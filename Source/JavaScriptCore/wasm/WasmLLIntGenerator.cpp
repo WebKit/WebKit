@@ -329,6 +329,8 @@ public:
     PartialResult WARN_UNUSED_RETURN addStructSet(ExpressionType structReference, const StructType&, uint32_t fieldIndex, ExpressionType value);
     PartialResult WARN_UNUSED_RETURN addRefTest(ExpressionType reference, bool allowNull, int32_t heapType, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addRefCast(ExpressionType reference, bool allowNull, int32_t heapType, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addExternInternalize(ExpressionType reference, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addExternExternalize(ExpressionType reference, ExpressionType& result);
 
     // Basic operators
 #define X(name, opcode, short, idx, ...) \
@@ -2120,6 +2122,22 @@ auto LLIntGenerator::addRefCast(ExpressionType reference, bool allowNull, int32_
     addCallBuiltin(LLIntBuiltin::RefCast, { reference, addConstantWithoutPush(Types::I32, static_cast<uint32_t>(allowNull)), addConstantWithoutPush(Types::I32, heapType) }, results);
     ASSERT(results.size() == 1);
     result = results.at(0);
+    return { };
+}
+
+auto LLIntGenerator::addExternInternalize(ExpressionType reference, ExpressionType& result) -> PartialResult
+{
+    ResultList results;
+    addCallBuiltin(LLIntBuiltin::ExternInternalize, { reference }, results);
+    ASSERT(results.size() == 1);
+    result = results.at(0);
+    return { };
+}
+
+auto LLIntGenerator::addExternExternalize(ExpressionType reference, ExpressionType& result) -> PartialResult
+{
+    result = push();
+    WasmExternExternalize::emit(this, result, reference);
     return { };
 }
 

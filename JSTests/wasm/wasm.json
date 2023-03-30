@@ -291,6 +291,8 @@
         "ref.cast":                  { "category": "gc",         "value": 251, "return": ["any"],                          "parameter": ["any"],                        "immediate": [{"name": "heap_type", "type": "varuint32"}], "extendedOp": 65 },
         "ref.test_null":             { "category": "gc",         "value": 251, "return": ["any"],                          "parameter": ["any"],                        "immediate": [{"name": "heap_type", "type": "varuint32"}], "extendedOp": 72 },
         "ref.cast_null":             { "category": "gc",         "value": 251, "return": ["any"],                          "parameter": ["any"],                        "immediate": [{"name": "heap_type", "type": "varuint32"}], "extendedOp": 73 },
+        "extern.internalize":        { "category": "gc",         "value": 251, "return": ["anyref"],                       "parameter": ["externref"],                  "immediate": [], "extendedOp": 112 },
+        "extern.externalize":        { "category": "gc",         "value": 251, "return": ["externref"],                    "parameter": ["anyref"],                     "immediate": [], "extendedOp": 113 },
 
         "i32.trunc_sat_f32_s": { "category": "conversion", "value": 252, "return": ["i32"], "parameter": ["f32"], "immediate": [], "extendedOp": 0 },
         "i32.trunc_sat_f32_u": { "category": "conversion", "value": 252, "return": ["i32"], "parameter": ["f32"], "immediate": [], "extendedOp": 1 },

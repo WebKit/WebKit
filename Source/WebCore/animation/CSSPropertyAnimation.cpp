@@ -2490,7 +2490,7 @@ private:
     }
 };
 
-class PropertyWrapperFontSizeAdjust final : public PropertyWrapperGetter<std::optional<float>> {
+class PropertyWrapperFontSizeAdjust final : public PropertyWrapperGetter<FontSizeAdjust> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     PropertyWrapperFontSizeAdjust()
@@ -2501,17 +2501,18 @@ public:
 private:
     bool canInterpolate(const RenderStyle& from, const RenderStyle& to, CompositeOperation) const final
     {
-        return from.fontSizeAdjust().has_value() && to.fontSizeAdjust().has_value();
+        return from.fontSizeAdjust().value && to.fontSizeAdjust().value;
     }
 
     void blend(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const CSSPropertyBlendingContext& context) const final
     {
-        auto blendedFontSizeAdjust = [&]() -> std::optional<float> {
+        auto blendedFontSizeAdjust = [&]() -> FontSizeAdjust {
             if (context.isDiscrete)
                 return (!context.progress ? from : to).fontSizeAdjust();
-            ASSERT(from.fontSizeAdjust().has_value() && to.fontSizeAdjust().has_value());
-            auto blendedAdjust = blendFunc(from.fontSizeAdjust().value(), to.fontSizeAdjust().value(), context);
-            return std::max(blendedAdjust, 0.0f);
+            ASSERT(from.fontSizeAdjust().value && to.fontSizeAdjust().value);
+            auto blendedAdjust = blendFunc(*from.fontSizeAdjust().value, *to.fontSizeAdjust().value, context);
+            // FIXME: Handle interpolation between metrics. <http://webkit.org/b/254266>
+            return { from.fontSizeAdjust().metric, std::max(blendedAdjust, 0.0f) };
         };
 
         destination.setFontSizeAdjust(blendedFontSizeAdjust());

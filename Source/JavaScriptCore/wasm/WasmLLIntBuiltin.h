@@ -46,6 +46,7 @@ enum class LLIntBuiltin : uint8_t {
     RefCast,
     ArrayNewData,
     ArrayNewElem,
+    ExternInternalize,
 };
 
 } } // namespace JSC::Wasm

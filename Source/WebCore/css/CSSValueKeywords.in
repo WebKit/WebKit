@@ -58,6 +58,14 @@ small-caption
 // This has to go after the -apple-system versions.
 status-bar
 
+// font-size-adjust:
+//
+ex-height
+cap-height
+ch-width
+ic-width
+ic-height
+
 //
 // CSS_PROP_FONT_STYLE:
 //
@@ -1607,9 +1615,11 @@ numbers
 words
 // spell-out
 
-// @supports selector()
+// @supports
 // https://drafts.csswg.org/css-conditional-4/#typedef-supports-selector-fn
+// https://drafts.csswg.org/css-conditional-5/#typedef-supports-font-format-fn
 selector
+font-format
 
 // math-style
 // normal

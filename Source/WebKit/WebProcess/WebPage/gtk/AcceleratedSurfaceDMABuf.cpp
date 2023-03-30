@@ -123,7 +123,7 @@ void AcceleratedSurfaceDMABuf::clientResize(const WebCore::IntSize& size)
     if (size.isEmpty())
         return;
 
-    auto* backObject = gbm_bo_create(WebCore::GBMDevice::singleton().device(), size.width(), size.height(), uint32_t(DMABufFormat::FourCC::ARGB8888), 0);
+    auto* backObject = gbm_bo_create(WebCore::GBMDevice::singleton().device(), size.width(), size.height(), uint32_t(WebCore::DMABufFormat::FourCC::ARGB8888), 0);
     if (!backObject) {
         WTFLogAlways("Failed to create GBM buffer of size %dx%d: %s", size.width(), size.height(), safeStrerror(errno).data());
         return;
@@ -144,7 +144,7 @@ void AcceleratedSurfaceDMABuf::clientResize(const WebCore::IntSize& size)
         gbm_bo_destroy(backObject);
         return;
     }
-    auto* frontObject = gbm_bo_create(WebCore::GBMDevice::singleton().device(), size.width(), size.height(), uint32_t(DMABufFormat::FourCC::ARGB8888), 0);
+    auto* frontObject = gbm_bo_create(WebCore::GBMDevice::singleton().device(), size.width(), size.height(), uint32_t(WebCore::DMABufFormat::FourCC::ARGB8888), 0);
     if (!frontObject) {
         WTFLogAlways("Failed to create GBM buffer of size %dx%d: %s", size.width(), size.height(), safeStrerror(errno).data());
         display.destroyEGLImage(m_backImage);

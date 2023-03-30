@@ -6,6 +6,7 @@ RUN(sourceBuffer = source.addSourceBuffer("video/mp4"))
 RUN(sourceBuffer.appendBuffer(initSegment))
 EXPECTED (sourceBuffer.updating == 'true') OK
 EVENT(updatestart)
+EVENT(error)
 EVENT(updateend)
 EXPECTED (sourceBuffer.updating == 'false') OK
 END OF TEST

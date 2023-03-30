@@ -37,8 +37,52 @@
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <notify.h>
+#import <objc/runtime.h>
 #import <wtf/Function.h>
 #import <wtf/RetainPtr.h>
+
+@interface NSUserDefaults (TestSupport)
+- (NSURL *)swizzled_objectForKey:(NSString *)key;
+@end
+
+@implementation NSUserDefaults (TestSupport)
+
+- (id)swizzled_objectForKey:(NSString *)key
+{
+    if ([key isEqualToString:@"WebKit2UseRemoteLayerTreeDrawingArea"])
+        return @(YES);
+    return [self swizzled_objectForKey:key];
+}
+
+@end
+
+namespace TestWebKitAPI {
+
+class EnableUISideCompositingScope {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    EnableUISideCompositingScope()
+        : m_originalMethod(class_getInstanceMethod(NSUserDefaults.class, @selector(objectForKey:)))
+        , m_swizzledMethod(class_getInstanceMethod(NSUserDefaults.class, @selector(swizzled_objectForKey:)))
+    {
+        m_originalImplementation = method_getImplementation(m_originalMethod);
+        m_swizzledImplementation = method_getImplementation(m_swizzledMethod);
+        class_replaceMethod(NSUserDefaults.class, @selector(swizzled_objectForKey:), m_originalImplementation, method_getTypeEncoding(m_originalMethod));
+        class_replaceMethod(NSUserDefaults.class, @selector(objectForKey:), m_swizzledImplementation, method_getTypeEncoding(m_swizzledMethod));
+    }
+
+    ~EnableUISideCompositingScope()
+    {
+        class_replaceMethod(NSUserDefaults.class, @selector(swizzled_objectForKey:), m_swizzledImplementation, method_getTypeEncoding(m_originalMethod));
+        class_replaceMethod(NSUserDefaults.class, @selector(objectForKey:), m_originalImplementation, method_getTypeEncoding(m_swizzledMethod));
+    }
+
+private:
+    Method m_originalMethod;
+    Method m_swizzledMethod;
+    IMP m_originalImplementation;
+    IMP m_swizzledImplementation;
+};
 
 #if PLATFORM(MAC)
 typedef NSImage *PlatformImage;
@@ -234,6 +278,41 @@ TEST(GPUProcess, OnlyLaunchesGPUProcessWhenNecessary)
     TestWebKitAPI::Util::spinRunLoop(10);
 
     EXPECT_EQ([configuration.get().processPool _gpuProcessIdentifier], 0);
+}
+
+TEST(GPUProcess, GPUProcessForDOMRenderingCarriesOverFromRelatedPage)
+{
+    if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"WebKit2GPUProcessForDOMRendering"] boolValue])
+        return;
+
+    EnableUISideCompositingScope enableUISideCompositing;
+
+    RetainPtr<WKWebViewConfiguration> configuration;
+    RetainPtr<TestWKWebView> originalWebView;
+    {
+        configuration = adoptNS([WKWebViewConfiguration new]);
+        WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], true, WKStringCreateWithUTF8CString("UseGPUProcessForDOMRenderingEnabled"));
+
+        originalWebView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400) configuration:configuration.get()]);
+        [originalWebView synchronouslyLoadTestPageNamed:@"simple"];
+    }
+
+    RetainPtr<TestWKWebView> newWebView;
+    {
+        auto newPreferences = adoptNS([[configuration preferences] copy]);
+        WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)newPreferences.get(), false, WKStringCreateWithUTF8CString("UseGPUProcessForDOMRenderingEnabled"));
+        [configuration setPreferences:newPreferences.get()];
+        [configuration _setRelatedWebView:originalWebView.get()];
+
+        newWebView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400) configuration:configuration.get()]);
+        [newWebView synchronouslyLoadTestPageNamed:@"simple"];
+    }
+
+    [originalWebView stringByEvaluatingJavaScript:@"document.body.style.backgroundColor = 'red';"];
+    [originalWebView waitForNextPresentationUpdate];
+
+    [newWebView stringByEvaluatingJavaScript:@"document.body.style.backgroundColor = 'green';"];
+    [newWebView waitForNextPresentationUpdate];
 }
 
 TEST(GPUProcess, OnlyLaunchesGPUProcessWhenNecessarySVG)
@@ -857,3 +936,5 @@ TEST(GPUProcess, ValidateWebAudioMediaProcessingAssertion)
 
     EXPECT_TRUE([configuration.get().processPool _hasAudibleMediaActivity]);
 }
+
+} // namespace TestWebKitAPI

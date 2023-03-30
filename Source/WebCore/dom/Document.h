@@ -622,7 +622,7 @@ public:
     Vector<AtomString> formElementsState() const;
     void setStateForNewFormElements(const Vector<AtomString>&);
 
-    WEBCORE_EXPORT LocalFrameView* view() const; // Can be null.
+    inline LocalFrameView* view() const; // Defined in LocalFrame.h.
     inline Page* page() const; // Defined in Page.h
     const Settings& settings() const { return m_settings.get(); }
     EditingBehavior editingBehavior() const;
@@ -1633,7 +1633,7 @@ public:
     HTMLElement* topmostAutoPopover() const;
 
     void hideAllPopoversUntil(Element*, FocusPreviousElement, FireEvents);
-    void handlePopoverLightDismiss(PointerEvent&);
+    void handlePopoverLightDismiss(const PointerEvent&, Node&);
 
 #if ENABLE(ATTACHMENT_ELEMENT)
     void registerAttachmentIdentifier(const String&, const HTMLImageElement&);

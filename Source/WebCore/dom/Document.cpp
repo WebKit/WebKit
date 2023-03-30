@@ -2019,11 +2019,6 @@ void Document::setStateForNewFormElements(const Vector<AtomString>& stateVector)
     formController().setStateForNewFormElements(stateVector);
 }
 
-LocalFrameView* Document::view() const
-{
-    return m_frame ? m_frame->view() : nullptr;
-}
-
 Ref<Range> Document::createRange()
 {
     return Range::create(*this);
@@ -8985,7 +8980,7 @@ void Document::hideAllPopoversUntil(Element* endpoint, FocusPreviousElement focu
 }
 
 // https://html.spec.whatwg.org/#popover-light-dismiss
-void Document::handlePopoverLightDismiss(PointerEvent& event)
+void Document::handlePopoverLightDismiss(const PointerEvent& event, Node& target)
 {
     ASSERT(event.isTrusted());
 
@@ -8994,7 +8989,6 @@ void Document::handlePopoverLightDismiss(PointerEvent& event)
         return;
 
     RefPtr popoverToAvoidHiding = [&]() -> HTMLElement* {
-        auto& target = downcast<Node>(*event.target());
         auto* startElement = is<Element>(target) ? &downcast<Element>(target) : target.parentElement();
         auto [clickedPopover, invokerPopover] = [&]() {
             RefPtr<HTMLElement> clickedPopover;

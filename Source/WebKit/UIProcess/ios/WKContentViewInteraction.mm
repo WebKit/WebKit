@@ -10309,7 +10309,7 @@ static BOOL applicationIsKnownToIgnoreMouseEvents(const char* &warningVersion)
     [_mouseGestureRecognizer setEnabled:[self shouldUseMouseGestureRecognizer]];
 #if ENABLE(PENCIL_HOVER)
     [_pencilHoverGestureRecognizer setAllowedTouchTypes:@[ @(UITouchTypePencil)] ];
-    [_mouseGestureRecognizer setAllowedTouchTypes:@[ @(UITouchTypeDirect), @(UITouchTypeIndirectPointer)] ];
+    [_mouseGestureRecognizer setAllowedTouchTypes:@[ @(UITouchTypeIndirectPointer)] ];
     [_pencilHoverGestureRecognizer setEnabled:[self shouldUseMouseGestureRecognizer]];
 #endif
 }

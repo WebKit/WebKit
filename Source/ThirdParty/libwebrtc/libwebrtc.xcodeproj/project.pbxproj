@@ -22561,7 +22561,6 @@
 			buildConfigurationList = 5C0884DA1E4A980100403995 /* Build configuration list for PBXNativeTarget "yuv" */;
 			buildPhases = (
 				5C0884D51E4A980100403995 /* Headers */,
-				410B392B292CC3F30003E515 /* (Legacy) Nest Headers */,
 				5C0884D61E4A980100403995 /* Sources */,
 				5C0884D71E4A980100403995 /* Frameworks */,
 				5C0884D81E4A980100403995 /* CopyFiles */,
@@ -22759,24 +22758,6 @@
 /* End PBXProject section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		410B392B292CC3F30003E515 /* (Legacy) Nest Headers */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "(Legacy) Nest Headers";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n[ \"${WK_USE_NEW_BUILD_SYSTEM}\" = YES ] && exit 0\nxcodebuild -project \"${PROJECT_FILE_PATH}\" -target \"${TARGET_NAME}\" installhdrs SYMROOT=\"${TARGET_TEMP_DIR}/LegacyNestHeaders-build\" DSTROOT=\"${BUILT_PRODUCTS_DIR}\" SDKROOT=\"${SDKROOT}\" -UseNewBuildSystem=YES\n";
-		};
 		41F2354122F39AC000B4FCDB /* Check For Inappropriate Objective-C Class Names */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;

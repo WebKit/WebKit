@@ -22,6 +22,7 @@
 #include "config.h"
 #include "CounterNode.h"
 
+#include "LayoutIntegrationLineLayout.h"
 #include "RenderCounter.h"
 #include "RenderElement.h"
 #include <stdio.h>
@@ -179,8 +180,11 @@ void CounterNode::resetRenderers()
     bool skipLayoutAndPerfWidthsRecalc = m_rootRenderer->renderTreeBeingDestroyed();
     auto* current = m_rootRenderer;
     while (current) {
-        if (!skipLayoutAndPerfWidthsRecalc)
+        if (!skipLayoutAndPerfWidthsRecalc) {
             current->setNeedsLayoutAndPrefWidthsRecalc();
+            if (auto* lineLayout = LayoutIntegration::LineLayout::containing(*current))
+                lineLayout->flow().invalidateLineLayoutPath();
+        }
         auto* next = current->m_nextForSameCounter;
         current->m_nextForSameCounter = nullptr;
         current->m_counterNode = nullptr;

@@ -1,0 +1,24 @@
+
+PASS Loading data…
+PASS URL: Setting <file://localhost/>.protocol = 'http' Can’t switch from file URL with no host
+PASS URL: Setting <file:///test>.protocol = 'https'
+PASS URL: Setting <file:>.protocol = 'wss'
+FAIL URL: Setting <file://hi/path>.protocol = 's' assert_equals: expected "file://hi/path" but got "s://hi/path"
+PASS URL: Setting <file:///home/you/index.html>.username = 'me' No host means no username
+PASS URL: Setting <file://test/>.username = 'test'
+PASS URL: Setting <file:///home/me/index.html>.password = 'secret' No host means no password
+PASS URL: Setting <file://test/>.password = 'test'
+PASS URL: Setting <file://y/>.host = 'x:123'
+PASS URL: Setting <file://y/>.host = 'loc%41lhost'
+PASS URL: Setting <file://hi/x>.host = ''
+PASS URL: Setting <file://y/>.hostname = 'x:123'
+PASS URL: Setting <file://y/>.hostname = 'loc%41lhost'
+PASS URL: Setting <file://hi/x>.hostname = ''
+PASS URL: Setting <file://test/>.port = '12'
+PASS URL: Setting <file://localhost/>.port = '12'
+PASS URL: Setting <file:///some/path>.pathname = '' Special URLs cannot have their paths erased
+PASS URL: Setting <file://monkey/>.pathname = '\\' File URLs and (back)slashes
+PASS URL: Setting <file:///unicorn>.pathname = '//\/' File URLs and (back)slashes
+PASS URL: Setting <file:///unicorn>.pathname = '//monkey/..//' File URLs and (back)slashes
+PASS URL: Setting <file:///var/log/system.log>.href = 'http://0300.168.0xF0'
+

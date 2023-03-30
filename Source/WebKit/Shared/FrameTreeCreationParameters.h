@@ -26,12 +26,14 @@
 #pragma once
 
 #include <WebCore/FrameIdentifier.h>
+#include <WebCore/ProcessIdentifier.h>
 #include <wtf/Vector.h>
 
 namespace WebKit {
 
 struct FrameTreeCreationParameters {
     WebCore::FrameIdentifier frameID;
+    WebCore::ProcessIdentifier remoteProcessIdentifier;
     Vector<FrameTreeCreationParameters> children;
 };
 

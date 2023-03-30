@@ -53,7 +53,7 @@ class InstallHooks(Command):
     def hook_needs_update(cls, repository, path):
         if not os.path.isfile(path):
             return False
-        hook_path = os.path.join(repository.root_path, '.git', 'hooks', os.path.basename(path))
+        hook_path = os.path.join(repository.common_directory, 'hooks', os.path.basename(path))
         if not os.path.isfile(hook_path):
             return True
         repo_version = cls.version_for(path)

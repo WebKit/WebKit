@@ -4,7 +4,7 @@
    version = "1.7">
    <BuildAction
       parallelizeBuildables = "YES"
-      buildImplicitDependencies = "NO">
+      buildImplicitDependencies = "YES">
       <BuildActionEntries>
          <BuildActionEntry
             buildForTesting = "YES"
@@ -17,6 +17,20 @@
                BlueprintIdentifier = "1CEBD7E22716AFBA00A5254D"
                BuildableName = "WebGPU.framework"
                BlueprintName = "WebGPU"
+               ReferencedContainer = "container:WebGPU.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "97FA1A8F29C086CE0052D650"
+               BuildableName = "All"
+               BlueprintName = "All"
                ReferencedContainer = "container:WebGPU.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>

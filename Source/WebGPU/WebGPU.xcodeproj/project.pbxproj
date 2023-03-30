@@ -6,6 +6,21 @@
 	objectVersion = 55;
 	objects = {
 
+/* Begin PBXAggregateTarget section */
+		97FA1A8F29C086CE0052D650 /* All */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 97FA1A9029C086CE0052D650 /* Build configuration list for PBXAggregateTarget "All" */;
+			buildPhases = (
+			);
+			dependencies = (
+				97FA1A9729C086E10052D650 /* PBXTargetDependency */,
+				97FA1A9929C086E10052D650 /* PBXTargetDependency */,
+			);
+			name = All;
+			productName = All;
+		};
+/* End PBXAggregateTarget section */
+
 /* Begin PBXBuildFile section */
 		1C0F41EE280940650005886D /* HardwareCapabilities.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C0F41EC280940650005886D /* HardwareCapabilities.mm */; };
 		1C2CEDEE271E8A7300EDC16F /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1C2CEDED271E8A7300EDC16F /* Metal.framework */; };
@@ -143,6 +158,9 @@
 		979240C929769AC00050EA2C /* EntryPointRewriter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 979240C729769AC00050EA2C /* EntryPointRewriter.cpp */; };
 		97F547B8298055D90011D79A /* GlobalVariableRewriter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97F547B6298055D90011D79A /* GlobalVariableRewriter.cpp */; };
 		97F547B9298055D90011D79A /* GlobalVariableRewriter.h in Headers */ = {isa = PBXBuildFile; fileRef = 97F547B7298055D90011D79A /* GlobalVariableRewriter.h */; };
+		97FA1A8E29C086230052D650 /* wgslc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97FA1A8729C085A60052D650 /* wgslc.cpp */; };
+		97FA1AA729C0DA890052D650 /* libwgsl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1CEBD7F22716B2CC00A5254D /* libwgsl.a */; };
+		97FA1AAB29C0DC6F0052D650 /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1C023D4A274495B9001DB734 /* JavaScriptCore.framework */; };
 		DD05A35C27BF09C60096EFAB /* libWTF.a in Product Dependencies */ = {isa = PBXBuildFile; fileRef = 1CEBD8292716CAE700A5254D /* libWTF.a */; };
 /* End PBXBuildFile section */
 
@@ -172,9 +190,32 @@
 			remoteGlobalIDString = 1CEBD7F12716B2CC00A5254D;
 			remoteInfo = WGSL;
 		};
+		97FA1A9629C086E10052D650 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1CEBD7DA2716AFBA00A5254D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 1CEBD7E22716AFBA00A5254D;
+			remoteInfo = WebGPU;
+		};
+		97FA1A9829C086E10052D650 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1CEBD7DA2716AFBA00A5254D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 97FA1A7E29C085740052D650;
+			remoteInfo = wgslc;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		97FA1A7D29C085740052D650 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
 		DD05A35B27BF09B60096EFAB /* Product Dependencies */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -371,6 +412,9 @@
 		979240C729769AC00050EA2C /* EntryPointRewriter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EntryPointRewriter.cpp; sourceTree = "<group>"; };
 		97F547B6298055D90011D79A /* GlobalVariableRewriter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GlobalVariableRewriter.cpp; sourceTree = "<group>"; };
 		97F547B7298055D90011D79A /* GlobalVariableRewriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GlobalVariableRewriter.h; sourceTree = "<group>"; };
+		97FA1A7F29C085740052D650 /* wgslc */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = wgslc; sourceTree = BUILT_PRODUCTS_DIR; };
+		97FA1A8729C085A60052D650 /* wgslc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = wgslc.cpp; path = WGSL/wgslc.cpp; sourceTree = SOURCE_ROOT; };
+		97FA1AA229C0BB700052D650 /* wgslc.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = wgslc.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -392,6 +436,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		97FA1A7C29C085740052D650 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				97FA1AAB29C0DC6F0052D650 /* JavaScriptCore.framework in Frameworks */,
+				97FA1AA729C0DA890052D650 /* libwgsl.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -410,6 +463,7 @@
 		1CEBD7E42716AFBA00A5254D /* Products */ = {
 			isa = PBXGroup;
 			children = (
+				97FA1A7F29C085740052D650 /* wgslc */,
 				1CEBD7F22716B2CC00A5254D /* libwgsl.a */,
 				1CEBD7E32716AFBA00A5254D /* WebGPU.framework */,
 			);
@@ -525,6 +579,7 @@
 				978A9135298D40F100B37E5E /* TypeStore.h */,
 				1CEBD8022716BF8200A5254D /* WGSL.cpp */,
 				1CEBD7F72716B34400A5254D /* WGSL.h */,
+				97FA1A8729C085A60052D650 /* wgslc.cpp */,
 				9776BE7529957E12002D6D93 /* WGSLShaderModule.h */,
 			);
 			path = WGSL;
@@ -537,6 +592,7 @@
 				1CEBD7FB2716B5B400A5254D /* DebugRelease.xcconfig */,
 				1CEBD7FC2716B64400A5254D /* WebGPU.xcconfig */,
 				1CEBD7FD2716B64F00A5254D /* WGSL.xcconfig */,
+				97FA1AA229C0BB700052D650 /* wgslc.xcconfig */,
 			);
 			path = Configurations;
 			sourceTree = "<group>";
@@ -791,6 +847,23 @@
 			productReference = 1CEBD7F22716B2CC00A5254D /* libwgsl.a */;
 			productType = "com.apple.product-type.library.static";
 		};
+		97FA1A7E29C085740052D650 /* wgslc */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 97FA1A8629C085740052D650 /* Build configuration list for PBXNativeTarget "wgslc" */;
+			buildPhases = (
+				97FA1A7B29C085740052D650 /* Sources */,
+				97FA1A7C29C085740052D650 /* Frameworks */,
+				97FA1A7D29C085740052D650 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = wgslc;
+			productName = wgslc;
+			productReference = 97FA1A7F29C085740052D650 /* wgslc */;
+			productType = "com.apple.product-type.tool";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -805,6 +878,12 @@
 					};
 					1CEBD7F12716B2CC00A5254D = {
 						CreatedOnToolsVersion = 13.3;
+					};
+					97FA1A7E29C085740052D650 = {
+						CreatedOnToolsVersion = 14.3;
+					};
+					97FA1A8F29C086CE0052D650 = {
+						CreatedOnToolsVersion = 14.3;
 					};
 				};
 			};
@@ -821,8 +900,10 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
+				97FA1A8F29C086CE0052D650 /* All */,
 				1CEBD7E22716AFBA00A5254D /* WebGPU */,
 				1CEBD7F12716B2CC00A5254D /* WGSL */,
+				97FA1A7E29C085740052D650 /* wgslc */,
 			);
 		};
 /* End PBXProject section */
@@ -920,6 +1001,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		97FA1A7B29C085740052D650 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				97FA1A8E29C086230052D650 /* wgslc.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -927,6 +1016,16 @@
 			isa = PBXTargetDependency;
 			target = 1CEBD7F12716B2CC00A5254D /* WGSL */;
 			targetProxy = 1CEBD8272716CACC00A5254D /* PBXContainerItemProxy */;
+		};
+		97FA1A9729C086E10052D650 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 1CEBD7E22716AFBA00A5254D /* WebGPU */;
+			targetProxy = 97FA1A9629C086E10052D650 /* PBXContainerItemProxy */;
+		};
+		97FA1A9929C086E10052D650 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 97FA1A7E29C085740052D650 /* wgslc */;
+			targetProxy = 97FA1A9829C086E10052D650 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -994,6 +1093,45 @@
 			};
 			name = Production;
 		};
+		97FA1A8329C085740052D650 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 97FA1AA229C0BB700052D650 /* wgslc.xcconfig */;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		97FA1A8429C085740052D650 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 97FA1AA229C0BB700052D650 /* wgslc.xcconfig */;
+			buildSettings = {
+			};
+			name = Release;
+		};
+		97FA1A8529C085740052D650 /* Production */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 97FA1AA229C0BB700052D650 /* wgslc.xcconfig */;
+			buildSettings = {
+			};
+			name = Production;
+		};
+		97FA1A9129C086CE0052D650 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		97FA1A9229C086CE0052D650 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Release;
+		};
+		97FA1A9329C086CE0052D650 /* Production */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Production;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -1023,6 +1161,26 @@
 				1CEBD7F42716B2CC00A5254D /* Debug */,
 				1CEBD7F52716B2CC00A5254D /* Release */,
 				1CEBD8002716B6BE00A5254D /* Production */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Production;
+		};
+		97FA1A8629C085740052D650 /* Build configuration list for PBXNativeTarget "wgslc" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				97FA1A8329C085740052D650 /* Debug */,
+				97FA1A8429C085740052D650 /* Release */,
+				97FA1A8529C085740052D650 /* Production */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Production;
+		};
+		97FA1A9029C086CE0052D650 /* Build configuration list for PBXAggregateTarget "All" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				97FA1A9129C086CE0052D650 /* Debug */,
+				97FA1A9229C086CE0052D650 /* Release */,
+				97FA1A9329C086CE0052D650 /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;

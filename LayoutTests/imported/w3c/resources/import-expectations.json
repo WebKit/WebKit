@@ -467,6 +467,7 @@
     "web-platform-tests/uievents": "import",
     "web-platform-tests/upgrade-insecure-requests": "import",
     "web-platform-tests/url": "import",
+    "web-platform-tests/url/tools": "skip",
     "web-platform-tests/user-timing": "import",
     "web-platform-tests/vibration": "skip",
     "web-platform-tests/video-rvfc": "import",

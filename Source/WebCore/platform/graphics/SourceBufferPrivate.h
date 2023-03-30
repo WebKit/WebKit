@@ -33,6 +33,7 @@
 
 #if ENABLE(MEDIA_SOURCE)
 
+#include "InbandTextTrackPrivate.h"
 #include "MediaDescription.h"
 #include "MediaPlayer.h"
 #include "MediaSample.h"
@@ -40,6 +41,7 @@
 #include "SampleMap.h"
 #include "SourceBufferPrivateClient.h"
 #include "TimeRanges.h"
+#include <wtf/Deque.h>
 #include <wtf/HashMap.h>
 #include <wtf/Logger.h>
 #include <wtf/LoggerHelper.h>
@@ -104,8 +106,8 @@ public:
     WEBCORE_EXPORT virtual void seekToTime(const MediaTime&);
     WEBCORE_EXPORT virtual void updateTrackIds(Vector<std::pair<AtomString, AtomString>>&& trackIdPairs);
 
-    WEBCORE_EXPORT void setClient(SourceBufferPrivateClient*);
-    void setIsAttached(bool flag) { m_isAttached = flag; }
+    WEBCORE_EXPORT void setClient(SourceBufferPrivateClient&);
+    WEBCORE_EXPORT void detach();
 
     const PlatformTimeRanges& buffered() const { return m_buffered; }
 
@@ -152,15 +154,19 @@ protected:
     virtual void setMinimumUpcomingPresentationTime(const AtomString&, const MediaTime&) { }
     virtual void clearMinimumUpcomingPresentationTime(const AtomString&) { }
 
-    bool processingInitializationSegment() const { return m_processingInitializationSegment; }
-
-    WEBCORE_EXPORT virtual void didReceiveSampleForTrackId(uint64_t, Ref<MediaSample>&&);
-
+    using InitializationSegment = SourceBufferPrivateClient::InitializationSegment;
+    using ReceiveResult = SourceBufferPrivateClient::ReceiveResult;
     void reenqueSamples(const AtomString& trackID);
-    WEBCORE_EXPORT void didReceiveInitializationSegment(SourceBufferPrivateClient::InitializationSegment&&, CompletionHandler<void(SourceBufferPrivateClient::ReceiveResult)>&&);
+
+    // Callbacks must not take a strong reference to this SourceBufferPrivate object in order to avoid cycles
+    // that would prevent `this` to be deleted in case the SourceBufferClient detaches itself while an initialization
+    // is pending. Take a WeakPtr instead.
+    WEBCORE_EXPORT void didReceiveInitializationSegment(InitializationSegment&&, Function<bool(InitializationSegment&)>&&, CompletionHandler<void(ReceiveResult)>&&);
     WEBCORE_EXPORT void didReceiveSample(Ref<MediaSample>&&);
     WEBCORE_EXPORT void setBufferedRanges(PlatformTimeRanges&&, CompletionHandler<void()>&& completionHandler = [] { });
     void provideMediaData(const AtomString& trackID);
+
+    virtual bool isMediaSampleAllowed(const MediaSample&) const { return true; }
 
     // Must be called once all samples have been processed.
     WEBCORE_EXPORT void appendCompleted(bool parsingSucceeded, bool isEnded, Function<void()>&& = [] { });
@@ -171,22 +177,15 @@ private:
     void updateHighestPresentationTimestamp();
     void updateMinimumUpcomingPresentationTime(TrackBuffer&, const AtomString& trackID);
     void reenqueueMediaForTime(TrackBuffer&, const AtomString& trackID, const MediaTime&);
-    bool validateInitializationSegment(const SourceBufferPrivateClient::InitializationSegment&);
+    bool validateInitializationSegment(const InitializationSegment&);
     void provideMediaData(TrackBuffer&, const AtomString& trackID);
     void setBufferedDirty(bool);
     void trySignalAllSamplesInTrackEnqueued(TrackBuffer&, const AtomString& trackID);
     MediaTime findPreviousSyncSamplePresentationTime(const MediaTime&);
     bool evictFrames(uint64_t newDataSize, uint64_t maximumBufferSize, const MediaTime& currentTime, bool isEnded);
-    void processPendingSamples();
+    void processPendingOperations();
+    bool isAttached() const;
 
-    struct AppendCompletedArguments {
-        bool parsingSucceeded { false };
-        bool isEnded { false };
-        Function<void()> preTask;
-    };
-    std::optional<AppendCompletedArguments> m_appendCompletedPending;
-
-    bool m_isAttached { false };
     bool m_hasAudio { false };
     bool m_hasVideo { false };
 
@@ -197,11 +196,31 @@ private:
     bool m_shouldGenerateTimestamps { false };
     bool m_receivedFirstInitializationSegment { false };
     bool m_pendingInitializationSegmentForChangeType { false };
+    bool m_didReceiveInitializationSegmentErrored { false };
     bool m_didReceiveSampleErrored { false };
 
-    bool m_processingInitializationSegment { false };
-    Vector<std::pair<uint64_t, Ref<MediaSample>>> m_pendingMediaSamples;
-    bool m_hasPendingAppendCompleted { false };
+    struct InitOperation {
+        InitializationSegment segment;
+        Function<bool(InitializationSegment&)> check;
+        CompletionHandler<void(ReceiveResult)> completionHandler;
+    };
+    using SamplesVector = Vector<Ref<MediaSample>>;
+    using Operation = std::variant<InitOperation, SamplesVector>;
+
+    void abortPendingOperations();
+    void processInitOperation(InitOperation&&);
+    void processMediaSamples(SamplesVector&&);
+    void processMediaSample(Ref<MediaSample>&&);
+
+    Deque<Operation> m_pendingAppendOperations;
+    bool m_pendingInitOperation { false };
+
+    struct AppendCompletedArguments {
+        bool parsingSucceeded { false };
+        bool isEnded { false };
+        Function<void()> preTask;
+    };
+    std::optional<AppendCompletedArguments> m_appendCompletedPending;
 
     MediaTime m_timestampOffset;
     MediaTime m_appendWindowStart { MediaTime::zeroTime() };

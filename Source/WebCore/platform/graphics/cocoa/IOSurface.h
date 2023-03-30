@@ -48,6 +48,7 @@ namespace WebCore {
 class IOSurfacePool;
 
 enum class PixelFormat : uint8_t;
+enum class RenderingPurpose : uint8_t;
 enum class SetNonVolatileResult : uint8_t;
 
 using IOSurfaceSeed = uint32_t;
@@ -56,6 +57,20 @@ using PlatformDisplayID = uint32_t;
 class IOSurface final {
     WTF_MAKE_FAST_ALLOCATED;
 public:
+    enum class Name : uint8_t {
+        Default,
+        DOM,
+        Canvas,
+        GraphicsContextGL,
+        ImageBuffer,
+        ImageBufferShareableMapped,
+        LayerBacking,
+        MediaPainting,
+        Snapshot,
+        ShareableSnapshot,
+        ShareableLocalSnapshot,
+    };
+
     enum class Format {
         BGRX,
         BGRA,
@@ -101,7 +116,7 @@ public:
         uint32_t m_flags;
     };
 
-    WEBCORE_EXPORT static std::unique_ptr<IOSurface> create(IOSurfacePool*, IntSize, const DestinationColorSpace&, Format = Format::BGRA);
+    WEBCORE_EXPORT static std::unique_ptr<IOSurface> create(IOSurfacePool*, IntSize, const DestinationColorSpace&, Name = Name::Default, Format = Format::BGRA);
     WEBCORE_EXPORT static std::unique_ptr<IOSurface> createFromImage(IOSurfacePool*, CGImageRef);
 
     WEBCORE_EXPORT static std::unique_ptr<IOSurface> createFromSendRight(const WTF::MachSendRight&&);
@@ -126,6 +141,9 @@ public:
     WEBCORE_EXPORT RetainPtr<CGImageRef> createImage(CGContextRef);
     // Passed in context is the context through which the contents was drawn.
     WEBCORE_EXPORT static RetainPtr<CGImageRef> sinkIntoImage(std::unique_ptr<IOSurface>, RetainPtr<CGContextRef>);
+
+    WEBCORE_EXPORT static Name nameForRenderingPurpose(RenderingPurpose);
+    Name name() const { return m_name; }
 
 #ifdef __OBJC__
     id asLayerContents() const { return (__bridge id)m_surface.get(); }
@@ -158,7 +176,7 @@ public:
 
 #if HAVE(IOSURFACE_ACCELERATOR)
     WEBCORE_EXPORT static bool allowConversionFromFormatToFormat(Format, Format);
-    WEBCORE_EXPORT static void convertToFormat(IOSurfacePool*, std::unique_ptr<WebCore::IOSurface>&& inSurface, Format, Function<void(std::unique_ptr<WebCore::IOSurface>)>&&);
+    WEBCORE_EXPORT static void convertToFormat(IOSurfacePool*, std::unique_ptr<WebCore::IOSurface>&& inSurface, Name, Format, Function<void(std::unique_ptr<WebCore::IOSurface>)>&&);
 #endif // HAVE(IOSURFACE_ACCELERATOR)
 
     WEBCORE_EXPORT void setOwnershipIdentity(const ProcessIdentity&);
@@ -167,12 +185,14 @@ public:
     RetainPtr<CGContextRef> createCompatibleBitmap(unsigned width, unsigned height);
 
 private:
-    IOSurface(IntSize, const DestinationColorSpace&, Format, bool& success);
+    IOSurface(IntSize, const DestinationColorSpace&, Name, Format, bool& success);
     IOSurface(IOSurfaceRef, std::optional<DestinationColorSpace>&&);
 
     void setColorSpaceProperty();
     void ensureColorSpace();
     std::optional<DestinationColorSpace> surfaceColorSpace() const;
+
+    void setName(Name name) { m_name = name; }
 
     struct BitmapConfiguration {
         CGBitmapInfo bitmapInfo;
@@ -191,6 +211,8 @@ private:
     RetainPtr<IOSurfaceRef> m_surface;
 
     static std::optional<IntSize> s_maximumSize;
+
+    Name m_name;
 
     WEBCORE_EXPORT friend WTF::TextStream& operator<<(WTF::TextStream&, const WebCore::IOSurface&);
 };

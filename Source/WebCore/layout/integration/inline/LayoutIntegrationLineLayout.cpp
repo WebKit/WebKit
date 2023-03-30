@@ -548,12 +548,6 @@ static inline Layout::BlockLayoutState::LeadingTrim leadingTrim(const RenderBloc
 
 std::optional<LayoutRect> LineLayout::layout()
 {
-    auto& rootLayoutBox = this->rootLayoutBox();
-    if (!rootLayoutBox.hasInFlowOrFloatingChild()) {
-        ASSERT_NOT_REACHED();
-        return { };
-    }
-
     prepareLayoutState();
     prepareFloatingState();
 
@@ -586,7 +580,7 @@ std::optional<LayoutRect> LineLayout::layout()
         return { constraintsForInFlowContent, m_inlineContentConstraints->visualLeft() };
     }();
     auto blockLayoutState = Layout::BlockLayoutState { m_blockFormattingState.floatingState(), lineClamp(flow()), leadingTrim(flow()), intrusiveInitialLetterBottom() };
-    auto inlineFormattingContext = Layout::InlineFormattingContext { rootLayoutBox, m_inlineFormattingState, m_lineDamage.get() };
+    auto inlineFormattingContext = Layout::InlineFormattingContext { rootLayoutBox(), m_inlineFormattingState, m_lineDamage.get() };
     auto layoutResult = inlineFormattingContext.layoutInFlowAndFloatContentForIntegration(inlineContentConstraints, blockLayoutState);
     inlineFormattingContext.layoutOutOfFlowContentForIntegration(inlineContentConstraints, blockLayoutState, layoutResult.displayContent);
 
@@ -802,8 +796,7 @@ std::optional<size_t> LineLayout::lastLineIndexForContentHeight() const
 
     auto& lines = m_inlineContent->displayContent().lines;
     if (lines.isEmpty()) {
-        // We should always have at least one line whenever we have inline content.
-        ASSERT_NOT_REACHED();
+        // Out-of-flow only content (and/or with floats) can produce blank inline content.
         return { };
     }
     auto* layoutState = flow().view().frameView().layoutContext().layoutState();

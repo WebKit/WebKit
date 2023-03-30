@@ -1293,6 +1293,11 @@ wasmOp(array_len, WasmArrayLen, macro(ctx)
     throwException(NullArrayLen)
 end)
 
+wasmOp(extern_externalize, WasmExternExternalize, macro(ctx)
+    mloadp(ctx, m_reference, t0)
+    returnq(ctx, t0)
+end)
+
 if ARM64E
     global _wasmTailCallJSEntrySlowPathTrampoline
     _wasmTailCallJSEntrySlowPathTrampoline:

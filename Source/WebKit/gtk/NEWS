@@ -1,4 +1,16 @@
 ================
+WebKitGTK 2.41.1
+================
+
+What's new in WebKitGTK 2.41.1?
+
+  - Use DMABuf and WebKit IPC for rendering instead of wpe/x11.
+  - Calculate scroll step depending on scrollable area size when scrolling with the mouse wheel or arrow keys.
+  - Add WebKitClipboardPermissionRequest to handle DOM paste access requests.
+  - Remove support for rendering with GLX in the web process.
+  - Fix several crashes and rendering issues.
+
+================
 WebKitGTK 2.39.7
 ================
 

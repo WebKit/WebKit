@@ -1055,7 +1055,7 @@ static inline IntRect computeImageDataRect(ImageBuffer& buffer, int width, int h
 
 void CanvasRenderingContext2DBase::postProcessPixelBuffer() const
 {
-    if (m_wasLastDrawPutImageData || !canvasBase().scriptExecutionContext()->settingsValues().canvasNoiseInjectionEnabled)
+    if (!canvasBase().shouldInjectNoiseBeforeReadback() || m_wasLastDrawPutImageData)
         return;
 
     ImageBuffer* buffer = canvasBase().buffer();

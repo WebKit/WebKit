@@ -495,16 +495,16 @@ static Vector<UserContentURLPattern> parseAndAllowAccessToCORSDisablingPatterns(
     return parsedPatterns;
 }
 
-static std::variant<UniqueRef<FrameLoaderClient>, UniqueRef<RemoteFrameClient>> clientForMainFrame(Ref<WebFrame>&& mainFrame, bool local)
+static std::variant<UniqueRef<FrameLoaderClient>, PageConfiguration::RemoteMainFrameCreationParameters> clientForMainFrame(Ref<WebFrame>&& mainFrame, std::optional<WebCore::ProcessIdentifier> remoteProcessIdentifier)
 {
-    if (local)
+    if (!remoteProcessIdentifier)
         return UniqueRef<WebCore::FrameLoaderClient>(makeUniqueRef<WebFrameLoaderClient>(WTFMove(mainFrame)));
 
     // FIXME: This is duplicate code with WebFrameLoaderClient ctor.
     auto invalidator = makeScopeExit<Function<void()>>([frame = mainFrame.copyRef()] {
         frame->invalidate();
     });
-    return UniqueRef<RemoteFrameClient>(makeUniqueRef<WebRemoteFrameClient>(WTFMove(mainFrame), WTFMove(invalidator)));
+    return PageConfiguration::RemoteMainFrameCreationParameters { UniqueRef<RemoteFrameClient>(makeUniqueRef<WebRemoteFrameClient>(WTFMove(mainFrame), WTFMove(invalidator))), remoteProcessIdentifier.value() };
 }
 
 WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
@@ -627,6 +627,10 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 
     m_pageGroup = WebProcess::singleton().webPageGroup(parameters.pageGroupData);
 
+    std::optional<ProcessIdentifier> remoteProcessIdentifier;
+    if (parameters.subframeProcessFrameTreeInitializationParameters)
+        remoteProcessIdentifier = parameters.subframeProcessFrameTreeInitializationParameters->treeCreationParameters.remoteProcessIdentifier;
+
     PageConfiguration pageConfiguration(
         WebProcess::singleton().sessionID(),
         makeUniqueRef<WebEditorClient>(this),
@@ -637,7 +641,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
         WebBackForwardListProxy::create(*this),
         WebProcess::singleton().cookieJar(),
         makeUniqueRef<WebProgressTrackerClient>(*this),
-        clientForMainFrame(m_mainFrame.copyRef(), !parameters.subframeProcessFrameTreeInitializationParameters),
+        clientForMainFrame(m_mainFrame.copyRef(), remoteProcessIdentifier),
         parameters.subframeProcessFrameTreeInitializationParameters ? parameters.subframeProcessFrameTreeInitializationParameters->treeCreationParameters.frameID : WebCore::FrameIdentifier::generate(),
         makeUniqueRef<WebSpeechRecognitionProvider>(m_identifier),
         makeUniqueRef<MediaRecorderProvider>(*this),
@@ -1012,7 +1016,7 @@ void WebPage::constructFrameTree(WebFrame& parent, WebCore::FrameIdentifier loca
     bool shouldCreateLocalFrame = treeCreationParameters.frameID == localFrameIdentifier;
     auto frame = shouldCreateLocalFrame
         ? WebFrame::createLocalSubframeHostedInAnotherProcess(*this, parent, treeCreationParameters.frameID, localFrameHostLayerIdentifier)
-        : WebFrame::createRemoteSubframe(*this, parent, treeCreationParameters.frameID);
+        : WebFrame::createRemoteSubframe(*this, parent, treeCreationParameters.frameID, treeCreationParameters.remoteProcessIdentifier);
     if (shouldCreateLocalFrame) {
         ASSERT(frame->coreFrame());
         m_page->addRootFrame(*frame->coreFrame());

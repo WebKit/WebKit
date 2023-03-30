@@ -33,6 +33,7 @@
 #include "CSSPrimitiveValue.h"
 #include "CSSToLengthConversionData.h"
 #include "CSSValueKeywords.h"
+#include "FontSizeAdjust.h"
 #include "GraphicsTypes.h"
 #include "Length.h"
 #include "LineClampValue.h"
@@ -1643,6 +1644,44 @@ template<> constexpr Kerning fromCSSValueID(CSSValueID valueID)
 DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
 #undef TYPE
 #undef FOR_EACH
+
+constexpr CSSValueID toCSSValueID(FontSizeAdjust::Metric metric)
+{
+    switch (metric) {
+    case FontSizeAdjust::Metric::ExHeight:
+        return CSSValueExHeight;
+    case FontSizeAdjust::Metric::CapHeight:
+        return CSSValueCapHeight;
+    case FontSizeAdjust::Metric::ChWidth:
+        return CSSValueChWidth;
+    case FontSizeAdjust::Metric::IcWidth:
+        return CSSValueIcWidth;
+    case FontSizeAdjust::Metric::IcHeight:
+        return CSSValueIcHeight;
+    }
+    ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
+    return CSSValueAuto;
+}
+
+template<> constexpr FontSizeAdjust::Metric fromCSSValueID(CSSValueID valueID)
+{
+    switch (valueID) {
+    case CSSValueExHeight:
+        return FontSizeAdjust::Metric::ExHeight;
+    case CSSValueCapHeight:
+        return FontSizeAdjust::Metric::CapHeight;
+    case CSSValueChWidth:
+        return FontSizeAdjust::Metric::ChWidth;
+    case CSSValueIcWidth:
+        return FontSizeAdjust::Metric::IcWidth;
+    case CSSValueIcHeight:
+        return FontSizeAdjust::Metric::IcHeight;
+    default:
+        break;
+    }
+    ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
+    return FontSizeAdjust::Metric::ExHeight;
+}
 
 constexpr CSSValueID toCSSValueID(FontSmoothingMode smoothing)
 {

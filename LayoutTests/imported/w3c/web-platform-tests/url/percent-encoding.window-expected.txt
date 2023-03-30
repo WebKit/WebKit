@@ -14,4 +14,6 @@ PASS Input  with encoding utf-8
 PASS Input − with encoding shift_jis
 PASS Input − with encoding utf-8
 PASS Input á| with encoding utf-8
+PASS Input U+d800 with encoding utf-8
+PASS Input U+d800 with encoding windows-1252
 

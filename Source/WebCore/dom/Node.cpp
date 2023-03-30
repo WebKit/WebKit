@@ -2498,9 +2498,6 @@ void Node::defaultEventHandler(Event& event)
             }
         }
 #endif
-    } else if (eventType == eventNames.pointerdownEvent || eventType == eventNames.pointerupEvent) {
-        if (is<PointerEvent>(event))
-            document().handlePopoverLightDismiss(downcast<PointerEvent>(event));
     } else if (eventNames.isWheelEventType(eventType) && is<WheelEvent>(event)) {
         // If we don't have a renderer, send the wheel event to the first node we find with a renderer.
         // This is needed for <option> and <optgroup> elements so that <select>s get a wheel scroll.

@@ -325,14 +325,15 @@ inline bool refCast(Instance* instance, EncodedJSValue encodedReference, bool al
     switch (static_cast<Wasm::TypeKind>(heapType)) {
     case Wasm::TypeKind::Funcref:
     case Wasm::TypeKind::Externref:
-    case Wasm::TypeKind::Eqref:
     case Wasm::TypeKind::Anyref:
         // Casts to these types cannot fail as they are the top types of their respective hierarchies, and static type-checking does not allow cross-hierarchy casts.
         return true;
+    case Wasm::TypeKind::Eqref:
+        return (refValue.isInt32() && refValue.asInt32() <= maxI31ref && refValue.asInt32() >= minI31ref) || jsDynamicCast<JSWebAssemblyArray*>(refValue) || jsDynamicCast<JSWebAssemblyStruct*>(refValue);
     case Wasm::TypeKind::Nullref:
         return false;
     case Wasm::TypeKind::I31ref:
-        return refValue.isInt32();
+        return refValue.isInt32() && refValue.asInt32() <= maxI31ref && refValue.asInt32() >= minI31ref;
     case Wasm::TypeKind::Arrayref:
         return jsDynamicCast<JSWebAssemblyArray*>(refValue);
     case Wasm::TypeKind::Structref:
@@ -371,6 +372,18 @@ inline bool refCast(Instance* instance, EncodedJSValue encodedReference, bool al
     }
 
     return false;
+}
+
+inline EncodedJSValue externInternalize(EncodedJSValue reference)
+{
+    JSValue value = JSValue::decode(reference);
+    if (value.isDouble() && JSC::canBeStrictInt32(value.asDouble())) {
+        int32_t int32Value = JSC::toInt32(value.asDouble());
+        if (int32Value <= Wasm::maxI31ref && int32Value >= Wasm::minI31ref)
+            return JSValue::encode(jsNumber(int32Value));
+    }
+
+    return reference;
 }
 
 inline EncodedJSValue tableGet(Instance* instance, unsigned tableIndex, int32_t signedIndex)

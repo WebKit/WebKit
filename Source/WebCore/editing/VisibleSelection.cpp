@@ -86,22 +86,12 @@ VisibleSelection VisibleSelection::selectionFromContentsOfNode(Node* node)
     return VisibleSelection(VisiblePosition { firstPositionInNode(node) }, VisiblePosition { lastPositionInNode(node) });
 }
 
-Position VisibleSelection::anchor() const
-{
-    return m_anchor;
-}
-
-Position VisibleSelection::focus() const
-{
-    return m_focus;
-}
-
-Position VisibleSelection::uncanonicalizedStart() const
+const Position& VisibleSelection::uncanonicalizedStart() const
 {
     return m_anchorIsFirst ? m_anchor : m_focus;
 }
 
-Position VisibleSelection::uncanonicalizedEnd() const
+const Position& VisibleSelection::uncanonicalizedEnd() const
 {
     return m_anchorIsFirst ? m_focus : m_anchor;
 }

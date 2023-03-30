@@ -39,6 +39,7 @@ function initializeReadableStream(underlyingSource, strategy)
     if (strategy !== @undefined && !@isObject(strategy))
         @throwTypeError("ReadableStream constructor takes an object as second argument, if any");
 
+    @putByIdDirectPrivate(this, "globalObject", @getGlobalObject());
     @putByIdDirectPrivate(this, "state", @streamReadable);
     @putByIdDirectPrivate(this, "reader", @undefined);
     @putByIdDirectPrivate(this, "storedError", @undefined);
@@ -117,12 +118,17 @@ function getReader(options)
         throw @makeThisTypeError("ReadableStream", "getReader");
 
     const mode = @toDictionary(options, { }, "ReadableStream.getReader takes an object as first argument").mode;
-    if (mode === @undefined)
-        return new @ReadableStreamDefaultReader(this);
+    const readableStreamGlobalObject = @getByIdDirectPrivate(this, "globalObject");
+    if (mode === @undefined) {
+        const readableStreamDefaultReaderConstructor = @getByIdDirectPrivate(readableStreamGlobalObject, "ReadableStreamDefaultReader");
+        return new readableStreamDefaultReaderConstructor(this);
+    }
 
     // String conversion is required by spec, hence double equals.
-    if (mode == 'byob')
+    if (mode == 'byob') {
+        const readableStreamBYOBReaderConstructor = @getByIdDirectPrivate(readableStreamGlobalObject, "ReadableStreamBYOBReader");
         return new @ReadableStreamBYOBReader(this);
+    }
 
     @throwTypeError("Invalid mode is specified");
 }

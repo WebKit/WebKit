@@ -343,11 +343,7 @@ void ScrollerMac::setHostLayer(CALayer *layer)
 
     [m_scrollerImp setLayer:layer];
 
-    NSScrollerImp *scrollerImp = layer ? m_scrollerImp.get() : nil;
-    if (m_orientation == ScrollbarOrientation::Vertical)
-        m_pair.setVerticalScrollerImp(scrollerImp);
-    else
-        m_pair.setHorizontalScrollerImp(scrollerImp);
+    updatePairScrollerImps();
 }
 
 void ScrollerMac::updateValues()
@@ -368,6 +364,7 @@ void ScrollerMac::updateValues()
 void ScrollerMac::updateScrollbarStyle()
 {
     m_scrollerImp = [NSScrollerImp scrollerImpWithStyle:nsScrollerStyle(m_pair.scrollbarStyle()) controlSize:NSControlSizeRegular horizontal:m_orientation == ScrollbarOrientation::Horizontal replacingScrollerImp:takeScrollerImp().get()];
+    updatePairScrollerImps();
 }
 
 FloatPoint ScrollerMac::convertFromContent(const FloatPoint& point) const
@@ -375,12 +372,24 @@ FloatPoint ScrollerMac::convertFromContent(const FloatPoint& point) const
     return FloatPoint { [m_hostLayer convertPoint:point fromLayer:[m_hostLayer superlayer]] };
 }
 
+void ScrollerMac::updatePairScrollerImps()
+{
+    NSScrollerImp *scrollerImp = m_hostLayer ? m_scrollerImp.get() : nil;
+    if (m_orientation == ScrollbarOrientation::Vertical)
+        m_pair.setVerticalScrollerImp(scrollerImp);
+    else
+        m_pair.setHorizontalScrollerImp(scrollerImp);
+}
+
 String ScrollerMac::scrollbarState() const
 {
+    if (!m_hostLayer || !m_scrollerImp)
+        return "none"_s;
+
     StringBuilder result;
     result.append([m_scrollerImp isEnabled] ? "enabled"_s: "disabled"_s);
 
-    if (!m_scrollerImp)
+    if (m_pair.scrollbarStyle() != WebCore::ScrollbarStyle::Overlay)
         return result.toString();
 
     if ([m_scrollerImp isExpanded])

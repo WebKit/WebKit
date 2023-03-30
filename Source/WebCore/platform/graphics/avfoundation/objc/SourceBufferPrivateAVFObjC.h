@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #pragma once
@@ -135,7 +135,7 @@ public:
     void setDecompressionSession(WebCoreDecompressionSession*);
 
     void bufferWasConsumed();
-    
+
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     SharedBuffer* initData() { return m_initData.get(); }
 #endif
@@ -156,9 +156,9 @@ private:
     void didParseInitializationData(InitializationSegment&&);
     void didEncounterErrorDuringParsing(int32_t);
     void didProvideMediaDataForTrackId(Ref<MediaSampleAVFObjC>&&, uint64_t trackId, const String& mediaType);
+    bool isMediaSampleAllowed(const MediaSample&) const final;
 
     // SourceBufferPrivate overrides
-    void didReceiveSampleForTrackId(uint64_t, Ref<MediaSample>&&) final;
     void append(Ref<SharedBuffer>&&) final;
     void abort() final;
     void resetParserState() final;
@@ -200,6 +200,8 @@ private:
 #if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
     void keyStatusesChanged();
 #endif
+
+    void setTrackChangeCallbacks(const Vector<Ref<TrackPrivateBase>>& tracks, bool initialized);
 
     HashMap<AtomString, RefPtr<VideoTrackPrivate>> m_videoTracks;
     HashMap<AtomString, RefPtr<AudioTrackPrivate>> m_audioTracks;

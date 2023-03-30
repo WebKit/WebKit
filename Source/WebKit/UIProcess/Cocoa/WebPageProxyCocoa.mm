@@ -990,7 +990,18 @@ bool WebPageProxy::useGPUProcessForDOMRenderingEnabled() const
     if (id useGPUProcessForDOMRendering = [[NSUserDefaults standardUserDefaults] objectForKey:@"WebKit2GPUProcessForDOMRendering"])
         return [useGPUProcessForDOMRendering boolValue];
 
-    return preferences().useGPUProcessForDOMRenderingEnabled();
+    if (preferences().useGPUProcessForDOMRenderingEnabled())
+        return true;
+
+    HashSet<RefPtr<const WebPageProxy>> visitedPages;
+    visitedPages.add(this);
+    for (auto* page = m_configuration->relatedPage(); page && !visitedPages.contains(page); page = page->configuration().relatedPage()) {
+        if (page->preferences().useGPUProcessForDOMRenderingEnabled())
+            return true;
+        visitedPages.add(page);
+    }
+
+    return false;
 }
 
 } // namespace WebKit

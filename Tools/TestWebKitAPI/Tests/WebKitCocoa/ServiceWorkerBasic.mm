@@ -51,6 +51,7 @@
 #import <WebKit/_WKRemoteObjectRegistry.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <WebKit/_WKWebsiteDataStoreDelegate.h>
+#import <wtf/BlockPtr.h>
 #import <wtf/Deque.h>
 #import <wtf/FileSystem.h>
 #import <wtf/HashMap.h>
@@ -3653,4 +3654,136 @@ TEST(ServiceWorkers, ServiceWorkerStorageTiming)
     TestWebKitAPI::Util::run(&done);
 }
 
+static constexpr auto ServiceWorkerCOOPNavigateMain =
+"<div>test page</div>"
+"<script>"
+"let worker;"
+"async function registerServiceWorker() {"
+"    try {"
+"        const registration = await navigator.serviceWorker.register('/sw.js');"
+"        if (registration.active) {"
+"            worker = registration.active;"
+"            alert('already active');"
+"            return;"
+"        }"
+"        worker = registration.installing;"
+"        worker.addEventListener('statechange', () => {"
+"            if (worker.state == 'activated')"
+"                alert('successfully registered');"
+"        });"
+"    } catch(e) {"
+"        alert('Exception: ' + e);"
+"    }"
+"}"
+"window.onload = registerServiceWorker;"
+""
+"function storeRegistration()"
+"{"
+"    if (!window.internals) {"
+"        alert('no internals');"
+"        return;"
+"    }"
+"    internals.storeRegistrationsOnDisk().then(() => {"
+"        alert('ok');"
+"    }, () => {"
+"        alert('ko');"
+"    });"
+"}"
+"</script>"_s;
+
+static constexpr auto ServiceWorkerCOOPNavigateJS =
+"self.addEventListener('fetch', (event) => {"
+"});"_s;
+
+TEST(ServiceWorker, ServiceWorkerProcessSwapWithNoDelay)
+{
+    [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
+
+    // Start with a clean slate data store
+    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    auto dataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
+    [dataStoreConfiguration setServiceWorkerProcessTerminationDelayEnabled:NO];
+    auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:dataStoreConfiguration.get()]);
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    setConfigurationInjectedBundlePath(configuration.get());
+    configuration.get().websiteDataStore = dataStore.get();
+
+    for (_WKFeature *feature in [WKPreferences _features]) {
+        if ([feature.key isEqualToString:@"CrossOriginOpenerPolicyEnabled"])
+            [[configuration preferences] _setEnabled:YES forFeature:feature];
+        else if ([feature.key isEqualToString:@"CrossOriginEmbedderPolicyEnabled"])
+            [[configuration preferences] _setEnabled:YES forFeature:feature];
+    }
+
+    auto webView1 = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get() addToWindow:YES]);
+
+    size_t responsePolicyCount { 0 };
+    auto webView2 = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get() addToWindow:YES]);
+    auto navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    navigationDelegate.get().decidePolicyForNavigationResponse = makeBlockPtr([&](WKNavigationResponse *, void (^completionHandler)(WKNavigationResponsePolicy)) {
+        ++responsePolicyCount;
+        completionHandler(WKNavigationResponsePolicyAllow);
+    }).get();
+    webView2.get().navigationDelegate = navigationDelegate.get();
+
+    TestWebKitAPI::HTTPServer server(TestWebKitAPI::HTTPServer::UseCoroutines::Yes, [&](auto connection) -> TestWebKitAPI::Task {
+        while (1) {
+            auto request = co_await connection.awaitableReceiveHTTPRequest();
+            auto path = TestWebKitAPI::HTTPServer::parsePath(request);
+            if (path == "/"_s) {
+                co_await connection.awaitableSend(makeString("HTTP/1.1 200 OK\r\nContent-Type:text/html\r\nContent-Length: "_s, strlen(ServiceWorkerCOOPNavigateMain), "\r\n\r\n"_s));
+                co_await connection.awaitableSend(ServiceWorkerCOOPNavigateMain);
+                continue;
+            }
+            if (path == "/sw.js"_s) {
+                co_await connection.awaitableSend(makeString("HTTP/1.1 200 OK\r\nContent-Type:application/javascript\r\nContent-Length: "_s, strlen(ServiceWorkerCOOPNavigateJS), "\r\n\r\n"_s));
+                co_await connection.awaitableSend(ServiceWorkerCOOPNavigateJS);
+                continue;
+            }
+            if (path == "/?swap"_s) {
+                TestWebKitAPI::Util::runFor(0.5_s);
+                size_t contentLength = 4000000 + strlen(ServiceWorkerCOOPNavigateMain);
+                co_await connection.awaitableSend(makeString("HTTP/1.1 200 OK\r\nCross-Origin-Opener-Policy:same-origin\r\nContent-Type:text/html\r\nContent-Length: "_s, contentLength, "\r\n\r\n"_s));
+                co_await connection.awaitableSend(Vector<uint8_t>(4000000, ' '));
+
+                while (responsePolicyCount <= 1)
+                    TestWebKitAPI::Util::spinRunLoop();
+
+                // Wait some time to let potential cancellation have an impact on the load.
+                TestWebKitAPI::Util::runFor(0.5_s);
+                co_await connection.awaitableSend(ServiceWorkerCOOPNavigateMain);
+                continue;
+            }
+            EXPECT_FALSE(true);
+        }
+    });
+    TestWebKitAPI::HTTPServer server2({
+        { "/"_s, { ServiceWorkerCOOPNavigateMain } },
+        { "/?swap"_s, { {{ "Content-Type"_s, "text/html"_s }, { "Cross-Origin-Opener-Policy"_s, "same-origin"_s } }, ServiceWorkerCOOPNavigateMain } },
+        { "/sw.js"_s, { {{ "Content-Type"_s, "application/javascript"_s }}, ServiceWorkerCOOPNavigateJS } }
+    }, TestWebKitAPI::HTTPServer::Protocol::Http, nullptr, nullptr, 8092);
+
+    [webView1 loadRequest:server.request()];
+    EXPECT_WK_STREQ([webView1 _test_waitForAlert], "successfully registered");
+    [webView2 loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://localhost:8092/"]]];
+    EXPECT_WK_STREQ([webView2 _test_waitForAlert], "successfully registered");
+
+    [webView1 evaluateJavaScript:@"storeRegistration()" completionHandler: nil];
+    EXPECT_WK_STREQ([webView1 _test_waitForAlert], "ok");
+    [webView1 _close];
+    webView1 = nullptr;
+
+    [dataStore _terminateNetworkProcess];
+
+    [webView2 evaluateJavaScript:[NSString stringWithFormat:@"window.location = '%@?swap';", [[server.request() URL] absoluteString]] completionHandler:^(id value, NSError *error) {
+        EXPECT_NULL(error);
+    }];
+    EXPECT_WK_STREQ([webView2 _test_waitForAlert], "already active");
+}
 #endif // WK_HAVE_C_SPI

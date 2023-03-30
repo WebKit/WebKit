@@ -59,6 +59,7 @@ public:
     NSScrollerImp *scrollerImp() { return m_scrollerImp.get(); }
     void setScrollerImp(NSScrollerImp *imp) { m_scrollerImp = imp; }
     void updateScrollbarStyle();
+    void updatePairScrollerImps();
 
     FloatPoint convertFromContent(const FloatPoint&) const;
 

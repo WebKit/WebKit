@@ -1926,4 +1926,10 @@ op :struct_set,
         value: VirtualRegister,
     }
 
+op :extern_externalize,
+    args: {
+        dst: VirtualRegister,
+        reference: VirtualRegister,
+    }
+
 end_section :Wasm

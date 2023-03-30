@@ -135,7 +135,7 @@ void HTMLProgressElement::updateDeterminateState()
 
 void HTMLProgressElement::didElementStateChange()
 {
-    m_value->setWidthPercentage(position() * 100);
+    m_value->setInlineSizePercentage(position() * 100);
     if (RenderProgress* renderer = renderProgress())
         renderer->updateFromElement();
 
@@ -153,7 +153,7 @@ void HTMLProgressElement::didAddUserAgentShadowRoot(ShadowRoot& root)
     auto bar = ProgressBarElement::create(document());
     auto value = ProgressValueElement::create(document());
     m_value = value.ptr();
-    m_value->setWidthPercentage(HTMLProgressElement::IndeterminatePosition * 100);
+    m_value->setInlineSizePercentage(HTMLProgressElement::IndeterminatePosition * 100);
     bar->appendChild(value);
 
     inner->appendChild(bar);
