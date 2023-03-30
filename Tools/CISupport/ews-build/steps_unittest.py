@@ -6688,10 +6688,10 @@ class TestValidateSquashed(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['git', 'log', '--oneline', 'HEAD', '^origin/main', '--max-count=51'],
+                        command=['git', 'log', '--format=format:"%H"', 'HEAD', '^origin/main', '--max-count=51'],
                         )
             + 0
-            + ExpectShell.log('stdio', stdout='e1eb24603493 (HEAD -> eng/pull-request-branch) First line of commit\n'),
+            + ExpectShell.log('stdio', stdout='e1eb24603493\n'),
         )
         self.expectOutcome(result=SUCCESS, state_string='Verified commit is squashed')
         return self.runStep()
@@ -6702,13 +6702,10 @@ class TestValidateSquashed(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['git', 'log', '--oneline', 'HEAD', '^origin/main', '--max-count=51'],
+                        command=['git', 'log', '--format=format:"%H"', 'HEAD', '^origin/main', '--max-count=51'],
                         )
             + 0
-            + ExpectShell.log('stdio', stdout='''e1eb24603493 (HEAD -> eng/pull-request-branch) Commit Series (3)
-08abb9ddcbb5 Commit Series (2)
-45cf3efe4dfb Commit Series (1)
-'''),
+            + ExpectShell.log('stdio', stdout='e1eb24603493\n08abb9ddcbb5\n45cf3efe4dfb\n'),
         )
         self.expectOutcome(result=FAILURE, state_string='Can only land squashed commits')
         rc = self.runStep()
@@ -6724,10 +6721,10 @@ class TestValidateSquashed(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['git', 'log', '--oneline', 'eng/pull-request-branch', '^main', '--max-count=51'],
+                        command=['git', 'log', '--format=format:"%H"', 'eng/pull-request-branch', '^main', '--max-count=51'],
                         )
             + 0
-            + ExpectShell.log('stdio', stdout='e1eb24603493 (HEAD -> eng/pull-request-branch) First line of commit\n'),
+            + ExpectShell.log('stdio', stdout='e1eb24603493\n'),
         )
         self.expectOutcome(result=SUCCESS, state_string='Verified commit is squashed')
         return self.runStep()
@@ -6740,13 +6737,10 @@ class TestValidateSquashed(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['git', 'log', '--oneline', 'eng/pull-request-branch', '^main', '--max-count=51'],
+                        command=['git', 'log', '--format=format:"%H"', 'eng/pull-request-branch', '^main', '--max-count=51'],
                         )
             + 0
-            + ExpectShell.log('stdio', stdout='''e1eb24603493 (HEAD -> eng/pull-request-branch) Commit Series (3)
-08abb9ddcbb5 Commit Series (2)
-45cf3efe4dfb Commit Series (1)
-'''),
+            + ExpectShell.log('stdio', stdout='e1eb24603493\n08abb9ddcbb5\n45cf3efe4dfb\n'),
         )
         self.expectOutcome(result=FAILURE, state_string='Can only land squashed commits')
         rc = self.runStep()
@@ -6762,7 +6756,7 @@ class TestValidateSquashed(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['git', 'log', '--oneline', 'eng/pull-request-branch', '^main', '--max-count=51'],
+                        command=['git', 'log', '--format=format:"%H"', 'eng/pull-request-branch', '^main', '--max-count=51'],
                         )
             + 0
             + ExpectShell.log('stdio', stdout=''),
@@ -6782,13 +6776,10 @@ class TestValidateSquashed(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['git', 'log', '--oneline', 'eng/pull-request-branch', '^main', '--max-count=51'],
+                        command=['git', 'log', '--format=format:"%H"', 'eng/pull-request-branch', '^main', '--max-count=51'],
                         )
             + 0
-            + ExpectShell.log('stdio', stdout='''e1eb24603493 (HEAD -> eng/pull-request-branch) Cherry-pick cdebfa
-08abb9ddcbb5 Cherry-pick abcdef
-45cf3efe4dfb Cherry-pick fedcba
-'''),
+            + ExpectShell.log('stdio', stdout='e1eb24603493\n08abb9ddcbb5\n45cf3efe4dfb\n'),
         )
         self.expectOutcome(result=SUCCESS, state_string='Commit sequence is entirely cherry-picks')
         rc = self.runStep()
@@ -6804,10 +6795,10 @@ class TestValidateSquashed(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['git', 'log', '--oneline', 'eng/pull-request-branch', '^main', '--max-count=51'],
+                        command=['git', 'log', '--format=format:"%H"', 'eng/pull-request-branch', '^main', '--max-count=51'],
                         )
             + 0
-            + ExpectShell.log('stdio', stdout='e1eb24603493 (HEAD -> eng/pull-request-branch) Cherry-pick cdebfa\n' + 50 * '08abb9ddcbb5 Cherry-pick abcdef\n'),
+            + ExpectShell.log('stdio', stdout='e1eb24603493\n' + 50 * '08abb9ddcbb5\n'),
         )
         self.expectOutcome(result=FAILURE, state_string='Too many commits in a pull-request')
         rc = self.runStep()
