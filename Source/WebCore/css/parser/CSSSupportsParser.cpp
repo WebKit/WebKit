@@ -123,7 +123,7 @@ CSSSupportsParser::SupportsResult CSSSupportsParser::consumeNegation(CSSParserTo
     return result ? Unsupported : Supported;
 }
 
-// <supports-selector-fn> | <supports-font-format-fn>
+// <function-token> <any-value>? | <supports-selector-fn> | <supports-font-format-fn>
 CSSSupportsParser::SupportsResult CSSSupportsParser::consumeSupportsFunction(CSSParserTokenRange& range)
 {
     if (range.peek().type() != FunctionToken)
@@ -134,8 +134,9 @@ CSSSupportsParser::SupportsResult CSSSupportsParser::consumeSupportsFunction(CSS
         return consumeSupportsSelectorFunction(range);
     case CSSValueFontFormat:
         return consumeSupportsFontFormatFunction(range);
-    default:
-        return Invalid;
+    default: // Unknown functions should parse as unsupported.
+        range.consumeComponentValue();
+        return Unsupported;
     }
 }
 
@@ -145,9 +146,6 @@ CSSSupportsParser::SupportsResult CSSSupportsParser::consumeSupportsFeatureOrGen
     if (range.peek().type() == FunctionToken) {
         if (auto result = consumeSupportsFunction(range); result != Invalid)
             return result;
-
-        range.consumeComponentValue();
-        return Unsupported;
     }
 
     return range.peek().type() == IdentToken && m_parser.supportsDeclaration(range) ? Supported : Unsupported;
