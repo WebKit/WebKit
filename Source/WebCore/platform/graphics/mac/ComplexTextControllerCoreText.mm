@@ -106,7 +106,7 @@ ComplexTextController::ComplexTextRun::ComplexTextRun(CTRunRef ctRun, const Font
             stream << " empty";
         else {
             for (unsigned i = 0; i < m_glyphCount; ++i)
-                stream << " " << m_glyphs[i];
+                stream << " " << m_glyphOrigins[i];
         }
         stream << "\n";
         stream << "Offsets:";
