@@ -38,19 +38,20 @@ using AbstractValue = std::variant<NumericVariable, unsigned>;
 struct TypeVariable {
     enum Constraint : uint8_t {
         None = 0,
-        F16 = 1 << 0,
-        F32 = 1 << 1,
-        AbstractFloat = 1 << 2,
+
+        Bool          = 1 << 0,
+        AbstractInt   = 1 << 1,
+        I32           = 1 << 2,
+        U32           = 1 << 3,
+        AbstractFloat = 1 << 4,
+        F32           = 1 << 5,
+        F16           = 1 << 6,
+
         ConcreteFloat = F16 | F32,
         Float = ConcreteFloat | AbstractFloat,
 
-        I32 = 1 << 3,
-        U32 = 1 << 4,
-        AbstractInt = 1 << 5,
         ConcreteInteger = I32 | U32,
         Integer = ConcreteInteger | AbstractInt,
-
-        Bool = 1 << 6,
 
         Scalar = Bool | Integer | Float,
         ConcreteScalar = Bool | ConcreteInteger | ConcreteFloat,

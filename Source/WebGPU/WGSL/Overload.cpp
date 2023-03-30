@@ -70,7 +70,7 @@ private:
     unsigned conversionRankImpl(Type*, Type*) const;
 
     bool unify(const AbstractType&, Type*);
-    void assign(TypeVariable, Type*);
+    bool assign(TypeVariable, Type*);
     Type* resolve(TypeVariable) const;
     Type* materialize(const AbstractType&) const;
 
@@ -195,8 +195,10 @@ std::optional<ViableOverload> OverloadResolver::considerCandidate(const Overload
     m_typeSubstitutions.fill(nullptr);
     m_numericSubstitutions.fill(std::nullopt);
 
-    for (unsigned i = 0; i < m_typeArguments.size(); ++i)
-        assign(candidate.typeVariables[i], m_typeArguments[i]);
+    for (unsigned i = 0; i < m_typeArguments.size(); ++i) {
+        if (!assign(candidate.typeVariables[i], m_typeArguments[i]))
+            return std::nullopt;
+    }
 
     logLn("Considering overload: ", candidate);
 
@@ -266,11 +268,8 @@ bool OverloadResolver::unify(const AbstractType& parameter, Type* argumentType)
     logLn("unify parameter type '", parameter, "' with argument '", *argumentType, "'");
     if (auto* variable = std::get_if<TypeVariable>(&parameter)) {
         auto* resolvedType = resolve(*variable);
-        if (!resolvedType) {
-            // FIXME: check the constraints on the variable
-            assign(*variable, argumentType);
-            return true;
-        }
+        if (!resolvedType)
+            return assign(*variable, argumentType);
 
         logLn("resolved '", *variable, "' to '", *resolvedType, "'");
 
@@ -303,10 +302,8 @@ bool OverloadResolver::unify(const AbstractType& parameter, Type* argumentType)
         auto variablePromotionRank = conversionRank(resolvedType, argumentType);
         auto argumentConversionRank = conversionRank(argumentType, resolvedType);
         logLn("variablePromotionRank: ", variablePromotionRank, ", argumentConversionRank: ", argumentConversionRank);
-        if (variablePromotionRank < argumentConversionRank) {
-            assign(*variable, argumentType);
-            return true;
-        }
+        if (variablePromotionRank < argumentConversionRank)
+            return assign(*variable, argumentType);
 
         return argumentConversionRank != s_noConversion;
     }
@@ -349,10 +346,83 @@ bool OverloadResolver::unify(const AbstractValue& parameter, unsigned argumentVa
     return *resolvedValue == argumentValue;
 }
 
-void OverloadResolver::assign(TypeVariable variable, Type* type)
+bool OverloadResolver::assign(TypeVariable variable, Type* type)
 {
     logLn("assign ", variable, " => ", *type);
+    if (variable.constraints) {
+        auto* primitive = std::get_if<Types::Primitive>(type);
+        if (!primitive)
+            return false;
+
+        switch (primitive->kind) {
+        case Types::Primitive::AbstractInt:
+            if (variable.constraints < TypeVariable::AbstractInt)
+                return false;
+            if (variable.constraints & TypeVariable::AbstractInt)
+                break;
+            if (variable.constraints & TypeVariable::I32) {
+                type = m_types.i32Type();
+                break;
+            }
+            if (variable.constraints & TypeVariable::U32) {
+                type = m_types.u32Type();
+                break;
+            }
+            if (variable.constraints & TypeVariable::AbstractFloat) {
+                type = m_types.abstractFloatType();
+                break;
+            }
+            if (variable.constraints & TypeVariable::F32) {
+                type = m_types.f32Type();
+                break;
+            }
+            if (variable.constraints & TypeVariable::F16) {
+                // FIXME: Add F16 support
+                // https://bugs.webkit.org/show_bug.cgi?id=254668
+                RELEASE_ASSERT_NOT_REACHED();
+            }
+            RELEASE_ASSERT_NOT_REACHED();
+        case Types::Primitive::AbstractFloat:
+            if (variable.constraints < TypeVariable::AbstractFloat)
+                return false;
+            if (variable.constraints & TypeVariable::AbstractFloat)
+                break;
+            if (variable.constraints & TypeVariable::F32) {
+                type = m_types.f32Type();
+                break;
+            }
+            if (variable.constraints & TypeVariable::F16) {
+                // FIXME: Add F16 support
+                // https://bugs.webkit.org/show_bug.cgi?id=254668
+                RELEASE_ASSERT_NOT_REACHED();
+            }
+            RELEASE_ASSERT_NOT_REACHED();
+        case Types::Primitive::I32:
+            if (!(variable.constraints & TypeVariable::I32))
+                return false;
+            break;
+        case Types::Primitive::U32:
+            if (!(variable.constraints & TypeVariable::U32))
+                return false;
+            break;
+        case Types::Primitive::F32:
+            if (!(variable.constraints & TypeVariable::F32))
+                return false;
+            break;
+        // FIXME: Add F16 support
+        // https://bugs.webkit.org/show_bug.cgi?id=254668
+        case Types::Primitive::Bool:
+            if (!(variable.constraints & TypeVariable::Bool))
+                return false;
+            break;
+
+        case Types::Primitive::Void:
+        case Types::Primitive::Sampler:
+            return false;
+        }
+    }
     m_typeSubstitutions[variable.id] = type;
+    return true;
 }
 
 void OverloadResolver::assign(NumericVariable variable, unsigned value)
