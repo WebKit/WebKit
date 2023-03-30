@@ -177,7 +177,8 @@ static const Seconds PostAnimationDelay { 100_ms };
         return;
     }
 
-    if (CGRectEqualToRect(self.videoLayerFrame, self.bounds) && CGAffineTransformIsIdentity(self.affineTransform))
+    auto* videoSublayer = [sublayers objectAtIndex:0];
+    if (CGRectEqualToRect(self.videoLayerFrame, videoSublayer.bounds) && CGAffineTransformIsIdentity(self.affineTransform))
         return;
 
     [CATransaction begin];
@@ -191,7 +192,6 @@ static const Seconds PostAnimationDelay { 100_ms };
         }
     }
 
-    auto* videoSublayer = [sublayers objectAtIndex:0];
     [videoSublayer setAffineTransform:CGAffineTransformIdentity];
     [videoSublayer setFrame:self.bounds];
 
