@@ -12713,13 +12713,14 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
             if (ddResult)
                 dataForPreview.get()[UIPreviewDataDDResult] = (__bridge id)ddResult;
             if (!_positionInformation.textBefore.isEmpty() || !_positionInformation.textAfter.isEmpty()) {
-                extendedContext = adoptNS([@{
-                    getkDataDetectorsLeadingText() : _positionInformation.textBefore,
-                    getkDataDetectorsTrailingText() : _positionInformation.textAfter,
-                } mutableCopy]);
-                
                 if (newContext)
-                    [extendedContext addEntriesFromDictionary:newContext];
+                    extendedContext = adoptNS([newContext mutableCopy]);
+                else
+                    extendedContext = adoptNS([[NSMutableDictionary alloc] init]);
+
+                extendedContext.get()[getkDataDetectorsLeadingText()] = _positionInformation.textBefore;
+                extendedContext.get()[getkDataDetectorsTrailingText()] = _positionInformation.textAfter;
+
                 newContext = extendedContext.get();
             }
             if (newContext)

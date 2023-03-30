@@ -62,7 +62,7 @@ NSDictionary *filterObjects<NSDictionary>(NSDictionary *dictionary, bool NS_NOES
             filterResult[key] = value;
     }];
 
-    return [filterResult copy];
+    return filterResult;
 }
 
 template<>
@@ -96,7 +96,7 @@ NSArray *mapObjects<NSArray>(NSArray *array, __kindof id NS_NOESCAPE (^block)(__
                 [mapResult addObject:result];
         }];
 
-        return [mapResult copy];
+        return mapResult;
     }
     }
 }
@@ -114,7 +114,7 @@ NSDictionary *mapObjects<NSDictionary>(NSDictionary *dictionary, __kindof id NS_
             mapResult[key] = result;
     }];
 
-    return [mapResult copy];
+    return mapResult;
 }
 
 template<>
@@ -137,7 +137,7 @@ NSSet *mapObjects<NSSet>(NSSet *set, __kindof id NS_NOESCAPE (^block)(__kindof i
                 [mapResult addObject:result];
         }];
 
-        return [mapResult copy];
+        return mapResult;
     }
     }
 }
@@ -237,20 +237,20 @@ WallTime toImpl(NSDate *date)
 
 NSSet *toAPI(HashSet<String>& set)
 {
-    NSMutableSet *result = [[NSMutableSet alloc] initWithCapacity:set.size()];
+    NSMutableSet *result = [NSMutableSet setWithCapacity:set.size()];
     for (auto& element : set)
         [result addObject:static_cast<NSString *>(element)];
 
-    return [result copy];
+    return result;
 }
 
 NSArray *toAPIArray(HashSet<String>& set)
 {
-    NSMutableArray *result = [[NSMutableArray alloc] initWithCapacity:set.size()];
+    NSMutableArray *result = [NSMutableArray arrayWithCapacity:set.size()];
     for (auto& element : set)
         [result addObject:static_cast<NSString *>(element)];
 
-    return [result copy];
+    return result;
 }
 
 } // namespace WebKit

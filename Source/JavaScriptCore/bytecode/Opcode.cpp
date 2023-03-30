@@ -86,12 +86,8 @@ static OpcodeStats logger;
 
 OpcodeStats::OpcodeStats()
 {
-    for (int i = 0; i < numOpcodeIDs; ++i)
-        opcodeCounts[i] = 0;
-    
-    for (int i = 0; i < numOpcodeIDs; ++i)
-        for (int j = 0; j < numOpcodeIDs; ++j)
-            opcodePairCounts[i][j] = 0;
+    memset(opcodeCounts, 0, sizeof(opcodeCounts));
+    memset(opcodePairCounts, 0, sizeof(opcodePairCounts));
 }
 
 static int compareOpcodeIndices(const void* left, const void* right)

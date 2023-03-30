@@ -55,7 +55,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 namespace WebCore {
 
-const NSUInteger currentSerializationVersion = 1;
+constexpr NSUInteger currentSerializationVersion = 1;
 
 const NSString* versionKey = @"version";
 const NSString* wrappedKEKKey = @"wrappedKEK";

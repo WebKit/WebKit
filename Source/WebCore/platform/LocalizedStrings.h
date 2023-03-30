@@ -431,7 +431,7 @@ namespace WebCore {
 #define WEB_UI_CFSTRING(string, description) WebCore::localizedString(CFSTR(string))
 #define WEB_UI_CFSTRING_KEY(string, key, description) WebCore::localizedString(CFSTR(key))
 
-    WEBCORE_EXPORT RetainPtr<CFStringRef> copyLocalizedString(CFStringRef key);
+    WEBCORE_EXPORT CFStringRef copyLocalizedString(CFStringRef key);
 #endif
 
 #if PLATFORM(COCOA)
@@ -468,7 +468,8 @@ namespace WebCore {
 
     inline NS_FORMAT_ARGUMENT(1) NSString *localizedNSString(NSString *key)
     {
-        return bridge_cast(copyLocalizedString(bridge_cast(key)).autorelease());
+        // FIXME: Find a way to do this without round-tripping between NSString and CFString
+        return adoptCF(copyLocalizedString(bridge_cast(key))).bridgingAutorelease();
     }
 #endif
 

@@ -230,7 +230,7 @@ static RetainPtr<CTFontRef> attachmentActionFont()
 {
     auto style = kCTUIFontTextStyleFootnote;
     auto size = contentSizeCategory();
-    auto attributes = static_cast<CFDictionaryRef>(@{ (id)kCTFontTraitsAttribute: @{ (id)kCTFontSymbolicTrait: @(kCTFontTraitTightLeading | kCTFontTraitEmphasized) } });
+    auto attributes = (__bridge CFDictionaryRef)(@{ (id)kCTFontTraitsAttribute : @{ (id)kCTFontSymbolicTrait : @(kCTFontTraitTightLeading | kCTFontTraitEmphasized) } });
     auto emphasizedFontDescriptor = adoptCF(CTFontDescriptorCreateWithTextStyleAndAttributes(style, size, attributes));
 
     return adoptCF(CTFontCreateWithFontDescriptor(emphasizedFontDescriptor.get(), 0, nullptr));

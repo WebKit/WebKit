@@ -57,7 +57,7 @@
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/Base64.h>
 
-static const NSUInteger windowStyleMask = NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskMiniaturizable | NSWindowStyleMaskResizable | NSWindowStyleMaskFullSizeContentView;
+static constexpr NSUInteger windowStyleMask = NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskMiniaturizable | NSWindowStyleMaskResizable | NSWindowStyleMaskFullSizeContentView;
 
 // The time we keep our WebView alive before closing it and its process.
 // Reusing the WebView improves start up time for people that jump in and out of the Inspector.
@@ -923,8 +923,8 @@ DebuggableInfoData WebInspectorUIProxy::infoForLocalDebuggable()
     DebuggableInfoData result;
     result.debuggableType = Inspector::DebuggableType::WebPage;
     result.targetPlatformName = "macOS"_s;
-    result.targetBuildVersion = plist[static_cast<NSString *>(_kCFSystemVersionBuildVersionKey)];
-    result.targetProductVersion = plist[static_cast<NSString *>(_kCFSystemVersionProductUserVisibleVersionKey)];
+    result.targetBuildVersion = plist[bridge_cast(_kCFSystemVersionBuildVersionKey)];
+    result.targetProductVersion = plist[bridge_cast(_kCFSystemVersionProductUserVisibleVersionKey)];
     result.targetIsSimulator = false;
 
     return result;

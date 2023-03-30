@@ -237,7 +237,7 @@ void RemoteInspector::sendMessageToRemote(TargetID targetIdentifier, const Strin
 
     NSData *messageData = [static_cast<NSString *>(message) dataUsingEncoding:NSUTF8StringEncoding];
     NSUInteger messageLength = messageData.length;
-    const NSUInteger maxChunkSize = 2 * 1024 * 1024; // 2 Mebibytes
+    constexpr NSUInteger maxChunkSize = 2 * 1024 * 1024; // 2 Mebibytes
 
     if (!m_messageDataTypeChunkSupported || messageLength < maxChunkSize) {
         m_relayConnection->sendMessage(WIRRawDataMessage, @{

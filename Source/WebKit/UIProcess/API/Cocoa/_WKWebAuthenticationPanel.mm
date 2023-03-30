@@ -704,6 +704,7 @@ static void createNSErrorFromWKErrorIfNecessary(NSError **error, WKErrorCode err
         
     [query removeObjectForKey:(id)kSecReturnRef];
     [query setObject: @YES forKey:(id)kSecReturnAttributes];
+
     CFTypeRef attributesArrayRef = nullptr;
     status = SecItemCopyMatching(bridge_cast(query.get()), &attributesArrayRef);
     if (status && status != errSecItemNotFound) {
@@ -711,7 +712,6 @@ static void createNSErrorFromWKErrorIfNecessary(NSError **error, WKErrorCode err
         return nullptr;
     }
     auto attributes = adoptNS((__bridge NSDictionary *)attributesArrayRef);
-
     int64_t keyType, keySize;
     if (!CFNumberGetValue((__bridge CFNumberRef)attributes.get()[bridge_id_cast(kSecAttrKeyType)], kCFNumberSInt64Type, &keyType)) {
         createNSErrorFromWKErrorIfNecessary(error, WKErrorMalformedCredential);

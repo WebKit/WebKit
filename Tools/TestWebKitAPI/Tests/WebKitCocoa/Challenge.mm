@@ -60,7 +60,7 @@ static RetainPtr<SecIdentityRef> createTestIdentity(const Vector<uint8_t>& priva
         (id)kSecAttrKeyClass: (id)kSecAttrKeyClassPrivate,
         (id)kSecAttrKeySizeInBits: @4096,
     };
-    const NSUInteger pemEncodedPrivateKeyHeaderLength = 26;
+    constexpr NSUInteger pemEncodedPrivateKeyHeaderLength = 26;
     CFErrorRef error = nullptr;
     auto privateKey = adoptCF(SecKeyCreateWithData((__bridge CFDataRef)[derEncodedPrivateKey subdataWithRange:NSMakeRange(pemEncodedPrivateKeyHeaderLength, derEncodedPrivateKey.length - pemEncodedPrivateKeyHeaderLength)], (__bridge CFDictionaryRef)options, &error));
     EXPECT_NULL(error);

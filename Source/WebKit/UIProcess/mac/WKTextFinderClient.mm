@@ -43,7 +43,7 @@
 // FIXME: Implement scrollFindMatchToVisible.
 // FIXME: The NSTextFinder overlay doesn't move with scrolling; we should have a mode where we manage the overlay.
 
-static const NSUInteger maximumFindMatches = 1000;
+static constexpr NSUInteger maximumFindMatches = 1000;
 
 @interface WKTextFinderClient ()
 

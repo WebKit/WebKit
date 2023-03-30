@@ -674,7 +674,7 @@ Class webAVPlayerControllerClass()
 
 - (BOOL)hasLegibleMediaSelectionOptions
 {
-    const NSUInteger numDefaultLegibleOptions = 2;
+    constexpr NSUInteger numDefaultLegibleOptions = 2;
     return [[self legibleMediaSelectionOptions] count] > numDefaultLegibleOptions;
 }
 

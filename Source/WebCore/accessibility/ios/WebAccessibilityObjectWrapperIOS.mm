@@ -408,7 +408,7 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
             return [attachmentView accessibilityElements];
     }
 
-    auto array = adoptNS([[NSMutableArray alloc] init]);
+    NSMutableArray *array = [NSMutableArray array];
     for (const auto& child : self.axBackingObject->children()) {
         auto* wrapper = child->wrapper();
         if (child->isAttachment()) {
@@ -425,7 +425,7 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
     }
 #endif
 
-    return array.autorelease();
+    return array;
 }
 
 - (NSInteger)accessibilityElementCount

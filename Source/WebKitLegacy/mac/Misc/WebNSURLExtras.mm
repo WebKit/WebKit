@@ -82,8 +82,8 @@
 
 - (BOOL)_web_isEmpty
 {
-    if (!CFURLGetBaseURL(bridge_cast(self)))
-        return !CFURLGetBytes(bridge_cast(self), nullptr, 0);
+    if (!self.baseURL)
+        return !self.dataRepresentation.length;
     return ![WTF::originalURLData(self) length];
 }
 
@@ -224,13 +224,7 @@
     if (colon.location != NSNotFound && colon.location > 0) {
         NSRange scheme = {0, colon.location};
         static NeverDestroyed inverseSchemeCharacterSet = [] {
-            /*
-             This stuff is very expensive.  10-15 msec on a 2x1.2GHz.  If not cached it swamps
-             everything else when adding items to the autocomplete DB.  Makes me wonder if we
-             even need to enforce the character set here.
-            */
-            NSString *acceptableCharacters = @"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+.-";
-            return RetainPtr { [[NSCharacterSet characterSetWithCharactersInString:acceptableCharacters] invertedSet] };
+            return RetainPtr { [[NSCharacterSet URLHostAllowedCharacterSet] invertedSet] };
         }();
         NSRange illegals = [self rangeOfCharacterFromSet:inverseSchemeCharacterSet.get().get() options:0 range:scheme];
         if (illegals.location == NSNotFound)

@@ -1122,11 +1122,11 @@ static id decodeObject(WKRemoteObjectDecoder *decoder, const API::Dictionary* di
     if (!_allowedClasses)
         return [NSSet set];
 
-    auto result = adoptNS([[NSMutableSet alloc] init]);
+    NSMutableSet *result = [NSMutableSet set];
     for (auto allowedClass : *_allowedClasses)
         [result addObject:(__bridge Class)allowedClass];
 
-    return result.autorelease();
+    return result;
 }
 
 @end

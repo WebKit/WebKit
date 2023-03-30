@@ -32,13 +32,13 @@
 extern "C" {
 #endif
 
-NSString *WebLocalizedStringInternal(const char* key) NS_FORMAT_ARGUMENT(1);
+NSString *WebLocalizedStringInternal(CFStringRef key) NS_FORMAT_ARGUMENT(1);
 
 #ifdef __cplusplus
 }
 #endif
 
-#define UI_STRING_INTERNAL(string, comment) WebLocalizedStringInternal(string)
-#define UI_STRING_KEY_INTERNAL(string, key, comment) WebLocalizedStringInternal(key)
+#define UI_STRING_INTERNAL(string, comment) WebLocalizedStringInternal(CFSTR(string))
+#define UI_STRING_KEY_INTERNAL(string, key, comment) WebLocalizedStringInternal(CFSTR(key))
 
 #endif // WebLocalizableStringsInternal_h

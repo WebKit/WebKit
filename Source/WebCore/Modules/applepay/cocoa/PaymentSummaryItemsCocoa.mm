@@ -161,9 +161,9 @@ NSArray *platformSummaryItems(const ApplePayLineItem& total, const Vector<AppleP
     if (PKPaymentSummaryItem *totalItem = platformSummaryItem(total))
         [paymentSummaryItems addObject:totalItem];
 
-    return adoptNS([paymentSummaryItems copy]).autorelease();
+    return paymentSummaryItems;
 }
 
-} // namespace WebbCore
+} // namespace WebCore
 
 #endif // ENABLE(APPLE_PAY)

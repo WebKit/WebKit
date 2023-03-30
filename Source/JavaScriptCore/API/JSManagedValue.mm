@@ -61,14 +61,14 @@ static JSManagedValueHandleOwner& managedValueHandleOwner()
 
 + (JSManagedValue *)managedValueWithValue:(JSValue *)value
 {
-    return adoptNS([[self alloc] initWithValue:value]).autorelease();
+    return [[[self alloc] initWithValue:value] autorelease];
 }
 
 + (JSManagedValue *)managedValueWithValue:(JSValue *)value andOwner:(id)owner
 {
-    auto managedValue = adoptNS([[self alloc] initWithValue:value]);
-    [value.context.virtualMachine addManagedReference:managedValue.get() withOwner:owner];
-    return managedValue.autorelease();
+    JSManagedValue *managedValue = [[self alloc] initWithValue:value];
+    [value.context.virtualMachine addManagedReference:managedValue withOwner:owner];
+    return [managedValue autorelease];
 }
 
 - (instancetype)init

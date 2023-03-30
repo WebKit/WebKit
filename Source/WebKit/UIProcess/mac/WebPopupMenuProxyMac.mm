@@ -65,36 +65,40 @@ void WebPopupMenuProxyMac::populate(const Vector<WebPopupItem>& items, NSFont *f
         [m_popup setAutoenablesItems:NO];
     }
 
-    int size = items.size();
-
-    for (int i = 0; i < size; i++) {
-        if (items[i].m_type == WebPopupItem::Type::Separator)
+    for (const auto &item : items) {
+        if (item.m_type == WebPopupItem::Type::Separator)
             [[m_popup menu] addItem:[NSMenuItem separatorItem]];
         else {
             [m_popup addItemWithTitle:@""];
             NSMenuItem *menuItem = [m_popup lastItem];
 
             RetainPtr<NSMutableParagraphStyle> paragraphStyle = adoptNS([[NSParagraphStyle defaultParagraphStyle] mutableCopy]);
-            NSWritingDirection writingDirection = items[i].m_textDirection == TextDirection::LTR ? NSWritingDirectionLeftToRight : NSWritingDirectionRightToLeft;
+            NSWritingDirection writingDirection = item.m_textDirection == TextDirection::LTR ? NSWritingDirectionLeftToRight : NSWritingDirectionRightToLeft;
             [paragraphStyle setBaseWritingDirection:writingDirection];
             [paragraphStyle setAlignment:menuTextDirection == TextDirection::LTR ? NSTextAlignmentLeft : NSTextAlignmentRight];
-            RetainPtr<NSMutableDictionary> attributes = adoptNS([[NSMutableDictionary alloc] initWithObjectsAndKeys:
-                paragraphStyle.get(), NSParagraphStyleAttributeName,
-                font, NSFontAttributeName,
-            nil]);
-            if (items[i].m_hasTextDirectionOverride) {
-                RetainPtr<NSNumber> writingDirectionValue = adoptNS([[NSNumber alloc] initWithInteger:writingDirection + NSWritingDirectionOverride]);
-                RetainPtr<NSArray> writingDirectionArray = adoptNS([[NSArray alloc] initWithObjects:writingDirectionValue.get(), nil]);
-                [attributes setObject:writingDirectionArray.get() forKey:NSWritingDirectionAttributeName];
+            NSDictionary *attributes;
+            if (item.m_hasTextDirectionOverride) {
+                NSNumber *writingDirectionValue = @(writingDirection + NSWritingDirectionOverride);
+                NSArray *writingDirectionArray = @[ writingDirectionValue ];
+                attributes = @ {
+                    NSParagraphStyleAttributeName : paragraphStyle.get(),
+                    NSFontAttributeName : font,
+                    NSWritingDirectionAttributeName : writingDirectionArray
+                };
+            } else {
+                attributes = @ {
+                    NSParagraphStyleAttributeName : paragraphStyle.get(),
+                    NSFontAttributeName : font
+                };
             }
-            RetainPtr<NSAttributedString> string = adoptNS([[NSAttributedString alloc] initWithString:nsStringFromWebCoreString(items[i].m_text) attributes:attributes.get()]);
+            RetainPtr<NSAttributedString> string = adoptNS([[NSAttributedString alloc] initWithString:nsStringFromWebCoreString(item.m_text) attributes:attributes]);
 
             [menuItem setAttributedTitle:string.get()];
             // We set the title as well as the attributed title here. The attributed title will be displayed in the menu,
             // but typeahead will use the non-attributed string that doesn't contain any leading or trailing whitespace.
             [menuItem setTitle:[[string string] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]]];
-            [menuItem setEnabled:items[i].m_isEnabled];
-            [menuItem setToolTip:nsStringFromWebCoreString(items[i].m_toolTip)];
+            [menuItem setEnabled:item.m_isEnabled];
+            [menuItem setToolTip:nsStringFromWebCoreString(item.m_toolTip)];
         }
     }
 }
@@ -129,10 +133,10 @@ void WebPopupMenuProxyMac::showPopupMenu(const IntRect& rect, TextDirection text
     [menu setUserInterfaceLayoutDirection:textDirection == TextDirection::LTR ? NSUserInterfaceLayoutDirectionLeftToRight : NSUserInterfaceLayoutDirectionRightToLeft];
 
     // These values were borrowed from AppKit to match their placement of the menu.
-    const int popOverHorizontalAdjust = -13;
-    const int popUnderHorizontalAdjust = 6;
-    const int popUnderVerticalAdjust = 6;
-    
+    constexpr NSInteger popOverHorizontalAdjust = -13;
+    constexpr NSInteger popUnderHorizontalAdjust = 6;
+    constexpr NSInteger popUnderVerticalAdjust = 6;
+
     // Menus that pop-over directly obscure the node that generated the popup menu.
     // Menus that pop-under are offset underneath it.
     NSPoint location;

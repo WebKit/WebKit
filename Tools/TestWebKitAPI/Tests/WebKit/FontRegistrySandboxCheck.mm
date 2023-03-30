@@ -58,7 +58,7 @@ TEST(WebKit, UserInstalledFontsWork)
 {
     NSURL *fontURL = [[NSBundle mainBundle] URLForResource:@"Ahem" withExtension:@"ttf" subdirectory:@"TestWebKitAPI.resources"];
     CFErrorRef error = nil;
-    auto registrationSucceeded = CTFontManagerRegisterFontsForURL(static_cast<CFURLRef>(fontURL), kCTFontManagerScopeUser, &error);
+    auto registrationSucceeded = CTFontManagerRegisterFontsForURL((__bridge CFURLRef)fontURL, kCTFontManagerScopeUser, &error);
 
     auto context = adoptWK(TestWebKitAPI::Util::createContextForInjectedBundleTest("InternalsInjectedBundleTest"));
     WKContextSetUsesSingleWebProcess(context.get(), true);
@@ -74,7 +74,7 @@ TEST(WebKit, UserInstalledFontsWork)
 
     if (registrationSucceeded) {
         error = nil;
-        CTFontManagerUnregisterFontsForURL(static_cast<CFURLRef>(fontURL), kCTFontManagerScopeUser, &error);
+        CTFontManagerUnregisterFontsForURL((__bridge CFURLRef)fontURL, kCTFontManagerScopeUser, &error);
         ASSERT_FALSE(error);
     }
 }

@@ -229,7 +229,7 @@ void SocketStreamHandleImpl::chooseProxyFromArray(CFArrayRef proxyArray)
         if (auto proxyInfo = dynamic_cf_cast<CFDictionaryRef>(CFArrayGetValueAtIndex(proxyArray, 0))) {
             if (auto proxyType = dynamic_cf_cast<CFStringRef>(CFDictionaryGetValue(proxyInfo, kCFProxyTypeKey)); proxyType && CFEqual(proxyType, kCFProxyTypeAutoConfigurationURL)) {
                 if (auto pacFileURL = dynamic_cf_cast<CFURLRef>(CFDictionaryGetValue(proxyInfo, kCFProxyAutoConfigurationURLKey))) {
-                    executePACFileURL(static_cast<CFURLRef>(pacFileURL));
+                    executePACFileURL(pacFileURL);
                     return;
                 }
             }

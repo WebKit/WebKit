@@ -1138,28 +1138,29 @@ static NSControlStateValue kit(TriState state)
 
 + (NSArray *)_excludedElementsForAttributedStringConversion
 {
-    auto elements = adoptNS([[NSMutableArray alloc] initWithObjects:
+#if !ENABLE(ATTACHMENT_ELEMENT)
+    return @[
+#else
+    NSMutableArray *elements = [NSMutableArray arrayWithObjects:
+#endif
         // Omit style since we want style to be inline so the fragment can be easily inserted.
         @"style",
         // Omit xml so the result is not XHTML.
-        @"xml",
-        // Omit tags that will get stripped when converted to a fragment anyway.
         @"doctype", @"html", @"head", @"body",
         // Omit deprecated tags.
         @"applet", @"basefont", @"center", @"dir", @"font", @"menu", @"s", @"strike", @"u",
-        // Omit object so no file attachments are part of the fragment.
 #if !ENABLE(ATTACHMENT_ELEMENT)
         // Omit object so no file attachments are part of the fragment.
-        @"object",
-#endif
-        nil]);
+        @"object"
+    ];
+#else
+    nil];
 
-#if ENABLE(ATTACHMENT_ELEMENT)
     if (!WebCore::DeprecatedGlobalSettings::attachmentElementEnabled())
         [elements addObject:@"object"];
-#endif
 
-    return elements.autorelease();
+    return elements;
+#endif
 }
 
 - (DOMDocumentFragment *)_documentFragmentFromPasteboard:(NSPasteboard *)pasteboard inContext:(DOMRange *)context allowPlainText:(BOOL)allowPlainText

@@ -224,15 +224,16 @@ static Vector<AuthenticatorTransport> transports()
 void LocalAuthenticator::clearAllCredentials()
 {
     // FIXME<rdar://problem/57171201>: We should guard the method with a first party entitlement once WebAuthn is avaliable for third parties.
-    auto query = adoptNS([[NSMutableDictionary alloc] init]);
-    [query setDictionary:@{
-        (id)kSecClass: (id)kSecClassKey,
-        (id)kSecAttrAccessGroup: @(LocalAuthenticatorAccessGroup),
-        (id)kSecUseDataProtectionKeychain: @YES
-    }];
-    updateQueryIfNecessary(query.get());
+    CFMutableDictionaryRef query = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
 
-    OSStatus status = SecItemDelete((__bridge CFDictionaryRef)query.get());
+    CFDictionaryAddValue(query, kSecClass, kSecClassKey);
+    CFDictionaryAddValue(query, kSecAttrAccessGroup, CFSTR("com.apple.webkit.webauthn"));
+    CFDictionaryAddValue(query, kSecUseDataProtectionKeychain, kCFBooleanTrue);
+
+    updateQueryIfNecessary(bridge_cast(query));
+
+    OSStatus status = SecItemDelete(query);
+    CFRelease(query);
     if (status && status != errSecItemNotFound)
         LOG_ERROR(makeString("Couldn't clear all credential: "_s, status).utf8().data());
 }
@@ -517,17 +518,18 @@ void LocalAuthenticator::continueMakeCredentialAfterUserVerification(SecAccessCo
         m_provisionalCredentialId = toNSData(credentialId);
 
 #ifndef NDEBUG
-        auto query = adoptNS([[NSMutableDictionary alloc] init]);
-        [query setDictionary:@{
-            (id)kSecClass: (id)kSecClassKey,
-            (id)kSecAttrKeyClass: (id)kSecAttrKeyClassPrivate,
-            (id)kSecAttrLabel: secAttrLabel,
-            (id)kSecAttrApplicationLabel: m_provisionalCredentialId.get(),
-            (id)kSecUseDataProtectionKeychain: @YES
-        }];
-        updateQueryIfNecessary(query.get());
+        CFMutableDictionaryRef query = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
 
-        OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)query.get(), nullptr);
+        CFDictionaryAddValue(query, kSecClass, kSecClassKey);
+        CFDictionaryAddValue(query, kSecAttrKeyClass, kSecAttrKeyClassPrivate);
+        CFDictionaryAddValue(query, kSecAttrLabel, secAttrLabel);
+        CFDictionaryAddValue(query, kSecAttrApplicationLabel, bridge_cast(m_provisionalCredentialId.get()));
+        CFDictionaryAddValue(query, kSecUseDataProtectionKeychain, kCFBooleanTrue);
+
+        updateQueryIfNecessary(bridge_cast(query));
+
+        OSStatus status = SecItemCopyMatching(query, nullptr);
+        CFRelease(query);
         ASSERT(!status);
 #endif // NDEBUG
     }
@@ -593,8 +595,9 @@ void LocalAuthenticator::continueMakeCredentialAfterAttested(Vector<uint8_t>&& c
     cbor::CBORValue::MapValue attestationStatementMap;
     {
         Vector<cbor::CBORValue> cborArray;
-        for (size_t i = 0; i < [certificates count]; i++)
-            cborArray.append(cbor::CBORValue(vectorFromNSData((NSData *)adoptCF(SecCertificateCopyData((__bridge SecCertificateRef)certificates[i])).get())));
+        cborArray.reserveInitialCapacity([certificates count]);
+        for (id certificate in certificates)
+            cborArray.append(cbor::CBORValue(vectorFromNSData((NSData *)adoptCF(SecCertificateCopyData((__bridge SecCertificateRef)certificate)).get())));
         attestationStatementMap[cbor::CBORValue("x5c")] = cbor::CBORValue(WTFMove(cborArray));
     }
     auto attestationObject = buildAttestationObject(WTFMove(authData), "apple"_s, WTFMove(attestationStatementMap), creationOptions.attestation);
@@ -723,22 +726,23 @@ void LocalAuthenticator::continueGetAssertionAfterUserVerification(Ref<WebCore::
     RetainPtr<CFDataRef> signature;
     auto nsCredentialId = toNSData(response->rawId());
     {
-        NSMutableDictionary *queryDictionary = [@{
-            (id)kSecClass: (id)kSecClassKey,
-            (id)kSecAttrKeyClass: (id)kSecAttrKeyClassPrivate,
-            (id)kSecAttrSynchronizable: (id)kSecAttrSynchronizableAny,
-            (id)kSecAttrApplicationLabel: nsCredentialId.get(),
-            (id)kSecReturnRef: @YES,
-            (id)kSecUseDataProtectionKeychain: @YES
-        } mutableCopy];
+        CFDictionaryRef queryDictionary;
 
-        if (context)
-            queryDictionary[(id)kSecUseAuthenticationContext] = context;
+        if (context) {
+            CFTypeRef keys[] = { kSecClass, kSecAttrKeyClass, kSecAttrSynchronizable, kSecAttrApplicationLabel, kSecReturnRef, kSecUseDataProtectionKeychain };
+            CFTypeRef values[] = { kSecClassKey, kSecAttrKeyClassPrivate, kSecAttrSynchronizableAny, bridge_cast(nsCredentialId.get()), kCFBooleanTrue, kCFBooleanTrue };
 
-        auto query = adoptNS(queryDictionary);
+            queryDictionary = CFDictionaryCreate(kCFAllocatorDefault, keys, values, 7, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
+        } else {
+            CFTypeRef keys[] = { kSecClass, kSecAttrKeyClass, kSecAttrSynchronizable, kSecAttrApplicationLabel, kSecReturnRef, kSecUseDataProtectionKeychain, kSecUseAuthenticationContext };
+            CFTypeRef values[] = { kSecClassKey, kSecAttrKeyClassPrivate, kSecAttrSynchronizableAny, bridge_cast(nsCredentialId.get()), kCFBooleanTrue, kCFBooleanTrue, (__bridge const void *)context };
+
+            queryDictionary = CFDictionaryCreate(kCFAllocatorDefault, keys, values, 8, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
+        }
 
         CFTypeRef privateKeyRef = nullptr;
-        OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)query.get(), &privateKeyRef);
+        OSStatus status = SecItemCopyMatching(queryDictionary, &privateKeyRef);
+        CFRelease(queryDictionary);
         if (status) {
             receiveException({ UnknownError, makeString("Couldn't get the private key reference: ", status) });
             RELEASE_LOG_ERROR(WebAuthn, "Couldn't get the private key reference: %d", status);
@@ -754,32 +758,33 @@ void LocalAuthenticator::continueGetAssertionAfterUserVerification(Ref<WebCore::
         signature = adoptCF(SecKeyCreateSignature((__bridge SecKeyRef)((id)privateKeyRef), kSecKeyAlgorithmECDSASignatureMessageX962SHA256, (__bridge CFDataRef)dataToSign, &errorRef));
         auto retainError = adoptCF(errorRef);
         if (errorRef) {
-            RELEASE_LOG_ERROR(WebAuthn, "Couldn't generate signature: %@", ((NSError*)errorRef).localizedDescription);
-            receiveException({ UnknownError, makeString("Couldn't generate the signature: ", String(((NSError*)errorRef).localizedDescription)) });
+            RELEASE_LOG_ERROR(WebAuthn, "Couldn't generate signature: %@", bridge_cast(errorRef).localizedDescription);
+            receiveException({ UnknownError, makeString("Couldn't generate the signature: ", String(bridge_cast(errorRef).localizedDescription)) });
             return;
         }
     }
 
     // Extra step: update the Keychain item with the same value to update its modification date such that LRU can be used
     // for selectAssertionResponse
-    NSDictionary *query = @{
-        (id)kSecClass: (id)kSecClassKey,
-        (id)kSecAttrKeyClass: (id)kSecAttrKeyClassPrivate,
-        (id)kSecAttrSynchronizable: (id)kSecAttrSynchronizableAny,
-        (id)kSecAttrApplicationLabel: nsCredentialId.get(),
-        (id)kSecUseDataProtectionKeychain: @YES
-    };
 
-    NSDictionary *updateParams = @{
-        (id)kSecAttrLabel: requestOptions.rpId,
-    };
-    auto status = SecItemUpdate((__bridge CFDictionaryRef)query, (__bridge CFDictionaryRef)updateParams);
+    CFTypeRef keys[] = { kSecClass, kSecAttrKeyClass, kSecAttrSynchronizable, kSecAttrApplicationLabel, kSecUseDataProtectionKeychain };
+    CFTypeRef values[] = { kSecClassKey, kSecAttrKeyClassPrivate, kSecAttrSynchronizableAny, bridge_cast(nsCredentialId.get()), kCFBooleanTrue };
+
+    CFTypeRef label[] = { kSecAttrLabel };
+    CFTypeRef rpID[] = { requestOptions.rpId };
+
+    CFDictionaryRef query = CFDictionaryCreate(kCFAllocatorDefault, keys, values, 5, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
+    CFDictionaryRef updateParams = CFDictionaryCreate(kCFAllocatorDefault, label, rpID, 1, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
+
+    auto status = SecItemUpdate(query, updateParams);
+    CFRelease(query);
+    CFRelease(updateParams);
     if (status)
         RELEASE_LOG_ERROR(WebAuthn, "Couldn't update the Keychain item: %d", status);
 
     // Step 13.
     response->setAuthenticatorData(WTFMove(authData));
-    response->setSignature(toArrayBuffer((NSData *)signature.get()));
+    response->setSignature(toArrayBuffer(bridge_cast(signature.get())));
     auto exception = processClientExtensions(response);
     if (exception)
         receiveException(WTFMove(exception.value()));
@@ -793,15 +798,16 @@ void LocalAuthenticator::receiveException(ExceptionData&& exception, WebAuthenti
 
     // Roll back the just created credential.
     if (m_provisionalCredentialId) {
-        auto query = adoptNS([[NSMutableDictionary alloc] init]);
-        [query setDictionary:@{
-            (id)kSecClass: (id)kSecClassKey,
-            (id)kSecAttrApplicationLabel: m_provisionalCredentialId.get(),
-            (id)kSecUseDataProtectionKeychain: @YES
-        }];
-        updateQueryIfNecessary(query.get());
+        CFMutableDictionaryRef query = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
 
-        OSStatus status = SecItemDelete((__bridge CFDictionaryRef)query.get());
+        CFDictionaryAddValue(query, kSecClass, kSecClassKey);
+        CFDictionaryAddValue(query, kSecAttrApplicationLabel, bridge_cast(m_provisionalCredentialId.get()));
+        CFDictionaryAddValue(query, kSecUseDataProtectionKeychain, kCFBooleanTrue);
+
+        updateQueryIfNecessary(bridge_cast(query));
+
+        OSStatus status = SecItemDelete(query);
+        CFRelease(query);
         if (status)
             RELEASE_LOG_ERROR(WebAuthn, "Couldn't delete provisional credential while handling error: %d", status);
     }

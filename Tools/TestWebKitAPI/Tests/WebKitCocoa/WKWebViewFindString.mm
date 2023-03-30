@@ -38,7 +38,7 @@
 #endif
 
 static bool focusDidStartInputSession;
-static const NSUInteger maxCount = 100;
+static constexpr NSUInteger maxCount = 100;
 
 @interface WKWebViewFindStringInputDelegate : NSObject <_WKInputDelegate>
 @end

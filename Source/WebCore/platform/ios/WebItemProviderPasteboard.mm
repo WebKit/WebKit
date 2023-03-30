@@ -75,7 +75,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (NSArray<NSString *> *)web_fileUploadContentTypes
 {
-    auto types = adoptNS([NSMutableArray new]);
+    NSMutableArray *types = [NSMutableArray array];
     for (NSString *identifier in self.registeredTypeIdentifiers) {
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         if (UTTypeConformsTo((__bridge CFStringRef)identifier, kUTTypeURL))
@@ -92,7 +92,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
             [types addObject:identifier];
     }
 
-    return types.autorelease();
+    return types;
 }
 
 @end
@@ -571,7 +571,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (_loadResults.isEmpty())
         return @[ ];
 
-    auto values = adoptNS([[NSMutableArray alloc] init]);
+    NSMutableArray *values = [NSMutableArray array];
     RetainPtr<WebItemProviderPasteboard> retainedSelf = self;
     [itemSet enumerateIndexesUsingBlock:[retainedSelf, pasteboardType, values] (NSUInteger index, BOOL *) {
         NSItemProvider *provider = [retainedSelf itemProviderAtIndex:index];
@@ -581,7 +581,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         if (NSData *loadedData = [retainedSelf _preLoadedDataConformingToType:pasteboardType forItemProviderAtIndex:index])
             [values addObject:loadedData];
     }];
-    return values.autorelease();
+    return values;
 }
 
 static NSArray<Class<NSItemProviderReading>> *allLoadableClasses()
@@ -617,7 +617,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (_loadResults.isEmpty())
         return @[ ];
 
-    auto values = adoptNS([[NSMutableArray alloc] init]);
+    NSMutableArray *values = [NSMutableArray array];
     RetainPtr<WebItemProviderPasteboard> retainedSelf = self;
     [itemSet enumerateIndexesUsingBlock:[retainedSelf, pasteboardType, values] (NSUInteger index, BOOL *) {
         NSItemProvider *provider = [retainedSelf itemProviderAtIndex:index];
@@ -637,7 +637,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
             [values addObject:readObject];
     }];
 
-    return values.autorelease();
+    return values;
 }
 
 - (NSInteger)changeCount
@@ -647,9 +647,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (NSArray<NSURL *> *)fileUploadURLsAtIndex:(NSUInteger)index fileTypes:(NSArray<NSString *> **)outFileTypes
 {
-    auto fileTypes = adoptNS([NSMutableArray new]);
-    auto fileURLs = adoptNS([NSMutableArray new]);
-
     if (index >= _loadResults.size())
         return @[ ];
 
@@ -657,6 +654,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (![result canBeRepresentedAsFileUpload])
         return @[ ];
 
+    NSMutableArray *fileTypes = [NSMutableArray array];
+    NSMutableArray *fileURLs = [NSMutableArray array];
     for (NSString *contentType in [result itemProvider].web_fileUploadContentTypes) {
         if (NSURL *url = [result fileURLForType:contentType]) {
             [fileTypes addObject:contentType];
@@ -664,8 +663,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         }
     }
 
-    *outFileTypes = fileTypes.autorelease();
-    return fileURLs.autorelease();
+    *outFileTypes = fileTypes;
+    return fileURLs;
 }
 
 - (NSArray<NSURL *> *)allDroppedFileURLs

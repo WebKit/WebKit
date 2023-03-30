@@ -36,7 +36,7 @@ extern "C" void JSSynchronousGarbageCollectForDebugging(JSContextRef);
 
 extern int failed;
 
-static const NSUInteger scriptToEvaluate = 50;
+static constexpr NSUInteger scriptToEvaluate = 50;
 
 @interface JSTEvaluator : NSObject
 - (instancetype)initWithScript:(NSString*)script;

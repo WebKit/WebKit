@@ -79,9 +79,10 @@
         return nil;
 
 #if USE(APPKIT)
+    // imageWithCGImage only exists for UIImage, not NSImage
     return adoptNS([[NSImage alloc] initWithCGImage:nativeImage->platformImage().get() size:NSZeroSize]).autorelease();
 #else
-    return adoptNS([[UIImage alloc] initWithCGImage:nativeImage->platformImage().get()]).autorelease();
+    return [UIImage imageWithCGImage:nativeImage->platformImage().get()];
 #endif
 }
 

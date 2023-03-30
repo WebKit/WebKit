@@ -308,10 +308,10 @@ NSURL *URLByRemovingUserInfo(NSURL *URL)
 
 NSData *originalURLData(NSURL *URL)
 {
-    auto data = bridge_cast(bytesAsCFData(bridge_cast(URL)));
-    if (auto baseURL = bridge_cast(CFURLGetBaseURL(bridge_cast(URL))))
-        return originalURLData(URLWithData(data.get(), baseURL));
-    return data.autorelease();
+    NSData *data = URL.dataRepresentation;
+    if (NSURL *baseURL = URL.baseURL)
+        return originalURLData(URLWithData(data, baseURL));
+    return data;
 }
 
 NSString *userVisibleString(NSURL *URL)
@@ -325,9 +325,7 @@ BOOL isUserVisibleURL(NSString *string)
     // Return true if the userVisibleString function is guaranteed to not change the passed-in URL.
     // This function is used to optimize all the most common cases where we don't need the userVisibleString algorithm.
 
-    char buffer[1024];
-    auto success = CFStringGetCString(bridge_cast(string), reinterpret_cast<char*>(buffer), sizeof(buffer) - 1, kCFStringEncodingUTF8);
-    auto characters = success ? buffer : [string UTF8String];
+    auto characters = string.UTF8String;
 
     // Check for control characters, %-escape sequences that are non-ASCII, and xn--: these
     // are the things that might lead the userVisibleString function to actually change the string.

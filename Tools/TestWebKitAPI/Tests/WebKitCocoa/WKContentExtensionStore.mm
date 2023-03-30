@@ -1129,7 +1129,7 @@ TEST_F(WKContentRuleListStoreTest, NullPatternSet)
             preferences._activeContentRuleListActionPatterns = [NSDictionary dictionaryWithObject:[NSSet setWithObject:@"testscheme://*/*"] forKey:@"testidentifier"];
             break;
         case DelegateAction::AllowNone:
-            preferences._activeContentRuleListActionPatterns = [NSDictionary dictionary];
+            preferences._activeContentRuleListActionPatterns = @{ };
             break;
         case DelegateAction::AllowTestHost:
             preferences._activeContentRuleListActionPatterns = [NSDictionary dictionaryWithObject:[NSSet setWithObject:@"testscheme://testhost/*"] forKey:@"testidentifier"];

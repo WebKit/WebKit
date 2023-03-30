@@ -120,22 +120,23 @@ static void encodeNSError(Encoder& encoder, NSError *nsError)
         CFDictionarySetValue(filteredUserInfo.get(), CFSTR("NSErrorClientCertificateChainKey"), (__bridge CFTypeRef)clientCertificates);
     }
 
-    id peerCertificateChain = [userInfo objectForKey:@"NSErrorPeerCertificateChainKey"];
+    CFTypeRef peerCertificateChain = (__bridge CFTypeRef)([userInfo objectForKey:@"NSErrorPeerCertificateChainKey"]);
     if (!peerCertificateChain) {
         if (SecTrustRef peerTrust = (__bridge SecTrustRef)[userInfo objectForKey:NSURLErrorFailingURLPeerTrustErrorKey]) {
 #if HAVE(SEC_TRUST_COPY_CERTIFICATE_CHAIN)
-            peerCertificateChain = (__bridge NSArray *)adoptCF(SecTrustCopyCertificateChain(peerTrust)).autorelease();
+            peerCertificateChain = SecTrustCopyCertificateChain(peerTrust);
 #else
             CFIndex count = SecTrustGetCertificateCount(peerTrust);
-            peerCertificateChain = [NSMutableArray arrayWithCapacity:count];
+            peerCertificateChain = CFDictionaryCreateMutable(kCFAllocatorDefault, count, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
             for (CFIndex i = 0; i < count; ++i)
-                [peerCertificateChain addObject:(__bridge id)SecTrustGetCertificateAtIndex(peerTrust, i)];
+                CFArrayInsertValueAtIndex(peerCertificateChain, i, SecTrustGetCertificateAtIndex(peerTrust, i));
 #endif
+            CFAutorelease(peerCertificateChain);
         }
     }
-    ASSERT(!peerCertificateChain || [peerCertificateChain isKindOfClass:[NSArray class]]);
+    ASSERT(!peerCertificateChain || CFGetTypeID(peerCertificateChain) == CFArrayGetTypeID());
     if (peerCertificateChain)
-        CFDictionarySetValue(filteredUserInfo.get(), CFSTR("NSErrorPeerCertificateChainKey"), (__bridge CFTypeRef)peerCertificateChain);
+        CFDictionarySetValue(filteredUserInfo.get(), CFSTR("NSErrorPeerCertificateChainKey"), peerCertificateChain);
 
     if (SecTrustRef peerTrust = (__bridge SecTrustRef)[userInfo objectForKey:NSURLErrorFailingURLPeerTrustErrorKey])
         CFDictionarySetValue(filteredUserInfo.get(), (__bridge CFStringRef)NSURLErrorFailingURLPeerTrustErrorKey, peerTrust);

@@ -257,9 +257,9 @@ ImageDecoderCG::ImageDecoderCG(FragmentedSharedBuffer& data, AlphaOption, GammaA
         utiHint = adoptCF(CGImageSourceGetTypeWithData(data.makeContiguous()->createCFData().get(), nullptr, nullptr));
     
     if (utiHint) {
-        const void* key = kCGImageSourceTypeIdentifierHint;
-        const void* value = utiHint.get();
-        auto options = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, &key, &value, 1, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+        CFTypeRef key[] = { kCGImageSourceTypeIdentifierHint };
+        CFTypeRef value[] = { utiHint.get() };
+        auto options = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, key, value, 1, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
         m_nativeDecoder = adoptCF(CGImageSourceCreateIncremental(options.get()));
     } else
         m_nativeDecoder = adoptCF(CGImageSourceCreateIncremental(nullptr));

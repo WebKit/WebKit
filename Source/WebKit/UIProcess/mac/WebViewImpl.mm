@@ -670,14 +670,14 @@ static void* keyValueObservingContext = &keyValueObservingContext;
 
 @synthesize currentListType = _currentListType;
 
-static const CGFloat listControlSegmentWidth = 67;
+static constexpr CGFloat listControlSegmentWidth = 67;
 #if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER) && ENABLE(FULLSCREEN_API)
-static const CGFloat exitFullScreenButtonWidth = 64;
+static constexpr CGFloat exitFullScreenButtonWidth = 64;
 #endif
 
-static const NSUInteger noListSegment = 0;
-static const NSUInteger unorderedListSegment = 1;
-static const NSUInteger orderedListSegment = 2;
+static constexpr NSUInteger noListSegment = 0;
+static constexpr NSUInteger unorderedListSegment = 1;
+static constexpr NSUInteger orderedListSegment = 2;
 
 - (instancetype)initWithWebViewImpl:(WebKit::WebViewImpl*)webViewImpl
 {

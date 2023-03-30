@@ -49,14 +49,16 @@ String formatLocalizedString(CFStringRef format, ...)
     va_list arguments;
     va_start(arguments, format);
 
-    auto localizedFormat = copyLocalizedString(format);
-ALLOW_NONLITERAL_FORMAT_BEGIN
+    CFStringRef localizedFormat = copyLocalizedString(format);
+    ALLOW_NONLITERAL_FORMAT_BEGIN
     // The 'format' parameter is already checked for correct placeholders and parameters.
-    auto result = adoptCF(CFStringCreateWithFormatAndArguments(0, 0, localizedFormat.get(), arguments));
-ALLOW_NONLITERAL_FORMAT_END
+    auto result = CFStringCreateWithFormatAndArguments(0, 0, localizedFormat, arguments);
+    CFRelease(localizedFormat);
+    CFAutorelease(result);
+    ALLOW_NONLITERAL_FORMAT_END
 
     va_end(arguments);
-    return result.get();
+    return result;
 }
 #elif PLATFORM(WIN)
 String formatLocalizedString(const wchar_t* format, ...)
@@ -95,7 +97,7 @@ static CFBundleRef webCoreBundle()
     return bundle.get().get();
 }
 
-RetainPtr<CFStringRef> copyLocalizedString(CFStringRef key)
+CFStringRef copyLocalizedString(CFStringRef key)
 {
 #if !PLATFORM(IOS_FAMILY)
     // Can be called on a dispatch queue when initializing strings on iOS.
@@ -103,16 +105,17 @@ RetainPtr<CFStringRef> copyLocalizedString(CFStringRef key)
     ASSERT(isMainThread());
 #endif
 
+#if ASSERT_ENABLED
     static CFStringRef notFound = CFSTR("localized string not found");
 
-    auto result = adoptCF(CFBundleCopyLocalizedString(webCoreBundle(), key, notFound, nullptr));
-
-#if ASSERT_ENABLED
-    if (result.get() == notFound) {
+    CFStringRef result = CFBundleCopyLocalizedString(webCoreBundle(), key, notFound, nullptr);
+    if (result == notFound) {
         char keyCString[256];
         CFStringGetCString(key, keyCString, sizeof(keyCString), kCFStringEncodingUTF8);
-        ASSERT_WITH_MESSAGE(result.get() != notFound, "Could not find localizable string '%s' in bundle", keyCString);
+        ASSERT_WITH_MESSAGE(result != notFound, "Could not find localizable string '%s' in bundle", keyCString);
     }
+#else
+    CFStringRef result = CFBundleCopyLocalizedString(webCoreBundle(), key, key, nullptr);
 #endif
 
     return result;
@@ -122,7 +125,9 @@ RetainPtr<CFStringRef> copyLocalizedString(CFStringRef key)
 #if PLATFORM(COCOA)
 String localizedString(CFStringRef key)
 {
-    return copyLocalizedString(key).get();
+    CFStringRef string = copyLocalizedString(key);
+    CFAutorelease(string);
+    return string;
 }
 #elif PLATFORM(WIN)
 String localizedString(const wchar_t* key)
@@ -141,7 +146,7 @@ String localizedString(const char* key)
 static String truncatedStringForMenuItem(const String& original)
 {
     // Truncate the string if it's too long. This number is roughly the same as the one used by AppKit.
-    unsigned maxNumberOfGraphemeClustersInLookupMenuItem = 24;
+    constexpr unsigned maxNumberOfGraphemeClustersInLookupMenuItem = 24;
 
     String trimmed = original.stripWhiteSpace();
     unsigned numberOfCharacters = numCodeUnitsInGraphemeClusters(trimmed, maxNumberOfGraphemeClustersInLookupMenuItem);

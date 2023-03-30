@@ -409,15 +409,15 @@ NSArray *makeNSArray(const WebCore::AXCoreObject::AccessibilityChildrenVector& c
     RefPtr<AXCoreObject> backingObject = [self baseUpdateBackingStore];
     if (!backingObject)
         return nil;
-    
-    RetainPtr<NSMutableArray<AXCustomContent *>> accessibilityCustomContent = nil;
+
+    NSMutableArray<AXCustomContent *> *accessibilityCustomContent = nil;
     auto extendedDescription = backingObject->extendedDescription();
     if (extendedDescription.length()) {
-        accessibilityCustomContent = adoptNS([[NSMutableArray alloc] init]);
+        accessibilityCustomContent = [NSMutableArray array];
         [accessibilityCustomContent addObject:[PAL::getAXCustomContentClass() customContentWithLabel:WEB_UI_STRING("description", "description detail") value:extendedDescription]];
     }
-    
-    return accessibilityCustomContent.autorelease();
+
+    return accessibilityCustomContent;
 }
 #endif
 

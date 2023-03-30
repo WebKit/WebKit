@@ -1000,7 +1000,7 @@ enum class WebListType {
 
 @synthesize currentListType = _currentListType;
 
-static const CGFloat listControlSegmentWidth = 67.0;
+static constexpr CGFloat listControlSegmentWidth = 67.0;
 
 static const NSUInteger noListSegment = 0;
 static const NSUInteger unorderedListSegment = 1;

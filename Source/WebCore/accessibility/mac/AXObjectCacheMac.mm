@@ -128,7 +128,7 @@
 #endif
 
 // Very large strings can negatively impact the performance of notifications, so this length is chosen to try to fit an average paragraph or line of text, but not allow strings to be large enough to hurt performance.
-static const NSUInteger AXValueChangeTruncationLength = 1000;
+static constexpr NSUInteger AXValueChangeTruncationLength = 1000;
 
 // Check if platform provides enums for text change notifications
 #ifndef AXTextStateChangeDefined
@@ -544,15 +544,15 @@ static NSDictionary *textReplacementChangeDictionary(AXCoreObject& object, AXTex
     NSUInteger length = [text length];
     if (!length)
         return nil;
-    auto change = adoptNS([[NSMutableDictionary alloc] initWithCapacity:4]);
+    NSMutableDictionary *change = [NSMutableDictionary dictionaryWithCapacity:4];
     [change setObject:@(platformEditTypeForWebCoreEditType(type)) forKey:NSAccessibilityTextEditType];
     if (length > AXValueChangeTruncationLength) {
         [change setObject:@(length) forKey:NSAccessibilityTextChangeValueLength];
         text = [text substringToIndex:AXValueChangeTruncationLength];
     }
     [change setObject:text forKey:NSAccessibilityTextChangeValue];
-    addTextMarkerFor(change.get(), object, markerTarget);
-    return change.autorelease();
+    addTextMarkerFor(change, object, markerTarget);
+    return change;
 }
 
 void AXObjectCache::postTextStateChangePlatformNotification(AccessibilityObject* object, AXTextEditType type, const String& text, const VisiblePosition& position)
@@ -774,7 +774,9 @@ AXTextMarkerRef textMarkerForVisiblePosition(AXObjectCache* cache, const Visible
     if (!textMarkerData)
         return nil;
 
-    return adoptCF(AXTextMarkerCreate(kCFAllocatorDefault, (const UInt8*)&textMarkerData.value(), sizeof(textMarkerData.value()))).autorelease();
+    AXTextMarkerRef result = AXTextMarkerCreate(kCFAllocatorDefault, (const UInt8 *)&textMarkerData.value(), sizeof(textMarkerData.value()));
+    CFAutorelease(result);
+    return result;
 }
 
 VisiblePosition visiblePositionForTextMarker(AXObjectCache* cache, AXTextMarkerRef textMarker)
@@ -822,7 +824,9 @@ AXTextMarkerRef textMarkerForCharacterOffset(AXObjectCache* cache, const Charact
     auto textMarkerData = cache->textMarkerDataForCharacterOffset(characterOffset);
     if (!textMarkerData.objectID || textMarkerData.ignored)
         return nil;
-    return adoptCF(AXTextMarkerCreate(kCFAllocatorDefault, (const UInt8*)&textMarkerData, sizeof(textMarkerData))).autorelease();
+    AXTextMarkerRef result = AXTextMarkerCreate(kCFAllocatorDefault, (const UInt8 *)&textMarkerData, sizeof(textMarkerData));
+    CFAutorelease(result);
+    return result;
 }
 
 CharacterOffset characterOffsetForTextMarker(AXObjectCache* cache, AXTextMarkerRef textMarker)
@@ -846,7 +850,9 @@ AXTextMarkerRef startOrEndTextMarkerForRange(AXObjectCache* cache, const std::op
     auto textMarkerData = cache->startOrEndTextMarkerDataForRange(*range, isStart);
     if (!textMarkerData.objectID)
         return nil;
-    return adoptCF(AXTextMarkerCreate(kCFAllocatorDefault, (const UInt8*)&textMarkerData, sizeof(textMarkerData))).autorelease();
+    AXTextMarkerRef result = AXTextMarkerCreate(kCFAllocatorDefault, (const UInt8 *)&textMarkerData, sizeof(textMarkerData));
+    CFAutorelease(result);
+    return result;
 }
 
 AXTextMarkerRangeRef textMarkerRangeFromRange(AXObjectCache* cache, const std::optional<SimpleRange>& range)
