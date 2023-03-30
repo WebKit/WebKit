@@ -614,9 +614,9 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(ResolvedStyle&& resolved
             auto animatedStyleBeforeCascadeApplication = RenderStyle::clonePtr(*animatedStyle);
             // The cascade may override animated properties and have dependencies to them.
             // FIXME: This is wrong if there are both transitions and animations running on the same element.
-            applyCascadeAfterAnimation(*animatedStyle, animatedProperties, styleable.hasRunningTransitions(), *resolvedStyle.matchResult, element, resolutionContext);
+            auto overriddenAnimatedProperties = applyCascadeAfterAnimation(*animatedStyle, animatedProperties, styleable.hasRunningTransitions(), *resolvedStyle.matchResult, element, resolutionContext);
             ASSERT(styleable.keyframeEffectStack());
-            styleable.keyframeEffectStack()->didApplyCascade(*animatedStyleBeforeCascadeApplication, *animatedStyle, animatedProperties, document);
+            styleable.keyframeEffectStack()->cascadeDidOverrideProperties(overriddenAnimatedProperties);
         }
 
         Adjuster adjuster(document, *resolutionContext.parentStyle, resolutionContext.parentBoxStyle, styleable.pseudoId == PseudoId::None ? &element : nullptr);
@@ -652,7 +652,7 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(ResolvedStyle&& resolved
     return { WTFMove(newStyle), change, shouldRecompositeLayer };
 }
 
-void TreeResolver::applyCascadeAfterAnimation(RenderStyle& animatedStyle, const HashSet<AnimatableProperty>& animatedProperties, bool isTransition, const MatchResult& matchResult, const Element& element, const ResolutionContext& resolutionContext)
+HashSet<AnimatableProperty> TreeResolver::applyCascadeAfterAnimation(RenderStyle& animatedStyle, const HashSet<AnimatableProperty>& animatedProperties, bool isTransition, const MatchResult& matchResult, const Element& element, const ResolutionContext& resolutionContext)
 {
     auto builderContext = BuilderContext {
         m_document,
@@ -671,6 +671,8 @@ void TreeResolver::applyCascadeAfterAnimation(RenderStyle& animatedStyle, const 
     };
 
     styleBuilder.applyAllProperties();
+
+    return styleBuilder.overriddenAnimatedProperties();
 }
 
 void TreeResolver::pushParent(Element& element, const RenderStyle& style, Change change, DescendantsToResolve descendantsToResolve)

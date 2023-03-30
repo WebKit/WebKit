@@ -213,6 +213,7 @@ bool PropertyCascade::addMatch(const MatchedProperties& matchedProperties, Casca
             // We only want to re-apply properties that may depend on animated values, or are overriden by !import.
             if (!shouldApplyAfterAnimation(current))
                 continue;
+            m_animationLayer->overriddenProperties.add(current.id());
         }
 
         auto propertyID = current.id();
@@ -369,6 +370,13 @@ void PropertyCascade::sortDeferredPropertyIDs()
     std::sort(begin, end, [&](auto id1, auto id2) {
         return deferredPropertyIndex(id1) < deferredPropertyIndex(id2);
     });
+}
+
+const HashSet<AnimatableProperty> PropertyCascade::overriddenAnimatedProperties() const
+{
+    if (m_animationLayer)
+        return m_animationLayer->overriddenProperties;
+    return { };
 }
 
 }
