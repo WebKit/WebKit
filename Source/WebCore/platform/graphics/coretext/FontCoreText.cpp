@@ -597,6 +597,7 @@ GlyphBufferAdvance Font::applyTransforms(GlyphBuffer& glyphBuffer, unsigned begi
 
     LOG_WITH_STREAM(TextShaping,
         stream << "Simple shaping " << numberOfInputGlyphs << " glyphs in font " << String(adoptCF(CTFontCopyPostScriptName(m_platformData.ctFont())).get()) << ".\n";
+        stream << "Font attributes: " << String(adoptCF(CFCopyDescription(adoptCF(CTFontDescriptorCopyAttributes(adoptCF(CTFontCopyFontDescriptor(m_platformData.ctFont())).get())).get())).get()) << "\n";
         const auto* glyphs = glyphBuffer.glyphs(beginningGlyphIndex);
         stream << "Glyphs:";
         for (unsigned i = 0; i < numberOfInputGlyphs; ++i)
