@@ -35,6 +35,7 @@
 #include "Document.h"
 #include "DocumentFragment.h"
 #include "ElementAncestorIteratorInlines.h"
+#include "ElementName.h"
 #include "ElementTraversal.h"
 #include "FragmentScriptingPermission.h"
 #include "HTMLAnchorElement.h"
@@ -130,11 +131,6 @@ static constexpr uint32_t tagNameHash(ASCIILiteral s)
 template<class Char> static constexpr uint32_t tagNameHash(Span<const Char> s)
 {
     return (s[0] + 17 * s[s.size() - 1]) & 63;
-}
-
-static uint32_t tagNameHash(const String& s)
-{
-    return (s[0] + 17 * s[s.length() - 1]) & 63;
 }
 
 template<typename CharacterType> static inline bool isQuoteCharacter(CharacterType c)
@@ -238,29 +234,17 @@ public:
 
     bool parse(Element& contextElement)
     {
-        auto contextTag = contextElement.tagQName();
-        ASSERT(!contextTag.localName().isEmpty());
-
         // This switch checks that the context element is supported and applies the
         // same restrictions regarding content as the fast-path parser does for a
         // corresponding nested tag.
         // This is to ensure that we preserve correct HTML structure with respect
         // to the context tag.
-        //
-        // If this switch has duplicate cases, then `tagNameHash()` needs to be
-        // updated.
-        switch (tagNameHash(contextTag.localName())) {
+        switch (contextElement.elementName()) {
 #define TAG_CASE(TagName, TagClassName)                                                                      \
-        case tagNameHash(TagInfo::TagClassName::tagName):                                                    \
-            ASSERT(HTMLNames::TagName##Tag->localName() == TagInfo::TagClassName::tagName); \
+        case ElementName::HTML_ ## TagName:                                                                  \
             if constexpr (!TagInfo::TagClassName::isVoid) {                                                  \
-                /* The hash function won't return collisions for the supported tags, but this function */    \
-                /* takes potentially unsupported tags, which may collide. Protect against that by */         \
-                /* checking equality. */                                                                     \
-                if (contextTag == HTMLNames::TagName##Tag) {                                                 \
-                    parseCompleteInput<typename TagInfo::TagClassName>();                                    \
-                    return !m_parsingFailed;                                                                 \
-                }                                                                                            \
+                parseCompleteInput<typename TagInfo::TagClassName>();                                        \
+                return !m_parsingFailed;                                                                     \
             }                                                                                                \
             break;
         FOR_EACH_SUPPORTED_TAG(TAG_CASE)
