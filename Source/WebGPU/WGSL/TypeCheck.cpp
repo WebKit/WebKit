@@ -98,7 +98,7 @@ private:
     bool unify(Type*, Type*) WARN_UNUSED_RETURN;
     bool isBottom(Type*) const;
     std::optional<unsigned> extractInteger(AST::Expression&);
-    Type* chooseOverload(const String&, const WTF::Vector<Type*>&);
+    Type* chooseOverload(const String&, const Vector<Type*>&);
 
     ShaderModule& m_shaderModule;
     Type* m_inferredType { nullptr };
@@ -106,7 +106,7 @@ private:
     TypeStore& m_types;
     Vector<Error> m_errors;
     // FIXME: maybe these should live in the context
-    HashMap<String, WTF::Vector<OverloadCandidate>> m_overloadedOperations;
+    HashMap<String, Vector<OverloadCandidate>> m_overloadedOperations;
 };
 
 TypeChecker::TypeChecker(ShaderModule& shaderModule)
@@ -513,7 +513,7 @@ void TypeChecker::vectorFieldAccess(const Types::Vector& vector, AST::FieldAcces
     inferred(m_types.constructType(base, vector.element));
 }
 
-Type* TypeChecker::chooseOverload(const String& operation, const WTF::Vector<Type*>& arguments)
+Type* TypeChecker::chooseOverload(const String& operation, const Vector<Type*>& arguments)
 {
     auto it = m_overloadedOperations.find(operation);
     if (it == m_overloadedOperations.end())

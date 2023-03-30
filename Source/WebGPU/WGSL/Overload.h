@@ -78,13 +78,13 @@ struct AbstractMatrix {
 };
 
 struct OverloadCandidate {
-    WTF::Vector<TypeVariable, 1> typeVariables;
-    WTF::Vector<NumericVariable, 2> numericVariables;
-    WTF::Vector<AbstractType, 2> parameters;
+    Vector<TypeVariable, 1> typeVariables;
+    Vector<NumericVariable, 2> numericVariables;
+    Vector<AbstractType, 2> parameters;
     AbstractType result;
 };
 
-Type* resolveOverloads(TypeStore&, const WTF::Vector<OverloadCandidate>&, const WTF::Vector<Type*>&);
+Type* resolveOverloads(TypeStore&, const Vector<OverloadCandidate>&, const Vector<Type*>&);
 
 } // namespace WGSL
 
