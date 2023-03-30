@@ -147,6 +147,7 @@
 #import "AppKitSPI.h"
 #import "WKAccessibilityWebPageObjectMac.h"
 #import "WebSwitchingGPUClient.h"
+#import <Security/SecStaticCode.h>
 #import <WebCore/DisplayConfigurationMonitor.h>
 #import <WebCore/ScrollbarThemeMac.h>
 #import <pal/spi/cf/CoreTextSPI.h>
@@ -277,7 +278,18 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
 
 #if HAVE(VIDEO_RESTRICTED_DECODING)
 #if PLATFORM(MAC)
-    SandboxExtension::consumePermanently(parameters.trustdExtensionHandle);
+    if (SandboxExtension::consumePermanently(parameters.trustdExtensionHandle)) {
+        // Open up a Mach connection to trustd by doing a code check validation on the main bundle.
+        // This is required since launchd will be blocked after process launch, which prevents new Mach connections to be created.
+        // FIXME: remove this once <rdar://90127163> is fixed.
+        auto bundleURL = adoptCF(CFBundleCopyBundleURL(CFBundleGetMainBundle()));
+        SecStaticCodeRef code = nullptr;
+        SecStaticCodeCreateWithPath(bundleURL.get(), kSecCSDefaultFlags, &code);
+        if (code) {
+            SecStaticCodeCheckValidity(code, kSecCSDoNotValidateResources, nullptr);
+            CFRelease(code);
+        }
+    }
 #endif // PLATFORM(MAC)
 #if USE(APPLE_INTERNAL_SDK)
     OptionSet<VideoDecoderBehavior> videoDecoderBehavior;
