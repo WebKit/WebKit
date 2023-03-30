@@ -40,6 +40,6 @@ private:
     std::optional<MediaCapabilitiesDecodingInfo> videoDecodingCapabilitiesOverride(const VideoConfiguration&) final;
 };
 
-} // namespace Webcore
+} // namespace WebCore
 
 #endif
