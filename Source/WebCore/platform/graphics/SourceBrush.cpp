@@ -70,7 +70,7 @@ void SourceBrush::setGradient(Ref<Gradient>&& gradient, const AffineTransform& s
 
 void SourceBrush::setPattern(Ref<Pattern>&& pattern)
 {
-    m_brush = { WTFMove(pattern) };
+    m_brush = { Brush::Variant { std::in_place_type<Ref<Pattern>>, WTFMove(pattern) } };
 }
 
 WTF::TextStream& operator<<(TextStream& ts, const SourceBrush& brush)

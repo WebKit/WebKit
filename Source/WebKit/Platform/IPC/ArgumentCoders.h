@@ -740,7 +740,7 @@ template<typename... Types> struct ArgumentCoder<std::variant<Types...>> {
                 auto optional = decoder.template decode<typename std::variant_alternative_t<index, std::variant<Types...>>>();
                 if (!optional)
                     return std::nullopt;
-                return std::make_optional<std::variant<Types...>>(WTFMove(*optional));
+                return std::make_optional<std::variant<Types...>>(std::in_place_index<index>, WTFMove(*optional));
             }
             return decode(decoder, std::make_index_sequence<index + 1> { }, i);
         } else

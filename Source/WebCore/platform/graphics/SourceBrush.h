@@ -39,7 +39,8 @@ public:
             AffineTransform spaceTransform;
         };
 
-        std::variant<LogicalGradient, Ref<Pattern>> brush;
+        using Variant = std::variant<LogicalGradient, Ref<Pattern>>;
+        Variant brush;
     };
 
     SourceBrush() = default;
