@@ -100,6 +100,35 @@ fn testTextureSample() {
   }
 }
 
+fn testVec2() {
+  // FIXME: overload resolution should support explicitly instantiating variables
+  // let v1 = vec2<i32>(vec2(0, 0));
+  let v2 = vec2(vec2(0, 0));
+  let v3 = vec2(0, 0);
+}
+
+fn testVec3() {
+  // FIXME: overload resolution should support explicitly instantiating variables
+  // let v1 = vec3<i32>(vec3(0, 0, 0));
+  let v2 = vec3(vec3(0, 0, 0));
+  let v3 = vec3(0, 0, 0);
+  let v4 = vec3(vec2(0, 0), 0);
+  let v5 = vec3(0, vec2(0, 0));
+}
+
+fn testVec4() {
+  // FIXME: overload resolution should support explicitly instantiating variables
+  // let v1 = vec4<i32>(vec4(0, 0, 0, 0));
+  let v2 = vec4(vec4(0, 0, 0, 0));
+  let v3 = vec4(0, 0, 0, 0);
+  let v4 = vec4(0, vec2(0, 0), 0);
+  let v5 = vec4(0, 0, vec2(0, 0));
+  let v6 = vec4(vec2(0, 0), 0, 0);
+  let v7 = vec4(vec2(0, 0), vec2(0, 0));
+  let v8 = vec4(vec3(0, 0, 0), 0);
+  let v9 = vec4(0, vec3(0, 0, 0));
+}
+
 fn testMatrixConstructor() {
   {
     // FIXME: overload resolution should support explicitly instantiating variables

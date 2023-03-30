@@ -46,9 +46,14 @@ struct TypeVariable {
 
         I32 = 1 << 3,
         U32 = 1 << 4,
-        ConcreteInteger = I32 | U32,
         AbstractInt = 1 << 5,
+        ConcreteInteger = I32 | U32,
         Integer = ConcreteInteger | AbstractInt,
+
+        Bool = 1 << 6,
+
+        Scalar = Bool | Integer | Float,
+        ConcreteScalar = Bool | ConcreteInteger | ConcreteFloat,
 
         Number = Float | Integer,
     };
