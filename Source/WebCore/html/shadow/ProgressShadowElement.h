@@ -77,7 +77,7 @@ static_assert(sizeof(ProgressBarElement) == sizeof(ProgressShadowElement));
 class ProgressValueElement final : public ProgressShadowElement {
 public:
     static Ref<ProgressValueElement> create(Document&);
-    void setWidthPercentage(double);
+    void setInlineSizePercentage(double);
 
 private:
     ProgressValueElement(Document&);
