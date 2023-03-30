@@ -681,6 +681,9 @@ void DrawingAreaCoordinatedGraphics::enterAcceleratedCompositingMode(GraphicsLay
 
     m_layerTreeHost->setRootCompositingLayer(graphicsLayer);
 
+    send(Messages::DrawingAreaProxy::EnterAcceleratedCompositingMode(m_backingStoreStateID, m_layerTreeHost->layerTreeContext()));
+    m_compositingAccordingToProxyMessages = true;
+
     // Non-composited content will now be handled exclusively by the layer tree host.
     m_dirtyRegion = WebCore::Region();
     m_scrollRect = IntRect();
