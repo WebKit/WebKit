@@ -41,7 +41,8 @@ struct TypeVariable {
         F16 = 1 << 0,
         F32 = 1 << 1,
         AbstractFloat = 1 << 2,
-        Float = F16 | F32 | AbstractFloat,
+        ConcreteFloat = F16 | F32,
+        Float = ConcreteFloat | AbstractFloat,
 
         I32 = 1 << 3,
         U32 = 1 << 4,

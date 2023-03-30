@@ -26,3 +26,15 @@ operator :textureSample, {
     # FIXME: add overloads for texture_depth
     # https://bugs.webkit.org/show_bug.cgi?id=254515
 }
+
+(2..4).each do |columns|
+    (2..4).each do |rows|
+        operator :"mat#{columns}x#{rows}", {
+            # FIXME: overload resolution should support explicitly instantiating variables
+            # [T < ConcreteFloat, S < Float].(Matrix[S, columns, rows]) => Matrix[T, columns, rows],
+            [T < Float].(Matrix[T, columns, rows]) => Matrix[T, columns, rows],
+            [T < Float].(*([T] * columns * rows)) => Matrix[T, columns, rows],
+            [T < Float].(*([Vector[T, rows]] * columns)) => Matrix[T, columns, rows],
+        }
+    end
+end

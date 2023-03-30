@@ -281,6 +281,7 @@ module DSL
         AbstractInt = PrimitiveType.new(:AbstractInt)
 
 
+        S = Variable.new(:S, @TypeVariable)
         T = Variable.new(:T, @TypeVariable)
         N = Variable.new(:N, @NumericVariable)
         C = Variable.new(:C, @NumericVariable)
@@ -289,6 +290,7 @@ module DSL
         Number = Constraint.new(:Number)
         Float = Constraint.new(:Float)
         ConcreteInteger = Constraint.new(:ConcreteInteger)
+        ConcreteFloat = Constraint.new(:ConcreteFloat)
         EOS
     end
 
