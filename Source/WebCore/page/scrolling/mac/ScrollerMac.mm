@@ -383,10 +383,13 @@ void ScrollerMac::updatePairScrollerImps()
 
 String ScrollerMac::scrollbarState() const
 {
+    if (!m_hostLayer || !m_scrollerImp)
+        return "none"_s;
+
     StringBuilder result;
     result.append([m_scrollerImp isEnabled] ? "enabled"_s: "disabled"_s);
 
-    if (!m_scrollerImp)
+    if (m_pair.scrollbarStyle() != WebCore::ScrollbarStyle::Overlay)
         return result.toString();
 
     if ([m_scrollerImp isExpanded])
