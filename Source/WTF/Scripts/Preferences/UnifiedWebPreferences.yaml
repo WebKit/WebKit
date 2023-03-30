@@ -2818,7 +2818,7 @@ ICECandidateFilteringEnabled:
 
 IOSFormControlRefreshEnabled:
   type: bool
-  status: unstable
+  status: internal
   category: dom
   humanReadableName: "iOS Form Control Refresh"
   humanReadableDescription: "Enable the new appearance for form controls on iOS"
