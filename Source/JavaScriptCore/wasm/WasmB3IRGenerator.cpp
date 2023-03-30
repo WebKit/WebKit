@@ -602,6 +602,7 @@ public:
     PartialResult WARN_UNUSED_RETURN addI31GetU(ExpressionType ref, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addArrayNew(uint32_t index, ExpressionType size, ExpressionType value, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addArrayNewDefault(uint32_t index, ExpressionType size, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addArrayNewFixed(uint32_t typeIndex, Vector<ExpressionType>& args, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addArrayGet(ExtGCOpType arrayGetKind, uint32_t typeIndex, ExpressionType arrayref, ExpressionType index, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addArrayNewData(uint32_t typeIndex, uint32_t dataIndex, ExpressionType size, ExpressionType offset, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addArrayNewElem(uint32_t typeIndex, uint32_t elemSegmentIndex, ExpressionType size, ExpressionType offset, ExpressionType& result);
@@ -673,6 +674,10 @@ public:
     ALWAYS_INLINE void didParseOpcode() { }
     void didFinishParsingLocals() { }
     void didPopValueFromStack() { --m_stackSize; }
+    const Ref<TypeDefinition> getTypeDefinition(uint32_t typeIndex) { return m_info.typeSignatures[typeIndex]; }
+    const ArrayType* getArrayTypeDefinition(uint32_t);
+    void getArrayElementType(uint32_t, StorageType&);
+    void getArrayRefType(uint32_t, Type&);
 
     bool canInline() const;
 
@@ -743,6 +748,8 @@ private:
     Value* emitAtomicBinaryRMWOp(ExtAtomicOpType, Type, Value* pointer, Value*, uint32_t offset);
     Value* emitAtomicCompareExchange(ExtAtomicOpType, Type, Value* pointer, Value* expected, Value*, uint32_t offset);
 
+    void emitArrayNullCheck(Value*);
+    void emitArraySetUnchecked(uint32_t, Value*, Value*, Value*);
     void emitStructSet(Value*, uint32_t, const StructType&, Value*);
     ExpressionType WARN_UNUSED_RETURN pushArrayNew(uint32_t typeIndex, Value* initValue, ExpressionType size);
     using arraySegmentOperation = EncodedJSValue (&)(JSC::Wasm::Instance*, uint32_t, uint32_t, uint32_t, uint32_t);
@@ -2814,12 +2821,35 @@ Variable* B3IRGenerator::pushArrayNew(uint32_t typeIndex, Value* initValue, Expr
         get(size), initValue));
 }
 
+// Given a type index, verify that it's an array type and return its expansion
+const ArrayType* B3IRGenerator::getArrayTypeDefinition(uint32_t typeIndex)
+{
+    Ref<Wasm::TypeDefinition> typeDef = getTypeDefinition(typeIndex);
+    const Wasm::TypeDefinition& arraySignature = typeDef->expand();
+    ASSERT(arraySignature.is<ArrayType>());
+    return arraySignature.as<ArrayType>();
+}
+
+// Given a type index for an array signature, look it up, expand it and
+// return the element type
+void B3IRGenerator::getArrayElementType(uint32_t typeIndex, StorageType& result)
+{
+    const ArrayType* arrayType = getArrayTypeDefinition(typeIndex);
+    result = arrayType->elementType().type;
+}
+
+// Given a type index, verify that it's an array type and return the type (Ref a)
+void B3IRGenerator::getArrayRefType(uint32_t typeIndex, Type& result)
+{
+    Ref<Wasm::TypeDefinition> typeDef = getTypeDefinition(typeIndex);
+    result = Type { TypeKind::Ref, typeDef->index() };
+}
+
 auto B3IRGenerator::addArrayNew(uint32_t typeIndex, ExpressionType size, ExpressionType value, ExpressionType& result) -> PartialResult
 {
 #if ASSERT_ENABLED
-    const Wasm::TypeDefinition& arraySignature = m_info.typeSignatures[typeIndex]->expand();
-    ASSERT(arraySignature.is<ArrayType>());
-    const StorageType& elementType = arraySignature.as<ArrayType>()->elementType().type;
+    StorageType elementType;
+    getArrayElementType(typeIndex, elementType);
     ASSERT(toB3Type(elementType.unpacked()) == value->type());
 #endif
 
@@ -2857,11 +2887,11 @@ Variable* B3IRGenerator::pushArrayNewFromSegment(arraySegmentOperation operation
 
 auto B3IRGenerator::addArrayNewDefault(uint32_t typeIndex, ExpressionType size, ExpressionType& result) -> PartialResult
 {
-    const Wasm::TypeDefinition& arraySignature = m_info.typeSignatures[typeIndex]->expand();
-    ASSERT(arraySignature.is<ArrayType>());
+    StorageType elementType;
+    getArrayElementType(typeIndex, elementType);
 
     Value* initValue;
-    if (Wasm::isRefType(arraySignature.as<ArrayType>()->elementType().type))
+    if (Wasm::isRefType(elementType))
         initValue = m_currentBlock->appendNew<Const64Value>(m_proc, origin(), JSValue::encode(jsNull()));
     else
         initValue = m_currentBlock->appendNew<Const64Value>(m_proc, origin(), 0);
@@ -2881,15 +2911,40 @@ auto B3IRGenerator::addArrayNewData(uint32_t typeIndex, uint32_t dataIndex, Expr
 auto B3IRGenerator::addArrayNewElem(uint32_t typeIndex, uint32_t elemSegmentIndex, ExpressionType arraySize, ExpressionType offset, ExpressionType& result) -> PartialResult
 {
     result = pushArrayNewFromSegment(operationWasmArrayNewElem, typeIndex, elemSegmentIndex, arraySize, offset, ExceptionType::OutOfBoundsElementSegmentAccess);
+    return { };
+}
+
+auto B3IRGenerator::addArrayNewFixed(uint32_t typeIndex, Vector<ExpressionType>& args, ExpressionType& result) -> PartialResult
+{
+    // Get the result type for the array.new_fixed operation
+    Type resultType;
+    getArrayRefType(typeIndex, resultType);
+
+    // Allocate an uninitialized array whose length matches the argument count
+
+    // FIXME: inline the allocation.
+    // https://bugs.webkit.org/show_bug.cgi?id=244388
+    Value* arrayValue = callWasmOperation(m_currentBlock, toB3Type(resultType), operationWasmArrayNewEmpty,
+        instanceValue(), m_currentBlock->appendNew<Const32Value>(m_proc, origin(), typeIndex),
+        m_currentBlock->appendNew<Const32Value>(m_proc, origin(), args.size()));
+
+    // Ensure array is non-null
+    emitArrayNullCheck(arrayValue);
+
+    for (uint32_t i = 0; i < args.size(); ++i) {
+        // Emit the array set code -- note that this omits the bounds check, since
+        // if operationWasmArrayNewEmpty() returned a non-null value, it's an array of the right size
+        emitArraySetUnchecked(typeIndex, arrayValue, m_currentBlock->appendNew<Const32Value>(m_proc, origin(), i), get(args[i]));
+    }
+    result = push(arrayValue);
 
     return { };
 }
 
 auto B3IRGenerator::addArrayGet(ExtGCOpType arrayGetKind, uint32_t typeIndex, ExpressionType arrayref, ExpressionType index, ExpressionType& result) -> PartialResult
 {
-    const Wasm::TypeDefinition& arraySignature = m_info.typeSignatures[typeIndex]->expand();
-    ASSERT(arraySignature.is<ArrayType>());
-    Wasm::StorageType elementType = arraySignature.as<ArrayType>()->elementType().type;
+    StorageType elementType;
+    getArrayElementType(typeIndex, elementType);
     Wasm::Type resultType = elementType.unpacked();
 
     // Ensure arrayref is non-null.
@@ -2965,35 +3020,20 @@ auto B3IRGenerator::addArrayGet(ExtGCOpType arrayGetKind, uint32_t typeIndex, Ex
     return { };
 }
 
-auto B3IRGenerator::addArraySet(uint32_t typeIndex, ExpressionType arrayref, ExpressionType index, ExpressionType value) -> PartialResult
+void B3IRGenerator::emitArrayNullCheck(Value* arrayref)
 {
-#if ASSERT_ENABLED
-    const Wasm::TypeDefinition& arraySignature = m_info.typeSignatures[typeIndex]->expand();
-    ASSERT(arraySignature.is<ArrayType>());
-#endif
+    CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(),
+        m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), arrayref, m_currentBlock->appendNew<Const64Value>(m_proc, origin(), JSValue::encode(jsNull()))));
+    check->setGenerator([=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+        this->emitExceptionCheck(jit, ExceptionType::NullArraySet);
+    });
+}
 
-    // Ensure arrayref is non-null.
-    {
-        CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(),
-            m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), get(arrayref), m_currentBlock->appendNew<Const64Value>(m_proc, origin(), JSValue::encode(jsNull()))));
-        check->setGenerator([=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
-            this->emitExceptionCheck(jit, ExceptionType::NullArraySet);
-        });
-    }
-
-    // Check array bounds.
-    Value* arraySize = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, Int32, origin(),
-        get(arrayref), safeCast<int32_t>(JSWebAssemblyArray::offsetOfSize()));
-    {
-        CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(),
-            m_currentBlock->appendNew<Value>(m_proc, AboveEqual, origin(), get(index), arraySize));
-        check->setGenerator([=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
-            this->emitExceptionCheck(jit, ExceptionType::OutOfBoundsArraySet);
-        });
-    }
-
-    Value* setValue = get(value);
-    if (value->type() == B3::Float || value->type() == B3::Double) {
+// Does the array set without null check and bounds checks -- can be
+// called directly by addArrayNewFixed()
+void B3IRGenerator::emitArraySetUnchecked(uint32_t typeIndex, Value* arrayref, Value* index, Value* setValue)
+{
+    if (setValue->type() == B3::Float || setValue->type() == B3::Double) {
         PatchpointValue* patchpoint = m_currentBlock->appendNew<PatchpointValue>(m_proc, B3::Int64, origin());
         patchpoint->appendSomeRegister(setValue);
         patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
@@ -3006,7 +3046,32 @@ auto B3IRGenerator::addArraySet(uint32_t typeIndex, ExpressionType arrayref, Exp
     // https://bugs.webkit.org/show_bug.cgi?id=245405
     callWasmOperation(m_currentBlock, B3::Void, operationWasmArraySet,
         instanceValue(), m_currentBlock->appendNew<Const32Value>(m_proc, origin(), typeIndex),
-        get(arrayref), get(index), setValue);
+        arrayref, index, setValue);
+
+}
+
+auto B3IRGenerator::addArraySet(uint32_t typeIndex, ExpressionType arrayref, ExpressionType index, ExpressionType value) -> PartialResult
+{
+#if ASSERT_ENABLED
+    const ArrayType* arrayType = getArrayTypeDefinition(typeIndex);
+    UNUSED_VARIABLE(arrayType);
+#endif
+
+    // Check for null array
+    emitArrayNullCheck(get(arrayref));
+
+    // Check array bounds.
+    Value* arraySize = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, Int32, origin(),
+        get(arrayref), safeCast<int32_t>(JSWebAssemblyArray::offsetOfSize()));
+    {
+        CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(),
+            m_currentBlock->appendNew<Value>(m_proc, AboveEqual, origin(), get(index), arraySize));
+        check->setGenerator([=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+            this->emitExceptionCheck(jit, ExceptionType::OutOfBoundsArraySet);
+        });
+    }
+
+    emitArraySetUnchecked(typeIndex, get(arrayref), get(index), get(value));
 
     return { };
 }
