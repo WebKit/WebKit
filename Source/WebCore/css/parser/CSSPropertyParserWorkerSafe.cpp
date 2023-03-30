@@ -226,7 +226,7 @@ static RefPtr<CSSFontFaceSrcResourceValue> consumeFontFaceSrcURI(CSSParserTokenR
         if (!args.atEnd())
             return nullptr;
         if (arg.type() == IdentToken) {
-            if (!CSSPropertyParserHelpers::identMatches<CSSValueCollection, CSSValueEmbeddedOpentype, CSSValueOpentype, CSSValueSvg, CSSValueTruetype, CSSValueWoff, CSSValueWoff2>(arg.id()))
+            if (!CSSPropertyParserHelpers::identMatchesSupportedFontFormat(arg.id()))
                 return nullptr;
         } else if (arg.type() != StringToken)
             return nullptr;

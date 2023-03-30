@@ -8176,6 +8176,19 @@ RefPtr<CSSValue> consumeFontFaceFontFamily(CSSParserTokenRange& range)
     return CSSValueList::createCommaSeparated(name.releaseNonNull());
 }
 
+bool identMatchesSupportedFontFormat(CSSValueID id)
+{
+    return identMatches<
+        CSSValueCollection,
+        CSSValueEmbeddedOpentype,
+        CSSValueOpentype,
+        CSSValueSvg,
+        CSSValueTruetype,
+        CSSValueWoff,
+        CSSValueWoff2
+    >(id);
+}
+
 // MARK: @font-palette-values
 
 RefPtr<CSSValue> consumeFontPaletteValuesOverrideColors(CSSParserTokenRange& range, const CSSParserContext& context)

@@ -123,11 +123,28 @@ CSSSupportsParser::SupportsResult CSSSupportsParser::consumeNegation(CSSParserTo
     return result ? Unsupported : Supported;
 }
 
+// <supports-selector-fn> | <supports-font-format-fn>
+CSSSupportsParser::SupportsResult CSSSupportsParser::consumeSupportsFunction(CSSParserTokenRange& range)
+{
+    if (range.peek().type() != FunctionToken)
+        return Invalid;
+
+    switch (range.peek().functionId()) {
+    case CSSValueSelector:
+        return consumeSupportsSelectorFunction(range);
+    case CSSValueFontFormat:
+        return consumeSupportsFontFormatFunction(range);
+    default:
+        return Invalid;
+    }
+}
+
+// <supports-feature> | <general-enclosed>
 CSSSupportsParser::SupportsResult CSSSupportsParser::consumeSupportsFeatureOrGeneralEnclosed(CSSParserTokenRange& range)
 {
     if (range.peek().type() == FunctionToken) {
-        if (range.peek().functionId() == CSSValueSelector)
-            return consumeSupportsSelectorFunction(range);
+        if (auto result = consumeSupportsFunction(range); result != Invalid)
+            return result;
 
         range.consumeComponentValue();
         return Unsupported;
@@ -136,10 +153,10 @@ CSSSupportsParser::SupportsResult CSSSupportsParser::consumeSupportsFeatureOrGen
     return range.peek().type() == IdentToken && m_parser.supportsDeclaration(range) ? Supported : Unsupported;
 }
 
+// <supports-selector-fn>
 CSSSupportsParser::SupportsResult CSSSupportsParser::consumeSupportsSelectorFunction(CSSParserTokenRange& range)
 {
-    if (range.peek().type() != FunctionToken || range.peek().functionId() != CSSValueSelector)
-        return Invalid;
+    ASSERT(range.peek().type() == FunctionToken && range.peek().functionId() == CSSValueSelector);
 
     auto block = range.consumeBlock();
     block.consumeWhitespace();
@@ -147,25 +164,36 @@ CSSSupportsParser::SupportsResult CSSSupportsParser::consumeSupportsSelectorFunc
     return CSSSelectorParser::supportsComplexSelector(block, m_parser.context(), m_isNestedContext) ? Supported : Unsupported;
 }
 
+// <supports-font-format-fn>
+CSSSupportsParser::SupportsResult CSSSupportsParser::consumeSupportsFontFormatFunction(CSSParserTokenRange& range)
+{
+    ASSERT(range.peek().type() == FunctionToken && range.peek().functionId() == CSSValueFontFormat);
+
+    auto block = range.consumeBlock();
+    block.consumeWhitespace();
+
+    auto isSupported = CSSPropertyParserHelpers::consumeIdent(block, CSSPropertyParserHelpers::identMatchesSupportedFontFormat) ? Supported : Unsupported;
+    if (!block.atEnd())
+        return Unsupported;
+
+    return isSupported;
+}
+
+// <supports-in-parens> = ( <supports-condition> ) | <supports-feature> | <general-enclosed>
 CSSSupportsParser::SupportsResult CSSSupportsParser::consumeConditionInParenthesis(CSSParserTokenRange& range,  CSSParserTokenType startTokenType)
 {
-    // <supports-in-parens> = ( <supports-condition> ) | <supports-feature> | <general-enclosed>
     if (startTokenType == IdentToken && range.peek().type() != LeftParenthesisToken) {
-        if (range.peek().type() == FunctionToken && range.peek().functionId() == CSSValueSelector)
-            return consumeSupportsSelectorFunction(range);
-
+        if (auto result = consumeSupportsFunction(range); result != Invalid)
+            return result;
         return Invalid;
     }
 
     auto innerRange = range.consumeBlock();
     innerRange.consumeWhitespace();
 
-    auto result = consumeCondition(innerRange);
-    if (result != Invalid)
+    if (auto result = consumeCondition(innerRange); result != Invalid)
         return result;
 
-    // <supports-feature> = <supports-selector-fn> | <supports-decl>
-    // <general-enclosed>
     return consumeSupportsFeatureOrGeneralEnclosed(innerRange);
 }
 
