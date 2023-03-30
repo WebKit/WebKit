@@ -44,11 +44,23 @@ inline EncodedJSValue refFunc(Instance* instance, uint32_t index)
     return JSValue::encode(value);
 }
 
-inline EncodedJSValue arrayNew(Instance* instance, uint32_t typeIndex, uint32_t size, EncodedJSValue encValue)
+template <typename T>
+JSWebAssemblyArray* fillArray(Instance* instance, Wasm::FieldType fieldType, uint32_t size, EncodedJSValue value, RefPtr<const Wasm::RTT> rtt)
 {
     JSGlobalObject* globalObject = instance->globalObject();
     VM& vm = instance->vm();
 
+    FixedVector<T> values(size);
+    if (!size)
+        return JSWebAssemblyArray::create(vm, globalObject->webAssemblyArrayStructure(), fieldType, size, WTFMove(values), rtt);
+
+    for (unsigned i = 0; i < size; i++)
+        values[i] = static_cast<T>(value);
+    return JSWebAssemblyArray::create(vm, globalObject->webAssemblyArrayStructure(), fieldType, size, WTFMove(values), rtt);
+}
+
+inline EncodedJSValue arrayNew(Instance* instance, uint32_t typeIndex, uint32_t size, EncodedJSValue encValue)
+{
     ASSERT(typeIndex < instance->module().moduleInformation().typeCount());
 
     const Wasm::TypeDefinition& arraySignature = instance->module().moduleInformation().typeSignatures[typeIndex]->expand();
@@ -58,45 +70,87 @@ inline EncodedJSValue arrayNew(Instance* instance, uint32_t typeIndex, uint32_t 
 
     size_t elementSize = fieldType.type.elementSize();
 
-    Structure* arrayStructure = globalObject->webAssemblyArrayStructure();
     JSWebAssemblyArray* array = nullptr;
 
     switch (elementSize) {
     case sizeof(uint8_t): {
         // `encValue` must be an unboxed int32 (since the typechecker guarantees that its type is i32); so it's safe to truncate it in the cases below.
         ASSERT(encValue <= UINT32_MAX);
-        FixedVector<uint8_t> values(size);
-        for (unsigned i = 0; i < size; i++)
-            values[i] = static_cast<uint8_t>(encValue);
-        array = JSWebAssemblyArray::create(vm, arrayStructure, fieldType, size, WTFMove(values), arrayRTT);
+        array = fillArray<uint8_t>(instance, fieldType, size, encValue, arrayRTT);
         break;
     }
     case sizeof(uint16_t): {
         ASSERT(encValue <= UINT32_MAX);
-        FixedVector<uint16_t> values(size);
-        for (unsigned i = 0; i < size; i++)
-            values[i] = static_cast<uint16_t>(encValue);
-        array = JSWebAssemblyArray::create(vm, arrayStructure, fieldType, size, WTFMove(values), arrayRTT);
+        array = fillArray<uint16_t>(instance, fieldType, size, encValue, arrayRTT);
         break;
     }
     case sizeof(uint32_t): {
         ASSERT(encValue <= UINT32_MAX);
-        FixedVector<uint32_t> values(size);
-        for (unsigned i = 0; i < size; i++)
-            values[i] = static_cast<uint32_t>(encValue);
-        array = JSWebAssemblyArray::create(vm, arrayStructure, fieldType, size, WTFMove(values), arrayRTT);
+        array = fillArray<uint32_t>(instance, fieldType, size, encValue, arrayRTT);
         break;
     }
     case sizeof(uint64_t): {
-        FixedVector<uint64_t> values(size);
-        for (unsigned i = 0; i < size; i++)
-            values[i] = static_cast<uint64_t>(encValue);
-        array = JSWebAssemblyArray::create(vm, arrayStructure, fieldType, size, WTFMove(values), arrayRTT);
+        array = fillArray<uint64_t>(instance, fieldType, size, encValue, arrayRTT);
         break;
     }
     default:
         RELEASE_ASSERT_NOT_REACHED();
     }
+    ASSERT(array);
+    return JSValue::encode(JSValue(array));
+}
+
+template <typename T>
+JSWebAssemblyArray* copyElementsInReverse(Instance* instance, Wasm::FieldType fieldType, uint32_t size, uint64_t* arguments, RefPtr<const Wasm::RTT> rtt)
+{
+    JSGlobalObject* globalObject = instance->globalObject();
+    VM& vm = instance->vm();
+
+    FixedVector<T> values(size);
+    if (!size)
+        return JSWebAssemblyArray::create(vm, globalObject->webAssemblyArrayStructure(), fieldType, size, WTFMove(values), rtt);
+
+    ASSERT(arguments);
+    for (int srcIndex = size - 1; srcIndex >= 0; srcIndex--) {
+        unsigned dstIndex = size - srcIndex - 1;
+        values[dstIndex] = static_cast<T>(arguments[srcIndex]);
+    }
+    return JSWebAssemblyArray::create(vm, globalObject->webAssemblyArrayStructure(), fieldType, size, WTFMove(values), rtt);
+}
+
+// Expects arguments in reverse order
+inline EncodedJSValue arrayNewFixed(Instance* instance, uint32_t typeIndex, uint32_t size, uint64_t* arguments)
+{
+    // Get the array element type and determine the element size
+    const Wasm::TypeDefinition& arraySignature = instance->module().moduleInformation().typeSignatures[typeIndex]->expand();
+    ASSERT(arraySignature.is<ArrayType>());
+    Wasm::FieldType fieldType = arraySignature.as<ArrayType>()->elementType();
+    size_t elementSize = fieldType.type.elementSize();
+    auto arrayRTT = instance->module().moduleInformation().rtts[typeIndex];
+
+    // Copy the elements into the result array in reverse order
+    JSWebAssemblyArray* array = nullptr;
+    switch (elementSize) {
+    case sizeof(uint8_t): {
+        array = copyElementsInReverse<uint8_t>(instance, fieldType, size, arguments, arrayRTT);
+        break;
+    }
+    case sizeof(uint16_t): {
+        array = copyElementsInReverse<uint16_t>(instance, fieldType, size, arguments, arrayRTT);
+        break;
+    }
+    case sizeof(uint32_t): {
+        array = copyElementsInReverse<uint32_t>(instance, fieldType, size, arguments, arrayRTT);
+        break;
+    }
+    case sizeof(uint64_t): {
+        array = copyElementsInReverse<uint64_t>(instance, fieldType, size, arguments, arrayRTT);
+        break;
+    }
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+    ASSERT(array);
     return JSValue::encode(JSValue(array));
 }
 

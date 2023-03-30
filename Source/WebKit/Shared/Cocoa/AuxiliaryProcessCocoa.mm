@@ -35,6 +35,7 @@
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <mach/task.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
+#import <pal/spi/cocoa/NSKeyedUnarchiverSPI.h>
 #import <wtf/cocoa/Entitlements.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #import <wtf/cocoa/SoftLinking.h>
@@ -157,16 +158,22 @@ id AuxiliaryProcess::decodePreferenceValue(const std::optional<String>& encodedV
         return nil;
     
     auto encodedData = adoptNS([[NSData alloc] initWithBase64EncodedString:*encodedValue options:0]);
-    if (!encodedData)
-        return nil;
-    NSError *err = nil;
-    auto classes = [NSSet setWithArray:@[[NSString class], [NSNumber class], [NSDate class], [NSDictionary class], [NSArray class], [NSData class]]];
-    id value = [NSKeyedUnarchiver unarchivedObjectOfClasses:classes fromData:encodedData.get() error:&err];
-    ASSERT(!err);
-    if (err)
-        return nil;
-
-    return value;
+    auto classes = [NSSet setWithObjects:
+        NSString.class,
+        NSMutableString.class,
+        NSNumber.class,
+        NSDate.class,
+        NSDictionary.class,
+        NSMutableDictionary.class,
+        NSArray.class,
+        NSMutableArray.class,
+        NSData.class,
+        NSMutableData.class,
+    nil];
+    NSError *error { nil };
+    id result = [NSKeyedUnarchiver _strictlyUnarchivedObjectOfClasses:classes fromData:encodedData.get() error:&error];
+    ASSERT(!error);
+    return result;
 }
 
 void AuxiliaryProcess::setPreferenceValue(const String& domain, const String& key, id value)

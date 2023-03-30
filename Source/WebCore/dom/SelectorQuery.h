@@ -26,8 +26,10 @@
 #pragma once
 
 #include "CSSSelectorList.h"
+#include "CSSSelectorParser.h"
 #include "ExceptionOr.h"
 #include "NodeList.h"
+#include "SecurityOriginData.h"
 #include "SelectorCompiler.h"
 #include <wtf/HashMap.h>
 #include <wtf/Vector.h>
@@ -108,9 +110,14 @@ private:
 class SelectorQueryCache {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    ExceptionOr<SelectorQuery&> add(const String&, Document&);
+    static SelectorQueryCache& singleton();
+
+    SelectorQuery* add(const String&, const Document&);
+    void clear();
+
 private:
-    HashMap<String, std::unique_ptr<SelectorQuery>> m_entries;
+    using Key = std::tuple<String, CSSSelectorParserContext, SecurityOriginData>;
+    HashMap<Key, std::unique_ptr<SelectorQuery>> m_entries;
 };
 
 inline bool SelectorQuery::matches(Element& element) const

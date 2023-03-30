@@ -407,4 +407,4 @@ bool HTMLFormControlElement::needsMouseFocusableQuirk() const
     return document().quirks().needsFormControlToBeMouseFocusable();
 }
 
-} // namespace Webcore
+} // namespace WebCore

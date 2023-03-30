@@ -16,7 +16,7 @@ function runTest()
 
     subDocument = document.getElementById("subframe").contentDocument;
     shouldBe('subDocument.getElementById("div").contentEditable', '"inherit"');
-    shouldBe('subDocument.getElementById("div").isContentEditable', 'true');
+    shouldBe('subDocument.getElementById("div").isContentEditable', 'false');
 
     document.getElementById("subframe").style.display= 'none';
 }

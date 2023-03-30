@@ -6688,10 +6688,10 @@ class TestValidateSquashed(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['git', 'log', '--oneline', 'HEAD', '^origin/main', '--max-count=2'],
+                        command=['git', 'log', '--format=format:"%H"', 'HEAD', '^origin/main', '--max-count=51'],
                         )
             + 0
-            + ExpectShell.log('stdio', stdout='e1eb24603493 (HEAD -> eng/pull-request-branch) First line of commit\n'),
+            + ExpectShell.log('stdio', stdout='e1eb24603493\n'),
         )
         self.expectOutcome(result=SUCCESS, state_string='Verified commit is squashed')
         return self.runStep()
@@ -6702,13 +6702,10 @@ class TestValidateSquashed(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['git', 'log', '--oneline', 'HEAD', '^origin/main', '--max-count=2'],
+                        command=['git', 'log', '--format=format:"%H"', 'HEAD', '^origin/main', '--max-count=51'],
                         )
             + 0
-            + ExpectShell.log('stdio', stdout='''e1eb24603493 (HEAD -> eng/pull-request-branch) Commit Series (3)
-08abb9ddcbb5 Commit Series (2)
-45cf3efe4dfb Commit Series (1)
-'''),
+            + ExpectShell.log('stdio', stdout='e1eb24603493\n08abb9ddcbb5\n45cf3efe4dfb\n'),
         )
         self.expectOutcome(result=FAILURE, state_string='Can only land squashed commits')
         rc = self.runStep()
@@ -6724,10 +6721,10 @@ class TestValidateSquashed(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['git', 'log', '--oneline', 'eng/pull-request-branch', '^main', '--max-count=2'],
+                        command=['git', 'log', '--format=format:"%H"', 'eng/pull-request-branch', '^main', '--max-count=51'],
                         )
             + 0
-            + ExpectShell.log('stdio', stdout='e1eb24603493 (HEAD -> eng/pull-request-branch) First line of commit\n'),
+            + ExpectShell.log('stdio', stdout='e1eb24603493\n'),
         )
         self.expectOutcome(result=SUCCESS, state_string='Verified commit is squashed')
         return self.runStep()
@@ -6740,13 +6737,10 @@ class TestValidateSquashed(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['git', 'log', '--oneline', 'eng/pull-request-branch', '^main', '--max-count=2'],
+                        command=['git', 'log', '--format=format:"%H"', 'eng/pull-request-branch', '^main', '--max-count=51'],
                         )
             + 0
-            + ExpectShell.log('stdio', stdout='''e1eb24603493 (HEAD -> eng/pull-request-branch) Commit Series (3)
-08abb9ddcbb5 Commit Series (2)
-45cf3efe4dfb Commit Series (1)
-'''),
+            + ExpectShell.log('stdio', stdout='e1eb24603493\n08abb9ddcbb5\n45cf3efe4dfb\n'),
         )
         self.expectOutcome(result=FAILURE, state_string='Can only land squashed commits')
         rc = self.runStep()
@@ -6762,7 +6756,7 @@ class TestValidateSquashed(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['git', 'log', '--oneline', 'eng/pull-request-branch', '^main', '--max-count=2'],
+                        command=['git', 'log', '--format=format:"%H"', 'eng/pull-request-branch', '^main', '--max-count=51'],
                         )
             + 0
             + ExpectShell.log('stdio', stdout=''),
@@ -6771,6 +6765,46 @@ class TestValidateSquashed(BuildStepMixinAdditions, unittest.TestCase):
         rc = self.runStep()
         self.assertEqual(self.getProperty('comment_text'), 'This change contains multiple commits which are not squashed together, blocking PR #1234. Please squash the commits to land.')
         self.assertEqual(self.getProperty('build_finish_summary'), 'Can only land squashed commits')
+        return rc
+
+    def test_success_multiple_commits_cherry_pick(self):
+        self.setupStep(ValidateSquashed())
+        self.setProperty('github.number', '1234')
+        self.setProperty('github.base.ref', 'main')
+        self.setProperty('github.head.ref', 'eng/pull-request-branch')
+        self.setProperty('classification', ['Cherry-pick'])
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logEnviron=False,
+                        command=['git', 'log', '--format=format:"%H"', 'eng/pull-request-branch', '^main', '--max-count=51'],
+                        )
+            + 0
+            + ExpectShell.log('stdio', stdout='e1eb24603493\n08abb9ddcbb5\n45cf3efe4dfb\n'),
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Commit sequence is entirely cherry-picks')
+        rc = self.runStep()
+        self.assertEqual(self.getProperty('commit_count'), 3)
+        return rc
+
+    def test_failure_too_many_commits_cherry_pick(self):
+        self.setupStep(ValidateSquashed())
+        self.setProperty('github.number', '1234')
+        self.setProperty('github.base.ref', 'main')
+        self.setProperty('github.head.ref', 'eng/pull-request-branch')
+        self.setProperty('classification', ['Cherry-pick'])
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logEnviron=False,
+                        command=['git', 'log', '--format=format:"%H"', 'eng/pull-request-branch', '^main', '--max-count=51'],
+                        )
+            + 0
+            + ExpectShell.log('stdio', stdout='e1eb24603493\n' + 50 * '08abb9ddcbb5\n'),
+        )
+        self.expectOutcome(result=FAILURE, state_string='Too many commits in a pull-request')
+        rc = self.runStep()
+        self.assertEqual(self.getProperty('commit_count'), 51)
+        self.assertEqual(self.getProperty('comment_text'), 'Policy allows for multiple cherry-picks to be landed simultaneously but there is a limit of 50, blocking PR #1234 because it has 51 commits. Please break this change into multiple pull requests.')
+        self.assertEqual(self.getProperty('build_finish_summary'), 'Too many commits in a pull-request')
         return rc
 
 
@@ -6859,6 +6893,17 @@ class TestAddReviewerToCommitMessage(BuildStepMixinAdditions, unittest.TestCase)
         self.setProperty('github.base.ref', 'main')
         self.setProperty('github.head.ref', 'eng/pull-request-branch')
         self.setProperty('reviewers_full_names', [])
+        self.expectOutcome(result=SKIPPED, state_string='finished (skipped)')
+        return self.runStep()
+
+    def test_skip_cherry_pick(self):
+        self.setupStep(AddReviewerToCommitMessage())
+        self.setProperty('github.number', '1234')
+        self.setProperty('github.base.ref', 'main')
+        self.setProperty('github.head.ref', 'eng/pull-request-branch')
+        self.setProperty('reviewers_full_names', ['WebKit Reviewer', 'Other Reviewer'])
+        self.setProperty('owners', ['webkit-commit-queue'])
+        self.setProperty('classification', ['Cherry-pick'])
         self.expectOutcome(result=SKIPPED, state_string='finished (skipped)')
         return self.runStep()
 
@@ -7130,6 +7175,65 @@ class TestCanonicalize(BuildStepMixinAdditions, unittest.TestCase):
         self.expectOutcome(result=SUCCESS, state_string='Canonicalized commit')
         return self.runStep()
 
+    def test_success_multiple_commits(self):
+        self.setupStep(Canonicalize())
+        self.setProperty('github.number', '1234')
+        self.setProperty('github.base.ref', 'main')
+        self.setProperty('github.head.ref', 'eng/pull-request-branch')
+        self.setProperty('owners', ['webkit-commit-queue'])
+        self.setProperty('remote', 'origin')
+        self.setProperty('commit_count', 4)
+
+        gmtoffset = int(time.localtime().tm_gmtoff * 100 / (60 * 60))
+        fixed_time = int(time.time())
+        date = f'{int(time.time())} {gmtoffset}'
+        time.time = lambda: fixed_time
+
+        self.expectRemoteCommands(
+            ExpectShell(
+                workdir='wkdir',
+                timeout=300,
+                logEnviron=False,
+                env=self.ENV,
+                command=['/bin/sh', '-c', 'rm .git/identifiers.json || true'],
+            ) + 0, ExpectShell(
+                workdir='wkdir',
+                timeout=300,
+                logEnviron=False,
+                env=self.ENV,
+                command=['git', 'pull', 'origin', 'main', '--rebase'],
+            ) + 0, ExpectShell(
+                workdir='wkdir',
+                timeout=300,
+                logEnviron=False,
+                env=self.ENV,
+                command=['git', 'branch', '-f', 'main', 'eng/pull-request-branch'],
+            ) + 0, ExpectShell(
+                workdir='wkdir',
+                timeout=300,
+                logEnviron=False,
+                env=self.ENV,
+                command=['git', 'checkout', 'main'],
+            ) + 0, ExpectShell(
+                workdir='wkdir',
+                timeout=300,
+                logEnviron=False,
+                env=self.ENV,
+                command=['python3', 'Tools/Scripts/git-webkit', 'canonicalize', '-n', '4'],
+            ) + 0, ExpectShell(workdir='wkdir',
+                logEnviron=False,
+                env=self.ENV,
+                timeout=300,
+                command=[
+                    'git', 'filter-branch', '-f',
+                    '--env-filter', "GIT_AUTHOR_DATE='{date}';GIT_COMMITTER_DATE='{date}';GIT_COMMITTER_NAME='WebKit Committer';GIT_COMMITTER_EMAIL='committer@webkit.org'".format(date=date),
+                    'HEAD...HEAD~1',
+                ],
+            ) + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Canonicalized commits')
+        return self.runStep()
+
     def test_success_branch(self):
         self.setupStep(Canonicalize())
         self.setProperty('github.number', '1234')
@@ -7379,7 +7483,7 @@ Canonical link: <a href="https://commits.webkit.org/249006@main">https://commits
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
                         timeout=300,
-                        command=['git', 'log', '-1', '--no-decorate'])
+                        command=['git', 'log', '--no-decorate', '-1'])
             + 0
             + ExpectShell.log('stdio', stdout='''commit 44a3b7100bd5dba51c57d874d3e89f89081e7886
 Author: Jonathan Bedard <jbedard@apple.com>
@@ -7442,7 +7546,7 @@ Canonical link: <a href="https://commits.webkit.org/249833@main">https://commits
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
                         timeout=300,
-                        command=['git', 'log', '-1', '--no-decorate'])
+                        command=['git', 'log', '--no-decorate', '-1'])
             + 0
             + ExpectShell.log('stdio', stdout='''commit 6a50b47fd71d922f753c06f46917086c839520b
 Author: Karl Rackler <rackler@apple.com>
@@ -7480,7 +7584,7 @@ Date:   Thu Apr 21 00:25:03 2022 +0000
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
                         timeout=300,
-                        command=['git', 'log', '-1', '--no-decorate'])
+                        command=['git', 'log', '--no-decorate', '-1'])
             + 0
             + ExpectShell.log('stdio', stdout='''commit 44a3b7100bd5dba51c57d874d3e89f89081e7886
 Author: Jonathan Bedard <jbedard@apple.com>
@@ -7504,6 +7608,165 @@ Date:   Tue Mar 29 16:04:35 2022 -0700
         with current_hostname(EWS_BUILD_HOSTNAME):
             rc = yield self.runStep()
             self.assertEqual(self.getProperty('bug_id'), '238553')
+            self.assertEqual(self.getProperty('is_test_gardening'), False)
+            return rc
+
+    def test_success_series(self):
+
+        def update_pr(x, pr_number, title, description, base=None, head=None, repository_url=None):
+            self.assertEqual(pr_number, '1234')
+            self.assertEqual(title, 'Cherry-pick 252432.1026@safari-7614-branch (2a8469e53b2f). rdar://107367418')
+            self.assertEqual(base, 'main')
+            self.assertEqual(head, 'JonWBedard:eng/pull-request-branch')
+
+            self.assertEqual(
+                description,
+                '''#### 9140b95e718e7342366bbcdc29cb1ba0f9328422
+<pre>
+Cherry-pick 252432.1026@safari-7614-branch (2a8469e53b2f). rdar://107367418
+
+    Remove inheritance of designMode attribute
+    <a href="https://bugs.webkit.org/show_bug.cgi?id=248615">https://bugs.webkit.org/show_bug.cgi?id=248615</a>
+    rdar://102868995
+
+    Reviewed by Wenson Hsieh and Jonathan Bedard.
+
+    Stop making design mode inherit across frame boundaries.
+
+    This will prevent a form element from being injected into a victim page via drag &amp; drop
+    and the new behavior matches that of Firefox and Chrome.
+
+    * LayoutTests/editing/editability/design-mode-does-not-inherit-across-frames-expected.txt: Added.
+    * LayoutTests/editing/editability/design-mode-does-not-inherit-across-frames.html: Added.
+    * LayoutTests/fast/dom/HTMLElement/iscontenteditable-designmodeon-allinherit-subframe-expected.txt:
+    * LayoutTests/fast/dom/HTMLElement/iscontenteditable-designmodeon-allinherit-subframe.html:
+    * Source/WebCore/dom/Document.cpp:
+    (WebCore::Document::setDesignMode):
+    (WebCore::Document::inDesignMode const): Deleted.
+    * Source/WebCore/dom/Document.h:
+    (WebCore::Document::inDesignMode const):
+
+    Canonical link: <a href="https://commits.webkit.org/252432.1026@safari-7614-branch">https://commits.webkit.org/252432.1026@safari-7614-branch</a>
+
+Canonical link: <a href="https://commits.webkit.org/262299@main">https://commits.webkit.org/262299@main</a>
+</pre>
+----------------------------------------------------------------------
+#### 6ec5319be307db36a27ea61d208cf68ce84abd67
+<pre>
+Cherry-pick 252432.1024@safari-7614-branch (2ea437d75522). rdar://107367090
+
+    Use-after-free in ContactsManager::select
+    <a href="https://bugs.webkit.org/show_bug.cgi?id=250351">https://bugs.webkit.org/show_bug.cgi?id=250351</a>
+    rdar://101241436
+
+    Reviewed by Wenson Hsieh and Jonathan Bedard.
+
+    `ContactsManager` can be destroyed prior to receiving the user&apos;s selection, which
+    is performed asynchronously. Deploy `WeakPtr` to avoid a use-after-free in this
+    scenario.
+
+    A test was unable to be added, as the failure scenario involves opening a new
+    Window, using the new Window object&apos;s `navigator.contacts`, and performing user
+    interaction. Creating a new Window results in the creation of a new web view,
+    however all of our existing UIScriptController hooks only apply to the original
+    (main) web view. Consequently, it is not possible to use our testing
+    infrastructure to dismiss the contact picker and trigger the callback in the
+    failure scenario.
+
+    * Source/WebCore/Modules/contact-picker/ContactsManager.cpp:
+    (WebCore::ContactsManager::select):
+    * Source/WebCore/Modules/contact-picker/ContactsManager.h:
+
+    Canonical link: <a href="https://commits.webkit.org/252432.1024@safari-7614-branch">https://commits.webkit.org/252432.1024@safari-7614-branch</a>
+
+Canonical link: <a href="https://commits.webkit.org/262298@main">https://commits.webkit.org/262298@main</a>
+</pre>
+''',
+            )
+
+            return defer.succeed(True)
+
+        UpdatePullRequest.update_pr = update_pr
+        self.setupStep(UpdatePullRequest())
+        self.setProperty('github.number', '1234')
+        self.setProperty('github.head.user.login', 'JonWBedard')
+        self.setProperty('github.head.ref', 'eng/pull-request-branch')
+        self.setProperty('github.base.ref', 'main')
+        self.setProperty('commit_count', 2)
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logEnviron=False,
+                        timeout=300,
+                        command=['git', 'log', '--no-decorate', '-2'])
+            + 0
+            + ExpectShell.log('stdio', stdout='''commit 9140b95e718e7342366bbcdc29cb1ba0f9328422
+Author: Jonathan Bedard <jbedard@apple.com>
+Date:   Tue Mar 29 16:04:35 2023 -0700
+
+    Cherry-pick 252432.1026@safari-7614-branch (2a8469e53b2f). rdar://107367418
+
+        Remove inheritance of designMode attribute
+        https://bugs.webkit.org/show_bug.cgi?id=248615
+        rdar://102868995
+
+        Reviewed by Wenson Hsieh and Jonathan Bedard.
+
+        Stop making design mode inherit across frame boundaries.
+
+        This will prevent a form element from being injected into a victim page via drag & drop
+        and the new behavior matches that of Firefox and Chrome.
+
+        * LayoutTests/editing/editability/design-mode-does-not-inherit-across-frames-expected.txt: Added.
+        * LayoutTests/editing/editability/design-mode-does-not-inherit-across-frames.html: Added.
+        * LayoutTests/fast/dom/HTMLElement/iscontenteditable-designmodeon-allinherit-subframe-expected.txt:
+        * LayoutTests/fast/dom/HTMLElement/iscontenteditable-designmodeon-allinherit-subframe.html:
+        * Source/WebCore/dom/Document.cpp:
+        (WebCore::Document::setDesignMode):
+        (WebCore::Document::inDesignMode const): Deleted.
+        * Source/WebCore/dom/Document.h:
+        (WebCore::Document::inDesignMode const):
+
+        Canonical link: https://commits.webkit.org/252432.1026@safari-7614-branch
+
+    Canonical link: https://commits.webkit.org/262299@main
+
+commit 6ec5319be307db36a27ea61d208cf68ce84abd67
+Author: Jonathan Bedard <jbedard@apple.com>
+Date:   Tue Mar 29 16:04:35 2023 -0700
+
+    Cherry-pick 252432.1024@safari-7614-branch (2ea437d75522). rdar://107367090
+
+        Use-after-free in ContactsManager::select
+        https://bugs.webkit.org/show_bug.cgi?id=250351
+        rdar://101241436
+
+        Reviewed by Wenson Hsieh and Jonathan Bedard.
+
+        `ContactsManager` can be destroyed prior to receiving the user's selection, which
+        is performed asynchronously. Deploy `WeakPtr` to avoid a use-after-free in this
+        scenario.
+
+        A test was unable to be added, as the failure scenario involves opening a new
+        Window, using the new Window object's `navigator.contacts`, and performing user
+        interaction. Creating a new Window results in the creation of a new web view,
+        however all of our existing UIScriptController hooks only apply to the original
+        (main) web view. Consequently, it is not possible to use our testing
+        infrastructure to dismiss the contact picker and trigger the callback in the
+        failure scenario.
+
+        * Source/WebCore/Modules/contact-picker/ContactsManager.cpp:
+        (WebCore::ContactsManager::select):
+        * Source/WebCore/Modules/contact-picker/ContactsManager.h:
+
+        Canonical link: https://commits.webkit.org/252432.1024@safari-7614-branch
+
+    Canonical link: https://commits.webkit.org/262298@main
+'''),
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Updated pull request')
+        with current_hostname(EWS_BUILD_HOSTNAME):
+            rc = self.runStep()
+            self.assertEqual(self.getProperty('bug_id'), '248615')
             self.assertEqual(self.getProperty('is_test_gardening'), False)
             return rc
 

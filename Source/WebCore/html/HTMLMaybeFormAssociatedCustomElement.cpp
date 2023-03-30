@@ -182,4 +182,4 @@ void HTMLMaybeFormAssociatedCustomElement::didUpgradeFormAssociated()
     formAssociatedCustomElementUnsafe().didUpgrade();
 }
 
-} // namespace Webcore
+} // namespace WebCore

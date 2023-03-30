@@ -34,7 +34,7 @@ from buildbot.util import httpclientservice, service
 from buildbot.www.hooks.github import GitHubEventHandler
 from rapidfuzz import fuzz
 from steps import GitHub
-from twisted.internet import defer
+from twisted.internet import defer, reactor, task
 from twisted.internet.defer import succeed
 from twisted.python import log
 

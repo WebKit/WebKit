@@ -27,7 +27,8 @@
 #include "config.h"
 #include "SelectorQuery.h"
 
-#include "CSSParser.h"
+#include "CSSSelectorParser.h"
+#include "CSSTokenizer.h"
 #include "CommonAtomStrings.h"
 #include "ElementAncestorIteratorInlines.h"
 #include "HTMLNames.h"
@@ -581,26 +582,43 @@ SelectorQuery::SelectorQuery(CSSSelectorList&& selectorList)
 {
 }
 
-ExceptionOr<SelectorQuery&> SelectorQueryCache::add(const String& selectors, Document& document)
+SelectorQueryCache& SelectorQueryCache::singleton()
 {
-    if (auto* entry = m_entries.get(selectors))
-        return *entry;
+    static NeverDestroyed<SelectorQueryCache> cache;
+    return cache.get();
+}
 
-    CSSParser parser(document);
-    auto selectorList = parser.parseSelector(selectors);
+SelectorQuery* SelectorQueryCache::add(const String& selectors, const Document& document)
+{
+    ASSERT(!selectors.isEmpty());
 
-    if (!selectorList || selectorList->hasInvalidSelector())
-        return Exception { SyntaxError };
-
-    if (selectorList->selectorsNeedNamespaceResolution())
-        return Exception { SyntaxError };
-
-    auto resolvedSelectorList = CSSSelectorParser::resolveNestingParent(*selectorList, nullptr);
-    constexpr int maximumSelectorQueryCacheSize = 256;
+    constexpr auto maximumSelectorQueryCacheSize = 512;
     if (m_entries.size() == maximumSelectorQueryCacheSize)
         m_entries.remove(m_entries.random());
 
-    return *m_entries.add(selectors, makeUnique<SelectorQuery>(WTFMove(resolvedSelectorList))).iterator->value;
+    auto context = CSSSelectorParserContext { document };
+    auto key = Key { selectors, context, document.securityOrigin().data() };
+
+    return m_entries.ensure(key, [&]() -> std::unique_ptr<SelectorQuery> {
+        auto tokenizer = CSSTokenizer { selectors };
+        auto selectorList = parseCSSSelector(tokenizer.tokenRange(), context, nullptr, CSSParserEnum::IsNestedContext::No);
+
+        if (!selectorList || selectorList->hasInvalidSelector())
+            return nullptr;
+
+        if (selectorList->selectorsNeedNamespaceResolution())
+            return nullptr;
+
+        // FIXME: Remove this fixup step or at least make it not make a copy in the common case.
+        auto resolvedSelectorList = CSSSelectorParser::resolveNestingParent(*selectorList, nullptr);
+
+        return makeUnique<SelectorQuery>(WTFMove(resolvedSelectorList));
+    }).iterator->value.get();
+}
+
+void SelectorQueryCache::clear()
+{
+    m_entries.clear();
 }
 
 }

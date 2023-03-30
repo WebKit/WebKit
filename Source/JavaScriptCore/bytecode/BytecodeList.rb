@@ -1878,7 +1878,7 @@ op :array_new,
         size: VirtualRegister,
         value: VirtualRegister,
         typeIndex: unsigned,
-        useDefault: bool,
+        arrayNewKind: uint8_t,
     }
 
 op :array_get,

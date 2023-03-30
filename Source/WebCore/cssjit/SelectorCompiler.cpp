@@ -534,7 +534,7 @@ static inline bool fragmentMatchesRightmostOrAdjacentElement(const SelectorFragm
     return fragment.isRightmostOrAdjacent && fragment.positionInRootFragments != FragmentPositionInRootFragments::Other;
 }
 
-static inline FunctionType addScrollbarPseudoClassType(const CSSSelector&, SelectorFragment&)
+static inline FunctionType addPseudoElementPseudoClassType(const CSSSelector&, SelectorFragment&)
 {
     // FIXME: scrollbar pseudoclass interaction with :not doesn't behave correctly.
     // Compile them when they are fixed and tested.
@@ -1227,11 +1227,6 @@ static bool pseudoClassOnlyMatchesLinksInQuirksMode(const CSSSelector& selector)
     return pseudoClassType == CSSSelector::PseudoClassHover || pseudoClassType == CSSSelector::PseudoClassActive;
 }
 
-static bool isScrollbarPseudoElement(CSSSelector::PseudoElementType type)
-{
-    return type >= CSSSelector::PseudoElementScrollbar && type <= CSSSelector::PseudoElementScrollbarTrackPiece;
-}
-
 static FunctionType constructFragmentsInternal(const CSSSelector* rootSelector, SelectorContext selectorContext, SelectorFragmentList& selectorFragments, FragmentsLevel fragmentLevel, FragmentPositionInRootFragments positionInRootFragments, bool visitedMatchEnabled, VisitedMode& visitedMode, PseudoElementMatchingBehavior pseudoElementMatchingBehavior)
 {
     FragmentRelation relationToPreviousFragment = FragmentRelation::Rightmost;
@@ -1243,12 +1238,6 @@ static FunctionType constructFragmentsInternal(const CSSSelector* rootSelector, 
             selectorFragments.append(SelectorFragment());
             fragment = &selectorFragments.last();
         }
-
-        // A selector is invalid if something follows a pseudo-element.
-        // We make an exception for scrollbar pseudo elements and allow a set of pseudo classes (but nothing else)
-        // to follow the pseudo elements.
-        if (fragment->pseudoElementSelector && !isScrollbarPseudoElement(fragment->pseudoElementSelector->pseudoElementType()))
-            return FunctionType::CannotMatchAnything;
 
         switch (selector->match()) {
         case CSSSelector::Tag:
@@ -1275,11 +1264,10 @@ static FunctionType constructFragmentsInternal(const CSSSelector* rootSelector, 
             FragmentPositionInRootFragments subPosition = positionInRootFragments;
             if (relationToPreviousFragment != FragmentRelation::Rightmost)
                 subPosition = isRightmostOrAdjacent ? FragmentPositionInRootFragments::AdjacentToRightmost : FragmentPositionInRootFragments::Other;
-            if (fragment->pseudoElementSelector && isScrollbarPseudoElement(fragment->pseudoElementSelector->pseudoElementType()))
-                functionType = mostRestrictiveFunctionType(functionType, addScrollbarPseudoClassType(*selector, *fragment));
-            else {
+            if (fragment->pseudoElementSelector)
+                functionType = mostRestrictiveFunctionType(functionType, addPseudoElementPseudoClassType(*selector, *fragment));
+            else
                 functionType = mostRestrictiveFunctionType(functionType, addPseudoClassType(*selector, *fragment, selectorContext, fragmentLevel, subPosition, visitedMatchEnabled, visitedMode, pseudoElementMatchingBehavior));
-            }
             if (!pseudoClassOnlyMatchesLinksInQuirksMode(*selector))
                 fragment->onlyMatchesLinksInQuirksMode = false;
             if (functionType == FunctionType::CannotCompile || functionType == FunctionType::CannotMatchAnything)
@@ -1295,24 +1283,33 @@ static FunctionType constructFragmentsInternal(const CSSSelector* rootSelector, 
 
             switch (selector->pseudoElementType()) {
             case CSSSelector::PseudoElementAfter:
+            case CSSSelector::PseudoElementBackdrop:
             case CSSSelector::PseudoElementBefore:
             case CSSSelector::PseudoElementFirstLetter:
             case CSSSelector::PseudoElementFirstLine:
+            case CSSSelector::PseudoElementMarker:
+            case CSSSelector::PseudoElementResizer:
             case CSSSelector::PseudoElementScrollbar:
             case CSSSelector::PseudoElementScrollbarButton:
             case CSSSelector::PseudoElementScrollbarCorner:
             case CSSSelector::PseudoElementScrollbarThumb:
             case CSSSelector::PseudoElementScrollbarTrack:
             case CSSSelector::PseudoElementScrollbarTrackPiece:
+            case CSSSelector::PseudoElementSelection:
+            case CSSSelector::PseudoElementWebKitCustom:
+            case CSSSelector::PseudoElementWebKitCustomLegacyPrefixed:
                 ASSERT(!fragment->pseudoElementSelector);
                 fragment->pseudoElementSelector = selector;
                 break;
             case CSSSelector::PseudoElementUnknown:
                 ASSERT_NOT_REACHED();
                 return FunctionType::CannotMatchAnything;
-            // FIXME: Support PseudoId::Resizer, PseudoId::Selection etc.
-            default:
-                // This branch includes custom pseudo elements.
+#if ENABLE(VIDEO)
+            case CSSSelector::PseudoElementCue:
+#endif
+            case CSSSelector::PseudoElementHighlight:
+            case CSSSelector::PseudoElementPart:
+            case CSSSelector::PseudoElementSlotted:
                 return FunctionType::CannotCompile;
             }
 

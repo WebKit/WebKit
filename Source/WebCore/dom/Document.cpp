@@ -931,14 +931,12 @@ ExceptionOr<SelectorQuery&> Document::selectorQueryForString(const String& selec
 {
     if (selectorString.isEmpty())
         return Exception { SyntaxError };
-    if (!m_selectorQueryCache)
-        m_selectorQueryCache = makeUnique<SelectorQueryCache>();
-    return m_selectorQueryCache->add(selectorString, *this);
-}
 
-void Document::clearSelectorQueryCache()
-{
-    m_selectorQueryCache = nullptr;
+    auto* query = SelectorQueryCache::singleton().add(selectorString, *this);
+    if (!query)
+        return Exception { SyntaxError };
+
+    return *query;
 }
 
 MediaQueryMatcher& Document::mediaQueryMatcher()
@@ -954,8 +952,6 @@ void Document::setCompatibilityMode(DocumentCompatibilityMode mode)
         return;
     bool wasInQuirksMode = inQuirksMode();
     m_compatibilityMode = mode;
-
-    clearSelectorQueryCache();
 
     if (inQuirksMode() != wasInQuirksMode) {
         // All user stylesheets have to reparse using the different mode.
@@ -3641,8 +3637,6 @@ void Document::updateBaseURL()
     else
         m_baseURL = fallbackBaseURL();
 
-    clearSelectorQueryCache();
-
     if (!m_baseURL.isValid())
         m_baseURL = URL();
 }
@@ -5846,7 +5840,6 @@ void Document::setBackForwardCacheState(BackForwardCacheState state)
 #endif
 
         styleScope().clearResolver();
-        clearSelectorQueryCache();
         m_styleRecalcTimer.stop();
 
         clearSharedObjectPool();
@@ -6213,15 +6206,10 @@ void Document::setTransformSource(std::unique_ptr<TransformSource> source)
 
 #endif
 
-void Document::setDesignMode(InheritedBool value)
+void Document::setDesignMode(DesignMode value)
 {
     m_designMode = value;
-    for (RefPtr<Frame> frame = m_frame.get(); frame; frame = frame->tree().traverseNext(m_frame.get())) {
-        RefPtr localFrame = dynamicDowncast<LocalFrame>(frame.get());
-        if (!localFrame || !localFrame->document())
-            continue;
-        localFrame->document()->scheduleFullStyleRebuild();
-    }
+    scheduleFullStyleRebuild();
 }
 
 String Document::designMode() const
@@ -6231,23 +6219,8 @@ String Document::designMode() const
 
 void Document::setDesignMode(const String& value)
 {
-    InheritedBool mode;
-    if (equalLettersIgnoringASCIICase(value, "on"_s))
-        mode = on;
-    else if (equalLettersIgnoringASCIICase(value, "off"_s))
-        mode = off;
-    else
-        mode = inherit;
+    DesignMode mode = equalLettersIgnoringASCIICase(value, "on"_s) ? DesignMode::On : DesignMode::Off;
     setDesignMode(mode);
-}
-
-bool Document::inDesignMode() const
-{
-    for (const Document* d = this; d; d = d->parentDocument()) {
-        if (d->m_designMode != inherit)
-            return d->m_designMode;
-    }
-    return false;
 }
 
 Document* Document::parentDocument() const

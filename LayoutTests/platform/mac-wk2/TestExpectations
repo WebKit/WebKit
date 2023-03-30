@@ -1718,6 +1718,8 @@ webkit.org/b/245010 imported/w3c/web-platform-tests/html/browsers/browsing-the-w
 
 webkit.org/b/245140 http/wpt/webrtc/video-script-transform-keyframe-only.html [ Pass Failure ]
 
+webkit.org/b/254745 imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/replaced-element-035.html [ Pass ImageOnlyFailure ]
+
 # Will pass once accelerated drawing is enabled on macOS tests.
 webkit.org/b/246285 compositing/canvas/accelerated-canvas-compositing-size-limit.html [ Failure ]
 
@@ -1732,6 +1734,8 @@ webkit.org/b/245727 [ Monterey ] imported/w3c/web-platform-tests/notifications/i
 [ Debug ] imported/w3c/web-platform-tests/html/browsers/windows/browsing-context-names/choose-default-001.html [ Skip ]
 
 webkit.org/b/248734 media/video-inaccurate-duration-ended.html [ Crash ]
+
+webkit.org/b/254713 imported/w3c/web-platform-tests/css/css-backgrounds/background-size/background-size-cover-svg.html [ Pass ImageOnlyFailure ]
 
 #webkit.org/b/248537 Batch mark expectations for Ventura test failures
 [ Ventura+ ] webrtc/canvas-to-peer-connection-2d.html [ Pass Timeout ]

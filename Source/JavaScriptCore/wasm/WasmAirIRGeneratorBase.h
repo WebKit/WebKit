@@ -412,6 +412,7 @@ struct AirIRGeneratorBase {
     PartialResult WARN_UNUSED_RETURN addArrayNewDefault(uint32_t index, ExpressionType size, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addArrayNewData(uint32_t typeIndex, uint32_t dataIndex, ExpressionType arraySize, ExpressionType offset, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addArrayNewElem(uint32_t typeIndex, uint32_t elemSegmentIndex, ExpressionType arraySize, ExpressionType offset, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addArrayNewFixed(uint32_t typeIndex, Vector<ExpressionType>& args, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addArrayGet(ExtGCOpType arrayGetKind, uint32_t typeIndex, ExpressionType arrayref, ExpressionType index, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addArraySet(uint32_t typeIndex, ExpressionType arrayref, ExpressionType index, ExpressionType value);
     PartialResult WARN_UNUSED_RETURN addArrayLen(ExpressionType arrayref, ExpressionType& result);
@@ -519,6 +520,9 @@ struct AirIRGeneratorBase {
     ALWAYS_INLINE void didParseOpcode() { }
     void didFinishParsingLocals() { }
     void didPopValueFromStack() { }
+    const Ref<TypeDefinition> getTypeDefinition(uint32_t typeIndex) { return m_info.typeSignatures[typeIndex]; }
+    void getArrayElementType(uint32_t, StorageType&);
+    void getArrayRefType(uint32_t, Type&);
 
     const Bag<B3::PatchpointValue*>& patchpoints() const
     {
@@ -2468,6 +2472,25 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::addCheckedFloatingPointTruncat
     return { };
 }
 
+// Given a type index for an array signature, look it up, expand it and
+// return the element type
+template<typename Derived, typename ExpressionType>
+void AirIRGeneratorBase<Derived, ExpressionType>::getArrayElementType(uint32_t typeIndex, StorageType& result)
+{
+    Ref<Wasm::TypeDefinition> typeDef = getTypeDefinition(typeIndex);
+    const Wasm::TypeDefinition& arraySignature = typeDef->expand();
+    ASSERT(arraySignature.is<ArrayType>());
+    result = arraySignature.as<ArrayType>()->elementType().type;
+}
+
+// Given a type index, verify that it's an array type and return the type (Ref a)
+template<typename Derived, typename ExpressionType>
+void AirIRGeneratorBase<Derived, ExpressionType>::getArrayRefType(uint32_t typeIndex, Type& result)
+{
+    Ref<Wasm::TypeDefinition> typeDef = getTypeDefinition(typeIndex);
+    result = Wasm::Type { Wasm::TypeKind::Ref, Wasm::TypeInformation::get(typeDef) };
+}
+
 template<typename Derived, typename ExpressionType>
 const StorageType AirIRGeneratorBase<Derived, ExpressionType>::arrayElementType(uint32_t typeIndex)
 {
@@ -2578,11 +2601,39 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::addArrayNewElem(uint32_t typeI
 }
 
 template <typename Derived, typename ExpressionType>
+auto AirIRGeneratorBase<Derived, ExpressionType>::addArrayNewFixed(uint32_t typeIndex, Vector<ExpressionType>& args, ExpressionType& result) -> PartialResult
+{
+    // Get the result type of the array.new_fixed operation
+    Type resultType;
+    getArrayRefType(typeIndex, resultType);
+
+    // Allocate a temp for the result array
+    result = self().tmpForType(resultType);
+
+    // Set the result to an uninitialized array
+    // FIXME: inline the allocation
+    // https://bugs.webkit.org/show_bug.cgi?id=245405
+    self().emitCCall(&operationWasmArrayNewEmpty, result, instanceValue(), self().addConstant(Types::I32, typeIndex), self().addConstant(Types::I32, args.size()));
+
+    // Set each of the elements to its corresponding argument
+    auto arrayIndex = tmpForType(Types::I32);
+    self().emitZeroInitialize(arrayIndex);
+    for (unsigned i = 0; i < args.size(); i++) {
+        auto resultVal = self().addArraySet(typeIndex, result, arrayIndex, args[i]);
+        if (!resultVal)
+            return resultVal;
+        append(Add32, Arg::imm(1), arrayIndex, arrayIndex);
+    }
+    return { };
+}
+
+template <typename Derived, typename ExpressionType>
 auto AirIRGeneratorBase<Derived, ExpressionType>::addArrayGet(ExtGCOpType arrayGetKind, uint32_t typeIndex, ExpressionType arrayref, ExpressionType index, ExpressionType& result) -> PartialResult
 {
     ASSERT(arrayGetKind == ExtGCOpType::ArrayGet || arrayGetKind == ExtGCOpType::ArrayGetS || arrayGetKind == ExtGCOpType::ArrayGetU);
 
-    Wasm::StorageType elementType = arrayElementType(typeIndex);
+    Wasm::StorageType elementType;
+    getArrayElementType(typeIndex, elementType);
     Wasm::Type resultType = elementType.unpacked();
 
     // Ensure arrayref is non-null.

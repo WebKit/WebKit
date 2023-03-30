@@ -35,6 +35,8 @@
 #include "CSSParserTokenRange.h"
 #include "CSSSelectorList.h"
 #include "StyleSheetContents.h"
+#include <wtf/HashFunctions.h>
+#include <wtf/Hasher.h>
 
 namespace WebCore {
 
@@ -43,17 +45,30 @@ class CSSSelectorList;
 class StyleSheetContents;
 class StyleRule;
 
-struct CSSParserContext;
+struct CSSSelectorParserContext {
+    CSSParserMode mode { CSSParserMode::HTMLStandardMode };
+    bool isHTMLDocument { false };
+    bool cssNestingEnabled { false };
+    bool focusVisibleEnabled { false };
+    bool hasPseudoClassEnabled { false };
 
+    bool isHashTableDeletedValue { false };
+
+    CSSSelectorParserContext() = default;
+    CSSSelectorParserContext(const CSSParserContext&);
+    explicit CSSSelectorParserContext(const Document&);
+
+    bool operator==(const CSSSelectorParserContext&) const;
+};
 
 class CSSSelectorParser {
 public:
-    CSSSelectorParser(const CSSParserContext&, StyleSheetContents*, CSSParserEnum::IsNestedContext = CSSParserEnum::IsNestedContext::No);
+    CSSSelectorParser(const CSSSelectorParserContext&, StyleSheetContents*, CSSParserEnum::IsNestedContext = CSSParserEnum::IsNestedContext::No);
 
     CSSSelectorList consumeComplexSelectorList(CSSParserTokenRange&);
     CSSSelectorList consumeNestedSelectorList(CSSParserTokenRange&);
 
-    static bool supportsComplexSelector(CSSParserTokenRange, const CSSParserContext&, CSSParserEnum::IsNestedContext);
+    static bool supportsComplexSelector(CSSParserTokenRange, const CSSSelectorParserContext&, CSSParserEnum::IsNestedContext);
     static CSSSelectorList resolveNestingParent(const CSSSelectorList& nestedSelectorList, const CSSSelectorList* parentResolvedSelectorList);
 
 private:
@@ -89,12 +104,12 @@ private:
     const AtomString& defaultNamespace() const;
     const AtomString& determineNamespace(const AtomString& prefix);
     void prependTypeSelectorIfNeeded(const AtomString& namespacePrefix, const AtomString& elementName, CSSParserSelector&);
-    static std::unique_ptr<CSSParserSelector> splitCompoundAtImplicitShadowCrossingCombinator(std::unique_ptr<CSSParserSelector> compoundSelector, const CSSParserContext&);
+    static std::unique_ptr<CSSParserSelector> splitCompoundAtImplicitShadowCrossingCombinator(std::unique_ptr<CSSParserSelector> compoundSelector, const CSSSelectorParserContext&);
     static bool containsUnknownWebKitPseudoElements(const CSSSelector& complexSelector);
 
     class DisallowPseudoElementsScope;
 
-    const CSSParserContext& m_context;
+    const CSSSelectorParserContext m_context;
     const RefPtr<StyleSheetContents> m_styleSheet;
     CSSParserEnum::IsNestedContext m_isNestedContext { CSSParserEnum::IsNestedContext::No };
     bool m_failedParsing { false };
@@ -106,7 +121,26 @@ private:
     std::optional<CSSSelector::PseudoElementType> m_precedingPseudoElement;
 };
 
+std::optional<CSSSelectorList> parseCSSSelector(CSSParserTokenRange, const CSSSelectorParserContext&, StyleSheetContents* = nullptr, CSSParserEnum::IsNestedContext = CSSParserEnum::IsNestedContext::No);
 
-std::optional<CSSSelectorList> parseCSSSelector(CSSParserTokenRange, const CSSParserContext&, StyleSheetContents*, CSSParserEnum::IsNestedContext);
+void add(Hasher&, const CSSSelectorParserContext&);
+
+struct CSSSelectorParserContextHash {
+    static unsigned hash(const CSSSelectorParserContext& context) { return computeHash(context); }
+    static bool equal(const CSSSelectorParserContext& a, const CSSSelectorParserContext& b) { return a == b; }
+    static const bool safeToCompareToEmptyOrDeleted = false;
+};
 
 } // namespace WebCore
+
+namespace WTF {
+
+template<> struct HashTraits<WebCore::CSSSelectorParserContext> : GenericHashTraits<WebCore::CSSSelectorParserContext> {
+    static void constructDeletedValue(WebCore::CSSSelectorParserContext& slot) { slot.isHashTableDeletedValue = true; }
+    static bool isDeletedValue(const WebCore::CSSSelectorParserContext& value) { return value.isHashTableDeletedValue; }
+    static WebCore::CSSSelectorParserContext emptyValue() { return { }; }
+};
+
+template<> struct DefaultHash<WebCore::CSSSelectorParserContext> : WebCore::CSSSelectorParserContextHash { };
+
+} // namespace WTF

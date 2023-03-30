@@ -4075,6 +4075,10 @@ webkit.org/b/254630 fast/canvas/offscreen-scaling.html [ Pass Failure ]
 
 webkit.org/b/254714 imported/w3c/web-platform-tests/css/css-images/image-set/image-set-calc-x-rendering-2.html [ ImageOnlyFailure ]
 
+webkit.org/b/254713 imported/w3c/web-platform-tests/css/css-backgrounds/background-size/background-size-cover-svg.html [ ImageOnlyFailure ]
+
+webkit.org/b/254707 imported/w3c/web-platform-tests/css/css-backgrounds/background-margin-root.html [ ImageOnlyFailure ]
+
 http/tests/webgpu/webgpu/idl/constants/flags.html [ Skip ]
 http/tests/webgpu/webgpu/idl/exposed.https.html [ Skip ]
 http/tests/webgpu/webgpu/idl/exposed.http.html [ Skip ]

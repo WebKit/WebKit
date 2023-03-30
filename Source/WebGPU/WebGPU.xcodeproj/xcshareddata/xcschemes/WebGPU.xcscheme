@@ -20,20 +20,6 @@
                ReferencedContainer = "container:WebGPU.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "97FA1A8F29C086CE0052D650"
-               BuildableName = "All"
-               BlueprintName = "All"
-               ReferencedContainer = "container:WebGPU.xcodeproj">
-            </BuildableReference>
-         </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction
