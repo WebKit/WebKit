@@ -254,9 +254,9 @@ nothing to commit, working tree clean
                     returncode=0,
                 ),
             ), mocks.Subprocess.Route(
-                self.executable, 'branch', '-a', '--merged',
+                self.executable, 'branch', '-a', '--merged', '--format=.+', '.+',
                 cwd=self.path,
-                generator=lambda *args, **kwargs: self.branch_merged_to(args[4]),
+                generator=lambda *args, **kwargs: self.branch_merged_to(args[5]),
             ), mocks.Subprocess.Route(
                 self.executable, 'branch', '-a',
                 cwd=self.path,
@@ -1350,7 +1350,7 @@ nothing to commit, working tree clean
         out = ''
         for branch, commits in self.commits.items():
             if commits and commits[-1].hash == obj.hash:
-                out += ' {}\n'.format(branch)
+                out += ' refs/heads/{}\n'.format(branch)
 
         return mocks.ProcessCompletion(
             returncode=0,
