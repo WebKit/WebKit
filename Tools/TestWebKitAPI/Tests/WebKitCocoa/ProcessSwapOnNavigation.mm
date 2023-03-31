@@ -59,6 +59,7 @@
 #import <wtf/HashMap.h>
 #import <wtf/HashSet.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/RunLoop.h>
 #import <wtf/Vector.h>
 #import <wtf/text/StringConcatenateNumbers.h>
 #import <wtf/text/StringHash.h>
@@ -8536,6 +8537,57 @@ TEST(ProcessSwap, ContentModeInCaseOfPSONThenCoopProcessSwap)
     Util::run(&done);
     done = false;
 }
+
+TEST(ProcessSwap, ChangeViewSizeDuringNavigationActionPolicyDecision)
+{
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
+    auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+    auto webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
+    [webViewConfiguration setProcessPool:processPool.get()];
+
+    auto handler = adoptNS([PSONScheme new]);
+    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:webViewConfiguration.get()]);
+    auto navigationDelegate = adoptNS([PSONNavigationDelegate new]);
+    [webView setNavigationDelegate:navigationDelegate.get()];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/source.html"]]];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    navigationDelegate->decidePolicyForNavigationAction = [webView](WKNavigationAction *, void (^decisionHandler)(WKNavigationActionPolicy)) {
+        decisionHandler(WKNavigationActionPolicyAllow);
+
+        constexpr auto estimatedDelayForWebProcessLaunch = 5_ms;
+        RunLoop::main().dispatchAfter(estimatedDelayForWebProcessLaunch, [webView] {
+            [webView setFrame:CGRectMake(0, 0, 320, 568)];
+        });
+    };
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.apple.com/destination.html"]]];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    NSArray<NSNumber *> *result = [webView objectByEvaluatingJavaScript:@"(() => {"
+        "const container = document.createElement('div');"
+        "container.style.width = '100vw';"
+        "container.style.height = '100vh';"
+        "container.style.backgroundColor = 'tomato';"
+        "document.body.appendChild(container);"
+        "document.body.offsetTop;"
+        "const bounds = container.getBoundingClientRect();"
+        "return [bounds.width, bounds.height];"
+        "})();"];
+
+    auto containerWidth = result.firstObject.doubleValue;
+    EXPECT_GT(containerWidth, 0);
+
+    auto containerHeight = result.lastObject.doubleValue;
+    EXPECT_GT(containerHeight, 0);
+}
+
 #endif // PLATFORM(IOS_FAMILY)
 
 // The WebProcess cache cannot be enabled on devices with too little RAM so we need to disable
