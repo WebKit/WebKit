@@ -2322,11 +2322,20 @@ static String accessibleNameForNode(Node* node, Node* labelledbyNode)
         if (!childText.isEmpty())
             return childText;
     }
-    
-    if (is<HTMLInputElement>(element))
-        return downcast<HTMLInputElement>(element).value();
-    if (is<HTMLOptionElement>(element))
-        return downcast<HTMLOptionElement>(element).value();
+
+    if (auto* input = dynamicDowncast<HTMLInputElement>(element)) {
+        String inputValue = input->value();
+        if (input->isPasswordField()) {
+            StringBuilder passwordValue;
+            passwordValue.reserveCapacity(inputValue.length());
+            for (size_t i = 0; i < inputValue.length(); i++)
+                passwordValue.append(String::fromUTF8("•"));
+            return passwordValue.toString();
+        }
+        return inputValue;
+    }
+    if (auto* option = dynamicDowncast<HTMLOptionElement>(element))
+        return option->value();
 
     String text;
     if (axObject) {

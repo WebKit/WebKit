@@ -464,6 +464,7 @@ imported/w3c/web-platform-tests/quirks/line-height-in-list-item.tentative.html [
 accessibility/progress-element-value-changes.html [ Skip ]
 
 accessibility/svg-font-face.html [ Skip ]
+accessibility/aria-labelledby-on-password-input.html [ Skip ]
 
 # Need to implement AccessibilityUIElement::insertText.
 accessibility/insert-text-into-password-field.html [ Skip ]
