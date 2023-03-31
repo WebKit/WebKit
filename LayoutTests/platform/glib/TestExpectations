@@ -341,6 +341,7 @@ webkit.org/b/239550 fast/text/simple-line-layout-hyphen-limit-before.html [ Pass
 accessibility/progress-element-value-changes.html [ Skip ]
 
 accessibility/svg-font-face.html [ Skip ]
+accessibility/aria-labelledby-on-password-input.html [ Skip ]
 
 # Need to implement AccessibilityUIElement::insertText.
 accessibility/insert-text-into-password-field.html [ Skip ]

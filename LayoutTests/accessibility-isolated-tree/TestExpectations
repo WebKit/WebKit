@@ -51,3 +51,6 @@ accessibility/textarea-insertion-point-line-number.html [ Failure ]
 accessibility/title-ui-element-correctness.html [ Failure ]
 accessibility/text-alternative-calculation-hidden-nodes.html [ Failure ]
 accessibility/math-multiscript-attributes.html [ Failure ]
+
+# Fails because aria-labelledby text changes don't update in isolated tree mode
+accessibility/aria-labelledby-on-password-input.html [ Failure ]
