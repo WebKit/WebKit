@@ -3406,24 +3406,34 @@ static RefPtr<Element> autoFocusDelegate(ContainerNode& target, FocusTrigger tri
     if (auto* root = target.shadowRoot(); root && !root->delegatesFocus())
         return nullptr;
 
-    for (auto& element : descendantsOfType<Element>(target)) {
-        if (!element.hasAttributeWithoutSynchronization(HTMLNames::autofocusAttr))
+    const Node* stayWithin = &target;
+
+    Element* element = ElementTraversal::next(target, stayWithin);
+    while (element) {
+        if (is<HTMLDialogElement>(element) || element->popoverData()) {
+            element = ElementTraversal::nextSkippingChildren(*element, stayWithin);
             continue;
-        if (auto root = shadowRootWithDelegatesFocus(element)) {
+        }
+        if (!element->hasAttributeWithoutSynchronization(HTMLNames::autofocusAttr)) {
+            element = ElementTraversal::next(*element, stayWithin);
+            continue;
+        }
+        if (auto root = shadowRootWithDelegatesFocus(*element)) {
             if (auto target = Element::findFocusDelegateForTarget(*root, trigger))
                 return target;
         }
         switch (trigger) {
         case FocusTrigger::Click:
-            if (element.isMouseFocusable())
-                return &element;
+            if (element->isMouseFocusable())
+                return element;
             break;
         case FocusTrigger::Other:
         case FocusTrigger::Bindings:
-            if (isProgramaticallyFocusable(element))
-                return &element;
+            if (isProgramaticallyFocusable(*element))
+                return element;
             break;
         }
+        element = ElementTraversal::next(*element, stayWithin);
     }
     return nullptr;
 }
