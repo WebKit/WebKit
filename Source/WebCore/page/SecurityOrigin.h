@@ -138,7 +138,7 @@ public:
     // Explicitly grant the ability to access very other SecurityOrigin.
     //
     // WARNING: This is an extremely powerful ability. Use with caution!
-    void grantUniversalAccess();
+    WEBCORE_EXPORT void grantUniversalAccess();
     bool hasUniversalAccess() const { return m_universalAccess; }
 
     void grantStorageAccessFromFileURLsQuirk();

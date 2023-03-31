@@ -228,6 +228,7 @@
 #include "ThreadableBlobRegistry.h"
 #include "TreeScope.h"
 #include "TypeConversions.h"
+#include "UserContentURLPattern.h"
 #include "UserGestureIndicator.h"
 #include "UserMediaController.h"
 #include "ViewportArguments.h"
@@ -5061,6 +5062,18 @@ ExceptionOr<bool> Internals::pageDefersLoading()
     if (!document || !document->page())
         return Exception { InvalidAccessError };
     return document->page()->defersLoading();
+}
+
+void Internals::grantUniversalAccess()
+{
+    if (auto* document = contextDocument())
+        document->securityOrigin().grantUniversalAccess();
+}
+
+void Internals::disableCORSForURL(const String& url)
+{
+    if (auto* page = contextDocument() ? contextDocument()->page() : nullptr)
+        page->addCORSDisablingPatternForTesting(UserContentURLPattern { url });
 }
 
 RefPtr<File> Internals::createFile(const String& path)

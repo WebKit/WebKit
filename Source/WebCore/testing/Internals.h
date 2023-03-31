@@ -811,6 +811,9 @@ public:
     void setPageDefersLoading(bool);
     ExceptionOr<bool> pageDefersLoading();
 
+    void grantUniversalAccess();
+    void disableCORSForURL(const String&);
+
     RefPtr<File> createFile(const String&);
     String createTemporaryFile(const String& name, const String& contents);
 

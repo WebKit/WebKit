@@ -881,6 +881,9 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     undefined setPageDefersLoading(boolean defersLoading);
     boolean pageDefersLoading();
 
+    undefined grantUniversalAccess();
+    undefined disableCORSForURL(DOMString url);
+
     File? createFile(DOMString url);
     DOMString createTemporaryFile(DOMString name, DOMString contents);
 

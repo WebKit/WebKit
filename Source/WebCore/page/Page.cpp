@@ -2309,6 +2309,11 @@ void Page::setCORSDisablingPatterns(Vector<UserContentURLPattern>&& patterns)
     m_corsDisablingPatterns = WTFMove(patterns);
 }
 
+void Page::addCORSDisablingPatternForTesting(UserContentURLPattern&& pattern)
+{
+    m_corsDisablingPatterns.append(WTFMove(pattern));
+}
+
 void Page::setMemoryCacheClientCallsEnabled(bool enabled)
 {
     if (m_areMemoryCacheClientCallsEnabled == enabled)
