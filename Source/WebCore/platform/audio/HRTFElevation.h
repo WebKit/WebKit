@@ -57,6 +57,8 @@ public:
     // Valid values for elevation are -45 -> +90 in 15 degree increments.
     static std::unique_ptr<HRTFElevation> createForSubject(const String& subjectName, int elevation, float sampleRate);
 
+    static void clearCache();
+
     // Given two HRTFElevations, and an interpolation factor x: 0 -> 1, returns an interpolated HRTFElevation.
     static std::unique_ptr<HRTFElevation> createByInterpolatingSlices(HRTFElevation* hrtfElevation1, HRTFElevation* hrtfElevation2, float x, float sampleRate);
 

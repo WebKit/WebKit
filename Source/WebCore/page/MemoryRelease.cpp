@@ -37,6 +37,7 @@
 #include "Document.h"
 #include "FontCache.h"
 #include "GCController.h"
+#include "HRTFElevation.h"
 #include "HTMLMediaElement.h"
 #include "HTMLNameCache.h"
 #include "InlineStyleSheetOwner.h"
@@ -102,6 +103,7 @@ static void releaseCriticalMemory(Synchronous synchronous, MaintainBackForwardCa
     }
 
     CSSValuePool::singleton().drain();
+    HRTFElevation::clearCache();
 
     Page::forEachPage([](auto& page) {
         page.cookieJar().clearCache();
