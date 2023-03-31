@@ -70,6 +70,10 @@
 #include <wtf/MachSendRight.h>
 #endif
 
+#if PLATFORM(GTK) && USE(EGL)
+#include <WebCore/PlatformDisplay.h>
+#endif
+
 #if PLATFORM(WAYLAND)
 #include <WebCore/PlatformDisplayLibWPE.h>
 #endif
