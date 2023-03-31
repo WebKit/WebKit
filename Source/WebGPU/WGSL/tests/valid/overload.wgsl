@@ -39,7 +39,7 @@ fn testAdd() {
 fn testMultiply() {
   let v2 = vec2<f32>(0, 0);
   let v4 = vec4<f32>(0, 0, 0, 0);
-  let m = mat2x4<f32>(0, 0, 0, 0);
+  let m = mat2x4<f32>(0, 0, 0, 0, 0, 0, 0, 0);
   let r1 = m * v2;
   let r2 = v4 * m;
 }
