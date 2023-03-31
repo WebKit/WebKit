@@ -100,10 +100,6 @@ RemoteMediaPlayerProxy::RemoteMediaPlayerProxy(RemoteMediaPlayerManagerProxy& ma
 
 RemoteMediaPlayerProxy::~RemoteMediaPlayerProxy()
 {
-#if ENABLE(MEDIA_SOURCE)
-    if (m_mediaSourceProxy)
-        m_mediaSourceProxy->shutdown();
-#endif
     if (m_performTaskAtMediaTimeCompletionHandler)
         m_performTaskAtMediaTimeCompletionHandler(std::nullopt, std::nullopt);
     setShouldEnableAudioSourceProvider(false);
@@ -158,7 +154,7 @@ void RemoteMediaPlayerProxy::load(URL&& url, std::optional<SandboxExtension::Han
         else
             WTFLogAlways("Unable to create sandbox extension for media url.\n");
     }
-
+    
     m_player->load(url, contentType, keySystem, requiresRemotePlayback);
     getConfiguration(configuration);
     completionHandler(WTFMove(configuration));
@@ -175,8 +171,6 @@ void RemoteMediaPlayerProxy::loadMediaSource(URL&& url, const WebCore::ContentTy
         return;
     }
 
-    if (m_mediaSourceProxy)
-        m_mediaSourceProxy->shutdown();
     m_mediaSourceProxy = adoptRef(*new RemoteMediaSourceProxy(*m_manager->gpuConnectionToWebProcess(), mediaSourceIdentifier, webMParserEnabled, *this));
     m_player->load(url, contentType, *m_mediaSourceProxy);
     getConfiguration(configuration);
@@ -584,7 +578,7 @@ TrackPrivateRemoteIdentifier RemoteMediaPlayerProxy::addRemoteAudioTrackProxy(We
     ASSERT(m_manager && m_manager->gpuConnectionToWebProcess());
     if (!m_manager || !m_manager->gpuConnectionToWebProcess())
         return { };
-
+    
     for (auto& [localTrack, remoteTrack] : m_audioTracks) {
         if (localTrack == track) {
             auto identifier = remoteTrack->identifier();
@@ -618,7 +612,7 @@ TrackPrivateRemoteIdentifier RemoteMediaPlayerProxy::addRemoteVideoTrackProxy(We
     ASSERT(m_manager->gpuConnectionToWebProcess());
     if (!m_manager || !m_manager->gpuConnectionToWebProcess())
         return { };
-
+    
     for (auto& [localTrack, remoteTrack] : m_videoTracks) {
         if (localTrack == track) {
             auto identifier = remoteTrack->identifier();
@@ -651,7 +645,7 @@ TrackPrivateRemoteIdentifier RemoteMediaPlayerProxy::addRemoteTextTrackProxy(Web
     ASSERT(m_manager && m_manager->gpuConnectionToWebProcess());
     if (!m_manager || !m_manager->gpuConnectionToWebProcess())
         return { };
-
+    
     for (auto& [localTrack, remoteTrack] : m_textTracks) {
         if (localTrack == track) {
             auto identifier = remoteTrack->identifier();

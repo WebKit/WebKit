@@ -27,7 +27,6 @@
 
 messages -> MediaSourcePrivateRemote NotRefCounted {
     SeekToTime(MediaTime time);
-    MediaSourcePrivateShuttingDown() -> ();
 }
 
 #endif

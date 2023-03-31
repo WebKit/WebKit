@@ -74,8 +74,6 @@ public:
 
     void failedToCreateRenderer(RendererType) final;
 
-    void shutdown();
-
 private:
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
