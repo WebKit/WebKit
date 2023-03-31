@@ -42,22 +42,13 @@ URL::URL(CFURLRef url)
         *this = URLParser(bytesAsString(url)).result();
 }
 
-#if !USE(FOUNDATION)
-
-RetainPtr<CFURLRef> URL::emptyCFURL()
-{
-    return nullptr;
-}
-
-#endif
-
 RetainPtr<CFURLRef> URL::createCFURL() const
 {
     if (isNull())
         return nullptr;
 
     if (isEmpty())
-        return emptyCFURL();
+        return adoptCF(CFURLCreateWithString(kCFAllocatorDefault, CFSTR(""), nullptr));
 
     RetainPtr<CFURLRef> result;
     if (LIKELY(m_string.is8Bit() && m_string.isAllASCII()))

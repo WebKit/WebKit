@@ -220,10 +220,6 @@ private:
 
     friend WTF_EXPORT_PRIVATE bool protocolHostAndPortAreEqual(const URL&, const URL&);
 
-#if USE(CF)
-    static RetainPtr<CFURLRef> emptyCFURL();
-#endif
-
     String m_string;
 
     unsigned m_isValid : 1;

@@ -728,17 +728,11 @@ std::optional<RetainPtr<CFURLRef>> ArgumentCoder<RetainPtr<CFURLRef>>::decode(De
     if (!urlBytes)
         return std::nullopt;
 
-#if USE(FOUNDATION)
-    // FIXME: Move this to ArgumentCodersCFMac.mm and change this file back to be C++
-    // instead of Objective-C++.
     if (urlBytes->empty()) {
-        // CFURL can't hold an empty URL, unlike NSURL.
-        // FIXME: This discards base URL, which seems incorrect.
-        return {{ (__bridge CFURLRef)[NSURL URLWithString:@""] }};
+        return adoptCF(CFURLCreateWithString(kCFAllocatorDefault, CFSTR(""), nullptr));
     }
-#endif
 
-    auto result = adoptCF(CFURLCreateAbsoluteURLWithBytes(nullptr, reinterpret_cast<const UInt8*>(urlBytes->data()), urlBytes->size(), kCFStringEncodingUTF8, baseURL.get(), true));
+    auto result = adoptCF(CFURLCreateWithBytes(kCFAllocatorDefault, urlBytes->data(), urlBytes->size(), kCFStringEncodingUTF8, baseURL.get()));
     if (!result)
         return std::nullopt;
     return WTFMove(result);
