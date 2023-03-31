@@ -183,6 +183,8 @@ static bool affectsRenderedSubtree(Element& element, const RenderStyle& newStyle
         return true;
     if (element.renderOrDisplayContentsStyle())
         return true;
+    if (element.displayContentsChanged())
+        return true;
     if (element.rendererIsNeeded(newStyle))
         return true;
     return false;
