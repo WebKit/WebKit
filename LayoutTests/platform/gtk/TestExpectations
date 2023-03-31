@@ -487,7 +487,7 @@ webkit.org/b/245840 webgl/2.0.y/conformance/extensions/ext-float-blend.html [ Pa
 webkit.org/b/251107 inspector/canvas/recording-webgl2-full.html [ Failure ]
 webkit.org/b/251107 inspector/canvas/recording-webgl2-snapshots.html [ Failure ]
 webkit.org/b/251107 webgl/2.0.0/conformance/context/premultiplyalpha-test.html [ Failure ]
-webkit.org/b/251107 webgl/2.0.0/conformance/glsl/bugs/conditional-discard-in-loop.html [ Failure ]
+webkit.org/b/251107 webgl/2.0.y/conformance/glsl/bugs/conditional-discard-in-loop.html [ Failure ]
 webkit.org/b/251107 webgl/2.0.0/conformance/rendering/gl-scissor-test.html [ Failure ]
 webkit.org/b/251107 webgl/2.0.0/conformance2/reading/read-pixels-from-fbo-test.html [ Failure ]
 webkit.org/b/251107 webgl/2.0.0/conformance2/rendering/fs-color-type-mismatch-color-buffer-type.html [ Failure ]
@@ -611,7 +611,7 @@ webkit.org/b/251107 webgl/2.0.y/conformance/buffers/index-validation-verifies-to
 webkit.org/b/251107 webgl/2.0.y/conformance/buffers/index-validation-with-resized-buffer.html [ Pass Failure ]
 webkit.org/b/251107 webgl/2.0.0/conformance/context/context-attributes-alpha-depth-stencil-antialias.html [ Pass Timeout ]
 webkit.org/b/251107 webgl/2.0.y/conformance/extensions/webgl-debug-shaders.html [ Pass Failure ]
-webkit.org/b/251107 webgl/2.0.0/conformance/limits/gl-min-textures.html [ Pass Failure ]
+webkit.org/b/251107 webgl/2.0.y/conformance/limits/gl-min-textures.html [ Pass Failure ]
 webkit.org/b/251107 webgl/2.0.0/conformance/rendering/draw-elements-out-of-bounds.html [ Pass Failure ]
 webkit.org/b/251107 webgl/2.0.0/conformance/textures/image_bitmap_from_video/tex-2d-rgba-rgba-unsigned_byte.html [ Pass Failure ]
 webkit.org/b/251107 webgl/2.0.0/conformance/textures/image_bitmap_from_video/tex-2d-rgba-rgba-unsigned_short_4_4_4_4.html [ Pass Failure ]
@@ -1549,17 +1549,20 @@ imported/w3c/web-platform-tests/css/cssom-view/scroll-behavior-subframe-window.h
 # Uncomment when webkit.org/b/231811 is fixed and glib expectation is removed.
 # webrtc/concurrentVideoPlayback2.html [ Slow ]
 
-webgl/1.0.3/conformance/glsl/literals/float_literal.vert.html [ Slow ]
-webgl/1.0.3/conformance/glsl/bugs/long-expressions-should-not-crash.html [ Slow ]
-webgl/1.0.3/conformance/glsl/constructors/glsl-construct-bvec2.html [ Slow ]
-webgl/1.0.3/conformance/glsl/constructors/glsl-construct-ivec2.html [ Slow ]
-webgl/1.0.3/conformance/glsl/constructors/glsl-construct-vec2.html [ Slow ]
-webgl/1.0.3/conformance/glsl/misc/shader-varying-packing-restrictions.html [ Slow ]
-webgl/1.0.3/conformance/glsl/constructors/glsl-construct-bvec4.html [ Slow ]
+webgl/1.0.x/conformance/glsl/literals/float_literal.vert.html [ Slow ]
+webgl/1.0.x/conformance/glsl/bugs/long-expressions-should-not-crash.html [ Slow ]
+webgl/1.0.x/conformance/glsl/constructors/glsl-construct-bvec2.html [ Slow ]
+webgl/1.0.x/conformance/glsl/constructors/glsl-construct-ivec2.html [ Slow ]
+webgl/1.0.x/conformance/glsl/constructors/glsl-construct-vec2.html [ Slow ]
+webgl/1.0.x/conformance/glsl/misc/shader-varying-packing-restrictions.html [ Slow ]
+webgl/1.0.x/conformance/glsl/constructors/glsl-construct-bvec4.html [ Slow ]
 webgl/1.0.3/conformance/ogles/GL/ceil/ceil_001_to_006.html [ Slow ]
 webgl/1.0.3/conformance/ogles/GL/cos/cos_001_to_006.html [ Slow ]
 webgl/1.0.3/conformance/ogles/GL/floor/floor_001_to_006.html [ Slow ]
 webgl/buffer-copysubdata-overlap-no-crash.html [ Slow ]
+
+webgl/2.0.y/conformance/glsl/constructors/glsl-construct-bvec2.html  [ Failure ]
+
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of slow tests

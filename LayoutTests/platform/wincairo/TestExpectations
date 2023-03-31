@@ -1664,13 +1664,13 @@ webxr [ Skip ]
 [ Debug ] loader/load-defer-resume-crash.html [ Skip ]
 [ Debug ] webgl/2.0.y/conformance/attribs/gl-vertexattribpointer.html [ Skip ] # Slow
 [ Debug ] webgl/2.0.0/conformance/canvas/drawingbuffer-test.html [ Skip ] # Crash by assertion failure
-[ Debug ] webgl/2.0.0/conformance/glsl/bugs/complex-glsl-does-not-crash.html [ Skip ] # Slow
-[ Debug ] webgl/2.0.0/conformance/glsl/bugs/compound-assignment-type-combination.html [ Skip ] # Slow
-[ Debug ] webgl/2.0.0/conformance/glsl/constructors/glsl-construct-ivec4.html [ Skip ] # Slow
-[ Debug ] webgl/2.0.0/conformance/glsl/constructors/glsl-construct-vec4.html [ Skip ] # Slow
-[ Debug ] webgl/2.0.0/conformance/glsl/misc/const-variable-initialization.html [ Skip ] # Slow
-[ Debug ] webgl/2.0.0/conformance/glsl/misc/shader-uniform-packing-restrictions.html [ Skip ] # Slow
-[ Debug ] webgl/2.0.0/conformance/glsl/misc/struct-nesting-of-variable-names.html [ Skip ] # Slow
+[ Debug ] webgl/2.0.y/conformance/glsl/bugs/complex-glsl-does-not-crash.html [ Skip ] # Slow
+[ Debug ] webgl/2.0.y/conformance/glsl/bugs/compound-assignment-type-combination.html [ Skip ] # Slow
+[ Debug ] webgl/2.0.y/conformance/glsl/constructors/glsl-construct-ivec4.html [ Skip ] # Slow
+[ Debug ] webgl/2.0.y/conformance/glsl/constructors/glsl-construct-vec4.html [ Skip ] # Slow
+[ Debug ] webgl/2.0.y/conformance/glsl/misc/const-variable-initialization.html [ Skip ] # Slow
+[ Debug ] webgl/2.0.y/conformance/glsl/misc/shader-uniform-packing-restrictions.html [ Skip ] # Slow
+[ Debug ] webgl/2.0.y/conformance/glsl/misc/struct-nesting-of-variable-names.html [ Skip ] # Slow
 [ Debug ] webgl/2.0.0/conformance/rendering/many-draw-calls.html [ Skip ] # Slow
 [ Debug ] webgl/2.0.0/conformance/rendering/multisample-corruption.html [ Skip ] # Slow
 [ Debug ] webgl/2.0.0/conformance/state/gl-object-get-calls.html [ Skip ] # Slow
@@ -1918,11 +1918,11 @@ loader/stateobjects/pushstate-size.html [ Skip ] # Timeout
 webgl/2.0.0/conformance/canvas/drawingbuffer-static-canvas-test.html [ Failure Pass ]
 webgl/2.0.0/conformance/canvas/framebuffer-bindings-affected-by-to-data-url.html [ Skip ] # Crash
 webgl/2.0.0/conformance/context/premultiplyalpha-test.html [ Failure ]
-webgl/2.0.0/conformance/glsl/bugs/conditional-discard-in-loop.html [ Failure ]
-webgl/2.0.0/conformance/glsl/bugs/loop-if-loop-gradient.html [ Skip ] # Flaky timeout if it runs with other tests
-webgl/2.0.0/conformance/glsl/bugs/qualcomm-crash.html [ Skip ] # Flaky timeout if it runs with other tests
-webgl/2.0.0/conformance/glsl/bugs/qualcomm-loop-with-continue-crash.html [ Skip ] # Flaky timeout if it runs with other tests
-webgl/2.0.0/conformance/glsl/bugs/sketchfab-lighting-shader-crash.html [ Skip ] # Flaky timeout if it runs with other tests
+webgl/2.0.y/conformance/glsl/bugs/conditional-discard-in-loop.html [ Failure ]
+webgl/2.0.y/conformance/glsl/bugs/loop-if-loop-gradient.html [ Skip ] # Flaky timeout if it runs with other tests
+webgl/2.0.y/conformance/glsl/bugs/qualcomm-crash.html [ Skip ] # Flaky timeout if it runs with other tests
+webgl/2.0.y/conformance/glsl/bugs/qualcomm-loop-with-continue-crash.html [ Skip ] # Flaky timeout if it runs with other tests
+webgl/2.0.y/conformance/glsl/bugs/sketchfab-lighting-shader-crash.html [ Skip ] # Flaky timeout if it runs with other tests
 webgl/2.0.0/conformance/textures/misc/texture-mips.html [ Failure Pass ]
 webgl/2.0.0/conformance/textures/misc/texture-upload-size.html [ Skip ] # Timeout
 webgl/2.0.0/conformance/uniforms/out-of-bounds-uniform-array-access.html [ Skip ] # Timeout

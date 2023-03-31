@@ -72,7 +72,7 @@ webkit.org/b/156717 transforms/3d/point-mapping/3d-point-mapping-preserve-3d.htm
 webkit.org/b/169917 fast/canvas/webgl/drawingbuffer-test.html [ Failure ]
 webkit.org/b/169917 webgl/1.0.3/conformance/textures/texture-npot-video.html [ Crash Pass ]
 webkit.org/b/169917 webgl/1.0.3/conformance/rendering/many-draw-calls.html [ Timeout Pass ]
-webkit.org/b/169917 webgl/1.0.3/conformance/glsl/bugs/temp-expressions-should-not-crash.html [ Timeout ]
+webkit.org/b/169917 webgl/1.0.x/conformance/glsl/bugs/temp-expressions-should-not-crash.html [ Timeout ]
 webkit.org/b/169917 webgl/1.0.x/conformance/extensions/webgl-draw-buffers.html [ Failure ]
 webkit.org/b/169917 webgl/1.0.3/conformance/rendering/negative-one-index.html [ Timeout Pass ]
 webkit.org/b/169917 webgl/webgl-padding.html [ ImageOnlyFailure ]

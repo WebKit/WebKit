@@ -3171,7 +3171,6 @@ webkit.org/b/207858 webgl/webgl-box-shadow.html [ Pass Failure ImageOnlyFailure 
 webkit.org/b/207858 fast/canvas/webgl/uninitialized-test.html [ Pass Failure ]
 webkit.org/b/207858 fast/canvas/webgl/oes-texture-float-linear.html [ Pass Failure ]
 webkit.org/b/207858 fast/canvas/webgl/tex-image-and-sub-image-2d-with-video.html [ Pass Failure ]
-webkit.org/b/207858 webgl/1.0.3/conformance/glsl/misc/shader-struct-scope.html [ Pass Failure ]
 webkit.org/b/207858 webgl/1.0.3/conformance/misc/uninitialized-test.html [ Pass Failure ]
 
 # <rdar://problem/59635486> REGRESSION: http/wpt/webauthn/public-key-credential-get-success-local.https.html is crashing
@@ -3277,10 +3276,6 @@ imported/w3c/web-platform-tests/dom/ranges/Range-surroundContents.html [ Slow ]
 
 # <rdar://problem/64546452> [ iOS ] mathml/opentype/munderover-stretch-width.html is flaky failing.
 mathml/opentype/munderover-stretch-width.html [ Pass Failure ]
-
-# # <rdar://problem/64701357> REGRESSION: [ iOS wk2 ] webgl/1.0.3/conformance/glsl/functions/glsl-function-sign.html and webgl/1.0.3/conformance/glsl/misc/glsl-function-nodes.html are failing consistently.
-# webgl/1.0.3/conformance/glsl/functions/glsl-function-sign.html [ Failure ]
-# webgl/1.0.3/conformance/glsl/misc/glsl-function-nodes.html [ Failure ]
 
 # <rdar://problem/64816264> [ iOS wk2 ] streams/pipe-to.html is flaky failing.
 streams/pipe-to.html [ Pass Failure ]
