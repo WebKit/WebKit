@@ -310,7 +310,6 @@ public:
     virtual LayoutUnit collapsedMarginBefore() const { return marginBefore(); }
     virtual LayoutUnit collapsedMarginAfter() const { return marginAfter(); }
 
-    virtual bool shouldTrimChildMargin(MarginTrimType, const RenderBox&) const { return false; }
     LayoutUnit constrainBlockMarginInAvailableSpaceOrTrim(const RenderBox& containingBlock, LayoutUnit availableSpace, MarginTrimType marginSide) const;
 
     void absoluteRects(Vector<IntRect>&, const LayoutPoint& accumulatedOffset) const override;
@@ -731,6 +730,9 @@ protected:
 
     void willBeDestroyed() override;
 
+    bool shouldTrimChildMargin(MarginTrimType, const RenderBox&) const;
+    virtual bool isChildEligibleForMarginTrim(MarginTrimType, const RenderBox&) const { return false; }
+
     virtual bool shouldResetLogicalHeightBeforeLayout() const { return false; }
     void resetLogicalHeightBeforeLayoutIfNeeded();
 
@@ -955,6 +957,13 @@ inline void RenderBox::setInlineBoxWrapper(LegacyInlineElementBox* boxWrapper)
 inline LayoutRect RenderBox::contentBoxRect() const
 {
     return { contentBoxLocation(), contentSize() };
+}
+
+inline bool RenderBox::shouldTrimChildMargin(MarginTrimType marginTrimType, const RenderBox& child) const
+{
+    if (!style().marginTrim().contains(marginTrimType))
+        return false;
+    return isChildEligibleForMarginTrim(marginTrimType, child);
 }
 
 LayoutUnit synthesizedBaseline(const RenderBox&, const RenderStyle& parentStyle, LineDirectionMode, BaselineSynthesisEdge);

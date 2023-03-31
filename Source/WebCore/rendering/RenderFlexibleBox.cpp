@@ -927,15 +927,14 @@ LayoutUnit RenderFlexibleBox::crossAxisMarginExtentForChild(const RenderBox& chi
     return marginStart + marginEnd;
 }
 
-bool RenderFlexibleBox::shouldTrimChildMargin(MarginTrimType marginTrimType, const RenderBox& child) const
+bool RenderFlexibleBox::isChildEligibleForMarginTrim(MarginTrimType marginTrimType, const RenderBox& child) const
 {
+    ASSERT(style().marginTrim().contains(marginTrimType));
     auto isMarginParallelWithMainAxis = [this](MarginTrimType marginTrimType) {
         if (isHorizontalFlow())
             return marginTrimType == MarginTrimType::BlockStart || marginTrimType == MarginTrimType::BlockEnd;
         return marginTrimType == MarginTrimType::InlineStart || marginTrimType == MarginTrimType::InlineEnd;
     };
-    if (!style().marginTrim().contains(marginTrimType))
-        return false;
     if (isMarginParallelWithMainAxis(marginTrimType))
         return (marginTrimType == MarginTrimType::BlockStart || marginTrimType == MarginTrimType::InlineStart) ? m_marginTrimItems.m_itemsOnFirstFlexLine.contains(&child) : m_marginTrimItems.m_itemsOnLastFlexLine.contains(&child);
     return (marginTrimType == MarginTrimType::BlockStart || marginTrimType == MarginTrimType::InlineStart) ? m_marginTrimItems.m_itemsAtFlexLineStart.contains(&child) : m_marginTrimItems.m_itemsAtFlexLineEnd.contains(&child);

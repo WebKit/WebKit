@@ -1441,9 +1441,10 @@ LayoutUnit RenderBlockFlow::collapseMarginsWithChildInfo(RenderBox* child, Rende
     return logicalTop;
 }
 
-bool RenderBlockFlow::shouldTrimChildMargin(MarginTrimType marginTrimType, const RenderBox& child) const
+bool RenderBlockFlow::isChildEligibleForMarginTrim(MarginTrimType marginTrimType, const RenderBox& child) const
 {
-    if (!child.style().isDisplayBlockLevel() || !style().marginTrim().contains(marginTrimType))
+    ASSERT(style().marginTrim().contains(marginTrimType));
+    if (!child.style().isDisplayBlockLevel())
         return false;
     if (marginTrimType == MarginTrimType::BlockStart)
         return firstInFlowChildBox() == &child;

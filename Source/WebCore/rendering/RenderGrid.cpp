@@ -1681,10 +1681,10 @@ void RenderGrid::updateAutoMarginsInColumnAxisIfNeeded(RenderBox& child)
     }
 }
 
-bool RenderGrid::shouldTrimChildMargin(MarginTrimType marginTrimType, const RenderBox& child) const
+bool RenderGrid::isChildEligibleForMarginTrim(MarginTrimType marginTrimType, const RenderBox& child) const
 {
-    if (!style().marginTrim().contains(marginTrimType))
-        return false;
+    ASSERT(style().marginTrim().contains(marginTrimType));
+
     auto isTrimmingBlockDirection = marginTrimType == MarginTrimType::BlockStart || marginTrimType == MarginTrimType::BlockEnd;
     auto itemGridSpan = isTrimmingBlockDirection ? currentGrid().gridItemSpanIgnoringCollapsedTracks(child, ForRows) : currentGrid().gridItemSpanIgnoringCollapsedTracks(child, ForColumns);
     switch (marginTrimType) {

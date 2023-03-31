@@ -228,7 +228,6 @@ public:
         LayoutUnit margin() const { return m_positiveMargin - m_negativeMargin; }
     };
 
-    bool shouldTrimChildMargin(MarginTrimType, const RenderBox&) const final;
     void trimFloatBlockEndMargins(LayoutUnit blockFormattingContextInFlowContentHeight);
     bool shouldChildInlineMarginContributeToContainerIntrinsicSize(MarginTrimType, const RenderElement&) const final;
 
@@ -409,7 +408,10 @@ public:
     std::optional<LayoutUnit> lowestInitialLetterLogicalBottom() const;
 
     LayoutUnit blockFormattingContextInFlowBlockLevelContentHeight() const;
+
 protected:
+    bool isChildEligibleForMarginTrim(MarginTrimType, const RenderBox&) const final;
+
     bool shouldResetLogicalHeightBeforeLayout() const override { return true; }
 
     void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const override;
