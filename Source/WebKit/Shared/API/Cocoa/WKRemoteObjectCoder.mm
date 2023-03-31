@@ -774,6 +774,24 @@ static id decodeObjectFromObjectStream(WKRemoteObjectDecoder *decoder, const Has
     return decodeObject(decoder, dictionary, allowedClasses);
 }
 
+static const HashSet<CFTypeRef> alwaysAllowedClasses()
+{
+    static NeverDestroyed<HashSet<CFTypeRef>> classes { HashSet<CFTypeRef> {
+        (__bridge CFTypeRef)NSArray.class,
+        (__bridge CFTypeRef)NSMutableArray.class,
+        (__bridge CFTypeRef)NSDictionary.class,
+        (__bridge CFTypeRef)NSMutableDictionary.class,
+        (__bridge CFTypeRef)NSString.class,
+        (__bridge CFTypeRef)NSMutableString.class,
+        (__bridge CFTypeRef)NSSet.class,
+        (__bridge CFTypeRef)NSMutableSet.class,
+        (__bridge CFTypeRef)NSData.class,
+        (__bridge CFTypeRef)NSMutableData.class,
+        (__bridge CFTypeRef)NSNumber.class,
+    } };
+    return classes.get();
+}
+
 static void checkIfClassIsAllowed(WKRemoteObjectDecoder *decoder, Class objectClass)
 {
     auto* allowedClasses = decoder->_allowedClasses;
@@ -783,6 +801,11 @@ static void checkIfClassIsAllowed(WKRemoteObjectDecoder *decoder, Class objectCl
     if (allowedClasses->contains((__bridge CFTypeRef)objectClass))
         return;
 
+    if (alwaysAllowedClasses().contains((__bridge CFTypeRef)objectClass))
+        return;
+
+    RELEASE_LOG_FAULT(RemoteObjectRegistry, "Unexpected class %s", NSStringFromClass(objectClass).UTF8String);
+    ASSERT_NOT_REACHED();
     for (Class superclass = class_getSuperclass(objectClass); superclass; superclass = class_getSuperclass(superclass)) {
         if (allowedClasses->contains((__bridge CFTypeRef)superclass))
             return;
