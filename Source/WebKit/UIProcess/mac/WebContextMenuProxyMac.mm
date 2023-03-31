@@ -445,8 +445,8 @@ void WebContextMenuProxyMac::getShareMenuItem(CompletionHandler<void(NSMenuItem 
         return;
     }
 
-    auto sharingServicePicker = adoptNS([[NSSharingServicePicker alloc] initWithItems:items.get()]);
-    if ([sharingServicePicker respondsToSelector:@selector(standardShareMenuItem)]) {
+    if (@available(macOS 13.0, *)) {
+        auto sharingServicePicker = adoptNS([[NSSharingServicePicker alloc] initWithItems:items.get()]);
         NSMenuItem *shareMenuItem = [sharingServicePicker standardShareMenuItem];
         [shareMenuItem setRepresentedObject:sharingServicePicker.get()];
         shareMenuItem.identifier = _WKMenuItemIdentifierShareMenu;

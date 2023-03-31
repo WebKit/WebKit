@@ -193,7 +193,7 @@ static TextRecognitionResult makeTextRecognitionResult(VKCImageAnalysisTranslati
             continue;
         }
 
-        if ([paragraph respondsToSelector:@selector(isPassthrough)] && [paragraph isPassthrough])
+        if (paragraph.isPassthrough)
             continue;
 
         auto quad = floatQuad(paragraph.quad);
