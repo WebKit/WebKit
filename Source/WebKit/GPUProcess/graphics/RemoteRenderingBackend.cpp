@@ -345,18 +345,42 @@ void RemoteRenderingBackend::cacheNativeImageWithQualifiedIdentifier(const Share
     m_remoteResourceCache.cacheNativeImage(image.releaseNonNull(), nativeImageResourceIdentifier);
 }
 
-void RemoteRenderingBackend::cacheFont(Ref<Font>&& font)
+void RemoteRenderingBackend::cacheFont(const WebCore::Font::Attributes& fontAttributes, WebCore::FontPlatformData::Attributes platformData, std::optional<WebCore::RenderingResourceIdentifier> renderingResourceIdentifier)
 {
+    FontCustomPlatformData* customPlatformData = nullptr;
+    if (renderingResourceIdentifier) {
+        QualifiedRenderingResourceIdentifier ident = { *renderingResourceIdentifier, m_gpuConnectionToWebProcess->webProcessIdentifier() };
+        customPlatformData = m_remoteResourceCache.cachedFontCustomPlatformData(ident);
+        MESSAGE_CHECK(customPlatformData, "CacheFont without caching custom data");
+    }
+
+    FontPlatformData platform = FontPlatformData::create(platformData, customPlatformData);
+
+    Ref<Font> font = Font::create(platform, fontAttributes.origin, fontAttributes.isInterstitial, fontAttributes.visibility, fontAttributes.isTextOrientationFallback, fontAttributes.renderingResourceIdentifier);
+
     // Immediately turn the RenderingResourceIdentifier (which is error-prone) to a QualifiedRenderingResourceIdentifier,
     // and use a helper function to make sure that don't accidentally use the RenderingResourceIdentifier (because the helper function can't see it).
-    auto renderingResourceIdentifier = font->renderingResourceIdentifier();
-    cacheFontWithQualifiedIdentifier(WTFMove(font), { renderingResourceIdentifier, m_gpuConnectionToWebProcess->webProcessIdentifier() });
+    cacheFontWithQualifiedIdentifier(WTFMove(font), { font->renderingResourceIdentifier(), m_gpuConnectionToWebProcess->webProcessIdentifier() });
 }
 
 void RemoteRenderingBackend::cacheFontWithQualifiedIdentifier(Ref<Font>&& font, QualifiedRenderingResourceIdentifier fontResourceIdentifier)
 {
     ASSERT(!RunLoop::isMain());
     m_remoteResourceCache.cacheFont(WTFMove(font), fontResourceIdentifier);
+}
+
+void RemoteRenderingBackend::cacheFontCustomPlatformData(Ref<FontCustomPlatformData>&& customPlatformData)
+{
+    // Immediately turn the RenderingResourceIdentifier (which is error-prone) to a QualifiedRenderingResourceIdentifier,
+    // and use a helper function to make sure that don't accidentally use the RenderingResourceIdentifier (because the helper function can't see it).
+    auto renderingResourceIdentifier = customPlatformData->m_renderingResourceIdentifier;
+    cacheFontCustomPlatformDataWithQualifiedIdentifier(WTFMove(customPlatformData), { renderingResourceIdentifier, m_gpuConnectionToWebProcess->webProcessIdentifier() });
+}
+
+void RemoteRenderingBackend::cacheFontCustomPlatformDataWithQualifiedIdentifier(Ref<FontCustomPlatformData>&& customPlatformData, QualifiedRenderingResourceIdentifier fontResourceIdentifier)
+{
+    ASSERT(!RunLoop::isMain());
+    m_remoteResourceCache.cacheFontCustomPlatformData(WTFMove(customPlatformData), fontResourceIdentifier);
 }
 
 void RemoteRenderingBackend::cacheDecomposedGlyphs(Ref<DecomposedGlyphs>&& decomposedGlyphs)

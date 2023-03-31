@@ -21,7 +21,9 @@
 #include "config.h"
 #include "FontPlatformData.h"
 
+
 #include "FontCache.h"
+#include "FontCustomPlatformData.h"
 #include "FontDescription.h"
 #include "RenderStyleConstants.h"
 #include "StyleFontSizeFunctions.h"
@@ -39,16 +41,20 @@ FontPlatformData::FontPlatformData()
 {
 }
 
-FontPlatformData::FontPlatformData(float size, bool syntheticBold, bool syntheticOblique, FontOrientation orientation, FontWidthVariant widthVariant, TextRenderingMode textRenderingMode, const CreationData* creationData)
+FontPlatformData::FontPlatformData(float size, bool syntheticBold, bool syntheticOblique, FontOrientation orientation, FontWidthVariant widthVariant, TextRenderingMode textRenderingMode, const FontCustomPlatformData* customPlatformData)
     : m_size(size)
     , m_orientation(orientation)
     , m_widthVariant(widthVariant)
     , m_textRenderingMode(textRenderingMode)
-    , m_creationData(makeOptionalFromPointer(creationData))
+    , m_customPlatformData(customPlatformData)
     , m_syntheticBold(syntheticBold)
     , m_syntheticOblique(syntheticOblique)
 {
 }
+
+FontPlatformData::~FontPlatformData() = default;
+FontPlatformData::FontPlatformData(const FontPlatformData&) = default;
+FontPlatformData& FontPlatformData::operator=(const FontPlatformData&) = default;
 
 #if !USE(FREETYPE)
 FontPlatformData FontPlatformData::cloneWithOrientation(const FontPlatformData& source, FontOrientation orientation)
@@ -93,6 +99,15 @@ void FontPlatformData::updateSizeWithFontSizeAdjust(const FontSizeAdjust& fontSi
         return;
 
     updateSize(std::min(adjustedFontSize, maximumAllowedFontSize));
+}
+
+const FontPlatformData::CreationData* FontPlatformData::creationData() const
+{
+#if PLATFORM(WIN) || USE(CORE_TEXT)
+    return m_customPlatformData ? &m_customPlatformData->creationData : nullptr;
+#else
+    return nullptr;
+#endif
 }
 
 #if !PLATFORM(COCOA) && !USE(FREETYPE)
