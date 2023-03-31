@@ -788,6 +788,10 @@ static const HashSet<CFTypeRef> alwaysAllowedClasses()
         (__bridge CFTypeRef)NSData.class,
         (__bridge CFTypeRef)NSMutableData.class,
         (__bridge CFTypeRef)NSNumber.class,
+        (__bridge CFTypeRef)NSInvocation.class,
+        (__bridge CFTypeRef)NSBlockInvocation.class,
+        (__bridge CFTypeRef)NSHTTPURLResponse.class,
+        (__bridge CFTypeRef)NSURLResponse.class,
     } };
     return classes.get();
 }
