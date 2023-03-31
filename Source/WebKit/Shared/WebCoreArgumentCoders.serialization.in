@@ -4735,12 +4735,19 @@ struct WebCore::GlobalWindowIdentifier {
 };
 
 [Nested] enum class WebCore::InteractionRegion::Type : bool;
+[Nested, OptionSet] enum class WebCore::InteractionRegion::CornerMask : uint8_t {
+    MinXMinYCorner
+    MaxXMinYCorner
+    MinXMaxYCorner
+    MaxXMaxYCorner
+};
 
 struct WebCore::InteractionRegion {
+    WebCore::InteractionRegion::Type type;
     WebCore::ElementIdentifier elementIdentifier;
     WebCore::IntRect rectInLayerCoordinates;
     float borderRadius;
-    WebCore::InteractionRegion::Type type;
+    OptionSet<WebCore::InteractionRegion::CornerMask> maskedCorners;
 };
 
 [Nested] struct WebCore::Region::Span {
