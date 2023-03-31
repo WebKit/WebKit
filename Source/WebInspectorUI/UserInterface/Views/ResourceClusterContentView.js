@@ -152,11 +152,16 @@ WI.ResourceClusterContentView = class ResourceClusterContentView extends WI.Clus
         if (this._responseContentView)
             return this._responseContentView;
 
+        let typeFromMIMEType = WI.Resource.typeFromMIMEType(this._resource.mimeType);
+
+        // COMPATIBILITY (macOS 13.3, iOS 16.3): Images inspected as the main resource used to have a resource type of Document.
+        if (typeFromMIMEType === WI.Resource.Type.Image && this._resource.type === WI.Resource.Type.Document)
+            return this._contentViewForResourceType(WI.Resource.Type.Image);
+
         this._responseContentView = this._contentViewForResourceType(this._resource.type);
         if (this._responseContentView)
             return this._responseContentView;
 
-        let typeFromMIMEType = WI.Resource.typeFromMIMEType(this._resource.mimeType);
         this._responseContentView = this._contentViewForResourceType(typeFromMIMEType);
         if (this._responseContentView)
             return this._responseContentView;
