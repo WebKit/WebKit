@@ -65,12 +65,12 @@ Pattern* SourceBrush::pattern() const
 
 void SourceBrush::setGradient(Ref<Gradient>&& gradient, const AffineTransform& spaceTransform)
 {
-    m_brush = { Brush::LogicalGradient { WTFMove(gradient), spaceTransform } };
+    m_brush = Brush { Brush::LogicalGradient { WTFMove(gradient), spaceTransform } };
 }
 
 void SourceBrush::setPattern(Ref<Pattern>&& pattern)
 {
-    m_brush = { Brush::Variant { std::in_place_type<Ref<Pattern>>, WTFMove(pattern) } };
+    m_brush = Brush { Brush::Variant { std::in_place_type<Ref<Pattern>>, WTFMove(pattern) } };
 }
 
 WTF::TextStream& operator<<(TextStream& ts, const SourceBrush& brush)
