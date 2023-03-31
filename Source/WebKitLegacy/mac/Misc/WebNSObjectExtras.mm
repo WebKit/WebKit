@@ -69,7 +69,7 @@ static bool returnTypeIsObject(NSInvocation *invocation)
         // Now autorelease it on the calling thread.
         id returnValue;
         [invocation getReturnValue:&returnValue];
-        adoptNS(returnValue).autorelease();
+        [returnValue autorelease];
     }
 }
 
@@ -111,12 +111,12 @@ static bool returnTypeIsObject(NSInvocation *invocation)
 
 + (id)_webkit_invokeOnMainThread
 {
-    return adoptNS([[WebMainThreadInvoker alloc] initWithTarget:self]).autorelease();
+    return [[[WebMainThreadInvoker alloc] initWithTarget:self] autorelease];
 }
 
 - (id)_webkit_invokeOnMainThread
 {
-    return adoptNS([[WebMainThreadInvoker alloc] initWithTarget:self]).autorelease();
+    return [[[WebMainThreadInvoker alloc] initWithTarget:self] autorelease];
 }
 
 @end

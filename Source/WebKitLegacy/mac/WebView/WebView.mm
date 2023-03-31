@@ -2708,15 +2708,14 @@ ALLOW_DEPRECATED_DECLARATIONS_END
             return nil;
     }
 
-    unsigned count = [menuItems count];
-    if (!count)
+    if (![menuItems count])
         return nil;
 
-    auto menu = adoptNS([[NSMenu alloc] init]);
-    for (unsigned i = 0; i < count; i++)
-        [menu addItem:[menuItems objectAtIndex:i]];
+    NSMenu *menu = [[NSMenu alloc] init];
+    for (NSMenuItem *item in items)
+        [menu addItem:item];
 
-    return menu.autorelease();
+    return [menu autorelease];
 }
 #endif
 
@@ -4030,7 +4029,7 @@ IGNORE_WARNINGS_END
     auto intRect = WebCore::enclosingIntRect(rect);
     auto range = WebCore::VisibleSelection(coreFrame->visiblePositionForPoint(intRect.minXMinYCorner()),
         coreFrame->visiblePositionForPoint(intRect.maxXMaxYCorner())).toNormalizedRange();
-    return adoptNS([[WebTextIterator alloc] initWithRange:kit(range)]).autorelease();
+    return [[[WebTextIterator alloc] initWithRange:kit(range)] autorelease];
 }
 
 #if !PLATFORM(IOS_FAMILY)
@@ -5210,14 +5209,14 @@ IGNORE_WARNINGS_END
     NSMutableDictionary *viewTypes = [WebFrameView _viewTypesAllowImageTypeOmission:YES];
     NSEnumerator *enumerator = [viewTypes keyEnumerator];
     id key;
-    auto array = adoptNS([[NSMutableArray alloc] init]);
+    NSMutableArray *array = [NSMutableArray array];
 
     while ((key = [enumerator nextObject])) {
         if ([viewTypes objectForKey:key] == [WebHTMLView class])
             [array addObject:key];
     }
 
-    return array.autorelease();
+    return array;
 }
 
 + (void)setMIMETypesShownAsHTML:(NSArray *)MIMETypes
@@ -5230,11 +5229,10 @@ IGNORE_WARNINGS_END
             [WebView _unregisterViewClassAndRepresentationClassForMIMEType:key];
     }
 
-    int i, count = [MIMETypes count];
-    for (i = 0; i < count; i++) {
+    for (NSString *MIMEType in MIMETypes) {
         [WebView registerViewClass:[WebHTMLView class]
                 representationClass:[WebHTMLRepresentation class]
-                forMIMEType:[MIMETypes objectAtIndex:i]];
+                forMIMEType:MIMEType];
     }
 }
 

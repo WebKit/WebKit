@@ -444,12 +444,12 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
 + (void)_fetchAllIdentifiers:(void(^)(NSArray<NSUUID *> *))completionHandler
 {
     auto completionHandlerCopy = makeBlockPtr(completionHandler);
-    WebKit::WebsiteDataStore::fetchAllDataStoreIdentifiers([completionHandlerCopy](auto&& identifiers) {
-        auto result = adoptNS([[NSMutableArray alloc] initWithCapacity:identifiers.size()]);
+    WebKit::WebsiteDataStore::fetchAllDataStoreIdentifiers([completionHandlerCopy](auto &&identifiers) {
+        NSMutableArray *result = [NSMutableArray arrayWithCapacity:identifiers.size()];
         for (auto identifier : identifiers)
             [result addObject:(NSUUID *)identifier];
 
-        completionHandlerCopy(result.autorelease());
+        completionHandlerCopy(result);
     });
 }
 
@@ -1050,11 +1050,11 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
 -(void)_getAllBackgroundFetchIdentifiers:(void(^)(NSArray<NSString *> *identifiers))completionHandler
 {
 #if ENABLE(SERVICE_WORKER)
-    _websiteDataStore->networkProcess().getAllBackgroundFetchIdentifiers(_websiteDataStore->sessionID(), [completionHandler = makeBlockPtr(completionHandler)] (auto identifiers) {
-        auto result = adoptNS([[NSMutableArray alloc] initWithCapacity:identifiers.size()]);
+    _websiteDataStore->networkProcess().getAllBackgroundFetchIdentifiers(_websiteDataStore->sessionID(), [completionHandler = makeBlockPtr(completionHandler)](auto identifiers) {
+        NSMutableArray *result = [NSMutableArray arrayWithCapacity:identifiers.size()];
         for (auto identifier : identifiers)
             [result addObject:(NSString *)identifier];
-        completionHandler(result.autorelease());
+        completionHandler(result);
     });
 #else
     completionHandler(nil);

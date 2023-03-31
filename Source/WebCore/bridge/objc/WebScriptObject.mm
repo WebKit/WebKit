@@ -116,7 +116,7 @@ id createJSWrapper(JSC::JSObject* object, RefPtr<JSC::Bindings::RootObject>&& or
 {
     if (id wrapper = getJSWrapper(object))
         return wrapper;
-    return adoptNS([[WebScriptObject alloc] _initWithJSObject:object originRootObject:WTFMove(origin) rootObject:WTFMove(root)]).autorelease();
+    return [[[WebScriptObject alloc] _initWithJSObject:object originRootObject:WTFMove(origin) rootObject:WTFMove(root)] autorelease];
 }
 
 static void addExceptionToConsole(JSC::JSGlobalObject* lexicalGlobalObject, JSC::Exception* exception)
@@ -648,11 +648,11 @@ static void getListFromNSArray(JSC::JSGlobalObject* lexicalGlobalObject, NSArray
 
 @implementation WebUndefined
 
-+ (instancetype)allocWithZone:(NSZone *)zone
++ (instancetype)alloc
 {
     static NeverDestroyed<RetainPtr<WebUndefined>> sharedUndefined;
     if (!sharedUndefined.get())
-        sharedUndefined.get() = adoptNS([super allocWithZone:zone]);
+        sharedUndefined.get() = adoptNS([super alloc]);
     return [sharedUndefined.get() retain];
 }
 
@@ -708,7 +708,7 @@ IGNORE_WARNINGS_END
 
 + (WebUndefined *)undefined
 {
-    return adoptNS([[WebUndefined alloc] init]).autorelease();
+    return [[[WebUndefined alloc] init] autorelease];
 }
 
 @end

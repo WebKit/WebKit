@@ -958,7 +958,7 @@ NSString *WebExtension::generatedBackgroundContent()
         return [NSString stringWithFormat:@"<script src=\"%@\"></script>", scriptPath];
     });
 
-    m_generatedBackgroundContent = [NSString stringWithFormat:@"<!DOCTYPE html>\n<body>\n%@\n</body>", [scriptTagsArray componentsJoinedByString:@"\n"]];
+    m_generatedBackgroundContent = [[NSString alloc] initWithFormat:@"<!DOCTYPE html>\n<body>\n%@\n</body>", [scriptTagsArray componentsJoinedByString:@"\n"]];
 
     return m_generatedBackgroundContent.get();
 }

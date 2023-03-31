@@ -181,19 +181,19 @@ static constexpr NSString *baseURLKey = @"WK.baseURL";
     BOOL hasBaseURL;
     [coder decodeValueOfObjCType:"c" at:&hasBaseURL size:sizeof(hasBaseURL)];
 
-    RetainPtr<NSURL> baseURL;
+    NSURL *baseURL = nil;
     if (hasBaseURL)
         baseURL = (NSURL *)[coder decodeObjectOfClass:NSURL.class forKey:baseURLKey];
 
     NSUInteger length;
     if (auto bytes = (UInt8 *)[coder decodeBytesWithReturnedLength:&length]) {
-        m_wrappedURL = bridge_cast(adoptCF(CFURLCreateAbsoluteURLWithBytes(nullptr, bytes, length, kCFStringEncodingUTF8, bridge_cast(baseURL.get()), true)));
+        m_wrappedURL = bridge_cast(adoptCF(CFURLCreateAbsoluteURLWithBytes(nullptr, bytes, length, kCFStringEncodingUTF8, bridge_cast(baseURL), true)));
         if (!m_wrappedURL)
             LOG_ERROR("Failed to decode NSURL due to invalid encoding of length %d. Substituting a blank URL", length);
     }
 
     if (!m_wrappedURL)
-        m_wrappedURL = [NSURL URLWithString:@""];
+        m_wrappedURL = [[NSURL alloc] initWithString:@""];
 
     return selfPtr.leakRef();
 }

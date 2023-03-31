@@ -64,10 +64,10 @@ std::optional<PaymentSetupConfiguration> PaymentSetupConfiguration::decode(IPC::
     static NeverDestroyed<RetainPtr<NSArray>> allowedClasses;
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
-        auto allowed = adoptNS([[NSMutableArray alloc] initWithCapacity:1]);
         if (auto pkPaymentSetupConfigurationClass = PAL::getPKPaymentSetupConfigurationClass())
-            [allowed addObject:pkPaymentSetupConfigurationClass];
-        allowedClasses.get() = adoptNS([allowed copy]);
+            allowedClasses.get() = @[ pkPaymentSetupConfigurationClass ];
+        else
+            allowedClasses.get() = @[];
     });
 
     auto configuration = IPC::decode<PKPaymentSetupConfiguration>(decoder, allowedClasses.get().get());

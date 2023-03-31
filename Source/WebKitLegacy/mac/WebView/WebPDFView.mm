@@ -885,13 +885,13 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
         [attributedString addAttribute:NSForegroundColorAttributeName value:[NSColor colorWithDeviceWhite:0.0f alpha:1.0f] range:wholeStringRange];
     [attributedString endEditing];
     
-    auto selectionImage = adoptNS([[NSImage alloc] initWithSize:[self selectionRect].size]);
+    NSImage *selectionImage = [[NSImage alloc] initWithSize:[self selectionRect].size];
     
     [selectionImage lockFocus];
     [attributedString drawAtPoint:NSZeroPoint];
     [selectionImage unlockFocus];
 
-    return selectionImage.autorelease();
+    return [selectionImage autorelease];
 }
 
 - (NSRect)selectionImageRect
@@ -1335,8 +1335,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (scaleFactor == 1.0)
         return unscaledAttributedString;
     
-    auto result = adoptNS([unscaledAttributedString mutableCopy]);
-    unsigned int length = [result length];
+    NSMutableAttributedString *result = [unscaledAttributedString mutableCopy];
+    NSUInteger length = [result length];
     NSRange effectiveRange = NSMakeRange(0,0);
     
     [result beginEditing];    
@@ -1347,7 +1347,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
             // FIXME: We can't scale the font if we don't know what it is. We should always know what it is,
             // but sometimes don't due to PDFKit issue 5089411. When that's addressed, we can remove this
             // early continue.
-            LOG_ERROR("no font attribute found in range %@ for attributed string \"%@\" on page %@ (see radar 5089411)", NSStringFromRange(effectiveRange), result.get(), [[dataSource request] URL]);
+            LOG_ERROR("no font attribute found in range %@ for attributed string \"%@\" on page %@ (see radar 5089411)", NSStringFromRange(effectiveRange), result, [[dataSource request] URL]);
             continue;
         }
         
@@ -1356,7 +1356,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     }
     [result endEditing];
     
-    return result.autorelease();
+    return [result autorelease];
 }
 
 - (void)_setTextMatches:(NSArray *)array

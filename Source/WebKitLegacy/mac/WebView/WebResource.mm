@@ -339,12 +339,12 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
 #if !PLATFORM(IOS_FAMILY)
 - (NSFileWrapper *)_fileWrapperRepresentation
 {
-    auto wrapper = adoptNS([[NSFileWrapper alloc] initRegularFileWithContents:[self data]]);
+    NSFileWrapper *wrapper = [[NSFileWrapper alloc] initRegularFileWithContents:[self data]];
     NSString *filename = [self _suggestedFilename];
     if (!filename || ![filename length])
         filename = [[self URL] _webkit_suggestedFilenameWithMIMEType:[self MIMEType]];
     [wrapper setPreferredFilename:filename];
-    return wrapper.autorelease();
+    return [wrapper autorelease];
 }
 #endif
 
@@ -355,7 +355,7 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
     NSURLResponse *response = nil;
     if (_private->coreResource)
         response = _private->coreResource->response().nsURLResponse();
-    return response ? response : adoptNS([[NSURLResponse alloc] init]).autorelease();
+    return response ? response : [[[NSURLResponse alloc] init] autorelease];
 }
 
 - (NSString *)_stringValue

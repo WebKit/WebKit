@@ -184,14 +184,14 @@ static void initializeMethods(_WKRemoteObjectInterface *interface, Protocol *pro
 
 - (NSString *)debugDescription
 {
-    auto result = adoptNS([[NSMutableString alloc] initWithFormat:@"<%@: %p; protocol = \"%@\"; identifier = \"%@\"\n", NSStringFromClass(self.class), self, _identifier.get(), NSStringFromProtocol(_protocol)]);
+    NSMutableString *result = [NSMutableString stringWithFormat:@"<%@: %p; protocol = \"%@\"; identifier = \"%@\"\n", NSStringFromClass(self.class), self, _identifier.get(), NSStringFromProtocol(_protocol)];
 
     auto descriptionForClasses = [](auto& allowedClasses) {
-        auto result = adoptNS([[NSMutableString alloc] initWithString:@"["]);
+        NSMutableString *result = [NSMutableString stringWithString:@"["];
         bool needsComma = false;
 
         auto descriptionForArgument = [](auto& allowedArgumentClasses) {
-            auto result = adoptNS([[NSMutableString alloc] initWithString:@"{"]);
+            NSMutableString *result = [NSMutableString stringWithString:@"{"];
 
             auto orderedArgumentClasses = copyToVector(allowedArgumentClasses);
             std::sort(orderedArgumentClasses.begin(), orderedArgumentClasses.end(), [](CFTypeRef a, CFTypeRef b) {
@@ -208,7 +208,7 @@ static void initializeMethods(_WKRemoteObjectInterface *interface, Protocol *pro
             }
 
             [result appendString:@"}"];
-            return result.autorelease();
+            return result;
         };
 
         for (auto& argumentClasses : allowedClasses) {
@@ -220,7 +220,7 @@ static void initializeMethods(_WKRemoteObjectInterface *interface, Protocol *pro
         }
 
         [result appendString:@"]"];
-        return result.autorelease();
+        return result;
     };
 
     for (auto& selectorAndMethod : _methods) {
@@ -231,7 +231,7 @@ static void initializeMethods(_WKRemoteObjectInterface *interface, Protocol *pro
     }
 
     [result appendString:@">\n"];
-    return result.autorelease();
+    return result;
 }
 
 static HashSet<CFTypeRef>& classesForSelectorArgument(_WKRemoteObjectInterface *interface, SEL selector, NSUInteger argumentIndex, bool replyBlock)

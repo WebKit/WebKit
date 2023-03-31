@@ -9260,25 +9260,25 @@ static NSArray<NSItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
     if (!self._hasFocusedElement)
         return nil;
 
-    auto context = adoptNS([[NSMutableDictionary alloc] init]);
-    context.get()[@"_WKAutofillContextVersion"] = @(2);
+    NSMutableDictionary *context = [NSMutableDictionary dictionary];
+    context[@"_WKAutofillContextVersion"] = @(2);
 
     if (_focusRequiresStrongPasswordAssistance && _focusedElementInformation.elementType == WebKit::InputType::Password) {
-        context.get()[@"_automaticPasswordKeyboard"] = @YES;
-        context.get()[@"strongPasswordAdditionalContext"] = _additionalContextForStrongPasswordAssistance.get();
+        context[@"_automaticPasswordKeyboard"] = @YES;
+        context[@"strongPasswordAdditionalContext"] = _additionalContextForStrongPasswordAssistance.get();
     } else if (_focusedElementInformation.acceptsAutofilledLoginCredentials)
-        context.get()[@"_acceptsLoginCredentials"] = @YES;
+        context[@"_acceptsLoginCredentials"] = @YES;
 
     NSURL *platformURL = _focusedElementInformation.representingPageURL;
     if (platformURL)
-        context.get()[@"_WebViewURL"] = platformURL;
+        context[@"_WebViewURL"] = platformURL;
 
     if (_focusedElementInformation.nonAutofillCredentialType == WebCore::NonAutofillCredentialType::WebAuthn) {
-        context.get()[@"_page_id"] = [NSNumber numberWithUnsignedLong:_page->webPageID().toUInt64()];
-        context.get()[@"_frame_id"] = [NSNumber numberWithUnsignedLong:_focusedElementInformation.frameID.object().toUInt64()];
-        context.get()[@"_credential_type"] = WebCore::nonAutofillCredentialTypeString(_focusedElementInformation.nonAutofillCredentialType);
+        context[@"_page_id"] = [NSNumber numberWithUnsignedLong:_page->webPageID().toUInt64()];
+        context[@"_frame_id"] = [NSNumber numberWithUnsignedLong:_focusedElementInformation.frameID.object().toUInt64()];
+        context[@"_credential_type"] = WebCore::nonAutofillCredentialTypeString(_focusedElementInformation.nonAutofillCredentialType);
     }
-    return context.autorelease();
+    return context;
 }
 
 - (BOOL)supportsImagePaste
@@ -12694,13 +12694,13 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         canShowLinkPreview = NO;
     }
 
-    auto dataForPreview = adoptNS([[NSMutableDictionary alloc] init]);
+    NSMutableDictionary *dataForPreview = [NSMutableDictionary dictionary];
     if (canShowLinkPreview) {
         *type = UIPreviewItemTypeLink;
         if (useImageURLForLink)
-            dataForPreview.get()[UIPreviewDataLink] = (NSURL *)_positionInformation.imageURL;
+            dataForPreview[UIPreviewDataLink] = (NSURL *)_positionInformation.imageURL;
         else
-            dataForPreview.get()[UIPreviewDataLink] = (NSURL *)linkURL;
+            dataForPreview[UIPreviewDataLink] = (NSURL *)linkURL;
 #if ENABLE(DATA_DETECTION)
         if (isDataDetectorLink) {
             NSDictionary *context = nil;
@@ -12710,26 +12710,27 @@ ALLOW_DEPRECATED_DECLARATIONS_END
             DDDetectionController *controller = [getDDDetectionControllerClass() sharedController];
             NSDictionary *newContext = nil;
             RetainPtr<NSMutableDictionary> extendedContext;
-            DDResultRef ddResult = [controller resultForURL:dataForPreview.get()[UIPreviewDataLink] identifier:_positionInformation.dataDetectorIdentifier selectedText:[self selectedText] results:_positionInformation.dataDetectorResults.get() context:context extendedContext:&newContext];
+            DDResultRef ddResult = [controller resultForURL:dataForPreview[UIPreviewDataLink] identifier:_positionInformation.dataDetectorIdentifier selectedText:[self selectedText] results:_positionInformation.dataDetectorResults.get() context:context extendedContext:&newContext];
             if (ddResult)
-                dataForPreview.get()[UIPreviewDataDDResult] = (__bridge id)ddResult;
+                dataForPreview[UIPreviewDataDDResult] = (__bridge id)ddResult;
             if (!_positionInformation.textBefore.isEmpty() || !_positionInformation.textAfter.isEmpty()) {
-                extendedContext = adoptNS([@{
-                    getkDataDetectorsLeadingText() : _positionInformation.textBefore,
-                    getkDataDetectorsTrailingText() : _positionInformation.textAfter,
-                } mutableCopy]);
-                
                 if (newContext)
-                    [extendedContext addEntriesFromDictionary:newContext];
+                    extendedContext = adoptNS([newContext mutableCopy]);
+                else
+                    extendedContext = adoptNS([[NSMutableDictionary alloc] init]);
+
+                extendedContext.get()[getkDataDetectorsLeadingText()] = _positionInformation.textBefore;
+                extendedContext.get()[getkDataDetectorsTrailingText()] = _positionInformation.textAfter;
+
                 newContext = extendedContext.get();
             }
             if (newContext)
-                dataForPreview.get()[UIPreviewDataDDContext] = newContext;
+                dataForPreview[UIPreviewDataDDContext] = newContext;
         }
 #endif // ENABLE(DATA_DETECTION)
     } else if (canShowImagePreview) {
         *type = UIPreviewItemTypeImage;
-        dataForPreview.get()[UIPreviewDataLink] = (NSURL *)_positionInformation.imageURL;
+        dataForPreview[UIPreviewDataLink] = (NSURL *)_positionInformation.imageURL;
     } else if (canShowAttachmentPreview) {
         *type = UIPreviewItemTypeAttachment;
         auto element = adoptNS([[_WKActivatedElementInfo alloc] _initWithType:_WKActivatedElementTypeAttachment URL:(NSURL *)linkURL imageURL:(NSURL *)_positionInformation.imageURL location:_positionInformation.request.point title:_positionInformation.title ID:_positionInformation.idAttribute rect:_positionInformation.bounds image:nil imageMIMEType:_positionInformation.imageMIMEType]);
@@ -12737,15 +12738,15 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         if (index != NSNotFound) {
             BOOL sourceIsManaged = NO;
             if (respondsToAttachmentListForWebViewSourceIsManaged)
-                dataForPreview.get()[UIPreviewDataAttachmentList] = [uiDelegate _attachmentListForWebView:self.webView sourceIsManaged:&sourceIsManaged];
+                dataForPreview[UIPreviewDataAttachmentList] = [uiDelegate _attachmentListForWebView:self.webView sourceIsManaged:&sourceIsManaged];
             else
-                dataForPreview.get()[UIPreviewDataAttachmentList] = [uiDelegate _attachmentListForWebView:self.webView];
-            dataForPreview.get()[UIPreviewDataAttachmentIndex] = [NSNumber numberWithUnsignedInteger:index];
-            dataForPreview.get()[UIPreviewDataAttachmentListIsContentManaged] = [NSNumber numberWithBool:sourceIsManaged];
+                dataForPreview[UIPreviewDataAttachmentList] = [uiDelegate _attachmentListForWebView:self.webView];
+            dataForPreview[UIPreviewDataAttachmentIndex] = [NSNumber numberWithUnsignedInteger:index];
+            dataForPreview[UIPreviewDataAttachmentListIsContentManaged] = [NSNumber numberWithBool:sourceIsManaged];
         }
     }
 
-    return dataForPreview.autorelease();
+    return dataForPreview;
 }
 
 - (CGRect)_presentationRectForPreviewItemController:(UIPreviewItemController *)controller
@@ -12916,7 +12917,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (!nativeImage)
         return nullptr;
 
-    return adoptNS([[UIImage alloc] initWithCGImage:nativeImage->platformImage().get()]).autorelease();
+    return [UIImage imageWithCGImage:nativeImage->platformImage().get()];
 }
 
 - (NSArray *)_presentationRectsForPreviewItemController:(UIPreviewItemController *)controller

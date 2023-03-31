@@ -797,7 +797,7 @@ void WebInspectorFrontendClient::save(Vector<InspectorFrontendClient::SaveData>&
 
 - (NSArray *)webView:(WebView *)sender contextMenuItemsForElement:(NSDictionary *)element defaultMenuItems:(NSArray *)defaultMenuItems
 {
-    auto menuItems = adoptNS([[NSMutableArray alloc] init]);
+    NSMutableArray *menuItems = [NSMutableArray array];
 
     for (NSMenuItem *item in defaultMenuItems) {
         switch (item.tag) {
@@ -814,7 +814,7 @@ void WebInspectorFrontendClient::save(Vector<InspectorFrontendClient::SaveData>&
         }
     }
 
-    return menuItems.autorelease();
+    return menuItems;
 }
 
 // MARK: -

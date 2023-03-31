@@ -1138,28 +1138,29 @@ static NSControlStateValue kit(TriState state)
 
 + (NSArray *)_excludedElementsForAttributedStringConversion
 {
-    auto elements = adoptNS([[NSMutableArray alloc] initWithObjects:
+#if !ENABLE(ATTACHMENT_ELEMENT)
+    return @[
+#else
+    NSMutableArray *elements = [NSMutableArray arrayWithObjects:
+#endif
         // Omit style since we want style to be inline so the fragment can be easily inserted.
         @"style",
         // Omit xml so the result is not XHTML.
-        @"xml",
-        // Omit tags that will get stripped when converted to a fragment anyway.
         @"doctype", @"html", @"head", @"body",
         // Omit deprecated tags.
         @"applet", @"basefont", @"center", @"dir", @"font", @"menu", @"s", @"strike", @"u",
-        // Omit object so no file attachments are part of the fragment.
 #if !ENABLE(ATTACHMENT_ELEMENT)
         // Omit object so no file attachments are part of the fragment.
-        @"object",
-#endif
-        nil]);
+        @"object"
+    ];
+#else
+    nil];
 
-#if ENABLE(ATTACHMENT_ELEMENT)
     if (!WebCore::DeprecatedGlobalSettings::attachmentElementEnabled())
         [elements addObject:@"object"];
-#endif
 
-    return elements.autorelease();
+    return elements;
+#endif
 }
 
 - (DOMDocumentFragment *)_documentFragmentFromPasteboard:(NSPasteboard *)pasteboard inContext:(DOMRange *)context allowPlainText:(BOOL)allowPlainText
@@ -3733,7 +3734,7 @@ static RetainPtr<NSArray> customMenuFromDefaultItems(WebView *webView, const Web
     if (![menuItems count])
         return nil;
 
-    auto menu = adoptNS([[NSMenu alloc] init]);
+    NSMenu *menu = [[NSMenu alloc] init];
 
     for (NSMenuItem *item in menuItems.get()) {
         [menu addItem:item];
@@ -3748,7 +3749,7 @@ static RetainPtr<NSArray> customMenuFromDefaultItems(WebView *webView, const Web
 
     [[WebMenuTarget sharedMenuTarget] setMenuController:&page->contextMenuController()];
     
-    return menu.autorelease();
+    return [menu autorelease];
 }
 
 #endif // PLATFORM(MAC)
@@ -6962,9 +6963,9 @@ static CGImageRef selectionImage(WebCore::LocalFrame* frame, bool forceBlackText
 - (NSArray *)pasteboardTypesForSelection
 {
     if ([self _canSmartCopyOrDelete]) {
-        auto types = adoptNS([[[self class] _selectionPasteboardTypes] mutableCopy]);
+        NSMutableArray *types = [[[self class] _selectionPasteboardTypes] mutableCopy];
         [types addObject:WebSmartPastePboardType];
-        return types.autorelease();
+        return [types autorelease];
     }
     return [[self class] _selectionPasteboardTypes];
 }
@@ -7001,7 +7002,7 @@ static CGImageRef selectionImage(WebCore::LocalFrame* frame, bool forceBlackText
 - (NSAttributedString *)_legacyAttributedStringFrom:(DOMNode *)startContainer offset:(int)startOffset to:(DOMNode *)endContainer offset:(int)endOffset
 {
     if (!startContainer || !endContainer)
-        return adoptNS([[NSAttributedString alloc] init]).autorelease();
+        return [[[NSAttributedString alloc] init] autorelease];
     return attributedString(WebCore::SimpleRange { { *core(startContainer), static_cast<unsigned>(startOffset) },
         { *core(endContainer), static_cast<unsigned>(endOffset) } }).nsAttributedString().autorelease();
 }
@@ -7010,7 +7011,7 @@ static CGImageRef selectionImage(WebCore::LocalFrame* frame, bool forceBlackText
 {
     auto document = core([[self _frame] DOMDocument]);
     if (!document)
-        return adoptNS([[NSAttributedString alloc] init]).autorelease();
+        return [[[NSAttributedString alloc] init] autorelease];
     auto range = makeRangeSelectingNodeContents(*document);
     if (auto result = attributedString(range).nsAttributedString())
         return result.autorelease();
@@ -7021,10 +7022,10 @@ static CGImageRef selectionImage(WebCore::LocalFrame* frame, bool forceBlackText
 {
     auto frame = core([self _frame]);
     if (!frame)
-        return adoptNS([[NSAttributedString alloc] init]).autorelease();
+        return [[[NSAttributedString alloc] init] autorelease];
     auto range = frame->selection().selection().firstRange();
     if (!range)
-        return adoptNS([[NSAttributedString alloc] init]).autorelease();
+        return [[[NSAttributedString alloc] init] autorelease];
     if (auto result = attributedString(*range).nsAttributedString())
         return result.autorelease();
     return editingAttributedString(*range).nsAttributedString().autorelease();

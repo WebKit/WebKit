@@ -116,13 +116,13 @@ static NSString *dataTypesToString(NSSet *dataTypes)
 
 - (NSString *)description
 {
-    auto result = adoptNS([[NSMutableString alloc] initWithFormat:@"<%@: %p; displayName = %@; dataTypes = { %@ }", NSStringFromClass(self.class), self, self.displayName, dataTypesToString(self.dataTypes)]);
+    NSMutableString *result = [NSMutableString stringWithFormat:@"<%@: %p; displayName = %@; dataTypes = { %@ }", NSStringFromClass(self.class), self, self.displayName, dataTypesToString(self.dataTypes)];
 
     if (auto* dataSize = self._dataSize)
         [result appendFormat:@"; _dataSize = { %llu bytes }", dataSize.totalSize];
 
     [result appendString:@">"];
-    return result.autorelease();
+    return result;
 }
 
 - (NSString *)displayName

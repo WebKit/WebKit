@@ -231,7 +231,7 @@ static BOOL resultIsURL(DDResultRef result)
     if (!result)
         return NO;
     
-    static NeverDestroyed<RetainPtr<NSSet>> urlTypes = [NSSet setWithObjects:
+    static NeverDestroyed<RetainPtr<NSSet>> urlTypes = [[NSSet alloc] initWithObjects:
         (NSString *)PAL::get_DataDetectorsCore_DDBinderHttpURLKey(),
         (NSString *)PAL::get_DataDetectorsCore_DDBinderWebURLKey(),
         (NSString *)PAL::get_DataDetectorsCore_DDBinderMailURLKey(),

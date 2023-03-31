@@ -60,11 +60,12 @@ IGNORE_WARNINGS_END
 
 + (instancetype)downloadWithDownload:(WKDownload *)download
 {
-    if (_WKDownload *wrapper = [downloadWrapperMap() objectForKey:download])
+    _WKDownload *wrapper;
+    if ((wrapper = [downloadWrapperMap() objectForKey:download]))
         return wrapper;
-    auto wrapper = adoptNS([[_WKDownload alloc] initWithDownload2:download]);
-    [downloadWrapperMap() setObject:wrapper.get() forKey:download];
-    return wrapper.autorelease();
+    wrapper = [[_WKDownload alloc] initWithDownload2:download];
+    [downloadWrapperMap() setObject:wrapper forKey:download];
+    return [wrapper autorelease];
 }
 
 - (void)cancel

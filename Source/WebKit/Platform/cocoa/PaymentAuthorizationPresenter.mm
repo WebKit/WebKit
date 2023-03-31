@@ -118,7 +118,7 @@ static PKPaymentErrorCode toPKPaymentErrorCode(WebCore::ApplePayErrorCode code)
 
 static NSError *toNSError(const WebCore::ApplePayError& error)
 {
-    auto userInfo = adoptNS([[NSMutableDictionary alloc] init]);
+    NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
     [userInfo setObject:error.message() forKey:NSLocalizedDescriptionKey];
 
     if (auto contactField = error.contactField()) {
@@ -192,7 +192,7 @@ static NSError *toNSError(const WebCore::ApplePayError& error)
             [userInfo setObject:postalAddressKey forKey:PKPaymentErrorPostalAddressUserInfoKey];
     }
 
-    return [NSError errorWithDomain:PKPaymentErrorDomain code:toPKPaymentErrorCode(error.code()) userInfo:userInfo.get()];
+    return [NSError errorWithDomain:PKPaymentErrorDomain code:toPKPaymentErrorCode(error.code()) userInfo:userInfo];
 }
 
 static RetainPtr<NSArray> toNSErrors(const Vector<RefPtr<WebCore::ApplePayError>>& errors)

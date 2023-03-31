@@ -439,7 +439,7 @@ static RetainPtr<NSArray>& additionalWebPlugInPaths()
 {
     NSMutableSet *newPlugins = [NSMutableSet set];
     NSEnumerator *directoryEnumerator = [[self _plugInPaths] objectEnumerator];
-    auto uniqueFilenames = adoptNS([[NSMutableSet alloc] init]);
+    NSMutableSet *uniqueFilenames = [NSMutableSet set];
     NSFileManager *fileManager = [NSFileManager defaultManager];
     NSString *pluginDirectory;
     while ((pluginDirectory = [directoryEnumerator nextObject]) != nil) {

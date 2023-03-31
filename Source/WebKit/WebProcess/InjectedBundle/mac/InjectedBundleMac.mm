@@ -252,7 +252,7 @@ void InjectedBundle::extendClassesForParameterCoder(API::Array& classes)
 NSSet* InjectedBundle::classesForCoder()
 {
     if (!m_classesForCoder)
-        m_classesForCoder = [NSSet setWithObjects:[NSArray class], [NSData class], [NSDate class], [NSDictionary class], [NSNull class], [NSNumber class], [NSSet class], [NSString class], [NSTimeZone class], [NSURL class], [NSUUID class], [WKBrowsingContextHandle class], nil];
+        m_classesForCoder = [[NSSet alloc] initWithObjects:[NSArray class], [NSData class], [NSDate class], [NSDictionary class], [NSNull class], [NSNumber class], [NSSet class], [NSString class], [NSTimeZone class], [NSURL class], [NSUUID class], [WKBrowsingContextHandle class], nil];
 
     return m_classesForCoder.get();
 }

@@ -910,11 +910,10 @@ void WebFrameLoaderClient::dispatchUnableToImplementPolicy(const WebCore::Resour
 static NSDictionary *makeFormFieldValuesDictionary(WebCore::FormState& formState)
 {
     auto& textFieldValues = formState.textFieldValues();
-    size_t size = textFieldValues.size();
-    auto dictionary = adoptNS([[NSMutableDictionary alloc] initWithCapacity:size]);
+    NSMutableDictionary *dictionary = [NSMutableDictionary dictionaryWithCapacity:textFieldValues.size()];
     for (auto& value : textFieldValues)
         [dictionary setObject:value.second forKey:value.first];
-    return dictionary.autorelease();
+    return dictionary;
 }
 
 void WebFrameLoaderClient::dispatchWillSendSubmitEvent(Ref<WebCore::FormState>&& formState)

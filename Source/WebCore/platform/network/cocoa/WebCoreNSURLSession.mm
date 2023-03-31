@@ -503,12 +503,12 @@ NS_ASSUME_NONNULL_END
     if (_invalidated)
         return nil;
 
-    auto task = adoptNS([[WebCoreNSURLSessionDataTask alloc] initWithSession:self identifier:++_nextTaskIdentifier request:request]);
+    WebCoreNSURLSessionDataTask *task = [[WebCoreNSURLSessionDataTask alloc] initWithSession:self identifier:++_nextTaskIdentifier request:request];
     {
         Locker<Lock> locker(_dataTasksLock);
-        _dataTasks.add(task.get());
+        _dataTasks.add(task);
     }
-    return (NSURLSessionDataTask *)task.autorelease();
+    return [(NSURLSessionDataTask *)task autorelease];
 }
 
 - (NSURLSessionDataTask *)dataTaskWithURL:(NSURL *)url
@@ -786,22 +786,22 @@ void WebCoreNSURLSessionDataTaskClient::loadFinished(PlatformMediaResource& reso
 
 - (NSURLRequest *)originalRequest
 {
-    return adoptNS([_originalRequest copy]).autorelease();
+    return [[_originalRequest copy] autorelease];
 }
 
 - (NSURLRequest *)currentRequest
 {
-    return adoptNS([_currentRequest copy]).autorelease();
+    return [[_currentRequest copy] autorelease];
 }
 
 - (NSError *)error
 {
-    return adoptNS([_error copy]).autorelease();
+    return [[_error copy] autorelease];
 }
 
 - (NSString *)taskDescription
 {
-    return adoptNS([_taskDescription copy]).autorelease();
+    return [[_taskDescription copy] autorelease];
 }
 
 - (void)setTaskDescription:(NSString *)description

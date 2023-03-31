@@ -147,14 +147,13 @@ void AudioSessionIOS::setPresentingProcesses(Vector<audit_token_t>&& auditTokens
     if (![session respondsToSelector:@selector(setAuditTokensForProcessAssertion:error:)])
         return;
 
-    auto nsAuditTokens = adoptNS([[NSMutableArray alloc] init]);
+    NSMutableArray *nsAuditTokens = [NSMutableArray arrayWithCapacity:auditTokens.size()];
     for (auto& token : auditTokens) {
-        auto nsToken = adoptNS([[NSData alloc] initWithBytes:token.val length:sizeof(token.val)]);
-        [nsAuditTokens addObject:nsToken.get()];
+        [nsAuditTokens addObject:[NSData dataWithBytes:token.val length:sizeof(token.val)]];
     }
 
     NSError *error = nil;
-    [session setAuditTokensForProcessAssertion:nsAuditTokens.get() error:&error];
+    [session setAuditTokensForProcessAssertion:nsAuditTokens error:&error];
     if (error)
         RELEASE_LOG_ERROR(Media, "Failed to set audit tokens for process assertion with error: %@", error.localizedDescription);
 #else
