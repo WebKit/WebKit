@@ -205,7 +205,7 @@ inline void Heap::decrementDeferralDepthAndGCIfNeeded()
     }
 }
 
-inline HashSet<MarkedArgumentBufferBase*>& Heap::markListSet()
+inline HashSet<MarkedVectorBase*>& Heap::markListSet()
 {
     return m_markListSet;
 }
