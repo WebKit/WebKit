@@ -4199,6 +4199,8 @@ http/tests/webgpu/webgpu/shader/validation/shader_io/entry_point.html [ Skip ]
 http/tests/webgpu/webgpu/shader/validation/shader_io/locations.html [ Skip ]
 http/tests/webgpu/cts.https.html [ Pass ]
 
+webkit.org/b/254637 fast/text/web-font-load-invisible-during-loading.html [ Pass Failure ]
+
 webkit.org/b/251417 imported/w3c/web-platform-tests/fetch/metadata/generated/css-font-face.https.sub.tentative.html [ Pass Failure ]
 
 webkit.org/b/251533 imported/w3c/web-platform-tests/workers/baseurl/alpha/import-in-moduleworker.html [ Pass Timeout ]
