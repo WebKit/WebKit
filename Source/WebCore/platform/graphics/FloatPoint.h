@@ -258,32 +258,32 @@ inline float operator*(const FloatPoint& a, const FloatPoint& b)
 
 inline IntSize flooredIntSize(const FloatPoint& p)
 {
-    return IntSize(clampToInteger(floorf(p.x())), clampToInteger(floorf(p.y())));
+    return IntSize(clampToInteger(std::floor(p.x())), clampToInteger(std::floor(p.y())));
 }
 
 inline IntPoint roundedIntPoint(const FloatPoint& p)
 {
-    return IntPoint(clampToInteger(roundf(p.x())), clampToInteger(roundf(p.y())));
+    return IntPoint(clampToInteger(std::round(p.x())), clampToInteger(std::round(p.y())));
 }
 
 inline IntPoint flooredIntPoint(const FloatPoint& p)
 {
-    return IntPoint(clampToInteger(floorf(p.x())), clampToInteger(floorf(p.y())));
+    return IntPoint(clampToInteger(std::floor(p.x())), clampToInteger(std::floor(p.y())));
 }
 
 inline IntPoint ceiledIntPoint(const FloatPoint& p)
 {
-    return IntPoint(clampToInteger(ceilf(p.x())), clampToInteger(ceilf(p.y())));
+    return IntPoint(clampToInteger(std::ceil(p.x())), clampToInteger(std::ceil(p.y())));
 }
 
 inline FloatPoint floorPointToDevicePixels(const FloatPoint& p, float deviceScaleFactor)
 {
-    return FloatPoint(floorf(p.x() * deviceScaleFactor)  / deviceScaleFactor, floorf(p.y() * deviceScaleFactor)  / deviceScaleFactor);
+    return FloatPoint(std::floor(p.x() * deviceScaleFactor) / deviceScaleFactor, std::floor(p.y() * deviceScaleFactor) / deviceScaleFactor);
 }
 
 inline FloatPoint ceilPointToDevicePixels(const FloatPoint& p, float deviceScaleFactor)
 {
-    return FloatPoint(ceilf(p.x() * deviceScaleFactor)  / deviceScaleFactor, ceilf(p.y() * deviceScaleFactor)  / deviceScaleFactor);
+    return FloatPoint(std::ceil(p.x() * deviceScaleFactor) / deviceScaleFactor, std::ceil(p.y() * deviceScaleFactor) / deviceScaleFactor);
 }
 
 inline FloatSize toFloatSize(const FloatPoint& a)

@@ -166,7 +166,7 @@ void PrintContext::computePageRectsWithPageSizeInternal(const FloatSize& pageSiz
         inlineDirectionEnd = view->style().isLeftToRightDirection() ? docRect.maxY() : docRect.y();
     }
 
-    unsigned pageCount = ceilf((float)docLogicalHeight / pageLogicalHeight);
+    unsigned pageCount = std::ceil((float)docLogicalHeight / pageLogicalHeight);
     for (unsigned i = 0; i < pageCount; ++i) {
         int pageLogicalTop = blockDirectionEnd > blockDirectionStart ?
                                 blockDirectionStart + i * pageLogicalHeight : 

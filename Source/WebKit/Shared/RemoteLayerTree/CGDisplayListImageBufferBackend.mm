@@ -62,7 +62,7 @@ public:
     {
 #if !HAVE(CG_DISPLAY_LIST_RESPECTING_CONTENTS_FLIPPED)
         m_immutableBaseTransform.scale(1, -1);
-        m_immutableBaseTransform.translate(0, -ceilf(parameters.logicalSize.height() * parameters.resolutionScale));
+        m_immutableBaseTransform.translate(0, -std::ceil(parameters.logicalSize.height() * parameters.resolutionScale));
 #endif
         m_immutableBaseTransform.scale(parameters.resolutionScale);
         m_inverseImmutableBaseTransform = *m_immutableBaseTransform.inverse();

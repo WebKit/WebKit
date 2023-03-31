@@ -124,9 +124,9 @@ void AttachmentLayout::layOutTitle(const RenderAttachment& attachment)
             // If the text rects are close in size, the curved enclosing background won't
             // look right, so make them the same exact size.
             if (i) {
-                float previousBackgroundRectWidth = lines[i-1].backgroundRect.width();
+                auto previousBackgroundRectWidth = lines[i-1].backgroundRect.width();
                 if (std::abs(line.backgroundRect.width() - previousBackgroundRectWidth) < attachmentTitleBackgroundRadius * 4) {
-                    float newBackgroundRectWidth = std::max(previousBackgroundRectWidth, line.backgroundRect.width());
+                    auto newBackgroundRectWidth = std::max(previousBackgroundRectWidth, line.backgroundRect.width());
                     line.backgroundRect.inflateX((newBackgroundRectWidth - line.backgroundRect.width()) / 2);
                     lines[i-1].backgroundRect.inflateX((newBackgroundRectWidth - previousBackgroundRectWidth) / 2);
                 }
@@ -187,7 +187,7 @@ AttachmentLayout::AttachmentLayout(const RenderAttachment& attachment, Attachmen
         attachmentRect.unite(line.backgroundRect);
     if (!subtitleTextRect.isEmpty()) {
         FloatRect roundedSubtitleTextRect = subtitleTextRect;
-        roundedSubtitleTextRect.inflateX(attachmentSubtitleWidthIncrement - clampToInteger(ceilf(subtitleTextRect.width())) % attachmentSubtitleWidthIncrement);
+        roundedSubtitleTextRect.inflateX(attachmentSubtitleWidthIncrement - clampToInteger(std::ceil(subtitleTextRect.width())) % attachmentSubtitleWidthIncrement);
         attachmentRect.unite(roundedSubtitleTextRect);
     }
     attachmentRect.inflate(attachmentMargin);

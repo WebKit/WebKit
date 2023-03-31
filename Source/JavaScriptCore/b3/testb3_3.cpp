@@ -1997,7 +1997,7 @@ void testCeilArg(float a)
     Value* result32 = root->appendNew<Value>(proc, BitwiseCast, Origin(), result);
     root->appendNewControlValue(proc, Return, Origin(), result32);
 
-    CHECK(isIdentical(compileAndRun<int32_t>(proc, bitwise_cast<int32_t>(a)), bitwise_cast<int32_t>(ceilf(a))));
+    CHECK(isIdentical(compileAndRun<int32_t>(proc, bitwise_cast<int32_t>(a)), bitwise_cast<int32_t>(std::ceil(a))));
 }
 
 void testCeilImm(float a)
@@ -2009,7 +2009,7 @@ void testCeilImm(float a)
     Value* result32 = root->appendNew<Value>(proc, BitwiseCast, Origin(), result);
     root->appendNewControlValue(proc, Return, Origin(), result32);
 
-    CHECK(isIdentical(compileAndRun<int32_t>(proc, bitwise_cast<int32_t>(a)), bitwise_cast<int32_t>(ceilf(a))));
+    CHECK(isIdentical(compileAndRun<int32_t>(proc, bitwise_cast<int32_t>(a)), bitwise_cast<int32_t>(std::ceil(a))));
 }
 
 void testCeilMem(float a)
@@ -2022,7 +2022,7 @@ void testCeilMem(float a)
     Value* result32 = root->appendNew<Value>(proc, BitwiseCast, Origin(), result);
     root->appendNewControlValue(proc, Return, Origin(), result32);
 
-    CHECK(isIdentical(compileAndRun<int32_t>(proc, &a), bitwise_cast<int32_t>(ceilf(a))));
+    CHECK(isIdentical(compileAndRun<int32_t>(proc, &a), bitwise_cast<int32_t>(std::ceil(a))));
 }
 
 void testCeilCeilArg(float a)
@@ -2036,7 +2036,7 @@ void testCeilCeilArg(float a)
     Value* secondCeil = root->appendNew<Value>(proc, Ceil, Origin(), firstCeil);
     root->appendNewControlValue(proc, Return, Origin(), secondCeil);
 
-    CHECK(isIdentical(compileAndRun<float>(proc, bitwise_cast<int32_t>(a)), ceilf(a)));
+    CHECK(isIdentical(compileAndRun<float>(proc, bitwise_cast<int32_t>(a)), std::ceil(a)));
 }
 
 void testFloorCeilArg(float a)
@@ -2050,7 +2050,7 @@ void testFloorCeilArg(float a)
     Value* wrappingFloor = root->appendNew<Value>(proc, Floor, Origin(), firstCeil);
     root->appendNewControlValue(proc, Return, Origin(), wrappingFloor);
 
-    CHECK(isIdentical(compileAndRun<float>(proc, bitwise_cast<int32_t>(a)), ceilf(a)));
+    CHECK(isIdentical(compileAndRun<float>(proc, bitwise_cast<int32_t>(a)), std::ceil(a)));
 }
 
 void testCeilArgWithUselessDoubleConversion(float a)
@@ -2066,7 +2066,7 @@ void testCeilArgWithUselessDoubleConversion(float a)
     Value* result32 = root->appendNew<Value>(proc, BitwiseCast, Origin(), floatResult);
     root->appendNewControlValue(proc, Return, Origin(), result32);
 
-    CHECK(isIdentical(compileAndRun<int32_t>(proc, bitwise_cast<int32_t>(a)), bitwise_cast<int32_t>(ceilf(a))));
+    CHECK(isIdentical(compileAndRun<int32_t>(proc, bitwise_cast<int32_t>(a)), bitwise_cast<int32_t>(std::ceil(a))));
 }
 
 void testCeilArgWithEffectfulDoubleConversion(float a)
@@ -2086,8 +2086,8 @@ void testCeilArgWithEffectfulDoubleConversion(float a)
 
     double effect = 0;
     int32_t resultValue = compileAndRun<int32_t>(proc, bitwise_cast<int32_t>(a), &effect);
-    CHECK(isIdentical(resultValue, bitwise_cast<int32_t>(ceilf(a))));
-    CHECK(isIdentical(effect, static_cast<double>(ceilf(a))));
+    CHECK(isIdentical(resultValue, bitwise_cast<int32_t>(std::ceil(a))));
+    CHECK(isIdentical(effect, static_cast<double>(std::ceil(a))));
 }
 
 void testFloorArg(double a)
@@ -2192,7 +2192,7 @@ void testFloorArg(float a)
     Value* result32 = root->appendNew<Value>(proc, BitwiseCast, Origin(), result);
     root->appendNewControlValue(proc, Return, Origin(), result32);
 
-    CHECK(isIdentical(compileAndRun<int32_t>(proc, bitwise_cast<int32_t>(a)), bitwise_cast<int32_t>(floorf(a))));
+    CHECK(isIdentical(compileAndRun<int32_t>(proc, bitwise_cast<int32_t>(a)), bitwise_cast<int32_t>(std::floor(a))));
 }
 
 void testFloorImm(float a)
@@ -2204,7 +2204,7 @@ void testFloorImm(float a)
     Value* result32 = root->appendNew<Value>(proc, BitwiseCast, Origin(), result);
     root->appendNewControlValue(proc, Return, Origin(), result32);
 
-    CHECK(isIdentical(compileAndRun<int32_t>(proc, bitwise_cast<int32_t>(a)), bitwise_cast<int32_t>(floorf(a))));
+    CHECK(isIdentical(compileAndRun<int32_t>(proc, bitwise_cast<int32_t>(a)), bitwise_cast<int32_t>(std::floor(a))));
 }
 
 void testFloorMem(float a)
@@ -2217,7 +2217,7 @@ void testFloorMem(float a)
     Value* result32 = root->appendNew<Value>(proc, BitwiseCast, Origin(), result);
     root->appendNewControlValue(proc, Return, Origin(), result32);
 
-    CHECK(isIdentical(compileAndRun<int32_t>(proc, &a), bitwise_cast<int32_t>(floorf(a))));
+    CHECK(isIdentical(compileAndRun<int32_t>(proc, &a), bitwise_cast<int32_t>(std::floor(a))));
 }
 
 void testFloorFloorArg(float a)
@@ -2231,7 +2231,7 @@ void testFloorFloorArg(float a)
     Value* secondFloor = root->appendNew<Value>(proc, Floor, Origin(), firstFloor);
     root->appendNewControlValue(proc, Return, Origin(), secondFloor);
 
-    CHECK(isIdentical(compileAndRun<float>(proc, bitwise_cast<int32_t>(a)), floorf(a)));
+    CHECK(isIdentical(compileAndRun<float>(proc, bitwise_cast<int32_t>(a)), std::floor(a)));
 }
 
 void testCeilFloorArg(float a)
@@ -2245,7 +2245,7 @@ void testCeilFloorArg(float a)
     Value* wrappingCeil = root->appendNew<Value>(proc, Ceil, Origin(), firstFloor);
     root->appendNewControlValue(proc, Return, Origin(), wrappingCeil);
 
-    CHECK(isIdentical(compileAndRun<float>(proc, bitwise_cast<int32_t>(a)), floorf(a)));
+    CHECK(isIdentical(compileAndRun<float>(proc, bitwise_cast<int32_t>(a)), std::floor(a)));
 }
 
 void testFloorArgWithUselessDoubleConversion(float a)
@@ -2261,7 +2261,7 @@ void testFloorArgWithUselessDoubleConversion(float a)
     Value* result32 = root->appendNew<Value>(proc, BitwiseCast, Origin(), floatResult);
     root->appendNewControlValue(proc, Return, Origin(), result32);
 
-    CHECK(isIdentical(compileAndRun<int32_t>(proc, bitwise_cast<int32_t>(a)), bitwise_cast<int32_t>(floorf(a))));
+    CHECK(isIdentical(compileAndRun<int32_t>(proc, bitwise_cast<int32_t>(a)), bitwise_cast<int32_t>(std::floor(a))));
 }
 
 void testFloorArgWithEffectfulDoubleConversion(float a)
@@ -2281,8 +2281,8 @@ void testFloorArgWithEffectfulDoubleConversion(float a)
 
     double effect = 0;
     int32_t resultValue = compileAndRun<int32_t>(proc, bitwise_cast<int32_t>(a), &effect);
-    CHECK(isIdentical(resultValue, bitwise_cast<int32_t>(floorf(a))));
-    CHECK(isIdentical(effect, static_cast<double>(floorf(a))));
+    CHECK(isIdentical(resultValue, bitwise_cast<int32_t>(std::floor(a))));
+    CHECK(isIdentical(effect, static_cast<double>(std::floor(a))));
 }
 
 double correctSqrt(double value)

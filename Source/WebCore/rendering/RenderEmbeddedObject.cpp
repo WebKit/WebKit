@@ -259,8 +259,8 @@ void RenderEmbeddedObject::paintReplaced(PaintInfo& paintInfo, const LayoutPoint
     context.strokePath(strokePath);
 
     const FontMetrics& fontMetrics = font.metricsOfPrimaryFont();
-    float labelX = roundf(replacementTextRect.location().x() + replacementTextRoundedRectLeftTextMargin);
-    float labelY = roundf(replacementTextRect.location().y() + (replacementTextRect.size().height() - fontMetrics.height()) / 2 + fontMetrics.ascent() + replacementTextRoundedRectTopTextMargin);
+    float labelX = std::round(replacementTextRect.location().x() + replacementTextRoundedRectLeftTextMargin);
+    float labelY = std::round(replacementTextRect.location().y() + (replacementTextRect.size().height() - fontMetrics.height()) / 2 + fontMetrics.ascent() + replacementTextRoundedRectTopTextMargin);
     context.setFillColor(replacementTextColor);
     context.drawBidiText(font, run, FloatPoint(labelX, labelY));
 
@@ -324,7 +324,7 @@ void RenderEmbeddedObject::getReplacementTextGeometry(const LayoutPoint& accumul
     // Expand the background rect to include the arrow, if it will be used.
     if (includesArrow) {
         arrowRect = indicatorRect;
-        arrowRect.setX(ceilf(arrowRect.maxX() + replacementArrowLeftMargin));
+        arrowRect.setX(std::ceil(arrowRect.maxX() + replacementArrowLeftMargin));
         arrowRect.setWidth(arrowRect.height());
         indicatorRect.unite(arrowRect);
     }

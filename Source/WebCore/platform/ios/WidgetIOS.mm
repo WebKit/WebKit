@@ -241,7 +241,7 @@ IntPoint Widget::convertFromRootToContainingWindow(const Widget* rootWidget, con
         convertedPoint = [documentView convertPoint:point toView:nil];
     else
         convertedPoint = [view convertPoint:point toView:nil];
-    return IntPoint(roundf(convertedPoint.x), roundf(convertedPoint.y));
+    return IntPoint(std::round(convertedPoint.x), std::round(convertedPoint.y));
     END_BLOCK_OBJC_EXCEPTIONS
 
     return point;
@@ -260,7 +260,7 @@ IntPoint Widget::convertFromContainingWindowToRoot(const Widget* rootWidget, con
         convertedPoint = IntPoint([documentView convertPoint:point fromView:nil]);
     else
         convertedPoint = IntPoint([view convertPoint:point fromView:nil]);
-    return IntPoint(roundf(convertedPoint.x), roundf(convertedPoint.y));
+    return IntPoint(std::round(convertedPoint.x), std::round(convertedPoint.y));
     END_BLOCK_OBJC_EXCEPTIONS
 
     return point;

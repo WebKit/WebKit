@@ -454,7 +454,7 @@ static InterpolationType interpolationFromString(NSString *string)
         }
 
         CGPoint point = pointInfo->point;
-        point = CGPointMake(roundf(point.x), roundf(point.y));
+        point = CGPointMake(std::round(point.x), std::round(point.y));
         
         [[GeneratedTouchesDebugWindow sharedGeneratedTouchesDebugWindow] updateDebugIndicatorForTouch:i withPointInWindowCoordinates:point isTouching:isTouching];
 

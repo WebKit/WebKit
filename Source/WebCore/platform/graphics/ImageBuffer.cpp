@@ -111,7 +111,7 @@ bool ImageBuffer::sizeNeedsClamping(const FloatSize& size)
     if (size.isEmpty())
         return false;
 
-    return floorf(size.height()) * floorf(size.width()) > MaxClampedArea;
+    return std::floor(size.height()) * std::floor(size.width()) > MaxClampedArea;
 }
 
 RefPtr<ImageBuffer> SerializedImageBuffer::sinkIntoImageBuffer(std::unique_ptr<SerializedImageBuffer> buffer)

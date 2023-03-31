@@ -107,25 +107,25 @@ void FEColorMatrixSoftwareApplier::applyPlatformAccelerated(PixelBuffer& pixelBu
         const auto& values = m_effect.values();
 
         const int16_t matrix[4 * 4] = {
-            static_cast<int16_t>(roundf(values[ 0] * divisor)),
-            static_cast<int16_t>(roundf(values[ 5] * divisor)),
-            static_cast<int16_t>(roundf(values[10] * divisor)),
-            static_cast<int16_t>(roundf(values[15] * divisor)),
+            static_cast<int16_t>(std::round(values[ 0] * divisor)),
+            static_cast<int16_t>(std::round(values[ 5] * divisor)),
+            static_cast<int16_t>(std::round(values[10] * divisor)),
+            static_cast<int16_t>(std::round(values[15] * divisor)),
 
-            static_cast<int16_t>(roundf(values[ 1] * divisor)),
-            static_cast<int16_t>(roundf(values[ 6] * divisor)),
-            static_cast<int16_t>(roundf(values[11] * divisor)),
-            static_cast<int16_t>(roundf(values[16] * divisor)),
+            static_cast<int16_t>(std::round(values[ 1] * divisor)),
+            static_cast<int16_t>(std::round(values[ 6] * divisor)),
+            static_cast<int16_t>(std::round(values[11] * divisor)),
+            static_cast<int16_t>(std::round(values[16] * divisor)),
 
-            static_cast<int16_t>(roundf(values[ 2] * divisor)),
-            static_cast<int16_t>(roundf(values[ 7] * divisor)),
-            static_cast<int16_t>(roundf(values[12] * divisor)),
-            static_cast<int16_t>(roundf(values[17] * divisor)),
+            static_cast<int16_t>(std::round(values[ 2] * divisor)),
+            static_cast<int16_t>(std::round(values[ 7] * divisor)),
+            static_cast<int16_t>(std::round(values[12] * divisor)),
+            static_cast<int16_t>(std::round(values[17] * divisor)),
 
-            static_cast<int16_t>(roundf(values[ 3] * divisor)),
-            static_cast<int16_t>(roundf(values[ 8] * divisor)),
-            static_cast<int16_t>(roundf(values[13] * divisor)),
-            static_cast<int16_t>(roundf(values[18] * divisor)),
+            static_cast<int16_t>(std::round(values[ 3] * divisor)),
+            static_cast<int16_t>(std::round(values[ 8] * divisor)),
+            static_cast<int16_t>(std::round(values[13] * divisor)),
+            static_cast<int16_t>(std::round(values[18] * divisor)),
         };
         vImageMatrixMultiply_ARGB8888(&src, &dest, matrix, divisor, nullptr, nullptr, kvImageNoFlags);
         break;
@@ -134,19 +134,19 @@ void FEColorMatrixSoftwareApplier::applyPlatformAccelerated(PixelBuffer& pixelBu
     case FECOLORMATRIX_TYPE_SATURATE:
     case FECOLORMATRIX_TYPE_HUEROTATE: {
         const int16_t matrix[4 * 4] = {
-            static_cast<int16_t>(roundf(m_components[0] * divisor)),
-            static_cast<int16_t>(roundf(m_components[3] * divisor)),
-            static_cast<int16_t>(roundf(m_components[6] * divisor)),
+            static_cast<int16_t>(std::round(m_components[0] * divisor)),
+            static_cast<int16_t>(std::round(m_components[3] * divisor)),
+            static_cast<int16_t>(std::round(m_components[6] * divisor)),
             0,
 
-            static_cast<int16_t>(roundf(m_components[1] * divisor)),
-            static_cast<int16_t>(roundf(m_components[4] * divisor)),
-            static_cast<int16_t>(roundf(m_components[7] * divisor)),
+            static_cast<int16_t>(std::round(m_components[1] * divisor)),
+            static_cast<int16_t>(std::round(m_components[4] * divisor)),
+            static_cast<int16_t>(std::round(m_components[7] * divisor)),
             0,
 
-            static_cast<int16_t>(roundf(m_components[2] * divisor)),
-            static_cast<int16_t>(roundf(m_components[5] * divisor)),
-            static_cast<int16_t>(roundf(m_components[8] * divisor)),
+            static_cast<int16_t>(std::round(m_components[2] * divisor)),
+            static_cast<int16_t>(std::round(m_components[5] * divisor)),
+            static_cast<int16_t>(std::round(m_components[8] * divisor)),
             0,
 
             0,
@@ -162,17 +162,17 @@ void FEColorMatrixSoftwareApplier::applyPlatformAccelerated(PixelBuffer& pixelBu
             0,
             0,
             0,
-            static_cast<int16_t>(roundf(0.2125 * divisor)),
+            static_cast<int16_t>(std::round(0.2125 * divisor)),
 
             0,
             0,
             0,
-            static_cast<int16_t>(roundf(0.7154 * divisor)),
+            static_cast<int16_t>(std::round(0.7154 * divisor)),
 
             0,
             0,
             0,
-            static_cast<int16_t>(roundf(0.0721 * divisor)),
+            static_cast<int16_t>(std::round(0.0721 * divisor)),
 
             0,
             0,

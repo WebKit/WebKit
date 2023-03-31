@@ -88,7 +88,7 @@ static int clampedToKernelSize(float value)
 
     // Limit the kernel size to 500. A bigger radius won't make a big difference for the result image but
     // inflates the absolute paint rect too much. This is compatible with Firefox' behavior.
-    unsigned size = std::max<unsigned>(2, static_cast<unsigned>(floorf(value * gaussianKernelFactor() + 0.5f)));
+    unsigned size = std::max<unsigned>(2, static_cast<unsigned>(std::floor(value * gaussianKernelFactor() + 0.5f)));
     return clampTo<int>(std::min(size, maxKernelSize));
 }
     

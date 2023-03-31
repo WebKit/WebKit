@@ -295,9 +295,9 @@ static void _WKViewAutoresizeCoord(bool bByHeight, unsigned int sizingMethod, co
             widthOrHeight = (newSuperFrameWidthOrHeight * prop);
             break;
     }
-    
-    *origFrameXorY = floorf(xOrY);
-    *origFrameWidthOrHeight = floorf(widthOrHeight);
+
+    *origFrameXorY = std::floor(xOrY);
+    *origFrameWidthOrHeight = std::floor(widthOrHeight);
 }
 
 void _WKViewAutoresize(WKViewRef view, const CGRect *oldSuperFrame, const CGRect *newSuperFrame)

@@ -521,7 +521,7 @@ void ViewGestureController::handleSwipeGesture(WebBackForwardListItem* targetIte
     else
         width = m_webPageProxy.drawingArea()->size().width();
 
-    double swipingLayerOffset = floor(width * progress);
+    double swipingLayerOffset = std::floor(width * progress);
 
     double dimmingProgress = swipingLeft ? 1 - progress : -progress;
     dimmingProgress = std::min(1., std::max(dimmingProgress, 0.));

@@ -2024,7 +2024,7 @@ LayoutUnit RenderBlock::adjustLogicalRightOffsetForLine(LayoutUnit offsetFromFlo
     // FIXME: Dynamic changes to the font or to the inline position need to result in a deep relayout.
     // (https://bugs.webkit.org/show_bug.cgi?id=79944)
     float remainder = fmodf(fmodf(right + layoutOffset - lineGridOffset, maxCharWidth), maxCharWidth);
-    right -= ceilf(remainder);
+    right -= std::ceil(remainder);
     return right;
 }
 

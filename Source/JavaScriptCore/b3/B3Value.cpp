@@ -553,7 +553,7 @@ bool Value::isRounded() const
 
     case ConstFloat: {
         float value = asFloat();
-        return std::isfinite(value) && value == ceilf(value);
+        return std::isfinite(value) && value == std::ceil(value);
     }
 
     default:

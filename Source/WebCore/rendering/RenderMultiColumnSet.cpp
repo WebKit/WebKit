@@ -456,7 +456,7 @@ unsigned RenderMultiColumnSet::columnCount() const
     if (logicalHeightInColumns <= 0)
         return 1;
     
-    unsigned count = (logicalHeightInColumns / computedColumnHeight).floor();
+    unsigned count = static_cast<unsigned>((logicalHeightInColumns / computedColumnHeight).floor());
     // logicalHeightInColumns may be saturated, so detect the remainder manually.
     if (count * computedColumnHeight < logicalHeightInColumns)
         ++count;

@@ -343,8 +343,8 @@ static BOOL scrollViewToPoint(WAKScrollView *scrollView, CGPoint point)
         return [[self nextResponder] scrollWheel:anEvent];
     
     CGPoint origin = [_documentView frame].origin;
-    origin.x = roundf(-origin.x - anEvent.deltaX);
-    origin.y = roundf(-origin.y - anEvent.deltaY);
+    origin.x = std::round(-origin.x - anEvent.deltaX);
+    origin.y = std::round(-origin.y - anEvent.deltaY);
 
     if (!scrollViewToPoint(self, origin))
         return [[self nextResponder] scrollWheel:anEvent];

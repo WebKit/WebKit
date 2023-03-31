@@ -767,8 +767,8 @@ void GraphicsContextCG::strokePath(const Path& path)
             FloatRect rect = path.fastBoundingRect();
             float lineWidth = strokeThickness();
             float doubleLineWidth = lineWidth * 2;
-            float adjustedWidth = ceilf(rect.width() + doubleLineWidth);
-            float adjustedHeight = ceilf(rect.height() + doubleLineWidth);
+            float adjustedWidth = std::ceil(rect.width() + doubleLineWidth);
+            float adjustedHeight = std::ceil(rect.height() + doubleLineWidth);
 
             FloatSize layerSize = getCTM().mapSize(FloatSize(adjustedWidth, adjustedHeight));
 
@@ -790,8 +790,8 @@ void GraphicsContextCG::strokePath(const Path& path)
             CGContextConcatCTM(layerContext, strokeGradientSpaceTransform());
             strokeGradient->paint(layerContext);
 
-            float destinationX = roundf(rect.x() - lineWidth);
-            float destinationY = roundf(rect.y() - lineWidth);
+            float destinationX = std::round(rect.x() - lineWidth);
+            float destinationY = std::round(rect.y() - lineWidth);
             CGContextDrawLayerInRect(context, CGRectMake(destinationX, destinationY, adjustedWidth, adjustedHeight), layer.get());
         } else {
             CGContextStateSaver stateSaver(context);
@@ -1263,8 +1263,8 @@ void GraphicsContextCG::strokeRect(const FloatRect& rect, float lineWidth)
     if (auto strokeGradient = this->strokeGradient()) {
         if (hasShadow()) {
             const float doubleLineWidth = lineWidth * 2;
-            float adjustedWidth = ceilf(rect.width() + doubleLineWidth);
-            float adjustedHeight = ceilf(rect.height() + doubleLineWidth);
+            float adjustedWidth = std::ceil(rect.width() + doubleLineWidth);
+            float adjustedHeight = std::ceil(rect.height() + doubleLineWidth);
             FloatSize layerSize = getCTM().mapSize(FloatSize(adjustedWidth, adjustedHeight));
 
             auto layer = adoptCF(CGLayerCreateWithContext(context, layerSize, 0));
@@ -1286,8 +1286,8 @@ void GraphicsContextCG::strokeRect(const FloatRect& rect, float lineWidth)
             CGContextConcatCTM(layerContext, strokeGradientSpaceTransform());
             strokeGradient->paint(layerContext);
 
-            const float destinationX = roundf(rect.x() - lineWidth);
-            const float destinationY = roundf(rect.y() - lineWidth);
+            const float destinationX = std::round(rect.x() - lineWidth);
+            const float destinationY = std::round(rect.y() - lineWidth);
             CGContextDrawLayerInRect(context, CGRectMake(destinationX, destinationY, adjustedWidth, adjustedHeight), layer.get());
         } else {
             CGContextStateSaver stateSaver(context);
@@ -1422,14 +1422,14 @@ FloatRect GraphicsContextCG::roundToDevicePixels(const FloatRect& rect, Rounding
     CGPoint deviceLowerRight = CGPointMake((rect.x() + rect.width()) * deviceScaleX,
         (rect.y() + rect.height()) * deviceScaleY);
 
-    deviceOrigin.x = roundf(deviceOrigin.x);
-    deviceOrigin.y = roundf(deviceOrigin.y);
+    deviceOrigin.x = std::round(deviceOrigin.x);
+    deviceOrigin.y = std::round(deviceOrigin.y);
     if (roundingMode == RoundAllSides) {
-        deviceLowerRight.x = roundf(deviceLowerRight.x);
-        deviceLowerRight.y = roundf(deviceLowerRight.y);
+        deviceLowerRight.x = std::round(deviceLowerRight.x);
+        deviceLowerRight.y = std::round(deviceLowerRight.y);
     } else {
-        deviceLowerRight.x = deviceOrigin.x + roundf(rect.width() * deviceScaleX);
-        deviceLowerRight.y = deviceOrigin.y + roundf(rect.height() * deviceScaleY);
+        deviceLowerRight.x = deviceOrigin.x + std::round(rect.width() * deviceScaleX);
+        deviceLowerRight.y = deviceOrigin.y + std::round(rect.height() * deviceScaleY);
     }
 
     // Don't let the height or width round to 0 unless either was originally 0

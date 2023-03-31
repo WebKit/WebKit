@@ -164,14 +164,14 @@ void SVGFEConvolveMatrixElement::setKernelUnitLength(float x, float y)
 bool SVGFEConvolveMatrixElement::isValidTargetXOffset() const
 {
     auto orderXValue = hasAttribute(SVGNames::orderAttr) ? orderX() : 3;
-    auto targetXValue = hasAttribute(SVGNames::targetXAttr) ? targetX() : static_cast<int>(floorf(orderXValue / 2));
+    auto targetXValue = hasAttribute(SVGNames::targetXAttr) ? targetX() : (orderXValue / 2);
     return targetXValue >= 0 && targetXValue < orderXValue;
 }
 
 bool SVGFEConvolveMatrixElement::isValidTargetYOffset() const
 {
     auto orderYValue = hasAttribute(SVGNames::orderAttr) ? orderY() : 3;
-    auto targetYValue = hasAttribute(SVGNames::targetYAttr) ? targetY() : static_cast<int>(floorf(orderYValue / 2));
+    auto targetYValue = hasAttribute(SVGNames::targetYAttr) ? targetY() : (orderYValue / 2);
     return targetYValue >= 0 && targetYValue < orderYValue;
 }
 
@@ -236,10 +236,10 @@ RefPtr<FilterEffect> SVGFEConvolveMatrixElement::createFilterEffect(const Filter
         return nullptr;
 
     // The spec says the default value is: targetX = floor ( orderX / 2 ))
-    int targetXValue = hasAttribute(SVGNames::targetXAttr) ? targetX() : static_cast<int>(floorf(orderXValue / 2));
+    int targetXValue = hasAttribute(SVGNames::targetXAttr) ? targetX() : (orderXValue / 2);
 
     // The spec says the default value is: targetY = floor ( orderY / 2 ))
-    int targetYValue = hasAttribute(SVGNames::targetYAttr) ? targetY() : static_cast<int>(floorf(orderYValue / 2));
+    int targetYValue = hasAttribute(SVGNames::targetYAttr) ? targetY() : (orderYValue / 2);
 
     // The spec says the default kernelUnitLength is 1.0, and a specified length cannot be 0.
     int kernelUnitLengthXValue = 1;

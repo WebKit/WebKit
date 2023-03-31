@@ -732,20 +732,20 @@ LayoutRect TransformationMatrix::clampedBoundsOfProjectedQuad(const FloatQuad& q
 {
     FloatRect mappedQuadBounds = projectQuad(q).boundingBox();
 
-    float left = clampEdgeValue(floorf(mappedQuadBounds.x()));
-    float top = clampEdgeValue(floorf(mappedQuadBounds.y()));
+    float left = clampEdgeValue(std::floor(mappedQuadBounds.x()));
+    float top = clampEdgeValue(std::floor(mappedQuadBounds.y()));
 
     float right;
     if (std::isinf(mappedQuadBounds.x()) && std::isinf(mappedQuadBounds.width()))
         right = LayoutUnit::max() / 2;
     else
-        right = clampEdgeValue(ceilf(mappedQuadBounds.maxX()));
+        right = clampEdgeValue(std::ceil(mappedQuadBounds.maxX()));
 
     float bottom;
     if (std::isinf(mappedQuadBounds.y()) && std::isinf(mappedQuadBounds.height()))
         bottom = LayoutUnit::max() / 2;
     else
-        bottom = clampEdgeValue(ceilf(mappedQuadBounds.maxY()));
+        bottom = clampEdgeValue(std::ceil(mappedQuadBounds.maxY()));
 
     return LayoutRect(LayoutUnit::clamp(left), LayoutUnit::clamp(top),  LayoutUnit::clamp(right - left), LayoutUnit::clamp(bottom - top));
 }

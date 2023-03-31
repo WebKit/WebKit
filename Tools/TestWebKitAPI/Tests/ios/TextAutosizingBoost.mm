@@ -49,15 +49,15 @@ TEST(TextAutosizingBoost, ChangeAutosizingBoostAtRuntime)
     WKPreferencesSetTextAutosizingUsesIdempotentMode((__bridge WKPreferencesRef)[webView configuration].preferences, false);
     [webView synchronouslyLoadHTMLString:testMarkup];
     CGSize regularSize {
-        roundf([[webView objectByEvaluatingJavaScript:@"document.getElementById('top').getBoundingClientRect().width"] floatValue]),
-        roundf([[webView objectByEvaluatingJavaScript:@"document.getElementById('top').getBoundingClientRect().height"] floatValue])
+        std::round([[webView objectByEvaluatingJavaScript:@"document.getElementById('top').getBoundingClientRect().width"] floatValue]),
+        std::round([[webView objectByEvaluatingJavaScript:@"document.getElementById('top').getBoundingClientRect().height"] floatValue])
     };
 
     [webView configuration].preferences._shouldEnableTextAutosizingBoost = YES;
     [webView waitForNextPresentationUpdate];
     CGSize boostedSize {
-        roundf([[webView objectByEvaluatingJavaScript:@"document.getElementById('top').getBoundingClientRect().width"] floatValue]),
-        roundf([[webView objectByEvaluatingJavaScript:@"document.getElementById('top').getBoundingClientRect().height"] floatValue])
+        std::round([[webView objectByEvaluatingJavaScript:@"document.getElementById('top').getBoundingClientRect().width"] floatValue]),
+        std::round([[webView objectByEvaluatingJavaScript:@"document.getElementById('top').getBoundingClientRect().height"] floatValue])
     };
 
     EXPECT_EQ(125, regularSize.width);

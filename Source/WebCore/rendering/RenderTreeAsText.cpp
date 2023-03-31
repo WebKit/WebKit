@@ -572,7 +572,7 @@ void write(TextStream& ts, const RenderObject& o, OptionSet<RenderAsTextFlag> be
         int x = rect.x();
         int y = rect.y();
         // FIXME: Use non-logical width. webkit.org/b/206809.
-        int logicalWidth = ceilf(rect.x() + (textRun.isHorizontal() ? rect.width() : rect.height())) - x;
+        int logicalWidth = std::ceil(rect.x() + (textRun.isHorizontal() ? rect.width() : rect.height())) - x;
         // FIXME: Table cell adjustment is temporary until results can be updated.
         if (is<RenderTableCell>(*o.containingBlock()))
             y -= floorToInt(downcast<RenderTableCell>(*o.containingBlock()).intrinsicPaddingBefore());

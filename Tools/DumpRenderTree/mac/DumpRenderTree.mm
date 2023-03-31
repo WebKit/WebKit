@@ -157,7 +157,7 @@ static RetainPtr<NSString> toNS(const std::string& string)
     ASSERT(scrollView && [scrollView isKindOfClass:[UIWebScrollView class]]);
     const CGSize scrollViewSize = [scrollView bounds].size;
     CGSize contentSize = newFrame.size;
-    contentSize.height = CGRound(std::max(CGRectGetMaxY(newFrame), scrollViewSize.height));
+    contentSize.height = std::round(std::max(CGRectGetMaxY(newFrame), scrollViewSize.height));
     [(UIWebScrollView *)scrollView setContentSize:contentSize];
 }
 @end

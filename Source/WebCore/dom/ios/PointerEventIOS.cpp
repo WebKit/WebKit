@@ -88,8 +88,8 @@ PointerEvent::PointerEvent(const AtomString& type, const PlatformTouchEvent& eve
     double azimuthAngle = event.azimuthAngleAtIndex(index);
     double altitudeAngle = event.altitudeAngleAtIndex(index);
 
-    m_tiltX = round(cos(azimuthAngle) * cos(altitudeAngle) * 90);
-    m_tiltY = round(sin(azimuthAngle) * cos(altitudeAngle) * 90);
+    m_tiltX = std::round(cos(azimuthAngle) * cos(altitudeAngle) * 90);
+    m_tiltY = std::round(sin(azimuthAngle) * cos(altitudeAngle) * 90);
 }
 
 } // namespace WebCore

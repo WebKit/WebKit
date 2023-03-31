@@ -551,7 +551,7 @@ WebCore::FloatSize MomentumEventDispatcher::offsetAtTime(Seconds time)
         return { };
 
     float fractionalFrameNumber = time.seconds() / idealCurveFrameInterval.seconds();
-    unsigned long lowerFrameNumber = std::min<unsigned long>(m_currentGesture.offsetTable.size() - 1, floor(fractionalFrameNumber));
+    unsigned long lowerFrameNumber = std::min<unsigned long>(m_currentGesture.offsetTable.size() - 1, std::floor(fractionalFrameNumber));
     unsigned long upperFrameNumber = std::min<unsigned long>(m_currentGesture.offsetTable.size() - 1, lowerFrameNumber + 1);
     float amount = fractionalFrameNumber - lowerFrameNumber;
     

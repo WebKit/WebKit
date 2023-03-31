@@ -255,7 +255,7 @@ TextUtil::WordBreakLeft TextUtil::breakWord(const InlineTextBox& inlineTextBox, 
                     return { };
                 // FIXME: Check if we could bring webkit.org/b/221581 back for system monospace fonts.
                 auto monospaceCharacterWidth = fontCascade.widthOfSpaceString();
-                size_t estimatedCharacterCount = floorf(availableWidth / monospaceCharacterWidth);
+                size_t estimatedCharacterCount = std::floor(availableWidth / monospaceCharacterWidth);
                 auto end = userPerceivedCharacterBoundaryAlignedIndex(std::min(start + estimatedCharacterCount, start + length - 1));
                 auto underflowWidth = TextUtil::width(inlineTextBox, fontCascade, start, end, contentLogicalLeft);
                 if (underflowWidth > availableWidth || underflowWidth + monospaceCharacterWidth < availableWidth) {

@@ -192,7 +192,7 @@ inline InlineLayoutUnit InlineLevelBox::preferredLineHeight() const
 
     if (m_style.lineHeight.isPercentOrCalculated())
         return floorf(minimumValueForLength(m_style.lineHeight, fontSize()));
-    return floorf(m_style.lineHeight.value());
+    return std::floor(m_style.lineHeight.value());
 }
 
 inline bool InlineLevelBox::hasLineBoxRelativeAlignment() const
@@ -203,10 +203,9 @@ inline bool InlineLevelBox::hasLineBoxRelativeAlignment() const
 
 inline void InlineLevelBox::AscentAndDescent::round()
 {
-    ascent = floorf(ascent);
-    descent = ceilf(descent);
+    ascent = std::floor(ascent);
+    descent = std::ceil(descent);
 }
 
 }
 }
-

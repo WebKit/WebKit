@@ -40,12 +40,12 @@ namespace WebCore {
 
 static inline float roundTowardZero(float num)
 {
-    return num > 0 ? ceilf(num - 0.5f) : floorf(num + 0.5f);
+    return num > 0 ? std::ceil(num - 0.5f) : std::floor(num + 0.5f);
 }
 
 static inline float roundToDevicePixelTowardZero(float num)
 {
-    float roundedNum = roundf(num);
+    float roundedNum = std::round(num);
     if (std::abs(num - roundedNum) < 0.125)
         num = roundedNum;
 

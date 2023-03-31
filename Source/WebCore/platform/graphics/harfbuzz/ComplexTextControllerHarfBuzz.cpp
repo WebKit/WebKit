@@ -339,7 +339,7 @@ void ComplexTextController::collectComplexTextRunsForCharacters(const UChar* cha
     HbUniquePtr<hb_font_t> harfBuzzFont(hb_font_create(face.get()));
     hb_font_set_funcs(harfBuzzFont.get(), harfBuzzFontFunctions(), const_cast<Font*>(font), nullptr);
     const float size = fontPlatformData.size();
-    if (floorf(size) == size)
+    if (std::floor(size) == size)
         hb_font_set_ppem(harfBuzzFont.get(), size, size);
     int scale = floatToHarfBuzzPosition(size);
     hb_font_set_scale(harfBuzzFont.get(), scale, scale);

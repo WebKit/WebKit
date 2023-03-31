@@ -203,8 +203,8 @@ static BOOL shouldRoundScrollOrigin(WebDynamicScrollBarsView *view)
         // WebCore isn't yet able to handle subpixel scrolling, as can happen on Retina displays. For
         // now we'll round to the nearest pixel. Once subpixel layout is enabled in WebCore we may be
         // able to remove this method entirely.
-        point.x = round(point.x);
-        point.y = round(point.y);
+        point.x = std::round(point.x);
+        point.y = std::round(point.y);
     }
 
     [super scrollClipView:clipView toPoint:point];
@@ -337,10 +337,10 @@ static const unsigned cMaxUpdateScrollbarsPass = 2;
     // while the documentSize (set by WebCore) will be integral.  Round up the non-integral sizes so that
     // the mismatch won't cause unwanted scrollbars to appear.  This can result in slightly cut off content,
     // but it will always be less than one pixel, which should not be noticeable.
-    visibleSize.width = ceilf(visibleSize.width);
-    visibleSize.height = ceilf(visibleSize.height);
-    frameSize.width = ceilf(frameSize.width);
-    frameSize.height = ceilf(frameSize.height);
+    visibleSize.width = std::ceil(visibleSize.width);
+    visibleSize.height = std::ceil(visibleSize.height);
+    frameSize.width = std::ceil(frameSize.width);
+    frameSize.height = std::ceil(frameSize.height);
 
     if (_private->hScroll == ScrollbarMode::Auto) {
         newHasHorizontalScroller = documentSize.width > visibleSize.width;

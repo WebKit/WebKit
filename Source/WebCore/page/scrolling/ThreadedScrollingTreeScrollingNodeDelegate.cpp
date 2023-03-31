@@ -204,7 +204,7 @@ void ThreadedScrollingTreeScrollingNodeDelegate::removeWheelEventTestCompletionD
 
 FloatPoint ThreadedScrollingTreeScrollingNodeDelegate::adjustedScrollPosition(const FloatPoint& position) const
 {
-    return { roundf(position.x()), roundf(position.y()) };
+    return { std::round(position.x()), std::round(position.y()) };
 }
 
 void ThreadedScrollingTreeScrollingNodeDelegate::handleKeyboardScrollRequest(const RequestedKeyboardScrollData& scrollData)

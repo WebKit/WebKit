@@ -681,7 +681,7 @@ MediaTime MediaPlayerPrivateAVFoundationObjC::getStartDate() const
     double currentTime = PAL::CMTimeGetSeconds([m_avPlayerItem currentTime]);
 
     // Rounding due to second offset error when subtracting.
-    return MediaTime::createWithDouble(round(date - currentTime));
+    return MediaTime::createWithDouble(std::round(date - currentTime));
 }
 
 bool MediaPlayerPrivateAVFoundationObjC::hasAvailableVideoFrame() const

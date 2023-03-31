@@ -86,7 +86,7 @@ float RenderTextControlMultiLine::getAverageCharWidth()
 
 LayoutUnit RenderTextControlMultiLine::preferredContentLogicalWidth(float charWidth) const
 {
-    float width = ceilf(charWidth * textAreaElement().cols());
+    float width = std::ceil(charWidth * textAreaElement().cols());
 
     // We are able to have a vertical scrollbar if the overflow style is scroll or auto
     if ((style().overflowY() == Overflow::Scroll) || (style().overflowY() == Overflow::Auto))

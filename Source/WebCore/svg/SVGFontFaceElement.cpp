@@ -103,7 +103,7 @@ unsigned SVGFontFaceElement::unitsPerEm() const
     if (valueString.isEmpty())
         return FontMetrics::defaultUnitsPerEm;
 
-    auto value = static_cast<unsigned>(ceilf(valueString.toFloat()));
+    auto value = static_cast<unsigned>(std::ceil(valueString.toFloat()));
     if (!value)
         return FontMetrics::defaultUnitsPerEm;
 
@@ -112,12 +112,12 @@ unsigned SVGFontFaceElement::unitsPerEm() const
 
 int SVGFontFaceElement::xHeight() const
 {
-    return static_cast<int>(ceilf(attributeWithoutSynchronization(x_heightAttr).toFloat()));
+    return static_cast<int>(std::ceil(attributeWithoutSynchronization(x_heightAttr).toFloat()));
 }
 
 int SVGFontFaceElement::capHeight() const
 {
-    return static_cast<int>(ceilf(attributeWithoutSynchronization(cap_heightAttr).toFloat()));
+    return static_cast<int>(std::ceil(attributeWithoutSynchronization(cap_heightAttr).toFloat()));
 }
 
 float SVGFontFaceElement::horizontalOriginX() const
@@ -211,16 +211,16 @@ int SVGFontFaceElement::ascent() const
     // vert-origin-y value for the corresponding font.
     const AtomString& ascentValue = attributeWithoutSynchronization(ascentAttr);
     if (!ascentValue.isEmpty())
-        return static_cast<int>(ceilf(ascentValue.toFloat()));
+        return static_cast<int>(std::ceil(ascentValue.toFloat()));
 
     if (RefPtr fontElement = m_fontElement.get()) {
         const AtomString& vertOriginY = fontElement->attributeWithoutSynchronization(vert_origin_yAttr);
         if (!vertOriginY.isEmpty())
-            return static_cast<int>(unitsPerEm()) - static_cast<int>(ceilf(vertOriginY.toFloat()));
+            return static_cast<int>(unitsPerEm()) - static_cast<int>(std::ceil(vertOriginY.toFloat()));
     }
 
     // Match Batiks default value
-    return static_cast<int>(ceilf(unitsPerEm() * 0.8f));
+    return static_cast<int>(std::ceil(unitsPerEm() * 0.8f));
 }
 
 int SVGFontFaceElement::descent() const
@@ -233,18 +233,18 @@ int SVGFontFaceElement::descent() const
         // 14 different W3C SVG 1.1 testcases use a negative descent value,
         // where a positive was meant to be used  Including:
         // animate-elem-24-t.svg, fonts-elem-01-t.svg, fonts-elem-02-t.svg (and 11 others)
-        int descent = static_cast<int>(ceilf(descentValue.toFloat()));
+        int descent = static_cast<int>(std::ceil(descentValue.toFloat()));
         return descent < 0 ? -descent : descent;
     }
 
     if (RefPtr fontElement = m_fontElement.get()) {
         const AtomString& vertOriginY = fontElement->attributeWithoutSynchronization(vert_origin_yAttr);
         if (!vertOriginY.isEmpty())
-            return static_cast<int>(ceilf(vertOriginY.toFloat()));
+            return static_cast<int>(std::ceil(vertOriginY.toFloat()));
     }
 
     // Match Batiks default value
-    return static_cast<int>(ceilf(unitsPerEm() * 0.2f));
+    return static_cast<int>(std::ceil(unitsPerEm() * 0.2f));
 }
 
 String SVGFontFaceElement::fontFamily() const

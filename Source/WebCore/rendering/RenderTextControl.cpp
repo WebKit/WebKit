@@ -147,8 +147,8 @@ float RenderTextControl::getAverageCharWidth()
 float RenderTextControl::scaleEmToUnits(int x) const
 {
     // This matches the unitsPerEm value for MS Shell Dlg and Courier New from the "head" font table.
-    float unitsPerEm = 2048.0f;
-    return roundf(style().fontCascade().size() * x / unitsPerEm);
+    constexpr float unitsPerEm = 2048.0f;
+    return std::round(style().fontCascade().size() * x / unitsPerEm);
 }
 
 void RenderTextControl::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const

@@ -341,7 +341,7 @@ float angleOfPointToSideOfIntersection(const FloatRect& boundingRect, const std:
 float normalizeAngleInRadians(float radians)
 {
     float circles = radians / radiansPerTurnFloat;
-    return radiansPerTurnFloat * (circles - floor(circles));
+    return radiansPerTurnFloat * (circles - std::floor(circles));
 }
 
 }

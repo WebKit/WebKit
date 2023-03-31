@@ -366,7 +366,7 @@ LayoutUnit RenderTextControlSingleLine::preferredContentLogicalWidth(float charW
     if (family == "Lucida Grande"_s)
         maxCharWidth = scaleEmToUnits(4027);
     else if (style().fontCascade().hasValidAverageCharWidth())
-        maxCharWidth = roundf(style().fontCascade().primaryFont().maxCharWidth());
+        maxCharWidth = std::round(style().fontCascade().primaryFont().maxCharWidth());
 #endif
 
     // For text inputs, IE adds some extra width.

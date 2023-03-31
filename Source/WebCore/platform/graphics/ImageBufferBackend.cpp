@@ -35,7 +35,7 @@ namespace WebCore {
 
 IntSize ImageBufferBackend::calculateBackendSize(const Parameters& parameters)
 {
-    FloatSize scaledSize = { ceilf(parameters.resolutionScale * parameters.logicalSize.width()), ceilf(parameters.resolutionScale * parameters.logicalSize.height()) };
+    FloatSize scaledSize = { std::ceil(parameters.resolutionScale * parameters.logicalSize.width()), std::ceil(parameters.resolutionScale * parameters.logicalSize.height()) };
     if (scaledSize.isEmpty() || !scaledSize.isExpressibleAsIntSize())
         return { };
 

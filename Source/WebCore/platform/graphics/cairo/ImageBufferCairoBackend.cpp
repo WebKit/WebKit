@@ -61,7 +61,7 @@ void ImageBufferCairoBackend::transformToColorSpace(const DestinationColorSpace&
             for (unsigned i = 0; i < 256; i++) {
                 float color = i / 255.0f;
                 color = SRGBTransferFunction<float, TransferFunctionMode::Clamped>::toLinear(color);
-                array[i] = static_cast<uint8_t>(round(color * 255));
+                array[i] = static_cast<uint8_t>(std::round(color * 255));
             }
             return array;
         }();
@@ -72,7 +72,7 @@ void ImageBufferCairoBackend::transformToColorSpace(const DestinationColorSpace&
             for (unsigned i = 0; i < 256; i++) {
                 float color = i / 255.0f;
                 color = SRGBTransferFunction<float, TransferFunctionMode::Clamped>::toGammaEncoded(color);
-                array[i] = static_cast<uint8_t>(round(color * 255));
+                array[i] = static_cast<uint8_t>(std::round(color * 255));
             }
             return array;
         }();

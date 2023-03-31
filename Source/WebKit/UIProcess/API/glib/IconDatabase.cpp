@@ -182,7 +182,7 @@ void IconDatabase::populatePageURLToIconURLMap()
         return;
     }
 
-    if (query->bindInt64(1, floor((WallTime::now() - notUsedIconExpirationTime).secondsSinceEpoch().seconds())) != SQLITE_OK) {
+    if (query->bindInt64(1, std::floor((WallTime::now() - notUsedIconExpirationTime).secondsSinceEpoch().seconds())) != SQLITE_OK) {
         LOG_ERROR("IconDatabase::populatePageURLToIconURLMap: failed to bind statement: %s", m_db.lastErrorMsg());
         return;
     }
@@ -228,7 +228,7 @@ void IconDatabase::pruneTimerFired()
         m_pruneIconsStatement = pruneIconsStatement.value().moveToUniquePtr();
     }
 
-    if (m_pruneIconsStatement->bindInt64(1, floor((WallTime::now() - notUsedIconExpirationTime).secondsSinceEpoch().seconds())) != SQLITE_OK) {
+    if (m_pruneIconsStatement->bindInt64(1, std::floor((WallTime::now() - notUsedIconExpirationTime).secondsSinceEpoch().seconds())) != SQLITE_OK) {
         LOG_ERROR("FaviconDatabse::pruneTimerFired failed: %s", m_db.lastErrorMsg());
         return;
     }
@@ -307,7 +307,7 @@ std::optional<int64_t> IconDatabase::iconIDForIconURL(const String& iconURL, boo
     std::optional<int64_t> result;
     if (m_iconIDForIconURLStatement->step() == SQLITE_ROW) {
         result = m_iconIDForIconURLStatement->columnInt64(0);
-        expired = m_iconIDForIconURLStatement->columnInt64(1) <= floor((WallTime::now() - iconExpirationTime).secondsSinceEpoch().seconds());
+        expired = m_iconIDForIconURLStatement->columnInt64(1) <= std::floor((WallTime::now() - iconExpirationTime).secondsSinceEpoch().seconds());
     }
 
     m_iconIDForIconURLStatement->reset();

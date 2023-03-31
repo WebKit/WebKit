@@ -224,7 +224,7 @@ void RenderMenuList::updateOptionsWidth()
         }
     }
 
-    int width = static_cast<int>(ceilf(maxOptionWidth));
+    int width = static_cast<int>(std::ceil(maxOptionWidth));
     if (m_optionsWidth == width)
         return;
 

@@ -227,7 +227,7 @@ void RenderFileUploadControl::computeIntrinsicLogicalWidths(LayoutUnit& minLogic
     if (HTMLInputElement* button = uploadButton())
         if (RenderObject* buttonRenderer = button->renderer())
             defaultLabelWidth += buttonRenderer->maxPreferredLogicalWidth() + afterButtonSpacing;
-    maxLogicalWidth = static_cast<int>(ceilf(std::max(minDefaultLabelWidth, defaultLabelWidth)));
+    maxLogicalWidth = static_cast<int>(std::ceil(std::max(minDefaultLabelWidth, defaultLabelWidth)));
 
     if (!style().width().isPercentOrCalculated())
         minLogicalWidth = maxLogicalWidth;

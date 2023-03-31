@@ -129,7 +129,7 @@ public:
 
     void animate(SVGElement&, float progress, unsigned repeatCount, int& animated)
     {
-        animated = static_cast<int>(roundf(Base::animate(progress, repeatCount, m_from, m_to, toAtEndOfDuration(), animated)));
+        animated = static_cast<int>(std::round(Base::animate(progress, repeatCount, m_from, m_to, toAtEndOfDuration(), animated)));
     }
 
     std::optional<float> calculateDistance(SVGElement&, const String&, const String&) const final;

@@ -645,19 +645,12 @@ void WebPage::computePagesForPrintingPDFDocument(WebCore::FrameIdentifier frameI
     RetainPtr<PDFDocument> pdfDocument = coreFrame ? pdfDocumentForPrintingFrame(coreFrame) : 0;
     if ([pdfDocument allowsPrinting]) {
         NSUInteger pageCount = [pdfDocument pageCount];
-        IntRect pageRect(0, 0, ceilf(printInfo.availablePaperWidth), ceilf(printInfo.availablePaperHeight));
+        IntRect pageRect(0, 0, std::ceil(printInfo.availablePaperWidth), std::ceil(printInfo.availablePaperHeight));
         for (NSUInteger i = 1; i <= pageCount; ++i) {
             resultPageRects.append(pageRect);
             pageRect.move(0, pageRect.height());
         }
     }
-}
-
-static inline CGFloat roundCGFloat(CGFloat f)
-{
-    if (sizeof(CGFloat) == sizeof(float))
-        return roundf(static_cast<float>(f));
-    return static_cast<CGFloat>(round(f));
 }
 
 static void drawPDFPage(PDFDocument *pdfDocument, CFIndex pageIndex, CGContextRef context, CGFloat pageSetupScaleFactor, CGSize paperSize)
@@ -686,7 +679,7 @@ static void drawPDFPage(PDFDocument *pdfDocument, CFIndex pageIndex, CGContextRe
     CGFloat widthDifference = paperSize.width / pageSetupScaleFactor - cropBox.size.width;
     CGFloat heightDifference = paperSize.height / pageSetupScaleFactor - cropBox.size.height;
     if (widthDifference || heightDifference)
-        CGContextTranslateCTM(context, roundCGFloat(widthDifference / 2), roundCGFloat(heightDifference / 2));
+        CGContextTranslateCTM(context, std::round(widthDifference / 2), std::round(heightDifference / 2));
 
     if (shouldRotate) {
         CGContextRotateCTM(context, static_cast<CGFloat>(piOverTwoDouble));
@@ -724,7 +717,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 void WebPage::drawPDFDocument(CGContextRef context, PDFDocument *pdfDocument, const PrintInfo& printInfo, const WebCore::IntRect& rect)
 {
     NSUInteger pageCount = [pdfDocument pageCount];
-    IntSize paperSize(ceilf(printInfo.availablePaperWidth), ceilf(printInfo.availablePaperHeight));
+    IntSize paperSize(std::ceil(printInfo.availablePaperWidth), std::ceil(printInfo.availablePaperHeight));
     IntRect pageRect(IntPoint(), paperSize);
     for (NSUInteger i = 0; i < pageCount; ++i) {
         if (pageRect.intersects(rect)) {

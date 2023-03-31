@@ -276,7 +276,7 @@ void RenderMathMLFraction::paint(PaintInfo& info, const LayoutPoint& paintOffset
 std::optional<LayoutUnit> RenderMathMLFraction::firstLineBaseline() const
 {
     if (isValid())
-        return LayoutUnit { roundf(static_cast<float>(fractionAscent())) };
+        return LayoutUnit { std::round(static_cast<float>(fractionAscent())) };
     return RenderMathMLBlock::firstLineBaseline();
 }
 

@@ -163,7 +163,7 @@ void PopupMenuMac::show(const IntRect& r, LocalFrameView* v, int selectedIndex)
         NSRect titleFrame = [m_popup titleRectForBounds:r];
         if (titleFrame.size.width <= 0 || titleFrame.size.height <= 0)
             titleFrame = r;
-        float vertOffset = roundf((NSMaxY(r) - NSMaxY(titleFrame)) + NSHeight(titleFrame));
+        float vertOffset = std::round((NSMaxY(r) - NSMaxY(titleFrame)) + NSHeight(titleFrame));
         // Adjust for fonts other than the system font.
         auto defaultFont = adoptCF(CTFontCreateUIFontForLanguage(kCTFontUIFontSystem, CTFontGetSize(font), nil));
         vertOffset += CTFontGetDescent(font) - CTFontGetDescent(defaultFont.get());
@@ -215,7 +215,7 @@ void PopupMenuMac::show(const IntRect& r, LocalFrameView* v, int selectedIndex)
         break;
     }
 
-    PAL::popUpMenu(menu, location, roundf(NSWidth(r)), dummyView.get(), selectedIndex, (__bridge NSFont *)font, controlSize, !m_client->menuStyle().hasDefaultAppearance());
+    PAL::popUpMenu(menu, location, std::round(NSWidth(r)), dummyView.get(), selectedIndex, (__bridge NSFont *)font, controlSize, !m_client->menuStyle().hasDefaultAppearance());
 
     [m_popup dismissPopUp];
     [dummyView removeFromSuperview];

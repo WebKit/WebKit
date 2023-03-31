@@ -100,8 +100,8 @@ FloatPoint SimpleViewportController::boundContentsPositionAtScale(const FloatPoi
     // We need to floor the viewport here as to allow aligning the content in device units. If not,
     // it might not be possible to scroll the last pixel and that affects fixed position elements.
     return FloatPoint(
-        clampTo(framePosition.x(), .0f, std::max(.0f, m_contentsSize.width() - floorf(m_viewportSize.width() / scale))),
-        clampTo(framePosition.y(), .0f, std::max(.0f, m_contentsSize.height() - floorf(m_viewportSize.height() / scale))));
+        clampTo(framePosition.x(), .0f, std::max(.0f, m_contentsSize.width() - std::floor(m_viewportSize.width() / scale))),
+        clampTo(framePosition.y(), .0f, std::max(.0f, m_contentsSize.height() - std::floor(m_viewportSize.height() / scale))));
 }
 
 FloatPoint SimpleViewportController::boundContentsPosition(const FloatPoint& framePosition) const

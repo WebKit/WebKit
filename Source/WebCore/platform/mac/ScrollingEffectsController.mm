@@ -340,8 +340,8 @@ bool ScrollingEffectsController::applyScrollDeltaWithStretching(const PlatformWh
 
     m_stretchScrollForce += delta;
     auto dampedDelta = FloatSize {
-        ceilf(elasticDeltaForReboundDelta(m_stretchScrollForce.width())),
-        ceilf(elasticDeltaForReboundDelta(m_stretchScrollForce.height()))
+        std::ceil(elasticDeltaForReboundDelta(m_stretchScrollForce.width())),
+        std::ceil(elasticDeltaForReboundDelta(m_stretchScrollForce.height()))
     };
 
     LOG_WITH_STREAM(ScrollAnimations, stream << "ScrollingEffectsController::applyScrollDeltaWithStretching() - stretchScrollForce " << m_stretchScrollForce << " move delta " << delta << " dampedDelta " << dampedDelta);

@@ -182,13 +182,13 @@ static bool isValueOutOfRangeForProperty(CSSPropertyID propertyID, double value,
     switch (propertyID) {
     case CSSPropertyOrder:
     case CSSPropertyZIndex:
-        return round(value) != value;
+        return std::round(value) != value;
     case CSSPropertyTabSize:
-        return value < 0 || (unit == CSSUnitType::CSS_NUMBER && round(value) != value);
+        return value < 0 || (unit == CSSUnitType::CSS_NUMBER && std::round(value) != value);
     case CSSPropertyOrphans:
     case CSSPropertyWidows:
     case CSSPropertyColumnCount:
-        return round(value) != value || value < 1;
+        return std::round(value) != value || value < 1;
     case CSSPropertyAnimationDuration:
     case CSSPropertyAnimationIterationCount:
     case CSSPropertyBackgroundSize:
