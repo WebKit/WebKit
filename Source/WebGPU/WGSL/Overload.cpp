@@ -462,9 +462,6 @@ unsigned OverloadResolver::conversionRankImpl(Type* from, Type* to) const
     if (from == to)
         return 0;
 
-    if (std::holds_alternative<Bottom>(*from))
-        return 0;
-
     // FIXME: refs should also return 0
 
     if (auto* fromPrimitive = std::get_if<Primitive>(from)) {

@@ -31,3 +31,11 @@ fn testConstraints() {
     // CHECK-L: no matching overload for operator - (vec2<u32>)
     let x8 = -vec2(1u, 1u);
 }
+
+fn testBottomOverload() {
+  // CHECK-L: no matching overload for initializer vec2<f32>(<AbstractInt>)
+  let m = vec2<f32>(0);
+
+  // CHECK-NOT-L: no matching overload for operator + (⊥, <AbstractInt>)
+  let x = m + 2;
+}

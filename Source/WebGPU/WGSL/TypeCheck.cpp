@@ -549,6 +549,10 @@ Type* TypeChecker::chooseOverload(const String& operation, const Vector<Type*>& 
     auto it = m_overloadedOperations.find(operation);
     if (it == m_overloadedOperations.end())
         return nullptr;
+    for (auto* argument : valueArguments) {
+        if (isBottom(argument))
+            return m_types.bottomType();
+    }
     return resolveOverloads(m_types, it->value, valueArguments, typeArguments);
 }
 
