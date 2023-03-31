@@ -727,13 +727,14 @@ JSObjectRef objCCallbackFunctionForMethod(JSContext *context, Class cls, Protoco
 {
     NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:[NSMethodSignature signatureWithObjCTypes:types]];
     [invocation setSelector:sel];
-    if (!isInstanceMethod) {
-        [invocation setTarget:cls];
-        // We need to retain the target Class because m_invocation doesn't retain it by default (and we don't want it to).
-        // FIXME: What releases it?
-        CFRetain((__bridge CFTypeRef)cls);
-    }
-    return objCCallbackFunctionForInvocation(context, invocation, isInstanceMethod ? CallbackInstanceMethod : CallbackClassMethod, isInstanceMethod ? cls : nil, _protocol_getMethodTypeEncoding(protocol, sel, YES, isInstanceMethod));
+    if (isInstanceMethod)
+        return objCCallbackFunctionForInvocation(context, invocation, CallbackInstanceMethod, cls, _protocol_getMethodTypeEncoding(protocol, sel, YES, YES));
+
+    // We need to retain the target Class because invocation doesn't retain it by default (and we don't want it to).
+    // FIXME: What releases it?
+    [invocation setTarget:[cls retain]];
+
+    return objCCallbackFunctionForInvocation(context, invocation, CallbackClassMethod, nil, _protocol_getMethodTypeEncoding(protocol, sel, YES, NO));
 }
 
 JSObjectRef objCCallbackFunctionForBlock(JSContext *context, id target)
@@ -743,11 +744,11 @@ JSObjectRef objCCallbackFunctionForBlock(JSContext *context, id target)
     const char* signature = _Block_signature((__bridge void*)target);
     NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:[NSMethodSignature signatureWithObjCTypes:signature]];
 
-    // We don't want to use -retainArguments because that leaks memory. Arguments 
+    // We don't want to use -retainArguments because that leaks memory; arguments 
     // would be retained indefinitely between invocations of the callback.
-    // Additionally, we copy the target because we want the block to stick around
+    // Additionally, we manually retain the target because we want the block to stick around
     // until the ObjCCallbackFunctionImpl is destroyed.
-    [invocation setTarget:[target copy]];
+    [invocation setTarget:[target retain]];
 
     return objCCallbackFunctionForInvocation(context, invocation, CallbackBlock, nil, signature);
 }
