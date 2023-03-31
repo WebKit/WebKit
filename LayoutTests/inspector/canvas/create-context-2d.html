@@ -20,6 +20,12 @@ function test() {
         contextType: WI.Canvas.ContextType.Canvas2D,
     });
 
+    InspectorTest.CreateContextUtilities.addSimpleTestCase({
+        name: "Offscreen",
+        expression: `createOffscreenCanvas("2d")`,
+        contextType: WI.Canvas.ContextType.OffscreenCanvas2D,
+    });
+
     InspectorTest.CreateContextUtilities.addCSSCanvasTestCase(WI.Canvas.ContextType.Canvas2D);
 
     suite.runTestCasesAndFinish();

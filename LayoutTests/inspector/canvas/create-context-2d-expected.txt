@@ -16,7 +16,15 @@ PASS: Removed canvas has expected ID.
 -- Running test case: Canvas.CreateContext2D.Detached
 PASS: Canvas context should be 2D.
   0: getContext - [native code]
-  1: createDetachedCanvas - inspector/canvas/resources/create-context-utilities.js:11:62
+  1: createDetachedCanvas - inspector/canvas/resources/create-context-utilities.js:13:62
+  2: Global Code - [program code]
+
+PASS: Removed canvas has expected ID.
+
+-- Running test case: Canvas.CreateContext2D.Offscreen
+PASS: Canvas context should be Offscreen2D.
+  0: getContext - [native code]
+  1: createOffscreenCanvas - inspector/canvas/resources/create-context-utilities.js:36:36
   2: Global Code - [program code]
 
 PASS: Removed canvas has expected ID.
@@ -25,7 +33,7 @@ PASS: Removed canvas has expected ID.
 Create CSS canvas from -webkit-canvas(css-canvas).
 PASS: Canvas context should be 2D.
   0: getCSSCanvasContext - [native code]
-  1: createCSSCanvas - inspector/canvas/resources/create-context-utilities.js:18:47
+  1: createCSSCanvas - inspector/canvas/resources/create-context-utilities.js:22:47
   2: Global Code - [program code]
 
 PASS: Canvas name should equal the identifier passed to -webkit-canvas.

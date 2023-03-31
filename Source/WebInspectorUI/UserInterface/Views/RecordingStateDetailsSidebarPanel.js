@@ -42,7 +42,7 @@ WI.RecordingStateDetailsSidebarPanel = class RecordingStateDetailsSidebarPanel e
         if (!(objects instanceof Array))
             objects = [objects];
 
-        this.recording = objects.find((object) => object instanceof WI.Recording && object.type === WI.Recording.Type.Canvas2D);
+        this.recording = objects.find((object) => object instanceof WI.Recording && object.is2D());
         this.action = objects.find((object) => object instanceof WI.RecordingAction);
 
         return this._recording && this._action;
@@ -70,7 +70,7 @@ WI.RecordingStateDetailsSidebarPanel = class RecordingStateDetailsSidebarPanel e
 
         this._action = action;
 
-        if (this._action && this._recording.type === WI.Recording.Type.Canvas2D)
+        if (this._action && WI.Recording.is2D(this._recording.type))
             this._generateDetailsCanvas2D(this._action);
 
         this.updateLayoutIfNeeded();

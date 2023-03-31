@@ -6,10 +6,6 @@ Tests for the Canvas.resolveContext command for 2D contexts.
 PASS: Payload should have type "object".
 PASS: Payload should have expected className"
 
--- Running test case: Canvas.resolveContext2D.validIdentifier.OffscreenCanvas2D
-PASS: Payload should have type "object".
-PASS: Payload should have expected className"
-
 -- Running test case: Canvas.resolveContext.invalidIdentifier
 PASS: Should produce an error.
 Error: Missing canvas for given canvasId

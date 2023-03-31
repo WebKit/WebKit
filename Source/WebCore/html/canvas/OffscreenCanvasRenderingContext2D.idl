@@ -33,7 +33,7 @@
     JSGenerateToJSObject,
     JSCustomMarkFunction,
     TaggedWrapper,
-    // CallTracer=InspectorCanvasCallTracer, // FIXME: OffscreenCanvas.
+    CallTracer=InspectorCanvasCallTracer,
 ] interface OffscreenCanvasRenderingContext2D {
     readonly attribute OffscreenCanvas canvas;
     undefined commit();

@@ -212,6 +212,10 @@ WI.RecordingAction = class RecordingAction extends WI.Object
         switch (type) {
         case WI.Recording.Type.Canvas2D:
             return CanvasRenderingContext2D.prototype;
+        case WI.Recording.Type.OffscreenCanvas2D:
+            if (window.OffscreenCanvasRenderingContext2D)
+                return OffscreenCanvasRenderingContext2D.prototype;
+            break;
         case WI.Recording.Type.CanvasBitmapRenderer:
             if (window.ImageBitmapRenderingContext)
                 return ImageBitmapRenderingContext.prototype;
@@ -298,7 +302,7 @@ WI.RecordingAction = class RecordingAction extends WI.Object
                 this._warning = WI.UIString("This action causes no visual change");
         }
 
-        if (recording.type === WI.Recording.Type.Canvas2D) {
+        if (WI.Recording.is2D(recording.type)) {
             let currentState = WI.RecordingState.fromContext(recording.type, context, {source: this});
             console.assert(currentState);
 
@@ -368,15 +372,13 @@ WI.RecordingAction = class RecordingAction extends WI.Object
         if (this._payloadSnapshot >= 0)
             this._snapshot = snapshot;
 
-        if (recording.type === WI.Recording.Type.Canvas2D || recording.type === WI.Recording.Type.CanvasBitmapRenderer || recording.type === WI.Recording.Type.CanvasWebGL || recording.type === WI.Recording.Type.CanvasWebGL2) {
+        if (WI.Recording.is2D(recording.type) || recording.type === WI.Recording.Type.CanvasBitmapRenderer || recording.type === WI.Recording.Type.CanvasWebGL || recording.type === WI.Recording.Type.CanvasWebGL2) {
             if (this._name === "width" || this._name === "height") {
                 this._contextReplacer = "canvas";
                 this._isFunction = false;
                 this._isGetter = !this._parameters.length;
                 this._isVisual = !this._isGetter;
             }
-
-            // FIXME: <https://webkit.org/b/180833>
         }
 
         if (!this._contextReplacer) {
@@ -710,6 +712,16 @@ WI.RecordingAction._visualNames = {
         "strokeRect",
         "strokeText",
     ]),
+    [WI.Recording.Type.OffscreenCanvas2D]: new Set([
+        "clearRect",
+        "drawImage",
+        "fill",
+        "fillRect",
+        "fillText",
+        "putImageData",
+        "strokeRect",
+        "strokeText",   
+    ]),
     [WI.Recording.Type.CanvasBitmapRenderer]: new Set([
         "transferFromImageBitmap",
     ]),
@@ -752,6 +764,23 @@ WI.RecordingAction._stateModifiers = {
         setMiterLimit: ["miterLimit"],
         setShadow: ["shadowOffsetX", "shadowOffsetY", "shadowBlur", "shadowColor"],
         setStrokeColor: ["strokeStyle"],
+        setTransform: ["transform"],
+        translate: ["transform"],
+    },
+    [WI.Recording.Type.OffscreenCanvas2D]: {
+        arc: ["currentX", "currentY"],
+        arcTo: ["currentX", "currentY"],
+        beginPath: ["currentX", "currentY"],
+        bezierCurveTo: ["currentX", "currentY"],
+        closePath: ["currentX", "currentY"],
+        ellipse: ["currentX", "currentY"],
+        lineTo: ["currentX", "currentY"],
+        moveTo: ["currentX", "currentY"],
+        quadraticCurveTo: ["currentX", "currentY"],
+        rect: ["currentX", "currentY"],
+        resetTransform: ["transform"],
+        rotate: ["transform"],
+        scale: ["transform"],
         setTransform: ["transform"],
         translate: ["transform"],
     },

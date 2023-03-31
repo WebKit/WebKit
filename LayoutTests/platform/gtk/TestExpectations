@@ -181,6 +181,9 @@ webkit.org/b/217947 http/tests/security/mixedContent/secure-redirect-to-secure-r
 # WebInspector.
 webkit.org/b/217966 [ Release ] inspector/console/queryHolders.html [ Failure ]
 webkit.org/b/218367 inspector/page/setScreenSizeOverride.html [ Failure Pass ]
+webkit.org/b/254733 inspector/canvas/recording-offscreen-canvas-2d-frameCount.html [ Failure ]
+webkit.org/b/254733 inspector/canvas/recording-offscreen-canvas-2d-full.html [ Failure ]
+webkit.org/b/254733 inspector/canvas/recording-offscreen-canvas-2d-memoryLimit.html [ Failure ]
 
 # WebXR is not yet supported in GTK
 webkit.org/b/208988 http/wpt/webxr [ Skip ]

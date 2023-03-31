@@ -4,31 +4,41 @@
 <script src="../../http/tests/inspector/resources/inspector-test.js"></script>
 <script>
 function load() {
-    window.context2d = document.createElement("canvas").getContext("2d");
-    window.context2d.fillStyle = "rgba(255, 0, 0, 0.5)"; // Half-transparent red
-    window.context2d.fillRect(0, 0, 300, 150);
-
+    let context2Ds = [ ];
+    context2Ds.push(document.createElement("canvas").getContext("2d"));
+    if (window.OffscreenCanvas)
+        context2Ds.push(new OffscreenCanvas(300, 150).getContext("2d"));
+    for (context of context2Ds) {
+        context.fillStyle = "rgba(255, 0, 0, 0.5)"; // Half-transparent red
+        context.fillRect(0, 0, 300, 150);
+    }
+    window.context2Ds = context2Ds;
     runTest();
 }
 
 function test() {
     let suite = InspectorTest.createAsyncSuite("Canvas.requestContent2D");
 
-    suite.addTestCase({
-        name: "Canvas.requestContent2D.validCanvasId",
-        description: "Get the base64 encoded data for the canvas on the page with the given type.",
-        test(resolve, reject) {
-            let canvas = Array.from(WI.canvasManager.canvasCollection).find((canvas) => canvas.contextType === WI.Canvas.ContextType.Canvas2D);
-            if (!canvas) {
-                reject(`Missing Canvas.`);
-                return;
-            }
+    function addTestCase({name, contextType}) {
+        suite.addTestCase({
+            name,
+            description: "Get the base64 encoded data for the canvas on the page with the given type.",
+            test(resolve, reject) {
+                let canvas = Array.from(WI.canvasManager.canvasCollection).find((canvas) => canvas.contextType === contextType);
+                if (!canvas) {
+                    reject(`Missing canvas for type ${contextType}.`);
+                    return;
+                }
 
-            CanvasAgent.requestContent(canvas.identifier)
-            .then(({content}) => InspectorTest.expectGreaterThan(content.length, "data:image/png;base64,".length, "Content should not be empty."))
-            .then(resolve, reject);
-        }
-    });
+                CanvasAgent.requestContent(canvas.identifier)
+                .then(({content}) => InspectorTest.expectGreaterThan(content.length, "data:image/png;base64,".length, "Content should not be empty."))
+                .then(resolve, reject);
+            }
+        });
+    }
+    addTestCase({name: "Canvas.requestContent.validCanvasId.Canvas2D", contextType: WI.Canvas.ContextType.Canvas2D});
+    if (window.OffscreenCanvas)
+        addTestCase({name: "Canvas.requestContent.validCanvasId.OffscreenCanvas2D", contextType: WI.Canvas.ContextType.OffscreenCanvas2D});
 
     // ------
 

@@ -31,7 +31,7 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
 
         super(representedObject);
 
-        let isCanvas2D = this.representedObject.type === WI.Recording.Type.Canvas2D;
+        let isCanvas2D = this.representedObject.is2D();
         let isCanvasBitmapRenderer = this.representedObject.type === WI.Recording.Type.CanvasBitmapRenderer;
         let isCanvasWebGL = this.representedObject.type === WI.Recording.Type.CanvasWebGL;
         let isCanvasWebGL2 = this.representedObject.type === WI.Recording.Type.CanvasWebGL2;
@@ -84,7 +84,7 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
 
     get navigationItems()
     {
-        let isCanvas2D = this.representedObject.type === WI.Recording.Type.Canvas2D;
+        let isCanvas2D = this.representedObject.is2D();
         let isCanvasBitmapRenderer = this.representedObject.type === WI.Recording.Type.CanvasBitmapRenderer;
         let isCanvasWebGL = this.representedObject.type === WI.Recording.Type.CanvasWebGL;
         let isCanvasWebGL2 = this.representedObject.type === WI.Recording.Type.CanvasWebGL2;
@@ -132,7 +132,7 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
     {
         super.attached();
 
-        let isCanvas2D = this.representedObject.type === WI.Recording.Type.Canvas2D;
+        let isCanvas2D = this.representedObject.is2D();
         let isCanvasBitmapRenderer = this.representedObject.type === WI.Recording.Type.CanvasBitmapRenderer;
         let isCanvasWebGL = this.representedObject.type === WI.Recording.Type.CanvasWebGL;
         let isCanvasWebGL2 = this.representedObject.type === WI.Recording.Type.CanvasWebGL2;
@@ -216,7 +216,7 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
             content: JSON.stringify(this.representedObject.toJSON()),
             suggestedName: filename + ".recording",
         });
-        if (this.representedObject.type === WI.Recording.Type.Canvas2D && this.representedObject.ready) {
+        if (this.representedObject.is2D() && this.representedObject.ready) {
             data.push({
                 displayType: WI.UIString("Reduction"),
                 content: this.representedObject.toHTML(),
@@ -489,7 +489,7 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
         if (this._saveMode !== WI.FileUtilities.SaveMode.SingleFile)
             return;
 
-        if (this.representedObject.type === WI.Recording.Type.Canvas2D && this.representedObject.ready)
+        if (this.representedObject.is2D() && this.representedObject.ready)
             this._exportButtonNavigationItem.tooltip = WI.UIString("Export recording (%s)\nShift-click to export a HTML reduction").format(WI.saveKeyboardShortcut.displayName);
         else
             this._exportButtonNavigationItem.tooltip = WI.UIString("Export recording (%s)").format(WI.saveKeyboardShortcut.displayName);
@@ -547,7 +547,7 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
 
     _handleExportNavigationItemClicked(event)
     {
-        if (this._saveMode === WI.FileUtilities.SaveMode.SingleFile && this.representedObject.type === WI.Recording.Type.Canvas2D && this.representedObject.ready && event.data.nativeEvent.shiftKey) {
+        if (this._saveMode === WI.FileUtilities.SaveMode.SingleFile && this.representedObject.is2D() && this.representedObject.ready && event.data.nativeEvent.shiftKey) {
             this._exportReduction();
             return;
         }

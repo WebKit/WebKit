@@ -5,9 +5,6 @@ Test that CanvasAgent tracks changes in the client nodes of a CSS canvas.
 -- Running test case: Canvas.requestClientNodes.Initial.Canvas2D
 PASS: There should initially be no client nodes.
 
--- Running test case: CCanvas.requestClientNodes.Initial.OffscreenCanvas2D
-PASS: There should initially be no client nodes.
-
 -- Running test case: Canvas.CSSCanvasClients.InvalidCanvasId
 PASS: Should produce an error.
 Error: Missing canvas for given canvasId
