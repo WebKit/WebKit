@@ -3,32 +3,50 @@ window.contexts = [];
 function createAttachedCanvas(contextType) {
     let canvas = document.body.appendChild(document.createElement("canvas"));
     let context = canvas.getContext(contextType);
-    if (!context)
+    if (!context) {
         TestPage.addResult("FAIL: missing context for type " + contextType);
+        return;
+    }
     window.contexts.push(context);
 }
 
 function createDetachedCanvas(contextType) {
     let context = document.createElement("canvas").getContext(contextType);
-    if (!context)
+    if (!context) {
         TestPage.addResult("FAIL: missing context for type " + contextType);
+        return;
+    }
     window.contexts.push(context);
 }
 
 function createCSSCanvas(contextType, canvasName) {
     let context = document.getCSSCanvasContext(contextType, canvasName, 10, 10);
-    if (!context)
+    if (!context) {
         TestPage.addResult("FAIL: missing context for type " + contextType);
-    window.contexts.push();
+        return;
+    }
+    window.contexts.push(context);
+}
+
+function createOffscreenCanvas(contextType, canvasName) {
+    if (!window.OffscreenCanvas) {
+        TestPage.addResult("FAIL: missing OffscreenCanvas implementation");
+        return;
+    }
+    let canvas = new OffscreenCanvas(10, 10);
+    let context = canvas.getContext(contextType);
+
+    if (!context) {
+        TestPage.addResult("FAIL: missing offscreen context for type " + contextType);
+        return;
+    }
+    window.contexts.push(context);
 }
 
 let destroyCanvasesInterval = null;
 
 function destroyCanvases() {
     for (let context of window.contexts) {
-        if (!context)
-            continue;
-
         let canvasElement = context.canvas;
         if (canvasElement && canvasElement.parentNode)
             canvasElement.remove();

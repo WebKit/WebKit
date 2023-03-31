@@ -1,9 +1,6 @@
 "use strict";
 (function() {
-  var numFailures = 0;
-  var resultsList = null;
-  var resultNum = 1;
-
+  let resultMessages = [];
   if (window.testRunner && !window.layoutTestController) {
     window.layoutTestController = window.testRunner;
   }
@@ -23,21 +20,6 @@
     window.internals.settings.setWebGLErrorsToConsoleEnabled(false);
   }
 
-  var list = function(msg, color) {
-    if (!resultsList) {
-      resultsList = document.createElement("ul");
-      document.getElementById("result").appendChild(resultsList);
-    }
-
-    var item = document.createElement("li");
-    item.appendChild(document.createTextNode(msg));
-    if (color) {
-      item.style.color = color;
-    }
-
-    resultsList.appendChild(item);
-  }
-
   var log = function(msg, color) {
     var div = document.createElement("div");
     div.appendChild(document.createTextNode(msg));
@@ -49,22 +31,21 @@
 
   window.webglTestHarness = {
     reportResults: function(url, success, msg) {
-      if (success) {
-        list(`[ ${resultNum}: PASS ] ${msg}`, "green");
-      } else {
-        list(`[ ${resultNum}: FAIL ] ${msg}`, "red");
-        ++numFailures;
-      }
-
-      ++resultNum;
+      resultMessages.push({success, msg});
     },
 
     notifyFinished: function(url) {
-      var iframe = document.getElementById("iframe");
+      let numFailures = resultMessages.reduce((v, {success, msg}) => { return v + !success }, 0);
       if (numFailures > 0) {
+        resultMessages.forEach(({success, msg}, index) => {
+          if (success)
+            log(`[ ${index}: PASS ] ${msg}`, "green");
+          else
+            log(`[ ${index}: FAIL ] ${msg}`, "red");
+        })
         log(`[ FAIL ] ${numFailures} failures reported`, "red");
       } else {
-        resultsList.innerHTML = "";
+        var iframe = document.getElementById("iframe");
         iframe.innerHTML = "";
         log("[ PASS ] All tests passed", "green");
       }

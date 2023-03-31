@@ -40,7 +40,6 @@
 #include "WebPage.h"
 #include "WebProcess.h"
 #include <JavaScriptCore/TypedArrayInlines.h>
-#include <WebCore/FontCustomPlatformData.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebKit {
@@ -253,15 +252,9 @@ void RemoteRenderingBackendProxy::cacheNativeImage(const ShareableBitmapHandle& 
     send(Messages::RemoteRenderingBackend::CacheNativeImage(handle, renderingResourceIdentifier));
 }
 
-void RemoteRenderingBackendProxy::cacheFont(const WebCore::Font::Attributes& fontAttributes, const WebCore::FontPlatformData::Attributes& platformData, std::optional<WebCore::RenderingResourceIdentifier> ident)
+void RemoteRenderingBackendProxy::cacheFont(Ref<Font>&& font)
 {
-    send(Messages::RemoteRenderingBackend::CacheFont(fontAttributes, platformData, ident));
-}
-
-void RemoteRenderingBackendProxy::cacheFontCustomPlatformData(Ref<const FontCustomPlatformData>&& customPlatformData)
-{
-    Ref<FontCustomPlatformData> data = adoptRef(const_cast<FontCustomPlatformData&>(customPlatformData.leakRef()));
-    send(Messages::RemoteRenderingBackend::CacheFontCustomPlatformData(WTFMove(data)));
+    send(Messages::RemoteRenderingBackend::CacheFont(WTFMove(font)));
 }
 
 void RemoteRenderingBackendProxy::cacheDecomposedGlyphs(Ref<DecomposedGlyphs>&& decomposedGlyphs)

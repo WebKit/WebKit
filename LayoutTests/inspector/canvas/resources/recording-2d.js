@@ -26,15 +26,22 @@ let imageData23 = new ImageData(2, 3);
 
 let bitmap = null;
 
-async function load() {
-    ctx = canvas.getContext("2d");
-    linearGradient = ctx.createLinearGradient(1, 2, 3, 4);
-    radialGradient = ctx.createRadialGradient(1, 2, 3, 4, 5, 6);
-    pattern = ctx.createPattern(image, "no-repeat");
-    bitmap = await createImageBitmap(image);
+async function load({offscreen = false} = { }) {
+    if (offscreen) {
+        if (window.OffscreenCanvas)
+            ctx = new OffscreenCanvas(2, 2).getContext("2d");
+    } else
+        ctx = canvas.getContext("2d");
 
-    ctx.save();
-    cancelActions();
+    if (ctx) {
+        linearGradient = ctx.createLinearGradient(1, 2, 3, 4);
+        radialGradient = ctx.createRadialGradient(1, 2, 3, 4, 5, 6);
+        pattern = ctx.createPattern(image, "no-repeat");
+        bitmap = await createImageBitmap(image);
+
+        ctx.save();
+        cancelActions();
+    }
 
     runTest();
 }
@@ -84,7 +91,7 @@ function performActions() {
             ctx.clearRect(1, 2, 3, 4);
         },
         () => {
-            ctx.clearShadow();
+            ctx.clearShadow?.();
         },
         () => {
             ctx.clip();
@@ -116,8 +123,8 @@ function performActions() {
             ctx.direction = "test";
         },
         () => {
-            ctx.drawFocusIfNeeded(document.body);
-            ctx.drawFocusIfNeeded(path12, document.body);
+            ctx.drawFocusIfNeeded?.(document.body);
+            ctx.drawFocusIfNeeded?.(path12, document.body);
         },
         () => {
             ignoreException(() => ctx.drawImage(image, 11, 12));
@@ -137,8 +144,8 @@ function performActions() {
             ignoreException(() => ctx.drawImage(bitmap, 47, 48, 49, 410, 411, 412, 413, 414));
         },
         () => {
-            ctx.drawImageFromRect(image, 1, 2, 3, 4, 5, 6, 7, 8)
-            ctx.drawImageFromRect(image, 9, 10, 11, 12, 13, 14, 15, 16, "test");
+            ctx.drawImageFromRect?.(image, 1, 2, 3, 4, 5, 6, 7, 8)
+            ctx.drawImageFromRect?.(image, 9, 10, 11, 12, 13, 14, 15, 16, "test");
         },
         () => {
             ignoreException(() => ctx.ellipse(1, 2, 3, 4, 5, 6, 7));
@@ -260,53 +267,53 @@ function performActions() {
             ctx.scale(1, 2);
         },
         () => {
-            ctx.setAlpha();
-            ctx.setAlpha(1);
+            ctx.setAlpha?.();
+            ctx.setAlpha?.(1);
         },
         () => {
-            ctx.setCompositeOperation();
-            ctx.setCompositeOperation("test");
+            ctx.setCompositeOperation?.();
+            ctx.setCompositeOperation?.("test");
         },
         () => {
-            ctx.setFillColor("testA");
-            ctx.setFillColor("testB", 1);
-            ctx.setFillColor(2);
-            ctx.setFillColor(3, 4);
-            ctx.setFillColor(5, 6, 7, 8);
+            ctx.setFillColor?.("testA");
+            ctx.setFillColor?.("testB", 1);
+            ctx.setFillColor?.(2);
+            ctx.setFillColor?.(3, 4);
+            ctx.setFillColor?.(5, 6, 7, 8);
         },
         () => {
-            ctx.setLineCap();
-            ctx.setLineCap("test");
+            ctx.setLineCap?.();
+            ctx.setLineCap?.("test");
         },
         () => {
             ctx.setLineDash([1, 2]);
         },
         () => {
-            ctx.setLineJoin();
-            ctx.setLineJoin("test");
+            ctx.setLineJoin?.();
+            ctx.setLineJoin?.("test");
         },
         () => {
-            ctx.setLineWidth();
-            ctx.setLineWidth(1);
+            ctx.setLineWidth?.();
+            ctx.setLineWidth?.(1);
         },
         () => {
-            ctx.setMiterLimit();
-            ctx.setMiterLimit(1);
+            ctx.setMiterLimit?.();
+            ctx.setMiterLimit?.(1);
         },
         () => {
-            ctx.setShadow(1, 2, 3);
-            ctx.setShadow(4, 5, 6, "test", 7);
-            ctx.setShadow(8, 9, 10, 11);
-            ctx.setShadow(12, 13, 14, 15, 16);
-            ctx.setShadow(17, 18, 19, 20, 21, 22, 23);
-            ctx.setShadow(24, 25, 26, 27, 28, 29, 30, 31);
+            ctx.setShadow?.(1, 2, 3);
+            ctx.setShadow?.(4, 5, 6, "test", 7);
+            ctx.setShadow?.(8, 9, 10, 11);
+            ctx.setShadow?.(12, 13, 14, 15, 16);
+            ctx.setShadow?.(17, 18, 19, 20, 21, 22, 23);
+            ctx.setShadow?.(24, 25, 26, 27, 28, 29, 30, 31);
         },
         () => {
-            ctx.setStrokeColor("testA");
-            ctx.setStrokeColor("testB", 1);
-            ctx.setStrokeColor(2);
-            ctx.setStrokeColor(3, 4);
-            ctx.setStrokeColor(5, 6, 7, 8);
+            ctx.setStrokeColor?.("testA");
+            ctx.setStrokeColor?.("testB", 1);
+            ctx.setStrokeColor?.(2);
+            ctx.setStrokeColor?.(3, 4);
+            ctx.setStrokeColor?.(5, 6, 7, 8);
         },
         () => {
             ctx.setTransform(1, 2, 3, 4, 5, 6);
@@ -362,14 +369,20 @@ function performActions() {
             ctx.translate(1, 2);
         },
         () => {
+            if (window.OffscreenCanvasRenderingContext2D && ctx instanceof OffscreenCanvasRenderingContext2D)
+                return;
             ctx.webkitImageSmoothingEnabled;
             ctx.webkitImageSmoothingEnabled = true;
         },
         () => {
+            if (window.OffscreenCanvasRenderingContext2D && ctx instanceof OffscreenCanvasRenderingContext2D)
+                return;
             ctx.webkitLineDash;
             ctx.webkitLineDash = [1, 2];
         },
         () => {
+            if (window.OffscreenCanvasRenderingContext2D && ctx instanceof OffscreenCanvasRenderingContext2D)
+                return;
             ctx.webkitLineDashOffset;
             ctx.webkitLineDashOffset = 1;
         },
@@ -386,6 +399,9 @@ function performActions() {
             ctx.roundRect(0, 0, 50, 50, 42);
             ctx.roundRect(0, 0, 50, 50, [23]);
             ctx.roundRect(0, 0, 150, 150, [{x: 24, y: 42}]);
+        },
+        () => {
+            ctx.commit?.();
         },
         () => {
             TestPage.dispatchEventToFrontend("LastFrame");

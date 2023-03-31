@@ -45,6 +45,7 @@
 #include "ImageBitmapRenderingContext.h"
 #include "ImageBuffer.h"
 #include "ImageData.h"
+#include "InspectorCanvas.h"
 #include "InspectorController.h"
 #include "InspectorInstrumentation.h"
 #include "IntRect.h"
@@ -71,7 +72,9 @@
 
 #if ENABLE(OFFSCREEN_CANVAS)
 #include "JSOffscreenCanvas.h"
+#include "JSOffscreenCanvasRenderingContext2D.h"
 #include "OffscreenCanvas.h"
+#include "OffscreenCanvasRenderingContext2D.h"
 #endif
 
 #if ENABLE(WEBGL)
@@ -271,6 +274,8 @@ static CanvasRenderingContext* canvasRenderingContext(JSC::VM& vm, JSC::JSValue 
 #if ENABLE(OFFSCREEN_CANVAS)
     if (auto* canvas = JSOffscreenCanvas::toWrapped(vm, target))
         return canvas->renderingContext();
+    if (auto* context = JSOffscreenCanvasRenderingContext2D::toWrapped(vm, target))
+        return context;
 #endif
     if (auto* context = JSCanvasRenderingContext2D::toWrapped(vm, target))
         return context;
@@ -305,28 +310,6 @@ void PageConsoleClient::recordEnd(JSC::JSGlobalObject* lexicalGlobalObject, Ref<
         if (auto* context = canvasRenderingContext(lexicalGlobalObject->vm(), target))
             InspectorInstrumentation::consoleStopRecordingCanvas(*context);
     }
-}
-
-static std::optional<String> snapshotCanvas(HTMLCanvasElement& canvasElement, CanvasRenderingContext& canvasRenderingContext)
-{
-#if ENABLE(WEBGL)
-    if (is<WebGLRenderingContextBase>(canvasRenderingContext))
-        downcast<WebGLRenderingContextBase>(canvasRenderingContext).setPreventBufferClearForInspector(true);
-#else
-    UNUSED_PARAM(canvasRenderingContext);
-#endif
-
-    auto result = canvasElement.toDataURL("image/png"_s);
-
-#if ENABLE(WEBGL)
-    if (is<WebGLRenderingContextBase>(canvasRenderingContext))
-        downcast<WebGLRenderingContextBase>(canvasRenderingContext).setPreventBufferClearForInspector(false);
-#endif
-
-    if (!result.hasException())
-        return result.releaseReturnValue().string;
-
-    return std::nullopt;
 }
 
 void PageConsoleClient::screenshot(JSC::JSGlobalObject* lexicalGlobalObject, Ref<ScriptArguments>&& arguments)
@@ -375,7 +358,7 @@ void PageConsoleClient::screenshot(JSC::JSGlobalObject* lexicalGlobalObject, Ref
                     else if (is<HTMLCanvasElement>(node)) {
                         auto& canvasElement = downcast<HTMLCanvasElement>(*node);
                         if (auto* canvasRenderingContext = canvasElement.renderingContext()) {
-                            if (auto result = snapshotCanvas(canvasElement, *canvasRenderingContext))
+                            if (auto result = InspectorCanvas::getContentAsDataURL(*canvasRenderingContext))
                                 dataURL = result.value();
                         }
                     }
@@ -408,16 +391,11 @@ void PageConsoleClient::screenshot(JSC::JSGlobalObject* lexicalGlobalObject, Ref
                     dataURL = imageBuffer->toDataURL("image/png"_s, std::nullopt, PreserveResolution::Yes);
             }
         } else if (auto* context = canvasRenderingContext(vm, possibleTarget)) {
-            auto& canvas = context->canvasBase();
-            if (is<HTMLCanvasElement>(canvas)) {
-                target = possibleTarget;
-                if (UNLIKELY(InspectorInstrumentation::hasFrontends())) {
-                    if (auto result = snapshotCanvas(downcast<HTMLCanvasElement>(canvas), *context))
-                        dataURL = result.value();
-                }
+            target = possibleTarget;
+            if (UNLIKELY(InspectorInstrumentation::hasFrontends())) {
+                if (auto result = InspectorCanvas::getContentAsDataURL(*context))
+                    dataURL = result.value();
             }
-
-            // FIXME: <https://webkit.org/b/180833> Web Inspector: support OffscreenCanvas for Canvas related operations
         } else {
             String base64;
             if (possibleTarget.getString(lexicalGlobalObject, base64) && startsWithLettersIgnoringASCIICase(base64, "data:"_s) && base64.length() > 5) {

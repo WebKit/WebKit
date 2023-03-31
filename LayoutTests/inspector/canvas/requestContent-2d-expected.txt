@@ -2,7 +2,10 @@ Test that CanvasAgent.requestContent can retrieve a dataURL with the current con
 
 
 == Running test suite: Canvas.requestContent2D
--- Running test case: Canvas.requestContent2D.validCanvasId
+-- Running test case: Canvas.requestContent.validCanvasId.Canvas2D
+PASS: Content should not be empty.
+
+-- Running test case: Canvas.requestContent.validCanvasId.OffscreenCanvas2D
 PASS: Content should not be empty.
 
 -- Running test case: Canvas.requestContent.invalidCanvasId

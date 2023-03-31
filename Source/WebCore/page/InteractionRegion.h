@@ -46,21 +46,29 @@ class RenderObject;
 
 struct InteractionRegion {
     enum class Type : bool { Interaction, Occlusion };
+    enum class CornerMask : uint8_t {
+        MinXMinYCorner = 1 << 0,
+        MaxXMinYCorner = 1 << 1,
+        MinXMaxYCorner = 1 << 2,
+        MaxXMaxYCorner = 1 << 3
+    };
 
+    Type type;
     ElementIdentifier elementIdentifier;
     IntRect rectInLayerCoordinates;
     float borderRadius { 0 };
-    Type type;
+    OptionSet<CornerMask> maskedCorners { };
 
     WEBCORE_EXPORT ~InteractionRegion();
 };
 
 inline bool operator==(const InteractionRegion& a, const InteractionRegion& b)
 {
-    return a.elementIdentifier == b.elementIdentifier
+    return a.type == b.type
+        && a.elementIdentifier == b.elementIdentifier
         && a.rectInLayerCoordinates == b.rectInLayerCoordinates
         && a.borderRadius == b.borderRadius
-        && a.type == b.type;
+        && a.maskedCorners == b.maskedCorners;
 }
 
 WEBCORE_EXPORT std::optional<InteractionRegion> interactionRegionForRenderedRegion(RenderObject&, const Region&);

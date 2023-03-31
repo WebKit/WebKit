@@ -138,7 +138,7 @@ static bool initializeFreeTypeLibrary(FT_Library& library)
     return true;
 }
 
-RefPtr<FontCustomPlatformData> createFontCustomPlatformData(SharedBuffer& buffer, const String&)
+std::unique_ptr<FontCustomPlatformData> createFontCustomPlatformData(SharedBuffer& buffer, const String&)
 {
     static FT_Library library;
     if (!library && !initializeFreeTypeLibrary(library)) {
@@ -149,7 +149,7 @@ RefPtr<FontCustomPlatformData> createFontCustomPlatformData(SharedBuffer& buffer
     FT_Face freeTypeFace;
     if (FT_New_Memory_Face(library, reinterpret_cast<const FT_Byte*>(buffer.data()), buffer.size(), 0, &freeTypeFace))
         return nullptr;
-    return adoptRef(new FontCustomPlatformData(freeTypeFace, buffer));
+    return makeUnique<FontCustomPlatformData>(freeTypeFace, buffer);
 }
 
 bool FontCustomPlatformData::supportsFormat(const String& format)

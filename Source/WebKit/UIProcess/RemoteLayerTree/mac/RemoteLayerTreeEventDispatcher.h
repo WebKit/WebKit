@@ -67,6 +67,7 @@ public:
     void cacheWheelEventScrollingAccelerationCurve(const NativeWebWheelEvent&);
 
     void handleWheelEvent(const WebWheelEvent&, WebCore::RectEdges<bool> rubberBandableEdges);
+    void wheelEventHandlingCompleted(const WebCore::PlatformWheelEvent&, WebCore::ScrollingNodeID, std::optional<WebCore::WheelScrollGestureState>);
 
     void setScrollingTree(RefPtr<RemoteScrollingTree>&&);
 
@@ -80,7 +81,7 @@ public:
 private:
     OptionSet<WheelEventProcessingSteps> determineWheelEventProcessing(const WebCore::PlatformWheelEvent&, WebCore::RectEdges<bool> rubberBandableEdges);
 
-    WebCore::WheelEventHandlingResult scrollingThreadHandleWheelEvent(const WebWheelEvent&, WebCore::RectEdges<bool> rubberBandableEdges);
+    void scrollingThreadHandleWheelEvent(const WebWheelEvent&, RectEdges<bool> rubberBandableEdges);
     WebCore::WheelEventHandlingResult internalHandleWheelEvent(const WebCore::PlatformWheelEvent&, OptionSet<WheelEventProcessingSteps>);
 
     WebCore::PlatformWheelEvent filteredWheelEvent(const WebCore::PlatformWheelEvent&);
@@ -88,6 +89,7 @@ private:
     void wheelEventHysteresisUpdated(PAL::HysteresisState);
 
     void willHandleWheelEvent(const WebWheelEvent&);
+    void continueWheelEventHandling(WheelEventHandlingResult);
     void wheelEventWasHandledByScrollingThread(WheelEventHandlingResult);
 
     DisplayLink* displayLink() const;

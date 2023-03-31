@@ -206,8 +206,8 @@ public:
 
     static void recordAction(CanvasRenderingContext&, String&&, ProcessedArguments&& = { });
 
-    static std::optional<ProcessedArgument> processArgument(const HTMLCanvasElement&, uint32_t);
-    static void recordAction(const HTMLCanvasElement&, String&&, ProcessedArguments&& = { });
+    static std::optional<ProcessedArgument> processArgument(const CanvasBase&, uint32_t);
+    static void recordAction(const CanvasBase&, String&&, ProcessedArguments&& = { });
 };
 
 } // namespace WebCore

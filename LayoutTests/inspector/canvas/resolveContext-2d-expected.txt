@@ -2,9 +2,13 @@ Tests for the Canvas.resolveContext command for 2D contexts.
 
 
 == Running test suite: Canvas.resolveContext2D
--- Running test case: Canvas.resolveContext2D.validIdentifier
+-- Running test case: Canvas.resolveContext2D.validIdentifier.Canvas2D
 PASS: Payload should have type "object".
-PASS: Payload should have className "CanvasRenderingContext2D".
+PASS: Payload should have expected className"
+
+-- Running test case: Canvas.resolveContext2D.validIdentifier.OffscreenCanvas2D
+PASS: Payload should have type "object".
+PASS: Payload should have expected className"
 
 -- Running test case: Canvas.resolveContext.invalidIdentifier
 PASS: Should produce an error.

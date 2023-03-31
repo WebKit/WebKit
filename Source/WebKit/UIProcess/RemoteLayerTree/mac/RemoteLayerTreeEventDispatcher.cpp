@@ -177,27 +177,63 @@ void RemoteLayerTreeEventDispatcher::handleWheelEvent(const WebWheelEvent& wheel
     willHandleWheelEvent(wheelEvent);
 
     ScrollingThread::dispatch([dispatcher = Ref { *this }, wheelEvent, rubberBandableEdges] {
-        auto handlingResult = dispatcher->scrollingThreadHandleWheelEvent(wheelEvent, rubberBandableEdges);
-        RunLoop::main().dispatch([dispatcher, handlingResult] {
-            dispatcher->wheelEventWasHandledByScrollingThread(handlingResult);
-        });
+        dispatcher->scrollingThreadHandleWheelEvent(wheelEvent, rubberBandableEdges);
     });
 }
 
-void RemoteLayerTreeEventDispatcher::wheelEventWasHandledByScrollingThread(WheelEventHandlingResult handlingResult)
+void RemoteLayerTreeEventDispatcher::scrollingThreadHandleWheelEvent(const WebWheelEvent& webWheelEvent, RectEdges<bool> rubberBandableEdges)
+{
+    ASSERT(ScrollingThread::isCurrentThread());
+    
+    auto continueEventHandlingOnMainThread = [strongThis = Ref { *this }](WheelEventHandlingResult handlingResult) {
+        RunLoop::main().dispatch([strongThis, handlingResult] {
+            strongThis->continueWheelEventHandling(handlingResult);
+        });
+    };
+
+    auto scrollingTree = this->scrollingTree();
+    if (!scrollingTree)
+        return;
+
+    auto locker = RemoteLayerTreeHitTestLocker { *scrollingTree };
+
+    auto platformWheelEvent = platform(webWheelEvent);
+    auto processingSteps = determineWheelEventProcessing(platformWheelEvent, rubberBandableEdges);
+
+    bool needSynchronousScrolling = processingSteps.contains(WheelEventProcessingSteps::SynchronousScrolling);
+    if (needSynchronousScrolling) {
+        scrollingTree->willSendEventForDefaultHandling(platformWheelEvent);
+        continueEventHandlingOnMainThread(WheelEventHandlingResult::unhandled(processingSteps));
+        // Wait for the web process to respond to the event, preventing the next event from being handled until we get a response or time out,
+        // allowing us to know if this gesture should be come non-blocking.
+        scrollingTree->waitForEventDefaultHandlingCompletion(platformWheelEvent);
+        return;
+    }
+
+#if ENABLE(MOMENTUM_EVENT_DISPATCHER)
+    if (m_momentumEventDispatcher->handleWheelEvent(m_pageIdentifier, webWheelEvent, rubberBandableEdges)) {
+        continueEventHandlingOnMainThread(WheelEventHandlingResult::handled(processingSteps));
+        return;
+    }
+#endif
+
+    auto handlingResult = internalHandleWheelEvent(platformWheelEvent, processingSteps);
+    continueEventHandlingOnMainThread(handlingResult);
+}
+
+void RemoteLayerTreeEventDispatcher::continueWheelEventHandling(WheelEventHandlingResult handlingResult)
 {
     ASSERT(isMainRunLoop());
-
-    LOG_WITH_STREAM(Scrolling, stream << "RemoteLayerTreeEventDispatcher::wheelEventWasHandledByScrollingThread - result " << handlingResult);
-
     if (!m_scrollingCoordinator)
         return;
+
+    LOG_WITH_STREAM(Scrolling, stream << "RemoteLayerTreeEventDispatcher::continueWheelEventHandling - result " << handlingResult);
 
     auto event = m_wheelEventsBeingProcessed.takeFirst();
     m_scrollingCoordinator->continueWheelEventHandling(event, handlingResult);
 }
 
-OptionSet<WheelEventProcessingSteps> RemoteLayerTreeEventDispatcher::determineWheelEventProcessing(const WebCore::PlatformWheelEvent& wheelEvent, RectEdges<bool> rubberBandableEdges)
+OptionSet<WheelEventProcessingSteps> RemoteLayerTreeEventDispatcher::determineWheelEventProcessing(const PlatformWheelEvent& wheelEvent, RectEdges<bool> rubberBandableEdges)
 {
     auto scrollingTree = this->scrollingTree();
     if (!scrollingTree)
@@ -209,28 +245,6 @@ OptionSet<WheelEventProcessingSteps> RemoteLayerTreeEventDispatcher::determineWh
         scrollingTree->setMainFrameCanRubberBand(rubberBandableEdges);
 
     return scrollingTree->determineWheelEventProcessing(wheelEvent);
-}
-
-WheelEventHandlingResult RemoteLayerTreeEventDispatcher::scrollingThreadHandleWheelEvent(const WebWheelEvent& wheelEvent, RectEdges<bool> rubberBandableEdges)
-{
-    auto scrollingTree = this->scrollingTree();
-    if (!scrollingTree)
-        return WheelEventHandlingResult::unhandled();
-
-    auto locker = RemoteLayerTreeHitTestLocker { *scrollingTree };
-
-    auto platformWheelEvent = platform(wheelEvent);
-    auto processingSteps = determineWheelEventProcessing(platformWheelEvent, rubberBandableEdges);
-    if (!processingSteps.contains(WheelEventProcessingSteps::AsyncScrolling))
-        return WheelEventHandlingResult { processingSteps, false };
-
-#if ENABLE(MOMENTUM_EVENT_DISPATCHER)
-    if (m_momentumEventDispatcher->handleWheelEvent(m_pageIdentifier, wheelEvent, rubberBandableEdges))
-        return WheelEventHandlingResult { processingSteps, true };
-#endif
-
-    LOG_WITH_STREAM(Scrolling, stream << "RemoteLayerTreeEventDispatcher::handleWheelEvent on scrolling thread " << platformWheelEvent);
-    return internalHandleWheelEvent(platformWheelEvent, processingSteps);
 }
 
 WheelEventHandlingResult RemoteLayerTreeEventDispatcher::internalHandleWheelEvent(const PlatformWheelEvent& wheelEvent, OptionSet<WheelEventProcessingSteps> processingSteps)
@@ -250,6 +264,22 @@ WheelEventHandlingResult RemoteLayerTreeEventDispatcher::internalHandleWheelEven
     scrollingTree->applyLayerPositions();
 
     return result;
+}
+
+void RemoteLayerTreeEventDispatcher::wheelEventHandlingCompleted(const PlatformWheelEvent& wheelEvent, ScrollingNodeID scrollingNodeID, std::optional<WheelScrollGestureState> gestureState)
+{
+    ASSERT(isMainRunLoop());
+
+    LOG_WITH_STREAM(Scrolling, stream << "RemoteLayerTreeEventDispatcher::wheelEventHandlingCompleted " << wheelEvent << " - sending event to scrolling thread, node " << 0 << " gestureState " << gestureState);
+
+    ScrollingThread::dispatch([strongThis = Ref { *this }, wheelEvent, scrollingNodeID, gestureState] {
+
+        auto scrollingTree = strongThis->scrollingTree();
+        if (!scrollingTree)
+            return;
+
+        scrollingTree->wheelEventDefaultHandlingCompleted(wheelEvent, scrollingNodeID, gestureState);
+    });
 }
 
 PlatformWheelEvent RemoteLayerTreeEventDispatcher::filteredWheelEvent(const PlatformWheelEvent& wheelEvent)

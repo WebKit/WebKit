@@ -176,6 +176,20 @@ Node* CSSStyleSheet::ownerNode() const
     return m_ownerNode.get();
 }
 
+RefPtr<StyleRuleWithNesting> CSSStyleSheet::prepareChildStyleRuleForNesting(StyleRule&& styleRule)
+{
+    RuleMutationScope scope(this);
+    auto& rules = m_contents->m_childRules;
+    for (size_t i = 0 ; i < rules.size() ; i++) {
+        if (rules[i] == &styleRule) {
+            auto styleRuleWithNesting = StyleRuleWithNesting::create(WTFMove(styleRule));
+            rules[i] = styleRuleWithNesting.ptr();
+            return styleRuleWithNesting;
+        }        
+    }
+    return { };
+}
+
 CSSStyleSheet::WhetherContentsWereClonedForMutation CSSStyleSheet::willMutateRules()
 {
     // If we are the only client it is safe to mutate.

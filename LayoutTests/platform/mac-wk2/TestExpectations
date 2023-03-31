@@ -352,15 +352,11 @@ http/wpt/mediarecorder/set-srcObject-MediaStream-Blob.html [ Pass Failure Timeou
 [ Monterey+ ] http/tests/websocket/tests/hybi/send-object-tostring-check.html [ Pass Failure Timeout ]
 
 # rdar://77084155 (REGRESSION: [ Monterey WK2 ] WebGL textures tests are consistently timing out)
-[ Monterey+ ] webgl/1.0.3/conformance/extensions/oes-texture-float-with-video.html [ Skip ]
-[ Monterey+ ] webgl/1.0.3/conformance/extensions/oes-texture-half-float-with-video.html [ Skip ]
 [ Monterey+ ] webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-video-rgb565.html [ Skip ]
 [ Monterey+ ] webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-video-rgba4444.html [ Skip ]
 [ Monterey+ ] webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-video-rgba5551.html [ Skip ]
 [ Monterey+ ] webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-video.html [ Skip ]
 [ Monterey+ ] webgl/1.0.3/conformance/textures/texture-upload-size.html [ Skip ]
-[ Monterey+ ] webgl/2.0.0/conformance/extensions/oes-texture-float-with-video.html [ Skip ]
-[ Monterey+ ] webgl/2.0.0/conformance/extensions/oes-texture-half-float-with-video.html [ Skip ]
 [ Monterey+ ] webgl/2.0.0/conformance/textures/image_bitmap_from_video/tex-2d-rgb-rgb-unsigned_byte.html [ Skip ]
 [ Monterey+ ] webgl/2.0.0/conformance/textures/image_bitmap_from_video/tex-2d-rgb-rgb-unsigned_short_5_6_5.html [ Skip ]
 [ Monterey+ ] webgl/2.0.0/conformance/textures/image_bitmap_from_video/tex-2d-rgba-rgba-unsigned_byte.html [ Skip ]
@@ -1393,8 +1389,6 @@ webkit.org/b/228713 [ BigSur Debug arm64 ] compositing/video/video-object-fit.ht
 
 webkit.org/b/224698 [ BigSur Release arm64 ] inspector/console/console-oom.html [ Pass Crash ]
 
-webkit.org/b/224257 [ Debug ] webgl/2.0.0/conformance/glsl/misc/shader-uniform-packing-restrictions.html [ Slow ]
-
 webkit.org/b/238033 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-050.html [ Pass Failure ]
 
 webkit.org/b/224963 [ BigSur arm64 ] webrtc/captureCanvas-webrtc.html [ Pass Timeout ]
@@ -1531,8 +1525,6 @@ webkit.org/b/229460 [ BigSur Debug ] http/tests/inspector/network/ping-type.html
 webkit.org/b/230056 [ BigSur Debug ] http/tests/inspector/network/resource-request-headers.html [ Pass Failure ]
 webkit.org/b/230056 [ BigSur Debug ] http/tests/inspector/network/har/har-page-aggressive-gc.html [ Pass Failure ]
 
-webkit.org/b/229472 [ BigSur Debug ] webgl/1.0.3/conformance/glsl/constructors/glsl-construct-bvec2.html [ Pass Timeout ]
-
 webkit.org/b/229561 http/tests/navigation/page-cache-video.html [ Pass Failure ]
 
 webkit.org/b/229579 [ BigSur Debug ] http/tests/loading/preload-img-test.html [ Pass Failure ]
@@ -1609,8 +1601,6 @@ webkit.org/b/239095 http/wpt/cache-storage/cache-storage-networkprocess-crash.ht
 webkit.org/b/239304 http/tests/cache-storage/cache-origins.https.html [ Pass Failure ]
 
 # [ Monterey wk2 debug ] WebGL conformance tests are a flaky time out
-webkit.org/b/239386 [ Debug ] webgl/1.0.3/conformance/context/context-eviction-with-garbage-collection.html [ Pass Timeout ]
-webkit.org/b/239386 [ Debug ] webgl/1.0.3/conformance/context/context-release-with-workers.html [ Pass Timeout ]
 webkit.org/b/239386 [ Debug ] webgl/1.0.3/conformance/textures/copy-tex-image-and-sub-image-2d.html [ Pass Timeout ]
 webkit.org/b/239386 webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-array-buffer-view.html [ Pass Timeout ]
 webkit.org/b/239386 webgl/1.0.3/conformance/textures/texture-size-cube-maps.html [ Pass Timeout ]
@@ -1624,8 +1614,6 @@ webkit.org/b/239386 webgl/1.0.3/conformance/uniforms/uniform-default-values.html
 webkit.org/b/239386 webgl/2.0.0/conformance/canvas/rapid-resizing.html [ Pass Timeout ]
 webkit.org/b/239386 [ Debug ] webgl/2.0.0/conformance/context/context-eviction-with-garbage-collection.html [ Pass Timeout ]
 webkit.org/b/239386 [ Debug ] webgl/2.0.0/conformance/context/context-release-upon-reload.html [ Pass Timeout ]
-webkit.org/b/239386 [ Debug ] webgl/2.0.0/conformance/extensions/webgl-compressed-texture-s3tc-srgb.html [ Pass Timeout ]
-webkit.org/b/239386 [ Debug ] webgl/2.0.0/conformance/extensions/webgl-compressed-texture-s3tc.html [ Pass Timeout ]
 webkit.org/b/239386 [ Debug ] webgl/2.0.0/conformance2/buffers/buffer-copying-contents.html [ Pass Timeout ]
 webkit.org/b/239386 webgl/2.0.0/conformance/textures/image_bitmap_from_canvas/tex-2d-rgba-rgba-unsigned_short_4_4_4_4.html [ Pass Timeout ]
 webkit.org/b/239386 [ Debug ] webgl/2.0.0/conformance/uniforms/uniform-values-per-program.html [ Pass Timeout ]
@@ -1634,7 +1622,6 @@ webkit.org/b/239386 webgl/2.0.0/conformance/rendering/multisample-corruption.htm
 
 # [ Monterey wk2 ] WebGL conformance tests are a flaky time out
 webkit.org/b/239388 webgl/1.0.3/conformance/uniforms/out-of-bounds-uniform-array-access.html [ Pass Timeout ]
-webkit.org/b/239388 webgl/2.0.0/conformance/glsl/misc/struct-nesting-of-variable-names.html [ Pass Timeout ]
 webkit.org/b/239388 webgl/2.0.0/conformance/textures/canvas/tex-2d-rgb-rgb-unsigned_byte.html [ Pass Timeout ]
 webkit.org/b/239388 webgl/2.0.0/conformance/textures/canvas/tex-2d-rgb-rgb-unsigned_short_5_6_5.html [ Pass Timeout ]
 webkit.org/b/239388 webgl/2.0.0/conformance/textures/canvas/tex-2d-rgba-rgba-unsigned_byte.html [ Pass Timeout ]
@@ -1737,6 +1724,8 @@ webkit.org/b/248734 media/video-inaccurate-duration-ended.html [ Crash ]
 
 webkit.org/b/254713 imported/w3c/web-platform-tests/css/css-backgrounds/background-size/background-size-cover-svg.html [ Pass ImageOnlyFailure ]
 
+webkit.org/b/254778 [ Ventura Debug arm64 ] fast/images/avif-image-decoding.html [ Pass Crash ]
+
 #webkit.org/b/248537 Batch mark expectations for Ventura test failures
 [ Ventura+ ] webrtc/canvas-to-peer-connection-2d.html [ Pass Timeout ]
 [ Ventura+ ] webrtc/canvas-to-peer-connection.html [ Pass Failure Timeout ]
@@ -1794,7 +1783,6 @@ webkit.org/b/254713 imported/w3c/web-platform-tests/css/css-backgrounds/backgrou
 [ Ventura Debug x86_64 ] editing/caret/color-span-inside-editable-background.html [ Pass ImageOnlyFailure ]
 [ Ventura+ x86_64 ] fast/css/text-overflow-input-focus-placeholder.html [ Pass ImageOnlyFailure ]
 [ BigSur+ x86_64 ] webrtc/captureCanvas-webrtc-software-h264-high.html [ Pass Failure Timeout ]
-[ Ventura+ x86_64 ] webgl/pending/conformance/glsl/misc/swizzle-as-lvalue.html [ Pass Timeout ]
 [ Ventura+ x86_64 Debug ] webgl/2.0.0/conformance2/textures/canvas_sub_rectangle/tex-3d-rg32f-rg-float.html [ Pass Timeout ]
 [ Ventura+ Debug x86_64 ] webgl/2.0.0/conformance/state/gl-object-get-calls.html [ Pass Timeout ]
 [ Monterey+ Debug x86_64 ] webgl/2.0.0/conformance/context/context-release-with-workers.html [ Pass Timeout ]
@@ -1832,3 +1820,5 @@ webkit.org/b/250046 [ Monterey+ ] svg/clip-path/clip-opacity-translate.svg [ Ima
 webkit.org/b/253533 imported/w3c/web-platform-tests/fetch/api/basic/status.h2.any.html [ Pass ]
 webkit.org/b/253533 imported/w3c/web-platform-tests/fetch/api/basic/status.h2.any.worker.html [ Pass ]
 webkit.org/b/253533 imported/w3c/web-platform-tests/xhr/status.h2.window.html [ Pass ]
+
+webkit.org/b/254770 http/tests/misc/heic-accept-header.html [ Pass Crash ]

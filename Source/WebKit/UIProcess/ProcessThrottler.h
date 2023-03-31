@@ -144,7 +144,7 @@ public:
     void setShouldDropSuspendedAssertionAfterDelay(bool shouldDropAfterDelay) { m_shouldDropSuspendedAssertionAfterDelay = shouldDropAfterDelay; }
     void setShouldTakeSuspendedAssertion(bool);
     void delaySuspension();
-    bool isSuspended() const { return !m_assertion; }
+    bool isSuspended() const { return m_processIdentifier && !m_assertion; }
 
 private:
     friend WTF::TextStream& operator<<(WTF::TextStream&, const ProcessThrottler&);

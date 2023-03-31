@@ -2501,7 +2501,10 @@ public:
 private:
     bool canInterpolate(const RenderStyle& from, const RenderStyle& to, CompositeOperation) const final
     {
-        return from.fontSizeAdjust().value && to.fontSizeAdjust().value;
+        auto fromFontSizeAdjust = from.fontSizeAdjust();
+        auto toFontSizeAdjust = to.fontSizeAdjust();
+        return fromFontSizeAdjust.metric == toFontSizeAdjust.metric
+            && fromFontSizeAdjust.value && toFontSizeAdjust.value;
     }
 
     void blend(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const CSSPropertyBlendingContext& context) const final
@@ -2509,10 +2512,12 @@ private:
         auto blendedFontSizeAdjust = [&]() -> FontSizeAdjust {
             if (context.isDiscrete)
                 return (!context.progress ? from : to).fontSizeAdjust();
+
             ASSERT(from.fontSizeAdjust().value && to.fontSizeAdjust().value);
             auto blendedAdjust = blendFunc(*from.fontSizeAdjust().value, *to.fontSizeAdjust().value, context);
-            // FIXME: Handle interpolation between metrics. <http://webkit.org/b/254266>
-            return { from.fontSizeAdjust().metric, std::max(blendedAdjust, 0.0f) };
+
+            ASSERT(from.fontSizeAdjust().metric == to.fontSizeAdjust().metric);
+            return { to.fontSizeAdjust().metric, std::max(blendedAdjust, 0.0f) };
         };
 
         destination.setFontSizeAdjust(blendedFontSizeAdjust());

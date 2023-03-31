@@ -113,7 +113,7 @@ WI.CanvasContentView = class CanvasContentView extends WI.ContentView
 
             let navigationBar = new WI.NavigationBar;
 
-            if (this.representedObject.contextType === WI.Canvas.ContextType.Canvas2D || this.representedObject.contextType === WI.Canvas.ContextType.BitmapRenderer || this.representedObject.contextType === WI.Canvas.ContextType.WebGL || this.representedObject.contextType === WI.Canvas.ContextType.WebGL2) {
+            if (this.representedObject.contextType === WI.Canvas.ContextType.Canvas2D || this.representedObject.contextType === WI.Canvas.ContextType.OffscreenCanvas2D || this.representedObject.contextType === WI.Canvas.ContextType.BitmapRenderer || this.representedObject.contextType === WI.Canvas.ContextType.WebGL || this.representedObject.contextType === WI.Canvas.ContextType.WebGL2) {
                 const toolTip = WI.UIString("Start recording canvas actions.\nShift-click to record a single frame.");
                 const altToolTip = WI.UIString("Stop recording canvas actions");
                 this._recordButtonNavigationItem = new WI.ToggleButtonNavigationItem("record-start-stop", toolTip, altToolTip, "Images/Record.svg", "Images/Stop.svg", 13, 13);

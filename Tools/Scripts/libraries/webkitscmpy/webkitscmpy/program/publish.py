@@ -51,7 +51,7 @@ class Publish(Command):
     @classmethod
     def branches_on(cls, repository, ref):
         output = run(
-            [repository.executable(), 'branch', '-a', '--merged', ref],
+            [repository.executable(), 'branch', '-a', '--merged', '--format=%(refname)', ref],
             cwd=repository.root_path,
             capture_output=True,
             encoding='utf-8',
@@ -61,11 +61,12 @@ class Publish(Command):
             return {}
         result = collections.defaultdict(set)
         for line in output.stdout.splitlines():
-            split = line.lstrip().split('/', 2)
-            if len(split) < 3 or split[0] != 'remotes':
-                result[None].add('/'.join(split))
+            _, typ, name = line.split('/', 2)
+            if typ == 'remotes':
+                remote, name = name.split('/', 1)
+                result[remote].add(name)
             else:
-                result[split[1]].add(split[2])
+                result[None].add(name)
         return result
 
     @classmethod

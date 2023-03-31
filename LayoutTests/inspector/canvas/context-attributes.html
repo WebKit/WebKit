@@ -9,6 +9,10 @@ function createCanvas(contextType, attributes) {
     let canvas = document.body.appendChild(document.createElement("canvas"));
     contexts.push(canvas.getContext(contextType, attributes));
 }
+function createOffscreenCanvas(contextType, attributes) {
+    let canvas = new OffscreenCanvas(300, 150);
+    contexts.push(canvas.getContext(contextType, attributes));
+}
 
 function test() {
     let suite = InspectorTest.createAsyncSuite("Canvas.contextAttributes");
@@ -41,14 +45,19 @@ function test() {
                 .then(resolve, reject);
 
                 let type = "";
+                let createFunc = "createCanvas"
                 if (contextType === WI.Canvas.ContextType.Canvas2D)
                     type = "2d";
+                else if (contextType === WI.Canvas.ContextType.OffscreenCanvas2D) {
+                    type = "2d";
+                    createFunc = "createOffscreenCanvas";
+                }
                 else if (contextType === WI.Canvas.ContextType.BitmapRenderer)
                     type = "bitmaprenderer";
                 else if (contextType === WI.Canvas.ContextType.WebGL)
                     type = "webgl";
                 let attributes = JSON.stringify(contextAttributes);
-                InspectorTest.evaluateInPage(`createCanvas("${type}", ${attributes})`);
+                InspectorTest.evaluateInPage(`${createFunc}("${type}", ${attributes})`);
             }
         });
     }
@@ -79,7 +88,12 @@ function test() {
     ];
 
     testCases.forEach(addTestCase);
-
+    if (window.OffscreenCanvas) {
+        addTestCase({
+            name: "CreateOffscreenCanvasContext2D",
+            contextType: WI.Canvas.ContextType.OffscreenCanvas2D,
+        });
+    }
     suite.runTestCasesAndFinish();
 }
 </script>

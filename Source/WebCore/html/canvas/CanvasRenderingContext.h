@@ -64,6 +64,7 @@ public:
 
     CanvasBase& canvasBase() const { return m_canvas; }
 
+    virtual bool is2dBase() const { return false; }
     virtual bool is2d() const { return false; }
     virtual bool isWebGL1() const { return false; }
     virtual bool isWebGL2() const { return false; }

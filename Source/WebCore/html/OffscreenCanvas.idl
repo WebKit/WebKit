@@ -56,8 +56,8 @@ enum OffscreenRenderingContextType
 ] interface OffscreenCanvas : EventTarget {
     [CallWith=CurrentScriptExecutionContext] constructor([EnforceRange] unsigned long width, [EnforceRange] unsigned long height);
 
-    attribute [EnforceRange] unsigned long width;
-    attribute [EnforceRange] unsigned long height;
+    [CallTracer=InspectorCanvasCallTracer] attribute [EnforceRange] unsigned long width;
+    [CallTracer=InspectorCanvasCallTracer] attribute [EnforceRange] unsigned long height;
 
     [CallWith=CurrentGlobalObject] OffscreenRenderingContext? getContext(OffscreenRenderingContextType contextType, any... arguments);
     ImageBitmap transferToImageBitmap();

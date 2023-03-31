@@ -149,10 +149,11 @@ void EventRegionContext::uniteInteractionRegions(const Region& region, RenderObj
                 
                 for (auto rect : tempRegion.rects()) {
                     m_interactionRegions.append({
+                        InteractionRegion::Type::Interaction,
                         interactionRegion->elementIdentifier,
                         rect,
                         interactionRegion->borderRadius,
-                        InteractionRegion::Type::Interaction
+                        interactionRegion->maskedCorners
                     });
                 }
                 return;

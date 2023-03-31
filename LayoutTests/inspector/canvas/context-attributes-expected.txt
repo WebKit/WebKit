@@ -54,3 +54,11 @@ PASS: Canvas context should be "WebGL".
 }
 PASS: Canvas context should have attribute "alpha" with value "false".
 
+-- Running test case: CreateOffscreenCanvasContext2D
+Added canvas.
+PASS: Canvas context should be "Offscreen2D".
+{
+  "colorSpace": "srgb",
+  "desynchronized": false
+}
+

@@ -48,14 +48,13 @@ namespace WebCore {
 
 int screenDepth(Widget*)
 {
-    // Assume 32 bits per pixel. See <rdar://problem/9378829>.
-    return 32;
+    // See <rdar://problem/9378829> for why this is a constant.
+    return 24;
 }
 
 int screenDepthPerComponent(Widget*)
 {
-    // Assume the screen depth is evenly divided into four color components. See <rdar://problem/9378829>.
-    return screenDepth(nullptr) / 4;
+    return screenDepth(nullptr) / 3;
 }
 
 bool screenIsMonochrome(Widget*)
@@ -67,7 +66,7 @@ bool screenHasInvertedColors()
 {
     if (auto data = screenData(primaryScreenDisplayID()))
         return data->screenHasInvertedColors;
-    
+
     return PAL::softLinkUIKitUIAccessibilityIsInvertColorsEnabled();
 }
 
@@ -146,7 +145,7 @@ float screenPPIFactor()
         float mainScreenPPI = (pitch && scale) ? pitch / scale : originalIPhonePPI;
         ppiFactor = mainScreenPPI / originalIPhonePPI;
     });
-    
+
     return ppiFactor;
 }
 
@@ -202,7 +201,7 @@ ScreenProperties collectScreenProperties()
         auto screenAvailableRect = FloatRect { screen.bounds };
         screenAvailableRect.setY(NSMaxY(screen.bounds) - (screenAvailableRect.y() + screenAvailableRect.height())); // flip
         screenData.screenAvailableRect = screenAvailableRect;
-        
+
         screenData.screenRect = screen._referenceBounds;
         screenData.colorSpace = { screenColorSpace(nullptr) };
         screenData.screenDepth = WebCore::screenDepth(nullptr);
@@ -213,11 +212,11 @@ ScreenProperties collectScreenProperties()
         screenData.scaleFactor = WebCore::screenPPIFactor();
 
         screenProperties.screenDataMap.set(++displayID, WTFMove(screenData));
-        
+
         if (screen == [PAL::getUIScreenClass() mainScreen])
             screenProperties.primaryDisplayID = displayID;
     }
-    
+
     return screenProperties;
 }
 

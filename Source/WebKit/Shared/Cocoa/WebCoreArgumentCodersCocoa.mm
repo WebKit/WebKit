@@ -594,7 +594,8 @@ std::optional<WebCore::FontPlatformData> ArgumentCoder<WebCore::Font>::decodePla
         auto fontDescriptor = adoptCF(CTFontDescriptorCreateCopyWithAttributes(baseFontDescriptor, attributes->get()));
         auto ctFont = adoptCF(CTFontCreateWithFontDescriptor(fontDescriptor.get(), *size, nullptr));
 
-        return WebCore::FontPlatformData(ctFont.get(), *size, *syntheticBold, *syntheticOblique, *orientation, *widthVariant, *textRenderingMode, fontCustomPlatformData.get());
+        auto creationData = WebCore::FontPlatformData::CreationData { fontFaceData, *itemInCollection };
+        return WebCore::FontPlatformData(ctFont.get(), *size, *syntheticBold, *syntheticOblique, *orientation, *widthVariant, *textRenderingMode, &creationData);
     }
 
     std::optional<CTFontDescriptorOptions> options;
@@ -619,88 +620,6 @@ std::optional<WebCore::FontPlatformData> ArgumentCoder<WebCore::Font>::decodePla
     return WebCore::FontPlatformData(ctFont.get(), *size, *syntheticBold, *syntheticOblique, *orientation, *widthVariant, *textRenderingMode);
 }
 
-void ArgumentCoder<WebCore::FontCustomPlatformData>::encodePlatformData(Encoder& encoder, const WebCore::FontCustomPlatformData& customPlatformData)
-{
-    WebKit::SharedMemory::Handle handle;
-    {
-        auto sharedMemoryBuffer = WebKit::SharedMemory::copyBuffer(customPlatformData.creationData.fontFaceData);
-        if (auto memoryHandle = sharedMemoryBuffer->createHandle(WebKit::SharedMemory::Protection::ReadOnly))
-            handle = WTFMove(*memoryHandle);
-    }
-    encoder << customPlatformData.creationData.fontFaceData->size();
-    encoder << WTFMove(handle);
-    encoder << customPlatformData.creationData.itemInCollection;
-}
-
-std::optional<Ref<WebCore::FontCustomPlatformData>> ArgumentCoder<WebCore::FontCustomPlatformData>::decodePlatformData(Decoder& decoder)
-{
-    std::optional<uint64_t> bufferSize;
-    decoder >> bufferSize;
-    if (!bufferSize)
-        return std::nullopt;
-
-    std::optional<WebKit::SharedMemory::Handle> handle;
-    decoder >> handle;
-    if (!handle)
-        return std::nullopt;
-
-    auto sharedMemoryBuffer = WebKit::SharedMemory::map(*handle, WebKit::SharedMemory::Protection::ReadOnly);
-    if (!sharedMemoryBuffer)
-        return std::nullopt;
-
-    if (sharedMemoryBuffer->size() < *bufferSize)
-        return std::nullopt;
-
-    auto fontFaceData = sharedMemoryBuffer->createSharedBuffer(*bufferSize);
-
-    std::optional<String> itemInCollection;
-    decoder >> itemInCollection;
-    if (!itemInCollection)
-        return std::nullopt;
-
-    auto fontCustomPlatformData = createFontCustomPlatformData(fontFaceData, *itemInCollection);
-    if (!fontCustomPlatformData)
-        return std::nullopt;
-    return fontCustomPlatformData.releaseNonNull();
-}
-
-void ArgumentCoder<WebCore::FontPlatformData::Attributes>::encodePlatformData(Encoder& encoder, const WebCore::FontPlatformData::Attributes& data)
-{
-    encoder << data.m_attributes;
-    encoder << data.m_options;
-    encoder << data.m_url;
-    encoder << data.m_psName;
-}
-
-bool ArgumentCoder<WebCore::FontPlatformData::Attributes>::decodePlatformData(Decoder& decoder, WebCore::FontPlatformData::Attributes& data)
-{
-    std::optional<RetainPtr<CFDictionaryRef>> attributes;
-    decoder >> attributes;
-    if (!attributes)
-        return false;
-
-    std::optional<CTFontDescriptorOptions> options;
-    decoder >> options;
-    if (!options)
-        return false;
-
-
-    std::optional<RetainPtr<CFStringRef>> url;
-    decoder >> url;
-    if (!url)
-        return false;
-
-    std::optional<RetainPtr<CFStringRef>> psName;
-    decoder >> psName;
-    if (!psName)
-        return false;
-
-    data.m_attributes = attributes.value();
-    data.m_options = options.value();
-    data.m_url = url.value();
-    data.m_psName = psName.value();
-    return true;
-}
 
 #if ENABLE(DATA_DETECTION)
 

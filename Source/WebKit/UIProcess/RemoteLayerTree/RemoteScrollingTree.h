@@ -51,6 +51,10 @@ public:
 
     virtual void handleMouseEvent(const WebCore::PlatformMouseEvent&) { }
 
+    virtual void willSendEventForDefaultHandling(const WebCore::PlatformWheelEvent&) { }
+    virtual void waitForEventDefaultHandlingCompletion(const WebCore::PlatformWheelEvent&) { }
+    virtual void wheelEventDefaultHandlingCompleted(const WebCore::PlatformWheelEvent&, WebCore::ScrollingNodeID, std::optional<WebCore::WheelScrollGestureState>) { }
+
     RemoteScrollingCoordinatorProxy* scrollingCoordinatorProxy() const;
 
     void scrollingTreeNodeDidScroll(WebCore::ScrollingTreeScrollingNode&, WebCore::ScrollingLayerPositionAction = WebCore::ScrollingLayerPositionAction::Sync) override;

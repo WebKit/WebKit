@@ -50,6 +50,7 @@ void RemoteLayerTreeScrollingPerformanceData::didCommitLayerTree(const FloatRect
 {
     // FIXME: maybe we only care about newly created tiles?
     appendBlankPixelCount(ScrollingLogEvent::Filled, blankPixelCount(visibleRect));
+    logData();
 }
 
 void RemoteLayerTreeScrollingPerformanceData::didScroll(const FloatRect& visibleRect)
@@ -62,6 +63,7 @@ void RemoteLayerTreeScrollingPerformanceData::didScroll(const FloatRect& visible
         return;
 #endif
     appendBlankPixelCount(ScrollingLogEvent::Exposed, pixelCount);
+    logData();
 }
 
 bool RemoteLayerTreeScrollingPerformanceData::ScrollingLogEvent::canCoalesce(ScrollingLogEvent::EventType type, uint64_t pixelCount) const
@@ -72,6 +74,7 @@ bool RemoteLayerTreeScrollingPerformanceData::ScrollingLogEvent::canCoalesce(Scr
 void RemoteLayerTreeScrollingPerformanceData::didChangeSynchronousScrollingReasons(WTF::MonotonicTime timestamp, uint64_t data)
 {
     appendSynchronousScrollingChange(timestamp, data);
+    logData();
 }
 
 void RemoteLayerTreeScrollingPerformanceData::appendBlankPixelCount(ScrollingLogEvent::EventType eventType, uint64_t blankPixelCount)

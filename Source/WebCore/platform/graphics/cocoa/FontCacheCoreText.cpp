@@ -793,10 +793,10 @@ RefPtr<Font> FontCache::systemFallbackForCharacters(const FontDescription& descr
 
     auto [syntheticBold, syntheticOblique] = computeNecessarySynthesis(substituteFont, description, ShouldComputePhysicalTraits::No, isForPlatformFont == IsForPlatformFont::Yes).boldObliquePair();
 
-    const FontCustomPlatformData* customPlatformData = nullptr;
+    const FontPlatformData::CreationData* creationData = nullptr;
     if (safeCFEqual(platformData.font(), substituteFont))
-        customPlatformData = platformData.customPlatformData();
-    FontPlatformData alternateFont(substituteFont, platformData.size(), syntheticBold, syntheticOblique, platformData.orientation(), platformData.widthVariant(), platformData.textRenderingMode(), customPlatformData);
+        creationData = platformData.creationData();
+    FontPlatformData alternateFont(substituteFont, platformData.size(), syntheticBold, syntheticOblique, platformData.orientation(), platformData.widthVariant(), platformData.textRenderingMode(), creationData);
 
     return fontForPlatformData(alternateFont);
 }

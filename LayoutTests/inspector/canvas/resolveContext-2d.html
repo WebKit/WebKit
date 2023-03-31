@@ -4,34 +4,51 @@
 <script src="../../http/tests/inspector/resources/inspector-test.js"></script>
 <script>
 function load() {
-    window.context2d = document.body.appendChild(document.createElement("canvas")).getContext("2d");
-
+    let context2Ds = [ ];
+    context2Ds.push(document.createElement("canvas").getContext("2d"));
+    if (window.OffscreenCanvas)
+        context2Ds.push(new OffscreenCanvas(300, 150).getContext("2d"));
+    window.context2Ds = context2Ds;
     runTest();
 }
 
+
 function test()
 {
+    function classNameForContextType(contextType)
+    {
+        if (contextType == WI.Canvas.ContextType.Canvas2D)
+            return "CanvasRenderingContext2D";
+        if (contextType == WI.Canvas.ContextType.OffscreenCanvas2D)
+            return "OffscreenCanvasRenderingContext2D";
+        return "unknown context type";
+    }
     let suite = InspectorTest.createAsyncSuite("Canvas.resolveContext2D");
+    function addTestCase({name, contextType}) {
+        suite.addTestCase({
+            name,
+            description: "Should return a valid object for the given canvas identifier.",
+            test(resolve, reject) {
+                let canvas = Array.from(WI.canvasManager.canvasCollection).find((canvas) => canvas.contextType === contextType);
+                if (!canvas) {
+                    reject(`Missing canvas for type ${contextType}.`);
+                    return;
+                }
 
-    suite.addTestCase({
-        name: `Canvas.resolveContext2D.validIdentifier`,
-        description: "Should return a valid object for the given canvas identifier.",
-        test(resolve, reject) {
-            let canvas = Array.from(WI.canvasManager.canvasCollection).find((canvas) => canvas.contextType === WI.Canvas.ContextType.Canvas2D);
-            if (!canvas) {
-                reject(`Missing Canvas.`);
-                return;
+                const objectGroup = "test";
+                CanvasAgent.resolveContext(canvas.identifier, objectGroup)
+                .then(({object}) => {
+                    InspectorTest.expectEqual(object.type, "object", `Payload should have type "object".`);
+                    InspectorTest.expectEqual(object.className, classNameForContextType(contextType), `Payload should have expected className"`); 
+                })
+                .then(resolve, reject);
             }
+        });
+    }
+    addTestCase({name: `Canvas.resolveContext2D.validIdentifier.Canvas2D`, contextType: WI.Canvas.ContextType.Canvas2D});
+    if (window.OffscreenCanvas)
+        addTestCase({name: `Canvas.resolveContext2D.validIdentifier.OffscreenCanvas2D`, contextType: WI.Canvas.ContextType.OffscreenCanvas2D});
 
-            const objectGroup = "test";
-            CanvasAgent.resolveContext(canvas.identifier, objectGroup)
-            .then(({object}) => {
-                InspectorTest.expectEqual(object.type, "object", `Payload should have type "object".`);
-                InspectorTest.expectEqual(object.className, "CanvasRenderingContext2D", `Payload should have className "CanvasRenderingContext2D".`);
-            })
-            .then(resolve, reject);
-        }
-    });
 
     // ------
 

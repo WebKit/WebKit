@@ -400,8 +400,6 @@ fast/canvas/webgl/tex-image-and-sub-image-2d-with-video-rgba5551.html [ Skip ]
 fast/canvas/webgl/tex-image-and-sub-image-2d-with-video.html [ Skip ]
 fast/canvas/webgl/texImage2D-video-flipY-false.html [ Skip ]
 fast/canvas/webgl/texImage2D-video-flipY-true.html [ Skip ]
-webgl/2.0.0/conformance/extensions/oes-texture-float-with-video.html [ Skip ]
-webgl/2.0.0/conformance/extensions/oes-texture-half-float-with-video.html [ Skip ]
 webgl/2.0.0/conformance/textures/image_bitmap_from_video [ Skip ]
 webgl/2.0.0/conformance/textures/video [ Skip ]
 webgl/2.0.0/conformance2/textures/image_bitmap_from_video [ Skip ]
@@ -1666,13 +1664,13 @@ webxr [ Skip ]
 [ Debug ] loader/load-defer-resume-crash.html [ Skip ]
 [ Debug ] webgl/2.0.y/conformance/attribs/gl-vertexattribpointer.html [ Skip ] # Slow
 [ Debug ] webgl/2.0.0/conformance/canvas/drawingbuffer-test.html [ Skip ] # Crash by assertion failure
-[ Debug ] webgl/2.0.0/conformance/glsl/bugs/complex-glsl-does-not-crash.html [ Skip ] # Slow
-[ Debug ] webgl/2.0.0/conformance/glsl/bugs/compound-assignment-type-combination.html [ Skip ] # Slow
-[ Debug ] webgl/2.0.0/conformance/glsl/constructors/glsl-construct-ivec4.html [ Skip ] # Slow
-[ Debug ] webgl/2.0.0/conformance/glsl/constructors/glsl-construct-vec4.html [ Skip ] # Slow
-[ Debug ] webgl/2.0.0/conformance/glsl/misc/const-variable-initialization.html [ Skip ] # Slow
-[ Debug ] webgl/2.0.0/conformance/glsl/misc/shader-uniform-packing-restrictions.html [ Skip ] # Slow
-[ Debug ] webgl/2.0.0/conformance/glsl/misc/struct-nesting-of-variable-names.html [ Skip ] # Slow
+[ Debug ] webgl/2.0.y/conformance/glsl/bugs/complex-glsl-does-not-crash.html [ Skip ] # Slow
+[ Debug ] webgl/2.0.y/conformance/glsl/bugs/compound-assignment-type-combination.html [ Skip ] # Slow
+[ Debug ] webgl/2.0.y/conformance/glsl/constructors/glsl-construct-ivec4.html [ Skip ] # Slow
+[ Debug ] webgl/2.0.y/conformance/glsl/constructors/glsl-construct-vec4.html [ Skip ] # Slow
+[ Debug ] webgl/2.0.y/conformance/glsl/misc/const-variable-initialization.html [ Skip ] # Slow
+[ Debug ] webgl/2.0.y/conformance/glsl/misc/shader-uniform-packing-restrictions.html [ Skip ] # Slow
+[ Debug ] webgl/2.0.y/conformance/glsl/misc/struct-nesting-of-variable-names.html [ Skip ] # Slow
 [ Debug ] webgl/2.0.0/conformance/rendering/many-draw-calls.html [ Skip ] # Slow
 [ Debug ] webgl/2.0.0/conformance/rendering/multisample-corruption.html [ Skip ] # Slow
 [ Debug ] webgl/2.0.0/conformance/state/gl-object-get-calls.html [ Skip ] # Slow
@@ -1920,12 +1918,11 @@ loader/stateobjects/pushstate-size.html [ Skip ] # Timeout
 webgl/2.0.0/conformance/canvas/drawingbuffer-static-canvas-test.html [ Failure Pass ]
 webgl/2.0.0/conformance/canvas/framebuffer-bindings-affected-by-to-data-url.html [ Skip ] # Crash
 webgl/2.0.0/conformance/context/premultiplyalpha-test.html [ Failure ]
-webgl/2.0.0/conformance/extensions/webgl-draw-buffers.html [ Failure ]
-webgl/2.0.0/conformance/glsl/bugs/conditional-discard-in-loop.html [ Failure ]
-webgl/2.0.0/conformance/glsl/bugs/loop-if-loop-gradient.html [ Skip ] # Flaky timeout if it runs with other tests
-webgl/2.0.0/conformance/glsl/bugs/qualcomm-crash.html [ Skip ] # Flaky timeout if it runs with other tests
-webgl/2.0.0/conformance/glsl/bugs/qualcomm-loop-with-continue-crash.html [ Skip ] # Flaky timeout if it runs with other tests
-webgl/2.0.0/conformance/glsl/bugs/sketchfab-lighting-shader-crash.html [ Skip ] # Flaky timeout if it runs with other tests
+webgl/2.0.y/conformance/glsl/bugs/conditional-discard-in-loop.html [ Failure ]
+webgl/2.0.y/conformance/glsl/bugs/loop-if-loop-gradient.html [ Skip ] # Flaky timeout if it runs with other tests
+webgl/2.0.y/conformance/glsl/bugs/qualcomm-crash.html [ Skip ] # Flaky timeout if it runs with other tests
+webgl/2.0.y/conformance/glsl/bugs/qualcomm-loop-with-continue-crash.html [ Skip ] # Flaky timeout if it runs with other tests
+webgl/2.0.y/conformance/glsl/bugs/sketchfab-lighting-shader-crash.html [ Skip ] # Flaky timeout if it runs with other tests
 webgl/2.0.0/conformance/textures/misc/texture-mips.html [ Failure Pass ]
 webgl/2.0.0/conformance/textures/misc/texture-upload-size.html [ Skip ] # Timeout
 webgl/2.0.0/conformance/uniforms/out-of-bounds-uniform-array-access.html [ Skip ] # Timeout
@@ -2328,8 +2325,8 @@ fast/transforms/rotated-transform-affects-scrolling-2.html [ Failure ]
 
 fast/workers/worker-multi-startup.html [ Skip ] # Timeout
 webgl/2.0.0/conformance/canvas/rapid-resizing.html [ Skip ] # Timeout
+webgl/1.0.x/conformance/extensions/webgl-multi-draw.html [ Skip ] # Timeout
 webgl/2.0.y/conformance/extensions/webgl-multi-draw.html [ Skip ] # Timeout
-webgl/conformance/extensions/webgl-multi-draw.html [ Skip ] # Timeout
 
 fast/canvas/webgl/colorspaces-test.html [ Failure Pass ]
 fast/canvas/webgl/context-lost-restored-p3.html [ Failure ]
@@ -2421,8 +2418,6 @@ fetch/fetch-url-serialization.html [ Failure ]
 imported/w3c/web-platform-tests/permissions/all-permissions.html [ Failure ]
 loader/go-back-cached-main-resource.html [ Failure ]
 streams/pipe-to.html [ Failure ]
-
-webkit.org/b/222239 webgl/conformance/extensions/khr-parallel-shader-compile.html [ Skip ]
 
 animations/stacking-context-not-fill-forwards.html [ ImageOnlyFailure ]
 fast/box-shadow/inset-box-shadow.html [ ImageOnlyFailure ]

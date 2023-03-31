@@ -100,16 +100,16 @@ void InspectorCanvasCallTracer::recordAction(CanvasRenderingContext& canvasRende
         canvasAgent->recordAction(canvasRenderingContext, WTFMove(name), WTFMove(arguments));
 }
 
-std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvasCallTracer::processArgument(const HTMLCanvasElement& canvasElement, uint32_t argument)
+std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvasCallTracer::processArgument(const CanvasBase& canvasBase, uint32_t argument)
 {
-    ASSERT(canvasElement.renderingContext());
-    return processArgument(*canvasElement.renderingContext(), argument);
+    ASSERT(canvasBase.renderingContext());
+    return processArgument(*canvasBase.renderingContext(), argument);
 }
 
-void InspectorCanvasCallTracer::recordAction(const HTMLCanvasElement& canvasElement, String&& name, InspectorCanvasCallTracer::ProcessedArguments&& arguments)
+void InspectorCanvasCallTracer::recordAction(const CanvasBase& canvasBase, String&& name, InspectorCanvasCallTracer::ProcessedArguments&& arguments)
 {
-    ASSERT(canvasElement.renderingContext());
-    recordAction(*canvasElement.renderingContext(), WTFMove(name), WTFMove(arguments));
+    ASSERT(canvasBase.renderingContext());
+    recordAction(*canvasBase.renderingContext(), WTFMove(name), WTFMove(arguments));
 }
 
 } // namespace WebCore

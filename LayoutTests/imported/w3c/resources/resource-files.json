@@ -3244,6 +3244,8 @@
         "web-platform-tests/css/css-writing-modes/form-controls-vlr-005.xht",
         "web-platform-tests/css/css-writing-modes/form-controls-vrl-004.xht",
         "web-platform-tests/css/css-writing-modes/form-controls-vrl-005.xht",
+        "web-platform-tests/css/css-writing-modes/forms/number-input-vertical-overflow-ref.html",
+        "web-platform-tests/css/css-writing-modes/forms/range-input-painting-ref.html",
         "web-platform-tests/css/css-writing-modes/horizontal-rule-vlr-003-ref.xht",
         "web-platform-tests/css/css-writing-modes/horizontal-rule-vrl-002-ref.xht",
         "web-platform-tests/css/css-writing-modes/horizontal-rule-vrl-004-ref.xht",

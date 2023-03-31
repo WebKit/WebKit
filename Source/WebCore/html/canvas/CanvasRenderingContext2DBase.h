@@ -342,6 +342,7 @@ private:
     void didDraw(bool entireCanvas, const FloatRect&);
     template<typename RectProvider> void didDraw(bool entireCanvas, RectProvider);
 
+    bool is2dBase() const final { return true; }
     void paintRenderingResultsToCanvas() override;
     bool needsPreparationForDisplay() const final;
     void prepareForDisplay() final;
@@ -431,3 +432,5 @@ private:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_CANVASRENDERINGCONTEXT(WebCore::CanvasRenderingContext2DBase, is2dBase())

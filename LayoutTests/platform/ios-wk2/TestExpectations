@@ -1279,8 +1279,6 @@ webkit.org/b/182144 [ Debug ] webgl/1.0.3/conformance/rendering/many-draw-calls.
 
 webkit.org/b/231514 webgl/1.0.3/conformance/uniforms/uniform-default-values.html [ Slow ]
 
-webkit.org/b/231541 webgl/1.0.3/conformance/glsl/bugs/long-expressions-should-not-crash.html [ Pass Timeout ]
-
 webkit.org/b/183860 http/wpt/service-workers/third-party-registration.html [ Pass Timeout ]
 
 webkit.org/b/184245 http/tests/workers/service/service-worker-cache-api.https.html [ Pass Failure Timeout ]
@@ -1985,8 +1983,6 @@ imported/w3c/web-platform-tests/css/css-counter-styles/gujarati/css3-counter-sty
 imported/w3c/web-platform-tests/css/css-counter-styles/gurmukhi/css3-counter-styles-126.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/kannada/css3-counter-styles-129.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/lower-greek/css3-counter-styles-028.html [ ImageOnlyFailure ]
-
-webkit.org/b/223586 webgl/conformance/extensions/khr-parallel-shader-compile.html [ Skip ]
 
 webkit.org/b/214955 fast/parser/xml-colon-entity.html [ Failure ]
 

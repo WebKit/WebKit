@@ -38,7 +38,6 @@ namespace WebCore {
 class Font;
 class Gradient;
 class ImageBuffer;
-struct FontCustomPlatformData;
 }
 
 namespace WebKit {
@@ -61,7 +60,6 @@ public:
     void recordImageBufferUse(WebCore::ImageBuffer&);
     void recordDecomposedGlyphsUse(WebCore::DecomposedGlyphs&);
     void recordGradientUse(WebCore::Gradient&);
-    void recordFontCustomPlatformDataUse(const WebCore::FontCustomPlatformData&);
 
     void didPaintLayers();
 
@@ -94,11 +92,8 @@ private:
     FontHashMap m_fonts;
     DecomposedGlyphsHashMap m_decomposedGlyphs;
     GradientHashMap m_gradients;
-    FontHashMap m_fontCustomPlatformDatas;
 
     unsigned m_numberOfFontsUsedInCurrentRenderingUpdate { 0 };
-    unsigned m_numberOfFontCustomPlatformDatasUsedInCurrentRenderingUpdate { 0 };
-
 
     RemoteRenderingBackendProxy& m_remoteRenderingBackendProxy;
     uint64_t m_renderingUpdateID;

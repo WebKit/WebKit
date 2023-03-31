@@ -83,9 +83,6 @@ namespace MacApplication {
 
 WEBCORE_EXPORT bool isAdobeInstaller();
 WEBCORE_EXPORT bool isAppleMail();
-WEBCORE_EXPORT bool isMicrosoftMessenger();
-WEBCORE_EXPORT bool isMicrosoftMyDay();
-WEBCORE_EXPORT bool isMicrosoftOutlook();
 WEBCORE_EXPORT bool isMiniBrowser();
 bool isQuickenEssentials();
 WEBCORE_EXPORT bool isSafari();

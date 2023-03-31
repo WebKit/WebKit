@@ -400,7 +400,7 @@ button {
 }
 
 /* Every time a new control is supported in vertical writing mode, it should be removed from here and added in the horizontalFormControls.css rule */
-select, button, meter, input:is([type="button"], [type="submit"], [type="reset"], [type="file"]) {
+select, button, input:is([type="button"], [type="submit"], [type="reset"], [type="file"]) {
     writing-mode: horizontal-tb !important;
 }
 
@@ -1192,8 +1192,8 @@ meter {
     appearance: auto;
     box-sizing: border-box;
     display: inline-block;
-    height: 1em;
-    width: 5em;
+    block-size: 1em;
+    inline-size: 5em;
     vertical-align: -0.2em;
 }
 

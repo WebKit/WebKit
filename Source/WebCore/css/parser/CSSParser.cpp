@@ -71,9 +71,9 @@ void CSSParser::parseSheetForInspector(const CSSParserContext& context, StyleShe
     return CSSParserImpl::parseStyleSheetForInspector(string, context, sheet, observer);
 }
 
-RefPtr<StyleRuleBase> CSSParser::parseRule(const CSSParserContext& context, StyleSheetContents* sheet, const String& string)
+RefPtr<StyleRuleBase> CSSParser::parseRule(const CSSParserContext& context, StyleSheetContents* sheet, const String& string, CSSParserEnum::IsNestedContext isNestedContext)
 {
-    return CSSParserImpl::parseRule(string, context, sheet, CSSParserImpl::AllowImportRules);
+    return CSSParserImpl::parseRule(string, context, sheet, CSSParserImpl::AllowImportRules, isNestedContext);
 }
 
 RefPtr<StyleRuleKeyframe> CSSParser::parseKeyframeRule(const String& string)

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<style>
+    body { margin: 0; }
+    div {
+        display: inline-block;
+        margin: 10px;
+        padding: 1em;
+        background: blue;
+        color: white;
+        cursor: pointer;
+    }
+    .uniform {
+        border-radius: 12px;
+    }
+    .half-pill {
+        border-radius: 20px 0 0 20px;
+    }
+    .diagonal {
+        border-radius: 16px 0 16px 0;
+    }
+    .tongue {
+        border-radius: 0 0 10px 10px;
+    }
+    .degenerate {
+        border-radius: 2px 16px 10px 18px;
+    }
+    .changed {
+        border-radius: 20px;
+    }
+</style>
+<script src="../resources/ui-helper.js"></script>
+<body>
+<div class="uniform">uniform</div>
+<div class="half-pill">half pill</div>
+<div class="diagonal">diagonal</div>
+<div class="tongue">tongue</div>
+<div class="degenerate">degenerate</div>
+<div class="changing">changing</div>
+<pre id="results"></pre>
+<script>
+document.body.addEventListener("click", function(e) {
+    console.log(e, "event delegation");
+});
+
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+window.onload = async function () {
+    await UIHelper.animationFrame();
+    document.querySelector(".changing").classList.add("changed");
+    if (window.internals) {
+       results.textContent = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_EVENT_REGION | internals.LAYER_TREE_INCLUDES_ROOT_LAYER_PROPERTIES);
+       testRunner.notifyDone();
+    }
+};
+</script>
+</body>
+</html>

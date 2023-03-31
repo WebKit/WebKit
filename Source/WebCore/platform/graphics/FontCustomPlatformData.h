@@ -26,7 +26,6 @@
 #pragma once
 
 #include "FontPlatformData.h"
-#include "RenderingResourceIdentifier.h"
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 
@@ -54,7 +53,7 @@ class FragmentedSharedBuffer;
 template <typename T> class FontTaggedSettings;
 typedef FontTaggedSettings<int> FontFeatureSettings;
 
-struct FontCustomPlatformData : public RefCounted<FontCustomPlatformData> {
+struct FontCustomPlatformData {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(FontCustomPlatformData);
 public:
@@ -64,7 +63,6 @@ public:
     FontCustomPlatformData(CTFontDescriptorRef fontDescriptor, FontPlatformData::CreationData&& creationData)
         : fontDescriptor(fontDescriptor)
         , creationData(WTFMove(creationData))
-        , m_renderingResourceIdentifier(RenderingResourceIdentifier::generateThreadSafe())
     {
     }
 #else
@@ -85,10 +83,8 @@ public:
 #else
     RefPtr<cairo_font_face_t> m_fontFace;
 #endif
-
-    RenderingResourceIdentifier m_renderingResourceIdentifier;
 };
 
-WEBCORE_EXPORT RefPtr<FontCustomPlatformData> createFontCustomPlatformData(SharedBuffer&, const String&);
+WEBCORE_EXPORT std::unique_ptr<FontCustomPlatformData> createFontCustomPlatformData(SharedBuffer&, const String&);
 
 } // namespace WebCore

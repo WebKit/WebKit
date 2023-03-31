@@ -85,6 +85,22 @@ static void setInteractionRegionOcclusion(CALayer *layer)
     [layer setValue:@(static_cast<bool>(InteractionRegion::Type::Occlusion)) forKey:interactionRegionTypeKey];
 }
 
+static CACornerMask convertToCACornerMask(OptionSet<InteractionRegion::CornerMask> mask)
+{
+    CACornerMask cornerMask = 0;
+
+    if (mask.contains(InteractionRegion::CornerMask::MinXMinYCorner))
+        cornerMask |= kCALayerMinXMinYCorner;
+    if (mask.contains(InteractionRegion::CornerMask::MaxXMinYCorner))
+        cornerMask |= kCALayerMaxXMinYCorner;
+    if (mask.contains(InteractionRegion::CornerMask::MinXMaxYCorner))
+        cornerMask |= kCALayerMinXMaxYCorner;
+    if (mask.contains(InteractionRegion::CornerMask::MaxXMaxYCorner))
+        cornerMask |= kCALayerMaxXMaxYCorner;
+
+    return cornerMask;
+}
+
 void insertInteractionRegionLayersForLayer(NSMutableArray *sublayers, CALayer *layer)
 {
     NSUInteger insertionPoint = 0;
@@ -178,6 +194,8 @@ void updateLayersForInteractionRegions(CALayer *layer, RemoteLayerTreeHost& host
                 configureLayerForInteractionRegion(interactionLayer.get(), interactionRegionGroupName);
 
             [interactionLayer setCornerRadius:region.borderRadius];
+            if (!region.maskedCorners.isEmpty())
+                [interactionLayer setMaskedCorners:convertToCACornerMask(region.maskedCorners)];
 
             if (!foundInPosition)
                 [layer insertSublayer:interactionLayer.get() atIndex:insertionPoint];

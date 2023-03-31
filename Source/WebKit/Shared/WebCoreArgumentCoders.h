@@ -158,7 +158,6 @@ struct DictionaryPopupInfo;
 struct EventTrackingRegions;
 struct ExceptionDetails;
 struct FileChooserSettings;
-struct FontCustomPlatformData;
 struct TextRecognitionDataDetector;
 struct Length;
 struct GrammarDetail;
@@ -266,25 +265,6 @@ template<> struct ArgumentCoder<WebCore::Font> {
     static std::optional<Ref<WebCore::Font>> decode(Decoder&);
     static void encodePlatformData(Encoder&, const WebCore::Font&);
     static std::optional<WebCore::FontPlatformData> decodePlatformData(Decoder&);
-};
-
-template<> struct ArgumentCoder<WebCore::Font::Attributes> {
-    static void encode(Encoder&, const WebCore::Font::Attributes&);
-    static std::optional<WebCore::Font::Attributes> decode(Decoder&);
-};
-
-template<> struct ArgumentCoder<WebCore::FontPlatformData::Attributes> {
-    static void encode(Encoder&, const WebCore::FontPlatformData::Attributes&);
-    static std::optional<WebCore::FontPlatformData::Attributes> decode(Decoder&);
-    static void encodePlatformData(Encoder&, const WebCore::FontPlatformData::Attributes&);
-    static WARN_UNUSED_RETURN bool decodePlatformData(Decoder&, WebCore::FontPlatformData::Attributes&);
-};
-
-template<> struct ArgumentCoder<WebCore::FontCustomPlatformData> {
-    static void encode(Encoder&, const WebCore::FontCustomPlatformData&);
-    static std::optional<Ref<WebCore::FontCustomPlatformData>> decode(Decoder&);
-    static void encodePlatformData(Encoder&, const WebCore::FontCustomPlatformData&);
-    static std::optional<Ref<WebCore::FontCustomPlatformData>> decodePlatformData(Decoder&);
 };
 
 template<> struct ArgumentCoder<WebCore::ResourceError> {

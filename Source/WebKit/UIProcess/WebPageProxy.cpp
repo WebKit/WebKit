@@ -1204,8 +1204,6 @@ void WebPageProxy::close()
     if (m_isClosed)
         return;
 
-    logScrollingPerformanceData();
-
     WEBPAGEPROXY_RELEASE_LOG(Loading, "close:");
 
     m_isClosed = true;
@@ -3093,8 +3091,22 @@ void WebPageProxy::sendWheelEvent(const WebWheelEvent& event, OptionSet<WebCore:
     if (drawingArea()->shouldSendWheelEventsToEventDispatcher()) {
         sendWheelEventScrollingAccelerationCurveIfNecessary(event);
         connection->send(Messages::EventDispatcher::WheelEvent(m_webPageID, event, rubberBandableEdges), 0, { }, Thread::QOS::UserInteractive);
-    } else
-        send(Messages::WebPage::HandleWheelEvent(event, processingSteps));
+    } else {
+        sendWithAsyncReply(Messages::WebPage::HandleWheelEvent(event, processingSteps), [weakThis = WeakPtr { *this }, platformWheelEvent = platform(event)](ScrollingNodeID nodeID, std::optional<WheelScrollGestureState> gestureState) {
+            RefPtr protectedThis = weakThis.get();
+            if (!protectedThis)
+                return;
+
+#if ENABLE(ASYNC_SCROLLING) && PLATFORM(MAC)
+            if (auto* scrollingCoordinatorProxy = protectedThis->scrollingCoordinatorProxy())
+                scrollingCoordinatorProxy->wheelEventHandlingCompleted(platformWheelEvent, nodeID, gestureState);
+#else
+            UNUSED_PARAM(platformWheelEvent);
+            UNUSED_PARAM(nodeID);
+            UNUSED_PARAM(gestureState);
+#endif
+        });
+    }
 
     // Manually ping the web process to check for responsiveness since our wheel
     // event will dispatch to a non-main thread, which always responds.
@@ -8425,6 +8437,9 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
 
 #if PLATFORM(COCOA)
     m_scrollingPerformanceData = nullptr;
+#if PLATFORM(MAC)
+    m_scrollPerformanceDataCollectionEnabled = false;
+#endif
     m_firstLayerTreeTransactionIdAfterDidCommitLoad = { };
 #endif
 
@@ -12072,14 +12087,6 @@ String WebPageProxy::scrollbarStateForScrollingNodeID(int scrollingNodeID, bool 
     return m_scrollingCoordinatorProxy->scrollbarStateForScrollingNodeID(scrollingNodeID, isVertical);
 #else
     return ""_s;
-#endif
-}
-
-void WebPageProxy::logScrollingPerformanceData()
-{
-#if PLATFORM(COCOA)
-    if (m_scrollingPerformanceData)
-        m_scrollingPerformanceData->logData();
 #endif
 }
 

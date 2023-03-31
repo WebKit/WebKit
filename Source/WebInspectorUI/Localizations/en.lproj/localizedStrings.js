@@ -1117,6 +1117,7 @@ localizedStrings["Observer Callback"] = "Observer Callback";
 localizedStrings["Observer Handlers:"] = "Observer Handlers:";
 localizedStrings["Observers:"] = "Observers:";
 localizedStrings["Off"] = "Off";
+localizedStrings["2D"] = "2D (Offscreen)";
 /* Label for a preference that is turned off. */
 localizedStrings["Off @ User Preferences Overrides"] = "Off";
 /* Input label for the x-axis of the offset of a CSS box shadow */
