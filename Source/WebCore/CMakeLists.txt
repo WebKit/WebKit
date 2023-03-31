@@ -1249,6 +1249,7 @@ set(WebCore_NON_SVG_IDL_FILES
     page/BarProp.idl
     page/Crypto.idl
     page/DOMSelection.idl
+    page/DOMWindow.idl
     page/EventSource.idl
     page/History.idl
     page/IntersectionObserver.idl
@@ -1319,6 +1320,7 @@ set(WebCore_NON_SVG_IDL_FILES
     page/WindowOrWorkerGlobalScope+Crypto.idl
     page/WindowOrWorkerGlobalScope+Performance.idl
     page/WindowOrWorkerGlobalScope.idl
+    page/WindowPostMessageOptions.idl
     page/WindowSessionStorage.idl
     page/WorkerNavigator.idl
 

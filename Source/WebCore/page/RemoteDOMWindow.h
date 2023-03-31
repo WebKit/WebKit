@@ -27,6 +27,7 @@
 
 #include "DOMWindow.h"
 #include "RemoteFrame.h"
+#include "WindowPostMessageOptions.h"
 #include <JavaScriptCore/Strong.h>
 #include <wtf/IsoMalloc.h>
 #include <wtf/TypeCasts.h>
@@ -68,7 +69,11 @@ public:
     WindowProxy* top() const;
     WindowProxy* opener() const;
     WindowProxy* parent() const;
-    ExceptionOr<void> postMessage(JSC::JSGlobalObject&, LocalDOMWindow& incumbentWindow, JSC::JSValue message, const String& targetOrigin, Vector<JSC::Strong<JSC::JSObject>>&&);
+    ExceptionOr<void> postMessage(JSC::JSGlobalObject&, LocalDOMWindow& incumbentWindow, JSC::JSValue message, WindowPostMessageOptions&&);
+    ExceptionOr<void> postMessage(JSC::JSGlobalObject& globalObject, LocalDOMWindow& incumbentWindow, JSC::JSValue message, String&& targetOrigin, Vector<JSC::Strong<JSC::JSObject>>&& transfer)
+    {
+        return postMessage(globalObject, incumbentWindow, message, WindowPostMessageOptions { WTFMove(targetOrigin), WTFMove(transfer) });
+    }
 
 private:
     WEBCORE_EXPORT RemoteDOMWindow(RemoteFrame&, GlobalWindowIdentifier&&);

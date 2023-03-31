@@ -3085,6 +3085,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWindowOrWorkerGlobalScope+Perform
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWindowOrWorkerGlobalScope+Performance.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWindowOrWorkerGlobalScope.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWindowOrWorkerGlobalScope.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWindowPostMessageOptions.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWindowPostMessageOptions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWindowSessionStorage.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWindowSessionStorage.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWorker.cpp

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,44 +25,18 @@
 
 #pragma once
 
-#include "EventTarget.h"
-#include "GlobalWindowIdentifier.h"
-#include <wtf/HashMap.h>
-#include <wtf/RefCounted.h>
+#include "StructuredSerializeOptions.h"
 
 namespace WebCore {
 
-class Document;
-class Frame;
-class SecurityOrigin;
+struct WindowPostMessageOptions : public StructuredSerializeOptions {
+    WindowPostMessageOptions() = default;
+    WindowPostMessageOptions(String&& targetOrigin, Vector<JSC::Strong<JSC::JSObject>>&& transfer)
+        : StructuredSerializeOptions(WTFMove(transfer))
+        , targetOrigin(WTFMove(targetOrigin))
+    { }
 
-class DOMWindow : public RefCounted<DOMWindow>, public EventTarget {
-    WTF_MAKE_ISO_ALLOCATED(DOMWindow);
-public:
-    virtual ~DOMWindow();
-
-    static HashMap<GlobalWindowIdentifier, DOMWindow*>& allWindows();
-
-    const GlobalWindowIdentifier& identifier() const { return m_identifier; }
-    virtual Frame* frame() const = 0;
-
-    virtual bool isLocalDOMWindow() const = 0;
-    virtual bool isRemoteDOMWindow() const = 0;
-
-    using RefCounted::ref;
-    using RefCounted::deref;
-
-protected:
-    explicit DOMWindow(GlobalWindowIdentifier&&);
-
-    ExceptionOr<RefPtr<SecurityOrigin>> createTargetOriginForPostMessage(const String&, Document&);
-
-    EventTargetInterface eventTargetInterface() const final { return LocalDOMWindowEventTargetInterfaceType; }
-    void refEventTarget() final { ref(); }
-    void derefEventTarget() final { deref(); }
-
-private:
-    GlobalWindowIdentifier m_identifier;
+    String targetOrigin { "/"_s };
 };
 
-} // namespace WebCore
+}

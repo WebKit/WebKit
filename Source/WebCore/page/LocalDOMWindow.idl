@@ -87,10 +87,6 @@
     DOMString? prompt(optional DOMString message = "", optional DOMString defaultValue = "");
     undefined print();
 
-    [CallWith=CurrentGlobalObject&IncumbentWindow, DoNotCheckSecurity] undefined postMessage(any message, USVString targetOrigin, optional sequence<object> transfer = []);
-    [CallWith=CurrentGlobalObject&IncumbentWindow, DoNotCheckSecurity] undefined postMessage(any message, optional WindowPostMessageOptions options);
-
-
     // Obsolete: Still part of the HTML specification (https://html.spec.whatwg.org/#Window-partial).
     undefined captureEvents();
     undefined releaseEvents();
@@ -126,14 +122,9 @@
     [EnabledForWorld=shadowRootIsAlwaysOpen] Element? matchingElementInFlatTree(Node scope, DOMString selectors);
 };
 
-[
-    ImplementedAs=WindowPostMessageOptions
-] dictionary WindowPostMessageOptions : StructuredSerializeOptions {
-    USVString targetOrigin = "/";
-};
-
 LocalDOMWindow includes AnimationFrameProvider;
 LocalDOMWindow includes GlobalEventHandlers;
+LocalDOMWindow includes DOMWindow;
 LocalDOMWindow includes WindowEventHandlers;
 LocalDOMWindow includes WindowOrWorkerGlobalScope;
 LocalDOMWindow includes WindowLocalStorage;

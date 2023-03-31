@@ -954,18 +954,9 @@ ExceptionOr<void> LocalDOMWindow::postMessage(JSC::JSGlobalObject& lexicalGlobal
     if (!sourceDocument)
         return { };
 
-    // Compute the target origin. We need to do this synchronously in order
-    // to generate the SyntaxError exception correctly.
-    std::optional<ExceptionOr<RefPtr<SecurityOrigin>>> targetSecurityOrigin = createTargetOriginForPostMessage(options.targetOrigin, sourceDocument);
-    if (!targetSecurityOrigin)
-        return { };
-
-    if (targetSecurityOrigin->hasException())
-        return targetSecurityOrigin->releaseException();
-
-    RefPtr<SecurityOrigin> target;
-    if (targetSecurityOrigin->returnValue())
-        target = targetSecurityOrigin->releaseReturnValue();
+    auto targetSecurityOrigin = createTargetOriginForPostMessage(options.targetOrigin, *sourceDocument);
+    if (targetSecurityOrigin.hasException())
+        return targetSecurityOrigin.releaseException();
 
     Vector<RefPtr<MessagePort>> ports;
     auto messageData = SerializedScriptValue::create(lexicalGlobalObject, messageValue, WTFMove(options.transfer), ports, SerializationForStorage::No, SerializationContext::WindowPostMessage);
@@ -979,7 +970,7 @@ ExceptionOr<void> LocalDOMWindow::postMessage(JSC::JSGlobalObject& lexicalGlobal
     // Schedule the message.
     RefPtr<WindowProxy> incumbentWindowProxy = incumbentWindow.frame() ? &incumbentWindow.frame()->windowProxy() : nullptr;
     MessageWithMessagePorts message { messageData.releaseReturnValue(), disentangledPorts.releaseReturnValue() };
-    processPostMessage(lexicalGlobalObject, WTFMove(sourceDocument), message, WTFMove(incumbentWindowProxy), WTFMove(target));
+    processPostMessage(lexicalGlobalObject, WTFMove(sourceDocument), message, WTFMove(incumbentWindowProxy), targetSecurityOrigin.releaseReturnValue());
     return { };
 }
 

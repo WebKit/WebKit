@@ -1481,6 +1481,7 @@ $(PROJECT_DIR)/mathml/mathtags.in
 $(PROJECT_DIR)/page/BarProp.idl
 $(PROJECT_DIR)/page/Crypto.idl
 $(PROJECT_DIR)/page/DOMSelection.idl
+$(PROJECT_DIR)/page/DOMWindow.idl
 $(PROJECT_DIR)/page/DOMWindow+CSSOM.idl
 $(PROJECT_DIR)/page/DOMWindow+CSSOMView.idl
 $(PROJECT_DIR)/page/DOMWindow+Compat.idl
@@ -1567,6 +1568,7 @@ $(PROJECT_DIR)/page/WindowLocalStorage.idl
 $(PROJECT_DIR)/page/WindowOrWorkerGlobalScope+Crypto.idl
 $(PROJECT_DIR)/page/WindowOrWorkerGlobalScope+Performance.idl
 $(PROJECT_DIR)/page/WindowOrWorkerGlobalScope.idl
+$(PROJECT_DIR)/page/WindowPostMessageOptions.idl
 $(PROJECT_DIR)/page/WindowSessionStorage.idl
 $(PROJECT_DIR)/page/WorkerNavigator.idl
 $(PROJECT_DIR)/page/csp/CSPViolationReportBody.idl

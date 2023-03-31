@@ -114,23 +114,22 @@ WindowProxy* RemoteDOMWindow::parent() const
     return &m_frame->windowProxy();
 }
 
-ExceptionOr<void> RemoteDOMWindow::postMessage(JSC::JSGlobalObject& lexicalGlobalObject, LocalDOMWindow& incumbentWindow, JSC::JSValue message, const String& targetOrigin, Vector<JSC::Strong<JSC::JSObject>>&& transfer)
+ExceptionOr<void> RemoteDOMWindow::postMessage(JSC::JSGlobalObject& lexicalGlobalObject, LocalDOMWindow& incumbentWindow, JSC::JSValue message, WindowPostMessageOptions&& options)
 {
     RefPtr sourceDocument = incumbentWindow.document();
-    // Compute the target origin. We need to do this synchronously in order
-    // to generate the SyntaxError exception correctly.
-    std::optional<ExceptionOr<RefPtr<SecurityOrigin>>> targetSecurityOrigin = createTargetOriginForPostMessage(targetOrigin, sourceDocument);
-    if (!targetSecurityOrigin)
+    if (!sourceDocument)
         return { };
-    if (targetSecurityOrigin->hasException())
-        return targetSecurityOrigin->releaseException();
+
+    auto targetSecurityOrigin = createTargetOriginForPostMessage(options.targetOrigin, *sourceDocument);
+    if (targetSecurityOrigin.hasException())
+        return targetSecurityOrigin.releaseException();
 
     std::optional<SecurityOriginData> target;
-    if (targetSecurityOrigin->returnValue())
-        target = targetSecurityOrigin->releaseReturnValue()->data();
+    if (auto origin = targetSecurityOrigin.releaseReturnValue())
+        target = origin->data();
 
     Vector<RefPtr<MessagePort>> ports;
-    auto messageData = SerializedScriptValue::create(lexicalGlobalObject, message, WTFMove(transfer), ports, SerializationForStorage::No, SerializationContext::WindowPostMessage);
+    auto messageData = SerializedScriptValue::create(lexicalGlobalObject, message, WTFMove(options.transfer), ports, SerializationForStorage::No, SerializationContext::WindowPostMessage);
     if (messageData.hasException())
         return messageData.releaseException();
 

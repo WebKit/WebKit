@@ -35,9 +35,9 @@
 #include "ReducedResolutionSeconds.h"
 #include "ScrollToOptions.h"
 #include "ScrollTypes.h"
-#include "StructuredSerializeOptions.h"
 #include "Supplementable.h"
 #include "WindowOrWorkerGlobalScope.h"
+#include "WindowPostMessageOptions.h"
 #include <JavaScriptCore/HandleTypes.h>
 #include <JavaScriptCore/Strong.h>
 #include <wtf/FixedVector.h>
@@ -101,16 +101,6 @@ struct WindowFeatures;
 
 enum SetLocationLocking { LockHistoryBasedOnGestureState, LockHistoryAndBackForwardList };
 enum class IncludeTargetOrigin : bool { No, Yes };
-
-struct WindowPostMessageOptions : public StructuredSerializeOptions {
-    WindowPostMessageOptions() = default;
-    WindowPostMessageOptions(String&& targetOrigin, Vector<JSC::Strong<JSC::JSObject>>&& transfer)
-        : StructuredSerializeOptions(WTFMove(transfer))
-        , targetOrigin(WTFMove(targetOrigin))
-    { }
-
-    String targetOrigin { "/"_s };
-};
 
 class LocalDOMWindow final
     : public DOMWindow

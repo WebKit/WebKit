@@ -1308,6 +1308,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/page/BarProp.idl \
     $(WebCore)/page/Crypto.idl \
     $(WebCore)/page/DOMSelection.idl \
+    $(WebCore)/page/DOMWindow.idl \
     $(WebCore)/page/EventSource.idl \
     $(WebCore)/page/History.idl \
     $(WebCore)/page/IntersectionObserver.idl \
@@ -1382,6 +1383,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/page/WindowOrWorkerGlobalScope+Crypto.idl \
     $(WebCore)/page/WindowOrWorkerGlobalScope+Performance.idl \
     $(WebCore)/page/WindowOrWorkerGlobalScope.idl \
+    $(WebCore)/page/WindowPostMessageOptions.idl \
     $(WebCore)/page/WindowSessionStorage.idl \
     $(WebCore)/page/WorkerNavigator.idl \
     $(WebCore)/page/csp/CSPViolationReportBody.idl \

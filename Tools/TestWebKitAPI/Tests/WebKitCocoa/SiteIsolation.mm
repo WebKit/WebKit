@@ -62,7 +62,7 @@ TEST(SiteIsolation, LoadingCallbacksAndPostMessage)
 
     auto webkitHTML = "<script>"
     "    window.addEventListener('message', (event) => {"
-    "        parent.window.postMessage(event.data + 'pong', '*');"
+    "        parent.window.postMessage(event.data + 'pong', { 'targetOrigin' : '*' });"
     "    }, false)"
     "</script>"_s;
 
@@ -172,20 +172,9 @@ TEST(SiteIsolation, PostMessageWithMessagePorts)
     "</script>"_s;
 
     bool finishedLoading { false };
-    HTTPServer server(HTTPServer::UseCoroutines::Yes, [&](Connection connection) -> Task {
-        while (1) {
-            auto request = co_await connection.awaitableReceiveHTTPRequest();
-            auto path = HTTPServer::parsePath(request);
-            if (path == "/example"_s) {
-                co_await connection.awaitableSend(HTTPResponse(exampleHTML).serialize());
-                continue;
-            }
-            if (path == "/webkit"_s) {
-                co_await connection.awaitableSend(HTTPResponse(webkitHTML).serialize());
-                continue;
-            }
-            EXPECT_FALSE(true);
-        }
+    HTTPServer server({
+        { "/example"_s, { exampleHTML } },
+        { "/webkit"_s, { webkitHTML } }
     }, HTTPServer::Protocol::HttpsProxy);
     auto navigationDelegate = adoptNS([TestNavigationDelegate new]);
     [navigationDelegate allowAnyTLSCertificate];
@@ -321,21 +310,12 @@ TEST(SiteIsolation, PostMessageToIFrameWithOpaqueOrigin)
     "</script>"_s;
 
     bool finishedLoading { false };
-    HTTPServer server(HTTPServer::UseCoroutines::Yes, [&](Connection connection) -> Task {
-        while (1) {
-            auto request = co_await connection.awaitableReceiveHTTPRequest();
-            auto path = HTTPServer::parsePath(request);
-            if (path == "/example"_s) {
-                co_await connection.awaitableSend(HTTPResponse(exampleHTML).serialize());
-                continue;
-            }
-            if (path == "/webkit"_s) {
-                co_await connection.awaitableSend(HTTPResponse(webkitHTML).serialize());
-                continue;
-            }
-            EXPECT_FALSE(true);
-        }
+    
+    HTTPServer server({
+        { "/example"_s, { exampleHTML } },
+        { "/webkit"_s, { webkitHTML } }
     }, HTTPServer::Protocol::HttpsProxy);
+
     auto navigationDelegate = adoptNS([TestNavigationDelegate new]);
     [navigationDelegate allowAnyTLSCertificate];
     navigationDelegate.get().didFinishNavigation = makeBlockPtr([&](WKWebView *, WKNavigation *navigation) {
