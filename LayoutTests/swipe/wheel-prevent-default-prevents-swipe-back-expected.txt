@@ -1,3 +1,4 @@
 Swipe target
+startSlowSwipeGesture
 completeSwipeGesture
 
