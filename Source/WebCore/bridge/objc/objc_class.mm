@@ -178,9 +178,7 @@ Field* ObjcClass::fieldNamed(PropertyName propertyName, Instance* instance) cons
 #endif
     if (attributes) {
         // Class overrides attributeKeys, use that array of key names.
-        unsigned count = [attributes count];
-        for (unsigned i = 0; i < count; i++) {
-            NSString* keyName = [attributes objectAtIndex:i];
+        for (NSString *keyName in attributes) {
             const char* UTF8KeyName = [keyName UTF8String]; // ObjC actually only supports ASCII names.
 
             // See if the class wants to exclude the selector from visibility in JavaScript.

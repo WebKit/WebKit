@@ -1685,13 +1685,11 @@ void HTMLConverter::_addTableCellForElement(Element* element)
     NSInteger rowSpan = 1;
     NSInteger colSpan = 1;
     NSMutableArray *rowArray = [_textTableRowArrays lastObject];
-    NSUInteger count = [rowArray count];
     PlatformColor *color = ([_textTableRowBackgroundColors count] > 0) ? [_textTableRowBackgroundColors lastObject] : nil;
     NSTextTableBlock *previousBlock;
     CGFloat cellSpacingVal = [[_textTableSpacings lastObject] floatValue];
     if ([color isEqual:[PlatformColorClass clearColor]]) color = nil;
-    for (NSUInteger i = 0; i < count; i++) {
-        previousBlock = [rowArray objectAtIndex:i];
+    for (NSTextTableBlock *previousBlock in rowArray) {
         if (columnNumber >= [previousBlock startingColumn] && columnNumber < [previousBlock startingColumn] + [previousBlock columnSpan])
             columnNumber = [previousBlock startingColumn] + [previousBlock columnSpan];
     }
@@ -1993,9 +1991,7 @@ void HTMLConverter::_exitElement(Element& element, NSInteger depth, NSUInteger s
         [_textTableRowArrays removeLastObject];
     } else if (displayValue == "table-row"_s && [_textTables count] > 0) {
         NSTextTable *table = [_textTables lastObject];
-        NSTextTableBlock *block;
         NSMutableArray *rowArray = [_textTableRowArrays lastObject], *previousRowArray;
-        NSUInteger i, count;
         NSInteger numberOfColumns = [table numberOfColumns];
         NSInteger openColumn;
         NSInteger rowNumber = [[_textTableRows lastObject] integerValue];
@@ -2003,16 +1999,12 @@ void HTMLConverter::_exitElement(Element& element, NSInteger depth, NSUInteger s
             rowNumber++;
             previousRowArray = rowArray;
             rowArray = [NSMutableArray array];
-            count = [previousRowArray count];
-            for (i = 0; i < count; i++) {
-                block = [previousRowArray objectAtIndex:i];
+            for (NSTextTableBlock *block in previousRowArray) {
                 if ([block startingColumn] + [block columnSpan] > numberOfColumns) numberOfColumns = [block startingColumn] + [block columnSpan];
                 if ([block startingRow] + [block rowSpan] > rowNumber) [rowArray addObject:block];
             }
-            count = [rowArray count];
             openColumn = 0;
-            for (i = 0; i < count; i++) {
-                block = [rowArray objectAtIndex:i];
+            for (NSTextTableBlock *block in rowArray) {
                 if (openColumn >= [block startingColumn] && openColumn < [block startingColumn] + [block columnSpan]) openColumn = [block startingColumn] + [block columnSpan];
             }
         } while (openColumn >= numberOfColumns);

@@ -367,11 +367,7 @@ static RegularExpression* regExpForLabels(NSArray *labels)
     else {
         StringBuilder pattern;
         pattern.append('(');
-        unsigned numLabels = [labels count];
-        unsigned i;
-        for (i = 0; i < numLabels; i++) {
-            String label = [labels objectAtIndex:i];
-
+        for (String label in labels) {
             bool startsWithWordCharacter = false;
             bool endsWithWordCharacter = false;
             if (label.length()) {

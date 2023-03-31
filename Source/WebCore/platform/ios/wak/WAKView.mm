@@ -292,9 +292,6 @@ static void _WAKCopyWrapper(const void *value, void *context)
         return @[ ];
     
     NSMutableArray *result = [NSMutableArray arrayWithCapacity:count];
-    if (!result)
-        return @[ ];
-    
     CFArrayApplyFunction(subviews, CFRangeMake(0, count), _WAKCopyWrapper, (void*)result);
     
     return result;

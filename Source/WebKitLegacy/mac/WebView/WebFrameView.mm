@@ -1141,10 +1141,9 @@ enum {
 {
     WebFrameView *largest = nil;
     NSArray *frameChildren = [[self webFrame] childFrames];
-    
-    unsigned i;
-    for (i=0; i < [frameChildren count]; i++) {
-        WebFrameView *childFrameView = [[frameChildren objectAtIndex:i] frameView];
+
+    for (WebFrame *childFrame in frameChildren) {
+        WebFrameView *childFrameView = [childFrame frameView];
         WebFrameView *scrollableFrameView = [childFrameView _isScrollable] ? childFrameView : [childFrameView _largestScrollableChild];
         if (!scrollableFrameView)
             continue;
@@ -1180,9 +1179,8 @@ enum {
     WebFrameView *largest = nil;
     NSArray *frameChildren = [[self webFrame] childFrames];
     
-    unsigned i;
-    for (i=0; i < [frameChildren count]; i++) {
-        WebFrameView *childFrameView = [[frameChildren objectAtIndex:i] frameView];
+    for (WebFrame *childFrame in frameChildren) {
+        WebFrameView *childFrameView = [childFrame frameView];
         WebFrameView *scrollableFrameView = [childFrameView _hasScrollBars] ? childFrameView : [childFrameView _largestChildWithScrollBars];
         if (!scrollableFrameView)
             continue;

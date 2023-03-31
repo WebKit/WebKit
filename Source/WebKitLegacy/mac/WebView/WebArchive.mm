@@ -134,10 +134,10 @@ static BOOL isArrayOfClass(id object, Class elementClass)
     if (![object isKindOfClass:[NSArray class]])
         return NO;
     NSArray *array = (NSArray *)object;
-    NSUInteger count = [array count];
-    for (NSUInteger i = 0; i < count; ++i)
-        if (![[array objectAtIndex:i] isKindOfClass:elementClass])
+    for (id object in array) {
+        if (![object isKindOfClass:elementClass])
             return NO;
+    }
     return YES;
 }
 

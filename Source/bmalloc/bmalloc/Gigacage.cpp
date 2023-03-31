@@ -248,24 +248,27 @@ void removePrimitiveDisableCallback(void (*function)(void*), void* argument)
 {
     PrimitiveDisableCallbacks& callbacks = *PrimitiveDisableCallbacks::get();
     UniqueLockHolder lock(PrimitiveDisableCallbacks::mutex());
-    for (size_t i = 0; i < callbacks.callbacks.size(); ++i) {
-        if (callbacks.callbacks[i].function == function
-            && callbacks.callbacks[i].argument == argument) {
-            callbacks.callbacks[i] = callbacks.callbacks.last();
+    for (auto &callback : callbacks.callbacks) {
+        if (callback.function == function
+            && callback.argument == argument) {
+            callback = callbacks.callbacks.last();
             callbacks.callbacks.pop();
             return;
         }
     }
 }
 
+static inline bool areAllGigacageBasePtrsEnabled()
+{
+    for (size_t i = 0; i < NumberOfKinds; ++i) {
+        if (!g_gigacageConfig.basePtrs[i])
+            return false;
+    return true;
+}
+
 static bool verifyGigacageIsEnabled()
 {
-    bool isEnabled = g_gigacageConfig.isEnabled;
-    for (size_t i = 0; i < NumberOfKinds; ++i)
-        isEnabled = isEnabled && g_gigacageConfig.basePtrs[i];
-    isEnabled = isEnabled && g_gigacageConfig.start;
-    isEnabled = isEnabled && g_gigacageConfig.totalSize;
-    return isEnabled;
+    return g_gigacageConfig.isEnabled && areAllGigacageBasePtrsEnabled() && g_gigacageConfig.start && g_gigacageConfig.totalSize;
 }
 
 void forbidDisablingPrimitiveGigacage()

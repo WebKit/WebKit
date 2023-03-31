@@ -593,8 +593,8 @@ void LocalAuthenticator::continueMakeCredentialAfterAttested(Vector<uint8_t>&& c
     cbor::CBORValue::MapValue attestationStatementMap;
     {
         Vector<cbor::CBORValue> cborArray;
-        for (size_t i = 0; i < [certificates count]; i++)
-            cborArray.append(cbor::CBORValue(vectorFromNSData((NSData *)adoptCF(SecCertificateCopyData((__bridge SecCertificateRef)certificates[i])).get())));
+        for (id certificate in certificates)
+            cborArray.append(cbor::CBORValue(vectorFromNSData((__bridge NSData *)adoptCF(SecCertificateCopyData((__bridge SecCertificateRef)certificates)).get())));
         attestationStatementMap[cbor::CBORValue("x5c")] = cbor::CBORValue(WTFMove(cborArray));
     }
     auto attestationObject = buildAttestationObject(WTFMove(authData), "apple"_s, WTFMove(attestationStatementMap), creationOptions.attestation);

@@ -799,8 +799,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         [self._ensureDataDetectorContextMenuInteraction _presentMenuAtLocation:_positionInformation->request.point];
 #else
     NSMutableArray *elementActions = [NSMutableArray array];
-    for (NSUInteger actionNumber = 0; actionNumber < [dataDetectorsActions count]; actionNumber++) {
-        DDAction *action = [dataDetectorsActions objectAtIndex:actionNumber];
+    for (DDAction *action in dataDetectorsActions) {
         auto *elementAction = [self _elementActionForDDAction:action];
         [elementActions addObject:elementAction];
     }

@@ -244,7 +244,8 @@ public:
     {
         if (numBits() != other.numBits())
             return false;
-        for (size_t i = arrayLength(); i--;) {
+        size_t length = arrayLength();
+        for (size_t i = 0; i < length; i++) {
             if (m_words.word(i) != other.m_words.word(i))
                 return false;
         }
@@ -269,7 +270,8 @@ public:
     
     bool isEmpty() const
     {
-        for (size_t index = arrayLength(); index--;) {
+        size_t length = arrayLength();
+        for (size_t i = 0; i < length; i++) {
             if (m_words.word(index))
                 return false;
         }

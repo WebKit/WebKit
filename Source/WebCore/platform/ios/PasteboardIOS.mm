@@ -336,7 +336,7 @@ void Pasteboard::read(PasteboardWebContentReader& reader, WebContentReadingPolic
         return;
 
     NSArray *types = supportedWebContentPasteboardTypes();
-    int numberOfTypes = [types count];
+    size_t numberOfTypes = [types count];
 
 #if ENABLE(ATTACHMENT_ELEMENT)
     bool canReadAttachment = policy == WebContentReadingPolicy::AnyType && DeprecatedGlobalSettings::attachmentElementEnabled();
@@ -363,7 +363,7 @@ void Pasteboard::read(PasteboardWebContentReader& reader, WebContentReadingPolic
         }
 #endif
 
-        for (int typeIndex = 0; typeIndex < numberOfTypes; typeIndex++) {
+        for (size_t typeIndex = 0; typeIndex < numberOfTypes; typeIndex++) {
             NSString *type = [types objectAtIndex:typeIndex];
             if (!isTypeAllowedByReadingPolicy(type, policy))
                 continue;

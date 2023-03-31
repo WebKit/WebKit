@@ -335,8 +335,7 @@ int64_t PlatformPasteboard::copy(const String& fromPasteboard)
     NSArray* types = [pasteboard types];
 
     [m_pasteboard addTypes:types owner:nil];
-    for (NSUInteger i = 0; i < [types count]; i++) {
-        NSString* type = [types objectAtIndex:i];
+    for (NSString *type in types) {
         if (![m_pasteboard setData:[pasteboard dataForType:type] forType:type])
             return 0;
     }
