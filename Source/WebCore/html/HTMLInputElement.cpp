@@ -586,6 +586,8 @@ void HTMLInputElement::updateType()
     }
 
     updateValidity();
+
+    checkAndPossiblyClosePopoverStack();
 }
 
 inline void HTMLInputElement::runPostTypeUpdateTasks()

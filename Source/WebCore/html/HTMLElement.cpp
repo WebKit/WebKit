@@ -1284,6 +1284,23 @@ static HTMLElement* topmostPopoverAncestor(Element& newPopover)
     return topmostAncestor.get();
 }
 
+void HTMLElement::checkAndPossiblyClosePopoverStackInternal()
+{
+    Vector<RefPtr<Element>> autoPopoverList;
+    for (auto& element : document().topLayerElements()) {
+        if (!is<HTMLElement>(element) || downcast<HTMLElement>(element.get()).popoverState() != PopoverState::Auto)
+            continue;
+        autoPopoverList.append(element.ptr());
+    }
+
+    for (size_t i = autoPopoverList.size(); i-- > 1;) {
+        if (topmostPopoverAncestor(*autoPopoverList[i]) != autoPopoverList[i - 1]) {
+            document().hideAllPopoversUntil(nullptr, FocusPreviousElement::No, FireEvents::No);
+            return;
+        }
+    }
+}
+
 // https://html.spec.whatwg.org/#popover-focusing-steps
 static void runPopoverFocusingSteps(HTMLElement& popover)
 {

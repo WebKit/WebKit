@@ -141,6 +141,7 @@ void HTMLFormControlElement::removedFromAncestor(RemovalType removalType, Contai
 {
     HTMLElement::removedFromAncestor(removalType, oldParentOfRemovedTree);
     ValidatedFormListedElement::removedFromAncestor(removalType, oldParentOfRemovedTree);
+    checkAndPossiblyClosePopoverStack();
 }
 
 void HTMLFormControlElement::parseAttribute(const QualifiedName& name, const AtomString& value)
@@ -152,7 +153,9 @@ void HTMLFormControlElement::parseAttribute(const QualifiedName& name, const Ato
             m_isRequired = newRequired;
             requiredStateChanged();
         }
-    } else {
+    } else if (name == popovertargetAttr)
+        checkAndPossiblyClosePopoverStack();
+    else {
         HTMLElement::parseAttribute(name, value);
         ValidatedFormListedElement::parseAttribute(name, value);
     }
@@ -170,6 +173,7 @@ void HTMLFormControlElement::disabledStateChanged()
     ValidatedFormListedElement::disabledStateChanged();
     if (renderer() && renderer()->style().hasEffectiveAppearance())
         renderer()->theme().stateChanged(*renderer(), ControlStates::States::Enabled);
+    checkAndPossiblyClosePopoverStack();
 }
 
 void HTMLFormControlElement::readOnlyStateChanged()
@@ -407,4 +411,10 @@ bool HTMLFormControlElement::needsMouseFocusableQuirk() const
     return document().quirks().needsFormControlToBeMouseFocusable();
 }
 
-} // namespace WebCore
+void HTMLFormControlElement::didChangeForm()
+{
+    ValidatedFormListedElement::didChangeForm();
+    checkAndPossiblyClosePopoverStack();
+}
+
+} // namespace Webcore
