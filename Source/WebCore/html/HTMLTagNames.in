@@ -32,7 +32,6 @@ cite interfaceName=HTMLElement
 code interfaceName=HTMLElement
 col interfaceName=HTMLTableColElement
 colgroup interfaceName=HTMLTableColElement
-command interfaceName=HTMLUnknownElement
 data
 datalist interfaceName=HTMLDataListElement, conditional=DATALIST_ELEMENT, settingsConditional=dataListElementEnabled
 dd interfaceName=HTMLElement
@@ -115,7 +114,7 @@ samp interfaceName=HTMLElement
 script constructorNeedsCreatedByParser
 section interfaceName=HTMLElement
 select constructorNeedsFormElement
-slot 
+slot
 small interfaceName=HTMLElement
 source
 span

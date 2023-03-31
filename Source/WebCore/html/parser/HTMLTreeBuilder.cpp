@@ -557,7 +557,6 @@ void HTMLTreeBuilder::processStartTagForInBody(AtomHTMLToken&& token)
     case TagName::base:
     case TagName::basefont:
     case TagName::bgsound:
-    case TagName::command:
     case TagName::link:
     case TagName::meta:
     case TagName::noframes:
@@ -2765,7 +2764,6 @@ bool HTMLTreeBuilder::processStartTagForInHead(AtomHTMLToken&& token)
     case TagName::base:
     case TagName::basefont:
     case TagName::bgsound:
-    case TagName::command:
     case TagName::link:
     case TagName::meta:
         m_tree.insertSelfClosingHTMLElement(WTFMove(token));
