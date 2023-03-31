@@ -68,7 +68,12 @@ TEST(WebKit, MediaBufferingPolicy)
 
     // Suspending the process also forces a memory warning, which should purge whatever possible ASAP.
     [webView _processWillSuspendImminentlyForTesting];
+#if PLATFORM(MAC)
+    // Suspending the page on macOS shouldn't cause resource purging
+    waitUntilBufferingPolicyIsEqualTo(webView.get(), "Default");
+#else
     waitUntilBufferingPolicyIsEqualTo(webView.get(), "PurgeResources");
+#endif
 
     // And should switch back to default when buffering is allowed.
     [webView _processDidResumeForTesting];
