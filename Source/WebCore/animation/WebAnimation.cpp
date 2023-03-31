@@ -1431,8 +1431,8 @@ ExceptionOr<void> WebAnimation::commitStyles()
     // https://drafts.csswg.org/web-animations-1/#commit-computed-styles
 
     // 1. Let targets be the set of all effect targets for animation effects associated with animation.
-    auto* effect = is<KeyframeEffect>(m_effect) ? downcast<KeyframeEffect>(m_effect.get()) : nullptr;
-    auto* target = effect ? effect->target() : nullptr;
+    RefPtr effect = dynamicDowncast<KeyframeEffect>(m_effect.get());
+    RefPtr target = effect ? effect->target() : nullptr;
 
     // 2. For each target in targets:
     //
