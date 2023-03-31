@@ -34,6 +34,7 @@
 #import "WebPageProxy.h"
 #import "WebProcess.h"
 #import "WebProcessPool.h"
+#import <WebCore/CGDisplayStreamScreenCaptureSource.h>
 #import <WebCore/CaptureDeviceManager.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/MockRealtimeMediaSourceCenter.h>
@@ -240,11 +241,15 @@ void DisplayCaptureSessionManager::promptForGetDisplayMedia(UserMediaPermissionR
         else
             showWindowPicker(origin, WTFMove(completionHandler));
     });
-#else
-    completionHandler(std::nullopt);
-#endif
 
+#elif PLATFORM(MAC)
+
+    // There is no picker on systems without ScreenCaptureKit, so share the main screen.
+    completionHandler(CGDisplayStreamScreenCaptureSource::screenCaptureDeviceForMainDisplay());
+
+#endif
 }
+
 } // namespace WebKit
 
 #endif // PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)

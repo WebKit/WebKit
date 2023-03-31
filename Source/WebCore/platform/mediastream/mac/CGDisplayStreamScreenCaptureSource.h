@@ -48,6 +48,7 @@ public:
 
     static std::optional<CaptureDevice> screenCaptureDeviceWithPersistentID(const String&);
     static void screenCaptureDevices(Vector<CaptureDevice>&);
+    WEBCORE_EXPORT static std::optional<CaptureDevice> screenCaptureDeviceForMainDisplay();
 
 private:
 
