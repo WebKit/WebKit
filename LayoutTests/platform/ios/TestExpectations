@@ -2637,7 +2637,6 @@ fast/canvas/webgl/webgl-compressed-texture-size-limit.html [ Failure ]
 fast/canvas/webgl/webgl2-texture-upload-enums.html [ Failure ]
 fast/canvas/webgl/read-pixels-test.html [ Skip ]
 fast/canvas/webgl/webglcontextchangedevent.html [ Skip ]
-webgl/1.0.3/conformance/context/context-creation-and-destruction.html [ Skip ]
 webgl/1.0.3/conformance/ogles/GL/sin/sin_001_to_006.html [ Skip ]
 webgl/1.0.3/conformance/reading/read-pixels-test.html [ Skip ]
 webgl/1.0.3/conformance/rendering/multisample-corruption.html [ Skip ]
@@ -3172,13 +3171,8 @@ webkit.org/b/207858 webgl/webgl-box-shadow.html [ Pass Failure ImageOnlyFailure 
 webkit.org/b/207858 fast/canvas/webgl/uninitialized-test.html [ Pass Failure ]
 webkit.org/b/207858 fast/canvas/webgl/oes-texture-float-linear.html [ Pass Failure ]
 webkit.org/b/207858 fast/canvas/webgl/tex-image-and-sub-image-2d-with-video.html [ Pass Failure ]
-webkit.org/b/207858 webgl/1.0.3/conformance/context/context-lost-restored.html [ Pass Failure ]
 webkit.org/b/207858 webgl/1.0.3/conformance/glsl/misc/shader-struct-scope.html [ Pass Failure ]
 webkit.org/b/207858 webgl/1.0.3/conformance/misc/uninitialized-test.html [ Pass Failure ]
-
-# rdar://63506750 Now that float/half-float is supported, the video tests don't instantly fail.
-webgl/1.0.3/conformance/extensions/oes-texture-float-with-video.html [ Skip ]
-webgl/1.0.3/conformance/extensions/oes-texture-half-float-with-video.html [ Skip ]
 
 # <rdar://problem/59635486> REGRESSION: http/wpt/webauthn/public-key-credential-get-success-local.https.html is crashing
 http/wpt/webauthn/public-key-credential-get-success-local.https.html [ Skip ]
@@ -3385,8 +3379,6 @@ webkit.org/b/221833 fast/text/image-alt-text-bidi.html [ ImageOnlyFailure ]
 
 webkit.org/b/222844 fast/canvas/webgl/match-page-color-space.html [ Pass ImageOnlyFailure ]
 webkit.org/b/222844 imported/blink/compositing/draws-content/webgl-simple-background.html [ Pass ImageOnlyFailure ]
-
-webkit.org/b/222239 webgl/conformance/extensions/khr-parallel-shader-compile.html [ Skip ]
 
 fast/text/line-break-with-locale.html [ ImageOnlyFailure ]
 
@@ -4407,3 +4399,6 @@ webkit.org/b/254073 webgl/2.0.y/conformance/textures/canvas/tex-2d-rgba-rgba-uns
 # webkit.org/b/254690 REGRESSION(262009@main): 2X webgl/conformance/textures/canvas (layout-tests) are flaky timeouts
 webgl/1.0.x/conformance/textures/canvas/tex-2d-rgb-rgb-unsigned_byte.html [ Pass Timeout ]
 webgl/2.0.y/conformance/textures/canvas/tex-2d-rgb-rgb-unsigned_byte.html [ Pass Timeout ]
+
+webkit.org/b/229934 webgl/1.0.x/conformance/extensions/webgl-depth-texture.html [ Failure ]
+webkit.org/b/254398 webgl/2.0.y/conformance/extensions/webgl-compressed-texture-astc.html [ Failure ]
