@@ -362,8 +362,10 @@ void WebCoreAVFResourceLoader::responseReceived(const ResourceResponse& response
         // When the property is YES, AVAssetResourceLoader will request small data ranges over and over again
         // during the playback. For DataURLResourceMediaLoader, that means it needs to decode the URL repeatedly,
         // which is very inefficient for long URLs.
+        ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
         if (!m_dataURLMediaLoader && [contentInfo respondsToSelector:@selector(setEntireLengthAvailableOnDemand:)])
             [contentInfo setEntireLengthAvailableOnDemand:YES];
+        ALLOW_NEW_API_WITHOUT_GUARDS_END
 
         if (![m_avRequest dataRequest]) {
             [m_avRequest finishLoading];

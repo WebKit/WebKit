@@ -204,12 +204,6 @@ static AtomString initTypeForRequest(AVContentKeyRequest* request)
     if ([request.identifier isKindOfClass:NSString.class] && [request.identifier hasPrefix:@"skd://"])
         return CDMPrivateFairPlayStreaming::skdName();
 
-    if (![request respondsToSelector:@selector(options)]) {
-        // AVContentKeyRequest.options was added in 10.14.4; if we are running on a previous version
-        // we don't have support for 'cenc' anyway, so just assume 'sinf'.
-        return CDMPrivateFairPlayStreaming::sinfName();
-    }
-
 ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
     auto nsInitType = (NSString*)[request.options valueForKey:InitializationDataTypeKey];
 ALLOW_NEW_API_WITHOUT_GUARDS_END
