@@ -825,6 +825,9 @@ static bool rareDataChangeRequiresLayout(const StyleRareNonInheritedData& first,
     if (first.containIntrinsicWidth != second.containIntrinsicWidth || first.containIntrinsicHeight != second.containIntrinsicHeight)
         return true;
 
+    if (first.marginTrim != second.marginTrim)
+        return true;
+
     return false;
 }
 
