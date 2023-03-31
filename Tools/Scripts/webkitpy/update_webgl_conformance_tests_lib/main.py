@@ -253,8 +253,9 @@ def _generate_webkit_webgl_tests(
                 print(f"Ignoring test: {test_path}, implementation does not exist at {target_test_impl}")
             continue
         test_to_impl = os.path.relpath(target_test_impl, target_test.parent)
-        test_file_url = f"{test_to_impl}?webglVersion=2" if use_webgl2_context else test_to_impl
-        subs = {"test_file_url": test_file_url, "test_name": test_path.name, "webgl_top_level_url": os.path.relpath(target_dir, target_test.parent)}
+        test_link_url = f"{test_to_impl}?webglVersion=2" if use_webgl2_context else test_to_impl
+        test_iframe_url = f"{test_to_impl}?quiet=1&webglVersion=2" if use_webgl2_context else f"{test_to_impl}?quiet=1"
+        subs = {"test_link_url": test_link_url, "test_iframe_url": test_iframe_url, "test_name": test_path.name, "webgl_top_level_url": os.path.relpath(target_dir, target_test.parent)}
         target_test.parent.mkdir(parents=True, exist_ok=True)
         target_test.write_text(test_template % subs)
         expectation = target_test.parent / f"{target_test.stem}-expected.txt"
