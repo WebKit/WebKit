@@ -69,8 +69,9 @@ CSSParserImpl::CSSParserImpl(const CSSParserContext& context, StyleSheetContents
 {
 }
 
-CSSParserImpl::CSSParserImpl(const CSSParserContext& context, const String& string, StyleSheetContents* styleSheet, CSSParserObserverWrapper* wrapper)
-    : m_context(context)
+CSSParserImpl::CSSParserImpl(const CSSParserContext& context, const String& string, StyleSheetContents* styleSheet, CSSParserObserverWrapper* wrapper, CSSParserEnum::IsNestedContext isNestedContext)
+    : m_isAlwaysNestedContext(isNestedContext)
+    , m_context(context)
     , m_styleSheet(styleSheet)
     , m_tokenizer(wrapper ? CSSTokenizer::tryCreate(string, *wrapper) : CSSTokenizer::tryCreate(string))
     , m_observerWrapper(wrapper)
@@ -166,9 +167,9 @@ bool CSSParserImpl::parseDeclarationList(MutableStyleProperties* declaration, co
     return declaration->addParsedProperties(results);
 }
 
-RefPtr<StyleRuleBase> CSSParserImpl::parseRule(const String& string, const CSSParserContext& context, StyleSheetContents* styleSheet, AllowedRulesType allowedRules)
+RefPtr<StyleRuleBase> CSSParserImpl::parseRule(const String& string, const CSSParserContext& context, StyleSheetContents* styleSheet, AllowedRulesType allowedRules, CSSParserEnum::IsNestedContext isNestedContext)
 {
-    CSSParserImpl parser(context, string, styleSheet);
+    CSSParserImpl parser(context, string, styleSheet, nullptr, isNestedContext);
     CSSParserTokenRange range = parser.tokenizer()->tokenRange();
     range.consumeWhitespace();
     if (range.atEnd())
@@ -1162,7 +1163,7 @@ void CSSParserImpl::consumeDeclarationListOrStyleBlockHelper(CSSParserTokenRange
                 auto rule = consumeQualifiedRule(range, AllowedRulesType::RegularRules);
                 if (!rule)
                     break;
-                if (!rule->isStyleRule())
+                if (!rule->isStyleRuleWithNesting())
                     break;
                 topContext().m_parsedRules.append(*rule);
                 break;

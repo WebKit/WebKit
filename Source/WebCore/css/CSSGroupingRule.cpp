@@ -66,7 +66,8 @@ ExceptionOr<unsigned> CSSGroupingRule::insertRule(const String& ruleString, unsi
     }
 
     CSSStyleSheet* styleSheet = parentStyleSheet();
-    RefPtr<StyleRuleBase> newRule = CSSParser::parseRule(parserContext(), styleSheet ? &styleSheet->contents() : nullptr, ruleString);
+    auto isNestedContext = hasStyleRuleAncestor() ? CSSParserEnum::IsNestedContext::Yes : CSSParserEnum::IsNestedContext::No;
+    RefPtr<StyleRuleBase> newRule = CSSParser::parseRule(parserContext(), styleSheet ? &styleSheet->contents() : nullptr, ruleString, isNestedContext);
     if (!newRule) {
         // SyntaxError: Raised if the specified rule has a syntax error and is unparsable.
         return Exception { SyntaxError };
@@ -82,6 +83,11 @@ ExceptionOr<unsigned> CSSGroupingRule::insertRule(const String& ruleString, unsi
         // at-rule.
         return Exception { HierarchyRequestError };
     }
+
+    // Nesting inside style rule only accepts style rule or group rule
+    if (hasStyleRuleAncestor() && !newRule->isStyleRuleWithNesting() && !newRule->isStyleRule() && !newRule->isGroupRule())
+        return Exception { HierarchyRequestError };
+
     CSSStyleSheet::RuleMutationScope mutationScope(this);
 
     m_groupRule->wrapperInsertRule(index, newRule.releaseNonNull());
@@ -159,6 +165,21 @@ void CSSGroupingRule::cssTextForDeclsAndRules(StringBuilder& decls, StringBuilde
         auto wrappedRule = item(index);
         rules.append("\n  ", wrappedRule->cssText());
     }
+}
+
+RefPtr<StyleRuleWithNesting> CSSGroupingRule::prepareChildStyleRuleForNesting(StyleRule& styleRule)
+{
+    CSSStyleSheet::RuleMutationScope scope(this);
+    auto& rules = m_groupRule->m_childRules;
+    for (size_t i = 0 ; i < rules.size() ; i++) {
+        auto& rule = rules[i];
+        if (rule == &styleRule) {
+            auto styleRuleWithNesting = StyleRuleWithNesting::create(WTFMove(styleRule));
+            rules[i] = styleRuleWithNesting.ptr();
+            return styleRuleWithNesting;
+        }        
+    }
+    return { };
 }
 
 unsigned CSSGroupingRule::length() const

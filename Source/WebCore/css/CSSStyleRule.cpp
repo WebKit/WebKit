@@ -22,6 +22,7 @@
 #include "config.h"
 #include "CSSStyleRule.h"
 
+#include "CSSGroupingRule.h"
 #include "CSSParser.h"
 #include "CSSRuleList.h"
 #include "CSSStyleSheet.h"
@@ -111,13 +112,10 @@ void CSSStyleRule::setSelectorText(const String& selectorText)
         return;
 
     CSSParser p(parserContext());
+    auto isNestedContext = hasStyleRuleAncestor() ? CSSParserEnum::IsNestedContext::Yes : CSSParserEnum::IsNestedContext::No;
     auto* sheet = parentStyleSheet();
-    auto selectorList = p.parseSelector(selectorText, sheet ? &sheet->contents() : nullptr);
+    auto selectorList = p.parseSelector(selectorText, sheet ? &sheet->contents() : nullptr, isNestedContext);
     if (!selectorList)
-        return;
-
-    // FIXME: We don't support setting nesting parent selector by CSSOM
-    if (selectorList->hasExplicitNestingParent())
         return;
 
     // NOTE: The selector list has to fit into RuleData. <http://webkit.org/b/118369>
@@ -181,9 +179,10 @@ String CSSStyleRule::cssText() const
     return builder.toString();
 }
 
+// FIXME: share all methods below with CSSGroupingRule.
+
 void CSSStyleRule::cssTextForDeclsAndRules(StringBuilder& decls, StringBuilder& rules) const
 {
-    // FIXME: share this with CSSGroupingRule.
     for (unsigned index = 0 ; index < nestedRules().size() ; index++) {
         // We put the declarations at the upper level when the rule:
         // - is a style rule
@@ -191,7 +190,7 @@ void CSSStyleRule::cssTextForDeclsAndRules(StringBuilder& decls, StringBuilder& 
         // - has no child rules
         auto childRule = nestedRules()[index];
         if (childRule->isStyleRuleWithNesting()) {
-            auto& nestedStyleRule = downcast<StyleRuleWithNesting>(childRule.get());
+            auto& nestedStyleRule = downcast<StyleRuleWithNesting>(childRule);
             if (nestedStyleRule.originalSelectorList().hasOnlyNestingSelector() && nestedStyleRule.nestedRules().isEmpty()) {
                 decls.append(nestedStyleRule.properties().asText());
                 continue;
@@ -214,16 +213,57 @@ void CSSStyleRule::reattach(StyleRuleBase& rule)
         m_propertiesCSSOMWrapper->reattach(m_styleRule->mutableProperties());
 }
 
-ExceptionOr<unsigned> CSSStyleRule::insertRule(const String&, unsigned)
+ExceptionOr<unsigned> CSSStyleRule::insertRule(const String& ruleString, unsigned index)
 {
-    // FIXME: to implement (or use CSSGroupingRule).
-    return Exception { NotSupportedError };
+    ASSERT(m_childRuleCSSOMWrappers.size() == nestedRules().size());
+
+    if (index > nestedRules().size())
+        return Exception { IndexSizeError };
+
+    auto* styleSheet = parentStyleSheet();
+    RefPtr<StyleRuleBase> newRule = CSSParser::parseRule(parserContext(), styleSheet ? &styleSheet->contents() : nullptr, ruleString, CSSParserEnum::IsNestedContext::Yes);
+    if (!newRule)
+        return Exception { SyntaxError };
+    // We only accepts style rule or group rule (@media,...) inside style rules.
+    if (!newRule->isStyleRuleWithNesting() && !newRule->isGroupRule())
+        return Exception { HierarchyRequestError };
+
+    if (m_styleRule->isStyleRule()) {
+        // Call the parent rule (or parent stylesheet if top-level) to transform the current StyleRule to StyleRuleWithNesting.
+        auto parent = parentRule();
+        auto styleRuleWithNesting = parent ? parent->prepareChildStyleRuleForNesting(m_styleRule) : styleSheet->prepareChildStyleRuleForNesting(WTFMove(m_styleRule.get()));
+        ASSERT(styleRuleWithNesting);
+        m_styleRule = *styleRuleWithNesting;
+    }
+
+    CSSStyleSheet::RuleMutationScope mutationScope(this);
+    ASSERT(m_styleRule->isStyleRuleWithNesting());
+    downcast<StyleRuleWithNesting>(m_styleRule).nestedRules().insert(index, newRule.releaseNonNull());
+    m_childRuleCSSOMWrappers.insert(index, RefPtr<CSSRule>());
+    return index;
 }
 
-ExceptionOr<void> CSSStyleRule::deleteRule(unsigned)
+ExceptionOr<void> CSSStyleRule::deleteRule(unsigned index)
 {
-    // FIXME: to implement (or use CSSGroupingRule).
-    return Exception { NotSupportedError };
+    ASSERT(m_childRuleCSSOMWrappers.size() == nestedRules().size());
+
+    if (index >= nestedRules().size()) {
+        // IndexSizeError: Raised if the specified index does not correspond to a
+        // rule in the media rule list.
+        return Exception { IndexSizeError };
+    }
+
+    ASSERT(m_styleRule->isStyleRuleWithNesting());
+    auto& rules = downcast<StyleRuleWithNesting>(m_styleRule).nestedRules();
+    
+    CSSStyleSheet::RuleMutationScope mutationScope(this);
+    rules.remove(index);
+
+    if (m_childRuleCSSOMWrappers[index])
+        m_childRuleCSSOMWrappers[index]->setParentRule(nullptr);
+    m_childRuleCSSOMWrappers.remove(index);
+
+    return { };
 }
 
 unsigned CSSStyleRule::length() const
