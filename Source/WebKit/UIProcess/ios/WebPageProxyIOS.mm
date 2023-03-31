@@ -45,6 +45,7 @@
 #import "PageClient.h"
 #import "PaymentAuthorizationViewController.h"
 #import "PrintInfo.h"
+#import "ProvisionalPageProxy.h"
 #import "RemoteLayerTreeHost.h"
 #import "RemoteLayerTreeNode.h"
 #import "RemoteLayerTreeTransaction.h"
@@ -294,6 +295,9 @@ void WebPageProxy::setViewportConfigurationViewLayoutSize(const WebCore::FloatSi
     m_viewportConfigurationViewLayoutSize = size;
     m_viewportConfigurationLayoutSizeScaleFactor = scaleFactor;
     m_viewportConfigurationMinimumEffectiveDeviceWidth = minimumEffectiveDeviceWidth;
+
+    if (m_provisionalPage)
+        m_provisionalPage->send(Messages::WebPage::SetViewportConfigurationViewLayoutSize(size, scaleFactor, minimumEffectiveDeviceWidth));
 
     if (hasRunningProcess())
         m_process->send(Messages::WebPage::SetViewportConfigurationViewLayoutSize(size, scaleFactor, minimumEffectiveDeviceWidth), m_webPageID);
