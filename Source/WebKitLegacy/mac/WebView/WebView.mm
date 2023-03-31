@@ -1353,26 +1353,6 @@ static RetainPtr<CFMutableSetRef>& allWebViewsSet()
     [self registerForDraggedTypes:[types allObjects]];
 }
 
-static bool needsOutlookQuirksScript()
-{
-    static bool isOutlookNeedingQuirksScript = !WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITH_HTML5_PARSER)
-        && WebCore::MacApplication::isMicrosoftOutlook();
-    return isOutlookNeedingQuirksScript;
-}
-
-static RetainPtr<NSString> createOutlookQuirksUserScriptContents()
-{
-    NSString *scriptPath = [[NSBundle bundleForClass:[WebView class]] pathForResource:@"OutlookQuirksUserScript" ofType:@"js"];
-    NSStringEncoding encoding;
-    return adoptNS([[NSString alloc] initWithContentsOfFile:scriptPath usedEncoding:&encoding error:0]);
-}
-
--(void)_injectOutlookQuirksScript
-{
-    static NeverDestroyed<RetainPtr<NSString>> outlookQuirksScriptContents = createOutlookQuirksUserScriptContents();
-    _private->group->userContentController().addUserScript(*core([WebScriptWorld world]), makeUnique<WebCore::UserScript>(outlookQuirksScriptContents.get().get(), URL(), Vector<String>(), Vector<String>(), WebCore::UserScriptInjectionTime::DocumentEnd, WebCore::UserContentInjectedFrames::InjectInAllFrames, WebCore::WaitForNotificationBeforeInjecting::No));
-
-}
 #endif
 
 #if PLATFORM(IOS)
@@ -1587,13 +1567,6 @@ static void WebKitInitializeGamepadProviderIfNecessary()
 
     _private->page->setCanStartMedia([self window]);
     _private->page->settings().setLocalStorageDatabasePath([[self preferences] _localStorageDatabasePath]);
-
-#if !PLATFORM(IOS_FAMILY)
-    if (needsOutlookQuirksScript()) {
-        _private->page->settings().setShouldInjectUserScriptsInInitialEmptyDocument(true);
-        [self _injectOutlookQuirksScript];
-    }
-#endif
 
 #if PLATFORM(IOS)
     if (needsLaBanquePostaleQuirks())

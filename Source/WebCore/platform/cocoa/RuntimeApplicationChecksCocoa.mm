@@ -140,28 +140,10 @@ bool MacApplication::isAppleMail()
     return isAppleMail;
 }
 
-bool MacApplication::isMicrosoftMessenger()
-{
-    static bool isMicrosoftMessenger = applicationBundleIsEqualTo("com.microsoft.Messenger"_s);
-    return isMicrosoftMessenger;
-}
-
 bool MacApplication::isAdobeInstaller()
 {
     static bool isAdobeInstaller = applicationBundleIsEqualTo("com.adobe.Installers.Setup"_s);
     return isAdobeInstaller;
-}
-
-bool MacApplication::isMicrosoftMyDay()
-{
-    static bool isMicrosoftMyDay = applicationBundleIsEqualTo("com.microsoft.myday"_s);
-    return isMicrosoftMyDay;
-}
-
-bool MacApplication::isMicrosoftOutlook()
-{
-    static bool isMicrosoftOutlook = applicationBundleIsEqualTo("com.microsoft.Outlook"_s);
-    return isMicrosoftOutlook;
 }
 
 bool MacApplication::isMiniBrowser()

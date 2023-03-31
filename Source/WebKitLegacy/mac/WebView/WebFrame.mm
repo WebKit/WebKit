@@ -2372,21 +2372,8 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
     return getWebView(self);
 }
 
-static bool needsMicrosoftMessengerDOMDocumentWorkaround()
-{
-#if PLATFORM(IOS_FAMILY)
-    return false;
-#else
-    static bool needsWorkaround = WebCore::MacApplication::isMicrosoftMessenger() && [[[NSBundle mainBundle] objectForInfoDictionaryKey:(NSString *)kCFBundleVersionKey] compare:@"7.1" options:NSNumericSearch] == NSOrderedAscending;
-    return needsWorkaround;
-#endif
-}
-
 - (DOMDocument *)DOMDocument
 {
-    if (needsMicrosoftMessengerDOMDocumentWorkaround() && !pthread_main_np())
-        return nil;
-
     auto coreFrame = _private->coreFrame;
     if (!coreFrame)
         return nil;
