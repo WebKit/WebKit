@@ -2754,6 +2754,8 @@ imported/w3c/web-platform-tests/websockets/cookies/007.html?wss&wpt_flags=https 
 [ Monterey+ x86_64 ] media/track/track-cues-cuechange.html [ Pass Timeout Failure ]
 [ BigSur+ x86_64 ] js/promises-tests/promises-tests-2-3-3.html [ Pass Timeout ]
 
+webkit.org/b/254637 fast/text/web-font-load-invisible-during-loading.html [ Pass Failure ]
+
 webkit.org/b/242804 media/track/track-forced-subtitles-in-band.html [ Pass Failure ]
 
 webkit.org/b/251051 [ BigSur+ Debug ] storage/indexeddb/modern/deleteindex-4-private.html [ Crash ]
