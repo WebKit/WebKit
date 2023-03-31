@@ -120,7 +120,8 @@ public:
     static Ref<WebsiteDataStore> defaultDataStore();
     static bool defaultDataStoreExists();
     static void deleteDefaultDataStoreForTesting();
-    
+    static RefPtr<WebsiteDataStore> existingDataStoreForIdentifier(const UUID&);
+
     static Ref<WebsiteDataStore> createNonPersistent();
     static Ref<WebsiteDataStore> create(Ref<WebsiteDataStoreConfiguration>&&, PAL::SessionID);
 
@@ -452,6 +453,7 @@ private:
     void platformSetNetworkParameters(WebsiteDataStoreParameters&);
 
     WebsiteDataStore();
+    static WorkQueue& websiteDataStoreIOQueue();
 
     // FIXME: Only Cocoa ports respect ShouldCreateDirectory, so you cannot rely on it to create
     // directories. This is confusing.
@@ -469,6 +471,7 @@ private:
     static void removeMediaKeys(const String& mediaKeysStorageDirectory, const HashSet<WebCore::SecurityOriginData>&);
 
     void registerWithSessionIDMap();
+    bool hasActivePages();
 
 #if ENABLE(APP_BOUND_DOMAINS)
     static std::optional<HashSet<WebCore::RegistrableDomain>> appBoundDomainsIfInitialized();

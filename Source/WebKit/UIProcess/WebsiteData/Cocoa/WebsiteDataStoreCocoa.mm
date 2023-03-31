@@ -267,24 +267,39 @@ static String defaultWebsiteDataStoreRootDirectory()
 
 void WebsiteDataStore::fetchAllDataStoreIdentifiers(CompletionHandler<void(Vector<UUID>&&)>&& completionHandler)
 {
-    Vector<UUID> identifiers;
-    for (auto identifierString : FileSystem::listDirectory(defaultWebsiteDataStoreRootDirectory())) {
-        if (auto identifier = UUID::parse(identifierString))
-            identifiers.append(*identifier);
-    }
+    ASSERT(isMainRunLoop());
 
-    completionHandler(WTFMove(identifiers));
+    websiteDataStoreIOQueue().dispatch([completionHandler = WTFMove(completionHandler), directory = defaultWebsiteDataStoreRootDirectory().isolatedCopy()]() mutable {
+        auto identifiers = WTF::compactMap(FileSystem::listDirectory(directory), [](auto&& identifierString) {
+            return UUID::parse(identifierString);
+        });
+        RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler), identifiers = crossThreadCopy(WTFMove(identifiers))]() mutable {
+            completionHandler(WTFMove(identifiers));
+        });
+    });
 }
 
 void WebsiteDataStore::removeDataStoreWithIdentifier(const UUID& identifier, CompletionHandler<void(const String&)>&& completionHandler)
 {
+    ASSERT(isMainRunLoop());
+
     if (!identifier)
         return completionHandler("Identifier is invalid"_s);
 
-    if (!FileSystem::deleteNonEmptyDirectory(defaultWebsiteDataStoreDirectory(identifier)))
-        return completionHandler("WebsiteDataStore with this identifier does not exist or deletion failed"_s);
+    if (auto existingDataStore = existingDataStoreForIdentifier(identifier)) {
+        if (existingDataStore->hasActivePages())
+            return completionHandler("Data store is in use"_s);
+    }
 
-    return completionHandler({ });
+    websiteDataStoreIOQueue().dispatch([completionHandler = WTFMove(completionHandler), directory = defaultWebsiteDataStoreDirectory(identifier).isolatedCopy()]() mutable {
+        bool deleted = FileSystem::deleteNonEmptyDirectory(directory);
+        RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler), deleted]() mutable {
+            if (!deleted)
+                return completionHandler("Failed to delete files on disk"_s);
+
+            completionHandler({ });
+        });
+    });
 }
 
 String WebsiteDataStore::defaultWebsiteDataStoreDirectory(const UUID& identifier)
