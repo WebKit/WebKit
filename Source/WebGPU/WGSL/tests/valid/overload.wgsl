@@ -202,3 +202,9 @@ fn testMatrixConstructor() {
     let m4 = mat4x4(vec4(0.0, 0.0, 0.0, 0.0), vec4(0.0, 0.0, 0.0, 0.0), vec4(0.0, 0.0, 0.0, 0.0), vec4(0.0, 0.0, 0.0, 0.0));
   }
 }
+
+fn testUnaryMinus() {
+  let x = 1;
+  let x1 = -x;
+  let x2 = -vec2(1, 1);
+}

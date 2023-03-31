@@ -12,6 +12,11 @@ operator :*, {
     [T < Float, C, R].(Vector[T, R], Matrix[T, C, R]) => Vector[T, C],
 }
 
+operator :-, {
+  [T < SignedNumber].(T) => T,
+  [T < SignedNumber, N].(Vector[T, N]) => Vector[T, N],
+}
+
 operator :textureSample, {
     [].(Texture[F32, Texture1d], Sampler, F32) => Vector[F32, 4],
     [].(Texture[F32, Texture2d], Sampler, Vector[F32, 2]) => Vector[F32, 4],

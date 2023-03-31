@@ -293,6 +293,7 @@ module DSL
         ConcreteInteger = Constraint.new(:ConcreteInteger)
         ConcreteFloat = Constraint.new(:ConcreteFloat)
         ConcreteScalar = Constraint.new(:ConcreteScalar)
+        SignedNumber = Constraint.new(:SignedNumber)
         EOS
     end
 

@@ -52,10 +52,12 @@ struct TypeVariable {
 
         ConcreteInteger = I32 | U32,
         Integer = ConcreteInteger | AbstractInt,
+        SignedInteger = I32 | AbstractInt,
 
         Scalar = Bool | Integer | Float,
         ConcreteScalar = Bool | ConcreteInteger | ConcreteFloat,
 
+        SignedNumber = Float | SignedInteger,
         Number = Float | Integer,
     };
 

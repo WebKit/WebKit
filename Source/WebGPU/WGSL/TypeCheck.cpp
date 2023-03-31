@@ -64,6 +64,7 @@ public:
     void visit(AST::BinaryExpression&) override;
     void visit(AST::IdentifierExpression&) override;
     void visit(AST::CallExpression&) override;
+    void visit(AST::UnaryExpression&) override;
 
     // Literal Expressions
     void visit(AST::BoolLiteral&) override;
@@ -374,6 +375,16 @@ void TypeChecker::visit(AST::CallExpression& call)
     // FIXME: add support for user-defined function calls
     auto* result = resolve(target);
     inferred(result);
+}
+
+void TypeChecker::visit(AST::UnaryExpression& unary)
+{
+    auto* argument = infer(unary.expression());
+    auto* result = chooseOverload(toString(unary.operation()), { argument }, { });
+    if (result)
+        inferred(result);
+    else
+        typeError(unary.span(), "no matching overload for operator ", toString(unary.operation()), " (", *argument, ")");
 }
 
 // Literal Expressions

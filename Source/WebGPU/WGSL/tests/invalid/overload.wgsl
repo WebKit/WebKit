@@ -24,4 +24,10 @@ fn testConstraints() {
 
     // CHECK-L:  no matching overload for initializer vec2<S>(vec2<<AbstractInt>>)
     let x6 = vec2<S>(vec2(0, 0));
+
+    // CHECK-L: no matching overload for operator - (u32)
+    let x7 = -1u;
+
+    // CHECK-L: no matching overload for operator - (vec2<u32>)
+    let x8 = -vec2(1u, 1u);
 }
