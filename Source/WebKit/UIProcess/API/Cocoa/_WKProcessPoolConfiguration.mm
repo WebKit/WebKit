@@ -360,12 +360,11 @@
 
 - (NSString *)customWebContentServiceBundleIdentifier
 {
-    return _processPoolConfiguration->customWebContentServiceBundleIdentifier();
+    return nil;
 }
 
 - (void)setCustomWebContentServiceBundleIdentifier:(NSString *)customWebContentServiceBundleIdentifier
 {
-    _processPoolConfiguration->setCustomWebContentServiceBundleIdentifier(customWebContentServiceBundleIdentifier);
 }
 
 - (BOOL)configureJSCForTesting

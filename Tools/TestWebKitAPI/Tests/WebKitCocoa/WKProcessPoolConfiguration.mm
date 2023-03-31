@@ -36,7 +36,6 @@ TEST(WKProcessPoolConfiguration, Copy)
     auto configuration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
     
     [configuration setInjectedBundleURL:[NSURL fileURLWithPath:@"/path/to/injected.wkbundle"]];
-    [configuration setCustomWebContentServiceBundleIdentifier:@"org.webkit.WebContent.custom"];
     [configuration setIgnoreSynchronousMessagingTimeoutsForTesting:YES];
     [configuration setAttrStyleEnabled:YES];
     [configuration setAdditionalReadAccessAllowedURLs:@[ [NSURL fileURLWithPath:@"/path/to/allow/read/access/"] ]];
@@ -57,7 +56,6 @@ TEST(WKProcessPoolConfiguration, Copy)
     auto copy = adoptNS([configuration copy]);
 
     EXPECT_TRUE([[configuration injectedBundleURL] isEqual:[copy injectedBundleURL]]);
-    EXPECT_TRUE([[configuration customWebContentServiceBundleIdentifier] isEqual:[copy customWebContentServiceBundleIdentifier]]);
     EXPECT_EQ([configuration ignoreSynchronousMessagingTimeoutsForTesting], [copy ignoreSynchronousMessagingTimeoutsForTesting]);
     EXPECT_EQ([configuration attrStyleEnabled], [copy attrStyleEnabled]);
     EXPECT_TRUE([[configuration additionalReadAccessAllowedURLs] isEqual:[copy additionalReadAccessAllowedURLs]]);

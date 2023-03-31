@@ -392,9 +392,8 @@ bool WKContextGetUsesSingleWebProcess(WKContextRef contextRef)
     return WebKit::toImpl(contextRef)->configuration().usesSingleWebProcess();
 }
 
-void WKContextSetCustomWebContentServiceBundleIdentifier(WKContextRef contextRef, WKStringRef name)
+void WKContextSetCustomWebContentServiceBundleIdentifier(WKContextRef, WKStringRef)
 {
-    WebKit::toImpl(contextRef)->setCustomWebContentServiceBundleIdentifier(WebKit::toImpl(name)->string());
 }
 
 void WKContextSetDiskCacheSpeculativeValidationEnabled(WKContextRef, bool)

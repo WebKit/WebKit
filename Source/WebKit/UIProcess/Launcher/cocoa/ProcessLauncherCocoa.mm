@@ -62,19 +62,22 @@
 
 namespace WebKit {
 
-static const char* webContentServiceName(bool nonValidInjectedCodeAllowed, ProcessLauncher::Client* client)
+static const char* webContentServiceName(const ProcessLauncher::LaunchOptions& launchOptions, ProcessLauncher::Client* client)
 {
+    if (launchOptions.extraInitializationData.get<HashTranslatorASCIILiteral>("is-webcontent-crashy"_s) == "1"_s)
+        return "com.apple.WebKit.WebContent.Crashy";
+
     if (client && client->shouldEnableLockdownMode())
         return "com.apple.WebKit.WebContent.CaptivePortal";
 
-    return nonValidInjectedCodeAllowed ? "com.apple.WebKit.WebContent.Development" : "com.apple.WebKit.WebContent";
+    return launchOptions.nonValidInjectedCodeAllowed ? "com.apple.WebKit.WebContent.Development" : "com.apple.WebKit.WebContent";
 }
 
 static const char* serviceName(const ProcessLauncher::LaunchOptions& launchOptions, ProcessLauncher::Client* client)
 {
     switch (launchOptions.processType) {
     case ProcessLauncher::ProcessType::Web:
-        return webContentServiceName(launchOptions.nonValidInjectedCodeAllowed, client);
+        return webContentServiceName(launchOptions, client);
     case ProcessLauncher::ProcessType::Network:
         return "com.apple.WebKit.Networking";
 #if ENABLE(GPU_PROCESS)
@@ -88,11 +91,7 @@ void ProcessLauncher::launchProcess()
 {
     ASSERT(!m_xpcConnection);
 
-    const char* name;
-    if (!m_launchOptions.customWebContentServiceBundleIdentifier.isNull())
-        name = m_launchOptions.customWebContentServiceBundleIdentifier.data();
-    else
-        name = serviceName(m_launchOptions, m_client);
+    const char* name = serviceName(m_launchOptions, m_client);
 
     m_xpcConnection = adoptOSObject(xpc_connection_create(name, nullptr));
 

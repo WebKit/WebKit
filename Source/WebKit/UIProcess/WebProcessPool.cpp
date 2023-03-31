@@ -366,15 +366,6 @@ void WebProcessPool::setAutomationClient(std::unique_ptr<API::AutomationClient>&
         m_automationClient = WTFMove(automationClient);
 }
 
-void WebProcessPool::setCustomWebContentServiceBundleIdentifier(const String& customWebContentServiceBundleIdentifier)
-{
-    // Guard against API misuse.
-    if (!customWebContentServiceBundleIdentifier.isAllASCII())
-        CRASH();
-
-    m_configuration->setCustomWebContentServiceBundleIdentifier(customWebContentServiceBundleIdentifier);
-}
-
 void WebProcessPool::setOverrideLanguages(Vector<String>&& languages)
 {
     WebKit::setOverrideLanguages(WTFMove(languages));

@@ -134,9 +134,6 @@ public:
     bool processSwapsOnWindowOpenWithOpener() const { return m_processSwapsOnWindowOpenWithOpener; }
     void setProcessSwapsOnWindowOpenWithOpener(bool swaps) { m_processSwapsOnWindowOpenWithOpener = swaps; }
 
-    const WTF::String& customWebContentServiceBundleIdentifier() const { return m_customWebContentServiceBundleIdentifier; }
-    void setCustomWebContentServiceBundleIdentifier(const WTF::String& customWebContentServiceBundleIdentifier) { m_customWebContentServiceBundleIdentifier = customWebContentServiceBundleIdentifier; }
-
 #if PLATFORM(GTK) && !USE(GTK4)
     bool useSystemAppearanceForScrollbars() const { return m_useSystemAppearanceForScrollbars; }
     void setUseSystemAppearanceForScrollbars(bool useSystemAppearanceForScrollbars) { m_useSystemAppearanceForScrollbars = useSystemAppearanceForScrollbars; }
@@ -186,7 +183,6 @@ private:
     bool m_usesWebProcessCache { false };
     bool m_usesBackForwardCache { true };
     bool m_clientWouldBenefitFromAutomaticProcessPrewarming { false };
-    WTF::String m_customWebContentServiceBundleIdentifier;
     bool m_shouldConfigureJSCForTesting { false };
     bool m_isJITEnabled { true };
     bool m_usesSingleWebProcess { false };

@@ -192,9 +192,6 @@ public:
     void setLegacyDownloadClient(RefPtr<API::DownloadClient>&&);
     void setAutomationClient(std::unique_ptr<API::AutomationClient>&&);
 
-    void setCustomWebContentServiceBundleIdentifier(const String&);
-    const String& customWebContentServiceBundleIdentifier() { return m_configuration->customWebContentServiceBundleIdentifier(); }
-
     const Vector<Ref<WebProcessProxy>>& processes() const { return m_processes; }
 
     // WebProcessProxy object which does not have a running process which is used for convenience, to avoid
