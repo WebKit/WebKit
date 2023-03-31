@@ -540,6 +540,7 @@ static const unsigned StringDataIs8BitFlag = 0x80000000;
 using DeserializationResult = std::pair<JSC::JSValue, SerializationReturnCode>;
 
 class CloneBase {
+    WTF_FORBID_HEAP_ALLOCATION;
 protected:
     CloneBase(JSGlobalObject* lexicalGlobalObject)
         : m_lexicalGlobalObject(lexicalGlobalObject)
@@ -617,6 +618,7 @@ template <> bool writeLittleEndian<uint8_t>(Vector<uint8_t>& buffer, const uint8
 }
 
 class CloneSerializer : CloneBase {
+    WTF_FORBID_HEAP_ALLOCATION;
 public:
     static SerializationReturnCode serialize(JSGlobalObject* lexicalGlobalObject, JSValue value, Vector<RefPtr<MessagePort>>& messagePorts, Vector<RefPtr<JSC::ArrayBuffer>>& arrayBuffers, const Vector<RefPtr<ImageBitmap>>& imageBitmaps,
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
@@ -2150,6 +2152,7 @@ SerializationReturnCode CloneSerializer::serialize(JSValue in)
 }
 
 class CloneDeserializer : CloneBase {
+    WTF_FORBID_HEAP_ALLOCATION;
 public:
     static String deserializeString(const Vector<uint8_t>& buffer)
     {
@@ -3921,10 +3924,10 @@ DeserializationResult CloneDeserializer::deserialize()
 
     Vector<uint32_t, 16> indexStack;
     Vector<Identifier, 16> propertyNameStack;
-    Vector<JSObject*, 32> outputObjectStack;
-    Vector<JSValue, 4> mapKeyStack;
-    Vector<JSMap*, 4> mapStack;
-    Vector<JSSet*, 4> setStack;
+    MarkedVector<JSObject*, 32> outputObjectStack;
+    MarkedVector<JSValue, 4> mapKeyStack;
+    MarkedVector<JSMap*, 4> mapStack;
+    MarkedVector<JSSet*, 4> setStack;
     Vector<WalkerState, 16> stateStack;
     WalkerState lexicalGlobalObject = StateUnknown;
     JSValue outValue;
