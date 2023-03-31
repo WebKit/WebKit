@@ -32,6 +32,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-anchor-scroll-display-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-anchor-scroll-display-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-anchor-scroll-display.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-and-svg-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-and-svg-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-and-svg.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-appearance-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-appearance-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-appearance.html

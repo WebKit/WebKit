@@ -5758,6 +5758,7 @@
         "web-platform-tests/html/semantics/popovers/popover-anchor-display-ref.html",
         "web-platform-tests/html/semantics/popovers/popover-anchor-nested-display-ref.html",
         "web-platform-tests/html/semantics/popovers/popover-anchor-scroll-display-ref.html",
+        "web-platform-tests/html/semantics/popovers/popover-and-svg-ref.html",
         "web-platform-tests/html/semantics/popovers/popover-appearance-ref.html",
         "web-platform-tests/html/semantics/popovers/popover-backdrop-appearance-ref.html",
         "web-platform-tests/html/semantics/popovers/popover-dialog-appearance-ref.html",

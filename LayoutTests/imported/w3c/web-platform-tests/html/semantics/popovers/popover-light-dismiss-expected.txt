@@ -6,8 +6,8 @@ PASS Clicking inside a popover does not close that popover
 PASS Popovers close on pointerup, not pointerdown
 PASS Synthetic events can't close popovers
 FAIL Moving focus outside the popover should not dismiss the popover assert_equals: Focus should move to a button outside the popover expected Element node <button id="after_p1">Next control after popover1</button> but got Element node <body><button id="b1t" popovertarget="p1">Popover 1</butt...
-FAIL Clicking inside a child popover shouldn't close either popover promise_test: Unhandled rejection with value: object "InvalidStateError: Element has unexpected visibility state"
-FAIL Clicking inside a parent popover should close child popover promise_test: Unhandled rejection with value: object "InvalidStateError: Element has unexpected visibility state"
+PASS Clicking inside a child popover shouldn't close either popover
+PASS Clicking inside a parent popover should close child popover
 PASS Clicking on invoking element, after using it for activation, shouldn't close its popover
 PASS Clicking on invoking element, after using it for activation, shouldn't close its popover (nested case)
 PASS Clicking on invoking element, after using it for activation, shouldn't close its popover (nested case, not used for invocation)
