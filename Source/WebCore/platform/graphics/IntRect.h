@@ -188,7 +188,7 @@ public:
     IntRect transposedRect() const { return IntRect(m_location.transposedPoint(), m_size.transposedSize()); }
 
     // Return false if x + width or y + height overflows.
-    bool isValid() const;
+    WEBCORE_EXPORT bool isValid() const;
 
 #if PLATFORM(WIN)
     WEBCORE_EXPORT IntRect(const RECT&);
