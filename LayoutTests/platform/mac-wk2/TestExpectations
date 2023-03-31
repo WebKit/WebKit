@@ -1834,3 +1834,5 @@ webkit.org/b/250046 [ Monterey+ ] svg/clip-path/clip-opacity-translate.svg [ Ima
 webkit.org/b/253533 imported/w3c/web-platform-tests/fetch/api/basic/status.h2.any.html [ Pass ]
 webkit.org/b/253533 imported/w3c/web-platform-tests/fetch/api/basic/status.h2.any.worker.html [ Pass ]
 webkit.org/b/253533 imported/w3c/web-platform-tests/xhr/status.h2.window.html [ Pass ]
+
+webkit.org/b/254770 http/tests/misc/heic-accept-header.html [ Pass Crash ]
