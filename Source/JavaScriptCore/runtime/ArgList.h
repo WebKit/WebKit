@@ -28,20 +28,20 @@
 
 namespace JSC {
 
-class alignas(alignof(EncodedJSValue)) MarkedArgumentBufferBase : public RecordOverflow {
-    WTF_MAKE_NONCOPYABLE(MarkedArgumentBufferBase);
-    WTF_MAKE_NONMOVABLE(MarkedArgumentBufferBase);
+class alignas(alignof(EncodedJSValue)) MarkedVectorBase {
+    WTF_MAKE_NONCOPYABLE(MarkedVectorBase);
+    WTF_MAKE_NONMOVABLE(MarkedVectorBase);
     WTF_FORBID_HEAP_ALLOCATION;
     friend class VM;
     friend class ArgList;
 
+protected:
+    enum class Status { Success, Overflowed };
 public:
-    using Base = RecordOverflow;
-    typedef HashSet<MarkedArgumentBufferBase*> ListSet;
+    typedef HashSet<MarkedVectorBase*> ListSet;
 
-    ~MarkedArgumentBufferBase()
+    ~MarkedVectorBase()
     {
-        ASSERT(!m_needsOverflowCheck);
         if (m_markSet)
             m_markSet->remove(this);
 
@@ -52,92 +52,20 @@ public:
     size_t size() const { return m_size; }
     bool isEmpty() const { return !m_size; }
 
-    JSValue at(int i) const
-    {
-        if (i >= m_size)
-            return jsUndefined();
-
-        return JSValue::decode(slotFor(i));
-    }
-
-    void clear()
-    {
-        ASSERT(!m_needsOverflowCheck);
-        clearOverflow();
-        m_size = 0;
-    }
-
-    enum OverflowCheckAction {
-        CrashOnOverflow,
-        WillCheckLater
-    };
-    template<OverflowCheckAction action>
-    void appendWithAction(JSValue v)
-    {
-        ASSERT(m_size <= m_capacity);
-        if (m_size == m_capacity || mallocBase()) {
-            slowAppend(v);
-            if (action == CrashOnOverflow)
-                RELEASE_ASSERT(!hasOverflowed());
-            return;
-        }
-
-        slotFor(m_size) = JSValue::encode(v);
-        ++m_size;
-    }
-    void append(JSValue v) { appendWithAction<WillCheckLater>(v); }
-    void appendWithCrashOnOverflow(JSValue v) { appendWithAction<CrashOnOverflow>(v); }
-
     void removeLast()
     { 
         ASSERT(m_size);
         m_size--;
     }
 
-    JSValue last() 
-    {
-        ASSERT(m_size);
-        return JSValue::decode(slotFor(m_size - 1));
-    }
-
-    JSValue takeLast()
-    {
-        JSValue result = last();
-        removeLast();
-        return result;
-    }
-        
     template<typename Visitor> static void markLists(Visitor&, ListSet&);
 
-    void ensureCapacity(size_t requestedCapacity)
-    {
-        if (requestedCapacity > static_cast<size_t>(m_capacity))
-            slowEnsureCapacity(requestedCapacity);
-    }
-
-    bool hasOverflowed()
-    {
-        clearNeedsOverflowCheck();
-        return Base::hasOverflowed();
-    }
-
     void overflowCheckNotNeeded() { clearNeedsOverflowCheck(); }
-
-    template<typename Functor>
-    void fill(size_t count, const Functor& func)
-    {
-        ASSERT(!m_size);
-        ensureCapacity(count);
-        if (Base::hasOverflowed())
-            return;
-        m_size = count;
-        func(reinterpret_cast<JSValue*>(&slotFor(0)));
-    }
 
 protected:
     // Constructor for a read-write list, to which you may append values.
     // FIXME: Remove all clients of this API, then remove this API.
-    MarkedArgumentBufferBase(size_t capacity)
+    MarkedVectorBase(size_t capacity)
         : m_size(0)
         , m_capacity(capacity)
         , m_buffer(inlineBuffer())
@@ -147,17 +75,16 @@ protected:
 
     EncodedJSValue* inlineBuffer()
     {
-        return bitwise_cast<EncodedJSValue*>(bitwise_cast<uint8_t*>(this) + sizeof(MarkedArgumentBufferBase));
+        return bitwise_cast<EncodedJSValue*>(bitwise_cast<uint8_t*>(this) + sizeof(MarkedVectorBase));
     }
 
-private:
-    void expandCapacity();
-    void expandCapacity(int newCapacity);
-    void slowEnsureCapacity(size_t requestedCapacity);
+    Status expandCapacity();
+    Status expandCapacity(int newCapacity);
+    Status slowEnsureCapacity(size_t requestedCapacity);
 
     void addMarkSet(JSValue);
 
-    JS_EXPORT_PRIVATE void slowAppend(JSValue);
+    JS_EXPORT_PRIVATE Status slowAppend(JSValue);
 
     EncodedJSValue& slotFor(int item) const
     {
@@ -172,11 +99,14 @@ private:
     }
 
 #if ASSERT_ENABLED
-    void setNeedsOverflowCheck() { m_needsOverflowCheck = true; }
+    void disableNeedsOverflowCheck() { m_overflowCheckEnabled = false; }
+    void setNeedsOverflowCheck() { m_needsOverflowCheck = m_overflowCheckEnabled; }
     void clearNeedsOverflowCheck() { m_needsOverflowCheck = false; }
 
     bool m_needsOverflowCheck { false };
+    bool m_overflowCheckEnabled { true };
 #else
+    void disableNeedsOverflowCheck() { }
     void setNeedsOverflowCheck() { }
     void clearNeedsOverflowCheck() { }
 #endif // ASSERT_ENABLED
@@ -186,22 +116,114 @@ private:
     ListSet* m_markSet;
 };
 
-template<size_t passedInlineCapacity = 8>
-class MarkedArgumentBufferWithSize : public MarkedArgumentBufferBase {
+template<typename T, size_t passedInlineCapacity = 8, class OverflowHandler = CrashOnOverflow>
+class MarkedVector : public OverflowHandler, public MarkedVectorBase  {
 public:
     static constexpr size_t inlineCapacity = passedInlineCapacity;
 
-    MarkedArgumentBufferWithSize()
-        : MarkedArgumentBufferBase(inlineCapacity)
+    MarkedVector()
+        : MarkedVectorBase(inlineCapacity)
     {
         ASSERT(inlineBuffer() == m_inlineBuffer);
+        if constexpr (std::is_same_v<OverflowHandler, CrashOnOverflow>) {
+            // CrashOnOverflow handles overflows immediately. So, we do not
+            // need to check for it after.
+            disableNeedsOverflowCheck();
+        }
+    }
+
+    auto at(int i) const -> decltype(auto)
+    {
+        if constexpr (std::is_same_v<T, JSValue>) {
+            if (i >= m_size)
+                return jsUndefined();
+            return JSValue::decode(slotFor(i));
+        } else {
+            if (i >= m_size)
+                return static_cast<T>(nullptr);
+            return jsCast<T>(JSValue::decode(slotFor(i)).asCell());
+        }
+    }
+
+    void clear()
+    {
+        ASSERT(!m_needsOverflowCheck);
+        OverflowHandler::clearOverflow();
+        m_size = 0;
+    }
+
+    void append(T v)
+    {
+        ASSERT(m_size <= m_capacity);
+        if (m_size == m_capacity || mallocBase()) {
+            if (slowAppend(v) == Status::Overflowed)
+                this->overflowed();
+            return;
+        }
+
+        slotFor(m_size) = JSValue::encode(v);
+        ++m_size;
+    }
+
+    void appendWithCrashOnOverflow(T v)
+    {
+        append(v);
+        if constexpr (!std::is_same<OverflowHandler, CrashOnOverflow>::value)
+            RELEASE_ASSERT(!this->hasOverflowed());
+    }
+
+    auto last() const -> decltype(auto)
+    {
+        if constexpr (std::is_same_v<T, JSValue>) {
+            ASSERT(m_size);
+            return JSValue::decode(slotFor(m_size - 1));
+        } else {
+            ASSERT(m_size);
+            return jsCast<T>(JSValue::decode(slotFor(m_size - 1)).asCell());
+        }
+    }
+
+    JSValue takeLast()
+    {
+        JSValue result = last();
+        removeLast();
+        return result;
+    }
+
+    void ensureCapacity(size_t requestedCapacity)
+    {
+        if (requestedCapacity > static_cast<size_t>(m_capacity)) {
+            if (slowEnsureCapacity(requestedCapacity) == Status::Overflowed)
+                this->overflowed();
+        }
+    }
+
+    bool hasOverflowed()
+    {
+        clearNeedsOverflowCheck();
+        return OverflowHandler::hasOverflowed();
+    }
+
+    template<typename Functor>
+    void fill(size_t count, const Functor& func)
+    {
+        ASSERT(!m_size);
+        ensureCapacity(count);
+        if (OverflowHandler::hasOverflowed())
+            return;
+        m_size = count;
+        func(reinterpret_cast<JSValue*>(&slotFor(0)));
     }
 
 private:
     EncodedJSValue m_inlineBuffer[inlineCapacity] { };
 };
 
-using MarkedArgumentBuffer = MarkedArgumentBufferWithSize<>;
+template<size_t passedInlineCapacity>
+class MarkedArgumentBufferWithSize : public MarkedVector<JSValue, passedInlineCapacity, RecordOverflow> {
+};
+
+using MarkedArgumentBuffer = MarkedVector<JSValue, 8, RecordOverflow>;
 
 class ArgList {
     WTF_MAKE_FAST_ALLOCATED;
