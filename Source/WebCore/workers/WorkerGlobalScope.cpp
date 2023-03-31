@@ -412,7 +412,7 @@ ExceptionOr<void> WorkerGlobalScope::importScripts(const FixedVector<String>& ur
         WeakPtr<ScriptBufferSourceProvider> sourceProvider;
         {
             NakedPtr<JSC::Exception> exception;
-            ScriptSourceCode sourceCode(scriptLoader->script(), URL(scriptLoader->responseURL()));
+            ScriptSourceCode sourceCode(scriptLoader->script(), URL(scriptLoader->responseURL()), scriptLoader->isRedirected() ? URL(scriptLoader->url()) : URL());
             sourceProvider = static_cast<ScriptBufferSourceProvider&>(sourceCode.provider());
             script()->evaluate(sourceCode, exception);
             if (exception) {
