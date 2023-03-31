@@ -77,8 +77,10 @@ public:
     WTF_EXPORT_PRIVATE static URL fileURLWithFileSystemPath(StringView);
 
     WTF_EXPORT_PRIVATE String strippedForUseAsReferrer() const;
-
     WTF_EXPORT_PRIVATE String strippedForUseAsReferrerWithExplicitPort() const;
+
+    // Similar to strippedForUseAsReferrer except we also remove the query component.
+    WTF_EXPORT_PRIVATE String strippedForUseAsReport() const;
 
     // Makes a deep copy. Helpful only if you need to use a URL on another
     // thread. Since the underlying StringImpl objects are immutable, there's
