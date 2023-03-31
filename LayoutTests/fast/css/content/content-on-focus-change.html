@@ -1,0 +1,21 @@
+<style>
+.class2:focus-within { display: contents; }
+</style>
+<script>
+if(window.testRunner)
+    testRunner.dumpAsText();
+
+function main() {
+    input.setSelectionRange(0,31,"forward");
+}
+function f1() {
+    var input = document.getElementById("input");
+    document.execCommand("justifyRight",false,null);
+    a.text = "This test passes if it doesn't crash.";
+    input.type = "checkbox";
+}
+</script>
+<body onload="main()">
+<a id="a" onfocusin="f1()">
+<span class="class2">
+<input id="input">
