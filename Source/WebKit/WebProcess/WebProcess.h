@@ -70,6 +70,10 @@
 #include <wtf/MachSendRight.h>
 #endif
 
+#if PLATFORM(GTK) && USE(EGL)
+#include <WebCore/PlatformDisplay.h>
+#endif
+
 #if PLATFORM(WAYLAND)
 #include <WebCore/PlatformDisplayLibWPE.h>
 #endif
@@ -707,7 +711,7 @@ private:
 
     WeakHashMap<WebCore::UserGestureToken, uint64_t> m_userGestureTokens;
 
-#if PLATFORM(WAYLAND)
+#if PLATFORM(GTK) && USE(EGL)
     std::unique_ptr<WebCore::PlatformDisplay> m_displayForCompositing;
 #endif
 
