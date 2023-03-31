@@ -27,6 +27,8 @@
 
 #import "Test.h"
 #import <WebCore/IOSurface.h>
+#import <WebCore/IOSurfacePool.h>
+#import <WebCore/RenderingMode.h>
 #import <wtf/MachSendRight.h>
 
 namespace TestWebKitAPI {
@@ -56,6 +58,42 @@ TEST(IOSurfaceTest, CreatePlatformContext)
     EXPECT_FALSE(s1->isInUse());
     c2 = nullptr;
     EXPECT_FALSE(s1->isInUse());
+}
+
+TEST(IOSurfaceTest, IOSurfaceNames)
+{
+    {
+        auto purpose = WebCore::RenderingPurpose::DOM;
+        auto s = WebCore::IOSurface::create(nullptr, { 5, 5 }, WebCore::DestinationColorSpace::SRGB(), WebCore::IOSurface::nameForRenderingPurpose(purpose));
+        NSString *expected = @"WebKit DOM";
+
+        EXPECT_EQ(WebCore::IOSurface::Name::DOM, s->name());
+        EXPECT_STREQ([expected UTF8String], [(NSString *)IOSurfaceCopyValue(s->surface(), kIOSurfaceName) UTF8String]);
+    }
+    {
+
+        auto purpose = WebCore::RenderingPurpose::Snapshot;
+        auto s = WebCore::IOSurface::create(nullptr, { 5, 5 }, WebCore::DestinationColorSpace::SRGB(), WebCore::IOSurface::nameForRenderingPurpose(purpose));
+        NSString *expected = @"WKWebView Snapshot";
+
+        EXPECT_EQ(WebCore::IOSurface::Name::Snapshot, s->name());
+        EXPECT_STREQ([expected UTF8String], [(NSString *)IOSurfaceCopyValue(s->surface(), kIOSurfaceName) UTF8String]);
+    }
+}
+
+TEST(IOSurfacePoolTest, IOSurfacePoolNames)
+{
+    auto initialPurpose = WebCore::RenderingPurpose::Unspecified;
+    auto purpose = WebCore::RenderingPurpose::Canvas;
+    auto* pool = &WebCore::IOSurfacePool::sharedPool();
+
+    auto s1 = WebCore::IOSurface::create(nullptr, { 5, 5 }, WebCore::DestinationColorSpace::SRGB(), WebCore::IOSurface::nameForRenderingPurpose(initialPurpose));
+    EXPECT_EQ(WebCore::IOSurface::Name::ImageBufferShareableMapped, s1->name());
+
+    pool->addSurface(WTFMove(s1));
+
+    auto s2 = WebCore::IOSurface::create(pool, { 5, 5 }, WebCore::DestinationColorSpace::SRGB(), WebCore::IOSurface::nameForRenderingPurpose(purpose));
+    EXPECT_EQ(WebCore::IOSurface::Name::Canvas, s2->name());
 }
 
 }

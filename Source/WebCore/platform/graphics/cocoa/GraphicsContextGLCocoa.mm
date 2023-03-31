@@ -600,7 +600,7 @@ void GraphicsContextGLCocoa::setDrawingBufferColorSpace(const DestinationColorSp
 bool GraphicsContextGLCocoa::allocateAndBindDisplayBufferBacking()
 {
     ASSERT(!getInternalFramebufferSize().isEmpty());
-    auto backing = IOSurface::create(nullptr, getInternalFramebufferSize(), m_drawingBufferColorSpace);
+    auto backing = IOSurface::create(nullptr, getInternalFramebufferSize(), m_drawingBufferColorSpace, IOSurface::Name::GraphicsContextGL);
     if (!backing)
         return false;
     if (m_resourceOwner)
