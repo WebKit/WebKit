@@ -76,7 +76,13 @@ WI.FontDetailsPanel = class FontDetailsPanel extends WI.StyleDetailsPanel
                 row.value = this._formatPropertyValue(propertyName, fontProperty.value);
 
                 if (propertyName === "font-style")
-                    row.warningMessage = this.nodeStyles.computedPrimaryFont?.synthesizedOblique ? WI.UIString("Font was synthesized to be oblique because no oblique font is available.", "A warning that is shown in the Font Details Sidebar when the font had to be synthesized to support the provided style.") : null;
+                    if (this.nodeStyles.computedPrimaryFont?.synthesizedOblique)
+                        if (fontProperty.value === "italic")
+                            row.warningMessage = WI.UIString("Font was synthesized to be oblique because no italic font is available.", "A warning that is shown in the Font Details Sidebar when the font had to be synthesized to support the provided style.");
+                        else
+                            row.warningMessage = WI.UIString("Font was synthesized to be oblique because no oblique font is available.", "A warning that is shown in the Font Details Sidebar when the font had to be synthesized to support the provided style.");
+                    else
+                        row.warningMessage = null;
 
                 if (propertyName === "font-weight")
                     row.warningMessage = this.nodeStyles.computedPrimaryFont?.synthesizedBold ? WI.UIString("Font was synthesized to be bold because no bold font is available.", "A warning that is shown in the Font Details Sidebar when the font had to be synthesized to support the provided weight.") : null;

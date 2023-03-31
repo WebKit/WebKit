@@ -739,6 +739,8 @@ localizedStrings["Font @ Font Details Sidebar Title"] = "Font";
 /* A warning that is shown in the Font Details Sidebar when the font had to be synthesized to support the provided weight. */
 localizedStrings["Font was synthesized to be bold because no bold font is available."] = "Font was synthesized to be bold because no bold font is available.";
 /* A warning that is shown in the Font Details Sidebar when the font had to be synthesized to support the provided style. */
+localizedStrings["Font was synthesized to be oblique because no italic font is available."] = "Font was synthesized to be oblique because no italic font is available.";
+/* A warning that is shown in the Font Details Sidebar when the font had to be synthesized to support the provided style. */
 localizedStrings["Font was synthesized to be oblique because no oblique font is available."] = "Font was synthesized to be oblique because no oblique font is available.";
 localizedStrings["Fonts"] = "Fonts";
 localizedStrings["Force print media styles"] = "Force print media styles";
