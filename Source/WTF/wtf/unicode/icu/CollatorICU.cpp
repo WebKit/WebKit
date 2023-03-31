@@ -70,12 +70,7 @@ static inline char* copyShortASCIIString(CFStringRef string)
 
 static char* copyDefaultLocale()
 {
-#if !PLATFORM(IOS_FAMILY)
     return copyShortASCIIString(static_cast<CFStringRef>(CFLocaleGetValue(adoptCF(CFLocaleCopyCurrent()).get(), kCFLocaleCollatorIdentifier)));
-#else
-    // FIXME: Documentation claims the code above would work on iOS 4.0 and later. After test that works, we should remove this and use that instead.
-    return copyShortASCIIString(adoptCF(static_cast<CFStringRef>(CFPreferencesCopyValue(CFSTR("AppleCollationOrder"), kCFPreferencesAnyApplication, kCFPreferencesCurrentUser, kCFPreferencesAnyHost))).get());
-#endif
 }
 
 static inline const char* resolveDefaultLocale(const char* locale)
