@@ -1091,7 +1091,7 @@ public:
 
     bool isProcessingWheelEvents() const;
     void handleNativeWheelEvent(const NativeWebWheelEvent&);
-    void continueWheelEventHandling(const WebWheelEvent&, const WebCore::WheelEventHandlingResult&);
+    void continueWheelEventHandling(const WebWheelEvent&, const WebCore::WheelEventHandlingResult&, std::optional<bool> willStartSwipe);
 
     bool isProcessingKeyboardEvents() const;
     bool handleKeyboardEvent(const NativeWebKeyboardEvent&);
@@ -2630,7 +2630,7 @@ private:
     void setRenderTreeSize(uint64_t treeSize) { m_renderTreeSize = treeSize; }
 
     void handleWheelEvent(const WebWheelEvent&);
-    void sendWheelEvent(const WebWheelEvent&, OptionSet<WebCore::WheelEventProcessingSteps>, WebCore::RectEdges<bool> rubberBandableEdges);
+    void sendWheelEvent(const WebWheelEvent&, OptionSet<WebCore::WheelEventProcessingSteps>, WebCore::RectEdges<bool> rubberBandableEdges, std::optional<bool> willStartSwipe);
 
     void wheelEventHandlingCompleted(bool wasHandled);
 

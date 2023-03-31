@@ -57,6 +57,8 @@ public:
 
     void addNodeWithActiveRubberBanding(WebCore::ScrollingNodeID);
     void removeNodeWithActiveRubberBanding(WebCore::ScrollingNodeID);
+    
+    void setCurrentWheelEventWillStartSwipe(std::optional<bool> value) { m_currentWheelEventWillStartSwipe = value; }
 
     struct NodeAndGestureState {
         WebCore::ScrollingNodeID wheelGestureNode { 0 };
@@ -106,6 +108,8 @@ private:
     NodeAndGestureState m_currentWheelGestureInfo;
 
     bool m_clearScrollLatchingInNextTransaction { false };
+    
+    std::optional<bool> m_currentWheelEventWillStartSwipe;
 };
 
 } // namespace WebKit

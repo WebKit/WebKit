@@ -270,9 +270,9 @@ void RemoteScrollingTreeMac::waitForEventDefaultHandlingCompletion(const Platfor
 
     Locker locker { m_treeLock };
 
-    static constexpr auto maxAllowableMainThreadDelay = 50_ms;
+    static constexpr auto maxAllowableEventProcessingDelay = 50_ms;
     auto startTime = MonotonicTime::now();
-    auto timeoutTime = startTime + maxAllowableMainThreadDelay;
+    auto timeoutTime = startTime + maxAllowableEventProcessingDelay;
 
     bool receivedEvent = m_waitingForBeganEventCondition.waitUntil(m_treeLock, timeoutTime, [&] {
         assertIsHeld(m_treeLock);
