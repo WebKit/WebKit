@@ -1,4 +1,4 @@
 
 PASS Simple CSSOM manipulation of subrules
-FAIL Simple CSSOM manipulation of subrules 1 assert_throws_dom: function "() => { ss.cssRules[0].cssRules[0].insertRule('@font-face {}', 0); }" did not throw
+PASS Simple CSSOM manipulation of subrules 1
 
