@@ -77,7 +77,10 @@ protected:
     void initialize(const RenderStyle* oldStyle, const RenderStyle& newStyle, const Style::ResolutionContext&);
     virtual void syncPropertiesWithBackingAnimation();
     virtual Ref<DeclarativeAnimationEvent> createEvent(const AtomString& eventType, std::optional<Seconds> scheduledTime, double elapsedTime, PseudoId) = 0;
-    void invalidateDOMEvents(Seconds elapsedTime = 0_s);
+
+    enum class ShouldFireEvents : uint8_t { No, YesForCSSAnimation, YesForCSSTransition };
+    ShouldFireEvents shouldFireDOMEvents() const;
+    void invalidateDOMEvents(ShouldFireEvents, Seconds elapsedTime = 0_s);
 
 private:
     void disassociateFromOwningElement();
