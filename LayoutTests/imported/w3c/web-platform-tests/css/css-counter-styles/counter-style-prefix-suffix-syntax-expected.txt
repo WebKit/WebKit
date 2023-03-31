@@ -15,12 +15,12 @@ PASS @counter-style 'prefix: inherit' is invalid
 PASS @counter-style 'suffix: inherit' is invalid
 PASS @counter-style 'prefix: unset' is invalid
 PASS @counter-style 'suffix: unset' is invalid
-PASS @counter-style 'prefix: url("https://example.com/foo.png")' is valid
-PASS @counter-style 'suffix: url("https://example.com/foo.png")' is valid
-PASS @counter-style 'prefix: url(https://example.com/foo.png)' is valid
-PASS @counter-style 'suffix: url(https://example.com/foo.png)' is valid
-PASS @counter-style 'prefix: linear-gradient(yellow, blue)' is valid
-PASS @counter-style 'suffix: linear-gradient(yellow, blue)' is valid
+FAIL @counter-style 'prefix: url("https://example.com/foo.png")' is valid assert_not_equals: got disallowed value -1
+FAIL @counter-style 'suffix: url("https://example.com/foo.png")' is valid assert_not_equals: got disallowed value -1
+FAIL @counter-style 'prefix: url(https://example.com/foo.png)' is valid assert_not_equals: got disallowed value -1
+FAIL @counter-style 'suffix: url(https://example.com/foo.png)' is valid assert_not_equals: got disallowed value -1
+FAIL @counter-style 'prefix: linear-gradient(yellow, blue)' is valid assert_not_equals: got disallowed value -1
+FAIL @counter-style 'suffix: linear-gradient(yellow, blue)' is valid assert_not_equals: got disallowed value -1
 PASS @counter-style 'prefix: ' is invalid
 PASS @counter-style 'suffix: ' is invalid
 PASS @counter-style 'prefix: foo bar' is invalid

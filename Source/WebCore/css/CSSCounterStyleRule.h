@@ -34,38 +34,33 @@
 namespace WebCore {
 class StyleRuleCounterStyle final : public StyleRuleBase {
 public:
-    static Ref<StyleRuleCounterStyle> create(const AtomString&, Ref<StyleProperties>&&, CSSCounterStyleDescriptors&&);
+    static Ref<StyleRuleCounterStyle> create(const AtomString&, CSSCounterStyleDescriptors&&);
     ~StyleRuleCounterStyle();
 
     Ref<StyleRuleCounterStyle> copy() const { RELEASE_ASSERT_NOT_REACHED(); }
 
-    const StyleProperties& properties() const { return m_properties; }
     const CSSCounterStyleDescriptors& descriptors() const { return m_descriptors; };
     CSSCounterStyleDescriptors& mutableDescriptors() { return m_descriptors; };
-    RefPtr<CSSValue> getPropertyCSSValue(CSSPropertyID id) const { return m_properties->getPropertyCSSValue(id); }
-    MutableStyleProperties& mutableProperties();
 
     const AtomString& name() const { return m_name; }
-    String system() const { return m_properties->getPropertyValue(CSSPropertySystem); }
-    String negative() const { return m_properties->getPropertyValue(CSSPropertyNegative); }
-    String prefix() const { return m_properties->getPropertyValue(CSSPropertyPrefix); }
-    String suffix() const { return m_properties->getPropertyValue(CSSPropertySuffix); }
-    String range() const { return m_properties->getPropertyValue(CSSPropertyRange); }
-    String pad() const { return m_properties->getPropertyValue(CSSPropertyPad); }
-    String fallback() const { return m_properties->getPropertyValue(CSSPropertyFallback); }
-    String symbols() const { return m_properties->getPropertyValue(CSSPropertySymbols); }
-    String additiveSymbols() const { return m_properties->getPropertyValue(CSSPropertyAdditiveSymbols); }
-    String speakAs() const { return m_properties->getPropertyValue(CSSPropertySpeakAs); }
+    String system() const { return m_descriptors.systemCSSText(); }
+    String negative() const { return m_descriptors.negativeCSSText(); }
+    String prefix() const { return m_descriptors.prefixCSSText(); }
+    String suffix() const { return m_descriptors.suffixCSSText(); }
+    String range() const { return { m_descriptors.rangesCSSText() }; }
+    String pad() const { return m_descriptors.padCSSText(); }
+    String fallback() const { return m_descriptors.fallbackCSSText(); }
+    String symbols() const { return m_descriptors.symbolsCSSText(); }
+    String additiveSymbols() const { return m_descriptors.additiveSymbolsCSSText(); }
+    String speakAs() const { return { }; }
     bool newValueInvalidOrEqual(CSSPropertyID, const RefPtr<CSSValue> newValue) const;
 
     void setName(const AtomString& name) { m_name = name; }
 
 private:
-    explicit StyleRuleCounterStyle(const AtomString&, Ref<StyleProperties>&&, CSSCounterStyleDescriptors&&);
+    explicit StyleRuleCounterStyle(const AtomString&, CSSCounterStyleDescriptors&&);
 
     AtomString m_name;
-    // FIXME: we can get rid of m_properties and use only m_descriptors for storing the descriptors data (rdar://107267784).
-    Ref<StyleProperties> m_properties;
     CSSCounterStyleDescriptors m_descriptors;
 };
 
@@ -106,6 +101,9 @@ private:
     CSSCounterStyleRule(StyleRuleCounterStyle&, CSSStyleSheet* parent);
 
     bool setterInternal(CSSPropertyID, const String&);
+    RefPtr<CSSValue> cssValueFromText(CSSPropertyID, const String&);
+    const CSSCounterStyleDescriptors& descriptors() const { return m_counterStyleRule->descriptors(); }
+    CSSCounterStyleDescriptors& mutableDescriptors() { return m_counterStyleRule->mutableDescriptors(); }
 
     Ref<StyleRuleCounterStyle> m_counterStyleRule;
 };

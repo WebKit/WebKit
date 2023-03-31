@@ -74,7 +74,7 @@ public:
 
     void setFallbackReference(RefPtr<CSSCounterStyle>&&);
     bool isFallbackUnresolved() { return !m_fallbackReference; }
-    bool isExtendsUnresolved() { return m_isExtendedUnresolved; };
+    bool isExtendsUnresolved() { return !m_descriptors.m_isExtendedResolved; };
     bool isExtendsSystem() const { return system() == CSSCounterStyleDescriptors::System::Extends; }
     void extendAndResolve(const CSSCounterStyle&);
 

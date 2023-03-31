@@ -35,11 +35,18 @@ class StyleProperties;
 
 struct CSSCounterStyleDescriptors {
     using Name = AtomString;
-    using Symbol = String;
     using Ranges = Vector<std::pair<int, int>>;
-    using AdditiveSymbols = Vector<std::pair<Symbol, unsigned>>;
+    using SystemData = std::pair<CSSCounterStyleDescriptors::Name, int>;
     // The keywords that can be used as values for the counter-style `system` descriptor.
     // https://www.w3.org/TR/css-counter-styles-3/#counter-style-system
+    struct Symbol {
+        bool isCustomIdent { false };
+        String text;
+        bool operator==(const Symbol& other) const { return isCustomIdent == other.isCustomIdent && text == other.text; }
+        bool operator!=(const Symbol& other) const { return !(*this == other); }
+        String cssText() const;
+    };
+    using AdditiveSymbols = Vector<std::pair<Symbol, unsigned>>;
     enum class System : uint8_t {
         Cyclic,
         Numeric,
@@ -62,9 +69,10 @@ struct CSSCounterStyleDescriptors {
         Symbol m_padSymbol;
         bool operator==(const Pad& other) const { return m_padMinimumLength == other.m_padMinimumLength && m_padSymbol == other.m_padSymbol; }
         bool operator!=(const Pad& other) const { return !(*this == other); }
+        String cssText() const;
     };
     struct NegativeSymbols {
-        Symbol m_prefix = "-"_s;
+        Symbol m_prefix = { false, "-"_s };
         Symbol m_suffix;
         bool operator==(const NegativeSymbols& other) const { return m_prefix == other.m_prefix && m_suffix == other.m_suffix; }
         bool operator!=(const NegativeSymbols& other) const { return !(*this == other); }
@@ -104,10 +112,11 @@ struct CSSCounterStyleDescriptors {
     bool operator!=(const CSSCounterStyleDescriptors& other) const { return !(*this == other); }
     void setExplicitlySetDescriptors(const StyleProperties&);
     bool isValid() const;
-    bool areSymbolsValidForSystem() const;
+    static bool areSymbolsValidForSystem(System, const Vector<Symbol>&, const AdditiveSymbols&);
 
-    void setName(Name name) { m_name = WTFMove(name); }
+    void setName(Name);
     void setSystem(System);
+    void setSystemData(SystemData);
     void setNegative(NegativeSymbols);
     void setPrefix(Symbol);
     void setSuffix(Symbol);
@@ -116,6 +125,17 @@ struct CSSCounterStyleDescriptors {
     void setFallbackName(Name);
     void setSymbols(Vector<Symbol>);
     void setAdditiveSymbols(AdditiveSymbols);
+
+    String nameCSSText() const;
+    String systemCSSText() const;
+    String negativeCSSText() const;
+    String prefixCSSText() const;
+    String suffixCSSText() const;
+    String rangesCSSText() const;
+    String padCSSText() const;
+    String fallbackCSSText() const;
+    String symbolsCSSText() const;
+    String additiveSymbolsCSSText() const;
 
     Name m_name;
     System m_system;
@@ -131,15 +151,15 @@ struct CSSCounterStyleDescriptors {
     Name m_extendsName;
     int m_fixedSystemFirstSymbolValue;
     OptionSet<ExplicitlySetDescriptors> m_explicitlySetDescriptors;
+    bool m_isExtendedResolved { false };
 };
 
-CSSCounterStyleDescriptors::Ranges translateRangeFromStyleProperties(const StyleProperties&);
-CSSCounterStyleDescriptors::AdditiveSymbols translateAdditiveSymbolsFromStyleProperties(const StyleProperties&);
-CSSCounterStyleDescriptors::Pad translatePadFromStyleProperties(const StyleProperties&);
-CSSCounterStyleDescriptors::NegativeSymbols translateNegativeSymbolsFromStyleProperties(const StyleProperties&);
-Vector<CSSCounterStyleDescriptors::Symbol> translateSymbolsFromStyleProperties(const StyleProperties&);
-CSSCounterStyleDescriptors::Name translateFallbackNameFromStyleProperties(const StyleProperties&);
-CSSCounterStyleDescriptors::Symbol translatePrefixFromStyleProperties(const StyleProperties&);
-CSSCounterStyleDescriptors::Symbol translateSuffixFromStyleProperties(const StyleProperties&);
-std::pair<CSSCounterStyleDescriptors::Name, int> extractDataFromSystemDescriptor(const StyleProperties&, CSSCounterStyleDescriptors::System);
+CSSCounterStyleDescriptors::Ranges rangeFromCSSValue(Ref<CSSValue>);
+CSSCounterStyleDescriptors::AdditiveSymbols additiveSymbolsFromCSSValue(Ref<CSSValue>);
+CSSCounterStyleDescriptors::Pad padFromCSSValue(Ref<CSSValue>);
+CSSCounterStyleDescriptors::NegativeSymbols negativeSymbolsFromCSSValue(Ref<CSSValue>);
+CSSCounterStyleDescriptors::Symbol symbolFromCSSValue(RefPtr<CSSValue>);
+Vector<CSSCounterStyleDescriptors::Symbol> symbolsFromCSSValue(Ref<CSSValue>);
+CSSCounterStyleDescriptors::Name fallbackNameFromCSSValue(Ref<CSSValue>);
+CSSCounterStyleDescriptors::SystemData extractSystemDataFromCSSValue(RefPtr<CSSValue>, CSSCounterStyleDescriptors::System);
 } // namespace WebCore

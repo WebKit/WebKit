@@ -57,7 +57,7 @@ String CSSCounterStyle::counterForSystemCyclic(int value) const
         ASSERT_NOT_REACHED();
         return  { };
     }
-    return symbols().at(static_cast<unsigned>(symbolIndex));
+    return symbols().at(static_cast<unsigned>(symbolIndex)).text;
 }
 
 // https://www.w3.org/TR/css-counter-styles-3/#fixed-system
@@ -68,7 +68,7 @@ String CSSCounterStyle::counterForSystemFixed(int value) const
     unsigned valueOffset = value - firstSymbolValueForFixedSystem();
     if (valueOffset >= symbols().size())
         return { };
-    return symbols().at(valueOffset);
+    return symbols().at(valueOffset).text;
 }
 
 // https://www.w3.org/TR/css-counter-styles-3/#symbolic-system
@@ -87,7 +87,7 @@ String CSSCounterStyle::counterForSystemSymbolic(unsigned value) const
 
     StringBuilder result;
     for (unsigned i = 0; i < frequency; ++i)
-        result.append(symbols().at(symbolIndex));
+        result.append(symbols().at(symbolIndex).text);
     return result.toString();
 }
 
@@ -105,7 +105,7 @@ String CSSCounterStyle::counterForSystemAlphabetic(unsigned value) const
     Vector<String> reversed;
     while (value) {
         value -= 1;
-        reversed.append(symbols().at(value % amountOfSymbols));
+        reversed.append(symbols().at(value % amountOfSymbols).text);
         value = std::floor(value / amountOfSymbols);
     }
     StringBuilder result;
@@ -123,11 +123,11 @@ String CSSCounterStyle::counterForSystemNumeric(unsigned value) const
         return { };
     }
     if (!value)
-        return symbols().at(0);
+        return symbols().at(0).text;
 
     Vector<String> reversed;
     while (value) {
-        reversed.append(symbols().at(value % amountOfSymbols));
+        reversed.append(symbols().at(value % amountOfSymbols).text);
         value = static_cast<unsigned>(std::floor(value / amountOfSymbols));
     }
     StringBuilder result;
@@ -143,7 +143,7 @@ String CSSCounterStyle::counterForSystemAdditive(unsigned value) const
     if (!value) {
         for (auto& [symbol, weight] : additiveSymbols) {
             if (!weight)
-                return symbol;
+                return symbol.text;
         }
         return { };
     }
@@ -158,7 +158,7 @@ String CSSCounterStyle::counterForSystemAdditive(unsigned value) const
         if (!weight || weight > value)
             continue;
         auto repetitions = static_cast<unsigned>(std::floor(value / weight));
-        appendToResult(symbol, repetitions);
+        appendToResult(symbol.text, repetitions);
         value -= weight * repetitions;
         if (!value)
             return result.toString();
@@ -225,7 +225,7 @@ bool CSSCounterStyle::shouldApplyNegativeSymbols(int value) const
 
 void CSSCounterStyle::applyNegativeSymbols(String& text) const
 {
-    text = negative().m_suffix.isEmpty() ? makeString(negative().m_prefix, text) : makeString(negative().m_prefix, text, negative().m_suffix);
+    text = negative().m_suffix.text.isEmpty() ? makeString(negative().m_prefix.text, text) : makeString(negative().m_prefix.text, text, negative().m_suffix.text);
 }
 
 void CSSCounterStyle::applyPadSymbols(String& text, int value) const
@@ -236,11 +236,11 @@ void CSSCounterStyle::applyPadSymbols(String& text, int value) const
 
     int numberOfSymbolsToAdd = static_cast<int>(pad().m_padMinimumLength - WTF::numGraphemeClusters(text));
     if (shouldApplyNegativeSymbols(value))
-        numberOfSymbolsToAdd -= static_cast<int>(WTF::numGraphemeClusters(negative().m_prefix) + WTF::numGraphemeClusters(negative().m_suffix));
+        numberOfSymbolsToAdd -= static_cast<int>(WTF::numGraphemeClusters(negative().m_prefix.text) + WTF::numGraphemeClusters(negative().m_suffix.text));
 
     String padText;
     for (int i = 0; i < numberOfSymbolsToAdd; ++i)
-        padText = makeString(padText, pad().m_padSymbol);
+        padText = makeString(padText, pad().m_padSymbol.text);
     text = makeString(padText, text);
 }
 
@@ -289,7 +289,7 @@ void CSSCounterStyle::setFallbackReference(RefPtr<CSSCounterStyle>&& fallback)
 // The counter's system value is promoted to the value of the counter we are extending.
 void CSSCounterStyle::extendAndResolve(const CSSCounterStyle& extendedCounterStyle)
 {
-    m_isExtendedUnresolved = false;
+    m_descriptors.m_isExtendedResolved = true;
 
     setSystem(extendedCounterStyle.system());
     setFirstSymbolValueForFixedSystem(extendedCounterStyle.firstSymbolValueForFixedSystem());

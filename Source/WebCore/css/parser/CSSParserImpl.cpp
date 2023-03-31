@@ -906,11 +906,10 @@ RefPtr<StyleRuleCounterStyle> CSSParserImpl::consumeCounterStyleRule(CSSParserTo
     }
 
     auto declarations = consumeDeclarationListInNewNestingContext(block, StyleRuleType::CounterStyle);
-    auto properties = createStyleProperties(declarations, m_context.mode);
-    auto descriptors = CSSCounterStyleDescriptors::create(name, properties);
+    auto descriptors = CSSCounterStyleDescriptors::create(name, createStyleProperties(declarations, m_context.mode));
     if (!descriptors.isValid())
         return nullptr;
-    return StyleRuleCounterStyle::create(name, WTFMove(properties), WTFMove(descriptors));
+    return StyleRuleCounterStyle::create(name, WTFMove(descriptors));
 }
 
 RefPtr<StyleRuleLayer> CSSParserImpl::consumeLayerRule(CSSParserTokenRange prelude, std::optional<CSSParserTokenRange> block)
