@@ -2818,7 +2818,7 @@ JSC_DEFINE_JIT_OPERATION(operationFunctionToString, JSString*, (JSGlobalObject* 
     return function->toString(globalObject);
 }
 
-JSC_DEFINE_JIT_OPERATION(operationFunctionBind, JSBoundFunction*, (JSGlobalObject* globalObject, JSObject* target, unsigned boundArgsLength, EncodedJSValue boundThisValue, EncodedJSValue arg0Value, EncodedJSValue arg1Value, EncodedJSValue arg2Value))
+JSC_DEFINE_JIT_OPERATION(operationFunctionBind, JSBoundFunction*, (JSGlobalObject* globalObject, JSObject* target, EncodedJSValue boundThisValue, EncodedJSValue arg0Value, EncodedJSValue arg1Value, EncodedJSValue arg2Value))
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
@@ -2829,6 +2829,11 @@ JSC_DEFINE_JIT_OPERATION(operationFunctionBind, JSBoundFunction*, (JSGlobalObjec
         throwTypeError(globalObject, scope, "|this| is not a function inside Function.prototype.bind"_s);
         return { };
     }
+
+    unsigned boundArgsLength = 0;
+    boundArgsLength += !!(JSValue::decode(arg0Value));
+    boundArgsLength += !!(JSValue::decode(arg1Value));
+    boundArgsLength += !!(JSValue::decode(arg2Value));
 
     JSValue boundThis = JSValue::decode(boundThisValue);
     EncodedJSValue arguments[JSBoundFunction::maxEmbeddedArgs] {
@@ -2871,7 +2876,7 @@ JSC_DEFINE_JIT_OPERATION(operationFunctionBind, JSBoundFunction*, (JSGlobalObjec
     RELEASE_AND_RETURN(scope, JSBoundFunction::create(vm, globalObject, target, boundThis, boundArgs, length, name));
 }
 
-JSC_DEFINE_JIT_OPERATION(operationNewBoundFunction, JSBoundFunction*, (JSGlobalObject* globalObject, JSFunction* function, unsigned boundArgsLength, EncodedJSValue boundThisValue, EncodedJSValue arg0Value, EncodedJSValue arg1Value, EncodedJSValue arg2Value))
+JSC_DEFINE_JIT_OPERATION(operationNewBoundFunction, JSBoundFunction*, (JSGlobalObject* globalObject, JSFunction* function, EncodedJSValue boundThisValue, EncodedJSValue arg0Value, EncodedJSValue arg1Value, EncodedJSValue arg2Value))
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
@@ -2880,6 +2885,10 @@ JSC_DEFINE_JIT_OPERATION(operationNewBoundFunction, JSBoundFunction*, (JSGlobalO
     JSValue arg0 = JSValue::decode(arg0Value);
     JSValue arg1 = JSValue::decode(arg1Value);
     JSValue arg2 = JSValue::decode(arg2Value);
+    unsigned boundArgsLength = 0;
+    boundArgsLength += !!(arg0);
+    boundArgsLength += !!(arg1);
+    boundArgsLength += !!(arg2);
     return JSBoundFunction::createRaw(vm, globalObject, function, boundArgsLength, boundThis, arg0, arg1, arg2);
 }
 

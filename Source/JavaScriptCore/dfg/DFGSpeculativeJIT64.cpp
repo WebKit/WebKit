@@ -6574,12 +6574,10 @@ void SpeculativeJIT::compileFunctionBind(Node* node)
 
     speculateObject(m_graph.child(node, 0), targetGPR);
 
-    unsigned boundArgsLength = node->numberOfBoundArguments();
-
     GPRFlushedCallResult result(this);
     GPRReg resultGPR = result.gpr();
     flushRegisters();
-    callOperation(operationFunctionBind, resultGPR, LinkableConstant::globalObject(*this, node), targetGPR, TrustedImm32(boundArgsLength), boundThisRegs, arg0Regs, arg1Regs, arg2Regs);
+    callOperation(operationFunctionBind, resultGPR, LinkableConstant::globalObject(*this, node), targetGPR, boundThisRegs, arg0Regs, arg1Regs, arg2Regs);
     exceptionCheck();
     cellResult(resultGPR, node);
 }
@@ -6629,7 +6627,7 @@ void SpeculativeJIT::compileNewBoundFunction(Node* node)
     store8(TrustedImm32(static_cast<uint8_t>(TriState::Indeterminate)), Address(resultGPR, JSBoundFunction::offsetOfCanConstruct()));
     mutatorFence(vm());
 
-    addSlowPathGenerator(slowPathCall(slowPath, this, operationNewBoundFunction, resultGPR, LinkableConstant::globalObject(*this, node), targetGPR, TrustedImm32(node->numberOfBoundArguments()), boundThisRegs, arg0Regs, arg1Regs, arg2Regs));
+    addSlowPathGenerator(slowPathCall(slowPath, this, operationNewBoundFunction, resultGPR, LinkableConstant::globalObject(*this, node), targetGPR, boundThisRegs, arg0Regs, arg1Regs, arg2Regs));
     cellResult(resultGPR, node);
 }
 

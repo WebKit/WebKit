@@ -7339,7 +7339,7 @@ IGNORE_CLANG_WARNINGS_END
         LValue callResult = lazySlowPath(
             [=, &vm] (const Vector<Location>& locations) -> RefPtr<LazySlowPath::Generator> {
                 return createLazyCallGenerator(vm, operationNewBoundFunction, locations[0].directGPR(),
-                    CCallHelpers::TrustedImmPtr(globalObject), locations[1].directGPR(), CCallHelpers::TrustedImm32(numberOfBoundArguments),
+                    CCallHelpers::TrustedImmPtr(globalObject), locations[1].directGPR(),
                     locations[2].directGPR(), locations[3].directGPR(), locations[4].directGPR(), locations[5].directGPR());
             },
             target, thisValue, arg0, arg1, arg2);
@@ -9014,8 +9014,7 @@ IGNORE_CLANG_WARNINGS_END
     void compileFunctionBind()
     {
         JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
-        unsigned boundArgsLength = m_node->numberOfBoundArguments();
-        setJSValue(vmCall(pointerType(), operationFunctionBind, weakPointer(globalObject), lowObject(m_graph.child(m_node, 0)), m_out.constInt32(boundArgsLength), lowJSValue(m_graph.child(m_node, 1)), lowJSValue(m_graph.child(m_node, 2)), lowJSValue(m_graph.child(m_node, 3)), lowJSValue(m_graph.child(m_node, 4))));
+        setJSValue(vmCall(pointerType(), operationFunctionBind, weakPointer(globalObject), lowObject(m_graph.child(m_node, 0)), lowJSValue(m_graph.child(m_node, 1)), lowJSValue(m_graph.child(m_node, 2)), lowJSValue(m_graph.child(m_node, 3)), lowJSValue(m_graph.child(m_node, 4))));
     }
 
     void compileToPrimitive()
