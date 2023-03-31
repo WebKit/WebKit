@@ -265,15 +265,15 @@ function test()
     addDocumentResourceTestCase({
         name: "Resource.MIMEType.Document.png",
         expression: `loadDocumentWithURL("/resources/square100.png")`,
-        type: WI.Resource.Type.Document,
+        type: WI.Resource.Type.Image,
         mimeType: mimeTypeForExtension.png,
         synthetic: mimeTypeForExtension.png,
     });
 
     addDocumentResourceTestCase({
-        name: "Resource.MIMEType.Document.txt",
+        name: "Resource.MIMEType.Document.jpg",
         expression: `loadDocumentWithURL("/resources/square20.jpg")`,
-        type: WI.Resource.Type.Document,
+        type: WI.Resource.Type.Image,
         mimeType: mimeTypeForExtension.jpg,
         synthetic: mimeTypeForExtension.jpg,
     });

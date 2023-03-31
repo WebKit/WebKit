@@ -124,13 +124,13 @@ PASS: Resource syntheticMIMEType should be 'text/css'.
 
 -- Running test case: Resource.MIMEType.Document.png
 PASS: Frame MainResource should be created.
-PASS: Resource Type should be 'resource-type-document'.
+PASS: Resource Type should be 'resource-type-image'.
 PASS: Resource mimeType should be 'image/png'.
 PASS: Resource syntheticMIMEType should be 'image/png'.
 
--- Running test case: Resource.MIMEType.Document.txt
+-- Running test case: Resource.MIMEType.Document.jpg
 PASS: Frame MainResource should be created.
-PASS: Resource Type should be 'resource-type-document'.
+PASS: Resource Type should be 'resource-type-image'.
 PASS: Resource mimeType should be 'image/jpeg'.
 PASS: Resource syntheticMIMEType should be 'image/jpeg'.
 
