@@ -3323,6 +3323,7 @@ static void dumpException(GlobalObject* globalObject, JSValue exception)
             printf("%s\n", stackString.utf8().data());
     }
 
+    fflush(stdout);
 #undef CHECK_EXCEPTION
 }
 
