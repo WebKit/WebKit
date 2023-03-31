@@ -318,6 +318,7 @@ public:
     PartialResult WARN_UNUSED_RETURN addI31GetU(ExpressionType ref, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addArrayNew(uint32_t index, ExpressionType size, ExpressionType value, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addArrayNewDefault(uint32_t index, ExpressionType size, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addArrayNewFixed(uint32_t index, Vector<ExpressionType>& args, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addArrayGet(ExtGCOpType arrayGetKind, uint32_t typeIndex, ExpressionType arrayref, ExpressionType index, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addArrayNewData(uint32_t typeIndex, uint32_t dataIndex, ExpressionType size, ExpressionType offset, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addArrayNewElem(uint32_t typeIndex, uint32_t elemSegmentIndex, ExpressionType size, ExpressionType offset, ExpressionType& result);
@@ -329,6 +330,8 @@ public:
     PartialResult WARN_UNUSED_RETURN addStructSet(ExpressionType structReference, const StructType&, uint32_t fieldIndex, ExpressionType value);
     PartialResult WARN_UNUSED_RETURN addRefTest(ExpressionType reference, bool allowNull, int32_t heapType, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addRefCast(ExpressionType reference, bool allowNull, int32_t heapType, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addExternInternalize(ExpressionType reference, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addExternExternalize(ExpressionType reference, ExpressionType& result);
 
     // Basic operators
 #define X(name, opcode, short, idx, ...) \
@@ -1268,6 +1271,11 @@ auto LLIntGenerator::addReturn(const ControlType& data, Stack& returnValues) -> 
         return { };
     }
 
+    // We should materialize locals when return more than one values, since 
+    // it might clobber arguments before use them (see examples in wasm-tuple-return.js).
+    if (returnValues.size() > 1)
+        materializeConstantsAndLocals(returnValues);
+
     // no need to drop keep here, since we have to move anyway
     unifyValuesWithBlock(callInformationForCallee(*data.m_signature->as<FunctionSignature>()), returnValues);
     WasmRet::emit(this);
@@ -1996,7 +2004,7 @@ auto LLIntGenerator::addI31GetU(ExpressionType ref, ExpressionType& result) -> P
 auto LLIntGenerator::addArrayNew(uint32_t index, ExpressionType size, ExpressionType value, ExpressionType& result) -> PartialResult
 {
     result = push();
-    WasmArrayNew::emit(this, result, size, value, index, static_cast<bool>(UseDefaultValue::No));
+    WasmArrayNew::emit(this, result, size, value, index, static_cast<uint8_t>(ArrayGetKind::New));
 
     return { };
 }
@@ -2004,7 +2012,39 @@ auto LLIntGenerator::addArrayNew(uint32_t index, ExpressionType size, Expression
 auto LLIntGenerator::addArrayNewDefault(uint32_t index, ExpressionType size, ExpressionType& result) -> PartialResult
 {
     result = push();
-    WasmArrayNew::emit(this, result, size, ExpressionType(), index, static_cast<bool>(UseDefaultValue::Yes));
+    WasmArrayNew::emit(this, result, size, ExpressionType(), index, static_cast<uint8_t>(ArrayGetKind::NewDefault));
+
+    return { };
+}
+
+auto LLIntGenerator::addArrayNewFixed(uint32_t index, Vector<ExpressionType>& args, ExpressionType& result) -> PartialResult
+{
+    // Special-case the 0-arguments case since the logic below only makes sense with at least one argument
+    if (!args.size()) {
+        result = push();
+        WasmArrayNew::emit(this, result, addConstantWithoutPush(Types::I32, args.size()), ExpressionType(), index, static_cast<uint8_t>(ArrayGetKind::NewFixed));
+        return { };
+    }
+
+    // Allocate stack slots for the arguments
+    m_stackSize += args.size();
+
+    // See the `addStructNew` operation for rationale
+    walkExpressionStack(args, [&](VirtualRegister& arg, VirtualRegister slot) {
+        if (arg == slot)
+            return;
+        WasmMov::emit(this, slot, arg);
+        arg = slot;
+    });
+
+    // Arguments are passed in reverse order (the last arg will be at the highest virtual register index, which
+    // will have the lowest address.)
+    // The implementation of array_new_fixed has to iterate over its arguments in reverse order.
+    result = args[0];
+    WasmArrayNew::emit(this, result, addConstantWithoutPush(Types::I32, args.size()), args.last(), index, static_cast<uint8_t>(ArrayGetKind::NewFixed));
+
+    // "Pop" arguments off stack, leaving the return value
+    m_stackSize -= args.size() - 1;
 
     return { };
 }
@@ -2120,6 +2160,22 @@ auto LLIntGenerator::addRefCast(ExpressionType reference, bool allowNull, int32_
     addCallBuiltin(LLIntBuiltin::RefCast, { reference, addConstantWithoutPush(Types::I32, static_cast<uint32_t>(allowNull)), addConstantWithoutPush(Types::I32, heapType) }, results);
     ASSERT(results.size() == 1);
     result = results.at(0);
+    return { };
+}
+
+auto LLIntGenerator::addExternInternalize(ExpressionType reference, ExpressionType& result) -> PartialResult
+{
+    ResultList results;
+    addCallBuiltin(LLIntBuiltin::ExternInternalize, { reference }, results);
+    ASSERT(results.size() == 1);
+    result = results.at(0);
+    return { };
+}
+
+auto LLIntGenerator::addExternExternalize(ExpressionType reference, ExpressionType& result) -> PartialResult
+{
+    result = push();
+    WasmExternExternalize::emit(this, result, reference);
     return { };
 }
 

@@ -1,0 +1,10 @@
+CONSOLE MESSAGE: SyntaxError: Unexpected token ':'
+
+Harness Error (FAIL), message = SyntaxError: Unexpected token ':'
+
+FAIL javascript: URL that fails to parse due to invalid host assert_equals: Property is undefined immediately after the click expected (undefined) undefined but got (number) 1
+PASS javascript: URL that fails to parse due to invalid host and has a U+0009 in scheme
+FAIL javascript: URL without an opaque path assert_equals: Property is undefined immediately after the click expected (undefined) undefined but got (number) 1
+FAIL javascript: URL containing a JavaScript string split over path and query assert_equals: Property is undefined immediately after the click expected (undefined) undefined but got (string) "https://whatsoever.com/?a=b&c=5&x=y"
+FAIL javascript: URL containing a JavaScript string split over path and query and has a U+000A in scheme assert_equals: Property is undefined immediately after the click expected (undefined) undefined but got (string) "https://whatsoever.com/?a=b&c=5&x=y"
+

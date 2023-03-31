@@ -388,8 +388,11 @@ void WebFullScreenManager::saveScrollPosition()
 
 void WebFullScreenManager::restoreScrollPosition()
 {
-    if (auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->corePage()->mainFrame()))
+    if (auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->corePage()->mainFrame())) {
+        // Make sure overflow: hidden is unapplied from the root element before restoring.
+        localMainFrame->view()->forceLayout();
         localMainFrame->view()->setScrollPosition(m_scrollPosition);
+    }
 }
 
 void WebFullScreenManager::setFullscreenInsets(const WebCore::FloatBoxExtent& insets)

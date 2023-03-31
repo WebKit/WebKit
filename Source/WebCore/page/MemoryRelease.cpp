@@ -49,6 +49,7 @@
 #include "PerformanceLogging.h"
 #include "RenderTheme.h"
 #include "ScrollingThread.h"
+#include "SelectorQuery.h"
 #include "StyleScope.h"
 #include "StyledElement.h"
 #include "TextPainter.h"
@@ -73,10 +74,9 @@ static void releaseNoncriticalMemory(MaintainMemoryCache maintainMemoryCache)
     FontCache::releaseNoncriticalMemoryInAllFontCaches();
 
     GlyphDisplayListCache::singleton().clear();
+    SelectorQueryCache::singleton().clear();
 
     for (auto* document : Document::allDocuments()) {
-        document->clearSelectorQueryCache();
-
         if (auto* renderView = document->renderView())
             LayoutIntegration::LineLayout::releaseCaches(*renderView);
     }

@@ -219,6 +219,7 @@ RefPtr<CSSValueList> consumeJustifyTracks(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeDisplay(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeWillChange(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumeQuotes(CSSParserTokenRange&);
+RefPtr<CSSValue> consumeFontSizeAdjust(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeFontVariantLigatures(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeFontVariantEastAsian(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeFontVariantAlternates(CSSParserTokenRange&);
@@ -318,6 +319,7 @@ RefPtr<CSSValue> consumeDeclarationValue(CSSParserTokenRange&, const CSSParserCo
 // @font-face descriptor consumers:
 
 RefPtr<CSSValue> consumeFontFaceFontFamily(CSSParserTokenRange&);
+bool identMatchesSupportedFontFormat(CSSValueID);
 
 // @font-palette-values descriptor consumers:
 

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>mock-media-source</title>
+    <script src="mock-media-source.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    var source;
+    var sourceBuffer;
+    var buffer;
+
+    if (window.internals)
+        internals.initializeMockMediaSource();
+
+    async function runTest() {
+        findMediaElement();
+
+        source = new MediaSource();
+        run('video.src = URL.createObjectURL(source)');
+        await waitFor(source, 'sourceopen');
+
+        run('sourceBuffer = source.addSourceBuffer("video/mock; codecs=mock")');
+
+        buffer = concatenateSamples([
+            makeAInit(0, [makeATrack(1, 'mock', TRACK_KIND.VIDEO)])
+            , makeASample(0,  0,  1, 1, 1, SAMPLE_FLAG.SYNC, 0)
+            , makeASample(1,  1,  1, 1, 1, SAMPLE_FLAG.NONE, 0)
+            , makeASample(2,  2,  1, 1, 1, SAMPLE_FLAG.NONE, 0)
+            , makeASample(3,  3,  1, 1, 1, SAMPLE_FLAG.NONE, 0)
+            , makeASample(4,  4,  1, 1, 1, SAMPLE_FLAG.SYNC, 0)
+            , makeASample(5,  5,  1, 1, 1, SAMPLE_FLAG.NONE, 0)
+            , makeASample(6,  6,  1, 1, 1, SAMPLE_FLAG.NONE, 0)
+            , makeASample(7,  7,  1, 1, 1, SAMPLE_FLAG.NONE, 0)
+            , makeASample(8,  8,  1, 1, 1, SAMPLE_FLAG.SYNC, 0)
+            , makeASample(9,  9,  1, 1, 1, SAMPLE_FLAG.NONE, 0)
+            , makeASample(10, 10, 1, 1, 1, SAMPLE_FLAG.NONE, 0)
+            , makeAInit(0, [makeATrack(0, 'mock', TRACK_KIND.VIDEO)])
+            , makeASample(11,  11,  1, 1, 0, SAMPLE_FLAG.SYNC, 0)
+            , makeASample(12,  12,  1, 1, 0, SAMPLE_FLAG.NONE, 0)
+            , makeASample(13,  13,  1, 1, 0, SAMPLE_FLAG.NONE, 0)
+            , makeASample(14,  14,  1, 1, 0, SAMPLE_FLAG.NONE, 0)
+            , makeASample(15,  15,  1, 1, 0, SAMPLE_FLAG.SYNC, 0)
+            , makeASample(16,  16,  1, 1, 0, SAMPLE_FLAG.NONE, 0)
+            , makeASample(17,  17,  1, 1, 0, SAMPLE_FLAG.NONE, 0)
+            , makeASample(18,  18,  1, 1, 0, SAMPLE_FLAG.NONE, 0)
+            , makeASample(19,  19,  1, 1, 0, SAMPLE_FLAG.SYNC, 0)
+            , makeASample(20,  20,  1, 1, 0, SAMPLE_FLAG.NONE, 0)
+        ]);
+
+        run('sourceBuffer.appendBuffer(buffer)');
+        await waitFor(sourceBuffer, 'update');
+
+        testExpected("sourceBuffer.buffered.length", 1);
+        testExpected("sourceBuffer.buffered.end(0)", 21);
+
+        endTest();
+    }
+
+    </script>
+</head>
+<body onload="runTest()">
+    <video></video>
+</body>
+</html>

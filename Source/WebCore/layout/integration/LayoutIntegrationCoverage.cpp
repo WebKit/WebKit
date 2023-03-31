@@ -42,6 +42,7 @@
 #include "RenderListItem.h"
 #include "RenderListMarker.h"
 #include "RenderMultiColumnFlow.h"
+#include "RenderSVGBlock.h"
 #include "RenderTable.h"
 #include "RenderTextControl.h"
 #include "RenderVTTCue.h"
@@ -118,9 +119,6 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
         break;
     case AvoidanceReason::MultiColumnFlowIsFloating:
         stream << "column with floating objects";
-        break;
-    case AvoidanceReason::FlowDoesNotEstablishInlineFormattingContext:
-        stream << "flow does not establishes inline formatting context";
         break;
     case AvoidanceReason::ChildBoxIsFloatingOrPositioned:
         stream << "child box is floating or positioned";
@@ -246,8 +244,6 @@ static void printModernLineLayoutCoverage(void)
             }
             continue;
         }
-        if (reasons.contains(AvoidanceReason::FlowDoesNotEstablishInlineFormattingContext))
-            continue;
         ++numberOfUnsupportedLeafBlocks;
         unsupportedTextLength += flowLength;
         for (auto reason : reasons) {
@@ -397,21 +393,13 @@ OptionSet<AvoidanceReason> canUseForLineLayoutWithReason(const RenderBlockFlow& 
     // FIXME: For tests that disable SLL and expect to get CLL.
     if (!DeprecatedGlobalSettings::inlineFormattingContextIntegrationEnabled())
         SET_REASON_AND_RETURN_IF_NEEDED(FeatureIsDisabled, reasons, includeReasons);
-    auto establishesInlineFormattingContext = [&] {
-        if (flow.isRenderView()) {
-            // RenderView initiates a block formatting context.
-            return false;
-        }
-        ASSERT(flow.parent());
-        auto* firstInFlowChild = flow.firstInFlowChild();
-        if (!firstInFlowChild) {
-            // Empty block containers do not initiate inline formatting context.
-            return false;
-        }
-        return firstInFlowChild->isInline() || firstInFlowChild->isInlineBlockOrInlineTable();
-    };
-    if (!establishesInlineFormattingContext())
-        SET_REASON_AND_RETURN_IF_NEEDED(FlowDoesNotEstablishInlineFormattingContext, reasons, includeReasons);
+    if (flow.isRenderView())
+        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNonSupportedChild, reasons, includeReasons);
+    if (!flow.firstChild()) {
+        // Non-SVG code does not call into layoutInlineChildren with no children anymore.
+        ASSERT(is<RenderSVGBlock>(flow));
+        SET_REASON_AND_RETURN_IF_NEEDED(ContentIsSVG, reasons, includeReasons);
+    }
     if (flow.fragmentedFlowState() != RenderObject::NotInsideFragmentedFlow) {
         auto& style = flow.style();
         if (!style.isHorizontalWritingMode())

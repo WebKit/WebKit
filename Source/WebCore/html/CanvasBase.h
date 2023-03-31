@@ -125,7 +125,9 @@ public:
 
     virtual void queueTaskKeepingObjectAlive(TaskSource, Function<void()>&&) = 0;
     virtual void dispatchEvent(Event&) = 0;
-    bool postProcessPixelBuffer(Ref<PixelBuffer>, bool, const HashSet<uint32_t>&) const;
+
+    bool shouldInjectNoiseBeforeReadback() const;
+    bool postProcessPixelBuffer(Ref<PixelBuffer>&&, bool, const HashSet<uint32_t>&) const;
 
 protected:
     explicit CanvasBase(IntSize);

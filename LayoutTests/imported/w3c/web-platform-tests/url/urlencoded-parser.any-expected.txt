@@ -8,6 +8,9 @@ PASS response.formData() with input: ﻿test=﻿
 PASS URLSearchParams constructed with: %EF%BB%BFtest=%EF%BB%BF
 PASS request.formData() with input: %EF%BB%BFtest=%EF%BB%BF
 PASS response.formData() with input: %EF%BB%BFtest=%EF%BB%BF
+PASS URLSearchParams constructed with: %EF%BF%BF=%EF%BF%BF
+PASS request.formData() with input: %EF%BF%BF=%EF%BF%BF
+PASS response.formData() with input: %EF%BF%BF=%EF%BF%BF
 PASS URLSearchParams constructed with: %FE%FF
 PASS request.formData() with input: %FE%FF
 PASS response.formData() with input: %FE%FF

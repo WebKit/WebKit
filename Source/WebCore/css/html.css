@@ -400,7 +400,7 @@ button {
 }
 
 /* Every time a new control is supported in vertical writing mode, it should be removed from here and added in the horizontalFormControls.css rule */
-select, button, meter, progress, input:is([type="button"], [type="submit"], [type="reset"], [type="file"]) {
+select, button, meter, input:is([type="button"], [type="submit"], [type="reset"], [type="file"]) {
     writing-mode: horizontal-tb !important;
 }
 
@@ -1203,8 +1203,8 @@ progress {
     appearance: auto;
     box-sizing: border-box;
     display: inline-block;
-    height: 1em;
-    width: 10em;
+    block-size: 1em;
+    inline-size: 10em;
     vertical-align: -0.2em;
 }
 
@@ -1223,8 +1223,8 @@ progress::-webkit-progress-bar {
 
 progress::-webkit-progress-value {
     background-color: green;
-    height: 100%;
-    width: 50%; /* should be removed later */
+    block-size: 100%;
+    inline-size: 50%; /* should be removed later */
     box-sizing: border-box;
 }
 

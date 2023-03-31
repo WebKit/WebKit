@@ -98,7 +98,7 @@ private:
     bool unify(Type*, Type*) WARN_UNUSED_RETURN;
     bool isBottom(Type*) const;
     std::optional<unsigned> extractInteger(AST::Expression&);
-    Type* chooseOverload(const String&, const WTF::Vector<Type*>&);
+    Type* chooseOverload(const String&, const Vector<Type*>& valueArguments, const Vector<Type*>& typeArguments);
 
     ShaderModule& m_shaderModule;
     Type* m_inferredType { nullptr };
@@ -106,7 +106,7 @@ private:
     TypeStore& m_types;
     Vector<Error> m_errors;
     // FIXME: maybe these should live in the context
-    HashMap<String, WTF::Vector<OverloadCandidate>> m_overloadedOperations;
+    HashMap<String, Vector<OverloadCandidate>> m_overloadedOperations;
 };
 
 TypeChecker::TypeChecker(ShaderModule& shaderModule)
@@ -305,7 +305,7 @@ void TypeChecker::visit(AST::BinaryExpression& binary)
     // FIXME: this needs to resolve overloads, not just unify both types
     auto* leftType = infer(binary.leftExpression());
     auto* rightType = infer(binary.rightExpression());
-    auto* result = chooseOverload(toString(binary.operation()), { leftType, rightType });
+    auto* result = chooseOverload(toString(binary.operation()), { leftType, rightType }, { });
     if (result)
         inferred(result);
     else
@@ -331,26 +331,46 @@ void TypeChecker::visit(AST::CallExpression& call)
         arguments.append(infer(argument));
 
     auto& target = call.target();
-    if (is<AST::NamedTypeName>(target)) {
-        auto& namedTarget = downcast<AST::NamedTypeName>(target);
-        auto* result = chooseOverload(namedTarget.name(), arguments);
+    bool isNamedType = is<AST::NamedTypeName>(target);
+    bool isParameterizedType = is<AST::ParameterizedTypeName>(target);
+    if (isNamedType || isParameterizedType) {
+        Vector<Type*> typeArguments;
+        String targetName = [&]() -> String {
+            if (isNamedType)
+                return downcast<AST::NamedTypeName>(target).name();
+            auto& parameterizedType = downcast<AST::ParameterizedTypeName>(target);
+            typeArguments.append(resolve(parameterizedType.elementType()));
+            return AST::ParameterizedTypeName::baseToString(parameterizedType.base());
+        }();
+        auto* result = chooseOverload(targetName, arguments, typeArguments);
         if (result)
             inferred(result);
         else {
-            StringPrintStream argumentsString;
+            StringPrintStream valueArgumentsStream;
             bool first = true;
             for (auto* argument : arguments) {
                 if (!first)
-                    argumentsString.print(", ");
+                    valueArgumentsStream.print(", ");
                 first = false;
-                argumentsString.print(*argument);
+                valueArgumentsStream.print(*argument);
             }
-            typeError(call.span(), "no matching overload for initializer ", namedTarget.name(), "(", argumentsString.toString(), ")");
+            StringPrintStream typeArgumentsStream;
+            first = true;
+            if (typeArguments.size()) {
+                typeArgumentsStream.print("<");
+                for (auto* typeArgument : typeArguments) {
+                    if (!first)
+                        typeArgumentsStream.print(", ");
+                    first = false;
+                    typeArgumentsStream.print(*typeArgument);
+                }
+                typeArgumentsStream.print(">");
+            }
+            typeError(call.span(), "no matching overload for initializer ", targetName, typeArgumentsStream.toString(), "(", valueArgumentsStream.toString(), ")");
         }
         return;
     }
 
-    // FIXME: add support parameterized type constructors (e.g. vec4<f32>(...))
     // FIXME: add support for user-defined function calls
     auto* result = resolve(target);
     inferred(result);
@@ -513,12 +533,12 @@ void TypeChecker::vectorFieldAccess(const Types::Vector& vector, AST::FieldAcces
     inferred(m_types.constructType(base, vector.element));
 }
 
-Type* TypeChecker::chooseOverload(const String& operation, const WTF::Vector<Type*>& arguments)
+Type* TypeChecker::chooseOverload(const String& operation, const Vector<Type*>& valueArguments, const Vector<Type*>& typeArguments)
 {
     auto it = m_overloadedOperations.find(operation);
     if (it == m_overloadedOperations.end())
         return nullptr;
-    return resolveOverloads(m_types, it->value, arguments);
+    return resolveOverloads(m_types, it->value, valueArguments, typeArguments);
 }
 
 Type* TypeChecker::infer(AST::Expression& expression)

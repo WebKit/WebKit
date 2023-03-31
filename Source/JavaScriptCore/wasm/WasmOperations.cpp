@@ -1015,7 +1015,57 @@ JSC_DEFINE_JIT_OPERATION(operationWasmArrayNewElem, EncodedJSValue, (Instance* i
     CallFrame* callFrame = DECLARE_WASM_CALL_FRAME(instance);
     VM& vm = instance->vm();
     NativeCallFrameTracer tracer(vm, callFrame);
+
     return arrayNewElem(instance, typeIndex, elemSegmentIndex, arraySize, offset);
+}
+
+JSC_DEFINE_JIT_OPERATION(operationWasmArrayNewEmpty, EncodedJSValue, (Instance* instance, uint32_t typeIndex, uint32_t size))
+{
+    CallFrame* callFrame = DECLARE_WASM_CALL_FRAME(instance);
+    VM& vm = instance->vm();
+    NativeCallFrameTracer tracer(vm, callFrame);
+
+    JSGlobalObject* globalObject = instance->globalObject();
+    auto arrayRTT = instance->module().moduleInformation().rtts[typeIndex];
+
+    // Get the element type
+    ASSERT(typeIndex < instance->module().moduleInformation().typeCount());
+    const Wasm::TypeDefinition& arraySignature = instance->module().moduleInformation().typeSignatures[typeIndex]->expand();
+    ASSERT(arraySignature.is<ArrayType>());
+    Wasm::FieldType fieldType = arraySignature.as<ArrayType>()->elementType();
+
+    // Create a zero-initialized array with the right element type and length
+    JSWebAssemblyArray* array = nullptr;
+    switch (fieldType.type.elementSize()) {
+    case sizeof(uint8_t): {
+        FixedVector<uint8_t> v(size);
+        v.fill(0); // Prevent GC from tracing uninitialized array slots
+        array = JSWebAssemblyArray::create(vm, globalObject->webAssemblyArrayStructure(), fieldType, size, WTFMove(v), arrayRTT);
+        break;
+    }
+    case sizeof(uint16_t): {
+        FixedVector<uint16_t> v(size);
+        v.fill(0);
+        array = JSWebAssemblyArray::create(vm, globalObject->webAssemblyArrayStructure(), fieldType, size, WTFMove(v), arrayRTT);
+        break;
+    }
+    case sizeof(uint32_t): {
+        FixedVector<uint32_t> v(size);
+        v.fill(0);
+        array = JSWebAssemblyArray::create(vm, globalObject->webAssemblyArrayStructure(), fieldType, size, WTFMove(v), arrayRTT);
+        break;
+    }
+    case sizeof(uint64_t): {
+        FixedVector<uint64_t> v(size);
+        v.fill(0);
+        array = JSWebAssemblyArray::create(vm, globalObject->webAssemblyArrayStructure(), fieldType, size, WTFMove(v), arrayRTT);
+        break;
+    }
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+
+    return JSValue::encode(array);
 }
 
 JSC_DEFINE_JIT_OPERATION(operationWasmArrayGet, EncodedJSValue, (Instance* instance, uint32_t typeIndex, EncodedJSValue arrayValue, uint32_t index))
@@ -1038,6 +1088,11 @@ JSC_DEFINE_JIT_OPERATION(operationWasmIsSubRTT, bool, (RTT* maybeSubRTT, RTT* ta
 {
     ASSERT(maybeSubRTT && targetRTT);
     return maybeSubRTT->isSubRTT(*targetRTT);
+}
+
+JSC_DEFINE_JIT_OPERATION(operationWasmExternInternalize, EncodedJSValue, (EncodedJSValue reference))
+{
+    return externInternalize(reference);
 }
 
 } } // namespace JSC::Wasm

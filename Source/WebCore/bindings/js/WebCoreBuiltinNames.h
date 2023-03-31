@@ -531,10 +531,12 @@ namespace WebCore {
     macro(flushAlgorithm) \
     macro(focus) \
     macro(frames) \
+    macro(getGlobalObject) \
     macro(getInternalWritableStream) \
     macro(getMatchedCSSRules) \
     macro(getTracks) \
     macro(getUserMedia) \
+    macro(globalObject) \
     macro(gpu) \
     macro(handleEvent) \
     macro(header) \

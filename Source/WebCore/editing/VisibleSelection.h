@@ -60,17 +60,17 @@ public:
     // These functions return the values that were passed in, without the canonicalization done by VisiblePosition.
     // FIXME: When we expand granularity, we canonicalize as a side effect, so expanded values have been made canonical.
     // FIXME: Replace start/range/base/end/firstRange with these, renaming these to the shorter names.
-    Position uncanonicalizedStart() const;
-    Position uncanonicalizedEnd() const;
-    Position anchor() const;
-    Position focus() const;
+    const Position& uncanonicalizedStart() const;
+    const Position& uncanonicalizedEnd() const;
+    const Position& anchor() const { return m_anchor; }
+    const Position& focus() const { return m_focus; }
     WEBCORE_EXPORT std::optional<SimpleRange> range() const;
 
     // FIXME: Rename these to include the word "canonical" or remove.
-    Position base() const { return m_base; }
-    Position extent() const { return m_extent; }
-    Position start() const { return m_start; }
-    Position end() const { return m_end; }
+    const Position& base() const { return m_base; }
+    const Position& extent() const { return m_extent; }
+    const Position& start() const { return m_start; }
+    const Position& end() const { return m_end; }
 
     VisiblePosition visibleStart() const { return VisiblePosition(m_start, isRange() ? Affinity::Downstream : affinity()); }
     VisiblePosition visibleEnd() const { return VisiblePosition(m_end, isRange() ? Affinity::Upstream : affinity()); }

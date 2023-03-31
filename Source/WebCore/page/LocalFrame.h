@@ -368,6 +368,11 @@ inline Document* LocalFrame::document() const
     return m_doc.get();
 }
 
+inline LocalFrameView* Document::view() const
+{
+    return m_frame ? m_frame->view() : nullptr;
+}
+
 WTF::TextStream& operator<<(WTF::TextStream&, const LocalFrame&);
 
 } // namespace WebCore

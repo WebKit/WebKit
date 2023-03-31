@@ -189,12 +189,12 @@ bool Quirks::shouldDisableContentChangeObserver() const
 {
     if (!needsQuirks())
         return false;
-    
+
     auto& topDocument = m_document->topDocument();
-    
+
     auto host = topDocument.url().host();
     auto isYouTube = host.endsWith(".youtube.com"_s) || host == "youtube.com"_s;
-    
+
     if (isYouTube && (topDocument.url().path().startsWithIgnoringASCIICase("/results"_s) || topDocument.url().path().startsWithIgnoringASCIICase("/watch"_s)))
         return true;
 
@@ -1001,7 +1001,7 @@ bool Quirks::needsCanPlayAfterSeekedQuirk() const
     return m_needsCanPlayAfterSeekedQuirk.value();
 }
 
-// wikipedia.org rdar://54856323 
+// wikipedia.org rdar://54856323
 bool Quirks::shouldLayOutAtMinimumWindowWidthWhenIgnoringScalingConstraints() const
 {
     if (!needsQuirks())
@@ -1206,7 +1206,7 @@ Quirks::StorageAccessResult Quirks::triggerOptionalStorageAccessQuirk(Element& e
     static NeverDestroyed<RegistrableDomain> kinjaDomain { kinjaURL };
 
     static NeverDestroyed<RegistrableDomain> youTubeDomain = RegistrableDomain::uncheckedCreateFromRegistrableDomainString("youtube.com"_s);
-    
+
     static NeverDestroyed<String> loginPopupWindowFeatureString = "toolbar=no,location=yes,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,copyhistory=no,width=599,height=600,top=420,left=980.5"_s;
 
     static NeverDestroyed<UserScript> kinjaLoginUserScript { "function triggerLoginForm() { let elements = document.getElementsByClassName('js_header-userbutton'); if (elements && elements[0]) { elements[0].click(); clearInterval(interval); } } let interval = setInterval(triggerLoginForm, 200);"_s, URL(aboutBlankURL()), Vector<String>(), Vector<String>(), UserScriptInjectionTime::DocumentEnd, UserContentInjectedFrames::InjectInTopFrameOnly, WaitForNotificationBeforeInjecting::Yes };
@@ -1310,18 +1310,6 @@ bool Quirks::needsVP9FullRangeFlagQuirk() const
         m_needsVP9FullRangeFlagQuirk = equalLettersIgnoringASCIICase(m_document->url().host(), "www.youtube.com"_s);
 
     return *m_needsVP9FullRangeFlagQuirk;
-}
-
-// youtube.com rdar://66242343
-bool Quirks::needsHDRPixelDepthQuirk() const
-{
-    if (!needsQuirks())
-        return false;
-
-    if (!m_needsHDRPixelDepthQuirk)
-        m_needsHDRPixelDepthQuirk = equalLettersIgnoringASCIICase(m_document->url().host(), "www.youtube.com"_s);
-
-    return *m_needsHDRPixelDepthQuirk;
 }
 
 bool Quirks::requiresUserGestureToPauseInPictureInPicture() const
@@ -1440,13 +1428,13 @@ bool Quirks::allowLayeredFullscreenVideos() const
 {
     if (!needsQuirks())
         return false;
-    
+
     if (!m_allowLayeredFullscreenVideos) {
         auto domain = RegistrableDomain(m_document->topDocument().url());
-        
+
         m_allowLayeredFullscreenVideos = domain == "espn.com"_s;
     }
-    
+
     return *m_allowLayeredFullscreenVideos;
 }
 #endif
@@ -1567,7 +1555,7 @@ bool Quirks::shouldDisableLazyImageLoadingQuirk() const
         return false;
 
     auto* metaElement = m_document->getElementsByTagName("meta"_s)->namedItem("generator"_s);
-    
+
     if (metaElement && metaElement->getAttribute("content"_s) == "Gatsby 4.24.1"_s)
         m_shouldDisableLazyImageLoadingQuirk = true;
 

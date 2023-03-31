@@ -248,16 +248,12 @@ void KeyframeEffectStack::lastStyleChangeEventStyleDidChange(const RenderStyle* 
         effect->lastStyleChangeEventStyleDidChange(previousStyle, currentStyle);
 }
 
-void KeyframeEffectStack::didApplyCascade(const RenderStyle& styleBeforeCascade, const RenderStyle& styleAfterCascade, const HashSet<AnimatableProperty> animatedProperties, const Document& document)
+void KeyframeEffectStack::cascadeDidOverrideProperties(const HashSet<AnimatableProperty>& overriddenProperties, const Document& document)
 {
     HashSet<AnimatableProperty> acceleratedPropertiesOverriddenByCascade;
-    if (styleBeforeCascade != styleAfterCascade) {
-        for (auto animatedProperty : animatedProperties) {
-            if (!CSSPropertyAnimation::animationOfPropertyIsAccelerated(animatedProperty, document.settings()))
-                continue;
-            if (!CSSPropertyAnimation::propertiesEqual(animatedProperty, styleBeforeCascade, styleAfterCascade, document))
-                acceleratedPropertiesOverriddenByCascade.add(animatedProperty);
-        }
+    for (auto animatedProperty : overriddenProperties) {
+        if (CSSPropertyAnimation::animationOfPropertyIsAccelerated(animatedProperty, document.settings()))
+            acceleratedPropertiesOverriddenByCascade.add(animatedProperty);
     }
 
     if (acceleratedPropertiesOverriddenByCascade == m_acceleratedPropertiesOverriddenByCascade)

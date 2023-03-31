@@ -266,14 +266,14 @@ static constexpr OptionSet<ActivityState::Flag> pageInitialActivityState()
     return { ActivityState::IsVisible, ActivityState::IsInWindow };
 }
 
-static Ref<Frame> createMainFrame(Page& page, std::variant<UniqueRef<FrameLoaderClient>, UniqueRef<RemoteFrameClient>>&& client, FrameIdentifier identifier)
+static Ref<Frame> createMainFrame(Page& page, std::variant<UniqueRef<FrameLoaderClient>, PageConfiguration::RemoteMainFrameCreationParameters>&& frameCreationParameter, FrameIdentifier identifier)
 {
-    return switchOn(WTFMove(client), [&] (UniqueRef<FrameLoaderClient>&& localFrameClient) -> Ref<Frame> {
+    return switchOn(WTFMove(frameCreationParameter), [&] (UniqueRef<FrameLoaderClient>&& localFrameClient) -> Ref<Frame> {
         auto localFrame = LocalFrame::createMainFrame(page, WTFMove(localFrameClient), identifier);
         page.addRootFrame(localFrame.get());
         return localFrame;
-    }, [&] (UniqueRef<RemoteFrameClient>&& remoteFrameClient) -> Ref<Frame> {
-        return RemoteFrame::createMainFrame(page, WTFMove(remoteFrameClient), identifier);
+    }, [&] (PageConfiguration::RemoteMainFrameCreationParameters&& remoteMainFrameCreationParameters) -> Ref<Frame> {
+        return RemoteFrame::createMainFrame(page, WTFMove(remoteMainFrameCreationParameters.remoteFrameClient), identifier, remoteMainFrameCreationParameters.remoteProcessIdentifier);
     });
 }
 
@@ -3810,11 +3810,6 @@ ScrollLatchingController& Page::scrollLatchingController()
         m_scrollLatchingController = makeUnique<ScrollLatchingController>();
         
     return *m_scrollLatchingController;
-}
-
-ScrollLatchingController* Page::scrollLatchingControllerIfExists()
-{
-    return m_scrollLatchingController.get();
 }
 #endif // ENABLE(WHEEL_EVENT_LATCHING)
 

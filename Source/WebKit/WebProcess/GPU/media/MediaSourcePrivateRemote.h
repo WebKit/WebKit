@@ -86,6 +86,8 @@ private:
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
     void seekToTime(const MediaTime&);
+    void mediaSourcePrivateShuttingDown(CompletionHandler<void()>&&);
+    bool isGPURunning() const { return !m_shutdown && m_gpuProcessConnection; }
 
     WeakPtr<GPUProcessConnection> m_gpuProcessConnection;
     RemoteMediaSourceIdentifier m_identifier;
@@ -94,6 +96,7 @@ private:
     WeakPtr<WebCore::MediaSourcePrivateClient> m_client;
     Vector<RefPtr<SourceBufferPrivateRemote>> m_sourceBuffers;
     bool m_ended { false };
+    bool m_shutdown { false };
 
 #if !RELEASE_LOG_DISABLED
     const char* logClassName() const override { return "MediaSourcePrivateRemote"; }

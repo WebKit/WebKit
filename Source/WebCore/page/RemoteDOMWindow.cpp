@@ -27,6 +27,7 @@
 #include "RemoteDOMWindow.h"
 
 #include "RemoteFrame.h"
+#include "RemoteFrameClient.h"
 #include <JavaScriptCore/JSCJSValue.h>
 #include <JavaScriptCore/JSCJSValueInlines.h>
 #include <wtf/IsoMallocInlines.h>
@@ -113,13 +114,34 @@ WindowProxy* RemoteDOMWindow::parent() const
     return &m_frame->windowProxy();
 }
 
-void RemoteDOMWindow::postMessage(JSC::JSGlobalObject&, LocalDOMWindow& incumbentWindow, JSC::JSValue message, const String& targetOrigin, Vector<JSC::Strong<JSC::JSObject>>&&)
+ExceptionOr<void> RemoteDOMWindow::postMessage(JSC::JSGlobalObject& lexicalGlobalObject, LocalDOMWindow& incumbentWindow, JSC::JSValue message, const String& targetOrigin, Vector<JSC::Strong<JSC::JSObject>>&& transfer)
 {
-    UNUSED_PARAM(incumbentWindow);
-    UNUSED_PARAM(message);
-    UNUSED_PARAM(targetOrigin);
+    RefPtr sourceDocument = incumbentWindow.document();
+    // Compute the target origin. We need to do this synchronously in order
+    // to generate the SyntaxError exception correctly.
+    std::optional<ExceptionOr<RefPtr<SecurityOrigin>>> targetSecurityOrigin = createTargetOriginForPostMessage(targetOrigin, sourceDocument);
+    if (!targetSecurityOrigin)
+        return { };
+    if (targetSecurityOrigin->hasException())
+        return targetSecurityOrigin->releaseException();
 
-    // FIXME: Implemented this.
+    std::optional<SecurityOriginData> target;
+    if (targetSecurityOrigin->returnValue())
+        target = targetSecurityOrigin->releaseReturnValue()->data();
+
+    Vector<RefPtr<MessagePort>> ports;
+    auto messageData = SerializedScriptValue::create(lexicalGlobalObject, message, WTFMove(transfer), ports, SerializationForStorage::No, SerializationContext::WindowPostMessage);
+    if (messageData.hasException())
+        return messageData.releaseException();
+
+    auto disentangledPorts = MessagePort::disentanglePorts(WTFMove(ports));
+    if (disentangledPorts.hasException())
+        return messageData.releaseException();
+
+    MessageWithMessagePorts messageWithPorts { messageData.releaseReturnValue(), disentangledPorts.releaseReturnValue() };
+    if (auto* remoteFrame = frame())
+        remoteFrame->client().postMessageToRemote(remoteFrame->remoteProcessIdentifier(), remoteFrame->frameID(), target, messageWithPorts);
+    return { };
 }
 
 } // namespace WebCore

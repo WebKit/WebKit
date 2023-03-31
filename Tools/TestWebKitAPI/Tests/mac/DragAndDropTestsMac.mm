@@ -28,6 +28,7 @@
 #import "DragAndDropSimulator.h"
 #import "InstanceMethodSwizzler.h"
 #import "PlatformUtilities.h"
+#import "TestDraggingInfo.h"
 #import <WebCore/PasteboardCustomData.h>
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
@@ -114,6 +115,13 @@ TEST(DragAndDropTests, DragPromisedImageFileIntoFileUpload)
         return [webView stringByEvaluatingJavaScript:@"imageload.textContent"].boolValue;
     }, 2, @"Expected image to finish loading.");
     EXPECT_EQ(1, [webView stringByEvaluatingJavaScript:@"filecount.textContent"].integerValue);
+
+    TestDraggingInfo *draggingInfo = [simulator draggingInfo];
+    NSArray<NSFilePromiseReceiver *> *filePromiseReceivers = [draggingInfo filePromiseReceivers];
+    EXPECT_EQ(1UL, [filePromiseReceivers count]);
+    NSFilePromiseReceiver *filePromiseReceiver = filePromiseReceivers.firstObject;
+    EXPECT_EQ(1UL, [filePromiseReceiver.fileTypes count]);
+    EXPECT_WK_STREQ((__bridge NSString *)kUTTypeGIF, filePromiseReceiver.fileTypes.firstObject);
 }
 
 TEST(DragAndDropTests, ReadURLWhenDroppingPromisedWebLoc)

@@ -1904,13 +1904,7 @@ inline void BuilderCustom::applyValueFontSize(BuilderState& builderState, CSSVal
 inline void BuilderCustom::applyValueFontSizeAdjust(BuilderState& builderState, CSSValue& value)
 {
     auto fontDescription = builderState.fontDescription();
-    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
-    if (primitiveValue.isNumber())
-        fontDescription.setFontSizeAdjust(primitiveValue.floatValue());
-    else {
-        ASSERT(primitiveValue.valueID() == CSSValueNone || CSSPropertyParserHelpers::isSystemFontShorthand(primitiveValue.valueID()));
-        fontDescription.setFontSizeAdjust(std::nullopt);
-    }
+    fontDescription.setFontSizeAdjust(BuilderConverter::convertFontSizeAdjust(builderState, value));
     builderState.setFontDescription(WTFMove(fontDescription));
 }
 

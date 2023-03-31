@@ -66,6 +66,7 @@ public:
     virtual ~SourceBufferPrivateRemote();
 
     void clearMediaSource() { m_mediaSourcePrivate = nullptr; }
+    void disconnect() { m_disconnected = true; }
 
 private:
     SourceBufferPrivateRemote(GPUProcessConnection&, RemoteSourceBufferIdentifier, const MediaSourcePrivateRemote&, const MediaPlayerPrivateRemote&);
@@ -112,7 +113,6 @@ private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
     void sourceBufferPrivateDidReceiveInitializationSegment(InitializationSegmentInfo&&, CompletionHandler<void(WebCore::SourceBufferPrivateClient::ReceiveResult)>&&);
     void sourceBufferPrivateStreamEndedWithDecodeError();
-    void sourceBufferPrivateAppendError(bool decodeError);
     void sourceBufferPrivateAppendComplete(WebCore::SourceBufferPrivateClient::AppendResult, uint64_t totalTrackBufferSizeInBytes, const MediaTime& timestampOffset);
     void sourceBufferPrivateHighestPresentationTimestampChanged(const MediaTime&);
     void sourceBufferPrivateBufferedChanged(WebCore::PlatformTimeRanges&&, CompletionHandler<void()>&&);
@@ -134,6 +134,9 @@ private:
 
     bool m_isActive { false };
     uint64_t m_totalTrackBufferSizeInBytes = { 0 };
+
+    bool isGPURunning() const { return !m_disconnected && m_gpuProcessConnection; }
+    bool m_disconnected { false };
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger.get(); }

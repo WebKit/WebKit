@@ -56,14 +56,13 @@ TEST(SiteIsolation, LoadingCallbacksAndPostMessage)
     "    }, false);"
     "    onload = () => {"
     "        document.getElementById('webkit_frame').contentWindow.postMessage('ping', '*');"
-    "        setTimeout(() => { alert('postMessage failed') }, 1000)"
     "    }"
     "</script>"
     "<iframe id='webkit_frame' src='https://webkit.org/webkit'></iframe>"_s;
 
     auto webkitHTML = "<script>"
     "    window.addEventListener('message', (event) => {"
-    "        parent.window.postMessage('pong', '*')"
+    "        parent.window.postMessage(event.data + 'pong', '*');"
     "    }, false)"
     "</script>"_s;
 
@@ -139,7 +138,232 @@ TEST(SiteIsolation, LoadingCallbacksAndPostMessage)
 
     while (!alert)
         Util::spinRunLoop();
-    EXPECT_WK_STREQ(alert.get(), "postMessage failed"); // FIXME: Hook up postMessage and this should become "parent frame received pong".
+    EXPECT_WK_STREQ(alert.get(), "parent frame received pingpong");
+
+    __block bool done { false };
+    [webView _frames:^(_WKFrameTreeNode *mainFrame) {
+        pid_t mainFramePid = mainFrame._processIdentifier;
+        pid_t childFramePid = mainFrame.childFrames.firstObject._processIdentifier;
+        EXPECT_NE(mainFramePid, 0);
+        EXPECT_NE(childFramePid, 0);
+        EXPECT_NE(mainFramePid, childFramePid);
+        done = true;
+    }];
+    Util::run(&done);
+}
+
+TEST(SiteIsolation, PostMessageWithMessagePorts)
+{
+    auto exampleHTML = "<script>"
+    "    const channel = new MessageChannel();"
+    "    channel.port1.onmessage = function() {"
+    "        alert('parent frame received ' + event.data)"
+    "    };"
+    "    onload = () => {"
+    "        document.getElementById('webkit_frame').contentWindow.postMessage('ping', '*', [channel.port2]);"
+    "    }"
+    "</script>"
+    "<iframe id='webkit_frame' src='https://webkit.org/webkit'></iframe>"_s;
+
+    auto webkitHTML = "<script>"
+    "    window.addEventListener('message', (event) => {"
+    "           event.ports[0].postMessage('got port and message ' + event.data);"
+    "    }, false)"
+    "</script>"_s;
+
+    bool finishedLoading { false };
+    HTTPServer server(HTTPServer::UseCoroutines::Yes, [&](Connection connection) -> Task {
+        while (1) {
+            auto request = co_await connection.awaitableReceiveHTTPRequest();
+            auto path = HTTPServer::parsePath(request);
+            if (path == "/example"_s) {
+                co_await connection.awaitableSend(HTTPResponse(exampleHTML).serialize());
+                continue;
+            }
+            if (path == "/webkit"_s) {
+                co_await connection.awaitableSend(HTTPResponse(webkitHTML).serialize());
+                continue;
+            }
+            EXPECT_FALSE(true);
+        }
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+    navigationDelegate.get().didFinishNavigation = makeBlockPtr([&](WKWebView *, WKNavigation *navigation) {
+        if (navigation._request) {
+            EXPECT_WK_STREQ(navigation._request.URL.absoluteString, "https://example.com/example");
+            finishedLoading = true;
+        }
+    }).get();
+
+    auto configuration = server.httpsProxyConfiguration();
+    enableSiteIsolation(configuration);
+
+    __block RetainPtr<NSString> alert;
+    auto uiDelegate = adoptNS([TestUIDelegate new]);
+    uiDelegate.get().runJavaScriptAlertPanelWithMessage = ^(WKWebView *, NSString *message, WKFrameInfo *, void (^completionHandler)(void)) {
+        alert = message;
+        completionHandler();
+    };
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
+    webView.get().navigationDelegate = navigationDelegate.get();
+    webView.get().UIDelegate = uiDelegate.get();
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    Util::run(&finishedLoading);
+
+    while (!alert)
+        Util::spinRunLoop();
+    EXPECT_WK_STREQ(alert.get(), "parent frame received got port and message ping");
+
+    __block bool done { false };
+    [webView _frames:^(_WKFrameTreeNode *mainFrame) {
+        pid_t mainFramePid = mainFrame._processIdentifier;
+        pid_t childFramePid = mainFrame.childFrames.firstObject._processIdentifier;
+        EXPECT_NE(mainFramePid, 0);
+        EXPECT_NE(childFramePid, 0);
+        EXPECT_NE(mainFramePid, childFramePid);
+        done = true;
+    }];
+    Util::run(&done);
+}
+
+TEST(SiteIsolation, PostMessageWithNotAllowedTargetOrigin)
+{
+    auto exampleHTML = "<script>"
+    "    onload = () => {"
+    "        document.getElementById('webkit_frame').contentWindow.postMessage('ping', 'https://foo.org');"
+    "    }"
+    "</script>"
+    "<iframe id='webkit_frame' src='https://webkit.org/webkit'></iframe>"_s;
+
+    auto webkitHTML = "<script>"
+    "    window.addEventListener('message', (event) => {"
+    "        alert('child frame received ' + event.data)"
+    "    }, false);"
+    "    setTimeout(() => { alert('child did not receive message'); }, 1000);"
+    "</script>"_s;
+
+    bool finishedLoading { false };
+    HTTPServer server(HTTPServer::UseCoroutines::Yes, [&](Connection connection) -> Task {
+        while (1) {
+            auto request = co_await connection.awaitableReceiveHTTPRequest();
+            auto path = HTTPServer::parsePath(request);
+            if (path == "/example"_s) {
+                co_await connection.awaitableSend(HTTPResponse(exampleHTML).serialize());
+                continue;
+            }
+            if (path == "/webkit"_s) {
+                co_await connection.awaitableSend(HTTPResponse(webkitHTML).serialize());
+                continue;
+            }
+            EXPECT_FALSE(true);
+        }
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+    navigationDelegate.get().didFinishNavigation = makeBlockPtr([&](WKWebView *, WKNavigation *navigation) {
+        if (navigation._request) {
+            EXPECT_WK_STREQ(navigation._request.URL.absoluteString, "https://example.com/example");
+            finishedLoading = true;
+        }
+    }).get();
+
+    auto configuration = server.httpsProxyConfiguration();
+    enableSiteIsolation(configuration);
+
+    __block RetainPtr<NSString> alert;
+    auto uiDelegate = adoptNS([TestUIDelegate new]);
+    uiDelegate.get().runJavaScriptAlertPanelWithMessage = ^(WKWebView *, NSString *message, WKFrameInfo *, void (^completionHandler)(void)) {
+        alert = message;
+        completionHandler();
+    };
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
+    webView.get().navigationDelegate = navigationDelegate.get();
+    webView.get().UIDelegate = uiDelegate.get();
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    Util::run(&finishedLoading);
+
+    while (!alert)
+        Util::spinRunLoop();
+    EXPECT_WK_STREQ(alert.get(), "child did not receive message");
+
+    __block bool done { false };
+    [webView _frames:^(_WKFrameTreeNode *mainFrame) {
+        pid_t mainFramePid = mainFrame._processIdentifier;
+        pid_t childFramePid = mainFrame.childFrames.firstObject._processIdentifier;
+        EXPECT_NE(mainFramePid, 0);
+        EXPECT_NE(childFramePid, 0);
+        EXPECT_NE(mainFramePid, childFramePid);
+        done = true;
+    }];
+    Util::run(&done);
+}
+
+TEST(SiteIsolation, PostMessageToIFrameWithOpaqueOrigin)
+{
+    auto exampleHTML = "<script>"
+    "    onload = () => {"
+    "        try {"
+    "           document.getElementById('webkit_frame').contentWindow.postMessage('ping', 'data:');"
+    "        } catch (error) {"
+    "           alert(error);"
+    "        }"
+    "    }"
+    "</script>"
+    "<iframe id='webkit_frame' src='https://webkit.org/webkit'></iframe>"_s;
+
+    auto webkitHTML = "<script>"
+    "    window.addEventListener('message', (event) => {"
+    "        alert('child frame received ' + event.data)"
+    "    }, false);"
+    "</script>"_s;
+
+    bool finishedLoading { false };
+    HTTPServer server(HTTPServer::UseCoroutines::Yes, [&](Connection connection) -> Task {
+        while (1) {
+            auto request = co_await connection.awaitableReceiveHTTPRequest();
+            auto path = HTTPServer::parsePath(request);
+            if (path == "/example"_s) {
+                co_await connection.awaitableSend(HTTPResponse(exampleHTML).serialize());
+                continue;
+            }
+            if (path == "/webkit"_s) {
+                co_await connection.awaitableSend(HTTPResponse(webkitHTML).serialize());
+                continue;
+            }
+            EXPECT_FALSE(true);
+        }
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+    navigationDelegate.get().didFinishNavigation = makeBlockPtr([&](WKWebView *, WKNavigation *navigation) {
+        if (navigation._request) {
+            EXPECT_WK_STREQ(navigation._request.URL.absoluteString, "https://example.com/example");
+            finishedLoading = true;
+        }
+    }).get();
+
+    auto configuration = server.httpsProxyConfiguration();
+    enableSiteIsolation(configuration);
+
+    __block RetainPtr<NSString> alert;
+    auto uiDelegate = adoptNS([TestUIDelegate new]);
+    uiDelegate.get().runJavaScriptAlertPanelWithMessage = ^(WKWebView *, NSString *message, WKFrameInfo *, void (^completionHandler)(void)) {
+        alert = message;
+        completionHandler();
+    };
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
+    webView.get().navigationDelegate = navigationDelegate.get();
+    webView.get().UIDelegate = uiDelegate.get();
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    Util::run(&finishedLoading);
+
+    while (!alert)
+        Util::spinRunLoop();
+    EXPECT_WK_STREQ(alert.get(), "SyntaxError: The string did not match the expected pattern.");
 
     __block bool done { false };
     [webView _frames:^(_WKFrameTreeNode *mainFrame) {

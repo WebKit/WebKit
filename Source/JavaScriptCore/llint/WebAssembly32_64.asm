@@ -1164,3 +1164,8 @@ wasmOp(array_len, WasmArrayLen, macro(ctx)
 .nullArray:
     throwException(NullArrayLen)
 end)
+
+wasmOp(extern_externalize, WasmExternExternalize, macro(ctx)
+    mload2i(ctx, m_reference, t1, t0)
+    return2i(ctx, t1, t0)
+end)

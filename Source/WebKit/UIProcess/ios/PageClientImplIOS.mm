@@ -144,7 +144,13 @@ bool PageClientImpl::isViewVisible()
     
     if ([m_webView _mayAutomaticallyShowVideoPictureInPicture])
         return true;
-    
+
+#if ENABLE(WEBXR) && !USE(OPENXR)
+    auto page = m_webView.get()->_page;
+    if (page && page->xrSystem() && page->xrSystem()->hasActiveSession())
+        return true;
+#endif
+
     return false;
 }
 

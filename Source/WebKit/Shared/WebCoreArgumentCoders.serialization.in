@@ -420,7 +420,6 @@ struct CGAffineTransform {
     Height,
     Width,
     ColorDepth,
-    PixelDepth,
     AvailLeft,
     AvailTop,
     AvailHeight,
@@ -1386,7 +1385,7 @@ enum class WebCore::DiagnosticLoggingDomain : uint8_t {
         , DisplayP3
 #endif
 };
-    
+
 [AdditionalEncoder=StreamConnectionEncoder] class WebCore::PlatformColorSpace {
     WebCore::PlatformColorSpace::Name get();
 };
@@ -1856,7 +1855,7 @@ class WebCore::AuthenticationChallenge {
     unsigned previousFailureCount();
     WebCore::ResourceResponse failureResponse();
     WebCore::ResourceError error();
-    
+
 #if USE(SOUP)
     uint32_t tlsPasswordFlags();
 #endif
@@ -2288,7 +2287,7 @@ struct WebCore::MediaDecodingConfiguration : WebCore::MediaConfiguration {
     WebCore::MediaDecodingType type;
     bool canExposeVP9;
 };
-    
+
 enum class WebCore::ResourceRequestCachePolicy : uint8_t {
     UseProtocolCachePolicy,
     ReloadIgnoringCacheData,
@@ -2340,7 +2339,7 @@ enum class WebCore::ResourceLoadPriority : uint8_t {
     Opaque,
     Opaqueredirect
 };
-    
+
 [Nested] enum class WebCore::ResourceResponseBase::Source : uint8_t {
     Unknown,
     Network,
@@ -2366,7 +2365,7 @@ enum class WebCore::ResourceLoadPriority : uint8_t {
 
     short m_httpStatusCode;
     std::optional<WebCore::CertificateInfo> m_certificateInfo;
-    
+
     WebCore::ResourceResponseBase::Source m_source;
     WebCore::ResourceResponseBase::Type m_type;
     WebCore::ResourceResponseBase::Tainting m_tainting;
@@ -2831,10 +2830,10 @@ enum class WebCore::DOMPasteAccessResponse : uint8_t {
 };
 
 header: <WebCore/DeviceOrientationOrMotionPermissionState.h>
-enum class WebCore::DeviceOrientationOrMotionPermissionState : uint8_t { 
+enum class WebCore::DeviceOrientationOrMotionPermissionState : uint8_t {
     Granted,
     Denied,
-    Prompt 
+    Prompt
 };
 
 header: <WebCore/ExceptionDetails.h>
@@ -2848,10 +2847,10 @@ header: <WebCore/SecurityPolicyViolationEventDisposition.h>
 enum class WebCore::SecurityPolicyViolationEventDisposition : bool
 
 header: <WebCore/FontAttributeChanges.h>
-enum class WebCore::VerticalAlignChange : uint8_t { 
+enum class WebCore::VerticalAlignChange : uint8_t {
     Superscript,
     Baseline,
-    Subscript 
+    Subscript
 };
 
 header: <WebCore/TextGranularity.h>
@@ -4759,7 +4758,7 @@ class WebCore::Region {
     HasWidth,
     HasHeight
 };
-    
+
 [AdditionalEncoder=StreamConnectionEncoder] class WebCore::FilterEffectGeometry {
     WebCore::FloatRect m_boundaries;
     OptionSet<WebCore::FilterEffectGeometry::Flags> m_flags;

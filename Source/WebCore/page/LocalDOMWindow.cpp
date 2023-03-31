@@ -893,43 +893,11 @@ ExceptionOr<Storage*> LocalDOMWindow::localStorage()
     return m_localStorage.get();
 }
 
-ExceptionOr<void> LocalDOMWindow::postMessage(JSC::JSGlobalObject& lexicalGlobalObject, LocalDOMWindow& incumbentWindow, JSC::JSValue messageValue, WindowPostMessageOptions&& options)
+void LocalDOMWindow::processPostMessage(JSC::JSGlobalObject& lexicalGlobalObject, RefPtr<Document>&& sourceDocument, const MessageWithMessagePorts& message, RefPtr<WindowProxy>&& incumbentWindowProxy, RefPtr<SecurityOrigin>&& targetOrigin)
 {
-    if (!isCurrentlyDisplayedInFrame())
-        return { };
-
-    RefPtr sourceDocument = incumbentWindow.document();
-
-    // Compute the target origin.  We need to do this synchronously in order
-    // to generate the SyntaxError exception correctly.
-    RefPtr<SecurityOrigin> target;
-    if (options.targetOrigin == "/"_s) {
-        if (!sourceDocument)
-            return { };
-        target = &sourceDocument->securityOrigin();
-    } else if (options.targetOrigin != "*"_s) {
-        target = SecurityOrigin::createFromString(options.targetOrigin);
-        // It doesn't make sense target a postMessage at an opaque origin
-        // because there's no way to represent an opaque origin in a string.
-        if (target->isOpaque())
-            return Exception { SyntaxError };
-    }
-
-    Vector<RefPtr<MessagePort>> ports;
-    auto messageData = SerializedScriptValue::create(lexicalGlobalObject, messageValue, WTFMove(options.transfer), ports, SerializationForStorage::No, SerializationContext::WindowPostMessage);
-    if (messageData.hasException())
-        return messageData.releaseException();
-
-    auto disentangledPorts = MessagePort::disentanglePorts(WTFMove(ports));
-    if (disentangledPorts.hasException())
-        return disentangledPorts.releaseException();
-
     // Capture the source of the message.  We need to do this synchronously
     // in order to capture the source of the message correctly.
-    if (!sourceDocument)
-        return { };
     auto sourceOrigin = sourceDocument->securityOrigin().toString();
-
     // Capture stack trace only when inspector front-end is loaded as it may be time consuming.
     RefPtr<ScriptCallStack> stackTrace;
     if (InspectorInstrumentation::consoleAgentEnabled(sourceDocument.get()))
@@ -937,13 +905,9 @@ ExceptionOr<void> LocalDOMWindow::postMessage(JSC::JSGlobalObject& lexicalGlobal
 
     auto postMessageIdentifier = InspectorInstrumentation::willPostMessage(*frame());
 
-    MessageWithMessagePorts message { messageData.releaseReturnValue(), disentangledPorts.releaseReturnValue() };
-
-    // Schedule the message.
-    RefPtr<WindowProxy> incumbentWindowProxy = incumbentWindow.frame() ? &incumbentWindow.frame()->windowProxy() : nullptr;
     auto userGestureToForward = UserGestureIndicator::currentUserGesture();
 
-    document()->eventLoop().queueTask(TaskSource::PostedMessageQueue, [this, protectedThis = Ref { *this }, message = WTFMove(message), incumbentWindowProxy = WTFMove(incumbentWindowProxy), sourceOrigin = WTFMove(sourceOrigin), userGestureToForward = WTFMove(userGestureToForward), postMessageIdentifier, stackTrace = WTFMove(stackTrace), targetOrigin = WTFMove(target)]() mutable {
+    document()->eventLoop().queueTask(TaskSource::PostedMessageQueue, [this, protectedThis = Ref { *this }, message = message, incumbentWindowProxy = WTFMove(incumbentWindowProxy), sourceOrigin = WTFMove(sourceOrigin), userGestureToForward = WTFMove(userGestureToForward), postMessageIdentifier, stackTrace = WTFMove(stackTrace), targetOrigin = WTFMove(targetOrigin)]() mutable {
         if (!isCurrentlyDisplayedInFrame())
             return;
 
@@ -979,8 +943,62 @@ ExceptionOr<void> LocalDOMWindow::postMessage(JSC::JSGlobalObject& lexicalGlobal
     });
 
     InspectorInstrumentation::didPostMessage(*frame(), postMessageIdentifier, lexicalGlobalObject);
+}
 
+ExceptionOr<void> LocalDOMWindow::postMessage(JSC::JSGlobalObject& lexicalGlobalObject, LocalDOMWindow& incumbentWindow, JSC::JSValue messageValue, WindowPostMessageOptions&& options)
+{
+    if (!isCurrentlyDisplayedInFrame())
+        return { };
+
+    RefPtr sourceDocument = incumbentWindow.document();
+    if (!sourceDocument)
+        return { };
+
+    // Compute the target origin. We need to do this synchronously in order
+    // to generate the SyntaxError exception correctly.
+    std::optional<ExceptionOr<RefPtr<SecurityOrigin>>> targetSecurityOrigin = createTargetOriginForPostMessage(options.targetOrigin, sourceDocument);
+    if (!targetSecurityOrigin)
+        return { };
+
+    if (targetSecurityOrigin->hasException())
+        return targetSecurityOrigin->releaseException();
+
+    RefPtr<SecurityOrigin> target;
+    if (targetSecurityOrigin->returnValue())
+        target = targetSecurityOrigin->releaseReturnValue();
+
+    Vector<RefPtr<MessagePort>> ports;
+    auto messageData = SerializedScriptValue::create(lexicalGlobalObject, messageValue, WTFMove(options.transfer), ports, SerializationForStorage::No, SerializationContext::WindowPostMessage);
+    if (messageData.hasException())
+        return messageData.releaseException();
+
+    auto disentangledPorts = MessagePort::disentanglePorts(WTFMove(ports));
+    if (disentangledPorts.hasException())
+        return disentangledPorts.releaseException();
+
+    // Schedule the message.
+    RefPtr<WindowProxy> incumbentWindowProxy = incumbentWindow.frame() ? &incumbentWindow.frame()->windowProxy() : nullptr;
+    MessageWithMessagePorts message { messageData.releaseReturnValue(), disentangledPorts.releaseReturnValue() };
+    processPostMessage(lexicalGlobalObject, WTFMove(sourceDocument), message, WTFMove(incumbentWindowProxy), WTFMove(target));
     return { };
+}
+
+void LocalDOMWindow::postMessageFromRemoteFrame(JSC::JSGlobalObject& lexicalGlobalObject, std::optional<WebCore::SecurityOriginData> target, const WebCore::MessageWithMessagePorts& message)
+{
+    RefPtr sourceDocument = document();
+    if (!sourceDocument)
+        return;
+
+    if (!frame())
+        return;
+
+    RefPtr<WindowProxy> incumbentWindowProxy = &frame()->windowProxy();
+
+    RefPtr<SecurityOrigin> targetOrigin;
+    if (target)
+        targetOrigin = target->securityOrigin();
+
+    processPostMessage(lexicalGlobalObject, WTFMove(sourceDocument), message, WTFMove(incumbentWindowProxy), WTFMove(targetOrigin));
 }
 
 DOMSelection* LocalDOMWindow::getSelection()

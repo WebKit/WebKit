@@ -1845,7 +1845,7 @@ private:
             m_formatter.oneByteOp(OP_GROUP2_Ev1, op, dst);
         else {
             m_formatter.oneByteOp(OP_GROUP2_EvIb, op, dst);
-            m_formatter.immediate8(imm);
+            m_formatter.immediate8(imm & 31);
         }
     }
 
@@ -1926,7 +1926,7 @@ private:
             m_formatter.oneByteOp64(OP_GROUP2_Ev1, op, dst);
         else {
             m_formatter.oneByteOp64(OP_GROUP2_EvIb, op, dst);
-            m_formatter.immediate8(imm);
+            m_formatter.immediate8(imm & 63);
         }
     }
 public:

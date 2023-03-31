@@ -107,7 +107,7 @@ function readableStreamPipeTo(stream, sink)
     "use strict";
     @assert(@isReadableStream(stream));
 
-    const reader = new @ReadableStreamDefaultReader(stream);
+    const reader = @acquireReadableStreamDefaultReader(stream);
 
     @getByIdDirectPrivate(reader, "closedPromiseCapability").@promise.@then(() => { }, (e) => { sink.error(e); });
 
@@ -133,7 +133,9 @@ function readableStreamPipeTo(stream, sink)
 
 function acquireReadableStreamDefaultReader(stream)
 {
-    return new @ReadableStreamDefaultReader(stream);
+    const readableStreamGlobalObject = @getByIdDirectPrivate(stream, "globalObject");
+    const readableStreamDefaultReaderConstructor = @getByIdDirectPrivate(readableStreamGlobalObject, "ReadableStreamDefaultReader");
+    return new readableStreamDefaultReaderConstructor(stream);
 }
 
 // FIXME: Replace readableStreamPipeTo by below function.
@@ -389,14 +391,16 @@ function readableStreamTee(stream, shouldClone)
     @assert(@isReadableStream(stream));
     @assert(typeof(shouldClone) === "boolean");
 
-    const reader = new @ReadableStreamDefaultReader(stream);
+    const reader = @acquireReadableStreamDefaultReader(stream);
 
     const teeState = {
-        closedOrErrored: false,
+        stream: stream,
         canceled1: false,
         canceled2: false,
         reason1: @undefined,
         reason2: @undefined,
+        reading: false,
+        readAgain: false,
     };
 
     teeState.cancelPromiseCapability = @newPromiseCapability(@Promise);
@@ -411,15 +415,14 @@ function readableStreamTee(stream, shouldClone)
     @putByIdDirectPrivate(branch2Source, "pull", pullFunction);
     @putByIdDirectPrivate(branch2Source, "cancel", @readableStreamTeeBranch2CancelFunction(teeState, stream));
 
-    const branch1 = new @ReadableStream(branch1Source);
-    const branch2 = new @ReadableStream(branch2Source);
+    const readableStreamGlobalObject = @getByIdDirectPrivate(stream, "globalObject");
+    const readableStreamConstructor = @getByIdDirectPrivate(readableStreamGlobalObject, "ReadableStream");
+    const branch1 = new readableStreamConstructor(branch1Source);
+    const branch2 = new readableStreamConstructor(branch2Source);
 
     @getByIdDirectPrivate(reader, "closedPromiseCapability").@promise.@then(@undefined, function(e) {
-        if (teeState.closedOrErrored)
-            return;
         @readableStreamDefaultControllerError(branch1.@readableStreamController, e);
         @readableStreamDefaultControllerError(branch2.@readableStreamController, e);
-        teeState.closedOrErrored = true;
         if (!teeState.canceled1 || !teeState.canceled2)
             teeState.cancelPromiseCapability.@resolve.@call();
     });
@@ -435,27 +438,57 @@ function readableStreamTeePullFunction(teeState, reader, shouldClone)
 {
     "use strict";
 
-    return function() {
+    const pullAlgorithm = function() {
+        if (teeState.reading) {
+            teeState.readAgain = true;
+            return @Promise.@resolve();
+        }
+        teeState.reading = true;
         @Promise.prototype.@then.@call(@readableStreamDefaultReaderRead(reader), function(result) {
             @assert(@isObject(result));
             @assert(typeof result.done === "boolean");
-            if (result.done && !teeState.closedOrErrored) {
+            if (result.done) {
+                // close steps.
+                teeState.reading = false;
                 if (!teeState.canceled1)
                     @readableStreamDefaultControllerClose(teeState.branch1.@readableStreamController);
                 if (!teeState.canceled2)
                     @readableStreamDefaultControllerClose(teeState.branch2.@readableStreamController);
-                teeState.closedOrErrored = true;
                 if (!teeState.canceled1 || !teeState.canceled2)
                     teeState.cancelPromiseCapability.@resolve.@call();
-            }
-            if (teeState.closedOrErrored)
                 return;
+            }
+            // chunk steps.
+            teeState.readAgain = false;
+            let chunk1 = result.value;
+            let chunk2 = result.value;
+            if (!teeState.canceled2 && shouldClone) {
+                try {
+                    chunk2 = @structuredCloneForStream(result.value);
+                } catch (e) {
+                    @readableStreamDefaultControllerError(teeState.branch1.@readableStreamController, e);
+                    @readableStreamDefaultControllerError(teeState.branch2.@readableStreamController, e);
+                    @readableStreamCancel(teeState.stream, e).@then(teeState.cancelPromiseCapability.@resolve, teeState.cancelPromiseCapability.@reject);
+                    return;
+                }
+            }
             if (!teeState.canceled1)
-                @readableStreamDefaultControllerEnqueue(teeState.branch1.@readableStreamController, result.value);
+                @readableStreamDefaultControllerEnqueue(teeState.branch1.@readableStreamController, chunk1);
             if (!teeState.canceled2)
-                @readableStreamDefaultControllerEnqueue(teeState.branch2.@readableStreamController, shouldClone ? @structuredCloneForStream(result.value) : result.value);
-        }, () => { });
+                @readableStreamDefaultControllerEnqueue(teeState.branch2.@readableStreamController, chunk2);
+            teeState.reading = false
+
+            @Promise.@resolve().@then(() => {
+                if (teeState.readAgain)
+                    pullAlgorithm();
+            });
+        }, () => {
+            // error steps.
+            teeState.reading = false
+        });
+        return @Promise.@resolve();
     }
+    return pullAlgorithm;
 }
 
 function readableStreamTeeBranch1CancelFunction(teeState, stream)

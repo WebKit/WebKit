@@ -429,7 +429,6 @@ public:
     void invalidateAccessKeyCache();
 
     ExceptionOr<SelectorQuery&> selectorQueryForString(const String&);
-    void clearSelectorQueryCache();
 
     void setViewportArguments(const ViewportArguments& viewportArguments) { m_viewportArguments = viewportArguments; }
     WEBCORE_EXPORT ViewportArguments viewportArguments() const;
@@ -622,7 +621,7 @@ public:
     Vector<AtomString> formElementsState() const;
     void setStateForNewFormElements(const Vector<AtomString>&);
 
-    WEBCORE_EXPORT LocalFrameView* view() const; // Can be null.
+    inline LocalFrameView* view() const; // Defined in LocalFrame.h.
     inline Page* page() const; // Defined in Page.h
     const Settings& settings() const { return m_settings.get(); }
     EditingBehavior editingBehavior() const;
@@ -1109,9 +1108,9 @@ public:
     UndoManager& undoManager() const { return m_undoManager.get(); }
 
     // designMode support
-    enum InheritedBool : uint8_t { off = false, on = true, inherit };
-    void setDesignMode(InheritedBool value);
-    bool inDesignMode() const;
+    enum class DesignMode : bool { Off, On };
+    void setDesignMode(DesignMode value);
+    bool inDesignMode() const { return m_designMode == DesignMode::On; }
     WEBCORE_EXPORT String designMode() const;
     WEBCORE_EXPORT void setDesignMode(const String&);
 
@@ -1633,7 +1632,7 @@ public:
     HTMLElement* topmostAutoPopover() const;
 
     void hideAllPopoversUntil(Element*, FocusPreviousElement, FireEvents);
-    void handlePopoverLightDismiss(PointerEvent&);
+    void handlePopoverLightDismiss(const PointerEvent&, Node&);
 
 #if ENABLE(ATTACHMENT_ELEMENT)
     void registerAttachmentIdentifier(const String&, const HTMLImageElement&);
@@ -2056,8 +2055,6 @@ private:
 
     std::unique_ptr<ConstantPropertyMap> m_constantPropertyMap;
 
-    std::unique_ptr<SelectorQueryCache> m_selectorQueryCache;
-
     RenderPtr<RenderView> m_renderView;
     std::unique_ptr<RenderStyle> m_initialContainingBlockStyle;
 
@@ -2273,7 +2270,7 @@ private:
 
     TextDirection m_documentElementTextDirection;
 
-    InheritedBool m_designMode { inherit };
+    DesignMode m_designMode { DesignMode::Off };
     BackForwardCacheState m_backForwardCacheState { NotInBackForwardCache };
     ReadyState m_readyState { Complete };
 

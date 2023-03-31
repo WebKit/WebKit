@@ -46,6 +46,8 @@ async function startSlowSwipeGesture()
     if (!window.eventSender)
         return;
 
+    await UIHelper.ensurePresentationUpdate();
+
     // Similar to uiController.beginBackSwipe(), but with a gap between events to allow
     // for DOM wheel event handlers to fire.
     eventSender.mouseMoveTo(400, 300);

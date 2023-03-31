@@ -43,7 +43,45 @@ namespace WebCore {
 static AtomString serializeANPlusB(const std::pair<int, int>&);
 static bool consumeANPlusB(CSSParserTokenRange&, std::pair<int, int>&);
 
-std::optional<CSSSelectorList> parseCSSSelector(CSSParserTokenRange range, const CSSParserContext& context, StyleSheetContents* styleSheet, CSSParserEnum::IsNestedContext isNestedContext)
+CSSSelectorParserContext::CSSSelectorParserContext(const CSSParserContext& context)
+    : mode(context.mode)
+    , isHTMLDocument(context.isHTMLDocument)
+    , cssNestingEnabled(context.cssNestingEnabled)
+    , focusVisibleEnabled(context.focusVisibleEnabled)
+    , hasPseudoClassEnabled(context.hasPseudoClassEnabled)
+{
+}
+
+CSSSelectorParserContext::CSSSelectorParserContext(const Document& document)
+    : mode(document.inQuirksMode() ? HTMLQuirksMode : HTMLStandardMode)
+    , isHTMLDocument(document.isHTMLDocument())
+    , cssNestingEnabled(document.settings().cssNestingEnabled())
+    , focusVisibleEnabled(document.settings().focusVisibleEnabled())
+    , hasPseudoClassEnabled(document.settings().hasPseudoClassEnabled())
+{
+}
+
+bool CSSSelectorParserContext::operator==(const CSSSelectorParserContext& other) const
+{
+    return mode == other.mode
+        || isHTMLDocument == other.isHTMLDocument
+        || cssNestingEnabled == other.cssNestingEnabled
+        || focusVisibleEnabled == other.focusVisibleEnabled
+        || hasPseudoClassEnabled == other.hasPseudoClassEnabled;
+}
+
+void add(Hasher& hasher, const CSSSelectorParserContext& context)
+{
+    add(hasher,
+        context.mode,
+        context.isHTMLDocument,
+        context.cssNestingEnabled,
+        context.focusVisibleEnabled,
+        context.hasPseudoClassEnabled
+    );
+}
+
+std::optional<CSSSelectorList> parseCSSSelector(CSSParserTokenRange range, const CSSSelectorParserContext& context, StyleSheetContents* styleSheet, CSSParserEnum::IsNestedContext isNestedContext)
 {
     CSSSelectorParser parser(context, styleSheet, isNestedContext);
     range.consumeWhitespace();
@@ -59,7 +97,7 @@ std::optional<CSSSelectorList> parseCSSSelector(CSSParserTokenRange range, const
     return result;
 }
 
-CSSSelectorParser::CSSSelectorParser(const CSSParserContext& context, StyleSheetContents* styleSheet, CSSParserEnum::IsNestedContext isNestedContext)
+CSSSelectorParser::CSSSelectorParser(const CSSSelectorParserContext& context, StyleSheetContents* styleSheet, CSSParserEnum::IsNestedContext isNestedContext)
     : m_context(context)
     , m_styleSheet(styleSheet)
     , m_isNestedContext(isNestedContext)
@@ -157,7 +195,7 @@ CSSSelectorList CSSSelectorParser::consumeForgivingComplexSelectorList(CSSParser
     });
 }
 
-bool CSSSelectorParser::supportsComplexSelector(CSSParserTokenRange range, const CSSParserContext& context, CSSParserEnum::IsNestedContext isNestedContext)
+bool CSSSelectorParser::supportsComplexSelector(CSSParserTokenRange range, const CSSSelectorParserContext& context, CSSParserEnum::IsNestedContext isNestedContext)
 {
     range.consumeWhitespace();
     CSSSelectorParser parser(context, nullptr, isNestedContext);
@@ -1116,7 +1154,7 @@ void CSSSelectorParser::prependTypeSelectorIfNeeded(const AtomString& namespaceP
         compoundSelector.prependTagSelector(tag, determinedPrefix == nullAtom() && determinedElementName == starAtom() && !explicitForHost);
 }
 
-std::unique_ptr<CSSParserSelector> CSSSelectorParser::splitCompoundAtImplicitShadowCrossingCombinator(std::unique_ptr<CSSParserSelector> compoundSelector, const CSSParserContext& context)
+std::unique_ptr<CSSParserSelector> CSSSelectorParser::splitCompoundAtImplicitShadowCrossingCombinator(std::unique_ptr<CSSParserSelector> compoundSelector, const CSSSelectorParserContext& context)
 {
     // The tagHistory is a linked list that stores combinator separated compound selectors
     // from right-to-left. Yet, within a single compound selector, stores the simple selectors

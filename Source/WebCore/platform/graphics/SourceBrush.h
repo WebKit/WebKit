@@ -42,7 +42,8 @@ public:
             template<typename Decoder> static std::optional<LogicalGradient> decode(Decoder&);
         };
 
-        std::variant<LogicalGradient, Ref<Pattern>> brush;
+        using Variant = std::variant<LogicalGradient, Ref<Pattern>>;
+        Variant brush;
     };
 
     SourceBrush() = default;

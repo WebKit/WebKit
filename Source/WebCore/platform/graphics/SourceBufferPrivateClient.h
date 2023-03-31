@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #pragma once
@@ -76,7 +76,6 @@ public:
     };
     virtual void sourceBufferPrivateDidReceiveInitializationSegment(InitializationSegment&&, CompletionHandler<void(ReceiveResult)>&&) = 0;
     virtual void sourceBufferPrivateStreamEndedWithDecodeError() = 0;
-    virtual void sourceBufferPrivateAppendError(bool decodeError) = 0;
     enum class AppendResult : uint8_t {
         Succeeded,
         ReadStreamFailed,
@@ -90,6 +89,7 @@ public:
     virtual void sourceBufferPrivateDidDropSample() = 0;
     virtual void sourceBufferPrivateDidReceiveRenderingError(int64_t errorCode) = 0;
     virtual void sourceBufferPrivateReportExtraMemoryCost(uint64_t) = 0;
+    virtual bool isAsync() const { return false; }
 };
 
 String convertEnumerationToString(SourceBufferPrivateClient::ReceiveResult);

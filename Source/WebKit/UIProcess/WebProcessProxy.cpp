@@ -1327,6 +1327,13 @@ void WebProcessProxy::didDestroyUserGestureToken(uint64_t identifier)
         m_userInitiatedActionByAuthorizationTokenMap.remove(*removed->authorizationToken());
 }
 
+void WebProcessProxy::postMessageToRemote(WebCore::ProcessIdentifier destinationProcessIdentifier, WebCore::FrameIdentifier identifier, std::optional<WebCore::SecurityOriginData> target, const WebCore::MessageWithMessagePorts& message)
+{
+    auto webProcessProxy = processForIdentifier(destinationProcessIdentifier);
+    if (webProcessProxy)
+        webProcessProxy->send(Messages::WebProcess::RemotePostMessage(identifier, target, message), 0);
+}
+
 bool WebProcessProxy::canBeAddedToWebProcessCache() const
 {
     if (isRunningServiceWorkers()) {

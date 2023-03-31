@@ -1878,7 +1878,7 @@ op :array_new,
         size: VirtualRegister,
         value: VirtualRegister,
         typeIndex: unsigned,
-        useDefault: bool,
+        arrayNewKind: uint8_t,
     }
 
 op :array_get,
@@ -1924,6 +1924,12 @@ op :struct_set,
         structReference: VirtualRegister,
         fieldIndex: unsigned,
         value: VirtualRegister,
+    }
+
+op :extern_externalize,
+    args: {
+        dst: VirtualRegister,
+        reference: VirtualRegister,
     }
 
 end_section :Wasm

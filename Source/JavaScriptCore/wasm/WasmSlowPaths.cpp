@@ -425,19 +425,30 @@ WASM_SLOW_PATH_DECL(array_new)
 {
     auto instruction = pc->as<WasmArrayNew>();
     uint32_t size = READ(instruction.m_size).unboxedUInt32();
-    Wasm::UseDefaultValue useDefault = static_cast<Wasm::UseDefaultValue>(instruction.m_useDefault);
+    Wasm::ArrayGetKind kind = static_cast<Wasm::ArrayGetKind>(instruction.m_arrayNewKind);
 
     const Wasm::TypeDefinition& arraySignature = instance->module().moduleInformation().typeSignatures[instruction.m_typeIndex]->expand();
     ASSERT(arraySignature.is<Wasm::ArrayType>());
     Wasm::StorageType elementType = arraySignature.as<Wasm::ArrayType>()->elementType().type;
 
     EncodedJSValue value = 0;
-    if (useDefault == Wasm::UseDefaultValue::Yes) {
+    switch (kind) {
+    case Wasm::ArrayGetKind::New: {
+        value = READ(instruction.m_value).encodedJSValue();
+        break;
+    }
+    case Wasm::ArrayGetKind::NewDefault: {
         if (Wasm::isRefType(elementType))
             value = JSValue::encode(jsNull());
-    } else
-        value = READ(instruction.m_value).encodedJSValue();
-
+        break;
+    }
+    case Wasm::ArrayGetKind::NewFixed: {
+        // In this case, m_value must refer to a possibly-empty array of arguments,
+        // so m_value being constant would be a bug.
+        ASSERT(!instruction.m_value.isConstant());
+        WASM_RETURN(Wasm::arrayNewFixed(instance, instruction.m_typeIndex, size, reinterpret_cast<uint64_t*>(&callFrame->r(instruction.m_value))));
+    }
+    }
     WASM_RETURN(Wasm::arrayNew(instance, instruction.m_typeIndex, size, value));
 }
 
@@ -806,6 +817,11 @@ WASM_SLOW_PATH_DECL(call_builtin)
         if (JSValue::decode(result).isNull())
             WASM_THROW(Wasm::ExceptionType::OutOfBoundsElementSegmentAccess);
         gprStart[0] = static_cast<EncodedJSValue>(result);
+        WASM_END();
+    }
+    case Wasm::LLIntBuiltin::ExternInternalize: {
+        auto reference = takeGPR().encodedJSValue();
+        gprStart[0] = Wasm::externInternalize(reference);
         WASM_END();
     }
     default:

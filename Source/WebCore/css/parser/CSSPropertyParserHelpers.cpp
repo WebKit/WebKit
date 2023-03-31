@@ -4896,6 +4896,27 @@ static std::optional<Vector<FontFamilyRaw>> consumeFontFamilyRaw(CSSParserTokenR
     return list;
 }
 
+RefPtr<CSSValue> consumeFontSizeAdjust(CSSParserTokenRange& range)
+{
+    if (range.peek().id() == CSSValueNone)
+        return consumeIdent(range);
+
+    if (auto value = consumeNumber(range, ValueRange::NonNegative))
+        return value;
+
+    auto metric = consumeIdent<CSSValueExHeight, CSSValueCapHeight, CSSValueChWidth, CSSValueIcWidth, CSSValueIcHeight>(range);
+    if (!metric)
+        return nullptr;
+
+    auto value = consumeNumber(range, ValueRange::NonNegative);
+    if (!value)
+        return nullptr;
+    if (metric->valueID() == CSSValueExHeight)
+        return value;
+
+    return CSSValuePair::create(metric.releaseNonNull(), value.releaseNonNull());
+}
+
 static std::optional<FontSizeRaw> consumeFontSizeRaw(CSSParserTokenRange& range, CSSParserMode parserMode)
 {
     // -webkit-xxx-large is a parse-time alias.
@@ -8174,6 +8195,19 @@ RefPtr<CSSValue> consumeFontFaceFontFamily(CSSParserTokenRange& range)
     // use consumeFamilyName instead, and then patch the @font-face code to
     // not expect a list with a single name in it.
     return CSSValueList::createCommaSeparated(name.releaseNonNull());
+}
+
+bool identMatchesSupportedFontFormat(CSSValueID id)
+{
+    return identMatches<
+        CSSValueCollection,
+        CSSValueEmbeddedOpentype,
+        CSSValueOpentype,
+        CSSValueSvg,
+        CSSValueTruetype,
+        CSSValueWoff,
+        CSSValueWoff2
+    >(id);
 }
 
 // MARK: @font-palette-values

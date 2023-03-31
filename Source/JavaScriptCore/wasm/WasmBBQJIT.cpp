@@ -3597,12 +3597,28 @@ public:
     PartialResult WARN_UNUSED_RETURN addArrayNewDefault(uint32_t, ExpressionType, ExpressionType&) BBQ_STUB
     PartialResult WARN_UNUSED_RETURN addArrayNewData(uint32_t, uint32_t, ExpressionType, ExpressionType, ExpressionType&) BBQ_STUB
     PartialResult WARN_UNUSED_RETURN addArrayNewElem(uint32_t, uint32_t, ExpressionType, ExpressionType, ExpressionType&) BBQ_STUB
+    PartialResult WARN_UNUSED_RETURN addArrayNewFixed(uint32_t, Vector<ExpressionType>&, ExpressionType&) BBQ_STUB
     PartialResult WARN_UNUSED_RETURN addArrayGet(ExtGCOpType, uint32_t, ExpressionType, ExpressionType, ExpressionType&) BBQ_STUB
     PartialResult WARN_UNUSED_RETURN addArraySet(uint32_t, ExpressionType, ExpressionType, ExpressionType) BBQ_STUB
     PartialResult WARN_UNUSED_RETURN addArrayLen(ExpressionType, ExpressionType&) BBQ_STUB
     PartialResult WARN_UNUSED_RETURN addStructNewDefault(uint32_t, ExpressionType&) BBQ_STUB
     PartialResult WARN_UNUSED_RETURN addRefCast(ExpressionType, bool, int32_t, ExpressionType&) BBQ_STUB
     PartialResult WARN_UNUSED_RETURN addRefTest(ExpressionType, bool, int32_t, ExpressionType&) BBQ_STUB
+
+    PartialResult WARN_UNUSED_RETURN addExternInternalize(ExpressionType reference, ExpressionType& result)
+    {
+        Vector<Value, 8> arguments = {
+            reference
+        };
+        emitCCall(&operationWasmExternInternalize, arguments, TypeKind::Anyref, result);
+        return { };
+    }
+
+    PartialResult WARN_UNUSED_RETURN addExternExternalize(ExpressionType reference, ExpressionType& result)
+    {
+        result = reference;
+        return { };
+    }
 
     // Basic operators
     PartialResult WARN_UNUSED_RETURN addSelect(Value condition, Value lhs, Value rhs, Value& result)
@@ -4265,8 +4281,8 @@ public:
                     ? m_jit.branch32(RelationalCondition::Equal, rhsLocation.asGPR(), TrustedImm32(-1))
                     : m_jit.branch64(RelationalCondition::Equal, rhsLocation.asGPR(), TrustedImm64(-1));
                 throwExceptionIf(ExceptionType::IntegerOverflow, isNegativeOne);
-                checkedForNegativeOne = true;
             }
+            checkedForNegativeOne = true;
 
             lhsLocation = Location::fromGPR(wasmScratchGPR);
             emitMoveConst(lhs, lhsLocation);
@@ -4282,6 +4298,14 @@ public:
 
         ScratchScope<1, 0> scratches(*this, lhsLocation, rhsLocation, resultLocation);
         if (isSigned && !IsMod && !checkedForNegativeOne) {
+            // The following code freely clobbers wasmScratchGPR. This would be a bug if either of our operands were
+            // stored in wasmScratchGPR, which is the case if one of our operands is a constant - but in that case,
+            // we should be able to rule out this check based on the value of that constant above.
+            ASSERT(!lhs.isConst());
+            ASSERT(!rhs.isConst());
+            ASSERT(lhsLocation.asGPR() != wasmScratchGPR);
+            ASSERT(rhsLocation.asGPR() != wasmScratchGPR);
+
             if constexpr (is32)
                 m_jit.compare32(RelationalCondition::Equal, rhsLocation.asGPR(), TrustedImm32(-1), wasmScratchGPR);
             else
@@ -4948,7 +4972,7 @@ public:
             ),
             BLOCK(
                 if (rhs.isConst())
-                    m_jit.rotateLeft64(lhsLocation.asGPR(), m_jit.trustedImm32ForShift(Imm32(rhs.asI32())), resultLocation.asGPR());
+                    m_jit.rotateLeft64(lhsLocation.asGPR(), TrustedImm32(rhs.asI32()), resultLocation.asGPR());
                 else {
                     moveShiftAmountIfNecessary(rhsLocation);
                     emitMoveConst(lhs, resultLocation);

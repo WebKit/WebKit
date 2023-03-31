@@ -1914,6 +1914,12 @@ webkit.org/b/244696 [ Debug ] media/modern-media-controls/media-documents/insert
 
 webkit.org/b/213896 imported/w3c/web-platform-tests/css/css-flexbox/overflow-auto-008.html [ Pass Failure ]
 
+webkit.org/b/254630 fast/canvas/offscreen-scaling.html [ Pass Failure ]
+
+webkit.org/b/254707 imported/w3c/web-platform-tests/css/css-backgrounds/background-margin-root.html [ ImageOnlyFailure ]
+
+webkit.org/b/254713 imported/w3c/web-platform-tests/css/css-backgrounds/background-size/background-size-cover-svg.html [ ImageOnlyFailure ]
+
 # ENABLE_INPUT_TYPE_* are not enabled on wk1.
 fast/forms/date
 fast/forms/datetimelocal
@@ -2460,6 +2466,9 @@ http/tests/websocket/tests/hybi/multiple-connections-limit.html [ Skip ]
 
 # Displays blank on WK1
 fullscreen/fullscreen-iframe-navigation.html [ Skip ]
+
+# Timeout on WK1
+fullscreen/fullscreen-restore-scroll-position-overflow-auto.html [ Skip ]
 
 # Timeout testing is not applicable to in-process webgl, only webgl in gpu process.
 fast/canvas/webgl/lose-context-on-timeout-async.html [ Skip ]

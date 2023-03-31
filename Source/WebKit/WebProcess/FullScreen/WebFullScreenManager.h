@@ -71,6 +71,9 @@ public:
     void willExitFullScreen();
     void didExitFullScreen();
 
+    void saveScrollPosition();
+    void restoreScrollPosition();
+
     WebCore::Element* element();
 
     void videoControlsManagerDidChange();
@@ -85,8 +88,6 @@ protected:
     void setAnimatingFullScreen(bool);
     void requestRestoreFullScreen();
     void requestExitFullScreen();
-    void saveScrollPosition();
-    void restoreScrollPosition();
     void setFullscreenInsets(const WebCore::FloatBoxExtent&);
     void setFullscreenAutoHideDuration(Seconds);
     void setFullscreenControlsHidden(bool);
