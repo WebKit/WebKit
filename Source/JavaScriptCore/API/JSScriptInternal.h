@@ -45,11 +45,13 @@ class String;
 
 - (instancetype)init;
 - (unsigned)hash;
-- (const WTF::String&)source;
-- (RefPtr<JSC::CachedBytecode>)cachedBytecode;
-- (JSC::JSSourceCode*)jsSourceCode;
+
+@property (nonatomic, readonly) const WTF::String& source;
+@property (nonatomic, readonly) RefPtr<JSC::CachedBytecode> cachedBytecode;
+
+- (JSC::JSSourceCode*)jsSourceCode NS_RETURNS_INNER_POINTER;
 - (JSC::SourceCode)sourceCode;
-- (BOOL)writeCache:(String&)error;
+- (void)writeCache:(String&)error;
 
 @end
 

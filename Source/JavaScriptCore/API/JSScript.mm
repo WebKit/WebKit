@@ -72,7 +72,7 @@ static bool validateBytecodeCachePath(NSURL* cachePath, NSError** error)
     if (!cachePath)
         return true;
 
-    URL cachePathURL([cachePath absoluteURL]);
+    URL cachePathURL(cachePath.absoluteURL);
     if (!cachePathURL.isLocalFile()) {
         createError([NSString stringWithFormat:@"Cache path `%@` is not a local file", static_cast<NSURL *>(cachePathURL)], error);
         return false;
@@ -128,7 +128,7 @@ static bool validateBytecodeCachePath(NSURL* cachePath, NSError** error)
     if (!validateBytecodeCachePath(cachePath, error))
         return nil;
 
-    URL filePathURL([filePath absoluteURL]);
+    URL filePathURL(filePath.absoluteURL);
     if (!filePathURL.isLocalFile())
         return createError([NSString stringWithFormat:@"File path %@ is not a local file", static_cast<NSURL *>(filePathURL)], error);
 
@@ -157,7 +157,7 @@ static bool validateBytecodeCachePath(NSURL* cachePath, NSError** error)
     if (!m_cachePath)
         return;
 
-    String cacheFilename = [m_cachePath path];
+    String cacheFilename = m_cachePath.get().path;
 
     auto fd = FileSystem::openAndLockFile(cacheFilename, FileSystem::FileOpenMode::Read, {FileSystem::FileLockMode::Exclusive, FileSystem::FileLockMode::Nonblocking});
     if (!FileSystem::isHandleValid(fd))
@@ -172,7 +172,7 @@ static bool validateBytecodeCachePath(NSURL* cachePath, NSError** error)
         return;
 
     const uint8_t* fileData = reinterpret_cast<const uint8_t*>(mappedFile.data());
-    unsigned fileTotalSize = mappedFile.size();
+    size_t fileTotalSize = mappedFile.size();
 
     // Ensure we at least have a SHA1::Digest to read.
     if (fileTotalSize < sizeof(SHA1::Digest)) {
@@ -180,7 +180,7 @@ static bool validateBytecodeCachePath(NSURL* cachePath, NSError** error)
         return;
     }
 
-    unsigned fileDataSize = fileTotalSize - sizeof(SHA1::Digest);
+    size_t fileDataSize = fileTotalSize - sizeof(SHA1::Digest);
 
     SHA1::Digest computedHash;
     SHA1 sha1;
@@ -269,7 +269,7 @@ static bool validateBytecodeCachePath(NSURL* cachePath, NSError** error)
     JSC::JSLockHolder locker(vm);
 
     TextPosition startPosition { };
-    String filename = String { [[self sourceURL] absoluteString] };
+    String filename = String { self.sourceURL.absoluteString };
     URL url = URL({ }, filename);
     auto type = m_type == kJSScriptTypeModule ? JSC::SourceProviderSourceType::Module : JSC::SourceProviderSourceType::Program;
     JSC::SourceOrigin origin(url);
@@ -286,29 +286,29 @@ static bool validateBytecodeCachePath(NSURL* cachePath, NSError** error)
     return jsSourceCode;
 }
 
-- (BOOL)writeCache:(String&)error
+- (void)writeCache:(String&)error
 {
-    if (self.isUsingBytecodeCache) {
+    if ([self isUsingBytecodeCache]) {
         error = "Cache for JSScript is already non-empty. Can not override it."_s;
-        return NO;
+        return;
     }
 
     if (!m_cachePath) {
         error = "No cache path was provided during construction of this JSScript."_s;
-        return NO;
+        return;
     }
 
     // We want to do the write as a transaction (i.e. we guarantee that it's all
     // or nothing). So, we'll write to a temp file first, and rename the temp
     // file to the cache file only after we've finished writing the whole thing.
 
-    NSString *cachePathString = [m_cachePath path];
+    NSString *cachePathString = m_cachePath.get().path;
     const char* cacheFileName = cachePathString.UTF8String;
     const char* tempFileName = [cachePathString stringByAppendingString:@".tmp"].UTF8String;
     int fd = open(cacheFileName, O_CREAT | O_WRONLY | O_EXLOCK | O_NONBLOCK, 0600);
     if (fd == -1) {
         error = makeString("Could not open or lock the bytecode cache file. It's likely another VM or process is already using it. Error: ", safeStrerror(errno).data());
-        return NO;
+        return;
     }
 
     auto closeFD = makeScopeExit([&] {
@@ -318,7 +318,7 @@ static bool validateBytecodeCachePath(NSURL* cachePath, NSError** error)
     int tempFD = open(tempFileName, O_CREAT | O_RDWR | O_EXLOCK | O_NONBLOCK, 0600);
     if (tempFD == -1) {
         error = makeString("Could not open or lock the bytecode cache temp file. Error: ", safeStrerror(errno).data());
-        return NO;
+        return;
     }
 
     auto closeTempFD = makeScopeExit([&] {
@@ -341,7 +341,7 @@ static bool validateBytecodeCachePath(NSURL* cachePath, NSError** error)
         m_cachedBytecode = JSC::CachedBytecode::create();
         FileSystem::truncateFile(fd, 0);
         error = makeString("Unable to generate bytecode for this JSScript because: ", cacheError.message());
-        return NO;
+        return;
     }
 
     SHA1::Digest computedHash;
@@ -352,7 +352,7 @@ static bool validateBytecodeCachePath(NSURL* cachePath, NSError** error)
 
     fsync(tempFD);
     rename(tempFileName, cacheFileName);
-    return YES;
+    return;
 }
 
 @end

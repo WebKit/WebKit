@@ -159,7 +159,7 @@ JSObjectRef JSObjectMakeTypedArray(JSContextRef ctx, JSTypedArrayType arrayType,
     if (arrayType == kJSTypedArrayTypeNone || arrayType == kJSTypedArrayTypeArrayBuffer)
         return nullptr;
 
-    unsigned elementByteSize = elementSize(toTypedArrayType(arrayType));
+    auto elementByteSize = elementSize(toTypedArrayType(arrayType));
 
     auto buffer = ArrayBuffer::tryCreate(length, elementByteSize);
     JSObject* result = createTypedArray(globalObject, arrayType, WTFMove(buffer), 0, length);
@@ -178,7 +178,7 @@ JSObjectRef JSObjectMakeTypedArrayWithBytesNoCopy(JSContextRef ctx, JSTypedArray
     if (arrayType == kJSTypedArrayTypeNone || arrayType == kJSTypedArrayTypeArrayBuffer)
         return nullptr;
 
-    unsigned elementByteSize = elementSize(toTypedArrayType(arrayType));
+    auto elementByteSize = elementSize(toTypedArrayType(arrayType));
 
     auto buffer = ArrayBuffer::createFromBytes(bytes, length, createSharedTask<void(void*)>([=](void* p) {
         if (destructor)
@@ -207,7 +207,7 @@ JSObjectRef JSObjectMakeTypedArrayWithArrayBuffer(JSContextRef ctx, JSTypedArray
     }
 
     RefPtr<ArrayBuffer> buffer = jsBuffer->impl();
-    unsigned elementByteSize = elementSize(toTypedArrayType(arrayType));
+    auto elementByteSize = elementSize(toTypedArrayType(arrayType));
 
     std::optional<size_t> length;
     if (!buffer->isResizableOrGrowableShared())

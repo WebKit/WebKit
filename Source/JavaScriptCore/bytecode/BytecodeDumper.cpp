@@ -130,7 +130,7 @@ void CodeBlockBytecodeDumper<Block>::dumpIdentifiers()
         do {
             this->m_out.print("  id", static_cast<unsigned>(i), " = ", identifier(i), "\n");
             ++i;
-        } while (i != count);
+        } while (i < count);
     }
 }
 
@@ -170,7 +170,7 @@ void CodeBlockBytecodeDumper<Block>::dumpExceptionHandlers()
         unsigned i = 0;
         do {
             const auto& handler = this->block()->exceptionHandler(i);
-            this->m_out.printf("\t %d: { start: [%4d] end: [%4d] target: [%4d] } %s\n", i + 1, handler.start, handler.end, handler.target, handler.typeName());
+            this->m_out.printf("\t %u: { start: [%4u] end: [%4u] target: [%4u] } %s\n", i + 1, handler.start, handler.end, handler.target, handler.typeName());
             ++i;
         } while (i < count);
     }
@@ -234,7 +234,7 @@ static void dumpHeader(Block* block, const JSInstructionStream& instructions, Pr
 
     out.print(*block);
     out.printf(
-        ": %lu instructions (%lu 16-bit instructions, %lu 32-bit instructions, %lu instructions with metadata); %lu bytes (%lu metadata bytes); %d parameter(s); %d callee register(s); %d variable(s)",
+        ": %lu instructions (%lu 16-bit instructions, %lu 32-bit instructions, %lu instructions with metadata); %lu bytes (%lu metadata bytes); %u parameter(s); %u callee register(s); %u variable(s)",
         static_cast<unsigned long>(instructionCount),
         static_cast<unsigned long>(wide16InstructionCount),
         static_cast<unsigned long>(wide32InstructionCount),
@@ -357,7 +357,7 @@ void BytecodeDumper::dumpBlock(FunctionCodeBlockGenerator* block, const ModuleIn
     out.print("wasm size: ", function.data.size(), " bytes\n");
 
     out.printf(
-        "bytecode: %lu instructions (%lu 16-bit instructions, %lu 32-bit instructions); %lu bytes; %d parameter(s); %d local(s); %d callee register(s)\n",
+        "bytecode: %lu instructions (%lu 16-bit instructions, %lu 32-bit instructions); %lu bytes; %u parameter(s); %u local(s); %u callee register(s)\n",
         static_cast<unsigned long>(instructionCount),
         static_cast<unsigned long>(wide16InstructionCount),
         static_cast<unsigned long>(wide32InstructionCount),
@@ -399,7 +399,7 @@ void BytecodeDumper::dumpExceptionHandlers()
         unsigned i = 0;
         do {
             const auto& handler = this->block()->exceptionHandler(i);
-            this->m_out.printf("\t %d: { start: [%4d] end: [%4d] target: [%4d] tryDepth: [%4d] exceptionIndexOrDelegateTarget: [%4d] } %s\n", i + 1, handler.m_start, handler.m_end, handler.m_target, handler.m_tryDepth, handler.m_exceptionIndexOrDelegateTarget, handler.typeName().characters8());
+            this->m_out.printf("\t %u: { start: [%4u] end: [%4u] target: [%4u] tryDepth: [%4u] exceptionIndexOrDelegateTarget: [%4u] } %s\n", i + 1, handler.m_start, handler.m_end, handler.m_target, handler.m_tryDepth, handler.m_exceptionIndexOrDelegateTarget, handler.typeName().characters8());
             ++i;
         } while (i < count);
     }

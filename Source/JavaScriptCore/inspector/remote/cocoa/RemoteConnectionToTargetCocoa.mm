@@ -35,6 +35,10 @@
 #import <dispatch/dispatch.h>
 #import <wtf/RunLoop.h>
 
+#if !__has_feature(objc_arc)
+#error This file requires ARC. Add the "-fobjc-arc" compiler flag for this file.
+#endif
+
 #if USE(WEB_THREAD)
 #import <wtf/ios/WebCoreThread.h>
 #endif
@@ -127,12 +131,12 @@ std::optional<TargetID> RemoteConnectionToTarget::targetIdentifier() const
 
 NSString *RemoteConnectionToTarget::connectionIdentifier() const
 {
-    return adoptNS([m_connectionIdentifier copy]).autorelease();
+    return [m_connectionIdentifier copy];
 }
 
 NSString *RemoteConnectionToTarget::destination() const
 {
-    return adoptNS([m_destination copy]).autorelease();
+    return [m_destination copy];
 }
 
 void RemoteConnectionToTarget::dispatchAsyncOnTarget(Function<void ()>&& callback)

@@ -49,6 +49,10 @@
 
 #if JSC_OBJC_API_ENABLED
 
+#if __has_feature(objc_arc)
+#error This file cannot be compiled under ARC
+#endif
+
 @implementation JSContext {
     RetainPtr<JSVirtualMachine> m_virtualMachine;
     JSGlobalContextRef m_context;
@@ -63,15 +67,16 @@
 
 - (void)ensureWrapperMap
 {
-    if (!toJS([self JSGlobalContextRef])->wrapperMap()) {
+    if (!toJS(self.JSGlobalContextRef)->wrapperMap()) {
         // The map will be retained by the GlobalObject in initialization.
-        [[[JSWrapperMap alloc] initWithGlobalContextRef:[self JSGlobalContextRef]] release];
+        [[[JSWrapperMap alloc] initWithGlobalContextRef:self.JSGlobalContextRef] release];
     }
 }
 
 - (instancetype)init
 {
-    return [self initWithVirtualMachine:adoptNS([[JSVirtualMachine alloc] init]).get()];
+    self = [self initWithVirtualMachine:adoptNS([[JSVirtualMachine alloc] init]).get()];
+    return self;
 }
 
 - (instancetype)initWithVirtualMachine:(JSVirtualMachine *)virtualMachine
@@ -110,7 +115,7 @@
 {
     JSValueRef exceptionValue = nullptr;
     auto scriptJS = OpaqueJSString::tryCreate(script);
-    auto sourceURLJS = OpaqueJSString::tryCreate([sourceURL absoluteString]);
+    auto sourceURLJS = OpaqueJSString::tryCreate(sourceURL.absoluteString);
     JSValueRef result = JSEvaluateScript(m_context, scriptJS.get(), nullptr, sourceURLJS.get(), 0, &exceptionValue);
 
     if (exceptionValue)
@@ -162,7 +167,7 @@
     }
 
     auto scope = DECLARE_CATCH_SCOPE(vm);
-    JSC::JSArray* result = globalObject->moduleLoader()->dependencyKeysIfEvaluated(globalObject, JSC::jsString(vm, String([[script sourceURL] absoluteString])));
+    JSC::JSArray* result = globalObject->moduleLoader()->dependencyKeysIfEvaluated(globalObject, JSC::jsString(vm, String(script.sourceURL.absoluteString)));
     if (scope.exception()) {
         JSValueRef exceptionValue = toRef(globalObject, scope.exception()->value());
         scope.clearException();
@@ -329,12 +334,12 @@
 
 - (JSValue *)objectForKeyedSubscript:(id)key
 {
-    return [self globalObject][key];
+    return self.globalObject[key];
 }
 
 - (void)setObject:(id)object forKeyedSubscript:(NSObject <NSCopying> *)key
 {
-    [self globalObject][key] = object;
+    self.globalObject[key] = object;
 }
 
 @end
@@ -400,7 +405,7 @@
 - (JSValue *)wrapperForObjCObject:(id)object
 {
     JSC::JSLockHolder locker(toJS(m_context));
-    return [[self wrapperMap] jsWrapperForObject:object inContext:self];
+    return [self.wrapperMap jsWrapperForObject:object inContext:self];
 }
 
 - (JSWrapperMap *)wrapperMap
@@ -411,16 +416,16 @@
 - (JSValue *)wrapperForJSObject:(JSValueRef)value
 {
     JSC::JSLockHolder locker(toJS(m_context));
-    return [[self wrapperMap] objcWrapperForJSValueRef:value inContext:self];
+    return [self.wrapperMap objcWrapperForJSValueRef:value inContext:self];
 }
 
 + (JSContext *)contextWithJSGlobalContextRef:(JSGlobalContextRef)globalContext
 {
     JSVirtualMachine *virtualMachine = [JSVirtualMachine virtualMachineWithContextGroupRef:toRef(&toJS(globalContext)->vm())];
-    auto context = retainPtr([virtualMachine contextForGlobalContextRef:globalContext]);
+    JSContext *context = [virtualMachine contextForGlobalContextRef:globalContext];
     if (!context)
-        context = adoptNS([[JSContext alloc] initWithGlobalContextRef:globalContext]);
-    return context.autorelease();
+        context = [[[JSContext alloc] initWithGlobalContextRef:globalContext] autorelease];
+    return context;
 }
 
 @end
