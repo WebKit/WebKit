@@ -824,6 +824,24 @@ void RenderBlockFlow::layoutBlockChildren(bool relayoutChildren, LayoutUnit& max
             continue;
         }
         if (child.isFloating()) {
+            auto markSiblingsIfIntrudingForLayout = [&] {
+                // Let's find out if this float box is (was) intruding to sibling boxes and mark them for layout accordingly. 
+                if (!child.selfNeedsLayout() || !child.everHadLayout()) {
+                    // At this point floatingObjectSet() is purged, we can't check whether
+                    // this is a new or an existing float in this block container.
+                    return;
+                }
+                for (auto* nextSibling = child.nextSibling(); nextSibling; nextSibling = nextSibling->nextSibling()) {
+                    if (!is<RenderBlockFlow>(*nextSibling))
+                        continue;
+                    auto& block = downcast<RenderBlockFlow>(*nextSibling);
+                    if (block.avoidsFloats() && !block.shrinkToAvoidFloats())
+                        continue;
+                    if (block.containsFloat(child))
+                        block.markAllDescendantsWithFloatsForLayout();
+                }
+            };
+            markSiblingsIfIntrudingForLayout();
             insertFloatingObject(child);
             adjustFloatingBlock(marginInfo);
             continue;
