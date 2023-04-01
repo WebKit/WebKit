@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 56;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -209,7 +209,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0700;
-				LastUpgradeCheck = 1000;
+				LastUpgradeCheck = 1420;
 				TargetAttributes = {
 					8D1107260486CEB800E47090 = {
 						SystemCapabilities = {
@@ -221,11 +221,12 @@
 				};
 			};
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "MiniBrowser" */;
-			compatibilityVersion = "Xcode 3.2";
+			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				en,
+				Base,
 			);
 			mainGroup = 29B97314FDCFA39411CA2CEA /* MiniBrowser */;
 			projectDirPath = "";
@@ -284,6 +285,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BCA8CBDF11E578A000812FB7 /* MiniBrowser.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
+				DEAD_CODE_STRIPPING = YES;
 			};
 			name = Debug;
 		};
@@ -291,6 +294,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BCA8CBDF11E578A000812FB7 /* MiniBrowser.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
+				DEAD_CODE_STRIPPING = YES;
 			};
 			name = Release;
 		};
@@ -298,6 +303,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BCA8CBDE11E578A000812FB7 /* DebugRelease.xcconfig */;
 			buildSettings = {
+				DEAD_CODE_STRIPPING = NO;
+				ENABLE_TESTABILITY = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 			};
 			name = Debug;
@@ -306,18 +313,21 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BCA8CBDE11E578A000812FB7 /* DebugRelease.xcconfig */;
 			buildSettings = {
+				DEAD_CODE_STRIPPING = YES;
 			};
 			name = Release;
 		};
 		DD403C882851B13F00D899FC /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				DEAD_CODE_STRIPPING = YES;
 			};
 			name = Debug;
 		};
 		DD403C892851B13F00D899FC /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				DEAD_CODE_STRIPPING = YES;
 			};
 			name = Release;
 		};

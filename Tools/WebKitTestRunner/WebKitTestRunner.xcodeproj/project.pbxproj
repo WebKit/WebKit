@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 51;
+	objectVersion = 56;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -1088,7 +1088,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0700;
-				LastUpgradeCheck = 1140;
+				LastUpgradeCheck = 1420;
 				TargetAttributes = {
 					5325BDD921DFF4F500A0DEE1 = {
 						CreatedOnToolsVersion = 10.1;
@@ -1102,7 +1102,7 @@
 				};
 			};
 			buildConfigurationList = 1DEB927808733DD40010E9CD /* Build configuration list for PBXProject "WebKitTestRunner" */;
-			compatibilityVersion = "Xcode 3.1";
+			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 1;
 			knownRegions = (
@@ -1376,6 +1376,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = A18510381B9ADF2200744AEB /* WebKitTestRunner.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
+				DEAD_CODE_STRIPPING = YES;
 			};
 			name = Debug;
 		};
@@ -1383,6 +1385,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = A18510381B9ADF2200744AEB /* WebKitTestRunner.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
+				DEAD_CODE_STRIPPING = YES;
 			};
 			name = Release;
 		};
@@ -1390,6 +1394,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC793427118F7DAF005EA8E2 /* DebugRelease.xcconfig */;
 			buildSettings = {
+				DEAD_CODE_STRIPPING = NO;
+				ENABLE_TESTABILITY = YES;
 			};
 			name = Debug;
 		};
@@ -1397,6 +1403,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC793427118F7DAF005EA8E2 /* DebugRelease.xcconfig */;
 			buildSettings = {
+				DEAD_CODE_STRIPPING = YES;
 			};
 			name = Release;
 		};
@@ -1405,6 +1412,8 @@
 			baseConfigurationReference = A18510391B9ADFF800744AEB /* WebKitTestRunnerApp.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_IDENTITY = "-";
+				DEAD_CODE_STRIPPING = YES;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				INFOPLIST_FILE = "WebKitTestRunnerApp/WebKitTestRunnerApp-Info.plist";
@@ -1418,6 +1427,8 @@
 			baseConfigurationReference = A18510391B9ADFF800744AEB /* WebKitTestRunnerApp.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_IDENTITY = "-";
+				DEAD_CODE_STRIPPING = YES;
 				INFOPLIST_FILE = "WebKitTestRunnerApp/WebKitTestRunnerApp-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
@@ -1429,6 +1440,8 @@
 			baseConfigurationReference = A18510391B9ADFF800744AEB /* WebKitTestRunnerApp.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_IDENTITY = "-";
+				DEAD_CODE_STRIPPING = YES;
 				INFOPLIST_FILE = "WebKitTestRunnerApp/WebKitTestRunnerApp-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
@@ -1440,6 +1453,7 @@
 			baseConfigurationReference = A18510381B9ADF2200744AEB /* WebKitTestRunner.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -1449,6 +1463,7 @@
 			baseConfigurationReference = A18510381B9ADF2200744AEB /* WebKitTestRunner.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -1458,6 +1473,7 @@
 			baseConfigurationReference = A18510381B9ADF2200744AEB /* WebKitTestRunner.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Production;
@@ -1465,6 +1481,7 @@
 		A115CCB61B9D769D00E89159 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				DEAD_CODE_STRIPPING = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -1472,6 +1489,7 @@
 		A115CCB71B9D769D00E89159 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				DEAD_CODE_STRIPPING = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -1479,6 +1497,7 @@
 		A115CCB81B9D769D00E89159 /* Production */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				DEAD_CODE_STRIPPING = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Production;
@@ -1487,6 +1506,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC251A1811D16795002EBC01 /* WebKitTestRunnerLibrary.xcconfig */;
 			buildSettings = {
+				DEAD_CODE_STRIPPING = YES;
 			};
 			name = Debug;
 		};
@@ -1494,6 +1514,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC251A1811D16795002EBC01 /* WebKitTestRunnerLibrary.xcconfig */;
 			buildSettings = {
+				DEAD_CODE_STRIPPING = YES;
 			};
 			name = Release;
 		};
@@ -1501,6 +1522,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC251A1811D16795002EBC01 /* WebKitTestRunnerLibrary.xcconfig */;
 			buildSettings = {
+				DEAD_CODE_STRIPPING = YES;
 			};
 			name = Production;
 		};
@@ -1508,6 +1530,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC25197111D15E61002EBC01 /* InjectedBundle.xcconfig */;
 			buildSettings = {
+				DEAD_CODE_STRIPPING = YES;
 			};
 			name = Debug;
 		};
@@ -1515,6 +1538,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC25197111D15E61002EBC01 /* InjectedBundle.xcconfig */;
 			buildSettings = {
+				DEAD_CODE_STRIPPING = YES;
 			};
 			name = Release;
 		};
@@ -1522,6 +1546,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC793426118F7D3C005EA8E2 /* Base.xcconfig */;
 			buildSettings = {
+				DEAD_CODE_STRIPPING = YES;
 			};
 			name = Production;
 		};
@@ -1529,6 +1554,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = A18510381B9ADF2200744AEB /* WebKitTestRunner.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
+				DEAD_CODE_STRIPPING = YES;
 			};
 			name = Production;
 		};
@@ -1536,12 +1563,14 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC25197111D15E61002EBC01 /* InjectedBundle.xcconfig */;
 			buildSettings = {
+				DEAD_CODE_STRIPPING = YES;
 			};
 			name = Production;
 		};
 		BC646D70136A3A8700B35DED /* Production */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				DEAD_CODE_STRIPPING = YES;
 				PRODUCT_NAME = "Derived Sources";
 			};
 			name = Production;
@@ -1549,6 +1578,7 @@
 		BC952D7811F3BF5E003398B4 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				DEAD_CODE_STRIPPING = YES;
 				PRODUCT_NAME = "Derived Sources";
 			};
 			name = Debug;
@@ -1556,6 +1586,7 @@
 		BC952D7911F3BF5E003398B4 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				DEAD_CODE_STRIPPING = YES;
 				PRODUCT_NAME = "Derived Sources";
 			};
 			name = Release;

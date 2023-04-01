@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 56;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -3680,7 +3680,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0700;
-				LastUpgradeCheck = 1140;
+				LastUpgradeCheck = 1420;
 				TargetAttributes = {
 					31CDFDF32491819E00486F27 = {
 						CreatedOnToolsVersion = 12.0;
@@ -3696,7 +3696,7 @@
 				};
 			};
 			buildConfigurationList = FB39D0731200ED9200088E69 /* Build configuration list for PBXProject "ANGLE" */;
-			compatibilityVersion = "Xcode 3.2";
+			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -4180,6 +4180,7 @@
 		31DB79502491C33300982878 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				DEAD_CODE_STRIPPING = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -4187,6 +4188,7 @@
 		31DB79512491C33300982878 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				DEAD_CODE_STRIPPING = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -4194,6 +4196,7 @@
 		31DB79522491C33300982878 /* Production */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				DEAD_CODE_STRIPPING = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Production;
@@ -4202,6 +4205,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5D7C59C61208C68B001C873E /* Base.xcconfig */;
 			buildSettings = {
+				DEAD_CODE_STRIPPING = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
 			};
 			name = Production;
 		};
@@ -4209,6 +4214,9 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5D7C59C71208C68B001C873E /* DebugRelease.xcconfig */;
 			buildSettings = {
+				DEAD_CODE_STRIPPING = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 			};
 			name = Debug;
@@ -4217,6 +4225,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5D7C59C71208C68B001C873E /* DebugRelease.xcconfig */;
 			buildSettings = {
+				DEAD_CODE_STRIPPING = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
 			};
 			name = Release;
 		};
@@ -4224,6 +4234,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = FFE0D91526A0B4E80071ADAE /* AngleMetalLib.xcconfig */;
 			buildSettings = {
+				DEAD_CODE_STRIPPING = YES;
 				"MTL_PREPROCESSOR_DEFINITIONS[sdk=*]" = "";
 			};
 			name = Debug;
@@ -4232,6 +4243,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = FFE0D91526A0B4E80071ADAE /* AngleMetalLib.xcconfig */;
 			buildSettings = {
+				DEAD_CODE_STRIPPING = YES;
 			};
 			name = Release;
 		};
@@ -4239,6 +4251,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = FFE0D91526A0B4E80071ADAE /* AngleMetalLib.xcconfig */;
 			buildSettings = {
+				DEAD_CODE_STRIPPING = YES;
 			};
 			name = Production;
 		};

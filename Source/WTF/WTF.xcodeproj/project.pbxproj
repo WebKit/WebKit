@@ -3,13 +3,13 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 52;
+	objectVersion = 56;
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0F0C03D029981BEB0064230A /* EmbeddedFixedVector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F0C03CF29981BEB0064230A /* EmbeddedFixedVector.cpp */; };
 		0F0C03D8299820EB0064230A /* WeakPtr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F0C03D7299820EB0064230A /* WeakPtr.cpp */; };
 		0F0C03E7299828E60064230A /* BloomFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F0C03E6299828E50064230A /* BloomFilter.cpp */; };
-		0F0C03D029981BEB0064230A /* EmbeddedFixedVector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F0C03CF29981BEB0064230A /* EmbeddedFixedVector.cpp */; };
 		0F30BA901E78708E002CA847 /* GlobalVersion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F30BA8A1E78708E002CA847 /* GlobalVersion.cpp */; };
 		0F30CB5A1FCDF134004B5323 /* ConcurrentPtrHashSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F30CB581FCDF133004B5323 /* ConcurrentPtrHashSet.cpp */; };
 		0F3492D722AF431C004F85FC /* TextStreamCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0F3492D622AF42F1004F85FC /* TextStreamCocoa.mm */; };
@@ -931,11 +931,11 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		0F0C03D7299820EB0064230A /* WeakPtr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WeakPtr.cpp; sourceTree = "<group>"; };
-		0F0C03E6299828E50064230A /* BloomFilter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BloomFilter.cpp; sourceTree = "<group>"; };
 		077CD86A1FD9CFD200828587 /* Logger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Logger.h; sourceTree = "<group>"; };
 		077CD86B1FD9CFD300828587 /* LoggerHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoggerHelper.h; sourceTree = "<group>"; };
 		0F0C03CF29981BEB0064230A /* EmbeddedFixedVector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EmbeddedFixedVector.cpp; sourceTree = "<group>"; };
+		0F0C03D7299820EB0064230A /* WeakPtr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WeakPtr.cpp; sourceTree = "<group>"; };
+		0F0C03E6299828E50064230A /* BloomFilter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BloomFilter.cpp; sourceTree = "<group>"; };
 		0F0D85B317234CB100338210 /* NoLock.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NoLock.h; sourceTree = "<group>"; };
 		0F0FCDDD1DD167F900CCAB53 /* LockAlgorithm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LockAlgorithm.h; sourceTree = "<group>"; };
 		0F2AC5601E89F70C0001EE3F /* Range.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Range.h; sourceTree = "<group>"; };
@@ -3614,7 +3614,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0700;
-				LastUpgradeCheck = 1140;
+				LastUpgradeCheck = 1420;
 				TargetAttributes = {
 					DDF3081D27C44EFE006A526F = {
 						CreatedOnToolsVersion = 13.3;
@@ -3622,7 +3622,7 @@
 				};
 			};
 			buildConfigurationList = 5D247B5C14689B8600E78B76 /* Build configuration list for PBXProject "WTF" */;
-			compatibilityVersion = "Xcode 3.2";
+			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -3855,6 +3855,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5D247B7014689C4700E78B76 /* DebugRelease.xcconfig */;
 			buildSettings = {
+				ENABLE_TESTABILITY = YES;
 			};
 			name = Debug;
 		};

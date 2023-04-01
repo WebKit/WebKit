@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 56;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -2652,7 +2652,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0700;
-				LastUpgradeCheck = 1140;
+				LastUpgradeCheck = 1420;
 				TargetAttributes = {
 					0F7EB8501F95504B00F1ABCB = {
 						CreatedOnToolsVersion = 9.0;
@@ -2661,7 +2661,7 @@
 				};
 			};
 			buildConfigurationList = 145F683A179DC45F00D65598 /* Build configuration list for PBXProject "bmalloc" */;
-			compatibilityVersion = "Xcode 3.2";
+			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -2939,6 +2939,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 14B650C718F39F4800751968 /* DebugRelease.xcconfig */;
 			buildSettings = {
+				ENABLE_TESTABILITY = YES;
 			};
 			name = Debug;
 		};

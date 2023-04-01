@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 56;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -1372,7 +1372,7 @@
 		650994D228C942B7006EE6DB /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC3DE46815A91763008D26FC /* Foundation.framework */; };
 		650994D328C942B7006EE6DB /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8DC2EF5B0486A6940098B216 /* WebKit.framework */; };
 		650994D528C942B7006EE6DB /* WebContentProcess.xib in Resources */ = {isa = PBXBuildFile; fileRef = E1D26A4C1759634E0095BFD1 /* WebContentProcess.xib */; };
-		650994D728C942B7006EE6DB /* MediaFormatReader.bundle in Copy Plug-ins */ = {isa = PBXBuildFile; fileRef = A16E66002581930800EE1749 /* MediaFormatReader.bundle */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		650994D728C942B7006EE6DB /* MediaFormatReader.bundle in Copy Plug-ins */ = {isa = PBXBuildFile; fileRef = A16E66002581930800EE1749 /* MediaFormatReader.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		65B86F1E12F11DE300B7DD8A /* WKBundleInspector.h in Headers */ = {isa = PBXBuildFile; fileRef = 65B86F1812F11D7B00B7DD8A /* WKBundleInspector.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6A5080BF1F0EDAAA00E617C5 /* WKWindowFeaturesPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 6A5080BE1F0EDAAA00E617C5 /* WKWindowFeaturesPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6BD05865220CE8C2000BED5C /* PrivateClickMeasurementManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 6BD05863220CE8C2000BED5C /* PrivateClickMeasurementManager.h */; };
@@ -1402,7 +1402,7 @@
 		7A7E8DEC2748392500DCC97A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC3DE46815A91763008D26FC /* Foundation.framework */; };
 		7A7E8DED2748392500DCC97A /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8DC2EF5B0486A6940098B216 /* WebKit.framework */; };
 		7A7E8DEF2748392500DCC97A /* WebContentProcess.xib in Resources */ = {isa = PBXBuildFile; fileRef = E1D26A4C1759634E0095BFD1 /* WebContentProcess.xib */; };
-		7A7E8DF12748392500DCC97A /* MediaFormatReader.bundle in Copy Plug-ins */ = {isa = PBXBuildFile; fileRef = A16E66002581930800EE1749 /* MediaFormatReader.bundle */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		7A7E8DF12748392500DCC97A /* MediaFormatReader.bundle in Copy Plug-ins */ = {isa = PBXBuildFile; fileRef = A16E66002581930800EE1749 /* MediaFormatReader.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		7A821F4C1E2F673900604577 /* LegacyCustomProtocolManagerClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 7A821F4B1E2F664800604577 /* LegacyCustomProtocolManagerClient.h */; };
 		7A821F501E2F7A7500604577 /* APICustomProtocolManagerClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 7A821F4F1E2F7A5C00604577 /* APICustomProtocolManagerClient.h */; };
 		7A8A9D581EF119B0009801AE /* APIInjectedBundleClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 7A8A9D571EF119AA009801AE /* APIInjectedBundleClient.h */; };
@@ -1709,7 +1709,7 @@
 		A118A9F31908B8EA00F7C92B /* _WKNSFileManagerExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = A118A9F11908B8EA00F7C92B /* _WKNSFileManagerExtras.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A13B3DA2207F39DE0090C58D /* MobileWiFiSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = A13B3DA1207F39DE0090C58D /* MobileWiFiSPI.h */; };
 		A13DC682207AA6B20066EF72 /* WKApplicationStateTrackingView.h in Headers */ = {isa = PBXBuildFile; fileRef = A13DC680207AA6B20066EF72 /* WKApplicationStateTrackingView.h */; };
-		A15797642582B1DB00528236 /* MediaFormatReader.bundle in Copy Plug-ins */ = {isa = PBXBuildFile; fileRef = A16E66002581930800EE1749 /* MediaFormatReader.bundle */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		A15797642582B1DB00528236 /* MediaFormatReader.bundle in Copy Plug-ins */ = {isa = PBXBuildFile; fileRef = A16E66002581930800EE1749 /* MediaFormatReader.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A15799B72584433200528236 /* MediaTrackReader.h in Headers */ = {isa = PBXBuildFile; fileRef = A15799AE2584433100528236 /* MediaTrackReader.h */; };
 		A15799BC2584433200528236 /* CoreMediaWrapped.h in Headers */ = {isa = PBXBuildFile; fileRef = A15799B32584433100528236 /* CoreMediaWrapped.h */; };
 		A15799BD2584433200528236 /* MediaSampleCursor.h in Headers */ = {isa = PBXBuildFile; fileRef = A15799B42584433100528236 /* MediaSampleCursor.h */; };
@@ -1736,8 +1736,8 @@
 		A1DF631318E0B7C8003A3E2A /* LegacyDownloadClient.h in Headers */ = {isa = PBXBuildFile; fileRef = A1DF631118E0B7C8003A3E2A /* LegacyDownloadClient.h */; };
 		A1EA02381DABFF7E0096021F /* WKContextMenuListener.h in Headers */ = {isa = PBXBuildFile; fileRef = A1EA02361DABFF7E0096021F /* WKContextMenuListener.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A1EA02401DAC31DB0096021F /* WebContextMenuListenerProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = A1EA023E1DAC31DB0096021F /* WebContextMenuListenerProxy.h */; };
-		A1EF36C02581F76F0090B02A /* MediaFormatReader.bundle in Copy Plug-ins */ = {isa = PBXBuildFile; fileRef = A16E66002581930800EE1749 /* MediaFormatReader.bundle */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		A1EF36D52581F7EB0090B02A /* MediaFormatReader.bundle in Copy Plug-ins */ = {isa = PBXBuildFile; fileRef = A16E66002581930800EE1749 /* MediaFormatReader.bundle */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		A1EF36C02581F76F0090B02A /* MediaFormatReader.bundle in Copy Plug-ins */ = {isa = PBXBuildFile; fileRef = A16E66002581930800EE1749 /* MediaFormatReader.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		A1EF36D52581F7EB0090B02A /* MediaFormatReader.bundle in Copy Plug-ins */ = {isa = PBXBuildFile; fileRef = A16E66002581930800EE1749 /* MediaFormatReader.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A1FB68241F6E518200C43F9F /* WKCrashReporter.h in Headers */ = {isa = PBXBuildFile; fileRef = A1FB68221F6E518200C43F9F /* WKCrashReporter.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A31F60A425CC7DB900AF14F4 /* IPCSemaphore.h in Headers */ = {isa = PBXBuildFile; fileRef = A31F60A225CC7DB800AF14F4 /* IPCSemaphore.h */; };
 		A513F5402154A5D700662841 /* WebPageInspectorController.h in Headers */ = {isa = PBXBuildFile; fileRef = A513F53E2154A5CC00662841 /* WebPageInspectorController.h */; };
@@ -10253,7 +10253,6 @@
 		3AE104BB29CAAEDB00661165 /* Recovered References */ = {
 			isa = PBXGroup;
 			children = (
-				7A830B2D29B7F3EB00848075 /* WebPageInlines.h */,
 			);
 			name = "Recovered References";
 			sourceTree = "<group>";
@@ -15435,9 +15434,9 @@
 				2D9FB21B237523830049F936 /* Sources */,
 				2D9FB21E237523830049F936 /* Frameworks */,
 				2D9FB221237523830049F936 /* Resources */,
-				A15797632582B1A500528236 /* Copy Plug-ins */,
 				2D9FB222237523830049F936 /* Unlock keychain */,
 				2D9FB223237523830049F936 /* Process GPU entitlements */,
+				A15797632582B1A500528236 /* Copy Plug-ins */,
 				6577FFBF2769C7550011AEC8 /* Create Symlink to Alt Root Path */,
 				3AB34B6528D4F098009DAAB6 /* Update Info.plist for RunningBoard management */,
 			);
@@ -15460,8 +15459,8 @@
 				372EBB3B2017E64300085064 /* Sources */,
 				372EBB3D2017E64300085064 /* Frameworks */,
 				372EBB402017E64300085064 /* Resources */,
-				A1EF36BF2581F73B0090B02A /* Copy Plug-ins */,
 				7AFCBD5520B8917D00F55C9C /* Process WebContent entitlements */,
+				A1EF36BF2581F73B0090B02A /* Copy Plug-ins */,
 				6577FFBD2769C70F0011AEC8 /* Create Symlink to Alt Root Path */,
 				3AB34B6328D4F08E009DAAB6 /* Update Info.plist for RunningBoard management */,
 			);
@@ -15544,8 +15543,8 @@
 				650994CE28C942B7006EE6DB /* Sources */,
 				650994D128C942B7006EE6DB /* Frameworks */,
 				650994D428C942B7006EE6DB /* Resources */,
-				650994D628C942B7006EE6DB /* Copy Plug-ins */,
 				650994D828C942B7006EE6DB /* Process WebContent entitlements */,
+				650994D628C942B7006EE6DB /* Copy Plug-ins */,
 				650994D928C942B7006EE6DB /* Create Symlink to Alt Root Path */,
 				65793ACF28FF4E92005F01CE /* Update Info.plist for RunningBoard management */,
 			);
@@ -15568,8 +15567,8 @@
 				7A7E8DE82748392500DCC97A /* Sources */,
 				7A7E8DEB2748392500DCC97A /* Frameworks */,
 				7A7E8DEE2748392500DCC97A /* Resources */,
-				7A7E8DF02748392500DCC97A /* Copy Plug-ins */,
 				7A7E8DF22748392500DCC97A /* Process WebContent entitlements */,
+				7A7E8DF02748392500DCC97A /* Copy Plug-ins */,
 				6577FFBC2769C6D90011AEC8 /* Create Symlink to Alt Root Path */,
 				3AB34B6228D4F01C009DAAB6 /* Update Info.plist for RunningBoard management */,
 			);
@@ -15677,8 +15676,8 @@
 				BC3DE46215A91763008D26FC /* Sources */,
 				BCDC308D15FDB99A006B6695 /* Frameworks */,
 				BC3DE46415A91763008D26FC /* Resources */,
-				A1EF36D42581F7D70090B02A /* Copy Plug-ins */,
 				7AFCBD5420B8911D00F55C9C /* Process WebContent entitlements */,
+				A1EF36D42581F7D70090B02A /* Copy Plug-ins */,
 				4157853721279CC600DD3800 /* Copy Custom WebContent Resources to Framework Private Headers */,
 				6577FFBB2769C6AA0011AEC8 /* Create Symlink to Alt Root Path */,
 				3AFFC9A428D43977006D6076 /* Update Info.plist for RunningBoard management */,
@@ -15743,7 +15742,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 1300;
-				LastUpgradeCheck = 1140;
+				LastUpgradeCheck = 1420;
 				TargetAttributes = {
 					517B5F5A275A8D3E002DC22D = {
 						CreatedOnToolsVersion = 13.0;
@@ -15777,7 +15776,7 @@
 				};
 			};
 			buildConfigurationList = 1DEB91B108733DA50010E9CD /* Build configuration list for PBXProject "WebKit" */;
-			compatibilityVersion = "Xcode 3.2";
+			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 1;
 			knownRegions = (
@@ -17621,6 +17620,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1A4F976B100E7B6600637A18 /* DebugRelease.xcconfig */;
 			buildSettings = {
+				ENABLE_TESTABILITY = YES;
 			};
 			name = Debug;
 		};
@@ -17628,6 +17628,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1A4F976B100E7B6600637A18 /* DebugRelease.xcconfig */;
 			buildSettings = {
+				SWIFT_COMPILATION_MODE = wholemodule;
 			};
 			name = Release;
 		};
@@ -17659,6 +17660,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 2D9FB22A237523FB0049F936 /* GPUService.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 			};
 			name = Debug;
 		};
@@ -17666,6 +17668,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 2D9FB22A237523FB0049F936 /* GPUService.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 			};
 			name = Release;
 		};
@@ -17673,6 +17676,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 2D9FB22A237523FB0049F936 /* GPUService.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 			};
 			name = Production;
 		};
@@ -17680,6 +17684,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 372EBB4A2017E76000085064 /* WebContentService.Development.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 			};
 			name = Debug;
 		};
@@ -17687,6 +17692,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 372EBB4A2017E76000085064 /* WebContentService.Development.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 			};
 			name = Release;
 		};
@@ -17694,6 +17700,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 372EBB4A2017E76000085064 /* WebContentService.Development.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 			};
 			name = Production;
 		};
@@ -17701,6 +17708,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 517B5F6A275AA199002DC22D /* webpushtool.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 			};
 			name = Debug;
 		};
@@ -17708,6 +17716,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 517B5F6A275AA199002DC22D /* webpushtool.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 			};
 			name = Release;
 		};
@@ -17715,6 +17724,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 517B5F6A275AA199002DC22D /* webpushtool.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 			};
 			name = Production;
 		};
@@ -17749,6 +17759,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5C1579DD27165BE500ED5280 /* webpushd.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 				OTHER_LDFLAGS = "$(OTHER_LDFLAGS)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -17758,6 +17769,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5C1579DD27165BE500ED5280 /* webpushd.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 				OTHER_LDFLAGS = "$(OTHER_LDFLAGS)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -17767,6 +17779,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5C1579DD27165BE500ED5280 /* webpushd.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 				OTHER_LDFLAGS = "$(OTHER_LDFLAGS)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -17776,6 +17789,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5CAF7AA626F93AA50003F19E /* adattributiond.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 				OTHER_LDFLAGS = "$(OTHER_LDFLAGS)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -17785,6 +17799,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5CAF7AA626F93AA50003F19E /* adattributiond.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 				OTHER_LDFLAGS = "$(OTHER_LDFLAGS)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -17794,6 +17809,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5CAF7AA626F93AA50003F19E /* adattributiond.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 				OTHER_LDFLAGS = "$(OTHER_LDFLAGS)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -17825,6 +17841,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 65DC53C528CA5D07008DABD5 /* WebContentService.Crashy.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = "615.1.4+";
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -17837,6 +17854,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 65DC53C528CA5D07008DABD5 /* WebContentService.Crashy.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 				COPY_PHASE_STRIP = YES;
 				CURRENT_PROJECT_VERSION = "615.1.4+";
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -17848,6 +17866,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 65DC53C528CA5D07008DABD5 /* WebContentService.Crashy.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 				CURRENT_PROJECT_VERSION = "615.1.4+";
 				MARKETING_VERSION = "615+";
 			};
@@ -17857,6 +17876,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 7A7E8DFA2748399300DCC97A /* WebContentService.CaptivePortal.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 			};
 			name = Debug;
 		};
@@ -17864,6 +17884,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 7A7E8DFA2748399300DCC97A /* WebContentService.CaptivePortal.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 			};
 			name = Release;
 		};
@@ -17871,6 +17892,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 7A7E8DFA2748399300DCC97A /* WebContentService.CaptivePortal.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 			};
 			name = Production;
 		};
@@ -17965,6 +17987,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BCACC40E16B0B8A800B6E092 /* WebContentService.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 			};
 			name = Debug;
 		};
@@ -17972,6 +17995,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BCACC40E16B0B8A800B6E092 /* WebContentService.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 			};
 			name = Release;
 		};
@@ -17979,6 +18003,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BCACC40E16B0B8A800B6E092 /* WebContentService.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 			};
 			name = Production;
 		};
@@ -17986,6 +18011,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC8283AB16B4BEAD00A278FE /* NetworkService.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 			};
 			name = Debug;
 		};
@@ -17993,6 +18019,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC8283AB16B4BEAD00A278FE /* NetworkService.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 			};
 			name = Release;
 		};
@@ -18000,6 +18027,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC8283AB16B4BEAD00A278FE /* NetworkService.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 			};
 			name = Production;
 		};

@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 52;
+	objectVersion = 56;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -22714,7 +22714,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0700;
-				LastUpgradeCheck = 1000;
+				LastUpgradeCheck = 1420;
 				TargetAttributes = {
 					41F77D15215BE45E00E72967 = {
 						CreatedOnToolsVersion = 10.0;
@@ -22730,14 +22730,15 @@
 				};
 			};
 			buildConfigurationList = FB39D0731200ED9200088E69 /* Build configuration list for PBXProject "libwebrtc" */;
-			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
-				English,
-				Japanese,
-				French,
-				German,
+				de,
+				ja,
+				en,
+				Base,
+				fr,
 			);
 			mainGroup = FB39D06E1200ED9200088E69;
 			projectDirPath = "";
@@ -25380,6 +25381,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 41F77D1E215BE4AD00E72967 /* yasm.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -25391,6 +25393,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 41F77D1E215BE4AD00E72967 /* yasm.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 			};
 			name = Release;
 		};
@@ -25398,6 +25401,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 41F77D1E215BE4AD00E72967 /* yasm.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 			};
 			name = Production;
 		};
@@ -25571,6 +25575,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5D7C59C71208C68B001C873E /* DebugRelease.xcconfig */;
 			buildSettings = {
+				ENABLE_TESTABILITY = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 			};
 			name = Debug;

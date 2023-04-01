@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 51;
+	objectVersion = 56;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -921,7 +921,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0700;
-				LastUpgradeCheck = 1140;
+				LastUpgradeCheck = 1420;
 				TargetAttributes = {
 					5325BDD321DFF4BD00A0DEE1 = {
 						CreatedOnToolsVersion = 10.1;
@@ -930,7 +930,7 @@
 				};
 			};
 			buildConfigurationList = 149C29C308902C6D008A9EFC /* Build configuration list for PBXProject "DumpRenderTree" */;
-			compatibilityVersion = "Xcode 3.2";
+			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 1;
 			knownRegions = (
@@ -1158,6 +1158,7 @@
 		0F18E6FE1D6B9CAE0027E547 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				DEAD_CODE_STRIPPING = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -1165,6 +1166,7 @@
 		0F18E6FF1D6B9CAE0027E547 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				DEAD_CODE_STRIPPING = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -1172,6 +1174,7 @@
 		0F18E7001D6B9CAE0027E547 /* Production */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				DEAD_CODE_STRIPPING = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Production;
@@ -1180,6 +1183,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BCB281F00CFA713D007E533E /* DumpRenderTree.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
+				DEAD_CODE_STRIPPING = YES;
 			};
 			name = Debug;
 		};
@@ -1187,6 +1192,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BCB281F00CFA713D007E533E /* DumpRenderTree.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
+				DEAD_CODE_STRIPPING = YES;
 			};
 			name = Release;
 		};
@@ -1194,6 +1201,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BCB282F40CFA7450007E533E /* DebugRelease.xcconfig */;
 			buildSettings = {
+				DEAD_CODE_STRIPPING = NO;
+				ENABLE_TESTABILITY = YES;
 			};
 			name = Debug;
 		};
@@ -1201,6 +1210,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BCB282F40CFA7450007E533E /* DebugRelease.xcconfig */;
 			buildSettings = {
+				DEAD_CODE_STRIPPING = YES;
 			};
 			name = Release;
 		};
@@ -1208,6 +1218,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = A1103B5B1892498F00738C87 /* LayoutTestHelper.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
+				DEAD_CODE_STRIPPING = YES;
 				PRODUCT_NAME = LayoutTestHelper;
 			};
 			name = Debug;
@@ -1216,6 +1228,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = A1103B5B1892498F00738C87 /* LayoutTestHelper.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
+				DEAD_CODE_STRIPPING = YES;
 				PRODUCT_NAME = LayoutTestHelper;
 			};
 			name = Release;
@@ -1224,6 +1238,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = A1103B5B1892498F00738C87 /* LayoutTestHelper.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
+				DEAD_CODE_STRIPPING = YES;
 				PRODUCT_NAME = LayoutTestHelper;
 			};
 			name = Production;
@@ -1233,6 +1249,7 @@
 			baseConfigurationReference = BCB281F00CFA713D007E533E /* DumpRenderTree.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -1242,6 +1259,7 @@
 			baseConfigurationReference = BCB281F00CFA713D007E533E /* DumpRenderTree.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -1251,6 +1269,7 @@
 			baseConfigurationReference = BCB281F00CFA713D007E533E /* DumpRenderTree.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Production;
@@ -1259,12 +1278,14 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BCB281EE0CFA713D007E533E /* Base.xcconfig */;
 			buildSettings = {
+				DEAD_CODE_STRIPPING = YES;
 			};
 			name = Production;
 		};
 		90CBC3510F748B1300A712B7 /* Production */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				DEAD_CODE_STRIPPING = YES;
 				PRODUCT_NAME = All;
 			};
 			name = Production;
@@ -1273,6 +1294,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BCB281F00CFA713D007E533E /* DumpRenderTree.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
+				DEAD_CODE_STRIPPING = YES;
 			};
 			name = Production;
 		};
@@ -1280,6 +1303,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = A19317FD18928738001C52B1 /* DumpRenderTreeApp.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
+				DEAD_CODE_STRIPPING = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/ios/Info.plist";
 			};
 			name = Debug;
@@ -1288,6 +1313,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = A19317FD18928738001C52B1 /* DumpRenderTreeApp.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
+				DEAD_CODE_STRIPPING = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/ios/Info.plist";
 			};
 			name = Release;
@@ -1296,6 +1323,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = A19317FD18928738001C52B1 /* DumpRenderTreeApp.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
+				DEAD_CODE_STRIPPING = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/ios/Info.plist";
 			};
 			name = Production;
@@ -1304,6 +1333,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = A134E5391890671C00901D06 /* DumpRenderTreeLibrary.xcconfig */;
 			buildSettings = {
+				DEAD_CODE_STRIPPING = YES;
 			};
 			name = Debug;
 		};
@@ -1311,6 +1341,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = A134E5391890671C00901D06 /* DumpRenderTreeLibrary.xcconfig */;
 			buildSettings = {
+				DEAD_CODE_STRIPPING = YES;
 			};
 			name = Release;
 		};
@@ -1318,6 +1349,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = A134E5391890671C00901D06 /* DumpRenderTreeLibrary.xcconfig */;
 			buildSettings = {
+				DEAD_CODE_STRIPPING = YES;
 			};
 			name = Production;
 		};
@@ -1325,6 +1357,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				PRODUCT_NAME = All;
 			};
@@ -1334,6 +1367,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
+				DEAD_CODE_STRIPPING = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				PRODUCT_NAME = All;
 			};

@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 51;
+	objectVersion = 56;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -340,6 +340,7 @@
 		51C8E1A91F27F49600BF731B /* EmptyGrandfatheredResourceLoadStatistics.plist in Copy Resources */ = {isa = PBXBuildFile; fileRef = 51C8E1A81F27F47300BF731B /* EmptyGrandfatheredResourceLoadStatistics.plist */; };
 		51CD1C721B38D48400142CA5 /* modal-alerts-in-new-about-blank-window.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 51CD1C711B38D48400142CA5 /* modal-alerts-in-new-about-blank-window.html */; };
 		51DB16CE1F085137001FA4C5 /* WebViewIconLoading.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51DB16CD1F085047001FA4C5 /* WebViewIconLoading.mm */; };
+		51E1007929C6D947009CEE99 /* file-with-managedmse.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 51E1007129C6D891009CEE99 /* file-with-managedmse.html */; };
 		51E5C7021919C3B200D8B3E1 /* simple2.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 51E780361919AFF8001829A2 /* simple2.html */; };
 		51E5C7031919C3B200D8B3E1 /* simple3.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 51E780371919AFF8001829A2 /* simple3.html */; };
 		51E6A8961D2F1CA700C004B6 /* LocalStorageClear.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 51E6A8951D2F1C7700C004B6 /* LocalStorageClear.html */; };
@@ -1003,7 +1004,6 @@
 		CD577799211CE0E4001B371E /* web-audio-only.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = CD577798211CDE8F001B371E /* web-audio-only.html */; };
 		CD57779C211CE91F001B371E /* audio-with-web-audio.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = CD57779A211CE6B7001B371E /* audio-with-web-audio.html */; };
 		CD57779D211CE91F001B371E /* video-with-audio-and-web-audio.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = CD57779B211CE6CE001B371E /* video-with-audio-and-web-audio.html */; };
-		51E1007929C6D947009CEE99 /* file-with-managedmse.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 51E1007129C6D891009CEE99 /* file-with-managedmse.html */; };
 		CD59F53419E9110D00CF1835 /* file-with-mse.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = CD59F53219E910AA00CF1835 /* file-with-mse.html */; };
 		CD59F53519E9110D00CF1835 /* test-mse.mp4 in Copy Resources */ = {isa = PBXBuildFile; fileRef = CD59F53319E910BC00CF1835 /* test-mse.mp4 */; };
 		CD5FF49F2162E943004BD86F /* ISOBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD5FF4962162E27E004BD86F /* ISOBox.cpp */; };
@@ -2448,6 +2448,7 @@
 		51D124971E763AF8002B2820 /* WKHTTPCookieStore.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKHTTPCookieStore.mm; sourceTree = "<group>"; };
 		51D8C18F2267B26700797E40 /* PDFLinkReferrer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PDFLinkReferrer.mm; sourceTree = "<group>"; };
 		51DB16CD1F085047001FA4C5 /* WebViewIconLoading.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebViewIconLoading.mm; sourceTree = "<group>"; };
+		51E1007129C6D891009CEE99 /* file-with-managedmse.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "file-with-managedmse.html"; sourceTree = "<group>"; };
 		51E5C7041919EA5F00D8B3E1 /* ShouldKeepCurrentBackForwardListItemInList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShouldKeepCurrentBackForwardListItemInList.cpp; sourceTree = "<group>"; };
 		51E6A8921D2F1BEC00C004B6 /* LocalStorageClear.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LocalStorageClear.mm; sourceTree = "<group>"; };
 		51E6A8951D2F1C7700C004B6 /* LocalStorageClear.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = LocalStorageClear.html; sourceTree = "<group>"; };
@@ -3215,7 +3216,6 @@
 		CD577798211CDE8F001B371E /* web-audio-only.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "web-audio-only.html"; sourceTree = "<group>"; };
 		CD57779A211CE6B7001B371E /* audio-with-web-audio.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "audio-with-web-audio.html"; sourceTree = "<group>"; };
 		CD57779B211CE6CE001B371E /* video-with-audio-and-web-audio.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "video-with-audio-and-web-audio.html"; sourceTree = "<group>"; };
-		51E1007129C6D891009CEE99 /* file-with-managedmse.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "file-with-managedmse.html"; sourceTree = "<group>"; };
 		CD59F53219E910AA00CF1835 /* file-with-mse.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "file-with-mse.html"; sourceTree = "<group>"; };
 		CD59F53319E910BC00CF1835 /* test-mse.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "test-mse.mp4"; sourceTree = "<group>"; };
 		CD5FF4962162E27E004BD86F /* ISOBox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ISOBox.cpp; sourceTree = "<group>"; };
@@ -5647,13 +5647,13 @@
 		DDF3A82A28930475005920CF /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				DDF3A83D28930475005920CF /* gtest_unittest */,
-				DDF3A83B28930475005920CF /* gtest_unittest-framework */,
-				DDF3A83F28930475005920CF /* sample1_unittest-framework */,
-				DDF3A84128930475005920CF /* sample1_unittest-static */,
 				DDF3A83528930475005920CF /* gtest.framework */,
 				DDF3A83728930475005920CF /* libgtest.a */,
 				DDF3A83928930475005920CF /* libgtest_main.a */,
+				DDF3A83B28930475005920CF /* gtest_unittest-framework */,
+				DDF3A83D28930475005920CF /* gtest_unittest */,
+				DDF3A83F28930475005920CF /* sample1_unittest-framework */,
+				DDF3A84128930475005920CF /* sample1_unittest-static */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -5840,7 +5840,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0700;
-				LastUpgradeCheck = 1140;
+				LastUpgradeCheck = 1420;
 				TargetAttributes = {
 					537CF84322EFD64100C6EBB3 = {
 						CreatedOnToolsVersion = 11.0;
@@ -5866,7 +5866,7 @@
 				};
 			};
 			buildConfigurationList = 1DEB927808733DD40010E9CD /* Build configuration list for PBXProject "TestWebKitAPI" */;
-			compatibilityVersion = "Xcode 3.2";
+			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 1;
 			knownRegions = (
@@ -6852,6 +6852,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC90958012554CF900083756 /* TestWebKitAPI.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
+				DEAD_CODE_STRIPPING = YES;
 			};
 			name = Debug;
 		};
@@ -6859,6 +6861,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC90958012554CF900083756 /* TestWebKitAPI.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
+				DEAD_CODE_STRIPPING = YES;
 			};
 			name = Release;
 		};
@@ -6866,6 +6870,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC90957F12554CF900083756 /* DebugRelease.xcconfig */;
 			buildSettings = {
+				DEAD_CODE_STRIPPING = NO;
+				ENABLE_TESTABILITY = YES;
 			};
 			name = Debug;
 		};
@@ -6873,6 +6879,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC90957F12554CF900083756 /* DebugRelease.xcconfig */;
 			buildSettings = {
+				DEAD_CODE_STRIPPING = YES;
 			};
 			name = Release;
 		};
@@ -6880,6 +6887,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 3A5DDADB28D15328004DA950 /* TestWGSL.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
+				DEAD_CODE_STRIPPING = YES;
 			};
 			name = Debug;
 		};
@@ -6887,6 +6896,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 3A5DDADB28D15328004DA950 /* TestWGSL.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
+				DEAD_CODE_STRIPPING = YES;
 			};
 			name = Release;
 		};
@@ -6894,6 +6905,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -6902,6 +6914,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -6909,6 +6922,7 @@
 		5C9D921A22D7DA02008E9266 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				DEAD_CODE_STRIPPING = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -6916,6 +6930,7 @@
 		5C9D921B22D7DA02008E9266 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				DEAD_CODE_STRIPPING = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -6924,6 +6939,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 7B9FC58628A2682E007570E7 /* TestIPC.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
+				DEAD_CODE_STRIPPING = YES;
 			};
 			name = Debug;
 		};
@@ -6931,6 +6948,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 7B9FC58628A2682E007570E7 /* TestIPC.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
+				DEAD_CODE_STRIPPING = YES;
 			};
 			name = Release;
 		};
@@ -6938,6 +6957,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 7C83E0271D0A5B8D00FEBCF3 /* TestWTFLibrary.xcconfig */;
 			buildSettings = {
+				DEAD_CODE_STRIPPING = YES;
 			};
 			name = Debug;
 		};
@@ -6945,6 +6965,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 7C83E0271D0A5B8D00FEBCF3 /* TestWTFLibrary.xcconfig */;
 			buildSettings = {
+				DEAD_CODE_STRIPPING = YES;
 			};
 			name = Release;
 		};
@@ -6952,6 +6973,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 7C83E0261D0A5B8D00FEBCF3 /* TestWTF.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
+				DEAD_CODE_STRIPPING = YES;
 			};
 			name = Debug;
 		};
@@ -6959,12 +6982,15 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 7C83E0261D0A5B8D00FEBCF3 /* TestWTF.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
+				DEAD_CODE_STRIPPING = YES;
 			};
 			name = Release;
 		};
 		7C83E02D1D0A5E1000FEBCF3 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				DEAD_CODE_STRIPPING = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -6972,6 +6998,7 @@
 		7C83E02E1D0A5E1000FEBCF3 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				DEAD_CODE_STRIPPING = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -6980,6 +7007,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 7CCE7EA31A4115CB00447C4C /* TestWebKitAPILibrary.xcconfig */;
 			buildSettings = {
+				DEAD_CODE_STRIPPING = YES;
 			};
 			name = Debug;
 		};
@@ -6987,6 +7015,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 7CCE7EA31A4115CB00447C4C /* TestWebKitAPILibrary.xcconfig */;
 			buildSettings = {
+				DEAD_CODE_STRIPPING = YES;
 			};
 			name = Release;
 		};
@@ -6994,6 +7023,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = A13EBB521B87346600097110 /* WebProcessPlugIn.xcconfig */;
 			buildSettings = {
+				DEAD_CODE_STRIPPING = YES;
 			};
 			name = Debug;
 		};
@@ -7001,6 +7031,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = A13EBB521B87346600097110 /* WebProcessPlugIn.xcconfig */;
 			buildSettings = {
+				DEAD_CODE_STRIPPING = YES;
 			};
 			name = Release;
 		};
@@ -7008,6 +7039,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC575AE2126E88B1006F0F12 /* InjectedBundle.xcconfig */;
 			buildSettings = {
+				DEAD_CODE_STRIPPING = YES;
 			};
 			name = Debug;
 		};
@@ -7015,6 +7047,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC575AE2126E88B1006F0F12 /* InjectedBundle.xcconfig */;
 			buildSettings = {
+				DEAD_CODE_STRIPPING = YES;
 			};
 			name = Release;
 		};
