@@ -44,10 +44,10 @@ enum class ConversionResult : uint8_t {
 // converted to the replacement character, except for an unpaired lead surrogate
 // at the end of the source, which will instead cause a SourceExhausted error.
 
-WTF_EXPORT_PRIVATE bool convertUTF8ToUTF16(const char* sourceStart, const char* sourceEnd, UChar** targetStart, UChar* targetEnd, bool* isSourceAllASCII = nullptr);
-WTF_EXPORT_PRIVATE bool convertUTF8ToUTF16ReplacingInvalidSequences(const char* sourceStart, const char* sourceEnd, UChar** targetStart, UChar* targetEnd, bool* isSourceAllASCII = nullptr);
-WTF_EXPORT_PRIVATE bool convertLatin1ToUTF8(const LChar** sourceStart, const LChar* sourceEnd, char** targetStart, char* targetEnd);
-WTF_EXPORT_PRIVATE ConversionResult convertUTF16ToUTF8(const UChar** sourceStart, const UChar* sourceEnd, char** targetStart, char* targetEnd, bool strict = true);
+WTF_EXPORT_PRIVATE bool convertUTF8ToUTF16(const char* sourceStart, const char* sourceEnd, UChar** targetStart, const UChar* targetEnd, bool* isSourceAllASCII = nullptr);
+WTF_EXPORT_PRIVATE bool convertUTF8ToUTF16ReplacingInvalidSequences(const char* sourceStart, const char* sourceEnd, UChar** targetStart, const UChar* targetEnd, bool* isSourceAllASCII = nullptr);
+WTF_EXPORT_PRIVATE bool convertLatin1ToUTF8(const LChar** sourceStart, const LChar* sourceEnd, char** targetStart, const char* targetEnd);
+WTF_EXPORT_PRIVATE ConversionResult convertUTF16ToUTF8(const UChar** sourceStart, const UChar* sourceEnd, char** targetStart, const char* targetEnd, bool strict = true);
 WTF_EXPORT_PRIVATE unsigned calculateStringHashAndLengthFromUTF8MaskingTop8Bits(const char* data, const char* dataEnd, unsigned& dataLength, unsigned& utf16Length);
 
 // Callers of these functions must check that the lengths are the same; accordingly we omit an end argument for UTF-16 and Latin-1.

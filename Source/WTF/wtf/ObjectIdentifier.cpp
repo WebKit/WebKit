@@ -31,7 +31,7 @@ namespace WTF {
 
 uint64_t ObjectIdentifierBase::generateIdentifierInternal()
 {
-    static uint64_t current;
+    static uint64_t current = 0;
     return ++current;
 }
 

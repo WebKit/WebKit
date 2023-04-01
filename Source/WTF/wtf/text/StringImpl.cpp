@@ -1438,7 +1438,7 @@ bool equal(const StringImpl* a, const LChar* b)
     if (!a)
         return !b;
     if (!b)
-        return !a;
+        return false;
 
     unsigned length = a->length();
 

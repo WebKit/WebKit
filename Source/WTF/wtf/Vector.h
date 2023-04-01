@@ -405,7 +405,7 @@ public:
     {
     }
 
-    VectorBuffer(size_t capacity, size_t size = 0)
+    explicit VectorBuffer(size_t capacity, size_t size = 0)
     {
         m_size = size;
         // Calling malloc(0) might take a lock and may actually do an
@@ -481,7 +481,7 @@ public:
     {
     }
 
-    VectorBuffer(size_t capacity, size_t size = 0)
+    explicit VectorBuffer(size_t capacity, size_t size = 0)
         : Base(inlineBuffer(), inlineCapacity, size)
     {
         if (capacity > inlineCapacity)

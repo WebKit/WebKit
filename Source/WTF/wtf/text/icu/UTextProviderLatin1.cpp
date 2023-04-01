@@ -81,7 +81,7 @@ static UText* uTextLatin1Clone(UText* destination, const UText* source, UBool de
     result->context = source->context;
     result->a = source->a;
     result->pFuncs = &uTextLatin1Funcs;
-    result->chunkContents = (UChar*)result->pExtra;
+    result->chunkContents = static_cast<UChar*>(result->pExtra);
     memset(const_cast<UChar*>(result->chunkContents), 0, sizeof(UChar) * UTextWithBufferInlineCapacity);
 
     return result;
@@ -228,7 +228,7 @@ UText* openLatin1UTextProvider(UTextWithBuffer* utWithBuffer, const LChar* strin
     text->context = string;
     text->a = length;
     text->pFuncs = &uTextLatin1Funcs;
-    text->chunkContents = (UChar*)text->pExtra;
+    text->chunkContents = static_cast<UChar*>(text->pExtra);
     memset(const_cast<UChar*>(text->chunkContents), 0, sizeof(UChar) * UTextWithBufferInlineCapacity);
 
     return text;

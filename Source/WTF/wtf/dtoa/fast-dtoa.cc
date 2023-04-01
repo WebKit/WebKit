@@ -42,8 +42,8 @@ namespace double_conversion {
 //
 // A different range might be chosen on a different platform, to optimize digit
 // generation, but a smaller range requires more powers of ten to be cached.
-static const int kMinimalTargetExponent = -60;
-static const int kMaximalTargetExponent = -32;
+static constexpr int kMinimalTargetExponent = -60;
+static constexpr int kMaximalTargetExponent = -32;
 
 
 // Adjusts the last digit of the generated number, and screens out generated
@@ -434,8 +434,8 @@ static bool DigitGenCounted(DiyFp w,
                             int* length,
                             int* kappa) {
   ASSERT(kMinimalTargetExponent <= w.e() && w.e() <= kMaximalTargetExponent);
-  ASSERT(kMinimalTargetExponent >= -60);
-  ASSERT(kMaximalTargetExponent <= -32);
+  static_assert(kMinimalTargetExponent >= -60);
+  static_assert(kMaximalTargetExponent <= -32);
   // w is assumed to have an error less than 1 unit. Whenever w is scaled we
   // also scale its error.
   uint64_t w_error = 1;

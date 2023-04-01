@@ -38,7 +38,7 @@ const char* numberToString(double d, NumberToStringBuffer& buffer)
     return builder.Finalize();
 }
 
-static inline void truncateTrailingZeros(char* buffer, double_conversion::StringBuilder& builder)
+static inline void truncateTrailingZeros(const char* buffer, double_conversion::StringBuilder& builder)
 {
     size_t length = builder.position();
     size_t decimalPointPosition = 0;

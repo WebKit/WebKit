@@ -49,12 +49,8 @@ static uint32_t greatestCommonDivisor(uint32_t a, uint32_t b)
     ASSERT(b);
 
     // Euclid's Algorithm
-    uint32_t temp = 0;
-    while (b) {
-        temp = b;
-        b = a % b;
-        a = temp;
-    }
+    while (b)
+        b = std::exchange(a, b) % b;
 
     ASSERT(a);
     return a;
