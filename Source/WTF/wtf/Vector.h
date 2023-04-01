@@ -997,7 +997,7 @@ Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>& Vector<T, inlin
 
     asanBufferSizeWillChangeTo(other.size());
 
-    std::copy(other.begin(), other.begin() + size(), begin());
+    std::copy_n(other.begin(), size(), begin());
     TypeOperations::uninitializedCopy(other.begin() + size(), other.end(), end());
     m_size = other.size();
 
@@ -1025,7 +1025,7 @@ Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>& Vector<T, inlin
     
     asanBufferSizeWillChangeTo(other.size());
 
-    std::copy(other.begin(), other.begin() + size(), begin());
+    std::copy_n(other.begin(), size(), begin());
     TypeOperations::uninitializedCopy(other.begin() + size(), other.end(), end());
     m_size = other.size();
 

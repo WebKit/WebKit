@@ -3439,7 +3439,7 @@ static void runWithOptions(GlobalObject* globalObject, CommandLine& options, boo
         } else {
             size_t commandLineLength = strlen(scripts[i].argument);
             scriptBuffer.resize(commandLineLength);
-            std::copy(scripts[i].argument, scripts[i].argument + commandLineLength, scriptBuffer.begin());
+            std::copy_n(scripts[i].argument, commandLineLength, scriptBuffer.begin());
             fileName = "[Command Line]"_s;
         }
 

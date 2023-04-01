@@ -243,7 +243,7 @@ ALWAYS_INLINE bool Parser<SuccessType>::parseImmByteArray16(v128_t& result)
 {
     if (length() < 16 || m_offset > length() - 16)
         return false;
-    std::copy(source() + m_offset, source() + m_offset + 16, result.u8x16);
+    std::copy_n(source() + m_offset, 16, result.u8x16);
     m_offset += 16;
     return true;
 }
