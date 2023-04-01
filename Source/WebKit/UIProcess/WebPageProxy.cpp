@@ -8716,6 +8716,9 @@ static Span<const ASCIILiteral> gpuMachServices()
     return services;
 }
 
+#endif // PLATFORM(COCOA)
+
+#if PLATFORM(COCOA) && !ENABLE(WEBCONTENT_GPU_SANDBOX_EXTENSIONS_BLOCKING) || HAVE(MACH_BOOTSTRAP_EXTENSION)
 static bool shouldBlockIOKit(const WebPreferences& preferences)
 {
     if (!preferences.useGPUProcessForMediaEnabled()
@@ -8727,7 +8730,7 @@ static bool shouldBlockIOKit(const WebPreferences& preferences)
         return false;
     return true;
 }
-#endif // PLATFORM(COCOA)
+#endif
 
 #if !PLATFORM(COCOA)
 bool WebPageProxy::useGPUProcessForDOMRenderingEnabled() const
