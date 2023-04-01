@@ -3309,9 +3309,13 @@ void WebPage::mouseEvent(const WebMouseEvent& mouseEvent, std::optional<Vector<S
 
 void WebPage::handleWheelEvent(const WebWheelEvent& event, const OptionSet<WheelEventProcessingSteps>& processingSteps, std::optional<bool> willStartSwipe, CompletionHandler<void(WebCore::ScrollingNodeID, std::optional<WebCore::WheelScrollGestureState>)>&& completionHandler)
 {
+#if ENABLE(ASYNC_SCROLLING)
     auto* remoteScrollingCoordinator = dynamicDowncast<RemoteScrollingCoordinator>(scrollingCoordinator());
     if (remoteScrollingCoordinator)
         remoteScrollingCoordinator->setCurrentWheelEventWillStartSwipe(willStartSwipe);
+#else
+    UNUSED_PARAM(willStartSwipe);
+#endif
 
     bool handled = wheelEvent(event, processingSteps, EventDispatcher::WheelEventOrigin::UIProcess);
     // FIXME: Ideally we'd avoid sending both a reply, and a separate WebPageProxy::DidReceiveEvent IPC, but the latter is generic to all events.
