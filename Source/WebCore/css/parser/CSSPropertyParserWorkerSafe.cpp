@@ -542,12 +542,6 @@ RefPtr<CSSValueList> consumeFontFaceUnicodeRange(CSSParserTokenRange& range)
     return values;
 }
 
-enum class FontTagCaseManipulation {
-    None,
-    ToASCIILower
-};
-
-template<FontTagCaseManipulation caseManipulation = FontTagCaseManipulation::None>
 static std::optional<FontTag> consumeFontTag(CSSParserTokenRange& range)
 {
     FontTag tag;
@@ -564,10 +558,7 @@ static std::optional<FontTag> consumeFontTag(CSSParserTokenRange& range)
         if (character < 0x20 || character > 0x7E)
             return std::nullopt;
 
-        if constexpr (caseManipulation == FontTagCaseManipulation::ToASCIILower)
-            tag[i] = toASCIILower(character);
-        else
-            tag[i] = character;
+        tag[i] = character;
     }
 
     range.consumeIncludingWhitespace();
@@ -581,7 +572,7 @@ RefPtr<CSSValue> consumeFeatureTagValue(CSSParserTokenRange& range)
 
     // FIXME: The specification states "The <string> is a case-sensitive OpenType feature tag."
     // so we probably should not be lowercasing it at parse time.
-    auto tag = consumeFontTag<FontTagCaseManipulation::ToASCIILower>(range);
+    auto tag = consumeFontTag(range);
     if (!tag)
         return nullptr;
 
