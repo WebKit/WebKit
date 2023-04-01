@@ -226,7 +226,70 @@ function testI31JS() {
   )
 }
 
+function testI31Table() {
+  {
+    let m = instantiate(`
+      (module
+        (table 10 (ref null i31))
+        (func (export "set") (param i32) (result)
+          (table.set (local.get 0) (i31.new (i32.const 42))))
+        (func (export "get") (param i32) (result i32)
+          (i31.get_s (table.get (local.get 0)))))
+    `);
+    m.exports.set(3);
+    assert.eq(m.exports.get(3), 42);
+    assert.throws(() => m.exports.get(2), WebAssembly.RuntimeError, "i31.get_<sx> to a null");
+  }
+
+  // Invalid non-defaultable table type.
+  assert.throws(
+    () => compile(`
+      (module
+        (table 0 (ref i31)))
+    `),
+    WebAssembly.CompileError,
+    "WebAssembly.Module doesn't parse at byte 17: Table's type must be defaultable (evaluating 'new WebAssembly.Module(binary)')"
+  )
+
+  // Test JS API.
+  {
+    const m = instantiate(`
+      (module
+        (table (export "t") 10 (ref null i31))
+        (start 0)
+        (func
+          (table.fill (i32.const 0) (i31.new (i32.const 42)) (i32.const 10))))
+    `);
+    const m2 = instantiate(`
+      (module
+        (type (array i32))
+        (func (export "makeArray") (result (ref 0)) (array.new_canon_default 0 (i32.const 5))))
+    `);
+    assert.eq(m.exports.t.get(0), 42);
+    assert.throws(
+      () => m.exports.t.set(0, "foo"),
+      TypeError,
+      "WebAssembly.Table.prototype.set failed to cast the second argument to the table's element type"
+    );
+    assert.throws(
+      () => m.exports.t.set(0, m2.exports.makeArray()),
+      TypeError,
+      "WebAssembly.Table.prototype.set failed to cast the second argument to the table's element type"
+    );
+    assert.throws(
+      () => m.exports.t.set(0, 8e99),
+      TypeError,
+      "WebAssembly.Table.prototype.set failed to cast the second argument to the table's element type"
+    );
+    m.exports.t.set(0, 3);
+    assert.eq(m.exports.t.get(0), 3);
+    m.exports.t.set(0, null);
+    assert.eq(m.exports.t.get(0), null);
+  }
+}
+
 testI31Type();
 testI31New();
 testI31Get();
 testI31JS();
+testI31Table();

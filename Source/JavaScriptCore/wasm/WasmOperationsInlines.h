@@ -370,74 +370,14 @@ inline void structSet(Instance* instance, EncodedJSValue encodedStructReference,
     return structPointer->set(globalObject, fieldIndex, toJSValue(globalObject, fieldType, argument));
 }
 
-inline bool refCast(Instance* instance, EncodedJSValue encodedReference, bool allowNull, int32_t heapType)
+inline bool refCast(EncodedJSValue encodedReference, bool allowNull, TypeIndex typeIndex)
 {
-    JSValue refValue = JSValue::decode(encodedReference);
-    if (refValue.isNull())
-        return allowNull;
-
-    switch (static_cast<Wasm::TypeKind>(heapType)) {
-    case Wasm::TypeKind::Funcref:
-    case Wasm::TypeKind::Externref:
-    case Wasm::TypeKind::Anyref:
-        // Casts to these types cannot fail as they are the top types of their respective hierarchies, and static type-checking does not allow cross-hierarchy casts.
-        return true;
-    case Wasm::TypeKind::Eqref:
-        return (refValue.isInt32() && refValue.asInt32() <= maxI31ref && refValue.asInt32() >= minI31ref) || jsDynamicCast<JSWebAssemblyArray*>(refValue) || jsDynamicCast<JSWebAssemblyStruct*>(refValue);
-    case Wasm::TypeKind::Nullref:
-        return false;
-    case Wasm::TypeKind::I31ref:
-        return refValue.isInt32() && refValue.asInt32() <= maxI31ref && refValue.asInt32() >= minI31ref;
-    case Wasm::TypeKind::Arrayref:
-        return jsDynamicCast<JSWebAssemblyArray*>(refValue);
-    case Wasm::TypeKind::Structref:
-        return jsDynamicCast<JSWebAssemblyStruct*>(refValue);
-    default: {
-        ASSERT(!Wasm::typeIndexIsType(static_cast<Wasm::TypeIndex>(heapType)));
-        Wasm::TypeDefinition& signature = instance->module().moduleInformation().typeSignatures[heapType];
-        auto signatureRTT = instance->module().moduleInformation().rtts[heapType];
-        if (signature.expand().is<Wasm::FunctionSignature>()) {
-            WebAssemblyFunctionBase* funcRef = jsDynamicCast<WebAssemblyFunctionBase*>(refValue);
-            // Static type-checking should ensure this jsDynamicCast always succeeds.
-            ASSERT(funcRef);
-            auto funcRTT = funcRef->rtt();
-            if (funcRTT.get() == signatureRTT.get())
-                return true;
-            return funcRTT->isSubRTT(*signatureRTT);
-        }
-        if (signature.expand().is<Wasm::ArrayType>()) {
-            JSWebAssemblyArray* arrayRef = jsDynamicCast<JSWebAssemblyArray*>(refValue);
-            if (!arrayRef)
-                return false;
-            auto arrayRTT = arrayRef->rtt();
-            if (arrayRTT.get() == signatureRTT.get())
-                return true;
-            return arrayRTT->isSubRTT(*signatureRTT);
-        }
-        ASSERT(signature.expand().is<Wasm::StructType>());
-        JSWebAssemblyStruct* structRef = jsDynamicCast<JSWebAssemblyStruct*>(refValue);
-        if (!structRef)
-            return false;
-        auto structRTT = structRef->rtt();
-        if (structRTT.get() == signatureRTT.get())
-            return true;
-        return structRTT->isSubRTT(*signatureRTT);
-    }
-    }
-
-    return false;
+    return TypeInformation::castReference(JSValue::decode(encodedReference), allowNull, typeIndex);
 }
 
 inline EncodedJSValue externInternalize(EncodedJSValue reference)
 {
-    JSValue value = JSValue::decode(reference);
-    if (value.isDouble() && JSC::canBeStrictInt32(value.asDouble())) {
-        int32_t int32Value = JSC::toInt32(value.asDouble());
-        if (int32Value <= Wasm::maxI31ref && int32Value >= Wasm::minI31ref)
-            return JSValue::encode(jsNumber(int32Value));
-    }
-
-    return reference;
+    return JSValue::encode(Wasm::internalizeExternref(JSValue::decode(reference)));
 }
 
 inline EncodedJSValue tableGet(Instance* instance, unsigned tableIndex, int32_t signedIndex)

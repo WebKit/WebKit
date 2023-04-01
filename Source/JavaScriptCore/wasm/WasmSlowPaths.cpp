@@ -777,20 +777,23 @@ WASM_SLOW_PATH_DECL(call_builtin)
         Wasm::elemDrop(instance, elementIndex);
         WASM_END();
     }
-    case Wasm::LLIntBuiltin::RefTest: {
-        auto reference = takeGPR().encodedJSValue();
-        bool allowNull = static_cast<bool>(takeGPR().unboxedInt32());
-        int32_t heapType = takeGPR().unboxedInt32();
-        gprStart[0] = static_cast<uint32_t>(Wasm::refCast(instance, reference, allowNull, heapType));
-        WASM_END();
-    }
+    case Wasm::LLIntBuiltin::RefTest:
     case Wasm::LLIntBuiltin::RefCast: {
         auto reference = takeGPR().encodedJSValue();
         bool allowNull = static_cast<bool>(takeGPR().unboxedInt32());
         int32_t heapType = takeGPR().unboxedInt32();
-        if (!Wasm::refCast(instance, reference, allowNull, heapType))
-            WASM_THROW(Wasm::ExceptionType::CastFailure);
-        gprStart[0] = reference;
+        Wasm::TypeIndex typeIndex;
+        if (Wasm::typeIndexIsType(static_cast<Wasm::TypeIndex>(heapType)))
+            typeIndex = static_cast<Wasm::TypeIndex>(heapType);
+        else
+            typeIndex = instance->module().moduleInformation().typeSignatures[heapType]->index();
+        if (builtin == Wasm::LLIntBuiltin::RefTest)
+            gprStart[0] = static_cast<uint32_t>(Wasm::refCast(reference, allowNull, typeIndex));
+        else {
+            if (!Wasm::refCast(reference, allowNull, typeIndex))
+                WASM_THROW(Wasm::ExceptionType::CastFailure);
+            gprStart[0] = reference;
+        }
         WASM_END();
     }
     case Wasm::LLIntBuiltin::ArrayNewData: {

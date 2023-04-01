@@ -884,6 +884,8 @@ public:
     static std::optional<RefPtr<const RTT>> tryGetCanonicalRTT(TypeIndex);
     static RefPtr<const RTT> getCanonicalRTT(TypeIndex);
 
+    static bool castReference(JSValue, bool, TypeIndex);
+
     static const TypeDefinition& get(TypeIndex);
     static TypeIndex get(const TypeDefinition&);
 

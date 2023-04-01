@@ -1155,9 +1155,93 @@ function testStructSet() {
   );
 }
 
+function testStructTable() {
+  {
+    let m = instantiate(`
+      (module
+        (type (struct (field i32)))
+        (table 10 (ref null 0))
+        (func (export "set") (param i32) (result)
+          (table.set (local.get 0) (struct.new_canon 0 (i32.const 42))))
+        (func (export "get") (param i32) (result i32)
+          (struct.get 0 0 (table.get (local.get 0)))
+          )
+      )
+    `);
+    m.exports.set(2);
+    assert.eq(m.exports.get(2), 42);
+    assert.throws(() => m.exports.get(4), WebAssembly.RuntimeError, "struct.get to a null");
+  }
+
+  // Invalid struct.get, needs a downcast.
+  assert.throws(
+    () => compile(`
+      (module
+        (type (struct (field i32)))
+        (table 10 (ref null struct))
+        (func (param i32) (result i32)
+          (struct.get 0 0 (table.get (local.get 0))))
+      )
+    `),
+    WebAssembly.CompileError,
+    "WebAssembly.Module doesn't validate: struct.get invalid index: Structref, in function at index 0 (evaluating 'new WebAssembly.Module(binary)')"
+  );
+
+  // Invalid non-defaultable table type.
+  assert.throws(
+    () => compile(`
+      (module
+        (type (struct))
+        (table 0 (ref 0)))
+    `),
+    WebAssembly.CompileError,
+    "WebAssembly.Module doesn't parse at byte 26: Table's type must be defaultable (evaluating 'new WebAssembly.Module(binary)')"
+  )
+
+  // Test JS API.
+  {
+    const m = instantiate(`
+      (module
+        (type (struct))
+        (table (export "t") 10 (ref null 0))
+        (start 0)
+        (func
+          (table.fill (i32.const 0) (struct.new_canon 0) (i32.const 10)))
+        (func (export "makeStruct") (result (ref 0)) (struct.new_canon 0)))
+    `);
+    const m2 = instantiate(`
+      (module
+        (type (array i32))
+        (func (export "makeArray") (result (ref 0)) (array.new_canon_default 0 (i32.const 5))))
+    `);
+    assert.eq(m.exports.t.get(0) !== null, true);
+    assert.throws(
+      () => m.exports.t.set(0, "foo"),
+      TypeError,
+      "WebAssembly.Table.prototype.set failed to cast the second argument to the table's element type"
+    );
+    assert.throws(
+      () => m.exports.t.set(0, 3),
+      TypeError,
+      "WebAssembly.Table.prototype.set failed to cast the second argument to the table's element type"
+    );
+    assert.throws(
+      () => m.exports.t.set(0, m2.exports.makeArray()),
+      TypeError,
+      "WebAssembly.Table.prototype.set failed to cast the second argument to the table's element type"
+    );
+    const str = m.exports.makeStruct();
+    m.exports.t.set(0, str);
+    assert.eq(m.exports.t.get(0), str);
+    m.exports.t.set(0, null);
+    assert.eq(m.exports.t.get(0), null);
+  }
+}
+
 testStructDeclaration();
 testStructJS();
 testStructNew();
 testStructNewDefault();
 testStructGet();
 testStructSet();
+testStructTable();

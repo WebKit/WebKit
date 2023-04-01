@@ -471,7 +471,7 @@ void WebAssemblyModuleRecord::initializeExports(JSGlobalObject* globalObject)
         if (!m_instance->table(i)) {
             RELEASE_ASSERT(!moduleInformation.tables[i].isImport());
             // We create a Table when it's a Table definition.
-            RefPtr<Wasm::Table> wasmTable = Wasm::Table::tryCreate(moduleInformation.tables[i].initial(), moduleInformation.tables[i].maximum(), moduleInformation.tables[i].type());
+            RefPtr<Wasm::Table> wasmTable = Wasm::Table::tryCreate(moduleInformation.tables[i].initial(), moduleInformation.tables[i].maximum(), moduleInformation.tables[i].type(), moduleInformation.tables[i].wasmType());
             if (!wasmTable)
                 return exception(createJSWebAssemblyLinkError(globalObject, vm, "couldn't create Table"_s));
             JSWebAssemblyTable* table = JSWebAssemblyTable::tryCreate(globalObject, vm, globalObject->webAssemblyTableStructure(), wasmTable.releaseNonNull());

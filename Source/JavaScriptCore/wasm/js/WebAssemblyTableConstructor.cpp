@@ -111,7 +111,7 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyTable, (JSGlobalObject* globalObj
             return throwVMRangeError(globalObject, throwScope, "'maximum' property must be greater than or equal to the 'initial' property"_s);
     }
 
-    RefPtr<Wasm::Table> wasmTable = Wasm::Table::tryCreate(initial, maximum, type);
+    RefPtr<Wasm::Table> wasmTable = Wasm::Table::tryCreate(initial, maximum, type, type == Wasm::TableElementType::Funcref ? Wasm::funcrefType() : Wasm::externrefType());
     if (!wasmTable)
         return throwVMRangeError(globalObject, throwScope, "couldn't create Table"_s);
 

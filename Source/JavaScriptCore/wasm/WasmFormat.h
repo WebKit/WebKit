@@ -354,6 +354,17 @@ inline bool isDefaultableType(StorageType type)
     return true;
 }
 
+inline JSValue internalizeExternref(JSValue value)
+{
+    if (value.isDouble() && JSC::canBeStrictInt32(value.asDouble())) {
+        int32_t int32Value = JSC::toInt32(value.asDouble());
+        if (int32Value <= Wasm::maxI31ref && int32Value >= Wasm::minI31ref)
+            return jsNumber(int32Value);
+    }
+
+    return value;
+}
+
 enum class ExternalKind : uint8_t {
     // FIXME auto-generate this. https://bugs.webkit.org/show_bug.cgi?id=165231
     Function = 0,
@@ -559,12 +570,13 @@ public:
         ASSERT(!*this);
     }
 
-    TableInformation(uint32_t initial, std::optional<uint32_t> maximum, bool isImport, TableElementType type)
+    TableInformation(uint32_t initial, std::optional<uint32_t> maximum, bool isImport, TableElementType type, Type wasmType)
         : m_initial(initial)
         , m_maximum(maximum)
         , m_isImport(isImport)
         , m_isValid(true)
         , m_type(type)
+        , m_wasmType(wasmType)
     {
         ASSERT(*this);
     }
@@ -574,7 +586,7 @@ public:
     uint32_t initial() const { return m_initial; }
     std::optional<uint32_t> maximum() const { return m_maximum; }
     TableElementType type() const { return m_type; }
-    Type wasmType() const { return m_type == TableElementType::Funcref ? funcrefType() : externrefType(); }
+    Type wasmType() const { return m_wasmType; }
 
 private:
     uint32_t m_initial;
@@ -582,6 +594,7 @@ private:
     bool m_isImport { false };
     bool m_isValid { false };
     TableElementType m_type;
+    Type m_wasmType;
 };
     
 struct CustomSection {
