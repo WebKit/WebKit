@@ -1454,8 +1454,6 @@ webkit.org/b/189680 platform/mac/media/audio-session-category-video-paused.html 
 webkit.org/b/195466 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/ready-states/autoplay.html [ Pass Failure ]
 webkit.org/b/195466 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/error-codes/error.html [ Pass Failure ]
 
-webkit.org/b/195466 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/sizes/parse-a-sizes-attribute-width-1000px.html [ Pass Failure ]
-
 webkit.org/b/153588 imported/w3c/web-platform-tests/media-source/mediasource-correct-frames.html [ Skip ]
 webkit.org/b/153588 imported/w3c/web-platform-tests/media-source/mediasource-correct-frames-after-reappend.html [ Skip ]
 

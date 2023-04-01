@@ -1838,9 +1838,6 @@ imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/t
 # Flaky tests.
 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/audio_loop_base.html [ Failure Pass ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/networkState_during_progress.html [ Failure Pass ]
-imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/sizes/parse-a-sizes-attribute-display-none.html [ Failure Pass ]
-imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/sizes/parse-a-sizes-attribute-quirks-mode.html [ Failure Pass ]
-imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/sizes/parse-a-sizes-attribute-standards-mode.html [ Failure Pass ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-object-element/object-fallback-failed-cross-origin-navigation.sub.html [ Failure Pass ]
 
 # Newly importing W3C tests needed support for reftest-wait.
