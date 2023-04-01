@@ -1,11 +1,8 @@
-Hi 😎
 This tests that CharacterOffset and VisiblePosition convert correctly when there are composed characters.
 
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+PASS: text.stringForTextMarkerRange(text.textMarkerRangeForMarkers(startMarker, endMarker)) === 'Hi 😎'
 
-
-Hi 😎
 PASS successfullyParsed is true
 
 TEST COMPLETE
-
+Hi 😎 world

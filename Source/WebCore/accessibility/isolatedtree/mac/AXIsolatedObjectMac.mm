@@ -103,6 +103,31 @@ void AXIsolatedObject::detachPlatformWrapper(AccessibilityDetachmentType detachm
     [wrapper() detachIsolatedObject:detachmentType];
 }
 
+AXTextMarkerRange AXIsolatedObject::textMarkerRange() const
+{
+    if (auto attributedText = propertyValue<RetainPtr<NSAttributedString>>(AXPropertyName::AttributedText)) {
+        // FIXME: return a null range to match non ITM behavior, but this should be revisited since we should return ranges for secure fields.
+        if (isSecureField())
+            return { };
+
+        String text { [attributedText string] };
+        if (text.length()) {
+            TextMarkerData start(tree()->treeID(), objectID(),
+                nullptr, 0, Position::PositionIsOffsetInAnchor, Affinity::Downstream,
+                0, 0);
+            TextMarkerData end(tree()->treeID(), objectID(),
+                nullptr, text.length(), Position::PositionIsOffsetInAnchor, Affinity::Downstream,
+                0, text.length());
+            return { { start }, { end } };
+        }
+    }
+
+    return Accessibility::retrieveValueFromMainThread<AXTextMarkerRange>([this] () {
+        auto* axObject = associatedAXObject();
+        return axObject ? axObject->textMarkerRange() : AXTextMarkerRange();
+    });
+}
+
 AXTextMarkerRangeRef AXIsolatedObject::textMarkerRangeForNSRange(const NSRange& range) const
 {
     return Accessibility::retrieveAutoreleasedValueFromMainThread<AXTextMarkerRangeRef>([&range, this] () -> RetainPtr<AXTextMarkerRangeRef> {

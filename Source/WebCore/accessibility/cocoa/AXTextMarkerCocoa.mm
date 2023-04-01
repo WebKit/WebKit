@@ -53,6 +53,9 @@ AXTextMarker::AXTextMarker(PlatformTextMarkerData platformData)
 #else // PLATFORM(IOS_FAMILY)
     [platformData getBytes:&m_data length:sizeof(m_data)];
 #endif
+
+    if (isMainThread() && !m_data.node)
+        setNode();
 }
 
 RetainPtr<PlatformTextMarkerData> AXTextMarker::platformData() const

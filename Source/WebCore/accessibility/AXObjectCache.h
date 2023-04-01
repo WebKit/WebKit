@@ -137,6 +137,7 @@ class AXObjectCache : public CanMakeWeakPtr<AXObjectCache>
     WTF_MAKE_NONCOPYABLE(AXObjectCache);
     WTF_MAKE_FAST_ALLOCATED;
     friend class AXIsolatedTree;
+    friend class AXTextMarker;
     friend WTF::TextStream& operator<<(WTF::TextStream&, AXObjectCache&);
 public:
     explicit AXObjectCache(Document&);

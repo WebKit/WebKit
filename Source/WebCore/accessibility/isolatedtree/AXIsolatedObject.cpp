@@ -1346,16 +1346,6 @@ VisiblePositionRange AXIsolatedObject::visiblePositionRange() const
     return axObject ? axObject->visiblePositionRange() : VisiblePositionRange();
 }
 
-AXTextMarkerRange AXIsolatedObject::textMarkerRange() const
-{
-    // FIXME: create AXTextMarkerRange without hitting the main thread.
-
-    return Accessibility::retrieveValueFromMainThread<AXTextMarkerRange>([this] () {
-        auto* axObject = associatedAXObject();
-        return axObject ? axObject->textMarkerRange() : AXTextMarkerRange();
-    });
-}
-
 VisiblePositionRange AXIsolatedObject::visiblePositionRangeForLine(unsigned index) const
 {
     ASSERT(isMainThread());

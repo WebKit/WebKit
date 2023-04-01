@@ -147,7 +147,7 @@ f
         for (var i = 0; i < 6; i++)
             currentMarker = text3.previousTextMarker(currentMarker);
         marker2 = currentMarker;
-        markerRange = text3.textMarkerRangeForMarkers(marker1, marker2);
+        markerRange = text3.textMarkerRangeForMarkers(marker2, marker1);
         output += expect("text3.stringForTextMarkerRange(markerRange)", "'sel'");
 
         // Check the case with password field.
@@ -229,7 +229,7 @@ f
             previousMarker = currentMarker;
             currentMarker = text.previousTextMarker(currentMarker);
         }
-        markerRange = text.textMarkerRangeForMarkers(previousMarker, currentMarker)
+        markerRange = text.textMarkerRangeForMarkers(currentMarker, previousMarker);
         output += expect("text.stringForTextMarkerRange(markerRange)", "'\uFFFC'");
 
         document.getElementById("content").style.visibility = "hidden";

@@ -657,14 +657,14 @@ static AccessibilityTextOperation accessibilityTextOperationForParameterizedAttr
     return operation;
 }
 
-static std::pair<std::optional<SimpleRange>, AccessibilitySearchDirection> accessibilityMisspellingSearchCriteriaForParameterizedAttribute(AXObjectCache* axObjectCache, const NSDictionary *params)
+static std::pair<AXTextMarkerRange, AccessibilitySearchDirection> misspellingSearchCriteriaForParameterizedAttribute(const NSDictionary *params)
 {
-    ASSERT(isMainThread());
+    id markerRangeRef = [params objectForKey:@"AXStartTextMarkerRange"];
+    if (!AXObjectIsTextMarkerRange(markerRangeRef))
+        return { };
 
-    std::pair<std::optional<SimpleRange>, AccessibilitySearchDirection> criteria;
-
-    ASSERT(AXObjectIsTextMarkerRange([params objectForKey:@"AXStartTextMarkerRange"]));
-    criteria.first = rangeForTextMarkerRange(axObjectCache, (AXTextMarkerRangeRef)[params objectForKey:@"AXStartTextMarkerRange"]);
+    std::pair<AXTextMarkerRange, AccessibilitySearchDirection> criteria;
+    criteria.first = AXTextMarkerRange { (AXTextMarkerRangeRef)markerRangeRef };
 
     NSNumber *forward = [params objectForKey:NSAccessibilitySearchTextDirection];
     if ([forward isKindOfClass:[NSNumber class]])
@@ -2733,8 +2733,8 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     if ([attributeName isEqualToString:AXSelectedTextMarkerRangeAttribute]) {
         ASSERT(textMarkerRange);
         Accessibility::performFunctionOnMainThread([textMarkerRange = retainPtr(textMarkerRange), protectedSelf = retainPtr(self)] {
-            if (auto* backingObject = protectedSelf.get().axBackingObject)
-                backingObject->setSelectedVisiblePositionRange(visiblePositionRangeForTextMarkerRange(backingObject->axObjectCache(), textMarkerRange.get()));
+            if (RefPtr<AXCoreObject> backingObject = protectedSelf.get().axBackingObject)
+                backingObject->setSelectedVisiblePositionRange(AXTextMarkerRange { textMarkerRange.get() });
         });
     } else if ([attributeName isEqualToString: NSAccessibilityFocusedAttribute]) {
         backingObject->setFocused([number boolValue]);
@@ -2828,26 +2828,16 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     });
 }
 
-- (NSInteger)_indexForTextMarker:(AXTextMarkerRef)marker
+- (NSInteger)_indexForTextMarker:(AXTextMarkerRef)markerRef
 {
-    if (!marker)
+    if (!markerRef)
         return NSNotFound;
 
-    return Accessibility::retrieveValueFromMainThread<NSInteger>([marker = retainPtr(marker), protectedSelf = retainPtr(self)] () -> NSInteger {
-        auto* backingObject = protectedSelf.get().axBackingObject;
-        if (!backingObject)
+    return Accessibility::retrieveValueFromMainThread<NSInteger>([markerRef = retainPtr(markerRef)] () -> NSInteger {
+        AXTextMarker marker { markerRef.get() };
+        if (!marker.isValid())
             return NSNotFound;
-
-        if (auto* cache = backingObject->axObjectCache()) {
-            auto characterOffset = characterOffsetForTextMarker(cache, marker.get());
-            auto range = cache->rangeForUnorderedCharacterOffsets(characterOffset, characterOffset);
-            if (!range)
-                return NSNotFound;
-
-            return makeNSRange(range).location;
-        }
-
-        return NSNotFound;
+        return makeNSRange(AXTextMarkerRange { marker, marker }.simpleRange()).location;
     });
 }
 
@@ -2961,20 +2951,20 @@ enum class TextUnit {
         if (!cache)
             return nil;
 
-        auto characterOffset = characterOffsetForTextMarker(cache, textMarker.get());
+        AXTextMarker marker { textMarker.get() };
         std::optional<SimpleRange> range;
         switch (textUnit) {
         case TextUnit::LeftWord:
-            range = cache->leftWordRange(characterOffset);
+            range = cache->leftWordRange(marker);
             break;
         case TextUnit::RightWord:
-            range = cache->rightWordRange(characterOffset);
+            range = cache->rightWordRange(marker);
             break;
         case TextUnit::Sentence:
-            range = cache->sentenceForCharacterOffset(characterOffset);
+            range = cache->sentenceForCharacterOffset(marker);
             break;
         case TextUnit::Paragraph:
-            range = cache->paragraphForCharacterOffset(characterOffset);
+            range = cache->paragraphForCharacterOffset(marker);
             break;
         default:
             ASSERT_NOT_REACHED();
@@ -2992,11 +2982,7 @@ enum class TextUnit {
         if (!backingObject)
             return nil;
 
-        auto* cache = backingObject->axObjectCache();
-        if (!cache)
-            return nil;
-
-        AXTextMarker marker(textMarker.get());
+        AXTextMarker marker { textMarker.get() };
         VisiblePositionRange visiblePositionRange;
         switch (textUnit) {
         case TextUnit::Line:
@@ -3017,9 +3003,9 @@ enum class TextUnit {
     });
 }
 
-- (AXTextMarkerRef)textMarkerForTextMarker:(AXTextMarkerRef)textMarker atUnit:(TextUnit)textUnit
+- (AXTextMarkerRef)textMarkerForTextMarker:(AXTextMarkerRef)textMarkerRef atUnit:(TextUnit)textUnit
 {
-    return Accessibility::retrieveAutoreleasedValueFromMainThread<AXTextMarkerRef>([textMarker = retainPtr(textMarker), &textUnit, protectedSelf = retainPtr(self)] () -> RetainPtr<AXTextMarkerRef> {
+    return Accessibility::retrieveAutoreleasedValueFromMainThread<AXTextMarkerRef>([textMarkerRef = retainPtr(textMarkerRef), &textUnit, protectedSelf = retainPtr(self)] () -> RetainPtr<AXTextMarkerRef> {
         auto* backingObject = protectedSelf.get().axBackingObject;
         if (!backingObject)
             return nil;
@@ -3028,41 +3014,37 @@ enum class TextUnit {
         if (!cache)
             return nil;
 
-        auto oldOffset = characterOffsetForTextMarker(cache, textMarker.get());
-        CharacterOffset newOffset;
+        AXTextMarker oldMarker { textMarkerRef.get() };
+        AXTextMarker newMarker;
         switch (textUnit) {
         case TextUnit::NextWordEnd:
-            newOffset = cache->nextWordEndCharacterOffset(oldOffset);
+            newMarker = cache->nextWordEndCharacterOffset(oldMarker);
             break;
         case TextUnit::PreviousWordStart:
-            newOffset = cache->previousWordStartCharacterOffset(oldOffset);
+            newMarker = cache->previousWordStartCharacterOffset(oldMarker);
             break;
         case TextUnit::NextSentenceEnd:
-            newOffset = cache->nextSentenceEndCharacterOffset(oldOffset);
+            newMarker = cache->nextSentenceEndCharacterOffset(oldMarker);
             break;
         case TextUnit::PreviousSentenceStart:
-            newOffset = cache->previousSentenceStartCharacterOffset(oldOffset);
+            newMarker = cache->previousSentenceStartCharacterOffset(oldMarker);
             break;
         case TextUnit::NextParagraphEnd:
-            newOffset = cache->nextParagraphEndCharacterOffset(oldOffset);
+            newMarker = cache->nextParagraphEndCharacterOffset(oldMarker);
             break;
         case TextUnit::PreviousParagraphStart:
-            newOffset = cache->previousParagraphStartCharacterOffset(oldOffset);
+            newMarker = cache->previousParagraphStartCharacterOffset(oldMarker);
             break;
-        case TextUnit::NextLineEnd: {
-            auto visiblePosition = visiblePositionForTextMarker(cache, textMarker.get());
-            return textMarkerForVisiblePosition(cache, backingObject->nextLineEndPosition(visiblePosition));
-        }
-        case TextUnit::PreviousLineStart: {
-            auto visiblePosition = visiblePositionForTextMarker(cache, textMarker.get());
-            return textMarkerForVisiblePosition(cache, backingObject->previousLineStartPosition(visiblePosition));
-        }
+        case TextUnit::NextLineEnd:
+            return textMarkerForVisiblePosition(cache, backingObject->nextLineEndPosition(oldMarker));
+        case TextUnit::PreviousLineStart:
+            return textMarkerForVisiblePosition(cache, backingObject->previousLineStartPosition(oldMarker));
         default:
             ASSERT_NOT_REACHED();
             break;
         }
 
-        return textMarkerForCharacterOffset(cache, newOffset);
+        return newMarker.platformData();
     });
 }
 
@@ -3096,9 +3078,9 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
     AXTextMarkerRef textMarker = nil;
     AXTextMarkerRangeRef textMarkerRange = nil;
-    NSNumber* number = nil;
-    NSArray* array = nil;
-    NSDictionary* dictionary = nil;
+    NSNumber *number = nil;
+    NSArray *array = nil;
+    NSDictionary *dictionary = nil;
     RefPtr<AXCoreObject> uiElement;
     NSPoint point = NSZeroPoint;
     bool pointSet = false;
@@ -3271,19 +3253,21 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         return (id)[self lineTextMarkerRangeForTextMarker:textMarker forUnit:TextUnit::Line];
 
     if ([attribute isEqualToString:AXMisspellingTextMarkerRangeAttribute]) {
-        return Accessibility::retrieveAutoreleasedValueFromMainThread<id>([&dictionary, protectedSelf = retainPtr(self)] () -> RetainPtr<id> {
+        return (id)Accessibility::retrieveAutoreleasedValueFromMainThread<AXTextMarkerRangeRef>([&dictionary, protectedSelf = retainPtr(self)] () -> RetainPtr<AXTextMarkerRangeRef> {
             auto* backingObject = protectedSelf.get().axBackingObject;
             if (!backingObject)
                 return nil;
 
-            auto* cache = backingObject->axObjectCache();
-            if (!cache)
+            auto criteria = misspellingSearchCriteriaForParameterizedAttribute(dictionary);
+            if (!criteria.first)
                 return nil;
 
-            auto criteria = accessibilityMisspellingSearchCriteriaForParameterizedAttribute(cache, dictionary);
-            if (auto misspellingRange = backingObject->misspellingRange(*criteria.first, criteria.second))
-                return (id)textMarkerRangeFromRange(cache, *misspellingRange);
+            auto range = criteria.first.simpleRange();
+            if (!range)
+                return nil;
 
+            if (auto misspellRange = backingObject->misspellingRange(*range, criteria.second))
+                return AXTextMarkerRange(*misspellRange).platformData();
             return nil;
         });
     }
@@ -3301,7 +3285,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         return (id)[self _textMarkerForIndex:[number integerValue]];
 
     if ([attribute isEqualToString:AXUIElementForTextMarkerAttribute]) {
-        AXTextMarker marker(textMarker);
+        AXTextMarker marker { textMarker };
         RefPtr object = marker.object();
         if (!object)
             return nil;
@@ -3330,9 +3314,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
             auto* backingObject = protectedSelf.get().axBackingObject;
             if (!backingObject)
                 return -1;
-
-            auto visiblePos = visiblePositionForTextMarker(backingObject->axObjectCache(), textMarker.get());
-            return backingObject->lineForPosition(visiblePos);
+            return backingObject->lineForPosition(AXTextMarker { textMarker.get() });
         });
         return @(result);
     }
@@ -3357,7 +3339,8 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
             if (!backingObject)
                 return String();
 
-            auto range = rangeForTextMarkerRange(backingObject->axObjectCache(), textMarkerRange.get());
+            AXTextMarkerRange markerRange { textMarkerRange.get() };
+            auto range = markerRange.simpleRange();
             return range ? backingObject->stringForRange(*range) : String();
         });
     }
@@ -3382,7 +3365,8 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
             if (!backingObject)
                 return CGRectZero;
 
-            auto range = rangeForTextMarkerRange(backingObject->axObjectCache(), textMarkerRange.get());
+            AXTextMarkerRange markerRange { textMarkerRange.get() };
+            auto range = markerRange.simpleRange();
             if (!range)
                 return CGRectZero;
 
@@ -3499,9 +3483,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
             auto* cache = backingObject->axObjectCache();
             if (!cache)
                 return nil;
-
-            AXTextMarker marker(textMarker.get());
-            return nextTextMarker(cache, marker).bridgingAutorelease();
+            return nextTextMarker(cache, AXTextMarker { textMarker.get() }).bridgingAutorelease();
         });
     }
 
@@ -3514,9 +3496,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
             auto* cache = backingObject->axObjectCache();
             if (!cache)
                 return nil;
-
-            AXTextMarker marker(textMarker.get());
-            return previousTextMarker(cache, marker).bridgingAutorelease();
+            return previousTextMarker(cache, AXTextMarker { textMarker.get() }).bridgingAutorelease();
         });
     }
 
@@ -3567,15 +3547,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
             auto* backingObject = protectedSelf.get().axBackingObject;
             if (!backingObject)
                 return nil;
-
-            auto* cache = backingObject->axObjectCache();
-            if (!cache)
-                return nil;
-
-            auto visiblePos = visiblePositionForTextMarker(cache, textMarker.get());
-            VisiblePositionRange vpRange = backingObject->styleRangeForPosition(visiblePos);
-
-            return (id)textMarkerRangeFromVisiblePositions(cache, vpRange.start, vpRange.end);
+            return AXTextMarkerRange { backingObject->styleRangeForPosition(AXTextMarker { textMarker.get() }) }.platformData().bridgingAutorelease();
         });
     }
 
@@ -3585,7 +3557,8 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
             if (!backingObject)
                 return 0;
 
-            auto range = rangeForTextMarkerRange(backingObject->axObjectCache(), textMarkerRange.get());
+            AXTextMarkerRange markerRange { textMarkerRange.get() };
+            auto range = markerRange.simpleRange();
             return range ? AXObjectCache::lengthForRange(*range) : 0;
         });
         return @(length);
@@ -3593,13 +3566,13 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
     // Used only by DumpRenderTree (so far).
     if ([attribute isEqualToString:AXStartTextMarkerForTextMarkerRangeAttribute]) {
-        AXTextMarkerRange axTextMarkerRange { textMarkerRange };
-        return axTextMarkerRange.start().platformData().bridgingAutorelease();
+        AXTextMarkerRange markerRange { textMarkerRange };
+        return markerRange.start().platformData().bridgingAutorelease();
     }
 
     if ([attribute isEqualToString:AXEndTextMarkerForTextMarkerRangeAttribute]) {
-        AXTextMarkerRange axTextMarkerRange { textMarkerRange };
-        return axTextMarkerRange.end().platformData().bridgingAutorelease();
+        AXTextMarkerRange markerRange { textMarkerRange };
+        return markerRange.end().platformData().bridgingAutorelease();
     }
 
 #if ENABLE(TREE_DEBUGGING)
