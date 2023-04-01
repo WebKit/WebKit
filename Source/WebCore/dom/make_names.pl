@@ -1048,6 +1048,8 @@ sub printElementNameHeaderFile
     print F "} // namespace ElementNames\n";
     print F "\n";
     print F "ElementName findElementName(Namespace, const String&);\n";
+    print F "ElementName findHTMLElementName(Span<const LChar>);\n";
+    print F "ElementName findHTMLElementName(Span<const UChar>);\n";
     print F "TagName tagNameForElement(ElementName);\n";
     print F "ElementName elementNameForTag(Namespace, TagName);\n";
     print F "const QualifiedName& qualifiedNameForElement(ElementName);\n";
@@ -1169,6 +1171,16 @@ sub printElementNameCppFile
     print F "    if (name.is8Bit())\n";
     print F "        return findElementFromBuffer(ns, makeSpan(name.characters8(), name.length()));\n";
     print F "    return findElementFromBuffer(ns, makeSpan(name.characters16(), name.length()));\n";
+    print F "}\n";
+    print F "\n";
+    print F "ElementName findHTMLElementName(Span<const LChar> buffer)\n";
+    print F "{\n";
+    print F "    return findHTMLElement(buffer);\n";
+    print F "}\n";
+    print F "\n";
+    print F "ElementName findHTMLElementName(Span<const UChar> buffer)\n";
+    print F "{\n";
+    print F "    return findHTMLElement(buffer);\n";
     print F "}\n";
     print F "\n";
     print F "const QualifiedName& qualifiedNameForElement(ElementName elementName)\n";
