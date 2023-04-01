@@ -1154,7 +1154,6 @@ _WKHTTPCookiesForURL
 _WKGetPreferredExtensionForMIMEType
 +[WebView(WebPrivate) _decodeData:]
 +[NSPasteboard(WebExtras) _web_setFindPasteboardString:withOwner:]
--[NSString(WebKitExtras) _webkit_fixedCarbonPOSIXPath]
 +[WebCoreStatistics statistics]
 +[WebCache statistics]
 +[WebCoreStatistics javaScriptObjectsCount]
