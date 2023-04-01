@@ -103,7 +103,9 @@ static void releaseCriticalMemory(Synchronous synchronous, MaintainBackForwardCa
     }
 
     CSSValuePool::singleton().drain();
+#if ENABLE(WEB_AUDIO)
     HRTFElevation::clearCache();
+#endif
 
     Page::forEachPage([](auto& page) {
         page.cookieJar().clearCache();
