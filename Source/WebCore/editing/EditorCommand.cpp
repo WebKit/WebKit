@@ -1012,20 +1012,22 @@ static bool executeRemoveFormat(LocalFrame& frame, Event*, EditorCommandSource, 
     return true;
 }
 
-static bool executeScrollPageBackward(LocalFrame& frame, Event* event, EditorCommandSource, const String&)
+static bool executeScrollPageBackward(LocalFrame& frame, Event*, EditorCommandSource, const String&)
 {
     if (frame.eventHandler().shouldUseSmoothKeyboardScrollingForFocusedScrollableArea()) {
-        auto isKeyRepeat = event && event->isKeyboardEvent() && downcast<KeyboardEvent>(*event).repeat();
+        auto isKeyRepeat = frame.eventHandler().isProcessingKeyRepeatForPotentialScroll();
+        frame.eventHandler().setProcessingKeyRepeatForPotentialScroll(false);
         return frame.eventHandler().keyboardScrollRecursively(ScrollDirection::ScrollUp, ScrollGranularity::Page, nullptr, isKeyRepeat);
     }
 
     return frame.eventHandler().logicalScrollRecursively(ScrollBlockDirectionBackward, ScrollGranularity::Page);
 }
 
-static bool executeScrollPageForward(LocalFrame& frame, Event* event, EditorCommandSource, const String&)
+static bool executeScrollPageForward(LocalFrame& frame, Event*, EditorCommandSource, const String&)
 {
     if (frame.eventHandler().shouldUseSmoothKeyboardScrollingForFocusedScrollableArea()) {
-        auto isKeyRepeat = event && event->isKeyboardEvent() && downcast<KeyboardEvent>(*event).repeat();
+        auto isKeyRepeat = frame.eventHandler().isProcessingKeyRepeatForPotentialScroll();
+        frame.eventHandler().setProcessingKeyRepeatForPotentialScroll(false);
         return frame.eventHandler().keyboardScrollRecursively(ScrollDirection::ScrollDown, ScrollGranularity::Page, nullptr, isKeyRepeat);
     }
 

@@ -273,6 +273,9 @@ bool WebPage::executeKeypressCommandsInternal(const Vector<WebCore::KeypressComm
                 eventWasHandled |= frame.editor().insertText(commands[i].text, event);
             }
         } else {
+            if (commands[i].commandName == "scrollPageDown:"_s || commands[i].commandName == "scrollPageUp:"_s)
+                frame.eventHandler().setProcessingKeyRepeatForPotentialScroll(event && event->repeat());
+
             Editor::Command command = frame.editor().command(commandNameForSelectorName(commands[i].commandName));
             if (command.isSupported()) {
                 bool commandExecutedByEditor = command.execute(event);
