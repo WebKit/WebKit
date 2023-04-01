@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2003-2021 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2023 Apple Inc. All rights reserved.
  *  Copyright (C) 2007 Eric Seidel <eric@webkit.org>
  *
  *  This library is free software; you can redistribute it and/or
@@ -2855,7 +2855,7 @@ void Heap::addCoreConstraints()
             
             if (m_markListSet && m_markListSet->size()) {
                 SetRootMarkReasonScope rootScope(visitor, RootMarkReason::ConservativeScan);
-                MarkedArgumentBufferBase::markLists(visitor, *m_markListSet);
+                MarkedVectorBase::markLists(visitor, *m_markListSet);
             }
 
             {
