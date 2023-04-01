@@ -121,39 +121,6 @@ bool AccessibilityObject::accessibilityIgnoreAttachment() const
     return true;
 }
 
-static bool shouldIgnoreGroup(const AccessibilityObject& axObject)
-{
-    // The given object must either be a group, or an implicit generic element (like a div), as implicit generics map to groups.
-    if (!axObject.isGroup() && !axObject.hasImplicitGenericRole())
-        return false;
-
-    // Never ignore a group with event listeners attached to it (e.g. onclick).
-    if (axObject.node() && axObject.node()->hasEventListeners())
-        return false;
-
-    if (!is<AccessibilityNodeObject>(axObject))
-        return false;
-    auto& axNodeObject = downcast<AccessibilityNodeObject>(axObject);
-
-    // Ignore groups whose accessibility text is the same as their child's static-text content.
-    auto* first = axObject.firstChild();
-    if (!first || first->roleValue() != AccessibilityRole::StaticText || first != axObject.lastChild())
-        return false;
-
-    Vector<AccessibilityText> axText;
-    axNodeObject.alternativeText(axText);
-    if (!axText.size())
-        axNodeObject.helpText(axText);
-    if (!axText.size())
-        return false;
-
-    auto childString = first->stringValue();
-    // stringValue() can be null if the underlying document needs style recalculation.
-    if (childString.isNull())
-        return false;
-    return childString == axText[0].text;
-}
-
 AccessibilityObjectInclusion AccessibilityObject::accessibilityPlatformIncludesObject() const
 {
     if (isMenuListPopup() || isMenuListOption())
@@ -182,9 +149,6 @@ AccessibilityObjectInclusion AccessibilityObject::accessibilityPlatformIncludesO
         }
     }
     
-    if (shouldIgnoreGroup(*this))
-        return AccessibilityObjectInclusion::IgnoreObject;
-
     return AccessibilityObjectInclusion::DefaultBehavior;
 }
     
