@@ -1416,9 +1416,11 @@ template<typename CharacterType> inline bool equalInternal(const StringImpl* a, 
 
     if (a->length() != length)
         return false;
+    if (!length)
+        return true;
     if (a->is8Bit())
-        return equal(a->characters8(), b, length);
-    return equal(a->characters16(), b, length);
+        return *a->characters8() == *b && equal(a->characters8() + 1, b + 1, length - 1);
+    return *a->characters16() == *b && equal(a->characters16() + 1, b + 1, length - 1);
 }
 
 bool equal(const StringImpl* a, const LChar* b, unsigned length)
