@@ -143,6 +143,15 @@ static constexpr ASCIILiteral acceptHeaderValueForAVIFImageResource()
 #endif
 }
 
+static constexpr ASCIILiteral acceptHeaderValueForJPEGXLImageResource()
+{
+#if USE(JPEGXL)
+    return "image/jxl,"_s;
+#else
+    return ""_s;
+#endif
+}
+
 static String acceptHeaderValueForAdditionalSupportedImageMIMETypes()
 {
     StringBuilder sb;
@@ -162,6 +171,7 @@ static String acceptHeaderValueForImageResource()
 {
     return String(acceptHeaderValueForWebPImageResource())
         + acceptHeaderValueForAVIFImageResource()
+        + acceptHeaderValueForJPEGXLImageResource()
         + acceptHeaderValueForAdditionalSupportedImageMIMETypes()
         + acceptHeaderValueForVideoImageResource(ImageDecoder::supportsMediaType(ImageDecoder::MediaType::Video))
         + "image/png,image/svg+xml,image/*;q=0.8,*/*;q=0.5"_s;
