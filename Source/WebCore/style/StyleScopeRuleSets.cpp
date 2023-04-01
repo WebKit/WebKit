@@ -47,9 +47,9 @@ namespace WebCore {
 namespace Style {
 
 ScopeRuleSets::ScopeRuleSets(Resolver& styleResolver)
-    : m_styleResolver(styleResolver)
+    : m_authorStyle(RuleSet::create())
+    , m_styleResolver(styleResolver)
 {
-    m_authorStyle = RuleSet::create();
 }
 
 ScopeRuleSets::~ScopeRuleSets()

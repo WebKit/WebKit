@@ -103,15 +103,15 @@ static bool needsUpdateAfterChangingDisabledAdaptations(const OptionSet<Disabled
     return false;
 }
 
+// Setup a reasonable default configuration to avoid computing infinite scale/sizes.
+// Those are the original iPhone configuration.
 ViewportConfiguration::ViewportConfiguration()
-    : m_minimumLayoutSize(1024, 768)
+    : m_defaultConfiguration(ViewportConfiguration::webpageParameters())
+    , m_minimumLayoutSize(1024, 768)
     , m_viewLayoutSize(1024, 768)
     , m_canIgnoreScalingConstraints(false)
     , m_forceAlwaysUserScalable(false)
 {
-    // Setup a reasonable default configuration to avoid computing infinite scale/sizes.
-    // Those are the original iPhone configuration.
-    m_defaultConfiguration = ViewportConfiguration::webpageParameters();
     updateConfiguration();
 }
 

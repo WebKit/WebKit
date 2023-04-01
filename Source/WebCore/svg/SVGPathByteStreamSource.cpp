@@ -24,9 +24,9 @@
 namespace WebCore {
 
 SVGPathByteStreamSource::SVGPathByteStreamSource(const SVGPathByteStream& stream)
+    : m_streamCurrent(stream.begin())
+    , m_streamEnd(stream.end())
 {
-    m_streamCurrent = stream.begin();
-    m_streamEnd = stream.end();
 }
 
 bool SVGPathByteStreamSource::hasMoreData() const

@@ -40,8 +40,8 @@ public:
 
 private:
     MallocStatistics()
+        : m_stats(WTF::fastMallocStatistics())
     {
-        m_stats = WTF::fastMallocStatistics();
     }
 
     WTF::FastMallocStatistics m_stats;

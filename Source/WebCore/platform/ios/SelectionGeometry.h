@@ -112,7 +112,7 @@ private:
     mutable std::optional<IntRect> m_cachedEnclosingRect;
 };
 
-WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, SelectionGeometry);
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const SelectionGeometry&);
 
 } // namespace WebCore
 

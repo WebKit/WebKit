@@ -32,9 +32,9 @@
 namespace WebCore {
 
 LinkPreloadResourceClient::LinkPreloadResourceClient(LinkLoader& loader, CachedResource& resource)
+    : m_loader(loader)
+    , m_resource(&resource)
 {
-    m_loader = loader;
-    m_resource = &resource;
 }
 
 void LinkPreloadResourceClient::triggerEvents(const CachedResource& resource)

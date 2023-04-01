@@ -33,8 +33,8 @@
 namespace WebCore {
 
 UserContentURLPattern::UserContentURLPattern(StringView scheme, StringView host, StringView path)
+    : m_scheme(scheme.toString())
 {
-    m_scheme = scheme.toString();
     if (m_scheme.isEmpty()) {
         m_error = Error::MissingScheme;
         return;

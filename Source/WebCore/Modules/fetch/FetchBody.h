@@ -102,7 +102,7 @@ private:
     explicit FetchBody(Ref<const ArrayBufferView>&& data) : m_data(WTFMove(data)) { }
     explicit FetchBody(Ref<FormData>&& data) : m_data(WTFMove(data)) { }
     explicit FetchBody(Ref<const URLSearchParams>&& data) : m_data(WTFMove(data)) { }
-    explicit FetchBody(Ref<ReadableStream>&& stream) : m_data(stream) { m_readableStream = WTFMove(stream); }
+    explicit FetchBody(Ref<ReadableStream>&& stream) : m_data(stream), m_readableStream(WTFMove(stream)) { }
     explicit FetchBody(FetchBodyConsumer&& consumer) : m_consumer(WTFMove(consumer)) { }
 
     void consume(FetchBodyOwner&, Ref<DeferredPromise>&&);

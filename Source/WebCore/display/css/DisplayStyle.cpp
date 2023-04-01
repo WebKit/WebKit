@@ -84,16 +84,14 @@ Style::Style(const RenderStyle& style)
 }
 
 Style::Style(const RenderStyle& style, const RenderStyle* styleForBackground)
-    : m_overflowX(style.overflowX())
+    : m_color(style.visitedDependentColorWithColorFilter(CSSPropertyColor)) // FIXME: Is currentColor resolved here?
+    , m_overflowX(style.overflowX())
     , m_overflowY(style.overflowY())
     , m_fontCascade(style.fontCascade())
     , m_whiteSpace(style.whiteSpace())
     , m_tabSize(style.tabSize())
     , m_opacity(style.opacity())
 {
-    // FIXME: Is currentColor resolved here?
-    m_color = style.visitedDependentColorWithColorFilter(CSSPropertyColor);
-
     if (styleForBackground)
         setupBackground(*styleForBackground);
 

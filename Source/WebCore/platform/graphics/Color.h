@@ -182,9 +182,9 @@ private:
 
     class OutOfLineComponents : public ThreadSafeRefCounted<OutOfLineComponents> {
     public:
-        static Ref<OutOfLineComponents> create(ColorComponents<float, 4> components)
+        static Ref<OutOfLineComponents> create(ColorComponents<float, 4>&& components)
         {
-            return adoptRef(*new OutOfLineComponents(components));
+            return adoptRef(*new OutOfLineComponents(WTFMove(components)));
         }
 
         float unresolvedAlpha() const { return m_components[3]; }
@@ -193,8 +193,8 @@ private:
         ColorComponents<float, 4> resolvedComponents() const { return resolveColorComponents(m_components); }
 
     private:
-        OutOfLineComponents(ColorComponents<float, 4> components)
-            : m_components(components)
+        OutOfLineComponents(ColorComponents<float, 4>&& components)
+            : m_components(WTFMove(components))
         {
         }
 

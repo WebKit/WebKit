@@ -136,7 +136,7 @@ void SelectionGeometry::setRect(const IntRect& rect)
     m_cachedEnclosingRect = rect;
 }
 
-TextStream& operator<<(TextStream& stream, SelectionGeometry rect)
+TextStream& operator<<(TextStream& stream, const SelectionGeometry& rect)
 {
     TextStream::GroupScope group(stream);
     stream << "selection geometry";

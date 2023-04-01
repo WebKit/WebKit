@@ -50,8 +50,8 @@ public:
     InspectorCSSId() = default;
 
     explicit InspectorCSSId(const JSON::Object& value)
+        : m_styleSheetId(value.getString("styleSheetId"_s))
     {
-        m_styleSheetId = value.getString("styleSheetId"_s);
         if (!m_styleSheetId)
             return;
 
