@@ -330,6 +330,10 @@ public:
 
     bool isHandlingWheelEvent() const { return m_isHandlingWheelEvent; }
 
+    void setProcessingKeyRepeatForPotentialScroll(bool processingKeyRepeatForPotentialScroll) { m_isProcessingKeyRepeatForPotentialScroll = processingKeyRepeatForPotentialScroll; }
+
+    bool isProcessingKeyRepeatForPotentialScroll() const { return m_isProcessingKeyRepeatForPotentialScroll; }
+
     WEBCORE_EXPORT void setImmediateActionStage(ImmediateActionStage stage);
     ImmediateActionStage immediateActionStage() const { return m_immediateActionStage; }
 
@@ -573,6 +577,7 @@ private:
     bool m_currentWheelEventAllowsScrolling { true };
     bool m_svgPan { false };
     bool m_eventHandlerWillResetCapturingMouseEventsElement { false };
+    bool m_isProcessingKeyRepeatForPotentialScroll { false };
 
     enum SelectionInitiationState : uint8_t { HaveNotStartedSelection, PlacedCaret, ExtendedSelection };
     SelectionInitiationState m_selectionInitiationState { HaveNotStartedSelection };
