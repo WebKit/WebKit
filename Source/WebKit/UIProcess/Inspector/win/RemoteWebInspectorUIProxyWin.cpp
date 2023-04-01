@@ -104,7 +104,6 @@ LRESULT RemoteWebInspectorUIProxy::onClose()
 WebPageProxy* RemoteWebInspectorUIProxy::platformCreateFrontendPageAndWindow()
 {
     RefPtr<WebPreferences> preferences = WebPreferences::create(String(), "WebKit2."_s, "WebKit2."_s);
-    preferences->setAllowFileAccessFromFileURLs(true);
 
 #if ENABLE(DEVELOPER_MODE)
     preferences->setDeveloperExtrasEnabled(true);
@@ -129,7 +128,11 @@ WebPageProxy* RemoteWebInspectorUIProxy::platformCreateFrontendPageAndWindow()
     RECT r;
     ::GetClientRect(m_frontendHandle, &r);
     m_webView = WebView::create(r, pageConfiguration, m_frontendHandle);
-    return m_webView->page();
+
+    auto inspectorPage = m_webView->page();
+    inspectorPage->setURLSchemeHandlerForScheme(InspectorResourceURLSchemeHandler::create(), "inspector-resource"_s);
+
+    return inspectorPage;
 }
 
 void RemoteWebInspectorUIProxy::platformSave(Vector<WebCore::InspectorFrontendClient::SaveData>&& saveDatas, bool /* forceSaveAs */)
