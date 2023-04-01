@@ -35,6 +35,7 @@
 #include "AuthenticationChallengeProxy.h"
 #include "AuthenticationManager.h"
 #include "BackgroundFetchState.h"
+#include "DownloadProxy.h"
 #include "DownloadProxyMap.h"
 #include "DownloadProxyMessages.h"
 #include "FrameInfoData.h"
@@ -336,7 +337,7 @@ void NetworkProcessProxy::synthesizeAppIsBackground(bool background)
         applicationWillEnterForeground();
 }
 
-DownloadProxy& NetworkProcessProxy::createDownloadProxy(WebsiteDataStore& dataStore, Ref<API::DownloadClient>&& client, const ResourceRequest& resourceRequest, const FrameInfoData& frameInfo, WebPageProxy* originatingPage)
+Ref<DownloadProxy> NetworkProcessProxy::createDownloadProxy(WebsiteDataStore& dataStore, Ref<API::DownloadClient>&& client, const ResourceRequest& resourceRequest, const FrameInfoData& frameInfo, WebPageProxy* originatingPage)
 {
     if (!m_downloadProxyMap)
         m_downloadProxyMap = makeUnique<DownloadProxyMap>(*this);

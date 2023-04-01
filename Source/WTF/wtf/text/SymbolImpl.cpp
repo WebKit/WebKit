@@ -38,7 +38,7 @@ unsigned SymbolImpl::nextHashForSymbol()
 {
     static unsigned s_nextHashForSymbol = 0;
     s_nextHashForSymbol += 1 << s_flagCount;
-    s_nextHashForSymbol |= 1 << 31;
+    s_nextHashForSymbol |= 1u << 31;
     return s_nextHashForSymbol;
 }
 

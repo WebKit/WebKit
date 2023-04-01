@@ -3760,8 +3760,8 @@ void WebPageProxy::receivedPolicyDecision(PolicyAction action, API::Navigation* 
     std::optional<DownloadID> downloadID;
     if (action == PolicyAction::Download) {
         // Create a download proxy.
-        auto& download = m_process->processPool().createDownloadProxy(m_websiteDataStore, m_decidePolicyForResponseRequest, this, navigation ? navigation->originatingFrameInfo() : FrameInfoData { });
-        download.setDidStartCallback([this, weakThis = WeakPtr { *this }, navigationActionOrResponse = WTFMove(navigationActionOrResponse)] (auto* downloadProxy) {
+        auto download = m_process->processPool().createDownloadProxy(m_websiteDataStore, m_decidePolicyForResponseRequest, this, navigation ? navigation->originatingFrameInfo() : FrameInfoData { });
+        download->setDidStartCallback([this, weakThis = WeakPtr { *this }, navigationActionOrResponse = WTFMove(navigationActionOrResponse)] (auto* downloadProxy) {
             if (!weakThis || !downloadProxy)
                 return;
             WTF::switchOn(navigationActionOrResponse,
@@ -3775,11 +3775,11 @@ void WebPageProxy::receivedPolicyDecision(PolicyAction action, API::Navigation* 
             );
         });
         if (navigation) {
-            download.setWasUserInitiated(navigation->wasUserInitiated());
-            download.setRedirectChain(navigation->takeRedirectChain());
+            download->setWasUserInitiated(navigation->wasUserInitiated());
+            download->setRedirectChain(navigation->takeRedirectChain());
         }
 
-        downloadID = download.downloadID();
+        downloadID = download->downloadID();
         m_decidePolicyForResponseRequest = { };
     }
     
@@ -6879,15 +6879,15 @@ void WebPageProxy::setMayStartMediaWhenInWindow(bool mayStartMedia)
 
 void WebPageProxy::resumeDownload(const API::Data& resumeData, const String& path, CompletionHandler<void(DownloadProxy*)>&& completionHandler)
 {
-    auto& download = process().processPool().resumeDownload(websiteDataStore(), this, resumeData, path, CallDownloadDidStart::Yes);
-    download.setDestinationFilename(path);
-    download.setDidStartCallback(WTFMove(completionHandler));
+    auto download = process().processPool().resumeDownload(websiteDataStore(), this, resumeData, path, CallDownloadDidStart::Yes);
+    download->setDestinationFilename(path);
+    download->setDidStartCallback(WTFMove(completionHandler));
 }
 
 void WebPageProxy::downloadRequest(WebCore::ResourceRequest&& request, CompletionHandler<void(DownloadProxy*)>&& completionHandler)
 {
-    auto& download = process().processPool().download(websiteDataStore(), this, request, { });
-    download.setDidStartCallback(WTFMove(completionHandler));
+    auto download = process().processPool().download(websiteDataStore(), this, request, { });
+    download->setDidStartCallback(WTFMove(completionHandler));
 }
 
 void WebPageProxy::dataTaskWithRequest(WebCore::ResourceRequest&& request, CompletionHandler<void(API::DataTask&)>&& completionHandler)
@@ -7591,8 +7591,8 @@ void WebPageProxy::contextMenuItemSelected(const WebContextMenuItemData& item)
     }
 
     if (downloadInfo) {
-        auto& download = m_process->processPool().download(m_websiteDataStore, this, URL { downloadInfo->url }, downloadInfo->suggestedFilename);
-        download.setDidStartCallback([this, weakThis = WeakPtr { *this }] (auto* download) {
+        auto download = m_process->processPool().download(m_websiteDataStore, this, URL { downloadInfo->url }, downloadInfo->suggestedFilename);
+        download->setDidStartCallback([this, weakThis = WeakPtr { *this }] (auto* download) {
             if (!weakThis || !download)
                 return;
             m_navigationClient->contextMenuDidCreateDownload(*this, *download);

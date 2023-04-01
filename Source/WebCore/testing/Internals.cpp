@@ -2984,7 +2984,13 @@ RefPtr<WindowProxy> Internals::openDummyInspectorFrontend(const String& url)
 {
     auto* inspectedPage = contextDocument()->frame()->page();
     auto* localMainFrame = dynamicDowncast<LocalFrame>(inspectedPage->mainFrame());
-    auto* window = localMainFrame ? localMainFrame->document()->domWindow() : nullptr;
+    if (!localMainFrame)
+        return nullptr;
+
+    auto* window = localMainFrame->document()->domWindow();
+    if (!window)
+        return nullptr;
+
     auto frontendWindowProxy = window->open(*window, *window, url, emptyAtom(), emptyString()).releaseReturnValue();
     m_inspectorFrontend = makeUnique<InspectorStubFrontend>(*inspectedPage, downcast<LocalDOMWindow>(frontendWindowProxy->window()));
     return frontendWindowProxy;

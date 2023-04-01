@@ -1079,9 +1079,9 @@ WebKitDownload* webkit_web_context_download_uri(WebKitWebContext* context, const
 
     WebCore::ResourceRequest request(String::fromUTF8(uri));
     auto& websiteDataStore = webkitWebsiteDataManagerGetDataStore(context->priv->websiteDataManager.get());
-    auto& downloadProxy = context->priv->processPool->download(websiteDataStore, nullptr, request);
-    auto download = webkitDownloadCreate(downloadProxy);
-    downloadProxy.setDidStartCallback([context = GRefPtr<WebKitWebContext> { context }, download = download.get()](auto* downloadProxy) {
+    auto downloadProxy = context->priv->processPool->download(websiteDataStore, nullptr, request);
+    auto download = webkitDownloadCreate(downloadProxy.get());
+    downloadProxy->setDidStartCallback([context = GRefPtr<WebKitWebContext> { context }, download = download.get()](auto* downloadProxy) {
         if (!downloadProxy)
             return;
 

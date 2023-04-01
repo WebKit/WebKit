@@ -438,7 +438,7 @@ public:
     void setServiceWorkerOverridePreferences(WebPreferences* preferences) { m_serviceWorkerOverridePreferences = preferences; }
     WebPreferences* serviceWorkerOverridePreferences() const { return m_serviceWorkerOverridePreferences.get(); }
 
-    DownloadProxy& createDownloadProxy(Ref<API::DownloadClient>&&, const WebCore::ResourceRequest&, WebPageProxy* originatingPage, const FrameInfoData&);
+    Ref<DownloadProxy> createDownloadProxy(Ref<API::DownloadClient>&&, const WebCore::ResourceRequest&, WebPageProxy* originatingPage, const FrameInfoData&);
     void download(const DownloadProxy&, const String& suggestedFilename);
     void resumeDownload(const DownloadProxy&, const API::Data&, const String& path, CallDownloadDidStart);
 

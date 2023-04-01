@@ -4784,12 +4784,12 @@ WebKitDownload* webkit_web_view_download_uri(WebKitWebView* webView, const char*
     g_return_val_if_fail(uri, nullptr);
 
     auto& page = getPage(webView);
-    auto& downloadProxy = page.process().processPool().download(page.websiteDataStore(), &page, ResourceRequest { String::fromUTF8(uri) });
+    auto downloadProxy = page.process().processPool().download(page.websiteDataStore(), &page, ResourceRequest { String::fromUTF8(uri) });
     auto download = webkitDownloadCreate(downloadProxy, webView);
 #if ENABLE(2022_GLIB_API)
-    downloadProxy.setDidStartCallback([session = GRefPtr<WebKitNetworkSession> { webView->priv->networkSession }, download = download.get()](auto* downloadProxy) {
+    downloadProxy->setDidStartCallback([session = GRefPtr<WebKitNetworkSession> { webView->priv->networkSession }, download = download.get()](auto* downloadProxy) {
 #else
-    downloadProxy.setDidStartCallback([context = GRefPtr<WebKitWebContext> { webView->priv->context }, download = download.get()](auto* downloadProxy) {
+    downloadProxy->setDidStartCallback([context = GRefPtr<WebKitWebContext> { webView->priv->context }, download = download.get()](auto* downloadProxy) {
 #endif
         if (!downloadProxy)
             return;

@@ -1742,7 +1742,7 @@ static HTMLElement* singleChildList(HTMLElement& element)
     return isListHTMLElement(child.get()) ? &downcast<HTMLElement>(*child) : nullptr;
 }
 
-static HTMLElement& deepestSingleChildList(HTMLElement& topLevelList)
+static Ref<HTMLElement> deepestSingleChildList(HTMLElement& topLevelList)
 {
     Ref list { topLevelList };
     while (auto childList = singleChildList(list))
@@ -1754,7 +1754,7 @@ static HTMLElement& deepestSingleChildList(HTMLElement& topLevelList)
 // we put the list items into the existing list.
 Node* ReplaceSelectionCommand::insertAsListItems(HTMLElement& passedListElement, Node* insertionBlock, const Position& insertPos, InsertedNodes& insertedNodes)
 {
-    Ref<HTMLElement> listElement = deepestSingleChildList(passedListElement);
+    Ref listElement = deepestSingleChildList(passedListElement);
 
     bool isStart = isStartOfParagraph(insertPos);
     bool isEnd = isEndOfParagraph(insertPos);

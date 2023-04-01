@@ -105,6 +105,8 @@ static bool isAppleLegacyCSSValueKeyword(const char* characters, unsigned length
 
 template<typename CharacterType> static CSSValueID cssValueKeywordID(const CharacterType* characters, unsigned length)
 {
+    ASSERT(length > 0); // Otherwise buffer[0] would access uninitialized memory below.
+
     char buffer[maxCSSValueKeywordLength + 1]; // 1 to turn "apple" into "webkit"
     
     for (unsigned i = 0; i != length; ++i) {

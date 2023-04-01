@@ -59,7 +59,7 @@ WEBCORE_EXPORT std::optional<HEVCParameters> parseHEVCDecoderConfigurationRecord
 WEBCORE_EXPORT String createHEVCCodecParametersString(const HEVCParameters&);
 
 struct DoViParameters {
-    enum class Codec { AVC1, AVC3, HEV1, HVC1 } codec;
+    enum class Codec { AVC1, AVC3, HEV1, HVC1 } codec { Codec::HVC1 };
     uint16_t bitstreamProfileID { 0 };
     uint16_t bitstreamLevelID { 0 };
 };

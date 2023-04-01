@@ -1189,16 +1189,16 @@ bool WebProcessPool::hasPagesUsingWebsiteDataStore(WebsiteDataStore& dataStore) 
     return m_sessionToPageIDsMap.contains(dataStore.sessionID());
 }
 
-DownloadProxy& WebProcessPool::download(WebsiteDataStore& dataStore, WebPageProxy* initiatingPage, const ResourceRequest& request, const String& suggestedFilename)
+Ref<DownloadProxy> WebProcessPool::download(WebsiteDataStore& dataStore, WebPageProxy* initiatingPage, const ResourceRequest& request, const String& suggestedFilename)
 {
-    auto& downloadProxy = createDownloadProxy(dataStore, request, initiatingPage, { });
+    auto downloadProxy = createDownloadProxy(dataStore, request, initiatingPage, { });
     dataStore.download(downloadProxy, suggestedFilename);
     return downloadProxy;
 }
 
-DownloadProxy& WebProcessPool::resumeDownload(WebsiteDataStore& dataStore, WebPageProxy* initiatingPage, const API::Data& resumeData, const String& path, CallDownloadDidStart callDownloadDidStart)
+Ref<DownloadProxy> WebProcessPool::resumeDownload(WebsiteDataStore& dataStore, WebPageProxy* initiatingPage, const API::Data& resumeData, const String& path, CallDownloadDidStart callDownloadDidStart)
 {
-    auto& downloadProxy = createDownloadProxy(dataStore, ResourceRequest(), initiatingPage, { });
+    auto downloadProxy = createDownloadProxy(dataStore, ResourceRequest(), initiatingPage, { });
     dataStore.resumeDownload(downloadProxy, resumeData, path, callDownloadDidStart);
     return downloadProxy;
 }
@@ -1411,7 +1411,7 @@ void WebProcessPool::setDefaultRequestTimeoutInterval(double timeoutInterval)
     sendToAllProcesses(Messages::WebProcess::SetDefaultRequestTimeoutInterval(timeoutInterval));
 }
 
-DownloadProxy& WebProcessPool::createDownloadProxy(WebsiteDataStore& dataStore, const ResourceRequest& request, WebPageProxy* originatingPage, const FrameInfoData& frameInfo)
+Ref<DownloadProxy> WebProcessPool::createDownloadProxy(WebsiteDataStore& dataStore, const ResourceRequest& request, WebPageProxy* originatingPage, const FrameInfoData& frameInfo)
 {
     auto client = m_legacyDownloadClient ? Ref<API::DownloadClient>(*m_legacyDownloadClient) : adoptRef(*new API::DownloadClient);
     return dataStore.createDownloadProxy(WTFMove(client), request, originatingPage, frameInfo);
