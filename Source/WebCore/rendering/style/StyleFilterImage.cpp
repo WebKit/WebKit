@@ -162,8 +162,10 @@ void StyleFilterImage::imageChanged(CachedImage*, const IntRect*)
     if (!m_inputImageIsReady)
         return;
 
-    for (auto& client : clients().values())
-        client->imageChanged(static_cast<WrappedImagePtr>(this));
+    for (auto entry : clients()) {
+        auto& client = entry.key;
+        client.imageChanged(static_cast<WrappedImagePtr>(this));
+    }
 }
 
 } // namespace WebCore

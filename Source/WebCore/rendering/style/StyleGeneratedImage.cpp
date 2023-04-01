@@ -138,29 +138,29 @@ void StyleGeneratedImage::computeIntrinsicDimensions(const RenderElement* render
 
 void StyleGeneratedImage::addClient(RenderElement& renderer)
 {
-    if (m_clients.isEmpty())
+    if (m_clients.isEmptyIgnoringNullReferences())
         ref();
 
-    m_clients.add(&renderer);
+    m_clients.add(renderer);
 
     this->didAddClient(renderer);
 }
 
 void StyleGeneratedImage::removeClient(RenderElement& renderer)
 {
-    ASSERT(m_clients.contains(&renderer));
-    if (!m_clients.remove(&renderer))
+    ASSERT(m_clients.contains(renderer));
+    if (!m_clients.remove(renderer))
         return;
 
     this->didRemoveClient(renderer);
 
-    if (m_clients.isEmpty())
+    if (m_clients.isEmptyIgnoringNullReferences())
         deref();
 }
 
 bool StyleGeneratedImage::hasClient(RenderElement& renderer) const
 {
-    return m_clients.contains(&renderer);
+    return m_clients.contains(renderer);
 }
 
 } // namespace WebCore

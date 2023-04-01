@@ -26,8 +26,8 @@
 #include "FloatSize.h"
 #include "FloatSizeHash.h"
 #include "StyleImage.h"
-#include <wtf/HashCountedSet.h>
 #include <wtf/HashMap.h>
+#include <wtf/WeakHashCountedSet.h>
 
 namespace WebCore {
 
@@ -42,7 +42,7 @@ struct ResourceLoaderOptions;
 
 class StyleGeneratedImage : public StyleImage {
 public:
-    const HashCountedSet<RenderElement*>& clients() const { return m_clients; }
+    const WeakHashCountedSet<RenderElement>& clients() const { return m_clients; }
 
 protected:
     explicit StyleGeneratedImage(StyleImage::Type, bool fixedSize);
@@ -76,7 +76,7 @@ protected:
 
     FloatSize m_containerSize;
     bool m_fixedSize;
-    HashCountedSet<RenderElement*> m_clients;
+    WeakHashCountedSet<RenderElement> m_clients;
     HashMap<FloatSize, std::unique_ptr<CachedGeneratedImage>> m_images;
 };
 
