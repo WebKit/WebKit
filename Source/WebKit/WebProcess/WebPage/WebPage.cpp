@@ -993,9 +993,9 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     auto experimentalSandbox = parameters.store.getBoolValueForKey(WebPreferencesKey::experimentalSandboxEnabledKey());
     if (experimentalSandbox)
         sandbox_enable_state_flag("EnableExperimentalSandbox", *auditToken);
-#if !ENABLE(LAUNCHD_BLOCKING_IN_WEBCONTENT) && HAVE(MACH_BOOTSTRAP_EXTENSION)
-    if (!shouldBlockIOKit || !experimentalSandbox)
-        SandboxExtension::consumePermanently(parameters.machBootstrapHandle);
+
+#if HAVE(MACH_BOOTSTRAP_EXTENSION)
+    SandboxExtension::consumePermanently(parameters.machBootstrapHandle);
 #endif
 
     if (WebProcess::singleton().isLockdownModeEnabled())

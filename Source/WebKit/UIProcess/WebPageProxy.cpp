@@ -8716,6 +8716,17 @@ static Span<const ASCIILiteral> gpuMachServices()
     return services;
 }
 
+static bool shouldBlockIOKit(const WebPreferences& preferences)
+{
+    if (!preferences.useGPUProcessForMediaEnabled()
+        || (!preferences.captureVideoInGPUProcessEnabled() && !preferences.captureVideoInUIProcessEnabled())
+        || (!preferences.captureAudioInGPUProcessEnabled() && !preferences.captureAudioInUIProcessEnabled())
+        || !preferences.webRTCPlatformCodecsInGPUProcessEnabled()
+        || !preferences.useGPUProcessForCanvasRenderingEnabled()
+        || !preferences.useGPUProcessForWebGLEnabled())
+        return false;
+    return true;
+}
 #endif // PLATFORM(COCOA)
 
 #if !PLATFORM(COCOA)
@@ -8815,12 +8826,7 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
     parameters.additionalSupportedImageTypes = m_configuration->additionalSupportedImageTypes();
 
 #if !ENABLE(WEBCONTENT_GPU_SANDBOX_EXTENSIONS_BLOCKING)
-    if (!preferences().useGPUProcessForMediaEnabled()
-        || (!preferences().captureVideoInGPUProcessEnabled() && !preferences().captureVideoInUIProcessEnabled())
-        || (!preferences().captureAudioInGPUProcessEnabled() && !preferences().captureAudioInUIProcessEnabled())
-        || !preferences().webRTCPlatformCodecsInGPUProcessEnabled()
-        || !preferences().useGPUProcessForCanvasRenderingEnabled()
-        || !preferences().useGPUProcessForWebGLEnabled()) {
+    if (shouldBlockIOKit(preferences())) {
         parameters.gpuIOKitExtensionHandles = SandboxExtension::createHandlesForIOKitClassExtensions(gpuIOKitClasses(), std::nullopt);
         parameters.gpuMachExtensionHandles = SandboxExtension::createHandlesForMachLookup(gpuMachServices(), std::nullopt);
     }
@@ -8956,8 +8962,14 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
     parameters.allowedLookalikeCharacterStrings = cachedAllowedLookalikeStrings();
 #endif
 
-#if !ENABLE(LAUNCHD_BLOCKING_IN_WEBCONTENT) && HAVE(MACH_BOOTSTRAP_EXTENSION)
-    parameters.machBootstrapHandle = SandboxExtension::createHandleForMachBootstrapExtension();
+#if HAVE(MACH_BOOTSTRAP_EXTENSION)
+#if ENABLE(LAUNCHD_BLOCKING_IN_WEBCONTENT)
+    bool createBootstrapExtension = false;
+#else
+    bool createBootstrapExtension = !parameters.store.getBoolValueForKey(WebPreferencesKey::experimentalSandboxEnabledKey());
+#endif
+    if (!shouldBlockIOKit(preferences()) || createBootstrapExtension)
+        parameters.machBootstrapHandle = SandboxExtension::createHandleForMachBootstrapExtension();
 #endif
     return parameters;
 }

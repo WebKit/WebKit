@@ -304,7 +304,7 @@ struct WebPageCreationParameters {
     Vector<WebCore::LookalikeCharactersSanitizationData> allowedLookalikeCharacterStrings;
 #endif
 
-#if !ENABLE(LAUNCHD_BLOCKING_IN_WEBCONTENT) && HAVE(MACH_BOOTSTRAP_EXTENSION)
+#if HAVE(MACH_BOOTSTRAP_EXTENSION)
     SandboxExtension::Handle machBootstrapHandle;
 #endif
 };
