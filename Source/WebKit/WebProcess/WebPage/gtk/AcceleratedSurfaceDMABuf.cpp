@@ -130,12 +130,12 @@ void AcceleratedSurfaceDMABuf::clientResize(const WebCore::IntSize& size)
     }
     UnixFileDescriptor backFD(gbm_bo_get_fd(backObject), UnixFileDescriptor::Adopt);
     Vector<EGLAttrib> attributes = {
-        EGL_WIDTH, gbm_bo_get_width(backObject),
-        EGL_HEIGHT, gbm_bo_get_height(backObject),
-        EGL_LINUX_DRM_FOURCC_EXT, gbm_bo_get_format(backObject),
+        EGL_WIDTH, static_cast<EGLAttrib>(gbm_bo_get_width(backObject)),
+        EGL_HEIGHT, static_cast<EGLAttrib>(gbm_bo_get_height(backObject)),
+        EGL_LINUX_DRM_FOURCC_EXT, static_cast<EGLAttrib>(gbm_bo_get_format(backObject)),
         EGL_DMA_BUF_PLANE0_FD_EXT, backFD.value(),
-        EGL_DMA_BUF_PLANE0_OFFSET_EXT, gbm_bo_get_offset(backObject, 0),
-        EGL_DMA_BUF_PLANE0_PITCH_EXT, gbm_bo_get_stride(backObject),
+        EGL_DMA_BUF_PLANE0_OFFSET_EXT, static_cast<EGLAttrib>(gbm_bo_get_offset(backObject, 0)),
+        EGL_DMA_BUF_PLANE0_PITCH_EXT, static_cast<EGLAttrib>(gbm_bo_get_stride(backObject)),
         EGL_NONE
     };
     m_backImage = display.createEGLImage(EGL_NO_CONTEXT, EGL_LINUX_DMA_BUF_EXT, nullptr, attributes);
