@@ -90,7 +90,7 @@ JSC_DEFINE_HOST_FUNCTION(constructTemporalDuration, (JSGlobalObject* globalObjec
     RETURN_IF_EXCEPTION(scope, { });
 
     ISO8601::Duration result;
-    auto count = std::min<size_t>(callFrame->argumentCount(), numberOfTemporalUnits);
+    size_t count = std::min<size_t>(callFrame->argumentCount(), numberOfTemporalUnits);
     for (size_t i = 0; i < count; i++) {
         JSValue value = callFrame->uncheckedArgument(i);
         if (value.isUndefined())

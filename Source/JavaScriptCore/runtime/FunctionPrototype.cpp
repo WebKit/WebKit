@@ -114,10 +114,10 @@ JSC_DEFINE_HOST_FUNCTION(functionProtoFuncBind, (JSGlobalObject* globalObject, C
     JSObject* target = asObject(thisValue);
 
     JSValue boundThis = callFrame->argument(0);
-    unsigned argumentCount = callFrame->argumentCount();
-    unsigned numBoundArgs = 0;
+    size_t argsCount = callFrame->argumentCount();
+    size_t numBoundArgs = 0;
     ArgList boundArgs { };
-    if (argumentCount > 1)
+    if (argsCount > 1)
         boundArgs = ArgList(callFrame, 1);
 
     double length = PNaN;

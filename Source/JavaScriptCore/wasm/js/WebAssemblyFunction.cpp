@@ -80,8 +80,8 @@ JSC_DEFINE_HOST_FUNCTION(callWebAssemblyFunction, (JSGlobalObject* globalObject,
     if (signature.argumentsOrResultsIncludeV128())
         return throwVMTypeError(globalObject, scope, Wasm::errorMessageForExceptionType(Wasm::ExceptionType::TypeErrorInvalidV128Use));
 
-    for (unsigned argIndex = 0; argIndex < signature.argumentCount(); ++argIndex) {
-        uint64_t value = fromJSValue(globalObject, signature.argumentType(argIndex), callFrame->argument(argIndex));
+    for (size_t argIndex = 0; argIndex < signature.argumentCount(); ++argIndex) {
+        uint64_t value = fromJSValue(globalObject, signature.argumentType(argIndex), callFrame->uncheckedArgument(argIndex));
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
         boxedArgs.append(value);
     }

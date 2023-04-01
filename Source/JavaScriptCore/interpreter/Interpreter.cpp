@@ -111,12 +111,9 @@ JSValue eval(CallFrame* callFrame, JSValue thisValue, JSScope* callerScopeChain,
         vm.didEnterVM = true;
     });
 
-    if (!callFrame->argumentCount())
-        return jsUndefined();
-
     JSValue program = callFrame->argument(0);
     if (!program.isString())
-        return program;
+        return program; // Includes undefined if program is undefined
 
     auto* programString = asString(program);
 

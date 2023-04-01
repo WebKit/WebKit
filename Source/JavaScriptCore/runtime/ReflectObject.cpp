@@ -99,7 +99,7 @@ JSC_DEFINE_HOST_FUNCTION(reflectObjectConstruct, (JSGlobalObject* globalObject, 
 
     JSValue newTarget = target;
     if (callFrame->argumentCount() >= 3) {
-        newTarget = callFrame->argument(2);
+        newTarget = callFrame->uncheckedArgument(2);
         if (!newTarget.isConstructor())
             return JSValue::encode(throwTypeError(globalObject, scope, "Reflect.construct requires the third argument be a constructor if present"_s));
     }
@@ -234,7 +234,7 @@ JSC_DEFINE_HOST_FUNCTION(reflectObjectSet, (JSGlobalObject* globalObject, CallFr
 
     JSValue receiver = target;
     if (callFrame->argumentCount() >= 4)
-        receiver = callFrame->argument(3);
+        receiver = callFrame->uncheckedArgument(3);
 
     // Do not raise any readonly errors that happen in strict mode.
     bool shouldThrowIfCantSet = false;

@@ -51,7 +51,8 @@ JSC_DEFINE_HOST_FUNCTION(boundThisNoArgsFunctionCall, (JSGlobalObject* globalObj
                 return IterationStatus::Continue;
             });
         }
-        for (unsigned i = 0; i < callFrame->argumentCount(); ++i)
+        size_t count = callFrame->argumentCount();
+        for (size_t i = 0; i < count; ++i) 
             args.append(callFrame->uncheckedArgument(i));
         RELEASE_ASSERT(!args.hasOverflowed());
     }
@@ -84,7 +85,8 @@ JSC_DEFINE_HOST_FUNCTION(boundFunctionCall, (JSGlobalObject* globalObject, CallF
                 return IterationStatus::Continue;
             });
         }
-        for (unsigned i = 0; i < callFrame->argumentCount(); ++i)
+        size_t count = callFrame->argumentCount();
+        for (size_t i = 0; i < count; ++i)
             args.append(callFrame->uncheckedArgument(i));
         if (UNLIKELY(args.hasOverflowed())) {
             throwOutOfMemoryError(globalObject, scope);
@@ -120,7 +122,8 @@ JSC_DEFINE_HOST_FUNCTION(boundFunctionConstruct, (JSGlobalObject* globalObject, 
                 return IterationStatus::Continue;
             });
         }
-        for (unsigned i = 0; i < callFrame->argumentCount(); ++i)
+        size_t count = callFrame->argumentCount();
+        for (size_t i = 0; i < count; ++i)
             args.append(callFrame->uncheckedArgument(i));
         if (UNLIKELY(args.hasOverflowed())) {
             throwOutOfMemoryError(globalObject, scope);

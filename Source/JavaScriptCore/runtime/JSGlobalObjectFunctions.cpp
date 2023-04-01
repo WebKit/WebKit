@@ -892,15 +892,16 @@ JSC_DEFINE_HOST_FUNCTION(globalFuncCopyDataProperties, (JSGlobalObject* globalOb
     UnlinkedCodeBlock* unlinkedCodeBlock = nullptr;
     const IdentifierSet* excludedSet = nullptr;
     std::optional<IdentifierSet> newlyCreatedSet;
-    if (callFrame->argumentCount() > 1) {
+    size_t count = callFrame->argumentCount();
+    if (count > 1) {
         int32_t setIndex = callFrame->uncheckedArgument(1).asUInt32AsAnyInt();
         CodeBlock* codeBlock = getCallerCodeBlock(callFrame);
         ASSERT(codeBlock);
         unlinkedCodeBlock = codeBlock->unlinkedCodeBlock();
         excludedSet = &unlinkedCodeBlock->constantIdentifierSets()[setIndex];
-        if (callFrame->argumentCount() > 2) {
+        if (count > 2) {
             newlyCreatedSet.emplace(*excludedSet);
-            for (unsigned index = 2; index < callFrame->argumentCount(); ++index) {
+            for (size_t index = 2; index < count; ++index) {
                 // This isn't observable since ObjectPatternNode::bindValue() also performs ToPropertyKey.
                 auto propertyName = callFrame->uncheckedArgument(index).toPropertyKey(globalObject);
                 RETURN_IF_EXCEPTION(scope, { });

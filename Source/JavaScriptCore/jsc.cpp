@@ -1358,7 +1358,8 @@ static EncodedJSValue printInternal(JSGlobalObject* globalObject, CallFrame* cal
         }
     }
 
-    for (unsigned i = 0; i < callFrame->argumentCount(); ++i) {
+    size_t count = callFrame->argumentCount();
+    for (size_t i = 0; i < count; ++i) {
         if (i)
             if (EOF == fputc(' ', out))
                 goto fail;
@@ -1401,7 +1402,7 @@ JSC_DEFINE_HOST_FUNCTION(functionAtob, (JSGlobalObject* globalObject, CallFrame*
     if (!callFrame->argumentCount())
         return JSValue::encode(throwException(globalObject, scope, createError(globalObject, "Missing input for atob."_s)));
 
-    JSValue jsValue = callFrame->argument(0);
+    JSValue jsValue = callFrame->uncheckedArgument(0);
     if (jsValue.isUndefined())
         return JSValue::encode(throwException(globalObject, scope, createError(globalObject, "Invalid character in argument for atob."_s)));
 
@@ -1428,7 +1429,7 @@ JSC_DEFINE_HOST_FUNCTION(functionBtoa, (JSGlobalObject* globalObject, CallFrame*
     if (!callFrame->argumentCount())
         return JSValue::encode(throwException(globalObject, scope, createError(globalObject, "Missing input for btoa."_s)));
 
-    auto* string = callFrame->argument(0).toString(globalObject);
+    auto* string = callFrame->uncheckedArgument(0).toString(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
     String stringToEncode = string->value(globalObject);
@@ -1464,7 +1465,7 @@ JSC_DEFINE_HOST_FUNCTION(functionDescribe, (JSGlobalObject* globalObject, CallFr
     VM& vm = globalObject->vm();
     if (callFrame->argumentCount() < 1)
         return JSValue::encode(jsUndefined());
-    return JSValue::encode(jsString(vm, toString(callFrame->argument(0))));
+    return JSValue::encode(jsString(vm, toString(callFrame->uncheckedArgument(0))));
 }
 
 JSC_DEFINE_HOST_FUNCTION(functionDescribeArray, (JSGlobalObject* globalObject, CallFrame* callFrame))
@@ -1472,7 +1473,7 @@ JSC_DEFINE_HOST_FUNCTION(functionDescribeArray, (JSGlobalObject* globalObject, C
     if (callFrame->argumentCount() < 1)
         return JSValue::encode(jsUndefined());
     VM& vm = globalObject->vm();
-    JSObject* object = jsDynamicCast<JSObject*>(callFrame->argument(0));
+    JSObject* object = jsDynamicCast<JSObject*>(callFrame->uncheckedArgument(0));
     if (!object)
         return JSValue::encode(jsNontrivialString(vm, "<not object>"_s));
     return JSValue::encode(jsNontrivialString(vm, toString("<Butterfly: ", RawPointer(object->butterfly()), "; public length: ", object->getArrayLength(), "; vector length: ", object->getVectorLength(), ">")));
@@ -1484,11 +1485,11 @@ JSC_DEFINE_HOST_FUNCTION(functionSleepSeconds, (JSGlobalObject* globalObject, Ca
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (callFrame->argumentCount() >= 1) {
-        Seconds seconds = Seconds(callFrame->argument(0).toNumber(globalObject));
+        Seconds seconds = Seconds(callFrame->uncheckedArgument(0).toNumber(globalObject));
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
         sleep(seconds);
     }
-    
+
     return JSValue::encode(jsUndefined());
 }
 
@@ -1659,7 +1660,8 @@ JSC_DEFINE_HOST_FUNCTION(functionRun, (JSGlobalObject* globalObject, CallFrame* 
 
     JSArray* array = constructEmptyArray(realm, nullptr);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    for (unsigned i = 1; i < callFrame->argumentCount(); ++i) {
+    unsigned count = callFrame->argumentCount();
+    for (unsigned i = 1; i < count; ++i) {
         array->putDirectIndex(realm, i - 1, callFrame->uncheckedArgument(i));
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
     }
@@ -1693,7 +1695,8 @@ JSC_DEFINE_HOST_FUNCTION(functionRunString, (JSGlobalObject* globalObject, CallF
 
     JSArray* array = constructEmptyArray(realm, nullptr);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    for (unsigned i = 1; i < callFrame->argumentCount(); ++i) {
+    unsigned count = callFrame->argumentCount();
+    for (unsigned i = 1; i < count; ++i) {
         array->putDirectIndex(realm, i - 1, callFrame->uncheckedArgument(i));
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
     }
@@ -1784,7 +1787,7 @@ JSC_DEFINE_HOST_FUNCTION(functionReadFile, (JSGlobalObject* globalObject, CallFr
 
     bool isBinary = false;
     if (callFrame->argumentCount() > 1) {
-        String type = callFrame->argument(1).toWTFString(globalObject);
+        String type = callFrame->uncheckedArgument(1).toWTFString(globalObject);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
         if (type != "binary"_s)
             return throwVMError(globalObject, scope, "Expected 'binary' as second argument."_s);
@@ -1878,7 +1881,8 @@ JSC_DEFINE_HOST_FUNCTION(functionCheckSyntax, (JSGlobalObject* globalObject, Cal
 #if ENABLE(SAMPLING_FLAGS)
 JSC_DEFINE_HOST_FUNCTION(functionSetSamplingFlags, (JSGlobalObject*, CallFrame* callFrame))
 {
-    for (unsigned i = 0; i < callFrame->argumentCount(); ++i) {
+    size_t count = callFrame->argumentCount();
+    for (size_t i = 0; i < count; ++i) {
         unsigned flag = static_cast<unsigned>(callFrame->uncheckedArgument(i).toNumber(globalObject));
         if ((flag >= 1) && (flag <= 32))
             SamplingFlags::setFlag(flag);
@@ -1888,7 +1892,8 @@ JSC_DEFINE_HOST_FUNCTION(functionSetSamplingFlags, (JSGlobalObject*, CallFrame* 
 
 JSC_DEFINE_HOST_FUNCTION(functionClearSamplingFlags, (JSGlobalObject*, CallFrame* callFrame))
 {
-    for (unsigned i = 0; i < callFrame->argumentCount(); ++i) {
+    size_t count = callFrame->argumentCount();
+    for (size_t i = 0; i < count; ++i) {
         unsigned flag = static_cast<unsigned>(callFrame->uncheckedArgument(i).toNumber(globalObject));
         if ((flag >= 1) && (flag <= 32))
             SamplingFlags::clearFlag(flag);
@@ -2037,8 +2042,8 @@ JSC_DEFINE_HOST_FUNCTION(functionNoDFG, (JSGlobalObject* globalObject, CallFrame
 
 JSC_DEFINE_HOST_FUNCTION(functionNoFTL, (JSGlobalObject*, CallFrame* callFrame))
 {
-    if (callFrame->argumentCount()) {
-        FunctionExecutable* executable = getExecutableForFunction(callFrame->argument(0));
+    if (callFrame->argumentCount() >= 1) {
+        FunctionExecutable* executable = getExecutableForFunction(callFrame->uncheckedArgument(0));
         if (executable)
             executable->setNeverFTLOptimize(true);
     }
@@ -2251,7 +2256,7 @@ JSC_DEFINE_HOST_FUNCTION(functionDollarGlobalObjectFor, (JSGlobalObject* globalO
 
     if (callFrame->argumentCount() < 1)
         return JSValue::encode(throwException(globalObject, scope, createError(globalObject, "Not enough arguments"_s)));
-    JSValue arg = callFrame->argument(0);
+    JSValue arg = callFrame->uncheckedArgument(0);
     if (arg.isObject())
         return JSValue::encode(asObject(arg)->globalObject()->globalThis());
 
@@ -2266,7 +2271,7 @@ JSC_DEFINE_HOST_FUNCTION(functionDollarIsRemoteFunction, (JSGlobalObject* global
     if (callFrame->argumentCount() < 1)
         return JSValue::encode(throwException(globalObject, scope, createError(globalObject, "Not enough arguments"_s)));
 
-    JSValue arg = callFrame->argument(0);
+    JSValue arg = callFrame->uncheckedArgument(0);
     return JSValue::encode(jsBoolean(isRemoteFunction(arg)));
 }
 
@@ -2400,8 +2405,8 @@ JSC_DEFINE_HOST_FUNCTION(functionDollarAgentSleep, (JSGlobalObject* globalObject
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (callFrame->argumentCount() >= 1) {
-        Seconds seconds = Seconds::fromMilliseconds(callFrame->argument(0).toNumber(globalObject));
+    if (callFrame->argumentCount()) {
+        Seconds seconds = Seconds::fromMilliseconds(callFrame->uncheckedArgument(0).toNumber(globalObject));
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
         sleep(seconds);
     }
@@ -2499,7 +2504,7 @@ JSC_DEFINE_HOST_FUNCTION(functionFlashHeapAccess, (JSGlobalObject* globalObject,
     
     double sleepTimeMs = 0;
     if (callFrame->argumentCount() >= 1) {
-        sleepTimeMs = callFrame->argument(0).toNumber(globalObject);
+        sleepTimeMs = callFrame->uncheckedArgument(0).toNumber(globalObject);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
     }
 
@@ -2559,8 +2564,8 @@ JSC_DEFINE_HOST_FUNCTION(functionReoptimizationRetryCount, (JSGlobalObject*, Cal
 {
     if (callFrame->argumentCount() < 1)
         return JSValue::encode(jsUndefined());
-    
-    CodeBlock* block = getSomeBaselineCodeBlockForFunction(callFrame->argument(0));
+
+    CodeBlock* block = getSomeBaselineCodeBlockForFunction(callFrame->uncheckedArgument(0));
     if (!block)
         return JSValue::encode(jsNumber(0));
     
@@ -2574,8 +2579,8 @@ JSC_DEFINE_HOST_FUNCTION(functionTransferArrayBuffer, (JSGlobalObject* globalObj
 
     if (callFrame->argumentCount() < 1)
         return JSValue::encode(throwException(globalObject, scope, createError(globalObject, "Not enough arguments"_s)));
-    
-    JSArrayBuffer* buffer = jsDynamicCast<JSArrayBuffer*>(callFrame->argument(0));
+
+    JSArrayBuffer* buffer = jsDynamicCast<JSArrayBuffer*>(callFrame->uncheckedArgument(0));
     if (!buffer)
         return JSValue::encode(throwException(globalObject, scope, createError(globalObject, "Expected an array buffer"_s)));
     
@@ -2622,8 +2627,9 @@ JSC_DEFINE_HOST_FUNCTION(functionUndefined2, (JSGlobalObject*, CallFrame*))
 
 JSC_DEFINE_HOST_FUNCTION(functionIsInt32, (JSGlobalObject*, CallFrame* callFrame))
 {
-    for (size_t i = 0; i < callFrame->argumentCount(); ++i) {
-        if (!callFrame->argument(i).isInt32())
+    size_t count = callFrame->argumentCount();
+    for (size_t i = 0; i < count; ++i) {
+        if (!callFrame->uncheckedArgument(i).isInt32())
             return JSValue::encode(jsBoolean(false));
     }
     return JSValue::encode(jsBoolean(true));
@@ -2631,8 +2637,9 @@ JSC_DEFINE_HOST_FUNCTION(functionIsInt32, (JSGlobalObject*, CallFrame* callFrame
 
 JSC_DEFINE_HOST_FUNCTION(functionIsPureNaN, (JSGlobalObject*, CallFrame* callFrame))
 {
-    for (size_t i = 0; i < callFrame->argumentCount(); ++i) {
-        JSValue value = callFrame->argument(i);
+    size_t count = callFrame->argumentCount();
+    for (size_t i = 0; i < count; ++i) {
+        JSValue value = callFrame->uncheckedArgument(i);
         if (!value.isNumber())
             return JSValue::encode(jsBoolean(false));
         double number = value.asNumber();
@@ -2954,8 +2961,10 @@ JSC_DEFINE_HOST_FUNCTION(functionResetSuperSamplerState, (JSGlobalObject*, CallF
 JSC_DEFINE_HOST_FUNCTION(functionEnsureArrayStorage, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
-    for (unsigned i = 0; i < callFrame->argumentCount(); ++i) {
-        if (JSObject* object = jsDynamicCast<JSObject*>(callFrame->argument(i)))
+    size_t count = callFrame->argumentCount();
+    for (size_t i = 0; i < count; ++i) {
+        JSObject* object = jsDynamicCast<JSObject*>(callFrame->uncheckedArgument(i));
+        if (object)
             object->ensureArrayStorage(vm);
     }
     return JSValue::encode(jsUndefined());

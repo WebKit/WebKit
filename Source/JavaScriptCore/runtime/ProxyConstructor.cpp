@@ -60,8 +60,8 @@ JSC_DEFINE_HOST_FUNCTION(makeRevocableProxy, (JSGlobalObject* globalObject, Call
     if (callFrame->argumentCount() < 2)
         return throwVMTypeError(globalObject, scope, "Proxy.revocable needs to be called with two arguments: the target and the handler"_s);
 
-    JSValue target = callFrame->argument(0);
-    JSValue handler = callFrame->argument(1);
+    JSValue target = callFrame->uncheckedArgument(0);
+    JSValue handler = callFrame->uncheckedArgument(1);
     ProxyObject* proxy = ProxyObject::create(globalObject, target, handler);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     ProxyRevoke* revoke = ProxyRevoke::create(vm, globalObject->proxyRevokeStructure(), proxy);

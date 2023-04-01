@@ -131,7 +131,7 @@ JSC_DEFINE_HOST_FUNCTION(callPlugin, (JSGlobalObject* lexicalGlobalObject, CallF
     size_t argumentCount = callFrame->argumentCount();
     MarkedArgumentBuffer argumentList;
     for (size_t i = 0; i < argumentCount; i++)
-        argumentList.append(callFrame->argument(i));
+        argumentList.append(callFrame->uncheckedArgument(i));
     ASSERT(!argumentList.hasOverflowed());
 
     auto callData = JSC::getCallData(scriptObject);

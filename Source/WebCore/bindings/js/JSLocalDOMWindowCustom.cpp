@@ -538,7 +538,7 @@ JSC_DEFINE_HOST_FUNCTION(showModalDialog, (JSGlobalObject* lexicalGlobalObjectPt
     if (UNLIKELY(callFrame.argumentCount() < 1))
         return throwVMException(&lexicalGlobalObject, scope, createNotEnoughArgumentsError(&lexicalGlobalObject));
 
-    String urlString = convert<IDLNullable<IDLDOMString>>(lexicalGlobalObject, callFrame.argument(0));
+    String urlString = convert<IDLNullable<IDLDOMString>>(lexicalGlobalObject, callFrame.uncheckedArgument(0));
     RETURN_IF_EXCEPTION(scope, { });
     String dialogFeaturesString = convert<IDLNullable<IDLDOMString>>(lexicalGlobalObject, callFrame.argument(2));
     RETURN_IF_EXCEPTION(scope, { });

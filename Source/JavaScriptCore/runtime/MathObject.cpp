@@ -189,10 +189,10 @@ JSC_DEFINE_HOST_FUNCTION(mathProtoFuncHypot, (JSGlobalObject* globalObject, Call
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    unsigned argsCount = callFrame->argumentCount();
+    size_t argsCount = callFrame->argumentCount();
     Vector<double, 8> args;
     args.reserveInitialCapacity(argsCount);
-    for (unsigned i = 0; i < argsCount; ++i) {
+    for (size_t i = 0; i < argsCount; ++i) {
         double argument = callFrame->uncheckedArgument(i).toNumber(globalObject);
         RETURN_IF_EXCEPTION(scope, { });
         args.uncheckedAppend(argument);
@@ -230,9 +230,9 @@ JSC_DEFINE_HOST_FUNCTION(mathProtoFuncMax, (JSGlobalObject* globalObject, CallFr
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    unsigned argsCount = callFrame->argumentCount();
+    size_t argsCount = callFrame->argumentCount();
     double result = -std::numeric_limits<double>::infinity();
-    for (unsigned k = 0; k < argsCount; ++k) {
+    for (size_t k = 0; k < argsCount; ++k) {
         double val = callFrame->uncheckedArgument(k).toNumber(globalObject);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
         if (std::isnan(val)) {
@@ -247,9 +247,9 @@ JSC_DEFINE_HOST_FUNCTION(mathProtoFuncMin, (JSGlobalObject* globalObject, CallFr
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    unsigned argsCount = callFrame->argumentCount();
+    size_t argsCount = callFrame->argumentCount();
     double result = +std::numeric_limits<double>::infinity();
-    for (unsigned k = 0; k < argsCount; ++k) {
+    for (size_t k = 0; k < argsCount; ++k) {
         double val = callFrame->uncheckedArgument(k).toNumber(globalObject);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
         if (std::isnan(val)) {

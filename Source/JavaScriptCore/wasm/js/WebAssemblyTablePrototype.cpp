@@ -94,7 +94,7 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyTableProtoFuncGrow, (JSGlobalObject* globalO
     uint32_t delta = toNonWrappingUint32(globalObject, callFrame->argument(0));
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
 
-    JSValue defaultValue = jsNull();
+    JSValue defaultValue;
     if (callFrame->argumentCount() < 2)
         defaultValue = defaultValueForReferenceType(table->table()->wasmType());
     else
@@ -140,9 +140,11 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyTableProtoFuncSet, (JSGlobalObject* globalOb
     if (index >= table->length())
         return throwVMRangeError(globalObject, throwScope, "WebAssembly.Table.prototype.set expects an integer less than the length of the table"_s);
 
-    JSValue value = callFrame->argument(1);
+    JSValue value;
     if (callFrame->argumentCount() < 2)
         value = defaultValueForReferenceType(table->table()->wasmType());
+    else
+        value = callFrame->uncheckedArgument(1);
 
     if (table->table()->asFuncrefTable()) {
         WebAssemblyFunction* wasmFunction = nullptr;

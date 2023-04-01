@@ -99,7 +99,8 @@ JSC_DEFINE_HOST_FUNCTION(remoteFunctionCallForJSFunction, (JSGlobalObject* globa
         args.overflowCheckNotNeeded();
         return { };
     };
-    for (unsigned i = 0; i < callFrame->argumentCount(); ++i) {
+    size_t count = callFrame->argumentCount();
+    for (size_t i = 0; i < count; ++i) {
         JSValue wrappedValue = wrapArgument(globalObject, targetGlobalObject, callFrame->uncheckedArgument(i));
         RETURN_IF_EXCEPTION(scope, clearArgOverflowCheckAndReturnAbortValue());
         args.append(wrappedValue);
@@ -140,7 +141,8 @@ JSC_DEFINE_HOST_FUNCTION(remoteFunctionCallGeneric, (JSGlobalObject* globalObjec
         args.overflowCheckNotNeeded();
         return { };
     };
-    for (unsigned i = 0; i < callFrame->argumentCount(); ++i) {
+    size_t count = callFrame->argumentCount();
+    for (size_t i = 0; i < count; ++i) {
         JSValue wrappedValue = wrapArgument(globalObject, targetGlobalObject, callFrame->uncheckedArgument(i));
         RETURN_IF_EXCEPTION(scope, clearArgOverflowCheckAndReturnAbortValue());
         args.append(wrappedValue);

@@ -35,9 +35,6 @@ namespace JSC {
 
 static String valueOrDefaultLabelString(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
-    if (callFrame->argumentCount() < 1)
-        return "default"_s;
-
     auto value = callFrame->argument(0);
     if (value.isUndefined())
         return "default"_s;

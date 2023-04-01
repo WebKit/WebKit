@@ -90,9 +90,9 @@ JSC_DEFINE_HOST_FUNCTION(constructTemporalPlainTime, (JSGlobalObject* globalObje
     RETURN_IF_EXCEPTION(scope, { });
 
     ISO8601::Duration duration { };
-    auto count = std::min<size_t>(callFrame->argumentCount(), numberOfTemporalPlainTimeUnits);
-    for (unsigned i = 0; i < count; i++) {
-        unsigned durationIndex = i + static_cast<unsigned>(TemporalUnit::Hour);
+    size_t count = std::min<size_t>(callFrame->argumentCount(), numberOfTemporalPlainTimeUnits);
+    for (size_t i = 0; i < count; i++) {
+        size_t durationIndex = i + static_cast<size_t>(TemporalUnit::Hour);
         duration[durationIndex] = callFrame->uncheckedArgument(i).toIntegerOrInfinity(globalObject);
         RETURN_IF_EXCEPTION(scope, { });
         if (!std::isfinite(duration[durationIndex]))

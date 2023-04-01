@@ -327,8 +327,8 @@ JSC_DEFINE_HOST_FUNCTION(objectConstructorAssign, (JSGlobalObject* globalObject,
 
     Vector<RefPtr<UniquedStringImpl>, 8> properties;
     MarkedArgumentBuffer values;
-    unsigned argsCount = callFrame->argumentCount();
-    for (unsigned i = 1; i < argsCount; ++i) {
+    size_t argsCount = callFrame->argumentCount();
+    for (size_t i = 1; i < argsCount; ++i) {
         JSValue sourceValue = callFrame->uncheckedArgument(i);
         if (sourceValue.isUndefinedOrNull())
             continue;
