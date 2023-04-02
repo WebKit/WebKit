@@ -37,7 +37,7 @@ namespace WebCore {
 FontCustomPlatformData::FontCustomPlatformData(const String& name, FontPlatformData::CreationData&& creationData)
     : name(name)
     , creationData(WTFMove(creationData))
-    , m_renderingResourceIdentifier(RenderingResourceIdentifier::generate())
+    , m_renderingResourceIdentifier(RenderingResourceIdentifier::generateThreadSafe())
 {
 }
 
