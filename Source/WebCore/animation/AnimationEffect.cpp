@@ -32,8 +32,11 @@
 #include "JSComputedEffectTiming.h"
 #include "WebAnimation.h"
 #include "WebAnimationUtilities.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(AnimationEffect);
 
 AnimationEffect::AnimationEffect()
     : m_timingFunction(LinearTimingFunction::create())
