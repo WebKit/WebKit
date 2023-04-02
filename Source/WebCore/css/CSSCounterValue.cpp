@@ -27,7 +27,7 @@
 #include "CSSCounterValue.h"
 
 #include "CSSMarkup.h"
-#include "CSSValueKeywords.h"
+#include "CSSPrimitiveValue.h"
 #include <wtf/PointerComparison.h> 
 #include <wtf/text/StringBuilder.h>
 

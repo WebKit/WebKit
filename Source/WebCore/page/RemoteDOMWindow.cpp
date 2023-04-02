@@ -26,8 +26,12 @@
 #include "config.h"
 #include "RemoteDOMWindow.h"
 
+#include "LocalDOMWindow.h"
+#include "MessagePort.h"
 #include "RemoteFrame.h"
 #include "RemoteFrameClient.h"
+#include "SecurityOrigin.h"
+#include "SerializedScriptValue.h"
 #include <JavaScriptCore/JSCJSValue.h>
 #include <JavaScriptCore/JSCJSValueInlines.h>
 #include <wtf/IsoMallocInlines.h>

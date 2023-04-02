@@ -28,6 +28,8 @@
 
 #if ENABLE(MEDIA_SOURCE)
 
+#include "PlatformTimeRanges.h"
+
 namespace WebCore {
 
 bool MediaSourcePrivate::hasFutureTime(const MediaTime& currentTime, const MediaTime& duration, const PlatformTimeRanges& ranges) const

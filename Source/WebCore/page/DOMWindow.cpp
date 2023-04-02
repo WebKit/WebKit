@@ -26,7 +26,9 @@
 #include "config.h"
 #include "DOMWindow.h"
 
+#include "Document.h"
 #include "HTTPParsers.h"
+#include "SecurityOrigin.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
 

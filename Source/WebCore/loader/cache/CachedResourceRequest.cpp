@@ -36,6 +36,7 @@
 #include "FrameLoader.h"
 #include "HTTPHeaderValues.h"
 #include "ImageDecoder.h"
+#include "LocalFrame.h"
 #include "MIMETypeRegistry.h"
 #include "MemoryCache.h"
 #include "SecurityPolicy.h"

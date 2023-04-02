@@ -32,6 +32,7 @@
 
 #include "CommonAtomStrings.h"
 #include "DeprecatedGlobalSettings.h"
+#include "Document.h"
 #include <memory>
 #include <wtf/OptionSet.h>
 #include <wtf/SetForScope.h>

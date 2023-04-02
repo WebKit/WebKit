@@ -31,6 +31,7 @@
 #include "CSSSupportsParser.h"
 
 #include "CSSParserImpl.h"
+#include "CSSPropertyParserHelpers.h"
 #include "CSSSelectorParser.h"
 #include "StyleRule.h"
 

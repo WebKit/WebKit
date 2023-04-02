@@ -33,7 +33,7 @@
 #include "AXIsolatedObject.h"
 #endif
 #include "AXObjectCache.h"
-#include "Document.h"
+#include "DocumentInlines.h"
 #include "LocalFrameView.h"
 #include "LogInitialization.h"
 #include "Logging.h"

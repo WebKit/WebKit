@@ -49,6 +49,7 @@
 #include "LocalFrameView.h"
 #include "Page.h"
 #include "PlatformLocale.h"
+#include "RenderElement.h"
 #include "ScriptDisallowedScope.h"
 #include "Settings.h"
 #include "ShadowPseudoIds.h"

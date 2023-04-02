@@ -49,6 +49,7 @@
 #include "Logging.h"
 #include "OESDrawBuffersIndexed.h"
 #include "OESTextureFloatLinear.h"
+#include "OffscreenCanvas.h"
 #include "RenderBox.h"
 #include "WebCodecsVideoFrame.h"
 #include "WebCoreOpaqueRootInlines.h"

@@ -32,6 +32,7 @@ namespace WebCore {
 class Document;
 class RenderStyle;
 class FontMetrics;
+struct FontSizeAdjust;
 
 namespace Style {
 

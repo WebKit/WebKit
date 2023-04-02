@@ -31,6 +31,7 @@
 
 namespace WebCore {
 
+class CSSValue;
 class StyleProperties;
 
 struct CSSCounterStyleDescriptors {

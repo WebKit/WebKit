@@ -32,6 +32,7 @@
 #include "JSWebAssemblyStruct.h"
 #include "WasmFormat.h"
 #include "WasmTypeDefinitionInlines.h"
+#include "WebAssemblyFunctionBase.h"
 #include <wtf/CommaPrinter.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/StringPrintStream.h>
