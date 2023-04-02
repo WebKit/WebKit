@@ -216,6 +216,7 @@ struct HTMLModelElementCamera;
 struct ImageBufferBackendParameters;
 struct InspectorOverlayHighlight;
 struct LinkIcon;
+struct LookalikeCharactersSanitizationData;
 struct MediaControlsContextMenuItem;
 struct MediaDeviceHashSalts;
 struct MediaKeySystemRequestIdentifierType;
@@ -312,6 +313,7 @@ class DrawingAreaProxy;
 class GamepadData;
 class GeolocationPermissionRequestManagerProxy;
 class LayerTreeContext;
+class LookalikeCharactersObserver;
 class MediaKeySystemPermissionRequestManagerProxy;
 class MediaSessionCoordinatorProxyPrivate;
 class MediaUsageManager;
@@ -3214,7 +3216,7 @@ private:
     bool m_isLockdownModeExplicitlySet { false };
 
 #if ENABLE(NETWORK_CONNECTION_INTEGRITY)
-    RefPtr<LookalikeCharacters::Observer> m_lookalikeCharacterUpdateObserver;
+    RefPtr<LookalikeCharactersObserver> m_lookalikeCharacterUpdateObserver;
     bool m_needsInitialLookalikeCharacterStrings { true };
     bool m_shouldUpdateAllowedLookalikeCharacterStrings { false };
 #endif

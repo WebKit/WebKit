@@ -29,6 +29,7 @@
 
 #import "LocalAuthenticator.h"
 #import "LocalService.h"
+#import "Logging.h"
 #import "WKError.h"
 #import "WebAuthenticationPanelClient.h"
 #import "_WKAuthenticationExtensionsClientInputs.h"

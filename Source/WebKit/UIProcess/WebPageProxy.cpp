@@ -182,6 +182,7 @@
 #include <WebCore/GlobalFrameIdentifier.h>
 #include <WebCore/GlobalWindowIdentifier.h>
 #include <WebCore/LengthBox.h>
+#include <WebCore/LookalikeCharactersSanitizationData.h>
 #include <WebCore/MIMETypeRegistry.h>
 #include <WebCore/MediaDeviceHashSalts.h>
 #include <WebCore/MediaStreamRequest.h>
@@ -233,6 +234,7 @@
 
 #if PLATFORM(COCOA)
 #include "InsertTextOptions.h"
+#include "NetworkConnectionIntegrityHelpers.h"
 #include "NetworkIssueReporter.h"
 #include "RemoteLayerTreeDrawingAreaProxy.h"
 #include "RemoteLayerTreeScrollingPerformanceData.h"
