@@ -375,8 +375,8 @@ EntityMask MarkupAccumulator::entityMaskForText(const Text& text) const
     if (text.parentElement())
         parentName = &text.parentElement()->tagQName();
 
-    if (parentName && (*parentName == scriptTag || *parentName == styleTag || *parentName == xmpTag 
-        || *parentName == noembedTag || *parentName == noframesTag || *parentName == plaintextTag 
+    if (parentName && (*parentName == scriptTag || *parentName == styleTag || *parentName == xmpTag
+        || *parentName == noembedTag || *parentName == noframesTag || *parentName == plaintextTag
         || *parentName == iframeTag))
         return EntityMaskInCDATA;
     return EntityMaskInHTMLPCDATA;
@@ -470,7 +470,7 @@ void MarkupAccumulator::generateUniquePrefix(QualifiedName& prefixedName, const 
     AtomString name;
     do {
         // FIXME: We should create makeAtomString, which would be more efficient.
-        name = makeAtomString("NS"_s, ++m_prefixLevel);
+        name = makeAtomString("ns"_s, ++m_prefixLevel);
     } while (namespaces.get(name.impl()));
     prefixedName.setPrefix(name);
 }
@@ -522,15 +522,21 @@ void MarkupAccumulator::appendAttribute(StringBuilder& result, const Element& el
 {
     bool isSerializingHTML = element.document().isHTMLDocument() && !inXMLFragmentSerialization();
 
+    std::optional<QualifiedName> effectiveXMLPrefixedName;
+
+    // Per https://w3c.github.io/DOM-Parsing/#dfn-xml-serialization-of-the-attributes the xmlns attribute is serialized first
+    if (!isSerializingHTML) {
+        effectiveXMLPrefixedName = xmlAttributeSerialization(attribute, namespaces);
+        if (namespaces && shouldAddNamespaceAttribute(attribute, *namespaces))
+            appendNamespace(result, effectiveXMLPrefixedName->prefix(), effectiveXMLPrefixedName->namespaceURI(), *namespaces);
+    }
+
     result.append(' ');
 
-    std::optional<QualifiedName> effectiveXMLPrefixedName;
     if (isSerializingHTML)
         result.append(htmlAttributeSerialization(attribute));
-    else {
-        effectiveXMLPrefixedName = xmlAttributeSerialization(attribute, namespaces);
+    else
         result.append(effectiveXMLPrefixedName->toString());
-    }
 
     result.append('=');
 
@@ -542,9 +548,6 @@ void MarkupAccumulator::appendAttribute(StringBuilder& result, const Element& el
     } else
         appendAttributeValue(result, attribute.value(), isSerializingHTML);
     result.append('"');
-
-    if (!isSerializingHTML && namespaces && shouldAddNamespaceAttribute(attribute, *namespaces))
-        appendNamespace(result, effectiveXMLPrefixedName->prefix(), effectiveXMLPrefixedName->namespaceURI(), *namespaces);
 }
 
 void MarkupAccumulator::appendNonElementNode(StringBuilder& result, const Node& node, Namespaces* namespaces)

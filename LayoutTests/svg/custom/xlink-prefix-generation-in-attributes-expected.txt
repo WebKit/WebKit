@@ -1,3 +1,3 @@
-<svg xmlns="http://www.w3.org/2000/svg" NS1:href="#foo" xmlns:NS1="http://www.w3.org/1999/xlink"/>
-<svg xmlns="http://www.w3.org/2000/svg" NS1:href="#foo" xmlns:NS1="http://www.w3.org/1999/xlink"/>
-<svg xmlns="http://www.w3.org/2000/svg" xlink:href="#foo" xmlns:xlink="http://www.w3.org/1999/xlink"/>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:ns1="http://www.w3.org/1999/xlink" ns1:href="#foo"/>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:ns1="http://www.w3.org/1999/xlink" ns1:href="#foo"/>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#foo"/>
