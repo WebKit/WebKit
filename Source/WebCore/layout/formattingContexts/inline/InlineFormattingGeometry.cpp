@@ -67,7 +67,6 @@ InlineLayoutUnit InlineFormattingGeometry::logicalTopForNextLine(const LineBuild
     // The spec is unclear of how much we should move down at this point and while 1px should be the most precise it's also rather expensive. 
     auto inflatedLineRectBottom = lineLogicalRect.top() + formattingContext().root().style().computedLineHeight();
     auto floatConstraints = floatingContext.constraints(toLayoutUnit(lineLogicalRect.top()), toLayoutUnit(inflatedLineRectBottom), FloatingContext::MayBeAboveLastFloat::Yes);
-    ASSERT(floatConstraints.left || floatConstraints.right);
     if (floatConstraints.left && floatConstraints.right) {
         // In case of left and right constraints, we need to pick the one that's closer to the current line.
         return std::min(floatConstraints.left->y, floatConstraints.right->y);
@@ -78,7 +77,7 @@ InlineLayoutUnit InlineFormattingGeometry::logicalTopForNextLine(const LineBuild
         return floatConstraints.right->y;
     ASSERT_NOT_REACHED();
     // Do not get stuck on the same vertical position.
-    return lineLogicalRect.bottom() + 1.0f;
+    return nextafter(lineLogicalRect.bottom(), std::numeric_limits<float>::max());
 }
 
 ContentWidthAndMargin InlineFormattingGeometry::inlineBlockContentWidthAndMargin(const Box& formattingContextRoot, const HorizontalConstraints& horizontalConstraints, const OverriddenHorizontalValues& overriddenHorizontalValues) const
@@ -344,8 +343,12 @@ InlineLayoutUnit InlineFormattingGeometry::initialLineHeight(bool isFirstLine) c
 
 FloatingContext::Constraints InlineFormattingGeometry::floatConstraintsForLine(InlineLayoutUnit lineLogicalTop, InlineLayoutUnit contentLogicalHeight, const FloatingContext& floatingContext) const
 {
+    auto logicalTopCandidate = LayoutUnit { lineLogicalTop };
+    auto logicalBottomCandidate = LayoutUnit { lineLogicalTop + contentLogicalHeight };
+    if (logicalTopCandidate.mightBeSaturated() || logicalBottomCandidate.mightBeSaturated())
+        return { };
     // Check for intruding floats and adjust logical left/available width for this line accordingly.
-    return floatingContext.constraints(toLayoutUnit(lineLogicalTop), toLayoutUnit(lineLogicalTop + contentLogicalHeight), FloatingContext::MayBeAboveLastFloat::Yes);
+    return floatingContext.constraints(logicalTopCandidate, logicalBottomCandidate, FloatingContext::MayBeAboveLastFloat::Yes);
 }
 
 void InlineFormattingGeometry::adjustMarginStartForListMarker(const ElementBox& listMarkerBox, LayoutUnit nestedListMarkerMarginStart, InlineLayoutUnit rootInlineBoxOffset) const
