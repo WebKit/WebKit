@@ -146,11 +146,14 @@ TEST(RemoteObjectRegistry, Basic)
         NSURLCredential *credential = [NSURLCredential credentialWithUser:@"testUser" password:@"testPassword" persistence:NSURLCredentialPersistenceForSession];
         id<NSURLAuthenticationChallengeSender> sender = nil;
         auto challenge = adoptNS([[NSURLAuthenticationChallenge alloc] initWithProtectionSpace:protectionSpace.get() proposedCredential:credential previousFailureCount:42 failureResponse:response.get() error:error sender:sender]);
-        [object sendRequest:request response:response.get() challenge:challenge.get() error:error completionHandler:^(NSURLRequest *deserializedRequest, NSURLResponse *deserializedResponse, NSURLAuthenticationChallenge *deserializedChallenge, NSError *deserializedError) {
+        NSUUID *uuid = [NSUUID UUID];
+        [object sendRequest:request response:response.get() challenge:challenge.get() error:error nsNull:[NSNull null] uuid:uuid completionHandler:^(NSURLRequest *deserializedRequest, NSURLResponse *deserializedResponse, NSURLAuthenticationChallenge *deserializedChallenge, NSError *deserializedError, id nsNull, id deserializedUUID) {
             EXPECT_WK_STREQ(deserializedRequest.URL.absoluteString, "https://webkit.org/");
             EXPECT_WK_STREQ([(NSHTTPURLResponse *)deserializedResponse allHeaderFields][@"testFieldName"], "testFieldValue");
             EXPECT_WK_STREQ(deserializedChallenge.protectionSpace.realm, "testRealm");
             EXPECT_WK_STREQ(deserializedError.domain, "testDomain");
+            EXPECT_WK_STREQ(NSStringFromClass([nsNull class]), @"NSNull");
+            EXPECT_WK_STREQ(uuid.UUIDString, [deserializedUUID UUIDString]);
             isDone = true;
         }];
         TestWebKitAPI::Util::run(&isDone);

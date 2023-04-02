@@ -781,6 +781,7 @@ static const HashSet<CFTypeRef> alwaysAllowedClasses()
         (__bridge CFTypeRef)NSMutableArray.class,
         (__bridge CFTypeRef)NSDictionary.class,
         (__bridge CFTypeRef)NSMutableDictionary.class,
+        (__bridge CFTypeRef)NSNull.class,
         (__bridge CFTypeRef)NSString.class,
         (__bridge CFTypeRef)NSMutableString.class,
         (__bridge CFTypeRef)NSSet.class,
@@ -792,6 +793,7 @@ static const HashSet<CFTypeRef> alwaysAllowedClasses()
         (__bridge CFTypeRef)NSBlockInvocation.class,
         (__bridge CFTypeRef)NSHTTPURLResponse.class,
         (__bridge CFTypeRef)NSURLResponse.class,
+        (__bridge CFTypeRef)NSUUID.class,
     } };
     return classes.get();
 }

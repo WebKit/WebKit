@@ -113,9 +113,9 @@
 {
 }
 
-- (void)sendRequest:(NSURLRequest *)request response:(NSURLResponse *)response challenge:(NSURLAuthenticationChallenge *)challenge error:(NSError *)error completionHandler:(void (^)(NSURLRequest *, NSURLResponse *, NSURLAuthenticationChallenge *, NSError *))completionHandler
+- (void)sendRequest:(NSURLRequest *)request response:(NSURLResponse *)response challenge:(NSURLAuthenticationChallenge *)challenge error:(NSError *)error nsNull:(id)nsNull uuid:(id)uuid completionHandler:(void (^)(NSURLRequest *, NSURLResponse *, NSURLAuthenticationChallenge *, NSError *, id, id))completionHandler
 {
-    completionHandler(request, response, challenge, error);
+    completionHandler(request, response, challenge, error, nsNull, uuid);
 }
 
 - (void)sendError:(NSError *)error completionHandler:(void (^)(NSError *))completionHandler
