@@ -73,9 +73,8 @@ enum class IsMetaRefresh : bool { No, Yes };
 enum class WillContinueLoading : bool { No, Yes };
 enum class WillInternallyHandleFailure : bool { No, Yes };
 
-enum LocalPolicyCheckIdentifierType { };
-using LocalPolicyCheckIdentifier = ObjectIdentifier<LocalPolicyCheckIdentifierType>;
-using PolicyCheckIdentifier = ProcessQualified<LocalPolicyCheckIdentifier>;
+struct PolicyCheckIdentifierType;
+using PolicyCheckIdentifier = ProcessQualified<ObjectIdentifier<PolicyCheckIdentifierType>>;
 
 enum class ShouldContinuePolicyCheck : bool { No, Yes };
 

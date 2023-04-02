@@ -26,11 +26,10 @@
 #pragma once
 
 #include "ProcessQualified.h"
-#include <wtf/ObjectIdentifier.h>
 
 namespace WebCore {
 
-enum PlatformLayerIdentifierType { };
+struct PlatformLayerIdentifierType;
 using PlatformLayerIdentifier = ProcessQualified<ObjectIdentifier<PlatformLayerIdentifierType>>;
 
 } // namespace WebCore

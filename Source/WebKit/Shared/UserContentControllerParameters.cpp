@@ -29,6 +29,7 @@
 #include "ArgumentCoders.h"
 #include "Decoder.h"
 #include "Encoder.h"
+#include "WebCompiledContentRuleListData.h"
 
 namespace WebKit {
 

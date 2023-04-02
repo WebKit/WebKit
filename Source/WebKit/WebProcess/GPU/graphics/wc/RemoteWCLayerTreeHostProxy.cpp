@@ -29,6 +29,7 @@
 #if USE(GRAPHICS_LAYER_WC)
 
 #include "GPUConnectionToWebProcess.h"
+#include "MessageSenderInlines.h"
 #include "RemoteWCLayerTreeHostMessages.h"
 #include "WCUpateInfo.h"
 #include "WebPage.h"

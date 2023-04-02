@@ -89,7 +89,7 @@ class WebPageProxy;
 class WebUserContentControllerProxy;
 
 enum class BackgroundFetchChange : uint8_t;
-enum class ProcessTerminationReason;
+enum class ProcessTerminationReason : uint8_t;
 enum class RemoteWorkerType : bool;
 enum class ShouldGrandfatherStatistics : bool;
 enum class StorageAccessStatus : uint8_t;

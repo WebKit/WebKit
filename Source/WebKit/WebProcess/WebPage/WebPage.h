@@ -33,6 +33,7 @@
 #include "APIInjectedBundlePageUIClient.h"
 #include "APIObject.h"
 #include "CallbackID.h"
+#include "Connection.h"
 #include "ContentAsStringIncludesChildFrames.h"
 #include "ContentWorldShared.h"
 #include "DataReference.h"
@@ -687,7 +688,7 @@ public:
     inline bool isVisible() const;
     inline bool isVisibleOrOccluded() const;
 
-    OptionSet<WebCore::ActivityState::Flag> activityState() const { return m_activityState; }
+    OptionSet<WebCore::ActivityState> activityState() const { return m_activityState; }
     bool isThrottleable() const;
 
     LayerHostingMode layerHostingMode() const { return m_layerHostingMode; }
@@ -1757,7 +1758,7 @@ private:
     void setInitialFocus(bool forward, bool isKeyboardEventValid, const WebKeyboardEvent&, CompletionHandler<void()>&&);
     void updateIsInWindow(bool isInitialState = false);
     void visibilityDidChange();
-    void setActivityState(OptionSet<WebCore::ActivityState::Flag>, ActivityStateChangeID, CompletionHandler<void()>&&);
+    void setActivityState(OptionSet<WebCore::ActivityState>, ActivityStateChangeID, CompletionHandler<void()>&&);
     void validateCommand(const String&, CompletionHandler<void(bool, int32_t)>&&);
     void executeEditCommand(const String&, const String&);
     void setEditable(bool);
@@ -2363,7 +2364,7 @@ private:
     bool m_isTouchBarUpdateSupressedForHiddenContentEditable { false };
     bool m_isNeverRichlyEditableForTouchBar { false };
 #endif
-    OptionSet<WebCore::ActivityState::Flag> m_lastActivityStateChanges;
+    OptionSet<WebCore::ActivityState> m_lastActivityStateChanges;
 
 #if HAVE(UIKIT_RESIZABLE_WINDOWS)
     bool m_isWindowResizingEnabled { false };
@@ -2464,7 +2465,7 @@ private:
 
     bool m_useAsyncScrolling { false };
 
-    OptionSet<WebCore::ActivityState::Flag> m_activityState;
+    OptionSet<WebCore::ActivityState> m_activityState;
 
     bool m_isAppNapEnabled { true };
     UserActivity m_userActivity;

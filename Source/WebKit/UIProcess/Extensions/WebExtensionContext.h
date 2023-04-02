@@ -37,7 +37,6 @@
 #include "WebExtensionController.h"
 #include "WebExtensionEventListenerType.h"
 #include "WebExtensionMatchPattern.h"
-#include "WebPageProxy.h"
 #include "WebPageProxyIdentifier.h"
 #include "WebProcessProxy.h"
 #include <wtf/CompletionHandler.h>
@@ -100,8 +99,8 @@ public:
     using InjectedContentVector = WebExtension::InjectedContentVector;
 
     using WeakPageCountedSet = WeakHashCountedSet<WebPageProxy>;
-    using EventListenterTypeCountedSet = HashCountedSet<WebExtensionEventListenerType, WTF::IntHash<WebKit::WebExtensionEventListenerType>, WTF::StrongEnumHashTraits<WebKit::WebExtensionEventListenerType>>;
-    using EventListenterTypePageMap = HashMap<WebExtensionEventListenerType, WeakPageCountedSet, WTF::IntHash<WebKit::WebExtensionEventListenerType>, WTF::StrongEnumHashTraits<WebKit::WebExtensionEventListenerType>>;
+    using EventListenerTypeCountedSet = HashCountedSet<WebExtensionEventListenerType, WTF::IntHash<WebKit::WebExtensionEventListenerType>, WTF::StrongEnumHashTraits<WebKit::WebExtensionEventListenerType>>;
+    using EventListenerTypePageMap = HashMap<WebExtensionEventListenerType, WeakPageCountedSet, WTF::IntHash<WebKit::WebExtensionEventListenerType>, WTF::StrongEnumHashTraits<WebKit::WebExtensionEventListenerType>>;
     using EventListenerTypeSet = HashSet<WebExtensionEventListenerType, WTF::IntHash<WebKit::WebExtensionEventListenerType>, WTF::StrongEnumHashTraits<WebKit::WebExtensionEventListenerType>>;
     using VoidCompletionHandlerVector = Vector<CompletionHandler<void()>>;
 
@@ -303,6 +302,8 @@ private:
     // IPC::MessageReceiver.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
+    WeakHashSet<WebProcessProxy> processes(WebExtensionEventListenerType) const;
+
     WebExtensionContextIdentifier m_identifier;
 
     String m_storageDirectory;
@@ -345,8 +346,8 @@ private:
 #endif
 
     VoidCompletionHandlerVector m_actionsToPerformAfterBackgroundContentLoads;
-    EventListenterTypeCountedSet m_backgroundContentEventListeners;
-    EventListenterTypePageMap m_eventListenerPages;
+    EventListenerTypeCountedSet m_backgroundContentEventListeners;
+    EventListenerTypePageMap m_eventListenerPages;
     bool m_shouldFireStartupEvent { false };
 
     RetainPtr<NSDate> m_lastBackgroundContentLoadDate;
@@ -361,18 +362,7 @@ private:
 template<typename T>
 void WebExtensionContext::sendToProcessesForEvent(WebExtensionEventListenerType type, const T& message)
 {
-    auto iterator = m_eventListenerPages.find(type);
-    if (iterator == m_eventListenerPages.end())
-        return;
-
-    WeakHashSet<WebProcessProxy> processes;
-    for (auto entry : iterator->value) {
-        auto& process = entry.key.process();
-        if (process.canSendMessage())
-            processes.add(process);
-    }
-
-    for (auto& process : processes)
+    for (auto& process : processes(type))
         process.send(T(message), identifier());
 }
 

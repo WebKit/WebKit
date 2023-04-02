@@ -46,8 +46,8 @@ public:
     void setViewSize(WebCore::IntSize);
     WebCore::IntSize viewSize() const { return m_viewSize; }
 
-    void setViewState(OptionSet<WebCore::ActivityState::Flag>);
-    OptionSet<WebCore::ActivityState::Flag> viewState() const { return m_viewStateFlags; }
+    void setViewState(OptionSet<WebCore::ActivityState>);
+    OptionSet<WebCore::ActivityState> viewState() const { return m_viewStateFlags; }
 
 #if ENABLE(FULLSCREEN_API)
     void willEnterFullScreen();
@@ -75,7 +75,7 @@ private:
     std::unique_ptr<API::ViewClient> m_client;
     std::unique_ptr<WebKit::PageClientImpl> m_pageClient;
     RefPtr<WebPageProxy> m_page;
-    OptionSet<WebCore::ActivityState::Flag> m_viewStateFlags;
+    OptionSet<WebCore::ActivityState> m_viewStateFlags;
 
     WebCore::IntSize m_viewSize;
 #if ENABLE(FULLSCREEN_API)

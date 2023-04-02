@@ -26,6 +26,7 @@
 #include "config.h"
 #include "NotificationPermissionRequestManager.h"
 
+#include "MessageSenderInlines.h"
 #include "NotificationManagerMessageHandlerMessages.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebPage.h"

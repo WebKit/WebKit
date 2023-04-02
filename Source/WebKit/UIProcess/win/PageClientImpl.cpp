@@ -33,6 +33,7 @@
 #include "WebOpenPanelResultListenerProxy.h"
 #include "WebPageProxy.h"
 #include "WebPopupMenuProxyWin.h"
+#include "WebPreferences.h"
 #include "WebView.h"
 #include <WebCore/DOMPasteAccess.h>
 #include <WebCore/LocalizedStrings.h>
@@ -193,7 +194,7 @@ void PageClientImpl::doneWithKeyEvent(const NativeWebKeyboardEvent& event, bool 
 
 RefPtr<WebPopupMenuProxy> PageClientImpl::createPopupMenuProxy(WebPageProxy& page)
 {
-    return WebPopupMenuProxyWin::create(&m_view, page);
+    return WebPopupMenuProxyWin::create(&m_view, page.popupMenuClient());
 }
 
 #if ENABLE(CONTEXT_MENUS)

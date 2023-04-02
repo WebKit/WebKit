@@ -29,6 +29,7 @@
 #if PLATFORM(MAC)
 
 #import "APIHitTestResult.h"
+#import "MessageSenderInlines.h"
 #import "WKNSURLExtras.h"
 #import "WebPageMessages.h"
 #import "WebPageProxy.h"

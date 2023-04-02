@@ -27,6 +27,7 @@
 #include "WKDownloadRef.h"
 
 #include "APIArray.h"
+#include "APIClient.h"
 #include "APIData.h"
 #include "APIDownloadClient.h"
 #include "APIURLRequest.h"

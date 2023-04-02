@@ -26,6 +26,7 @@
 #include "config.h"
 #include "GeolocationPermissionRequestManagerProxy.h"
 
+#include "MessageSenderInlines.h"
 #include "WebPageMessages.h"
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"

@@ -1,5 +1,5 @@
-/*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+/**
+ * Copyright (C) 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,21 +27,17 @@
 
 #include "ResourceResponse.h"
 #include "SharedBuffer.h"
-#include <wtf/RefPtr.h>
 #include <wtf/URL.h>
 
 namespace WebCore {
 
+enum class SessionHistoryVisibility : bool { Visible, Hidden };
+
 class SubstituteData {
 public:
-    enum class SessionHistoryVisibility : bool {
-        Visible,
-        Hidden,
-    };
+    using SessionHistoryVisibility = WebCore::SessionHistoryVisibility;
 
-    SubstituteData()
-    {
-    }
+    SubstituteData() = default;
 
     SubstituteData(RefPtr<FragmentedSharedBuffer>&& content, const URL& failingURL, const ResourceResponse& response, SessionHistoryVisibility shouldRevealToSessionHistory)
         : m_content(WTFMove(content))
@@ -54,7 +50,7 @@ public:
     bool isValid() const { return m_content != nullptr; }
     SessionHistoryVisibility shouldRevealToSessionHistory() const { return m_shouldRevealToSessionHistory; }
 
-    const RefPtr<FragmentedSharedBuffer> content() const { return m_content; }
+    const RefPtr<FragmentedSharedBuffer>& content() const { return m_content; }
     const String& mimeType() const { return m_response.mimeType(); }
     const String& textEncoding() const { return m_response.textEncodingName(); }
     const URL& failingURL() const { return m_failingURL; }

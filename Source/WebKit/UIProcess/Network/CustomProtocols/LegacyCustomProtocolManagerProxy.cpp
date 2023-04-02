@@ -25,6 +25,7 @@
 #include "LegacyCustomProtocolManagerMessages.h"
 #include "LegacyCustomProtocolManagerProxyMessages.h"
 #include "NetworkProcessProxy.h"
+#include "WebCoreArgumentCoders.h"
 #include "WebProcessPool.h"
 #include <WebCore/ResourceRequest.h>
 

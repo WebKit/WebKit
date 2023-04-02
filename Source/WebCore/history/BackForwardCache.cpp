@@ -33,6 +33,7 @@
 #include "DeviceOrientationController.h"
 #include "DiagnosticLoggingClient.h"
 #include "DiagnosticLoggingKeys.h"
+#include "DiagnosticLoggingResultType.h"
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "FocusController.h"

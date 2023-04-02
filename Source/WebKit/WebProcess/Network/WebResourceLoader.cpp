@@ -28,6 +28,7 @@
 
 #include "FormDataReference.h"
 #include "Logging.h"
+#include "MessageSenderInlines.h"
 #include "NetworkProcessConnection.h"
 #include "NetworkResourceLoaderMessages.h"
 #include "PrivateRelayed.h"

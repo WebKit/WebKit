@@ -627,8 +627,8 @@ public:
 #endif
 
     // Notifications when the Page starts and stops being presented via a native window.
-    WEBCORE_EXPORT void setActivityState(OptionSet<ActivityState::Flag>);
-    OptionSet<ActivityState::Flag> activityState() const { return m_activityState; }
+    WEBCORE_EXPORT void setActivityState(OptionSet<ActivityState>);
+    OptionSet<ActivityState> activityState() const { return m_activityState; }
 
     bool isWindowActive() const;
     bool isVisibleAndActive() const;
@@ -1211,7 +1211,7 @@ private:
 
     bool m_isEditable { false };
     bool m_isPrerender { false };
-    OptionSet<ActivityState::Flag> m_activityState;
+    OptionSet<ActivityState> m_activityState;
 
     OptionSet<LayoutMilestone> m_requestedLayoutMilestones;
 

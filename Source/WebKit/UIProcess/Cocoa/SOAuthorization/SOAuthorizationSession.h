@@ -49,7 +49,7 @@ namespace WebKit {
 
 class WebPageProxy;
 
-enum class SOAuthorizationLoadPolicy : uint8_t;
+enum class SOAuthorizationLoadPolicy : bool;
 
 // A session will only be executed once.
 class SOAuthorizationSession : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<SOAuthorizationSession, WTF::DestructionThread::MainRunLoop> {

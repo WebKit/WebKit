@@ -30,6 +30,7 @@
 
 #import "DrawingArea.h"
 #import "Logging.h"
+#import "MessageSenderInlines.h"
 #import "WebPage.h"
 #import "WebPageProxyMessages.h"
 #import <WebCore/Model.h>

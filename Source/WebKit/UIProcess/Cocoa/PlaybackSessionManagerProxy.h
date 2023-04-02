@@ -30,7 +30,6 @@
 #include "MessageReceiver.h"
 #include "PlaybackSessionContextIdentifier.h"
 #include <WebCore/MediaSelectionOption.h>
-#include <WebCore/PlatformView.h>
 #include <WebCore/PlaybackSessionModel.h>
 #include <WebCore/TimeRanges.h>
 #include <wtf/HashCountedSet.h>

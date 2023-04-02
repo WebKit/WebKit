@@ -35,10 +35,14 @@
 #import "WebPageProxy.h"
 #import <WebCore/AuthenticatorAttachment.h>
 #import <WebCore/AuthenticatorResponseData.h>
+#import <WebCore/AuthenticatorTransport.h>
 #import <WebCore/BufferSource.h>
 #import <WebCore/ExceptionData.h>
 #import <WebCore/PublicKeyCredentialCreationOptions.h>
+#import <WebCore/SecurityOrigin.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/CompletionHandler.h>
+#import <wtf/EnumTraits.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
 #import "AuthenticationServicesCoreSoftLink.h"

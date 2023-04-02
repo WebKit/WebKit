@@ -32,7 +32,6 @@ OBJC_CLASS NSDictionary;
 #include "WebExtensionContextIdentifier.h"
 #include <wtf/RetainPtr.h>
 #include <wtf/URL.h>
-#include <wtf/text/WTFString.h>
 
 namespace WebKit {
 

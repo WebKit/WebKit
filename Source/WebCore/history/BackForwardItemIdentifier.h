@@ -25,15 +25,11 @@
 
 #pragma once
 
-#include "ProcessIdentifier.h"
 #include "ProcessQualified.h"
-#include <wtf/DebugUtilities.h>
-#include <wtf/Hasher.h>
-#include <wtf/text/StringConcatenateNumbers.h>
 
 namespace WebCore {
 
-enum BackForwardItemIdentifierType { };
+struct BackForwardItemIdentifierType;
 using BackForwardItemIdentifier = ProcessQualified<ObjectIdentifier<BackForwardItemIdentifierType>>;
 
 } // namespace WebCore

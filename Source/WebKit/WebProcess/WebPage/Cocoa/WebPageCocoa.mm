@@ -29,6 +29,7 @@
 #import "EditorState.h"
 #import "InsertTextOptions.h"
 #import "LoadParameters.h"
+#import "MessageSenderInlines.h"
 #import "PluginView.h"
 #import "UserMediaCaptureManager.h"
 #import "WKAccessibilityWebPageObjectBase.h"

@@ -33,7 +33,6 @@
 #include "WebGPUTextureFormat.h"
 #include <IOSurface/IOSurfaceRef.h>
 #include <WebGPU/WebGPU.h>
-#include <wtf/MachSendRight.h>
 
 namespace PAL::WebGPU {
 

@@ -29,12 +29,10 @@
 #if PLATFORM(MAC) && ENABLE(REMOTE_INSPECTOR)
 
 #import "GlobalFindInPageState.h"
+#import "MessageSenderInlines.h"
 #import "RemoteWebInspectorUIMessages.h"
 #import "RemoteWebInspectorUIProxyMessages.h"
-#import <WebKit/WKFrameInfo.h>
 #import "WKInspectorViewController.h"
-#import <WebKit/WKNavigationAction.h>
-#import <WebKit/WKNavigationDelegate.h>
 #import "WKWebViewInternal.h"
 #import "WebInspectorUIProxy.h"
 #import "WebPageGroup.h"
@@ -44,6 +42,9 @@
 #import <SecurityInterface/SFCertificateView.h>
 #import <WebCore/CertificateInfo.h>
 #import <WebCore/Color.h>
+#import <WebKit/WKFrameInfo.h>
+#import <WebKit/WKNavigationAction.h>
+#import <WebKit/WKNavigationDelegate.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/text/Base64.h>
 

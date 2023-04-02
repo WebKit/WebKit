@@ -25,6 +25,8 @@
 #include "DeviceIdHashSaltStorage.h"
 #include "Logging.h"
 #include "MediaPermissionUtilities.h"
+#include "MessageSenderInlines.h"
+#include "PageLoadState.h"
 #include "UserMediaPermissionRequestManager.h"
 #include "UserMediaProcessManager.h"
 #include "WebAutomationSession.h"

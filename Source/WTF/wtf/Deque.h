@@ -42,8 +42,7 @@ template<typename T, size_t inlineCapacity> class DequeIteratorBase;
 template<typename T, size_t inlineCapacity> class DequeIterator;
 template<typename T, size_t inlineCapacity> class DequeConstIterator;
 
-template<typename T, size_t inlineCapacity = 0>
-class Deque final {
+template<typename T, size_t inlineCapacity> class Deque final {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     typedef T ValueType;
@@ -813,5 +812,3 @@ inline T* DequeIteratorBase<T, inlineCapacity>::before() const
 }
 
 } // namespace WTF
-
-using WTF::Deque;

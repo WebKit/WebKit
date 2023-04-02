@@ -30,6 +30,7 @@
 
 #import "WebPageProxy.h"
 #import "WebViewImpl.h"
+#import <pal/SessionID.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
 static inline NSCorrectionIndicatorType correctionIndicatorType(WebCore::AlternativeTextType alternativeTextType)

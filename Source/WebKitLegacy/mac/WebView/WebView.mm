@@ -4482,19 +4482,19 @@ IGNORE_WARNINGS_END
     auto pagination = page->pagination();
     switch (paginationMode) {
     case WebPaginationModeUnpaginated:
-        pagination.mode = WebCore::Pagination::Unpaginated;
+        pagination.mode = WebCore::Unpaginated;
         break;
     case WebPaginationModeLeftToRight:
-        pagination.mode = WebCore::Pagination::LeftToRightPaginated;
+        pagination.mode = WebCore::LeftToRightPaginated;
         break;
     case WebPaginationModeRightToLeft:
-        pagination.mode = WebCore::Pagination::RightToLeftPaginated;
+        pagination.mode = WebCore::RightToLeftPaginated;
         break;
     case WebPaginationModeTopToBottom:
-        pagination.mode = WebCore::Pagination::TopToBottomPaginated;
+        pagination.mode = WebCore::TopToBottomPaginated;
         break;
     case WebPaginationModeBottomToTop:
-        pagination.mode = WebCore::Pagination::BottomToTopPaginated;
+        pagination.mode = WebCore::BottomToTopPaginated;
         break;
     default:
         return;
@@ -4510,15 +4510,15 @@ IGNORE_WARNINGS_END
         return WebPaginationModeUnpaginated;
 
     switch (page->pagination().mode) {
-    case WebCore::Pagination::Unpaginated:
+    case WebCore::Unpaginated:
         return WebPaginationModeUnpaginated;
-    case WebCore::Pagination::LeftToRightPaginated:
+    case WebCore::LeftToRightPaginated:
         return WebPaginationModeLeftToRight;
-    case WebCore::Pagination::RightToLeftPaginated:
+    case WebCore::RightToLeftPaginated:
         return WebPaginationModeRightToLeft;
-    case WebCore::Pagination::TopToBottomPaginated:
+    case WebCore::TopToBottomPaginated:
         return WebPaginationModeTopToBottom;
-    case WebCore::Pagination::BottomToTopPaginated:
+    case WebCore::BottomToTopPaginated:
         return WebPaginationModeBottomToTop;
     }
 

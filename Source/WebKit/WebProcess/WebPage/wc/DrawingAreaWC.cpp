@@ -30,6 +30,7 @@
 
 #include "DrawingAreaProxyMessages.h"
 #include "GraphicsLayerWC.h"
+#include "MessageSenderInlines.h"
 #include "PlatformImageBufferShareableBackend.h"
 #include "RemoteRenderingBackendProxy.h"
 #include "RemoteWCLayerTreeHostProxy.h"

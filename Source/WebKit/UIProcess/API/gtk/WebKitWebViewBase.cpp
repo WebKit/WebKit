@@ -34,11 +34,13 @@
 #include "DragSource.h"
 #include "DrawingAreaProxyCoordinatedGraphics.h"
 #include "DropTarget.h"
+#include "EditorState.h"
 #include "InputMethodFilter.h"
 #include "KeyAutoRepeatHandler.h"
 #include "KeyBindingTranslator.h"
 #include "NativeWebKeyboardEvent.h"
 #include "NativeWebMouseEvent.h"
+#include "NativeWebTouchEvent.h"
 #include "NativeWebWheelEvent.h"
 #include "PageClientImpl.h"
 #include "PointerLockManager.h"
@@ -71,6 +73,7 @@
 #include <WebCore/PointerEvent.h>
 #include <WebCore/RefPtrCairo.h>
 #include <WebCore/Region.h>
+#include <WebCore/Scrollbar.h>
 #include <gdk/gdk.h>
 #include <gdk/gdkkeysyms.h>
 #include <glib-object.h>
@@ -320,8 +323,8 @@ struct _WebKitWebViewBasePrivate {
     unsigned long toplevelWindowRealizedID { 0 };
 
     // View State.
-    OptionSet<ActivityState::Flag> activityState;
-    OptionSet<ActivityState::Flag> activityStateFlagsToUpdate;
+    OptionSet<ActivityState> activityState;
+    OptionSet<ActivityState> activityStateFlagsToUpdate;
     RunLoop::Timer updateActivityStateTimer;
 
 #if ENABLE(FULLSCREEN_API)
@@ -367,7 +370,7 @@ WEBKIT_DEFINE_TYPE(WebKitWebViewBase, webkit_web_view_base, GTK_TYPE_WIDGET)
 WEBKIT_DEFINE_TYPE(WebKitWebViewBase, webkit_web_view_base, GTK_TYPE_CONTAINER)
 #endif
 
-static void webkitWebViewBaseScheduleUpdateActivityState(WebKitWebViewBase* webViewBase, OptionSet<ActivityState::Flag> flagsToUpdate)
+static void webkitWebViewBaseScheduleUpdateActivityState(WebKitWebViewBase* webViewBase, OptionSet<ActivityState> flagsToUpdate)
 {
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
     priv->activityStateFlagsToUpdate.add(flagsToUpdate);
@@ -462,7 +465,7 @@ static void webkitWebViewBaseSetToplevelOnScreenWindow(WebKitWebViewBase* webVie
     priv->toplevelOnScreenWindow = window;
 
     if (!priv->toplevelOnScreenWindow) {
-        OptionSet<ActivityState::Flag> flagsToUpdate;
+        OptionSet<ActivityState> flagsToUpdate;
         if (priv->activityState & ActivityState::IsInWindow) {
             priv->activityState.remove(ActivityState::IsInWindow);
             flagsToUpdate.add(ActivityState::IsInWindow);
@@ -938,7 +941,7 @@ static void webkitWebViewBaseMap(GtkWidget* widget)
 
     WebKitWebViewBase* webViewBase = WEBKIT_WEB_VIEW_BASE(widget);
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
-    OptionSet<ActivityState::Flag> flagsToUpdate;
+    OptionSet<ActivityState> flagsToUpdate;
     if (!(priv->activityState & ActivityState::IsVisible))
         flagsToUpdate.add(ActivityState::IsVisible);
     if (priv->toplevelOnScreenWindow) {
@@ -1924,7 +1927,7 @@ static void webkitWebViewBaseRoot(GtkWidget* widget)
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
     priv->toplevelOnScreenWindow = GTK_WINDOW(gtk_widget_get_root(widget));
 
-    OptionSet<ActivityState::Flag> flagsToUpdate;
+    OptionSet<ActivityState> flagsToUpdate;
     if (!(priv->activityState & ActivityState::IsInWindow)) {
         priv->activityState.add(ActivityState::IsInWindow);
         flagsToUpdate.add(ActivityState::IsInWindow);
@@ -1962,7 +1965,7 @@ static void webkitWebViewBaseUnroot(GtkWidget* widget)
         g_clear_signal_handler(&priv->toplevelWindowStateChangedID, gtk_native_get_surface(GTK_NATIVE(priv->toplevelOnScreenWindow)));
     priv->toplevelOnScreenWindow = nullptr;
 
-    OptionSet<ActivityState::Flag> flagsToUpdate;
+    OptionSet<ActivityState> flagsToUpdate;
     if (priv->activityState & ActivityState::IsInWindow) {
         priv->activityState.remove(ActivityState::IsInWindow);
         flagsToUpdate.add(ActivityState::IsInWindow);
@@ -2616,7 +2619,7 @@ void webkitWebViewBaseSetFocus(WebKitWebViewBase* webViewBase, bool focused)
     if ((focused && priv->activityState & ActivityState::IsFocused) || (!focused && !(priv->activityState & ActivityState::IsFocused)))
         return;
 
-    OptionSet<ActivityState::Flag> flagsToUpdate { ActivityState::IsFocused };
+    OptionSet<ActivityState> flagsToUpdate { ActivityState::IsFocused };
     if (focused) {
         priv->activityState.add(ActivityState::IsFocused);
 

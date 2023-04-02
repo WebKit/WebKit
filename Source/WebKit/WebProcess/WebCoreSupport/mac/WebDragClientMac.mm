@@ -28,6 +28,7 @@
 
 #if ENABLE(DRAG_SUPPORT)
 
+#import "MessageSenderInlines.h"
 #import "PasteboardTypes.h"
 #import "ShareableBitmap.h"
 #import "WebCoreArgumentCoders.h"

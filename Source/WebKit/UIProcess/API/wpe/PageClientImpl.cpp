@@ -29,6 +29,7 @@
 #include "APIViewClient.h"
 #include "DrawingAreaProxyCoordinatedGraphics.h"
 #include "NativeWebMouseEvent.h"
+#include "NativeWebTouchEvent.h"
 #include "NativeWebWheelEvent.h"
 #include "TouchGestureController.h"
 #include "WPEView.h"
@@ -256,7 +257,7 @@ RefPtr<WebPopupMenuProxy> PageClientImpl::createPopupMenuProxy(WebPageProxy& pag
 {
     if (!m_view.client().isGLibBasedAPI())
         return nullptr;
-    return WebKitPopupMenu::create(m_view, page);
+    return WebKitPopupMenu::create(m_view, page.popupMenuClient());
 }
 
 #if ENABLE(CONTEXT_MENUS)

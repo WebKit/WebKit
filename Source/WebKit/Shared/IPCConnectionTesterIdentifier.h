@@ -31,7 +31,7 @@
 
 namespace WebKit {
 
-enum IPCConnectionTesterIdentifierType { };
+struct IPCConnectionTesterIdentifierType;
 using IPCConnectionTesterIdentifier = ObjectIdentifier<IPCConnectionTesterIdentifierType>;
 
 }

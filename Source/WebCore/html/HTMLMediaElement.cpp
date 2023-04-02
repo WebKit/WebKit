@@ -49,6 +49,7 @@
 #include "DeprecatedGlobalSettings.h"
 #include "DiagnosticLoggingClient.h"
 #include "DiagnosticLoggingKeys.h"
+#include "DiagnosticLoggingResultType.h"
 #include "Document.h"
 #include "DocumentInlines.h"
 #include "DocumentLoader.h"

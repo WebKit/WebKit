@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "ArrayReference.h"
 #include <wtf/Span.h>
 
 namespace IPC {

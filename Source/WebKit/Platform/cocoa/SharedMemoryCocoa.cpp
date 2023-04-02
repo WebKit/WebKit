@@ -107,7 +107,7 @@ void SharedMemory::Handle::encode(IPC::Encoder& encoder) const
     encoder << WTFMove(m_handle); // FIXME: add rvalue encode.
 }
 
-bool SharedMemory::Handle::decode(IPC::Decoder& decoder, Handle& handle)
+bool SharedMemory::Handle::decode(IPC::Decoder& decoder, SharedMemoryHandle& handle)
 {
     ASSERT(!handle.m_handle);
     ASSERT(!handle.m_size);

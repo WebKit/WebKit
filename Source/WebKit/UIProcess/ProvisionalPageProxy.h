@@ -63,6 +63,8 @@ class WebFrameProxy;
 class WebPageProxy;
 class WebProcessProxy;
 class WebsiteDataStore;
+
+struct BackForwardListItemState;
 struct FrameInfoData;
 struct NavigationActionData;
 struct URLSchemeTaskParameters;

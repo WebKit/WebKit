@@ -57,17 +57,22 @@
 #include "AuthenticationDecisionListener.h"
 #include "ContentAsStringIncludesChildFrames.h"
 #include "DownloadProxy.h"
+#include "GeolocationPermissionRequestProxy.h"
 #include "LegacySessionStateCoding.h"
 #include "Logging.h"
 #include "MediaKeySystemPermissionRequest.h"
+#include "MessageSenderInlines.h"
 #include "NativeWebKeyboardEvent.h"
 #include "NativeWebWheelEvent.h"
 #include "NavigationActionData.h"
 #include "NotificationPermissionRequest.h"
 #include "PageClient.h"
+#include "PageLoadState.h"
 #include "PrintInfo.h"
 #include "QueryPermissionResultCallback.h"
 #include "SpeechRecognitionPermissionRequest.h"
+#include "UserMediaPermissionCheckProxy.h"
+#include "UserMediaPermissionRequestProxy.h"
 #include "WKAPICast.h"
 #include "WKPagePolicyClientInternal.h"
 #include "WKPageRenderingProgressEventsInternal.h"
@@ -78,16 +83,19 @@
 #include "WebImage.h"
 #include "WebInspectorUIProxy.h"
 #include "WebOpenPanelResultListenerProxy.h"
+#include "WebPageDiagnosticLoggingClient.h"
 #include "WebPageGroup.h"
 #include "WebPageMessages.h"
 #include "WebPageProxy.h"
 #include "WebProcessPool.h"
 #include "WebProcessProxy.h"
 #include "WebProtectionSpace.h"
+#include <WebCore/AutoplayEvent.h>
 #include <WebCore/ContentRuleListResults.h>
 #include <WebCore/MockRealtimeMediaSourceCenter.h>
 #include <WebCore/Page.h>
 #include <WebCore/Permissions.h>
+#include <WebCore/RunJavaScriptParameters.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/SecurityOriginData.h>
 #include <WebCore/SerializedCryptoKeyWrap.h>
@@ -799,19 +807,19 @@ void WKPageSetPaginationMode(WKPageRef pageRef, WKPaginationMode paginationMode)
     WebCore::Pagination::Mode mode;
     switch (paginationMode) {
     case kWKPaginationModeUnpaginated:
-        mode = WebCore::Pagination::Unpaginated;
+        mode = WebCore::Unpaginated;
         break;
     case kWKPaginationModeLeftToRight:
-        mode = WebCore::Pagination::LeftToRightPaginated;
+        mode = WebCore::LeftToRightPaginated;
         break;
     case kWKPaginationModeRightToLeft:
-        mode = WebCore::Pagination::RightToLeftPaginated;
+        mode = WebCore::RightToLeftPaginated;
         break;
     case kWKPaginationModeTopToBottom:
-        mode = WebCore::Pagination::TopToBottomPaginated;
+        mode = WebCore::TopToBottomPaginated;
         break;
     case kWKPaginationModeBottomToTop:
-        mode = WebCore::Pagination::BottomToTopPaginated;
+        mode = WebCore::BottomToTopPaginated;
         break;
     default:
         return;
@@ -822,15 +830,15 @@ void WKPageSetPaginationMode(WKPageRef pageRef, WKPaginationMode paginationMode)
 WKPaginationMode WKPageGetPaginationMode(WKPageRef pageRef)
 {
     switch (toImpl(pageRef)->paginationMode()) {
-    case WebCore::Pagination::Unpaginated:
+    case WebCore::Unpaginated:
         return kWKPaginationModeUnpaginated;
-    case WebCore::Pagination::LeftToRightPaginated:
+    case WebCore::LeftToRightPaginated:
         return kWKPaginationModeLeftToRight;
-    case WebCore::Pagination::RightToLeftPaginated:
+    case WebCore::RightToLeftPaginated:
         return kWKPaginationModeRightToLeft;
-    case WebCore::Pagination::TopToBottomPaginated:
+    case WebCore::TopToBottomPaginated:
         return kWKPaginationModeTopToBottom;
-    case WebCore::Pagination::BottomToTopPaginated:
+    case WebCore::BottomToTopPaginated:
         return kWKPaginationModeBottomToTop;
     }
 

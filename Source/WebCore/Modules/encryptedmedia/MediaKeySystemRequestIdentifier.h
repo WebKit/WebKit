@@ -28,7 +28,7 @@
 
 namespace WebCore {
 
-enum MediaKeySystemRequestIdentifierType { };
+struct MediaKeySystemRequestIdentifierType;
 using MediaKeySystemRequestIdentifier = ObjectIdentifier<MediaKeySystemRequestIdentifierType>;
 
 } // namespace WebCore

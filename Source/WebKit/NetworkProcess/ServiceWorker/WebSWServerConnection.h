@@ -27,6 +27,7 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "Connection.h"
 #include "MessageReceiver.h"
 #include "MessageSender.h"
 #include "RetrieveRecordResponseBodyCallbackIdentifier.h"

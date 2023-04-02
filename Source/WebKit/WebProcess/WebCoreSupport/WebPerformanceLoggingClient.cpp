@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebPerformanceLoggingClient.h"
 
+#include "MessageSenderInlines.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"

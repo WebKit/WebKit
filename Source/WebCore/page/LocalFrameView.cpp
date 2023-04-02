@@ -169,7 +169,7 @@ Pagination::Mode paginationModeForRenderStyle(const RenderStyle& style)
 {
     Overflow overflow = style.overflowY();
     if (overflow != Overflow::PagedX && overflow != Overflow::PagedY)
-        return Pagination::Unpaginated;
+        return Unpaginated;
 
     bool isHorizontalWritingMode = style.isHorizontalWritingMode();
     TextDirection textDirection = style.direction();
@@ -180,16 +180,16 @@ Pagination::Mode paginationModeForRenderStyle(const RenderStyle& style)
     // is vertical, then the direction of the verticality dictates the choice.
     if (overflow == Overflow::PagedX) {
         if ((isHorizontalWritingMode && textDirection == TextDirection::LTR) || writingMode == WritingMode::LeftToRight)
-            return Pagination::LeftToRightPaginated;
-        return Pagination::RightToLeftPaginated;
+            return LeftToRightPaginated;
+        return RightToLeftPaginated;
     }
 
     // paged-y always corresponds to TopToBottomPaginated or BottomToTopPaginated. If the WritingMode
     // is horizontal, then the direction of the horizontality dictates the choice. If the WritingMode
     // is vertical, then we use TextDirection to choose between those options. 
     if (writingMode == WritingMode::TopToBottom || (!isHorizontalWritingMode && textDirection == TextDirection::RTL))
-        return Pagination::TopToBottomPaginated;
-    return Pagination::BottomToTopPaginated;
+        return TopToBottomPaginated;
+    return BottomToTopPaginated;
 }
 
 LocalFrameView::LocalFrameView(LocalFrame& frame)

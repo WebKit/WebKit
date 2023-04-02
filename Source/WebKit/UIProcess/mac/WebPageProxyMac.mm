@@ -32,12 +32,12 @@
 #import "CocoaImage.h"
 #import "Connection.h"
 #import "DataReference.h"
-#import "EditorState.h"
 #import "FontInfo.h"
 #import "FrameInfoData.h"
 #import "ImageAnalysisUtilities.h"
 #import "InsertTextOptions.h"
 #import "MenuUtilities.h"
+#import "MessageSenderInlines.h"
 #import "NativeWebKeyboardEvent.h"
 #import "PDFContextMenu.h"
 #import "PageClient.h"
@@ -51,6 +51,7 @@
 #import "WKSharingServicePickerDelegate.h"
 #import "WebContextMenuProxyMac.h"
 #import "WebPageMessages.h"
+#import "WebPageProxyInternals.h"
 #import "WebPageProxyMessages.h"
 #import "WebPreferencesKeys.h"
 #import "WebProcessProxy.h"
@@ -117,7 +118,7 @@
 
 namespace WebKit {
 using namespace WebCore;
-    
+
 static inline bool expectsLegacyImplicitRubberBandControl()
 {
     if (MacApplication::isSafari()) {
@@ -169,7 +170,7 @@ void WebPageProxy::searchWithSpotlight(const String& string)
 {
     [[NSWorkspace sharedWorkspace] showSearchResultsForQueryString:nsStringFromWebCoreString(string)];
 }
-    
+
 void WebPageProxy::searchTheWeb(const String& string)
 {
     NSPasteboard *pasteboard = [NSPasteboard pasteboardWithUniqueName];
@@ -300,7 +301,7 @@ void WebPageProxy::didPerformDictionaryLookup(const DictionaryPopupInfo& diction
 {
     pageClient().didPerformDictionaryLookup(dictionaryPopupInfo);
 }
-    
+
 void WebPageProxy::registerWebProcessAccessibilityToken(const IPC::DataReference& data)
 {
     if (!hasRunningProcess())
@@ -308,7 +309,7 @@ void WebPageProxy::registerWebProcessAccessibilityToken(const IPC::DataReference
     
     pageClient().accessibilityWebProcessTokenReceived(data);
 }    
-    
+
 void WebPageProxy::makeFirstResponder()
 {
     pageClient().makeFirstResponder();
@@ -629,9 +630,9 @@ _WKRemoteObjectRegistry *WebPageProxy::remoteObjectRegistry()
 
 #if ENABLE(APPLE_PAY)
 
-NSWindow *WebPageProxy::paymentCoordinatorPresentingWindow(const WebPaymentCoordinatorProxy&)
+NSWindow *WebPageProxy::Internals::paymentCoordinatorPresentingWindow(const WebPaymentCoordinatorProxy&)
 {
-    return platformWindow();
+    return page.platformWindow();
 }
 
 #endif
@@ -671,9 +672,9 @@ void WebPageProxy::willPerformPasteCommand(DOMPasteAccessCategory pasteAccessCat
     }
 }
 
-PlatformView* WebPageProxy::platformView() const
+NSView *WebPageProxy::Internals::platformView() const
 {
-    return [pageClient().platformWindow() contentView];
+    return [page.pageClient().platformWindow() contentView];
 }
 
 #if ENABLE(UI_PROCESS_PDF_HUD)
@@ -778,9 +779,7 @@ void WebPageProxy::closeSharedPreviewPanelIfNecessary()
 
 void WebPageProxy::handleContextMenuLookUpImage()
 {
-    ASSERT(m_activeContextMenuContextData.webHitTestResultData());
-    
-    auto result = m_activeContextMenuContextData.webHitTestResultData().value();
+    auto result = internals().activeContextMenuContextData.webHitTestResultData().value();
     if (!result.imageBitmap)
         return;
 

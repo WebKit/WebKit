@@ -29,7 +29,7 @@
 
 namespace WebKit {
 
-enum TransactionIDType { };
+struct TransactionIDType;
 using TransactionID = MonotonicObjectIdentifier<TransactionIDType>;
 
 } // namespace WebKit

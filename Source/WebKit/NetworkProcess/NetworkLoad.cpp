@@ -28,6 +28,7 @@
 
 #include "AuthenticationChallengeDisposition.h"
 #include "AuthenticationManager.h"
+#include "MessageSenderInlines.h"
 #include "NetworkDataTaskBlob.h"
 #include "NetworkLoadScheduler.h"
 #include "NetworkProcess.h"

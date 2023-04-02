@@ -261,7 +261,7 @@ static void networkStateChanged(bool isOnLine)
     }
 }
 
-static constexpr OptionSet<ActivityState::Flag> pageInitialActivityState()
+static constexpr OptionSet<ActivityState> pageInitialActivityState()
 {
     return { ActivityState::IsVisible, ActivityState::IsInWindow };
 }
@@ -1608,7 +1608,7 @@ void Page::setPagination(const Pagination& pagination)
 
 unsigned Page::pageCount() const
 {
-    if (m_pagination.mode == Pagination::Unpaginated)
+    if (m_pagination.mode == Unpaginated)
         return 0;
 
     auto* localMainFrame = dynamicDowncast<LocalFrame>(mainFrame());
@@ -2616,7 +2616,7 @@ void Page::resumeAnimatingImages()
         view->resumeVisibleImageAnimationsIncludingSubframes();
 }
 
-void Page::setActivityState(OptionSet<ActivityState::Flag> activityState)
+void Page::setActivityState(OptionSet<ActivityState> activityState)
 {
     auto changed = m_activityState ^ activityState;
     if (!changed)

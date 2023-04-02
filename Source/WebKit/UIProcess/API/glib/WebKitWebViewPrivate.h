@@ -38,6 +38,7 @@
 #include <WebCore/CompositionUnderline.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/LinkIcon.h>
+#include <WebCore/MediaProducer.h>
 #include <WebCore/ResourceRequest.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/text/CString.h>

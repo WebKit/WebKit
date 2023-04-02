@@ -30,6 +30,7 @@
 #include "InjectedBundlePageFullScreenClient.h"
 
 #include "InjectedBundleNodeHandle.h"
+#include "MessageSenderInlines.h"
 #include "WKAPICast.h"
 #include "WKBundleAPICast.h"
 #include "WKSharedAPICast.h"

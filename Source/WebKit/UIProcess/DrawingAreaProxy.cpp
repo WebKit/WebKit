@@ -30,6 +30,7 @@
 #include "DrawingAreaProxyMessages.h"
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
+#include <WebCore/ScrollView.h>
 
 #if PLATFORM(COCOA)
 #include <wtf/MachSendRight.h>

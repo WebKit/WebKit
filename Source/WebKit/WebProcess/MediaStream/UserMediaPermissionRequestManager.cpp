@@ -23,6 +23,7 @@
 #if ENABLE(MEDIA_STREAM)
 
 #include "Logging.h"
+#include "MessageSenderInlines.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebFrame.h"
 #include "WebPage.h"
@@ -40,7 +41,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-static constexpr OptionSet<ActivityState::Flag> focusedActiveWindow = { ActivityState::IsFocused, ActivityState::WindowIsActive };
+static constexpr OptionSet<ActivityState> focusedActiveWindow = { ActivityState::IsFocused, ActivityState::WindowIsActive };
 
 UserMediaPermissionRequestManager::UserMediaPermissionRequestManager(WebPage& page)
     : m_page(page)

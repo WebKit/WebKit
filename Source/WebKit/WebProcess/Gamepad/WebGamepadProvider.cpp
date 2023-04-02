@@ -30,6 +30,7 @@
 
 #include "GamepadData.h"
 #include "Logging.h"
+#include "MessageSenderInlines.h"
 #include "WebGamepad.h"
 #include "WebProcess.h"
 #include "WebProcessPoolMessages.h"

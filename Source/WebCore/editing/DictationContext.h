@@ -29,7 +29,7 @@
 
 namespace WebCore {
 
-enum class DictationContextType { };
+struct DictationContextType;
 using DictationContext = ObjectIdentifier<DictationContextType>;
 
 } // namespace WebCore

@@ -105,7 +105,7 @@ View::View(struct wpe_view_backend* backend, const API::PageConfiguration& baseC
         [](void* data, uint32_t state)
         {
             auto& view = *reinterpret_cast<View*>(data);
-            OptionSet<WebCore::ActivityState::Flag> flags;
+            OptionSet<WebCore::ActivityState> flags;
             if (state & wpe_view_activity_state_visible)
                 flags.add(WebCore::ActivityState::IsVisible);
             if (state & wpe_view_activity_state_focused) {
@@ -395,7 +395,7 @@ void View::setSize(const WebCore::IntSize& size)
         m_pageProxy->drawingArea()->setSize(size);
 }
 
-void View::setViewState(OptionSet<WebCore::ActivityState::Flag> flags)
+void View::setViewState(OptionSet<WebCore::ActivityState> flags)
 {
     auto changedFlags = m_viewStateFlags ^ flags;
     m_viewStateFlags = flags;

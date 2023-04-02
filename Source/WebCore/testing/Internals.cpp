@@ -2120,15 +2120,15 @@ ExceptionOr<void> Internals::setPagination(const String& mode, int gap, int page
 
     Pagination pagination;
     if (mode == "Unpaginated"_s)
-        pagination.mode = Pagination::Unpaginated;
+        pagination.mode = Unpaginated;
     else if (mode == "LeftToRightPaginated"_s)
-        pagination.mode = Pagination::LeftToRightPaginated;
+        pagination.mode = LeftToRightPaginated;
     else if (mode == "RightToLeftPaginated"_s)
-        pagination.mode = Pagination::RightToLeftPaginated;
+        pagination.mode = RightToLeftPaginated;
     else if (mode == "TopToBottomPaginated"_s)
-        pagination.mode = Pagination::TopToBottomPaginated;
+        pagination.mode = TopToBottomPaginated;
     else if (mode == "BottomToTopPaginated"_s)
-        pagination.mode = Pagination::BottomToTopPaginated;
+        pagination.mode = BottomToTopPaginated;
     else
         return Exception { SyntaxError };
 
@@ -5725,7 +5725,7 @@ void Internals::setPageIsInWindow(bool isInWindow)
     updatePageActivityState(ActivityState::IsInWindow, isInWindow);
 }
 
-void Internals::updatePageActivityState(OptionSet<ActivityState::Flag> statesToChange, bool newValue)
+void Internals::updatePageActivityState(OptionSet<ActivityState> statesToChange, bool newValue)
 {
     auto* page = contextDocument() ? contextDocument()->page() : nullptr;
     if (!page)

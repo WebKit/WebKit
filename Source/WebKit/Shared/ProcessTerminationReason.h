@@ -27,7 +27,7 @@
 
 namespace WebKit {
 
-enum class ProcessTerminationReason {
+enum class ProcessTerminationReason : uint8_t {
     ExceededMemoryLimit,
     ExceededCPULimit,
     RequestedByClient,

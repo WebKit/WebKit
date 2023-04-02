@@ -29,6 +29,7 @@
 
 #import "FindController.h"
 #import "FindIndicatorOverlayClientIOS.h"
+#import "MessageSenderInlines.h"
 #import "SmartMagnificationControllerMessages.h"
 #import "WebCoreArgumentCoders.h"
 #import "WebPage.h"

@@ -28,6 +28,7 @@
 #if ENABLE(SERVICE_WORKER)
 #include "WebSWOriginStore.h"
 
+#include "MessageSenderInlines.h"
 #include "WebSWClientConnectionMessages.h"
 #include "WebSWServerConnection.h"
 #include <WebCore/SecurityOrigin.h>

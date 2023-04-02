@@ -134,20 +134,20 @@ private:
     int64_t m_handle { 0 };
 };
 
-SandboxExtension::Handle::Handle()
+SandboxExtensionHandle::SandboxExtensionHandle()
 {
 }
 
-SandboxExtension::Handle::Handle(Handle&&) = default;
-SandboxExtension::Handle& SandboxExtension::Handle::operator=(Handle&&) = default;
+SandboxExtensionHandle::SandboxExtensionHandle(SandboxExtensionHandle&&) = default;
+SandboxExtensionHandle& SandboxExtensionHandle::operator=(SandboxExtensionHandle&&) = default;
 
-SandboxExtension::Handle::~Handle()
+SandboxExtensionHandle::~SandboxExtensionHandle()
 {
     if (m_sandboxExtension)
         m_sandboxExtension->invalidate();
 }
 
-void SandboxExtension::Handle::encode(IPC::Encoder& encoder) const
+void SandboxExtensionHandle::encode(IPC::Encoder& encoder) const
 {
     if (!m_sandboxExtension) {
         encoder << IPC::DataReference();
@@ -164,7 +164,7 @@ void SandboxExtension::Handle::encode(IPC::Encoder& encoder) const
     m_sandboxExtension = 0;
 }
 
-auto SandboxExtension::Handle::decode(IPC::Decoder& decoder) -> std::optional<Handle>
+auto SandboxExtensionHandle::decode(IPC::Decoder& decoder) -> std::optional<SandboxExtensionHandle>
 {
     IPC::DataReference dataReference;
     if (!decoder.decode(dataReference))
@@ -173,7 +173,7 @@ auto SandboxExtension::Handle::decode(IPC::Decoder& decoder) -> std::optional<Ha
     if (dataReference.empty())
         return {{ }};
 
-    Handle handle;
+    SandboxExtensionHandle handle;
     handle.m_sandboxExtension = makeUnique<SandboxExtensionImpl>(reinterpret_cast<const char*>(dataReference.data()), dataReference.size());
     return WTFMove(handle);
 }

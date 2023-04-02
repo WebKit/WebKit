@@ -32,6 +32,7 @@
 
 #if PLATFORM(MAC)
 
+#import "MessageSenderInlines.h"
 #import "WebPage.h"
 #import "WebPageProxyMessages.h"
 #import "WebProcess.h"

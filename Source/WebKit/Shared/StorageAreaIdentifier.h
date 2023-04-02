@@ -29,7 +29,7 @@
 
 namespace WebKit {
 
-enum StorageAreaIdentifierType { };
+struct StorageAreaIdentifierType;
 using StorageAreaIdentifier = ObjectIdentifier<StorageAreaIdentifierType>;
 
 }

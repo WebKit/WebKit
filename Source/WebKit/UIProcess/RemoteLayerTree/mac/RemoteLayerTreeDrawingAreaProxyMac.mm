@@ -30,6 +30,7 @@
 
 #import "DrawingArea.h"
 #import "DrawingAreaMessages.h"
+#import "MessageSenderInlines.h"
 #import "RemoteLayerTreeScrollingPerformanceData.h"
 #import "RemoteScrollingCoordinatorProxyMac.h"
 #import "WebPageProxy.h"
@@ -38,6 +39,7 @@
 #import <QuartzCore/QuartzCore.h>
 #import <WebCore/DeprecatedGlobalSettings.h>
 #import <WebCore/FloatPoint.h>
+#import <WebCore/LocalFrameView.h>
 #import <WebCore/NSScrollerImpDetails.h>
 #import <WebCore/ScrollView.h>
 #import <WebCore/ScrollingTreeFrameScrollingNode.h>

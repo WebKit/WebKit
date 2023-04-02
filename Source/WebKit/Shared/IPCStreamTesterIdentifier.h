@@ -31,7 +31,7 @@
 
 namespace WebKit {
 
-enum IPCStreamTesterIdentifierType { };
+struct IPCStreamTesterIdentifierType;
 using IPCStreamTesterIdentifier = ObjectIdentifier<IPCStreamTesterIdentifierType>;
 
 }

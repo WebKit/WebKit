@@ -38,10 +38,10 @@
 
 namespace WebCore {
 class ResourceRequest;
-
+struct BackgroundFetchRequest;
 struct ClientOrigin;
 struct FetchOptions;
-};
+}
 
 namespace WebKit {
 

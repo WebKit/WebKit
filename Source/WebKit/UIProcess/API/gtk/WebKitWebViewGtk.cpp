@@ -20,6 +20,7 @@
 #include "config.h"
 #include "WebKitWebView.h"
 
+#include "PageLoadState.h"
 #include "WebKitAuthenticationDialog.h"
 #include "WebKitScriptDialogImpl.h"
 #include "WebKitWebViewBasePrivate.h"

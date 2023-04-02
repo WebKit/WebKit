@@ -27,6 +27,7 @@
 #include "WebBackForwardListProxy.h"
 
 #include "Logging.h"
+#include "MessageSenderInlines.h"
 #include "SessionState.h"
 #include "SessionStateConversion.h"
 #include "WebCoreArgumentCoders.h"

@@ -67,12 +67,9 @@
 #import "WKQuickLookPreviewController.h"
 #import "WKRevealItemPresenter.h"
 #import "WKSafeBrowsingWarning.h"
-#import <WebKit/WKShareSheet.h>
 #import "WKTextInputWindowController.h"
 #import "WKViewLayoutStrategy.h"
 #import "WKWebViewInternal.h"
-#import <WebKit/WKWebViewPrivate.h>
-#import <WebKit/WebBackForwardList.h>
 #import "WebBackForwardList.h"
 #import "WebEditCommandProxy.h"
 #import "WebEventFactory.h"
@@ -117,6 +114,9 @@
 #import <WebCore/WebCoreFullScreenWindow.h>
 #import <WebCore/WebCoreNSFontManagerExtras.h>
 #import <WebCore/WebPlaybackControlsManager.h>
+#import <WebKit/WKShareSheet.h>
+#import <WebKit/WKWebViewPrivate.h>
+#import <WebKit/WebBackForwardList.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <pal/spi/cocoa/AVKitSPI.h>
 #import <pal/spi/cocoa/NSAccessibilitySPI.h>
@@ -2144,7 +2144,7 @@ void WebViewImpl::viewDidMoveToWindow()
     if (window) {
         windowDidChangeScreen();
 
-        OptionSet<WebCore::ActivityState::Flag> activityStateChanges { WebCore::ActivityState::WindowIsActive, WebCore::ActivityState::IsVisible };
+        OptionSet<WebCore::ActivityState> activityStateChanges { WebCore::ActivityState::WindowIsActive, WebCore::ActivityState::IsVisible };
         if (m_shouldDeferViewInWindowChanges)
             m_viewInWindowChangeWasDeferred = true;
         else
@@ -2170,7 +2170,7 @@ void WebViewImpl::viewDidMoveToWindow()
         if (m_immediateActionGestureRecognizer && ![[m_view gestureRecognizers] containsObject:m_immediateActionGestureRecognizer.get()] && !m_ignoresNonWheelEvents && m_allowsLinkPreview)
             [m_view addGestureRecognizer:m_immediateActionGestureRecognizer.get()];
     } else {
-        OptionSet<WebCore::ActivityState::Flag> activityStateChanges { WebCore::ActivityState::WindowIsActive, WebCore::ActivityState::IsVisible };
+        OptionSet<WebCore::ActivityState> activityStateChanges { WebCore::ActivityState::WindowIsActive, WebCore::ActivityState::IsVisible };
         if (m_shouldDeferViewInWindowChanges)
             m_viewInWindowChangeWasDeferred = true;
         else
@@ -3780,7 +3780,7 @@ void WebViewImpl::setThumbnailView(_WKThumbnailView *thumbnailView)
         updateThumbnailViewLayer();
     else {
         setAcceleratedCompositingRootLayer(m_rootLayer.get());
-        m_page->activityStateDidChange(WebCore::ActivityState::allFlags());
+        m_page->activityStateDidChange(WebCore::allActivityStates());
     }
 }
 

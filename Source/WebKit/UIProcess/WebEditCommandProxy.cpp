@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebEditCommandProxy.h"
 
+#include "MessageSenderInlines.h"
 #include "UndoOrRedo.h"
 #include "WebPageMessages.h"
 #include "WebPageProxy.h"

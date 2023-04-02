@@ -1388,7 +1388,7 @@ private:
     Document* contextDocument() const;
     LocalFrame* frame() const;
 
-    void updatePageActivityState(OptionSet<ActivityState::Flag> statesToChange, bool newValue);
+    void updatePageActivityState(OptionSet<ActivityState> statesToChange, bool newValue);
 
     ExceptionOr<RenderedDocumentMarker*> markerAt(Node&, const String& markerType, unsigned index);
     ExceptionOr<ScrollableArea*> scrollableAreaForNode(Node*) const;

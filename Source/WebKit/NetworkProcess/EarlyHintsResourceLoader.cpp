@@ -26,6 +26,7 @@
 #include "config.h"
 #include "EarlyHintsResourceLoader.h"
 
+#include "MessageSenderInlines.h"
 #include "NetworkLoadParameters.h"
 #include "PreconnectTask.h"
 #include "WebPageMessages.h"

@@ -29,7 +29,7 @@
 
 namespace WebKit {
 
-enum DataTaskIdentifierType { };
+struct DataTaskIdentifierType;
 using DataTaskIdentifier = ObjectIdentifier<DataTaskIdentifierType>;
 
 }

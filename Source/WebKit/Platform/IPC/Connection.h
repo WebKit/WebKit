@@ -85,7 +85,7 @@ enum class SendOption : uint8_t {
 #endif
 };
 
-enum class SendSyncOption {
+enum class SendSyncOption : uint8_t {
     // Use this to inform that this sync call will suspend this process until the user responds with input.
     InformPlatformProcessWillSuspend = 1 << 0,
     UseFullySynchronousModeForTesting = 1 << 1,
@@ -129,8 +129,38 @@ class MachMessage;
 class UnixMessage;
 class WorkQueueMessageReceiver;
 
-enum AsyncReplyIDType { };
+struct AsyncReplyIDType;
 using AsyncReplyID = ObjectIdentifier<AsyncReplyIDType>;
+
+template<typename T> struct ConnectionSendSyncResult {
+    std::unique_ptr<Decoder> decoder;
+    std::optional<typename T::ReplyArguments> replyArguments;
+
+    explicit operator bool() const { return !!decoder; }
+
+    typename T::ReplyArguments& reply()
+    {
+        ASSERT(!!replyArguments);
+        return *replyArguments;
+    }
+
+    typename T::ReplyArguments takeReply()
+    {
+        ASSERT(!!replyArguments);
+        return WTFMove(replyArguments).value();
+    }
+
+    template<typename... U>
+    typename T::ReplyArguments takeReplyOr(U&&... defaultValues)
+    {
+        return WTFMove(replyArguments).value_or(typename T::ReplyArguments { std::forward<U>(defaultValues)... });
+    }
+};
+
+struct ConnectionAsyncReplyHandler {
+    CompletionHandler<void(Decoder*)> completionHandler;
+    AsyncReplyID replyID;
+};
 
 class Connection : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<Connection, WTF::DestructionThread::MainRunLoop> {
 public:
@@ -267,32 +297,7 @@ public:
     // Sync senders should check the SendSyncResult for true/false in case they need to know if the result was really received.
     // Sync senders should hold on to the SendSyncResult in case they reference the contents of the reply via DataRefererence / ArrayReference.
 
-    template<typename T>
-    struct SendSyncResult {
-        std::unique_ptr<Decoder> decoder;
-        std::optional<typename T::ReplyArguments> replyArguments;
-
-        explicit operator bool() const { return !!decoder; }
-
-        typename T::ReplyArguments& reply()
-        {
-            ASSERT(!!replyArguments);
-            return *replyArguments;
-        }
-
-        typename T::ReplyArguments takeReply()
-        {
-            ASSERT(!!replyArguments);
-            return WTFMove(replyArguments).value();
-        }
-
-        template<typename... U>
-        typename T::ReplyArguments takeReplyOr(U&&... defaultValues)
-        {
-            return WTFMove(replyArguments).value_or(typename T::ReplyArguments { std::forward<U>(defaultValues)... });
-        }
-    };
-
+    template<typename T> using SendSyncResult = ConnectionSendSyncResult<T>;
     template<typename T> SendSyncResult<T> sendSync(T&& message, uint64_t destinationID, Timeout = Timeout::infinity(), OptionSet<SendSyncOption> sendSyncOptions = { }); // Main thread only.
 
     template<typename> bool waitForAndDispatchImmediately(uint64_t destinationID, Timeout, OptionSet<WaitForOption> waitForOptions = { }); // Main thread only.
@@ -328,10 +333,7 @@ public:
 
     bool sendMessage(UniqueRef<Encoder>&&, OptionSet<SendOption> sendOptions, std::optional<Thread::QOS> = std::nullopt);
 
-    struct AsyncReplyHandler {
-        CompletionHandler<void(Decoder*)> completionHandler;
-        AsyncReplyID replyID;
-    };
+    using AsyncReplyHandler = ConnectionAsyncReplyHandler;
     bool sendMessageWithAsyncReply(UniqueRef<Encoder>&&, AsyncReplyHandler, OptionSet<SendOption> sendOptions, std::optional<Thread::QOS> = std::nullopt);
     UniqueRef<Encoder> createSyncMessageEncoder(MessageName, uint64_t destinationID, SyncRequestID&);
     std::unique_ptr<Decoder> sendSyncMessage(SyncRequestID, UniqueRef<Encoder>&&, Timeout, OptionSet<SendSyncOption> sendSyncOptions);

@@ -34,6 +34,7 @@
 #import "LayerHostingContext.h"
 #import "LayerTreeContext.h"
 #import "Logging.h"
+#import "MessageSenderInlines.h"
 #import "ViewGestureControllerMessages.h"
 #import "WebFrame.h"
 #import "WebPage.h"
@@ -437,7 +438,7 @@ void TiledCoreAnimationDrawingArea::handleActivityStateChangeCallbacksIfNeeded()
     } forPhase:kCATransactionPhasePostCommit];
 }
 
-void TiledCoreAnimationDrawingArea::activityStateDidChange(OptionSet<ActivityState::Flag> changed, ActivityStateChangeID activityStateChangeID, CompletionHandler<void()>&& nextActivityStateChangeCallback)
+void TiledCoreAnimationDrawingArea::activityStateDidChange(OptionSet<ActivityState> changed, ActivityStateChangeID activityStateChangeID, CompletionHandler<void()>&& nextActivityStateChangeCallback)
 {
     m_nextActivityStateChangeCallbacks.append(WTFMove(nextActivityStateChangeCallback));
     m_activityStateChangeID = std::max(m_activityStateChangeID, activityStateChangeID);

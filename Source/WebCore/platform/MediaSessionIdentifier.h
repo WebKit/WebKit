@@ -29,7 +29,7 @@
 
 namespace WebCore {
 
-enum MediaSessionIdentifierType { };
+struct MediaSessionIdentifierType;
 using MediaSessionIdentifier = ObjectIdentifier<MediaSessionIdentifierType>;
 
 }

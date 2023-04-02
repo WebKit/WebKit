@@ -29,8 +29,9 @@
 #if PLATFORM(MAC)
 
 #import "ImageOptions.h"
+#import "ShareableBitmap.h"
 #import "WKAPICast.h"
-#import <WebKit/WKView.h>
+#import "WKView.h"
 #import "WKViewInternal.h"
 #import "WKWebViewInternal.h"
 #import "WebPageProxy.h"

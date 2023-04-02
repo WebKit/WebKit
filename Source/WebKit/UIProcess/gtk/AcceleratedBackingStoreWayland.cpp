@@ -32,10 +32,12 @@
 #include "WebPageProxy.h"
 #include <WebCore/CairoUtilities.h>
 #include <WebCore/GLContext.h>
+#include <WebCore/Region.h>
 #include <epoxy/egl.h>
 #include <epoxy/gl.h>
 #include <wpe/fdo-egl.h>
 #include <wpe/wpe.h>
+#include <wtf/glib/GUniquePtr.h>
 
 // These includes need to be in this order because wayland-egl.h defines WL_EGL_PLATFORM
 // and eglplatform.h, included by egl.h, checks that to decide whether it's Wayland platform.

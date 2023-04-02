@@ -36,6 +36,7 @@
 #import "SandboxUtilities.h"
 #import "WebExtensionContext.h"
 #import "WebExtensionContextMessages.h"
+#import "WebExtensionContextParameters.h"
 #import "WebExtensionContextProxyMessages.h"
 #import "WebExtensionControllerMessages.h"
 #import "WebExtensionControllerProxyMessages.h"

@@ -282,8 +282,8 @@ void PageClientImpl::doneWithKeyEvent(const NativeWebKeyboardEvent& event, bool 
 RefPtr<WebPopupMenuProxy> PageClientImpl::createPopupMenuProxy(WebPageProxy& page)
 {
     if (WEBKIT_IS_WEB_VIEW(m_viewWidget))
-        return WebKitPopupMenu::create(m_viewWidget, page);
-    return WebPopupMenuProxyGtk::create(m_viewWidget, page);
+        return WebKitPopupMenu::create(m_viewWidget, page.popupMenuClient());
+    return WebPopupMenuProxyGtk::create(m_viewWidget, page.popupMenuClient());
 }
 
 Ref<WebContextMenuProxy> PageClientImpl::createContextMenuProxy(WebPageProxy& page, ContextMenuContextData&& context, const UserData& userData)

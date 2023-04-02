@@ -32,6 +32,7 @@
 #include "HandleMessage.h"
 #include "LoadParameters.h"
 #include "LoadedWebArchive.h"
+#include "MessageSenderInlines.h"
 #include "NetworkProcessMessages.h"
 #include "WebFrameProxy.h"
 #include "WebFrameProxyMessages.h"

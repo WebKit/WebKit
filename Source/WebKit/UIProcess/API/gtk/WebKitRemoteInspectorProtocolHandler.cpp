@@ -23,6 +23,7 @@
 #if ENABLE(REMOTE_INSPECTOR)
 
 #include "APIContentWorld.h"
+#include "PageLoadState.h"
 #include "WebKitError.h"
 #include "WebKitNavigationPolicyDecision.h"
 #include "WebKitUserContentManagerPrivate.h"

@@ -29,7 +29,7 @@
 
 namespace WebKit {
 
-enum UserContentControllerIdentifierType { };
+struct UserContentControllerIdentifierType;
 using UserContentControllerIdentifier = ObjectIdentifier<UserContentControllerIdentifierType>;
 
 }

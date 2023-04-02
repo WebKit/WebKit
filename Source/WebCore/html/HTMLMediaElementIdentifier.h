@@ -29,7 +29,7 @@
 
 namespace WebCore {
 
-enum HTMLMediaElementIdentifierType { };
+struct HTMLMediaElementIdentifierType;
 using HTMLMediaElementIdentifier = ObjectIdentifier<HTMLMediaElementIdentifierType>;
 
 }

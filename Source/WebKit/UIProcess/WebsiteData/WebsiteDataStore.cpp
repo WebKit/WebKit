@@ -37,6 +37,7 @@
 #include "MockAuthenticatorManager.h"
 #include "NetworkProcessConnectionInfo.h"
 #include "NetworkProcessMessages.h"
+#include "PageLoadState.h"
 #include "ShouldGrandfatherStatistics.h"
 #include "StorageAccessStatus.h"
 #include "UnifiedOriginStorageLevel.h"
@@ -60,6 +61,7 @@
 #include <WebCore/OriginLock.h>
 #include <WebCore/RegistrableDomain.h>
 #include <WebCore/ResourceRequest.h>
+#include <WebCore/SearchPopupMenu.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/SecurityOriginData.h>
 #include <WebCore/WebLockRegistry.h>

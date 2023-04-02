@@ -26,9 +26,11 @@
 #include "config.h"
 #include "WebNotificationManagerMessageHandler.h"
 
+#include "Logging.h"
 #include "ServiceWorkerNotificationHandler.h"
 #include "WebPageProxy.h"
 #include <WebCore/NotificationData.h>
+#include <wtf/CompletionHandler.h>
 
 namespace WebKit {
 

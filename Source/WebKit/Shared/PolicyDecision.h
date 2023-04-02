@@ -29,7 +29,6 @@
 #include "NavigatingToAppBoundDomain.h"
 #include "SandboxExtension.h"
 #include "WebsitePoliciesData.h"
-#include <wtf/Forward.h>
 
 namespace WebKit {
 

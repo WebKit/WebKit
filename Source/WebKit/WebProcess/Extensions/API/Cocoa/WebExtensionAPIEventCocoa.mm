@@ -30,6 +30,7 @@
 #import "config.h"
 #import "WebExtensionAPIEvent.h"
 
+#import "MessageSenderInlines.h"
 #import "WebExtensionContextMessages.h"
 #import "WebPageProxy.h"
 #import "WebProcess.h"

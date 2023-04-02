@@ -28,13 +28,14 @@
 #if ENABLE(PLATFORM_DRIVEN_TEXT_CHECKING)
 
 #import "EditingRange.h"
-#import "WebPageProxy.h"
 #import <WebCore/FloatRect.h>
 #import <wtf/CompletionHandler.h>
 
 OBJC_CLASS NSAttributedString;
 
 namespace WebKit {
+
+class WebPageProxy;
 
 class TextCheckingController final {
     WTF_MAKE_FAST_ALLOCATED;

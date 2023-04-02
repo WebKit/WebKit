@@ -49,7 +49,7 @@ enum {
 };
 typedef uint64_t ActivityStateChangeID;
 
-enum DrawingAreaIdentifierType { };
+struct DrawingAreaIdentifierType;
 using DrawingAreaIdentifier = ObjectIdentifier<DrawingAreaIdentifierType>;
 
 } // namespace WebKit

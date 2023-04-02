@@ -29,7 +29,7 @@
 
 namespace WebKit {
 
-enum MarkSurfacesAsVolatileRequestIdentifierType { };
+struct MarkSurfacesAsVolatileRequestIdentifierType;
 using MarkSurfacesAsVolatileRequestIdentifier = ObjectIdentifier<MarkSurfacesAsVolatileRequestIdentifierType>;
 
 }

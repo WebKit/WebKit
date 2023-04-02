@@ -20,6 +20,7 @@
 #include "config.h"
 #include "UserMediaPermissionRequestProxy.h"
 
+#include "APIUIClient.h"
 #include "MediaPermissionUtilities.h"
 #include "UserMediaPermissionRequestManagerProxy.h"
 #include <WebCore/CaptureDeviceManager.h>

@@ -30,6 +30,7 @@
 
 #include "FrameInfoData.h"
 #include "GeolocationIdentifier.h"
+#include "MessageSenderInlines.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebFrame.h"
 #include "WebPage.h"

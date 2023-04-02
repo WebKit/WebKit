@@ -25,9 +25,12 @@
 
 #pragma once
 
-#include <WebCore/DiagnosticLoggingDomain.h>
-#include <WebCore/DiagnosticLoggingResultType.h>
-#include <wtf/text/WTFString.h>
+#include <wtf/Forward.h>
+
+namespace WebCore {
+enum DiagnosticLoggingResultType : uint8_t;
+enum class DiagnosticLoggingDomain : uint8_t;
+}
 
 namespace WebKit {
 class WebPageProxy;

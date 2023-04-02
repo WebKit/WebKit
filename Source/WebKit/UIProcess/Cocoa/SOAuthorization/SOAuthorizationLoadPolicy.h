@@ -29,7 +29,7 @@
 
 namespace WebKit {
 
-enum class SOAuthorizationLoadPolicy : uint8_t {
+enum class SOAuthorizationLoadPolicy : bool {
     Allow,
     Ignore
 };

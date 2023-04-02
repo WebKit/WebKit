@@ -82,7 +82,7 @@ struct WebPageCreationParameters {
 
     WebCore::IntSize viewSize;
 
-    OptionSet<WebCore::ActivityState::Flag> activityState;
+    OptionSet<WebCore::ActivityState> activityState;
     
     WebPreferencesStore store;
     DrawingAreaType drawingAreaType;

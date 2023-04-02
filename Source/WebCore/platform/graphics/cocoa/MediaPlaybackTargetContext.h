@@ -35,6 +35,12 @@ OBJC_CLASS NSData;
 
 namespace WebCore {
 
+enum class MediaPlaybackTargetContextMockState : uint8_t {
+    Unknown = 0,
+    OutputDeviceUnavailable = 1,
+    OutputDeviceAvailable = 2,
+};
+
 class MediaPlaybackTargetContext {
 public:
     enum class Type : uint8_t {
@@ -44,11 +50,7 @@ public:
         Mock,
     };
 
-    enum class MockState : uint8_t {
-        Unknown = 0,
-        OutputDeviceUnavailable = 1,
-        OutputDeviceAvailable = 2,
-    };
+    using MockState = MediaPlaybackTargetContextMockState;
 
     MediaPlaybackTargetContext() = default;
     WEBCORE_EXPORT explicit MediaPlaybackTargetContext(RetainPtr<AVOutputContext>&&);

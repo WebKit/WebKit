@@ -30,6 +30,7 @@
 
 #include "GPUConnectionToWebProcess.h"
 #include "IPCUtilities.h"
+#include "MessageSenderInlines.h"
 #include "RemoteVideoFrameObjectHeap.h"
 #include "SampleBufferDisplayLayerMessages.h"
 #include <WebCore/ImageTransferSessionVT.h>

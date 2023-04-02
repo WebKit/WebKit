@@ -29,6 +29,7 @@
 #include "APISecurityOrigin.h"
 #include "APIUIClient.h"
 #include "Logging.h"
+#include "MessageSenderInlines.h"
 #include "WebAutomationSession.h"
 #include "WebFrameProxy.h"
 #include "WebPageMessages.h"

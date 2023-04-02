@@ -30,6 +30,7 @@
 #include "AuthenticationManagerMessages.h"
 #include "Download.h"
 #include "DownloadProxyMessages.h"
+#include "MessageSenderInlines.h"
 #include "NetworkProcess.h"
 #include "NetworkProcessProxyMessages.h"
 #include "PendingDownload.h"

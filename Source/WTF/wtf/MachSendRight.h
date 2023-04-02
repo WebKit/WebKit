@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/Forward.h>
+
 #if PLATFORM(COCOA)
 
 #include <mach/mach_port.h>
@@ -62,7 +64,6 @@ WTF_EXPORT_PRIVATE void deallocateSendRightSafely(mach_port_t);
 
 }
 
-using WTF::MachSendRight;
 using WTF::deallocateSendRightSafely;
 
 #endif

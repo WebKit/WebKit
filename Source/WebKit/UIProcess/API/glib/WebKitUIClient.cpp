@@ -22,6 +22,7 @@
 
 #include "APIUIClient.h"
 #include "DrawingAreaProxy.h"
+#include "GeolocationPermissionRequestProxy.h"
 #include "NotificationPermissionRequest.h"
 #include "WebKitDeviceInfoPermissionRequestPrivate.h"
 #include "WebKitFileChooserRequestPrivate.h"

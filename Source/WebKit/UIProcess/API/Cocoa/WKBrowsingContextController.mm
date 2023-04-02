@@ -58,6 +58,7 @@
 #import "WebProcessPool.h"
 #import "WebProtectionSpace.h"
 #import "_WKRemoteObjectRegistryInternal.h"
+#import <WebCore/Pagination.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/NeverDestroyed.h>
@@ -653,19 +654,19 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     WebCore::Pagination::Mode mode;
     switch (paginationMode) {
     case WKPaginationModeUnpaginated:
-        mode = WebCore::Pagination::Unpaginated;
+        mode = WebCore::Unpaginated;
         break;
     case WKPaginationModeLeftToRight:
-        mode = WebCore::Pagination::LeftToRightPaginated;
+        mode = WebCore::LeftToRightPaginated;
         break;
     case WKPaginationModeRightToLeft:
-        mode = WebCore::Pagination::RightToLeftPaginated;
+        mode = WebCore::RightToLeftPaginated;
         break;
     case WKPaginationModeTopToBottom:
-        mode = WebCore::Pagination::TopToBottomPaginated;
+        mode = WebCore::TopToBottomPaginated;
         break;
     case WKPaginationModeBottomToTop:
-        mode = WebCore::Pagination::BottomToTopPaginated;
+        mode = WebCore::BottomToTopPaginated;
         break;
     default:
         return;
@@ -677,15 +678,15 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 - (WKBrowsingContextPaginationMode)paginationMode
 {
     switch (_page->paginationMode()) {
-    case WebCore::Pagination::Unpaginated:
+    case WebCore::Unpaginated:
         return WKPaginationModeUnpaginated;
-    case WebCore::Pagination::LeftToRightPaginated:
+    case WebCore::LeftToRightPaginated:
         return WKPaginationModeLeftToRight;
-    case WebCore::Pagination::RightToLeftPaginated:
+    case WebCore::RightToLeftPaginated:
         return WKPaginationModeRightToLeft;
-    case WebCore::Pagination::TopToBottomPaginated:
+    case WebCore::TopToBottomPaginated:
         return WKPaginationModeTopToBottom;
-    case WebCore::Pagination::BottomToTopPaginated:
+    case WebCore::BottomToTopPaginated:
         return WKPaginationModeBottomToTop;
     }
 

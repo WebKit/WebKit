@@ -34,6 +34,7 @@
 #include "WebContextMenuItemData.h"
 #include "WebKitWebViewBasePrivate.h"
 #include "WebPageProxy.h"
+#include "WebPopupMenuProxy.h"
 #include "WebProcessProxy.h"
 #include <WebCore/GUniquePtrGtk.h>
 #include <WebCore/GtkUtilities.h>
@@ -280,7 +281,7 @@ void WebContextMenuProxyGtk::showContextMenuWithItems(Vector<Ref<WebContextMenuI
     if (!menuWidgetHasItems(m_menu))
         return;
 
-    NativeWebMouseEvent* mouseEvent = page()->currentlyProcessedMouseDownEvent();
+    NativeWebMouseEvent* mouseEvent = page()->popupMenuClient().currentlyProcessedMouseDownEvent();
     const GdkEvent* event = mouseEvent ? mouseEvent->nativeEvent() : nullptr;
     const GdkRectangle rect = { m_context.menuLocation().x(), m_context.menuLocation().y(), 1, 1 };
     popupMenuWidget(m_menu, event, rect);

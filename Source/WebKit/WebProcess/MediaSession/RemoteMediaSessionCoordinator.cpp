@@ -29,6 +29,7 @@
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
 
 #include "Logging.h"
+#include "MessageSenderInlines.h"
 #include "RemoteMediaSessionCoordinatorMessages.h"
 #include "RemoteMediaSessionCoordinatorProxyMessages.h"
 #include "WebPage.h"

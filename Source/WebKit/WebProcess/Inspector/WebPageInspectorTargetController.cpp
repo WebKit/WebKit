@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebPageInspectorTargetController.h"
 
+#include "MessageSenderInlines.h"
 #include "WebPage.h"
 #include "WebPageInspectorTargetFrontendChannel.h"
 #include "WebPageProxyMessages.h"

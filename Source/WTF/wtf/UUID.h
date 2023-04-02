@@ -229,6 +229,5 @@ private:
 
 }
 
-using WTF::UUID;
 using WTF::createVersion4UUIDString;
 using WTF::bootSessionUUIDString;

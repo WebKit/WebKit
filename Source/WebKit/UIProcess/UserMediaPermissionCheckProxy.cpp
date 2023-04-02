@@ -26,6 +26,7 @@
 #include "config.h"
 #include "UserMediaPermissionCheckProxy.h"
 
+#include "APIUIClient.h"
 #include "UserMediaPermissionRequestManagerProxy.h"
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/SecurityOriginData.h>
@@ -62,4 +63,3 @@ void UserMediaPermissionCheckProxy::complete(PermissionInfo info)
 }
 
 } // namespace WebKit
-

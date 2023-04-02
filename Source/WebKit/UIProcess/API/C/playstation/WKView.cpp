@@ -67,7 +67,7 @@ void WKViewSetSize(WKViewRef view, WKSize viewSize)
     WebKit::toImpl(view)->setViewSize(WebKit::toIntSize(viewSize));
 }
 
-static void setViewActivityStateFlag(WKViewRef view, WebCore::ActivityState::Flag flag, bool set)
+static void setViewActivityStateFlag(WKViewRef view, WebCore::ActivityState flag, bool set)
 {
     auto viewState = WebKit::toImpl(view)->viewState();
     if (set)

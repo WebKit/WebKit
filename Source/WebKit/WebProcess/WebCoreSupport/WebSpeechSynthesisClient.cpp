@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebSpeechSynthesisClient.h"
 
+#include "MessageSenderInlines.h"
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
 #include "WebSpeechSynthesisVoice.h"

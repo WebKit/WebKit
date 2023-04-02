@@ -30,6 +30,7 @@
 #import "Attachment.h"
 #import "LayerHostingContext.h"
 #import "Logging.h"
+#import "MessageSenderInlines.h"
 #import "PlaybackSessionManager.h"
 #import "TextTrackRepresentationCocoa.h"
 #import "VideoFullscreenManagerMessages.h"

@@ -32,7 +32,7 @@ namespace WebCore {
 // FIXME: Some of these milestones are about layout, and others are about painting.
 // We should either re-name them to something more generic, or split them into
 // two enums -- one for painting and one for layout.
-enum LayoutMilestone {
+enum LayoutMilestone : uint16_t {
     DidFirstLayout                                      = 1 << 0,
     DidFirstVisuallyNonEmptyLayout                      = 1 << 1,
     DidHitRelevantRepaintedObjectsAreaThreshold         = 1 << 2,

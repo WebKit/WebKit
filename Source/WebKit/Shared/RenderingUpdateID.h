@@ -29,7 +29,7 @@
 
 namespace WebKit {
 
-enum RenderingUpdateIDType { };
+struct RenderingUpdateIDType;
 using RenderingUpdateID = MonotonicObjectIdentifier<RenderingUpdateIDType>;
 
 } // namespace WebKit

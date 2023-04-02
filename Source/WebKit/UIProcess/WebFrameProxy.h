@@ -30,7 +30,6 @@
 #include "MessageReceiver.h"
 #include "MessageSender.h"
 #include "WebFramePolicyListenerProxy.h"
-#include "WebPageProxy.h"
 #include <WebCore/FrameLoaderTypes.h>
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
@@ -45,24 +44,30 @@
 namespace API {
 class Data;
 class Navigation;
+class URL;
 }
 
 namespace IPC {
 class Connection;
 class Decoder;
+using DataReference = Span<const uint8_t>;
 }
 
 namespace WebKit {
-class DownloadProxy;
+
 class ProvisionalFrameProxy;
 class SafeBrowsingWarning;
 class SubframePageProxy;
 class UserData;
 class WebFramePolicyListenerProxy;
+class WebPageProxy;
 class WebProcessProxy;
 class WebsiteDataStore;
+
 enum class ShouldExpectSafeBrowsingResult : bool;
 enum class ProcessSwapRequestedByClient : bool;
+
+struct FrameInfoData;
 struct FrameTreeCreationParameters;
 struct FrameTreeNodeData;
 struct WebsitePoliciesData;
@@ -80,7 +85,7 @@ public:
     virtual ~WebFrameProxy();
 
     WebCore::FrameIdentifier frameID() const { return m_frameID; }
-    WebPageProxy* page() const { return m_page.get(); }
+    WebPageProxy* page() const;
 
     bool pageIsClosed() const { return !m_page; } // Needs to be thread-safe.
 

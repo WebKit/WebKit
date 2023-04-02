@@ -53,6 +53,7 @@
 #include <WebCore/DatabaseDetails.h>
 #include <WebCore/DecomposedGlyphs.h>
 #include <WebCore/DeprecationReportBody.h>
+#include <WebCore/DiagnosticLoggingClient.h>
 #include <WebCore/DictationAlternative.h>
 #include <WebCore/DictionaryPopupInfo.h>
 #include <WebCore/DisplayListItems.h>
@@ -681,6 +682,16 @@ bool ArgumentCoder<Cursor>::decode(Decoder& decoder, Cursor& cursor)
     cursor = Cursor(image.get(), hotSpot);
 #endif
     return true;
+}
+
+void ArgumentCoder<DiagnosticLoggingDictionary>::encode(Encoder& encoder, const DiagnosticLoggingDictionary& dictionary)
+{
+    encoder << dictionary.dictionary;
+}
+
+bool ArgumentCoder<DiagnosticLoggingDictionary>::decode(Decoder& decoder, DiagnosticLoggingDictionary& dictionary)
+{
+    return decoder.decode(dictionary.dictionary);
 }
 
 void ArgumentCoder<ResourceError>::encode(Encoder& encoder, const ResourceError& resourceError)

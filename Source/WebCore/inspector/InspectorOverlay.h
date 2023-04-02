@@ -62,101 +62,103 @@ class Node;
 class NodeList;
 class Page;
 
+struct InspectorOverlayHighlight {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+
+    enum class Type {
+        None, // Provides only non-quad information, including grid overlays.
+        Node, // Provides 4 quads: margin, border, padding, content.
+        NodeList, // Provides a list of nodes.
+        Rects, // Provides a list of quads.
+    };
+
+    struct Config {
+        WTF_MAKE_STRUCT_FAST_ALLOCATED;
+        Color content;
+        Color contentOutline;
+        Color padding;
+        Color border;
+        Color margin;
+        bool showInfo;
+        bool usePageCoordinates;
+    };
+
+    struct GridHighlightOverlay {
+        WTF_MAKE_STRUCT_FAST_ALLOCATED;
+
+        struct Area {
+            WTF_MAKE_STRUCT_FAST_ALLOCATED;
+            String name;
+            FloatQuad quad;
+
+#if PLATFORM(IOS_FAMILY)
+            template<class Encoder> void encode(Encoder&) const;
+            template<class Decoder> static std::optional<Area> decode(Decoder&);
+#endif
+        };
+
+        Color color;
+        Vector<FloatLine> gridLines;
+        Vector<FloatQuad> gaps;
+        Vector<Area> areas;
+        Vector<InspectorOverlayLabel> labels;
+
+#if PLATFORM(IOS_FAMILY)
+        template<class Encoder> void encode(Encoder&) const;
+        template<class Decoder> static std::optional<GridHighlightOverlay> decode(Decoder&);
+#endif
+    };
+
+    struct FlexHighlightOverlay {
+        WTF_MAKE_STRUCT_FAST_ALLOCATED;
+
+        Color color;
+        FloatQuad containerBounds;
+        Vector<FloatQuad> itemBounds;
+        Vector<FloatQuad> mainAxisGaps;
+        Vector<FloatQuad> mainAxisSpaceBetweenItemsAndGaps;
+        Vector<FloatQuad> spaceBetweenItemsAndCrossAxisSpace;
+        Vector<FloatQuad> crossAxisGaps;
+        Vector<InspectorOverlayLabel> labels;
+
+#if PLATFORM(IOS_FAMILY)
+        template<class Encoder> void encode(Encoder&) const;
+        template<class Decoder> static std::optional<FlexHighlightOverlay> decode(Decoder&);
+#endif
+    };
+
+    void setDataFromConfig(const Config& config)
+    {
+        contentColor = config.content;
+        contentOutlineColor = config.contentOutline;
+        paddingColor = config.padding;
+        borderColor = config.border;
+        marginColor = config.margin;
+        usePageCoordinates = config.usePageCoordinates;
+    }
+
+    Color contentColor;
+    Color contentOutlineColor;
+    Color paddingColor;
+    Color borderColor;
+    Color marginColor;
+
+    Type type { Type::Node };
+    Vector<FloatQuad> quads;
+    Vector<GridHighlightOverlay> gridHighlightOverlays;
+    Vector<FlexHighlightOverlay> flexHighlightOverlays;
+    bool usePageCoordinates { true };
+
+    using Bounds = FloatRect;
+};
+
 class InspectorOverlay {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     InspectorOverlay(Page&, InspectorClient*);
     ~InspectorOverlay();
 
-    struct Highlight {
-        WTF_MAKE_STRUCT_FAST_ALLOCATED;
-
-        enum class Type {
-            None, // Provides only non-quad information, including grid overlays.
-            Node, // Provides 4 quads: margin, border, padding, content.
-            NodeList, // Provides a list of nodes.
-            Rects, // Provides a list of quads.
-        };
-
-        struct Config {
-            WTF_MAKE_STRUCT_FAST_ALLOCATED;
-            Color content;
-            Color contentOutline;
-            Color padding;
-            Color border;
-            Color margin;
-            bool showInfo;
-            bool usePageCoordinates;
-        };
-
-        struct GridHighlightOverlay {
-            WTF_MAKE_STRUCT_FAST_ALLOCATED;
-
-            struct Area {
-                WTF_MAKE_STRUCT_FAST_ALLOCATED;
-                String name;
-                FloatQuad quad;
-
-#if PLATFORM(IOS_FAMILY)
-                template<class Encoder> void encode(Encoder&) const;
-                template<class Decoder> static std::optional<InspectorOverlay::Highlight::GridHighlightOverlay::Area> decode(Decoder&);
-#endif
-            };
-
-            Color color;
-            Vector<FloatLine> gridLines;
-            Vector<FloatQuad> gaps;
-            Vector<Area> areas;
-            Vector<InspectorOverlayLabel> labels;
-
-#if PLATFORM(IOS_FAMILY)
-            template<class Encoder> void encode(Encoder&) const;
-            template<class Decoder> static std::optional<InspectorOverlay::Highlight::GridHighlightOverlay> decode(Decoder&);
-#endif
-        };
-
-        struct FlexHighlightOverlay {
-            WTF_MAKE_STRUCT_FAST_ALLOCATED;
-
-            Color color;
-            FloatQuad containerBounds;
-            Vector<FloatQuad> itemBounds;
-            Vector<FloatQuad> mainAxisGaps;
-            Vector<FloatQuad> mainAxisSpaceBetweenItemsAndGaps;
-            Vector<FloatQuad> spaceBetweenItemsAndCrossAxisSpace;
-            Vector<FloatQuad> crossAxisGaps;
-            Vector<InspectorOverlayLabel> labels;
-
-#if PLATFORM(IOS_FAMILY)
-            template<class Encoder> void encode(Encoder&) const;
-            template<class Decoder> static std::optional<InspectorOverlay::Highlight::FlexHighlightOverlay> decode(Decoder&);
-#endif
-        };
-
-        void setDataFromConfig(const Config& config)
-        {
-            contentColor = config.content;
-            contentOutlineColor = config.contentOutline;
-            paddingColor = config.padding;
-            borderColor = config.border;
-            marginColor = config.margin;
-            usePageCoordinates = config.usePageCoordinates;
-        }
-
-        Color contentColor;
-        Color contentOutlineColor;
-        Color paddingColor;
-        Color borderColor;
-        Color marginColor;
-
-        Type type {Type::Node};
-        Vector<FloatQuad> quads;
-        Vector<GridHighlightOverlay> gridHighlightOverlays;
-        Vector<FlexHighlightOverlay> flexHighlightOverlays;
-        bool usePageCoordinates {true};
-
-        using Bounds = FloatRect;
-    };
+    using Highlight = InspectorOverlayHighlight;
 
     struct Grid {
         WTF_MAKE_STRUCT_FAST_ALLOCATED;
@@ -230,8 +232,9 @@ public:
     Inspector::ErrorStringOr<void> clearFlexOverlayForNode(Node&);
     void clearAllFlexOverlays();
 
-    WEBCORE_EXPORT static void drawGridOverlay(GraphicsContext&, const InspectorOverlay::Highlight::GridHighlightOverlay&);
-    WEBCORE_EXPORT static void drawFlexOverlay(GraphicsContext&, const InspectorOverlay::Highlight::FlexHighlightOverlay&);
+    WEBCORE_EXPORT static void drawGridOverlay(GraphicsContext&, const InspectorOverlayHighlight::GridHighlightOverlay&);
+    WEBCORE_EXPORT static void drawFlexOverlay(GraphicsContext&, const InspectorOverlayHighlight::FlexHighlightOverlay&);
+
 private:
     using TimeRectPair = std::pair<MonotonicTime, FloatRect>;
 
@@ -248,8 +251,8 @@ private:
 
     Path drawElementTitle(GraphicsContext&, Node&, const Highlight::Bounds&);
     
-    std::optional<InspectorOverlay::Highlight::GridHighlightOverlay> buildGridOverlay(const InspectorOverlay::Grid&, bool offsetBoundsByScroll = false);
-    std::optional<InspectorOverlay::Highlight::FlexHighlightOverlay> buildFlexOverlay(const InspectorOverlay::Flex&);
+    std::optional<InspectorOverlayHighlight::GridHighlightOverlay> buildGridOverlay(const InspectorOverlay::Grid&, bool offsetBoundsByScroll = false);
+    std::optional<InspectorOverlayHighlight::FlexHighlightOverlay> buildFlexOverlay(const InspectorOverlay::Flex&);
 
     void updatePaintRectsTimerFired();
 
@@ -282,7 +285,7 @@ private:
 
 #if PLATFORM(IOS_FAMILY)
 
-template<class Encoder> void InspectorOverlay::Highlight::FlexHighlightOverlay::encode(Encoder& encoder) const
+template<class Encoder> void InspectorOverlayHighlight::FlexHighlightOverlay::encode(Encoder& encoder) const
 {
     encoder << color;
     encoder << containerBounds;
@@ -294,9 +297,9 @@ template<class Encoder> void InspectorOverlay::Highlight::FlexHighlightOverlay::
     encoder << labels;
 }
 
-template<class Decoder> std::optional<InspectorOverlay::Highlight::FlexHighlightOverlay> InspectorOverlay::Highlight::FlexHighlightOverlay::decode(Decoder& decoder)
+template<class Decoder> std::optional<InspectorOverlayHighlight::FlexHighlightOverlay> InspectorOverlayHighlight::FlexHighlightOverlay::decode(Decoder& decoder)
 {
-    InspectorOverlay::Highlight::FlexHighlightOverlay flexHighlightOverlay;
+    FlexHighlightOverlay flexHighlightOverlay;
     if (!decoder.decode(flexHighlightOverlay.color))
         return { };
     if (!decoder.decode(flexHighlightOverlay.containerBounds))
@@ -316,7 +319,7 @@ template<class Decoder> std::optional<InspectorOverlay::Highlight::FlexHighlight
     return { flexHighlightOverlay };
 }
 
-template<class Encoder> void InspectorOverlay::Highlight::GridHighlightOverlay::encode(Encoder& encoder) const
+template<class Encoder> void InspectorOverlayHighlight::GridHighlightOverlay::encode(Encoder& encoder) const
 {
     encoder << color;
     encoder << gridLines;
@@ -325,9 +328,9 @@ template<class Encoder> void InspectorOverlay::Highlight::GridHighlightOverlay::
     encoder << labels;
 }
 
-template<class Decoder> std::optional<InspectorOverlay::Highlight::GridHighlightOverlay> InspectorOverlay::Highlight::GridHighlightOverlay::decode(Decoder& decoder)
+template<class Decoder> std::optional<InspectorOverlayHighlight::GridHighlightOverlay> InspectorOverlayHighlight::GridHighlightOverlay::decode(Decoder& decoder)
 {
-    InspectorOverlay::Highlight::GridHighlightOverlay gridHighlightOverlay;
+    GridHighlightOverlay gridHighlightOverlay;
     if (!decoder.decode(gridHighlightOverlay.color))
         return { };
     if (!decoder.decode(gridHighlightOverlay.gridLines))
@@ -341,15 +344,15 @@ template<class Decoder> std::optional<InspectorOverlay::Highlight::GridHighlight
     return { gridHighlightOverlay };
 }
 
-template<class Encoder> void InspectorOverlay::Highlight::GridHighlightOverlay::Area::encode(Encoder& encoder) const
+template<class Encoder> void InspectorOverlayHighlight::GridHighlightOverlay::Area::encode(Encoder& encoder) const
 {
     encoder << name;
     encoder << quad;
 }
 
-template<class Decoder> std::optional<InspectorOverlay::Highlight::GridHighlightOverlay::Area> InspectorOverlay::Highlight::GridHighlightOverlay::Area::decode(Decoder& decoder)
+template<class Decoder> std::optional<InspectorOverlayHighlight::GridHighlightOverlay::Area> InspectorOverlayHighlight::GridHighlightOverlay::Area::decode(Decoder& decoder)
 {
-    InspectorOverlay::Highlight::GridHighlightOverlay::Area area;
+    Area area;
     if (!decoder.decode(area.name))
         return { };
     if (!decoder.decode(area.quad))

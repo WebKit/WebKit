@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebAlternativeTextClient.h"
 
+#include "MessageSenderInlines.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"

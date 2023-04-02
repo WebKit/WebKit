@@ -31,7 +31,6 @@
 #include "WorkerOptions.h"
 #include "WorkerScriptLoaderClient.h"
 #include <wtf/CompletionHandler.h>
-#include <wtf/ObjectIdentifier.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {

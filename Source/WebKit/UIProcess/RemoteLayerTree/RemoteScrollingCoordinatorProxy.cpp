@@ -28,6 +28,7 @@
 #if ENABLE(UI_SIDE_COMPOSITING)
 #include "RemoteScrollingCoordinatorProxy.h"
 
+#include "MessageSenderInlines.h"
 #include "NativeWebWheelEvent.h"
 #include "RemoteLayerTreeDrawingAreaProxy.h"
 #include "RemoteLayerTreeScrollingPerformanceData.h"

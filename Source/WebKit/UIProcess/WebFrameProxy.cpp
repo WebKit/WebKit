@@ -32,6 +32,7 @@
 #include "DrawingAreaProxy.h"
 #include "FrameTreeCreationParameters.h"
 #include "FrameTreeNodeData.h"
+#include "MessageSenderInlines.h"
 #include "ProvisionalFrameProxy.h"
 #include "ProvisionalPageProxy.h"
 #include "SubframePageProxy.h"
@@ -39,6 +40,7 @@
 #include "WebFramePolicyListenerProxy.h"
 #include "WebFrameProxyMessages.h"
 #include "WebPageMessages.h"
+#include "WebPageProxy.h"
 #include "WebPageProxyMessages.h"
 #include "WebPasteboardProxy.h"
 #include "WebProcessPool.h"
@@ -106,6 +108,11 @@ WebFrameProxy::~WebFrameProxy()
 
     if (m_subframePage)
         m_process->removeFrameWithRemoteFrameProcess(*this);
+}
+
+WebPageProxy* WebFrameProxy::page() const
+{
+    return m_page.get();
 }
 
 void WebFrameProxy::webProcessWillShutDown()

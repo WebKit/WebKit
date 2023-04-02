@@ -27,6 +27,7 @@
 #include "config.h"
 #include "WebFrameNetworkingContext.h"
 
+#include "MessageSenderInlines.h"
 #include "NetworkSession.h"
 #include "NetworkSessionCreationParameters.h"
 #include "WebFrame.h"

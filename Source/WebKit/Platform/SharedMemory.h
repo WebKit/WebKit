@@ -57,45 +57,44 @@ namespace WebKit {
 
 enum class MemoryLedger { None, Default, Network, Media, Graphics, Neural };
 
+class SharedMemoryHandle {
+public:
+    bool isNull() const;
+
+    size_t size() const { return m_size; }
+
+    // Take/Set ownership of the memory for jetsam purposes.
+    void takeOwnershipOfMemory(MemoryLedger) const;
+    void setOwnershipOfMemory(const WebCore::ProcessIdentity&, MemoryLedger) const;
+
+    void clear();
+
+    void encode(IPC::Encoder&) const;
+    static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, SharedMemoryHandle&);
+#if USE(UNIX_DOMAIN_SOCKETS)
+    UnixFileDescriptor releaseHandle();
+#endif
+
+private:
+#if USE(UNIX_DOMAIN_SOCKETS)
+    mutable UnixFileDescriptor m_handle;
+#elif OS(DARWIN)
+    mutable MachSendRight m_handle;
+#elif OS(WINDOWS)
+    mutable Win32Handle m_handle;
+#endif
+    size_t m_size { 0 };
+    friend class SharedMemory;
+#if USE(UNIX_DOMAIN_SOCKETS)
+    friend class IPC::Connection;
+#endif
+};
+
 class SharedMemory : public ThreadSafeRefCounted<SharedMemory> {
 public:
-    enum class Protection {
-        ReadOnly,
-        ReadWrite
-    };
+    using Handle = SharedMemoryHandle;
 
-    class Handle {
-    public:
-        bool isNull() const;
-
-        size_t size() const { return m_size; }
-
-        // Take/Set ownership of the memory for jetsam purposes.
-        void takeOwnershipOfMemory(MemoryLedger) const;
-        void setOwnershipOfMemory(const WebCore::ProcessIdentity&, MemoryLedger) const;
-
-        void clear();
-
-        void encode(IPC::Encoder&) const;
-        static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, Handle&);
-#if USE(UNIX_DOMAIN_SOCKETS)
-        UnixFileDescriptor releaseHandle();
-#endif
-
-    private:
-#if USE(UNIX_DOMAIN_SOCKETS)
-        mutable UnixFileDescriptor m_handle;
-#elif OS(DARWIN)
-        mutable MachSendRight m_handle;
-#elif OS(WINDOWS)
-        mutable Win32Handle m_handle;
-#endif
-        size_t m_size { 0 };
-        friend class SharedMemory;
-#if USE(UNIX_DOMAIN_SOCKETS)
-        friend class IPC::Connection;
-#endif
-    };
+    enum class Protection : bool { ReadOnly, ReadWrite };
 
     // FIXME: Change these factory functions to return Ref<SharedMemory> and crash on failure.
     static RefPtr<SharedMemory> allocate(size_t);

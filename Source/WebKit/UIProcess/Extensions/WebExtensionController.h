@@ -35,7 +35,6 @@
 #include "WebExtensionControllerConfiguration.h"
 #include "WebExtensionControllerIdentifier.h"
 #include "WebExtensionURLSchemeHandler.h"
-#include "WebPageProxy.h"
 #include "WebProcessProxy.h"
 #include "WebUserContentControllerProxy.h"
 #include <wtf/Forward.h>

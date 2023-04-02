@@ -83,7 +83,7 @@
         return;
 
     page->applicationDidEnterBackground();
-    page->activityStateDidChange(WebCore::ActivityState::allFlags() - WebCore::ActivityState::IsInWindow);
+    page->activityStateDidChange(WebCore::allActivityStates() - WebCore::ActivityState::IsInWindow);
 }
 
 - (void)_applicationDidFinishSnapshottingAfterEnteringBackground
@@ -99,7 +99,7 @@
         return;
 
     page->applicationWillEnterForeground();
-    page->activityStateDidChange(WebCore::ActivityState::allFlags() - WebCore::ActivityState::IsInWindow, WebKit::WebPageProxy::ActivityStateChangeDispatchMode::Immediate, WebKit::WebPageProxy::ActivityStateChangeReplyMode::Synchronous);
+    page->activityStateDidChange(WebCore::allActivityStates() - WebCore::ActivityState::IsInWindow, WebKit::WebPageProxy::ActivityStateChangeDispatchMode::Immediate, WebKit::WebPageProxy::ActivityStateChangeReplyMode::Synchronous);
 }
 
 - (void)_willBeginSnapshotSequence

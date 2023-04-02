@@ -33,59 +33,57 @@ namespace WebKit {
 
 class WebPageProxy;
 
+class PageLoadStateObserverBase {
+public:
+    virtual ~PageLoadStateObserverBase() = default;
+
+    virtual void willChangeIsLoading() = 0;
+    virtual void didChangeIsLoading() = 0;
+
+    virtual void willChangeTitle() = 0;
+    virtual void didChangeTitle() = 0;
+
+    virtual void willChangeActiveURL() = 0;
+    virtual void didChangeActiveURL() = 0;
+
+    virtual void willChangeHasOnlySecureContent() = 0;
+    virtual void didChangeHasOnlySecureContent() = 0;
+
+    virtual void willChangeNegotiatedLegacyTLS() { }
+    virtual void didChangeNegotiatedLegacyTLS() { }
+
+    virtual void willChangeWasPrivateRelayed() { }
+    virtual void didChangeWasPrivateRelayed() { }
+
+    virtual void willChangeEstimatedProgress() = 0;
+    virtual void didChangeEstimatedProgress() = 0;
+
+    virtual void willChangeCanGoBack() = 0;
+    virtual void didChangeCanGoBack() = 0;
+
+    virtual void willChangeCanGoForward() = 0;
+    virtual void didChangeCanGoForward() = 0;
+
+    virtual void willChangeNetworkRequestsInProgress() = 0;
+    virtual void didChangeNetworkRequestsInProgress() = 0;
+
+    virtual void willChangeCertificateInfo() = 0;
+    virtual void didChangeCertificateInfo() = 0;
+
+    virtual void willChangeWebProcessIsResponsive() = 0;
+    virtual void didChangeWebProcessIsResponsive() = 0;
+
+    virtual void didSwapWebProcesses() = 0;
+};
+
 class PageLoadState {
 public:
     explicit PageLoadState(WebPageProxy&);
     ~PageLoadState();
 
-    enum class State {
-        Provisional,
-        Committed,
-        Finished
-    };
+    enum class State : uint8_t { Provisional, Committed, Finished };
 
-    class Observer {
-    public:
-        virtual ~Observer() { }
-
-        virtual void willChangeIsLoading() = 0;
-        virtual void didChangeIsLoading() = 0;
-
-        virtual void willChangeTitle() = 0;
-        virtual void didChangeTitle() = 0;
-
-        virtual void willChangeActiveURL() = 0;
-        virtual void didChangeActiveURL() = 0;
-
-        virtual void willChangeHasOnlySecureContent() = 0;
-        virtual void didChangeHasOnlySecureContent() = 0;
-
-        virtual void willChangeNegotiatedLegacyTLS() { };
-        virtual void didChangeNegotiatedLegacyTLS() { };
-
-        virtual void willChangeWasPrivateRelayed() { };
-        virtual void didChangeWasPrivateRelayed() { };
-
-        virtual void willChangeEstimatedProgress() = 0;
-        virtual void didChangeEstimatedProgress() = 0;
-
-        virtual void willChangeCanGoBack() = 0;
-        virtual void didChangeCanGoBack() = 0;
-
-        virtual void willChangeCanGoForward() = 0;
-        virtual void didChangeCanGoForward() = 0;
-
-        virtual void willChangeNetworkRequestsInProgress() = 0;
-        virtual void didChangeNetworkRequestsInProgress() = 0;
-
-        virtual void willChangeCertificateInfo() = 0;
-        virtual void didChangeCertificateInfo() = 0;
-
-        virtual void willChangeWebProcessIsResponsive() = 0;
-        virtual void didChangeWebProcessIsResponsive() = 0;
-        
-        virtual void didSwapWebProcesses() = 0;
-    };
+    using Observer = PageLoadStateObserverBase;
 
     class Transaction {
         WTF_MAKE_NONCOPYABLE(Transaction);

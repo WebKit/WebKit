@@ -26,6 +26,7 @@
 #include "config.h"
 #include "InspectorTargetProxy.h"
 
+#include "MessageSenderInlines.h"
 #include "ProvisionalPageProxy.h"
 #include "WebFrameProxy.h"
 #include "WebPageInspectorTarget.h"

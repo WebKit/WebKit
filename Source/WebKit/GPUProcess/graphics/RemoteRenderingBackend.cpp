@@ -31,6 +31,7 @@
 #include "BufferIdentifierSet.h"
 #include "GPUConnectionToWebProcess.h"
 #include "Logging.h"
+#include "MessageSenderInlines.h"
 #include "PlatformImageBufferShareableBackend.h"
 #include "QualifiedRenderingResourceIdentifier.h"
 #include "RemoteDisplayListRecorder.h"

@@ -27,6 +27,7 @@
 #include "FindController.h"
 
 #include "DrawingArea.h"
+#include "MessageSenderInlines.h"
 #include "PluginView.h"
 #include "ShareableBitmap.h"
 #include "WKPage.h"

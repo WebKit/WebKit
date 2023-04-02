@@ -1,5 +1,5 @@
-/*
- *  Copyright (C) 2006-2021 Apple Inc. All rights reserved.
+/**
+ *  Copyright (C) 2006-2023 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -23,6 +23,11 @@
 #include <stddef.h>
 #include <wtf/Platform.h>
 
+// Include <windows.h> before "using WTF::UUID" to avoid conflicts with UUID in Windows headers.
+#if OS(WINDOWS)
+#include <windows.h>
+#endif
+
 namespace WTF {
 
 class ASCIILiteral;
@@ -37,6 +42,7 @@ class FunctionDispatcher;
 class Hasher;
 class Lock;
 class Logger;
+class MachSendRight;
 class MonotonicTime;
 class OrdinalNumber;
 class PrintStream;
@@ -50,6 +56,7 @@ class SuspendableWorkQueue;
 class TextPosition;
 class TextStream;
 class URL;
+class UUID;
 class UniquedStringImpl;
 class WallTime;
 
@@ -67,6 +74,7 @@ template<typename> struct DefaultRefDerefTraits;
 
 template<typename> class CompactPtr;
 template<typename> class CompletionHandler;
+template<typename, size_t = 0> class Deque;
 template<typename Key, typename, Key> class EnumeratedArray;
 template<typename> class FixedVector;
 template<typename> class Function;
@@ -88,7 +96,7 @@ template<typename> class StringBuffer;
 template<typename> class StringParsingBuffer;
 template<typename, typename = void> class StringTypeAdapter;
 template<typename> class UniqueRef;
-template<typename, size_t = 0, typename = CrashOnOverflow, size_t = 16, typename Malloc = VectorBufferMalloc> class Vector;
+template<typename, size_t = 0, typename = CrashOnOverflow, size_t = 16, typename = VectorBufferMalloc> class Vector;
 template<typename, typename = DefaultWeakPtrImpl> class WeakPtr;
 
 template<typename> struct DefaultHash;
@@ -131,6 +139,7 @@ using WTF::AtomStringImpl;
 using WTF::BinarySemaphore;
 using WTF::CString;
 using WTF::CompletionHandler;
+using WTF::Deque;
 using WTF::EnumeratedArray;
 using WTF::FixedVector;
 using WTF::Function;
@@ -142,6 +151,8 @@ using WTF::Hasher;
 using WTF::LazyNeverDestroyed;
 using WTF::Lock;
 using WTF::Logger;
+using WTF::MachSendRight;
+using WTF::MonotonicTime;
 using WTF::NeverDestroyed;
 using WTF::ObjectIdentifier;
 using WTF::OptionSet;
@@ -164,6 +175,7 @@ using WTF::SuspendableWorkQueue;
 using WTF::TextPosition;
 using WTF::TextStream;
 using WTF::URL;
+using WTF::UUID;
 using WTF::UniqueRef;
 using WTF::Vector;
 using WTF::WeakPtr;

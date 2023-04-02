@@ -105,7 +105,7 @@ void RenderView::styleDidChange(StyleDifference diff, const RenderStyle* oldStyl
     bool directionChanged = oldStyle && style().direction() != oldStyle->direction();
 
     if ((writingModeChanged || directionChanged) && multiColumnFlow()) {
-        if (frameView().pagination().mode != Pagination::Unpaginated)
+        if (frameView().pagination().mode != Unpaginated)
             updateColumnProgressionFromStyle(style());
         updateStylesForColumnChildren(oldStyle);
     }
@@ -331,7 +331,7 @@ void RenderView::mapAbsoluteToLocalPoint(OptionSet<MapCoordinatesMode> mode, Tra
 
 bool RenderView::requiresColumns(int) const
 {
-    return frameView().pagination().mode != Pagination::Unpaginated;
+    return frameView().pagination().mode != Unpaginated;
 }
 
 void RenderView::computeColumnCountAndWidth()
@@ -352,7 +352,7 @@ void RenderView::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     ASSERT(LayoutPoint(IntPoint(paintOffset.x(), paintOffset.y())) == paintOffset);
 
     // This avoids painting garbage between columns if there is a column gap.
-    if (frameView().pagination().mode != Pagination::Unpaginated && paintInfo.shouldPaintWithinRoot(*this))
+    if (frameView().pagination().mode != Unpaginated && paintInfo.shouldPaintWithinRoot(*this))
         paintInfo.context().fillRect(paintInfo.rect, frameView().baseBackgroundColor());
 
     paintObject(paintInfo, paintOffset);
@@ -1035,7 +1035,7 @@ unsigned RenderView::pageNumberForBlockProgressionOffset(int offset) const
 {
     int columnNumber = 0;
     const Pagination& pagination = page().pagination();
-    if (pagination.mode == Pagination::Unpaginated)
+    if (pagination.mode == Unpaginated)
         return columnNumber;
     
     bool progressionIsInline = false;
@@ -1060,7 +1060,7 @@ unsigned RenderView::pageNumberForBlockProgressionOffset(int offset) const
 unsigned RenderView::pageCount() const
 {
     const Pagination& pagination = page().pagination();
-    if (pagination.mode == Pagination::Unpaginated)
+    if (pagination.mode == Unpaginated)
         return 0;
     
     if (multiColumnFlow() && multiColumnFlow()->firstMultiColumnSet())

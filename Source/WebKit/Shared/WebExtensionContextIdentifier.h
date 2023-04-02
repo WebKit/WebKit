@@ -29,7 +29,7 @@
 
 namespace WebKit {
 
-enum WebExtensionContextIdentifierType { };
+struct WebExtensionContextIdentifierType;
 using WebExtensionContextIdentifier = ObjectIdentifier<WebExtensionContextIdentifierType>;
 
 }

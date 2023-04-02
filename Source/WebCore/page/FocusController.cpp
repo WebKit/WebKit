@@ -338,7 +338,7 @@ static inline int shadowAdjustedTabIndex(Element& element, KeyboardEvent* event)
     return element.shouldBeIgnoredInSequentialFocusNavigation() ? -1 : element.tabIndexSetExplicitly().value_or(0);
 }
 
-FocusController::FocusController(Page& page, OptionSet<ActivityState::Flag> activityState)
+FocusController::FocusController(Page& page, OptionSet<ActivityState> activityState)
     : m_page(page)
     , m_isChangingFocusedFrame(false)
     , m_activityState(activityState)
@@ -919,7 +919,7 @@ bool FocusController::setFocusedElement(Element* element, LocalFrame& newFocused
     return true;
 }
 
-void FocusController::setActivityState(OptionSet<ActivityState::Flag> activityState)
+void FocusController::setActivityState(OptionSet<ActivityState> activityState)
 {
     auto changed = m_activityState ^ activityState;
     m_activityState = activityState;

@@ -23,14 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DiagnosticLoggingClient_h
-#define DiagnosticLoggingClient_h
-
-#import "WKFoundation.h"
+#pragma once
 
 #import "APIDiagnosticLoggingClient.h"
-#import <WebCore/DiagnosticLoggingDomain.h>
-#import <WebCore/DiagnosticLoggingResultType.h>
+#import "WKFoundation.h"
 #import <wtf/WeakObjCPtr.h>
 
 @class WKWebView;
@@ -69,6 +65,3 @@ private:
 };
 
 } // WebKit
-
-#endif // DiagnosticLoggingClient_h
-

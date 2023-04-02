@@ -47,6 +47,7 @@
 #include "WKUserContentInjectedFrames.h"
 #include "WKUserScriptInjectionTime.h"
 #include "WebFindOptions.h"
+#include "WebFrameProxy.h"
 #include "WebMouseEvent.h"
 #include <WebCore/ContextMenuItem.h>
 #include <WebCore/DiagnosticLoggingResultType.h>

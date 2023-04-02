@@ -43,8 +43,33 @@ namespace WebKit {
     
 class SandboxExtensionImpl;
 
+class SandboxExtensionHandle {
+    WTF_MAKE_NONCOPYABLE(SandboxExtensionHandle);
+public:
+    SandboxExtensionHandle();
+#if ENABLE(SANDBOX_EXTENSIONS)
+    SandboxExtensionHandle(SandboxExtensionHandle&&);
+    SandboxExtensionHandle& operator=(SandboxExtensionHandle&&);
+#else
+    SandboxExtensionHandle(SandboxExtensionHandle&&) = default;
+    SandboxExtensionHandle& operator=(SandboxExtensionHandle&&) = default;
+#endif
+    ~SandboxExtensionHandle();
+
+    void encode(IPC::Encoder&) const;
+    static std::optional<SandboxExtensionHandle> decode(IPC::Decoder&);
+
+private:
+    friend class SandboxExtension;
+#if ENABLE(SANDBOX_EXTENSIONS)
+    mutable std::unique_ptr<SandboxExtensionImpl> m_sandboxExtension;
+#endif
+};
+
 class SandboxExtension : public RefCounted<SandboxExtension> {
 public:
+    using Handle = SandboxExtensionHandle;
+
     enum class Type : uint8_t {
         ReadOnly,
         ReadWrite,
@@ -65,29 +90,7 @@ public:
         EnableMachBootstrap
     };
 
-    class Handle {
-        WTF_MAKE_NONCOPYABLE(Handle);
-    public:
-        Handle();
-#if ENABLE(SANDBOX_EXTENSIONS)
-        Handle(Handle&&);
-        Handle& operator=(Handle&&);
-#else
-        Handle(Handle&&) = default;
-        Handle& operator=(Handle&&) = default;
-#endif
-        ~Handle();
 
-        void encode(IPC::Encoder&) const;
-        static std::optional<Handle> decode(IPC::Decoder&);
-
-    private:
-        friend class SandboxExtension;
-#if ENABLE(SANDBOX_EXTENSIONS)
-        mutable std::unique_ptr<SandboxExtensionImpl> m_sandboxExtension;
-#endif
-    };
-    
     static RefPtr<SandboxExtension> create(Handle&&);
     static std::optional<Handle> createHandle(StringView path, Type);
     static Vector<Handle> createReadOnlyHandlesForFiles(ASCIILiteral logLabel, const Vector<String>& paths);
@@ -113,7 +116,7 @@ public:
 
     // FIXME: These should not be const.
     static bool consumePermanently(const Handle&);
-    static bool consumePermanently(const Vector<SandboxExtension::Handle>&);
+    static bool consumePermanently(const Vector<Handle>&);
 
 private:
     explicit SandboxExtension(const Handle&);
@@ -130,10 +133,10 @@ String resolveAndCreateReadWriteDirectoryForSandboxExtension(StringView path);
 
 #if !ENABLE(SANDBOX_EXTENSIONS)
 
-inline SandboxExtension::Handle::Handle() { }
-inline SandboxExtension::Handle::~Handle() { }
-inline void SandboxExtension::Handle::encode(IPC::Encoder&) const { }
-inline std::optional<SandboxExtension::Handle> SandboxExtension::Handle::decode(IPC::Decoder&) { return Handle { }; }
+inline SandboxExtensionHandle::SandboxExtensionHandle() { }
+inline SandboxExtensionHandle::~SandboxExtensionHandle() { }
+inline void SandboxExtensionHandle::encode(IPC::Encoder&) const { }
+inline std::optional<SandboxExtensionHandle> SandboxExtensionHandle::decode(IPC::Decoder&) { return SandboxExtensionHandle { }; }
 inline RefPtr<SandboxExtension> SandboxExtension::create(Handle&&) { return nullptr; }
 inline auto SandboxExtension::createHandle(StringView, Type) -> std::optional<Handle> { return Handle { }; }
 inline auto SandboxExtension::createReadOnlyHandlesForFiles(ASCIILiteral, const Vector<String>&) -> Vector<Handle> { return { }; }

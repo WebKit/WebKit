@@ -26,6 +26,7 @@
 #pragma once
 
 #include <wtf/ClockType.h>
+#include <wtf/Forward.h>
 #include <wtf/GenericTimeMixin.h>
 
 namespace WTF {
@@ -99,5 +100,3 @@ inline bool isfinite(WTF::MonotonicTime time)
 }
 
 } // namespace std
-
-using WTF::MonotonicTime;

@@ -41,6 +41,7 @@
 #import "UIKitSPI.h"
 #import "VideoFullscreenManagerProxy.h"
 #import "ViewGestureController.h"
+#import "VisibleContentRectUpdateInfo.h"
 #import "WKBackForwardListItemInternal.h"
 #import "WKContentViewInteraction.h"
 #import "WKPasswordView.h"
@@ -57,6 +58,7 @@
 #import "WebIOSEventFactory.h"
 #import "WebPage.h"
 #import "WebPageProxy.h"
+#import "WebPreferences.h"
 #import "_WKActivatedElementInfoInternal.h"
 #import <WebCore/ColorCocoa.h>
 #import <WebCore/GraphicsContextCG.h>
@@ -1676,7 +1678,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     if (!_overridesInterfaceOrientation)
         [self _dispatchSetDeviceOrientation:[self _deviceOrientationIgnoringOverrides]];
     [self _dispatchSetOrientationForMediaCapture:[self _deviceOrientationIgnoringOverrides]];
-    _page->activityStateDidChange(WebCore::ActivityState::allFlags());
+    _page->activityStateDidChange(WebCore::allActivityStates());
     _page->webViewDidMoveToWindow();
     [self _presentLockdownModeAlertIfNeeded];
 #if HAVE(UIKIT_RESIZABLE_WINDOWS)
@@ -3201,7 +3203,7 @@ static bool isLockdownModeWarningNeeded()
             WallTime::now(),
             WebCore::PCM::AttributionEphemeral::No
         );
-        _page->setPrivateClickMeasurement({{ WTFMove(measurement), attribution.sourceDescription, attribution.purchaser }});
+        _page->setPrivateClickMeasurement(WTFMove(measurement), attribution.sourceDescription, attribution.purchaser);
     } else
         _page->setPrivateClickMeasurement(std::nullopt);
 #endif
@@ -3210,12 +3212,12 @@ static bool isLockdownModeWarningNeeded()
 - (UIEventAttribution *)_uiEventAttribution
 {
 #if HAVE(UI_EVENT_ATTRIBUTION)
-    auto& measurement = _page->privateClickMeasurement();
-    if (!measurement)
+    auto attribution = _page->privateClickMeasurementEventAttribution();
+    if (!attribution)
         return nil;
 
-    URL destinationURL { makeString("https://", measurement->pcm.destinationSite().registrableDomain.string()) };
-    return adoptNS([[UIEventAttribution alloc] initWithSourceIdentifier:measurement->pcm.sourceID() destinationURL:destinationURL sourceDescription:measurement->sourceDescription purchaser:measurement->purchaser]).autorelease();
+    URL destinationURL { makeString("https://"_s, attribution->destinationDomain) };
+    return adoptNS([[UIEventAttribution alloc] initWithSourceIdentifier:attribution->sourceID destinationURL:destinationURL sourceDescription:attribution->sourceDescription purchaser:attribution->purchaser]).autorelease();
 #else
     return nil;
 #endif
@@ -3239,7 +3241,7 @@ static bool isLockdownModeWarningNeeded()
             WallTime::now(),
             WebCore::PCM::AttributionEphemeral::Yes
         );
-        _page->setPrivateClickMeasurement({{ WTFMove(measurement), attribution.sourceDescription, attribution.purchaser }});
+        _page->setPrivateClickMeasurement(WTFMove(measurement), attribution.sourceDescription, attribution.purchaser);
     } else
         _page->setPrivateClickMeasurement(std::nullopt);
 #endif

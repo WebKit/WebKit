@@ -41,6 +41,7 @@
 #import "WebContextMenuItem.h"
 #import "WebContextMenuItemData.h"
 #import "WebPageProxy.h"
+#import "WebPreferences.h"
 #import <WebCore/GraphicsContext.h>
 #import <WebCore/IntRect.h>
 #import <WebCore/LocalizedStrings.h>

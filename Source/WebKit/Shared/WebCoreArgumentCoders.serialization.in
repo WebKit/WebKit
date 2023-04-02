@@ -1377,6 +1377,7 @@ header: <WebCore/ResourceRequest.h>
 };
 #endif
 
+header: <WebCore/DiagnosticLoggingDomain.h>
 enum class WebCore::DiagnosticLoggingDomain : uint8_t {
     Media
 };

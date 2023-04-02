@@ -30,6 +30,7 @@
 
 #include "DrawingAreaProxyMessages.h"
 #include "LayerTreeHost.h"
+#include "MessageSenderInlines.h"
 #include "ShareableBitmap.h"
 #include "UpdateInfo.h"
 #include "WebPage.h"
@@ -399,7 +400,7 @@ RefPtr<DisplayRefreshMonitor> DrawingAreaCoordinatedGraphics::createDisplayRefre
     return m_layerTreeHost->createDisplayRefreshMonitor(displayID);
 }
 
-void DrawingAreaCoordinatedGraphics::activityStateDidChange(OptionSet<ActivityState::Flag> changed, ActivityStateChangeID, CompletionHandler<void()>&& completionHandler)
+void DrawingAreaCoordinatedGraphics::activityStateDidChange(OptionSet<ActivityState> changed, ActivityStateChangeID, CompletionHandler<void()>&& completionHandler)
 {
     if (changed & ActivityState::IsVisible) {
         if (m_webPage.isVisible())

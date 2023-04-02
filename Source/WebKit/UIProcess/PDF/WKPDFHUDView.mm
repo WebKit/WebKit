@@ -31,9 +31,11 @@
 #import "WKWebViewInternal.h"
 #import "WebPageProxy.h"
 #import <QuartzCore/CATransaction.h>
+#import <WebCore/Color.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <pal/spi/mac/NSImageSPI.h>
 #import <wtf/WeakObjCPtr.h>
+#import <wtf/WorkQueue.h>
 
 //  The HUD items should have the following spacing:
 //  -------------------------------------------------

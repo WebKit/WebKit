@@ -1,5 +1,5 @@
-/*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+/**
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,26 +24,32 @@
  */
 
 #include "config.h"
-#include "MessageSender.h"
+#include "APIUIClient.h"
 
-#include "Connection.h"
+#include "UserMediaPermissionCheckProxy.h"
+#include "UserMediaPermissionRequestProxy.h"
+#include "WebPageProxy.h"
 
-namespace IPC {
+namespace API {
 
-MessageSender::~MessageSender() = default;
-
-bool MessageSender::sendMessage(UniqueRef<Encoder>&& encoder, OptionSet<SendOption> sendOptions)
+void UIClient::checkUserMediaPermissionForOrigin(WebKit::WebPageProxy&, WebKit::WebFrameProxy&, SecurityOrigin&, SecurityOrigin&, WebKit::UserMediaPermissionCheckProxy& request)
 {
-    auto* connection = messageSenderConnection();
-    ASSERT(connection);
-    return connection->sendMessage(WTFMove(encoder), sendOptions);
+    request.deny();
 }
 
-bool MessageSender::sendMessageWithAsyncReply(UniqueRef<Encoder>&& encoder, AsyncReplyHandler replyHandler, OptionSet<SendOption> sendOptions)
+void UIClient::decidePolicyForUserMediaPermissionRequest(WebKit::WebPageProxy&, WebKit::WebFrameProxy&, SecurityOrigin&, SecurityOrigin&, WebKit::UserMediaPermissionRequestProxy& request)
 {
-    auto* connection = messageSenderConnection();
-    ASSERT(connection);
-    return connection->sendMessageWithAsyncReply(WTFMove(encoder), WTFMove(replyHandler), sendOptions);
+    request.doDefaultAction();
 }
 
-} // namespace IPC
+void UIClient::createNewPage(WebKit::WebPageProxy&, WebCore::WindowFeatures&&, Ref<NavigationAction>&&, CompletionHandler<void(RefPtr<WebKit::WebPageProxy>&&)>&& completionHandler)
+{
+    completionHandler(nullptr);
+}
+
+void UIClient::decidePolicyForMediaKeySystemPermissionRequest(WebKit::WebPageProxy& page, SecurityOrigin& origin, const WTF::String& keySystem, CompletionHandler<void(bool)>&& completionHandler)
+{
+    page.requestMediaKeySystemPermissionByDefaultAction(origin.securityOrigin(), WTFMove(completionHandler));
+}
+
+} // namespace API

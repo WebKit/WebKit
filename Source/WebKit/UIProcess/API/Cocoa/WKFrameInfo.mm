@@ -29,6 +29,7 @@
 #import "WKSecurityOriginInternal.h"
 #import "WKWebViewInternal.h"
 #import "WebFrameProxy.h"
+#import "WebPageProxy.h"
 #import "_WKFrameHandleInternal.h"
 #import <WebCore/WebCoreObjCExtras.h>
 

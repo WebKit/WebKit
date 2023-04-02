@@ -31,6 +31,7 @@
 #include "APIInspectorExtension.h"
 #include "APISerializedScriptValue.h"
 #include "APIURL.h"
+#include "MessageSenderInlines.h"
 #include "WebInspectorUIExtensionControllerMessages.h"
 #include "WebInspectorUIExtensionControllerProxyMessages.h"
 #include "WebPageProxy.h"

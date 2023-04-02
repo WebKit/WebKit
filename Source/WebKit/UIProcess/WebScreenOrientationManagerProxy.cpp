@@ -27,6 +27,7 @@
 #include "WebScreenOrientationManagerProxy.h"
 
 #include "APIUIClient.h"
+#include "MessageSenderInlines.h"
 #include "WebFullScreenManagerProxy.h"
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"

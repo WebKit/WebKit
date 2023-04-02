@@ -40,6 +40,7 @@
 #import "WKTypeRefWrapper.h"
 #import "WebProcessMessages.h"
 #import "WebProcessPool.h"
+#import <WebCore/ActivityState.h>
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <sys/sysctl.h>
 #import <wtf/NeverDestroyed.h>

@@ -36,6 +36,7 @@
 #import "WKWebViewIOS.h"
 #import "WebFullScreenManagerProxy.h"
 #import "WebPageProxy.h"
+#import "WebPreferences.h"
 #import <WebCore/LocalizedStrings.h>
 #import <pal/spi/cocoa/AVKitSPI.h>
 #import <wtf/RetainPtr.h>

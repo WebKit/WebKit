@@ -27,6 +27,7 @@
 #include "WebURLSchemeTask.h"
 
 #include "APIFrameInfo.h"
+#include "MessageSenderInlines.h"
 #include "URLSchemeTaskParameters.h"
 #include "WebErrors.h"
 #include "WebPageMessages.h"

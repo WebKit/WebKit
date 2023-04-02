@@ -31,6 +31,7 @@
 #include "DrawingAreaMessages.h"
 #include "DrawingAreaProxyMessages.h"
 #include "LayerTreeContext.h"
+#include "MessageSenderInlines.h"
 #include "UpdateInfo.h"
 #include "WebPageProxy.h"
 #include "WebPreferences.h"

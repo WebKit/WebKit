@@ -26,11 +26,10 @@
 #pragma once
 
 #include "ProcessQualified.h"
-#include <wtf/ObjectIdentifier.h>
 
 namespace WebCore {
 
-enum SharedWorkerObjectIdentifierType { };
+struct SharedWorkerObjectIdentifierType;
 using SharedWorkerObjectIdentifier = ProcessQualified<ObjectIdentifier<SharedWorkerObjectIdentifierType>>;
 
 } // namespace WebCore

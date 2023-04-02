@@ -40,7 +40,7 @@ public:
 
     void didStartProvisionalLoad();
     void didFinishLoad();
-    void activityStateChanged(OptionSet<ActivityState::Flag> oldState, OptionSet<ActivityState::Flag> newState);
+    void activityStateChanged(OptionSet<ActivityState> oldState, OptionSet<ActivityState> newState);
 
 private:
     void measurePostLoadCPUUsage();

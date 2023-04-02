@@ -73,7 +73,7 @@ RenderStyle resolveForDocument(const Document& document)
     Adjuster::adjustEventListenerRegionTypesForRootStyle(documentStyle, document);
     
     const Pagination& pagination = renderView.frameView().pagination();
-    if (pagination.mode != Pagination::Unpaginated) {
+    if (pagination.mode != Unpaginated) {
         documentStyle.setColumnStylesFromPaginationMode(pagination.mode);
         documentStyle.setColumnGap(GapLength(Length((int) pagination.gap, LengthType::Fixed)));
         if (renderView.multiColumnFlow())

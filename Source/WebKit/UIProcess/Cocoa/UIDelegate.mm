@@ -36,6 +36,7 @@
 #import "MediaUtilities.h"
 #import "NativeWebWheelEvent.h"
 #import "NavigationActionData.h"
+#import "PageLoadState.h"
 #import "UserMediaPermissionCheckProxy.h"
 #import "UserMediaPermissionRequestManagerProxy.h"
 #import "UserMediaPermissionRequestProxy.h"
@@ -53,6 +54,7 @@
 #import "WebEventFactory.h"
 #import "WebFrameProxy.h"
 #import "WebOpenPanelResultListenerProxy.h"
+#import "WebPageProxy.h"
 #import "WebProcessProxy.h"
 #import "_WKContextMenuElementInfoInternal.h"
 #import "_WKFrameHandleInternal.h"
@@ -63,6 +65,7 @@
 #import "_WKWebAuthenticationPanelInternal.h"
 #import <AVFoundation/AVCaptureDevice.h>
 #import <AVFoundation/AVMediaFormat.h>
+#import <WebCore/AutoplayEvent.h>
 #import <WebCore/FontAttributes.h>
 #import <WebCore/SecurityOrigin.h>
 #import <wtf/BlockPtr.h>

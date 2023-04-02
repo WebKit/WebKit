@@ -31,6 +31,7 @@
 #import "DrawingArea.h"
 #import "InteractionInformationAtPosition.h"
 #import "InteractionInformationRequest.h"
+#import "MessageSenderInlines.h"
 #import "UIKitSPI.h"
 #import "WebCoreArgumentCoders.h"
 #import "WebFrame.h"

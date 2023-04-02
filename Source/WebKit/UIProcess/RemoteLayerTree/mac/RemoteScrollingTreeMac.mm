@@ -33,6 +33,7 @@
 #import "RemoteScrollingCoordinatorProxy.h"
 #import "ScrollingTreeFrameScrollingNodeRemoteMac.h"
 #import "ScrollingTreeOverflowScrollingNodeRemoteMac.h"
+#import <WebCore/FrameView.h>
 #import <WebCore/ScrollingThread.h>
 #import <WebCore/ScrollingTreeFixedNodeCocoa.h>
 #import <WebCore/ScrollingTreeOverflowScrollProxyNode.h>

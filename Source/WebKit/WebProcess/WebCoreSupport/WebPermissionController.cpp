@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebPermissionController.h"
 
+#include "MessageSenderInlines.h"
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
 #include "WebPermissionControllerMessages.h"

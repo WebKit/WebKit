@@ -29,6 +29,7 @@
 #import "APIDictionary.h"
 #import "WKSharedAPICast.h"
 #import "_WKDiagnosticLoggingDelegate.h"
+#import <WebCore/DiagnosticLoggingDomain.h>
 
 namespace WebKit {
 

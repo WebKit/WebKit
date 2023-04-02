@@ -42,7 +42,7 @@ Ref<WebColorPickerGtk> WebColorPickerGtk::create(WebPageProxy& page, const Color
 }
 
 WebColorPickerGtk::WebColorPickerGtk(WebPageProxy& page, const Color& initialColor, const IntRect&)
-    : WebColorPicker(&page)
+    : WebColorPicker(&page.colorPickerClient())
     , m_initialColor(initialColor)
     , m_webView(page.viewWidget())
     , m_colorChooser(nullptr)

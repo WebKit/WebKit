@@ -34,6 +34,7 @@
 #import "_WKDataTaskDelegate.h"
 #import <WebCore/AuthenticationMac.h>
 #import <WebCore/Credential.h>
+#import <WebCore/ResourceRequest.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <wtf/BlockPtr.h>
 
