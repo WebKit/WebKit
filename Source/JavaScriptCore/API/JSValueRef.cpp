@@ -62,9 +62,12 @@ using namespace JSC;
     JSValue jsValue = toJS(value);
 #endif
 
+    if (!jsValue)
+        return kJSTypeNull;
+
     if (jsValue.isUndefined())
         return kJSTypeUndefined;
-    if (!jsValue || jsValue.isNull())
+    if (jsValue.isNull())
         return kJSTypeNull;
     if (jsValue.isBoolean())
         return kJSTypeBoolean;
