@@ -298,7 +298,7 @@ void MediaControlTextTrackContainerElement::updateTextTrackRepresentationIfNeede
     if (!m_textTrackRepresentation) {
         ALWAYS_LOG(LOGIDENTIFIER);
 
-        m_textTrackRepresentation = TextTrackRepresentation::create(*this);
+        m_textTrackRepresentation = TextTrackRepresentation::create(*this, *m_mediaElement);
         if (document().page())
             m_textTrackRepresentation->setContentScale(document().page()->deviceScaleFactor());
         m_mediaElement->setTextTrackRepresentation(m_textTrackRepresentation.get());

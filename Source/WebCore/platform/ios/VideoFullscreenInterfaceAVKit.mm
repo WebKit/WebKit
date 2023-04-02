@@ -1533,6 +1533,52 @@ bool VideoFullscreenInterfaceAVKit::isPlayingVideoInEnhancedFullscreen() const
     return hasMode(WebCore::HTMLMediaElementEnums::VideoFullscreenModePictureInPicture) && [playerController() isPlaying];
 }
 
+void VideoFullscreenInterfaceAVKit::textTrackRepresentationUpdate(PlatformImagePtr textTrack)
+{
+    [m_captionsLayer setContents:(__bridge id)textTrack.get()];
+}
+
+void VideoFullscreenInterfaceAVKit::textTrackRepresentationSetContentsScale(float scale)
+{
+    [m_captionsLayer setContentsScale:scale];
+}
+
+void VideoFullscreenInterfaceAVKit::textTrackRepresentationSetHidden(bool hidden)
+{
+    [m_captionsLayer setHidden:hidden];
+}
+
+CALayer *VideoFullscreenInterfaceAVKit::captionsLayer()
+{
+    if (!m_captionsLayer)
+        m_captionsLayer = adoptNS([[CALayer alloc] init]);
+    return m_captionsLayer.get();
+}
+
+void VideoFullscreenInterfaceAVKit::setCaptionsFrame(const CGRect& frame)
+{
+    [captionsLayer() setFrame:frame];
+}
+
+void VideoFullscreenInterfaceAVKit::setupCaptionsLayer(CALayer* parent, const WebCore::FloatSize& initialSize)
+{
+    [captionsLayer() removeFromSuperlayer];
+    [parent addSublayer:captionsLayer()];
+
+    [CATransaction begin];
+    [CATransaction setDisableActions:YES];
+    captionsLayer().zPosition = FLT_MAX;
+    [captionsLayer() setAnchorPoint:CGPointZero];
+    [captionsLayer() setBounds:CGRectMake(0, 0, initialSize.width(), initialSize.height())];
+    [CATransaction commit];
+}
+
+void VideoFullscreenInterfaceAVKit::removeCaptionsLayer()
+{
+    [m_captionsLayer removeFromSuperlayer];
+    m_captionsLayer = nullptr;
+}
+
 static std::optional<bool> isPictureInPictureSupported;
 
 void WebCore::setSupportsPictureInPicture(bool isSupported)

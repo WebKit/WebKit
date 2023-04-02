@@ -780,8 +780,7 @@ BlockMediaLayerRehostingInWebContentProcess:
     WebKitLegacy:
       default: false
     WebKit:
-      "PLATFORM(MAC)": true
-      default: false
+      default: true
     WebCore:
       default: false
 

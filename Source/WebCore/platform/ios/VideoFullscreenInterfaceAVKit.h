@@ -31,6 +31,7 @@
 #include "EventListener.h"
 #include "HTMLMediaElementEnums.h"
 #include "MediaPlayerIdentifier.h"
+#include "PlatformImage.h"
 #include "PlatformLayer.h"
 #include "PlaybackSessionInterfaceAVKit.h"
 #include "VideoFullscreenModel.h"
@@ -162,6 +163,15 @@ public:
     WEBCORE_EXPORT AVPlayerViewController *avPlayerViewController() const;
     WebAVPlayerController *playerController() const;
 
+    WEBCORE_EXPORT void textTrackRepresentationUpdate(PlatformImagePtr textTrack);
+    WEBCORE_EXPORT void textTrackRepresentationSetContentsScale(float scale);
+    WEBCORE_EXPORT void textTrackRepresentationSetHidden(bool hidden);
+
+    WEBCORE_EXPORT CALayer* captionsLayer();
+    WEBCORE_EXPORT void setCaptionsFrame(const CGRect&);
+    WEBCORE_EXPORT void setupCaptionsLayer(CALayer* parent, const WebCore::FloatSize&);
+    WEBCORE_EXPORT void removeCaptionsLayer();
+
 private:
     WEBCORE_EXPORT VideoFullscreenInterfaceAVKit(PlaybackSessionInterfaceAVKit&);
 
@@ -236,6 +246,8 @@ private:
     bool m_shouldIgnoreAVKitCallbackAboutExitFullscreenReason { false };
     bool m_enteringPictureInPicture { false };
     bool m_exitingPictureInPicture { false };
+
+    RetainPtr<CALayer> m_captionsLayer;
 };
 
 }
