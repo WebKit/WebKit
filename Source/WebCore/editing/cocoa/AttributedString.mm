@@ -92,8 +92,10 @@ static RetainPtr<NSObject> toNSObject(const AttributedString::AttributeValue& va
 static RetainPtr<NSDictionary> toNSDictionary(const HashMap<String, AttributedString::AttributeValue>& map)
 {
     auto result = adoptNS([[NSMutableDictionary alloc] initWithCapacity:map.size()]);
-    for (auto& pair : map)
-        [result setObject:toNSObject(pair.value).get() forKey:(NSString *)pair.key];
+    for (auto& pair : map) {
+        if (auto nsObject = toNSObject(pair.value))
+            [result setObject:nsObject.get() forKey:(NSString *)pair.key];
+    }
     return result;
 }
 
