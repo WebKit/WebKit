@@ -40,7 +40,9 @@ class StateManager9 final : angle::NonCopyable
 
     void initialize();
 
-    void syncState(const gl::State &state, const gl::State::DirtyBits &dirtyBits);
+    void syncState(const gl::State &state,
+                   const gl::State::DirtyBits &dirtyBits,
+                   const gl::State::ExtendedDirtyBits &extendedDirtyBits);
 
     void setBlendDepthRasterStates(const gl::State &glState, unsigned int sampleMask);
     void setScissorState(const gl::Rectangle &scissor, bool enabled);

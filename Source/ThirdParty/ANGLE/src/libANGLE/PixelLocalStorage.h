@@ -157,6 +157,8 @@ class PixelLocalStorage
 
     const PixelLocalStoragePlane *getPlanes() { return mPlanes.data(); }
 
+    size_t interruptCount() const { return mInterruptCount; }
+
     // ANGLE_shader_pixel_local_storage API.
     void deinitialize(Context *context, GLint plane) { mPlanes[plane].deinitialize(context); }
     void setMemoryless(Context *context, GLint plane, GLenum internalformat)
@@ -173,6 +175,8 @@ class PixelLocalStorage
     void begin(Context *, GLsizei n, const GLenum loadops[]);
     void end(Context *, const GLenum storeops[]);
     void barrier(Context *);
+    void interrupt(Context *);
+    void restore(Context *);
 
   protected:
     PixelLocalStorage(const ShPixelLocalStorageOptions &);
@@ -194,6 +198,8 @@ class PixelLocalStorage
 
   private:
     std::array<PixelLocalStoragePlane, IMPLEMENTATION_MAX_PIXEL_LOCAL_STORAGE_PLANES> mPlanes;
+    size_t mInterruptCount           = 0;
+    GLsizei mActivePlanesAtInterrupt = 0;
 };
 
 }  // namespace gl

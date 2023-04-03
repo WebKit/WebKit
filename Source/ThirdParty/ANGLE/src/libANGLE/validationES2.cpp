@@ -613,6 +613,9 @@ bool ValidCap(const Context *context, GLenum cap, bool queryOnly)
         case GL_DITHER:
             return true;
 
+        case GL_DEPTH_CLAMP_EXT:
+            return context->getExtensions().depthClampEXT;
+
         case GL_PRIMITIVE_RESTART_FIXED_INDEX:
         case GL_RASTERIZER_DISCARD:
             return (context->getClientMajorVersion() >= 3);
@@ -2094,19 +2097,13 @@ bool ValidateGetDebugMessageLogKHR(const Context *context,
     return true;
 }
 
-bool ValidatePushDebugGroupKHR(const Context *context,
-                               angle::EntryPoint entryPoint,
-                               GLenum source,
-                               GLuint id,
-                               GLsizei length,
-                               const GLchar *message)
+bool ValidatePushDebugGroupBase(const Context *context,
+                                angle::EntryPoint entryPoint,
+                                GLenum source,
+                                GLuint id,
+                                GLsizei length,
+                                const GLchar *message)
 {
-    if (!context->getExtensions().debugKHR)
-    {
-        context->validationError(entryPoint, GL_INVALID_OPERATION, kExtensionNotEnabled);
-        return false;
-    }
-
     if (!ValidDebugSource(source, true))
     {
         context->validationError(entryPoint, GL_INVALID_ENUM, kInvalidDebugSource);
@@ -2130,14 +2127,8 @@ bool ValidatePushDebugGroupKHR(const Context *context,
     return true;
 }
 
-bool ValidatePopDebugGroupKHR(const Context *context, angle::EntryPoint entryPoint)
+bool ValidatePopDebugGroupBase(const Context *context, angle::EntryPoint entryPoint)
 {
-    if (!context->getExtensions().debugKHR)
-    {
-        context->validationError(entryPoint, GL_INVALID_OPERATION, kExtensionNotEnabled);
-        return false;
-    }
-
     size_t currentStackSize = context->getState().getDebug().getGroupStackDepth();
     if (currentStackSize <= 1)
     {
@@ -2146,6 +2137,33 @@ bool ValidatePopDebugGroupKHR(const Context *context, angle::EntryPoint entryPoi
     }
 
     return true;
+}
+
+bool ValidatePushDebugGroupKHR(const Context *context,
+                               angle::EntryPoint entryPoint,
+                               GLenum source,
+                               GLuint id,
+                               GLsizei length,
+                               const GLchar *message)
+{
+    if (!context->getExtensions().debugKHR)
+    {
+        context->validationError(entryPoint, GL_INVALID_OPERATION, kExtensionNotEnabled);
+        return false;
+    }
+
+    return ValidatePushDebugGroupBase(context, entryPoint, source, id, length, message);
+}
+
+bool ValidatePopDebugGroupKHR(const Context *context, angle::EntryPoint entryPoint)
+{
+    if (!context->getExtensions().debugKHR)
+    {
+        context->validationError(entryPoint, GL_INVALID_OPERATION, kExtensionNotEnabled);
+        return false;
+    }
+
+    return ValidatePopDebugGroupBase(context, entryPoint);
 }
 
 static bool ValidateObjectIdentifierAndName(const Context *context,

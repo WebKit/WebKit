@@ -640,13 +640,13 @@ EGLBoolean SwapBuffersWithDamageKHR(Thread *thread,
 
 EGLBoolean PrepareSwapBuffersANGLE(EGLDisplay dpy, EGLSurface surface)
 {
-    ANGLE_SCOPED_GLOBAL_SURFACE_LOCK();
-
-    egl::Display *dpyPacked = PackParam<egl::Display *>(dpy);
-    SurfaceID surfacePacked = PackParam<SurfaceID>(surface);
-    Thread *thread          = egl::GetCurrentThread();
-    Surface *surfacePtr     = nullptr;
+    egl::Display *dpyPacked        = PackParam<egl::Display *>(dpy);
+    SurfaceID surfacePacked        = PackParam<SurfaceID>(surface);
+    Thread *thread                 = egl::GetCurrentThread();
+    Surface *surfacePtr            = nullptr;
+    const egl::Surface *eglSurface = nullptr;
     {
+        ANGLE_SCOPED_GLOBAL_SURFACE_LOCK();
         ANGLE_SCOPED_GLOBAL_LOCK();
 
         EGL_EVENT(PrepareSwapBuffersANGLE, "dpy = 0x%016" PRIxPTR ", surface = 0x%016" PRIxPTR "",
@@ -659,9 +659,10 @@ EGLBoolean PrepareSwapBuffersANGLE(EGLDisplay dpy, EGLSurface surface)
                              GetDisplayIfValid(dpyPacked), EGL_FALSE);
 
         surfacePtr = dpyPacked->getSurface(surfacePacked);
+        eglSurface = GetSurfaceIfValid(dpyPacked, surfacePacked);
     }
     ANGLE_EGL_TRY_RETURN(thread, surfacePtr->prepareSwap(thread->getContext()), "prepareSwap",
-                         GetSurfaceIfValid(dpyPacked, surfacePacked), EGL_FALSE);
+                         eglSurface, EGL_FALSE);
 
     thread->setSuccess();
     return EGL_TRUE;

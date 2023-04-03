@@ -185,6 +185,7 @@ void InitBuiltInResources(ShBuiltInResources *resources)
     resources->NV_EGL_stream_consumer_external                = 0;
     resources->ARB_texture_rectangle                          = 0;
     resources->EXT_blend_func_extended                        = 0;
+    resources->EXT_conservative_depth                         = 0;
     resources->EXT_draw_buffers                               = 0;
     resources->EXT_frag_depth                                 = 0;
     resources->EXT_shader_texture_lod                         = 0;
@@ -1066,6 +1067,10 @@ const char *InterpolationTypeToString(InterpolationType type)
             return "flat";
         case InterpolationType::INTERPOLATION_NOPERSPECTIVE:
             return "noperspective";
+        case InterpolationType::INTERPOLATION_NOPERSPECTIVE_CENTROID:
+            return "noperspective centroid";
+        case InterpolationType::INTERPOLATION_NOPERSPECTIVE_SAMPLE:
+            return "noperspective sample";
         default:
             return "invalid";
     }

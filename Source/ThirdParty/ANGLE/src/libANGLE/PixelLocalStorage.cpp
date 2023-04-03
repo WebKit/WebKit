@@ -11,6 +11,7 @@
 #include "libANGLE/PixelLocalStorage.h"
 
 #include <numeric>
+#include "common/FixedVector.h"
 #include "libANGLE/Context.h"
 #include "libANGLE/Framebuffer.h"
 #include "libANGLE/Texture.h"
@@ -518,6 +519,42 @@ void PixelLocalStorage::barrier(Context *context)
 {
     ASSERT(!context->getExtensions().shaderPixelLocalStorageCoherentANGLE);
     onBarrier(context);
+}
+
+void PixelLocalStorage::interrupt(Context *context)
+{
+    if (mInterruptCount == 0)
+    {
+        mActivePlanesAtInterrupt = context->getState().getPixelLocalStorageActivePlanes();
+        ASSERT(0 <= mActivePlanesAtInterrupt &&
+               mActivePlanesAtInterrupt <= IMPLEMENTATION_MAX_PIXEL_LOCAL_STORAGE_PLANES);
+        if (mActivePlanesAtInterrupt >= 1)
+        {
+            angle::FixedVector<GLenum, IMPLEMENTATION_MAX_PIXEL_LOCAL_STORAGE_PLANES> storeops(
+                mActivePlanesAtInterrupt, GL_STORE_OP_STORE_ANGLE);
+            context->endPixelLocalStorage(mActivePlanesAtInterrupt, storeops.data());
+        }
+    }
+    ++mInterruptCount;
+    ASSERT(mInterruptCount > 0);
+}
+
+void PixelLocalStorage::restore(Context *context)
+{
+    ASSERT(mInterruptCount > 0);
+    --mInterruptCount;
+    ASSERT(0 <= mActivePlanesAtInterrupt &&
+           mActivePlanesAtInterrupt <= IMPLEMENTATION_MAX_PIXEL_LOCAL_STORAGE_PLANES);
+    if (mInterruptCount == 0 && mActivePlanesAtInterrupt >= 1)
+    {
+        angle::FixedVector<GLenum, IMPLEMENTATION_MAX_PIXEL_LOCAL_STORAGE_PLANES> loadops(
+            mActivePlanesAtInterrupt);
+        for (GLsizei i = 0; i < mActivePlanesAtInterrupt; ++i)
+        {
+            loadops[i] = mPlanes[i].isMemoryless() ? GL_DONT_CARE : GL_LOAD_OP_LOAD_ANGLE;
+        }
+        context->beginPixelLocalStorage(mActivePlanesAtInterrupt, loadops.data());
+    }
 }
 
 namespace

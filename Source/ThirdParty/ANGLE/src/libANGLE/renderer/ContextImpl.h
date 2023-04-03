@@ -202,6 +202,8 @@ class ContextImpl : public GLImplFactory
     virtual angle::Result syncState(const gl::Context *context,
                                     const gl::State::DirtyBits &dirtyBits,
                                     const gl::State::DirtyBits &bitMask,
+                                    const gl::State::ExtendedDirtyBits &extendedDirtyBits,
+                                    const gl::State::ExtendedDirtyBits &extendedBitMask,
                                     gl::Command command) = 0;
 
     // Disjoint timer queries

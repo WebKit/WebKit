@@ -88,6 +88,8 @@ class ShareGroupVk : public ShareGroupImpl
         return mMetaDescriptorPools[descriptorSetIndex];
     }
 
+    size_t getContextCount() const { return mContexts.size(); }
+
     // Used to flush the mutable textures more often.
     angle::Result onMutableTextureUpload(ContextVk *contextVk, TextureVk *newTexture);
 

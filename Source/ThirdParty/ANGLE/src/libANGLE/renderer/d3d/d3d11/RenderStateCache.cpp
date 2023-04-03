@@ -193,7 +193,7 @@ angle::Result RenderStateCache::getRasterizerState(const gl::Context *context,
     rasterDesc.FillMode              = D3D11_FILL_SOLID;
     rasterDesc.CullMode              = cullMode;
     rasterDesc.FrontCounterClockwise = (rasterState.frontFace == GL_CCW) ? FALSE : TRUE;
-    rasterDesc.DepthClipEnable       = TRUE;
+    rasterDesc.DepthClipEnable       = !rasterState.depthClamp;
     rasterDesc.ScissorEnable         = scissorEnabled ? TRUE : FALSE;
     rasterDesc.MultisampleEnable     = rasterState.multiSample;
     rasterDesc.AntialiasedLineEnable = FALSE;

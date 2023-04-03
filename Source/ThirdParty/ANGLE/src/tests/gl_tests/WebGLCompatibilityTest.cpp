@@ -5283,8 +5283,8 @@ void main()
 
     constexpr char kVSArrayTooLarge[] =
         R"(varying vec4 color;
-// 2 GB / 32 aligned bytes per mat2 = 67108864
-const int array_size = 67108865;
+// 1 MB / 32 aligned bytes per mat2 = 32768
+const int array_size = 32769;
 void main()
 {
     mat2 array[array_size];
@@ -5296,7 +5296,7 @@ void main()
 
     constexpr char kVSArrayMuchTooLarge[] =
         R"(varying vec4 color;
-const int array_size = 556007917;
+const int array_size = 55600;
 void main()
 {
     mat2 array[array_size];
@@ -5854,6 +5854,27 @@ void main() {
 
     drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f, 1.0f, true);
     EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(42, 0, 0, 255), 1);
+}
+
+// Regression test for syncing internal state for TexImage calls while there is an incomplete
+// framebuffer bound
+TEST_P(WebGL2CompatibilityTest, TexImageSyncWithIncompleteFramebufferBug)
+{
+    glColorMask(false, true, false, false);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glViewport(100, 128, 65, 65537);
+
+    GLFramebuffer fb1;
+    glBindFramebuffer(GL_FRAMEBUFFER, fb1);
+
+    GLRenderbuffer rb;
+    glBindRenderbuffer(GL_RENDERBUFFER, rb);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_RG8UI, 1304, 2041);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rb);
+
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_R8, 8, 8, 0, GL_RED_EXT, GL_UNSIGNED_BYTE, nullptr);
 }
 
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(WebGLCompatibilityTest);

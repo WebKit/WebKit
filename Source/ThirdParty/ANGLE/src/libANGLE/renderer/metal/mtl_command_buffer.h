@@ -337,6 +337,8 @@ struct RenderCommandEncoderStates
     id<MTLDepthStencilState> depthStencilState;
     float depthBias, depthSlopeScale, depthClamp;
 
+    MTLDepthClipMode depthClipMode;
+
     uint32_t stencilFrontRef, stencilBackRef;
 
     Optional<MTLViewport> viewport;
@@ -373,6 +375,7 @@ class RenderCommandEncoder final : public CommandEncoder
 
     RenderCommandEncoder &setDepthStencilState(id<MTLDepthStencilState> state);
     RenderCommandEncoder &setDepthBias(float depthBias, float slopeScale, float clamp);
+    RenderCommandEncoder &setDepthClipMode(MTLDepthClipMode depthClipMode);
     RenderCommandEncoder &setStencilRefVals(uint32_t frontRef, uint32_t backRef);
     RenderCommandEncoder &setStencilRefVal(uint32_t ref);
 

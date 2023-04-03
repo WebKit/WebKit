@@ -4,6 +4,7 @@
 // found in the LICENSE file.
 //
 
+#include <algorithm>
 #include <functional>
 #include <unordered_map>
 #include <unordered_set>
@@ -27,6 +28,11 @@ using Edges = std::unordered_set<T>;
 
 template <typename T>
 using Graph = std::unordered_map<T, Edges<T>>;
+
+struct EdgeComparator
+{
+    bool operator()(const TStructure *s1, const TStructure *s2) { return s2->name() < s1->name(); }
+};
 
 void BuildGraphImpl(SymbolEnv &symbolEnv, Graph<const TStructure *> &g, const TStructure *s)
 {
@@ -61,7 +67,21 @@ Graph<const TStructure *> BuildGraph(SymbolEnv &symbolEnv,
     return g;
 }
 
+std::vector<const TStructure *> SortEdges(const std::unordered_set<const TStructure *> &structs)
+{
+    std::vector<const TStructure *> sorted;
+    sorted.reserve(structs.size());
+    sorted.insert(sorted.begin(), structs.begin(), structs.end());
+    std::sort(sorted.begin(), sorted.end(), EdgeComparator());
+    return sorted;
+}
+
 // Algorthm: https://en.wikipedia.org/wiki/Topological_sorting#Depth-first_search
+// Note that the algorithm is modified to visit nodes in sorted order. This
+// ensures consistent results. Without this, the returned order (in so far as
+// leaf nodes) is undefined, because iterating over an unordered_set of pointers
+// depends upon the actual pointer values. Consistent results is important for
+// code that keys off the string of shaders for caching.
 template <typename T>
 std::vector<T> Toposort(const Graph<T> &g)
 {
@@ -99,8 +119,9 @@ std::vector<T> Toposort(const Graph<T> &g)
         // for each node m with an edge from n to m do
         auto enIter = g.find(n);
         ASSERT(enIter != g.end());
-        const Edges<T> &en = enIter->second;
-        for (T m : en)
+
+        std::vector<T> sorted = SortEdges(enIter->second);
+        for (T m : sorted)
         {
             // visit(m)
             visit(m);
@@ -118,7 +139,8 @@ std::vector<T> Toposort(const Graph<T> &g)
     while (!invPerms.empty())
     {
         // select an unmarked node n
-        T n = *invPerms.begin();
+        std::vector<T> sorted = SortEdges(invPerms);
+        T n                   = *sorted.begin();
         // visit(n)
         visit(n);
     }

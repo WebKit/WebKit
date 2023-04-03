@@ -640,6 +640,7 @@ void ValidateAST::visitBuiltInVariable(TIntermSymbol *node)
 
         if ((name == "gl_ClipDistance" && qualifier != EvqClipDistance) ||
             (name == "gl_CullDistance" && qualifier != EvqCullDistance) ||
+            (name == "gl_FragDepth" && qualifier != EvqFragDepth) ||
             (name == "gl_LastFragData" && qualifier != EvqLastFragData) ||
             (name == "gl_LastFragColorARM" && qualifier != EvqLastFragColor))
         {

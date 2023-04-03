@@ -1350,6 +1350,66 @@ TEST_P(SimpleOperationTest, DrawElementsZeroInstanceCountIsNoOp)
     }
 }
 
+// Test that sample coverage does not affect single sample rendering
+TEST_P(SimpleOperationTest, DrawSingleSampleWithCoverage)
+{
+    GLint sampleBuffers = -1;
+    glGetIntegerv(GL_SAMPLE_BUFFERS, &sampleBuffers);
+    ASSERT_EQ(sampleBuffers, 0);
+
+    GLint samples = -1;
+    glGetIntegerv(GL_SAMPLES, &samples);
+    ASSERT_EQ(samples, 0);
+
+    glClearColor(1.0, 0.0, 1.0, 1.0);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    glEnable(GL_SAMPLE_COVERAGE);
+    glSampleCoverage(0.0f, false);
+
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::Green());
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.0);
+    ASSERT_GL_NO_ERROR();
+
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+}
+
+// Test that sample coverage affects multi sample rendering with only one sample
+TEST_P(SimpleOperationTest, DrawSingleMultiSampleWithCoverage)
+{
+    ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3);
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
+    GLRenderbuffer rbo;
+    glBindRenderbuffer(GL_RENDERBUFFER, rbo);
+    glRenderbufferStorageMultisample(GL_RENDERBUFFER, 1, GL_RGBA8, 1, 1);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, rbo);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    GLint samples = -1;
+    glGetIntegerv(GL_SAMPLES, &samples);
+    ASSERT_GT(samples, 0);
+    ANGLE_SKIP_TEST_IF(samples != 1);
+
+    glClearColor(0.0, 0.0, 1.0, 1.0);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    glEnable(GL_SAMPLE_COVERAGE);
+    glSampleCoverage(0.0f, false);
+
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::Green());
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.0);
+    ASSERT_GL_NO_ERROR();
+
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, fbo);
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+    glBlitFramebuffer(0, 0, 1, 1, 0, 0, 1, 1, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::blue);
+}
+
 // Use this to select which configurations (e.g. which renderer, which GLES major version) these
 // tests should be run against.
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND(

@@ -1145,28 +1145,32 @@ const char *InterpolationString(TQualifier qualifier)
 {
     switch (qualifier)
     {
+        case EvqVaryingOut:
         case EvqVaryingIn:
-            return "";
+        case EvqVertexOut:
         case EvqFragmentIn:
             return "";
+        case EvqSmoothOut:
         case EvqSmoothIn:
             return "linear";
+        case EvqFlatOut:
         case EvqFlatIn:
             return "nointerpolation";
+        case EvqNoPerspectiveOut:
+        case EvqNoPerspectiveIn:
+            return "noperspective";
+        case EvqCentroidOut:
         case EvqCentroidIn:
             return "centroid";
-        case EvqVaryingOut:
-            return "";
-        case EvqVertexOut:
-            return "";
-        case EvqSmoothOut:
-            return "linear";
-        case EvqFlatOut:
-            return "nointerpolation";
-        case EvqCentroidOut:
-            return "centroid";
+        case EvqSampleOut:
         case EvqSampleIn:
             return "sample";
+        case EvqNoPerspectiveCentroidOut:
+        case EvqNoPerspectiveCentroidIn:
+            return "noperspective centroid";
+        case EvqNoPerspectiveSampleOut:
+        case EvqNoPerspectiveSampleIn:
+            return "noperspective sample";
         default:
             UNREACHABLE();
     }
@@ -1187,8 +1191,6 @@ const char *QualifierString(TQualifier qualifier)
             return "inout";
         case EvqParamConst:
             return "const";
-        case EvqSampleOut:
-            return "sample";
         default:
             UNREACHABLE();
     }

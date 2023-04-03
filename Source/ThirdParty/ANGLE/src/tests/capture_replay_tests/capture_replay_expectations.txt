@@ -125,6 +125,8 @@
 7291 : BlitFramebufferTest.Blit3D/* = SKIP_FOR_CAPTURE
 7291 : BlitFramebufferTest.Blit3DTo2DArray/* = SKIP_FOR_CAPTURE
 7291 : BlitFramebufferTest.Blit2DArrayTo3D/* = SKIP_FOR_CAPTURE
+7291 : BlitFramebufferTest.drawBlitAndDrawAgain/* = SKIP_FOR_CAPTURE
+7291 : BlitFramebufferTest.scissorDrawBlitAndDrawAgain/* = SKIP_FOR_CAPTURE
 
 7357 : FramebufferTest_ES3.FramebufferConditionalFeedbackLoop/* = SKIP_FOR_CAPTURE
 7499 : Texture2DTest.TextureMaxSize/* = SKIP_FOR_CAPTURE
@@ -199,3 +201,6 @@
 
 # Fails if run after DifferentStencilMasksTest.DrawWithSameEffectiveMask
 8079 : DiscardFramebufferEXTTest.ClearDepthThenDrawWithoutDepthTestThenDiscard/* = SKIP_FOR_CAPTURE
+
+# Sample coverage must not affect single sample render targets
+8102 : SimpleOperationTest.DrawSingleSampleWithCoverage/* = SKIP_FOR_CAPTURE

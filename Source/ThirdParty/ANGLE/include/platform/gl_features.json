@@ -652,6 +652,15 @@
             ]
         },
         {
+            "name": "bind_framebuffer_for_timer_queries",
+            "category": "Workarounds",
+            "description": [
+                "Some drivers require a non-zero framebuffer when beginQuery for TimeElapsed or",
+                "Timestampis called."
+            ],
+            "issue": "https://crbug.com/1356053"
+        },
+        {
             "name": "supports_fragment_shader_interlock_NV",
             "category": "Features",
             "description": [

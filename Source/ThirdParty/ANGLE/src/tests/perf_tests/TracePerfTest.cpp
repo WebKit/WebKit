@@ -1143,7 +1143,8 @@ TracePerfTest::TracePerfTest(std::unique_ptr<const TracePerfParams> params)
     }
 
     if (traceNameIs("hill_climb_racing") || traceNameIs("dead_trigger_2") ||
-        traceNameIs("disney_mirrorverse") || traceNameIs("cut_the_rope"))
+        traceNameIs("disney_mirrorverse") || traceNameIs("cut_the_rope") ||
+        traceNameIs("geometry_dash"))
     {
         if (IsAndroid() && (IsPixel4() || IsPixel4XL()) && !mParams->isANGLE())
         {

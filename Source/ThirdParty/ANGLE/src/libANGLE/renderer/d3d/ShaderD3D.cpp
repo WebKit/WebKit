@@ -124,13 +124,13 @@ void ShaderD3D::uncompile()
     mUsesPointSize               = false;
     mUsesPointCoord              = false;
     mUsesDepthRange              = false;
-    mUsesFragDepth               = false;
     mHasANGLEMultiviewEnabled    = false;
     mUsesVertexID                = false;
     mUsesViewID                  = false;
     mUsesDiscardRewriting        = false;
     mUsesNestedBreak             = false;
     mRequiresIEEEStrictCompiling = false;
+    mFragDepthUsage              = FragDepthUsage::Unused;
     mClipDistanceSize            = 0;
     mCullDistanceSize            = 0;
 
@@ -311,7 +311,6 @@ std::shared_ptr<WaitableCompileEvent> ShaderD3D::compile(const gl::Context *cont
         mUsesPointSize  = translatedSource.find("GL_USES_POINT_SIZE") != std::string::npos;
         mUsesPointCoord = translatedSource.find("GL_USES_POINT_COORD") != std::string::npos;
         mUsesDepthRange = translatedSource.find("GL_USES_DEPTH_RANGE") != std::string::npos;
-        mUsesFragDepth  = translatedSource.find("GL_USES_FRAG_DEPTH") != std::string::npos;
         mHasANGLEMultiviewEnabled =
             translatedSource.find("GL_ANGLE_MULTIVIEW_ENABLED") != std::string::npos;
         mUsesVertexID = translatedSource.find("GL_USES_VERTEX_ID") != std::string::npos;
@@ -324,6 +323,18 @@ std::shared_ptr<WaitableCompileEvent> ShaderD3D::compile(const gl::Context *cont
 
         ShHandle compilerHandle = compiler->getHandle();
 
+        if (translatedSource.find("GL_USES_FRAG_DEPTH_GREATER") != std::string::npos)
+        {
+            mFragDepthUsage = FragDepthUsage::Greater;
+        }
+        else if (translatedSource.find("GL_USES_FRAG_DEPTH_LESS") != std::string::npos)
+        {
+            mFragDepthUsage = FragDepthUsage::Less;
+        }
+        else if (translatedSource.find("GL_USES_FRAG_DEPTH") != std::string::npos)
+        {
+            mFragDepthUsage = FragDepthUsage::Any;
+        }
         mClipDistanceSize   = sh::GetClipDistanceArraySize(compilerHandle);
         mCullDistanceSize   = sh::GetCullDistanceArraySize(compilerHandle);
         mUniformRegisterMap = GetUniformRegisterMap(sh::GetUniformRegisterMap(compilerHandle));

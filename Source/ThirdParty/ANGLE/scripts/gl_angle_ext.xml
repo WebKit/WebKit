@@ -994,6 +994,12 @@
             <proto>void <name>glPixelLocalStorageBarrierANGLE</name></proto>
         </command>
         <command>
+            <proto>void <name>glFramebufferPixelLocalStorageInterruptANGLE</name></proto>
+        </command>
+        <command>
+            <proto>void <name>glFramebufferPixelLocalStorageRestoreANGLE</name></proto>
+        </command>
+        <command>
             <proto>void <name>glGetFramebufferPixelLocalStorageParameterfvANGLE</name></proto>
             <param><ptype>GLint</ptype> <name>plane</name></param>
             <param group="PLSQueryFloat"><ptype>GLenum</ptype> <name>pname</name></param>
@@ -1292,6 +1298,8 @@
                 <command name="glBeginPixelLocalStorageANGLE"/>
                 <command name="glEndPixelLocalStorageANGLE"/>
                 <command name="glPixelLocalStorageBarrierANGLE"/>
+                <command name="glFramebufferPixelLocalStorageInterruptANGLE"/>
+                <command name="glFramebufferPixelLocalStorageRestoreANGLE"/>
                 <command name="glGetFramebufferPixelLocalStorageParameterfvANGLE"/>
                 <command name="glGetFramebufferPixelLocalStorageParameterivANGLE"/>
                 <command name="glGetFramebufferPixelLocalStorageParameterfvRobustANGLE"/>

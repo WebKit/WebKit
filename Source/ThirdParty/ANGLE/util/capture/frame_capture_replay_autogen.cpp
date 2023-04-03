@@ -1008,6 +1008,12 @@ void ReplayTraceFunctionCall(const CallCapture &call, const TraceFunctionMap &cu
             glFramebufferPixelLocalClearValueuivANGLE(captures[0].value.GLintVal,
                                                       captures[1].value.GLuintConstPointerVal);
             break;
+        case angle::EntryPoint::GLFramebufferPixelLocalStorageInterruptANGLE:
+            glFramebufferPixelLocalStorageInterruptANGLE();
+            break;
+        case angle::EntryPoint::GLFramebufferPixelLocalStorageRestoreANGLE:
+            glFramebufferPixelLocalStorageRestoreANGLE();
+            break;
         case angle::EntryPoint::GLFramebufferRenderbuffer:
             glFramebufferRenderbuffer(captures[0].value.GLenumVal, captures[1].value.GLenumVal,
                                       captures[2].value.GLenumVal,

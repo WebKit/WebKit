@@ -318,14 +318,28 @@ std::string DynamicHLSL::generateVertexShaderForInputLayout(
 std::string DynamicHLSL::generatePixelShaderForOutputSignature(
     const std::string &sourceShader,
     const std::vector<PixelShaderOutputVariable> &outputVariables,
-    bool usesFragDepth,
+    FragDepthUsage fragDepthUsage,
     const std::vector<GLenum> &outputLayout,
     const std::vector<ShaderStorageBlock> &shaderStorageBlocks,
     size_t baseUAVRegister) const
 {
     const int shaderModel      = mRenderer->getMajorShaderModel();
     std::string targetSemantic = (shaderModel >= 4) ? "SV_TARGET" : "COLOR";
-    std::string depthSemantic  = (shaderModel >= 4) ? "SV_Depth" : "DEPTH";
+    std::string depthSemantic  = [shaderModel, fragDepthUsage]() {
+        if (shaderModel < 4)
+        {
+            return "DEPTH";
+        }
+        switch (fragDepthUsage)
+        {
+            case FragDepthUsage::Less:
+                return "SV_DepthLessEqual";
+            case FragDepthUsage::Greater:
+                return "SV_DepthGreaterEqual";
+            default:
+                return "SV_Depth";
+        }
+    }();
 
     std::ostringstream declarationStream;
     std::ostringstream copyStream;
@@ -374,7 +388,7 @@ std::string DynamicHLSL::generatePixelShaderForOutputSignature(
         }
     }
 
-    if (usesFragDepth)
+    if (fragDepthUsage != FragDepthUsage::Unused)
     {
         declarationStream << "    float gl_Depth : " << depthSemantic << ";\n";
         copyStream << "    output.gl_Depth = gl_Depth; \n";
@@ -503,11 +517,20 @@ void DynamicHLSL::generateVaryingLinkHLSL(const VaryingPacking &varyingPacking,
             case sh::INTERPOLATION_FLAT:
                 hlslStream << "    nointerpolation ";
                 break;
+            case sh::INTERPOLATION_NOPERSPECTIVE:
+                hlslStream << "    noperspective ";
+                break;
             case sh::INTERPOLATION_CENTROID:
                 hlslStream << "    centroid ";
                 break;
             case sh::INTERPOLATION_SAMPLE:
                 hlslStream << "    sample ";
+                break;
+            case sh::INTERPOLATION_NOPERSPECTIVE_CENTROID:
+                hlslStream << "    noperspective centroid ";
+                break;
+            case sh::INTERPOLATION_NOPERSPECTIVE_SAMPLE:
+                hlslStream << "    noperspective sample ";
                 break;
             default:
                 UNREACHABLE();

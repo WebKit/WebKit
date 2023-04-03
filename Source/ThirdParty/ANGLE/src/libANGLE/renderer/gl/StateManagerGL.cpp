@@ -102,6 +102,7 @@ StateManagerGL::StateManagerGL(const FunctionsGL *functions,
       mPackSkipPixels(0),
       mFramebuffers(angle::FramebufferBindingSingletonMax, 0),
       mRenderbuffer(0),
+      mPlaceholderFbo(0),
       mScissorTestEnabled(false),
       mScissor(0, 0, 0, 0),
       mViewport(0, 0, 0, 0),
@@ -142,6 +143,7 @@ StateManagerGL::StateManagerGL(const FunctionsGL *functions,
       mPolygonOffsetFactor(0.0f),
       mPolygonOffsetUnits(0.0f),
       mPolygonOffsetClamp(0.0f),
+      mDepthClampEnabled(false),
       mRasterizerDiscardEnabled(false),
       mLineWidth(1.0f),
       mPrimitiveRestartEnabled(false),
@@ -214,6 +216,10 @@ StateManagerGL::StateManagerGL(const FunctionsGL *functions,
 
 StateManagerGL::~StateManagerGL()
 {
+    if (mPlaceholderFbo != 0)
+    {
+        deleteFramebuffer(mPlaceholderFbo);
+    }
     if (mDefaultVAO != 0)
     {
         mFunctions->deleteVertexArrays(1, &mDefaultVAO);
@@ -757,6 +763,17 @@ void StateManagerGL::beginQuery(gl::QueryType type, QueryGL *queryObject, GLuint
     // Make sure this is a valid query type and there is no current active query of this type
     ASSERT(mQueries[type] == nullptr);
     ASSERT(queryId != 0);
+
+    if (mFeatures.bindFramebufferForTimerQueries.enabled &&
+        mFramebuffers[angle::FramebufferBindingDraw] == 0 &&
+        (type == gl::QueryType::TimeElapsed || type == gl::QueryType::Timestamp))
+    {
+        if (!mPlaceholderFbo)
+        {
+            mFunctions->genFramebuffers(1, &mPlaceholderFbo);
+        }
+        bindFramebuffer(GL_FRAMEBUFFER, mPlaceholderFbo);
+    }
 
     mQueries[type] = queryObject;
     mFunctions->beginQuery(ToGLenum(type), queryId);
@@ -1700,6 +1717,25 @@ void StateManagerGL::setPolygonOffset(float factor, float units, float clamp)
     }
 }
 
+void StateManagerGL::setDepthClampEnabled(bool enabled)
+{
+    if (mDepthClampEnabled != enabled)
+    {
+        mDepthClampEnabled = enabled;
+        if (mDepthClampEnabled)
+        {
+            mFunctions->enable(GL_DEPTH_CLAMP_EXT);
+        }
+        else
+        {
+            mFunctions->disable(GL_DEPTH_CLAMP_EXT);
+        }
+
+        mLocalDirtyBits.set(gl::State::DIRTY_BIT_EXTENDED);
+        mLocalExtendedDirtyBits.set(gl::State::EXTENDED_DIRTY_BIT_DEPTH_CLAMP_ENABLED);
+    }
+}
+
 void StateManagerGL::setRasterizerDiscardEnabled(bool enabled)
 {
     if (mRasterizerDiscardEnabled != enabled)
@@ -1830,7 +1866,9 @@ void StateManagerGL::setClearStencil(GLint clearStencil)
 
 angle::Result StateManagerGL::syncState(const gl::Context *context,
                                         const gl::State::DirtyBits &glDirtyBits,
-                                        const gl::State::DirtyBits &bitMask)
+                                        const gl::State::DirtyBits &bitMask,
+                                        const gl::State::ExtendedDirtyBits &extendedDirtyBits,
+                                        const gl::State::ExtendedDirtyBits &extendedBitMask)
 {
     const gl::State &state = context->getState();
 
@@ -2218,8 +2256,6 @@ angle::Result StateManagerGL::syncState(const gl::Context *context,
                 break;
             case gl::State::DIRTY_BIT_EXTENDED:
             {
-                const gl::State::ExtendedDirtyBits extendedDirtyBits =
-                    state.getAndResetExtendedDirtyBits();
                 const gl::State::ExtendedDirtyBits glAndLocalExtendedDirtyBits =
                     extendedDirtyBits | mLocalExtendedDirtyBits;
                 for (size_t extendedDirtyBit : glAndLocalExtendedDirtyBits)
@@ -2237,6 +2273,9 @@ angle::Result StateManagerGL::syncState(const gl::Context *context,
                                                                 state.getProgram(),
                                                                 state.getEnabledClipDistances());
                             }
+                            break;
+                        case gl::State::EXTENDED_DIRTY_BIT_DEPTH_CLAMP_ENABLED:
+                            setDepthClampEnabled(state.isDepthClampEnabled());
                             break;
                         case gl::State::EXTENDED_DIRTY_BIT_LOGIC_OP_ENABLED:
                             setLogicOpEnabled(state.isLogicOpEnabled());
@@ -2893,6 +2932,17 @@ void StateManagerGL::syncFromNativeContext(const gl::Extensions &extensions,
         }
     }
 
+    if (extensions.depthClampEXT)
+    {
+        get(GL_DEPTH_CLAMP_EXT, &state->enableDepthClamp);
+        if (mDepthClampEnabled != state->enableDepthClamp)
+        {
+            mDepthClampEnabled = state->enableDepthClamp;
+            mLocalDirtyBits.set(gl::State::DIRTY_BIT_EXTENDED);
+            mLocalExtendedDirtyBits.set(gl::State::EXTENDED_DIRTY_BIT_DEPTH_CLAMP_ENABLED);
+        }
+    }
+
     get(GL_SAMPLE_COVERAGE_VALUE, &state->sampleCoverageValue);
     get(GL_SAMPLE_COVERAGE_INVERT, &state->sampleCoverageInvert);
     if (mSampleCoverageValue != state->sampleCoverageValue ||
@@ -2990,6 +3040,11 @@ void StateManagerGL::restoreNativeContext(const gl::Extensions &extensions,
 
     setPolygonOffset(state->polygonOffsetFactor, state->polygonOffsetUnits,
                      state->polygonOffsetClamp);
+
+    if (extensions.depthClampEXT)
+    {
+        setDepthClampEnabled(state->enableDepthClamp);
+    }
 
     setSampleCoverage(state->sampleCoverageValue, state->sampleCoverageInvert);
 

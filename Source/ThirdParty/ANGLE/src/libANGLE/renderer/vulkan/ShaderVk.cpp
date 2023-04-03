@@ -108,6 +108,11 @@ std::shared_ptr<WaitableCompileEvent> ShaderVk::compile(const gl::Context *conte
         options->precisionSafeDivision = true;
     }
 
+    if (contextVk->getFeatures().appendAliasedMemoryDecorationsToSsbo.enabled)
+    {
+        options->aliasedSSBOUnlessRestrict = true;
+    }
+
     if (contextVk->getExtensions().shaderPixelLocalStorageANGLE)
     {
         options->pls = contextVk->getNativePixelLocalStorageOptions();

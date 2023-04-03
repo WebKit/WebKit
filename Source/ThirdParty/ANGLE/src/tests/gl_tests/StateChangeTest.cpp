@@ -10257,7 +10257,8 @@ ANGLE_INSTANTIATE_TEST_ES3_AND(StateChangeTestES3,
                                ES3_VULKAN()
                                    .disable(Feature::SupportsExtendedDynamicState2)
                                    .disable(Feature::SupportsLogicOpDynamicState),
-                               ES3_VULKAN().enable(Feature::ForceStaticVertexStrideState));
+                               ES3_VULKAN().enable(Feature::ForceStaticVertexStrideState),
+                               ES3_VULKAN().enable(Feature::ForceStaticPrimitiveRestartState));
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(StateChangeTestWebGL2);
 ANGLE_INSTANTIATE_TEST_COMBINE_1(StateChangeTestWebGL2,

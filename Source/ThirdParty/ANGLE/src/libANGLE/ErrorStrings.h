@@ -509,6 +509,9 @@ MSG kPLSMismatchedBackingTextureSizes = "Mismatched pixel local storage backing 
 MSG kPLSMultisamplingEnabled = "Attempted to begin pixel local storage with a multisampled framebuffer.";
 MSG kPLSNNotEqualActivePlanes = "<n> != ACTIVE_PIXEL_LOCAL_STORAGE_PLANES_ANGLE";
 MSG kPLSNoAttachmentsNoTextureBacked = "Draw framebuffer has no attachments and no enabled, texture-backed pixel local storage planes.";
+MSG kPLSInterruptOverflow = "Pixel local storage does not support more than 255 nested interruptions.";
+MSG kPLSInterrupted = "Pixel local storage on the draw framebuffer is interrupted.";
+MSG kPLSNotInterrupted = "Pixel local storage on the draw framebuffer is not interrupted.";
 MSG kPLSParamsNULL = "<params> cannot be null.";
 MSG kPLSPlaneLessThanZero = "Plane cannot be less than 0.";
 MSG kPLSPlaneOutOfRange = "Plane must be less than GL_MAX_PIXEL_LOCAL_STORAGE_PLANES_ANGLE.";

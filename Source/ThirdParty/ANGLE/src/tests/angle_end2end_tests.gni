@@ -62,6 +62,7 @@ angle_end2end_tests_sources = [
   "gl_tests/DebugTest.cpp",
   "gl_tests/DepthStencilFormatsTest.cpp",
   "gl_tests/DepthStencilTest.cpp",
+  "gl_tests/DepthWriteTest.cpp",
   "gl_tests/DesktopGLSLTest.cpp",
   "gl_tests/DifferentStencilMasksTest.cpp",
   "gl_tests/DiscardFramebufferEXTTest.cpp",

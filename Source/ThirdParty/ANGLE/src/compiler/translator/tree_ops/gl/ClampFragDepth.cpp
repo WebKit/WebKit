@@ -23,12 +23,13 @@ namespace sh
 bool ClampFragDepth(TCompiler *compiler, TIntermBlock *root, TSymbolTable *symbolTable)
 {
     // Only clamp gl_FragDepth if it's used in the shader.
-    if (!FindSymbolNode(root, ImmutableString("gl_FragDepth")))
+    const TIntermSymbol *fragDepthSymbol = FindSymbolNode(root, ImmutableString("gl_FragDepth"));
+    if (!fragDepthSymbol)
     {
         return true;
     }
 
-    TIntermSymbol *fragDepthNode = new TIntermSymbol(BuiltInVariable::gl_FragDepth());
+    TIntermSymbol *fragDepthNode = new TIntermSymbol(&fragDepthSymbol->variable());
 
     TIntermTyped *minFragDepthNode = CreateZeroNode(TType(EbtFloat, EbpHigh, EvqConst));
 

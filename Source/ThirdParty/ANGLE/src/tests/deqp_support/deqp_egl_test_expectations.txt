@@ -92,13 +92,16 @@
 5753 LINUX VULKAN : dEQP-EGL.functional.resize.surface_size.* = FAIL
 
 // Mac failures
+
+// New crash on MacBook Pro 2019 macOS 13.2.1, must come before the wildcard native_window.* FAIL below
+8091 MAC METAL AMD : dEQP-EGL.functional.native_color_mapping.native_window.rgba8888_depth_no_stencil_render = SKIP
+
 2546 MAC : dEQP-EGL.functional.native_color_mapping.native_window.* = FAIL
 2546 MAC : dEQP-EGL.functional.native_coord_mapping.native_window.* = FAIL
 2546 MAC : dEQP-EGL.functional.negative_api.copy_buffers = FAIL
 2546 MAC : dEQP-EGL.functional.negative_api.swap_interval = FAIL
 2546 MAC OPENGL : dEQP-EGL.functional.query_surface.simple.pbuffer.rgba8888_depth_stencil = FAIL
 2546 MAC : dEQP-EGL.functional.thread_cleanup.* = SKIP
-1347817 MAC : dEQP-EGL.functional.image.api.create_image_gles2_android_native_* = SKIP
 
 // Android GLES-only failues
 2567 ANDROID GLES : dEQP-EGL.functional.image.api.create_image_gles2_tex2d_red = FAIL

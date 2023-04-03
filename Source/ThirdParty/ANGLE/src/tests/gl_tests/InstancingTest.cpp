@@ -804,6 +804,45 @@ TEST_P(InstancingTestES3, LargestDivisor)
         << "Vertex attrib divisor read was not the same that was passed in.";
 }
 
+// Regression test for D3D11 streaming of GL_DYNAMIC_DRAW buffers not taking into account instanced
+// attributes for buffer size calculations. http://crbug.com/1425606
+TEST_P(InstancingTestES3, D3D11StreamingInstancedData)
+{
+    constexpr char kVS[] = R"(#version 300 es
+in float scale;
+void main()
+{
+    gl_Position = vec4(vec2(gl_VertexID % 2, gl_VertexID % 3) * scale, 0, 1);
+})";
+
+    constexpr char kFS[] = R"(#version 300 es
+precision mediump float;
+out vec4 color;
+void main()
+{
+    color = vec4(1, 0, 0, 1);
+})";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    glUseProgram(program);
+
+    GLBuffer buffer;
+    float data = 0.5f;
+    glBindBuffer(GL_ARRAY_BUFFER, buffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(data), &data, GL_DYNAMIC_DRAW);
+
+    GLint loc = glGetAttribLocation(program, "scale");
+    glEnableVertexAttribArray(loc);
+    glVertexAttribPointer(loc, 1, GL_FLOAT, false, 0, 0);
+    glVertexAttribDivisor(loc, 1);
+
+    // Both of these should succeed
+    glDrawArraysInstanced(GL_TRIANGLES, 0, 3, 1);
+    EXPECT_GL_NO_ERROR();
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+    EXPECT_GL_NO_ERROR();
+}
+
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(InstancingTestES3);
 ANGLE_INSTANTIATE_TEST_ES3(InstancingTestES3);
 
