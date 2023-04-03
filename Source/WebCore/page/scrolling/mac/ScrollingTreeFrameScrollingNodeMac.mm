@@ -70,9 +70,14 @@ void ScrollingTreeFrameScrollingNodeMac::willBeDestroyed()
     delegate().nodeWillBeDestroyed();
 }
 
-void ScrollingTreeFrameScrollingNodeMac::commitStateBeforeChildren(const ScrollingStateNode& stateNode)
+bool ScrollingTreeFrameScrollingNodeMac::commitStateBeforeChildren(const ScrollingStateNode& stateNode)
 {
-    ScrollingTreeFrameScrollingNode::commitStateBeforeChildren(stateNode);
+    if (!ScrollingTreeFrameScrollingNode::commitStateBeforeChildren(stateNode))
+        return false;
+
+    if (!is<ScrollingStateFrameScrollingNode>(stateNode))
+        return false;
+
     const auto& scrollingStateNode = downcast<ScrollingStateFrameScrollingNode>(stateNode);
 
     if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::RootContentsLayer))
@@ -103,11 +108,16 @@ void ScrollingTreeFrameScrollingNodeMac::commitStateBeforeChildren(const Scrolli
     m_delegate->updateFromStateNode(scrollingStateNode);
 
     m_hadFirstUpdate = true;
+    return true;
 }
 
-void ScrollingTreeFrameScrollingNodeMac::commitStateAfterChildren(const ScrollingStateNode& stateNode)
+bool ScrollingTreeFrameScrollingNodeMac::commitStateAfterChildren(const ScrollingStateNode& stateNode)
 {
-    ScrollingTreeFrameScrollingNode::commitStateAfterChildren(stateNode);
+    if (!ScrollingTreeFrameScrollingNode::commitStateAfterChildren(stateNode))
+        return false;
+
+    if (!is<ScrollingStateScrollingNode>(stateNode))
+        return false;
 
     const auto& scrollingStateNode = downcast<ScrollingStateScrollingNode>(stateNode);
     if (isRootNode()
@@ -115,6 +125,8 @@ void ScrollingTreeFrameScrollingNodeMac::commitStateAfterChildren(const Scrollin
         || scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::TotalContentsSize)
         || scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::ScrollableAreaSize)))
         updateMainFramePinAndRubberbandState();
+
+    return true;
 }
 
 WheelEventHandlingResult ScrollingTreeFrameScrollingNodeMac::handleWheelEvent(const PlatformWheelEvent& wheelEvent, EventTargeting eventTargeting)

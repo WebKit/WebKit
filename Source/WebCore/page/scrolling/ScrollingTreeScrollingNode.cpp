@@ -48,9 +48,12 @@ ScrollingTreeScrollingNode::ScrollingTreeScrollingNode(ScrollingTree& scrollingT
 
 ScrollingTreeScrollingNode::~ScrollingTreeScrollingNode() = default;
 
-void ScrollingTreeScrollingNode::commitStateBeforeChildren(const ScrollingStateNode& stateNode)
+bool ScrollingTreeScrollingNode::commitStateBeforeChildren(const ScrollingStateNode& stateNode)
 {
-    const ScrollingStateScrollingNode& state = downcast<ScrollingStateScrollingNode>(stateNode);
+    if (!is<ScrollingStateScrollingNode>(stateNode))
+        return false;
+
+    const auto& state = downcast<ScrollingStateScrollingNode>(stateNode);
 
     if (state.hasChangedProperty(ScrollingStateNode::Property::ScrollableAreaSize))
         m_scrollableAreaSize = state.scrollableAreaSize();
@@ -98,11 +101,16 @@ void ScrollingTreeScrollingNode::commitStateBeforeChildren(const ScrollingStateN
 
     if (state.hasChangedProperty(ScrollingStateNode::Property::ScrolledContentsLayer))
         m_scrolledContentsLayer = state.scrolledContentsLayer();
+
+    return true;
 }
 
-void ScrollingTreeScrollingNode::commitStateAfterChildren(const ScrollingStateNode& stateNode)
+bool ScrollingTreeScrollingNode::commitStateAfterChildren(const ScrollingStateNode& stateNode)
 {
-    const ScrollingStateScrollingNode& scrollingStateNode = downcast<ScrollingStateScrollingNode>(stateNode);
+    if (!is<ScrollingStateScrollingNode>(stateNode))
+        return false;
+
+    const auto& scrollingStateNode = downcast<ScrollingStateScrollingNode>(stateNode);
     if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::RequestedScrollPosition))
         handleScrollPositionRequest(scrollingStateNode.requestedScrollData());
 
@@ -114,6 +122,7 @@ void ScrollingTreeScrollingNode::commitStateAfterChildren(const ScrollingStateNo
     m_synchronousScrollingReasons.remove(SynchronousScrollingReason::DescendantScrollersHaveSynchronousScrolling);
 #endif
     m_isFirstCommit = false;
+    return true;
 }
 
 void ScrollingTreeScrollingNode::didCompleteCommitForNode()

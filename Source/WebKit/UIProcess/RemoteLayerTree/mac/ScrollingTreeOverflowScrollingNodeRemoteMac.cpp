@@ -50,11 +50,17 @@ ScrollingTreeOverflowScrollingNodeRemoteMac::~ScrollingTreeOverflowScrollingNode
 {
 }
 
-void ScrollingTreeOverflowScrollingNodeRemoteMac::commitStateBeforeChildren(const ScrollingStateNode& stateNode)
+bool ScrollingTreeOverflowScrollingNodeRemoteMac::commitStateBeforeChildren(const ScrollingStateNode& stateNode)
 {
-    ScrollingTreeOverflowScrollingNodeMac::commitStateBeforeChildren(stateNode);
+    if (!ScrollingTreeOverflowScrollingNodeMac::commitStateBeforeChildren(stateNode))
+        return false;
+
+    if (!is<ScrollingStateOverflowScrollingNode>(stateNode))
+        return false;
+
     const auto& scrollingStateNode = downcast<ScrollingStateOverflowScrollingNode>(stateNode);
     m_delegate->updateFromStateNode(scrollingStateNode);
+    return true;
 }
 
 void ScrollingTreeOverflowScrollingNodeRemoteMac::repositionRelatedLayers()

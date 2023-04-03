@@ -43,7 +43,7 @@ public:
 private:
     ScrollingTreeOverflowScrollingNodeRemoteMac(WebCore::ScrollingTree&, WebCore::ScrollingNodeID);
 
-    void commitStateBeforeChildren(const WebCore::ScrollingStateNode&) override;
+    bool commitStateBeforeChildren(const WebCore::ScrollingStateNode&) override;
     void handleWheelEventPhase(const WebCore::PlatformWheelEventPhase) override;
     void repositionRelatedLayers() override;
     String scrollbarStateForOrientation(WebCore::ScrollbarOrientation) const override;

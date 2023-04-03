@@ -58,9 +58,13 @@ ScrollingTreeScrollingNodeDelegateNicosia& ScrollingTreeFrameScrollingNodeNicosi
     return *static_cast<ScrollingTreeScrollingNodeDelegateNicosia*>(m_delegate.get());
 }
 
-void ScrollingTreeFrameScrollingNodeNicosia::commitStateBeforeChildren(const ScrollingStateNode& stateNode)
+bool ScrollingTreeFrameScrollingNodeNicosia::commitStateBeforeChildren(const ScrollingStateNode& stateNode)
 {
-    ScrollingTreeFrameScrollingNode::commitStateBeforeChildren(stateNode);
+    if (!ScrollingTreeFrameScrollingNode::commitStateBeforeChildren(stateNode))
+        return false;
+
+    if (!is<ScrollingStateFrameScrollingNode>(stateNode))
+        return false;
 
     const auto& scrollingStateNode = downcast<ScrollingStateFrameScrollingNode>(stateNode);
 
@@ -90,6 +94,7 @@ void ScrollingTreeFrameScrollingNodeNicosia::commitStateBeforeChildren(const Scr
     }
 
     m_delegate->updateFromStateNode(scrollingStateNode);
+    return true;
 }
 
 WheelEventHandlingResult ScrollingTreeFrameScrollingNodeNicosia::handleWheelEvent(const PlatformWheelEvent& wheelEvent, EventTargeting eventTargeting)

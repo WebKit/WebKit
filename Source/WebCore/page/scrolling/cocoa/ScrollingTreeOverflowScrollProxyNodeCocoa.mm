@@ -46,7 +46,7 @@ ScrollingTreeOverflowScrollProxyNodeCocoa::ScrollingTreeOverflowScrollProxyNodeC
 
 ScrollingTreeOverflowScrollProxyNodeCocoa::~ScrollingTreeOverflowScrollProxyNodeCocoa() = default;
 
-void ScrollingTreeOverflowScrollProxyNodeCocoa::commitStateBeforeChildren(const ScrollingStateNode& stateNode)
+bool ScrollingTreeOverflowScrollProxyNodeCocoa::commitStateBeforeChildren(const ScrollingStateNode& stateNode)
 {
     if (stateNode.hasChangedProperty(ScrollingStateNode::Property::Layer)) {
         m_layer = static_cast<CALayer*>(stateNode.layer());
@@ -56,7 +56,7 @@ void ScrollingTreeOverflowScrollProxyNodeCocoa::commitStateBeforeChildren(const 
     }
 
 
-    ScrollingTreeOverflowScrollProxyNode::commitStateBeforeChildren(stateNode);
+    return ScrollingTreeOverflowScrollProxyNode::commitStateBeforeChildren(stateNode);
 }
 
 void ScrollingTreeOverflowScrollProxyNodeCocoa::applyLayerPositions()

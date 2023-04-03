@@ -47,19 +47,16 @@ ScrollingTreeStickyNodeCocoa::ScrollingTreeStickyNodeCocoa(ScrollingTree& scroll
 {
 }
 
-void ScrollingTreeStickyNodeCocoa::commitStateBeforeChildren(const ScrollingStateNode& stateNode)
+bool ScrollingTreeStickyNodeCocoa::commitStateBeforeChildren(const ScrollingStateNode& stateNode)
 {
-    const ScrollingStateStickyNode& stickyStateNode = downcast<ScrollingStateStickyNode>(stateNode);
-
-    if (stickyStateNode.hasChangedProperty(ScrollingStateNode::Property::Layer)) {
-        m_layer = static_cast<CALayer*>(stickyStateNode.layer());
+    if (stateNode.hasChangedProperty(ScrollingStateNode::Property::Layer)) {
+        m_layer = static_cast<CALayer*>(stateNode.layer());
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
-        m_interactionRegionsLayer = static_cast<CALayer*>(stickyStateNode.interactionRegionsLayer());
+        m_interactionRegionsLayer = static_cast<CALayer*>(stateNode.interactionRegionsLayer());
 #endif
     }
 
-
-    ScrollingTreeStickyNode::commitStateBeforeChildren(stateNode);
+    return ScrollingTreeStickyNode::commitStateBeforeChildren(stateNode);
 }
 
 void ScrollingTreeStickyNodeCocoa::applyLayerPositions()

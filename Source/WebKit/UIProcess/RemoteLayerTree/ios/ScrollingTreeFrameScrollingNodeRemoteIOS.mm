@@ -61,10 +61,14 @@ UIScrollView *ScrollingTreeFrameScrollingNodeRemoteIOS::scrollView() const
     return m_delegate ? delegate()->scrollView() : nil;
 }
 
-void ScrollingTreeFrameScrollingNodeRemoteIOS::commitStateBeforeChildren(const ScrollingStateNode& stateNode)
+bool ScrollingTreeFrameScrollingNodeRemoteIOS::commitStateBeforeChildren(const ScrollingStateNode& stateNode)
 {
-    ScrollingTreeFrameScrollingNode::commitStateBeforeChildren(stateNode);
-    
+    if (!ScrollingTreeFrameScrollingNode::commitStateBeforeChildren(stateNode))
+        return false;
+
+    if (!is<ScrollingStateFrameScrollingNode>(stateNode))
+        return false;
+
     const auto& scrollingStateNode = downcast<ScrollingStateFrameScrollingNode>(stateNode);
 
     if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::CounterScrollingLayer))
@@ -84,16 +88,21 @@ void ScrollingTreeFrameScrollingNodeRemoteIOS::commitStateBeforeChildren(const S
     }
 
     if (m_delegate)
-        delegate()->commitStateBeforeChildren(downcast<ScrollingStateScrollingNode>(stateNode));
+        delegate()->commitStateBeforeChildren(scrollingStateNode);
+
+    return true;
 }
 
-void ScrollingTreeFrameScrollingNodeRemoteIOS::commitStateAfterChildren(const ScrollingStateNode& stateNode)
+bool ScrollingTreeFrameScrollingNodeRemoteIOS::commitStateAfterChildren(const ScrollingStateNode& stateNode)
 {
-    const auto& scrollingStateNode = downcast<ScrollingStateFrameScrollingNode>(stateNode);
-    if (m_delegate)
-        delegate()->commitStateAfterChildren(scrollingStateNode);
+    if (m_delegate) {
+        if (!is<ScrollingStateFrameScrollingNode>(stateNode))
+            return false;
 
-    ScrollingTreeFrameScrollingNode::commitStateAfterChildren(stateNode);
+        delegate()->commitStateAfterChildren(downcast<ScrollingStateFrameScrollingNode>(stateNode));
+    }
+
+    return ScrollingTreeFrameScrollingNode::commitStateAfterChildren(stateNode);
 }
 
 FloatPoint ScrollingTreeFrameScrollingNodeRemoteIOS::minimumScrollPosition() const
