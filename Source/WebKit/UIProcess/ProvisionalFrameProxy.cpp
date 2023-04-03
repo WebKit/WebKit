@@ -37,6 +37,7 @@
 #include "WebFrameProxy.h"
 #include "WebFrameProxyMessages.h"
 #include "WebPageMessages.h"
+#include "WebPageProxy.h"
 #include "WebPageProxyMessages.h"
 #include "WebProcessMessages.h"
 #include "WebProcessProxy.h"

@@ -80,6 +80,7 @@
 #include <WebCore/PlatformMediaSessionManager.h>
 #include <WebCore/PrewarmInformation.h>
 #include <WebCore/PublicSuffix.h>
+#include <WebCore/RealtimeMediaSourceCenter.h>
 #include <WebCore/SecurityOriginData.h>
 #include <WebCore/SuddenTermination.h>
 #include <pal/system/Sound.h>

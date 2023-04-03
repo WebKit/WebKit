@@ -29,6 +29,7 @@
 #if ENABLE(INPUT_TYPE_COLOR)
 
 #include "WebPageProxy.h"
+#include <WebCore/Color.h>
 #include <WebCore/GtkUtilities.h>
 #include <WebCore/GtkVersioning.h>
 #include <glib/gi18n-lib.h>
