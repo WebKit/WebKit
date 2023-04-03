@@ -33,6 +33,7 @@
 #include <WebCore/DMABufFormat.h>
 #include <WebCore/GBMDevice.h>
 #include <WebCore/PlatformDisplay.h>
+#include <array>
 #include <epoxy/egl.h>
 #include <gbm.h>
 #include <wtf/SafeStrerror.h>
@@ -55,13 +56,6 @@ AcceleratedSurfaceDMABuf::~AcceleratedSurfaceDMABuf()
 
 void AcceleratedSurfaceDMABuf::didCreateGLContext()
 {
-    glGenTextures(1, &m_texture);
-    glBindTexture(GL_TEXTURE_2D, m_texture);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
     glGenFramebuffers(1, &m_fbo);
     glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
 
@@ -71,20 +65,18 @@ void AcceleratedSurfaceDMABuf::didCreateGLContext()
 void AcceleratedSurfaceDMABuf::willDestroyGLContext()
 {
     auto& display = WebCore::PlatformDisplay::sharedDisplayForCompositing();
-    if (m_backImage) {
-        display.destroyEGLImage(m_backImage);
-        m_backImage = nullptr;
-    }
 
-    if (m_frontImage) {
-        display.destroyEGLImage(m_frontImage);
-        m_frontImage = nullptr;
-    }
+    if (m_back.image)
+        display.destroyEGLImage(m_back.image);
+    if (m_back.colorBuffer)
+        glDeleteRenderbuffers(1, &m_back.colorBuffer);
+    m_back = { };
 
-    if (m_texture) {
-        glDeleteTextures(1, &m_texture);
-        m_texture = 0;
-    }
+    if (m_front.image)
+        display.destroyEGLImage(m_front.image);
+    if (m_front.colorBuffer)
+        glDeleteRenderbuffers(1, &m_front.colorBuffer);
+    m_front = { };
 
     if (m_depthStencilBuffer) {
         glDeleteRenderbuffers(1, &m_depthStencilBuffer);
@@ -105,15 +97,18 @@ uint64_t AcceleratedSurfaceDMABuf::surfaceID() const
 void AcceleratedSurfaceDMABuf::clientResize(const WebCore::IntSize& size)
 {
     auto& display = WebCore::PlatformDisplay::sharedDisplayForCompositing();
-    if (m_backImage) {
-        display.destroyEGLImage(m_backImage);
-        m_backImage = nullptr;
-    }
 
-    if (m_frontImage) {
-        display.destroyEGLImage(m_frontImage);
-        m_frontImage = nullptr;
-    }
+    if (m_back.image)
+        display.destroyEGLImage(m_back.image);
+    if (m_back.colorBuffer)
+        glDeleteRenderbuffers(1, &m_back.colorBuffer);
+    m_back = { };
+
+    if (m_front.image)
+        display.destroyEGLImage(m_front.image);
+    if (m_front.colorBuffer)
+        glDeleteRenderbuffers(1, &m_front.colorBuffer);
+    m_front = { };
 
     if (m_depthStencilBuffer) {
         glDeleteRenderbuffers(1, &m_depthStencilBuffer);
@@ -138,8 +133,8 @@ void AcceleratedSurfaceDMABuf::clientResize(const WebCore::IntSize& size)
         EGL_DMA_BUF_PLANE0_PITCH_EXT, static_cast<EGLAttrib>(gbm_bo_get_stride(backObject)),
         EGL_NONE
     };
-    m_backImage = display.createEGLImage(EGL_NO_CONTEXT, EGL_LINUX_DMA_BUF_EXT, nullptr, attributes);
-    if (!m_backImage) {
+    m_back.image = display.createEGLImage(EGL_NO_CONTEXT, EGL_LINUX_DMA_BUF_EXT, nullptr, attributes);
+    if (!m_back.image) {
         WTFLogAlways("Failed to create EGL image for DMABuf with file descriptor: %d", backFD.value());
         gbm_bo_destroy(backObject);
         return;
@@ -147,24 +142,35 @@ void AcceleratedSurfaceDMABuf::clientResize(const WebCore::IntSize& size)
     auto* frontObject = gbm_bo_create(WebCore::GBMDevice::singleton().device(), size.width(), size.height(), uint32_t(WebCore::DMABufFormat::FourCC::ARGB8888), 0);
     if (!frontObject) {
         WTFLogAlways("Failed to create GBM buffer of size %dx%d: %s", size.width(), size.height(), safeStrerror(errno).data());
-        display.destroyEGLImage(m_backImage);
-        m_backImage = nullptr;
+        display.destroyEGLImage(m_back.image);
+        m_back.image = nullptr;
         gbm_bo_destroy(backObject);
         return;
     }
     UnixFileDescriptor frontFD(gbm_bo_get_fd(frontObject), UnixFileDescriptor::Adopt);
     attributes[7] = frontFD.value();
-    m_frontImage = display.createEGLImage(EGL_NO_CONTEXT, EGL_LINUX_DMA_BUF_EXT, nullptr, attributes);
-    if (!m_frontImage) {
+    m_front.image = display.createEGLImage(EGL_NO_CONTEXT, EGL_LINUX_DMA_BUF_EXT, nullptr, attributes);
+    if (!m_front.image) {
         WTFLogAlways("Failed to create EGL image for DMABuf with file descriptor: %d", frontFD.value());
         gbm_bo_destroy(frontObject);
-        display.destroyEGLImage(m_backImage);
-        m_backImage = nullptr;
+        display.destroyEGLImage(m_back.image);
+        m_back.image = nullptr;
         gbm_bo_destroy(backObject);
         return;
     }
 
-    glGenRenderbuffers(1, &m_depthStencilBuffer);
+    std::array<unsigned, 3> renderbuffers;
+    glGenRenderbuffers(3, renderbuffers.data());
+
+    m_back.colorBuffer = renderbuffers[0];
+    glBindRenderbuffer(GL_RENDERBUFFER, m_back.colorBuffer);
+    glEGLImageTargetRenderbufferStorageOES(GL_RENDERBUFFER, m_back.image);
+
+    m_front.colorBuffer = renderbuffers[1];
+    glBindRenderbuffer(GL_RENDERBUFFER, m_front.colorBuffer);
+    glEGLImageTargetRenderbufferStorageOES(GL_RENDERBUFFER, m_front.image);
+
+    m_depthStencilBuffer = renderbuffers[2];
     glBindRenderbuffer(GL_RENDERBUFFER, m_depthStencilBuffer);
     glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8_OES, size.width(), size.height());
 
@@ -175,20 +181,21 @@ void AcceleratedSurfaceDMABuf::clientResize(const WebCore::IntSize& size)
 
 void AcceleratedSurfaceDMABuf::willRenderFrame()
 {
-    if (!m_backImage)
+    if (!m_back.image)
         return;
 
-    glBindTexture(GL_TEXTURE_2D, m_texture);
-    glEGLImageTargetTexture2DOES(GL_TEXTURE_2D, m_backImage);
     glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_texture, 0);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, m_back.colorBuffer);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_depthStencilBuffer);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_depthStencilBuffer);
+
+    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+        WTFLogAlways("AcceleratedSurfaceDMABuf was unable to construct a complete framebuffer");
 }
 
 void AcceleratedSurfaceDMABuf::didRenderFrame()
 {
-    if (!m_backImage)
+    if (!m_back.image)
         return;
 
     glFlush();
@@ -197,7 +204,7 @@ void AcceleratedSurfaceDMABuf::didRenderFrame()
         runLoop->dispatch([this, weakThis = WTFMove(weakThis)] {
             if (!weakThis)
                 return;
-            std::swap(m_backImage, m_frontImage);
+            std::swap(m_back, m_front);
             m_client.frameComplete();
         });
     }, m_webPage.identifier());

@@ -61,11 +61,13 @@ public:
 private:
     AcceleratedSurfaceDMABuf(WebPage&, Client&);
 
-    unsigned m_texture { 0 };
     unsigned m_fbo { 0 };
     unsigned m_depthStencilBuffer { 0 };
-    EGLImage m_backImage { nullptr };
-    EGLImage m_frontImage { nullptr };
+
+    struct {
+        EGLImage image { nullptr };
+        unsigned colorBuffer { 0 };
+    } m_back, m_front;
 };
 
 } // namespace WebKit
