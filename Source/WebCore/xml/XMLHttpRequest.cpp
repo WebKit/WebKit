@@ -60,6 +60,7 @@
 #include <JavaScriptCore/ArrayBufferView.h>
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/JSLock.h>
+#include <pal/text/TextCodecUTF8.h>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/RefCountedLeakCounter.h>
 #include <wtf/StdLibExtras.h>
@@ -483,7 +484,7 @@ ExceptionOr<void> XMLHttpRequest::send(Document& document)
         // https://xhr.spec.whatwg.org/#dom-xmlhttprequest-send Step 4.2.
         auto serialized = serializeFragment(document, SerializedNodes::SubtreeIncludingNode);
         auto converted = replaceUnpairedSurrogatesWithReplacementCharacter(WTFMove(serialized));
-        auto encoded = PAL::UTF8Encoding().encode(WTFMove(converted), PAL::UnencodableHandling::Entities);
+        auto encoded = PAL::TextCodecUTF8::encodeUTF8(WTFMove(converted));
         m_requestEntityBody = FormData::create(WTFMove(encoded));
         if (m_upload)
             m_requestEntityBody->setAlwaysStream(true);
@@ -506,7 +507,7 @@ ExceptionOr<void> XMLHttpRequest::send(const String& body)
             m_requestHeaders.set(HTTPHeaderName::ContentType, contentType);
         }
 
-        m_requestEntityBody = FormData::create(PAL::UTF8Encoding().encode(body, PAL::UnencodableHandling::Entities));
+        m_requestEntityBody = FormData::create(PAL::TextCodecUTF8::encodeUTF8(body));
         if (m_upload)
             m_requestEntityBody->setAlwaysStream(true);
     }

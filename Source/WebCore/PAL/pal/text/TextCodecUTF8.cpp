@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
@@ -458,7 +458,7 @@ upConvertTo16Bit:
     return String::adopt(WTFMove(buffer16));
 }
 
-Vector<uint8_t> TextCodecUTF8::encodeUTF8(StringView string, UnencodableHandling)
+Vector<uint8_t> TextCodecUTF8::encodeUTF8(StringView string)
 {
     // The maximum number of UTF-8 bytes needed per UTF-16 code unit is 3.
     // BMP characters take only one UTF-16 code unit and can take up to 3 bytes (3x).
@@ -471,9 +471,9 @@ Vector<uint8_t> TextCodecUTF8::encodeUTF8(StringView string, UnencodableHandling
     return bytes;
 }
 
-Vector<uint8_t> TextCodecUTF8::encode(StringView string, UnencodableHandling unencodableHandling) const
+Vector<uint8_t> TextCodecUTF8::encode(StringView string, UnencodableHandling) const
 {
-    return encodeUTF8(string, unencodableHandling);
+    return encodeUTF8(string);
 }
 
 } // namespace PAL
