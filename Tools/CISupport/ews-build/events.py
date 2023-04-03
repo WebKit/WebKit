@@ -39,8 +39,9 @@ from twisted.internet.defer import succeed
 from twisted.python import log
 
 from twisted_additions import TwistedAdditions
+from utils import load_password
 
-custom_suffix = '-uat' if os.getenv('BUILDBOT_UAT') else ''
+custom_suffix = '-uat' if load_password('BUILDBOT_UAT') else ''
 
 
 class Events(service.BuildbotService):
@@ -185,7 +186,7 @@ class Events(service.BuildbotService):
         builder = yield self.master.db.builders.getBuilder(build.get('builderid'))
         build['description'] = builder.get('description', '?')
 
-        if self.extractProperty(build, 'github.number'):
+        if self.extractProperty(build, 'github.number') and ('uat' not in custom_suffix):
             self.buildFinishedGitHub(build)
 
         data = {
