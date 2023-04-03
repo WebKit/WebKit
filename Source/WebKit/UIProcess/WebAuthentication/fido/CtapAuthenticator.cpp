@@ -92,8 +92,6 @@ CtapAuthenticator::CtapAuthenticator(std::unique_ptr<CtapDriver>&& driver, Authe
 void CtapAuthenticator::makeCredential()
 {
     ASSERT(!m_isDowngraded);
-    if (processGoogleLegacyAppIdSupportExtension())
-        return;
     Vector<uint8_t> cborCmd;
     auto& options = std::get<PublicKeyCredentialCreationOptions>(requestData().options);
     auto internalUVAvailability = m_info.options().userVerificationAvailability();
@@ -390,20 +388,6 @@ bool CtapAuthenticator::tryDowngrade()
     driver().setProtocol(ProtocolVersion::kU2f);
     observer()->downgrade(this, U2fAuthenticator::create(releaseDriver()));
     return true;
-}
-
-// Only U2F protocol is supported for Google legacy AppID support.
-bool CtapAuthenticator::processGoogleLegacyAppIdSupportExtension()
-{
-    auto& extensions = std::get<PublicKeyCredentialCreationOptions>(requestData().options).extensions;
-    if (!extensions) {
-        // AuthenticatorCoordinator::create should always set it.
-        ASSERT_NOT_REACHED();
-        return false;
-    }
-    if (extensions->googleLegacyAppidSupport)
-        tryDowngrade();
-    return extensions->googleLegacyAppidSupport;
 }
 
 Vector<AuthenticatorTransport> CtapAuthenticator::transports() const

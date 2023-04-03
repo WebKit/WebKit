@@ -44,9 +44,6 @@ std::optional<AuthenticationExtensionsClientInputs> AuthenticationExtensionsClie
     auto it = decodedMap.find(cbor::CBORValue("appid"));
     if (it != decodedMap.end() && it->second.isString())
         clientInputs.appid = it->second.getString();
-    it = decodedMap.find(cbor::CBORValue("googleLegacyAppidSupport"));
-    if (it != decodedMap.end() && it->second.isBool())
-        clientInputs.googleLegacyAppidSupport = it->second.getBool();
     it = decodedMap.find(cbor::CBORValue("credProps"));
     if (it != decodedMap.end() && it->second.isBool())
         clientInputs.credProps = it->second.getBool();
@@ -80,8 +77,6 @@ Vector<uint8_t> AuthenticationExtensionsClientInputs::toCBOR() const
     cbor::CBORValue::MapValue clientInputsMap;
     if (!appid.isEmpty())
         clientInputsMap[cbor::CBORValue("appid")] = cbor::CBORValue(appid);
-    if (googleLegacyAppidSupport)
-        clientInputsMap[cbor::CBORValue("googleLegacyAppidSupport")] = cbor::CBORValue(googleLegacyAppidSupport);
     if (credProps)
         clientInputsMap[cbor::CBORValue("credProps")] = cbor::CBORValue(credProps);
     if (largeBlob) {

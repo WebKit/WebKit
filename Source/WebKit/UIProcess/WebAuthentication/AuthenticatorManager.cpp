@@ -152,19 +152,6 @@ static AuthenticatorManager::TransportSet collectTransports(const Vector<PublicK
     return result;
 }
 
-// Only roaming authenticators are supported for Google legacy AppID support.
-static void processGoogleLegacyAppIdSupportExtension(const std::optional<AuthenticationExtensionsClientInputs>& extensions, AuthenticatorManager::TransportSet& transports)
-{
-    if (!extensions) {
-        // AuthenticatorCoordinator::create should always set it.
-        ASSERT_NOT_REACHED();
-        return;
-    }
-    if (!extensions->googleLegacyAppidSupport)
-        return;
-    transports.remove(AuthenticatorTransport::Internal);
-}
-
 static String getRpId(const std::variant<PublicKeyCredentialCreationOptions, PublicKeyCredentialRequestOptions>& options)
 {
     if (std::holds_alternative<PublicKeyCredentialCreationOptions>(options)) {
@@ -544,7 +531,6 @@ auto AuthenticatorManager::getTransports() const -> TransportSet
     TransportSet transports;
     WTF::switchOn(m_pendingRequestData.options, [&](const PublicKeyCredentialCreationOptions& options) {
         transports = collectTransports(options.authenticatorSelection);
-        processGoogleLegacyAppIdSupportExtension(options.extensions, transports);
     }, [&](const PublicKeyCredentialRequestOptions& options) {
         transports = collectTransports(options.allowCredentials, options.authenticatorAttachment);
     });

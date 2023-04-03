@@ -36,7 +36,6 @@
 ] dictionary AuthenticationExtensionsClientInputs {
     USVString appid;
     // For Google to turn off the legacy AppID support.
-    boolean googleLegacyAppidSupport = true;
     boolean credProps;
     AuthenticationExtensionsLargeBlobInputs largeBlob;
 };

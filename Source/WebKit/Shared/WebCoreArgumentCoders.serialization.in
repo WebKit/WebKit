@@ -988,7 +988,6 @@ struct WebCore::WebLockManagerSnapshot {
 
 [LegacyPopulateFromEmptyConstructor] struct WebCore::AuthenticationExtensionsClientInputs {
     String appid;
-    bool googleLegacyAppidSupport;
     std::optional<WebCore::AuthenticationExtensionsClientInputs::LargeBlobInputs> largeBlob;
 }
 

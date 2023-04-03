@@ -85,16 +85,6 @@ static String processAppIdExtension(const SecurityOrigin& facetId, const String&
     return appId;
 }
 
-// The default behaviour for google.com is to always turn on the legacy AppID support.
-static bool processGoogleLegacyAppIdSupportExtension(const std::optional<AuthenticationExtensionsClientInputs>& extensions, const String& rpId)
-{
-    if (rpId != "google.com"_s)
-        return false;
-    if (!extensions)
-        return true;
-    return extensions->googleLegacyAppidSupport;
-}
-
 } // namespace AuthenticatorCoordinatorInternal
 
 AuthenticatorCoordinator::AuthenticatorCoordinator(std::unique_ptr<AuthenticatorCoordinatorClient>&& client)
@@ -164,7 +154,6 @@ void AuthenticatorCoordinator::create(const Document& document, const PublicKeyC
 
     AuthenticationExtensionsClientInputs extensionInputs = {
         String(),
-        processGoogleLegacyAppIdSupportExtension(options.extensions, *options.rp.id),
         false,
         std::nullopt
     };
