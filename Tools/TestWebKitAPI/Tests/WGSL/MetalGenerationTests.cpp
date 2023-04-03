@@ -34,14 +34,13 @@
 
 namespace TestWGSLAPI {
 
-inline Expected<String, WGSL::Error> translate(const String& wgsl, const String& entryPointName)
+inline Expected<String, WGSL::FailedCheck> translate(const String& wgsl, const String& entryPointName)
 {
-    WGSL::ShaderModule shaderModule(wgsl, { 8 });
-    auto maybeError = WGSL::parse(shaderModule);
-    if (maybeError.has_value())
+    auto result = WGSL::staticCheck(wgsl, std::nullopt, { 8 });
+    if (auto* maybeError = std::get_if<WGSL::FailedCheck>(&result))
         return makeUnexpected(*maybeError);
 
-    auto preparedResults = WGSL::prepare(shaderModule, entryPointName, { });
+    auto preparedResults = WGSL::prepare(std::get<WGSL::SuccessfulCheck>(result).ast, entryPointName, { });
 
     return { WTFMove(preparedResults.msl) };
 }

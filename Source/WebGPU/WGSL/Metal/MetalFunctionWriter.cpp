@@ -31,6 +31,7 @@
 #include "ASTStringDumper.h"
 #include "ASTVisitor.h"
 #include "CallGraph.h"
+#include "Types.h"
 #include "WGSLShaderModule.h"
 
 #include <wtf/SortedArrayMap.h>
@@ -83,10 +84,7 @@ public:
     void visit(AST::AssignmentStatement&) override;
     void visit(AST::ReturnStatement&) override;
 
-    void visit(AST::ArrayTypeName&) override;
-    void visit(AST::NamedTypeName&) override;
-    void visit(AST::ParameterizedTypeName&) override;
-    void visit(AST::ReferenceTypeName&) override;
+    void visit(AST::TypeName&) override;
 
     void visit(AST::Parameter&) override;
     void visitArgumentBufferParameter(AST::Parameter&);
@@ -94,6 +92,8 @@ public:
     StringBuilder& stringBuilder() { return m_stringBuilder; }
 
 private:
+    void visit(const Type*);
+
     StringBuilder& m_stringBuilder;
     CallGraph& m_callGraph;
     Indentation<4> m_indent { 0 };
@@ -178,16 +178,20 @@ void FunctionDefinitionWriter::visit(AST::Structure& structDecl)
     m_structRole = std::nullopt;
 }
 
-void FunctionDefinitionWriter::visit(AST::Variable& variableDecl)
+void FunctionDefinitionWriter::visit(AST::Variable& variable)
 {
-    ASSERT(variableDecl.maybeTypeName());
-
     m_stringBuilder.append(m_indent);
-    visit(*variableDecl.maybeTypeName());
-    m_stringBuilder.append(" ", variableDecl.name());
-    if (variableDecl.maybeInitializer()) {
+    if (variable.maybeTypeName())
+        visit(*variable.maybeTypeName());
+    else {
+        ASSERT(variable.maybeInitializer());
+        const Type* inferredType = variable.maybeInitializer()->inferredType();
+        visit(inferredType);
+    }
+    m_stringBuilder.append(" ", variable.name());
+    if (variable.maybeInitializer()) {
         m_stringBuilder.append(" = ");
-        visit(*variableDecl.maybeInitializer());
+        visit(*variable.maybeInitializer());
     }
     m_stringBuilder.append(";\n");
 }
@@ -278,139 +282,125 @@ void FunctionDefinitionWriter::visit(AST::LocationAttribute& location)
     m_stringBuilder.append("[[attribute(", location.location(), ")]]");
 }
 
-void FunctionDefinitionWriter::visit(AST::ArrayTypeName& type)
+// Types
+void FunctionDefinitionWriter::visit(AST::TypeName& type)
 {
-    ASSERT(type.maybeElementType());
-
-    if (!type.maybeElementCount()) {
-        visit(*type.maybeElementType());
-        m_suffix = { "[1]"_s };
+    // FIXME:Remove this when the type checker is aware of reference types
+    if (is<AST::ReferenceTypeName>(type)) {
+        // FIXME: We can't assume this will always be device. The ReferenceType should
+        // have knowledge about the memory region
+        m_stringBuilder.append("device ");
+        visit(downcast<AST::ReferenceTypeName>(type).type());
+        m_stringBuilder.append("&");
         return;
     }
 
-    m_stringBuilder.append("array<");
-    visit(*type.maybeElementType());
-    m_stringBuilder.append(", ");
-    visit(*type.maybeElementCount());
-    m_stringBuilder.append(">");
+    visit(type.resolvedType());
 }
 
-void FunctionDefinitionWriter::visit(AST::NamedTypeName& type)
+void FunctionDefinitionWriter::visit(const Type* type)
 {
-    if (type.name() == "i32"_s)
-        m_stringBuilder.append("int");
-    else if (type.name() == "f32"_s)
-        m_stringBuilder.append("float");
-    else if (type.name() == "u32"_s)
-        m_stringBuilder.append("unsigned");
-    else
-        m_stringBuilder.append(type.name());
-}
+    using namespace WGSL::Types;
+    WTF::switchOn(*type,
+        [&](const Primitive& primitive) {
+            switch (primitive.kind) {
+            case Types::Primitive::AbstractInt:
+            case Types::Primitive::I32:
+                m_stringBuilder.append("int");
+                break;
+            case Types::Primitive::U32:
+                m_stringBuilder.append("unsigned");
+                break;
+            case Types::Primitive::AbstractFloat:
+            case Types::Primitive::F32:
+                m_stringBuilder.append("float");
+                break;
+            case Types::Primitive::Void:
+            case Types::Primitive::Bool:
+            case Types::Primitive::Sampler:
+                m_stringBuilder.append(*type);
+                break;
+            }
+        },
+        [&](const Vector& vector) {
+            m_stringBuilder.append("vec<");
+            visit(vector.element);
+            m_stringBuilder.append(", ", vector.size, ">");
+        },
+        [&](const Matrix& matrix) {
+            m_stringBuilder.append("matrix<");
+            visit(matrix.element);
+            m_stringBuilder.append(", ", matrix.columns, ", ", matrix.rows, ">");
+        },
+        [&](const Array& array) {
+            ASSERT(array.element);
+            if (!array.size.has_value()) {
+                visit(array.element);
+                m_suffix = { "[1]"_s };
+                return;
+            }
 
-void FunctionDefinitionWriter::visit(AST::ParameterizedTypeName& type)
-{
-    const auto& vec = [&](size_t size) {
-        m_stringBuilder.append("vec<");
-        visit(type.elementType());
-        m_stringBuilder.append(", ", size, ">");
-    };
+            m_stringBuilder.append("array<");
+            visit(array.element);
+            m_stringBuilder.append(", ", *array.size, ">");
+        },
+        [&](const Struct& structure) {
+            m_stringBuilder.append(structure.structure.name());
+        },
+        [&](const Function&) {
+            // FIXME: implement this
+            RELEASE_ASSERT_NOT_REACHED();
+        },
+        [&](const Bottom&) {
+            RELEASE_ASSERT_NOT_REACHED();
+        },
+        [&](const Texture& texture) {
+            const char* type;
+            const char* mode = "sample";
+            switch (texture.kind) {
+            case Types::Texture::Kind::Texture1d:
+                type = "texture1d";
+                break;
+            case Types::Texture::Kind::Texture2d:
+                type = "texture2d";
+                break;
+            case Types::Texture::Kind::Texture2dArray:
+                type = "texture2d_array";
+                break;
+            case Types::Texture::Kind::Texture3d:
+                type = "texture3d";
+                break;
+            case Types::Texture::Kind::TextureCube:
+                type = "texturecube";
+                break;
+            case Types::Texture::Kind::TextureCubeArray:
+                type = "texturecube_array";
+                break;
+            case Types::Texture::Kind::TextureMultisampled2d:
+                type = "texture2d_ms";
+                break;
 
-    const auto& matrix = [&](size_t rows, size_t columns) {
-        m_stringBuilder.append("matrix<");
-        visit(type.elementType());
-        m_stringBuilder.append(", ", columns, ", ", rows, ">");
-    };
-
-    const auto& texture = [&](const char* name, const char* mode = "sample") {
-        m_stringBuilder.append(name, "<");
-        visit(type.elementType());
-        m_stringBuilder.append(", access::", mode, ">");
-    };
-
-    switch (type.base()) {
-    case AST::ParameterizedTypeName::Base::Vec2:
-        vec(2);
-        break;
-    case AST::ParameterizedTypeName::Base::Vec3:
-        vec(3);
-        break;
-    case AST::ParameterizedTypeName::Base::Vec4:
-        vec(4);
-        break;
-
-    // FIXME: Implement the following types
-    case AST::ParameterizedTypeName::Base::Mat2x2:
-        matrix(2, 2);
-        break;
-    case AST::ParameterizedTypeName::Base::Mat2x3:
-        matrix(2, 3);
-        break;
-    case AST::ParameterizedTypeName::Base::Mat2x4:
-        matrix(2, 4);
-        break;
-    case AST::ParameterizedTypeName::Base::Mat3x2:
-        matrix(3, 2);
-        break;
-    case AST::ParameterizedTypeName::Base::Mat3x3:
-        matrix(3, 3);
-        break;
-    case AST::ParameterizedTypeName::Base::Mat3x4:
-        matrix(3, 4);
-        break;
-    case AST::ParameterizedTypeName::Base::Mat4x2:
-        matrix(4, 2);
-        break;
-    case AST::ParameterizedTypeName::Base::Mat4x3:
-        matrix(4, 3);
-        break;
-    case AST::ParameterizedTypeName::Base::Mat4x4:
-        matrix(4, 4);
-        break;
-
-    case AST::ParameterizedTypeName::Base::Texture1d:
-        texture("texture1d");
-        break;
-    case AST::ParameterizedTypeName::Base::Texture2d:
-        texture("texture2d");
-        break;
-    case AST::ParameterizedTypeName::Base::Texture2dArray:
-        texture("texture2d_array");
-        break;
-    case AST::ParameterizedTypeName::Base::Texture3d:
-        texture("texture3d");
-        break;
-    case AST::ParameterizedTypeName::Base::TextureCube:
-        texture("texturecube");
-        break;
-    case AST::ParameterizedTypeName::Base::TextureCubeArray:
-        texture("texturecube_array");
-        break;
-    case AST::ParameterizedTypeName::Base::TextureMultisampled2d:
-        texture("texture2d_ms");
-        break;
-
-    case AST::ParameterizedTypeName::Base::TextureStorage1d:
-        texture("texture1d", "write");
-        break;
-    case AST::ParameterizedTypeName::Base::TextureStorage2d:
-        texture("texture2d", "write");
-        break;
-    case AST::ParameterizedTypeName::Base::TextureStorage2dArray:
-        texture("texture2d_aray", "write");
-        break;
-    case AST::ParameterizedTypeName::Base::TextureStorage3d:
-        texture("texture3d", "write");
-        break;
-    }
-}
-
-void FunctionDefinitionWriter::visit(AST::ReferenceTypeName& type)
-{
-    // FIXME: We can't assume this will always be device. The ReferenceType should
-    // have knowledge about the memory region
-    m_stringBuilder.append("device ");
-    visit(type.type());
-    m_stringBuilder.append("&");
+            case Types::Texture::Kind::TextureStorage1d:
+                type = "texture1d";
+                mode = "write";
+                break;
+            case Types::Texture::Kind::TextureStorage2d:
+                type = "texture2d";
+                mode = "write";
+                break;
+            case Types::Texture::Kind::TextureStorage2dArray:
+                type = "texture2d_aray";
+                mode = "write";
+                break;
+            case Types::Texture::Kind::TextureStorage3d:
+                type = "texture3d";
+                mode = "write";
+                break;
+            }
+            m_stringBuilder.append(type, "<");
+            visit(texture.element);
+            m_stringBuilder.append(", access::", mode, ">");
+        });
 }
 
 void FunctionDefinitionWriter::visit(AST::Parameter& parameter)
@@ -469,12 +459,6 @@ void FunctionDefinitionWriter::visit(AST::CallExpression& call)
     }
 
     if (is<AST::NamedTypeName>(call.target())) {
-#define ALIAS(alias) \
-    [](FunctionDefinitionWriter* writer, AST::CallExpression& call) { \
-        writer->stringBuilder().append(alias); \
-        visitArguments(writer, call, 1); \
-    }
-
         static constexpr std::pair<ComparableASCIILiteral, void(*)(FunctionDefinitionWriter*, AST::CallExpression&)> builtinMappings[] {
             { "textureSample", [](FunctionDefinitionWriter* writer, AST::CallExpression& call) {
                 ASSERT(call.arguments().size() > 1);
@@ -482,11 +466,7 @@ void FunctionDefinitionWriter::visit(AST::CallExpression& call)
                 writer->stringBuilder().append(".sample");
                 visitArguments(writer, call, 1);
             } },
-            { "vec2", ALIAS("float2") },
-            { "vec3", ALIAS("float3") },
-            { "vec4", ALIAS("float4") },
         };
-#undef ALIAS
         static constexpr SortedArrayMap builtins { builtinMappings };
         if (auto mappedBuiltin = builtins.get(downcast<AST::NamedTypeName>(call.target()).name().id())) {
             mappedBuiltin(this, call);

@@ -85,6 +85,7 @@ private:
     PrepareResult& m_result;
     HashMap<String, Global> m_globals;
     IndexMap<IndexMap<Global*>> m_groupBindingMap;
+    IndexMap<Type*> m_structTypes;
     HashSet<String> m_defs;
     HashSet<String> m_reads;
 };
@@ -266,6 +267,7 @@ void RewriteGlobalVariables::insertStructs()
             AST::Attribute::List { },
             AST::StructureRole::BindGroup
         ));
+        m_structTypes.add(groupBinding.key, m_callGraph.ast().types().structType(m_callGraph.ast().structures().last()));
     }
 }
 
@@ -273,10 +275,12 @@ void RewriteGlobalVariables::insertParameters(AST::Function& function, const Ind
 {
     auto span = function.span();
     for (unsigned group : requiredGroups) {
+        auto type = adoptRef(*new AST::NamedTypeName(span, argumentBufferStructName(group)));
+        type->m_resolvedType = m_structTypes.get(group);
         m_callGraph.ast().append(function.parameters(), adoptRef(*new AST::Parameter(
             span,
             argumentBufferParameterName(group),
-            adoptRef(*new AST::NamedTypeName(span, argumentBufferStructName(group))),
+            WTFMove(type),
             AST::Attribute::List {
                 adoptRef(*new AST::GroupAttribute(span, group))
             },

@@ -369,6 +369,7 @@ void TypeChecker::visit(AST::CallExpression& call)
             }
             typeError(call.span(), "no matching overload for initializer ", targetName, typeArgumentsStream.toString(), "(", valueArgumentsStream.toString(), ")");
         }
+        target.m_resolvedType = result;
         return;
     }
 

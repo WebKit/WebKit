@@ -29,6 +29,7 @@
 #include "AST.h"
 #include "ASTVisitor.h"
 #include "CallGraph.h"
+#include "TypeStore.h"
 #include "Types.h"
 #include "WGSL.h"
 #include "WGSLShaderModule.h"
@@ -68,6 +69,7 @@ private:
     Vector<MemberOrParameter> m_builtins;
     Vector<MemberOrParameter> m_parameters;
     AST::Statement::List m_materializations;
+    Type* m_structType;
     String m_structTypeName;
     String m_structParameterName;
     Reflection::EntryPointInformation m_information;
@@ -109,13 +111,16 @@ void EntryPointRewriter::rewrite()
     appendBuiltins();
 
     // add parameter to builtins: ${structName} : ${structType}
-    m_shaderModule.append(m_function.parameters(), adoptRef(*new AST::Parameter(
+    auto type = adoptRef(*new AST::NamedTypeName(SourceSpan::empty(), AST::Identifier::make(m_structTypeName)));
+    type->m_resolvedType = m_structType;
+    auto parameter = adoptRef(*new AST::Parameter(
         SourceSpan::empty(),
         AST::Identifier::make(m_structParameterName),
-        adoptRef(*new AST::NamedTypeName(SourceSpan::empty(), AST::Identifier::make(m_structTypeName))),
+        type,
         AST::Attribute::List { },
         AST::ParameterRole::StageIn
-    )));
+    ));
+    m_shaderModule.append(m_function.parameters(), WTFMove(parameter));
 
     while (m_materializations.size())
         m_shaderModule.insert(m_function.body().statements(), 0, m_materializations.takeLast());
@@ -182,6 +187,7 @@ void EntryPointRewriter::constructInputStruct()
         AST::Attribute::List { },
         role
     ));
+    m_structType = m_shaderModule.types().structType(m_shaderModule.structures().last());
 }
 
 void EntryPointRewriter::materialize(Vector<String>& path, MemberOrParameter& data, IsBuiltin isBuiltin)

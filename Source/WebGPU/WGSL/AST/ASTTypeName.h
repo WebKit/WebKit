@@ -29,6 +29,8 @@
 #include "ASTIdentifier.h"
 
 namespace WGSL {
+class EntryPointRewriter;
+class RewriteGlobalVariables;
 class TypeChecker;
 struct Type;
 
@@ -38,6 +40,8 @@ class Structure;
 class TypeName : public Node, public RefCounted<TypeName> {
     WTF_MAKE_FAST_ALLOCATED;
     friend TypeChecker;
+    friend EntryPointRewriter;
+    friend RewriteGlobalVariables;
 
 public:
     using Ref = WTF::Ref<TypeName>;
