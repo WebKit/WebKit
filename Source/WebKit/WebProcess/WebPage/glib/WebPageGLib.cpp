@@ -28,6 +28,7 @@
 
 #include "EditorState.h"
 #include "InputMethodState.h"
+#include "MessageSenderInlines.h"
 #include "UserMessage.h"
 #include "WebKitUserMessage.h"
 #include "WebKitWebPagePrivate.h"

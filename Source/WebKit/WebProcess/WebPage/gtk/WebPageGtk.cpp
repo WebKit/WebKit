@@ -28,6 +28,7 @@
 #include "config.h"
 #include "WebPage.h"
 
+#include "MessageSenderInlines.h"
 #include "WebFrame.h"
 #include "WebKeyboardEvent.h"
 #include "WebPageProxyMessages.h"

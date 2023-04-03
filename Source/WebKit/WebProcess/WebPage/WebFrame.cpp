@@ -34,6 +34,7 @@
 #include "InjectedBundleNodeHandle.h"
 #include "InjectedBundleRangeHandle.h"
 #include "InjectedBundleScriptWorld.h"
+#include "MessageSenderInlines.h"
 #include "NetworkConnectionToWebProcessMessages.h"
 #include "NetworkProcessConnection.h"
 #include "PluginView.h"
