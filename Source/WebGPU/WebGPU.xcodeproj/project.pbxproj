@@ -141,11 +141,11 @@
 		979240C029753B2A0050EA2C /* PhaseTimer.h in Headers */ = {isa = PBXBuildFile; fileRef = 979240BC29753B2A0050EA2C /* PhaseTimer.h */; };
 		979240C829769AC00050EA2C /* EntryPointRewriter.h in Headers */ = {isa = PBXBuildFile; fileRef = 979240C629769AC00050EA2C /* EntryPointRewriter.h */; };
 		979240C929769AC00050EA2C /* EntryPointRewriter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 979240C729769AC00050EA2C /* EntryPointRewriter.cpp */; };
+		97BCD6AE29D7422B00A82577 /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1CBAB0912718CCA0006080BB /* JavaScriptCore.framework */; };
 		97F547B8298055D90011D79A /* GlobalVariableRewriter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97F547B6298055D90011D79A /* GlobalVariableRewriter.cpp */; };
 		97F547B9298055D90011D79A /* GlobalVariableRewriter.h in Headers */ = {isa = PBXBuildFile; fileRef = 97F547B7298055D90011D79A /* GlobalVariableRewriter.h */; };
 		97FA1A8E29C086230052D650 /* wgslc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97FA1A8729C085A60052D650 /* wgslc.cpp */; };
 		97FA1AA729C0DA890052D650 /* libwgsl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1CEBD7F22716B2CC00A5254D /* libwgsl.a */; };
-		97FA1AAB29C0DC6F0052D650 /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1C023D4A274495B9001DB734 /* JavaScriptCore.framework */; };
 		DD05A35C27BF09C60096EFAB /* libWTF.a in Product Dependencies */ = {isa = PBXBuildFile; fileRef = 1CEBD8292716CAE700A5254D /* libWTF.a */; };
 /* End PBXBuildFile section */
 
@@ -202,7 +202,6 @@
 
 /* Begin PBXFileReference section */
 		0D4D2E80294A89CF0000A1AB /* BindableResource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BindableResource.h; sourceTree = "<group>"; };
-		1C023D4A274495B9001DB734 /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = JavaScriptCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1C0F41EC280940650005886D /* HardwareCapabilities.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = HardwareCapabilities.mm; sourceTree = "<group>"; };
 		1C0F41ED280940650005886D /* HardwareCapabilities.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HardwareCapabilities.h; sourceTree = "<group>"; };
 		1C2CEDED271E8A7300EDC16F /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = System/Library/Frameworks/Metal.framework; sourceTree = SDKROOT; };
@@ -411,7 +410,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				97FA1AAB29C0DC6F0052D650 /* JavaScriptCore.framework in Frameworks */,
+				97BCD6AE29D7422B00A82577 /* JavaScriptCore.framework in Frameworks */,
 				97FA1AA729C0DA890052D650 /* libwgsl.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -574,7 +573,6 @@
 				1CEBD82B2716CAFB00A5254D /* CoreFoundation.framework */,
 				1CEBD82D2716CB1600A5254D /* Foundation.framework */,
 				664C92FC286A66090008D143 /* IOSurface.framework */,
-				1C023D4A274495B9001DB734 /* JavaScriptCore.framework */,
 				1CBAB0912718CCA0006080BB /* JavaScriptCore.framework */,
 				1CEBD8302716CB3800A5254D /* libicucore.tbd */,
 				1CEBD8292716CAE700A5254D /* libWTF.a */,
