@@ -1380,9 +1380,6 @@ public:
     void processWillBecomeSuspended();
     void processWillBecomeForeground();
 #endif
-#if PLATFORM(MACCATALYST)
-    void isUserFacingChanged(bool) final;
-#endif
 
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
     void didCreateContextInWebProcessForVisibilityPropagation(LayerHostingContextID);
