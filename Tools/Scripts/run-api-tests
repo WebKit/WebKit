@@ -146,9 +146,13 @@ def parse_args(args):
                              help='Passes that environment variable to the tests (--additional-env-var=NAME=VALUE)'),
 
         optparse.make_option('--remote-layer-tree', action='store_true', default=False,
-                             help='Use the remote layer tree drawing model (macOS non-WebKitLegacy only)'),
+                             help='Use the remote layer tree drawing model (macOS WebKit2 only)'),
+        optparse.make_option('--no-remote-layer-tree', action='store_true', default=False,
+                             help='Disable the remote layer tree drawing model (macOS WebKit2 only)'),
         optparse.make_option('--use-gpu-process', action='store_true', default=False,
                              help='Enable GPU process DOM rendering'),
+        optparse.make_option('--no-use-gpu-process', action='store_true', default=False,
+                             help='Disable GPU process DOM rendering'),
     ]))
     option_group_definitions.append(('Upload Options', upload_options()))
 
