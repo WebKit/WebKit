@@ -3258,10 +3258,8 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
 {
     auto position = [gestureRecognizer locationInView:self];
 
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
-    if ([self _handleTapOverImageAnalysisInteractionButton:position])
+    if ([self _handleTapOverInteractiveControl:position])
         return;
-#endif
 
     ASSERT(gestureRecognizer == _singleTapGestureRecognizer);
     ASSERT(!_potentialTapInProgress);
@@ -3347,12 +3345,13 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
 {
     ASSERT(gestureRecognizer == _singleTapGestureRecognizer);
 
+    if (!_potentialTapInProgress)
+        return;
+
     if (![self isFirstResponder]) {
         [self startDeferringInputViewUpdates:WebKit::InputViewUpdateDeferralSource::TapGesture];
         [self becomeFirstResponder];
     }
-
-    ASSERT(_potentialTapInProgress);
 
     _lastInteractionLocation = [gestureRecognizer locationInView:self];
 
@@ -4900,30 +4899,26 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
     });
 }
 
-- (BOOL)_handleTapOverImageAnalysisInteractionButton:(CGPoint)position
+#endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+
+- (BOOL)_handleTapOverInteractiveControl:(CGPoint)position
 {
-    if (!_imageAnalysisInteraction)
+    auto *hitButton = dynamic_objc_cast<UIControl>([self hitTest:position withEvent:nil]);
+    if (!hitButton)
         return NO;
 
-    auto *hitButton = dynamic_objc_cast<UIButton>([self hitTest:position withEvent:nil]);
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
     UIButton *analysisButton = [_imageAnalysisInteraction analysisButton];
-    // FIXME: Instead of a class check, this should be a straightforward equality check.
-    // However, rdar://91828384 currently prevents us from doing so. We can simplify this logic
-    // once the fix for that bug has landed.
-    if (analysisButton && hitButton.class == analysisButton.class) {
+    // This has to be a class check instead of a straight equality check because the `analysisButton`
+    // isn't in the view hierarchy, so this is the only way to disambiguate this particular button.
+    if (analysisButton && hitButton.class == analysisButton.class)
         [_imageAnalysisInteraction setHighlightSelectableItems:![_imageAnalysisInteraction highlightSelectableItems]];
-        return YES;
-    }
+#endif
 
-    if ([_imageAnalysisActionButtons containsObject:hitButton]) {
-        [hitButton sendActionsForControlEvents:UIControlEventTouchUpInside];
-        return YES;
-    }
+    [hitButton sendActionsForControlEvents:UIControlEventTouchUpInside];
 
-    return NO;
+    return YES;
 }
-
-#endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 
 static void logTextInteractionAssistantSelectionChange(const char* methodName, UIWKTextInteractionAssistant *textInteractionAssistant, std::optional<UIGestureRecognizerState> gestureState = std::nullopt, std::optional<UIWKGestureType> gestureType = std::nullopt, std::optional<UIWKSelectionTouch> selectionTouch = std::nullopt, std::optional<UIWKSelectionFlags> selectionFlags = std::nullopt)
 {
