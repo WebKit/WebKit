@@ -350,12 +350,16 @@ public:
     void deleteShader(PlatformGLObject) final;
     void deleteTexture(PlatformGLObject) final;
     void simulateEventForTesting(SimulatedEventForTesting) override;
-    void paintRenderingResultsToCanvas(ImageBuffer&) final;
-    RefPtr<PixelBuffer> paintRenderingResultsToPixelBuffer() final;
-    void paintCompositedResultsToCanvas(ImageBuffer&) final;
+    void paintRenderingResultsToCanvas(ImageBuffer&) override;
+    RefPtr<PixelBuffer> paintRenderingResultsToPixelBuffer() override;
+    void paintCompositedResultsToCanvas(ImageBuffer&) override;
 
     RefPtr<PixelBuffer> readRenderingResultsForPainting();
     RefPtr<PixelBuffer> readCompositedResultsForPainting();
+
+    virtual void withDrawingBufferAsNativeImage(std::function<void(NativeImage&)>);
+    virtual void withDisplayBufferAsNativeImage(std::function<void(NativeImage&)>);
+
     // Returns true on success.
     bool readnPixelsWithStatus(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, GCGLSpan<GCGLvoid> data);
 

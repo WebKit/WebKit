@@ -41,6 +41,7 @@
 #import "RuntimeApplicationChecks.h"
 #import <CoreGraphics/CGBitmapContext.h>
 #import <Metal/Metal.h>
+#import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <pal/spi/cocoa/MetalSPI.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/darwin/WeakLinking.h>
@@ -757,6 +758,14 @@ void GraphicsContextGLCocoa::clientWaitSyncWithFlush(void* sync, uint64_t timeou
 }
 #endif
 
+void GraphicsContextGLCocoa::waitUntilWorkScheduled()
+{
+    if (contextAttributes().useMetal)
+        EGL_WaitUntilWorkScheduledANGLE(platformDisplay());
+    else
+        GL_Flush();
+}
+
 void GraphicsContextGLCocoa::prepareForDisplay()
 {
     if (m_layerComposited)
@@ -904,6 +913,83 @@ void GraphicsContextGLCocoa::invalidateKnownTextureContent(GCGLuint texture)
 {
     if (m_cv)
         m_cv->invalidateKnownTextureContent(texture);
+}
+
+void GraphicsContextGLCocoa::withDrawingBufferAsNativeImage(std::function<void(NativeImage&)> func)
+{
+    if (!makeContextCurrent())
+        return;
+
+    if (!m_displayBufferBacking
+        || m_displayBufferBacking->size() != getInternalFramebufferSize())
+        return;
+
+    prepareTexture();
+
+    RetainPtr<CGContextRef> cgContext;
+    RefPtr<NativeImage> drawingImage;
+
+    if (contextAttributes().premultipliedAlpha) {
+        // Use the IOSurface backed image directly
+        waitUntilWorkScheduled();
+
+        cgContext = m_displayBufferBacking->createPlatformContext();
+        if (cgContext)
+            drawingImage = NativeImage::create(m_displayBufferBacking->createImage(cgContext.get()));
+    } else {
+        // Since IOSurface-backed images only support premultiplied alpha, read
+        // the image into a PixelBuffer which can be used to create a CGImage
+        // that does the conversion.
+        //
+        // FIXME: Can the IOSurface be read into a buffer to avoid the read back via GL?
+        auto drawingPixelBuffer = paintRenderingResultsToPixelBuffer();
+        if (!drawingPixelBuffer)
+            return;
+
+        drawingImage = createNativeImageFromPixelBuffer(contextAttributes(), drawingPixelBuffer.releaseNonNull());
+    }
+
+    if (!drawingImage)
+        return;
+
+    CGImageSetCachingFlags(drawingImage->platformImage().get(), kCGImageCachingTransient);
+    func(*drawingImage);
+}
+
+void GraphicsContextGLCocoa::withDisplayBufferAsNativeImage(std::function<void(NativeImage&)> func)
+{
+    auto& displayBuffer = m_swapChain.displayBuffer();
+    if (!displayBuffer.surface || !displayBuffer.handle)
+        return;
+    if (displayBuffer.surface->size() != getInternalFramebufferSize())
+        return;
+
+    RetainPtr<CGContextRef> cgContext;
+    RefPtr<NativeImage> displayImage;
+
+    if (contextAttributes().premultipliedAlpha) {
+        // Use the IOSurface backed image directly
+        cgContext = displayBuffer.surface->createPlatformContext();
+        if (cgContext)
+            displayImage = NativeImage::create(displayBuffer.surface->createImage(cgContext.get()));
+    } else {
+        // Since IOSurface-backed images only support premultiplied alpha, read
+        // the image into a PixelBuffer which can be used to create a CGImage
+        // that does the conversion.
+        //
+        // FIXME: Can the IOSurface be read into a buffer to avoid the read back via GL?
+        auto displayPixelBuffer = readCompositedResults();
+        if (!displayPixelBuffer)
+            return;
+
+        displayImage = createNativeImageFromPixelBuffer(contextAttributes(), displayPixelBuffer.releaseNonNull());
+    }
+
+    if (!displayImage)
+        return;
+
+    CGImageSetCachingFlags(displayImage->platformImage().get(), kCGImageCachingTransient);
+    func(*displayImage);
 }
 
 }

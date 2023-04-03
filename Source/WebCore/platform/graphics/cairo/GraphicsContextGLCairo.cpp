@@ -106,11 +106,9 @@ bool GraphicsContextGLImageExtractor::extractImage(bool premultiplyAlpha, bool i
     return true;
 }
 
-void GraphicsContextGL::paintToCanvas(const GraphicsContextGLAttributes& sourceContextAttributes, Ref<PixelBuffer>&& pixelBuffer, const IntSize& canvasSize, GraphicsContext& context)
+RefPtr<NativeImage> GraphicsContextGL::createNativeImageFromPixelBuffer(const GraphicsContextGLAttributes& sourceContextAttributes, Ref<PixelBuffer>&& pixelBuffer)
 {
     ASSERT(!pixelBuffer->size().isEmpty());
-    if (canvasSize.isEmpty())
-        return;
 
     // Convert RGBA to BGRA. BGRA is CAIRO_FORMAT_ARGB32 on little-endian architectures.
     size_t totalBytes = pixelBuffer->sizeInBytes();
@@ -127,17 +125,10 @@ void GraphicsContextGL::paintToCanvas(const GraphicsContextGLAttributes& sourceC
     }
 
     auto imageSize = pixelBuffer->size();
-
     RefPtr<cairo_surface_t> imageSurface = adoptRef(cairo_image_surface_create_for_data(
         pixelBuffer->bytes(), CAIRO_FORMAT_ARGB32, imageSize.width(), imageSize.height(), imageSize.width() * 4));
 
-    auto image = NativeImage::create(WTFMove(imageSurface));
-
-    GraphicsContextStateSaver stateSaver(context);
-    context.scale(FloatSize(1, -1));
-    context.translate(0, -imageSize.height());
-    context.setImageInterpolationQuality(InterpolationQuality::DoNotInterpolate);
-    context.drawNativeImage(*image, imageSize, FloatRect({ }, canvasSize), FloatRect({ }, imageSize), { CompositeOperator::Copy });
+    return NativeImage::create(WTFMove(imageSurface));
 }
 
 } // namespace WebCore

@@ -685,6 +685,35 @@ void GraphicsContextGL::markLayerComposited()
         m_client->didComposite();
 }
 
+void GraphicsContextGL::paintToCanvas(NativeImage& image, const IntSize& canvasSize, GraphicsContext& context)
+{
+    if (canvasSize.isEmpty())
+        return;
+
+    auto imageSize = image.size();
+
+    // CSS styling may cause the canvas's content to be resized on
+    // the page. Go back to the Canvas to figure out the correct
+    // width and height to draw.
+    FloatRect canvasRect(FloatPoint(), canvasSize);
+    // We want to completely overwrite the previous frame's
+    // rendering results.
+
+    GraphicsContextStateSaver stateSaver(context);
+    context.scale(FloatSize(1, -1));
+    context.translate(0, -imageSize.height());
+    context.setImageInterpolationQuality(InterpolationQuality::DoNotInterpolate);
+    context.drawNativeImage(image, imageSize, canvasRect, FloatRect(FloatPoint(), imageSize), { CompositeOperator::Copy });
+}
+
+void GraphicsContextGL::paintToCanvas(const GraphicsContextGLAttributes& sourceContextAttributes, Ref<PixelBuffer>&& pixelBuffer, const IntSize& canvasSize, GraphicsContext& context)
+{
+    if (canvasSize.isEmpty())
+        return;
+
+    auto image = createNativeImageFromPixelBuffer(sourceContextAttributes, WTFMove(pixelBuffer));
+    paintToCanvas(*image, canvasSize, context);
+}
 
 void GraphicsContextGL::forceContextLost()
 {

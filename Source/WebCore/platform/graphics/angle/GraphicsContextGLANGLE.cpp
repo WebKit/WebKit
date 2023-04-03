@@ -564,8 +564,6 @@ void GraphicsContextGLANGLE::validateDepthStencil(ASCIILiteral packedDepthStenci
 
 void GraphicsContextGLANGLE::prepareTexture()
 {
-    ASSERT(!m_layerComposited);
-
     if (contextAttributes().antialias)
         resolveMultisamplingIfNecessary();
 
@@ -3184,6 +3182,20 @@ bool GraphicsContextGLANGLE::isGLES2Compliant() const
 
 void GraphicsContextGLANGLE::paintRenderingResultsToCanvas(ImageBuffer& imageBuffer)
 {
+    withDrawingBufferAsNativeImage([&](NativeImage& image) {
+        paintToCanvas(image, imageBuffer.backendSize(), imageBuffer.context());
+    });
+}
+
+void GraphicsContextGLANGLE::paintCompositedResultsToCanvas(ImageBuffer& imageBuffer)
+{
+    withDisplayBufferAsNativeImage([&](NativeImage& image) {
+        paintToCanvas(image, imageBuffer.backendSize(), imageBuffer.context());
+    });
+}
+
+void GraphicsContextGLANGLE::withDrawingBufferAsNativeImage(std::function<void(NativeImage&)> func)
+{
     if (!makeContextCurrent())
         return;
     if (getInternalFramebufferSize().isEmpty())
@@ -3191,10 +3203,15 @@ void GraphicsContextGLANGLE::paintRenderingResultsToCanvas(ImageBuffer& imageBuf
     auto pixelBuffer = readRenderingResults();
     if (!pixelBuffer)
         return;
-    paintToCanvas(contextAttributes(), pixelBuffer.releaseNonNull(), imageBuffer.backendSize(), imageBuffer.context());
+
+    auto drawingImage = createNativeImageFromPixelBuffer(contextAttributes(), pixelBuffer.releaseNonNull());
+    if (!drawingImage)
+        return;
+
+    func(*drawingImage);
 }
 
-void GraphicsContextGLANGLE::paintCompositedResultsToCanvas(ImageBuffer& imageBuffer)
+void GraphicsContextGLANGLE::withDisplayBufferAsNativeImage(std::function<void(NativeImage&)> func)
 {
     if (!makeContextCurrent())
         return;
@@ -3203,7 +3220,12 @@ void GraphicsContextGLANGLE::paintCompositedResultsToCanvas(ImageBuffer& imageBu
     auto pixelBuffer = readCompositedResults();
     if (!pixelBuffer)
         return;
-    paintToCanvas(contextAttributes(), pixelBuffer.releaseNonNull(), imageBuffer.backendSize(), imageBuffer.context());
+
+    auto displayImage = createNativeImageFromPixelBuffer(contextAttributes(), pixelBuffer.releaseNonNull());
+    if (!displayImage)
+        return;
+
+    func(*displayImage);
 }
 
 RefPtr<PixelBuffer> GraphicsContextGLANGLE::paintRenderingResultsToPixelBuffer()

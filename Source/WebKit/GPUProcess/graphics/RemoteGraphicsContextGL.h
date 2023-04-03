@@ -148,7 +148,7 @@ protected:
 private:
     void paintRenderingResultsToCanvasWithQualifiedIdentifier(QualifiedRenderingResourceIdentifier, CompletionHandler<void()>&&);
     void paintCompositedResultsToCanvasWithQualifiedIdentifier(QualifiedRenderingResourceIdentifier, CompletionHandler<void()>&&);
-    void paintPixelBufferToImageBuffer(RefPtr<WebCore::PixelBuffer>&&, QualifiedRenderingResourceIdentifier, CompletionHandler<void()>&&);
+    void paintNativeImageToImageBuffer(WebCore::NativeImage&, QualifiedRenderingResourceIdentifier, CompletionHandler<void()>&&);
 
 protected:
     WeakPtr<GPUConnectionToWebProcess> m_gpuConnectionToWebProcess;
