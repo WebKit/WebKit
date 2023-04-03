@@ -305,6 +305,7 @@ private:
 
         struct A : ContainerTag<HTMLAnchorElement, PermittedParents::FlowContent> {
             static constexpr ElementName tagName = ElementName::HTML_a;
+            static constexpr Char tagNameCharacters[] = { 'a' };
 
             static RefPtr<Element> parseChild(HTMLFastPathParser& self)
             {
@@ -318,6 +319,7 @@ private:
 
         struct AWithPhrasingContent : ContainsPhrasingContentTag<HTMLAnchorElement, PermittedParents::PhrasingOrFlowContent> {
             static constexpr ElementName tagName = ElementName::HTML_a;
+            static constexpr Char tagNameCharacters[] = { 'a' };
 
             static RefPtr<Element> parseChild(HTMLFastPathParser& self)
             {
@@ -331,6 +333,7 @@ private:
 
         struct B : ContainsPhrasingContentTag<HTMLElement, PermittedParents::PhrasingOrFlowContent> {
             static constexpr ElementName tagName = ElementName::HTML_b;
+            static constexpr Char tagNameCharacters[] = { 'b' };
 
             static Ref<HTMLElement> create(Document& document)
             {
@@ -340,18 +343,22 @@ private:
 
         struct Br : VoidTag<HTMLBRElement, PermittedParents::PhrasingOrFlowContent> {
             static constexpr ElementName tagName = ElementName::HTML_br;
+            static constexpr Char tagNameCharacters[] = { 'b', 'r' };
         };
 
         struct Button : ContainsPhrasingContentTag<HTMLButtonElement, PermittedParents::PhrasingOrFlowContent> {
             static constexpr ElementName tagName = ElementName::HTML_button;
+            static constexpr Char tagNameCharacters[] = { 'b', 'u', 't', 't', 'o', 'n' };
         };
 
         struct Div : ContainerTag<HTMLDivElement, PermittedParents::FlowContent> {
             static constexpr ElementName tagName = ElementName::HTML_div;
+            static constexpr Char tagNameCharacters[] = { 'd', 'i', 'v' };
         };
 
         struct Footer : ContainerTag<HTMLDivElement, PermittedParents::FlowContent> {
             static constexpr ElementName tagName = ElementName::HTML_footer;
+            static constexpr Char tagNameCharacters[] = { 'f', 'o', 'o', 't', 'e', 'r' };
 
             static Ref<HTMLElement> create(Document& document)
             {
@@ -361,6 +368,7 @@ private:
 
         struct I : ContainsPhrasingContentTag<HTMLElement, PermittedParents::PhrasingOrFlowContent> {
             static constexpr ElementName tagName = ElementName::HTML_i;
+            static constexpr Char tagNameCharacters[] = { 'i' };
 
             static Ref<HTMLElement> create(Document& document)
             {
@@ -370,6 +378,7 @@ private:
 
         struct Input : VoidTag<HTMLInputElement, PermittedParents::PhrasingOrFlowContent> {
             static constexpr ElementName tagName = ElementName::HTML_input;
+            static constexpr Char tagNameCharacters[] = { 'i', 'n', 'p', 'u', 't' };
 
             static Ref<HTMLInputElement> create(Document& document)
             {
@@ -379,14 +388,17 @@ private:
 
         struct Li : ContainerTag<HTMLLIElement, PermittedParents::Special> {
             static constexpr ElementName tagName = ElementName::HTML_li;
+            static constexpr Char tagNameCharacters[] = { 'l', 'i' };
         };
 
         struct Label : ContainsPhrasingContentTag<HTMLLabelElement, PermittedParents::PhrasingOrFlowContent> {
             static constexpr ElementName tagName = ElementName::HTML_label;
+            static constexpr Char tagNameCharacters[] = { 'l', 'a', 'b', 'e', 'l' };
         };
 
         struct Option : ContainerTag<HTMLOptionElement, PermittedParents::Special> {
             static constexpr ElementName tagName = ElementName::HTML_option;
+            static constexpr Char tagNameCharacters[] = { 'o', 'p', 't', 'i', 'o', 'n' };
 
             static RefPtr<Element> parseChild(HTMLFastPathParser& self)
             {
@@ -397,6 +409,7 @@ private:
 
         struct Ol : ContainerTag<HTMLOListElement, PermittedParents::FlowContent> {
             static constexpr ElementName tagName = ElementName::HTML_ol;
+            static constexpr Char tagNameCharacters[] = { 'o', 'l' };
 
             static RefPtr<Element> parseChild(HTMLFastPathParser& self)
             {
@@ -406,10 +419,12 @@ private:
 
         struct P : ContainsPhrasingContentTag<HTMLParagraphElement, PermittedParents::FlowContent> {
             static constexpr ElementName tagName = ElementName::HTML_p;
+            static constexpr Char tagNameCharacters[] = { 'p' };
         };
 
         struct Select : ContainerTag<HTMLSelectElement, PermittedParents::PhrasingOrFlowContent> {
             static constexpr ElementName tagName = ElementName::HTML_select;
+            static constexpr Char tagNameCharacters[] = { 's', 'e', 'l', 'e', 'c', 't' };
 
             static RefPtr<Element> parseChild(HTMLFastPathParser& self)
             {
@@ -419,10 +434,12 @@ private:
 
         struct Span : ContainsPhrasingContentTag<HTMLSpanElement, PermittedParents::PhrasingOrFlowContent> {
             static constexpr ElementName tagName = ElementName::HTML_span;
+            static constexpr Char tagNameCharacters[] = { 's', 'p', 'a', 'n' };
         };
 
         struct Strong : ContainsPhrasingContentTag<HTMLElement, PermittedParents::PhrasingOrFlowContent> {
             static constexpr ElementName tagName = ElementName::HTML_strong;
+            static constexpr Char tagNameCharacters[] = { 's', 't', 'r', 'o', 'n', 'g' };
 
             static Ref<HTMLElement> create(Document& document)
             {
@@ -432,6 +449,7 @@ private:
 
         struct Ul : ContainerTag<HTMLUListElement, PermittedParents::FlowContent> {
             static constexpr ElementName tagName = ElementName::HTML_ul;
+            static constexpr Char tagNameCharacters[] = { 'u', 'l' };
 
             static RefPtr<Element> parseChild(HTMLFastPathParser& self)
             {
@@ -842,9 +860,6 @@ private:
         // Similarly, we disallow nesting <a> tags. But tables for example have
         // complex re-parenting rules that cannot be captured in this way, so we
         // cannot support them.
-        //
-        // If this switch has duplicate cases, then `tagNameHash()` needs to be
-        // updated.
         switch (tagName) {
 #define TAG_CASE(TagName, TagClassName)                                                  \
         case ElementName::HTML_ ## TagName:                                              \
@@ -894,12 +909,16 @@ private:
         // and fails if the the current char is not '/'.
         ASSERT(*m_parsingBuffer == '/');
         m_parsingBuffer.advance();
-        auto endtag = scanTagName();
-        if (endtag == Tag::tagName) {
-            if (m_parsingBuffer.atEnd() || m_parsingBuffer.consume() != '>')
-                return didFail(HTMLFastPathResult::FailedUnexpectedTagNameCloseState, element);
-        } else
-            return didFail(HTMLFastPathResult::FailedEndTagNameMismatch, element);
+
+        if (UNLIKELY(!skipCharactersExactly(m_parsingBuffer, Tag::tagNameCharacters))) {
+            if (!skipLettersExactlyIgnoringASCIICase(m_parsingBuffer, Tag::tagNameCharacters))
+                return didFail(HTMLFastPathResult::FailedEndTagNameMismatch, element);
+        }
+        skipWhile<isHTMLSpace>(m_parsingBuffer);
+
+        if (m_parsingBuffer.atEnd() || m_parsingBuffer.consume() != '>')
+            return didFail(HTMLFastPathResult::FailedUnexpectedTagNameCloseState, element);
+
         element->finishParsingChildren();
         return WTFMove(element);
     }

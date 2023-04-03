@@ -198,6 +198,19 @@ template<typename CharacterType> bool skipExactlyIgnoringASCIICase(StringParsing
     return true;
 }
 
+template<typename CharacterType, unsigned characterCount> bool skipLettersExactlyIgnoringASCIICase(StringParsingBuffer<CharacterType>& buffer, const CharacterType(&letters)[characterCount])
+{
+    if (buffer.lengthRemaining() < characterCount)
+        return false;
+    for (unsigned i = 0; i < characterCount; ++i) {
+        ASSERT(isASCIIAlpha(letters[i]));
+        if (!isASCIIAlphaCaselessEqual(buffer.position()[i], static_cast<char>(letters[i])))
+            return false;
+    }
+    buffer += characterCount;
+    return true;
+}
+
 template<typename CharacterType, unsigned characterCount> constexpr bool skipCharactersExactly(const CharacterType*& ptr, const CharacterType* end, const CharacterType(&str)[characterCount])
 {
     if (end - ptr < characterCount)
