@@ -60,7 +60,6 @@ public:
     ExceptionOr<void> setValidity(ValidityStateFlags, String&& message, HTMLElement* validationAnchor);
     String validationMessage() const final;
 
-    void formWillBeDestroyed() final;
     void finishParsingChildren();
 
     bool computeValidity() const final;
@@ -98,7 +97,6 @@ private:
 
     WeakPtr<HTMLMaybeFormAssociatedCustomElement, WeakPtrImplWithEventTargetData> m_element;
     ValidityStateFlags m_validityStateFlags;
-    bool m_formWillBeDestroyed : 1 { false };
     WeakPtr<HTMLElement, WeakPtrImplWithEventTargetData> m_validationAnchor { nullptr };
     std::optional<CustomElementFormValue> m_submissionValue;
     std::optional<CustomElementFormValue> m_state;

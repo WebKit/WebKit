@@ -1,0 +1,10 @@
+No crash when a form with a input type=radio gets destroyed
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+
