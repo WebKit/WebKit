@@ -12289,12 +12289,12 @@ void WebPageProxy::updateAllowedLookalikeCharacterStringsIfNeeded()
     if (!cachedAllowedLookalikeStrings().isEmpty())
         return;
 
-    requestAllowedLookalikeCharacterStrings([weakPage = WeakPtr { *this }](auto&& data) {
+    requestAllowedLookalikeCharacterStrings([weakPage = WeakPtr { *this }](auto&& data) mutable {
         if (cachedAllowedLookalikeStrings().isEmpty()) {
             cachedAllowedLookalikeStrings() = WTFMove(data);
             cachedAllowedLookalikeStrings().shrinkToFit();
         }
-        
+
         if (RefPtr page = weakPage.get(); page && page->hasRunningProcess())
             page->send(Messages::WebPage::SetAllowedLookalikeCharacterStrings(cachedAllowedLookalikeStrings()));
     });

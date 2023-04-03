@@ -35,7 +35,7 @@ struct LookalikeCharactersSanitizationData {
     String lookalikeCharacters;
 
     LookalikeCharactersSanitizationData(RegistrableDomain&& domain, const String& lookalikeCharacters)
-        : domain(domain)
+        : domain(WTFMove(domain))
         , lookalikeCharacters(lookalikeCharacters)
     {
     }
@@ -49,6 +49,22 @@ struct LookalikeCharactersSanitizationData {
     LookalikeCharactersSanitizationData(const String& lookalikeCharacters)
         : lookalikeCharacters(lookalikeCharacters)
     {
+    }
+
+    LookalikeCharactersSanitizationData(const LookalikeCharactersSanitizationData&) = default;
+    LookalikeCharactersSanitizationData& operator=(const LookalikeCharactersSanitizationData&) = default;
+
+    LookalikeCharactersSanitizationData(LookalikeCharactersSanitizationData&& data)
+        : domain(WTFMove(data.domain))
+        , lookalikeCharacters(WTFMove(data.lookalikeCharacters))
+    {
+    }
+
+    LookalikeCharactersSanitizationData& operator=(LookalikeCharactersSanitizationData&& data)
+    {
+        domain = WTFMove(data.domain);
+        lookalikeCharacters = WTFMove(data.lookalikeCharacters);
+        return *this;
     }
 
     template<class Encoder> void encode(Encoder& encoder) const

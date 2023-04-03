@@ -45,7 +45,7 @@ namespace WebKit {
 #if ENABLE(NETWORK_CONNECTION_INTEGRITY)
 
 void configureForNetworkConnectionIntegrity(NSURLSession *);
-void requestAllowedLookalikeCharacterStrings(CompletionHandler<void(const Vector<WebCore::LookalikeCharactersSanitizationData>&)>&&);
+void requestAllowedLookalikeCharacterStrings(CompletionHandler<void(Vector<WebCore::LookalikeCharactersSanitizationData>&&)>&&);
 
 class LookalikeCharactersObserver : public RefCounted<LookalikeCharactersObserver>, public CanMakeWeakPtr<LookalikeCharactersObserver> {
 public:
