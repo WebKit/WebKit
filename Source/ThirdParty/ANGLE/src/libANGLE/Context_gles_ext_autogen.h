@@ -587,6 +587,8 @@
     void beginPixelLocalStorage(GLsizei n, const GLenum *loadops);                                 \
     void endPixelLocalStorage(GLsizei n, const GLenum *storeops);                                  \
     void pixelLocalStorageBarrier();                                                               \
+    void framebufferPixelLocalStorageInterrupt();                                                  \
+    void framebufferPixelLocalStorageRestore();                                                    \
     void getFramebufferPixelLocalStorageParameterfv(GLint plane, GLenum pname, GLfloat *params);   \
     void getFramebufferPixelLocalStorageParameteriv(GLint plane, GLenum pname, GLint *params);     \
     void getFramebufferPixelLocalStorageParameterfvRobust(                                         \

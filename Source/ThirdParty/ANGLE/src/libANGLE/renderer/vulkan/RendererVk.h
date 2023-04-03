@@ -284,16 +284,6 @@ class RendererVk : angle::NonCopyable
         return mOneOffCommandPoolMap[protectionType].getCommandBuffer(context, commandBufferOut);
     }
 
-    void resetOutsideRenderPassCommandBuffer(vk::OutsideRenderPassCommandBuffer &&commandBuffer)
-    {
-        mOutsideRenderPassCommandBufferRecycler.resetCommandBuffer(std::move(commandBuffer));
-    }
-
-    void resetRenderPassCommandBuffer(vk::RenderPassCommandBuffer &&commandBuffer)
-    {
-        mRenderPassCommandBufferRecycler.resetCommandBuffer(std::move(commandBuffer));
-    }
-
     // Fire off a single command buffer immediately with default priority.
     // Command buffer must be allocated with getCommandBufferOneOff and is reclaimed.
     angle::Result queueSubmitOneOff(vk::Context *context,
@@ -308,7 +298,7 @@ class RendererVk : angle::NonCopyable
 
     angle::Result queueSubmitWaitSemaphore(vk::Context *context,
                                            egl::ContextPriority priority,
-                                           const vk::Semaphore *waitSemaphore,
+                                           const vk::Semaphore &waitSemaphore,
                                            VkPipelineStageFlags waitSemaphoreStageMasks,
                                            QueueSerial submitQueueSerial);
 
@@ -509,6 +499,7 @@ class RendererVk : angle::NonCopyable
                                                             VkResult *result);
     angle::Result finish(vk::Context *context);
     angle::Result checkCompletedCommands(vk::Context *context);
+    angle::Result retireFinishedCommands(vk::Context *context);
 
     angle::Result flushWaitSemaphores(vk::ProtectionType protectionType,
                                       egl::ContextPriority priority,
@@ -535,20 +526,18 @@ class RendererVk : angle::NonCopyable
 
     angle::Result getOutsideRenderPassCommandBufferHelper(
         vk::Context *context,
-        vk::CommandPool *commandPool,
+        vk::SecondaryCommandPool *commandPool,
         vk::SecondaryCommandMemoryAllocator *commandsAllocator,
         vk::OutsideRenderPassCommandBufferHelper **commandBufferHelperOut);
     angle::Result getRenderPassCommandBufferHelper(
         vk::Context *context,
-        vk::CommandPool *commandPool,
+        vk::SecondaryCommandPool *commandPool,
         vk::SecondaryCommandMemoryAllocator *commandsAllocator,
         vk::RenderPassCommandBufferHelper **commandBufferHelperOut);
 
     void recycleOutsideRenderPassCommandBufferHelper(
-        VkDevice device,
         vk::OutsideRenderPassCommandBufferHelper **commandBuffer);
-    void recycleRenderPassCommandBufferHelper(VkDevice device,
-                                              vk::RenderPassCommandBufferHelper **commandBuffer);
+    void recycleRenderPassCommandBufferHelper(vk::RenderPassCommandBufferHelper **commandBuffer);
 
     // Process GPU memory reports
     void processMemoryReportCallback(const VkDeviceMemoryReportCallbackDataEXT &callbackData)
@@ -758,7 +747,7 @@ class RendererVk : angle::NonCopyable
 
     template <typename CommandBufferHelperT, typename RecyclerT>
     angle::Result getCommandBufferImpl(vk::Context *context,
-                                       vk::CommandPool *commandPool,
+                                       vk::SecondaryCommandPool *commandPool,
                                        vk::SecondaryCommandMemoryAllocator *commandsAllocator,
                                        RecyclerT *recycler,
                                        CommandBufferHelperT **commandBufferHelperOut);
@@ -949,11 +938,9 @@ class RendererVk : angle::NonCopyable
     vk::CommandProcessor mCommandProcessor;
 
     // Command buffer pool management.
-    vk::CommandBufferRecycler<vk::OutsideRenderPassCommandBuffer,
-                              vk::OutsideRenderPassCommandBufferHelper>
+    vk::CommandBufferRecycler<vk::OutsideRenderPassCommandBufferHelper>
         mOutsideRenderPassCommandBufferRecycler;
-    vk::CommandBufferRecycler<vk::RenderPassCommandBuffer, vk::RenderPassCommandBufferHelper>
-        mRenderPassCommandBufferRecycler;
+    vk::CommandBufferRecycler<vk::RenderPassCommandBufferHelper> mRenderPassCommandBufferRecycler;
 
     SamplerCache mSamplerCache;
     SamplerYcbcrConversionCache mYuvConversionCache;
@@ -1068,6 +1055,11 @@ ANGLE_INLINE void RendererVk::requestAsyncCommandsAndGarbageCleanup(vk::Context 
 ANGLE_INLINE angle::Result RendererVk::checkCompletedCommands(vk::Context *context)
 {
     return mCommandQueue.checkAndCleanupCompletedCommands(context);
+}
+
+ANGLE_INLINE angle::Result RendererVk::retireFinishedCommands(vk::Context *context)
+{
+    return mCommandQueue.retireFinishedCommands(context);
 }
 }  // namespace rx
 

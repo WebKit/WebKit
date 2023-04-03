@@ -931,6 +931,10 @@ MTLSamplerAddressMode GetSamplerAddressMode(GLenum wrap)
             return MTLSamplerAddressModeClampToEdge;
         case GL_MIRROR_CLAMP_TO_EDGE_EXT:
             return MTLSamplerAddressModeMirrorClampToEdge;
+#if !defined(ANGLE_PLATFORM_WATCHOS) || !ANGLE_PLATFORM_WATCHOS
+        case GL_MIRROR_CLAMP_TO_EDGE_EXT:
+            return MTLSamplerAddressModeMirrorClampToEdge;
+#endif
         case GL_REPEAT:
             return MTLSamplerAddressModeRepeat;
         case GL_MIRRORED_REPEAT:
@@ -1061,7 +1065,7 @@ MTLStencilOperation GetStencilOp(GLenum op)
     }
 }
 
-MTLWinding GetFontfaceWinding(GLenum frontFaceMode, bool invert)
+MTLWinding GetFrontfaceWinding(GLenum frontFaceMode, bool invert)
 {
     switch (frontFaceMode)
     {

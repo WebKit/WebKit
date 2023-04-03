@@ -20,9 +20,13 @@ namespace sh
 namespace
 {
 
-// Arbitrarily enforce that types - even local variables' - declared
-// with a size in bytes of over 2 GB will cause compilation failure.
-constexpr size_t kMaxTypeSizeInBytes = static_cast<size_t>(2) * 1024 * 1024 * 1024;
+// Arbitrarily enforce that all types declared with a size in bytes of over 2 GB will cause
+// compilation failure.
+//
+// For local and global variables, the limit is much lower (1MB) as that much memory won't fit in
+// the GPU registers anyway.
+constexpr size_t kMaxVariableSizeInBytes        = static_cast<size_t>(2) * 1024 * 1024 * 1024;
+constexpr size_t kMaxPrivateVariableSizeInBytes = static_cast<size_t>(1) * 1024 * 1024;
 
 // Traverses intermediate tree to ensure that the shader does not
 // exceed certain implementation-defined limits on the sizes of types.
@@ -78,10 +82,21 @@ class ValidateTypeSizeLimitationsTraverser : public TIntermTraverser
             // whether the row-major layout is correctly determined.
             bool isRowMajorLayout = false;
             TraverseShaderVariable(shaderVar, isRowMajorLayout, &visitor);
-            if (layoutEncoder.getCurrentOffset() > kMaxTypeSizeInBytes)
+            if (layoutEncoder.getCurrentOffset() > kMaxVariableSizeInBytes)
             {
                 error(asSymbol->getLine(),
                       "Size of declared variable exceeds implementation-defined limit",
+                      asSymbol->getName());
+                return false;
+            }
+
+            const bool isPrivate = variableType.getQualifier() == EvqTemporary ||
+                                   variableType.getQualifier() == EvqGlobal ||
+                                   variableType.getQualifier() == EvqConst;
+            if (layoutEncoder.getCurrentOffset() > kMaxPrivateVariableSizeInBytes && isPrivate)
+            {
+                error(asSymbol->getLine(),
+                      "Size of declared private variable exceeds implementation-defined limit",
                       asSymbol->getName());
                 return false;
             }

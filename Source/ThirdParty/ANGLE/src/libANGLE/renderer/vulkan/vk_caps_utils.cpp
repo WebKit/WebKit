@@ -337,6 +337,7 @@ void RendererVk::ensureCapsInitialized() const
     mNativeExtensions.textureStorageEXT           = true;
     mNativeExtensions.drawBuffersEXT              = true;
     mNativeExtensions.fragDepthEXT                = true;
+    mNativeExtensions.conservativeDepthEXT        = true;
     mNativeExtensions.framebufferBlitANGLE        = true;
     mNativeExtensions.framebufferBlitNV           = true;
     mNativeExtensions.framebufferMultisampleANGLE = true;
@@ -899,6 +900,9 @@ void RendererVk::ensureCapsInitialized() const
     //
     // Note that this exception for gl_Position does not apply to MAX_VERTEX_OUTPUT_COMPONENTS and
     // similar limits.
+    //
+    // Note also that the reserved components are for transform feedback capture only, so they don't
+    // apply to the _input_ component limit.
     const GLint reservedVaryingVectorCount = reservedVaryingComponentCount / 4 + 1;
 
     const GLint maxVaryingCount =
@@ -907,8 +911,7 @@ void RendererVk::ensureCapsInitialized() const
         LimitToInt((maxVaryingCount / kComponentsPerVector) - reservedVaryingVectorCount);
     mNativeCaps.maxVertexOutputComponents =
         LimitToInt(limitsVk.maxVertexOutputComponents) - reservedVaryingComponentCount;
-    mNativeCaps.maxFragmentInputComponents =
-        LimitToInt(limitsVk.maxFragmentInputComponents) - reservedVaryingComponentCount;
+    mNativeCaps.maxFragmentInputComponents = LimitToInt(limitsVk.maxFragmentInputComponents);
 
     mNativeCaps.maxTransformFeedbackInterleavedComponents =
         gl::IMPLEMENTATION_MAX_TRANSFORM_FEEDBACK_INTERLEAVED_COMPONENTS;
@@ -994,43 +997,6 @@ void RendererVk::ensureCapsInitialized() const
     // expect r32ui instead.
     mNativeExtensions.shaderImageAtomicOES = true;
 
-    // Geometry shaders are required for ES 3.2.
-    if (mPhysicalDeviceFeatures.geometryShader)
-    {
-        bool geometryShaderEnabled = mFeatures.supportsTransformFeedbackExtension.enabled &&
-                                     (mFeatures.supportsPrimitivesGeneratedQuery.enabled ||
-                                      mFeatures.exposeNonConformantExtensionsAndVersions.enabled);
-        mNativeExtensions.geometryShaderEXT = geometryShaderEnabled;
-        mNativeExtensions.geometryShaderOES = geometryShaderEnabled;
-        mNativeCaps.maxFramebufferLayers    = LimitToInt(limitsVk.maxFramebufferLayers);
-
-        // Use "undefined" which means APP would have to set gl_Layer identically.
-        mNativeCaps.layerProvokingVertex = GL_UNDEFINED_VERTEX_EXT;
-
-        mNativeCaps.maxGeometryInputComponents =
-            LimitToInt(limitsVk.maxGeometryInputComponents) - reservedVaryingComponentCount;
-        mNativeCaps.maxGeometryOutputComponents =
-            LimitToInt(limitsVk.maxGeometryOutputComponents) - reservedVaryingComponentCount;
-        mNativeCaps.maxGeometryOutputVertices = LimitToInt(limitsVk.maxGeometryOutputVertices);
-        mNativeCaps.maxGeometryTotalOutputComponents =
-            LimitToInt(limitsVk.maxGeometryTotalOutputComponents);
-        if (mPhysicalDeviceFeatures.vertexPipelineStoresAndAtomics)
-        {
-            mNativeCaps.maxShaderStorageBlocks[gl::ShaderType::Geometry] =
-                mNativeCaps.maxCombinedShaderOutputResources;
-            mNativeCaps.maxShaderAtomicCounterBuffers[gl::ShaderType::Geometry] =
-                maxCombinedAtomicCounterBuffers;
-        }
-        mNativeCaps.maxGeometryShaderInvocations =
-            LimitToInt(limitsVk.maxGeometryShaderInvocations);
-
-        // Reserve a uniform buffer binding for the geometry stage
-        if (geometryShaderEnabled)
-        {
-            maxCombinedUniformBuffers -= kReservedPerStageDefaultUniformBindingCount;
-        }
-    }
-
     // Tessellation shaders are required for ES 3.2.
     if (mPhysicalDeviceFeatures.tessellationShader)
     {
@@ -1055,7 +1021,8 @@ void RendererVk::ensureCapsInitialized() const
         mNativeCaps.maxTessEvaluationInputComponents =
             LimitToInt(limitsVk.maxTessellationEvaluationInputComponents);
         mNativeCaps.maxTessEvaluationOutputComponents =
-            LimitToInt(limitsVk.maxTessellationEvaluationOutputComponents);
+            LimitToInt(limitsVk.maxTessellationEvaluationOutputComponents) -
+            reservedVaryingComponentCount;
 
         // There is 1 default uniform binding used per tessellation stages.
         mNativeCaps.maxCombinedUniformBlocks = LimitToInt(
@@ -1080,6 +1047,50 @@ void RendererVk::ensureCapsInitialized() const
         if (tessellationShaderEnabled)
         {
             maxCombinedUniformBuffers -= 2 * kReservedPerStageDefaultUniformBindingCount;
+        }
+    }
+
+    // Geometry shaders are required for ES 3.2.
+    if (mPhysicalDeviceFeatures.geometryShader)
+    {
+        bool geometryShaderEnabled = mFeatures.supportsTransformFeedbackExtension.enabled &&
+                                     (mFeatures.supportsPrimitivesGeneratedQuery.enabled ||
+                                      mFeatures.exposeNonConformantExtensionsAndVersions.enabled);
+        mNativeExtensions.geometryShaderEXT = geometryShaderEnabled;
+        mNativeExtensions.geometryShaderOES = geometryShaderEnabled;
+        mNativeCaps.maxFramebufferLayers    = LimitToInt(limitsVk.maxFramebufferLayers);
+
+        // Use "undefined" which means APP would have to set gl_Layer identically.
+        mNativeCaps.layerProvokingVertex = GL_UNDEFINED_VERTEX_EXT;
+
+        mNativeCaps.maxGeometryInputComponents = LimitToInt(limitsVk.maxGeometryInputComponents);
+        mNativeCaps.maxGeometryOutputComponents =
+            LimitToInt(limitsVk.maxGeometryOutputComponents) - reservedVaryingComponentCount;
+        mNativeCaps.maxGeometryOutputVertices = LimitToInt(limitsVk.maxGeometryOutputVertices);
+        mNativeCaps.maxGeometryTotalOutputComponents =
+            LimitToInt(limitsVk.maxGeometryTotalOutputComponents);
+        if (mPhysicalDeviceFeatures.vertexPipelineStoresAndAtomics)
+        {
+            mNativeCaps.maxShaderStorageBlocks[gl::ShaderType::Geometry] =
+                mNativeCaps.maxCombinedShaderOutputResources;
+            mNativeCaps.maxShaderAtomicCounterBuffers[gl::ShaderType::Geometry] =
+                maxCombinedAtomicCounterBuffers;
+        }
+        mNativeCaps.maxGeometryShaderInvocations =
+            LimitToInt(limitsVk.maxGeometryShaderInvocations);
+
+        // Cap maxGeometryInputComponents by maxVertexOutputComponents and
+        // maxTessellationEvaluationOutputComponents; there can't be more inputs than there are
+        // outputs in the previous stage.
+        mNativeCaps.maxGeometryInputComponents =
+            std::min(mNativeCaps.maxGeometryInputComponents,
+                     std::min(mNativeCaps.maxVertexOutputComponents,
+                              mNativeCaps.maxTessEvaluationOutputComponents));
+
+        // Reserve a uniform buffer binding for the geometry stage
+        if (geometryShaderEnabled)
+        {
+            maxCombinedUniformBuffers -= kReservedPerStageDefaultUniformBindingCount;
         }
     }
 

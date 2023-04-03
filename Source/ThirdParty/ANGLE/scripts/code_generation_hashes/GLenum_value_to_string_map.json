@@ -2,7 +2,7 @@
   "scripts/gen_gl_enum_utils.py":
     "3bab69a4a3555ab1551a6e5008534cec",
   "scripts/gl_angle_ext.xml":
-    "a529bc9810e3c3d23e47944465d849f4",
+    "796894fd74d141b88000669104a663ea",
   "scripts/registry_xml.py":
     "8dc1bcf2e8324094c19c41613897b212",
   "src/common/gl_enum_utils_autogen.cpp":

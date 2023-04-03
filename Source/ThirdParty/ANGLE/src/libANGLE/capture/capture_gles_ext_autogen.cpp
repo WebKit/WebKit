@@ -4827,6 +4827,23 @@ CallCapture CapturePixelLocalStorageBarrierANGLE(const State &glState, bool isCa
     return CallCapture(angle::EntryPoint::GLPixelLocalStorageBarrierANGLE, std::move(paramBuffer));
 }
 
+CallCapture CaptureFramebufferPixelLocalStorageInterruptANGLE(const State &glState,
+                                                              bool isCallValid)
+{
+    ParamBuffer paramBuffer;
+
+    return CallCapture(angle::EntryPoint::GLFramebufferPixelLocalStorageInterruptANGLE,
+                       std::move(paramBuffer));
+}
+
+CallCapture CaptureFramebufferPixelLocalStorageRestoreANGLE(const State &glState, bool isCallValid)
+{
+    ParamBuffer paramBuffer;
+
+    return CallCapture(angle::EntryPoint::GLFramebufferPixelLocalStorageRestoreANGLE,
+                       std::move(paramBuffer));
+}
+
 CallCapture CaptureGetFramebufferPixelLocalStorageParameterfvANGLE(const State &glState,
                                                                    bool isCallValid,
                                                                    GLint plane,

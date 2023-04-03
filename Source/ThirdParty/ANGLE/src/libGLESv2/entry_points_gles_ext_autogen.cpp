@@ -4016,6 +4016,56 @@ void GL_APIENTRY GL_PixelLocalStorageBarrierANGLE()
     }
 }
 
+void GL_APIENTRY GL_FramebufferPixelLocalStorageInterruptANGLE()
+{
+    Context *context = GetValidGlobalContext();
+    EVENT(context, GLFramebufferPixelLocalStorageInterruptANGLE, "context = %d", CID(context));
+
+    if (context)
+    {
+        SCOPED_SHARE_CONTEXT_LOCK(context);
+        bool isCallValid =
+            (context->skipValidation() ||
+             ValidateFramebufferPixelLocalStorageInterruptANGLE(
+                 context, angle::EntryPoint::GLFramebufferPixelLocalStorageInterruptANGLE));
+        if (isCallValid)
+        {
+            context->framebufferPixelLocalStorageInterrupt();
+        }
+        ANGLE_CAPTURE_GL(FramebufferPixelLocalStorageInterruptANGLE, isCallValid, context);
+    }
+    else
+    {
+        GenerateContextLostErrorOnCurrentGlobalContext();
+    }
+}
+
+void GL_APIENTRY GL_FramebufferPixelLocalStorageRestoreANGLE()
+{
+    Context *context = GetValidGlobalContext();
+    EVENT(context, GLFramebufferPixelLocalStorageRestoreANGLE, "context = %d", CID(context));
+
+    if (context)
+    {
+        SCOPED_SHARE_CONTEXT_LOCK(context);
+        bool isCallValid =
+            (context->skipValidation() ||
+             (ValidatePixelLocalStorageInactive(
+                  context, angle::EntryPoint::GLFramebufferPixelLocalStorageRestoreANGLE) &&
+              ValidateFramebufferPixelLocalStorageRestoreANGLE(
+                  context, angle::EntryPoint::GLFramebufferPixelLocalStorageRestoreANGLE)));
+        if (isCallValid)
+        {
+            context->framebufferPixelLocalStorageRestore();
+        }
+        ANGLE_CAPTURE_GL(FramebufferPixelLocalStorageRestoreANGLE, isCallValid, context);
+    }
+    else
+    {
+        GenerateContextLostErrorOnCurrentGlobalContext();
+    }
+}
+
 void GL_APIENTRY GL_GetFramebufferPixelLocalStorageParameterfvANGLE(GLint plane,
                                                                     GLenum pname,
                                                                     GLfloat *params)

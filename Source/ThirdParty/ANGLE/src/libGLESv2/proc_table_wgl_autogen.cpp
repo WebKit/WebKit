@@ -396,6 +396,8 @@ const ProcEntry g_procTable[] = {
     {"glFramebufferPixelLocalClearValuefvANGLE", P(GL_FramebufferPixelLocalClearValuefvANGLE)},
     {"glFramebufferPixelLocalClearValueivANGLE", P(GL_FramebufferPixelLocalClearValueivANGLE)},
     {"glFramebufferPixelLocalClearValueuivANGLE", P(GL_FramebufferPixelLocalClearValueuivANGLE)},
+    {"glFramebufferPixelLocalStorageInterruptANGLE", P(GL_FramebufferPixelLocalStorageInterruptANGLE)},
+    {"glFramebufferPixelLocalStorageRestoreANGLE", P(GL_FramebufferPixelLocalStorageRestoreANGLE)},
     {"glFramebufferRenderbuffer", P(GL_FramebufferRenderbuffer)},
     {"glFramebufferRenderbufferOES", P(GL_FramebufferRenderbufferOES)},
     {"glFramebufferTexture", P(GL_FramebufferTexture)},

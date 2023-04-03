@@ -32,6 +32,7 @@ enum class TExtension : uint8_t
     EXT_YUV_target,
     EXT_blend_func_extended,
     EXT_clip_cull_distance,
+    EXT_conservative_depth,
     EXT_draw_buffers,
     EXT_frag_depth,
     EXT_geometry_shader,

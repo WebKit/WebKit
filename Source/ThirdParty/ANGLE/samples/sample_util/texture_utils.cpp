@@ -6,6 +6,7 @@
 
 #include "texture_utils.h"
 #include <array>
+#include <cstddef>
 
 GLuint CreateSimpleTexture2D()
 {

@@ -1084,21 +1084,53 @@ enum TQualifier
     EvqLastFragData,
 
     // GLSL ES 3.0 vertex output and fragment input
-    EvqSmooth,         // Incomplete qualifier, smooth is the default
-    EvqFlat,           // Incomplete qualifier
-    EvqNoPerspective,  // Incomplete qualifier
-    EvqCentroid,       // Incomplete qualifier
-    EvqSample,
+
+    // This section combines
+    // * storage (in/out),
+    // * auxiliary storage (<none>/centroid/sample), and
+    // * interpolation (<none>/smooth/flat/noperspective)
+    // qualifiers into a flat list.
+
+    // Qualifiers not ending with 'In' or 'Out' are considered incomplete
+    // and are used only internally. Some combinations are redundant
+    // because they represent the same effective qualifiers. Specifically:
+    // * 'smooth' is implied when an interpolation qualifier is omitted
+    // * 'flat' makes 'centroid' and 'sample' irrelevant
+
+    // <none>        <none>   -> original storage qualifier, e.g., EvqFragmentIn, implies smooth
+    // <none>        centroid -> EvqCentroid
+    // <none>        sample   -> EvqSample
+    // smooth        <none>   -> EvqSmooth
+    // smooth        centroid -> EvqCentroid
+    // smooth        sample   -> EvqSample
+    // flat          <none>   -> EvqFlat
+    // flat          centroid -> EvqFlat
+    // flat          sample   -> EvqFlat
+    // noperspective <none>   -> EvqNoPerspective
+    // noperspective centroid -> EvqNoPerspectiveCentroid
+    // noperspective sample   -> EvqNoPerspectiveSample
+
+    EvqSmooth,                 // Incomplete
+    EvqFlat,                   // Incomplete
+    EvqNoPerspective,          // Incomplete
+    EvqCentroid,               // Incomplete
+    EvqSample,                 // Incomplete
+    EvqNoPerspectiveCentroid,  // Incomplete
+    EvqNoPerspectiveSample,    // Incomplete
     EvqSmoothOut,
     EvqFlatOut,
     EvqNoPerspectiveOut,
     EvqCentroidOut,  // Implies smooth
-    EvqSampleOut,
+    EvqSampleOut,    // Implies smooth
+    EvqNoPerspectiveCentroidOut,
+    EvqNoPerspectiveSampleOut,
     EvqSmoothIn,
     EvqFlatIn,
     EvqNoPerspectiveIn,
     EvqCentroidIn,  // Implies smooth
-    EvqSampleIn,
+    EvqSampleIn,    // Implies smooth
+    EvqNoPerspectiveCentroidIn,
+    EvqNoPerspectiveSampleIn,
 
     // GLSL ES 3.0 extension OES_sample_variables
     EvqSampleID,
@@ -1194,6 +1226,8 @@ inline bool IsShaderIn(TQualifier qualifier)
         case EvqNoPerspectiveIn:
         case EvqCentroidIn:
         case EvqSampleIn:
+        case EvqNoPerspectiveCentroidIn:
+        case EvqNoPerspectiveSampleIn:
         case EvqPatchIn:
             return true;
         default:
@@ -1217,6 +1251,8 @@ inline bool IsShaderOut(TQualifier qualifier)
         case EvqNoPerspectiveOut:
         case EvqCentroidOut:
         case EvqSampleOut:
+        case EvqNoPerspectiveCentroidOut:
+        case EvqNoPerspectiveSampleOut:
         case EvqPatchOut:
         case EvqFragmentInOut:
             return true;
@@ -1285,6 +1321,15 @@ enum TLayoutBlockStorage
     EbsStd430,
 
     EbsLast = EbsStd430,
+};
+
+enum TLayoutDepth
+{
+    EdUnspecified,
+    EdAny,
+    EdGreater,
+    EdLess,
+    EdUnchanged,
 };
 
 enum TYuvCscStandardEXT
@@ -1364,7 +1409,7 @@ struct TLayoutQualifier
                earlyFragmentTests == false && matrixPacking == EmpUnspecified &&
                blockStorage == EbsUnspecified && !localSize.isAnyValueSet() &&
                imageInternalFormat == EiifUnspecified && primitiveType == EptUndefined &&
-               invocations == 0 && maxVertices == -1 && vertices == 0 &&
+               invocations == 0 && maxVertices == -1 && vertices == 0 && depth == EdUnspecified &&
                tesPrimitiveType == EtetUndefined && tesVertexSpacingType == EtetUndefined &&
                tesOrderingType == EtetUndefined && tesPointType == EtetUndefined && index == -1 &&
                inputAttachmentIndex == -1 && noncoherent == false &&
@@ -1410,6 +1455,9 @@ struct TLayoutQualifier
     int offset;
 
     bool pushConstant;
+
+    // Depth layout qualifier
+    TLayoutDepth depth;
 
     // Image format layout qualifier
     TLayoutImageInternalFormat imageInternalFormat;
@@ -1459,6 +1507,7 @@ struct TLayoutQualifier
           binding(-1),
           offset(-1),
           pushConstant(false),
+          depth(EdUnspecified),
           imageInternalFormat(EiifUnspecified),
           numViews(-1),
           yuv(false),
@@ -1534,98 +1583,104 @@ inline const char *getQualifierString(TQualifier q)
     // clang-format off
     switch(q)
     {
-    case EvqTemporary:              return "Temporary";
-    case EvqGlobal:                 return "Global";
-    case EvqConst:                  return "const";
-    case EvqAttribute:              return "attribute";
-    case EvqVaryingIn:              return "varying";
-    case EvqVaryingOut:             return "varying";
-    case EvqUniform:                return "uniform";
-    case EvqBuffer:                 return "buffer";
-    case EvqPatch:                  return "patch";
-    case EvqVertexIn:               return "in";
-    case EvqFragmentOut:            return "out";
-    case EvqVertexOut:              return "out";
-    case EvqFragmentIn:             return "in";
-    case EvqParamIn:                return "in";
-    case EvqParamOut:               return "out";
-    case EvqParamInOut:             return "inout";
-    case EvqParamConst:             return "const";
-    case EvqInstanceID:             return "InstanceID";
-    case EvqVertexID:               return "VertexID";
-    case EvqPosition:               return "Position";
-    case EvqPointSize:              return "PointSize";
-    case EvqDrawID:                 return "DrawID";
-    case EvqFragCoord:              return "FragCoord";
-    case EvqFrontFacing:            return "FrontFacing";
-    case EvqHelperInvocation:       return "HelperInvocation";
-    case EvqPointCoord:             return "PointCoord";
-    case EvqFragColor:              return "FragColor";
-    case EvqFragData:               return "FragData";
-    case EvqFragDepth:              return "FragDepth";
-    case EvqSecondaryFragColorEXT:  return "SecondaryFragColorEXT";
-    case EvqSecondaryFragDataEXT:   return "SecondaryFragDataEXT";
-    case EvqViewIDOVR:              return "ViewIDOVR";
-    case EvqViewportIndex:          return "ViewportIndex";
-    case EvqLayerOut:               return "LayerOut";
-    case EvqLayerIn:                return "LayerIn";
-    case EvqLastFragColor:          return "LastFragColor";
-    case EvqLastFragData:           return "LastFragData";
-    case EvqFragmentInOut:          return "inout";
-    case EvqSmoothOut:              return "smooth out";
-    case EvqCentroidOut:            return "smooth centroid out";
-    case EvqFlatOut:                return "flat out";
-    case EvqNoPerspectiveOut:       return "noperspective out";
-    case EvqSmoothIn:               return "smooth in";
-    case EvqFlatIn:                 return "flat in";
-    case EvqNoPerspectiveIn:        return "noperspective in";
-    case EvqCentroidIn:             return "smooth centroid in";
-    case EvqCentroid:               return "centroid";
-    case EvqFlat:                   return "flat";
-    case EvqNoPerspective:          return "noperspective";
-    case EvqSmooth:                 return "smooth";
-    case EvqShared:                 return "shared";
-    case EvqComputeIn:              return "in";
-    case EvqNumWorkGroups:          return "NumWorkGroups";
-    case EvqWorkGroupSize:          return "WorkGroupSize";
-    case EvqWorkGroupID:            return "WorkGroupID";
-    case EvqLocalInvocationID:      return "LocalInvocationID";
-    case EvqGlobalInvocationID:     return "GlobalInvocationID";
-    case EvqLocalInvocationIndex:   return "LocalInvocationIndex";
-    case EvqReadOnly:               return "readonly";
-    case EvqWriteOnly:              return "writeonly";
-    case EvqGeometryIn:             return "in";
-    case EvqGeometryOut:            return "out";
-    case EvqPerVertexIn:            return "gl_in";
-    case EvqPrimitiveIDIn:          return "gl_PrimitiveIDIn";
-    case EvqInvocationID:           return "gl_InvocationID";
-    case EvqPrimitiveID:            return "gl_PrimitiveID";
-    case EvqPrecise:                return "precise";
-    case EvqClipDistance:           return "ClipDistance";
-    case EvqCullDistance:           return "CullDistance";
-    case EvqSample:                 return "sample";
-    case EvqSampleIn:               return "sample in";
-    case EvqSampleOut:              return "sample out";
-    case EvqSampleID:               return "SampleID";
-    case EvqSamplePosition:         return "SamplePosition";
-    case EvqSampleMaskIn:           return "SampleMaskIn";
-    case EvqSampleMask:             return "SampleMask";
-    case EvqNumSamples:             return "NumSamples";
-    case EvqPatchIn:                return "patch in";
-    case EvqPatchOut:               return "patch out";
-    case EvqTessControlIn:          return "in";
-    case EvqTessControlOut:         return "out";
-    case EvqPerVertexOut:           return "out";
-    case EvqPatchVerticesIn:        return "PatchVerticesIn";
-    case EvqTessLevelOuter:         return "TessLevelOuter";
-    case EvqTessLevelInner:         return "TessLevelInner";
-    case EvqBoundingBox:            return "BoundingBox";
-    case EvqTessEvaluationIn:       return "in";
-    case EvqTessEvaluationOut:      return "out";
-    case EvqTessCoord:              return "TessCoord";
-    case EvqSpecConst:              return "const";
-    case EvqPixelLocalEXT:          return "__pixel_localEXT";
-    default: UNREACHABLE();         return "unknown qualifier";
+    case EvqTemporary:                 return "Temporary";
+    case EvqGlobal:                    return "Global";
+    case EvqConst:                     return "const";
+    case EvqAttribute:                 return "attribute";
+    case EvqVaryingIn:                 return "varying";
+    case EvqVaryingOut:                return "varying";
+    case EvqUniform:                   return "uniform";
+    case EvqBuffer:                    return "buffer";
+    case EvqPatch:                     return "patch";
+    case EvqVertexIn:                  return "in";
+    case EvqFragmentOut:               return "out";
+    case EvqVertexOut:                 return "out";
+    case EvqFragmentIn:                return "in";
+    case EvqParamIn:                   return "in";
+    case EvqParamOut:                  return "out";
+    case EvqParamInOut:                return "inout";
+    case EvqParamConst:                return "const";
+    case EvqInstanceID:                return "InstanceID";
+    case EvqVertexID:                  return "VertexID";
+    case EvqPosition:                  return "Position";
+    case EvqPointSize:                 return "PointSize";
+    case EvqDrawID:                    return "DrawID";
+    case EvqFragCoord:                 return "FragCoord";
+    case EvqFrontFacing:               return "FrontFacing";
+    case EvqHelperInvocation:          return "HelperInvocation";
+    case EvqPointCoord:                return "PointCoord";
+    case EvqFragColor:                 return "FragColor";
+    case EvqFragData:                  return "FragData";
+    case EvqFragDepth:                 return "FragDepth";
+    case EvqSecondaryFragColorEXT:     return "SecondaryFragColorEXT";
+    case EvqSecondaryFragDataEXT:      return "SecondaryFragDataEXT";
+    case EvqViewIDOVR:                 return "ViewIDOVR";
+    case EvqViewportIndex:             return "ViewportIndex";
+    case EvqLayerOut:                  return "LayerOut";
+    case EvqLayerIn:                   return "LayerIn";
+    case EvqLastFragColor:             return "LastFragColor";
+    case EvqLastFragData:              return "LastFragData";
+    case EvqFragmentInOut:             return "inout";
+    case EvqSmoothOut:                 return "smooth out";
+    case EvqCentroidOut:               return "smooth centroid out";
+    case EvqFlatOut:                   return "flat out";
+    case EvqNoPerspectiveOut:          return "noperspective out";
+    case EvqNoPerspectiveCentroidOut:  return "noperspective centroid out";
+    case EvqNoPerspectiveSampleOut:    return "noperspective sample out";
+    case EvqSmoothIn:                  return "smooth in";
+    case EvqFlatIn:                    return "flat in";
+    case EvqNoPerspectiveIn:           return "noperspective in";
+    case EvqNoPerspectiveCentroidIn:   return "noperspective centroid in";
+    case EvqNoPerspectiveSampleIn:     return "noperspective sample in";
+    case EvqCentroidIn:                return "smooth centroid in";
+    case EvqCentroid:                  return "centroid";
+    case EvqFlat:                      return "flat";
+    case EvqNoPerspective:             return "noperspective";
+    case EvqNoPerspectiveCentroid:     return "noperspective centroid";
+    case EvqNoPerspectiveSample:       return "noperspective sample";
+    case EvqSmooth:                    return "smooth";
+    case EvqShared:                    return "shared";
+    case EvqComputeIn:                 return "in";
+    case EvqNumWorkGroups:             return "NumWorkGroups";
+    case EvqWorkGroupSize:             return "WorkGroupSize";
+    case EvqWorkGroupID:               return "WorkGroupID";
+    case EvqLocalInvocationID:         return "LocalInvocationID";
+    case EvqGlobalInvocationID:        return "GlobalInvocationID";
+    case EvqLocalInvocationIndex:      return "LocalInvocationIndex";
+    case EvqReadOnly:                  return "readonly";
+    case EvqWriteOnly:                 return "writeonly";
+    case EvqGeometryIn:                return "in";
+    case EvqGeometryOut:               return "out";
+    case EvqPerVertexIn:               return "gl_in";
+    case EvqPrimitiveIDIn:             return "gl_PrimitiveIDIn";
+    case EvqInvocationID:              return "gl_InvocationID";
+    case EvqPrimitiveID:               return "gl_PrimitiveID";
+    case EvqPrecise:                   return "precise";
+    case EvqClipDistance:              return "ClipDistance";
+    case EvqCullDistance:              return "CullDistance";
+    case EvqSample:                    return "sample";
+    case EvqSampleIn:                  return "sample in";
+    case EvqSampleOut:                 return "sample out";
+    case EvqSampleID:                  return "SampleID";
+    case EvqSamplePosition:            return "SamplePosition";
+    case EvqSampleMaskIn:              return "SampleMaskIn";
+    case EvqSampleMask:                return "SampleMask";
+    case EvqNumSamples:                return "NumSamples";
+    case EvqPatchIn:                   return "patch in";
+    case EvqPatchOut:                  return "patch out";
+    case EvqTessControlIn:             return "in";
+    case EvqTessControlOut:            return "out";
+    case EvqPerVertexOut:              return "out";
+    case EvqPatchVerticesIn:           return "PatchVerticesIn";
+    case EvqTessLevelOuter:            return "TessLevelOuter";
+    case EvqTessLevelInner:            return "TessLevelInner";
+    case EvqBoundingBox:               return "BoundingBox";
+    case EvqTessEvaluationIn:          return "in";
+    case EvqTessEvaluationOut:         return "out";
+    case EvqTessCoord:                 return "TessCoord";
+    case EvqSpecConst:                 return "const";
+    case EvqPixelLocalEXT:             return "__pixel_localEXT";
+    default: UNREACHABLE();            return "unknown qualifier";
     }
     // clang-format on
 }
@@ -1699,6 +1754,26 @@ inline const char *getImageInternalFormatString(TLayoutImageInternalFormat iifq)
         default:
             UNREACHABLE();
             return "unknown internal image format";
+    }
+}
+
+inline const char *getDepthString(TLayoutDepth depth)
+{
+    switch (depth)
+    {
+        case EdUnspecified:
+            return "depth_unspecified";
+        case EdAny:
+            return "depth_any";
+        case EdGreater:
+            return "depth_greater";
+        case EdLess:
+            return "depth_less";
+        case EdUnchanged:
+            return "depth_unchanged";
+        default:
+            UNREACHABLE();
+            return "unknown depth";
     }
 }
 

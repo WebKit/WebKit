@@ -570,7 +570,10 @@ def main():
     parser.add_argument('-f', '--filter', help='Trace filter. Defaults to all.', default='*')
     parser.add_argument('-l', '--log', help='Logging level.', default=DEFAULT_LOG_LEVEL)
     parser.add_argument(
-        '--renderer', help='Which renderer to use: native, vulkan, or both.', default='both')
+        '--renderer',
+        help='Which renderer to use: native, vulkan (via ANGLE), or default (' +
+        'GLES driver selected by system). Providing no option will run twice, native and vulkan',
+        default='both')
     parser.add_argument(
         '--walltimeonly',
         help='Limit output to just wall time',
@@ -701,12 +704,21 @@ def main():
             run_adb_command(
                 'shell settings put global angle_gl_driver_selection_pkgs com.android.angle.test')
             run_adb_command('shell settings put global angle_gl_driver_selection_values native')
-        else:
+        elif renderer == "vulkan":
             # Force the settings to ANGLE
             run_adb_command('shell settings put global angle_debug_package org.chromium.angle')
             run_adb_command(
                 'shell settings put global angle_gl_driver_selection_pkgs com.android.angle.test')
             run_adb_command('shell settings put global angle_gl_driver_selection_values angle')
+        elif renderer == "default":
+            logging.info('Deleting Android settings for forcing selection of GLES driver, ' +
+                         'allowing system to load the default')
+            run_adb_command('shell settings delete global angle_debug_package')
+            run_adb_command('shell settings delete global angle_gl_driver_selection_pkgs')
+            run_adb_command('shell settings delete global angle_gl_driver_selection_values')
+        else:
+            logging.error('Unsupported renderer {}'.format(renderer))
+            exit()
 
         for i in range(int(args.loop_count)):
             print("\nStarting run %i with %s at %s\n" %

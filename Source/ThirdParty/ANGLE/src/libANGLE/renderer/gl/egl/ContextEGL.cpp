@@ -28,7 +28,7 @@ angle::Result ContextEGL::onMakeCurrent(const gl::Context *context)
         if (!mExtState)
         {
             mExtState        = std::make_unique<ExternalContextState>();
-            const auto &caps = getNativeCaps();
+            const auto &caps = getCaps();
             mExtState->textureBindings.resize(
                 static_cast<size_t>(caps.maxCombinedTextureImageUnits));
         }

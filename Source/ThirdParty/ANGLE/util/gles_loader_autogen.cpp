@@ -585,6 +585,10 @@ ANGLE_UTIL_EXPORT PFNGLFRAMEBUFFERPIXELLOCALCLEARVALUEIVANGLEPROC
     l_glFramebufferPixelLocalClearValueivANGLE;
 ANGLE_UTIL_EXPORT PFNGLFRAMEBUFFERPIXELLOCALCLEARVALUEUIVANGLEPROC
     l_glFramebufferPixelLocalClearValueuivANGLE;
+ANGLE_UTIL_EXPORT PFNGLFRAMEBUFFERPIXELLOCALSTORAGEINTERRUPTANGLEPROC
+    l_glFramebufferPixelLocalStorageInterruptANGLE;
+ANGLE_UTIL_EXPORT PFNGLFRAMEBUFFERPIXELLOCALSTORAGERESTOREANGLEPROC
+    l_glFramebufferPixelLocalStorageRestoreANGLE;
 ANGLE_UTIL_EXPORT PFNGLFRAMEBUFFERTEXTUREPIXELLOCALSTORAGEANGLEPROC
     l_glFramebufferTexturePixelLocalStorageANGLE;
 ANGLE_UTIL_EXPORT PFNGLGETFRAMEBUFFERPIXELLOCALSTORAGEPARAMETERFVANGLEPROC
@@ -1755,6 +1759,12 @@ void LoadUtilGLES(LoadProc loadProc)
     l_glFramebufferPixelLocalClearValueuivANGLE =
         reinterpret_cast<PFNGLFRAMEBUFFERPIXELLOCALCLEARVALUEUIVANGLEPROC>(
             loadProc("glFramebufferPixelLocalClearValueuivANGLE"));
+    l_glFramebufferPixelLocalStorageInterruptANGLE =
+        reinterpret_cast<PFNGLFRAMEBUFFERPIXELLOCALSTORAGEINTERRUPTANGLEPROC>(
+            loadProc("glFramebufferPixelLocalStorageInterruptANGLE"));
+    l_glFramebufferPixelLocalStorageRestoreANGLE =
+        reinterpret_cast<PFNGLFRAMEBUFFERPIXELLOCALSTORAGERESTOREANGLEPROC>(
+            loadProc("glFramebufferPixelLocalStorageRestoreANGLE"));
     l_glFramebufferTexturePixelLocalStorageANGLE =
         reinterpret_cast<PFNGLFRAMEBUFFERTEXTUREPIXELLOCALSTORAGEANGLEPROC>(
             loadProc("glFramebufferTexturePixelLocalStorageANGLE"));

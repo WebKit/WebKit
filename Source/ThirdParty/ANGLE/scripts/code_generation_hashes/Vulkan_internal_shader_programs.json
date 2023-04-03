@@ -90,9 +90,9 @@
   "src/libANGLE/renderer/vulkan/shaders/gen/ConvertVertex.comp.00000007.inc":
     "105331ec6b8d657fc30ff93f73258baa",
   "src/libANGLE/renderer/vulkan/shaders/gen/EtcToBc.comp.00000000.inc":
-    "122d01d1628da2071d835c55095911b1",
+    "435329724f5ff414203f06cc8512d232",
   "src/libANGLE/renderer/vulkan/shaders/gen/EtcToBc.comp.00000001.inc":
-    "515531e181b5b92ebe2bbc6cba39367f",
+    "8fb53423a3f2feecacfc0d170a33ff3a",
   "src/libANGLE/renderer/vulkan/shaders/gen/ExportStencil.frag.00000000.inc":
     "4a68fcf26f60d54745325f79d3eaf219",
   "src/libANGLE/renderer/vulkan/shaders/gen/FullScreenTri.vert.00000000.inc":
@@ -296,7 +296,7 @@
   "src/libANGLE/renderer/vulkan/shaders/src/ConvertVertex.comp.json":
     "5186e223d98092a54dc3ce23677039c1",
   "src/libANGLE/renderer/vulkan/shaders/src/EtcToBc.comp":
-    "808257085591ef68f2f64d29ecf813d9",
+    "03acbcc8abd31c280fd1b9781a765f47",
   "src/libANGLE/renderer/vulkan/shaders/src/EtcToBc.comp.json":
     "59e43d52460e98e6f9992ec8c93e2eb5",
   "src/libANGLE/renderer/vulkan/shaders/src/ExportStencil.frag":

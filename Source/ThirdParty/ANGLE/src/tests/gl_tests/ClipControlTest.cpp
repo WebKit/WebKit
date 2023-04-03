@@ -175,4 +175,426 @@ TEST_P(ClipControlTest, OriginScissorClear)
     test("User framebuffer", getClientMajorVersion() > 2);
 }
 
+// Test that changing clip origin state does not affect location of scissor area
+TEST_P(ClipControlTest, OriginScissorDraw)
+{
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_EXT_clip_control"));
+
+    constexpr char kVS[] = R"(
+attribute vec2 a_position;
+void main()
+{
+    // Square at (0.25, 0.25) -> (0.75, 0.75)
+    gl_Position = vec4(a_position * 0.25 + 0.5, 0.0, 1.0);
+})";
+
+    ANGLE_GL_PROGRAM(program, kVS, essl1_shaders::fs::Blue());
+    glUseProgram(program);
+    ASSERT_GL_NO_ERROR();
+
+    auto test = [&](std::string name) {
+        glClipControlEXT(GL_LOWER_LEFT_EXT, GL_NEGATIVE_ONE_TO_ONE_EXT);
+
+        glDisable(GL_SCISSOR_TEST);
+        glClear(GL_COLOR_BUFFER_BIT);
+
+        // Draw only to the lower half
+        glEnable(GL_SCISSOR_TEST);
+        glScissor(0, 0, w, h / 2);
+
+        // Draw blue quad in the upper-right part of the framebuffer; scissor test must fail
+        drawQuad(program, "a_position", 0);
+        ASSERT_GL_NO_ERROR();
+
+        // Switch the clip origin and draw again; scissor test must pass
+        glClipControlEXT(GL_UPPER_LEFT_EXT, GL_NEGATIVE_ONE_TO_ONE_EXT);
+        drawQuad(program, "a_position", 0);
+        ASSERT_GL_NO_ERROR();
+
+        // Reads are unaffected by clip origin
+        EXPECT_PIXEL_COLOR_EQ(0.75 * w, 0.25 * h, GLColor::blue) << name;
+        EXPECT_PIXEL_COLOR_EQ(0.75 * w, 0.75 * h, GLColor::transparentBlack) << name;
+    };
+
+    test("Default framebuffer");
+
+    GLFramebuffer fb;
+    glBindFramebuffer(GL_FRAMEBUFFER, fb);
+
+    GLRenderbuffer rb;
+    glBindRenderbuffer(GL_RENDERBUFFER, rb);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA4, w, h);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, rb);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    test("User framebuffer");
+}
+
+// Test that changing clip origin state does not affect copyTexImage
+TEST_P(ClipControlTest, OriginCopyTexImage)
+{
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_EXT_clip_control"));
+
+    auto test = [&](std::string name) {
+        glClipControlEXT(GL_LOWER_LEFT_EXT, GL_NEGATIVE_ONE_TO_ONE_EXT);
+
+        // Clear to red
+        glDisable(GL_SCISSOR_TEST);
+        glClearColor(1.0, 0.0, 0.0, 1.0);
+        glClear(GL_COLOR_BUFFER_BIT);
+
+        // Clear lower half-space to green
+        glEnable(GL_SCISSOR_TEST);
+        glScissor(0, 0, w, h / 2);
+        glClearColor(0.0, 1.0, 0.0, 1.0);
+        glClear(GL_COLOR_BUFFER_BIT);
+
+        // Switch clip origin state, it must have no effect on the next commands
+        glClipControlEXT(GL_UPPER_LEFT_EXT, GL_NEGATIVE_ONE_TO_ONE_EXT);
+
+        GLTexture tex;
+        glBindTexture(GL_TEXTURE_2D, tex);
+        glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 0, 0, w / 4, h / 4, 0);
+        ASSERT_GL_NO_ERROR();
+
+        GLFramebuffer readFb;
+        glBindFramebuffer(GL_FRAMEBUFFER, readFb);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex, 0);
+        ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+        // Copied texture must contain values from the lower half-space
+        EXPECT_PIXEL_COLOR_EQ(w / 8, h / 8, GLColor::green) << name;
+    };
+
+    test("Default framebuffer");
+
+    GLFramebuffer fb;
+    glBindFramebuffer(GL_FRAMEBUFFER, fb);
+
+    GLRenderbuffer rb;
+    glBindRenderbuffer(GL_RENDERBUFFER, rb);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA4, w, h);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, rb);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    test("User framebuffer");
+}
+
+// Test that changing clip origin state does not affect copyTexImage
+// with Luma format that may use draw calls internally
+TEST_P(ClipControlTest, OriginCopyTexImageLuma)
+{
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_EXT_clip_control"));
+
+    glClipControlEXT(GL_LOWER_LEFT_EXT, GL_NEGATIVE_ONE_TO_ONE_EXT);
+
+    // Clear to zero
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // Clear lower half-space to one
+    glEnable(GL_SCISSOR_TEST);
+    glScissor(0, 0, w, h / 2);
+    glClearColor(1.0, 1.0, 1.0, 1.0);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glDisable(GL_SCISSOR_TEST);
+
+    // Switch clip origin state, it must have no effect on the next commands
+    glClipControlEXT(GL_UPPER_LEFT_EXT, GL_NEGATIVE_ONE_TO_ONE_EXT);
+
+    GLTexture tex;
+    glBindTexture(GL_TEXTURE_2D, tex);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, 0, 0, w, h, 0);
+    ASSERT_GL_NO_ERROR();
+
+    glClearColor(1.0, 0.0, 1.0, 1.0);
+    glClear(GL_COLOR_BUFFER_BIT);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::magenta);
+
+    // Draw the luma texture
+    glClipControlEXT(GL_LOWER_LEFT_EXT, GL_NEGATIVE_ONE_TO_ONE_EXT);
+    ANGLE_GL_PROGRAM(drawTexture, essl1_shaders::vs::Texture2D(), essl1_shaders::fs::Texture2D());
+    drawQuad(drawTexture, essl1_shaders::PositionAttrib(), 0.0f);
+    ASSERT_GL_NO_ERROR();
+
+    EXPECT_PIXEL_COLOR_EQ(w / 2, h * 1 / 4, GLColor::white);
+    EXPECT_PIXEL_COLOR_EQ(w / 2, h * 3 / 4, GLColor::black);
+}
+
+// Test that clip origin does not affect gl_FragCoord
+TEST_P(ClipControlTest, OriginFragCoord)
+{
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_EXT_clip_control"));
+
+    const char kFS[] = R"(precision mediump float;
+void main()
+{
+    gl_FragColor = vec4(sign(gl_FragCoord.xy / 64.0 - 0.5), 0.0, 1.0);
+})";
+
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), kFS);
+
+    glClearColor(1.0, 0.0, 1.0, 1.0);
+
+    for (GLenum origin : {GL_LOWER_LEFT_EXT, GL_UPPER_LEFT_EXT})
+    {
+        glClipControlEXT(origin, GL_NEGATIVE_ONE_TO_ONE_EXT);
+
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+        glClear(GL_COLOR_BUFFER_BIT);
+        drawQuad(program, essl1_shaders::PositionAttrib(), 0.0);
+
+        EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::black);
+        EXPECT_PIXEL_COLOR_EQ(w - 1, 0, GLColor::red);
+        EXPECT_PIXEL_COLOR_EQ(0, h - 1, GLColor::green);
+        EXPECT_PIXEL_COLOR_EQ(w - 1, h - 1, GLColor::yellow);
+
+        GLFramebuffer fb;
+        glBindFramebuffer(GL_FRAMEBUFFER, fb);
+
+        GLRenderbuffer rb;
+        glBindRenderbuffer(GL_RENDERBUFFER, rb);
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA4, w, h);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, rb);
+        ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+        glClear(GL_COLOR_BUFFER_BIT);
+        drawQuad(program, essl1_shaders::PositionAttrib(), 0.0);
+
+        EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::black);
+        EXPECT_PIXEL_COLOR_EQ(w - 1, 0, GLColor::red);
+        EXPECT_PIXEL_COLOR_EQ(0, h - 1, GLColor::green);
+        EXPECT_PIXEL_COLOR_EQ(w - 1, h - 1, GLColor::yellow);
+    }
+}
+
+// Test that clip origin does not affect gl_PointCoord
+TEST_P(ClipControlTest, OriginPointCoord)
+{
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_EXT_clip_control"));
+
+    float pointSizeRange[2] = {};
+    glGetFloatv(GL_ALIASED_POINT_SIZE_RANGE, pointSizeRange);
+    ANGLE_SKIP_TEST_IF(pointSizeRange[1] < 32);
+
+    const char kVS[] = R"(precision mediump float;
+void main()
+{
+    gl_Position = vec4(0.0, 0.0, 0.0, 1.0);
+    gl_PointSize = 32.0;
+})";
+
+    const char kFS[] = R"(precision mediump float;
+void main()
+{
+    gl_FragColor = vec4(sign(gl_PointCoord.xy - 0.5), 0.0, 1.0);
+})";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    glUseProgram(program);
+    ASSERT_GL_NO_ERROR();
+
+    glClearColor(1.0, 0.0, 1.0, 1.0);
+
+    for (GLenum origin : {GL_LOWER_LEFT_EXT, GL_UPPER_LEFT_EXT})
+    {
+        glClipControlEXT(origin, GL_NEGATIVE_ONE_TO_ONE_EXT);
+
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+        glClear(GL_COLOR_BUFFER_BIT);
+        glDrawArrays(GL_POINTS, 0, 1);
+        ASSERT_GL_NO_ERROR();
+
+        EXPECT_PIXEL_COLOR_EQ(w / 2 - 15, h / 2 + 15, GLColor::black);
+        EXPECT_PIXEL_COLOR_EQ(w / 2 + 15, h / 2 + 15, GLColor::red);
+        EXPECT_PIXEL_COLOR_EQ(w / 2 - 15, h / 2 - 15, GLColor::green);
+        EXPECT_PIXEL_COLOR_EQ(w / 2 + 15, h / 2 - 15, GLColor::yellow);
+
+        GLFramebuffer fb;
+        glBindFramebuffer(GL_FRAMEBUFFER, fb);
+
+        GLRenderbuffer rb;
+        glBindRenderbuffer(GL_RENDERBUFFER, rb);
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA4, w, h);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, rb);
+        ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+        glClear(GL_COLOR_BUFFER_BIT);
+        glDrawArrays(GL_POINTS, 0, 1);
+        ASSERT_GL_NO_ERROR();
+
+        EXPECT_PIXEL_COLOR_EQ(w / 2 - 15, h / 2 + 15, GLColor::black);
+        EXPECT_PIXEL_COLOR_EQ(w / 2 + 15, h / 2 + 15, GLColor::red);
+        EXPECT_PIXEL_COLOR_EQ(w / 2 - 15, h / 2 - 15, GLColor::green);
+        EXPECT_PIXEL_COLOR_EQ(w / 2 + 15, h / 2 - 15, GLColor::yellow);
+    }
+}
+
+// Test that clip origin does not affect gl_FrontFacing
+TEST_P(ClipControlTest, OriginFrontFacing)
+{
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_EXT_clip_control"));
+
+    const char kFS[] = R"(precision mediump float;
+void main()
+{
+    gl_FragColor = vec4(gl_FrontFacing ? vec2(1.0, 0.0) : vec2(0.0, 1.0), 0.0, 1.0);
+})";
+
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), kFS);
+
+    for (GLenum origin : {GL_LOWER_LEFT_EXT, GL_UPPER_LEFT_EXT})
+    {
+        glClipControlEXT(origin, GL_NEGATIVE_ONE_TO_ONE_EXT);
+
+        glBindRenderbuffer(GL_RENDERBUFFER, 0);
+
+        glFrontFace(GL_CCW);
+        drawQuad(program, essl1_shaders::PositionAttrib(), 0.0);
+        EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+
+        glFrontFace(GL_CW);
+        drawQuad(program, essl1_shaders::PositionAttrib(), 0.0);
+        EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+
+        GLFramebuffer fb;
+        glBindFramebuffer(GL_FRAMEBUFFER, fb);
+
+        GLRenderbuffer rb;
+        glBindRenderbuffer(GL_RENDERBUFFER, rb);
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA4, w, h);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, rb);
+        ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+        glFrontFace(GL_CCW);
+        drawQuad(program, essl1_shaders::PositionAttrib(), 0.0);
+        EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+
+        glFrontFace(GL_CW);
+        drawQuad(program, essl1_shaders::PositionAttrib(), 0.0);
+        EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+    }
+}
+
+class ClipControlTestES3 : public ClipControlTest
+{};
+
+// Test that clip origin state does not affect framebuffer blits
+TEST_P(ClipControlTestES3, OriginBlit)
+{
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_EXT_clip_control"));
+
+    constexpr char kFS[] = R"(
+precision mediump float;
+varying vec4 v_position;
+void main()
+{
+    gl_FragColor = vec4(sign(v_position.xy), 0.0, 1.0);
+})";
+
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Passthrough(), kFS);
+    glUseProgram(program);
+    ASSERT_GL_NO_ERROR();
+
+    // Blit default to custom
+    {
+        GLFramebuffer fb;
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fb);
+
+        GLRenderbuffer rb;
+        glBindRenderbuffer(GL_RENDERBUFFER, rb);
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, w, h);
+        glFramebufferRenderbuffer(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, rb);
+        ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_DRAW_FRAMEBUFFER);
+
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+        glClipControlEXT(GL_LOWER_LEFT_EXT, GL_NEGATIVE_ONE_TO_ONE_EXT);
+        drawQuad(program, "a_position", 0);
+        ASSERT_GL_NO_ERROR();
+
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fb);
+        glClipControlEXT(GL_UPPER_LEFT_EXT, GL_NEGATIVE_ONE_TO_ONE_EXT);
+        glBlitFramebuffer(0, 0, w, h, 0, 0, w, h, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+        ASSERT_GL_NO_ERROR();
+
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, fb);
+        EXPECT_PIXEL_COLOR_EQ(0.25 * w, 0.25 * h, GLColor::black);
+        EXPECT_PIXEL_COLOR_EQ(0.75 * w, 0.25 * h, GLColor::red);
+        EXPECT_PIXEL_COLOR_EQ(0.25 * w, 0.75 * h, GLColor::green);
+        EXPECT_PIXEL_COLOR_EQ(0.75 * w, 0.75 * h, GLColor::yellow);
+    }
+
+    // Blit custom to default
+    {
+        GLFramebuffer fb;
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fb);
+
+        GLRenderbuffer rb;
+        glBindRenderbuffer(GL_RENDERBUFFER, rb);
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, w, h);
+        glFramebufferRenderbuffer(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, rb);
+        ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_DRAW_FRAMEBUFFER);
+
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fb);
+        glClipControlEXT(GL_LOWER_LEFT_EXT, GL_NEGATIVE_ONE_TO_ONE_EXT);
+        drawQuad(program, "a_position", 0);
+        ASSERT_GL_NO_ERROR();
+
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, fb);
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+        glClipControlEXT(GL_UPPER_LEFT_EXT, GL_NEGATIVE_ONE_TO_ONE_EXT);
+        glBlitFramebuffer(0, 0, w, h, 0, 0, w, h, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+        ASSERT_GL_NO_ERROR();
+
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
+        EXPECT_PIXEL_COLOR_EQ(0.25 * w, 0.25 * h, GLColor::black);
+        EXPECT_PIXEL_COLOR_EQ(0.75 * w, 0.25 * h, GLColor::red);
+        EXPECT_PIXEL_COLOR_EQ(0.25 * w, 0.75 * h, GLColor::green);
+        EXPECT_PIXEL_COLOR_EQ(0.75 * w, 0.75 * h, GLColor::yellow);
+    }
+
+    // Blit custom to custom
+    {
+        GLFramebuffer fb1;
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fb1);
+
+        GLRenderbuffer rb1;
+        glBindRenderbuffer(GL_RENDERBUFFER, rb1);
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, w, h);
+        glFramebufferRenderbuffer(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, rb1);
+        ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_DRAW_FRAMEBUFFER);
+
+        GLFramebuffer fb2;
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fb2);
+
+        GLRenderbuffer rb2;
+        glBindRenderbuffer(GL_RENDERBUFFER, rb2);
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, w, h);
+        glFramebufferRenderbuffer(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, rb2);
+        ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_DRAW_FRAMEBUFFER);
+
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fb1);
+        glClipControlEXT(GL_LOWER_LEFT_EXT, GL_NEGATIVE_ONE_TO_ONE_EXT);
+        drawQuad(program, "a_position", 0);
+        ASSERT_GL_NO_ERROR();
+
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, fb1);
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fb2);
+        glClipControlEXT(GL_UPPER_LEFT_EXT, GL_NEGATIVE_ONE_TO_ONE_EXT);
+        glBlitFramebuffer(0, 0, w, h, 0, 0, w, h, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+        ASSERT_GL_NO_ERROR();
+
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, fb2);
+        EXPECT_PIXEL_COLOR_EQ(0.25 * w, 0.25 * h, GLColor::black);
+        EXPECT_PIXEL_COLOR_EQ(0.75 * w, 0.25 * h, GLColor::red);
+        EXPECT_PIXEL_COLOR_EQ(0.25 * w, 0.75 * h, GLColor::green);
+        EXPECT_PIXEL_COLOR_EQ(0.75 * w, 0.75 * h, GLColor::yellow);
+    }
+}
+
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(ClipControlTest);
+ANGLE_INSTANTIATE_TEST_ES3(ClipControlTestES3);

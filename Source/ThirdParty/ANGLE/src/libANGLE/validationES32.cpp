@@ -13,7 +13,7 @@
 #include "libANGLE/Framebuffer.h"
 #include "libANGLE/VertexArray.h"
 #include "libANGLE/validationES.h"
-#include "libANGLE/validationES2_autogen.h"
+#include "libANGLE/validationES2.h"
 #include "libANGLE/validationES3.h"
 #include "libANGLE/validationES31.h"
 #include "libANGLE/validationES31_autogen.h"
@@ -538,7 +538,7 @@ bool ValidatePatchParameteri(const Context *context,
 
 bool ValidatePopDebugGroup(const Context *context, angle::EntryPoint entryPoint)
 {
-    return true;
+    return ValidatePopDebugGroupBase(context, entryPoint);
 }
 
 bool ValidatePrimitiveBoundingBox(const Context *context,
@@ -562,7 +562,7 @@ bool ValidatePushDebugGroup(const Context *context,
                             GLsizei length,
                             const GLchar *message)
 {
-    return true;
+    return ValidatePushDebugGroupBase(context, entryPoint, source, id, length, message);
 }
 
 bool ValidateReadnPixels(const Context *context,

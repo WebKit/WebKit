@@ -199,6 +199,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
         resources.NV_EGL_stream_consumer_external = 1;
         resources.ARB_texture_rectangle           = 1;
         resources.EXT_blend_func_extended         = 1;
+        resources.EXT_conservative_depth          = 1;
         resources.EXT_draw_buffers                = 1;
         resources.EXT_frag_depth                  = 1;
         resources.EXT_shader_texture_lod          = 1;

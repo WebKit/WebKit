@@ -2469,6 +2469,104 @@ TEST_P(PixelLocalStorageTest, PLSWithSamplers)
     ASSERT_GL_NO_ERROR();
 }
 
+// Check the PLS interruption mechanism.
+TEST_P(PixelLocalStorageTest, Interrupt)
+{
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_ANGLE_shader_pixel_local_storage"));
+
+    PLSTestTexture t(GL_RGBA8);
+    PLSTestTexture u0(GL_R32UI);
+    PLSTestTexture u1(GL_R32UI);
+    PLSTestTexture u2(GL_R32UI);
+
+    GLFramebuffer f;
+    glBindFramebuffer(GL_FRAMEBUFFER, f);
+    glFramebufferTexturePixelLocalStorageANGLE(0, t, 0, 0);
+
+    GLFramebuffer g;
+    glBindFramebuffer(GL_FRAMEBUFFER, g);
+    glFramebufferTexturePixelLocalStorageANGLE(0, u0, 0, 0);
+    glFramebufferTexturePixelLocalStorageANGLE(1, u1, 0, 0);
+    glFramebufferTexturePixelLocalStorageANGLE(2, u2, 0, 0);
+
+    glViewport(0, 0, W, H);
+    glDrawBuffers(0, nullptr);
+
+    PLSProgram p;
+    p.compile(R"(
+    layout(binding=0, rgba8) uniform highp pixelLocalANGLE t;
+    void main()
+    {
+        pixelLocalStoreANGLE(t, color + pixelLocalLoadANGLE(t));
+    })");
+
+    PLSProgram q;
+    q.compile(R"(
+    layout(binding=0, r32ui) uniform highp upixelLocalANGLE u0;
+    layout(binding=1, r32ui) uniform highp upixelLocalANGLE u1;
+    layout(binding=2, r32ui) uniform highp upixelLocalANGLE u2;
+    void main()
+    {
+        pixelLocalStoreANGLE(u0, (pixelLocalLoadANGLE(u1) << 8) | 0xau);
+        pixelLocalStoreANGLE(u1, (pixelLocalLoadANGLE(u2) << 8) | 0xbu);
+        pixelLocalStoreANGLE(u2, (pixelLocalLoadANGLE(u0) << 8) | 0xcu);
+    })");
+
+    // Interleave 2 PLS rendering passes.
+    glBindFramebuffer(GL_FRAMEBUFFER, f);
+    glBeginPixelLocalStorageANGLE(1, GLenumArray({GL_LOAD_OP_ZERO_ANGLE}));
+    p.bind();
+    p.drawBoxes({{{FULLSCREEN}, {1, 0, 0, 0}}});
+    glFramebufferPixelLocalStorageInterruptANGLE();
+
+    glBindFramebuffer(GL_FRAMEBUFFER, g);
+    q.bind();
+    glBeginPixelLocalStorageANGLE(
+        3, GLenumArray({GL_LOAD_OP_ZERO_ANGLE, GL_LOAD_OP_ZERO_ANGLE, GL_LOAD_OP_ZERO_ANGLE}));
+    q.drawBoxes({{{FULLSCREEN}}});
+    glFramebufferPixelLocalStorageInterruptANGLE();
+
+    p.bind();
+    glBindFramebuffer(GL_FRAMEBUFFER, f);
+    glFramebufferPixelLocalStorageRestoreANGLE();
+    p.drawBoxes({{{FULLSCREEN}, {0, 0, 0, 1}}});
+    glFramebufferPixelLocalStorageInterruptANGLE();
+
+    glBindFramebuffer(GL_FRAMEBUFFER, g);
+    glFramebufferPixelLocalStorageRestoreANGLE();
+    q.bind();
+    q.drawBoxes({{{FULLSCREEN}}});
+    glFramebufferPixelLocalStorageInterruptANGLE();
+
+    glBindFramebuffer(GL_FRAMEBUFFER, f);
+    glFramebufferPixelLocalStorageRestoreANGLE();
+    p.bind();
+    p.drawBoxes({{{FULLSCREEN}, {0, 0, 1, 0}}});
+    glEndPixelLocalStorageANGLE(1, GLenumArray({GL_STORE_OP_STORE_ANGLE}));
+
+    q.bind();
+    glBindFramebuffer(GL_FRAMEBUFFER, g);
+    glFramebufferPixelLocalStorageRestoreANGLE();
+    q.drawBoxes({{{FULLSCREEN}}});
+    glEndPixelLocalStorageANGLE(3, GLenumArray({GL_STORE_OP_STORE_ANGLE, GL_STORE_OP_STORE_ANGLE,
+                                                GL_STORE_OP_STORE_ANGLE}));
+
+    attachTextureToScratchFBO(t);
+    EXPECT_PIXEL_RECT_EQ(0, 0, W, H, GLColor(255, 0, 255, 255));
+    ASSERT_GL_NO_ERROR();
+
+    attachTextureToScratchFBO(u0);
+    EXPECT_PIXEL_RECT32UI_EQ(0, 0, W, H, GLColor32UI(0x0a0c0b0a, 0, 0, 1));
+
+    attachTextureToScratchFBO(u1);
+    EXPECT_PIXEL_RECT32UI_EQ(0, 0, W, H, GLColor32UI(0x0b0a0c0b, 0, 0, 1));
+
+    attachTextureToScratchFBO(u2);
+    EXPECT_PIXEL_RECT32UI_EQ(0, 0, W, H, GLColor32UI(0x0c0b0a0c, 0, 0, 1));
+
+    ASSERT_GL_NO_ERROR();
+}
+
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(PixelLocalStorageTest);
 #define PLATFORM(API, BACKEND) API##_##BACKEND()
 #define PLS_INSTANTIATE_RENDERING_TEST_AND(TEST, API, ...)                                \
@@ -3019,6 +3117,16 @@ TEST_P(PixelLocalStorageValidationTest, FramebufferMemorylessPixelLocalStorageAN
     glBindFramebuffer(GL_FRAMEBUFFER, fbo);
     EXPECT_PLS_INTEGER(0, GL_PIXEL_LOCAL_FORMAT_ANGLE, GL_RGBA8I);
 
+    // INVALID_FRAMEBUFFER_OPERATION is generated if pixel local storage on the draw framebuffer is
+    // in an interrupted state.
+    EXPECT_GL_NO_ERROR();
+    glFramebufferPixelLocalStorageInterruptANGLE();
+    glFramebufferMemorylessPixelLocalStorageANGLE(0, GL_R32UI);
+    EXPECT_GL_SINGLE_ERROR(GL_INVALID_FRAMEBUFFER_OPERATION);
+    EXPECT_GL_SINGLE_ERROR_MSG("Pixel local storage on the draw framebuffer is interrupted.");
+    glFramebufferPixelLocalStorageRestoreANGLE();
+    EXPECT_PLS_INTEGER(0, GL_PIXEL_LOCAL_FORMAT_ANGLE, GL_RGBA8I);
+
     // INVALID_OPERATION is generated if PIXEL_LOCAL_STORAGE_ACTIVE_PLANES_ANGLE is nonzero.
     {
         PLSTestTexture tmp(GL_RGBA8);
@@ -3140,6 +3248,17 @@ TEST_P(PixelLocalStorageValidationTest, FramebufferTexturePixelLocalStorageANGLE
     EXPECT_GL_SINGLE_ERROR_MSG(
         "Default framebuffer object name 0 does not support pixel local storage.");
     glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
+    // INVALID_FRAMEBUFFER_OPERATION is generated if pixel local storage on the draw framebuffer is
+    // in an interrupted state.
+    EXPECT_GL_NO_ERROR();
+    glFramebufferTexturePixelLocalStorageANGLE(1, tex, 1, 0);
+    glFramebufferPixelLocalStorageInterruptANGLE();
+    glFramebufferTexturePixelLocalStorageANGLE(1, 0, 0, 0);
+    EXPECT_GL_SINGLE_ERROR(GL_INVALID_FRAMEBUFFER_OPERATION);
+    EXPECT_GL_SINGLE_ERROR_MSG("Pixel local storage on the draw framebuffer is interrupted.");
+    glFramebufferPixelLocalStorageRestoreANGLE();
+    EXPECT_PLS_INTEGER(1, GL_PIXEL_LOCAL_TEXTURE_NAME_ANGLE, tex);
 
     // INVALID_OPERATION is generated if PIXEL_LOCAL_STORAGE_ACTIVE_PLANES_ANGLE is nonzero.
     {
@@ -3326,6 +3445,29 @@ TEST_P(PixelLocalStorageValidationTest, glFramebufferPixelLocalClearValuesANGLE)
     GLFramebuffer fbo;
     glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 
+    // INVALID_FRAMEBUFFER_OPERATION is generated if pixel local storage on the draw framebuffer is
+    // in an interrupted state.
+    glFramebufferPixelLocalStorageInterruptANGLE();
+
+    glFramebufferPixelLocalClearValuefvANGLE(0, ClearF(1, 1, 1, 1));
+    EXPECT_GL_SINGLE_ERROR(GL_INVALID_FRAMEBUFFER_OPERATION);
+    EXPECT_GL_SINGLE_ERROR_MSG("Pixel local storage on the draw framebuffer is interrupted.");
+
+    glFramebufferPixelLocalClearValueivANGLE(1, ClearI(1, 1, 1, 1));
+    EXPECT_GL_SINGLE_ERROR(GL_INVALID_FRAMEBUFFER_OPERATION);
+    EXPECT_GL_SINGLE_ERROR_MSG("Pixel local storage on the draw framebuffer is interrupted.");
+
+    glFramebufferPixelLocalClearValueuivANGLE(MAX_PIXEL_LOCAL_STORAGE_PLANES - 1,
+                                              ClearUI(1, 1, 1, 1));
+    EXPECT_GL_SINGLE_ERROR(GL_INVALID_FRAMEBUFFER_OPERATION);
+    EXPECT_GL_SINGLE_ERROR_MSG("Pixel local storage on the draw framebuffer is interrupted.");
+
+    glFramebufferPixelLocalStorageRestoreANGLE();
+    EXPECT_PIXEL_LOCAL_CLEAR_VALUE_FLOAT(0, ({0, 0, 0, 0}));
+    EXPECT_PIXEL_LOCAL_CLEAR_VALUE_INT(1, ({0, 0, 0, 0}));
+    EXPECT_PIXEL_LOCAL_CLEAR_VALUE_UNSIGNED_INT(MAX_PIXEL_LOCAL_STORAGE_PLANES - 1, ({0, 0, 0, 0}));
+    ASSERT_GL_NO_ERROR();
+
     // INVALID_VALUE is generated if <plane> < 0 or <plane> >= MAX_PIXEL_LOCAL_STORAGE_PLANES_ANGLE.
     glFramebufferPixelLocalClearValuefvANGLE(-1, ClearF(0, 0, 0, 0));
     EXPECT_GL_SINGLE_ERROR(GL_INVALID_VALUE);
@@ -3395,6 +3537,17 @@ TEST_P(PixelLocalStorageValidationTest, BeginPixelLocalStorageANGLE_context_stat
 
     GLFramebuffer fbo;
     glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
+    // INVALID_FRAMEBUFFER_OPERATION is generated if pixel local storage on the draw framebuffer is
+    // in an interrupted state.
+    glFramebufferPixelLocalStorageInterruptANGLE();
+    glBeginPixelLocalStorageANGLE(1, GLenumArray({GL_LOAD_OP_ZERO_ANGLE}));
+    EXPECT_GL_SINGLE_ERROR(GL_INVALID_FRAMEBUFFER_OPERATION);
+    EXPECT_GL_SINGLE_ERROR_MSG("Pixel local storage on the draw framebuffer is interrupted.");
+    glFramebufferPixelLocalStorageRestoreANGLE();
+    ASSERT_GL_INTEGER(GL_PIXEL_LOCAL_STORAGE_ACTIVE_PLANES_ANGLE, 0);
+    ASSERT_GL_NO_ERROR();
+
     PLSTestTexture pls0(GL_RGBA8, 100, 100);
     glFramebufferTexturePixelLocalStorageANGLE(0, pls0, 0, 0);
     glBeginPixelLocalStorageANGLE(1, GLenumArray({GL_LOAD_OP_ZERO_ANGLE}));
@@ -3749,7 +3902,19 @@ TEST_P(PixelLocalStorageValidationTest, BeginPixelLocalStorageANGLE_pls_planes)
 // Check that glEndPixelLocalStorageANGLE and glPixelLocalStorageBarrierANGLE validate as specified.
 TEST_P(PixelLocalStorageValidationTest, EndAndBarrierANGLE)
 {
+    // INVALID_FRAMEBUFFER_OPERATION is generated if pixel local storage on the draw framebuffer is
+    // in an interrupted state.
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fbo);
+    glFramebufferPixelLocalStorageInterruptANGLE();
+    glEndPixelLocalStorageANGLE(0, nullptr);
+    EXPECT_GL_SINGLE_ERROR(GL_INVALID_FRAMEBUFFER_OPERATION);
+    EXPECT_GL_SINGLE_ERROR_MSG("Pixel local storage on the draw framebuffer is interrupted.");
+    glFramebufferPixelLocalStorageRestoreANGLE();
+    ASSERT_GL_NO_ERROR();
+
     // INVALID_OPERATION is generated if PIXEL_LOCAL_STORAGE_ACTIVE_PLANES_ANGLE is zero.
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
     glEndPixelLocalStorageANGLE(0, nullptr);
     EXPECT_GL_SINGLE_ERROR(GL_INVALID_OPERATION);
     EXPECT_GL_SINGLE_ERROR_MSG("Pixel local storage is not active.");
@@ -3760,7 +3925,6 @@ TEST_P(PixelLocalStorageValidationTest, EndAndBarrierANGLE)
     EXPECT_GL_SINGLE_ERROR_MSG("Pixel local storage is not active.");
     ASSERT_GL_INTEGER(GL_PIXEL_LOCAL_STORAGE_ACTIVE_PLANES_ANGLE, 0);
 
-    GLFramebuffer fbo;
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fbo);
     ASSERT_GL_INTEGER(GL_PIXEL_LOCAL_STORAGE_ACTIVE_PLANES_ANGLE, 0);
 
@@ -3862,6 +4026,71 @@ TEST_P(PixelLocalStorageValidationTest, EndAndBarrierANGLE)
     ASSERT_GL_NO_ERROR();
 }
 
+// Check that FramebufferPixelLocalStorageInterruptANGLE validates as specified.
+TEST_P(PixelLocalStorageValidationTest, InterruptMechanism)
+{
+    // These commands are ignored when the default framebuffer object name 0 is bound.
+    glFramebufferPixelLocalStorageRestoreANGLE();
+    glFramebufferPixelLocalStorageInterruptANGLE();
+    glFramebufferPixelLocalStorageInterruptANGLE();
+    glFramebufferPixelLocalStorageInterruptANGLE();
+    glFramebufferPixelLocalStorageRestoreANGLE();
+    glFramebufferPixelLocalStorageRestoreANGLE();
+    glFramebufferPixelLocalStorageRestoreANGLE();
+    glFramebufferPixelLocalStorageRestoreANGLE();
+    EXPECT_GL_NO_ERROR();
+
+    for (size_t i = 0; i < 256; ++i)
+    {
+        glFramebufferPixelLocalStorageInterruptANGLE();
+    }
+    EXPECT_GL_NO_ERROR();
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fbo);
+
+    // INVALID_FRAMEBUFFER_OPERATION is generated if pixel local storage on the draw framebuffer is
+    // not in an interrupted state.
+    glFramebufferPixelLocalStorageRestoreANGLE();
+    EXPECT_GL_SINGLE_ERROR(GL_INVALID_FRAMEBUFFER_OPERATION);
+    EXPECT_GL_SINGLE_ERROR_MSG("Pixel local storage on the draw framebuffer is not interrupted.");
+
+    for (size_t i = 0; i < 255; ++i)
+    {
+        glFramebufferPixelLocalStorageInterruptANGLE();
+    }
+    EXPECT_GL_NO_ERROR();
+
+    // INVALID_FRAMEBUFFER_OPERATION is generated if the current interrupt count on the draw
+    // framebuffer is greater than or equal to 255.
+    glFramebufferPixelLocalStorageInterruptANGLE();
+    EXPECT_GL_SINGLE_ERROR(GL_INVALID_FRAMEBUFFER_OPERATION);
+    EXPECT_GL_SINGLE_ERROR_MSG(
+        "Pixel local storage does not support more than 255 nested interruptions.");
+
+    for (size_t i = 0; i < 255; ++i)
+    {
+        glFramebufferPixelLocalStorageRestoreANGLE();
+    }
+    EXPECT_GL_NO_ERROR();
+
+    glFramebufferPixelLocalStorageRestoreANGLE();
+    EXPECT_GL_SINGLE_ERROR(GL_INVALID_FRAMEBUFFER_OPERATION);
+    EXPECT_GL_SINGLE_ERROR_MSG("Pixel local storage on the draw framebuffer is not interrupted.");
+
+    glFramebufferPixelLocalStorageInterruptANGLE();
+    glFramebufferPixelLocalStorageInterruptANGLE();
+    ASSERT_GL_NO_ERROR();
+
+    glFramebufferPixelLocalStorageRestoreANGLE();
+    glFramebufferPixelLocalStorageRestoreANGLE();
+    ASSERT_GL_NO_ERROR();
+
+    glFramebufferPixelLocalStorageRestoreANGLE();
+    EXPECT_GL_SINGLE_ERROR(GL_INVALID_FRAMEBUFFER_OPERATION);
+    EXPECT_GL_SINGLE_ERROR_MSG("Pixel local storage on the draw framebuffer is not interrupted.");
+}
+
 // Check that glGetFramebufferPixelLocalStorageParameter(f|i|ui)(Robust)?ANGLE validate as
 // specified.
 TEST_P(PixelLocalStorageValidationTest, GetFramebufferPixelLocalStorageParametersANGLE)
@@ -3901,6 +4130,27 @@ TEST_P(PixelLocalStorageValidationTest, GetFramebufferPixelLocalStorageParameter
 
     GLFramebuffer fbo;
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fbo);
+
+    // INVALID_FRAMEBUFFER_OPERATION is generated if pixel local storage on the draw framebuffer is
+    // in an interrupted state.
+    glFramebufferPixelLocalStorageInterruptANGLE();
+    glGetFramebufferPixelLocalStorageParameterfvRobustANGLE(
+        0, GL_PIXEL_LOCAL_CLEAR_VALUE_FLOAT_ANGLE, 4, &length, floats);
+    EXPECT_GL_SINGLE_ERROR(GL_INVALID_FRAMEBUFFER_OPERATION);
+    EXPECT_GL_SINGLE_ERROR_MSG("Pixel local storage on the draw framebuffer is interrupted.");
+    glGetFramebufferPixelLocalStorageParameterfvANGLE(0, GL_PIXEL_LOCAL_CLEAR_VALUE_FLOAT_ANGLE,
+                                                      floats);
+    EXPECT_GL_SINGLE_ERROR(GL_INVALID_FRAMEBUFFER_OPERATION);
+    EXPECT_GL_SINGLE_ERROR_MSG("Pixel local storage on the draw framebuffer is interrupted.");
+    glGetFramebufferPixelLocalStorageParameterivRobustANGLE(1, GL_PIXEL_LOCAL_FORMAT_ANGLE, 4,
+                                                            &length, ints);
+    EXPECT_GL_SINGLE_ERROR(GL_INVALID_FRAMEBUFFER_OPERATION);
+    EXPECT_GL_SINGLE_ERROR_MSG("Pixel local storage on the draw framebuffer is interrupted.");
+    glGetFramebufferPixelLocalStorageParameterivANGLE(1, GL_PIXEL_LOCAL_FORMAT_ANGLE, ints);
+    EXPECT_GL_SINGLE_ERROR(GL_INVALID_FRAMEBUFFER_OPERATION);
+    EXPECT_GL_SINGLE_ERROR_MSG("Pixel local storage on the draw framebuffer is interrupted.");
+    glFramebufferPixelLocalStorageRestoreANGLE();
+    ASSERT_GL_NO_ERROR();
 
     // INVALID_VALUE is generated if <plane> < 0 or <plane> >= MAX_PIXEL_LOCAL_STORAGE_PLANES_ANGLE.
     glGetFramebufferPixelLocalStorageParameterfvRobustANGLE(

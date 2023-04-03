@@ -202,6 +202,15 @@ bool ValidateES2TexStorageParametersBase(const Context *context,
                                          GLsizei width,
                                          GLsizei height);
 
+// Validation of [Push,Pop]DebugGroup
+bool ValidatePushDebugGroupBase(const Context *context,
+                                angle::EntryPoint entryPoint,
+                                GLenum source,
+                                GLuint id,
+                                GLsizei length,
+                                const GLchar *message);
+bool ValidatePopDebugGroupBase(const Context *context, angle::EntryPoint entryPoint);
+
 }  // namespace gl
 
 #endif  // LIBANGLE_VALIDATION_ES2_H_

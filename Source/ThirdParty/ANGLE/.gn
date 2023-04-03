@@ -44,6 +44,9 @@ default_args = {
   # Saves on importing extra dependencies and ANGLE doesn't use JS.
   enable_js_protobuf = false
 
+  # Saves on importing extra dependencies and ANGLE doesn't use Rust.
+  enable_rust = false
+
   # Disable location tags in isolates.
   tests_have_location_tags = false
 

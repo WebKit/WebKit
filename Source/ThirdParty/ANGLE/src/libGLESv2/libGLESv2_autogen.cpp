@@ -3814,6 +3814,16 @@ void GL_APIENTRY glPixelLocalStorageBarrierANGLE()
     return GL_PixelLocalStorageBarrierANGLE();
 }
 
+void GL_APIENTRY glFramebufferPixelLocalStorageInterruptANGLE()
+{
+    return GL_FramebufferPixelLocalStorageInterruptANGLE();
+}
+
+void GL_APIENTRY glFramebufferPixelLocalStorageRestoreANGLE()
+{
+    return GL_FramebufferPixelLocalStorageRestoreANGLE();
+}
+
 void GL_APIENTRY glGetFramebufferPixelLocalStorageParameterfvANGLE(GLint plane,
                                                                    GLenum pname,
                                                                    GLfloat *params)

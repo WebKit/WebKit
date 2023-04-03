@@ -1648,7 +1648,9 @@ void GenerateCaps(ID3D11Device *device,
     extensions->standardDerivativesOES      = GetDerivativeInstructionSupport(featureLevel);
     extensions->shaderTextureLodEXT         = GetShaderTextureLODSupport(featureLevel);
     extensions->fragDepthEXT                = true;
+    extensions->conservativeDepthEXT        = (featureLevel >= D3D_FEATURE_LEVEL_11_0);
     extensions->polygonOffsetClampEXT       = (featureLevel >= D3D_FEATURE_LEVEL_10_0);
+    extensions->depthClampEXT               = true;
     extensions->stencilTexturingANGLE       = (featureLevel >= D3D_FEATURE_LEVEL_10_1);
     extensions->multiviewOVR                = IsMultiviewSupported(featureLevel);
     extensions->multiview2OVR               = IsMultiviewSupported(featureLevel);
@@ -1675,6 +1677,7 @@ void GenerateCaps(ID3D11Device *device,
     extensions->copyCompressedTextureCHROMIUM       = true;
     extensions->textureStorageMultisample2dArrayOES = true;
     extensions->textureMirrorClampToEdgeEXT         = true;
+    extensions->shaderNoperspectiveInterpolationNV  = (featureLevel >= D3D_FEATURE_LEVEL_10_0);
     extensions->multiviewMultisampleANGLE =
         ((extensions->multiviewOVR || extensions->multiview2OVR) &&
          extensions->textureStorageMultisample2dArrayOES);

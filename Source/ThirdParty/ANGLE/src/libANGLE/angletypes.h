@@ -238,6 +238,8 @@ struct RasterizerState final
     GLfloat polygonOffsetUnits;
     GLfloat polygonOffsetClamp;
 
+    bool depthClamp;
+
     // pointDrawMode/multiSample are only used in the D3D back-end right now.
     bool pointDrawMode;
     bool multiSample;
