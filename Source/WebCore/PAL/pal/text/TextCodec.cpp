@@ -21,7 +21,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
@@ -34,6 +34,14 @@ namespace PAL {
 
 int TextCodec::getUnencodableReplacement(UChar32 codePoint, UnencodableHandling handling, UnencodableReplacementArray& replacement)
 {
+    ASSERT(!(codePoint > 0x10FFFF));
+
+    // The Encoding Standard doesn't have surrogate code points in the input, but that would require
+    // scanning and potentially manipulating inputs ahead of time. Instead handle them at the last
+    // possible point.
+    if (codePoint >= 0xD800 && codePoint <= 0xDFFF)
+        codePoint = 0xFFFD;
+
     switch (handling) {
     case UnencodableHandling::QuestionMarks:
         replacement.data()[0] = '?';

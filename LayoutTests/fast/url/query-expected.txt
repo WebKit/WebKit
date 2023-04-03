@@ -8,7 +8,7 @@ PASS canonicalize('http://www.example.com/?as?df') is 'http://www.example.com/?a
 PASS canonicalize('http://www.example.com/?\x02hello bye') is 'http://www.example.com/?%02hello%7F%20bye'
 PASS canonicalize('http://www.example.com/?%40%41123') is 'http://www.example.com/?%40%41123'
 PASS canonicalize('http://www.example.com/?q=你好') is 'http://www.example.com/?q=%26%2320320%3B%26%2322909%3B'
-PASS canonicalize('http://www.example.com/?q=\ud800\ud800') is 'http://www.example.com/?q=%26%2355296%3B%26%2355296%3B'
+PASS canonicalize('http://www.example.com/?q=\ud800\ud800') is 'http://www.example.com/?q=%26%2365533%3B%26%2365533%3B'
 PASS canonicalize('http://www.example.com/?q=<asdf>') is 'http://www.example.com/?q=%3Casdf%3E'
 PASS canonicalize('http://www.example.com/?q="asdf"') is 'http://www.example.com/?q=%22asdf%22'
 PASS successfullyParsed is true
