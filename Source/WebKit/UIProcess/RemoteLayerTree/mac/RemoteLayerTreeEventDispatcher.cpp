@@ -261,8 +261,6 @@ WheelEventHandlingResult RemoteLayerTreeEventDispatcher::internalHandleWheelEven
     auto filteredEvent = filteredWheelEvent(wheelEvent);
     auto result = scrollingTree->handleWheelEvent(filteredEvent, processingSteps);
 
-    scrollingTree->applyLayerPositions();
-
     return result;
 }
 
@@ -391,13 +389,103 @@ void RemoteLayerTreeEventDispatcher::didRefreshDisplay(PlatformDisplayID display
     }
 #endif
 
+    Locker locker { m_scrollingTreeLock };
+
+    auto now = MonotonicTime::now();
+    m_lastDisplayDidRefreshTime = now;
+
     scrollingTree->displayDidRefresh(displayID);
-    scrollingTree->applyLayerPositions();
+
+    if (m_state != SynchronizationState::Idle)
+        scrollingTree->applyLayerPositions();
+
+    switch (m_state) {
+    case SynchronizationState::Idle: {
+        m_state = SynchronizationState::WaitingForRenderingUpdate;
+        constexpr auto maxStartRenderingUpdateDelay = 1_ms;
+        scheduleDelayedRenderingUpdateDetectionTimer(maxStartRenderingUpdateDelay);
+        break;
+    }
+    case SynchronizationState::WaitingForRenderingUpdate:
+    case SynchronizationState::InRenderingUpdate:
+    case SynchronizationState::Desynchronized:
+        break;
+    }
+}
+
+void RemoteLayerTreeEventDispatcher::scheduleDelayedRenderingUpdateDetectionTimer(Seconds delay)
+{
+    ASSERT(ScrollingThread::isCurrentThread());
+
+    if (!m_delayedRenderingUpdateDetectionTimer)
+        m_delayedRenderingUpdateDetectionTimer = makeUnique<RunLoop::Timer>(RunLoop::current(), this, &RemoteLayerTreeEventDispatcher::delayedRenderingUpdateDetectionTimerFired);
+
+    m_delayedRenderingUpdateDetectionTimer->startOneShot(delay);
+}
+
+void RemoteLayerTreeEventDispatcher::delayedRenderingUpdateDetectionTimerFired()
+{
+    ASSERT(ScrollingThread::isCurrentThread());
+    scrollingTree()->applyLayerPositions();
+}
+
+void RemoteLayerTreeEventDispatcher::waitForRenderingUpdateCompletionOrTimeout()
+{
+    ASSERT(ScrollingThread::isCurrentThread());
+    ASSERT(m_scrollingTreeLock.isLocked());
+
+    if (m_delayedRenderingUpdateDetectionTimer)
+        m_delayedRenderingUpdateDetectionTimer->stop();
+
+    auto currentTime = MonotonicTime::now();
+    auto estimatedNextDisplayRefreshTime = std::max(m_lastDisplayDidRefreshTime + m_scrollingTree->frameDuration(), currentTime);
+    auto timeoutTime = std::min(currentTime + m_scrollingTree->maxAllowableRenderingUpdateDurationForSynchronization(), estimatedNextDisplayRefreshTime);
+
+    bool becameIdle = m_stateCondition.waitUntil(m_scrollingTreeLock, timeoutTime, [&] {
+        assertIsHeld(m_scrollingTreeLock);
+        return m_state == SynchronizationState::Idle;
+    });
+
+    ASSERT(m_scrollingTreeLock.isLocked());
+
+    if (!becameIdle) {
+        m_state = SynchronizationState::Desynchronized;
+        // At this point we know the main thread is taking too long in the rendering update,
+        // so we give up trying to sync with the main thread and update layers here on the scrolling thread.
+        // Dispatch to allow for the scrolling thread to handle any outstanding wheel events before we commit layers.
+        ScrollingThread::dispatch([protectedThis = Ref { *this }]() {
+            protectedThis->scrollingTree()->applyLayerPositions();
+        });
+        tracePoint(ScrollingThreadRenderUpdateSyncEnd, 1);
+    } else
+        tracePoint(ScrollingThreadRenderUpdateSyncEnd);
 }
 
 void RemoteLayerTreeEventDispatcher::mainThreadDisplayDidRefresh(PlatformDisplayID)
 {
-    scrollingTree()->applyLayerPositions();
+    // Wait for the scrolling thread to acquire m_scrollingTreeLock. This ensures that any pending wheel events are processed.
+    BinarySemaphore semaphore;
+    ScrollingThread::dispatch([protectedThis = Ref { *this }, &semaphore]() {
+        Locker treeLocker { protectedThis->m_scrollingTreeLock };
+        semaphore.signal();
+        protectedThis->waitForRenderingUpdateCompletionOrTimeout();
+    });
+    semaphore.wait();
+
+    Locker locker { m_scrollingTreeLock };
+    m_state = SynchronizationState::InRenderingUpdate;
+}
+
+void RemoteLayerTreeEventDispatcher::renderingUpdateComplete()
+{
+    ASSERT(isMainRunLoop());
+
+    Locker locker { m_scrollingTreeLock };
+
+    if (m_state == SynchronizationState::InRenderingUpdate)
+        m_stateCondition.notifyOne();
+
+    m_state = SynchronizationState::Idle;
 }
 
 void RemoteLayerTreeEventDispatcher::windowScreenDidChange(PlatformDisplayID displayID, std::optional<FramesPerSecond> nominalFramesPerSecond)

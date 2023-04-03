@@ -115,9 +115,6 @@ private:
     
     bool isScrollingSynchronizedWithMainThread() final WTF_REQUIRES_LOCK(m_treeLock);
 
-    Seconds frameDuration();
-    Seconds maxAllowableRenderingUpdateDurationForSynchronization();
-    
     bool scrollingThreadIsActive();
 
     void receivedWheelEventWithPhases(PlatformWheelEventPhase, PlatformWheelEventPhase) final;

@@ -226,6 +226,12 @@ void RemoteScrollingCoordinatorProxyMac::didCommitLayerAndScrollingTrees()
     scrollingTree()->unlockLayersForHitTesting();
 }
 
+void RemoteScrollingCoordinatorProxyMac::applyScrollingTreeLayerPositionsAfterCommit()
+{
+    RemoteScrollingCoordinatorProxy::applyScrollingTreeLayerPositionsAfterCommit();
+    m_wheelEventDispatcher->renderingUpdateComplete();
+}
+
 } // namespace WebKit
 
 #endif // PLATFORM(MAC) && ENABLE(UI_SIDE_COMPOSITING)

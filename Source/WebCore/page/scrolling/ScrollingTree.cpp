@@ -28,6 +28,7 @@
 
 #if ENABLE(ASYNC_SCROLLING)
 
+#include "AnimationFrameRate.h"
 #include "EventNames.h"
 #include "Logging.h"
 #include "PlatformWheelEvent.h"
@@ -900,6 +901,19 @@ bool ScrollingTree::overlayScrollbarsEnabled()
     Locker locker { m_treeStateLock };
     return m_overlayScrollbarsEnabled;
 }
+
+Seconds ScrollingTree::frameDuration()
+{
+    auto displayFPS = nominalFramesPerSecond().value_or(FullSpeedFramesPerSecond);
+    return 1_s / (double)displayFPS;
+}
+
+Seconds ScrollingTree::maxAllowableRenderingUpdateDurationForSynchronization()
+{
+    constexpr double allowableFrameFraction = 0.5;
+    return allowableFrameFraction * frameDuration();
+}
+
 
 String ScrollingTree::scrollingTreeAsText(OptionSet<ScrollingStateTreeAsTextBehavior> behavior)
 {

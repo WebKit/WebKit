@@ -415,18 +415,6 @@ void ThreadedScrollingTree::willStartRenderingUpdate()
     m_state = SynchronizationState::InRenderingUpdate;
 }
 
-Seconds ThreadedScrollingTree::frameDuration()
-{
-    auto displayFPS = nominalFramesPerSecond().value_or(FullSpeedFramesPerSecond);
-    return 1_s / (double)displayFPS;
-}
-
-Seconds ThreadedScrollingTree::maxAllowableRenderingUpdateDurationForSynchronization()
-{
-    constexpr double allowableFrameFraction = 0.5;
-    return allowableFrameFraction * frameDuration();
-}
-
 void ThreadedScrollingTree::hasNodeWithAnimatedScrollChanged(bool hasNodeWithAnimatedScroll)
 {
     auto scrollingCoordinator = m_scrollingCoordinator;

@@ -239,6 +239,9 @@ public:
     WEBCORE_EXPORT void viewWillEndLiveResize();
     WEBCORE_EXPORT void viewSizeDidChange();
     WEBCORE_EXPORT bool overlayScrollbarsEnabled();
+
+    WEBCORE_EXPORT Seconds frameDuration();
+    WEBCORE_EXPORT Seconds maxAllowableRenderingUpdateDurationForSynchronization();
     
 protected:
     WEBCORE_EXPORT WheelEventHandlingResult handleWheelEventWithNode(const PlatformWheelEvent&, OptionSet<WheelEventProcessingSteps>, ScrollingTreeNode*, EventTargeting = EventTargeting::Propagate);

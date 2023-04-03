@@ -395,6 +395,8 @@ void RemoteLayerTreeDrawingAreaProxy::didRefreshDisplay()
     
     m_didUpdateMessageState = DoesNotNeedDidUpdate;
 
+    m_webPageProxy.scrollingCoordinatorProxy()->sendScrollingTreeNodeDidScroll();
+
     // Waiting for CA to commit is insufficient, because the render server can still be
     // using our backing store. We can improve this by waiting for the render server to commit
     // if we find API to do so, but for now we will make extra buffers if need be.

@@ -61,6 +61,7 @@ private:
 
     void willCommitLayerAndScrollingTrees() override;
     void didCommitLayerAndScrollingTrees() override;
+    void applyScrollingTreeLayerPositionsAfterCommit() override;
 
 #if ENABLE(SCROLLING_THREAD)
     RefPtr<RemoteLayerTreeEventDispatcher> m_wheelEventDispatcher;

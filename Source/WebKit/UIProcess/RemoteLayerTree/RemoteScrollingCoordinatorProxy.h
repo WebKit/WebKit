@@ -90,7 +90,7 @@ public:
     // Called externally when native views move around.
     void viewportChangedViaDelegatedScrolling(const WebCore::FloatPoint& scrollPosition, const WebCore::FloatRect& layoutViewport, double scale);
 
-    void applyScrollingTreeLayerPositionsAfterCommit();
+    virtual void applyScrollingTreeLayerPositionsAfterCommit();
 
     void currentSnapPointIndicesDidChange(WebCore::ScrollingNodeID, std::optional<unsigned> horizontal, std::optional<unsigned> vertical);
 
@@ -159,6 +159,8 @@ public:
     String scrollbarStateForScrollingNodeID(WebCore::ScrollingNodeID, bool isVertical);
     bool overlayScrollbarsEnabled();
 
+    void sendScrollingTreeNodeDidScroll();
+
 protected:
     RemoteScrollingTree* scrollingTree() const { return m_scrollingTree.get(); }
 
@@ -168,7 +170,6 @@ protected:
     virtual void didReceiveWheelEvent(bool /* wasHandled */) { }
 
     void sendUIStateChangedIfNecessary();
-    void sendScrollingTreeNodeDidScroll();
     void receivedLastScrollingTreeNodeDidScrollReply();
 
 private:

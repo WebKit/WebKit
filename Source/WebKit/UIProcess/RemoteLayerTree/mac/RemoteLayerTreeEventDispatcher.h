@@ -31,11 +31,14 @@
 #include "MomentumEventDispatcher.h"
 #include "NativeWebWheelEvent.h"
 #include <pal/HysteresisActivity.h>
+#include <wtf/Condition.h>
 #include <wtf/Deque.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
+#include <wtf/RunLoop.h>
 #include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/threads/BinarySemaphore.h>
 
 namespace WebCore {
 class PlatformWheelEvent;
@@ -78,6 +81,8 @@ public:
 
     void windowScreenDidChange(WebCore::PlatformDisplayID, std::optional<WebCore::FramesPerSecond>);
 
+    void renderingUpdateComplete();
+
 private:
     OptionSet<WheelEventProcessingSteps> determineWheelEventProcessing(const WebCore::PlatformWheelEvent&, WebCore::RectEdges<bool> rubberBandableEdges);
 
@@ -99,6 +104,11 @@ private:
 
     void startOrStopDisplayLink();
     void startOrStopDisplayLinkOnMainThread();
+
+    void scheduleDelayedRenderingUpdateDetectionTimer(Seconds delay);
+    void delayedRenderingUpdateDetectionTimerFired();
+
+    void waitForRenderingUpdateCompletionOrTimeout() WTF_REQUIRES_LOCK(m_scrollingTreeLock);
 
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER)
     void handleSyntheticWheelEvent(WebCore::PageIdentifier, const WebWheelEvent&, WebCore::RectEdges<bool> rubberBandableEdges);
@@ -123,6 +133,20 @@ private:
     std::unique_ptr<RemoteLayerTreeEventDispatcherDisplayLinkClient> m_displayLinkClient;
     std::optional<DisplayLinkObserverID> m_displayRefreshObserverID;
     PAL::HysteresisActivity m_wheelEventActivityHysteresis;
+
+    enum class SynchronizationState : uint8_t {
+        Idle,
+        WaitingForRenderingUpdate,
+        InRenderingUpdate,
+        Desynchronized,
+    };
+
+    SynchronizationState m_state WTF_GUARDED_BY_LOCK(m_scrollingTreeLock) { SynchronizationState::Idle };
+    Condition m_stateCondition;
+
+    MonotonicTime m_lastDisplayDidRefreshTime;
+
+    std::unique_ptr<RunLoop::Timer> m_delayedRenderingUpdateDetectionTimer;
 
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER)
     std::unique_ptr<MomentumEventDispatcher> m_momentumEventDispatcher;
