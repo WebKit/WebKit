@@ -475,19 +475,6 @@ template <bool shouldClose(const HTMLStackItem&)> void HTMLTreeBuilder::processC
     m_tree.insertHTMLElement(WTFMove(token));
 }
 
-template <typename TableQualifiedName> static MemoryCompactLookupOnlyRobinHoodHashMap<AtomString, QualifiedName> createCaseMap(const TableQualifiedName* const names[], unsigned length)
-{
-    MemoryCompactLookupOnlyRobinHoodHashMap<AtomString, QualifiedName> map;
-    for (unsigned i = 0; i < length; ++i) {
-        const QualifiedName& name = *names[i];
-        const AtomString& localName = name.localName();
-        AtomString loweredLocalName = localName.convertToASCIILowercase();
-        if (loweredLocalName != localName)
-            map.add(loweredLocalName, name);
-    }
-    return map;
-}
-
 static void adjustSVGTagNameCase(AtomHTMLToken& token)
 {
     if (auto currentTagName = token.tagName(); currentTagName != TagName::Unknown)
@@ -503,37 +490,132 @@ static inline void adjustAttributes(const MemoryCompactLookupOnlyRobinHoodHashMa
     }
 }
 
-template<const QualifiedName* const* attributesTable(), unsigned attributesTableLength> static void adjustAttributes(AtomHTMLToken& token)
+// https://html.spec.whatwg.org/multipage/parsing.html#adjust-svg-attributes
+static MemoryCompactLookupOnlyRobinHoodHashMap<AtomString, QualifiedName> createSVGAttributesMap()
 {
-    static NeverDestroyed<MemoryCompactLookupOnlyRobinHoodHashMap<AtomString, QualifiedName>> map = createCaseMap(attributesTable(), attributesTableLength);
-    adjustAttributes(map, token);
+    MemoryCompactLookupOnlyRobinHoodHashMap<AtomString, QualifiedName> map;
+
+    const QualifiedName svgAttrs[] = {
+        SVGNames::attributeNameAttr,
+        SVGNames::attributeTypeAttr,
+        SVGNames::baseFrequencyAttr,
+        SVGNames::baseProfileAttr,
+        SVGNames::calcModeAttr,
+        SVGNames::clipPathUnitsAttr,
+        SVGNames::diffuseConstantAttr,
+        SVGNames::edgeModeAttr,
+        SVGNames::filterUnitsAttr,
+        SVGNames::glyphRefAttr,
+        SVGNames::gradientTransformAttr,
+        SVGNames::gradientUnitsAttr,
+        SVGNames::kernelMatrixAttr,
+        SVGNames::kernelUnitLengthAttr,
+        SVGNames::keyPointsAttr,
+        SVGNames::keySplinesAttr,
+        SVGNames::keyTimesAttr,
+        SVGNames::lengthAdjustAttr,
+        SVGNames::limitingConeAngleAttr,
+        SVGNames::markerHeightAttr,
+        SVGNames::markerUnitsAttr,
+        SVGNames::markerWidthAttr,
+        SVGNames::maskContentUnitsAttr,
+        SVGNames::maskUnitsAttr,
+        SVGNames::numOctavesAttr,
+        SVGNames::pathLengthAttr,
+        SVGNames::patternContentUnitsAttr,
+        SVGNames::patternTransformAttr,
+        SVGNames::patternUnitsAttr,
+        SVGNames::pointsAtXAttr,
+        SVGNames::pointsAtYAttr,
+        SVGNames::pointsAtZAttr,
+        SVGNames::preserveAlphaAttr,
+        SVGNames::preserveAspectRatioAttr,
+        SVGNames::primitiveUnitsAttr,
+        SVGNames::refXAttr,
+        SVGNames::refYAttr,
+        SVGNames::repeatCountAttr,
+        SVGNames::repeatDurAttr,
+        SVGNames::requiredExtensionsAttr,
+        SVGNames::requiredFeaturesAttr,
+        SVGNames::specularConstantAttr,
+        SVGNames::specularExponentAttr,
+        SVGNames::spreadMethodAttr,
+        SVGNames::startOffsetAttr,
+        SVGNames::stdDeviationAttr,
+        SVGNames::stitchTilesAttr,
+        SVGNames::surfaceScaleAttr,
+        SVGNames::systemLanguageAttr,
+        SVGNames::tableValuesAttr,
+        SVGNames::targetXAttr,
+        SVGNames::targetYAttr,
+        SVGNames::textLengthAttr,
+        SVGNames::viewBoxAttr,
+        SVGNames::viewTargetAttr,
+        SVGNames::xChannelSelectorAttr,
+        SVGNames::yChannelSelectorAttr,
+        SVGNames::zoomAndPanAttr,
+    };
+
+    for (auto name : svgAttrs) {
+        const AtomString& localName = name.localName();
+        AtomString loweredLocalName = localName.convertToASCIILowercase();
+        map.add(loweredLocalName, name);
+    }
+
+    return map;
 }
 
 static inline void adjustSVGAttributes(AtomHTMLToken& token)
 {
-    adjustAttributes<SVGNames::getSVGAttrs, SVGNames::SVGAttrsCount>(token);
+    static NeverDestroyed<MemoryCompactLookupOnlyRobinHoodHashMap<AtomString, QualifiedName>> map = createSVGAttributesMap();
+    adjustAttributes(map, token);
+}
+
+// https://html.spec.whatwg.org/multipage/parsing.html#adjust-mathml-attributes
+static MemoryCompactLookupOnlyRobinHoodHashMap<AtomString, QualifiedName> createMathMLAttributesMap()
+{
+    MemoryCompactLookupOnlyRobinHoodHashMap<AtomString, QualifiedName> map;
+
+    map.add("definitionurl"_s, MathMLNames::definitionURLAttr);
+
+    return map;
 }
 
 static inline void adjustMathMLAttributes(AtomHTMLToken& token)
 {
-    adjustAttributes<MathMLNames::getMathMLAttrs, MathMLNames::MathMLAttrsCount>(token);
+    static NeverDestroyed<MemoryCompactLookupOnlyRobinHoodHashMap<AtomString, QualifiedName>> map = createMathMLAttributesMap();
+    adjustAttributes(map, token);
 }
 
+// https://html.spec.whatwg.org/multipage/parsing.html#adjust-foreign-attributes
 static MemoryCompactLookupOnlyRobinHoodHashMap<AtomString, QualifiedName> createForeignAttributesMap()
 {
-    auto addNamesWithPrefix = [](MemoryCompactLookupOnlyRobinHoodHashMap<AtomString, QualifiedName>& map, const AtomString& prefix, const QualifiedName* const names[], unsigned length) {
-        for (unsigned i = 0; i < length; ++i) {
-            const QualifiedName& name = *names[i];
-            const AtomString& localName = name.localName();
-            map.add(makeAtomString(prefix, ':', localName), QualifiedName(prefix, localName, name.namespaceURI()));
-        }
-    };
-
     MemoryCompactLookupOnlyRobinHoodHashMap<AtomString, QualifiedName> map;
 
+    auto addNameWithPrefix = [](MemoryCompactLookupOnlyRobinHoodHashMap<AtomString, QualifiedName>& map, const QualifiedName name, const AtomString& prefix) {
+        const AtomString& localName = name.localName();
+        map.add(makeAtomString(prefix, ':', localName), QualifiedName(prefix, localName, name.namespaceURI()));
+    };
+
     AtomString xlinkName("xlink"_s);
-    addNamesWithPrefix(map, xlinkName, XLinkNames::getXLinkAttrs(), XLinkNames::XLinkAttrsCount);
-    addNamesWithPrefix(map, xmlAtom(), XMLNames::getXMLAttrs(), XMLNames::XMLAttrsCount);
+    const QualifiedName xLinkAttrs[] = {
+        XLinkNames::actuateAttr,
+        XLinkNames::arcroleAttr,
+        XLinkNames::hrefAttr,
+        XLinkNames::roleAttr,
+        XLinkNames::showAttr,
+        XLinkNames::titleAttr,
+        XLinkNames::typeAttr,
+    };
+    for (auto name : xLinkAttrs)
+        addNameWithPrefix(map, name, xlinkName);
+
+    const QualifiedName xmlAttrs[] = {
+        XMLNames::langAttr,
+        XMLNames::spaceAttr,
+    };
+    for (auto name : xmlAttrs)
+        addNameWithPrefix(map, name, xmlAtom());
 
     map.add(xmlnsAtom(), XMLNSNames::xmlnsAttr);
     map.add("xmlns:xlink"_s, QualifiedName(xmlnsAtom(), xlinkName, XMLNSNames::xmlnsNamespaceURI));

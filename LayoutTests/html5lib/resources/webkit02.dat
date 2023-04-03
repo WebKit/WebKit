@@ -199,3 +199,39 @@ select
 |   <body>
 |     <plaintext>
 |       "<div>foo</div>"
+
+#data
+<svg xml:base xml:lang xml:space xml:baaah definitionurl>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <svg svg>
+|       definitionurl=""
+|       xml lang=""
+|       xml space=""
+|       xml:baaah=""
+|       xml:base=""
+
+#data
+<math definitionurl xlink:title xlink:show>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <math math>
+|       definitionURL=""
+|       xlink show=""
+|       xlink title=""
+
+#data
+<math DEFINITIONURL>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <math math>
+|       definitionURL=""

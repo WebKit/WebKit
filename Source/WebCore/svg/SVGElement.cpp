@@ -313,7 +313,7 @@ SVGElement* SVGElement::viewportElement() const
 
     return nullptr;
 }
- 
+
 const WeakHashSet<SVGElement, WeakPtrImplWithEventTargetData>& SVGElement::instances() const
 {
     if (!m_svgRareData) {
@@ -442,7 +442,7 @@ bool SVGElement::haveLoadedRequiredResources()
 }
 
 bool SVGElement::addEventListener(const AtomString& eventType, Ref<EventListener>&& listener, const AddEventListenerOptions& options)
-{   
+{
     // Add event listener to regular DOM element
     if (!Node::addEventListener(eventType, listener.copyRef(), options))
         return false;
@@ -606,7 +606,7 @@ bool SVGElement::childShouldCreateRenderer(const Node& child) const
     case ElementNames::SVG::tspan:
         return false;
     default:
-        break;        
+        break;
     }
     return svgChild.isValid();
 }
@@ -632,7 +632,7 @@ void SVGElement::synchronizeAttribute(const QualifiedName& name)
     if (auto value = propertyRegistry().synchronize(name))
         setSynchronizedLazyAttribute(name, AtomString { *value });
 }
-    
+
 void SVGElement::synchronizeAllAttributes()
 {
     // SVGPropertyRegistry::synchronizeAllAttributes() returns the new values of
@@ -689,7 +689,7 @@ RefPtr<SVGAttributeAnimator> SVGElement::createAnimator(const QualifiedName& att
     // Property animator, e.g. "fill" or "fill-opacity".
     if (auto animator = propertyAnimatorFactory().createAnimator(attributeName, animationMode, calcMode, isAccumulated, isAdditive))
         return animator;
-    
+
     // Animated property animator.
     auto animator = propertyRegistry().createAnimator(attributeName, animationMode, calcMode, isAccumulated, isAdditive);
     if (!animator)
@@ -698,7 +698,7 @@ RefPtr<SVGAttributeAnimator> SVGElement::createAnimator(const QualifiedName& att
         instance->propertyRegistry().appendAnimatedInstance(attributeName, *animator);
     return animator;
 }
-    
+
 void SVGElement::animatorWillBeDeleted(const QualifiedName& attributeName)
 {
     propertyAnimatorFactory().animatorWillBeDeleted(attributeName);
@@ -782,7 +782,6 @@ QualifiedName SVGElement::animatableAttributeForName(const AtomString& localName
             &SVGNames::edgeModeAttr,
             &SVGNames::elevationAttr,
             &SVGNames::exponentAttr,
-            &SVGNames::externalResourcesRequiredAttr,
             &SVGNames::filterUnitsAttr,
             &SVGNames::fxAttr,
             &SVGNames::fyAttr,

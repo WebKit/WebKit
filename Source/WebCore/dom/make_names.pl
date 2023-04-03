@@ -10,13 +10,13 @@
 # are met:
 #
 # 1.  Redistributions of source code must retain the above copyright
-#     notice, this list of conditions and the following disclaimer. 
+#     notice, this list of conditions and the following disclaimer.
 # 2.  Redistributions in binary form must reproduce the above copyright
 #     notice, this list of conditions and the following disclaimer in the
-#     documentation and/or other materials provided with the distribution. 
+#     documentation and/or other materials provided with the distribution.
 # 3.  Neither the name of Apple Inc. ("Apple") nor the names of
 #     its contributors may be used to endorse or promote products derived
-#     from this software without specific prior written permission. 
+#     from this software without specific prior written permission.
 #
 # THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
 # EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -45,9 +45,9 @@ use InFilesParser;
 sub readElements($$);
 sub readAttrs($$);
 
-my $printFactory = 0; 
+my $printFactory = 0;
 my $printEnum = "";
-my $printWrapperFactory = 0; 
+my $printWrapperFactory = 0;
 my $fontNamesIn = "";
 my @elementsFiles = ();
 my @attrsFiles = ();
@@ -470,7 +470,7 @@ sub printConstructorSignature
     print F ")\n{\n";
 }
 
-# Helper method to dump the constructor interior and call the 
+# Helper method to dump the constructor interior and call the
 # Element constructor with the right arguments.
 # The variable names should be kept in sync with the previous method.
 sub printConstructorInterior
@@ -486,7 +486,7 @@ sub printConstructorInterior
         print F <<END
     if (!document.settings().mediaEnabled())
         return $parameters{fallbackInterfaceName}::create($constructorTagName, document);
-    
+
 END
 ;
     }
@@ -617,13 +617,13 @@ sub svgCapitalizationHacks
 sub upperCaseName
 {
     my $name = shift;
-    
+
     $name = svgCapitalizationHacks($name) if ($parameters{namespace} eq "SVG");
 
     while ($name =~ /^(.*?)_(.*)/) {
         $name = $1 . ucfirst $2;
     }
-    
+
     return ucfirst $name;
 }
 
@@ -826,7 +826,6 @@ END
 
     if (keys %allAttrs) {
         print F "const unsigned $parameters{namespace}AttrsCount = ", scalar(keys %allAttrs), ";\n";
-        print F "const WebCore::QualifiedName* const* get$parameters{namespace}Attrs();\n";
     }
 
     printInit($F, 1);
@@ -1345,13 +1344,13 @@ sub printNamesCppFile
     my $cppPath = shift;
     my $F;
     open F, ">$cppPath";
-    
+
     printLicenseHeader($F);
     printCppHead($F, "DOM", $parameters{namespace}, <<END, "WebCore");
 #include "ElementName.h"
 #include "Namespace.h"
 END
-    
+
     my $lowercaseNamespacePrefix = lc($parameters{namespacePrefix});
 
     print F "MainThreadLazyNeverDestroyed<const AtomString> ${lowercaseNamespacePrefix}NamespaceURI;\n\n";
@@ -1387,14 +1386,6 @@ END
         for my $attrKey (sort keys %allAttrs) {
             print F "WEBCORE_EXPORT LazyNeverDestroyed<const QualifiedName> $allAttrs{$attrKey}{identifier}Attr;\n";
         }
-        print F "\n\nconst WebCore::QualifiedName* const* get$parameters{namespace}Attrs()\n";
-        print F "{\n    static const WebCore::QualifiedName* const $parameters{namespace}Attrs[] = {\n";
-        for my $attrKey (sort keys %allAttrs) {
-            print F "        &$allAttrs{$attrKey}{identifier}Attr.get(),\n";
-        }
-        print F "    };\n";
-        print F "    return $parameters{namespace}Attrs;\n";
-        print F "}\n";
     }
 
     printInit($F, 0);
@@ -1998,7 +1989,7 @@ namespace WebCore {
     JSDOMObject* createJS$parameters{namespace}Wrapper(JSDOMGlobalObject*, Ref<$parameters{namespace}Element>&&);
 
 }
- 
+
 END
     ;
 

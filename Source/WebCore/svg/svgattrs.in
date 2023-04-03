@@ -32,8 +32,6 @@ clipPathUnits
 color
 color-interpolation
 color-interpolation-filters
-contentScriptType
-contentStyleType
 cursor
 cx
 cy
@@ -51,7 +49,6 @@ edgeMode
 elevation
 end
 exponent
-externalResourcesRequired
 fill
 fill-opacity
 fill-rule
