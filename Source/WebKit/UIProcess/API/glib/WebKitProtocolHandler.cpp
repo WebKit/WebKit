@@ -213,7 +213,8 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request)
     addTableRow(versionObject, "Operating system"_s, makeString(osName.sysname, ' ', osName.release, ' ', osName.version, ' ', osName.machine));
 #endif
 
-    addTableRow(versionObject, "Desktop"_s, makeString(g_getenv("XDG_CURRENT_DESKTOP")));
+    const char* desktopName = g_getenv("XDG_CURRENT_DESKTOP");
+    addTableRow(versionObject, "Desktop"_s, (desktopName && *desktopName) ? makeString(desktopName) : "Unknown"_s);
 
 #if USE(CAIRO)
     addTableRow(versionObject, "Cairo version"_s, makeString(CAIRO_VERSION_STRING, " (build) "_s, cairo_version_string(), " (runtime)"_s));
