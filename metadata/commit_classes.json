@@ -3,9 +3,10 @@
 		"name": "Versioning",
 		"pickable": false,
 		"headers": [
-			"^[Vv]ersioning\\.?$",
-			"^Revert \"?[Vv]ersioning\\.?\"?$"
-		]
+			"[Vv]ersioning",
+			"[Bb]ump [Vv]ersion"
+		],
+		"paths": ["Configurations/Version.xcconfig"]
 	},
 	{
 		"name": "Build-fix",
