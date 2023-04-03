@@ -1,9 +1,5 @@
 # Currently skipped due to fetching external resources.
-webgl/1.0.3/conformance/more/functions [ Skip ]
 webgl/2.0.0/conformance/textures/misc/origin-clean-conformance.html [ Skip ]
-webgl/2.0.0/conformance/more/functions/texImage2DHTML.html [ Skip ]
-webgl/2.0.0/conformance/more/functions/readPixelsBadArgs.html [ Skip ]
-webgl/2.0.0/conformance/more/functions/texSubImage2DHTML.html [ Skip ]
 
 # Run as much of DEQP as possible
 webgl/2.0.0/deqp [ Pass Slow ]

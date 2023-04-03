@@ -417,11 +417,6 @@ editing/pasteboard/paste-global-selection.html
 # These tests pass when run through webgl-conformance-tests.html but not when just opened via a browser (or via run-webkit-tests)
 webgl/1.0.3/conformance/rendering/multisample-corruption.html [ Pass Timeout ]
 
-# Skip 1.0.3 tests that pass in conformance suite but timeout in TestRunner
-webgl/1.0.3/conformance/more/glsl [ Skip ]
-webgl/1.0.3/conformance/more/conformance [ Skip ]
-webgl/1.0.3/conformance/more/functions [ Skip ]
-
 # Sending the mouse down event to the scrollbar starts a nested run loop which causes a hang.
 fast/events/mousedown-in-subframe-scrollbar.html [ Skip ]
 

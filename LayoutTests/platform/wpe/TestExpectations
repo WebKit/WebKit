@@ -1148,10 +1148,6 @@ Bug(WPE) ietestcenter/css3/flexbox/flexbox-align-stretch-001.htm [ ImageOnlyFail
 Bug(WPE) ietestcenter/css3/flexbox/flexbox-layout-002.htm [ ImageOnlyFailure ]
 
 # webgl/1.0.3:
-#  Failing:
-webkit.org/b/204676 webgl/1.0.3/conformance/more/functions/readPixelsBadArgs.html [ Failure ]
-webkit.org/b/204676 webgl/1.0.3/conformance/more/functions/texImage2DHTML.html [ Failure ]
-webkit.org/b/204676 webgl/1.0.3/conformance/more/functions/texSubImage2DHTML.html [ Failure ]
 #  Timing out:
 webkit.org/b/204676 webgl/1.0.x/conformance/glsl/constructors/glsl-construct-bvec2.html [ Timeout ]
 webkit.org/b/204676 webgl/1.0.x/conformance/glsl/constructors/glsl-construct-ivec2.html [ Timeout ]

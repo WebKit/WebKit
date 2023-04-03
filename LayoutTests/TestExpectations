@@ -3765,11 +3765,6 @@ webgl/1.0.3/conformance/canvas/rapid-resizing.html [ Skip ]
 # DEQP is skipped on the main fleet of bots because of the long run time.
 webgl/2.0.0/deqp [ Skip ]
 
-# The layout tests run from the local file system. These tests, which
-# rely on creating a cross-origin image, can not work in this environment.
-webgl/2.0.0/conformance/more/functions/texImage2DHTML.html [ Skip ]
-webgl/2.0.0/conformance/more/functions/texSubImage2DHTML.html [ Skip ]
-
 webkit.org/b/214893 [ Debug ] webgl/2.0.0/conformance/uniforms/gl-uniform-arrays.html [ Slow ]
 
 # webkit.org/b/208211 Additional inconsitencies between Intel bots and AMD machine
@@ -3870,7 +3865,6 @@ webgl/1.0.x [ Skip ]
 
 # Explicitly enable tests which we have fixed and do not have corresponding 1.0.3 test functionality.
 webgl/1.0.x/conformance/canvas/to-data-url-test.html [ Pass ]
-webgl/1.0.x/conformance/misc/invalid-passed-params.html [ Pass ]
 webgl/1.0.x/conformance/context/constants-and-properties.html [ Pass ]
 webgl/1.0.x/conformance/textures/misc/exif-orientation.html [ Pass ]
 webgl/1.0.x/conformance/programs/program-test.html [ Pass ]
@@ -3882,6 +3876,10 @@ webgl/1.0.x/conformance/context [ Pass ]
 webgl/1.0.x/conformance/extensions [ Pass ]
 webgl/1.0.x/conformance/glsl [ Pass ]
 webgl/1.0.x/conformance/limits [ Pass ]
+webgl/1.0.x/conformance/misc [ Pass ]
+webgl/1.0.x/conformance/more [ Pass ]
+webgl/1.0.x/conformance/offscreencanvas [ Pass ]
+webgl/1.0.x/conformance/ogles [ Pass ]
 webgl/1.0.x/conformance/textures/canvas/ [ Pass ]
 
 # Debug builds on slower machines run close to the time out especially with GPUP enabled
@@ -3894,8 +3892,6 @@ webkit.org/b/254730 [ Debug ] webgl/2.0.y/conformance/extensions/webgl-compresse
 
 # Explicitly enable tests which we have fixed and do not have corresponding 2.0.0 test functionality.
 webgl/2.0.y/conformance/canvas/to-data-url-test.html [ Pass ]
-webgl/2.0.y/conformance/misc/invalid-passed-params.html [ Pass ]
-webgl/2.0.y/conformance/misc/expando-loss.html [ Pass ]
 webgl/2.0.y/conformance/textures/misc/exif-orientation.html [ Pass ]
 webgl/2.0.y/conformance/extensions/webgl-multi-draw.html [ Pass Slow ]
 webgl/2.0.y/conformance/programs/program-test.html [ Pass ]
@@ -3908,7 +3904,6 @@ webgl/2.0.y/conformance2/transform_feedback/transform_feedback.html [ Pass ]
 webgl/2.0.y/conformance2/transform_feedback/simultaneous_binding.html [ Pass ]
 webgl/1.0.x/conformance/extensions/oes-vertex-array-object.html [ Pass ]
 
-webgl/2.0.y/conformance/offscreencanvas [ Pass ]
 webgl/2.0.y/conformance2/offscreencanvas [ Pass ]
 
 # Explicitly turn on conformance test until all of webgl/2.0.y is enabled
@@ -3918,6 +3913,10 @@ webgl/2.0.y/conformance/context [ Pass ]
 webgl/2.0.y/conformance/extensions [ Pass ]
 webgl/2.0.y/conformance/glsl [ Pass ]
 webgl/2.0.y/conformance/limits [ Pass ]
+webgl/2.0.y/conformance/misc [ Pass ]
+webgl/2.0.y/conformance/more [ Pass ]
+webgl/2.0.y/conformance/offscreencanvas [ Pass ]
+webgl/2.0.y/conformance/ogles [ Pass ]
 webgl/2.0.y/conformance/reading/read-pixels-test.html [ Pass ]
 webgl/2.0.y/conformance/textures/canvas/ [ Pass ]
 webgl/2.0.y/conformance2/extensions/ext-texture-norm16.html [ Pass ]
@@ -3938,7 +3937,9 @@ webgl/1.0.3/conformance/context [ Skip ]
 webgl/1.0.3/conformance/extensions [ Skip ]
 webgl/1.0.3/conformance/glsl [ Skip ]
 webgl/1.0.3/conformance/limits [ Skip ]
-webgl/1.0.3/conformance/misc/invalid-passed-params.html [ Skip ]
+webgl/1.0.3/conformance/misc [ Skip ]
+webgl/1.0.3/conformance/more [ Skip ]
+webgl/1.0.3/conformance/ogles [ Skip ]
 webgl/1.0.3/conformance/programs/program-test.html [ Skip ]
 webgl/1.0.3/conformance/reading/read-pixels-test.html [ Skip ]
 webgl/2.0.0/conformance/attribs [ Skip ]
@@ -3947,7 +3948,9 @@ webgl/2.0.0/conformance/context [ Skip ]
 webgl/2.0.0/conformance/extensions [ Skip ]
 webgl/2.0.0/conformance/glsl [ Skip ]
 webgl/2.0.0/conformance/limits [ Skip ]
-webgl/2.0.0/conformance/misc/invalid-passed-params.html [ Skip ]
+webgl/2.0.0/conformance/misc [ Skip ]
+webgl/2.0.0/conformance/more [ Skip ]
+webgl/2.0.0/conformance/ogles [ Skip ]
 webgl/2.0.0/conformance/programs/program-test.html [ Skip ]
 webgl/2.0.0/conformance/reading/read-pixels-test.html [ Skip ]
 webgl/2.0.0/conformance/textures/canvas/ [ Skip ]

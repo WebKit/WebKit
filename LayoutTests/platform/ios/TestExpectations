@@ -2637,10 +2637,6 @@ fast/canvas/webgl/webgl-compressed-texture-size-limit.html [ Failure ]
 fast/canvas/webgl/webgl2-texture-upload-enums.html [ Failure ]
 fast/canvas/webgl/read-pixels-test.html [ Skip ]
 fast/canvas/webgl/webglcontextchangedevent.html [ Skip ]
-webgl/1.0.3/conformance/ogles/GL/sin/sin_001_to_006.html [ Skip ]
-webgl/1.0.3/conformance/reading/read-pixels-test.html [ Skip ]
-webgl/1.0.3/conformance/rendering/multisample-corruption.html [ Skip ]
-webgl/1.0.3/conformance/uniforms/out-of-bounds-uniform-array-access.html [ Skip ]
 
 fast/canvas/webgl/texImage2D-mse-flipY-false.html [ Skip ]
 fast/canvas/webgl/texImage2D-mse-flipY-true.html [ Skip ]
@@ -2728,10 +2724,6 @@ webkit.org/b/183441 mathml/presentation/multiscripts-equivalence.html [ ImageOnl
 imported/w3c/web-platform-tests/fetch/api/basic/request-headers.any.html [ Failure ]
 imported/w3c/web-platform-tests/fetch/api/basic/request-headers.any.worker.html [ Failure ]
 
-# <rdar://problem/34209038>
-webgl/1.0.3/conformance/ogles/GL/log/log_001_to_008.html [ Skip ]
-webgl/1.0.3/conformance/ogles/GL/log2/log2_001_to_008.html [ Skip ]
-
 # <rdar://problem/30517283>
 security/block-test.html
 security/block-test-no-port.html
@@ -2742,10 +2734,6 @@ svg/W3C-SVG-1.1/text-intro-02-b.svg [ Failure ]
 svg/W3C-SVG-1.1/text-intro-03-b.svg [ Failure ]
 svg/W3C-SVG-1.1/text-intro-04-t.svg [ Failure ]
 svg/custom/acid3-test-77.html [ Failure ]
-
-# <rdar://problem/33381269> REGRESSION: Multiple Layout test from webgl/1.0.3/conformance are timing out.
-webgl/1.0.3/conformance/ogles/GL/acos/acos_001_to_006.html [ Skip  ]
-webgl/1.0.3/conformance/ogles/GL/asin/asin_001_to_006.html [ Skip  ]
 
 fast/text/font-variations-feature-detection.html [ ImageOnlyFailure ]
 fast/text/text-indent-inside-float.html [ ImageOnlyFailure ]
@@ -3171,7 +3159,6 @@ webkit.org/b/207858 webgl/webgl-box-shadow.html [ Pass Failure ImageOnlyFailure 
 webkit.org/b/207858 fast/canvas/webgl/uninitialized-test.html [ Pass Failure ]
 webkit.org/b/207858 fast/canvas/webgl/oes-texture-float-linear.html [ Pass Failure ]
 webkit.org/b/207858 fast/canvas/webgl/tex-image-and-sub-image-2d-with-video.html [ Pass Failure ]
-webkit.org/b/207858 webgl/1.0.3/conformance/misc/uninitialized-test.html [ Pass Failure ]
 
 # <rdar://problem/59635486> REGRESSION: http/wpt/webauthn/public-key-credential-get-success-local.https.html is crashing
 http/wpt/webauthn/public-key-credential-get-success-local.https.html [ Skip ]
