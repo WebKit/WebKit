@@ -327,6 +327,7 @@ class NetworkIssueReporter;
 class PageClient;
 class PageLoadState;
 class PageLoadStateObserverBase;
+class PlatformXRSystem;
 class PlaybackSessionManagerProxy;
 class ProcessThrottlerActivity;
 class ProvisionalPageProxy;
@@ -2212,7 +2213,7 @@ public:
     String scrollbarStateForScrollingNodeID(int scrollingNodeID, bool isVertical);
 
 #if ENABLE(WEBXR) && !USE(OPENXR)
-    PlatformXRSystem* xrSystem() const { return m_xrSystem.get(); }
+    PlatformXRSystem* xrSystem() const;
 #endif
 
 #if ENABLE(INPUT_TYPE_COLOR)

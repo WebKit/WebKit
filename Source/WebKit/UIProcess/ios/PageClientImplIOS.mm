@@ -37,6 +37,7 @@
 #import "InteractionInformationAtPosition.h"
 #import "NativeWebKeyboardEvent.h"
 #import "NavigationState.h"
+#import "PlatformXRSystem.h"
 #import "RemoteLayerTreeNode.h"
 #import "RunningBoardServicesSPI.h"
 #import "StringUtilities.h"

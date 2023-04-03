@@ -37,6 +37,7 @@
 #include "NetworkProcessConnectionInfo.h"
 #include "NotificationManagerMessageHandlerMessages.h"
 #include "PageLoadState.h"
+#include "PlatformXRSystem.h"
 #include "ProvisionalFrameProxy.h"
 #include "ProvisionalPageProxy.h"
 #include "RemoteWorkerType.h"

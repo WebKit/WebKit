@@ -7071,6 +7071,13 @@ void WebPageProxy::didChangeIntrinsicContentSize(const IntSize& intrinsicContent
 #endif
 }
 
+#if ENABLE(WEBXR) && !USE(OPENXR)
+PlatformXRSystem* WebPageProxy::xrSystem() const
+{
+    return internals().xrSystem.get();
+}
+#endif
+
 #if ENABLE(INPUT_TYPE_COLOR)
 
 void WebPageProxy::showColorPicker(const WebCore::Color& initialColor, const IntRect& elementRect, Vector<WebCore::Color>&& suggestions)
