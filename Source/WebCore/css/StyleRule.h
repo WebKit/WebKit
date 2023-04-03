@@ -64,7 +64,7 @@ public:
     bool isNamespaceRule() const { return type() == StyleRuleType::Namespace; }
     bool isMediaRule() const { return type() == StyleRuleType::Media; }
     bool isPageRule() const { return type() == StyleRuleType::Page; }
-    bool isStyleRule() const { return type() == StyleRuleType::Style; }
+    bool isStyleRule() const { return type() == StyleRuleType::Style || type() == StyleRuleType::StyleWithNesting; }
     bool isStyleRuleWithNesting() const { return type() == StyleRuleType::StyleWithNesting; }
     bool isGroupRule() const { return type() == StyleRuleType::Media || type() == StyleRuleType::Supports || type() == StyleRuleType::LayerBlock || type() == StyleRuleType::Container; }
     bool isSupportsRule() const { return type() == StyleRuleType::Supports; }
@@ -156,20 +156,15 @@ private:
 class StyleRuleWithNesting final : public StyleRule {
 public:
     static Ref<StyleRuleWithNesting> create(Ref<StyleProperties>&&, bool hasDocumentSecurityOrigin, CSSSelectorList&&, Vector<Ref<StyleRuleBase>>&& nestedRules);
-    static Ref<StyleRuleWithNesting> create(StyleRule&&);
     Ref<StyleRuleWithNesting> copy() const;
-    ~StyleRuleWithNesting();
 
     const Vector<Ref<StyleRuleBase>>& nestedRules() const { return m_nestedRules; }
-    Vector<Ref<StyleRuleBase>>& nestedRules() { return m_nestedRules; }
     const CSSSelectorList& originalSelectorList() const { return m_originalSelectorList; }
-
-protected:
     StyleRuleWithNesting(const StyleRuleWithNesting&);
+    ~StyleRuleWithNesting();
 
 private:
     StyleRuleWithNesting(Ref<StyleProperties>&&, bool hasDocumentSecurityOrigin, CSSSelectorList&&, Vector<Ref<StyleRuleBase>>&& nestedRules);
-    StyleRuleWithNesting(StyleRule&&);
 
     Vector<Ref<StyleRuleBase>> m_nestedRules;
     CSSSelectorList m_originalSelectorList;
@@ -283,9 +278,6 @@ public:
 
     void wrapperInsertRule(unsigned, Ref<StyleRuleBase>&&);
     void wrapperRemoveRule(unsigned);
-
-    friend class CSSGroupingRule;
-    friend class CSSStyleSheet;
 
 protected:
     StyleRuleGroup(StyleRuleType, Vector<RefPtr<StyleRuleBase>>&&);

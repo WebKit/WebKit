@@ -313,24 +313,12 @@ StyleRuleWithNesting::StyleRuleWithNesting(const StyleRuleWithNesting& other)
     , m_nestedRules(other.m_nestedRules.map( [](auto& rule) { return rule->copy(); }))
     , m_originalSelectorList(other.m_originalSelectorList)
 {
-}
 
-StyleRuleWithNesting::StyleRuleWithNesting(StyleRule&& styleRule)
-    : StyleRule(WTFMove(styleRule))
-    , m_nestedRules({ })
-    , m_originalSelectorList(selectorList())
-{ 
-    setType(StyleRuleType::StyleWithNesting);
 }
 
 Ref<StyleRuleWithNesting> StyleRuleWithNesting::create(Ref<StyleProperties>&& properties, bool hasDocumentSecurityOrigin, CSSSelectorList&& selectors, Vector<Ref<StyleRuleBase>>&& nestedRules)
 { 
     return adoptRef(* new StyleRuleWithNesting(WTFMove(properties), hasDocumentSecurityOrigin, WTFMove(selectors), WTFMove(nestedRules)));
-}
-
-Ref<StyleRuleWithNesting> StyleRuleWithNesting::create(StyleRule&& styleRule)
-{ 
-    return adoptRef(* new StyleRuleWithNesting(WTFMove(styleRule)));
 }
 
 StyleRuleWithNesting::StyleRuleWithNesting(Ref<StyleProperties>&& properties, bool hasDocumentSecurityOrigin, CSSSelectorList&& selectors, Vector<Ref<StyleRuleBase>>&& nestedRules)

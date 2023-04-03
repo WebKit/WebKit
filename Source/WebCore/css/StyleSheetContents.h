@@ -150,8 +150,6 @@ public:
 
     void setLoadErrorOccured() { m_didLoadErrorOccur = true; }
 
-    friend class CSSStyleSheet;
-
 private:
     WEBCORE_EXPORT StyleSheetContents(StyleRuleImport* ownerRule, const String& originalURL, const CSSParserContext&);
     StyleSheetContents(const StyleSheetContents&);

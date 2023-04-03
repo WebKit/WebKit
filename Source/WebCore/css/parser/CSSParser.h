@@ -61,7 +61,7 @@ public:
 
     void parseSheet(StyleSheetContents&, const String&);
     
-    static RefPtr<StyleRuleBase> parseRule(const CSSParserContext&, StyleSheetContents*, const String&, CSSParserEnum::IsNestedContext = CSSParserEnum::IsNestedContext::No);
+    static RefPtr<StyleRuleBase> parseRule(const CSSParserContext&, StyleSheetContents*, const String&);
     
     RefPtr<StyleRuleKeyframe> parseKeyframeRule(const String&);
     static Vector<double> parseKeyframeKeyList(const String&);
