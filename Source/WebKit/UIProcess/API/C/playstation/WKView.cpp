@@ -26,12 +26,14 @@
 #include "config.h"
 #include "WKView.h"
 
+#include "APIClient.h"
 #include "APIPageConfiguration.h"
 #include "APIViewClient.h"
 #include "PlayStationWebView.h"
 #include "WKAPICast.h"
 #include "WKSharedAPICast.h"
 #include <WebCore/Cursor.h>
+#include <WebCore/Region.h>
 
 namespace API {
 template<> struct ClientTraits<WKViewClientBase> {

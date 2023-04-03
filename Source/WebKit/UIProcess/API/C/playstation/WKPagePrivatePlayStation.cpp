@@ -34,6 +34,7 @@
 #include "WKAPICast.h"
 #include "WebEventFactory.h"
 #include "WebPageProxy.h"
+#include <WebCore/Region.h>
 #include <cairo.h>
 #include <wpe/wpe.h>
 

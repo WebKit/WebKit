@@ -29,6 +29,8 @@
 #include "DrawingAreaProxyCoordinatedGraphics.h"
 #include "PlayStationWebView.h"
 #include "WebPageProxy.h"
+#include <WebCore/DOMPasteAccess.h>
+#include <WebCore/NotImplemented.h>
 
 #if USE(GRAPHICS_LAYER_WC)
 #include "DrawingAreaProxyWC.h"

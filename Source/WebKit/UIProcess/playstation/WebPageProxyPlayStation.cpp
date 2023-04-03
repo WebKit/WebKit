@@ -29,6 +29,7 @@
 #include "EditorState.h"
 #include "WebsiteDataStore.h"
 #include <WebCore/NotImplemented.h>
+#include <WebCore/SearchPopupMenu.h>
 #include <WebCore/UserAgent.h>
 
 namespace WebKit {
