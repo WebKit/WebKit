@@ -1,4 +1,13 @@
 =================
+WPE WebKit 2.41.1
+=================
+
+What's new in WPE WebKit 2.41.1?
+
+  - Add WebKitClipboardPermissionRequest to handle DOM paste access requests.
+  - Fix several crashes and rendering issues.
+
+=================
 WPE WebKit 2.39.4
 =================
 
