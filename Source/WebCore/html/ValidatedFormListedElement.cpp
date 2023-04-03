@@ -263,11 +263,13 @@ void ValidatedFormListedElement::updateValidity()
 
         if (willValidate) {
             if (!newIsValid) {
-                addInvalidElementToAncestorFromInsertionPoint(element, element.parentNode());
+                if (!belongsToFormThatIsBeingDestroyed())
+                    addInvalidElementToAncestorFromInsertionPoint(element, element.parentNode());
                 if (auto* form = this->form())
                     form->addInvalidFormControl(element);
             } else {
-                removeInvalidElementToAncestorFromInsertionPoint(element, element.parentNode());
+                if (!belongsToFormThatIsBeingDestroyed())
+                    removeInvalidElementToAncestorFromInsertionPoint(element, element.parentNode());
                 if (auto* form = this->form())
                     form->removeInvalidFormControlIfNeeded(element);
             }
@@ -388,6 +390,13 @@ void ValidatedFormListedElement::didChangeForm()
         if (m_willValidateInitialized && m_willValidate && !isValidFormControlElement())
             form->addInvalidFormControl(asHTMLElement());
     }
+}
+
+void ValidatedFormListedElement::formWillBeDestroyed()
+{
+    m_belongsToFormThatIsBeingDestroyed = true;
+    FormListedElement::formWillBeDestroyed();
+    m_belongsToFormThatIsBeingDestroyed = false;
 }
 
 void ValidatedFormListedElement::disabledStateChanged()
