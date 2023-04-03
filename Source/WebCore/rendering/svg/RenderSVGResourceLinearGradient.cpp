@@ -58,7 +58,7 @@ Ref<Gradient> RenderSVGResourceLinearGradient::buildGradient(const RenderStyle& 
         { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied },
         platformSpreadMethodFromSVGType(m_attributes.spreadMethod()),
         stopsByApplyingColorFilter(m_attributes.stops(), style),
-        RenderingResourceIdentifier::generate()
+        RenderingResourceIdentifier::generateThreadSafe()
     );
 }
 
