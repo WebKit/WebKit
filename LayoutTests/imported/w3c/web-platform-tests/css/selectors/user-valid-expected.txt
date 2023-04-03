@@ -1,4 +1,4 @@
 
 
-PASS :user-valid selector should be supported
+PASS :user-valid selector should respond to user action
 
