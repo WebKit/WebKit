@@ -86,7 +86,7 @@
             "configurePreset": "gtk-debug"
         },
         {
-            "name": "gtk-dev-relese",
+            "name": "gtk-dev-release",
             "displayName": "GTK Dev Release",
             "configurePreset": "gtk-dev-release"
         },
