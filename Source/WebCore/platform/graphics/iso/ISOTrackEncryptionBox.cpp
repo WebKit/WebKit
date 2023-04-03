@@ -67,6 +67,9 @@ bool ISOTrackEncryptionBox::parse(DataView& view, unsigned& offset)
     offset += 16;
 
     m_defaultKID.resize(16);
+    if (keyIDBuffer->byteLength() < 16)
+        return false;
+
     memcpy(m_defaultKID.data(), keyIDBuffer->data(), 16);
 
     if (m_defaultIsProtected == 1 && !m_defaultPerSampleIVSize) {
