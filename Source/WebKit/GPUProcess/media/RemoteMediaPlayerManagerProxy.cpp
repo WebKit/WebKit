@@ -68,7 +68,7 @@ void RemoteMediaPlayerManagerProxy::createMediaPlayer(MediaPlayerIdentifier iden
     ASSERT(m_gpuConnectionToWebProcess);
     ASSERT(!m_proxies.contains(identifier));
 
-    auto proxy = makeUnique<RemoteMediaPlayerProxy>(*this, identifier, m_gpuConnectionToWebProcess->connection(), engineIdentifier, WTFMove(proxyConfiguration), m_gpuConnectionToWebProcess->videoFrameObjectHeap(), m_gpuConnectionToWebProcess->webProcessIdentity());
+    auto proxy = RemoteMediaPlayerProxy::create(*this, identifier, m_gpuConnectionToWebProcess->connection(), engineIdentifier, WTFMove(proxyConfiguration), m_gpuConnectionToWebProcess->videoFrameObjectHeap(), m_gpuConnectionToWebProcess->webProcessIdentity());
     m_proxies.add(identifier, WTFMove(proxy));
 }
 
