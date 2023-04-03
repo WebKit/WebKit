@@ -602,38 +602,32 @@ private:
     // as '&' and '\r'.
     UCharSpan scanEscapedAttributeValue()
     {
-        CharSpan result;
         skipWhile<isHTMLSpace>(m_parsingBuffer);
         m_ucharBuffer.resize(0);
-        auto* start = m_parsingBuffer.position();
-        if (m_parsingBuffer.hasCharactersRemaining() && isQuoteCharacter(*m_parsingBuffer)) {
-            UChar quoteChar = m_parsingBuffer.consume();
-            start = m_parsingBuffer.position();
-            while (m_parsingBuffer.hasCharactersRemaining() && *m_parsingBuffer != quoteChar) {
-                if (m_parsingFailed)
-                    return UCharSpan { };
-                Char c = *m_parsingBuffer;
-                if (c == '&')
-                    scanHTMLCharacterReference(m_ucharBuffer);
-                else if (c == '\r') {
-                    m_parsingBuffer.advance();
-                    // Normalize "\r\n" to "\n" according to https://infra.spec.whatwg.org/#normalize-newlines.
-                    if (m_parsingBuffer.hasCharactersRemaining() && *m_parsingBuffer == '\n')
-                        m_parsingBuffer.advance();
-                    m_ucharBuffer.append('\n');
-                } else {
-                    m_ucharBuffer.append(c);
-                    m_parsingBuffer.advance();
-                }
-            }
-            if (m_parsingBuffer.atEnd())
-                return didFail(HTMLFastPathResult::FailedParsingQuotedEscapedAttributeValue, UCharSpan { });
-
-            result = CharSpan { start, static_cast<size_t>(m_parsingBuffer.position() - start) };
-            if (m_parsingBuffer.consume() != quoteChar)
-                return didFail( HTMLFastPathResult::FailedParsingQuotedEscapedAttributeValue, UCharSpan { });
-        } else
+        if (UNLIKELY(!m_parsingBuffer.hasCharactersRemaining() || !isQuoteCharacter(*m_parsingBuffer)))
             return didFail(HTMLFastPathResult::FailedParsingUnquotedEscapedAttributeValue, UCharSpan { });
+
+        UChar quoteChar = m_parsingBuffer.consume();
+        if (m_parsingBuffer.hasCharactersRemaining() && *m_parsingBuffer != quoteChar) {
+            if (m_parsingFailed)
+                return UCharSpan { };
+            Char c = *m_parsingBuffer;
+            if (c == '&')
+                scanHTMLCharacterReference(m_ucharBuffer);
+            else if (c == '\r') {
+                m_parsingBuffer.advance();
+                // Normalize "\r\n" to "\n" according to https://infra.spec.whatwg.org/#normalize-newlines.
+                if (m_parsingBuffer.hasCharactersRemaining() && *m_parsingBuffer == '\n')
+                    m_parsingBuffer.advance();
+                m_ucharBuffer.append('\n');
+            } else {
+                m_ucharBuffer.append(c);
+                m_parsingBuffer.advance();
+            }
+        }
+        if (UNLIKELY(m_parsingBuffer.atEnd() || m_parsingBuffer.consume() != quoteChar))
+            return didFail(HTMLFastPathResult::FailedParsingQuotedEscapedAttributeValue, UCharSpan { });
+
         return UCharSpan { m_ucharBuffer.data(), m_ucharBuffer.size() };
     }
 
