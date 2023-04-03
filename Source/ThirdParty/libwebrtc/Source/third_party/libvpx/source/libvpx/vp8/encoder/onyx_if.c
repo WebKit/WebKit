@@ -3213,7 +3213,6 @@ static void encode_frame_to_data_rate(VP8_COMP *cpi, size_t *size,
   int frame_under_shoot_limit;
 
   int Loop = 0;
-  int loop_count;
 
   VP8_COMMON *cm = &cpi->common;
   int active_worst_qchanged = 0;
@@ -3779,8 +3778,6 @@ static void encode_frame_to_data_rate(VP8_COMP *cpi, size_t *size,
 
   vp8_save_coding_context(cpi);
 
-  loop_count = 0;
-
   scale_and_extend_source(cpi->un_scaled_source, cpi);
 
 #if CONFIG_TEMPORAL_DENOISING && CONFIG_POSTPROC
@@ -4003,7 +4000,6 @@ static void encode_frame_to_data_rate(VP8_COMP *cpi, size_t *size,
         q_low = cpi->active_best_quality;
         q_high = cpi->active_worst_quality;
 
-        loop_count++;
         Loop = 1;
 
         continue;
@@ -4229,7 +4225,6 @@ static void encode_frame_to_data_rate(VP8_COMP *cpi, size_t *size,
 
     if (Loop == 1) {
       vp8_restore_coding_context(cpi);
-      loop_count++;
 #if CONFIG_INTERNAL_STATS
       cpi->tot_recode_hits++;
 #endif

@@ -697,7 +697,6 @@ static JSObjectRef objCCallbackFunctionForInvocation(JSContext *context, NSInvoc
 
     std::unique_ptr<CallbackArgument> arguments;
     auto* nextArgument = &arguments;
-    unsigned argumentCount = 0;
     while (*position) {
         auto argument = parseObjCType<ArgumentTypeDelegate>(position);
         if (!argument || !skipNumber(position))
@@ -705,7 +704,6 @@ static JSObjectRef objCCallbackFunctionForInvocation(JSContext *context, NSInvoc
 
         *nextArgument = WTFMove(argument);
         nextArgument = &(*nextArgument)->m_next;
-        ++argumentCount;
     }
 
     JSC::JSGlobalObject* globalObject = toJS([context JSGlobalContextRef]);
