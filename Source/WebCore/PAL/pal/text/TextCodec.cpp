@@ -43,10 +43,6 @@ int TextCodec::getUnencodableReplacement(UChar32 codePoint, UnencodableHandling 
         codePoint = 0xFFFD;
 
     switch (handling) {
-    case UnencodableHandling::QuestionMarks:
-        replacement.data()[0] = '?';
-        replacement.data()[1] = 0;
-        return 1;
     case UnencodableHandling::Entities:
         return snprintf(replacement.data(), sizeof(UnencodableReplacementArray), "&#%u;", codePoint);
     case UnencodableHandling::URLEncodedEntities:
