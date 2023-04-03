@@ -237,7 +237,8 @@ LineBoxVerticalAligner::LineBoxAlignmentContent LineBoxVerticalAligner::computeL
     // The line box height computation is as follows:
     // 1. Stretch the line box with the non-line-box relative aligned inline box absolute top and bottom values.
     // 2. Check if the line box relative aligned inline boxes (top, bottom etc) have enough room and stretch the line box further if needed.
-    auto nonBottomAlignedBoxesMaximumHeight = valueOrDefault(maximumLogicalBottom) - valueOrDefault(minimumLogicalTop);
+    auto nonLineBoxRelativeAlignedBoxesMaximumHeight = valueOrDefault(maximumLogicalBottom) - valueOrDefault(minimumLogicalTop);
+    auto topAlignedBoxesMaximumHeight = std::optional<InlineLayoutUnit> { };
     auto bottomAlignedBoxesMaximumHeight = std::optional<InlineLayoutUnit> { };
     for (auto* lineBoxRelativeInlineLevelBox : lineBoxRelativeInlineLevelBoxes) {
         if (!formattingGeometry.inlineLevelBoxAffectsLineBox(*lineBoxRelativeInlineLevelBox))
@@ -245,7 +246,7 @@ LineBoxVerticalAligner::LineBoxAlignmentContent LineBoxVerticalAligner::computeL
         // This line box relative aligned inline level box stretches the line box.
         auto inlineLevelBoxHeight = lineBoxRelativeInlineLevelBox->layoutBounds() ? lineBoxRelativeInlineLevelBox->layoutBounds()->height() : lineBoxRelativeInlineLevelBox->logicalHeight();
         if (lineBoxRelativeInlineLevelBox->verticalAlign().type == VerticalAlign::Top) {
-            nonBottomAlignedBoxesMaximumHeight = std::max(inlineLevelBoxHeight, nonBottomAlignedBoxesMaximumHeight);
+            topAlignedBoxesMaximumHeight = std::max(inlineLevelBoxHeight, topAlignedBoxesMaximumHeight.value_or(0.f));
             continue;
         }
         if (lineBoxRelativeInlineLevelBox->verticalAlign().type == VerticalAlign::Bottom) {
@@ -254,7 +255,7 @@ LineBoxVerticalAligner::LineBoxAlignmentContent LineBoxVerticalAligner::computeL
         }
         ASSERT_NOT_REACHED();
     }
-    return { nonBottomAlignedBoxesMaximumHeight, bottomAlignedBoxesMaximumHeight, contentHasAnnotation };
+    return { nonLineBoxRelativeAlignedBoxesMaximumHeight, { topAlignedBoxesMaximumHeight, bottomAlignedBoxesMaximumHeight }, contentHasAnnotation };
 }
 
 void LineBoxVerticalAligner::computeRootInlineBoxVerticalPosition(LineBox& lineBox, const LineBoxAlignmentContent& lineBoxAlignmentContent) const
@@ -353,12 +354,20 @@ void LineBoxVerticalAligner::computeRootInlineBoxVerticalPosition(LineBox& lineB
         maximumTopOffsetFromRootInlineBoxBaseline = rootInlineBox.ascent();
     }
     // vertical-align: bottom stretches the top of the line box pushing the root inline box downwards.
-    auto bottomAlignedBoxStretch = InlineLayoutUnit { };
-    if (lineBoxAlignmentContent.bottomAlignedBoxesMaximumHeight) {
-        // Negative vertical margin can make aligned boxes have negative height. 
-        bottomAlignedBoxStretch = std::max(0.f, lineBoxAlignmentContent.nonBottomAlignedBoxesMaximumHeight < 0
-            ? *lineBoxAlignmentContent.bottomAlignedBoxesMaximumHeight
-            : std::max(0.f, *lineBoxAlignmentContent.bottomAlignedBoxesMaximumHeight - lineBoxAlignmentContent.nonBottomAlignedBoxesMaximumHeight));
+    auto bottomAlignedBoxStretch = lineBoxAlignmentContent.topAndBottomAlignedMaximumHeight.bottom.value_or(0.f);
+    if (bottomAlignedBoxStretch) {
+        // If top happens to stretch the line box, we don't need to push the root inline box anymore.
+        if (bottomAlignedBoxStretch <= lineBoxAlignmentContent.topAndBottomAlignedMaximumHeight.top.value_or(0.f))
+            bottomAlignedBoxStretch = { };
+
+        // However non-line box relative content needs some space. Root inline box may not end up being at the very bottom.
+        if (bottomAlignedBoxStretch) {
+            if (lineBoxAlignmentContent.nonLineBoxRelativeAlignedMaximumHeight > 0) {
+                // Negative vertical margin can make aligned boxes have negative height.
+                bottomAlignedBoxStretch -= std::max(0.f, lineBoxAlignmentContent.nonLineBoxRelativeAlignedMaximumHeight);
+            }
+            bottomAlignedBoxStretch = std::max(0.f, bottomAlignedBoxStretch);
+        }
     }
     auto rootInlineBoxLogicalTop = bottomAlignedBoxStretch + maximumTopOffsetFromRootInlineBoxBaseline.value_or(0.f) - rootInlineBox.ascent();
     rootInlineBox.setLogicalTop(rootInlineBoxLogicalTop);

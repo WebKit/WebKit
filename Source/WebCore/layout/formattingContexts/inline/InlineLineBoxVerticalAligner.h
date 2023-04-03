@@ -40,10 +40,14 @@ private:
     InlineLayoutUnit simplifiedVerticalAlignment(LineBox&) const;
 
     struct LineBoxAlignmentContent {
-        InlineLayoutUnit height() const { return std::max(nonBottomAlignedBoxesMaximumHeight, bottomAlignedBoxesMaximumHeight.value_or(0.f)); }
+        InlineLayoutUnit height() const { return std::max(nonLineBoxRelativeAlignedMaximumHeight, std::max(topAndBottomAlignedMaximumHeight.top.value_or(0.f), topAndBottomAlignedMaximumHeight.bottom.value_or(0.f))); }
 
-        InlineLayoutUnit nonBottomAlignedBoxesMaximumHeight { 0 };
-        std::optional<InlineLayoutUnit> bottomAlignedBoxesMaximumHeight { };
+        InlineLayoutUnit nonLineBoxRelativeAlignedMaximumHeight { 0 };
+        struct TopAndBottomAlignedMaximumHeight {
+            std::optional<InlineLayoutUnit> top { };
+            std::optional<InlineLayoutUnit> bottom { };
+        };
+        TopAndBottomAlignedMaximumHeight topAndBottomAlignedMaximumHeight { };
         bool hasAnnotation { false };
     };
     LineBoxAlignmentContent computeLineBoxLogicalHeight(LineBox&) const;
