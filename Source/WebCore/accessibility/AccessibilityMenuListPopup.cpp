@@ -68,15 +68,6 @@ bool AccessibilityMenuListPopup::computeAccessibilityIsIgnored() const
     return accessibilityIsIgnoredByDefault();
 }
 
-bool AccessibilityMenuListPopup::canHaveSelectedChildren() const
-{
-#if USE(ATSPI)
-    return true;
-#else
-    return false;
-#endif
-}
-
 void AccessibilityMenuListPopup::selectedChildren(AccessibilityChildrenVector& result)
 {
     ASSERT(result.isEmpty());

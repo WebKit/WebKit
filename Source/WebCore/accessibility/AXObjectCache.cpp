@@ -1150,7 +1150,7 @@ void AXObjectCache::handleLiveRegionCreated(Node* node)
             liveRegionStatus = AtomString { AccessibilityObject::defaultLiveRegionStatusForRole(AccessibilityObject::ariaRoleToWebCoreRole(ariaRole)) };
     }
 
-    if (AccessibilityObject::liveRegionStatusIsEnabled(liveRegionStatus))
+    if (AXCoreObject::liveRegionStatusIsEnabled(liveRegionStatus))
         postNotification(getOrCreate(node), &document(), AXLiveRegionCreated);
 }
 

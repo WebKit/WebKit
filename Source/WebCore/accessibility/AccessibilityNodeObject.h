@@ -56,23 +56,15 @@ public:
     bool isBusy() const override;
     bool isControl() const override;
     bool isFieldset() const override;
-    bool isGroup() const override;
-    bool isHeading() const override;
     bool isHovered() const override;
     bool isInputImage() const override;
     bool isLink() const override;
-    bool isMenu() const override;
-    bool isMenuBar() const override;
-    bool isMenuButton() const override;
-    bool isMenuItem() const override;
-    bool isMenuRelated() const override;
     bool isMultiSelectable() const override;
     bool isNativeImage() const;
     bool isNativeTextControl() const override;
     bool isSecureField() const override;
     bool isProgressIndicator() const override;
     bool isSearchField() const override;
-    bool isSlider() const override;
 
     bool isChecked() const override;
     bool isEnabled() const override;
@@ -102,8 +94,6 @@ public:
 
     AccessibilityOrientation orientation() const override;
 
-    AXCoreObject* selectedRadioButton() override;
-    AXCoreObject* selectedTabItem() override;
     AccessibilityButtonState checkboxOrRadioValue() const override;
 
     unsigned hierarchicalLevel() const override;

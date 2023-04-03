@@ -661,53 +661,6 @@ bool AccessibilityNodeObject::isProgressIndicator() const
     return roleValue() == AccessibilityRole::ProgressIndicator || roleValue() == AccessibilityRole::Meter;
 }
 
-bool AccessibilityNodeObject::isSlider() const
-{
-    return roleValue() == AccessibilityRole::Slider;
-}
-
-bool AccessibilityNodeObject::isMenuRelated() const
-{
-    switch (roleValue()) {
-    case AccessibilityRole::Menu:
-    case AccessibilityRole::MenuBar:
-    case AccessibilityRole::MenuButton:
-    case AccessibilityRole::MenuItem:
-    case AccessibilityRole::MenuItemCheckbox:
-    case AccessibilityRole::MenuItemRadio:
-        return true;
-    default:
-        return false;
-    }
-}
-
-bool AccessibilityNodeObject::isMenu() const
-{
-    return roleValue() == AccessibilityRole::Menu;
-}
-
-bool AccessibilityNodeObject::isMenuBar() const
-{
-    return roleValue() == AccessibilityRole::MenuBar;
-}
-
-bool AccessibilityNodeObject::isMenuButton() const
-{
-    return roleValue() == AccessibilityRole::MenuButton;
-}
-
-bool AccessibilityNodeObject::isMenuItem() const
-{
-    switch (roleValue()) {
-    case AccessibilityRole::MenuItem:
-    case AccessibilityRole::MenuItemRadio:
-    case AccessibilityRole::MenuItemCheckbox:
-        return true;
-    default:
-        return false;
-    }
-}
-
 bool AccessibilityNodeObject::isEnabled() const
 {
     // ARIA says that the disabled status applies to the current element and all descendant elements.
@@ -989,11 +942,6 @@ AccessibilityOrientation AccessibilityNodeObject::orientation() const
     return AccessibilityObject::orientation();
 }
 
-bool AccessibilityNodeObject::isHeading() const
-{
-    return roleValue() == AccessibilityRole::Heading;
-}
-
 bool AccessibilityNodeObject::isLink() const
 {
     return roleValue() == AccessibilityRole::WebCoreLink;
@@ -1020,39 +968,6 @@ bool AccessibilityNodeObject::isFieldset() const
         return false;
 
     return node->hasTagName(fieldsetTag);
-}
-
-bool AccessibilityNodeObject::isGroup() const
-{
-    AccessibilityRole role = roleValue();
-    return role == AccessibilityRole::Group || role == AccessibilityRole::TextGroup || role == AccessibilityRole::ApplicationGroup || role == AccessibilityRole::ApplicationTextGroup;
-}
-
-AXCoreObject* AccessibilityNodeObject::selectedRadioButton()
-{
-    if (!isRadioGroup())
-        return nullptr;
-
-    // Find the child radio button that is selected (ie. the intValue == 1).
-    for (const auto& child : children()) {
-        if (child->roleValue() == AccessibilityRole::RadioButton && child->checkboxOrRadioValue() == AccessibilityButtonState::On)
-            return child.get();
-    }
-    return nullptr;
-}
-
-AXCoreObject* AccessibilityNodeObject::selectedTabItem()
-{
-    if (!isTabList())
-        return nullptr;
-
-    // FIXME: Is this valid? ARIA tab items support aria-selected; not aria-checked.
-    // Find the child tab item that is selected (ie. the intValue == 1).
-    for (const auto& child : children()) {
-        if (child->isTabItem() && (child->isChecked() || child->isSelected()))
-            return child.get();
-    }
-    return nullptr;
 }
 
 AccessibilityButtonState AccessibilityNodeObject::checkboxOrRadioValue() const

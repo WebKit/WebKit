@@ -56,8 +56,6 @@ public:
     AXIsolatedObject* parentObject() const override { return parentObjectUnignored(); }
     AXIsolatedObject* editableAncestor() override { return Accessibility::editableAncestor(*this); };
     bool canSetFocusAttribute() const override { return boolAttributeValue(AXPropertyName::CanSetFocusAttribute); }
-    bool isTextControl() const override { return boolAttributeValue(AXPropertyName::IsTextControl); }
-    bool supportsLiveRegion(bool = true) const override { return boolAttributeValue(AXPropertyName::SupportsLiveRegion); }
 
 private:
     void detachRemoteParts(AccessibilityDetachmentType) override;
@@ -117,19 +115,11 @@ private:
     }
 
     // Attribute retrieval overrides.
-    bool isHeading() const override { return boolAttributeValue(AXPropertyName::IsHeading); }
-    bool isLandmark() const override { return boolAttributeValue(AXPropertyName::IsLandmark); }
     bool isLink() const override { return boolAttributeValue(AXPropertyName::IsLink); }
     bool isSecureField() const override { return boolAttributeValue(AXPropertyName::IsSecureField); }
     bool isAttachment() const override { return boolAttributeValue(AXPropertyName::IsAttachment); }
-    bool isMenuRelated() const override { return boolAttributeValue(AXPropertyName::IsMenuRelated); }
-    bool isMenu() const override { return boolAttributeValue(AXPropertyName::IsMenu); }
-    bool isMenuBar() const override { return boolAttributeValue(AXPropertyName::IsMenuBar); }
-    bool isMenuButton() const override { return boolAttributeValue(AXPropertyName::IsMenuButton); }
-    bool isMenuItem() const override { return boolAttributeValue(AXPropertyName::IsMenuItem); }
     bool isInputImage() const override { return boolAttributeValue(AXPropertyName::IsInputImage); }
     bool isProgressIndicator() const override { return boolAttributeValue(AXPropertyName::IsProgressIndicator); }
-    bool isSlider() const override { return boolAttributeValue(AXPropertyName::IsSlider); }
     bool isControl() const override { return boolAttributeValue(AXPropertyName::IsControl); }
 
     bool isList() const override { return boolAttributeValue(AXPropertyName::IsList); }
@@ -177,9 +167,6 @@ private:
     AXCoreObject* disclosedByRow() const override { return objectAttributeValue(AXPropertyName::DisclosedByRow); }
 
     bool isFieldset() const override { return boolAttributeValue(AXPropertyName::IsFieldset); }
-    bool isGroup() const override { return boolAttributeValue(AXPropertyName::IsGroup); }
-    bool isMenuList() const override { return boolAttributeValue(AXPropertyName::IsMenuList); }
-    bool isButton() const override { return boolAttributeValue(AXPropertyName::IsButton); }
     bool isChecked() const override { return boolAttributeValue(AXPropertyName::IsChecked); }
     bool isEnabled() const override { return boolAttributeValue(AXPropertyName::IsEnabled); }
     bool isSelected() const override { return boolAttributeValue(AXPropertyName::IsSelected); }
@@ -193,7 +180,6 @@ private:
     bool supportsDatetimeAttribute() const override { return boolAttributeValue(AXPropertyName::SupportsDatetimeAttribute); }
     String datetimeAttributeValue() const override { return stringAttributeValue(AXPropertyName::DatetimeAttributeValue); }
     bool canSetValueAttribute() const override { return boolAttributeValue(AXPropertyName::CanSetValueAttribute); }
-    bool canSetNumericValue() const override { return boolAttributeValue(AXPropertyName::CanSetNumericValue); }
     bool canSetSelectedAttribute() const override { return boolAttributeValue(AXPropertyName::CanSetSelectedAttribute); }
     bool canSetSelectedChildren() const override { return boolAttributeValue(AXPropertyName::CanSetSelectedChildren); }
     // We should never create an isolated object from an ignored live object, so we can hardcode this to false.
@@ -205,12 +191,9 @@ private:
     float valueForRange() const override { return floatAttributeValue(AXPropertyName::ValueForRange); }
     float maxValueForRange() const override { return floatAttributeValue(AXPropertyName::MaxValueForRange); }
     float minValueForRange() const override { return floatAttributeValue(AXPropertyName::MinValueForRange); }
-    AXCoreObject* selectedRadioButton() override { return objectAttributeValue(AXPropertyName::SelectedRadioButton); }
-    AXCoreObject* selectedTabItem() override { return objectAttributeValue(AXPropertyName::SelectedTabItem); }
     int layoutCount() const override;
     double loadingProgress() const override { return tree()->loadingProgress(); }
     bool supportsARIAOwns() const override { return boolAttributeValue(AXPropertyName::SupportsARIAOwns); }
-    bool hasPopup() const override { return boolAttributeValue(AXPropertyName::HasPopup); }
     String popupValue() const override { return stringAttributeValue(AXPropertyName::PopupValue); }
     bool pressedIsPresent() const override;
     bool ariaIsMultiline() const override { return boolAttributeValue(AXPropertyName::ARIAIsMultiline); }
@@ -247,7 +230,6 @@ private:
     String rolePlatformString() const override { return stringAttributeValue(AXPropertyName::RolePlatformString); }
     String roleDescription() const override { return stringAttributeValue(AXPropertyName::RoleDescription); }
     String subrolePlatformString() const override { return stringAttributeValue(AXPropertyName::SubrolePlatformString); }
-    String ariaLandmarkRoleDescription() const override { return stringAttributeValue(AXPropertyName::ARIALandmarkRoleDescription); }
     LayoutRect elementRect() const override;
     IntPoint clickPoint() override;
     void accessibilityText(Vector<AccessibilityText>& texts) const override;
@@ -308,11 +290,9 @@ private:
     AccessibilityOrientation orientation() const override { return static_cast<AccessibilityOrientation>(intAttributeValue(AXPropertyName::Orientation)); }
     unsigned hierarchicalLevel() const override { return unsignedAttributeValue(AXPropertyName::HierarchicalLevel); }
     String language() const override { return stringAttributeValue(AXPropertyName::Language); }
-    bool canHaveSelectedChildren() const override { return boolAttributeValue(AXPropertyName::CanHaveSelectedChildren); }
     void selectedChildren(AccessibilityChildrenVector& children) override { fillChildrenVectorForProperty(AXPropertyName::SelectedChildren, children); }
     void setSelectedChildren(const AccessibilityChildrenVector&) override;
     void visibleChildren(AccessibilityChildrenVector& children) override { fillChildrenVectorForProperty(AXPropertyName::VisibleChildren, children); }
-    AccessibilityChildrenVector contents() override;
     AtomString tagName() const override;
     const AccessibilityChildrenVector& children(bool updateChildrenIfNeeded = true) override;
     void updateChildrenIfNecessary() override;
@@ -444,7 +424,6 @@ private:
 
     bool isNativeTextControl() const override;
     bool isListBoxOption() const override;
-    bool isImageMapLink() const override;
     bool isMockObject() const override;
     bool isNonNativeTextControl() const override;
     bool isIndeterminate() const override { return boolAttributeValue(AXPropertyName::IsIndeterminate); }

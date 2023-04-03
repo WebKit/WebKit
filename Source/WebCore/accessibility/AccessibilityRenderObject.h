@@ -134,7 +134,6 @@ public:
 
     void addChildren() override;
     bool canHaveChildren() const override;
-    bool canHaveSelectedChildren() const override;
     void selectedChildren(AccessibilityChildrenVector&) override;
     void visibleChildren(AccessibilityChildrenVector&) override;
     bool shouldFocusActiveDescendant() const override;
@@ -147,7 +146,6 @@ public:
     VisiblePositionRange selectedVisiblePositionRange() const override;
     void setSelectedVisiblePositionRange(const VisiblePositionRange&) const override;
     bool isVisiblePositionRangeInDifferentDocument(const VisiblePositionRange&) const;
-    bool hasPopup() const override;
 
     bool supportsDropping() const override;
     bool supportsDragging() const override;

@@ -319,19 +319,6 @@ String AccessibilityObject::computedLabel()
     return String();
 }
 
-bool AccessibilityObject::isTextControl() const
-{
-    switch (roleValue()) {
-    case AccessibilityRole::ComboBox:
-    case AccessibilityRole::SearchField:
-    case AccessibilityRole::TextArea:
-    case AccessibilityRole::TextField:
-        return true;
-    default:
-        return false;
-    }
-}
-    
 bool AccessibilityObject::isARIATextControl() const
 {
     return ariaRoleAttribute() == AccessibilityRole::TextArea || ariaRoleAttribute() == AccessibilityRole::TextField || ariaRoleAttribute() == AccessibilityRole::SearchField;
@@ -340,23 +327,6 @@ bool AccessibilityObject::isARIATextControl() const
 bool AccessibilityObject::isNonNativeTextControl() const
 {
     return (isARIATextControl() || hasContentEditableAttributeSet()) && !isNativeTextControl();
-}
-
-bool AccessibilityObject::isLandmark() const
-{
-    switch (roleValue()) {
-    case AccessibilityRole::LandmarkBanner:
-    case AccessibilityRole::LandmarkComplementary:
-    case AccessibilityRole::LandmarkContentInfo:
-    case AccessibilityRole::LandmarkDocRegion:
-    case AccessibilityRole::LandmarkMain:
-    case AccessibilityRole::LandmarkNavigation:
-    case AccessibilityRole::LandmarkRegion:
-    case AccessibilityRole::LandmarkSearch:
-        return true;
-    default:
-        return false;
-    }
 }
 
 bool AccessibilityObject::hasMisspelling() const
@@ -2616,57 +2586,6 @@ String AccessibilityObject::embeddedImageDescription() const
     return downcast<RenderImage>(renderer())->accessibilityDescription();
 }
 
-String AccessibilityObject::ariaLandmarkRoleDescription() const
-{
-    switch (roleValue()) {
-    case AccessibilityRole::LandmarkBanner:
-        return AXARIAContentGroupText("ARIALandmarkBanner"_s);
-    case AccessibilityRole::LandmarkComplementary:
-        return AXARIAContentGroupText("ARIALandmarkComplementary"_s);
-    case AccessibilityRole::LandmarkContentInfo:
-        return AXARIAContentGroupText("ARIALandmarkContentInfo"_s);
-    case AccessibilityRole::LandmarkMain:
-        return AXARIAContentGroupText("ARIALandmarkMain"_s);
-    case AccessibilityRole::LandmarkNavigation:
-        return AXARIAContentGroupText("ARIALandmarkNavigation"_s);
-    case AccessibilityRole::LandmarkDocRegion:
-    case AccessibilityRole::LandmarkRegion:
-        return AXARIAContentGroupText("ARIALandmarkRegion"_s);
-    case AccessibilityRole::LandmarkSearch:
-        return AXARIAContentGroupText("ARIALandmarkSearch"_s);
-    case AccessibilityRole::ApplicationAlert:
-        return AXARIAContentGroupText("ARIAApplicationAlert"_s);
-    case AccessibilityRole::ApplicationAlertDialog:
-        return AXARIAContentGroupText("ARIAApplicationAlertDialog"_s);
-    case AccessibilityRole::ApplicationDialog:
-        return AXARIAContentGroupText("ARIAApplicationDialog"_s);
-    case AccessibilityRole::ApplicationLog:
-        return AXARIAContentGroupText("ARIAApplicationLog"_s);
-    case AccessibilityRole::ApplicationMarquee:
-        return AXARIAContentGroupText("ARIAApplicationMarquee"_s);
-    case AccessibilityRole::ApplicationStatus:
-        return AXARIAContentGroupText("ARIAApplicationStatus"_s);
-    case AccessibilityRole::ApplicationTimer:
-        return AXARIAContentGroupText("ARIAApplicationTimer"_s);
-    case AccessibilityRole::Document:
-        return AXARIAContentGroupText("ARIADocument"_s);
-    case AccessibilityRole::DocumentArticle:
-        return AXARIAContentGroupText("ARIADocumentArticle"_s);
-    case AccessibilityRole::DocumentMath:
-        return AXARIAContentGroupText("ARIADocumentMath"_s);
-    case AccessibilityRole::DocumentNote:
-        return AXARIAContentGroupText("ARIADocumentNote"_s);
-    case AccessibilityRole::UserInterfaceTooltip:
-        return AXARIAContentGroupText("ARIAUserInterfaceTooltip"_s);
-    case AccessibilityRole::TabPanel:
-        return AXARIAContentGroupText("ARIATabPanel"_s);
-    case AccessibilityRole::WebApplication:
-        return AXARIAContentGroupText("ARIAWebApplication"_s);
-    default:
-        return String();
-    }
-}
-
 // ARIA spec: User agents must not expose the aria-roledescription property if the element to which aria-roledescription is applied does not have a valid WAI-ARIA role or does not have an implicit WAI-ARIA role semantic.
 bool AccessibilityObject::supportsARIARoleDescription() const
 {
@@ -2881,17 +2800,6 @@ bool AccessibilityObject::supportsARIAAttributes() const
         || hasAttribute(aria_relevantAttr);
 }
     
-bool AccessibilityObject::liveRegionStatusIsEnabled(const AtomString& liveRegionStatus)
-{
-    return equalLettersIgnoringASCIICase(liveRegionStatus, "polite"_s) || equalLettersIgnoringASCIICase(liveRegionStatus, "assertive"_s);
-}
-    
-bool AccessibilityObject::supportsLiveRegion(bool excludeIfOff) const
-{
-    auto liveRegionStatusValue = liveRegionStatus();
-    return excludeIfOff ? liveRegionStatusIsEnabled(AtomString { liveRegionStatusValue }) : !liveRegionStatusValue.isEmpty();
-}
-
 AXCoreObject* AccessibilityObject::elementAccessibilityHitTest(const IntPoint& point) const
 { 
     // Send the hit test back into the sub-frame if necessary.
@@ -3520,23 +3428,6 @@ IntRect AccessibilityObject::scrollVisibleContentRect() const
     return IntRect();
 }
 
-AXCoreObject::AccessibilityChildrenVector AccessibilityObject::contents()
-{
-    if (isTabList())
-        return tabChildren();
-
-    if (isScrollView()) {
-        // A scroll view's contents are everything except the scroll bars.
-        AccessibilityChildrenVector nonScrollbarChildren;
-        for (auto* child = firstChild(); child; child = child->nextSibling()) {
-            if (child && !child->isScrollbar())
-                nonScrollbarChildren.append(child);
-        }
-        return nonScrollbarChildren;
-    }
-    return { };
-}
-    
 IntSize AccessibilityObject::scrollContentsSize() const
 {
     if (auto scroller = scrollableAreaAncestor())
@@ -3632,12 +3523,6 @@ AccessibilityRole AccessibilityObject::buttonRoleType() const
     // type.
 
     return AccessibilityRole::Button;
-}
-
-bool AccessibilityObject::isButton() const
-{
-    auto role = roleValue();
-    return role == AccessibilityRole::Button || role == AccessibilityRole::PopUpButton || role == AccessibilityRole::ToggleButton;
 }
 
 bool AccessibilityObject::isFileUploadButton() const

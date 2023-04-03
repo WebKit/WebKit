@@ -1074,15 +1074,6 @@ AXCoreObject::AccessibilityChildrenVector AccessibilityRenderObject::linkedObjec
     return linkedObjects;
 }
 
-bool AccessibilityRenderObject::hasPopup() const
-{
-    // Return true if this has the aria-haspopup attribute, or if it has an ancestor of type link with the aria-haspopup attribute.
-    return Accessibility::findAncestor<AccessibilityObject>(*this, true, [this] (const AccessibilityObject& object) {
-        return (this == &object) ? !equalLettersIgnoringASCIICase(object.popupValue(), "false"_s)
-            : object.isLink() && !equalLettersIgnoringASCIICase(object.popupValue(), "false"_s);
-    });
-}
-
 bool AccessibilityRenderObject::supportsDropping() const 
 {
     return determineDropEffects().size();
@@ -3116,27 +3107,6 @@ bool AccessibilityRenderObject::canHaveChildren() const
     return m_renderer && AccessibilityNodeObject::canHaveChildren();
 }
 
-bool AccessibilityRenderObject::canHaveSelectedChildren() const
-{
-    switch (roleValue()) {
-    // These roles are containers whose children support aria-selected:
-    case AccessibilityRole::Grid:
-    case AccessibilityRole::ListBox:
-    case AccessibilityRole::TabList:
-    case AccessibilityRole::Tree:
-    case AccessibilityRole::TreeGrid:
-    case AccessibilityRole::List:
-    // These roles are containers whose children are treated as selected by assistive
-    // technologies. We can get the "selected" item via aria-activedescendant or the
-    // focused element.
-    case AccessibilityRole::Menu:
-    case AccessibilityRole::MenuBar:
-        return true;
-    default:
-        return false;
-    }
-}
-    
 void AccessibilityRenderObject::ariaSelectedRows(AccessibilityChildrenVector& result)
 {
     // Determine which rows are selected.

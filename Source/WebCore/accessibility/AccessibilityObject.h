@@ -121,7 +121,6 @@ public:
     bool isAXIsolatedObjectInstance() const override { return false; }
 
     virtual bool isAttachmentElement() const { return false; }
-    bool isHeading() const override { return false; }
     bool isLink() const override { return false; }
     bool isSecureField() const override { return false; }
     bool isContainedBySecureField() const;
@@ -130,15 +129,9 @@ public:
     bool isListBoxOption() const override { return false; }
     bool isAttachment() const override { return false; }
     bool isMediaTimeline() const { return false; }
-    bool isMenuRelated() const override { return false; }
-    bool isMenu() const override { return false; }
-    bool isMenuBar() const override { return false; }
-    bool isMenuButton() const override { return false; }
-    bool isMenuItem() const override { return false; }
     bool isFileUploadButton() const;
     bool isInputImage() const override { return false; }
     bool isProgressIndicator() const override { return false; }
-    bool isSlider() const override { return false; }
     virtual bool isSliderThumb() const { return false; }
     bool isControl() const override { return false; }
     virtual bool isLabel() const { return false; }
@@ -192,9 +185,8 @@ public:
     AXCoreObject* disclosedByRow() const override { return nullptr; }
 
     bool isFieldset() const override { return false; }
-    bool isGroup() const override { return false; }
-    bool isImageMapLink() const override { return false; }
-    bool isMenuList() const override { return false; }
+    virtual bool isImageMapLink() const { return false; }
+    virtual bool isMenuList() const { return false; }
     virtual bool isMenuListPopup() const { return false; }
     virtual bool isMenuListOption() const { return false; }
     virtual bool isNativeSpinButton() const { return false; }
@@ -204,11 +196,8 @@ public:
     virtual bool isIncrementor() const { return false; }
     bool isMockObject() const override { return false; }
     virtual bool isMediaObject() const { return false; }
-    bool isTextControl() const override;
     bool isARIATextControl() const;
     bool isNonNativeTextControl() const override;
-    bool isButton() const override;
-    bool isLandmark() const override;
     bool isRangeControl() const;
     bool isMeter() const;
     bool isStyleFormatGroup() const;
@@ -259,7 +248,6 @@ public:
 
     bool canSetFocusAttribute() const override { return false; }
     bool canSetValueAttribute() const override { return false; }
-    bool canSetNumericValue() const override { return false; }
     bool canSetSelectedAttribute() const override { return false; }
     bool canSetSelectedChildren() const override { return false; }
 
@@ -287,8 +275,6 @@ public:
     float maxValueForRange() const override { return 0.0f; }
     float minValueForRange() const override { return 0.0f; }
     virtual float stepValueForRange() const { return 0.0f; }
-    AXCoreObject* selectedRadioButton() override { return nullptr; }
-    AXCoreObject* selectedTabItem() override { return nullptr; }
     AccessibilityObject* selectedListItem();
     int layoutCount() const override { return 0; }
     double loadingProgress() const override { return 0; }
@@ -299,7 +285,6 @@ public:
     bool supportsARIAOwns() const override { return false; }
     bool isActiveDescendantOfFocusedContainer() const;
 
-    bool hasPopup() const override { return false; }
     String popupValue() const override;
     bool hasDatalist() const;
     bool supportsHasPopup() const override;
@@ -430,7 +415,6 @@ public:
     String rolePlatformString() const override;
     String roleDescription() const override;
     String subrolePlatformString() const override;
-    String ariaLandmarkRoleDescription() const override;
 
     AXObjectCache* axObjectCache() const override;
 
@@ -520,7 +504,6 @@ public:
 #endif
     bool isDetachedFromParent() override { return false; }
 
-    bool canHaveSelectedChildren() const override { return false; }
     void selectedChildren(AccessibilityChildrenVector&) override { }
     void setSelectedChildren(const AccessibilityChildrenVector&) override { }
     void visibleChildren(AccessibilityChildrenVector&) override { }
@@ -614,14 +597,12 @@ public:
     AccessibilityChildrenVector ariaTreeItemContent() override;
 
     // ARIA live-region features.
-    bool supportsLiveRegion(bool excludeIfOff = true) const override;
     AccessibilityObject* liveRegionAncestor(bool excludeIfOff = true) const final { return Accessibility::liveRegionAncestor(*this, excludeIfOff); }
     const String liveRegionStatus() const override { return String(); }
     const String liveRegionRelevant() const override { return nullAtom(); }
     bool liveRegionAtomic() const override { return false; }
     bool isBusy() const override { return false; }
     static const String defaultLiveRegionStatusForRole(AccessibilityRole);
-    static bool liveRegionStatusIsEnabled(const AtomString&);
     static bool contentEditableAttributeIsEnabled(Element*);
     bool hasContentEditableAttributeSet() const;
 
@@ -647,7 +628,6 @@ public:
     enum class ScrollByPageDirection { Up, Down, Left, Right };
     bool scrollByPage(ScrollByPageDirection) const;
     IntPoint scrollPosition() const;
-    AccessibilityChildrenVector contents() override;
     IntSize scrollContentsSize() const;
     IntRect scrollVisibleContentRect() const;
     void scrollToMakeVisible(const ScrollRectToVisibleOptions&) const;

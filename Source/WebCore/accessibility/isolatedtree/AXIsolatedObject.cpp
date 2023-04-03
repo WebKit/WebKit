@@ -53,7 +53,7 @@ AXIsolatedObject::AXIsolatedObject(const Ref<AccessibilityObject>& axObject, AXI
     // Every object will have at least this many properties. We can shrink this number
     // to some estimated average once we implement sparse property storage (i.e. only storing
     // a property if it's not the default value for its type).
-    m_propertyMap.reserveInitialCapacity(116);
+    m_propertyMap.reserveInitialCapacity(96);
 
     initializeProperties(axObject, isRoot);
 }
@@ -71,7 +71,6 @@ AXIsolatedObject::~AXIsolatedObject()
 void AXIsolatedObject::initializeProperties(const Ref<AccessibilityObject>& axObject, IsRoot isRoot)
 {
     auto& object = axObject.get();
-    setProperty(AXPropertyName::ARIALandmarkRoleDescription, object.ariaLandmarkRoleDescription().isolatedCopy());
 
     if (object.ancestorFlagsAreInitialized())
         setProperty(AXPropertyName::AncestorFlags, object.ancestorFlags());
@@ -80,35 +79,24 @@ void AXIsolatedObject::initializeProperties(const Ref<AccessibilityObject>& axOb
 
     setProperty(AXPropertyName::IsAttachment, object.isAttachment());
     setProperty(AXPropertyName::IsBusy, object.isBusy());
-    setProperty(AXPropertyName::IsButton, object.isButton());
     setProperty(AXPropertyName::IsControl, object.isControl());
     setProperty(AXPropertyName::IsEnabled, object.isEnabled());
     setProperty(AXPropertyName::IsExpanded, object.isExpanded());
     setProperty(AXPropertyName::IsFocused, object.isFocused());
-    setProperty(AXPropertyName::IsGroup, object.isGroup());
-    setProperty(AXPropertyName::IsHeading, object.isHeading());
     setProperty(AXPropertyName::IsIndeterminate, object.isIndeterminate());
     setProperty(AXPropertyName::IsInlineText, object.isInlineText());
     setProperty(AXPropertyName::IsInputImage, object.isInputImage());
-    setProperty(AXPropertyName::IsLandmark, object.isLandmark());
     setProperty(AXPropertyName::IsLink, object.isLink());
     setProperty(AXPropertyName::IsList, object.isList());
-    setProperty(AXPropertyName::IsMenu, object.isMenu());
-    setProperty(AXPropertyName::IsMenuBar, object.isMenuBar());
-    setProperty(AXPropertyName::IsMenuButton, object.isMenuButton());
-    setProperty(AXPropertyName::IsMenuItem, object.isMenuItem());
-    setProperty(AXPropertyName::IsMenuList, object.isMenuList());
-    setProperty(AXPropertyName::IsMenuRelated, object.isMenuRelated());
     setProperty(AXPropertyName::IsMultiSelectable, object.isMultiSelectable());
     setProperty(AXPropertyName::IsPressed, object.isPressed());
     setProperty(AXPropertyName::IsProgressIndicator, object.isProgressIndicator());
     setProperty(AXPropertyName::IsRequired, object.isRequired());
-    setProperty(AXPropertyName::IsScrollbar, object.isScrollbar());
     setProperty(AXPropertyName::IsSecureField, object.isSecureField());
     setProperty(AXPropertyName::IsSelected, object.isSelected());
-    setProperty(AXPropertyName::IsSlider, object.isSlider());
     setProperty(AXPropertyName::IsUnvisited, object.isUnvisited());
     setProperty(AXPropertyName::IsValueAutofillAvailable, object.isValueAutofillAvailable());
+    // FIXME: We should cache AXPropertyName::InsideLink instead of both AXPropertyName::IsVisited and AXPropertyName::IsUnvisited.
     setProperty(AXPropertyName::IsVisited, object.isVisited());
     setProperty(AXPropertyName::RoleDescription, object.roleDescription().isolatedCopy());
     setProperty(AXPropertyName::RolePlatformString, object.rolePlatformString().isolatedCopy());
@@ -119,7 +107,6 @@ void AXIsolatedObject::initializeProperties(const Ref<AccessibilityObject>& axOb
     setProperty(AXPropertyName::DatetimeAttributeValue, object.datetimeAttributeValue().isolatedCopy());
     setProperty(AXPropertyName::CanSetFocusAttribute, object.canSetFocusAttribute());
     setProperty(AXPropertyName::CanSetValueAttribute, object.canSetValueAttribute());
-    setProperty(AXPropertyName::CanSetNumericValue, object.canSetNumericValue());
     setProperty(AXPropertyName::SupportsRequiredAttribute, object.supportsRequiredAttribute());
     setProperty(AXPropertyName::CanSetSelectedAttribute, object.canSetSelectedAttribute());
     setProperty(AXPropertyName::CanSetSelectedChildren, object.canSetSelectedChildren());
@@ -129,10 +116,7 @@ void AXIsolatedObject::initializeProperties(const Ref<AccessibilityObject>& axOb
     setProperty(AXPropertyName::ValueForRange, object.valueForRange());
     setProperty(AXPropertyName::MaxValueForRange, object.maxValueForRange());
     setProperty(AXPropertyName::MinValueForRange, object.minValueForRange());
-    setObjectProperty(AXPropertyName::SelectedRadioButton, object.selectedRadioButton());
-    setObjectProperty(AXPropertyName::SelectedTabItem, object.selectedTabItem());
     setProperty(AXPropertyName::SupportsARIAOwns, object.supportsARIAOwns());
-    setProperty(AXPropertyName::HasPopup, object.hasPopup());
     setProperty(AXPropertyName::PopupValue, object.popupValue().isolatedCopy());
     setProperty(AXPropertyName::ARIAIsMultiline, object.ariaIsMultiline());
     setProperty(AXPropertyName::InvalidStatus, object.invalidStatus().isolatedCopy());
@@ -172,7 +156,6 @@ void AXIsolatedObject::initializeProperties(const Ref<AccessibilityObject>& axOb
     setProperty(AXPropertyName::Orientation, static_cast<int>(object.orientation()));
     setProperty(AXPropertyName::HierarchicalLevel, object.hierarchicalLevel());
     setProperty(AXPropertyName::Language, object.language().isolatedCopy());
-    setProperty(AXPropertyName::SupportsLiveRegion, object.supportsLiveRegion());
     setProperty(AXPropertyName::LiveRegionStatus, object.liveRegionStatus().isolatedCopy());
     setProperty(AXPropertyName::LiveRegionRelevant, object.liveRegionRelevant().isolatedCopy());
     setProperty(AXPropertyName::LiveRegionAtomic, object.liveRegionAtomic());
@@ -245,17 +228,12 @@ void AXIsolatedObject::initializeProperties(const Ref<AccessibilityObject>& axOb
         setObjectVectorProperty(AXPropertyName::ARIATreeRows, ariaTreeRows);
     }
 
-    if (object.isTextControl())
-        setProperty(AXPropertyName::IsTextControl, true);
-
     if (object.isRadioButton()) {
         if (auto nameAttribute = object.attributeValue("name"_s))
             setProperty(AXPropertyName::NameAttribute, nameAttribute->isolatedCopy());
     }
 
     if (object.canHaveSelectedChildren()) {
-        setProperty(AXPropertyName::CanHaveSelectedChildren, true);
-
         AccessibilityChildrenVector selectedChildren;
         object.selectedChildren(selectedChildren);
         setObjectVectorProperty(AXPropertyName::SelectedChildren, selectedChildren);
@@ -264,14 +242,13 @@ void AXIsolatedObject::initializeProperties(const Ref<AccessibilityObject>& axOb
     if (object.isImage())
         setProperty(AXPropertyName::EmbeddedImageDescription, object.embeddedImageDescription().isolatedCopy());
 
-    setObjectVectorProperty(AXPropertyName::Contents, object.contents());
-
     AccessibilityChildrenVector visibleChildren;
     object.visibleChildren(visibleChildren);
     setObjectVectorProperty(AXPropertyName::VisibleChildren, visibleChildren);
     setObjectVectorProperty(AXPropertyName::LinkedObjects, object.linkedObjects());
 
     if (object.isSpinButton()) {
+        // FIXME: These properties get out of date every time AccessibilitySpinButton::{clearChildren, addChildren} is called. We should probably just not cache these properties.
         setObjectProperty(AXPropertyName::DecrementButton, object.decrementButton());
         setObjectProperty(AXPropertyName::IncrementButton, object.incrementButton());
     }
@@ -465,13 +442,6 @@ void AXIsolatedObject::setSelectedChildren(const AccessibilityChildrenVector& se
         auto axSelectedChildren = axObjectCache->objectsForIDs(axIDs(selectedChildren));
         object->setSelectedChildren(axSelectedChildren);
     });
-}
-
-AXCoreObject::AccessibilityChildrenVector AXIsolatedObject::contents()
-{
-    AccessibilityChildrenVector result;
-    fillChildrenVectorForProperty(AXPropertyName::Contents, result);
-    return result;
 }
 
 bool AXIsolatedObject::isDetachedFromParent()
@@ -1438,12 +1408,6 @@ int AXIsolatedObject::lineForPosition(const VisiblePosition& position) const
 }
 
 bool AXIsolatedObject::isListBoxOption() const
-{
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
-bool AXIsolatedObject::isImageMapLink() const
 {
     ASSERT_NOT_REACHED();
     return false;
