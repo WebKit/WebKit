@@ -53,6 +53,7 @@
                 }
             ];
 
+            await UIHelper.ensurePresentationUpdate();
             await UIHelper.mouseWheelSequence({ events });
             finishJSTest();
         }
