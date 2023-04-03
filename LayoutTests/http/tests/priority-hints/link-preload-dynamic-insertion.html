@@ -98,7 +98,7 @@
       link.as = test.as;
       if (test.fetchPriority) link.fetchPriority = test.fetchPriority;
 
-      const url = new URL(`../resources/${test.resource}?${iteration++}`, location);
+      const url = new URL(`../resources/${test.resource}?lpdi${iteration++}`, location);
       link.href = url;
       link.onload = t.step_func(() => { checkResourcePriority(url, test.expected_priority, test.description); t.done(); });
       document.head.appendChild(link);
