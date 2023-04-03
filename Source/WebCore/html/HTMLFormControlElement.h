@@ -43,6 +43,8 @@ public:
 
     bool matchesValidPseudoClass() const override { return ValidatedFormListedElement::matchesValidPseudoClass(); }
     bool matchesInvalidPseudoClass() const override { return ValidatedFormListedElement::matchesInvalidPseudoClass(); }
+    bool matchesUserValidPseudoClass() const override { return ValidatedFormListedElement::matchesUserValidPseudoClass(); }
+    bool matchesUserInvalidPseudoClass() const override { return ValidatedFormListedElement::matchesUserInvalidPseudoClass(); }
 
     bool isDisabledFormControl() const final { return isDisabled(); }
     bool supportsFocus() const override { return !isDisabled(); }

@@ -1,5 +1,5 @@
 
 
-PASS :user-invalid selector should be supported
+PASS :user-invalid selector should respond to user action
 PASS :user-error selector should not be supported
 
