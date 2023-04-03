@@ -210,25 +210,22 @@ Allow the app to run until the `*angledata.gz` file is non-zero and no longer gr
 should continue rendering after that:
 ```
 $ adb shell ls -s -w 1 /sdcard/Android/data/$PACKAGE_NAME/angle_capture
-30528 angry_birds_2_capture_context1.angledata.gz
-    8 angry_birds_2_capture_context1.cpp
-    4 angry_birds_2_capture_context1_files.txt
-  768 angry_birds_2_capture_context1_frame001.cpp
-  100 angry_birds_2_capture_context1_frame002.cpp
-  100 angry_birds_2_capture_context1_frame003.cpp
-  100 angry_birds_2_capture_context1_frame004.cpp
-  100 angry_birds_2_capture_context1_frame005.cpp
-  104 angry_birds_2_capture_context1_frame006.cpp
-  100 angry_birds_2_capture_context1_frame007.cpp
-  100 angry_birds_2_capture_context1_frame008.cpp
-  100 angry_birds_2_capture_context1_frame009.cpp
-  100 angry_birds_2_capture_context1_frame010.cpp
-  120 angry_birds_2_capture_context1_frame011.cpp
-    8 angry_birds_2_capture_context1.h
+30528 angry_birds_2.angledata.gz
+    8 angry_birds_2.cpp
+    4 angry_birds_2.json
+  768 angry_birds_2_001.cpp
+  100 angry_birds_2_002.cpp
+  100 angry_birds_2_003.cpp
+  100 angry_birds_2_004.cpp
+  100 angry_birds_2_005.cpp
+  104 angry_birds_2_006.cpp
+  100 angry_birds_2_007.cpp
+  100 angry_birds_2_008.cpp
+  100 angry_birds_2_009.cpp
+  100 angry_birds_2_010.cpp
+  120 angry_birds_2_011.cpp
+    8 angry_birds_2.h
 ```
-Note, you may see multiple contexts captured in the output. When this happens, look at the size of
-the files. The larger files should be the context you care about it. You should move or delete the
-other context files.
 
 ## Pull the trace files
 

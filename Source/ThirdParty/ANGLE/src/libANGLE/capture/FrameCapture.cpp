@@ -4958,6 +4958,11 @@ void CaptureMidExecutionSetup(const gl::Context *context,
         }
     }
 
+    if (currentRasterState.depthClamp != defaultRasterState.depthClamp)
+    {
+        capCap(GL_DEPTH_CLAMP_EXT, currentRasterState.depthClamp);
+    }
+
     // pointDrawMode/multiSample are only used in the D3D back-end right now.
 
     if (currentRasterState.rasterizerDiscard != defaultRasterState.rasterizerDiscard)

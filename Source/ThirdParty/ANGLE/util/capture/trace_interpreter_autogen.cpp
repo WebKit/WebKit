@@ -2206,6 +2206,22 @@ CallCapture ParseCallCapture(const Token &nameToken,
         return CallCapture(EntryPoint::GLFramebufferPixelLocalClearValueuivANGLE,
                            std::move(params));
     }
+    if (strcmp(nameToken, "glFramebufferPixelLocalStorageInterruptANGLE") == 0)
+    {
+        ParamBuffer params = ParseParameters<
+            std::remove_pointer<PFNGLFRAMEBUFFERPIXELLOCALSTORAGEINTERRUPTANGLEPROC>::type>(
+            paramTokens, strings);
+        return CallCapture(EntryPoint::GLFramebufferPixelLocalStorageInterruptANGLE,
+                           std::move(params));
+    }
+    if (strcmp(nameToken, "glFramebufferPixelLocalStorageRestoreANGLE") == 0)
+    {
+        ParamBuffer params = ParseParameters<
+            std::remove_pointer<PFNGLFRAMEBUFFERPIXELLOCALSTORAGERESTOREANGLEPROC>::type>(
+            paramTokens, strings);
+        return CallCapture(EntryPoint::GLFramebufferPixelLocalStorageRestoreANGLE,
+                           std::move(params));
+    }
     if (strcmp(nameToken, "glFramebufferRenderbuffer") == 0)
     {
         ParamBuffer params =

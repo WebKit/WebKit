@@ -628,6 +628,8 @@ typedef void (GL_APIENTRYP PFNGLFRAMEBUFFERPIXELLOCALCLEARVALUEUIVANGLEPROC) (GL
 typedef void (GL_APIENTRYP PFNGLBEGINPIXELLOCALSTORAGEANGLEPROC) (GLsizei n, const GLenum loadops[]);
 typedef void (GL_APIENTRYP PFNGLENDPIXELLOCALSTORAGEANGLEPROC) (GLsizei n, const GLenum storeops[]);
 typedef void (GL_APIENTRYP PFNGLPIXELLOCALSTORAGEBARRIERANGLEPROC) (void);
+typedef void (GL_APIENTRYP PFNGLFRAMEBUFFERPIXELLOCALSTORAGEINTERRUPTANGLEPROC) (void);
+typedef void (GL_APIENTRYP PFNGLFRAMEBUFFERPIXELLOCALSTORAGERESTOREANGLEPROC) (void);
 typedef void (GL_APIENTRYP PFNGLGETFRAMEBUFFERPIXELLOCALSTORAGEPARAMETERFVANGLEPROC) (GLint plane, GLenum pname, GLfloat *params);
 typedef void (GL_APIENTRYP PFNGLGETFRAMEBUFFERPIXELLOCALSTORAGEPARAMETERIVANGLEPROC) (GLint plane, GLenum pname, GLint *params);
 typedef void (GL_APIENTRYP PFNGLGETFRAMEBUFFERPIXELLOCALSTORAGEPARAMETERFVROBUSTANGLEPROC) (GLint plane, GLenum pname, GLsizei bufSize, GLsizei *length, GLfloat *params);
@@ -641,6 +643,8 @@ GL_APICALL void GL_APIENTRY glFramebufferPixelLocalClearValueuivANGLE (GLint pla
 GL_APICALL void GL_APIENTRY glBeginPixelLocalStorageANGLE (GLsizei n, const GLenum loadops[]);
 GL_APICALL void GL_APIENTRY glEndPixelLocalStorageANGLE (GLsizei n, const GLenum storeops[]);
 GL_APICALL void GL_APIENTRY glPixelLocalStorageBarrierANGLE (void);
+GL_APICALL void GL_APIENTRY glFramebufferPixelLocalStorageInterruptANGLE (void);
+GL_APICALL void GL_APIENTRY glFramebufferPixelLocalStorageRestoreANGLE (void);
 GL_APICALL void GL_APIENTRY glGetFramebufferPixelLocalStorageParameterfvANGLE (GLint plane, GLenum pname, GLfloat *params);
 GL_APICALL void GL_APIENTRY glGetFramebufferPixelLocalStorageParameterivANGLE (GLint plane, GLenum pname, GLint *params);
 GL_APICALL void GL_APIENTRY glGetFramebufferPixelLocalStorageParameterfvRobustANGLE (GLint plane, GLenum pname, GLsizei bufSize, GLsizei *length, GLfloat *params);

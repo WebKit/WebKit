@@ -2499,18 +2499,6 @@ TEST_P(Texture2DTest, TexStorage)
 // initialized the image with a default color.
 TEST_P(Texture2DTest, TexStorageWithPBO)
 {
-    // http://anglebug.com/4126
-    ANGLE_SKIP_TEST_IF(IsOSX() && IsOpenGL());
-
-    // http://anglebug.com/5081
-    ANGLE_SKIP_TEST_IF(IsWindows() && IsNVIDIA() && IsOpenGL());
-
-    // http://anglebug.com/5651
-    ANGLE_SKIP_TEST_IF(IsLinux() && IsNVIDIA() && IsOpenGL());
-
-    // http://anglebug.com/5097
-    ANGLE_SKIP_TEST_IF(IsLinux() && IsOpenGL() && IsTSan());
-
     if (getClientMajorVersion() < 3)
     {
         ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_storage"));
@@ -2561,8 +2549,7 @@ TEST_P(Texture2DTest, TexStorageWithPBO)
     drawQuad(mProgram, "position", 0.5f);
     glDeleteBuffers(1, &pbo);
     EXPECT_GL_NO_ERROR();
-    EXPECT_PIXEL_EQ(3 * width / 4, 3 * height / 4, 0, 0, 0, 255);
-    EXPECT_PIXEL_EQ(width / 4, height / 4, 255, 0, 0, 255);
+    EXPECT_PIXEL_RECT_EQ(0, 0, width / 2, height / 2, GLColor(255, 0, 0, 255));
 }
 
 // Test that glTexSubImage2D combined with a PBO works properly after deleting the PBO

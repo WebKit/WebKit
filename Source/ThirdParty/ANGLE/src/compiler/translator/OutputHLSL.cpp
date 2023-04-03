@@ -363,6 +363,8 @@ OutputHLSL::OutputHLSL(sh::GLenum shaderType,
     mUseZeroArray                = false;
     mUsesSecondaryColor          = false;
 
+    mDepthLayout = EdUnspecified;
+
     mUniqueIndex = 0;
 
     mOutputLod0Function      = false;
@@ -1202,7 +1204,18 @@ void OutputHLSL::header(TInfoSinkBase &out,
 
     if (mUsesFragDepth)
     {
-        out << "#define GL_USES_FRAG_DEPTH\n";
+        switch (mDepthLayout)
+        {
+            case EdGreater:
+                out << "#define GL_USES_FRAG_DEPTH_GREATER\n";
+                break;
+            case EdLess:
+                out << "#define GL_USES_FRAG_DEPTH_LESS\n";
+                break;
+            default:
+                out << "#define GL_USES_FRAG_DEPTH\n";
+                break;
+        }
     }
 
     if (mUsesDepthRange)
@@ -1383,6 +1396,7 @@ void OutputHLSL::visitSymbol(TIntermSymbol *node)
         else if (name == "gl_FragDepthEXT" || name == "gl_FragDepth")
         {
             mUsesFragDepth = true;
+            mDepthLayout   = variableType.getLayoutQualifier().depth;
             out << "gl_Depth";
         }
         else if (qualifier == EvqNumWorkGroups)

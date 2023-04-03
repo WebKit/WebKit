@@ -20,6 +20,12 @@ struct FeaturesVk : FeatureSetBase
     FeaturesVk();
     ~FeaturesVk();
 
+    FeatureInfo appendAliasedMemoryDecorationsToSsbo = {
+        "appendAliasedMemoryDecorationsToSsbo", FeatureCategory::VulkanWorkarounds,
+        "Append aliased memory decoration to ssbo in SpirV if the ssbo in GLSL is not declared "
+        "with restrict memory qualifier",
+        &members, "b/266235549"};
+
     FeatureInfo bresenhamLineRasterization = {
         "bresenhamLineRasterization",
         FeatureCategory::VulkanFeatures,
@@ -659,6 +665,12 @@ struct FeaturesVk : FeatureSetBase
         "Force static state for VK_DYNAMIC_STATE_VERTEX_INPUT_BINDING_STRIDE_EXT due to "
         "driver bugs",
         &members, "https://bugs.fuchsia.dev/p/fuchsia/issues/detail?id=107106"};
+
+    FeatureInfo forceStaticPrimitiveRestartState = {
+        "forceStaticPrimitiveRestartState", FeatureCategory::VulkanWorkarounds,
+        "Force static state for VK_DYNAMIC_STATE_PRIMITIVE_RESTART_ENABLE due to "
+        "driver bugs",
+        &members, "https://issuetracker.google.com/275210062"};
 
     FeatureInfo supportsExtendedDynamicState = {
         "supportsExtendedDynamicState", FeatureCategory::VulkanFeatures,

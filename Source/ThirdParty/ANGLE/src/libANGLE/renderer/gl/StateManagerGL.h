@@ -67,6 +67,7 @@ struct ExternalContextState
 
     bool enableDither;
     bool enablePolygonOffsetFill;
+    bool enableDepthClamp;
     bool enableSampleAlphaToCoverage;
     bool enableSampleCoverage;
     bool multisampleEnabled;
@@ -231,6 +232,7 @@ class StateManagerGL final : angle::NonCopyable
     void setFrontFace(GLenum frontFace);
     void setPolygonOffsetFillEnabled(bool enabled);
     void setPolygonOffset(float factor, float units, float clamp);
+    void setDepthClampEnabled(bool enabled);
     void setRasterizerDiscardEnabled(bool enabled);
     void setLineWidth(float width);
 
@@ -277,7 +279,9 @@ class StateManagerGL final : angle::NonCopyable
 
     angle::Result syncState(const gl::Context *context,
                             const gl::State::DirtyBits &glDirtyBits,
-                            const gl::State::DirtyBits &bitMask);
+                            const gl::State::DirtyBits &bitMask,
+                            const gl::State::ExtendedDirtyBits &extendedDirtyBits,
+                            const gl::State::ExtendedDirtyBits &extendedBitMask);
 
     ANGLE_INLINE void updateMultiviewBaseViewLayerIndexUniform(
         const gl::Program *program,
@@ -452,6 +456,7 @@ class StateManagerGL final : angle::NonCopyable
     // TODO(jmadill): Convert to std::array when available
     std::vector<GLenum> mFramebuffers;
     GLuint mRenderbuffer;
+    GLuint mPlaceholderFbo;
 
     bool mScissorTestEnabled;
     gl::Rectangle mScissor;
@@ -499,6 +504,7 @@ class StateManagerGL final : angle::NonCopyable
     GLfloat mPolygonOffsetFactor;
     GLfloat mPolygonOffsetUnits;
     GLfloat mPolygonOffsetClamp;
+    bool mDepthClampEnabled;
     bool mRasterizerDiscardEnabled;
     float mLineWidth;
 

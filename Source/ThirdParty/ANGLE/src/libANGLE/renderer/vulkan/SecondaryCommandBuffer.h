@@ -29,6 +29,7 @@ namespace vk
 {
 class Context;
 class RenderPassDesc;
+class SecondaryCommandPool;
 
 #if ANGLE_ENABLE_VULKAN_SHARED_RING_BUFFER_CMD_ALLOC
 using SecondaryCommandMemoryAllocator = SharedCommandMemoryAllocator;
@@ -634,7 +635,7 @@ class SecondaryCommandBuffer final : angle::NonCopyable
     static constexpr bool ExecutesInline() { return true; }
 
     static angle::Result InitializeCommandPool(Context *context,
-                                               CommandPool *pool,
+                                               SecondaryCommandPool *pool,
                                                uint32_t queueFamilyIndex,
                                                ProtectionType protectionType)
     {
@@ -891,7 +892,7 @@ class SecondaryCommandBuffer final : angle::NonCopyable
 
     // Initialize the SecondaryCommandBuffer by setting the allocator it will use
     angle::Result initialize(vk::Context *context,
-                             vk::CommandPool *pool,
+                             vk::SecondaryCommandPool *pool,
                              bool isRenderPassCommandBuffer,
                              SecondaryCommandMemoryAllocator *allocator)
     {

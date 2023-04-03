@@ -189,6 +189,11 @@ TEST_P(DebugTest, ObjectLabelsEXT)
 class DebugTestES3 : public DebugTest
 {};
 
+class DebugTestES32 : public DebugTestES3
+{
+    void testSetUp() override { ; }
+};
+
 struct Message
 {
     GLenum source;
@@ -642,6 +647,24 @@ TEST_P(DebugTestES3, Rendering)
     ASSERT_GL_NO_ERROR();
 }
 
+// Simple test for gl[Push, Pop]DebugGroup using ES32 core APIs
+TEST_P(DebugTestES32, DebugGroup)
+{
+    const std::string testDrawGroup = "Test Draw Group";
+
+    // Pop without a push should generate GL_STACK_UNDERFLOW error
+    glPopDebugGroup();
+    EXPECT_GL_ERROR(GL_STACK_UNDERFLOW);
+
+    // Push a test debug group and expect no error
+    glPushDebugGroup(GL_DEBUG_SOURCE_THIRD_PARTY, 0, -1, testDrawGroup.c_str());
+    ASSERT_GL_NO_ERROR();
+
+    // Pop the test debug group and expect no error
+    glPopDebugGroup();
+    ASSERT_GL_NO_ERROR();
+}
+
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(DebugTestES3);
 ANGLE_INSTANTIATE_TEST_ES3(DebugTestES3);
 
@@ -650,4 +673,7 @@ ANGLE_INSTANTIATE_TEST(DebugTest,
                        ANGLE_ALL_TEST_PLATFORMS_ES2,
                        ANGLE_ALL_TEST_PLATFORMS_ES3,
                        ANGLE_ALL_TEST_PLATFORMS_ES31);
+
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(DebugTestES32);
+ANGLE_INSTANTIATE_TEST_ES32(DebugTestES32);
 }  // namespace angle

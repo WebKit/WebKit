@@ -37,6 +37,10 @@ void InitExtensionBehavior(const ShBuiltInResources &resources, TExtensionBehavi
     {
         extBehavior[TExtension::EXT_blend_func_extended] = EBhUndefined;
     }
+    if (resources.EXT_conservative_depth)
+    {
+        extBehavior[TExtension::EXT_conservative_depth] = EBhUndefined;
+    }
     if (resources.EXT_draw_buffers)
     {
         extBehavior[TExtension::EXT_draw_buffers] = EBhUndefined;

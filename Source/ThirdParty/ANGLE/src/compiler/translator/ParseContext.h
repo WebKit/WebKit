@@ -602,6 +602,8 @@ class TParseContext : angle::NonCopyable
                                        int objectLocationCount,
                                        const TLayoutQualifier &layoutQualifier);
 
+    void checkDepthIsNotSpecified(const TSourceLoc &location, TLayoutDepth depth);
+
     void checkYuvIsNotSpecified(const TSourceLoc &location, bool yuv);
 
     void checkEarlyFragmentTestsIsNotSpecified(const TSourceLoc &location, bool earlyFragmentTests);

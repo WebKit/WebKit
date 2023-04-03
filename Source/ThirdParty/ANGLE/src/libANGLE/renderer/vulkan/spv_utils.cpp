@@ -1532,7 +1532,7 @@ TransformationState SpirvPerVertexTrimmer::transformTypeStruct(const SpirvIDDisc
 
     // Change the definition of the gl_PerVertex struct by stripping unused fields at the end.
     const uint32_t memberCount = maxMembers + 1;
-    memberList->resize(memberCount);
+    memberList->resize_down(memberCount);
 
     spirv::WriteTypeStruct(blobOut, id, *memberList);
 
@@ -1647,7 +1647,7 @@ void SpirvInactiveVaryingRemover::modifyEntryPointInterfaceList(
     }
 
     // Update the number of interface variables.
-    interfaceList->resize(writeIndex);
+    interfaceList->resize_down(writeIndex);
 }
 
 TransformationState SpirvInactiveVaryingRemover::transformTypePointer(
@@ -2215,7 +2215,8 @@ void SpirvTransformFeedbackCodeGenerator::writeIntConstant(const SpirvIDDiscover
 
     if (mIntNIds.size() <= value)
     {
-        mIntNIds.resize(value + 1);
+        // This member never resized down, so new elements can't have previous values.
+        mIntNIds.resize_maybe_value_reuse(value + 1);
     }
     else if (mIntNIds[value].valid())
     {
@@ -2275,7 +2276,10 @@ void SpirvTransformFeedbackCodeGenerator::writePendingDeclarations(
                                 ids.ivec4Id());
     }
 
-    mIntNIds.resize(4);
+    ASSERT(mIntNIds.empty());
+    // All new elements initialized later after the resize. Additionally mIntNIds was always empty
+    // before this resize, so previous value reuse is not possible.
+    mIntNIds.resize_maybe_value_reuse(4);
     mIntNIds[0] = ids.int0Id();
     for (int n = 1; n < 4; ++n)
     {
@@ -4519,7 +4523,7 @@ TransformationState SpirvVertexAttributeAliasingTransformer::transformEntryPoint
     }
 
     // Update the number of interface variables.
-    interfaceList.resize(writeIndex);
+    interfaceList.resize_down(writeIndex);
 
     // Write the entry point with the aliasing attributes removed.
     spirv::WriteEntryPoint(mSpirvBlobOut, executionModel, mEntryPointId, name, interfaceList);
@@ -4763,7 +4767,7 @@ void SpirvVertexAttributeAliasingTransformer::transformLoadHelper(spirv::IdRef p
     {
         spirv::LiteralIntegerList swizzle = {spirv::LiteralInteger(0), spirv::LiteralInteger(1),
                                              spirv::LiteralInteger(2), spirv::LiteralInteger(3)};
-        swizzle.resize(aliasingInfo->attributeComponentCount);
+        swizzle.resize_down(aliasingInfo->attributeComponentCount);
 
         spirv::WriteVectorShuffle(mSpirvBlobOut, typeId, resultId, loadResultId, loadResultId,
                                   swizzle);

@@ -26,6 +26,7 @@
     OP(ARM_shader_framebuffer_fetch,                   100, 320) \
     OP(EXT_blend_func_extended,                        100, 320) \
     OP(EXT_clip_cull_distance,                         300, 320) \
+    OP(EXT_conservative_depth,                         300, 320) \
     OP(EXT_draw_buffers,                               100, 100) \
     OP(EXT_frag_depth,                                 100, 100) \
     OP(EXT_geometry_shader,                            310, 320) \

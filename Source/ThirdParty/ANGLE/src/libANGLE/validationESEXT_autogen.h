@@ -884,6 +884,10 @@ bool ValidateEndPixelLocalStorageANGLE(const Context *context,
                                        GLsizei n,
                                        const GLenum *storeops);
 bool ValidatePixelLocalStorageBarrierANGLE(const Context *context, angle::EntryPoint entryPoint);
+bool ValidateFramebufferPixelLocalStorageInterruptANGLE(const Context *context,
+                                                        angle::EntryPoint entryPoint);
+bool ValidateFramebufferPixelLocalStorageRestoreANGLE(const Context *context,
+                                                      angle::EntryPoint entryPoint);
 bool ValidateGetFramebufferPixelLocalStorageParameterfvANGLE(const Context *context,
                                                              angle::EntryPoint entryPoint,
                                                              GLint plane,

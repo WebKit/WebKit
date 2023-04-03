@@ -7196,6 +7196,37 @@ TEST_P(VulkanPerformanceCounterTest, FBOChangeAndBackDoesNotBreakRenderPass)
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
 }
 
+// Verify that changing framebuffer and issue a (nop or deferred) clear and change framebuffer back
+// doesn't break the render pass.
+TEST_P(VulkanPerformanceCounterTest, FBOChangeAndClearAndBackDoesNotBreakRenderPass)
+{
+    // switch to FBO and issue clear on fbo and then switch back to default framebuffer
+    GLFramebuffer framebuffer;
+    GLTexture texture;
+    setupForColorOpsTest(&framebuffer, &texture);
+    glClearColor(0.0f, 1.0f, 0.0f, 1.0f);  // clear to green
+    glClear(GL_COLOR_BUFFER_BIT);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+
+    uint64_t expectedRenderPassCount = getPerfCounters().renderPasses + 1;
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    ANGLE_GL_PROGRAM(drawRed, essl3_shaders::vs::Simple(), essl3_shaders::fs::Red());
+    drawQuad(drawRed, essl1_shaders::PositionAttrib(), 0);
+
+    // switch to FBO and issue a deferred clear on fbo and then switch back to default framebuffer
+    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    drawQuad(drawRed, essl1_shaders::PositionAttrib(), 0);
+
+    // Verify render pass count.
+    EXPECT_EQ(getPerfCounters().renderPasses, expectedRenderPassCount);
+
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+}
+
 // This is test for optimization in vulkan backend. efootball_pes_2021 usage shows this usage
 // pattern and we expect implementation to reuse the storage for performance.
 TEST_P(VulkanPerformanceCounterTest,

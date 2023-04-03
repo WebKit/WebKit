@@ -1392,6 +1392,7 @@ void TCompiler::setResourceString()
         << ":MaxCallStackDepth:" << mResources.MaxCallStackDepth
         << ":MaxFunctionParameters:" << mResources.MaxFunctionParameters
         << ":EXT_blend_func_extended:" << mResources.EXT_blend_func_extended
+        << ":EXT_conservative_depth:" << mResources.EXT_conservative_depth
         << ":EXT_frag_depth:" << mResources.EXT_frag_depth
         << ":EXT_primitive_bounding_box:" << mResources.EXT_primitive_bounding_box
         << ":OES_primitive_bounding_box:" << mResources.OES_primitive_bounding_box

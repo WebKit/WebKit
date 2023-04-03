@@ -80,12 +80,10 @@ config("angle_vulkan_backend_config") {
 template("angle_vulkan_backend_template") {
   config("${target_name}_internal_config") {
     defines = []
-    if (invoker.enable_custom_outside_render_pass_cmd_buffers ||
-        angle_enable_vulkan_shared_ring_buffer_cmd_alloc) {
+    if (invoker.enable_custom_outside_render_pass_cmd_buffers) {
       defines += [ "ANGLE_USE_CUSTOM_VULKAN_OUTSIDE_RENDER_PASS_CMD_BUFFERS=1" ]
     }
-    if (invoker.enable_custom_render_pass_cmd_buffers ||
-        angle_enable_vulkan_shared_ring_buffer_cmd_alloc) {
+    if (invoker.enable_custom_render_pass_cmd_buffers) {
       defines += [ "ANGLE_USE_CUSTOM_VULKAN_RENDER_PASS_CMD_BUFFERS=1" ]
     }
   }

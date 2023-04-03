@@ -160,9 +160,10 @@ bool HasRepeatingQualifiers(const TTypeQualifierBuilder::QualifierSequence &qual
             }
             case QtInterpolation:
             {
-                // 'centroid' is treated as a storage qualifier
-                // 'flat centroid' will be squashed to 'flat'
+                // 'centroid' and 'sample' are treated as storage qualifiers
+                // 'flat centroid' and 'flat sample' will be squashed to 'flat'
                 // 'smooth centroid' will be squashed to 'centroid'
+                // 'smooth sample' will be squashed to 'sample'
                 if (interpolationFound)
                 {
                     *errorMessage = kInterpolationMultipleTimes;
@@ -371,6 +372,9 @@ bool JoinVariableStorageQualifier(TQualifier *joinedQualifier, TQualifier storag
                 case EvqCentroid:
                     *joinedQualifier = EvqCentroid;
                     break;
+                case EvqSample:
+                    *joinedQualifier = EvqSample;
+                    break;
                 case EvqVertexOut:
                 case EvqGeometryOut:
                 case EvqTessControlOut:
@@ -393,6 +397,7 @@ bool JoinVariableStorageQualifier(TQualifier *joinedQualifier, TQualifier storag
             switch (storageQualifier)
             {
                 case EvqCentroid:
+                case EvqSample:
                     *joinedQualifier = EvqFlat;
                     break;
                 case EvqVertexOut:
@@ -417,7 +422,10 @@ bool JoinVariableStorageQualifier(TQualifier *joinedQualifier, TQualifier storag
             switch (storageQualifier)
             {
                 case EvqCentroid:
-                    *joinedQualifier = EvqNoPerspective;
+                    *joinedQualifier = EvqNoPerspectiveCentroid;
+                    break;
+                case EvqSample:
+                    *joinedQualifier = EvqNoPerspectiveSample;
                     break;
                 case EvqVertexOut:
                 case EvqGeometryOut:
@@ -472,6 +480,48 @@ bool JoinVariableStorageQualifier(TQualifier *joinedQualifier, TQualifier storag
                 case EvqTessControlIn:
                 case EvqTessEvaluationIn:
                     *joinedQualifier = EvqSampleIn;
+                    break;
+                default:
+                    return false;
+            }
+            break;
+        }
+        case EvqNoPerspectiveCentroid:
+        {
+            switch (storageQualifier)
+            {
+                case EvqVertexOut:
+                case EvqGeometryOut:
+                case EvqTessControlOut:
+                case EvqTessEvaluationOut:
+                    *joinedQualifier = EvqNoPerspectiveCentroidOut;
+                    break;
+                case EvqFragmentIn:
+                case EvqGeometryIn:
+                case EvqTessControlIn:
+                case EvqTessEvaluationIn:
+                    *joinedQualifier = EvqNoPerspectiveCentroidIn;
+                    break;
+                default:
+                    return false;
+            }
+            break;
+        }
+        case EvqNoPerspectiveSample:
+        {
+            switch (storageQualifier)
+            {
+                case EvqVertexOut:
+                case EvqGeometryOut:
+                case EvqTessControlOut:
+                case EvqTessEvaluationOut:
+                    *joinedQualifier = EvqNoPerspectiveSampleOut;
+                    break;
+                case EvqFragmentIn:
+                case EvqGeometryIn:
+                case EvqTessControlIn:
+                case EvqTessEvaluationIn:
+                    *joinedQualifier = EvqNoPerspectiveSampleIn;
                     break;
                 default:
                     return false;
@@ -713,6 +763,15 @@ TLayoutQualifier JoinLayoutQualifiers(TLayoutQualifier leftQualifier,
         joinedQualifier.location = rightQualifier.location;
         ++joinedQualifier.locationsSpecified;
     }
+    if (rightQualifier.depth != EdUnspecified)
+    {
+        if (joinedQualifier.depth != EdUnspecified)
+        {
+            diagnostics->error(rightQualifierLocation, "Cannot have multiple depth qualifiers",
+                               getDepthString(rightQualifier.depth));
+        }
+        joinedQualifier.depth = rightQualifier.depth;
+    }
     if (rightQualifier.yuv != false)
     {
         joinedQualifier.yuv = rightQualifier.yuv;
@@ -886,9 +945,9 @@ unsigned int TLayoutQualifierWrapper::getRank() const
 
 unsigned int TStorageQualifierWrapper::getRank() const
 {
-    // Force the 'centroid' auxilary storage qualifier to be always first among all storage
-    // qualifiers.
-    if (mStorageQualifier == EvqCentroid)
+    // Force the 'centroid' and 'sample' auxilary storage qualifiers
+    // to be always first among all storage qualifiers.
+    if (mStorageQualifier == EvqCentroid || mStorageQualifier == EvqSample)
     {
         return 4u;
     }

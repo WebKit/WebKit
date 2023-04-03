@@ -148,6 +148,9 @@ Compiler::Compiler(rx::GLImplFactory *implFactory, const State &state, egl::Disp
     mResources.EXT_blend_func_extended  = extensions.blendFuncExtendedEXT;
     mResources.MaxDualSourceDrawBuffers = caps.maxDualSourceDrawBuffers;
 
+    // EXT_conservative_depth
+    mResources.EXT_conservative_depth = extensions.conservativeDepthEXT;
+
     // APPLE_clip_distance / EXT_clip_cull_distance / ANGLE_clip_cull_distance
     mResources.MaxClipDistances                = caps.maxClipDistances;
     mResources.MaxCullDistances                = caps.maxCullDistances;

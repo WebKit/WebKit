@@ -6485,6 +6485,50 @@ TEST_P(WebGLGLSLTest, UninitializedNamelessStructInGlobalScope)
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
+// Test that uninitialized output arguments are initialized to 0.
+TEST_P(WebGL2GLSLTest, InitOutputParams)
+{
+    constexpr char kFS[] = R"(#version 300 es
+precision mediump float;
+
+struct S { float a; };
+
+out vec4 color;
+
+float f(out vec2 o1, out S o2[2], out float o3[3])
+{
+    float uninitialized_local;
+
+    // leave o1 uninitialized
+    // leave o2 partially uninitialized
+    o2[0].a = 1.0;
+
+    // leave o3 partially uninitialized
+    o3[1] = 0.5;
+
+    return uninitialized_local;
+}
+
+void main()
+{
+    vec2 v1 = vec2(123., 234.);
+    S v2[2] = S[2](S(-1111.), S(55.));
+    float v3[3] = float[3](20., 30., 40.);
+    float v4 = f(v1, v2, v3);
+
+    // Everything should be 0 now except for v2[0].a and v3[1] which should be 1.0 and 0.5
+    // respectively.
+    color = vec4(v1.x + v2[0].a + v3[0],  // 1.0
+                 v1.y + v2[1].a + v3[1],  // 0.5
+                 v3[2] + v4,              // 0
+                 1.0);
+})";
+
+    ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kFS);
+    drawQuad(program.get(), essl3_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+    EXPECT_PIXEL_NEAR(0, 0, 255, 127, 0, 255, 1);
+}
+
 // Tests nameless struct uniforms.
 TEST_P(GLSLTest, EmbeddedStructUniform)
 {
@@ -6974,6 +7018,102 @@ TEST_P(GLSLTest_ES31, VaryingTessellationSampleInAndOut)
     ANGLE_GL_PROGRAM_WITH_TESS(program, kVS, kTCS, kTES, kFS);
     drawPatches(program.get(), "inputAttribute", 0.5f, 1.0f, GL_FALSE);
     ASSERT_GL_NO_ERROR();
+}
+
+// Test that `smooth sample` and `flat sample` pass the validation.
+TEST_P(GLSLTest_ES3, AliasedSampleQualifiers)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_shader_multisample_interpolation"));
+
+    constexpr char kVS[] =
+        R"(#version 300 es
+        #extension GL_OES_shader_multisample_interpolation : require
+
+        smooth sample out mediump float f;
+        flat sample out mediump int i;
+        void main()
+        {
+            f = 1.0;
+            i = 1;
+            gl_Position = vec4(0.0, 0.0, 0.0, 1.0);
+        })";
+
+    constexpr char kFS[] =
+        R"(#version 300 es
+        #extension GL_OES_shader_multisample_interpolation : require
+
+        smooth sample in mediump float f;
+        flat sample in mediump int i;
+        out mediump vec4 color;
+        void main()
+        {
+            color = vec4(f, float(i), 0, 1);
+        })";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+}
+
+// Test that `noperspective centroid` passes the validation and compiles.
+TEST_P(GLSLTest_ES3, NoPerspectiveCentroid)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_NV_shader_noperspective_interpolation"));
+
+    constexpr char kVS[] =
+        R"(#version 300 es
+        #extension GL_NV_shader_noperspective_interpolation : require
+
+        noperspective centroid out mediump float f;
+        void main()
+        {
+            f = 1.0;
+            gl_Position = vec4(0.0, 0.0, 0.0, 1.0);
+        })";
+
+    constexpr char kFS[] =
+        R"(#version 300 es
+        #extension GL_NV_shader_noperspective_interpolation : require
+
+        noperspective centroid in mediump float f;
+        out mediump vec4 color;
+        void main()
+        {
+            color = vec4(f, 0.0, 0.0, 1.0);
+        })";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+}
+
+// Test that `noperspective sample` passes the validation and compiles.
+TEST_P(GLSLTest_ES3, NoPerspectiveSample)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_shader_multisample_interpolation"));
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_NV_shader_noperspective_interpolation"));
+
+    constexpr char kVS[] =
+        R"(#version 300 es
+        #extension GL_OES_shader_multisample_interpolation : require
+        #extension GL_NV_shader_noperspective_interpolation : require
+
+        noperspective sample out mediump float f;
+        void main()
+        {
+            f = 1.0;
+            gl_Position = vec4(f, 0.0, 0.0, 1.0);
+        })";
+
+    constexpr char kFS[] =
+        R"(#version 300 es
+        #extension GL_OES_shader_multisample_interpolation : require
+        #extension GL_NV_shader_noperspective_interpolation : require
+
+        noperspective sample in mediump float f;
+        out mediump vec4 color;
+        void main()
+        {
+            color = vec4(f, 0.0, 0.0, 1.0);
+        })";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
 }
 
 // Test that a shader with sample in / sample out can be used successfully when the varying
@@ -16167,6 +16307,24 @@ void main()
 })";
 
     ANGLE_GL_PROGRAM(testProgram, kVS, kFS);
+}
+
+// Test that sample variables compile.
+TEST_P(GLSLTest_ES3, SampleVariables)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_sample_variables"));
+
+    const char kFS[] = R"(#version 300 es
+#extension GL_OES_sample_variables : require
+precision highp float;
+out vec4 color;
+void main()
+{
+    gl_SampleMask[0] = gl_SampleMaskIn[0] & 0x55555555;
+    color = vec4(gl_SamplePosition.yx, float(gl_SampleID), float(gl_MaxSamples + gl_NumSamples));
+})";
+
+    ANGLE_GL_PROGRAM(testProgram, essl3_shaders::vs::Simple(), kFS);
 }
 
 // Test that shader caching maintains uniforms across compute shader compilations.

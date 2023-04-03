@@ -25,6 +25,7 @@
 #include "libANGLE/angletypes.h"
 #include "libANGLE/renderer/serial_utils.h"
 #include "libANGLE/renderer/vulkan/SecondaryCommandBuffer.h"
+#include "libANGLE/renderer/vulkan/SecondaryCommandPool.h"
 #include "libANGLE/renderer/vulkan/VulkanSecondaryCommandBuffer.h"
 #include "libANGLE/renderer/vulkan/vk_wrapper.h"
 #include "platform/FeaturesVk_autogen.h"
@@ -311,16 +312,10 @@ using RenderPassCommandBuffer = priv::SecondaryCommandBuffer;
 using RenderPassCommandBuffer                = VulkanSecondaryCommandBuffer;
 #endif
 
-struct SecondaryCommandBufferList
-{
-    std::vector<OutsideRenderPassCommandBuffer> outsideRenderPassCommandBuffers;
-    std::vector<RenderPassCommandBuffer> renderPassCommandBuffers;
-};
-
 struct SecondaryCommandPools
 {
-    CommandPool outsideRenderPassPool;
-    CommandPool renderPassPool;
+    SecondaryCommandPool outsideRenderPassPool;
+    SecondaryCommandPool renderPassPool;
 };
 
 VkImageAspectFlags GetDepthStencilAspectFlags(const angle::Format &format);
@@ -910,6 +905,8 @@ void MakeDebugUtilsLabel(GLenum source, const char *marker, VkDebugUtilsLabelEXT
 
 constexpr size_t kUnpackedDepthIndex   = gl::IMPLEMENTATION_MAX_DRAW_BUFFERS;
 constexpr size_t kUnpackedStencilIndex = gl::IMPLEMENTATION_MAX_DRAW_BUFFERS + 1;
+constexpr uint32_t kUnpackedColorBuffersMask =
+    angle::BitMask<uint32_t>(gl::IMPLEMENTATION_MAX_DRAW_BUFFERS);
 
 class ClearValuesArray final
 {

@@ -10,12 +10,12 @@
 // Events are issued against categories. Whereas LOG's
 // categories are statically defined, TRACE categories are created
 // implicitly with a string. For example:
-//   TRACE_EVENT_INSTANT0("MY_SUBSYSTEM", "SomeImportantEvent")
+//   TRACE_EVENT_INSTANT("MY_SUBSYSTEM", "SomeImportantEvent")
 //
 // Events can be INSTANT, or can be pairs of BEGIN and END in the same scope:
-//   TRACE_EVENT_BEGIN0("MY_SUBSYSTEM", "SomethingCostly")
+//   TRACE_EVENT_BEGIN("MY_SUBSYSTEM", "SomethingCostly")
 //   doSomethingCostly()
-//   TRACE_EVENT_END0("MY_SUBSYSTEM", "SomethingCostly")
+//   TRACE_EVENT_END("MY_SUBSYSTEM", "SomethingCostly")
 // Note: our tools can't always determine the correct BEGIN/END pairs unless
 // these are used in the same scope. Use ASYNC_BEGIN/ASYNC_END macros if you need them
 // to be in separate scopes.
@@ -23,14 +23,13 @@
 // A common use case is to trace entire function scopes. This
 // issues a trace BEGIN and END automatically:
 //   void doSomethingCostly() {
-//     TRACE_EVENT0("MY_SUBSYSTEM", "doSomethingCostly");
+//     TRACE_EVENT("MY_SUBSYSTEM", "doSomethingCostly");
 //     ...
 //   }
 //
 // Additional parameters can be associated with an event:
 //   void doSomethingCostly2(int howMuch) {
-//     TRACE_EVENT1("MY_SUBSYSTEM", "doSomethingCostly",
-//         "howMuch", howMuch);
+//     TRACE_EVENT("MY_SUBSYSTEM", "doSomethingCostly", "howMuch", howMuch);
 //     ...
 //   }
 //
@@ -42,11 +41,11 @@
 //   [single threaded sender code]
 //     static int send_count = 0;
 //     ++send_count;
-//     TRACE_EVENT_ASYNC_BEGIN0("ipc", "message", send_count);
+//     TRACE_EVENT_ASYNC_BEGIN("ipc", "message", send_count);
 //     Send(new MyMessage(send_count));
 //   [receive code]
 //     void OnMyMessage(send_count) {
-//       TRACE_EVENT_ASYNC_END0("ipc", "message", send_count);
+//       TRACE_EVENT_ASYNC_END("ipc", "message", send_count);
 //     }
 // The third parameter is a unique ID to match ASYNC_BEGIN/ASYNC_END pairs.
 // ASYNC_BEGIN and ASYNC_END can occur on any thread of any traced process. Pointers can
@@ -55,10 +54,10 @@
 //   class MyTracedClass {
 //    public:
 //     MyTracedClass() {
-//       TRACE_EVENT_ASYNC_BEGIN0("category", "MyTracedClass", this);
+//       TRACE_EVENT_ASYNC_BEGIN("category", "MyTracedClass", this);
 //     }
 //     ~MyTracedClass() {
-//       TRACE_EVENT_ASYNC_END0("category", "MyTracedClass", this);
+//       TRACE_EVENT_ASYNC_END("category", "MyTracedClass", this);
 //     }
 //   }
 //
@@ -80,7 +79,7 @@
 // This indicates to the tracing UI that these counters should be displayed
 // in a single graph, as a summed area chart.
 //
-// Since counters are in a global namespace, you may want to disembiguate with a
+// Since counters are in a global namespace, you may want to disambiguate with a
 // unique ID, by using the TRACE_COUNTER_ID* variations.
 //
 // By default, trace collection is compiled in, but turned off at runtime.
@@ -94,7 +93,7 @@
 // in for category, name, and arg_names. Thus, the following code will
 // cause problems:
 //     char* str = strdup("impprtantName");
-//     TRACE_EVENT_INSTANT0("SUBSYSTEM", str);  // BAD!
+//     TRACE_EVENT_INSTANT("SUBSYSTEM", str);  // BAD!
 //     free(str);                   // Trace system now has dangling pointer
 //
 // To avoid this issue with the |name| and |arg_name| parameters, use the
@@ -105,13 +104,13 @@
 //
 // When are string argument values copied:
 // const char* arg_values are only referenced by default:
-//     TRACE_EVENT1("category", "name",
+//     TRACE_EVENT("category", "name",
 //                  "arg1", "literal string is only referenced");
 // Use TRACE_STR_COPY to force copying of a const char*:
-//     TRACE_EVENT1("category", "name",
+//     TRACE_EVENT("category", "name",
 //                  "arg1", TRACE_STR_COPY("string will be copied"));
 // std::string arg_values are always copied:
-//     TRACE_EVENT1("category", "name",
+//     TRACE_EVENT("category", "name",
 //                  "arg1", std::string("string will be copied"));
 //
 //
@@ -151,88 +150,106 @@
 #define TRACE_STR_COPY(str) WebCore::TraceEvent::TraceStringWithCopy(str)
 
 // Records a pair of begin and end events called "name" for the current
-// scope, with 0, 1 or 2 associated arguments. If the category is not
-// enabled, then this does nothing.
+// scope, optionally with associated arguments.
+// Each argument must have a name and a value.
+// If the category is not enabled, then this does nothing.
 // - category and name strings must have application lifetime (statics or
 //   literals). They may not include " chars.
-#define TRACE_EVENT0(platform, category, name) \
-    INTERNAL_TRACE_EVENT_ADD_SCOPED(platform, category, name)
-#define TRACE_EVENT1(platform, category, name, arg1_name, arg1_val) \
-    INTERNAL_TRACE_EVENT_ADD_SCOPED(platform, category, name, arg1_name, arg1_val)
-#define TRACE_EVENT2(category, name, arg1_name, arg1_val, arg2_name, arg2_val)                \
-    INTERNAL_TRACE_EVENT_ADD_SCOPED(platform, category, name, arg1_name, arg1_val, arg2_name, \
-                                    arg2_val)
+#define TRACE_EVENT(platform, category, name, ...) \
+    INTERNAL_TRACE_EVENT_ADD_SCOPED(platform, category, name, ##__VA_ARGS__)
 
-// Records a single event called "name" immediately, with 0, 1 or 2
-// associated arguments. If the category is not enabled, then this
-// does nothing.
+// Deprecated, use `TRACE_EVENT` instead
+#define TRACE_EVENT0(platform, category, name) TRACE_EVENT(platform, category, name)
+#define TRACE_EVENT1(platform, category, name, arg1_name, arg1_val) \
+    TRACE_EVENT(platform, category, name, arg1_name, arg1_val)
+#define TRACE_EVENT2(category, name, arg1_name, arg1_val, arg2_name, arg2_val) \
+    TRACE_EVENT(platform, category, name, arg1_name, arg1_val, arg2_name, arg2_val)
+
+// Records a single event called "name" immediately, optionally with associated arguments.
+// Each argument must have a name and a value.
+// If the category is not enabled, then this does nothing.
 // - category and name strings must have application lifetime (statics or
 //   literals). They may not include " chars.
-#define TRACE_EVENT_INSTANT0(platform, category, name)                            \
+#define TRACE_EVENT_INSTANT(platform, category, name, ...)                        \
     INTERNAL_TRACE_EVENT_ADD(platform, TRACE_EVENT_PHASE_INSTANT, category, name, \
-                             TRACE_EVENT_FLAG_NONE)
-#define TRACE_EVENT_INSTANT1(platform, category, name, arg1_name, arg1_val)       \
+                             TRACE_EVENT_FLAG_NONE, ##__VA_ARGS__)
+#define TRACE_EVENT_COPY_INSTANT(platform, category, name, ...)                   \
     INTERNAL_TRACE_EVENT_ADD(platform, TRACE_EVENT_PHASE_INSTANT, category, name, \
-                             TRACE_EVENT_FLAG_NONE, arg1_name, arg1_val)
+                             TRACE_EVENT_FLAG_COPY, ##__VA_ARGS__)
+
+// Deprecated, use `TRACE_EVENT_INSTANT` instead
+#define TRACE_EVENT_INSTANT0(platform, category, name) TRACE_EVENT_INSTANT(platform, category, name)
+#define TRACE_EVENT_INSTANT1(platform, category, name, arg1_name, arg1_val) \
+    TRACE_EVENT_INSTANT(platform, category, name, arg1_name, arg1_val)
 #define TRACE_EVENT_INSTANT2(platform, category, name, arg1_name, arg1_val, arg2_name, arg2_val) \
-    INTERNAL_TRACE_EVENT_ADD(platform, TRACE_EVENT_PHASE_INSTANT, category, name,                \
-                             TRACE_EVENT_FLAG_NONE, arg1_name, arg1_val, arg2_name, arg2_val)
-#define TRACE_EVENT_COPY_INSTANT0(platform, category, name)                       \
-    INTERNAL_TRACE_EVENT_ADD(platform, TRACE_EVENT_PHASE_INSTANT, category, name, \
-                             TRACE_EVENT_FLAG_COPY)
-#define TRACE_EVENT_COPY_INSTANT1(platform, category, name, arg1_name, arg1_val)  \
-    INTERNAL_TRACE_EVENT_ADD(platform, TRACE_EVENT_PHASE_INSTANT, category, name, \
-                             TRACE_EVENT_FLAG_COPY, arg1_name, arg1_val)
+    TRACE_EVENT_INSTANT(platform, category, name, arg1_name, arg1_val, arg2_name, arg2_val)
+
+// Deprecated, use `TRACE_EVENT_COPY_INSTANT` instead
+#define TRACE_EVENT_COPY_INSTANT0(platform, category, name) \
+    TRACE_EVENT_COPY_INSTANT(platform, category, name)
+#define TRACE_EVENT_COPY_INSTANT1(platform, category, name, arg1_name, arg1_val) \
+    TRACE_EVENT_COPY_INSTANT(platform, category, name, arg1_name, arg1_val)
 #define TRACE_EVENT_COPY_INSTANT2(platform, category, name, arg1_name, arg1_val, arg2_name, \
                                   arg2_val)                                                 \
-    INTERNAL_TRACE_EVENT_ADD(platform, TRACE_EVENT_PHASE_INSTANT, category, name,           \
-                             TRACE_EVENT_FLAG_COPY, arg1_name, arg1_val, arg2_name, arg2_val)
+    TRACE_EVENT_COPY_INSTANT(platform, category, name, arg1_name, arg1_val, arg2_name, arg2_val)
 
-// Records a single BEGIN event called "name" immediately, with 0, 1 or 2
-// associated arguments. If the category is not enabled, then this
-// does nothing.
+// Records a single BEGIN event called "name" immediately, optionally with associated arguments.
+// Each argument must have a name and a value.
+// If the category is not enabled, then this does nothing.
 // - category and name strings must have application lifetime (statics or
 //   literals). They may not include " chars.
-#define TRACE_EVENT_BEGIN0(platform, category, name)                            \
+#define TRACE_EVENT_BEGIN(platform, category, name, ...)                        \
     INTERNAL_TRACE_EVENT_ADD(platform, TRACE_EVENT_PHASE_BEGIN, category, name, \
-                             TRACE_EVENT_FLAG_NONE)
-#define TRACE_EVENT_BEGIN1(platform, category, name, arg1_name, arg1_val)       \
+                             TRACE_EVENT_FLAG_NONE, ##__VA_ARGS__)
+#define TRACE_EVENT_COPY_BEGIN(platform, category, name, ...)                   \
     INTERNAL_TRACE_EVENT_ADD(platform, TRACE_EVENT_PHASE_BEGIN, category, name, \
-                             TRACE_EVENT_FLAG_NONE, arg1_name, arg1_val)
+                             TRACE_EVENT_FLAG_COPY, ##__VA_ARGS__)
+
+// Deprecated, use TRACE_EVENT_BEGIN
+#define TRACE_EVENT_BEGIN0(platform, category, name) TRACE_EVENT_BEGIN(platform, category, name)
+#define TRACE_EVENT_BEGIN1(platform, category, name, arg1_name, arg1_val) \
+    TRACE_EVENT_BEGIN(platform, category, name, arg1_name, arg1_val)
 #define TRACE_EVENT_BEGIN2(platform, category, name, arg1_name, arg1_val, arg2_name, arg2_val) \
-    INTERNAL_TRACE_EVENT_ADD(platform, TRACE_EVENT_PHASE_BEGIN, category, name,                \
-                             TRACE_EVENT_FLAG_NONE, arg1_name, arg1_val, arg2_name, arg2_val)
-#define TRACE_EVENT_COPY_BEGIN0(platform, category, name)                       \
-    INTERNAL_TRACE_EVENT_ADD(platform, TRACE_EVENT_PHASE_BEGIN, category, name, \
-                             TRACE_EVENT_FLAG_COPY)
-#define TRACE_EVENT_COPY_BEGIN1(platform, category, name, arg1_name, arg1_val)  \
-    INTERNAL_TRACE_EVENT_ADD(platform, TRACE_EVENT_PHASE_BEGIN, category, name, \
-                             TRACE_EVENT_FLAG_COPY, arg1_name, arg1_val)
-#define TRACE_EVENT_COPY_BEGIN2(platform, category, name, arg1_name, arg1_val, arg2_name, \
-                                arg2_val)                                                 \
-    INTERNAL_TRACE_EVENT_ADD(platform, TRACE_EVENT_PHASE_BEGIN, category, name,           \
-                             TRACE_EVENT_FLAG_COPY, arg1_name, arg1_val, arg2_name, arg2_val)
+    TRACE_EVENT_BEGIN(platform, category, name, arg1_name, arg1_val, arg2_name, arg2_val)
+
+// Deprecated, use TRACE_EVENT_COPY_BEGIN
+#define TRACE_EVENT_COPY_BEGIN0(platform, category, name) \
+    TRACE_EVENT_COPY_BEGIN(platform, category, name)
+#define TRACE_EVENT_COPY_BEGIN1(platform, category, name, arg1_name, arg1_val) \
+    TRACE_EVENT_COPY_BEGIN(platform, category, name, TRACE_EVENT_FLAG_COPY, arg1_name, arg1_val)
+#define TRACE_EVENT_COPY_BEGIN2(platform, category, name, arg1_name, arg1_val, arg2_name,        \
+                                arg2_val)                                                        \
+    TRACE_EVENT_COPY_BEGIN(platform, category, name, TRACE_EVENT_FLAG_COPY, arg1_name, arg1_val, \
+                           arg2_name, arg2_val)
 
 // Records a single END event for "name" immediately. If the category
 // is not enabled, then this does nothing.
 // - category and name strings must have application lifetime (statics or
 //   literals). They may not include " chars.
+#define TRACE_EVENT_END(platform, category, name, ...)                        \
+    INTERNAL_TRACE_EVENT_ADD(platform, TRACE_EVENT_PHASE_END, category, name, \
+                             TRACE_EVENT_FLAG_NONE, ##__VA_ARGS__)
+#define TRACE_EVENT_COPY_END(platform, category, name, ...)                   \
+    INTERNAL_TRACE_EVENT_ADD(platform, TRACE_EVENT_PHASE_END, category, name, \
+                             TRACE_EVENT_FLAG_COPY, ##__VA_ARGS__)
+
+// Deprecated, use TRACE_EVENT_END
 #define TRACE_EVENT_END0(platform, category, name) \
-    INTERNAL_TRACE_EVENT_ADD(platform, TRACE_EVENT_PHASE_END, category, name, TRACE_EVENT_FLAG_NONE)
-#define TRACE_EVENT_END1(platform, category, name, arg1_name, arg1_val)       \
-    INTERNAL_TRACE_EVENT_ADD(platform, TRACE_EVENT_PHASE_END, category, name, \
-                             TRACE_EVENT_FLAG_NONE, arg1_name, arg1_val)
+    TRACE_EVENT_END(platform, TRACE_EVENT_PHASE_END, category, name)
+#define TRACE_EVENT_END1(platform, category, name, arg1_name, arg1_val) \
+    TRACE_EVENT_END(platform, TRACE_EVENT_PHASE_END, category, name, arg1_name, arg1_val)
 #define TRACE_EVENT_END2(platform, category, name, arg1_name, arg1_val, arg2_name, arg2_val) \
-    INTERNAL_TRACE_EVENT_ADD(platform, TRACE_EVENT_PHASE_END, category, name,                \
-                             TRACE_EVENT_FLAG_NONE, arg1_name, arg1_val, arg2_name, arg2_val)
+    TRACE_EVENT_END(platform, TRACE_EVENT_PHASE_END, category, name, arg1_name, arg1_val,    \
+                    arg2_name, arg2_val)
+
+// Deprecated, use TRACE_EVENT_COPY_END
 #define TRACE_EVENT_COPY_END0(platform, category, name) \
-    INTERNAL_TRACE_EVENT_ADD(platform, TRACE_EVENT_PHASE_END, category, name, TRACE_EVENT_FLAG_COPY)
-#define TRACE_EVENT_COPY_END1(platform, category, name, arg1_name, arg1_val)  \
-    INTERNAL_TRACE_EVENT_ADD(platform, TRACE_EVENT_PHASE_END, category, name, \
-                             TRACE_EVENT_FLAG_COPY, arg1_name, arg1_val)
+    TRACE_EVENT_COPY_END(platform, TRACE_EVENT_PHASE_END, category, name)
+#define TRACE_EVENT_COPY_END1(platform, category, name, arg1_name, arg1_val) \
+    TRACE_EVENT_COPY_END(platform, TRACE_EVENT_PHASE_END, category, name, arg1_name, arg1_val)
 #define TRACE_EVENT_COPY_END2(platform, category, name, arg1_name, arg1_val, arg2_name, arg2_val) \
-    INTERNAL_TRACE_EVENT_ADD(platform, TRACE_EVENT_PHASE_END, category, name,                     \
-                             TRACE_EVENT_FLAG_COPY, arg1_name, arg1_val, arg2_name, arg2_val)
+    TRACE_EVENT_COPY_END(platform, TRACE_EVENT_PHASE_END, category, name, arg1_name, arg1_val,    \
+                         arg2_name, arg2_val)
 
 // Records the value of a counter called "name" immediately. Value
 // must be representable as a 32 bit integer.
@@ -664,60 +681,54 @@ static inline void setTraceValue(const std::string &arg,
     *value             = typeValue.m_uint;
 }
 
-// These addTraceEvent template functions are defined here instead of in the
+static inline void unpackArguments(const char **names,
+                                   unsigned char *types,
+                                   unsigned long long *values)
+{}
+
+template <class ArgType, class... Args>
+static inline void unpackArguments(const char **names,
+                                   unsigned char *types,
+                                   unsigned long long *values,
+                                   const char *argName,
+                                   const ArgType &argVal,
+                                   const Args... args)
+{
+    *names = argName;
+    setTraceValue(argVal, types, values);
+    unpackArguments(++names, ++types, ++values, args...);
+}
+
+// The addTraceEvent template function is defined here instead of in the
 // macro, because the arg values could be temporary string objects. In order to
 // store pointers to the internal c_str and pass through to the tracing API, the
 // arg values must live throughout these procedures.
 
-static inline angle::TraceEventHandle addTraceEvent(angle::PlatformMethods *platform,
-                                                    char phase,
-                                                    const unsigned char *categoryEnabled,
-                                                    const char *name,
-                                                    unsigned long long id,
-                                                    unsigned char flags)
-{
-    return TRACE_EVENT_API_ADD_TRACE_EVENT(platform, phase, categoryEnabled, name, id, zeroNumArgs,
-                                           0, 0, 0, flags);
-}
-
-template <class ARG1_TYPE>
+template <class... Args>
 static inline angle::TraceEventHandle addTraceEvent(angle::PlatformMethods *platform,
                                                     char phase,
                                                     const unsigned char *categoryEnabled,
                                                     const char *name,
                                                     unsigned long long id,
                                                     unsigned char flags,
-                                                    const char *arg1Name,
-                                                    const ARG1_TYPE &arg1Val)
+                                                    const Args... args)
 {
-    const int numArgs = 1;
-    unsigned char argTypes[1];
-    unsigned long long argValues[1];
-    setTraceValue(arg1Val, &argTypes[0], &argValues[0]);
-    return TRACE_EVENT_API_ADD_TRACE_EVENT(platform, phase, categoryEnabled, name, id, numArgs,
-                                           &arg1Name, argTypes, argValues, flags);
-}
+    if constexpr (sizeof...(Args) == 0)
+    {
+        return TRACE_EVENT_API_ADD_TRACE_EVENT(platform, phase, categoryEnabled, name, id,
+                                               zeroNumArgs, 0, 0, 0, flags);
+    }
+    else
+    {
+        constexpr std::size_t numArgs = sizeof...(Args) / 2;
+        const char *argNames[numArgs];
+        unsigned char argTypes[numArgs];
+        unsigned long long argValues[numArgs];
+        unpackArguments(argNames, argTypes, argValues, args...);
 
-template <class ARG1_TYPE, class ARG2_TYPE>
-static inline angle::TraceEventHandle addTraceEvent(angle::PlatformMethods *platform,
-                                                    char phase,
-                                                    const unsigned char *categoryEnabled,
-                                                    const char *name,
-                                                    unsigned long long id,
-                                                    unsigned char flags,
-                                                    const char *arg1Name,
-                                                    const ARG1_TYPE &arg1Val,
-                                                    const char *arg2Name,
-                                                    const ARG2_TYPE &arg2Val)
-{
-    const int numArgs       = 2;
-    const char *argNames[2] = {arg1Name, arg2Name};
-    unsigned char argTypes[2];
-    unsigned long long argValues[2];
-    setTraceValue(arg1Val, &argTypes[0], &argValues[0]);
-    setTraceValue(arg2Val, &argTypes[1], &argValues[1]);
-    return TRACE_EVENT_API_ADD_TRACE_EVENT(platform, phase, categoryEnabled, name, id, numArgs,
-                                           argNames, argTypes, argValues, flags);
+        return TRACE_EVENT_API_ADD_TRACE_EVENT(platform, phase, categoryEnabled, name, id, numArgs,
+                                               argNames, argTypes, argValues, flags);
+    }
 }
 
 // Used by TRACE_EVENTx macro. Do not use directly.

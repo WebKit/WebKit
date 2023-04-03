@@ -409,6 +409,7 @@ void SerializeRasterizerState(JsonSerializer *json, const gl::RasterizerState &r
     json->addScalar("PolygonOffsetFactor", rasterizerState.polygonOffsetFactor);
     json->addScalar("PolygonOffsetUnits", rasterizerState.polygonOffsetUnits);
     json->addScalar("PolygonOffsetClamp", rasterizerState.polygonOffsetClamp);
+    json->addScalar("DepthClamp", rasterizerState.depthClamp);
     json->addScalar("PointDrawMode", rasterizerState.pointDrawMode);
     json->addScalar("MultiSample", rasterizerState.multiSample);
     json->addScalar("RasterizerDiscard", rasterizerState.rasterizerDiscard);

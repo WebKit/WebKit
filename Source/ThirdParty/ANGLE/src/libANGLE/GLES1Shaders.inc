@@ -16,7 +16,7 @@
 // magnitude for all other floating-point values must be at least 2^32 .
 //
 // Internal computations can use either fixed-point or floating-point arithmetic.  Fixed-point
-// computations must be accurate to within ±2^−15.  The maximum representable magnitude for a
+// computations must be accurate to within ±2^-15.  The maximum representable magnitude for a
 // fixed-point number used to represent positional or normal coordinates must be at least 2^15; the
 // maximum representable magnitude for colors or texture coordinates must be at least 2^10.  The
 // maximum representable magnitude for all other fixed-point values must be at least 2^15

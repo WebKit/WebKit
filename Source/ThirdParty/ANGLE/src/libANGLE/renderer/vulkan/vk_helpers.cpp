@@ -925,42 +925,6 @@ char GetStoreOpShorthand(RenderPassStoreOp storeOp)
     }
 }
 
-template <typename CommandBufferHelperT>
-void RecycleCommandBufferHelper(VkDevice device,
-                                std::vector<CommandBufferHelperT *> *freeList,
-                                CommandBufferHelperT **commandBufferHelper,
-                                priv::SecondaryCommandBuffer *commandBuffer)
-{
-    freeList->push_back(*commandBufferHelper);
-}
-
-template <typename CommandBufferHelperT>
-void RecycleCommandBufferHelper(VkDevice device,
-                                std::vector<CommandBufferHelperT *> *freeList,
-                                CommandBufferHelperT **commandBufferHelper,
-                                VulkanSecondaryCommandBuffer *commandBuffer)
-{
-    CommandPool *pool = (*commandBufferHelper)->getCommandPool();
-
-    pool->freeCommandBuffers(device, 1, commandBuffer->ptr());
-    commandBuffer->releaseHandle();
-    SafeDelete(*commandBufferHelper);
-}
-
-[[maybe_unused]] void ResetSecondaryCommandBuffer(
-    std::vector<priv::SecondaryCommandBuffer> *resetList,
-    priv::SecondaryCommandBuffer &&commandBuffer)
-{
-    commandBuffer.reset();
-}
-
-[[maybe_unused]] void ResetSecondaryCommandBuffer(
-    std::vector<VulkanSecondaryCommandBuffer> *resetList,
-    VulkanSecondaryCommandBuffer &&commandBuffer)
-{
-    resetList->push_back(std::move(commandBuffer));
-}
-
 bool IsClear(UpdateSource updateSource)
 {
     return updateSource == UpdateSource::Clear ||
@@ -1439,15 +1403,111 @@ CommandBufferHelperCommon::CommandBufferHelperCommon()
 
 CommandBufferHelperCommon::~CommandBufferHelperCommon() {}
 
-void CommandBufferHelperCommon::initializeImpl(CommandPool *commandPool)
+void CommandBufferHelperCommon::initializeImpl()
 {
     mCommandAllocator.init();
-    mCommandPool = commandPool;
 }
 
 void CommandBufferHelperCommon::resetImpl()
 {
     mCommandAllocator.resetAllocator();
+}
+
+template <class DerivedT>
+angle::Result CommandBufferHelperCommon::attachCommandPoolImpl(Context *context,
+                                                               SecondaryCommandPool *commandPool)
+{
+    if constexpr (!DerivedT::ExecutesInline())
+    {
+        DerivedT *derived = static_cast<DerivedT *>(this);
+        ASSERT(commandPool != nullptr);
+        ASSERT(mCommandPool == nullptr);
+        ASSERT(!derived->getCommandBuffer().valid());
+
+        mCommandPool = commandPool;
+
+        ANGLE_TRY(derived->initializeCommandBuffer(context));
+    }
+    return angle::Result::Continue;
+}
+
+template <class DerivedT, bool kIsRenderPassBuffer>
+angle::Result CommandBufferHelperCommon::detachCommandPoolImpl(
+    Context *context,
+    SecondaryCommandPool **commandPoolOut)
+{
+    if constexpr (!DerivedT::ExecutesInline())
+    {
+        DerivedT *derived = static_cast<DerivedT *>(this);
+        ASSERT(mCommandPool != nullptr);
+        ASSERT(derived->getCommandBuffer().valid());
+
+        if constexpr (!kIsRenderPassBuffer)
+        {
+            ASSERT(!derived->getCommandBuffer().empty());
+            ANGLE_TRY(derived->endCommandBuffer(context));
+        }
+
+        *commandPoolOut = mCommandPool;
+        mCommandPool    = nullptr;
+    }
+    ASSERT(mCommandPool == nullptr);
+    return angle::Result::Continue;
+}
+
+template <class DerivedT>
+void CommandBufferHelperCommon::releaseCommandPoolImpl()
+{
+    if constexpr (!DerivedT::ExecutesInline())
+    {
+        DerivedT *derived = static_cast<DerivedT *>(this);
+        ASSERT(mCommandPool != nullptr);
+
+        if (derived->getCommandBuffer().valid())
+        {
+            ASSERT(derived->getCommandBuffer().empty());
+            mCommandPool->collect(&derived->getCommandBuffer());
+        }
+
+        mCommandPool = nullptr;
+    }
+    ASSERT(mCommandPool == nullptr);
+}
+
+template <class DerivedT>
+void CommandBufferHelperCommon::attachAllocatorImpl(SecondaryCommandMemoryAllocator *allocator)
+{
+    if constexpr (DerivedT::ExecutesInline())
+    {
+        auto &commandBuffer = static_cast<DerivedT *>(this)->getCommandBuffer();
+        mCommandAllocator.attachAllocator(allocator);
+        commandBuffer.attachAllocator(mCommandAllocator.getAllocator());
+    }
+}
+
+template <class DerivedT>
+SecondaryCommandMemoryAllocator *CommandBufferHelperCommon::detachAllocatorImpl()
+{
+    SecondaryCommandMemoryAllocator *result = nullptr;
+    if constexpr (DerivedT::ExecutesInline())
+    {
+        auto &commandBuffer = static_cast<DerivedT *>(this)->getCommandBuffer();
+        commandBuffer.detachAllocator(mCommandAllocator.getAllocator());
+        result = mCommandAllocator.detachAllocator(commandBuffer.empty());
+    }
+    return result;
+}
+
+template <class DerivedT>
+void CommandBufferHelperCommon::assertCanBeRecycledImpl()
+{
+    DerivedT *derived = static_cast<DerivedT *>(this);
+    ASSERT(mCommandPool == nullptr);
+    ASSERT(!mCommandAllocator.hasAllocatorLinks());
+    // Vulkan secondary command buffers must be invalid (collected).
+    ASSERT(DerivedT::ExecutesInline() || !derived->getCommandBuffer().valid());
+    // ANGLEs Custom secondary command buffers must be empty (reset).
+    ASSERT(!DerivedT::ExecutesInline() || derived->getCommandBuffer().empty());
 }
 
 void CommandBufferHelperCommon::bufferWrite(ContextVk *contextVk,
@@ -1559,24 +1619,31 @@ OutsideRenderPassCommandBufferHelper::OutsideRenderPassCommandBufferHelper() {}
 
 OutsideRenderPassCommandBufferHelper::~OutsideRenderPassCommandBufferHelper() {}
 
-angle::Result OutsideRenderPassCommandBufferHelper::initialize(Context *context,
-                                                               CommandPool *commandPool)
+angle::Result OutsideRenderPassCommandBufferHelper::initialize(Context *context)
 {
-    initializeImpl(commandPool);
+    initializeImpl();
     return initializeCommandBuffer(context);
 }
 angle::Result OutsideRenderPassCommandBufferHelper::initializeCommandBuffer(Context *context)
 {
+    // Skip initialization in the Pool-detached state.
+    if (!ExecutesInline() && mCommandPool == nullptr)
+    {
+        return angle::Result::Continue;
+    }
     return mCommandBuffer.initialize(context, mCommandPool, false,
                                      mCommandAllocator.getAllocator());
 }
 
-angle::Result OutsideRenderPassCommandBufferHelper::reset(Context *context)
+angle::Result OutsideRenderPassCommandBufferHelper::reset(
+    Context *context,
+    SecondaryCommandBufferCollector *commandBufferCollector)
 {
     resetImpl();
 
-    // Reset and re-initialize the command buffer
-    context->getRenderer()->resetOutsideRenderPassCommandBuffer(std::move(mCommandBuffer));
+    // Collect/Reset the command buffer
+    commandBufferCollector->collectCommandBuffer(std::move(mCommandBuffer));
+    mIsCommandBufferEnded = false;
 
     // Invalidate the queue serial here. We will get a new queue serial after commands flush.
     mQueueSerial = QueueSerial();
@@ -1640,33 +1707,81 @@ void OutsideRenderPassCommandBufferHelper::imageWrite(ContextVk *contextVk,
     image->setQueueSerial(mQueueSerial);
 }
 
-angle::Result OutsideRenderPassCommandBufferHelper::flushToPrimary(Context *context,
-                                                                   PrimaryCommandBuffer *primary)
+angle::Result OutsideRenderPassCommandBufferHelper::flushToPrimary(
+    Context *context,
+    PrimaryCommandBuffer *primary,
+    SecondaryCommandBufferCollector *commandBufferCollector)
 {
     ANGLE_TRACE_EVENT0("gpu.angle", "OutsideRenderPassCommandBufferHelper::flushToPrimary");
     ASSERT(!empty());
 
-    // Commands that are added to primary before beginRenderPass command
-    executeBarriers(context->getRenderer()->getFeatures(), primary);
+    RendererVk *renderer = context->getRenderer();
 
-    ANGLE_TRY(mCommandBuffer.end(context));
+    // Commands that are added to primary before beginRenderPass command
+    executeBarriers(renderer->getFeatures(), primary);
+
+    // When using Vulkan secondary command buffers and "asyncCommandQueue" is enabled, command
+    // buffer MUST be already ended in the detachCommandPool() (called in the CommandProcessor).
+    // After the detach, nothing is written to the buffer (the barriers above are written directly
+    // to the primary buffer).
+    // Note: RenderPass Command Buffers are explicitly ended in the endRenderPass().
+    if (ExecutesInline() || !renderer->isAsyncCommandQueueEnabled())
+    {
+        ANGLE_TRY(endCommandBuffer(context));
+    }
+    ASSERT(mIsCommandBufferEnded);
     mCommandBuffer.executeCommands(primary);
 
     // Restart the command buffer.
-    return reset(context);
+    return reset(context, commandBufferCollector);
+}
+
+angle::Result OutsideRenderPassCommandBufferHelper::endCommandBuffer(Context *context)
+{
+    ASSERT(ExecutesInline() || mCommandPool != nullptr);
+    ASSERT(mCommandBuffer.valid());
+    ASSERT(!mIsCommandBufferEnded);
+
+    ANGLE_TRY(mCommandBuffer.end(context));
+    mIsCommandBufferEnded = true;
+
+    return angle::Result::Continue;
+}
+
+angle::Result OutsideRenderPassCommandBufferHelper::attachCommandPool(
+    Context *context,
+    SecondaryCommandPool *commandPool)
+{
+    return attachCommandPoolImpl<OutsideRenderPassCommandBufferHelper>(context, commandPool);
+}
+
+angle::Result OutsideRenderPassCommandBufferHelper::detachCommandPool(
+    Context *context,
+    SecondaryCommandPool **commandPoolOut)
+{
+    return detachCommandPoolImpl<OutsideRenderPassCommandBufferHelper, false>(context,
+                                                                              commandPoolOut);
+}
+
+void OutsideRenderPassCommandBufferHelper::releaseCommandPool()
+{
+    releaseCommandPoolImpl<OutsideRenderPassCommandBufferHelper>();
 }
 
 void OutsideRenderPassCommandBufferHelper::attachAllocator(
     SecondaryCommandMemoryAllocator *allocator)
 {
-    mCommandAllocator.attachAllocator(allocator);
-    getCommandBuffer().attachAllocator(mCommandAllocator.getAllocator());
+    attachAllocatorImpl<OutsideRenderPassCommandBufferHelper>(allocator);
 }
 
 SecondaryCommandMemoryAllocator *OutsideRenderPassCommandBufferHelper::detachAllocator()
 {
-    getCommandBuffer().detachAllocator(mCommandAllocator.getAllocator());
-    return mCommandAllocator.detachAllocator(getCommandBuffer().empty());
+    return detachAllocatorImpl<OutsideRenderPassCommandBufferHelper>();
+}
+
+void OutsideRenderPassCommandBufferHelper::assertCanBeRecycled()
+{
+    assertCanBeRecycledImpl<OutsideRenderPassCommandBufferHelper>();
 }
 
 void OutsideRenderPassCommandBufferHelper::addCommandDiagnostics(ContextVk *contextVk)
@@ -1700,18 +1815,25 @@ RenderPassCommandBufferHelper::~RenderPassCommandBufferHelper()
     mFramebuffer.setHandle(VK_NULL_HANDLE);
 }
 
-angle::Result RenderPassCommandBufferHelper::initialize(Context *context, CommandPool *commandPool)
+angle::Result RenderPassCommandBufferHelper::initialize(Context *context)
 {
-    initializeImpl(commandPool);
+    initializeImpl();
     return initializeCommandBuffer(context);
 }
 angle::Result RenderPassCommandBufferHelper::initializeCommandBuffer(Context *context)
 {
+    // Skip initialization in the Pool-detached state.
+    if (!ExecutesInline() && mCommandPool == nullptr)
+    {
+        return angle::Result::Continue;
+    }
     return getCommandBuffer().initialize(context, mCommandPool, true,
                                          mCommandAllocator.getAllocator());
 }
 
-angle::Result RenderPassCommandBufferHelper::reset(Context *context)
+angle::Result RenderPassCommandBufferHelper::reset(
+    Context *context,
+    SecondaryCommandBufferCollector *commandBufferCollector)
 {
     resetImpl();
 
@@ -1739,10 +1861,10 @@ angle::Result RenderPassCommandBufferHelper::reset(Context *context)
 
     ASSERT(CheckSubpassCommandBufferCount(getSubpassCommandBufferCount()));
 
-    // Reset and re-initialize the command buffers
+    // Collect/Reset the command buffers
     for (uint32_t subpass = 0; subpass < getSubpassCommandBufferCount(); ++subpass)
     {
-        context->getRenderer()->resetRenderPassCommandBuffer(std::move(mCommandBuffers[subpass]));
+        commandBufferCollector->collectCommandBuffer(std::move(mCommandBuffers[subpass]));
     }
 
     mCurrentSubpassCommandBufferIndex = 0;
@@ -2320,7 +2442,7 @@ angle::Result RenderPassCommandBufferHelper::endRenderPassCommandBuffer(ContextV
 angle::Result RenderPassCommandBufferHelper::nextSubpass(ContextVk *contextVk,
                                                          RenderPassCommandBuffer **commandBufferOut)
 {
-    if (RenderPassCommandBuffer::ExecutesInline())
+    if (ExecutesInline())
     {
         // When using ANGLE secondary command buffers, the commands are inline and are executed on
         // the primary command buffer.  This means that vkCmdNextSubpass can be intermixed with the
@@ -2415,9 +2537,11 @@ void RenderPassCommandBufferHelper::invalidateRenderPassStencilAttachment(
                                   getRenderPassWriteCommandCount());
 }
 
-angle::Result RenderPassCommandBufferHelper::flushToPrimary(Context *context,
-                                                            PrimaryCommandBuffer *primary,
-                                                            const RenderPass *renderPass)
+angle::Result RenderPassCommandBufferHelper::flushToPrimary(
+    Context *context,
+    PrimaryCommandBuffer *primary,
+    const RenderPass *renderPass,
+    SecondaryCommandBufferCollector *commandBufferCollector)
 {
     ANGLE_TRACE_EVENT0("gpu.angle", "RenderPassCommandBufferHelper::flushToPrimary");
     ASSERT(mRenderPassStarted);
@@ -2451,8 +2575,8 @@ angle::Result RenderPassCommandBufferHelper::flushToPrimary(Context *context,
 
     // Run commands inside the RenderPass.
     constexpr VkSubpassContents kSubpassContents =
-        RenderPassCommandBuffer::ExecutesInline() ? VK_SUBPASS_CONTENTS_INLINE
-                                                  : VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS;
+        ExecutesInline() ? VK_SUBPASS_CONTENTS_INLINE
+                         : VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS;
 
     primary->beginRenderPass(beginInfo, kSubpassContents);
     for (uint32_t subpass = 0; subpass < getSubpassCommandBufferCount(); ++subpass)
@@ -2466,7 +2590,7 @@ angle::Result RenderPassCommandBufferHelper::flushToPrimary(Context *context,
     primary->endRenderPass();
 
     // Restart the command buffer.
-    return reset(context);
+    return reset(context, commandBufferCollector);
 }
 
 void RenderPassCommandBufferHelper::updateRenderPassForResolve(
@@ -2544,18 +2668,46 @@ void RenderPassCommandBufferHelper::growRenderArea(ContextVk *contextVk,
     mStencilAttachment.onRenderAreaGrowth(contextVk, mRenderArea);
 }
 
+angle::Result RenderPassCommandBufferHelper::attachCommandPool(Context *context,
+                                                               SecondaryCommandPool *commandPool)
+{
+    ASSERT(!mRenderPassStarted);
+    ASSERT(getSubpassCommandBufferCount() == 1);
+    return attachCommandPoolImpl<RenderPassCommandBufferHelper>(context, commandPool);
+}
+
+void RenderPassCommandBufferHelper::detachCommandPool(SecondaryCommandPool **commandPoolOut)
+{
+    ASSERT(mRenderPassStarted);
+    angle::Result result =
+        detachCommandPoolImpl<RenderPassCommandBufferHelper, true>(nullptr, commandPoolOut);
+    ASSERT(result == angle::Result::Continue);
+}
+
+void RenderPassCommandBufferHelper::releaseCommandPool()
+{
+    ASSERT(!mRenderPassStarted);
+    ASSERT(getSubpassCommandBufferCount() == 1);
+    releaseCommandPoolImpl<RenderPassCommandBufferHelper>();
+}
+
 void RenderPassCommandBufferHelper::attachAllocator(SecondaryCommandMemoryAllocator *allocator)
 {
     ASSERT(CheckSubpassCommandBufferCount(getSubpassCommandBufferCount()));
-    mCommandAllocator.attachAllocator(allocator);
-    getCommandBuffer().attachAllocator(mCommandAllocator.getAllocator());
+    attachAllocatorImpl<RenderPassCommandBufferHelper>(allocator);
 }
 
 SecondaryCommandMemoryAllocator *RenderPassCommandBufferHelper::detachAllocator()
 {
     ASSERT(CheckSubpassCommandBufferCount(getSubpassCommandBufferCount()));
-    getCommandBuffer().detachAllocator(mCommandAllocator.getAllocator());
-    return mCommandAllocator.detachAllocator(getCommandBuffer().empty());
+    return detachAllocatorImpl<RenderPassCommandBufferHelper>();
+}
+
+void RenderPassCommandBufferHelper::assertCanBeRecycled()
+{
+    ASSERT(!mRenderPassStarted);
+    ASSERT(getSubpassCommandBufferCount() == 1);
+    assertCanBeRecycledImpl<RenderPassCommandBufferHelper>();
 }
 
 void RenderPassCommandBufferHelper::addCommandDiagnostics(ContextVk *contextVk)
@@ -2622,8 +2774,8 @@ void RenderPassCommandBufferHelper::addCommandDiagnostics(ContextVk *contextVk)
 }
 
 // CommandBufferRecycler implementation.
-template <typename CommandBufferT, typename CommandBufferHelperT>
-void CommandBufferRecycler<CommandBufferT, CommandBufferHelperT>::onDestroy()
+template <typename CommandBufferHelperT>
+void CommandBufferRecycler<CommandBufferHelperT>::onDestroy()
 {
     std::unique_lock<std::mutex> lock(mMutex);
     for (CommandBufferHelperT *commandBufferHelper : mCommandBufferHelperFreeList)
@@ -2631,19 +2783,15 @@ void CommandBufferRecycler<CommandBufferT, CommandBufferHelperT>::onDestroy()
         SafeDelete(commandBufferHelper);
     }
     mCommandBufferHelperFreeList.clear();
-
-    ASSERT(mSecondaryCommandBuffersToReset.empty());
 }
 
-template void CommandBufferRecycler<OutsideRenderPassCommandBuffer,
-                                    OutsideRenderPassCommandBufferHelper>::onDestroy();
-template void
-CommandBufferRecycler<RenderPassCommandBuffer, RenderPassCommandBufferHelper>::onDestroy();
+template void CommandBufferRecycler<OutsideRenderPassCommandBufferHelper>::onDestroy();
+template void CommandBufferRecycler<RenderPassCommandBufferHelper>::onDestroy();
 
-template <typename CommandBufferT, typename CommandBufferHelperT>
-angle::Result CommandBufferRecycler<CommandBufferT, CommandBufferHelperT>::getCommandBufferHelper(
+template <typename CommandBufferHelperT>
+angle::Result CommandBufferRecycler<CommandBufferHelperT>::getCommandBufferHelper(
     Context *context,
-    CommandPool *commandPool,
+    SecondaryCommandPool *commandPool,
     SecondaryCommandMemoryAllocator *commandsAllocator,
     CommandBufferHelperT **commandBufferHelperOut)
 {
@@ -2652,7 +2800,7 @@ angle::Result CommandBufferRecycler<CommandBufferT, CommandBufferHelperT>::getCo
     {
         CommandBufferHelperT *commandBuffer = new CommandBufferHelperT();
         *commandBufferHelperOut             = commandBuffer;
-        ANGLE_TRY(commandBuffer->initialize(context, commandPool));
+        ANGLE_TRY(commandBuffer->initialize(context));
     }
     else
     {
@@ -2661,6 +2809,8 @@ angle::Result CommandBufferRecycler<CommandBufferT, CommandBufferHelperT>::getCo
         *commandBufferHelperOut = commandBuffer;
     }
 
+    ANGLE_TRY((*commandBufferHelperOut)->attachCommandPool(context, commandPool));
+
     // Attach functions are only used for ring buffer allocators.
     (*commandBufferHelperOut)->attachAllocator(commandsAllocator);
 
@@ -2668,43 +2818,61 @@ angle::Result CommandBufferRecycler<CommandBufferT, CommandBufferHelperT>::getCo
 }
 
 template angle::Result
-CommandBufferRecycler<OutsideRenderPassCommandBuffer, OutsideRenderPassCommandBufferHelper>::
-    getCommandBufferHelper(Context *,
-                           CommandPool *,
-                           SecondaryCommandMemoryAllocator *,
-                           OutsideRenderPassCommandBufferHelper **);
-template angle::Result CommandBufferRecycler<
-    RenderPassCommandBuffer,
-    RenderPassCommandBufferHelper>::getCommandBufferHelper(Context *,
-                                                           CommandPool *,
-                                                           SecondaryCommandMemoryAllocator *,
-                                                           RenderPassCommandBufferHelper **);
+CommandBufferRecycler<OutsideRenderPassCommandBufferHelper>::getCommandBufferHelper(
+    Context *,
+    SecondaryCommandPool *,
+    SecondaryCommandMemoryAllocator *,
+    OutsideRenderPassCommandBufferHelper **);
+template angle::Result CommandBufferRecycler<RenderPassCommandBufferHelper>::getCommandBufferHelper(
+    Context *,
+    SecondaryCommandPool *,
+    SecondaryCommandMemoryAllocator *,
+    RenderPassCommandBufferHelper **);
 
-template <typename CommandBufferT, typename CommandBufferHelperT>
-void CommandBufferRecycler<CommandBufferT, CommandBufferHelperT>::recycleCommandBufferHelper(
-    VkDevice device,
+template <typename CommandBufferHelperT>
+void CommandBufferRecycler<CommandBufferHelperT>::recycleCommandBufferHelper(
     CommandBufferHelperT **commandBuffer)
 {
-    std::unique_lock<std::mutex> lock(mMutex);
-    ASSERT((*commandBuffer)->empty() && !(*commandBuffer)->hasAllocatorLinks());
+    (*commandBuffer)->assertCanBeRecycled();
     (*commandBuffer)->markOpen();
 
-    RecycleCommandBufferHelper(device, &mCommandBufferHelperFreeList, commandBuffer,
-                               &(*commandBuffer)->getCommandBuffer());
+    {
+        std::unique_lock<std::mutex> lock(mMutex);
+        mCommandBufferHelperFreeList.push_back(*commandBuffer);
+    }
+
+    *commandBuffer = nullptr;
 }
 
 template void
-CommandBufferRecycler<OutsideRenderPassCommandBuffer, OutsideRenderPassCommandBufferHelper>::
-    recycleCommandBufferHelper(VkDevice, OutsideRenderPassCommandBufferHelper **);
-template void CommandBufferRecycler<RenderPassCommandBuffer, RenderPassCommandBufferHelper>::
-    recycleCommandBufferHelper(VkDevice, RenderPassCommandBufferHelper **);
+CommandBufferRecycler<OutsideRenderPassCommandBufferHelper>::recycleCommandBufferHelper(
+    OutsideRenderPassCommandBufferHelper **);
+template void CommandBufferRecycler<RenderPassCommandBufferHelper>::recycleCommandBufferHelper(
+    RenderPassCommandBufferHelper **);
 
-template <typename CommandBufferT, typename CommandBufferHelperT>
-void CommandBufferRecycler<CommandBufferT, CommandBufferHelperT>::resetCommandBuffer(
-    CommandBufferT &&commandBuffer)
+// SecondaryCommandBufferCollector implementation.
+void SecondaryCommandBufferCollector::collectCommandBuffer(
+    priv::SecondaryCommandBuffer &&commandBuffer)
 {
-    std::unique_lock<std::mutex> lock(mMutex);
-    ResetSecondaryCommandBuffer(&mSecondaryCommandBuffersToReset, std::move(commandBuffer));
+    commandBuffer.reset();
+}
+
+void SecondaryCommandBufferCollector::collectCommandBuffer(
+    VulkanSecondaryCommandBuffer &&commandBuffer)
+{
+    ASSERT(commandBuffer.valid());
+    mCollectedCommandBuffers.emplace_back(std::move(commandBuffer));
+}
+
+void SecondaryCommandBufferCollector::retireCommandBuffers()
+{
+    // Note: we currently free the command buffers individually, but we could potentially reset the
+    // entire command pool.  https://issuetracker.google.com/issues/166793850
+    for (VulkanSecondaryCommandBuffer &commandBuffer : mCollectedCommandBuffers)
+    {
+        commandBuffer.destroy();
+    }
+    mCollectedCommandBuffers.clear();
 }
 
 // DynamicBuffer implementation.
@@ -5292,8 +5460,14 @@ angle::Result ImageHelper::initExternal(Context *context,
 
     mYcbcrConversionDesc.reset();
 
-    const angle::Format &actualFormat = angle::Format::Get(actualFormatID);
-    VkFormat actualVkFormat           = GetVkFormatFromFormatID(actualFormatID);
+    const angle::Format &actualFormat   = angle::Format::Get(actualFormatID);
+    const angle::Format &intendedFormat = angle::Format::Get(intendedFormatID);
+    VkFormat actualVkFormat             = GetVkFormatFromFormatID(actualFormatID);
+
+    ANGLE_TRACE_EVENT_INSTANT("gpu.angle.texture_metrics", "ImageHelper::initExternal",
+                              "intended_format", intendedFormat.glInternalFormat, "actual_format",
+                              actualFormat.glInternalFormat, "width", extents.width, "height",
+                              extents.height);
 
     if (actualFormat.isYUV)
     {
@@ -5354,7 +5528,10 @@ angle::Result ImageHelper::initExternal(Context *context,
     imageInfo.pQueueFamilyIndices   = nullptr;
     imageInfo.initialLayout         = ConvertImageLayoutToVkImageLayout(context, initialLayout);
 
-    mCurrentLayout = initialLayout;
+    mCurrentLayout               = initialLayout;
+    mCurrentQueueFamilyIndex     = std::numeric_limits<uint32_t>::max();
+    mLastNonShaderReadOnlyLayout = ImageLayout::Undefined;
+    mCurrentShaderReadStageMask  = 0;
 
     ANGLE_VK_TRY(context, mImage.init(context->getDevice(), imageInfo));
 
@@ -5431,6 +5608,9 @@ void ImageHelper::deriveImageViewFormatFromCreateInfoPNext(VkImageCreateInfo &im
         pNextChain = pNextChain->pNext;
     }
 
+    // Clear formatOut in case it has leftovers from previous VkImage in the case of releaseImage
+    // followed by initExternal.
+    std::fill(formatOut.begin(), formatOut.begin() + formatOut.max_size(), VK_FORMAT_UNDEFINED);
     if (pNextChain != nullptr)
     {
         const VkImageFormatListCreateInfoKHR *imageFormatCreateInfo =

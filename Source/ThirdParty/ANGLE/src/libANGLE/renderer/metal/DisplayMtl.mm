@@ -925,11 +925,13 @@ void DisplayMtl::initializeExtensions() const
     mNativeExtensions.mapbufferOES                  = true;
     mNativeExtensions.mapBufferRangeEXT             = true;
     mNativeExtensions.textureStorageEXT             = true;
+    mNativeExtensions.clipControlEXT                = true;
     mNativeExtensions.drawBuffersEXT                = true;
     mNativeExtensions.drawBuffersIndexedEXT         = true;
     mNativeExtensions.drawBuffersIndexedOES         = true;
     mNativeExtensions.fboRenderMipmapOES            = true;
     mNativeExtensions.fragDepthEXT                  = true;
+    mNativeExtensions.conservativeDepthEXT          = true;
     mNativeExtensions.framebufferBlitANGLE          = true;
     mNativeExtensions.framebufferBlitNV             = true;
     mNativeExtensions.framebufferMultisampleANGLE   = true;
@@ -944,6 +946,11 @@ void DisplayMtl::initializeExtensions() const
         mNativeExtensions.textureMirrorClampToEdgeEXT = true;
     }
 #endif
+
+    if (ANGLE_APPLE_AVAILABLE_XCI(10.11, 11.0, 13.1))
+    {
+        mNativeExtensions.depthClampEXT = true;
+    }
 
     // EXT_debug_marker is not implemented yet, but the entry points must be exposed for the
     // Metal backend to be used in Chrome (http://anglebug.com/4946)
@@ -1006,6 +1013,8 @@ void DisplayMtl::initializeExtensions() const
     mNativeExtensions.textureNpotOES = true;
 
     mNativeExtensions.texture3DOES = true;
+
+    mNativeExtensions.shaderNoperspectiveInterpolationNV = true;
 
     mNativeExtensions.shaderTextureLodEXT = true;
 

@@ -929,13 +929,9 @@ MTLSamplerAddressMode GetSamplerAddressMode(GLenum wrap)
     {
         case GL_CLAMP_TO_EDGE:
             return MTLSamplerAddressModeClampToEdge;
-        case GL_MIRROR_CLAMP_TO_EDGE_EXT:
 #if !defined(ANGLE_PLATFORM_WATCHOS) || !ANGLE_PLATFORM_WATCHOS
+        case GL_MIRROR_CLAMP_TO_EDGE_EXT:
             return MTLSamplerAddressModeMirrorClampToEdge;
-#else
-            // This feature isn't supported on watchOS. The extension should not
-            // be visible, but return a default value just in case we get to here.
-            return MTLSamplerAddressModeClampToEdge;
 #endif
         case GL_REPEAT:
             return MTLSamplerAddressModeRepeat;
@@ -1067,7 +1063,7 @@ MTLStencilOperation GetStencilOp(GLenum op)
     }
 }
 
-MTLWinding GetFontfaceWinding(GLenum frontFaceMode, bool invert)
+MTLWinding GetFrontfaceWinding(GLenum frontFaceMode, bool invert)
 {
     switch (frontFaceMode)
     {

@@ -3617,6 +3617,9 @@ void RendererVk::initFeatures(DisplayVk *displayVk,
         isVulkan11Device() ||
         ExtensionFound(VK_KHR_MAINTENANCE1_EXTENSION_NAME, deviceExtensionNames);
 
+    ANGLE_FEATURE_CONDITION(&mFeatures, appendAliasedMemoryDecorationsToSsbo,
+                            isARM && (isVenus || armDriverVersion >= ARMDriverVersion(38, 1, 0)));
+
     ANGLE_FEATURE_CONDITION(
         &mFeatures, supportsSharedPresentableImageExtension,
         ExtensionFound(VK_KHR_SHARED_PRESENTABLE_IMAGE_EXTENSION_NAME, deviceExtensionNames));
@@ -4152,10 +4155,7 @@ void RendererVk::initFeatures(DisplayVk *displayVk,
     // http://anglebug.com/7308
     // Flushing mutable textures causes flakes in perf tests using Windows/Intel GPU. Failures are
     // due to lost context/device.
-    // http://b/264143971
-    // The mutable texture uploading feature can sometimes result in incorrect rendering of some
-    // textures.
-    ANGLE_FEATURE_CONDITION(&mFeatures, mutableMipmapTextureUpload, false);
+    ANGLE_FEATURE_CONDITION(&mFeatures, mutableMipmapTextureUpload, !(IsWindows() && isIntel));
 
     // Use VMA for image suballocation.
     ANGLE_FEATURE_CONDITION(&mFeatures, useVmaForImageSuballocation, true);
@@ -4187,6 +4187,10 @@ void RendererVk::initFeatures(DisplayVk *displayVk,
     // Avoid dynamic state for vertex input binding stride on buggy drivers.
     ANGLE_FEATURE_CONDITION(&mFeatures, forceStaticVertexStrideState,
                             mFeatures.supportsExtendedDynamicState.enabled && isARM);
+
+    // Avoid dynamic state for primitive restart on buggy drivers.
+    ANGLE_FEATURE_CONDITION(&mFeatures, forceStaticPrimitiveRestartState,
+                            mFeatures.supportsExtendedDynamicState2.enabled && isARM);
 
     // Support GL_QCOM_shading_rate extension
     ANGLE_FEATURE_CONDITION(&mFeatures, supportsFragmentShadingRate,
@@ -4368,18 +4372,6 @@ void RendererVk::initFeatures(DisplayVk *displayVk,
     ANGLE_FEATURE_CONDITION(&mFeatures, mapUnspecifiedColorSpaceToPassThrough, isVenus);
 
     ApplyFeatureOverrides(&mFeatures, displayVk->getState());
-
-    // Disable async command queue when using Vulkan secondary command buffers temporarily to avoid
-    // threading hazards with ContextVk::mCommandPools.  Note that this is done even if the feature
-    // is enabled through an override.
-    // TODO: Investigate whether async command queue is useful with Vulkan secondary command buffers
-    // and enable the feature.  http://anglebug.com/6811
-    if (!vk::OutsideRenderPassCommandBuffer::ExecutesInline() ||
-        !vk::RenderPassCommandBuffer::ExecutesInline())
-    {
-        mFeatures.asyncCommandQueue.enabled       = false;
-        mFeatures.asyncCommandBufferReset.enabled = false;
-    }
 
     // Disable memory report feature overrides if extension is not supported.
     if ((mFeatures.logMemoryReportCallbacks.enabled || mFeatures.logMemoryReportStats.enabled) &&
@@ -4688,17 +4680,22 @@ angle::Result RendererVk::queueSubmitOneOff(vk::Context *context,
     ANGLE_TRY(allocateScopedQueueSerialIndex(&index));
     QueueSerial submitQueueSerial(index.get(), generateQueueSerial(index.get()));
 
+    ASSERT(waitSemaphore == nullptr || waitSemaphore->valid());
+    ASSERT(fence == nullptr || fence->valid());
+    const VkSemaphore waitVkSemaphore = waitSemaphore ? waitSemaphore->getHandle() : VK_NULL_HANDLE;
+    const VkFence vkFence             = fence ? fence->getHandle() : VK_NULL_HANDLE;
+
     if (isAsyncCommandQueueEnabled())
     {
         ANGLE_TRY(mCommandProcessor.enqueueSubmitOneOffCommands(
-            context, protectionType, priority, primary.getHandle(), waitSemaphore,
-            waitSemaphoreStageMasks, fence, submitPolicy, submitQueueSerial));
+            context, protectionType, priority, primary.getHandle(), waitVkSemaphore,
+            waitSemaphoreStageMasks, vkFence, submitPolicy, submitQueueSerial));
     }
     else
     {
         ANGLE_TRY(mCommandQueue.queueSubmitOneOff(
-            context, protectionType, priority, primary.getHandle(), waitSemaphore,
-            waitSemaphoreStageMasks, fence, submitPolicy, submitQueueSerial));
+            context, protectionType, priority, primary.getHandle(), waitVkSemaphore,
+            waitSemaphoreStageMasks, vkFence, submitPolicy, submitQueueSerial));
     }
 
     *queueSerialOut = submitQueueSerial;
@@ -4715,21 +4712,23 @@ angle::Result RendererVk::queueSubmitOneOff(vk::Context *context,
 
 angle::Result RendererVk::queueSubmitWaitSemaphore(vk::Context *context,
                                                    egl::ContextPriority priority,
-                                                   const vk::Semaphore *waitSemaphore,
+                                                   const vk::Semaphore &waitSemaphore,
                                                    VkPipelineStageFlags waitSemaphoreStageMasks,
                                                    QueueSerial submitQueueSerial)
 {
     if (isAsyncCommandQueueEnabled())
     {
         ANGLE_TRY(mCommandProcessor.enqueueSubmitOneOffCommands(
-            context, vk::ProtectionType::Unprotected, priority, VK_NULL_HANDLE, waitSemaphore,
-            waitSemaphoreStageMasks, nullptr, vk::SubmitPolicy::AllowDeferred, submitQueueSerial));
+            context, vk::ProtectionType::Unprotected, priority, VK_NULL_HANDLE,
+            waitSemaphore.getHandle(), waitSemaphoreStageMasks, VK_NULL_HANDLE,
+            vk::SubmitPolicy::AllowDeferred, submitQueueSerial));
     }
     else
     {
         ANGLE_TRY(mCommandQueue.queueSubmitOneOff(
-            context, vk::ProtectionType::Unprotected, priority, VK_NULL_HANDLE, waitSemaphore,
-            waitSemaphoreStageMasks, nullptr, vk::SubmitPolicy::AllowDeferred, submitQueueSerial));
+            context, vk::ProtectionType::Unprotected, priority, VK_NULL_HANDLE,
+            waitSemaphore.getHandle(), waitSemaphoreStageMasks, VK_NULL_HANDLE,
+            vk::SubmitPolicy::AllowDeferred, submitQueueSerial));
     }
 
     return angle::Result::Continue;
@@ -5039,26 +5038,19 @@ angle::Result RendererVk::submitCommands(vk::Context *context,
                                          const vk::Semaphore *signalSemaphore,
                                          const QueueSerial &submitQueueSerial)
 {
-    vk::SecondaryCommandBufferList commandBuffersToReset;
-    mOutsideRenderPassCommandBufferRecycler.releaseCommandBuffersToReset(
-        &commandBuffersToReset.outsideRenderPassCommandBuffers);
-    mRenderPassCommandBufferRecycler.releaseCommandBuffersToReset(
-        &commandBuffersToReset.renderPassCommandBuffers);
-
+    ASSERT(signalSemaphore == nullptr || signalSemaphore->valid());
     const VkSemaphore signalVkSemaphore =
         signalSemaphore ? signalSemaphore->getHandle() : VK_NULL_HANDLE;
 
     if (isAsyncCommandQueueEnabled())
     {
-        ANGLE_TRY(mCommandProcessor.enqueueSubmitCommands(
-            context, protectionType, contextPriority, signalVkSemaphore,
-            std::move(commandBuffersToReset), submitQueueSerial));
+        ANGLE_TRY(mCommandProcessor.enqueueSubmitCommands(context, protectionType, contextPriority,
+                                                          signalVkSemaphore, submitQueueSerial));
     }
     else
     {
         ANGLE_TRY(mCommandQueue.submitCommands(context, protectionType, contextPriority,
-                                               signalVkSemaphore, std::move(commandBuffersToReset),
-                                               submitQueueSerial));
+                                               signalVkSemaphore, submitQueueSerial));
     }
 
     ANGLE_TRY(mCommandQueue.postSubmitCheck(context));
@@ -5101,7 +5093,7 @@ angle::Result RendererVk::submitPriorityDependency(vk::Context *context,
     // Submit only Wait Semaphore into the destination Priority (VkQueue).
     QueueSerial queueSerial(index, generateQueueSerial(index));
     semaphore.get().setQueueSerial(queueSerial);
-    ANGLE_TRY(queueSubmitWaitSemaphore(context, dstContextPriority, &semaphore.get().get(),
+    ANGLE_TRY(queueSubmitWaitSemaphore(context, dstContextPriority, semaphore.get().get(),
                                        VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, queueSerial));
 
     return angle::Result::Continue;
@@ -5251,7 +5243,7 @@ void RendererVk::queuePresent(vk::Context *context,
 template <typename CommandBufferHelperT, typename RecyclerT>
 angle::Result RendererVk::getCommandBufferImpl(
     vk::Context *context,
-    vk::CommandPool *commandPool,
+    vk::SecondaryCommandPool *commandPool,
     vk::SecondaryCommandMemoryAllocator *commandsAllocator,
     RecyclerT *recycler,
     CommandBufferHelperT **commandBufferHelperOut)
@@ -5262,7 +5254,7 @@ angle::Result RendererVk::getCommandBufferImpl(
 
 angle::Result RendererVk::getOutsideRenderPassCommandBufferHelper(
     vk::Context *context,
-    vk::CommandPool *commandPool,
+    vk::SecondaryCommandPool *commandPool,
     vk::SecondaryCommandMemoryAllocator *commandsAllocator,
     vk::OutsideRenderPassCommandBufferHelper **commandBufferHelperOut)
 {
@@ -5273,7 +5265,7 @@ angle::Result RendererVk::getOutsideRenderPassCommandBufferHelper(
 
 angle::Result RendererVk::getRenderPassCommandBufferHelper(
     vk::Context *context,
-    vk::CommandPool *commandPool,
+    vk::SecondaryCommandPool *commandPool,
     vk::SecondaryCommandMemoryAllocator *commandsAllocator,
     vk::RenderPassCommandBufferHelper **commandBufferHelperOut)
 {
@@ -5283,19 +5275,17 @@ angle::Result RendererVk::getRenderPassCommandBufferHelper(
 }
 
 void RendererVk::recycleOutsideRenderPassCommandBufferHelper(
-    VkDevice device,
     vk::OutsideRenderPassCommandBufferHelper **commandBuffer)
 {
     ANGLE_TRACE_EVENT0("gpu.angle", "RendererVk::recycleOutsideRenderPassCommandBufferHelper");
-    mOutsideRenderPassCommandBufferRecycler.recycleCommandBufferHelper(device, commandBuffer);
+    mOutsideRenderPassCommandBufferRecycler.recycleCommandBufferHelper(commandBuffer);
 }
 
 void RendererVk::recycleRenderPassCommandBufferHelper(
-    VkDevice device,
     vk::RenderPassCommandBufferHelper **commandBuffer)
 {
     ANGLE_TRACE_EVENT0("gpu.angle", "RendererVk::recycleRenderPassCommandBufferHelper");
-    mRenderPassCommandBufferRecycler.recycleCommandBufferHelper(device, commandBuffer);
+    mRenderPassCommandBufferRecycler.recycleCommandBufferHelper(commandBuffer);
 }
 
 void RendererVk::logCacheStats() const
