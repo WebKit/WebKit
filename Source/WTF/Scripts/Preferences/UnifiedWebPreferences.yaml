@@ -4991,8 +4991,8 @@ ProcessSwapOnCrossSiteNavigationEnabled:
   exposed: [ WebKit ]
   defaultValue:
     WebKit:
-      "PLATFORM(MAC) || PLATFORM(IOS) || PLATFORM(GTK) || PLATFORM(WPE)": true
-      default: false
+      "PLATFORM(PLAYSTATION)": false
+      default: true
 
 PunchOutWhiteBackgroundsInDarkMode:
   type: bool
