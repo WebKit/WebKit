@@ -1918,7 +1918,6 @@ loader/stateobjects/pushstate-size.html [ Skip ] # Timeout
 webgl/2.0.0/conformance/canvas/drawingbuffer-static-canvas-test.html [ Failure Pass ]
 webgl/2.0.0/conformance/canvas/framebuffer-bindings-affected-by-to-data-url.html [ Skip ] # Crash
 webgl/2.0.0/conformance/context/premultiplyalpha-test.html [ Failure ]
-webgl/2.0.y/conformance/glsl/bugs/conditional-discard-in-loop.html [ Failure ]
 webgl/2.0.y/conformance/glsl/bugs/loop-if-loop-gradient.html [ Skip ] # Flaky timeout if it runs with other tests
 webgl/2.0.y/conformance/glsl/bugs/qualcomm-crash.html [ Skip ] # Flaky timeout if it runs with other tests
 webgl/2.0.y/conformance/glsl/bugs/qualcomm-loop-with-continue-crash.html [ Skip ] # Flaky timeout if it runs with other tests
@@ -2505,3 +2504,9 @@ fast/text/bidi-with-non-preserved-tab.html [ ImageOnlyFailure ]
 webgl/2.0.0/conformance/context/context-eviction-with-garbage-collection.html [ Skip ] # Crash Timeout only on Buildbot
 
 webkit.org/b/208022 http/tests/history/back-to-post.py [ Pass Failure Timeout ]
+
+webgl/2.0.y/conformance/context/premultiplyalpha-test.html [ Failure ]
+fast/css/scrollbar-dynamic-style-change.html [ ImageOnlyFailure ]
+fast/dynamic/out-of-flow-counter-do-not-update.html [ ImageOnlyFailure ]
+
+webkit.org/b/253868 js/ShadowRealm-iframe-detach.html [ Timeout Pass ]
