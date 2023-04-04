@@ -64,9 +64,9 @@ static const Seconds defaultBackupExclusionPeriod { 24_h };
 #endif
 
 // FIXME: Remove this if rdar://104754030 is fixed.
-static HashMap<String, WeakPtr<NetworkStorageManager>>& activePaths()
+static HashMap<String, ThreadSafeWeakPtr<NetworkStorageManager>>& activePaths()
 {
-    static MainThreadNeverDestroyed<HashMap<String, WeakPtr<NetworkStorageManager>>> pathToManagerMap;
+    static MainThreadNeverDestroyed<HashMap<String, ThreadSafeWeakPtr<NetworkStorageManager>>> pathToManagerMap;
     return pathToManagerMap;
 }
 
@@ -139,29 +139,34 @@ NetworkStorageManager::NetworkStorageManager(PAL::SessionID sessionID, Markable<
     : m_sessionID(sessionID)
     , m_queueName(makeString("com.apple.WebKit.Storage.", sessionID.toUInt64(), ".", static_cast<uint64_t>(identifier->data() >> 64), static_cast<uint64_t>(identifier->data())))
     , m_queue(SuspendableWorkQueue::create(m_queueName.utf8().data(), SuspendableWorkQueue::QOS::Default, SuspendableWorkQueue::ShouldLog::Yes))
-    , m_defaultOriginQuota(defaultOriginQuota)
-    , m_defaultThirdPartyOriginQuota(defaultThirdPartyOriginQuota)
-    , m_originQuotaRatio(originQuotaRatio)
-    , m_totalQuotaRatio(totalQuotaRatio)
-    , m_volumeCapacityOverride(volumeCapacityOverride)
     , m_parentConnection(connection)
-#if PLATFORM(IOS_FAMILY)
-    , m_backupExclusionPeriod(defaultBackupExclusionPeriod)
-#endif
+
 {
     ASSERT(RunLoop::isMain());
 
     if (!path.isEmpty()) {
         auto addResult = activePaths().add(path, *this);
         if (!addResult.isNewEntry) {
-            if (auto existingManager = addResult.iterator->value)
+            if (auto existingManager = addResult.iterator->value.get())
                 RELEASE_LOG_ERROR(Storage, "%p - NetworkStorageManager::NetworkStorageManager path for session %" PRIu64 " is already in use by session %" PRIu64, this, m_sessionID.toUInt64(), existingManager->sessionID().toUInt64());
             else
                 addResult.iterator->value = *this;
         }
     }
 
-    m_queue->dispatch([this, protectedThis = Ref { *this }, path = path.isolatedCopy(), customLocalStoragePath = crossThreadCopy(customLocalStoragePath), customIDBStoragePath = crossThreadCopy(customIDBStoragePath), customCacheStoragePath = crossThreadCopy(customCacheStoragePath), level]() mutable {
+    m_queue->dispatch([this, weakThis = ThreadSafeWeakPtr { *this }, path = path.isolatedCopy(), customLocalStoragePath = crossThreadCopy(customLocalStoragePath), customIDBStoragePath = crossThreadCopy(customIDBStoragePath), customCacheStoragePath = crossThreadCopy(customCacheStoragePath), defaultOriginQuota, defaultThirdPartyOriginQuota, originQuotaRatio, totalQuotaRatio, volumeCapacityOverride, level]() mutable {
+        auto strongThis = weakThis.get();
+        if (!strongThis)
+            return;
+
+        m_defaultOriginQuota = defaultOriginQuota;
+        m_defaultThirdPartyOriginQuota = defaultThirdPartyOriginQuota;
+        m_originQuotaRatio = originQuotaRatio;
+        m_totalQuotaRatio = totalQuotaRatio;
+        m_volumeCapacityOverride = volumeCapacityOverride;
+#if PLATFORM(IOS_FAMILY)
+        m_backupExclusionPeriod = defaultBackupExclusionPeriod;
+#endif
         m_fileSystemStorageHandleRegistry = makeUnique<FileSystemStorageHandleRegistry>();
         m_storageAreaRegistry = makeUnique<StorageAreaRegistry>();
         m_idbStorageRegistry = makeUnique<IDBStorageRegistry>();
