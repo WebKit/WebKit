@@ -2477,3 +2477,6 @@ webkit.org/b/253533 imported/w3c/web-platform-tests/xhr/status.h2.window.html [ 
 
 # webgpu is being brought up in the GPU process, radar://106507574 tracks fixing WK1
 http/tests/webgpu/webgpu/api/operation/buffers/map.html [ Skip ]
+
+webkit.org/b/253101 ipc/restrictedendpoints/deny-access-updateQuotaBasedOnSpaceUsageForTesting.html [ Skip ]
+webkit.org/b/253101 ipc/restrictedendpoints/no-test-only-ipc-expected-crash.html [ Skip ]
