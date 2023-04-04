@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,15 +35,58 @@
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
-class Image;
 class GraphicsContext;
+class Image;
+class NativeImage;
 }
 
 namespace WebKit {
 
-struct ShareableBitmapConfiguration {
-    std::optional<WebCore::DestinationColorSpace> colorSpace;
-    bool isOpaque { false };
+class ShareableBitmapConfiguration {
+public:
+    ShareableBitmapConfiguration() = default;
+
+    ShareableBitmapConfiguration(const WebCore::IntSize&, std::optional<WebCore::DestinationColorSpace> = std::nullopt, bool isOpaque = false);
+    ShareableBitmapConfiguration(const WebCore::IntSize&, std::optional<WebCore::DestinationColorSpace>, bool isOpaque, unsigned bytesPerPixel, unsigned bytesPerRow
+#if USE(CG)
+        , CGBitmapInfo
+#endif
+    );
+
+    WebCore::IntSize size() const { return m_size; }
+    const WebCore::DestinationColorSpace& colorSpace() const { return m_colorSpace ? *m_colorSpace : WebCore::DestinationColorSpace::SRGB(); }
+    WebCore::PlatformColorSpaceValue platformColorSpace() const { return colorSpace().platformColorSpace(); }
+    bool isOpaque() const { return m_isOpaque; }
+
+    unsigned bytesPerPixel() const { ASSERT(!m_bytesPerPixel.hasOverflowed()); return m_bytesPerPixel; }
+    unsigned bytesPerRow() const { ASSERT(!m_bytesPerRow.hasOverflowed()); return m_bytesPerRow; }
+#if USE(CG)
+    CGBitmapInfo bitmapInfo() const { return m_bitmapInfo; }
+#endif
+
+    CheckedUint32 sizeInBytes() const { return m_bytesPerRow * m_size.height(); }
+
+    static CheckedUint32 calculateBytesPerRow(const WebCore::IntSize&, const WebCore::DestinationColorSpace&);
+    static CheckedUint32 calculateSizeInBytes(const WebCore::IntSize&, const WebCore::DestinationColorSpace&);
+
+private:
+    friend struct IPC::ArgumentCoder<ShareableBitmapConfiguration, void>;
+
+    static std::optional<WebCore::DestinationColorSpace> validateColorSpace(std::optional<WebCore::DestinationColorSpace>);
+    static CheckedUint32 calculateBytesPerPixel(const WebCore::DestinationColorSpace&);
+#if USE(CG)
+    static CGBitmapInfo calculateBitmapInfo(const WebCore::DestinationColorSpace&, bool isOpaque);
+#endif
+
+    WebCore::IntSize m_size;
+    std::optional<WebCore::DestinationColorSpace> m_colorSpace;
+    bool m_isOpaque { false };
+
+    CheckedUint32 m_bytesPerPixel;
+    CheckedUint32 m_bytesPerRow;
+#if USE(CG)
+    CGBitmapInfo m_bitmapInfo { 0 };
+#endif
 };
 
 class ShareableBitmapHandle  {
@@ -51,7 +94,7 @@ class ShareableBitmapHandle  {
 public:
     ShareableBitmapHandle();
     ShareableBitmapHandle(ShareableBitmapHandle&&) = default;
-    ShareableBitmapHandle(SharedMemory::Handle&&, const WebCore::IntSize&, const ShareableBitmapConfiguration&);
+    ShareableBitmapHandle(SharedMemory::Handle&&, const ShareableBitmapConfiguration&);
 
     ShareableBitmapHandle& operator=(ShareableBitmapHandle&&) = default;
 
@@ -68,23 +111,16 @@ private:
     friend class ShareableBitmap;
 
     mutable SharedMemory::Handle m_handle;
-    WebCore::IntSize m_size;
     ShareableBitmapConfiguration m_configuration;
 };
 
 class ShareableBitmap : public ThreadSafeRefCounted<ShareableBitmap> {
 public:
-
-    static void validateConfiguration(ShareableBitmapConfiguration&);
-    static CheckedUint32 numBytesForSize(WebCore::IntSize, const ShareableBitmapConfiguration&);
-    static CheckedUint32 calculateBytesPerRow(WebCore::IntSize, const ShareableBitmapConfiguration&);
-    static CheckedUint32 calculateBytesPerPixel(const ShareableBitmapConfiguration&);
-
     // Create a shareable bitmap whose backing memory can be shared with another process.
-    static RefPtr<ShareableBitmap> create(const WebCore::IntSize&, ShareableBitmapConfiguration);
+    static RefPtr<ShareableBitmap> create(const ShareableBitmapConfiguration&);
 
     // Create a shareable bitmap from an already existing shared memory block.
-    static RefPtr<ShareableBitmap> create(const WebCore::IntSize&, ShareableBitmapConfiguration, Ref<SharedMemory>&&);
+    static RefPtr<ShareableBitmap> create(const ShareableBitmapConfiguration&, Ref<SharedMemory>&&);
 
     // Create a shareable bitmap from a handle.
     static RefPtr<ShareableBitmap> create(const ShareableBitmapHandle&, SharedMemory::Protection = SharedMemory::Protection::ReadWrite);
@@ -97,12 +133,12 @@ public:
     // Create a ReadOnly handle.
     std::optional<ShareableBitmapHandle> createReadOnlyHandle() const;
 
-    const WebCore::IntSize& size() const { return m_size; }
+    WebCore::IntSize size() const { return m_configuration.size(); }
     WebCore::IntRect bounds() const { return WebCore::IntRect(WebCore::IntPoint(), size()); }
 
     void* data() const;
-    size_t bytesPerRow() const { return calculateBytesPerRow(m_size, m_configuration); }
-    size_t sizeInBytes() const { return numBytesForSize(m_size, m_configuration); }
+    size_t bytesPerRow() const { return m_configuration.bytesPerRow(); }
+    size_t sizeInBytes() const { return m_configuration.sizeInBytes(); }
 
     // Create a graphics context that can be used to paint into the backing store.
     std::unique_ptr<WebCore::GraphicsContext> createGraphicsContext();
@@ -134,7 +170,7 @@ public:
 #endif
 
 private:
-    ShareableBitmap(const WebCore::IntSize&, ShareableBitmapConfiguration, Ref<SharedMemory>&&);
+    ShareableBitmap(ShareableBitmapConfiguration, Ref<SharedMemory>&&);
 
 #if USE(CG)
     RetainPtr<CGImageRef> createCGImage(CGDataProviderRef, WebCore::ShouldInterpolate) const;
@@ -145,15 +181,12 @@ private:
     static void releaseSurfaceData(void* typelessBitmap);
 #endif
 
-    WebCore::IntSize m_size;
-    ShareableBitmapConfiguration m_configuration;
-
 #if USE(CG)
     bool m_releaseBitmapContextDataCalled { false };
 #endif
 
+    ShareableBitmapConfiguration m_configuration;
     Ref<SharedMemory> m_sharedMemory;
 };
 
 } // namespace WebKit
-

@@ -73,7 +73,7 @@ static RefPtr<ShareableBitmap> convertDragImageToBitmap(DragImage image, const I
     if (!localMainFrame)
         return nullptr;
 
-    auto bitmap = ShareableBitmap::create(size, { screenColorSpace(localMainFrame->view()) });
+    auto bitmap = ShareableBitmap::create({ size, screenColorSpace(localMainFrame->view()) });
     if (!bitmap)
         return nullptr;
 

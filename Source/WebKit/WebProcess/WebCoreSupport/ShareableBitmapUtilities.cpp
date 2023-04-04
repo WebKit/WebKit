@@ -63,7 +63,7 @@ RefPtr<ShareableBitmap> createShareableBitmap(RenderImage& renderImage, CreateSh
         if (!snapshotImage)
             return { };
 
-        auto bitmap = ShareableBitmap::create(snapshotRect.size(), { WTFMove(colorSpaceForBitmap) });
+        auto bitmap = ShareableBitmap::create({ snapshotRect.size(), WTFMove(colorSpaceForBitmap) });
         if (!bitmap)
             return { };
 
@@ -87,7 +87,7 @@ RefPtr<ShareableBitmap> createShareableBitmap(RenderImage& renderImage, CreateSh
         if (imageSize.isEmpty() || imageSize.width() <= 1 || imageSize.height() <= 1)
             return { };
 
-        auto bitmap = ShareableBitmap::create(imageSize, { WTFMove(colorSpaceForBitmap) });
+        auto bitmap = ShareableBitmap::create({ imageSize, WTFMove(colorSpaceForBitmap) });
         if (!bitmap)
             return { };
 
@@ -118,7 +118,7 @@ RefPtr<ShareableBitmap> createShareableBitmap(RenderImage& renderImage, CreateSh
     }
 
     // FIXME: Only select ExtendedColor on images known to need wide gamut.
-    auto sharedBitmap = ShareableBitmap::create(IntSize(bitmapSize), { WTFMove(colorSpaceForBitmap) });
+    auto sharedBitmap = ShareableBitmap::create({ IntSize(bitmapSize), WTFMove(colorSpaceForBitmap) });
     if (!sharedBitmap)
         return { };
 

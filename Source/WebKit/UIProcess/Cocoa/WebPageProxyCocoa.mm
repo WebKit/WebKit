@@ -334,8 +334,7 @@ static RefPtr<WebKit::ShareableBitmap> convertPlatformImageToBitmap(CocoaImage *
     auto resultRect = roundedIntRect(largestRectWithAspectRatioInsideRect(originalThumbnailSize.aspectRatio(), { { }, fittingSize }));
     resultRect.setLocation({ });
 
-    WebKit::ShareableBitmapConfiguration bitmapConfiguration;
-    auto bitmap = WebKit::ShareableBitmap::create(resultRect.size(), bitmapConfiguration);
+    auto bitmap = WebKit::ShareableBitmap::create({ resultRect.size() });
     if (!bitmap)
         return nullptr;
 

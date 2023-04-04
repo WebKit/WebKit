@@ -141,7 +141,7 @@ void RemoteImageDecoderAVFProxy::createFrameImageAtIndex(ImageDecoderIdentifier 
     DestinationColorSpace colorSpace { CGImageGetColorSpace(frameImage.get()) };
     bool isOpaque = false;
 
-    auto bitmap = ShareableBitmap::create(IntSize(width, height), { WTFMove(colorSpace), isOpaque });
+    auto bitmap = ShareableBitmap::create({ IntSize(width, height), WTFMove(colorSpace), isOpaque });
     if (!bitmap)
         return;
     auto context = bitmap->createGraphicsContext();

@@ -61,7 +61,7 @@ void WebTextTrackRepresentationCocoa::update()
     if (!image)
         return;
     auto imageSize = image->size();
-    auto bitmap = ShareableBitmap::create(image->size(), { image->colorSpace() });
+    auto bitmap = ShareableBitmap::create({ image->size(), image->colorSpace() });
     if (!bitmap)
         return;
     auto context = bitmap->createGraphicsContext();

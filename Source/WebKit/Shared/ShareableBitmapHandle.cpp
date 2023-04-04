@@ -38,9 +38,8 @@ ShareableBitmapHandle::ShareableBitmapHandle()
 {
 }
 
-ShareableBitmapHandle::ShareableBitmapHandle(SharedMemory::Handle&& handle, const WebCore::IntSize& size, const ShareableBitmapConfiguration& config)
+ShareableBitmapHandle::ShareableBitmapHandle(SharedMemory::Handle&& handle, const ShareableBitmapConfiguration& config)
     : m_handle(WTFMove(handle))
-    , m_size(size)
     , m_configuration(config)
 {
 }
@@ -53,7 +52,6 @@ void ShareableBitmapHandle::takeOwnershipOfMemory(MemoryLedger ledger) const
 void ShareableBitmapHandle::clear()
 {
     m_handle.clear();
-    m_size = IntSize();
     m_configuration = { };
 }
 

@@ -442,7 +442,7 @@ void ArgumentCoder<RefPtr<Image>>::encode(Encoder& encoder, const RefPtr<Image>&
     if (!hasImage)
         return;
 
-    RefPtr<ShareableBitmap> bitmap = ShareableBitmap::create(IntSize(image->size()), { });
+    RefPtr<ShareableBitmap> bitmap = ShareableBitmap::create({ IntSize(image->size()) });
     auto graphicsContext = bitmap->createGraphicsContext();
     encoder << !!graphicsContext;
     if (!graphicsContext)

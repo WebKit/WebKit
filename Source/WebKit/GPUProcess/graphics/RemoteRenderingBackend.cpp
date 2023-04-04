@@ -285,7 +285,7 @@ void RemoteRenderingBackend::getShareableBitmapForImageBufferWithQualifiedIdenti
         auto backendSize = imageBuffer->backendSize();
         auto logicalSize = imageBuffer->logicalSize();
         auto resultSize = preserveResolution == PreserveResolution::Yes ? backendSize : imageBuffer->truncatedLogicalSize();
-        auto bitmap = ShareableBitmap::create(resultSize, { imageBuffer->colorSpace() });
+        auto bitmap = ShareableBitmap::create({ resultSize, imageBuffer->colorSpace() });
         if (!bitmap)
             return;
         auto context = bitmap->createGraphicsContext();
@@ -311,7 +311,7 @@ void RemoteRenderingBackend::getFilteredImageForImageBuffer(RenderingResourceIde
         if (!image)
             return;
         auto imageSize = image->size();
-        auto bitmap = ShareableBitmap::create(IntSize(imageSize), { imageBuffer->colorSpace() });
+        auto bitmap = ShareableBitmap::create({ IntSize(imageSize), imageBuffer->colorSpace() });
         if (!bitmap)
             return;
         auto context = bitmap->createGraphicsContext();

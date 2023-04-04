@@ -4410,7 +4410,7 @@ void WebPage::drawToImage(WebCore::FrameIdentifier frameID, const PrintInfo& pri
         return;
     }
 
-    auto bitmap = ShareableBitmap::create({ pageWidth, imageHeight }, { });
+    auto bitmap = ShareableBitmap::create({ IntSize(pageWidth, imageHeight) });
     if (!bitmap) {
         reply({ });
         endPrinting();

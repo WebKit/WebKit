@@ -41,22 +41,13 @@ using namespace WebCore;
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(ImageBufferShareableBitmapBackend);
 
-ShareableBitmapConfiguration ImageBufferShareableBitmapBackend::configuration(const Parameters& parameters)
-{
-    return { parameters.colorSpace };
-}
-
 IntSize ImageBufferShareableBitmapBackend::calculateSafeBackendSize(const Parameters& parameters)
 {
     IntSize backendSize = calculateBackendSize(parameters);
     if (backendSize.isEmpty())
         return { };
 
-    CheckedUint32 bytesPerRow = ShareableBitmap::calculateBytesPerRow(backendSize, configuration(parameters));
-    if (bytesPerRow.hasOverflowed())
-        return { };
-
-    CheckedSize numBytes = CheckedUint32(backendSize.height()) * bytesPerRow;
+    CheckedUint32 numBytes = ShareableBitmapConfiguration::calculateSizeInBytes(backendSize, parameters.colorSpace);
     if (numBytes.hasOverflowed())
         return { };
 
@@ -66,7 +57,7 @@ IntSize ImageBufferShareableBitmapBackend::calculateSafeBackendSize(const Parame
 unsigned ImageBufferShareableBitmapBackend::calculateBytesPerRow(const Parameters& parameters, const IntSize& backendSize)
 {
     ASSERT(!backendSize.isEmpty());
-    return ShareableBitmap::calculateBytesPerRow(backendSize, configuration(parameters));
+    return ShareableBitmapConfiguration::calculateBytesPerRow(backendSize, parameters.colorSpace);
 }
 
 size_t ImageBufferShareableBitmapBackend::calculateMemoryCost(const Parameters& parameters)
@@ -83,7 +74,7 @@ std::unique_ptr<ImageBufferShareableBitmapBackend> ImageBufferShareableBitmapBac
     if (backendSize.isEmpty())
         return nullptr;
 
-    auto bitmap = ShareableBitmap::create(backendSize, configuration(parameters));
+    auto bitmap = ShareableBitmap::create({ backendSize, parameters.colorSpace });
     if (!bitmap)
         return nullptr;
 
