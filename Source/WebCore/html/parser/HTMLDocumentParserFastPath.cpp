@@ -470,7 +470,7 @@ private:
     // separate buffer and we might go outside of `Char` range if we are in an
     // `LChar` parser. Therefore, this function returns either a `LCharSpan` or a
     // `UCharSpan`.
-    std::variant<LCharSpan, UCharSpan> scanText()
+    String scanText()
     {
         auto* start = m_parsingBuffer.position();
         while (m_parsingBuffer.hasCharactersRemaining() && *m_parsingBuffer != '<') {
@@ -481,23 +481,26 @@ private:
                 return scanEscapedText();
             }
             if (UNLIKELY(*m_parsingBuffer == '\0'))
-                return didFail(HTMLFastPathResult::FailedContainsNull, LCharSpan { });
+                return didFail(HTMLFastPathResult::FailedContainsNull, String());
 
             m_parsingBuffer.advance();
         }
-        return makeSpan(start, static_cast<size_t>(m_parsingBuffer.position() - start));
+        unsigned length = m_parsingBuffer.position() - start;
+        if (UNLIKELY(length >= Text::defaultLengthLimit))
+            return didFail(HTMLFastPathResult::FailedBigText, String());
+        return length ? String(start, length) : String();
     }
 
     // Slow-path of `scanText()`, which supports escape sequences by copying to a
     // separate buffer.
-    UCharSpan scanEscapedText()
+    String scanEscapedText()
     {
         m_ucharBuffer.resize(0);
         while (m_parsingBuffer.hasCharactersRemaining() && *m_parsingBuffer != '<') {
             if (*m_parsingBuffer == '&') {
                 scanHTMLCharacterReference(m_ucharBuffer);
                 if (m_parsingFailed)
-                    return UCharSpan { };
+                    return { };
             } else if (*m_parsingBuffer == '\r') {
                 // Normalize "\r\n" to "\n" according to https://infra.spec.whatwg.org/#normalize-newlines.
                 m_parsingBuffer.advance();
@@ -505,11 +508,13 @@ private:
                     m_parsingBuffer.advance();
                 m_ucharBuffer.append('\n');
             } else if (UNLIKELY(*m_parsingBuffer == '\0'))
-                return didFail(HTMLFastPathResult::FailedContainsNull, UCharSpan { });
+                return didFail(HTMLFastPathResult::FailedContainsNull, String());
             else
                 m_ucharBuffer.append(m_parsingBuffer.consume());
         }
-        return { m_ucharBuffer.data(), m_ucharBuffer.size() };
+        if (UNLIKELY(m_ucharBuffer.size() >= Text::defaultLengthLimit))
+            return didFail(HTMLFastPathResult::FailedBigText, String());
+        return m_ucharBuffer.isEmpty() ? String() : String(std::exchange(m_ucharBuffer, { }));
     }
 
     // Scan a tagName and convert to lowercase if necessary.
@@ -728,22 +733,10 @@ private:
     template<class ParentTag> void parseChildren(ContainerNode& parent)
     {
         while (true) {
-            auto textSpan = scanText();
+            auto text = scanText();
             if (m_parsingFailed)
                 return;
 
-            bool exceededLengthLimit = false;
-            auto text = std::visit([&exceededLengthLimit](auto span) -> String {
-                if (span.empty())
-                    return { };
-                if (UNLIKELY(span.size() >= Text::defaultLengthLimit)) {
-                    exceededLengthLimit = true;
-                    return { };
-                }
-                return String(span.data(), span.size());
-            }, textSpan);
-            if (UNLIKELY(exceededLengthLimit))
-                return didFail(HTMLFastPathResult::FailedBigText);
             if (!text.isNull())
                 parent.parserAppendChild(Text::create(m_document, WTFMove(text)));
 
