@@ -49,7 +49,6 @@
                   { "name": "bot687", "platform": "*" },
                   { "name": "bot688", "platform": "*" },
 
-                  { "name": "bot210", "platform": "ios-simulator-16" },
                   { "name": "bot303", "platform": "ios-simulator-16" },
                   { "name": "bot304", "platform": "ios-16" },
                   { "name": "bot305", "platform": "ios-simulator-16" },
@@ -291,49 +290,43 @@
                   {
                     "name": "Apple-iOS-16-Simulator-Release-Build", "factory": "BuildFactory",
                     "platform": "ios-simulator-16", "configuration": "release", "architectures": ["x86_64", "arm64"],
-                    "triggers": ["ios-simulator-16-release-arm64-tests-wk2", "ios-simulator-16-release-gpuprocess-tests-wk2", "ios-simulator-16-release-tests-wk2", "ipados-simulator-16-release-tests-wk2"],
+                    "triggers": ["ios-simulator-16-release-gpuprocess-tests-wk2", "ios-simulator-16-release-tests-wk2", "ipados-simulator-16-release-tests-wk2"],
                     "workernames": ["bot641", "bot682", "bot303", "bot305", "bot306"]
                   },
                   {
                     "name": "Apple-iOS-16-Simulator-Debug-Build", "factory": "BuildFactory",
-                    "platform": "ios-simulator-16", "configuration": "debug", "architectures": ["x86_64"],
+                    "platform": "ios-simulator-16", "configuration": "debug", "architectures": ["x86_64", "arm64"],
                     "triggers": ["ios-simulator-16-debug-tests-wk2", "ipados-simulator-16-debug-tests-wk2"],
                     "workernames": ["bot307", "bot308"]
                   },
                   {
-                    "name": "Apple-iOS-16-Simulator-Release-arm64-WK2-Tests", "factory": "TestAllButJSCFactory",
-                    "platform": "ios-simulator-16", "configuration": "release", "architectures": ["x86_64", "arm64"], "device_model": "iphone",
-                    "additionalArguments": ["--no-retry-failures"],
-                    "workernames": ["bot210"]
-                  },
-                  {
                     "name": "Apple-iOS-16-Simulator-Release-GPUProcess-WK2-Tests", "factory": "TestAllButJSCFactory",
                     "platform": "ios-simulator-16", "configuration": "release", "architectures": ["x86_64", "arm64"], "device_model": "iphone",
-                    "additionalArguments": ["--no-retry-failures", "--use-gpu-process"],
+                    "additionalArguments": ["--no-retry-failures", "--use-gpu-process", "--child-process=5"],
                     "workernames": ["bot600"]
                   },
                   {
                     "name": "Apple-iOS-16-Simulator-Release-WK2-Tests", "factory": "TestAllButJSCFactory",
                     "platform": "ios-simulator-16", "configuration": "release", "architectures": ["x86_64", "arm64"], "device_model": "iphone",
-                    "additionalArguments": ["--no-retry-failures"],
+                    "additionalArguments": ["--no-retry-failures", "--child-process=5"],
                     "workernames": ["bot651", "bot652"]
                   },
                   {
                     "name": "Apple-iOS-16-Simulator-Debug-WK2-Tests", "factory": "TestAllButJSCFactory",
-                    "platform": "ios-simulator-16", "configuration": "debug", "architectures": ["x86_64"], "device_model": "iphone",
-                    "additionalArguments": ["--no-retry-failures", "--no-sample-on-timeout"],
+                    "platform": "ios-simulator-16", "configuration": "debug", "architectures": ["x86_64", "arm64"], "device_model": "iphone",
+                    "additionalArguments": ["--no-retry-failures", "--no-sample-on-timeout", "--child-process=5"],
                     "workernames": ["bot653"]
                   },
                   {
                     "name": "Apple-iPadOS-16-Simulator-Release-WK2-Tests", "factory": "TestAllButJSCFactory",
                     "platform": "ios-simulator-16", "configuration": "release", "architectures": ["x86_64", "arm64"], "device_model": "ipad",
-                    "additionalArguments": ["--no-retry-failures"],
+                    "additionalArguments": ["--no-retry-failures", "--child-process=5" ],
                     "workernames": ["bot667"]
                   },
                   {
                     "name": "Apple-iPadOS-16-Simulator-Debug-WK2-Tests", "factory": "TestAllButJSCFactory",
-                    "platform": "ios-simulator-16", "configuration": "debug", "architectures": ["x86_64"], "device_model": "ipad",
-                    "additionalArguments": ["--no-retry-failures", "--no-sample-on-timeout"],
+                    "platform": "ios-simulator-16", "configuration": "debug", "architectures": ["x86_64", "arm64"], "device_model": "ipad",
+                    "additionalArguments": ["--no-retry-failures", "--no-sample-on-timeout", "--child-process=5"],
                     "workernames": ["bot664"]
                   },
                   {
@@ -705,9 +698,6 @@
                   },
                   { "type": "PlatformSpecificScheduler", "platform": "watchos-simulator-9", "branch": "main", "treeStableTimer": 45.0,
                     "builderNames": ["Apple-watchOS-Simulator-9-Release-Build"]
-                  },
-                  { "type": "Triggerable", "name": "ios-simulator-16-release-arm64-tests-wk2",
-                    "builderNames": ["Apple-iOS-16-Simulator-Release-arm64-WK2-Tests"]
                   },
                   { "type": "Triggerable", "name": "ios-simulator-16-release-gpuprocess-tests-wk2",
                     "builderNames": ["Apple-iOS-16-Simulator-Release-GPUProcess-WK2-Tests"]

@@ -59,7 +59,6 @@ WebKitBuildbot = function()
         }},
         "Apple-iOS-16-Release-Build": {platform: Dashboard.Platform.iOS16Device, debug: false, builder: true, architecture: Buildbot.BuildArchitecture.SixtyFourBit},
         "Apple-iOS-16-Simulator-Release-Build": {platform: Dashboard.Platform.iOS16Simulator, debug: false, builder: true, architecture: Buildbot.BuildArchitecture.SixtyFourBit},
-        "Apple-iOS-16-Simulator-Release-arm64-WK2-Tests": {platform: Dashboard.Platform.iOS16Simulator, heading:"iOS Release (arm64)", debug: false, tester: true, testCategory: Buildbot.TestCategory.WebKit2},
         "Apple-iOS-16-Simulator-Release-WK2-Tests": {platform: Dashboard.Platform.iOS16Simulator, heading:"iOS Release", debug: false, tester: true, testCategory: Buildbot.TestCategory.WebKit2},
         "Apple-iOS-16-Simulator-Debug-Build": {platform: Dashboard.Platform.iOS16Simulator, debug: true, builder: true, architecture: Buildbot.BuildArchitecture.SixtyFourBit},
         "Apple-iOS-16-Simulator-Debug-WK2-Tests": {platform: Dashboard.Platform.iOS16Simulator, debug: true, heading:"iOS Debug", tester: true, testCategory: Buildbot.TestCategory.WebKit2},
