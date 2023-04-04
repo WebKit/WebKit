@@ -73,7 +73,6 @@ ins interfaceName=HTMLModElement
 kbd interfaceName=HTMLElement
 keygen interfaceName=HTMLUnknownElement
 label
-layer interfaceName=HTMLElement
 legend
 li interfaceName=HTMLLIElement
 link constructorNeedsCreatedByParser
@@ -91,7 +90,6 @@ nav interfaceName=HTMLElement
 nobr interfaceName=HTMLElement
 noembed interfaceName=HTMLElement
 noframes interfaceName=HTMLElement
-nolayer interfaceName=HTMLElement
 object constructorNeedsFormElement
 ol interfaceName=HTMLOListElement
 optgroup interfaceName=HTMLOptGroupElement
