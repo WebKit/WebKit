@@ -632,7 +632,7 @@ WebPageProxy::~WebPageProxy()
 #endif
 
 #if PLATFORM(MACCATALYST)
-    EndowmentStateTracker::singleton().removeClient(*this);
+    EndowmentStateTracker::singleton().removeClient(internals());
 #endif
     
     for (auto& callback : m_nextActivityStateChangeCallbacks)
@@ -10454,7 +10454,7 @@ void WebPageProxy::updatePlayingMediaDidChange(MediaProducerMediaStateFlags newS
     // the EndowmentStateTracker to get notifications when the application is no longer
     // user-facing, so that we can appropriately suspend all media playback.
     if (!m_isListeningForUserFacingStateChangeNotification) {
-        EndowmentStateTracker::singleton().addClient(*this);
+        EndowmentStateTracker::singleton().addClient(internals());
         m_isListeningForUserFacingStateChangeNotification = true;
     }
 #endif
