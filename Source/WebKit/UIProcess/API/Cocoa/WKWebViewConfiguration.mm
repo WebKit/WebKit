@@ -651,6 +651,10 @@ static NSString *defaultApplicationNameForUserAgent()
     return static_cast<WebKit::WebURLSchemeHandlerCocoa*>(handler.get())->apiHandler();
 }
 
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/WKWebViewConfigurationAdditions.mm>
+#endif
+
 #if PLATFORM(IOS_FAMILY)
 - (BOOL)limitsNavigationsToAppBoundDomains
 {
