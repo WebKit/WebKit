@@ -32,6 +32,7 @@
 #include "ScopedActiveMessageReceiveQueue.h"
 #include "ScopedRenderingResourcesRequest.h"
 #include <WebCore/ImageBuffer.h>
+#include <wtf/Lock.h>
 
 namespace WebKit {
 
@@ -79,7 +80,8 @@ struct RemoteSerializedImageBuffer : public ThreadSafeRefCounted<RemoteSerialize
         , m_info(info)
     { }
 
-    std::unique_ptr<WebCore::ImageBufferBackend> m_backend;
+    Lock m_lock;
+    std::unique_ptr<WebCore::ImageBufferBackend> m_backend WTF_GUARDED_BY_LOCK(m_lock);
     WebCore::ImageBufferBackend::Info m_info;
 };
 
