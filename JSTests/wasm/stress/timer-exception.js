@@ -1,4 +1,4 @@
-//@ runDefault("--watchdog=100", "--watchdog-exception-ok")
+//@ requireOptions("--watchdog=100", "--watchdog-exception-ok")
 (async function () {
   let bytes = readFile('./resources/large.wasm', 'binary');
   let x = await WebAssembly.instantiate(bytes, {
