@@ -62,12 +62,14 @@ namespace WebCore {
 static NSMutableArray<NSString*>* cameraCaptureDeviceTypes()
 {
     ASSERT(isMainThread());
-    NSMutableArray<NSString*>* deviceTypes = [[NSMutableArray alloc] initWithArray:
-        @[AVCaptureDeviceTypeBuiltInWideAngleCamera,
-          AVCaptureDeviceTypeBuiltInTelephotoCamera,
-          AVCaptureDeviceTypeBuiltInUltraWideCamera,
-        ]
-    ];
+    NSMutableArray<NSString*>* deviceTypes = [[NSMutableArray alloc] initWithCapacity:7];
+
+    if (PAL::canLoad_AVFoundation_AVCaptureDeviceTypeBuiltInWideAngleCamera())
+        [deviceTypes addObject:AVCaptureDeviceTypeBuiltInWideAngleCamera];
+    if (PAL::canLoad_AVFoundation_AVCaptureDeviceTypeBuiltInTelephotoCamera())
+        [deviceTypes addObject:AVCaptureDeviceTypeBuiltInTelephotoCamera];
+    if (PAL::canLoad_AVFoundation_AVCaptureDeviceTypeBuiltInUltraWideCamera())
+        [deviceTypes addObject:AVCaptureDeviceTypeBuiltInUltraWideCamera];
     if (PAL::canLoad_AVFoundation_AVCaptureDeviceTypeDeskViewCamera())
         [deviceTypes addObject:AVCaptureDeviceTypeDeskViewCamera];
     if (PAL::canLoad_AVFoundation_AVCaptureDeviceTypeBuiltInDualWideCamera())
