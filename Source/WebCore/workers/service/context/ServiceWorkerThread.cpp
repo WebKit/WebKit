@@ -246,6 +246,9 @@ void ServiceWorkerThread::queueTaskToFirePushEvent(std::optional<Vector<uint8_t>
             }
 
             bool showedNotification = !serviceWorkerGlobalScope->hasPendingSilentPushEvent();
+            serviceWorkerGlobalScope->setHasPendingSilentPushEvent(false);
+            if (!showedNotification)
+                serviceWorkerGlobalScope->addConsoleMessage(MessageSource::Storage, MessageLevel::Error, "Push event ended without showing any notification may trigger removal of the push subscription."_s, 0);
             bool success = !hasRejectedAnyPromise && showedNotification;
 
             RELEASE_LOG_ERROR_IF(!success, ServiceWorker, "ServiceWorkerThread::queueTaskToFirePushEvent failed to process push event (rejectedPromise = %d, showedNotification = %d)", hasRejectedAnyPromise, showedNotification);

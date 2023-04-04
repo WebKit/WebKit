@@ -1916,6 +1916,12 @@ void NetworkProcessProxy::openWindowFromServiceWorker(PAL::SessionID sessionID, 
     callback(std::nullopt);
 }
 
+void NetworkProcessProxy::reportConsoleMessage(PAL::SessionID sessionID, const URL& scriptURL, const WebCore::SecurityOriginData& clientOrigin, MessageSource source, MessageLevel level, const String& message, unsigned long requestIdentifier)
+{
+    if (auto* store = websiteDataStoreFromSessionID(sessionID))
+        store->reportServiceWorkerConsoleMessage(scriptURL, clientOrigin, source, level, message, requestIdentifier);
+}
+
 void NetworkProcessProxy::navigateServiceWorkerClient(WebCore::FrameIdentifier frameIdentifier, WebCore::ScriptExecutionContextIdentifier documentIdentifier, const URL& url, CompletionHandler<void(std::optional<WebCore::PageIdentifier>, std::optional<WebCore::FrameIdentifier>)>&& callback)
 {
     auto process = WebProcessProxy::processForIdentifier(documentIdentifier.processIdentifier());

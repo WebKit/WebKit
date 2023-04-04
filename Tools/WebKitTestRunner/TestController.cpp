@@ -2481,6 +2481,11 @@ void TestController::downloadDidFail(WKDownloadRef, WKErrorRef error)
     m_currentInvocation->notifyDownloadDone();
 }
 
+void TestController::receivedServiceWorkerConsoleMessage(const String& message)
+{
+    m_currentInvocation->outputText(makeString("Received ServiceWorker Console Message: ", message, "\n"));
+}
+
 void TestController::downloadDidReceiveAuthenticationChallenge(WKDownloadRef, WKAuthenticationChallengeRef authenticationChallenge, const void *clientInfo)
 {
     static_cast<TestController*>(const_cast<void*>(clientInfo))->didReceiveAuthenticationChallenge(nullptr, authenticationChallenge);

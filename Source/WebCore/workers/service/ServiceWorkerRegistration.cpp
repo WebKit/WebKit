@@ -303,9 +303,6 @@ void ServiceWorkerRegistration::showNotification(ScriptExecutionContext& context
         return;
     }
 
-    if (context.isServiceWorkerGlobalScope())
-        downcast<ServiceWorkerGlobalScope>(context).setHasPendingSilentPushEvent(false);
-
     auto notificationResult = Notification::createForServiceWorker(context, WTFMove(title), WTFMove(options), m_registrationData.scopeURL);
     if (notificationResult.hasException()) {
         RELEASE_LOG_ERROR(Push, "Cannot show notification from ServiceWorker: Creating Notification had an exception");
@@ -319,6 +316,12 @@ void ServiceWorkerRegistration::showNotification(ScriptExecutionContext& context
             auto& jsPromise = *JSC::jsCast<JSC::JSPromise*>(promise->promise());
             pushEvent->waitUntil(DOMPromise::create(globalObject, jsPromise));
         }
+
+        if (!serviceWorkerGlobalScope->hasPendingSilentPushEvent() && serviceWorkerGlobalScope->didFirePushEventRecently())
+            serviceWorkerGlobalScope->addConsoleMessage(MessageSource::Storage, MessageLevel::Warning, "showNotification was called outside of any push event lifetime. PushEvent.waitUntil can be used to extend the push event lifetime as necessary."_s, 0);
+        else
+            serviceWorkerGlobalScope->setHasPendingSilentPushEvent(false);
+
     }
 
     auto notification = notificationResult.releaseReturnValue();

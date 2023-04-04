@@ -1323,6 +1323,10 @@ imported/w3c/web-platform-tests/notifications/idlharness.https.any.serviceworker
 imported/w3c/web-platform-tests/notifications/idlharness.https.any.worker.html [ Skip ]
 http/tests/workers/service/getnotifications-stop.html [ Skip ]
 http/tests/workers/service/getnotifications.html [ Skip ]
+http/wpt/service-workers/push-console-messages-no-showNotification.https.html [ Skip ]
+http/wpt/service-workers/push-console-messages-showNotification-async.https.html [ Skip ]
+http/wpt/service-workers/push-console-messages-showNotification-late.https.html [ Skip ]
+http/wpt/service-workers/push-console-messages-showNotification-sync.https.html [ Skip ]
 
 http/tests/media/fairplay [ Skip ]
 

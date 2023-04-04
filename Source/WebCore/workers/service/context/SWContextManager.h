@@ -86,6 +86,8 @@ public:
         virtual void deref() const = 0;
         virtual void stop() = 0;
 
+        virtual void reportConsoleMessage(ServiceWorkerIdentifier, MessageSource, MessageLevel, const String& message, unsigned long requestIdentifier) = 0;
+
         bool isClosed() const { return m_isClosed; }
 
     protected:

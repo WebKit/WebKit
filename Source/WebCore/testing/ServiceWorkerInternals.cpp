@@ -208,6 +208,16 @@ void ServiceWorkerInternals::setAsInspected(bool isInspected)
     SWContextManager::singleton().setAsInspected(m_identifier, isInspected);
 }
 
+void ServiceWorkerInternals::enableConsoleMessageReporting(ScriptExecutionContext& context)
+{
+    downcast<ServiceWorkerGlobalScope>(context).enableConsoleMessageReporting();
+}
+
+void ServiceWorkerInternals:: logReportedConsoleMessage(ScriptExecutionContext& context, const String& value)
+{
+    downcast<ServiceWorkerGlobalScope>(context).addConsoleMessage(MessageSource::Storage, MessageLevel::Info, value, 0);
+}
+
 } // namespace WebCore
 
 #endif

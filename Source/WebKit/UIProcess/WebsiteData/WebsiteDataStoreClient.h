@@ -59,6 +59,9 @@ public:
     {
         completionHandler(nullptr);
     }
+    virtual void reportServiceWorkerConsoleMessage(const URL&, const WebCore::SecurityOriginData&, MessageSource, MessageLevel, const String&, unsigned long)
+    {
+    }
 
     virtual bool showNotification(const WebCore::NotificationData&)
     {

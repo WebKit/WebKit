@@ -39,6 +39,7 @@
 #include "NotificationEvent.h"
 #include "PushEvent.h"
 #include "SWContextManager.h"
+#include "SWServer.h"
 #include "ServiceWorker.h"
 #include "ServiceWorkerClient.h"
 #include "ServiceWorkerClients.h"
@@ -87,6 +88,7 @@ void ServiceWorkerGlobalScope::dispatchPushEvent(PushEvent& pushEvent)
 {
     ASSERT(!m_pushEvent);
     m_pushEvent = &pushEvent;
+    m_lastPushEventTime = MonotonicTime::now();
     dispatchEvent(pushEvent);
     m_pushEvent = nullptr;
 }
@@ -216,6 +218,22 @@ void ServiceWorkerGlobalScope::recordUserGesture()
 {
     m_isProcessingUserGesture = true;
     m_userGestureTimer.startOneShot(userGestureLifetime);
+}
+
+bool ServiceWorkerGlobalScope::didFirePushEventRecently() const
+{
+    return MonotonicTime::now() <= m_lastPushEventTime + SWServer::defaultTerminationDelay;
+}
+
+void ServiceWorkerGlobalScope::addConsoleMessage(MessageSource source, MessageLevel level, const String& message, unsigned long requestIdentifier)
+{
+    if (m_consoleMessageReportingEnabled) {
+        callOnMainThread([threadIdentifier = thread().identifier(), source, level, message = message.isolatedCopy(), requestIdentifier] {
+            if (auto* connection = SWContextManager::singleton().connection())
+                connection->reportConsoleMessage(threadIdentifier, source, level, message, requestIdentifier);
+        });
+    }
+    WorkerGlobalScope::addConsoleMessage(source, level, message, requestIdentifier);
 }
 
 } // namespace WebCore

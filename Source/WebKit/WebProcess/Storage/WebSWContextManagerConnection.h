@@ -94,6 +94,7 @@ private:
     void setAsInspected(WebCore::ServiceWorkerIdentifier, bool) final;
     void openWindow(WebCore::ServiceWorkerIdentifier, const URL&, OpenWindowCallback&&) final;
     void stop() final;
+    void reportConsoleMessage(WebCore::ServiceWorkerIdentifier, MessageSource, MessageLevel, const String& message, unsigned long requestIdentifier) final;
 
     // IPC messages.
     void updatePreferencesStore(WebPreferencesStore&&);

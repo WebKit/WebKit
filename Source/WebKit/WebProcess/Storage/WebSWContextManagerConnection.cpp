@@ -546,6 +546,11 @@ void WebSWContextManagerConnection::setAsInspected(WebCore::ServiceWorkerIdentif
     m_connectionToNetworkProcess->send(Messages::WebSWServerToContextConnection::SetAsInspected { identifier, isInspected }, 0);
 }
 
+void WebSWContextManagerConnection::reportConsoleMessage(WebCore::ServiceWorkerIdentifier identifier, MessageSource source, MessageLevel level, const String& message, unsigned long requestIdentifier)
+{
+    m_connectionToNetworkProcess->send(Messages::WebSWServerToContextConnection::ReportConsoleMessage { identifier, source, level, message, requestIdentifier }, 0);
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(SERVICE_WORKER)

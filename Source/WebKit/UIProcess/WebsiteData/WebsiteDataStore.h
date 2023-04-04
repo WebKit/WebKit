@@ -426,6 +426,7 @@ public:
     void didDestroyServiceWorkerNotification(const UUID& notificationID);
 
     void openWindowFromServiceWorker(const String& urlString, const WebCore::SecurityOriginData& serviceWorkerOrigin, CompletionHandler<void(std::optional<WebCore::PageIdentifier>)>&&);
+    void reportServiceWorkerConsoleMessage(const URL&, const WebCore::SecurityOriginData&, MessageSource,  MessageLevel, const String& message, unsigned long requestIdentifier);
 
     void workerUpdatedAppBadge(const WebCore::SecurityOriginData&, std::optional<uint64_t>);
 

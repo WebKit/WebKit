@@ -417,6 +417,8 @@ public:
     WKRetainPtr<WKStringRef> lastUpdatedBackgroundFetchIdentifier() const;
     WKRetainPtr<WKStringRef> backgroundFetchState(WKStringRef);
 
+    void receivedServiceWorkerConsoleMessage(const String&);
+
 private:
     WKRetainPtr<WKPageConfigurationRef> generatePageConfiguration(const TestOptions&);
     WKRetainPtr<WKContextConfigurationRef> generateContextConfiguration(const TestOptions&) const;

@@ -1680,6 +1680,10 @@ webkit.org/b/253343 [ Ventura+ ] http/tests/workers/service/shownotification-all
 [ Ventura+ ] imported/w3c/web-platform-tests/notifications/idlharness.https.any.worker.html [ Pass ]
 [ Ventura+ ] http/tests/workers/service/getnotifications-stop.html [ Pass ]
 [ Ventura+ ] http/tests/workers/service/getnotifications.html [ Pass ]
+[ Ventura+ ] http/wpt/service-workers/push-console-messages-no-showNotification.https.html [ Pass ]
+[ Ventura+ ] http/wpt/service-workers/push-console-messages-showNotification-async.https.html [ Pass ]
+[ Ventura+ ] http/wpt/service-workers/push-console-messages-showNotification-late.https.html [ Pass ]
+[ Ventura+ ] http/wpt/service-workers/push-console-messages-showNotification-sync.https.html [ Pass ]
 
 webkit.org/b/242164 [ Debug ] imported/w3c/web-platform-tests/service-workers/service-worker/navigation-timing.https.html [ Failure ]
 

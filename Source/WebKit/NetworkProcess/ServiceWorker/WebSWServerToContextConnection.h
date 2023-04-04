@@ -109,6 +109,7 @@ private:
     void connectionIsNoLongerNeeded() final;
     void terminateDueToUnresponsiveness() final;
     void openWindow(WebCore::ServiceWorkerIdentifier, const URL&, OpenWindowCallback&&) final;
+    void reportConsoleMessage(WebCore::ServiceWorkerIdentifier, MessageSource, MessageLevel, const String& message, unsigned long requestIdentifier);
 
     void connectionClosed();
 

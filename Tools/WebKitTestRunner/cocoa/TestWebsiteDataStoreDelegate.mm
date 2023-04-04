@@ -95,6 +95,10 @@
     _shouldAllowBackgroundFetchPermission = shouldAllowBackgroundFetchPermission;
 }
 
+- (void)websiteDataStore:(WKWebsiteDataStore *)dataStore reportServiceWorkerConsoleMessage:(NSString *)message
+{
+    WTR::TestController::singleton().receivedServiceWorkerConsoleMessage(message);
+}
 
 - (void)requestBackgroundFetchPermission:(NSURL *)mainFrameURL frameOrigin:(NSURL *)frameURL  decisionHandler:(void (^)(bool isGranted))decisionHandler
 {
