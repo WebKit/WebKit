@@ -603,6 +603,7 @@ void WebProcessProxy::shutDown()
     m_activityForHoldingLockedFiles = nullptr;
     m_audibleMediaActivity = std::nullopt;
     m_mediaStreamingActivity = std::nullopt;
+    m_throttler.didDisconnectFromProcess();
 
     for (auto& page : pages()) {
         if (page)
