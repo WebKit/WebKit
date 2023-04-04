@@ -1144,6 +1144,8 @@ bool RenderLayerBacking::updateConfiguration(const RenderLayer* compositingAnces
         if (m_graphicsLayer->layerMode() == GraphicsLayer::LayerMode::LayerHostingContextId
 #if ENABLE(GPU_PROCESS)
             && videoElement.document().settings().blockMediaLayerRehostingInWebContentProcess()
+            && videoElement.document().page()
+            && videoElement.document().page()->chrome().client().isUsingUISideCompositing()
 #endif
             )
             m_graphicsLayer->setContentsToVideoElement(videoElement, GraphicsLayer::ContentsLayerPurpose::Media);

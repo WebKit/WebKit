@@ -95,7 +95,7 @@ public:
     void setIsFullscreen(bool flag) { m_isFullscreen = flag; }
 
     RetainPtr<CALayer> rootLayer() const { return m_rootLayer; }
-    void setRootLayer(RetainPtr<CALayer> layer) { m_rootLayer = layer; }
+    void setRootLayer(RetainPtr<CALayer>);
 
 private:
     // VideoFullscreenModelClient

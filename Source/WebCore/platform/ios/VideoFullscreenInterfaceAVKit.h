@@ -34,6 +34,7 @@
 #include "PlatformImage.h"
 #include "PlatformLayer.h"
 #include "PlaybackSessionInterfaceAVKit.h"
+#include "VideoFullscreenCaptions.h"
 #include "VideoFullscreenModel.h"
 #include <objc/objc.h>
 #include <wtf/Forward.h>
@@ -64,6 +65,7 @@ class VideoFullscreenChangeObserver;
 class VideoFullscreenInterfaceAVKit final
     : public VideoFullscreenModelClient
     , public PlaybackSessionModelClient
+    , public VideoFullscreenCaptions
     , public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<VideoFullscreenInterfaceAVKit, WTF::DestructionThread::MainRunLoop> {
 public:
     WEBCORE_EXPORT static Ref<VideoFullscreenInterfaceAVKit> create(PlaybackSessionInterfaceAVKit&);
@@ -163,15 +165,6 @@ public:
     WEBCORE_EXPORT AVPlayerViewController *avPlayerViewController() const;
     WebAVPlayerController *playerController() const;
 
-    WEBCORE_EXPORT void textTrackRepresentationUpdate(PlatformImagePtr textTrack);
-    WEBCORE_EXPORT void textTrackRepresentationSetContentsScale(float scale);
-    WEBCORE_EXPORT void textTrackRepresentationSetHidden(bool hidden);
-
-    WEBCORE_EXPORT CALayer* captionsLayer();
-    WEBCORE_EXPORT void setCaptionsFrame(const CGRect&);
-    WEBCORE_EXPORT void setupCaptionsLayer(CALayer* parent, const WebCore::FloatSize&);
-    WEBCORE_EXPORT void removeCaptionsLayer();
-
 private:
     WEBCORE_EXPORT VideoFullscreenInterfaceAVKit(PlaybackSessionInterfaceAVKit&);
 
@@ -246,8 +239,6 @@ private:
     bool m_shouldIgnoreAVKitCallbackAboutExitFullscreenReason { false };
     bool m_enteringPictureInPicture { false };
     bool m_exitingPictureInPicture { false };
-
-    RetainPtr<CALayer> m_captionsLayer;
 };
 
 }
