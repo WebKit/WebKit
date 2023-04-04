@@ -28,6 +28,7 @@
 #include <JavaScriptCore/GenericTypedArrayViewInlines.h>
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/JSGenericTypedArrayViewInlines.h>
+#include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {
 
@@ -44,22 +45,21 @@ RefPtr<Uint8Array> TextEncoderStreamEncoder::encode(const String& input)
     for (size_t cptr = 0; cptr < view.length(); cptr++) {
         // https://encoding.spec.whatwg.org/#convert-code-unit-to-scalar-value
         auto token = view[cptr];
-        if (m_pendingHighSurrogate) {
-            auto highSurrogate = *m_pendingHighSurrogate;
-            m_pendingHighSurrogate = std::nullopt;
-            if (token >= 0xDC00 && token <= 0xDFFF) {
-                auto codePoint = 0x10000 + ((highSurrogate - 0xD800) << 10) + (token - 0xDC00);
+        if (m_pendingLeadSurrogate) {
+            auto leadSurrogate = *std::exchange(m_pendingLeadSurrogate, std::nullopt);
+            if (U16_IS_TRAIL(token)) {
+                auto codePoint = U16_GET_SUPPLEMENTARY(leadSurrogate, token);
                 U8_APPEND_UNSAFE(bytes.data(), bytesWritten, codePoint);
                 continue;
             }
-            U8_APPEND_UNSAFE(bytes.data(), bytesWritten, 0XFFFD);
+            U8_APPEND_UNSAFE(bytes.data(), bytesWritten, replacementCharacter);
         }
-        if (token >= 0xD800 && token <= 0xDBFF) {
-            m_pendingHighSurrogate = token;
+        if (U16_IS_LEAD(token)) {
+            m_pendingLeadSurrogate = token;
             continue;
         }
-        if (token >= 0xDC00 && token <= 0xDFFF) {
-            U8_APPEND_UNSAFE(bytes.data(), bytesWritten, 0XFFFD);
+        if (U16_IS_TRAIL(token)) {
+            U8_APPEND_UNSAFE(bytes.data(), bytesWritten, replacementCharacter);
             continue;
         }
         U8_APPEND_UNSAFE(bytes.data(), bytesWritten, token);
@@ -74,7 +74,7 @@ RefPtr<Uint8Array> TextEncoderStreamEncoder::encode(const String& input)
 
 RefPtr<Uint8Array> TextEncoderStreamEncoder::flush()
 {
-    if (!m_pendingHighSurrogate)
+    if (!m_pendingLeadSurrogate)
         return nullptr;
 
     constexpr uint8_t byteSequence[] = { 0xEF, 0xBF, 0xBD };

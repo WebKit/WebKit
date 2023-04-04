@@ -130,11 +130,11 @@ inline unsigned advanceStringUnicode(String s, unsigned length, unsigned current
         return currentIndex + 1;
 
     UChar first = s[currentIndex];
-    if (first < 0xD800 || first > 0xDBFF)
+    if (!U16_IS_LEAD(first))
         return currentIndex + 1;
 
     UChar second = s[currentIndex + 1];
-    if (second < 0xDC00 || second > 0xDFFF)
+    if (!U16_IS_TRAIL(second))
         return currentIndex + 1;
 
     return currentIndex + 2;

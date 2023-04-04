@@ -1573,7 +1573,7 @@ Expected<size_t, UTF8ConversionError> StringImpl::utf8ForCharactersIntoBuffer(co
             // Conversion fails when there is an unpaired surrogate.
             // Put replacement character (U+FFFD) instead of the unpaired surrogate.
             if (result != ConversionResult::Success) {
-                ASSERT((0xD800 <= *characters && *characters <= 0xDFFF));
+                ASSERT(U16_IS_SURROGATE(*characters));
                 // There should be room left, since one UChar hasn't been converted.
                 ASSERT((buffer + 3) <= bufferEnd);
                 putUTF8Triple(buffer, replacementCharacter);
@@ -1593,7 +1593,7 @@ Expected<size_t, UTF8ConversionError> StringImpl::utf8ForCharactersIntoBuffer(co
             if (strict)
                 return makeUnexpected(UTF8ConversionError::SourceExhausted);
             ASSERT(characters + 1 == charactersEnd);
-            ASSERT((0xD800 <= *characters && *characters <= 0xDFFF));
+            ASSERT(U16_IS_SURROGATE(*characters));
             putUTF8Triple(buffer, *characters);
                 break;
         case ConversionResult::TargetExhausted:

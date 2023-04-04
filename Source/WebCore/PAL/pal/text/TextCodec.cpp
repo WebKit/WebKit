@@ -26,6 +26,7 @@
 
 #include "config.h"
 #include "TextCodec.h"
+#include <wtf/unicode/CharacterNames.h>
 
 #include <array>
 #include <cstdio>
@@ -39,8 +40,8 @@ int TextCodec::getUnencodableReplacement(UChar32 codePoint, UnencodableHandling 
     // The Encoding Standard doesn't have surrogate code points in the input, but that would require
     // scanning and potentially manipulating inputs ahead of time. Instead handle them at the last
     // possible point.
-    if (codePoint >= 0xD800 && codePoint <= 0xDFFF)
-        codePoint = 0xFFFD;
+    if (U_IS_SURROGATE(codePoint))
+        codePoint = replacementCharacter;
 
     switch (handling) {
     case UnencodableHandling::Entities:
