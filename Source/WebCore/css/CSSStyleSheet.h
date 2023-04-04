@@ -47,7 +47,10 @@ class Document;
 class Element;
 class WeakPtrImplWithEventTargetData;
 class ShadowRoot;
+class StyleRule;
+class StyleRuleBase;
 class StyleRuleKeyframes;
+class StyleRuleWithNesting;
 class StyleSheetContents;
 class TreeScope;
 
@@ -121,6 +124,7 @@ public:
 
     bool hadRulesMutation() const { return m_mutatedRules; }
     void clearHadRulesMutation() { m_mutatedRules = false; }
+    RefPtr<StyleRuleWithNesting> prepareChildStyleRuleForNesting(StyleRule&&);
 
     enum RuleMutationType { OtherMutation, RuleInsertion, KeyframesRuleMutation, RuleReplace };
     enum WhetherContentsWereClonedForMutation { ContentsWereNotClonedForMutation = 0, ContentsWereClonedForMutation };
