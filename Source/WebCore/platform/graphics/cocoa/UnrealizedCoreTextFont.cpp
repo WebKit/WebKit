@@ -76,13 +76,11 @@ UnrealizedCoreTextFont::operator bool() const
     });
 }
 
-void UnrealizedCoreTextFont::addAttributesForOpticalSizing(CFMutableDictionaryRef attributes, VariationsMap& variationsToBeApplied, OpticalSizingType opticalSizingType, CGFloat size)
+void UnrealizedCoreTextFont::addAttributesForOpticalSizing(CFMutableDictionaryRef attributes, VariationsMap& variationsToBeApplied, const OpticalSizingType& opticalSizingType, CGFloat size)
 {
-    switch (opticalSizingType) {
-    case OpticalSizingType::None:
+    WTF::switchOn(opticalSizingType, [&](OpticalSizingTypes::None) {
         CFDictionarySetValue(attributes, kCTFontOpticalSizeAttribute, CFSTR("none"));
-        break;
-    case OpticalSizingType::JustVariation:
+    }, [&](OpticalSizingTypes::JustVariation) {
 #if USE(VARIABLE_OPTICAL_SIZING)
         // FIXME: https://bugs.webkit.org/show_bug.cgi?id=252592 We should never be enabling just the opsz variation without also enabling trak.
         // We should delete this and use the OpticalSizingType::Everything path instead.
@@ -91,11 +89,9 @@ void UnrealizedCoreTextFont::addAttributesForOpticalSizing(CFMutableDictionaryRe
         UNUSED_PARAM(variationsToBeApplied);
         UNUSED_PARAM(size);
 #endif
-        break;
-    case OpticalSizingType::Everything:
+    }, [&](OpticalSizingTypes::Everything) {
         CFDictionarySetValue(attributes, kCTFontOpticalSizeAttribute, CFSTR("auto"));
-        break;
-    }
+    });
 }
 
 static inline void appendOpenTypeFeature(CFMutableArrayRef features, const FontFeature& feature)
@@ -215,7 +211,7 @@ void UnrealizedCoreTextFont::applyVariations(CFMutableDictionaryRef attributes, 
     CFDictionarySetValue(attributes, kCTFontVariationAttribute, variationDictionary.get());
 }
 
-void UnrealizedCoreTextFont::modifyFromContext(CFMutableDictionaryRef attributes, const FontDescription& fontDescription, const FontCreationContext& fontCreationContext, ApplyTraitsVariations applyTraitsVariations, float weight, float width, float slope, CGFloat size, OpticalSizingType opticalSizingType)
+void UnrealizedCoreTextFont::modifyFromContext(CFMutableDictionaryRef attributes, const FontDescription& fontDescription, const FontCreationContext& fontCreationContext, ApplyTraitsVariations applyTraitsVariations, float weight, float width, float slope, CGFloat size, const OpticalSizingType& opticalSizingType)
 {
     auto fontStyleAxis = fontDescription.fontStyleAxis();
     const auto& variations = fontDescription.variationSettings();
@@ -306,14 +302,14 @@ void UnrealizedCoreTextFont::modifyFromContext(const FontDescription& fontDescri
 
     m_size = getSize();
 
-    if (fontDescription.textRenderingMode() == TextRenderingMode::OptimizeLegibility)
-        m_opticalSizingType = OpticalSizingType::Everything;
-    else if (fontDescription.opticalSizing() == FontOpticalSizing::Disabled)
-        m_opticalSizingType = OpticalSizingType::None;
-    else
-        m_opticalSizingType = OpticalSizingType::JustVariation;
-
     m_variationSettings = fontDescription.variationSettings();
+
+    if (fontDescription.textRenderingMode() == TextRenderingMode::OptimizeLegibility)
+        m_opticalSizingType = OpticalSizingTypes::Everything { };
+    else if (fontDescription.opticalSizing() == FontOpticalSizing::Disabled)
+        m_opticalSizingType = OpticalSizingTypes::None { };
+    else
+        m_opticalSizingType = OpticalSizingTypes::JustVariation { };
 
     modify([&](CFMutableDictionaryRef attributes) {
         modifyFromContext(attributes, fontDescription, fontCreationContext, m_applyTraitsVariations, m_weight, m_width, m_slope, m_size, m_opticalSizingType);
