@@ -78,7 +78,6 @@ struct WebKit::EditorState {
     uint64_t candidateRequestStartPosition;
     String paragraphContextForCandidateRequest;
     String stringForCandidateRequest;
-    Vector<WebCore::FloatRect> evasionRectsAroundSelection;
 #endif
 #if PLATFORM(GTK) || PLATFORM(WPE)
     String surroundingContext;
