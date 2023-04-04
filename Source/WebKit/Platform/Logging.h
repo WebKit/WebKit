@@ -98,6 +98,7 @@ extern "C" {
     M(Sandbox) \
     M(ScrollAnimations) \
     M(Scrolling) \
+    M(SecureCoding) \
     M(Selection) \
     M(ServiceWorker) \
     M(SessionState) \

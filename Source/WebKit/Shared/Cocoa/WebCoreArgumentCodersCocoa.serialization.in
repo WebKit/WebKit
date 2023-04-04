@@ -43,7 +43,7 @@ header: <WebCore/DictionaryPopupInfo.h>
 
 header: <WebCore/ResourceRequest.h>
 [CustomHeader] struct WebCore::ResourceRequestPlatformData {
-    RetainPtr<NSURLRequest> m_urlRequest;
+    [SecureCodingAllowed=[NSMutableURLRequest.class, NSURLRequest.class]] RetainPtr<NSURLRequest> m_urlRequest;
     std::optional<bool> m_isAppInitiated;
     std::optional<WebCore::ResourceRequestRequester> m_requester
 };

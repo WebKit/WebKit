@@ -32,5 +32,6 @@
 #else
 @interface NSKeyedUnarchiver (WebKit)
 + (id)_strictlyUnarchivedObjectOfClasses:(NSSet<Class> *)classes fromData:(NSData *)data error:(NSError **)error;
+- (void)_enableStrictSecureDecodingMode;
 @end
 #endif
