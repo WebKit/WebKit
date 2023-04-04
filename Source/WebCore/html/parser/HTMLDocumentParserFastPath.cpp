@@ -574,11 +574,11 @@ private:
         return CharSpan { m_attributeNameBuffer.data(), static_cast<size_t>(m_attributeNameBuffer.size()) };
     }
 
-    std::variant<LCharSpan, UCharSpan> scanAttributeValue()
+    AtomString scanAttributeValue()
     {
-        CharSpan result;
         skipWhile<isHTMLSpace>(m_parsingBuffer);
         auto* start = m_parsingBuffer.position();
+        size_t length = 0;
         if (m_parsingBuffer.hasCharactersRemaining() && isQuoteCharacter(*m_parsingBuffer)) {
             auto quoteChar = m_parsingBuffer.consume();
             start = m_parsingBuffer.position();
@@ -589,33 +589,33 @@ private:
                 }
             }
             if (m_parsingBuffer.atEnd())
-                return didFail(HTMLFastPathResult::FailedParsingQuotedAttributeValue, LCharSpan { });
+                return didFail(HTMLFastPathResult::FailedParsingQuotedAttributeValue, emptyAtom());
 
-            result = CharSpan { start, static_cast<size_t>(m_parsingBuffer.position() - start) };
+            length = m_parsingBuffer.position() - start;
             if (m_parsingBuffer.consume() != quoteChar)
-                return didFail(HTMLFastPathResult::FailedParsingQuotedAttributeValue, LCharSpan { });
+                return didFail(HTMLFastPathResult::FailedParsingQuotedAttributeValue, emptyAtom());
         } else {
             skipWhile<isValidUnquotedAttributeValueChar>(m_parsingBuffer);
-            result = CharSpan { start, static_cast<size_t>(m_parsingBuffer.position() - start) };
+            length = m_parsingBuffer.position() - start;
             if (m_parsingBuffer.atEnd() || !isCharAfterUnquotedAttribute(*m_parsingBuffer))
-                return didFail(HTMLFastPathResult::FailedParsingUnquotedAttributeValue, LCharSpan { });
+                return didFail(HTMLFastPathResult::FailedParsingUnquotedAttributeValue, emptyAtom());
         }
-        return result;
+        return HTMLNameCache::makeAttributeValue({ start, length });
     }
 
     // Slow path for scanning an attribute value. Used for special cases such
     // as '&' and '\r'.
-    UCharSpan scanEscapedAttributeValue()
+    AtomString scanEscapedAttributeValue()
     {
         skipWhile<isHTMLSpace>(m_parsingBuffer);
         m_ucharBuffer.resize(0);
         if (UNLIKELY(!m_parsingBuffer.hasCharactersRemaining() || !isQuoteCharacter(*m_parsingBuffer)))
-            return didFail(HTMLFastPathResult::FailedParsingUnquotedEscapedAttributeValue, UCharSpan { });
+            return didFail(HTMLFastPathResult::FailedParsingUnquotedEscapedAttributeValue, emptyAtom());
 
         auto quoteChar = m_parsingBuffer.consume();
         if (m_parsingBuffer.hasCharactersRemaining() && *m_parsingBuffer != quoteChar) {
             if (m_parsingFailed)
-                return UCharSpan { };
+                return emptyAtom();
             auto c = *m_parsingBuffer;
             if (c == '&')
                 scanHTMLCharacterReference(m_ucharBuffer);
@@ -631,9 +631,9 @@ private:
             }
         }
         if (UNLIKELY(m_parsingBuffer.atEnd() || m_parsingBuffer.consume() != quoteChar))
-            return didFail(HTMLFastPathResult::FailedParsingQuotedEscapedAttributeValue, UCharSpan { });
+            return didFail(HTMLFastPathResult::FailedParsingQuotedEscapedAttributeValue, emptyAtom());
 
-        return UCharSpan { m_ucharBuffer.data(), m_ucharBuffer.size() };
+        return HTMLNameCache::makeAttributeValue({ m_ucharBuffer.data(), m_ucharBuffer.size() });
     }
 
     void scanHTMLCharacterReference(Vector<UChar>& out)
@@ -759,15 +759,6 @@ private:
         }
     }
 
-    static Attribute processAttribute(CharSpan nameSpan, std::variant<LCharSpan, UCharSpan> valueSpan)
-    {
-        auto name = HTMLNameCache::makeAttributeQualifiedName(nameSpan);
-        auto value = std::visit([](auto span) {
-            return HTMLNameCache::makeAttributeValue(span);
-        }, valueSpan);
-        return Attribute { WTFMove(name), WTFMove(value) };
-    }
-
     void parseAttributes(HTMLElement& parent)
     {
         ASSERT(m_attributeBuffer.isEmpty());
@@ -799,12 +790,12 @@ private:
             if (attributeName.size() == 2 && attributeName[0] == 'i' && attributeName[1] == 's')
                 return didFail(HTMLFastPathResult::FailedParsingAttributes);
             skipWhile<isHTMLSpace>(m_parsingBuffer);
-            std::variant<LCharSpan, UCharSpan> attributeValue;
+            AtomString attributeValue { emptyAtom() };
             if (skipExactly(m_parsingBuffer, '=')) {
                 attributeValue = scanAttributeValue();
                 skipWhile<isHTMLSpace>(m_parsingBuffer);
             }
-            auto attribute = processAttribute(attributeName, attributeValue);
+            Attribute attribute { HTMLNameCache::makeAttributeQualifiedName(attributeName), WTFMove(attributeValue) };
             m_attributeNames.append(attribute.localName().impl());
             m_attributeBuffer.append(WTFMove(attribute));
         }
