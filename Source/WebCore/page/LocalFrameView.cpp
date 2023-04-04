@@ -5814,7 +5814,7 @@ void LocalFrameView::didAddScrollbar(Scrollbar* scrollbar, ScrollbarOrientation 
     if (page && page->isMonitoringWheelEvents())
         scrollAnimator().setWheelEventTestMonitor(page->wheelEventTestMonitor());
     if (AXObjectCache* cache = axObjectCache())
-        cache->handleScrollbarUpdate(this);
+        cache->onScrollbarUpdate(this);
 }
 
 void LocalFrameView::willRemoveScrollbar(Scrollbar* scrollbar, ScrollbarOrientation orientation)
@@ -5822,7 +5822,7 @@ void LocalFrameView::willRemoveScrollbar(Scrollbar* scrollbar, ScrollbarOrientat
     ScrollableArea::willRemoveScrollbar(scrollbar, orientation);
     if (AXObjectCache* cache = axObjectCache()) {
         cache->remove(scrollbar);
-        cache->handleScrollbarUpdate(this);
+        cache->onScrollbarUpdate(this);
     }
 }
 

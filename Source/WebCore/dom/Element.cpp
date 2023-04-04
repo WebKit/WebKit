@@ -2174,6 +2174,9 @@ void Element::setElementAttribute(const QualifiedName& attributeName, Element* e
     setAttribute(attributeName, emptyAtom());
 
     explicitlySetAttrElementsMap().set(attributeName, Vector<WeakPtr<Element, WeakPtrImplWithEventTargetData>> { element });
+    
+    if (auto* cache = document().existingAXObjectCache())
+        cache->updateRelations(*this, attributeName);
 }
 
 std::optional<Vector<RefPtr<Element>>> Element::getElementsArrayAttribute(const QualifiedName& attributeName) const
@@ -2225,6 +2228,11 @@ void Element::setElementsArrayAttribute(const QualifiedName& attributeName, std:
         newElements.uncheckedAppend(element);
     }
     explicitlySetAttrElementsMap().set(attributeName, WTFMove(newElements));
+    
+    if (auto* cache = document().existingAXObjectCache()) {
+        for (auto element : elements.value())
+            cache->updateRelations(*this, attributeName);
+    }
 }
 
 void Element::classAttributeChanged(const AtomString& newClassString)

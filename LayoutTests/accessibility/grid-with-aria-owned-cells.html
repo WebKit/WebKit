@@ -171,26 +171,30 @@
 
 <script>
     if (window.accessibilityController) {
-        let output = "This tests that a grid can use aria-owns to establish parent-child relationships between its rows and cells, even when the cell elements are not descendants of the grid in the DOM hierarchy.\n";
+        window.jsTestIsAsync = true;
+        var output = "This tests that a grid can use aria-owns to establish parent-child relationships between its rows and cells, even when the cell elements are not descendants of the grid in the DOM hierarchy.\n";
+        var table, row1, cell_1_1, row3, cell_3_14, row5, cell_5_28;
+        setTimeout(function() {
+            table = accessibilityController.accessibleElementById("grid");
+            row1 = accessibilityController.accessibleElementById("row1");
+            cell_1_1 = table.cellForColumnAndRow(0, 0);
+            output += expect("row1.childAtIndex(0).isEqual(cell_1_1)", "true");
+            output += expect("cell_1_1.parentElement().isEqual(row1)", "true");
 
-        var table = accessibilityController.accessibleElementById("grid");
-        var row1 = accessibilityController.accessibleElementById("row1");
-        var cell_1_1 = table.cellForColumnAndRow(0, 0);
-        output += expect("row1.childAtIndex(0).isEqual(cell_1_1)", "true");
-        output += expect("cell_1_1.parentElement().isEqual(row1)", "true");
+            row3 = accessibilityController.accessibleElementById("row3");
+            cell_3_14 = table.cellForColumnAndRow(13, 2);
+            output += expect("row3.childAtIndex(13).isEqual(cell_3_14)", "true");
+            output += expect("cell_3_14.parentElement().isEqual(row3)", "true");
 
-        var row3 = accessibilityController.accessibleElementById("row3");
-        var cell_3_14 = table.cellForColumnAndRow(13, 2);
-        output += expect("row3.childAtIndex(13).isEqual(cell_3_14)", "true");
-        output += expect("cell_3_14.parentElement().isEqual(row3)", "true");
+            row5 = accessibilityController.accessibleElementById("row5");
+            cell_5_28 = table.cellForColumnAndRow(27, 4);
+            output += expect("row5.childAtIndex(27).isEqual(cell_5_28)", "true");
+            output += expect("cell_5_28.parentElement().isEqual(row5)", "true");
 
-        var row5 = accessibilityController.accessibleElementById("row5");
-        var cell_5_28 = table.cellForColumnAndRow(27, 4);
-        output += expect("row5.childAtIndex(27).isEqual(cell_5_28)", "true");
-        output += expect("cell_5_28.parentElement().isEqual(row5)", "true");
-
-        document.getElementById("content").style.visibility = "hidden";
-        debug(output);
+            document.getElementById("content").style.visibility = "hidden";
+            debug(output);
+            finishJSTest();
+        }, 0);
     }
 </script>
 </body>

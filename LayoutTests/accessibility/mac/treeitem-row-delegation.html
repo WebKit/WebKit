@@ -26,22 +26,29 @@
     description("This tests that a treeitem with a group that uses aria-owns will report its disclosed rows correctly.");
 
     if (window.accessibilityController) {
-       var tree = accessibilityController.accessibleElementById("tree");
-       var treeitem1 = tree.rowAtIndex(0);
-       var treeitem1_1 = treeitem1.disclosedRowAtIndex(0);
-       var treeitem1_2 = treeitem1.disclosedRowAtIndex(1);
-       var treeitem1_3 = treeitem1.disclosedRowAtIndex(4);
-       var treeitem1_2_1 = treeitem1_2.disclosedRowAtIndex(0);
-       var treeitem1_2_2 = treeitem1_2.disclosedRowAtIndex(1);
-       var treeitem2 = tree.rowAtIndex(6);
-       shouldBe("tree.childrenCount", "7");
-       shouldBeTrue("treeitem1.isEqual(accessibilityController.accessibleElementById('item-1'))");
-       shouldBeTrue("treeitem1_1.isEqual(accessibilityController.accessibleElementById('group1-item1'))");
-       shouldBeTrue("treeitem1_2.isEqual(accessibilityController.accessibleElementById('group1-item2'))");
-       shouldBeTrue("treeitem1_3.isEqual(accessibilityController.accessibleElementById('group1-item3'))");
-       shouldBeTrue("treeitem1_2_1.isEqual(accessibilityController.accessibleElementById('group2-item1'))");
-       shouldBeTrue("treeitem1_2_2.isEqual(accessibilityController.accessibleElementById('group2-item2'))");
-       shouldBeTrue("treeitem2.isEqual(accessibilityController.accessibleElementById('item-2'))");
+       window.jsTestIsAsync = true;
+       var output = "";
+       var tree, treeitem1, treeitem1_1, treeitem1_2, treeitem1_3, treeitem1_2_1, treeitem1_2_2, treeitem2;
+       setTimeout(function() {
+           tree = accessibilityController.accessibleElementById("tree");
+           treeitem1 = tree.rowAtIndex(0);
+           treeitem1_1 = treeitem1.disclosedRowAtIndex(0);
+           treeitem1_2 = treeitem1.disclosedRowAtIndex(1);
+           treeitem1_3 = treeitem1.disclosedRowAtIndex(4);
+           treeitem1_2_1 = treeitem1_2.disclosedRowAtIndex(0);
+           treeitem1_2_2 = treeitem1_2.disclosedRowAtIndex(1);
+           treeitem2 = tree.rowAtIndex(6);
+           output += expect("tree.childrenCount", "7");
+           output += expect("treeitem1.isEqual(accessibilityController.accessibleElementById('item-1'))", "true");
+           output += expect("treeitem1_1.isEqual(accessibilityController.accessibleElementById('group1-item1'))", "true");
+           output += expect("treeitem1_2.isEqual(accessibilityController.accessibleElementById('group1-item2'))", "true");
+           output += expect("treeitem1_3.isEqual(accessibilityController.accessibleElementById('group1-item3'))", "true");
+           output += expect("treeitem1_2_1.isEqual(accessibilityController.accessibleElementById('group2-item1'))", "true");
+           output += expect("treeitem1_2_2.isEqual(accessibilityController.accessibleElementById('group2-item2'))", "true");
+           output += expect("treeitem2.isEqual(accessibilityController.accessibleElementById('item-2'))", "true");
+           debug(output);
+           finishJSTest();
+        }, 0);
     }
 </script>
 <script src="../../resources/js-test-post.js"></script>

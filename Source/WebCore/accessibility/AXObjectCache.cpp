@@ -969,6 +969,8 @@ void AXObjectCache::remove(Widget* view)
     if (!view)
         return;
     remove(m_widgetObjectMapping.take(view));
+    if (auto* scrollView = dynamicDowncast<ScrollView>(view))
+        m_deferredScrollbarUpdateChangeList.remove(*scrollView);
 }
 
 AXID AXObjectCache::generateNewObjectID() const
@@ -1877,13 +1879,20 @@ void AXObjectCache::focusCurrentModal()
     }
 }
 
-void AXObjectCache::handleScrollbarUpdate(ScrollView* view)
+void AXObjectCache::onScrollbarUpdate(ScrollView* view)
 {
     if (!view)
         return;
-    
+
+    m_deferredScrollbarUpdateChangeList.add(*view);
+    if (!m_performCacheUpdateTimer.isActive())
+        m_performCacheUpdateTimer.startOneShot(0_s);
+}
+
+void AXObjectCache::handleScrollbarUpdate(ScrollView& view)
+{
     // We don't want to create a scroll view from this method, only update an existing one.
-    if (AccessibilityObject* scrollViewObject = get(view)) {
+    if (auto* scrollViewObject = get(&view)) {
         stopCachingComputedObjectAttributes();
         scrollViewObject->updateChildrenIfNecessary();
     }
@@ -3594,6 +3603,11 @@ void AXObjectCache::performDeferredCacheUpdate()
     });
     m_deferredMenuListChange.clear();
 
+    m_deferredScrollbarUpdateChangeList.forEach([this] (auto& scrollView) {
+        handleScrollbarUpdate(scrollView);
+    });
+    m_deferredScrollbarUpdateChangeList.clear();
+    
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     if (m_deferredRegenerateIsolatedTree) {
         if (auto tree = AXIsolatedTree::treeForPageID(m_pageID)) {
@@ -4008,18 +4022,50 @@ AXRelationType AXObjectCache::attributeToRelationType(const QualifiedName& attri
     return AXRelationType::None;
 }
 
+static bool validRelation(void* origin, void* target, AXRelationType relationType)
+{
+    if (!origin || !target || relationType == AXRelationType::None)
+        return false;
+    
+    if (origin == target && relationType != AXRelationType::LabelledBy)
+        return false;
+    
+    return true;
+}
+
 void AXObjectCache::addRelation(Element* origin, Element* target, AXRelationType relationType)
 {
-    if (!origin || !target || origin == target || relationType == AXRelationType::None) {
+    if (!validRelation(origin, target, relationType)) {
         ASSERT_NOT_REACHED();
         return;
     }
     addRelation(getOrCreate(origin), getOrCreate(target), relationType);
 }
 
+static bool relationCausesCycle(AccessibilityObject* origin, AccessibilityObject* target, AXRelationType relationType)
+{
+    // Validate that we're not creating an aria-owns cycle.
+    if (relationType == AXRelationType::OwnerFor) {
+        for (auto* verifyOrigin = origin; verifyOrigin; verifyOrigin = verifyOrigin->parentObject()) {
+            if (verifyOrigin == target)
+                return true;
+        }
+    } else if (relationType == AXRelationType::OwnedBy) {
+        for (auto* verifyTarget = target; verifyTarget; verifyTarget = verifyTarget->parentObject()) {
+            if (verifyTarget == origin)
+                return true;
+        }
+    }
+
+    return false;
+}
+
 void AXObjectCache::addRelation(AccessibilityObject* origin, AccessibilityObject* target, AXRelationType relationType, AddingSymmetricRelation addingSymmetricRelation)
 {
-    if (!origin || !target || origin == target || relationType == AXRelationType::None)
+    if (!validRelation(origin, target, relationType))
+        return;
+
+    if (relationCausesCycle(origin, target, relationType))
         return;
 
     auto relationsIterator = m_relations.find(origin->objectID());
@@ -4039,6 +4085,24 @@ void AXObjectCache::addRelation(AccessibilityObject* origin, AccessibilityObject
         targetsIterator->value.append(target->objectID());
     }
     m_relationTargets.add(target->objectID());
+
+    if (relationType == AXRelationType::OwnerFor) {
+        // First find and clear the old owner.
+        auto targetID = target->objectID();
+        for (auto oldOwnerIterator = m_relations.begin(); oldOwnerIterator != m_relations.end(); ++oldOwnerIterator) {
+            if (oldOwnerIterator->key == origin->objectID())
+                continue;
+            
+            removeRelationByID(oldOwnerIterator->key, targetID, AXRelationType::OwnerFor);
+            if (auto* oldOwner = objectForID(oldOwnerIterator->key))
+                childrenChanged(oldOwner);
+        }
+        
+        childrenChanged(origin);
+    } else if (relationType == AXRelationType::OwnedBy) {
+        if (auto* parentObject = origin->parentObjectUnignored())
+            childrenChanged(parentObject);
+    }
 
     if (addingSymmetricRelation == AddingSymmetricRelation::No) {
         if (auto symmetric = symmetricRelation(relationType); symmetric != AXRelationType::None)
@@ -4094,7 +4158,7 @@ void AXObjectCache::updateRelationsForTree(ContainerNode& rootNode)
 {
     ASSERT(!rootNode.parentNode());
     for (auto& element : descendantsOfType<Element>(rootNode)) {
-        if (element.hasTagName(metaTag) || element.hasTagName(headTag) || element.hasTagName(scriptTag))
+        if (element.hasTagName(metaTag) || element.hasTagName(headTag) || element.hasTagName(scriptTag) || element.hasTagName(htmlTag) || element.hasTagName(styleTag))
             continue;
 
         if (RefPtr shadowRoot = element.shadowRoot(); shadowRoot && shadowRoot->mode() != ShadowRootMode::UserAgent)

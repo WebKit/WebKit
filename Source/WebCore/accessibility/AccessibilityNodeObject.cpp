@@ -188,11 +188,21 @@ AccessibilityObject* AccessibilityNodeObject::parentObjectIfExists() const
     return parentObject();
 }
     
+AccessibilityObject* AccessibilityNodeObject::ownerParentObject() const
+{
+    auto owners = this->owners();
+    ASSERT(owners.size() <= 1);
+    return owners.size() ? dynamicDowncast<AccessibilityObject>(owners.first().get()) : nullptr;
+}
+
 AccessibilityObject* AccessibilityNodeObject::parentObject() const
 {
     if (!node())
         return nullptr;
 
+    if (auto* ownerParent = ownerParentObject())
+        return ownerParent;
+    
     Node* parentObj = node()->parentNode();
     if (!parentObj)
         return nullptr;
@@ -465,6 +475,16 @@ void AccessibilityNodeObject::clearChildren()
     m_childrenDirty = false;
 }
 
+void AccessibilityNodeObject::updateOwnedChildren()
+{
+    for (RefPtr child : ownedObjects()) {
+        // If the child already exists as a DOM child, but is also in the owned objects, then
+        // we need to re-order this child in the aria-owns order.
+        m_children.removeFirst(child);
+        addChild(child.get());
+    }
+}
+
 void AccessibilityNodeObject::addChildren()
 {
     // If the need to add more children in addition to existing children arises, 
@@ -487,6 +507,7 @@ void AccessibilityNodeObject::addChildren()
     for (Node* child = m_node->firstChild(); child; child = child->nextSibling())
         addChild(objectCache->getOrCreate(child));
     
+    updateOwnedChildren();
     m_subtreeDirty = false;
 }
 

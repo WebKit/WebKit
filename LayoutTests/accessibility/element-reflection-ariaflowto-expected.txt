@@ -3,15 +3,16 @@ Checks that element reflection is exposed to the a11y tree for 'ariaFlowToElemen
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS axTarget1.ariaFlowToElementAtIndex(0).isEqual(axFlow1) is true
-PASS axTarget2.ariaFlowToElementAtIndex(0).isEqual(axFlow2) is true
-PASS axTarget2.ariaFlowToElementAtIndex(0).isEqual(axFlow1) is true
-PASS axInnerTarget.ariaFlowToElementAtIndex(0).isEqual(axFlow3) is true
-PASS axTarget2.ariaFlowToElementAtIndex(0).isEqual(axFlow1) is true
-PASS axTarget2.ariaFlowToElementAtIndex(1).isEqual(axFlow2) is true
-PASS axTarget2.ariaFlowToElementAtIndex(2).isEqual(axFlow3) is true
-PASS axTarget4.ariaFlowToElementAtIndex(0).isEqual(axFlow4) is true
-PASS axTarget5.ariaFlowToElementAtIndex(0).isEqual(axFlow5) is true
+PASS: axTarget1.ariaFlowToElementAtIndex(0).isEqual(axFlow1) === true
+PASS: axTarget2.ariaFlowToElementAtIndex(0).isEqual(axFlow2) === true
+PASS: axTarget2.ariaFlowToElementAtIndex(0).isEqual(axFlow1) === true
+PASS: axInnerTarget.ariaFlowToElementAtIndex(0).isEqual(axFlow3) === true
+PASS: axTarget2.ariaFlowToElementAtIndex(0).isEqual(axFlow1) === true
+PASS: axTarget2.ariaFlowToElementAtIndex(1).isEqual(axFlow2) === true
+PASS: axTarget2.ariaFlowToElementAtIndex(2).isEqual(axFlow3) === true
+PASS: axTarget4.ariaFlowToElementAtIndex(0).isEqual(axFlow4) === true
+PASS: axTarget5.ariaFlowToElementAtIndex(0).isEqual(axFlow5) === true
+
 PASS successfullyParsed is true
 
 TEST COMPLETE

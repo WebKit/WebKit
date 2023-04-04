@@ -157,7 +157,9 @@ protected:
     void updateChildrenIfNecessary() override;
     bool canHaveChildren() const override;
     bool isDescendantOfBarrenParent() const override;
-
+    void updateOwnedChildren();
+    AccessibilityObject* ownerParentObject() const;
+    
     enum class StepAction : bool { Decrement, Increment };
     void alterRangeValue(StepAction);
     void changeValueByStep(StepAction);

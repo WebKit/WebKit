@@ -4,7 +4,8 @@ This tests that aria-labelledby works on SVG elements.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS platformValueForW3CName(image) is "Sudan"
+PASS: platformValueForW3CName(image) === 'Sudan'
+
 PASS successfullyParsed is true
 
 TEST COMPLETE

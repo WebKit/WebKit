@@ -1,0 +1,25 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<div role="group" id="a">
+  <div role="group" id="b" aria-owns="a">text</div>
+</div>
+
+<script>
+
+description("This tests that aria-owns cycles don't lead to crashes");
+if (window.accessibilityController) {
+    var ax = accessibilityController;
+    var output = expect("ax.accessibleElementById('a').childAtIndex(0).isEqual(ax.accessibleElementById('b'))", "true");
+    debug(output);
+}
+
+</script>
+
+</body>
+</html>

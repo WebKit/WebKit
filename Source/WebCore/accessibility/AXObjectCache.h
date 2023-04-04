@@ -160,7 +160,7 @@ public:
     AccessibilityObject* get(RenderObject*);
     AccessibilityObject* get(Widget*);
     AccessibilityObject* get(Node*);
-    
+
     void remove(RenderObject*);
     void remove(Node&);
     void remove(Widget*);
@@ -215,7 +215,7 @@ public:
     void deferMenuListValueChange(Element*);
     void deferNodeAddedOrRemoved(Node*);
     void handleScrolledToAnchor(const Node* anchorNode);
-    void handleScrollbarUpdate(ScrollView*);
+    void onScrollbarUpdate(ScrollView*);
 
     bool isRetrievingCurrentModalNode() { return m_isRetrievingCurrentModalNode; }
     Node* modalNode();
@@ -423,6 +423,7 @@ public:
 
     // Returns the IDs of the objects that relate to the given object with the specified relationship.
     std::optional<Vector<AXID>> relatedObjectIDsFor(const AXCoreObject&, AXRelationType);
+    void updateRelations(Element&, const QualifiedName&);
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     WEBCORE_EXPORT static bool isIsolatedTreeEnabled();
@@ -518,6 +519,7 @@ private:
     bool shouldProcessAttributeChange(Element*, const QualifiedName&);
     void selectedChildrenChanged(Node*);
     void selectedChildrenChanged(RenderObject*);
+    void handleScrollbarUpdate(ScrollView&);
 
     void handleActiveDescendantChanged(Element&);
 
@@ -544,7 +546,6 @@ private:
     void addRelation(AccessibilityObject*, AccessibilityObject*, AXRelationType, AddingSymmetricRelation = AddingSymmetricRelation::No);
     void removeRelationByID(AXID originID, AXID targetID, AXRelationType);
     void addRelations(Element&, const QualifiedName&);
-    void updateRelations(Element&, const QualifiedName&);
     void removeRelations(Element&, AXRelationType);
     void updateRelationsIfNeeded();
     void updateRelationsForTree(ContainerNode&);
@@ -602,6 +603,7 @@ private:
     ListHashSet<Node*> m_deferredNodeAddedOrRemovedList;
     WeakHashSet<Element, WeakPtrImplWithEventTargetData> m_deferredModalChangedList;
     WeakHashSet<Element, WeakPtrImplWithEventTargetData> m_deferredMenuListChange;
+    WeakHashSet<ScrollView> m_deferredScrollbarUpdateChangeList;
     HashMap<Element*, String> m_deferredTextFormControlValue;
     Vector<AttributeChange> m_deferredAttributeChange;
     std::optional<std::pair<WeakPtr<Node, WeakPtrImplWithEventTargetData>, WeakPtr<Node, WeakPtrImplWithEventTargetData>>> m_deferredFocusedNodeChange;
@@ -697,7 +699,8 @@ inline void AXObjectCache::deferAttributeChangeIfNeeded(Element*, const Qualifie
 inline void AXObjectCache::handleAttributeChange(Element*, const QualifiedName&, const AtomString&, const AtomString&) { }
 inline bool AXObjectCache::shouldProcessAttributeChange(Element*, const QualifiedName&) { return false; }
 inline void AXObjectCache::handleFocusedUIElementChanged(Node*, Node*, UpdateModal) { }
-inline void AXObjectCache::handleScrollbarUpdate(ScrollView*) { }
+inline void AXObjectCache::handleScrollbarUpdate(ScrollView&) { }
+inline void AXObjectCache::onScrollbarUpdate(ScrollView*) { }
 inline void AXObjectCache::handleScrolledToAnchor(const Node*) { }
 inline void AXObjectCache::liveRegionChangedNotificationPostTimerFired() { }
 inline void AXObjectCache::notificationPostTimerFired() { }

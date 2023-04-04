@@ -423,7 +423,8 @@ AccessibilityObject* AccessibilityRenderObject::nextSibling() const
     if (nextObjectParent && nextObjectParent != thisParent) {
         // Unless either object has a parent with display: contents, as display: contents can cause parent differences
         // that we properly account for elsewhere.
-        if (nextObjectParent->hasDisplayContents() || (thisParent && thisParent->hasDisplayContents()))
+        if (nextObjectParent->hasDisplayContents() || (thisParent && thisParent->hasDisplayContents())
+            || thisParent->ownedObjects().contains(this) || nextObjectParent->ownedObjects().contains(nextObject))
             return nextObject;
         return nullptr;
     }
@@ -492,6 +493,9 @@ AccessibilityObject* AccessibilityRenderObject::parentObjectIfExists() const
     if (m_renderer && isWebArea())
         return cache->get(&m_renderer->view().frameView());
 
+    if (auto* ownerParent = ownerParentObject())
+        return ownerParent;
+
     if (auto* displayContentsParent = this->displayContentsParent())
         return displayContentsParent;
 
@@ -500,6 +504,9 @@ AccessibilityObject* AccessibilityRenderObject::parentObjectIfExists() const
     
 AccessibilityObject* AccessibilityRenderObject::parentObject() const
 {
+    if (auto* ownerParent = ownerParentObject())
+        return ownerParent;
+
     if (auto* displayContentsParent = this->displayContentsParent())
         return displayContentsParent;
 
@@ -3079,6 +3086,10 @@ void AccessibilityRenderObject::addChildren()
         if (object.renderer()->isListMarker())
             return;
 #endif
+        auto owners = object.owners();
+        if (owners.size() && !owners.contains(this))
+            return;
+        
         addChild(&object);
     };
 
@@ -3097,6 +3108,7 @@ void AccessibilityRenderObject::addChildren()
 #if PLATFORM(COCOA)
     updateAttachmentViewParents();
 #endif
+    updateOwnedChildren();
 
     m_subtreeDirty = false;
     updateRoleAfterChildrenCreation();
