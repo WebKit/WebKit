@@ -195,6 +195,10 @@ void RemoteRenderingBackend::moveToImageBuffer(RemoteSerializedImageBufferWriteR
     if (!data)
         return;
 
+    Locker locker { data->m_lock };
+    if (!data->m_backend)
+        return;
+
     auto imageBuffer = RemoteImageBuffer::createTransfer(WTFMove(data->m_backend), data->m_info, *this, qualifiedIdentifier);
     m_remoteResourceCache.cacheImageBuffer(*imageBuffer, qualifiedIdentifier);
 }
