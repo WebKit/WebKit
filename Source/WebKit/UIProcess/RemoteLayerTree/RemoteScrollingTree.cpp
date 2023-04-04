@@ -202,6 +202,21 @@ void RemoteScrollingTree::removeWheelEventTestCompletionDeferralForReason(Scroll
     m_scrollingCoordinatorProxy->removeWheelEventTestCompletionDeferralForReason(nodeID, reason);
 }
 
+void RemoteScrollingTree::propagateSynchronousScrollingReasons(const HashSet<ScrollingNodeID>& synchronousScrollingNodes)
+{
+    m_hasNodesWithSynchronousScrollingReasons = !synchronousScrollingNodes.isEmpty();
+}
+
+void RemoteScrollingTree::tryToApplyLayerPositions()
+{
+    Locker locker { m_treeLock };
+    if (m_hasNodesWithSynchronousScrollingReasons)
+        return;
+
+    applyLayerPositionsInternal();
+}
+
+
 } // namespace WebKit
 
 #endif // ENABLE(UI_SIDE_COMPOSITING)

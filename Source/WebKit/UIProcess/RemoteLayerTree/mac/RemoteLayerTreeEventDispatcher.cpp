@@ -397,7 +397,7 @@ void RemoteLayerTreeEventDispatcher::didRefreshDisplay(PlatformDisplayID display
     scrollingTree->displayDidRefresh(displayID);
 
     if (m_state != SynchronizationState::Idle)
-        scrollingTree->applyLayerPositions();
+        scrollingTree->tryToApplyLayerPositions();
 
     switch (m_state) {
     case SynchronizationState::Idle: {
@@ -426,7 +426,7 @@ void RemoteLayerTreeEventDispatcher::scheduleDelayedRenderingUpdateDetectionTime
 void RemoteLayerTreeEventDispatcher::delayedRenderingUpdateDetectionTimerFired()
 {
     ASSERT(ScrollingThread::isCurrentThread());
-    scrollingTree()->applyLayerPositions();
+    scrollingTree()->tryToApplyLayerPositions();
 }
 
 void RemoteLayerTreeEventDispatcher::waitForRenderingUpdateCompletionOrTimeout()
@@ -454,7 +454,7 @@ void RemoteLayerTreeEventDispatcher::waitForRenderingUpdateCompletionOrTimeout()
         // so we give up trying to sync with the main thread and update layers here on the scrolling thread.
         // Dispatch to allow for the scrolling thread to handle any outstanding wheel events before we commit layers.
         ScrollingThread::dispatch([protectedThis = Ref { *this }]() {
-            protectedThis->scrollingTree()->applyLayerPositions();
+            protectedThis->scrollingTree()->tryToApplyLayerPositions();
         });
         tracePoint(ScrollingThreadRenderUpdateSyncEnd, 1);
     } else
