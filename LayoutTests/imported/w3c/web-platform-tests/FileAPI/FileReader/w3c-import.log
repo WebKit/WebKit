@@ -14,5 +14,5 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/FileAPI/FileReader/progress_event_bubbles_cancelable.html
+/LayoutTests/imported/w3c/web-platform-tests/FileAPI/FileReader/Progress_event_bubbles_cancelable.html
 /LayoutTests/imported/w3c/web-platform-tests/FileAPI/FileReader/workers.html

@@ -17,7 +17,7 @@ PASS Fetching URL.createObjectURL(empty_type_blob) is OK
 PASS Fetching URL.createObjectURL(empty_data_blob) is OK
 PASS Blob content is not sniffed for a content type [image/png]
 PASS Blob content is not sniffed for a content type [text/xml]
-FAIL Set content type to the empty string for slice with invalid content type assert_equals: expected "" but got "text/plain"
-FAIL Set content type to the empty string for slice with no content type  assert_equals: expected "" but got "text/plain"
+PASS Set content type to the empty string for slice with invalid content type
+PASS Set content type to the empty string for slice with no content type
 PASS Blob.slice should not sniff the content for a content type
 

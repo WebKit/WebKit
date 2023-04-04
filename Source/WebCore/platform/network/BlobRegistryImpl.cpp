@@ -247,7 +247,7 @@ void BlobRegistryImpl::registerBlobURLForSlice(const URL& url, const URL& srcURL
         end = originalSize;
 
     unsigned long long newLength = end - start;
-    auto newData = BlobData::create(contentType.isEmpty() ? originalData->contentType() : contentType);
+    auto newData = BlobData::create(contentType);
 
     appendStorageItems(newData.ptr(), originalData->items(), start, newLength);
 

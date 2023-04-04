@@ -14,10 +14,12 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/FileAPI/Blob-methods-from-detached-frame.html
 /LayoutTests/imported/w3c/web-platform-tests/FileAPI/FileReaderSync.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/FileAPI/META.yml
 /LayoutTests/imported/w3c/web-platform-tests/FileAPI/fileReader.any.js
 /LayoutTests/imported/w3c/web-platform-tests/FileAPI/historical.https.html
+/LayoutTests/imported/w3c/web-platform-tests/FileAPI/idlharness.any.js
 /LayoutTests/imported/w3c/web-platform-tests/FileAPI/idlharness.html
 /LayoutTests/imported/w3c/web-platform-tests/FileAPI/idlharness.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/FileAPI/unicode.html
