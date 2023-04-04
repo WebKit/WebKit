@@ -54,7 +54,7 @@ TEST(DisplayListTests, ReplayWithMissingResource)
     auto cgContext = adoptCF(CGBitmapContextCreate(nullptr, contextWidth, contextHeight, 8, 4 * contextWidth, colorSpace.platformColorSpace(), kCGImageAlphaPremultipliedLast));
     GraphicsContextCG context { cgContext.get() };
 
-    auto imageBufferIdentifier = RenderingResourceIdentifier::generate();
+    auto imageBufferIdentifier = RenderingResourceIdentifier::generateThreadSafe();
 
     DisplayList list;
 

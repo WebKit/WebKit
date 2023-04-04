@@ -181,7 +181,7 @@ Font::~Font()
 RenderingResourceIdentifier Font::renderingResourceIdentifier() const
 {
     if (!m_renderingResourceIdentifier)
-        m_renderingResourceIdentifier = RenderingResourceIdentifier::generate();
+        m_renderingResourceIdentifier = RenderingResourceIdentifier::generateThreadSafe();
     return *m_renderingResourceIdentifier;
 }
 

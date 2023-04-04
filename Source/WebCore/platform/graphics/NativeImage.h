@@ -53,7 +53,7 @@ public:
         Observer() = default;
     };
 
-    static WEBCORE_EXPORT RefPtr<NativeImage> create(PlatformImagePtr&&, RenderingResourceIdentifier = RenderingResourceIdentifier::generate());
+    static WEBCORE_EXPORT RefPtr<NativeImage> create(PlatformImagePtr&&, RenderingResourceIdentifier = RenderingResourceIdentifier::generateThreadSafe());
 
     WEBCORE_EXPORT ~NativeImage();
 
