@@ -220,7 +220,8 @@ ExceptionOr<void> DOMSelection::collapse(Node* node, unsigned offset)
         }
         if (auto result = Range::checkNodeOffsetPair(*node, offset); result.hasException())
             return result.releaseException();
-        if (!frame->document()->contains(*node))
+        if (!(frame->settings().selectionAPIForShadowDOMEnabled() && node->isConnected() && frame->document() == &node->document())
+            && &node->rootNode() != frame->document())
             return { };
     } else {
         if (!isValidForPosition(node))
@@ -358,12 +359,13 @@ ExceptionOr<void> DOMSelection::extend(Node& node, unsigned offset)
     auto frame = this->frame();
     if (!frame)
         return { };
-    
-    if (rangeCount() < 1)
+
+    if (rangeCount() < 1 && !(frame->settings().liveRangeSelectionEnabled() && frame->selection().isCaretOrRange()))
         return Exception { InvalidStateError, "extend() requires a Range to be added to the Selection"_s };
 
     if (frame->settings().liveRangeSelectionEnabled()) {
-        if (!frame->document()->contains(node))
+        if (!(frame->settings().selectionAPIForShadowDOMEnabled() && node.isConnected() && frame->document() == &node.document())
+            && &node.rootNode() != frame->document())
             return { };
         if (auto result = Range::checkNodeOffsetPair(node, offset); result.hasException())
             return result.releaseException();
