@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,7 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef TextTrackRepresentationCocoa_h
+#define TextTrackRepresentationCocoa_h
 
 #if (PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))) && ENABLE(VIDEO)
 
@@ -36,33 +37,24 @@
 
 namespace WebCore {
 
-class HTMLMediaElement;
-
-class TextTrackRepresentationCocoa : public TextTrackRepresentation, public CanMakeWeakPtr<TextTrackRepresentationCocoa, WeakPtrFactoryInitialization::Eager> {
+class TextTrackRepresentationCocoa final : public TextTrackRepresentation, public CanMakeWeakPtr<TextTrackRepresentationCocoa, WeakPtrFactoryInitialization::Eager> {
 public:
-    WEBCORE_EXPORT explicit TextTrackRepresentationCocoa(TextTrackRepresentationClient&);
-    WEBCORE_EXPORT virtual ~TextTrackRepresentationCocoa();
+    explicit TextTrackRepresentationCocoa(TextTrackRepresentationClient&);
+    virtual ~TextTrackRepresentationCocoa();
 
     TextTrackRepresentationClient& client() const { return m_client; }
 
     PlatformLayer* platformLayer() final { return m_layer.get(); }
 
-    WEBCORE_EXPORT IntRect bounds() const override;
+    IntRect bounds() const final;
     void boundsChanged();
 
-    using TextTrackRepresentationFactory = WTF::Function<std::unique_ptr<TextTrackRepresentation>(TextTrackRepresentationClient&, HTMLMediaElement&)>;
-
-    WEBCORE_EXPORT static TextTrackRepresentationFactory& representationFactory();
-
-protected:
-    // TextTrackRepresentation
-    WEBCORE_EXPORT void update() override;
-    WEBCORE_EXPORT void setContentScale(float) override;
-    WEBCORE_EXPORT void setHidden(bool) const override;
+private:
+    void update() final;
+    void setContentScale(float) final;
+    void setHidden(bool) const final;
 
     TextTrackRepresentationClient& m_client;
-
-private:
     RetainPtr<CALayer> m_layer;
     RetainPtr<WebCoreTextTrackRepresentationCocoaHelper> m_delegate;
 };
@@ -70,3 +62,5 @@ private:
 }
 
 #endif // (PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))) && ENABLE(VIDEO)
+
+#endif // TextTrackRepresentationCocoa_h

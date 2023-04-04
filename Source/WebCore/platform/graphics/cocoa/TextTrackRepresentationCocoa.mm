@@ -107,17 +107,9 @@
 
 namespace WebCore {
 
-std::unique_ptr<TextTrackRepresentation> TextTrackRepresentation::create(TextTrackRepresentationClient& client, HTMLMediaElement& mediaElement)
+std::unique_ptr<TextTrackRepresentation> TextTrackRepresentation::create(TextTrackRepresentationClient& client)
 {
-    if (TextTrackRepresentationCocoa::representationFactory())
-        return TextTrackRepresentationCocoa::representationFactory()(client, mediaElement);
     return makeUnique<TextTrackRepresentationCocoa>(client);
-}
-
-TextTrackRepresentationCocoa::TextTrackRepresentationFactory& TextTrackRepresentationCocoa::representationFactory()
-{
-    static NeverDestroyed<TextTrackRepresentationFactory> factory;
-    return factory.get();
 }
 
 TextTrackRepresentationCocoa::TextTrackRepresentationCocoa(TextTrackRepresentationClient& client)

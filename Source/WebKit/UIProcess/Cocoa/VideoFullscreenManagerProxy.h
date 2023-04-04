@@ -213,9 +213,6 @@ private:
     void preparedToExitFullscreen(PlaybackSessionContextIdentifier);
     void exitFullscreenWithoutAnimationToMode(PlaybackSessionContextIdentifier, WebCore::HTMLMediaElementEnums::VideoFullscreenMode);
     void setPlayerIdentifier(PlaybackSessionContextIdentifier, std::optional<WebCore::MediaPlayerIdentifier>);
-    void textTrackRepresentationUpdate(PlaybackSessionContextIdentifier, const ShareableBitmapHandle& textTrack);
-    void textTrackRepresentationSetContentsScale(PlaybackSessionContextIdentifier, float scale);
-    void textTrackRepresentationSetHidden(PlaybackSessionContextIdentifier, bool hidden);
 
     // Messages to VideoFullscreenManager
     void requestFullscreenMode(PlaybackSessionContextIdentifier, WebCore::HTMLMediaElementEnums::VideoFullscreenMode, bool finishedWithMedia = false);

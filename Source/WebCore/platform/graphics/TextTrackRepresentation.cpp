@@ -44,7 +44,7 @@ public:
 
 #if !(PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)))
 
-std::unique_ptr<TextTrackRepresentation> TextTrackRepresentation::create(TextTrackRepresentationClient&, HTMLMediaElement&)
+std::unique_ptr<TextTrackRepresentation> TextTrackRepresentation::create(TextTrackRepresentationClient&)
 {
     return makeUnique<NullTextTrackRepresentation>();
 }
