@@ -1320,6 +1320,10 @@ a:any-link:active {
     color: -webkit-activelink;
 }
 
+area:any-link {
+    cursor: pointer;
+}
+
 /* HTML5 ruby elements */
 
 ruby, rt {
