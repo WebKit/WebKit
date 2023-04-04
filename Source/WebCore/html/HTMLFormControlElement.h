@@ -77,6 +77,7 @@ public:
     virtual bool isSuccessfulSubmitButton() const { return false; }
     virtual bool isActivatedSubmit() const { return false; }
     virtual void setActivatedSubmit(bool) { }
+    void finishParsingChildren() override;
 
 #if ENABLE(AUTOCORRECT)
     WEBCORE_EXPORT bool shouldAutocorrect() const final;
@@ -114,7 +115,6 @@ protected:
     void didMoveToNewDocument(Document& oldDocument, Document& newDocument) override;
     void removedFromAncestor(RemovalType, ContainerNode&) override;
     void parseAttribute(const QualifiedName&, const AtomString&) override;
-    void finishParsingChildren() override;
 
     void disabledStateChanged() override;
     void readOnlyStateChanged() override;

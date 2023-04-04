@@ -260,11 +260,11 @@ private:
     struct TagInfo {
         template<class T, PermittedParents parents>
         struct Tag {
-            using ElemClass = T;
+            using HTMLElementClass = T;
             static constexpr PermittedParents permittedParents = parents;
-            static Ref<ElemClass> create(Document& document)
+            static Ref<HTMLElementClass> create(Document& document)
             {
-                return ElemClass::create(document);
+                return HTMLElementClass::create(document);
             }
             static constexpr bool allowedInPhrasingOrFlowContent()
             {
@@ -285,7 +285,7 @@ private:
         struct ContainerTag : Tag<T, parents> {
             static constexpr bool isVoid = false;
 
-            static RefPtr<Element> parseChild(HTMLFastPathParser& self)
+            static RefPtr<HTMLElement> parseChild(HTMLFastPathParser& self)
             {
                 return self.parseElement</*nonPhrasingContent*/ true>();
             }
@@ -297,7 +297,7 @@ private:
         struct ContainsPhrasingContentTag : ContainerTag<T, parents> {
             static constexpr bool isVoid = false;
 
-            static RefPtr<Element> parseChild(HTMLFastPathParser& self)
+            static RefPtr<HTMLElement> parseChild(HTMLFastPathParser& self)
             {
                 return self.parseElement</*nonPhrasingContent*/ false>();
             }
@@ -307,7 +307,7 @@ private:
             static constexpr ElementName tagName = ElementName::HTML_a;
             static constexpr Char tagNameCharacters[] = { 'a' };
 
-            static RefPtr<Element> parseChild(HTMLFastPathParser& self)
+            static RefPtr<HTMLElement> parseChild(HTMLFastPathParser& self)
             {
                 ASSERT(!self.m_insideOfTagA);
                 self.m_insideOfTagA = true;
@@ -321,7 +321,7 @@ private:
             static constexpr ElementName tagName = ElementName::HTML_a;
             static constexpr Char tagNameCharacters[] = { 'a' };
 
-            static RefPtr<Element> parseChild(HTMLFastPathParser& self)
+            static RefPtr<HTMLElement> parseChild(HTMLFastPathParser& self)
             {
                 ASSERT(!self.m_insideOfTagA);
                 self.m_insideOfTagA = true;
@@ -356,7 +356,7 @@ private:
             static constexpr Char tagNameCharacters[] = { 'd', 'i', 'v' };
         };
 
-        struct Footer : ContainerTag<HTMLDivElement, PermittedParents::FlowContent> {
+        struct Footer : ContainerTag<HTMLElement, PermittedParents::FlowContent> {
             static constexpr ElementName tagName = ElementName::HTML_footer;
             static constexpr Char tagNameCharacters[] = { 'f', 'o', 'o', 't', 'e', 'r' };
 
@@ -400,7 +400,7 @@ private:
             static constexpr ElementName tagName = ElementName::HTML_option;
             static constexpr Char tagNameCharacters[] = { 'o', 'p', 't', 'i', 'o', 'n' };
 
-            static RefPtr<Element> parseChild(HTMLFastPathParser& self)
+            static RefPtr<HTMLElement> parseChild(HTMLFastPathParser& self)
             {
                 // <option> can only contain a text content.
                 return self.didFail(HTMLFastPathResult::FailedOptionWithChild, nullptr);
@@ -411,7 +411,7 @@ private:
             static constexpr ElementName tagName = ElementName::HTML_ol;
             static constexpr Char tagNameCharacters[] = { 'o', 'l' };
 
-            static RefPtr<Element> parseChild(HTMLFastPathParser& self)
+            static RefPtr<HTMLElement> parseChild(HTMLFastPathParser& self)
             {
                 return self.parseSpecificElements<Li>();
             }
@@ -426,7 +426,7 @@ private:
             static constexpr ElementName tagName = ElementName::HTML_select;
             static constexpr Char tagNameCharacters[] = { 's', 'e', 'l', 'e', 'c', 't' };
 
-            static RefPtr<Element> parseChild(HTMLFastPathParser& self)
+            static RefPtr<HTMLElement> parseChild(HTMLFastPathParser& self)
             {
                 return self.parseSpecificElements<Option>();
             }
@@ -451,7 +451,7 @@ private:
             static constexpr ElementName tagName = ElementName::HTML_ul;
             static constexpr Char tagNameCharacters[] = { 'u', 'l' };
 
-            static RefPtr<Element> parseChild(HTMLFastPathParser& self)
+            static RefPtr<HTMLElement> parseChild(HTMLFastPathParser& self)
             {
                 return self.parseSpecificElements<Li>();
             }
@@ -775,7 +775,7 @@ private:
         return Attribute { WTFMove(name), WTFMove(value) };
     }
 
-    void parseAttributes(Element& parent)
+    void parseAttributes(HTMLElement& parent)
     {
         ASSERT(m_attributeBuffer.isEmpty());
         ASSERT(m_attributeNames.isEmpty());
@@ -825,25 +825,25 @@ private:
         m_attributeNames.resize(0);
     }
 
-    template<class... Tags> RefPtr<Element> parseSpecificElements()
+    template<class... Tags> RefPtr<HTMLElement> parseSpecificElements()
     {
         auto tagName = scanTagName();
         return parseSpecificElements<Tags...>(tagName);
     }
 
-    template<void* = nullptr> RefPtr<Element> parseSpecificElements(ElementName)
+    template<void* = nullptr> RefPtr<HTMLElement> parseSpecificElements(ElementName)
     {
         return didFail(HTMLFastPathResult::FailedParsingSpecificElements, nullptr);
     }
 
-    template<class Tag, class... OtherTags> RefPtr<Element> parseSpecificElements(ElementName tagName)
+    template<class Tag, class... OtherTags> RefPtr<HTMLElement> parseSpecificElements(ElementName tagName)
     {
         if (tagName == Tag::tagName)
             return parseElementAfterTagName<Tag>();
         return parseSpecificElements<OtherTags...>(tagName);
     }
 
-    template<bool nonPhrasingContent> RefPtr<Element> parseElement()
+    template<bool nonPhrasingContent> RefPtr<HTMLElement> parseElement()
     {
         auto tagName = scanTagName();
 
@@ -881,7 +881,7 @@ private:
         return didFail(HTMLFastPathResult::FailedUnsupportedTag, nullptr);
     }
 
-    template<class Tag> Ref<Element> parseElementAfterTagName()
+    template<class Tag> Ref<typename Tag::HTMLElementClass> parseElementAfterTagName()
     {
         if constexpr (Tag::isVoid)
             return parseVoidElement(Tag::create(m_document));
@@ -889,7 +889,7 @@ private:
             return parseContainerElement<Tag>(Tag::create(m_document));
     }
 
-    template<class Tag> Ref<Element> parseContainerElement(Ref<Element>&& element)
+    template<class Tag> Ref<typename Tag::HTMLElementClass> parseContainerElement(Ref<typename Tag::HTMLElementClass>&& element)
     {
         parseAttributes(element);
         if (m_parsingFailed)
@@ -917,7 +917,7 @@ private:
         return WTFMove(element);
     }
 
-    Ref<Element> parseVoidElement(Ref<Element>&& element)
+    template<typename HTMLElementType> Ref<HTMLElementType> parseVoidElement(Ref<HTMLElementType>&& element)
     {
         parseAttributes(element);
         if (!m_parsingFailed) {

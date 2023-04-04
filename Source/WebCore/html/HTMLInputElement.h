@@ -334,6 +334,7 @@ public:
     String resultForDialogSubmit() const final;
 
     bool isInnerTextElementEditable() const final { return !hasAutoFillStrongPasswordButton() && HTMLTextFormControlElement::isInnerTextElementEditable(); }
+    void finishParsingChildren() final;
 
 protected:
     HTMLInputElement(const QualifiedName&, Document&, HTMLFormElement*, bool createdByParser);
@@ -380,7 +381,6 @@ private:
     void parseAttribute(const QualifiedName&, const AtomString&) final;
     bool hasPresentationalHintsForAttribute(const QualifiedName&) const final;
     void collectPresentationalHintsForAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) final;
-    void finishParsingChildren() final;
     void parserDidSetAttributes() final;
 
     void copyNonAttributePropertiesFromElement(const Element&) final;
