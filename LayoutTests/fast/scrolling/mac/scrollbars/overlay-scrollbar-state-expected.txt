@@ -7,11 +7,11 @@ Document
 enabled
 none
 overflow:auto
-PASS internals.verticalScrollbarState(autoScroller) is "enabled"
-PASS internals.horizontalScrollbarState(autoScroller) is "none"
+PASS verticalScrollbarStateForAuto is "enabled"
+PASS horizontalScrollbarStateForAuto is "none"
 overflow:scroll
-PASS internals.verticalScrollbarState(scrollScroller) is "enabled"
-PASS internals.horizontalScrollbarState(scrollScroller) is "none"
+PASS verticalScrollbarStateForScroll is "enabled"
+PASS horizontalScrollbarStateForScroll is "none"
 PASS successfullyParsed is true
 
 TEST COMPLETE

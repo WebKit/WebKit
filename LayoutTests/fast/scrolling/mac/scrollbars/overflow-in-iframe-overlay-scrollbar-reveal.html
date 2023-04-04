@@ -42,12 +42,13 @@
             iframeWindow.internals.setUsesOverlayScrollbars(true);
 
             debug('Initial state');
-            debug(iframeWindow.internals.verticalScrollbarState(scroller));
+            var scrollbarState = await UIHelper.verticalScrollbarState(scroller);
+            debug(scrollbarState);
 
             debug('MayBegin should show the scrollbar');
             await UIHelper.mouseWheelMayBeginAt(x, y);
-            await UIHelper.waitForCondition(() => {
-                let state = iframeWindow.internals.verticalScrollbarState(scroller);
+            await UIHelper.waitForConditionAsync(async () => {
+                let state = await UIHelper.verticalScrollbarState(scroller);
                 let visible = state.indexOf('visible_thumb') != -1;
                 if (visible)
                     testPassed('Scrollbar state: ' + state);
@@ -57,8 +58,8 @@
             debug('Cancelled should hide the scrollbar');
             await UIHelper.mouseWheelCancelAt(x, y);
 
-            await UIHelper.waitForCondition(() => {
-                let state = iframeWindow.internals.verticalScrollbarState(scroller);
+            await UIHelper.waitForConditionAsync(async () => {
+                let state = await UIHelper.verticalScrollbarState(scroller);
                 let hidden = state.indexOf('visible_thumb') == -1;
                 if (hidden)
                     testPassed('Scrollbar state: ' + state);
