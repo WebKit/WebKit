@@ -3894,10 +3894,6 @@ webgl/webgl-via-metal-flag-off.html [ Skip ]
 webgl/1.0.3/conformance/uniforms/gl-uniform-arrays.html [ Skip ]
 webgl/2.0.0/conformance2/rendering/blitframebuffer-filter-outofbounds.html [ Skip ]
 
-# webkit.org/b/203908 Tests generate inconsistent results or time out
-webgl/1.0.3/conformance/textures/texture-npot-video.html [ Skip ]
-webgl/1.0.3/conformance/canvas/rapid-resizing.html [ Skip ]
-
 # WebGL 2 Conformance Suite rules for regular bots post ANGLE backend adoption.
 # DEQP is skipped on the main fleet of bots because of the long run time.
 webgl/2.0.0/deqp [ Skip ]
@@ -3919,16 +3915,9 @@ webgl/2.0.0/conformance2/textures/svg_image [ Skip ]
 
 # To-be-addressed WebGL 2 Timeouts and Failures
 # webkit.org/b/189641
-webgl/2.0.0/conformance/textures/misc/texture-size-limit.html [ Slow ]
-webgl/2.0.0/conformance/textures/misc/texture-npot-video.html [ Skip ]
 webgl/2.0.0/conformance2/misc/uninitialized-test-2.html [ Skip ]
 
 # Flaky failures
-webkit.org/b/241027 webgl/2.0.0/conformance/textures/image_bitmap_from_image_bitmap/tex-2d-rgb-rgb-unsigned_byte.html [ Pass Failure ]
-webkit.org/b/241027 webgl/2.0.0/conformance/textures/image_bitmap_from_image_bitmap/tex-2d-rgb-rgb-unsigned_short_5_6_5.html [ Pass Failure ]
-webkit.org/b/241027 webgl/2.0.0/conformance/textures/image_bitmap_from_image_bitmap/tex-2d-rgba-rgba-unsigned_byte.html [ Pass Failure ]
-webkit.org/b/241027 webgl/2.0.0/conformance/textures/image_bitmap_from_image_bitmap/tex-2d-rgba-rgba-unsigned_short_4_4_4_4.html [ Pass Failure ]
-webkit.org/b/241027 webgl/2.0.0/conformance/textures/image_bitmap_from_image_bitmap/tex-2d-rgba-rgba-unsigned_short_5_5_5_1.html [ Pass Failure ]
 webkit.org/b/241027 webgl/2.0.0/conformance2/textures/image_bitmap_from_image_bitmap/tex-2d-r8-red-unsigned_byte.html [ Pass Failure ]
 webkit.org/b/241027 webgl/2.0.0/conformance2/textures/image_bitmap_from_image_bitmap/tex-2d-r16f-red-half_float.html [ Pass Failure ]
 webkit.org/b/241027 webgl/2.0.0/conformance2/textures/image_bitmap_from_image_bitmap/tex-2d-r16f-red-float.html [ Pass Failure ]
@@ -3999,29 +3988,7 @@ webkit.org/b/241027 webgl/2.0.0/conformance2/textures/image_bitmap_from_image_bi
 # WebGL conformance test suite 1.0.x is skipped until 1.0.3 is retired.
 webgl/1.0.x [ Skip ]
 
-# Explicitly enable tests which we have fixed and do not have corresponding 1.0.3 test functionality.
-webgl/1.0.x/conformance/canvas/to-data-url-test.html [ Pass ]
-webgl/1.0.x/conformance/context/constants-and-properties.html [ Pass ]
-webgl/1.0.x/conformance/textures/misc/exif-orientation.html [ Pass ]
-
-webgl/1.0.x/conformance/attribs [ Pass ]
-webgl/1.0.x/conformance/buffers [ Pass ]
-webgl/1.0.x/conformance/context [ Pass ]
-webgl/1.0.x/conformance/extensions [ Pass ]
-webgl/1.0.x/conformance/glsl [ Pass ]
-webgl/1.0.x/conformance/limits [ Pass ]
-webgl/1.0.x/conformance/misc [ Pass ]
-webgl/1.0.x/conformance/more [ Pass ]
-webgl/1.0.x/conformance/offscreencanvas [ Pass ]
-webgl/1.0.x/conformance/ogles [ Pass ]
-webgl/1.0.x/conformance/programs [ Pass ]
-webgl/1.0.x/conformance/reading [ Pass ]
-webgl/1.0.x/conformance/renderbuffers [ Pass ]
-webgl/1.0.x/conformance/rendering [ Pass ]
-webgl/1.0.x/conformance/textures/canvas/ [ Pass ]
-
-# Debug builds on slower machines run close to the time out especially with GPUP enabled
-webkit.org/b/238691 [ Debug ] webgl/1.0.3/conformance/state/gl-object-get-calls.html [ Slow ]
+webgl/1.0.x/conformance [ Pass ]
 
 # WebGL conformance test suite 2.0.1 is skipped until 2.0.0 is retired.
 webgl/2.0.y [ Skip ]
@@ -4029,9 +3996,7 @@ webgl/2.0.y [ Skip ]
 webkit.org/b/254730 [ Debug ] webgl/2.0.y/conformance/extensions/webgl-compressed-texture-astc.html [ Slow ]
 
 # Explicitly enable tests which we have fixed and do not have corresponding 2.0.0 test functionality.
-webgl/2.0.y/conformance/canvas/to-data-url-test.html [ Pass ]
-webgl/2.0.y/conformance/textures/misc/exif-orientation.html [ Pass ]
-webgl/2.0.y/conformance/extensions/webgl-multi-draw.html [ Pass Slow ]
+webgl/2.0.y/conformance/extensions/webgl-multi-draw.html [ Slow ]
 webgl/2.0.y/conformance2/extensions/ext-texture-filter-anisotropic.html [ Pass ]
 webgl/2.0.y/conformance2/context/constants-and-properties-2.html [ Pass ]
 webgl/2.0.y/conformance2/renderbuffers/multisampled-depth-renderbuffer-initialization.html [ Pass ]
@@ -4044,21 +4009,7 @@ webgl/1.0.x/conformance/extensions/oes-vertex-array-object.html [ Pass ]
 webgl/2.0.y/conformance2/offscreencanvas [ Pass ]
 
 # Explicitly turn on conformance test until all of webgl/2.0.y is enabled
-webgl/2.0.y/conformance/attribs [ Pass ]
-webgl/2.0.y/conformance/buffers [ Pass ]
-webgl/2.0.y/conformance/context [ Pass ]
-webgl/2.0.y/conformance/extensions [ Pass ]
-webgl/2.0.y/conformance/glsl [ Pass ]
-webgl/2.0.y/conformance/limits [ Pass ]
-webgl/2.0.y/conformance/misc [ Pass ]
-webgl/2.0.y/conformance/more [ Pass ]
-webgl/2.0.y/conformance/offscreencanvas [ Pass ]
-webgl/2.0.y/conformance/ogles [ Pass ]
-webgl/2.0.y/conformance/programs [ Pass ]
-webgl/2.0.y/conformance/reading [ Pass ]
-webgl/2.0.y/conformance/renderbuffers [ Pass ]
-webgl/2.0.y/conformance/rendering [ Pass ]
-webgl/2.0.y/conformance/textures/canvas/ [ Pass ]
+webgl/2.0.y/conformance [ Pass ]
 webgl/2.0.y/conformance2/extensions/ext-conservative-depth.html [ Pass ]
 webgl/2.0.y/conformance2/extensions/ext-render-snorm.html [ Pass ]
 webgl/2.0.y/conformance2/extensions/ext-texture-norm16.html [ Pass ]
@@ -4079,33 +4030,8 @@ webgl/2.0.y/conformance2/textures/webgl_canvas [ Pass ]
 # WebGL 1.0.3 and 2.0.0 tests where behavior is obsolete and WebKit contains implementation
 # and tests for the new behavior. Should be removed once 1.0.3 and 2.0.0 are retired.
 fast/canvas/webgl/invalid-passed-params.html [ Skip ]
-webgl/1.0.3/conformance/attribs [ Skip ]
-webgl/1.0.3/conformance/buffers [ Skip ]
-webgl/1.0.3/conformance/context [ Skip ]
-webgl/1.0.3/conformance/extensions [ Skip ]
-webgl/1.0.3/conformance/glsl [ Skip ]
-webgl/1.0.3/conformance/limits [ Skip ]
-webgl/1.0.3/conformance/misc [ Skip ]
-webgl/1.0.3/conformance/more [ Skip ]
-webgl/1.0.3/conformance/ogles [ Skip ]
-webgl/1.0.3/conformance/programs [ Skip ]
-webgl/1.0.3/conformance/reading [ Skip ]
-webgl/1.0.3/conformance/renderbuffers [ Skip ]
-webgl/1.0.3/conformance/rendering [ Skip ]
-webgl/2.0.0/conformance/attribs [ Skip ]
-webgl/2.0.0/conformance/buffers [ Skip ]
-webgl/2.0.0/conformance/context [ Skip ]
-webgl/2.0.0/conformance/extensions [ Skip ]
-webgl/2.0.0/conformance/glsl [ Skip ]
-webgl/2.0.0/conformance/limits [ Skip ]
-webgl/2.0.0/conformance/misc [ Skip ]
-webgl/2.0.0/conformance/more [ Skip ]
-webgl/2.0.0/conformance/ogles [ Skip ]
-webgl/2.0.0/conformance/programs [ Skip ]
-webgl/2.0.0/conformance/reading [ Skip ]
-webgl/2.0.0/conformance/renderbuffers [ Skip ]
-webgl/2.0.0/conformance/rendering [ Skip ]
-webgl/2.0.0/conformance/textures/canvas/ [ Skip ]
+webgl/1.0.3/conformance [ Skip ]
+webgl/2.0.0/conformance [ Skip ]
 webgl/2.0.0/conformance2/context/constants-and-properties-2.html [ Skip ]
 webgl/2.0.0/conformance2/textures/canvas/ [ Skip ]
 

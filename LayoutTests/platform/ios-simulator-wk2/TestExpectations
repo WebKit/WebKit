@@ -154,7 +154,6 @@ webkit.org/b/226600 imported/w3c/web-platform-tests/navigation-timing/test_navig
 # These failures are happening only in iOS simulator on an arm64 host
 webkit.org/b/236928 fast/canvas/webgl/gl-teximage.html [ Failure Pass ]
 webkit.org/b/236928 fast/canvas/webgl/premultiplyalpha-test.html [ Failure Pass ]
-webkit.org/b/236928 webgl/1.0.3/conformance/textures/gl-teximage.html [ Failure Pass ]
 webkit.org/b/236928 imported/w3c/web-platform-tests/xhr/event-timeout-order.any.worker.html [ Failure Pass ]
 webkit.org/b/236926 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-biquadfilternode-interface/no-dezippering.html [ Failure Pass ]
 webkit.org/b/236926 webrtc/vp9-profile2.html [ Timeout Pass ]

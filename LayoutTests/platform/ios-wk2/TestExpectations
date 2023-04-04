@@ -1283,8 +1283,6 @@ webkit.org/b/181392 imported/w3c/web-platform-tests/service-workers/service-work
 
 webkit.org/b/181821 fast/visual-viewport/ios/caret-after-focus-in-fixed.html [ Pass Failure Timeout ]
 
-webkit.org/b/231514 webgl/1.0.3/conformance/uniforms/uniform-default-values.html [ Slow ]
-
 webkit.org/b/183860 http/wpt/service-workers/third-party-registration.html [ Pass Timeout ]
 
 webkit.org/b/184245 http/tests/workers/service/service-worker-cache-api.https.html [ Pass Failure Timeout ]
@@ -2181,9 +2179,6 @@ webkit.org/b/236926 webrtc/vp8-then-h264-gpu-process-crash.html [ Timeout Pass ]
 # Flaky crash
 webkit.org/b/237674 imported/w3c/web-platform-tests/html/semantics/links/links-created-by-a-and-area-elements/target_blank_implicit_noopener.html [ Timeout Crash Pass ]
 webkit.org/b/237674 imported/w3c/web-platform-tests/html/semantics/links/links-created-by-a-and-area-elements/target_blank_implicit_noopener_base.html [ Timeout Crash Pass ]
-
-# Timeout
-webkit.org/b/238691 webgl/1.0.3/conformance/state/gl-object-get-calls.html [ Timeout Pass ]
 
 ############ end of test failures related to GPU Process on by default
 

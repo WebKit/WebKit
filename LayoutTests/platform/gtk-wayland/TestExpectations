@@ -70,7 +70,7 @@ webkit.org/b/156717 transforms/3d/point-mapping/3d-point-mapping-preserve-3d.htm
 # Diff of failures (and passes) related with WebGL and Compositing tests (compared to --display-server=xvfb)
 # When passing --display-server=wayland on an system running native Weston on an Intel GPU (like the GTK Wayland bot)
 webkit.org/b/169917 fast/canvas/webgl/drawingbuffer-test.html [ Failure ]
-webkit.org/b/169917 webgl/1.0.3/conformance/textures/texture-npot-video.html [ Crash Pass ]
+webkit.org/b/169917 webgl/1.0.x/conformance/textures/texture-npot-video.html [ Crash Pass ]
 webkit.org/b/169917 webgl/1.0.x/conformance/rendering/many-draw-calls.html [ Timeout Pass ]
 webkit.org/b/169917 webgl/1.0.x/conformance/glsl/bugs/temp-expressions-should-not-crash.html [ Timeout ]
 webkit.org/b/169917 webgl/1.0.x/conformance/extensions/webgl-draw-buffers.html [ Failure ]
@@ -79,9 +79,9 @@ webkit.org/b/169917 webgl/webgl-padding.html [ ImageOnlyFailure ]
 webkit.org/b/169917 webgl/webgl-backing-store-size-update.html [ ImageOnlyFailure ]
 webkit.org/b/169917 fast/canvas/webgl/context-attributes-alpha-depth-stencil-antialias.html [ Pass ]
 webkit.org/b/169917 webgl/1.0.3/conformance/context/context-attributes-alpha-depth-stencil-antialias.html [ Pass ]
-webkit.org/b/169917 webgl/1.0.3/conformance/textures/texture-mips.html [ Pass ]
-webkit.org/b/169917 webgl/1.0.3/conformance/textures/texture-npot.html [ Pass ]
-webkit.org/b/169917 webgl/1.0.3/conformance/textures/texture-size-limit.html [ Pass ]
+webkit.org/b/169917 webgl/1.0.x/conformance/textures/texture-mips.html [ Pass ]
+webkit.org/b/169917 webgl/1.0.x/conformance/textures/texture-npot.html [ Pass ]
+webkit.org/b/169917 webgl/1.0.x/conformance/textures/texture-size-limit.html [ Pass ]
 webkit.org/b/169918 compositing/geometry/fixed-position-composited-page-scale-smaller-than-viewport.html [ ImageOnlyFailure ]
 webkit.org/b/169918 compositing/backing/solid-color-with-paints-into-ancestor.html [ ImageOnlyFailure ]
 

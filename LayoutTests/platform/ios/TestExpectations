@@ -3601,8 +3601,6 @@ imported/w3c/web-platform-tests/html/rendering/bindings/the-select-element-0/opt
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-modify-scrolling-attr-to-yes.html [ Pass ]
 webkit.org/b/214465 imported/w3c/web-platform-tests/css/mediaqueries/mq-gamut-002.html [ Pass ]
 
-webkit.org/b/237694 [ Debug ] webgl/1.0.3/conformance/uniforms/uniform-samplers-test.html [ Timeout Pass ]
-
 # image-set failing only on iOS
 webkit.org/b/253095 imported/w3c/web-platform-tests/css/css-images/image-set/image-set-type-rendering-2.html [ ImageOnlyFailure ]
 
