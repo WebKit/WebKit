@@ -33,12 +33,16 @@ void StopFrameCapture();
 namespace mtl
 {
 
+bool PreferStagedTextureUploads(const gl::Context *context,
+                                const TextureRef &texture,
+                                const Format &textureObjFormat);
+
 // Initialize texture content to black.
 angle::Result InitializeTextureContents(const gl::Context *context,
                                         const TextureRef &texture,
                                         const Format &textureObjFormat,
                                         const ImageNativeIndex &index);
-// Same as above but using GPU clear operation instead of CPU.
+// Same as above but using GPU clear operation instead of CPU.forma
 // - channelsToInit parameter controls which channels will get their content initialized.
 angle::Result InitializeTextureContentsGPU(const gl::Context *context,
                                            const TextureRef &texture,

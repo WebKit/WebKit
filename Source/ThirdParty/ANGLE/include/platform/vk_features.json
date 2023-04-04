@@ -838,6 +838,14 @@
             ]
         },
         {
+            "name": "double_depth_bias_constant_factor",
+            "category": "Workarounds",
+            "description": [
+                "Due to a Vulkan spec ambiguity, some drivers interpret depthBiasConstantFactor as half ",
+                "the expected value"
+            ]
+        },
+        {
             "name": "bottom_left_origin_present_region_rectangles",
             "category": "Workarounds",
             "description": [

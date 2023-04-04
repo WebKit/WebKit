@@ -1274,6 +1274,13 @@ void DisplayMtl::initializeFeatures()
     ANGLE_FEATURE_CONDITION((&mFeatures), enableInMemoryMtlLibraryCache, true);
     ANGLE_FEATURE_CONDITION((&mFeatures), enableParallelMtlLibraryCompilation, true);
 
+    // Uploading texture data via staging buffers improves performance on all tested systems.
+    // http://anglebug.com/8092: Disabled on intel due to some texture formats uploading incorrectly
+    // with staging buffers
+    ANGLE_FEATURE_CONDITION(&mFeatures, alwaysPreferStagedTextureUploads, true);
+    ANGLE_FEATURE_CONDITION(&mFeatures, disableStagedInitializationOfPackedTextureFormats,
+                            isIntel());
+
     ApplyFeatureOverrides(&mFeatures, getState());
 }
 

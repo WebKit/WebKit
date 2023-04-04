@@ -265,6 +265,17 @@ struct FeaturesMtl : FeatureSetBase
     FeatureInfo enableParallelMtlLibraryCompilation = {
         "enableParallelMtlLibraryCompilation", FeatureCategory::MetalFeatures,
         "Compile MTLLibrary in multiple threads.", &members, "http://crbug.com/1385510"};
+
+    FeatureInfo alwaysPreferStagedTextureUploads = {
+        "alwaysPreferStagedTextureUploads", FeatureCategory::MetalFeatures,
+        "Always prefer to upload texture data via a staging buffer and avoid "
+        "MTLTexture::replaceRegion.",
+        &members, "http://crbug.com/1380790"};
+
+    FeatureInfo disableStagedInitializationOfPackedTextureFormats = {
+        "disableStagedInitializationOfPackedTextureFormats", FeatureCategory::MetalFeatures,
+        "Staged GPU upload of some packed texture formats such as RGB9_E5 fail on Intel GPUs.",
+        &members, "http://anglebug.com/8092"};
 };
 
 inline FeaturesMtl::FeaturesMtl()  = default;

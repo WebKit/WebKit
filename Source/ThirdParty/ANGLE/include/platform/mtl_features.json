@@ -289,6 +289,22 @@
                 "Compile MTLLibrary in multiple threads."
             ],
             "issue": "http://crbug.com/1385510"
+        },
+        {
+            "name": "always_prefer_staged_texture_uploads",
+            "category": "Features",
+            "description": [
+                "Always prefer to upload texture data via a staging buffer and avoid MTLTexture::replaceRegion."
+            ],
+            "issue": "http://crbug.com/1380790"
+        },
+        {
+            "name": "disable_staged_initialization_of_packed_texture_formats",
+            "category": "Features",
+            "description": [
+                "Staged GPU upload of some packed texture formats such as RGB9_E5 fail on Intel GPUs."
+            ],
+            "issue": "http://anglebug.com/8092"
         }
     ]
 }

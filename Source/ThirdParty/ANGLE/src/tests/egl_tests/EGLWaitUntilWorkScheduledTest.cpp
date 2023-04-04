@@ -3,7 +3,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
-// EGLPowerPreferenceTest.cpp:
+// EGLWaitUntilWorkScheduledTest.cpp:
 //   Checks the implementation of EGL_ANGLE_wait_until_work_scheduled.
 //
 
@@ -43,4 +43,8 @@ TEST_P(EGLWaitUntilWorkScheduledTest, WaitUntilWorkScheduled)
 }
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(EGLWaitUntilWorkScheduledTest);
-ANGLE_INSTANTIATE_TEST(EGLWaitUntilWorkScheduledTest, ES2_METAL(), ES3_METAL());
+ANGLE_INSTANTIATE_TEST(EGLWaitUntilWorkScheduledTest,
+                       ES2_METAL(),
+                       ES3_METAL(),
+                       ES2_OPENGL(),
+                       ES3_OPENGL());

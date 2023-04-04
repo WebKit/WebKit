@@ -179,8 +179,14 @@ class BufferVk : public BufferImpl
                                       BufferUsageType usageType);
 
     bool isExternalBuffer() const { return mClientBuffer != nullptr; }
+    BufferUpdateType calculateBufferUpdateTypeOnFullUpdate(
+        RendererVk *renderer,
+        size_t size,
+        VkMemoryPropertyFlags memoryPropertyFlags,
+        BufferUsageType usage,
+        const void *data) const;
     bool shouldRedefineStorage(RendererVk *renderer,
-                               gl::BufferUsage usage,
+                               BufferUsageType usageType,
                                VkMemoryPropertyFlags memoryPropertyFlags,
                                size_t size) const;
 

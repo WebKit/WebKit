@@ -4367,6 +4367,9 @@ void RendererVk::initFeatures(DisplayVk *displayVk,
     // virtualized environment. https://issuetracker.google.com/246378938
     ANGLE_FEATURE_CONDITION(&mFeatures, preferLinearFilterForYUV, isVenus);
 
+    // Intel mesa drivers need depthBiasConstantFactor to be doubled to align with GL.
+    ANGLE_FEATURE_CONDITION(&mFeatures, doubleDepthBiasConstantFactor, isIntel && !IsWindows());
+
     // Required to pass android.media.codec.cts.EncodeDecodeTest with MESA Virtio-GPU Venus driver
     // in virtualized environment. https://issuetracker.google.com/246218584
     ANGLE_FEATURE_CONDITION(&mFeatures, mapUnspecifiedColorSpaceToPassThrough, isVenus);

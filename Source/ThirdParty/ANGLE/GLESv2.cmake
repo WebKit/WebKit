@@ -157,6 +157,7 @@ set(libangle_image_util_headers
     "src/image_util/imageformats.h"
     "src/image_util/loadimage.h"
     "src/image_util/loadimage.inc"
+    "src/image_util/storeimage.h"
 )
 
 set(libangle_image_util_sources
@@ -166,6 +167,7 @@ set(libangle_image_util_sources
     "src/image_util/loadimage_astc.cpp"
     "src/image_util/loadimage_etc.cpp"
     "src/image_util/loadimage_paletted.cpp"
+    "src/image_util/storeimage_paletted.cpp"
 )
 
 if(angle_has_astc_encoder)

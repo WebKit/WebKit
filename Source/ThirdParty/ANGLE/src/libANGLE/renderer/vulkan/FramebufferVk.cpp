@@ -523,19 +523,18 @@ angle::Result FramebufferVk::clearImpl(const gl::Context *context,
     bool clearDepthWithDraw   = clearDepth && scissoredClear;
     bool clearStencilWithDraw = clearStencil && (maskedClearStencil || scissoredClear);
 
-    const bool isMidRenderPassClear =
-        contextVk->hasStartedRenderPassWithQueueSerial(mLastRenderPassQueueSerial) &&
-        !contextVk->getStartedRenderPassCommands().getCommandBuffer().empty();
+    const bool isMidRenderPassClear = contextVk->hasActiveRenderPassWithCommands();
     if (isMidRenderPassClear)
     {
+        // If a render pass is open with commands, it must be for this framebuffer.  Otherwise,
+        // either FramebufferVk::syncState() or ContextVk::syncState() would have closed it.
+        ASSERT(contextVk->hasStartedRenderPassWithQueueSerial(mLastRenderPassQueueSerial));
         // Emit debug-util markers for this mid-render-pass clear
         ANGLE_TRY(
             contextVk->handleGraphicsEventLog(rx::GraphicsEventCmdBuf::InRenderPassCmdBufQueryCmd));
     }
     else
     {
-        ASSERT(!contextVk->hasActiveRenderPass() ||
-               contextVk->hasStartedRenderPassWithQueueSerial(mLastRenderPassQueueSerial));
         // Emit debug-util markers for this outside-render-pass clear
         ANGLE_TRY(
             contextVk->handleGraphicsEventLog(rx::GraphicsEventCmdBuf::InOutsideCmdBufQueryCmd));
@@ -2134,8 +2133,12 @@ angle::Result FramebufferVk::syncState(const gl::Context *context,
         // multisampled-render-to-texture, then srcFramebuffer->getSamples(context) gives > 1, but
         // there's no resolve happening as the read buffer's single sampled image will be used as
         // blit src. FramebufferVk::blit() will handle those details for us.
-        ANGLE_TRY(
-            contextVk->flushCommandsAndEndRenderPass(RenderPassClosureReason::FramebufferChange));
+
+        // ContextVk::onFramebufferChange will end up calling onRenderPassFinished if necessary,
+        // whih will trigger ending of current render pass if needed. But we still need to reset
+        // mLastRenderPassQueueSerial so that it will not get reactivated, since the
+        // mCurrentFramebufferDesc has changed.
+        mLastRenderPassQueueSerial = QueueSerial();
     }
 
     updateRenderPassDesc(contextVk);

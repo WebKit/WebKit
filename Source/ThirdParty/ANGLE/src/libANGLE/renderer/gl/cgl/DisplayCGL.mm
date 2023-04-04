@@ -504,8 +504,9 @@ CGLPixelFormatObj DisplayCGL::getCGLPixelFormat() const
 
 void DisplayCGL::generateExtensions(egl::DisplayExtensions *outExtensions) const
 {
-    outExtensions->iosurfaceClientBuffer = true;
-    outExtensions->surfacelessContext    = true;
+    outExtensions->iosurfaceClientBuffer  = true;
+    outExtensions->surfacelessContext     = true;
+    outExtensions->waitUntilWorkScheduled = true;
 
     // Contexts are virtualized so textures and semaphores can be shared globally
     outExtensions->displayTextureShareGroup   = true;
@@ -533,6 +534,15 @@ egl::Error DisplayCGL::waitClient(const gl::Context *context)
 egl::Error DisplayCGL::waitNative(const gl::Context *context, EGLint engine)
 {
     // TODO(cwallez) UNIMPLEMENTED()
+    return egl::NoError();
+}
+
+egl::Error DisplayCGL::waitUntilWorkScheduled()
+{
+    for (auto context : mState.contextSet)
+    {
+        context->flush();
+    }
     return egl::NoError();
 }
 

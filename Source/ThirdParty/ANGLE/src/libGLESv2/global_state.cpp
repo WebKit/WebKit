@@ -179,7 +179,7 @@ ANGLE_NO_SANITIZE_MEMORY ANGLE_NO_SANITIZE_THREAD Thread *GetCurrentThread()
 #if defined(ANGLE_PLATFORM_APPLE)
     Thread *current = GetCurrentThreadTLS();
 #else
-    Thread *current = gCurrentThread;
+    Thread *current          = gCurrentThread;
 #endif
     return (current ? current : AllocateCurrentThread());
 }
@@ -189,7 +189,7 @@ void SetContextCurrent(Thread *thread, gl::Context *context)
 #if defined(ANGLE_PLATFORM_APPLE)
     Thread *currentThread = GetCurrentThreadTLS();
 #else
-    Thread *currentThread = gCurrentThread;
+    Thread *currentThread    = gCurrentThread;
 #endif
     ASSERT(currentThread);
     currentThread->setCurrent(context);
@@ -250,8 +250,10 @@ namespace
 void DeallocateGlobalMutex(std::atomic<angle::GlobalMutex *> &mutex)
 {
     angle::GlobalMutex *toDelete = mutex.exchange(nullptr);
-    if (!mutex)
+    if (toDelete == nullptr)
+    {
         return;
+    }
     {
         // Wait for toDelete to become released by other threads before deleting.
         std::lock_guard<angle::GlobalMutex> lock(*toDelete);

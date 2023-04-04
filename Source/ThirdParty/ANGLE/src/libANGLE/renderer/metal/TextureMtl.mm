@@ -525,13 +525,11 @@ angle::Result UploadTextureContents(const gl::Context *context,
 
 {
     ASSERT(texture && texture->valid());
-    ContextMtl *contextMtl = mtl::GetImpl(context);
-#if !TARGET_OS_SIMULATOR
-    const angle::FeaturesMtl &features = contextMtl->getDisplay()->getFeatures();
+    ContextMtl *contextMtl       = mtl::GetImpl(context);
+    const mtl::Format &mtlFormat = contextMtl->getPixelFormat(textureAngleFormat.id);
 
-    bool forceStagedUpload =
-        texture->hasIOSurface() && features.uploadDataToIosurfacesWithStagingBuffers.enabled;
-    if (texture->isCPUAccessible() && !forceStagedUpload)
+    bool preferGPUInitialization = PreferStagedTextureUploads(context, texture, mtlFormat);
+    if (texture->isCPUAccessible() && !preferGPUInitialization)
     {
         // If texture is CPU accessible, just call replaceRegion() directly.
         texture->replaceRegion(contextMtl, region, mipmapLevel, slice, data, bytesPerRow,
@@ -539,7 +537,6 @@ angle::Result UploadTextureContents(const gl::Context *context,
 
         return angle::Result::Continue;
     }
-#endif
 
     // Texture is not CPU accessible or staging is forced due to a workaround
     if (!textureAngleFormat.depthBits && !textureAngleFormat.stencilBits)

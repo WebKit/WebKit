@@ -635,6 +635,14 @@ struct FeaturesVk : FeatureSetBase
         &members,
     };
 
+    FeatureInfo doubleDepthBiasConstantFactor = {
+        "doubleDepthBiasConstantFactor",
+        FeatureCategory::VulkanWorkarounds,
+        "Due to a Vulkan spec ambiguity, some drivers interpret depthBiasConstantFactor as half "
+        "the expected value",
+        &members,
+    };
+
     FeatureInfo bottomLeftOriginPresentRegionRectangles = {
         "bottomLeftOriginPresentRegionRectangles",
         FeatureCategory::VulkanWorkarounds,

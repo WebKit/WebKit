@@ -395,7 +395,6 @@ angle::Result BufferVk::setDataWithMemoryType(const gl::Context *context,
 {
     ContextVk *contextVk = vk::GetImpl(context);
     RendererVk *renderer = contextVk->getRenderer();
-    BufferUpdateType updateType;
 
     // Reset the flag since the buffer contents are being reinitialized. If the caller passed in
     // data to fill the buffer, the flag will be updated when the data is copied to the buffer.
@@ -407,35 +406,16 @@ angle::Result BufferVk::setDataWithMemoryType(const gl::Context *context,
         return angle::Result::Continue;
     }
 
-    if (!mBuffer.valid())
+    BufferUsageType usageType = GetBufferUsageType(usage);
+    BufferUpdateType updateType =
+        calculateBufferUpdateTypeOnFullUpdate(renderer, size, memoryPropertyFlags, usageType, data);
+
+    if (updateType == BufferUpdateType::StorageRedefined)
     {
-        mUsageType           = GetBufferUsageType(usage);
+        mUsageType           = usageType;
         mMemoryPropertyFlags = memoryPropertyFlags;
         ANGLE_TRY(GetMemoryTypeIndex(contextVk, size, memoryPropertyFlags, &mMemoryTypeIndex));
         ANGLE_TRY(acquireBufferHelper(contextVk, size, mUsageType));
-        updateType = BufferUpdateType::StorageRedefined;
-    }
-    else
-    {
-        const bool inUseAndRespecifiedWithoutData = (data == nullptr && isCurrentlyInUse(renderer));
-        // Optimization: Lets figure out if we can reuse the existing storage.
-        bool redefineStorage = shouldRedefineStorage(renderer, usage, memoryPropertyFlags, size);
-
-        // The entire buffer is being respecified, possibly with null data.
-        // Release and init a new mBuffer with requested size.
-        if (redefineStorage || inUseAndRespecifiedWithoutData)
-        {
-            // Release and re-create the memory and buffer.
-            release(contextVk);
-            mUsageType = GetBufferUsageType(usage);
-            ANGLE_TRY(GetMemoryTypeIndex(contextVk, size, memoryPropertyFlags, &mMemoryTypeIndex));
-            ANGLE_TRY(acquireBufferHelper(contextVk, size, mUsageType));
-            updateType = BufferUpdateType::StorageRedefined;
-        }
-        else
-        {
-            updateType = BufferUpdateType::ContentsUpdate;
-        }
     }
 
     if (data)
@@ -501,7 +481,7 @@ angle::Result BufferVk::copySubData(const gl::Context *context,
     commandBuffer->copyBuffer(sourceBuffer.getBuffer(), mBuffer.getBuffer(), 1, &copyRegion);
 
     // The new destination buffer data may require a conversion for the next draw, so mark it dirty.
-    onDataChanged();
+    dataUpdated();
 
     return angle::Result::Continue;
 }
@@ -1007,13 +987,13 @@ angle::Result BufferVk::setDataImpl(ContextVk *contextVk,
     {
         // If storage has just been redefined, don't go down acquireAndUpdate code path. There is no
         // reason you acquire another new buffer right after redefined. And if we do go into
-        // acquireAndUpdate, you will also run int correctness bug that mState.getSize() has not
+        // acquireAndUpdate, you will also run into correctness bug that mState.getSize() has not
         // been updated with new size and you will acquire a new buffer with wrong size. This could
         // happen if the buffer memory is DEVICE_LOCAL and
         // renderer->getFeatures().allocateNonZeroMemory.enabled is true. In this case we will issue
         // a copyToBuffer immediately after allocation and isCurrentlyInUse will be true.
-        // If BufferVk does not have any valid data, which means there is no data needs to be copied
-        // from old buffer to new buffer when we acquire a new buffer, we also favor
+        // If BufferVk does not have any valid data, which means there is no data needed to be
+        // copied from old buffer to the new buffer when we acquire a new buffer, we also favor
         // acquireAndUpdate over stagedUpdate. This could happen when app calls glBufferData with
         // same size and we will try to reuse the existing buffer storage.
         // To avoid breaking the render pass unnecessary, acquireAndUpdate is also favored over
@@ -1113,12 +1093,40 @@ bool BufferVk::isCurrentlyInUse(RendererVk *renderer) const
     return !renderer->hasResourceUseFinished(mBuffer.getResourceUse());
 }
 
+// When a buffer is being completely changed, calculate whether it's better to allocate a new buffer
+// or overwrite the existing one.
+BufferUpdateType BufferVk::calculateBufferUpdateTypeOnFullUpdate(
+    RendererVk *renderer,
+    size_t size,
+    VkMemoryPropertyFlags memoryPropertyFlags,
+    BufferUsageType usage,
+    const void *data) const
+{
+    // 0-sized updates should be no-op'd before this call.
+    ASSERT(size > 0);
+
+    // If there is no existing buffer, this cannot be a content update.
+    if (!mBuffer.valid())
+    {
+        return BufferUpdateType::StorageRedefined;
+    }
+
+    const bool inUseAndRespecifiedWithoutData = data == nullptr && isCurrentlyInUse(renderer);
+    bool redefineStorage = shouldRedefineStorage(renderer, usage, memoryPropertyFlags, size);
+
+    // Create a new buffer if the buffer is busy and it's being redefined without data.
+    // Additionally, a new buffer is created if any of the parameters change (memory type, usage,
+    // size).
+    return redefineStorage || inUseAndRespecifiedWithoutData ? BufferUpdateType::StorageRedefined
+                                                             : BufferUpdateType::ContentsUpdate;
+}
+
 bool BufferVk::shouldRedefineStorage(RendererVk *renderer,
-                                     gl::BufferUsage usage,
+                                     BufferUsageType usageType,
                                      VkMemoryPropertyFlags memoryPropertyFlags,
                                      size_t size) const
 {
-    if (mUsageType != GetBufferUsageType(usage))
+    if (mUsageType != usageType)
     {
         return true;
     }

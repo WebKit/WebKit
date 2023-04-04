@@ -149,10 +149,10 @@ index 64952d92ffc289bdca8d074e13dcc295fe9daad4..7eee61f7cac71801934f0b44aa486cea
      return angle::Result::Continue;
  }
 diff --git a/src/libANGLE/renderer/metal/DisplayMtl.mm b/src/libANGLE/renderer/metal/DisplayMtl.mm
-index 5033366c2d53433992fa92505e15137db615ea19..ece4e06e3432dfe369c9b0f62e633170683c9656 100644
+index 420a08c771ab6a165ce35dc91f05ba3536fdabd1..f33cb70b296b8d86f1a90404f7ab239675826637 100644
 --- a/src/libANGLE/renderer/metal/DisplayMtl.mm
 +++ b/src/libANGLE/renderer/metal/DisplayMtl.mm
-@@ -1370,8 +1370,7 @@ bool DisplayMtl::supportsEitherGPUFamily(uint8_t iOSFamily, uint8_t macFamily) c
+@@ -1377,8 +1377,7 @@ bool DisplayMtl::supportsEitherGPUFamily(uint8_t iOSFamily, uint8_t macFamily) c
  bool DisplayMtl::supports32BitFloatFiltering() const
  {
  #if (defined(__MAC_11_0) && __MAC_OS_X_VERSION_MIN_REQUIRED >= __MAC_11_0) ||        \
@@ -479,10 +479,10 @@ index 558075b21cdcdcac0b9cd4ab8fc915bc032f57f7..b3990a828944bab60e692cdd16019ac2
          if (!ValidateRenderPipelineState(objCDesc, context, metalDevice))
          {
 diff --git a/src/libANGLE/renderer/metal/mtl_utils.mm b/src/libANGLE/renderer/metal/mtl_utils.mm
-index 555c891f80f36b1824da1a91cd13db80828f3eae..07f27d7a886db9066153aa00b1870e6b6f6e051a 100644
+index a6655fb5897a4db75eef9993843096e5b6c0d781..27f3b79bc2607ebcefd95ff4a900d9b37d1218bd 100644
 --- a/src/libANGLE/renderer/metal/mtl_utils.mm
 +++ b/src/libANGLE/renderer/metal/mtl_utils.mm
-@@ -1357,6 +1357,24 @@ bool SupportsAppleGPUFamily(id<MTLDevice> device, uint8_t appleFamily)
+@@ -1395,6 +1395,24 @@ bool SupportsAppleGPUFamily(id<MTLDevice> device, uint8_t appleFamily)
  #endif      // TARGET_OS_IOS || TARGET_OS_TV
  }
  
@@ -507,7 +507,7 @@ index 555c891f80f36b1824da1a91cd13db80828f3eae..07f27d7a886db9066153aa00b1870e6b
  bool SupportsMacGPUFamily(id<MTLDevice> device, uint8_t macFamily)
  {
  #if TARGET_OS_OSX || TARGET_OS_MACCATALYST
-@@ -1371,10 +1389,10 @@ bool SupportsMacGPUFamily(id<MTLDevice> device, uint8_t macFamily)
+@@ -1409,10 +1427,10 @@ bool SupportsMacGPUFamily(id<MTLDevice> device, uint8_t macFamily)
  #        if TARGET_OS_MACCATALYST
              ANGLE_APPLE_ALLOW_DEPRECATED_BEGIN
              case 1:
@@ -520,7 +520,7 @@ index 555c891f80f36b1824da1a91cd13db80828f3eae..07f27d7a886db9066153aa00b1870e6b
                  break;
                  ANGLE_APPLE_ALLOW_DEPRECATED_END
  #        else   // TARGET_OS_MACCATALYST
-@@ -1397,7 +1415,7 @@ bool SupportsMacGPUFamily(id<MTLDevice> device, uint8_t macFamily)
+@@ -1435,7 +1453,7 @@ bool SupportsMacGPUFamily(id<MTLDevice> device, uint8_t macFamily)
  
      // If device doesn't support [MTLDevice supportsFamily:], then use
      // [MTLDevice supportsFeatureSet:].

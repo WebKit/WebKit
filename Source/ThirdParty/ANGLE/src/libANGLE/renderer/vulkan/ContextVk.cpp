@@ -2297,12 +2297,12 @@ angle::Result ContextVk::handleDirtyGraphicsRenderPass(DirtyBits::Iterator *dirt
     // clear are handled differently.
     bool reactivateStartedRenderPass =
         hasStartedRenderPassWithQueueSerial(drawFramebufferVk->getLastRenderPassQueueSerial()) &&
-        mAllowRenderPassToReactivate && renderArea == mRenderPassCommands->getRenderArea();
+        mAllowRenderPassToReactivate && !drawFramebufferVk->hasDeferredClears() &&
+        renderArea == mRenderPassCommands->getRenderArea();
     if (reactivateStartedRenderPass)
     {
         INFO() << "Reactivate already started render pass on draw.";
         mRenderPassCommandBuffer = &mRenderPassCommands->getCommandBuffer();
-        ASSERT(!drawFramebufferVk->hasDeferredClears());
         ASSERT(hasActiveRenderPass());
         ASSERT(drawFramebufferVk->getRenderPassDesc() == mRenderPassCommands->getRenderPassDesc());
 
@@ -2946,9 +2946,15 @@ angle::Result ContextVk::handleDirtyGraphicsDynamicDepthBias(DirtyBits::Iterator
                                                              DirtyBits dirtyBitMask)
 {
     const gl::RasterizerState &rasterState = mState.getRasterizerState();
+
+    float depthBiasConstantFactor = rasterState.polygonOffsetUnits;
+    if (getFeatures().doubleDepthBiasConstantFactor.enabled)
+    {
+        depthBiasConstantFactor *= 2.0f;
+    }
+
     // Note: depth bias clamp is only exposed in EXT_polygon_offset_clamp.
-    mRenderPassCommandBuffer->setDepthBias(rasterState.polygonOffsetUnits,
-                                           rasterState.polygonOffsetClamp,
+    mRenderPassCommandBuffer->setDepthBias(depthBiasConstantFactor, rasterState.polygonOffsetClamp,
                                            rasterState.polygonOffsetFactor);
     return angle::Result::Continue;
 }
@@ -4680,12 +4686,19 @@ void ContextVk::updateSampleMaskWithRasterizationSamples(const uint32_t rasteriz
     ASSERT(mState.getMaxSampleMaskWords() == 1);
 
     uint32_t mask = std::numeric_limits<uint16_t>::max();
-    if (mState.isSampleMaskEnabled() && rasterizationSamples > 1)
-    {
-        mask = mState.getSampleMaskWord(0) & angle::BitMask<uint32_t>(rasterizationSamples);
-    }
 
-    ApplySampleCoverage(mState, coverageSampleCount, &mask);
+    // The following assumes that supported sample counts for multisampled
+    // rendering does not include 1. This is true in the Vulkan backend,
+    // where 1x multisampling is disallowed.
+    if (rasterizationSamples > 1)
+    {
+        if (mState.isSampleMaskEnabled())
+        {
+            mask = mState.getSampleMaskWord(0) & angle::BitMask<uint32_t>(rasterizationSamples);
+        }
+
+        ApplySampleCoverage(mState, coverageSampleCount, &mask);
+    }
 
     mGraphicsPipelineDesc->updateSampleMask(&mGraphicsPipelineTransition, 0, mask);
 }
@@ -7717,11 +7730,13 @@ angle::Result ContextVk::endRenderPassQuery(QueryVk *queryVk)
 
 void ContextVk::pauseRenderPassQueriesIfActive()
 {
+    ASSERT(hasActiveRenderPass());
     for (QueryVk *activeQuery : mActiveRenderPassQueries)
     {
         if (activeQuery)
         {
             activeQuery->onRenderPassEnd(this);
+
             // No need to update rasterizer discard emulation with primitives generated query.  The
             // state will be updated when the next render pass starts.
         }
@@ -7730,6 +7745,7 @@ void ContextVk::pauseRenderPassQueriesIfActive()
 
 angle::Result ContextVk::resumeRenderPassQueriesIfActive()
 {
+    ASSERT(hasActiveRenderPass());
     // Note: these queries should be processed in order.  See comment in QueryVk::onRenderPassStart.
     for (QueryVk *activeQuery : mActiveRenderPassQueries)
     {
@@ -7756,6 +7772,7 @@ angle::Result ContextVk::resumeRenderPassQueriesIfActive()
 
 angle::Result ContextVk::resumeXfbRenderPassQueriesIfActive()
 {
+    ASSERT(hasActiveRenderPass());
     // All other queries are handled separately.
     QueryVk *xfbQuery = mActiveRenderPassQueries[gl::QueryType::TransformFeedbackPrimitivesWritten];
     if (xfbQuery && mState.isTransformFeedbackActiveUnpaused())

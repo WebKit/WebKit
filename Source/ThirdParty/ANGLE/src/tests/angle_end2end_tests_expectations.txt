@@ -249,6 +249,7 @@
 3496 MAC INTEL OPENGL : BlitFramebufferTest.ScissoredMultisampleStencil/* = SKIP
 3496 MAC AMD OPENGL : BlitFramebufferTest.ScissoredMultisampleStencil/* = SKIP
 7191 MAC NVIDIA OPENGL : BlitFramebufferTest.ScissoredMultisampleStencil/ES3_OpenGL = SKIP
+273808966 MAC AMD OPENGL : BlitFramebufferTest.scissorDrawBlitAndDrawAgain/* = SKIP
 
 // Mac Metal
 
@@ -787,8 +788,6 @@
 7853 IOS : FramebufferExtensionsTest.ColorBufferHalfFloat/ES2_OpenGL = SKIP
 
 // Some Metal tests fail on iOS Intel simulator
-7994 IOS METAL : CopyTextureTestES3.ES3FloatFormats/ES3_Metal = SKIP
-7994 IOS METAL : CopyTextureTestES3.CopySubTextureOffsetNonRenderableFloat/ES3_Metal = SKIP
 7994 IOS METAL : CubeMapTextureTest.SampleCoordinateTransformGrad/ES2_Metal = SKIP
 7994 IOS METAL : CubeMapTextureTest.SampleCoordinateTransformGrad/ES3_Metal = SKIP
 7994 IOS METAL : CubeMapTextureTest.SampleCoordinateTransformGrad_ES3/ES3_Metal = SKIP
@@ -988,6 +987,9 @@
 6824 METAL INTEL : CubeMapTextureTest.SampleCoordinateTransformGrad/* = SKIP
 6824 METAL INTEL : CubeMapTextureTest.SampleCoordinateTransformGrad_ES3/* = SKIP
 
+// Staged texture uploads causes some incorrect texture data on Intel
+8109 MAC METAL INTEL : Texture2DTest.ManySupersedingTextureUpdates/ES2_Metal = SKIP
+
 2799 NVIDIA OPENGL WIN : RobustBufferAccessBehaviorTest.DrawElementsIndexOutOfRangeWithStaticDraw/* = SKIP
 2799 NVIDIA OPENGL WIN : RobustBufferAccessBehaviorTest.DrawElementsIndexOutOfRangeWithDynamicDraw/* = SKIP
 2861 ANDROID GLES : RobustBufferAccessBehaviorTest.NoBufferData/* = SKIP
@@ -1158,7 +1160,10 @@
 
 // Sample coverage must not affect single sample render targets
 8102 D3D11 : SimpleOperationTest.DrawSingleSampleWithCoverage/* = SKIP
-8102 VULKAN : SimpleOperationTest.DrawSingleSampleWithCoverage/* = SKIP
+8102 D3D11 : StateChangeTestES3.SampleCoverageFramebufferAttachmentSwitch/* = SKIP
+
+// Sample coverage is ignored when replacing a single-sample attachment with a multi-sample one
+8114 MAC INTEL OPENGL : StateChangeTestES3.SampleCoverageFramebufferAttachmentSwitch/* = SKIP
 
 // bits 24..31 from glClearValueuiv value don't work on Intel Metal.
 7794 MAC INTEL METAL : PixelLocalStorageTest.ClearValues_r32/* = SKIP

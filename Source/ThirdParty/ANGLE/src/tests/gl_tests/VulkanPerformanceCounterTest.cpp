@@ -6257,7 +6257,7 @@ TEST_P(VulkanPerformanceCounterTest, InvalidateThenRepeatedClearThenReadbackThen
 }
 
 // Tests that the submission counters count the implicit submission in eglSwapBuffers().
-TEST_P(VulkanPerformanceCounterTest, VerifySubmitCounters)
+TEST_P(VulkanPerformanceCounterTest, VerifySubmitCountersForSwapBuffer)
 {
     uint64_t expectedVkQueueSubmitCount      = getPerfCounters().vkQueueSubmitCallsTotal;
     uint64_t expectedCommandQueueSubmitCount = getPerfCounters().commandQueueSubmitCallsTotal;
@@ -6282,6 +6282,71 @@ TEST_P(VulkanPerformanceCounterTest, VerifySubmitCounters)
     swapBuffers();
 
     EXPECT_EQ(getPerfCounters().vkQueueSubmitCallsTotal, expectedVkQueueSubmitCount);
+    EXPECT_EQ(getPerfCounters().commandQueueSubmitCallsTotal, expectedCommandQueueSubmitCount);
+}
+
+// Tests that PreferSubmitAtFBOBoundary feature works properly. Bind to different FBO and should
+// trigger submit of previous FBO. In this specific test, we switch to system default framebuffer
+// which is always considered as "dirty".
+TEST_P(VulkanPerformanceCounterTest, VerifySubmitCounterForSwitchUserFBOToSystemFramebuffer)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled(kPerfMonitorExtensionName));
+
+    uint64_t expectedCommandQueueSubmitCount = getPerfCounters().commandQueueSubmitCallsTotal;
+
+    GLFramebuffer framebuffer;
+    GLTexture texture;
+    setupForColorOpsTest(&framebuffer, &texture);
+
+    // Draw
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::Red());
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+    ASSERT_GL_NO_ERROR();
+
+    if (hasPreferSubmitAtFBOBoundary())
+    {
+        // One submission coming from glBindFramebuffer and draw
+        ++expectedCommandQueueSubmitCount;
+    }
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+    ASSERT_GL_NO_ERROR();
+
+    EXPECT_EQ(getPerfCounters().commandQueueSubmitCallsTotal, expectedCommandQueueSubmitCount);
+}
+
+// Tests that PreferSubmitAtFBOBoundary feature works properly. Bind to different FBO and should
+// trigger submit of previous FBO. In this specific test, we test bind to a new user FBO which we
+// used to had a bug.
+TEST_P(VulkanPerformanceCounterTest, VerifySubmitCounterForSwitchUserFBOToDirtyUserFBO)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled(kPerfMonitorExtensionName));
+
+    uint64_t expectedCommandQueueSubmitCount = getPerfCounters().commandQueueSubmitCallsTotal;
+
+    GLFramebuffer framebuffer;
+    GLTexture texture;
+    setupForColorOpsTest(&framebuffer, &texture);
+
+    // Draw
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::Red());
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+    ASSERT_GL_NO_ERROR();
+
+    if (hasPreferSubmitAtFBOBoundary())
+    {
+        // One submission coming from glBindFramebuffer and draw
+        ++expectedCommandQueueSubmitCount;
+    }
+
+    // Create and bind to a new FBO
+    GLFramebuffer framebuffer2;
+    GLTexture texture2;
+    setupForColorOpsTest(&framebuffer2, &texture2);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+    ASSERT_GL_NO_ERROR();
+
     EXPECT_EQ(getPerfCounters().commandQueueSubmitCallsTotal, expectedCommandQueueSubmitCount);
 }
 
