@@ -331,6 +331,9 @@ void WebPageProxy::platformCloneAttachment(Ref<API::Attachment>&& fromAttachment
 static RefPtr<WebKit::ShareableBitmap> convertPlatformImageToBitmap(CocoaImage *image, const WebCore::FloatSize& fittingSize)
 {
     FloatSize originalThumbnailSize([image size]);
+    if (originalThumbnailSize.isEmpty())
+        return nullptr;
+
     auto resultRect = roundedIntRect(largestRectWithAspectRatioInsideRect(originalThumbnailSize.aspectRatio(), { { }, fittingSize }));
     resultRect.setLocation({ });
 

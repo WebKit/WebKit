@@ -64,7 +64,8 @@ ShareableBitmapConfiguration::ShareableBitmapConfiguration(const IntSize& size, 
     , m_bitmapInfo(bitmapInfo)
 #endif
 {
-    ASSERT(!m_size.isEmpty());
+    // This constructor is called when decoding ShareableBitmapConfiguration. So this constructor
+    // will behave like the default constructor if a null ShareableBitmapHandle was encoded.
 }
 
 CheckedUint32 ShareableBitmapConfiguration::calculateSizeInBytes(const IntSize& size, const DestinationColorSpace& colorSpace)
