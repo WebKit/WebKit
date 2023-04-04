@@ -501,6 +501,19 @@ void InjectedBundle::didReceiveMessageToPage(WKBundlePageRef page, WKStringRef m
         return;
     }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "WheelEventMarker")) {
+        ASSERT(messageBody);
+        ASSERT(WKGetTypeID(messageBody) == WKStringGetTypeID());
+
+        auto bodyString = toWTFString(static_cast<WKStringRef>(messageBody));
+        // These match the strings in EventSenderProxy::sendWheelEvent().
+        if (bodyString == "SentWheelPhaseEndOrCancel"_s)
+            m_eventSendingController->sentWheelPhaseEndOrCancel();
+        else if (bodyString == "SentWheelMomentumPhaseEnd"_s)
+            m_eventSendingController->sentWheelMomentumPhaseEnd();
+        return;
+    }
+
     postPageMessage("Error", "Unknown");
 }
 
