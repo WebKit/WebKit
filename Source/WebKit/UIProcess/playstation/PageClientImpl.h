@@ -156,6 +156,10 @@ private:
 
     void requestDOMPasteAccess(WebCore::DOMPasteAccessCategory, const WebCore::IntRect&, const String&, CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&&) override;
 
+#if USE(WPE_RENDERER)
+    UnixFileDescriptor hostFileDescriptor() override;
+#endif
+
     PlayStationWebView& m_view;
 };
 

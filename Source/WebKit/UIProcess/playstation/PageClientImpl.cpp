@@ -36,6 +36,10 @@
 #include "DrawingAreaProxyWC.h"
 #endif
 
+#if USE(WPE_RENDERER)
+#include <wpe/wpe.h>
+#endif
+
 namespace WebKit {
 
 PageClientImpl::PageClientImpl(PlayStationWebView& view)
@@ -343,5 +347,12 @@ void PageClientImpl::requestDOMPasteAccess(WebCore::DOMPasteAccessCategory, cons
 {
     completionHandler(WebCore::DOMPasteAccessResponse::DeniedForGesture);
 }
+
+#if USE(WPE_RENDERER)
+UnixFileDescriptor PageClientImpl::hostFileDescriptor()
+{
+    return UnixFileDescriptor { 1, UnixFileDescriptor::Adopt };
+}
+#endif
 
 } // namespace WebKit

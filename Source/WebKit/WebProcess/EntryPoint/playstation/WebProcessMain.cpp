@@ -66,6 +66,9 @@ int main(int argc, char** argv)
     loadLibraryOrExit(LibXml2_LOAD_AT);
 #endif
     loadLibraryOrExit(WebKitRequirements_LOAD_AT);
+#if defined(WPE_LOAD_AT)
+    loadLibraryOrExit(WPE_LOAD_AT);
+#endif
 #if !ENABLE(STATIC_JSC)
     loadLibraryOrExit("libJavaScriptCore");
 #endif
