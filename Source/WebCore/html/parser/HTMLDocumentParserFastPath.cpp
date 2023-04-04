@@ -575,7 +575,7 @@ private:
         skipWhile<isHTMLSpace>(m_parsingBuffer);
         auto* start = m_parsingBuffer.position();
         if (m_parsingBuffer.hasCharactersRemaining() && isQuoteCharacter(*m_parsingBuffer)) {
-            Char quoteChar = m_parsingBuffer.consume();
+            auto quoteChar = m_parsingBuffer.consume();
             start = m_parsingBuffer.position();
             for (; m_parsingBuffer.hasCharactersRemaining() && *m_parsingBuffer != quoteChar; m_parsingBuffer.advance()) {
                 if (*m_parsingBuffer == '&' || *m_parsingBuffer == '\r') {
@@ -607,11 +607,11 @@ private:
         if (UNLIKELY(!m_parsingBuffer.hasCharactersRemaining() || !isQuoteCharacter(*m_parsingBuffer)))
             return didFail(HTMLFastPathResult::FailedParsingUnquotedEscapedAttributeValue, UCharSpan { });
 
-        UChar quoteChar = m_parsingBuffer.consume();
+        auto quoteChar = m_parsingBuffer.consume();
         if (m_parsingBuffer.hasCharactersRemaining() && *m_parsingBuffer != quoteChar) {
             if (m_parsingFailed)
                 return UCharSpan { };
-            Char c = *m_parsingBuffer;
+            auto c = *m_parsingBuffer;
             if (c == '&')
                 scanHTMLCharacterReference(m_ucharBuffer);
             else if (c == '\r') {
