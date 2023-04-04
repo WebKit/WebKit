@@ -33,6 +33,10 @@
 #include "PlatformImage.h"
 #include "RenderingResource.h"
 
+#if USE(CAIRO)
+#include "PixelBuffer.h"
+#endif
+
 namespace WebCore {
 
 class GraphicsContext;
@@ -41,6 +45,9 @@ class NativeImage final : public RenderingResource {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static WEBCORE_EXPORT RefPtr<NativeImage> create(PlatformImagePtr&&, RenderingResourceIdentifier = RenderingResourceIdentifier::generateThreadSafe());
+#if USE(CAIRO)
+    static RefPtr<NativeImage> create(Ref<PixelBuffer>&&, bool premultipliedAlpha);
+#endif
 
     WEBCORE_EXPORT void setPlatformImage(PlatformImagePtr&&);
     const PlatformImagePtr& platformImage() const { return m_platformImage; }
@@ -55,8 +62,14 @@ public:
 
 private:
     NativeImage(PlatformImagePtr&&, RenderingResourceIdentifier);
+#if USE(CAIRO)
+    NativeImage(PlatformImagePtr&&, RenderingResourceIdentifier, Ref<PixelBuffer>&&);
+#endif
 
     PlatformImagePtr m_platformImage;
+#if USE(CAIRO)
+    RefPtr<PixelBuffer> m_pixelBuffer;
+#endif
 };
 
 } // namespace WebCore
