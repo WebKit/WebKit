@@ -31,6 +31,7 @@
 #include "LayerTreeContext.h"
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
+#include <WebCore/DMABufFormat.h>
 #include <WebCore/GBMDevice.h>
 #include <WebCore/GLContext.h>
 #include <WebCore/IntRect.h>
@@ -109,31 +110,44 @@ AcceleratedBackingStoreDMABuf::RenderSource::RenderSource(const WebCore::IntSize
 {
 }
 
-AcceleratedBackingStoreDMABuf::Texture::Texture(GdkGLContext* glContext, const UnixFileDescriptor& backFD, const UnixFileDescriptor& frontFD, int fourcc, int32_t offset, int32_t stride, const WebCore::IntSize& size, float deviceScaleFactor)
+AcceleratedBackingStoreDMABuf::Texture::Texture(GdkGLContext* glContext, const UnixFileDescriptor& backFD, const UnixFileDescriptor& frontFD, int fourcc, int32_t offset, int32_t stride, const WebCore::IntSize& size, uint64_t modifier, float deviceScaleFactor)
     : RenderSource(size, deviceScaleFactor)
     , m_context(glContext)
 {
     gdk_gl_context_make_current(m_context.get());
     auto& display = WebCore::PlatformDisplay::sharedDisplay();
-    Vector<EGLAttrib> attributeList = {
-        EGL_WIDTH, m_size.width(),
-        EGL_HEIGHT, m_size.height(),
-        EGL_LINUX_DRM_FOURCC_EXT, fourcc,
-        EGL_DMA_BUF_PLANE0_FD_EXT, backFD.value(),
-        EGL_DMA_BUF_PLANE0_OFFSET_EXT, offset,
-        EGL_DMA_BUF_PLANE0_PITCH_EXT, stride,
-        EGL_NONE };
-    m_backImage = display.createEGLImage(EGL_NO_CONTEXT, EGL_LINUX_DMA_BUF_EXT, nullptr, attributeList);
-    if (!m_backImage) {
-        WTFLogAlways("Failed to create EGL image from DMABuf with file descriptor %d", backFD.value());
-        return;
-    }
-    attributeList[7] = frontFD.value();
-    m_frontImage = display.createEGLImage(EGL_NO_CONTEXT, EGL_LINUX_DMA_BUF_EXT, nullptr, attributeList);
-    if (!m_frontImage) {
-        WTFLogAlways("Failed to create EGL image from DMABuf with file descriptor %d", frontFD.value());
-        display.destroyEGLImage(m_backImage);
+
+    auto createImage = [&](const UnixFileDescriptor& fd) -> EGLImage {
+        Vector<EGLAttrib> attributes = {
+            EGL_WIDTH, m_size.width(),
+            EGL_HEIGHT, m_size.height(),
+            EGL_LINUX_DRM_FOURCC_EXT, fourcc,
+            EGL_DMA_BUF_PLANE0_FD_EXT, fd.value(),
+            EGL_DMA_BUF_PLANE0_OFFSET_EXT, offset,
+            EGL_DMA_BUF_PLANE0_PITCH_EXT, stride,
+        };
+        if (modifier != uint64_t(WebCore::DMABufFormat::Modifier::Invalid) && display.eglExtensions().EXT_image_dma_buf_import_modifiers) {
+            std::array<EGLAttrib, 4> modifierAttributes {
+                EGL_DMA_BUF_PLANE0_MODIFIER_HI_EXT, static_cast<EGLAttrib>(modifier >> 32),
+                EGL_DMA_BUF_PLANE0_MODIFIER_LO_EXT, static_cast<EGLAttrib>(modifier & 0xffffffff),
+            };
+            attributes.append(Span<const EGLAttrib> { modifierAttributes });
+        }
+        attributes.append(EGL_NONE);
+
+        return display.createEGLImage(EGL_NO_CONTEXT, EGL_LINUX_DMA_BUF_EXT, nullptr, attributes);
+    };
+
+    m_backImage = createImage(backFD);
+    m_frontImage = createImage(frontFD);
+    if (!m_backImage || !m_frontImage) {
+        WTFLogAlways("Failed to create EGL image from DMABufs with file descriptors %d and %d", backFD.value(), frontFD.value());
+        if (m_backImage)
+            display.destroyEGLImage(m_backImage);
         m_backImage = nullptr;
+        if (m_frontImage)
+            display.destroyEGLImage(m_frontImage);
+        m_frontImage = nullptr;
         return;
     }
 
@@ -299,7 +313,7 @@ void AcceleratedBackingStoreDMABuf::Surface::paint(GtkWidget*, cairo_t* cr, cons
 }
 #endif
 
-void AcceleratedBackingStoreDMABuf::configure(UnixFileDescriptor&& backFD, UnixFileDescriptor&& frontFD, int fourcc, int32_t offset, int32_t stride, WebCore::IntSize&& size)
+void AcceleratedBackingStoreDMABuf::configure(UnixFileDescriptor&& backFD, UnixFileDescriptor&& frontFD, int fourcc, int32_t offset, int32_t stride, WebCore::IntSize&& size, uint64_t modifier)
 {
     m_surface.backFD = WTFMove(backFD);
     m_surface.frontFD = WTFMove(frontFD);
@@ -307,6 +321,7 @@ void AcceleratedBackingStoreDMABuf::configure(UnixFileDescriptor&& backFD, UnixF
     m_surface.offset = offset;
     m_surface.stride = stride;
     m_surface.size = WTFMove(size);
+    m_surface.modifier = modifier;
     if (gtk_widget_get_realized(m_webPage.viewWidget()))
         m_pendingSource = createSource();
 }
@@ -317,7 +332,7 @@ std::unique_ptr<AcceleratedBackingStoreDMABuf::RenderSource> AcceleratedBackingS
         return makeUnique<Surface>(m_surface.backFD, m_surface.frontFD, m_surface.fourcc, m_surface.offset, m_surface.stride, m_surface.size, m_webPage.deviceScaleFactor());
 
     ensureGLContext();
-    return makeUnique<Texture>(m_gdkGLContext.get(), m_surface.backFD, m_surface.frontFD, m_surface.fourcc, m_surface.offset, m_surface.stride, m_surface.size, m_webPage.deviceScaleFactor());
+    return makeUnique<Texture>(m_gdkGLContext.get(), m_surface.backFD, m_surface.frontFD, m_surface.fourcc, m_surface.offset, m_surface.stride, m_surface.size, m_surface.modifier, m_webPage.deviceScaleFactor());
 }
 
 void AcceleratedBackingStoreDMABuf::frame(CompletionHandler<void()>&& completionHandler)

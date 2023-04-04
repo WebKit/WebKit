@@ -63,7 +63,7 @@ private:
     // IPC::MessageReceiver.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
-    void configure(WTF::UnixFileDescriptor&&, WTF::UnixFileDescriptor&&, int fourcc, int32_t offset, int32_t stride, WebCore::IntSize&&);
+    void configure(WTF::UnixFileDescriptor&&, WTF::UnixFileDescriptor&&, int fourcc, int32_t offset, int32_t stride, WebCore::IntSize&&, uint64_t modifier);
     void frame(CompletionHandler<void()>&&);
     void ensureGLContext();
 
@@ -99,7 +99,7 @@ private:
 
     class Texture final : public RenderSource {
     public:
-        Texture(GdkGLContext*, const WTF::UnixFileDescriptor&, const WTF::UnixFileDescriptor&, int fourcc, int32_t offset, int32_t stride, const WebCore::IntSize&, float deviceScaleFactor);
+        Texture(GdkGLContext*, const WTF::UnixFileDescriptor&, const WTF::UnixFileDescriptor&, int fourcc, int32_t offset, int32_t stride, const WebCore::IntSize&, uint64_t modifier, float deviceScaleFactor);
         ~Texture();
 
         unsigned texture() const { return m_textureID; }
@@ -157,6 +157,7 @@ private:
         int32_t offset { 0 };
         int32_t stride { 0 };
         WebCore::IntSize size;
+        uint64_t modifier { 0 };
     } m_surface;
     std::unique_ptr<RenderSource> m_pendingSource;
     std::unique_ptr<RenderSource> m_committedSource;

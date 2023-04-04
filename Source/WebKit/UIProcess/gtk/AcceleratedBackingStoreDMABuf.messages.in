@@ -21,6 +21,6 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 messages -> AcceleratedBackingStoreDMABuf NotRefCounted {
-    Configure(UnixFileDescriptor backFD, UnixFileDescriptor frontFD, int fourcc, int32_t offset, int32_t stride, WebCore::IntSize size)
+    Configure(UnixFileDescriptor backFD, UnixFileDescriptor frontFD, int fourcc, int32_t offset, int32_t stride, WebCore::IntSize size, uint64_t modifier)
     Frame() -> ()
 }

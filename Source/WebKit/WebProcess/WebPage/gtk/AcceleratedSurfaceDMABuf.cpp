@@ -118,46 +118,62 @@ void AcceleratedSurfaceDMABuf::clientResize(const WebCore::IntSize& size)
     if (size.isEmpty())
         return;
 
-    auto* backObject = gbm_bo_create(WebCore::GBMDevice::singleton().device(), size.width(), size.height(), uint32_t(WebCore::DMABufFormat::FourCC::ARGB8888), 0);
-    if (!backObject) {
-        WTFLogAlways("Failed to create GBM buffer of size %dx%d: %s", size.width(), size.height(), safeStrerror(errno).data());
-        return;
-    }
-    UnixFileDescriptor backFD(gbm_bo_get_fd(backObject), UnixFileDescriptor::Adopt);
-    Vector<EGLAttrib> attributes = {
-        EGL_WIDTH, static_cast<EGLAttrib>(gbm_bo_get_width(backObject)),
-        EGL_HEIGHT, static_cast<EGLAttrib>(gbm_bo_get_height(backObject)),
-        EGL_LINUX_DRM_FOURCC_EXT, static_cast<EGLAttrib>(gbm_bo_get_format(backObject)),
-        EGL_DMA_BUF_PLANE0_FD_EXT, backFD.value(),
-        EGL_DMA_BUF_PLANE0_OFFSET_EXT, static_cast<EGLAttrib>(gbm_bo_get_offset(backObject, 0)),
-        EGL_DMA_BUF_PLANE0_PITCH_EXT, static_cast<EGLAttrib>(gbm_bo_get_stride(backObject)),
-        EGL_NONE
+    struct {
+        uint32_t format;
+        uint32_t offset;
+        uint32_t stride;
+        uint64_t modifier;
+    } metadata;
+
+    auto createImage = [&]() -> std::pair<UnixFileDescriptor, EGLImage> {
+        auto* bo = gbm_bo_create(WebCore::GBMDevice::singleton().device(), size.width(), size.height(), uint32_t(WebCore::DMABufFormat::FourCC::ARGB8888), 0);
+        if (!bo) {
+            WTFLogAlways("Failed to create GBM buffer of size %dx%d: %s", size.width(), size.height(), safeStrerror(errno).data());
+            return { };
+        }
+
+        UnixFileDescriptor fd { gbm_bo_get_fd(bo), UnixFileDescriptor::Adopt };
+        metadata.format = gbm_bo_get_format(bo);
+        metadata.offset = gbm_bo_get_offset(bo, 0);
+        metadata.stride = gbm_bo_get_stride(bo);
+        metadata.modifier = gbm_bo_get_modifier(bo);
+
+        Vector<EGLAttrib> attributes = {
+            EGL_WIDTH, static_cast<EGLAttrib>(gbm_bo_get_width(bo)),
+            EGL_HEIGHT, static_cast<EGLAttrib>(gbm_bo_get_height(bo)),
+            EGL_LINUX_DRM_FOURCC_EXT, static_cast<EGLAttrib>(metadata.format),
+            EGL_DMA_BUF_PLANE0_FD_EXT, fd.value(),
+            EGL_DMA_BUF_PLANE0_OFFSET_EXT, static_cast<EGLAttrib>(metadata.offset),
+            EGL_DMA_BUF_PLANE0_PITCH_EXT, static_cast<EGLAttrib>(metadata.stride),
+        };
+        if (metadata.modifier != uint64_t(WebCore::DMABufFormat::Modifier::Invalid) && display.eglExtensions().EXT_image_dma_buf_import_modifiers) {
+            std::array<EGLAttrib, 4> modifierAttributes {
+                EGL_DMA_BUF_PLANE0_MODIFIER_HI_EXT, static_cast<EGLAttrib>(metadata.modifier >> 32),
+                EGL_DMA_BUF_PLANE0_MODIFIER_LO_EXT, static_cast<EGLAttrib>(metadata.modifier & 0xffffffff),
+            };
+            attributes.append(Span<const EGLAttrib> { modifierAttributes });
+        }
+        attributes.append(EGL_NONE);
+
+        EGLImage image = display.createEGLImage(EGL_NO_CONTEXT, EGL_LINUX_DMA_BUF_EXT, nullptr, attributes);
+        gbm_bo_destroy(bo);
+
+        return { WTFMove(fd), image };
     };
-    m_back.image = display.createEGLImage(EGL_NO_CONTEXT, EGL_LINUX_DMA_BUF_EXT, nullptr, attributes);
-    if (!m_back.image) {
-        WTFLogAlways("Failed to create EGL image for DMABuf with file descriptor: %d", backFD.value());
-        gbm_bo_destroy(backObject);
+
+    auto backImage = createImage();
+    auto frontImage = createImage();
+    if (!backImage.second || !frontImage.second) {
+        WTFLogAlways("Failed to create EGL images for DMABufs with file descriptors %d and %d", backImage.first.value(), frontImage.first.value());
+        if (backImage.second)
+            display.destroyEGLImage(backImage.second);
+        if (frontImage.second)
+            display.destroyEGLImage(frontImage.second);
         return;
     }
-    auto* frontObject = gbm_bo_create(WebCore::GBMDevice::singleton().device(), size.width(), size.height(), uint32_t(WebCore::DMABufFormat::FourCC::ARGB8888), 0);
-    if (!frontObject) {
-        WTFLogAlways("Failed to create GBM buffer of size %dx%d: %s", size.width(), size.height(), safeStrerror(errno).data());
-        display.destroyEGLImage(m_back.image);
-        m_back.image = nullptr;
-        gbm_bo_destroy(backObject);
-        return;
-    }
-    UnixFileDescriptor frontFD(gbm_bo_get_fd(frontObject), UnixFileDescriptor::Adopt);
-    attributes[7] = frontFD.value();
-    m_front.image = display.createEGLImage(EGL_NO_CONTEXT, EGL_LINUX_DMA_BUF_EXT, nullptr, attributes);
-    if (!m_front.image) {
-        WTFLogAlways("Failed to create EGL image for DMABuf with file descriptor: %d", frontFD.value());
-        gbm_bo_destroy(frontObject);
-        display.destroyEGLImage(m_back.image);
-        m_back.image = nullptr;
-        gbm_bo_destroy(backObject);
-        return;
-    }
+
+    m_back.image = backImage.second;
+    m_front.image = frontImage.second;
 
     std::array<unsigned, 3> renderbuffers;
     glGenRenderbuffers(3, renderbuffers.data());
@@ -174,9 +190,8 @@ void AcceleratedSurfaceDMABuf::clientResize(const WebCore::IntSize& size)
     glBindRenderbuffer(GL_RENDERBUFFER, m_depthStencilBuffer);
     glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8_OES, size.width(), size.height());
 
-    WebProcess::singleton().parentProcessConnection()->send(Messages::AcceleratedBackingStoreDMABuf::Configure(WTFMove(backFD), WTFMove(frontFD), gbm_bo_get_format(backObject), gbm_bo_get_offset(backObject, 0), gbm_bo_get_stride(backObject), size), m_webPage.identifier());
-    gbm_bo_destroy(backObject);
-    gbm_bo_destroy(frontObject);
+    WebProcess::singleton().parentProcessConnection()->send(Messages::AcceleratedBackingStoreDMABuf::Configure(WTFMove(backImage.first), WTFMove(frontImage.first),
+        metadata.format, metadata.offset, metadata.stride, size, metadata.modifier), m_webPage.identifier());
 }
 
 void AcceleratedSurfaceDMABuf::willRenderFrame()
