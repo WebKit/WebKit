@@ -358,7 +358,7 @@ Node::Editability HTMLElement::editabilityFromContentEditableAttr(const Node& no
     if (containingShadowRoot && containingShadowRoot->mode() == ShadowRootMode::UserAgent)
         return Editability::ReadOnly;
 
-    if (node.document().inDesignMode())
+    if (node.document().inDesignMode() && &node.rootNode() == &node.document())
         return Editability::CanEditRichly;
 
     return Editability::ReadOnly;
