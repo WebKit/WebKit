@@ -68,7 +68,7 @@ static RetainPtr<CTFontDescriptorRef> findFontDescriptor(CFStringRef referenceUR
     return nullptr;
 }
 
-static RetainPtr<CTFontRef> createCTFont(CFDictionaryRef attributes, float size, CTFontDescriptorOptions options, CFStringRef referenceURL, CFStringRef desiredPostScriptName)
+RetainPtr<CTFontRef> createCTFont(CFDictionaryRef attributes, float size, CTFontDescriptorOptions options, CFStringRef referenceURL, CFStringRef desiredPostScriptName)
 {
     auto fontDescriptor = adoptCF(CTFontDescriptorCreateWithAttributes(attributes));
     if (fontDescriptor) {

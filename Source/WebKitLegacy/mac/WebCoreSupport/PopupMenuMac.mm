@@ -88,7 +88,7 @@ void PopupMenuMac::populate()
                 CGFloat size = style.font().primaryFont().platformData().size();
                 font = adoptCF(CTFontCreateUIFontForLanguage(isFontWeightBold(style.font().weight()) ? kCTFontUIFontEmphasizedSystem : kCTFontUIFontSystem, size, nullptr));
             }
-            [attributes setObject:toNSFont(font.get()) forKey:NSFontAttributeName];
+            [attributes setObject:(__bridge NSFont *)(font.get()) forKey:NSFontAttributeName];
         }
 
         RetainPtr<NSMutableParagraphStyle> paragraphStyle = adoptNS([[NSParagraphStyle defaultParagraphStyle] mutableCopy]);
@@ -215,7 +215,7 @@ void PopupMenuMac::show(const IntRect& r, LocalFrameView* v, int selectedIndex)
         break;
     }
 
-    PAL::popUpMenu(menu, location, roundf(NSWidth(r)), dummyView.get(), selectedIndex, toNSFont(font), controlSize, !m_client->menuStyle().hasDefaultAppearance());
+    PAL::popUpMenu(menu, location, roundf(NSWidth(r)), dummyView.get(), selectedIndex, (__bridge NSFont *)font, controlSize, !m_client->menuStyle().hasDefaultAppearance());
 
     [m_popup dismissPopUp];
     [dummyView removeFromSuperview];

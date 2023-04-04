@@ -96,9 +96,12 @@ TEST(NSAttributedStringWebKitAdditions, FontDataURL)
 
     __block bool done = false;
     [NSAttributedString loadFromHTMLWithString:html options:@{ } completionHandler:^(NSAttributedString *attributedString, NSDictionary<NSAttributedStringDocumentAttributeKey, id> *attributes, NSError *error) {
+        __block bool foundFont { false };
         [attributedString enumerateAttributesInRange:NSMakeRange(0, attributedString.length) options:0 usingBlock:^(NSDictionary *attributes, NSRange attributeRange, BOOL *stop) {
-            EXPECT_FALSE(attributes[NSFontAttributeName]);
+            if (attributes[NSFontAttributeName])
+                foundFont = true;
         }];
+        EXPECT_TRUE(foundFont);
         done = true;
     }];
     TestWebKitAPI::Util::run(&done);

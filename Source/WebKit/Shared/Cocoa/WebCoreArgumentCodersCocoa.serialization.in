@@ -50,10 +50,10 @@ header: <WebCore/ResourceRequest.h>
 
 [Nested] struct WebCore::AttributedString::AttributeValue {
 #if PLATFORM(MAC)
-    std::variant<double, String, URL, Vector<String>, Vector<double>, RetainPtr<NSParagraphStyle>, RetainPtr<NSTextAttachment>, RetainPtr<NSShadow>, RetainPtr<NSDate>, RetainPtr<NSFont>, RetainPtr<NSColor>> value;
+    std::variant<double, String, URL, Ref<WebCore::Font>, Vector<String>, Vector<double>, RetainPtr<NSParagraphStyle>, RetainPtr<NSTextAttachment>, RetainPtr<NSShadow>, RetainPtr<NSDate>, RetainPtr<NSColor>> value;
 #endif
 #if PLATFORM(IOS_FAMILY)
-    std::variant<double, String, URL, Vector<String>, Vector<double>, RetainPtr<NSParagraphStyle>, RetainPtr<NSTextAttachment>, RetainPtr<NSShadow>, RetainPtr<NSDate>, RetainPtr<UIFont>, RetainPtr<UIColor>> value;
+    std::variant<double, String, URL, Ref<WebCore::Font>, Vector<String>, Vector<double>, RetainPtr<NSParagraphStyle>, RetainPtr<NSTextAttachment>, RetainPtr<NSShadow>, RetainPtr<NSDate>, RetainPtr<UIColor>> value;
 #endif
 }
 

@@ -77,42 +77,10 @@
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-
 #import "UIFoundationSoftLink.h"
 #import "WAKAppKitStubs.h"
 #import <pal/ios/UIKitSoftLink.h>
 #import <pal/spi/ios/UIKitSPI.h>
-
-#define PlatformNSShadow            getNSShadowClass()
-#define PlatformNSTextAttachment    getNSTextAttachmentClass()
-#define PlatformNSParagraphStyle    getNSParagraphStyleClass()
-#define PlatformNSTextList          getNSTextListClass()
-#define PlatformNSTextTableBlock    getNSTextTableBlockClass()
-#define PlatformNSTextTable         getNSTextTableClass()
-#define PlatformNSTextTab           getNSTextTabClass()
-#define PlatformColor               UIColor
-#define PlatformColorClass          PAL::getUIColorClass()
-#define PlatformNSColorClass        getNSColorClass()
-#define PlatformFont                UIFont
-#define PlatformFontClass           PAL::getUIFontClass()
-#define PlatformImageClass          PAL::getUIImageClass()
-
-#else
-
-#define PlatformNSShadow            NSShadow
-#define PlatformNSTextAttachment    NSTextAttachment
-#define PlatformNSParagraphStyle    NSParagraphStyle
-#define PlatformNSTextList          NSTextList
-#define PlatformNSTextTableBlock    NSTextTableBlock
-#define PlatformNSTextTable         NSTextTable
-#define PlatformNSTextTab           NSTextTab
-#define PlatformColor               NSColor
-#define PlatformColorClass          NSColor
-#define PlatformNSColorClass        NSColor
-#define PlatformFont                NSFont
-#define PlatformFontClass           NSFont
-#define PlatformImageClass          NSImage
-
 #endif
 
 using namespace WebCore;
@@ -2387,7 +2355,7 @@ AttributedString editingAttributedString(const SimpleRange& range, IncludeImages
         if (style.textDecorationsInEffect() & TextDecorationLine::LineThrough)
             [attrs setObject:[NSNumber numberWithInteger:NSUnderlineStyleSingle] forKey:NSStrikethroughStyleAttributeName];
         if (auto font = style.fontCascade().primaryFont().getCTFont())
-            [attrs setObject:toNSFont(font) forKey:NSFontAttributeName];
+            [attrs setObject:(__bridge NSFont *)font forKey:NSFontAttributeName];
         else
             [attrs setObject:[fontManager convertFont:WebDefaultFont() toSize:style.fontCascade().primaryFont().platformData().size()] forKey:NSFontAttributeName];
 

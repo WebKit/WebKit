@@ -34,10 +34,8 @@
 SOFT_LINK_PRIVATE_FRAMEWORK_FOR_SOURCE(WebCore, UIFoundation)
 
 SOFT_LINK_CLASS_FOR_SOURCE(WebCore, UIFoundation, NSColor)
-SOFT_LINK_CLASS_FOR_SOURCE(WebCore, UIFoundation, NSShadow)
 SOFT_LINK_CLASS_FOR_SOURCE(WebCore, UIFoundation, NSTextAttachment)
 SOFT_LINK_CLASS_FOR_SOURCE(WebCore, UIFoundation, NSMutableParagraphStyle)
-SOFT_LINK_CLASS_FOR_SOURCE(WebCore, UIFoundation, NSParagraphStyle)
 SOFT_LINK_CLASS_FOR_SOURCE(WebCore, UIFoundation, NSTextList)
 SOFT_LINK_CLASS_FOR_SOURCE(WebCore, UIFoundation, NSTextBlock)
 SOFT_LINK_CLASS_FOR_SOURCE(WebCore, UIFoundation, NSTextTableBlock)

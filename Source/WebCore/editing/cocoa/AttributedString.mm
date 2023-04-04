@@ -26,6 +26,7 @@
 #import "config.h"
 #import "AttributedString.h"
 
+#import "Font.h"
 #import "Logging.h"
 #import <Foundation/Foundation.h>
 #import <wtf/cocoa/VectorCocoa.h>
@@ -37,6 +38,8 @@
 #endif
 
 namespace WebCore {
+
+AttributedString::~AttributedString() = default;
 
 bool AttributedString::rangesAreSafe(const String& string, const Vector<std::pair<Range, HashMap<String, AttributeValue>>>& vector)
 {
@@ -75,17 +78,10 @@ static RetainPtr<NSObject> toNSObject(const AttributedString::AttributeValue& va
         return value;
     }, [] (const RetainPtr<NSDate>& value) -> RetainPtr<NSObject> {
         return value;
-#if PLATFORM(MAC)
-    }, [] (const RetainPtr<NSFont>& value) -> RetainPtr<NSObject> {
+    }, [] (const Ref<Font>& font) -> RetainPtr<NSObject> {
+        return (__bridge PlatformFont *)(font->getCTFont());
+    }, [] (const RetainPtr<PlatformColor>& value) -> RetainPtr<NSObject> {
         return value;
-    }, [] (const RetainPtr<NSColor>& value) -> RetainPtr<NSObject> {
-        return value;
-#else
-    }, [] (const RetainPtr<UIFont>& value) -> RetainPtr<NSObject> {
-        return value;
-    }, [] (const RetainPtr<UIColor>& value) -> RetainPtr<NSObject> {
-        return value;
-#endif
     });
 }
 
@@ -164,29 +160,16 @@ static std::optional<AttributedString::AttributeValue> extractValue(id value)
         return extractArray(array);
     if (auto* date = dynamic_objc_cast<NSDate>(value))
         return { { { RetainPtr { date } } } };
-#if PLATFORM(MAC)
-    if (auto* shadow = dynamic_objc_cast<NSShadow>(value))
-        return { { { RetainPtr { shadow } } } };
-    if (auto* paragraphStyle = dynamic_objc_cast<NSParagraphStyle>(value))
-        return { { { RetainPtr { paragraphStyle } } } };
-    if (auto* textAttachment = dynamic_objc_cast<NSTextAttachment>(value))
-        return { { { RetainPtr { textAttachment } } } };
-    if (auto* font = dynamic_objc_cast<NSFont>(value))
-        return { { { RetainPtr { font } } } };
-    if (auto* color = dynamic_objc_cast<NSColor>(value))
-        return { { { RetainPtr { color } } } };
-#else
-    if ([value isKindOfClass:WebCore::getNSShadowClass()])
+    if ([value isKindOfClass:PlatformNSShadow])
         return { { { RetainPtr { (NSShadow *)value } } } };
-    if ([value isKindOfClass:PAL::getNSParagraphStyleClass()])
+    if ([value isKindOfClass:PlatformNSParagraphStyle])
         return { { { RetainPtr { (NSParagraphStyle *)value } } } };
-    if ([value isKindOfClass:WebCore::getNSTextAttachmentClass()])
+    if ([value isKindOfClass:PlatformNSTextAttachment])
         return { { { RetainPtr { (NSTextAttachment *)value } } } };
-    if ([value isKindOfClass:PAL::getUIFontClass()])
-        return { { { RetainPtr { (UIFont *)value } } } };
-    if ([value isKindOfClass:PAL::getUIColorClass()])
-        return { { { RetainPtr { (UIColor *)value } } } };
-#endif
+    if ([value isKindOfClass:PlatformFontClass])
+        return { { { Font::create(FontPlatformData((__bridge CTFontRef)value, [(PlatformFont *)value pointSize])) } } };
+    if ([value isKindOfClass:PlatformColorClass])
+        return { { { RetainPtr { (PlatformColor *)value } } } };
     if (value) {
         RELEASE_LOG_ERROR(Editing, "NSAttributedString extraction failed for class <%@>", NSStringFromClass([value class]));
         ASSERT_NOT_REACHED();

@@ -327,21 +327,7 @@ private:
 
 #if USE(CORE_TEXT)
 bool isSystemFont(CTFontRef);
-#endif
-
-#if USE(APPKIT) && defined(__OBJC__)
-
-// NSFonts and CTFontRefs are toll-free-bridged.
-inline CTFontRef toCTFont(NSFont *font)
-{
-    return (__bridge CTFontRef)font;
-}
-
-inline NSFont *toNSFont(CTFontRef font)
-{
-    return (__bridge NSFont *)font;
-}
-
+WEBCORE_EXPORT RetainPtr<CTFontRef> createCTFont(CFDictionaryRef attributes, float size, CTFontDescriptorOptions, CFStringRef referenceURL, CFStringRef desiredPostScriptName);
 #endif
 
 #if USE(CG)
