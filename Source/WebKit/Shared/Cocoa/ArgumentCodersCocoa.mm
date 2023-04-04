@@ -96,16 +96,16 @@
         return adoptNS([[WKSecureCodingURLWrapper alloc] initWithURL:unwrappedURL]).autorelease();
 
     if (auto mutableArray = dynamic_objc_cast<NSMutableArray>(object); mutableArray && rewriteMutableArray)
-        return [mutableArray copy];
+        return adoptNS([mutableArray copy]).autorelease();
 
     if (auto mutableData = dynamic_objc_cast<NSMutableData>(object); mutableData && rewriteMutableData)
-        return [mutableData copy];
+        return adoptNS([mutableData copy]).autorelease();
 
     if (auto mutableDict = dynamic_objc_cast<NSMutableDictionary>(object); mutableDict && rewriteMutableDictionary)
-        return [mutableDict copy];
+        return adoptNS([mutableDict copy]).autorelease();
 
     if (auto mutableStr = dynamic_objc_cast<NSMutableString>(object); mutableStr && rewriteMutableString)
-        return [mutableStr copy];
+        return adoptNS([mutableStr copy]).autorelease();
 
     // We can't just return a WebCore::CocoaColor here, because the decoder would
     // have no way of distinguishing an authentic WebCore::CocoaColor vs a CGColor
