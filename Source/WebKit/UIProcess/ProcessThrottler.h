@@ -139,6 +139,7 @@ public:
     };
     
     void didConnectToProcess(ProcessID);
+    void didDisconnectFromProcess();
     bool shouldBeRunnable() const { return m_foregroundActivities.size() || m_backgroundActivities.size(); }
     void setAllowsActivities(bool);
     void setShouldTakeSuspendedAssertion(bool);

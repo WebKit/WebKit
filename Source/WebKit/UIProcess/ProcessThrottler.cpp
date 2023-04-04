@@ -234,6 +234,15 @@ void ProcessThrottler::didConnectToProcess(ProcessID pid)
     updateThrottleStateNow();
     RELEASE_ASSERT(m_assertion || (m_state == ProcessThrottleState::Suspended && !m_shouldTakeSuspendedAssertion));
 }
+
+void ProcessThrottler::didDisconnectFromProcess()
+{
+    PROCESSTHROTTLER_RELEASE_LOG_WITH_PID("didDisconnectFromProcess:", m_processIdentifier);
+
+    clearPendingRequestToSuspend();
+    m_processIdentifier = 0;
+    m_assertion = nullptr;
+}
     
 void ProcessThrottler::prepareToSuspendTimeoutTimerFired()
 {
