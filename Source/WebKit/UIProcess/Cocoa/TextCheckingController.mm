@@ -29,6 +29,7 @@
 #if ENABLE(PLATFORM_DRIVEN_TEXT_CHECKING)
 
 #import "TextCheckingControllerProxyMessages.h"
+#import "WebPageProxy.h"
 #import "WebProcessProxy.h"
 #import <WebCore/AttributedString.h>
 
