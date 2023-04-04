@@ -580,6 +580,8 @@ webkit.org/b/151455 [ Release ] http/tests/xmlhttprequest/workers/methods-async.
 
 webkit.org/b/150542 fast/forms/state-restore-per-form.html [ Pass Timeout ]
 
+webkit.org/b/254706 imported/w3c/web-platform-tests/html/dom/idlharness.https.html [ Pass Failure ]
+
 webkit.org/b/151709 [ Release ] http/tests/xmlhttprequest/workers/methods.html [ Pass Timeout ]
 
 webkit.org/b/231372 [ BigSur arm64 Debug ] http/tests/xmlhttprequest/access-control-response-with-body.html [ Pass Crash ]

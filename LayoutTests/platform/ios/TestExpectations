@@ -3144,6 +3144,8 @@ webkit.org/b/207767 http/wpt/service-workers/online.https.html [ Pass Failure ]
 
 webkit.org/b/207768 http/wpt/service-workers/useragent.https.html [ Pass Failure ]
 
+webkit.org/b/254706 imported/w3c/web-platform-tests/html/dom/idlharness.https.html [ Pass Failure ]
+
 webkit.org/b/205216 imported/w3c/web-platform-tests/content-security-policy/reporting/report-same-origin-with-cookies.html [ Pass Failure DumpJSConsoleLogInStdErr ]
 
 webkit.org/b/207769 crypto/subtle/rsa-indexeddb-non-exportable.html [ Pass Timeout ]
