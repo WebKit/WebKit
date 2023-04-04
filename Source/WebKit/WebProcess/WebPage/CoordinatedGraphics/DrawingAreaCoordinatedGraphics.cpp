@@ -384,12 +384,6 @@ void DrawingAreaCoordinatedGraphics::layerHostDidFlushLayers()
         sendDidUpdateBackingStoreState();
         return;
     }
-
-    ASSERT(!m_compositingAccordingToProxyMessages);
-    if (!exitAcceleratedCompositingModePending()) {
-        send(Messages::DrawingAreaProxy::EnterAcceleratedCompositingMode(m_backingStoreStateID, m_layerTreeHost->layerTreeContext()));
-        m_compositingAccordingToProxyMessages = true;
-    }
 }
 #endif
 
