@@ -488,6 +488,11 @@ static ALWAYS_INLINE JSString* replaceUsingRegExpSearch(
                 startPosition++;
                 if (startPosition > sourceLen)
                     break;
+                if (U16_IS_LEAD(source[startPosition - 1]) && U16_IS_TRAIL(source[startPosition])) {
+                    startPosition++;
+                    if (startPosition > sourceLen)
+                        break;
+                }
             }
         }
     } else {
@@ -567,6 +572,11 @@ static ALWAYS_INLINE JSString* replaceUsingRegExpSearch(
                 startPosition++;
                 if (startPosition > sourceLen)
                     break;
+                if (U16_IS_LEAD(source[startPosition - 1]) && U16_IS_TRAIL(source[startPosition])) {
+                    startPosition++;
+                    if (startPosition > sourceLen)
+                        break;
+                }
             }
         } while (global);
     }
