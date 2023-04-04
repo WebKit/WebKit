@@ -31,6 +31,10 @@
 #include <dlfcn.h>
 #include <toolkitten/Application.h>
 
+#if defined (USE_WPE_BACKEND_PLAYSTATION) && USE_WPE_BACKEND_PLAYSTATION
+#include <wpe/playstation.h>
+#endif
+
 using toolkitten::Widget;
 using toolkitten::Application;
 
@@ -72,6 +76,10 @@ static void initialize()
     loadLibraryOrExit("libJavaScriptCore");
 #endif
     loadLibraryOrExit("libWebKit");
+
+#if defined (USE_WPE_BACKEND_PLAYSTATION) && USE_WPE_BACKEND_PLAYSTATION
+    wpe_playstation_process_provider_register_backend();
+#endif
 }
 
 class ApplicationClient : public Application::Client {
