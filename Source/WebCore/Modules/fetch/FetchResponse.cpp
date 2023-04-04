@@ -39,6 +39,7 @@
 #include "ReadableStreamSink.h"
 #include "ResourceError.h"
 #include "ScriptExecutionContext.h"
+#include <JavaScriptCore/JSONObject.h>
 #include <wtf/text/StringConcatenateNumbers.h>
 
 namespace WebCore {

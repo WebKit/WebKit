@@ -27,8 +27,14 @@ function initializeReadableStreamDefaultReader(stream)
 {
     "use strict";
 
-    if (!@isReadableStream(stream))
-        @throwTypeError("ReadableStreamDefaultReader needs a ReadableStream");
+    if (!@isReadableStream(stream)) {
+        // FIXME: We should pass a single type.
+        let potentialInternalStream = @getInternalReadableStream(stream);
+        if (potentialInternalStream === @undefined)
+            @throwTypeError("ReadableStreamDefaultReader needs a ReadableStream");
+        stream = potentialInternalStream;
+    }
+
     if (@isReadableStreamLocked(stream))
         @throwTypeError("ReadableStream is locked");
 
