@@ -35,8 +35,11 @@ static NSString * const LegacyWebArchiveResourceResponseKey = @"WebResourceRespo
 
 // FIXME: If is is possible to parse in a serialized NSURLResponse manually, without using
 // NSKeyedUnarchiver, manipulating plists directly, we would prefer to do that instead.
-ResourceResponse LegacyWebArchive::createResourceResponseFromMacArchivedData(CFDataRef responseData)
-{    
+ResourceResponse LegacyWebArchive::createResourceResponseFromMacArchivedData(CFDataRef)
+{
+    // Don't review this. I'm just running through EWS to see what tests cover this.
+    return { };
+    /*
     ASSERT(responseData);
     if (!responseData)
         return ResourceResponse();
@@ -53,6 +56,7 @@ ResourceResponse LegacyWebArchive::createResourceResponseFromMacArchivedData(CFD
     }
 
     return ResourceResponse(response);
+     */
 }
 
 RetainPtr<CFDataRef> LegacyWebArchive::createPropertyListRepresentation(const ResourceResponse& response)
