@@ -60,6 +60,7 @@ class LayerHostingContext;
 class WebPage;
 class PlaybackSessionInterfaceContext;
 class PlaybackSessionManager;
+class ShareableBitmapHandle;
 class VideoFullscreenManager;
 
 class VideoFullscreenInterfaceContext
@@ -93,6 +94,9 @@ public:
     bool isFullscreen() const { return m_isFullscreen; }
     void setIsFullscreen(bool flag) { m_isFullscreen = flag; }
 
+    RetainPtr<CALayer> rootLayer() const { return m_rootLayer; }
+    void setRootLayer(RetainPtr<CALayer> layer) { m_rootLayer = layer; }
+
 private:
     // VideoFullscreenModelClient
     void hasVideoChanged(bool) override;
@@ -109,6 +113,7 @@ private:
     WebCore::HTMLMediaElementEnums::VideoFullscreenMode m_fullscreenMode { WebCore::HTMLMediaElementEnums::VideoFullscreenModeNone };
     bool m_fullscreenStandby { false };
     bool m_isFullscreen { false };
+    RetainPtr<CALayer> m_rootLayer;
 };
 
 class VideoFullscreenManager : public RefCounted<VideoFullscreenManager>, private IPC::MessageReceiver {
@@ -133,14 +138,18 @@ public:
     void exitVideoFullscreenForVideoElement(WebCore::HTMLVideoElement&, WTF::CompletionHandler<void(bool)>&& = [](bool) { });
     void exitVideoFullscreenToModeWithoutAnimation(WebCore::HTMLVideoElement&, WebCore::HTMLMediaElementEnums::VideoFullscreenMode);
 
+    void updateTextTrackRepresentationForVideoElement(WebCore::HTMLVideoElement&, const ShareableBitmapHandle&);
+    void setTextTrackRepresentationContentScaleForVideoElement(WebCore::HTMLVideoElement&, float scale);
+    void setTextTrackRepresentationIsHiddenForVideoElement(WebCore::HTMLVideoElement&, bool hidden);
+
 protected:
     friend class VideoFullscreenInterfaceContext;
 
     explicit VideoFullscreenManager(WebPage&, PlaybackSessionManager&);
 
     typedef std::tuple<RefPtr<WebCore::VideoFullscreenModelVideoElement>, RefPtr<VideoFullscreenInterfaceContext>> ModelInterfaceTuple;
-    ModelInterfaceTuple createModelAndInterface(PlaybackSessionContextIdentifier);
-    ModelInterfaceTuple& ensureModelAndInterface(PlaybackSessionContextIdentifier);
+    ModelInterfaceTuple createModelAndInterface(PlaybackSessionContextIdentifier, bool createLayerHostingContext);
+    ModelInterfaceTuple& ensureModelAndInterface(PlaybackSessionContextIdentifier, bool createLayerHostingContext = true);
     WebCore::VideoFullscreenModelVideoElement& ensureModel(PlaybackSessionContextIdentifier);
     VideoFullscreenInterfaceContext& ensureInterface(PlaybackSessionContextIdentifier);
     void removeContext(PlaybackSessionContextIdentifier);

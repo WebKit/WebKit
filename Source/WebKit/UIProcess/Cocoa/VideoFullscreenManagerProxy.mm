@@ -599,6 +599,11 @@ RetainPtr<WKLayerHostView> VideoFullscreenManagerProxy::createLayerHostViewWithI
     }
     [view layer].frame = CGRectMake(0, 0, initialSize.width(), initialSize.height());
     [view setContextID:videoLayerID];
+
+#if PLATFORM(IOS_FAMILY)
+    interface->setupCaptionsLayer([view layer], initialSize);
+#endif
+
     return view;
 }
 
@@ -856,6 +861,32 @@ void VideoFullscreenManagerProxy::preparedToExitFullscreen(PlaybackSessionContex
     ensureInterface(contextId).preparedToExitFullscreen();
 }
 
+void VideoFullscreenManagerProxy::textTrackRepresentationUpdate(PlaybackSessionContextIdentifier contextId, const ShareableBitmapHandle& textTrack)
+{
+#if PLATFORM(IOS_FAMILY)
+    auto bitmap = ShareableBitmap::create(textTrack);
+    if (!bitmap)
+        return;
+    
+    auto platformImage = bitmap->createPlatformImage();
+    ensureInterface(contextId).textTrackRepresentationUpdate(platformImage);
+#endif
+}
+
+void VideoFullscreenManagerProxy::textTrackRepresentationSetContentsScale(PlaybackSessionContextIdentifier contextId, float scale)
+{
+#if PLATFORM(IOS_FAMILY)
+    ensureInterface(contextId).textTrackRepresentationSetContentsScale(scale);
+#endif
+}
+
+void VideoFullscreenManagerProxy::textTrackRepresentationSetHidden(PlaybackSessionContextIdentifier contextId, bool hidden)
+{
+#if PLATFORM(IOS_FAMILY)
+    ensureInterface(contextId).textTrackRepresentationSetHidden(hidden);
+#endif
+}
+
 #pragma mark Messages to VideoFullscreenManager
 
 void VideoFullscreenManagerProxy::callCloseCompletionHandlers()
@@ -967,6 +998,9 @@ void VideoFullscreenManagerProxy::didCleanupFullscreen(PlaybackSessionContextIde
     auto& [model, interface] = ensureModelAndInterface(contextId);
 
     [model->layerHostView() removeFromSuperview];
+#if PLATFORM(IOS_FAMILY)
+    interface->removeCaptionsLayer();
+#endif
     if (auto playerLayer = model->playerLayer()) {
         // Return the video layer to the player layer
         auto videoView = model->layerHostView();
@@ -987,7 +1021,9 @@ void VideoFullscreenManagerProxy::didCleanupFullscreen(PlaybackSessionContextIde
 void VideoFullscreenManagerProxy::setVideoLayerFrame(PlaybackSessionContextIdentifier contextId, WebCore::FloatRect frame)
 {
 #if PLATFORM(IOS_FAMILY)
+    auto& [model, interface] = ensureModelAndInterface(contextId);
     auto fenceSendRight = MachSendRight::adopt([UIWindow _synchronizeDrawingAcrossProcesses]);
+    interface->setCaptionsFrame(CGRectMake(0, 0, frame.width(), frame.height()));
 #else
     MachSendRight fenceSendRight;
     if (DrawingAreaProxy* drawingArea = m_page->drawingArea())

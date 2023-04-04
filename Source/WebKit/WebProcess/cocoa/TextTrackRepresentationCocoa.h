@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,34 +23,31 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "TextTrackRepresentation.h"
+#pragma once
 
-#if ENABLE(VIDEO)
-
-#include "IntRect.h"
+#include <WebCore/TextTrackRepresentationCocoa.h>
 
 namespace WebCore {
+class HTMLMediaElement;
+class WeakPtrImplWithEventTargetData;
+}
 
-class NullTextTrackRepresentation : public TextTrackRepresentation {
+namespace WebKit {
+
+class WebPage;
+
+class WebTextTrackRepresentationCocoa final : public WebCore::TextTrackRepresentationCocoa {
 public:
-    virtual ~NullTextTrackRepresentation() = default;
-    void update() final { }
-    PlatformLayer* platformLayer() final { return nullptr; }
-    void setContentScale(float) final { }
-    IntRect bounds() const final { return IntRect(); }
-    void setHidden(bool) const final { }
+    explicit WebTextTrackRepresentationCocoa(WebCore::TextTrackRepresentationClient&, WebCore::HTMLMediaElement&);
+    virtual ~WebTextTrackRepresentationCocoa() { }
+
+private:
+    void update() final;
+    void setContentScale(float) final;
+    void setHidden(bool) const final;
+
+    WeakPtr<WebPage> m_page;
+    WeakPtr<WebCore::HTMLMediaElement, WebCore::WeakPtrImplWithEventTargetData> m_mediaElement;
 };
 
-#if !(PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)))
-
-std::unique_ptr<TextTrackRepresentation> TextTrackRepresentation::create(TextTrackRepresentationClient&, HTMLMediaElement&)
-{
-    return makeUnique<NullTextTrackRepresentation>();
-}
-
-#endif
-
-}
-
-#endif
+} // namespace WebKit
