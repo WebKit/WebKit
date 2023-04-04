@@ -92,7 +92,7 @@ inline void add(Hasher& hasher, const GlyphDisplayListCacheEntry& entry)
 
 struct GlyphDisplayListCacheEntryHash {
     static unsigned hash(GlyphDisplayListCacheEntry* entry) { return computeHash(*entry); }
-    static bool equal(GlyphDisplayListCacheEntry* a, GlyphDisplayListCacheEntry* b) { return *a == *b; }
+    static bool equal(GlyphDisplayListCacheEntry* a, GlyphDisplayListCacheEntry* b) { return a == b; }
     static constexpr bool safeToCompareToEmptyOrDeleted = false;
 };
 
