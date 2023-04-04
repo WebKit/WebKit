@@ -206,12 +206,10 @@ private:
 
     void registerInsertionUndoGrouping() override;
 
-#if ENABLE(UI_PROCESS_PDF_HUD)
     void createPDFHUD(PDFPluginIdentifier, const WebCore::IntRect&) override;
     void updatePDFHUDLocation(PDFPluginIdentifier, const WebCore::IntRect&) override;
     void removePDFHUD(PDFPluginIdentifier) override;
     void removeAllPDFHUDs() override;
-#endif
 
     // Auxiliary Client Creation
 #if ENABLE(FULLSCREEN_API)

@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WKPDFHUDView.h"
 
-#if ENABLE(UI_PROCESS_PDF_HUD)
+#if ENABLE(PDFKIT_PLUGIN)
 
 #import "WKWebViewInternal.h"
 #import "WebPageProxy.h"
@@ -356,4 +356,4 @@ static NSArray<NSString *> *controlArray()
 
 @end
 
-#endif // ENABLE(UI_PROCESS_PDF_HUD)
+#endif // ENABLE(PDFKIT_PLUGIN)

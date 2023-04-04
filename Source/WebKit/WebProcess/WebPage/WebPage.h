@@ -431,7 +431,7 @@ public:
 
     void centerSelectionInVisibleArea();
 
-#if ENABLE(UI_PROCESS_PDF_HUD)
+#if ENABLE(PDFKIT_PLUGIN)
     void createPDFHUD(PDFPlugin&, const WebCore::IntRect&);
     void updatePDFHUDLocation(PDFPlugin&, const WebCore::IntRect&);
     void removePDFHUD(PDFPlugin&);
@@ -1216,11 +1216,6 @@ public:
     void setSelectionFlippingEnabled(bool enabled) { m_selectionFlippingEnabled = enabled; }
 
     NSDictionary *dataDetectionContext() const { return m_dataDetectionContext.get(); }
-#endif
-
-#if ENABLE(PDFKIT_PLUGIN) && !ENABLE(UI_PROCESS_PDF_HUD)
-    void savePDFToFileInDownloadsFolder(const String& suggestedFilename, const URL& originatingURL, const uint8_t* data, unsigned long size);
-    void savePDFToTemporaryFolderAndOpenWithNativeApplication(const String& suggestedFilename, FrameInfoData&&, const uint8_t* data, unsigned long size, const String& pdfUUID);
 #endif
 
     bool mainFrameIsScrollable() const { return m_mainFrameIsScrollable; }
@@ -2130,7 +2125,7 @@ private:
 
     WebCore::Color m_underlayColor;
 
-#if ENABLE(UI_PROCESS_PDF_HUD)
+#if ENABLE(PDFKIT_PLUGIN)
     HashMap<PDFPluginIdentifier, WeakPtr<PDFPlugin>> m_pdfPlugInsWithHUD;
 #endif
 

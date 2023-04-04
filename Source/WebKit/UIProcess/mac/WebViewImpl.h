@@ -85,9 +85,7 @@ OBJC_CLASS WKTextTouchBarItemController;
 OBJC_CLASS WebPlaybackControlsManager;
 #endif // HAVE(TOUCH_BAR)
 
-#if ENABLE(UI_PROCESS_PDF_HUD)
 OBJC_CLASS WKPDFHUDView;
-#endif
 
 OBJC_CLASS VKCImageAnalysis;
 OBJC_CLASS VKCImageAnalysisOverlayView;
@@ -213,13 +211,11 @@ public:
     void viewWillStartLiveResize();
     void viewDidEndLiveResize();
 
-#if ENABLE(UI_PROCESS_PDF_HUD)
     void createPDFHUD(PDFPluginIdentifier, const WebCore::IntRect&);
     void updatePDFHUDLocation(PDFPluginIdentifier, const WebCore::IntRect&);
     void removePDFHUD(PDFPluginIdentifier);
     void removeAllPDFHUDs();
     NSSet *pdfHUDs();
-#endif
 
     void renewGState();
     void setFrameSize(CGSize);
@@ -826,9 +822,7 @@ private:
     RetainPtr<WKFullScreenWindowController> m_fullScreenWindowController;
 #endif
 
-#if ENABLE(UI_PROCESS_PDF_HUD)
     HashMap<WebKit::PDFPluginIdentifier, RetainPtr<WKPDFHUDView>> _pdfHUDViews;
-#endif
 
     RetainPtr<WKShareSheet> _shareSheet;
 

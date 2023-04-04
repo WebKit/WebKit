@@ -502,24 +502,6 @@ void WebPageProxy::savePDFToTemporaryFolderAndOpenWithNativeApplication(const St
     });
 }
 
-#if ENABLE(PDFKIT_PLUGIN) && !ENABLE(UI_PROCESS_PDF_HUD)
-void WebPageProxy::openPDFFromTemporaryFolderWithNativeApplication(FrameInfoData&& frameInfo, const String& pdfUUID)
-{
-    MESSAGE_CHECK(TemporaryPDFFileMap::isValidKey(pdfUUID));
-
-    String pdfFilename = m_temporaryPDFFiles.get(pdfUUID);
-
-    if (!pdfFilename.endsWithIgnoringASCIICase(".pdf"))
-        return;
-
-    auto pdfFileURL = URL::fileURLWithFileSystemPath(pdfFilename);
-    m_uiClient->confirmPDFOpening(*this, pdfFileURL, WTFMove(frameInfo), [pdfFileURL] (bool allowed) {
-        if (!allowed)
-            return;
-        [[NSWorkspace sharedWorkspace] openURL:pdfFileURL];
-    });
-}
-#endif
 
 #if ENABLE(PDFKIT_PLUGIN)
 void WebPageProxy::showPDFContextMenu(const WebKit::PDFContextMenu& contextMenu, PDFPluginIdentifier identifier, CompletionHandler<void(std::optional<int32_t>&&)>&& completionHandler)
@@ -558,12 +540,8 @@ void WebPageProxy::showPDFContextMenu(const WebKit::PDFContextMenu& contextMenu,
 
     if (auto selectedMenuItem = [menuTarget selectedMenuItem]) {
         NSInteger tag = selectedMenuItem.tag;
-#if ENABLE(UI_PROCESS_PDF_HUD)
         if (contextMenu.openInPreviewIndex && *contextMenu.openInPreviewIndex == tag)
             pdfOpenWithPreview(identifier);
-#else
-        UNUSED_PARAM(identifier);
-#endif
         return completionHandler(tag);
     }
     completionHandler(std::nullopt);
@@ -677,8 +655,6 @@ NSView *WebPageProxy::Internals::platformView() const
     return [page.pageClient().platformWindow() contentView];
 }
 
-#if ENABLE(UI_PROCESS_PDF_HUD)
-
 void WebPageProxy::createPDFHUD(PDFPluginIdentifier identifier, const WebCore::IntRect& rect)
 {
     pageClient().createPDFHUD(identifier, rect);
@@ -717,8 +693,6 @@ void WebPageProxy::pdfOpenWithPreview(PDFPluginIdentifier identifier)
         savePDFToTemporaryFolderAndOpenWithNativeApplication(WTFMove(suggestedFilename), WTFMove(frameInfo), data, pdfUUID);
     });
 }
-
-#endif // ENABLE(UI_PROCESS_PDF_HUD)
 
 void WebPageProxy::changeUniversalAccessZoomFocus(const WebCore::IntRect& viewRect, const WebCore::IntRect& selectionRect)
 {

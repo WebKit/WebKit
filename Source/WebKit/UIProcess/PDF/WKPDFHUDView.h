@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if ENABLE(UI_PROCESS_PDF_HUD)
+#if ENABLE(PDFKIT_PLUGIN)
 
 #import "PDFPluginIdentifier.h"
 
@@ -42,4 +42,4 @@ class WebPageProxy;
 
 @end
 
-#endif // ENABLE(UI_PROCESS_PDF_HUD)
+#endif // ENABLE(PDFKIT_PLUGIN)

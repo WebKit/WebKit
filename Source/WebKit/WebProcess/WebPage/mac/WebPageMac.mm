@@ -1073,8 +1073,6 @@ void WebPage::setAccentColor(WebCore::Color color)
 
 #endif // HAVE(APP_ACCENT_COLORS)
 
-#if ENABLE(UI_PROCESS_PDF_HUD)
-
 void WebPage::zoomPDFIn(PDFPluginIdentifier identifier)
 {
     auto pdfPlugin = m_pdfPlugInsWithHUD.get(identifier);
@@ -1125,8 +1123,6 @@ void WebPage::removePDFHUD(PDFPlugin& plugin)
     if (m_pdfPlugInsWithHUD.remove(plugin.identifier()))
         send(Messages::WebPageProxy::RemovePDFHUD(plugin.identifier()));
 }
-
-#endif // ENABLE(UI_PROCESS_PDF_HUD)
 
 } // namespace WebKit
 

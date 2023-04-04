@@ -114,19 +114,14 @@ public:
     void notifySelectionChanged(PDFSelection *);
     void notifyCursorChanged(uint64_t /* PDFLayerControllerCursorType */);
 
-#if ENABLE(UI_PROCESS_PDF_HUD)
     void zoomIn();
     void zoomOut();
     void save(CompletionHandler<void(const String&, const URL&, const IPC::DataReference&)>&&);
     void openWithPreview(CompletionHandler<void(const String&, FrameInfoData&&, const IPC::DataReference&, const String&)>&&);
     PDFPluginIdentifier identifier() const { return m_identifier; }
-#endif
 
     void clickedLink(NSURL *);
-#if !ENABLE(UI_PROCESS_PDF_HUD)
-    void saveToPDF();
-    void openWithNativeApplication();
-#endif
+
     void writeItemsToPasteboard(NSString *pasteboardName, NSArray *items, NSArray *types);
     void showDefinitionForAttributedString(NSAttributedString *, CGPoint);
     void performWebSearch(NSString *);

@@ -98,11 +98,7 @@
 
 - (NSSet<NSView *> *)_pdfHUDs
 {
-#if ENABLE(UI_PROCESS_PDF_HUD)
     return _impl->pdfHUDs();
-#else
-    return nil;
-#endif
 }
 
 - (NSMenu *)_activeMenu
