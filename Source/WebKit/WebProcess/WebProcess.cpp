@@ -303,7 +303,6 @@ WebProcess::WebProcess()
     , m_broadcastChannelRegistry(WebBroadcastChannelRegistry::create())
     , m_cookieJar(WebCookieJar::create())
     , m_dnsPrefetchHystereris([this](PAL::HysteresisState state) { if (state == PAL::HysteresisState::Stopped) m_dnsPrefetchedHosts.clear(); })
-    , m_nonVisibleProcessEarlyMemoryCleanupTimer(*this, &WebProcess::nonVisibleProcessEarlyMemoryCleanupTimerFired)
 #if ENABLE(NON_VISIBLE_WEBPROCESS_MEMORY_CLEANUP_TIMER)
     , m_nonVisibleProcessMemoryCleanupTimer(*this, &WebProcess::nonVisibleProcessMemoryCleanupTimerFired)
 #endif
@@ -1675,7 +1674,7 @@ void WebProcess::sendPrewarmInformation(const URL& url)
 void WebProcess::pageDidEnterWindow(PageIdentifier pageID)
 {
     m_pagesInWindows.add(pageID);
-    m_nonVisibleProcessEarlyMemoryCleanupTimer.stop();
+    m_nonVisibleProcessEarlyMemoryCleanupTimer.reset();
 
 #if ENABLE(NON_VISIBLE_WEBPROCESS_MEMORY_CLEANUP_TIMER)
     m_nonVisibleProcessMemoryCleanupTimer.stop();
@@ -1687,8 +1686,9 @@ void WebProcess::pageWillLeaveWindow(PageIdentifier pageID)
     m_pagesInWindows.remove(pageID);
 
     if (m_pagesInWindows.isEmpty()) {
-        if (!m_nonVisibleProcessEarlyMemoryCleanupTimer.isActive())
-            m_nonVisibleProcessEarlyMemoryCleanupTimer.startOneShot(nonVisibleProcessEarlyMemoryCleanupDelay);
+        if (!m_nonVisibleProcessEarlyMemoryCleanupTimer)
+            m_nonVisibleProcessEarlyMemoryCleanupTimer.emplace(*this, &WebProcess::nonVisibleProcessEarlyMemoryCleanupTimerFired, nonVisibleProcessEarlyMemoryCleanupDelay);
+        m_nonVisibleProcessEarlyMemoryCleanupTimer->restart();
 
 #if ENABLE(NON_VISIBLE_WEBPROCESS_MEMORY_CLEANUP_TIMER)
         if (!m_nonVisibleProcessMemoryCleanupTimer.isActive())
@@ -1703,10 +1703,34 @@ void WebProcess::nonVisibleProcessEarlyMemoryCleanupTimerFired()
     if (!m_pagesInWindows.isEmpty())
         return;
 
+    destroyDecodedDataForAllImages();
+
 #if PLATFORM(COCOA)
     destroyRenderingResources();
     releaseSystemMallocMemory();
 #endif
+}
+
+void WebProcess::destroyDecodedDataForAllImages()
+{
+    // Only do this when UI side compositing is enabled, since for now only
+    // RemoteLayerTreeDrawingArea will correctly synchronously decode images
+    // after their decoded data has been destroyed.
+    for (auto& page : m_pageMap.values()) {
+        if (!page->isUsingUISideCompositing())
+            return;
+    }
+
+    for (auto& page : m_pageMap.values())
+        page->willDestroyDecodedDataForAllImages();
+
+    MemoryCache::singleton().destroyDecodedDataForAllImages();
+}
+
+void WebProcess::deferNonVisibleProcessEarlyMemoryCleanupTimer()
+{
+    if (m_nonVisibleProcessEarlyMemoryCleanupTimer)
+        m_nonVisibleProcessEarlyMemoryCleanupTimer->restart();
 }
 
 #if ENABLE(NON_VISIBLE_WEBPROCESS_MEMORY_CLEANUP_TIMER)

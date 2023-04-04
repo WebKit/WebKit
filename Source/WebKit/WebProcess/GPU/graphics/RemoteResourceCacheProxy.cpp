@@ -109,6 +109,8 @@ void RemoteResourceCacheProxy::recordImageBufferUse(WebCore::ImageBuffer& imageB
 
 void RemoteResourceCacheProxy::recordNativeImageUse(NativeImage& image)
 {
+    WebProcess::singleton().deferNonVisibleProcessEarlyMemoryCleanupTimer();
+
     auto iterator = m_nativeImages.find(image.renderingResourceIdentifier());
     if (iterator != m_nativeImages.end())
         return;
@@ -322,6 +324,13 @@ void RemoteResourceCacheProxy::releaseMemory()
     clearGradientMap();
     m_remoteRenderingBackendProxy.releaseAllRemoteResources();
 }
+
+void RemoteResourceCacheProxy::releaseAllImageResources()
+{
+    clearNativeImageMap();
+    m_remoteRenderingBackendProxy.releaseAllImageResources();
+}
+
 
 } // namespace WebKit
 

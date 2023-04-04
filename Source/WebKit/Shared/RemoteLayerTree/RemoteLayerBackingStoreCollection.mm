@@ -57,10 +57,15 @@ void RemoteLayerBackingStoreCollection::prepareBackingStoresForDisplay(RemoteLay
     }
 }
 
-void RemoteLayerBackingStoreCollection::paintReachableBackingStoreContents()
+bool RemoteLayerBackingStoreCollection::paintReachableBackingStoreContents()
 {
-    for (auto* backingStore : m_backingStoresNeedingDisplay)
+    bool anyNonEmptyDirtyRegion = false;
+    for (auto* backingStore : m_backingStoresNeedingDisplay) {
+        if (!backingStore->hasEmptyDirtyRegion())
+            anyNonEmptyDirtyRegion = true;
         backingStore->paintContents();
+    }
+    return anyNonEmptyDirtyRegion;
 }
 
 void RemoteLayerBackingStoreCollection::willFlushLayers()

@@ -101,6 +101,7 @@ public:
     void cacheDecomposedGlyphs(Ref<WebCore::DecomposedGlyphs>&&);
     void cacheGradient(Ref<WebCore::Gradient>&&);
     void releaseAllRemoteResources();
+    void releaseAllImageResources();
     void releaseRenderingResource(WebCore::RenderingResourceIdentifier);
     void markSurfacesVolatile(Vector<WebCore::RenderingResourceIdentifier>&&, CompletionHandler<void(bool madeAllVolatile)>&&);
 

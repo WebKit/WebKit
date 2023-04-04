@@ -312,6 +312,8 @@ DecodingMode RenderBoxModelObject::decodingModeForImageDraw(const Image& image, 
     if (IOSApplication::isIBooksStorytime())
         return DecodingMode::Synchronous;
 #endif
+    if (paintInfo.paintBehavior.contains(PaintBehavior::Snapshotting))
+        return DecodingMode::Synchronous;
     if (is<HTMLImageElement>(element())) {
         auto decodingMode = downcast<HTMLImageElement>(*element()).decodingMode();
         if (decodingMode == DecodingMode::Asynchronous)
@@ -322,8 +324,6 @@ DecodingMode RenderBoxModelObject::decodingModeForImageDraw(const Image& image, 
     if (bitmapImage.isLargeImageAsyncDecodingEnabledForTesting())
         return DecodingMode::Asynchronous;
     if (document().isImageDocument())
-        return DecodingMode::Synchronous;
-    if (paintInfo.paintBehavior.contains(PaintBehavior::Snapshotting))
         return DecodingMode::Synchronous;
     if (!settings().largeImageAsyncDecodingEnabled())
         return DecodingMode::Synchronous;

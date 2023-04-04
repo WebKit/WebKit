@@ -289,6 +289,13 @@ void RemoteRenderingBackendProxy::releaseRenderingResource(RenderingResourceIden
     send(Messages::RemoteRenderingBackend::ReleaseRenderingResource(renderingResourceIdentifier));
 }
 
+void RemoteRenderingBackendProxy::releaseAllImageResources()
+{
+    if (!m_streamConnection)
+        return;
+    send(Messages::RemoteRenderingBackend::ReleaseAllImageResources());
+}
+
 #if PLATFORM(COCOA)
 auto RemoteRenderingBackendProxy::prepareBuffersForDisplay(const Vector<LayerPrepareBuffersData>& prepareBuffersInput) -> Vector<SwapBuffersResult>
 {

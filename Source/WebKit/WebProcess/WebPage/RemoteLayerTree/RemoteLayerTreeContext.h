@@ -80,7 +80,7 @@ public:
 
     RemoteLayerBackingStoreCollection& backingStoreCollection() { return *m_backingStoreCollection; }
     
-    void setNextRenderingUpdateRequiresSynchronousImageDecoding(bool requireSynchronousDecoding) { m_nextRenderingUpdateRequiresSynchronousImageDecoding = requireSynchronousDecoding; }
+    void setNextRenderingUpdateRequiresSynchronousImageDecoding() { m_nextRenderingUpdateRequiresSynchronousImageDecoding = true; }
     bool nextRenderingUpdateRequiresSynchronousImageDecoding() const { return m_nextRenderingUpdateRequiresSynchronousImageDecoding; }
 
     void adoptLayersFromContext(RemoteLayerTreeContext&);

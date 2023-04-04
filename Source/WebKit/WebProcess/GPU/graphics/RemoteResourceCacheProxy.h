@@ -67,6 +67,7 @@ public:
 
     void remoteResourceCacheWasDestroyed();
     void releaseMemory();
+    void releaseAllImageResources();
     
     unsigned imagesCount() const { return m_nativeImages.size(); }
 

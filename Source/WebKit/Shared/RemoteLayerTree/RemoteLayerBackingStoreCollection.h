@@ -60,7 +60,7 @@ public:
     void backingStoreBecameUnreachable(RemoteLayerBackingStore&);
 
     virtual void prepareBackingStoresForDisplay(RemoteLayerTreeTransaction&);
-    void paintReachableBackingStoreContents();
+    bool paintReachableBackingStoreContents();
 
     void willFlushLayers();
     void willCommitLayerTree(RemoteLayerTreeTransaction&);

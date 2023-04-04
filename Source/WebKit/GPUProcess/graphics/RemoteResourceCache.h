@@ -58,6 +58,7 @@ public:
     std::optional<WebCore::SourceImage> cachedSourceImage(QualifiedRenderingResourceIdentifier) const;
 
     void releaseAllResources();
+    void releaseAllImageResources();
     bool releaseRenderingResource(QualifiedRenderingResourceIdentifier);
 
 private:

@@ -4698,6 +4698,17 @@ void WebPage::releaseMemory(Critical)
 #endif
 }
 
+void WebPage::willDestroyDecodedDataForAllImages()
+{
+#if ENABLE(GPU_PROCESS)
+    if (m_remoteRenderingBackendProxy)
+        m_remoteRenderingBackendProxy->remoteResourceCacheProxy().releaseAllImageResources();
+#endif
+
+    if (m_drawingArea)
+        m_drawingArea->setNextRenderingUpdateRequiresSynchronousImageDecoding();
+}
+
 unsigned WebPage::remoteImagesCountForTesting() const
 {
 #if ENABLE(GPU_PROCESS)

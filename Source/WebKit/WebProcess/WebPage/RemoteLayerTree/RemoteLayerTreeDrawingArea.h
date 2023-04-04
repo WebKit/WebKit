@@ -127,6 +127,8 @@ private:
 
     void adoptLayersFromDrawingArea(DrawingArea&) final;
 
+    void setNextRenderingUpdateRequiresSynchronousImageDecoding() final;
+
     class BackingStoreFlusher : public ThreadSafeRefCounted<BackingStoreFlusher> {
     public:
         static Ref<BackingStoreFlusher> create(IPC::Connection*, UniqueRef<IPC::Encoder>&&, Vector<std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher>>);
@@ -160,7 +162,6 @@ private:
     WebCore::Timer m_updateRenderingTimer;
     bool m_isRenderingSuspended { false };
     bool m_hasDeferredRenderingUpdate { false };
-    bool m_nextRenderingUpdateRequiresSynchronousImageDecoding { false };
     bool m_inUpdateRendering { false };
 
     bool m_waitingForBackingStoreSwap { false };

@@ -415,6 +415,12 @@ void RemoteRenderingBackend::releaseAllResources()
     m_remoteResourceCache.releaseAllResources();
 }
 
+void RemoteRenderingBackend::releaseAllImageResources()
+{
+    ASSERT(!RunLoop::isMain());
+    m_remoteResourceCache.releaseAllImageResources();
+}
+
 void RemoteRenderingBackend::releaseRenderingResource(RenderingResourceIdentifier renderingResourceIdentifier)
 {
     // Immediately turn the RenderingResourceIdentifier (which is error-prone) to a QualifiedRenderingResourceIdentifier,
