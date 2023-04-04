@@ -822,10 +822,11 @@ WindowViewBackend::WindowViewBackend(uint32_t width, uint32_t height)
         m_program = glCreateProgram();
         glAttachShader(m_program, vertexShader);
         glAttachShader(m_program, fragmentShader);
-        glLinkProgram(m_program);
 
         glBindAttribLocation(m_program, 0, "pos");
         glBindAttribLocation(m_program, 1, "texture");
+
+        glLinkProgram(m_program);
         m_textureUniform = glGetUniformLocation(m_program, "u_texture");
     }
 
