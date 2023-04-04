@@ -45,11 +45,6 @@
 
 namespace WebCore {
 
-GraphicsContextGLANGLE::GraphicsContextGLANGLE(GraphicsContextGLAttributes attributes)
-    : GraphicsContextGL(attributes)
-{
-}
-
 GraphicsContextGLANGLE::~GraphicsContextGLANGLE()
 {
     if (!makeContextCurrent())
@@ -70,16 +65,6 @@ GraphicsContextGLANGLE::~GraphicsContextGLANGLE()
             GL_DeleteRenderbuffers(1, &m_depthStencilBuffer);
     }
     GL_DeleteFramebuffers(1, &m_fbo);
-}
-
-GCGLDisplay GraphicsContextGLANGLE::platformDisplay() const
-{
-    return m_displayObj;
-}
-
-GCGLConfig GraphicsContextGLANGLE::platformConfig() const
-{
-    return m_configObj;
 }
 
 bool GraphicsContextGLANGLE::makeContextCurrent()

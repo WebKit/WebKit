@@ -45,7 +45,7 @@ namespace WebCore {
 // Base class for GraphicsContextGL contexts that use ANGLE.
 class WEBCORE_EXPORT GraphicsContextGLANGLE : public GraphicsContextGL {
 public:
-    virtual ~GraphicsContextGLANGLE();
+    ~GraphicsContextGLANGLE();
 
     GCGLDisplay platformDisplay() const;
     GCGLConfig platformConfig() const;
@@ -62,15 +62,6 @@ public:
         TerminateAndReleaseThreadResources
     };
     static bool releaseThreadResources(ReleaseThreadResourceBehavior);
-
-    // Get an attribute location without checking the name -> mangledname mapping.
-    int getAttribLocationDirect(PlatformGLObject program, const String& name);
-
-    // Compile a shader without going through ANGLE.
-    void compileShaderDirect(PlatformGLObject);
-
-    // Equivalent to ::glTexImage2D(). Allows pixels==0 with no allocation.
-    void texImage2DDirect(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type, const void* pixels);
 
     // GraphicsContextGL overrides.
     bool isGLES2Compliant() const final;
@@ -409,7 +400,6 @@ protected:
     // Returns false if context should be lost due to timeout.
     bool waitAndUpdateOldestFrame() WARN_UNUSED_RETURN;
 
-    // Platform specific behavior for releaseResources();
     static void platformReleaseThreadResources();
 
     virtual void invalidateKnownTextureContent(GCGLuint);
@@ -438,7 +428,6 @@ protected:
     GCGLint m_drawingBufferTextureTarget { -1 };
     GCGLErrorCodeSet m_errors;
     bool m_isForWebGL2 { false };
-    unsigned m_statusCheckCount { 0 };
     bool m_failNextStatusCheck { false };
     bool m_useFenceSyncForDisplayRateLimit = false;
     static constexpr size_t maxPendingFrames = 3;
@@ -461,6 +450,16 @@ protected:
 #endif
 };
 
+
+inline GCGLDisplay GraphicsContextGLANGLE::platformDisplay() const 
+{
+    return m_displayObj; 
+}
+
+inline GCGLConfig GraphicsContextGLANGLE::platformConfig() const
+{
+    return m_configObj;
+}
 }
 
 #endif

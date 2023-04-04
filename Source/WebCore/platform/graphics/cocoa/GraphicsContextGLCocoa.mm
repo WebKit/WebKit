@@ -211,8 +211,6 @@ static EGLDisplay initializeEGLDisplay(const GraphicsContextGLAttributes& attrs)
     return display;
 }
 
-static const unsigned statusCheckThreshold = 5;
-
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
 static bool needsEAGLOnMac()
 {
@@ -249,13 +247,6 @@ IOSurface* GraphicsContextGLCocoa::displayBuffer()
 void GraphicsContextGLCocoa::markDisplayBufferInUse()
 {
     return m_swapChain.markDisplayBufferInUse();
-}
-
-// FIXME: Below is functionality that should be moved to GraphicsContextGLCocoa to simplify the base class.
-
-GraphicsContextGLANGLE::GraphicsContextGLANGLE(GraphicsContextGLAttributes attrs)
-    : GraphicsContextGL(attrs)
-{
 }
 
 bool GraphicsContextGLCocoa::platformInitializeContext()
@@ -505,7 +496,6 @@ GraphicsContextGLANGLE::~GraphicsContextGLANGLE()
     }
     ASSERT(currentContext != this);
     m_drawingBufferTextureTarget = -1;
-    LOG(WebGL, "Destroyed a GraphicsContextGLANGLE (%p).", this);
 }
 
 bool GraphicsContextGLANGLE::makeContextCurrent()
@@ -535,14 +525,6 @@ void GraphicsContextGLANGLE::checkGPUStatus()
         makeCurrent(m_displayObj, EGL_NO_CONTEXT);
         return;
     }
-
-    // Only do the check every statusCheckThreshold calls.
-    if (m_statusCheckCount)
-        return;
-
-    m_statusCheckCount = (m_statusCheckCount + 1) % statusCheckThreshold;
-
-    // FIXME: check via KHR_robustness.
 }
 
 void GraphicsContextGLCocoa::setContextVisibility(bool isVisible)
@@ -893,16 +875,6 @@ bool GraphicsContextGLCocoa::copyTextureFromMedia(MediaPlayer& player, PlatformG
     return contextCV->copyVideoSampleToTexture(*videoFrameCV, outputTexture, level, internalFormat, format, type, GraphicsContextGL::FlipY(flipY));
 }
 #endif
-
-GCGLDisplay GraphicsContextGLANGLE::platformDisplay() const
-{
-    return m_displayObj;
-}
-
-GCGLConfig GraphicsContextGLANGLE::platformConfig() const
-{
-    return m_configObj;
-}
 
 RefPtr<GraphicsLayerContentsDisplayDelegate> GraphicsContextGLCocoa::layerContentsDisplayDelegate()
 {

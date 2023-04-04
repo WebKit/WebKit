@@ -76,6 +76,10 @@ static void wipeAlphaChannelFromPixels(int width, int height, unsigned char* pix
 }
 #endif
 
+GraphicsContextGLANGLE::GraphicsContextGLANGLE(GraphicsContextGLAttributes attributes)
+    : GraphicsContextGL(attributes)
+{
+}
 
 bool GraphicsContextGLANGLE::initialize()
 {
@@ -1004,23 +1008,6 @@ void GraphicsContextGLANGLE::compileShader(PlatformGLObject shader)
 #endif
 }
 
-void GraphicsContextGLANGLE::compileShaderDirect(PlatformGLObject shader)
-{
-    ASSERT(shader);
-    if (!makeContextCurrent())
-        return;
-
-    GL_CompileShader(shader);
-}
-
-void GraphicsContextGLANGLE::texImage2DDirect(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type, const void* pixels)
-{
-    if (!makeContextCurrent())
-        return;
-    GL_TexImage2D(target, level, internalformat, width, height, border, format, type, pixels);
-    invalidateKnownTextureContent(m_state.currentBoundTexture());
-}
-
 void GraphicsContextGLANGLE::copyTexImage2D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLint border)
 {
     if (!makeContextCurrent())
@@ -1270,11 +1257,6 @@ int GraphicsContextGLANGLE::getAttribLocation(PlatformGLObject program, const St
         return -1;
 
     return GL_GetAttribLocation(program, name.utf8().data());
-}
-
-int GraphicsContextGLANGLE::getAttribLocationDirect(PlatformGLObject program, const String& name)
-{
-    return getAttribLocation(program, name);
 }
 
 bool GraphicsContextGLANGLE::updateErrors()

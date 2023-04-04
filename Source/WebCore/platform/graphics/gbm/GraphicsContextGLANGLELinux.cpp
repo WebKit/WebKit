@@ -57,11 +57,6 @@ RefPtr<GraphicsContextGL> createWebProcessGraphicsContextGL(const GraphicsContex
     return GraphicsContextGLFallback::create(GraphicsContextGLAttributes(attributes));
 }
 
-GraphicsContextGLANGLE::GraphicsContextGLANGLE(GraphicsContextGLAttributes attributes)
-    : GraphicsContextGL(attributes)
-{
-}
-
 GraphicsContextGLANGLE::~GraphicsContextGLANGLE()
 {
     bool success = makeContextCurrent();
@@ -81,16 +76,6 @@ GraphicsContextGLANGLE::~GraphicsContextGLANGLE()
             GL_DeleteRenderbuffers(1, &m_depthStencilBuffer);
     }
     GL_DeleteFramebuffers(1, &m_fbo);
-}
-
-GCGLDisplay GraphicsContextGLANGLE::platformDisplay() const
-{
-    return m_displayObj;
-}
-
-GCGLConfig GraphicsContextGLANGLE::platformConfig() const
-{
-    return m_configObj;
 }
 
 void GraphicsContextGLANGLE::checkGPUStatus()
