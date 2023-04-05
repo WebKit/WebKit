@@ -618,13 +618,11 @@ bool TParseContext::checkCanBeLValue(const TSourceLoc &line, const char *op, TIn
         case EvqGeometryIn:
         case EvqTessControlIn:
         case EvqTessEvaluationIn:
-        case EvqSmoothIn:
         case EvqFlatIn:
         case EvqNoPerspectiveIn:
+        case EvqSmoothIn:
         case EvqCentroidIn:
         case EvqSampleIn:
-        case EvqNoPerspectiveCentroidIn:
-        case EvqNoPerspectiveSampleIn:
             message = "can't modify an input";
             break;
         case EvqUniform:
@@ -1331,7 +1329,6 @@ bool TParseContext::declareVariable(const TSourceLoc &line,
     {
         case EvqClipDistance:
         case EvqCullDistance:
-        case EvqFragDepth:
         case EvqLastFragData:
         case EvqLastFragColor:
             symbolType = SymbolType::BuiltIn;
@@ -1470,17 +1467,6 @@ bool TParseContext::declareVariable(const TSourceLoc &line,
                   identifier);
             return false;
         }
-    }
-    else if (isExtensionEnabled(TExtension::EXT_conservative_depth) &&
-             mShaderType == GL_FRAGMENT_SHADER && identifier == "gl_FragDepth")
-    {
-        if (type->getBasicType() != EbtFloat || type->getNominalSize() != 1 ||
-            type->getSecondarySize() != 1 || type->isArray())
-        {
-            error(line, "gl_FragDepth can only be redeclared as float", identifier);
-            return false;
-        }
-        needsReservedCheck = false;
     }
     else if (isExtensionEnabled(TExtension::EXT_separate_shader_objects) &&
              mShaderType == GL_VERTEX_SHADER)
@@ -1682,11 +1668,6 @@ void TParseContext::declarationQualifierErrorCheck(const sh::TQualifier qualifie
         error(location, "layout qualifier only valid for interface blocks",
               getBlockStorageString(layoutQualifier.blockStorage));
         return;
-    }
-
-    if (qualifier != EvqFragDepth)
-    {
-        checkDepthIsNotSpecified(location, layoutQualifier.depth);
     }
 
     if (qualifier == EvqFragmentOut)
@@ -2269,15 +2250,6 @@ void TParseContext::checkAttributeLocationInRange(const TSourceLoc &location,
         {
             error(location, "Attribute location out of range", "location");
         }
-    }
-}
-
-void TParseContext::checkDepthIsNotSpecified(const TSourceLoc &location, TLayoutDepth depth)
-{
-    if (depth != EdUnspecified)
-    {
-        error(location, "invalid layout qualifier: only valid on gl_FragDepth",
-              getDepthString(depth));
     }
 }
 
@@ -2939,9 +2911,7 @@ TPublicType TParseContext::addFullySpecifiedType(const TTypeQualifierBuilder &ty
     checkEarlyFragmentTestsIsNotSpecified(typeSpecifier.getLine(),
                                           returnType.layoutQualifier.earlyFragmentTests);
 
-    if (returnType.qualifier == EvqSampleIn || returnType.qualifier == EvqSampleOut ||
-        returnType.qualifier == EvqNoPerspectiveSampleIn ||
-        returnType.qualifier == EvqNoPerspectiveSampleOut)
+    if (returnType.qualifier == EvqSampleIn || returnType.qualifier == EvqSampleOut)
     {
         mSampleQualifierSpecified = true;
     }
@@ -3217,27 +3187,20 @@ void TParseContext::checkTessellationShaderUnsizedArraysAndSetSize(const TSource
         {
             case EvqTessControlIn:
             case EvqTessEvaluationIn:
-            case EvqSmoothIn:
             case EvqFlatIn:
-            case EvqNoPerspectiveIn:
             case EvqCentroidIn:
+            case EvqSmoothIn:
             case EvqSampleIn:
-            case EvqNoPerspectiveCentroidIn:
-            case EvqNoPerspectiveSampleIn:
                 // Declaring an array size is optional. If no size is specified, it will be taken
                 // from the implementation-dependent maximum patch size (gl_MaxPatchVertices).
                 ASSERT(mMaxPatchVertices > 0);
                 type->sizeOutermostUnsizedArray(mMaxPatchVertices);
                 break;
             case EvqTessControlOut:
-            case EvqTessEvaluationOut:
-            case EvqSmoothOut:
             case EvqFlatOut:
-            case EvqNoPerspectiveOut:
             case EvqCentroidOut:
+            case EvqSmoothOut:
             case EvqSampleOut:
-            case EvqNoPerspectiveCentroidOut:
-            case EvqNoPerspectiveSampleOut:
                 // Declaring an array size is optional. If no size is specified, it will be taken
                 // from output patch size declared in the shader.  If the patch size is not yet
                 // declared, this is deferred until such time as it does.
@@ -3311,23 +3274,10 @@ TIntermDeclaration *TParseContext::parseSingleDeclaration(
         }
     }
 
-    if (identifier == "gl_FragDepth")
-    {
-        if (type->getQualifier() == EvqFragmentOut)
-        {
-            type->setQualifier(EvqFragDepth);
-        }
-        else
-        {
-            error(identifierOrTypeLocation,
-                  "gl_FragDepth can only be redeclared as fragment output", identifier);
-        }
-    }
-
     checkGeometryShaderInputAndSetArraySize(identifierOrTypeLocation, identifier, type);
     checkTessellationShaderUnsizedArraysAndSetSize(identifierOrTypeLocation, identifier, type);
 
-    declarationQualifierErrorCheck(type->getQualifier(), publicType.layoutQualifier,
+    declarationQualifierErrorCheck(publicType.qualifier, publicType.layoutQualifier,
                                    identifierOrTypeLocation);
 
     bool emptyDeclaration                  = (identifier == "");
@@ -4024,8 +3974,6 @@ void TParseContext::parseGlobalLayoutQualifier(const TTypeQualifierBuilder &type
     checkMemoryQualifierIsNotSpecified(typeQualifier.memoryQualifier, typeQualifier.line);
 
     checkInternalFormatIsNotSpecified(typeQualifier.line, layoutQualifier.imageInternalFormat);
-
-    checkDepthIsNotSpecified(typeQualifier.line, layoutQualifier.depth);
 
     checkYuvIsNotSpecified(typeQualifier.line, layoutQualifier.yuv);
 
@@ -4861,7 +4809,6 @@ TIntermDeclaration *TParseContext::addInterfaceBlock(
                                  typeQualifier.layoutQualifier.binding, arraySize);
     }
 
-    checkDepthIsNotSpecified(typeQualifier.line, typeQualifier.layoutQualifier.depth);
     checkYuvIsNotSpecified(typeQualifier.line, typeQualifier.layoutQualifier.yuv);
     checkEarlyFragmentTestsIsNotSpecified(typeQualifier.line,
                                           typeQualifier.layoutQualifier.earlyFragmentTests);
@@ -4937,20 +4884,14 @@ TIntermDeclaration *TParseContext::addInterfaceBlock(
                 }
                 break;
             // a member variable in io block may have different interpolation.
-            case EvqSmoothIn:
-            case EvqSmoothOut:
             case EvqFlatIn:
             case EvqFlatOut:
             case EvqNoPerspectiveIn:
             case EvqNoPerspectiveOut:
+            case EvqSmoothIn:
+            case EvqSmoothOut:
             case EvqCentroidIn:
             case EvqCentroidOut:
-            case EvqSampleIn:
-            case EvqSampleOut:
-            case EvqNoPerspectiveCentroidIn:
-            case EvqNoPerspectiveCentroidOut:
-            case EvqNoPerspectiveSampleIn:
-            case EvqNoPerspectiveSampleOut:
                 break;
             // a member variable can have an incomplete qualifier because shader io block has either
             // in or out.
@@ -4958,9 +4899,6 @@ TIntermDeclaration *TParseContext::addInterfaceBlock(
             case EvqFlat:
             case EvqNoPerspective:
             case EvqCentroid:
-            case EvqSample:
-            case EvqNoPerspectiveCentroid:
-            case EvqNoPerspectiveSample:
             case EvqGeometryIn:
             case EvqGeometryOut:
                 if (!IsShaderIoBlock(typeQualifier.qualifier) &&
@@ -5818,22 +5756,6 @@ TLayoutQualifier TParseContext::parseLayoutQualifier(const ImmutableString &qual
         else if (qualifierType == "blend_support_all_equations")
         {
             qualifier.advancedBlendEquations.setAll();
-        }
-        else if (qualifierType == "depth_any")
-        {
-            qualifier.depth = EdAny;
-        }
-        else if (qualifierType == "depth_greater")
-        {
-            qualifier.depth = EdGreater;
-        }
-        else if (qualifierType == "depth_less")
-        {
-            qualifier.depth = EdLess;
-        }
-        else if (qualifierType == "depth_unchanged")
-        {
-            qualifier.depth = EdUnchanged;
         }
         else
         {

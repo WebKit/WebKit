@@ -139,7 +139,7 @@ MTLBlendOperation GetBlendOp(GLenum op);
 MTLCompareFunction GetCompareFunc(GLenum func);
 MTLStencilOperation GetStencilOp(GLenum op);
 
-MTLWinding GetFrontfaceWinding(GLenum frontFaceMode, bool invert);
+MTLWinding GetFontfaceWinding(GLenum frontFaceMode, bool invert);
 
 PrimitiveTopologyClass GetPrimitiveTopologyClass(gl::PrimitiveMode mode);
 MTLPrimitiveType GetPrimitiveType(gl::PrimitiveMode mode);

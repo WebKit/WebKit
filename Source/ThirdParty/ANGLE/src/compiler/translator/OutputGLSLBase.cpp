@@ -176,12 +176,6 @@ std::string TOutputGLSLBase::getCommonLayoutQualifiers(TIntermSymbol *variable)
     const TType &type                       = variable->getType();
     const TLayoutQualifier &layoutQualifier = type.getLayoutQualifier();
 
-    if (type.getQualifier() == EvqFragDepth)
-    {
-        ASSERT(layoutQualifier.depth != EdUnspecified);
-        out << listItemPrefix << getDepthString(layoutQualifier.depth);
-    }
-
     if (type.getQualifier() == EvqFragmentOut || type.getQualifier() == EvqFragmentInOut)
     {
         if (layoutQualifier.index >= 0)
@@ -366,12 +360,6 @@ const char *TOutputGLSLBase::mapQualifierToString(TQualifier qualifier)
                 return "smooth in";
             case EvqCentroidOut:
                 return "smooth out";
-            case EvqNoPerspectiveCentroid:
-                return "noperspective";
-            case EvqNoPerspectiveCentroidIn:
-                return "noperspective in";
-            case EvqNoPerspectiveCentroidOut:
-                return "noperspective out";
             default:
                 break;
         }
@@ -399,9 +387,6 @@ const char *TOutputGLSLBase::mapQualifierToString(TQualifier qualifier)
             return (sh::IsGLSL130OrNewer(mOutput) || mShaderVersion > 100)
                        ? (mShaderType == GL_FRAGMENT_SHADER ? "in" : "out")
                        : "varying";
-
-        case EvqFragDepth:
-            return "out";
 
         // gl_LastFragColor / gl_LastFragData have no qualifiers.
         case EvqLastFragData:
@@ -1277,12 +1262,6 @@ const char *getVariableInterpolation(TQualifier qualifier)
             return "noperspective out ";
         case EvqCentroidOut:
             return "centroid out ";
-        case EvqSampleOut:
-            return "sample out ";
-        case EvqNoPerspectiveCentroidOut:
-            return "noperspective centroid out ";
-        case EvqNoPerspectiveSampleOut:
-            return "noperspective sample out ";
         case EvqSmoothIn:
             return "smooth in ";
         case EvqFlatIn:
@@ -1291,12 +1270,6 @@ const char *getVariableInterpolation(TQualifier qualifier)
             return "noperspective in ";
         case EvqCentroidIn:
             return "centroid in ";
-        case EvqSampleIn:
-            return "sample in ";
-        case EvqNoPerspectiveCentroidIn:
-            return "noperspective centroid in ";
-        case EvqNoPerspectiveSampleIn:
-            return "noperspective sample in ";
         default:
             break;
     }
@@ -1466,11 +1439,6 @@ bool TOutputGLSLBase::needsToWriteLayoutQualifier(const TType &type)
         {
             return true;
         }
-    }
-
-    if (type.getQualifier() == EvqFragDepth && layoutQualifier.depth != EdUnspecified)
-    {
-        return true;
     }
 
     if (type.getQualifier() == EvqFragmentOut || type.getQualifier() == EvqFragmentInOut)

@@ -2713,7 +2713,6 @@ bool Framebuffer::partialBufferClearNeedsInit(const Context *context, GLenum buf
 
 PixelLocalStorage &Framebuffer::getPixelLocalStorage(const Context *context)
 {
-    ASSERT(id().value != 0);
     if (!mPixelLocalStorage)
     {
         mPixelLocalStorage = PixelLocalStorage::Make(context);

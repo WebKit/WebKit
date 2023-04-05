@@ -498,11 +498,8 @@ angle::Result VertexDataManager::reserveSpaceForAttrib(const gl::Context *contex
     BufferD3D *bufferD3D = buffer ? GetImplAs<BufferD3D>(buffer) : nullptr;
     ASSERT(!bufferD3D || bufferD3D->getStaticVertexBuffer(attrib, binding) == nullptr);
 
-    // Make sure we always pass at least one instance count to gl::ComputeVertexBindingElementCount.
-    // Even if this is not an instanced draw call, some attributes can still be instanced if they
-    // have a non-zero divisor.
-    size_t totalCount = gl::ComputeVertexBindingElementCount(
-        binding.getDivisor(), count, static_cast<size_t>(std::max(instances, 1)));
+    size_t totalCount = gl::ComputeVertexBindingElementCount(binding.getDivisor(), count,
+                                                             static_cast<size_t>(instances));
     // TODO(jiajia.qin@intel.com): force the index buffer to clamp any out of range indices instead
     // of invalid operation here.
     if (bufferD3D)

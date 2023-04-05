@@ -84,8 +84,7 @@ class SharedCommandBlockPool final : angle::RingBufferAllocateListener
         return angle::Result::Continue;
     }
 
-    // Always valid (even if allocator is detached).
-    bool valid() const { return true; }
+    bool valid() const { return mAllocator.valid(); }
     bool empty() const { return getCommandSize() == 0; }
 
     void getMemoryUsageStats(size_t *usedMemoryOut, size_t *allocatedMemoryOut) const;

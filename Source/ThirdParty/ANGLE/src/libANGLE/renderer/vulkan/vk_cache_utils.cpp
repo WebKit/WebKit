@@ -3356,10 +3356,7 @@ void GraphicsPipelineDesc::initializePipelineVertexInputState(
     }
     if (context->getFeatures().supportsExtendedDynamicState2.enabled)
     {
-        if (!context->getFeatures().forceStaticPrimitiveRestartState.enabled)
-        {
-            dynamicStateListOut->push_back(VK_DYNAMIC_STATE_PRIMITIVE_RESTART_ENABLE);
-        }
+        dynamicStateListOut->push_back(VK_DYNAMIC_STATE_PRIMITIVE_RESTART_ENABLE);
     }
 }
 

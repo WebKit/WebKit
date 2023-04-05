@@ -3244,16 +3244,6 @@ bool GetQueryParameterInfo(const State &glState,
             *numParams = 1;
             return true;
         }
-        case GL_DEPTH_CLAMP_EXT:
-        {
-            if (!extensions.depthClampEXT)
-            {
-                return false;
-            }
-            *type      = GL_BOOL;
-            *numParams = 1;
-            return true;
-        }
         case GL_COLOR_LOGIC_OP:
         {
             if (!extensions.logicOpANGLE)

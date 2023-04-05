@@ -1192,10 +1192,6 @@ const char *GetEntryPointName(EntryPoint ep)
             return "glFramebufferPixelLocalClearValueivANGLE";
         case EntryPoint::GLFramebufferPixelLocalClearValueuivANGLE:
             return "glFramebufferPixelLocalClearValueuivANGLE";
-        case EntryPoint::GLFramebufferPixelLocalStorageInterruptANGLE:
-            return "glFramebufferPixelLocalStorageInterruptANGLE";
-        case EntryPoint::GLFramebufferPixelLocalStorageRestoreANGLE:
-            return "glFramebufferPixelLocalStorageRestoreANGLE";
         case EntryPoint::GLFramebufferRenderbuffer:
             return "glFramebufferRenderbuffer";
         case EntryPoint::GLFramebufferRenderbufferOES:

@@ -75,7 +75,6 @@ PLS_ALLOW_LIST = {
     "EnableClientState",
     "EnableVertexAttribArray",
     "EndPixelLocalStorageANGLE",
-    "FramebufferPixelLocalStorageInterruptANGLE",
     "FrontFace",
     "MapBufferRange",
     "PixelLocalStorageBarrierANGLE",

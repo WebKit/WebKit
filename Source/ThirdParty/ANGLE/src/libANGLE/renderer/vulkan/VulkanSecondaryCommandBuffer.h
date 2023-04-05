@@ -34,7 +34,6 @@ namespace vk
 {
 class Context;
 class RenderPassDesc;
-class SecondaryCommandPool;
 
 class VulkanSecondaryCommandBuffer : public priv::CommandBuffer
 {
@@ -42,7 +41,7 @@ class VulkanSecondaryCommandBuffer : public priv::CommandBuffer
     VulkanSecondaryCommandBuffer() = default;
 
     static angle::Result InitializeCommandPool(Context *context,
-                                               SecondaryCommandPool *pool,
+                                               CommandPool *pool,
                                                uint32_t queueFamilyIndex,
                                                ProtectionType protectionType);
     static angle::Result InitializeRenderPassInheritanceInfo(
@@ -51,19 +50,20 @@ class VulkanSecondaryCommandBuffer : public priv::CommandBuffer
         const RenderPassDesc &renderPassDesc,
         VkCommandBufferInheritanceInfo *inheritanceInfoOut);
 
-    angle::Result initialize(Context *context,
-                             SecondaryCommandPool *pool,
+    angle::Result initialize(vk::Context *context,
+                             vk::CommandPool *pool,
                              bool isRenderPassCommandBuffer,
                              SecondaryCommandMemoryAllocator *allocator);
 
-    void destroy();
+    void free(VkDevice device);
 
     void attachAllocator(SecondaryCommandMemoryAllocator *source) {}
 
     void detachAllocator(SecondaryCommandMemoryAllocator *destination) {}
 
-    angle::Result begin(Context *context, const VkCommandBufferInheritanceInfo &inheritanceInfo);
-    angle::Result end(Context *context);
+    angle::Result begin(vk::Context *context,
+                        const VkCommandBufferInheritanceInfo &inheritanceInfo);
+    angle::Result end(vk::Context *context);
     VkResult reset();
 
     void executeCommands(PrimaryCommandBuffer *primary) { primary->executeCommands(1, this); }
@@ -234,14 +234,9 @@ class VulkanSecondaryCommandBuffer : public priv::CommandBuffer
 
     void open() const {}
     void close() const {}
-    bool empty() const
-    {
-        ASSERT(valid());
-        return !mAnyCommand;
-    }
+    bool empty() const { return !mAnyCommand; }
     uint32_t getRenderPassWriteCommandCount() const
     {
-        ASSERT(valid());
         return mCommandTracker.getRenderPassWriteCommandCount();
     }
     std::string dumpCommands(const char *separator) const { return ""; }
@@ -249,7 +244,7 @@ class VulkanSecondaryCommandBuffer : public priv::CommandBuffer
   private:
     void onRecordCommand() { mAnyCommand = true; }
 
-    SecondaryCommandPool *mCommandPool = nullptr;
+    CommandPool *mCommandPool = nullptr;
     CommandBufferCommandTracker mCommandTracker;
     bool mAnyCommand = false;
 };

@@ -43,16 +43,15 @@ bool Pipeline::uses(const TVariable &var) const
         case Type::VertexOut:
             switch (qualifier)
             {
-                case TQualifier::EvqVaryingOut:
                 case TQualifier::EvqVertexOut:
                 case TQualifier::EvqPosition:
-                case TQualifier::EvqPointSize:
                 case TQualifier::EvqClipDistance:
-                case TQualifier::EvqSmoothOut:
                 case TQualifier::EvqFlatOut:
-                case TQualifier::EvqNoPerspectiveOut:
+                case TQualifier::EvqPointSize:
+                case TQualifier::EvqSmoothOut:
                 case TQualifier::EvqCentroidOut:
-                case TQualifier::EvqNoPerspectiveCentroidOut:
+                case TQualifier::EvqNoPerspectiveOut:
+                case TQualifier::EvqVaryingOut:
                     return true;
                 default:
                     return false;
@@ -61,13 +60,12 @@ bool Pipeline::uses(const TVariable &var) const
         case Type::FragmentIn:
             switch (qualifier)
             {
-                case TQualifier::EvqVaryingIn:
                 case TQualifier::EvqFragmentIn:
-                case TQualifier::EvqSmoothIn:
                 case TQualifier::EvqFlatIn:
-                case TQualifier::EvqNoPerspectiveIn:
+                case TQualifier::EvqSmoothIn:
                 case TQualifier::EvqCentroidIn:
-                case TQualifier::EvqNoPerspectiveCentroidIn:
+                case TQualifier::EvqNoPerspectiveIn:
+                case TQualifier::EvqVaryingIn:
                     return true;
                 default:
                     return false;

@@ -916,10 +916,8 @@ ShaderVariable CollectVariablesTraverser::recordVarying(const TIntermSymbol &var
         case EvqFlatOut:
         case EvqNoPerspectiveOut:
         case EvqCentroidOut:
-        case EvqSampleOut:
-        case EvqNoPerspectiveCentroidOut:
-        case EvqNoPerspectiveSampleOut:
         case EvqGeometryOut:
+        case EvqSampleOut:
             if (mSymbolTable->isVaryingInvariant(variable.variable()) || type.isInvariant())
             {
                 varying.isInvariant = true;

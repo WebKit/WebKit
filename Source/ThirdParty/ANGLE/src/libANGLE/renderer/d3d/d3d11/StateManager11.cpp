@@ -707,6 +707,7 @@ StateManager11::StateManager11(Renderer11 *renderer)
     mCurDepthStencilState.stencilBackPassDepthPass = GL_KEEP;
     mCurDepthStencilState.stencilBackWritemask     = static_cast<GLuint>(-1);
 
+    mCurRasterState.rasterizerDiscard   = false;
     mCurRasterState.cullFace            = false;
     mCurRasterState.cullMode            = gl::CullFaceMode::Back;
     mCurRasterState.frontFace           = GL_CCW;
@@ -714,10 +715,8 @@ StateManager11::StateManager11(Renderer11 *renderer)
     mCurRasterState.polygonOffsetFactor = 0.0f;
     mCurRasterState.polygonOffsetUnits  = 0.0f;
     mCurRasterState.polygonOffsetClamp  = 0.0f;
-    mCurRasterState.depthClamp          = false;
     mCurRasterState.pointDrawMode       = false;
     mCurRasterState.multiSample         = false;
-    mCurRasterState.rasterizerDiscard   = false;
     mCurRasterState.dither              = false;
 
     // Start with all internal dirty bits set except the SRV and UAV bits.
@@ -927,7 +926,6 @@ angle::Result StateManager11::updateStateForCompute(const gl::Context *context,
 
 void StateManager11::syncState(const gl::Context *context,
                                const gl::State::DirtyBits &dirtyBits,
-                               const gl::State::ExtendedDirtyBits &extendedDirtyBits,
                                gl::Command command)
 {
     if (!dirtyBits.any())
@@ -1195,6 +1193,9 @@ void StateManager11::syncState(const gl::Context *context,
                 break;
             case gl::State::DIRTY_BIT_EXTENDED:
             {
+                gl::State::ExtendedDirtyBits extendedDirtyBits =
+                    state.getAndResetExtendedDirtyBits();
+
                 for (size_t extendedDirtyBit : extendedDirtyBits)
                 {
                     switch (extendedDirtyBit)
@@ -1207,12 +1208,6 @@ void StateManager11::syncState(const gl::Context *context,
                                     state.getEnabledClipDistances().bits()))
                             {
                                 mInternalDirtyBits.set(DIRTY_BIT_DRIVER_UNIFORMS);
-                            }
-                            break;
-                        case gl::State::EXTENDED_DIRTY_BIT_DEPTH_CLAMP_ENABLED:
-                            if (state.getRasterizerState().depthClamp != mCurRasterState.depthClamp)
-                            {
-                                mInternalDirtyBits.set(DIRTY_BIT_RASTERIZER_STATE);
                             }
                             break;
                     }
@@ -1398,7 +1393,7 @@ void StateManager11::syncScissorRectangle(const gl::Context *context)
     int scissorX = scissor.x + mCurScissorOffset.x;
     int scissorY = scissor.y + mCurScissorOffset.y;
 
-    if (mCurPresentPathFastEnabled && glState.getClipOrigin() == gl::ClipOrigin::LowerLeft)
+    if (mCurPresentPathFastEnabled)
     {
         scissorY = mCurPresentPathFastColorBufferHeight - scissor.height - scissor.y;
     }

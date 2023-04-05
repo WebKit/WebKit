@@ -74,8 +74,6 @@ bool IsInterpolationIn(TQualifier qualifier)
         case EvqNoPerspectiveIn:
         case EvqCentroidIn:
         case EvqSampleIn:
-        case EvqNoPerspectiveCentroidIn:
-        case EvqNoPerspectiveSampleIn:
             return true;
         default:
             return false;
@@ -91,8 +89,6 @@ bool IsInterpolationOut(TQualifier qualifier)
         case EvqNoPerspectiveOut:
         case EvqCentroidOut:
         case EvqSampleOut:
-        case EvqNoPerspectiveCentroidOut:
-        case EvqNoPerspectiveSampleOut:
             return true;
         default:
             return false;
@@ -471,10 +467,15 @@ bool IsVaryingOut(TQualifier qualifier)
     switch (qualifier)
     {
         case EvqVaryingOut:
+        case EvqSmoothOut:
+        case EvqFlatOut:
+        case EvqNoPerspectiveOut:
+        case EvqCentroidOut:
         case EvqVertexOut:
         case EvqGeometryOut:
         case EvqTessControlOut:
         case EvqTessEvaluationOut:
+        case EvqSampleOut:
         case EvqPatchOut:
             return true;
 
@@ -482,7 +483,7 @@ bool IsVaryingOut(TQualifier qualifier)
             break;
     }
 
-    return IsInterpolationOut(qualifier);
+    return false;
 }
 
 bool IsVaryingIn(TQualifier qualifier)
@@ -490,10 +491,15 @@ bool IsVaryingIn(TQualifier qualifier)
     switch (qualifier)
     {
         case EvqVaryingIn:
+        case EvqSmoothIn:
+        case EvqFlatIn:
+        case EvqNoPerspectiveIn:
+        case EvqCentroidIn:
         case EvqFragmentIn:
         case EvqGeometryIn:
         case EvqTessControlIn:
         case EvqTessEvaluationIn:
+        case EvqSampleIn:
         case EvqPatchIn:
             return true;
 
@@ -501,7 +507,7 @@ bool IsVaryingIn(TQualifier qualifier)
             break;
     }
 
-    return IsInterpolationIn(qualifier);
+    return false;
 }
 
 bool IsVarying(TQualifier qualifier)
@@ -568,14 +574,6 @@ InterpolationType GetInterpolationType(TQualifier qualifier)
         case EvqNoPerspectiveOut:
             return INTERPOLATION_NOPERSPECTIVE;
 
-        case EvqNoPerspectiveCentroidIn:
-        case EvqNoPerspectiveCentroidOut:
-            return INTERPOLATION_NOPERSPECTIVE_CENTROID;
-
-        case EvqNoPerspectiveSampleIn:
-        case EvqNoPerspectiveSampleOut:
-            return INTERPOLATION_NOPERSPECTIVE_SAMPLE;
-
         case EvqSmoothIn:
         case EvqSmoothOut:
         case EvqVertexOut:
@@ -608,20 +606,14 @@ InterpolationType GetFieldInterpolationType(TQualifier qualifier)
 {
     switch (qualifier)
     {
-        case EvqSmooth:
-            return INTERPOLATION_SMOOTH;
         case EvqFlat:
             return INTERPOLATION_FLAT;
         case EvqNoPerspective:
             return INTERPOLATION_NOPERSPECTIVE;
+        case EvqSmooth:
+            return INTERPOLATION_SMOOTH;
         case EvqCentroid:
             return INTERPOLATION_CENTROID;
-        case EvqSample:
-            return INTERPOLATION_SAMPLE;
-        case EvqNoPerspectiveCentroid:
-            return INTERPOLATION_NOPERSPECTIVE_CENTROID;
-        case EvqNoPerspectiveSample:
-            return INTERPOLATION_NOPERSPECTIVE_SAMPLE;
         default:
             return GetInterpolationType(qualifier);
     }
@@ -1009,9 +1001,9 @@ bool IsPrecisionApplicableToType(TBasicType type)
 
 bool IsRedeclarableBuiltIn(const ImmutableString &name)
 {
-    return name == "gl_ClipDistance" || name == "gl_CullDistance" || name == "gl_FragDepth" ||
-           name == "gl_LastFragData" || name == "gl_LastFragColorARM" || name == "gl_PerVertex" ||
-           name == "gl_Position" || name == "gl_PointSize";
+    return name == "gl_ClipDistance" || name == "gl_CullDistance" || name == "gl_LastFragData" ||
+           name == "gl_LastFragColorARM" || name == "gl_PerVertex" || name == "gl_Position" ||
+           name == "gl_PointSize";
 }
 
 size_t FindFieldIndex(const TFieldList &fieldList, const char *fieldName)

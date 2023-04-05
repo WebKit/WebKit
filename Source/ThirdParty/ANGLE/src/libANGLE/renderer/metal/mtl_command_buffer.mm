@@ -48,7 +48,6 @@ namespace
     PROC(SetCullMode)                                \
     PROC(SetDepthStencilState)                       \
     PROC(SetDepthBias)                               \
-    PROC(SetDepthClipMode)                           \
     PROC(SetStencilRefVals)                          \
     PROC(SetViewport)                                \
     PROC(SetScissorRect)                             \
@@ -133,13 +132,6 @@ inline void SetDepthBiasCmd(id<MTLRenderCommandEncoder> encoder, IntermediateCom
     float slopeScale = stream->fetch<float>();
     float clamp      = stream->fetch<float>();
     [encoder setDepthBias:depthBias slopeScale:slopeScale clamp:clamp];
-}
-
-inline void SetDepthClipModeCmd(id<MTLRenderCommandEncoder> encoder,
-                                IntermediateCommandStream *stream)
-{
-    MTLDepthClipMode depthClipMode = stream->fetch<MTLDepthClipMode>();
-    [encoder setDepthClipMode:depthClipMode];
 }
 
 inline void SetStencilRefValsCmd(id<MTLRenderCommandEncoder> encoder,
@@ -1236,8 +1228,6 @@ void RenderCommandEncoderStates::reset()
     depthStencilState = nil;
     depthBias = depthSlopeScale = depthClamp = 0;
 
-    depthClipMode = MTLDepthClipModeClip;
-
     stencilFrontRef = stencilBackRef = 0;
 
     viewport.reset();
@@ -1674,18 +1664,6 @@ RenderCommandEncoder &RenderCommandEncoder::setDepthBias(float depthBias,
     mStateCache.depthClamp      = clamp;
 
     mCommands.push(CmdType::SetDepthBias).push(depthBias).push(slopeScale).push(clamp);
-
-    return *this;
-}
-RenderCommandEncoder &RenderCommandEncoder::setDepthClipMode(MTLDepthClipMode depthClipMode)
-{
-    if (mStateCache.depthClipMode == depthClipMode)
-    {
-        return *this;
-    }
-    mStateCache.depthClipMode = depthClipMode;
-
-    mCommands.push(CmdType::SetDepthClipMode).push(depthClipMode);
 
     return *this;
 }

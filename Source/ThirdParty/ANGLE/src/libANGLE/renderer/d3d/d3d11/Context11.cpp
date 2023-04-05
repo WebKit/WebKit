@@ -798,11 +798,9 @@ angle::Result Context11::popDebugGroup(const gl::Context *context)
 angle::Result Context11::syncState(const gl::Context *context,
                                    const gl::State::DirtyBits &dirtyBits,
                                    const gl::State::DirtyBits &bitMask,
-                                   const gl::State::ExtendedDirtyBits &extendedDirtyBits,
-                                   const gl::State::ExtendedDirtyBits &extendedBitMask,
                                    gl::Command command)
 {
-    mRenderer->getStateManager()->syncState(context, dirtyBits, extendedDirtyBits, command);
+    mRenderer->getStateManager()->syncState(context, dirtyBits, command);
     return angle::Result::Continue;
 }
 

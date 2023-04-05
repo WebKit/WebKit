@@ -616,8 +616,6 @@ EXPORTS
     glFramebufferPixelLocalClearValuefvANGLE
     glFramebufferPixelLocalClearValueivANGLE
     glFramebufferPixelLocalClearValueuivANGLE
-    glFramebufferPixelLocalStorageInterruptANGLE
-    glFramebufferPixelLocalStorageRestoreANGLE
     glFramebufferTexturePixelLocalStorageANGLE
     glGetFramebufferPixelLocalStorageParameterfvANGLE
     glGetFramebufferPixelLocalStorageParameterfvRobustANGLE

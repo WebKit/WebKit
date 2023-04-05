@@ -349,22 +349,6 @@ spv::ExecutionMode GetTessEvalOrderingExecutionMode(TLayoutTessEvaluationType or
             return {};
     }
 }
-
-void WriteInterpolationDecoration(spv::Decoration decoration,
-                                  spirv::IdRef id,
-                                  uint32_t fieldIndex,
-                                  spirv::Blob *decorationsBlob)
-{
-    if (fieldIndex != std::numeric_limits<uint32_t>::max())
-    {
-        spirv::WriteMemberDecorate(decorationsBlob, id, spirv::LiteralInteger(fieldIndex),
-                                   decoration, {});
-    }
-    else
-    {
-        spirv::WriteDecorate(decorationsBlob, id, decoration, {});
-    }
-}
 }  // anonymous namespace
 
 void SpirvTypeSpec::inferDefaults(const TType &type, TCompiler *compiler)
@@ -2054,6 +2038,8 @@ void SPIRVBuilder::writeInterpolationDecoration(TQualifier qualifier,
                                                 spirv::IdRef id,
                                                 uint32_t fieldIndex)
 {
+    spv::Decoration decoration = spv::DecorationMax;
+
     switch (qualifier)
     {
         case EvqSmooth:
@@ -2065,50 +2051,40 @@ void SPIRVBuilder::writeInterpolationDecoration(TQualifier qualifier,
         case EvqFlat:
         case EvqFlatOut:
         case EvqFlatIn:
-            WriteInterpolationDecoration(spv::DecorationFlat, id, fieldIndex, &mSpirvDecorations);
-            return;
+            decoration = spv::DecorationFlat;
+            break;
 
         case EvqNoPerspective:
         case EvqNoPerspectiveOut:
         case EvqNoPerspectiveIn:
-            WriteInterpolationDecoration(spv::DecorationNoPerspective, id, fieldIndex,
-                                         &mSpirvDecorations);
-            return;
+            decoration = spv::DecorationNoPerspective;
+            break;
 
         case EvqCentroid:
         case EvqCentroidOut:
         case EvqCentroidIn:
-            WriteInterpolationDecoration(spv::DecorationCentroid, id, fieldIndex,
-                                         &mSpirvDecorations);
-            return;
+            decoration = spv::DecorationCentroid;
+            break;
 
         case EvqSample:
         case EvqSampleOut:
         case EvqSampleIn:
-            WriteInterpolationDecoration(spv::DecorationSample, id, fieldIndex, &mSpirvDecorations);
+            decoration = spv::DecorationSample;
             addCapability(spv::CapabilitySampleRateShading);
-            return;
-
-        case EvqNoPerspectiveCentroid:
-        case EvqNoPerspectiveCentroidOut:
-        case EvqNoPerspectiveCentroidIn:
-            WriteInterpolationDecoration(spv::DecorationNoPerspective, id, fieldIndex,
-                                         &mSpirvDecorations);
-            WriteInterpolationDecoration(spv::DecorationCentroid, id, fieldIndex,
-                                         &mSpirvDecorations);
-            return;
-
-        case EvqNoPerspectiveSample:
-        case EvqNoPerspectiveSampleOut:
-        case EvqNoPerspectiveSampleIn:
-            WriteInterpolationDecoration(spv::DecorationNoPerspective, id, fieldIndex,
-                                         &mSpirvDecorations);
-            WriteInterpolationDecoration(spv::DecorationSample, id, fieldIndex, &mSpirvDecorations);
-            addCapability(spv::CapabilitySampleRateShading);
-            return;
+            break;
 
         default:
             return;
+    }
+
+    if (fieldIndex != std::numeric_limits<uint32_t>::max())
+    {
+        spirv::WriteMemberDecorate(&mSpirvDecorations, id, spirv::LiteralInteger(fieldIndex),
+                                   decoration, {});
+    }
+    else
+    {
+        spirv::WriteDecorate(&mSpirvDecorations, id, decoration, {});
     }
 }
 

@@ -1095,6 +1095,8 @@ constexpr uint32_t kInfiniteCmdCount = 0xFFFFFFFF;
 class CommandBufferHelperCommon : angle::NonCopyable
 {
   public:
+    CommandPool *getCommandPool() { return mCommandPool; }
+
     void bufferWrite(ContextVk *contextVk,
                      VkAccessFlags writeAccessType,
                      PipelineStage writeStage,
@@ -1134,6 +1136,8 @@ class CommandBufferHelperCommon : angle::NonCopyable
 
     const QueueSerial &getQueueSerial() const { return mQueueSerial; }
 
+    bool hasAllocatorLinks() const { return mCommandAllocator.hasAllocatorLinks(); }
+
     // Dumping the command stream is disabled by default.
     static constexpr bool kEnableCommandStreamDiagnostics = false;
 
@@ -1141,24 +1145,9 @@ class CommandBufferHelperCommon : angle::NonCopyable
     CommandBufferHelperCommon();
     ~CommandBufferHelperCommon();
 
-    void initializeImpl();
+    void initializeImpl(CommandPool *commandPool);
 
     void resetImpl();
-
-    template <class DerivedT>
-    angle::Result attachCommandPoolImpl(Context *context, SecondaryCommandPool *commandPool);
-    template <class DerivedT, bool kIsRenderPassBuffer>
-    angle::Result detachCommandPoolImpl(Context *context, SecondaryCommandPool **commandPoolOut);
-    template <class DerivedT>
-    void releaseCommandPoolImpl();
-
-    template <class DerivedT>
-    void attachAllocatorImpl(SecondaryCommandMemoryAllocator *allocator);
-    template <class DerivedT>
-    SecondaryCommandMemoryAllocator *detachAllocatorImpl();
-
-    template <class DerivedT>
-    void assertCanBeRecycledImpl();
 
     void imageReadImpl(ContextVk *contextVk,
                        VkImageAspectFlags aspectFlags,
@@ -1188,7 +1177,7 @@ class CommandBufferHelperCommon : angle::NonCopyable
 
     // The command pool *CommandBufferHelper::mCommandBuffer is allocated from.  Only used with
     // Vulkan secondary command buffers (as opposed to ANGLE's SecondaryCommandBuffer).
-    SecondaryCommandPool *mCommandPool;
+    CommandPool *mCommandPool;
 
     // Whether the command buffers contains any draw/dispatch calls that possibly output data
     // through storage buffers and images.  This is used to determine whether glMemoryBarrier*
@@ -1203,35 +1192,22 @@ class CommandBufferHelperCommon : angle::NonCopyable
     QueueSerial mQueueSerial;
 };
 
-class SecondaryCommandBufferCollector;
-
 class OutsideRenderPassCommandBufferHelper final : public CommandBufferHelperCommon
 {
   public:
     OutsideRenderPassCommandBufferHelper();
     ~OutsideRenderPassCommandBufferHelper();
 
-    angle::Result initialize(Context *context);
+    angle::Result initialize(Context *context, CommandPool *commandPool);
 
-    angle::Result reset(Context *context, SecondaryCommandBufferCollector *commandBufferCollector);
-
-    static constexpr bool ExecutesInline()
-    {
-        return OutsideRenderPassCommandBuffer::ExecutesInline();
-    }
+    angle::Result reset(Context *context);
 
     OutsideRenderPassCommandBuffer &getCommandBuffer() { return mCommandBuffer; }
 
     bool empty() const { return mCommandBuffer.empty(); }
 
-    angle::Result attachCommandPool(Context *context, SecondaryCommandPool *commandPool);
-    angle::Result detachCommandPool(Context *context, SecondaryCommandPool **commandPoolOut);
-    void releaseCommandPool();
-
     void attachAllocator(SecondaryCommandMemoryAllocator *allocator);
     SecondaryCommandMemoryAllocator *detachAllocator();
-
-    void assertCanBeRecycled();
 
 #if defined(ANGLE_ENABLE_ASSERTS)
     void markOpen() { mCommandBuffer.open(); }
@@ -1255,9 +1231,7 @@ class OutsideRenderPassCommandBufferHelper final : public CommandBufferHelperCom
                     ImageLayout imageLayout,
                     ImageHelper *image);
 
-    angle::Result flushToPrimary(Context *context,
-                                 PrimaryCommandBuffer *primary,
-                                 SecondaryCommandBufferCollector *commandBufferCollector);
+    angle::Result flushToPrimary(Context *context, PrimaryCommandBuffer *primary);
 
     void setGLMemoryBarrierIssued()
     {
@@ -1276,12 +1250,8 @@ class OutsideRenderPassCommandBufferHelper final : public CommandBufferHelperCom
 
   private:
     angle::Result initializeCommandBuffer(Context *context);
-    angle::Result endCommandBuffer(Context *context);
 
     OutsideRenderPassCommandBuffer mCommandBuffer;
-    bool mIsCommandBufferEnded = false;
-
-    friend class CommandBufferHelperCommon;
 };
 
 enum class ImagelessStatus
@@ -1331,11 +1301,9 @@ class RenderPassCommandBufferHelper final : public CommandBufferHelperCommon
     RenderPassCommandBufferHelper();
     ~RenderPassCommandBufferHelper();
 
-    angle::Result initialize(Context *context);
+    angle::Result initialize(Context *context, CommandPool *commandPool);
 
-    angle::Result reset(Context *context, SecondaryCommandBufferCollector *commandBufferCollector);
-
-    static constexpr bool ExecutesInline() { return RenderPassCommandBuffer::ExecutesInline(); }
+    angle::Result reset(Context *context);
 
     RenderPassCommandBuffer &getCommandBuffer()
     {
@@ -1344,14 +1312,8 @@ class RenderPassCommandBufferHelper final : public CommandBufferHelperCommon
 
     bool empty() const { return !started(); }
 
-    angle::Result attachCommandPool(Context *context, SecondaryCommandPool *commandPool);
-    void detachCommandPool(SecondaryCommandPool **commandPoolOut);
-    void releaseCommandPool();
-
     void attachAllocator(SecondaryCommandMemoryAllocator *allocator);
     SecondaryCommandMemoryAllocator *detachAllocator();
-
-    void assertCanBeRecycled();
 
 #if defined(ANGLE_ENABLE_ASSERTS)
     void markOpen() { getCommandBuffer().open(); }
@@ -1394,8 +1356,7 @@ class RenderPassCommandBufferHelper final : public CommandBufferHelperCommon
 
     angle::Result flushToPrimary(Context *context,
                                  PrimaryCommandBuffer *primary,
-                                 const RenderPass *renderPass,
-                                 SecondaryCommandBufferCollector *commandBufferCollector);
+                                 const RenderPass *renderPass);
 
     bool started() const { return mRenderPassStarted; }
 
@@ -1588,13 +1549,11 @@ class RenderPassCommandBufferHelper final : public CommandBufferHelperCommon
     // This is last renderpass before present and this is the image will be presented. We can use
     // final layout of the renderpass to transition it to the presentable layout
     ImageHelper *mImageOptimizeForPresent;
-
-    friend class CommandBufferHelperCommon;
 };
 
 // The following class helps support both Vulkan and ANGLE secondary command buffers by
 // encapsulating their differences.
-template <typename CommandBufferHelperT>
+template <typename CommandBufferT, typename CommandBufferHelperT>
 class CommandBufferRecycler
 {
   public:
@@ -1604,35 +1563,24 @@ class CommandBufferRecycler
     void onDestroy();
 
     angle::Result getCommandBufferHelper(Context *context,
-                                         SecondaryCommandPool *commandPool,
+                                         CommandPool *commandPool,
                                          SecondaryCommandMemoryAllocator *commandsAllocator,
                                          CommandBufferHelperT **commandBufferHelperOut);
 
-    void recycleCommandBufferHelper(CommandBufferHelperT **commandBuffer);
+    void recycleCommandBufferHelper(VkDevice device, CommandBufferHelperT **commandBuffer);
+
+    void resetCommandBuffer(CommandBufferT &&commandBuffer);
+
+    void releaseCommandBuffersToReset(std::vector<CommandBufferT> *vectorOut)
+    {
+        std::unique_lock<std::mutex> lock(mMutex);
+        (*vectorOut) = std::move(mSecondaryCommandBuffersToReset);
+    }
 
   private:
     std::mutex mMutex;
     std::vector<CommandBufferHelperT *> mCommandBufferHelperFreeList;
-};
-
-class SecondaryCommandBufferCollector final
-{
-  public:
-    SecondaryCommandBufferCollector()                                              = default;
-    SecondaryCommandBufferCollector(const SecondaryCommandBufferCollector &)       = delete;
-    SecondaryCommandBufferCollector(SecondaryCommandBufferCollector &&)            = default;
-    void operator=(const SecondaryCommandBufferCollector &)                        = delete;
-    SecondaryCommandBufferCollector &operator=(SecondaryCommandBufferCollector &&) = default;
-    ~SecondaryCommandBufferCollector() { ASSERT(empty()); }
-
-    void collectCommandBuffer(priv::SecondaryCommandBuffer &&commandBuffer);
-    void collectCommandBuffer(VulkanSecondaryCommandBuffer &&commandBuffer);
-    void retireCommandBuffers();
-
-    bool empty() const { return mCollectedCommandBuffers.empty(); }
-
-  private:
-    std::vector<VulkanSecondaryCommandBuffer> mCollectedCommandBuffers;
+    std::vector<CommandBufferT> mSecondaryCommandBuffersToReset;
 };
 
 // Imagine an image going through a few layout transitions:

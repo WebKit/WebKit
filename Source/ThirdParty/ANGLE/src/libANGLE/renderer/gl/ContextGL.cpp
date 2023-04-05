@@ -886,12 +886,9 @@ angle::Result ContextGL::popDebugGroup(const gl::Context *context)
 angle::Result ContextGL::syncState(const gl::Context *context,
                                    const gl::State::DirtyBits &dirtyBits,
                                    const gl::State::DirtyBits &bitMask,
-                                   const gl::State::ExtendedDirtyBits &extendedDirtyBits,
-                                   const gl::State::ExtendedDirtyBits &extendedBitMask,
                                    gl::Command command)
 {
-    return mRenderer->getStateManager()->syncState(context, dirtyBits, bitMask, extendedDirtyBits,
-                                                   extendedBitMask);
+    return mRenderer->getStateManager()->syncState(context, dirtyBits, bitMask);
 }
 
 GLint ContextGL::getGPUDisjoint()

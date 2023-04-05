@@ -209,9 +209,7 @@ class TranslatorMetalDirect : public TCompiler
     [[nodiscard]] bool transformDepthBeforeCorrection(TIntermBlock *root,
                                                       const DriverUniformMetal *driverUniforms);
 
-    [[nodiscard]] bool appendVertexShaderDepthCorrectionToMain(
-        TIntermBlock *root,
-        const DriverUniformMetal *driverUniforms);
+    [[nodiscard]] bool appendVertexShaderDepthCorrectionToMain(TIntermBlock *root);
 
     [[nodiscard]] bool insertSampleMaskWritingLogic(TIntermBlock &root,
                                                     DriverUniformMetal &driverUniforms);

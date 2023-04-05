@@ -602,8 +602,6 @@ enum class EntryPoint
     GLFramebufferPixelLocalClearValuefvANGLE,
     GLFramebufferPixelLocalClearValueivANGLE,
     GLFramebufferPixelLocalClearValueuivANGLE,
-    GLFramebufferPixelLocalStorageInterruptANGLE,
-    GLFramebufferPixelLocalStorageRestoreANGLE,
     GLFramebufferRenderbuffer,
     GLFramebufferRenderbufferOES,
     GLFramebufferTexture,

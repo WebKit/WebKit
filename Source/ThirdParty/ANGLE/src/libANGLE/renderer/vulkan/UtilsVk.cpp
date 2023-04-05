@@ -1106,10 +1106,7 @@ void ResetDynamicState(ContextVk *contextVk, vk::RenderPassCommandBuffer *comman
     {
         commandBuffer->setRasterizerDiscardEnable(VK_FALSE);
         commandBuffer->setDepthBiasEnable(VK_FALSE);
-        if (!contextVk->getFeatures().forceStaticPrimitiveRestartState.enabled)
-        {
-            commandBuffer->setPrimitiveRestartEnable(VK_FALSE);
-        }
+        commandBuffer->setPrimitiveRestartEnable(VK_FALSE);
     }
     if (contextVk->getFeatures().supportsFragmentShadingRate.enabled)
     {
@@ -2201,8 +2198,6 @@ angle::Result UtilsVk::clearFramebuffer(ContextVk *contextVk,
     }
     else
     {
-        // Deferred clears should be handled already.
-        ASSERT(!framebuffer->hasDeferredClears());
         ANGLE_TRY(contextVk->startRenderPass(scissoredRenderArea, &commandBuffer, nullptr));
     }
 
@@ -2313,8 +2308,7 @@ angle::Result UtilsVk::clearFramebuffer(ContextVk *contextVk,
         }
     }
 
-    ASSERT(contextVk->hasStartedRenderPassWithQueueSerial(
-        framebuffer->getLastRenderPassQueueSerial()));
+    ASSERT(contextVk->hasActiveRenderPass());
     // Make sure this draw call doesn't count towards occlusion query results.
     contextVk->pauseRenderPassQueriesIfActive();
     commandBuffer->draw(3, 0);
@@ -2602,8 +2596,6 @@ angle::Result UtilsVk::blitResolveImpl(ContextVk *contextVk,
         SetStencilStateForWrite(&pipelineDesc);
     }
 
-    // All deferred clear must have been flushed, otherwise it will conflict with params.blitArea.
-    ASSERT(!framebuffer->hasDeferredClears());
     vk::RenderPassCommandBuffer *commandBuffer;
     ANGLE_TRY(framebuffer->startNewRenderPass(contextVk, params.blitArea, &commandBuffer, nullptr));
 
@@ -2611,11 +2603,8 @@ angle::Result UtilsVk::blitResolveImpl(ContextVk *contextVk,
     ANGLE_TRY(allocateDescriptorSet(contextVk, &contextVk->getStartedRenderPassCommands(),
                                     Function::BlitResolve, &descriptorSet));
 
-    // Pick layout consistent with GetImageReadLayout() to avoid unnecessary layout change.
-    vk::ImageLayout srcImagelayout = src->isDepthOrStencil()
-                                         ? vk::ImageLayout::DepthReadStencilReadFragmentShaderRead
-                                         : vk::ImageLayout::FragmentShaderReadOnly;
-    contextVk->onImageRenderPassRead(src->getAspectFlags(), srcImagelayout, src);
+    contextVk->onImageRenderPassRead(src->getAspectFlags(), vk::ImageLayout::FragmentShaderReadOnly,
+                                     src);
 
     UpdateColorAccess(contextVk, framebuffer->getState().getColorAttachmentsMask(),
                       framebuffer->getState().getEnabledDrawBuffers());

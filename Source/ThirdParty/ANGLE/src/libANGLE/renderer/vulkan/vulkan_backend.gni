@@ -57,8 +57,6 @@ vulkan_backend_sources = [
   "SamplerVk.h",
   "SecondaryCommandBuffer.cpp",
   "SecondaryCommandBuffer.h",
-  "SecondaryCommandPool.cpp",
-  "SecondaryCommandPool.h",
   "SemaphoreVk.cpp",
   "SemaphoreVk.h",
   "ShaderInterfaceVariableInfoMap.cpp",
