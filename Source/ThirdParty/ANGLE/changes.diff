@@ -278,10 +278,20 @@ index 3247043cb4ca7c52ee9f79f3a7dd27cac8cbb2cd..5afc2f3c3c7f7df5bc2b9ec9ddc41baf
  }
  
 diff --git a/src/libANGLE/renderer/metal/mtl_render_utils.mm b/src/libANGLE/renderer/metal/mtl_render_utils.mm
-index 4b854d589c5c7042ba8ab2e32960425c4070eb2a..1e2b6888ef205c355b2220fb36d3b889a614fa25 100644
+index 4b854d589c5c7042ba8ab2e32960425c4070eb2a..026f89274298dbb041083b5cfea53e3df443164a 100644
 --- a/src/libANGLE/renderer/metal/mtl_render_utils.mm
 +++ b/src/libANGLE/renderer/metal/mtl_render_utils.mm
-@@ -2540,45 +2540,13 @@ angle::Result MipmapUtils::generateMipmapCS(ContextMtl *contextMtl,
+@@ -712,7 +712,8 @@ void DispatchCompute(ContextMtl *contextMtl,
+                      id<MTLComputePipelineState> pipelineState,
+                      size_t numThreads)
+ {
+-    NSUInteger w = std::min<NSUInteger>(pipelineState.threadExecutionWidth, numThreads);
++    ASSERT(numThreads != 0);
++    NSUInteger w = std::clamp<NSUInteger>(numThreads, 1u, pipelineState.threadExecutionWidth);
+     MTLSize threadsPerThreadgroup = MTLSizeMake(w, 1, 1);
+ 
+     if (contextMtl->getDisplay()->getFeatures().hasNonUniformDispatch.enabled)
+@@ -2540,45 +2541,13 @@ angle::Result MipmapUtils::generateMipmapCS(ContextMtl *contextMtl,
                                              bool sRGBMipmap,
                                              NativeTexLevelArray *mipmapOutputViews)
  {
@@ -327,7 +337,7 @@ index 4b854d589c5c7042ba8ab2e32960425c4070eb2a..1e2b6888ef205c355b2220fb36d3b889
      ComputeCommandEncoder *cmdEncoder = contextMtl->getComputeCommandEncoder();
      ASSERT(cmdEncoder);
  
-@@ -2615,8 +2583,29 @@ angle::Result MipmapUtils::generateMipmapCS(ContextMtl *contextMtl,
+@@ -2615,8 +2584,29 @@ angle::Result MipmapUtils::generateMipmapCS(ContextMtl *contextMtl,
              UNREACHABLE();
      }
  
