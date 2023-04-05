@@ -569,6 +569,9 @@ static bool shouldEnableStrictMode(Decoder& decoder, NSArray<Class> *allowedClas
             ) && isInWebProcess()
         )
 #endif
+#if ENABLE(APPLE_PAY)
+        || [allowedClasses containsObject:PAL::getPKPaymentSetupConfigurationClass()] // rdar://107553429, Don't re-introduce rdar://107626990
+#endif
     ) {
         return false;
     }
@@ -583,7 +586,6 @@ static bool shouldEnableStrictMode(Decoder& decoder, NSArray<Class> *allowedClas
 #endif // ENABLE(REVEAL)
 #if ENABLE(APPLE_PAY)
         || [allowedClasses containsObject:PAL::getPKPaymentSetupFeatureClass()] // rdar://107553409
-        || [allowedClasses containsObject:PAL::getPKPaymentSetupConfigurationClass()] // rdar://107553429
         || [allowedClasses containsObject:PAL::getPKPaymentMerchantSessionClass()] // rdar://107553452
         || ([allowedClasses containsObject:PAL::getPKPaymentClass()] && isInWebProcess())
         || ([allowedClasses containsObject:PAL::getPKPaymentInstallmentConfigurationClass()] && isInWebProcess())
