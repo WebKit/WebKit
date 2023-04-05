@@ -33,7 +33,7 @@
 #include "ExceptionOr.h"
 #include "JSValueInWrappedObject.h"
 #include <JavaScriptCore/Forward.h>
-#include <JavaScriptCore/TypedArrayAdaptersForwardDeclarations.h>
+#include <JavaScriptCore/GenericTypedArrayView.h>
 #include <wtf/Lock.h>
 #include <wtf/Vector.h>
 

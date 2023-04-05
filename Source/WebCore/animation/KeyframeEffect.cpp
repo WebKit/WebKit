@@ -39,6 +39,7 @@
 #include "CSSValue.h"
 #include "CSSValueKeywords.h"
 #include "ComputedStyleExtractor.h"
+#include "DocumentInlines.h"
 #include "Element.h"
 #include "FontCascade.h"
 #include "FrameView.h"
