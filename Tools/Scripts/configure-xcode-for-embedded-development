@@ -83,7 +83,7 @@ ideplugin = 'XCBSpecifications' if tuple(int(n) for n in xcode_version.split('.'
 
 XCSPEC_INFO = [dict(
     id='com.apple.product-type.tool',
-    dest=f'../PlugIns/{ideplugin}.ideplugin/Contents/Resources/Embedded-Shared.xcspec',
+    dest=f'Library/Xcode/Plug-ins/{ideplugin}.ideplugin/Contents/Resources/Embedded-Shared.xcspec' if tuple(int(n) for n in xcode_version.split('.')) >= (14, 3) else f'../PlugIns/{ideplugin}.ideplugin/Contents/Resources/Embedded-Shared.xcspec',
     content='''
     // Tool (normal Unix command-line executable)
     {   Type = ProductType;
@@ -118,7 +118,7 @@ XCSPEC_INFO = [dict(
 ''',
 ), dict(
     id='com.apple.package-type.mach-o-executable',
-    dest=f'../PlugIns/{ideplugin}.ideplugin/Contents/Resources/Embedded-Shared.xcspec',
+    dest=f'Library/Xcode/Plug-ins/{ideplugin}.ideplugin/Contents/Resources/Embedded-Shared.xcspec' if tuple(int(n) for n in xcode_version.split('.')) >= (14, 3) else f'../PlugIns/{ideplugin}.ideplugin/Contents/Resources/Embedded-Shared.xcspec',
     content='''
     {   Type = PackageType;
         Identifier = com.apple.package-type.mach-o-executable;
