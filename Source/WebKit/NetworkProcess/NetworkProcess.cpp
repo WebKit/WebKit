@@ -2319,12 +2319,16 @@ void NetworkProcess::syncLocalStorage(CompletionHandler<void()>&& completionHand
 
 void NetworkProcess::storeServiceWorkerRegistrations(PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)
 {
+#if ENABLE(SERVICE_WORKER)
     auto* session = networkSession(sessionID);
     auto* server = session ? session->swServer() : nullptr;
     if (!server)
         return completionHandler();
 
     server->storeRegistrationsOnDisk(WTFMove(completionHandler));
+#else
+    completionHandler();
+#endif
 }
 
 void NetworkProcess::resetQuota(PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)
