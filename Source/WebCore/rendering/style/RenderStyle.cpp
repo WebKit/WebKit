@@ -1160,9 +1160,6 @@ static bool miscDataChangeRequiresRepaint(const StyleMiscNonInheritedData& first
         || first.objectPosition != second.objectPosition)
         return true;
 
-    if (first.isNotFinal != second.isNotFinal)
-        return true;
-
     return false;
 }
 

@@ -364,12 +364,6 @@ void RenderSVGRoot::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOf
 
 void RenderSVGRoot::paintContents(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-    // Style is non-final if the element has a pending stylesheet before it. We end up with renderers with such styles if a script
-    // forces renderer construction by querying something layout dependent.
-    // Avoid FOUC by not painting. Switching to final style triggers repaint.
-    if (style().isNotFinal())
-        return;
-
     // We don't paint our own background, but we do let the kids paint their backgrounds.
     auto paintInfoForChild(paintInfo);
     if (paintInfo.phase == PaintPhase::ChildOutlines)

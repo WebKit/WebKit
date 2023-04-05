@@ -1152,8 +1152,6 @@ public:
     WEBCORE_EXPORT ExceptionOr<Ref<XPathResult>> evaluate(const String& expression, Node& contextNode, RefPtr<XPathNSResolver>&&, unsigned short type, XPathResult*);
     static void createNSResolverForBindings(Node&) { } // Legacy.
 
-    bool hasNodesWithNonFinalStyle() const { return m_hasNodesWithNonFinalStyle; }
-    void setHasNodesWithNonFinalStyle() { m_hasNodesWithNonFinalStyle = true; }
     bool hasNodesWithMissingStyle() const { return m_hasNodesWithMissingStyle; }
     void setHasNodesWithMissingStyle() { m_hasNodesWithMissingStyle = true; }
 
@@ -2297,7 +2295,6 @@ private:
     bool m_wellFormed { false };
     bool m_createRenderers { true };
 
-    bool m_hasNodesWithNonFinalStyle { false };
     bool m_hasNodesWithMissingStyle { false };
     // But sometimes you need to ignore pending stylesheet count to
     // force an immediate layout when requested by JS.

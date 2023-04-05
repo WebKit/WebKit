@@ -1961,10 +1961,6 @@ public:
 
     static MathStyle initialMathStyle() { return MathStyle::Normal; }
 
-    // Indicates the style is likely to change due to a pending stylesheet load.
-    bool isNotFinal() const { return m_nonInheritedData->miscData->isNotFinal; }
-    void setIsNotFinal() { SET_NESTED_VAR(m_nonInheritedData, miscData, isNotFinal, true); }
-
     void setVisitedLinkColor(const Color&);
     void setVisitedLinkBackgroundColor(const StyleColor& v) { SET_DOUBLY_NESTED_VAR(m_nonInheritedData, miscData, visitedLinkColor, background, v); }
     void setVisitedLinkBorderLeftColor(const StyleColor& v) { SET_DOUBLY_NESTED_VAR(m_nonInheritedData, miscData, visitedLinkColor, borderLeft, v); }

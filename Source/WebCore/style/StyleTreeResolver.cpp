@@ -230,11 +230,6 @@ auto TreeResolver::resolveElement(Element& element, const RenderStyle* existingS
     if (!affectsRenderedSubtree(element, *resolvedStyle.style))
         return { };
 
-    if (m_didSeePendingStylesheet && (!existingStyle || existingStyle->isNotFinal())) {
-        resolvedStyle.style->setIsNotFinal();
-        m_document.setHasNodesWithNonFinalStyle();
-    }
-
     auto update = createAnimatedElementUpdate(WTFMove(resolvedStyle), styleable, parent().change, resolutionContext);
     auto descendantsToResolve = computeDescendantsToResolve(update.change, element.styleValidity(), parent().descendantsToResolve);
 

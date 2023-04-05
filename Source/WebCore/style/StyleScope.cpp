@@ -578,7 +578,7 @@ void Scope::invalidateStyleAfterStyleSheetChange(const StyleSheetChange& styleSh
         return;
 
     // If we are already parsing the body and so may have significant amount of elements, put some effort into trying to avoid style recalcs.
-    bool invalidateAll = !m_document.bodyOrFrameset() || m_document.hasNodesWithNonFinalStyle() || m_document.hasNodesWithMissingStyle();
+    bool invalidateAll = !m_document.bodyOrFrameset() || m_document.hasNodesWithMissingStyle();
 
     if (styleSheetChange.resolverUpdateType == ResolverUpdateType::Reconstruct || invalidateAll) {
         Invalidator::invalidateAllStyle(*this);

@@ -155,11 +155,10 @@ void HTMLFrameSetElement::parseAttribute(const QualifiedName& name, const AtomSt
     HTMLElement::parseAttribute(name, value);
 }
 
-bool HTMLFrameSetElement::rendererIsNeeded(const RenderStyle& style)
+bool HTMLFrameSetElement::rendererIsNeeded(const RenderStyle&)
 {
     // For compatibility, frames render even when display: none is set.
-    // However, we delay creating a renderer until stylesheets have loaded. 
-    return !style.isNotFinal();
+    return true;
 }
 
 RenderPtr<RenderElement> HTMLFrameSetElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)

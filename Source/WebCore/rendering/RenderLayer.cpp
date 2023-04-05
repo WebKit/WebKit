@@ -2852,9 +2852,6 @@ static inline bool shouldDoSoftwarePaint(const RenderLayer* layer, bool painting
 
 static inline bool shouldSuppressPaintingLayer(RenderLayer* layer)
 {
-    if (layer->renderer().style().isNotFinal() && !layer->isRenderViewLayer() && !layer->renderer().isDocumentElementRenderer())
-        return true;
-
     // Avoid painting all layers if the document is in a state where visual updates aren't allowed.
     // A full repaint will occur in Document::setVisualUpdatesAllowed(bool) if painting is suppressed here.
     if (!layer->renderer().document().visualUpdatesAllowed())

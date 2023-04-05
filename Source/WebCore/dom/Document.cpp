@@ -2136,7 +2136,6 @@ void Document::resolveStyle(ResolveStyleType type)
 
         if (type == ResolveStyleType::Rebuild) {
             // This may get set again during style resolve.
-            m_hasNodesWithNonFinalStyle = false;
             m_hasNodesWithMissingStyle = false;
 
             auto newStyle = Style::resolveForDocument(*this);
