@@ -207,6 +207,16 @@ class Issue(object):
         match_string = ''
         for member in ('title', 'project', 'component', 'version', 'classification'):
             match_string += ';{}:{}'.format(member, getattr(self, member, ''))
+        match_string += ';keywords:{}'.format(','.join(self.keywords or []))
+
+        for key, value in self.tracker._redact_exemption.items():
+            if key.search(match_string) and value:
+                return self.tracker.Redaction(
+                    redacted=False,
+                    exemption=value,
+                    reason="is a {}".format(self.tracker.NAME) if key.pattern == '.*' else "matches '{}'".format(key.pattern),
+                )
+
         for key, value in self.tracker._redact.items():
             if key.search(match_string):
                 return self.tracker.Redaction(

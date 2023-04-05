@@ -103,9 +103,9 @@ class Tracker(GenericTracker):
         except ImportError:
             return None
 
-    def __init__(self, users=None, authentication=None, project=None, projects=None, redact=None, hide_title=None):
+    def __init__(self, users=None, authentication=None, project=None, projects=None, redact=None, hide_title=None, redact_exemption=None):
         hide_title = True if hide_title is None else hide_title
-        super(Tracker, self).__init__(users=users, redact=redact, hide_title=hide_title)
+        super(Tracker, self).__init__(users=users, redact=redact, redact_exemption=redact_exemption, hide_title=hide_title)
         self._projects = [project] if project else (projects or [])
 
         self.library = self.radarclient()
