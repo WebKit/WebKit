@@ -303,7 +303,7 @@ std::optional<TemporalUnit> temporalSmallestUnit(JSGlobalObject* globalObject, J
 // https://tc39.es/proposal-temporal/#sec-temporal-getdifferencesettings
 std::tuple<TemporalUnit, TemporalUnit, RoundingMode, double> extractDifferenceOptions(JSGlobalObject* globalObject, JSValue optionsValue, UnitGroup unitGroup, TemporalUnit defaultSmallestUnit, TemporalUnit defaultLargestUnit)
 {
-    static std::initializer_list<TemporalUnit> disallowedUnits[] = {
+    static const std::initializer_list<TemporalUnit> disallowedUnits[] = {
         { },
         { TemporalUnit::Hour, TemporalUnit::Minute, TemporalUnit::Second, TemporalUnit::Millisecond, TemporalUnit::Microsecond, TemporalUnit::Nanosecond },
         { TemporalUnit::Year, TemporalUnit::Month, TemporalUnit::Week, TemporalUnit::Day }
