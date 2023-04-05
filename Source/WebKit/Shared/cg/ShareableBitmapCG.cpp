@@ -39,6 +39,15 @@
 namespace WebKit {
 using namespace WebCore;
 
+ShareableBitmapConfiguration::ShareableBitmapConfiguration(NativeImage& image)
+    : m_size(image.size())
+    , m_colorSpace(image.colorSpace())
+    , m_bytesPerPixel(CGImageGetBitsPerPixel(image.platformImage().get()) / 8)
+    , m_bytesPerRow(CGImageGetBytesPerRow(image.platformImage().get()))
+    , m_bitmapInfo(CGImageGetBitmapInfo(image.platformImage().get()))
+{
+}
+
 std::optional<DestinationColorSpace> ShareableBitmapConfiguration::validateColorSpace(std::optional<DestinationColorSpace> colorSpace)
 {
     if (!colorSpace)
@@ -97,6 +106,30 @@ CGBitmapInfo ShareableBitmapConfiguration::calculateBitmapInfo(const Destination
     }
 
     return info;
+}
+
+RefPtr<ShareableBitmap> ShareableBitmap::createFromImagePixels(NativeImage& image)
+{
+    auto colorSpace = image.colorSpace();
+    if (colorSpace != DestinationColorSpace::SRGB())
+        return nullptr;
+
+    auto pixels = adoptCF(CGDataProviderCopyData(CGImageGetDataProvider(image.platformImage().get())));
+    if (!pixels)
+        return nullptr;
+
+    const auto* bytes = reinterpret_cast<const uint8_t*>(CFDataGetBytePtr(pixels.get()));
+    auto sizeInBytes = CFDataGetLength(pixels.get());
+    if (!bytes || !sizeInBytes)
+        return nullptr;
+
+    RefPtr<SharedMemory> sharedMemory = SharedMemory::allocate(sizeInBytes);
+    if (!sharedMemory)
+        return nullptr;
+
+    memcpy(sharedMemory->data(), bytes, sizeInBytes);
+
+    return adoptRef(new ShareableBitmap(ShareableBitmapConfiguration(image), sharedMemory.releaseNonNull()));
 }
 
 std::unique_ptr<GraphicsContext> ShareableBitmap::createGraphicsContext()

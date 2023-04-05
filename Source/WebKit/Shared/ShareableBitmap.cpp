@@ -75,11 +75,11 @@ CheckedUint32 ShareableBitmapConfiguration::calculateSizeInBytes(const IntSize& 
 
 RefPtr<ShareableBitmap> ShareableBitmap::create(const ShareableBitmapConfiguration& configuration)
 {
-    auto numBytes = configuration.sizeInBytes();
-    if (numBytes.hasOverflowed())
+    auto sizeInBytes = configuration.sizeInBytes();
+    if (sizeInBytes.hasOverflowed())
         return nullptr;
 
-    RefPtr<SharedMemory> sharedMemory = SharedMemory::allocate(numBytes);
+    RefPtr<SharedMemory> sharedMemory = SharedMemory::allocate(sizeInBytes);
     if (!sharedMemory)
         return nullptr;
 
@@ -88,16 +88,32 @@ RefPtr<ShareableBitmap> ShareableBitmap::create(const ShareableBitmapConfigurati
 
 RefPtr<ShareableBitmap> ShareableBitmap::create(const ShareableBitmapConfiguration& configuration, Ref<SharedMemory>&& sharedMemory)
 {
-    auto numBytes = configuration.sizeInBytes();
-    if (numBytes.hasOverflowed())
+    auto sizeInBytes = configuration.sizeInBytes();
+    if (sizeInBytes.hasOverflowed())
         return nullptr;
 
-    if (sharedMemory->size() < numBytes) {
+    if (sharedMemory->size() < sizeInBytes) {
         ASSERT_NOT_REACHED();
         return nullptr;
     }
     
     return adoptRef(new ShareableBitmap(configuration, WTFMove(sharedMemory)));
+}
+
+RefPtr<ShareableBitmap> ShareableBitmap::createFromImageDraw(NativeImage& image)
+{
+    auto imageSize = image.size();
+
+    auto bitmap = ShareableBitmap::create({ imageSize, image.colorSpace() });
+    if (!bitmap)
+        return nullptr;
+
+    auto context = bitmap->createGraphicsContext();
+    if (!context)
+        return nullptr;
+
+    context->drawNativeImage(image, imageSize, FloatRect({ }, imageSize), FloatRect({ }, imageSize), { CompositeOperator::Copy });
+    return bitmap;
 }
 
 RefPtr<ShareableBitmap> ShareableBitmap::create(const ShareableBitmapHandle& handle, SharedMemory::Protection protection)

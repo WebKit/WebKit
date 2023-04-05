@@ -52,6 +52,9 @@ public:
         , CGBitmapInfo
 #endif
     );
+#if USE(CG)
+    ShareableBitmapConfiguration(WebCore::NativeImage&);
+#endif
 
     WebCore::IntSize size() const { return m_size; }
     const WebCore::DestinationColorSpace& colorSpace() const { return m_colorSpace ? *m_colorSpace : WebCore::DestinationColorSpace::SRGB(); }
@@ -121,6 +124,12 @@ public:
 
     // Create a shareable bitmap from an already existing shared memory block.
     static RefPtr<ShareableBitmap> create(const ShareableBitmapConfiguration&, Ref<SharedMemory>&&);
+
+    // Create a shareable bitmap from a NativeImage.
+#if USE(CG)
+    static RefPtr<ShareableBitmap> createFromImagePixels(WebCore::NativeImage&);
+#endif
+    static RefPtr<ShareableBitmap> createFromImageDraw(WebCore::NativeImage&);
 
     // Create a shareable bitmap from a handle.
     static RefPtr<ShareableBitmap> create(const ShareableBitmapHandle&, SharedMemory::Protection = SharedMemory::Protection::ReadWrite);

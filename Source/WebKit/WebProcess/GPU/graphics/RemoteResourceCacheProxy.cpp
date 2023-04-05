@@ -29,6 +29,7 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "ArgumentCoders.h"
+#include "Logging.h"
 #include "RemoteImageBufferProxy.h"
 #include "RemoteRenderingBackendProxy.h"
 #include <WebCore/FontCustomPlatformData.h>
@@ -85,26 +86,42 @@ void RemoteResourceCacheProxy::forgetImageBuffer(RenderingResourceIdentifier ide
     ASSERT_UNUSED(success, success);
 }
 
-inline static RefPtr<ShareableBitmap> createShareableBitmapFromNativeImage(NativeImage& image)
-{
-    auto imageSize = image.size();
-
-    auto bitmap = ShareableBitmap::create({ image.size(), image.colorSpace() });
-    if (!bitmap)
-        return nullptr;
-
-    auto context = bitmap->createGraphicsContext();
-    if (!context)
-        return nullptr;
-
-    context->drawNativeImage(image, imageSize, FloatRect({ }, imageSize), FloatRect({ }, imageSize), { WebCore::CompositeOperator::Copy });
-    return bitmap;
-}
-
 void RemoteResourceCacheProxy::recordImageBufferUse(WebCore::ImageBuffer& imageBuffer)
 {
     auto iterator = m_imageBuffers.find(imageBuffer.renderingResourceIdentifier());
     ASSERT_UNUSED(iterator, iterator != m_imageBuffers.end());
+}
+
+inline static std::optional<ShareableBitmapHandle> createShareableBitmapFromNativeImage(NativeImage& image)
+{
+    RefPtr<ShareableBitmap> bitmap;
+    PlatformImagePtr platformImage;
+
+#if USE(CG)
+    bitmap = ShareableBitmap::createFromImagePixels(image);
+    if (bitmap)
+        platformImage = bitmap->createPlatformImage(DontCopyBackingStore, ShouldInterpolate::Yes);
+#endif
+
+    // If we failed to create ShareableBitmap or PlatformImage, fall back to image-draw method.
+    if (!platformImage)
+        bitmap = ShareableBitmap::createFromImageDraw(image);
+
+    if (!platformImage && bitmap)
+        platformImage = bitmap->createPlatformImage(DontCopyBackingStore, ShouldInterpolate::Yes);
+
+    if (!platformImage)
+        return std::nullopt;
+
+    auto handle = bitmap->createHandle();
+    if (!handle)
+        return std::nullopt;
+
+    handle->takeOwnershipOfMemory(MemoryLedger::Graphics);
+
+    // Replace the PlatformImage of the input NativeImage with the shared one.
+    image.setPlatformImage(WTFMove(platformImage));
+    return handle;
 }
 
 void RemoteResourceCacheProxy::recordNativeImageUse(NativeImage& image)
@@ -115,20 +132,16 @@ void RemoteResourceCacheProxy::recordNativeImageUse(NativeImage& image)
     if (iterator != m_nativeImages.end())
         return;
 
-    auto bitmap = createShareableBitmapFromNativeImage(image);
-    if (!bitmap)
+    auto handle = createShareableBitmapFromNativeImage(image);
+    if (!handle) {
+        // FIXME: Failing to send the image to GPUP will crash it when referencing this image.
+        LOG_WITH_STREAM(Images, stream
+            << "RemoteResourceCacheProxy::recordNativeImageUse() " << this
+            << " image.size(): " << image.size()
+            << " image.colorSpace(): " << image.colorSpace()
+            << " ShareableBitmap could not be created; bailing.");
         return;
-
-    auto handle = bitmap->createHandle();
-    if (!handle)
-        return;
-
-    auto platformImage = bitmap->createPlatformImage(DontCopyBackingStore, ShouldInterpolate::Yes);
-    if (!platformImage)
-        return;
-
-    image.setPlatformImage(WTFMove(platformImage));
-    handle->takeOwnershipOfMemory(MemoryLedger::Graphics);
+    }
 
     m_nativeImages.add(image.renderingResourceIdentifier(), image);
 
