@@ -1,5 +1,5 @@
 #!/usr/bin/env {{ python }}
-VERSION = '1.4'
+VERSION = '1.5'
 
 import io
 import os
@@ -215,6 +215,18 @@ def security_level_for_commit(commit, remotes, name_to_remote=None):
     message = message_for(commit)
     title = message.splitlines()[0]
 
+    # Compute class 3 before class 2, because a class 3 violation is more interesting than a class 2
+    # if both indicate a commit is potentially sensative
+    did_redact = False
+    if REPOSITORY:
+        obj = Commit(hash=commit, message=message)
+        for issue in obj.issues:
+            redaction = issue.redacted
+            if redaction:
+                did_redact = True
+            if getattr(redaction, 'exemption', False):
+                return 0, CLASS_3
+
     # Class 2: The commit we're pushing is a cherry-pick of something that exists on a remote already
     for r in CHERRY_PICK_RE:
         match = r.match(title)
@@ -228,19 +240,16 @@ def security_level_for_commit(commit, remotes, name_to_remote=None):
             original_remotes = remotes_for(candidate)
             if not original_remotes:
                 continue
-            return security_level_for_remotes(original_remotes, name_to_remote), CLASS_2
+            level = security_level_for_remotes(original_remotes, name_to_remote)
+
+            # If the commit is a cherry-pick of something already public, the state of the bug it's referencing doesn't matter 
+            if did_redact and level != 0:
+                return 1, CLASS_3
+            return level, CLASS_2
         break
 
     # Class 3: We must inspect the commit for bug references
     if REPOSITORY:
-        obj = Commit(hash=commit, message=message)
-        did_redact = False
-        for issue in obj.issues:
-            redaction = issue.redacted
-            if redaction:
-                did_redact = True
-            if getattr(redaction, 'exemption', False):
-                return 0, CLASS_3
         if did_redact:
             return 1, CLASS_3
         return 0, CLASS_3
@@ -326,13 +335,10 @@ def main(name, remote):
             else:
                 return 1
 
-        # Commit is redacted, but we're pushing it publically
+        # Commit references a redacted issue, but we're pushing it publically
         if categorization_class == 3 and (MAX_LEVEL if security_level is None else security_level) > (target_security_level or 0):
             print_error("'{}' fixes a redacted issue, but '{}' is a public remote".format(commit, name))
-            if MODE == DEFAULT_MODE:
-                prompt_for.append(commit)
-            else:
-                return 1
+            return 1
 
         if VERBOSITY >= VERBOSE:
             print_tty('    {} is security level {} by class {}'.format(commit, security_level, categorization_class))
