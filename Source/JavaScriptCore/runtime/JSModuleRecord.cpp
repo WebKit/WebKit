@@ -151,6 +151,20 @@ void JSModuleRecord::instantiateDeclarations(JSGlobalObject* globalObject, Modul
     for (const auto& pair : importEntries()) {
         const ImportEntry& importEntry = pair.value;
         AbstractModuleRecord* importedModule = hostResolveImportedModule(globalObject, importEntry.moduleRequest);
+
+#if CPU(ADDRESS64)
+        // rdar://107531050: Speculative crash mitigation
+        // TODO: rdar://107634974
+        if (UNLIKELY(importedModule == bitwise_cast<AbstractModuleRecord*>(encodedJSUndefined()))) {
+            ASSERT(vm.exceptionForInspection(), vm.traps().maybeNeedHandling(), vm.exceptionForInspection(), importedModule);
+            ASSERT(vm.traps().maybeNeedHandling(), vm.traps().maybeNeedHandling(), vm.exceptionForInspection(), importedModule);
+            if (!vm.exceptionForInspection() || !vm.traps().maybeNeedHandling()) {
+                throwSyntaxError(globalObject, scope, makeString("Importing module '", String(importEntry.moduleRequest.impl()), "' is not found."));
+                return;
+            }
+        }
+#endif
+
         RETURN_IF_EXCEPTION(scope, void());
         switch (importEntry.type) {
         case AbstractModuleRecord::ImportEntryType::Namespace: {
