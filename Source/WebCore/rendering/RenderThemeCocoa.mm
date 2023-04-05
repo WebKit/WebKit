@@ -72,6 +72,15 @@ constexpr int kThumbnailBorderCornerRadius = 1;
 constexpr int kVisibleBackgroundImageWidth = 1;
 constexpr int kMultipleThumbnailShrinkSize = 2;
 
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/RenderThemeCocoaAdditions.mm>
+#else
+static inline bool canShowCapsLockIndicator()
+{
+    return true;
+}
+#endif
+
 RenderThemeCocoa& RenderThemeCocoa::singleton()
 {
     return static_cast<RenderThemeCocoa&>(RenderTheme::singleton());
@@ -90,7 +99,7 @@ void RenderThemeCocoa::purgeCaches()
 
 bool RenderThemeCocoa::shouldHaveCapsLockIndicator(const HTMLInputElement& element) const
 {
-    return element.isPasswordField();
+    return canShowCapsLockIndicator() && element.isPasswordField();
 }
 
 Color RenderThemeCocoa::pictureFrameColor(const RenderObject& buttonRenderer)
