@@ -76,6 +76,7 @@ public:
     bool useEphemeralSession() const { return boolTestRunnerFeatureValue("useEphemeralSession"); }
     bool useFlexibleViewport() const { return boolTestRunnerFeatureValue("useFlexibleViewport"); }
     bool useRemoteLayerTree() const { return boolTestRunnerFeatureValue("useRemoteLayerTree"); }
+    bool noUseRemoteLayerTree() const { return boolTestRunnerFeatureValue("noUseRemoteLayerTree"); }
     bool useThreadedScrolling() const { return boolTestRunnerFeatureValue("useThreadedScrolling"); }
     double contentInsetTop() const { return doubleTestRunnerFeatureValue("contentInset.top"); }
     double horizontalSystemMinimumLayoutMargin() const { return doubleTestRunnerFeatureValue("horizontalSystemMinimumLayoutMargin"); }

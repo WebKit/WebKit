@@ -558,6 +558,8 @@ class Driver(object):
             cmd.append('--accelerated-drawing')
         if self._port.get_option('remote_layer_tree'):
             cmd.append('--remote-layer-tree')
+        if self._port.get_option('no_remote_layer_tree'):
+            cmd.append('--no-remote-layer-tree')
         if self._port.get_option('world_leaks'):
             cmd.append('--world-leaks')
         if self._port.get_option('threaded'):

@@ -1151,8 +1151,17 @@ WebViewImpl::WebViewImpl(NSView <WebViewImplDelegate> *view, WKWebView *outerWeb
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
     [NSApp registerServicesMenuSendTypes:PasteboardTypes::forSelection() returnTypes:PasteboardTypes::forEditing()];
 
-    if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"WebKit2UseRemoteLayerTreeDrawingArea"] boolValue]
-        || m_page->preferences().siteIsolationEnabled())
+#if ENABLE(REMOTE_LAYER_TREE_ON_MAC_BY_DEFAULT)
+    bool useRemoteLayerTree = true;
+#else
+    bool useRemoteLayerTree = false;
+#endif
+    if (id useRemoteLayerTreeBoolean = [[NSUserDefaults standardUserDefaults] objectForKey:@"WebKit2UseRemoteLayerTreeDrawingArea"])
+        useRemoteLayerTree = [useRemoteLayerTreeBoolean boolValue];
+    if (m_page->preferences().siteIsolationEnabled())
+        useRemoteLayerTree = true;
+
+    if (useRemoteLayerTree)
         m_drawingAreaType = DrawingAreaType::RemoteLayerTree;
 
     [view addTrackingArea:m_primaryTrackingArea.get()];

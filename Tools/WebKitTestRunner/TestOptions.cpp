@@ -46,7 +46,7 @@ static constexpr bool mediaSourceEnabledValue = true;
 #endif
 
 #if ENABLE(GPU_PROCESS)
-#if PLATFORM(IOS_FAMILY)
+#if ENABLE(GPU_PROCESS_DOM_RENDERING_BY_DEFAULT)
 static constexpr bool fullGPUProcessEnabledValue = true;
 #else
 static constexpr bool fullGPUProcessEnabledValue = false;
@@ -181,6 +181,7 @@ const TestFeatures& TestOptions::defaults()
             { "useEphemeralSession", false },
             { "useFlexibleViewport", false },
             { "useRemoteLayerTree", false },
+            { "noUseRemoteLayerTree", false },
             { "useThreadedScrolling", false },
         };
         features.doubleTestRunnerFeatures = {

@@ -65,6 +65,8 @@ PlatformWebView::PlatformWebView(WKWebViewConfiguration* configuration, const Te
     // FIXME: Not sure this is the best place for this; maybe we should have API to set this so we can do it from TestController?
     if (m_options.useRemoteLayerTree())
         [[NSUserDefaults standardUserDefaults] setValue:@YES forKey:@"WebKit2UseRemoteLayerTreeDrawingArea"];
+    if (m_options.noUseRemoteLayerTree())
+        [[NSUserDefaults standardUserDefaults] setValue:@NO forKey:@"WebKit2UseRemoteLayerTreeDrawingArea"];
 
     auto copiedConfiguration = adoptNS([configuration copy]);
     WKPreferencesSetThreadedScrollingEnabled((__bridge WKPreferencesRef)[copiedConfiguration preferences], m_options.useThreadedScrolling());

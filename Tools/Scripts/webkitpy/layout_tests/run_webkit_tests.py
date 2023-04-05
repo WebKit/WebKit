@@ -121,6 +121,8 @@ def parse_args(args):
             help="Use accelerated drawing (OS X only)"),
         optparse.make_option("--remote-layer-tree", action="store_true", default=False,
             help="Use the remote layer tree drawing model (OS X WebKit2 only)"),
+        optparse.make_option("--no-remote-layer-tree", action="store_true", default=False,
+            help="Disable the remote layer tree drawing model (OS X WebKit2 only)"),
         optparse.make_option("--internal-feature", type="string", action="append", default=[],
             help="Enable (disable) an internal feature (--internal-feature FeatureName[=true|false])"),
         optparse.make_option("--experimental-feature", type="string", action="append", default=[],
@@ -343,6 +345,9 @@ def parse_args(args):
             "--use-gpu-process", action="store_true", default=False,
             help=("Enable all GPU process related features, also set additional expectations and the result report flavor.")),
         optparse.make_option(
+            "--no-use-gpu-process", action="store_true", default=False,
+            help=("Disable GPU process for DOM rendering.")),
+        optparse.make_option(
             "--prefer-integrated-gpu", action="store_true", default=False,
             help=("Prefer using the lower-power integrated GPU on a dual-GPU system. Note that other running applications and the tests themselves can override this request.")),
         optparse.make_option("--show-window", action="store_true", default=False, help="Make the test runner window visible during testing."),
@@ -388,6 +393,10 @@ def parse_args(args):
         if options.result_report_flavor:
             raise RuntimeError('--use-gpu-process implicitly sets the result flavor, this should not be overridden')
         options.result_report_flavor = 'gpuprocess'
+    elif options.no_use_gpu_process:
+        if not options.experimental_feature:
+            options.experimental_feature = []
+        options.experimental_feature.append('UseGPUProcessForDOMRenderingEnabled=0')
 
     if options.accessibility_isolated_tree:
         host = Host()
