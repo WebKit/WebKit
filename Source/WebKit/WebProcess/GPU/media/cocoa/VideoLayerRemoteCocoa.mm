@@ -178,8 +178,6 @@ static const Seconds PostAnimationDelay { 100_ms };
     }
 
     if (CGRectEqualToRect(self.videoLayerFrame, self.bounds) && CGAffineTransformIsIdentity(self.affineTransform))
-    auto* videoSublayer = [sublayers objectAtIndex:0];
-    if (!CGRectIsEmpty(self.videoLayerFrame) && CGRectEqualToRect(self.videoLayerFrame, videoSublayer.bounds) && CGAffineTransformIsIdentity(self.affineTransform))
         return;
 
     [CATransaction begin];
