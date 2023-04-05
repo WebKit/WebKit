@@ -80,8 +80,9 @@ class Tracker(GenericTracker):
             component_color=DEFAULT_COMPONENT_COLOR,
             version_color=DEFAULT_VERSION_COLOR,
             session=None, redact=None, hide_title=None,
+            redact_exemption=None,
     ):
-        super(Tracker, self).__init__(users=users, redact=redact, hide_title=hide_title)
+        super(Tracker, self).__init__(users=users, redact=redact, hide_title=hide_title, redact_exemption=redact_exemption)
 
         self.session = session or requests.Session()
         self.component_color = component_color

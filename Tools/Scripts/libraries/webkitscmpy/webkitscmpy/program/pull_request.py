@@ -393,10 +393,21 @@ class PullRequest(Command):
         radar_cc_default = repository.config().get('webkitscmpy.cc-radar', 'true') == 'true'
         if radar_issue and not_radar and radar_issue.tracker.radarclient() and (args.cc_radar or (radar_cc_default and args.cc_radar is not False)):
             not_radar.cc_radar(radar=radar_issue)
+
+        redaction_exemption = None
         redacted_issue = None
         for candidate in issues:
+            if getattr(candidate.redacted, 'exemption', False):
+                redaction_exemption = candidate
             if candidate.redacted:
                 redacted_issue = candidate
+        if redaction_exemption:
+            print('A commit you are uploading references {}'.format(redaction_exemption.link))
+            print("{} {}".format(redaction_exemption.link, redaction_exemption.redacted))
+            if redacted_issue:
+                sys.stderr.write("Redaction exemption overrides the redaction of {}\n".format(redacted_issue.link))
+                sys.stderr.write("{} {}\n".format(redacted_issue.link, redacted_issue.redacted))
+            redacted_issue = None
         issue = issues[0] if issues else None
 
         remote_repo = repository.remote(name=source_remote)

@@ -81,7 +81,7 @@ try:
     import webkitpy
     from webkitcorepy import Version
     from webkitscmpy import local, Commit
-    from webkitbugspy import version
+    from webkitbugspy import version, Tracker
 
     if MODE != NO_RADAR_MODE and version >= Version(0, 9, 8):
         REPOSITORY = local.Git(os.getcwd())
@@ -234,9 +234,15 @@ def security_level_for_commit(commit, remotes, name_to_remote=None):
     # Class 3: We must inspect the commit for bug references
     if REPOSITORY:
         obj = Commit(hash=commit, message=message)
+        did_redact = False
         for issue in obj.issues:
-            if issue.redacted:
-                return 1, CLASS_3
+            redaction = issue.redacted
+            if redaction:
+                did_redact = True
+            if getattr(redaction, 'exemption', False):
+                return 0, CLASS_3
+        if did_redact:
+            return 1, CLASS_3
         return 0, CLASS_3
 
     return None, None

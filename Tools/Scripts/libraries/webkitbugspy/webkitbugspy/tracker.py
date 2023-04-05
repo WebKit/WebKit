@@ -44,9 +44,13 @@ class Tracker(object):
             return obj.Encoder.default(obj)
 
     class Redaction(object):
-        def __init__(self, redacted=False, reason=None):
+        def __init__(self, redacted=False, reason=None, exemption=False):
             self.redacted = redacted
             self.reason = reason
+            self.exemption = exemption
+
+            if self.exemption and not self.reason:
+                raise ValueError('Must define a reason for an redact exemption')
 
         def __bool__(self):
             return self.redacted
@@ -55,6 +59,8 @@ class Tracker(object):
             return self.redacted
 
         def __repr__(self):
+            if self.exemption:
+                return '{} and is exempt from redaction'.format(self.reason)
             if not self.redacted:
                 return 'is not redacted'
             if self.reason:
@@ -70,7 +76,7 @@ class Tracker(object):
             elif isinstance(other, bool):
                 return self.redacted == other
             elif isinstance(other, Tracker.Redaction):
-                return self.redacted == other.redacted and self.reason == other.reason
+                return self.redacted == other.redacted and self.exemption == other.exemption and self.reason == other.reason
             return False
 
         def __ne__(self, other):
@@ -89,6 +95,7 @@ class Tracker(object):
 
         unpacked = dict(
             redact=data.get('redact'),
+            redact_exemption=data.get('redact_exemption'),
             hide_title=data.get('hide_title'),
         )
         if data.get('type') in ('bugzilla', 'github'):
@@ -121,19 +128,22 @@ class Tracker(object):
             return cls._trackers[0]
         return None
 
-    def __init__(self, users=None, redact=None, hide_title=None):
+    def __init__(self, users=None, redact=None, hide_title=None, redact_exemption=None):
         self.users = users or User.Mapping()
         self.hide_title = False if hide_title is None else hide_title
-        if redact is None:
-            self._redact = {re.compile('.*'): False}
-        elif isinstance(redact, dict):
-            self._redact = {}
-            for key, value in redact.items():
-                if not isinstance(key, string_utils.basestring):
-                    raise ValueError("'{}' is not a string, only strings allowed in redaction mapping".format(key))
-                self._redact[re.compile(key)] = bool(value)
-        else:
-            raise ValueError("Expected redaction mapping to be of type dict, got '{}'".format(type(redact)))
+
+        for name, rvalue in (('redact', redact), ('redact_exemption', redact_exemption)):
+            if rvalue is None:
+                setattr(self, '_{}'.format(name), {re.compile('.*'): False})
+            elif isinstance(rvalue, dict):
+                attribute = {}
+                for key, value in rvalue.items():
+                    if not isinstance(key, string_utils.basestring):
+                        raise ValueError("'{}' is not a string, only strings allowed in redaction mapping".format(key))
+                    attribute[re.compile(key)] = bool(value)
+                setattr(self, '_{}'.format(name), attribute)
+            else:
+                raise ValueError("Expected redaction mapping to be of type dict, got '{}'".format(type(redact)))
 
     @decorators.hybridmethod
     def from_string(context, string):
