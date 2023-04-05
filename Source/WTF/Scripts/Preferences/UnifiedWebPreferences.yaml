@@ -4934,11 +4934,11 @@ PriorityHintsEnabled:
   humanReadableDescription: "Enable priority hints support"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 PrivateClickMeasurementDebugModeEnabled:
   type: bool
