@@ -192,7 +192,7 @@ for (let unit of units) {
 
 shouldBe(new Intl.RelativeTimeFormat('en', { style: 'short' }).format(10, 'second'), 'in 10 sec.');
 shouldBe(new Intl.RelativeTimeFormat('ru', { style: 'short' }).format(10, 'second'), 'через 10 сек.');
-shouldBe(new Intl.RelativeTimeFormat('en', { style: 'narrow' }).format(10, 'second'), 'in 10 sec.');
+shouldBe(new Intl.RelativeTimeFormat('en', { style: 'narrow' }).format(10, 'second'), $vm.icuVersion() >= 72 ? 'in 10s' : 'in 10 sec.');
 shouldBe(new Intl.RelativeTimeFormat('ru', { style: 'narrow' }).format(10, 'second'), '+10 с');
 
 shouldBe(new Intl.RelativeTimeFormat('en', { numeric: 'auto' }).format(0, 'second'), 'now');
