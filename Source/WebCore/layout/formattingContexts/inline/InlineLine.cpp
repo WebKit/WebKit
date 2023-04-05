@@ -472,7 +472,7 @@ void Line::appendTextContent(const InlineTextItem& inlineTextItem, const RenderS
         auto& lastRun = m_runs.last();
         lastRun.expand(inlineTextItem, logicalWidth);
         // Ensure that property values that act like negative margin are not making the line wider.
-        m_contentLogicalWidth = std::max(oldContentLogicalWidth, lastRun.logicalRight());
+        m_contentLogicalWidth = std::max(oldContentLogicalWidth, lastRun.logicalRight() + m_clonedEndDecorationWidthForInlineBoxRuns);
     } else {
         auto& lastRun = m_runs.last();
         ASSERT(lastRun.isText());
