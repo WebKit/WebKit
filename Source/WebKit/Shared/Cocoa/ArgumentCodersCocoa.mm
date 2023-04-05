@@ -518,17 +518,6 @@ static void encodeSecureCodingInternal(Encoder& encoder, id <NSObject, NSSecureC
 
     auto delegate = adoptNS([[WKSecureCodingArchivingDelegate alloc] init]);
 
-#if ENABLE(DATA_DETECTION)
-#if PLATFORM(MAC)
-    if ([object isKindOfClass:PAL::getDDScannerResultClass()] || [object isKindOfClass:PAL::getDDActionContextClass()]) {
-#else
-    if ([object isKindOfClass:PAL::getDDScannerResultClass()]) {
-#endif
-        [delegate setRewriteMutableArray:YES];
-        [delegate setRewriteMutableString:YES];
-    }
-#endif // ENABLE(DATA_DETECTION)
-
     if ([object isKindOfClass:NSURLCredential.class])
         [delegate setRewriteMutableDictionary:YES];
 
@@ -572,6 +561,12 @@ static bool shouldEnableStrictMode(Decoder& decoder, NSArray<Class> *allowedClas
 #if ENABLE(APPLE_PAY)
         || [allowedClasses containsObject:PAL::getPKPaymentSetupConfigurationClass()] // rdar://107553429, Don't re-introduce rdar://107626990
 #endif
+#if ENABLE(DATA_DETECTION)
+        || [allowedClasses containsObject:PAL::getDDScannerResultClass()] // rdar://107553330 - relying on NSMutableArray re-write, don't re-introduce rdar://107676726
+#if PLATFORM(MAC)
+        || [allowedClasses containsObject:PAL::getDDActionContextClass()] // rdar://107553348 - relying on NSMutableArray re-write, don't re-introduce rdar://107676726
+#endif // PLATFORM(MAC)
+#endif // ENABLE(DATA_DETECTION)
     ) {
         return false;
     }
@@ -591,12 +586,6 @@ static bool shouldEnableStrictMode(Decoder& decoder, NSArray<Class> *allowedClas
         || ([allowedClasses containsObject:PAL::getPKPaymentInstallmentConfigurationClass()] && isInWebProcess())
         || [allowedClasses containsObject:PAL::getPKPaymentMethodClass()] // rdar://107553480
 #endif // ENABLE(APPLE_PAY)
-#if ENABLE(DATA_DETECTION)
-        || [allowedClasses containsObject:PAL::getDDScannerResultClass()] // rdar://107553330 - relying on NSMutableArray re-write
-#endif
-#if PLATFORM(MAC) && ENABLE(DATA_DETECTION)
-        || [allowedClasses containsObject:PAL::getDDActionContextClass()] // rdar://107553348 - relying on NSMutableArray re-write
-#endif // PLATFORM(MAC) && ENABLE(DATA_DETECTION)
         || (
             [allowedClasses containsObject:NSURLCredential.class] // rdar://107553367 relying on NSMutableDictionary re-write
             && (
