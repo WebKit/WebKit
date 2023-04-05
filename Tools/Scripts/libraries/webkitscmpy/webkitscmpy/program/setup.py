@@ -102,10 +102,11 @@ class Setup(Command):
                 return result
 
         if repository.owner == username or args.defaults or Terminal.choose(
-            "Create a private fork of '{}' belonging to '{}'".format(forked_name, username),
-            default='Yes',
+            "Create a private fork of '{}/{}' named '{}' belonging to '{}'".format(
+                repository.owner, repository.name, forked_name, username
+            ), default='Yes',
         ) == 'No':
-            log.info("Continuing without forking '{}'".format(forked_name))
+            log.info("Continuing without forking '{}/{}'".format(repository.owner, repository.name))
             return 1
 
         data = dict(
@@ -121,7 +122,9 @@ class Setup(Command):
             repository.name,
         ), json=data, auth=auth, headers=dict(Accept=repository.ACCEPT_HEADER))
         if response.status_code // 100 != 2:
-            sys.stderr.write("Failed to create a fork of '{}' belonging to '{}'\n".format(forked_name, username))
+            sys.stderr.write("Failed to create a fork of '{}/{}' named '{}' belonging to '{}'\n".format(
+                repository.owner, repository.name, forked_name, username,
+            ))
             sys.stderr.write("URL: {}\nServer replied with status code {}:\n{}\n".format(response.url, response.status_code, response.text))
             return 1
 
@@ -133,7 +136,9 @@ class Setup(Command):
                 set_name,
             ), json=dict(name=forked_name), auth=auth, headers=dict(Accept=repository.ACCEPT_HEADER))
             if response.status_code // 100 != 2:
-                sys.stderr.write("Fork created with name '{}' belonging to '{}'\n Failed to change name to {}\n".format(set_name, username, forked_name))
+                sys.stderr.write("Fork of '{}/{}' created with name '{}' belonging to '{}'\n Failed to change name to {}\n".format(
+                    repository.owner, repository.name, set_name, username, forked_name,
+                ))
                 sys.stderr.write("URL: {}\nServer replied with status code {}:\n{}\n".format(response.url, response.status_code, response.text))
                 return 1
 
