@@ -1495,7 +1495,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         this._updateStatistics();
     }
 
-    _populateWithInitialResourcesIfNeeded(collection)
+    _populateWithInitialResourcesIfNeeded(mainFrame, collection)
     {
         if (!this._needsInitialPopulate)
             return;
@@ -1524,7 +1524,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
 
         for (let target of WI.targets) {
             if (target === WI.pageTarget)
-                populateResourcesForFrame(WI.networkManager.mainFrame);
+                populateResourcesForFrame(mainFrame);
             else
                 populateResourcesForTarget(target);
         }
@@ -1774,7 +1774,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
             if (this._transitioningPageTarget) {
                 this._transitioningPageTarget = false;
                 this._needsInitialPopulate = true;
-                this._populateWithInitialResourcesIfNeeded(collection);
+                this._populateWithInitialResourcesIfNeeded(frame, collection);
             } else
                 this._insertResourceAndReloadTable(frame.mainResource);
 
@@ -1786,7 +1786,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
     _mainFrameDidChange()
     {
         this._runForMainCollection((collection) => {
-            this._populateWithInitialResourcesIfNeeded(collection);
+            this._populateWithInitialResourcesIfNeeded(WI.networkManager.mainFrame, collection);
         });
     }
 
