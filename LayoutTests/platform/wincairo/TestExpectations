@@ -1650,8 +1650,8 @@ webxr [ Skip ]
 [ Debug ] webgl/2.0.y/conformance/glsl/misc/const-variable-initialization.html [ Skip ] # Slow
 [ Debug ] webgl/2.0.y/conformance/glsl/misc/shader-uniform-packing-restrictions.html [ Skip ] # Slow
 [ Debug ] webgl/2.0.y/conformance/glsl/misc/struct-nesting-of-variable-names.html [ Skip ] # Slow
-[ Debug ] webgl/2.0.0/conformance/rendering/many-draw-calls.html [ Skip ] # Slow
-[ Debug ] webgl/2.0.0/conformance/rendering/multisample-corruption.html [ Skip ] # Slow
+[ Debug ] webgl/2.0.y/conformance/rendering/many-draw-calls.html [ Skip ] # Slow
+[ Debug ] webgl/2.0.y/conformance/rendering/multisample-corruption.html [ Skip ] # Slow
 [ Debug ] webgl/2.0.0/conformance/state/gl-object-get-calls.html [ Skip ] # Slow
 [ Debug ] webgl/2.0.0/conformance/textures/misc/tex-image-and-sub-image-2d-with-array-buffer-view.html [ Skip ] # Slow
 [ Debug ] webgl/2.0.0/conformance2/glsl3/compound-assignment-type-combination.html [ Skip ] # Slow

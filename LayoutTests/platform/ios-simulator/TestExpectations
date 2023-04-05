@@ -139,3 +139,7 @@ webkit.org/b/242800 fast/css/counters/element-removal-crash.xhtml [ Pass Failure
 
 # FairPlay is not supported in the iOS Simulator
 http/tests/media/fairplay [ Skip ]
+
+webkit.org/b/254805 webgl/1.0.x/conformance/rendering/blending.html [ Failure ]
+webkit.org/b/237415 webgl/1.0.x/conformance/rendering/clipping-wide-points.html [ Pass Failure ]
+webkit.org/b/254805 webgl/2.0.y/conformance/rendering/blending.html [ Failure ]

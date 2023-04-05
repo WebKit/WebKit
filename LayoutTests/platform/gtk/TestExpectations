@@ -439,7 +439,7 @@ webkit.org/b/245840 fast/canvas/webgl/webgl-drawarrays-crash.html [ Failure ]
 
 # WebGL ANGLE backed flaky tests
 webkit.org/b/245840 webgl/1.0.3/conformance/textures/copy-tex-image-2d-formats.html [ Failure Pass ]
-webkit.org/b/245840 webgl/1.0.3/conformance/rendering/point-no-attributes.html [ Pass Failure ]
+webkit.org/b/245840 webgl/1.0.x/conformance/rendering/point-no-attributes.html [ Pass Failure ]
 webkit.org/b/245840 webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-video-rgba5551.html [ Timeout Failure ]
 webkit.org/b/245840 webgl/pending/conformance/context/context-attributes-alpha-depth-stencil-antialias.html [ Pass Timeout ]
 webkit.org/b/245840 webgl/1.0.x/conformance/extensions/oes-texture-float-with-video.html [ Pass Timeout ]
@@ -485,7 +485,7 @@ webkit.org/b/251107 inspector/canvas/recording-webgl2-full.html [ Failure ]
 webkit.org/b/251107 inspector/canvas/recording-webgl2-snapshots.html [ Failure ]
 webkit.org/b/251107 webgl/2.0.0/conformance/context/premultiplyalpha-test.html [ Failure ]
 webkit.org/b/251107 webgl/2.0.y/conformance/glsl/bugs/conditional-discard-in-loop.html [ Failure ]
-webkit.org/b/251107 webgl/2.0.0/conformance/rendering/gl-scissor-test.html [ Failure ]
+webkit.org/b/251107 webgl/2.0.y/conformance/rendering/gl-scissor-test.html [ Failure ]
 webkit.org/b/251107 webgl/2.0.0/conformance2/reading/read-pixels-from-fbo-test.html [ Failure ]
 webkit.org/b/251107 webgl/2.0.0/conformance2/rendering/fs-color-type-mismatch-color-buffer-type.html [ Failure ]
 
@@ -609,7 +609,7 @@ webkit.org/b/251107 webgl/2.0.y/conformance/buffers/index-validation-with-resize
 webkit.org/b/251107 webgl/2.0.0/conformance/context/context-attributes-alpha-depth-stencil-antialias.html [ Pass Timeout ]
 webkit.org/b/251107 webgl/2.0.y/conformance/extensions/webgl-debug-shaders.html [ Pass Failure ]
 webkit.org/b/251107 webgl/2.0.y/conformance/limits/gl-min-textures.html [ Pass Failure ]
-webkit.org/b/251107 webgl/2.0.0/conformance/rendering/draw-elements-out-of-bounds.html [ Pass Failure ]
+webkit.org/b/251107 webgl/2.0.y/conformance/rendering/draw-elements-out-of-bounds.html [ Pass Failure ]
 webkit.org/b/251107 webgl/2.0.0/conformance/textures/image_bitmap_from_video/tex-2d-rgba-rgba-unsigned_byte.html [ Pass Failure ]
 webkit.org/b/251107 webgl/2.0.0/conformance/textures/image_bitmap_from_video/tex-2d-rgba-rgba-unsigned_short_4_4_4_4.html [ Pass Failure ]
 webkit.org/b/251107 webgl/2.0.0/conformance/textures/image_bitmap_from_video/tex-2d-rgba-rgba-unsigned_short_5_5_5_1.html [ Pass Failure ]
@@ -2137,7 +2137,9 @@ webkit.org/b/212744 compositing/repaint/compositing-toggle-in-overflow-scroll-re
 
 webkit.org/b/219248 imported/w3c/web-platform-tests/uievents/mouse/mouseevent_move_button.html [ Failure ]
 
-webkit.org/b/224062 webgl/1.0.3/conformance/rendering/gl-scissor-test.html [ Failure ]
+webkit.org/b/224062 webgl/1.0.x/conformance/rendering/gl-scissor-test.html [ Failure ]
+webgl/1.0.x/conformance/rendering/texture-switch-performance.html [ Failure ] 
+webgl/2.0.y/conformance/rendering/texture-switch-performance.html [ Failure ]
 
 webkit.org/b/224076 imported/w3c/web-platform-tests/css/css-text/white-space/white-space-zero-fontsize-002.html [ ImageOnlyFailure ]
 

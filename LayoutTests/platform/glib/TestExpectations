@@ -2741,7 +2741,7 @@ webkit.org/b/169909 fast/css-generated-content/initial-letter-pagination-sunken-
 webkit.org/b/169910 fast/multicol/simple-line-layout-line-index-after-strut.html [ ImageOnlyFailure ]
 
 webkit.org/b/169917 webgl/1.0.x/conformance/glsl/bugs/temp-expressions-should-not-crash.html [ Slow ]
-webkit.org/b/169917 webgl/1.0.3/conformance/rendering/many-draw-calls.html [ Slow ]
+webkit.org/b/169917 webgl/1.0.x/conformance/rendering/many-draw-calls.html [ Slow ]
 webkit.org/b/169917 webgl/1.0.3/conformance/uniforms/gl-uniform-arrays.html [ Slow ]
 webkit.org/b/169917 webgl/1.0.3/conformance/uniforms/out-of-bounds-uniform-array-access.html [ Slow ]
 webkit.org/b/171726 media/media-source/media-source-init-segment-duration.html [ Failure ]
@@ -3270,6 +3270,7 @@ webkit.org/b/143153 imported/w3c/web-platform-tests/css/css-text/text-transform/
 webgl/1.0.x/conformance/context/premultiplyalpha-test.html [ Failure ]
 webgl/2.0.y/conformance/context/premultiplyalpha-test.html [ Failure ]
 webgl/2.0.y/conformance/extensions/ext-color-buffer-half-float.html [ Failure ]
+webgl/2.0.y/conformance/rendering/negative-one-index.html [ Failure ]
 
 # End: Common failures between GTK and WPE.
 
