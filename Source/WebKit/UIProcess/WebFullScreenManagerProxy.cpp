@@ -172,19 +172,19 @@ bool WebFullScreenManagerProxy::blocksReturnToFullscreenFromPictureInPicture() c
 }
 
 #if HAVE(UIKIT_WEBKIT_INTERNALS)
-bool WebFullScreenManagerProxy::isVideoElementWithControls() const
+bool WebFullScreenManagerProxy::isVideoElement() const
 {
-    return m_isVideoElementWithControls;
+    return m_isVideoElement;
 }
 #endif
 
-void WebFullScreenManagerProxy::enterFullScreen(bool blocksReturnToFullscreenFromPictureInPicture, bool isVideoElementWithControls, FloatSize videoDimensions)
+void WebFullScreenManagerProxy::enterFullScreen(bool blocksReturnToFullscreenFromPictureInPicture, bool isVideoElement, FloatSize videoDimensions)
 {
     m_blocksReturnToFullscreenFromPictureInPicture = blocksReturnToFullscreenFromPictureInPicture;
 #if HAVE(UIKIT_WEBKIT_INTERNALS)
-    m_isVideoElementWithControls = isVideoElementWithControls;
+    m_isVideoElement = isVideoElement;
 #else
-    UNUSED_PARAM(isVideoElementWithControls);
+    UNUSED_PARAM(isVideoElement);
 #endif
 #if PLATFORM(IOS_FAMILY)
     m_client.enterFullScreen(videoDimensions);

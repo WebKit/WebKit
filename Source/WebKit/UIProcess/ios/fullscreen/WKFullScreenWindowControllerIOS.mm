@@ -601,7 +601,7 @@ static constexpr CGFloat kFullScreenWindowCornerRadius = 12;
     [_fullscreenViewController setExitFullScreenAction:@selector(requestExitFullScreen)];
     _fullscreenViewController.get().view.frame = _rootViewController.get().view.bounds;
 #if HAVE(UIKIT_WEBKIT_INTERNALS)
-    [_fullscreenViewController hideMediaControls:manager->isVideoElementWithControls()];
+    [_fullscreenViewController hideCancelAndPIPButtons:manager->isVideoElement()];
 #endif
     [self _updateLocationInfo];
 
