@@ -35,6 +35,10 @@ template<size_t firstOffset, size_t secondOffset, size_t... remainingOffsets> st
 IGNORE_WARNINGS_BEGIN("invalid-offsetof")
 #endif
 #if ENABLE(TEST_FEATURE)
+#include "CommonHeader.h"
+#endif
+#include "CommonHeader.h"
+#if ENABLE(TEST_FEATURE)
 #include "FirstMemberType.h"
 #endif
 #include "HeaderWithoutCondition"
@@ -638,6 +642,78 @@ std::optional<Ref<WebCore::TimingFunction>> ArgumentCoder<WebCore::TimingFunctio
 
     ASSERT_NOT_REACHED();
     return std::nullopt;
+}
+
+#if ENABLE(TEST_FEATURE)
+
+void ArgumentCoder<Namespace::ConditionalCommonClass>::encode(Encoder& encoder, const Namespace::ConditionalCommonClass& instance)
+{
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.value)>, int>);
+    static_assert(MembersInCorrectOrder<0
+        , offsetof(Namespace::ConditionalCommonClass, value)
+    >::value);
+    encoder << instance.value;
+}
+
+std::optional<Namespace::ConditionalCommonClass> ArgumentCoder<Namespace::ConditionalCommonClass>::decode(Decoder& decoder)
+{
+    auto value = decoder.decode<int>();
+    if (!value)
+        return std::nullopt;
+
+    return {
+        Namespace::ConditionalCommonClass {
+            WTFMove(*value)
+        }
+    };
+}
+
+#endif
+
+
+void ArgumentCoder<Namesapce::CommonClass>::encode(Encoder& encoder, const Namesapce::CommonClass& instance)
+{
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.value)>, int>);
+    static_assert(MembersInCorrectOrder<0
+        , offsetof(Namesapce::CommonClass, value)
+    >::value);
+    encoder << instance.value;
+}
+
+std::optional<Namesapce::CommonClass> ArgumentCoder<Namesapce::CommonClass>::decode(Decoder& decoder)
+{
+    auto value = decoder.decode<int>();
+    if (!value)
+        return std::nullopt;
+
+    return {
+        Namesapce::CommonClass {
+            WTFMove(*value)
+        }
+    };
+}
+
+
+void ArgumentCoder<Namesapce::AnotherCommonClass>::encode(Encoder& encoder, const Namesapce::AnotherCommonClass& instance)
+{
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.value)>, int>);
+    static_assert(MembersInCorrectOrder<0
+        , offsetof(Namesapce::AnotherCommonClass, value)
+    >::value);
+    encoder << instance.value;
+}
+
+std::optional<Namesapce::AnotherCommonClass> ArgumentCoder<Namesapce::AnotherCommonClass>::decode(Decoder& decoder)
+{
+    auto value = decoder.decode<int>();
+    if (!value)
+        return std::nullopt;
+
+    return {
+        Namesapce::AnotherCommonClass {
+            WTFMove(*value)
+        }
+    };
 }
 
 } // namespace IPC

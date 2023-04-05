@@ -26,6 +26,10 @@
 #include "SerializedTypeInfo.h"
 
 #if ENABLE(TEST_FEATURE)
+#include "CommonHeader.h"
+#endif
+#include "CommonHeader.h"
+#if ENABLE(TEST_FEATURE)
 #include "FirstMemberType.h"
 #endif
 #include "HeaderWithoutCondition"
@@ -174,6 +178,24 @@ Vector<SerializedTypeInfo> allSerializedTypes()
         } },
         { "WebCore::TimingFunction"_s, {
             { "std::variant<WebCore::LinearTimingFunction, WebCore::CubicBezierTimingFunction, WebCore::StepsTimingFunction, WebCore::SpringTimingFunction>"_s, "subclasses"_s }
+        } },
+        { "Namespace::ConditionalCommonClass"_s, {
+            {
+                "int"_s,
+                "value"_s
+            }
+        } },
+        { "Namesapce::CommonClass"_s, {
+            {
+                "int"_s,
+                "value"_s
+            }
+        } },
+        { "Namesapce::AnotherCommonClass"_s, {
+            {
+                "int"_s,
+                "value"_s
+            }
         } },
         { "WebCore::SharedStringHash"_s, {
             { "uint32_t"_s, "alias"_s }

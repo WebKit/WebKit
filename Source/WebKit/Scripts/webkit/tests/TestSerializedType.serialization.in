@@ -4,7 +4,7 @@ headers: "HeaderWithoutCondition"
 
 #if ENABLE(TEST_FEATURE)
 headers: "StructHeader.h" "FirstMemberType.h" "SecondMemberType.h"
-[AdditionalEncoder=OtherEncoder, CustomHeader=True] struct Namespace::Subnamespace::StructName {
+[AdditionalEncoder=OtherEncoder, CustomHeader] struct Namespace::Subnamespace::StructName {
     FirstMemberType firstMemberName
     #if ENABLE(SECOND_MEMBER)
     SecondMemberType secondMemberName;
@@ -103,10 +103,10 @@ struct NullableSoftLinkedMember {
 }
 
 [RefCounted] class WebCore::TimingFunction subclasses {
-  WebCore::LinearTimingFunction,
-  WebCore::CubicBezierTimingFunction,
-  WebCore::StepsTimingFunction,
-  WebCore::SpringTimingFunction
+    WebCore::LinearTimingFunction,
+    WebCore::CubicBezierTimingFunction,
+    WebCore::StepsTimingFunction,
+    WebCore::SpringTimingFunction
 }
 
 [OptionSet] enum class OptionSetEnumFirstCondition : uint32_t {
@@ -139,3 +139,19 @@ struct NullableSoftLinkedMember {
 
 using WebCore::SharedStringHash = uint32_t
 
+#if ENABLE(TEST_FEATURE)
+headers: "CommonHeader.h"
+[CustomHeader] class Namespace::ConditionalCommonClass {
+    int value;
+}
+#endif
+
+headers: "CommonHeader.h"
+[CustomHeader] class Namesapce::CommonClass {
+    int value;
+}
+
+headers: "CommonHeader.h"
+[CustomHeader] class Namesapce::AnotherCommonClass {
+    int value;
+}

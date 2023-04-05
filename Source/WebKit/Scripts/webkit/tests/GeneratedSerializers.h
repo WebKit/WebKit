@@ -56,6 +56,11 @@ using FloatBoxExtent = ScrollSnapOffsetsInfo<float, double>;
 }
 struct NullableSoftLinkedMember;
 namespace WebCore { class TimingFunction; }
+#if ENABLE(TEST_FEATURE)
+namespace Namespace { class ConditionalCommonClass; }
+#endif
+namespace Namesapce { class CommonClass; }
+namespace Namesapce { class AnotherCommonClass; }
 
 namespace IPC {
 
@@ -130,6 +135,23 @@ template<> struct ArgumentCoder<NullableSoftLinkedMember> {
 template<> struct ArgumentCoder<WebCore::TimingFunction> {
     static void encode(Encoder&, const WebCore::TimingFunction&);
     static std::optional<Ref<WebCore::TimingFunction>> decode(Decoder&);
+};
+
+#if ENABLE(TEST_FEATURE)
+template<> struct ArgumentCoder<Namespace::ConditionalCommonClass> {
+    static void encode(Encoder&, const Namespace::ConditionalCommonClass&);
+    static std::optional<Namespace::ConditionalCommonClass> decode(Decoder&);
+};
+#endif
+
+template<> struct ArgumentCoder<Namesapce::CommonClass> {
+    static void encode(Encoder&, const Namesapce::CommonClass&);
+    static std::optional<Namesapce::CommonClass> decode(Decoder&);
+};
+
+template<> struct ArgumentCoder<Namesapce::AnotherCommonClass> {
+    static void encode(Encoder&, const Namesapce::AnotherCommonClass&);
+    static std::optional<Namesapce::AnotherCommonClass> decode(Decoder&);
 };
 
 } // namespace IPC

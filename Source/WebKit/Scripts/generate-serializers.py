@@ -177,6 +177,11 @@ class ConditionalHeader(object):
     def __lt__(self, other):
         return self.header < other.header
 
+    def __eq__(self, other):
+        return other and self.header == other.header and self.condition == other.condition
+
+    def __hash__(self):
+        return hash((self.header, self.condition))
 
 def sanitize_string_for_variable_name(string):
     return string.replace('()', '').replace('.', '')
@@ -891,6 +896,7 @@ def main(argv):
     serialized_enums = []
     typedefs = []
     headers = []
+    header_set = set()
     file_extension = argv[1]
     for i in range(3, len(argv)):
         with open(argv[2] + argv[i]) as file:
@@ -902,8 +908,8 @@ def main(argv):
             for typedef in new_typedefs:
                 typedefs.append(typedef)
             for header in new_headers:
-                headers.append(header)
-    headers.sort()
+                header_set.add(header)
+    headers = sorted(header_set)
 
     with open('GeneratedSerializers.h', "w+") as output:
         output.write(generate_header(serialized_types, serialized_enums))
