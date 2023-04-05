@@ -60,17 +60,9 @@ ExceptionOr<void> PaymentSession::canCreateSession(Document& document)
 
     auto& topDocument = document.topDocument();
     if (&document != &topDocument) {
-        auto& topOrigin = topDocument.topOrigin();
-
-        if (!document.securityOrigin().isSameSchemeHostPort(topOrigin))
-            return Exception { InvalidAccessError, "Trying to start an Apple Pay session from a document with an different security origin than its top-level frame."_s };
-
         for (auto* ancestorDocument = document.parentDocument(); ancestorDocument != &topDocument; ancestorDocument = ancestorDocument->parentDocument()) {
             if (!isSecure(*ancestorDocument->loader()))
                 return Exception { InvalidAccessError, "Trying to start an Apple Pay session from a document with an insecure parent frame."_s };
-
-            if (!ancestorDocument->securityOrigin().isSameSchemeHostPort(topOrigin))
-                return Exception { InvalidAccessError, "Trying to start an Apple Pay session from a document with an different security origin than its top-level frame."_s };
         }
     }
 
