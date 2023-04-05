@@ -37,6 +37,7 @@
 #import <WebCore/GraphicsLayerContentsDisplayDelegate.h>
 #import <WebCore/IOSurface.h>
 #import <WebCore/PlatformCALayer.h>
+#import <WebCore/PlatformCALayerDelegatedContents.h>
 
 namespace WebKit {
 
@@ -59,7 +60,7 @@ public:
     void display(WebCore::PlatformCALayer& layer) final
     {
         if (m_displayBuffer)
-            layer.setContents(m_displayBuffer);
+            layer.setDelegatedContents({ m_displayBuffer, { } });
         else
             layer.clearContents();
     }

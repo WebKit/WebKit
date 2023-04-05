@@ -37,18 +37,17 @@ OBJC_CLASS AVPlayerLayer;
 
 typedef struct CGContext *CGContextRef;
 
-namespace WTF {
-#if HAVE(IOSURFACE)
-class MachSendRight;
-#endif
-}
-
 namespace WebCore {
 
 class LayerPool;
 class PlatformCALayer;
 class PlatformCAAnimation;
 class PlatformCALayerClient;
+
+struct PlatformCALayerDelegatedContents;
+struct PlatformCALayerDelegatedContentsFinishedEvent;
+struct PlatformCALayerInProcessDelegatedContents;
+struct PlatformCALayerInProcessDelegatedContentsFinishedEvent;
 
 typedef Vector<RefPtr<PlatformCALayer>> PlatformCALayerList;
 
@@ -57,9 +56,7 @@ class AcceleratedEffect;
 struct AcceleratedEffectValues;
 #endif
 
-#if HAVE(IOSURFACE)
-class IOSurface;
-#endif
+
 
 class WEBCORE_EXPORT PlatformCALayer : public ThreadSafeRefCounted<PlatformCALayer, WTF::DestructionThread::Main> {
     friend class PlatformCALayerCocoa;
@@ -206,10 +203,12 @@ public:
     virtual void setContents(CFTypeRef) = 0;
     virtual void clearContents();
 
-#if HAVE(IOSURFACE)
-    virtual void setContents(const WebCore::IOSurface&) = 0;
-    virtual void setContents(const WTF::MachSendRight&) = 0;
-#endif
+    // The subclass will override one variant of both setDelegatedContentsFinishedEvent, setDelegatedContents.
+
+    virtual void setDelegatedContentsFinishedEvent(const PlatformCALayerDelegatedContentsFinishedEvent&);
+    virtual void setDelegatedContents(const PlatformCALayerDelegatedContents&);
+    virtual void setDelegatedContentsFinishedEvent(const PlatformCALayerInProcessDelegatedContentsFinishedEvent&);
+    virtual void setDelegatedContents(const PlatformCALayerInProcessDelegatedContents&);
 
     virtual void setContentsRect(const FloatRect&) = 0;
 

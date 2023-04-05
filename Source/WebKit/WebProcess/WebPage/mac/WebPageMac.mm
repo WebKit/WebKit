@@ -68,6 +68,7 @@
 #import <WebCore/FrameLoader.h>
 #import <WebCore/FrameLoaderTypes.h>
 #import <WebCore/GraphicsContext.h>
+#import <WebCore/GraphicsLayer.h>
 #import <WebCore/HTMLAttachmentElement.h>
 #import <WebCore/HTMLConverter.h>
 #import <WebCore/HTMLImageElement.h>

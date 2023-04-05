@@ -44,51 +44,7 @@
 
 namespace WebCore {
 
-class DisplayBufferDisplayDelegate final : public GraphicsLayerContentsDisplayDelegate {
-public:
-    static Ref<DisplayBufferDisplayDelegate> create(bool isOpaque = true, float contentsScale = 1)
-    {
-        return adoptRef(*new DisplayBufferDisplayDelegate(isOpaque, contentsScale));
-    }
-    // GraphicsLayerContentsDisplayDelegate overrides.
-    void prepareToDelegateDisplay(PlatformCALayer& layer) final
-    {
-        layer.setOpaque(m_isOpaque);
-        layer.setContentsScale(m_contentsScale);
-    }
-    void display(PlatformCALayer& layer) final
-    {
-        if (m_displayBuffer)
-            layer.setContents(m_displayBuffer);
-        else
-            layer.clearContents();
-    }
-    GraphicsLayer::CompositingCoordinatesOrientation orientation() const final
-    {
-        return GraphicsLayer::CompositingCoordinatesOrientation::TopDown;
-    }
-    void setDisplayBuffer(WTF::MachSendRight& displayBuffer)
-    {
-        if (!displayBuffer) {
-            m_displayBuffer = { };
-            return;
-        }
-
-        if (m_displayBuffer && displayBuffer.sendRight() == m_displayBuffer.sendRight())
-            return;
-
-        m_displayBuffer = displayBuffer.copySendRight();
-    }
-private:
-    DisplayBufferDisplayDelegate(bool isOpaque, float contentsScale)
-        : m_contentsScale(contentsScale)
-        , m_isOpaque(isOpaque)
-    {
-    }
-    WTF::MachSendRight m_displayBuffer;
-    const float m_contentsScale;
-    const bool m_isOpaque;
-};
+class GPUDisplayBufferDisplayDelegate;
 
 class GPUCanvasContextCocoa final : public GPUCanvasContext {
     WTF_MAKE_ISO_ALLOCATED(GPUCanvasContextCocoa);
@@ -146,7 +102,7 @@ private:
     };
     std::optional<Configuration> m_configuration;
 
-    Ref<DisplayBufferDisplayDelegate> m_layerContentsDisplayDelegate;
+    Ref<GPUDisplayBufferDisplayDelegate> m_layerContentsDisplayDelegate;
     Ref<GPUCompositorIntegration> m_compositorIntegration;
     Ref<GPUPresentationContext> m_presentationContext;
     RefPtr<GPUTexture> m_currentTexture;

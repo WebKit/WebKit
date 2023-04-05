@@ -198,7 +198,7 @@ editing/mac/TextAlternativeWithRange.mm @no-unify
 editing/mac/TextUndoInsertionMarkupMac.mm
 fileapi/FileCocoa.mm
 history/mac/HistoryItemMac.mm
-html/canvas/GPUCanvasContextCocoa.cpp
+html/canvas/GPUCanvasContextCocoa.mm
 html/shadow/YouTubeEmbedShadowElement.cpp
 inspector/LegacyWebSocketInspectorInstrumentation.cpp
 inspector/mac/PageDebuggerMac.mm
@@ -362,7 +362,7 @@ platform/graphics/avfoundation/objc/WebCoreAVFResourceLoader.mm
 platform/graphics/ca/GraphicsLayerCA.cpp
 platform/graphics/ca/LayerPool.cpp
 platform/graphics/ca/PlatformCAAnimation.cpp
-platform/graphics/ca/PlatformCALayer.cpp
+platform/graphics/ca/PlatformCALayer.mm
 platform/graphics/ca/TileController.cpp
 platform/graphics/ca/TileCoverageMap.cpp
 platform/graphics/ca/TileGrid.cpp

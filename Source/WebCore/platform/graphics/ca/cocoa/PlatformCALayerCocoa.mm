@@ -36,6 +36,7 @@
 #import "PlatformCAAnimationCocoa.h"
 #import "PlatformCAFilters.h"
 #import "PlatformCALayerContentsDelayedReleaser.h"
+#import "PlatformCALayerDelegatedContents.h"
 #import "ScrollbarThemeMac.h"
 #import "TileController.h"
 #import "TiledBacking.h"
@@ -786,18 +787,16 @@ void PlatformCALayerCocoa::setContents(CFTypeRef value)
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-#if HAVE(IOSURFACE)
-void PlatformCALayerCocoa::setContents(const WebCore::IOSurface& surface)
+void PlatformCALayerCocoa::setDelegatedContentsFinishedEvent(const PlatformCALayerInProcessDelegatedContentsFinishedEvent&)
 {
-    setContents(surface.asLayerContents());
+    // FIXME: To be implemented.
 }
 
-void PlatformCALayerCocoa::setContents(const WTF::MachSendRight& surfaceHandle)
+void PlatformCALayerCocoa::setDelegatedContents(const PlatformCALayerInProcessDelegatedContents& contents)
 {
-    auto surface = WebCore::IOSurface::createFromSendRight(surfaceHandle.copySendRight());
-    setContents(*surface);
+    setContents(contents.surface.asLayerContents());
+    // FIXME: m_delegatedContentsFinishedIdentifier = contents.finishedIdentifier;
 }
-#endif
 
 void PlatformCALayerCocoa::setContentsRect(const FloatRect& value)
 {

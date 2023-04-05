@@ -45,6 +45,7 @@
 #import <WebCore/IOSurfacePool.h>
 #import <WebCore/ImageBuffer.h>
 #import <WebCore/PlatformCALayerClient.h>
+#import <WebCore/PlatformCALayerDelegatedContents.h>
 #import <WebCore/WebCoreCALayerExtras.h>
 #import <WebCore/WebLayer.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
@@ -328,9 +329,15 @@ bool RemoteLayerBackingStore::supportsPartialRepaint() const
 #endif
 }
 
-void RemoteLayerBackingStore::setContents(WTF::MachSendRight&& contents)
+void RemoteLayerBackingStore::setDelegatedContentsFinishedEvent(const WebCore::PlatformCALayerDelegatedContentsFinishedEvent&)
 {
-    m_contentsBufferHandle = WTFMove(contents);
+    // FIXME: To be implemented.
+}
+
+void RemoteLayerBackingStore::setDelegatedContents(const WebCore::PlatformCALayerDelegatedContents& contents)
+{
+    m_contentsBufferHandle = contents.surface.copySendRight();
+    // FIXME: m_contentsBufferFinishedIdentifier = contents.finishedIdentifier;
     m_dirtyRegion = { };
     m_paintingRects.clear();
 }

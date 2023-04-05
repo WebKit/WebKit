@@ -4167,7 +4167,7 @@
 		2D9FB2152375209D0049F936 /* GPUProcess.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPUProcess.h; sourceTree = "<group>"; };
 		2D9FB228237523830049F936 /* com.apple.WebKit.GPU.xpc */ = {isa = PBXFileReference; explicitFileType = "wrapper.xpc-service"; includeInIndex = 0; path = com.apple.WebKit.GPU.xpc; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D9FB22A237523FB0049F936 /* GPUService.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = GPUService.xcconfig; sourceTree = "<group>"; };
-		2DA049B1180CCCD300AAFA9E /* PlatformCALayerRemote.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlatformCALayerRemote.cpp; sourceTree = "<group>"; };
+		2DA049B1180CCCD300AAFA9E /* PlatformCALayerRemote.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PlatformCALayerRemote.mm; sourceTree = "<group>"; };
 		2DA049B2180CCCD300AAFA9E /* PlatformCALayerRemote.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformCALayerRemote.h; sourceTree = "<group>"; };
 		2DA049B5180CCD0A00AAFA9E /* GraphicsLayerCARemote.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GraphicsLayerCARemote.cpp; sourceTree = "<group>"; };
 		2DA049B6180CCD0A00AAFA9E /* GraphicsLayerCARemote.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GraphicsLayerCARemote.h; sourceTree = "<group>"; };
@@ -9019,8 +9019,8 @@
 				2DA049B6180CCD0A00AAFA9E /* GraphicsLayerCARemote.h */,
 				0F5E200218E77051003EC3E5 /* PlatformCAAnimationRemote.h */,
 				0F5E200118E77051003EC3E5 /* PlatformCAAnimationRemote.mm */,
-				2DA049B1180CCCD300AAFA9E /* PlatformCALayerRemote.cpp */,
 				2DA049B2180CCCD300AAFA9E /* PlatformCALayerRemote.h */,
+				2DA049B1180CCCD300AAFA9E /* PlatformCALayerRemote.mm */,
 				2D8710151828415D0018FA01 /* PlatformCALayerRemoteCustom.h */,
 				2D8710141828415D0018FA01 /* PlatformCALayerRemoteCustom.mm */,
 				5CC333A3298487A200C7D77F /* PlatformCALayerRemoteHost.h */,
@@ -10253,7 +10253,6 @@
 		3AE104BB29CAAEDB00661165 /* Recovered References */ = {
 			isa = PBXGroup;
 			children = (
-				7A830B2D29B7F3EB00848075 /* WebPageInlines.h */,
 			);
 			name = "Recovered References";
 			sourceTree = "<group>";

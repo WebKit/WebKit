@@ -137,10 +137,8 @@ public:
     bool hasContents() const override;
     CFTypeRef contents() const override;
     void setContents(CFTypeRef) override;
-#if HAVE(IOSURFACE)
-    void setContents(const WebCore::IOSurface&) override;
-    void setContents(const WTF::MachSendRight&) override;
-#endif
+    void setDelegatedContentsFinishedEvent(const WebCore::PlatformCALayerDelegatedContentsFinishedEvent&) override;
+    void setDelegatedContents(const WebCore::PlatformCALayerDelegatedContents&) override;
     void setContentsRect(const WebCore::FloatRect&) override;
 
     void setMinificationFilter(WebCore::PlatformCALayer::FilterType) override;

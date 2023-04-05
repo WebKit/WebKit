@@ -28,6 +28,7 @@
 #include "ImageBufferBackendHandle.h"
 #include <WebCore/FloatRect.h>
 #include <WebCore/ImageBuffer.h>
+#include <WebCore/PlatformCALayer.h>
 #include <WebCore/Region.h>
 #include <wtf/MachSendRight.h>
 #include <wtf/MonotonicTime.h>
@@ -39,6 +40,8 @@ namespace WebCore {
 class NativeImage;
 class ThreadSafeImageBufferFlusher;
 typedef Vector<WebCore::FloatRect, 5> RepaintRectList;
+struct PlatformCALayerDelegatedContents;
+struct PlatformCALayerDelegatedContentsFinishedEvent;
 }
 
 namespace WebKit {
@@ -110,7 +113,8 @@ public:
     void setNeedsDisplay(const WebCore::IntRect);
     void setNeedsDisplay();
 
-    void setContents(WTF::MachSendRight&& surfaceHandle);
+    void setDelegatedContentsFinishedEvent(const WebCore::PlatformCALayerDelegatedContentsFinishedEvent&);
+    void setDelegatedContents(const WebCore::PlatformCALayerDelegatedContents&);
 
     // Returns true if we need to encode the buffer.
     bool layerWillBeDisplayed();
