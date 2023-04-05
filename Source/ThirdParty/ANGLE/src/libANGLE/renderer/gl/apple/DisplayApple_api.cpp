@@ -18,7 +18,7 @@
 #    if defined(ANGLE_PLATFORM_MACCATALYST) && defined(ANGLE_CPU_ARM64)
 #        include "libANGLE/renderer/gl/eagl/DisplayEAGL.h"
 #    endif
-#elif defined(ANGLE_PLATFORM_IOS)
+#else
 #    include "libANGLE/renderer/gl/eagl/DisplayEAGL.h"
 #endif
 
@@ -48,7 +48,7 @@ DisplayImpl *CreateDisplayCGLOrEAGL(const egl::DisplayState &state)
 #    else
     return new rx::DisplayCGL(state);
 #    endif
-#elif defined(ANGLE_PLATFORM_IOS)
+#else// defined(ANGLE_PLATFORM_APPLE_EMBEDDED)
     return new rx::DisplayEAGL(state);
 #endif
 }

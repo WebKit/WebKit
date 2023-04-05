@@ -226,7 +226,7 @@ void *OpenSystemLibraryAndGetError(const char *libraryName,
     {
         libraryWithExtension += dotExtension;
     }
-#if ANGLE_PLATFORM_IOS
+#if ANGLE_PLATFORM_APPLE_EMBEDDED
     // On iOS, libraryWithExtension is a directory in which the library resides.
     // The actual library name doesn't have an extension at all.
     // E.g. "libEGL.framework/libEGL"

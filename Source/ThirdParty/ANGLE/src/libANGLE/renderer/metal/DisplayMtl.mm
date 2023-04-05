@@ -940,6 +940,7 @@ void DisplayMtl::initializeExtensions() const
     mNativeExtensions.copyTextureCHROMIUM           = true;
     mNativeExtensions.copyCompressedTextureCHROMIUM = false;
 
+#if !ANGLE_PLATFORM_WATCH
     if (@available(iOS 14.0, macOS 10.11, macCatalyst 14.0, tvOS 16.0, *))
     {
         mNativeExtensions.textureMirrorClampToEdgeEXT = true;
