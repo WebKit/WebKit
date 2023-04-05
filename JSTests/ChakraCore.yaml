@@ -75,14 +75,8 @@
   cmd: runChakra :pass, "NoException", "shift_unshift.baseline", []
 - path: ChakraCore/test/Array/toString.js
   cmd: runChakra :baseline, "NoException", "toString.baseline", []
-  # FIXME: unskip the following test on Windows when INTL is reenabled (https://bugs.webkit.org/show_bug.cgi?id=159084).
 - path: ChakraCore/test/Array/toLocaleString.js
-  cmd: |
-      if ($hostOS == "windows")
-          skip
-      else
-          runChakra :baseline, "NoException", "toLocaleString.baseline-jsc", []
-      end
+  cmd: runChakra :baseline, "NoException", "toLocaleString.baseline-jsc", []
 - path: ChakraCore/test/Array/array_slice.js
   cmd: runChakra :baseline, "NoException", "array_slice.baseline", []
 - path: ChakraCore/test/Array/array_slice2.js
@@ -493,14 +487,8 @@
   cmd: runChakra :baseline, "NoException", "dateutc.baseline-jsc", []
 - path: ChakraCore/test/Date/MillisecondTruncationCheckAfterCopyConstructor.js
   cmd: runChakra :baseline, "NoException", "MillisecondTruncationCheckAfterCopyConstructor.es6.baseline", []
-  # FIXME: unskip the following test on Windows when https://bugs.webkit.org/show_bug.cgi?id=165193 is fixed.
 - path: ChakraCore/test/Date/date_cache_bug.js
-  cmd: |
-      if ($hostOS == "windows")
-          skip
-      else
-          runChakra :baseline, "NoException", "date_cache_bug.baseline", []
-      end
+  cmd: runChakra :baseline, "NoException", "date_cache_bug.baseline", []
 - path: ChakraCore/test/EH/capture.js
   cmd: runChakra :baseline, "NoException", "capture.baseline", []
 - path: ChakraCore/test/EH/oos2.js
@@ -684,12 +672,9 @@
   cmd: runChakra :baseline, "NoException", "parseInt.baseline", []
 - path: ChakraCore/test/GlobalFunctions/parseShortCut.js
   cmd: runChakra :baseline, "NoException", "parseShortCut.baseline", []
-  # FIXME: unskip the following test on Windows when https://bugs.webkit.org/show_bug.cgi?id=176538 is fixed.
 - path: ChakraCore/test/GlobalFunctions/InternalToString.js
   cmd: |
-      if ($hostOS == "windows")
-          skip
-      elsif ($hostOS == "playstation")
+      if ($hostOS == "playstation")
           runChakra :baseline, "NoException", "InternalToString.baseline-jsc-playstation", []
       else
           runChakra :baseline, "NoException", "InternalToString.baseline", []
@@ -983,14 +968,8 @@
 - path: ChakraCore/test/Object/toLocaleString2.js
   # Bad test, checks hard coded exceptions.
   cmd: runChakra :skip, "NoException", "", ["../UnitTestFramework/UnitTestFramework.js"]
-  # FIXME: unskip the following test on Windows when INTL is reenabled (https://bugs.webkit.org/show_bug.cgi?id=159084).
 - path: ChakraCore/test/Object/toLocaleStringBasics.js
-  cmd: |
-      if ($hostOS == "windows")
-          skip
-      else
-          runChakra :baseline, "NoException", "toLocaleStringBasics.baseline", []
-      end
+  cmd: runChakra :baseline, "NoException", "toLocaleStringBasics.baseline", []
 - path: ChakraCore/test/Object/toString1.js
   cmd: runChakra :baseline, "NoException", "toString3.baseline", []
 - path: ChakraCore/test/Object/toString2.js
@@ -1093,12 +1072,9 @@
   cmd: runChakra :baseline, "NoException", "delete3.baseline", []
 - path: ChakraCore/test/Operators/div.js
   cmd: runChakra :baseline, "NoException", "div.baseline-jsc", []
-  # FIXME: unskip the following test on Windows when https://bugs.webkit.org/show_bug.cgi?id=176538 is fixed.
 - path: ChakraCore/test/Operators/equals.js
   cmd: |
-      if ($hostOS == "windows")
-          skip
-      elsif ($hostOS == "playstation")
+      if ($hostOS == "playstation")
           runChakra :baseline, "NoException", "equals.baseline-jsc-playstation", []
       else
           runChakra :baseline, "NoException", "equals.baseline", []
@@ -1475,7 +1451,12 @@
 - path: ChakraCore/test/es5/enumerable.js
   cmd: runChakra :baseline, "NoException", "enumerable.baseline-jsc", []
 - path: ChakraCore/test/es5/hasItem.js
-  cmd: runChakra :baseline, "NoException", "hasItem.baseline-jsc", []
+  cmd: |
+      if ($hostOS == "windows")
+          runChakra :baseline, "NoException", "hasItem.baseline-jsc-windows", []
+      else
+          runChakra :baseline, "NoException", "hasItem.baseline-jsc", []
+      end
 - path: ChakraCore/test/es5/regexSpace.js
   cmd: runChakra :baseline, "NoException", "regexSpace.baseline", []
 - path: ChakraCore/test/es5/EnumeratingWithES5.js
@@ -2066,12 +2047,9 @@
   cmd: runChakra :baseline, "NoException", "objtypespec-add-4.baseline", []
 - path: ChakraCore/test/fieldopts/objtypespec-newobj.1.js
   cmd: runChakra :baseline, "NoException", "objtypespec-newobj.1.baseline", []
-  # FIXME: unskip the following test on Windows when https://bugs.webkit.org/show_bug.cgi?id=176538 is fixed.
 - path: ChakraCore/test/fieldopts/objtypespec-newobj.2.js
   cmd: |
-      if ($hostOS == "windows")
-          skip
-      elsif ($hostOS == "playstation")
+      if ($hostOS == "playstation")
           runChakra :baseline, "NoException", "objtypespec-newobj.2.baseline-jsc-playstation", []
       else
           runChakra :baseline, "NoException", "objtypespec-newobj.2.baseline", []
