@@ -43,6 +43,7 @@ namespace WebKit {
 #define CONNECTION_MESSAGE_CHECK_COMPLETION(assertion, completion) do { \
     ASSERT(assertion); \
     if (UNLIKELY(!(assertion))) { \
+        RELEASE_LOG_FAULT(IPC, __FILE__ " " CONNECTION_STRINGIFY_MACRO(__LINE__) ": Invalid message dispatched %" PUBLIC_LOG_STRING, WTF_PRETTY_FUNCTION); \
         m_networkProcess->parentProcessConnection()->send(Messages::NetworkProcessProxy::TerminateWebProcess(m_webProcessIdentifier), 0); \
         { completion; } \
         return; \
