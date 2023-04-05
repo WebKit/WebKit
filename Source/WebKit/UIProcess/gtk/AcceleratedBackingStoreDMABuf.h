@@ -63,7 +63,7 @@ private:
     // IPC::MessageReceiver.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
-    void configure(WTF::UnixFileDescriptor&&, WTF::UnixFileDescriptor&&, int fourcc, int32_t offset, int32_t stride, WebCore::IntSize&&, uint64_t modifier);
+    void configure(WTF::UnixFileDescriptor&&, WTF::UnixFileDescriptor&&, const WebCore::IntSize&, uint32_t format, uint32_t offset, uint32_t stride, uint64_t modifier);
     void frame(CompletionHandler<void()>&&);
     void ensureGLContext();
 
@@ -99,7 +99,7 @@ private:
 
     class Texture final : public RenderSource {
     public:
-        Texture(GdkGLContext*, const WTF::UnixFileDescriptor&, const WTF::UnixFileDescriptor&, int fourcc, int32_t offset, int32_t stride, const WebCore::IntSize&, uint64_t modifier, float deviceScaleFactor);
+        Texture(GdkGLContext*, const WTF::UnixFileDescriptor&, const WTF::UnixFileDescriptor&, const WebCore::IntSize&, uint32_t format, uint32_t offset, uint32_t stride, uint64_t modifier, float deviceScaleFactor);
         ~Texture();
 
         unsigned texture() const { return m_textureID; }
@@ -124,7 +124,7 @@ private:
 
     class Surface final : public RenderSource {
     public:
-        Surface(const WTF::UnixFileDescriptor&, const WTF::UnixFileDescriptor&, int fourcc, int32_t offset, int32_t stride, const WebCore::IntSize&, float deviceScaleFactor);
+        Surface(const WTF::UnixFileDescriptor&, const WTF::UnixFileDescriptor&, const WebCore::IntSize&, uint32_t format, uint32_t offset, uint32_t stride, float deviceScaleFactor);
         ~Surface();
 
         cairo_surface_t* surface() const { return m_surface.get(); }
@@ -153,10 +153,10 @@ private:
         uint64_t id { 0 };
         WTF::UnixFileDescriptor backFD;
         WTF::UnixFileDescriptor frontFD;
-        int fourcc { 0 };
-        int32_t offset { 0 };
-        int32_t stride { 0 };
         WebCore::IntSize size;
+        uint32_t format { 0 };
+        uint32_t offset { 0 };
+        uint32_t stride { 0 };
         uint64_t modifier { 0 };
     } m_surface;
     std::unique_ptr<RenderSource> m_pendingSource;

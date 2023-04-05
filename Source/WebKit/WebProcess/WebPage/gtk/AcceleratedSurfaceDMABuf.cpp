@@ -191,7 +191,7 @@ void AcceleratedSurfaceDMABuf::clientResize(const WebCore::IntSize& size)
     glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8_OES, size.width(), size.height());
 
     WebProcess::singleton().parentProcessConnection()->send(Messages::AcceleratedBackingStoreDMABuf::Configure(WTFMove(backImage.first), WTFMove(frontImage.first),
-        metadata.format, metadata.offset, metadata.stride, size, metadata.modifier), m_webPage.identifier());
+        size, metadata.format, metadata.offset, metadata.stride, metadata.modifier), m_webPage.identifier());
 }
 
 void AcceleratedSurfaceDMABuf::willRenderFrame()

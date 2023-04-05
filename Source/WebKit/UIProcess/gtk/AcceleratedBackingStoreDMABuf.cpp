@@ -110,7 +110,7 @@ AcceleratedBackingStoreDMABuf::RenderSource::RenderSource(const WebCore::IntSize
 {
 }
 
-AcceleratedBackingStoreDMABuf::Texture::Texture(GdkGLContext* glContext, const UnixFileDescriptor& backFD, const UnixFileDescriptor& frontFD, int fourcc, int32_t offset, int32_t stride, const WebCore::IntSize& size, uint64_t modifier, float deviceScaleFactor)
+AcceleratedBackingStoreDMABuf::Texture::Texture(GdkGLContext* glContext, const UnixFileDescriptor& backFD, const UnixFileDescriptor& frontFD, const WebCore::IntSize& size, uint32_t format, uint32_t offset, uint32_t stride, uint64_t modifier, float deviceScaleFactor)
     : RenderSource(size, deviceScaleFactor)
     , m_context(glContext)
 {
@@ -121,7 +121,7 @@ AcceleratedBackingStoreDMABuf::Texture::Texture(GdkGLContext* glContext, const U
         Vector<EGLAttrib> attributes = {
             EGL_WIDTH, m_size.width(),
             EGL_HEIGHT, m_size.height(),
-            EGL_LINUX_DRM_FOURCC_EXT, fourcc,
+            EGL_LINUX_DRM_FOURCC_EXT, format,
             EGL_DMA_BUF_PLANE0_FD_EXT, fd.value(),
             EGL_DMA_BUF_PLANE0_OFFSET_EXT, offset,
             EGL_DMA_BUF_PLANE0_PITCH_EXT, stride,
@@ -216,11 +216,11 @@ void AcceleratedBackingStoreDMABuf::Texture::paint(GtkWidget* widget, cairo_t* c
 }
 #endif
 
-AcceleratedBackingStoreDMABuf::Surface::Surface(const UnixFileDescriptor& backFD, const UnixFileDescriptor& frontFD, int fourcc, int32_t offset, int32_t stride, const WebCore::IntSize& size, float deviceScaleFactor)
+AcceleratedBackingStoreDMABuf::Surface::Surface(const UnixFileDescriptor& backFD, const UnixFileDescriptor& frontFD, const WebCore::IntSize& size, uint32_t format, uint32_t offset, uint32_t stride, float deviceScaleFactor)
     : RenderSource(size, deviceScaleFactor)
 {
     auto* device = WebCore::GBMDevice::singleton().device();
-    struct gbm_import_fd_data fdData = { backFD.value(), static_cast<uint32_t>(m_size.width()), static_cast<uint32_t>(m_size.height()), static_cast<uint32_t>(stride), static_cast<uint32_t>(fourcc) };
+    struct gbm_import_fd_data fdData = { backFD.value(), static_cast<uint32_t>(m_size.width()), static_cast<uint32_t>(m_size.height()), stride, format };
     m_backBuffer = gbm_bo_import(device, GBM_BO_IMPORT_FD, &fdData, GBM_BO_USE_RENDERING);
     if (!m_backBuffer) {
         WTFLogAlways("Failed to import DMABuf with file descriptor %d", fdData.fd);
@@ -313,14 +313,14 @@ void AcceleratedBackingStoreDMABuf::Surface::paint(GtkWidget*, cairo_t* cr, cons
 }
 #endif
 
-void AcceleratedBackingStoreDMABuf::configure(UnixFileDescriptor&& backFD, UnixFileDescriptor&& frontFD, int fourcc, int32_t offset, int32_t stride, WebCore::IntSize&& size, uint64_t modifier)
+void AcceleratedBackingStoreDMABuf::configure(UnixFileDescriptor&& backFD, UnixFileDescriptor&& frontFD, const WebCore::IntSize& size, uint32_t format, uint32_t offset, uint32_t stride, uint64_t modifier)
 {
     m_surface.backFD = WTFMove(backFD);
     m_surface.frontFD = WTFMove(frontFD);
-    m_surface.fourcc = fourcc;
+    m_surface.size = size;
+    m_surface.format = format;
     m_surface.offset = offset;
     m_surface.stride = stride;
-    m_surface.size = WTFMove(size);
     m_surface.modifier = modifier;
     if (gtk_widget_get_realized(m_webPage.viewWidget()))
         m_pendingSource = createSource();
@@ -329,10 +329,10 @@ void AcceleratedBackingStoreDMABuf::configure(UnixFileDescriptor&& backFD, UnixF
 std::unique_ptr<AcceleratedBackingStoreDMABuf::RenderSource> AcceleratedBackingStoreDMABuf::createSource()
 {
     if (!gtkGLContextIsEGL())
-        return makeUnique<Surface>(m_surface.backFD, m_surface.frontFD, m_surface.fourcc, m_surface.offset, m_surface.stride, m_surface.size, m_webPage.deviceScaleFactor());
+        return makeUnique<Surface>(m_surface.backFD, m_surface.frontFD, m_surface.size, m_surface.format, m_surface.offset, m_surface.stride, m_webPage.deviceScaleFactor());
 
     ensureGLContext();
-    return makeUnique<Texture>(m_gdkGLContext.get(), m_surface.backFD, m_surface.frontFD, m_surface.fourcc, m_surface.offset, m_surface.stride, m_surface.size, m_surface.modifier, m_webPage.deviceScaleFactor());
+    return makeUnique<Texture>(m_gdkGLContext.get(), m_surface.backFD, m_surface.frontFD, m_surface.size, m_surface.format, m_surface.offset, m_surface.stride, m_surface.modifier, m_webPage.deviceScaleFactor());
 }
 
 void AcceleratedBackingStoreDMABuf::frame(CompletionHandler<void()>&& completionHandler)
