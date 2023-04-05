@@ -580,6 +580,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Ref
 
 #if ENABLE(REMOTE_INSPECTOR)
     m_inspectorDebuggable->setInspectable(JSRemoteInspectorGetInspectionEnabledByDefault());
+    m_inspectorDebuggable->setPresentingApplicationPID(m_process->processPool().configuration().presentingApplicationPID());
     m_inspectorDebuggable->init();
 #endif
     m_inspectorController->init();
