@@ -283,9 +283,7 @@ webaudio/Panner/hrtf-database.html [ Timeout Pass ]
 crypto/subtle/ecdsa-import-compressed-spki-key-p384.html [ Skip ] # Timeout.
 
 # CSS backgrounds. Passing after WPT re-import in r277073.
-imported/w3c/web-platform-tests/css/css-backgrounds/bg-color-with-gradient.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-backgrounds/box-shadow-overlapping-001.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-backgrounds/css3-border-image-repeat-repeat.html [ Pass ]
+webkit.org/b/254943 imported/w3c/web-platform-tests/css/css-backgrounds/css3-border-image-repeat-repeat.html [ ImageOnlyFailure ]
 
 # Conic gradient. Marked as failure in root expectations
 webkit.org/b/225916 imported/w3c/web-platform-tests/css/css-images/conic-gradient-angle.html [ Pass ]
@@ -2870,7 +2868,6 @@ webkit.org/b/206692 fast/canvas/canvas-fillPath-shadow.html [ Failure ]
 webkit.org/b/206756 imported/w3c/web-platform-tests/css/css-backgrounds/background-size-025.html [ ImageOnlyFailure ]
 webkit.org/b/206756 imported/w3c/web-platform-tests/css/css-backgrounds/background-size-027.html [ ImageOnlyFailure ]
 webkit.org/b/206756 imported/w3c/web-platform-tests/css/css-backgrounds/background-size-029.html [ ImageOnlyFailure ]
-webkit.org/b/206756 imported/w3c/web-platform-tests/css/css-backgrounds/background-size/background-size-cover-svg.html [ Pass ]
 webkit.org/b/206756 imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/diagonal-percentage-vector-background.html [ Pass ]
 webkit.org/b/206885 imported/w3c/web-platform-tests/css/css-fonts/font-family-name-025.html [ Pass ]
 webkit.org/b/206885 imported/w3c/web-platform-tests/css/css-fonts/font-kerning-04.html [ Pass ]
@@ -3001,12 +2998,6 @@ webkit.org/b/212202 fast/scrolling/iframe-scrollable-after-back.html [ Skip ]
 webkit.org/b/212202 fast/scrolling/programmatic-scroll-to-zero-zero.html [ Skip ]
 webkit.org/b/212202 fast/scrolling/rtl-point-in-iframe.html [ Skip ]
 
-# Failing after r277073.
-webkit.org/b/225462 imported/w3c/web-platform-tests/css/css-backgrounds/background-repeat-space-6.html [ ImageOnlyFailure ]
-webkit.org/b/225462 imported/w3c/web-platform-tests/css/css-backgrounds/background-repeat-space-7.html [ ImageOnlyFailure ]
-webkit.org/b/225462 imported/w3c/web-platform-tests/css/css-backgrounds/border-image-repeat-round-2.html [ ImageOnlyFailure ]
-webkit.org/b/225462 imported/w3c/web-platform-tests/css/css-backgrounds/border-radius-clip-001.html [ ImageOnlyFailure ]
-
 # Failing since r277091.
 webkit.org/b/225499 imported/w3c/web-platform-tests/css/css-fonts/font-feature-resolution-002.html [ ImageOnlyFailure ]
 
@@ -3042,8 +3033,6 @@ webkit.org/b/207062 webkit.org/b/244776 imported/w3c/web-platform-tests/media-so
 
 webkit.org/b/229738 fast/text/whitespace/tab-character-basics.html [ Failure ]
 webkit.org/b/229738 fast/text/word-break.html [ Failure ]
-
-webkit.org/b/206753 imported/w3c/web-platform-tests/css/css-backgrounds/background-clip-content-box-002.html [ ImageOnlyFailure ]
 
 webkit.org/b/229764 animations/background-position.html [ ImageOnlyFailure Pass ]
 

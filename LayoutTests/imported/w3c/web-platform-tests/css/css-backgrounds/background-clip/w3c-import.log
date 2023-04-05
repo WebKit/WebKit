@@ -27,7 +27,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-padding-box_with_radius.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-padding-box_with_size.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-rounded-corner-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-rounded-corner-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-rounded-corner.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-text-dynamic-2-expected.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-text-dynamic-2.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/list.txt

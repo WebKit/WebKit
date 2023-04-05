@@ -232,9 +232,6 @@ webkit.org/b/215508 [ Release ] scrollingcoordinator/fixed-node-reattach.html [ 
 #Simple Line Layout
 webkit.org/b/219976 fast/text/simple-line-wordspacing.html [ ImageOnlyFailure ]
 
-# Subpixel
-webkit.org/b/216037 imported/w3c/web-platform-tests/css/css-backgrounds/background-position/subpixel-position-center.tentative.html [ Pass ImageOnlyFailure ]
-
 # SVG
 webkit.org/b/220614 imported/w3c/web-platform-tests/svg/linking/reftests/url-reference-local-textpath.svg [ Failure Pass ]
 webkit.org/b/222895 imported/w3c/web-platform-tests/svg/text/reftests/dominant-baseline-hanging-small-font-size.svg [ Failure Pass ]
@@ -720,7 +717,6 @@ webkit.org/b/208992 imported/w3c/web-platform-tests/html/semantics/forms/constra
 fast/events/drag-smooth-scroll-element.html [ Failure ]
 
 webkit.org/b/209275 imported/w3c/web-platform-tests/css/css-backgrounds/background-attachment-local/attachment-local-positioning-5.html [ ImageOnlyFailure Pass ]
-webkit.org/b/209275 imported/w3c/web-platform-tests/css/css-backgrounds/background-image-cover-zoomed-1.html [ ImageOnlyFailure Pass ]
 webkit.org/b/209275 imported/w3c/web-platform-tests/css/css-writing-modes/background-position-vrl-018.xht [ ImageOnlyFailure Pass ]
 webkit.org/b/209275 imported/w3c/web-platform-tests/css/css-writing-modes/background-position-vrl-020.xht [ ImageOnlyFailure Pass ]
 webkit.org/b/209275 imported/w3c/web-platform-tests/css/css-writing-modes/central-baseline-alignment-002.xht [ ImageOnlyFailure ]
@@ -1061,17 +1057,7 @@ webkit.org/b/252878 imported/blink/paint/deprecatedpaintlayer/non-self-painting-
 webkit.org/b/252878 imported/w3c/web-platform-tests/content-security-policy/script-src/scripthash-changed-1.html [ Failure Pass ]
 webkit.org/b/252878 imported/w3c/web-platform-tests/content-security-policy/script-src/scripthash-changed-2.html [ Failure Pass ]
 webkit.org/b/252878 imported/w3c/web-platform-tests/content-security-policy/script-src/scriptnonce-changed-2.html [ Failure Pass ]
-webkit.org/b/252878 imported/w3c/web-platform-tests/css/css-backgrounds/background-repeat-round-1a.html [ ImageOnlyFailure Pass ]
-webkit.org/b/252878 imported/w3c/web-platform-tests/css/css-backgrounds/background-repeat-round-1b.html [ ImageOnlyFailure Pass ]
-webkit.org/b/252878 imported/w3c/web-platform-tests/css/css-backgrounds/background-repeat-round-1c.html [ ImageOnlyFailure Pass ]
-webkit.org/b/252878 imported/w3c/web-platform-tests/css/css-backgrounds/background-repeat-round-1d.html [ ImageOnlyFailure Pass ]
-webkit.org/b/252878 imported/w3c/web-platform-tests/css/css-backgrounds/background-repeat-round-1e.html [ ImageOnlyFailure Pass ]
-webkit.org/b/252878 imported/w3c/web-platform-tests/css/css-backgrounds/background-repeat-round-2.html [ ImageOnlyFailure Pass ]
-webkit.org/b/252878 imported/w3c/web-platform-tests/css/css-backgrounds/background-repeat-round-3.html [ ImageOnlyFailure Pass ]
-webkit.org/b/214454 imported/w3c/web-platform-tests/css/css-backgrounds/background-attachment-margin-root-001.html [ ImageOnlyFailure ]
-webkit.org/b/214454 imported/w3c/web-platform-tests/css/css-backgrounds/background-margin-root.html [ ImageOnlyFailure ]
 webkit.org/b/206753 imported/w3c/web-platform-tests/css/css-backgrounds/border-image-space-001.html [ ImageOnlyFailure ]
-webkit.org/b/252878 imported/w3c/web-platform-tests/css/css-backgrounds/border-image-width-008.html [ ImageOnlyFailure Pass ]
 webkit.org/b/252878 imported/w3c/web-platform-tests/css/css-backgrounds/css3-border-image-repeat-stretch.html [ ImageOnlyFailure Pass ]
 webkit.org/b/252878 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-024.html [ ImageOnlyFailure Pass ]
 webkit.org/b/252878 imported/w3c/web-platform-tests/css/css-grid/grid-model/grid-layout-stale-001.html [ ImageOnlyFailure Pass ]

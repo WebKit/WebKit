@@ -74,6 +74,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/background-size-vector-029.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/diagonal-percentage-vector-background-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/diagonal-percentage-vector-background.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/reftest.list
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/tall--auto--omitted-width-percent-height-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/tall--auto--omitted-width-percent-height.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/tall--auto--percent-width-nonpercent-height-expected.html

@@ -38,5 +38,4 @@ PASS e.style['box-shadow'] = "inset 4px -4px red 0" should not set the property 
 PASS e.style['box-shadow'] = "4px -4px red 0 inset" should not set the property value
 PASS e.style['box-shadow'] = "red 4px -4px inset 0" should not set the property value
 PASS e.style['box-shadow'] = "4px -4px inset 0 red" should not set the property value
-PASS e.style['box-shadow'] = "1px 1px -1px" should not set the property value
 

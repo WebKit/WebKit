@@ -8,13 +8,12 @@
 <meta name="assert" content="background-color supports only the grammar '<color>'.">
 <script src="/resources/testharness.js"></script>
 <script src="/resources/testharnessreport.js"></script>
-<script src="/css/support/parsing-testcommon.js"></script>
+<script src="support/parsing-testcommon.js"></script>
 </head>
 <body>
 <script>
 test_invalid_value("background-color", "none");
 test_invalid_value("background-color", "black white");
-test_invalid_value("background-color", "black, white");
 </script>
 </body>
 </html>

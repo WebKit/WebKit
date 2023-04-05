@@ -102,6 +102,7 @@
     "web-platform-tests/css/css-animations": "import",
     "web-platform-tests/css/css-animations/": "import",
     "web-platform-tests/css/css-backgrounds": "import",
+    "web-platform-tests/css/css-backgrounds/border-image-6.html": "import",
     "web-platform-tests/css/css-cascade": "import",
     "web-platform-tests/css/css-color": "import",
     "web-platform-tests/css/css-color-adjust": "import",
