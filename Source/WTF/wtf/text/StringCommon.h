@@ -41,6 +41,11 @@ template<typename CharacterType> inline bool isLatin1(CharacterType character)
     return static_cast<UnsignedCharacterType>(character) <= static_cast<UnsignedCharacterType>(0xFF);
 }
 
+template<> ALWAYS_INLINE bool isLatin1(LChar)
+{
+    return true;
+}
+
 using CodeUnitMatchFunction = bool (*)(UChar);
 
 template<typename CharacterTypeA, typename CharacterTypeB> bool equalIgnoringASCIICase(const CharacterTypeA*, const CharacterTypeB*, unsigned length);
