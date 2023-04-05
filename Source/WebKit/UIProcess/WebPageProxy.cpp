@@ -8909,6 +8909,7 @@ static bool shouldBlockIOKit(const WebPreferences& preferences)
         || (!preferences.captureAudioInGPUProcessEnabled() && !preferences.captureAudioInUIProcessEnabled())
         || !preferences.webRTCPlatformCodecsInGPUProcessEnabled()
         || !preferences.useGPUProcessForCanvasRenderingEnabled()
+        || !preferences.useGPUProcessForDOMRenderingEnabled()
         || !preferences.useGPUProcessForWebGLEnabled())
         return false;
     return true;
@@ -9012,7 +9013,7 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
     parameters.additionalSupportedImageTypes = m_configuration->additionalSupportedImageTypes();
 
 #if !ENABLE(WEBCONTENT_GPU_SANDBOX_EXTENSIONS_BLOCKING)
-    if (shouldBlockIOKit(preferences())) {
+    if (!shouldBlockIOKit(preferences())) {
         parameters.gpuIOKitExtensionHandles = SandboxExtension::createHandlesForIOKitClassExtensions(gpuIOKitClasses(), std::nullopt);
         parameters.gpuMachExtensionHandles = SandboxExtension::createHandlesForMachLookup(gpuMachServices(), std::nullopt);
     }
