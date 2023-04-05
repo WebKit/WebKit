@@ -143,6 +143,7 @@ function mac_process_network_entitlements()
             plistbuddy Add :com.apple.private.security.message-filter bool YES
             plistbuddy Add :com.apple.private.tcc.manager.check-by-audit-token array
             plistbuddy Add :com.apple.private.tcc.manager.check-by-audit-token:0 string kTCCServiceWebKitIntelligentTrackingPrevention
+            plistbuddy Add :com.apple.private.tcc.manager.check-by-audit-token:1 string kTCCServiceUserTracking
         fi
 
         if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 110000 ))
