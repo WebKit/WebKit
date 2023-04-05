@@ -76,7 +76,7 @@ public:
     bool canSetSelectedAttribute() const override;
 
     void setNode(Node*);
-    Node* node() const override { return m_node; }
+    Node* node() const override { return m_node.get(); }
     Document* document() const override;
 
     void setFocused(bool) override;
@@ -212,7 +212,7 @@ private:
 
     bool isDescendantOfElementType(const HashSet<QualifiedName>&) const;
 
-    Node* m_node;
+    WeakPtr<Node, WeakPtrImplWithEventTargetData> m_node;
 };
 
 } // namespace WebCore
