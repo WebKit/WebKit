@@ -51,6 +51,7 @@
 #include "WebPageProxyMessages.h"
 #include "WebProcessProxy.h"
 #include "WebSWOriginStore.h"
+#include "WebSWRegistrationStore.h"
 #include "WebSharedWorkerServer.h"
 #include "WebSocketTask.h"
 #include <WebCore/CookieJar.h>
@@ -112,7 +113,12 @@ static Ref<NetworkStorageManager> createNetworkStorageManager(IPC::Connection* c
     IPC::Connection::UniqueID connectionID;
     if (connection)
         connectionID = connection->uniqueID();
-    return NetworkStorageManager::create(parameters.sessionID, parameters.dataStoreIdentifier, connectionID, parameters.generalStorageDirectory, parameters.localStorageDirectory, parameters.indexedDBDirectory, parameters.cacheStorageDirectory, parameters.perOriginStorageQuota, parameters.perThirdPartyOriginStorageQuota, parameters.originQuotaRatio, parameters.totalQuotaRatio, parameters.volumeCapacityOverride, parameters.unifiedOriginStorageLevel);
+    String serviceWorkerStorageDirectory;
+#if ENABLE(SERVICE_WORKER)
+    serviceWorkerStorageDirectory = parameters.serviceWorkerRegistrationDirectory;
+    SandboxExtension::consumePermanently(parameters.serviceWorkerRegistrationDirectoryExtensionHandle);
+#endif
+    return NetworkStorageManager::create(parameters.sessionID, parameters.dataStoreIdentifier, connectionID, parameters.generalStorageDirectory, parameters.localStorageDirectory, parameters.indexedDBDirectory, parameters.cacheStorageDirectory, serviceWorkerStorageDirectory, parameters.perOriginStorageQuota, parameters.perThirdPartyOriginStorageQuota, parameters.originQuotaRatio, parameters.totalQuotaRatio, parameters.volumeCapacityOverride, parameters.unifiedOriginStorageLevel);
 }
 
 NetworkSession::NetworkSession(NetworkProcess& networkProcess, const NetworkSessionCreationParameters& parameters)
@@ -757,6 +763,14 @@ void NetworkSession::addAllowedFirstPartyForCookies(WebCore::ProcessIdentifier w
         return;
     }
     m_networkProcess->addAllowedFirstPartyForCookies(webProcessIdentifier, WTFMove(firstPartyForCookies), LoadedWebArchive::No, [] { });
+}
+
+std::unique_ptr<SWRegistrationStore> NetworkSession::createUniqueRegistrationStore(WebCore::SWServer& server)
+{
+    if (m_sessionID.isEphemeral())
+        return nullptr;
+
+    return makeUnique<WebSWRegistrationStore>(server, m_storageManager.get());
 }
 
 std::unique_ptr<BackgroundFetchRecordLoader> NetworkSession::createBackgroundFetchRecordLoader(BackgroundFetchRecordLoader::Client& client, const WebCore::BackgroundFetchRequest& request, size_t responseDataSize, const ClientOrigin& clientOrigin)

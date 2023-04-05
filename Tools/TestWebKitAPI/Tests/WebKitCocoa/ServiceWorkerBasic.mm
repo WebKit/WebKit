@@ -1392,8 +1392,12 @@ TEST(ServiceWorkers, ServiceWorkerAndCacheStorageDefaultDirectories)
     [webView loadRequest:server.request("/first.html"_s)];
     TestWebKitAPI::Util::run(&done);
     done = false;
-    while (![[configuration websiteDataStore] _hasRegisteredServiceWorker])
-        TestWebKitAPI::Util::spinRunLoop();
+    
+    [configuration.get().websiteDataStore _storeServiceWorkerRegistrations:^{
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
 
     webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
@@ -1436,8 +1440,11 @@ TEST(ServiceWorkers, ServiceWorkerAndCacheStorageSpecificDirectories)
     [webView loadRequest:server.request("/first.html"_s)];
     TestWebKitAPI::Util::run(&done);
     done = false;
-    while (![websiteDataStore _hasRegisteredServiceWorker])
-        TestWebKitAPI::Util::spinRunLoop();
+    [websiteDataStore _storeServiceWorkerRegistrations:^{
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
 
     webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 

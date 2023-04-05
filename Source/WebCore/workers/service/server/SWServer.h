@@ -163,14 +163,12 @@ public:
     WEBCORE_EXPORT void clear(const SecurityOriginData&, CompletionHandler<void()>&&);
     WEBCORE_EXPORT void clear(const ClientOrigin&, CompletionHandler<void()>&&);
 
-    WEBCORE_EXPORT void startSuspension(CompletionHandler<void()>&&);
-    WEBCORE_EXPORT void endSuspension();
-
     SWServerRegistration* getRegistration(ServiceWorkerRegistrationIdentifier identifier) { return m_registrations.get(identifier); }
     WEBCORE_EXPORT SWServerRegistration* getRegistration(const ServiceWorkerRegistrationKey&);
     void addRegistration(std::unique_ptr<SWServerRegistration>&&);
     void removeRegistration(ServiceWorkerRegistrationIdentifier);
     WEBCORE_EXPORT Vector<ServiceWorkerRegistrationData> getRegistrations(const SecurityOriginData& topOrigin, const URL& clientURL);
+    WEBCORE_EXPORT void storeRegistrationsOnDisk(CompletionHandler<void()>&&);
 
     WEBCORE_EXPORT void scheduleJob(ServiceWorkerJobData&&);
     WEBCORE_EXPORT void scheduleUnregisterJob(ServiceWorkerJobDataIdentifier, SWServerRegistration&, ServiceWorkerOrClientIdentifier, URL&&);
@@ -223,7 +221,7 @@ public:
     void resolveRegistrationReadyRequests(SWServerRegistration&);
 
     void addRegistrationFromStore(ServiceWorkerContextData&&, CompletionHandler<void()>&&);
-    void didSaveWorkerScriptsToDisk(ServiceWorkerIdentifier, ScriptBuffer&& mainScript, MemoryCompactRobinHoodHashMap<URL, ScriptBuffer>&& importedScripts);
+    WEBCORE_EXPORT void didSaveWorkerScriptsToDisk(ServiceWorkerIdentifier, ScriptBuffer&& mainScript, MemoryCompactRobinHoodHashMap<URL, ScriptBuffer>&& importedScripts);
     void registrationStoreImportComplete();
     void registrationStoreDatabaseFailedToOpen();
     void storeRegistrationForWorker(SWServerWorker&);
@@ -342,7 +340,7 @@ private:
     MemoryCompactRobinHoodHashMap<String, ScriptExecutionContextIdentifier> m_visibleClientIdToInternalClientIdMap;
 
     UniqueRef<SWOriginStore> m_originStore;
-    std::unique_ptr<RegistrationStore> m_registrationStore;
+    std::unique_ptr<SWRegistrationStore> m_registrationStore;
     HashMap<RegistrableDomain, Vector<ServiceWorkerContextData>> m_pendingContextDatas;
     HashMap<RegistrableDomain, HashMap<ServiceWorkerIdentifier, Vector<RunServiceWorkerCallback>>> m_serviceWorkerRunRequests;
     PAL::SessionID m_sessionID;

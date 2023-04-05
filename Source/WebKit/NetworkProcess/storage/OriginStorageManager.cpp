@@ -26,7 +26,6 @@
 #include "config.h"
 #include "OriginStorageManager.h"
 
-#include "BackgroundFetchStoreManager.h"
 #include "CacheStorageManager.h"
 #include "CacheStorageRegistry.h"
 #include "FileSystemStorageHandleRegistry.h"
@@ -44,6 +43,11 @@
 #include <WebCore/StorageEstimate.h>
 #include <wtf/FileSystem.h>
 
+#if ENABLE(SERVICE_WORKER)
+#include "BackgroundFetchStoreManager.h"
+#include "ServiceWorkerStorageManager.h"
+#endif
+
 namespace WebKit {
 
 static constexpr auto originFileName = "origin"_s;
@@ -60,6 +64,7 @@ public:
         CacheStorage,
 #if ENABLE(SERVICE_WORKER)
         BackgroundFetchStorage,
+        ServiceWorkerStorage,
 #endif
     };
     std::optional<StorageType> toStorageType(WebsiteDataType) const;
@@ -81,6 +86,7 @@ public:
     CacheStorageManager* existingCacheStorageManager() { return m_cacheStorageManager.get(); }
 #if ENABLE(SERVICE_WORKER)
     BackgroundFetchStoreManager& backgroundFetchManager(Ref<WorkQueue>&&, BackgroundFetchStoreManager::QuotaCheckFunction&&);
+    ServiceWorkerStorageManager& serviceWorkerStorageManager();
 #endif
     uint64_t cacheStorageSize();
     void closeCacheStorageManager();
@@ -125,6 +131,7 @@ private:
     UnifiedOriginStorageLevel m_level;
 #if ENABLE(SERVICE_WORKER)
     std::unique_ptr<BackgroundFetchStoreManager> m_backgroundFetchManager;
+    std::unique_ptr<ServiceWorkerStorageManager> m_serviceWorkerStorageManager;
 #endif
 };
 
@@ -169,6 +176,8 @@ std::optional<OriginStorageManager::StorageBucket::StorageType> OriginStorageMan
 #if ENABLE(SERVICE_WORKER)
     case WebsiteDataType::BackgroundFetchStorage:
         return StorageType::BackgroundFetchStorage;
+    case WebsiteDataType::ServiceWorkerRegistrations:
+        return StorageType::ServiceWorkerStorage;
 #endif
     default:
         break;
@@ -194,6 +203,8 @@ String OriginStorageManager::StorageBucket::toStorageIdentifier(StorageType type
 #if ENABLE(SERVICE_WORKER)
     case StorageType::BackgroundFetchStorage:
         return "BackgroundFetchStorage"_s;
+    case StorageType::ServiceWorkerStorage:
+        return "ServiceWorkers"_s;
 #endif
     default:
         break;
@@ -256,6 +267,7 @@ CacheStorageManager& OriginStorageManager::StorageBucket::cacheStorageManager(Ca
 }
 
 #if ENABLE(SERVICE_WORKER)
+
 BackgroundFetchStoreManager& OriginStorageManager::StorageBucket::backgroundFetchManager(Ref<WorkQueue>&& queue, BackgroundFetchStoreManager::QuotaCheckFunction&& quotaCheckFunction)
 {
     if (!m_backgroundFetchManager)
@@ -263,6 +275,17 @@ BackgroundFetchStoreManager& OriginStorageManager::StorageBucket::backgroundFetc
 
     return *m_backgroundFetchManager;
 }
+
+ServiceWorkerStorageManager& OriginStorageManager::StorageBucket::serviceWorkerStorageManager()
+{
+    RELEASE_ASSERT(m_level >= UnifiedOriginStorageLevel::Standard);
+
+    if (!m_serviceWorkerStorageManager)
+        m_serviceWorkerStorageManager = makeUnique<ServiceWorkerStorageManager>(resolvedPath(WebsiteDataType::ServiceWorkerRegistrations));
+
+    return *m_serviceWorkerStorageManager;
+}
+
 #endif
 
 bool OriginStorageManager::StorageBucket::isActive() const
@@ -605,6 +628,7 @@ String OriginStorageManager::StorageBucket::resolvedPath(WebsiteDataType webiste
 #if ENABLE(SERVICE_WORKER)
     case StorageType::BackgroundFetchStorage:
         return resolvedBackgroundFetchStoragePath();
+    case StorageType::ServiceWorkerStorage:
 #endif
     case StorageType::SessionStorage:
     case StorageType::FileSystem:
@@ -764,6 +788,11 @@ BackgroundFetchStoreManager& OriginStorageManager::backgroundFetchManager(Ref<Wo
             completionHandler(decision == OriginQuotaManager::Decision::Grant);
         });
     });
+}
+
+ServiceWorkerStorageManager& OriginStorageManager::serviceWorkerStorageManager()
+{
+    return defaultBucket().serviceWorkerStorageManager();
 }
 #endif
 

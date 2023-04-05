@@ -39,6 +39,7 @@ namespace WebKit {
 
 #if ENABLE(SERVICE_WORKER)
 class BackgroundFetchStoreManager;
+class ServiceWorkerStorageManager;
 #endif
 class CacheStorageManager;
 class CacheStorageRegistry;
@@ -78,6 +79,7 @@ public:
     CacheStorageManager* existingCacheStorageManager();
 #if ENABLE(SERVICE_WORKER)
     BackgroundFetchStoreManager& backgroundFetchManager(Ref<WTF::WorkQueue>&&);
+    ServiceWorkerStorageManager& serviceWorkerStorageManager();
 #endif
     uint64_t cacheStorageSize();
     void closeCacheStorageManager();

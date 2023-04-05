@@ -37,8 +37,8 @@
 #include "ExceptionData.h"
 #include "Logging.h"
 #include "NotificationData.h"
-#include "RegistrationStore.h"
 #include "SWOriginStore.h"
+#include "SWRegistrationStore.h"
 #include "SWServerJobQueue.h"
 #include "SWServerRegistration.h"
 #include "SWServerToContextConnection.h"
@@ -48,6 +48,7 @@
 #include "ServiceWorkerContextData.h"
 #include "ServiceWorkerJobData.h"
 #include "WorkerFetchResult.h"
+#include <wtf/CallbackAggregator.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/MemoryPressureHandler.h>
 #include <wtf/NeverDestroyed.h>
@@ -283,6 +284,14 @@ Vector<ServiceWorkerRegistrationData> SWServer::getRegistrations(const SecurityO
     });
 }
 
+void SWServer::storeRegistrationsOnDisk(CompletionHandler<void()>&& completionHandler)
+{
+    if (!m_registrationStore)
+        return completionHandler();
+
+    m_registrationStore->closeFiles(WTFMove(completionHandler));
+}
+
 void SWServer::clearAll(CompletionHandler<void()>&& completionHandler)
 {
     if (!m_importCompleted) {
@@ -302,21 +311,6 @@ void SWServer::clearAll(CompletionHandler<void()>&& completionHandler)
         return completionHandler();
 
     m_registrationStore->clearAll(WTFMove(completionHandler));
-}
-
-void SWServer::startSuspension(CompletionHandler<void()>&& completionHandler)
-{
-    if (!m_registrationStore) {
-        completionHandler();
-        return;
-    }
-    m_registrationStore->startSuspension(WTFMove(completionHandler));
-}
-
-void SWServer::endSuspension()
-{
-    if (m_registrationStore)
-        m_registrationStore->endSuspension();
 }
 
 void SWServer::clear(const SecurityOriginData& securityOrigin, CompletionHandler<void()>&& completionHandler)
@@ -404,9 +398,26 @@ SWServer::SWServer(SWServerDelegate& delegate, UniqueRef<SWOriginStore>&& origin
     , m_overrideServiceWorkerRegistrationCountTestingValue(overrideServiceWorkerRegistrationCountTestingValue)
 {
     RELEASE_LOG_IF(registrationDatabaseDirectory.isEmpty(), ServiceWorker, "No path to store the service worker registrations");
-    if (!m_sessionID.isEphemeral())
-        m_registrationStore = makeUnique<RegistrationStore>(*this, WTFMove(registrationDatabaseDirectory));
-    else
+
+    m_registrationStore = m_delegate->createUniqueRegistrationStore(*this);
+    if (m_registrationStore) {
+        m_registrationStore->importRegistrations([this, weakThis = WeakPtr { *this }](auto&& result) mutable {
+            if (!weakThis)
+                return;
+
+            if (!result) {
+                registrationStoreDatabaseFailedToOpen();
+                return;
+            }
+
+            auto callbackAggregator = CallbackAggregator::create([weakThis = WTFMove(weakThis)]() mutable {
+                if (weakThis)
+                    weakThis->registrationStoreImportComplete();
+            });
+            for (auto data : result.value())
+                addRegistrationFromStore(WTFMove(data), [callbackAggregator] { });
+        });
+    } else
         registrationStoreImportComplete();
 
     UNUSED_PARAM(registrationDatabaseDirectory);
@@ -1302,11 +1313,7 @@ void SWServer::Connection::whenRegistrationReady(const SecurityOriginData& topOr
 
 void SWServer::Connection::storeRegistrationsOnDisk(CompletionHandler<void()>&& callback)
 {
-    if (!m_server.m_registrationStore) {
-        callback();
-        return;
-    }
-    m_server.m_registrationStore->closeDatabase(WTFMove(callback));
+    m_server.storeRegistrationsOnDisk(WTFMove(callback));
 }
 
 void SWServer::Connection::resolveRegistrationReadyRequests(SWServerRegistration& registration)

@@ -164,6 +164,7 @@ messages -> NetworkProcess LegacyReceiver {
     RegisterURLSchemeAsNoAccess(String scheme)
 
     SyncLocalStorage() -> ()
+    StoreServiceWorkerRegistrations(PAL::SessionID sessionID) -> ()
 
     StorePrivateClickMeasurement(PAL::SessionID sessionID, WebCore::PrivateClickMeasurement privateClickMeasurement)
     DumpPrivateClickMeasurement(PAL::SessionID sessionID) -> (String privateClickMeasurementState)

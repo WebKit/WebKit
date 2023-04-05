@@ -41,6 +41,8 @@ class BackgroundFetchRecordLoader;
 class BackgroundFetchStore;
 class RegistrableDomain;
 class ResourceRequest;
+class SWRegistrationStore;
+class SWServer;
 
 struct BackgroundFetchRequest;
 struct ServiceWorkerJobData;
@@ -58,6 +60,7 @@ public:
     virtual void requestBackgroundFetchPermission(const ClientOrigin&, CompletionHandler<void(bool)>&&) = 0;
     virtual std::unique_ptr<BackgroundFetchRecordLoader> createBackgroundFetchRecordLoader(BackgroundFetchRecordLoader::Client&, const BackgroundFetchRequest&, size_t responseDataSize, const WebCore::ClientOrigin&) = 0;
     virtual Ref<BackgroundFetchStore> createBackgroundFetchStore() = 0;
+    virtual std::unique_ptr<SWRegistrationStore> createUniqueRegistrationStore(SWServer&) = 0;
 };
 
 } // namespace WebCore

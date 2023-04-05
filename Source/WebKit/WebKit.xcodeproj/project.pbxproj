@@ -879,6 +879,8 @@
 		37F623B812A57B6200E3FDF6 /* WKFindOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 37F623B712A57B6200E3FDF6 /* WKFindOptions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		37FC19471850FBF2008CFA47 /* WKBrowsingContextLoadDelegatePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 37FC19461850FBF2008CFA47 /* WKBrowsingContextLoadDelegatePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		37FC194B18510D6A008CFA47 /* WKNSURLAuthenticationChallenge.h in Headers */ = {isa = PBXBuildFile; fileRef = 37FC194918510D6A008CFA47 /* WKNSURLAuthenticationChallenge.h */; };
+		3A12CDBB29D4D30200D57EAE /* WebSWRegistrationStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AC4C04529D35D1500402716 /* WebSWRegistrationStore.h */; };
+		3A7D62D629D38DD300D57DAC /* ServiceWorkerStorageManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A7D62D429D38DD300D57DAC /* ServiceWorkerStorageManager.h */; };
 		3AB0C59429C8162300141B5E /* NetworkQuotaManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AB0C59229C8162200141B5E /* NetworkQuotaManager.h */; };
 		3AE104C029CBC8BB00661165 /* OriginQuotaManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AE104BE29CBC8BB00661165 /* OriginQuotaManager.h */; };
 		3CAECB6627465AE400AB78D0 /* UnifiedSource113.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3CAECB5E27465AE300AB78D0 /* UnifiedSource113.cpp */; };
@@ -4404,10 +4406,15 @@
 		37FC19461850FBF2008CFA47 /* WKBrowsingContextLoadDelegatePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBrowsingContextLoadDelegatePrivate.h; sourceTree = "<group>"; };
 		37FC194818510D6A008CFA47 /* WKNSURLAuthenticationChallenge.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKNSURLAuthenticationChallenge.mm; sourceTree = "<group>"; };
 		37FC194918510D6A008CFA47 /* WKNSURLAuthenticationChallenge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKNSURLAuthenticationChallenge.h; sourceTree = "<group>"; };
+		3A7D62D229D35D9D00D57DAC /* WebSWRegistrationStore.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebSWRegistrationStore.cpp; sourceTree = "<group>"; };
+		3A7D62D329D38DD300D57DAC /* ServiceWorkerStorageManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ServiceWorkerStorageManager.cpp; sourceTree = "<group>"; };
+		3A7D62D429D38DD300D57DAC /* ServiceWorkerStorageManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServiceWorkerStorageManager.h; sourceTree = "<group>"; };
 		3A8997E029B25E8E00AB88B6 /* WebCookieCacheCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCookieCacheCocoa.mm; sourceTree = "<group>"; };
 		3AA50E2C28D37F8700D024E4 /* ProcessAssertionCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ProcessAssertionCocoa.mm; sourceTree = "<group>"; };
 		3AB0C59129C8162200141B5E /* NetworkQuotaManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkQuotaManager.cpp; sourceTree = "<group>"; };
 		3AB0C59229C8162200141B5E /* NetworkQuotaManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkQuotaManager.h; sourceTree = "<group>"; };
+		3AC4C04529D35D1500402716 /* WebSWRegistrationStore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebSWRegistrationStore.h; sourceTree = "<group>"; };
+		3AC4C04629D35D1B00402716 /* ServiceWorker */ = {isa = PBXFileReference; lastKnownFileType = folder; path = ServiceWorker; sourceTree = "<group>"; };
 		3AE104BD29CBC8BA00661165 /* OriginQuotaManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OriginQuotaManager.cpp; sourceTree = "<group>"; };
 		3AE104BE29CBC8BB00661165 /* OriginQuotaManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OriginQuotaManager.h; sourceTree = "<group>"; };
 		3CAECB5E27465AE300AB78D0 /* UnifiedSource113.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = UnifiedSource113.cpp; sourceTree = "<group>"; };
@@ -11592,6 +11599,8 @@
 				93085DC626E1C6CF000EC6A7 /* OriginStorageManager.h */,
 				93B631EE27ABACA800443A44 /* QuotaManager.cpp */,
 				93B631EF27ABACA900443A44 /* QuotaManager.h */,
+				3A7D62D329D38DD300D57DAC /* ServiceWorkerStorageManager.cpp */,
+				3A7D62D429D38DD300D57DAC /* ServiceWorkerStorageManager.h */,
 				93E799CC2760497B0074008A /* SessionStorageManager.cpp */,
 				93E799CA2760497A0074008A /* SessionStorageManager.h */,
 				93E799D3276121070074008A /* SQLiteStorageArea.cpp */,
@@ -11631,6 +11640,7 @@
 		93BA04D92151ADCD007F455F /* ServiceWorker */ = {
 			isa = PBXGroup;
 			children = (
+				3AC4C04629D35D1B00402716 /* ServiceWorker */,
 				41FFD2DA275A560B00501BBF /* ServiceWorkerDownloadTask.cpp */,
 				41FFD2DB275A560C00501BBF /* ServiceWorkerDownloadTask.h */,
 				41FFD2DC275A6A9400501BBF /* ServiceWorkerDownloadTask.messages.in */,
@@ -11643,6 +11653,8 @@
 				41D5C6D8238EB20D00B9B3CB /* ServiceWorkerSoftUpdateLoader.h */,
 				93BA04DF2151ADF4007F455F /* WebSWOriginStore.cpp */,
 				93BA04DE2151ADF4007F455F /* WebSWOriginStore.h */,
+				3A7D62D229D35D9D00D57DAC /* WebSWRegistrationStore.cpp */,
+				3AC4C04529D35D1500402716 /* WebSWRegistrationStore.h */,
 				93BA04E12151ADF4007F455F /* WebSWServerConnection.cpp */,
 				93BA04E02151ADF4007F455F /* WebSWServerConnection.h */,
 				93BA04DA2151ADF3007F455F /* WebSWServerConnection.messages.in */,
@@ -14586,6 +14598,7 @@
 				570AB8F320AE3BD700B8BE87 /* SecKeyProxyStore.h in Headers */,
 				514D9F5719119D35000063A7 /* ServicesController.h in Headers */,
 				5164658027A9C77400E1F2BA /* ServiceWorkerNotificationHandler.h in Headers */,
+				3A7D62D629D38DD300D57DAC /* ServiceWorkerStorageManager.h in Headers */,
 				1AFDE65A1954A42B00C48FFA /* SessionState.h in Headers */,
 				1A002D49196B345D00B9AD44 /* SessionStateCoding.h in Headers */,
 				93E799CE2760497B0074008A /* SessionStorageManager.h in Headers */,
@@ -14955,6 +14968,7 @@
 				C11A9ECC214035F800CFB20A /* WebSwitchingGPUClient.h in Headers */,
 				9356F2DE2152B71000E6D5DF /* WebSWOriginStore.h in Headers */,
 				83F1A07A1F96E7790045B94E /* WebSWOriginTable.h in Headers */,
+				3A12CDBB29D4D30200D57EAE /* WebSWRegistrationStore.h in Headers */,
 				9356F2DD2152B6F600E6D5DF /* WebSWServerConnection.h in Headers */,
 				517A52D91F43A9DA00DCDC0A /* WebSWServerConnectionMessages.h in Headers */,
 				515262BC1FB9515D0070E579 /* WebSWServerToContextConnectionMessages.h in Headers */,

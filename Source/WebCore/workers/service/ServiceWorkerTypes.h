@@ -29,10 +29,13 @@
 
 #include "ProcessIdentifier.h"
 #include "ProcessQualified.h"
+#include "ScriptBuffer.h"
 #include "ScriptExecutionContextIdentifier.h"
 #include "ServiceWorkerIdentifier.h"
 #include <variant>
 #include <wtf/ObjectIdentifier.h>
+#include <wtf/RobinHoodHashMap.h>
+#include <wtf/URLHash.h>
 
 namespace WebCore {
 
@@ -79,6 +82,20 @@ using ServiceWorkerOrClientData = std::variant<ServiceWorkerData, ServiceWorkerC
 
 // FIXME: It should be possible to replace ServiceWorkerOrClientIdentifier with ScriptExecutionContextIdentifier entirely.
 using ServiceWorkerOrClientIdentifier = std::variant<ServiceWorkerIdentifier, ScriptExecutionContextIdentifier>;
+
+struct ServiceWorkerScripts {
+    ServiceWorkerScripts isolatedCopy() const
+    {
+        MemoryCompactRobinHoodHashMap<WTF::URL, ScriptBuffer> isolatedImportedScripts;
+        for (auto& [url, script] : importedScripts)
+            isolatedImportedScripts.add(url.isolatedCopy(), script.isolatedCopy());
+        return { identifier, mainScript.isolatedCopy(), WTFMove(isolatedImportedScripts) };
+    }
+
+    ServiceWorkerIdentifier identifier;
+    ScriptBuffer mainScript;
+    MemoryCompactRobinHoodHashMap<WTF::URL, ScriptBuffer> importedScripts;
+};
 
 } // namespace WebCore
 

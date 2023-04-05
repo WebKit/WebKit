@@ -35,9 +35,9 @@
 #include "HTTPHeaderMap.h"
 #include "ImageResource.h"
 #include "NavigationPreloadState.h"
-#include "RegistrationDatabase.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
+#include "SWRegistrationDatabase.h"
 #include <wtf/persistence/PersistentCoders.h>
 
 #if PLATFORM(COCOA)

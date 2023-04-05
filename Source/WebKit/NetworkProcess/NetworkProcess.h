@@ -298,6 +298,7 @@ public:
 #endif
 
     void syncLocalStorage(CompletionHandler<void()>&&);
+    void storeServiceWorkerRegistrations(PAL::SessionID, CompletionHandler<void()>&&);
 
     void resetQuota(PAL::SessionID, CompletionHandler<void()>&&);
 #if PLATFORM(IOS_FAMILY)

@@ -143,6 +143,7 @@ NetworkProcess/ServiceWorker/ServiceWorkerFetchTask.cpp
 NetworkProcess/ServiceWorker/ServiceWorkerNavigationPreloader.cpp
 NetworkProcess/ServiceWorker/ServiceWorkerSoftUpdateLoader.cpp
 NetworkProcess/ServiceWorker/WebSWOriginStore.cpp @no-unify
+NetworkProcess/ServiceWorker/WebSWRegistrationStore.cpp
 NetworkProcess/ServiceWorker/WebSWServerConnection.cpp @no-unify
 NetworkProcess/ServiceWorker/WebSWServerToContextConnection.cpp @no-unify
 
@@ -171,6 +172,7 @@ NetworkProcess/storage/NetworkStorageManager.cpp
 NetworkProcess/storage/OriginQuotaManager.cpp
 NetworkProcess/storage/OriginStorageManager.cpp
 NetworkProcess/storage/SQLiteStorageArea.cpp
+NetworkProcess/storage/ServiceWorkerStorageManager.cpp
 NetworkProcess/storage/SessionStorageManager.cpp
 NetworkProcess/storage/StorageAreaBase.cpp
 NetworkProcess/storage/StorageAreaRegistry.cpp

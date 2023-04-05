@@ -2245,10 +2245,6 @@ void NetworkProcess::prepareToSuspend(bool isSuspensionImminent, MonotonicTime e
 
     forEachNetworkSession([&] (auto& session) {
         platformFlushCookies(session.sessionID(), [callbackAggregator] { });
-#if ENABLE(SERVICE_WORKER)
-        if (auto* swServer = session.swServer())
-            swServer->startSuspension([callbackAggregator] { });
-#endif
         session.storageManager().suspend([callbackAggregator] { });
     });
 
@@ -2281,10 +2277,6 @@ void NetworkProcess::processDidResume(bool forForegroundActivity)
     PCM::PersistentStore::processDidResume();
 
     forEachNetworkSession([](auto& session) {
-#if ENABLE(SERVICE_WORKER)
-        if (auto* swServer = session.swServer())
-            swServer->endSuspension();
-#endif
         session.storageManager().resume();
     });
 
@@ -2323,6 +2315,16 @@ void NetworkProcess::syncLocalStorage(CompletionHandler<void()>&& completionHand
     forEachNetworkSession([&](auto& session) {
         session.storageManager().syncLocalStorage([aggregator] { });
     });
+}
+
+void NetworkProcess::storeServiceWorkerRegistrations(PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)
+{
+    auto* session = networkSession(sessionID);
+    auto* server = session ? session->swServer() : nullptr;
+    if (!server)
+        return completionHandler();
+
+    server->storeRegistrationsOnDisk(WTFMove(completionHandler));
 }
 
 void NetworkProcess::resetQuota(PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)

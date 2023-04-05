@@ -1474,6 +1474,11 @@ void WebsiteDataStore::syncLocalStorage(CompletionHandler<void()>&& completionHa
     networkProcess().sendWithAsyncReply(Messages::NetworkProcess::SyncLocalStorage(), WTFMove(completionHandler));
 }
 
+void WebsiteDataStore::storeServiceWorkerRegistrations(CompletionHandler<void()>&& completionHandler)
+{
+    networkProcess().sendWithAsyncReply(Messages::NetworkProcess::StoreServiceWorkerRegistrations(m_sessionID), WTFMove(completionHandler));
+}
+
 void WebsiteDataStore::setCacheMaxAgeCapForPrevalentResources(Seconds seconds, CompletionHandler<void()>&& completionHandler)
 {
 #if ENABLE(TRACKING_PREVENTION)

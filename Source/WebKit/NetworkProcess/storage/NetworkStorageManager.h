@@ -42,6 +42,7 @@
 #include <WebCore/FileSystemSyncAccessHandleIdentifier.h>
 #include <WebCore/IDBResourceIdentifier.h>
 #include <WebCore/IndexedDB.h>
+#include <WebCore/ServiceWorkerTypes.h>
 #include <pal/SessionID.h>
 #include <wtf/Forward.h>
 #include <wtf/ThreadSafeWeakHashSet.h>
@@ -58,6 +59,7 @@ class IDBObjectStoreInfo;
 class IDBRequestData;
 class IDBTransactionInfo;
 class IDBValue;
+class ServiceWorkerRegistrationKey;
 struct ClientOrigin;
 struct IDBGetAllRecordsData;
 struct IDBGetRecordData;
@@ -65,6 +67,7 @@ struct IDBGetAllRecordsData;
 struct IDBIterateCursorData;
 struct IDBKeyRangeData;
 struct RetrieveRecordsOptions;
+struct ServiceWorkerContextData;
 enum class StorageType : uint8_t;
 }
 
@@ -75,12 +78,14 @@ enum class UnifiedOriginStorageLevel : uint8_t;
 class FileSystemStorageHandleRegistry;
 class IDBStorageRegistry;
 class NetworkQuotaManager;
+
+class ServiceWorkerStorageManager;
 class StorageAreaBase;
 class StorageAreaRegistry;
 
 class NetworkStorageManager final : public IPC::WorkQueueMessageReceiver {
 public:
-    static Ref<NetworkStorageManager> create(PAL::SessionID, Markable<UUID>, IPC::Connection::UniqueID, const String& path, const String& customLocalStoragePath, const String& customIDBStoragePath, const String& customCacheStoragePath, uint64_t defaultOriginQuota, uint64_t defaultThirdPartyOriginQuota, std::optional<double> originQuotaRatio, std::optional<double> totalQuotaRatio, std::optional<uint64_t> volumeCapacityOverride, UnifiedOriginStorageLevel);
+    static Ref<NetworkStorageManager> create(PAL::SessionID, Markable<UUID>, IPC::Connection::UniqueID, const String& path, const String& customLocalStoragePath, const String& customIDBStoragePath, const String& customCacheStoragePath, const String& customServiceWorkerStoragePath, uint64_t defaultOriginQuota, uint64_t defaultThirdPartyOriginQuota, std::optional<double> originQuotaRatio, std::optional<double> totalQuotaRatio, std::optional<uint64_t> volumeCapacityOverride, UnifiedOriginStorageLevel);
     static bool canHandleTypes(OptionSet<WebsiteDataType>);
     static OptionSet<WebsiteDataType> allManagedTypes();
 
@@ -116,10 +121,14 @@ public:
 #if ENABLE(SERVICE_WORKER)
     void dispatchTaskToBackgroundFetchManager(const WebCore::ClientOrigin&, Function<void(BackgroundFetchStoreManager*)>&&);
     void notifyBackgroundFetchChange(const String&, BackgroundFetchChange);
+    void closeServiceWorkerRegistrationFiles(CompletionHandler<void()>&&);
+    void clearServiceWorkerRegistrations(CompletionHandler<void()>&&);
+    void importServiceWorkerRegistrations(CompletionHandler<void(std::optional<Vector<WebCore::ServiceWorkerContextData>>)>&&);
+    void updateServiceWorkerRegistrations(Vector<WebCore::ServiceWorkerContextData>&&, Vector<WebCore::ServiceWorkerRegistrationKey>&&, CompletionHandler<void(std::optional<Vector<WebCore::ServiceWorkerScripts>>)>&&);
 #endif // ENABLE(SERVICE_WORKER)
 
 private:
-    NetworkStorageManager(PAL::SessionID, Markable<UUID>, IPC::Connection::UniqueID, const String& path, const String& customLocalStoragePath, const String& customIDBStoragePath, const String& customCacheStoragePath, uint64_t defaultOriginQuota, uint64_t defaultThirdPartyOriginQuota, std::optional<double> originQuotaRatio, std::optional<double> totalQuotaRatio, std::optional<uint64_t> volumeCapacityOverride, UnifiedOriginStorageLevel);
+    NetworkStorageManager(PAL::SessionID, Markable<UUID>, IPC::Connection::UniqueID, const String& path, const String& customLocalStoragePath, const String& customIDBStoragePath, const String& customCacheStoragePath, const String& customServiceWorkerStoragePath, uint64_t defaultOriginQuota, uint64_t defaultThirdPartyOriginQuota, std::optional<double> originQuotaRatio, std::optional<double> totalQuotaRatio, std::optional<uint64_t> volumeCapacityOverride, UnifiedOriginStorageLevel);
     ~NetworkStorageManager();
     NetworkQuotaManager& quotaManager();
     void writeOriginToFileIfNecessary(const WebCore::ClientOrigin&, StorageAreaBase* = nullptr);
@@ -210,6 +219,12 @@ private:
     void cacheStorageClearMemoryRepresentation(const WebCore::ClientOrigin&, CompletionHandler<void(std::optional<WebCore::DOMCacheEngine::Error>&&)>&&);
     void cacheStorageRepresentation(CompletionHandler<void(String&&)>&&);
 
+#if ENABLE(SERVICE_WORKER)
+    bool shouldManageServiceWorkerRegistrationsByOrigin();
+    void migrateServiceWorkerRegistrationsToOrigins();
+    Vector<WebCore::ServiceWorkerScripts> updateServiceWorkerRegistrationsByOrigin(Vector<WebCore::ServiceWorkerContextData>&&, Vector<WebCore::ServiceWorkerRegistrationKey>&&);
+#endif
+
     SuspendableWorkQueue& workQueue() WTF_RETURNS_CAPABILITY(m_queue.get()) { return m_queue; }
 
     PAL::SessionID m_sessionID;
@@ -227,6 +242,7 @@ private:
     String m_customLocalStoragePath;
     String m_customIDBStoragePath;
     String m_customCacheStoragePath;
+    String m_customServiceWorkerStoragePath;
     uint64_t m_defaultOriginQuota;
     uint64_t m_defaultThirdPartyOriginQuota;
     std::optional<double> m_originQuotaRatio;
@@ -238,6 +254,9 @@ private:
     HashMap<IPC::Connection::UniqueID, HashSet<String>> m_temporaryBlobPathsByConnection WTF_GUARDED_BY_CAPABILITY(workQueue());
 #if PLATFORM(IOS_FAMILY)
     Seconds m_backupExclusionPeriod;
+#endif
+#if ENABLE(SERVICE_WORKER)
+    std::unique_ptr<ServiceWorkerStorageManager> m_sharedServiceWorkerStorageManager;
 #endif
 };
 

@@ -59,7 +59,7 @@ public:
     bool relatesToOrigin(const SecurityOriginData&) const;
 
     WEBCORE_EXPORT ServiceWorkerRegistrationKey isolatedCopy() const &;
-    ServiceWorkerRegistrationKey isolatedCopy() &&;
+    WEBCORE_EXPORT ServiceWorkerRegistrationKey isolatedCopy() &&;
 
     String toDatabaseKey() const;
     WEBCORE_EXPORT static std::optional<ServiceWorkerRegistrationKey> fromDatabaseKey(const String&);
