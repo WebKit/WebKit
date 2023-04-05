@@ -119,7 +119,7 @@ private:
     float maxTimeLoaded() const { return m_maxTimeLoaded; }
 
     WeakPtr<MediaPlayerPrivateMediaFoundation> m_weakThis;
-    MediaPlayer* m_player;
+    WeakPtr<MediaPlayer> m_player;
     IntSize m_size;
     bool m_visible;
     bool m_loadingProgress;

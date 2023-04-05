@@ -230,7 +230,7 @@ private:
 
     MediaStreamTrackPrivate* activeVideoTrack() const;
 
-    MediaPlayer* m_player { nullptr };
+    WeakPtr<MediaPlayer> m_player;
     RefPtr<MediaStreamPrivate> m_mediaStreamPrivate;
     RefPtr<VideoTrackPrivateMediaStream> m_activeVideoTrack;
 
