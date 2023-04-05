@@ -47,7 +47,6 @@ ShareableBitmapConfiguration::ShareableBitmapConfiguration(const IntSize& size, 
     , m_bitmapInfo(calculateBitmapInfo(this->colorSpace(), isOpaque))
 #endif
 {
-    ASSERT(!m_size.isEmpty());
 }
 
 ShareableBitmapConfiguration::ShareableBitmapConfiguration(const IntSize& size, std::optional<DestinationColorSpace> colorSpace, bool isOpaque, unsigned bytesPerPixel, unsigned bytesPerRow
@@ -64,7 +63,6 @@ ShareableBitmapConfiguration::ShareableBitmapConfiguration(const IntSize& size, 
     , m_bitmapInfo(bitmapInfo)
 #endif
 {
-    ASSERT(!m_size.isEmpty());
 }
 
 CheckedUint32 ShareableBitmapConfiguration::calculateSizeInBytes(const IntSize& size, const DestinationColorSpace& colorSpace)
