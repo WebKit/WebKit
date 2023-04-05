@@ -1991,10 +1991,6 @@ webkit.org/b/221833 fast/text/image-alt-text-bidi-2.html [ ImageOnlyFailure ]
 
 webkit.org/b/223484 [ arm64 ] compositing/style-change/backface-visibility-change.html [ Pass ImageOnlyFailure ]
 
-# webkit.org/b/223724 These two tests are flakey timeouts on iOS Debug:
-[ Debug ] http/tests/security/webaudio-render-remote-audio-allowed-crossorigin.html [ Pass Timeout ]
-[ Debug ] http/tests/security/webaudio-render-remote-audio-allowed-crossorigin-redirect.html [ Pass Timeout ]
-
 webkit.org/b/223761 media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-drag.html [ Pass Timeout ]
 
 webkit.org/b/223759 [ BigSur Debug ] http/tests/security/webaudio-render-remote-audio-blocked-no-crossorigin-redirect.html [ Pass Timeout ]
