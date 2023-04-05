@@ -289,17 +289,42 @@ fast/events/clipboard-dataTransferItemList.html [ Skip ]
 fast/events/drag-dataTransferItemList.html [ Skip ]
 fast/events/drag-dataTransferItemList-file-handling.html [ Skip ]
 
-# Drag & Drop doesn't work correctly in DRT <rdar://5621244>
-# Drag and drop can't be tested with WebKitTestRunner
-# [GTK] https://bugs.webkit.org/show_bug.cgi?id=157179
-# Implement EditingCallbacks delegates in the WebKitTestRunner
-webkit.org/b/157179 fast/events/before-input-events-prevent-drag-and-drop.html [ Failure ]
-webkit.org/b/157179 fast/events/ondrop-text-html.html [ Failure ]
-webkit.org/b/157179 fast/forms/range/slider-delete-while-dragging-thumb.html [ Failure ]
-webkit.org/b/157179 http/tests/security/resources/drag-drop-allowed.html [ Skip ]
-webkit.org/b/157179 plugins/mouse-events-fixedpos.html [ Failure ]
-webkit.org/b/157179 plugins/mouse-events.html [ Failure Timeout ]
-webkit.org/b/157179 fast/events/drag-and-drop-autoscroll-inner-frame.html [ Skip ]
+# Drag and drop isn't supported yet
+editing/selection/drag-to-contenteditable-iframe.html [ Skip ]
+fast/events/before-input-events-prevent-drag-and-drop.html [ Skip ]
+fast/events/drag-and-drop-autoscroll-inner-frame.html [ Skip ]
+fast/events/drag-and-drop-autoscroll.html [ Skip ]
+fast/events/drag-and-drop-dataTransfer-types-nocrash.html [ Skip ]
+fast/events/drag-and-drop-fire-drag-dragover.html [ Skip ]
+fast/events/drag-and-drop-link-containing-block.html [ Skip ]
+fast/events/drag-and-drop-link-fast-multiple-times-does-not-crash.html [ Skip ]
+fast/events/drag-and-drop-link-into-focused-contenteditable.html [ Skip ]
+fast/events/drag-and-drop-link.html [ Skip ]
+fast/events/drag-and-drop-move-not-copy.html [ Skip ]
+fast/events/drag-and-drop-subframe-dataTransfer.html [ Skip ]
+fast/events/drag-and-drop.html [ Skip ]
+fast/events/drag-customData.html [ Skip ]
+fast/events/drag-image-with-border-image.html [ Skip ]
+fast/events/drag-in-frames.html [ Skip ]
+fast/events/drag-parent-node.html [ Skip ]
+fast/events/drag-select-when-zoomed-with-header.html [ Skip ]
+fast/events/drag-select-when-zoomed.html [ Skip ]
+fast/events/drag-to-navigate.html [ Skip ]
+fast/events/draggable-div-customdata.html [ Skip ]
+fast/events/draggable-div-nodata.html [ Skip ]
+fast/events/dragging-mouse-moves.html [ Skip ]
+fast/events/drop-handler-should-not-stop-navigate.html [ Skip ]
+fast/events/drop-with-file-paths.html [ Skip ]
+fast/events/dropzone-001.html [ Skip ]
+fast/events/dropzone-002.html [ Skip ]
+fast/events/dropzone-003.html [ Skip ]
+fast/events/input-events-drag-and-drop.html [ Skip ]
+fast/events/ondrop-text-html.html [ Skip ]
+fast/events/standalone-image-drag-to-editable.html [ Skip ]
+fast/forms/range/slider-delete-while-dragging-thumb.html [ Skip ]
+http/tests/security/resources/drag-drop-allowed.html [ Skip ]
+plugins/mouse-events-fixedpos.html [ Skip ]
+plugins/mouse-events.html [ Skip ]
 
 # eventSender.contextClick() needs to return a JS array of the context menu items.
 media/context-menu-actions.html [ Skip ]
@@ -419,6 +444,13 @@ fast/canvas/offscreen-giant-transfer-to-imagebitmap.html [ Failure ]
 #//////////////////////////////////////////////////////////////////////////////////////////
 
 ### TestRunner
+
+# page visibility isn't supported yet
+fast/events/page-visibility-iframe-move-test.html [ Skip ]
+fast/events/page-visibility-iframe-propagation-test.html [ Skip ]
+fast/events/page-visibility-iframe-delete-test.html [ Skip ]
+fast/events/page-visibility-onvisibilitychange.html [ Skip ]
+fast/events/page-visibility-transition-test.html [ Skip ]
 
 # testRunner.enableAutoResizeMode() not implemented
 fast/autoresize/ [ Skip ]
@@ -577,35 +609,6 @@ fast/dom/Window/window-special-properties.html [ Pass Failure ]
 #//////////////////////////////////////////////////////////////////////////////////////////
 # Following tests are labeled "Skip" because not working well and causes crash or timeout
 #//////////////////////////////////////////////////////////////////////////////////////////
-
-# BUG: internals.markerCountForNode, not correct
-editing/spelling/spellcheck-async.html [ Failure Timeout ]
-editing/spelling/spellcheck-async-mutation.html [ Failure Timeout ]
-editing/spelling/spellcheck-queue.html [ Failure Timeout ]
-
-# BUG: internals.hasSpellingMarker, not correct
-editing/spelling/design-mode-spellcheck-off.html [ Timeout ]
-editing/spelling/spelling-backspace-between-lines.html [ Timeout ]
-editing/spelling/spelling-backward.html [ Timeout ]
-editing/spelling/spellcheck-paste-continuous-disabled.html [ Timeout ]
-editing/spelling/spelling-hasspellingmarker.html [ Timeout ]
-editing/spelling/spelling-linebreak.html [ Timeout ]
-editing/spelling/delete-into-misspelled-word.html [ Timeout ]
-editing/spelling/editing-word-with-marker-2.html [ Timeout ]
-editing/spelling/move-cursor-around-misspelled-word.html [ Timeout ]
-editing/spelling/spelling-attribute-at-child.html [ Timeout ]
-editing/spelling/spelling-attribute-change.html [ Timeout ]
-editing/spelling/spellcheck-attribute.html [ Timeout ]
-
-# UIHelper.setSpellCheckerResults not implemented
-editing/spelling/inline-spelling-markers-hidpi.html [ Skip ]
-editing/spelling/inline-spelling-markers.html [ Skip ]
-
-# UIScriptController.setContinuousSpellCheckingEnabled is not implemented.
-editing/spelling/markers.html [ Skip ]
-editing/spelling/text-replacement-after-typing-to-word.html [ Skip ]
-editing/spelling/text-replacement-first-word-second-line.html [ Skip ]
-editing/spelling/toggle-spellchecking.html [ Skip ]
 
 # LayoutTest/fast/loader tests that fail or time out.
 fast/loader/local-CSS-from-local.html [ Failure Timeout ]
@@ -1298,31 +1301,7 @@ fast/events/input-event-insert-link.html [ Failure ]
 # Plain text controller currently in Mac DumpRenderTree only.
 editing/text-iterator [ Skip ]
 
-###### TODO Spellchecker is not implemented. Skip these test.
-webkit.org/b/108370 editing/spelling/ [ Pass Failure ImageOnlyFailure ]
-webkit.org/b/66620 editing/spelling/spelling-insert-html.html [ Skip ]
-webkit.org/b/97026 editing/spelling/grammar-edit-word.html [ Skip ]
-webkit.org/b/110447 editing/spelling/spelling-changed-text.html [ Skip ]
-# textInputController.hasGrammarMarkers() is not implemented.
-editing/spelling/grammar.html [ Skip ]
-# TODO EditorClient::requestCheckingOfString() is not implemented
-editing/spelling/spellcheck-paste.html [ Skip ]
-editing/spelling/spellcheck-paste-disabled.html [ Skip ]
-editing/spelling/grammar-markers.html [ Skip ]
-editing/spelling/grammar-markers-hidpi.html [ Skip ]
-# These test fail due to 'notifyDone' not being executed.
-webkit.org/b/121509 editing/spelling/grammar-paste.html [ Skip ]
-
-editing/spelling/context-menu-suggestions-multiword-selection.html [ Skip ]
-editing/spelling/context-menu-suggestions-subword-selection.html [ Skip ]
-editing/spelling/copy-paste-crash.html [ Skip ]
-editing/spelling/editing-multiple-words-with-markers.html [ Skip ]
-editing/spelling/retro-correction-spelling-markers.html [ Skip ]
-editing/spelling/spelling-double-clicked-word.html [ Skip ]
-editing/spelling/spelling-exactly-selected-word.html [ Skip ]
-editing/spelling/spelling-markers-after-pasting-sentence.html [ Skip ]
-editing/spelling/spelling-with-punctuation-selection.html [ Skip ]
-editing/spelling/spelling-with-whitespace-selection.html [ Skip ]
+editing/spelling [ Skip ]
 
 # No concept of secure text input
 editing/secure-input [ Skip ]
@@ -1743,15 +1722,6 @@ fast/events/clientXY-in-zoom-and-scroll.html [ Failure ]
 fast/events/context-activated-by-key-event.html [ Failure ]
 fast/events/dblclick-event-getModifierState.html [ Failure ]
 fast/events/domactivate-sets-underlying-click-event-as-handled.html [ Skip ] # File Upload Test
-fast/events/drag-and-drop-autoscroll.html [ Skip ] # Crash
-fast/events/drag-and-drop-move-not-copy.html [ Skip ] # Crash
-fast/events/drag-customData.html [ Skip ]
-fast/events/drag-in-frames.html [ Failure ]
-fast/events/drag-select-when-zoomed-with-header.html [ Failure ]
-fast/events/drag-select-when-zoomed.html [ Failure ]
-fast/events/drag-to-navigate.html [ Skip ] # Crash
-fast/events/dragging-mouse-moves.html [ Skip ] # Crash
-fast/events/drop-with-file-paths.html [ Pass Failure ]
 fast/events/dropzone-004.html [ Failure ]
 fast/events/dropzone-005.html [ Failure ]
 fast/events/fire-mousedown-while-pressing-mouse-button.html [ Failure ]
@@ -1769,8 +1739,6 @@ fast/events/media-focus-in-standalone-media-document.html [ Timeout ]
 fast/events/mouseover-button.html [ Failure ]
 fast/events/mouseup-from-button2.html [ Failure ]
 fast/events/option-tab.html [ Failure ]
-fast/events/page-visibility-iframe-move-test.html [ Skip ] # Crash by assertion failure
-fast/events/page-visibility-iframe-propagation-test.html [ Timeout Pass ]
 fast/events/scroll-in-scaled-page-with-overflow-hidden.html [ Failure Timeout ]
 fast/events/selectstart-by-double-triple-clicks.html [ Failure Pass ]
 fast/events/selectstart-by-drag.html [ Failure Pass ]
@@ -1993,7 +1961,6 @@ webkit.org/b/243992 fast/text/punctuation-break-all.html [ ImageOnlyFailure ]
 
 fast/css/before-after-pseudo-element-case-insensitivity.html [ ImageOnlyFailure ]
 fast/dynamic/float-from-empty-line.html [ Failure ]
-fast/events/standalone-image-drag-to-editable.html [ Timeout ]
 fast/text/crash-complex-text-surrogate.html [ Failure ]
 fast/text/punctuation-break-all-2.html [ ImageOnlyFailure ]
 
@@ -2382,19 +2349,6 @@ fast/events/5056619.html [ Failure ]
 fast/events/bogus-dropEffect-effectAllowed.html [ Failure ]
 fast/events/content-changed-during-drop.html [ Failure ]
 fast/events/crash-on-mutate-during-drop.html [ Failure ]
-fast/events/drag-and-drop-dataTransfer-types-nocrash.html [ Failure ]
-fast/events/drag-and-drop-fire-drag-dragover.html [ Failure ]
-fast/events/drag-and-drop-link-into-focused-contenteditable.html [ Failure ]
-fast/events/drag-and-drop-link.html [ Failure ]
-fast/events/drag-and-drop.html [ Failure ]
-fast/events/drag-image-with-border-image.html [ Failure ]
-fast/events/drag-parent-node.html [ Failure ]
-fast/events/draggable-div-customdata.html [ Failure ]
-fast/events/draggable-div-nodata.html [ Failure ]
-fast/events/dropzone-001.html [ Failure ]
-fast/events/dropzone-002.html [ Failure ]
-fast/events/dropzone-003.html [ Failure ]
-fast/events/input-events-drag-and-drop.html [ Failure ]
 fast/events/keydown-leftright-keys.html [ Failure ]
 fast/events/mouse-cursor-change.html [ Failure ]
 fast/events/mouse-cursor-image-set.html [ Failure ]
@@ -2440,15 +2394,8 @@ webkit.org/b/239550 fast/text/simple-line-hyphens-with-text-align.html [ Pass ]
 webkit.org/b/239550 fast/text/simple-line-layout-hyphen-limit-after.html [ Pass ]
 webkit.org/b/239550 fast/text/simple-line-layout-hyphen-limit-before.html [ Pass ]
 
-editing/selection/drag-to-contenteditable-iframe.html [ Timeout ]
-fast/events/drag-and-drop-link-containing-block.html [ Timeout ]
-fast/events/drag-and-drop-link-fast-multiple-times-does-not-crash.html [ Timeout ]
-fast/events/drag-and-drop-subframe-dataTransfer.html [ Timeout ]
-fast/events/drop-handler-should-not-stop-navigate.html [ Timeout ]
 fast/events/only-valid-drop-targets-receive-file-drop.html [ Timeout ]
-fast/events/page-visibility-iframe-delete-test.html [ Timeout ]
-fast/events/page-visibility-onvisibilitychange.html [ Timeout ]
-fast/events/page-visibility-transition-test.html [ Timeout ]
+
 fast/events/wheel/wheel-event-destroys-frame.html [ Timeout ]
 fast/text/install-font-style-recalc.html [ Timeout ]
 webgl/2.0.y/conformance2/state/gl-object-get-calls.html [ Skip ] # Timeout
