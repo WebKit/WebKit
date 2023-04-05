@@ -190,8 +190,6 @@ template<typename CharacterType> static inline bool isCharAfterUnquotedAttribute
 template<class Char>
 class HTMLFastPathParser {
     using CharSpan = Span<const Char>;
-    using LCharSpan = Span<const LChar>;
-    using UCharSpan = Span<const UChar>;
     static_assert(std::is_same_v<Char, UChar> || std::is_same_v<Char, LChar>);
 
 public:
@@ -468,8 +466,7 @@ private:
     // We first try to scan text as an unmodified subsequence of the input.
     // However, if there are escape sequences, we have to copy the text to a
     // separate buffer and we might go outside of `Char` range if we are in an
-    // `LChar` parser. Therefore, this function returns either a `LCharSpan` or a
-    // `UCharSpan`.
+    // `LChar` parser.
     String scanText()
     {
         auto* start = m_parsingBuffer.position();
