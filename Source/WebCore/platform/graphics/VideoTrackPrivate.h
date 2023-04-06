@@ -72,7 +72,7 @@ public:
             m_client->configurationChanged(m_configuration);
     }
     
-    virtual bool operator==(const VideoTrackPrivate& track) const
+    bool operator==(const VideoTrackPrivate& track) const
     {
         return TrackPrivateBase::operator==(track)
             && configuration() == track.configuration()

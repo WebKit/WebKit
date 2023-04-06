@@ -626,8 +626,10 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
             }
             
             ScopeOffset offset = functionSymbolTable->takeNextScopeOffset(NoLockingNecessary);
+IGNORE_GCC_WARNINGS_BEGIN("dangling-reference")
             const Identifier& ident =
                 static_cast<const BindingNode*>(parameters.at(i).first)->boundProperty();
+IGNORE_GCC_WARNINGS_END
             functionSymbolTable->set(NoLockingNecessary, name, SymbolTableEntry(VarOffset(offset)));
             
             OpPutToScope::emit(this, m_lexicalEnvironmentRegister, addConstant(ident), virtualRegisterForArgumentIncludingThis(1 + i), GetPutInfo(ThrowIfNotFound, ResolvedClosureVar, InitializationMode::NotInitialization, ecmaMode), SymbolTableOrScopeDepth::symbolTable(VirtualRegister { symbolTableConstantIndex }), offset.offset());

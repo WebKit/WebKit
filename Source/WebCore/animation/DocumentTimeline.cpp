@@ -241,11 +241,13 @@ bool DocumentTimeline::animationCanBeRemoved(WebAnimation& animation)
     if (!target || !target->element.isDescendantOf(*m_document))
         return false;
 
+IGNORE_GCC_WARNINGS_BEGIN("dangling-reference")
     auto& style = [&]() -> const RenderStyle& {
         if (auto* renderer = target->renderer())
             return renderer->style();
         return RenderStyle::defaultStyle();
     }();
+IGNORE_GCC_WARNINGS_END
 
     auto resolvedProperty = [&] (AnimatableProperty property) -> AnimatableProperty {
         if (std::holds_alternative<CSSPropertyID>(property))

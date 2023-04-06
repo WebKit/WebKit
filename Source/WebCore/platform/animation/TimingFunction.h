@@ -26,6 +26,7 @@
 
 #include "CSSValue.h"
 #include "ExceptionOr.h"
+#include <wtf/NeverDestroyed.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
@@ -72,8 +73,8 @@ public:
 
     static const LinearTimingFunction& sharedLinearTimingFunction()
     {
-        static const LinearTimingFunction& function = create().leakRef();
-        return function;
+        static NeverDestroyed<Ref<LinearTimingFunction>> function { create() };
+        return function.get();
     }
 
 private:
@@ -138,8 +139,8 @@ public:
 
     static const CubicBezierTimingFunction& defaultTimingFunction()
     {
-        static const CubicBezierTimingFunction& function = create().leakRef();
-        return function;
+        static NeverDestroyed<Ref<CubicBezierTimingFunction>> function { create() };
+        return function.get();
     }
 
     Ref<CubicBezierTimingFunction> createReversed() const

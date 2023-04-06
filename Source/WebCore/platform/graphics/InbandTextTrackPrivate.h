@@ -77,7 +77,7 @@ public:
 
     CueFormat cueFormat() const { return m_format; }
     
-    virtual bool operator==(const InbandTextTrackPrivate& track) const
+    bool operator==(const InbandTextTrackPrivate& track) const
     {
         return TrackPrivateBase::operator==(track)
             && cueFormat() == track.cueFormat()

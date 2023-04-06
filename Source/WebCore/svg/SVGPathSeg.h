@@ -79,7 +79,12 @@ public:
 
     virtual unsigned short pathSegType() const = 0;
     virtual String pathSegTypeAsLetter() const = 0;
+
+IGNORE_GCC_WARNINGS_BEGIN("overloaded-virtual")
+    // FIXME: SVGPathSegValue has a templated (and therefore non-virtual) clone
+    // function that hides this one, which is fragile and very confusing.
     virtual Ref<SVGPathSeg> clone() const = 0;
+IGNORE_GCC_WARNINGS_END
 
 protected:
     using SVGProperty::SVGProperty;
