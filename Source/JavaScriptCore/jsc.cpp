@@ -3961,8 +3961,13 @@ int jscmain(int argc, char** argv)
     // comes first.
     mainCommandLine.construct(argc, argv);
 
-#if OS(UNIX)
+#if OS(WINDOWS)
+    // Needed for complex.yaml tests.
+    if (char* tz = getenv("TZ"))
+        setTimeZoneOverride(StringView::fromLatin1(tz));
+#endif
 
+#if OS(UNIX)
     if (getenv("JS_SHELL_WAIT_FOR_SIGUSR2_TO_EXIT")) {
         initializeSignalHandling();
         addSignalHandler(Signal::Usr, SignalHandler([&] (Signal, SigInfo&, PlatformRegisters&) {
