@@ -988,7 +988,7 @@ void RenderFlexibleBox::trimMainAxisMarginEnd(const FlexItem& flexItem)
     auto horizontalFlow = isHorizontalFlow();
     flexItem.mainAxisMargin -= horizontalFlow ? flexItem.box.marginEnd(&style()) : flexItem.box.marginAfter(&style());
     if (horizontalFlow)
-        flexItem.box.setMarginEnd(0_lu, &style());
+        setTrimmedMarginForChild(flexItem.box, MarginTrimType::InlineEnd);
     else
         flexItem.box.setMarginAfter(0_lu, &style());
     m_marginTrimItems.m_itemsAtFlexLineEnd.add(&flexItem.box);
@@ -1008,7 +1008,7 @@ void RenderFlexibleBox::trimCrossAxisMarginEnd(const FlexItem& flexItem)
     if (isHorizontalFlow())
         flexItem.box.setMarginAfter(0_lu, &style());
     else
-        flexItem.box.setMarginEnd(0_lu, &style());
+        setTrimmedMarginForChild(flexItem.box, MarginTrimType::InlineEnd);
     m_marginTrimItems.m_itemsOnLastFlexLine.add(&flexItem.box);
 }
 
