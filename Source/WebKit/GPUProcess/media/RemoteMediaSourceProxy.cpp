@@ -52,7 +52,8 @@ RemoteMediaSourceProxy::RemoteMediaSourceProxy(GPUConnectionToWebProcess& connec
 
 RemoteMediaSourceProxy::~RemoteMediaSourceProxy()
 {
-    ASSERT(m_connectionToWebProcess);
+    if (!m_connectionToWebProcess)
+        return;
 
     m_connectionToWebProcess->messageReceiverMap().removeMessageReceiver(Messages::RemoteMediaSourceProxy::messageReceiverName(), m_identifier.toUInt64());
 }
