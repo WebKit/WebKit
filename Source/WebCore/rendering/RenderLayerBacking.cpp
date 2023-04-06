@@ -3690,10 +3690,14 @@ void RenderLayerBacking::paintDebugOverlays(const GraphicsLayer* graphicsLayer, 
 
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
     if (DebugPageOverlays::shouldPaintOverlayIntoLayerForRegionType(renderer().page(), DebugPageOverlays::RegionType::InteractionRegion)) {
-        context.setStrokeColor(Color::green);
         context.setStrokeThickness(1);
 
         for (const auto& region : eventRegion.interactionRegions()) {
+            if (region.type == InteractionRegion::Type::Occlusion)
+                context.setStrokeColor(Color::red);
+            else
+                context.setStrokeColor(Color::green);
+            
             auto rect = region.rectInLayerCoordinates;
             Path path;
             path.addRoundedRect(rect, { region.borderRadius, region.borderRadius });

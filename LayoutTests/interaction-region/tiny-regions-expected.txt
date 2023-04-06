@@ -1,4 +1,3 @@
-
 (GraphicsLayer
   (anchor 0.00 0.00)
   (bounds 800.00 600.00)
@@ -12,10 +11,12 @@
         (rect (0,0) width=800 height=600)
 
       (interaction regions [
-        (occlusion (48,-8) width=37 height=36)
+        (occlusion (-10,0) width=30 height=30)
         (borderRadius 0.00),
-        (interaction (58,2) width=17 height=16)
-        (borderRadius 8.00)])
+        (interaction (0,10) width=10 height=10)
+        (borderRadius 8.00),
+        (occlusion (0,20) width=10 height=10)
+        (borderRadius 0.00)])
       )
     )
   )

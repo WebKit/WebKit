@@ -119,6 +119,29 @@ bool EventRegionContext::contains(const IntRect& rect) const
 
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
 
+static std::optional<IntRect> guardRectForRegionBounds(const IntRect& regionBounds)
+{
+    constexpr int minimumSize = 20;
+    constexpr int occlusionMargin = 10;
+
+    bool isSmallRect = false;
+    auto occlusionRect = regionBounds;
+
+    if (occlusionRect.width() < minimumSize) {
+        occlusionRect.inflateX(occlusionMargin);
+        isSmallRect = true;
+    }
+
+    if (occlusionRect.height() < minimumSize) {
+        occlusionRect.inflateY(occlusionMargin);
+        isSmallRect = true;
+    }
+
+    if (isSmallRect)
+        return occlusionRect;
+    return std::nullopt;
+}
+
 void EventRegionContext::uniteInteractionRegions(const Region& region, RenderObject& renderer)
 {
     if (!renderer.page().shouldBuildInteractionRegions())
@@ -126,45 +149,67 @@ void EventRegionContext::uniteInteractionRegions(const Region& region, RenderObj
 
     if (auto interactionRegion = interactionRegionForRenderedRegion(renderer, region)) {
         auto bounds = interactionRegion->rectInLayerCoordinates;
-        if (interactionRegion->type == InteractionRegion::Type::Interaction) {
-            if (m_interactionRects.contains(bounds))
-                return;
-            m_interactionRects.add(bounds);
-
-            if (shouldConsolidateInteractionRegion(bounds, renderer))
-                return;
-
-            auto regionIterator = m_discoveredRegionsByElement.find(interactionRegion->elementIdentifier);
-            if (regionIterator != m_discoveredRegionsByElement.end()) {
-                auto discoveredRegion = regionIterator->value;
-                
-                Region tempRegion;
-                tempRegion.unite(interactionRegion->rectInLayerCoordinates);
-                tempRegion.subtract(discoveredRegion);
-                if (tempRegion.isEmpty())
-                    return;
-                
-                discoveredRegion.unite(tempRegion);
-                m_discoveredRegionsByElement.set(interactionRegion->elementIdentifier, discoveredRegion);
-                
-                for (auto rect : tempRegion.rects()) {
-                    m_interactionRegions.append({
-                        InteractionRegion::Type::Interaction,
-                        interactionRegion->elementIdentifier,
-                        rect,
-                        interactionRegion->borderRadius,
-                        interactionRegion->maskedCorners
-                    });
-                }
-                return;
-            } else
-                m_discoveredRegionsByElement.add(interactionRegion->elementIdentifier, interactionRegion->rectInLayerCoordinates);
-        } else {
+        
+        if (interactionRegion->type == InteractionRegion::Type::Occlusion) {
             if (m_occlusionRects.contains(bounds))
                 return;
             m_occlusionRects.add(bounds);
+            
+            m_interactionRegions.append(*interactionRegion);
+            return;
         }
+        
+        
+        if (m_interactionRects.contains(bounds))
+            return;
+        m_interactionRects.add(bounds);
 
+        if (shouldConsolidateInteractionRegion(bounds, renderer))
+            return;
+
+        auto regionIterator = m_discoveredRegionsByElement.find(interactionRegion->elementIdentifier);
+        if (regionIterator != m_discoveredRegionsByElement.end()) {
+            auto discoveredRegion = regionIterator->value;
+            
+            Region tempRegion;
+            tempRegion.unite(interactionRegion->rectInLayerCoordinates);
+            tempRegion.subtract(discoveredRegion);
+            if (tempRegion.isEmpty())
+                return;
+            
+            discoveredRegion.unite(tempRegion);
+            m_discoveredRegionsByElement.set(interactionRegion->elementIdentifier, discoveredRegion);
+            
+            auto occlusionRect = guardRectForRegionBounds(tempRegion.bounds());
+            if (occlusionRect) {
+                m_interactionRegions.append({
+                    InteractionRegion::Type::Occlusion,
+                    interactionRegion->elementIdentifier,
+                    occlusionRect.value()
+                });
+            }
+
+            for (auto rect : tempRegion.rects()) {
+                m_interactionRegions.append({
+                    InteractionRegion::Type::Interaction,
+                    interactionRegion->elementIdentifier,
+                    rect,
+                    interactionRegion->borderRadius,
+                    interactionRegion->maskedCorners
+                });
+            }
+            return;
+        } else
+            m_discoveredRegionsByElement.add(interactionRegion->elementIdentifier, interactionRegion->rectInLayerCoordinates);
+    
+        auto occlusionRect = guardRectForRegionBounds(interactionRegion->rectInLayerCoordinates);
+        if (occlusionRect) {
+            m_interactionRegions.append({
+                InteractionRegion::Type::Occlusion,
+                interactionRegion->elementIdentifier,
+                occlusionRect.value()
+            });
+        }
         m_interactionRegions.append(*interactionRegion);
     }
 }

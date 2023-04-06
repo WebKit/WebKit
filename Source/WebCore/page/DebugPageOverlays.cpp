@@ -400,8 +400,12 @@ std::optional<InteractionRegion> InteractionRegionOverlay::activeRegion() const
         }
     }
     
-    if (hitRegion)
+    if (hitRegion) {
+        if (hitRegion->type == InteractionRegion::Type::Occlusion)
+            return std::nullopt;
+        
         hitRegion->rectInLayerCoordinates = hitRectInOverlayCoordinates;
+    }
 
     return hitRegion;
 #else
