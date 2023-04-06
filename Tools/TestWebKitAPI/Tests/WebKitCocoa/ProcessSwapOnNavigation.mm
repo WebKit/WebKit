@@ -7900,6 +7900,10 @@ static void checkSettingsControlledByLockdownMode(WKWebView *webView, ShouldBeEn
     EXPECT_EQ(runJSCheck("!!window.PushSubscription"_s), isShowingInitialEmptyDocument != IsShowingInitialEmptyDocument::Yes && shouldBeEnabled == ShouldBeEnabled::Yes); // Push API.
     EXPECT_EQ(runJSCheck("!!window.PushSubscriptionOptions"_s), isShowingInitialEmptyDocument != IsShowingInitialEmptyDocument::Yes && shouldBeEnabled == ShouldBeEnabled::Yes); // Push API.
     EXPECT_EQ(runJSCheck("!!window.LockManager"_s), isShowingInitialEmptyDocument != IsShowingInitialEmptyDocument::Yes && shouldBeEnabled == ShouldBeEnabled::Yes); // WebLockManager API.
+    EXPECT_EQ(runJSCheck("!!window.VideoDecoder"_s), shouldBeEnabled == ShouldBeEnabled::Yes); // WebCodecs.
+    EXPECT_EQ(runJSCheck("!!window.VideoEncoder"_s), shouldBeEnabled == ShouldBeEnabled::Yes); // WebCodecs.
+    EXPECT_EQ(runJSCheck("!!window.VideoFrame"_s), shouldBeEnabled == ShouldBeEnabled::Yes); // WebCodecs.
+    EXPECT_EQ(runJSCheck("!!window.EncodedVideoChunk"_s), shouldBeEnabled == ShouldBeEnabled::Yes); // WebCodecs.
     String mathMLCheck = makeString("document.createElementNS('http://www.w3.org/1998/Math/MathML','mspace').__proto__ == ", shouldBeEnabled == ShouldBeEnabled::Yes ? "MathMLElement" : "Element", ".prototype");
     EXPECT_EQ(runJSCheck(mathMLCheck), true); // MathML.
     EXPECT_EQ(runJSCheck("!!window.ServiceWorker"_s), isShowingInitialEmptyDocument != IsShowingInitialEmptyDocument::Yes && shouldBeEnabled == ShouldBeEnabled::Yes); // Service Workers API.
