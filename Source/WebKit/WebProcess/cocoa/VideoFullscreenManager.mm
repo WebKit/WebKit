@@ -368,19 +368,29 @@ void VideoFullscreenManager::enterVideoFullscreenForVideoElement(HTMLVideoElemen
         interface->setRootLayer(videoLayer.get());
     }
 
+    auto setupFullscreen = [protectedThis = Ref { *this }, page = WeakPtr { m_page }, contextId = contextId, videoRect = videoRect, videoElement = WeakPtr { videoElement }, allowsPictureInPicture = allowsPictureInPicture, standby = standby, fullscreenMode = interface->fullscreenMode()] (LayerHostingContextID contextID, const FloatSize& size) {
+        if (!page || !videoElement)
+            return;
+        page->send(Messages::VideoFullscreenManagerProxy::SetupFullscreenWithID(contextId, contextID, videoRect, size, page->deviceScaleFactor(), fullscreenMode, allowsPictureInPicture, standby, videoElement->document().quirks().blocksReturnToFullscreenFromPictureInPictureQuirk()));
+
+        if (auto player = videoElement->player()) {
+            if (auto identifier = player->identifier())
+                protectedThis->setPlayerIdentifier(contextId, identifier);
+        }
+    };
+
     LayerHostingContextID contextID = 0;
     bool blockMediaLayerRehosting = videoElement.document().settings().blockMediaLayerRehostingInWebContentProcess() && videoElement.document().page() &&  videoElement.document().page()->chrome().client().isUsingUISideCompositing();
-    if (blockMediaLayerRehosting)
+    if (blockMediaLayerRehosting) {
         contextID = videoElement.layerHostingContextID();
-    else
+        if (!contextID) {
+            m_setupFullscreenHandler = WTFMove(setupFullscreen);
+            return;
+        }
+    } else
         contextID = interface->layerHostingContext()->contextID();
 
-    m_page->send(Messages::VideoFullscreenManagerProxy::SetupFullscreenWithID(contextId, contextID, videoRect, FloatSize(videoElement.videoWidth(), videoElement.videoHeight()), m_page->deviceScaleFactor(), interface->fullscreenMode(), allowsPictureInPicture, standby, videoElement.document().quirks().blocksReturnToFullscreenFromPictureInPictureQuirk()));
-
-    if (auto player = videoElement.player()) {
-        if (auto identifier = player->identifier())
-            setPlayerIdentifier(contextId, identifier);
-    }
+    setupFullscreen(contextID, FloatSize(videoElement.videoWidth(), videoElement.videoHeight()));
 }
 
 void VideoFullscreenManager::exitVideoFullscreenForVideoElement(HTMLVideoElement& videoElement, CompletionHandler<void(bool)>&& completionHandler)
@@ -452,6 +462,15 @@ void VideoFullscreenManager::hasVideoChanged(PlaybackSessionContextIdentifier co
 
 void VideoFullscreenManager::videoDimensionsChanged(PlaybackSessionContextIdentifier contextId, const FloatSize& videoDimensions)
 {
+    if (m_setupFullscreenHandler) {
+        auto [model, interface] = ensureModelAndInterface(contextId);
+        auto videoElement = model->videoElement();
+        auto layerHostingContextID = videoElement ? videoElement->layerHostingContextID() : 0;
+        if (layerHostingContextID) {
+            m_setupFullscreenHandler(layerHostingContextID, videoDimensions);
+            m_setupFullscreenHandler = nullptr;
+        }
+    }
     if (m_page)
         m_page->send(Messages::VideoFullscreenManagerProxy::SetVideoDimensions(contextId, videoDimensions));
 }

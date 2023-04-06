@@ -56,6 +56,8 @@ class Node;
 
 namespace WebKit {
 
+using LayerHostingContextID = uint32_t;
+
 class LayerHostingContext;
 class WebPage;
 class PlaybackSessionInterfaceContext;
@@ -190,6 +192,7 @@ protected:
     HashMap<PlaybackSessionContextIdentifier, int> m_clientCounts;
     WeakPtr<WebCore::HTMLVideoElement, WebCore::WeakPtrImplWithEventTargetData> m_videoElementInPictureInPicture;
     bool m_currentlyInFullscreen { false };
+    WTF::Function<void(LayerHostingContextID, const WebCore::FloatSize&)> m_setupFullscreenHandler;
 };
 
 } // namespace WebKit
