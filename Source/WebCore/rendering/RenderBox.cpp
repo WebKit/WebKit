@@ -1391,13 +1391,28 @@ void RenderBox::clearOverridingLogicalWidthLength()
 
 FlowRelativeDirection RenderBox::physicalToFlowRelativeDirectionMapping(PhysicalDirection direction) const
 {
-    auto isHorizontalWritingMode = style().isHorizontalWritingMode();
-    auto isLeftToRightDirection = style().isLeftToRightDirection();
+    auto determineFormattingContextRootStyle = [&]() -> const RenderStyle& {
+        if (isFlexItem())
+            return parent()->style();
+        ASSERT_NOT_IMPLEMENTED_YET();
+        return style();
+    };
+    auto& formattingContextRootStyle = determineFormattingContextRootStyle();
+    auto isHorizontalWritingMode = formattingContextRootStyle.isHorizontalWritingMode();
+    auto isLeftToRightDirection = formattingContextRootStyle.isLeftToRightDirection();
+    // vertical-rl and horizontal-bt writing modes
+    auto isFlippedBlocksWritingMode = formattingContextRootStyle.isFlippedBlocksWritingMode();
 
-    if (isHorizontalWritingMode == containingBlock()->style().isHorizontalWritingMode()) {
+    if (isHorizontalWritingMode == formattingContextRootStyle.isHorizontalWritingMode()) {
         switch (direction) {
         case PhysicalDirection::Top:
-            return isHorizontalWritingMode ? FlowRelativeDirection::BlockStart : (isLeftToRightDirection ? FlowRelativeDirection::InlineStart : FlowRelativeDirection::InlineEnd);
+            if (isHorizontalWritingMode)
+                return FlowRelativeDirection::BlockStart;
+            return isLeftToRightDirection ? FlowRelativeDirection::InlineStart : FlowRelativeDirection::InlineEnd;
+        case PhysicalDirection::Right:
+            if (isHorizontalWritingMode)
+                return isLeftToRightDirection ? FlowRelativeDirection::InlineEnd : FlowRelativeDirection::InlineStart;
+            return isFlippedBlocksWritingMode ? FlowRelativeDirection::BlockStart : FlowRelativeDirection::BlockEnd;
         default:
             ASSERT_NOT_IMPLEMENTED_YET();
         } 
@@ -1465,7 +1480,7 @@ bool RenderBox::hasTrimmedMargin(PhysicalDirection physicalDirection) const
 #endif
     ASSERT(!needsLayout());
 
-    if (physicalDirection == PhysicalDirection::Top)
+    if (physicalDirection == PhysicalDirection::Top || physicalDirection == PhysicalDirection::Right)
         return hasTrimmedMargin(flowRelativeDirectionToMarginTrimType(physicalToFlowRelativeDirectionMapping(physicalDirection)));
     ASSERT_NOT_IMPLEMENTED_YET();
     return false;

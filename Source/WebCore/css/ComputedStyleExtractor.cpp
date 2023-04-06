@@ -2305,8 +2305,8 @@ static bool rendererContainingBlockHasMarginTrim(const RenderBox& renderer, std:
     }
 
     if (containingBlock->isFlexibleBox()) {
-        ASSERT(!marginTrimType || *marginTrimType == MarginTrimType::BlockStart);
-        return marginTrimType ? containingBlock->style().marginTrim().contains(*marginTrimType) : !containingBlock->style().marginTrim().isEmpty();
+        ASSERT(!marginTrimType || marginTrimType.value() == MarginTrimType::BlockStart || marginTrimType.value() == MarginTrimType::InlineEnd);
+        return marginTrimType ? containingBlock->style().marginTrim().contains(marginTrimType.value()) : !containingBlock->style().marginTrim().containsAny({ MarginTrimType::BlockStart, MarginTrimType::InlineEnd });
     }
     ASSERT_NOT_REACHED();
     return false;
@@ -2347,7 +2347,7 @@ static bool isLayoutDependent(CSSPropertyID propertyID, const RenderStyle* style
     case CSSPropertyMarginTop:
         return paddingOrMarginIsRendererDependent<&RenderStyle::marginTop>(style, renderer) || (isFlexItem(renderer) && rendererContainingBlockHasMarginTrim(downcast<RenderBox>(*renderer), MarginTrimType::BlockStart));
     case CSSPropertyMarginRight:
-        return paddingOrMarginIsRendererDependent<&RenderStyle::marginRight>(style, renderer);
+        return paddingOrMarginIsRendererDependent<&RenderStyle::marginRight>(style, renderer) || (isFlexItem(renderer) && rendererContainingBlockHasMarginTrim(downcast<RenderBox>(*renderer), MarginTrimType::InlineEnd));
     case CSSPropertyMarginBottom:
         return paddingOrMarginIsRendererDependent<&RenderStyle::marginBottom>(style, renderer);
     case CSSPropertyMarginLeft:
@@ -3284,6 +3284,10 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         return zoomAdjustedPaddingOrMarginPixelValue<&RenderStyle::marginTop, &RenderBoxModelObject::marginTop>(style, renderer);
     }
     case CSSPropertyMarginRight: {
+        if (auto* box = dynamicDowncast<RenderBox>(renderer); box && box->isFlexItem() 
+            && rendererContainingBlockHasMarginTrim(*box, MarginTrimType::InlineEnd)
+            && box->hasTrimmedMargin(PhysicalDirection::Right))
+            return zoomAdjustedPixelValue(box->marginRight(), style);
         Length marginRight = style.marginRight();
         if (marginRight.isFixed() || !is<RenderBox>(renderer))
             return zoomAdjustedPixelValueForLength(marginRight, style);
