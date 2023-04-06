@@ -1,0 +1,7 @@
+
+EVENT(webkitneedkey)
+Create media keys:
+Attempt to create key session with invalid certificate:
+EVENT(webkitkeyerror)
+END OF TEST
+

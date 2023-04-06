@@ -28,12 +28,17 @@
 #include "CDMSessionMediaSourceAVFObjC.h"
 #include "SourceBufferPrivateAVFObjC.h"
 #include <wtf/RetainPtr.h>
+#include <wtf/WTFSemaphore.h>
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA) && ENABLE(MEDIA_SOURCE)
 
 OBJC_CLASS AVContentKeyRequest;
 OBJC_CLASS AVContentKeySession;
 OBJC_CLASS WebCDMSessionAVContentKeySessionDelegate;
+
+namespace WTF {
+class WorkQueue;
+}
 
 namespace WebCore {
 
@@ -66,12 +71,18 @@ protected:
     bool hasContentKeySession() const { return m_contentKeySession; }
     AVContentKeySession* contentKeySession();
 
+    bool hasContentKeyRequest() const;
+    RetainPtr<AVContentKeyRequest> contentKeyRequest();
+
 #if !RELEASE_LOG_DISABLED
     const char* logClassName() const { return "CDMSessionAVContentKeySession"; }
 #endif
 
     RetainPtr<AVContentKeySession> m_contentKeySession;
     RetainPtr<WebCDMSessionAVContentKeySessionDelegate> m_contentKeySessionDelegate;
+    Ref<WTF::WorkQueue> m_delegateQueue;
+    Semaphore m_hasKeyRequestSemaphore;
+    mutable Lock m_keyRequestLock;
     RetainPtr<AVContentKeyRequest> m_keyRequest;
     RefPtr<Uint8Array> m_identifier;
     RefPtr<SharedBuffer> m_initData;

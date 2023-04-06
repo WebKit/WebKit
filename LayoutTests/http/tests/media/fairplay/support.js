@@ -3,6 +3,11 @@ function uInt8ArrayToString(array) {
     return String.fromCharCode.apply(null, uint8array);
 }
 
+function uInt16ArrayToString(array) {
+    var uint16array = new Uint16Array(array.buffer);
+    return String.fromCharCode.apply(null, uint16array);
+}
+
 function base64DecodeUint8Array(input) {
     var raw = window.atob(input);
     var rawLength = raw.length;
@@ -20,6 +25,15 @@ function stringToUInt8Array(str)
    for (var i=0; i<str.length; i++)
         array[i] = str.charCodeAt(i);
    return array;
+}
+
+function stringToUint16Array(string) {
+    var buffer = new ArrayBuffer(string.length*2); // 2 bytes for each char
+    var array = new Uint16Array(buffer);
+    for (var i=0, strLen=string.length; i<strLen; i++) {
+        array[i] = string.charCodeAt(i);
+    }
+    return array;
 }
 
 function base64EncodeUint8Array(input) {

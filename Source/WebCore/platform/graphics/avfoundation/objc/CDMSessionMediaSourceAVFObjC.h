@@ -88,7 +88,7 @@ protected:
 
 inline CDMSessionMediaSourceAVFObjC* toCDMSessionMediaSourceAVFObjC(LegacyCDMSession* session)
 {
-    if (!session || (session->type() != CDMSessionTypeAVStreamSession && session->type() != CDMSessionTypeAVContentKeySession))
+    if (!session || session->type() != CDMSessionTypeAVContentKeySession)
         return nullptr;
     return static_cast<CDMSessionMediaSourceAVFObjC*>(session);
 }

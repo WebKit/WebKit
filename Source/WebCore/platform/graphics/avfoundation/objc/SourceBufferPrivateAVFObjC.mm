@@ -83,14 +83,6 @@
 @interface AVSampleBufferAudioRenderer (WebCoreSampleBufferKeySession) <AVContentKeyRecipient>
 @end
 
-#pragma mark -
-#pragma mark AVStreamSession
-
-@interface AVStreamSession : NSObject
-- (void)addStreamDataParser:(AVStreamDataParser *)streamDataParser;
-- (void)removeStreamDataParser:(AVStreamDataParser *)streamDataParser;
-@end
-
 @interface WebAVSampleBufferErrorListener : NSObject {
     WeakPtr<WebCore::SourceBufferPrivateAVFObjC> _parent;
     Vector<RetainPtr<AVSampleBufferDisplayLayer>> _layers;
@@ -297,13 +289,6 @@ static bool sampleBufferRenderersSupportKeySession()
     return supports;
 }
 
-static Vector<Ref<SharedBuffer>> copyKeyIDs(const Vector<Ref<SharedBuffer>> keyIDs)
-{
-    return keyIDs.map([] (auto& keyID) {
-        return keyID.copyRef();
-    });
-}
-
 static void bufferWasConsumedCallback(CMNotificationCenterRef, const void* listener, CFStringRef notificationName, const void*, CFTypeRef)
 {
     if (!CFEqual(PAL::kCMSampleBufferConsumerNotification_BufferConsumed, notificationName))
@@ -493,12 +478,7 @@ void SourceBufferPrivateAVFObjC::didEncounterErrorDuringParsing(int32_t code)
 void SourceBufferPrivateAVFObjC::didProvideMediaDataForTrackId(Ref<MediaSampleAVFObjC>&& mediaSample, uint64_t trackId, const String& mediaType)
 {
     UNUSED_PARAM(mediaType);
-
-#if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
-    auto findResult = m_protectedTrackInitDataMap.find(trackId);
-    if (findResult != m_protectedTrackInitDataMap.end())
-        mediaSample->setKeyIDs(copyKeyIDs(findResult->value.keyIDs));
-#endif
+    UNUSED_PARAM(trackId);
 
     didReceiveSample(WTFMove(mediaSample));
 }
@@ -516,29 +496,7 @@ void SourceBufferPrivateAVFObjC::willProvideContentKeyRequestInitializationDataF
     if (!m_mediaSource)
         return;
 
-#if HAVE(AVSTREAMSESSION) && ENABLE(LEGACY_ENCRYPTED_MEDIA)
-    ALWAYS_LOG(LOGIDENTIFIER, "track = ", trackID);
-
-    m_protectedTrackID = trackID;
-
-    auto parser = this->streamDataParser();
-    if (!parser)
-        return;
-
-    auto player = this->player();
-    if (!player)
-        return;
-
-    if (CDMSessionMediaSourceAVFObjC* session = player->cdmSession())
-        session->addParser(parser);
-    else if (!CDMSessionAVContentKeySession::isAvailable()) {
-        BEGIN_BLOCK_OBJC_EXCEPTIONS
-        [player->streamSession() addStreamDataParser:parser];
-        END_BLOCK_OBJC_EXCEPTIONS
-    }
-#else
     UNUSED_PARAM(trackID);
-#endif
 }
 
 void SourceBufferPrivateAVFObjC::didProvideContentKeyRequestInitializationDataForTrackID(Ref<SharedBuffer>&& initData, uint64_t trackID, Box<BinarySemaphore> hasSessionSemaphore)
@@ -767,10 +725,6 @@ void SourceBufferPrivateAVFObjC::destroyStreamDataParser()
     auto parser = this->streamDataParser();
     if (!parser)
         return;
-#if HAVE(AVSTREAMSESSION) && ENABLE(LEGACY_ENCRYPTED_MEDIA)
-    if (auto player = this->player(); player && player->hasStreamSession())
-        [player->streamSession() removeStreamDataParser:parser];
-#endif
 #if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
     if (m_cdmInstance) {
         if (auto instanceSession = m_cdmInstance->sessionForKeyIDs(m_keyIDs))

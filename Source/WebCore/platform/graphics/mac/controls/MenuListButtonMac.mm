@@ -31,6 +31,7 @@
 #import "ColorSpaceCG.h"
 #import "FloatRoundedRect.h"
 #import "GraphicsContext.h"
+#import "LocalCurrentGraphicsContext.h"
 #import "MenuListButtonPart.h"
 
 namespace WebCore {

@@ -74,10 +74,6 @@ SOFT_LINK_CLASS_FOR_HEADER(PAL, AVURLAsset)
 SOFT_LINK_CLASS_FOR_HEADER(PAL, AVDelegatingPlaybackCoordinator)
 #endif
 
-#if HAVE(AVSTREAMSESSION) && ENABLE(LEGACY_ENCRYPTED_MEDIA)
-SOFT_LINK_CLASS_FOR_HEADER(PAL, AVStreamSession)
-#endif
-
 #if PLATFORM(IOS_FAMILY)
 SOFT_LINK_CLASS_FOR_HEADER(PAL, AVAudioSession)
 SOFT_LINK_CLASS_FOR_HEADER(PAL, AVPersistableContentKeyRequest)
@@ -155,8 +151,6 @@ SOFT_LINK_CONSTANT_FOR_HEADER(PAL, AVFoundation, AVCaptureDeviceWasDisconnectedN
 #define AVCaptureDeviceWasDisconnectedNotification PAL::get_AVFoundation_AVCaptureDeviceWasDisconnectedNotification()
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, AVFoundation, AVPlayerItemDidPlayToEndTimeNotification, NSString *)
 #define AVPlayerItemDidPlayToEndTimeNotification PAL::get_AVFoundation_AVPlayerItemDidPlayToEndTimeNotification()
-SOFT_LINK_CONSTANT_FOR_HEADER(PAL, AVFoundation, AVStreamSessionContentProtectionSessionIdentifierChangedNotification, NSString *)
-#define AVStreamSessionContentProtectionSessionIdentifierChangedNotification PAL::get_AVFoundation_AVStreamSessionContentProtectionSessionIdentifierChangedNotification()
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, AVFoundation, AVSampleBufferDisplayLayerFailedToDecodeNotification, NSString*)
 #define AVSampleBufferDisplayLayerFailedToDecodeNotification PAL::get_AVFoundation_AVSampleBufferDisplayLayerFailedToDecodeNotification()
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, AVFoundation, AVSampleBufferDisplayLayerFailedToDecodeNotificationErrorKey, NSString*)

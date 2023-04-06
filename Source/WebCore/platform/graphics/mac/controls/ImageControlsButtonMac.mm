@@ -32,6 +32,7 @@
 #import "FloatRoundedRect.h"
 #import "GraphicsContext.h"
 #import "ImageControlsButtonPart.h"
+#import "LocalDefaultSystemAppearance.h"
 #import <pal/spi/mac/NSServicesRolloverButtonCellSPI.h>
 
 namespace WebCore {

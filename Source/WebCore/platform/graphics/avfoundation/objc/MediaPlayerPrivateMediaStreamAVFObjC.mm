@@ -37,6 +37,7 @@
 #import "MediaStreamPrivate.h"
 #import "PixelBufferConformerCV.h"
 #import "VideoFrame.h"
+#import "VideoFrameMetadata.h"
 #import "VideoLayerManagerObjC.h"
 #import "VideoTrackPrivateMediaStream.h"
 #import <CoreGraphics/CGAffineTransform.h>

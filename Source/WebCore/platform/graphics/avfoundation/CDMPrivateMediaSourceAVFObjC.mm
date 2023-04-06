@@ -29,7 +29,6 @@
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA) && ENABLE(MEDIA_SOURCE)
 
 #import "CDMSessionAVContentKeySession.h"
-#import "CDMSessionAVStreamSession.h"
 #import "ContentType.h"
 #import "LegacyCDM.h"
 #import "MediaPlayerPrivateMediaSourceAVFObjC.h"
@@ -69,11 +68,7 @@ CDMPrivateMediaSourceAVFObjC::~CDMPrivateMediaSourceAVFObjC()
 static bool queryDecoderAvailability()
 {
     if (!canLoad_VideoToolbox_VTGetGVADecoderAvailability()) {
-#if HAVE(AVSTREAMSESSION)
-        return false;
-#else
         return true;
-#endif
     }
     uint32_t totalInstanceCount = 0;
     OSStatus status = VTGetGVADecoderAvailability(&totalInstanceCount, nullptr);
@@ -135,22 +130,7 @@ std::unique_ptr<LegacyCDMSession> CDMPrivateMediaSourceAVFObjC::createSession(Le
     if (!parameters)
         return nullptr;
 
-    std::unique_ptr<CDMSessionMediaSourceAVFObjC> session;
-    
-#if HAVE(AVSTREAMSESSION)
-    bool shouldUseAVContentKeySession = parameters.value().version == 3;
-#else
-    bool shouldUseAVContentKeySession = true;
-#endif
-    
-    if (shouldUseAVContentKeySession && CDMSessionAVContentKeySession::isAvailable())
-        session = makeUnique<CDMSessionAVContentKeySession>(WTFMove(parameters.value().protocols), parameters.value().version, *this, client);
-    else
-#if HAVE(AVSTREAMSESSION)
-        session = makeUnique<CDMSessionAVStreamSession>(WTFMove(parameters.value().protocols), *this, client);
-#else
-        return nullptr;
-#endif
+    auto session = makeUnique<CDMSessionAVContentKeySession>(WTFMove(parameters.value().protocols), parameters.value().version, *this, client);
 
     m_sessions.append(session.get());
     return WTFMove(session);

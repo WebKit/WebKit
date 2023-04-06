@@ -31,7 +31,7 @@
 #import "AVAssetMIMETypeCache.h"
 #import "AVAssetTrackUtilities.h"
 #import "AVStreamDataParserMIMETypeCache.h"
-#import "CDMSessionAVStreamSession.h"
+#import "CDMSessionMediaSourceAVFObjC.h"
 #import "ContentTypeUtilities.h"
 #import "GraphicsContext.h"
 #import "IOSurface.h"
@@ -42,6 +42,7 @@
 #import "MediaSourcePrivateClient.h"
 #import "PixelBufferConformerCV.h"
 #import "PlatformScreen.h"
+#import "SourceBufferPrivateAVFObjC.h"
 #import "TextTrackRepresentation.h"
 #import "VideoFrameCV.h"
 #import "VideoLayerManagerObjC.h"
@@ -63,13 +64,6 @@
 #import "CoreVideoSoftLink.h"
 #import <pal/cf/CoreMediaSoftLink.h>
 #import <pal/cocoa/AVFoundationSoftLink.h>
-
-#pragma mark -
-#pragma mark AVStreamSession
-
-@interface AVStreamSession : NSObject
-- (instancetype)initWithStorageDirectoryAtURL:(NSURL *)storageDirectory;
-@end
 
 @interface AVSampleBufferDisplayLayer (Staging_100128644)
 @property (assign, nonatomic) BOOL preventsAutomaticBackgroundingDuringVideoPlayback;
@@ -1158,29 +1152,6 @@ void MediaPlayerPrivateMediaSourceAVFObjC::flushPendingSizeChanges()
 }
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
-#if HAVE(AVSTREAMSESSION)
-AVStreamSession* MediaPlayerPrivateMediaSourceAVFObjC::streamSession()
-{
-    if (!PAL::getAVStreamSessionClass() || ![PAL::getAVStreamSessionClass() instancesRespondToSelector:@selector(initWithStorageDirectoryAtURL:)])
-        return nil;
-
-    if (!m_streamSession) {
-        String storageDirectory = m_player->mediaKeysStorageDirectory();
-        if (storageDirectory.isEmpty())
-            return nil;
-
-        if (!FileSystem::fileExists(storageDirectory)) {
-            if (!FileSystem::makeAllDirectories(storageDirectory))
-                return nil;
-        }
-
-        String storagePath = FileSystem::pathByAppendingComponent(storageDirectory, "SecureStop.plist"_s);
-        m_streamSession = adoptNS([PAL::allocAVStreamSessionInstance() initWithStorageDirectoryAtURL:[NSURL fileURLWithPath:storagePath]]);
-    }
-    return m_streamSession.get();
-}
-#endif
-
 CDMSessionMediaSourceAVFObjC* MediaPlayerPrivateMediaSourceAVFObjC::cdmSession() const
 {
     return m_session.get();
@@ -1194,11 +1165,6 @@ void MediaPlayerPrivateMediaSourceAVFObjC::setCDMSession(LegacyCDMSession* sessi
     ALWAYS_LOG(LOGIDENTIFIER);
 
     m_session = toCDMSessionMediaSourceAVFObjC(session);
-
-#if HAVE(AVSTREAMSESSION)
-    if (CDMSessionAVStreamSession* cdmStreamSession = toCDMSessionAVStreamSession(m_session.get()))
-        cdmStreamSession->setStreamSession(streamSession());
-#endif
 
     if (!m_mediaSourcePrivate)
         return;
