@@ -23,6 +23,9 @@
 
 PRODUCT_NAME = yasm;
 
+// Needs to be ad-hoc signed by the linker due to rdar://107696259.
+CODE_SIGN_IDENTITY = ;
+
 HEADER_SEARCH_PATHS = Source/third_party/yasm;
 
 SKIP_INSTALL = YES;
