@@ -3560,6 +3560,22 @@ class RunWebKitTestsInStressGuardmallocMode(RunWebKitTestsInStressMode):
     ENABLE_GUARD_MALLOC = True
 
 
+class RunWebKitTestsNoWPT(RunWebKitTests):
+    name = 'layout-tests-no-wpt'
+
+    def setLayoutTestCommand(self):
+        RunWebKitTests.setLayoutTestCommand(self)
+        self.setCommand(self.command + ['--exclude-tests', 'imported/w3c/web-platform-tests'])
+
+
+class RunWebKitTestsOnlyWPT(RunWebKitTests):
+    name = 'layout-tests-only-wpt'
+
+    def setLayoutTestCommand(self):
+        RunWebKitTests.setLayoutTestCommand(self)
+        self.setCommand(self.command + ['imported/w3c/web-platform-tests'])
+
+
 class ReRunWebKitTests(RunWebKitTests):
     name = 're-run-layout-tests'
     NUM_FAILURES_TO_DISPLAY = 10

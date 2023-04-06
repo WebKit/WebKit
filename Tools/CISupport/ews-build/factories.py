@@ -32,7 +32,7 @@ from steps import (AddReviewerToCommitMessage, ApplyPatch, ApplyWatchList, Canon
                    MapBranchAlias, RunAPITests, RunBindingsTests, RunBuildWebKitOrgUnitTests, RunBuildbotCheckConfigForBuildWebKit, RunBuildbotCheckConfigForEWS,
                    RunEWSUnitTests, RunResultsdbpyTests, RunJavaScriptCoreTests, RunWebKit1Tests, RunWebKitPerlTests, RunWebKitPyPython2Tests,
                    RunWebKitPyPython3Tests, RunWebKitTests, RunWebKitTestsRedTree, RunWebKitTestsInStressMode, RunWebKitTestsInStressGuardmallocMode,
-                   SetBuildSummary, ShowIdentifier, TriggerCrashLogSubmission, UpdateWorkingDirectory, UpdatePullRequest,
+                   RunWebKitTestsNoWPT, RunWebKitTestsOnlyWPT, SetBuildSummary, ShowIdentifier, TriggerCrashLogSubmission, UpdateWorkingDirectory, UpdatePullRequest,
                    ValidateCommitMessage, ValidateChange, ValidateCommitterAndReviewer, WaitForCrashCollection,
                    InstallBuiltProduct, ValidateRemote, ValidateSquashed)
 
@@ -217,6 +217,16 @@ class iOSEmbeddedBuildFactory(BuildFactory):
 
 class iOSTestsFactory(TestFactory):
     LayoutTestClass = RunWebKitTests
+    willTriggerCrashLogSubmission = True
+
+
+class iOSTestsNoWPTFactory(TestFactory):
+    LayoutTestClass = RunWebKitTestsNoWPT
+    willTriggerCrashLogSubmission = True
+
+
+class iOSTestsOnlyWPTFactory(TestFactory):
+    LayoutTestClass = RunWebKitTestsOnlyWPT
     willTriggerCrashLogSubmission = True
 
 

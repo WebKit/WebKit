@@ -44,6 +44,7 @@ class Buildbot():
     QUEUE_TRIGGERS = {
         'api-ios': 'ios-sim',
         'ios-wk2': 'ios-sim',
+        'ios-wk2-wpt': 'ios-sim',
         'api-mac': 'mac',
         'mac-wk1': 'mac',
         'mac-wk2': 'mac',
