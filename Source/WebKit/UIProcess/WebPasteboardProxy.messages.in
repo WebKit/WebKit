@@ -72,7 +72,7 @@ messages -> WebPasteboardProxy NotRefCounted {
     ReadBuffer(String pasteboardName, String pasteboardType) -> (RefPtr<WebCore::SharedBuffer> buffer) Synchronous
     WriteToClipboard(String pasteboardName, WebCore::SelectionData pasteboardContent)
     ClearClipboard(String pasteboardName)
-    GetPasteboardChangeCount(String pasteboardName) -> (int64_t changeCount) Synchronous
+    GetPasteboardChangeCount(String pasteboardName) -> (int64_t changeCount) Synchronous WantsConnection
 #endif
 
 #if USE(LIBWPE)

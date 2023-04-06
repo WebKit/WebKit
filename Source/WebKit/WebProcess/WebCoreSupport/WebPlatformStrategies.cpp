@@ -333,8 +333,8 @@ void WebPlatformStrategies::clearClipboard(const String& pasteboardName)
 
 int64_t WebPlatformStrategies::changeCount(const String& pasteboardName)
 {
-    auto sendResult = WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPasteboardProxy::GetPasteboardChangeCount(pasteboardName), 0);
-    auto [changeCount] = sendResult.takeReplyOr(0);
+    int64_t changeCount { 0 };
+    WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPasteboardProxy::GetPasteboardChangeCount(pasteboardName), Messages::WebPasteboardProxy::GetPasteboardChangeCount::Reply(changeCount), 0);
     return changeCount;
 }
 
