@@ -122,11 +122,10 @@ endif ()
 
 if (USE_LIBGBM)
     list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
-        ${GBM_INCLUDE_DIR}
         ${LIBDRM_INCLUDE_DIR}
     )
     list(APPEND WebCore_LIBRARIES
-        ${GBM_LIBRARIES}
+        GBM::GBM
         ${LIBDRM_LIBRARIES}
     )
 endif ()
