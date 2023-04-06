@@ -90,7 +90,7 @@ if (Intl.DurationFormat) {
         });
 
         shouldBeOneOf(fmt.format({ hours: 10, seconds: 33, milliseconds: 32 }), [
-            `10, 33.032000000`,
+            `10:00:33.032000000`,
         ]);
     }
     {
@@ -101,7 +101,7 @@ if (Intl.DurationFormat) {
         });
 
         shouldBeOneOf(fmt.format({ minutes: 10, seconds: 33, milliseconds: 32 }), [
-            `10:33.032000000`,
+            `0:10:33.032000000`,
         ]);
     }
     {
@@ -122,6 +122,21 @@ if (Intl.DurationFormat) {
 
         shouldBeOneOf(fmt.format({ hours: 10, minutes: 10, milliseconds: 32}), [
             `10:10:00`,
+        ]);
+    }
+    {
+        var fmt = new Intl.DurationFormat('en', {
+            style: 'digital',
+        });
+
+        shouldBeOneOf(fmt.format({ hours: 0, minutes: 10}), [
+            `0:10:00`,
+        ]);
+        shouldBeOneOf(fmt.format({ hours: 5, minutes: 6}), [
+            `5:06:00`,
+        ]);
+        shouldBeOneOf(fmt.format({ minutes: 5, seconds:6}), [
+            `0:05:06`,
         ]);
     }
 }
