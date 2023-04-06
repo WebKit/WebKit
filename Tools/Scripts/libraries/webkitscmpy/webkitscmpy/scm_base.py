@@ -116,6 +116,8 @@ class ScmBase(object):
         raise NotImplementedError()
 
     def prioritize_branches(self, branches, preferred_branch=None):
+        if not branches:
+            return None
         if len(branches) == 1:
             return branches[0]
 
