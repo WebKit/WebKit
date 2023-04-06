@@ -242,9 +242,9 @@ DictionaryPopupInfo WebPage::dictionaryPopupInfoForRange(LocalFrame& frame, cons
 
     dictionaryPopupInfo.textIndicator = textIndicator->data();
 #if PLATFORM(MAC)
-    dictionaryPopupInfo.platformData.attributedString = scaledAttributedString;
+    dictionaryPopupInfo.platformData.attributedString = WebCore::AttributedString::fromNSAttributedString(scaledAttributedString);
 #elif PLATFORM(MACCATALYST)
-    dictionaryPopupInfo.platformData.attributedString = adoptNS([[NSMutableAttributedString alloc] initWithString:plainText(range)]);
+    dictionaryPopupInfo.platformData.attributedString = WebCore::AttributedString::fromNSAttributedString(adoptNS([[NSMutableAttributedString alloc] initWithString:plainText(range)]));
 #endif
 
     editor.setIsGettingDictionaryPopupInfo(false);

@@ -38,7 +38,7 @@ class WebCore::ContentFilterUnblockHandler {
 header: <WebCore/DictionaryPopupInfo.h>
 [CustomHeader] struct WebCore::DictionaryPopupInfoCocoa {
     RetainPtr<NSDictionary> options;
-    RetainPtr<NSAttributedString> attributedString;
+    WebCore::AttributedString attributedString;
 };
 
 header: <WebCore/ResourceRequest.h>

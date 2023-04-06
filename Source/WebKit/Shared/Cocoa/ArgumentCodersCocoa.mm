@@ -537,10 +537,7 @@ static void encodeSecureCodingInternal(Encoder& encoder, id <NSObject, NSSecureC
 
 static bool shouldEnableStrictMode(Decoder& decoder, NSArray<Class> *allowedClasses)
 {
-    if (
-        [allowedClasses containsObject:NSAttributedString.class] // rdar://107553512 Needed for DictionaryPopupInfo
-        || (
-            [allowedClasses containsObject:NSURLProtectionSpace.class]
+    if (([allowedClasses containsObject:NSURLProtectionSpace.class]
             && (
                 decoder.messageName() == IPC::MessageName::DownloadProxy_DidReceiveAuthenticationChallenge // NP -> UIP
                 || decoder.messageName() == IPC::MessageName::NetworkProcessProxy_DidReceiveAuthenticationChallenge // NP -> UIP

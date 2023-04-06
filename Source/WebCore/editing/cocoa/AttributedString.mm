@@ -39,7 +39,22 @@
 
 namespace WebCore {
 
+AttributedString::AttributedString() = default;
+
 AttributedString::~AttributedString() = default;
+
+AttributedString::AttributedString(AttributedString&&) = default;
+
+AttributedString& AttributedString::operator=(AttributedString&&) = default;
+
+AttributedString::AttributedString(const AttributedString&) = default;
+
+AttributedString& AttributedString::operator=(const AttributedString&) = default;
+
+AttributedString::AttributedString(String&& string, Vector<std::pair<Range, HashMap<String, AttributeValue>>>&& attributes, std::optional<HashMap<String, AttributeValue>>&& documentAttributes)
+    : string(WTFMove(string))
+    , attributes(WTFMove(attributes))
+    , documentAttributes(WTFMove(documentAttributes)) { }
 
 bool AttributedString::rangesAreSafe(const String& string, const Vector<std::pair<Range, HashMap<String, AttributeValue>>>& vector)
 {
@@ -210,7 +225,7 @@ AttributedString AttributedString::fromNSAttributedStringAndDocumentAttributes(R
     }];
     if (dictionary)
         result.documentAttributes = extractDictionary(dictionary.get());
-    return result;
+    return { WTFMove(result) };
 }
 
 }

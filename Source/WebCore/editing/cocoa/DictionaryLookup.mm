@@ -453,8 +453,9 @@ static WKRevealController showPopupOrCreateAnimationController(bool createAnimat
         pointerLocation = [view convertPoint:textBaselineOrigin toView:nil];
     }
 
-    auto webHighlight = adoptNS([[WebRevealHighlight alloc] initWithHighlightRect:highlightRect useDefaultHighlight:!textIndicator.get().contentImage() attributedString:dictionaryPopupInfo.platformData.attributedString.get() clearTextIndicatorCallback:WTFMove(clearTextIndicator)]);
-    auto item = adoptNS([PAL::allocRVItemInstance() initWithText:dictionaryPopupInfo.platformData.attributedString.get().string selectedRange:NSMakeRange(0, dictionaryPopupInfo.platformData.attributedString.get().string.length)]);
+    auto attributedString = dictionaryPopupInfo.platformData.attributedString.nsAttributedString();
+    auto webHighlight = adoptNS([[WebRevealHighlight alloc] initWithHighlightRect:highlightRect useDefaultHighlight:!textIndicator.get().contentImage() attributedString:attributedString.get() clearTextIndicatorCallback:WTFMove(clearTextIndicator)]);
+    auto item = adoptNS([PAL::allocRVItemInstance() initWithText:attributedString.get().string selectedRange:NSMakeRange(0, attributedString.get().string.length)]);
     auto context = createRVPresentingContextWithRetainedDelegate(pointerLocation, view, webHighlight.get());
     if (createAnimationController)
         return [presenter animationControllerForItem:item.get() documentContext:nil presentingContext:context.get() options:nil];
@@ -468,7 +469,8 @@ static WKRevealController showPopupOrCreateAnimationController(bool createAnimat
     ASSERT_UNUSED(createAnimationController, !createAnimationController);
     auto textIndicator = TextIndicator::create(dictionaryPopupInfo.textIndicator);
     auto webHighlight = adoptNS([[WebRevealHighlight alloc] initWithHighlightRect:[view convertRect:textIndicator->selectionRectInRootViewCoordinates() toView:nil] view:view image:textIndicator->contentImage()]);
-    auto item = adoptNS([PAL::allocRVItemInstance() initWithText:dictionaryPopupInfo.platformData.attributedString.get().string selectedRange:NSMakeRange(0, dictionaryPopupInfo.platformData.attributedString.get().string.length)]);
+    auto attributedString = dictionaryPopupInfo.platformData.attributedString.nsAttributedString();
+    auto item = adoptNS([PAL::allocRVItemInstance() initWithText:attributedString.get().string selectedRange:NSMakeRange(0, attributedString.get().string.length)]);
 
     [UINSSharedRevealController() revealItem:item.get() locationInWindow:dictionaryPopupInfo.origin window:view.window highlighter:webHighlight.get()];
     return nil;

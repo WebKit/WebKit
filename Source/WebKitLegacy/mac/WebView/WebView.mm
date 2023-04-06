@@ -9046,7 +9046,7 @@ FORWARD(toggleUnderline)
 
 - (id)_animationControllerForDictionaryLookupPopupInfo:(const WebCore::DictionaryPopupInfo&)dictionaryPopupInfo
 {
-    if (!dictionaryPopupInfo.platformData.attributedString)
+    if (!dictionaryPopupInfo.platformData.attributedString.nsAttributedString())
         return nil;
 
     [self _prepareForDictionaryLookup];
@@ -9114,7 +9114,7 @@ FORWARD(toggleUnderline)
 
 - (void)_showDictionaryLookupPopup:(const WebCore::DictionaryPopupInfo&)dictionaryPopupInfo
 {
-    if (!dictionaryPopupInfo.platformData.attributedString)
+    if (!dictionaryPopupInfo.platformData.attributedString.nsAttributedString())
         return;
 
     [self _prepareForDictionaryLookup];

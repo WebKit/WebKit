@@ -418,7 +418,7 @@ DictionaryPopupInfo WebPage::dictionaryPopupInfoForSelectionInPDFPlugin(PDFSelec
     dictionaryPopupInfo.origin = rangeRect.origin;
     dictionaryPopupInfo.platformData.options = options;
     dictionaryPopupInfo.textIndicator = dataForSelection;
-    dictionaryPopupInfo.platformData.attributedString = scaledNSAttributedString;
+    dictionaryPopupInfo.platformData.attributedString = WebCore::AttributedString::fromNSAttributedString(scaledNSAttributedString);
     
     return dictionaryPopupInfo;
 }

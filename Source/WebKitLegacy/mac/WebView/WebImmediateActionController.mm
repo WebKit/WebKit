@@ -546,7 +546,7 @@ static WebCore::IntRect elementBoundingBoxInWindowCoordinatesFromNode(WebCore::N
         [scaledAttributedString addAttributes:scaledAttributes.get() range:attributeRange];
     }];
 
-    popupInfo.platformData.attributedString = scaledAttributedString.get();
+    popupInfo.platformData.attributedString = WebCore::AttributedString::fromNSAttributedString(scaledAttributedString.get());
 
     if (auto textIndicator = WebCore::TextIndicator::createWithRange(range, indicatorOptions, presentationTransition))
         popupInfo.textIndicator = textIndicator->data();
@@ -574,7 +574,7 @@ static WebCore::IntRect elementBoundingBoxInWindowCoordinatesFromNode(WebCore::N
 
     auto [dictionaryRange, options] = WTFMove(*range);
     auto dictionaryPopupInfo = [WebImmediateActionController _dictionaryPopupInfoForRange:dictionaryRange inFrame:frame withLookupOptions:options indicatorOptions: { } transition: WebCore::TextIndicatorPresentationTransition::FadeIn];
-    if (!dictionaryPopupInfo.platformData.attributedString)
+    if (!dictionaryPopupInfo.platformData.attributedString.nsAttributedString())
         return nil;
 
     return [_webView _animationControllerForDictionaryLookupPopupInfo:dictionaryPopupInfo];

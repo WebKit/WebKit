@@ -86,6 +86,10 @@ struct WebHitTestResultData {
     RefPtr<WebCore::TextIndicator> linkTextIndicator;
 
     WebHitTestResultData();
+    WebHitTestResultData(WebHitTestResultData&&) = default;
+    WebHitTestResultData(const WebHitTestResultData&) = default;
+    WebHitTestResultData& operator=(WebHitTestResultData&&) = default;
+    WebHitTestResultData& operator=(const WebHitTestResultData&) = default;
     WebHitTestResultData(const WebCore::HitTestResult&, const String& toolTipText);
     WebHitTestResultData(const WebCore::HitTestResult&, bool includeImage);
     WebHitTestResultData(const String& absoluteImageURL, const String& absolutePDFURL, const String& absoluteLinkURL, const String& absoluteMediaURL, const String& linkLabel, const String& linkTitle, const String& linkSuggestedFilename, bool isContentEditable, const WebCore::IntRect& elementBoundingBox, const WebKit::WebHitTestResultData::IsScrollbar&, bool isSelected, bool isTextNode, bool isOverTextInsideFormControlElement, bool isDownloadableMedia, const String& lookupText, const String& toolTipText, const String& imageText, const std::optional<WebKit::SharedMemory::Handle>& imageHandle, const RefPtr<WebKit::ShareableBitmap>& imageBitmap, const String& sourceImageMIMEType,

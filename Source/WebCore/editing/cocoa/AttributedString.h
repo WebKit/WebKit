@@ -71,7 +71,7 @@ namespace WebCore {
 
 class Font;
 
-struct AttributedString {
+struct WEBCORE_EXPORT AttributedString {
     struct Range {
         size_t location { 0 };
         size_t length { 0 };
@@ -96,12 +96,19 @@ struct AttributedString {
     Vector<std::pair<Range, HashMap<String, AttributeValue>>> attributes;
     std::optional<HashMap<String, AttributeValue>> documentAttributes;
 
-    WEBCORE_EXPORT ~AttributedString();
-    WEBCORE_EXPORT static AttributedString fromNSAttributedStringAndDocumentAttributes(RetainPtr<NSAttributedString>&&, RetainPtr<NSDictionary>&& documentAttributes);
-    WEBCORE_EXPORT static AttributedString fromNSAttributedString(RetainPtr<NSAttributedString>&&);
-    WEBCORE_EXPORT static bool rangesAreSafe(const String&, const Vector<std::pair<Range, HashMap<String, AttributeValue>>>&);
-    WEBCORE_EXPORT RetainPtr<NSDictionary> documentAttributesAsNSDictionary() const;
-    WEBCORE_EXPORT RetainPtr<NSAttributedString> nsAttributedString() const;
+    AttributedString();
+    AttributedString(String&&, Vector<std::pair<Range, HashMap<String, AttributeValue>>>&&, std::optional<HashMap<String, AttributeValue>>&&);
+    AttributedString(AttributedString&&);
+    AttributedString(const AttributedString&);
+    AttributedString& operator=(AttributedString&&);
+    AttributedString& operator=(const AttributedString&);
+    ~AttributedString();
+
+    static AttributedString fromNSAttributedStringAndDocumentAttributes(RetainPtr<NSAttributedString>&&, RetainPtr<NSDictionary>&& documentAttributes);
+    static AttributedString fromNSAttributedString(RetainPtr<NSAttributedString>&&);
+    static bool rangesAreSafe(const String&, const Vector<std::pair<Range, HashMap<String, AttributeValue>>>&);
+    RetainPtr<NSDictionary> documentAttributesAsNSDictionary() const;
+    RetainPtr<NSAttributedString> nsAttributedString() const;
 };
 
 } // namespace WebCore

@@ -27,17 +27,19 @@
 
 #include "FloatPoint.h"
 #include "TextIndicator.h"
-#include <wtf/RetainPtr.h>
 
-OBJC_CLASS NSAttributedString;
+#if PLATFORM(COCOA)
+#include "AttributedString.h"
+#include <wtf/RetainPtr.h>
 OBJC_CLASS NSDictionary;
+#endif
 
 namespace WebCore {
 
 #if PLATFORM(COCOA)
 struct DictionaryPopupInfoCocoa {
     RetainPtr<NSDictionary> options;
-    RetainPtr<NSAttributedString> attributedString;
+    AttributedString attributedString;
 };
 #endif
 
