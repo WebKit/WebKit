@@ -27,6 +27,7 @@
 
 #if ENABLE(IMAGE_ANALYSIS)
 
+#import "CGImagePixelReader.h"
 #import "ImageAnalysisTestingUtilities.h"
 #import "InstanceMethodSwizzler.h"
 #import "PlatformUtilities.h"
@@ -36,7 +37,6 @@
 #import "TestWKWebView.h"
 #import "UIKitSPI.h"
 #import "WKWebViewConfigurationExtras.h"
-#import <WebCore/Color.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
@@ -103,45 +103,6 @@ static CGPoint swizzledLocationInView(id, SEL, UIView *)
 @end
 
 namespace TestWebKitAPI {
-
-// FIXME: We can unify most of this helper class with the logic in `TestPDFPage::colorAtPoint`, and deploy this
-// helper class in several other tests that read pixel data from CGImages.
-class CGImagePixelReader {
-    WTF_MAKE_FAST_ALLOCATED; WTF_MAKE_NONCOPYABLE(CGImagePixelReader);
-public:
-    CGImagePixelReader(CGImageRef image)
-        : m_width(CGImageGetWidth(image))
-        , m_height(CGImageGetHeight(image))
-    {
-        auto colorSpace = adoptCF(CGColorSpaceCreateWithName(kCGColorSpaceSRGB));
-        auto bytesPerPixel = 4;
-        auto bytesPerRow = bytesPerPixel * CGImageGetWidth(image);
-        auto bitsPerComponent = 8;
-        auto bitmapInfo = kCGImageAlphaPremultipliedLast | kCGImageByteOrder32Big;
-        m_context = adoptCF(CGBitmapContextCreateWithData(nullptr, m_width, m_height, bitsPerComponent, bytesPerRow, colorSpace.get(), bitmapInfo, nullptr, nullptr));
-        CGContextDrawImage(m_context.get(), CGRectMake(0, 0, m_width, m_height), image);
-    }
-
-    bool isTransparentBlack(unsigned x, unsigned y) const
-    {
-        return at(x, y) == WebCore::Color::transparentBlack;
-    }
-
-    WebCore::Color at(unsigned x, unsigned y) const
-    {
-        auto* data = reinterpret_cast<uint8_t*>(CGBitmapContextGetData(m_context.get()));
-        auto offset = 4 * (width() * y + x);
-        return WebCore::makeFromComponentsClampingExceptAlpha<WebCore::SRGBA<uint8_t>>(data[offset], data[offset + 1], data[offset + 2], data[offset + 3]);
-    }
-
-    unsigned width() const { return m_width; }
-    unsigned height() const { return m_height; }
-
-private:
-    unsigned m_width { 0 };
-    unsigned m_height { 0 };
-    RetainPtr<CGContextRef> m_context;
-};
 
 static Vector<RetainPtr<VKImageAnalyzerRequest>>& processedRequests()
 {

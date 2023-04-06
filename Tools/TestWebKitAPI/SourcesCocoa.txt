@@ -25,7 +25,9 @@ DeprecatedGlobalValues.mm
 EditingTestHarness.mm
 WKWebViewConfigurationExtras.mm
 
+cocoa/CGImagePixelReader.cpp
 cocoa/DaemonTestUtilities.mm
+cocoa/EnableUISideCompositingScope.mm
 cocoa/ImageAnalysisTestingUtilities.mm
 cocoa/NSItemProviderAdditions.mm
 cocoa/PlatformUtilitiesCocoa.mm

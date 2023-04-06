@@ -27,6 +27,8 @@
 
 #if PLATFORM(MAC)
 
+#import "CGImagePixelReader.h"
+#import "EnableUISideCompositingScope.h"
 #import "JavaScriptTest.h"
 #import "OffscreenWindow.h"
 #import "PlatformUtilities.h"
@@ -41,6 +43,24 @@ static bool didFinishLoad;
 static bool didTakeSnapshot;
 
 static void *snapshotSizeChangeKVOContext = &snapshotSizeChangeKVOContext;
+
+@interface NSView (TestWebKitAPI)
+@property (readonly, nonatomic) CGImageRef _test_cgImage;
+@end
+
+@implementation NSView (TestWebKitAPI)
+
+- (CGImageRef)_test_cgImage
+{
+    auto bounds = self.bounds;
+    auto image = adoptNS([[NSImage alloc] initWithSize:bounds.size]);
+    [image lockFocus];
+    [self.layer renderInContext:NSGraphicsContext.currentContext.CGContext];
+    [image unlockFocus];
+    return [image CGImageForProposedRect:nil context:nil hints:nil];
+}
+
+@end
 
 @interface WKWebView ()
 - (WKPageRef)_pageForTesting;
@@ -302,6 +322,36 @@ TEST(WebKit, WKThumbnailViewResetsViewStateWhenUnparented)
     [thumbnailView removeObserver:observer.get() forKeyPath:@"snapshotSize" context:snapshotSizeChangeKVOContext];
 }
 
+TEST(WebKit, WKThumbnailViewLayerReparentingWithUISideCompositing)
+{
+    EnableUISideCompositingScope enableUISideCompositing;
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
+    [webView synchronouslyLoadTestPageNamed:@"fixed-nav-bar"];
+    [webView waitForNextPresentationUpdate];
+
+    auto thumbnail = adoptNS([[_WKThumbnailView alloc] initWithFrame:[webView frame] fromWKWebView:webView.get()]);
+    [[webView window].contentView addSubview:thumbnail.get()];
+
+    auto getThumbnailViewLeftCornerColors = [&] {
+        __block RetainPtr<CGImageRef> snapshot;
+        __block bool done = false;
+        dispatch_async(dispatch_get_main_queue(), ^{
+            snapshot = [thumbnail _test_cgImage];
+            done = true;
+        });
+        Util::run(&done);
+        CGImagePixelReader pixelReader { snapshot.get() };
+        return std::pair { pixelReader.at(10, 10), pixelReader.at(10, pixelReader.height() - 10) };
+    };
+
+    auto [topLeftBeforeSnapshot, bottomLeftBeforeSnapshot] = getThumbnailViewLeftCornerColors();
+    [webView stringByEvaluatingJavaScript:@"1"];
+    auto [topLeftAfterSnapshot, bottomLeftAfterSnapshot] = getThumbnailViewLeftCornerColors();
+
+    EXPECT_EQ(topLeftBeforeSnapshot, topLeftAfterSnapshot);
+    EXPECT_EQ(bottomLeftBeforeSnapshot, bottomLeftAfterSnapshot);
+}
 
 } // namespace TestWebKitAPI
 

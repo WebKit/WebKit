@@ -25,6 +25,7 @@
 
 #import "config.h"
 
+#import "EnableUISideCompositingScope.h"
 #import "PlatformUtilities.h"
 #import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
@@ -41,48 +42,7 @@
 #import <wtf/Function.h>
 #import <wtf/RetainPtr.h>
 
-@interface NSUserDefaults (TestSupport)
-- (NSURL *)swizzled_objectForKey:(NSString *)key;
-@end
-
-@implementation NSUserDefaults (TestSupport)
-
-- (id)swizzled_objectForKey:(NSString *)key
-{
-    if ([key isEqualToString:@"WebKit2UseRemoteLayerTreeDrawingArea"])
-        return @(YES);
-    return [self swizzled_objectForKey:key];
-}
-
-@end
-
 namespace TestWebKitAPI {
-
-class EnableUISideCompositingScope {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    EnableUISideCompositingScope()
-        : m_originalMethod(class_getInstanceMethod(NSUserDefaults.class, @selector(objectForKey:)))
-        , m_swizzledMethod(class_getInstanceMethod(NSUserDefaults.class, @selector(swizzled_objectForKey:)))
-    {
-        m_originalImplementation = method_getImplementation(m_originalMethod);
-        m_swizzledImplementation = method_getImplementation(m_swizzledMethod);
-        class_replaceMethod(NSUserDefaults.class, @selector(swizzled_objectForKey:), m_originalImplementation, method_getTypeEncoding(m_originalMethod));
-        class_replaceMethod(NSUserDefaults.class, @selector(objectForKey:), m_swizzledImplementation, method_getTypeEncoding(m_swizzledMethod));
-    }
-
-    ~EnableUISideCompositingScope()
-    {
-        class_replaceMethod(NSUserDefaults.class, @selector(swizzled_objectForKey:), m_swizzledImplementation, method_getTypeEncoding(m_originalMethod));
-        class_replaceMethod(NSUserDefaults.class, @selector(objectForKey:), m_originalImplementation, method_getTypeEncoding(m_swizzledMethod));
-    }
-
-private:
-    Method m_originalMethod;
-    Method m_swizzledMethod;
-    IMP m_originalImplementation;
-    IMP m_swizzledImplementation;
-};
 
 #if PLATFORM(MAC)
 typedef NSImage *PlatformImage;

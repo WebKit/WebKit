@@ -104,6 +104,11 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return self;
 }
 
+- (BOOL)isFlipped
+{
+    return YES;
+}
+
 - (BOOL)wantsUpdateLayer
 {
     return YES;
