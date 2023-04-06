@@ -108,4 +108,8 @@ bool defaultUseSCContentSharingPicker();
 bool defaultPeerConnectionEnabledAvailable();
 #endif
 
+#if HAVE(AVCONTENTKEYSPECIFIER)
+bool defaultSampleBufferContentKeySessionSupportEnabled();
+#endif
+
 } // namespace WebKit
