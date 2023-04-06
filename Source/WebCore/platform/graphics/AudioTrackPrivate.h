@@ -76,7 +76,7 @@ public:
             m_client->configurationChanged(m_configuration);
     }
     
-    virtual bool operator==(const AudioTrackPrivate& track) const
+    bool operator==(const AudioTrackPrivate& track) const
     {
         return TrackPrivateBase::operator==(track)
             && configuration() == track.configuration()

@@ -83,7 +83,7 @@ void pas_fast_megapage_table_initialize_static(pas_fast_megapage_table* table,
 }
 
 void pas_fast_megapage_table_set_by_index(pas_fast_megapage_table* table,
-                                          size_t index, unsigned value,
+                                          size_t index, pas_fast_megapage_kind value,
                                           pas_lock_hold_mode heap_lock_hold_mode)
 {
     pas_fast_megapage_table_impl* instance;

@@ -290,15 +290,9 @@ TEST(WTF_CompactRefPtr, Assignment)
     {
         CompactRefPtr<AlignedRefLogger> ptr(&a);
         EXPECT_EQ(&a, ptr.get());
-#if COMPILER(CLANG)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunknown-pragmas"
-#pragma clang diagnostic ignored "-Wself-move"
-#endif
+        IGNORE_WARNINGS_BEGIN("self-move")
         ptr = WTFMove(ptr);
-#if COMPILER(CLANG)
-#pragma clang diagnostic pop
-#endif
+        IGNORE_WARNINGS_END
         EXPECT_EQ(&a, ptr.get());
     }
     EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());

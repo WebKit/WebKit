@@ -188,15 +188,9 @@ TEST(WTF_NakedPtr, Assignment)
     {
         NakedPtr<RefLogger> ptr(&a);
         ASSERT_EQ(&a, ptr.get());
-#if COMPILER(CLANG)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunknown-pragmas"
-#pragma clang diagnostic ignored "-Wself-move"
-#endif
+        IGNORE_WARNINGS_BEGIN("self-move")
         ptr = WTFMove(ptr);
-#if COMPILER(CLANG)
-#pragma clang diagnostic pop
-#endif
+        IGNORE_WARNINGS_END
         ASSERT_EQ(&a, ptr.get());
     }
 }
