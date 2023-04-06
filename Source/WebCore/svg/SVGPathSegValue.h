@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc.  All rights reserved.
+ * Copyright (C) 2019-2023 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,12 +38,6 @@ public:
         return adoptRef(*new PathSegType(std::forward<Arguments>(arguments)...));
     }
 
-    template<typename PathSegType>
-    Ref<PathSegType> clone() const
-    {
-        return adoptRef(*new PathSegType(m_arguments));
-    }
-
     SVGPathSegValue(Arguments... arguments)
         : m_arguments(std::forward<Arguments>(arguments)...)
     {
@@ -66,6 +60,12 @@ protected:
     {
         std::get<I>(m_arguments) = value;
         commitChange();
+    }
+
+    template<typename PathSegType>
+    Ref<PathSegType> cloneInternal() const
+    {
+        return adoptRef(*new PathSegType(m_arguments));
     }
 
     std::tuple<Arguments...> m_arguments;
@@ -188,4 +188,4 @@ private:
     using SVGPathSegValue::SVGPathSegValue;
 };
 
-}
+} // namespace WebCore
