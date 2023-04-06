@@ -48,19 +48,6 @@ Ref<ScrollingTreeFrameScrollingNodeRemoteMac> ScrollingTreeFrameScrollingNodeRem
     return adoptRef(*new ScrollingTreeFrameScrollingNodeRemoteMac(tree, nodeType, nodeID));
 }
 
-bool ScrollingTreeFrameScrollingNodeRemoteMac::commitStateBeforeChildren(const ScrollingStateNode& stateNode)
-{
-    if (!ScrollingTreeFrameScrollingNodeMac::commitStateBeforeChildren(stateNode))
-        return false;
-
-    if (!is<ScrollingStateFrameScrollingNode>(stateNode))
-        return false;
-
-    const auto& scrollingStateNode = downcast<ScrollingStateFrameScrollingNode>(stateNode);
-    m_delegate->updateFromStateNode(scrollingStateNode);
-    return true;
-}
-
 void ScrollingTreeFrameScrollingNodeRemoteMac::repositionRelatedLayers()
 {
     ScrollingTreeFrameScrollingNodeMac::repositionRelatedLayers();

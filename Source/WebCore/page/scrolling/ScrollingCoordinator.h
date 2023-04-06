@@ -204,6 +204,7 @@ public:
     void receivedWheelEventWithPhases(PlatformWheelEventPhase phase, PlatformWheelEventPhase momentumPhase);
     void deferWheelEventTestCompletionForReason(ScrollingNodeID, WheelEventTestMonitor::DeferReason);
     void removeWheelEventTestCompletionDeferralForReason(ScrollingNodeID, WheelEventTestMonitor::DeferReason);
+    WEBCORE_EXPORT virtual void setMouseIsOverContentArea(ScrollableArea*, bool) { }
 
 protected:
     explicit ScrollingCoordinator(Page*);

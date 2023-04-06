@@ -345,6 +345,20 @@ bool AsyncScrollingCoordinator::requestScrollPositionUpdate(ScrollableArea& scro
     return true;
 }
 
+void AsyncScrollingCoordinator::setMouseIsOverContentArea(ScrollableArea* scrollableArea, bool isOverContentArea)
+{
+    ASSERT(isMainThread());
+    ASSERT(m_page);
+    auto scrollingNodeID = scrollableArea->scrollingNodeID();
+    if (!scrollingNodeID)
+        return;
+    
+    auto stateNode = dynamicDowncast<ScrollingStateScrollingNode>(m_scrollingStateTree->stateNodeForID(scrollingNodeID));
+    if (!stateNode)
+        return;
+    stateNode->setMouseIsOverContentArea(isOverContentArea);
+}
+
 bool AsyncScrollingCoordinator::requestAnimatedScrollToPosition(ScrollableArea& scrollableArea, const ScrollPosition& scrollPosition, ScrollClamping clamping)
 {
     ASSERT(isMainThread());

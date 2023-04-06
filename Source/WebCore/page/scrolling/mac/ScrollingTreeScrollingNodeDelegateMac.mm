@@ -81,6 +81,13 @@ void ScrollingTreeScrollingNodeDelegateMac::updateFromStateNode(const ScrollingS
             m_scrollerPair->verticalScroller().setHostLayer(nullptr);
     }
     
+    if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::ContentAreaHoverState)) {
+        if (scrollingStateNode.mouseIsOverContentArea())
+            m_scrollerPair->mouseEnteredContentArea();
+        else
+            m_scrollerPair->mouseExitedContentArea();
+    }
+    
     m_scrollerPair->updateValues();
 
     ThreadedScrollingTreeScrollingNodeDelegate::updateFromStateNode(scrollingStateNode);

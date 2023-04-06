@@ -28,6 +28,7 @@
 
 #if PLATFORM(MAC)
 
+#import "Logging.h"
 #import "ScrollTypesMac.h"
 #import <WebCore/FloatPoint.h>
 #import <WebCore/IntRect.h>
@@ -346,6 +347,25 @@ void ScrollerPairMac::ensureOnMainThreadWithProtectedThis(Function<void()>&& tas
         task();
     });
 }
+
+void ScrollerPairMac::mouseEnteredContentArea()
+{
+    LOG_WITH_STREAM(OverlayScrollbars, stream << "ScrollerPairMac for [" << m_scrollingNode.scrollingNodeID() << "] mouseEnteredContentArea");
+    if ([m_scrollerImpPair overlayScrollerStateIsLocked])
+        return;
+
+    [m_scrollerImpPair mouseEnteredContentArea];
+}
+
+void ScrollerPairMac::mouseExitedContentArea()
+{
+    LOG_WITH_STREAM(OverlayScrollbars, stream << "ScrollerPairMac for [" << m_scrollingNode.scrollingNodeID() << "] mouseExitedContentArea");
+    if ([m_scrollerImpPair overlayScrollerStateIsLocked])
+        return;
+
+    [m_scrollerImpPair mouseExitedContentArea];
+}
+
 
 } // namespace WebCore
 

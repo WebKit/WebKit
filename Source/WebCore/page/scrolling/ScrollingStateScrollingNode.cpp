@@ -58,6 +58,7 @@ ScrollingStateScrollingNode::ScrollingStateScrollingNode(const ScrollingStateScr
     , m_synchronousScrollingReasons(stateNode.synchronousScrollingReasons())
 #endif
     , m_isMonitoringWheelEvents(stateNode.isMonitoringWheelEvents())
+    , m_mouseIsOverContentArea(stateNode.mouseIsOverContentArea())
 {
     scrollingStateTree().scrollingNodeAdded();
 
@@ -274,6 +275,15 @@ void ScrollingStateScrollingNode::setScrollerImpsFromScrollbars(Scrollbar*, Scro
 {
 }
 #endif
+
+void ScrollingStateScrollingNode::setMouseIsOverContentArea(bool flag)
+{
+    if (flag == m_mouseIsOverContentArea)
+        return;
+
+    m_mouseIsOverContentArea = flag;
+    setPropertyChanged(Property::ContentAreaHoverState);
+}
 
 void ScrollingStateScrollingNode::dumpProperties(TextStream& ts, OptionSet<ScrollingStateTreeAsTextBehavior> behavior) const
 {

@@ -72,6 +72,8 @@ public:
     bool scrollAnimatorEnabled() const;
 
     virtual void hasNodeWithAnimatedScrollChanged(bool) { };
+    
+    WEBCORE_EXPORT void setMouseIsOverContentArea(ScrollableArea*, bool) override;
 
 protected:
     WEBCORE_EXPORT AsyncScrollingCoordinator(Page*);

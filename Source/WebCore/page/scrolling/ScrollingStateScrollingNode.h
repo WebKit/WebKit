@@ -107,6 +107,9 @@ public:
 #endif
     void setScrollerImpsFromScrollbars(Scrollbar* verticalScrollbar, Scrollbar* horizontalScrollbar);
 
+    WEBCORE_EXPORT void setMouseIsOverContentArea(bool);
+    bool mouseIsOverContentArea() const { return m_mouseIsOverContentArea; }
+
 protected:
     ScrollingStateScrollingNode(ScrollingStateTree&, ScrollingNodeType, ScrollingNodeID);
     ScrollingStateScrollingNode(const ScrollingStateScrollingNode&, ScrollingStateTree&);
@@ -142,6 +145,8 @@ private:
     OptionSet<SynchronousScrollingReason> m_synchronousScrollingReasons;
 #endif
     bool m_isMonitoringWheelEvents { false };
+    bool m_mouseIsOverContentArea { false };
+
 };
 
 } // namespace WebCore

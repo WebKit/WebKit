@@ -101,6 +101,9 @@ public:
 
     void setVerticalScrollerImp(NSScrollerImp *);
     void setHorizontalScrollerImp(NSScrollerImp *);
+    
+    void mouseEnteredContentArea();
+    void mouseExitedContentArea();
 
 private:
     ScrollerPairMac(ScrollingTreeScrollingNode&);
