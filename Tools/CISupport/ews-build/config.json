@@ -183,22 +183,24 @@
     {
       "name": "iOS-16-Simulator-Build-EWS", "shortname": "ios-sim", "icon": "buildOnly",
       "factory": "iOSBuildFactory", "platform": "ios-simulator-16",
-      "configuration": "release", "architectures": ["x86_64"],
+      "configuration": "release", "architectures": ["arm64"],
       "triggers": ["api-tests-ios-sim-ews", "ios-16-sim-wk2-tests-ews", "ios-16-sim-wpt-wk2-tests-ews"],
       "workernames": ["ews152", "ews154", "ews108", "ews130", "ews132", "ews133", "ews134", "ews135"]
     },
     {
       "name": "iOS-16-Simulator-WK2-Tests-EWS", "shortname": "ios-wk2", "icon": "testOnly",
       "factory": "iOSTestsNoWPTFactory", "platform": "ios-simulator-16",
-      "configuration": "release", "architectures": ["x86_64"],
+      "configuration": "release", "architectures": ["arm64"],
       "triggered_by": ["ios-16-sim-build-ews"],
+      "additionalArguments": ["--child-process=5"],
       "workernames": ["ews121", "ews122", "ews123", "ews124", "ews125", "ews126", "ews184", "ews185"]
     },
     {
       "name": "iOS-16-Simulator-WPT-WK2-Tests-EWS", "shortname": "ios-wk2-wpt", "icon": "testOnly",
       "factory": "iOSTestsOnlyWPTFactory", "platform": "ios-simulator-16",
-      "configuration": "release", "architectures": ["x86_64"],
+      "configuration": "release", "architectures": ["arm64"],
       "triggered_by": ["ios-16-sim-build-ews"],
+      "additionalArguments": ["--child-process=5"],
       "workernames": ["ews191", "ews192", "ews193", "ews194", "ews195", "ews196", "ews197", "ews198"]
     },
     {
