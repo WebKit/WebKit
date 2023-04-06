@@ -113,13 +113,17 @@ static IntlDurationFormat::UnitData intlDurationUnitOptions(JSGlobalObject* glob
     if (styleValue)
         style = styleValue.value();
     else {
-        displayDefault = IntlDurationFormat::Display::Auto;
-        if (baseStyle == IntlDurationFormat::Style::Digital)
+        if (baseStyle == IntlDurationFormat::Style::Digital) {
+            if (unit != TemporalUnit::Hour && unit != TemporalUnit::Minute && unit != TemporalUnit::Second)
+                displayDefault = IntlDurationFormat::Display::Auto;
             style = digitalBase;
-        else if (prevStyle && (prevStyle.value() == IntlDurationFormat::UnitStyle::Numeric || prevStyle.value() == IntlDurationFormat::UnitStyle::TwoDigit))
-            style = IntlDurationFormat::UnitStyle::Numeric;
-        else
-            style = static_cast<IntlDurationFormat::UnitStyle>(baseStyle);
+        } else {
+            displayDefault = IntlDurationFormat::Display::Auto;
+            if (prevStyle && (prevStyle.value() == IntlDurationFormat::UnitStyle::Numeric || prevStyle.value() == IntlDurationFormat::UnitStyle::TwoDigit))
+                style = IntlDurationFormat::UnitStyle::Numeric;
+            else
+                style = static_cast<IntlDurationFormat::UnitStyle>(baseStyle);
+        }
     }
 
     IntlDurationFormat::Display display = intlOption<IntlDurationFormat::Display>(globalObject, options, displayName, { { "auto"_s, IntlDurationFormat::Display::Auto }, { "always"_s, IntlDurationFormat::Display::Always } }, "display name must be either \"auto\" or \"always\""_s, displayDefault);
