@@ -7,7 +7,7 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,67) size 47x19
           text run at (0,67) width 47: "Blank: "
         RenderBlock {ATTACHMENT} at (46,0) size 339x92 [color=#007AFF]
-          RenderGrid {DIV} at (0,0) size 338x92 [bgcolor=#F4F4F5]
+          RenderGrid {DIV} at (0,0) size 338x92 [bgcolor=#74748014]
             RenderGrid {DIV} at (0,0) size 76x92
               RenderAttachment {ATTACHMENT} at (10,10) size 56x72
             RenderGrid {DIV} at (76,0) size 262x92
@@ -16,7 +16,7 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,67) size 39x19
           text run at (0,67) width 39: "Title: "
         RenderBlock {ATTACHMENT} at (38,0) size 339x92 [color=#007AFF]
-          RenderGrid {DIV} at (0,0) size 338x92 [bgcolor=#F4F4F5]
+          RenderGrid {DIV} at (0,0) size 338x92 [bgcolor=#74748014]
             RenderGrid {DIV} at (0,0) size 76x92
               RenderAttachment {ATTACHMENT} at (10,10) size 56x72
             RenderGrid {DIV} at (76,0) size 262x92
@@ -25,7 +25,7 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,67) size 83x19
           text run at (0,67) width 83: "and subtitle: "
         RenderBlock {ATTACHMENT} at (82,0) size 339x92 [color=#007AFF]
-          RenderGrid {DIV} at (0,0) size 338x92 [bgcolor=#F4F4F5]
+          RenderGrid {DIV} at (0,0) size 338x92 [bgcolor=#74748014]
             RenderGrid {DIV} at (0,0) size 76x92
               RenderAttachment {ATTACHMENT} at (10,10) size 56x72
             RenderGrid {DIV} at (76,0) size 262x92
@@ -34,7 +34,7 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,67) size 52x19
           text run at (0,67) width 52: "Action: "
         RenderBlock {ATTACHMENT} at (51,0) size 339x92 [color=#007AFF]
-          RenderGrid {DIV} at (0,0) size 338x92 [bgcolor=#F4F4F5]
+          RenderGrid {DIV} at (0,0) size 338x92 [bgcolor=#74748014]
             RenderGrid {DIV} at (0,0) size 76x92
               RenderAttachment {ATTACHMENT} at (10,10) size 56x72
             RenderGrid {DIV} at (76,0) size 262x92
@@ -43,7 +43,7 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,67) size 40x19
           text run at (0,67) width 40: "Save: "
         RenderBlock {ATTACHMENT} at (39,0) size 339x92 [color=#007AFF]
-          RenderGrid {DIV} at (0,0) size 338x92 [bgcolor=#F4F4F5]
+          RenderGrid {DIV} at (0,0) size 338x92 [bgcolor=#74748014]
             RenderGrid {DIV} at (0,0) size 76x92
               RenderAttachment {ATTACHMENT} at (10,10) size 56x72
             RenderGrid {DIV} at (76,0) size 262x92

@@ -310,6 +310,7 @@ accentcolortext
 -apple-system-opaque-secondary-fill enable-if=WTF_PLATFORM_IOS_FAMILY
 -apple-system-opaque-secondary-fill-disabled enable-if=WTF_PLATFORM_IOS_FAMILY
 -apple-system-opaque-tertiary-fill enable-if=WTF_PLATFORM_IOS_FAMILY
+-apple-system-quaternary-fill enable-if=WTF_PLATFORM_IOS_FAMILY
 -apple-system-opaque-separator enable-if=WTF_PLATFORM_IOS_FAMILY
 -webkit-control-background enable-if=WTF_PLATFORM_COCOA|HAVE_OS_DARK_MODE_SUPPORT
 activebuttontext

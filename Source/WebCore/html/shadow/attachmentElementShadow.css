@@ -29,7 +29,7 @@ div#attachment-container {
     grid-template-columns: 76px auto;
     width: 338px;
     height: 92px;
-    background-color: rgb(244, 244, 245); /* FIXME: Use quaternary-fill when available, see rdar://105252500 depending on rdar://104844460 */
+    background-color: -apple-system-quaternary-fill;
 #else
     grid-template-columns: 68px auto;
     width: 266px;

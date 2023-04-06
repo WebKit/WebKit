@@ -1414,6 +1414,7 @@ static const Vector<CSSValueSystemColorInformation>& cssValueSystemColorInformat
             // FIXME: <rdar://problem/75538507> UIKit should expose this color so that we maintain parity with system buttons.
             { CSSValueAppleSystemOpaqueSecondaryFillDisabled, @selector(secondarySystemFillColor), true, 0.75f },
             { CSSValueAppleSystemOpaqueTertiaryFill, @selector(tertiarySystemFillColor), true },
+            { CSSValueAppleSystemQuaternaryFill, @selector(quaternarySystemFillColor) },
             { CSSValueAppleSystemGroupedBackground, @selector(systemGroupedBackgroundColor) },
             { CSSValueAppleSystemSecondaryGroupedBackground, @selector(secondarySystemGroupedBackgroundColor) },
             { CSSValueAppleSystemTertiaryGroupedBackground, @selector(tertiarySystemGroupedBackgroundColor) },
