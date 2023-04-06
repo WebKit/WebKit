@@ -1,8 +1,8 @@
 #ifndef FASTFLOAT_DECIMAL_TO_BINARY_H
 #define FASTFLOAT_DECIMAL_TO_BINARY_H
 
-#include <wtf/fast_float/float_common.h>
-#include <wtf/fast_float/fast_table.h>
+#include "float_common.h"
+#include "fast_table.h"
 #include <cfloat>
 #include <cinttypes>
 #include <cmath>

@@ -76,7 +76,6 @@ struct WallTime::MarkableTraits {
     }
 };
 
-WTF_EXPORT_PRIVATE void sleep(WallTime);
 WTF_EXPORT_PRIVATE Int128 currentTimeInNanoseconds();
 
 } // namespace WTF

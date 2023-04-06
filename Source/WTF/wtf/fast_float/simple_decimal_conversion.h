@@ -13,8 +13,8 @@
  * It is probably not very fast but it is a fallback that should almost never
  * be used in real life. Though it is not fast, it is "easily" understood and debugged.
  **/
-#include <wtf/fast_float/ascii_number.h>
-#include <wtf/fast_float/decimal_to_binary.h>
+#include "ascii_number.h"
+#include "decimal_to_binary.h"
 #include <cstdint>
 
 namespace fast_float {

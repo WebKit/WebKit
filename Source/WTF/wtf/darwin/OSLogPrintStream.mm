@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include <wtf/OSLogPrintStream.h>
+#include "OSLogPrintStream.h"
 
 namespace WTF {
 
@@ -53,6 +53,8 @@ void OSLogPrintStream::vprintf(const char* format, va_list argList)
     size_t freeBytes = m_string.length() - offset;
     va_list backup;
     va_copy(backup, argList);
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wformat-nonliteral"
     size_t bytesWritten = vsnprintf(m_string.mutableData() + offset, freeBytes, format, argList);
     if (UNLIKELY(bytesWritten >= freeBytes)) {
         size_t newLength = std::max(bytesWritten + m_string.length(), m_string.length() * 2);
@@ -61,6 +63,7 @@ void OSLogPrintStream::vprintf(const char* format, va_list argList)
         bytesWritten = vsnprintf(m_string.mutableData() + offset, freeBytes, format, backup);
         ASSERT(bytesWritten < freeBytes);
     }
+#pragma clang diagnostic pop
 
     size_t newOffset = offset + bytesWritten;
     char* buffer = m_string.mutableData();

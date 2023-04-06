@@ -320,14 +320,6 @@ void MemoryPressureHandler::ReliefLogger::logMemoryUsageChange()
 void MemoryPressureHandler::platformInitialize() { }
 #endif
 
-#if PLATFORM(COCOA)
-void MemoryPressureHandler::setDispatchQueue(OSObjectPtr<dispatch_queue_t>&& queue)
-{
-    RELEASE_ASSERT(!m_installed);
-    m_dispatchQueue = WTFMove(queue);
-}
-#endif
-
 MemoryPressureHandler::Configuration::Configuration()
     : baseThreshold(std::min(3 * GB, ramSize()))
     , conservativeThresholdFraction(s_conservativeThresholdFraction)

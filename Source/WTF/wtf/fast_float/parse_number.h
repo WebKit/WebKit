@@ -1,9 +1,9 @@
 #ifndef FASTFLOAT_PARSE_NUMBER_H
 #define FASTFLOAT_PARSE_NUMBER_H
 
-#include <wtf/fast_float/ascii_number.h>
-#include <wtf/fast_float/decimal_to_binary.h>
-#include <wtf/fast_float/digit_comparison.h>
+#include "ascii_number.h"
+#include "decimal_to_binary.h"
+#include "digit_comparison.h"
 
 #include <cmath>
 #include <cstring>

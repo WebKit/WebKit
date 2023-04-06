@@ -6,9 +6,9 @@
 #include <cstring>
 #include <iterator>
 
-#include <wtf/fast_float/float_common.h>
-#include <wtf/fast_float/bigint.h>
-#include <wtf/fast_float/ascii_number.h>
+#include "float_common.h"
+#include "bigint.h"
+#include "ascii_number.h"
 
 namespace fast_float {
 

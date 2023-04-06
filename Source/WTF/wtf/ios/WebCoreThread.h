@@ -29,10 +29,12 @@
 extern "C" {
 #endif
 
-extern void (*WebCoreWebThreadLock)(void);
-extern bool (*WebCoreWebThreadIsLockedOrDisabled)(void);
-extern bool (*WebCoreWebThreadIsEnabled)(void);
-extern void (*WebCoreWebThreadRun)(void (^block)());
+#if USE(WEB_THREAD)
+WTF_EXPORT_PRIVATE extern void (*WebCoreWebThreadLock)(void);
+WTF_EXPORT_PRIVATE extern bool (*WebCoreWebThreadIsLockedOrDisabled)(void);
+WTF_EXPORT_PRIVATE extern bool (*WebCoreWebThreadIsEnabled)(void);
+WTF_EXPORT_PRIVATE extern void (*WebCoreWebThreadRun)(void (^block)());
+#endif
 
 #ifdef __cplusplus
 }

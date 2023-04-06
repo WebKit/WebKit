@@ -35,7 +35,10 @@
 #include "Options.h"
 #include "VMInspectorInlines.h"
 #include <wtf/DataLog.h>
-#include <wtf/OSLogPrintStream.h>
+
+#if OS(DARWIN)
+#include <wtf/darwin/OSLogPrintStream.h>
+#endif
 
 namespace JSC {
 namespace Integrity {
