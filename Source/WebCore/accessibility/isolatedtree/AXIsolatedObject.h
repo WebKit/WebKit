@@ -530,7 +530,11 @@ private:
 template<typename T>
 inline T AXIsolatedObject::propertyValue(AXPropertyName propertyName) const
 {
-    auto value = m_propertyMap.get(propertyName);
+    auto it = m_propertyMap.find(propertyName);
+    if (it == m_propertyMap.end())
+        return { };
+
+    auto value = it->value;
     return WTF::switchOn(value,
         [] (T& typedValue) { return typedValue; },
         [] (auto&) { ASSERT_NOT_REACHED();
