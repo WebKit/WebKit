@@ -945,6 +945,7 @@ void DisplayMtl::initializeExtensions() const
     {
         mNativeExtensions.textureMirrorClampToEdgeEXT = true;
     }
+#endif
 
     if (ANGLE_APPLE_AVAILABLE_XCI(10.11, 11.0, 13.1))
     {
