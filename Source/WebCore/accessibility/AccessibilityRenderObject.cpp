@@ -2952,14 +2952,14 @@ AccessibilitySVGRoot* AccessibilityRenderObject::remoteSVGRootElement(CreationCh
     
 void AccessibilityRenderObject::addRemoteSVGChildren()
 {
-    AccessibilitySVGRoot* root = remoteSVGRootElement(Create);
+    RefPtr<AccessibilitySVGRoot> root = remoteSVGRootElement(Create);
     if (!root)
         return;
 
     // In order to connect the AX hierarchy from the SVG root element from the loaded resource
     // the parent must be set, because there's no other way to get back to who created the image.
     root->setParent(this);
-    addChild(root);
+    addChild(root.get());
 }
 
 void AccessibilityRenderObject::addCanvasChildren()
