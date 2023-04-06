@@ -743,7 +743,7 @@ static constexpr CGFloat kFullScreenWindowCornerRadius = 12;
 
 #if ENABLE(FULLSCREEN_WINDOW_EFFECTS)
             CompletionHandler<void()> completionHandler = []() { };
-            performFullscreenTransition(_lastKnownParentWindow.get(), _window.get(), _parentWindowState.get(), true, WTFMove(completionHandler));
+            performFullscreenTransition(self, _lastKnownParentWindow.get(), _window.get(), _parentWindowState.get(), true, WTFMove(completionHandler));
 #endif
 
             if (auto* videoFullscreenManager = self._videoFullscreenManager) {
@@ -1085,7 +1085,7 @@ static constexpr CGFloat kFullScreenWindowCornerRadius = 12;
 #if ENABLE(FULLSCREEN_WINDOW_EFFECTS)
     [UIView performWithoutAnimation:^{
         CompletionHandler<void()> completionHandler = []() { };
-        performFullscreenTransition(_lastKnownParentWindow.get(), _window.get(), _parentWindowState.get(), false, WTFMove(completionHandler));
+        performFullscreenTransition(self, _lastKnownParentWindow.get(), _window.get(), _parentWindowState.get(), false, WTFMove(completionHandler));
     }];
 #endif
 
@@ -1237,7 +1237,7 @@ static constexpr CGFloat kFullScreenWindowCornerRadius = 12;
         [self _completedExitFullScreen];
     };
 
-    performFullscreenTransition(_lastKnownParentWindow.get(), _window.get(), _parentWindowState.get(), false, WTFMove(completionHandler));
+    performFullscreenTransition(self, _lastKnownParentWindow.get(), _window.get(), _parentWindowState.get(), false, WTFMove(completionHandler));
 
 #else
 
