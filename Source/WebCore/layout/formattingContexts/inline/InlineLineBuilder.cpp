@@ -210,7 +210,6 @@ struct LineCandidate {
         void appendtrailingWordBreakOpportunity(const InlineItem& wordBreakItem) { m_trailingWordBreakOpportunity = &wordBreakItem; }
         void reset();
         bool isEmpty() const { return m_continuousContent.runs().isEmpty() && !trailingWordBreakOpportunity() && !trailingLineBreak(); }
-        bool hasInlineLevelBox() const { return m_hasInlineLevelBox; }
 
         void setHasTrailingSoftWrapOpportunity(bool hasTrailingSoftWrapOpportunity) { m_hasTrailingSoftWrapOpportunity = hasTrailingSoftWrapOpportunity; }
         bool hasTrailingSoftWrapOpportunity() const { return m_hasTrailingSoftWrapOpportunity; }
@@ -223,7 +222,6 @@ struct LineCandidate {
         InlineContentBreaker::ContinuousContent m_continuousContent;
         const InlineItem* m_trailingLineBreak { nullptr };
         const InlineItem* m_trailingWordBreakOpportunity { nullptr };
-        bool m_hasInlineLevelBox { false };
         bool m_hasTrailingSoftWrapOpportunity { false };
     };
 
@@ -245,7 +243,6 @@ LineCandidate::InlineContent::InlineContent(bool ignoreTrailingLetterSpacing)
 inline void LineCandidate::InlineContent::appendInlineItem(const InlineItem& inlineItem, const RenderStyle& style, InlineLayoutUnit logicalWidth)
 {
     ASSERT(inlineItem.isText() || inlineItem.isBox() || inlineItem.isInlineBoxStart() || inlineItem.isInlineBoxEnd());
-    m_hasInlineLevelBox = m_hasInlineLevelBox || inlineItem.isBox() || inlineItem.isInlineBoxStart();
 
     if (inlineItem.isBox() || inlineItem.isInlineBoxStart() || inlineItem.isInlineBoxEnd())
         return m_continuousContent.append(inlineItem, style, logicalWidth);
@@ -283,7 +280,6 @@ inline void LineCandidate::InlineContent::reset()
     m_continuousContent.reset();
     m_trailingLineBreak = { };
     m_trailingWordBreakOpportunity = { };
-    m_hasInlineLevelBox = false;
 }
 
 inline void LineCandidate::reset()
@@ -929,13 +925,14 @@ static inline InlineLayoutUnit availableWidth(const LineCandidate::InlineContent
 #endif
     auto availableWidth = availableWidthForContent - line.contentLogicalRight();
     auto& inlineBoxListWithClonedDecorationEnd = line.inlineBoxListWithClonedDecorationEnd();
-    if (candidateContent.hasInlineLevelBox() && !inlineBoxListWithClonedDecorationEnd.isEmpty()) {
-        // We may try to commit a inline box end here which already takes up place implicitly.
-        // Let's not account for its logical width twice.
-        for (auto& run : candidateContent.continuousContent().runs()) {
-            if (run.inlineItem.isInlineBoxEnd())
-                availableWidth += inlineBoxListWithClonedDecorationEnd.get(&run.inlineItem.layoutBox());
-        }
+    if (inlineBoxListWithClonedDecorationEnd.isEmpty())
+        return std::isnan(availableWidth) ? maxInlineLayoutUnit() : availableWidth;
+    // We may try to commit a inline box end here which already takes up place implicitly through the cloned decoration.
+    // Let's not account for its logical width twice.
+    for (auto& run : candidateContent.continuousContent().runs()) {
+        if (!run.inlineItem.isInlineBoxEnd())
+            continue;
+        availableWidth += inlineBoxListWithClonedDecorationEnd.get(&run.inlineItem.layoutBox());
     }
     return std::isnan(availableWidth) ? maxInlineLayoutUnit() : availableWidth;
 }
