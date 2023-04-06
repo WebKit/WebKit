@@ -69,3 +69,18 @@ operator :vec4, {
         }
     end
 end
+
+operator :clamp, {
+    [T < Number].(T, T, T) => T,
+    [T < Number, N].(Vector[T, N], Vector[T, N], Vector[T, N]) => Vector[T, N],
+}
+
+operator :min, {
+    [T < Number].(T, T) => T,
+    [T < Number, N].(Vector[T, N], Vector[T, N]) => Vector[T, N],
+}
+
+operator :max, {
+    [T < Number].(T, T) => T,
+    [T < Number, N].(Vector[T, N], Vector[T, N]) => Vector[T, N],
+}

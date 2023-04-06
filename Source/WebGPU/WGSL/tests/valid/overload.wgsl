@@ -208,3 +208,36 @@ fn testUnaryMinus() {
   let x1 = -x;
   let x2 = -vec2(1, 1);
 }
+
+fn testClamp() {
+   let x = clamp(0, 0, 0);
+   let x1 = clamp(0u, 0u, 0u);
+   let x2 = clamp(0i, 0i, 0i);
+   let x3 = clamp(0.0, 0.0, 0.0);
+   let x4 = clamp(0.0f, 0.0f, 0.0f);
+   let x5 = clamp(vec2(0.0, 0.0), vec2(0.0, 0.0), vec2(0.0, 0.0));
+   let x6 = clamp(vec3(0.0, 0.0, 0.0), vec3(0.0, 0.0, 0.0), vec3(0.0, 0.0, 0.0));
+   let x7 = clamp(vec4(0.0, 0.0, 0.0, 0.0), vec4(0.0, 0.0, 0.0, 0.0), vec4(0.0, 0.0, 0.0, 0.0));
+}
+
+fn testMin() {
+   let x = min(0, 0u);
+   let x1 = min(0u, 0u);
+   let x2 = min(0i, 0i);
+   let x3 = min(0.0, 0.0);
+   let x4 = min(0.0f, 0.0f);
+   let x5 = min(vec2(0.0, 0.0), vec2(0.0, 0.0));
+   let x6 = min(vec3(0.0, 0.0, 0.0), vec3(0.0, 0.0, 0.0));
+   let x7 = min(vec4(0.0, 0.0, 0.0, 0.0), vec4(0.0, 0.0, 0.0, 0.0));
+}
+
+fn testMax() {
+   let x = max(0, 0u);
+   let x1 = max(0u, 0u);
+   let x2 = max(0i, 0i);
+   let x3 = max(0.0, 0.0);
+   let x4 = max(0.0f, 0.0f);
+   let x5 = max(vec2(0.0, 0.0), vec2(0.0, 0.0));
+   let x6 = max(vec3(0.0, 0.0, 0.0), vec3(0.0, 0.0, 0.0));
+   let x7 = max(vec4(0.0, 0.0, 0.0, 0.0), vec4(0.0, 0.0, 0.0, 0.0));
+}
