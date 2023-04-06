@@ -3606,6 +3606,8 @@ imported/w3c/web-platform-tests/css/css-text-decor/text-emphasis-style-open-001.
 imported/w3c/web-platform-tests/css/css-text-decor/text-emphasis-style-shape-001.xht [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-text-decor/text-emphasis-style-string-001.xht [ ImageOnlyFailure ]
 webkit.org/b/230083 imported/w3c/web-platform-tests/css/css-text-decor/text-underline-offset-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-text-decor/text-emphasis-style-property-010Cc.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-text-decor/text-emphasis-style-property-010Cf.html [ ImageOnlyFailure ]
 
 # wpt css-position failures
 webkit.org/b/203445 [ Debug ] imported/w3c/web-platform-tests/css/css-position/position-absolute-container-dynamic-002.html [ Skip ]
