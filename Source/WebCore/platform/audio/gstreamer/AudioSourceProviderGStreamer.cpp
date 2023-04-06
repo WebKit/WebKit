@@ -379,19 +379,14 @@ void AudioSourceProviderGStreamer::handleNewDeinterleavePad(GstPad* pad)
     auto* sink = makeGStreamerElement("appsink", nullptr);
 
     static GstAppSinkCallbacks callbacks = {
-        nullptr,
-        [](GstAppSink* sink, gpointer userData) -> GstFlowReturn {
+        .new_preroll = [](GstAppSink* sink, gpointer userData) -> GstFlowReturn {
             return static_cast<AudioSourceProviderGStreamer*>(userData)->handleSample(sink, true);
         },
-        [](GstAppSink* sink, gpointer userData) -> GstFlowReturn {
+        .new_sample = [](GstAppSink* sink, gpointer userData) -> GstFlowReturn {
             return static_cast<AudioSourceProviderGStreamer*>(userData)->handleSample(sink, false);
-        },
-#if GST_CHECK_VERSION(1, 20, 0)
-        // new_event
-        nullptr,
-#endif
-        { nullptr }
+        }
     };
+
     gst_app_sink_set_callbacks(GST_APP_SINK(sink), &callbacks, this, nullptr);
     // The provider client might request samples faster than the current clock speed, so this sink
     // should process buffers as fast as possible.

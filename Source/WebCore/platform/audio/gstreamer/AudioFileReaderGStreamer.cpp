@@ -319,19 +319,10 @@ void AudioFileReader::handleNewDeinterleavePad(GstPad* pad)
     }
     m_channels++;
 
-    static GstAppSinkCallbacks callbacks = {
-        nullptr, // eos
-        nullptr, // new_preroll
-        // new_sample
-        [](GstAppSink* sink, gpointer userData) -> GstFlowReturn {
-            return static_cast<AudioFileReader*>(userData)->handleSample(sink);
-        },
-#if GST_CHECK_VERSION(1, 20, 0)
-        // new_event
-        nullptr,
-#endif
-        { nullptr }
-    };
+    static GstAppSinkCallbacks callbacks { .new_sample = [](GstAppSink* sink, gpointer userData) -> GstFlowReturn {
+        return static_cast<AudioFileReader*>(userData)->handleSample(sink);
+    } };
+
     gst_app_sink_set_callbacks(GST_APP_SINK(sink), &callbacks, this, nullptr);
 
     g_object_set(sink, "sync", FALSE, "async", FALSE, "enable-last-sample", FALSE, nullptr);

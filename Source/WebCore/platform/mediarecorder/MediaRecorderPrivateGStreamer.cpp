@@ -259,24 +259,20 @@ void MediaRecorderPrivateGStreamer::setSource(GstElement* element)
 
 void MediaRecorderPrivateGStreamer::setSink(GstElement* element)
 {
-    static GstAppSinkCallbacks callbacks = {
-        nullptr,
-        [](GstAppSink* sink, gpointer userData) -> GstFlowReturn {
+    static GstAppSinkCallbacks callbacks {
+        .new_preroll = [](GstAppSink* sink, gpointer userData) -> GstFlowReturn {
             auto sample = adoptGRef(gst_app_sink_pull_preroll(sink));
             if (sample)
                 static_cast<MediaRecorderPrivateGStreamer*>(userData)->processSample(WTFMove(sample));
             return gst_app_sink_is_eos(sink) ? GST_FLOW_EOS : GST_FLOW_OK;
         },
-        [](GstAppSink* sink, gpointer userData) -> GstFlowReturn {
+        .new_sample = [](GstAppSink* sink, gpointer userData) -> GstFlowReturn {
             auto sample = adoptGRef(gst_app_sink_pull_sample(sink));
             if (sample)
                 static_cast<MediaRecorderPrivateGStreamer*>(userData)->processSample(WTFMove(sample));
             return gst_app_sink_is_eos(sink) ? GST_FLOW_EOS : GST_FLOW_OK;
-        },
-        // new_event
-        nullptr,
-        { nullptr }
-    };
+        } };
+
     gst_app_sink_set_callbacks(GST_APP_SINK(element), &callbacks, this, nullptr);
     g_object_set(element, "enable-last-sample", FALSE, "max-buffers", 1, "async", FALSE, nullptr);
     m_sink = element;
