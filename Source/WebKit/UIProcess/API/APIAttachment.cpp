@@ -30,6 +30,7 @@
 
 #include "WebPageProxy.h"
 #include <WebCore/SharedBuffer.h>
+#include <wtf/CompletionHandler.h>
 #include <wtf/text/WTFString.h>
 
 namespace API {

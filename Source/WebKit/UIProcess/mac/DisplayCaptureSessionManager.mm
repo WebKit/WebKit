@@ -116,7 +116,7 @@ std::optional<WebCore::CaptureDevice> DisplayCaptureSessionManager::deviceSelect
 
 bool DisplayCaptureSessionManager::useMockCaptureDevices() const
 {
-    return m_indexOfDeviceSelectedForTesting || MockRealtimeMediaSourceCenter::mockRealtimeMediaSourceCenterEnabled();
+    return m_indexOfDeviceSelectedForTesting || WebCore::MockRealtimeMediaSourceCenter::mockRealtimeMediaSourceCenterEnabled();
 }
 
 void DisplayCaptureSessionManager::showWindowPicker(const WebCore::SecurityOriginData& origin, CompletionHandler<void(std::optional<WebCore::CaptureDevice>)>&& completionHandler)

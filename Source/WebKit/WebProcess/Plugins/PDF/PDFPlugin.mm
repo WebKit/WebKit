@@ -32,6 +32,7 @@
 #import "DataReference.h"
 #import "FrameInfoData.h"
 #import "Logging.h"
+#import "MessageSenderInlines.h"
 #import "PDFAnnotationTextWidgetDetails.h"
 #import "PDFContextMenu.h"
 #import "PDFLayerControllerSPI.h"

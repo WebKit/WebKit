@@ -35,6 +35,7 @@
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
+OBJC_CLASS NSData;
 OBJC_CLASS NSFileWrapper;
 OBJC_CLASS NSString;
 

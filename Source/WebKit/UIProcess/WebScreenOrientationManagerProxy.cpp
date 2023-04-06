@@ -28,6 +28,7 @@
 
 #include "APIUIClient.h"
 #include "MessageSenderInlines.h"
+#include "WebCoreArgumentCoders.h"
 #include "WebFullScreenManagerProxy.h"
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"

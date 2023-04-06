@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "SpeechRecognitionRemoteRealtimeMediaSourceManager.h"
+#include "MessageSenderInlines.h"
 
 #if ENABLE(MEDIA_STREAM)
 

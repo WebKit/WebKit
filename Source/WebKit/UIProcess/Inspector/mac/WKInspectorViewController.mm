@@ -29,21 +29,22 @@
 #if PLATFORM(MAC)
 
 #import "APINavigation.h"
-#import <WebKit/WKFrameInfo.h>
+#import "WKContextMenuItemTypes.h"
 #import "WKInspectorResourceURLSchemeHandler.h"
 #import "WKInspectorWKWebView.h"
-#import <WebKit/WKNavigationAction.h>
-#import <WebKit/WKNavigationDelegate.h>
 #import "WKOpenPanelParameters.h"
-#import <WebKit/WKPreferencesPrivate.h>
 #import "WKProcessPoolInternal.h"
-#import <WebKit/WKUIDelegatePrivate.h>
-#import <WebKit/WKWebViewConfigurationPrivate.h>
-#import <WebKit/WKWebViewPrivate.h>
 #import "WebInspectorUIProxy.h"
 #import "WebInspectorUtilities.h"
 #import "WebPageProxy.h"
 #import "_WKInspectorConfigurationInternal.h"
+#import <WebKit/WKFrameInfo.h>
+#import <WebKit/WKNavigationAction.h>
+#import <WebKit/WKNavigationDelegate.h>
+#import <WebKit/WKPreferencesPrivate.h>
+#import <WebKit/WKUIDelegatePrivate.h>
+#import <WebKit/WKWebViewConfigurationPrivate.h>
+#import <WebKit/WKWebViewPrivate.h>
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 

@@ -40,6 +40,7 @@
 #include <WebCore/ScrollingCoordinatorTypes.h>
 #include <WebCore/ScrollingThread.h>
 #include <WebCore/WheelEventDeltaFilter.h>
+#include <wtf/SystemTracing.h>
 
 namespace WebKit {
 using namespace WebCore;

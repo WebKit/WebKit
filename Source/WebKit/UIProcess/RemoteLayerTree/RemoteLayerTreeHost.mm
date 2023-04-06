@@ -35,6 +35,7 @@
 #import "WKAnimationDelegate.h"
 #import "WebPageProxy.h"
 #import "WebProcessProxy.h"
+#import "WindowKind.h"
 #import <QuartzCore/QuartzCore.h>
 #import <WebCore/DestinationColorSpace.h>
 #import <WebCore/GraphicsContextCG.h>

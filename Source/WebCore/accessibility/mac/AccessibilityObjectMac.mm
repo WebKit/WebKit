@@ -34,6 +34,7 @@
 #import "FrameSelection.h"
 #import "HTMLFieldSetElement.h"
 #import "HTMLInputElement.h"
+#import "LocalFrame.h"
 #import "LocalFrameView.h"
 #import "LocalizedStrings.h"
 #import "RenderObject.h"

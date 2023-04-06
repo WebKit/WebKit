@@ -29,6 +29,7 @@
 
 #include <WebCore/RealtimeMediaSource.h>
 #include <WebCore/RealtimeMediaSourceIdentifier.h>
+#include <wtf/MediaTime.h>
 
 #if PLATFORM(COCOA)
 #include "SharedCARingBuffer.h"

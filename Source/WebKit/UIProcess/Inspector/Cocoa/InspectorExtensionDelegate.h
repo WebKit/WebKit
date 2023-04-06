@@ -29,6 +29,7 @@
 
 #import "APIInspectorExtensionClient.h"
 #import "WKFoundation.h"
+#import <WebCore/FrameIdentifier.h>
 #import <wtf/WeakObjCPtr.h>
 
 @class _WKInspectorExtension;

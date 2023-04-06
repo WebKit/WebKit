@@ -26,6 +26,7 @@
 #pragma once
 
 #include "DeviceOrientationOrMotionPermissionState.h"
+#include "Document.h"
 #include "Event.h"
 #include "IDLTypes.h"
 

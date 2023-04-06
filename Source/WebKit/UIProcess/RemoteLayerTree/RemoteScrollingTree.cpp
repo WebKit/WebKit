@@ -32,6 +32,7 @@
 #include "RemoteScrollingCoordinatorProxy.h"
 #include <WebCore/ScrollingTreeFixedNodeCocoa.h>
 #include <WebCore/ScrollingTreeFrameHostingNode.h>
+#include <WebCore/ScrollingTreeFrameScrollingNode.h>
 #include <WebCore/ScrollingTreeOverflowScrollProxyNodeCocoa.h>
 #include <WebCore/ScrollingTreePositionedNodeCocoa.h>
 #include <WebCore/ScrollingTreeStickyNodeCocoa.h>
