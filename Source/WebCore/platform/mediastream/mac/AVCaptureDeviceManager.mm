@@ -59,29 +59,6 @@ using namespace WebCore;
 
 namespace WebCore {
 
-static NSMutableArray<NSString*>* cameraCaptureDeviceTypes()
-{
-    ASSERT(isMainThread());
-    NSMutableArray<NSString*>* deviceTypes = [[NSMutableArray alloc] initWithCapacity:7];
-
-    if (PAL::canLoad_AVFoundation_AVCaptureDeviceTypeBuiltInWideAngleCamera())
-        [deviceTypes addObject:AVCaptureDeviceTypeBuiltInWideAngleCamera];
-    if (PAL::canLoad_AVFoundation_AVCaptureDeviceTypeBuiltInTelephotoCamera())
-        [deviceTypes addObject:AVCaptureDeviceTypeBuiltInTelephotoCamera];
-    if (PAL::canLoad_AVFoundation_AVCaptureDeviceTypeBuiltInUltraWideCamera())
-        [deviceTypes addObject:AVCaptureDeviceTypeBuiltInUltraWideCamera];
-    if (PAL::canLoad_AVFoundation_AVCaptureDeviceTypeDeskViewCamera())
-        [deviceTypes addObject:AVCaptureDeviceTypeDeskViewCamera];
-    if (PAL::canLoad_AVFoundation_AVCaptureDeviceTypeBuiltInDualWideCamera())
-        [deviceTypes addObject:AVCaptureDeviceTypeBuiltInDualWideCamera];
-    if (PAL::canLoad_AVFoundation_AVCaptureDeviceTypeBuiltInTripleCamera())
-        [deviceTypes addObject:AVCaptureDeviceTypeBuiltInTripleCamera];
-    if (PAL::canLoad_AVFoundation_AVCaptureDeviceTypeExternalUnknown())
-        [deviceTypes addObject:AVCaptureDeviceTypeExternalUnknown];
-
-    return deviceTypes;
-}
-
 void AVCaptureDeviceManager::computeCaptureDevices(CompletionHandler<void()>&& callback)
 {
     if (!m_isInitialized) {
@@ -268,7 +245,7 @@ AVCaptureDeviceManager& AVCaptureDeviceManager::singleton()
 
 AVCaptureDeviceManager::AVCaptureDeviceManager()
     : m_objcObserver(adoptNS([[WebCoreAVCaptureDeviceManagerObserver alloc] initWithCallback:this]))
-    , m_avCaptureDeviceTypes(adoptNS(cameraCaptureDeviceTypes()))
+    , m_avCaptureDeviceTypes(adoptNS(AVVideoCaptureSource::cameraCaptureDeviceTypes()))
     , m_dispatchQueue(WorkQueue::create("com.apple.WebKit.AVCaptureDeviceManager"))
 {
 }

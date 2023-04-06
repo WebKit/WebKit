@@ -335,6 +335,34 @@ const RealtimeMediaSourceCapabilities& AVVideoCaptureSource::capabilities()
     return *m_capabilities;
 }
 
+NSMutableArray* AVVideoCaptureSource::cameraCaptureDeviceTypes()
+{
+    ASSERT(isMainThread());
+    static NSMutableArray *devicePriorities;
+    if (!devicePriorities) {
+        devicePriorities = [[NSMutableArray alloc] initWithCapacity:8];
+
+        // This order is important as it is used to select the preferred back camera.
+        if (PAL::canLoad_AVFoundation_AVCaptureDeviceTypeBuiltInTripleCamera())
+            [devicePriorities addObject:AVCaptureDeviceTypeBuiltInTripleCamera];
+        if (PAL::canLoad_AVFoundation_AVCaptureDeviceTypeBuiltInDualWideCamera())
+            [devicePriorities addObject:AVCaptureDeviceTypeBuiltInDualWideCamera];
+        if (PAL::canLoad_AVFoundation_AVCaptureDeviceTypeBuiltInUltraWideCamera())
+            [devicePriorities addObject:AVCaptureDeviceTypeBuiltInUltraWideCamera];
+        if (PAL::canLoad_AVFoundation_AVCaptureDeviceTypeBuiltInDualCamera())
+            [devicePriorities addObject:AVCaptureDeviceTypeBuiltInDualCamera];
+        if (PAL::canLoad_AVFoundation_AVCaptureDeviceTypeBuiltInWideAngleCamera())
+            [devicePriorities addObject:AVCaptureDeviceTypeBuiltInWideAngleCamera];
+        if (PAL::canLoad_AVFoundation_AVCaptureDeviceTypeBuiltInTelephotoCamera())
+            [devicePriorities addObject:AVCaptureDeviceTypeBuiltInTelephotoCamera];
+        if (PAL::canLoad_AVFoundation_AVCaptureDeviceTypeDeskViewCamera())
+            [devicePriorities addObject:AVCaptureDeviceTypeDeskViewCamera];
+        if (PAL::canLoad_AVFoundation_AVCaptureDeviceTypeExternalUnknown())
+            [devicePriorities addObject:AVCaptureDeviceTypeExternalUnknown];
+    }
+    return devicePriorities;
+}
+
 double AVVideoCaptureSource::facingModeFitnessScoreAdjustment() const
 {
     ASSERT(isMainThread());
@@ -342,27 +370,11 @@ double AVVideoCaptureSource::facingModeFitnessScoreAdjustment() const
     if ([device() position] != AVCaptureDevicePositionBack)
         return 0;
 
-    static NSMutableArray *devicePriorities;
-    if (!devicePriorities) {
-        devicePriorities = [[NSMutableArray alloc] init];
-
-        if (PAL::canLoad_AVFoundation_AVCaptureDeviceTypeBuiltInTripleCamera())
-            [devicePriorities addObject:AVCaptureDeviceTypeBuiltInTripleCamera];
-        if (PAL::canLoad_AVFoundation_AVCaptureDeviceTypeBuiltInDualWideCamera())
-            [devicePriorities addObject:AVCaptureDeviceTypeBuiltInDualWideCamera];
-        [devicePriorities addObject:AVCaptureDeviceTypeBuiltInUltraWideCamera];
-        [devicePriorities addObject:AVCaptureDeviceTypeBuiltInDualCamera];
-        [devicePriorities addObject:AVCaptureDeviceTypeBuiltInWideAngleCamera];
-        [devicePriorities addObject:AVCaptureDeviceTypeBuiltInTelephotoCamera];
-        if (PAL::canLoad_AVFoundation_AVCaptureDeviceTypeDeskViewCamera())
-            [devicePriorities addObject:AVCaptureDeviceTypeDeskViewCamera];
-    }
-
-    auto relativePriority = [devicePriorities indexOfObject:[device() deviceType]];
+    auto relativePriority = [cameraCaptureDeviceTypes() indexOfObject:[device() deviceType]];
     if (relativePriority == NSNotFound)
-        relativePriority = devicePriorities.count;
+        relativePriority = cameraCaptureDeviceTypes().count;
 
-    auto fitnessScore = devicePriorities.count - relativePriority;
+    auto fitnessScore = cameraCaptureDeviceTypes().count - relativePriority;
     ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER, captureDevice().label(), " has fitness adjustment ", fitnessScore);
 
     return fitnessScore;

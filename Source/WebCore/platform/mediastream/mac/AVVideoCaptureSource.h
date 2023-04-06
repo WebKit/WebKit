@@ -44,6 +44,7 @@ OBJC_CLASS AVCaptureSession;
 OBJC_CLASS AVCaptureVideoDataOutput;
 OBJC_CLASS AVFrameRateRange;
 OBJC_CLASS NSError;
+OBJC_CLASS NSMutableArray;
 OBJC_CLASS NSNotification;
 OBJC_CLASS WebCoreAVVideoCaptureSourceObserver;
 
@@ -56,6 +57,7 @@ enum class VideoFrameRotation : uint16_t;
 class AVVideoCaptureSource : public RealtimeVideoCaptureSource, private OrientationNotifier::Observer {
 public:
     static CaptureSourceOrError create(const CaptureDevice&, MediaDeviceHashSalts&&, const MediaConstraints*, PageIdentifier);
+    static NSMutableArray* cameraCaptureDeviceTypes();
 
     WEBCORE_EXPORT static VideoCaptureFactory& factory();
 
