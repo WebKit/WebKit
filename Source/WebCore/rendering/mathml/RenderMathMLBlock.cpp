@@ -199,6 +199,7 @@ void RenderMathMLBlock::layoutItems(bool relayoutChildren)
 
     LayoutUnit currentHorizontalExtent = contentLogicalWidth();
     for (auto* child = firstChildBox(); child; child = child->nextSiblingBox()) {
+        auto everHadLayout = child->everHadLayout();
         LayoutUnit childSize = child->maxPreferredLogicalWidth() - child->horizontalBorderAndPaddingExtent();
 
         if (preferredHorizontalExtent > currentHorizontalExtent)
@@ -225,6 +226,8 @@ void RenderMathMLBlock::layoutItems(bool relayoutChildren)
 
         child->setLocation(childLocation);
         horizontalOffset += childHorizontalExtent + child->marginEnd();
+        if (!everHadLayout && child->checkForRepaintDuringLayout())
+            child->repaint();
     }
 }
 

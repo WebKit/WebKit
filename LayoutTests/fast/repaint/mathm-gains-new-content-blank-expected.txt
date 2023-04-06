@@ -1,0 +1,11 @@
+PASS if
+this is visible.
+(repaint rects
+  (rect 470 24 320 20)
+  (rect 470 24 320 20)
+  (rect 8 8 462 20)
+  (rect 148 8 642 36)
+  (rect 8 8 302 20)
+  (rect 148 8 482 20)
+)
+

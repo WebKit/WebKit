@@ -153,7 +153,12 @@ void RenderMathMLRow::layoutRowItems(LayoutUnit width, LayoutUnit ascent)
         LayoutUnit childVerticalOffset = borderTop() + paddingTop() + child->marginTop() + ascent - childAscent;
         LayoutUnit childWidth = child->logicalWidth();
         LayoutUnit childHorizontalOffset = style().isLeftToRightDirection() ? horizontalOffset : width - horizontalOffset - childWidth;
+        auto repaintRect = child->checkForRepaintDuringLayout() ? std::make_optional(child->frameRect()) : std::nullopt;
         child->setLocation(LayoutPoint(childHorizontalOffset, childVerticalOffset));
+        if (repaintRect) {
+            repaintRect->uniteEvenIfEmpty(child->frameRect());
+            repaintRectangle(*repaintRect);
+        }
         horizontalOffset += childWidth + child->marginEnd();
     }
 }
