@@ -693,7 +693,7 @@ void RemoteLayerBackingStoreProperties::updateCachedBuffers(RemoteLayerTreeNode&
 {
     Vector<RemoteLayerTreeNode::CachedContentsBuffer> cachedBuffers = node.takeCachedContentsBuffers();
 
-    if (contentsType != LayerContentsType::CachedIOSurface || !m_frontBufferIdentifier)
+    if (contentsType != LayerContentsType::CachedIOSurface || !m_frontBufferIdentifier || !m_bufferHandle || !std::holds_alternative<MachSendRight>(*m_bufferHandle))
         return;
 
     cachedBuffers.removeAllMatching([&](const RemoteLayerTreeNode::CachedContentsBuffer& current) {
