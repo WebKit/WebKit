@@ -1279,7 +1279,7 @@ void DisplayMtl::initializeFeatures()
     // with staging buffers
     ANGLE_FEATURE_CONDITION(&mFeatures, alwaysPreferStagedTextureUploads, true);
     ANGLE_FEATURE_CONDITION(&mFeatures, disableStagedInitializationOfPackedTextureFormats,
-                            isIntel());
+                            isIntel() || isAMD());
 
     ApplyFeatureOverrides(&mFeatures, getState());
 }
