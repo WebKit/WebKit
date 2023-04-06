@@ -37,7 +37,7 @@ namespace WebKit {
 
 class WebPage;
 
-class AcceleratedSurfaceDMABuf final : public AcceleratedSurface, public CanMakeWeakPtr<AcceleratedSurfaceDMABuf> {
+class AcceleratedSurfaceDMABuf final : public AcceleratedSurface, public CanMakeWeakPtr<AcceleratedSurfaceDMABuf, WeakPtrFactoryInitialization::Eager> {
 public:
     static std::unique_ptr<AcceleratedSurfaceDMABuf> create(WebPage&, Client&);
     ~AcceleratedSurfaceDMABuf();
