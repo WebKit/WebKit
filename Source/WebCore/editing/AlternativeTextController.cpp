@@ -98,8 +98,10 @@ AlternativeTextController::~AlternativeTextController()
 void AlternativeTextController::startAlternativeTextUITimer(AlternativeTextType type)
 {
     const Seconds correctionPanelTimerInterval { 300_ms };
+#if ENABLE(ALTERNATIVE_TEXT_REQUIRES_AUTOMATIC_SPELLING_CORRECTION)
     if (!isAutomaticSpellingCorrectionEnabled())
         return;
+#endif
 
     // If type is PanelTypeReversion, then the new range has been set. So we shouldn't clear it.
     if (type == AlternativeTextType::Correction)
