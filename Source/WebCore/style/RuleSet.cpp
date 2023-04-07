@@ -397,11 +397,14 @@ RuleSet::CollectedMediaQueryChanges RuleSet::evaluateDynamicMediaQueryRules(cons
     if (affectedRulePositionsAndResults.isEmpty())
         return collectedChanges;
 
+    m_hasEnabledRules = false;
+
     traverseRuleDatas([&](RuleData& ruleData) {
         auto it = affectedRulePositionsAndResults.find(ruleData.position());
-        if (it == affectedRulePositionsAndResults.end())
-            return;
-        ruleData.setEnabled(it->value);
+        if (it != affectedRulePositionsAndResults.end())
+            ruleData.setEnabled(it->value);
+        if (ruleData.isEnabled())
+            m_hasEnabledRules = true;
     });
 
     return collectedChanges;

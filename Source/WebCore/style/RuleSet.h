@@ -118,6 +118,8 @@ public:
     bool hasContainerQueries() const { return !m_containerQueries.isEmpty(); }
     Vector<const CQ::ContainerQuery*> containerQueriesFor(const RuleData&) const;
 
+    bool hasEnabledRules() const { return m_hasEnabledRules; }
+
 private:
     friend class RuleSetBuilder;
 
@@ -192,6 +194,7 @@ private:
     Vector<DynamicMediaQueryRules> m_dynamicMediaQueryRules;
     HashMap<Vector<size_t>, Ref<const RuleSet>> m_mediaQueryInvalidationRuleSetCache;
     unsigned m_ruleCount { 0 };
+    bool m_hasEnabledRules { true };
 
     Vector<CascadeLayer> m_cascadeLayers;
     // This is a side vector to hold layer identifiers without bloating RuleData.
