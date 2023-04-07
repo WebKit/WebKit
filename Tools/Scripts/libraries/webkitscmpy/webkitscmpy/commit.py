@@ -1,4 +1,4 @@
-# Copyright (C) 2020 Apple Inc. All rights reserved.
+# Copyright (C) 2020-2023 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -34,6 +34,7 @@ class Commit(object):
     REVISION_RE = re.compile(r'^[Rr]?(?P<revision>\d{1,10})$')
     IDENTIFIER_RE = re.compile(r'^((?P<branch_point>\d{1,10})\.)?(?P<identifier>-?\d{1,10})(@(?P<branch>\S*))?$')
     NUMBER_RE = re.compile(r'^-?\d{1,10}$')
+    TRAILER_RE = re.compile(r'^(?P<key>[^:()\t\/*]+): (?P<value>.+)')
     HASH_LABEL_SIZE = 12
     UUID_MULTIPLIER = 100
 
@@ -289,6 +290,14 @@ class Commit(object):
         seen_first_line = False
         prepend = False
 
+        for line in self.trailers:
+            words = line.split()
+            for word in [words[0], words[-1]] if words[0] != words[-1] else [words[0]]:
+                candidate = Tracker.from_string(word)
+                if candidate and candidate.link not in links:
+                    links.add(candidate.link)
+                    result.append(candidate)
+
         for line in self.message.splitlines():
             if not line and seen_empty:
                 break
@@ -309,6 +318,18 @@ class Commit(object):
                     if not seen_first_line:
                         prepend = True
             seen_first_line = True
+        return result
+
+    @property
+    def trailers(self):
+        if not self.message:
+            return []
+        result = []
+        for line in reversed(self.message.splitlines()):
+            if self.TRAILER_RE.match(line):
+                result.insert(0, line)
+            else:
+                break
         return result
 
     def __repr__(self):

@@ -47,7 +47,11 @@
 	{
 		"name": "Cherry-pick",
 		"pickable": true,
-		"headers": ["^[Cc]herry[- ][Pp]ick"]
+		"headers": ["^[Cc]herry[- ][Pp]ick"],
+		"trailers": [
+			"^[Cc]herry[- ][Pp]ick:",
+			"^[Oo]riginally[- ]landed[- ]as:"
+		]
 	},
 	{
 		"name": "Tools",
