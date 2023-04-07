@@ -86,7 +86,8 @@ operator :max, {
 }
 
 # Trigonometric
-["acos", "asin", "atan", "cos", "sin", "tan"].each do |op|
+["acos", "asin", "atan", "cos", "sin", "tan",
+ "acosh", "asinh", "atanh", "cosh", "sinh", "tanh"].each do |op|
     operator :"#{op}", {
         [T < Float].(T) => T,
         [T < Float, N].(Vector[T, N]) => Vector[T, N],

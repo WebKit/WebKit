@@ -285,3 +285,47 @@ fn testTrigonometric() {
     let x3 = tan(vec4(0.0, 0.0, 0.0, 0.0));
   }
 }
+
+fn testTrigonometricHyperbolic() {
+  {
+    let x = acosh(0.0);
+    let x1 = acosh(vec2(0.0, 0.0));
+    let x2 = acosh(vec3(0.0, 0.0, 0.0));
+    let x3 = acosh(vec4(0.0, 0.0, 0.0, 0.0));
+  }
+
+  {
+    let x = asinh(0.0);
+    let x1 = asinh(vec2(0.0, 0.0));
+    let x2 = asinh(vec3(0.0, 0.0, 0.0));
+    let x3 = asinh(vec4(0.0, 0.0, 0.0, 0.0));
+  }
+
+  {
+    let x = atanh(0.0);
+    let x1 = atanh(vec2(0.0, 0.0));
+    let x2 = atanh(vec3(0.0, 0.0, 0.0));
+    let x3 = atanh(vec4(0.0, 0.0, 0.0, 0.0));
+  }
+
+  {
+    let x = cosh(0.0);
+    let x1 = cosh(vec2(0.0, 0.0));
+    let x2 = cosh(vec3(0.0, 0.0, 0.0));
+    let x3 = cosh(vec4(0.0, 0.0, 0.0, 0.0));
+  }
+
+  {
+    let x = sinh(0.0);
+    let x1 = sinh(vec2(0.0, 0.0));
+    let x2 = sinh(vec3(0.0, 0.0, 0.0));
+    let x3 = sinh(vec4(0.0, 0.0, 0.0, 0.0));
+  }
+
+  {
+    let x = tanh(0.0);
+    let x1 = tanh(vec2(0.0, 0.0));
+    let x2 = tanh(vec3(0.0, 0.0, 0.0));
+    let x3 = tanh(vec4(0.0, 0.0, 0.0, 0.0));
+  }
+}
