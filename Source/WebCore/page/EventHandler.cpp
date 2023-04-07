@@ -2777,9 +2777,14 @@ void EventHandler::notifyScrollableAreasOfMouseEvents(const AtomString& eventTyp
     bool movedBetweenScrollableaAreas = scrollableAreaForLastNode && scrollableAreaForNodeUnderMouse && (scrollableAreaForLastNode != scrollableAreaForNodeUnderMouse);
     if (eventType == eventNames().mousemoveEvent) {
         frameView->mouseMovedInContentArea();
+        if (scrollingCoordinator)
+            scrollingCoordinator->setMouseMovedInContentArea(frameView.get());
 
-        if (!movedBetweenScrollableaAreas && scrollableAreaForNodeUnderMouse && scrollableAreaForNodeUnderMouse != frameView)
+        if (!movedBetweenScrollableaAreas && scrollableAreaForNodeUnderMouse && scrollableAreaForNodeUnderMouse != frameView) {
             scrollableAreaForNodeUnderMouse->mouseMovedInContentArea();
+            if (scrollingCoordinator)
+                scrollingCoordinator->setMouseMovedInContentArea(scrollableAreaForNodeUnderMouse);
+        }
     }
 
     if (!movedBetweenScrollableaAreas)

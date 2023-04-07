@@ -3018,6 +3018,7 @@ header: <WebCore/ScrollingStateNode.h>
     VerticalScrollbarLayer
     PainterForScrollbar
     ContentAreaHoverState
+    MouseActivityState
     FrameScaleFactor
     EventTrackingRegion
     RootContentsLayer

@@ -104,6 +104,7 @@ public:
     
     void mouseEnteredContentArea();
     void mouseExitedContentArea();
+    void mouseMovedInContentArea();
 
 private:
     ScrollerPairMac(ScrollingTreeScrollingNode&);

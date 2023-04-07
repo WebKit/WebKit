@@ -285,6 +285,11 @@ void ScrollingStateScrollingNode::setMouseIsOverContentArea(bool flag)
     setPropertyChanged(Property::ContentAreaHoverState);
 }
 
+void ScrollingStateScrollingNode::setMouseMovedInContentArea()
+{
+    setPropertyChanged(Property::MouseActivityState);
+}
+
 void ScrollingStateScrollingNode::dumpProperties(TextStream& ts, OptionSet<ScrollingStateTreeAsTextBehavior> behavior) const
 {
     ScrollingStateNode::dumpProperties(ts, behavior);

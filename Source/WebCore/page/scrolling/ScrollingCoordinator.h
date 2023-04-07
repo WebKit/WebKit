@@ -205,6 +205,7 @@ public:
     void deferWheelEventTestCompletionForReason(ScrollingNodeID, WheelEventTestMonitor::DeferReason);
     void removeWheelEventTestCompletionDeferralForReason(ScrollingNodeID, WheelEventTestMonitor::DeferReason);
     WEBCORE_EXPORT virtual void setMouseIsOverContentArea(ScrollableArea*, bool) { }
+    WEBCORE_EXPORT virtual void setMouseMovedInContentArea(ScrollableArea*) { }
 
 protected:
     explicit ScrollingCoordinator(Page*);

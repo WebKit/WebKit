@@ -351,21 +351,36 @@ void ScrollerPairMac::ensureOnMainThreadWithProtectedThis(Function<void()>&& tas
 void ScrollerPairMac::mouseEnteredContentArea()
 {
     LOG_WITH_STREAM(OverlayScrollbars, stream << "ScrollerPairMac for [" << m_scrollingNode.scrollingNodeID() << "] mouseEnteredContentArea");
-    if ([m_scrollerImpPair overlayScrollerStateIsLocked])
-        return;
 
-    [m_scrollerImpPair mouseEnteredContentArea];
+    ensureOnMainThreadWithProtectedThis([this] {
+        if ([m_scrollerImpPair overlayScrollerStateIsLocked])
+            return;
+
+        [m_scrollerImpPair mouseEnteredContentArea];
+    });
 }
 
 void ScrollerPairMac::mouseExitedContentArea()
 {
     LOG_WITH_STREAM(OverlayScrollbars, stream << "ScrollerPairMac for [" << m_scrollingNode.scrollingNodeID() << "] mouseExitedContentArea");
-    if ([m_scrollerImpPair overlayScrollerStateIsLocked])
-        return;
+    
+    ensureOnMainThreadWithProtectedThis([this] {
+        if ([m_scrollerImpPair overlayScrollerStateIsLocked])
+            return;
 
-    [m_scrollerImpPair mouseExitedContentArea];
+        [m_scrollerImpPair mouseExitedContentArea];
+    });
 }
 
+void ScrollerPairMac::mouseMovedInContentArea()
+{
+    ensureOnMainThreadWithProtectedThis([this] {
+        if ([m_scrollerImpPair overlayScrollerStateIsLocked])
+            return;
+
+        [m_scrollerImpPair mouseMovedInContentArea];
+    });
+}
 
 } // namespace WebCore
 

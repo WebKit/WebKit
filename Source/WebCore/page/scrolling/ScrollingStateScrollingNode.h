@@ -110,6 +110,8 @@ public:
     WEBCORE_EXPORT void setMouseIsOverContentArea(bool);
     bool mouseIsOverContentArea() const { return m_mouseIsOverContentArea; }
 
+    WEBCORE_EXPORT void setMouseMovedInContentArea();
+
 protected:
     ScrollingStateScrollingNode(ScrollingStateTree&, ScrollingNodeType, ScrollingNodeID);
     ScrollingStateScrollingNode(const ScrollingStateScrollingNode&, ScrollingStateTree&);
