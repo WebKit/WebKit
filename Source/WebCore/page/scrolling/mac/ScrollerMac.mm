@@ -381,6 +381,34 @@ void ScrollerMac::updatePairScrollerImps()
         m_pair.setHorizontalScrollerImp(scrollerImp);
 }
 
+void ScrollerMac::mouseEnteredScrollbar()
+{
+    m_pair.ensureOnMainThreadWithProtectedThis([this] {
+        // At this time, only legacy scrollbars needs to send notifications here.
+        if (m_pair.scrollbarStyle() != WebCore::ScrollbarStyle::AlwaysVisible)
+            return;
+
+        if ([m_pair.scrollerImpPair() overlayScrollerStateIsLocked])
+            return;
+
+        [m_scrollerImp mouseEnteredScroller];
+    });
+}
+
+void ScrollerMac::mouseExitedScrollbar()
+{
+    m_pair.ensureOnMainThreadWithProtectedThis([this] {
+        // At this time, only legacy scrollbars needs to send notifications here.
+        if (m_pair.scrollbarStyle() != WebCore::ScrollbarStyle::AlwaysVisible)
+            return;
+
+        if ([m_pair.scrollerImpPair() overlayScrollerStateIsLocked])
+            return;
+
+        [m_scrollerImp mouseExitedScroller];
+    });
+}
+
 String ScrollerMac::scrollbarState() const
 {
     if (!m_hostLayer || !m_scrollerImp)

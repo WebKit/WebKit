@@ -66,6 +66,9 @@ public:
     void updateValues();
     
     String scrollbarState() const;
+    
+    void mouseEnteredScrollbar();
+    void mouseExitedScrollbar();
 
 private:
     ScrollerPairMac& m_pair;

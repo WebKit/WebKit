@@ -38,6 +38,13 @@ OBJC_CLASS NSScrollerImp;
 
 namespace WebCore {
 
+struct ScrollbarHoverState {
+    bool mouseIsOverHorizontalScrollbar { false };
+    bool mouseIsOverVerticalScrollbar { false };
+
+    friend bool operator==(ScrollbarHoverState const& lhs, ScrollbarHoverState const& rhs) = default;
+};
+
 class ScrollingStateScrollingNode : public ScrollingStateNode {
 public:
     virtual ~ScrollingStateScrollingNode();
@@ -105,6 +112,9 @@ public:
     NSScrollerImp *verticalScrollerImp() const { return m_verticalScrollerImp.get(); }
     NSScrollerImp *horizontalScrollerImp() const { return m_horizontalScrollerImp.get(); }
 #endif
+    ScrollbarHoverState scrollbarHoverState() const { return m_scrollbarHoverState; }
+    WEBCORE_EXPORT void setScrollbarHoverState(ScrollbarHoverState);
+
     void setScrollerImpsFromScrollbars(Scrollbar* verticalScrollbar, Scrollbar* horizontalScrollbar);
 
     WEBCORE_EXPORT void setMouseIsOverContentArea(bool);
@@ -134,6 +144,8 @@ private:
     LayerRepresentation m_scrolledContentsLayer;
     LayerRepresentation m_horizontalScrollbarLayer;
     LayerRepresentation m_verticalScrollbarLayer;
+    
+    ScrollbarHoverState m_scrollbarHoverState;
 
 #if PLATFORM(MAC)
     RetainPtr<NSScrollerImp> m_verticalScrollerImp;

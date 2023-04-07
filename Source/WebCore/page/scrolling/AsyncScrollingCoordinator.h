@@ -170,6 +170,8 @@ private:
     void animatedScrollDidEndForNode(ScrollingNodeID);
     void wheelEventScrollWillStartForNode(ScrollingNodeID);
     void wheelEventScrollDidEndForNode(ScrollingNodeID);
+    
+    WEBCORE_EXPORT void setMouseIsOverScrollbar(Scrollbar*, bool isOverScrollbar) override;
 
     LocalFrameView* frameViewForScrollingNode(ScrollingNodeID) const;
 

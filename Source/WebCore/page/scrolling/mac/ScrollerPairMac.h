@@ -27,10 +27,11 @@
 
 #if PLATFORM(MAC)
 
+#include "FloatRect.h"
+#include "FloatSize.h"
+#include "PlatformWheelEvent.h"
 #include "ScrollerMac.h"
-#include <WebCore/FloatRect.h>
-#include <WebCore/FloatSize.h>
-#include <WebCore/PlatformWheelEvent.h>
+#include "ScrollingStateScrollingNode.h"
 #include <wtf/RecursiveLockAdapter.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 
@@ -105,6 +106,10 @@ public:
     void mouseEnteredContentArea();
     void mouseExitedContentArea();
     void mouseMovedInContentArea();
+    void mouseIsInScrollbar(ScrollbarHoverState);
+
+    NSScrollerImpPair *scrollerImpPair() const { return m_scrollerImpPair.get(); }
+    void ensureOnMainThreadWithProtectedThis(Function<void()>&&);
 
 private:
     ScrollerPairMac(ScrollingTreeScrollingNode&);
@@ -112,9 +117,10 @@ private:
     NSScrollerImp *scrollerImpHorizontal() { return horizontalScroller().scrollerImp(); }
     NSScrollerImp *scrollerImpVertical() { return verticalScroller().scrollerImp(); }
 
-    void ensureOnMainThreadWithProtectedThis(Function<void()>&&);
 
     ScrollingTreeScrollingNode& m_scrollingNode;
+
+    ScrollbarHoverState m_scrollbarHoverState;
 
     ScrollerMac m_verticalScroller;
     ScrollerMac m_horizontalScroller;

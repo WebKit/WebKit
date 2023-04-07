@@ -4697,11 +4697,16 @@ void EventHandler::updateLastScrollbarUnderMouse(Scrollbar* scrollbar, SetOrClea
 {
     if (m_lastScrollbarUnderMouse != scrollbar) {
         // Send mouse exited to the old scrollbar.
-        if (m_lastScrollbarUnderMouse)
+        if (m_lastScrollbarUnderMouse) {
+            if (auto scrollingCoordinator = m_frame.page()->scrollingCoordinator())
+                scrollingCoordinator->setMouseIsOverScrollbar(m_lastScrollbarUnderMouse.get(), false);
             m_lastScrollbarUnderMouse->mouseExited();
+        }
 
         // Send mouse entered if we're setting a new scrollbar.
         if (scrollbar && setOrClear == SetOrClearLastScrollbar::Set) {
+            if (auto scrollingCoordinator = m_frame.page()->scrollingCoordinator())
+                scrollingCoordinator->setMouseIsOverScrollbar(scrollbar, true);
             scrollbar->mouseEntered();
             m_lastScrollbarUnderMouse = *scrollbar;
         } else

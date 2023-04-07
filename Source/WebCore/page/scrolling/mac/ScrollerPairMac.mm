@@ -377,9 +377,27 @@ void ScrollerPairMac::mouseMovedInContentArea()
     ensureOnMainThreadWithProtectedThis([this] {
         if ([m_scrollerImpPair overlayScrollerStateIsLocked])
             return;
-
+        
         [m_scrollerImpPair mouseMovedInContentArea];
     });
+}
+
+void ScrollerPairMac::mouseIsInScrollbar(ScrollbarHoverState hoverState)
+{
+    if (m_scrollbarHoverState.mouseIsOverVerticalScrollbar != hoverState.mouseIsOverVerticalScrollbar) {
+        if (hoverState.mouseIsOverVerticalScrollbar)
+            verticalScroller().mouseEnteredScrollbar();
+        else
+            verticalScroller().mouseExitedScrollbar();
+    }
+
+    if (m_scrollbarHoverState.mouseIsOverHorizontalScrollbar != hoverState.mouseIsOverHorizontalScrollbar) {
+        if (hoverState.mouseIsOverHorizontalScrollbar)
+            horizontalScroller().mouseEnteredScrollbar();
+        else
+            horizontalScroller().mouseExitedScrollbar();
+    }
+    m_scrollbarHoverState = hoverState;
 }
 
 } // namespace WebCore

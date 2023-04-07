@@ -165,6 +165,12 @@ void ArgumentCoder<ScrollingStateScrollingNode>::encode(Encoder& encoder, const 
 
     if (node.hasChangedProperty(ScrollingStateNode::Property::VerticalScrollbarLayer))
         encoder << node.verticalScrollbarLayer().layerIDForEncoding();
+    
+    if (node.hasChangedProperty(ScrollingStateNode::Property::ScrollbarHoverState)) {
+        auto mouseIsInScrollbar = node.scrollbarHoverState();
+        encoder << mouseIsInScrollbar.mouseIsOverHorizontalScrollbar;
+        encoder << mouseIsInScrollbar.mouseIsOverVerticalScrollbar;
+    }
 }
 
 void ArgumentCoder<ScrollingStateFrameScrollingNode>::encode(Encoder& encoder, const ScrollingStateFrameScrollingNode& node)
@@ -286,6 +292,17 @@ bool ArgumentCoder<ScrollingStateScrollingNode>::decode(Decoder& decoder, Scroll
         if (!decoder.decode(layerID))
             return false;
         node.setVerticalScrollbarLayer(layerID.value_or(PlatformLayerIdentifier { }));
+    }
+    
+    if (node.hasChangedProperty(ScrollingStateNode::Property::ScrollbarHoverState)) {
+        bool didEnterScrollbarHorizontal;
+        if (!decoder.decode(didEnterScrollbarHorizontal))
+            return false;
+
+        bool didEnterScrollbarVertical;
+        if (!decoder.decode(didEnterScrollbarVertical))
+            return false;
+        node.setScrollbarHoverState({ didEnterScrollbarHorizontal, didEnterScrollbarVertical });
     }
 
     return true;
