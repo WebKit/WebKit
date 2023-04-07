@@ -196,7 +196,7 @@ struct PermissionRequest {
         [alert addAction:denyAction];
         [alert addAction:allowAction];
 
-        [[_activeChallenge->view window].rootViewController presentViewController:alert animated:YES completion:nil];
+        [[UIViewController _viewControllerForFullScreenPresentationFromView:_activeChallenge->view.get()] presentViewController:alert animated:YES completion:nil];
     }];
 }
 
