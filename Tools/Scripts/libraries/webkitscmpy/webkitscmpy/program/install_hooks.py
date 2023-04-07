@@ -136,7 +136,7 @@ class InstallHooks(Command):
         return result
 
     @classmethod
-    def main(cls, args, repository, hooks=None, **kwargs):
+    def main(cls, args, repository, hooks=None, identifier_template=None, **kwargs):
         if not isinstance(repository, local.Git):
             sys.stderr.write('Can only install hooks in a native git repository\n')
             return 1
@@ -179,6 +179,9 @@ class InstallHooks(Command):
         if early_exit:
             return 1
 
+        trailers_to_strip = ['Identifier'] + ([identifier_template.split(':', 1)[0]] if identifier_template else [])
+        source_remotes = repository.source_remotes() or ['origin']
+
         for hook in hook_names:
             source_path = os.path.join(hooks, hook)
             if not os.path.isfile(source_path):
@@ -193,6 +196,9 @@ class InstallHooks(Command):
                     default_pre_push_mode="'{}'".format(getattr(args, 'mode', cls.MODES[0])),
                     security_levels=security_levels,
                     remote_re=cls.REMOTE_RE.pattern,
+                    default_branch=repository.default_branch,
+                    trailers_to_strip=trailers_to_strip,
+                    source_remotes=source_remotes,
                 )
 
             target = os.path.join(repository.common_directory, 'hooks', hook)
