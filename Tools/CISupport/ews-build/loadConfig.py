@@ -37,9 +37,8 @@ from twisted.internet import defer
 from factories import (APITestsFactory, BindingsFactory, BuildFactory, CommitQueueFactory, Factory, GTKBuildFactory,
                        GTKTestsFactory, JSCBuildFactory, JSCBuildAndTestsFactory, JSCTestsFactory, MergeQueueFactory, StressTestFactory,
                        StyleFactory, TestFactory, tvOSBuildFactory, WPEBuildFactory, WPETestsFactory, WebKitPerlFactory, WebKitPyFactory,
-                       WinCairoFactory, iOSBuildFactory, iOSEmbeddedBuildFactory, iOSTestsFactory, iOSTestsNoWPTFactory,
-                       iOSTestsOnlyWPTFactory, macOSBuildFactory, macOSBuildOnlyFactory, macOSWK1Factory, macOSWK2Factory,
-                       ServicesFactory, UnsafeMergeQueueFactory, WatchListFactory, watchOSBuildFactory)
+                       WinCairoFactory, iOSBuildFactory, iOSEmbeddedBuildFactory, iOSTestsFactory, macOSBuildFactory, macOSBuildOnlyFactory,
+                       macOSWK1Factory, macOSWK2Factory, ServicesFactory, UnsafeMergeQueueFactory, WatchListFactory, watchOSBuildFactory)
 
 BUILDER_NAME_LENGTH_LIMIT = 70
 STEP_NAME_LENGTH_LIMIT = 50

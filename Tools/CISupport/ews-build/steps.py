@@ -3337,6 +3337,9 @@ class RunWebKitTests(shell.Test, AddToLogMixin):
             self.setCommand(self.command + ['--enable-core-dumps-nolimit'])
 
         if additionalArguments:
+            for argument in ["--child-process=5", "--exclude-tests", "imported/w3c/web-platform-tests"]:
+                if argument in additionalArguments:
+                    additionalArguments.remove(argument)
             self.setCommand(self.command + additionalArguments)
 
         if self.ENABLE_GUARD_MALLOC:
@@ -3558,22 +3561,6 @@ class RunWebKitTestsInStressGuardmallocMode(RunWebKitTestsInStressMode):
     name = 'run-layout-tests-in-guard-malloc-stress-mode'
     suffix = 'guard-malloc'
     ENABLE_GUARD_MALLOC = True
-
-
-class RunWebKitTestsNoWPT(RunWebKitTests):
-    name = 'layout-tests-no-wpt'
-
-    def setLayoutTestCommand(self):
-        RunWebKitTests.setLayoutTestCommand(self)
-        self.setCommand(self.command + ['--exclude-tests', 'imported/w3c/web-platform-tests'])
-
-
-class RunWebKitTestsOnlyWPT(RunWebKitTests):
-    name = 'layout-tests-only-wpt'
-
-    def setLayoutTestCommand(self):
-        RunWebKitTests.setLayoutTestCommand(self)
-        self.setCommand(self.command + ['imported/w3c/web-platform-tests'])
 
 
 class ReRunWebKitTests(RunWebKitTests):

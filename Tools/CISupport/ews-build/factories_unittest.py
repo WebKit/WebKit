@@ -139,7 +139,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'kill-old-processes',
             'find-modified-layout-tests',
             'run-layout-tests-in-stress-mode',
-            'layout-tests-no-wpt',
+            'layout-tests',
             'trigger-crash-log-submission',
             'set-build-summary'
         ],
@@ -160,7 +160,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'kill-old-processes',
             'find-modified-layout-tests',
             'run-layout-tests-in-stress-mode',
-            'layout-tests-only-wpt',
+            'layout-tests',
             'trigger-crash-log-submission',
             'set-build-summary'
         ],
