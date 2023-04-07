@@ -2845,13 +2845,14 @@ JSC_DEFINE_JIT_OPERATION(operationFunctionBind, JSBoundFunction*, (JSGlobalObjec
     if (boundArgsLength >= 1)
         boundArgs = ArgList(arguments, boundArgsLength);
 
-    double length = PNaN;
+    double length = 0;
     JSString* name = nullptr;
     JSFunction* function = jsDynamicCast<JSFunction*>(target);
     if (LIKELY(function && function->canAssumeNameAndLengthAreOriginal(vm))) {
         // Do nothing! 'length' and 'name' computation are lazily done.
         // And this is totally OK since we know that wrapped functions have canAssumeNameAndLengthAreOriginal condition
         // at the time of creation of JSBoundFunction.
+        length = PNaN; // Defer computation.
     } else {
         bool found = target->hasOwnProperty(globalObject, vm.propertyNames->length);
         RETURN_IF_EXCEPTION(scope, { });
