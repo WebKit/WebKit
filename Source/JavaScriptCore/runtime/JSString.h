@@ -267,6 +267,7 @@ private:
     friend JSString* jsString(JSGlobalObject*, const String&, const String&);
     friend JSString* jsString(JSGlobalObject*, JSString*, JSString*, JSString*);
     friend JSString* jsString(JSGlobalObject*, const String&, const String&, const String&);
+    friend JS_EXPORT_PRIVATE JSString* jsStringWithCacheSlowCase(VM&, StringImpl&);
     friend JSString* jsSingleCharacterString(VM&, UChar);
     friend JSString* jsSingleCharacterString(VM&, LChar);
     friend JSString* jsNontrivialString(VM&, const String&);
@@ -1036,22 +1037,23 @@ inline JSString* jsOwnedString(VM& vm, const String& s)
 
 ALWAYS_INLINE JSString* jsStringWithCache(VM& vm, const String& s)
 {
-    StringImpl* stringImpl = s.impl();
-    if (!stringImpl || !stringImpl->length())
+    unsigned length = s.length();
+    if (!length)
         return jsEmptyString(vm);
 
-    if (stringImpl->length() == 1) {
-        UChar singleCharacter = (*stringImpl)[0u];
-        if (singleCharacter <= maxSingleCharacterString)
-            return vm.smallStrings.singleCharacterString(static_cast<unsigned char>(singleCharacter));
+    auto& stringImpl = *s.impl();
+    if (length == 1) {
+        auto c = stringImpl[0];
+        if (c <= maxSingleCharacterString)
+            return vm.smallStrings.singleCharacterString(c);
     }
 
-    if (JSString* lastCachedString = vm.lastCachedString.get()) {
-        if (lastCachedString->tryGetValueImpl() == stringImpl)
+    if (auto* lastCachedString = vm.lastCachedString.get()) {
+        if (lastCachedString->getValueImpl() == &stringImpl)
             return lastCachedString;
     }
 
-    return jsStringWithCacheSlowCase(vm, *stringImpl);
+    return jsStringWithCacheSlowCase(vm, stringImpl);
 }
 
 ALWAYS_INLINE bool JSString::getStringPropertySlot(JSGlobalObject* globalObject, PropertyName propertyName, PropertySlot& slot)

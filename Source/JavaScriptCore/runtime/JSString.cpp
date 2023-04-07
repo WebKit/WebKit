@@ -397,7 +397,8 @@ bool JSString::getStringPropertyDescriptor(JSGlobalObject* globalObject, Propert
 
 JSString* jsStringWithCacheSlowCase(VM& vm, StringImpl& stringImpl)
 {
-    JSString* string = jsString(vm, String(stringImpl));
+    ASSERT(stringImpl.length() > 1 || (stringImpl.length() == 1 && stringImpl[0] > maxSingleCharacterString));
+    JSString* string = JSString::create(vm, stringImpl);
     vm.lastCachedString.set(vm, string);
     return string;
 }
