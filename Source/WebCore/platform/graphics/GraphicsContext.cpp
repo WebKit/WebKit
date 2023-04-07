@@ -37,7 +37,6 @@
 #include "IntRect.h"
 #include "MediaPlayer.h"
 #include "MediaPlayerPrivate.h"
-#include "NullGraphicsContext.h"
 #include "RoundedRect.h"
 #include "SystemImage.h"
 #include "TextBoxIterator.h"
@@ -107,7 +106,7 @@ void GraphicsContext::drawRaisedEllipse(const FloatRect& rect, const Color& elli
     setStrokeColor(ellipseColor);
     setFillColor(ellipseColor);
 
-    drawEllipse(rect);  
+    drawEllipse(rect);
 
     restore();
 }
@@ -489,7 +488,7 @@ FloatSize GraphicsContext::scaleFactor() const
     AffineTransform transform = getCTM(GraphicsContext::DefinitelyIncludeDeviceScale);
     return FloatSize(transform.xScale(), transform.yScale());
 }
-    
+
 FloatSize GraphicsContext::scaleFactorForDrawing(const FloatRect& destRect, const FloatRect& srcRect) const
 {
     AffineTransform transform = getCTM(GraphicsContext::DefinitelyIncludeDeviceScale);
@@ -618,8 +617,4 @@ void GraphicsContext::paintVideoFrame(VideoFrame& frame, const FloatRect& destin
 }
 #endif
 
-void NullGraphicsContext::drawConsumingImageBuffer(RefPtr<ImageBuffer>, const FloatRect&, const FloatRect&, const ImagePaintingOptions&)
-{
-}
-
-}
+} // namespace WebCore
