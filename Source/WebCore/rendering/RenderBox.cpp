@@ -1421,6 +1421,10 @@ FlowRelativeDirection RenderBox::physicalToFlowRelativeDirectionMapping(Physical
             if (isHorizontalWritingMode)
                 return FlowRelativeDirection::BlockEnd;
             return isLeftToRightDirection ? FlowRelativeDirection::InlineEnd : FlowRelativeDirection::InlineStart;
+        case PhysicalDirection::Left:
+            if (isHorizontalWritingMode)
+                return isLeftToRightDirection ? FlowRelativeDirection::InlineStart : FlowRelativeDirection::InlineEnd;
+            return isFlippedBlocksWritingMode ? FlowRelativeDirection::BlockEnd : FlowRelativeDirection::BlockStart;
         default:
             ASSERT_NOT_IMPLEMENTED_YET();
         } 
@@ -1468,8 +1472,6 @@ bool RenderBox::hasTrimmedMargin(std::optional<MarginTrimType> marginTrimType) c
         ASSERT_NOT_IMPLEMENTED_YET();
         return false;
     }
-    if (containingBlock && containingBlock->isFlexibleBox())
-        ASSERT(!marginTrimType || marginTrimType.value() == MarginTrimType::BlockStart || marginTrimType.value() == MarginTrimType::InlineEnd || marginTrimType.value() == MarginTrimType::BlockEnd);
 #endif
     if (!hasRareData())
         return false;
@@ -1479,11 +1481,7 @@ bool RenderBox::hasTrimmedMargin(std::optional<MarginTrimType> marginTrimType) c
 bool RenderBox::hasTrimmedMargin(PhysicalDirection physicalDirection) const
 {
     ASSERT(!needsLayout());
-
-    if (physicalDirection == PhysicalDirection::Top || physicalDirection == PhysicalDirection::Right || physicalDirection == PhysicalDirection::Bottom)
-        return hasTrimmedMargin(flowRelativeDirectionToMarginTrimType(physicalToFlowRelativeDirectionMapping(physicalDirection)));
-    ASSERT_NOT_IMPLEMENTED_YET();
-    return false;
+    return hasTrimmedMargin(flowRelativeDirectionToMarginTrimType(physicalToFlowRelativeDirectionMapping(physicalDirection)));
 }
 
 LayoutUnit RenderBox::adjustBorderBoxLogicalWidthForBoxSizing(const Length& logicalWidth) const

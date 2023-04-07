@@ -976,8 +976,8 @@ void RenderFlexibleBox::trimMainAxisMarginStart(const FlexItem& flexItem)
 {
     auto horizontalFlow = isHorizontalFlow();
     flexItem.mainAxisMargin -= horizontalFlow ? flexItem.box.marginStart(&style()) : flexItem.box.marginBefore(&style());
-    if (horizontalFlow) 
-        flexItem.box.setMarginStart(0_lu, &style());
+    if (horizontalFlow)
+        setTrimmedMarginForChild(flexItem.box, MarginTrimType::InlineStart);
     else
         setTrimmedMarginForChild(flexItem.box, MarginTrimType::BlockStart);
     m_marginTrimItems.m_itemsAtFlexLineStart.add(&flexItem.box);
@@ -999,7 +999,7 @@ void RenderFlexibleBox::trimCrossAxisMarginStart(const FlexItem& flexItem)
     if (isHorizontalFlow())
         setTrimmedMarginForChild(flexItem.box, MarginTrimType::BlockStart);
     else
-        flexItem.box.setMarginStart(0_lu, &style());
+        setTrimmedMarginForChild(flexItem.box, MarginTrimType::InlineStart);
     m_marginTrimItems.m_itemsOnFirstFlexLine.add(&flexItem.box);
 }
 

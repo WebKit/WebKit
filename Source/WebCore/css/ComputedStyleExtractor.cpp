@@ -2418,7 +2418,7 @@ static bool rendererContainingBlockHasMarginTrim(const RenderBox& renderer, std:
 
     if (containingBlock->isFlexibleBox()) {
         if (!marginTrimType)
-            return containingBlock->style().marginTrim().containsAny({ MarginTrimType::BlockStart, MarginTrimType::BlockEnd, MarginTrimType::InlineEnd });
+            return !containingBlock->style().marginTrim().isEmpty();
         return containingBlock->style().marginTrim().contains(marginTrimType.value());
     }
     ASSERT_NOT_REACHED();
@@ -2464,7 +2464,7 @@ static bool isLayoutDependent(CSSPropertyID propertyID, const RenderStyle* style
     case CSSPropertyMarginBottom:
         return paddingOrMarginIsRendererDependent<&RenderStyle::marginBottom>(style, renderer) || (isFlexItem(renderer) && rendererCanHaveTrimmedMargin(downcast<RenderBox>(*renderer), MarginTrimType::BlockEnd));
     case CSSPropertyMarginLeft:
-        return paddingOrMarginIsRendererDependent<&RenderStyle::marginLeft>(style, renderer);
+        return paddingOrMarginIsRendererDependent<&RenderStyle::marginLeft>(style, renderer) || (isFlexItem(renderer) && rendererCanHaveTrimmedMargin(downcast<RenderBox>(*renderer), MarginTrimType::InlineStart));
     case CSSPropertyPadding: {
         if (!renderer || !renderer->isBox())
             return false;
@@ -3430,6 +3430,8 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
             return zoomAdjustedPixelValue(box->marginBottom(), style);
         return zoomAdjustedPaddingOrMarginPixelValue<&RenderStyle::marginBottom, &RenderBoxModelObject::marginBottom>(style, renderer);
     case CSSPropertyMarginLeft:
+        if (auto* box = dynamicDowncast<RenderBox>(renderer); box && box->isFlexItem() && box->hasTrimmedMargin(PhysicalDirection::Left))
+            return zoomAdjustedPixelValue(box->marginLeft(), style);
         return zoomAdjustedPaddingOrMarginPixelValue<&RenderStyle::marginLeft, &RenderBoxModelObject::marginLeft>(style, renderer);
     case CSSPropertyMarginTrim: {
         auto marginTrim = style.marginTrim();
