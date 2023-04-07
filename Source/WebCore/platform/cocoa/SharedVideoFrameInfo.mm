@@ -72,7 +72,23 @@ bool SharedVideoFrameInfo::isReadWriteSupported() const
 
 size_t SharedVideoFrameInfo::storageSize() const
 {
-    return (m_bytesPerRow * m_height) + (m_bytesPerRowPlaneB * m_heightPlaneB) + sizeof(SharedVideoFrameInfo);
+    if (m_storageSize)
+        return m_storageSize;
+
+    size_t sizePlaneA;
+    if (!WTF::safeMultiply(m_bytesPerRow, m_height, sizePlaneA))
+        return 0;
+
+    size_t sizePlaneB;
+    if (!WTF::safeMultiply(m_bytesPerRowPlaneB, m_heightPlaneB, sizePlaneB))
+        return 0;
+
+    size_t size;
+    if (!WTF::safeAdd(sizePlaneA, sizePlaneB, size) || !WTF::safeAdd(size, sizeof(SharedVideoFrameInfo), size))
+        return 0;
+
+    const_cast<SharedVideoFrameInfo*>(this)->m_storageSize = size;
+    return m_storageSize;
 }
 
 void SharedVideoFrameInfo::encode(uint8_t* destination)
@@ -129,7 +145,11 @@ std::optional<SharedVideoFrameInfo> SharedVideoFrameInfo::decode(Span<const uint
     if (!bytesPerRowPlaneB)
         return std::nullopt;
 
-    return SharedVideoFrameInfo { *bufferType, *width, *height, *bytesPerRow , *widthPlaneB, *heightPlaneB, *bytesPerRowPlaneB };
+    SharedVideoFrameInfo info { *bufferType, *width, *height, *bytesPerRow , *widthPlaneB, *heightPlaneB, *bytesPerRowPlaneB };
+    if (!info.storageSize())
+        return std::nullopt;
+
+    return info;
 }
 
 static const uint8_t* copyToCVPixelBufferPlane(CVPixelBufferRef pixelBuffer, size_t planeIndex, const uint8_t* source, size_t height, uint32_t bytesPerRowSource)
