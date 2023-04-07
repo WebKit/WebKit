@@ -35,16 +35,16 @@ String toString(TokenType type)
         return "Invalid"_s;
     case TokenType::EndOfFile:
         return "EOF"_s;
+    case TokenType::AbstractFloatLiteral:
+        return "AbstractFloatLiteral"_s;
     case TokenType::IntegerLiteral:
         return "IntegerLiteral"_s;
     case TokenType::IntegerLiteralSigned:
         return "IntegerLiteralSigned"_s;
     case TokenType::IntegerLiteralUnsigned:
         return "IntegerLiteralUnsigned"_s;
-    case TokenType::DecimalFloatLiteral:
-        return "DecimalFloatLiteral"_s;
-    case TokenType::HexFloatLiteral:
-        return "HexFloatLiteral"_s;
+    case TokenType::FloatLiteral:
+        return "FloatLiteral"_s;
     case TokenType::Identifier:
         return "Identifier"_s;
     case TokenType::ReservedWord:

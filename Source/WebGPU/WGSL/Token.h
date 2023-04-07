@@ -40,11 +40,11 @@ enum class TokenType: uint32_t {
 
     EndOfFile,
 
+    AbstractFloatLiteral,
     IntegerLiteral,
     IntegerLiteralSigned,
     IntegerLiteralUnsigned,
-    DecimalFloatLiteral,
-    HexFloatLiteral,
+    FloatLiteral,
 
     Identifier,
 
@@ -125,12 +125,12 @@ struct Token {
         : type(type)
         , span(position.line, position.lineOffset, position.offset, length)
     {
-        ASSERT(type != TokenType::Identifier);
-        ASSERT(type != TokenType::IntegerLiteral);
-        ASSERT(type != TokenType::IntegerLiteralSigned);
-        ASSERT(type != TokenType::IntegerLiteralUnsigned);
-        ASSERT(type != TokenType::DecimalFloatLiteral);
-        ASSERT(type != TokenType::HexFloatLiteral);
+        ASSERT(type != TokenType::AbstractFloatLiteral
+            && type != TokenType::Identifier
+            && type != TokenType::IntegerLiteral
+            && type != TokenType::IntegerLiteralSigned
+            && type != TokenType::IntegerLiteralUnsigned
+            && type != TokenType::FloatLiteral);
     }
 
     Token(TokenType type, SourcePosition position, unsigned length, double literalValue)
@@ -138,11 +138,11 @@ struct Token {
         , span(position.line, position.lineOffset, position.offset, length)
         , literalValue(literalValue)
     {
-        ASSERT(type == TokenType::IntegerLiteral
+        ASSERT(type == TokenType::AbstractFloatLiteral
+            || type == TokenType::IntegerLiteral
             || type == TokenType::IntegerLiteralSigned
             || type == TokenType::IntegerLiteralUnsigned
-            || type == TokenType::DecimalFloatLiteral
-            || type == TokenType::HexFloatLiteral);
+            || type == TokenType::FloatLiteral);
     }
 
     Token(TokenType type, SourcePosition position, unsigned length, String&& ident)
@@ -167,11 +167,11 @@ struct Token {
             new (NotNull, &ident) String();
             ident = other.ident;
             break;
+        case TokenType::AbstractFloatLiteral:
         case TokenType::IntegerLiteral:
         case TokenType::IntegerLiteralSigned:
         case TokenType::IntegerLiteralUnsigned:
-        case TokenType::DecimalFloatLiteral:
-        case TokenType::HexFloatLiteral:
+        case TokenType::FloatLiteral:
             literalValue = other.literalValue;
             break;
         default:
@@ -190,11 +190,11 @@ struct Token {
             new (NotNull, &ident) String();
             ident = other.ident;
             break;
+        case TokenType::AbstractFloatLiteral:
         case TokenType::IntegerLiteral:
         case TokenType::IntegerLiteralSigned:
         case TokenType::IntegerLiteralUnsigned:
-        case TokenType::DecimalFloatLiteral:
-        case TokenType::HexFloatLiteral:
+        case TokenType::FloatLiteral:
             literalValue = other.literalValue;
             break;
         default:

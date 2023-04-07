@@ -144,7 +144,11 @@ Token Lexer<T>::lex()
         std::optional<int64_t> exponent = parseDecimalFloatExponent();
         if (exponent)
             literalValue *= pow(10, exponent.value());
-        return makeLiteralToken(TokenType::DecimalFloatLiteral, literalValue);
+        if (m_current == 'f') {
+            shift();
+            return makeLiteralToken(TokenType::FloatLiteral, literalValue);
+        }
+        return makeLiteralToken(TokenType::AbstractFloatLiteral, literalValue);
     }
     case '-':
         shift();
@@ -212,12 +216,12 @@ Token Lexer<T>::lex()
                 }
                 if (m_current == 'f') {
                     shift();
-                    return makeLiteralToken(TokenType::DecimalFloatLiteral, literalValue);
+                    return makeLiteralToken(TokenType::FloatLiteral, literalValue);
                 }
             }
             if (std::optional<int64_t> exponent = parseDecimalFloatExponent()) {
+                isFloatingPoint = true;
                 literalValue *= pow(10, exponent.value());
-                return makeLiteralToken(TokenType::DecimalFloatLiteral, literalValue);
             }
             // Decimal integers are not allowed to start with 0.
             if (!isFloatingPoint)
@@ -225,10 +229,10 @@ Token Lexer<T>::lex()
         }
         if (m_current == 'f') {
             shift();
-            return makeLiteralToken(TokenType::DecimalFloatLiteral, literalValue);
+            return makeLiteralToken(TokenType::FloatLiteral, literalValue);
         }
         if (isFloatingPoint)
-            return makeLiteralToken(TokenType::DecimalFloatLiteral, literalValue);
+            return makeLiteralToken(TokenType::AbstractFloatLiteral, literalValue);
         return parseIntegerLiteralSuffix(literalValue);
     }
     case '~':
@@ -253,16 +257,16 @@ Token Lexer<T>::lex()
                 }
             }
             if (std::optional<int64_t> exponent = parseDecimalFloatExponent()) {
+                isFloatingPoint = true;
                 literalValue *= pow(10, exponent.value());
-                return makeLiteralToken(TokenType::DecimalFloatLiteral, literalValue);
             }
             if (m_current == 'f') {
                 shift();
-                return makeLiteralToken(TokenType::DecimalFloatLiteral, literalValue);
+                return makeLiteralToken(TokenType::FloatLiteral, literalValue);
             }
             if (!isFloatingPoint)
                 return parseIntegerLiteralSuffix(literalValue);
-            return makeLiteralToken(TokenType::DecimalFloatLiteral, literalValue);
+            return makeLiteralToken(TokenType::AbstractFloatLiteral, literalValue);
         } else if (isIdentifierStart(m_current)) {
             const T* startOfToken = m_code;
             shift();

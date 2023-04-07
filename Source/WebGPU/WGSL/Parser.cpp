@@ -1091,13 +1091,13 @@ Result<AST::Expression::Ref> Parser<Lexer>::parsePrimaryExpression()
         CONSUME_TYPE_NAMED(lit, IntegerLiteralUnsigned);
         RETURN_NODE_UNIQUE_REF(Unsigned32Literal, lit.literalValue);
     }
-    case TokenType::DecimalFloatLiteral: {
-        CONSUME_TYPE_NAMED(lit, DecimalFloatLiteral);
+    case TokenType::AbstractFloatLiteral: {
+        CONSUME_TYPE_NAMED(lit, AbstractFloatLiteral);
         RETURN_NODE_UNIQUE_REF(AbstractFloatLiteral, lit.literalValue);
     }
-    case TokenType::HexFloatLiteral: {
-        CONSUME_TYPE_NAMED(lit, HexFloatLiteral);
-        RETURN_NODE_UNIQUE_REF(AbstractFloatLiteral, lit.literalValue);
+    case TokenType::FloatLiteral: {
+        CONSUME_TYPE_NAMED(lit, FloatLiteral);
+        RETURN_NODE_UNIQUE_REF(Float32Literal, lit.literalValue);
     }
     // TODO: bitcast expression
 
