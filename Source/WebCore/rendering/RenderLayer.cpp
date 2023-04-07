@@ -4140,15 +4140,21 @@ RenderLayer::HitLayer RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLa
     }
 
     // Now check our overflow objects.
-    hitLayer = hitTestList(normalFlowLayers(), rootLayer, request, result, hitTestRect, hitTestLocation, localTransformState.get(), zOffsetForDescendantsPtr, zOffset, unflattenedTransformState.get(), depthSortDescendants);
-    if (hitLayer.layer) {
-        if (!depthSortDescendants)
-            return hitLayer;
-        if (using3DTransformsInterop) {
-            if (hitLayer.zOffset > candidateLayer.zOffset)
+    {
+        HitTestResult tempResult(result.hitTestLocation());
+        hitLayer = hitTestList(normalFlowLayers(), rootLayer, request, tempResult, hitTestRect, hitTestLocation, localTransformState.get(), zOffsetForDescendantsPtr, zOffset, unflattenedTransformState.get(), depthSortDescendants);
+        if (hitLayer.layer) {
+            if (!depthSortDescendants || !using3DTransformsInterop || hitLayer.zOffset > candidateLayer.zOffset) {
+                if (request.resultIsElementList())
+                    result.append(tempResult, request);
+                else
+                    result = tempResult;
                 candidateLayer = hitLayer;
-        } else
-            candidateLayer = hitLayer;
+            }
+
+            if (!depthSortDescendants)
+                return hitLayer;
+        }
     }
 
     // Collect the fragments. This will compute the clip rectangles for each layer fragment.
@@ -4187,15 +4193,21 @@ RenderLayer::HitLayer RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLa
     }
 
     // Now check our negative z-index children.
-    hitLayer = hitTestList(negativeZOrderLayers(), rootLayer, request, result, hitTestRect, hitTestLocation, localTransformState.get(), zOffsetForDescendantsPtr, zOffset, unflattenedTransformState.get(), depthSortDescendants);
-    if (hitLayer.layer) {
-        if (!depthSortDescendants)
-            return hitLayer;
-        if (using3DTransformsInterop) {
-            if (hitLayer.zOffset > candidateLayer.zOffset)
+    {
+        HitTestResult tempResult(result.hitTestLocation());
+        hitLayer = hitTestList(negativeZOrderLayers(), rootLayer, request, tempResult, hitTestRect, hitTestLocation, localTransformState.get(), zOffsetForDescendantsPtr, zOffset, unflattenedTransformState.get(), depthSortDescendants);
+        if (hitLayer.layer) {
+            if (!depthSortDescendants || !using3DTransformsInterop || hitLayer.zOffset > candidateLayer.zOffset) {
+                if (request.resultIsElementList())
+                    result.append(tempResult, request);
+                else
+                    result = tempResult;
                 candidateLayer = hitLayer;
-        } else
-            candidateLayer = hitLayer;
+            }
+
+            if (!depthSortDescendants)
+                return hitLayer;
+        }
     }
 
     // If we found a layer, return. Child layers, and foreground always render in front of background.
