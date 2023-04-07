@@ -1,0 +1,14 @@
+
+PASS border-top-width: thin is 1px
+PASS border-right-width: thin is 1px
+PASS border-bottom-width: thin is 1px
+PASS border-left-width: thin is 1px
+PASS border-top-width: medium is 3px
+PASS border-right-width: medium is 3px
+PASS border-bottom-width: medium is 3px
+PASS border-left-width: medium is 3px
+PASS border-top-width: thick is 5px
+PASS border-right-width: thick is 5px
+PASS border-bottom-width: thick is 5px
+PASS border-left-width: thick is 5px
+

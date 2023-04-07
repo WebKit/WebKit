@@ -2476,3 +2476,7 @@ http/tests/webgpu/webgpu/api/operation/buffers/map.html [ Skip ]
 
 webkit.org/b/253101 ipc/restrictedendpoints/deny-access-updateQuotaBasedOnSpaceUsageForTesting.html [ Skip ]
 webkit.org/b/253101 ipc/restrictedendpoints/no-test-only-ipc-expected-crash.html [ Skip ]
+
+imported/w3c/web-platform-tests/css/css-backgrounds/background-attachment-margin-root-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-backgrounds/background-image-shared-stylesheet.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-backgrounds/background-margin-root.html [ ImageOnlyFailure ]

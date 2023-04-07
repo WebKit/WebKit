@@ -1,0 +1,36 @@
+
+PASS e.style['border'] = "5px dotted blue" should set border-bottom-color
+PASS e.style['border'] = "5px dotted blue" should set border-bottom-style
+PASS e.style['border'] = "5px dotted blue" should set border-bottom-width
+PASS e.style['border'] = "5px dotted blue" should set border-image-outset
+PASS e.style['border'] = "5px dotted blue" should set border-image-repeat
+PASS e.style['border'] = "5px dotted blue" should set border-image-slice
+PASS e.style['border'] = "5px dotted blue" should set border-image-source
+PASS e.style['border'] = "5px dotted blue" should set border-image-width
+PASS e.style['border'] = "5px dotted blue" should set border-left-color
+PASS e.style['border'] = "5px dotted blue" should set border-left-style
+PASS e.style['border'] = "5px dotted blue" should set border-left-width
+PASS e.style['border'] = "5px dotted blue" should set border-right-color
+PASS e.style['border'] = "5px dotted blue" should set border-right-style
+PASS e.style['border'] = "5px dotted blue" should set border-right-width
+PASS e.style['border'] = "5px dotted blue" should set border-top-color
+PASS e.style['border'] = "5px dotted blue" should set border-top-style
+PASS e.style['border'] = "5px dotted blue" should set border-top-width
+PASS e.style['border'] = "5px dotted blue" should not set unrelated longhands
+PASS e.style['border-top'] = "thin" should set border-top-color
+PASS e.style['border-top'] = "thin" should set border-top-style
+PASS e.style['border-top'] = "thin" should set border-top-width
+PASS e.style['border-top'] = "thin" should not set unrelated longhands
+PASS e.style['border-right'] = "double" should set border-right-color
+PASS e.style['border-right'] = "double" should set border-right-style
+PASS e.style['border-right'] = "double" should set border-right-width
+PASS e.style['border-right'] = "double" should not set unrelated longhands
+PASS e.style['border-bottom'] = "green" should set border-bottom-color
+PASS e.style['border-bottom'] = "green" should set border-bottom-style
+PASS e.style['border-bottom'] = "green" should set border-bottom-width
+PASS e.style['border-bottom'] = "green" should not set unrelated longhands
+PASS e.style['border-left'] = "1px dotted red" should set border-left-color
+PASS e.style['border-left'] = "1px dotted red" should set border-left-style
+PASS e.style['border-left'] = "1px dotted red" should set border-left-width
+PASS e.style['border-left'] = "1px dotted red" should not set unrelated longhands
+

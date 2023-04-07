@@ -8,11 +8,15 @@
 <meta name="assert" content="background supports only the grammar '<bg-layer># , <final-bg-layer>'.">
 <script src="/resources/testharness.js"></script>
 <script src="/resources/testharnessreport.js"></script>
-<script src="support/parsing-testcommon.js"></script>
+<script src="/css/support/parsing-testcommon.js"></script>
 </head>
 <body>
 <script>
+// <bg-layer> does not allow a <color>.
 test_invalid_value("background", "red, green");
+
+// A `/ <bg-size>` is only allowed directly after a <bg-position>.
+test_invalid_value("background", "black 0 url(https://example.invalid/) / cover");
 </script>
 </body>
 </html>

@@ -15,3 +15,21 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/box-shadow/box-shadow-blur-definition-001.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/box-shadow/slice-block-fragmentation-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/box-shadow/slice-block-fragmentation-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/box-shadow/slice-block-fragmentation-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/box-shadow/slice-block-fragmentation-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/box-shadow/slice-block-fragmentation-002-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/box-shadow/slice-block-fragmentation-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/box-shadow/slice-block-fragmentation-003-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/box-shadow/slice-block-fragmentation-003-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/box-shadow/slice-block-fragmentation-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/box-shadow/slice-inline-fragmentation-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/box-shadow/slice-inline-fragmentation-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/box-shadow/slice-inline-fragmentation-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/box-shadow/slice-inline-fragmentation-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/box-shadow/slice-inline-fragmentation-002-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/box-shadow/slice-inline-fragmentation-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/box-shadow/slice-inline-fragmentation-003-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/box-shadow/slice-inline-fragmentation-003-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/box-shadow/slice-inline-fragmentation-003.html

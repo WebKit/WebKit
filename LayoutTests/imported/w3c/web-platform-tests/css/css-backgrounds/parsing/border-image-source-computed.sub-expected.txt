@@ -1,0 +1,9 @@
+
+PASS Property border-image-source value 'none'
+PASS Property border-image-source value 'url("http://localhost/")'
+PASS Property border-image-source value 'linear-gradient(-45deg, red, currentcolor)'
+PASS Property border-image-source value 'repeating-linear-gradient(-45deg, red, 30%, currentcolor 70%, lime)'
+PASS Property border-image-source value 'radial-gradient(10px at 20px 30px, currentcolor, lime)'
+PASS Property border-image-source value 'conic-gradient(from 90deg at 80% 90%, lime, black)'
+PASS url values are made absolute
+

@@ -1,0 +1,32 @@
+
+PASS e.style['border-image'] = "none" should set border-image-outset
+PASS e.style['border-image'] = "none" should set border-image-repeat
+PASS e.style['border-image'] = "none" should set border-image-slice
+PASS e.style['border-image'] = "none" should set border-image-source
+PASS e.style['border-image'] = "none" should set border-image-width
+PASS e.style['border-image'] = "none" should not set unrelated longhands
+PASS e.style['border-image'] = "url(\"http://localhost/\") 1 2 3 4 fill" should set border-image-outset
+PASS e.style['border-image'] = "url(\"http://localhost/\") 1 2 3 4 fill" should set border-image-repeat
+PASS e.style['border-image'] = "url(\"http://localhost/\") 1 2 3 4 fill" should set border-image-slice
+PASS e.style['border-image'] = "url(\"http://localhost/\") 1 2 3 4 fill" should set border-image-source
+PASS e.style['border-image'] = "url(\"http://localhost/\") 1 2 3 4 fill" should set border-image-width
+PASS e.style['border-image'] = "url(\"http://localhost/\") 1 2 3 4 fill" should not set unrelated longhands
+PASS e.style['border-image'] = "repeat round" should set border-image-outset
+PASS e.style['border-image'] = "repeat round" should set border-image-repeat
+PASS e.style['border-image'] = "repeat round" should set border-image-slice
+PASS e.style['border-image'] = "repeat round" should set border-image-source
+PASS e.style['border-image'] = "repeat round" should set border-image-width
+PASS e.style['border-image'] = "repeat round" should not set unrelated longhands
+PASS e.style['border-image'] = "url(\"http://localhost/\") fill 1 2% 3 4%" should set border-image-outset
+PASS e.style['border-image'] = "url(\"http://localhost/\") fill 1 2% 3 4%" should set border-image-repeat
+PASS e.style['border-image'] = "url(\"http://localhost/\") fill 1 2% 3 4%" should set border-image-slice
+PASS e.style['border-image'] = "url(\"http://localhost/\") fill 1 2% 3 4%" should set border-image-source
+PASS e.style['border-image'] = "url(\"http://localhost/\") fill 1 2% 3 4%" should set border-image-width
+PASS e.style['border-image'] = "url(\"http://localhost/\") fill 1 2% 3 4%" should not set unrelated longhands
+PASS e.style['border-image'] = "1 2% 3 4% / 5% / 6" should set border-image-outset
+PASS e.style['border-image'] = "1 2% 3 4% / 5% / 6" should set border-image-repeat
+PASS e.style['border-image'] = "1 2% 3 4% / 5% / 6" should set border-image-slice
+PASS e.style['border-image'] = "1 2% 3 4% / 5% / 6" should set border-image-source
+PASS e.style['border-image'] = "1 2% 3 4% / 5% / 6" should set border-image-width
+PASS e.style['border-image'] = "1 2% 3 4% / 5% / 6" should not set unrelated longhands
+

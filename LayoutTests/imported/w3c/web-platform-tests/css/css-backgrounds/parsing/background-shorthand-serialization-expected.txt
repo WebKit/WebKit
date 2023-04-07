@@ -1,0 +1,8 @@
+
+PASS single value
+PASS multiple values
+PASS multiple backgrounds
+FAIL background-size with non-initial background-position assert_equals: expected "url(\"/favicon.ico\") 0% 0% / 10rem" but got "url(\"/favicon.ico\") 0% 0% / 10rem auto"
+FAIL multiple backgrounds with varying values assert_equals: expected "url(\"/favicon.ico\") left top no-repeat, url(\"/favicon.ico\") center center / 100% 100% no-repeat, white url(\"/favicon.ico\")" but got "url(\"/favicon.ico\") left top no-repeat, url(\"/favicon.ico\") center center / 100% 100% no-repeat, url(\"/favicon.ico\") white"
+PASS all initial values
+
