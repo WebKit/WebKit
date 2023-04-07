@@ -329,7 +329,15 @@ def JetStream2Results(payload):
     assert detectJetStream2(payload)
 
     js = payload["JetStream2.0"]
-    iterations = len(js["tests"]["gaussian-blur"]["metrics"]["Score"]["current"])
+
+    iterations = 0
+    if "gaussian-blur" in js["tests"]:
+        iterations = len(js["tests"]["gaussian-blur"]["metrics"]["Score"]["current"])
+    else:
+        obj = js["tests"]
+        first_key = list(obj.keys())[0]
+        iterations = len(obj[first_key]["metrics"]["Score"]["current"])
+
     results = []
     for i in range(iterations):
         scores = []
