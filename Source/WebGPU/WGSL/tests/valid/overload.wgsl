@@ -241,3 +241,47 @@ fn testMax() {
    let x6 = max(vec3(0.0, 0.0, 0.0), vec3(0.0, 0.0, 0.0));
    let x7 = max(vec4(0.0, 0.0, 0.0, 0.0), vec4(0.0, 0.0, 0.0, 0.0));
 }
+
+fn testTrigonometric() {
+  {
+    let x = acos(0.0);
+    let x1 = acos(vec2(0.0, 0.0));
+    let x2 = acos(vec3(0.0, 0.0, 0.0));
+    let x3 = acos(vec4(0.0, 0.0, 0.0, 0.0));
+  }
+
+  {
+    let x = asin(0.0);
+    let x1 = asin(vec2(0.0, 0.0));
+    let x2 = asin(vec3(0.0, 0.0, 0.0));
+    let x3 = asin(vec4(0.0, 0.0, 0.0, 0.0));
+  }
+
+  {
+    let x = atan(0.0);
+    let x1 = atan(vec2(0.0, 0.0));
+    let x2 = atan(vec3(0.0, 0.0, 0.0));
+    let x3 = atan(vec4(0.0, 0.0, 0.0, 0.0));
+  }
+
+  {
+    let x = cos(0.0);
+    let x1 = cos(vec2(0.0, 0.0));
+    let x2 = cos(vec3(0.0, 0.0, 0.0));
+    let x3 = cos(vec4(0.0, 0.0, 0.0, 0.0));
+  }
+
+  {
+    let x = sin(0.0);
+    let x1 = sin(vec2(0.0, 0.0));
+    let x2 = sin(vec3(0.0, 0.0, 0.0));
+    let x3 = sin(vec4(0.0, 0.0, 0.0, 0.0));
+  }
+
+  {
+    let x = tan(0.0);
+    let x1 = tan(vec2(0.0, 0.0));
+    let x2 = tan(vec3(0.0, 0.0, 0.0));
+    let x3 = tan(vec4(0.0, 0.0, 0.0, 0.0));
+  }
+}
