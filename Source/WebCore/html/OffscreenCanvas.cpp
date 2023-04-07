@@ -199,12 +199,14 @@ static bool shouldEnableWebGL(const Settings::Values& settings, bool isWorker)
     if (!settings.webGLEnabled)
         return false;
 
-    if (isWorker && !settings.allowWebGLInWorkers)
+    if (!settings.allowWebGLInWorkers)
         return false;
 
 #if PLATFORM(IOS_FAMILY) || PLATFORM(MAC)
     if (isWorker && !settings.useGPUProcessForWebGLEnabled)
         return false;
+#else
+    UNUSED_PARAM(isWorker);
 #endif
 
     if (!requiresAcceleratedCompositingForWebGL())
