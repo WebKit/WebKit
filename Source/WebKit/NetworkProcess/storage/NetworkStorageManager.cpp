@@ -68,6 +68,10 @@ namespace WebKit {
 static const Seconds defaultBackupExclusionPeriod { 24_h };
 #endif
 
+static constexpr double defaultThirdPartyOriginQuotaRatio = 0.1; // third-party_origin_quota / origin_quota
+static constexpr uint64_t defaultStandardReportedQuota = 10 * GB;
+static constexpr uint64_t defaultVolumeCapacityUnit = 1 * GB;
+
 // FIXME: Remove this if rdar://104754030 is fixed.
 static HashMap<String, ThreadSafeWeakPtr<NetworkStorageManager>>& activePaths()
 {
@@ -135,12 +139,12 @@ static void deleteEmptyOriginDirectory(const String& directory)
     FileSystem::deleteEmptyDirectory(FileSystem::parentPath(directory));
 }
 
-Ref<NetworkStorageManager> NetworkStorageManager::create(PAL::SessionID sessionID, Markable<UUID> identifier, IPC::Connection::UniqueID connection, const String& path, const String& customLocalStoragePath, const String& customIDBStoragePath, const String& customCacheStoragePath, const String& customServiceWorkerStoragePath, uint64_t defaultOriginQuota, uint64_t defaultThirdPartyOriginQuota, std::optional<double> originQuotaRatio, std::optional<double> totalQuotaRatio, std::optional<uint64_t> volumeCapacityOverride, UnifiedOriginStorageLevel level)
+Ref<NetworkStorageManager> NetworkStorageManager::create(PAL::SessionID sessionID, Markable<UUID> identifier, IPC::Connection::UniqueID connection, const String& path, const String& customLocalStoragePath, const String& customIDBStoragePath, const String& customCacheStoragePath, const String& customServiceWorkerStoragePath, uint64_t defaultOriginQuota, std::optional<double> originQuotaRatio, std::optional<double> totalQuotaRatio, std::optional<uint64_t> volumeCapacityOverride, UnifiedOriginStorageLevel level)
 {
-    return adoptRef(*new NetworkStorageManager(sessionID, identifier, connection, path, customLocalStoragePath, customIDBStoragePath, customCacheStoragePath, customServiceWorkerStoragePath, defaultOriginQuota, defaultThirdPartyOriginQuota, originQuotaRatio, totalQuotaRatio, volumeCapacityOverride, level));
+    return adoptRef(*new NetworkStorageManager(sessionID, identifier, connection, path, customLocalStoragePath, customIDBStoragePath, customCacheStoragePath, customServiceWorkerStoragePath, defaultOriginQuota, originQuotaRatio, totalQuotaRatio, volumeCapacityOverride, level));
 }
 
-NetworkStorageManager::NetworkStorageManager(PAL::SessionID sessionID, Markable<UUID> identifier, IPC::Connection::UniqueID connection, const String& path, const String& customLocalStoragePath, const String& customIDBStoragePath, const String& customCacheStoragePath, const String& customServiceWorkerStoragePath, uint64_t defaultOriginQuota, uint64_t defaultThirdPartyOriginQuota, std::optional<double> originQuotaRatio, std::optional<double> totalQuotaRatio, std::optional<uint64_t> volumeCapacityOverride, UnifiedOriginStorageLevel level)
+NetworkStorageManager::NetworkStorageManager(PAL::SessionID sessionID, Markable<UUID> identifier, IPC::Connection::UniqueID connection, const String& path, const String& customLocalStoragePath, const String& customIDBStoragePath, const String& customCacheStoragePath, const String& customServiceWorkerStoragePath, uint64_t defaultOriginQuota, std::optional<double> originQuotaRatio, std::optional<double> totalQuotaRatio, std::optional<uint64_t> volumeCapacityOverride, UnifiedOriginStorageLevel level)
     : m_sessionID(sessionID)
     , m_queueName(makeString("com.apple.WebKit.Storage.", sessionID.toUInt64(), ".", static_cast<uint64_t>(identifier->data() >> 64), static_cast<uint64_t>(identifier->data())))
     , m_queue(SuspendableWorkQueue::create(m_queueName.utf8().data(), SuspendableWorkQueue::QOS::Default, SuspendableWorkQueue::ShouldLog::Yes))
@@ -159,13 +163,12 @@ NetworkStorageManager::NetworkStorageManager(PAL::SessionID sessionID, Markable<
         }
     }
 
-    m_queue->dispatch([this, weakThis = ThreadSafeWeakPtr { *this }, path = path.isolatedCopy(), customLocalStoragePath = crossThreadCopy(customLocalStoragePath), customIDBStoragePath = crossThreadCopy(customIDBStoragePath), customCacheStoragePath = crossThreadCopy(customCacheStoragePath), customServiceWorkerStoragePath = crossThreadCopy(customServiceWorkerStoragePath), defaultOriginQuota, defaultThirdPartyOriginQuota, originQuotaRatio, totalQuotaRatio, volumeCapacityOverride, level]() mutable {
+    m_queue->dispatch([this, weakThis = ThreadSafeWeakPtr { *this }, path = path.isolatedCopy(), customLocalStoragePath = crossThreadCopy(customLocalStoragePath), customIDBStoragePath = crossThreadCopy(customIDBStoragePath), customCacheStoragePath = crossThreadCopy(customCacheStoragePath), customServiceWorkerStoragePath = crossThreadCopy(customServiceWorkerStoragePath), defaultOriginQuota, originQuotaRatio, totalQuotaRatio, volumeCapacityOverride, level]() mutable {
         auto strongThis = weakThis.get();
         if (!strongThis)
             return;
 
         m_defaultOriginQuota = defaultOriginQuota;
-        m_defaultThirdPartyOriginQuota = defaultThirdPartyOriginQuota;
         m_originQuotaRatio = originQuotaRatio;
         m_totalQuotaRatio = totalQuotaRatio;
         m_volumeCapacityOverride = volumeCapacityOverride;
@@ -367,10 +370,13 @@ NetworkQuotaManager& NetworkStorageManager::quotaManager()
 
         uint64_t quota = std::numeric_limits<uint64_t>::max();
         if (m_totalQuotaRatio) {
+            std::optional<uint64_t> volumeCapacity;
             if (m_volumeCapacityOverride)
-                quota = m_totalQuotaRatio.value() * m_volumeCapacityOverride.value();
+                volumeCapacity = m_volumeCapacityOverride;
             else if (auto capacity = FileSystem::volumeCapacity(m_path))
-                quota = m_totalQuotaRatio.value() * capacity.value();
+                volumeCapacity = WTF::roundUpToMultipleOf(defaultVolumeCapacityUnit, *capacity);
+            if (volumeCapacity)
+                quota = *m_totalQuotaRatio * *volumeCapacity;
         }
         m_quotaManager = makeUnique<NetworkQuotaManager>(quota, usages, [weakThis = ThreadSafeWeakPtr { *this }](auto origin) {
             if (auto strongThis = weakThis.get()) {
@@ -397,23 +403,30 @@ OriginStorageManager& NetworkStorageManager::originStorageManager(const WebCore:
         OriginQuotaManager::IncreaseQuotaFunction increaseQuotaFunction = [sessionID = m_sessionID, origin, connection = m_parentConnection] (auto identifier, auto currentQuota, auto currentUsage, auto requestedIncrease) mutable {
             IPC::Connection::send(connection, Messages::NetworkProcessProxy::IncreaseQuota(sessionID, origin, identifier, currentQuota, currentUsage, requestedIncrease), 0);
         };
-        uint64_t quota = m_defaultOriginQuota;
+        // Use double for multiplication to preserve precision.
+        double quota = m_defaultOriginQuota;
+        double standardReportedQuota = defaultStandardReportedQuota;
         if (m_originQuotaRatio) {
-            if (m_volumeCapacityOverride) {
-                quota = m_originQuotaRatio.value() * m_volumeCapacityOverride.value();
-                increaseQuotaFunction = { };
-            } else if (auto capacity = FileSystem::volumeCapacity(m_path)) {
-                quota = m_originQuotaRatio.value() * capacity.value();
+            std::optional<uint64_t> volumeCapacity;
+            if (m_volumeCapacityOverride)
+                volumeCapacity = m_volumeCapacityOverride;
+            else if (auto capacity = FileSystem::volumeCapacity(m_path))
+                volumeCapacity = WTF::roundUpToMultipleOf(defaultVolumeCapacityUnit, *capacity);
+            if (volumeCapacity) {
+                quota = m_originQuotaRatio.value() * volumeCapacity.value();
                 increaseQuotaFunction = { };
             }
         }
-        if (origin.topOrigin != origin.clientOrigin)
-            quota = quota / m_defaultOriginQuota * m_defaultThirdPartyOriginQuota;
+        if (origin.topOrigin != origin.clientOrigin) {
+            quota *= defaultThirdPartyOriginQuotaRatio;
+            standardReportedQuota *= defaultThirdPartyOriginQuotaRatio;
+        }
         OriginQuotaManager::NotifyUsageUpdateFunction notifyUsageUpdateFunction = [weakThis = ThreadSafeWeakPtr { *this }, origin](uint64_t usage) {
             if (auto strongThis = weakThis.get())
                 strongThis->quotaManager().originUsageUpdated(origin, usage);
         };
-        return makeUnique<OriginStorageManager>(quota, WTFMove(increaseQuotaFunction), WTFMove(notifyUsageUpdateFunction), WTFMove(originDirectory), WTFMove(localStoragePath), WTFMove(idbStoragePath), WTFMove(cacheStoragePath), m_unifiedOriginStorageLevel);
+        // Use std::ceil instead of implicit conversion to make result more definitive.
+        return makeUnique<OriginStorageManager>(std::ceil(quota), std::ceil(standardReportedQuota), WTFMove(increaseQuotaFunction), WTFMove(notifyUsageUpdateFunction), WTFMove(originDirectory), WTFMove(localStoragePath), WTFMove(idbStoragePath), WTFMove(cacheStoragePath), m_unifiedOriginStorageLevel);
     }).iterator->value;
 
     if (shouldWriteOriginFile == ShouldWriteOriginFile::Yes)

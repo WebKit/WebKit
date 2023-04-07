@@ -38,7 +38,7 @@ public:
     using GetUsageFunction = Function<uint64_t()>;
     using IncreaseQuotaFunction = Function<void(QuotaIncreaseRequestIdentifier, uint64_t currentQuota, uint64_t currentUsage, uint64_t requestedIncrease)>;
     using NotifyUsageUpdateFunction = Function<void(uint64_t)>;
-    static Ref<OriginQuotaManager> create(uint64_t quota, GetUsageFunction&&, IncreaseQuotaFunction&& = { }, NotifyUsageUpdateFunction&& = { });
+    static Ref<OriginQuotaManager> create(uint64_t quota, uint64_t standardReportedQuota, GetUsageFunction&&, IncreaseQuotaFunction&& = { }, NotifyUsageUpdateFunction&& = { });
     uint64_t reportedQuota() const;
     uint64_t usage();
     enum class Decision : bool { Deny, Grant };
@@ -50,7 +50,7 @@ public:
     void resetQuotaForTesting();
 
 private:
-    OriginQuotaManager(uint64_t quota, GetUsageFunction&&, IncreaseQuotaFunction&&, NotifyUsageUpdateFunction&&);
+    OriginQuotaManager(uint64_t quota, uint64_t standardReportedQuota, GetUsageFunction&&, IncreaseQuotaFunction&&, NotifyUsageUpdateFunction&&);
     void handleRequests();
     bool grantWithCurrentQuota(uint64_t spaceRequested);
     bool grantFastPath(uint64_t spaceRequested);
@@ -66,6 +66,7 @@ private:
     bool m_isHandlingRequests { false };
     uint64_t m_quotaCountdown { 0 };
     uint64_t m_quota;
+    uint64_t m_standardReportedQuota;
     uint64_t m_initialQuota; // Test only.
     std::optional<uint64_t> m_usage;
     GetUsageFunction m_getUsageFunction;

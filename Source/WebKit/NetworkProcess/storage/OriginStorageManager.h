@@ -58,7 +58,7 @@ class OriginStorageManager : public CanMakeWeakPtr<OriginStorageManager> {
 public:
     static String originFileIdentifier();
 
-    OriginStorageManager(uint64_t quota, OriginQuotaManager::IncreaseQuotaFunction&&, OriginQuotaManager::NotifyUsageUpdateFunction&&, String&& path, String&& cusotmLocalStoragePath, String&& customIDBStoragePath, String&& customCacheStoragePath, UnifiedOriginStorageLevel);
+    OriginStorageManager(uint64_t quota, uint64_t standardReportedQuota, OriginQuotaManager::IncreaseQuotaFunction&&, OriginQuotaManager::NotifyUsageUpdateFunction&&, String&& path, String&& cusotmLocalStoragePath, String&& customIDBStoragePath, String&& customCacheStoragePath, UnifiedOriginStorageLevel);
     ~OriginStorageManager();
 
     void connectionClosed(IPC::Connection::UniqueID);
@@ -111,6 +111,7 @@ private:
     String m_customIDBStoragePath;
     String m_customCacheStoragePath;
     uint64_t m_quota;
+    uint64_t m_standardReportedQuota;
     OriginQuotaManager::IncreaseQuotaFunction m_increaseQuotaFunction;
     OriginQuotaManager::NotifyUsageUpdateFunction m_notifyUsageUpdateFunction;
     RefPtr<OriginQuotaManager> m_quotaManager;

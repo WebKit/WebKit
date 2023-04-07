@@ -1807,12 +1807,6 @@ void WebsiteDataStore::dispatchOnQueue(Function<void()>&& function)
     m_queue->dispatch(WTFMove(function));
 }
 
-uint64_t WebsiteDataStore::perThirdPartyOriginStorageQuota() const
-{
-    // FIXME: Consider whether allowing to set a perThirdPartyOriginStorageQuota from a WebsiteDataStore.
-    return perOriginStorageQuota() / 10;
-}
-
 void WebsiteDataStore::setCacheModelSynchronouslyForTesting(CacheModel cacheModel)
 {
     for (auto& processPool : WebProcessPool::allProcessPools())
@@ -1926,7 +1920,6 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
     networkSessionParameters.isBlobRegistryTopOriginPartitioningEnabled = isBlobRegistryPartitioningEnabled();
     networkSessionParameters.unifiedOriginStorageLevel = m_configuration->unifiedOriginStorageLevel();
     networkSessionParameters.perOriginStorageQuota = perOriginStorageQuota();
-    networkSessionParameters.perThirdPartyOriginStorageQuota = perThirdPartyOriginStorageQuota();
     networkSessionParameters.originQuotaRatio = originQuotaRatio();
     networkSessionParameters.totalQuotaRatio = m_configuration->totalQuotaRatio();
     networkSessionParameters.volumeCapacityOverride = m_configuration->volumeCapacityOverride();

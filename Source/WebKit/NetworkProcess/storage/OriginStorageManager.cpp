@@ -664,15 +664,16 @@ Ref<OriginQuotaManager> OriginStorageManager::createQuotaManager()
         }
         return IDBStorageManager::idbStorageSize(idbStoragePath) + CacheStorageManager::cacheStorageSize(cacheStoragePath) + fileSystemStorageSize;
     };
-    return OriginQuotaManager::create(m_quota, WTFMove(getUsageFunction), std::exchange(m_increaseQuotaFunction, { }), std::exchange(m_notifyUsageUpdateFunction, { }));
+    return OriginQuotaManager::create(m_quota, m_standardReportedQuota, WTFMove(getUsageFunction), std::exchange(m_increaseQuotaFunction, { }), std::exchange(m_notifyUsageUpdateFunction, { }));
 }
 
-OriginStorageManager::OriginStorageManager(uint64_t quota, OriginQuotaManager::IncreaseQuotaFunction&& increaseQuotaFunction, OriginQuotaManager::NotifyUsageUpdateFunction&& notifyUsageUpdateFunction, String&& path, String&& customLocalStoragePath, String&& customIDBStoragePath, String&& customCacheStoragePath, UnifiedOriginStorageLevel level)
+OriginStorageManager::OriginStorageManager(uint64_t quota, uint64_t standardReportedQuota, OriginQuotaManager::IncreaseQuotaFunction&& increaseQuotaFunction, OriginQuotaManager::NotifyUsageUpdateFunction&& notifyUsageUpdateFunction, String&& path, String&& customLocalStoragePath, String&& customIDBStoragePath, String&& customCacheStoragePath, UnifiedOriginStorageLevel level)
     : m_path(WTFMove(path))
     , m_customLocalStoragePath(WTFMove(customLocalStoragePath))
     , m_customIDBStoragePath(WTFMove(customIDBStoragePath))
     , m_customCacheStoragePath(WTFMove(customCacheStoragePath))
     , m_quota(quota)
+    , m_standardReportedQuota(standardReportedQuota)
     , m_increaseQuotaFunction(WTFMove(increaseQuotaFunction))
     , m_notifyUsageUpdateFunction(WTFMove(notifyUsageUpdateFunction))
     , m_level(level)

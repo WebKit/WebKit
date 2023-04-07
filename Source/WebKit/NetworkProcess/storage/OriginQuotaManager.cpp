@@ -30,15 +30,14 @@
 
 namespace WebKit {
 
-static constexpr uint64_t defaultMinimumReportedQuota = 10 * GB;
-
-Ref<OriginQuotaManager> OriginQuotaManager::create(uint64_t quota, GetUsageFunction&& getUsageFunction, IncreaseQuotaFunction&& increaseQuotaFunction, NotifyUsageUpdateFunction&& notifyUsageUpdateFunction)
+Ref<OriginQuotaManager> OriginQuotaManager::create(uint64_t quota, uint64_t standardReportedQuota, GetUsageFunction&& getUsageFunction, IncreaseQuotaFunction&& increaseQuotaFunction, NotifyUsageUpdateFunction&& notifyUsageUpdateFunction)
 {
-    return adoptRef(*new OriginQuotaManager(quota, WTFMove(getUsageFunction), WTFMove(increaseQuotaFunction), WTFMove(notifyUsageUpdateFunction)));
+    return adoptRef(*new OriginQuotaManager(quota, standardReportedQuota, WTFMove(getUsageFunction), WTFMove(increaseQuotaFunction), WTFMove(notifyUsageUpdateFunction)));
 }
 
-OriginQuotaManager::OriginQuotaManager(uint64_t quota, GetUsageFunction&& getUsageFunction, IncreaseQuotaFunction&& increaseQuotaFunction, NotifyUsageUpdateFunction&& notifyUsageUpdateFunction)
+OriginQuotaManager::OriginQuotaManager(uint64_t quota, uint64_t standardReportedQuota, GetUsageFunction&& getUsageFunction, IncreaseQuotaFunction&& increaseQuotaFunction, NotifyUsageUpdateFunction&& notifyUsageUpdateFunction)
     : m_quota(quota)
+    , m_standardReportedQuota(standardReportedQuota)
     , m_initialQuota(quota)
     , m_getUsageFunction(WTFMove(getUsageFunction))
     , m_increaseQuotaFunction(WTFMove(increaseQuotaFunction))
@@ -155,10 +154,10 @@ void OriginQuotaManager::resetQuotaForTesting()
 
 uint64_t OriginQuotaManager::reportedQuota() const
 {
-    if (!m_usage || (m_usage && m_usage.value() < defaultMinimumReportedQuota))
-        return std::min(m_quota, defaultMinimumReportedQuota);
+    if (m_usage && *m_usage > m_standardReportedQuota)
+        return m_quota;
 
-    return m_quota;
+    return std::min(m_quota, m_standardReportedQuota);
 }
 
 } // namespace WebKit
