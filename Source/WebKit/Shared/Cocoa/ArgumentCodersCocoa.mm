@@ -73,11 +73,6 @@
 @property (nonatomic, assign) BOOL rewriteMutableString;
 @end
 
-@interface WKSecureCodingURLWrapper : NSURL <NSSecureCoding>
-- (instancetype)initWithURL:(NSURL *)wrappedURL;
-@property (nonatomic, readonly) NSURL * wrappedURL;
-@end
-
 @interface WKSecureCodingCGColorWrapper : NSObject <NSSecureCoding>
 - (instancetype)initWithCGColor:(CGColorRef)wrappedColor;
 @property (nonatomic, readonly) CGColorRef wrappedColor;
@@ -92,9 +87,6 @@
 
 - (id)archiver:(NSKeyedArchiver *)archiver willEncodeObject:(id)object
 {
-    if (auto unwrappedURL = dynamic_objc_cast<NSURL>(object))
-        return adoptNS([[WKSecureCodingURLWrapper alloc] initWithURL:unwrappedURL]).autorelease();
-
     if (auto mutableArray = dynamic_objc_cast<NSMutableArray>(object); mutableArray && rewriteMutableArray)
         return adoptNS([mutableArray copy]).autorelease();
 
@@ -119,8 +111,6 @@
 - (id)unarchiver:(NSKeyedUnarchiver *)unarchiver didDecodeObject:(id) NS_RELEASES_ARGUMENT object NS_RETURNS_RETAINED
 {
     auto adoptedObject = adoptNS(object);
-    if (auto wrapper = dynamic_objc_cast<WKSecureCodingURLWrapper>(adoptedObject.get()))
-        return retainPtr(wrapper.wrappedURL).leakRef();
 
     if (auto wrapper = dynamic_objc_cast<WKSecureCodingCGColorWrapper>(adoptedObject.get()))
         return static_cast<id>(retainPtr(wrapper.wrappedColor).leakRef());
@@ -136,72 +126,6 @@
         rewriteMutableDictionary = NO;
         rewriteMutableString = NO;
     }
-
-    return self;
-}
-
-@end
-
-@implementation WKSecureCodingURLWrapper {
-    RetainPtr<NSURL> m_wrappedURL;
-}
-
-- (NSURL *)wrappedURL
-{
-    return m_wrappedURL.get();
-}
-
-+ (BOOL)supportsSecureCoding
-{
-    return YES;
-}
-
-static constexpr NSString *baseURLKey = @"WK.baseURL";
-
-- (void)encodeWithCoder:(NSCoder *)coder
-{
-    RELEASE_ASSERT(m_wrappedURL);
-    auto baseURL = m_wrappedURL.get().baseURL;
-    BOOL hasBaseURL = !!baseURL;
-
-    [coder encodeValueOfObjCType:"c" at:&hasBaseURL];
-    if (hasBaseURL)
-        [coder encodeObject:baseURL forKey:baseURLKey];
-
-    auto bytes = bytesAsVector(bridge_cast(m_wrappedURL.get()));
-    [coder encodeBytes:bytes.data() length:bytes.size()];
-}
-
-- (instancetype)initWithCoder:(NSCoder *)coder
-{
-    auto selfPtr = adoptNS([super initWithString:@""]);
-    if (!selfPtr)
-        return nil;
-
-    BOOL hasBaseURL;
-    [coder decodeValueOfObjCType:"c" at:&hasBaseURL size:sizeof(hasBaseURL)];
-
-    RetainPtr<NSURL> baseURL;
-    if (hasBaseURL)
-        baseURL = (NSURL *)[coder decodeObjectOfClass:NSURL.class forKey:baseURLKey];
-
-    NSUInteger length;
-    if (auto bytes = (UInt8 *)[coder decodeBytesWithReturnedLength:&length]) {
-        m_wrappedURL = bridge_cast(adoptCF(CFURLCreateAbsoluteURLWithBytes(nullptr, bytes, length, kCFStringEncodingUTF8, bridge_cast(baseURL.get()), true)));
-        if (!m_wrappedURL)
-            LOG_ERROR("Failed to decode NSURL due to invalid encoding of length %d. Substituting a blank URL", length);
-    }
-
-    if (!m_wrappedURL)
-        m_wrappedURL = [NSURL URLWithString:@""];
-
-    return selfPtr.leakRef();
-}
-
-- (instancetype)initWithURL:(NSURL *)url
-{
-    if (self = [super initWithString:@""])
-        m_wrappedURL = url;
 
     return self;
 }
@@ -555,9 +479,6 @@ static bool shouldEnableStrictMode(Decoder& decoder, NSArray<Class> *allowedClas
             ) && isInWebProcess()
         )
 #endif
-#if ENABLE(APPLE_PAY)
-        || [allowedClasses containsObject:PAL::getPKPaymentSetupConfigurationClass()] // rdar://107553429, Don't re-introduce rdar://107626990
-#endif
 #if ENABLE(DATA_DETECTION)
         || [allowedClasses containsObject:PAL::getDDScannerResultClass()] // rdar://107553330 - relying on NSMutableArray re-write, don't re-introduce rdar://107676726
 #if PLATFORM(MAC)
@@ -577,6 +498,7 @@ static bool shouldEnableStrictMode(Decoder& decoder, NSArray<Class> *allowedClas
         || [allowedClasses containsObject:PAL::getRVItemClass()] // rdar://107553310
 #endif // ENABLE(REVEAL)
 #if ENABLE(APPLE_PAY)
+        || [allowedClasses containsObject:PAL::getPKPaymentSetupConfigurationClass()] // rdar://107553429
         || [allowedClasses containsObject:PAL::getPKPaymentSetupFeatureClass()] // rdar://107553409
         || [allowedClasses containsObject:PAL::getPKPaymentMerchantSessionClass()] // rdar://107553452
         || ([allowedClasses containsObject:PAL::getPKPaymentClass()] && isInWebProcess())
@@ -619,9 +541,6 @@ static std::optional<RetainPtr<id>> decodeSecureCodingInternal(Decoder& decoder,
     unarchiver.get().delegate = delegate.get();
 
     auto allowedClassSet = adoptNS([[NSMutableSet alloc] initWithArray:allowedClasses]);
-
-    if ([allowedClasses containsObject:NSMutableURLRequest.class] || [allowedClasses containsObject:NSURLRequest.class])
-        [allowedClassSet addObject:WKSecureCodingURLWrapper.class];
 
     if (shouldEnableStrictMode(decoder, allowedClasses))
         [unarchiver _enableStrictSecureDecodingMode];
