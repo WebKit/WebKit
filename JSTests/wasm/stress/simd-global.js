@@ -1,4 +1,4 @@
-//@ skip if $architecture == "arm"
+//@ skip if !$isSIMDPlatform
 (async function () {
     /*
 (module
