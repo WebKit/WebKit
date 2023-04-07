@@ -37,7 +37,7 @@ if sys.version_info > (3, 6):
 
 
 class CommitClassifier(object):
-    class HeaderFilter(object):
+    class LineFilter(object):
         DEFAULT_FUZZ_RATIO = 90
 
         @classmethod
@@ -71,13 +71,14 @@ class CommitClassifier(object):
                 return re.compile(header)
             return None
 
-        def __init__(self, name, pickable=True, headers=None, paths=None, **kwargs):
+        def __init__(self, name, pickable=True, headers=None, trailers=None, paths=None, **kwargs):
             self.name = name
             self.pickable = pickable
-            self.headers = [CommitClassifier.HeaderFilter(header) for header in headers or []]
+            self.headers = [CommitClassifier.LineFilter(header) for header in headers or []]
+            self.trailers = [CommitClassifier.LineFilter(trailer) for trailer in trailers or []]
             self.paths = [re.compile(r'^{}'.format(path)) for path in (paths or [])]
 
-            if not self.headers and not self.paths:
+            if not self.headers and not self.trailers and not self.paths:
                 raise ValueError('A CommitClass must not match all commits')
 
             for argument, _ in kwargs.items():
@@ -112,15 +113,22 @@ class CommitClassifier(object):
 
     def classify(self, commit, repository=None):
         header = commit.message.splitlines()[0]
+        trailers = commit.trailers
         paths_for = CallByNeed(
             callback=lambda: repository.files_changed(commit.hash or str(commit)),
             type=list,
         )
+
         for klass in self.classes:
-            can_exclude = bool(klass.headers and header) or bool(klass.paths and paths_for.value)
+            matching_header = bool(klass.headers and header)
+            matching_trailer = bool(klass.trailers and trailers)
+            can_exclude = matching_header or matching_trailer or bool(klass.paths and paths_for.value)
             if not can_exclude:
                 continue
-            if klass.headers and header and not any([f(header) for f in klass.headers]):
+
+            matches_header = klass.headers and header and any([f(header) for f in klass.headers])
+            matches_trailers = klass.trailers and trailers and any([any([f(trailer) for f in klass.trailers]) for trailer in trailers])
+            if (matching_header or matching_trailer) and not matches_header and not matches_trailers:
                 continue
 
             if klass.paths and paths_for.value and not all([

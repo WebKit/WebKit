@@ -21,9 +21,10 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import os
+import time
 
 from webkitcorepy import OutputCapture, Terminal, testing
-from webkitscmpy import program, mocks, CommitClassifier
+from webkitscmpy import program, mocks, Commit, CommitClassifier, Contributor
 
 
 class TestClassify(testing.PathTestCase):
@@ -77,6 +78,47 @@ class TestClassify(testing.PathTestCase):
                 classifier=CommitClassifier([CommitClassifier.CommitClass(
                     name='Series',
                     headers=[r'^\?'],
+                )])
+            ))
+        self.assertEqual(captured.stdout.getvalue(), 'None\n')
+        self.assertEqual(
+            captured.stderr.getvalue(),
+            'Provided commit does not match a known class in this repository\n',
+        )
+
+    def test_trailer_success(self):
+        with OutputCapture() as captured, mocks.local.Git(self.path) as repository, mocks.local.Svn():
+            repository.commits[repository.default_branch].append(Commit(
+                revision=10,
+                hash='898d20c0b1efc7b717173804676349f079df3b7e',
+                identifier='6@main',
+                timestamp=int(time.time()),
+                author=Contributor.Encoder().default(Contributor.from_scm_log('Author: jbedard@apple.com <jbedard@apple.com>')),
+                message='Commit title\n'
+                        'https://bugs.example.com/show_bug.cgi?id=1\n\n'
+                        'Reviewed by NOBODY (OOPS!)\n\n'
+                        'cherry-pick: 2.3@branch-b (790725a6d79e)\n',
+            ))
+            repository.head = repository.commits[repository.default_branch][-1]
+            self.assertEqual(0, program.main(
+                args=('classify', 'HEAD'),
+                path=self.path,
+                classifier=CommitClassifier([CommitClassifier.CommitClass(
+                    name='Cherry-pick',
+                    trailers=[r'^[Cc]herry[- ][Pp]ick:'],
+                )])
+            ))
+        self.assertEqual(captured.stdout.getvalue(), 'Cherry-pick\n')
+        self.assertEqual(captured.stderr.getvalue(), '')
+
+    def test_trailer_failure(self):
+        with OutputCapture() as captured, mocks.local.Git(self.path), mocks.local.Svn():
+            self.assertEqual(1, program.main(
+                args=('classify', 'HEAD'),
+                path=self.path,
+                classifier=CommitClassifier([CommitClassifier.CommitClass(
+                    name='Cherry-pick',
+                    headers=[r'^[Cc]herry[- ][Pp]ick:'],
                 )])
             ))
         self.assertEqual(captured.stdout.getvalue(), 'None\n')

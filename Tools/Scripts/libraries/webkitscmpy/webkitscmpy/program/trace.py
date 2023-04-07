@@ -31,9 +31,10 @@ from webkitbugspy import Tracker
 COMMIT_REF_BASE = r'r?R?[a-f0-9A-F]+.?\d*@?[0-9a-zA-z\-\/\.]*'
 COMPOUND_COMMIT_REF = r'(?P<primary>{})(?P<secondary> \({}\))?'.format(COMMIT_REF_BASE, COMMIT_REF_BASE)
 CHERRY_PICK_RE = [
-    re.compile(r'\S* ?[Cc]herry[- ][Pp]ick of {}'.format(COMPOUND_COMMIT_REF)),
-    re.compile(r'\S* ?[Cc]herry[- ][Pp]ick {}'.format(COMPOUND_COMMIT_REF)),
-    re.compile(r'\S* ?[Cc]herry[- ][Pp]icked {}'.format(COMPOUND_COMMIT_REF)),
+    re.compile(r'\S* ?[Cc]herry[- ][Pp]ick of:? {}'.format(COMPOUND_COMMIT_REF)),
+    re.compile(r'\S* ?[Cc]herry[- ][Pp]ick:? {}'.format(COMPOUND_COMMIT_REF)),
+    re.compile(r'\S* ?[Cc]herry[- ][Pp]icked:? {}'.format(COMPOUND_COMMIT_REF)),
+    re.compile(r'^[Oo]riginally[- ]landed[- ]as: {}'.format(COMPOUND_COMMIT_REF)),
 ]
 REVERT_BASES = [
     r'Reverts? {}',
@@ -99,6 +100,7 @@ class Relationship(object):
     @classmethod
     def parse(cls, commit):
         lines = commit.message.splitlines()
+        lines_to_check = commit.trailers + [lines[0]]
 
         for type, regexes in {
             cls.ORIGINAL: CHERRY_PICK_RE + DOUBLE_REVERT,
@@ -106,7 +108,11 @@ class Relationship(object):
             cls.FOLLOW_UP: FOLLOW_UP_FIXES_RE,
         }.items():
             for regex in regexes:
-                match = regex.match(lines[0])
+                match = None
+                for line in lines_to_check:
+                    if match:
+                        break
+                    match = regex.match(line)
                 if not match:
                     continue
                 primary = match.group('primary')

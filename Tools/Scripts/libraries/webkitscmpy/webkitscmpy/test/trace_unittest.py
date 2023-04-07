@@ -1,4 +1,4 @@
-# Copyright (C) 2022 Apple Inc. All rights reserved.
+# Copyright (C) 2022-2023 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -63,6 +63,18 @@ class TestRelationship(TestCase):
             ('original', ['123@main']), Relationship.parse(Commit(
                 hash='deadbeef1234', revision=1234, identifier='1234@main',
                 message='Cherry-picked 123@main. <rdar://54321>',
+            ))
+        )
+        self.assertEqual(
+            ('original', ['123@main']), Relationship.parse(Commit(
+                hash='deadbeef1234', revision=1234, identifier='1234@main',
+                message='Commit title\n\nCherry-picked: 123@main. <rdar://54321>',
+            ))
+        )
+        self.assertEqual(
+            ('original', ['123@main']), Relationship.parse(Commit(
+                hash='deadbeef1234', revision=1234, identifier='1234@main',
+                message='Commit title\n\nOriginally landed as: 123@main. <rdar://54321>',
             ))
         )
 
