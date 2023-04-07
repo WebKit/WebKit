@@ -29,7 +29,6 @@
 
 #include "Connection.h"
 #include "Logging.h"
-#include "VideoFullscreenManager.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebFrame.h"
 #include "WebFullScreenManagerProxyMessages.h"
@@ -51,6 +50,7 @@
 
 #if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
 #include "PlaybackSessionManager.h"
+#include "VideoFullscreenManager.h"
 #endif
 
 namespace WebKit {
