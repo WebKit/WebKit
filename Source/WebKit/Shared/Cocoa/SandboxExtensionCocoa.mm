@@ -339,9 +339,8 @@ auto SandboxExtension::createHandleForMachLookup(ASCIILiteral service, std::opti
 auto SandboxExtension::createHandlesForMachLookup(Span<const ASCIILiteral> services, std::optional<audit_token_t> auditToken, MachBootstrapOptions machBootstrapOptions, OptionSet<Flags> flags) -> Vector<Handle>
 {
     auto handles = createHandlesForResources(services, [auditToken, flags] (ASCIILiteral service) -> std::optional<Handle> {
-        auto handle = createHandleForMachLookup(service, auditToken, flags);
-        ASSERT(handle);
-        return handle;
+        // Note that createHandleForMachLookup() may return null if the process has just crashed.
+        return createHandleForMachLookup(service, auditToken, flags);
     });
 
 #if HAVE(MACH_BOOTSTRAP_EXTENSION)
