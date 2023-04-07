@@ -54,6 +54,7 @@
 #import <WebKit/_WKInspector.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
+#import <notify.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/Deque.h>
 #import <wtf/HashMap.h>
@@ -8080,6 +8081,86 @@ TEST(ProcessSwap, LockdownModeSystemSettingChange)
 
     pid_t pid3 = [webView _webProcessIdentifier];
     EXPECT_NE(pid2, pid3);
+}
+
+TEST(ProcessSwap, DestinationProcessTerminationDuringProcessSwap)
+{
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
+    auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+    auto webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
+    [webViewConfiguration setProcessPool:processPool.get()];
+
+    auto handler = adoptNS([PSONScheme new]);
+    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:webViewConfiguration.get()]);
+    auto navigationDelegate = adoptNS([PSONNavigationDelegate new]);
+    [webView setNavigationDelegate:navigationDelegate.get()];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/source.html"]]];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    auto webkitPID = [webView _webProcessIdentifier];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.apple.com/destination.html"]]];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    navigationDelegate->decidePolicyForNavigationAction = [webkitPID](WKNavigationAction *, void (^decisionHandler)(WKNavigationActionPolicy)) {
+        decisionHandler(WKNavigationActionPolicyAllow);
+
+        kill(webkitPID, 9);
+    };
+
+    // The navigation may or may not finish depending on timing.
+    // Depending on when we get notified of the process termination, we may cancel the provisional load.
+    [webView goBack];
+
+    // We cannot reliably wait for the load to complete so we just wait a bit to make sure we're not crashing.
+    auto before = MonotonicTime::now();
+    while ((MonotonicTime::now() - before) < 1_s)
+        TestWebKitAPI::Util::spinRunLoop(10);
+}
+
+TEST(ProcessSwap, MemoryPressureDuringProcessSwap)
+{
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
+    auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+    auto webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
+    [webViewConfiguration setProcessPool:processPool.get()];
+
+    auto handler = adoptNS([PSONScheme new]);
+    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:webViewConfiguration.get()]);
+    auto navigationDelegate = adoptNS([PSONNavigationDelegate new]);
+    [webView setNavigationDelegate:navigationDelegate.get()];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/source.html"]]];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.apple.com/destination.html"]]];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    navigationDelegate->decidePolicyForNavigationAction = [](WKNavigationAction *, void (^decisionHandler)(WKNavigationActionPolicy)) {
+        decisionHandler(WKNavigationActionPolicyAllow);
+
+        notify_post("org.WebKit.lowMemory");
+    };
+
+    // The navigation may or may not finish depending on timing.
+    // Back/Forward cache processes exit on memory pressure, which may cancel the provisional load.
+    [webView goBack];
+
+    // We cannot reliably wait for the load to complete so we just wait a bit to make sure we're not crashing.
+    auto before = MonotonicTime::now();
+    while ((MonotonicTime::now() - before) < 1_s)
+        TestWebKitAPI::Util::spinRunLoop(10);
 }
 
 #if PLATFORM(IOS)
