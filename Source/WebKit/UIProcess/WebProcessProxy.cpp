@@ -1792,10 +1792,11 @@ void WebProcessProxy::updateBackgroundResponsivenessTimer()
 
 void WebProcessProxy::updateWebGPUEnabledStateInGPUProcess()
 {
-    bool webGPUEnabled = WTF::anyOf(pages(), [](const auto& page) {
-        return page && page->preferences().webGPU();
-    });
-    processPool().ensureGPUProcess().updateWebGPUEnabled(*this, webGPUEnabled);
+    if (auto* process = processPool().gpuProcess()) {
+        process->updateWebGPUEnabled(*this, WTF::anyOf(pages(), [](const auto& page) {
+            return page && page->preferences().webGPU();
+        }));
+    }
 }
 
 #if !PLATFORM(COCOA)
