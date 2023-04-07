@@ -9,21 +9,23 @@ const canvas = document.getElementById('offscreen');
 const offscreenCanvas = canvas.transferControlToOffscreen();
 const offscreenContext = offscreenCanvas.getContext('2d');
 
-const square = new Path2D();
-square.rect(50, 50, 100, 100);
-offscreenContext.fillStyle = 'red';
-offscreenContext.fill(square);
-offscreenContext.commit();
-
 if (window.testRunner)
     testRunner.waitUntilDone();
 
-function finishTest() {
-    if (window.testRunner)
-        testRunner.notifyDone();
-}
-requestAnimationFrame(finishTest);
+requestAnimationFrame(function() {
+  requestAnimationFrame(function() {
+    const square = new Path2D();
+    square.rect(50, 50, 100, 100);
+    offscreenContext.fillStyle = 'red';
+    offscreenContext.fill(square);
+    offscreenContext.commit();
 
+    requestAnimationFrame(function() {
+      if (window.testRunner)
+        testRunner.notifyDone();
+    });
+  });
+});
 </script>
 </body>
 </html>
