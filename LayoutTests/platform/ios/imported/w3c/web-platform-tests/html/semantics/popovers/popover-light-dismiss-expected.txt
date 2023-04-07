@@ -5,9 +5,9 @@ FAIL Canceling pointer events should not keep clicks from light dismissing popov
 FAIL Clicking inside a popover does not close that popover assert_false: expected false got true
 FAIL Popovers close on pointerup, not pointerdown assert_false: expected false got true
 FAIL Synthetic events can't close popovers assert_false: expected false got true
-FAIL Moving focus outside the popover should not dismiss the popover promise_test: Unhandled rejection with value: object "InvalidStateError: Element has unexpected visibility state"
-FAIL Clicking inside a child popover shouldn't close either popover promise_test: Unhandled rejection with value: object "InvalidStateError: Element has unexpected visibility state"
-FAIL Clicking inside a parent popover should close child popover promise_test: Unhandled rejection with value: object "InvalidStateError: Element has unexpected visibility state"
+FAIL Moving focus outside the popover should not dismiss the popover assert_equals: Focus should move to a button outside the popover expected Element node <button id="after_p1">Next control after popover1</button> but got Element node <body><button id="b1t" popovertarget="p1">Popover 1</butt...
+PASS Clicking inside a child popover shouldn't close either popover
+FAIL Clicking inside a parent popover should close child popover assert_false: expected false got true
 PASS Clicking on invoking element, after using it for activation, shouldn't close its popover
 FAIL Clicking on invoking element, after using it for activation, shouldn't close its popover (nested case) assert_true: button2 should activate popover2 expected true got false
 FAIL Clicking on invoking element, after using it for activation, shouldn't close its popover (nested case, not used for invocation) promise_test: Unhandled rejection with value: object "InvalidStateError: Element has unexpected visibility state"
