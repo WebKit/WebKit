@@ -82,6 +82,7 @@ struct ResolutionContext {
     // This needs to be provided during style resolution when up-to-date document element style is not available via DOM.
     const RenderStyle* documentElementStyle { nullptr };
     SelectorMatchingState* selectorMatchingState { nullptr };
+    bool isSVGUseTreeRoot { false };
 };
 
 class Resolver : public RefCounted<Resolver> {

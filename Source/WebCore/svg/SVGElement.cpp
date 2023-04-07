@@ -711,6 +711,7 @@ std::optional<Style::ResolvedStyle> SVGElement::resolveCustomStyle(const Style::
         auto styleElementResolutionContext = resolutionContext;
         // Can't use the state since we are going to another part of the tree.
         styleElementResolutionContext.selectorMatchingState = nullptr;
+        styleElementResolutionContext.isSVGUseTreeRoot = true;
         auto resolvedStyle = styleElement->resolveStyle(styleElementResolutionContext);
         Style::Adjuster::adjustSVGElementStyle(*resolvedStyle.style, *this);
         return resolvedStyle;
