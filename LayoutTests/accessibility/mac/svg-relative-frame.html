@@ -1,0 +1,55 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+<style>
+#svg {
+    margin-top: 2000px;
+    margin-left: 2000px;
+}
+</style>
+</head>
+<body>
+
+<svg id="svg" width="4in" height="4in" role="button" aria-label="clickable circle" onclick="() => {}">
+    <circle cx="2in" cy="2in" r="1.75in" fill="green" stroke="black">
+        <title>Clickable circle</title>
+    </circle>
+</svg>
+
+<script>
+window.jsTestIsAsync = true;
+var output = "This test ensures we compute the relative frame of SVGs correctly.\n\n";
+
+async function expectRelativeFrame(expectedFrame) {
+    const axElement = accessibilityController.accessibleElementById("svg");
+    let lastRelativeFrame;
+    await waitFor(() => {
+        lastRelativeFrame = axElement.stringDescriptionOfAttributeValue("AXRelativeFrame");
+        return lastRelativeFrame.includes(expectedFrame);
+    });
+    output += `\n#svg has AXRelativeFrame: ${lastRelativeFrame}\n`;
+}
+
+if (window.accessibilityController) {
+    setTimeout(async () => {
+        await expectRelativeFrame("{2008, 2008}, {384, 384}");
+
+        output += "\nScrolling to the bottom-right corner of the page.\n";
+        window.scroll(2000, 2000);
+        await expectRelativeFrame("{401, 193}, {384, 384}");
+
+        output += "\nRemoving #svg margins.\n";
+        document.getElementById("svg").style.marginTop = "0";
+        document.getElementById("svg").style.marginLeft = "0";
+        await expectRelativeFrame("{8, 8}, {384, 384}");
+
+        debug(output);
+        finishJSTest();
+    });
+}
+</script>
+</body>
+</html>
+
