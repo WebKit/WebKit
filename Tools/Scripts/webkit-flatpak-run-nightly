@@ -29,7 +29,7 @@ import urllib.request
 from html.parser import HTMLParser
 
 REPO = "https://software.igalia.com/flatpak-refs/webkit-sdk.flatpakrepo"
-SDK_BRANCH = "21.08"
+SDK_BRANCH = "22.08"
 USER_DIR = os.path.expanduser("~/.cache/wk-nightly")
 
 def spinning_cursor():
@@ -66,13 +66,13 @@ def ensure_sdk(build_type):
         flatpak("install", "--user", "-y", "webkit-nightly", f"org.webkit.Sdk.Debug//{branch}")
 
 def get_build_path(platform, build_type, revision_number):
-    dirname = f"{platform}-{build_type}-r{revision_number}"
+    dirname = f"{platform}-{build_type}-{revision_number}"
     return os.path.join(tempfile.gettempdir(), dirname)
 
 def get_revision_number(build_name):
-    match = re.match(r'.*_r([0-9]+)\.zip$', build_name)
+    match = re.match(r'.*_([0-9@a-z]+)_\d+\.zip$', build_name)
     if match:
-        return int(match.group(1))
+        return match.groups()[0]
 
 def ensure_extracted_build(args):
     build_type = args.build_type.lower()
