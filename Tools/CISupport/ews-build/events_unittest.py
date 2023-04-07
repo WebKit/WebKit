@@ -28,18 +28,18 @@ from events import CommitClassifier
 
 class TestCommitClassifier(unittest.TestCase):
     def test_regex_header_filter(self):
-        self.assertTrue(CommitClassifier.HeaderFilter('^[Vv]ersioning\\.?$')('Versioning.'))
-        self.assertTrue(CommitClassifier.HeaderFilter('^[Vv]ersioning\\.?$')('versioning.'))
-        self.assertTrue(CommitClassifier.HeaderFilter('^[Vv]ersioning\\.?$')('Versioning'))
+        self.assertTrue(CommitClassifier.LineFilter('^[Vv]ersioning\\.?$')('Versioning.'))
+        self.assertTrue(CommitClassifier.LineFilter('^[Vv]ersioning\\.?$')('versioning.'))
+        self.assertTrue(CommitClassifier.LineFilter('^[Vv]ersioning\\.?$')('Versioning'))
 
-        self.assertFalse(CommitClassifier.HeaderFilter('^[Vv]ersioning\\.?$')('Bumped versioning'))
-        self.assertFalse(CommitClassifier.HeaderFilter('^[Vv]ersioning\\.?$')('Versioning bumped.'))
+        self.assertFalse(CommitClassifier.LineFilter('^[Vv]ersioning\\.?$')('Bumped versioning'))
+        self.assertFalse(CommitClassifier.LineFilter('^[Vv]ersioning\\.?$')('Versioning bumped.'))
 
     def test_fuzzy_header_filter(self):
-        self.assertTrue(CommitClassifier.HeaderFilter({"value": "gardening", "ratio": 85})('[Gardening] Skip n tests'))
-        self.assertTrue(CommitClassifier.HeaderFilter({"value": "gardening", "ratio": 85})('[girdening] Skip n tests'))
+        self.assertTrue(CommitClassifier.LineFilter({"value": "gardening", "ratio": 85})('[Gardening] Skip n tests'))
+        self.assertTrue(CommitClassifier.LineFilter({"value": "gardening", "ratio": 85})('[girdening] Skip n tests'))
 
-        self.assertFalse(CommitClassifier.HeaderFilter({"value": "gardening", "ratio": 85})('[gdening] Skip n tests'))
+        self.assertFalse(CommitClassifier.LineFilter({"value": "gardening", "ratio": 85})('[gdening] Skip n tests'))
 
     def test_commit_class_gardening(self):
         c = CommitClassifier(
@@ -53,27 +53,29 @@ class TestCommitClassifier(unittest.TestCase):
         )
         self.assertEqual(c.name, 'Gardening')
         self.assertFalse(c.pickable)
-        self.assertTrue(c.matches('[Gardening] Skip n tests', ['LayoutTests/TestExpectations']))
+        self.assertTrue(c.matches('[Gardening] Skip n tests', [], ['LayoutTests/TestExpectations']))
 
-        self.assertFalse(c.matches('[Gardening] Skip n tests', []))
-        self.assertFalse(c.matches('[gdening] Skip n tests', ['LayoutTests/TestExpectations']))
-        self.assertFalse(c.matches('[Gardening] Skip n tests', ['Makefile', 'LayoutTests/TestExpectations']))
+        self.assertFalse(c.matches('[Gardening] Skip n tests', [], []))
+        self.assertFalse(c.matches('[gdening] Skip n tests', [], ['LayoutTests/TestExpectations']))
+        self.assertFalse(c.matches('[Gardening] Skip n tests', [], ['Makefile', 'LayoutTests/TestExpectations']))
 
     def test_commit_class_cherry_pick(self):
         c = CommitClassifier(
             name='Cherry-pick',
             pickable=False,
             headers=['^[Cc]herry[- ][Pp]ick'],
+            trailers=['^[Oo]riginally[- ]landed[- ]as:'],
         )
         self.assertEqual(c.name, 'Cherry-pick')
         self.assertFalse(c.pickable)
-        self.assertTrue(c.matches('Cherry-pick abcde', ['somefile']))
-        self.assertTrue(c.matches('cherry-pick abcde', ['otherfile']))
-        self.assertTrue(c.matches('Cherry-Pick abcde', []))
-        self.assertTrue(c.matches('cherry pick abcde', []))
+        self.assertTrue(c.matches('Cherry-pick abcde', [], ['somefile']))
+        self.assertTrue(c.matches('cherry-pick abcde', [], ['otherfile']))
+        self.assertTrue(c.matches('Cherry-Pick abcde', [], []))
+        self.assertTrue(c.matches('cherry pick abcde', [], []))
+        self.assertTrue(c.matches('[Component] Some change', ['Originally-landed-as: 1234.1@branch (abcde)'], []))
 
-        self.assertFalse(c.matches('Partial cherry-pick', []))
-        self.assertFalse(c.matches('Took cherry-pick', []))
+        self.assertFalse(c.matches('Partial cherry-pick', [], []))
+        self.assertFalse(c.matches('Took cherry-pick', [], []))
 
     def test_commit_class_tools(self):
         c = CommitClassifier(
@@ -83,10 +85,10 @@ class TestCommitClassifier(unittest.TestCase):
         )
         self.assertEqual(c.name, 'Tools')
         self.assertTrue(c.pickable)
-        self.assertTrue(c.matches('Some change', ['Tools/Scripts/git-webkit']))
-        self.assertTrue(c.matches('', ['LayoutTests/some/test.html']))
-        self.assertTrue(c.matches('', ['metadata/contributors.json']))
-        self.assertTrue(c.matches('', ['Tools/Scripts/run-webkit-tests', 'metadata/commit_classes.json']))
+        self.assertTrue(c.matches('Some change', [], ['Tools/Scripts/git-webkit']))
+        self.assertTrue(c.matches('', [], ['LayoutTests/some/test.html']))
+        self.assertTrue(c.matches('', [], ['metadata/contributors.json']))
+        self.assertTrue(c.matches('', [], ['Tools/Scripts/run-webkit-tests', 'metadata/commit_classes.json']))
 
-        self.assertFalse(c.matches('', []))
-        self.assertFalse(c.matches('', ['metadata/contributors.json', 'Makefile']))
+        self.assertFalse(c.matches('', [], []))
+        self.assertFalse(c.matches('', [], ['metadata/contributors.json', 'Makefile']))

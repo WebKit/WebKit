@@ -284,7 +284,7 @@ class logging_disabled(object):
 # Based off of webkitscmpy's CommitClassifier, although modified to not raise exceptions
 # when provided invalid commit classes.
 class CommitClassifier(object):
-    class HeaderFilter(object):
+    class LineFilter(object):
         DEFAULT_FUZZ_RATIO = 90
 
         @classmethod
@@ -308,25 +308,30 @@ class CommitClassifier(object):
         def __call__(self, string):
             return bool(self.do(string)) if self.do else False
 
-    def __init__(self, name=None, pickable=True, headers=None, paths=None, **kwargs):
+    def __init__(self, name=None, pickable=True, headers=None, trailers=None, paths=None, **kwargs):
         self.name = name or '?'
         self.pickable = pickable
-        self.headers = [self.HeaderFilter(header) for header in headers or []]
+        self.headers = [self.LineFilter(header) for header in headers or []]
+        self.trailers = [self.LineFilter(trailer) for trailer in trailers or []]
         self.paths = [re.compile(r'^{}'.format(path)) for path in (paths or [])]
 
-        if not self.headers and not self.paths:
+        if not self.headers and not self.trailers and not self.paths:
             log.msg(f'Commit class {self.name} matches all commits')
 
         for argument, _ in kwargs.items():
             log.msg(f'{argument} is not a valid member of CommitClassifier')
 
-    def matches(self, header, files):
-        if not self.headers and not self.paths:
+    def matches(self, header, trailers, files):
+        if not self.headers and not self.trailers and not self.paths:
             return False
 
-        if self.headers and not header:
-            return False
-        if self.headers and not any([h(header) for h in self.headers]):
+        matching_header = bool(self.headers and header)
+        matching_trailer = bool(self.trailers and trailers)
+
+        matches_header = self.headers and header and any([f(header) for f in self.headers])
+        matches_trailers = self.trailers and trailers and any([any([f(trailer) for f in self.trailers]) for trailer in trailers])
+
+        if (matching_header or matching_trailer) and not matches_header and not matches_trailers:
             return False
 
         if self.paths and not files:
@@ -346,6 +351,7 @@ class GitHubEventHandlerNoEdits(GitHubEventHandler):
     MERGE_QUEUE_LABEL = 'merge-queue'
     LABEL_PROCESS_DELAY = 10
     ACCOUNTS_TO_IGNORE = ('webkit-early-warning-system', 'webkit-commit-queue')
+    TRAILER_RE = re.compile(r'^(?P<key>[^:()\t\/*]+): (?P<value>.+)')
 
     _commit_classes = []
     _last_commit_classes_refresh = 0
@@ -391,9 +397,16 @@ class GitHubEventHandlerNoEdits(GitHubEventHandler):
         if not classes:
             return defer.returnValue(None)
 
-        header = message.splitlines()[0]
+        lines = message.splitlines()
+        header = lines[0]
+        trailers = []
+        for line in reversed(lines):
+            if not cls.TRAILER_RE.match(line):
+                break
+            trailers.append(line)
+
         for klass in classes:
-            if klass.matches(header, files):
+            if klass.matches(header, trailers, files):
                 return defer.returnValue(klass.name)
         return defer.returnValue(None)
 
