@@ -556,11 +556,8 @@ static MemoryCompactLookupOnlyRobinHoodHashMap<AtomString, QualifiedName> create
         SVGNames::zoomAndPanAttr,
     };
 
-    for (auto name : svgAttrs) {
-        const AtomString& localName = name.localName();
-        AtomString loweredLocalName = localName.convertToASCIILowercase();
-        map.add(loweredLocalName, name);
-    }
+    for (auto name : svgAttrs)
+        map.add(name.localNameLowercase(), name);
 
     return map;
 }

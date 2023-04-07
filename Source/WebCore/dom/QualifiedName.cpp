@@ -81,7 +81,7 @@ const QualifiedName& nullQName()
     return nullName;
 }
 
-const AtomString& QualifiedName::localNameUpper() const
+const AtomString& QualifiedName::localNameUppercase() const
 {
     if (!m_impl->m_localNameUpper)
         m_impl->m_localNameUpper = m_impl->m_localName.convertToASCIIUppercase();

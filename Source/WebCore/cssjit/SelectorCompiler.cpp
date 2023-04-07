@@ -561,6 +561,7 @@ private:
     void generateElementIsRoot(Assembler::JumpList& failureCases);
     void generateElementIsScopeRoot(Assembler::JumpList& failureCases);
     void generateElementIsTarget(Assembler::JumpList& failureCases);
+    void generateElementAndDocumentIsHTML(Assembler::JumpList& failureCases);
 
     // Helpers.
     void generateAddStyleRelationIfResolvingStyle(Assembler::RegisterID element, Style::Relation::Type, std::optional<Assembler::RegisterID> value = { });
@@ -3242,14 +3243,8 @@ static inline bool canMatchStyleAttribute(const SelectorFragment& fragment)
     for (unsigned i = 0; i < fragment.attributes.size(); ++i) {
         const CSSSelector& attributeSelector = fragment.attributes[i].selector();
         const QualifiedName& attributeName = attributeSelector.attribute();
-        if (Attribute::nameMatchesFilter(HTMLNames::styleAttr, attributeName.prefix(), attributeName.localName(), attributeName.namespaceURI()))
+        if (Attribute::nameMatchesFilter(HTMLNames::styleAttr, attributeName.prefix(), attributeName.localNameLowercase(), attributeName.namespaceURI()))
             return true;
-
-        const AtomString& canonicalLocalName = attributeSelector.attributeCanonicalLocalName();
-        if (attributeName.localName() != canonicalLocalName
-            && Attribute::nameMatchesFilter(HTMLNames::styleAttr, attributeName.prefix(), attributeSelector.attributeCanonicalLocalName(), attributeName.namespaceURI())) {
-            return true;
-        }
     }
     return false;
 }
@@ -3278,7 +3273,7 @@ static inline bool canMatchAnimatableSVGAttribute(const SelectorFragment& fragme
         if (Attribute::nameMatchesFilter(candidateForLocalName, selectorAttributeName.prefix(), selectorAttributeName.localName(), selectorAttributeName.namespaceURI()))
             return true;
 
-        const AtomString& canonicalLocalName = attributeSelector.attributeCanonicalLocalName();
+        const AtomString& canonicalLocalName = attributeSelector.attribute().localNameLowercase();
         if (selectorAttributeName.localName() != canonicalLocalName) {
             const QualifiedName& candidateForCanonicalLocalName = SVGElement::animatableAttributeForName(selectorAttributeName.localName());
             if (Attribute::nameMatchesFilter(candidateForCanonicalLocalName, selectorAttributeName.prefix(), selectorAttributeName.localName(), selectorAttributeName.namespaceURI()))
@@ -3365,6 +3360,21 @@ void SelectorCodeGenerator::generateElementAttributesMatching(Assembler::JumpLis
     }
 }
 
+static inline Assembler::Jump testIsHTMLClassOnDocument(Assembler::ResultCondition condition, Assembler& assembler, Assembler::RegisterID documentAddress)
+{
+    static_assert(sizeof(Document::DocumentClass) == 2, "Document::DocumentClass must be a 16-bit value for branchTest16");
+    return assembler.branchTest16(condition, Assembler::Address(documentAddress, Document::documentClassesMemoryOffset()), Assembler::TrustedImm32(Document::isHTMLDocumentClassFlag()));
+}
+
+void SelectorCodeGenerator::generateElementAndDocumentIsHTML(Assembler::JumpList& failureCases)
+{
+    failureCases.append(DOMJIT::branchTestIsHTMLFlagOnNode(m_assembler, Assembler::Zero, elementAddressRegister));
+
+    LocalRegister document(m_registerAllocator);
+    DOMJIT::loadDocument(m_assembler, elementAddressRegister, document);
+    failureCases.append(testIsHTMLClassOnDocument(Assembler::Zero, m_assembler, document));
+}
+
 void SelectorCodeGenerator::generateElementAttributeMatching(Assembler::JumpList& failureCases, Assembler::RegisterID currentAttributeAddress, Assembler::RegisterID decIndexRegister, const AttributeMatchingInfo& attributeInfo)
 {
     // Get the localName used for comparison. HTML elements use a lowercase local name known in selectors as canonicalLocalName.
@@ -3373,15 +3383,21 @@ void SelectorCodeGenerator::generateElementAttributeMatching(Assembler::JumpList
     // In general, canonicalLocalName and localName are the same. When they differ, we have to check if the node is HTML to know
     // which one to use.
     const CSSSelector& attributeSelector = attributeInfo.selector();
-    const AtomStringImpl* canonicalLocalName = attributeSelector.attributeCanonicalLocalName().impl();
+    const AtomStringImpl* localNameLower = attributeSelector.attribute().localNameLowercase().impl();
     const AtomStringImpl* localName = attributeSelector.attribute().localName().impl();
-    if (canonicalLocalName == localName)
-        m_assembler.move(Assembler::TrustedImmPtr(canonicalLocalName), localNameToMatch);
+    if (localNameLower == localName)
+        m_assembler.move(Assembler::TrustedImmPtr(localNameLower), localNameToMatch);
     else {
-        m_assembler.move(Assembler::TrustedImmPtr(canonicalLocalName), localNameToMatch);
-        Assembler::Jump elementIsHTML = DOMJIT::branchTestIsHTMLFlagOnNode(m_assembler, Assembler::NonZero, elementAddressRegister);
+        Assembler::JumpList isHTMLFailureCases;
+        generateElementAndDocumentIsHTML(isHTMLFailureCases);
+
+        m_assembler.move(Assembler::TrustedImmPtr(localNameLower), localNameToMatch);
+        Assembler::Jump skipCaseSensitiveCase = m_assembler.jump();
+
+        isHTMLFailureCases.link(&m_assembler);
         m_assembler.move(Assembler::TrustedImmPtr(localName), localNameToMatch);
-        elementIsHTML.link(&m_assembler);
+
+        skipCaseSensitiveCase.link(&m_assembler);
     }
 
     Assembler::JumpList successCases;
@@ -3600,12 +3616,6 @@ void SelectorCodeGenerator::generateElementAttributeValueMatching(Assembler::Jum
     }
 }
 
-static inline Assembler::Jump testIsHTMLClassOnDocument(Assembler::ResultCondition condition, Assembler& assembler, Assembler::RegisterID documentAddress)
-{
-    static_assert(sizeof(Document::DocumentClass) == 2, "Document::DocumentClass must be a 16-bit value for branchTest16");
-    return assembler.branchTest16(condition, Assembler::Address(documentAddress, Document::documentClassesMemoryOffset()), Assembler::TrustedImm32(Document::isHTMLDocumentClassFlag()));
-}
-
 void SelectorCodeGenerator::generateElementAttributeValueExactMatching(Assembler::JumpList& failureCases, Assembler::RegisterID currentAttributeAddress, const AtomString& expectedValue, AttributeCaseSensitivity valueCaseSensitivity)
 {
     LocalRegisterWithPreference expectedValueRegister(m_registerAllocator, JSC::GPRInfo::argumentGPR1);
@@ -3622,13 +3632,7 @@ void SelectorCodeGenerator::generateElementAttributeValueExactMatching(Assembler
         // If the element is an HTML element, in a HTML dcoument (not including XHTML), value matching is case insensitive.
         // Taking the contrapositive, if we find the element is not HTML or is not in a HTML document, the condition above
         // sould be sufficient and we can fail early.
-        failureCases.append(DOMJIT::branchTestIsHTMLFlagOnNode(m_assembler, Assembler::Zero, elementAddressRegister));
-
-        {
-            LocalRegister document(m_registerAllocator);
-            DOMJIT::loadDocument(m_assembler, elementAddressRegister, document);
-            failureCases.append(testIsHTMLClassOnDocument(Assembler::Zero, m_assembler, document));
-        }
+        generateElementAndDocumentIsHTML(failureCases);
 
         LocalRegister valueStringImpl(m_registerAllocator);
         m_assembler.loadPtr(Assembler::Address(currentAttributeAddress, Attribute::valueMemoryOffset()), valueStringImpl);
@@ -4081,19 +4085,14 @@ inline void SelectorCodeGenerator::generateElementHasTagName(Assembler::JumpList
             m_assembler.move(Assembler::TrustedImmPtr(selectorLocalName.impl()), constantRegister);
             failureCases.append(m_assembler.branchPtr(Assembler::NotEqual, Assembler::Address(qualifiedNameImpl, QualifiedName::QualifiedNameImpl::localNameMemoryOffset()), constantRegister));
         } else {
-            Assembler::JumpList caseSensitiveCases;
-            caseSensitiveCases.append(DOMJIT::branchTestIsHTMLFlagOnNode(m_assembler, Assembler::Zero, elementAddressRegister));
-            {
-                LocalRegister document(m_registerAllocator);
-                DOMJIT::loadDocument(m_assembler, elementAddressRegister, document);
-                caseSensitiveCases.append(testIsHTMLClassOnDocument(Assembler::Zero, m_assembler, document));
-            }
+            Assembler::JumpList isHTMLFailureCases;
+            generateElementAndDocumentIsHTML(isHTMLFailureCases);
 
             LocalRegister constantRegister(m_registerAllocator);
             m_assembler.move(Assembler::TrustedImmPtr(lowercaseLocalName.impl()), constantRegister);
             Assembler::Jump skipCaseSensitiveCase = m_assembler.jump();
 
-            caseSensitiveCases.link(&m_assembler);
+            isHTMLFailureCases.link(&m_assembler);
             m_assembler.move(Assembler::TrustedImmPtr(selectorLocalName.impl()), constantRegister);
             skipCaseSensitiveCase.link(&m_assembler);
 

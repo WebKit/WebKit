@@ -47,7 +47,6 @@ class StyleRule;
 
 struct CSSSelectorParserContext {
     CSSParserMode mode { CSSParserMode::HTMLStandardMode };
-    bool isHTMLDocument { false };
     bool cssNestingEnabled { false };
     bool focusVisibleEnabled { false };
     bool hasPseudoClassEnabled { false };

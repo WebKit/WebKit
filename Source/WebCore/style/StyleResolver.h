@@ -182,19 +182,5 @@ private:
     bool m_isSharedBetweenShadowTrees { false };
 };
 
-inline bool Resolver::hasSelectorForAttribute(const Element& element, const AtomString &attributeName) const
-{
-    ASSERT(!attributeName.isEmpty());
-    if (element.isHTMLElement())
-        return m_ruleSets.features().attributeCanonicalLocalNamesInRules.contains(attributeName);
-    return m_ruleSets.features().attributeLocalNamesInRules.contains(attributeName);
-}
-
-inline bool Resolver::hasSelectorForId(const AtomString& idValue) const
-{
-    ASSERT(!idValue.isEmpty());
-    return m_ruleSets.features().idsInRules.contains(idValue);
-}
-
 } // namespace Style
 } // namespace WebCore

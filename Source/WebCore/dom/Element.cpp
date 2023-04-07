@@ -332,7 +332,7 @@ bool Element::isNonceable() const
         static constexpr auto styleString = "<style"_s;
 
         for (const auto& attribute : attributesIterator()) {
-            auto name = attribute.localName().convertToASCIILowercase();
+            auto name = attribute.localNameLowercase();
             auto value = attribute.value().convertToASCIILowercase();
             if (name.contains(scriptString)
                 || name.contains(styleString)

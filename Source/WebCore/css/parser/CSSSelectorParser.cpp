@@ -46,7 +46,6 @@ static bool consumeANPlusB(CSSParserTokenRange&, std::pair<int, int>&);
 
 CSSSelectorParserContext::CSSSelectorParserContext(const CSSParserContext& context)
     : mode(context.mode)
-    , isHTMLDocument(context.isHTMLDocument)
     , cssNestingEnabled(context.cssNestingEnabled)
     , focusVisibleEnabled(context.focusVisibleEnabled)
     , hasPseudoClassEnabled(context.hasPseudoClassEnabled)
@@ -55,7 +54,6 @@ CSSSelectorParserContext::CSSSelectorParserContext(const CSSParserContext& conte
 
 CSSSelectorParserContext::CSSSelectorParserContext(const Document& document)
     : mode(document.inQuirksMode() ? HTMLQuirksMode : HTMLStandardMode)
-    , isHTMLDocument(document.isHTMLDocument())
     , cssNestingEnabled(document.settings().cssNestingEnabled())
     , focusVisibleEnabled(document.settings().focusVisibleEnabled())
     , hasPseudoClassEnabled(document.settings().hasPseudoClassEnabled())
@@ -65,7 +63,6 @@ CSSSelectorParserContext::CSSSelectorParserContext(const Document& document)
 bool CSSSelectorParserContext::operator==(const CSSSelectorParserContext& other) const
 {
     return mode == other.mode
-        || isHTMLDocument == other.isHTMLDocument
         || cssNestingEnabled == other.cssNestingEnabled
         || focusVisibleEnabled == other.focusVisibleEnabled
         || hasPseudoClassEnabled == other.hasPseudoClassEnabled;
@@ -75,7 +72,6 @@ void add(Hasher& hasher, const CSSSelectorParserContext& context)
 {
     add(hasher,
         context.mode,
-        context.isHTMLDocument,
         context.cssNestingEnabled,
         context.focusVisibleEnabled,
         context.hasPseudoClassEnabled
@@ -696,7 +692,7 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumeAttribute(CSSParser
     auto selector = makeUnique<CSSParserSelector>();
 
     if (block.atEnd()) {
-        selector->setAttribute(qualifiedName, m_context.isHTMLDocument, CSSSelector::CaseSensitive);
+        selector->setAttribute(qualifiedName, CSSSelector::CaseSensitive);
         selector->setMatch(CSSSelector::Set);
         return selector;
     }
@@ -708,7 +704,7 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumeAttribute(CSSParser
         return nullptr;
     selector->setValue(attributeValue.value().toAtomString());
     
-    selector->setAttribute(qualifiedName, m_context.isHTMLDocument, consumeAttributeFlags(block));
+    selector->setAttribute(qualifiedName, consumeAttributeFlags(block));
 
     if (!block.atEnd())
         return nullptr;

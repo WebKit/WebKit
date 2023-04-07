@@ -174,7 +174,7 @@ private:
     AtomRuleMap m_idRules;
     AtomRuleMap m_classRules;
     AtomRuleMap m_attributeLocalNameRules;
-    AtomRuleMap m_attributeCanonicalLocalNameRules;
+    AtomRuleMap m_attributeLowercaseLocalNameRules;
     AtomRuleMap m_tagLocalNameRules;
     AtomRuleMap m_tagLowercaseLocalNameRules;
     AtomRuleMap m_shadowPseudoElementRules;
@@ -208,7 +208,7 @@ private:
 
 inline const RuleSet::RuleDataVector* RuleSet::attributeRules(const AtomString& key, bool isHTMLName) const
 {
-    auto& rules = isHTMLName ? m_attributeCanonicalLocalNameRules : m_attributeLocalNameRules;
+    auto& rules = isHTMLName ? m_attributeLowercaseLocalNameRules : m_attributeLocalNameRules;
     return rules.get(key);
 }
 

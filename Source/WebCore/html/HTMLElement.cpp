@@ -115,7 +115,7 @@ String HTMLElement::nodeName() const
     // ASCII characters that does not have to copy the string on a hit in the hash.
     if (document().isHTMLDocument()) {
         if (LIKELY(!tagQName().hasPrefix()))
-            return tagQName().localNameUpper();
+            return tagQName().localNameUppercase();
         return Element::nodeName().convertToASCIIUppercase();
     }
     return Element::nodeName();

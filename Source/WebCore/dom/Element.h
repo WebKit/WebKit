@@ -281,6 +281,8 @@ public:
     const AtomString& prefix() const final { return m_tagName.prefix(); }
     const AtomString& namespaceURI() const final { return m_tagName.namespaceURI(); }
 
+    const AtomString& localNameLowercase() const { return m_tagName.localNameLowercase(); }
+
     ElementName elementName() const { return m_tagName.elementName(); }
     Namespace nodeNamespace() const { return m_tagName.nodeNamespace(); }
 

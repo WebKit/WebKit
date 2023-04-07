@@ -35,7 +35,7 @@ namespace Style {
 
 static bool mayBeAffectedByAttributeChange(const RuleFeatureSet& features, bool isHTML, const QualifiedName& attributeName)
 {
-    auto& nameSet = isHTML ? features.attributeCanonicalLocalNamesInRules : features.attributeLocalNamesInRules;
+    auto& nameSet = isHTML ? features.attributeLowercaseLocalNamesInRules : features.attributeLocalNamesInRules;
     return nameSet.contains(attributeName.localName());
 }
 
@@ -44,12 +44,12 @@ void AttributeChangeInvalidation::invalidateStyle(const QualifiedName& attribute
     if (newValue == oldValue)
         return;
 
-    bool isHTML = m_element.isHTMLElement();
+    bool isHTML = m_element.isHTMLElement() && m_element.document().isHTMLDocument();
 
     bool shouldInvalidateCurrent = false;
     bool mayAffectStyleInShadowTree = false;
 
-    auto attributeNameForLookups = attributeName.localName().convertToASCIILowercase();
+    auto attributeNameForLookups = attributeName.localNameLowercase();
 
     traverseRuleFeatures(m_element, [&] (const RuleFeatureSet& features, bool mayAffectShadowTree) {
         if (mayAffectShadowTree && mayBeAffectedByAttributeChange(features, isHTML, attributeName))
