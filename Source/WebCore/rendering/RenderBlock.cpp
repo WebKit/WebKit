@@ -3031,6 +3031,10 @@ void RenderBlock::setTrimmedMarginForChild(RenderBox &child, MarginTrimType marg
         setMarginBeforeForChild(child, 0_lu);
         child.markMarginAsTrimmed(MarginTrimType::BlockStart);
         break;
+    case MarginTrimType::BlockEnd:
+        setMarginAfterForChild(child, 0_lu);
+        child.markMarginAsTrimmed(MarginTrimType::BlockEnd);
+        break;
     case MarginTrimType::InlineEnd:
         setMarginEndForChild(child, 0_lu);
         child.markMarginAsTrimmed(MarginTrimType::InlineEnd);
