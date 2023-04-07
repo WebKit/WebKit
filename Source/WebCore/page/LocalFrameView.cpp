@@ -3796,12 +3796,6 @@ void LocalFrameView::performPostLayoutTasks()
     LOG(Layout, "LocalFrameView %p performPostLayoutTasks", this);
     updateHasReachedSignificantRenderedTextThreshold();
 
-    if (auto& selection = m_frame->selection(); selection.isFocusedAndActive()) {
-        // FIXME (247041): We should be able to remove this appearance update altogether,
-        // and instead defer updates until the next rendering update.
-        selection.updateAppearanceAfterLayout();
-    }
-
     flushPostLayoutTasksQueue();
 
     if (!layoutContext().isLayoutNested() && m_frame->document()->documentElement())

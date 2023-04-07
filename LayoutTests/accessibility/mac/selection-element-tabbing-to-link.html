@@ -53,8 +53,17 @@
         }
     }
 
+    function waitForRAF() {
+        return new Promise((resolve) => {
+            requestAnimationFrame(() => {
+                setTimeout(resolve, 0);
+            });
+        });
+    }
+
     if (window.accessibilityController) {
         jsTestIsAsync = true;
+        testRunner.waitUntilDone();
 
         accessibilityController.enableEnhancedAccessibility(true);
         webArea = accessibilityController.rootElement.childAtIndex(0);
@@ -66,8 +75,12 @@
         var addedNotification = webArea.addNotificationListener(notificationCallback);
         shouldBe("addedNotification", "true");
 
-        eventSender.keyDown("\t");
-        eventSender.keyDown("\t", ["shiftKey"]);
+        (async function () {
+            await waitForRAF();
+            eventSender.keyDown("\t");
+            await waitForRAF();
+            eventSender.keyDown("\t", ["shiftKey"]);   
+        })();
     }
 
 </script>

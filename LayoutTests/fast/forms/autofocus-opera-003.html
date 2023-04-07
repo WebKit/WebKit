@@ -18,13 +18,15 @@
         }
 
         requestAnimationFrame(() => {
-            if (document.activeElement == document.getElementsByTagName("input")[0] &&
-                document.scrollingElement.scrollTop != 0)
-                log("SUCCESS");
-            else
-                log("FAILURE");
-            if (window.testRunner)
-                testRunner.notifyDone();
+            setTimeout(() => {
+                if (document.activeElement == document.getElementsByTagName("input")[0] &&
+                    document.scrollingElement.scrollTop != 0)
+                    log("SUCCESS");
+                else
+                    log("FAILURE");
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            }, 0);
         });
     }
 </script>

@@ -15,18 +15,22 @@ jsTestIsAsync = true;
 onload = function() {
     button.click();
 
-    getValidationMessage().then((_message) => {
-        if (_message !== "Fill out this field")
-            testFailed("Unexpected message: " + _message);
-
-        // Make sure the message stays visible.
+    requestAnimationFrame(() => {
         setTimeout(() => {
             getValidationMessage().then((_message) => {
-                message = _message;
-                shouldBeEqualToString("message", "Fill out this field");
-                finishJSTest();
+                if (_message !== "Fill out this field")
+                    testFailed("Unexpected message: " + _message);
+
+                // Make sure the message stays visible.
+                setTimeout(() => {
+                    getValidationMessage().then((_message) => {
+                        message = _message;
+                        shouldBeEqualToString("message", "Fill out this field");
+                        finishJSTest();
+                    });
+                }, 10);
             });
-        }, 10);
+        });
     });
 }
 </script>

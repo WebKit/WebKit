@@ -164,7 +164,9 @@
 
         function waitForAnimationFrame() {
             return new Promise(function(resolve, reject) {
-                requestAnimationFrame(resolve);
+                requestAnimationFrame(() => {
+                    setTimeout(resolve, 0);
+                });
             });
         }
 

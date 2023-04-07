@@ -2187,10 +2187,6 @@ void Document::resolveStyle(ResolveStyleType type)
         if (m_renderView->needsLayout())
             frameView.layoutContext().scheduleLayout();
 
-        // Usually this is handled by post-layout.
-        if (!frameView.needsLayout() && is<LocalFrame>(frameView.frame()))
-            downcast<LocalFrame>(frameView.frame()).selection().scheduleAppearanceUpdateAfterStyleChange();
-
         // As a result of the style recalculation, the currently hovered element might have been
         // detached (for example, by setting display:none in the :hover style), schedule another mouseMove event
         // to check if any other elements ended up under the mouse pointer due to re-layout.

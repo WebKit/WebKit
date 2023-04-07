@@ -35,7 +35,6 @@
 #include "Range.h"
 #include "ScrollAlignment.h"
 #include "ScrollBehavior.h"
-#include "Timer.h"
 #include "VisibleSelection.h"
 #include <wtf/Noncopyable.h>
 
@@ -156,7 +155,7 @@ public:
     WEBCORE_EXPORT void clear();
     void willBeRemovedFromFrame();
 
-    void updateAppearanceAfterLayout();
+    void updateAppearanceAfterUpdatingRendering();
     void scheduleAppearanceUpdateAfterStyleChange();
 
     enum class RevealSelectionAfterUpdate : bool { NotForced, Forced };
@@ -312,9 +311,6 @@ private:
     void setFocusedElementIfNeeded();
     void focusedOrActiveStateChanged();
 
-    void updateAppearanceAfterLayoutOrStyleChange();
-    void appearanceUpdateTimerFired();
-
     enum class ShouldUpdateAppearance : bool { No, Yes };
     WEBCORE_EXPORT void setCaretVisibility(CaretVisibility, ShouldUpdateAppearance);
 
@@ -344,7 +340,6 @@ private:
     RefPtr<Node> m_previousCaretNode; // The last node which painted the caret. Retained for clearing the old caret when it moves.
 
     RefPtr<EditingStyle> m_typingStyle;
-    Timer m_appearanceUpdateTimer;
     // The painted bounds of the caret in absolute coordinates
     IntRect m_absCaretBounds;
 

@@ -1746,6 +1746,7 @@ void Editor::revealSelectionIfNeededAfterLoadingImageForElement(HTMLImageElement
 
     // FIXME: This should be queued as a task for the next rendering update.
     document().updateLayout();
+    document().selection().setCaretRectNeedsUpdate();
     revealSelectionAfterEditingOperation();
 }
 

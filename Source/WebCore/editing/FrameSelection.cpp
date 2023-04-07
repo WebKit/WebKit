@@ -180,7 +180,6 @@ static UniqueRef<CaretAnimator> createCaretAnimator(FrameSelection* frameSelecti
 FrameSelection::FrameSelection(Document* document)
     : m_document(document)
     , m_granularity(TextGranularity::CharacterGranularity)
-    , m_appearanceUpdateTimer(*this, &FrameSelection::appearanceUpdateTimerFired)
     , m_caretAnimator(createCaretAnimator(this))
     , m_caretInsidePositionFixed(false)
     , m_absCaretBoundsDirty(true)
@@ -475,10 +474,8 @@ void FrameSelection::setSelection(const VisibleSelection& selection, OptionSet<S
     if (frameView && frameView->layoutContext().isLayoutPending())
         return;
 
-    if (!(options & IsUserTriggered)) {
-        scheduleAppearanceUpdateAfterStyleChange();
+    if (!(options & IsUserTriggered))
         return;
-    }
 
     updateAndRevealSelection(intent, options.contains(SmoothScroll) ? ScrollBehavior::Smooth : ScrollBehavior::Instant, options.contains(RevealSelectionBounds) ? RevealExtentOption::DoNotRevealExtent : RevealExtentOption::RevealExtent, options.contains(ForceCenterScroll) ? ForceCenterScrollOption::ForceCenterScroll : ForceCenterScrollOption::DoNotForceCenterScroll);
 
@@ -1685,7 +1682,6 @@ void FrameSelection::willBeRemovedFromFrame()
     setSelectionWithoutUpdatingAppearance(VisibleSelection(), defaultSetSelectionOptions(), AlignCursorOnScrollIfNeeded, TextGranularity::CharacterGranularity);
     m_previousCaretNode = nullptr;
     m_typingStyle = nullptr;
-    m_appearanceUpdateTimer.stop();
 }
 
 void FrameSelection::setStart(const VisiblePosition& position, EUserTriggered trigger)
@@ -2570,24 +2566,7 @@ void FrameSelection::setShouldShowBlockCursor(bool shouldShowBlockCursor)
     updateAppearance();
 }
 
-void FrameSelection::updateAppearanceAfterLayout()
-{
-    m_appearanceUpdateTimer.stop();
-    updateAppearanceAfterLayoutOrStyleChange();
-}
-
-void FrameSelection::scheduleAppearanceUpdateAfterStyleChange()
-{
-    m_appearanceUpdateTimer.startOneShot(0_s);
-}
-
-void FrameSelection::appearanceUpdateTimerFired()
-{
-    Ref<Document> protector(*m_document);
-    updateAppearanceAfterLayoutOrStyleChange();
-}
-
-void FrameSelection::updateAppearanceAfterLayoutOrStyleChange()
+void FrameSelection::updateAppearanceAfterUpdatingRendering()
 {
     if (auto* client = m_document->editor().client())
         client->updateEditorStateAfterLayoutIfEditabilityChanged();

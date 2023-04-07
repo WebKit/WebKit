@@ -1863,7 +1863,7 @@ void Page::doAfterUpdateRendering()
     });
 
     forEachDocument([] (Document& document) {
-        document.selection().updateAppearanceAfterLayout();
+        document.selection().updateAppearanceAfterUpdatingRendering();
     });
 
     forEachDocument([] (Document& document) {
