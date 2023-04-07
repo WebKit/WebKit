@@ -8,6 +8,7 @@ PASS [Worker] rootHandle.name is ""
 PASS [Worker] rootHandle.kind is "directory"
 PASS [Worker] dirHandle.name is "dir"
 PASS [Worker] dirHandle.kind is "directory"
+PASS [Worker] getError.toString() is "TypeMismatchError: File type is incompatible with handle type"
 PASS [Worker] isSameEntry is false
 PASS [Worker] fileHandle.name is "file"
 PASS [Worker] fileHandle.kind is "file"
