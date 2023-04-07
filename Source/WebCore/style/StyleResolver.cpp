@@ -244,7 +244,7 @@ ResolvedStyle Resolver::styleForElement(const Element& element, const Resolution
 
     if (state.parentStyle()) {
         state.setStyle(RenderStyle::createPtrWithRegisteredInitialValues(document().customPropertyRegistry()));
-        if (&element == document().documentElement()) {
+        if (&element == document().documentElement() && !context.isSVGUseTreeRoot) {
             // Initial values for custom properties are inserted to the document element style. Don't overwrite them.
             state.style()->inheritIgnoringCustomPropertiesFrom(*state.parentStyle());
         } else
