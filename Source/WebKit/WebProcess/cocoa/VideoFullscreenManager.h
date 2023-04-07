@@ -144,6 +144,8 @@ public:
     void setTextTrackRepresentationContentScaleForVideoElement(WebCore::HTMLVideoElement&, float scale);
     void setTextTrackRepresentationIsHiddenForVideoElement(WebCore::HTMLVideoElement&, bool hidden);
 
+    bool videoElementInPictureInPicture() const { return !!m_videoElementInPictureInPicture; }
+
 protected:
     friend class VideoFullscreenInterfaceContext;
 

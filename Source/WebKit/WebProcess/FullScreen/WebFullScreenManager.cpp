@@ -29,6 +29,7 @@
 
 #include "Connection.h"
 #include "Logging.h"
+#include "VideoFullscreenManager.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebFrame.h"
 #include "WebFullScreenManagerProxyMessages.h"
@@ -197,6 +198,9 @@ void WebFullScreenManager::enterFullScreenForElement(WebCore::Element* element)
     bool isVideoElement = false;
 #if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
     isVideoElement = is<HTMLVideoElement>(element);
+
+    if (m_page->videoFullscreenManager().videoElementInPictureInPicture() && m_element->document().quirks().blocksEnteringStandardFullscreenFromPictureInPictureQuirk())
+        return;
 
     if (auto* currentPlaybackControlsElement = m_page->playbackSessionManager().currentPlaybackControlsElement())
         currentPlaybackControlsElement->prepareForVideoFullscreenStandby();

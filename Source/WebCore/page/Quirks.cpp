@@ -1373,6 +1373,25 @@ bool Quirks::blocksReturnToFullscreenFromPictureInPictureQuirk() const
 #endif
 }
 
+bool Quirks::blocksEnteringStandardFullscreenFromPictureInPictureQuirk() const
+{
+#if ENABLE(FULLSCREEN_API) && ENABLE(VIDEO_PRESENTATION_MODE)
+    // Vimeo enters fullscreen when starting playback from the inline play button while already in PIP.
+    // This behavior is revealing a bug in the fullscreen handling. See rdar://107592139.
+    if (!needsQuirks())
+        return false;
+
+    if (!m_blocksEnteringStandardFullscreenFromPictureInPictureQuirk) {
+        auto domain = RegistrableDomain { m_document->topDocument().url() };
+        m_blocksEnteringStandardFullscreenFromPictureInPictureQuirk = domain == "vimeo.com"_s;
+    }
+
+    return *m_blocksEnteringStandardFullscreenFromPictureInPictureQuirk;
+#else
+    return false;
+#endif
+}
+
 bool Quirks::shouldDisableEndFullscreenEventWhenEnteringPictureInPictureFromFullscreenQuirk() const
 {
 #if ENABLE(VIDEO_PRESENTATION_MODE)
