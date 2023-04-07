@@ -1317,10 +1317,11 @@ void av1_source_content_sb(AV1_COMP *cpi, MACROBLOCK *x, int mi_row,
   unsigned int tmp_variance;
   const BLOCK_SIZE bsize = cpi->common.seq_params->sb_size;
   uint8_t *src_y = cpi->source->y_buffer;
-  int src_ystride = cpi->source->y_stride;
+  const int src_ystride = cpi->source->y_stride;
+  const int src_offset = src_ystride * (mi_row << 2) + (mi_col << 2);
   uint8_t *last_src_y = cpi->last_source->y_buffer;
-  int last_src_ystride = cpi->last_source->y_stride;
-  const int offset = cpi->source->y_stride * (mi_row << 2) + (mi_col << 2);
+  const int last_src_ystride = cpi->last_source->y_stride;
+  const int last_src_offset = last_src_ystride * (mi_row << 2) + (mi_col << 2);
   uint64_t avg_source_sse_threshold[2] = { 100000,   // ~5*5*(64*64)
                                            36000 };  // ~3*3*(64*64)
   uint64_t avg_source_sse_threshold_high = 1000000;  // ~15*15*(64*64)
@@ -1329,8 +1330,8 @@ void av1_source_content_sb(AV1_COMP *cpi, MACROBLOCK *x, int mi_row,
   MACROBLOCKD *xd = &x->e_mbd;
   if (xd->cur_buf->flags & YV12_FLAG_HIGHBITDEPTH) return;
 #endif
-  src_y += offset;
-  last_src_y += offset;
+  src_y += src_offset;
+  last_src_y += last_src_offset;
   tmp_variance = cpi->ppi->fn_ptr[bsize].vf(src_y, src_ystride, last_src_y,
                                             last_src_ystride, &tmp_sse);
   // rd thresholds
