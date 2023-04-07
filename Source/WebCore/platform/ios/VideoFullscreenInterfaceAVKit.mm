@@ -1088,6 +1088,7 @@ void VideoFullscreenInterfaceAVKit::didStopPictureInPicture()
         m_enteringPictureInPicture = false;
         if (m_videoFullscreenModel)
             m_videoFullscreenModel->didExitPictureInPicture();
+        returnToStandby();
 
         return;
     }
@@ -1145,6 +1146,9 @@ void VideoFullscreenInterfaceAVKit::prepareForPictureInPictureStopWithCompletion
 
         return;
     }
+
+    if (m_standby)
+        m_returningToStandby = true;
 
     prepareForPictureInPictureStop([protectedThis = Ref { *this }, strongCompletionHandler = adoptNS([completionHandler copy])](bool restored)  {
         LOG(Fullscreen, "VideoFullscreenInterfaceAVKit::prepareForPictureInPictureStopWithCompletionHandler lambda(%p) - restored(%s)", protectedThis.ptr(), boolString(restored));
