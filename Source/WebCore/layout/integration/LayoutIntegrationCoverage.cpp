@@ -295,11 +295,16 @@ static OptionSet<AvoidanceReason> canUseForStyle(const RenderElement& renderer, 
     };
     if (auto* ancestor = deprecatedFlexBoxAncestor(); ancestor && !ancestor->style().lineClamp().isNone()) {
         auto isSupportedLineClamp = [&] {
-            for (auto* flexItem = ancestor->firstChild(); flexItem; flexItem = flexItem->nextInFlowSibling()) {
-                if (!is<RenderBlockFlow>(*flexItem))
+            for (auto* child = ancestor->firstChild(); child; child = child->nextInFlowSibling()) {
+                if (!is<RenderBlockFlow>(*child))
                     return false;
                 // No anchor box support either (let's just disable content with links).
-                for (auto* inFlowChild = downcast<RenderBlockFlow>(*flexItem).lastChild(); inFlowChild; inFlowChild = inFlowChild->previousInFlowSibling()) {
+                auto& flexItem = downcast<RenderBlockFlow>(*child);
+                if (flexItem.firstInFlowChild() == flexItem.lastInFlowChild()) {
+                    // Single content does not trigger the anchor box case.
+                    return true;
+                }
+                for (auto* inFlowChild = flexItem.lastInFlowChild(); inFlowChild; inFlowChild = inFlowChild->previousInFlowSibling()) {
                     if (inFlowChild->style().isLink())
                         return false;
                 }
