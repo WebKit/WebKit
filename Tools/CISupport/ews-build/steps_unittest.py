@@ -1901,6 +1901,22 @@ ts","version":4,"num_passes":42158,"pixel_tests_enabled":false,"date":"11:28AM o
         self.expectOutcome(result=WARNINGS, state_string='2 flakes')
         return self.runStep()
 
+    def test_success_additional_arguments(self):
+        self.configureStep()
+        self.setProperty('fullPlatform', 'ios-simulator')
+        self.setProperty('configuration', 'release')
+        self.setProperty('additionalArguments', ['--exclude-tests', 'imported/w3c/web-platform-tests'])
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logfiles={'json': self.jsonFileName},
+                        logEnviron=False,
+                        command=['python3', 'Tools/Scripts/run-webkit-tests', '--no-build', '--no-show-results', '--no-new-test-results', '--clobber-old-results', '--release', '--results-directory', 'layout-test-results', '--debug-rwt-logging', '--exit-after-n-failures', '60', '--skip-failing-tests', '--exclude-tests', 'imported/w3c/web-platform-tests'],
+                        )
+            + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Passed layout tests')
+        return self.runStep()
+
     def test_skip_for_revert_patches_on_commit_queue(self):
         self.configureStep()
         self.setProperty('buildername', 'Commit-Queue')

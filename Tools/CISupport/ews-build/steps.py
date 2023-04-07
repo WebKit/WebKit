@@ -3337,9 +3337,6 @@ class RunWebKitTests(shell.Test, AddToLogMixin):
             self.setCommand(self.command + ['--enable-core-dumps-nolimit'])
 
         if additionalArguments:
-            for argument in ["--child-process=5", "--exclude-tests", "imported/w3c/web-platform-tests"]:
-                if argument in additionalArguments:
-                    additionalArguments.remove(argument)
             self.setCommand(self.command + additionalArguments)
 
         if self.ENABLE_GUARD_MALLOC:
@@ -3531,6 +3528,11 @@ class RunWebKitTestsInStressMode(RunWebKitTests):
 
     def setLayoutTestCommand(self):
         RunWebKitTests.setLayoutTestCommand(self)
+
+        # To support stress mode with iOS layout tests in a WPT / no-WPT configuration, we need to remove these arguments.
+        for argument in ["--child-process=5", "--exclude-tests", "imported/w3c/web-platform-tests"]:
+            if argument in self.command:
+                self.command.remove(argument)
 
         self.setCommand(self.command + ['--iterations', self.num_iterations])
         modified_tests = self.getProperty('modified_tests')
