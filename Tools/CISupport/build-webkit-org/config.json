@@ -56,12 +56,9 @@
                   { "name": "bot307", "platform": "ios-simulator-16" },
                   { "name": "bot308", "platform": "ios-simulator-16" },
                   { "name": "bot600", "platform": "ios-simulator-16" },
-                  { "name": "bot673", "platform": "ios-16" },
                   { "name": "bot651", "platform": "ios-simulator-16" },
                   { "name": "bot652", "platform": "ios-simulator-16" },
                   { "name": "bot653", "platform": "ios-simulator-16" },
-                  { "name": "bot641", "platform": "ios-simulator-16" },
-                  { "name": "bot682", "platform": "ios-simulator-16" },
                   { "name": "bot667", "platform": "ios-simulator-16"},
                   { "name": "bot664", "platform": "ios-simulator-16"},
 
@@ -285,13 +282,13 @@
                   {
                     "name": "Apple-iOS-16-Release-Build", "factory": "BuildFactory",
                     "platform": "ios-16", "configuration": "release", "architectures": ["arm64"],
-                    "workernames": ["bot673", "bot304"]
+                    "workernames": ["bot304"]
                   },
                   {
                     "name": "Apple-iOS-16-Simulator-Release-Build", "factory": "BuildFactory",
                     "platform": "ios-simulator-16", "configuration": "release", "architectures": ["x86_64", "arm64"],
                     "triggers": ["ios-simulator-16-release-gpuprocess-tests-wk2", "ios-simulator-16-release-tests-wk2", "ipados-simulator-16-release-tests-wk2"],
-                    "workernames": ["bot641", "bot682", "bot303", "bot305", "bot306"]
+                    "workernames": ["bot303", "bot305", "bot306"]
                   },
                   {
                     "name": "Apple-iOS-16-Simulator-Debug-Build", "factory": "BuildFactory",
