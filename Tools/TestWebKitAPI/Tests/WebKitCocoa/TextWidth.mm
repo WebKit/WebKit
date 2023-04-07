@@ -47,7 +47,7 @@ TEST(WebKit, TextWidth)
     }];
     TestWebKitAPI::Util::run(&didEvaluateJavaScript);
 
-    auto font = adoptCF(CTFontCreateUIFontForLanguage(kCTFontUIFontSystem, 24, static_cast<CFStringRef>(@"en-US")));
+    auto font = adoptCF(CTFontCreateUIFontForLanguage(kCTFontUIFontSystem, 24, CFSTR("en-US")));
     // Use CFAttributedString so we don't have to deal with NSFont / UIFont and have this code be platform-dependent.
     CFTypeRef keys[] = { kCTFontAttributeName };
     CFTypeRef values[] = { font.get() };
