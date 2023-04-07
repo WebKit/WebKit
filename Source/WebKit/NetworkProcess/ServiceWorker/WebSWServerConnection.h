@@ -106,6 +106,7 @@ private:
     void setRegistrationUpdateViaCache(WebCore::ServiceWorkerRegistrationIdentifier, WebCore::ServiceWorkerUpdateViaCache) final;
     void notifyClientsOfControllerChange(const HashSet<WebCore::ScriptExecutionContextIdentifier>& contextIdentifiers, const WebCore::ServiceWorkerData& newController);
     void focusServiceWorkerClient(WebCore::ScriptExecutionContextIdentifier, CompletionHandler<void(std::optional<WebCore::ServiceWorkerClientData>&&)>&&) final;
+    void getServiceWorkerClientPendingMessages(const WebCore::ScriptExecutionContextIdentifier&, CompletionHandler<void(Vector<WebCore::ServiceWorkerClientPendingMessage>&&)>&&);
 
     void scheduleJobInServer(WebCore::ServiceWorkerJobData&&);
 

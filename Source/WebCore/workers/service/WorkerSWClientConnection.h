@@ -76,6 +76,7 @@ private:
     void matchBackgroundFetch(ServiceWorkerRegistrationIdentifier, const String&, RetrieveRecordsOptions&&, MatchBackgroundFetchCallback&&) final;
     void retrieveRecordResponse(BackgroundFetchRecordIdentifier, RetrieveRecordResponseCallback&&) final;
     void retrieveRecordResponseBody(BackgroundFetchRecordIdentifier, RetrieveRecordResponseBodyCallback&&) final;
+    void getServiceWorkerClientPendingMessages(ScriptExecutionContextIdentifier, CompletionHandler<void(Vector<ServiceWorkerClientPendingMessage>&&)>&&) final;
 
     Ref<WorkerThread> m_thread;
 

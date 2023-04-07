@@ -1118,6 +1118,8 @@ void SWServer::registerServiceWorkerClient(ClientOrigin&& clientOrigin, ServiceW
 
     ASSERT(!m_clientsById.contains(clientIdentifier));
     m_clientsById.add(clientIdentifier, makeUniqueRef<ServiceWorkerClientData>(WTFMove(data)));
+    ASSERT(!m_clientPendingMessagesById.contains(clientIdentifier));
+    m_clientPendingMessagesById.add(clientIdentifier, Vector<ServiceWorkerClientPendingMessage> { });
 
     auto& clientIdentifiersForOrigin = m_clientIdentifiersPerOrigin.ensure(clientOrigin, [] {
         return Clients { };
@@ -1176,6 +1178,7 @@ void SWServer::unregisterServiceWorkerClient(const ClientOrigin& clientOrigin, S
     auto appInitiatedValueBefore = clientIsAppInitiatedForRegistrableDomain(clientOrigin.clientRegistrableDomain());
 
     m_clientsById.remove(clientIdentifier);
+    m_clientPendingMessagesById.remove(clientIdentifier);
     m_visibleClientIdToInternalClientIdMap.remove(clientIdentifier.toString());
 
     auto clientsByRegistrableDomainIterator = m_clientsByRegistrableDomain.find(clientRegistrableDomain);
@@ -1668,6 +1671,19 @@ void SWServer::fireFunctionalEvent(SWServerRegistration& registration, Completio
             callback(contextConnection);
         });
     });
+}
+
+void SWServer::addServiceWorkerClientPendingMessage(ScriptExecutionContextIdentifier contextIdentifier, ServiceWorkerClientPendingMessage&& message)
+{
+    auto iterator = m_clientPendingMessagesById.find(contextIdentifier);
+    if (iterator == m_clientPendingMessagesById.end())
+        return;
+    iterator->value.append(WTFMove(message));
+}
+
+Vector<ServiceWorkerClientPendingMessage> SWServer::releaseServiceWorkerClientPendingMessage(ScriptExecutionContextIdentifier contextIdentifier)
+{
+    return m_clientPendingMessagesById.take(contextIdentifier);
 }
 
 void SWServer::Connection::startBackgroundFetch(ServiceWorkerRegistrationIdentifier registrationIdentifier, const String& backgroundFetchIdentifier, Vector<BackgroundFetchRequest>&& requests, BackgroundFetchOptions&& options, ExceptionOrBackgroundFetchInformationCallback&& callback)

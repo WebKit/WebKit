@@ -37,6 +37,7 @@
 #include "ScriptExecutionContextIdentifier.h"
 #include "SecurityOriginData.h"
 #include "ServiceWorkerClientData.h"
+#include "ServiceWorkerClientPendingMessage.h"
 #include "ServiceWorkerIdentifier.h"
 #include "ServiceWorkerJob.h"
 #include "ServiceWorkerRegistrationData.h"
@@ -285,6 +286,9 @@ public:
     Ref<BackgroundFetchStore> createBackgroundFetchStore() { return m_delegate->createBackgroundFetchStore(); }
     WEBCORE_EXPORT BackgroundFetchEngine& backgroundFetchEngine();
 
+    WEBCORE_EXPORT void addServiceWorkerClientPendingMessage(ScriptExecutionContextIdentifier, ServiceWorkerClientPendingMessage&&);
+    WEBCORE_EXPORT Vector<ServiceWorkerClientPendingMessage> releaseServiceWorkerClientPendingMessage(ScriptExecutionContextIdentifier);
+
 private:
     unsigned maxRegistrationCount();
     bool allowLoopbackIPAddress(const String&);
@@ -336,6 +340,7 @@ private:
     HashMap<ClientOrigin, Clients> m_clientIdentifiersPerOrigin;
     HashMap<ScriptExecutionContextIdentifier, WeakPtr<SWServerRegistration>> m_serviceWorkerPageIdentifierToRegistrationMap;
     HashMap<ScriptExecutionContextIdentifier, UniqueRef<ServiceWorkerClientData>> m_clientsById;
+    HashMap<ScriptExecutionContextIdentifier, Vector<ServiceWorkerClientPendingMessage>> m_clientPendingMessagesById;
     HashMap<ScriptExecutionContextIdentifier, ServiceWorkerRegistrationIdentifier> m_clientToControllingRegistration;
     MemoryCompactRobinHoodHashMap<String, ScriptExecutionContextIdentifier> m_visibleClientIdToInternalClientIdMap;
 

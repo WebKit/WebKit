@@ -553,6 +553,11 @@ void WorkerSWClientConnection::retrieveRecordResponseBody(BackgroundFetchRecordI
     });
 }
 
+void WorkerSWClientConnection::getServiceWorkerClientPendingMessages(ScriptExecutionContextIdentifier, CompletionHandler<void(Vector<ServiceWorkerClientPendingMessage>&&)>&& completionHandler)
+{
+    completionHandler({ });
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(SERVICE_WORKER)

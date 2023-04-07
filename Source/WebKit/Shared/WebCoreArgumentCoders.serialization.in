@@ -3966,6 +3966,14 @@ struct WebCore::ServiceWorkerClientData {
     Vector<String> ancestorOrigins;
 };
 
+
+header: <WebCore/ServiceWorkerClientPendingMessage.h>
+[CustomHeader] struct WebCore::ServiceWorkerClientPendingMessage {
+    WebCore::MessageWithMessagePorts message;
+    WebCore::ServiceWorkerData sourceData;
+    String sourceOrigin;
+};
+
 struct WebCore::ServiceWorkerClientQueryOptions {
     bool includeUncontrolled;
     WebCore::ServiceWorkerClientType type;

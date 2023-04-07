@@ -65,5 +65,6 @@ messages -> WebSWServerConnection NotRefCounted {
     MatchBackgroundFetch(WebCore::ServiceWorkerRegistrationIdentifier registrationIdentifier, String backgroundFetchIdentifier, struct WebCore::RetrieveRecordsOptions options) -> (Vector<WebCore::BackgroundFetchRecordInformation> results)
     RetrieveRecordResponse(WebCore::BackgroundFetchRecordIdentifier recordIdentifier) -> (Expected<WebCore::ResourceResponse, WebCore::ExceptionData> result)
     RetrieveRecordResponseBody(WebCore::BackgroundFetchRecordIdentifier recordIdentifier, WebKit::RetrieveRecordResponseBodyCallbackIdentifier callbackIdentifier)
+    GetServiceWorkerClientPendingMessages(WebCore::ScriptExecutionContextIdentifier identifier) -> (Vector<WebCore::ServiceWorkerClientPendingMessage> messages)
 }
 #endif // ENABLE(SERVICE_WORKER)
