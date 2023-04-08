@@ -1730,14 +1730,14 @@ static String escapeForJSON(const String& s)
     return makeStringByReplacingAll(makeStringByReplacingAll(s, '\\', "\\\\"_s), '"', "\\\""_s);
 }
 
-template<typename IdentifierType>
-static String escapeIDForJSON(const std::optional<ObjectIdentifier<IdentifierType>>& value)
+template<typename IdentifierType, typename ThreadSafety>
+static String escapeIDForJSON(const std::optional<ObjectIdentifier<IdentifierType, ThreadSafety>>& value)
 {
     return value ? String::number(value->toUInt64()) : String("None"_s);
 }
 
-template<typename IdentifierType>
-static String escapeIDForJSON(const std::optional<ProcessQualified<ObjectIdentifier<IdentifierType>>>& value)
+template<typename IdentifierType, typename ThreadSafety>
+static String escapeIDForJSON(const std::optional<ProcessQualified<ObjectIdentifier<IdentifierType, ThreadSafety>>>& value)
 {
     return value ? String::number(value->object().toUInt64()) : String("None"_s);
 }

@@ -56,7 +56,7 @@ public:
     void claim(ScriptExecutionContext&, Ref<DeferredPromise>&&);
 
     enum PromiseIdentifierType { };
-    using PromiseIdentifier = ObjectIdentifier<PromiseIdentifierType>;
+    using PromiseIdentifier = ObjectIdentifier<PromiseIdentifierType, WTF::ObjectIdentifierThreadSafeAccessTraits>;
 
     PromiseIdentifier addPendingPromise(Ref<DeferredPromise>&&);
     RefPtr<DeferredPromise> takePendingPromise(PromiseIdentifier);

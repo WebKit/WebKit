@@ -230,7 +230,7 @@ void setMockGamepadButtonValue(unsigned gamepadIndex, unsigned buttonIndex, doub
 void setupNewlyCreatedServiceWorker(uint64_t serviceWorkerIdentifier)
 {
 #if ENABLE(SERVICE_WORKER)
-    auto identifier = makeObjectIdentifier<ServiceWorkerIdentifierType>(serviceWorkerIdentifier);
+    auto identifier = makeObjectIdentifier<ServiceWorkerIdentifierType, WTF::ObjectIdentifierThreadSafeAccessTraits>(serviceWorkerIdentifier);
     SWContextManager::singleton().postTaskToServiceWorker(identifier, [identifier] (ServiceWorkerGlobalScope& globalScope) {
         auto* script = globalScope.script();
         if (!script)

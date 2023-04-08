@@ -286,7 +286,7 @@ private:
 };
 
 enum VMIdentifierType { };
-using VMIdentifier = ObjectIdentifier<VMIdentifierType>;
+using VMIdentifier = ObjectIdentifier<VMIdentifierType, WTF::ObjectIdentifierThreadSafeAccessTraits>;
 
 class VM : public ThreadSafeRefCounted<VM>, public DoublyLinkedListNode<VM> {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(VM);

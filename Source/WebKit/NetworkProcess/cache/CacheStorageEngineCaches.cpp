@@ -324,7 +324,7 @@ void Caches::open(const String& name, CacheIdentifierCallback&& callback)
 
     makeDirty();
 
-    auto cacheIdentifier = WebCore::DOMCacheIdentifier::generate();
+    auto cacheIdentifier = WebCore::DOMCacheIdentifier::generateThreadSafe();
     m_caches.append(Cache { *this, cacheIdentifier, Cache::State::Open, String { name }, createVersion4UUIDString() });
 
     writeCachesToDisk([callback = WTFMove(callback), cacheIdentifier](std::optional<Error>&& error) mutable {
@@ -472,7 +472,7 @@ void Caches::readCachesFromDisk(WTF::Function<void(Expected<Vector<Cache>, Error
             return;
         }
         callback(WTF::map(WTFMove(result.value()), [this] (auto&& pair) {
-            return Cache { *this, WebCore::DOMCacheIdentifier::generate(), Cache::State::Uninitialized, WTFMove(pair.first), WTFMove(pair.second) };
+            return Cache { *this, WebCore::DOMCacheIdentifier::generateThreadSafe(), Cache::State::Uninitialized, WTFMove(pair.first), WTFMove(pair.second) };
         }));
     });
 }

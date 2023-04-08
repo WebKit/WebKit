@@ -1981,7 +1981,7 @@ void WebFrameLoaderClient::sendH2Ping(const URL& url, CompletionHandler<void(Exp
 
     NetworkResourceLoadParameters parameters;
     parameters.request = ResourceRequest(url);
-    parameters.identifier = WebCore::ResourceLoaderIdentifier::generate();
+    parameters.identifier = WebCore::ResourceLoaderIdentifier::generateThreadSafe();
     parameters.webPageProxyID = webPage->webPageProxyIdentifier();
     parameters.webPageID = webPage->identifier();
     parameters.webFrameID = m_frame->frameID();

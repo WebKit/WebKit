@@ -40,7 +40,7 @@ namespace WebCore {
 
 static ServiceWorkerRegistrationIdentifier generateServiceWorkerRegistrationIdentifier()
 {
-    return ServiceWorkerRegistrationIdentifier::generate();
+    return ServiceWorkerRegistrationIdentifier::generateThreadSafe();
 }
 
 SWServerRegistration::SWServerRegistration(SWServer& server, const ServiceWorkerRegistrationKey& key, ServiceWorkerUpdateViaCache updateViaCache, const URL& scopeURL, const URL& scriptURL, std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, NavigationPreloadState&& navigationPreloadState)

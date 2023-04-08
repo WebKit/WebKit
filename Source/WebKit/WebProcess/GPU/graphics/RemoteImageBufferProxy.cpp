@@ -314,7 +314,7 @@ bool RemoteImageBufferProxy::flushDrawingContextAsync()
     if (!m_needsFlush)
         return hasPendingFlush();
 
-    m_sentFlushIdentifier = DisplayListRecorderFlushIdentifier::generate();
+    m_sentFlushIdentifier = DisplayListRecorderFlushIdentifier::generateThreadSafe();
     LOG_WITH_STREAM(SharedDisplayLists, stream << "RemoteImageBufferProxy " << m_renderingResourceIdentifier << " flushDrawingContextAsync - flush " << m_sentFlushIdentifier);
     m_remoteDisplayList.flushContext(m_sentFlushIdentifier);
     m_remoteRenderingBackendProxy->addPendingFlush(m_flushState, m_sentFlushIdentifier);

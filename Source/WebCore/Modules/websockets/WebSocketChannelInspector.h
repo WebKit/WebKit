@@ -39,7 +39,7 @@ class ResourceResponse;
 class WebSocketChannel;
 class WebSocketChannelInspector;
 
-using WebSocketChannelIdentifier = ObjectIdentifier<WebSocketChannel>;
+using WebSocketChannelIdentifier = ObjectIdentifier<WebSocketChannel, WTF::ObjectIdentifierThreadSafeAccessTraits>;
 
 class WEBCORE_EXPORT WebSocketChannelInspector {
 public:

@@ -63,6 +63,8 @@ class WallTime;
 struct AnyThreadsAccessTraits;
 struct FastMalloc;
 struct MainThreadAccessTraits;
+struct ObjectIdentifierMainThreadAccessTraits;
+struct ObjectIdentifierThreadSafeAccessTraits;
 
 #if ENABLE(MALLOC_HEAP_BREAKDOWN)
 struct VectorBufferMalloc;
@@ -81,7 +83,7 @@ template<typename> class Function;
 template<typename, typename = AnyThreadsAccessTraits> class LazyNeverDestroyed;
 template<typename T, typename Traits = typename T::MarkableTraits> class Markable;
 template<typename, typename = AnyThreadsAccessTraits> class NeverDestroyed;
-template<typename> class ObjectIdentifier;
+template<typename, typename = ObjectIdentifierMainThreadAccessTraits> class ObjectIdentifier;
 template<typename> class OptionSet;
 template<typename> class Packed;
 template<typename T, size_t = alignof(T)> class PackedAlignedPtr;

@@ -59,7 +59,7 @@ class SocketStreamHandle;
 class SocketStreamError;
 class WebSocketChannelClient;
 class WebSocketChannel;
-using WebSocketChannelIdentifier = ObjectIdentifier<WebSocketChannel>;
+using WebSocketChannelIdentifier = ObjectIdentifier<WebSocketChannel, WTF::ObjectIdentifierThreadSafeAccessTraits>;
 
 class WebSocketChannel final : public RefCounted<WebSocketChannel>, public SocketStreamHandleClient, public ThreadableWebSocketChannel, public FileReaderLoaderClient
 {

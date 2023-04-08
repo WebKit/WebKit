@@ -802,7 +802,7 @@ bool DocumentLoader::tryLoadingSubstituteData()
         return false;
 
     DOCUMENTLOADER_RELEASE_LOG("startLoadingMainResource: Returning substitute data");
-    m_identifierForLoadWithoutResourceLoader = ResourceLoaderIdentifier::generate();
+    m_identifierForLoadWithoutResourceLoader = ResourceLoaderIdentifier::generateThreadSafe();
     frameLoader()->notifier().assignIdentifierToInitialRequest(m_identifierForLoadWithoutResourceLoader, this, m_request);
     frameLoader()->notifier().dispatchWillSendRequest(this, m_identifierForLoadWithoutResourceLoader, m_request, ResourceResponse(), nullptr);
 
@@ -2250,7 +2250,7 @@ void DocumentLoader::loadMainResource(ResourceRequest&& request)
 #endif
 
     if (!mainResourceLoader()) {
-        m_identifierForLoadWithoutResourceLoader = ResourceLoaderIdentifier::generate();
+        m_identifierForLoadWithoutResourceLoader = ResourceLoaderIdentifier::generateThreadSafe();
         frameLoader()->notifier().assignIdentifierToInitialRequest(m_identifierForLoadWithoutResourceLoader, this, mainResourceRequest.resourceRequest());
         frameLoader()->notifier().dispatchWillSendRequest(this, m_identifierForLoadWithoutResourceLoader, mainResourceRequest.resourceRequest(), ResourceResponse(), nullptr);
     }

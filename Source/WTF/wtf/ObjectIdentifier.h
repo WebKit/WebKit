@@ -34,24 +34,26 @@
 
 namespace WTF {
 
-class ObjectIdentifierBase {
-protected:
-    WTF_EXPORT_PRIVATE static uint64_t generateIdentifierInternal();
+struct ObjectIdentifierThreadSafeAccessTraits {
     WTF_EXPORT_PRIVATE static uint64_t generateThreadSafeIdentifierInternal();
 };
 
-template<typename T> class ObjectIdentifier : private ObjectIdentifierBase {
+struct ObjectIdentifierMainThreadAccessTraits {
+    WTF_EXPORT_PRIVATE static uint64_t generateIdentifierInternal();
+};
+
+template<typename T, typename ThreadSafety> class ObjectIdentifier {
 public:
     static ObjectIdentifier generate()
     {
         RELEASE_ASSERT(!m_generationProtected);
-        return ObjectIdentifier { generateIdentifierInternal() };
+        return ObjectIdentifier { ThreadSafety::generateIdentifierInternal() };
     }
 
     static ObjectIdentifier generateThreadSafe()
     {
         RELEASE_ASSERT(!m_generationProtected);
-        return ObjectIdentifier { generateThreadSafeIdentifierInternal() };
+        return ObjectIdentifier { ThreadSafety::generateThreadSafeIdentifierInternal() };
     }
 
     static void enableGenerationProtection()
@@ -131,9 +133,9 @@ public:
     };
 
 private:
-    template<typename U> friend ObjectIdentifier<U> makeObjectIdentifier(uint64_t);
+    template<typename U, typename V> friend ObjectIdentifier<U, V> makeObjectIdentifier(uint64_t);
     friend struct HashTraits<ObjectIdentifier>;
-    template<typename U> friend struct ObjectIdentifierHash;
+    template<typename U, typename V> friend struct ObjectIdentifierHash;
 
     static uint64_t hashTableDeletedValue() { return std::numeric_limits<uint64_t>::max(); }
     static bool isValidIdentifier(uint64_t identifier) { return identifier && identifier != hashTableDeletedValue(); }
@@ -147,42 +149,42 @@ private:
     inline static bool m_generationProtected { false };
 };
 
-template<typename T> inline ObjectIdentifier<T> makeObjectIdentifier(uint64_t identifier)
+template<typename T, typename U = ObjectIdentifierMainThreadAccessTraits> inline ObjectIdentifier<T, U> makeObjectIdentifier(uint64_t identifier)
 {
-    return ObjectIdentifier<T> { identifier };
+    return ObjectIdentifier<T, U> { identifier };
 }
 
-template<typename T> inline void add(Hasher& hasher, ObjectIdentifier<T> identifier)
+template<typename T, typename U> inline void add(Hasher& hasher, ObjectIdentifier<T, U> identifier)
 {
     add(hasher, identifier.toUInt64());
 }
 
-template<typename T> struct ObjectIdentifierHash {
-    static unsigned hash(const ObjectIdentifier<T>& identifier) { return intHash(identifier.m_identifier); }
-    static bool equal(const ObjectIdentifier<T>& a, const ObjectIdentifier<T>& b) { return a == b; }
+template<typename T, typename U> struct ObjectIdentifierHash {
+    static unsigned hash(const ObjectIdentifier<T, U>& identifier) { return intHash(identifier.m_identifier); }
+    static bool equal(const ObjectIdentifier<T, U>& a, const ObjectIdentifier<T, U>& b) { return a == b; }
     static constexpr bool safeToCompareToEmptyOrDeleted = true;
 };
 
-template<typename T> struct HashTraits<ObjectIdentifier<T>> : SimpleClassHashTraits<ObjectIdentifier<T>> { };
+template<typename T, typename U> struct HashTraits<ObjectIdentifier<T, U>> : SimpleClassHashTraits<ObjectIdentifier<T, U>> { };
 
-template<typename T> struct DefaultHash<ObjectIdentifier<T>> : ObjectIdentifierHash<T> { };
+template<typename T, typename U> struct DefaultHash<ObjectIdentifier<T, U>> : ObjectIdentifierHash<T, U> { };
 
-template<typename T>
-TextStream& operator<<(TextStream& ts, const ObjectIdentifier<T>& identifier)
+template<typename T, typename U>
+TextStream& operator<<(TextStream& ts, const ObjectIdentifier<T, U>& identifier)
 {
     ts << identifier.toUInt64();
     return ts;
 }
 
-template<typename T> class StringTypeAdapter<ObjectIdentifier<T>> {
+template<typename T, typename U> class StringTypeAdapter<ObjectIdentifier<T, U>> {
 public:
-    explicit StringTypeAdapter(ObjectIdentifier<T> identifier)
+    explicit StringTypeAdapter(ObjectIdentifier<T, U> identifier)
         : m_identifier(identifier) { }
     unsigned length() const { return lengthOfIntegerAsString(m_identifier.toUInt64()); }
     bool is8Bit() const { return true; }
     template<typename CharacterType> void writeTo(CharacterType* destination) const { writeIntegerToBuffer(m_identifier.toUInt64(), destination); }
 private:
-    ObjectIdentifier<T> m_identifier;
+    ObjectIdentifier<T, U> m_identifier;
 };
 
 } // namespace WTF

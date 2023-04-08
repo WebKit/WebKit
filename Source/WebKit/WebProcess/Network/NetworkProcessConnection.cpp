@@ -97,7 +97,7 @@ NetworkProcessConnection::~NetworkProcessConnection()
 void NetworkProcessConnection::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
     if (decoder.messageReceiverName() == Messages::WebResourceLoader::messageReceiverName()) {
-        if (auto* webResourceLoader = WebProcess::singleton().webLoaderStrategy().webResourceLoaderForIdentifier(makeObjectIdentifier<WebCore::ResourceLoader>(decoder.destinationID())))
+        if (auto* webResourceLoader = WebProcess::singleton().webLoaderStrategy().webResourceLoaderForIdentifier(makeObjectIdentifier<WebCore::ResourceLoader, WTF::ObjectIdentifierThreadSafeAccessTraits>(decoder.destinationID())))
             webResourceLoader->didReceiveWebResourceLoaderMessage(connection, decoder);
         return;
     }
@@ -136,7 +136,7 @@ void NetworkProcessConnection::didReceiveMessage(IPC::Connection& connection, IP
     if (decoder.messageReceiverName() == Messages::WebRTCResolver::messageReceiverName()) {
         auto& network = WebProcess::singleton().libWebRTCNetwork();
         if (network.isActive())
-            network.resolver(makeObjectIdentifier<LibWebRTCResolverIdentifierType>(decoder.destinationID())).didReceiveMessage(connection, decoder);
+            network.resolver(makeObjectIdentifier<LibWebRTCResolverIdentifierType, WTF::ObjectIdentifierThreadSafeAccessTraits>(decoder.destinationID())).didReceiveMessage(connection, decoder);
         else
             RELEASE_LOG_ERROR(WebRTC, "Received WebRTCResolver message while libWebRTCNetwork is not active");
         return;

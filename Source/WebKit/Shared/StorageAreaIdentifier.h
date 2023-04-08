@@ -30,6 +30,6 @@
 namespace WebKit {
 
 struct StorageAreaIdentifierType;
-using StorageAreaIdentifier = ObjectIdentifier<StorageAreaIdentifierType>;
+using StorageAreaIdentifier = ObjectIdentifier<StorageAreaIdentifierType, WTF::ObjectIdentifierThreadSafeAccessTraits>;
 
 }

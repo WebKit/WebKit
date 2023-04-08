@@ -30,7 +30,7 @@
 namespace WebCore {
 
 enum WebLockIdentifierType { };
-using WebLockIdentifier = ProcessQualified<ObjectIdentifier<WebLockIdentifierType>>;
+using WebLockIdentifier = ProcessQualified<ObjectIdentifier<WebLockIdentifierType, WTF::ObjectIdentifierThreadSafeAccessTraits>>;
 
 } // namespace
 

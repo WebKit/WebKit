@@ -48,7 +48,7 @@ class LibWebRTCSocketFactory;
 class LibWebRTCResolver final : public rtc::AsyncResolverInterface {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    LibWebRTCResolver() : m_identifier(LibWebRTCResolverIdentifier::generate()) { }
+    LibWebRTCResolver() : m_identifier(LibWebRTCResolverIdentifier::generateThreadSafe()) { }
 
     bool isResolving() const { return m_isResolving; }
     LibWebRTCResolverIdentifier identifier() const { return m_identifier; }

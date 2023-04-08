@@ -300,7 +300,7 @@ HashMap<IPC::Connection::UniqueID, Connection*>& Connection::connectionMap()
 }
 
 Connection::Connection(Identifier identifier, bool isServer)
-    : m_uniqueID(UniqueID::generate())
+    : m_uniqueID(UniqueID::generateThreadSafe())
     , m_isServer(isServer)
     , m_connectionQueue(WorkQueue::create("com.apple.IPC.ReceiveQueue"))
 {
@@ -1166,7 +1166,7 @@ void Connection::dispatchMessage(Decoder& decoder)
     assertIsCurrent(dispatcher());
     RELEASE_ASSERT(m_client);
     if (decoder.messageReceiverName() == ReceiverName::AsyncReply) {
-        auto handler = takeAsyncReplyHandler(makeObjectIdentifier<AsyncReplyIDType>(decoder.destinationID()));
+        auto handler = takeAsyncReplyHandler(makeObjectIdentifier<AsyncReplyIDType, WTF::ObjectIdentifierThreadSafeAccessTraits>(decoder.destinationID()));
         if (!handler) {
             markCurrentlyDispatchedMessageAsInvalid();
 #if ENABLE(IPC_TESTING_API)

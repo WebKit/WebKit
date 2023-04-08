@@ -26,16 +26,18 @@
 #include "config.h"
 #include "ObjectIdentifier.h"
 
+#include "MainThread.h"
 
 namespace WTF {
 
-uint64_t ObjectIdentifierBase::generateIdentifierInternal()
+uint64_t ObjectIdentifierMainThreadAccessTraits::generateIdentifierInternal()
 {
+    ASSERT(isMainThread());
     static uint64_t current = 0;
     return ++current;
 }
 
-uint64_t ObjectIdentifierBase::generateThreadSafeIdentifierInternal()
+uint64_t ObjectIdentifierThreadSafeAccessTraits::generateThreadSafeIdentifierInternal()
 {
     static LazyNeverDestroyed<std::atomic<uint64_t>> current;
     static std::once_flag initializeCurrentIdentifier;

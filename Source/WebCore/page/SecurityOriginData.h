@@ -37,7 +37,7 @@ class LocalFrame;
 class SecurityOrigin;
 
 enum OpaqueOriginIdentifierType { };
-using OpaqueOriginIdentifier = ObjectIdentifier<OpaqueOriginIdentifierType>;
+using OpaqueOriginIdentifier = ObjectIdentifier<OpaqueOriginIdentifierType, WTF::ObjectIdentifierThreadSafeAccessTraits>;
 
 class SecurityOriginData {
 public:
