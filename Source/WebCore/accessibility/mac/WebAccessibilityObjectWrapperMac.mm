@@ -1384,19 +1384,9 @@ static void WebTransformCGPathToNSBezierPath(void* info, const CGPathElement *el
 
 - (NSValue *)position
 {
-    auto* backingObject = self.axBackingObject;
-    if (!backingObject)
-        return nil;
-
-    auto rect = snappedIntRect(backingObject->elementRect());
-
-    // The Cocoa accessibility API wants the lower-left corner.
-    FloatPoint floatPoint(rect.x(), rect.maxY());
-
-    // FIXME: add a function to convert a point, no need to convert a rect when you only need a point.
-    FloatRect floatRect(floatPoint, FloatSize());
-    CGRect cgRect(backingObject->convertRectToPlatformSpace(floatRect, AccessibilityConversionSpace::Screen));
-    return @(cgRect.origin);
+    if (auto* backingObject = self.axBackingObject)
+        return @(CGPoint(backingObject->screenRelativePosition()));
+    return nil;
 }
 
 - (NSString*)role
@@ -1772,8 +1762,8 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         return [NSNumber numberWithBool: backingObject->isEnabled()];
 
     if ([attributeName isEqualToString: NSAccessibilitySizeAttribute]) {
-        IntSize s = snappedIntRect(backingObject->elementRect()).size();
-        return [NSValue valueWithSize: NSMakeSize(s.width(), s.height())];
+        auto size = backingObject->size();
+        return [NSValue valueWithSize:NSMakeSize(size.width(), size.height())];
     }
 
     if ([attributeName isEqualToString: NSAccessibilityPrimaryScreenHeightAttribute])

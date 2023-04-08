@@ -93,6 +93,13 @@ static bool isDescriptiveText(AccessibilityTextSource textSource)
     }
 }
 
+FloatPoint AccessibilityObject::screenRelativePosition() const
+{
+    auto rect = snappedIntRect(elementRect());
+    // The Cocoa accessibility API wants the lower-left corner.
+    return convertRectToPlatformSpace(FloatRect(FloatPoint(rect.x(), rect.maxY()), FloatSize()), AccessibilityConversionSpace::Screen).location();
+}
+
 String AccessibilityObject::descriptionAttributeValue() const
 {
     if (!shouldComputeDescriptionAttributeValue())

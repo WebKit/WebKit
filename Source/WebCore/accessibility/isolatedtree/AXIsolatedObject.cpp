@@ -1042,6 +1042,15 @@ LayoutRect AXIsolatedObject::elementRect() const
     });
 }
 
+FloatPoint AXIsolatedObject::screenRelativePosition() const
+{
+    return Accessibility::retrieveValueFromMainThread<FloatPoint>([&, this] () -> FloatPoint {
+        if (auto* axObject = associatedAXObject())
+            return axObject->screenRelativePosition();
+        return { };
+    });
+}
+
 FloatRect AXIsolatedObject::relativeFrame() const
 {
     // Retrieve this on the main thread because we require the scroll ancestor to convert to the right scroll offset.

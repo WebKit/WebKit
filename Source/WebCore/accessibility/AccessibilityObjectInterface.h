@@ -986,9 +986,6 @@ public:
     virtual bool isExpanded() const = 0;
     virtual bool isVisible() const = 0;
     virtual void setIsExpanded(bool) = 0;
-    virtual FloatRect relativeFrame() const = 0;
-    virtual FloatRect convertFrameToSpace(const FloatRect&, AccessibilityConversionSpace) const = 0;
-    virtual FloatRect unobscuredContentRect() const = 0;
     virtual bool supportsCheckedState() const = 0;
     
     // In a multi-select list, many items can be selected but only one is active at a time.
@@ -1102,6 +1099,9 @@ public:
 
     virtual AXCoreObject* focusedUIElement() const = 0;
 
+#if PLATFORM(COCOA)
+    virtual RemoteAXObjectRef remoteParentObject() const = 0;
+#endif
     virtual AXCoreObject* parentObject() const = 0;
     virtual AXCoreObject* parentObjectUnignored() const = 0;
 
@@ -1169,8 +1169,26 @@ public:
 
     virtual bool supportsPressAction() const = 0;
     virtual Element* actionElement() const = 0;
+
+    // Rect relative to root document origin (i.e. absolute coordinates), disregarding viewport state.
+    // This does not change when the viewport does (i.e via scrolling).
     virtual LayoutRect elementRect() const = 0;
-    LayoutSize size() const { return elementRect().size(); }
+
+    // Position relative to the viewport and normalized to screen coordinates.
+    // Viewport-relative means that when the page scrolls, the portion of the page in the viewport changes, and thus
+    // any viewport-relative rects do too (since they are either closer to or farther from the viewport origin after the scroll).
+    virtual FloatPoint screenRelativePosition() const = 0;
+
+    virtual FloatRect convertFrameToSpace(const FloatRect&, AccessibilityConversionSpace) const = 0;
+#if PLATFORM(COCOA)
+    virtual FloatRect convertRectToPlatformSpace(const FloatRect&, AccessibilityConversionSpace) const = 0;
+#endif
+
+    // Rect relative to the viewport.
+    virtual FloatRect relativeFrame() const = 0;
+
+    virtual FloatRect unobscuredContentRect() const = 0;
+    virtual IntSize size() const = 0;
     virtual IntPoint clickPoint() = 0;
     virtual Path elementPath() const = 0;
     virtual bool supportsPath() const = 0;
@@ -1191,10 +1209,6 @@ public:
     virtual PlatformWidget platformWidget() const = 0;
     virtual Widget* widgetForAttachmentView() const = 0;
 
-#if PLATFORM(COCOA)
-    virtual RemoteAXObjectRef remoteParentObject() const = 0;
-    virtual FloatRect convertRectToPlatformSpace(const FloatRect&, AccessibilityConversionSpace) const = 0;
-#endif
     virtual Page* page() const = 0;
     virtual Document* document() const = 0;
     virtual LocalFrameView* documentFrameView() const = 0;

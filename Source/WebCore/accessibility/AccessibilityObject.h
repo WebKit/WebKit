@@ -425,6 +425,12 @@ public:
     Element* actionElement() const override { return nullptr; }
     virtual LayoutRect boundingBoxRect() const { return { }; }
     LayoutRect elementRect() const override = 0;
+#if PLATFORM(COCOA)
+    FloatPoint screenRelativePosition() const final;
+#else
+    FloatPoint screenRelativePosition() const final { return convertFrameToSpace(elementRect(), AccessibilityConversionSpace::Screen).location(); }
+#endif
+    IntSize size() const final { return snappedIntRect(elementRect()).size(); }
     IntPoint clickPoint() override;
     static IntRect boundingBoxForQuads(RenderObject*, const Vector<FloatQuad>&);
     Path elementPath() const override { return Path(); }

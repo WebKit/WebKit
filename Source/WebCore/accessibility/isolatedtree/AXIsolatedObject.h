@@ -176,7 +176,9 @@ private:
     bool isRequired() const override { return boolAttributeValue(AXPropertyName::IsRequired); }
     bool supportsRequiredAttribute() const override { return boolAttributeValue(AXPropertyName::SupportsRequiredAttribute); }
     bool isExpanded() const override { return boolAttributeValue(AXPropertyName::IsExpanded); }
+    FloatPoint screenRelativePosition() const final;
     FloatRect relativeFrame() const override;
+    IntSize size() const final { return snappedIntRect(LayoutRect(relativeFrame())).size(); }
     bool supportsDatetimeAttribute() const override { return boolAttributeValue(AXPropertyName::SupportsDatetimeAttribute); }
     String datetimeAttributeValue() const override { return stringAttributeValue(AXPropertyName::DatetimeAttributeValue); }
     bool canSetValueAttribute() const override { return boolAttributeValue(AXPropertyName::CanSetValueAttribute); }
