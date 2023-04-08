@@ -209,7 +209,7 @@ bool KeyboardScrollingAnimator::beginKeyboardScrollGesture(ScrollDirection direc
     }
 
     if (m_scrollTriggeringKeyIsPressed)
-        return false;
+        return true;
 
     if (!rubberbandableDirections().at(boxSideForDirection(direction)))
         return false;
