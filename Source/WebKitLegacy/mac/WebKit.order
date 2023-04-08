@@ -56,7 +56,6 @@ __ZN7WebCore15FontDescriptionD2Ev
 -[WebPreferences _setStringValue:forKey:]
 -[WebPreferences _stringValueForKey:]
 -[WebView initWithCoder:]
-__ZL32needsWebViewInitThreadWorkaroundv
 -[WebView setNextKeyView:]
 -[WebView mainFrame]
 +[WebViewPrivate initialize]

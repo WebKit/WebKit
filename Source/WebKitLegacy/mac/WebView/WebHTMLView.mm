@@ -1539,8 +1539,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     _private->savedSubviews = self._subviewsIvar;
     // We need to keep the layer-hosting view in the subviews, otherwise the layers flash.
     if (_private->layerHostingView) {
-        NSMutableArray* newSubviews = [[NSMutableArray alloc] initWithObjects:_private->layerHostingView, nil];
-        self._subviewsIvar = newSubviews;
+        self._subviewsIvar = [[NSMutableArray alloc] initWithObjects:_private->layerHostingView, nil];
     } else
         self._subviewsIvar = nil;
     _private->subviewsSetAside = YES;
@@ -3400,7 +3399,6 @@ static RetainPtr<NSArray> fixMenusToSendToOldClients(NSMutableArray *defaultMenu
 
             [defaultMenuItems removeObject:secondToLastItem];
             [defaultMenuItems removeObject:lastItem];
-            defaultItemsCount -= 2;
         }
     }
 

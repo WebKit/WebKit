@@ -5300,40 +5300,6 @@ IGNORE_WARNINGS_END
     return self;
 }
 
-#if !PLATFORM(IOS_FAMILY)
-static bool clientNeedsWebViewInitThreadWorkaround()
-{
-    if (WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITHOUT_WEBVIEW_INIT_THREAD_WORKAROUND))
-        return false;
-
-    NSString *bundleIdentifier = [[NSBundle mainBundle] bundleIdentifier];
-
-    // Installer.
-    if ([bundleIdentifier _webkit_isCaseInsensitiveEqualToString:@"com.apple.installer"])
-        return true;
-
-    // Automator.
-    if ([bundleIdentifier _webkit_isCaseInsensitiveEqualToString:@"com.apple.Automator"])
-        return true;
-
-    // Automator Runner.
-    if ([bundleIdentifier _webkit_isCaseInsensitiveEqualToString:@"com.apple.AutomatorRunner"])
-        return true;
-
-    // Automator workflows.
-    if ([bundleIdentifier _webkit_hasCaseInsensitivePrefix:@"com.apple.Automator."])
-        return true;
-
-    return false;
-}
-
-static bool needsWebViewInitThreadWorkaround()
-{
-    static bool isOldClient = clientNeedsWebViewInitThreadWorkaround();
-    return isOldClient && !pthread_main_np();
-}
-#endif // !PLATFORM(IOS_FAMILY)
-
 - (instancetype)initWithFrame:(NSRect)f
 {
     return [self initWithFrame:f frameName:nil groupName:nil];
@@ -5341,10 +5307,6 @@ static bool needsWebViewInitThreadWorkaround()
 
 - (instancetype)initWithFrame:(NSRect)f frameName:(NSString *)frameName groupName:(NSString *)groupName
 {
-#if !PLATFORM(IOS_FAMILY)
-    if (needsWebViewInitThreadWorkaround())
-        return [[self _webkit_invokeOnMainThread] initWithFrame:f frameName:frameName groupName:groupName];
-#endif
 
     WebCoreThreadViolationCheckRoundTwo();
     return [self _initWithFrame:f frameName:frameName groupName:groupName];
@@ -5353,9 +5315,6 @@ static bool needsWebViewInitThreadWorkaround()
 #if !PLATFORM(IOS_FAMILY)
 - (instancetype)initWithCoder:(NSCoder *)decoder
 {
-    if (needsWebViewInitThreadWorkaround())
-        return [[self _webkit_invokeOnMainThread] initWithCoder:decoder];
-
     WebCoreThreadViolationCheckRoundTwo();
     WebView *result = nil;
 
