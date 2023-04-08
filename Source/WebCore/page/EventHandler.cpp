@@ -2738,33 +2738,19 @@ void EventHandler::notifyScrollableAreasOfMouseEvents(const AtomString& eventTyp
 
     auto scrollableAreaForLastNode = enclosingScrollableArea(lastElementUnderMouse);
     auto scrollableAreaForNodeUnderMouse = enclosingScrollableArea(elementUnderMouse);
-    auto scrollingCoordinator = m_frame.page()->scrollingCoordinator();
 
     if (!!lastElementUnderMouse != !!elementUnderMouse) {
         if (elementUnderMouse) {
-            if (scrollableAreaForNodeUnderMouse != frameView) {
+            if (scrollableAreaForNodeUnderMouse != frameView)
                 frameView->mouseEnteredContentArea();
-                if (scrollingCoordinator)
-                    scrollingCoordinator->setMouseIsOverContentArea(frameView.get(), true);
-            }
-
-            if (scrollableAreaForNodeUnderMouse) {
+            if (scrollableAreaForNodeUnderMouse)
                 scrollableAreaForNodeUnderMouse->mouseEnteredContentArea();
-                if (scrollingCoordinator)
-                    scrollingCoordinator->setMouseIsOverContentArea(scrollableAreaForNodeUnderMouse, true);
-            }
         } else {
-            if (scrollableAreaForLastNode) {
+            if (scrollableAreaForLastNode)
                 scrollableAreaForLastNode->mouseExitedContentArea();
-                if (scrollingCoordinator)
-                    scrollingCoordinator->setMouseIsOverContentArea(scrollableAreaForLastNode, false);
-            }
 
-            if (scrollableAreaForLastNode != frameView) {
+            if (scrollableAreaForLastNode != frameView)
                 frameView->mouseExitedContentArea();
-                if (scrollingCoordinator)
-                    scrollingCoordinator->setMouseIsOverContentArea(frameView.get(), false);
-            }
         }
         return;
     }
@@ -2777,30 +2763,19 @@ void EventHandler::notifyScrollableAreasOfMouseEvents(const AtomString& eventTyp
     bool movedBetweenScrollableaAreas = scrollableAreaForLastNode && scrollableAreaForNodeUnderMouse && (scrollableAreaForLastNode != scrollableAreaForNodeUnderMouse);
     if (eventType == eventNames().mousemoveEvent) {
         frameView->mouseMovedInContentArea();
-        if (scrollingCoordinator)
-            scrollingCoordinator->setMouseMovedInContentArea(frameView.get());
 
-        if (!movedBetweenScrollableaAreas && scrollableAreaForNodeUnderMouse && scrollableAreaForNodeUnderMouse != frameView) {
+        if (!movedBetweenScrollableaAreas && scrollableAreaForNodeUnderMouse && scrollableAreaForNodeUnderMouse != frameView)
             scrollableAreaForNodeUnderMouse->mouseMovedInContentArea();
-            if (scrollingCoordinator)
-                scrollingCoordinator->setMouseMovedInContentArea(scrollableAreaForNodeUnderMouse);
-        }
     }
 
     if (!movedBetweenScrollableaAreas)
         return;
 
-    if (scrollableAreaForLastNode && scrollableAreaForLastNode != frameView) {
+    if (scrollableAreaForLastNode && scrollableAreaForLastNode != frameView)
         scrollableAreaForLastNode->mouseExitedContentArea();
-        if (scrollingCoordinator)
-            scrollingCoordinator->setMouseIsOverContentArea(scrollableAreaForLastNode, false);
-    }
 
-    if (scrollableAreaForNodeUnderMouse && scrollableAreaForNodeUnderMouse != frameView) {
+    if (scrollableAreaForNodeUnderMouse && scrollableAreaForNodeUnderMouse != frameView)
         scrollableAreaForNodeUnderMouse->mouseEnteredContentArea();
-        if (scrollingCoordinator)
-            scrollingCoordinator->setMouseIsOverContentArea(scrollableAreaForNodeUnderMouse, true);
-    }
 }
 
 bool EventHandler::dispatchMouseEvent(const AtomString& eventType, Node* targetNode, int clickCount, const PlatformMouseEvent& platformMouseEvent, FireMouseOverOut fireMouseOverOut)
@@ -4697,16 +4672,11 @@ void EventHandler::updateLastScrollbarUnderMouse(Scrollbar* scrollbar, SetOrClea
 {
     if (m_lastScrollbarUnderMouse != scrollbar) {
         // Send mouse exited to the old scrollbar.
-        if (m_lastScrollbarUnderMouse) {
-            if (auto scrollingCoordinator = m_frame.page()->scrollingCoordinator())
-                scrollingCoordinator->setMouseIsOverScrollbar(m_lastScrollbarUnderMouse.get(), false);
+        if (m_lastScrollbarUnderMouse)
             m_lastScrollbarUnderMouse->mouseExited();
-        }
 
         // Send mouse entered if we're setting a new scrollbar.
         if (scrollbar && setOrClear == SetOrClearLastScrollbar::Set) {
-            if (auto scrollingCoordinator = m_frame.page()->scrollingCoordinator())
-                scrollingCoordinator->setMouseIsOverScrollbar(scrollbar, true);
             scrollbar->mouseEntered();
             m_lastScrollbarUnderMouse = *scrollbar;
         } else

@@ -359,11 +359,11 @@ bool AsyncScrollingCoordinator::requestScrollPositionUpdate(ScrollableArea& scro
     return true;
 }
 
-void AsyncScrollingCoordinator::setMouseIsOverContentArea(ScrollableArea* scrollableArea, bool isOverContentArea)
+void AsyncScrollingCoordinator::setMouseIsOverContentArea(ScrollableArea& scrollableArea, bool isOverContentArea)
 {
     ASSERT(isMainThread());
     ASSERT(m_page);
-    auto scrollingNodeID = scrollableArea->scrollingNodeID();
+    auto scrollingNodeID = scrollableArea.scrollingNodeID();
     if (!scrollingNodeID)
         return;
     
@@ -373,11 +373,11 @@ void AsyncScrollingCoordinator::setMouseIsOverContentArea(ScrollableArea* scroll
     stateNode->setMouseIsOverContentArea(isOverContentArea);
 }
 
-void AsyncScrollingCoordinator::setMouseMovedInContentArea(ScrollableArea* scrollableArea)
+void AsyncScrollingCoordinator::setMouseMovedInContentArea(ScrollableArea& scrollableArea)
 {
     ASSERT(isMainThread());
     ASSERT(m_page);
-    auto scrollingNodeID = scrollableArea->scrollingNodeID();
+    auto scrollingNodeID = scrollableArea.scrollingNodeID();
     if (!scrollingNodeID)
         return;
     

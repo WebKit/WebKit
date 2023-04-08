@@ -54,42 +54,42 @@ public:
 
     virtual void notifyContentAreaScrolled(const FloatSize&) { }
 
-    virtual void cancelAnimations();
+    WEBCORE_EXPORT virtual void cancelAnimations();
 
-    virtual void didBeginScrollGesture();
-    virtual void didEndScrollGesture();
-    virtual void mayBeginScrollGesture();
+    WEBCORE_EXPORT virtual void didBeginScrollGesture();
+    WEBCORE_EXPORT virtual void didEndScrollGesture();
+    WEBCORE_EXPORT virtual void mayBeginScrollGesture();
 
-    virtual void contentAreaWillPaint() const { }
-    virtual void mouseEnteredContentArea() { }
-    virtual void mouseExitedContentArea() { }
-    virtual void mouseMovedInContentArea() { }
-    virtual void mouseEnteredScrollbar(Scrollbar*) const { }
-    virtual void mouseExitedScrollbar(Scrollbar*) const { }
-    virtual void mouseIsDownInScrollbar(Scrollbar*, bool) const { }
-    virtual void willStartLiveResize() { }
-    virtual void contentsSizeChanged() const { }
-    virtual void willEndLiveResize() { }
-    virtual void contentAreaDidShow() { }
-    virtual void contentAreaDidHide() { }
+    WEBCORE_EXPORT virtual void contentAreaWillPaint() const { }
+    WEBCORE_EXPORT virtual void mouseEnteredContentArea() { }
+    WEBCORE_EXPORT virtual void mouseExitedContentArea() { }
+    WEBCORE_EXPORT virtual void mouseMovedInContentArea() { }
+    WEBCORE_EXPORT virtual void mouseEnteredScrollbar(Scrollbar*) const { }
+    WEBCORE_EXPORT virtual void mouseExitedScrollbar(Scrollbar*) const { }
+    WEBCORE_EXPORT virtual void mouseIsDownInScrollbar(Scrollbar*, bool) const { }
+    WEBCORE_EXPORT virtual void willStartLiveResize() { }
+    WEBCORE_EXPORT virtual void contentsSizeChanged() const { }
+    WEBCORE_EXPORT virtual void willEndLiveResize() { }
+    WEBCORE_EXPORT virtual void contentAreaDidShow() { }
+    WEBCORE_EXPORT virtual void contentAreaDidHide() { }
 
-    virtual void lockOverlayScrollbarStateToHidden(bool) { }
-    virtual bool scrollbarsCanBeActive() const { return true; }
+    WEBCORE_EXPORT virtual void lockOverlayScrollbarStateToHidden(bool) { }
+    WEBCORE_EXPORT virtual bool scrollbarsCanBeActive() const { return true; }
 
-    virtual void didAddVerticalScrollbar(Scrollbar*) { }
-    virtual void willRemoveVerticalScrollbar(Scrollbar*) { }
-    virtual void didAddHorizontalScrollbar(Scrollbar*) { }
-    virtual void willRemoveHorizontalScrollbar(Scrollbar*) { }
+    WEBCORE_EXPORT virtual void didAddVerticalScrollbar(Scrollbar*) { }
+    WEBCORE_EXPORT virtual void willRemoveVerticalScrollbar(Scrollbar*) { }
+    WEBCORE_EXPORT virtual void didAddHorizontalScrollbar(Scrollbar*) { }
+    WEBCORE_EXPORT virtual void willRemoveHorizontalScrollbar(Scrollbar*) { }
 
-    virtual void invalidateScrollbarPartLayers(Scrollbar*) { }
+    WEBCORE_EXPORT virtual void invalidateScrollbarPartLayers(Scrollbar*) { }
 
-    virtual void verticalScrollbarLayerDidChange() { }
-    virtual void horizontalScrollbarLayerDidChange() { }
+    WEBCORE_EXPORT virtual void verticalScrollbarLayerDidChange() { }
+    WEBCORE_EXPORT virtual void horizontalScrollbarLayerDidChange() { }
 
-    virtual bool shouldScrollbarParticipateInHitTesting(Scrollbar*) { return true; }
+    WEBCORE_EXPORT virtual bool shouldScrollbarParticipateInHitTesting(Scrollbar*) { return true; }
 
-    virtual String horizontalScrollbarStateForTesting() const { return emptyString(); }
-    virtual String verticalScrollbarStateForTesting() const { return emptyString(); }
+    WEBCORE_EXPORT virtual String horizontalScrollbarStateForTesting() const { return emptyString(); }
+    WEBCORE_EXPORT virtual String verticalScrollbarStateForTesting() const { return emptyString(); }
 
 private:
     ScrollableArea& m_scrollableArea;

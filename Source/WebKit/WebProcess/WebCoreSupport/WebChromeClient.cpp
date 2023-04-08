@@ -143,7 +143,7 @@
 #endif
 
 #if PLATFORM(MAC)
-#include <WebCore/ScrollbarsController.h>
+#include "RemoteScrollbarsController.h"
 #endif
 
 namespace WebKit {
@@ -1039,7 +1039,7 @@ bool WebChromeClient::layerTreeStateIsFrozen() const
 
 #if ENABLE(ASYNC_SCROLLING)
 
-RefPtr<ScrollingCoordinator> WebChromeClient::createScrollingCoordinator(Page& page) const
+RefPtr<WebCore::ScrollingCoordinator> WebChromeClient::createScrollingCoordinator(Page& page) const
 {
     ASSERT_UNUSED(page, m_page.corePage() == &page);
 #if PLATFORM(COCOA)
@@ -1063,7 +1063,7 @@ std::unique_ptr<ScrollbarsController> WebChromeClient::createScrollbarsControlle
     ASSERT_UNUSED(page, m_page.corePage() == &page);
     switch (m_page.drawingArea()->type()) {
     case DrawingAreaType::RemoteLayerTree:
-        return makeUnique<ScrollbarsController>(area);
+        return makeUnique<RemoteScrollbarsController>(area, page.scrollingCoordinator());
     default:
         return nullptr;
     }

@@ -716,6 +716,7 @@ WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeContext.mm
 WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDisplayRefreshMonitor.mm
 WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDrawingArea.mm @no-unify
 WebProcess/WebPage/RemoteLayerTree/RemoteScrollingCoordinator.mm
+WebProcess/WebPage/RemoteLayerTree/RemoteScrollbarsController.cpp
 
 // Derived Sources
 GPUConnectionToWebProcessMessageReceiver.cpp
