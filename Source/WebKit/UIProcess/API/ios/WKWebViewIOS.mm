@@ -1818,11 +1818,11 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 
 #if ENABLE(ASYNC_SCROLLING)
     // FIXME: We will want to detect whether snapping will occur before beginning to drag. See WebPageProxy::didCommitLayerTree.
-    auto* coordinator = downcast<WebKit::RemoteScrollingCoordinatorProxyIOS>(_page->scrollingCoordinatorProxy());
     ASSERT(scrollView == _scrollView.get());
-    [_scrollView _setDecelerationRateInternal:(coordinator && coordinator->shouldSetScrollViewDecelerationRateFast()) ? UIScrollViewDecelerationRateFast : UIScrollViewDecelerationRateNormal];
-
-    coordinator->setRootNodeIsInUserScroll(true);
+    if (auto* coordinator = downcast<WebKit::RemoteScrollingCoordinatorProxyIOS>(_page->scrollingCoordinatorProxy())) {
+        [_scrollView _setDecelerationRateInternal:(coordinator->shouldSetScrollViewDecelerationRateFast()) ? UIScrollViewDecelerationRateFast : UIScrollViewDecelerationRateNormal];
+        coordinator->setRootNodeIsInUserScroll(true);
+    }
 #endif
 }
 
@@ -1838,7 +1838,8 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     [_contentView didFinishScrolling];
 
 #if ENABLE(ASYNC_SCROLLING)
-    _page->scrollingCoordinatorProxy()->setRootNodeIsInUserScroll(false);
+    if (auto* coordinator = _page->scrollingCoordinatorProxy())
+        coordinator->setRootNodeIsInUserScroll(false);
 #endif
 }
 
