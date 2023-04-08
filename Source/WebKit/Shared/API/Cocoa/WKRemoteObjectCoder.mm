@@ -810,15 +810,6 @@ static void checkIfClassIsAllowed(WKRemoteObjectDecoder *decoder, Class objectCl
     if (alwaysAllowedClasses().contains((__bridge CFTypeRef)objectClass))
         return;
 
-#if PLATFORM(IOS_FAMILY) && !PLATFORM(IOS_FAMILY_SIMULATOR) && !PLATFORM(MACCATALYST)
-    RELEASE_LOG_FAULT(RemoteObjectRegistry, "Unexpected class %s", NSStringFromClass(objectClass).UTF8String);
-    ASSERT_NOT_REACHED();
-    for (Class superclass = class_getSuperclass(objectClass); superclass; superclass = class_getSuperclass(superclass)) {
-        if (allowedClasses->contains((__bridge CFTypeRef)superclass))
-            return;
-    }
-#endif
-
     [NSException raise:NSInvalidUnarchiveOperationException format:@"Object of class \"%@\" is not allowed. Allowed classes are \"%@\"", objectClass, decoder.allowedClasses];
 }
 

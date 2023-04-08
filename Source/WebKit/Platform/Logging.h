@@ -95,7 +95,6 @@ extern "C" {
     M(RemoteLayerTree) \
     M(Resize) \
     M(ResourceLoadStatistics) \
-    M(RemoteObjectRegistry) \
     M(Sandbox) \
     M(ScrollAnimations) \
     M(Scrolling) \
