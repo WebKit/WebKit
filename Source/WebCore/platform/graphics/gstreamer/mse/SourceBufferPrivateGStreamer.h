@@ -58,9 +58,8 @@ public:
 
     void clearMediaSource() { m_mediaSource = nullptr; }
 
-    void append(Vector<unsigned char>&&) final;
-    void abort() final;
-    void resetParserState() final;
+    void appendInternal(Ref<SharedBuffer>&&) final;
+    void resetParserStateInternal() final;
     void removedFromMediaSource() final;
     MediaPlayer::ReadyState readyState() const final;
     void setReadyState(MediaPlayer::ReadyState) final;

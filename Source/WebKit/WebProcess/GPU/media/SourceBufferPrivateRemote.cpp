@@ -110,6 +110,16 @@ void SourceBufferPrivateRemote::resetParserState()
     m_gpuProcessConnection->connection().send(Messages::RemoteSourceBufferProxy::ResetParserState(), m_remoteSourceBufferIdentifier);
 }
 
+void SourceBufferPrivateRemote::appendInternal(Ref<SharedBuffer>&&)
+{
+    ASSERT_NOT_REACHED();
+}
+
+void SourceBufferPrivateRemote::resetParserStateInternal()
+{
+    ASSERT_NOT_REACHED();
+}
+
 void SourceBufferPrivateRemote::removedFromMediaSource()
 {
     if (!isGPURunning())

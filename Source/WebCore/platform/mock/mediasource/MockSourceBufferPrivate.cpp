@@ -133,9 +133,9 @@ MockSourceBufferPrivate::MockSourceBufferPrivate(MockMediaSourcePrivate* parent)
 
 MockSourceBufferPrivate::~MockSourceBufferPrivate() = default;
 
-void MockSourceBufferPrivate::append(Vector<uint8_t>&& data)
+void MockSourceBufferPrivate::appendInternal(Ref<SharedBuffer>&& data)
 {
-    m_inputBuffer.appendVector(WTFMove(data));
+    m_inputBuffer.appendVector(data->extractData());
     bool parsingSucceeded = true;
 
     while (m_inputBuffer.size() && parsingSucceeded) {
@@ -201,7 +201,7 @@ void MockSourceBufferPrivate::didReceiveSample(const MockSampleBox& sampleBox)
     SourceBufferPrivate::didReceiveSample(MockMediaSample::create(sampleBox));
 }
 
-void MockSourceBufferPrivate::abort()
+void MockSourceBufferPrivate::resetParserStateInternal()
 {
 }
 

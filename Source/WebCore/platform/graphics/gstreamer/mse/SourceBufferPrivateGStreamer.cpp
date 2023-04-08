@@ -84,33 +84,25 @@ SourceBufferPrivateGStreamer::SourceBufferPrivateGStreamer(MediaSourcePrivateGSt
 {
 }
 
-void SourceBufferPrivateGStreamer::append(Vector<unsigned char>&& data)
+void SourceBufferPrivateGStreamer::appendInternal(Ref<SharedBuffer>&& data)
 {
     ASSERT(isMainThread());
     ASSERT(m_mediaSource);
     ASSERT(m_client);
 
-    GST_DEBUG_OBJECT(m_playerPrivate.pipeline(), "Appending %zu bytes", data.size());
-    // Wrap the whole Vector object in case the data is stored in the inlined buffer.
-    auto* bufferData = data.data();
-    auto bufferLength = data.size();
-    GRefPtr<GstBuffer> buffer = adoptGRef(gst_buffer_new_wrapped_full(static_cast<GstMemoryFlags>(0), bufferData, bufferLength, 0, bufferLength, new Vector<unsigned char>(WTFMove(data)),
+    GST_DEBUG_OBJECT(m_playerPrivate.pipeline(), "Appending %zu bytes", data->size());
+    gpointer bufferData = const_cast<void*>(static_cast<const void*>(data->data()));
+    auto bufferLength = data->size();
+    GRefPtr<GstBuffer> buffer = adoptGRef(gst_buffer_new_wrapped_full(static_cast<GstMemoryFlags>(0), bufferData, bufferLength, 0, bufferLength, &data.leakRef(),
         [](gpointer data)
         {
-            delete static_cast<Vector<unsigned char>*>(data);
+            static_cast<SharedBuffer*>(data)->deref();
         }));
 
     m_appendPipeline->pushNewBuffer(WTFMove(buffer));
 }
 
-void SourceBufferPrivateGStreamer::abort()
-{
-    ASSERT(isMainThread());
-    GST_DEBUG_OBJECT(m_playerPrivate.pipeline(), "aborting");
-    m_appendPipeline->resetParserState();
-}
-
-void SourceBufferPrivateGStreamer::resetParserState()
+void SourceBufferPrivateGStreamer::resetParserStateInternal()
 {
     ASSERT(isMainThread());
     GST_DEBUG_OBJECT(m_playerPrivate.pipeline(), "resetting parser state");

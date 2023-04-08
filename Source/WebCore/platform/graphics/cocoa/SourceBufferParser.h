@@ -47,7 +47,7 @@ class ContentType;
 class MediaSampleAVFObjC;
 class SharedBuffer;
 
-class WEBCORE_EXPORT SourceBufferParser : public ThreadSafeRefCounted<SourceBufferParser> {
+class WEBCORE_EXPORT SourceBufferParser : public ThreadSafeRefCounted<SourceBufferParser, WTF::DestructionThread::Main> {
 public:
     static MediaPlayerEnums::SupportsType isContentTypeSupported(const ContentType&);
 

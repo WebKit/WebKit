@@ -53,5 +53,10 @@ RUN(sourceBuffer.appendBuffer(loader.mediaSegment(0).slice(0, 45000)))
 EVENT(update)
 EXPECTED (sourceBuffer.buffered.length == '1') OK
 EXPECTED (sourceBuffer.buffered.end(0) >= '0.708') OK
+RUN(sourceBuffer.appendBuffer(loader.mediaSegment(0).slice(0, 45000)))
+EXPECTED (sourceBuffer.updating == 'true') OK
+RUN(sourceBuffer.abort())
+EVENT(abort)
+EXPECTED (sourceBuffer.updating == 'false') OK
 END OF TEST
 

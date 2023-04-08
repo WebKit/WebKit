@@ -75,7 +75,7 @@ public:
 
     virtual void setActive(bool) = 0;
     WEBCORE_EXPORT virtual void append(Ref<SharedBuffer>&&);
-    virtual void abort() = 0;
+    virtual void abort();
     // Overrides must call the base class.
     virtual void resetParserState();
     virtual void removedFromMediaSource() = 0;
@@ -137,8 +137,28 @@ public:
 #endif
 
 protected:
-    // The following method should never be called directly and be overridden instead.
-    WEBCORE_EXPORT virtual void append(Vector<unsigned char>&&);
+    struct ResetParserOperation { };
+    struct ErrorOperation { };
+    using AppendBufferOperation = Ref<SharedBuffer>;
+
+    using InitializationSegment = SourceBufferPrivateClient::InitializationSegment;
+    using ReceiveResult = SourceBufferPrivateClient::ReceiveResult;
+    struct InitOperation {
+        InitializationSegment segment;
+        Function<bool(InitializationSegment&)> check;
+        CompletionHandler<void(ReceiveResult)> completionHandler;
+    };
+    using SamplesVector = Vector<Ref<MediaSample>>;
+    struct AppendCompletedOperation {
+        size_t abortCount { 0 };
+        bool isEnded { false };
+        Function<void()> preTask;
+    };
+    using Operation = std::variant<AppendBufferOperation, InitOperation, SamplesVector, ResetParserOperation, AppendCompletedOperation, ErrorOperation>;
+    void queueOperation(Operation&&);
+
+    virtual void appendInternal(Ref<SharedBuffer>&&) = 0;
+    virtual void resetParserStateInternal() = 0;
     virtual MediaTime timeFudgeFactor() const { return { 2002, 24000 }; }
     virtual bool isActive() const { return false; }
     virtual bool isSeeking() const { return false; }
@@ -154,8 +174,6 @@ protected:
     virtual void setMinimumUpcomingPresentationTime(const AtomString&, const MediaTime&) { }
     virtual void clearMinimumUpcomingPresentationTime(const AtomString&) { }
 
-    using InitializationSegment = SourceBufferPrivateClient::InitializationSegment;
-    using ReceiveResult = SourceBufferPrivateClient::ReceiveResult;
     void reenqueSamples(const AtomString& trackID);
 
     // Callbacks must not take a strong reference to this SourceBufferPrivate object in order to avoid cycles
@@ -183,7 +201,6 @@ private:
     void trySignalAllSamplesInTrackEnqueued(TrackBuffer&, const AtomString& trackID);
     MediaTime findPreviousSyncSamplePresentationTime(const MediaTime&);
     bool evictFrames(uint64_t newDataSize, uint64_t maximumBufferSize, const MediaTime& currentTime, bool isEnded);
-    void processPendingOperations();
     bool isAttached() const;
 
     bool m_hasAudio { false };
@@ -198,29 +215,28 @@ private:
     bool m_pendingInitializationSegmentForChangeType { false };
     bool m_didReceiveInitializationSegmentErrored { false };
     bool m_didReceiveSampleErrored { false };
+    bool m_errored { false };
+    size_t m_abortCount { 0 };
 
-    struct InitOperation {
-        InitializationSegment segment;
-        Function<bool(InitializationSegment&)> check;
-        CompletionHandler<void(ReceiveResult)> completionHandler;
-    };
-    using SamplesVector = Vector<Ref<MediaSample>>;
-    using Operation = std::variant<InitOperation, SamplesVector>;
-
+    void processPendingOperations();
     void abortPendingOperations();
     void processInitOperation(InitOperation&&);
-    void processMediaSamples(SamplesVector&&);
+    void processMediaSamplesOperation(SamplesVector&&);
+    void processAppendCompletedOperation(AppendCompletedOperation&&);
+    void processError();
+
     void processMediaSample(Ref<MediaSample>&&);
 
-    Deque<Operation> m_pendingAppendOperations;
-    bool m_pendingInitOperation { false };
-
-    struct AppendCompletedArguments {
-        bool parsingSucceeded { false };
-        bool isEnded { false };
-        Function<void()> preTask;
+    Deque<Operation> m_pendingOperations;
+    enum class OperationState : uint8_t {
+        Idle,
+        ProcessingAppend,
+        ProcessingInit
     };
-    std::optional<AppendCompletedArguments> m_appendCompletedPending;
+    OperationState m_operationState { OperationState::Idle };
+
+    void advanceOperationState();
+    void rewindOperationState();
 
     MediaTime m_timestampOffset;
     MediaTime m_appendWindowStart { MediaTime::zeroTime() };

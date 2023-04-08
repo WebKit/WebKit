@@ -153,45 +153,67 @@ void SourceBufferPrivate::updateBufferedFromTrackBuffers(bool sourceIsEnded)
     setBufferedRanges(WTFMove(intersectionRanges));
 }
 
+void SourceBufferPrivate::advanceOperationState()
+{
+    switch (m_operationState) {
+    case OperationState::Idle:
+        m_operationState = OperationState::ProcessingAppend;
+        break;
+    case OperationState::ProcessingAppend:
+        m_operationState = OperationState::ProcessingInit;
+        break;
+    case OperationState::ProcessingInit:
+        ASSERT_NOT_REACHED();
+        break;
+    }
+}
+
+void SourceBufferPrivate::rewindOperationState()
+{
+    switch (m_operationState) {
+    case OperationState::Idle:
+        ASSERT_NOT_REACHED();
+        break;
+    case OperationState::ProcessingAppend:
+        m_operationState = OperationState::Idle;
+        break;
+    case OperationState::ProcessingInit:
+        m_operationState = OperationState::ProcessingAppend;
+        break;
+    }
+}
+
 void SourceBufferPrivate::appendCompleted(bool parsingSucceeded, bool isEnded, Function<void()>&& preAppendCompletedTask)
 {
     DEBUG_LOG(LOGIDENTIFIER);
 
-    ASSERT(!m_appendCompletedPending);
+    rewindOperationState();
+    if (parsingSucceeded)
+        queueOperation(AppendCompletedOperation { m_abortCount, isEnded, WTFMove(preAppendCompletedTask) });
+    else
+        queueOperation(ErrorOperation { });
+}
 
-    if (!isAttached()) {
-        abortPendingOperations();
-        return;
-    }
-    if (!parsingSucceeded) {
-        abortPendingOperations();
-        // SourceBuffer will run https://w3c.github.io/media-source/#dfn-end-of-stream with error set to "decode".
-        // We can abort early.
-        m_client->sourceBufferPrivateAppendComplete(SourceBufferPrivateClient::AppendResult::ParsingFailed);
-        return;
-    }
+void SourceBufferPrivate::processAppendCompletedOperation(AppendCompletedOperation&& operation)
+{
+    DEBUG_LOG(LOGIDENTIFIER);
 
-    if (m_pendingAppendOperations.size()) {
-        m_appendCompletedPending = { parsingSucceeded, isEnded, WTFMove(preAppendCompletedTask) };
-        processPendingOperations();
-        return;
-    }
-
-    preAppendCompletedTask();
+    operation.preTask();
 
     // Resolve the changes in TrackBuffers' buffered ranges
     // into the SourceBuffer's buffered ranges
-    updateBufferedFromTrackBuffers(isEnded);
+    updateBufferedFromTrackBuffers(operation.isEnded);
 
-    m_client->sourceBufferPrivateBufferedChanged(buffered(), [weakSelf = WeakPtr { *this }, this] () mutable {
+    m_client->sourceBufferPrivateBufferedChanged(buffered(), [weakSelf = WeakPtr { *this }, this, operation = WTFMove(operation)] () mutable {
         if (!weakSelf || !isAttached())
             return;
 
-        auto completionHandler = CompletionHandler<void()>([weakSelf = WTFMove(weakSelf), this] {
+        auto completionHandler = CompletionHandler<void()>([weakSelf = WTFMove(weakSelf), this, operation = WTFMove(operation)] {
             if (!weakSelf || !isAttached())
                 return;
 
-            m_client->sourceBufferPrivateAppendComplete(SourceBufferPrivateClient::AppendResult::Succeeded);
+            if (operation.abortCount == m_abortCount)
+                m_client->sourceBufferPrivateAppendComplete(SourceBufferPrivateClient::AppendResult::Succeeded);
             m_client->sourceBufferPrivateReportExtraMemoryCost(totalTrackBufferSizeInBytes());
         });
 
@@ -581,7 +603,7 @@ void SourceBufferPrivate::setAllTrackBuffersNeedRandomAccess()
 void SourceBufferPrivate::didReceiveInitializationSegment(InitializationSegment&& segment, Function<bool(InitializationSegment&)>&& initSegmentCheck, CompletionHandler<void(ReceiveResult)>&& completionHandler)
 {
     auto initOperation = InitOperation { WTFMove(segment), WTFMove(initSegmentCheck), WTFMove(completionHandler) };
-    m_pendingAppendOperations.append({ WTFMove(initOperation) });
+    m_pendingOperations.append({ WTFMove(initOperation) });
 }
 
 bool SourceBufferPrivate::validateInitializationSegment(const SourceBufferPrivateClient::InitializationSegment& segment)
@@ -617,62 +639,71 @@ void SourceBufferPrivate::didReceiveSample(Ref<MediaSample>&& sample)
     if (!isAttached())
         return;
 
-    if (m_pendingAppendOperations.isEmpty() || !std::holds_alternative<SamplesVector>(m_pendingAppendOperations.last()))
-        m_pendingAppendOperations.append({ SamplesVector { } }); // This is a new operation.
+    if (m_pendingOperations.isEmpty() || !std::holds_alternative<SamplesVector>(m_pendingOperations.last()))
+        m_pendingOperations.append({ SamplesVector { } }); // This is a new operation.
 
     DEBUG_LOG(LOGIDENTIFIER, sample.get());
-    std::get<SamplesVector>(m_pendingAppendOperations.last()).append(WTFMove(sample));
+    std::get<SamplesVector>(m_pendingOperations.last()).append(WTFMove(sample));
 }
 
 void SourceBufferPrivate::append(Ref<SharedBuffer>&& buffer)
 {
-    append(buffer->extractData());
+    queueOperation(WTFMove(buffer));
 }
 
-void SourceBufferPrivate::append(Vector<unsigned char>&&)
+void SourceBufferPrivate::queueOperation(Operation&& operation)
 {
-    RELEASE_ASSERT_NOT_REACHED();
+    m_pendingOperations.append(WTFMove(operation));
+    processPendingOperations();
 }
 
 void SourceBufferPrivate::processPendingOperations()
 {
-    if (m_pendingInitOperation)
-        return;
-
-    while (!m_pendingAppendOperations.isEmpty()) {
-        if (!isAttached())
-            break;
-
-        auto operation = m_pendingAppendOperations.takeFirst();
+    while (!m_pendingOperations.isEmpty()) {
+        if (!isAttached() || m_errored) {
+            abortPendingOperations();
+            return;
+        }
+        if (m_didReceiveInitializationSegmentErrored || m_didReceiveSampleErrored)
+            m_pendingOperations.prepend(ErrorOperation { });
+        else if (m_operationState != OperationState::Idle)
+            return;
+        auto operation = m_pendingOperations.takeFirst();
         std::visit(WTF::makeVisitor([&](InitOperation&& initOperation) {
             processInitOperation(WTFMove(initOperation));
         }, [&](SamplesVector&& samples) {
-            processMediaSamples(WTFMove(samples));
+            processMediaSamplesOperation(WTFMove(samples));
+        }, [&](ResetParserOperation&&) {
+            resetParserStateInternal();
+        }, [&](AppendBufferOperation&& buffer) {
+            advanceOperationState();
+            appendInternal(WTFMove(buffer));
+        }, [&](AppendCompletedOperation&& appendComplete) {
+            processAppendCompletedOperation(WTFMove(appendComplete));
+        }, [&](ErrorOperation&&) {
+            abortPendingOperations();
+            processError();
         }), WTFMove(operation));
-
-        if (m_pendingInitOperation)
-            return;
-        if (m_didReceiveInitializationSegmentErrored || m_didReceiveSampleErrored)
-            break;
     };
-
-    if (!m_appendCompletedPending)
-        return; // Reset Parser State got called mid-air.
-
-    auto [parsingSucceeded, isEnded, preTask] = WTFMove(*m_appendCompletedPending);
-    m_appendCompletedPending.reset();
-    parsingSucceeded &= !m_didReceiveInitializationSegmentErrored && !m_didReceiveSampleErrored;
-    appendCompleted(parsingSucceeded, isEnded, WTFMove(preTask));
 }
 
 void SourceBufferPrivate::abortPendingOperations()
 {
-    for (auto& operation : m_pendingAppendOperations) {
+    for (auto& operation : std::exchange(m_pendingOperations, { })) {
         if (!std::holds_alternative<InitOperation>(operation))
             continue;
         std::get<InitOperation>(operation).completionHandler(ReceiveResult::AppendError);
     }
-    m_pendingAppendOperations.clear();
+    m_operationState = OperationState::Idle;
+}
+
+void SourceBufferPrivate::processError()
+{
+    m_didReceiveInitializationSegmentErrored = false;
+    m_didReceiveSampleErrored = false;
+    m_errored = true;
+    // SourceBuffer will run https://w3c.github.io/media-source/#dfn-end-of-stream with error set to "decode".
+    m_client->sourceBufferPrivateAppendComplete(SourceBufferPrivateClient::AppendResult::ParsingFailed);
 }
 
 void SourceBufferPrivate::processInitOperation(InitOperation&& initOperation)
@@ -685,7 +716,7 @@ void SourceBufferPrivate::processInitOperation(InitOperation&& initOperation)
         return;
     }
 
-    m_pendingInitOperation = true;
+    advanceOperationState();
 
     m_client->sourceBufferPrivateDidReceiveInitializationSegment(WTFMove(segment), [this, weakThis = WeakPtr { *this }, completionHandler = WTFMove(initOperation.completionHandler)] (auto result) mutable {
         auto completeProcess = [this, weakThis = WeakPtr { *this }, result, completionHandler = WTFMove(completionHandler)] () mutable {
@@ -697,12 +728,13 @@ void SourceBufferPrivate::processInitOperation(InitOperation&& initOperation)
 
             completionHandler(result);
 
-            m_pendingInitOperation = false;
-            m_didReceiveInitializationSegmentErrored |= result != ReceiveResult::Succeeded;
+            if (!m_errored) {
+                rewindOperationState();
+                m_didReceiveInitializationSegmentErrored |= result != ReceiveResult::Succeeded;
 
-            m_receivedFirstInitializationSegment = true;
-            m_pendingInitializationSegmentForChangeType = false;
-
+                m_receivedFirstInitializationSegment = true;
+                m_pendingInitializationSegmentForChangeType = false;
+            }
             processPendingOperations();
         };
         if (!m_client || !m_client->isAsync()) {
@@ -714,6 +746,15 @@ void SourceBufferPrivate::processInitOperation(InitOperation&& initOperation)
         }
         completeProcess();
     });
+}
+
+void SourceBufferPrivate::processMediaSamplesOperation(SamplesVector&& mediaSamples)
+{
+    for (auto& samples : mediaSamples) {
+        if (m_didReceiveSampleErrored)
+            return;
+        processMediaSample(WTFMove(samples));
+    }
 }
 
 void SourceBufferPrivate::processMediaSample(Ref<MediaSample>&& sample)
@@ -1166,26 +1207,14 @@ void SourceBufferPrivate::processMediaSample(Ref<MediaSample>&& sample)
     updateHighestPresentationTimestamp();
 }
 
-void SourceBufferPrivate::processMediaSamples(Vector<Ref<MediaSample>>&& mediaSamples)
+void SourceBufferPrivate::abort()
 {
-    for (auto& samples : mediaSamples) {
-        if (m_didReceiveSampleErrored)
-            return;
-        processMediaSample(WTFMove(samples));
-    }
+    m_abortCount++;
 }
 
 void SourceBufferPrivate::resetParserState()
 {
-    // 4.5.2 Reset Parser State
-    // 1. If the [[append state]] equals PARSING_MEDIA_SEGMENT and the [[input buffer]] contains some complete coded frames, then run the coded frame processing algorithm until all of these complete coded frames have been processed.
-    if (!m_pendingAppendOperations.isEmpty()) {
-        auto& operation = m_pendingAppendOperations.first();
-        if (std::holds_alternative<SamplesVector>(operation))
-            processMediaSamples(std::get<SamplesVector>(WTFMove(operation)));
-    }
-    abortPendingOperations();
-    m_appendCompletedPending.reset();
+    queueOperation(ResetParserOperation { });
 }
 
 void SourceBufferPrivate::memoryPressure(uint64_t maximumBufferSize, const MediaTime& currentTime, bool isEnded)

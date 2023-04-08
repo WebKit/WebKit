@@ -93,7 +93,14 @@
             testExpected('sourceBuffer.buffered.length', '1');
             testExpected('sourceBuffer.buffered.end(0)', '0.708', '>=');
 
-            endTest();
+            // Ensure that abort() will fire the abort event if `updating` attribute is true.
+            run('sourceBuffer.appendBuffer(loader.mediaSegment(0).slice(0, 45000))');
+            testExpected('sourceBuffer.updating', true);
+            run('sourceBuffer.abort()');
+            await waitFor(sourceBuffer, 'abort');
+            testExpected('sourceBuffer.updating', false);
+            // The update event shouldn't be fired when we aborted.
+            waitForEventWithTimeout(sourceBuffer, 'update', 1000).then(failTest, endTest);
         } catch (e) {
             failTest(`Caught exception: "${e}"`);
         }

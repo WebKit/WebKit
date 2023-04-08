@@ -159,9 +159,9 @@ private:
     bool isMediaSampleAllowed(const MediaSample&) const final;
 
     // SourceBufferPrivate overrides
-    void append(Ref<SharedBuffer>&&) final;
+    void appendInternal(Ref<SharedBuffer>&&) final;
     void abort() final;
-    void resetParserState() final;
+    void resetParserStateInternal() final;
     void removedFromMediaSource() final;
     MediaPlayer::ReadyState readyState() const final;
     void setReadyState(MediaPlayer::ReadyState) final;

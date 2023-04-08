@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #pragma once
@@ -52,8 +52,8 @@ private:
     explicit MockSourceBufferPrivate(MockMediaSourcePrivate*);
 
     // SourceBufferPrivate overrides
-    void append(Vector<uint8_t>&&) final;
-    void abort() final;
+    void appendInternal(Ref<SharedBuffer>&&) final;
+    void resetParserStateInternal() final;
     void removedFromMediaSource() final;
     MediaPlayer::ReadyState readyState() const final;
     void setReadyState(MediaPlayer::ReadyState) final;
