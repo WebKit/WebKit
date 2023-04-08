@@ -207,8 +207,6 @@ private:
     HashMap<AtomString, RefPtr<AudioTrackPrivate>> m_audioTracks;
     Vector<SourceBufferPrivateAVFObjCErrorClient*> m_errorClients;
 
-    WeakPtrFactory<SourceBufferPrivateAVFObjC> m_appendWeakFactory;
-
     Ref<SourceBufferParser> m_parser;
     Vector<Function<void()>> m_pendingTrackChangeTasks;
     Deque<std::pair<uint64_t, Ref<MediaSampleAVFObjC>>> m_blockedSamples;

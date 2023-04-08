@@ -653,7 +653,7 @@ void SourceBufferPrivateAVFObjC::appendInternal(Ref<SharedBuffer>&& data)
 
     m_parsingSucceeded = true;
 
-    m_appendQueue->dispatch([data = WTFMove(data), weakThis = m_appendWeakFactory.createWeakPtr(*this), parser = m_parser]() mutable {
+    m_appendQueue->dispatch([data = WTFMove(data), weakThis = WeakPtr { *this }, parser = m_parser]() mutable {
         parser->appendData(WTFMove(data), [weakThis = WTFMove(weakThis)]() mutable {
             callOnMainThread([weakThis = WTFMove(weakThis)] {
                 if (weakThis)
