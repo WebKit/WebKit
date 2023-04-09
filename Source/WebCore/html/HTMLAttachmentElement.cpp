@@ -114,6 +114,18 @@ static const AtomString& attachmentPreviewIdentifier()
     return identifier;
 }
 
+static const AtomString& attachmentProgressIdentifier()
+{
+    static MainThreadNeverDestroyed<const AtomString> identifier("attachment-progress"_s);
+    return identifier;
+}
+
+static const AtomString& attachmentProgressCircleIdentifier()
+{
+    static MainThreadNeverDestroyed<const AtomString> identifier("attachment-progress-circle"_s);
+    return identifier;
+}
+
 static const AtomString& attachmentInformationAreaIdentifier()
 {
     static MainThreadNeverDestroyed<const AtomString> identifier("attachment-information-area"_s);
@@ -226,6 +238,11 @@ void HTMLAttachmentElement::ensureModernShadowTree(ShadowRoot& root)
     m_innerLegacyAttachment->setIdAttribute(attachmentPreviewIdentifier());
     previewArea->appendChild(*m_innerLegacyAttachment);
 
+    m_progressElement = createContainedElement<HTMLDivElement>(previewArea, attachmentProgressIdentifier());
+    updateProgress(attributeWithoutSynchronization(progressAttr));
+
+    createContainedElement<HTMLDivElement>(*m_progressElement, attachmentProgressCircleIdentifier());
+
     auto informationArea = createContainedElement<HTMLDivElement>(*m_containerElement, attachmentInformationAreaIdentifier());
 
     m_informationBlock = createContainedElement<HTMLDivElement>(informationArea, attachmentInformationBlockIdentifier());
@@ -274,6 +291,21 @@ private:
 
     WeakPtr<HTMLAttachmentElement, WeakPtrImplWithEventTargetData> m_attachment;
 };
+
+void HTMLAttachmentElement::updateProgress(const AtomString& progress)
+{
+    if (!m_progressElement)
+        return;
+
+    bool validProgress = false;
+    float value = progress.toFloat(&validProgress);
+    if (validProgress && std::isfinite(value)) {
+        m_progressElement->setAttributeWithoutSynchronization(styleAttr, makeAtomString("--progress: ", (value < 0.0) ? "0"_s : (value > 1.0) ? "1"_s : progress));
+        return;
+    }
+
+    m_progressElement->setAttributeWithoutSynchronization(styleAttr, "display: none;"_s);
+}
 
 void HTMLAttachmentElement::updateSaveButton(bool show)
 {
@@ -425,9 +457,11 @@ RefPtr<HTMLImageElement> HTMLAttachmentElement::enclosingImageElement() const
 
 void HTMLAttachmentElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
-    if (name == actionAttr || name == progressAttr || name == subtitleAttr() || name == titleAttr || name == typeAttr) {
+    if (name == actionAttr || name == subtitleAttr() || name == titleAttr || name == typeAttr) {
         if (m_innerLegacyAttachment)
             m_innerLegacyAttachment->setAttributeWithoutSynchronization(name, value);
+        invalidateRendering();
+    } else if (name == progressAttr && m_implementation == Implementation::Legacy) {
         invalidateRendering();
     }
 
@@ -442,7 +476,9 @@ void HTMLAttachmentElement::parseAttribute(const QualifiedName& name, const Atom
     } else if (name == subtitleAttr()) {
         if (m_subtitleElement)
             m_subtitleElement->setTextContent(String(value.string()));
-    } else if (name == saveAttr())
+    } else if (name == progressAttr)
+        updateProgress(value);
+    else if (name == saveAttr())
         updateSaveButton(!value.isNull());
 
 #if ENABLE(SERVICE_CONTROLS)
