@@ -1,0 +1,7 @@
+
+
+PASS Register service worker
+PASS Verify frame gets early messages if setting synchronously message event listener
+FAIL Verify frame does not get all messages if not setting event listener early assert_not_equals: got disallowed value 0
+FAIL Verify frame does get messages in order assert_true: expected true got false
+
