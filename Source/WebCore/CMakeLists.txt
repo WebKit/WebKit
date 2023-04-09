@@ -13,6 +13,7 @@ set(WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${CMAKE_BINARY_DIR}"
     "${WebCore_DERIVED_SOURCES_DIR}"
     "${WEBCORE_DIR}"
+    "${WEBCORE_DIR}/Modules/ShapeDetection"
     "${WEBCORE_DIR}/Modules/WebGPU"
     "${WEBCORE_DIR}/Modules/airplay"
     "${WEBCORE_DIR}/Modules/applepay"
@@ -1604,6 +1605,18 @@ list(APPEND WebCore_NON_SVG_IDL_FILES
 )
 
 list(APPEND WebCore_NON_SVG_IDL_FILES
+    Modules/ShapeDetection/BarcodeDetector.idl
+    Modules/ShapeDetection/BarcodeDetectorOptions.idl
+    Modules/ShapeDetection/BarcodeFormat.idl
+    Modules/ShapeDetection/DetectedBarcode.idl
+    Modules/ShapeDetection/DetectedFace.idl
+    Modules/ShapeDetection/DetectedText.idl
+    Modules/ShapeDetection/FaceDetector.idl
+    Modules/ShapeDetection/FaceDetectorOptions.idl
+    Modules/ShapeDetection/Landmark.idl
+    Modules/ShapeDetection/LandmarkType.idl
+    Modules/ShapeDetection/Point2D.idl
+    Modules/ShapeDetection/TextDetector.idl
     Modules/WebGPU/GPU.idl
     Modules/WebGPU/GPUAdapter.idl
     Modules/WebGPU/GPUAddressMode.idl

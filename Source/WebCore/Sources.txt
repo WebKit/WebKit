@@ -54,6 +54,9 @@ Modules/WebGPU/GPUTexture.cpp
 Modules/WebGPU/GPUTextureView.cpp
 Modules/WebGPU/GPUUncapturedErrorEvent.cpp
 Modules/WebGPU/GPUValidationError.cpp
+Modules/ShapeDetection/BarcodeDetector.cpp
+Modules/ShapeDetection/FaceDetector.cpp
+Modules/ShapeDetection/TextDetector.cpp
 Modules/airplay/WebKitPlaybackTargetAvailabilityEvent.cpp
 Modules/applicationmanifest/ApplicationManifestParser.cpp
 Modules/async-clipboard/Clipboard.cpp
@@ -3127,6 +3130,9 @@ JSBackgroundFetchRegistration.cpp
 JSBackgroundFetchResult.cpp
 JSBackgroundFetchUIOptions.cpp
 JSBackgroundFetchUpdateUIEvent.cpp
+JSBarcodeDetector.cpp
+JSBarcodeDetectorOptions.cpp
+JSBarcodeFormat.cpp
 JSImageResource.cpp
 JSBitrateMode.cpp
 JSBlob.cpp
@@ -3296,6 +3302,9 @@ JSDeprecatedCSSOMRect.cpp
 JSDeprecatedCSSOMValue.cpp
 JSDeprecatedCSSOMValueList.cpp
 JSDeprecationReportBody.cpp
+JSDetectedBarcode.cpp
+JSDetectedFace.cpp
+JSDetectedText.cpp
 JSDeviceMotionEvent.cpp
 JSDeviceOrientationEvent.cpp
 JSDeviceOrientationOrMotionPermissionState.cpp
@@ -3345,6 +3354,8 @@ JSEventTarget.cpp
 JSExtendableEvent.cpp
 JSExtendableEventInit.cpp
 JSExtendableMessageEvent.cpp
+JSFaceDetector.cpp
+JSFaceDetectorOptions.cpp
 JSFetchBody.cpp
 JSFetchEvent.cpp
 JSFetchHeaders.cpp
@@ -3665,6 +3676,8 @@ JSKeyboardEvent.cpp
 JSKeyframeAnimationOptions.cpp
 JSKeyframeEffect.cpp
 JSKeyframeEffectOptions.cpp
+JSLandmark.cpp
+JSLandmarkType.cpp
 JSLatencyMode.cpp
 JSLocalDOMWindow.cpp
 JSLocation.cpp
@@ -3837,6 +3850,7 @@ JSPictureInPictureEvent.cpp
 JSPictureInPictureWindow.cpp
 JSPlaneLayout.cpp
 JSPlaybackDirection.cpp
+JSPoint2D.cpp
 JSPointerEvent.cpp
 JSPopStateEvent.cpp
 JSPositionCallback.cpp
@@ -4155,6 +4169,7 @@ JSText.cpp
 JSTextDecoder.cpp
 JSTextDecoderStream.cpp
 JSTextDecoderStreamDecoder.cpp
+JSTextDetector.cpp
 JSTextEncoder.cpp
 JSTextEncoderStream.cpp
 JSTextEncoderStreamEncoder.cpp

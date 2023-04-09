@@ -309,6 +309,12 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSBackgroundFetchUpdateUIEvent.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSBackgroundFetchUpdateUIEvent.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSBarProp.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSBarProp.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSBarcodeDetector.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSBarcodeDetector.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSBarcodeDetectorOptions.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSBarcodeDetectorOptions.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSBarcodeFormat.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSBarcodeFormat.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSBaseAudioContext.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSBaseAudioContext.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSBasicCredential.cpp
@@ -773,6 +779,12 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDeprecatedCSSOMValueList.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDeprecatedCSSOMValueList.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDeprecationReportBody.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDeprecationReportBody.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDetectedBarcode.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDetectedBarcode.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDetectedFace.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDetectedFace.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDetectedText.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDetectedText.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDeviceMotionEvent.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDeviceMotionEvent.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDeviceOrientationEvent.cpp
@@ -917,6 +929,10 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSExtendableEventInit.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSExtendableEventInit.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSExtendableMessageEvent.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSExtendableMessageEvent.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFaceDetector.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFaceDetector.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFaceDetectorOptions.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFaceDetectorOptions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFakeXRBoundsPoint.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFakeXRBoundsPoint.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFakeXRButtonStateInit.cpp
@@ -1625,6 +1641,10 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSKeyframeEffect.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSKeyframeEffect.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSKeyframeEffectOptions.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSKeyframeEffectOptions.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSLandmark.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSLandmark.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSLandmarkType.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSLandmarkType.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSLatencyMode.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSLatencyMode.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSLinkStyle.cpp
@@ -2087,6 +2107,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPlaneLayout.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPlaneLayout.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPlaybackDirection.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPlaybackDirection.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPoint2D.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPoint2D.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPointerEvent.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPointerEvent.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPopStateEvent.cpp
@@ -2761,6 +2783,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSTextDecoderStream.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSTextDecoderStream.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSTextDecoderStreamDecoder.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSTextDecoderStreamDecoder.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSTextDetector.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSTextDetector.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSTextEncoder.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSTextEncoder.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSTextEncoderStream.cpp

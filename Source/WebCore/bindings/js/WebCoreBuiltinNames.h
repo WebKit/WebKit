@@ -1,6 +1,6 @@
 /*
  *  Copyright (c) 2015, Canon Inc. All rights reserved.
- *  Copyright (C) 2018-2022 Apple Inc. All rights reserved.
+ *  Copyright (C) 2018-2023 Apple Inc. All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
  *  modification, are permitted provided that the following conditions
@@ -96,6 +96,7 @@ namespace WebCore {
     macro(BackgroundFetchRecord) \
     macro(BackgroundFetchRegistration) \
     macro(BackgroundFetchUpdateUIEvent) \
+    macro(BarcodeDetector) \
     macro(BaseAudioContext) \
     macro(BiquadFilterNode) \
     macro(BlobEvent) \
@@ -175,6 +176,7 @@ namespace WebCore {
     macro(ExtendableMessageEvent) \
     macro(FakeXRDevice) \
     macro(FakeXRInputController) \
+    macro(FaceDetector) \
     macro(FetchEvent) \
     macro(FileSystem) \
     macro(FileSystemDirectoryEntry) \
@@ -404,6 +406,7 @@ namespace WebCore {
     macro(TestReportBody) \
     macro(TextDecoderStream) \
     macro(TextDecoderStreamDecoder) \
+    macro(TextDetector) \
     macro(TextEncoderStream) \
     macro(TextEncoderStreamEncoder) \
     macro(TextTrackCue) \

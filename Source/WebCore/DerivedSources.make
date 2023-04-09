@@ -1,4 +1,4 @@
-# Copyright (C) 2006-2022 Apple Inc. All rights reserved.
+# Copyright (C) 2006-2023 Apple Inc. All rights reserved.
 # Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
 # Copyright (C) 2009 Cameron McCormack <cam@mcc.id.au>
 #
@@ -199,6 +199,18 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/WebGPU/GPUVertexState.idl \
     $(WebCore)/Modules/WebGPU/GPUVertexStepMode.idl \
     $(WebCore)/Modules/WebGPU/NavigatorGPU.idl \
+    $(WebCore)/Modules/ShapeDetection/BarcodeDetector.idl \
+    $(WebCore)/Modules/ShapeDetection/BarcodeDetectorOptions.idl \
+    $(WebCore)/Modules/ShapeDetection/BarcodeFormat.idl \
+    $(WebCore)/Modules/ShapeDetection/DetectedBarcode.idl \
+    $(WebCore)/Modules/ShapeDetection/DetectedFace.idl \
+    $(WebCore)/Modules/ShapeDetection/DetectedText.idl \
+    $(WebCore)/Modules/ShapeDetection/FaceDetector.idl \
+    $(WebCore)/Modules/ShapeDetection/FaceDetectorOptions.idl \
+    $(WebCore)/Modules/ShapeDetection/Landmark.idl \
+    $(WebCore)/Modules/ShapeDetection/LandmarkType.idl \
+    $(WebCore)/Modules/ShapeDetection/Point2D.idl \
+    $(WebCore)/Modules/ShapeDetection/TextDetector.idl \
     $(WebCore)/Modules/airplay/WebKitPlaybackTargetAvailabilityEvent.idl \
     $(WebCore)/Modules/applepay/ApplePayAutomaticReloadPaymentRequest.idl \
     $(WebCore)/Modules/applepay/ApplePayCancelEvent.idl \

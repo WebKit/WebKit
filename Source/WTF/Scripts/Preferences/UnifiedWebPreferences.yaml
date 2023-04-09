@@ -5651,6 +5651,19 @@ ServiceWorkersUserGestureEnabled:
     WebCore:
       default: true
 
+ShapeDetection:
+  type: bool
+  status: unstable
+  humanReadableName: "Shape Detection API"
+  humanReadableDescription: "Enable the Shape Detection API"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 SharedWorkerEnabled:
   type: bool
   status: stable
