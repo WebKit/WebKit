@@ -153,7 +153,7 @@ static WebCore::Node* firstNodeAfter(const WebCore::BoundaryPoint& point)
     NSRect bounds = [self boundingBox];
     if (!NSIsEmptyRect(bounds)) {
         if ([self isKindOfClass:[DOMElement class]]) {
-            DOMDocument *document = [self ownerDocument];
+            DOMDocument *document = self.ownerDocument;
             DOMCSSStyleDeclaration *style = [document getComputedStyle:(DOMElement *)self pseudoElement:@""];
             if ([[style getPropertyValue:@"display"] isEqualToString:@"inline"])
                 rects = [self lineBoxRects];
@@ -161,7 +161,7 @@ static WebCore::Node* firstNodeAfter(const WebCore::BoundaryPoint& point)
             rects = [self lineBoxRects];
     }
 
-    if (![rects count])
+    if (!rects.count)
         rects = @[[NSValue valueWithRect:bounds]];
 
     return rects;
@@ -173,7 +173,7 @@ static WebCore::Node* firstNodeAfter(const WebCore::BoundaryPoint& point)
     NSRect bounds = [self boundingBox];
     if (!NSIsEmptyRect(bounds)) {
         if ([self isKindOfClass:[DOMElement class]]) {
-            DOMDocument *document = [self ownerDocument];
+            DOMDocument *document = self.ownerDocument;
             DOMCSSStyleDeclaration *style = [document getComputedStyle:(DOMElement *)self pseudoElement:@""];
             if ([[style getPropertyValue:@"display"] isEqualToString:@"inline"])
                 quads = [self lineBoxQuads];
@@ -181,7 +181,7 @@ static WebCore::Node* firstNodeAfter(const WebCore::BoundaryPoint& point)
             quads = [self lineBoxQuads];
     }
 
-    if (![quads count])
+    if (!quads.count)
         quads = @[adoptNS([[WKQuadObject alloc] initWithQuad:[self absoluteQuad]]).get()];
 
     return quads;

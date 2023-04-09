@@ -31,7 +31,8 @@ class WebInspectorFrontendClient;
 @private
     NakedPtr<WebInspectorFrontendClient> m_frontendClient;
 }
-- (id)initWithFrontendClient:(NakedPtr<WebInspectorFrontendClient>)frontendClient;
+- (instancetype)init NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithFrontendClient:(NakedPtr<WebInspectorFrontendClient>)frontendClient NS_DESIGNATED_INITIALIZER;
 - (void)attach;
 - (void)detach;
 - (void)close;

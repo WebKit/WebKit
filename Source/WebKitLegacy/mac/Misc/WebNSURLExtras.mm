@@ -84,7 +84,7 @@
 {
     if (!CFURLGetBaseURL(bridge_cast(self)))
         return !CFURLGetBytes(bridge_cast(self), nullptr, 0);
-    return ![WTF::originalURLData(self) length];
+    return !WTF::originalURLData(self).length;
 }
 
 - (const char*)_web_URLCString
@@ -92,7 +92,7 @@
     NSMutableData *data = [NSMutableData data];
     [data appendData:WTF::originalURLData(self)];
     [data appendBytes:"\0" length:1];
-    return (const char*)[data bytes];
+    return (const char*)data.bytes;
  }
 
 - (NSURL *)_webkit_canonicalize
@@ -123,7 +123,7 @@
 
 - (NSString *)_webkit_scriptIfJavaScriptURL
 {
-    return [[self absoluteString] _webkit_scriptIfJavaScriptURL];
+    return [self.absoluteString _webkit_scriptIfJavaScriptURL];
 }
 
 - (BOOL)_webkit_isFileURL
@@ -159,10 +159,10 @@
 
 - (NSURL *)_webkit_URLFromURLOrSchemelessFileURL
 {
-    if ([self scheme])
+    if (self.scheme)
         return self;
 
-    return [NSURL URLWithString:[@"file:" stringByAppendingString:[self absoluteString]]];
+    return [NSURL URLWithString:[@"file:" stringByAppendingString:self.absoluteString]];
 }
 @end
 
@@ -230,7 +230,7 @@
              even need to enforce the character set here.
             */
             NSString *acceptableCharacters = @"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+.-";
-            return RetainPtr { [[NSCharacterSet characterSetWithCharactersInString:acceptableCharacters] invertedSet] };
+            return RetainPtr { [NSCharacterSet characterSetWithCharactersInString:acceptableCharacters].invertedSet };
         }();
         NSRange illegals = [self rangeOfCharacterFromSet:inverseSchemeCharacterSet.get().get() options:0 range:scheme];
         if (illegals.location == NSNotFound)

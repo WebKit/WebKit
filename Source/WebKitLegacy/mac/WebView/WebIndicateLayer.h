@@ -34,7 +34,7 @@
     WebView *_webView;
 }
 
-- (id)initWithWebView:(WebView *)webView;
+- (instancetype)initWithWebView:(WebView *)webView NS_DESIGNATED_INITIALIZER;
 
 @end
 

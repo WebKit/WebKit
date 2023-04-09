@@ -47,7 +47,7 @@ NSString * const WebStorageDidModifyOriginNotification = @"WebStorageDidModifyOr
     return sharedManager;
 }
 
-- (id)init
+- (instancetype)init
 {
     if (!(self = [super init]))
         return nil;
@@ -103,10 +103,10 @@ NSString * const WebStorageDidModifyOriginNotification = @"WebStorageDidModifyOr
         RetainPtr<NSString> localStoragePath = [defaults objectForKey:WebStorageDirectoryDefaultsKey];
         if (!localStoragePath || ![localStoragePath isKindOfClass:[NSString class]]) {
             NSArray *paths = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES);
-            NSString *libraryDirectory = [paths objectAtIndex:0];
+            NSString *libraryDirectory = paths[0];
             localStoragePath = [libraryDirectory stringByAppendingPathComponent:@"WebKit/LocalStorage"];
         }
-        sLocalStoragePath.get() = [localStoragePath stringByStandardizingPath];
+        sLocalStoragePath.get() = localStoragePath.get().stringByStandardizingPath;
     });
     return sLocalStoragePath.get().get();
 }

@@ -69,14 +69,14 @@ void PopupMenuMac::populate()
         [m_popup addItemWithTitle:@""];
 
     TextDirection menuTextDirection = m_client->menuStyle().textDirection();
-    [m_popup setUserInterfaceLayoutDirection:menuTextDirection == TextDirection::LTR ? NSUserInterfaceLayoutDirectionLeftToRight : NSUserInterfaceLayoutDirectionRightToLeft];
+    m_popup.userInterfaceLayoutDirection = menuTextDirection == TextDirection::LTR ? NSUserInterfaceLayoutDirectionLeftToRight : NSUserInterfaceLayoutDirectionRightToLeft;
 
     ASSERT(m_client);
     int size = m_client->listSize();
 
     for (int i = 0; i < size; i++) {
         if (m_client->itemIsSeparator(i)) {
-            [[m_popup menu] addItem:[NSMenuItem separatorItem]];
+            [m_popup.menu addItem:[NSMenuItem separatorItem]];
             continue;
         }
 
@@ -88,38 +88,38 @@ void PopupMenuMac::populate()
                 CGFloat size = style.font().primaryFont().platformData().size();
                 font = adoptCF(CTFontCreateUIFontForLanguage(isFontWeightBold(style.font().weight()) ? kCTFontUIFontEmphasizedSystem : kCTFontUIFontSystem, size, nullptr));
             }
-            [attributes setObject:(__bridge NSFont *)(font.get()) forKey:NSFontAttributeName];
+            attributes[NSFontAttributeName] = (__bridge NSFont *)(font.get());
         }
 
         RetainPtr<NSMutableParagraphStyle> paragraphStyle = adoptNS([[NSParagraphStyle defaultParagraphStyle] mutableCopy]);
-        [paragraphStyle setAlignment:menuTextDirection == TextDirection::LTR ? NSTextAlignmentLeft : NSTextAlignmentRight];
+        paragraphStyle.alignment = menuTextDirection == TextDirection::LTR ? NSTextAlignmentLeft : NSTextAlignmentRight;
         NSWritingDirection writingDirection = style.textDirection() == TextDirection::LTR ? NSWritingDirectionLeftToRight : NSWritingDirectionRightToLeft;
-        [paragraphStyle setBaseWritingDirection:writingDirection];
+        paragraphStyle.baseWritingDirection = writingDirection;
         if (style.hasTextDirectionOverride()) {
             RetainPtr<NSNumber> writingDirectionValue = adoptNS([[NSNumber alloc] initWithInteger:writingDirection + NSWritingDirectionOverride]);
             RetainPtr<NSArray> writingDirectionArray = adoptNS([[NSArray alloc] initWithObjects:writingDirectionValue.get(), nil]);
-            [attributes setObject:writingDirectionArray.get() forKey:NSWritingDirectionAttributeName];
+            attributes[NSWritingDirectionAttributeName] = writingDirectionArray.get();
         }
-        [attributes setObject:paragraphStyle.get() forKey:NSParagraphStyleAttributeName];
+        attributes[NSParagraphStyleAttributeName] = paragraphStyle.get();
 
         // FIXME: Add support for styling the foreground and background colors.
         // FIXME: Find a way to customize text color when an item is highlighted.
         RetainPtr<NSAttributedString> string = adoptNS([[NSAttributedString alloc] initWithString:m_client->itemText(i) attributes:attributes.get()]);
 
         [m_popup addItemWithTitle:@""];
-        NSMenuItem *menuItem = [m_popup lastItem];
-        [menuItem setAttributedTitle:string.get()];
+        NSMenuItem *menuItem = m_popup.lastItem;
+        menuItem.attributedTitle = string.get();
         // We set the title as well as the attributed title here. The attributed title will be displayed in the menu,
         // but typeahead will use the non-attributed string that doesn't contain any leading or trailing whitespace.
-        [menuItem setTitle:[[string string] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]]];
-        [menuItem setEnabled:m_client->itemIsEnabled(i)];
-        [menuItem setToolTip:m_client->itemToolTip(i)];
+        menuItem.title = [string.string stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+        menuItem.enabled = m_client->itemIsEnabled(i);
+        menuItem.toolTip = m_client->itemToolTip(i);
 
         ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         // Allow the accessible text of the item to be overridden if necessary.
         if (AXObjectCache::accessibilityEnabled()) {
             NSString *accessibilityOverride = m_client->itemAccessibilityText(i);
-            if ([accessibilityOverride length])
+            if (accessibilityOverride.length)
                 [menuItem accessibilitySetOverrideValue:accessibilityOverride forAttribute:NSAccessibilityDescriptionAttribute];
         }
         ALLOW_DEPRECATED_DECLARATIONS_END
@@ -129,7 +129,7 @@ void PopupMenuMac::populate()
 void PopupMenuMac::show(const IntRect& r, LocalFrameView* v, int selectedIndex)
 {
     populate();
-    int numItems = [m_popup numberOfItems];
+    int numItems = m_popup.numberOfItems;
     if (numItems <= 0) {
         if (m_client)
             m_client->popupDidHide();
@@ -138,7 +138,7 @@ void PopupMenuMac::show(const IntRect& r, LocalFrameView* v, int selectedIndex)
     ASSERT(numItems > selectedIndex);
 
     // Workaround for crazy bug where a selectedIndex of -1 for a menu with only 1 item will cause a blank menu.
-    if (selectedIndex == -1 && numItems == 2 && !m_client->shouldPopOver() && ![[m_popup itemAtIndex:1] isEnabled])
+    if (selectedIndex == -1 && numItems == 2 && !m_client->shouldPopOver() && ![m_popup itemAtIndex:1].enabled)
         selectedIndex = 0;
 
     NSView* view = v->documentView();
@@ -147,10 +147,10 @@ void PopupMenuMac::show(const IntRect& r, LocalFrameView* v, int selectedIndex)
 
     [m_popup attachPopUpWithFrame:r inView:view];
     [m_popup selectItemAtIndex:selectedIndex];
-    [m_popup setUserInterfaceLayoutDirection:textDirection == TextDirection::LTR ? NSUserInterfaceLayoutDirectionLeftToRight : NSUserInterfaceLayoutDirectionRightToLeft];
+    m_popup.userInterfaceLayoutDirection = textDirection == TextDirection::LTR ? NSUserInterfaceLayoutDirectionLeftToRight : NSUserInterfaceLayoutDirectionRightToLeft;
 
-    NSMenu *menu = [m_popup menu];
-    [menu setUserInterfaceLayoutDirection:textDirection == TextDirection::LTR ? NSUserInterfaceLayoutDirectionLeftToRight : NSUserInterfaceLayoutDirectionRightToLeft];
+    NSMenu *menu = m_popup.menu;
+    menu.userInterfaceLayoutDirection = textDirection == TextDirection::LTR ? NSUserInterfaceLayoutDirectionLeftToRight : NSUserInterfaceLayoutDirectionRightToLeft;
 
     NSPoint location;
     CTFontRef font = m_client->menuStyle().font().primaryFont().getCTFont();
@@ -188,7 +188,7 @@ void PopupMenuMac::show(const IntRect& r, LocalFrameView* v, int selectedIndex)
     Ref<PopupMenuMac> protector(*this);
 
     RetainPtr<NSView> dummyView = adoptNS([[NSView alloc] initWithFrame:r]);
-    [dummyView.get() setUserInterfaceLayoutDirection:textDirection == TextDirection::LTR ? NSUserInterfaceLayoutDirectionLeftToRight : NSUserInterfaceLayoutDirectionRightToLeft];
+    dummyView.get().userInterfaceLayoutDirection = textDirection == TextDirection::LTR ? NSUserInterfaceLayoutDirectionLeftToRight : NSUserInterfaceLayoutDirectionRightToLeft;
     [view addSubview:dummyView.get()];
     location = [dummyView convertPoint:location fromView:view];
     
@@ -223,7 +223,7 @@ void PopupMenuMac::show(const IntRect& r, LocalFrameView* v, int selectedIndex)
     if (!m_client)
         return;
 
-    int newIndex = [m_popup indexOfSelectedItem];
+    int newIndex = m_popup.indexOfSelectedItem;
     m_client->popupDidHide();
 
     // Adjust newIndex for hidden first item.
@@ -240,7 +240,7 @@ void PopupMenuMac::show(const IntRect& r, LocalFrameView* v, int selectedIndex)
 
 void PopupMenuMac::hide()
 {
-    [[m_popup menu] cancelTracking];
+    [m_popup.menu cancelTracking];
     if (m_client)
         m_client->popupDidHide();
 }

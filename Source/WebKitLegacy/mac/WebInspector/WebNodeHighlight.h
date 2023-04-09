@@ -47,7 +47,7 @@ namespace WebCore {
     WebNodeHighlightView *_view;
     WebView *_webView;
 }
-- (id)initWithHighlightView:(WebNodeHighlightView *)view webView:(WebView *)webView;
+- (instancetype)initWithHighlightView:(WebNodeHighlightView *)view webView:(WebView *)webView NS_DESIGNATED_INITIALIZER;
 @end
 #endif
 
@@ -62,7 +62,9 @@ namespace WebCore {
     NakedPtr<WebCore::InspectorController> _inspectorController;
     id _delegate;
 }
-- (id)initWithTargetView:(NSView *)targetView inspectorController:(NakedPtr<WebCore::InspectorController>)inspectorController;
+
+- (instancetype)init NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithTargetView:(NSView *)targetView inspectorController:(NakedPtr<WebCore::InspectorController>)inspectorController NS_DESIGNATED_INITIALIZER;
 
 - (void)setDelegate:(id)delegate;
 - (id)delegate;

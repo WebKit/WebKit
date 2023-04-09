@@ -99,7 +99,7 @@ static RetainPtr<CGColorRef> createCGColorWithDeviceWhite(CGFloat white, CGFloat
 + (Class)_representationClassForWebFrame:(WebFrame *)webFrame
 {
     // If this is not the main frame, use the old WAK PDF view.
-    if ([[webFrame webView] mainFrame] != webFrame)
+    if (webFrame.webView.mainFrame != webFrame)
         return [WebPDFView class];
     
     return [WebPDFViewPlaceholder class];
@@ -203,7 +203,7 @@ static RetainPtr<CGColorRef> createCGColorWithDeviceWhite(CGFloat white, CGFloat
         return;
 
     if (!_title)
-        _title = adoptNS([[[[dataSource request] URL] lastPathComponent] copy]);
+        _title = adoptNS([dataSource.request.URL.lastPathComponent copy]);
 
     WAKView * superview = [self superview];
     
@@ -303,7 +303,7 @@ static RetainPtr<CGColorRef> createCGColorWithDeviceWhite(CGFloat white, CGFloat
 
 - (void)finishedLoadingWithDataSource:(WebDataSource *)dataSource
 {
-    auto provider = adoptCF(CGDataProviderCreateWithCFData((CFDataRef)[dataSource data]));
+    auto provider = adoptCF(CGDataProviderCreateWithCFData((CFDataRef)dataSource.data));
     if (!provider) 
         return;
     
@@ -316,7 +316,7 @@ static RetainPtr<CGColorRef> createCGColorWithDeviceWhite(CGFloat white, CGFloat
 
     NSArray *scripts = allScriptsInPDFDocument(_PDFDocument);
 
-    if (![scripts count])
+    if (!scripts.count)
         return;
 
     JSGlobalContextRef ctx = JSGlobalContextCreate(0);
@@ -349,10 +349,10 @@ static RetainPtr<CGColorRef> createCGColorWithDeviceWhite(CGFloat white, CGFloat
     if (_PDFDocument != NULL && _pageRects != NULL) {
         NSArray *pages = [self _pagesInRect:rect];
         float bestPageArea = 0;
-        size_t count = [pages count];
+        size_t count = pages.count;
         size_t i;
         for (i = 0; i < count; i++) {
-            size_t pageNumber = CGPDFPageGetPageNumber((CGPDFPageRef)[pages objectAtIndex:i]);
+            size_t pageNumber = CGPDFPageGetPageNumber((CGPDFPageRef)pages[i]);
             CGRect intersectionRect = CGRectIntersection(_pageRects[pageNumber - 1], rect);
             float intersectionArea = intersectionRect.size.width * intersectionRect.size.height;
             if (intersectionArea > bestPageArea) {

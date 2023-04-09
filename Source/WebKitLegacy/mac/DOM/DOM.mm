@@ -199,11 +199,21 @@ static inline WKQuad zeroQuad()
 @implementation WKQuadObject {
     WKQuad _quad;
 }
-
-- (id)initWithQuad:(WKQuad)quad
+- (instancetype)init
 {
-    if ((self = [super init]))
-        _quad = quad;
+    if (!(self = [super init]))
+        return nil;
+
+    _quad = zeroQuad();
+    return self;
+}
+
+- (instancetype)initWithQuad:(WKQuad)quad
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _quad = quad;
     return self;
 }
 
@@ -236,11 +246,11 @@ IGNORE_WARNINGS_BEGIN("objc-protocol-method-implementation")
     if (!_internal)
         return [NSString stringWithFormat:@"<%@: null>", [[self class] description]];
 
-    NSString *value = [self nodeValue];
+    NSString *value = self.nodeValue;
     if (value)
-        return [NSString stringWithFormat:@"<%@ [%@]: %p '%@'>", [[self class] description], [self nodeName], _internal, value];
+        return [NSString stringWithFormat:@"<%@ [%@]: %p '%@'>", [[self class] description], self.nodeName, _internal, value];
 
-    return [NSString stringWithFormat:@"<%@ [%@]: %p>", [[self class] description], [self nodeName], _internal];
+    return [NSString stringWithFormat:@"<%@ [%@]: %p>", [[self class] description], self.nodeName, _internal];
 }
 
 IGNORE_WARNINGS_END
@@ -590,9 +600,9 @@ id <DOMEventTarget> kit(EventTarget* target)
 
 #if PLATFORM(MAC)
     // iOS uses CGImageRef for drag images, which doesn't support separate logical/physical sizes.
-    IntSize size([renderedImage size]);
+    IntSize size(renderedImage.size);
     size.scale(1 / frame->page()->deviceScaleFactor());
-    [renderedImage setSize:size];
+    renderedImage.size = size;
 #endif
 
     return renderedImage.autorelease();
@@ -723,14 +733,14 @@ id <DOMEventTarget> kit(EventTarget* target)
     if (!_internal)
         return @"<DOMRange: null>";
     return [NSString stringWithFormat:@"<DOMRange: %@ %d %@ %d>",
-               [self startContainer], [self startOffset], [self endContainer], [self endOffset]];
+               self.startContainer, self.startOffset, self.endContainer, self.endOffset];
 }
 
 // FIXME: This should be removed as soon as all internal Apple uses of it have been replaced with
 // calls to the public method - (NSString *)text.
 - (NSString *)_text
 {
-    return [self text];
+    return self.text;
 }
 
 @end
@@ -746,7 +756,7 @@ id <DOMEventTarget> kit(EventTarget* target)
 // calls to the public method - (NSColor *)color.
 - (NSColor *)_color
 {
-    return [self color];
+    return self.color;
 }
 
 #endif

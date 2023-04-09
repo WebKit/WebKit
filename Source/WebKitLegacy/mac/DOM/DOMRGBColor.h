@@ -41,6 +41,6 @@ WEBKIT_CLASS_DEPRECATED_MAC(10_4, 10_14)
 #if !TARGET_OS_IPHONE
 @property (readonly, copy) NSColor *color WEBKIT_AVAILABLE_MAC(10_5);
 #else
-- (CGColorRef)color;
+- (CGColorRef)color CF_RETURNS_NOT_RETAINED;
 #endif
 @end

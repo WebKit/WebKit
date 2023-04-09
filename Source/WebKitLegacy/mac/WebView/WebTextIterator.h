@@ -34,7 +34,8 @@
     WebTextIteratorPrivate *_private;
 }
 
-- (id)initWithRange:(DOMRange *)range;
+- (instancetype)init NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithRange:(DOMRange *)range NS_DESIGNATED_INITIALIZER;
 
 /*!
  @method advance
@@ -63,7 +64,7 @@
  invalid after any modification is made to the document; it must be used before the document
  is changed or the iterator is advanced.
  */
-- (const unichar *)currentTextPointer;
+- (const unichar *)currentTextPointer NS_RETURNS_INNER_POINTER;
 
 /*!
  @method currentRange

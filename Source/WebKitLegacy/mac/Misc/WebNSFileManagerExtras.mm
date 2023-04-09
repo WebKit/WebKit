@@ -54,20 +54,20 @@
 static BOOL fileExists(NSString *path)
 {
     struct stat statBuffer;
-    return !lstat([path fileSystemRepresentation], &statBuffer);
+    return !lstat(path.fileSystemRepresentation, &statBuffer);
 }
 
 - (NSString *)_webkit_pathWithUniqueFilenameForPath:(NSString *)path
 {
     // "Fix" the filename of the path.
-    NSString *filename = filenameByFixingIllegalCharacters([path lastPathComponent]);
-    path = [[path stringByDeletingLastPathComponent] stringByAppendingPathComponent:filename];
+    NSString *filename = filenameByFixingIllegalCharacters(path.lastPathComponent);
+    path = [path.stringByDeletingLastPathComponent stringByAppendingPathComponent:filename];
 
     if (fileExists(path)) {
         // Don't overwrite existing file by appending "-n", "-n.ext" or "-n.ext.ext" to the filename.
         NSString *extensions = nil;
         NSString *pathWithoutExtensions;
-        NSString *lastPathComponent = [path lastPathComponent];
+        NSString *lastPathComponent = path.lastPathComponent;
         NSRange periodRange = [lastPathComponent rangeOfString:@"."];
         
         if (periodRange.location == NSNotFound) {
@@ -75,12 +75,12 @@ static BOOL fileExists(NSString *path)
         } else {
             extensions = [lastPathComponent substringFromIndex:periodRange.location + 1];
             lastPathComponent = [lastPathComponent substringToIndex:periodRange.location];
-            pathWithoutExtensions = [[path stringByDeletingLastPathComponent] stringByAppendingPathComponent:lastPathComponent];
+            pathWithoutExtensions = [path.stringByDeletingLastPathComponent stringByAppendingPathComponent:lastPathComponent];
         }
 
         for (unsigned i = 1; ; i++) {
             NSString *pathWithAppendedNumber = [NSString stringWithFormat:@"%@-%d", pathWithoutExtensions, i];
-            path = [extensions length] ? [pathWithAppendedNumber stringByAppendingPathExtension:extensions] : pathWithAppendedNumber;
+            path = extensions.length ? [pathWithAppendedNumber stringByAppendingPathExtension:extensions] : pathWithAppendedNumber;
             if (!fileExists(path))
                 break;
         }

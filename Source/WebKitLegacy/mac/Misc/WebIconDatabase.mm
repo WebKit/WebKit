@@ -117,11 +117,12 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     return database.get().get();
 }
 
-- (id)init
+- (instancetype)init
 {
     WebCoreThreadViolationCheckRoundOne();
 
-    return [super init];
+    self = [super init];
+    return self;
 }
 
 - (NSImage *)iconForURL:(NSString *)URL withSize:(NSSize)size cache:(BOOL)cache

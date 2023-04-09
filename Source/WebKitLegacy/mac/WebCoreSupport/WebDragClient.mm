@@ -114,7 +114,7 @@ static WebHTMLView *getTopHTMLView(LocalFrame* frame)
 {
     ASSERT(frame);
     ASSERT(frame->page());
-    return (WebHTMLView*)[[kit(dynamicDowncast<WebCore::LocalFrame>(frame->page()->mainFrame())) frameView] documentView];
+    return (WebHTMLView*)kit(dynamicDowncast<WebCore::LocalFrame>(frame->page()->mainFrame())).frameView.documentView;
 }
 
 void WebDragClient::willPerformDragDestinationAction(WebCore::DragDestinationAction action, const WebCore::DragData& dragData)
@@ -139,7 +139,7 @@ void WebDragClient::startDrag(DragItem dragItem, DataTransfer& dataTransfer, Loc
     auto& dragImage = dragItem.image;
     auto dragLocationInContentCoordinates = dragItem.dragLocationInContentCoordinates;
 
-    RetainPtr<WebHTMLView> htmlView = (WebHTMLView*)[[kit(&frame) frameView] documentView];
+    RetainPtr<WebHTMLView> htmlView = (WebHTMLView*)kit(&frame).frameView.documentView;
     if (![htmlView.get() isKindOfClass:[WebHTMLView class]])
         return;
     
@@ -153,11 +153,11 @@ void WebDragClient::startDrag(DragItem dragItem, DataTransfer& dataTransfer, Loc
     NSImage *dragNSImage = dragImage.get().get();
     WebHTMLView *sourceHTMLView = htmlView.get();
 
-    IntSize size([dragNSImage size]);
+    IntSize size(dragNSImage.size);
     size.scale(1 / frame.page()->deviceScaleFactor());
-    [dragNSImage setSize:size];
+    dragNSImage.size = size;
 
-    id delegate = [m_webView UIDelegate];
+    id delegate = m_webView.UIDelegate;
     SEL selector = @selector(webView:dragImage:at:offset:event:pasteboard:source:slideBack:forView:);
     if ([delegate respondsToSelector:selector]) {
         @try {
@@ -190,7 +190,7 @@ void WebDragClient::beginDrag(DragItem dragItem, LocalFrame& frame, const IntPoi
     NSRect draggingFrame = NSMakeRect(mouseDraggedPosition.x() - dragImageSize.width() * dragItem.imageAnchorPoint.x(), mouseDraggedPosition.y() - dragImageSize.height() * dragItem.imageAnchorPoint.y(), dragImageSize.width(), dragImageSize.height());
     [draggingItem setDraggingFrame:draggingFrame contents:dragItem.image.get().get()];
 
-    // FIXME: We should be able to make a fake event with the mosue dragged coordinates.
+    // FIXME: We should be able to make a fake event with the mouse-dragged coordinates.
     NSEvent *event = frame.eventHandler().currentNSEvent();
     [topWebHTMLView.get() beginDraggingSessionWithItems:@[ draggingItem.get() ] event:event source:topWebHTMLView.get()];
 }
@@ -198,7 +198,7 @@ void WebDragClient::beginDrag(DragItem dragItem, LocalFrame& frame, const IntPoi
 void WebDragClient::declareAndWriteDragImage(const String& pasteboardName, Element& element, const URL& url, const String& title, WebCore::LocalFrame* frame)
 {
     ASSERT(pasteboardName);
-    [[NSPasteboard pasteboardWithName:pasteboardName] _web_declareAndWriteDragImageForElement:kit(&element) URL:url title:title archive:[kit(&element) webArchive] source:getTopHTMLView(frame)];
+    [[NSPasteboard pasteboardWithName:pasteboardName] _web_declareAndWriteDragImageForElement:kit(&element) URL:url title:title archive:kit(&element).webArchive source:getTopHTMLView(frame)];
 }
 
 #elif !PLATFORM(IOS_FAMILY) || !ENABLE(DRAG_SUPPORT)

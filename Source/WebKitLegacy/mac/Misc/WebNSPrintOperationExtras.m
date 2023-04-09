@@ -34,19 +34,19 @@
 
 - (float)_web_pageSetupScaleFactor
 {
-    return [[[[self printInfo] dictionary] objectForKey:NSPrintScalingFactor] floatValue];
+    return [[self.printInfo dictionary][NSPrintScalingFactor] floatValue];
 }
 
 - (float)_web_availablePaperWidth
 {
-    NSPrintInfo *printInfo = [self printInfo];
-    return [printInfo paperSize].width - [printInfo leftMargin] - [printInfo rightMargin];
+    NSPrintInfo *printInfo = self.printInfo;
+    return printInfo.paperSize.width - printInfo.leftMargin - printInfo.rightMargin;
 }
 
 - (float)_web_availablePaperHeight
 {
-    NSPrintInfo *printInfo = [self printInfo];
-    return [printInfo paperSize].height - [printInfo topMargin] - [printInfo bottomMargin];
+    NSPrintInfo *printInfo = self.printInfo;
+    return printInfo.paperSize.height - printInfo.topMargin - printInfo.bottomMargin;
 }
 
 @end

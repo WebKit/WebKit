@@ -55,7 +55,7 @@ using namespace WebCore;
 #if ENABLE(NOTIFICATIONS)
 @implementation WebNotification (WebNotificationInternal)
 
-- (id)initWithCoreNotification:(NotificationData&&)coreNotification
+- (instancetype)initWithCoreNotification:(NotificationData&&)coreNotification
 {
     if (!(self = [super init]))
         return nil;
@@ -67,7 +67,7 @@ using namespace WebCore;
 #endif
 
 @implementation WebNotification
-- (id)init
+- (instancetype)init
 {
     return nil;
 }

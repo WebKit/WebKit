@@ -6,13 +6,13 @@
  * are met:
  *
  * 1.  Redistributions of source code must retain the above copyright
- *     notice, this list of conditions and the following disclaimer. 
+ *     notice, this list of conditions and the following disclaimer.
  * 2.  Redistributions in binary form must reproduce the above copyright
  *     notice, this list of conditions and the following disclaimer in the
- *     documentation and/or other materials provided with the distribution. 
+ *     documentation and/or other materials provided with the distribution.
  * 3.  Neither the name of Apple Inc. ("Apple") nor the names of
  *     its contributors may be used to endorse or promote products derived
- *     from this software without specific prior written permission. 
+ *     from this software without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -105,6 +105,12 @@ static RetainPtr<NSMutableSet>& pluginViews()
 
 @implementation WebPluginController
 
+- (instancetype)init
+{
+    self = [super init];
+    return self;
+}
+
 - (NSView *)plugInViewWithArguments:(NSDictionary *)arguments fromPluginPackage:(WebPluginPackage *)pluginPackage
 {
     return nil;
@@ -128,7 +134,7 @@ static RetainPtr<NSMutableSet>& pluginViews()
     return [pluginViews() containsObject:view];
 }
 
-- (id)initWithDocumentView:(NSView *)view
+- (instancetype)initWithDocumentView:(NSView *)view
 {
     self = [super init];
     if (!self)
@@ -141,7 +147,7 @@ static RetainPtr<NSMutableSet>& pluginViews()
 
 - (void)setDataSource:(WebDataSource *)dataSource
 {
-    _dataSource = dataSource;    
+    _dataSource = dataSource;
 }
 
 - (void)dealloc
@@ -154,8 +160,7 @@ static RetainPtr<NSMutableSet>& pluginViews()
 #if PLATFORM(IOS_FAMILY)
 - (BOOL)plugInsAreRunning
 {
-    NSUInteger pluginViewCount = [_views count];
-    return _started && pluginViewCount;
+    return _started && _views.count;
 }
 
 - (CALayer *)superlayerForPluginView:(NSView *)view
@@ -212,12 +217,10 @@ static RetainPtr<NSMutableSet>& pluginViews()
     if (_started)
         return;
     
-    if ([_views count] > 0)
+    if (_views.count)
         LOG(Plugins, "starting WebKit plugins : %@", [_views description]);
-    
-    int count = [_views count];
-    for (int i = 0; i < count; i++) {
-        id aView = [_views objectAtIndex:i];
+
+    for (NSView *aView in _views) {
         if ([aView respondsToSelector:@selector(webPlugInStart)]) {
             JSC::JSLock::DropAllLocks dropAllLocks(WebCore::commonVM());
             [aView webPlugInStart];
@@ -234,13 +237,12 @@ static RetainPtr<NSMutableSet>& pluginViews()
     if (!_started)
         return;
 
-    if ([_views count] > 0) {
+    if (_views.count) {
         LOG(Plugins, "stopping WebKit plugins: %@", [_views description]);
     }
     
-    int viewsCount = [_views count];
-    for (int i = 0; i < viewsCount; i++)
-        [self stopOnePlugin:[_views objectAtIndex:i]];
+    for (NSView *aView in _views)
+        [self stopOnePlugin:aView];
 
     _started = NO;
 }
@@ -251,26 +253,25 @@ static RetainPtr<NSMutableSet>& pluginViews()
     if (!_started)
         return;
 
-    NSUInteger viewsCount = [_views count];
-    if (viewsCount > 0)
+    if (_views.count)
         LOG(Plugins, "stopping WebKit plugins for PageCache: %@", [_views description]);
 
-    for (NSUInteger i = 0; i < viewsCount; ++i)
-        [self stopOnePluginForPageCache:[_views objectAtIndex:i]];
+    for (NSView *aView in _views)
+        [self stopOnePluginForPageCache:aView];
 
     _started = NO;
 }
 
 - (void)restorePluginsFromCache
 {
+    if (!_views.count)
+        return;
+    
+    LOG(Plugins, "restoring WebKit plugins from PageCache: %@", [_views description]);
+    
     WebView *webView = [_documentView _webView];
-
-    NSUInteger viewsCount = [_views count];
-    if (viewsCount > 0)
-        LOG(Plugins, "restoring WebKit plugins from PageCache: %@", [_views description]);
-
-    for (NSUInteger i = 0; i < viewsCount; ++i)
-        [[webView _UIKitDelegateForwarder] webView:webView willAddPlugInView:[_views objectAtIndex:i]];
+    for (NSView *aView in _views)
+        [[webView _UIKitDelegateForwarder] webView:webView willAddPlugInView:aView];
 }
 #endif // PLATFORM(IOS_FAMILY)
 
@@ -322,7 +323,7 @@ static RetainPtr<NSMutableSet>& pluginViews()
             
             if ([view respondsToSelector:@selector(setContainingWindow:)]) {
                 JSC::JSLock::DropAllLocks dropAllLocks(WebCore::commonVM());
-                [view setContainingWindow:[_documentView window]];
+                [view setContainingWindow:_documentView.window];
             }
         }
     }
@@ -364,18 +365,16 @@ static void cancelOutstandingCheck(const void *item, void *context)
 }
 
 - (void)destroyAllPlugins
-{    
+{
     [self stopAllPlugins];
 
-    if ([_views count] > 0) {
+    if (_views.count) {
         LOG(Plugins, "destroying WebKit plugins: %@", [_views description]);
     }
 
     [self _cancelOutstandingChecks];
     
-    int viewsCount = [_views count];
-    for (int i = 0; i < viewsCount; i++) {
-        id aView = [_views objectAtIndex:i];
+    for (NSView *aView in _views) {
         [self destroyOnePlugin:aView];
 
         [pluginViews() removeObject:aView];
@@ -421,7 +420,7 @@ static void cancelOutstandingCheck(const void *item, void *context)
         LOG_ERROR("could not load URL %@ because plug-in has already been destroyed", request);
         return;
     }
-    WebFrame *frame = [_dataSource webFrame];
+    WebFrame *frame = _dataSource.webFrame;
     if (!frame) {
         LOG_ERROR("could not load URL %@ because plug-in has already been stopped", request);
         return;
@@ -429,7 +428,7 @@ static void cancelOutstandingCheck(const void *item, void *context)
     if (!target) {
         target = @"_top";
     }
-    NSString *JSString = [[request URL] _webkit_scriptIfJavaScriptURL];
+    NSString *JSString = [request.URL _webkit_scriptIfJavaScriptURL];
     if (JSString) {
         if ([frame findFrameNamed:target] != frame) {
             LOG_ERROR("JavaScript requests can only be made on the frame that contains the plug-in");
@@ -489,41 +488,41 @@ static void cancelOutstandingCheck(const void *item, void *context)
 // For compatibility only.
 - (NSColor *)selectionColor
 {
-    return [self webPlugInContainerSelectionColor];
+    return self.webPlugInContainerSelectionColor;
 }
 #endif
 
 - (WebFrame *)webFrame
 {
-    return [_dataSource webFrame];
+    return _dataSource.webFrame;
 }
 
 - (WebView *)webView
 {
-    return [[self webFrame] webView];
+    return [self webFrame].webView;
 }
 
 - (NSString *)URLPolicyCheckReferrer
 {
-    NSURL *responseURL = [[[[self webFrame] _dataSource] response] URL];
+    NSURL *responseURL = [[self webFrame] _dataSource].response.URL;
     ASSERT(responseURL);
     return [responseURL _web_originalDataAsString];
 }
 
 - (void)pluginView:(NSView *)pluginView receivedResponse:(NSURLResponse *)response
-{    
+{
     if ([pluginView respondsToSelector:@selector(webPlugInMainResourceDidReceiveResponse:)])
         [pluginView webPlugInMainResourceDidReceiveResponse:response];
     else {
         // Cancel the load since this plug-in does its own loading.
         // FIXME: See <rdar://problem/4258008> for a problem with this.
         auto error = adoptNS([[NSError alloc] _initWithPluginErrorCode:WebKitErrorPlugInWillHandleLoad
-                                                        contentURL:[response URL]
+                                                        contentURL:response.URL
                                                      pluginPageURL:nil
                                                         pluginName:nil // FIXME: Get this from somewhere
-                                                          MIMEType:[response MIMEType]]);
+                                                          MIMEType:response.MIMEType]);
         [_dataSource _documentLoader]->cancelMainResourceLoad(error.get());
-    }        
+    }
 }
 
 - (void)pluginView:(NSView *)pluginView receivedData:(NSData *)data
@@ -596,7 +595,7 @@ static alertDidEndIMP original_TSUpdateCheck_alertDidEnd_returnCode_contextInfo_
 static void WebKit_TSUpdateCheck_alertDidEnd_returnCode_contextInfo_(id object, SEL selector, NSAlert *alert, NSInteger returnCode, void* contextInfo)
 {
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    [[(TSUpdateCheck *)object delegate] autorelease];
+    [((TSUpdateCheck *)object).delegate autorelease];
     ALLOW_DEPRECATED_DECLARATIONS_END
 
     original_TSUpdateCheck_alertDidEnd_returnCode_contextInfo_(object, selector, alert, returnCode, contextInfo);
@@ -606,7 +605,7 @@ static void WebKit_NSAlert_beginSheetModalForWindow_modalDelegate_didEndSelector
 {
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if (isKindOfClass(modalDelegate, @"TSUpdateCheck"))
-        [[(TSUpdateCheck *)modalDelegate delegate] retain];
+        [((TSUpdateCheck *)modalDelegate).delegate retain];
     ALLOW_DEPRECATED_DECLARATIONS_END
 
     original_NSAlert_beginSheetModalForWindow_modalDelegate_didEndSelector_contextInfo_(object, selector, window, modalDelegate, didEndSelector, contextInfo);

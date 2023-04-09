@@ -67,7 +67,7 @@ class EventListener;
 - (BOOL)isFullScreen;
 
 - (void)setElement:(RefPtr<WebCore::Element>&&)element;
-- (WebCore::Element*)element;
+- (WebCore::Element*)element NS_RETURNS_INNER_POINTER;
 
 - (void)enterFullScreen:(NSScreen *)screen;
 - (void)exitFullScreen;

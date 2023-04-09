@@ -45,7 +45,13 @@
 
 @implementation WebNavigationData
 
-- (id)initWithURLString:(NSString *)url title:(NSString *)title originalRequest:(NSURLRequest *)request response:(NSURLResponse *)response hasSubstituteData:(BOOL)hasSubstituteData clientRedirectSource:(NSString *)redirectSource
+- (instancetype)init
+{
+    self = [super init];
+    return self;
+}
+
+- (instancetype)initWithURLString:(NSString *)url title:(NSString *)title originalRequest:(NSURLRequest *)request response:(NSURLResponse *)response hasSubstituteData:(BOOL)hasSubstituteData clientRedirectSource:(NSString *)redirectSource
 {
     self = [super init];
     if (!self)

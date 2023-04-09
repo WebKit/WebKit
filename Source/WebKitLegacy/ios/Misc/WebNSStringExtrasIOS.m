@@ -41,10 +41,10 @@
     CFStringTrimWhitespace((CFMutableStringRef)workString);
     
     // Strip out newlines and carriage returns (likely cut & paste artifact)
-    CFStringFindAndReplace((CFMutableStringRef)workString, CFSTR("\n"), CFSTR(""), CFRangeMake (0, [workString length]), 0);
-    CFStringFindAndReplace((CFMutableStringRef)workString, CFSTR("\r"), CFSTR(""), CFRangeMake (0, [workString length]), 0);
+    CFStringFindAndReplace((CFMutableStringRef)workString, CFSTR("\n"), CFSTR(""), CFRangeMake (0, workString.length), 0);
+    CFStringFindAndReplace((CFMutableStringRef)workString, CFSTR("\r"), CFSTR(""), CFRangeMake (0, workString.length), 0);
     
-    if ([workString length] > 0) {
+    if (workString.length > 0) {
         
         // Looks like an absolute path or a ~-path
         if ([workString characterAtIndex:0] == '/' || 
@@ -79,7 +79,7 @@
                     [workString _web_hasCaseInsensitivePrefix:@"rdar:"]) {
                     URLHasScheme = YES;
                 }
-                else if ([workString length] > firstColonRange.location + 1) {
+                else if (workString.length > firstColonRange.location + 1) {
                     // If the first character following the first colon is not a number
                     // guess that this is not is a host:port combination, and that
                     // the string preceding the colon is a scheme we don't know about.
@@ -104,7 +104,7 @@
                 NSURL *URL;
                 
                 // apparent hostname contains a dot and starts with "www." 
-                if ([[workString lowercaseString] hasPrefix:@"www."]) {
+                if ([workString.lowercaseString hasPrefix:@"www."]) {
                     // - just prepend "http://"
                     [workString insertString:@"http://" atIndex:0];
                     URL = [NSURL _webkit_URLWithUserTypedString:workString];
@@ -113,7 +113,7 @@
                     }
                     
                 // apparent hostname contains a dot and starts with "ftp."
-                } else if ([[workString lowercaseString] hasPrefix:@"ftp."]) {
+                } else if ([workString.lowercaseString hasPrefix:@"ftp."]) {
                     // - just prepend "ftp://"
                     [workString insertString:@"ftp://" atIndex:0];
                     URL = [NSURL _webkit_URLWithUserTypedString:workString];
@@ -147,8 +147,8 @@
                     }
                     
                 // apparent hostname doesn't contain a dot but is equal to "localhost"
-                } else if ([[workString lowercaseString] isEqualToString:@"localhost"] ||
-                           [[workString lowercaseString] hasPrefix:@"localhost/"]) {
+                } else if ([workString.lowercaseString isEqualToString:@"localhost"] ||
+                           [workString.lowercaseString hasPrefix:@"localhost/"]) {
                     // - just prepend "http://"
                     [workString insertString:@"http://" atIndex:0];
                     URL = [NSURL _webkit_URLWithUserTypedString:workString];
@@ -167,14 +167,14 @@
                     
                     // - try prepending "http://www." and appending .com to the hostname, 
                     // but account for a port number if there is one
-                    NSRange secondColonRange = [workString rangeOfString:@":" options:NSLiteralSearch range:NSMakeRange(5, [workString length] - 5)]; // 5 is length of http:
+                    NSRange secondColonRange = [workString rangeOfString:@":" options:NSLiteralSearch range:NSMakeRange(5, workString.length - 5)]; // 5 is length of http:
                     unsigned endOfHostnameOrPort = (secondColonRange.location != NSNotFound) ?
                         secondColonRange.location :
                         (firstSlashRange.location != NSNotFound) ?
                         strlen("http://") + firstSlashRange.location : 
-                        [workString length];  
+                        workString.length;  
                     
-                    if (!(isPrefix && endOfHostnameOrPort == [workString length])) {
+                    if (!(isPrefix && endOfHostnameOrPort == workString.length)) {
                         [workString insertString:@".com" atIndex:endOfHostnameOrPort];
                     }
                     [workString insertString:@"www." atIndex:strlen("http://")];
@@ -204,10 +204,10 @@
 - (NSURL *)_web_bestURLForUserTypedString
 {
     NSArray *URLs = [self _web_possibleURLsForUserTypedString];
-    if ([URLs count] == 0) {
+    if (URLs.count == 0) {
         return nil;
     }
-    return [[URLs objectAtIndex:0] _webkit_canonicalize];
+    return [URLs[0] _webkit_canonicalize];
 }
 
 @end

@@ -33,7 +33,7 @@ using namespace WebCore;
 
 @implementation WebDatabaseQuotaManager
 
-- (id)initWithOrigin:(WebSecurityOrigin *)origin
+- (instancetype)initWithOrigin:(WebSecurityOrigin *)origin
 {
     if (!origin) {
         [self release];

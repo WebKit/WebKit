@@ -38,7 +38,7 @@ using namespace WebCore;
 
 @implementation WebIndicateLayer
 
-- (id)initWithWebView:(WebView *)webView
+- (instancetype)initWithWebView:(WebView *)webView
 {
     self = [super init];
     if (!self)
@@ -58,9 +58,9 @@ using namespace WebCore;
 
 - (void)layoutSublayers
 {
-    CGFloat documentScale = [[[_webView mainFrame] documentView] scale];
-    [self setTransform:CATransform3DMakeScale(documentScale, documentScale, 1.0)];
-    [self setFrame:[_webView frame]];
+    CGFloat documentScale = [[_webView.mainFrame documentView] scale];
+    self.transform = CATransform3DMakeScale(documentScale, documentScale, 1.0);
+    self.frame = [_webView frame];
 }
 
 - (id<CAAction>)actionForKey:(NSString *)key

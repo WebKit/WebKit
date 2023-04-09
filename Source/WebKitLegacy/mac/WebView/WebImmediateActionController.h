@@ -55,7 +55,7 @@ struct DictionaryPopupInfo;
     BOOL _contentPreventsDefault;
 }
 
-- (instancetype)initWithWebView:(WebView *)webView recognizer:(NSImmediateActionGestureRecognizer *)immediateActionRecognizer;
+- (instancetype)initWithWebView:(WebView *)webView recognizer:(NSImmediateActionGestureRecognizer *)immediateActionRecognizer NS_DESIGNATED_INITIALIZER;
 - (void)webViewClosed;
 
 @property (nonatomic, getter=isEnabled) BOOL enabled;

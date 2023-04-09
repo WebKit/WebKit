@@ -60,7 +60,7 @@
 
 @implementation WebClipView
 
-- (id)initWithFrame:(NSRect)frame
+- (instancetype)initWithFrame:(NSRect)frame
 {
     self = [super initWithFrame:frame];
     if (!self)
@@ -85,20 +85,20 @@
 - (NSRect)visibleRect
 {
     if (!_isScrolling)
-        return [super visibleRect];
+        return super.visibleRect;
 
-    WebFrameView *webFrameView = (WebFrameView *)[[self superview] superview];
+    WebFrameView *webFrameView = (WebFrameView *)self.superview.superview;
     if (![webFrameView isKindOfClass:[WebFrameView class]])
-        return [super visibleRect];
+        return super.visibleRect;
 
-    if (auto* coreFrame = core([webFrameView webFrame])) {
+    if (auto* coreFrame = core(webFrameView.webFrame)) {
         if (auto* frameView = coreFrame->view()) {
             if (frameView->isEnclosedInCompositingLayer())
-                return [self bounds];
+                return self.bounds;
         }
     }
 
-    return [super visibleRect];
+    return super.visibleRect;
 }
 
 - (void)_immediateScrollToPoint:(NSPoint)newOrigin
@@ -106,17 +106,17 @@
     _isScrolling = YES;
     _currentScrollIsBlit = NO;
 
-    [[self window] _disableDelayedWindowDisplay];
+    [self.window _disableDelayedWindowDisplay];
 
     [super _immediateScrollToPoint:newOrigin];
 
-    [[self window] _enableDelayedWindowDisplay];
+    [self.window _enableDelayedWindowDisplay];
 
     // We may hit this immediate scrolling code during a layout operation trigged by an AppKit call. When
     // this happens, WebCore will not paint. So, we need to mark this region dirty so that it paints properly.
-    auto *webFrameView = (WebFrameView *)[[self superview] superview];
+    auto *webFrameView = (WebFrameView *)self.superview.superview;
     if ([webFrameView isKindOfClass:[WebFrameView class]]) {
-        if (auto* coreFrame = core([webFrameView webFrame])) {
+        if (auto* coreFrame = core(webFrameView.webFrame)) {
             if (auto* frameView = coreFrame->view()) {
                 if (!frameView->layoutContext().inPaintableState())
                     [self setNeedsDisplay:YES];
@@ -164,7 +164,7 @@
 
 - (NSRect)_focusRingVisibleRect
 {
-    NSRect rect = [self visibleRect];
+    NSRect rect = self.visibleRect;
     if (_haveAdditionalClip)
         rect = NSIntersectionRect(rect, _additionalClip);
     return rect;

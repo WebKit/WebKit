@@ -61,6 +61,7 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
     RefPtr<ArchiveResource> coreResource;
 }
 - (instancetype)initWithCoreResource:(Ref<ArchiveResource>&&)coreResource;
+- (instancetype)init NS_DESIGNATED_INITIALIZER;
 @end
 
 @implementation WebResourcePrivate
@@ -76,12 +77,13 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
 
 - (instancetype)init
 {
-    return [super init];
+    self = [super init];
+    return self;
 }
 
 - (instancetype)initWithCoreResource:(Ref<ArchiveResource>&&)passedResource
 {
-    self = [super init];
+    self = [self init];
     if (!self)
         return nil;
     coreResource = WTFMove(passedResource);
@@ -318,8 +320,8 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
     // Copying it will also cause a performance regression.
     return [self _initWithData:data
                            URL:URL
-                      MIMEType:[response MIMEType]
-              textEncodingName:[response textEncodingName]
+                      MIMEType:response.MIMEType
+              textEncodingName:response.textEncodingName
                      frameName:nil
                       response:response
                       copyData:NO];
@@ -338,11 +340,11 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
 #if !PLATFORM(IOS_FAMILY)
 - (NSFileWrapper *)_fileWrapperRepresentation
 {
-    auto wrapper = adoptNS([[NSFileWrapper alloc] initRegularFileWithContents:[self data]]);
+    auto wrapper = adoptNS([[NSFileWrapper alloc] initRegularFileWithContents:self.data]);
     NSString *filename = [self _suggestedFilename];
-    if (!filename || ![filename length])
-        filename = [[self URL] _webkit_suggestedFilenameWithMIMEType:[self MIMEType]];
-    [wrapper setPreferredFilename:filename];
+    if (!filename || !filename.length)
+        filename = [self.URL _webkit_suggestedFilenameWithMIMEType:self.MIMEType];
+    wrapper.get().preferredFilename = filename;
     return wrapper.autorelease();
 }
 #endif

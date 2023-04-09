@@ -34,12 +34,12 @@
 
 -(BOOL)_web_isKeyEvent:(unichar)key
 {
-    int type = [self type];
+    int type = self.type;
     if (type != NSEventTypeKeyDown && type != NSEventTypeKeyUp)
         return NO;
     
-    NSString *chars = [self charactersIgnoringModifiers];
-    if ([chars length] != 1)
+    NSString *chars = self.charactersIgnoringModifiers;
+    if (chars.length != 1)
         return NO;
     
     unichar c = [chars characterAtIndex:0];
@@ -64,7 +64,7 @@
 
 - (BOOL)_web_isOptionTabKeyEvent
 {
-    return ([self modifierFlags] & NSEventModifierFlagOption) && [self _web_isTabKeyEvent];
+    return (self.modifierFlags & NSEventModifierFlagOption) && [self _web_isTabKeyEvent];
 }
 
 - (BOOL)_web_isReturnOrEnterKeyEvent

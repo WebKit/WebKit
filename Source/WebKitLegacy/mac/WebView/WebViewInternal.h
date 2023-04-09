@@ -134,7 +134,7 @@ WebLayoutMilestones kitLayoutMilestones(OptionSet<WebCore::LayoutMilestone>);
 
 + (BOOL)shouldIncludeInWebKitStatistics;
 
-- (WebCore::LocalFrame*)_mainCoreFrame;
+- (WebCore::LocalFrame*)_mainCoreFrame NS_RETURNS_INNER_POINTER;
 - (WebFrame *)_selectedOrMainFrame;
 
 - (void)_clearCredentials;
@@ -339,7 +339,7 @@ WebLayoutMilestones kitLayoutMilestones(OptionSet<WebCore::LayoutMilestone>);
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY) && defined(__cplusplus)
-- (WebMediaPlaybackTargetPicker *) _devicePicker;
+- (WebMediaPlaybackTargetPicker *) _devicePicker NS_RETURNS_INNER_POINTER;
 - (void)_addPlaybackTargetPickerClient:(WebCore::PlaybackTargetClientContextIdentifier)contextId;
 - (void)_removePlaybackTargetPickerClient:(WebCore::PlaybackTargetClientContextIdentifier)contextId;
 - (void)_showPlaybackTargetPicker:(WebCore::PlaybackTargetClientContextIdentifier)contextId location:(const WebCore::IntPoint&)location hasVideo:(BOOL)hasVideo;

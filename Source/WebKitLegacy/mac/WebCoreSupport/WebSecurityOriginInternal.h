@@ -38,6 +38,6 @@ typedef WebCore::SecurityOrigin WebCoreSecurityOrigin;
 
 - (id)_initWithWebCoreSecurityOrigin:(WebCoreSecurityOrigin *)origin;
 - (id)_initWithString:(NSString *)originString;
-- (WebCoreSecurityOrigin *)_core;
+- (WebCoreSecurityOrigin *)_core NS_RETURNS_INNER_POINTER;
 
 @end

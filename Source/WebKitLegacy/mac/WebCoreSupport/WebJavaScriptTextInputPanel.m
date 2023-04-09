@@ -37,19 +37,19 @@
 
 @implementation WebJavaScriptTextInputPanel
 
-- (id)initWithPrompt:(NSString *)p text:(NSString *)t
+- (instancetype)initWithPrompt:(NSString *)p text:(NSString *)t
 {
     self = [self initWithWindowNibName:@"WebJavaScriptTextInputPanel"];
     if (!self)
         return nil;
-    NSWindow *window = [self window];
+    NSWindow *window = self.window;
     
     // This must be done after the call to [self window], because
     // until then, prompt and textInput will be nil.
     ASSERT(prompt);
     ASSERT(textInput);
-    [prompt setStringValue:p];
-    [textInput setStringValue:t];
+    prompt.stringValue = p;
+    textInput.stringValue = t;
 
     [prompt sizeToFitAndAdjustWindowHeight];
     [window centerOverMainWindow];
@@ -59,7 +59,7 @@
 
 - (NSString *)text
 {
-    return [textInput stringValue];
+    return textInput.stringValue;
 }
 
 - (IBAction)pressedCancel:(id)sender

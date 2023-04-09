@@ -49,7 +49,7 @@ NSString *WebLocalizedString(WebLocalizableStringsBundle *stringsBundle, const c
     } else {
         bundle = stringsBundle->bundle;
         if (bundle == nil) {
-            bundle = [NSBundle bundleWithIdentifier:[NSString stringWithUTF8String:stringsBundle->identifier]];
+            bundle = [NSBundle bundleWithIdentifier:@(stringsBundle->identifier)];
             ASSERT(bundle);
             stringsBundle->bundle = bundle;
         }

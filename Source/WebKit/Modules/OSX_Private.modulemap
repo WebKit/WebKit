@@ -1369,11 +1369,6 @@ framework module WebKit_Private [system] {
     export *
   }
 
-  explicit module WebDashboardRegion {
-    header "WebDashboardRegion.h"
-    export *
-  }
-
   explicit module WebDataSourcePrivate {
     header "WebDataSourcePrivate.h"
     export *

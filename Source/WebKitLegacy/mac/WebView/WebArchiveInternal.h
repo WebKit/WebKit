@@ -36,6 +36,6 @@ namespace WebCore {
 @interface WebArchive (WebInternal)
 
 - (id)_initWithCoreLegacyWebArchive:(WTF::RefPtr<WebCore::LegacyWebArchive>&&)coreLegacyWebArchive;
-- (WebCore::LegacyWebArchive *)_coreLegacyWebArchive;
+- (WebCore::LegacyWebArchive *)_coreLegacyWebArchive NS_RETURNS_INNER_POINTER;
 
 @end

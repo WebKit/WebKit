@@ -30,8 +30,8 @@
 @private
     WebUserContentURLPatternPrivate *_private;
 }
-
-- (id)initWithPatternString:(NSString *)patternString;
+- (instancetype)init NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithPatternString:(NSString *)patternString NS_DESIGNATED_INITIALIZER;
 
 - (BOOL)isValid;
 - (NSString *)scheme;

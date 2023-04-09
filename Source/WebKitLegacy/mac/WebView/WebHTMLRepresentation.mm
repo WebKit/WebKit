@@ -127,7 +127,7 @@ static RetainPtr<NSArray> createNSArray(const HashSet<String, ASCIICaseInsensiti
     return staticUnsupportedTextMIMETypes.get().get();
 }
 
-- (id)init
+- (instancetype)init
 {
     self = [super init];
     if (!self)
@@ -158,7 +158,7 @@ static RetainPtr<NSArray> createNSArray(const HashSet<String, ASCIICaseInsensiti
 {
     _private->dataSource = dataSource;
 
-    if (!_private->includedInWebKitStatistics && [[dataSource webFrame] _isIncludedInWebKitStatistics]) {
+    if (!_private->includedInWebKitStatistics && [dataSource.webFrame _isIncludedInWebKitStatistics]) {
         _private->includedInWebKitStatistics = YES;
         ++WebHTMLRepresentationCount;
     }
@@ -172,7 +172,7 @@ static RetainPtr<NSArray> createNSArray(const HashSet<String, ASCIICaseInsensiti
 - (void)receivedData:(NSData *)data withDataSource:(WebDataSource *)dataSource
 {
     auto protectedSelf = retainPtr(self);
-    WebFrame *webFrame = [dataSource webFrame];
+    WebFrame *webFrame = dataSource.webFrame;
     if (!webFrame)
         return;
 
@@ -186,7 +186,7 @@ static RetainPtr<NSArray> createNSArray(const HashSet<String, ASCIICaseInsensiti
 
     if (_private->pluginView) {
         if (!_private->hasSentResponseToPlugin) {
-            [_private->manualLoader pluginView:_private->pluginView receivedResponse:[dataSource response]];
+            [_private->manualLoader pluginView:_private->pluginView receivedResponse:dataSource.response];
             _private->hasSentResponseToPlugin = YES;
         }
         
@@ -203,7 +203,7 @@ static RetainPtr<NSArray> createNSArray(const HashSet<String, ASCIICaseInsensiti
 
 - (void)finishedLoadingWithDataSource:(WebDataSource *)dataSource
 {
-    WebFrame* webFrame = [dataSource webFrame];
+    WebFrame* webFrame = dataSource.webFrame;
 
     if (_private->pluginView) {
         [_private->manualLoader pluginViewFinishedLoading:_private->pluginView];
@@ -212,19 +212,19 @@ static RetainPtr<NSArray> createNSArray(const HashSet<String, ASCIICaseInsensiti
 
     if (!webFrame)
         return;
-    WebView *webView = [webFrame webView];
-    if ([webView mainFrame] == webFrame && [webView isEditable])
+    WebView *webView = webFrame.webView;
+    if (webView.mainFrame == webFrame && webView.editable)
         core(webFrame)->editor().applyEditingStyleToBodyElement();
 }
 
 - (BOOL)canProvideDocumentSource
 {
-    return [[_private->dataSource webFrame] _canProvideDocumentSource];
+    return [_private->dataSource.webFrame _canProvideDocumentSource];
 }
 
 - (BOOL)canSaveAsWebArchive
 {
-    return [[_private->dataSource webFrame] _canSaveAsWebArchive];
+    return [_private->dataSource.webFrame _canSaveAsWebArchive];
 }
 
 - (NSString *)documentSource
@@ -234,7 +234,7 @@ static RetainPtr<NSArray> createNSArray(const HashSet<String, ASCIICaseInsensiti
         return adoptNS([[NSString alloc] initWithData:parsedArchiveData ? parsedArchiveData->createNSData().get() : nil encoding:NSUTF8StringEncoding]).autorelease();
     }
 
-    auto* coreFrame = core([_private->dataSource webFrame]);
+    auto* coreFrame = core(_private->dataSource.webFrame);
     if (!coreFrame)
         return nil;
     Document* document = coreFrame->document();
@@ -243,10 +243,10 @@ static RetainPtr<NSArray> createNSArray(const HashSet<String, ASCIICaseInsensiti
     TextResourceDecoder* decoder = document->decoder();
     if (!decoder)
         return nil;
-    NSData *data = [_private->dataSource data];
+    NSData *data = _private->dataSource.data;
     if (!data)
         return nil;
-    return decoder->encoding().decode(reinterpret_cast<const char*>([data bytes]), [data length]);
+    return decoder->encoding().decode(reinterpret_cast<const char*>(data.bytes), data.length);
 }
 
 - (NSString *)title
@@ -256,7 +256,7 @@ static RetainPtr<NSArray> createNSArray(const HashSet<String, ASCIICaseInsensiti
 
 - (DOMDocument *)DOMDocument
 {
-    return [[_private->dataSource webFrame] DOMDocument];
+    return _private->dataSource.webFrame.DOMDocument;
 }
 
 #if PLATFORM(MAC)
@@ -327,7 +327,7 @@ static HTMLInputElement* inputElementFromDOMElement(DOMElement* element)
 
 - (DOMElement *)currentForm
 {
-    return kit(core([_private->dataSource webFrame])->selection().currentForm());
+    return kit(core(_private->dataSource.webFrame)->selection().currentForm());
 }
 
 - (NSArray *)controlsInForm:(DOMElement *)form
@@ -343,7 +343,7 @@ static HTMLInputElement* inputElementFromDOMElement(DOMElement* element)
             return nil;
         return kit(coreElement.get());
     });
-    return [result count] ? result.autorelease() : nil;
+    return result.get().count ? result.autorelease() : nil;
 }
 
 // Either get cached regexp or build one that matches any of the labels.
@@ -367,11 +367,10 @@ static RegularExpression* regExpForLabels(NSArray *labels)
     else {
         StringBuilder pattern;
         pattern.append('(');
-        unsigned numLabels = [labels count];
-        unsigned i;
+        NSUInteger numLabels = labels.count;
+        NSUInteger i;
         for (i = 0; i < numLabels; i++) {
-            String label = [labels objectAtIndex:i];
-
+            String label = labels[i];
             bool startsWithWordCharacter = false;
             bool endsWithWordCharacter = false;
             if (label.length()) {
@@ -399,7 +398,7 @@ static RegularExpression* regExpForLabels(NSArray *labels)
         [regExpLabels.get() insertObject:labels atIndex:0];
         regExps.get().insert(0, result);
         // trim if too big
-        if ([regExpLabels.get() count] > regExpCacheSize) {
+        if (regExpLabels.get().get().count > regExpCacheSize) {
             [regExpLabels.get() removeObjectAtIndex:regExpCacheSize];
             RegularExpression* last = regExps.get().last();
             regExps.get().removeLast();
@@ -440,7 +439,7 @@ static NSString* searchForLabelsBeforeElement(LocalFrame* frame, NSArray* labels
             startingTableCell = static_cast<HTMLTableCellElement*>(n);
         } else if (n->hasTagName(trTag) && startingTableCell) {
             NSString *result = frame->searchForLabelsAboveCell(*regExp, startingTableCell, resultDistance);
-            if ([result length]) {
+            if (result.length) {
                 if (resultIsInCellAbove)
                     *resultIsInCellAbove = true;
                 return result;
@@ -466,7 +465,7 @@ static NSString* searchForLabelsBeforeElement(LocalFrame* frame, NSArray* labels
     // previous element, we still might need to search the row above us for a label.
     if (startingTableCell && !searchedCellAbove) {
         NSString *result = frame->searchForLabelsAboveCell(*regExp, startingTableCell, resultDistance);
-        if ([result length]) {
+        if (result.length) {
             if (resultIsInCellAbove)
                 *resultIsInCellAbove = true;
             return result;
@@ -536,7 +535,7 @@ static NSString *matchLabelsAgainstElement(NSArray *labels, Element* element)
     size_t distance;
     bool isInCellAbove;
     
-    NSString *result = searchForLabelsBeforeElement(core([_private->dataSource webFrame]), labels, core(element), &distance, &isInCellAbove);
+    NSString *result = searchForLabelsBeforeElement(core(_private->dataSource.webFrame), labels, core(element), &distance, &isInCellAbove);
     
     if (outDistance) {
         if (distance == notFound)

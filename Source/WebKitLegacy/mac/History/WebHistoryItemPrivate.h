@@ -50,7 +50,7 @@ extern NSString *WebViewportFitCoverValue;
 + (void)_releaseAllPendingPageCaches;
 #endif
 
-- (id)initWithURL:(NSURL *)URL title:(NSString *)title;
+- (instancetype)initWithURL:(NSURL *)URL title:(NSString *)title;
 
 - (NSURL *)URL;
 - (BOOL)lastVisitWasFailure;

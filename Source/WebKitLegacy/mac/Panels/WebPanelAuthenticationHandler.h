@@ -38,7 +38,7 @@
     NSMapTable *windowToChallengeQueue;
 }
 
-+ (id)sharedHandler;
++ (WebPanelAuthenticationHandler*)sharedHandler;
 - (void)startAuthentication:(NSURLAuthenticationChallenge *)challenge window:(NSWindow *)w;
 - (void)cancelAuthentication:(NSURLAuthenticationChallenge *)challenge;
 

@@ -66,7 +66,8 @@ typedef void (*BP_CreatePluginMIMETypesPreferencesFuncPtr)(void);
 }
 
 + (WebBasePluginPackage *)pluginWithPath:(NSString *)pluginPath;
-- (id)initWithPath:(NSString *)pluginPath;
+- (instancetype)init NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithPath:(NSString *)pluginPath NS_DESIGNATED_INITIALIZER;
 
 - (BOOL)getPluginInfoFromPLists;
 

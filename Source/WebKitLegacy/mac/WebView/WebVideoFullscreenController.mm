@@ -138,12 +138,12 @@ static WebAVPlayerView *allocWebAVPlayerViewInstance()
 
 @implementation WebVideoFullscreenController
 
-- (id)init
+- (instancetype)init
 {
     // Do not defer window creation, to make sure -windowNumber is created (needed by WebWindowScaleAnimation).
     auto window = adoptNS([[WebCoreFullScreenWindow alloc] initWithContentRect:NSZeroRect styleMask:(NSWindowStyleMaskFullSizeContentView | NSWindowStyleMaskResizable) backing:NSBackingStoreBuffered defer:NO]);
-    [window setCollectionBehavior:([window collectionBehavior] | NSWindowCollectionBehaviorFullScreenPrimary)];
-    [window setDelegate: self];
+    window.get().collectionBehavior = (window.get().collectionBehavior | NSWindowCollectionBehaviorFullScreenPrimary);
+    window.get().delegate = self;
     self = [super initWithWindow:window.get()];
     if (!self)
         return nil;
@@ -153,7 +153,7 @@ static WebAVPlayerView *allocWebAVPlayerViewInstance()
     _contentOverlay.get().layerContentsRedrawPolicy = NSViewLayerContentsRedrawNever;
     _contentOverlay.get().layer = adoptNS([[WebVideoFullscreenOverlayLayer alloc] init]).get();
     [_contentOverlay setWantsLayer:YES];
-    [_contentOverlay setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
+    _contentOverlay.get().autoresizingMask = (NSViewWidthSizable | NSViewHeightSizable);
     [self windowDidLoad];
 
     return self;
@@ -169,15 +169,15 @@ static WebAVPlayerView *allocWebAVPlayerViewInstance()
 
 - (WebCoreFullScreenWindow *)fullscreenWindow
 {
-    return (WebCoreFullScreenWindow *)[super window];
+    return (WebCoreFullScreenWindow *)super.window;
 }
 
 - (void)windowDidLoad
 {
-    auto window = [self fullscreenWindow];
+    auto window = self.fullscreenWindow;
 
     [window setHasShadow:YES]; // This is nicer with a shadow.
-    [window setLevel:NSPopUpMenuWindowLevel-1];
+    window.level = NSPopUpMenuWindowLevel-1;
 
     _playerView = [allocWebAVPlayerViewInstance() initWithFrame:window.contentLayoutRect];
     _playerView.controlsStyle = AVPlayerViewControlsStyleNone;
@@ -185,7 +185,7 @@ static WebAVPlayerView *allocWebAVPlayerViewInstance()
     _playerView.showsAudioOnlyIndicatorView = NO;
     _playerView.webDelegate = self;
     window.contentView = _playerView;
-    [_contentOverlay setFrame:_playerView.contentOverlayView.bounds];
+    _contentOverlay.get().frame = _playerView.contentOverlayView.bounds;
     [_playerView.contentOverlayView addSubview:_contentOverlay.get()];
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationDidResignActive:) name:NSApplicationDidResignActiveNotification object:NSApp];
@@ -203,7 +203,7 @@ static WebAVPlayerView *allocWebAVPlayerViewInstance()
     ASSERT(videoElement);
     _videoElement = videoElement;
 
-    if (![self isWindowLoaded])
+    if (!self.windowLoaded)
         return;
 
     _playbackModel->setMediaElement(videoElement);
@@ -236,7 +236,7 @@ static WebAVPlayerView *allocWebAVPlayerViewInstance()
 - (void)applicationDidResignActive:(NSNotification*)notification
 {
     UNUSED_PARAM(notification);
-    NSWindow* fullscreenWindow = [self fullscreenWindow];
+    NSWindow* fullscreenWindow = self.fullscreenWindow;
 
     // Replicate the QuickTime Player (X) behavior when losing active application status:
     // Is the fullscreen screen the main screen? (Note: this covers the case where only a

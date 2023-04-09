@@ -34,7 +34,7 @@ class FileChooser;
 {
     RefPtr<WebCore::FileChooser> _chooser;
 }
-
-- (id)initWithChooser:(WebCore::FileChooser&)chooser;
+- (instancetype)init NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithChooser:(WebCore::FileChooser&)chooser NS_DESIGNATED_INITIALIZER;
 
 @end

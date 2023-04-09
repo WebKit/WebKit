@@ -38,5 +38,5 @@ namespace WebCore {
     NSMutableSet *_nilValues;
     BOOL _cacheComplete;
 }
-- (id)initWithHitTestResult:(const WebCore::HitTestResult&)result;
+- (instancetype)initWithHitTestResult:(const WebCore::HitTestResult&)result;
 @end

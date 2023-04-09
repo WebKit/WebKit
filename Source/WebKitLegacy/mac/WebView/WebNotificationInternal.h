@@ -37,7 +37,7 @@ struct NotificationData;
 }
 
 @interface WebNotification (WebNotificationInternal)
-- (id)initWithCoreNotification:(WebCore::NotificationData&&)coreNotification;
+- (instancetype)initWithCoreNotification:(WebCore::NotificationData&&)coreNotification;
 @end
 
 #endif

@@ -56,18 +56,22 @@
 @end
 
 @implementation WebTextIterator
-
+- (instancetype)init
+{
+    self = [super init];
+    return self;
+}
 - (void)dealloc
 {
     [_private release];
     [super dealloc];
 }
 
-- (id)initWithRange:(DOMRange *)range
+- (instancetype)initWithRange:(DOMRange *)range
 {
     self = [super init];
     if (!self)
-        return self;
+        return nil;
     
     _private = [[WebTextIteratorPrivate alloc] init];
     if (!range)

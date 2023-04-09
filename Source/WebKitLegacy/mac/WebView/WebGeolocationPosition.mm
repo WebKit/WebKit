@@ -36,13 +36,18 @@ using namespace WebCore;
 @public
     GeolocationPositionData _position;
 }
-
-- (id)initWithCoreGeolocationPosition:(GeolocationPositionData&&)coreGeolocationPosition;
+- (instancetype)initWithCoreGeolocationPosition:(GeolocationPositionData&&)coreGeolocationPosition;
 @end
 
 @implementation WebGeolocationPositionInternal
 
-- (id)initWithCoreGeolocationPosition:(GeolocationPositionData&&)coreGeolocationPosition
+- (instancetype)init
+{
+    self = [super init];
+    return self;
+}
+
+- (instancetype)initWithCoreGeolocationPosition:(GeolocationPositionData&&)coreGeolocationPosition
 {
     self = [super init];
     if (!self)
@@ -62,7 +67,7 @@ std::optional<GeolocationPositionData> core(WebGeolocationPosition *position)
     return position->_internal->_position;
 }
 
-- (id)initWithTimestamp:(double)timestamp latitude:(double)latitude longitude:(double)longitude accuracy:(double)accuracy
+- (instancetype)initWithTimestamp:(double)timestamp latitude:(double)latitude longitude:(double)longitude accuracy:(double)accuracy
 {
     self = [super init];
     if (!self)
@@ -71,7 +76,7 @@ std::optional<GeolocationPositionData> core(WebGeolocationPosition *position)
     return self;
 }
 
-- (id)initWithGeolocationPosition:(GeolocationPositionData&&)coreGeolocationPosition
+- (instancetype)initWithGeolocationPosition:(GeolocationPositionData&&)coreGeolocationPosition
 {
     self = [super init];
     if (!self)

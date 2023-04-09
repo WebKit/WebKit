@@ -39,9 +39,9 @@ struct WebSecurityOriginPrivate;
     id<WebQuotaManager> _databaseQuotaManager;
 }
 
-+ (id)webSecurityOriginFromDatabaseIdentifier:(NSString *)databaseIdentifier;
++ (instancetype)webSecurityOriginFromDatabaseIdentifier:(NSString *)databaseIdentifier;
 
-- (id)initWithURL:(NSURL *)url;
+- (instancetype)initWithURL:(NSURL *)url;
 
 - (NSString *)protocol;
 - (NSString *)host;

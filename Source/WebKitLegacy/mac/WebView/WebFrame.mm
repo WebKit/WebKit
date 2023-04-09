@@ -416,14 +416,14 @@ static NSURL *createUniqueWebDataURL();
 
 - (WebHTMLView *)_webHTMLDocumentView
 {
-    id documentView = [_private->webFrameView documentView];    
+    id documentView = _private->webFrameView.get().documentView;
     return [documentView isKindOfClass:[WebHTMLView class]] ? (WebHTMLView *)documentView : nil;
 }
 
 - (void)_updateBackgroundAndUpdatesWhileOffscreen
 {
     WebView *webView = getWebView(self);
-    BOOL drawsBackground = [webView drawsBackground];
+    BOOL drawsBackground = webView.drawsBackground;
 #if !PLATFORM(IOS_FAMILY)
     NSColor *backgroundColor = [webView backgroundColor];
 #else
@@ -439,9 +439,9 @@ static NSURL *createUniqueWebDataURL();
         // in progress; WebFrameLoaderClient keeps it set to NO during the load process.
         WebFrame *webFrame = kit(frame);
         if (!drawsBackground)
-            [[[webFrame frameView] _scrollView] setDrawsBackground:NO];
+            [[webFrame.frameView _scrollView] setDrawsBackground:NO];
 #if !PLATFORM(IOS_FAMILY)
-        [[[webFrame frameView] _scrollView] setBackgroundColor:backgroundColor];
+        [webFrame.frameView _scrollView].backgroundColor = backgroundColor;
 #endif
 
         if (auto* view = frame->view()) {
@@ -454,7 +454,7 @@ static NSURL *createUniqueWebDataURL();
             WebCore::Color color(WebCore::roundAndClampToSRGBALossy(backgroundColor));
 #endif
             view->setBaseBackgroundColor(color);
-            view->setShouldUpdateWhileOffscreen([webView shouldUpdateWhileOffscreen]);
+            view->setShouldUpdateWhileOffscreen(webView.shouldUpdateWhileOffscreen);
         }
     }
 }
@@ -497,7 +497,7 @@ static NSURL *createUniqueWebDataURL();
 
 - (BOOL)_hasSelection
 {
-    id documentView = [_private->webFrameView documentView];    
+    id documentView = _private->webFrameView.get().documentView;
 
     // optimization for common case to avoid creating potentially large selection string
     if ([documentView isKindOfClass:[WebHTMLView class]])
@@ -505,14 +505,14 @@ static NSURL *createUniqueWebDataURL();
             return coreFrame->selection().isRange();
 
     if ([documentView conformsToProtocol:@protocol(WebDocumentText)])
-        return [[documentView selectedString] length] > 0;
+        return [documentView selectedString].length > 0;
     
     return NO;
 }
 
 - (void)_clearSelection
 {
-    id documentView = [_private->webFrameView documentView];    
+    id documentView = _private->webFrameView.get().documentView;    
     if ([documentView conformsToProtocol:@protocol(WebDocumentText)])
         [documentView deselectAll];
 }
@@ -556,7 +556,7 @@ static NSURL *createUniqueWebDataURL();
     // We rely on WebDocumentSelection protocol implementors to call this method when they become first 
     // responder. It would be nicer to just notice first responder changes here instead, but there's no 
     // notification sent when the first responder changes in general (Radar 2573089).
-    WebFrame *frameWithSelection = [[getWebView(self) mainFrame] _findFrameWithSelection];
+    WebFrame *frameWithSelection = [getWebView(self).mainFrame _findFrameWithSelection];
     if (frameWithSelection != self)
         [frameWithSelection _clearSelection];
 
@@ -629,7 +629,7 @@ static NSURL *createUniqueWebDataURL();
 #if !PLATFORM(IOS_FAMILY)
     ASSERT([[NSGraphicsContext currentContext] isFlipped]);
 
-    CGContextRef ctx = [[NSGraphicsContext currentContext] CGContext];
+    CGContextRef ctx = [NSGraphicsContext currentContext].CGContext;
 #else
     CGContextRef ctx = WKGetCurrentGraphicsContext();
 #endif
@@ -733,7 +733,7 @@ static NSURL *createUniqueWebDataURL();
 {
     bool insideFixed = false; // FIXME: get via firstRectForRange().
     NSRect rangeRect = [self _firstRectForDOMRange:range];
-    auto* startNode = core([range startContainer]);
+    auto* startNode = core(range.startContainer);
         
     if (startNode && startNode->renderer()) {
 #if !PLATFORM(IOS_FAMILY)
@@ -754,7 +754,7 @@ static NSURL *createUniqueWebDataURL();
 {
     bool insideFixed = false; // FIXME: get via firstRectForRange().
     NSRect rangeRect = NSInsetRect([self _firstRectForDOMRange:range], inset, inset);
-    auto* startNode = core([range startContainer]);
+    auto* startNode = core(range.startContainer);
 
     if (startNode && startNode->renderer()) {
         auto* layer = startNode->renderer()->enclosingLayer();
@@ -952,7 +952,7 @@ static NSURL *createUniqueWebDataURL();
     if (!view)
         return;
     // FIXME: These are fake modifier keys here, but they should be real ones instead.
-    WebCore::PlatformMouseEvent event(WebCore::IntPoint(windowLoc), WebCore::IntPoint(WebCore::globalPoint(windowLoc, [view->platformWidget() window])),
+    WebCore::PlatformMouseEvent event(WebCore::IntPoint(windowLoc), WebCore::IntPoint(WebCore::globalPoint(windowLoc, view->platformWidget().window)),
         WebCore::LeftButton, WebCore::PlatformEvent::Type::MouseMoved, 0, { }, WallTime::now(), WebCore::ForceAtClick, WebCore::NoTap);
     _private->coreFrame->eventHandler().dragSourceEndedAt(event, coreDragOperationMask(dragOperationMask));
 }
@@ -1397,7 +1397,7 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
 - (NSView *)documentView
 {
     WebCore::LocalFrame *frame = core(self);
-    return [[kit(frame) frameView] documentView];
+    return kit(frame).frameView.documentView;
 }
 
 - (int)layoutCount
@@ -1624,7 +1624,7 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
         return;
         
     Vector<WebCore::CompositionUnderline> underlines;
-    frame->editor().setComposition(text, underlines, { }, 0, [text length]);
+    frame->editor().setComposition(text, underlines, { }, 0, text.length);
 }
 
 - (void)confirmMarkedText:(NSString *)text
@@ -1726,8 +1726,8 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
                 // the same metadata are for the same result. So combine their ranges.
                 ASSERT(previousDOMRange == [ranges lastObject]);
                 [ranges removeLastObject];
-                DOMNode *startContainer = [domRange startContainer];
-                int startOffset = [domRange startOffset];
+                DOMNode *startContainer = domRange.startContainer;
+                int startOffset = domRange.startOffset;
                 [previousDOMRange setEnd:startContainer offset:startOffset];
                 [ranges addObject:previousDOMRange.get()];
             }
@@ -1770,7 +1770,7 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
     PAL::TextEncoding encoding(textEncodingName);
     if (!encoding.isValid())
         encoding = PAL::WindowsLatin1Encoding();
-    return encoding.decode(reinterpret_cast<const char*>([data bytes]), [data length]);
+    return encoding.decode(reinterpret_cast<const char*>(data.bytes), data.length);
 }
 
 - (NSRect)caretRectAtNode:(DOMNode *)node offset:(int)offset affinity:(NSSelectionAffinity)affinity
@@ -1855,13 +1855,13 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
 
 - (void)_replaceSelectionWithWebArchive:(WebArchive *)webArchive selectReplacement:(BOOL)selectReplacement smartReplace:(BOOL)smartReplace
 {
-    NSArray* subresources = [webArchive subresources];
+    NSArray* subresources = webArchive.subresources;
     for (WebResource* subresource in subresources) {
-        if (![[self dataSource] subresourceForURL:[subresource URL]])
-            [[self dataSource] addSubresource:subresource];
+        if (![self.dataSource subresourceForURL:subresource.URL])
+            [self.dataSource addSubresource:subresource];
     }
 
-    DOMDocumentFragment* fragment = [[self dataSource] _documentFragmentWithArchive:webArchive];
+    DOMDocumentFragment* fragment = [self.dataSource _documentFragmentWithArchive:webArchive];
     [self _replaceSelectionWithFragment:fragment selectReplacement:selectReplacement smartReplace:smartReplace matchStyle:NO];
 }
 
@@ -1981,7 +1981,7 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
     // inspect source
     bool hasWhitespaceAtStart = false;
     bool hasWhitespaceAtEnd = false;
-    unsigned pasteLength = [pasteString length];
+    unsigned pasteLength = pasteString.length;
     if (pasteLength > 0) {
         NSCharacterSet *whiteSet = [NSCharacterSet whitespaceAndNewlineCharacterSet];
         
@@ -2009,21 +2009,21 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
     auto& frameLoader = _private->coreFrame->loader();
     auto* documentLoader = frameLoader.documentLoader();
     if (documentLoader && !documentLoader->mainDocumentError().isNull())
-        [result setObject:(NSError *)documentLoader->mainDocumentError() forKey:WebFrameMainDocumentError];
+        result[WebFrameMainDocumentError] = (NSError *)documentLoader->mainDocumentError();
         
     if (frameLoader.subframeLoader().containsPlugins())
-        [result setObject:@YES forKey:WebFrameHasPlugins];
+        result[WebFrameHasPlugins] = @YES;
     
     if (auto* domWindow = _private->coreFrame->document()->domWindow()) {
         if (domWindow->hasEventListeners(WebCore::eventNames().unloadEvent))
-            [result setObject:@YES forKey:WebFrameHasUnloadListener];
+            result[WebFrameHasUnloadListener] = @YES;
         if (domWindow->optionalApplicationCache())
-            [result setObject:@YES forKey:WebFrameUsesApplicationCache];
+            result[WebFrameUsesApplicationCache] = @YES;
     }
     
     if (auto* document = _private->coreFrame->document()) {
         if (WebCore::DatabaseManager::singleton().hasOpenDatabases(*document))
-            [result setObject:@YES forKey:WebFrameUsesDatabases];
+            result[WebFrameUsesDatabases] = @YES;
     }
     
     return result;
@@ -2101,18 +2101,18 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
 - (void)setAllowsScrollersToOverlapContent:(BOOL)flag
 {
     ASSERT([[[self frameView] _scrollView] isKindOfClass:[WebDynamicScrollBarsView class]]);
-    [(WebDynamicScrollBarsView *)[[self frameView] _scrollView] setAllowsScrollersToOverlapContent:flag];
+    [(WebDynamicScrollBarsView *)[self.frameView _scrollView] setAllowsScrollersToOverlapContent:flag];
 }
 
 - (void)setAlwaysHideHorizontalScroller:(BOOL)flag
 {
     ASSERT([[[self frameView] _scrollView] isKindOfClass:[WebDynamicScrollBarsView class]]);
-    [(WebDynamicScrollBarsView *)[[self frameView] _scrollView] setAlwaysHideHorizontalScroller:flag];
+    [(WebDynamicScrollBarsView *)[self.frameView _scrollView] setAlwaysHideHorizontalScroller:flag];
 }
 - (void)setAlwaysHideVerticalScroller:(BOOL)flag
 {
     ASSERT([[[self frameView] _scrollView] isKindOfClass:[WebDynamicScrollBarsView class]]);
-    [(WebDynamicScrollBarsView *)[[self frameView] _scrollView] setAlwaysHideVerticalScroller:flag];
+    [(WebDynamicScrollBarsView *)[self.frameView _scrollView] setAlwaysHideVerticalScroller:flag];
 }
 #endif
 
@@ -2244,7 +2244,7 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
 
 - (DOMDocumentFragment *)_documentFragmentForWebArchive:(WebArchive *)webArchive
 {
-    return [[self dataSource] _documentFragmentWithArchive:webArchive];
+    return [self.dataSource _documentFragmentWithArchive:webArchive];
 }
 
 - (DOMDocumentFragment *)_documentFragmentForImageData:(NSData *)data withRelativeURLPart:(NSString *)relativeURLPart andMIMEType:(NSString *)mimeType
@@ -2316,7 +2316,7 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
 
 - (NSURL *)_unreachableURL
 {
-    return [[self _dataSource] unreachableURL];
+    return [self _dataSource].unreachableURL;
 }
 
 - (void)_generateTestReport:(NSString *) message withGroup:(NSString *)group
@@ -2429,7 +2429,7 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
     // Note that other users of WebKit API use nil requests or requests with nil URLs or empty URLs, so we
     // only implement this workaround when the request had a non-nil or non-empty URL.
     if (!resourceRequest.url().isValid() && !resourceRequest.url().isEmpty())
-        resourceRequest.setURL([NSURL URLWithString:[@"file:" stringByAppendingString:[[request URL] absoluteString]]]);
+        resourceRequest.setURL([NSURL URLWithString:[@"file:" stringByAppendingString:request.URL.absoluteString]]);
 
     coreFrame->loader().load(WebCore::FrameLoadRequest(*coreFrame, resourceRequest));
 }
@@ -2450,7 +2450,7 @@ static NSURL *createUniqueWebDataURL()
 
     NSURL *responseURL = nil;
     if (baseURL)
-        baseURL = [baseURL absoluteURL];
+        baseURL = baseURL.absoluteURL;
     else {
         baseURL = aboutBlankURL();
         responseURL = createUniqueWebDataURL();
@@ -2468,8 +2468,8 @@ static NSURL *createUniqueWebDataURL()
 
     WebCore::ResourceRequest request(baseURL);
 
-    WebCore::ResourceResponse response(responseURL, MIMEType, [data length], encodingName);
-    WebCore::SubstituteData substituteData(WebCore::SharedBuffer::create(data), [unreachableURL absoluteURL], response, WebCore::SubstituteData::SessionHistoryVisibility::Hidden);
+    WebCore::ResourceResponse response(responseURL, MIMEType, data.length, encodingName);
+    WebCore::SubstituteData substituteData(WebCore::SharedBuffer::create(data), unreachableURL.absoluteURL, response, WebCore::SubstituteData::SessionHistoryVisibility::Hidden);
 
     _private->coreFrame->loader().load(WebCore::FrameLoadRequest(*_private->coreFrame, request, substituteData));
 }

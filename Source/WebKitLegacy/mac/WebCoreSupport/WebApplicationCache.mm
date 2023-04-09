@@ -75,9 +75,9 @@ static NSString *applicationCacheBundleIdentifier()
         return @"com.apple.WebAppCache";
 #endif
 
-    NSString *appName = [[NSBundle mainBundle] bundleIdentifier];
+    NSString *appName = [NSBundle mainBundle].bundleIdentifier;
     if (!appName)
-        appName = [[NSProcessInfo processInfo] processName];
+        appName = [NSProcessInfo processInfo].processName;
 
     ASSERT(appName);
     return appName;

@@ -37,7 +37,7 @@
 - (void)_web_scaleToMaxSize:(NSSize)size
 {
     float heightResizeDelta = 0.0f, widthResizeDelta = 0.0f, resizeDelta = 0.0f;
-    NSSize originalSize = [self size];
+    NSSize originalSize = self.size;
 
     if(originalSize.width > size.width){
         widthResizeDelta = size.width / originalSize.width;
@@ -56,16 +56,16 @@
         ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         [self setScalesWhenResized:YES];
         ALLOW_DEPRECATED_DECLARATIONS_END
-        [self setSize:newSize];
+        self.size = newSize;
     }
 }
 
 - (void)_web_dissolveToFraction:(float)delta
 {
-    NSImage *dissolvedImage = [[NSImage alloc] initWithSize:[self size]];
+    NSImage *dissolvedImage = [[NSImage alloc] initWithSize:self.size];
 
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    NSPoint point = [self isFlipped] ? NSMakePoint(0, [self size].height) : NSZeroPoint;
+    NSPoint point = [self isFlipped] ? NSMakePoint(0, self.size.height) : NSZeroPoint;
     ALLOW_DEPRECATED_DECLARATIONS_END
     
     // In this case the dragging image is always correct.

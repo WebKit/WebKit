@@ -44,7 +44,7 @@
 
 @implementation WebAuthenticationPanel
 
--(id)initWithCallback:(id)cb selector:(SEL)sel
+-(instancetype)initWithCallback:(id)cb selector:(SEL)sel
 {
     self = [self init];
     if (self != nil) {
@@ -108,7 +108,7 @@
         if ([NSBundle loadNibNamed:WebAuthenticationPanelNibName owner:self]) {
             ALLOW_DEPRECATED_DECLARATIONS_END
             nibLoaded = YES;
-            [imageView setImage:[NSImage imageNamed:@"NSApplicationIcon"]];
+            imageView.image = [NSImage imageNamed:@"NSApplicationIcon"];
         } else {
             LOG_ERROR("couldn't load nib named '%@'", WebAuthenticationPanelNibName);
             return FALSE;
@@ -123,16 +123,16 @@
 {
     [self loadNib];
 
-    NSURLProtectionSpace *space = [chall protectionSpace];
+    NSURLProtectionSpace *space = chall.protectionSpace;
 
     NSString *host;
-    if ([space port] == 0) {
-        host = [[space host] _webkit_decodeHostName];
+    if (space.port == 0) {
+        host = [space.host _webkit_decodeHostName];
     } else {
-        host = [NSString stringWithFormat:@"%@:%ld", [[space host] _webkit_decodeHostName], (long)[space port]];
+        host = [NSString stringWithFormat:@"%@:%ld", [space.host _webkit_decodeHostName], (long)space.port];
     }
 
-    NSString *realm = [space realm];
+    NSString *realm = space.realm;
     if (!realm)
         realm = @"";
     NSString *message;
@@ -142,11 +142,11 @@
     // to keep a malicious realm name from spoofing the wording in the sheet text.
     BOOL realmNameIsSimple = [realm rangeOfCharacterFromSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]].location == NSNotFound;    
     
-    if ([chall previousFailureCount] == 0) {
-        if ([space isProxy]) {
+    if (chall.previousFailureCount == 0) {
+        if (space.isProxy) {
             message = [NSString stringWithFormat:UI_STRING_INTERNAL("To view this page, you must log in to the %@ proxy server %@.",
                                                            "prompt string in authentication panel"),
-                [space proxyType], host];
+                space.proxyType, host];
         } else {
             if (realmNameIsSimple)
                 message = [NSString stringWithFormat:UI_STRING_INTERNAL("To view this page, you must log in to area “%@” on %@.",
@@ -156,10 +156,10 @@
                                                                "prompt string in authentication panel"), host];
         }
     } else {
-        if ([space isProxy]) {
+        if (space.isProxy) {
             message = [NSString stringWithFormat:UI_STRING_INTERNAL("The user name or password you entered for the %@ proxy server %@ was incorrect. Make sure you’re entering them correctly, and then try again.",
                                                            "prompt string in authentication panel"),
-                [space proxyType], host];
+                space.proxyType, host];
         } else {
             if (realmNameIsSimple)
                 message = [NSString stringWithFormat:UI_STRING_INTERNAL("The user name or password you entered for area “%@” on %@ was incorrect. Make sure you’re entering them correctly, and then try again.",
@@ -170,18 +170,18 @@
         }
     }
     
-    if (![space isProxy] && !realmNameIsSimple) {
+    if (!space.isProxy && !realmNameIsSimple) {
         [separateRealmLabel setHidden:NO];
-        [separateRealmLabel setStringValue:realm];
-        [separateRealmLabel setAutoresizingMask:NSViewMinYMargin];
+        separateRealmLabel.stringValue = realm;
+        separateRealmLabel.autoresizingMask = NSViewMinYMargin;
         [separateRealmLabel sizeToFitAndAdjustWindowHeight];
-        [separateRealmLabel setAutoresizingMask:NSViewMaxYMargin];
+        separateRealmLabel.autoresizingMask = NSViewMaxYMargin;
     } else {
         // In the proxy or "simple" realm name case, we need to hide the 'separateRealmLabel'
         // and move the rest of the contents up appropriately to fill the space.
-        NSRect mainLabelFrame = [mainLabel frame];
-        NSRect realmFrame = [separateRealmLabel frame];
-        NSRect smallLabelFrame = [smallLabel frame];
+        NSRect mainLabelFrame = mainLabel.frame;
+        NSRect realmFrame = separateRealmLabel.frame;
+        NSRect smallLabelFrame = smallLabel.frame;
 
         // Find the distance between the 'smallLabel' and the label above it, initially the 'separateRealmLabel'.
         // Then, find the current distance between 'smallLabel' and 'mainLabel'.  The difference between
@@ -191,15 +191,15 @@
         CGFloat deltaMargin = smallLabelToMainLabel - smallLabelMargin;
         
         [separateRealmLabel setHidden:YES];
-        NSRect windowFrame = [panel frame];
+        NSRect windowFrame = panel.frame;
         windowFrame.size.height -= deltaMargin;
         [panel setFrame:windowFrame display:NO];
     }
     
-    [mainLabel setStringValue:message];
+    mainLabel.stringValue = message;
     [mainLabel sizeToFitAndAdjustWindowHeight];
 
-    if ([space receivesCredentialSecurely] || [[space protocol] _webkit_isCaseInsensitiveEqualToString:@"https"]) {
+    if (space.receivesCredentialSecurely || [space.protocol _webkit_isCaseInsensitiveEqualToString:@"https"]) {
         [smallLabel setStringValue:
             UI_STRING_INTERNAL("Your login information will be sent securely.",
                 "message in authentication panel")];
@@ -211,13 +211,13 @@
                 "message in authentication panel")];
     }
 
-    if ([[chall proposedCredential] user] != nil) {
-        [username setStringValue:[[chall proposedCredential] user]];
-        [panel setInitialFirstResponder:password];
+    if (chall.proposedCredential.user != nil) {
+        username.stringValue = chall.proposedCredential.user;
+        panel.initialFirstResponder = password;
     } else {
-        [username setStringValue:@""];
-        [password setStringValue:@""];
-        [panel setInitialFirstResponder:username];
+        username.stringValue = @"";
+        password.stringValue = @"";
+        panel.initialFirstResponder = username;
     }
 }
 
@@ -230,7 +230,7 @@
     NSURLCredential *credential = nil;
 
     if ([[NSApplication sharedApplication] runModalForWindow:panel] == 0) {
-        credential = [[NSURLCredential alloc] initWithUser:[username stringValue] password:[password stringValue] persistence:([remember state] == NSControlStateValueOn) ? NSURLCredentialPersistencePermanent : NSURLCredentialPersistenceForSession];
+        credential = [[NSURLCredential alloc] initWithUser:username.stringValue password:password.stringValue persistence:(remember.state == NSControlStateValueOn) ? NSURLCredentialPersistencePermanent : NSURLCredentialPersistenceForSession];
     }
 
     [callback performSelector:selector withObject:chall withObject:credential];
@@ -262,7 +262,7 @@
     ASSERT(challenge != nil);
 
     if (returnCode == 0) {
-        credential = [[NSURLCredential alloc] initWithUser:[username stringValue] password:[password stringValue] persistence:([remember state] == NSControlStateValueOn) ? NSURLCredentialPersistencePermanent : NSURLCredentialPersistenceForSession];
+        credential = [[NSURLCredential alloc] initWithUser:username.stringValue password:password.stringValue persistence:(remember.state == NSControlStateValueOn) ? NSURLCredentialPersistencePermanent : NSURLCredentialPersistenceForSession];
     }
 
     // We take this tricky approach to nilling out and releasing the challenge

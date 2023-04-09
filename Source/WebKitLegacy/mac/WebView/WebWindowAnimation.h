@@ -33,7 +33,7 @@
     RetainPtr<NSAnimation> _subAnimation;
     NSTimeInterval _hintedDuration;
 }
-- (id)initWithHintedDuration:(NSTimeInterval)duration window:(NSWindow *)window initalFrame:(NSRect)initialFrame finalFrame:(NSRect)finalFrame;
+- (instancetype)initWithHintedDuration:(NSTimeInterval)duration window:(NSWindow *)window initalFrame:(NSRect)initialFrame finalFrame:(NSRect)finalFrame;
 
 - (void)setSubAnimation:(NSAnimation *)animation;
 
@@ -51,7 +51,7 @@
     BOOL _isStopped;
     
 }
-- (id)initWithDuration:(NSTimeInterval)duration window:(NSWindow *)window initialAlpha:(CGFloat)initialAlpha finalAlpha:(CGFloat)finalAlpha;
+- (instancetype)initWithDuration:(NSTimeInterval)duration window:(NSWindow *)window initialAlpha:(CGFloat)initialAlpha finalAlpha:(CGFloat)finalAlpha;
 
 - (CGFloat)currentAlpha;
 

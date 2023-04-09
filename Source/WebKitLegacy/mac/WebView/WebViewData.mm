@@ -111,7 +111,7 @@ int pluginDatabaseClientCount = 0;
 #endif
 }
 
-- (id)init 
+- (instancetype)init 
 {
     self = [super init];
     if (!self)

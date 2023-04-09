@@ -40,14 +40,14 @@ static NSString *WebModalDialogPretendWindow = @"WebModalDialogPretendWindow";
 
 WebPanelAuthenticationHandler *sharedHandler;
 
-+ (id)sharedHandler
++ (WebPanelAuthenticationHandler*)sharedHandler
 {
     if (sharedHandler == nil)
         sharedHandler = [[self alloc] init];
     return sharedHandler;
 }
 
--(id)init
+-(instancetype)init
 {
     self = [super init];
     if (self != nil) {
@@ -84,15 +84,15 @@ WebPanelAuthenticationHandler *sharedHandler;
     if (!queue)
         return;
 
-    NSURLAuthenticationChallenge *challenge = [[queue objectAtIndex:0] retain];
+    NSURLAuthenticationChallenge *challenge = [queue[0] retain];
     [queue removeObjectAtIndex:0];
-    if (![queue count])
+    if (!queue.count)
         [windowToChallengeQueue removeObjectForKey:window];
 
-    NSURLCredential *latestCredential = [[NSURLCredentialStorage sharedCredentialStorage] defaultCredentialForProtectionSpace:[challenge protectionSpace]];
+    NSURLCredential *latestCredential = [[NSURLCredentialStorage sharedCredentialStorage] defaultCredentialForProtectionSpace:challenge.protectionSpace];
 
-    if ([latestCredential hasPassword]) {
-        [[challenge sender] useCredential:latestCredential forAuthenticationChallenge:challenge];
+    if (latestCredential.hasPassword) {
+        [challenge.sender useCredential:latestCredential forAuthenticationChallenge:challenge];
         [challenge release];
         return;
     }
@@ -116,8 +116,8 @@ WebPanelAuthenticationHandler *sharedHandler;
     // cancel loading instead, since this case is fairly
     // unlikely (how would you be loading a page if you had an error
     // sheet up?)
-    if ([w attachedSheet] != nil) {
-        [[challenge sender] cancelAuthenticationChallenge:challenge];
+    if (w.attachedSheet != nil) {
+        [challenge.sender cancelAuthenticationChallenge:challenge];
         return;
     }
 
@@ -152,9 +152,9 @@ WebPanelAuthenticationHandler *sharedHandler;
     }
 
     if (credential == nil) {
-        [[challenge sender] continueWithoutCredentialForAuthenticationChallenge:challenge];
+        [challenge.sender continueWithoutCredentialForAuthenticationChallenge:challenge];
     } else {
-        [[challenge sender] useCredential:credential forAuthenticationChallenge:challenge];
+        [challenge.sender useCredential:credential forAuthenticationChallenge:challenge];
     }
 
     [self tryNextChallengeForWindow:window];

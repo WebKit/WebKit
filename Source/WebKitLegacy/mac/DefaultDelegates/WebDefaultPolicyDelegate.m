@@ -62,9 +62,9 @@ static WebDefaultPolicyDelegate *sharedDelegate = nil;
                                                  frame:(WebFrame *)frame
                                       decisionListener:(id <WebPolicyDecisionListener>)listener
 {
-    if ([[request URL] isFileURL]) {
+    if (request.URL.fileURL) {
         BOOL isDirectory = NO;
-        BOOL exists = [[NSFileManager defaultManager] fileExistsAtPath:[[request URL] path] isDirectory:&isDirectory];
+        BOOL exists = [[NSFileManager defaultManager] fileExistsAtPath:request.URL.path isDirectory:&isDirectory];
 
         if (exists && !isDirectory && [wv _canShowMIMEType:type])
             [listener use];
@@ -81,18 +81,18 @@ static WebDefaultPolicyDelegate *sharedDelegate = nil;
                                                          frame:(WebFrame *)frame
                                               decisionListener:(id <WebPolicyDecisionListener>)listener
 {
-    WebNavigationType navType = (WebNavigationType)[[actionInformation objectForKey:WebActionNavigationTypeKey] intValue];
+    WebNavigationType navType = (WebNavigationType)[actionInformation[WebActionNavigationTypeKey] intValue];
 
-    if ([WebView _canHandleRequest:request forMainFrame:frame == [wv mainFrame]]) {
+    if ([WebView _canHandleRequest:request forMainFrame:frame == wv.mainFrame]) {
         [listener use];
     } else if (navType == WebNavigationTypePlugInRequest) {
         [listener use];
     } else {
         // A file URL shouldn't fall through to here, but if it did,
         // it would be a security risk to open it.
-        if (![[request URL] isFileURL]) {
+        if (!request.URL.fileURL) {
 #if !PLATFORM(IOS_FAMILY)
-            [[NSWorkspace sharedWorkspace] openURL:[request URL]];
+            [[NSWorkspace sharedWorkspace] openURL:request.URL];
 #endif
         }
         [listener ignore];

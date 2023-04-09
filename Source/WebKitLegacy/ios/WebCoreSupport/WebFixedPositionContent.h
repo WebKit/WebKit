@@ -42,7 +42,7 @@ typedef NS_ENUM(NSInteger, WebFixedPositionAnchorEdge) {
 
 @interface WebFixedPositionContent : NSObject
 
-- (id)initWithWebView:(WebView *)webView;
+- (instancetype)initWithWebView:(WebView *)webView;
 
 - (void)scrollOrZoomChanged:(CGRect)positionedObjectsRect;
 - (void)overflowScrollPositionForLayer:(CALayer *)scrollLayer changedTo:(CGPoint)scrollPosition;

@@ -30,7 +30,7 @@
 - (unsigned)pageNumberForRect:(CGRect)rect;
 - (unsigned)totalPages;
 
-- (CGPDFDocumentRef)doc;
+- (CGPDFDocumentRef)doc CF_RETURNS_NOT_RETAINED;
 - (CGRect)rectForPageNumber:(unsigned)pageNum;
 
 @end

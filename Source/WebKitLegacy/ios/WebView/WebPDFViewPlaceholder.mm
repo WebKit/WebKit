@@ -147,12 +147,12 @@ static const float PAGE_HEIGHT_INSET = 4.0f * 2.0f;
 
 - (CGPDFDocumentRef)doc
 {
-    return [self document];
+    return self.document;
 }
 
 - (NSUInteger)totalPages
 {
-    return CGPDFDocumentGetNumberOfPages([self document]);
+    return CGPDFDocumentGetNumberOfPages(self.document);
 }
 
 + (void)setAsPDFDocRepAndView
@@ -195,8 +195,8 @@ static const float PAGE_HEIGHT_INSET = 4.0f * 2.0f;
 {
     [self dataSourceUpdated:dataSource];
 
-    if ([dataSource request])
-        [self _updateTitleForURL:[[dataSource request] URL]];
+    if (dataSource.request)
+        [self _updateTitleForURL:dataSource.request.URL];
 
     WAKView *superview = [self superview];
     if (superview)
@@ -274,7 +274,7 @@ static const float PAGE_HEIGHT_INSET = 4.0f * 2.0f;
     [self dataSourceUpdated:dataSource];
 
     _didFinishLoad = YES;
-    auto provider = adoptCF(CGDataProviderCreateWithCFData((CFDataRef)[dataSource data]));
+    auto provider = adoptCF(CGDataProviderCreateWithCFData((CFDataRef)dataSource.data));
     if (!provider)
         return;
 
@@ -302,7 +302,7 @@ static const float PAGE_HEIGHT_INSET = 4.0f * 2.0f;
 
     NSArray *scripts = allScriptsInPDFDocument(pdfDocument);
 
-    if ([scripts count]) {
+    if (scripts.count) {
         JSGlobalContextRef ctx = JSGlobalContextCreate(0);
         JSObjectRef jsPDFDoc = makeJSPDFDoc(ctx, _dataSource);
         for (NSString *script in scripts)
@@ -313,11 +313,11 @@ static const float PAGE_HEIGHT_INSET = 4.0f * 2.0f;
 
 - (void)_updateTitleForURL:(NSURL *)URL
 {
-    NSString *titleFromURL = [URL lastPathComponent];
-    if (![titleFromURL length] || [titleFromURL isEqualToString:@"/"])
+    NSString *titleFromURL = URL.lastPathComponent;
+    if (!titleFromURL.length || [titleFromURL isEqualToString:@"/"])
         titleFromURL = [[URL _web_hostString] _webkit_decodeHostName];
 
-    [self setTitle:titleFromURL];
+    self.title = titleFromURL;
     [[self _frame] _dispatchDidReceiveTitle:titleFromURL];
 }
 
@@ -334,7 +334,7 @@ static const float PAGE_HEIGHT_INSET = 4.0f * 2.0f;
         title = adoptCF(CGPDFStringCopyTextString(value));
 
     if (title && CFStringGetLength(title.get())) {
-        [self setTitle:(NSString *)title.get()];
+        self.title = (NSString *)title.get();
         [[self _frame] _dispatchDidReceiveTitle:(NSString *)title.get()];
     }
 }
@@ -451,10 +451,10 @@ static const float PAGE_HEIGHT_INSET = 4.0f * 2.0f;
 - (CGRect)rectForPageNumber:(NSUInteger)pageNumber
 {
     // Page number is 1-based, not 0 based.
-    if ((!pageNumber) || (pageNumber > [_pageRects count]))
+    if ((!pageNumber) || (pageNumber > _pageRects.count))
         return CGRectNull;
 
-    return [[_pageRects objectAtIndex:pageNumber - 1] _web_CGRectValue];
+    return [_pageRects[pageNumber - 1] _web_CGRectValue];
 }
 
 - (void)simulateClickOnLinkToURL:(NSURL *)URL
@@ -466,7 +466,7 @@ static const float PAGE_HEIGHT_INSET = 4.0f * 2.0f;
         MonotonicTime::now(), nullptr, 1, { }, { }, 0, 0, { }, 0, 0, nullptr, 0, 0, MouseEvent::IsSimulated::Yes);
 
     // Call to the frame loader because this is where our security checks are made.
-    auto* frame = core([_dataSource webFrame]);
+    auto* frame = core(_dataSource.webFrame);
     FrameLoadRequest frameLoadRequest { *frame->document(), frame->document()->securityOrigin(), { URL }, { }, InitiatedByMainFrame::Unknown };
 frameLoadRequest.setReferrerPolicy(ReferrerPolicy::NoReferrer);
     frame->loader().loadFrameRequest(WTFMove(frameLoadRequest), event.ptr(), nullptr);

@@ -342,10 +342,13 @@ static const CGFloat kDateTimePickerToolbarHeight = 44;
         break;
     default:
         [self release];
+        self = nil;
         return nil;
     }
 
-    return [super initWithView:view control:adoptNS([[WKDateTimePicker alloc] initWithView:view datePickerMode:mode])];
+    self = [super initWithView:view control:adoptNS([[WKDateTimePicker alloc] initWithView:view datePickerMode:mode])];
+
+    return self;
 }
 
 @end

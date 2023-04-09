@@ -54,7 +54,7 @@ using namespace WebCore;
 }
 #endif
 
-- (id)initWithWebNodeHighlight:(WebNodeHighlight *)webNodeHighlight
+- (instancetype)initWithWebNodeHighlight:(WebNodeHighlight *)webNodeHighlight
 {
     self = [self initWithFrame:NSZeroRect];
     if (!self)
@@ -98,7 +98,7 @@ using namespace WebCore;
 
         ASSERT([[NSGraphicsContext currentContext] isFlipped]);
 
-        GraphicsContextCG context([[NSGraphicsContext currentContext] CGContext]);
+        GraphicsContextCG context([NSGraphicsContext currentContext].CGContext);
         [_webNodeHighlight inspectorController]->drawHighlight(context);
         [NSGraphicsContext restoreGraphicsState];
     }
@@ -109,7 +109,7 @@ using namespace WebCore;
     ASSERT(numLayers);
 
     // We have the right layers and they are all parented correctly.
-    if ([_layers count] == numLayers && [[_layers objectAtIndex:0] superlayer] == parent)
+    if (_layers.count == numLayers && [_layers[0] superlayer] == parent)
         return;
 
     // Remove and create new layers.
@@ -267,10 +267,10 @@ static void layerPath(CAShapeLayer *layer, const FloatQuad& outerQuad)
 
     [self _attach:parentLayer numLayers:4];
 
-    CAShapeLayer *marginLayer = [_layers objectAtIndex:0];
-    CAShapeLayer *borderLayer = [_layers objectAtIndex:1];
-    CAShapeLayer *paddingLayer = [_layers objectAtIndex:2];
-    CAShapeLayer *contentLayer = [_layers objectAtIndex:3];
+    CAShapeLayer *marginLayer = _layers[0];
+    CAShapeLayer *borderLayer = _layers[1];
+    CAShapeLayer *paddingLayer = _layers[2];
+    CAShapeLayer *contentLayer = _layers[3];
 
     FloatQuad marginQuad = highlight->quads[0];
     FloatQuad borderQuad = highlight->quads[1];
@@ -300,7 +300,7 @@ static void layerPath(CAShapeLayer *layer, const FloatQuad& outerQuad)
 
     auto contentColor = cachedCGColor(highlight->contentColor);
     for (NSUInteger i = 0; i < numLayers; ++i) {
-        CAShapeLayer *layer = [_layers objectAtIndex:i];
+        CAShapeLayer *layer = _layers[i];
         layer.fillColor = contentColor.get();
         layerPath(layer, highlight->quads[i]);
     }

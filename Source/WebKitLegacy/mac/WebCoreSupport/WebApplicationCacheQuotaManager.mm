@@ -31,7 +31,7 @@
 
 @implementation WebApplicationCacheQuotaManager
 
-- (id)initWithOrigin:(WebSecurityOrigin *)origin
+- (instancetype)initWithOrigin:(WebSecurityOrigin *)origin
 {
     self = [super init];
     if (!self)

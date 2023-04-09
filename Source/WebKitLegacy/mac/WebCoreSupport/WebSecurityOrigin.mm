@@ -40,7 +40,7 @@ using namespace WebCore;
 
 @implementation WebSecurityOrigin
 
-+ (id)webSecurityOriginFromDatabaseIdentifier:(NSString *)databaseIdentifier
++ (instancetype)webSecurityOriginFromDatabaseIdentifier:(NSString *)databaseIdentifier
 {
     WTF::initializeMainThread();
 
@@ -51,7 +51,7 @@ using namespace WebCore;
     return adoptNS([[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:origin->securityOrigin().ptr()]).autorelease();
 }
 
-- (id)initWithURL:(NSURL *)url
+- (instancetype)initWithURL:(NSURL *)url
 {
     WTF::initializeMainThread();
 
@@ -59,7 +59,7 @@ using namespace WebCore;
     if (!self)
         return nil;
 
-    _private = reinterpret_cast<WebSecurityOriginPrivate *>(&SecurityOrigin::create(URL([url absoluteURL])).leakRef());
+    _private = reinterpret_cast<WebSecurityOriginPrivate *>(&SecurityOrigin::create(URL(url.absoluteURL)).leakRef());
     return self;
 }
 
@@ -120,7 +120,7 @@ using namespace WebCore;
 
 @implementation WebSecurityOrigin (WebInternal)
 
-- (id)_initWithWebCoreSecurityOrigin:(SecurityOrigin*)origin
+- (instancetype)_initWithWebCoreSecurityOrigin:(SecurityOrigin*)origin
 {
     ASSERT(origin);
     self = [super init];
@@ -133,7 +133,7 @@ using namespace WebCore;
     return self;
 }
 
-- (id)_initWithString:(NSString *)originString
+- (instancetype)_initWithString:(NSString *)originString
 {
     auto origin = SecurityOrigin::createFromString(originString);
     return adoptNS([[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:origin.ptr()]).autorelease();

@@ -80,7 +80,7 @@ bool WebSelectionServiceController::hasRelevantSelectionServices(bool isTextOnly
     auto attachment = adoptNS([[NSTextAttachment alloc] init]);
     auto image = adoptNS([[NSImage alloc] init]);
     auto cell = adoptNS([[NSTextAttachmentCell alloc] initImageCell:image.get()]);
-    [attachment setAttachmentCell:cell.get()];
+    attachment.get().attachmentCell = cell.get();
     NSMutableAttributedString *attributedStringWithRichContent = (NSMutableAttributedString *)[NSMutableAttributedString attributedStringWithAttachment:attachment.get()];
     [attributedStringWithRichContent appendAttributedString:attributedString.get()];
 

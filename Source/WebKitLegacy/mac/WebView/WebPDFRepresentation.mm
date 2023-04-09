@@ -109,22 +109,22 @@
 
 - (void)finishedLoadingWithDataSource:(WebDataSource *)dataSource
 {
-    NSData *data = [dataSource data];
+    NSData *data = dataSource.data;
 
     NSArray *postScriptMIMETypes = [[self class] postScriptMIMETypes];
     NSString *mimeType = [dataSource _responseMIMEType];
     if ([postScriptMIMETypes containsObject:mimeType]) {
         data = [self convertPostScriptDataSourceToPDF:data];
-        if ([data length] == 0)
+        if (data.length == 0)
             return;
     }
 
-    WebPDFView *view = (WebPDFView *)[[[dataSource webFrame] frameView] documentView];
+    WebPDFView *view = (WebPDFView *)dataSource.webFrame.frameView.documentView;
     auto document = adoptNS([[[[self class] PDFDocumentClass] alloc] initWithData:data]);
     [view setPDFDocument:document.get()];
 
     NSArray *scripts = allScriptsInPDFDocument(document.get());
-    if (![scripts count])
+    if (!scripts.count)
         return;
 
     JSGlobalContextRef ctx = JSGlobalContextCreate(0);

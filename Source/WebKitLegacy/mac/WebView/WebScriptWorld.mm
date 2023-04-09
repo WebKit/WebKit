@@ -49,7 +49,7 @@ static WorldMap& allWorlds()
 
 @implementation WebScriptWorld
 
-- (id)initWithWorld:(Ref<WebCore::DOMWrapperWorld>&&)world
+- (instancetype)initWithWorld:(Ref<WebCore::DOMWrapperWorld>&&)world
 {
     self = [super init];
     if (!self)
@@ -64,7 +64,7 @@ static WorldMap& allWorlds()
     return self;
 }
 
-- (id)init
+- (instancetype)init
 {
     return [self initWithWorld:WebCore::ScriptController::createWorld("WebScriptWorld"_s, WebCore::ScriptController::WorldType::User)];
 }
@@ -103,7 +103,7 @@ static WorldMap& allWorlds()
 #if JSC_OBJC_API_ENABLED
 + (WebScriptWorld *)scriptWorldForJavaScriptContext:(JSContext *)context
 {
-    return [self scriptWorldForGlobalContext:[context JSGlobalContextRef]];
+    return [self scriptWorldForGlobalContext:context.JSGlobalContextRef];
 }
 #endif
 

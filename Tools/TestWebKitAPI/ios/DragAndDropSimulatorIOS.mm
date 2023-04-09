@@ -174,8 +174,9 @@ using namespace TestWebKitAPI;
     auto items = adoptNS([[NSMutableArray alloc] init]);
     for (NSItemProvider *itemProvider in providers)
         [items addObject:adoptNS([[UIDragItem alloc] initWithItemProvider:itemProvider]).get()];
-
-    return [super initWithItems:items.get() location:locationInWindow window:window allowMove:allowMove];
+    
+    self = [super initWithItems:items.get() location:locationInWindow window:window allowMove:allowMove];
+    return self;
 }
 
 - (BOOL)isLocal
@@ -233,7 +234,8 @@ using namespace TestWebKitAPI;
 
 - (instancetype)initWithWindow:(UIWindow *)window allowMove:(BOOL)allowMove
 {
-    return [super initWithItems:@[ ] location:CGPointZero window:window allowMove:allowMove];
+    self = [super initWithItems:@[ ] location:CGPointZero window:window allowMove:allowMove];
+    return self;
 }
 
 - (NSUInteger)localOperationMask

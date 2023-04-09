@@ -88,7 +88,7 @@
 {
     _webView = nil;
 
-    id animationController = [_immediateActionRecognizer animationController];
+    id animationController = _immediateActionRecognizer.animationController;
     if (PAL::isQuickLookUIFrameworkAvailable() && [animationController isKindOfClass:PAL::getQLPreviewMenuItemClass()]) {
         QLPreviewMenuItem *menuItem = (QLPreviewMenuItem *)animationController;
         menuItem.delegate = nil;
@@ -100,17 +100,17 @@
 
 - (BOOL)isEnabled
 {
-    return [_immediateActionRecognizer isEnabled];
+    return _immediateActionRecognizer.enabled;
 }
 
 - (void)setEnabled:(BOOL)enabled
 {
-    if (enabled == [_immediateActionRecognizer isEnabled])
+    if (enabled == _immediateActionRecognizer.enabled)
         return;
 
-    [_immediateActionRecognizer setEnabled:enabled];
+    _immediateActionRecognizer.enabled = enabled;
 
-    if (![_immediateActionRecognizer isEnabled])
+    if (!_immediateActionRecognizer.enabled)
         [self _cancelImmediateAction];
 }
 
@@ -129,7 +129,7 @@
 - (void)_cancelImmediateAction
 {
     // Reset the recognizer by turning it off and on again.
-    if ([_immediateActionRecognizer isEnabled]) {
+    if (_immediateActionRecognizer.enabled) {
         [_immediateActionRecognizer setEnabled:NO];
         [_immediateActionRecognizer setEnabled:YES];
     }
@@ -184,7 +184,7 @@
     if (!_webView)
         return;
 
-    NSView *documentView = [[[_webView _selectedOrMainFrame] frameView] documentView];
+    NSView *documentView = [_webView _selectedOrMainFrame].frameView.documentView;
     if (![documentView isKindOfClass:[WebHTMLView class]]) {
         [self _cancelImmediateAction];
         return;
@@ -199,7 +199,7 @@
     [self performHitTestAtPoint:locationInDocumentView];
     [self _updateImmediateActionItem];
 
-    if (![_immediateActionRecognizer animationController]) {
+    if (!_immediateActionRecognizer.animationController) {
         // FIXME: We should be able to remove the dispatch_async when rdar://problem/19502927 is resolved.
         RunLoop::main().dispatch([self, strongSelf = retainPtr(self)] {
             [self _cancelImmediateAction];
@@ -233,7 +233,7 @@
     if (_contentPreventsDefault)
         return;
 
-    [_webView _setTextIndicatorAnimationProgress:[immediateActionRecognizer animationProgress]];
+    [_webView _setTextIndicatorAnimationProgress:immediateActionRecognizer.animationProgress];
 }
 
 - (void)immediateActionRecognizerDidCancelAnimation:(NSImmediateActionGestureRecognizer *)immediateActionRecognizer
@@ -275,7 +275,7 @@
         return adoptNS([[WebAnimationController alloc] init]).autorelease();
 
     NSURL *url = _hitTestResult.absoluteLinkURL();
-    String absoluteURLString = [url absoluteString];
+    String absoluteURLString = url.absoluteString;
     if (url && _hitTestResult.URLElement()) {
         if (WTF::protocolIs(absoluteURLString, "mailto"_s)) {
             _type = WebImmediateActionMailtoLink;
@@ -326,15 +326,15 @@
     id <NSImmediateActionAnimationController> defaultAnimationController = [self _defaultAnimationController];
 
     if (_contentPreventsDefault) {
-        [_immediateActionRecognizer setAnimationController:defaultAnimationController];
+        _immediateActionRecognizer.animationController = defaultAnimationController;
         return;
     }
 
     // Allow clients the opportunity to override the default immediate action.
     id customClientAnimationController = nil;
-    if ([[_webView UIDelegate] respondsToSelector:@selector(_webView:immediateActionAnimationControllerForHitTestResult:withType:)]) {
+    if ([_webView.UIDelegate respondsToSelector:@selector(_webView:immediateActionAnimationControllerForHitTestResult:withType:)]) {
         RetainPtr<WebElementDictionary> webHitTestResult = adoptNS([[WebElementDictionary alloc] initWithHitTestResult:_hitTestResult]);
-        customClientAnimationController = [(id)[_webView UIDelegate] _webView:_webView immediateActionAnimationControllerForHitTestResult:webHitTestResult.get() withType:_type];
+        customClientAnimationController = [(id)_webView.UIDelegate _webView:_webView immediateActionAnimationControllerForHitTestResult:webHitTestResult.get() withType:_type];
     }
 
     if (customClientAnimationController == [NSNull null]) {
@@ -343,9 +343,9 @@
     }
 
     if (customClientAnimationController && [customClientAnimationController conformsToProtocol:@protocol(NSImmediateActionAnimationController)])
-        [_immediateActionRecognizer setAnimationController:(id <NSImmediateActionAnimationController>)customClientAnimationController];
+        _immediateActionRecognizer.animationController = (id <NSImmediateActionAnimationController>)customClientAnimationController;
     else
-        [_immediateActionRecognizer setAnimationController:defaultAnimationController];
+        _immediateActionRecognizer.animationController = defaultAnimationController;
 }
 
 #pragma mark QLPreviewMenuItemDelegate implementation
@@ -425,9 +425,9 @@ static WebCore::IntRect elementBoundingBoxInWindowCoordinatesFromNode(WebCore::N
 
     std::optional<WebCore::DetectedItem> detectedItem;
 
-    if ([[_webView UIDelegate] respondsToSelector:@selector(_webView:actionContextForHitTestResult:range:)]) {
+    if ([_webView.UIDelegate respondsToSelector:@selector(_webView:actionContextForHitTestResult:range:)]) {
         DOMRange *customDataDetectorsRange;
-        auto actionContext = [(id)[_webView UIDelegate] _webView:_webView
+        auto actionContext = [(id)_webView.UIDelegate _webView:_webView
             actionContextForHitTestResult:adoptNS([[WebElementDictionary alloc] initWithHitTestResult:_hitTestResult]).get()
             range:&customDataDetectorsRange];
         if (actionContext && customDataDetectorsRange) {
@@ -448,7 +448,7 @@ static WebCore::IntRect elementBoundingBoxInWindowCoordinatesFromNode(WebCore::N
 
     [detectedItem->actionContext setAltMode:YES];
     [detectedItem->actionContext setImmediate:YES];
-    if (![[PAL::getDDActionsManagerClass() sharedManager] hasActionsForResult:[detectedItem->actionContext mainResult] actionContext:detectedItem->actionContext.get()])
+    if (![[PAL::getDDActionsManagerClass() sharedManager] hasActionsForResult:detectedItem->actionContext.mainResult actionContext:detectedItem->actionContext.get()])
         return nil;
 
     auto indicator = WebCore::TextIndicator::createWithRange(detectedItem->range, { }, WebCore::TextIndicatorPresentationTransition::FadeIn);
@@ -461,9 +461,9 @@ static WebCore::IntRect elementBoundingBoxInWindowCoordinatesFromNode(WebCore::N
         [_webView _clearTextIndicatorWithAnimation:WebCore::TextIndicatorDismissalAnimation::FadeOut];
     }];
 
-    [_currentActionContext setHighlightFrame:[_webView.window convertRectToScreen:detectedItem->boundingBox]];
+    _currentActionContext.highlightFrame = [_webView.window convertRectToScreen:detectedItem->boundingBox];
 
-    NSArray *menuItems = [[PAL::getDDActionsManagerClass() sharedManager] menuItemsForResult:[_currentActionContext mainResult] actionContext:_currentActionContext.get()];
+    NSArray *menuItems = [[PAL::getDDActionsManagerClass() sharedManager] menuItemsForResult:_currentActionContext.mainResult actionContext:_currentActionContext.get()];
     if (menuItems.count != 1)
         return nil;
 
@@ -494,7 +494,7 @@ static WebCore::IntRect elementBoundingBoxInWindowCoordinatesFromNode(WebCore::N
         [_webView _clearTextIndicatorWithAnimation:WebCore::TextIndicatorDismissalAnimation::FadeOut];
     }];
 
-    [_currentActionContext setHighlightFrame:[_webView.window convertRectToScreen:elementBoundingBoxInWindowCoordinatesFromNode(_hitTestResult.URLElement())]];
+    _currentActionContext.highlightFrame = [_webView.window convertRectToScreen:elementBoundingBoxInWindowCoordinatesFromNode(_hitTestResult.URLElement())];
 
     NSArray *menuItems = [[PAL::getDDActionsManagerClass() sharedManager] menuItemsForTargetURL:_hitTestResult.absoluteLinkURL().string() actionContext:_currentActionContext.get()];
     if (menuItems.count != 1)
@@ -533,16 +533,16 @@ static WebCore::IntRect elementBoundingBoxInWindowCoordinatesFromNode(WebCore::N
     popupInfo.platformData.options = lookupOptions;
 
     auto attributedString = editingAttributedString(range, WebCore::IncludeImages::No).nsAttributedString();
-    auto scaledAttributedString = adoptNS([[NSMutableAttributedString alloc] initWithString:[attributedString string]]);
+    auto scaledAttributedString = adoptNS([[NSMutableAttributedString alloc] initWithString:attributedString.string]);
     NSFontManager *fontManager = [NSFontManager sharedFontManager];
 
-    [attributedString enumerateAttributesInRange:NSMakeRange(0, [attributedString length]) options:0 usingBlock:^(NSDictionary *attributes, NSRange attributeRange, BOOL *stop) {
+    [attributedString enumerateAttributesInRange:NSMakeRange(0, attributedString.length) options:0 usingBlock:^(NSDictionary *attributes, NSRange attributeRange, BOOL *stop) {
         RetainPtr<NSMutableDictionary> scaledAttributes = adoptNS([attributes mutableCopy]);
-        NSFont *font = [scaledAttributes objectForKey:NSFontAttributeName];
+        NSFont *font = scaledAttributes[NSFontAttributeName];
         if (font)
             font = [fontManager convertFont:font toSize:font.pointSize * frame->page()->pageScaleFactor()];
         if (font)
-            [scaledAttributes setObject:font forKey:NSFontAttributeName];
+            scaledAttributes[NSFontAttributeName] = font;
         [scaledAttributedString addAttributes:scaledAttributes.get() range:attributeRange];
     }];
 

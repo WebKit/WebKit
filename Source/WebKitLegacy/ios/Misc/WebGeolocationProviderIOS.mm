@@ -43,13 +43,13 @@
 using namespace WebCore;
 
 @interface WebGeolocationPosition (Internal)
-- (id)initWithGeolocationPosition:(GeolocationPositionData&&)coreGeolocationPosition;
+- (instancetype)initWithGeolocationPosition:(GeolocationPositionData&&)coreGeolocationPosition;
 @end
 
 // CoreLocation runs in the main thread. WebGeolocationProviderIOS lives on the WebThread.
 // _WebCoreLocationUpdateThreadingProxy forward updates from CoreLocation to WebGeolocationProviderIOS.
 @interface _WebCoreLocationUpdateThreadingProxy : NSObject<WebGeolocationCoreLocationUpdateListener>
-- (id)initWithProvider:(WebGeolocationProviderIOS*)provider;
+- (instancetype)initWithProvider:(WebGeolocationProviderIOS*)provider;
 @end
 
 typedef HashMap<RetainPtr<WebView>, RetainPtr<id<WebGeolocationProviderInitializationListener> > > GeolocationInitializationCallbackMap;
@@ -327,7 +327,7 @@ static inline void abortSendLastPosition(WebGeolocationProviderIOS* provider)
     WebGeolocationProviderIOS* _provider;
 }
 
-- (id)initWithProvider:(WebGeolocationProviderIOS*)provider
+- (instancetype)initWithProvider:(WebGeolocationProviderIOS*)provider
 {
     self = [super init];
     if (self)

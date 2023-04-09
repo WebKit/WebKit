@@ -102,7 +102,7 @@ void WebContextMenuClient::searchWithGoogle(const LocalFrame*)
 
 void WebContextMenuClient::lookUpInDictionary(LocalFrame* frame)
 {
-    WebHTMLView* htmlView = (WebHTMLView*)[[kit(frame) frameView] documentView];
+    WebHTMLView* htmlView = (WebHTMLView*)kit(frame).frameView.documentView;
     if(![htmlView isKindOfClass:[WebHTMLView class]])
         return;
     [htmlView _lookUpInDictionaryFromMenu:nil];
@@ -277,7 +277,7 @@ void WebContextMenuClient::showContextMenu()
 
     NSView* view = frameView->documentView();
     IntPoint point = frameView->contentsToWindow(page->contextMenuController().hitTestResult().roundedPointInInnerNodeFrame());
-    NSEvent* event = [NSEvent mouseEventWithType:NSEventTypeRightMouseDown location:point modifierFlags:0 timestamp:0 windowNumber:[[view window] windowNumber] context:0 eventNumber:0 clickCount:1 pressure:1];
+    NSEvent* event = [NSEvent mouseEventWithType:NSEventTypeRightMouseDown location:point modifierFlags:0 timestamp:0 windowNumber:view.window.windowNumber context:0 eventNumber:0 clickCount:1 pressure:1];
 
     // Show the contextual menu for this event.
     bool isServicesMenu;

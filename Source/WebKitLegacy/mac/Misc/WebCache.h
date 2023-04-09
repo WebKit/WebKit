@@ -39,7 +39,7 @@
 #if TARGET_OS_IPHONE
 + (void)emptyInMemoryResources;
 + (void)sizeOfDeadResources:(int *)resources;
-+ (CGImageRef)imageForURL:(NSURL *)url;
++ (CGImageRef)imageForURL:(NSURL *)url CF_RETURNS_NOT_RETAINED;
 #endif
 + (void)setDisabled:(BOOL)disabled;
 + (BOOL)isDisabled;

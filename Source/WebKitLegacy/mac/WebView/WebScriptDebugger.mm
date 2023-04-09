@@ -85,7 +85,7 @@ void WebScriptDebugger::sourceParsed(JSC::JSGlobalObject* lexicalGlobalObject, J
 
     JSC::VM& vm = lexicalGlobalObject->vm();
     WebFrame *webFrame = toWebFrame(vm.deprecatedVMEntryGlobalObject(lexicalGlobalObject));
-    WebView *webView = [webFrame webView];
+    WebView *webView = webFrame.webView;
     WebScriptDebugDelegateImplementationCache* implementations = WebViewGetScriptDebugDelegateImplementations(webView);
 
     if (errorLine == -1) {
@@ -93,7 +93,7 @@ void WebScriptDebugger::sourceParsed(JSC::JSGlobalObject* lexicalGlobalObject, J
             if (implementations->didParseSourceExpectsBaseLineNumber)
                 CallScriptDebugDelegate(implementations->didParseSourceFunc, webView, @selector(webView:didParseSource:baseLineNumber:fromURL:sourceId:forWebFrame:), nsSource, firstLine, nsURL, sourceProvider->asID(), webFrame);
             else
-                CallScriptDebugDelegate(implementations->didParseSourceFunc, webView, @selector(webView:didParseSource:fromURL:sourceId:forWebFrame:), nsSource, [nsURL absoluteString], sourceProvider->asID(), webFrame);
+                CallScriptDebugDelegate(implementations->didParseSourceFunc, webView, @selector(webView:didParseSource:fromURL:sourceId:forWebFrame:), nsSource, nsURL.absoluteString, sourceProvider->asID(), webFrame);
         }
     } else {
         NSDictionary *info;
@@ -128,7 +128,7 @@ void WebScriptDebugger::handlePause(JSC::JSGlobalObject* globalObject, Debugger:
 
     JSC::VM& vm = globalObject->vm();
     WebFrame *webFrame = toWebFrame(globalObject);
-    WebView *webView = [webFrame webView];
+    WebView *webView = webFrame.webView;
     JSC::DebuggerCallFrame& debuggerCallFrame = currentDebuggerCallFrame();
     JSC::JSValue exceptionValue = currentException();
     String functionName = debuggerCallFrame.functionName(vm);

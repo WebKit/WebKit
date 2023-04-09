@@ -112,11 +112,11 @@ static NSArray *writableTypesForImageWithArchive()
 
 - (NSURL *)_web_bestURL
 {
-    NSArray *types = [self types];
+    NSArray *types = self.types;
 
     if ([types containsObject:legacyURLPasteboardType()]) {
         NSURL *URLFromPasteboard = [NSURL URLFromPasteboard:self];
-        NSString *scheme = [URLFromPasteboard scheme];
+        NSString *scheme = URLFromPasteboard.scheme;
         if ([scheme isEqualToString:@"http"] || [scheme isEqualToString:@"https"]) {
             return [URLFromPasteboard _webkit_canonicalize];
         }
@@ -135,8 +135,8 @@ static NSArray *writableTypesForImageWithArchive()
     if ([types containsObject:legacyFilenamesPasteboardType()]) {
         NSArray *files = [self propertyListForType:legacyFilenamesPasteboardType()];
         // FIXME: Maybe it makes more sense to allow multiple files and only use the first one?
-        if ([files count] == 1) {
-            NSString *file = [files objectAtIndex:0];
+        if (files.count == 1) {
+            NSString *file = files[0];
             // FIXME: We are filtering out directories because that's what the original code used to
             // do. Without this check, if the URL points to a local directory, Safari will open the
             // parent directory of the directory in Finder. This check should go away as soon as
@@ -155,9 +155,9 @@ static NSArray *writableTypesForImageWithArchive()
 {
     ASSERT(URL);
 
-    if ([title length] == 0) {
-        title = [[URL path] lastPathComponent];
-        if ([title length] == 0)
+    if (title.length == 0) {
+        title = URL.path.lastPathComponent;
+        if (title.length == 0)
             title = [URL _web_userVisibleString];
     }
     
@@ -178,7 +178,7 @@ static NSArray *writableTypesForImageWithArchive()
     NSPasteboard *findPasteboard = [NSPasteboard pasteboardWithName:NSPasteboardNameFind];
     [findPasteboard declareTypes:@[legacyStringPasteboardType()] owner:owner];
     [findPasteboard setString:string forType:legacyStringPasteboardType()];
-    return [findPasteboard changeCount];
+    return findPasteboard.changeCount;
 }
 
 - (void)_web_writeFileWrapperAsRTFDAttachment:(NSFileWrapper *)wrapper
@@ -186,7 +186,7 @@ static NSArray *writableTypesForImageWithArchive()
     auto attachment = adoptNS([[NSTextAttachment alloc] initWithFileWrapper:wrapper]);
     NSAttributedString *string = [NSAttributedString attributedStringWithAttachment:attachment.get()];
     
-    NSData *RTFDData = [string RTFDFromRange:NSMakeRange(0, [string length]) documentAttributes:@{ }];
+    NSData *RTFDData = [string RTFDFromRange:NSMakeRange(0, string.length) documentAttributes:@{ }];
     [self setData:RTFDData forType:legacyRTFDPasteboardType()];
 }
 
@@ -196,18 +196,18 @@ static NSArray *writableTypesForImageWithArchive()
     ASSERT(archive);
     // This image data is either the only subresource of an archive (HTML image case)
     // or the main resource (standalone image case).
-    NSArray *subresources = [archive subresources];
-    WebResource *resource = [archive mainResource];
-    if (containsImage && [subresources count] > 0) {
-        WebResource *subresource = [subresources objectAtIndex:0];
-        NSString *subresourceMIMEType = [subresource MIMEType];
+    NSArray *subresources = archive.subresources;
+    WebResource *resource = archive.mainResource;
+    if (containsImage && subresources.count) {
+        WebResource *subresource = subresources[0];
+        NSString *subresourceMIMEType = subresource.MIMEType;
         if (MIMETypeRegistry::isSupportedImageMIMEType(subresourceMIMEType) || MIMETypeRegistry::isPDFOrPostScriptMIMEType(subresourceMIMEType))
             resource = subresource;
     }
     ASSERT(resource != nil);
     
     ASSERT(!containsImage || MIMETypeRegistry::isSupportedImageMIMEType([resource MIMEType]) || MIMETypeRegistry::isPDFOrPostScriptMIMEType([resource MIMEType]));
-    if (!containsImage || MIMETypeRegistry::isSupportedImageMIMEType([resource MIMEType]) || MIMETypeRegistry::isPDFOrPostScriptMIMEType([resource MIMEType]))
+    if (!containsImage || MIMETypeRegistry::isSupportedImageMIMEType(resource.MIMEType) || MIMETypeRegistry::isPDFOrPostScriptMIMEType(resource.MIMEType))
         [self _web_writeFileWrapperAsRTFDAttachment:[resource _fileWrapperRepresentation]];
     
 }
@@ -241,7 +241,7 @@ static CachedImage* imageFromElement(DOMElement *domElement)
     
     if ([types containsObject:legacyTIFFPasteboardType()]) {
         if (image)
-            [self setData:[image TIFFRepresentation] forType:legacyTIFFPasteboardType()];
+            [self setData:image.TIFFRepresentation forType:legacyTIFFPasteboardType()];
         else if (source && element)
             [source setPromisedDragTIFFDataSource:imageFromElement(element)];
         else if (element)
@@ -250,7 +250,7 @@ static CachedImage* imageFromElement(DOMElement *domElement)
     
     if (archive) {
         if ([types containsObject:WebArchivePboardType])
-            [self setData:[archive data] forType:WebArchivePboardType];
+            [self setData:archive.data forType:WebArchivePboardType];
         return;
     }
 
@@ -283,7 +283,7 @@ static CachedImage* imageFromElement(DOMElement *domElement)
             if (auto* image = downcast<RenderImage>(*renderer).cachedImage()) {
                 // FIXME: This doesn't check errorOccured the way imageFromElement does.
                 extension = image->image()->filenameExtension();
-                if (![extension length])
+                if (!extension.length)
                     return nullptr;
                 [types addObjectsFromArray:[NSPasteboard _web_writableTypesForImageIncludingArchive:(archive != nil)]];
                 [self declareTypes:types.get() owner:source];

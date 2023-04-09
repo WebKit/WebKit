@@ -117,23 +117,23 @@ void WebKitSetBackgroundAndForegroundNotificationNames(NSString *didEnterBackgro
 
 void WebKitSetInvalidWebBackgroundTaskIdentifier(WebBackgroundTaskIdentifier taskIdentifier)
 {
-    [[WebBackgroundTaskController sharedController] setInvalidBackgroundTaskIdentifier:taskIdentifier];
+    [WebBackgroundTaskController sharedController].invalidBackgroundTaskIdentifier = taskIdentifier;
 }
 
 void WebKitSetStartBackgroundTaskBlock(StartBackgroundTaskBlock startBlock)
 {
-    [[WebBackgroundTaskController sharedController] setBackgroundTaskStartBlock:startBlock];
+    [WebBackgroundTaskController sharedController].backgroundTaskStartBlock = startBlock;
 }
 
 void WebKitSetEndBackgroundTaskBlock(EndBackgroundTaskBlock endBlock)
 {
-    [[WebBackgroundTaskController sharedController] setBackgroundTaskEndBlock:endBlock];
+    [WebBackgroundTaskController sharedController].backgroundTaskEndBlock = endBlock;
 }
 
 CGPathRef WebKitCreatePathWithShrinkWrappedRects(NSArray* cgRects, CGFloat radius)
 {
     Vector<FloatRect> rects;
-    rects.reserveInitialCapacity([cgRects count]);
+    rects.reserveInitialCapacity(cgRects.count);
 
     const char* cgRectEncodedString = @encode(CGRect);
 

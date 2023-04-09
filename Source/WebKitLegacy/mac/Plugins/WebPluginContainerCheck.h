@@ -52,7 +52,7 @@
     WebPolicyDecisionListener *_listener;
 }
 
-+ (id)checkWithRequest:(NSURLRequest *)request target:(NSString *)target resultObject:(id)obj selector:(SEL)selector controller:(id <WebPluginContainerCheckController>)controller contextInfo:(id)/*optional*/contextInfo; 
++ (instancetype)checkWithRequest:(NSURLRequest *)request target:(NSString *)target resultObject:(id)obj selector:(SEL)selector controller:(id <WebPluginContainerCheckController>)controller contextInfo:(id)/*optional*/contextInfo; 
 - (void)start;
 - (void)cancel;
 - (id)contextInfo;

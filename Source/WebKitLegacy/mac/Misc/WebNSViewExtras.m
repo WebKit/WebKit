@@ -55,9 +55,9 @@
 
 - (NSView *)_web_superviewOfClass:(Class)class
 {
-    NSView *view = [self superview];
+    NSView *view = self.superview;
     while (view  && ![view isKindOfClass:class])
-        view = [view superview];
+        view = view.superview;
     return view;
 }
 
@@ -82,7 +82,7 @@
     NSEvent *nextEvent, *firstEvent, *dragEvent, *mouseUp;
     BOOL dragIt;
 
-    if ([mouseDownEvent type] != NSEventTypeLeftMouseDown) {
+    if (mouseDownEvent.type != NSEventTypeLeftMouseDown) {
         return NO;
     }
 
@@ -92,7 +92,7 @@
     mouseUp = nil;
     dragIt = NO;
 
-    while ((nextEvent = [[self window] nextEventMatchingMask:(NSEventMaskLeftMouseUp | NSEventMaskLeftMouseDragged)
+    while ((nextEvent = [self.window nextEventMatchingMask:(NSEventMaskLeftMouseUp | NSEventMaskLeftMouseDragged)
                                                    untilDate:expiration
                                                       inMode:NSEventTrackingRunLoopMode
                                                      dequeue:YES]) != nil) {
@@ -100,7 +100,7 @@
             firstEvent = nextEvent;
         }
 
-        if ([nextEvent type] == NSEventTypeLeftMouseDragged) {
+        if (nextEvent.type == NSEventTypeLeftMouseDragged) {
             float deltax = ABS([nextEvent locationInWindow].x - [mouseDownEvent locationInWindow].x);
             float deltay = ABS([nextEvent locationInWindow].y - [mouseDownEvent locationInWindow].y);
             dragEvent = nextEvent;
@@ -114,7 +114,7 @@
                 dragIt = YES;
                 break;
             }
-        } else if ([nextEvent type] == NSEventTypeLeftMouseUp) {
+        } else if (nextEvent.type == NSEventTypeLeftMouseUp) {
             mouseUp = nextEvent;
             break;
         }
@@ -148,10 +148,10 @@
 
 - (NSDragOperation)_web_dragOperationForDraggingInfo:(id <NSDraggingInfo>)sender
 {
-    if (![NSApp modalWindow] && 
-        ![[self window] attachedSheet] &&
-        [sender draggingSource] != self &&
-        [[sender draggingPasteboard] _web_bestURL]) {
+    if (!NSApp.modalWindow && 
+        !self.window.attachedSheet &&
+        sender.draggingSource != self &&
+        [sender.draggingPasteboard _web_bestURL]) {
 
         return NSDragOperationCopy;
     }
@@ -163,7 +163,7 @@
 
 - (BOOL)_web_firstResponderIsSelfOrDescendantView
 {
-    NSResponder *responder = [[self window] firstResponder];
+    NSResponder *responder = self.window.firstResponder;
     return (responder && 
            (responder == self || 
            ([responder isKindOfClass:[NSView class]] && [(NSView *)responder isDescendantOf:self])));
@@ -177,14 +177,14 @@
 - (WebFrame *)_frame
 {
     WebFrameView *webFrameView = [self _web_parentWebFrameView];
-    return [webFrameView webFrame];
+    return webFrameView.webFrame;
 }
 
 - (WebView *)_webView
 {
     // We used to use the view hierarchy exclusively here, but that won't work
     // right when the first viewDidMoveToSuperview call is done, and this will.
-    return [[self _frame] webView];
+    return [self _frame].webView;
 }
 
 @end

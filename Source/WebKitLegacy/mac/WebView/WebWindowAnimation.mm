@@ -37,7 +37,7 @@ static const CGFloat slowMotionFactor = 10;
 
 static NSTimeInterval WebWindowAnimationDurationFromDuration(NSTimeInterval duration)
 {
-    return ([[NSApp currentEvent] modifierFlags] & NSEventModifierFlagShift) ? duration * slowMotionFactor : duration;
+    return (NSApp.currentEvent.modifierFlags & NSEventModifierFlagShift) ? duration * slowMotionFactor : duration;
 }
 
 static NSRect scaledRect(NSRect _initialFrame, NSRect _finalFrame, CGFloat factor)
@@ -61,17 +61,17 @@ using WebCore::narrowPrecisionToFloat;
 
 @implementation WebWindowScaleAnimation
 
-- (id)init
+- (instancetype)init
 {
     self = [super init];
     if (!self)
         return nil;
-    [self setAnimationBlockingMode:NSAnimationNonblockingThreaded];
-    [self setFrameRate:60];
+    self.animationBlockingMode = NSAnimationNonblockingThreaded;
+    self.frameRate = 60;
     return self;
 }
 
-- (id)initWithHintedDuration:(NSTimeInterval)duration window:(NSWindow *)window initalFrame:(NSRect)initialFrame finalFrame:(NSRect)finalFrame
+- (instancetype)initWithHintedDuration:(NSTimeInterval)duration window:(NSWindow *)window initalFrame:(NSRect)initialFrame finalFrame:(NSRect)finalFrame
 {
     self = [self init];
     if (!self)
@@ -80,13 +80,13 @@ using WebCore::narrowPrecisionToFloat;
     _window = window;
     _initialFrame = initialFrame;
     _finalFrame = finalFrame;
-    _realFrame = [window frame];
+    _realFrame = window.frame;
     return self;
 }
 
 - (void)setDuration:(NSTimeInterval)duration
 {
-    [super setDuration:WebWindowAnimationDurationFromDuration(duration)];
+    super.duration = WebWindowAnimationDurationFromDuration(duration);
 }
 
 - (void)setWindow:(NSWindow *)window
@@ -96,17 +96,17 @@ using WebCore::narrowPrecisionToFloat;
 
 - (float)currentValue
 {
-    return narrowPrecisionToFloat(0.5 - 0.5 * cos(piDouble * (1 - [self currentProgress])));
+    return narrowPrecisionToFloat(0.5 - 0.5 * cos(piDouble * (1 - self.currentProgress)));
 }
 
 - (NSRect)currentFrame
 {
-    return scaledRect(_finalFrame, _initialFrame, [self currentValue]);
+    return scaledRect(_finalFrame, _initialFrame, self.currentValue);
 }
 
 static void flipRect(NSRect* rect)
 {
-    rect->origin.y = NSMaxY([(NSScreen *)[[NSScreen screens] objectAtIndex:0] frame]) - NSMaxY(*rect);
+    rect->origin.y = NSMaxY(((NSScreen *)[NSScreen screens][0]).frame) - NSMaxY(*rect);
 }
 
 static CGSConnectionID mainWindowServerConnectionID()
@@ -164,11 +164,11 @@ static void setScaledFrameForWindow(NSWindow *window, NSRect scaleFrame, NSRect 
     if (!_window)
         return;
 
-    [super setCurrentProgress:progress];
+    super.currentProgress = progress;
 
     NSRect currentRect = [self currentFrame];
     setScaledFrameForWindow(_window, currentRect, _realFrame);
-    [_subAnimation setCurrentProgress:progress];
+    _subAnimation.get().currentProgress = progress;
 }
 
 - (void)setSubAnimation:(NSAnimation *)animation
@@ -178,8 +178,8 @@ static void setScaledFrameForWindow(NSWindow *window, NSRect scaleFrame, NSRect 
 
 - (NSTimeInterval)additionalDurationNeededToReachFinalFrame
 {
-    static const CGFloat maxAdditionalDuration = 1;
-    static const CGFloat speedFactor = 0.0001f;
+    static constexpr CGFloat maxAdditionalDuration = 1;
+    static constexpr CGFloat speedFactor = 0.0001f;
     
     CGFloat maxDist = squaredDistance(_initialFrame.origin, _finalFrame.origin);
     CGFloat dist;
@@ -203,7 +203,7 @@ static void setScaledFrameForWindow(NSWindow *window, NSRect scaleFrame, NSRect 
 {
     // Compute extra time
     if (_hintedDuration)
-        [self setDuration:_hintedDuration + [self additionalDurationNeededToReachFinalFrame]];
+        self.duration = _hintedDuration + [self additionalDurationNeededToReachFinalFrame];
     [super startAnimation];
 }
 
@@ -218,18 +218,18 @@ static void setScaledFrameForWindow(NSWindow *window, NSRect scaleFrame, NSRect 
 
 @implementation WebWindowFadeAnimation
 
-- (id)init
+- (instancetype)init
 {
     self = [super init];
     if (!self)
         return nil;
-    [self setAnimationBlockingMode:NSAnimationNonblockingThreaded];
-    [self setFrameRate:60];
-    [self setAnimationCurve:NSAnimationEaseInOut];
+    self.animationBlockingMode = NSAnimationNonblockingThreaded;
+    self.frameRate = 60;
+    self.animationCurve = NSAnimationEaseInOut;
     return self;
 }
 
-- (id)initWithDuration:(NSTimeInterval)duration window:(NSWindow *)window initialAlpha:(CGFloat)initialAlpha finalAlpha:(CGFloat)finalAlpha
+- (instancetype)initWithDuration:(NSTimeInterval)duration window:(NSWindow *)window initialAlpha:(CGFloat)initialAlpha finalAlpha:(CGFloat)finalAlpha
 {
     self = [self init];
     if (!self)
@@ -237,18 +237,18 @@ static void setScaledFrameForWindow(NSWindow *window, NSRect scaleFrame, NSRect 
     _window = window;
     _initialAlpha = initialAlpha;
     _finalAlpha = finalAlpha;
-    [self setDuration:duration];
+    self.duration = duration;
     return self;
 }
 
 - (void)setDuration:(NSTimeInterval)duration
 {
-    [super setDuration:WebWindowAnimationDurationFromDuration(duration)];
+    super.duration = WebWindowAnimationDurationFromDuration(duration);
 }
 
 - (CGFloat)currentAlpha
 {
-    return std::max(static_cast<CGFloat>(0), std::min(static_cast<CGFloat>(1), _initialAlpha + [self currentValue] * (_finalAlpha - _initialAlpha)));
+    return std::max(static_cast<CGFloat>(0), std::min(static_cast<CGFloat>(1), _initialAlpha + self.currentValue * (_finalAlpha - _initialAlpha)));
 }
 
 - (void)setCurrentProgress:(NSAnimationProgress)progress
@@ -257,7 +257,7 @@ static void setScaledFrameForWindow(NSWindow *window, NSRect scaleFrame, NSRect 
         return;
 
     ASSERT(_window);
-    [super setCurrentProgress:progress];
+    super.currentProgress = progress;
 
     CGSSetWindowAlpha(mainWindowServerConnectionID(), _window.windowNumber, self.currentAlpha);
 }

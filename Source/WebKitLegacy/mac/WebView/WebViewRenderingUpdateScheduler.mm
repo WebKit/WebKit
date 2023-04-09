@@ -160,7 +160,7 @@ void WebViewRenderingUpdateScheduler::updateRendering()
 {
     @autoreleasepool {
 #if PLATFORM(MAC)
-        NSWindow *window = [m_webView window];
+        NSWindow *window = m_webView.window;
 #endif // PLATFORM(MAC)
 
         [m_webView _updateRendering];
@@ -170,7 +170,7 @@ void WebViewRenderingUpdateScheduler::updateRendering()
         // In case setNeedsDisplayInRect() has prevented the window from needing to be flushed, re-enable screen
         // updates here.
         ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        if (![window isFlushWindowDisabled])
+        if (!window.flushWindowDisabled)
             [window _enableScreenUpdatesIfNeeded];
         ALLOW_DEPRECATED_DECLARATIONS_END
 #endif

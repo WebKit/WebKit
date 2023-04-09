@@ -40,7 +40,7 @@
     NSMutableArray *_layers; // CAShapeLayers.
 #endif
 }
-- (id)initWithWebNodeHighlight:(WebNodeHighlight *)webNodeHighlight;
+- (instancetype)initWithWebNodeHighlight:(WebNodeHighlight *)webNodeHighlight;
 
 - (WebNodeHighlight *)webNodeHighlight;
 - (void)detachFromWebNodeHighlight;
