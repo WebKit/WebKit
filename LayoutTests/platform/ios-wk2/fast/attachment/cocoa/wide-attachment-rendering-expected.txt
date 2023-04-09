@@ -51,7 +51,7 @@ layer at (0,0) size 800x600
                 RenderBlock {DIV} at (190,0) size 40x40
                   RenderButton {BUTTON} at (0,0) size 40x40 [bgcolor=#EEEEEF]
                     RenderBlock (anonymous) at (0,9) size 40x22
-                      RenderBlock {DIV} at (11,0) size 18x22
+                      RenderBlock {DIV} at (9,0) size 22x22
 layer at (128,131) size 230x17
   RenderDeprecatedFlexibleBox {DIV} at (0,0) size 230x17 [color=#000000]
     RenderBlock (anonymous) at (0,0) size 230x17

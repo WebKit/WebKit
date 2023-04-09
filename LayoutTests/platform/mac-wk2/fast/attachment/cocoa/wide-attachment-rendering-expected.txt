@@ -49,9 +49,9 @@ layer at (0,0) size 800x600
             RenderGrid {DIV} at (68,0) size 198x80
               RenderGrid {DIV} at (4,26) size 170x28
                 RenderBlock {DIV} at (142,0) size 28x28
-                  RenderButton {BUTTON} at (0,0) size 28x28 [color=#000000D8] [border: (1px solid #000000D8)]
+                  RenderButton {BUTTON} at (0,0) size 28x28 [color=#000000D8] [border: (1px solid #0000007F)]
                     RenderBlock (anonymous) at (1,3) size 26x22
-                      RenderBlock {DIV} at (4,0) size 18x22
+                      RenderBlock {DIV} at (2,0) size 22x22
 layer at (118,114) size 170x16
   RenderDeprecatedFlexibleBox {DIV} at (0,0) size 170x16 [color=#000000D8]
     RenderBlock (anonymous) at (0,0) size 170x16
