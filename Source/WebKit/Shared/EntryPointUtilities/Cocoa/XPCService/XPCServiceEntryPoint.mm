@@ -30,6 +30,7 @@
 #import "XPCServiceEntryPoint.h"
 #import <WebCore/ProcessIdentifier.h>
 #import <signal.h>
+#import <wtf/Process.h>
 #import <wtf/cocoa/Entitlements.h>
 #import <wtf/spi/darwin/SandboxSPI.h>
 #import <wtf/text/StringToIntegerConversion.h>
@@ -170,13 +171,13 @@ void setOSTransaction(OSObjectPtr<os_transaction_t>&& transaction)
     // services ourselves. However, one of the side effects of leaking this transaction is that the default SIGTERM
     // handler doesn't cleanly exit our XPC services when logging out or rebooting. This led to crashes with
     // XPC_EXIT_REASON_SIGTERM_TIMEOUT as termination reason (rdar://88940229). To address the issue, we now set our
-    // own SIGTERM handler that calls exit(0). In the future, we should likely adopt RunningBoard on macOS and
+    // own SIGTERM handler that calls exitProcess(0). In the future, we should likely adopt RunningBoard on macOS and
     // control our lifetime via process assertions instead of leaking this OS transaction.
     static dispatch_once_t flag;
     dispatch_once(&flag, ^{
         globalSource.get() = adoptOSObject(dispatch_source_create(DISPATCH_SOURCE_TYPE_SIGNAL, SIGTERM, 0, dispatch_get_main_queue()));
         dispatch_source_set_event_handler(globalSource.get().get(), ^{
-            exit(0);
+            exitProcess(0);
         });
         dispatch_resume(globalSource.get().get());
     });

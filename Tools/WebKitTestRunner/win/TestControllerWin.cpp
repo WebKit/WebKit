@@ -34,6 +34,7 @@
 #include <shlwapi.h>
 #include <string>
 #include <windows.h>
+#include <wtf/Process.h>
 #include <wtf/RunLoop.h>
 
 
@@ -163,7 +164,7 @@ void TestController::platformRunUntil(bool& condition, WTF::Seconds timeout)
     bool neverSetCondition = false;
     result = runRunLoopUntil(neverSetCondition, 0, maximumWaitForWebProcessToCrash);
     ASSERT_UNUSED(result, result == TimedOut);
-    exit(1);
+    exitProcess(1);
 }
 
 void TestController::platformDidCommitLoadForFrame(WKPageRef, WKFrameRef)

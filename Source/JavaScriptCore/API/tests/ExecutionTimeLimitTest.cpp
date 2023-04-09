@@ -33,6 +33,7 @@
 #include <wtf/CPUTime.h>
 #include <wtf/Condition.h>
 #include <wtf/Lock.h>
+#include <wtf/Process.h>
 #include <wtf/Threading.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -203,12 +204,12 @@ int testExecutionTimeLimit()
                 printf("PASS: %s script timed out as expected.\n", tierName);
             else {
                 printf("FAIL: %s script timeout callback was not called.\n", tierName);
-                exit(1);
+                exitProcess(1);
             }
 
             if (!exception) {
                 printf("FAIL: %s TerminationException was not thrown.\n", tierName);
-                exit(1);
+                exitProcess(1);
             }
 
             thread->waitForCompletion();

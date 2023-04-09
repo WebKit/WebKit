@@ -64,6 +64,7 @@
 #include <wtf/CPUTime.h>
 #include <wtf/DataLog.h>
 #include <wtf/Language.h>
+#include <wtf/Process.h>
 #include <wtf/ProcessID.h>
 #include <wtf/StringPrintStream.h>
 #include <wtf/unicode/icu/ICUHelpers.h>
@@ -2287,12 +2288,12 @@ JSC_DEFINE_HOST_FUNCTION(functionBreakpoint, (JSGlobalObject* globalObject, Call
     return encodedJSUndefined();
 }
 
-// Executes exit(EXIT_SUCCESS).
+// Executes exitProcess(EXIT_SUCCESS).
 // Usage: $vm.exit()
 JSC_DEFINE_HOST_FUNCTION(functionExit, (JSGlobalObject*, CallFrame*))
 {
     DollarVMAssertScope assertScope;
-    exit(EXIT_SUCCESS);
+    exitProcess(EXIT_SUCCESS);
 }
 
 // Returns true if the current frame is a DFG frame.

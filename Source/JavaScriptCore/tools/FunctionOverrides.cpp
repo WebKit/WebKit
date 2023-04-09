@@ -31,6 +31,7 @@
 #include <string.h>
 #include <wtf/DataLog.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/Process.h>
 #include <wtf/SafeStrerror.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
@@ -185,7 +186,7 @@ bool FunctionOverrides::initializeOverrideFor(const SourceCode& origCode, Functi
     do { \
         dataLog("functionOverrides ", error, ": "); \
         dataLog errorMessageInBrackets; \
-        exit(EXIT_FAILURE); \
+        exitProcess(EXIT_FAILURE); \
     } while (false)
 
 static bool hasDisallowedCharacters(const char* str, size_t length)

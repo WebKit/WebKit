@@ -35,6 +35,7 @@
 #include <WebCore/LogInitialization.h>
 #include <pal/SessionID.h>
 #include <wtf/LogInitialization.h>
+#include <wtf/Process.h>
 #include <wtf/SetForScope.h>
 
 #if !OS(WINDOWS)
@@ -67,7 +68,7 @@ void AuxiliaryProcess::didClose(IPC::Connection&)
 #if PLATFORM(GTK) || PLATFORM(WPE)
     stopRunLoop();
 #else
-    _exit(EXIT_SUCCESS);
+    terminateProcess(EXIT_SUCCESS);
 #endif
 }
 

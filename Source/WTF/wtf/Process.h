@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,21 +23,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "ResourceExhaustion.h"
+#pragma once
 
-#include "Options.h"
-#include <wtf/Assertions.h>
-#include <wtf/Process.h>
+namespace WTF {
 
-namespace JSC {
+// Expect exit call on UNIX platforms.
+WTF_EXPORT_PRIVATE NO_RETURN void exitProcess(int status);
+// Expect _exit call on UNIX platforms.
+WTF_EXPORT_PRIVATE NO_RETURN void terminateProcess(int status);
 
-NO_RETURN_DUE_TO_CRASH void handleResourceExhaustion(const char* file, int line, const char* function, const char* assertion, ResourceExhaustionCode exitCode, const char* exitCodeAsString, const char* failureMessage)
-{
-    WTFReportAssertionFailureWithMessage(file, line, function, assertion, "%s: %s", exitCodeAsString, failureMessage);
-    if (Options::exitOnResourceExhaustion())
-        exitProcess(exitCode);
-    CRASH();
-}
+} // namespace WTF
 
-} // namespace JSC
+using WTF::exitProcess;
+using WTF::terminateProcess;

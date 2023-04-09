@@ -212,6 +212,7 @@ set(WTF_PUBLIC_HEADERS
     PointerPreparations.h
     PrintStream.h
     PriorityQueue.h
+    Process.h
     ProcessID.h
     ProcessPrivilege.h
     PtrTag.h
@@ -482,6 +483,7 @@ set(WTF_SOURCES
     ParallelJobsGeneric.cpp
     ParkingLot.cpp
     PrintStream.cpp
+    Process.cpp
     ProcessPrivilege.cpp
     RAMSize.cpp
     RandomDevice.cpp

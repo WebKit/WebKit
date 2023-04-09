@@ -36,6 +36,7 @@
 #include <wtf/Lock.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/ObjectIdentifier.h>
+#include <wtf/Process.h>
 #include <wtf/RunLoop.h>
 #include <wtf/Scope.h>
 #include <wtf/text/WTFString.h>
@@ -1122,7 +1123,7 @@ void Connection::didFailToSendSyncMessage()
     if (!m_shouldExitOnSyncMessageSendFailure)
         return;
 
-    exit(0);
+    exitProcess(0);
 }
 
 void Connection::enqueueIncomingMessage(std::unique_ptr<Decoder> incomingMessage)

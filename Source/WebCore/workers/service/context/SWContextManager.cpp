@@ -31,6 +31,7 @@
 #include "Logging.h"
 #include "MessageWithMessagePorts.h"
 #include "ServiceWorkerGlobalScope.h"
+#include <wtf/Process.h>
 
 namespace WebCore {
 
@@ -233,7 +234,7 @@ void SWContextManager::serviceWorkerFailedToTerminate(ServiceWorkerIdentifier se
     UNUSED_PARAM(serviceWorkerIdentifier);
     RELEASE_LOG_ERROR(ServiceWorker, "Failed to terminate service worker with identifier %s, killing the service worker process", serviceWorkerIdentifier.loggingString().utf8().data());
     ASSERT_NOT_REACHED();
-    _exit(EXIT_FAILURE);
+    terminateProcess(EXIT_FAILURE);
 }
 
 SWContextManager::ServiceWorkerTerminationRequest::ServiceWorkerTerminationRequest(SWContextManager& manager, ServiceWorkerIdentifier serviceWorkerIdentifier, Seconds timeout)

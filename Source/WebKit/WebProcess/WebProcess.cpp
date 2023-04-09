@@ -149,6 +149,7 @@
 #include <wtf/CallbackAggregator.h>
 #include <wtf/DateMath.h>
 #include <wtf/Language.h>
+#include <wtf/Process.h>
 #include <wtf/ProcessPrivilege.h>
 #include <wtf/RunLoop.h>
 #include <wtf/SystemTracing.h>
@@ -266,12 +267,7 @@ using namespace WebCore;
 #if !PLATFORM(GTK) && !PLATFORM(WPE)
 NO_RETURN static void callExit(IPC::Connection*)
 {
-#if OS(WINDOWS)
-    // Calling _exit in non-main threads may cause a deadlock in WTF::Thread::ThreadHolder::~ThreadHolder.
-    TerminateProcess(GetCurrentProcess(), EXIT_SUCCESS);
-#else
-    _exit(EXIT_SUCCESS);
-#endif
+    terminateProcess(EXIT_SUCCESS);
 }
 #endif
 
@@ -1159,7 +1155,7 @@ NO_RETURN inline void failedToGetNetworkProcessConnection()
     // Web process is still initializing, so we always want to exit instead of crashing. This can
     // happen when the WebView is created and then destroyed quickly.
     // See https://bugs.webkit.org/show_bug.cgi?id=183348.
-    exit(0);
+    exitProcess(0);
 #else
     CRASH();
 #endif

@@ -32,6 +32,7 @@
 #include <WebKit/WKViewPrivate.h>
 #include <gtk/gtk.h>
 #include <wtf/Platform.h>
+#include <wtf/Process.h>
 #include <wtf/RunLoop.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
@@ -90,7 +91,7 @@ static char* getEnvironmentVariableAsUTF8String(const char* variableName)
     const char* value = g_getenv(variableName);
     if (!value) {
         fprintf(stderr, "%s environment variable not found\n", variableName);
-        exit(0);
+        exitProcess(0);
     }
     gsize bytesWritten;
     return g_filename_to_utf8(value, -1, 0, &bytesWritten, 0);

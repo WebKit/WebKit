@@ -30,6 +30,7 @@
 #include "WGSLShaderModule.h"
 #include <wtf/DataLog.h>
 #include <wtf/FileSystem.h>
+#include <wtf/Process.h>
 
 static NO_RETURN void printUsageStatement(bool help = false)
 {
@@ -40,7 +41,7 @@ static NO_RETURN void printUsageStatement(bool help = false)
     fprintf(stderr, "  --dump-generated-code  Dumps the generated Metal code\n");
     fprintf(stderr, "\n");
 
-    exit(help ? EXIT_SUCCESS : EXIT_FAILURE);
+    exitProcess(help ? EXIT_SUCCESS : EXIT_FAILURE);
 }
 
 struct CommandLine {

@@ -87,6 +87,7 @@
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/FileSystem.h>
 #include <wtf/MainThread.h>
+#include <wtf/Process.h>
 #include <wtf/ProcessPrivilege.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RunLoop.h>
@@ -591,10 +592,10 @@ void TestController::initialize(int argc, const char* argv[])
 
     if (argc < 2) {
         optionsHandler.printHelp();
-        exit(1);
+        exitProcess(1);
     }
     if (!optionsHandler.parse(argc, argv))
-        exit(1);
+        exitProcess(1);
 
     platformInitialize(options);
 
@@ -2145,7 +2146,7 @@ void TestController::networkProcessDidCrash(WKProcessID processID, WKProcessTerm
     fprintf(stderr, "%s terminated (pid %ld) for reason: %s\n", networkProcessName(), static_cast<long>(processID), terminationReasonToString(reason));
     fprintf(stderr, "#CRASHED - %s (pid %ld)\n", networkProcessName(), static_cast<long>(processID));
     if (m_shouldExitWhenAuxiliaryProcessCrashes)
-        exit(1);
+        exitProcess(1);
 }
 
 void TestController::serviceWorkerProcessDidCrash(WKProcessID processID, WKProcessTerminationReason reason)
@@ -2153,7 +2154,7 @@ void TestController::serviceWorkerProcessDidCrash(WKProcessID processID, WKProce
     fprintf(stderr, "%s terminated (pid %ld) for reason: %s\n", "ServiceWorkerProcess", static_cast<long>(processID), terminationReasonToString(reason));
     fprintf(stderr, "#CRASHED - ServiceWorkerProcess (pid %ld)\n", static_cast<long>(processID));
     if (m_shouldExitWhenAuxiliaryProcessCrashes)
-        exit(1);
+        exitProcess(1);
 }
 
 void TestController::gpuProcessDidCrash(WKProcessID processID, WKProcessTerminationReason reason)
@@ -2161,7 +2162,7 @@ void TestController::gpuProcessDidCrash(WKProcessID processID, WKProcessTerminat
     fprintf(stderr, "%s terminated (pid %ld) for reason: %s\n", gpuProcessName(), static_cast<long>(processID), terminationReasonToString(reason));
     fprintf(stderr, "#CRASHED - %s (pid %ld)\n", gpuProcessName(), static_cast<long>(processID));
     if (m_shouldExitWhenAuxiliaryProcessCrashes)
-        exit(1);
+        exitProcess(1);
 }
 
 // WKPageNavigationClient
@@ -2521,7 +2522,7 @@ void TestController::webProcessDidTerminate(WKProcessTerminationReason reason)
     }
 
     if (m_shouldExitWhenAuxiliaryProcessCrashes)
-        exit(1);
+        exitProcess(1);
 }
 
 void TestController::didBeginNavigationGesture(WKPageRef)

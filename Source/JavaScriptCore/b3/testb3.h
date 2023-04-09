@@ -77,6 +77,7 @@
 #include <wtf/ListDump.h>
 #include <wtf/Lock.h>
 #include <wtf/NumberOfCores.h>
+#include <wtf/Process.h>
 #include <wtf/StdList.h>
 #include <wtf/Threading.h>
 #include <wtf/text/StringCommon.h>
@@ -88,7 +89,7 @@ inline void usage()
 {
     dataLog("Usage: testb3 [<filter>]\n");
     if (hiddenTruthBecauseNoReturnIsStupid())
-        exit(1);
+        exitProcess(1);
 }
 
 #if ENABLE(B3_JIT) && !CPU(ARM)

@@ -45,6 +45,7 @@
 #include <wtf/DataLog.h>
 #include <wtf/Lock.h>
 #include <wtf/NumberOfCores.h>
+#include <wtf/Process.h>
 #include <wtf/StdMap.h>
 #include <wtf/Threading.h>
 #include <wtf/text/StringCommon.h>
@@ -56,7 +57,7 @@ static void usage()
 {
     dataLog("Usage: testair [<filter>]\n");
     if (hiddenTruthBecauseNoReturnIsStupid())
-        exit(1);
+        exitProcess(1);
 }
 
 #if ENABLE(B3_JIT)

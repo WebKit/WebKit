@@ -37,6 +37,7 @@
 #import <wtf/BlockPtr.h>
 #import <wtf/Language.h>
 #import <wtf/OSObjectPtr.h>
+#import <wtf/Process.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/spi/cocoa/OSLogSPI.h>
 #import <wtf/spi/darwin/SandboxSPI.h>
@@ -125,7 +126,7 @@ static void XPCServiceEventHandler(xpc_connection_t peer)
                     RELEASE_LOG_FAULT(IPC, "Exiting: Received XPC event type: %{public}s", event == XPC_ERROR_CONNECTION_INVALID ? "XPC_ERROR_CONNECTION_INVALID" : "XPC_ERROR_TERMINATION_IMMINENT");
                     // FIXME: Handle this case more gracefully.
                     [[NSRunLoop mainRunLoop] performBlock:^{
-                        exit(EXIT_FAILURE);
+                        exitProcess(EXIT_FAILURE);
                     }];
                 }
             }
@@ -164,7 +165,7 @@ static void XPCServiceEventHandler(xpc_connection_t peer)
             if (!initializerFunctionPtr) {
                 RELEASE_LOG_FAULT(IPC, "Exiting: Unable to find entry point in WebKit.framework with name: %s", [(__bridge NSString *)entryPointFunctionName UTF8String]);
                 [[NSRunLoop mainRunLoop] performBlock:^{
-                    exit(EXIT_FAILURE);
+                    exitProcess(EXIT_FAILURE);
                 }];
                 return;
             }
