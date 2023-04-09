@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2006 Oliver Hunt <ojh16@student.canterbury.ac.nz>
- * Copyright (C) 2006 Apple Inc.
+ * Copyright (C) 2006-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2008 Rob Buis <buis@kde.org>
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
@@ -112,7 +112,7 @@ void RenderSVGInlineText::styleDidChange(StyleDifference diff, const RenderStyle
 
     // The text metrics may be influenced by style changes.
     if (auto* textAncestor = RenderSVGText::locateRenderSVGTextAncestor(*this))
-        textAncestor->subtreeStyleDidChange(this);
+        textAncestor->setNeedsLayout();
 }
 
 std::unique_ptr<LegacyInlineTextBox> RenderSVGInlineText::createTextBox()

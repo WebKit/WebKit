@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Inc.
+ * Copyright (C) 2006-2023 Apple Inc.
  * Copyright (C) 2007 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) Research In Motion Limited 2010-2012. All rights reserved.
  *
@@ -57,7 +57,7 @@ public:
     void subtreeChildWasAdded(RenderObject*);
     void subtreeChildWillBeRemoved(RenderObject*, Vector<SVGTextLayoutAttributes*, 2>& affectedAttributes);
     void subtreeChildWasRemoved(const Vector<SVGTextLayoutAttributes*, 2>& affectedAttributes);
-    void subtreeStyleDidChange(RenderSVGInlineText*);
+    void willLayout();
     void subtreeTextDidChange(RenderSVGInlineText*);
 
     FloatRect objectBoundingBox() const final { return m_objectBoundingBox; }
