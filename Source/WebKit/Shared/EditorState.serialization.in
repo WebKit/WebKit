@@ -49,6 +49,7 @@ struct WebKit::EditorState {
     WebCore::Color textColor;
     uint32_t enclosingListType;
     WebCore::WritingDirection baseWritingDirection;
+    bool editableRootIsTransparentOrFullyClipped;
 #endif
 #if PLATFORM(IOS_FAMILY)
     String markedText;
@@ -66,7 +67,6 @@ struct WebKit::EditorState {
     bool isStableStateUpdate;
     bool insideFixedPosition;
     bool hasPlainText;
-    bool editableRootIsTransparentOrFullyClipped;
     WebCore::Color caretColor;
     bool atStartOfSentence;
     bool selectionStartIsAtParagraphBoundary;

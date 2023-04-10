@@ -51,6 +51,7 @@
 #import <WebCore/HTMLConverter.h>
 #import <WebCore/HTMLImageElement.h>
 #import <WebCore/HTMLOListElement.h>
+#import <WebCore/HTMLTextFormControlElement.h>
 #import <WebCore/HTMLUListElement.h>
 #import <WebCore/HitTestResult.h>
 #import <WebCore/ImageOverlay.h>
@@ -62,6 +63,7 @@
 #import <WebCore/PlatformMediaSessionManager.h>
 #import <WebCore/Range.h>
 #import <WebCore/RenderElement.h>
+#import <WebCore/RenderLayer.h>
 #import <WebCore/RenderedDocumentMarker.h>
 #import <WebCore/TextIterator.h>
 #import <pal/spi/cocoa/LaunchServicesSPI.h>
@@ -462,6 +464,19 @@ void WebPage::getProcessDisplayName(CompletionHandler<void(String&&)>&& completi
 #endif
 }
 
+bool WebPage::isTransparentOrFullyClipped(const Element& element) const
+{
+    auto* renderer = element.renderer();
+    if (!renderer)
+        return false;
+
+    auto* enclosingLayer = renderer->enclosingLayer();
+    if (enclosingLayer && enclosingLayer->isTransparentRespectingParentFrames())
+        return true;
+
+    return renderer->hasNonEmptyVisibleRectRespectingParentFrames();
+}
+
 void WebPage::getPlatformEditorStateCommon(const LocalFrame& frame, EditorState& result) const
 {
     if (!result.hasPostLayoutAndVisualData())
@@ -525,6 +540,16 @@ void WebPage::getPlatformEditorStateCommon(const LocalFrame& frame, EditorState&
     }
 
     postLayoutData.baseWritingDirection = frame.editor().baseWritingDirectionForSelectionStart();
+
+    if (!selection.isNone()) {
+        if (RefPtr editableRootOrFormControl = enclosingTextFormControl(selection.start()) ?: selection.rootEditableElement()) {
+#if PLATFORM(IOS_FAMILY)
+            auto& visualData = *result.visualData;
+            visualData.selectionClipRect = rootViewInteractionBounds(*editableRootOrFormControl);
+#endif
+            postLayoutData.editableRootIsTransparentOrFullyClipped = result.isContentEditable && isTransparentOrFullyClipped(*editableRootOrFormControl);
+        }
+    }
 }
 
 #if !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
