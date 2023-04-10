@@ -67,10 +67,10 @@ enum class ServiceWorkerClientFrameType : uint8_t {
 enum class ShouldNotifyWhenResolved : bool { No, Yes };
 
 enum ServiceWorkerRegistrationIdentifierType { };
-using ServiceWorkerRegistrationIdentifier = ObjectIdentifier<ServiceWorkerRegistrationIdentifierType, WTF::ObjectIdentifierThreadSafeAccessTraits>;
+using ServiceWorkerRegistrationIdentifier = AtomicObjectIdentifier<ServiceWorkerRegistrationIdentifierType>;
 
 enum ServiceWorkerJobIdentifierType { };
-using ServiceWorkerJobIdentifier = ObjectIdentifier<ServiceWorkerJobIdentifierType, WTF::ObjectIdentifierThreadSafeAccessTraits>;
+using ServiceWorkerJobIdentifier = AtomicObjectIdentifier<ServiceWorkerJobIdentifierType>;
 
 enum SWServerToContextConnectionIdentifierType { };
 using SWServerToContextConnectionIdentifier = ObjectIdentifier<SWServerToContextConnectionIdentifierType>;

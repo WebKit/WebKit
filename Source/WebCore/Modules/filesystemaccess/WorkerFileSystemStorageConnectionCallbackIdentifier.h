@@ -30,7 +30,7 @@
 namespace WebCore {
 
 enum WorkerFileSystemStorageConnectionCallbackIdentifierType { };
-using WorkerFileSystemStorageConnectionCallbackIdentifier = ObjectIdentifier<WorkerFileSystemStorageConnectionCallbackIdentifierType, WTF::ObjectIdentifierThreadSafeAccessTraits>;
+using WorkerFileSystemStorageConnectionCallbackIdentifier = AtomicObjectIdentifier<WorkerFileSystemStorageConnectionCallbackIdentifierType>;
 
 } // namespace WebCore
 

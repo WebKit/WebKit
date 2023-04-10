@@ -616,7 +616,7 @@ void DocumentThreadableLoader::loadRequest(ResourceRequest&& request, SecurityCh
     RefPtr<SharedBuffer> data;
     ResourceError error;
     ResourceResponse response;
-    auto identifier = makeObjectIdentifier<ResourceLoader, WTF::ObjectIdentifierThreadSafeAccessTraits>(std::numeric_limits<uint64_t>::max());
+    auto identifier = AtomicObjectIdentifier<ResourceLoader> { std::numeric_limits<uint64_t>::max() };
     if (auto* frame = m_document.frame()) {
         if (!MixedContentChecker::canRunInsecureContent(*frame, m_document.securityOrigin(), requestURL))
             return;

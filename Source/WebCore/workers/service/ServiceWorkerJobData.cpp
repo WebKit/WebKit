@@ -43,7 +43,7 @@ static inline ServiceWorkerOrClientIdentifier serviceWorkerOrClientIdentifier(co
 
 ServiceWorkerJobData::ServiceWorkerJobData(SWServerConnectionIdentifier connectionIdentifier, const ServiceWorkerOrClientIdentifier& localSourceContext)
     : sourceContext(serviceWorkerOrClientIdentifier(localSourceContext))
-    , m_identifier { connectionIdentifier, ServiceWorkerJobIdentifier::generateThreadSafe() }
+    , m_identifier { connectionIdentifier, ServiceWorkerJobIdentifier::generate() }
 {
 }
 

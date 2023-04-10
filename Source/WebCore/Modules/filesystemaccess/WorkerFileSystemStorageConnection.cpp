@@ -98,7 +98,7 @@ void WorkerFileSystemStorageConnection::isSameEntry(FileSystemHandleIdentifier i
     if (!m_scope)
         return callback(Exception { InvalidStateError });
 
-    auto callbackIdentifier = CallbackIdentifier::generateThreadSafe();
+    auto callbackIdentifier = CallbackIdentifier::generate();
     m_sameEntryCallbacks.add(callbackIdentifier, WTFMove(callback));
 
     callOnMainThread([callbackIdentifier, workerThread = Ref { m_scope->thread() }, mainThreadConnection = m_mainThreadConnection, identifier, otherIdentifier]() mutable {
@@ -124,7 +124,7 @@ void WorkerFileSystemStorageConnection::getFileHandle(FileSystemHandleIdentifier
     if (!m_scope)
         return callback(Exception { InvalidStateError });
 
-    auto callbackIdentifier = CallbackIdentifier::generateThreadSafe();
+    auto callbackIdentifier = CallbackIdentifier::generate();
     m_getHandleCallbacks.add(callbackIdentifier, WTFMove(callback));
 
     callOnMainThread([callbackIdentifier, workerThread = Ref { m_scope->thread() }, mainThreadConnection = m_mainThreadConnection, identifier, name = name.isolatedCopy(), createIfNecessary]() mutable {
@@ -144,7 +144,7 @@ void WorkerFileSystemStorageConnection::getDirectoryHandle(FileSystemHandleIdent
     if (!m_scope)
         return callback(Exception { InvalidStateError });
 
-    auto callbackIdentifier = CallbackIdentifier::generateThreadSafe();
+    auto callbackIdentifier = CallbackIdentifier::generate();
     m_getHandleCallbacks.add(callbackIdentifier, WTFMove(callback));
 
     callOnMainThread([callbackIdentifier, workerThread = Ref { m_scope->thread() }, mainThreadConnection = m_mainThreadConnection, identifier, name = name.isolatedCopy(), createIfNecessary]() mutable {
@@ -170,7 +170,7 @@ void WorkerFileSystemStorageConnection::removeEntry(FileSystemHandleIdentifier i
     if (!m_scope)
         return callback(Exception { InvalidStateError });
 
-    auto callbackIdentifier = CallbackIdentifier::generateThreadSafe();
+    auto callbackIdentifier = CallbackIdentifier::generate();
     m_voidCallbacks.add(callbackIdentifier, WTFMove(callback));
 
     callOnMainThread([callbackIdentifier, workerThread = Ref { m_scope->thread() }, mainThreadConnection = m_mainThreadConnection, identifier, name = name.isolatedCopy(), deleteRecursively]() mutable {
@@ -190,7 +190,7 @@ void WorkerFileSystemStorageConnection::resolve(FileSystemHandleIdentifier ident
     if (!m_scope)
         return callback(Exception { InvalidStateError });
 
-    auto callbackIdentifier = CallbackIdentifier::generateThreadSafe();
+    auto callbackIdentifier = CallbackIdentifier::generate();
     m_resolveCallbacks.add(callbackIdentifier, WTFMove(callback));
 
     callOnMainThread([callbackIdentifier, workerThread = Ref { m_scope->thread() }, mainThreadConnection = m_mainThreadConnection, identifier, otherIdentifier]() mutable {
@@ -216,7 +216,7 @@ void WorkerFileSystemStorageConnection::getFile(FileSystemHandleIdentifier ident
     if (!m_scope)
         return callback(Exception { InvalidStateError });
 
-    auto callbackIdentifier = CallbackIdentifier::generateThreadSafe();
+    auto callbackIdentifier = CallbackIdentifier::generate();
     m_stringCallbacks.add(callbackIdentifier, WTFMove(callback));
 
     callOnMainThread([callbackIdentifier, workerThread = Ref { m_scope->thread() }, mainThreadConnection = m_mainThreadConnection, identifier]() mutable {
@@ -254,7 +254,7 @@ void WorkerFileSystemStorageConnection::createSyncAccessHandle(FileSystemHandleI
     if (!m_scope)
         return callback(Exception { InvalidStateError });
 
-    auto callbackIdentifier = CallbackIdentifier::generateThreadSafe();
+    auto callbackIdentifier = CallbackIdentifier::generate();
     m_getAccessHandlCallbacks.add(callbackIdentifier, WTFMove(callback));
 
     callOnMainThread([callbackIdentifier, workerThread = Ref { m_scope->thread() }, mainThreadConnection = m_mainThreadConnection, identifier]() mutable {
@@ -318,7 +318,7 @@ void WorkerFileSystemStorageConnection::getHandleNames(FileSystemHandleIdentifie
     if (!m_scope)
         return callback(Exception { InvalidStateError });
 
-    auto callbackIdentifier = CallbackIdentifier::generateThreadSafe();
+    auto callbackIdentifier = CallbackIdentifier::generate();
     m_getHandleNamesCallbacks.add(callbackIdentifier, WTFMove(callback));
 
     callOnMainThread([callbackIdentifier, workerThread = Ref { m_scope->thread() }, mainThreadConnection = m_mainThreadConnection, identifier]() mutable {
@@ -344,7 +344,7 @@ void WorkerFileSystemStorageConnection::getHandle(FileSystemHandleIdentifier ide
     if (!m_scope)
         return callback(Exception { InvalidStateError });
 
-    auto callbackIdentifier = CallbackIdentifier::generateThreadSafe();
+    auto callbackIdentifier = CallbackIdentifier::generate();
     m_getHandleCallbacks.add(callbackIdentifier, WTFMove(callback));
 
     callOnMainThread([callbackIdentifier, workerThread = Ref { m_scope->thread() }, mainThreadConnection = m_mainThreadConnection, identifier, name = name.isolatedCopy()]() mutable {
@@ -364,7 +364,7 @@ void WorkerFileSystemStorageConnection::move(FileSystemHandleIdentifier identifi
     if (!m_scope)
         return callback(Exception { InvalidStateError });
 
-    auto callbackIdentifier = CallbackIdentifier::generateThreadSafe();
+    auto callbackIdentifier = CallbackIdentifier::generate();
     m_voidCallbacks.add(callbackIdentifier, WTFMove(callback));
 
     callOnMainThread([callbackIdentifier, workerThread = Ref { m_scope->thread() }, mainThreadConnection = m_mainThreadConnection, identifier, destinationIdentifier, name = crossThreadCopy(newName)]() mutable {

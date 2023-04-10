@@ -42,7 +42,7 @@ namespace WebKit {
 
 LibWebRTCSocket::LibWebRTCSocket(LibWebRTCSocketFactory& factory, const void* socketGroup, Type type, const rtc::SocketAddress& localAddress, const rtc::SocketAddress& remoteAddress)
     : m_factory(factory)
-    , m_identifier(WebCore::LibWebRTCSocketIdentifier::generateThreadSafe())
+    , m_identifier(WebCore::LibWebRTCSocketIdentifier::generate())
     , m_type(type)
     , m_localAddress(localAddress)
     , m_remoteAddress(remoteAddress)

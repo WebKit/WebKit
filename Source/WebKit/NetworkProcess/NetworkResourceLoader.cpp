@@ -1731,13 +1731,13 @@ static String escapeForJSON(const String& s)
 }
 
 template<typename IdentifierType, typename ThreadSafety>
-static String escapeIDForJSON(const std::optional<ObjectIdentifier<IdentifierType, ThreadSafety>>& value)
+static String escapeIDForJSON(const std::optional<ObjectIdentifierGeneric<IdentifierType, ThreadSafety>>& value)
 {
     return value ? String::number(value->toUInt64()) : String("None"_s);
 }
 
 template<typename IdentifierType, typename ThreadSafety>
-static String escapeIDForJSON(const std::optional<ProcessQualified<ObjectIdentifier<IdentifierType, ThreadSafety>>>& value)
+static String escapeIDForJSON(const std::optional<ProcessQualified<ObjectIdentifierGeneric<IdentifierType, ThreadSafety>>>& value)
 {
     return value ? String::number(value->object().toUInt64()) : String("None"_s);
 }

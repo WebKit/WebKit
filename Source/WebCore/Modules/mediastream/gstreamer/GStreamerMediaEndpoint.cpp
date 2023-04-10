@@ -1148,7 +1148,7 @@ void GStreamerMediaEndpoint::prepareDataChannel(GstWebRTCDataChannel* dataChanne
     GRefPtr<GstWebRTCDataChannel> channel = dataChannel;
     GST_DEBUG_OBJECT(m_pipeline.get(), "Setting up data channel %p", channel.get());
     auto channelHandler = makeUniqueRef<GStreamerDataChannelHandler>(WTFMove(channel));
-    auto identifier = makeObjectIdentifier<GstWebRTCDataChannel>(reinterpret_cast<uintptr_t>(channelHandler->channel()));
+    auto identifier = ObjectIdentifier<GstWebRTCDataChannel>(reinterpret_cast<uintptr_t>(channelHandler->channel()));
     m_incomingDataChannels.add(identifier, WTFMove(channelHandler));
 }
 
@@ -1157,7 +1157,7 @@ UniqueRef<GStreamerDataChannelHandler> GStreamerMediaEndpoint::findOrCreateIncom
     if (!webkitGstCheckVersion(1, 22, 0))
         return makeUniqueRef<GStreamerDataChannelHandler>(WTFMove(dataChannel));
 
-    auto identifier = makeObjectIdentifier<GstWebRTCDataChannel>(reinterpret_cast<uintptr_t>(dataChannel.get()));
+    auto identifier = ObjectIdentifier<GstWebRTCDataChannel>(reinterpret_cast<uintptr_t>(dataChannel.get()));
     auto channelHandler = m_incomingDataChannels.take(identifier);
     RELEASE_ASSERT(channelHandler);
     return makeUniqueRefFromNonNullUniquePtr(WTFMove(channelHandler));

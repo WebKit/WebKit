@@ -31,6 +31,6 @@ namespace WebCore {
 
 class ResourceLoader;
 
-using ResourceLoaderIdentifier = ObjectIdentifier<ResourceLoader, WTF::ObjectIdentifierThreadSafeAccessTraits>;
+using ResourceLoaderIdentifier = AtomicObjectIdentifier<ResourceLoader>;
 
 } // namespace WebCore

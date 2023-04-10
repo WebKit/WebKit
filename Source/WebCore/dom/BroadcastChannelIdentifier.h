@@ -30,6 +30,6 @@
 namespace WebCore {
 
 enum BroadcastChannelIdentifierType { };
-using BroadcastChannelIdentifier = ObjectIdentifier<BroadcastChannelIdentifierType, WTF::ObjectIdentifierThreadSafeAccessTraits>;
+using BroadcastChannelIdentifier = AtomicObjectIdentifier<BroadcastChannelIdentifierType>;
 
 } // namespace WebCore

@@ -37,7 +37,7 @@ class LocalFrame;
 class SecurityOrigin;
 
 enum OpaqueOriginIdentifierType { };
-using OpaqueOriginIdentifier = ObjectIdentifier<OpaqueOriginIdentifierType, WTF::ObjectIdentifierThreadSafeAccessTraits>;
+using OpaqueOriginIdentifier = AtomicObjectIdentifier<OpaqueOriginIdentifierType>;
 
 class SecurityOriginData {
 public:
@@ -70,7 +70,7 @@ public:
 
     static SecurityOriginData createOpaque()
     {
-        return SecurityOriginData { ProcessQualified<OpaqueOriginIdentifier>::generateThreadSafe() };
+        return SecurityOriginData { ProcessQualified<OpaqueOriginIdentifier>::generate() };
     }
 
     WEBCORE_EXPORT Ref<SecurityOrigin> securityOrigin() const;

@@ -67,7 +67,7 @@ WebSocketChannel::WebSocketChannel(Document& document, WebSocketChannelClient& c
     , m_client(client)
     , m_resumeTimer(*this, &WebSocketChannel::resumeTimerFired)
     , m_closingTimer(*this, &WebSocketChannel::closingTimerFired)
-    , m_progressIdentifier(WebSocketChannelIdentifier::generateThreadSafe())
+    , m_progressIdentifier(WebSocketChannelIdentifier::generate())
     , m_socketProvider(provider)
 {
     LOG(Network, "WebSocketChannel %p ctor, progress identifier %" PRIu64, this, m_progressIdentifier.toUInt64());

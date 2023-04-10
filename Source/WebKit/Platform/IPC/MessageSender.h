@@ -37,7 +37,7 @@ enum class SendSyncOption : uint8_t;
 struct AsyncReplyIDType;
 struct ConnectionAsyncReplyHandler;
 template<typename> struct ConnectionSendSyncResult;
-using AsyncReplyID = ObjectIdentifier<AsyncReplyIDType, WTF::ObjectIdentifierThreadSafeAccessTraits>;
+using AsyncReplyID = AtomicObjectIdentifier<AsyncReplyIDType>;
 
 class MessageSender {
 public:
@@ -47,8 +47,8 @@ public:
     template<typename T> inline bool send(T&& message, OptionSet<SendOption>);
     template<typename T> inline bool send(T&& message, uint64_t destinationID);
     template<typename T> inline bool send(T&& message, uint64_t destinationID, OptionSet<SendOption>);
-    template<typename T, typename U, typename V> inline bool send(T&& message, ObjectIdentifier<U, V> destinationID);
-    template<typename T, typename U, typename V> inline bool send(T&& message, ObjectIdentifier<U, V> destinationID, OptionSet<SendOption>);
+    template<typename T, typename U, typename V> inline bool send(T&& message, ObjectIdentifierGeneric<U, V> destinationID);
+    template<typename T, typename U, typename V> inline bool send(T&& message, ObjectIdentifierGeneric<U, V> destinationID, OptionSet<SendOption>);
 
     template<typename T> using SendSyncResult = ConnectionSendSyncResult<T>;
     template<typename T> inline SendSyncResult<T> sendSync(T&& message);
@@ -57,17 +57,17 @@ public:
     template<typename T> inline SendSyncResult<T> sendSync(T&& message, uint64_t destinationID);
     template<typename T> inline SendSyncResult<T> sendSync(T&& message, uint64_t destinationID, Timeout);
     template<typename T> inline SendSyncResult<T> sendSync(T&& message, uint64_t destinationID, Timeout, OptionSet<SendSyncOption>);
-    template<typename T, typename U, typename V> inline SendSyncResult<T> sendSync(T&& message, ObjectIdentifier<U, V> destinationID);
-    template<typename T, typename U, typename V> inline SendSyncResult<T> sendSync(T&& message, ObjectIdentifier<U, V> destinationID, Timeout);
-    template<typename T, typename U, typename V> inline SendSyncResult<T> sendSync(T&& message, ObjectIdentifier<U, V> destinationID, Timeout, OptionSet<SendSyncOption>);
+    template<typename T, typename U, typename V> inline SendSyncResult<T> sendSync(T&& message, ObjectIdentifierGeneric<U, V> destinationID);
+    template<typename T, typename U, typename V> inline SendSyncResult<T> sendSync(T&& message, ObjectIdentifierGeneric<U, V> destinationID, Timeout);
+    template<typename T, typename U, typename V> inline SendSyncResult<T> sendSync(T&& message, ObjectIdentifierGeneric<U, V> destinationID, Timeout, OptionSet<SendSyncOption>);
 
     using AsyncReplyID = IPC::AsyncReplyID;
     template<typename T, typename C> inline AsyncReplyID sendWithAsyncReply(T&& message, C&& completionHandler);
     template<typename T, typename C> inline AsyncReplyID sendWithAsyncReply(T&& message, C&& completionHandler, OptionSet<SendOption>);
     template<typename T, typename C> inline AsyncReplyID sendWithAsyncReply(T&& message, C&& completionHandler, uint64_t destinationID);
     template<typename T, typename C> inline AsyncReplyID sendWithAsyncReply(T&& message, C&& completionHandler, uint64_t destinationID, OptionSet<SendOption>);
-    template<typename T, typename C, typename U, typename V> inline AsyncReplyID sendWithAsyncReply(T&& message, C&& completionHandler, ObjectIdentifier<U, V> destinationID);
-    template<typename T, typename C, typename U, typename V> inline AsyncReplyID sendWithAsyncReply(T&& message, C&& completionHandler, ObjectIdentifier<U, V> destinationID, OptionSet<SendOption>);
+    template<typename T, typename C, typename U, typename V> inline AsyncReplyID sendWithAsyncReply(T&& message, C&& completionHandler, ObjectIdentifierGeneric<U, V> destinationID);
+    template<typename T, typename C, typename U, typename V> inline AsyncReplyID sendWithAsyncReply(T&& message, C&& completionHandler, ObjectIdentifierGeneric<U, V> destinationID, OptionSet<SendOption>);
 
     virtual bool sendMessage(UniqueRef<Encoder>&&, OptionSet<SendOption>);
 

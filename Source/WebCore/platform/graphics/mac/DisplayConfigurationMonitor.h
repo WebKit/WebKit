@@ -37,7 +37,7 @@
 namespace WebCore {
 
 enum DisplayConfigurationClientIdentifierType { };
-using DisplayConfigurationClientIdentifier = ObjectIdentifier<DisplayConfigurationClientIdentifierType, WTF::ObjectIdentifierThreadSafeAccessTraits>;
+using DisplayConfigurationClientIdentifier = AtomicObjectIdentifier<DisplayConfigurationClientIdentifierType>;
 
 class DisplayConfigurationMonitor {
 public:

@@ -487,7 +487,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
                 JSValueUnprotect(context, resolve);
                 JSGlobalContextRelease(JSContextGetGlobalContext(context));
             },
-            IPC::Connection::AsyncReplyID::generateThreadSafe()
+            IPC::Connection::AsyncReplyID::generate()
         };
         connection.sendMessageWithAsyncReply(WTFMove(encoder), WTFMove(handler), IPC::SendOption::IPCTestingMessage);
     } else
@@ -1147,7 +1147,7 @@ JSValueRef JSIPCStreamClientConnection::sendIPCStreamTesterSyncCrashOnZero(JSCon
 
     auto& streamConnection = jsStreamConnection->connection();
     enum JSIPCStreamTesterIdentifierType { };
-    auto destination = makeObjectIdentifier<JSIPCStreamTesterIdentifierType>(*destinationID);
+    auto destination = ObjectIdentifier<JSIPCStreamTesterIdentifierType>(*destinationID);
 
     auto result = streamConnection.sendSync(Messages::IPCStreamTester::SyncCrashOnZero(value), destination, timeoutDuration);
     if (!result) {
@@ -1945,7 +1945,7 @@ std::optional<ObjectIdentifier<ObjectIdentifierType>> getObjectIdentifierFromPro
     auto number = convertToUint64(jsPropertyValue);
     if (!number)
         return std::nullopt;
-    return makeObjectIdentifier<ObjectIdentifierType>(*number);
+    return ObjectIdentifier<ObjectIdentifierType>(*number);
 }
 
 static bool encodeRemoteRenderingBackendCreationParameters(IPC::Encoder& encoder, JSC::JSGlobalObject* globalObject, JSC::JSObject* jsObject, JSC::CatchScope& scope)
@@ -2270,8 +2270,8 @@ static bool encodeArgument(IPC::Encoder& encoder, JSContextRef context, JSValueR
         if (!frameIdentifier || !processIdentifier)
             return false;
         encoder << WebCore::FrameIdentifier {
-            makeObjectIdentifier<WebCore::FrameIdentifierType>(frameIdentifier),
-            makeObjectIdentifier<WebCore::ProcessIdentifierType>(processIdentifier)
+            ObjectIdentifier<WebCore::FrameIdentifierType>(frameIdentifier),
+            ObjectIdentifier<WebCore::ProcessIdentifierType>(processIdentifier)
         };
         return true;
     }

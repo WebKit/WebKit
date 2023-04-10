@@ -274,7 +274,7 @@ using PlatformLayerIdentifier = ProcessQualified<ObjectIdentifier<PlatformLayerI
 using PlaybackTargetClientContextIdentifier = ObjectIdentifier<PlaybackTargetClientContextIdentifierType>;
 using PointerID = int32_t;
 using PolicyCheckIdentifier = ProcessQualified<ObjectIdentifier<PolicyCheckIdentifierType>>;
-using ResourceLoaderIdentifier = ObjectIdentifier<ResourceLoader, WTF::ObjectIdentifierThreadSafeAccessTraits>;
+using ResourceLoaderIdentifier = AtomicObjectIdentifier<ResourceLoader>;
 using ScrollingNodeID = uint64_t;
 using UserMediaRequestIdentifier = ObjectIdentifier<UserMediaRequestIdentifierType>;
 

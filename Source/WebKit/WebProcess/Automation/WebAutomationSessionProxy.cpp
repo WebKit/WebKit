@@ -201,8 +201,8 @@ static JSValueRef evaluateJavaScriptCallback(JSContextRef context, JSObjectRef f
         return JSValueMakeUndefined(context);
 
     WebCore::FrameIdentifier frameID {
-        makeObjectIdentifier<WebCore::FrameIdentifierType>(JSValueToNumber(context, arguments[0], exception)),
-        makeObjectIdentifier<WebCore::ProcessIdentifierType>(JSValueToNumber(context, arguments[1], exception))
+        ObjectIdentifier<WebCore::FrameIdentifierType>(JSValueToNumber(context, arguments[0], exception)),
+        ObjectIdentifier<WebCore::ProcessIdentifierType>(JSValueToNumber(context, arguments[1], exception))
     };
     uint64_t callbackID = JSValueToNumber(context, arguments[2], exception);
     if (JSValueIsString(context, arguments[3])) {

@@ -67,7 +67,7 @@ RefPtr<ThreadableWebSocketChannel> ThreadableWebSocketChannel::create(ScriptExec
 }
 
 ThreadableWebSocketChannel::ThreadableWebSocketChannel()
-    : m_identifier(WebSocketIdentifier::generateThreadSafe())
+    : m_identifier(WebSocketIdentifier::generate())
 {
 }
 

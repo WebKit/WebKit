@@ -30,6 +30,6 @@
 namespace WebCore {
 
 enum WebSocketIdentifierType { };
-using WebSocketIdentifier = ObjectIdentifier<WebSocketIdentifierType, WTF::ObjectIdentifierThreadSafeAccessTraits>;
+using WebSocketIdentifier = AtomicObjectIdentifier<WebSocketIdentifierType>;
 
 } // namespace WebCore

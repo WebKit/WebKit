@@ -78,7 +78,7 @@ void OriginQuotaManager::handleRequests()
             continue;
         }
     
-        m_currentRequest->identifier = QuotaIncreaseRequestIdentifier::generateThreadSafe();
+        m_currentRequest->identifier = QuotaIncreaseRequestIdentifier::generate();
         m_increaseQuotaFunction(m_currentRequest->identifier, m_quota, *m_usage, m_currentRequest->spaceRequested);
     }
 }

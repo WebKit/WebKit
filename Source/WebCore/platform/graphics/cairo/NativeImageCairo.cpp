@@ -57,7 +57,7 @@ RefPtr<NativeImage> NativeImage::create(Ref<PixelBuffer>&& pixelBuffer, bool pre
     RefPtr<cairo_surface_t> imageSurface = adoptRef(cairo_image_surface_create_for_data(
         pixelBuffer->bytes(), CAIRO_FORMAT_ARGB32, imageSize.width(), imageSize.height(), imageSize.width() * 4));
 
-    return adoptRef(*new NativeImage(WTFMove(imageSurface), RenderingResourceIdentifier::generateThreadSafe(), WTFMove(pixelBuffer)));
+    return adoptRef(*new NativeImage(WTFMove(imageSurface), RenderingResourceIdentifier::generate(), WTFMove(pixelBuffer)));
 }
 
 NativeImage::NativeImage(PlatformImagePtr&& platformImage, RenderingResourceIdentifier renderingResourceIdentifier, Ref<PixelBuffer>&& pixelBuffer)

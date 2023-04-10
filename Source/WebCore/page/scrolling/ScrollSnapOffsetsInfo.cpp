@@ -388,7 +388,7 @@ void updateSnapOffsetsForScrollableArea(ScrollableArea& scrollableArea, const Re
         snapAreas.append(scrollSnapAreaAsOffsets);
         
         auto isFocused = child->element() ? focusedElement == child->element() : false;
-        auto identifier = child->element() ? child->element()->identifier() : makeObjectIdentifier<ElementIdentifierType>(0);
+        auto identifier = child->element() ? child->element()->identifier() : ObjectIdentifier<ElementIdentifierType>(0);
         snapAreasIDs.append(identifier);
         if (snapsHorizontally) {
             auto absoluteScrollXPosition = computeScrollSnapAlignOffset(scrollSnapArea.x(), scrollSnapArea.maxX(), xAlign, areaXAxisFlipped) - computeScrollSnapAlignOffset(scrollSnapPort.x(), scrollSnapPort.maxX(), xAlign, areaXAxisFlipped);

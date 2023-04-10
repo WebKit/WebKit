@@ -30,6 +30,6 @@
 namespace WebCore {
 
 enum RenderingResourceIdentifierType { };
-using RenderingResourceIdentifier = ObjectIdentifier<RenderingResourceIdentifierType, WTF::ObjectIdentifierThreadSafeAccessTraits>;
+using RenderingResourceIdentifier = AtomicObjectIdentifier<RenderingResourceIdentifierType>;
 
 } // namespace WebCore

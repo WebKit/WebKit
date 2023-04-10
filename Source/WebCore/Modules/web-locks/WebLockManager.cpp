@@ -219,7 +219,7 @@ void WebLockManager::request(const String& name, Options&& options, Ref<WebLockG
         return;
     }
 
-    WebLockIdentifier lockIdentifier = WebLockIdentifier::generateThreadSafe();
+    WebLockIdentifier lockIdentifier = WebLockIdentifier::generate();
     m_releasePromises.add(lockIdentifier, WTFMove(releasePromise));
 
     if (options.signal) {

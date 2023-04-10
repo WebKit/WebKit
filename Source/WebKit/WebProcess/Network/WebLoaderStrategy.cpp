@@ -816,7 +816,7 @@ void WebLoaderStrategy::startPingLoad(LocalFrame& frame, ResourceRequest& reques
     }
 
     NetworkResourceLoadParameters loadParameters;
-    loadParameters.identifier = WebCore::ResourceLoaderIdentifier::generateThreadSafe();
+    loadParameters.identifier = WebCore::ResourceLoaderIdentifier::generate();
     loadParameters.webPageProxyID = webPage->webPageProxyIdentifier();
     loadParameters.webPageID = webPage->identifier();
     loadParameters.webFrameID = webFrame->frameID();
@@ -906,7 +906,7 @@ void WebLoaderStrategy::preconnectTo(WebCore::ResourceRequest&& request, WebPage
         if (!webPageUserAgent.isEmpty())
             parameters.request.setHTTPUserAgent(webPageUserAgent);
     }
-    parameters.identifier = WebCore::ResourceLoaderIdentifier::generateThreadSafe();
+    parameters.identifier = WebCore::ResourceLoaderIdentifier::generate();
     parameters.webPageProxyID = webPage.webPageProxyIdentifier();
     parameters.webPageID = webPage.identifier();
     parameters.webFrameID = webFrame.frameID();

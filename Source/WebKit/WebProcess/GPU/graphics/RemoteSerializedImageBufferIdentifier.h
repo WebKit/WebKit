@@ -33,7 +33,7 @@
 namespace WebKit {
 
 enum RemoteSerializedImageBufferIdentifierType { };
-using RemoteSerializedImageBufferIdentifier = ObjectIdentifier<RemoteSerializedImageBufferIdentifierType, WTF::ObjectIdentifierThreadSafeAccessTraits>;
+using RemoteSerializedImageBufferIdentifier = AtomicObjectIdentifier<RemoteSerializedImageBufferIdentifierType>;
 using RemoteSerializedImageBufferReadReference = ObjectIdentifierReadReference<RemoteSerializedImageBufferIdentifier>;
 using RemoteSerializedImageBufferWriteReference = ObjectIdentifierWriteReference<RemoteSerializedImageBufferIdentifier>;
 using RemoteSerializedImageBufferReference = ObjectIdentifierReference<RemoteSerializedImageBufferIdentifier>;

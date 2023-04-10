@@ -391,8 +391,8 @@ std::optional<Vector<ServiceWorkerContextData>> SWRegistrationDatabase::importRe
             continue;
         }
 
-        auto workerIdentifier = ServiceWorkerIdentifier::generateThreadSafe();
-        auto registrationIdentifier = ServiceWorkerRegistrationIdentifier::generateThreadSafe();
+        auto workerIdentifier = ServiceWorkerIdentifier::generate();
+        auto registrationIdentifier = ServiceWorkerRegistrationIdentifier::generate();
         auto serviceWorkerData = ServiceWorkerData { workerIdentifier, registrationIdentifier, scriptURL, ServiceWorkerState::Activated, *workerType };
         auto registration = ServiceWorkerRegistrationData { WTFMove(*key), registrationIdentifier, WTFMove(scopeURL), *updateViaCache, lastUpdateCheckTime, std::nullopt, std::nullopt, WTFMove(serviceWorkerData) };
         auto contextData = ServiceWorkerContextData { std::nullopt, WTFMove(registration), workerIdentifier, WTFMove(script), WTFMove(*certificateInfo), WTFMove(*contentSecurityPolicy), WTFMove(*coep), WTFMove(referrerPolicy), WTFMove(scriptURL), *workerType, true, LastNavigationWasAppInitiated::Yes, WTFMove(scriptResourceMap), std::nullopt, WTFMove(*navigationPreloadState) };

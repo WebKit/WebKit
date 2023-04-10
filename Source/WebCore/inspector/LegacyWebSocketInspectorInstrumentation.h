@@ -34,7 +34,7 @@ class ResourceRequest;
 class ResourceResponse;
 class WebSocketChannel;
 struct WebSocketFrame;
-using WebSocketChannelIdentifier = ObjectIdentifier<WebSocketChannel, WTF::ObjectIdentifierThreadSafeAccessTraits>;
+using WebSocketChannelIdentifier = AtomicObjectIdentifier<WebSocketChannel>;
 
 class WEBCORE_EXPORT LegacyWebSocketInspectorInstrumentation {
 public:

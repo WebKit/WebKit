@@ -164,7 +164,7 @@ bool ImageOverlayController::handleDataDetectorAction(const HTMLElement& element
     if (!identifierValue)
         return false;
 
-    auto identifier = makeObjectIdentifier<ImageOverlayDataDetectionResultIdentifierType>(*identifierValue);
+    auto identifier = ObjectIdentifier<ImageOverlayDataDetectionResultIdentifierType>(*identifierValue);
     if (!identifier.isValid())
         return false;
 

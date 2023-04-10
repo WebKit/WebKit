@@ -28,6 +28,7 @@
 #include <sys/ioctl.h>
 #include <sys/mman.h>
 #include <wtf/FileSystem.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/UniStdExtras.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>

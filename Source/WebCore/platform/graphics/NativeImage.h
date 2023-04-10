@@ -44,7 +44,7 @@ class GraphicsContext;
 class NativeImage final : public RenderingResource {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static WEBCORE_EXPORT RefPtr<NativeImage> create(PlatformImagePtr&&, RenderingResourceIdentifier = RenderingResourceIdentifier::generateThreadSafe());
+    static WEBCORE_EXPORT RefPtr<NativeImage> create(PlatformImagePtr&&, RenderingResourceIdentifier = RenderingResourceIdentifier::generate());
 #if USE(CAIRO)
     static RefPtr<NativeImage> create(Ref<PixelBuffer>&&, bool premultipliedAlpha);
 #endif

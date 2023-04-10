@@ -32,7 +32,7 @@
 namespace WebKit {
 
 enum WCContentBufferIdentifierType { };
-using WCContentBufferIdentifier = ObjectIdentifier<WCContentBufferIdentifierType, WTF::ObjectIdentifierThreadSafeAccessTraits>;
+using WCContentBufferIdentifier = AtomicObjectIdentifier<WCContentBufferIdentifierType>;
 
 } // namespace WebKit
 

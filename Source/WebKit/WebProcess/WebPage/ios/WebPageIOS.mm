@@ -2947,7 +2947,7 @@ static void dataDetectorImageOverlayPositionInformation(const HTMLElement& overl
     if (!identifierValue)
         return;
 
-    auto identifier = makeObjectIdentifier<ImageOverlayDataDetectionResultIdentifierType>(*identifierValue);
+    auto identifier = ObjectIdentifier<ImageOverlayDataDetectionResultIdentifierType>(*identifierValue);
     if (!identifier.isValid())
         return;
 

@@ -74,12 +74,12 @@ struct TextMarkerData {
 
     AXID axTreeID() const
     {
-        return makeObjectIdentifier<AXIDType>(treeID);
+        return ObjectIdentifier<AXIDType>(treeID);
     }
 
     AXID axObjectID() const
     {
-        return makeObjectIdentifier<AXIDType>(objectID);
+        return ObjectIdentifier<AXIDType>(objectID);
     }
 private:
     void initializeAXIDs(AXObjectCache&, Node*);

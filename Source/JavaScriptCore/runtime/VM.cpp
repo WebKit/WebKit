@@ -194,7 +194,7 @@ void VM::computeCanUseJIT()
 static bool vmCreationShouldCrash = false;
 
 VM::VM(VMType vmType, HeapType heapType, WTF::RunLoop* runLoop, bool* success)
-    : m_identifier(VMIdentifier::generateThreadSafe())
+    : m_identifier(VMIdentifier::generate())
     , m_apiLock(adoptRef(new JSLock(this)))
     , m_runLoop(runLoop ? *runLoop : WTF::RunLoop::current())
     , m_random(Options::seedOfVMRandomForFuzzer() ? Options::seedOfVMRandomForFuzzer() : cryptographicallyRandomNumber<uint32_t>())

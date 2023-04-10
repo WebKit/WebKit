@@ -30,6 +30,6 @@
 namespace WebKit {
 
 enum VideoDecoderIdentifierType { };
-using VideoDecoderIdentifier = ObjectIdentifier<VideoDecoderIdentifierType, WTF::ObjectIdentifierThreadSafeAccessTraits>;
+using VideoDecoderIdentifier = AtomicObjectIdentifier<VideoDecoderIdentifierType>;
 
 } // namespace WebKit

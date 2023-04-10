@@ -291,7 +291,7 @@ public:
 protected:
     static TestObjectIdentifier defaultDestinationID()
     {
-        return makeObjectIdentifier<TestObjectIdentifierTag>(77);
+        return ObjectIdentifier<TestObjectIdentifierTag>(77);
     }
 
     MockMessageReceiver m_mockClientReceiver;
@@ -311,7 +311,7 @@ TEST_P(StreamMessageTest, Send)
     serverQueue().dispatch([&] {
         assertIsCurrent(serverQueue());
         for (uint64_t i = 100u; i < 160u; ++i) {
-            auto success = m_serverConnection->send(MockTestMessage1 { }, makeObjectIdentifier<TestObjectIdentifierTag>(i));
+            auto success = m_serverConnection->send(MockTestMessage1 { }, ObjectIdentifier<TestObjectIdentifierTag>(i));
             EXPECT_TRUE(success);
         }
     });
@@ -329,7 +329,7 @@ TEST_P(StreamMessageTest, Send)
 
 TEST_P(StreamMessageTest, SendWithSwitchingDestinationIDs)
 {
-    auto other = makeObjectIdentifier<TestObjectIdentifierTag>(0x1234567891234);
+    auto other = ObjectIdentifier<TestObjectIdentifierTag>(0x1234567891234);
     {
         serverQueue().dispatch([&] {
             assertIsCurrent(serverQueue());

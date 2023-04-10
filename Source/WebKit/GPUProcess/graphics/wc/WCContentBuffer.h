@@ -81,7 +81,7 @@ private:
 
     WCContentBufferManager& m_manager;
     WebCore::ProcessIdentifier m_processIdentifier;
-    WCContentBufferIdentifier m_identifier { WCContentBufferIdentifier::generateThreadSafe() };
+    WCContentBufferIdentifier m_identifier { WCContentBufferIdentifier::generate() };
     WebCore::TextureMapperPlatformLayer* m_platformLayer;
     Client* m_client { nullptr };
 };

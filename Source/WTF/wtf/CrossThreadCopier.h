@@ -119,8 +119,8 @@ template<> struct CrossThreadCopierBase<false, false, WTF::ASCIILiteral> {
     }
 };
 
-template<typename T, typename U> struct CrossThreadCopierBase<false, false, ObjectIdentifier<T, U>> {
-    typedef ObjectIdentifier<T, U> Type;
+template<typename T, typename U> struct CrossThreadCopierBase<false, false, ObjectIdentifierGeneric<T, U>> {
+    typedef ObjectIdentifierGeneric<T, U> Type;
     static Type copy(const Type& source)
     {
         return source;

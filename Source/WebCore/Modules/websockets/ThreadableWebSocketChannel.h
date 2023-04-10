@@ -52,7 +52,7 @@ class WebSocketChannel;
 class WebSocketChannelInspector;
 class WebSocketChannelClient;
 
-using WebSocketChannelIdentifier = ObjectIdentifier<WebSocketChannel, WTF::ObjectIdentifierThreadSafeAccessTraits>;
+using WebSocketChannelIdentifier = AtomicObjectIdentifier<WebSocketChannel>;
 
 class ThreadableWebSocketChannel {
     WTF_MAKE_NONCOPYABLE(ThreadableWebSocketChannel);

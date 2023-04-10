@@ -30,6 +30,7 @@
 
 #include "WCContentBuffer.h"
 #include <wtf/HashSet.h>
+#include <wtf/NeverDestroyed.h>
 
 namespace WebKit {
 

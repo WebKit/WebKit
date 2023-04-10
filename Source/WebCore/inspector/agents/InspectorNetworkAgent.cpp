@@ -692,7 +692,7 @@ void InspectorNetworkAgent::didLoadResourceFromMemoryCache(DocumentLoader* loade
     if (!loader)
         return;
 
-    auto identifier = ResourceLoaderIdentifier::generateThreadSafe();
+    auto identifier = ResourceLoaderIdentifier::generate();
     String requestId = IdentifiersFactory::requestId(identifier.toUInt64());
     Protocol::Network::LoaderId loaderId = loaderIdentifier(loader);
     Protocol::Network::FrameId frameId = frameIdentifier(loader);

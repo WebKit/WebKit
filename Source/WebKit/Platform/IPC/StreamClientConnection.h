@@ -74,18 +74,18 @@ public:
     void open(Connection::Client&, SerialFunctionDispatcher& = RunLoop::current());
     void invalidate();
 
-    template<typename T, typename U, typename V> bool send(T&& message, ObjectIdentifier<U, V> destinationID, Timeout);
+    template<typename T, typename U, typename V> bool send(T&& message, ObjectIdentifierGeneric<U, V> destinationID, Timeout);
 
     using AsyncReplyID = Connection::AsyncReplyID;
     template<typename T, typename C, typename U, typename V>
-    AsyncReplyID sendWithAsyncReply(T&& message, C&& completionHandler, ObjectIdentifier<U, V> destinationID, Timeout);
+    AsyncReplyID sendWithAsyncReply(T&& message, C&& completionHandler, ObjectIdentifierGeneric<U, V> destinationID, Timeout);
 
     template<typename T> using SendSyncResult = Connection::SendSyncResult<T>;
     template<typename T, typename U, typename V>
-    SendSyncResult<T> sendSync(T&& message, ObjectIdentifier<U, V> destinationID, Timeout);
+    SendSyncResult<T> sendSync(T&& message, ObjectIdentifierGeneric<U, V> destinationID, Timeout);
 
     template<typename T, typename U, typename V>
-    bool waitForAndDispatchImmediately(ObjectIdentifier<U, V> destinationID, Timeout, OptionSet<WaitForOption> = { });
+    bool waitForAndDispatchImmediately(ObjectIdentifierGeneric<U, V> destinationID, Timeout, OptionSet<WaitForOption> = { });
 
     StreamClientConnectionBuffer& bufferForTesting();
     Connection& connectionForTesting();
@@ -126,7 +126,7 @@ private:
 };
 
 template<typename T, typename U, typename V>
-bool StreamClientConnection::send(T&& message, ObjectIdentifier<U, V> destinationID, Timeout timeout)
+bool StreamClientConnection::send(T&& message, ObjectIdentifierGeneric<U, V> destinationID, Timeout timeout)
 {
     static_assert(!T::isSync, "Message is sync!");
     if (!trySendDestinationIDIfNeeded(destinationID.toUInt64(), timeout))
@@ -145,7 +145,7 @@ bool StreamClientConnection::send(T&& message, ObjectIdentifier<U, V> destinatio
 }
 
 template<typename T, typename C, typename U, typename V>
-StreamClientConnection::AsyncReplyID StreamClientConnection::sendWithAsyncReply(T&& message, C&& completionHandler, ObjectIdentifier<U, V> destinationID, Timeout timeout)
+StreamClientConnection::AsyncReplyID StreamClientConnection::sendWithAsyncReply(T&& message, C&& completionHandler, ObjectIdentifierGeneric<U, V> destinationID, Timeout timeout)
 {
     static_assert(!T::isSync, "Message is sync!");
     if (!trySendDestinationIDIfNeeded(destinationID.toUInt64(), timeout))
@@ -194,7 +194,7 @@ bool StreamClientConnection::trySendStream(Span<uint8_t>& span, T& message, Addi
 }
 
 template<typename T, typename U, typename V>
-StreamClientConnection::SendSyncResult<T> StreamClientConnection::sendSync(T&& message, ObjectIdentifier<U, V> destinationID, Timeout timeout)
+StreamClientConnection::SendSyncResult<T> StreamClientConnection::sendSync(T&& message, ObjectIdentifierGeneric<U, V> destinationID, Timeout timeout)
 {
     static_assert(T::isSync, "Message is not sync!");
     if (!trySendDestinationIDIfNeeded(destinationID.toUInt64(), timeout))
@@ -212,7 +212,7 @@ StreamClientConnection::SendSyncResult<T> StreamClientConnection::sendSync(T&& m
 }
 
 template<typename T, typename U, typename V>
-bool StreamClientConnection::waitForAndDispatchImmediately(ObjectIdentifier<U, V> destinationID, Timeout timeout, OptionSet<WaitForOption> waitForOptions)
+bool StreamClientConnection::waitForAndDispatchImmediately(ObjectIdentifierGeneric<U, V> destinationID, Timeout timeout, OptionSet<WaitForOption> waitForOptions)
 {
     return m_connection->waitForAndDispatchImmediately<T>(destinationID, timeout, waitForOptions);
 }

@@ -3807,7 +3807,7 @@ void FrameLoader::requestFromDelegate(ResourceRequest& request, ResourceLoaderId
 {
     ASSERT(!request.isNull());
 
-    identifier = ResourceLoaderIdentifier::generateThreadSafe();
+    identifier = ResourceLoaderIdentifier::generate();
     notifier().assignIdentifierToInitialRequest(identifier, m_documentLoader.get(), request);
 
     ResourceRequest newRequest(request);

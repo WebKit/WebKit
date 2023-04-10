@@ -30,6 +30,6 @@
 namespace WebCore {
 
 enum DOMCacheIdentifierType { };
-using DOMCacheIdentifier = ObjectIdentifier<DOMCacheIdentifierType, WTF::ObjectIdentifierThreadSafeAccessTraits>;
+using DOMCacheIdentifier = AtomicObjectIdentifier<DOMCacheIdentifierType>;
 
 }

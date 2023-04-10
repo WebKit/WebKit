@@ -32,7 +32,7 @@
 namespace WebCore {
 
 enum ServiceWorkerIdentifierType { };
-using ServiceWorkerIdentifier = ObjectIdentifier<ServiceWorkerIdentifierType, WTF::ObjectIdentifierThreadSafeAccessTraits>;
+using ServiceWorkerIdentifier = AtomicObjectIdentifier<ServiceWorkerIdentifierType>;
 
 } // namespace WebCore
 

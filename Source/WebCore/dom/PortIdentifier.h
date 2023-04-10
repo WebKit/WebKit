@@ -30,6 +30,6 @@
 namespace WebCore {
 
 enum PortIdentifierType { };
-using PortIdentifier = ObjectIdentifier<PortIdentifierType, WTF::ObjectIdentifierThreadSafeAccessTraits>;
+using PortIdentifier = AtomicObjectIdentifier<PortIdentifierType>;
 
 }

@@ -30,6 +30,7 @@
 
 #include "AuxiliaryProcess.h"
 #include "WebKit2Initialize.h"
+#include <wtf/NeverDestroyed.h>
 #include <wtf/RunLoop.h>
 
 namespace WebKit {

@@ -113,7 +113,7 @@ WorkerThreadableLoader::MainThreadBridge::MainThreadBridge(ThreadableLoaderClien
     : m_workerClientWrapper(&workerClientWrapper)
     , m_loaderProxy(loaderProxy)
     , m_taskMode(taskMode.isolatedCopy())
-    , m_workerRequestIdentifier { ResourceLoaderIdentifier::generateThreadSafe() }
+    , m_workerRequestIdentifier { ResourceLoaderIdentifier::generate() }
     , m_contextIdentifier(contextIdentifier)
 {
     auto* securityOrigin = globalScope.securityOrigin();

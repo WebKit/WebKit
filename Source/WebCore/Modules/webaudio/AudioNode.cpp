@@ -38,6 +38,7 @@
 #include <wtf/Atomics.h>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/MainThread.h>
+#include <wtf/NeverDestroyed.h>
 
 #if DEBUG_AUDIONODE_REFERENCES
 #include <stdio.h>

@@ -22,6 +22,7 @@
 
 #if USE(GSTREAMER) && ENABLE(MEDIA_SOURCE)
 #include "RuntimeApplicationChecks.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 

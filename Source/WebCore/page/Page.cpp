@@ -2556,7 +2556,7 @@ MediaSessionGroupIdentifier Page::mediaSessionGroupIdentifier() const
     if (!m_mediaSessionGroupIdentifier) {
         if (auto* localMainFrame = dynamicDowncast<LocalFrame>(m_mainFrame.get())) {
             if (auto identifier = localMainFrame->loader().pageID())
-                m_mediaSessionGroupIdentifier = makeObjectIdentifier<MediaSessionGroupIdentifierType>(identifier->toUInt64());
+                m_mediaSessionGroupIdentifier = ObjectIdentifier<MediaSessionGroupIdentifierType>(identifier->toUInt64());
         }
     }
     return m_mediaSessionGroupIdentifier;

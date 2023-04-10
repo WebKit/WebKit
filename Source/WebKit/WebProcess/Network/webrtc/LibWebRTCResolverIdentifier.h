@@ -30,6 +30,6 @@
 namespace WebKit {
 
 enum LibWebRTCResolverIdentifierType { };
-using LibWebRTCResolverIdentifier = ObjectIdentifier<LibWebRTCResolverIdentifierType, WTF::ObjectIdentifierThreadSafeAccessTraits>;
+using LibWebRTCResolverIdentifier = AtomicObjectIdentifier<LibWebRTCResolverIdentifierType>;
 
 } // namespace WebKit

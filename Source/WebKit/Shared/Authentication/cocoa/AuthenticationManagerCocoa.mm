@@ -98,7 +98,7 @@ void AuthenticationManager::initializeConnection(IPC::Connection* connection)
             if (persistence > static_cast<uint64_t>(NSURLCredentialPersistenceSynchronizable))
                 return;
 
-            weakThis->completeAuthenticationChallenge(makeObjectIdentifier<AuthenticationChallengeIdentifierType>(challengeID), AuthenticationChallengeDisposition::UseCredential, WebCore::Credential(adoptNS([[NSURLCredential alloc] initWithIdentity:identity.get() certificates:certificates persistence:(NSURLCredentialPersistence)persistence]).get()));
+            weakThis->completeAuthenticationChallenge(ObjectIdentifier<AuthenticationChallengeIdentifierType>(challengeID), AuthenticationChallengeDisposition::UseCredential, WebCore::Credential(adoptNS([[NSURLCredential alloc] initWithIdentity:identity.get() certificates:certificates persistence:(NSURLCredentialPersistence)persistence]).get()));
         });
     });
 }

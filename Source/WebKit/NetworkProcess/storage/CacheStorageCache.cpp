@@ -63,7 +63,7 @@ static Ref<CacheStorageStore> createStore(const String& uniqueName, const String
 
 CacheStorageCache::CacheStorageCache(CacheStorageManager& manager, const String& name, const String& uniqueName, const String& path, Ref<WorkQueue>&& queue)
     : m_manager(manager)
-    , m_identifier(WebCore::DOMCacheIdentifier::generateThreadSafe())
+    , m_identifier(WebCore::DOMCacheIdentifier::generate())
     , m_name(name)
     , m_uniqueName(uniqueName)
 #if ASSERT_ENABLED

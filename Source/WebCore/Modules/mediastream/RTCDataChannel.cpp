@@ -96,7 +96,7 @@ NetworkSendQueue RTCDataChannel::createMessageQueue(ScriptExecutionContext& cont
 RTCDataChannel::RTCDataChannel(ScriptExecutionContext& context, std::unique_ptr<RTCDataChannelHandler>&& handler, String&& label, RTCDataChannelInit&& options)
     : ActiveDOMObject(&context)
     , m_handler(WTFMove(handler))
-    , m_identifier(RTCDataChannelIdentifier { Process::identifier(), RTCDataChannelLocalIdentifier::generateThreadSafe() })
+    , m_identifier(RTCDataChannelIdentifier { Process::identifier(), RTCDataChannelLocalIdentifier::generate() })
     , m_contextIdentifier(context.isDocument() ? ScriptExecutionContextIdentifier { } : context.identifier())
     , m_label(WTFMove(label))
     , m_options(WTFMove(options))

@@ -257,7 +257,7 @@ void CachedResource::load(CachedResourceLoader& cachedResourceLoader)
         ASSERT(m_originalRequest);
         CachedResourceHandle<CachedResource> protectedThis(this);
 
-        auto identifier = ResourceLoaderIdentifier::generateThreadSafe();
+        auto identifier = ResourceLoaderIdentifier::generate();
         InspectorInstrumentation::willSendRequestOfType(&frame, identifier, frameLoader.activeDocumentLoader(), request, InspectorInstrumentation::LoadType::Beacon);
 
         platformStrategies()->loaderStrategy()->startPingLoad(frame, request, m_originalRequest->httpHeaderFields(), m_options, m_options.contentSecurityPolicyImposition, [this, protectedThis = WTFMove(protectedThis), protectedFrame = Ref { frame }, identifier] (const ResourceError& error, const ResourceResponse& response) {

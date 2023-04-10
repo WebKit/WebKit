@@ -820,7 +820,7 @@ ScriptExecutionContext::HasResourceAccess ScriptExecutionContext::canAccessResou
 
 ScriptExecutionContext::NotificationCallbackIdentifier ScriptExecutionContext::addNotificationCallback(CompletionHandler<void()>&& callback)
 {
-    auto identifier = NotificationCallbackIdentifier::generateThreadSafe();
+    auto identifier = NotificationCallbackIdentifier::generate();
     m_notificationCallbacks.add(identifier, WTFMove(callback));
     return identifier;
 }

@@ -251,7 +251,7 @@ void RemoteMediaPlayerManager::clearMediaCacheForOrigins(MediaPlayerEnums::Media
 
 void RemoteMediaPlayerManager::didReceivePlayerMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
-    if (const auto& player = m_players.get(makeObjectIdentifier<MediaPlayerIdentifierType>(decoder.destinationID())))
+    if (const auto& player = m_players.get(ObjectIdentifier<MediaPlayerIdentifierType>(decoder.destinationID())))
         player->didReceiveMessage(connection, decoder);
 }
 

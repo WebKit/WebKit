@@ -30,6 +30,6 @@
 namespace WebKit {
 
 enum DisplayListRecorderFlushIdentifierType { };
-using DisplayListRecorderFlushIdentifier = ObjectIdentifier<DisplayListRecorderFlushIdentifierType, WTF::ObjectIdentifierThreadSafeAccessTraits>;
+using DisplayListRecorderFlushIdentifier = AtomicObjectIdentifier<DisplayListRecorderFlushIdentifierType>;
 
 }
