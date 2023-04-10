@@ -617,7 +617,7 @@ bool TypeChecker::unify(Type* lhs, Type* rhs)
     if (isBottom(lhs) || isBottom(rhs))
         return true;
 
-    return false;
+    return !!conversionRank(rhs, lhs);
 }
 
 bool TypeChecker::isBottom(Type* type) const

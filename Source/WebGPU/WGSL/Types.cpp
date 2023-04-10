@@ -110,6 +110,78 @@ void Type::dump(PrintStream& out) const
         });
 }
 
+constexpr unsigned primitivePair(Types::Primitive::Kind first, Types::Primitive::Kind second)
+{
+    static_assert(sizeof(Types::Primitive::Kind) == 1);
+    return static_cast<unsigned>(first) << 8 | second;
+}
+
+// https://www.w3.org/TR/WGSL/#conversion-rank
+ConversionRank conversionRank(Type* from, Type* to)
+{
+    using namespace WGSL::Types;
+
+    if (from == to)
+        return { 0 };
+
+    // FIXME: refs should also return 0
+
+    if (auto* fromPrimitive = std::get_if<Primitive>(from)) {
+        auto* toPrimitive = std::get_if<Primitive>(to);
+        if (!toPrimitive)
+            return std::nullopt;
+
+        switch (primitivePair(fromPrimitive->kind, toPrimitive->kind)) {
+        case primitivePair(Primitive::AbstractFloat, Primitive::F32):
+            return { 1 };
+        // FIXME: AbstractFloat to f16 should return 2
+        case primitivePair(Primitive::AbstractInt, Primitive::I32):
+            return { 3 };
+        case primitivePair(Primitive::AbstractInt, Primitive::U32):
+            return { 4 };
+        case primitivePair(Primitive::AbstractInt, Primitive::AbstractFloat):
+            return { 5 };
+        case primitivePair(Primitive::AbstractInt, Primitive::F32):
+            return { 6 };
+        // FIXME: AbstractInt to f16 should return 7
+        default:
+            return std::nullopt;
+        }
+    }
+
+    if (auto* fromVector = std::get_if<Vector>(from)) {
+        auto* toVector = std::get_if<Vector>(to);
+        if (!toVector)
+            return std::nullopt;
+        if (fromVector->size != toVector->size)
+            return std::nullopt;
+        return conversionRank(fromVector->element, toVector->element);
+    }
+
+    if (auto* fromMatrix = std::get_if<Matrix>(from)) {
+        auto* toMatrix = std::get_if<Matrix>(to);
+        if (!toMatrix)
+            return std::nullopt;
+        if (fromMatrix->columns != toMatrix->columns)
+            return std::nullopt;
+        if (fromMatrix->rows != toMatrix->rows)
+            return std::nullopt;
+        return conversionRank(fromMatrix->element, toMatrix->element);
+    }
+
+    if (auto* fromArray = std::get_if<Array>(from)) {
+        auto* toArray = std::get_if<Array>(to);
+        if (!toArray)
+            return std::nullopt;
+        if (fromArray->size != toArray->size)
+            return std::nullopt;
+        return conversionRank(fromArray->element, toArray->element);
+    }
+
+    // FIXME: add the abstract result conversion rules
+    return std::nullopt;
+}
+
 String Type::toString() const
 {
     StringPrintStream out;

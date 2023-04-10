@@ -61,13 +61,10 @@ public:
     Type* resolve();
 
 private:
-    static constexpr unsigned s_noConversion = std::numeric_limits<unsigned>::max();
-
     FixedVector<std::optional<ViableOverload>> considerCandidates();
     std::optional<ViableOverload> considerCandidate(const OverloadCandidate&);
-    unsigned calculateRank(const AbstractType&, Type*);
-    unsigned conversionRank(Type*, Type*) const;
-    unsigned conversionRankImpl(Type*, Type*) const;
+    ConversionRank calculateRank(const AbstractType&, Type*);
+    ConversionRank conversionRank(Type*, Type*) const;
 
     bool unify(const AbstractType&, Type*);
     bool assign(TypeVariable, Type*);
@@ -216,8 +213,8 @@ std::optional<ViableOverload> OverloadResolver::considerCandidate(const Overload
         auto& parameter = candidate.parameters[i];
         auto* argument = m_valueArguments[i];
         auto rank = calculateRank(parameter, argument);
-        ASSERT(rank != s_noConversion);
-        viableOverload.ranks[i] = rank;
+        ASSERT(!!rank);
+        viableOverload.ranks[i] = *rank;
     }
 
     viableOverload.result = materialize(candidate.result);
@@ -241,7 +238,7 @@ std::optional<ViableOverload> OverloadResolver::considerCandidate(const Overload
     return { WTFMove(viableOverload) };
 }
 
-unsigned OverloadResolver::calculateRank(const AbstractType& parameter, Type* argumentType)
+ConversionRank OverloadResolver::calculateRank(const AbstractType& parameter, Type* argumentType)
 {
     if (auto* variable = std::get_if<TypeVariable>(&parameter)) {
         auto* resolvedType = resolve(*variable);
@@ -301,11 +298,11 @@ bool OverloadResolver::unify(const AbstractType& parameter, Type* argumentType)
         // 2) unify(Var(T), Type(u32); Failed! Can't unify AbstractFloat and u32
         auto variablePromotionRank = conversionRank(resolvedType, argumentType);
         auto argumentConversionRank = conversionRank(argumentType, resolvedType);
-        logLn("variablePromotionRank: ", variablePromotionRank, ", argumentConversionRank: ", argumentConversionRank);
-        if (variablePromotionRank < argumentConversionRank)
+        logLn("variablePromotionRank: ", variablePromotionRank.value(), ", argumentConversionRank: ", argumentConversionRank.value());
+        if (variablePromotionRank.value() < argumentConversionRank.value())
             return assign(*variable, argumentType);
 
-        return argumentConversionRank != s_noConversion;
+        return !!argumentConversionRank;
     }
 
     if (auto* vectorParameter = std::get_if<AbstractVector>(&parameter)) {
@@ -329,7 +326,7 @@ bool OverloadResolver::unify(const AbstractType& parameter, Type* argumentType)
     }
 
     auto* parameterType = std::get<Type*>(parameter);
-    return conversionRank(argumentType, parameterType) != s_noConversion;
+    return !!conversionRank(argumentType, parameterType);
 }
 
 bool OverloadResolver::unify(const AbstractValue& parameter, unsigned argumentValue)
@@ -441,83 +438,11 @@ std::optional<unsigned> OverloadResolver::resolve(NumericVariable variable) cons
     return m_numericSubstitutions[variable.id];
 }
 
-unsigned OverloadResolver::conversionRank(Type* from, Type* to) const
+ConversionRank OverloadResolver::conversionRank(Type* from, Type* to) const
 {
-    auto rank = conversionRankImpl(from, to);
-    logLn("conversionRank(from: ", *from, ", to: ", *to, ") = ", rank);
+    auto rank = ::WGSL::conversionRank(from, to);
+    logLn("conversionRank(from: ", *from, ", to: ", *to, ") = ", rank.value());
     return rank;
-}
-
-constexpr unsigned primitivePair(Types::Primitive::Kind first, Types::Primitive::Kind second)
-{
-    static_assert(sizeof(Types::Primitive::Kind) == 1);
-    return static_cast<unsigned>(first) << 8 | second;
-}
-
-// https://www.w3.org/TR/WGSL/#conversion-rank
-unsigned OverloadResolver::conversionRankImpl(Type* from, Type* to) const
-{
-    using namespace WGSL::Types;
-
-    if (from == to)
-        return 0;
-
-    // FIXME: refs should also return 0
-
-    if (auto* fromPrimitive = std::get_if<Primitive>(from)) {
-        auto* toPrimitive = std::get_if<Primitive>(to);
-        if (!toPrimitive)
-            return s_noConversion;
-
-        switch (primitivePair(fromPrimitive->kind, toPrimitive->kind)) {
-        case primitivePair(Primitive::AbstractFloat, Primitive::F32):
-            return 1;
-        // FIXME: AbstractFloat to f16 should return 2
-        case primitivePair(Primitive::AbstractInt, Primitive::I32):
-            return 3;
-        case primitivePair(Primitive::AbstractInt, Primitive::U32):
-            return 4;
-        case primitivePair(Primitive::AbstractInt, Primitive::AbstractFloat):
-            return 5;
-        case primitivePair(Primitive::AbstractInt, Primitive::F32):
-            return 6;
-        // FIXME: AbstractInt to f16 should return 7
-        default:
-            return s_noConversion;
-        }
-    }
-
-    if (auto* fromVector = std::get_if<Vector>(from)) {
-        auto* toVector = std::get_if<Vector>(to);
-        if (!toVector)
-            return s_noConversion;
-        if (fromVector->size != toVector->size)
-            return s_noConversion;
-        return conversionRank(fromVector->element, toVector->element);
-    }
-
-    if (auto* fromMatrix = std::get_if<Matrix>(from)) {
-        auto* toMatrix = std::get_if<Matrix>(to);
-        if (!toMatrix)
-            return s_noConversion;
-        if (fromMatrix->columns != toMatrix->columns)
-            return s_noConversion;
-        if (fromMatrix->rows != toMatrix->rows)
-            return s_noConversion;
-        return conversionRank(fromMatrix->element, toMatrix->element);
-    }
-
-    if (auto* fromArray = std::get_if<Array>(from)) {
-        auto* toArray = std::get_if<Array>(to);
-        if (!toArray)
-            return s_noConversion;
-        if (fromArray->size != toArray->size)
-            return s_noConversion;
-        return conversionRank(fromArray->element, toArray->element);
-    }
-
-    // FIXME: add the abstract result conversion rules
-    return s_noConversion;
 }
 
 Type* resolveOverloads(TypeStore& types, const Vector<OverloadCandidate>& candidates, const Vector<Type*>& valueArguments, const Vector<Type*>& typeArguments)

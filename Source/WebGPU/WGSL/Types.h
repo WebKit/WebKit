@@ -27,6 +27,7 @@
 
 #include "ASTForward.h"
 #include <wtf/HashMap.h>
+#include <wtf/Markable.h>
 #include <wtf/PrintStream.h>
 #include <wtf/text/WTFString.h>
 
@@ -128,6 +129,9 @@ struct Type : public std::variant<
     void dump(PrintStream&) const;
     String toString() const;
 };
+
+using ConversionRank = Markable<unsigned, IntegralMarkableTraits<unsigned, std::numeric_limits<unsigned>::max()>>;
+ConversionRank conversionRank(Type* from, Type* to);
 
 } // namespace WGSL
 
