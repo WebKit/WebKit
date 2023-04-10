@@ -284,11 +284,14 @@ void Navigator::initializePluginAndMimeTypeArrays()
 
     // https://html.spec.whatwg.org/multipage/system-state.html#pdf-viewing-support
     // Section 8.9.1.6 states that if pdfViewerEnabled is true, we must return a list
-    // of exactly five PDF view plugins, in a particular order.
+    // of exactly five PDF view plugins, in a particular order. They also must return
+    // a specific plain English string for 'Navigator.plugins[x].description':
+    constexpr auto navigatorPDFDescription = "Portable Document Format"_s;
     for (auto& currentDummyName : dummyPDFPluginNames()) {
         pdfPluginInfo.name = currentDummyName;
+        pdfPluginInfo.desc = navigatorPDFDescription;
         domPlugins.append(DOMPlugin::create(*this, pdfPluginInfo));
-
+        
         // Register the copy of the PluginInfo using the generic 'PDF Viewer' name
         // as the handler for PDF MIME type to match the specification.
         if (currentDummyName == genericPDFViewerName)
