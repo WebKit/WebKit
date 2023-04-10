@@ -165,13 +165,10 @@ inline void ArbitraryConditionalGuardBuiltinsWrapper::exportNames()
 #if ENABLE(TEST_ARBITARY_CONDTIONAL_GUARD_SEPARATE_A) || USE(TEST_ARBITARY_CONDTIONAL_GUARD_SEPARATE_B)
 
 #include "WebCoreJSClientData.h"
-#include <JavaScriptCore/HeapInlines.h>
 #include <JavaScriptCore/IdentifierInlines.h>
 #include <JavaScriptCore/ImplementationVisibility.h>
 #include <JavaScriptCore/Intrinsic.h>
-#include <JavaScriptCore/JSCJSValueInlines.h>
-#include <JavaScriptCore/JSCellInlines.h>
-#include <JavaScriptCore/StructureInlines.h>
+#include <JavaScriptCore/JSObjectInlines.h>
 #include <JavaScriptCore/VM.h>
 
 namespace WebCore {

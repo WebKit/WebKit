@@ -110,7 +110,6 @@ JSC_FOREACH_BUILTIN.PROMISE_BUILTIN_CODE(DECLARE_BUILTIN_GENERATOR)
 #include "BuiltinPromiseBuiltins.h"
 
 #include "BuiltinExecutables.h"
-#include "HeapInlines.h"
 #include "IdentifierInlines.h"
 #include "ImplementationVisibility.h"
 #include "Intrinsic.h"

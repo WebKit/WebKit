@@ -132,7 +132,6 @@ JSC_FOREACH_BUILTIN_CODE(DECLARE_BUILTIN_GENERATOR)
 #include "JSCBuiltins.h"
 
 #include "BuiltinExecutables.h"
-#include "HeapInlines.h"
 #include "IdentifierInlines.h"
 #include "ImplementationVisibility.h"
 #include "Intrinsic.h"
