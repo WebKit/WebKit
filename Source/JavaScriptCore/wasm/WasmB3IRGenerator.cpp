@@ -95,8 +95,15 @@ namespace {
 namespace WasmB3IRGeneratorInternal {
 static constexpr bool verbose = false;
 static constexpr bool verboseInlining = false;
+static constexpr bool traceExecution = false;
+static constexpr bool traceExecutionIncludesConstructionSite = false;
+static constexpr bool traceStackValues = false;
 }
 }
+
+#define TRACE_VALUE(...) do { if constexpr (WasmB3IRGeneratorInternal::traceExecution) { traceValue(__VA_ARGS__); } } while (0)
+
+#define TRACE_CF(...) do { if constexpr (WasmB3IRGeneratorInternal::traceExecution) { traceCF(__VA_ARGS__); } } while (0)
 
 class B3IRGenerator {
     WTF_MAKE_FAST_ALLOCATED;
@@ -673,7 +680,11 @@ public:
     ALWAYS_INLINE void willParseOpcode() { }
     ALWAYS_INLINE void didParseOpcode() { }
     void didFinishParsingLocals() { }
-    void didPopValueFromStack() { --m_stackSize; }
+    void didPopValueFromStack(ExpressionType expr, String msg)
+    {
+        --m_stackSize;
+        TRACE_VALUE(Wasm::Types::Void, get(expr), "pop at height: ", m_stackSize.value() + 1, " site: [", msg, "], var ", *expr);
+    }
     const Ref<TypeDefinition> getTypeDefinition(uint32_t typeIndex) { return m_info.typeSignatures[typeIndex]; }
     const ArrayType* getArrayTypeDefinition(uint32_t);
     void getArrayElementType(uint32_t, StorageType&);
@@ -787,19 +798,22 @@ private:
         return m_outerLoops.last();
     }
 
-    ExpressionType push(Type type)
-    {
-        return push(toB3Type(type));
-    }
-
-    ExpressionType push(B3::Type type)
+    ExpressionType getPushVariable(B3::Type type)
     {
         ++m_stackSize;
         if (m_stackSize > m_maxStackSize) {
             m_maxStackSize = m_stackSize;
             Variable* var = m_proc.addVariable(type);
+            if constexpr (WasmB3IRGeneratorInternal::traceStackValues)
+                set(var, constant(type, 0xBADBEEFEF));
             m_stack.append(var);
             return var;
+        }
+
+        if constexpr (WasmB3IRGeneratorInternal::traceStackValues) {
+            // When we push, everything else *should* be dead
+            for (unsigned i = m_stackSize - 1; i < m_stack.size(); ++i)
+                set(m_stack[i], constant(m_stack[i]->type(), 0xBADBEEFEF));
         }
 
         Variable* var = m_stack[m_stackSize - 1];
@@ -813,8 +827,16 @@ private:
 
     ExpressionType push(Value* value)
     {
-        Variable* var = push(value->type());
+        Variable* var = getPushVariable(value->type());
         set(var, value);
+        if constexpr (!WasmB3IRGeneratorInternal::traceExecution)
+            return var;
+        String site;
+#if ASSERT_ENABLED
+        if constexpr (WasmB3IRGeneratorInternal::traceExecutionIncludesConstructionSite)
+            site = Value::generateCompilerConstructionSite();
+#endif
+        TRACE_VALUE(Wasm::Types::Void, get(var), "push to stack height ", m_stackSize.value(), " site: [", site, "] var ", *var);
         return var;
     }
 
@@ -847,6 +869,11 @@ private:
     {
         return m_mode == MemoryMode::Signaling;
     }
+
+    template<typename... Args>
+    void traceValue(Type, Value*, Args&&... info);
+    template<typename... Args>
+    void traceCF(Args&&... info);
 
     FunctionParser<B3IRGenerator>* m_parser { nullptr };
     const ModuleInformation& m_info;
@@ -1425,6 +1452,7 @@ auto B3IRGenerator::addRefFunc(uint32_t index, ExpressionType& result) -> Partia
     // FIXME: Emit this inline <https://bugs.webkit.org/show_bug.cgi?id=198506>.
     result = push(callWasmOperation(m_currentBlock, B3::Int64, operationWasmRefFunc,
         instanceValue(), constant(toB3Type(Types::I32), index)));
+    TRACE_VALUE(Wasm::Types::Funcref, get(result), "ref_func ", index);
     return { };
 }
 
@@ -1534,6 +1562,7 @@ auto B3IRGenerator::getLocal(uint32_t index, ExpressionType& result) -> PartialR
 {
     ASSERT(m_locals[index]);
     result = push(m_currentBlock->appendNew<VariableValue>(m_proc, B3::Get, origin(), m_locals[index]));
+    TRACE_VALUE(m_parser->typeOfLocal(index), get(result), "get_local ", index);
     return { };
 }
 
@@ -1769,10 +1798,113 @@ auto B3IRGenerator::addDataDrop(unsigned dataSegmentIndex) -> PartialResult
     return { };
 }
 
+template<typename... Args>
+void B3IRGenerator::traceValue(Type type, Value* value, Args&&... info)
+{
+    if constexpr (!WasmB3IRGeneratorInternal::traceExecution)
+        return;
+    if (!type.isFuncref() && !type.isVoid())
+        return;
+    auto* patch = m_proc.add<PatchpointValue>(B3::Void, origin());
+    patch->effects = Effects::none();
+    patch->effects.controlDependent = true;
+    patch->effects.fence = true;
+    patch->effects.reads = HeapRange::top();
+    patch->effects.writes = HeapRange::top();
+    StringPrintStream sb;
+    if (m_parser->unreachableBlocks())
+        sb.print("(unreachable) ");
+    sb.print("TRACE OMG EXECUTION fn[", m_functionIndex, "] stack height ", m_stackSize.value(), " type ", type, " ");
+    sb.print(info...);
+    dataLogLn("static: ", sb.toString());
+    patch->setGenerator([infoString = sb.toString(), type] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
+        AllowMacroScratchRegisterUsage allowScratch(jit);
+        JIT_COMMENT(jit, "PROBE FOR ", infoString);
+        jit.probeDebug([params, type, infoString](Probe::Context& ctx) {
+            auto rep = params[0];
+            uint64_t rawVal = 0;
+            ASSERT(rep.isGPR() || rep.isFPR());
+            if (rep.isGPR())
+                rawVal = ctx.gpr(rep.gpr());
+            else if (rep.isFPR())
+                rawVal = ctx.fpr(rep.fpr());
+            else if (rep.isConstant())
+                rawVal = rep.value();
+
+            dataLogLn(infoString, " = ", rawVal);
+
+            if (type.isVoid() || !rawVal)
+                return;
+
+            JSValue jsValue = JSValue::decode(rawVal);
+            RELEASE_ASSERT(jsValue.isCallable() || jsValue.isUndefinedOrNull());
+        });
+    });
+    patch->append(ConstrainedValue(value, ValueRep::SomeRegister));
+    m_currentBlock->append(patch);
+}
+
+template<typename... Args>
+void B3IRGenerator::traceCF(Args&&... info)
+{
+    if constexpr (!WasmB3IRGeneratorInternal::traceExecution)
+        return;
+    auto* patch = m_proc.add<PatchpointValue>(B3::Void, origin());
+    patch->effects = Effects::none();
+    patch->effects.controlDependent = true;
+    patch->effects.fence = true;
+    patch->effects.reads = HeapRange::top();
+    patch->effects.writes = HeapRange::top();
+    StringPrintStream sb;
+    sb.print("TRACE OMG EXECUTION fn[", m_functionIndex, "] stack height ", m_stackSize.value(), " CF ");
+    sb.print(info...);
+    dataLogLn("static: ", sb.toString());
+    patch->setGenerator([infoString = sb.toString()] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
+        AllowMacroScratchRegisterUsage allowScratch(jit);
+        JIT_COMMENT(jit, "PROBE FOR ", infoString);
+        jit.probeDebug([params, infoString](Probe::Context&) {
+            dataLogLn(infoString);
+        });
+    });
+    m_currentBlock->append(patch);
+
+    if (!WasmB3IRGeneratorInternal::traceStackValues)
+        return;
+    int i = 0;
+    for (auto* val : m_stack) {
+        ++i;
+        traceValue(Wasm::Types::Void, get(val), " wasm stack[", i, "] = ", *val);
+    }
+
+    i = 0;
+    for (auto val : m_parser->expressionStack()) {
+        ++i;
+        traceValue(Wasm::Types::Void, get(val.value()), " parser stack[", i, "] = ", *val.value());
+    }
+
+    if (m_parser->unreachableBlocks())
+        return;
+    if (m_parser->expressionStack().isEmpty() && m_stackSize) {
+        dataLogLn("%%%%%%%%%%%%%%%%%%%");
+        return;
+    }
+    if (!m_parser->expressionStack().isEmpty() && !m_stackSize) {
+        dataLogLn("$$$$$$$$$$$$$$$$$$$");
+        return;
+    }
+    for (i = 0; i < (int) m_parser->expressionStack().size(); ++i) {
+        if (m_parser->expressionStack()[m_parser->expressionStack().size() - i - 1] != m_stack[m_stackSize.value() - i - 1]) {
+            dataLogLn("************************");
+            return;
+        }
+    }
+}
+
 auto B3IRGenerator::setLocal(uint32_t index, ExpressionType value) -> PartialResult
 {
     ASSERT(m_locals[index]);
     m_currentBlock->appendNew<VariableValue>(m_proc, B3::Set, origin(), m_locals[index], get(value));
+    TRACE_VALUE(m_parser->typeOfLocal(index), get(value), "set_local ", index);
     return { };
 }
 
@@ -1790,6 +1922,8 @@ auto B3IRGenerator::getGlobal(uint32_t index, ExpressionType& result) -> Partial
         break;
     }
     }
+    TRACE_VALUE(global.type, get(result), "get_global ", index);
+
     return { };
 }
 
@@ -1797,6 +1931,8 @@ auto B3IRGenerator::setGlobal(uint32_t index, ExpressionType value) -> PartialRe
 {
     const Wasm::GlobalInformation& global = m_info.globals[index];
     ASSERT(toB3Type(global.type) == value->type());
+    TRACE_VALUE(global.type, get(value), "set_global ", index);
+
     switch (global.bindingMode) {
     case Wasm::GlobalInformation::BindingMode::EmbeddedInInstance:
         m_currentBlock->appendNew<MemoryValue>(m_proc, Store, origin(), get(value), instanceValue(), safeCast<int32_t>(Instance::offsetOfGlobalPtr(m_numImportFunctions, m_info.tableCount(), index)));
@@ -3851,6 +3987,7 @@ Value* B3IRGenerator::loadFromScratchBuffer(unsigned& indexInBuffer, Value* poin
 
 void B3IRGenerator::connectControlAtEntrypoint(unsigned& indexInBuffer, Value* pointer, ControlData& data, Stack& expressionStack, ControlData& currentData, bool fillLoopPhis)
 {
+    TRACE_CF("Connect control at entrypoint");
     for (unsigned i = 0; i < expressionStack.size(); i++) {
         TypedExpression value = expressionStack[i];
         auto* load = loadFromScratchBuffer(indexInBuffer, pointer, value->type());
@@ -3867,6 +4004,7 @@ void B3IRGenerator::connectControlAtEntrypoint(unsigned& indexInBuffer, Value* p
 
 auto B3IRGenerator::addLoop(BlockSignature signature, Stack& enclosingStack, ControlType& block, Stack& newStack, uint32_t loopIndex) -> PartialResult
 {
+    TRACE_CF("LOOP: entering loop index: ", loopIndex, " signature: ", *signature);
     BasicBlock* body = m_proc.addBlock();
     BasicBlock* continuation = m_proc.addBlock();
 
@@ -3917,11 +4055,13 @@ auto B3IRGenerator::addLoop(BlockSignature signature, Stack& enclosingStack, Con
 
 B3IRGenerator::ControlData B3IRGenerator::addTopLevel(BlockSignature signature)
 {
+    TRACE_CF("TopLevel: ", *signature);
     return ControlData(m_proc, Origin(), signature, BlockType::TopLevel, m_stackSize, m_proc.addBlock());
 }
 
 auto B3IRGenerator::addBlock(BlockSignature signature, Stack& enclosingStack, ControlType& newBlock, Stack& newStack) -> PartialResult
 {
+    TRACE_CF("Block: ", *signature);
     BasicBlock* continuation = m_proc.addBlock();
 
     splitStack(signature, enclosingStack, newStack);
@@ -3957,6 +4097,7 @@ auto B3IRGenerator::addIf(ExpressionType condition, BlockSignature signature, St
     notTaken->addPredecessor(m_currentBlock);
 
     m_currentBlock = taken;
+    TRACE_CF("IF");
     splitStack(signature, enclosingStack, newStack);
     result = ControlData(m_proc, origin(), signature, BlockType::If, m_stackSize, continuation, notTaken);
     return { };
@@ -3975,12 +4116,14 @@ auto B3IRGenerator::addElseToUnreachable(ControlData& data) -> PartialResult
     m_stackSize = data.stackSize() + data.m_signature->as<FunctionSignature>()->argumentCount();
     m_currentBlock = data.special;
     data.convertIfToBlock();
+    TRACE_CF("ELSE");
     return { };
 }
 
 auto B3IRGenerator::addTry(BlockSignature signature, Stack& enclosingStack, ControlType& result, Stack& newStack) -> PartialResult
 {
     ++m_tryCatchDepth;
+    TRACE_CF("TRY");
 
     BasicBlock* continuation = m_proc.addBlock();
     splitStack(signature, enclosingStack, newStack);
@@ -3990,6 +4133,7 @@ auto B3IRGenerator::addTry(BlockSignature signature, Stack& enclosingStack, Cont
 
 auto B3IRGenerator::addCatch(unsigned exceptionIndex, const TypeDefinition& signature, Stack& currentStack, ControlType& data, ResultList& results) -> PartialResult
 {
+    TRACE_CF("CATCH: ", signature);
     unifyValuesWithBlock(currentStack, data);
     m_currentBlock->appendNewControlValue(m_proc, Jump, origin(), data.continuation);
     return addCatchToUnreachable(exceptionIndex, signature, data, results);
@@ -4040,12 +4184,14 @@ auto B3IRGenerator::addCatchToUnreachable(unsigned exceptionIndex, const TypeDef
         Value* value = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, toB3Type(type), origin(), payload, i * sizeof(uint64_t));
         results.append(push(value));
     }
+    TRACE_CF("CATCH");
     return { };
 }
 
 auto B3IRGenerator::addCatchAll(Stack& currentStack, ControlType& data) -> PartialResult
 {
     unifyValuesWithBlock(currentStack, data);
+    TRACE_CF("CATCH_ALL");
     m_currentBlock->appendNewControlValue(m_proc, Jump, origin(), data.continuation);
     return addCatchAllToUnreachable(data);
 }
@@ -4101,6 +4247,7 @@ Value* B3IRGenerator::emitCatchImpl(CatchKind kind, ControlType& data, unsigned 
     }
 
     set(data.exception(), exception);
+    TRACE_CF("CATCH");
 
     return buffer;
 }
@@ -4112,6 +4259,7 @@ auto B3IRGenerator::addDelegate(ControlType& target, ControlType& data) -> Parti
 
 auto B3IRGenerator::addDelegateToUnreachable(ControlType& target, ControlType& data) -> PartialResult
 {
+    TRACE_CF("DELEGATE");
     unsigned targetDepth = 0;
     if (m_inlineParent)
         targetDepth += m_inlineParent->m_tryCatchDepth;
@@ -4125,6 +4273,7 @@ auto B3IRGenerator::addDelegateToUnreachable(ControlType& target, ControlType& d
 
 auto B3IRGenerator::addThrow(unsigned exceptionIndex, Vector<ExpressionType>& args, Stack&) -> PartialResult
 {
+    TRACE_CF("THROW");
     PatchpointValue* patch = m_proc.add<PatchpointValue>(B3::Void, origin());
     patch->effects.terminal = true;
     patch->append(instanceValue(), ValueRep::reg(GPRInfo::argumentGPR0));
@@ -4141,7 +4290,7 @@ auto B3IRGenerator::addThrow(unsigned exceptionIndex, Vector<ExpressionType>& ar
     patch->setGenerator([this, exceptionIndex, handle] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
         AllowMacroScratchRegisterUsage allowScratch(jit);
         handle.generate(jit, params, this);
-        emitThrowImpl(jit, exceptionIndex); 
+        emitThrowImpl(jit, exceptionIndex);
     });
     m_currentBlock->append(patch);
 
@@ -4150,6 +4299,7 @@ auto B3IRGenerator::addThrow(unsigned exceptionIndex, Vector<ExpressionType>& ar
 
 auto B3IRGenerator::addRethrow(unsigned, ControlType& data) -> PartialResult
 {
+    TRACE_CF("RETHROW");
     PatchpointValue* patch = m_proc.add<PatchpointValue>(B3::Void, origin());
     patch->clobber(RegisterSetBuilder::registersToSaveForJSCall(m_proc.usesSIMD() ? RegisterSetBuilder::allRegisters() : RegisterSetBuilder::allScalarRegisters()));
     patch->effects.terminal = true;
@@ -4191,6 +4341,7 @@ auto B3IRGenerator::addInlinedReturn(const Stack& returnValues) -> PartialResult
 
 auto B3IRGenerator::addReturn(const ControlData&, const Stack& returnValues) -> PartialResult
 {
+    TRACE_CF("RETURN");
     if (m_returnContinuation)
         return addInlinedReturn(returnValues);
 
@@ -4212,6 +4363,8 @@ auto B3IRGenerator::addReturn(const ControlData&, const Stack& returnValues) -> 
             ASSERT(rep.isReg());
             patch->append(get(returnValues[offset + i]), rep);
         }
+
+        TRACE_VALUE(m_parser->signature().as<FunctionSignature>()->returnType(i), get(returnValues[offset + i]), "put to return value ", i);
     }
 
     m_currentBlock->append(patch);
@@ -4238,6 +4391,8 @@ auto B3IRGenerator::addBranch(ControlData& data, ExpressionType condition, const
         break;
     }
 
+    TRACE_CF("BRANCH to ", *target);
+
     if (condition) {
         BasicBlock* continuation = m_proc.addBlock();
         m_currentBlock->appendNew<Value>(m_proc, B3::Branch, origin(), get(condition));
@@ -4255,6 +4410,7 @@ auto B3IRGenerator::addBranch(ControlData& data, ExpressionType condition, const
 
 auto B3IRGenerator::addSwitch(ExpressionType condition, const Vector<ControlData*>& targets, ControlData& defaultTarget, const Stack& expressionStack) -> PartialResult
 {
+    TRACE_CF("SWITCH");
     UNUSED_PARAM(expressionStack);
     for (size_t i = 0; i < targets.size(); ++i)
         unifyValuesWithBlock(expressionStack, *targets[i]);
@@ -4313,6 +4469,11 @@ auto B3IRGenerator::addEndToUnreachable(ControlEntry& entry, const Stack& expres
         }
     }
 
+    if constexpr (WasmB3IRGeneratorInternal::traceStackValues) {
+        m_parser->expressionStack().swap(entry.enclosedExpressionStack);
+        TRACE_CF("END: ", *data.signature(), " block type ", (int) data.blockType());
+        m_parser->expressionStack().swap(entry.enclosedExpressionStack);
+    }
 
     // TopLevel does not have any code after this so we need to make sure we emit a return here.
     if (data.blockType() == BlockType::TopLevel)
@@ -4517,6 +4678,8 @@ auto B3IRGenerator::addCall(uint32_t functionIndex, const TypeDefinition& signat
     ASSERT(callType == CallType::Call || isTailCall);
     ASSERT(signature.as<FunctionSignature>()->argumentCount() == args.size());
 
+    TRACE_CF("Call: entered with ", signature);
+
     const auto& callingConvention = wasmCallingConvention();
     Checked<int32_t> tailCallStackOffsetFromFP;
     CallInformation wasmCalleeInfo = callingConvention.callInformationFor(signature, CallRole::Caller);
@@ -4678,6 +4841,8 @@ auto B3IRGenerator::addCallIndirect(unsigned tableIndex, const TypeDefinition& o
     const TypeDefinition& signature = originalSignature.expand();
     ASSERT(signature.as<FunctionSignature>()->argumentCount() == args.size());
 
+    TRACE_CF("Call_indirect: entered with table index: ", tableIndex, " ", originalSignature);
+
     // Note: call indirect can call either WebAssemblyFunction or WebAssemblyWrapperFunction. Because
     // WebAssemblyWrapperFunction is like calling into the js, we conservatively assume all call indirects
     // can be to the js for our stack check calculation.
@@ -4744,6 +4909,7 @@ auto B3IRGenerator::addCallIndirect(unsigned tableIndex, const TypeDefinition& o
 auto B3IRGenerator::addCallRef(const TypeDefinition& originalSignature, Vector<ExpressionType>& args, ResultList& results) -> PartialResult
 {
     Value* callee = get(args.takeLast());
+    TRACE_VALUE(Wasm::Types::Void, callee, "call_ref: ", originalSignature);
     const TypeDefinition& signature = originalSignature.expand();
     ASSERT(signature.as<FunctionSignature>()->argumentCount() == args.size());
     m_makesCalls = true;

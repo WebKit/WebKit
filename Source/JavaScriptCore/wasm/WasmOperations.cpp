@@ -131,6 +131,7 @@ void loadValuesIntoBuffer(Probe::Context& context, const StackMap& values, uint6
             default:
                 *bitwise_cast<uint64_t*>(buffer + index * valueSize) = context.gpr(value.gpr());
             }
+            dataLogLnIf(WasmOperationsInternal::verbose, "GPR for value ", index, " ", value.gpr(), " = ", context.gpr(value.gpr()));
         } else if (value.isFPR()) {
             switch (value.type().kind()) {
             case B3::Float:

@@ -132,6 +132,7 @@ public:
     size_t currentOpcodeStartingOffset() const { return m_currentOpcodeStartingOffset; }
     const TypeDefinition& signature() const { return m_signature; }
     const Type& typeOfLocal(uint32_t localIndex) const { return m_locals[localIndex]; }
+    bool unreachableBlocks() const { return m_unreachableBlocks; }
 
     ControlStack& controlStack() { return m_controlStack; }
     Stack& expressionStack() { return m_expressionStack; }
@@ -149,7 +150,7 @@ private:
 #define WASM_TRY_POP_EXPRESSION_STACK_INTO(result, what) do {                               \
         WASM_PARSER_FAIL_IF(m_expressionStack.isEmpty(), "can't pop empty stack in ", what); \
         result = m_expressionStack.takeLast();                                              \
-        m_context.didPopValueFromStack();                                                   \
+        m_context.didPopValueFromStack(result, WTF::makeString("WasmFunctionParser.h:", (__LINE__)));                                                   \
     } while (0)
 
     using UnaryOperationHandler = PartialResult (Context::*)(ExpressionType, ExpressionType&);
@@ -1876,14 +1877,15 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             // Allocate stack space for arguments
             Vector<ExpressionType> args;
             size_t firstArgumentIndex = m_expressionStack.size() - argc;
-            WASM_PARSER_FAIL_IF(!args.tryReserveCapacity(argc), "can't allocate enough memory for array.new_fixed ", argc, " values");
+            WASM_PARSER_FAIL_IF(!args.tryReserveInitialCapacity(argc), "can't allocate enough memory for array.new_fixed ", argc, " values");
+            args.resize(argc);
 
             // Start parsing arguments; the expected type for each one is the unpacked version of the array element type
-            for (size_t i = firstArgumentIndex; i < m_expressionStack.size(); ++i) {
-                TypedExpression arg = m_expressionStack.at(i);
+            for (size_t i = 0; i < argc; ++i) {
+                TypedExpression arg = m_expressionStack.at(m_expressionStack.size() - i - 1);
                 WASM_VALIDATOR_FAIL_IF(!isSubtype(arg.type(), elementType), "argument type mismatch in array.new_fixed, got ", arg.type(), ", expected a subtype of ", elementType);
-                args.uncheckedAppend(arg);
-                m_context.didPopValueFromStack();
+                args[args.size() - i - 1] = arg;
+                m_context.didPopValueFromStack(arg, "GC ArrayNew"_s);
             }
             m_expressionStack.shrink(firstArgumentIndex);
             // We already checked that the expression stack was deep enough, so it's safe to assert this
@@ -2083,14 +2085,15 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
 
             Vector<ExpressionType> args;
             size_t firstArgumentIndex = m_expressionStack.size() - structType->fieldCount();
-            WASM_PARSER_FAIL_IF(!args.tryReserveCapacity(structType->fieldCount()), "can't allocate enough memory for struct.new ", structType->fieldCount(), " values");
+            WASM_PARSER_FAIL_IF(!args.tryReserveInitialCapacity(structType->fieldCount()), "can't allocate enough memory for struct.new ", structType->fieldCount(), " values");
+            args.resize(structType->fieldCount());
 
-            for (size_t i = firstArgumentIndex; i < m_expressionStack.size(); ++i) {
-                TypedExpression arg = m_expressionStack.at(i);
-                const auto& fieldType = structType->field(StructFieldCount(i - firstArgumentIndex)).type.unpacked();
+            for (size_t i = 0; i < structType->fieldCount(); ++i) {
+                TypedExpression arg = m_expressionStack.at(m_expressionStack.size() - i - 1);
+                const auto& fieldType = structType->field(StructFieldCount(structType->fieldCount() - i - 1)).type.unpacked();
                 WASM_VALIDATOR_FAIL_IF(!isSubtype(arg.type(), fieldType), "argument type mismatch in struct.new, got ", arg.type(), ", expected ", fieldType);
-                args.uncheckedAppend(arg);
-                m_context.didPopValueFromStack();
+                args[args.size() - i - 1] = arg;
+                m_context.didPopValueFromStack(arg, "StructNew*"_s);
             }
             m_expressionStack.shrink(firstArgumentIndex);
             RELEASE_ASSERT(structType->fieldCount() == args.size());
@@ -2433,12 +2436,14 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
 
         size_t firstArgumentIndex = m_expressionStack.size() - calleeSignature.argumentCount();
         Vector<ExpressionType> args;
-        WASM_PARSER_FAIL_IF(!args.tryReserveCapacity(calleeSignature.argumentCount()), "can't allocate enough memory for call's ", calleeSignature.argumentCount(), " arguments");
-        for (size_t i = firstArgumentIndex; i < m_expressionStack.size(); ++i) {
-            TypedExpression arg = m_expressionStack.at(i);
-            WASM_VALIDATOR_FAIL_IF(!isSubtype(arg.type(), calleeSignature.argumentType(i - firstArgumentIndex)), "argument type mismatch in call, got ", arg.type(), ", expected ", calleeSignature.argumentType(i - firstArgumentIndex));
-            args.uncheckedAppend(arg);
-            m_context.didPopValueFromStack();
+        WASM_PARSER_FAIL_IF(!args.tryReserveInitialCapacity(calleeSignature.argumentCount()), "can't allocate enough memory for call's ", calleeSignature.argumentCount(), " arguments");
+        args.resize(calleeSignature.argumentCount());
+        for (size_t i = 0; i < calleeSignature.argumentCount(); ++i) {
+            size_t stackIndex = m_expressionStack.size() - i - 1;
+            TypedExpression arg = m_expressionStack.at(stackIndex);
+            WASM_VALIDATOR_FAIL_IF(!isSubtype(arg.type(), calleeSignature.argumentType(calleeSignature.argumentCount() - i - 1)), "argument type mismatch in call, got ", arg.type(), ", expected ", calleeSignature.argumentType(calleeSignature.argumentCount() - i - 1));
+            args[args.size() - i - 1] = arg;
+            m_context.didPopValueFromStack(arg, "Call"_s);
         }
         m_expressionStack.shrink(firstArgumentIndex);
 
@@ -2500,14 +2505,16 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         WASM_VALIDATOR_FAIL_IF(!m_expressionStack.last().type().isI32(), "non-i32 call_indirect index ", m_expressionStack.last().type());
 
         Vector<ExpressionType> args;
-        WASM_PARSER_FAIL_IF(!args.tryReserveCapacity(argumentCount), "can't allocate enough memory for ", argumentCount, " call_indirect arguments");
+        WASM_PARSER_FAIL_IF(!args.tryReserveInitialCapacity(argumentCount), "can't allocate enough memory for ", argumentCount, " call_indirect arguments");
+        args.resize(argumentCount);
         size_t firstArgumentIndex = m_expressionStack.size() - argumentCount;
-        for (size_t i = firstArgumentIndex; i < m_expressionStack.size(); ++i) {
-            TypedExpression arg = m_expressionStack.at(i);
-            if (i < m_expressionStack.size() - 1)
-                WASM_VALIDATOR_FAIL_IF(!isSubtype(arg.type(), calleeSignature.argumentType(i - firstArgumentIndex)), "argument type mismatch in call_indirect, got ", arg.type(), ", expected ", calleeSignature.argumentType(i - firstArgumentIndex));
-            args.uncheckedAppend(arg);
-            m_context.didPopValueFromStack();
+        for (size_t i = 0; i < argumentCount; ++i) {
+            size_t stackIndex = m_expressionStack.size() - i - 1;
+            TypedExpression arg = m_expressionStack.at(stackIndex);
+            if (i > 0)
+                WASM_VALIDATOR_FAIL_IF(!isSubtype(arg.type(), calleeSignature.argumentType(argumentCount - i - 1)), "argument type mismatch in call_indirect, got ", arg.type(), ", expected ", calleeSignature.argumentType(argumentCount - i - 1));
+            args[args.size() - i - 1] = arg;
+            m_context.didPopValueFromStack(arg, "CallIndirect"_s);
         }
         m_expressionStack.shrink(firstArgumentIndex);
 
@@ -2563,14 +2570,16 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         WASM_PARSER_FAIL_IF(argumentCount > m_expressionStack.size(), "call_ref expects ", argumentCount, " arguments, but the expression stack currently holds ", m_expressionStack.size(), " values");
 
         Vector<ExpressionType> args;
-        WASM_PARSER_FAIL_IF(!args.tryReserveCapacity(argumentCount + 1), "can't allocate enough memory for ", argumentCount, " call_indirect arguments");
+        WASM_PARSER_FAIL_IF(!args.tryReserveInitialCapacity(argumentCount), "can't allocate enough memory for ", argumentCount, " call_indirect arguments");
+        args.resize(argumentCount);
         size_t firstArgumentIndex = m_expressionStack.size() - argumentCount;
-        for (size_t i = firstArgumentIndex; i < m_expressionStack.size(); ++i) {
-            TypedExpression arg = m_expressionStack.at(i);
-            if (i < m_expressionStack.size() - 1)
-                WASM_VALIDATOR_FAIL_IF(arg.type() != calleeSignature.argumentType(i - firstArgumentIndex), "argument type mismatch in call_indirect, got ", arg.type(), ", expected ", calleeSignature.argumentType(i - firstArgumentIndex));
-            args.uncheckedAppend(arg);
-            m_context.didPopValueFromStack();
+        for (size_t i = 0; i < argumentCount; ++i) {
+            size_t stackIndex = m_expressionStack.size() - i - 1;
+            TypedExpression arg = m_expressionStack.at(stackIndex);
+            if (i > 0)
+                WASM_VALIDATOR_FAIL_IF(arg.type() != calleeSignature.argumentType(argumentCount - i - 1), "argument type mismatch in call_indirect, got ", arg.type(), ", expected ", calleeSignature.argumentType(argumentCount - i - 1));
+            args[args.size() - i - 1] = arg;
+            m_context.didPopValueFromStack(arg, "CallRef"_s);
         }
         m_expressionStack.shrink(firstArgumentIndex);
 
@@ -2685,7 +2694,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
 
         BlockSignature expandedSignature = &inlineSignatureAsType->expand();
         const FunctionSignature* inlineSignature = expandedSignature->as<FunctionSignature>();
-        WASM_VALIDATOR_FAIL_IF(m_expressionStack.size() < inlineSignature->argumentCount(), "Too few arguments on stack for try block. Trye expects ", inlineSignature->argumentCount(), ", but only ", m_expressionStack.size(), " were present. Try block has signature: ", inlineSignature->toString());
+        WASM_VALIDATOR_FAIL_IF(m_expressionStack.size() < inlineSignature->argumentCount(), "Too few arguments on stack for try block. Try expects ", inlineSignature->argumentCount(), ", but only ", m_expressionStack.size(), " were present. Try block has signature: ", inlineSignature->toString());
         unsigned offset = m_expressionStack.size() - inlineSignature->argumentCount();
         for (unsigned i = 0; i < inlineSignature->argumentCount(); ++i)
             WASM_VALIDATOR_FAIL_IF(m_expressionStack[offset + i].type() != inlineSignature->argumentType(i), "Try expects the argument at index", i, " to be ", inlineSignature->argumentType(i), " but argument has type ", m_expressionStack[i].type());
@@ -2775,12 +2784,13 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         WASM_VALIDATOR_FAIL_IF(m_expressionStack.size() < exceptionSignature.argumentCount(), "Too few arguments on stack for the exception being thrown. The exception expects ", exceptionSignature.argumentCount(), ", but only ", m_expressionStack.size(), " were present. Exception has signature: ", exceptionSignature.toString());
         unsigned offset = m_expressionStack.size() - exceptionSignature.argumentCount();
         Vector<ExpressionType> args;
-        WASM_PARSER_FAIL_IF(!args.tryReserveCapacity(exceptionSignature.argumentCount()), "can't allocate enough memory for throw's ", exceptionSignature.argumentCount(), " arguments");
+        WASM_PARSER_FAIL_IF(!args.tryReserveInitialCapacity(exceptionSignature.argumentCount()), "can't allocate enough memory for throw's ", exceptionSignature.argumentCount(), " arguments");
+        args.resize(exceptionSignature.argumentCount());
         for (unsigned i = 0; i < exceptionSignature.argumentCount(); ++i) {
-            TypedExpression arg = m_expressionStack.at(offset + i);
-            WASM_VALIDATOR_FAIL_IF(arg.type() != exceptionSignature.argumentType(i), "The exception being thrown expects the argument at index ", i, " to be ", exceptionSignature.argumentType(i), " but argument has type ", arg.type());
-            args.uncheckedAppend(arg);
-            m_context.didPopValueFromStack();
+            TypedExpression arg = m_expressionStack.at(m_expressionStack.size() - i - 1);
+            WASM_VALIDATOR_FAIL_IF(arg.type() != exceptionSignature.argumentType(exceptionSignature.argumentCount() - i - 1), "The exception being thrown expects the argument at index ", i, " to be ", exceptionSignature.argumentType(exceptionSignature.argumentCount() - i - 1), " but argument has type ", arg.type());
+            args[args.size() - i - 1] = arg;
+            m_context.didPopValueFromStack(arg, "Throw"_s);
         }
         m_expressionStack.shrink(offset);
 
@@ -2890,8 +2900,9 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
 
     case Drop: {
         WASM_PARSER_FAIL_IF(!m_expressionStack.size(), "can't drop on empty stack");
-        WASM_TRY_ADD_TO_CONTEXT(addDrop(m_expressionStack.takeLast()));
-        m_context.didPopValueFromStack();
+        auto last = m_expressionStack.takeLast();
+        WASM_TRY_ADD_TO_CONTEXT(addDrop(last));
+        m_context.didPopValueFromStack(last, "Drop"_s);
         return { };
     }
 

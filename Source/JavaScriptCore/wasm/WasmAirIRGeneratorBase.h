@@ -519,7 +519,7 @@ struct AirIRGeneratorBase {
     ALWAYS_INLINE void willParseOpcode() { }
     ALWAYS_INLINE void didParseOpcode() { }
     void didFinishParsingLocals() { }
-    void didPopValueFromStack() { }
+    void didPopValueFromStack(ExpressionType, String) { }
     const Ref<TypeDefinition> getTypeDefinition(uint32_t typeIndex) { return m_info.typeSignatures[typeIndex]; }
     void getArrayElementType(uint32_t, StorageType&);
     void getArrayRefType(uint32_t, Type&);

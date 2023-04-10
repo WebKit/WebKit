@@ -165,7 +165,7 @@ class CodeGenerator:
         return result
 
     def makeResult(self, resultValue):
-        return resultValue + ";\n" + "    result = push(resultValue->type());\n" + "    m_currentBlock->appendNew<VariableValue>(m_proc, Set, origin(), result, resultValue);"
+        return resultValue + ";\n" + "    result = push(resultValue);"
 
     def generate(self, wasmOp):
         if len(self.tokens) == 1:

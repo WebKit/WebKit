@@ -256,7 +256,7 @@ public:
         return push(NoConsistencyCheck);
     }
 
-    void didPopValueFromStack() { --m_stackSize; }
+    void didPopValueFromStack(ExpressionType, String) { --m_stackSize; }
     void notifyFunctionUsesSIMD() { ASSERT(Options::useWebAssemblySIMD()); m_usesSIMD = true; }
 
     PartialResult WARN_UNUSED_RETURN addDrop(ExpressionType);
@@ -1775,7 +1775,7 @@ auto LLIntGenerator::atomicStore(ExtAtomicOpType op, Type, ExpressionType pointe
         RELEASE_ASSERT_NOT_REACHED();
     }
 
-    didPopValueFromStack(); // Ignore the result.
+    didPopValueFromStack(result, "LLINT ATOMIC IGNORE"_s); // Ignore the result.
     return { };
 }
 

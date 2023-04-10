@@ -8447,7 +8447,7 @@ public:
 
     void dump(const ControlStack&, const Stack*) { }
     void didFinishParsingLocals() { }
-    void didPopValueFromStack() { }
+    void didPopValueFromStack(ExpressionType, String) { }
 
     void finalize()
     {

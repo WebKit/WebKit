@@ -56,11 +56,8 @@ constexpr bool alwaysDumpConstructionSite = false;
 #if ASSERT_ENABLED
 String Value::generateCompilerConstructionSite()
 {
-    if (!Options::needDisassemblySupport() || !Options::dumpCompilerConstructionSite())
-        return emptyString();
-
     StringPrintStream s;
-    static constexpr int framesToShow = 60;
+    static constexpr int framesToShow = 15;
     static constexpr int framesToSkip = 0;
     void* samples[framesToShow + framesToSkip];
     int frames = framesToShow + framesToSkip;
@@ -73,13 +70,31 @@ String Value::generateCompilerConstructionSite()
     s.print("[");
     int printed = 0;
     stackTrace.forEach([&] (unsigned, void*, const char* cName) {
-        if (printed > 3)
+        if (printed > 10)
             return;
         auto name = String::fromUTF8(cName);
         if (name.contains("JSC::Wasm::B3IRGenerator::emit"_s)
             || name.contains("JSC::Wasm::B3IRGenerator::add"_s)
             || name.contains("JSC::Wasm::B3IRGenerator::create"_s)
-            || name.contains("JSC::Wasm::B3IRGenerator::end"_s)) {
+            || name.contains("JSC::Wasm::B3IRGenerator::end"_s)
+            || name.contains("JSC::Wasm::B3IRGenerator::set"_s)
+            || name.contains("JSC::Wasm::B3IRGenerator::get"_s)
+            || name.contains("JSC::Wasm::B3IRGenerator::insert"_s)
+            || name.contains("JSC::Wasm::B3IRGenerator::constant("_s)
+            || name.contains("JSC::Wasm::B3IRGenerator::fixup"_s)
+            || name.contains("JSC::Wasm::B3IRGenerator::load"_s)
+            || name.contains("JSC::Wasm::B3IRGenerator::store"_s)
+            || name.contains("JSC::Wasm::B3IRGenerator::atomic"_s)
+            || name.contains("JSC::Wasm::B3IRGenerator::trunc"_s)
+            || name.contains("JSC::Wasm::B3IRGenerator::sanitize"_s)
+            || name.contains("JSC::Wasm::B3IRGenerator::restore"_s)
+            || name.contains("JSC::Wasm::B3IRGenerator::connect"_s)
+            || name.contains("JSC::Wasm::B3IRGenerator::prepare"_s)) {
+            if (name.contains(">::add"_s)
+                || name.contains(">::translate"_s)
+                || name.contains(">::inlineEnsure"_s)
+                || name.contains(">::KeyValuePairTraits"_s))
+                return;
             if (printed)
                 s.print("|");
             s.print(name.left(name.find('(')));

@@ -33,6 +33,7 @@
 #include "JSWebAssemblyStruct.h"
 #include "TypedArrayController.h"
 #include "WaiterListManager.h"
+#include "WasmInstance.h"
 
 namespace JSC {
 namespace Wasm {

@@ -864,8 +864,9 @@ private:
     NO_RETURN_DUE_TO_CRASH static void badKind(Kind, unsigned);
 
 #if ASSERT_ENABLED
-    String m_compilerConstructionSite { generateCompilerConstructionSite() };
+    String m_compilerConstructionSite { emptyString() };
 
+public:
     static String generateCompilerConstructionSite();
 #endif
 
