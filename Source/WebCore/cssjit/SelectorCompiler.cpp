@@ -124,8 +124,7 @@ namespace SelectorCompiler {
     v(operationHasAttachment) \
     v(operationMatchesDir) \
     v(operationMatchesLangPseudoClass) \
-    v(operationMatchesOpenPseudoClass) \
-    v(operationMatchesClosedPseudoClass) \
+    v(operationMatchesPopoverOpenPseudoClass) \
     v(operationMatchesModalPseudoClass) \
     v(operationIsUserInvalid) \
     v(operationIsUserValid) \
@@ -280,8 +279,7 @@ static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesVolumeLock
 #if ENABLE(ATTACHMENT_ELEMENT)
 static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationHasAttachment, bool, (const Element&));
 #endif
-static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesOpenPseudoClass, bool, (const Element&));
-static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesClosedPseudoClass, bool, (const Element&));
+static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesPopoverOpenPseudoClass, bool, (const Element&));
 static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesModalPseudoClass, bool, (const Element&));
 static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationIsUserInvalid, bool, (const Element&));
 static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationIsUserValid, bool, (const Element&));
@@ -1020,16 +1018,10 @@ JSC_DEFINE_JIT_OPERATION(operationMatchesLangPseudoClass, bool, (const Element& 
     return matchesLangPseudoClass(element, argumentList);
 }
 
-JSC_DEFINE_JIT_OPERATION(operationMatchesOpenPseudoClass, bool, (const Element& element))
+JSC_DEFINE_JIT_OPERATION(operationMatchesPopoverOpenPseudoClass, bool, (const Element& element))
 {
-    COUNT_SELECTOR_OPERATION(operationMatchesOpenPseudoClass);
-    return matchesOpenPseudoClass(element);
-}
-
-JSC_DEFINE_JIT_OPERATION(operationMatchesClosedPseudoClass, bool, (const Element& element))
-{
-    COUNT_SELECTOR_OPERATION(operationMatchesClosedPseudoClass);
-    return matchesClosedPseudoClass(element);
+    COUNT_SELECTOR_OPERATION(operationMatchesPopoverOpenPseudoClass);
+    return matchesPopoverOpenPseudoClass(element);
 }
 
 JSC_DEFINE_JIT_OPERATION(operationMatchesModalPseudoClass, bool, (const Element& element))
@@ -1189,12 +1181,8 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
         return FunctionType::SimpleSelectorChecker;
 #endif
 
-    case CSSSelector::PseudoClassOpen:
-        fragment.unoptimizedPseudoClasses.append(CodePtr<JSC::OperationPtrTag>(operationMatchesOpenPseudoClass));
-        return FunctionType::SimpleSelectorChecker;
-
-    case CSSSelector::PseudoClassClosed:
-        fragment.unoptimizedPseudoClasses.append(CodePtr<JSC::OperationPtrTag>(operationMatchesClosedPseudoClass));
+    case CSSSelector::PseudoClassPopoverOpen:
+        fragment.unoptimizedPseudoClasses.append(CodePtr<JSC::OperationPtrTag>(operationMatchesPopoverOpenPseudoClass));
         return FunctionType::SimpleSelectorChecker;
 
     case CSSSelector::PseudoClassModal:

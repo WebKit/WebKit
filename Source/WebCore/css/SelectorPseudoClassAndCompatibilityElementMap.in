@@ -13,7 +13,6 @@ any-link
 autofill
 before, PseudoClassUnknown, PseudoElementBefore
 checked
-closed
 corner-present
 decrement
 default
@@ -57,7 +56,7 @@ nth-last-of-type
 nth-of-type
 only-child
 only-of-type
-open
+popover-open
 optional
 out-of-range
 placeholder-shown

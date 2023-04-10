@@ -1374,10 +1374,7 @@ ExceptionOr<void> HTMLElement::showPopover()
 
     popoverData()->setPreviouslyFocusedElement(nullptr);
 
-    Style::PseudoClassChangeInvalidation styleInvalidation(*this, {
-        { CSSSelector::PseudoClassOpen, true },
-        { CSSSelector::PseudoClassClosed, false }
-    });
+    Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClassPopoverOpen, true);
     popoverData()->setVisibilityState(PopoverVisibilityState::Showing);
 
     runPopoverFocusingSteps(*this);
@@ -1416,10 +1413,7 @@ ExceptionOr<void> HTMLElement::hidePopoverInternal(FocusPreviousElement focusPre
 
     removeFromTopLayer();
 
-    Style::PseudoClassChangeInvalidation styleInvalidation(*this, {
-        { CSSSelector::PseudoClassClosed, true },
-        { CSSSelector::PseudoClassOpen, false }
-    });
+    Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClassPopoverOpen, false);
     popoverData()->setVisibilityState(PopoverVisibilityState::Hidden);
 
     if (fireEvents == FireEvents::Yes)
@@ -1469,10 +1463,7 @@ void HTMLElement::popoverAttributeChanged(const AtomString& value)
     if (newPopoverState == oldPopoverState)
         return;
 
-    Style::PseudoClassChangeInvalidation styleInvalidation(*this, {
-        { CSSSelector::PseudoClassOpen, false },
-        { CSSSelector::PseudoClassClosed, newPopoverState != PopoverState::None }
-    });
+    Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClassPopoverOpen, false);
 
     if (oldPopoverState != PopoverState::None)
         hidePopoverInternal(FocusPreviousElement::Yes, FireEvents::No);

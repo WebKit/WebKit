@@ -23,8 +23,10 @@ PASS Changing attribute values for popover should work
 PASS Changing attribute values should close open popovers
 PASS Removing a visible popover=auto element from the document should close the popover
 PASS A showing popover=auto does not match :modal
+PASS A popover=auto never matches :open or :closed
 PASS Removing a visible popover=manual element from the document should close the popover
 PASS A showing popover=manual does not match :modal
+PASS A popover=manual never matches :open or :closed
 PASS Changing the popover type in a "beforetoggle" event handler should throw an exception (during showPopover())
 PASS Changing the popover type in a "beforetoggle" event handler should throw an exception (during hidePopover())
 PASS Changing a popover from auto to auto (via attr), and then auto during 'beforetoggle' works

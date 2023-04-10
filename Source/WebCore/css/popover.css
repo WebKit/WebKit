@@ -2,10 +2,10 @@
 
 @namespace "http://www.w3.org/1999/xhtml";
 
-[popover]:closed:not(dialog[open]) {
+[popover]:not(:popover-open):not(dialog[open]) {
     display: none;
 }
-dialog[popover]:not(:closed) {
+dialog:popover-open {
     display: block;
 }
 
@@ -22,7 +22,7 @@ dialog[popover]:not(:closed) {
     background-color: Canvas;
 }
 
-[popover]:open::backdrop {
+[popover]:popover-open::backdrop {
     position: fixed;
     inset: 0;
     pointer-events: none !important;
