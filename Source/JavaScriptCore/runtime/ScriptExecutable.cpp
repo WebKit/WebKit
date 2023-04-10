@@ -252,6 +252,11 @@ CodeBlock* ScriptExecutable::newCodeBlockFor(CodeSpecializationKind kind, JSFunc
         RELEASE_ASSERT(kind == CodeForCall);
         RELEASE_ASSERT(!executable->m_codeBlock);
         RELEASE_ASSERT(!function);
+
+        // FIXME: There might be a case that executable->unlinkedCodeBlock() will be a nullptr 
+        // since ScriptExecutable::clearCode might be triggered due to limited memory usage. 
+        // We should regenerate unlinkedCodeBlock if necessary for both EvalExecutable and ProgramExecutable.
+        // See similar problem for ModuleProgramExecutable in https://bugs.webkit.org/show_bug.cgi?id=255044.
         RELEASE_AND_RETURN(throwScope, EvalCodeBlock::create(vm, executable, executable->unlinkedCodeBlock(), scope));
     }
 
@@ -268,7 +273,11 @@ CodeBlock* ScriptExecutable::newCodeBlockFor(CodeSpecializationKind kind, JSFunc
         RELEASE_ASSERT(kind == CodeForCall);
         RELEASE_ASSERT(!executable->m_codeBlock);
         RELEASE_ASSERT(!function);
-        RELEASE_AND_RETURN(throwScope, ModuleProgramCodeBlock::create(vm, executable, executable->unlinkedCodeBlock(), scope));
+
+        UnlinkedModuleProgramCodeBlock* unlinkedCodeBlock = executable->getUnlinkedCodeBlock(globalObject, ModuleProgramExecutable::PossibleExceptionsExpected::No);
+        EXCEPTION_ASSERT(!throwScope.exception());
+        ASSERT(executable->unlinkedCodeBlock());
+        RELEASE_AND_RETURN(throwScope, ModuleProgramCodeBlock::create(vm, executable, unlinkedCodeBlock, scope));
     }
 
     RELEASE_ASSERT(classInfo() == FunctionExecutable::info());
@@ -295,11 +304,11 @@ CodeBlock* ScriptExecutable::newCodeBlockFor(CodeSpecializationKind kind, JSFunc
         executable->m_unlinkedExecutable->lexicalScopeFeatures(),
         executable->m_unlinkedExecutable->hasCapturedVariables(),
         lastLine(), endColumn()); 
+    // FIXME: We should remove this and add ASSERT(unlinkedCodeBlock).
     if (!unlinkedCodeBlock) {
         throwException(globalObject, throwScope, error.toErrorObject(globalObject, executable->source()));
         return nullptr;
     }
-
     RELEASE_AND_RETURN(throwScope, FunctionCodeBlock::create(vm, executable, unlinkedCodeBlock, scope));
 }
 
