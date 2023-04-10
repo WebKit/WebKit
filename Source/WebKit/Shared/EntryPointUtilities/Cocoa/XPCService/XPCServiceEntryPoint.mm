@@ -30,7 +30,7 @@
 #import "XPCServiceEntryPoint.h"
 #import <WebCore/ProcessIdentifier.h>
 #import <signal.h>
-#import <wtf/Process.h>
+#import <wtf/WTFProcess.h>
 #import <wtf/cocoa/Entitlements.h>
 #import <wtf/spi/darwin/SandboxSPI.h>
 #import <wtf/text/StringToIntegerConversion.h>

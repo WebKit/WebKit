@@ -29,7 +29,7 @@
 #import <Foundation/Foundation.h>
 #import <optional>
 #import <wtf/MainThread.h>
-#import <wtf/Process.h>
+#import <wtf/WTFProcess.h>
 
 using WebKit::WebPushD::PushMessageForTesting;
 

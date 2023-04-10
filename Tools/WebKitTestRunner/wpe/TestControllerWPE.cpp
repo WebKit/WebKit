@@ -29,8 +29,8 @@
 #include "PlatformWebView.h"
 #include <cairo.h>
 #include <glib.h>
-#include <wtf/Process.h>
 #include <wtf/RunLoop.h>
+#include <wtf/WTFProcess.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/Base64.h>
 

@@ -26,7 +26,7 @@
 #include "config.h"
 #include "IPCStreamTester.h"
 
-#include <wtf/Process.h>
+#include <wtf/WTFProcess.h>
 
 #if ENABLE(IPC_TESTING_API)
 #include "Decoder.h"

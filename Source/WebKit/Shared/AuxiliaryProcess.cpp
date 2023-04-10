@@ -35,8 +35,8 @@
 #include <WebCore/LogInitialization.h>
 #include <pal/SessionID.h>
 #include <wtf/LogInitialization.h>
-#include <wtf/Process.h>
 #include <wtf/SetForScope.h>
+#include <wtf/WTFProcess.h>
 
 #if !OS(WINDOWS)
 #include <unistd.h>

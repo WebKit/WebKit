@@ -28,7 +28,7 @@
 
 #include "Options.h"
 #include <wtf/Assertions.h>
-#include <wtf/Process.h>
+#include <wtf/WTFProcess.h>
 
 namespace JSC {
 

@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include <wtf/Process.h>
+#include <wtf/WTFProcess.h>
 
 #include <stdlib.h>
 

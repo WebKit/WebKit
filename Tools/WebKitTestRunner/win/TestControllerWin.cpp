@@ -34,8 +34,8 @@
 #include <shlwapi.h>
 #include <string>
 #include <windows.h>
-#include <wtf/Process.h>
 #include <wtf/RunLoop.h>
+#include <wtf/WTFProcess.h>
 
 
 #define INJECTED_BUNDLE_DLL_NAME "TestRunnerInjectedBundle.dll"

@@ -212,7 +212,6 @@ set(WTF_PUBLIC_HEADERS
     PointerPreparations.h
     PrintStream.h
     PriorityQueue.h
-    Process.h
     ProcessID.h
     ProcessPrivilege.h
     PtrTag.h
@@ -327,6 +326,7 @@ set(WTF_PUBLIC_HEADERS
     VectorHash.h
     VectorTraits.h
     WTFConfig.h
+    WTFProcess.h
     WTFSemaphore.h
     WallTime.h
     WeakHashCountedSet.h
@@ -483,7 +483,6 @@ set(WTF_SOURCES
     ParallelJobsGeneric.cpp
     ParkingLot.cpp
     PrintStream.cpp
-    Process.cpp
     ProcessPrivilege.cpp
     RAMSize.cpp
     RandomDevice.cpp
@@ -517,6 +516,7 @@ set(WTF_SOURCES
     Vector.cpp
     WTFAssertions.cpp
     WTFConfig.cpp
+    WTFProcess.cpp
     WallTime.cpp
     WeakPtr.cpp
     WeakRandomNumber.cpp

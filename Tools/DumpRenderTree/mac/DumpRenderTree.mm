@@ -98,11 +98,11 @@
 #import <wtf/FastMalloc.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/OSObjectPtr.h>
-#import <wtf/Process.h>
 #import <wtf/ProcessPrivilege.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/Threading.h>
 #import <wtf/UniqueArray.h>
+#import <wtf/WTFProcess.h>
 #import <wtf/WorkQueue.h>
 #import <wtf/cocoa/CrashReporter.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>

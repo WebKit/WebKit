@@ -92,11 +92,11 @@
 #include <wtf/CallbackAggregator.h>
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/OptionSet.h>
-#include <wtf/Process.h>
 #include <wtf/ProcessPrivilege.h>
 #include <wtf/RunLoop.h>
 #include <wtf/UUID.h>
 #include <wtf/UniqueRef.h>
+#include <wtf/WTFProcess.h>
 #include <wtf/text/AtomString.h>
 
 #if ENABLE(SEC_ITEM_SHIM)

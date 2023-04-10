@@ -50,11 +50,11 @@
 #import <sysexits.h>
 #import <wtf/DataLog.h>
 #import <wtf/FileSystem.h>
-#import <wtf/Process.h>
 #import <wtf/SafeStrerror.h>
 #import <wtf/Scope.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/SystemTracing.h>
+#import <wtf/WTFProcess.h>
 #import <wtf/WallTime.h>
 #import <wtf/cocoa/Entitlements.h>
 #import <wtf/spi/darwin/SandboxSPI.h>

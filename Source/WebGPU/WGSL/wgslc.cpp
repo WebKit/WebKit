@@ -30,7 +30,7 @@
 #include "WGSLShaderModule.h"
 #include <wtf/DataLog.h>
 #include <wtf/FileSystem.h>
-#include <wtf/Process.h>
+#include <wtf/WTFProcess.h>
 
 static NO_RETURN void printUsageStatement(bool help = false)
 {

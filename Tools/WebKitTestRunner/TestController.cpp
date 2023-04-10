@@ -87,7 +87,6 @@
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/FileSystem.h>
 #include <wtf/MainThread.h>
-#include <wtf/Process.h>
 #include <wtf/ProcessPrivilege.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RunLoop.h>
@@ -95,6 +94,7 @@
 #include <wtf/UUID.h>
 #include <wtf/UniqueArray.h>
 #include <wtf/UniqueRef.h>
+#include <wtf/WTFProcess.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringConcatenateNumbers.h>
 

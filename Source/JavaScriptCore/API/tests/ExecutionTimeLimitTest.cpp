@@ -33,8 +33,8 @@
 #include <wtf/CPUTime.h>
 #include <wtf/Condition.h>
 #include <wtf/Lock.h>
-#include <wtf/Process.h>
 #include <wtf/Threading.h>
+#include <wtf/WTFProcess.h>
 #include <wtf/text/StringBuilder.h>
 
 #if HAVE(MACH_EXCEPTIONS)

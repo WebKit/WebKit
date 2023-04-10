@@ -36,9 +36,9 @@
 #include <wtf/Lock.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/ObjectIdentifier.h>
-#include <wtf/Process.h>
 #include <wtf/RunLoop.h>
 #include <wtf/Scope.h>
+#include <wtf/WTFProcess.h>
 #include <wtf/text/WTFString.h>
 #include <wtf/threads/BinarySemaphore.h>
 

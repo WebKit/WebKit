@@ -31,8 +31,8 @@
 #include <string.h>
 #include <wtf/DataLog.h>
 #include <wtf/NeverDestroyed.h>
-#include <wtf/Process.h>
 #include <wtf/SafeStrerror.h>
+#include <wtf/WTFProcess.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringHash.h>

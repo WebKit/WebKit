@@ -31,7 +31,7 @@
 #include "Logging.h"
 #include "MessageWithMessagePorts.h"
 #include "ServiceWorkerGlobalScope.h"
-#include <wtf/Process.h>
+#include <wtf/WTFProcess.h>
 
 namespace WebCore {
 

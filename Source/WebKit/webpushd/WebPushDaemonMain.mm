@@ -40,7 +40,7 @@
 #import <wtf/LogInitialization.h>
 #import <wtf/MainThread.h>
 #import <wtf/OSObjectPtr.h>
-#import <wtf/Process.h>
+#import <wtf/WTFProcess.h>
 #import <wtf/spi/darwin/XPCSPI.h>
 
 using WebKit::Daemon::EncodedMessage;

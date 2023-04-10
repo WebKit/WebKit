@@ -64,9 +64,9 @@
 #include <wtf/CPUTime.h>
 #include <wtf/DataLog.h>
 #include <wtf/Language.h>
-#include <wtf/Process.h>
 #include <wtf/ProcessID.h>
 #include <wtf/StringPrintStream.h>
+#include <wtf/WTFProcess.h>
 #include <wtf/unicode/icu/ICUHelpers.h>
 
 #if !USE(SYSTEM_MALLOC)

@@ -37,8 +37,8 @@
 #import <wtf/BlockPtr.h>
 #import <wtf/Language.h>
 #import <wtf/OSObjectPtr.h>
-#import <wtf/Process.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/WTFProcess.h>
 #import <wtf/spi/cocoa/OSLogSPI.h>
 #import <wtf/spi/darwin/SandboxSPI.h>
 #import <wtf/spi/darwin/XPCSPI.h>

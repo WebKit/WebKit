@@ -32,8 +32,8 @@
 #include <WebKit/WKViewPrivate.h>
 #include <gtk/gtk.h>
 #include <wtf/Platform.h>
-#include <wtf/Process.h>
 #include <wtf/RunLoop.h>
+#include <wtf/WTFProcess.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/Base64.h>

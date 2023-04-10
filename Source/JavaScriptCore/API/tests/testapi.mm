@@ -39,8 +39,8 @@
 #import "JSWrapperMapTests.h"
 #import "Regress141275.h"
 #import "Regress141809.h"
-#import <wtf/Process.h>
 #import <wtf/SafeStrerror.h>
+#import <wtf/WTFProcess.h>
 #import <wtf/spi/darwin/DataVaultSPI.h>
 
 

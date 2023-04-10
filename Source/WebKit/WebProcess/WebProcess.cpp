@@ -149,11 +149,11 @@
 #include <wtf/CallbackAggregator.h>
 #include <wtf/DateMath.h>
 #include <wtf/Language.h>
-#include <wtf/Process.h>
 #include <wtf/ProcessPrivilege.h>
 #include <wtf/RunLoop.h>
 #include <wtf/SystemTracing.h>
 #include <wtf/URLParser.h>
+#include <wtf/WTFProcess.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/TextStream.h>
 

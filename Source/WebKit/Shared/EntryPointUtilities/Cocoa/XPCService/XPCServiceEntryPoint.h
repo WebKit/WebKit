@@ -29,7 +29,7 @@
 #import "WebKit2Initialize.h"
 #import <JavaScriptCore/ExecutableAllocator.h>
 #import <wtf/OSObjectPtr.h>
-#import <wtf/Process.h>
+#import <wtf/WTFProcess.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 
 #if !USE(RUNNINGBOARD)

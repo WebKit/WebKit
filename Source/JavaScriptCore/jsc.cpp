@@ -92,12 +92,12 @@
 #include <wtf/MainThread.h>
 #include <wtf/MemoryPressureHandler.h>
 #include <wtf/MonotonicTime.h>
-#include <wtf/Process.h>
 #include <wtf/SafeStrerror.h>
 #include <wtf/Scope.h>
 #include <wtf/Span.h>
 #include <wtf/StringPrintStream.h>
 #include <wtf/URL.h>
+#include <wtf/WTFProcess.h>
 #include <wtf/WallTime.h>
 #include <wtf/text/Base64.h>
 #include <wtf/text/StringBuilder.h>

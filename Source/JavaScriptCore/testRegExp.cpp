@@ -28,8 +28,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <wtf/Process.h>
 #include <wtf/Vector.h>
+#include <wtf/WTFProcess.h>
 #include <wtf/text/StringBuilder.h>
 
 #if COMPILER(MSVC)
