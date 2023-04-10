@@ -74,9 +74,9 @@ public:
     void clearColor(const Color&) override;
 
     void bindSurface(BitmapTexture* surface) override;
-    BitmapTexture* currentSurface();
+    BitmapTexture* currentSurface() override;
     void beginClip(const TransformationMatrix&, const FloatRoundedRect&) override;
-    void beginPainting(PaintFlags = 0) override;
+    void beginPainting(PaintFlags = 0, BitmapTexture* = nullptr) override;
     void endPainting() override;
     void endClip() override;
     IntRect clipBounds() override;
@@ -102,6 +102,8 @@ private:
     void bindDefaultSurface();
     ClipStack& clipStack();
     inline TextureMapperGLData& data() { return *m_data; }
+
+    void updateProjectionMatrix();
 
     TextureMapperContextAttributes m_contextAttributes;
     TextureMapperGLData* m_data;

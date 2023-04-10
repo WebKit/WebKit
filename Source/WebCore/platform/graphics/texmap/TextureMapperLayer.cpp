@@ -174,8 +174,7 @@ void TextureMapperLayer::paint(TextureMapper& textureMapper)
     textureMapper.setDepthRange(data.zNear, data.zFar);
 
     TextureMapperPaintOptions options(textureMapper);
-    options.textureMapper.bindSurface(0);
-
+    options.surface = textureMapper.currentSurface();
     paintRecursive(options);
 }
 
