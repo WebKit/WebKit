@@ -427,6 +427,8 @@ void HTMLSelectElement::childrenChanged(const ChildChange& change)
 
 void HTMLSelectElement::optionElementChildrenChanged()
 {
+    setOptionsChangedOnRenderer();
+    invalidateStyleForSubtree();
     updateValidity();
     if (auto* cache = document().existingAXObjectCache())
         cache->childrenChanged(this);
