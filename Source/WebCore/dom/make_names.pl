@@ -1283,12 +1283,13 @@ sub generateFindNameForLength
         }
         return;
     }
+    print F "${indent}switch (buffer[$currentIndex]) {\n";
     for (my $i = 0; $i < $candidateCount;) {
         my $candidate = $candidates->[$i];
         my $string = $candidate->{string};
         my $enumValue = $candidate->{enumValue};
         my $letterAtIndex = substr($string, $currentIndex, 1);
-        print F "${indent}if (buffer[$currentIndex] == '$letterAtIndex') {\n";
+        print F "${indent}case '$letterAtIndex': {\n";
         my @candidatesWithPrefix = ($candidate);
         for ($i = $i + 1; $i < $candidateCount; $i = $i + 1) {
             my $nextCandidate = $candidates->[$i];
@@ -1302,9 +1303,14 @@ sub generateFindNameForLength
         generateFindNameForLength($indent . "    ", \@candidatesWithPrefix, $length, $currentIndex + 1, $enumClass);
         if (@candidatesWithPrefix > 1) {
             print F "${indent}    return ${enumClass}::Unknown;\n";
+        } elsif ($currentIndex + 1 < $length) {
+            print F "${indent}    break;\n";
         }
         print F "$indent}\n";
     }
+    print F "${indent}default:\n";
+    print F "${indent}    break;\n";
+    print F "${indent}}\n";
 }
 
 sub generateFindBody {
