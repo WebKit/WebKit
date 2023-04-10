@@ -4503,6 +4503,17 @@ void WebPage::drawToImage(WebCore::FrameIdentifier frameID, const PrintInfo& pri
     Checked<int> pageWidth = pageRects[0].width();
     Checked<int> pageHeight = pageRects[0].height();
 
+    // The thumbnail images are always a maximum of 500 x 500.
+    static constexpr float maximumPrintPreviewDimensionSize = 500.0;
+
+    // If the sizes are too large, the bitmap will not be able to be created,
+    // so scale them down.
+    float scaleFactor = maximumPrintPreviewDimensionSize / static_cast<int>(std::max(pageWidth, pageHeight));
+    if (scaleFactor < 1.0) {
+        pageWidth = static_cast<int>(std::floorf(static_cast<int>(pageWidth) * scaleFactor));
+        pageHeight = static_cast<int>(std::floorf(static_cast<int>(pageHeight) * scaleFactor));
+    }
+
     int imageHeight;
     if (!WTF::safeMultiply(pageHeight.value<size_t>(), pageCount, imageHeight)) {
         reply({ });
