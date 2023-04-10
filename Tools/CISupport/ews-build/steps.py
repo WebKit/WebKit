@@ -2670,6 +2670,11 @@ class CompileWebKit(shell.Compile, AddToLogMixin):
             self.addLogObserver('stdio', BuildLogLineObserver(self.errorReceived))
 
         if additionalArguments:
+            # FIXME: These arguments are required for iOS layout tests, but don't apply to compliation. We need to
+            # create a separate property to handle these run-webkit-tests specific arguments.
+            for argument in ["--child-process=5", "--exclude-tests", "imported/w3c/web-platform-tests"]:
+                if argument in additionalArguments:
+                    additionalArguments.remove(argument)
             self.setCommand(self.command + additionalArguments)
         if platform in ('mac', 'ios', 'tvos', 'watchos'):
             # FIXME: Once WK_VALIDATE_DEPENDENCIES is set via xcconfigs, it can
