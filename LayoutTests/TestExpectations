@@ -1853,8 +1853,6 @@ webkit.org/b/186045 imported/w3c/web-platform-tests/html/semantics/embedded-cont
 webkit.org/b/186045 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/available-images.html [ Skip ]
 webkit.org/b/186045 imported/w3c/web-platform-tests/apng/animated-png-timeout.html [ Skip ]
 webkit.org/b/186045 imported/w3c/web-platform-tests/css/css-font-loading/fontface-descriptor-updates.html [ Skip ]
-webkit.org/b/186045 imported/w3c/web-platform-tests/css/css-backgrounds/background-clip-color-repaint.html [ Skip ]
-webkit.org/b/186045 imported/w3c/web-platform-tests/css/css-backgrounds/background-image-none-gradient-repaint.html [ Skip ]
 webkit.org/b/186045 imported/w3c/web-platform-tests/css/css-fonts/font-display/font-display-change.html [ Skip ]
 webkit.org/b/186045 imported/w3c/web-platform-tests/css/css-fonts/font-display/font-display-feature-policy-02.tentative.html [ Skip ]
 webkit.org/b/186045 imported/w3c/web-platform-tests/css/css-fonts/font-display/font-display-preload.html [ Skip ]
@@ -4016,7 +4014,6 @@ webkit.org/b/206753 imported/w3c/web-platform-tests/css/css-backgrounds/backgrou
 webkit.org/b/206753 imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/background-size-vector-025.html [ ImageOnlyFailure ]
 webkit.org/b/206753 imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/background-size-vector-027.html [ ImageOnlyFailure ]
 webkit.org/b/206753 imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/background-size-vector-029.html [ ImageOnlyFailure ]
-webkit.org/b/206753 imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/diagonal-percentage-vector-background.html [ ImageOnlyFailure ]
 webkit.org/b/206753 imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/tall--auto--percent-width-nonpercent-height-viewbox.html [ ImageOnlyFailure ]
 webkit.org/b/206753 imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/tall--auto--percent-width-omitted-height-viewbox.html [ ImageOnlyFailure ]
 webkit.org/b/206753 imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/tall--auto--percent-width-percent-height-viewbox.html [ ImageOnlyFailure ]
@@ -4115,22 +4112,10 @@ webkit.org/b/206753 imported/w3c/web-platform-tests/css/css-backgrounds/backgrou
 webkit.org/b/206753 imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/wide--cover--percent-width-nonpercent-height-viewbox.html [ ImageOnlyFailure ]
 webkit.org/b/206753 imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/wide--cover--percent-width-omitted-height-viewbox.html [ ImageOnlyFailure ]
 webkit.org/b/206753 imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/wide--cover--percent-width-percent-height-viewbox.html [ ImageOnlyFailure ]
-webkit.org/b/206753 imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/wide--cover--width.html [ Pass ImageOnlyFailure ]
-webkit.org/b/206753 imported/w3c/web-platform-tests/css/css-backgrounds/css-border-radius-001.html [ ImageOnlyFailure ]
-webkit.org/b/206753 imported/w3c/web-platform-tests/css/css-backgrounds/css3-border-image-repeat-stretch.html [ ImageOnlyFailure ]
 webkit.org/b/206753 imported/w3c/web-platform-tests/css/css-backgrounds/first-letter-space-not-selected.html [ ImageOnlyFailure ]
-webkit.org/b/254820 imported/w3c/web-platform-tests/css/css-backgrounds/background-size-001.html [ Failure ]
-webkit.org/b/254820 imported/w3c/web-platform-tests/css/css-backgrounds/border-image-6.html [ Skip ]
-
-webkit.org/b/206753 imported/w3c/web-platform-tests/css/css-backgrounds/background-attachment-local/attachment-local-clipping-color-5.html [ ImageOnlyFailure Pass ]
-webkit.org/b/206753 imported/w3c/web-platform-tests/css/css-backgrounds/background-image-007.html [ ImageOnlyFailure Pass ]
-webkit.org/b/206753 imported/w3c/web-platform-tests/css/css-backgrounds/background-repeat/background-repeat-round-roundup.xht [ ImageOnlyFailure Pass ]
-webkit.org/b/206753 imported/w3c/web-platform-tests/css/css-backgrounds/background-size/background-size-cover-contain-001.xht [ ImageOnlyFailure Pass ]
 
 webkit.org/b/206579 [ Debug ] imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/zero-height-ratio-auto-5px.html [ Skip ]
 webkit.org/b/206579 [ Debug ] imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/zero-width-ratio-auto-5px.html [ Skip ]
-
-webkit.org/b/254943 imported/w3c/web-platform-tests/css/css-backgrounds/css3-border-image-repeat-repeat.html [ ImageOnlyFailure ]
 
 webkit.org/b/207262 imported/w3c/web-platform-tests/web-animations/timing-model/animations/sync-start-times.html [ Pass ImageOnlyFailure ]
 
@@ -4707,11 +4692,6 @@ webkit.org/b/251953 imported/w3c/web-platform-tests/shadow-dom/directionality/di
 
 # WebKit2 only.
 js/throw-large-string-oom.html [ Skip ]
-
-webkit.org/b/215531 imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/tall--contain--height.html [ ImageOnlyFailure ]
-webkit.org/b/215531 imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/tall--contain--width.html [ ImageOnlyFailure ]
-webkit.org/b/215531 imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/wide--contain--height.html [ ImageOnlyFailure ]
-webkit.org/b/215531 imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/wide--contain--width.html [ ImageOnlyFailure ]
 
 # Newly imported scroll-snap tests that are failing
 imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-align-001.html [ ImageOnlyFailure ]
@@ -6281,8 +6261,6 @@ imported/w3c/web-platform-tests/css/css-ruby/ruby-with-floats-002.html [ ImageOn
 imported/w3c/web-platform-tests/css/css-ruby/ruby-with-floats-003.html [ ImageOnlyFailure ]
 
 webkit.org/b/242658 http/tests/media/user-gesture-preserved-across-xmlhttprequest.html [ Slow Pass Failure ]
-
-webkit.org/b/206753 imported/w3c/web-platform-tests/css/css-backgrounds/background-size-percentage-root.html [ ImageOnlyFailure Pass ]
 
 # Recent WPT update
 webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/background-attachment-fixed-inside-transform-1.html [ ImageOnlyFailure ]

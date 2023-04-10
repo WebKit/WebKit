@@ -3265,6 +3265,12 @@ webgl/2.0.y/conformance/context/premultiplyalpha-test.html [ Failure ]
 webgl/2.0.y/conformance/extensions/ext-color-buffer-half-float.html [ Failure ]
 webgl/2.0.y/conformance/rendering/negative-one-index.html [ Failure ]
 
+imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/tall--contain--height.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/tall--contain--width.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/wide--contain--height.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/wide--contain--width.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/wide--cover--width.html [ ImageOnlyFailure ]
+
 # End: Common failures between GTK and WPE.
 
 #////////////////////////////////////////////////////////////////////////////////////////
