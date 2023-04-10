@@ -322,6 +322,32 @@ TEST(WebKit, WKThumbnailViewResetsViewStateWhenUnparented)
     [thumbnailView removeObserver:observer.get() forKeyPath:@"snapshotSize" context:snapshotSizeChangeKVOContext];
 }
 
+static std::pair<WebCore::Color, WebCore::Color> leftCornerColorsForThumbnailView(_WKThumbnailView *thumbnailView)
+{
+    __block RetainPtr<CGImageRef> snapshot;
+    __block bool done = false;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        snapshot = thumbnailView._test_cgImage;
+        done = true;
+    });
+    Util::run(&done);
+    CGImagePixelReader pixelReader { snapshot.get() };
+    return std::pair { pixelReader.at(10, 10), pixelReader.at(10, pixelReader.height() - 10) };
+}
+
+void checkThumbnailViewSnapshotConsistency(TestWKWebView *webView)
+{
+    auto thumbnail = adoptNS([[_WKThumbnailView alloc] initWithFrame:webView.frame fromWKWebView:webView]);
+    [webView.window.contentView addSubview:thumbnail.get()];
+
+    auto [topLeftBeforeSnapshot, bottomLeftBeforeSnapshot] = leftCornerColorsForThumbnailView(thumbnail.get());
+    [webView stringByEvaluatingJavaScript:@"1"];
+    auto [topLeftAfterSnapshot, bottomLeftAfterSnapshot] = leftCornerColorsForThumbnailView(thumbnail.get());
+
+    EXPECT_EQ(topLeftBeforeSnapshot, topLeftAfterSnapshot);
+    EXPECT_EQ(bottomLeftBeforeSnapshot, bottomLeftAfterSnapshot);
+}
+
 TEST(WebKit, WKThumbnailViewLayerReparentingWithUISideCompositing)
 {
     EnableUISideCompositingScope enableUISideCompositing;
@@ -330,27 +356,20 @@ TEST(WebKit, WKThumbnailViewLayerReparentingWithUISideCompositing)
     [webView synchronouslyLoadTestPageNamed:@"fixed-nav-bar"];
     [webView waitForNextPresentationUpdate];
 
-    auto thumbnail = adoptNS([[_WKThumbnailView alloc] initWithFrame:[webView frame] fromWKWebView:webView.get()]);
-    [[webView window].contentView addSubview:thumbnail.get()];
+    checkThumbnailViewSnapshotConsistency(webView.get());
+}
 
-    auto getThumbnailViewLeftCornerColors = [&] {
-        __block RetainPtr<CGImageRef> snapshot;
-        __block bool done = false;
-        dispatch_async(dispatch_get_main_queue(), ^{
-            snapshot = [thumbnail _test_cgImage];
-            done = true;
-        });
-        Util::run(&done);
-        CGImagePixelReader pixelReader { snapshot.get() };
-        return std::pair { pixelReader.at(10, 10), pixelReader.at(10, pixelReader.height() - 10) };
-    };
+TEST(WebKit, WKThumbnailViewLayerReparentingWithUISideCompositingAndTopContentInset)
+{
+    EnableUISideCompositingScope enableUISideCompositing;
 
-    auto [topLeftBeforeSnapshot, bottomLeftBeforeSnapshot] = getThumbnailViewLeftCornerColors();
-    [webView stringByEvaluatingJavaScript:@"1"];
-    auto [topLeftAfterSnapshot, bottomLeftAfterSnapshot] = getThumbnailViewLeftCornerColors();
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
+    [webView _setAutomaticallyAdjustsContentInsets:NO];
+    [webView _setTopContentInset:100];
+    [webView synchronouslyLoadTestPageNamed:@"fixed-nav-bar"];
+    [webView waitForNextPresentationUpdate];
 
-    EXPECT_EQ(topLeftBeforeSnapshot, topLeftAfterSnapshot);
-    EXPECT_EQ(bottomLeftBeforeSnapshot, bottomLeftAfterSnapshot);
+    checkThumbnailViewSnapshotConsistency(webView.get());
 }
 
 } // namespace TestWebKitAPI

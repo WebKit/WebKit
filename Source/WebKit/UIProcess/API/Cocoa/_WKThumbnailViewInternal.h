@@ -31,6 +31,7 @@
 
 @property (nonatomic, assign, setter=_setThumbnailLayer:) CALayer *_thumbnailLayer;
 @property (nonatomic, assign, setter=_setWaitingForSnapshot:) BOOL _waitingForSnapshot;
+@property (nonatomic, assign, setter=_setSublayerVerticalTranslationAmount:) CGFloat _sublayerVerticalTranslationAmount;
 
 @end
 
