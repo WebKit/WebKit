@@ -30,6 +30,6 @@
 namespace WebKit {
 
 enum LegacyCustomProtocolIDType { };
-using LegacyCustomProtocolID = ObjectIdentifier<LegacyCustomProtocolIDType>;
+using LegacyCustomProtocolID = AtomicObjectIdentifier<LegacyCustomProtocolIDType>;
 
 }
