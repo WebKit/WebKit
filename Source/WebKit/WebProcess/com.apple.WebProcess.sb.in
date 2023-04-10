@@ -1411,10 +1411,7 @@
 
 ; Needed for [CAContext remoteContextWithOptions]
 #if HAVE(SANDBOX_STATE_FLAGS)
-(with-filter
-    (require-any
-        (require-not (lockdown-mode))
-        (require-not (state-flag "EnableExperimentalSandbox")))
+(with-filter (require-not (lockdown-mode))
     (allow mach-lookup (global-name "com.apple.CARenderServer")))
 #else
 (allow mach-lookup (global-name "com.apple.CARenderServer"))
