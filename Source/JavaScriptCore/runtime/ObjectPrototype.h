@@ -53,5 +53,6 @@ private:
 JS_EXPORT_PRIVATE JSC_DECLARE_HOST_FUNCTION(objectProtoFuncToString);
 JSString* objectPrototypeToString(JSGlobalObject*, JSValue thisValue);
 bool objectPrototypeHasOwnProperty(JSGlobalObject*, JSObject* base, const Identifier& property);
+JSString* objectPrototypeToStringSlow(JSGlobalObject*, JSObject*);
 
 } // namespace JSC

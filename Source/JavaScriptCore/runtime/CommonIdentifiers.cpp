@@ -29,7 +29,7 @@ namespace JSC {
 #define INITIALIZE_PROPERTY_NAME(name) , name(Identifier::fromString(vm, #name ""_s))
 #define INITIALIZE_KEYWORD(name) , name##Keyword(Identifier::fromString(vm, #name ""_s))
 #define INITIALIZE_PRIVATE_NAME(name) , name##PrivateName(m_builtinNames->name##PrivateName())
-#define INITIALIZE_SYMBOL(name) , name##Symbol(m_builtinNames->name##Symbol())
+#define INITIALIZE_SYMBOL(name, flags) , name##Symbol(m_builtinNames->name##Symbol())
 #define INITIALIZE_PRIVATE_FIELD_NAME(name) , name##PrivateField(Identifier::fromString(vm, "#" #name ""_s))
 
 CommonIdentifiers::CommonIdentifiers(VM& vm)

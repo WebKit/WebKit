@@ -2313,6 +2313,11 @@ static ALWAYS_INLINE JSValue callToPrimitiveFunction(JSGlobalObject* globalObjec
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
+    if constexpr (key == CachedSpecialPropertyKey::ToPrimitive) {
+        if (LIKELY(!object->mayHaveInterestingSymbols()))
+            return JSValue();
+    }
+
     JSValue function = object->structure()->cachedSpecialProperty(key);
     if (!function) {
         PropertySlot slot(object, PropertySlot::InternalMethodType::Get);
@@ -2333,6 +2338,37 @@ static ALWAYS_INLINE JSValue callToPrimitiveFunction(JSGlobalObject* globalObjec
     // https://bugs.webkit.org/show_bug.cgi?id=216084
     if constexpr (key == CachedSpecialPropertyKey::ToString) {
         if (function == globalObject->objectProtoToStringFunction()) {
+            if (LIKELY(!object->mayHaveInterestingSymbols())) {
+                switch (object->type()) {
+                case ArrayType:
+                case DerivedArrayType:
+                    return vm.smallStrings.objectArrayString();
+                case DirectArgumentsType:
+                case ScopedArgumentsType:
+                case ClonedArgumentsType:
+                    return vm.smallStrings.objectArgumentsString();
+                case JSFunctionType:
+                case InternalFunctionType:
+                    return vm.smallStrings.objectFunctionString();
+                case ErrorInstanceType:
+                    return vm.smallStrings.objectErrorString();
+                case JSDateType:
+                    return vm.smallStrings.objectDateString();
+                case RegExpObjectType:
+                    return vm.smallStrings.objectRegExpString();
+                case BooleanObjectType:
+                    return vm.smallStrings.objectBooleanString();
+                case NumberObjectType:
+                    return vm.smallStrings.objectNumberString();
+                case StringObjectType:
+                case DerivedStringObjectType:
+                    return vm.smallStrings.objectStringString();
+                case FinalObjectType:
+                    return vm.smallStrings.objectObjectString();
+                default:
+                    break;
+                }
+            }
             if (auto result = object->structure()->cachedSpecialProperty(CachedSpecialPropertyKey::ToStringTag))
                 return result;
         }

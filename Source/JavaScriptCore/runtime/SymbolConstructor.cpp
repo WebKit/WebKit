@@ -61,8 +61,8 @@ SymbolConstructor::SymbolConstructor(VM& vm, Structure* structure)
 {
 }
 
-#define INITIALIZE_WELL_KNOWN_SYMBOLS(name) \
-putDirectWithoutTransition(vm, Identifier::fromString(vm, #name ""_s), Symbol::create(vm, static_cast<SymbolImpl&>(*vm.propertyNames->name##Symbol.impl())), PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
+#define INITIALIZE_WELL_KNOWN_SYMBOLS(name, flags) \
+    putDirectWithoutTransition(vm, Identifier::fromString(vm, #name ""_s), Symbol::create(vm, static_cast<SymbolImpl&>(*vm.propertyNames->name##Symbol.impl())), PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
 
 void SymbolConstructor::finishCreation(VM& vm, SymbolPrototype* prototype)
 {

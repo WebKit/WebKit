@@ -212,6 +212,7 @@ Structure::Structure(VM& vm, JSGlobalObject* globalObject, JSValue prototype, co
     setHasAnyKindOfGetterSetterProperties(classInfo->hasStaticPropertyWithAnyOfAttributes(static_cast<uint8_t>(PropertyAttribute::AccessorOrCustomAccessorOrValue)));
     setHasReadOnlyOrGetterSetterPropertiesExcludingProto(hasAnyKindOfGetterSetterProperties() || classInfo->hasStaticPropertyWithAnyOfAttributes(static_cast<uint8_t>(PropertyAttribute::ReadOnly)));
     setHasUnderscoreProtoPropertyExcludingOriginalProto(false);
+    setHasInterestingSymbols(typeInfo.overridesGetPrototype() || typeInfo.prohibitsPropertyCaching() || typeInfo.getOwnPropertySlotIsImpureForPropertyAbsence() || typeInfo.getOwnPropertySlotIsImpure());
     setIsQuickPropertyAccessAllowedForEnumeration(true);
     setTransitionPropertyAttributes(0);
     setTransitionKind(TransitionKind::Unknown);
@@ -248,11 +249,14 @@ Structure::Structure(VM& vm, CreatingEarlyCellTag)
     , m_classInfo(info())
     , m_transitionWatchpointSet(IsWatched)
 {
+    TypeInfo typeInfo = TypeInfo(StructureType, StructureFlags);
+
     setDictionaryKind(NoneDictionaryKind);
     setIsPinnedPropertyTable(false);
     setHasAnyKindOfGetterSetterProperties(m_classInfo->hasStaticPropertyWithAnyOfAttributes(static_cast<uint8_t>(PropertyAttribute::AccessorOrCustomAccessorOrValue)));
     setHasReadOnlyOrGetterSetterPropertiesExcludingProto(hasAnyKindOfGetterSetterProperties() || m_classInfo->hasStaticPropertyWithAnyOfAttributes(static_cast<uint8_t>(PropertyAttribute::ReadOnly)));
     setHasUnderscoreProtoPropertyExcludingOriginalProto(false);
+    setHasInterestingSymbols(typeInfo.overridesGetPrototype() || typeInfo.prohibitsPropertyCaching() || typeInfo.getOwnPropertySlotIsImpureForPropertyAbsence() || typeInfo.getOwnPropertySlotIsImpure());
     setIsQuickPropertyAccessAllowedForEnumeration(true);
     setTransitionPropertyAttributes(0);
     setTransitionKind(TransitionKind::Unknown);
@@ -265,7 +269,6 @@ Structure::Structure(VM& vm, CreatingEarlyCellTag)
     setTransitionOffset(vm, invalidOffset);
     setMaxOffset(vm, invalidOffset);
  
-    TypeInfo typeInfo = TypeInfo(StructureType, StructureFlags);
     m_blob = TypeInfoBlob(0, typeInfo);
     m_outOfLineTypeFlags = typeInfo.outOfLineTypeFlags();
 
@@ -294,6 +297,7 @@ Structure::Structure(VM& vm, Structure* previous)
     setHasAnyKindOfGetterSetterProperties(previous->hasAnyKindOfGetterSetterProperties());
     setHasReadOnlyOrGetterSetterPropertiesExcludingProto(previous->hasReadOnlyOrGetterSetterPropertiesExcludingProto());
     setHasUnderscoreProtoPropertyExcludingOriginalProto(previous->hasUnderscoreProtoPropertyExcludingOriginalProto());
+    setHasInterestingSymbols(previous->hasInterestingSymbols());
     setIsQuickPropertyAccessAllowedForEnumeration(previous->isQuickPropertyAccessAllowedForEnumeration());
     setTransitionPropertyAttributes(0);
     setTransitionKind(TransitionKind::Unknown);

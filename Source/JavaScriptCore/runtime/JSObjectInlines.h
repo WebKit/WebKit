@@ -824,4 +824,18 @@ bool JSObject::fastForEachPropertyWithSideEffectFreeFunctor(VM& vm, const Functo
     return true;
 }
 
+inline bool JSObject::mayHaveInterestingSymbols() const
+{
+    const JSObject* cursor = this;
+    while (true) {
+        Structure* structure = cursor->structure();
+        if (UNLIKELY(structure->hasInterestingSymbols()))
+            return true;
+        JSValue prototype = cursor->getPrototypeDirect();
+        if (!prototype.isObject())
+            return false;
+        cursor = asObject(prototype);
+    }
+}
+
 } // namespace JSC

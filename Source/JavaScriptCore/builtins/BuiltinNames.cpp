@@ -37,7 +37,7 @@
 namespace JSC {
 namespace Symbols {
 
-#define INITIALIZE_BUILTIN_STATIC_SYMBOLS(name) SymbolImpl::StaticSymbolImpl name##Symbol { "Symbol." #name };
+#define INITIALIZE_BUILTIN_STATIC_SYMBOLS(name, flags) SymbolImpl::StaticSymbolImpl name##Symbol { "Symbol." #name, flags };
 JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_WELL_KNOWN_SYMBOL(INITIALIZE_BUILTIN_STATIC_SYMBOLS)
 #undef INITIALIZE_BUILTIN_STATIC_SYMBOLS
 
@@ -54,7 +54,7 @@ SymbolImpl::StaticSymbolImpl polyProtoPrivateName { "PolyProto", SymbolImpl::s_f
 } // namespace Symbols
 
 #define INITIALIZE_BUILTIN_NAMES_IN_JSC(name) , m_##name(JSC::Identifier::fromString(vm, #name ""_s))
-#define INITIALIZE_BUILTIN_SYMBOLS_IN_JSC(name) \
+#define INITIALIZE_BUILTIN_SYMBOLS_IN_JSC(name, flag) \
     , m_##name##Symbol(JSC::Identifier::fromUid(vm, &static_cast<SymbolImpl&>(JSC::Symbols::name##Symbol))) \
     , m_##name##SymbolPrivateIdentifier(JSC::Identifier::fromString(vm, #name ""_s))
 
@@ -65,7 +65,7 @@ SymbolImpl::StaticSymbolImpl polyProtoPrivateName { "PolyProto", SymbolImpl::s_f
         m_privateNameSet.add(symbol); \
     } while (0);
 
-#define INITIALIZE_WELL_KNOWN_SYMBOL_PUBLIC_TO_PRIVATE_ENTRY(name) \
+#define INITIALIZE_WELL_KNOWN_SYMBOL_PUBLIC_TO_PRIVATE_ENTRY(name, flag) \
     do { \
         SymbolImpl* symbol = static_cast<SymbolImpl*>(m_##name##Symbol.impl()); \
         m_wellKnownSymbolsMap.add(m_##name##SymbolPrivateIdentifier.impl(), symbol); \

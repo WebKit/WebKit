@@ -345,19 +345,19 @@
     macro(yield)
 
 #define JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_WELL_KNOWN_SYMBOL(macro) \
-    macro(hasInstance) \
-    macro(isConcatSpreadable) \
-    macro(asyncIterator) \
-    macro(iterator) \
-    macro(match) \
-    macro(matchAll) \
-    macro(replace) \
-    macro(search) \
-    macro(species) \
-    macro(split) \
-    macro(toPrimitive) \
-    macro(toStringTag) \
-    macro(unscopables)
+    macro(hasInstance, SymbolImpl::s_flagDefault | SymbolImpl::s_flagIsWellKnownSymbol) \
+    macro(isConcatSpreadable, SymbolImpl::s_flagDefault | SymbolImpl::s_flagIsWellKnownSymbol) \
+    macro(asyncIterator, SymbolImpl::s_flagDefault | SymbolImpl::s_flagIsWellKnownSymbol) \
+    macro(iterator, SymbolImpl::s_flagDefault | SymbolImpl::s_flagIsWellKnownSymbol) \
+    macro(match, SymbolImpl::s_flagDefault | SymbolImpl::s_flagIsWellKnownSymbol) \
+    macro(matchAll, SymbolImpl::s_flagDefault | SymbolImpl::s_flagIsWellKnownSymbol) \
+    macro(replace, SymbolImpl::s_flagDefault | SymbolImpl::s_flagIsWellKnownSymbol) \
+    macro(search, SymbolImpl::s_flagDefault | SymbolImpl::s_flagIsWellKnownSymbol) \
+    macro(species, SymbolImpl::s_flagDefault | SymbolImpl::s_flagIsWellKnownSymbol) \
+    macro(split, SymbolImpl::s_flagDefault | SymbolImpl::s_flagIsWellKnownSymbol) \
+    macro(toPrimitive, SymbolImpl::s_flagDefault | SymbolImpl::s_flagIsWellKnownSymbol | SymbolImpl::s_flagIsInterestingSymbol) \
+    macro(toStringTag, SymbolImpl::s_flagDefault | SymbolImpl::s_flagIsWellKnownSymbol | SymbolImpl::s_flagIsInterestingSymbol) \
+    macro(unscopables, SymbolImpl::s_flagDefault | SymbolImpl::s_flagIsWellKnownSymbol)
 
 #define JSC_PARSER_PRIVATE_NAMES(macro) \
     macro(generator) \
@@ -405,7 +405,7 @@ namespace JSC {
         JSC_COMMON_IDENTIFIERS_EACH_PROPERTY_NAME(JSC_IDENTIFIER_DECLARE_PROPERTY_NAME_GLOBAL)
 #undef JSC_IDENTIFIER_DECLARE_PROPERTY_NAME_GLOBAL
 
-#define JSC_IDENTIFIER_DECLARE_PRIVATE_WELL_KNOWN_SYMBOL_GLOBAL(name) const Identifier name##Symbol;
+#define JSC_IDENTIFIER_DECLARE_PRIVATE_WELL_KNOWN_SYMBOL_GLOBAL(name, flags) const Identifier name##Symbol;
         JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_WELL_KNOWN_SYMBOL(JSC_IDENTIFIER_DECLARE_PRIVATE_WELL_KNOWN_SYMBOL_GLOBAL)
 #undef JSC_IDENTIFIER_DECLARE_PRIVATE_WELL_KNOWN_SYMBOL_GLOBAL
         const Identifier intlLegacyConstructedSymbol;

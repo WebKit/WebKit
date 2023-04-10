@@ -79,7 +79,7 @@ ObjectPrototype* ObjectPrototype::create(VM& vm, JSGlobalObject* globalObject, S
 }
 
 #if PLATFORM(IOS)
-bool isPokerBros()
+static bool isPokerBros()
 {
     auto bundleID = CFBundleGetIdentifier(CFBundleGetMainBundle());
     return bundleID
@@ -87,6 +87,62 @@ bool isPokerBros()
         && !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::NoPokerBrosBuiltInTagQuirk);
 }
 #endif
+
+inline ASCIILiteral inferBuiltinTag(JSGlobalObject* globalObject, JSObject* object)
+{
+    VM& vm = getVM(globalObject);
+#if PLATFORM(IOS)
+    static bool needsOldBuiltinTag = isPokerBros();
+    if (UNLIKELY(needsOldBuiltinTag))
+        return object->className();
+#endif
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    bool objectIsArray = isArray(globalObject, object);
+    RETURN_IF_EXCEPTION(scope, { });
+    if (objectIsArray)
+        return "Array"_s;
+    if (object->isCallable())
+        return "Function"_s;
+    JSType type = object->type();
+    if (TypeInfo::isArgumentsType(type)
+        || type == ErrorInstanceType
+        || type == BooleanObjectType
+        || type == NumberObjectType
+        || type == StringObjectType
+        || type == DerivedStringObjectType
+        || type == JSDateType
+        || type == RegExpObjectType)
+        return object->className();
+    return "Object"_s;
+}
+
+JSString* objectPrototypeToStringSlow(JSGlobalObject* globalObject, JSObject* thisObject)
+{
+    VM& vm = getVM(globalObject);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    ASCIILiteral tag = inferBuiltinTag(globalObject, thisObject);
+    RETURN_IF_EXCEPTION(scope, nullptr);
+    JSString* jsTag = nullptr;
+
+    PropertySlot slot(thisObject, PropertySlot::InternalMethodType::Get);
+    bool hasProperty = thisObject->getPropertySlot(globalObject, vm.propertyNames->toStringTagSymbol, slot);
+    EXCEPTION_ASSERT(!scope.exception() || !hasProperty);
+    if (hasProperty) {
+        JSValue tagValue = slot.getValue(globalObject, vm.propertyNames->toStringTagSymbol);
+        RETURN_IF_EXCEPTION(scope, nullptr);
+        if (tagValue.isString())
+            jsTag = asString(tagValue);
+    }
+
+    if (!jsTag)
+        jsTag = jsString(vm, AtomStringImpl::add(tag));
+
+    JSString* jsResult = jsString(globalObject, vm.smallStrings.objectStringStart(), jsTag, vm.smallStrings.singleCharacterString(']'));
+    RETURN_IF_EXCEPTION(scope, nullptr);
+    thisObject->structure()->cacheSpecialProperty(globalObject, vm, jsResult, CachedSpecialPropertyKey::ToStringTag, slot);
+    return jsResult;
+}
 
 // ------------------------------ Functions --------------------------------
 
