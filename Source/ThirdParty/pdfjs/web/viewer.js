@@ -158,6 +158,9 @@ class DefaultExternalServices {
   static updateEditorStates(data) {
     throw new Error("Not implemented: updateEditorStates");
   }
+  static get canvasMaxAreaInBytes() {
+    return (0, _pdfjsLib.shadow)(this, "canvasMaxAreaInBytes", -1);
+  }
 }
 exports.DefaultExternalServices = DefaultExternalServices;
 const PDFViewerApplication = {
@@ -694,6 +697,7 @@ const PDFViewerApplication = {
     }
     const apiParams = _app_options.AppOptions.getAll(_app_options.OptionKind.API);
     const params = {
+      canvasMaxAreaInBytes: this.externalServices.canvasMaxAreaInBytes,
       ...apiParams,
       ...args
     };
@@ -851,12 +855,7 @@ const PDFViewerApplication = {
     const openActionPromise = pdfDocument.getOpenAction().catch(function () {});
     this.toolbar?.setPagesCount(pdfDocument.numPages, false);
     this.secondaryToolbar?.setPagesCount(pdfDocument.numPages);
-    let baseDocumentUrl;
-    baseDocumentUrl = null;
-    if (baseDocumentUrl && (0, _pdfjsLib.isDataScheme)(baseDocumentUrl)) {
-      baseDocumentUrl = null;
-    }
-    this.pdfLinkService.setDocument(pdfDocument, baseDocumentUrl);
+    this.pdfLinkService.setDocument(pdfDocument);
     this.pdfDocumentProperties?.setDocument(pdfDocument);
     const pdfViewer = this.pdfViewer;
     pdfViewer.setDocument(pdfDocument);
@@ -2610,7 +2609,6 @@ function parseQueryString(query) {
   }
   return params;
 }
-const NullCharactersRegExp = /\x00/g;
 const InvisibleCharactersRegExp = /[\x01-\x1F]/g;
 function removeNullCharacters(str, replaceInvisible = false) {
   if (typeof str !== "string") {
@@ -2618,9 +2616,9 @@ function removeNullCharacters(str, replaceInvisible = false) {
     return str;
   }
   if (replaceInvisible) {
-    str = str.replace(InvisibleCharactersRegExp, " ");
+    str = str.replaceAll(InvisibleCharactersRegExp, " ");
   }
-  return str.replace(NullCharactersRegExp, "");
+  return str.replaceAll("\x00", "");
 }
 function binarySearchFirstItem(items, condition, start = 0) {
   let minIndex = start;
@@ -3578,7 +3576,7 @@ class PDFLinkService {
     return this.getAnchorUrl("");
   }
   getAnchorUrl(anchor) {
-    return (this.baseUrl || "") + anchor;
+    return this.baseUrl ? this.baseUrl + anchor : anchor;
   }
   setHash(hash) {
     if (!this.pdfDocument) {
@@ -3590,7 +3588,7 @@ class PDFLinkService {
       if (params.has("search")) {
         this.eventBus.dispatch("findfromurlhash", {
           source: this,
-          query: params.get("search").replace(/"/g, ""),
+          query: params.get("search").replaceAll('"', ""),
           phraseSearch: params.get("phrase") === "true"
         });
       }
@@ -5074,17 +5072,19 @@ function normalize(text) {
       return p4;
     }
     if (p5) {
-      positions.push([i - shift + 1, 1 + shift]);
+      const len = p5.length - 2;
+      positions.push([i - shift + len, 1 + shift]);
       shift += 1;
       shiftOrigin += 1;
       eol += 1;
-      return p5.charAt(0);
+      return p5.slice(0, -2);
     }
     if (p6) {
-      positions.push([i - shift + 1, shift]);
+      const len = p6.length - 1;
+      positions.push([i - shift + len, shift]);
       shiftOrigin += 1;
       eol += 1;
-      return p6.charAt(0);
+      return p6.slice(0, -1);
     }
     if (p7) {
       positions.push([i - shift + 1, shift - 1]);
@@ -5330,7 +5330,7 @@ class PDFFindController {
       matchDiacritics
     } = this._state;
     let isUnicode = false;
-    query = query.replace(SPECIAL_CHARS_REG_EXP, (match, p1, p2, p3, p4, p5) => {
+    query = query.replaceAll(SPECIAL_CHARS_REG_EXP, (match, p1, p2, p3, p4, p5) => {
       if (p1) {
         return `[ ]*\\${p1}[ ]*`;
       }
@@ -8445,7 +8445,7 @@ class PDFViewer {
   #onVisibilityChange = null;
   #scaleTimeoutId = null;
   constructor(options) {
-    const viewerVersion = '3.4.120';
+    const viewerVersion = '3.5.141';
     if (_pdfjsLib.version !== viewerVersion) {
       throw new Error(`The API version "${_pdfjsLib.version}" does not match the Viewer version "${viewerVersion}".`);
     }
@@ -8583,7 +8583,7 @@ class PDFViewer {
     if (!this.pdfDocument) {
       return;
     }
-    this._setScale(val, {
+    this.#setScale(val, {
       noScroll: false
     });
   }
@@ -8594,7 +8594,7 @@ class PDFViewer {
     if (!this.pdfDocument) {
       return;
     }
-    this._setScale(val, {
+    this.#setScale(val, {
       noScroll: false
     });
   }
@@ -8621,7 +8621,7 @@ class PDFViewer {
       rotation
     });
     if (this._currentScaleValue) {
-      this._setScale(this._currentScaleValue, {
+      this.#setScale(this._currentScaleValue, {
         noScroll: true
       });
     }
@@ -9030,7 +9030,7 @@ class PDFViewer {
   #isSameScale(newScale) {
     return newScale === this._currentScale || Math.abs(newScale - this._currentScale) < 1e-15;
   }
-  _setScaleUpdatePages(newScale, newValue, {
+  #setScaleUpdatePages(newScale, newValue, {
     noScroll = false,
     preset = false,
     drawingDelay = -1
@@ -9083,17 +9083,17 @@ class PDFViewer {
       this.update();
     }
   }
-  get _pageWidthScaleFactor() {
+  get #pageWidthScaleFactor() {
     if (this._spreadMode !== _ui_utils.SpreadMode.NONE && this._scrollMode !== _ui_utils.ScrollMode.HORIZONTAL) {
       return 2;
     }
     return 1;
   }
-  _setScale(value, options) {
+  #setScale(value, options) {
     let scale = parseFloat(value);
     if (scale > 0) {
       options.preset = false;
-      this._setScaleUpdatePages(scale, value, options);
+      this.#setScaleUpdatePages(scale, value, options);
     } else {
       const currentPage = this._pages[this._currentPageNumber - 1];
       if (!currentPage) {
@@ -9111,7 +9111,7 @@ class PDFViewer {
       } else if (this._scrollMode === _ui_utils.ScrollMode.HORIZONTAL) {
         [hPadding, vPadding] = [vPadding, hPadding];
       }
-      const pageWidthScale = (this.container.clientWidth - hPadding) / currentPage.width * currentPage.scale / this._pageWidthScaleFactor;
+      const pageWidthScale = (this.container.clientWidth - hPadding) / currentPage.width * currentPage.scale / this.#pageWidthScaleFactor;
       const pageHeightScale = (this.container.clientHeight - vPadding) / currentPage.height * currentPage.scale;
       switch (value) {
         case "page-actual":
@@ -9131,17 +9131,17 @@ class PDFViewer {
           scale = Math.min(_ui_utils.MAX_AUTO_SCALE, horizontalScale);
           break;
         default:
-          console.error(`_setScale: "${value}" is an unknown zoom value.`);
+          console.error(`#setScale: "${value}" is an unknown zoom value.`);
           return;
       }
       options.preset = true;
-      this._setScaleUpdatePages(scale, value, options);
+      this.#setScaleUpdatePages(scale, value, options);
     }
   }
   #resetCurrentPageView() {
     const pageView = this._pages[this._currentPageNumber - 1];
     if (this.isInPresentationMode) {
-      this._setScale(this._currentScaleValue, {
+      this.#setScale(this._currentScaleValue, {
         noScroll: true
       });
     }
@@ -9512,7 +9512,7 @@ class PDFViewer {
       this._updateSpreadMode();
     }
     if (this._currentScaleValue && isNaN(this._currentScaleValue)) {
-      this._setScale(this._currentScaleValue, {
+      this.#setScale(this._currentScaleValue, {
         noScroll: true
       });
     }
@@ -9570,7 +9570,7 @@ class PDFViewer {
       return;
     }
     if (this._currentScaleValue && isNaN(this._currentScaleValue)) {
-      this._setScale(this._currentScaleValue, {
+      this.#setScale(this._currentScaleValue, {
         noScroll: true
       });
     }
@@ -9698,55 +9698,49 @@ class PDFViewer {
     this.currentPageNumber = Math.max(currentPageNumber - advance, 1);
     return true;
   }
-  increaseScale(options = null) {
-    if (typeof options === "number") {
-      console.error("The `increaseScale` method-signature was updated, please use an object instead.");
-      options = {
-        steps: options
-      };
-    }
+  increaseScale({
+    drawingDelay,
+    scaleFactor,
+    steps
+  } = {}) {
     if (!this.pdfDocument) {
       return;
     }
-    options ||= Object.create(null);
     let newScale = this._currentScale;
-    if (options.scaleFactor > 1) {
-      newScale = Math.min(_ui_utils.MAX_SCALE, Math.round(newScale * options.scaleFactor * 100) / 100);
+    if (scaleFactor > 1) {
+      newScale = Math.round(newScale * scaleFactor * 100) / 100;
     } else {
-      let steps = options.steps ?? 1;
+      steps ??= 1;
       do {
-        newScale = (newScale * _ui_utils.DEFAULT_SCALE_DELTA).toFixed(2);
-        newScale = Math.ceil(newScale * 10) / 10;
-        newScale = Math.min(_ui_utils.MAX_SCALE, newScale);
+        newScale = Math.ceil((newScale * _ui_utils.DEFAULT_SCALE_DELTA).toFixed(2) * 10) / 10;
       } while (--steps > 0 && newScale < _ui_utils.MAX_SCALE);
     }
-    options.noScroll = false;
-    this._setScale(newScale, options);
+    this.#setScale(Math.min(_ui_utils.MAX_SCALE, newScale), {
+      noScroll: false,
+      drawingDelay
+    });
   }
-  decreaseScale(options = null) {
-    if (typeof options === "number") {
-      console.error("The `decreaseScale` method-signature was updated, please use an object instead.");
-      options = {
-        steps: options
-      };
-    }
+  decreaseScale({
+    drawingDelay,
+    scaleFactor,
+    steps
+  } = {}) {
     if (!this.pdfDocument) {
       return;
     }
-    options ||= Object.create(null);
     let newScale = this._currentScale;
-    if (options.scaleFactor > 0 && options.scaleFactor < 1) {
-      newScale = Math.max(_ui_utils.MIN_SCALE, Math.round(newScale * options.scaleFactor * 100) / 100);
+    if (scaleFactor > 0 && scaleFactor < 1) {
+      newScale = Math.round(newScale * scaleFactor * 100) / 100;
     } else {
-      let steps = options.steps ?? 1;
+      steps ??= 1;
       do {
-        newScale = (newScale / _ui_utils.DEFAULT_SCALE_DELTA).toFixed(2);
-        newScale = Math.floor(newScale * 10) / 10;
-        newScale = Math.max(_ui_utils.MIN_SCALE, newScale);
+        newScale = Math.floor((newScale / _ui_utils.DEFAULT_SCALE_DELTA).toFixed(2) * 10) / 10;
       } while (--steps > 0 && newScale > _ui_utils.MIN_SCALE);
     }
-    options.noScroll = false;
-    this._setScale(newScale, options);
+    this.#setScale(Math.max(_ui_utils.MIN_SCALE, newScale), {
+      noScroll: false,
+      drawingDelay
+    });
   }
   #updateContainerHeightCss(height = this.container.clientHeight) {
     if (height !== this.#previousContainerHeight) {
@@ -9912,7 +9906,7 @@ function formatL10nValue(text, args) {
   if (!args) {
     return text;
   }
-  return text.replace(/\{\{\s*(\w+)\s*\}\}/g, (all, name) => {
+  return text.replaceAll(/\{\{\s*(\w+)\s*\}\}/g, (all, name) => {
     return name in args ? args[name] : "{{" + name + "}}";
   });
 }
@@ -10321,9 +10315,10 @@ class PDFPageView {
         isScalingRestricted = true;
       }
     }
-    const postponeDrawing = drawingDelay >= 0 && drawingDelay < 1000;
+    const onlyCssZoom = this.useOnlyCssZoom || this.hasRestrictedScaling && isScalingRestricted;
+    const postponeDrawing = !onlyCssZoom && drawingDelay >= 0 && drawingDelay < 1000;
     if (this.canvas) {
-      if (postponeDrawing || this.useOnlyCssZoom || this.hasRestrictedScaling && isScalingRestricted) {
+      if (postponeDrawing || onlyCssZoom) {
         if (postponeDrawing && this.renderingState !== _ui_utils.RenderingStates.FINISHED) {
           this.cancelRendering({
             keepZoomLayer: true,
@@ -10443,9 +10438,7 @@ class PDFPageView {
         scaleX = height / width;
         scaleY = width / height;
       }
-      if (absRotation !== 0) {
-        target.style.transform = `rotate(${relativeRotation}deg) scale(${scaleX}, ${scaleY})`;
-      }
+      target.style.transform = `rotate(${relativeRotation}deg) scale(${scaleX}, ${scaleY})`;
     }
     if (redrawAnnotationLayer && this.annotationLayer) {
       this.#renderAnnotationLayer();
@@ -10639,8 +10632,9 @@ class PDFPageView {
     canvas.setAttribute("role", "presentation");
     canvas.hidden = true;
     let isCanvasHidden = true;
-    const showCanvas = function () {
-      if (isCanvasHidden) {
+    const hasHCM = !!(this.pageColors?.background && this.pageColors?.foreground);
+    const showCanvas = function (isLastShow) {
+      if (isCanvasHidden && (!hasHCM || isLastShow)) {
         canvas.hidden = false;
         isCanvasHidden = false;
       }
@@ -10691,7 +10685,7 @@ class PDFPageView {
     };
     const renderTask = this.pdfPage.render(renderContext);
     renderTask.onContinue = function (cont) {
-      showCanvas();
+      showCanvas(false);
       if (result.onRenderContinue) {
         result.onRenderContinue(cont);
       } else {
@@ -10699,11 +10693,11 @@ class PDFPageView {
       }
     };
     renderTask.promise.then(function () {
-      showCanvas();
+      showCanvas(true);
       renderCapability.resolve();
     }, function (error) {
       if (!(error instanceof _pdfjsLib.RenderingCancelledException)) {
-        showCanvas();
+        showCanvas(true);
       }
       renderCapability.reject(error);
     });
@@ -11892,13 +11886,10 @@ class SecondaryToolbar {
     } of this.buttons) {
       element.addEventListener("click", evt => {
         if (eventName !== null) {
-          const details = {
-            source: this
-          };
-          for (const property in eventDetails) {
-            details[property] = eventDetails[property];
-          }
-          this.eventBus.dispatch(eventName, details);
+          this.eventBus.dispatch(eventName, {
+            source: this,
+            ...eventDetails
+          });
         }
         if (close) {
           this.close();
@@ -12142,15 +12133,10 @@ class Toolbar {
     } of this.buttons) {
       element.addEventListener("click", evt => {
         if (eventName !== null) {
-          const details = {
-            source: this
-          };
-          if (eventDetails) {
-            for (const property in eventDetails) {
-              details[property] = eventDetails[property];
-            }
-          }
-          this.eventBus.dispatch(eventName, details);
+          this.eventBus.dispatch(eventName, {
+            source: this,
+            ...eventDetails
+          });
         }
       });
     }
@@ -13755,8 +13741,8 @@ var _ui_utils = __webpack_require__(3);
 var _app_options = __webpack_require__(5);
 var _pdf_link_service = __webpack_require__(7);
 var _app = __webpack_require__(2);
-const pdfjsVersion = '3.4.120';
-const pdfjsBuild = 'af6414988';
+const pdfjsVersion = '3.5.141';
+const pdfjsBuild = 'be0f6ee08';
 const AppConstants = {
   LinkTarget: _pdf_link_service.LinkTarget,
   RenderingStates: _ui_utils.RenderingStates,
