@@ -192,7 +192,7 @@
       "factory": "iOSTestsFactory", "platform": "ios-simulator-16",
       "configuration": "release", "architectures": ["arm64"],
       "triggered_by": ["ios-16-sim-build-ews"],
-      "additionalArguments": ["--child-process=5", "--exclude-tests", "imported/w3c/web-platform-tests"],
+      "additionalArguments": ["--child-processes=6", "--exclude-tests", "imported/w3c/web-platform-tests"],
       "workernames": ["ews121", "ews122", "ews123", "ews124", "ews125", "ews126", "ews184", "ews185"]
     },
     {
@@ -200,7 +200,7 @@
       "factory": "iOSTestsFactory", "platform": "ios-simulator-16",
       "configuration": "release", "architectures": ["arm64"],
       "triggered_by": ["ios-16-sim-build-ews"],
-      "additionalArguments": ["--child-process=5", "imported/w3c/web-platform-tests"],
+      "additionalArguments": ["--child-processes=6", "imported/w3c/web-platform-tests"],
       "workernames": ["ews191", "ews192", "ews193", "ews194", "ews195", "ews196", "ews197", "ews198"]
     },
     {

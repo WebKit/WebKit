@@ -299,31 +299,31 @@
                   {
                     "name": "Apple-iOS-16-Simulator-Release-GPUProcess-WK2-Tests", "factory": "TestAllButJSCFactory",
                     "platform": "ios-simulator-16", "configuration": "release", "architectures": ["x86_64", "arm64"], "device_model": "iphone",
-                    "additionalArguments": ["--no-retry-failures", "--use-gpu-process", "--child-process=5"],
+                    "additionalArguments": ["--no-retry-failures", "--use-gpu-process", "--child-processes=6"],
                     "workernames": ["bot600"]
                   },
                   {
                     "name": "Apple-iOS-16-Simulator-Release-WK2-Tests", "factory": "TestAllButJSCFactory",
                     "platform": "ios-simulator-16", "configuration": "release", "architectures": ["x86_64", "arm64"], "device_model": "iphone",
-                    "additionalArguments": ["--no-retry-failures", "--child-process=5"],
+                    "additionalArguments": ["--no-retry-failures", "--child-processes=6"],
                     "workernames": ["bot651", "bot652"]
                   },
                   {
                     "name": "Apple-iOS-16-Simulator-Debug-WK2-Tests", "factory": "TestAllButJSCFactory",
                     "platform": "ios-simulator-16", "configuration": "debug", "architectures": ["x86_64", "arm64"], "device_model": "iphone",
-                    "additionalArguments": ["--no-retry-failures", "--no-sample-on-timeout", "--child-process=5"],
+                    "additionalArguments": ["--no-retry-failures", "--no-sample-on-timeout", "--child-processes=6"],
                     "workernames": ["bot653"]
                   },
                   {
                     "name": "Apple-iPadOS-16-Simulator-Release-WK2-Tests", "factory": "TestAllButJSCFactory",
                     "platform": "ios-simulator-16", "configuration": "release", "architectures": ["x86_64", "arm64"], "device_model": "ipad",
-                    "additionalArguments": ["--no-retry-failures", "--child-process=5" ],
+                    "additionalArguments": ["--no-retry-failures", "--child-processes=6" ],
                     "workernames": ["bot667"]
                   },
                   {
                     "name": "Apple-iPadOS-16-Simulator-Debug-WK2-Tests", "factory": "TestAllButJSCFactory",
                     "platform": "ios-simulator-16", "configuration": "debug", "architectures": ["x86_64", "arm64"], "device_model": "ipad",
-                    "additionalArguments": ["--no-retry-failures", "--no-sample-on-timeout", "--child-process=5"],
+                    "additionalArguments": ["--no-retry-failures", "--no-sample-on-timeout", "--child-processes=6"],
                     "workernames": ["bot664"]
                   },
                   {

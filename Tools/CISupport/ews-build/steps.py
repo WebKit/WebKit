@@ -2672,7 +2672,7 @@ class CompileWebKit(shell.Compile, AddToLogMixin):
         if additionalArguments:
             # FIXME: These arguments are required for iOS layout tests, but don't apply to compliation. We need to
             # create a separate property to handle these run-webkit-tests specific arguments.
-            for argument in ["--child-process=5", "--exclude-tests", "imported/w3c/web-platform-tests"]:
+            for argument in ["--child-processes=6", "--exclude-tests", "imported/w3c/web-platform-tests"]:
                 if argument in additionalArguments:
                     additionalArguments.remove(argument)
             self.setCommand(self.command + additionalArguments)
@@ -3535,7 +3535,7 @@ class RunWebKitTestsInStressMode(RunWebKitTests):
         RunWebKitTests.setLayoutTestCommand(self)
 
         # To support stress mode with iOS layout tests in a WPT / no-WPT configuration, we need to remove these arguments.
-        for argument in ["--child-process=5", "--exclude-tests", "imported/w3c/web-platform-tests"]:
+        for argument in ["--child-processes=6", "--exclude-tests", "imported/w3c/web-platform-tests"]:
             if argument in self.command:
                 self.command.remove(argument)
 
