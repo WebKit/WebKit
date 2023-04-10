@@ -4128,32 +4128,44 @@ RenderLayer::HitLayer RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLa
     if (auto* rendererBox = this->renderBox(); rendererBox && !rendererBox->hitTestClipPath(hitTestLocation, toLayoutPoint(offsetFromRoot - toLayoutSize(rendererLocation()))))
         return { nullptr };
 
+    auto isHitLayerCandidate = [&](const HitLayer& hitLayer) {
+        if (!depthSortDescendants || !using3DTransformsInterop)
+            return true;
+        return hitLayer.zOffset > candidateLayer.zOffset;
+    };
+
+    auto isThisLayerCandidate = [&]() {
+        if (using3DTransformsInterop)
+            return isHitLayerCandidate({ this, selfZOffset });
+        return isHitCandidateLegacy(this, false, zOffsetForContentsPtr, unflattenedTransformState.get());
+    };
+
+    auto updateResultAndCheckComplete = [&](const HitTestResult& tempResult, const HitLayer& hitLayer) {
+        if (request.resultIsElementList())
+            result.append(tempResult, request);
+        else
+            result = tempResult;
+
+        candidateLayer = hitLayer;
+        return !depthSortDescendants;
+    };
+
     // Begin by walking our list of positive layers from highest z-index down to the lowest z-index.
-    auto hitLayer = hitTestList(positiveZOrderLayers(), rootLayer, request, result, hitTestRect, hitTestLocation, localTransformState.get(), zOffsetForDescendantsPtr, zOffset, unflattenedTransformState.get(), depthSortDescendants);
-    if (hitLayer.layer) {
-        if (!depthSortDescendants)
-            return hitLayer;
-        if (using3DTransformsInterop) {
-            if (hitLayer.zOffset > candidateLayer.zOffset)
-                candidateLayer = hitLayer;
-        } else
-            candidateLayer = hitLayer;
+    {
+        HitTestResult tempResult(result.hitTestLocation());
+        auto hitLayer = hitTestList(positiveZOrderLayers(), rootLayer, request, tempResult, hitTestRect, hitTestLocation, localTransformState.get(), zOffsetForDescendantsPtr, zOffset, unflattenedTransformState.get(), depthSortDescendants);
+        if (hitLayer.layer && isHitLayerCandidate(hitLayer)) {
+            if (updateResultAndCheckComplete(tempResult, hitLayer))
+                return hitLayer;
+        }
     }
 
     // Now check our overflow objects.
     {
         HitTestResult tempResult(result.hitTestLocation());
-        hitLayer = hitTestList(normalFlowLayers(), rootLayer, request, tempResult, hitTestRect, hitTestLocation, localTransformState.get(), zOffsetForDescendantsPtr, zOffset, unflattenedTransformState.get(), depthSortDescendants);
-        if (hitLayer.layer) {
-            if (!depthSortDescendants || !using3DTransformsInterop || hitLayer.zOffset > candidateLayer.zOffset) {
-                if (request.resultIsElementList())
-                    result.append(tempResult, request);
-                else
-                    result = tempResult;
-                candidateLayer = hitLayer;
-            }
-
-            if (!depthSortDescendants)
+        auto hitLayer = hitTestList(normalFlowLayers(), rootLayer, request, tempResult, hitTestRect, hitTestLocation, localTransformState.get(), zOffsetForDescendantsPtr, zOffset, unflattenedTransformState.get(), depthSortDescendants);
+        if (hitLayer.layer && isHitLayerCandidate(hitLayer)) {
+            if (updateResultAndCheckComplete(tempResult, hitLayer))
                 return hitLayer;
         }
     }
@@ -4168,27 +4180,15 @@ RenderLayer::HitLayer RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLa
         return { this, selfZOffset };
     }
 
-    auto isHitCandidate = [&]() {
-        if (using3DTransformsInterop)
-            return !depthSortDescendants || selfZOffset > candidateLayer.zOffset;
-        return isHitCandidateLegacy(this, false, zOffsetForContentsPtr, unflattenedTransformState.get());
-    };
-
     // Next we want to see if the mouse pos is inside the child RenderObjects of the layer. Check
     // every fragment in reverse order.
     if (isSelfPaintingLayer()) {
         // Hit test with a temporary HitTestResult, because we only want to commit to 'result' if we know we're frontmost.
         HitTestResult tempResult(result.hitTestLocation());
         bool insideFragmentForegroundRect = false;
-        if (hitTestContentsForFragments(layerFragments, request, tempResult, hitTestLocation, HitTestDescendants, insideFragmentForegroundRect) && isHitCandidate()) {
-            if (request.resultIsElementList())
-                result.append(tempResult, request);
-            else
-                result = tempResult;
-            if (!depthSortDescendants)
+        if (hitTestContentsForFragments(layerFragments, request, tempResult, hitTestLocation, HitTestDescendants, insideFragmentForegroundRect) && isThisLayerCandidate()) {
+            if (updateResultAndCheckComplete(tempResult, { this, selfZOffset }))
                 return { this, selfZOffset };
-            // Foreground can depth-sort with descendant layers, so keep this as a candidate.
-            candidateLayer = { this, selfZOffset };
         } else if (insideFragmentForegroundRect && request.resultIsElementList())
             result.append(tempResult, request);
     }
@@ -4196,17 +4196,9 @@ RenderLayer::HitLayer RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLa
     // Now check our negative z-index children.
     {
         HitTestResult tempResult(result.hitTestLocation());
-        hitLayer = hitTestList(negativeZOrderLayers(), rootLayer, request, tempResult, hitTestRect, hitTestLocation, localTransformState.get(), zOffsetForDescendantsPtr, zOffset, unflattenedTransformState.get(), depthSortDescendants);
-        if (hitLayer.layer) {
-            if (!depthSortDescendants || !using3DTransformsInterop || hitLayer.zOffset > candidateLayer.zOffset) {
-                if (request.resultIsElementList())
-                    result.append(tempResult, request);
-                else
-                    result = tempResult;
-                candidateLayer = hitLayer;
-            }
-
-            if (!depthSortDescendants)
+        auto hitLayer = hitTestList(negativeZOrderLayers(), rootLayer, request, tempResult, hitTestRect, hitTestLocation, localTransformState.get(), zOffsetForDescendantsPtr, zOffset, unflattenedTransformState.get(), depthSortDescendants);
+        if (hitLayer.layer && isHitLayerCandidate(hitLayer)) {
+            if (updateResultAndCheckComplete(tempResult, hitLayer))
                 return hitLayer;
         }
     }
@@ -4218,14 +4210,9 @@ RenderLayer::HitLayer RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLa
     if (isSelfPaintingLayer()) {
         HitTestResult tempResult(result.hitTestLocation());
         bool insideFragmentBackgroundRect = false;
-            if (hitTestContentsForFragments(layerFragments, request, tempResult, hitTestLocation, HitTestSelf, insideFragmentBackgroundRect)  && isHitCandidate()) {
-            if (request.resultIsElementList())
-                result.append(tempResult, request);
-            else
-                result = tempResult;
-            if (!depthSortDescendants)
+        if (hitTestContentsForFragments(layerFragments, request, tempResult, hitTestLocation, HitTestSelf, insideFragmentBackgroundRect)  && isThisLayerCandidate()) {
+            if (updateResultAndCheckComplete(tempResult, { this, selfZOffset }))
                 return { this, selfZOffset };
-            candidateLayer = { this, selfZOffset };
         }
         if (insideFragmentBackgroundRect && request.resultIsElementList())
             result.append(tempResult, request);
