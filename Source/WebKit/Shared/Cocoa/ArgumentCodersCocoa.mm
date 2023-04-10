@@ -537,6 +537,44 @@ static void encodeSecureCodingInternal(Encoder& encoder, id <NSObject, NSSecureC
 
 static bool shouldEnableStrictMode(Decoder& decoder, NSArray<Class> *allowedClasses)
 {
+    static bool supportsPassKitCore = false;
+    static bool supportsDataDetectorsCore = false;
+    static bool supportsDataDetectors = false;
+    static bool supportsVisionKitCore = false;
+    static bool supportsRevealCore = false;
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+#if ENABLE(APPLE_PAY)
+        supportsPassKitCore = PAL::isPassKitCoreFrameworkAvailable();
+#else
+        UNUSED_PARAM(supportsPassKitCore);
+#endif
+
+#if ENABLE(DATA_DETECTION)
+        supportsDataDetectorsCore = PAL::isDataDetectorsCoreFrameworkAvailable();
+#else
+        UNUSED_PARAM(supportsDataDetectorsCore);
+#endif
+
+#if ENABLE(DATA_DETECTION) && PLATFORM(MAC)
+        supportsDataDetectors = PAL::isDataDetectorsFrameworkAvailable();
+#else
+        UNUSED_PARAM(supportsDataDetectors);
+#endif
+
+#if HAVE(VK_IMAGE_ANALYSIS)
+        supportsVisionKitCore = PAL::isVisionKitCoreFrameworkAvailable();
+#else
+        UNUSED_PARAM(supportsVisionKitCore);
+#endif
+
+#if ENABLE(REVEAL)
+        supportsRevealCore = PAL::isRevealCoreFrameworkAvailable();
+#else
+        UNUSED_PARAM(supportsRevealCore);
+#endif
+    });
+
     if (([allowedClasses containsObject:NSURLProtectionSpace.class]
             && (
                 decoder.messageName() == IPC::MessageName::DownloadProxy_DidReceiveAuthenticationChallenge // NP -> UIP
@@ -546,9 +584,9 @@ static bool shouldEnableStrictMode(Decoder& decoder, NSArray<Class> *allowedClas
                 || decoder.messageName() == IPC::MessageName::AuthenticationManager_CompleteAuthenticationChallenge // UIP -> NP
             )
         )
-#if HAVE(VK_IMAGE_ANALYSIS) && ENABLE(IMAGE_ANALYSIS)
+#if HAVE(VK_IMAGE_ANALYSIS)
         || (
-            [allowedClasses containsObject:PAL::getVKCImageAnalysisClass()]
+            (supportsVisionKitCore && [allowedClasses containsObject:PAL::getVKCImageAnalysisClass()])
             && (
                 decoder.messageName() == IPC::MessageName::WebPage_UpdateWithTextRecognitionResult // UIP -> WCP
                 || decoder.messageName() == IPC::MessageName::WebPageProxy_RequestTextRecognitionReply // UIP -> WCP
@@ -556,12 +594,12 @@ static bool shouldEnableStrictMode(Decoder& decoder, NSArray<Class> *allowedClas
         )
 #endif
 #if ENABLE(APPLE_PAY)
-        || [allowedClasses containsObject:PAL::getPKPaymentSetupConfigurationClass()] // rdar://107553429, Don't re-introduce rdar://107626990
+        || (supportsPassKitCore && [allowedClasses containsObject:PAL::getPKPaymentSetupConfigurationClass()]) // rdar://107553429, Don't re-introduce rdar://107626990
 #endif
 #if ENABLE(DATA_DETECTION)
-        || [allowedClasses containsObject:PAL::getDDScannerResultClass()] // rdar://107553330 - relying on NSMutableArray re-write, don't re-introduce rdar://107676726
+        || (supportsDataDetectorsCore && [allowedClasses containsObject:PAL::getDDScannerResultClass()]) // rdar://107553330 - relying on NSMutableArray re-write, don't re-introduce rdar://107676726
 #if PLATFORM(MAC)
-        || [allowedClasses containsObject:PAL::getDDActionContextClass()] // rdar://107553348 - relying on NSMutableArray re-write, don't re-introduce rdar://107676726
+        || (supportsDataDetectors && [allowedClasses containsObject:PAL::getDDActionContextClass()]) // rdar://107553348 - relying on NSMutableArray re-write, don't re-introduce rdar://107676726
 #endif // PLATFORM(MAC)
 #endif // ENABLE(DATA_DETECTION)
     ) {
@@ -574,14 +612,14 @@ static bool shouldEnableStrictMode(Decoder& decoder, NSArray<Class> *allowedClas
         || [allowedClasses containsObject:NSShadow.class] // rdar://107553244
         || [allowedClasses containsObject:NSTextAttachment.class] // rdar://107553273
 #if ENABLE(REVEAL)
-        || [allowedClasses containsObject:PAL::getRVItemClass()] // rdar://107553310
+        || (supportsRevealCore && [allowedClasses containsObject:PAL::getRVItemClass()]) // rdar://107553310
 #endif // ENABLE(REVEAL)
 #if ENABLE(APPLE_PAY)
-        || [allowedClasses containsObject:PAL::getPKPaymentSetupFeatureClass()] // rdar://107553409
-        || [allowedClasses containsObject:PAL::getPKPaymentMerchantSessionClass()] // rdar://107553452
-        || ([allowedClasses containsObject:PAL::getPKPaymentClass()] && isInWebProcess())
-        || ([allowedClasses containsObject:PAL::getPKPaymentInstallmentConfigurationClass()] && isInWebProcess())
-        || [allowedClasses containsObject:PAL::getPKPaymentMethodClass()] // rdar://107553480
+        || (supportsPassKitCore && [allowedClasses containsObject:PAL::getPKPaymentSetupFeatureClass()]) // rdar://107553409
+        || (supportsPassKitCore && [allowedClasses containsObject:PAL::getPKPaymentMerchantSessionClass()]) // rdar://107553452
+        || (supportsPassKitCore && [allowedClasses containsObject:PAL::getPKPaymentClass()] && isInWebProcess())
+        || (supportsPassKitCore && [allowedClasses containsObject:PAL::getPKPaymentInstallmentConfigurationClass()] && isInWebProcess())
+        || (supportsPassKitCore && [allowedClasses containsObject:PAL::getPKPaymentMethodClass()]) // rdar://107553480
 #endif // ENABLE(APPLE_PAY)
         || (
             [allowedClasses containsObject:NSURLCredential.class] // rdar://107553367 relying on NSMutableDictionary re-write
