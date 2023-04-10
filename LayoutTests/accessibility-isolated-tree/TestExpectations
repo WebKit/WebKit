@@ -1,10 +1,13 @@
 # Crashes
 accessibility/mac/resolved-text-editing.html [ Crash ]
+accessibility/mac/rowheader-outside-table-role.html [ Crash ]
 
 # Timeouts
 accessibility/aria-controls-with-tabs.html [ Timeout ]
 accessibility/frame-disconnect-textmarker-cache-crash.html [ Timeout ]
 accessibility/slider-with-lost-renderer.html [ Timeout ]
+accessibility/mac/combobox-activedescendant-notifications.html [ Timeout ]
+accessibility/mac/relationships-in-frames.html [ Timeout ]
 
 # Text failures
 accessibility/aria-current.html [ Failure ]
@@ -54,3 +57,8 @@ accessibility/math-multiscript-attributes.html [ Failure ]
 
 # Fails because aria-labelledby text changes don't update in isolated tree mode
 accessibility/aria-labelledby-on-password-input.html [ Failure ]
+
+accessibility/aria-selected-menu-items.html [ Failure ]
+accessibility/aria-flowto.html [ Failure ]
+accessibility/aria-owns-hierarchy-remap.html [ Failure ]
+accessibility/element-reflection-ariaactivedescendant.html [ Failure ]
