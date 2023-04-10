@@ -562,7 +562,7 @@ static bool shouldEnableStrictMode(Decoder& decoder, NSArray<Class> *allowedClas
         UNUSED_PARAM(supportsDataDetectors);
 #endif
 
-#if HAVE(VK_IMAGE_ANALYSIS)
+#if ENABLE(IMAGE_ANALYSIS) && HAVE(VK_IMAGE_ANALYSIS)
         supportsVisionKitCore = PAL::isVisionKitCoreFrameworkAvailable();
 #else
         UNUSED_PARAM(supportsVisionKitCore);
@@ -584,7 +584,7 @@ static bool shouldEnableStrictMode(Decoder& decoder, NSArray<Class> *allowedClas
                 || decoder.messageName() == IPC::MessageName::AuthenticationManager_CompleteAuthenticationChallenge // UIP -> NP
             )
         )
-#if HAVE(VK_IMAGE_ANALYSIS)
+#if ENABLE(IMAGE_ANALYSIS) && HAVE(VK_IMAGE_ANALYSIS)
         || (
             (supportsVisionKitCore && [allowedClasses containsObject:PAL::getVKCImageAnalysisClass()])
             && (
