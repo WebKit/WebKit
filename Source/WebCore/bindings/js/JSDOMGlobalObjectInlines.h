@@ -28,7 +28,6 @@
 
 #include "DOMConstructors.h"
 #include "JSDOMGlobalObject.h"
-#include <JavaScriptCore/HeapInlines.h>
 #include <JavaScriptCore/JSObjectInlines.h>
 
 namespace WebCore {
