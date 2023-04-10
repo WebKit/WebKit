@@ -20,11 +20,11 @@ PASS region.childAtIndex(0).traits != nonLandmarkText.traits is true
 PASS footer.description is 'AXLabel: content information'
 PASS footer.childAtIndex(0).traits != nonLandmarkText.traits is true
 PASS article.description is 'AXLabel: article'
-PASS article.childAtIndex(0).traits != nonLandmarkText.traits is true
+PASS article.childAtIndex(0).traits == nonLandmarkText.traits is true
 PASS note.description is 'AXLabel: note'
-PASS note.childAtIndex(0).traits != nonLandmarkText.traits is true
+PASS note.childAtIndex(0).traits == nonLandmarkText.traits is true
 PASS documentContainer.description is 'AXLabel: document'
-PASS documentContainer.childAtIndex(0).traits != nonLandmarkText.traits is true
+PASS documentContainer.childAtIndex(0).traits == nonLandmarkText.traits is true
 PASS region.childAtIndex(0).traits == main.childAtIndex(0).traits is true
 PASS successfullyParsed is true
 

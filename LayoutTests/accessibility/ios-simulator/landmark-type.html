@@ -69,17 +69,18 @@ note
         shouldBe("footer.description", "'AXLabel: content information'");
         shouldBeTrue("footer.childAtIndex(0).traits != nonLandmarkText.traits");
 
+        // Article should NOT be a landmark
         var article = accessibilityController.accessibleElementById("article");
         shouldBe("article.description", "'AXLabel: article'");
-        shouldBeTrue("article.childAtIndex(0).traits != nonLandmarkText.traits");
+        shouldBeTrue("article.childAtIndex(0).traits == nonLandmarkText.traits");
 
         var note = accessibilityController.accessibleElementById("note");
         shouldBe("note.description", "'AXLabel: note'");
-        shouldBeTrue("note.childAtIndex(0).traits != nonLandmarkText.traits");
+        shouldBeTrue("note.childAtIndex(0).traits == nonLandmarkText.traits");
 
         var documentContainer = accessibilityController.accessibleElementById("documentcontainer");
         shouldBe("documentContainer.description", "'AXLabel: document'");
-        shouldBeTrue("documentContainer.childAtIndex(0).traits != nonLandmarkText.traits");
+        shouldBeTrue("documentContainer.childAtIndex(0).traits == nonLandmarkText.traits");
 
         shouldBeTrue("region.childAtIndex(0).traits == main.childAtIndex(0).traits");
     }

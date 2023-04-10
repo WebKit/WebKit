@@ -604,9 +604,6 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
 - (BOOL)_accessibilityIsLandmarkRole:(AccessibilityRole)role
 {
     switch (role) {
-    case AccessibilityRole::Document:
-    case AccessibilityRole::DocumentArticle:
-    case AccessibilityRole::DocumentNote:
     case AccessibilityRole::LandmarkBanner:
     case AccessibilityRole::LandmarkComplementary:
     case AccessibilityRole::LandmarkContentInfo:
@@ -661,13 +658,11 @@ static AccessibilityObjectWrapper *ancestorWithRole(const AXCoreObject& descenda
 {
     if (![self _prepareAccessibilityCall])
         return nil;
-    return ancestorWithRole(*self.axBackingObject, { AccessibilityRole::Document,
-        AccessibilityRole::DocumentArticle,
-        AccessibilityRole::DocumentNote,
+    return ancestorWithRole(*self.axBackingObject, {
         AccessibilityRole::LandmarkBanner,
         AccessibilityRole::LandmarkComplementary,
         AccessibilityRole::LandmarkContentInfo,
-        AccessibilityRole::LandmarkDocRegion,
+        AccessibilityRole::LandmarkDocRegion, // Maps to "region"
         AccessibilityRole::LandmarkMain,
         AccessibilityRole::LandmarkNavigation,
         AccessibilityRole::LandmarkRegion,
