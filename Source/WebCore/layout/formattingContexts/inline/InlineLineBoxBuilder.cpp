@@ -470,9 +470,8 @@ void LineBoxBuilder::adjustInlineBoxHeightsForLineBoxContainIfApplicable(LineBox
             if (!inlineLevelBox.isInlineBox())
                 continue;
             auto& inlineBoxGeometry = formattingContext().geometryForBox(inlineLevelBox.layoutBox());
-            auto layoutBounds = *inlineLevelBox.layoutBounds();
-            auto ascent = layoutBounds.ascent + inlineBoxGeometry.marginBorderAndPaddingBefore();
-            auto descent = layoutBounds.descent + inlineBoxGeometry.marginBorderAndPaddingAfter();
+            auto ascent = inlineLevelBox.ascent() + inlineBoxGeometry.marginBorderAndPaddingBefore();
+            auto descent = valueOrDefault(inlineLevelBox.descent()) + inlineBoxGeometry.marginBorderAndPaddingAfter();
             inlineBoxBoundsMap.set(&inlineLevelBox, TextUtil::EnclosingAscentDescent { ascent, descent });
         }
     }
@@ -481,12 +480,6 @@ void LineBoxBuilder::adjustInlineBoxHeightsForLineBoxContainIfApplicable(LineBox
         // Assign font based layout bounds to all inline boxes.
         auto ensureFontMetricsBasedHeight = [&] (auto& inlineBox) {
             ASSERT(inlineBox.isInlineBox());
-            if (inlineBox.isPreferredLineHeightFontMetricsBased()) {
-                auto fontMetricsBaseLayoutBounds = *inlineBox.layoutBounds();
-                inlineBoxBoundsMap.set(&inlineBox, TextUtil::EnclosingAscentDescent { fontMetricsBaseLayoutBounds.ascent, fontMetricsBaseLayoutBounds.descent });
-                return;
-            }
-
             auto ascentAndDescent = primaryFontMetricsForInlineBox(inlineBox, lineBox.baselineType());
             InlineLayoutUnit lineGap = inlineBox.primarymetricsOfPrimaryFont().lineSpacing();
             auto halfLeading = (lineGap - ascentAndDescent.height()) / 2;
