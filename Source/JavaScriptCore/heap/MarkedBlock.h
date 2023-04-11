@@ -74,6 +74,7 @@ public:
 
     // Block size must be at least as large as the system page size.
     static constexpr size_t blockSize = std::max(16 * KB, CeilingOnPageSize);
+    static_assert((WeakBlock::blockSize * 16) == 16 * KB);
 
     static constexpr size_t blockMask = ~(blockSize - 1); // blockSize must be a power of two.
 

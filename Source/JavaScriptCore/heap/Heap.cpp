@@ -2914,9 +2914,11 @@ void Heap::addCoreConstraints()
         "Ws", "Weak Sets",
         MAKE_MARKING_CONSTRAINT_EXECUTOR_PAIR(([this] (auto& visitor) {
             SetRootMarkReasonScope rootScope(visitor, RootMarkReason::WeakSets);
-            m_objectSpace.visitWeakSets(visitor);
+            RefPtr<SharedTask<void(decltype(visitor)&)>> task = m_objectSpace.forEachWeakInParallel<decltype(visitor)>();
+            visitor.addParallelConstraintTask(WTFMove(task));
         })),
-        ConstraintVolatility::GreyedByMarking);
+        ConstraintVolatility::GreyedByMarking,
+        ConstraintParallelism::Parallel);
     
     m_constraintSet->add(
         "O", "Output",
@@ -2934,7 +2936,7 @@ void Heap::addCoreConstraints()
             
             auto add = [&] (auto& set) {
                 RefPtr<SharedTask<void(decltype(visitor)&)>> task = set.template forEachMarkedCellInParallel<decltype(visitor)>(callOutputConstraint);
-                visitor.addParallelConstraintTask(task);
+                visitor.addParallelConstraintTask(WTFMove(task));
             };
 
             {

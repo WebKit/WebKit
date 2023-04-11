@@ -105,8 +105,10 @@ public:
     
     void prepareForAllocation();
 
-    template<typename Visitor> void visitWeakSets(Visitor&);
     void reapWeakSets();
+
+    template<typename Visitor>
+    Ref<SharedTask<void(Visitor&)>> forEachWeakInParallel();
 
     MarkedBlockSet& blocks() { return m_blocks; }
 

@@ -56,14 +56,21 @@ public:
     bool isEmpty() const;
     bool isTriviallyDestructible() const;
 
-    template<typename Visitor> void visit(Visitor&);
-
     void reap();
     void sweep();
     void shrink();
     void resetAllocator();
 
     static ptrdiff_t offsetOfVM() { return OBJECT_OFFSETOF(WeakSet, m_vm); }
+
+    WeakBlock* head() { return m_blocks.head(); }
+
+    template<typename Functor>
+    void forEachBlock(const Functor& functor)
+    {
+        for (WeakBlock* block = m_blocks.head(); block; block = block->next())
+            functor(*block);
+    }
 
 private:
     JS_EXPORT_PRIVATE WeakBlock::FreeCell* findAllocator(CellContainer);
@@ -115,21 +122,16 @@ inline void WeakSet::deallocate(WeakImpl* weakImpl)
 
 inline void WeakSet::lastChanceToFinalize()
 {
-    for (WeakBlock* block = m_blocks.head(); block; block = block->next())
-        block->lastChanceToFinalize();
-}
-
-template<typename Visitor>
-inline void WeakSet::visit(Visitor& visitor)
-{
-    for (WeakBlock* block = m_blocks.head(); block; block = block->next())
-        block->visit(visitor);
+    forEachBlock([](WeakBlock& block) {
+        block.lastChanceToFinalize();
+    });
 }
 
 inline void WeakSet::reap()
 {
-    for (WeakBlock* block = m_blocks.head(); block; block = block->next())
-        block->reap();
+    forEachBlock([](WeakBlock& block) {
+        block.reap();
+    });
 }
 
 inline void WeakSet::resetAllocator()
