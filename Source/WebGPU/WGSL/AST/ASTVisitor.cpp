@@ -407,9 +407,11 @@ void Visitor::visit(AST::ForStatement& forStatement)
 
 void Visitor::visit(AST::IfStatement& ifStatement)
 {
+    for (auto& attribute : ifStatement.attributes())
+        checkErrorAndVisit(attribute);
     checkErrorAndVisit(ifStatement.test());
     checkErrorAndVisit(ifStatement.trueBody());
-    checkErrorAndVisit(ifStatement.falseBody());
+    maybeCheckErrorAndVisit(ifStatement.maybeFalseBody());
 }
 
 void Visitor::visit(AST::LoopStatement& loopStatement)

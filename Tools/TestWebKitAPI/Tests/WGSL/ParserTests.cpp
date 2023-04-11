@@ -25,6 +25,8 @@
 
 #include "config.h"
 #include "ASTAttribute.h"
+#include "ASTBinaryExpression.h"
+#include "ASTCompoundStatement.h"
 #include "ASTTypeName.h"
 #include "Parser.h"
 #include "ParserPrivate.h"
@@ -803,6 +805,41 @@ TEST(WGSLParserTest, ShortCircuitOrExpression)
     testBinaryExpressionXYZ("x || y || z"_s,
         { WGSL::AST::BinaryOperation::ShortCircuitOr, WGSL::AST::BinaryOperation::ShortCircuitOr },
         { "x"_s, "y"_s, "z"_s });
+}
+
+#pragma mark -
+#pragma mark Statements
+
+TEST(WGSLParserTest, IfStatement)
+{
+    auto shader = parse(
+        R"(fn foo() {
+               if true {
+                   return;
+               } else if false {
+                   return;
+               } else {
+                   return;
+               }
+        })"_s);
+
+    EXPECT_SHADER(shader);
+    EXPECT_TRUE(shader.has_value());
+    EXPECT_TRUE(shader->directives().isEmpty());
+    EXPECT_TRUE(shader->structures().isEmpty());
+    EXPECT_TRUE(shader->variables().isEmpty());
+    EXPECT_EQ(shader->functions().size(), 1u);
+
+    auto& func = shader->functions()[0];
+    EXPECT_GE(func.body().statements().size(), 1u);
+    auto& stmt = func.body().statements()[0];
+    EXPECT_TRUE(is<WGSL::AST::IfStatement>(stmt));
+    auto& ifStmt = downcast<WGSL::AST::IfStatement>(stmt);
+    auto& testExpr = ifStmt.test();
+    EXPECT_TRUE(is<WGSL::AST::BoolLiteral>(testExpr));
+    auto& trueBody = ifStmt.trueBody();
+    EXPECT_TRUE(is<WGSL::AST::CompoundStatement>(trueBody));
+    EXPECT_TRUE(is<WGSL::AST::IfStatement>(ifStmt.maybeFalseBody()));
 }
 
 #pragma mark -

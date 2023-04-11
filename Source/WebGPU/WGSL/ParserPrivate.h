@@ -71,6 +71,8 @@ public:
     Result<Ref<AST::Parameter>> parseParameter();
     Result<AST::Statement::Ref> parseStatement();
     Result<AST::CompoundStatement> parseCompoundStatement();
+    Result<AST::IfStatement> parseIfStatement();
+    Result<AST::IfStatement> parseIfStatementWithAttributes(AST::Attribute::List&&, SourcePosition _startOfElementPosition);
     Result<AST::ReturnStatement> parseReturnStatement();
     Result<AST::Expression::Ref> parseShortCircuitExpression(AST::Expression::Ref&&, TokenType, AST::BinaryOperation);
     Result<AST::Expression::Ref> parseRelationalExpression();

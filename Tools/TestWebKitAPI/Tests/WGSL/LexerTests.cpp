@@ -32,6 +32,7 @@ static WGSL::Token checkSingleToken(const String& string, WGSL::TokenType type)
 {
     WGSL::Lexer<LChar> lexer(string);
     WGSL::Token result = lexer.lex();
+    ASSERT(result.type == type);
     EXPECT_EQ(result.type, type);
     return result;
 }
@@ -122,10 +123,12 @@ TEST(WGSLLexerTests, KeywordTokens)
     checkSingleToken("array"_s, TokenType::KeywordArray);
     checkSingleToken("bool"_s, TokenType::KeywordBool);
     checkSingleToken("const"_s, TokenType::KeywordConst);
+    checkSingleToken("else"_s, TokenType::KeywordElse);
     checkSingleToken("f32"_s, TokenType::KeywordF32);
     checkSingleToken("fn"_s, TokenType::KeywordFn);
     checkSingleToken("function"_s, TokenType::KeywordFunction);
     checkSingleToken("i32"_s, TokenType::KeywordI32);
+    checkSingleToken("if"_s, TokenType::KeywordIf);
     checkSingleToken("let"_s, TokenType::KeywordLet);
     checkSingleToken("override"_s, TokenType::KeywordOverride);
     checkSingleToken("private"_s, TokenType::KeywordPrivate);

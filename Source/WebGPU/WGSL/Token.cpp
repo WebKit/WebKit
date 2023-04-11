@@ -53,12 +53,16 @@ String toString(TokenType type)
         return "array"_s;
     case TokenType::KeywordConst:
         return "const"_s;
+    case TokenType::KeywordElse:
+        return "else"_s;
     case TokenType::KeywordStruct:
         return "struct"_s;
     case TokenType::KeywordFn:
         return "fn"_s;
     case TokenType::KeywordFunction:
         return "function"_s;
+    case TokenType::KeywordIf:
+        return "if"_s;
     case TokenType::KeywordLet:
         return "let"_s;
     case TokenType::KeywordOverride:

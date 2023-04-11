@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "ASTAttribute.h"
 #include "ASTCompoundStatement.h"
 #include "ASTExpression.h"
 
@@ -33,22 +34,25 @@ namespace WGSL::AST {
 class IfStatement final : public Statement {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    IfStatement(SourceSpan span, Expression::Ref&& test, CompoundStatement::Ref&& trueBody, CompoundStatement::Ref&& falseBody)
+    IfStatement(SourceSpan span, Expression::Ref&& test, CompoundStatement&& trueBody, Statement::Ptr&& falseBody, Attribute::List&& attributes)
         : Statement(span)
         , m_test(WTFMove(test))
         , m_trueBody(WTFMove(trueBody))
         , m_falseBody(WTFMove(falseBody))
+        , m_attributes(WTFMove(attributes))
     { }
 
     NodeKind kind() const override;
     Expression& test() { return m_test.get(); }
-    CompoundStatement& trueBody() { return m_trueBody.get(); }
-    CompoundStatement& falseBody() { return m_falseBody.get(); }
+    CompoundStatement& trueBody() { return m_trueBody; }
+    Statement* maybeFalseBody() { return m_falseBody.get(); }
+    Attribute::List& attributes() { return m_attributes; }
 
 private:
     Expression::Ref m_test;
-    CompoundStatement::Ref m_trueBody;
-    CompoundStatement::Ref m_falseBody;
+    CompoundStatement m_trueBody;
+    Statement::Ptr m_falseBody;
+    Attribute::List m_attributes;
 };
 
 } // namespace WGSL::AST
