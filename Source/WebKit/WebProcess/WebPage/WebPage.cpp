@@ -875,8 +875,6 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     if (!parameters.itemStates.isEmpty())
         restoreSessionInternal(parameters.itemStates, parameters.itemStatesWereRestoredByAPIRequest ? WasRestoredByAPIRequest::Yes : WasRestoredByAPIRequest::No, WebBackForwardListProxy::OverwriteExistingItem::No);
 
-    m_drawingArea->enablePainting();
-    
     setMediaVolume(parameters.mediaVolume);
 
     setMuted(parameters.muted, [] { });
@@ -1093,7 +1091,6 @@ void WebPage::reinitializeWebPage(WebPageCreationParameters&& parameters)
         m_drawingArea = DrawingArea::create(*this, parameters);
         m_drawingArea->setShouldScaleViewToFitDocument(parameters.shouldScaleViewToFitDocument);
         m_drawingArea->updatePreferences(parameters.store);
-        m_drawingArea->enablePainting();
 
         m_drawingArea->adoptLayersFromDrawingArea(*oldDrawingArea);
         m_drawingArea->adoptDisplayRefreshMonitorsFromDrawingArea(*oldDrawingArea);

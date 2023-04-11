@@ -51,12 +51,13 @@
 namespace WebKit {
 using namespace WebCore;
 
-LayerTreeHost::LayerTreeHost(WebPage& webPage)
+LayerTreeHost::LayerTreeHost(WebPage& webPage, WebCore::PlatformDisplayID displayID)
     : m_webPage(webPage)
     , m_surface(AcceleratedSurface::create(webPage, *this))
     , m_viewportController(webPage.size())
     , m_layerFlushTimer(RunLoop::main(), this, &LayerTreeHost::layerFlushTimerFired)
     , m_coordinator(webPage, *this)
+    , m_displayID(displayID)
 {
 #if USE(GLIB_EVENT_LOOP)
     m_layerFlushTimer.setPriority(RunLoopSourcePriority::LayerFlushTimer);
@@ -78,8 +79,6 @@ LayerTreeHost::LayerTreeHost(WebPage& webPage)
     if (m_surface->shouldPaintMirrored())
         paintFlags |= TextureMapper::PaintingMirrored;
 
-    ASSERT(m_webPage.drawingArea());
-    m_displayID = std::numeric_limits<uint32_t>::max() - m_webPage.drawingArea()->identifier().toUInt64();
     m_compositor = ThreadedCompositor::create(*this, *this, m_displayID, scaledSize, scaleFactor, paintFlags);
     m_layerTreeContext.contextID = m_surface->surfaceID();
 

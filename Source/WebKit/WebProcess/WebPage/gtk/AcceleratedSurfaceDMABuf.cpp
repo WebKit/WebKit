@@ -58,8 +58,6 @@ void AcceleratedSurfaceDMABuf::didCreateGLContext()
 {
     glGenFramebuffers(1, &m_fbo);
     glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
-
-    clientResize(m_size);
 }
 
 void AcceleratedSurfaceDMABuf::willDestroyGLContext()
