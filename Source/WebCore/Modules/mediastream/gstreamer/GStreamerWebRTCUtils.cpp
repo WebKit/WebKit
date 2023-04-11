@@ -462,7 +462,7 @@ GRefPtr<GstCaps> capsFromRtpCapabilities(const RTCRtpCapabilities& capabilities,
         supplementCapsCallback(codecStructure);
 
         if (!index) {
-            for (unsigned i = 0; auto& extension : capabilities.headerExtensions)
+            for (unsigned i = 1; auto& extension : capabilities.headerExtensions)
                 gst_structure_set(codecStructure, makeString("extmap-", i++).ascii().data(), G_TYPE_STRING, extension.uri.ascii().data(), nullptr);
         }
         gst_caps_append_structure(caps.get(), codecStructure);
