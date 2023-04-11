@@ -134,6 +134,8 @@ public:
             , m_tryStart(tryStart)
             , m_tryCatchDepth(tryDepth)
         {
+            ASSERT(type == BlockType::Try);
+            m_stackSize -= signature->as<FunctionSignature>()->argumentCount();
             for (unsigned i = 0; i < signature->as<FunctionSignature>()->returnCount(); ++i)
                 phis.append(proc.add<Value>(Phi, toB3Type(signature->as<FunctionSignature>()->returnType(i)), origin));
         }
@@ -639,7 +641,10 @@ public:
     void dump(const ControlStack&, const Stack* expressionStack);
     void setParser(FunctionParser<B3IRGenerator>* parser) { m_parser = parser; };
     void didFinishParsingLocals() { }
-    void didPopValueFromStack() { --m_stackSize; }
+    void didPopValueFromStack()
+    {
+        --m_stackSize;
+    }
 
     Value* constant(B3::Type, uint64_t bits, std::optional<Origin> = std::nullopt);
     Value* constant(B3::Type, v128_t bits, std::optional<Origin> = std::nullopt);
