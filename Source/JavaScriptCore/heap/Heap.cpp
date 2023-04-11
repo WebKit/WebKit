@@ -700,8 +700,10 @@ void Heap::finalizeUnconditionalFinalizers()
         [&] (auto& space) {
             this->finalizeMarkedUnconditionalFinalizers<CodeBlock>(space.set, collectionScope);
         });
-    if (collectionScope == CollectionScope::Full)
+    if (collectionScope == CollectionScope::Full) {
         finalizeMarkedUnconditionalFinalizers<Structure>(structureSpace, collectionScope);
+        finalizeMarkedUnconditionalFinalizers<BrandedStructure>(brandedStructureSpace, collectionScope);
+    }
     finalizeMarkedUnconditionalFinalizers<StructureRareData>(structureRareDataSpace, collectionScope);
     finalizeMarkedUnconditionalFinalizers<UnlinkedFunctionExecutable>(unlinkedFunctionExecutableSpaceAndSet.set, collectionScope);
     if (m_weakSetSpace)

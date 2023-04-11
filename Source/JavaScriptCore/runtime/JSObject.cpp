@@ -4092,7 +4092,6 @@ void JSObject::putOwnDataPropertyBatching(VM& vm, const RefPtr<UniquedStringImpl
     if (!(structure->isDictionary() || (structure->transitionCountEstimate() + size) > Structure::s_maxTransitionLength || !structure->canPerformFastPropertyEnumeration() || (structure->transitionWatchpointSet().isBeingWatched() && structure->transitionWatchpointSet().isStillValid()))) {
         Vector<PropertyOffset, 16> offsets;
         offsets.reserveInitialCapacity(size);
-        Structure* originalStructure = structure;
 
         for (unsigned index = 0; index < size; ++index) {
             PropertyName propertyName(properties[index].get());
@@ -4135,10 +4134,11 @@ void JSObject::putOwnDataPropertyBatching(VM& vm, const RefPtr<UniquedStringImpl
         // Flush batching here. Note that it is possible that offsets.size() is not equal to size, if we stop batching due to transition-watchpoint-firing.
 
         Butterfly* newButterfly = butterfly();
-        if (originalStructure->outOfLineCapacity() != structure->outOfLineCapacity()) {
-            ASSERT(structure != originalStructure);
-            newButterfly = allocateMoreOutOfLineStorage(vm, originalStructure->outOfLineCapacity(), structure->outOfLineCapacity());
-            nukeStructureAndSetButterfly(vm, originalStructure->structureID(), newButterfly);
+        auto* oldStructure = this->structure();
+        if (oldStructure->outOfLineCapacity() != structure->outOfLineCapacity()) {
+            ASSERT(structure != oldStructure);
+            newButterfly = allocateMoreOutOfLineStorage(vm, oldStructure->outOfLineCapacity(), structure->outOfLineCapacity());
+            nukeStructureAndSetButterfly(vm, StructureID::encode(oldStructure), newButterfly);
         }
 
         for (unsigned index = 0; index < offsets.size(); ++index)
