@@ -42,6 +42,9 @@ fn testMultiply() {
   let m = mat2x4<f32>(0, 0, 0, 0, 0, 0, 0, 0);
   let r1 = m * v2;
   let r2 = v4 * m;
+  let r3 = vec2(1, 1) * 1;
+  let r4 = 1 * vec2(1, 1);
+  let r5 = vec2(1, 1) * vec2(1, 1);
 }
 
 fn testTextureSample() {
@@ -101,6 +104,7 @@ fn testTextureSample() {
 }
 
 fn testVec2() {
+  let v = vec2<f32>(0);
   let v0 = vec2<f32>(0, 0);
   let v1 = vec2<i32>(vec2(0, 0));
   let v2 = vec2(vec2(0, 0));
@@ -108,6 +112,7 @@ fn testVec2() {
 }
 
 fn testVec3() {
+  let v = vec3<f32>(0);
   let v0 = vec3<f32>(0, 0, 0);
   let v1 = vec3<i32>(vec3(0, 0, 0));
   let v2 = vec3(vec3(0, 0, 0));
@@ -117,6 +122,7 @@ fn testVec3() {
 }
 
 fn testVec4() {
+  let v = vec4<f32>(0);
   let v0 = vec4<f32>(0, 0, 0, 0);
   let v1 = vec4<i32>(vec4(0, 0, 0, 0));
   let v2 = vec4(vec4(0, 0, 0, 0));
@@ -328,4 +334,10 @@ fn testTrigonometricHyperbolic() {
     let x2 = tanh(vec3(0.0, 0.0, 0.0));
     let x3 = tanh(vec4(0.0, 0.0, 0.0, 0.0));
   }
+}
+
+fn testBinaryMinus() {
+  let x1 = vec2(1, 1) - 1;
+  let x2 = 1 - vec2(1, 1);
+  let x3 = vec2(1, 1) - vec2(1, 1);
 }

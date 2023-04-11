@@ -8,13 +8,25 @@ operator :+, {
 }
 
 operator :*, {
+    # vector scaling
+    [T < Number, N].(Vector[T, N], T) => Vector[T, N],
+    [T < Number, N].(T, Vector[T, N]) => Vector[T, N],
+    [T < Number, N].(Vector[T, N], Vector[T, N]) => Vector[T, N],
+
+    # matrix-vector multiplication
     [T < Float, C, R].(Matrix[T, C, R], Vector[T, C]) => Vector[T, R],
     [T < Float, C, R].(Vector[T, R], Matrix[T, C, R]) => Vector[T, C],
 }
 
 operator :-, {
+  # unary
   [T < SignedNumber].(T) => T,
   [T < SignedNumber, N].(Vector[T, N]) => Vector[T, N],
+
+  # binary
+  [T < Number, N].(Vector[T, N], T) => Vector[T, N],
+  [T < Number, N].(T, Vector[T, N]) => Vector[T, N],
+  [T < Number, N].(Vector[T, N], Vector[T, N]) => Vector[T, N],
 }
 
 operator :textureSample, {
@@ -33,12 +45,14 @@ operator :textureSample, {
 }
 
 operator :vec2, {
+    [T < Scalar].(T) => Vector[T, 2],
     [S < Scalar, T < ConcreteScalar].(Vector[S, 2]) => Vector[T, 2],
     [S < Scalar].(Vector[S, 2]) => Vector[S, 2],
     [T < Scalar].(T, T) => Vector[T, 2],
 }
 
 operator :vec3, {
+    [T < Scalar].(T) => Vector[T, 3],
     [S < Scalar, T < ConcreteScalar].(Vector[S, 3]) => Vector[T, 3],
     [S < Scalar].(Vector[S, 3]) => Vector[S, 3],
     [T < Scalar].(T, T, T) => Vector[T, 3],
@@ -47,6 +61,7 @@ operator :vec3, {
 }
 
 operator :vec4, {
+    [T < Scalar].(T) => Vector[T, 4],
     [S < Scalar, T < ConcreteScalar].(Vector[S, 4]) => Vector[T, 4],
     [S < Scalar].(Vector[S, 4]) => Vector[S, 4],
     [T < Scalar].(T, T, T, T) => Vector[T, 4],
