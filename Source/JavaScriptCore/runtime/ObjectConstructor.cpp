@@ -324,10 +324,49 @@ JSC_DEFINE_HOST_FUNCTION(objectConstructorAssign, (JSGlobalObject* globalObject,
     // FIXME: Extend this for non JSFinalObject. For example, we would like to use this fast path for function objects too.
     // https://bugs.webkit.org/show_bug.cgi?id=185358
     bool targetCanPerformFastPut = jsDynamicCast<JSFinalObject*>(target) && target->canPerformFastPutInlineExcludingProto() && target->isStructureExtensible();
+    unsigned argsCount = callFrame->argumentCount();
+
+    if (argsCount > 2 && argsCount < 5 && targetCanPerformFastPut) {
+        bool willBatch = true;
+        for (unsigned i = 1; i < argsCount; ++i) {
+            JSValue sourceValue = callFrame->uncheckedArgument(i);
+            if (!sourceValue.isObject()) {
+                willBatch = false;
+                break;
+            }
+            JSObject* source = asObject(sourceValue);
+            if (!source->staticPropertiesReified() || !source->structure()->canPerformFastPropertyEnumeration()) {
+                willBatch = false;
+                break;
+            }
+        }
+        if (willBatch) {
+            Vector<RefPtr<UniquedStringImpl>, 16> properties;
+            MarkedArgumentBufferWithSize<16> values;
+            for (unsigned i = 1; i < argsCount; ++i) {
+                JSValue sourceValue = callFrame->uncheckedArgument(i);
+                JSObject* source = asObject(sourceValue);
+                source->structure()->forEachProperty(vm, [&](const PropertyTableEntry& entry) -> bool {
+                    if (entry.attributes() & PropertyAttribute::DontEnum)
+                        return true;
+
+                    PropertyName propertyName(entry.key());
+                    if (propertyName.isPrivateName())
+                        return true;
+
+                    properties.append(entry.key());
+                    values.appendWithCrashOnOverflow(source->getDirect(entry.offset()));
+
+                    return true;
+                });
+            }
+            target->putOwnDataPropertyBatching(vm, properties.data(), values.data(), properties.size());
+            return JSValue::encode(target);
+        }
+    }
 
     Vector<RefPtr<UniquedStringImpl>, 8> properties;
     MarkedArgumentBuffer values;
-    unsigned argsCount = callFrame->argumentCount();
     for (unsigned i = 1; i < argsCount; ++i) {
         JSValue sourceValue = callFrame->uncheckedArgument(i);
         if (sourceValue.isUndefinedOrNull())

@@ -64,7 +64,7 @@ public:
         return vm.weakObjectRefSpace<mode>();
     }
 
-    void finalizeUnconditionally(VM&);
+    void finalizeUnconditionally(VM&, CollectionScope);
     DECLARE_VISIT_CHILDREN;
 
 private:

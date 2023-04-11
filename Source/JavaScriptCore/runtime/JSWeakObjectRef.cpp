@@ -54,7 +54,7 @@ void JSWeakObjectRef::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 
 DEFINE_VISIT_CHILDREN(JSWeakObjectRef);
 
-void JSWeakObjectRef::finalizeUnconditionally(VM& vm)
+void JSWeakObjectRef::finalizeUnconditionally(VM& vm, CollectionScope)
 {
     if (m_value && !vm.heap.isMarked(m_value.get()))
         m_value.clear();

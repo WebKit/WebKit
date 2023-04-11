@@ -185,6 +185,9 @@ public:
 #endif
     static_assert(JSCell::atomSize >= MarkedBlock::atomSize);
 
+    static constexpr int s_maxTransitionLength = 64;
+    static constexpr int s_maxTransitionLengthForNonEvalPutById = 512;
+
     enum PolyProtoTag { PolyProto };
     static Structure* create(VM&, JSGlobalObject*, JSValue prototype, const TypeInfo&, const ClassInfo*, IndexingType = NonArray, unsigned inlineCapacity = 0);
     static Structure* create(PolyProtoTag, VM&, JSGlobalObject*, JSObject* prototype, const TypeInfo&, const ClassInfo*, IndexingType = NonArray, unsigned inlineCapacity = 0);
@@ -242,6 +245,16 @@ public:
     }
 
     static void dumpStatistics();
+
+    inline bool shouldDoCacheableDictionaryTransitionForAdd(PutPropertySlot::Context context)
+    {
+        int maxTransitionLength;
+        if (context == PutPropertySlot::PutById)
+            maxTransitionLength = s_maxTransitionLengthForNonEvalPutById;
+        else
+            maxTransitionLength = s_maxTransitionLength;
+        return transitionCountEstimate() > maxTransitionLength;
+    }
 
     JS_EXPORT_PRIVATE static Structure* addPropertyTransition(VM&, Structure*, PropertyName, unsigned attributes, PropertyOffset&);
     JS_EXPORT_PRIVATE static Structure* addNewPropertyTransition(VM&, Structure*, PropertyName, unsigned attributes, PropertyOffset&, PutPropertySlot::Context = PutPropertySlot::UnknownContext, DeferredStructureTransitionWatchpointFire* = nullptr);
@@ -824,6 +837,15 @@ public:
     static_assert(s_bitWidthOfTransitionPropertyAttributes <= sizeof(TransitionPropertyAttributes) * 8);
     static_assert(s_bitWidthOfTransitionKind <= sizeof(TransitionKind) * 8);
 
+    int transitionCountEstimate() const
+    {
+        // Since the number of transitions is often the same as the last offset (except if there are deletes)
+        // we keep the size of Structure down by not storing both.
+        return numberOfSlotsForMaxOffset(maxOffset(), m_inlineCapacity);
+    }
+
+    void finalizeUnconditionally(VM&, CollectionScope);
+
 protected:
     Structure(VM&, Structure*);
 
@@ -910,13 +932,6 @@ private:
             m_previousOrRareData.clear();
     }
 
-    int transitionCountEstimate() const
-    {
-        // Since the number of transitions is often the same as the last offset (except if there are deletes)
-        // we keep the size of Structure down by not storing both.
-        return numberOfSlotsForMaxOffset(maxOffset(), m_inlineCapacity);
-    }
-
     ALWAYS_INLINE bool transitionCountHasOverflowed() const
     {
         int transitionCount = 0;
@@ -948,9 +963,6 @@ private:
     void startWatchingInternalProperties(VM&);
 
     void clearCachedPrototypeChain();
-
-    static constexpr int s_maxTransitionLength = 64;
-    static constexpr int s_maxTransitionLengthForNonEvalPutById = 512;
 
     // These need to be properly aligned at the beginning of the 'Structure'
     // part of the object.

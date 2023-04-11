@@ -45,55 +45,37 @@ namespace JSC {
 static HashSet<Structure*>& liveStructureSet = *(new HashSet<Structure*>);
 #endif
 
-class SingleSlotTransitionWeakOwner final : public WeakHandleOwner {
-    void finalize(Handle<Unknown>, void* context) final
-    {
-        StructureTransitionTable* table = reinterpret_cast<StructureTransitionTable*>(context);
-        ASSERT(table->isUsingSingleSlot());
-        WeakSet::deallocate(table->weakImpl());
-        table->m_data = StructureTransitionTable::UsingSingleSlotFlag;
-    }
-};
-
-static SingleSlotTransitionWeakOwner& singleSlotTransitionWeakOwner()
-{
-    static NeverDestroyed<SingleSlotTransitionWeakOwner> owner;
-    return owner;
-}
-
-inline void StructureTransitionTable::setSingleTransition(Structure* structure)
+inline void StructureTransitionTable::setSingleTransition(VM& vm, JSCell* owner, Structure* structure)
 {
     ASSERT(isUsingSingleSlot());
-    if (WeakImpl* impl = this->weakImpl())
-        WeakSet::deallocate(impl);
-    WeakImpl* impl = WeakSet::allocate(structure, &singleSlotTransitionWeakOwner(), this);
-    m_data = bitwise_cast<intptr_t>(impl) | UsingSingleSlotFlag;
+    m_data = bitwise_cast<intptr_t>(structure) | UsingSingleSlotFlag;
+    vm.writeBarrier(owner, structure);
 }
 
 bool StructureTransitionTable::contains(UniquedStringImpl* rep, unsigned attributes, TransitionKind transitionKind) const
 {
     if (isUsingSingleSlot()) {
-        Structure* transition = singleTransition();
+        Structure* transition = trySingleTransition();
         return transition && transition->m_transitionPropertyName == rep && transition->transitionPropertyAttributes() == attributes && transition->transitionKind() == transitionKind;
     }
     return map()->get(StructureTransitionTable::Hash::Key(rep, attributes, transitionKind));
 }
 
-void StructureTransitionTable::add(VM& vm, Structure* structure)
+void StructureTransitionTable::add(VM& vm, JSCell* owner, Structure* structure)
 {
     if (isUsingSingleSlot()) {
-        Structure* existingTransition = singleTransition();
+        Structure* existingTransition = trySingleTransition();
 
         // This handles the first transition being added.
         if (!existingTransition) {
-            setSingleTransition(structure);
+            setSingleTransition(vm, owner, structure);
             return;
         }
 
         // This handles the second transition being added
         // (or the first transition being despecified!)
         setMap(new TransitionMap(vm));
-        add(vm, existingTransition);
+        add(vm, owner, existingTransition);
     }
 
     // Add the structure to the map.
@@ -511,12 +493,7 @@ Structure* Structure::addNewPropertyTransition(VM& vm, Structure* structure, Pro
     ASSERT(structure->isObject());
     ASSERT(!Structure::addPropertyTransitionToExistingStructure(structure, propertyName, attributes, offset));
     
-    int maxTransitionLength;
-    if (context == PutPropertySlot::PutById)
-        maxTransitionLength = s_maxTransitionLengthForNonEvalPutById;
-    else
-        maxTransitionLength = s_maxTransitionLength;
-    if (structure->transitionCountEstimate() > maxTransitionLength) {
+    if (structure->shouldDoCacheableDictionaryTransitionForAdd(context)) {
         ASSERT(!isCopyOnWrite(structure->indexingMode()));
         Structure* transition = toCacheableDictionaryTransition(vm, structure, deferred);
         ASSERT(structure != transition);
@@ -560,7 +537,7 @@ Structure* Structure::addNewPropertyTransition(VM& vm, Structure* structure, Pro
     checkOffset(transition->transitionOffset(), transition->inlineCapacity());
     if (!structure->hasBeenDictionary()) {
         GCSafeConcurrentJSLocker locker(structure->m_lock, vm);
-        structure->m_transitionTable.add(vm, transition);
+        structure->m_transitionTable.add(vm, structure, transition);
     }
     transition->checkOffsetConsistency();
     structure->checkOffsetConsistency();
@@ -657,7 +634,7 @@ Structure* Structure::removeNewPropertyTransition(VM& vm, Structure* structure, 
     checkOffset(transition->transitionOffset(), transition->inlineCapacity());
     if (!structure->hasBeenDictionary()) {
         GCSafeConcurrentJSLocker locker(structure->m_lock, vm);
-        structure->m_transitionTable.add(vm, transition);
+        structure->m_transitionTable.add(vm, structure, transition);
     }
     transition->checkOffsetConsistency();
     structure->checkOffsetConsistency();
@@ -751,7 +728,7 @@ Structure* Structure::attributeChangeTransition(VM& vm, Structure* structure, Pr
     checkOffset(transition->transitionOffset(), transition->inlineCapacity());
     if (!structure->hasBeenDictionary()) {
         GCSafeConcurrentJSLocker locker(structure->m_lock, vm);
-        structure->m_transitionTable.add(vm, transition);
+        structure->m_transitionTable.add(vm, structure, transition);
     }
     transition->checkOffsetConsistency();
     structure->checkOffsetConsistency();
@@ -877,7 +854,7 @@ Structure* Structure::nonPropertyTransitionSlow(VM& vm, Structure* structure, Tr
         transition->pin(Locker { transition->m_lock }, vm, table);
     } else {
         Locker locker { structure->m_lock };
-        structure->m_transitionTable.add(vm, transition);
+        structure->m_transitionTable.add(vm, structure, transition);
     }
 
     transition->checkOffsetConsistency();
@@ -1289,6 +1266,12 @@ void Structure::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 
     if (thisObject->isBrandedStructure())
         BrandedStructure::visitAdditionalChildren(cell, visitor);
+
+    // Mark only in non Full collection. In full collection, we handle it as a weak-link.
+    if (!(visitor.heap()->collectionScope() == CollectionScope::Full)) {
+        if (auto* transition = thisObject->m_transitionTable.trySingleTransition())
+            visitor.appendUnbarriered(transition);
+    }
 }
 
 DEFINE_VISIT_CHILDREN(Structure);
@@ -1550,7 +1533,7 @@ Structure* Structure::setBrandTransition(VM& vm, Structure* structure, Symbol* b
         transition->pin(Locker { transition->m_lock }, vm, table);
     } else {
         Locker locker { structure->m_lock };
-        structure->m_transitionTable.add(vm, transition);
+        structure->m_transitionTable.add(vm, structure, transition);
     }
 
     transition->checkOffsetConsistency();
@@ -1561,6 +1544,11 @@ void DeferredStructureTransitionWatchpointFire::fireAllSlow()
 {
     StructureFireDetail detail(m_structure);
     watchpointsToFire().fireAll(m_vm, detail);
+}
+
+void Structure::finalizeUnconditionally(VM& vm, CollectionScope collectionScope)
+{
+    m_transitionTable.finalizeUnconditionally(vm, collectionScope);
 }
 
 } // namespace JSC

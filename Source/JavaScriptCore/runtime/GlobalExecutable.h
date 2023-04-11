@@ -50,7 +50,7 @@ public:
     DECLARE_VISIT_CHILDREN;
     DECLARE_VISIT_OUTPUT_CONSTRAINTS;
 
-    void finalizeUnconditionally(VM&);
+    void finalizeUnconditionally(VM&, CollectionScope);
 
 protected:
     friend class ScriptExecutable;

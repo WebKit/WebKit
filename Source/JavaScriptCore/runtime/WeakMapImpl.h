@@ -287,7 +287,7 @@ public:
     }
 
     template<typename Visitor> static void visitOutputConstraints(JSCell*, Visitor&);
-    void finalizeUnconditionally(VM&);
+    void finalizeUnconditionally(VM&, CollectionScope);
 
 private:
     template<typename Visitor>

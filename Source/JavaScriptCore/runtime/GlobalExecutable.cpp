@@ -77,7 +77,7 @@ CodeBlock* GlobalExecutable::replaceCodeBlockWith(VM& vm, CodeBlock* newCodeBloc
     return oldCodeBlock;
 }
 
-void GlobalExecutable::finalizeUnconditionally(VM& vm)
+void GlobalExecutable::finalizeUnconditionally(VM& vm, CollectionScope)
 {
     finalizeCodeBlockEdge(vm, m_codeBlock);
     Heap::ScriptExecutableSpaceAndSets::outputConstraintsSetFor(*subspace()).remove(this);

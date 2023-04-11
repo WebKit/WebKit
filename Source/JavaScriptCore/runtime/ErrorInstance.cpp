@@ -206,7 +206,7 @@ String ErrorInstance::sanitizedToString(JSGlobalObject* globalObject)
     return makeString(nameString, nameString.isEmpty() || messageString.isEmpty() ? ""_s : ": "_s, messageString);
 }
 
-void ErrorInstance::finalizeUnconditionally(VM& vm)
+void ErrorInstance::finalizeUnconditionally(VM& vm, CollectionScope)
 {
     if (!m_stackTrace)
         return;

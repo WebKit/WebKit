@@ -693,7 +693,7 @@ private:
     void harvestWeakReferences();
 
     template<typename CellType, typename CellSet>
-    void finalizeMarkedUnconditionalFinalizers(CellSet&);
+    void finalizeMarkedUnconditionalFinalizers(CellSet&, CollectionScope);
 
     void finalizeUnconditionalFinalizers();
 

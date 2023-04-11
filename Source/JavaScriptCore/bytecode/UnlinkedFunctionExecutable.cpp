@@ -296,7 +296,7 @@ void UnlinkedFunctionExecutable::setInvalidTypeProfilingOffsets()
     m_typeProfilingEndOffset = std::numeric_limits<unsigned>::max();
 }
 
-void UnlinkedFunctionExecutable::finalizeUnconditionally(VM& vm)
+void UnlinkedFunctionExecutable::finalizeUnconditionally(VM& vm, CollectionScope)
 {
     if (codeBlockEdgeMayBeWeak()) {
         bool isCleared = false;

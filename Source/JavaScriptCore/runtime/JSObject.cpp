@@ -40,6 +40,7 @@
 #include "PropertyDescriptor.h"
 #include "PropertyNameArray.h"
 #include "ProxyObject.h"
+#include "SuperSampler.h"
 #include "TypeError.h"
 #include "VMInlines.h"
 #include "VMTrapsInlines.h"
@@ -4083,6 +4084,76 @@ TransitionKind JSObject::suggestedArrayStorageTransition() const
         return TransitionKind::AllocateSlowPutArrayStorage;
     
     return TransitionKind::AllocateArrayStorage;
+}
+
+void JSObject::putOwnDataPropertyBatching(VM& vm, const RefPtr<UniquedStringImpl>* properties, const EncodedJSValue* values, unsigned size)
+{
+    unsigned i = 0;
+    Structure* structure = this->structure();
+    if (!(structure->isDictionary() || (structure->transitionCountEstimate() + size) > Structure::s_maxTransitionLength || !structure->canPerformFastPropertyEnumeration() || (structure->transitionWatchpointSet().isBeingWatched() && structure->transitionWatchpointSet().isStillValid()))) {
+        Vector<PropertyOffset, 16> offsets;
+        offsets.reserveInitialCapacity(size);
+        Structure* originalStructure = structure;
+
+        for (unsigned index = 0; index < size; ++index) {
+            PropertyName propertyName(properties[index].get());
+
+            PropertyOffset offset;
+            if (Structure* newStructure = Structure::addPropertyTransitionToExistingStructure(structure, propertyName, 0, offset)) {
+                structure = newStructure;
+                offsets.uncheckedAppend(offset);
+                // If we detect that this structure requires transition watchpoint firing, then we need to stop this batching and rest of the values
+                // should be put via generic way.
+                if (UNLIKELY(structure->transitionWatchpointSet().isBeingWatched() && structure->transitionWatchpointSet().isStillValid()))
+                    break;
+                continue;
+            }
+
+            unsigned currentAttributes;
+            offset = structure->get(vm, propertyName, currentAttributes);
+            if (offset != invalidOffset) {
+                structure->didReplaceProperty(offset);
+                offsets.uncheckedAppend(offset);
+                if (UNLIKELY(structure->transitionWatchpointSet().isBeingWatched() && structure->transitionWatchpointSet().isStillValid()))
+                    break;
+                continue;
+            }
+
+            // It will go to the cacheable dictionary case. We stop the batching here and fall though to the generic case.
+            // We break here before adding offset to offsets since this property itself should be put via generic path.
+            if (UNLIKELY(structure->shouldDoCacheableDictionaryTransitionForAdd(PutPropertySlot::UnknownContext)))
+                break;
+
+            Structure* newStructure = Structure::addNewPropertyTransition(vm, structure, propertyName, 0, offset, PutPropertySlot::UnknownContext, nullptr);
+
+            validateOffset(offset);
+            ASSERT(newStructure->isValidOffset(offset));
+
+            structure = newStructure;
+            offsets.uncheckedAppend(offset);
+        }
+
+        // Flush batching here. Note that it is possible that offsets.size() is not equal to size, if we stop batching due to transition-watchpoint-firing.
+
+        Butterfly* newButterfly = butterfly();
+        if (originalStructure->outOfLineCapacity() != structure->outOfLineCapacity()) {
+            ASSERT(structure != originalStructure);
+            newButterfly = allocateMoreOutOfLineStorage(vm, originalStructure->outOfLineCapacity(), structure->outOfLineCapacity());
+            nukeStructureAndSetButterfly(vm, originalStructure->structureID(), newButterfly);
+        }
+
+        for (unsigned index = 0; index < offsets.size(); ++index)
+            putDirectOffset(vm, offsets[index], JSValue::decode(values[index]));
+        setStructure(vm, structure);
+
+        // We fall through to the generic case and consume the rest of put operations if batching stopped in the middle.
+        i = offsets.size();
+    }
+
+    for (; i < size; ++i) {
+        PutPropertySlot putPropertySlot(this, true);
+        putOwnDataProperty(vm, properties[i].get(), JSValue::decode(values[i]), putPropertySlot);
+    }
 }
 
 } // namespace JSC

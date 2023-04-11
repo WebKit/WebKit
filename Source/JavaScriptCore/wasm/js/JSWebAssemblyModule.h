@@ -75,7 +75,7 @@ public:
     CodePtr<WasmEntryPtrTag> importFunctionStub(size_t importFunctionNum) { return m_wasmToJSExitStubs[importFunctionNum].code(); }
 
     void clearJSCallICs(VM&);
-    void finalizeUnconditionally(VM&);
+    void finalizeUnconditionally(VM&, CollectionScope);
 
     JS_EXPORT_PRIVATE Wasm::Module& module();
 

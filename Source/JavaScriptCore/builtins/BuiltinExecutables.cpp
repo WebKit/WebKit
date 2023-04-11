@@ -262,7 +262,7 @@ UnlinkedFunctionExecutable* BuiltinExecutables::createExecutable(VM& vm, const S
     return functionExecutable;
 }
 
-void BuiltinExecutables::finalizeUnconditionally()
+void BuiltinExecutables::finalizeUnconditionally(CollectionScope)
 {
     for (auto*& unlinkedExecutable : m_unlinkedExecutables) {
         if (unlinkedExecutable && !m_vm.heap.isMarked(unlinkedExecutable))

@@ -238,10 +238,7 @@ class StructureTransitionTable {
     typedef WeakGCMap<Hash::Key, Structure, Hash, Hash::KeyTraits> TransitionMap;
 
 public:
-    StructureTransitionTable()
-        : m_data(UsingSingleSlotFlag)
-    {
-    }
+    StructureTransitionTable() = default;
 
     ~StructureTransitionTable()
     {
@@ -249,16 +246,15 @@ public:
             delete map();
             return;
         }
-
-        WeakImpl* impl = this->weakImpl();
-        if (!impl)
-            return;
-        WeakSet::deallocate(impl);
     }
 
-    void add(VM&, Structure*);
+    void add(VM&, JSCell* owner, Structure*);
     bool contains(UniquedStringImpl*, unsigned attributes, TransitionKind) const;
     Structure* get(UniquedStringImpl*, unsigned attributes, TransitionKind) const;
+
+    Structure* trySingleTransition() const;
+
+    void finalizeUnconditionally(VM&, CollectionScope);
 
 private:
     friend class SingleSlotTransitionWeakOwner;
@@ -274,29 +270,17 @@ private:
         return bitwise_cast<TransitionMap*>(m_data);
     }
 
-    WeakImpl* weakImpl() const
-    {
-        ASSERT(isUsingSingleSlot());
-        return bitwise_cast<WeakImpl*>(m_data & ~UsingSingleSlotFlag);
-    }
-
     void setMap(TransitionMap* map)
     {
         ASSERT(isUsingSingleSlot());
-        
-        if (WeakImpl* impl = this->weakImpl())
-            WeakSet::deallocate(impl);
-
         // This implicitly clears the flag that indicates we're using a single transition
         m_data = bitwise_cast<intptr_t>(map);
-
         ASSERT(!isUsingSingleSlot());
     }
 
-    Structure* singleTransition() const;
-    void setSingleTransition(Structure*);
+    void setSingleTransition(VM&, JSCell* owner, Structure*);
 
-    intptr_t m_data;
+    intptr_t m_data { UsingSingleSlotFlag };
 };
 
 } // namespace JSC

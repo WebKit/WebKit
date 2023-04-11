@@ -666,56 +666,60 @@ void Heap::addReference(JSCell* cell, ArrayBuffer* buffer)
 }
 
 template<typename CellType, typename CellSet>
-void Heap::finalizeMarkedUnconditionalFinalizers(CellSet& cellSet)
+void Heap::finalizeMarkedUnconditionalFinalizers(CellSet& cellSet, CollectionScope collectionScope)
 {
     cellSet.forEachMarkedCell(
         [&] (HeapCell* cell, HeapCell::Kind) {
-            static_cast<CellType*>(cell)->finalizeUnconditionally(vm());
+            static_cast<CellType*>(cell)->finalizeUnconditionally(vm(), collectionScope);
         });
 }
 
 void Heap::finalizeUnconditionalFinalizers()
 {
     VM& vm = this->vm();
-    vm.builtinExecutables()->finalizeUnconditionally();
+    CollectionScope collectionScope = this->collectionScope().value_or(CollectionScope::Full);
+
+    vm.builtinExecutables()->finalizeUnconditionally(collectionScope);
 
     {
         // We run this before CodeBlock's unconditional finalizer since CodeBlock looks at the owner executable's installed CodeBlock in its finalizeUnconditionally.
 
         // FunctionExecutable requires all live instances to run finalizers. Thus, we do not use finalizer set.
-        finalizeMarkedUnconditionalFinalizers<FunctionExecutable>(functionExecutableSpaceAndSet.space);
+        finalizeMarkedUnconditionalFinalizers<FunctionExecutable>(functionExecutableSpaceAndSet.space, collectionScope);
 
-        finalizeMarkedUnconditionalFinalizers<ProgramExecutable>(programExecutableSpaceAndSet.finalizerSet);
+        finalizeMarkedUnconditionalFinalizers<ProgramExecutable>(programExecutableSpaceAndSet.finalizerSet, collectionScope);
         if (m_evalExecutableSpace)
-            finalizeMarkedUnconditionalFinalizers<EvalExecutable>(m_evalExecutableSpace->finalizerSet);
+            finalizeMarkedUnconditionalFinalizers<EvalExecutable>(m_evalExecutableSpace->finalizerSet, collectionScope);
         if (m_moduleProgramExecutableSpace)
-            finalizeMarkedUnconditionalFinalizers<ModuleProgramExecutable>(m_moduleProgramExecutableSpace->finalizerSet);
+            finalizeMarkedUnconditionalFinalizers<ModuleProgramExecutable>(m_moduleProgramExecutableSpace->finalizerSet, collectionScope);
     }
 
-    finalizeMarkedUnconditionalFinalizers<SymbolTable>(symbolTableSpace);
+    finalizeMarkedUnconditionalFinalizers<SymbolTable>(symbolTableSpace, collectionScope);
 
     forEachCodeBlockSpace(
         [&] (auto& space) {
-            this->finalizeMarkedUnconditionalFinalizers<CodeBlock>(space.set);
+            this->finalizeMarkedUnconditionalFinalizers<CodeBlock>(space.set, collectionScope);
         });
-    finalizeMarkedUnconditionalFinalizers<StructureRareData>(structureRareDataSpace);
-    finalizeMarkedUnconditionalFinalizers<UnlinkedFunctionExecutable>(unlinkedFunctionExecutableSpaceAndSet.set);
+    if (collectionScope == CollectionScope::Full)
+        finalizeMarkedUnconditionalFinalizers<Structure>(structureSpace, collectionScope);
+    finalizeMarkedUnconditionalFinalizers<StructureRareData>(structureRareDataSpace, collectionScope);
+    finalizeMarkedUnconditionalFinalizers<UnlinkedFunctionExecutable>(unlinkedFunctionExecutableSpaceAndSet.set, collectionScope);
     if (m_weakSetSpace)
-        finalizeMarkedUnconditionalFinalizers<JSWeakSet>(*m_weakSetSpace);
+        finalizeMarkedUnconditionalFinalizers<JSWeakSet>(*m_weakSetSpace, collectionScope);
     if (m_weakMapSpace)
-        finalizeMarkedUnconditionalFinalizers<JSWeakMap>(*m_weakMapSpace);
+        finalizeMarkedUnconditionalFinalizers<JSWeakMap>(*m_weakMapSpace, collectionScope);
     if (m_weakObjectRefSpace)
-        finalizeMarkedUnconditionalFinalizers<JSWeakObjectRef>(*m_weakObjectRefSpace);
+        finalizeMarkedUnconditionalFinalizers<JSWeakObjectRef>(*m_weakObjectRefSpace, collectionScope);
     if (m_errorInstanceSpace)
-        finalizeMarkedUnconditionalFinalizers<ErrorInstance>(*m_errorInstanceSpace);
+        finalizeMarkedUnconditionalFinalizers<ErrorInstance>(*m_errorInstanceSpace, collectionScope);
 
     // FinalizationRegistries currently rely on serial finalization because they can post tasks to the deferredWorkTimer, which normally expects tasks to only be posted by the API lock holder.
     if (m_finalizationRegistrySpace)
-        finalizeMarkedUnconditionalFinalizers<JSFinalizationRegistry>(*m_finalizationRegistrySpace);
+        finalizeMarkedUnconditionalFinalizers<JSFinalizationRegistry>(*m_finalizationRegistrySpace, collectionScope);
 
 #if ENABLE(WEBASSEMBLY)
     if (m_webAssemblyModuleSpace)
-        finalizeMarkedUnconditionalFinalizers<JSWebAssemblyModule>(*m_webAssemblyModuleSpace);
+        finalizeMarkedUnconditionalFinalizers<JSWebAssemblyModule>(*m_webAssemblyModuleSpace, collectionScope);
 #endif
 }
 

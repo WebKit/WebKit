@@ -278,7 +278,7 @@ public:
 
     TemplateObjectMap& ensureTemplateObjectMap(VM&);
 
-    void finalizeUnconditionally(VM&);
+    void finalizeUnconditionally(VM&, CollectionScope);
 
     JSString* toString(JSGlobalObject*);
     JSString* asStringConcurrently() const

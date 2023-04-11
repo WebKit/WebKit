@@ -215,7 +215,7 @@ public:
         ensureRareData().m_sourceMappingURLDirective = sourceMappingURL;
     }
 
-    void finalizeUnconditionally(VM&);
+    void finalizeUnconditionally(VM&, CollectionScope);
 
     struct RareData {
         WTF_MAKE_STRUCT_FAST_ALLOCATED;

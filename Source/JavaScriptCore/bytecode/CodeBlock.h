@@ -203,7 +203,7 @@ public:
 
     static size_t estimatedSize(JSCell*, VM&);
     static void destroy(JSCell*);
-    void finalizeUnconditionally(VM&);
+    void finalizeUnconditionally(VM&, CollectionScope);
 
     void notifyLexicalBindingUpdate();
 

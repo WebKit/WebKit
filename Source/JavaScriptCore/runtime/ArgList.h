@@ -60,6 +60,8 @@ public:
         return JSValue::decode(slotFor(i));
     }
 
+    const EncodedJSValue* data() const { return m_buffer; }
+
     void clear()
     {
         ASSERT(!m_needsOverflowCheck);
