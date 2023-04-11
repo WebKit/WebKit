@@ -144,9 +144,7 @@ void JSTestEventTarget::finishCreation(VM& vm)
 
 JSObject* JSTestEventTarget::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    auto* structure = JSTestEventTargetPrototype::createStructure(vm, &globalObject, JSEventTarget::prototype(vm, globalObject));
-    structure->setMayBePrototype(true);
-    return JSTestEventTargetPrototype::create(vm, &globalObject, structure);
+    return JSTestEventTargetPrototype::create(vm, &globalObject, JSTestEventTargetPrototype::createStructure(vm, &globalObject, JSEventTarget::prototype(vm, globalObject)));
 }
 
 JSObject* JSTestEventTarget::prototype(VM& vm, JSDOMGlobalObject& globalObject)

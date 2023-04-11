@@ -137,9 +137,7 @@ void JSTestNamedDeleterWithIndexedGetter::finishCreation(VM& vm)
 
 JSObject* JSTestNamedDeleterWithIndexedGetter::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    auto* structure = JSTestNamedDeleterWithIndexedGetterPrototype::createStructure(vm, &globalObject, globalObject.objectPrototype());
-    structure->setMayBePrototype(true);
-    return JSTestNamedDeleterWithIndexedGetterPrototype::create(vm, &globalObject, structure);
+    return JSTestNamedDeleterWithIndexedGetterPrototype::create(vm, &globalObject, JSTestNamedDeleterWithIndexedGetterPrototype::createStructure(vm, &globalObject, globalObject.objectPrototype()));
 }
 
 JSObject* JSTestNamedDeleterWithIndexedGetter::prototype(VM& vm, JSDOMGlobalObject& globalObject)

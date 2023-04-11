@@ -39,9 +39,6 @@ void printInternal(PrintStream& out, JSC::StubInfoSummary summary)
     case JSC::StubInfoSummary::Simple:
         out.print("Simple");
         return;
-    case JSC::StubInfoSummary::Megamorphic:
-        out.print("Megamorphic");
-        return;
     case JSC::StubInfoSummary::MakesCalls:
         out.print("MakesCalls");
         return;

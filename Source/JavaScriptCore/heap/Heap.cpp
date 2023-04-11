@@ -62,7 +62,6 @@
 #include "MarkedJSValueRefArray.h"
 #include "MarkedSpaceInlines.h"
 #include "MarkingConstraintSet.h"
-#include "MegamorphicCache.h"
 #include "NumberObject.h"
 #include "PreventCollectionScope.h"
 #include "SamplingProfiler.h"
@@ -2161,8 +2160,6 @@ void Heap::finalize()
     
     if (HasOwnPropertyCache* cache = vm().hasOwnPropertyCache())
         cache->clear();
-    if (auto* cache = vm().megamorphicCache())
-        cache->age(m_lastCollectionScope && m_lastCollectionScope.value() == CollectionScope::Full ? CollectionScope::Full : CollectionScope::Eden);
 
     if (m_lastCollectionScope && m_lastCollectionScope.value() == CollectionScope::Full)
         vm().jsonAtomStringCache.clear();

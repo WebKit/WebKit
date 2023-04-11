@@ -156,9 +156,7 @@ void JSTestReadOnlySetLike::finishCreation(VM& vm)
 
 JSObject* JSTestReadOnlySetLike::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    auto* structure = JSTestReadOnlySetLikePrototype::createStructure(vm, &globalObject, globalObject.objectPrototype());
-    structure->setMayBePrototype(true);
-    return JSTestReadOnlySetLikePrototype::create(vm, &globalObject, structure);
+    return JSTestReadOnlySetLikePrototype::create(vm, &globalObject, JSTestReadOnlySetLikePrototype::createStructure(vm, &globalObject, globalObject.objectPrototype()));
 }
 
 JSObject* JSTestReadOnlySetLike::prototype(VM& vm, JSDOMGlobalObject& globalObject)

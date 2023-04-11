@@ -145,9 +145,7 @@ void JSTestLegacyOverrideBuiltIns::finishCreation(VM& vm)
 
 JSObject* JSTestLegacyOverrideBuiltIns::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    auto* structure = JSTestLegacyOverrideBuiltInsPrototype::createStructure(vm, &globalObject, globalObject.objectPrototype());
-    structure->setMayBePrototype(true);
-    return JSTestLegacyOverrideBuiltInsPrototype::create(vm, &globalObject, structure);
+    return JSTestLegacyOverrideBuiltInsPrototype::create(vm, &globalObject, JSTestLegacyOverrideBuiltInsPrototype::createStructure(vm, &globalObject, globalObject.objectPrototype()));
 }
 
 JSObject* JSTestLegacyOverrideBuiltIns::prototype(VM& vm, JSDOMGlobalObject& globalObject)

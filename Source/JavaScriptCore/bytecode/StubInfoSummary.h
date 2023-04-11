@@ -30,7 +30,6 @@ namespace JSC {
 enum class StubInfoSummary : int8_t {
     NoInformation,
     Simple,
-    Megamorphic,
     MakesCalls,
     TakesSlowPath,
     TakesSlowPathAndMakesCalls
@@ -40,7 +39,6 @@ inline bool isInlineable(StubInfoSummary summary)
 {
     switch (summary) {
     case StubInfoSummary::Simple:
-    case StubInfoSummary::Megamorphic:
     case StubInfoSummary::MakesCalls:
         return true;
     case StubInfoSummary::NoInformation:
@@ -56,7 +54,6 @@ inline StubInfoSummary slowVersion(StubInfoSummary summary)
 {
     switch (summary) {
     case StubInfoSummary::Simple:
-    case StubInfoSummary::Megamorphic:
     case StubInfoSummary::NoInformation:
     case StubInfoSummary::TakesSlowPath:
         return StubInfoSummary::TakesSlowPath;

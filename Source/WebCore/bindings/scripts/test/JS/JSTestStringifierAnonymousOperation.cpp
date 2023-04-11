@@ -141,9 +141,7 @@ void JSTestStringifierAnonymousOperation::finishCreation(VM& vm)
 
 JSObject* JSTestStringifierAnonymousOperation::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    auto* structure = JSTestStringifierAnonymousOperationPrototype::createStructure(vm, &globalObject, globalObject.objectPrototype());
-    structure->setMayBePrototype(true);
-    return JSTestStringifierAnonymousOperationPrototype::create(vm, &globalObject, structure);
+    return JSTestStringifierAnonymousOperationPrototype::create(vm, &globalObject, JSTestStringifierAnonymousOperationPrototype::createStructure(vm, &globalObject, globalObject.objectPrototype()));
 }
 
 JSObject* JSTestStringifierAnonymousOperation::prototype(VM& vm, JSDOMGlobalObject& globalObject)

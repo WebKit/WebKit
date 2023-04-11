@@ -43,11 +43,10 @@ inline Structure* StructureCache::createEmptyStructure(JSGlobalObject* globalObj
 
     // We don't need to lock here because only the main thread can get here, and only the main thread can mutate the cache
     ASSERT(!isCompilationThread() && !Thread::mayBeGCThread());
-    VM& vm = globalObject->vm();
     PrototypeKey key { makePolyProtoStructure ? nullptr : prototype, executable, inlineCapacity, classInfo };
     if (Structure* structure = m_structures.get(key)) {
         if (makePolyProtoStructure) {
-            prototype->didBecomePrototype(vm);
+            prototype->didBecomePrototype();
             RELEASE_ASSERT(structure->hasPolyProto());
         } else
             RELEASE_ASSERT(structure->hasMonoProto());
@@ -55,8 +54,9 @@ inline Structure* StructureCache::createEmptyStructure(JSGlobalObject* globalObj
         return structure;
     }
 
-    prototype->didBecomePrototype(vm);
+    prototype->didBecomePrototype();
 
+    VM& vm = globalObject->vm();
     Structure* structure;
     if (makePolyProtoStructure) {
         structure = Structure::create(

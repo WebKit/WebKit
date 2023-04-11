@@ -166,9 +166,7 @@ void JSTestSetLikeWithOverriddenOperations::finishCreation(VM& vm)
 
 JSObject* JSTestSetLikeWithOverriddenOperations::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    auto* structure = JSTestSetLikeWithOverriddenOperationsPrototype::createStructure(vm, &globalObject, globalObject.objectPrototype());
-    structure->setMayBePrototype(true);
-    return JSTestSetLikeWithOverriddenOperationsPrototype::create(vm, &globalObject, structure);
+    return JSTestSetLikeWithOverriddenOperationsPrototype::create(vm, &globalObject, JSTestSetLikeWithOverriddenOperationsPrototype::createStructure(vm, &globalObject, globalObject.objectPrototype()));
 }
 
 JSObject* JSTestSetLikeWithOverriddenOperations::prototype(VM& vm, JSDOMGlobalObject& globalObject)

@@ -2664,9 +2664,7 @@ void JSTestObj::finishCreation(VM& vm)
 
 JSObject* JSTestObj::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    auto* structure = JSTestObjPrototype::createStructure(vm, &globalObject, globalObject.objectPrototype());
-    structure->setMayBePrototype(true);
-    return JSTestObjPrototype::create(vm, &globalObject, structure);
+    return JSTestObjPrototype::create(vm, &globalObject, JSTestObjPrototype::createStructure(vm, &globalObject, globalObject.objectPrototype()));
 }
 
 JSObject* JSTestObj::prototype(VM& vm, JSDOMGlobalObject& globalObject)

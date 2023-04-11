@@ -162,9 +162,7 @@ void JSTestNamedSetterWithLegacyUnforgeableProperties::finishCreation(VM& vm)
 
 JSObject* JSTestNamedSetterWithLegacyUnforgeableProperties::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    auto* structure = JSTestNamedSetterWithLegacyUnforgeablePropertiesPrototype::createStructure(vm, &globalObject, globalObject.objectPrototype());
-    structure->setMayBePrototype(true);
-    return JSTestNamedSetterWithLegacyUnforgeablePropertiesPrototype::create(vm, &globalObject, structure);
+    return JSTestNamedSetterWithLegacyUnforgeablePropertiesPrototype::create(vm, &globalObject, JSTestNamedSetterWithLegacyUnforgeablePropertiesPrototype::createStructure(vm, &globalObject, globalObject.objectPrototype()));
 }
 
 JSObject* JSTestNamedSetterWithLegacyUnforgeableProperties::prototype(VM& vm, JSDOMGlobalObject& globalObject)

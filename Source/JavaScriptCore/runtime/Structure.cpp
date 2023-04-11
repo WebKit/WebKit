@@ -197,7 +197,6 @@ Structure::Structure(VM& vm, JSGlobalObject* globalObject, JSValue prototype, co
     setIsQuickPropertyAccessAllowedForEnumeration(true);
     setTransitionPropertyAttributes(0);
     setTransitionKind(TransitionKind::Unknown);
-    setMayBePrototype(false);
     setDidPreventExtensions(false);
     setDidTransition(false);
     setStaticPropertiesReified(false);
@@ -239,7 +238,6 @@ Structure::Structure(VM& vm, CreatingEarlyCellTag)
     setIsQuickPropertyAccessAllowedForEnumeration(true);
     setTransitionPropertyAttributes(0);
     setTransitionKind(TransitionKind::Unknown);
-    setMayBePrototype(false);
     setDidPreventExtensions(false);
     setDidTransition(false);
     setStaticPropertiesReified(false);
@@ -281,7 +279,6 @@ Structure::Structure(VM& vm, Structure* previous)
     setIsQuickPropertyAccessAllowedForEnumeration(previous->isQuickPropertyAccessAllowedForEnumeration());
     setTransitionPropertyAttributes(0);
     setTransitionKind(TransitionKind::Unknown);
-    setMayBePrototype(previous->mayBePrototype());
     setDidPreventExtensions(previous->didPreventExtensions());
     setDidTransition(true);
     setStaticPropertiesReified(previous->staticPropertiesReified());
@@ -777,11 +774,6 @@ Structure* Structure::preventExtensionsTransition(VM& vm, Structure* structure, 
     return nonPropertyTransition(vm, structure, TransitionKind::PreventExtensions, deferred);
 }
 
-Structure* Structure::becomePrototypeTransition(VM& vm, Structure* structure, DeferredStructureTransitionWatchpointFire* deferred)
-{
-    return nonPropertyTransition(vm, structure, TransitionKind::BecomePrototype, deferred);
-}
-
 PropertyTable* Structure::takePropertyTableOrCloneIfPinned(VM& vm)
 {
     // This must always return a property table. It can't return null.
@@ -817,9 +809,6 @@ Structure* Structure::nonPropertyTransitionSlow(VM& vm, Structure* structure, Tr
     
     if (preventsExtensions(transitionKind))
         transition->setDidPreventExtensions(true);
-
-    if (transitionKind == TransitionKind::BecomePrototype)
-        transition->setMayBePrototype(true);
     
     if (setsDontDeleteOnAllProperties(transitionKind)
         || setsReadOnlyOnNonAccessorProperties(transitionKind)) {

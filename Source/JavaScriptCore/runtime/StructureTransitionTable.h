@@ -37,30 +37,28 @@ class Structure;
 
 using TransitionPropertyAttributes = uint8_t;
 
-// This must be 5 bits (less than 32).
 enum class TransitionKind : uint8_t {
-    Unknown = 0,
-    PropertyAddition = 1,
-    PropertyDeletion = 2,
-    PropertyAttributeChange = 3,
+    Unknown,
+    PropertyAddition,
+    PropertyDeletion,
+    PropertyAttributeChange,
 
     // Support for transitions not related to properties.
     // If any of these are used, the string portion of the key should be 0.
-    AllocateUndecided = 4,
-    AllocateInt32 = 5,
-    AllocateDouble = 6,
-    AllocateContiguous = 7,
-    AllocateArrayStorage = 8,
-    AllocateSlowPutArrayStorage = 9,
-    SwitchToSlowPutArrayStorage = 10,
-    AddIndexedAccessors = 11,
-    PreventExtensions = 12,
-    Seal = 13,
-    Freeze = 14,
-    BecomePrototype = 15,
+    AllocateUndecided,
+    AllocateInt32,
+    AllocateDouble,
+    AllocateContiguous,
+    AllocateArrayStorage,
+    AllocateSlowPutArrayStorage,
+    SwitchToSlowPutArrayStorage,
+    AddIndexedAccessors,
+    PreventExtensions,
+    Seal,
+    Freeze,
 
     // Support for transitions related with private brand
-    SetBrand = 16
+    SetBrand
 };
 
 static constexpr auto FirstNonPropertyTransitionKind = TransitionKind::AllocateUndecided;

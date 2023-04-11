@@ -216,9 +216,7 @@ void JSTestConditionallyReadWrite::finishCreation(VM& vm)
 
 JSObject* JSTestConditionallyReadWrite::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    auto* structure = JSTestConditionallyReadWritePrototype::createStructure(vm, &globalObject, globalObject.objectPrototype());
-    structure->setMayBePrototype(true);
-    return JSTestConditionallyReadWritePrototype::create(vm, &globalObject, structure);
+    return JSTestConditionallyReadWritePrototype::create(vm, &globalObject, JSTestConditionallyReadWritePrototype::createStructure(vm, &globalObject, globalObject.objectPrototype()));
 }
 
 JSObject* JSTestConditionallyReadWrite::prototype(VM& vm, JSDOMGlobalObject& globalObject)

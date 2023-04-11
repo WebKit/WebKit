@@ -148,9 +148,7 @@ void JSTestNamedSetterWithIndexedGetter::finishCreation(VM& vm)
 
 JSObject* JSTestNamedSetterWithIndexedGetter::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    auto* structure = JSTestNamedSetterWithIndexedGetterPrototype::createStructure(vm, &globalObject, globalObject.objectPrototype());
-    structure->setMayBePrototype(true);
-    return JSTestNamedSetterWithIndexedGetterPrototype::create(vm, &globalObject, structure);
+    return JSTestNamedSetterWithIndexedGetterPrototype::create(vm, &globalObject, JSTestNamedSetterWithIndexedGetterPrototype::createStructure(vm, &globalObject, globalObject.objectPrototype()));
 }
 
 JSObject* JSTestNamedSetterWithIndexedGetter::prototype(VM& vm, JSDOMGlobalObject& globalObject)

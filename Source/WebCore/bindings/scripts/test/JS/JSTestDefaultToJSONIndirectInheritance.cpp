@@ -132,9 +132,7 @@ void JSTestDefaultToJSONIndirectInheritance::finishCreation(VM& vm)
 
 JSObject* JSTestDefaultToJSONIndirectInheritance::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    auto* structure = JSTestDefaultToJSONIndirectInheritancePrototype::createStructure(vm, &globalObject, JSTestDefaultToJSONInherit::prototype(vm, globalObject));
-    structure->setMayBePrototype(true);
-    return JSTestDefaultToJSONIndirectInheritancePrototype::create(vm, &globalObject, structure);
+    return JSTestDefaultToJSONIndirectInheritancePrototype::create(vm, &globalObject, JSTestDefaultToJSONIndirectInheritancePrototype::createStructure(vm, &globalObject, JSTestDefaultToJSONInherit::prototype(vm, globalObject)));
 }
 
 JSObject* JSTestDefaultToJSONIndirectInheritance::prototype(VM& vm, JSDOMGlobalObject& globalObject)

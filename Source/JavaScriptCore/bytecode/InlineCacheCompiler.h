@@ -57,7 +57,6 @@ public:
         Buffered,
         GeneratedNewCode,
         GeneratedFinalCode, // Generated so much code that we never want to generate code again.
-        GeneratedMegamorphicCode, // Generated so much code that we never want to generate code again. And this is megamorphic code.
         ResetStubAndFireWatchpoints // We found out some data that makes us want to start over fresh with this stub. Currently, this happens when we detect poly proto.
     };
 
@@ -71,14 +70,13 @@ public:
     {
         RELEASE_ASSERT(kind != GeneratedNewCode);
         RELEASE_ASSERT(kind != GeneratedFinalCode);
-        RELEASE_ASSERT(kind != GeneratedMegamorphicCode);
     }
 
     AccessGenerationResult(Kind kind, CodePtr<JITStubRoutinePtrTag> code)
         : m_kind(kind)
         , m_code(code)
     {
-        RELEASE_ASSERT(kind == GeneratedNewCode || kind == GeneratedFinalCode || kind == GeneratedMegamorphicCode);
+        RELEASE_ASSERT(kind == GeneratedNewCode || kind == GeneratedFinalCode);
         RELEASE_ASSERT(code);
     }
 
@@ -106,14 +104,13 @@ public:
     bool buffered() const { return m_kind == Buffered; }
     bool generatedNewCode() const { return m_kind == GeneratedNewCode; }
     bool generatedFinalCode() const { return m_kind == GeneratedFinalCode; }
-    bool generatedMegamorphicCode() const { return m_kind == GeneratedMegamorphicCode; }
     bool shouldResetStubAndFireWatchpoints() const { return m_kind == ResetStubAndFireWatchpoints; }
 
     // If we gave up on this attempt to generate code, or if we generated the "final" code, then we
     // should give up after this.
     bool shouldGiveUpNow() const { return gaveUp() || generatedFinalCode(); }
 
-    bool generatedSomeCode() const { return generatedNewCode() || generatedFinalCode() || generatedMegamorphicCode(); }
+    bool generatedSomeCode() const { return generatedNewCode() || generatedFinalCode(); }
 
     void dump(PrintStream&) const;
 

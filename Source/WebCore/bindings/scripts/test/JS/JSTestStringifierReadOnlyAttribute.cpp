@@ -144,9 +144,7 @@ void JSTestStringifierReadOnlyAttribute::finishCreation(VM& vm)
 
 JSObject* JSTestStringifierReadOnlyAttribute::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    auto* structure = JSTestStringifierReadOnlyAttributePrototype::createStructure(vm, &globalObject, globalObject.objectPrototype());
-    structure->setMayBePrototype(true);
-    return JSTestStringifierReadOnlyAttributePrototype::create(vm, &globalObject, structure);
+    return JSTestStringifierReadOnlyAttributePrototype::create(vm, &globalObject, JSTestStringifierReadOnlyAttributePrototype::createStructure(vm, &globalObject, globalObject.objectPrototype()));
 }
 
 JSObject* JSTestStringifierReadOnlyAttribute::prototype(VM& vm, JSDOMGlobalObject& globalObject)

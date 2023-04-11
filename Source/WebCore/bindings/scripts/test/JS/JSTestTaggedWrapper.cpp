@@ -134,9 +134,7 @@ void JSTestTaggedWrapper::finishCreation(VM& vm)
 
 JSObject* JSTestTaggedWrapper::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    auto* structure = JSTestTaggedWrapperPrototype::createStructure(vm, &globalObject, globalObject.objectPrototype());
-    structure->setMayBePrototype(true);
-    return JSTestTaggedWrapperPrototype::create(vm, &globalObject, structure);
+    return JSTestTaggedWrapperPrototype::create(vm, &globalObject, JSTestTaggedWrapperPrototype::createStructure(vm, &globalObject, globalObject.objectPrototype()));
 }
 
 JSObject* JSTestTaggedWrapper::prototype(VM& vm, JSDOMGlobalObject& globalObject)

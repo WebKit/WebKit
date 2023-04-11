@@ -122,7 +122,7 @@ void JSWindowProxy::setWindow(DOMWindow& domWindow)
 
     auto& propertiesStructure = *JSDOMWindowProperties::createStructure(vm, window, JSEventTarget::prototype(vm, *window));
     auto& properties = *JSDOMWindowProperties::create(&propertiesStructure, *window);
-    properties.didBecomePrototype(vm);
+    properties.didBecomePrototype();
     prototype->structure()->setPrototypeWithoutTransition(vm, &properties);
 
     setWindow(vm, *window);

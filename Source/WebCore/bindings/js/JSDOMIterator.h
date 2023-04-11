@@ -97,9 +97,7 @@ public:
 
     static Prototype* createPrototype(JSC::VM& vm, JSC::JSGlobalObject& globalObject)
     {
-        auto* structure = Prototype::createStructure(vm, &globalObject, globalObject.iteratorPrototype());
-        structure->setMayBePrototype(true);
-        return Prototype::create(vm, &globalObject, structure);
+        return Prototype::create(vm, &globalObject, Prototype::createStructure(vm, &globalObject, globalObject.iteratorPrototype()));
     }
 
     JSC::JSValue next(JSC::JSGlobalObject&);

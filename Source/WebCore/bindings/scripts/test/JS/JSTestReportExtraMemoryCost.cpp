@@ -135,9 +135,7 @@ void JSTestReportExtraMemoryCost::finishCreation(VM& vm)
 
 JSObject* JSTestReportExtraMemoryCost::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    auto* structure = JSTestReportExtraMemoryCostPrototype::createStructure(vm, &globalObject, globalObject.objectPrototype());
-    structure->setMayBePrototype(true);
-    return JSTestReportExtraMemoryCostPrototype::create(vm, &globalObject, structure);
+    return JSTestReportExtraMemoryCostPrototype::create(vm, &globalObject, JSTestReportExtraMemoryCostPrototype::createStructure(vm, &globalObject, globalObject.objectPrototype()));
 }
 
 JSObject* JSTestReportExtraMemoryCost::prototype(VM& vm, JSDOMGlobalObject& globalObject)

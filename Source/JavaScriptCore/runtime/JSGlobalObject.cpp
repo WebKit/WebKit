@@ -824,7 +824,7 @@ void JSGlobalObject::init(VM& vm)
     m_nullSetterStrictFunction.set(vm, this, NullSetterFunction::create(vm, nullSetterFunctionStructure, ECMAMode::strict()));
     m_objectPrototype.set(vm, this, ObjectPrototype::create(vm, this, ObjectPrototype::createStructure(vm, this, jsNull())));
     // We have to manually set this here because we make it a prototype without transition below.
-    m_objectPrototype.get()->didBecomePrototype(vm);
+    m_objectPrototype.get()->didBecomePrototype();
     GetterSetter* protoAccessor = GetterSetter::create(vm, this,
         JSFunction::create(vm, this, 0, makeString("get "_s, vm.propertyNames->underscoreProto.string()), globalFuncProtoGetter, ImplementationVisibility::Public, UnderscoreProtoIntrinsic),
         JSFunction::create(vm, this, 0, makeString("set "_s, vm.propertyNames->underscoreProto.string()), globalFuncProtoSetter, ImplementationVisibility::Public));

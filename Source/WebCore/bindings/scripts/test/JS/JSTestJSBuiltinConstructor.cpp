@@ -146,9 +146,7 @@ void JSTestJSBuiltinConstructor::finishCreation(VM& vm)
 
 JSObject* JSTestJSBuiltinConstructor::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    auto* structure = JSTestJSBuiltinConstructorPrototype::createStructure(vm, &globalObject, globalObject.objectPrototype());
-    structure->setMayBePrototype(true);
-    return JSTestJSBuiltinConstructorPrototype::create(vm, &globalObject, structure);
+    return JSTestJSBuiltinConstructorPrototype::create(vm, &globalObject, JSTestJSBuiltinConstructorPrototype::createStructure(vm, &globalObject, globalObject.objectPrototype()));
 }
 
 JSObject* JSTestJSBuiltinConstructor::prototype(VM& vm, JSDOMGlobalObject& globalObject)

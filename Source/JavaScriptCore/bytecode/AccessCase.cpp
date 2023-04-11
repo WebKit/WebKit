@@ -72,7 +72,6 @@ AccessCase::AccessCase(VM& vm, JSCell* owner, AccessType type, CacheableIdentifi
 Ref<AccessCase> AccessCase::create(VM& vm, JSCell* owner, AccessType type, CacheableIdentifier identifier, PropertyOffset offset, Structure* structure, const ObjectPropertyConditionSet& conditionSet, RefPtr<PolyProtoAccessChain>&& prototypeAccessChain)
 {
     switch (type) {
-    case LoadMegamorphic:
     case InHit:
     case InMiss:
     case DeleteNonConfigurable:
@@ -138,22 +137,7 @@ Ref<AccessCase> AccessCase::create(VM& vm, JSCell* owner, AccessType type, Cache
     case IndexedResizableTypedArrayFloat64Store:
         RELEASE_ASSERT(!prototypeAccessChain);
         break;
-    case Load:
-    case Miss:
-    case Delete:
-    case Transition:
-    case GetGetter:
-    case Getter:
-    case Setter:
-    case CustomValueGetter:
-    case CustomValueSetter:
-    case CustomAccessorGetter:
-    case CustomAccessorSetter:
-    case IntrinsicGetter:
-    case InstanceOfHit:
-    case InstanceOfMiss:
-    case CheckPrivateBrand:
-    case SetPrivateBrand:
+    default:
         RELEASE_ASSERT_NOT_REACHED();
     };
 
@@ -337,7 +321,6 @@ bool AccessCase::guardedByStructureCheckSkippingConstantIdentifierCheck() const
         return false;
 
     switch (m_type) {
-    case LoadMegamorphic:
     case ArrayLength:
     case StringLength:
     case DirectArgumentsLength:
@@ -397,36 +380,16 @@ bool AccessCase::guardedByStructureCheckSkippingConstantIdentifierCheck() const
     case IndexedResizableTypedArrayFloat32Store:
     case IndexedResizableTypedArrayFloat64Store:
         return false;
-    case Load:
-    case Miss:
-    case Delete:
-    case DeleteNonConfigurable:
-    case DeleteMiss:
-    case Replace:
     case IndexedNoIndexingMiss:
-    case Transition:
-    case GetGetter:
-    case Getter:
-    case Setter:
-    case CustomValueGetter:
-    case CustomValueSetter:
-    case CustomAccessorGetter:
-    case CustomAccessorSetter:
-    case InHit:
-    case InMiss:
-    case IntrinsicGetter:
-    case CheckPrivateBrand:
-    case SetPrivateBrand:
+    default:
         return true;
     }
-    RELEASE_ASSERT_NOT_REACHED();
 }
 
 bool AccessCase::requiresIdentifierNameMatch() const
 {
     switch (m_type) {
     case Load:
-    case LoadMegamorphic:
     // We don't currently have a by_val for these puts, but we do care about the identifier.
     case Transition:
     case Delete:
@@ -515,7 +478,6 @@ bool AccessCase::requiresInt32PropertyCheck() const
 {
     switch (m_type) {
     case Load:
-    case LoadMegamorphic:
     case Transition:
     case Delete:
     case DeleteNonConfigurable:
@@ -603,7 +565,6 @@ bool AccessCase::needsScratchFPR() const
 {
     switch (m_type) {
     case Load:
-    case LoadMegamorphic:
     case Transition:
     case Delete:
     case DeleteNonConfigurable:
@@ -744,7 +705,6 @@ void AccessCase::forEachDependentCell(VM&, const Functor& functor) const
     case CustomAccessorGetter:
     case CustomAccessorSetter:
     case Load:
-    case LoadMegamorphic:
     case Transition:
     case Delete:
     case DeleteNonConfigurable:
@@ -839,7 +799,6 @@ bool AccessCase::doesCalls(VM& vm, Vector<JSCell*>* cellsToMarkIfDoesCalls) cons
     case DeleteNonConfigurable:
     case DeleteMiss:
     case Load:
-    case LoadMegamorphic:
     case Miss:
     case GetGetter:
     case InHit:
@@ -963,7 +922,6 @@ bool AccessCase::canReplace(const AccessCase& other) const
     };
     
     switch (type()) {
-    case LoadMegamorphic:
     case IndexedInt32Load:
     case IndexedDoubleLoad:
     case IndexedContiguousLoad:
@@ -1171,7 +1129,6 @@ template<typename Func>
 inline void AccessCase::runWithDowncast(const Func& func)
 {
     switch (m_type) {
-    case LoadMegamorphic:
     case Transition:
     case Delete:
     case DeleteNonConfigurable:
@@ -1309,7 +1266,6 @@ bool AccessCase::canBeShared(const AccessCase& lhs, const AccessCase& rhs)
 
     switch (lhs.m_type) {
     case Load:
-    case LoadMegamorphic:
     case Transition:
     case Delete:
     case DeleteNonConfigurable:

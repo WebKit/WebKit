@@ -136,9 +136,7 @@ void JSTestNamedSetterWithLegacyOverrideBuiltIns::finishCreation(VM& vm)
 
 JSObject* JSTestNamedSetterWithLegacyOverrideBuiltIns::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    auto* structure = JSTestNamedSetterWithLegacyOverrideBuiltInsPrototype::createStructure(vm, &globalObject, globalObject.objectPrototype());
-    structure->setMayBePrototype(true);
-    return JSTestNamedSetterWithLegacyOverrideBuiltInsPrototype::create(vm, &globalObject, structure);
+    return JSTestNamedSetterWithLegacyOverrideBuiltInsPrototype::create(vm, &globalObject, JSTestNamedSetterWithLegacyOverrideBuiltInsPrototype::createStructure(vm, &globalObject, globalObject.objectPrototype()));
 }
 
 JSObject* JSTestNamedSetterWithLegacyOverrideBuiltIns::prototype(VM& vm, JSDOMGlobalObject& globalObject)

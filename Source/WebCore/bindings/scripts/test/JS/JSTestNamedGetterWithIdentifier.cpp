@@ -142,9 +142,7 @@ void JSTestNamedGetterWithIdentifier::finishCreation(VM& vm)
 
 JSObject* JSTestNamedGetterWithIdentifier::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    auto* structure = JSTestNamedGetterWithIdentifierPrototype::createStructure(vm, &globalObject, globalObject.objectPrototype());
-    structure->setMayBePrototype(true);
-    return JSTestNamedGetterWithIdentifierPrototype::create(vm, &globalObject, structure);
+    return JSTestNamedGetterWithIdentifierPrototype::create(vm, &globalObject, JSTestNamedGetterWithIdentifierPrototype::createStructure(vm, &globalObject, globalObject.objectPrototype()));
 }
 
 JSObject* JSTestNamedGetterWithIdentifier::prototype(VM& vm, JSDOMGlobalObject& globalObject)

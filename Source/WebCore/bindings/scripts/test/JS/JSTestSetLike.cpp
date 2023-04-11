@@ -162,9 +162,7 @@ void JSTestSetLike::finishCreation(VM& vm)
 
 JSObject* JSTestSetLike::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    auto* structure = JSTestSetLikePrototype::createStructure(vm, &globalObject, globalObject.objectPrototype());
-    structure->setMayBePrototype(true);
-    return JSTestSetLikePrototype::create(vm, &globalObject, structure);
+    return JSTestSetLikePrototype::create(vm, &globalObject, JSTestSetLikePrototype::createStructure(vm, &globalObject, globalObject.objectPrototype()));
 }
 
 JSObject* JSTestSetLike::prototype(VM& vm, JSDOMGlobalObject& globalObject)

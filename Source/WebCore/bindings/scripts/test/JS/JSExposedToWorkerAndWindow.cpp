@@ -203,9 +203,7 @@ void JSExposedToWorkerAndWindow::finishCreation(VM& vm)
 
 JSObject* JSExposedToWorkerAndWindow::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    auto* structure = JSExposedToWorkerAndWindowPrototype::createStructure(vm, &globalObject, globalObject.objectPrototype());
-    structure->setMayBePrototype(true);
-    return JSExposedToWorkerAndWindowPrototype::create(vm, &globalObject, structure);
+    return JSExposedToWorkerAndWindowPrototype::create(vm, &globalObject, JSExposedToWorkerAndWindowPrototype::createStructure(vm, &globalObject, globalObject.objectPrototype()));
 }
 
 JSObject* JSExposedToWorkerAndWindow::prototype(VM& vm, JSDOMGlobalObject& globalObject)

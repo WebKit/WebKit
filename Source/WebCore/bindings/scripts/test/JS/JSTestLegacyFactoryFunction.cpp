@@ -191,9 +191,7 @@ void JSTestLegacyFactoryFunction::finishCreation(VM& vm)
 
 JSObject* JSTestLegacyFactoryFunction::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    auto* structure = JSTestLegacyFactoryFunctionPrototype::createStructure(vm, &globalObject, globalObject.objectPrototype());
-    structure->setMayBePrototype(true);
-    return JSTestLegacyFactoryFunctionPrototype::create(vm, &globalObject, structure);
+    return JSTestLegacyFactoryFunctionPrototype::create(vm, &globalObject, JSTestLegacyFactoryFunctionPrototype::createStructure(vm, &globalObject, globalObject.objectPrototype()));
 }
 
 JSObject* JSTestLegacyFactoryFunction::prototype(VM& vm, JSDOMGlobalObject& globalObject)

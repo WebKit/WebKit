@@ -137,9 +137,7 @@ void JSTestNamedAndIndexedSetterThrowingException::finishCreation(VM& vm)
 
 JSObject* JSTestNamedAndIndexedSetterThrowingException::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    auto* structure = JSTestNamedAndIndexedSetterThrowingExceptionPrototype::createStructure(vm, &globalObject, globalObject.objectPrototype());
-    structure->setMayBePrototype(true);
-    return JSTestNamedAndIndexedSetterThrowingExceptionPrototype::create(vm, &globalObject, structure);
+    return JSTestNamedAndIndexedSetterThrowingExceptionPrototype::create(vm, &globalObject, JSTestNamedAndIndexedSetterThrowingExceptionPrototype::createStructure(vm, &globalObject, globalObject.objectPrototype()));
 }
 
 JSObject* JSTestNamedAndIndexedSetterThrowingException::prototype(VM& vm, JSDOMGlobalObject& globalObject)

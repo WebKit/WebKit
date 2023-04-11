@@ -170,7 +170,6 @@ JSC_DECLARE_JIT_OPERATION(operationTryGetById, EncodedJSValue, (JSGlobalObject*,
 JSC_DECLARE_JIT_OPERATION(operationTryGetByIdGeneric, EncodedJSValue, (JSGlobalObject*, EncodedJSValue, uintptr_t));
 JSC_DECLARE_JIT_OPERATION(operationTryGetByIdOptimize, EncodedJSValue, (JSGlobalObject*, StructureStubInfo*, EncodedJSValue, uintptr_t));
 JSC_DECLARE_JIT_OPERATION(operationGetById, EncodedJSValue, (JSGlobalObject*, StructureStubInfo*, EncodedJSValue, uintptr_t));
-JSC_DECLARE_JIT_OPERATION(operationGetByIdMegamorphic, EncodedJSValue, (JSGlobalObject*, StructureStubInfo*, EncodedJSValue, uintptr_t));
 JSC_DECLARE_JIT_OPERATION(operationGetByIdGeneric, EncodedJSValue, (JSGlobalObject*, EncodedJSValue, uintptr_t));
 JSC_DECLARE_JIT_OPERATION(operationGetByIdOptimize, EncodedJSValue, (JSGlobalObject*, StructureStubInfo*, EncodedJSValue, uintptr_t));
 JSC_DECLARE_JIT_OPERATION(operationGetByIdWithThis, EncodedJSValue, (JSGlobalObject*, StructureStubInfo*, EncodedJSValue, EncodedJSValue, uintptr_t));

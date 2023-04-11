@@ -129,11 +129,11 @@ private:
     }
 };
 
-ALWAYS_INLINE HasOwnPropertyCache& VM::ensureHasOwnPropertyCache()
+ALWAYS_INLINE HasOwnPropertyCache* VM::ensureHasOwnPropertyCache()
 {
     if (UNLIKELY(!m_hasOwnPropertyCache))
         m_hasOwnPropertyCache = std::unique_ptr<HasOwnPropertyCache>(HasOwnPropertyCache::create());
-    return *m_hasOwnPropertyCache;
+    return m_hasOwnPropertyCache.get();
 }
 
 } // namespace JSC

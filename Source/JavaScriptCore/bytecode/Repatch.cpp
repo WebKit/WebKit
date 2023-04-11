@@ -247,8 +247,7 @@ static void repatchSlowPathCall(CodeBlock* codeBlock, StructureStubInfo& stubInf
 enum InlineCacheAction {
     GiveUpOnCache,
     RetryCacheLater,
-    AttemptToCache,
-    PromoteToMegamorphic,
+    AttemptToCache
 };
 
 static InlineCacheAction actionForCell(VM& vm, JSCell* cell)
@@ -597,8 +596,6 @@ static InlineCacheAction tryCacheGetBy(JSGlobalObject* globalObject, CodeBlock* 
 
     fireWatchpointsAndClearStubIfNeeded(vm, stubInfo, codeBlock, result);
 
-    if (result.generatedMegamorphicCode())
-        return PromoteToMegamorphic;
     return result.shouldGiveUpNow() ? GiveUpOnCache : RetryCacheLater;
 }
 
@@ -606,19 +603,10 @@ void repatchGetBy(JSGlobalObject* globalObject, CodeBlock* codeBlock, JSValue ba
 {
     SuperSamplerScope superSamplerScope(false);
     
-    auto result = tryCacheGetBy(globalObject, codeBlock, baseValue, propertyName, slot, stubInfo, kind);
-    if (result == PromoteToMegamorphic)
-        repatchSlowPathCall(codeBlock, stubInfo, operationGetByIdMegamorphic);
-    else if (result == GiveUpOnCache)
+    if (tryCacheGetBy(globalObject, codeBlock, baseValue, propertyName, slot, stubInfo, kind) == GiveUpOnCache)
         repatchSlowPathCall(codeBlock, stubInfo, appropriateGetByFunction(kind));
 }
 
-// Mainly used to transition from megamorphic case to generic case.
-void repatchGetBySlowPathCall(CodeBlock* codeBlock, StructureStubInfo& stubInfo, GetByKind kind)
-{
-    resetGetBy(codeBlock, stubInfo, kind);
-    repatchSlowPathCall(codeBlock, stubInfo, appropriateGetByFunction(kind));
-}
 
 static InlineCacheAction tryCacheArrayGetByVal(JSGlobalObject* globalObject, CodeBlock* codeBlock, JSValue baseValue, JSValue index, StructureStubInfo& stubInfo)
 {
@@ -931,10 +919,6 @@ static InlineCacheAction tryCachePutBy(JSGlobalObject* globalObject, CodeBlock* 
                 if (!oldStructure->isObject())
                     return GiveUpOnCache;
 
-                // Right now, we disable IC for put onto prototype for NewProperty case.
-                if (oldStructure->mayBePrototype())
-                    return GiveUpOnCache;
-
                 // If the old structure is dictionary, it means that this is one-on-one between an object and a structure.
                 // If this is NewProperty operation, generating IC for this does not offer any benefit because this transition never happens again.
                 if (oldStructure->isDictionary())
@@ -1220,10 +1204,6 @@ static InlineCacheAction tryCacheDeleteBy(JSGlobalObject* globalObject, CodeBloc
                 return RetryCacheLater;
             if (!newStructure->propertyAccessesAreCacheable() || newStructure->isDictionary())
                 return GiveUpOnCache;
-            // Right now, we disable IC for put onto prototype.
-            if (oldStructure->mayBePrototype())
-                return GiveUpOnCache;
-
             ASSERT(newOffset == slot.cachedOffset());
             ASSERT(newStructure->previousID() == oldStructure);
             ASSERT(newStructure->transitionKind() == TransitionKind::PropertyDeletion);
@@ -1233,9 +1213,7 @@ static InlineCacheAction tryCacheDeleteBy(JSGlobalObject* globalObject, CodeBloc
         } else if (slot.isNonconfigurable()) {
             if (ecmaMode.isStrict())
                 return GiveUpOnCache;
-            // Right now, we disable IC for put onto prototype.
-            if (oldStructure->mayBePrototype())
-                return GiveUpOnCache;
+
             newCase = AccessCase::create(vm, codeBlock, AccessCase::DeleteNonConfigurable, propertyName, invalidOffset, oldStructure, { }, nullptr);
         } else
             newCase = AccessCase::create(vm, codeBlock, AccessCase::DeleteMiss, propertyName, invalidOffset, oldStructure, { }, nullptr);

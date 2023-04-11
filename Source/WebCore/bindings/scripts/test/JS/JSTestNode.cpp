@@ -251,9 +251,7 @@ void JSTestNode::finishCreation(VM& vm)
 
 JSObject* JSTestNode::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    auto* structure = JSTestNodePrototype::createStructure(vm, &globalObject, JSNode::prototype(vm, globalObject));
-    structure->setMayBePrototype(true);
-    return JSTestNodePrototype::create(vm, &globalObject, structure);
+    return JSTestNodePrototype::create(vm, &globalObject, JSTestNodePrototype::createStructure(vm, &globalObject, JSNode::prototype(vm, globalObject)));
 }
 
 JSObject* JSTestNode::prototype(VM& vm, JSDOMGlobalObject& globalObject)

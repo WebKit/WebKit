@@ -168,9 +168,7 @@ void JSTestDomainSecurity::finishCreation(VM& vm)
 
 JSObject* JSTestDomainSecurity::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    auto* structure = JSTestDomainSecurityPrototype::createStructure(vm, &globalObject, globalObject.objectPrototype());
-    structure->setMayBePrototype(true);
-    return JSTestDomainSecurityPrototype::create(vm, &globalObject, structure);
+    return JSTestDomainSecurityPrototype::create(vm, &globalObject, JSTestDomainSecurityPrototype::createStructure(vm, &globalObject, globalObject.objectPrototype()));
 }
 
 JSObject* JSTestDomainSecurity::prototype(VM& vm, JSDOMGlobalObject& globalObject)

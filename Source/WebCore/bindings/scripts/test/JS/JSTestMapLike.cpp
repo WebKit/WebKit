@@ -164,9 +164,7 @@ void JSTestMapLike::finishCreation(VM& vm)
 
 JSObject* JSTestMapLike::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    auto* structure = JSTestMapLikePrototype::createStructure(vm, &globalObject, globalObject.objectPrototype());
-    structure->setMayBePrototype(true);
-    return JSTestMapLikePrototype::create(vm, &globalObject, structure);
+    return JSTestMapLikePrototype::create(vm, &globalObject, JSTestMapLikePrototype::createStructure(vm, &globalObject, globalObject.objectPrototype()));
 }
 
 JSObject* JSTestMapLike::prototype(VM& vm, JSDOMGlobalObject& globalObject)

@@ -124,9 +124,7 @@ void JSWorkletGlobalScope::finishCreation(VM& vm, JSProxy* proxy)
 
 JSObject* JSWorkletGlobalScope::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    auto* structure = JSWorkletGlobalScopePrototype::createStructure(vm, &globalObject, JSEventTarget::prototype(vm, globalObject));
-    structure->setMayBePrototype(true);
-    return JSWorkletGlobalScopePrototype::create(vm, &globalObject, structure);
+    return JSWorkletGlobalScopePrototype::create(vm, &globalObject, JSWorkletGlobalScopePrototype::createStructure(vm, &globalObject, JSEventTarget::prototype(vm, globalObject)));
 }
 
 JSObject* JSWorkletGlobalScope::prototype(VM& vm, JSDOMGlobalObject& globalObject)

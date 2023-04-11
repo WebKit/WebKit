@@ -247,9 +247,7 @@ void JSTestPromiseRejectionEvent::finishCreation(VM& vm)
 
 JSObject* JSTestPromiseRejectionEvent::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    auto* structure = JSTestPromiseRejectionEventPrototype::createStructure(vm, &globalObject, JSEvent::prototype(vm, globalObject));
-    structure->setMayBePrototype(true);
-    return JSTestPromiseRejectionEventPrototype::create(vm, &globalObject, structure);
+    return JSTestPromiseRejectionEventPrototype::create(vm, &globalObject, JSTestPromiseRejectionEventPrototype::createStructure(vm, &globalObject, JSEvent::prototype(vm, globalObject)));
 }
 
 JSObject* JSTestPromiseRejectionEvent::prototype(VM& vm, JSDOMGlobalObject& globalObject)

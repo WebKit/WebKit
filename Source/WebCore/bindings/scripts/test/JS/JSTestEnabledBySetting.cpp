@@ -263,9 +263,7 @@ void JSTestEnabledBySetting::finishCreation(VM& vm)
 
 JSObject* JSTestEnabledBySetting::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    auto* structure = JSTestEnabledBySettingPrototype::createStructure(vm, &globalObject, globalObject.objectPrototype());
-    structure->setMayBePrototype(true);
-    return JSTestEnabledBySettingPrototype::create(vm, &globalObject, structure);
+    return JSTestEnabledBySettingPrototype::create(vm, &globalObject, JSTestEnabledBySettingPrototype::createStructure(vm, &globalObject, globalObject.objectPrototype()));
 }
 
 JSObject* JSTestEnabledBySetting::prototype(VM& vm, JSDOMGlobalObject& globalObject)

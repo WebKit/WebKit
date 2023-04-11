@@ -140,9 +140,7 @@ void JSTestEnabledForContext::finishCreation(VM& vm)
 
 JSObject* JSTestEnabledForContext::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    auto* structure = JSTestEnabledForContextPrototype::createStructure(vm, &globalObject, globalObject.objectPrototype());
-    structure->setMayBePrototype(true);
-    return JSTestEnabledForContextPrototype::create(vm, &globalObject, structure);
+    return JSTestEnabledForContextPrototype::create(vm, &globalObject, JSTestEnabledForContextPrototype::createStructure(vm, &globalObject, globalObject.objectPrototype()));
 }
 
 JSObject* JSTestEnabledForContext::prototype(VM& vm, JSDOMGlobalObject& globalObject)

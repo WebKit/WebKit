@@ -163,9 +163,7 @@ void JSExposedStar::finishCreation(VM& vm)
 
 JSObject* JSExposedStar::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    auto* structure = JSExposedStarPrototype::createStructure(vm, &globalObject, JSEventTarget::prototype(vm, globalObject));
-    structure->setMayBePrototype(true);
-    return JSExposedStarPrototype::create(vm, &globalObject, structure);
+    return JSExposedStarPrototype::create(vm, &globalObject, JSExposedStarPrototype::createStructure(vm, &globalObject, JSEventTarget::prototype(vm, globalObject)));
 }
 
 JSObject* JSExposedStar::prototype(VM& vm, JSDOMGlobalObject& globalObject)

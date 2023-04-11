@@ -448,7 +448,7 @@ JSC_DEFINE_JIT_OPERATION(operationCreateThis, JSCell*, (JSGlobalObject* globalOb
             JSObject* prototype = allocationProfile->prototype();
             ASSERT(prototype == jsCast<JSFunction*>(constructor)->prototypeForConstruction(vm, globalObject));
             result->putDirectOffset(vm, knownPolyProtoOffset, prototype);
-            prototype->didBecomePrototype(vm);
+            prototype->didBecomePrototype();
             ASSERT_WITH_MESSAGE(!hasIndexedProperties(result->indexingType()), "We rely on JSFinalObject not starting out with an indexing type otherwise we would potentially need to convert to slow put storage");
         }
         return result;

@@ -469,9 +469,7 @@ void JSTestConditionalIncludes::finishCreation(VM& vm)
 
 JSObject* JSTestConditionalIncludes::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    auto* structure = JSTestConditionalIncludesPrototype::createStructure(vm, &globalObject, globalObject.objectPrototype());
-    structure->setMayBePrototype(true);
-    return JSTestConditionalIncludesPrototype::create(vm, &globalObject, structure);
+    return JSTestConditionalIncludesPrototype::create(vm, &globalObject, JSTestConditionalIncludesPrototype::createStructure(vm, &globalObject, globalObject.objectPrototype()));
 }
 
 JSObject* JSTestConditionalIncludes::prototype(VM& vm, JSDOMGlobalObject& globalObject)

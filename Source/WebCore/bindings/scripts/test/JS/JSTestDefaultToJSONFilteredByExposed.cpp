@@ -169,9 +169,7 @@ void JSTestDefaultToJSONFilteredByExposed::finishCreation(VM& vm)
 
 JSObject* JSTestDefaultToJSONFilteredByExposed::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    auto* structure = JSTestDefaultToJSONFilteredByExposedPrototype::createStructure(vm, &globalObject, globalObject.objectPrototype());
-    structure->setMayBePrototype(true);
-    return JSTestDefaultToJSONFilteredByExposedPrototype::create(vm, &globalObject, structure);
+    return JSTestDefaultToJSONFilteredByExposedPrototype::create(vm, &globalObject, JSTestDefaultToJSONFilteredByExposedPrototype::createStructure(vm, &globalObject, globalObject.objectPrototype()));
 }
 
 JSObject* JSTestDefaultToJSONFilteredByExposed::prototype(VM& vm, JSDOMGlobalObject& globalObject)

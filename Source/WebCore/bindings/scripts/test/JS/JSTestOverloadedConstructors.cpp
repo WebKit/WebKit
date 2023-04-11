@@ -270,9 +270,7 @@ void JSTestOverloadedConstructors::finishCreation(VM& vm)
 
 JSObject* JSTestOverloadedConstructors::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    auto* structure = JSTestOverloadedConstructorsPrototype::createStructure(vm, &globalObject, globalObject.objectPrototype());
-    structure->setMayBePrototype(true);
-    return JSTestOverloadedConstructorsPrototype::create(vm, &globalObject, structure);
+    return JSTestOverloadedConstructorsPrototype::create(vm, &globalObject, JSTestOverloadedConstructorsPrototype::createStructure(vm, &globalObject, globalObject.objectPrototype()));
 }
 
 JSObject* JSTestOverloadedConstructors::prototype(VM& vm, JSDOMGlobalObject& globalObject)

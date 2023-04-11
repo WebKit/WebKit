@@ -144,9 +144,7 @@ void JSTestLegacyNoInterfaceObject::finishCreation(VM& vm)
 
 JSObject* JSTestLegacyNoInterfaceObject::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    auto* structure = JSTestLegacyNoInterfaceObjectPrototype::createStructure(vm, &globalObject, globalObject.objectPrototype());
-    structure->setMayBePrototype(true);
-    return JSTestLegacyNoInterfaceObjectPrototype::create(vm, &globalObject, structure);
+    return JSTestLegacyNoInterfaceObjectPrototype::create(vm, &globalObject, JSTestLegacyNoInterfaceObjectPrototype::createStructure(vm, &globalObject, globalObject.objectPrototype()));
 }
 
 JSObject* JSTestLegacyNoInterfaceObject::prototype(VM& vm, JSDOMGlobalObject& globalObject)
