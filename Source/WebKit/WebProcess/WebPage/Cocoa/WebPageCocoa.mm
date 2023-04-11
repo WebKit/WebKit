@@ -484,71 +484,72 @@ void WebPage::getPlatformEditorStateCommon(const LocalFrame& frame, EditorState&
 
     const auto& selection = frame.selection().selection();
 
-    if (!result.isContentEditable || selection.isNone())
+    if (selection.isNone())
         return;
 
     auto& postLayoutData = *result.postLayoutData;
-    if (auto editingStyle = EditingStyle::styleAtSelectionStart(selection)) {
-        if (editingStyle->hasStyle(CSSPropertyFontWeight, "bold"_s))
-            postLayoutData.typingAttributes |= AttributeBold;
 
-        if (editingStyle->hasStyle(CSSPropertyFontStyle, "italic"_s) || editingStyle->hasStyle(CSSPropertyFontStyle, "oblique"_s))
-            postLayoutData.typingAttributes |= AttributeItalics;
+    if (result.isContentEditable) {
+        if (auto editingStyle = EditingStyle::styleAtSelectionStart(selection)) {
+            if (editingStyle->hasStyle(CSSPropertyFontWeight, "bold"_s))
+                postLayoutData.typingAttributes |= AttributeBold;
 
-        if (editingStyle->hasStyle(CSSPropertyWebkitTextDecorationsInEffect, "underline"_s))
-            postLayoutData.typingAttributes |= AttributeUnderline;
+            if (editingStyle->hasStyle(CSSPropertyFontStyle, "italic"_s) || editingStyle->hasStyle(CSSPropertyFontStyle, "oblique"_s))
+                postLayoutData.typingAttributes |= AttributeItalics;
 
-        if (auto* styleProperties = editingStyle->style()) {
-            bool isLeftToRight = styleProperties->propertyAsValueID(CSSPropertyDirection) == CSSValueLtr;
-            switch (styleProperties->propertyAsValueID(CSSPropertyTextAlign).value_or(CSSValueInvalid)) {
-            case CSSValueRight:
-            case CSSValueWebkitRight:
-                postLayoutData.textAlignment = RightAlignment;
-                break;
-            case CSSValueLeft:
-            case CSSValueWebkitLeft:
-                postLayoutData.textAlignment = LeftAlignment;
-                break;
-            case CSSValueCenter:
-            case CSSValueWebkitCenter:
-                postLayoutData.textAlignment = CenterAlignment;
-                break;
-            case CSSValueJustify:
-                postLayoutData.textAlignment = JustifiedAlignment;
-                break;
-            case CSSValueStart:
-                postLayoutData.textAlignment = isLeftToRight ? LeftAlignment : RightAlignment;
-                break;
-            case CSSValueEnd:
-                postLayoutData.textAlignment = isLeftToRight ? RightAlignment : LeftAlignment;
-                break;
-            default:
-                break;
+            if (editingStyle->hasStyle(CSSPropertyWebkitTextDecorationsInEffect, "underline"_s))
+                postLayoutData.typingAttributes |= AttributeUnderline;
+
+            if (auto* styleProperties = editingStyle->style()) {
+                bool isLeftToRight = styleProperties->propertyAsValueID(CSSPropertyDirection) == CSSValueLtr;
+                switch (styleProperties->propertyAsValueID(CSSPropertyTextAlign).value_or(CSSValueInvalid)) {
+                case CSSValueRight:
+                case CSSValueWebkitRight:
+                    postLayoutData.textAlignment = RightAlignment;
+                    break;
+                case CSSValueLeft:
+                case CSSValueWebkitLeft:
+                    postLayoutData.textAlignment = LeftAlignment;
+                    break;
+                case CSSValueCenter:
+                case CSSValueWebkitCenter:
+                    postLayoutData.textAlignment = CenterAlignment;
+                    break;
+                case CSSValueJustify:
+                    postLayoutData.textAlignment = JustifiedAlignment;
+                    break;
+                case CSSValueStart:
+                    postLayoutData.textAlignment = isLeftToRight ? LeftAlignment : RightAlignment;
+                    break;
+                case CSSValueEnd:
+                    postLayoutData.textAlignment = isLeftToRight ? RightAlignment : LeftAlignment;
+                    break;
+                default:
+                    break;
+                }
+                if (auto textColor = styleProperties->propertyAsColor(CSSPropertyColor))
+                    postLayoutData.textColor = *textColor;
             }
-            if (auto textColor = styleProperties->propertyAsColor(CSSPropertyColor))
-                postLayoutData.textColor = *textColor;
         }
+
+        if (auto* enclosingListElement = enclosingList(selection.start().containerNode())) {
+            if (is<HTMLUListElement>(*enclosingListElement))
+                postLayoutData.enclosingListType = UnorderedList;
+            else if (is<HTMLOListElement>(*enclosingListElement))
+                postLayoutData.enclosingListType = OrderedList;
+            else
+                ASSERT_NOT_REACHED();
+        }
+
+        postLayoutData.baseWritingDirection = frame.editor().baseWritingDirectionForSelectionStart();
     }
 
-    if (auto* enclosingListElement = enclosingList(selection.start().containerNode())) {
-        if (is<HTMLUListElement>(*enclosingListElement))
-            postLayoutData.enclosingListType = UnorderedList;
-        else if (is<HTMLOListElement>(*enclosingListElement))
-            postLayoutData.enclosingListType = OrderedList;
-        else
-            ASSERT_NOT_REACHED();
-    }
-
-    postLayoutData.baseWritingDirection = frame.editor().baseWritingDirectionForSelectionStart();
-
-    if (!selection.isNone()) {
-        if (RefPtr editableRootOrFormControl = enclosingTextFormControl(selection.start()) ?: selection.rootEditableElement()) {
+    if (RefPtr editableRootOrFormControl = enclosingTextFormControl(selection.start()) ?: selection.rootEditableElement()) {
 #if PLATFORM(IOS_FAMILY)
-            auto& visualData = *result.visualData;
-            visualData.selectionClipRect = rootViewInteractionBounds(*editableRootOrFormControl);
+        auto& visualData = *result.visualData;
+        visualData.selectionClipRect = rootViewInteractionBounds(*editableRootOrFormControl);
 #endif
-            postLayoutData.editableRootIsTransparentOrFullyClipped = result.isContentEditable && isTransparentOrFullyClipped(*editableRootOrFormControl);
-        }
+        postLayoutData.editableRootIsTransparentOrFullyClipped = result.isContentEditable && isTransparentOrFullyClipped(*editableRootOrFormControl);
     }
 }
 
