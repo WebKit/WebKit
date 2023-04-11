@@ -1135,7 +1135,10 @@ public:
     virtual void setAccessibleName(const AtomString&) = 0;
     virtual bool hasAttributesRequiredForInclusion() const = 0;
 
-    virtual String textContent() const = 0;
+    virtual String title() const = 0;
+    virtual String description() const = 0;
+
+    virtual std::optional<String> textContent() const = 0;
 
     // Methods for determining accessibility text.
     virtual String stringValue() const = 0;
@@ -1468,6 +1471,7 @@ inline Vector<AXID> axIDs(const AXCoreObject::AccessibilityChildrenVector& objec
 }
 
 #if PLATFORM(COCOA)
+
 inline bool AXCoreObject::shouldComputeDescriptionAttributeValue() const
 {
     // Static text objects shouldn't return a description. Their content is communicated via AXValue.

@@ -373,11 +373,15 @@ public:
     void setAccessibleName(const AtomString&) override { }
     bool hasAttributesRequiredForInclusion() const override;
 
-    virtual String title() const { return { }; }
-    virtual String description() const { return { }; }
+    String title() const override { return { }; }
+    String description() const override { return { }; }
     virtual String helpText() const { return { }; }
 
-    String textContent() const override;
+    std::optional<String> textContent() const override;
+    bool hasTextContent() const;
+#if PLATFORM(COCOA)
+    bool hasAttributedText() const;
+#endif
 
     // Methods for determining accessibility text.
     bool isARIAStaticText() const { return ariaRoleAttribute() == AccessibilityRole::StaticText; }
@@ -865,6 +869,22 @@ inline void AccessibilityObject::detachPlatformWrapper(AccessibilityDetachmentTy
 #if !(ENABLE(ACCESSIBILITY) && USE(ATSPI))
 inline bool AccessibilityObject::allowsTextRanges() const { return true; }
 inline unsigned AccessibilityObject::getLengthForTextRange() const { return text().length(); }
+#endif
+
+inline bool AccessibilityObject::hasTextContent() const
+{
+    return isStaticText()
+        || roleValue() == AccessibilityRole::WebCoreLink
+        || isTextControl() || isTabItem();
+}
+
+#if PLATFORM(COCOA)
+inline bool AccessibilityObject::hasAttributedText() const
+{
+    return (isStaticText() && !isARIAStaticText())
+        || roleValue() == AccessibilityRole::WebCoreLink
+        || isTextControl() || isTabItem();
+}
 #endif
 
 AccessibilityObject* firstAccessibleObjectFromNode(const Node*, const Function<bool(const AccessibilityObject&)>& isAccessible);

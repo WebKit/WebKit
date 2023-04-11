@@ -2756,12 +2756,14 @@ AutoFillButtonType AccessibilityObject::valueAutofillButtonType() const
     return downcast<HTMLInputElement>(*this->node()).autoFillButtonType();
 }
 
-String AccessibilityObject::textContent() const
+std::optional<String> AccessibilityObject::textContent() const
 {
-    auto title = this->title();
-    if (!title.isEmpty())
-        return title;
-    return description();
+    if (!hasTextContent())
+        return std::nullopt;
+
+    if (auto range = simpleRange())
+        return stringForRange(*range);
+    return std::nullopt;
 }
 
 const String AccessibilityObject::placeholderValue() const
@@ -4026,7 +4028,8 @@ static bool isAccessibilityTextSearchMatch(RefPtr<AXCoreObject> axObject, const 
     if (criteria.searchText.isEmpty())
         return true;
 
-    return containsPlainText(axObject->textContent(), criteria.searchText, CaseInsensitive)
+    return containsPlainText(axObject->title(), criteria.searchText, CaseInsensitive)
+        || containsPlainText(axObject->description(), criteria.searchText, CaseInsensitive)
         || containsPlainText(axObject->stringValue(), criteria.searchText, CaseInsensitive);
 }
 
