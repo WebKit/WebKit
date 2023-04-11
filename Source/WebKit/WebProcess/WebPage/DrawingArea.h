@@ -94,7 +94,6 @@ public:
     virtual bool layerTreeStateIsFrozen() const { return false; }
 
     virtual void updatePreferences(const WebPreferencesStore&) { }
-    virtual void enablePainting() { }
     virtual void mainFrameContentSizeChanged(const WebCore::IntSize&) { }
 
 #if PLATFORM(COCOA)

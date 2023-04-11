@@ -65,7 +65,7 @@ class LayerTreeHost
 {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit LayerTreeHost(WebPage&);
+    LayerTreeHost(WebPage&, WebCore::PlatformDisplayID);
     ~LayerTreeHost();
 
     const LayerTreeContext& layerTreeContext() const { return m_layerTreeContext; }

@@ -57,8 +57,8 @@ private:
     bool layerTreeStateIsFrozen() const override { return m_layerTreeStateIsFrozen; }
 
     void updatePreferences(const WebPreferencesStore&) override;
-    void enablePainting() override;
     void mainFrameContentSizeChanged(const WebCore::IntSize&) override;
+    void sendEnterAcceleratedCompositingModeIfNeeded() override;
 
 #if USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)
     void deviceOrPageScaleFactorChanged() override;
@@ -111,9 +111,6 @@ private:
 
     uint64_t m_backingStoreStateID { 0 };
 
-    // Whether painting is enabled. If painting is disabled, any calls to setNeedsDisplay and scroll are ignored.
-    bool m_isPaintingEnabled { false };
-
     // Whether we're currently processing an UpdateBackingStoreState message.
     bool m_inUpdateBackingStoreState { false };
 
@@ -156,6 +153,7 @@ private:
     bool m_alwaysUseCompositing { false };
     bool m_supportsAsyncScrolling { true };
     bool m_forceRepaintAfterBackingStoreStateUpdate { false };
+    bool m_shouldSendEnterAcceleratedCompositingMode { false };
 
     RunLoop::Timer m_displayTimer;
 
