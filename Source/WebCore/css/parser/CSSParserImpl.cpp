@@ -1111,7 +1111,7 @@ void CSSParserImpl::consumeDeclarationListOrStyleBlockHelper(CSSParserTokenRange
     ASSERT(topContext().m_parsedProperties.isEmpty());
     ASSERT(topContext().m_parsedRules.isEmpty());
 
-    bool useObserver = m_observerWrapper && (ruleType == StyleRuleType::Style || ruleType == StyleRuleType::Keyframe || ruleType == StyleRuleType::CounterStyle);
+    bool useObserver = m_observerWrapper && (ruleType == StyleRuleType::Style || ruleType == StyleRuleType::Keyframe);
     if (useObserver) {
         if (isParsingStyleDeclarationsInRuleList == ParsingStyleDeclarationsInRuleList::No)
             m_observerWrapper->observer().startRuleBody(m_observerWrapper->previousTokenStartOffset(range));

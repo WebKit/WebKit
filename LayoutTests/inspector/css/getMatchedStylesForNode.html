@@ -13,6 +13,7 @@ window.internals.insertUserCSS("div { z-index: 500; }");
     body { color: red; }
     @media (min-width: 1px) { body { color: red; } }
     @media (min-width: 2px) { @supports(display: block) { body { color: red; } } }
+    @media screen { @counter-style foo { foo:bar; } }
 </style>
 <style media="(min-width: 3px)">
     body { color: red;}
