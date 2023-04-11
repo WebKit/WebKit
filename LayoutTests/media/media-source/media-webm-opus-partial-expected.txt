@@ -11,12 +11,12 @@ Append a partial media segment.
 RUN(sourceBuffer.appendBuffer(partial1))
 EVENT(update)
 EXPECTED (sourceBuffer.buffered.length == '1') OK
-EXPECTED (sourceBuffer.buffered.end(0) == '3.621') OK
+EXPECTED (sourceBuffer.buffered.end(0) == '3.96') OK
 Complete the partial media segment.
 RUN(sourceBuffer.appendBuffer(partial2))
 EVENT(update)
 EXPECTED (sourceBuffer.buffered.length == '1') OK
-EXPECTED (sourceBuffer.buffered.end(0) == '10.001') OK
+EXPECTED (sourceBuffer.buffered.end(0) == '4.98') OK
 Clean sourcebuffer of all content.
 RUN(sourceBuffer.remove(0, 100))
 EVENT(update)
@@ -24,11 +24,12 @@ Append the two media segment in reverse order.
 RUN(sourceBuffer.appendBuffer(loader.mediaSegment(1)))
 EVENT(update)
 EXPECTED (sourceBuffer.buffered.length == '1') OK
-EXPECTED (sourceBuffer.buffered.end(0) == '90.001') OK
+EXPECTED (sourceBuffer.buffered.start(0) == '4.98') OK
+EXPECTED (sourceBuffer.buffered.end(0) == '9.98') OK
 RUN(sourceBuffer.appendBuffer(loader.mediaSegment(0)))
 EVENT(update)
-EXPECTED (sourceBuffer.buffered.length == '2') OK
-EXPECTED (sourceBuffer.buffered.end(0) == '10.001') OK
-EXPECTED (sourceBuffer.buffered.end(1) == '90.001') OK
+EXPECTED (sourceBuffer.buffered.length == '1') OK
+EXPECTED (sourceBuffer.buffered.start(0) == '0') OK
+EXPECTED (sourceBuffer.buffered.end(0) == '9.98') OK
 END OF TEST
 

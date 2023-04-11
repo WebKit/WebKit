@@ -217,6 +217,7 @@ public:
         MediaTime presentationTime;
         MediaTime decodeTime;
         MediaTime duration;
+        MediaTime trimDuration;
         MediaSampleDataType data;
         MediaSample::SampleFlags flags;
     };
