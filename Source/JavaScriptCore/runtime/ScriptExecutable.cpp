@@ -274,8 +274,8 @@ CodeBlock* ScriptExecutable::newCodeBlockFor(CodeSpecializationKind kind, JSFunc
         RELEASE_ASSERT(!executable->m_codeBlock);
         RELEASE_ASSERT(!function);
 
-        UnlinkedModuleProgramCodeBlock* unlinkedCodeBlock = executable->getUnlinkedCodeBlock(globalObject, ModuleProgramExecutable::PossibleExceptionsExpected::No);
-        EXCEPTION_ASSERT(!throwScope.exception());
+        UnlinkedModuleProgramCodeBlock* unlinkedCodeBlock = executable->getUnlinkedCodeBlock(globalObject);
+        RETURN_IF_EXCEPTION(throwScope, nullptr);
         ASSERT(executable->unlinkedCodeBlock());
         RELEASE_AND_RETURN(throwScope, ModuleProgramCodeBlock::create(vm, executable, unlinkedCodeBlock, scope));
     }
@@ -303,8 +303,7 @@ CodeBlock* ScriptExecutable::newCodeBlockFor(CodeSpecializationKind kind, JSFunc
         executable->m_unlinkedExecutable->features(), 
         executable->m_unlinkedExecutable->lexicalScopeFeatures(),
         executable->m_unlinkedExecutable->hasCapturedVariables(),
-        lastLine(), endColumn()); 
-    // FIXME: We should remove this and add ASSERT(unlinkedCodeBlock).
+        lastLine(), endColumn());
     if (!unlinkedCodeBlock) {
         throwException(globalObject, throwScope, error.toErrorObject(globalObject, executable->source()));
         return nullptr;

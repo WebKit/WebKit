@@ -52,8 +52,7 @@ public:
         return bitwise_cast<ModuleProgramCodeBlock*>(Base::codeBlock());
     }
 
-    enum class PossibleExceptionsExpected { Yes, No };
-    UnlinkedModuleProgramCodeBlock* getUnlinkedCodeBlock(JSGlobalObject*, PossibleExceptionsExpected);
+    UnlinkedModuleProgramCodeBlock* getUnlinkedCodeBlock(JSGlobalObject*);
 
     UnlinkedModuleProgramCodeBlock* unlinkedCodeBlock() const
     {
