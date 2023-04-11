@@ -39,8 +39,8 @@ struct RealtimeOutgoingVideoSourceHolder {
 WEBKIT_DEFINE_ASYNC_DATA_STRUCT(RealtimeOutgoingVideoSourceHolder)
 
 
-RealtimeOutgoingVideoSourceGStreamer::RealtimeOutgoingVideoSourceGStreamer(const String& mediaStreamId, MediaStreamTrack& track)
-    : RealtimeOutgoingMediaSourceGStreamer(mediaStreamId, track)
+RealtimeOutgoingVideoSourceGStreamer::RealtimeOutgoingVideoSourceGStreamer(const RefPtr<UniqueSSRCGenerator>& ssrcGenerator, const String& mediaStreamId, MediaStreamTrack& track)
+    : RealtimeOutgoingMediaSourceGStreamer(ssrcGenerator, mediaStreamId, track)
 {
     static std::once_flag debugRegisteredFlag;
     std::call_once(debugRegisteredFlag, [] {

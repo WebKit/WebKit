@@ -22,6 +22,7 @@
 #if USE(GSTREAMER_WEBRTC)
 
 #include "GRefPtrGStreamer.h"
+#include "GStreamerWebRTCUtils.h"
 #include "MediaStreamTrackPrivate.h"
 #include "RTCRtpCapabilities.h"
 
@@ -55,7 +56,7 @@ public:
     virtual void teardown() { }
 
 protected:
-    explicit RealtimeOutgoingMediaSourceGStreamer(const String& mediaStreamId, MediaStreamTrack&);
+    explicit RealtimeOutgoingMediaSourceGStreamer(const RefPtr<UniqueSSRCGenerator>&, const String& mediaStreamId, MediaStreamTrack&);
 
     void initializeFromTrack();
     virtual void sourceEnabledChanged();
@@ -84,6 +85,7 @@ protected:
     GRefPtr<GstWebRTCRTPTransceiver> m_transceiver;
     GRefPtr<GstWebRTCRTPSender> m_sender;
     GRefPtr<GstPad> m_webrtcSinkPad;
+    RefPtr<UniqueSSRCGenerator> m_ssrcGenerator;
 
 private:
     void sourceMutedChanged();

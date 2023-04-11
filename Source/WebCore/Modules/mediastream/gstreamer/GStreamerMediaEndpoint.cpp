@@ -71,6 +71,7 @@ GStreamerMediaEndpoint::GStreamerMediaEndpoint(GStreamerPeerConnectionBackend& p
     , m_logger(peerConnection.logger())
     , m_logIdentifier(peerConnection.logIdentifier())
 #endif
+    , m_ssrcGenerator(UniqueSSRCGenerator::create())
 {
     ensureGStreamerInitialized();
     registerWebKitGStreamerElements();
@@ -692,7 +693,7 @@ bool GStreamerMediaEndpoint::addTrack(GStreamerRtpSenderBackend& sender, MediaSt
     GST_DEBUG_OBJECT(m_pipeline.get(), "Adding source for track %s", track.id().ascii().data());
     if (track.privateTrack().isAudio()) {
         GST_DEBUG_OBJECT(m_pipeline.get(), "Adding outgoing audio source");
-        auto audioSource = RealtimeOutgoingAudioSourceGStreamer::create(mediaStreamId, track);
+        auto audioSource = RealtimeOutgoingAudioSourceGStreamer::create(m_ssrcGenerator, mediaStreamId, track);
         configureAndLinkSource(audioSource);
 
         rtcSender = audioSource->sender();
@@ -700,7 +701,7 @@ bool GStreamerMediaEndpoint::addTrack(GStreamerRtpSenderBackend& sender, MediaSt
     } else {
         ASSERT(track.privateTrack().isVideo());
         GST_DEBUG_OBJECT(m_pipeline.get(), "Adding outgoing video source");
-        auto videoSource = RealtimeOutgoingVideoSourceGStreamer::create(mediaStreamId, track);
+        auto videoSource = RealtimeOutgoingVideoSourceGStreamer::create(m_ssrcGenerator, mediaStreamId, track);
         configureAndLinkSource(videoSource);
 
         rtcSender = videoSource->sender();
@@ -944,7 +945,7 @@ std::optional<GStreamerMediaEndpoint::Backends> GStreamerMediaEndpoint::createTr
             codecs = registryScanner.audioRtpCapabilities(GStreamerRegistryScanner::Configuration::Decoding).codecs;
     }
 
-    auto caps = capsFromRtpCapabilities({ .codecs = codecs, .headerExtensions = rtpExtensions }, [this](GstStructure* structure) {
+    auto caps = capsFromRtpCapabilities(m_ssrcGenerator, { .codecs = codecs, .headerExtensions = rtpExtensions }, [this](GstStructure* structure) {
         gst_structure_set(structure, "payload", G_TYPE_INT, m_ptCounter++, nullptr);
     });
 
@@ -1008,10 +1009,10 @@ std::optional<GStreamerMediaEndpoint::Backends> GStreamerMediaEndpoint::addTrans
 GStreamerRtpSenderBackend::Source GStreamerMediaEndpoint::createSourceForTrack(MediaStreamTrack& track)
 {
     if (track.privateTrack().isAudio())
-        return RealtimeOutgoingAudioSourceGStreamer::create(emptyString(), track);
+        return RealtimeOutgoingAudioSourceGStreamer::create(m_ssrcGenerator, emptyString(), track);
 
     ASSERT(track.privateTrack().isVideo());
-    return RealtimeOutgoingVideoSourceGStreamer::create(emptyString(), track);
+    return RealtimeOutgoingVideoSourceGStreamer::create(m_ssrcGenerator, emptyString(), track);
 }
 
 GStreamerRtpSenderBackend::Source GStreamerMediaEndpoint::createLinkedSourceForTrack(MediaStreamTrack& track)

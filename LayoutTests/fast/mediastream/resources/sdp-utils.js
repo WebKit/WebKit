@@ -17,6 +17,7 @@
             "iceufrag": "^a=ice-ufrag:([\\w+/]*).*$",
             "icepwd": "^a=ice-pwd:([\\w+/]*).*$",
             "bundle": "^a=group:BUNDLE .*$",
+            "ssrcgroup": "^a=ssrc-group:([A-Z]+) ([\\d\\s]+).*$",
             "fingerprint": "^a=fingerprint:sha-256 ([a-zA-Z0-9:]*).*$"
         };
 
@@ -82,6 +83,10 @@
                     line = line.replace(icepwd[1], verified("ice-password"));
                 else if (fingerprint = match(line, regexp.fingerprint))
                     line = line.replace(fingerprint[1], verified("fingerprint"));
+                else if (ssrcgroup = match(line, regexp.ssrcgroup)) {
+                    line = line.replace(ssrcgroup[1], verified("semantics"));
+                    line = line.replace(ssrcgroup[2], verified("ssrc-id"));
+                }
             }
 
             if (line)

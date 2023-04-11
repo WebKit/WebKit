@@ -28,7 +28,7 @@ namespace WebCore {
 
 class RealtimeOutgoingVideoSourceGStreamer final : public RealtimeOutgoingMediaSourceGStreamer {
 public:
-    static Ref<RealtimeOutgoingVideoSourceGStreamer> create(const String& mediaStreamId, MediaStreamTrack& track) { return adoptRef(*new RealtimeOutgoingVideoSourceGStreamer(mediaStreamId, track)); }
+    static Ref<RealtimeOutgoingVideoSourceGStreamer> create(const RefPtr<UniqueSSRCGenerator>& ssrcGenerator, const String& mediaStreamId, MediaStreamTrack& track) { return adoptRef(*new RealtimeOutgoingVideoSourceGStreamer(ssrcGenerator, mediaStreamId, track)); }
 
     void setApplyRotation(bool shouldApplyRotation) { m_shouldApplyRotation = shouldApplyRotation; }
 
@@ -39,7 +39,7 @@ public:
     const GstStructure* stats() const { return m_stats.get(); }
 
 protected:
-    explicit RealtimeOutgoingVideoSourceGStreamer(const String& mediaStreamId, MediaStreamTrack&);
+    explicit RealtimeOutgoingVideoSourceGStreamer(const RefPtr<UniqueSSRCGenerator>&, const String& mediaStreamId, MediaStreamTrack&);
 
     void sourceEnabledChanged() final;
 

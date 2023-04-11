@@ -43,6 +43,8 @@
 #include <gst/webrtc/webrtc.h>
 #undef GST_USE_UNSTABLE_API
 
+#include <wtf/ThreadSafeRefCounted.h>
+
 namespace WebCore {
 
 inline RTCRtpTransceiverDirection toRTCRtpTransceiverDirection(GstWebRTCRTPTransceiverDirection direction)
@@ -266,7 +268,19 @@ std::optional<Ref<RTCCertificate>> generateCertificate(Ref<SecurityOrigin>&&, co
 
 bool sdpMediaHasAttributeKey(const GstSDPMedia*, const char* key);
 
-WARN_UNUSED_RETURN GRefPtr<GstCaps> capsFromRtpCapabilities(const RTCRtpCapabilities&, Function<void(GstStructure*)> supplementCapsCallback);
+class UniqueSSRCGenerator : public ThreadSafeRefCounted<UniqueSSRCGenerator> {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    static Ref<UniqueSSRCGenerator> create() { return adoptRef(*new UniqueSSRCGenerator()); }
+
+    uint32_t generateSSRC();
+
+private:
+    Lock m_lock;
+    Vector<uint32_t> m_knownIds WTF_GUARDED_BY_LOCK(m_lock);
+};
+
+WARN_UNUSED_RETURN GRefPtr<GstCaps> capsFromRtpCapabilities(RefPtr<UniqueSSRCGenerator>,  const RTCRtpCapabilities&, Function<void(GstStructure*)> supplementCapsCallback);
 
 GstWebRTCRTPTransceiverDirection getDirectionFromSDPMedia(const GstSDPMedia*);
 WARN_UNUSED_RETURN GRefPtr<GstCaps> capsFromSDPMedia(const GstSDPMedia*);

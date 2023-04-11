@@ -44,6 +44,7 @@ class GStreamerRtpTransceiverBackend;
 class MediaStreamTrack;
 class RTCSessionDescription;
 class RealtimeOutgoingMediaSourceGStreamer;
+class UniqueSSRCGenerator;
 
 class GStreamerMediaEndpoint : public ThreadSafeRefCounted<GStreamerMediaEndpoint, WTF::DestructionThread::Main>
 #if !RELEASE_LOG_DISABLED
@@ -189,6 +190,8 @@ private:
 
     using DataChannelHandlerIdentifier = ObjectIdentifier<GstWebRTCDataChannel>;
     HashMap<DataChannelHandlerIdentifier, UniqueRef<GStreamerDataChannelHandler>> m_incomingDataChannels;
+
+    RefPtr<UniqueSSRCGenerator> m_ssrcGenerator;
 };
 
 } // namespace WebCore

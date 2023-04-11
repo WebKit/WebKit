@@ -33,8 +33,8 @@ GST_DEBUG_CATEGORY(webkit_webrtc_outgoing_audio_debug);
 
 namespace WebCore {
 
-RealtimeOutgoingAudioSourceGStreamer::RealtimeOutgoingAudioSourceGStreamer(const String& mediaStreamId, MediaStreamTrack& track)
-    : RealtimeOutgoingMediaSourceGStreamer(mediaStreamId, track)
+RealtimeOutgoingAudioSourceGStreamer::RealtimeOutgoingAudioSourceGStreamer(const RefPtr<UniqueSSRCGenerator>& ssrcGenerator, const String& mediaStreamId, MediaStreamTrack& track)
+    : RealtimeOutgoingMediaSourceGStreamer(ssrcGenerator, mediaStreamId, track)
 {
     static std::once_flag debugRegisteredFlag;
     std::call_once(debugRegisteredFlag, [] {
