@@ -105,7 +105,7 @@ class ConfigureBuild(buildstep.BuildStep):
     description = ["configuring build"]
     descriptionDone = ["configured build"]
 
-    def __init__(self, platform, configuration, architecture, buildOnly, additionalArguments, device_model, *args, **kwargs):
+    def __init__(self, platform, configuration, architecture, buildOnly, additionalArguments, additionalRunWebKitTestsArguments, device_model, *args, **kwargs):
         buildstep.BuildStep.__init__(self, *args, **kwargs)
         self.platform = platform
         if platform != 'jsc-only':
@@ -696,6 +696,7 @@ class RunWebKitTests(shell.Test):
         platform = self.getProperty('platform')
         appendCustomTestingFlags(self, platform, self.getProperty('device_model'))
         additionalArguments = self.getProperty('additionalArguments')
+        additionalRunWebKitTestsArguments = self.getProperty('additionalRunWebKitTestsArguments')
 
         self.setCommand(self.command + ["--results-directory", self.resultDirectory])
         self.setCommand(self.command + ['--debug-rwt-logging'])
@@ -708,6 +709,8 @@ class RunWebKitTests(shell.Test):
 
         if additionalArguments:
             self.setCommand(self.command + additionalArguments)
+        if additionalRunWebKitTestsArguments:
+            self.setCommand(self.command + additionalRunWebKitTestsArguments)
         return shell.Test.start(self)
 
     def _strip_python_logging_prefix(self, line):

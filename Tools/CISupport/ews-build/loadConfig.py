@@ -70,7 +70,7 @@ def loadBuilderConfig(c, is_test_mode_enabled=False, master_prefix_path='./'):
         if 'icon' in builder:
             del builder['icon']
         factorykwargs = {}
-        for key in ['platform', 'configuration', 'architectures', 'triggers', 'remotes', 'additionalArguments', 'runTests', 'triggered_by']:
+        for key in ['platform', 'configuration', 'architectures', 'triggers', 'remotes', 'additionalArguments', 'additionalRunWebKitTestsArguments', 'runTests', 'triggered_by']:
             value = builder.pop(key, None)
             if value:
                 factorykwargs[key] = value

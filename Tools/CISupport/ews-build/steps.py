@@ -601,7 +601,7 @@ class ConfigureBuild(buildstep.BuildStep, AddToLogMixin):
     description = ['configuring build']
     descriptionDone = ['Configured build']
 
-    def __init__(self, platform, configuration, architectures, buildOnly, triggers, remotes, additionalArguments, triggered_by=None):
+    def __init__(self, platform, configuration, architectures, buildOnly, triggers, remotes, additionalArguments, additionalRunWebKitTestsArguments, triggered_by=None):
         super().__init__()
         self.platform = platform
         if platform != 'jsc-only':
@@ -614,6 +614,7 @@ class ConfigureBuild(buildstep.BuildStep, AddToLogMixin):
         self.triggered_by = triggered_by
         self.remotes = remotes
         self.additionalArguments = additionalArguments
+        self.additionalRunWebKitTestsArguments = additionalRunWebKitTestsArguments
 
     @defer.inlineCallbacks
     def run(self):
@@ -635,6 +636,8 @@ class ConfigureBuild(buildstep.BuildStep, AddToLogMixin):
             self.setProperty('remotes', self.remotes, 'config.json')
         if self.additionalArguments:
             self.setProperty('additionalArguments', self.additionalArguments, 'config.json')
+        if self.additionalRunWebKitTestsArguments:
+            self.setProperty('additionalRunWebKitTestsArguments', self.additionalRunWebKitTestsArguments, 'config.json')
 
         self.add_patch_id_url()
         yield self.add_pr_details()
@@ -2670,11 +2673,6 @@ class CompileWebKit(shell.Compile, AddToLogMixin):
             self.addLogObserver('stdio', BuildLogLineObserver(self.errorReceived))
 
         if additionalArguments:
-            # FIXME: These arguments are required for iOS layout tests, but don't apply to compliation. We need to
-            # create a separate property to handle these run-webkit-tests specific arguments.
-            for argument in ["--child-processes=6", "--exclude-tests", "imported/w3c/web-platform-tests"]:
-                if argument in additionalArguments:
-                    additionalArguments.remove(argument)
             self.setCommand(self.command + additionalArguments)
         if platform in ('mac', 'ios', 'tvos', 'watchos'):
             # FIXME: Once WK_VALIDATE_DEPENDENCIES is set via xcconfigs, it can
@@ -3323,6 +3321,7 @@ class RunWebKitTests(shell.Test, AddToLogMixin):
         platform = self.getProperty('platform')
         self.setCommand(self.command + customBuildFlag(platform, self.getProperty('fullPlatform')))
         additionalArguments = self.getProperty('additionalArguments')
+        additionalRunWebKitTestsArguments = self.getProperty('additionalRunWebKitTestsArguments')
 
         if self.getProperty('use-dump-render-tree', False):
             self.setCommand(self.command + ['--dump-render-tree'])
@@ -3343,6 +3342,9 @@ class RunWebKitTests(shell.Test, AddToLogMixin):
 
         if additionalArguments:
             self.setCommand(self.command + additionalArguments)
+
+        if additionalRunWebKitTestsArguments:
+            self.setCommand(self.command + additionalRunWebKitTestsArguments)
 
         if self.ENABLE_GUARD_MALLOC:
             self.setCommand(self.command + ['--guard-malloc'])

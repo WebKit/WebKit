@@ -27,9 +27,9 @@ from steps import *
 
 
 class Factory(factory.BuildFactory):
-    def __init__(self, platform, configuration, architectures, buildOnly, additionalArguments, device_model):
+    def __init__(self, platform, configuration, architectures, buildOnly, additionalArguments, additionalRunWebKitTestsArguments, device_model):
         factory.BuildFactory.__init__(self)
-        self.addStep(ConfigureBuild(platform=platform, configuration=configuration, architecture=" ".join(architectures), buildOnly=buildOnly, additionalArguments=additionalArguments, device_model=device_model))
+        self.addStep(ConfigureBuild(platform=platform, configuration=configuration, architecture=" ".join(architectures), buildOnly=buildOnly, additionalArguments=additionalArguments, additionalRunWebKitTestsArguments=additionalRunWebKitTestsArguments, device_model=device_model))
         self.addStep(PrintConfiguration())
         self.addStep(CheckOutSource())
         self.addStep(CheckOutSpecificRevision())
@@ -52,8 +52,8 @@ class BuildFactory(Factory):
     ShouldRunJSCBundleStep = False
     ShouldRunMiniBrowserBundleStep = False
 
-    def __init__(self, platform, configuration, architectures, triggers=None, additionalArguments=None, device_model=None):
-        Factory.__init__(self, platform, configuration, architectures, True, additionalArguments, device_model)
+    def __init__(self, platform, configuration, architectures, triggers=None, additionalArguments=None, additionalRunWebKitTestsArguments=None, device_model=None):
+        Factory.__init__(self, platform, configuration, architectures, True, additionalArguments, additionalRunWebKitTestsArguments, device_model)
 
         if platform == "win" or platform.startswith("playstation"):
             self.addStep(CompileWebKit(timeout=2 * 60 * 60))
@@ -86,8 +86,8 @@ class TestFactory(Factory):
         self.addStep(DownloadBuiltProduct())
         self.addStep(ExtractBuiltProduct())
 
-    def __init__(self, platform, configuration, architectures, additionalArguments=None, device_model=None, **kwargs):
-        Factory.__init__(self, platform, configuration, architectures, False, additionalArguments, device_model, **kwargs)
+    def __init__(self, platform, configuration, architectures, additionalArguments=None, additionalRunWebKitTestsArguments=None, device_model=None, **kwargs):
+        Factory.__init__(self, platform, configuration, architectures, False, additionalArguments, additionalRunWebKitTestsArguments, device_model, **kwargs)
         self.getProduct()
 
         if platform == 'wincairo':
@@ -135,8 +135,8 @@ class BuildAndTestFactory(TestFactory):
     def getProduct(self):
         self.addStep(CompileWebKit())
 
-    def __init__(self, platform, configuration, architectures, triggers=None, additionalArguments=None, device_model=None, **kwargs):
-        TestFactory.__init__(self, platform, configuration, architectures, additionalArguments, device_model, **kwargs)
+    def __init__(self, platform, configuration, architectures, triggers=None, additionalArguments=None, additionalRunWebKitTestsArguments=None, device_model=None, **kwargs):
+        TestFactory.__init__(self, platform, configuration, architectures, additionalArguments, additionalRunWebKitTestsArguments, device_model, **kwargs)
         if triggers:
             self.addStep(ArchiveBuiltProduct())
             self.addStep(UploadBuiltProduct())
@@ -144,15 +144,15 @@ class BuildAndTestFactory(TestFactory):
 
 
 class BuildAndTestLLINTCLoopFactory(Factory):
-    def __init__(self, platform, configuration, architectures, triggers=None, additionalArguments=None, device_model=None, **kwargs):
-        Factory.__init__(self, platform, configuration, architectures, False, additionalArguments, device_model, **kwargs)
+    def __init__(self, platform, configuration, architectures, triggers=None, additionalArguments=None, additionalRunWebKitTestsArguments=None, device_model=None, **kwargs):
+        Factory.__init__(self, platform, configuration, architectures, False, additionalArguments, additionalRunWebKitTestsArguments, device_model, **kwargs)
         self.addStep(CompileLLINTCLoop())
         self.addStep(RunLLINTCLoopTests())
 
 
 class BuildAndTest32bitJSCFactory(Factory):
-    def __init__(self, platform, configuration, architectures, triggers=None, additionalArguments=None, device_model=None, **kwargs):
-        Factory.__init__(self, platform, configuration, architectures, False, additionalArguments, device_model, **kwargs)
+    def __init__(self, platform, configuration, architectures, triggers=None, additionalArguments=None, additionalRunWebKitTestsArguments=None, device_model=None, **kwargs):
+        Factory.__init__(self, platform, configuration, architectures, False, additionalArguments, additionalRunWebKitTestsArguments, device_model, **kwargs)
         self.addStep(Compile32bitJSC())
         self.addStep(Run32bitJSCTests())
 
@@ -162,8 +162,8 @@ class BuildAndNonLayoutTestFactory(BuildAndTestFactory):
 
 
 class BuildAndJSCTestsFactory(Factory):
-    def __init__(self, platform, configuration, architectures, triggers=None, additionalArguments=None, device_model=None):
-        Factory.__init__(self, platform, configuration, architectures, False, additionalArguments, device_model)
+    def __init__(self, platform, configuration, architectures, triggers=None, additionalArguments=None, additionalRunWebKitTestsArguments=None, device_model=None):
+        Factory.__init__(self, platform, configuration, architectures, False, additionalArguments, additionalRunWebKitTestsArguments, device_model)
         self.addStep(CompileJSCOnly(timeout=60 * 60))
         self.addStep(RunJavaScriptCoreTests(timeout=60 * 60))
 
@@ -175,8 +175,8 @@ class TestAllButJSCFactory(TestFactory):
 class BuildAndTestAllButJSCFactory(BuildAndTestFactory):
     JSCTestClass = None
 
-    def __init__(self, platform, configuration, architectures, triggers=None, additionalArguments=None, device_model=None, **kwargs):
-        BuildAndTestFactory.__init__(self, platform, configuration, architectures, triggers, additionalArguments, device_model, **kwargs)
+    def __init__(self, platform, configuration, architectures, triggers=None, additionalArguments=None, additionalRunWebKitTestsArguments=None, device_model=None, **kwargs):
+        BuildAndTestFactory.__init__(self, platform, configuration, architectures, triggers, additionalArguments, additionalRunWebKitTestsArguments, device_model, **kwargs)
         self.addStep(RunWebDriverTests())
 
 
@@ -194,24 +194,24 @@ class BuildAndGenerateMiniBrowserJSCBundleFactory(BuildFactory):
 
 
 class TestJSCFactory(Factory):
-    def __init__(self, platform, configuration, architectures, additionalArguments=None, device_model=None):
-        Factory.__init__(self, platform, configuration, architectures, False, additionalArguments, device_model)
+    def __init__(self, platform, configuration, architectures, additionalArguments=None, additionalRunWebKitTestsArguments=None, device_model=None):
+        Factory.__init__(self, platform, configuration, architectures, False, additionalArguments, additionalRunWebKitTestsArguments, device_model)
         self.addStep(DownloadBuiltProduct())
         self.addStep(ExtractBuiltProduct())
         self.addStep(RunJavaScriptCoreTests())
 
 
 class Test262Factory(Factory):
-    def __init__(self, platform, configuration, architectures, additionalArguments=None, device_model=None):
-        Factory.__init__(self, platform, configuration, architectures, False, additionalArguments, device_model)
+    def __init__(self, platform, configuration, architectures, additionalArguments=None, additionalRunWebKitTestsArguments=None, device_model=None):
+        Factory.__init__(self, platform, configuration, architectures, False, additionalArguments, additionalRunWebKitTestsArguments, device_model)
         self.addStep(DownloadBuiltProduct())
         self.addStep(ExtractBuiltProduct())
         self.addStep(RunTest262Tests())
 
 
 class TestJSFactory(Factory):
-    def __init__(self, platform, configuration, architectures, additionalArguments=None, device_model=None):
-        Factory.__init__(self, platform, configuration, architectures, False, additionalArguments, device_model)
+    def __init__(self, platform, configuration, architectures, additionalArguments=None, additionalRunWebKitTestsArguments=None, device_model=None):
+        Factory.__init__(self, platform, configuration, architectures, False, additionalArguments, additionalRunWebKitTestsArguments, device_model)
         self.addStep(DownloadBuiltProduct())
         self.addStep(ExtractBuiltProduct())
         self.addStep(RunJavaScriptCoreTests())
@@ -219,8 +219,8 @@ class TestJSFactory(Factory):
 
 
 class TestLayoutFactory(Factory):
-    def __init__(self, platform, configuration, architectures, additionalArguments=None, device_model=None):
-        Factory.__init__(self, platform, configuration, architectures, False, additionalArguments, device_model)
+    def __init__(self, platform, configuration, architectures, additionalArguments=None, additionalRunWebKitTestsArguments=None, device_model=None):
+        Factory.__init__(self, platform, configuration, architectures, False, additionalArguments, additionalRunWebKitTestsArguments, device_model)
         self.addStep(DownloadBuiltProduct())
         self.addStep(ExtractBuiltProduct())
         self.addStep(RunWebKitTests())
@@ -233,8 +233,8 @@ class TestLayoutFactory(Factory):
 
 
 class TestWebDriverFactory(Factory):
-    def __init__(self, platform, configuration, architectures, additionalArguments=None, device_model=None):
-        Factory.__init__(self, platform, configuration, architectures, False, additionalArguments, device_model)
+    def __init__(self, platform, configuration, architectures, additionalArguments=None, additionalRunWebKitTestsArguments=None, device_model=None):
+        Factory.__init__(self, platform, configuration, architectures, False, additionalArguments, additionalRunWebKitTestsArguments, device_model)
         self.addStep(DownloadBuiltProduct())
         self.addStep(ExtractBuiltProduct())
         self.addStep(RunWebDriverTests())
@@ -249,8 +249,8 @@ class TestWebKit1AllButJSCFactory(TestWebKit1Factory):
 
 
 class BuildAndPerfTestFactory(Factory):
-    def __init__(self, platform, configuration, architectures, additionalArguments=None, device_model=None, **kwargs):
-        Factory.__init__(self, platform, configuration, architectures, False, additionalArguments, device_model, **kwargs)
+    def __init__(self, platform, configuration, architectures, additionalArguments=None, additionalRunWebKitTestsArguments=None, device_model=None, **kwargs):
+        Factory.__init__(self, platform, configuration, architectures, False, additionalArguments, additionalRunWebKitTestsArguments, device_model, **kwargs)
         self.addStep(CompileWebKit())
         self.addStep(RunAndUploadPerfTests())
         if platform == "gtk":
@@ -258,8 +258,8 @@ class BuildAndPerfTestFactory(Factory):
 
 
 class DownloadAndPerfTestFactory(Factory):
-    def __init__(self, platform, configuration, architectures, additionalArguments=None, device_model=None, **kwargs):
-        Factory.__init__(self, platform, configuration, architectures, False, additionalArguments, device_model, **kwargs)
+    def __init__(self, platform, configuration, architectures, additionalArguments=None, additionalRunWebKitTestsArguments=None, device_model=None, **kwargs):
+        Factory.__init__(self, platform, configuration, architectures, False, additionalArguments, additionalRunWebKitTestsArguments, device_model, **kwargs)
         self.addStep(DownloadBuiltProduct())
         self.addStep(ExtractBuiltProduct())
         self.addStep(RunAndUploadPerfTests())

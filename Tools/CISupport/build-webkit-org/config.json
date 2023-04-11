@@ -137,22 +137,22 @@
                   },
                   { "name": "Apple-Ventura-Release-WK1-Tests", "factory": "TestWebKit1AllButJSCFactory",
                   "platform": "mac-ventura", "configuration": "release", "architectures": ["x86_64", "arm64"],
-                  "additionalArguments": ["--no-retry-failures"],
+                  "additionalRunWebKitTestsArguments": ["--no-retry-failures"],
                   "workernames": ["bot212"]
                   },
                   { "name": "Apple-Ventura-Release-AppleSilicon-WK2-Tests", "factory": "TestAllButJSCFactory",
                   "platform": "mac-ventura", "configuration": "release", "architectures": ["x86_64", "arm64"],
-                  "additionalArguments": ["--no-retry-failures"],
+                  "additionalRunWebKitTestsArguments": ["--no-retry-failures"],
                   "workernames": ["bot256"]
                   },
                   { "name": "Apple-Ventura-Release-AppleSilicon-WK1-Tests", "factory": "TestWebKit1AllButJSCFactory",
                   "platform": "mac-ventura", "configuration": "release", "architectures": ["x86_64", "arm64"],
-                  "additionalArguments": ["--no-retry-failures"],
+                  "additionalRunWebKitTestsArguments": ["--no-retry-failures"],
                   "workernames": ["bot257"]
                   },
                   { "name": "Apple-Ventura-Release-WK2-Tests", "factory": "TestAllButJSCFactory",
                   "platform": "mac-ventura", "configuration": "release", "architectures": ["x86_64", "arm64"],
-                  "additionalArguments": ["--no-retry-failures"],
+                  "additionalRunWebKitTestsArguments": ["--no-retry-failures"],
                   "workernames": ["bot211"]
                   },
                   { "name": "Apple-Ventura-AppleSilicon-Release-Test262-Tests", "factory": "Test262Factory",
@@ -169,27 +169,27 @@
                   },
                   { "name": "Apple-Ventura-Debug-WK1-Tests", "factory": "TestWebKit1AllButJSCFactory",
                   "platform": "mac-ventura", "configuration": "debug", "architectures": ["x86_64", "arm64"],
-                  "additionalArguments": ["--no-retry-failures"],
+                  "additionalRunWebKitTestsArguments": ["--no-retry-failures"],
                   "workernames": ["bot216"]
                   },
                   { "name": "Apple-Ventura-Debug-WK2-Tests", "factory": "TestAllButJSCFactory",
                   "platform": "mac-ventura", "configuration": "debug", "architectures": ["x86_64", "arm64"],
-                  "additionalArguments": ["--no-retry-failures"],
+                  "additionalRunWebKitTestsArguments": ["--no-retry-failures"],
                   "workernames": ["bot215"]
                   },
                   { "name": "Apple-Ventura-Debug-AppleSilicon-WK1-Tests", "factory": "TestWebKit1AllButJSCFactory",
                   "platform": "mac-ventura", "configuration": "debug", "architectures": ["x86_64", "arm64"],
-                  "additionalArguments": ["--no-retry-failures"],
+                  "additionalRunWebKitTestsArguments": ["--no-retry-failures"],
                   "workernames": ["bot260"]
                   },
                   { "name": "Apple-Ventura-Debug-AppleSilicon-WK2-Tests", "factory": "TestAllButJSCFactory",
                   "platform": "mac-ventura", "configuration": "debug", "architectures": ["x86_64", "arm64"],
-                  "additionalArguments": ["--no-retry-failures"],
+                  "additionalRunWebKitTestsArguments": ["--no-retry-failures"],
                   "workernames": ["bot258"]
                   },
                   { "name": "Apple-Ventura-Debug-WK2-GPUProcess-Tests", "factory": "TestAllButJSCFactory",
                   "platform": "mac-ventura", "configuration": "debug", "architectures": ["x86_64", "arm64"],
-                  "additionalArguments": ["--no-retry-failures", "--use-gpu-process", "--remote-layer-tree"],
+                  "additionalRunWebKitTestsArguments": ["--no-retry-failures", "--use-gpu-process", "--remote-layer-tree"],
                   "workernames": ["bot234"]
                   },
                   { "name": "Apple-Ventura-LLINT-CLoop-BuildAndTest", "factory": "BuildAndTestLLINTCLoopFactory",
@@ -216,27 +216,27 @@
                   },
                   { "name": "Apple-Monterey-Release-WK1-Tests", "factory": "TestWebKit1AllButJSCFactory",
                     "platform": "mac-monterey", "configuration": "release", "architectures": ["x86_64", "arm64"],
-                    "additionalArguments": ["--no-retry-failures"],
+                    "additionalRunWebKitTestsArguments": ["--no-retry-failures"],
                     "workernames": ["bot1021"]
                   },
                   { "name": "Apple-Monterey-Release-AppleSilicon-WK2-Tests", "factory": "TestAllButJSCFactory",
                     "platform": "mac-monterey", "configuration": "release", "architectures": ["x86_64", "arm64"],
-                    "additionalArguments": ["--no-retry-failures"],
+                    "additionalRunWebKitTestsArguments": ["--no-retry-failures"],
                     "workernames": ["bot135"]
                   },
                   { "name": "Apple-Monterey-Release-AppleSilicon-WK1-Tests", "factory": "TestWebKit1AllButJSCFactory",
                     "platform": "mac-monterey", "configuration": "release", "architectures": ["x86_64", "arm64"],
-                    "additionalArguments": ["--no-retry-failures"],
+                    "additionalRunWebKitTestsArguments": ["--no-retry-failures"],
                     "workernames": ["bot138"]
                   },
                   { "name": "Apple-Monterey-Release-WK2-Tests", "factory": "TestAllButJSCFactory",
                     "platform": "mac-monterey", "configuration": "release", "architectures": ["x86_64", "arm64"],
-                    "additionalArguments": ["--no-retry-failures"],
+                    "additionalRunWebKitTestsArguments": ["--no-retry-failures"],
                     "workernames": ["bot1023"]
                   },
                   { "name": "Apple-Monterey-Release-WK2-Accessibility-Isolated-Tree-Tests", "factory": "TestLayoutFactory",
                     "platform": "mac-monterey", "configuration": "release", "architectures": ["x86_64", "arm64"],
-                    "additionalArguments": ["--no-retry-failures", "--accessibility-isolated-tree", "accessibility/"],
+                    "additionalRunWebKitTestsArguments": ["--no-retry-failures", "--accessibility-isolated-tree", "accessibility/"],
                     "workernames": ["bot179"]
                   },
                   { "name": "Apple-Monterey-Debug-Build", "factory": "BuildFactory",
@@ -253,22 +253,22 @@
                   },
                   { "name": "Apple-Monterey-Debug-WK1-Tests", "factory": "TestWebKit1AllButJSCFactory",
                     "platform": "mac-monterey", "configuration": "debug", "architectures": ["x86_64", "arm64"],
-                    "additionalArguments": ["--no-retry-failures"],
+                    "additionalRunWebKitTestsArguments": ["--no-retry-failures"],
                     "workernames": ["bot1025"]
                   },
                   { "name": "Apple-Monterey-Debug-WK2-Tests", "factory": "TestAllButJSCFactory",
                     "platform": "mac-monterey", "configuration": "debug", "architectures": ["x86_64", "arm64"],
-                    "additionalArguments": ["--no-retry-failures"],
+                    "additionalRunWebKitTestsArguments": ["--no-retry-failures"],
                     "workernames": ["bot1026"]
                   },
                   { "name": "Apple-Monterey-Debug-AppleSilicon-WK1-Tests", "factory": "TestWebKit1AllButJSCFactory",
                     "platform": "mac-monterey", "configuration": "debug", "architectures": ["x86_64", "arm64"],
-                    "additionalArguments": ["--no-retry-failures"],
+                    "additionalRunWebKitTestsArguments": ["--no-retry-failures"],
                     "workernames": ["bot139"]
                   },
                   { "name": "Apple-Monterey-Debug-AppleSilicon-WK2-Tests", "factory": "TestAllButJSCFactory",
                     "platform": "mac-monterey", "configuration": "debug", "architectures": ["x86_64", "arm64"],
-                    "additionalArguments": ["--no-retry-failures"],
+                    "additionalRunWebKitTestsArguments": ["--no-retry-failures"],
                     "workernames": ["bot141"]
                   },
                   { "name": "Apple-Monterey-AppleSilicon-Debug-JSC-Tests", "factory": "TestJSCFactory",
@@ -299,31 +299,31 @@
                   {
                     "name": "Apple-iOS-16-Simulator-Release-GPUProcess-WK2-Tests", "factory": "TestAllButJSCFactory",
                     "platform": "ios-simulator-16", "configuration": "release", "architectures": ["x86_64", "arm64"], "device_model": "iphone",
-                    "additionalArguments": ["--no-retry-failures", "--use-gpu-process", "--child-processes=6"],
+                    "additionalRunWebKitTestsArguments": ["--no-retry-failures", "--use-gpu-process", "--child-processes=6"],
                     "workernames": ["bot600"]
                   },
                   {
                     "name": "Apple-iOS-16-Simulator-Release-WK2-Tests", "factory": "TestAllButJSCFactory",
                     "platform": "ios-simulator-16", "configuration": "release", "architectures": ["x86_64", "arm64"], "device_model": "iphone",
-                    "additionalArguments": ["--no-retry-failures", "--child-processes=6"],
+                    "additionalRunWebKitTestsArguments": ["--no-retry-failures", "--child-processes=6"],
                     "workernames": ["bot651", "bot652"]
                   },
                   {
                     "name": "Apple-iOS-16-Simulator-Debug-WK2-Tests", "factory": "TestAllButJSCFactory",
                     "platform": "ios-simulator-16", "configuration": "debug", "architectures": ["x86_64", "arm64"], "device_model": "iphone",
-                    "additionalArguments": ["--no-retry-failures", "--no-sample-on-timeout", "--child-processes=6"],
+                    "additionalRunWebKitTestsArguments": ["--no-retry-failures", "--no-sample-on-timeout", "--child-processes=6"],
                     "workernames": ["bot653"]
                   },
                   {
                     "name": "Apple-iPadOS-16-Simulator-Release-WK2-Tests", "factory": "TestAllButJSCFactory",
                     "platform": "ios-simulator-16", "configuration": "release", "architectures": ["x86_64", "arm64"], "device_model": "ipad",
-                    "additionalArguments": ["--no-retry-failures", "--child-processes=6" ],
+                    "additionalRunWebKitTestsArguments": ["--no-retry-failures", "--child-processes=6" ],
                     "workernames": ["bot667"]
                   },
                   {
                     "name": "Apple-iPadOS-16-Simulator-Debug-WK2-Tests", "factory": "TestAllButJSCFactory",
                     "platform": "ios-simulator-16", "configuration": "debug", "architectures": ["x86_64", "arm64"], "device_model": "ipad",
-                    "additionalArguments": ["--no-retry-failures", "--no-sample-on-timeout", "--child-processes=6"],
+                    "additionalRunWebKitTestsArguments": ["--no-retry-failures", "--no-sample-on-timeout", "--child-processes=6"],
                     "workernames": ["bot664"]
                   },
                   {
@@ -434,7 +434,7 @@
                   {
                     "name": "GTK-Linux-64-bit-Release-Skip-Failing-Tests", "factory": "TestLayoutFactory",
                     "platform": "gtk", "configuration": "release", "architectures": ["x86_64"],
-                    "additionalArguments": ["--skip-failing-tests"],
+                    "additionalRunWebKitTestsArguments": ["--skip-failing-tests"],
                     "workernames": ["gtk-linux-bot-19"]
                   },
                   {

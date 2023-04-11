@@ -1905,7 +1905,7 @@ ts","version":4,"num_passes":42158,"pixel_tests_enabled":false,"date":"11:28AM o
         self.configureStep()
         self.setProperty('fullPlatform', 'ios-simulator')
         self.setProperty('configuration', 'release')
-        self.setProperty('additionalArguments', ['--exclude-tests', 'imported/w3c/web-platform-tests'])
+        self.setProperty('additionalRunWebKitTestsArguments', ['--exclude-tests', 'imported/w3c/web-platform-tests'])
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logfiles={'json': self.jsonFileName},
@@ -2272,7 +2272,7 @@ class TestRunWebKitTestsInStressMode(BuildStepMixinAdditions, unittest.TestCase)
         self.setProperty('fullPlatform', 'ios-simulator')
         self.setProperty('configuration', 'release')
         self.setProperty('modified_tests', ['test1', 'test2'])
-        self.setProperty('additionalArguments', ['--child-processes=6', '--exclude-tests', 'imported/w3c/web-platform-tests'])
+        self.setProperty('additionalRunWebKitTestsArguments', ['--child-processes=6', '--exclude-tests', 'imported/w3c/web-platform-tests'])
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logfiles={'json': self.jsonFileName},

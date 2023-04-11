@@ -93,7 +93,7 @@ def loadBuilderConfig(c, is_test_mode_enabled=False, master_prefix_path='./'):
         factoryName = builder.pop('factory')
         factory = globals()[factoryName]
         factorykwargs = {}
-        for key in ['platform', 'configuration', 'architectures', 'triggers', 'additionalArguments', 'device_model']:
+        for key in ['platform', 'configuration', 'architectures', 'triggers', 'additionalArguments', 'additionalRunWebKitTestsArguments', 'device_model']:
             value = builder.pop(key, None)
             if value:
                 factorykwargs[key] = value

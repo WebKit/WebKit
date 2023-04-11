@@ -57,8 +57,8 @@ class ConfigDotJSONTest(unittest.TestCase):
 
     def test_builder_keys(self):
         config = self.get_config()
-        valid_builder_keys = ['additionalArguments', 'architectures', 'builddir', 'configuration', 'description',
-                              'defaultProperties', 'env', 'factory', 'icon', 'locks', 'name', 'platform', 'properties',
+        valid_builder_keys = ['additionalArguments', 'additionalRunWebKitTestsArguments', 'architectures', 'builddir', 'configuration',
+                              'description', 'defaultProperties', 'env', 'factory', 'icon', 'locks', 'name', 'platform', 'properties',
                               'remotes', 'runTests', 'shortname', 'tags', 'triggers', 'triggered_by', 'workernames', 'workerbuilddir']
         for builder in config.get('builders', []):
             for key in builder:

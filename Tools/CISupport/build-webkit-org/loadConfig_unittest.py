@@ -46,9 +46,9 @@ class ConfigDotJSONTest(unittest.TestCase):
 
     def test_builder_keys(self):
         config = self.get_config()
-        valid_builder_keys = ['additionalArguments', 'architectures', 'builddir', 'configuration', 'description',
-                              'defaultProperties', 'device_model', 'env', 'factory', 'icon', 'locks', 'name', 'platform', 'properties',
-                              'remotes', 'runTests', 'shortname', 'tags', 'triggers', 'workernames', 'workerbuilddir']
+        valid_builder_keys = ['additionalArguments', 'additionalRunWebKitTestsArguments', 'architectures', 'builddir', 'configuration',
+                              'description', 'defaultProperties', 'device_model', 'env', 'factory', 'icon', 'locks', 'name', 'platform',
+                              'properties', 'remotes', 'runTests', 'shortname', 'tags', 'triggers', 'workernames', 'workerbuilddir']
         for builder in config.get('builders', []):
             for key in builder:
                 self.assertTrue(key in valid_builder_keys, 'Unexpected key "{}" for builder {}'.format(key, builder.get('name')))
