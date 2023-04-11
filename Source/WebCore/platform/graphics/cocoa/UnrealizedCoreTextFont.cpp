@@ -89,8 +89,12 @@ void UnrealizedCoreTextFont::addAttributesForOpticalSizing(CFMutableDictionaryRe
         UNUSED_PARAM(variationsToBeApplied);
         UNUSED_PARAM(size);
 #endif
-    }, [&](OpticalSizingTypes::Everything) {
-        CFDictionarySetValue(attributes, kCTFontOpticalSizeAttribute, CFSTR("auto"));
+    }, [&](const OpticalSizingTypes::Everything& everything) {
+        if (everything.opticalSizingValue) {
+            auto number = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberFloatType, &everything.opticalSizingValue.value()));
+            CFDictionarySetValue(attributes, kCTFontOpticalSizeAttribute, number.get());
+        } else
+            CFDictionarySetValue(attributes, kCTFontOpticalSizeAttribute, CFSTR("auto"));
     });
 }
 
@@ -304,9 +308,23 @@ void UnrealizedCoreTextFont::modifyFromContext(const FontDescription& fontDescri
 
     m_variationSettings = fontDescription.variationSettings();
 
-    if (fontDescription.textRenderingMode() == TextRenderingMode::OptimizeLegibility)
-        m_opticalSizingType = OpticalSizingTypes::Everything { };
-    else if (fontDescription.opticalSizing() == FontOpticalSizing::Disabled)
+    if (fontDescription.textRenderingMode() == TextRenderingMode::OptimizeLegibility) {
+        std::optional<float> opticalSizingValue;
+#if USE(CORE_TEXT_OPTICAL_SIZING_WORKAROUND)
+        // We can delete this when rdar://problem/104370451 is fixed.
+        // And then we can change OpticalSizingType back to an enum instead of a variant.
+        auto predicate = [opsz = fontFeatureTag("opsz")](const FontVariationSettings::Setting& setting) {
+            return setting.tag() == opsz;
+        };
+        auto iterator = std::find_if(std::begin(m_variationSettings), std::end(m_variationSettings), WTFMove(predicate));
+        if (iterator != m_variationSettings.end()) {
+            // Core Text's auto optical sizing clobbers whatever font-variation-settings says, which is not how the
+            // web is supposed to work, so we can explicitly specify a value for Core Text to use.
+            opticalSizingValue = iterator->value();
+        }
+#endif
+        m_opticalSizingType = OpticalSizingTypes::Everything { WTFMove(opticalSizingValue) };
+    } else if (fontDescription.opticalSizing() == FontOpticalSizing::Disabled)
         m_opticalSizingType = OpticalSizingTypes::None { };
     else
         m_opticalSizingType = OpticalSizingTypes::JustVariation { };

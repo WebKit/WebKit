@@ -28,6 +28,7 @@
 #include "FontCacheCoreText.h"
 #include <CoreFoundation/CoreFoundation.h>
 #include <CoreText/CoreText.h>
+#include <optional>
 #include <variant>
 #include <wtf/RetainPtr.h>
 
@@ -74,7 +75,9 @@ private:
         // When USE(CORE_TEXT_OPTICAL_SIZING_WORKAROUND) is no longer necessary, we can migrate this back to an enum.
         struct None { };
         struct JustVariation { };
-        struct Everything { };
+        struct Everything {
+            std::optional<float> opticalSizingValue;
+        };
     };
 
     using OpticalSizingType = std::variant<OpticalSizingTypes::None, OpticalSizingTypes::JustVariation, OpticalSizingTypes::Everything>;

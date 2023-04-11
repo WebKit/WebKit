@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -154,6 +154,8 @@ template<typename T> void add(Hasher& hasher, const FontTaggedSetting<T>& settin
 template <typename T>
 class FontTaggedSettings {
 public:
+    using Setting = FontTaggedSetting<T>;
+
     void insert(FontTaggedSetting<T>&&);
     bool operator==(const FontTaggedSettings<T>& other) const { return m_list == other.m_list; }
     bool operator!=(const FontTaggedSettings<T>& other) const { return !(*this == other); }
