@@ -497,6 +497,9 @@ void RemoteLayerTreeEventDispatcher::windowScreenDidChange(PlatformDisplayID dis
     UNUSED_PARAM(displayID);
     UNUSED_PARAM(nominalFramesPerSecond);
 #endif
+    if (auto scrollingTree = this->scrollingTree())
+        scrollingTree->windowScreenDidChange(displayID, nominalFramesPerSecond);
+    
     // FIXME: Restart the displayLink if necessary.
 }
 
