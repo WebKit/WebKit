@@ -99,6 +99,7 @@ bool defaultShouldDropSuspendedAssertionAfterDelay();
 bool defaultShowModalDialogEnabled();
 
 bool defaultShouldEnableScreenOrientationAPI();
+bool defaultPopoverAttributeEnabled();
 
 #if HAVE(SC_CONTENT_SHARING_PICKER)
 bool defaultUseSCContentSharingPicker();

@@ -207,6 +207,12 @@ bool defaultShouldConvertInvalidURLsToBlank()
     return shouldConvertInvalidURLsToBlank;
 }
 
+bool defaultPopoverAttributeEnabled()
+{
+    static bool newSDK = linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::PopoverAttributeEnabled);
+    return newSDK;
+}
+
 #if PLATFORM(MAC)
 
 bool defaultPassiveWheelListenersAsDefaultOnDocument()

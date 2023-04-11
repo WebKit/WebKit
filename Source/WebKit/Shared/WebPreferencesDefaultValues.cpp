@@ -252,4 +252,14 @@ bool defaultPeerConnectionEnabledAvailable()
 }
 #endif
 
+bool defaultPopoverAttributeEnabled()
+{
+#if PLATFORM(COCOA)
+    static bool newSDK = linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::PopoverAttributeEnabled);
+    return newSDK;
+#else
+    return false;
+#endif
+}
+
 } // namespace WebKit

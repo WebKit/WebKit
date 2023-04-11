@@ -66,6 +66,7 @@ bool defaultUseLegacyBackgroundSizeShorthandBehavior();
 bool defaultAllowDisplayOfInsecureContent();
 bool defaultAllowRunningOfInsecureContent();
 bool defaultShouldConvertInvalidURLsToBlank();
+bool defaultPopoverAttributeEnabled();
 
 #if PLATFORM(MAC)
 bool defaultPassiveWheelListenersAsDefaultOnDocument();

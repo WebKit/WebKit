@@ -4875,9 +4875,9 @@ PopoverAttributeEnabled:
   humanReadableDescription: "Enable HTML popover attribute support"
   defaultValue:
     WebKitLegacy:
-      default: true
+      default: WebKit::defaultPopoverAttributeEnabled()
     WebKit:
-      default: true
+      default: WebKit::defaultPopoverAttributeEnabled()
     WebCore:
       default: true
 
