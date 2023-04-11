@@ -95,6 +95,17 @@ function testExpected(testFuncString, expected, comparison)
     }
 }
 
+function testExpectedEqualWithTolerance(testFuncString, expected, tolerance)
+{
+    try {
+        let observed = eval(testFuncString);
+        let success = Math.abs(observed - expected) <= tolerance;
+        reportExpected(success, testFuncString, '==', expected, observed)
+    } catch (ex) {
+        consoleWrite(ex);
+    }
+}
+
 function sleepFor(duration) {
     return new Promise(resolve => {
         setTimeout(resolve, duration);

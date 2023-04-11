@@ -233,10 +233,7 @@ public:
             return makeUniqueRef<AudioTrackData>(codecType, trackEntry, parser);
         }
 
-        AudioTrackData(CodecType codecType, const webm::TrackEntry& trackEntry, WebMParser& parser)
-            : TrackData { codecType, trackEntry, TrackInfo::TrackType::Audio, parser }
-        {
-        }
+        AudioTrackData(CodecType, const webm::TrackEntry&, WebMParser&);
 
     private:
         webm::Status consumeFrameData(webm::Reader&, const webm::FrameMetadata&, uint64_t*, const MediaTime&) final;
@@ -247,6 +244,9 @@ public:
         uint8_t m_framesPerPacket { 0 };
         Seconds m_frameDuration { 0_s };
         size_t mNumFramesInCompleteBlock { 0 };
+        MediaTime m_lastPresentationEndTime { MediaTime::invalidTime() };
+        MediaTime m_remainingTrimDuration;
+        MediaTime m_presentationTimeShift;
     };
 
 private:

@@ -21,7 +21,7 @@ EXPECTED (sourceBuffer.buffered.end(0) == '7.401') OK
 RUN(sourceBuffer.appendBuffer(loader.mediaSegment(0).slice(0, loader.mediaSegmentSize(0)/2)))
 EVENT(update)
 EXPECTED (sourceBuffer.buffered.length == '2') OK
-EXPECTED (sourceBuffer.buffered.end(0) == '3.961') OK
+EXPECTED (sourceBuffer.buffered.end(0) == '3.96') OK
 EXPECTED (sourceBuffer.buffered.end(1) == '7.401') OK
 Clean sourcebuffer of all content.
 RUN(sourceBuffer.remove(0, 100))
@@ -41,7 +41,7 @@ EVENT(update)
 RUN(sourceBuffer.appendBuffer(loader.mediaSegment(0).slice(0, loader.mediaSegmentSize(0)/2)))
 EVENT(update)
 EXPECTED (sourceBuffer.buffered.length == '2') OK
-EXPECTED (sourceBuffer.buffered.end(0) == '3.961') OK
+EXPECTED (sourceBuffer.buffered.end(0) == '3.96') OK
 EXPECTED (sourceBuffer.buffered.end(1) == '7.401') OK
 Clean sourcebuffer of all content.
 RUN(sourceBuffer.abort())
@@ -56,6 +56,6 @@ EVENT(update)
 RUN(sourceBuffer.appendBuffer(loader.mediaSegment(0).slice(0, loader.mediaSegmentSize(0)/2)))
 EVENT(update)
 EXPECTED (sourceBuffer.buffered.length == '1') OK
-EXPECTED (sourceBuffer.buffered.end(0) == '3.961') OK
+EXPECTED (sourceBuffer.buffered.end(0) == '3.96') OK
 END OF TEST
 

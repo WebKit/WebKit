@@ -230,6 +230,7 @@ Expected<RetainPtr<CMSampleBufferRef>, CString> toCMSampleBuffer(MediaSamplesBlo
     packetTimings.reserveInitialCapacity(samples.size());
     Vector<size_t> packetSizes;
     packetSizes.reserveInitialCapacity(samples.size());
+    auto cumulativeTrimDuration = MediaTime::zeroTime();
     for (auto& sample : samples) {
         if (!std::holds_alternative<Ref<const FragmentedSharedBuffer>>(sample.data))
             return makeUnexpected("Invalid MediaSamplesBlock type");
@@ -247,6 +248,7 @@ Expected<RetainPtr<CMSampleBufferRef>, CString> toCMSampleBuffer(MediaSamplesBlo
         }
         packetTimings.append({ PAL::toCMTime(sample.duration), PAL::toCMTime(sample.presentationTime), PAL::toCMTime(sample.decodeTime) });
         packetSizes.append(data->size());
+        cumulativeTrimDuration += sample.trimDuration;
     }
 
     CMSampleBufferRef rawSampleBuffer = nullptr;
@@ -266,6 +268,11 @@ Expected<RetainPtr<CMSampleBufferRef>, CString> toCMSampleBuffer(MediaSamplesBlo
         }
     } else if (samples.isAudio() && samples.discontinuity())
         PAL::CMSetAttachment(rawSampleBuffer, PAL::kCMSampleBufferAttachmentKey_FillDiscontinuitiesWithSilence, *samples.discontinuity() ? kCFBooleanTrue : kCFBooleanFalse, kCMAttachmentMode_ShouldPropagate);
+
+    if (cumulativeTrimDuration > MediaTime::zeroTime()) {
+        auto trimDurationDict = adoptCF(PAL::softLink_CoreMedia_CMTimeCopyAsDictionary(PAL::toCMTime(cumulativeTrimDuration), kCFAllocatorDefault));
+        PAL::CMSetAttachment(rawSampleBuffer, PAL::get_CoreMedia_kCMSampleBufferAttachmentKey_TrimDurationAtStart(), trimDurationDict.get(), kCMAttachmentMode_ShouldPropagate);
+    }
 
     return adoptCF(rawSampleBuffer);
 }

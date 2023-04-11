@@ -23,6 +23,13 @@
 
     window.addEventListener('load', async event => {
         try {
+            // NOTE: A bug in ffmpeg causes a 1ms mismatch between the Opus
+            // packet duration of the first WebM block, and the start time of
+            // the subsequent block. Until all ports agree on whether to use
+            // the packet duration or the block timestamps, this tolerance
+            // value allows this to continue passing normally.
+            const OpusBufferedTolerance = 0.001;
+
             findMediaElement();
             loader = new MediaSourceLoader('content/test-opus-manifest.json');
             await loaderPromise(loader);
@@ -58,7 +65,7 @@
             run('sourceBuffer.appendBuffer(loader.mediaSegment(0).slice(0, loader.mediaSegmentSize(0)/2))');
             await waitFor(sourceBuffer, 'update');
             testExpected('sourceBuffer.buffered.length', '2');
-            testExpected('sourceBuffer.buffered.end(0)', '3.961');
+            testExpectedEqualWithTolerance('sourceBuffer.buffered.end(0)', '3.96', OpusBufferedTolerance);
             testExpected('sourceBuffer.buffered.end(1)', '7.401');
 
             consoleWrite('Clean sourcebuffer of all content.');
@@ -80,7 +87,7 @@
             run('sourceBuffer.appendBuffer(loader.mediaSegment(0).slice(0, loader.mediaSegmentSize(0)/2))');
             await waitFor(sourceBuffer, 'update');
             testExpected('sourceBuffer.buffered.length', '2');
-            testExpected('sourceBuffer.buffered.end(0)', '3.961');
+            testExpectedEqualWithTolerance('sourceBuffer.buffered.end(0)', '3.96', OpusBufferedTolerance);
             testExpected('sourceBuffer.buffered.end(1)', '7.401');
 
             consoleWrite('Clean sourcebuffer of all content.');
@@ -97,7 +104,7 @@
             run('sourceBuffer.appendBuffer(loader.mediaSegment(0).slice(0, loader.mediaSegmentSize(0)/2))');
             await waitFor(sourceBuffer, 'update');
             testExpected('sourceBuffer.buffered.length', '1');
-            testExpected('sourceBuffer.buffered.end(0)', '3.961');
+            testExpectedEqualWithTolerance('sourceBuffer.buffered.end(0)', '3.96', OpusBufferedTolerance);
 
             endTest();
         } catch (e) {
