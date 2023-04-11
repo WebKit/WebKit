@@ -26,7 +26,7 @@
 #pragma once
 
 #include "CachedResourceHandle.h"
-#include <wtf/HashMap.h>
+#include <wtf/WeakHashMap.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -48,10 +48,9 @@ private:
     enum AlreadyAdded { NotYetAdded, Added };
     struct InitiatorInfo {
         AtomString type;
-        AlreadyAdded added;
+        AlreadyAdded added { NotYetAdded };
     };
-    // FIXME: This shoudn't use raw pointer as identifier (though it is not dereferenced).
-    HashMap<CachedResource*, InitiatorInfo> m_initiatorMap;
+    WeakHashMap<CachedResource, InitiatorInfo> m_initiatorMap;
 };
 
 }
