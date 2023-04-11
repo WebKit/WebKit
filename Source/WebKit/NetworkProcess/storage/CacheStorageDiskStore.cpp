@@ -297,7 +297,7 @@ static std::optional<StoredRecordInformation> readRecordInfoFromFileData(const F
         return std::nullopt;
 
     CacheStorageRecordInformation info { metaData->key, header->insertionTime, 0, 0, header->responseBodySize, header->request.url(), false, { } };
-    info.updateVaryHeaders(header->request, header->responseData.httpHeaderFields.get(WebCore::HTTPHeaderName::Vary));
+    info.updateVaryHeaders(header->request, header->responseData);
     return StoredRecordInformation { info, WTFMove(*metaData), WTFMove(*header) };
 }
 

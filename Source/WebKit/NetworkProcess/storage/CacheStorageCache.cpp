@@ -135,7 +135,7 @@ static CacheStorageRecord toCacheStorageRecord(WebCore::DOMCacheEngine::CrossThr
 {
     NetworkCache::Key key { "record"_s, uniqueName, { }, createVersion4UUIDString(), salt };
     CacheStorageRecordInformation recordInfo { WTFMove(key), MonotonicTime::now().secondsSinceEpoch().milliseconds(), record.identifier, 0 , record.responseBodySize, record.request.url(), false, { } };
-    recordInfo.updateVaryHeaders(record.request, record.response.httpHeaderFields.get(WebCore::HTTPHeaderName::Vary));
+    recordInfo.updateVaryHeaders(record.request, record.response);
 
     return CacheStorageRecord { WTFMove(recordInfo), record.requestHeadersGuard, WTFMove(record.request), record.options, WTFMove(record.referrer), record.responseHeadersGuard, WTFMove(record.response), record.responseBodySize, WTFMove(record.responseBody) };
 }
@@ -351,7 +351,7 @@ void CacheStorageCache::putRecordsInStore(Vector<CacheStorageRecord>&& records, 
             record.request = WTFMove(existingRecord->request);
             record.options = WTFMove(existingRecord->options);
             record.referrer = WTFMove(existingRecord->referrer);
-            record.info.updateVaryHeaders(record.request, record.responseData.httpHeaderFields.get(WebCore::HTTPHeaderName::Vary));
+            record.info.updateVaryHeaders(record.request, record.responseData);
             sizeIncreased += record.info.size;
             sizeDecreased += existingRecordInfo->size;
             existingRecordInfo->size = record.info.size;
