@@ -241,16 +241,6 @@ bool Quirks::shouldHideSearchFieldResultsButton() const
     return false;
 }
 
-// icourse163.org https://bugs.webkit.org/show_bug.cgi?id=210510
-// FIXME: https://bugs.webkit.org/show_bug.cgi?id=210527
-bool Quirks::needsMillisecondResolutionForHighResTimeStamp() const
-{
-    if (!needsQuirks())
-        return false;
-    auto host = m_document->url().host();
-    return equalLettersIgnoringASCIICase(host, "www.icourse163.org"_s);
-}
-
 // docs.google.com https://bugs.webkit.org/show_bug.cgi?id=161984
 bool Quirks::isTouchBarUpdateSupressedForHiddenContentEditable() const
 {
