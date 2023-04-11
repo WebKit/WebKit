@@ -146,7 +146,9 @@ void JSTestDelegateToSharedSyntheticAttribute::finishCreation(VM& vm)
 
 JSObject* JSTestDelegateToSharedSyntheticAttribute::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    return JSTestDelegateToSharedSyntheticAttributePrototype::create(vm, &globalObject, JSTestDelegateToSharedSyntheticAttributePrototype::createStructure(vm, &globalObject, globalObject.objectPrototype()));
+    auto* structure = JSTestDelegateToSharedSyntheticAttributePrototype::createStructure(vm, &globalObject, globalObject.objectPrototype());
+    structure->setMayBePrototype(true);
+    return JSTestDelegateToSharedSyntheticAttributePrototype::create(vm, &globalObject, structure);
 }
 
 JSObject* JSTestDelegateToSharedSyntheticAttribute::prototype(VM& vm, JSDOMGlobalObject& globalObject)

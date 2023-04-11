@@ -158,7 +158,9 @@ void JSTestReadOnlyMapLike::finishCreation(VM& vm)
 
 JSObject* JSTestReadOnlyMapLike::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    return JSTestReadOnlyMapLikePrototype::create(vm, &globalObject, JSTestReadOnlyMapLikePrototype::createStructure(vm, &globalObject, globalObject.objectPrototype()));
+    auto* structure = JSTestReadOnlyMapLikePrototype::createStructure(vm, &globalObject, globalObject.objectPrototype());
+    structure->setMayBePrototype(true);
+    return JSTestReadOnlyMapLikePrototype::create(vm, &globalObject, structure);
 }
 
 JSObject* JSTestReadOnlyMapLike::prototype(VM& vm, JSDOMGlobalObject& globalObject)

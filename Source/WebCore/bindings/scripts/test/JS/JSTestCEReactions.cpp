@@ -170,7 +170,9 @@ void JSTestCEReactions::finishCreation(VM& vm)
 
 JSObject* JSTestCEReactions::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    return JSTestCEReactionsPrototype::create(vm, &globalObject, JSTestCEReactionsPrototype::createStructure(vm, &globalObject, globalObject.objectPrototype()));
+    auto* structure = JSTestCEReactionsPrototype::createStructure(vm, &globalObject, globalObject.objectPrototype());
+    structure->setMayBePrototype(true);
+    return JSTestCEReactionsPrototype::create(vm, &globalObject, structure);
 }
 
 JSObject* JSTestCEReactions::prototype(VM& vm, JSDOMGlobalObject& globalObject)

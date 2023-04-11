@@ -143,7 +143,9 @@ void JSTestStringifierOperationImplementedAs::finishCreation(VM& vm)
 
 JSObject* JSTestStringifierOperationImplementedAs::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    return JSTestStringifierOperationImplementedAsPrototype::create(vm, &globalObject, JSTestStringifierOperationImplementedAsPrototype::createStructure(vm, &globalObject, globalObject.objectPrototype()));
+    auto* structure = JSTestStringifierOperationImplementedAsPrototype::createStructure(vm, &globalObject, globalObject.objectPrototype());
+    structure->setMayBePrototype(true);
+    return JSTestStringifierOperationImplementedAsPrototype::create(vm, &globalObject, structure);
 }
 
 JSObject* JSTestStringifierOperationImplementedAs::prototype(VM& vm, JSDOMGlobalObject& globalObject)

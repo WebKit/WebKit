@@ -168,7 +168,9 @@ void JSTestMapLikeWithOverriddenOperations::finishCreation(VM& vm)
 
 JSObject* JSTestMapLikeWithOverriddenOperations::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    return JSTestMapLikeWithOverriddenOperationsPrototype::create(vm, &globalObject, JSTestMapLikeWithOverriddenOperationsPrototype::createStructure(vm, &globalObject, globalObject.objectPrototype()));
+    auto* structure = JSTestMapLikeWithOverriddenOperationsPrototype::createStructure(vm, &globalObject, globalObject.objectPrototype());
+    structure->setMayBePrototype(true);
+    return JSTestMapLikeWithOverriddenOperationsPrototype::create(vm, &globalObject, structure);
 }
 
 JSObject* JSTestMapLikeWithOverriddenOperations::prototype(VM& vm, JSDOMGlobalObject& globalObject)

@@ -191,7 +191,9 @@ void JSTestCallTracer::finishCreation(VM& vm)
 
 JSObject* JSTestCallTracer::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    return JSTestCallTracerPrototype::create(vm, &globalObject, JSTestCallTracerPrototype::createStructure(vm, &globalObject, globalObject.objectPrototype()));
+    auto* structure = JSTestCallTracerPrototype::createStructure(vm, &globalObject, globalObject.objectPrototype());
+    structure->setMayBePrototype(true);
+    return JSTestCallTracerPrototype::create(vm, &globalObject, structure);
 }
 
 JSObject* JSTestCallTracer::prototype(VM& vm, JSDOMGlobalObject& globalObject)

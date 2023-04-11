@@ -259,7 +259,9 @@ void JSTestTypedefs::finishCreation(VM& vm)
 
 JSObject* JSTestTypedefs::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    return JSTestTypedefsPrototype::create(vm, &globalObject, JSTestTypedefsPrototype::createStructure(vm, &globalObject, globalObject.objectPrototype()));
+    auto* structure = JSTestTypedefsPrototype::createStructure(vm, &globalObject, globalObject.objectPrototype());
+    structure->setMayBePrototype(true);
+    return JSTestTypedefsPrototype::create(vm, &globalObject, structure);
 }
 
 JSObject* JSTestTypedefs::prototype(VM& vm, JSDOMGlobalObject& globalObject)

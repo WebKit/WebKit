@@ -136,7 +136,9 @@ void JSTestNamedGetterCallWith::finishCreation(VM& vm)
 
 JSObject* JSTestNamedGetterCallWith::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    return JSTestNamedGetterCallWithPrototype::create(vm, &globalObject, JSTestNamedGetterCallWithPrototype::createStructure(vm, &globalObject, globalObject.objectPrototype()));
+    auto* structure = JSTestNamedGetterCallWithPrototype::createStructure(vm, &globalObject, globalObject.objectPrototype());
+    structure->setMayBePrototype(true);
+    return JSTestNamedGetterCallWithPrototype::create(vm, &globalObject, structure);
 }
 
 JSObject* JSTestNamedGetterCallWith::prototype(VM& vm, JSDOMGlobalObject& globalObject)

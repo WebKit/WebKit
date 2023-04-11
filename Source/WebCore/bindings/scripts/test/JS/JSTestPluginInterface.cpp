@@ -135,7 +135,9 @@ void JSTestPluginInterface::finishCreation(VM& vm)
 
 JSObject* JSTestPluginInterface::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    return JSTestPluginInterfacePrototype::create(vm, &globalObject, JSTestPluginInterfacePrototype::createStructure(vm, &globalObject, globalObject.objectPrototype()));
+    auto* structure = JSTestPluginInterfacePrototype::createStructure(vm, &globalObject, globalObject.objectPrototype());
+    structure->setMayBePrototype(true);
+    return JSTestPluginInterfacePrototype::create(vm, &globalObject, structure);
 }
 
 JSObject* JSTestPluginInterface::prototype(VM& vm, JSDOMGlobalObject& globalObject)

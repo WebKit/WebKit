@@ -139,7 +139,9 @@ void JSTestGenerateAddOpaqueRoot::finishCreation(VM& vm)
 
 JSObject* JSTestGenerateAddOpaqueRoot::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    return JSTestGenerateAddOpaqueRootPrototype::create(vm, &globalObject, JSTestGenerateAddOpaqueRootPrototype::createStructure(vm, &globalObject, globalObject.objectPrototype()));
+    auto* structure = JSTestGenerateAddOpaqueRootPrototype::createStructure(vm, &globalObject, globalObject.objectPrototype());
+    structure->setMayBePrototype(true);
+    return JSTestGenerateAddOpaqueRootPrototype::create(vm, &globalObject, structure);
 }
 
 JSObject* JSTestGenerateAddOpaqueRoot::prototype(VM& vm, JSDOMGlobalObject& globalObject)

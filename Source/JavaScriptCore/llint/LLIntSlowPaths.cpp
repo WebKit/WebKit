@@ -965,7 +965,8 @@ LLINT_SLOW_PATH_DECL(slow_path_put_by_id)
     if (Options::useLLIntICs()
         && baseValue.isCell()
         && slot.isCacheablePut()
-        && oldStructure->propertyAccessesAreCacheable()) {
+        && oldStructure->propertyAccessesAreCacheable()
+        && !oldStructure->mayBePrototype()) {
         {
             StructureID oldStructureID = metadata.m_oldStructureID;
             if (oldStructureID) {

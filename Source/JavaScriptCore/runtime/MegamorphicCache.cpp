@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,40 +20,40 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
-#include "StubInfoSummary.h"
+#include "MegamorphicCache.h"
 
-#include <wtf/PrintStream.h>
+namespace JSC {
 
-namespace WTF {
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(MegamorphicCache);
 
-void printInternal(PrintStream& out, JSC::StubInfoSummary summary)
+void MegamorphicCache::age(CollectionScope collectionScope)
 {
-    switch (summary) {
-    case JSC::StubInfoSummary::NoInformation:
-        out.print("NoInformation");
-        return;
-    case JSC::StubInfoSummary::Simple:
-        out.print("Simple");
-        return;
-    case JSC::StubInfoSummary::Megamorphic:
-        out.print("Megamorphic");
-        return;
-    case JSC::StubInfoSummary::MakesCalls:
-        out.print("MakesCalls");
-        return;
-    case JSC::StubInfoSummary::TakesSlowPath:
-        out.print("TakesSlowPath");
-        return;
-    case JSC::StubInfoSummary::TakesSlowPathAndMakesCalls:
-        out.print("TakesSlowPathAndMakesCalls");
-        return;
+    ++m_epoch;
+    if (collectionScope == CollectionScope::Full || m_epoch == invalidEpoch) {
+        for (auto& entry : m_primaryEntries) {
+            entry.m_uid = nullptr;
+            entry.m_epoch = invalidEpoch;
+        }
+        for (auto& entry : m_secondaryEntries) {
+            entry.m_uid = nullptr;
+            entry.m_epoch = invalidEpoch;
+        }
+        if (m_epoch == invalidEpoch)
+            m_epoch = 1;
     }
-    RELEASE_ASSERT_NOT_REACHED();
 }
 
-} // namespace WTF
+void MegamorphicCache::clearEntries()
+{
+    for (auto& entry : m_primaryEntries)
+        entry.m_epoch = invalidEpoch;
+    for (auto& entry : m_secondaryEntries)
+        entry.m_epoch = invalidEpoch;
+    m_epoch = 1;
+}
 
+} // namespace JSC

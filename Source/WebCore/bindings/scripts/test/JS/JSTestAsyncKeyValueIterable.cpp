@@ -150,7 +150,9 @@ void JSTestAsyncKeyValueIterable::finishCreation(VM& vm)
 
 JSObject* JSTestAsyncKeyValueIterable::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    return JSTestAsyncKeyValueIterablePrototype::create(vm, &globalObject, JSTestAsyncKeyValueIterablePrototype::createStructure(vm, &globalObject, globalObject.objectPrototype()));
+    auto* structure = JSTestAsyncKeyValueIterablePrototype::createStructure(vm, &globalObject, globalObject.objectPrototype());
+    structure->setMayBePrototype(true);
+    return JSTestAsyncKeyValueIterablePrototype::create(vm, &globalObject, structure);
 }
 
 JSObject* JSTestAsyncKeyValueIterable::prototype(VM& vm, JSDOMGlobalObject& globalObject)
