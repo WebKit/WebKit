@@ -180,7 +180,7 @@ static SDKAlignedBehaviors computeSDKAlignedBehaviors()
         disableBehavior(SDKAlignedBehavior::UIBackForwardSkipsHistoryItemsWithoutUserGesture);
     }
 
-    if (linkedBefore(dyld_spring_2023_os_versions, DYLD_IOS_VERSION_16_4, DYLD_MACOSX_VERSION_13_4)) {
+    if (linkedBefore(dyld_spring_2023_os_versions, DYLD_IOS_VERSION_16_4, DYLD_MACOSX_VERSION_13_3)) {
         disableBehavior(SDKAlignedBehavior::NoShowModalDialog);
         disableBehavior(SDKAlignedBehavior::DoesNotAddIntrinsicMarginsToFormControls);
         disableBehavior(SDKAlignedBehavior::ProgrammaticFocusDuringUserScriptShowsInputViews);
