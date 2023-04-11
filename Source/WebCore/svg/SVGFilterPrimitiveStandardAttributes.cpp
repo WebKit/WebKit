@@ -46,24 +46,24 @@ SVGFilterPrimitiveStandardAttributes::SVGFilterPrimitiveStandardAttributes(const
     });
 }
 
-void SVGFilterPrimitiveStandardAttributes::parseAttribute(const QualifiedName& name, const AtomString& value)
+void SVGFilterPrimitiveStandardAttributes::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     SVGParsingError parseError = NoError;
 
     if (name == SVGNames::xAttr)
-        m_x->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Width, value, parseError));
+        m_x->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Width, newValue, parseError));
     else if (name == SVGNames::yAttr)
-        m_y->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Height, value, parseError));
+        m_y->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Height, newValue, parseError));
     else if (name == SVGNames::widthAttr)
-        m_width->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Width, value, parseError));
+        m_width->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Width, newValue, parseError));
     else if (name == SVGNames::heightAttr)
-        m_height->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Height, value, parseError));
+        m_height->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Height, newValue, parseError));
     else if (name == SVGNames::resultAttr)
-        m_result->setBaseValInternal(value);
+        m_result->setBaseValInternal(newValue);
 
-    reportAttributeParsingError(parseError, name, value);
+    reportAttributeParsingError(parseError, name, newValue);
 
-    SVGElement::parseAttribute(name, value);
+    SVGElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }
 
 OptionSet<FilterEffectGeometry::Flags> SVGFilterPrimitiveStandardAttributes::effectGeometryFlags() const

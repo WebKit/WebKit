@@ -40,7 +40,7 @@ private:
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGStopElement, SVGElement>;
 
-    void parseAttribute(const QualifiedName&, const AtomString&) final;
+    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
     void svgAttributeChanged(const QualifiedName&) final;
 
     bool isGradientStop() const final { return true; }

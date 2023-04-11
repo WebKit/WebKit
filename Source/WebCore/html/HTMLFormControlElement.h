@@ -114,7 +114,7 @@ protected:
     void didAttachRenderers() override;
     void didMoveToNewDocument(Document& oldDocument, Document& newDocument) override;
     void removedFromAncestor(RemovalType, ContainerNode&) override;
-    void parseAttribute(const QualifiedName&, const AtomString&) override;
+    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
 
     void disabledStateChanged() override;
     void readOnlyStateChanged() override;

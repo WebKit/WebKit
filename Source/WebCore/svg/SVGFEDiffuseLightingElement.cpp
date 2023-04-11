@@ -51,32 +51,32 @@ Ref<SVGFEDiffuseLightingElement> SVGFEDiffuseLightingElement::create(const Quali
     return adoptRef(*new SVGFEDiffuseLightingElement(tagName, document));
 }
 
-void SVGFEDiffuseLightingElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void SVGFEDiffuseLightingElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
+    SVGFilterPrimitiveStandardAttributes::attributeChanged(name, oldValue, newValue, attributeModificationReason);
+
     if (name == SVGNames::inAttr) {
-        m_in1->setBaseValInternal(value);
+        m_in1->setBaseValInternal(newValue);
         return;
     }
 
     if (name == SVGNames::surfaceScaleAttr) {
-        m_surfaceScale->setBaseValInternal(value.toFloat());
+        m_surfaceScale->setBaseValInternal(newValue.toFloat());
         return;
     }
 
     if (name == SVGNames::diffuseConstantAttr) {
-        m_diffuseConstant->setBaseValInternal(value.toFloat());
+        m_diffuseConstant->setBaseValInternal(newValue.toFloat());
         return;
     }
 
     if (name == SVGNames::kernelUnitLengthAttr) {
-        if (auto result = parseNumberOptionalNumber(value)) {
+        if (auto result = parseNumberOptionalNumber(newValue)) {
             m_kernelUnitLengthX->setBaseValInternal(result->first);
             m_kernelUnitLengthY->setBaseValInternal(result->second);
         }
         return;
     }
-
-    SVGFilterPrimitiveStandardAttributes::parseAttribute(name, value);
 }
 
 bool SVGFEDiffuseLightingElement::setFilterEffectAttribute(FilterEffect& effect, const QualifiedName& attrName)

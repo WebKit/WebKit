@@ -58,20 +58,20 @@ SVGCursorElement::~SVGCursorElement()
         client->cursorElementRemoved(*this);
 }
 
-void SVGCursorElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void SVGCursorElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     SVGParsingError parseError = NoError;
 
     if (name == SVGNames::xAttr)
-        m_x->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Width, value, parseError));
+        m_x->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Width, newValue, parseError));
     else if (name == SVGNames::yAttr)
-        m_y->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Height, value, parseError));
+        m_y->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Height, newValue, parseError));
 
-    reportAttributeParsingError(parseError, name, value);
+    reportAttributeParsingError(parseError, name, newValue);
 
-    SVGElement::parseAttribute(name, value);
-    SVGTests::parseAttribute(name, value);
-    SVGURIReference::parseAttribute(name, value);
+    SVGURIReference::parseAttribute(name, newValue);
+    SVGTests::parseAttribute(name, newValue);
+    SVGElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }
 
 void SVGCursorElement::addClient(StyleCursorImage& value)

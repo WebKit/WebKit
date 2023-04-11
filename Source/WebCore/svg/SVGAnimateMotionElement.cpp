@@ -98,15 +98,14 @@ bool SVGAnimateMotionElement::hasValidAttributeName() const
     return true;
 }
 
-void SVGAnimateMotionElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void SVGAnimateMotionElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
-    if (name == SVGNames::pathAttr) {
-        m_path = buildPathFromString(value);
-        updateAnimationPath();
-        return;
-    }
+    SVGAnimationElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 
-    SVGAnimationElement::parseAttribute(name, value);
+    if (name == SVGNames::pathAttr) {
+        m_path = buildPathFromString(newValue);
+        updateAnimationPath();
+    }
 }
     
 SVGAnimateMotionElement::RotateMode SVGAnimateMotionElement::rotateMode() const

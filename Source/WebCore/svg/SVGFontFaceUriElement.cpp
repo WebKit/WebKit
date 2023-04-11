@@ -66,12 +66,11 @@ Ref<CSSFontFaceSrcResourceValue> SVGFontFaceUriElement::createSrcValue() const
     return CSSFontFaceSrcResourceValue::create(WTFMove(location), format.isEmpty() ? "svg"_s : format.string(), LoadedFromOpaqueSource::No);
 }
 
-void SVGFontFaceUriElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void SVGFontFaceUriElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
+    SVGElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
     if (name == SVGNames::hrefAttr || name == XLinkNames::hrefAttr)
         loadFont();
-    else
-        SVGElement::parseAttribute(name, value);
 }
 
 void SVGFontFaceUriElement::childrenChanged(const ChildChange& change)

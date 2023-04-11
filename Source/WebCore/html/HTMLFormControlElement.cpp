@@ -144,10 +144,10 @@ void HTMLFormControlElement::removedFromAncestor(RemovalType removalType, Contai
     checkAndPossiblyClosePopoverStack();
 }
 
-void HTMLFormControlElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void HTMLFormControlElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     if (name == requiredAttr) {
-        bool newRequired = !value.isNull();
+        bool newRequired = !newValue.isNull();
         if (m_isRequired != newRequired) {
             Style::PseudoClassChangeInvalidation requiredInvalidation(*this, { { CSSSelector::PseudoClassRequired, newRequired }, { CSSSelector::PseudoClassOptional, !newRequired } });
             m_isRequired = newRequired;
@@ -156,8 +156,8 @@ void HTMLFormControlElement::parseAttribute(const QualifiedName& name, const Ato
     } else if (name == popovertargetAttr)
         checkAndPossiblyClosePopoverStack();
     else {
-        HTMLElement::parseAttribute(name, value);
-        ValidatedFormListedElement::parseAttribute(name, value);
+        HTMLElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
+        ValidatedFormListedElement::parseAttribute(name, newValue);
     }
 }
 

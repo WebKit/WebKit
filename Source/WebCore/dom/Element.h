@@ -306,9 +306,8 @@ public:
         ModifiedByCloning
     };
 
-    // These functions are called whenever an attribute is added, changed or removed.
+    // This function is called whenever an attribute is added, changed or removed.
     virtual void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason = ModifiedDirectly);
-    virtual void parseAttribute(const QualifiedName&, const AtomString&) { }
 
     // Only called by the parser immediately after element construction.
     void parserSetAttributes(Span<const Attribute>);

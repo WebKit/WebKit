@@ -75,7 +75,7 @@ private:
     bool rendererIsNeeded(const RenderStyle&) final { return false; }
     bool matchesDefaultPseudoClass() const final;
 
-    void parseAttribute(const QualifiedName&, const AtomString&) final;
+    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
 
     bool accessKeyAction(bool) final;
 

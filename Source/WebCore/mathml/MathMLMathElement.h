@@ -41,7 +41,7 @@ public:
 private:
     constexpr static auto CreateMathMLMathElement = CreateMathMLRowElement | NodeFlag::HasCustomStyleResolveCallbacks;
     MathMLMathElement(const QualifiedName& tagName, Document&);
-    void parseAttribute(const QualifiedName&, const AtomString&) final;
+    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
     void didAttachRenderers() final;
 
     bool acceptsMathVariantAttribute() final { return true; }

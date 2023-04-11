@@ -65,14 +65,14 @@ void HTMLScriptElement::childrenChanged(const ChildChange& change)
     ScriptElement::childrenChanged(change);
 }
 
-void HTMLScriptElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void HTMLScriptElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     if (name == srcAttr)
-        handleSourceAttribute(value);
+        handleSourceAttribute(newValue);
     else if (name == asyncAttr)
         handleAsyncAttribute();
     else
-        HTMLElement::parseAttribute(name, value);
+        HTMLElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }
 
 Node::InsertedIntoAncestorResult HTMLScriptElement::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)

@@ -51,24 +51,26 @@ Ref<SVGFETurbulenceElement> SVGFETurbulenceElement::create(const QualifiedName& 
     return adoptRef(*new SVGFETurbulenceElement(tagName, document));
 }
 
-void SVGFETurbulenceElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void SVGFETurbulenceElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
+    SVGFilterPrimitiveStandardAttributes::attributeChanged(name, oldValue, newValue, attributeModificationReason);
+
     if (name == SVGNames::typeAttr) {
-        TurbulenceType propertyValue = SVGPropertyTraits<TurbulenceType>::fromString(value);
+        TurbulenceType propertyValue = SVGPropertyTraits<TurbulenceType>::fromString(newValue);
         if (propertyValue != TurbulenceType::Unknown)
             m_type->setBaseValInternal<TurbulenceType>(propertyValue);
         return;
     }
 
     if (name == SVGNames::stitchTilesAttr) {
-        SVGStitchOptions propertyValue = SVGPropertyTraits<SVGStitchOptions>::fromString(value);
+        SVGStitchOptions propertyValue = SVGPropertyTraits<SVGStitchOptions>::fromString(newValue);
         if (propertyValue > 0)
             m_stitchTiles->setBaseValInternal<SVGStitchOptions>(propertyValue);
         return;
     }
 
     if (name == SVGNames::baseFrequencyAttr) {
-        if (auto result = parseNumberOptionalNumber(value)) {
+        if (auto result = parseNumberOptionalNumber(newValue)) {
             m_baseFrequencyX->setBaseValInternal(result->first);
             m_baseFrequencyY->setBaseValInternal(result->second);
         }
@@ -76,16 +78,14 @@ void SVGFETurbulenceElement::parseAttribute(const QualifiedName& name, const Ato
     }
 
     if (name == SVGNames::seedAttr) {
-        m_seed->setBaseValInternal(value.toFloat());
+        m_seed->setBaseValInternal(newValue.toFloat());
         return;
     }
 
     if (name == SVGNames::numOctavesAttr) {
-        m_numOctaves->setBaseValInternal(parseInteger<unsigned>(value).value_or(0));
+        m_numOctaves->setBaseValInternal(parseInteger<unsigned>(newValue).value_or(0));
         return;
     }
-
-    SVGFilterPrimitiveStandardAttributes::parseAttribute(name, value);
 }
 
 bool SVGFETurbulenceElement::setFilterEffectAttribute(FilterEffect& effect, const QualifiedName& attrName)

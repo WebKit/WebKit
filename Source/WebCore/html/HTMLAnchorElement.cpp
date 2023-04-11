@@ -234,28 +234,28 @@ void HTMLAnchorElement::setActive(bool down, Style::InvalidationScope invalidati
     HTMLElement::setActive(down, invalidationScope);
 }
 
-void HTMLAnchorElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void HTMLAnchorElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
+    HTMLElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
+
     if (name == hrefAttr) {
         bool wasLink = isLink();
-        setIsLink(!value.isNull() && !shouldProhibitLinks(this));
+        setIsLink(!newValue.isNull() && !shouldProhibitLinks(this));
         if (wasLink != isLink())
             invalidateStyleForSubtree();
         if (isLink()) {
-            String parsedURL = stripLeadingAndTrailingHTMLSpaces(value);
+            String parsedURL = stripLeadingAndTrailingHTMLSpaces(newValue);
             if (document().isDNSPrefetchEnabled() && document().frame()) {
                 if (protocolIsInHTTPFamily(parsedURL) || parsedURL.startsWith("//"_s))
                     document().frame()->loader().client().prefetchDNS(document().completeURL(parsedURL).host().toString());
             }
         }
-    } else if (name == nameAttr || name == titleAttr) {
-        // Do nothing.
     } else if (name == relAttr) {
         // Update HTMLAnchorElement::relList() if more rel attributes values are supported.
         static MainThreadNeverDestroyed<const AtomString> noReferrer("noreferrer"_s);
         static MainThreadNeverDestroyed<const AtomString> noOpener("noopener"_s);
         static MainThreadNeverDestroyed<const AtomString> opener("opener"_s);
-        SpaceSplitString relValue(value, SpaceSplitString::ShouldFoldCase::Yes);
+        SpaceSplitString relValue(newValue, SpaceSplitString::ShouldFoldCase::Yes);
         if (relValue.contains(noReferrer))
             m_linkRelations.add(Relation::NoReferrer);
         if (relValue.contains(noOpener))
@@ -263,10 +263,8 @@ void HTMLAnchorElement::parseAttribute(const QualifiedName& name, const AtomStri
         if (relValue.contains(opener))
             m_linkRelations.add(Relation::Opener);
         if (m_relList)
-            m_relList->associatedAttributeValueChanged(value);
+            m_relList->associatedAttributeValueChanged(newValue);
     }
-    else
-        HTMLElement::parseAttribute(name, value);
 }
 
 bool HTMLAnchorElement::isURLAttribute(const Attribute& attribute) const

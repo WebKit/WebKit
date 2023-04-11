@@ -48,24 +48,24 @@ Ref<SVGFEOffsetElement> SVGFEOffsetElement::create(const QualifiedName& tagName,
     return adoptRef(*new SVGFEOffsetElement(tagName, document));
 }
 
-void SVGFEOffsetElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void SVGFEOffsetElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
+    SVGFilterPrimitiveStandardAttributes::attributeChanged(name, oldValue, newValue, attributeModificationReason);
+
     if (name == SVGNames::dxAttr) {
-        m_dx->setBaseValInternal(value.toFloat());
+        m_dx->setBaseValInternal(newValue.toFloat());
         return;
     }
 
     if (name == SVGNames::dyAttr) {
-        m_dy->setBaseValInternal(value.toFloat());
+        m_dy->setBaseValInternal(newValue.toFloat());
         return;
     }
 
     if (name == SVGNames::inAttr) {
-        m_in1->setBaseValInternal(value);
+        m_in1->setBaseValInternal(newValue);
         return;
     }
-
-    SVGFilterPrimitiveStandardAttributes::parseAttribute(name, value);
 }
 
 void SVGFEOffsetElement::svgAttributeChanged(const QualifiedName& attrName)

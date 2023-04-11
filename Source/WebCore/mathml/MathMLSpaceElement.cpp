@@ -63,7 +63,7 @@ const MathMLElement::Length& MathMLSpaceElement::depth()
     return cachedMathMLLength(MathMLNames::depthAttr, m_depth);
 }
 
-void MathMLSpaceElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void MathMLSpaceElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     if (name == widthAttr)
         m_width = std::nullopt;
@@ -72,7 +72,7 @@ void MathMLSpaceElement::parseAttribute(const QualifiedName& name, const AtomStr
     else if (name == depthAttr)
         m_depth = std::nullopt;
 
-    MathMLPresentationElement::parseAttribute(name, value);
+    MathMLPresentationElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }
 
 RenderPtr<RenderElement> MathMLSpaceElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)

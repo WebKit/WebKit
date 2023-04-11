@@ -143,17 +143,18 @@ void HTMLTextAreaElement::collectPresentationalHintsForAttribute(const Qualified
         HTMLTextFormControlElement::collectPresentationalHintsForAttribute(name, value, style);
 }
 
-void HTMLTextAreaElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void HTMLTextAreaElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
+    HTMLTextFormControlElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
     if (name == rowsAttr) {
-        unsigned rows = limitToOnlyHTMLNonNegativeNumbersGreaterThanZero(value, defaultRows);
+        unsigned rows = limitToOnlyHTMLNonNegativeNumbersGreaterThanZero(newValue, defaultRows);
         if (m_rows != rows) {
             m_rows = rows;
             if (renderer())
                 renderer()->setNeedsLayoutAndPrefWidthsRecalc();
         }
     } else if (name == colsAttr) {
-        unsigned cols = limitToOnlyHTMLNonNegativeNumbersGreaterThanZero(value, defaultCols);
+        unsigned cols = limitToOnlyHTMLNonNegativeNumbersGreaterThanZero(newValue, defaultCols);
         if (m_cols != cols) {
             m_cols = cols;
             if (renderer())
@@ -163,9 +164,9 @@ void HTMLTextAreaElement::parseAttribute(const QualifiedName& name, const AtomSt
         // The virtual/physical values were a Netscape extension of HTML 3.0, now deprecated.
         // The soft/hard /off values are a recommendation for HTML 4 extension by IE and NS 4.
         WrapMethod wrap;
-        if (equalLettersIgnoringASCIICase(value, "physical"_s) || equalLettersIgnoringASCIICase(value, "hard"_s) || equalLettersIgnoringASCIICase(value, "on"_s))
+        if (equalLettersIgnoringASCIICase(newValue, "physical"_s) || equalLettersIgnoringASCIICase(newValue, "hard"_s) || equalLettersIgnoringASCIICase(newValue, "on"_s))
             wrap = HardWrap;
-        else if (equalLettersIgnoringASCIICase(value, "off"_s))
+        else if (equalLettersIgnoringASCIICase(newValue, "off"_s))
             wrap = NoWrap;
         else
             wrap = SoftWrap;
@@ -175,13 +176,12 @@ void HTMLTextAreaElement::parseAttribute(const QualifiedName& name, const AtomSt
                 renderer()->setNeedsLayoutAndPrefWidthsRecalc();
         }
     } else if (name == maxlengthAttr) {
-        internalSetMaxLength(parseHTMLNonNegativeInteger(value).value_or(-1));
+        internalSetMaxLength(parseHTMLNonNegativeInteger(newValue).value_or(-1));
         updateValidity();
     } else if (name == minlengthAttr) {
-        internalSetMinLength(parseHTMLNonNegativeInteger(value).value_or(-1));
+        internalSetMinLength(parseHTMLNonNegativeInteger(newValue).value_or(-1));
         updateValidity();
-    } else
-        HTMLTextFormControlElement::parseAttribute(name, value);
+    }
 }
 
 RenderPtr<RenderElement> HTMLTextAreaElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)

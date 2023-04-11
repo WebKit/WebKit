@@ -72,13 +72,15 @@ Ref<SVGFontFaceElement> SVGFontFaceElement::create(const QualifiedName& tagName,
     return adoptRef(*new SVGFontFaceElement(tagName, document));
 }
 
-void SVGFontFaceElement::parseAttribute(const QualifiedName& name, const AtomString& value)
-{    
+void SVGFontFaceElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
+{
+    SVGElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
+
     CSSPropertyID propertyId = cssPropertyIdForSVGAttributeName(name);
     if (propertyId > 0) {
         // FIXME: Parse using the @font-face descriptor grammars, not the property grammars.
         auto& properties = m_fontFaceRule->mutableProperties();
-        bool valueChanged = properties.setProperty(propertyId, value);
+        bool valueChanged = properties.setProperty(propertyId, newValue);
 
         if (valueChanged) {
             // The above parser is designed for the font-face properties, not descriptors, and the properties accept the global keywords, but descriptors don't.
@@ -93,8 +95,6 @@ void SVGFontFaceElement::parseAttribute(const QualifiedName& name, const AtomStr
         rebuildFontFace();
         return;
     }
-    
-    SVGElement::parseAttribute(name, value);
 }
 
 unsigned SVGFontFaceElement::unitsPerEm() const

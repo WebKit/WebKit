@@ -185,7 +185,6 @@ private:
     void setFormInternal(RefPtr<HTMLFormElement>&&) final;
 
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
-    void parseAttribute(const QualifiedName&, const AtomString&) override;
     bool hasPresentationalHintsForAttribute(const QualifiedName&) const override;
     void collectPresentationalHintsForAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) override;
     void collectExtraStyleForPresentationalHints(MutableStyleProperties&) override;

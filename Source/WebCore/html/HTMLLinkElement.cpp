@@ -159,14 +159,14 @@ void HTMLLinkElement::setDisabledState(bool disabled)
     }
 }
 
-void HTMLLinkElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void HTMLLinkElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     if (name == relAttr) {
-        auto parsedRel = LinkRelAttribute(document(), value);
+        auto parsedRel = LinkRelAttribute(document(), newValue);
         auto didMutateRel = parsedRel != m_relAttribute;
         m_relAttribute = WTFMove(parsedRel);
         if (m_relList)
-            m_relList->associatedAttributeValueChanged(value);
+            m_relList->associatedAttributeValueChanged(newValue);
         if (didMutateRel)
             process();
         return;
@@ -180,20 +180,20 @@ void HTMLLinkElement::parseAttribute(const QualifiedName& name, const AtomString
         return;
     }
     if (name == typeAttr) {
-        if (value == m_type)
+        if (newValue == m_type)
             return;
-        m_type = value;
+        m_type = newValue;
         process();
         return;
     }
     if (name == sizesAttr) {
         if (m_sizes)
-            m_sizes->associatedAttributeValueChanged(value);
+            m_sizes->associatedAttributeValueChanged(newValue);
         process();
         return;
     }
     if (name == mediaAttr) {
-        auto media = value.string().convertToASCIILowercase();
+        auto media = newValue.string().convertToASCIILowercase();
         if (media == m_media)
             return;
         m_media = WTFMove(media);
@@ -203,15 +203,15 @@ void HTMLLinkElement::parseAttribute(const QualifiedName& name, const AtomString
         return;
     }
     if (name == disabledAttr) {
-        setDisabledState(!value.isNull());
+        setDisabledState(!newValue.isNull());
         return;
     }
     if (name == titleAttr) {
         if (m_sheet && !isInShadowTree())
-            m_sheet->setTitle(value);
+            m_sheet->setTitle(newValue);
         return;
     }
-    HTMLElement::parseAttribute(name, value);
+    HTMLElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }
 
 bool HTMLLinkElement::shouldLoadLink()

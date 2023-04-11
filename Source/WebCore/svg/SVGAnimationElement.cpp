@@ -163,14 +163,17 @@ bool SVGAnimationElement::attributeContainsJavaScriptURL(const Attribute& attrib
     return Element::attributeContainsJavaScriptURL(attribute);
 }
 
-void SVGAnimationElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void SVGAnimationElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
+    SVGTests::parseAttribute(name, newValue);
+    SVGSMILElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
+
     if (name == SVGNames::valuesAttr) {
         // Per the SMIL specification, leading and trailing white space,
         // and white space before and after semicolon separators, is allowed and will be ignored.
         // http://www.w3.org/TR/SVG11/animate.html#ValuesAttribute
         m_values.clear();
-        value.string().split(';', [this](StringView innerValue) {
+        newValue.string().split(';', [this](StringView innerValue) {
             m_values.append(innerValue.stripLeadingAndTrailingMatchedCharacters(isHTMLSpace<UChar>).toString());
         });
 
@@ -179,7 +182,7 @@ void SVGAnimationElement::parseAttribute(const QualifiedName& name, const AtomSt
     }
 
     if (name == SVGNames::keyTimesAttr) {
-        m_keyTimesFromAttribute = parseKeyTimes(value, true);
+        m_keyTimesFromAttribute = parseKeyTimes(newValue, true);
         return;
     }
 
@@ -187,13 +190,13 @@ void SVGAnimationElement::parseAttribute(const QualifiedName& name, const AtomSt
         if (hasTagName(SVGNames::animateMotionTag)) {
             // This is specified to be an animateMotion attribute only but it is simpler to put it here 
             // where the other timing calculatations are.
-            m_keyPoints = parseKeyTimes(value, false);
+            m_keyPoints = parseKeyTimes(newValue, false);
         }
         return;
     }
 
     if (name == SVGNames::keySplinesAttr) {
-        if (auto keySplines = parseKeySplines(value))
+        if (auto keySplines = parseKeySplines(newValue))
             m_keySplines = WTFMove(*keySplines);
         else
             m_keySplines.clear();
@@ -201,12 +204,12 @@ void SVGAnimationElement::parseAttribute(const QualifiedName& name, const AtomSt
     }
 
     if (name == SVGNames::attributeTypeAttr) {
-        setAttributeType(value);
+        setAttributeType(newValue);
         return;
     }
 
     if (name == SVGNames::calcModeAttr) {
-        setCalcMode(value);
+        setCalcMode(newValue);
         return;
     }
 
@@ -214,9 +217,6 @@ void SVGAnimationElement::parseAttribute(const QualifiedName& name, const AtomSt
         updateAnimationMode();
         return;
     }
-
-    SVGSMILElement::parseAttribute(name, value);
-    SVGTests::parseAttribute(name, value);
 }
 
 void SVGAnimationElement::svgAttributeChanged(const QualifiedName& attrName)

@@ -410,28 +410,6 @@ void SVGElement::setCorrespondingElement(SVGElement* correspondingElement)
         correspondingElement->ensureSVGRareData().addInstance(*this);
 }
 
-void SVGElement::parseAttribute(const QualifiedName& name, const AtomString& value)
-{
-    if (name == HTMLNames::classAttr) {
-        m_className->setBaseValInternal(value);
-        return;
-    }
-
-    if (name == HTMLNames::tabindexAttr) {
-        if (value.isEmpty())
-            setTabIndexExplicitly(std::nullopt);
-        else if (auto optionalTabIndex = parseHTMLInteger(value))
-            setTabIndexExplicitly(optionalTabIndex.value());
-        return;
-    }
-
-    auto& eventName = HTMLElement::eventNameForEventHandlerAttribute(name);
-    if (!eventName.isNull()) {
-        setAttributeEventListener(eventName, name, value);
-        return;
-    }
-}
-
 bool SVGElement::haveLoadedRequiredResources()
 {
     for (auto& child : childrenOfType<SVGElement>(*this)) {
@@ -611,13 +589,24 @@ bool SVGElement::childShouldCreateRenderer(const Node& child) const
     return svgChild.isValid();
 }
 
-void SVGElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason)
+void SVGElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
-    StyledElement::attributeChanged(name, oldValue, newValue);
+    StyledElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 
     if (name == HTMLNames::idAttr)
         document().accessSVGExtensions().rebuildAllElementReferencesForTarget(*this);
-
+    else if (name == HTMLNames::classAttr) {
+        m_className->setBaseValInternal(newValue);
+    } else if (name == HTMLNames::tabindexAttr) {
+        if (newValue.isEmpty())
+            setTabIndexExplicitly(std::nullopt);
+        else if (auto optionalTabIndex = parseHTMLInteger(newValue))
+            setTabIndexExplicitly(optionalTabIndex.value());
+    } else {
+        auto& eventName = HTMLElement::eventNameForEventHandlerAttribute(name);
+        if (!eventName.isNull())
+            setAttributeEventListener(eventName, name, newValue);
+    }
     // Changes to the style attribute are processed lazily (see Element::getAttribute() and related methods),
     // so we don't want changes to the style attribute to result in extra work here except invalidateInstances().
     if (name == HTMLNames::styleAttr)

@@ -41,7 +41,7 @@ public:
 protected:
     constexpr static auto CreateMathMLPresentationElement = CreateMathMLElement;
     MathMLPresentationElement(const QualifiedName& tagName, Document&, ConstructionType = CreateMathMLPresentationElement);
-    void parseAttribute(const QualifiedName&, const AtomString&) override;
+    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
 
     static bool isPhrasingContent(const Node&);
     static bool isFlowContent(const Node&);

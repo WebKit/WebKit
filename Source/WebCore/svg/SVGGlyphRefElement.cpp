@@ -60,21 +60,20 @@ static float parseFloat(const AtomString& value)
     return parseNumber(value).value_or(0);
 }
 
-void SVGGlyphRefElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void SVGGlyphRefElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
+    SVGURIReference::parseAttribute(name, newValue);
+    SVGElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
+
     // FIXME: Is the error handling in parseFloat correct for these attributes?
     if (name == SVGNames::xAttr)
-        m_x = parseFloat(value);
+        m_x = parseFloat(newValue);
     else if (name == SVGNames::yAttr)
-        m_y = parseFloat(value);
+        m_y = parseFloat(newValue);
     else if (name == SVGNames::dxAttr)
-        m_dx = parseFloat(value);
+        m_dx = parseFloat(newValue);
     else if (name == SVGNames::dyAttr)
-        m_dy = parseFloat(value);
-    else {
-        SVGURIReference::parseAttribute(name, value);
-        SVGElement::parseAttribute(name, value);
-    }
+        m_dy = parseFloat(newValue);
 }
 
 void SVGGlyphRefElement::setX(float x)

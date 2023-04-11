@@ -93,24 +93,16 @@ const Color& HTMLMetaElement::contentColor()
     return *m_contentColor;
 }
 
-void HTMLMetaElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason reason)
+void HTMLMetaElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
-    HTMLElement::attributeChanged(name, oldValue, newValue, reason);
+    HTMLElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 
-    if (!isInDocumentTree())
-        return;
-
-    if (name == nameAttr) {
-        if (equalLettersIgnoringASCIICase(oldValue, "theme-color"_s) && !equalLettersIgnoringASCIICase(newValue, "theme-color"_s))
-            document().metaElementThemeColorChanged(*this);
-        return;
-    }
-}
-
-void HTMLMetaElement::parseAttribute(const QualifiedName& name, const AtomString& value)
-{
     if (name == nameAttr) {
         process();
+        if (isInDocumentTree()) {
+            if (equalLettersIgnoringASCIICase(oldValue, "theme-color"_s) && !equalLettersIgnoringASCIICase(newValue, "theme-color"_s))
+                document().metaElementThemeColorChanged(*this);
+        }
         return;
     }
 
@@ -130,8 +122,6 @@ void HTMLMetaElement::parseAttribute(const QualifiedName& name, const AtomString
         process();
         return;
     }
-
-    HTMLElement::parseAttribute(name, value);
 }
 
 Node::InsertedIntoAncestorResult HTMLMetaElement::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)

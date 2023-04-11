@@ -100,27 +100,27 @@ void HTMLObjectElement::collectPresentationalHintsForAttribute(const QualifiedNa
         HTMLPlugInImageElement::collectPresentationalHintsForAttribute(name, value, style);
 }
 
-void HTMLObjectElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void HTMLObjectElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
+    HTMLPlugInImageElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
+
     bool invalidateRenderer = false;
     bool needsWidgetUpdate = false;
 
     if (name == typeAttr) {
-        m_serviceType = value.string().left(value.find(';')).convertToASCIILowercase();
+        m_serviceType = newValue.string().left(newValue.find(';')).convertToASCIILowercase();
         invalidateRenderer = !hasAttributeWithoutSynchronization(classidAttr);
         needsWidgetUpdate = true;
     } else if (name == dataAttr) {
-        m_url = stripLeadingAndTrailingHTMLSpaces(value);
+        m_url = stripLeadingAndTrailingHTMLSpaces(newValue);
         invalidateRenderer = !hasAttributeWithoutSynchronization(classidAttr);
         needsWidgetUpdate = true;
         updateImageLoaderWithNewURLSoon();
     } else if (name == classidAttr) {
         invalidateRenderer = true;
         needsWidgetUpdate = true;
-    } else {
-        HTMLPlugInImageElement::parseAttribute(name, value);
-        FormListedElement::parseAttribute(name, value);
-    }
+    } else
+        FormListedElement::parseAttribute(name, newValue);
 
     if (needsWidgetUpdate) {
         setNeedsWidgetUpdate(true);

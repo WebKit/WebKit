@@ -502,10 +502,10 @@ void HTMLFormElement::resetListedFormControlElements()
         control->reset();
 }
 
-void HTMLFormElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void HTMLFormElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     if (name == actionAttr) {
-        m_attributes.parseAction(value);
+        m_attributes.parseAction(newValue);
         
         if (!m_attributes.action().isEmpty()) {
             if (RefPtr f = document().frame()) {
@@ -514,13 +514,13 @@ void HTMLFormElement::parseAttribute(const QualifiedName& name, const AtomString
             }
         }
     } else if (name == targetAttr)
-        m_attributes.setTarget(value);
+        m_attributes.setTarget(newValue);
     else if (name == methodAttr)
-        m_attributes.updateMethodType(value, document().settings().dialogElementEnabled());
+        m_attributes.updateMethodType(newValue, document().settings().dialogElementEnabled());
     else if (name == enctypeAttr)
-        m_attributes.updateEncodingType(value);
+        m_attributes.updateEncodingType(newValue);
     else if (name == accept_charsetAttr)
-        m_attributes.setAcceptCharset(value);
+        m_attributes.setAcceptCharset(newValue);
     else if (name == autocompleteAttr) {
         if (!shouldAutocomplete())
             document().registerForDocumentSuspensionCallbacks(*this);
@@ -528,9 +528,9 @@ void HTMLFormElement::parseAttribute(const QualifiedName& name, const AtomString
             document().unregisterForDocumentSuspensionCallbacks(*this);
     } else if (name == relAttr) {
         if (m_relList)
-            m_relList->associatedAttributeValueChanged(value);
+            m_relList->associatedAttributeValueChanged(newValue);
     } else
-        HTMLElement::parseAttribute(name, value);
+        HTMLElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }
 
 unsigned HTMLFormElement::formElementIndexWithFormAttribute(Element* element, unsigned rangeStart, unsigned rangeEnd)

@@ -48,14 +48,12 @@ Ref<SVGFEMergeNodeElement> SVGFEMergeNodeElement::create(const QualifiedName& ta
     return adoptRef(*new SVGFEMergeNodeElement(tagName, document));
 }
 
-void SVGFEMergeNodeElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void SVGFEMergeNodeElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
-    if (name == SVGNames::inAttr) {
-        m_in1->setBaseValInternal(value);
-        return;
-    }
+    SVGElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 
-    SVGElement::parseAttribute(name, value);
+    if (name == SVGNames::inAttr)
+        m_in1->setBaseValInternal(newValue);
 }
 
 void SVGFEMergeNodeElement::svgAttributeChanged(const QualifiedName& attrName)

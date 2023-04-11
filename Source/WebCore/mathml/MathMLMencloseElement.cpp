@@ -133,12 +133,12 @@ bool MathMLMencloseElement::hasNotation(MencloseNotationFlag notationFlag)
     return m_notationFlags.value() & notationFlag;
 }
 
-void MathMLMencloseElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void MathMLMencloseElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     if (name == notationAttr)
         m_notationFlags = std::nullopt;
 
-    MathMLRowElement::parseAttribute(name, value);
+    MathMLRowElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }
 
 }

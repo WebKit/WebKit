@@ -83,11 +83,11 @@ static void updateFromControlElementsAncestorDisabledStateUnder(HTMLElement& sta
     }
 }
 
-void HTMLFieldSetElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void HTMLFieldSetElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     bool oldHasDisabledAttribute = hasDisabledAttribute();
 
-    HTMLFormControlElement::parseAttribute(name, value);
+    HTMLFormControlElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 
     if (hasDisabledAttribute() != oldHasDisabledAttribute) {
         if (hasDisabledAttribute())

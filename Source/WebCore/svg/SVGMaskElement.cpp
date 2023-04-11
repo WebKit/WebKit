@@ -64,16 +64,19 @@ Ref<SVGMaskElement> SVGMaskElement::create(const QualifiedName& tagName, Documen
     return adoptRef(*new SVGMaskElement(tagName, document));
 }
 
-void SVGMaskElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void SVGMaskElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
+    SVGTests::parseAttribute(name, newValue);
+    SVGElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
+
     if (name == SVGNames::maskUnitsAttr) {
-        auto propertyValue = SVGPropertyTraits<SVGUnitTypes::SVGUnitType>::fromString(value);
+        auto propertyValue = SVGPropertyTraits<SVGUnitTypes::SVGUnitType>::fromString(newValue);
         if (propertyValue > 0)
             m_maskUnits->setBaseValInternal<SVGUnitTypes::SVGUnitType>(propertyValue);
         return;
     }
     if (name == SVGNames::maskContentUnitsAttr) {
-        auto propertyValue = SVGPropertyTraits<SVGUnitTypes::SVGUnitType>::fromString(value);
+        auto propertyValue = SVGPropertyTraits<SVGUnitTypes::SVGUnitType>::fromString(newValue);
         if (propertyValue > 0)
             m_maskContentUnits->setBaseValInternal<SVGUnitTypes::SVGUnitType>(propertyValue);
         return;
@@ -82,18 +85,15 @@ void SVGMaskElement::parseAttribute(const QualifiedName& name, const AtomString&
     SVGParsingError parseError = NoError;
 
     if (name == SVGNames::xAttr)
-        m_x->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Width, value, parseError));
+        m_x->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Width, newValue, parseError));
     else if (name == SVGNames::yAttr)
-        m_y->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Height, value, parseError));
+        m_y->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Height, newValue, parseError));
     else if (name == SVGNames::widthAttr)
-        m_width->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Width, value, parseError));
+        m_width->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Width, newValue, parseError));
     else if (name == SVGNames::heightAttr)
-        m_height->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Height, value, parseError));
+        m_height->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Height, newValue, parseError));
 
-    reportAttributeParsingError(parseError, name, value);
-
-    SVGElement::parseAttribute(name, value);
-    SVGTests::parseAttribute(name, value);
+    reportAttributeParsingError(parseError, name, newValue);
 }
 
 void SVGMaskElement::svgAttributeChanged(const QualifiedName& attrName)

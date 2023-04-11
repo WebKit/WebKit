@@ -47,12 +47,12 @@ Ref<HTMLBaseElement> HTMLBaseElement::create(const QualifiedName& tagName, Docum
     return adoptRef(*new HTMLBaseElement(tagName, document));
 }
 
-void HTMLBaseElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void HTMLBaseElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     if (name == hrefAttr || name == targetAttr)
         document().processBaseElement();
     else
-        HTMLElement::parseAttribute(name, value);
+        HTMLElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }
 
 Node::InsertedIntoAncestorResult HTMLBaseElement::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)

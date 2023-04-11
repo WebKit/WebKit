@@ -58,26 +58,26 @@ bool SVGFEColorMatrixElement::isInvalidValuesLength() const
         || (filterType == FECOLORMATRIX_TYPE_SATURATE  && size != 1);
 }
 
-void SVGFEColorMatrixElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void SVGFEColorMatrixElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
+    SVGFilterPrimitiveStandardAttributes::attributeChanged(name, oldValue, newValue, attributeModificationReason);
+
     if (name == SVGNames::typeAttr) {
-        auto propertyValue = SVGPropertyTraits<ColorMatrixType>::fromString(value);
+        auto propertyValue = SVGPropertyTraits<ColorMatrixType>::fromString(newValue);
         if (propertyValue > 0)
             m_type->setBaseValInternal<ColorMatrixType>(propertyValue);
         return;
     }
 
     if (name == SVGNames::inAttr) {
-        m_in1->setBaseValInternal(value);
+        m_in1->setBaseValInternal(newValue);
         return;
     }
 
     if (name == SVGNames::valuesAttr) {
-        m_values->baseVal()->parse(value);
+        m_values->baseVal()->parse(newValue);
         return;
     }
-
-    SVGFilterPrimitiveStandardAttributes::parseAttribute(name, value);
 }
 
 bool SVGFEColorMatrixElement::setFilterEffectAttribute(FilterEffect& effect, const QualifiedName& attrName)

@@ -44,7 +44,7 @@ private:
 
     const AtomString& formControlType() const;
     bool isFocusable() const final;
-    void parseAttribute(const QualifiedName&, const AtomString&) final;
+    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
     bool rendererIsNeeded(const RenderStyle&) final { return false; }
 
     void childrenChanged(const ChildChange&) final;

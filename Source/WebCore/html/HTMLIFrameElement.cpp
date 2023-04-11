@@ -98,14 +98,14 @@ void HTMLIFrameElement::collectPresentationalHintsForAttribute(const QualifiedNa
         HTMLFrameElementBase::collectPresentationalHintsForAttribute(name, value, style);
 }
 
-void HTMLIFrameElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void HTMLIFrameElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     if (name == sandboxAttr) {
         if (m_sandbox)
-            m_sandbox->associatedAttributeValueChanged(value);
+            m_sandbox->associatedAttributeValueChanged(newValue);
 
         String invalidTokens;
-        setSandboxFlags(value.isNull() ? SandboxNone : SecurityContext::parseSandboxPolicy(value, invalidTokens));
+        setSandboxFlags(newValue.isNull() ? SandboxNone : SecurityContext::parseSandboxPolicy(newValue, invalidTokens));
         if (!invalidTokens.isNull())
             document().addConsoleMessage(MessageSource::Other, MessageLevel::Error, "Error while parsing the 'sandbox' attribute: " + invalidTokens);
     } else if (name == allowAttr || name == allowfullscreenAttr || name == webkitallowfullscreenAttr) {
@@ -113,12 +113,12 @@ void HTMLIFrameElement::parseAttribute(const QualifiedName& name, const AtomStri
     } else if (name == loadingAttr) {
         // Allow loading=eager to load the frame immediately if the lazy load was started, but
         // do not allow the reverse situation since the eager load is already started.
-        if (m_lazyLoadFrameObserver && !equalLettersIgnoringASCIICase(value, "lazy"_s)) {
+        if (m_lazyLoadFrameObserver && !equalLettersIgnoringASCIICase(newValue, "lazy"_s)) {
             m_lazyLoadFrameObserver->unobserve();
             loadDeferredFrame();
         }
     } else
-        HTMLFrameElementBase::parseAttribute(name, value);
+        HTMLFrameElementBase::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }
 
 bool HTMLIFrameElement::rendererIsNeeded(const RenderStyle& style)

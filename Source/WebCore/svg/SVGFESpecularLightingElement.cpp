@@ -54,37 +54,37 @@ Ref<SVGFESpecularLightingElement> SVGFESpecularLightingElement::create(const Qua
     return adoptRef(*new SVGFESpecularLightingElement(tagName, document));
 }
 
-void SVGFESpecularLightingElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void SVGFESpecularLightingElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
+    SVGFilterPrimitiveStandardAttributes::attributeChanged(name, oldValue, newValue, attributeModificationReason);
+
     if (name == SVGNames::inAttr) {
-        m_in1->setBaseValInternal(value);
+        m_in1->setBaseValInternal(newValue);
         return;
     }
 
     if (name == SVGNames::surfaceScaleAttr) {
-        m_surfaceScale->setBaseValInternal(value.toFloat());
+        m_surfaceScale->setBaseValInternal(newValue.toFloat());
         return;
     }
 
     if (name == SVGNames::specularConstantAttr) {
-        m_specularConstant->setBaseValInternal(value.toFloat());
+        m_specularConstant->setBaseValInternal(newValue.toFloat());
         return;
     }
 
     if (name == SVGNames::specularExponentAttr) {
-        m_specularExponent->setBaseValInternal(value.toFloat());
+        m_specularExponent->setBaseValInternal(newValue.toFloat());
         return;
     }
 
     if (name == SVGNames::kernelUnitLengthAttr) {
-        if (auto result = parseNumberOptionalNumber(value)) {
+        if (auto result = parseNumberOptionalNumber(newValue)) {
             m_kernelUnitLengthX->setBaseValInternal(result->first);
             m_kernelUnitLengthY->setBaseValInternal(result->second);
         }
         return;
     }
-
-    SVGFilterPrimitiveStandardAttributes::parseAttribute(name, value);
 }
 
 bool SVGFESpecularLightingElement::setFilterEffectAttribute(FilterEffect& effect, const QualifiedName& attrName)

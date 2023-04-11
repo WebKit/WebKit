@@ -47,46 +47,46 @@ SVGComponentTransferFunctionElement::SVGComponentTransferFunctionElement(const Q
     });
 }
 
-void SVGComponentTransferFunctionElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void SVGComponentTransferFunctionElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
+    SVGElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
+
     if (name == SVGNames::typeAttr) {
-        ComponentTransferType propertyValue = SVGPropertyTraits<ComponentTransferType>::fromString(value);
+        ComponentTransferType propertyValue = SVGPropertyTraits<ComponentTransferType>::fromString(newValue);
         if (propertyValue > 0)
             m_type->setBaseValInternal<ComponentTransferType>(propertyValue);
         return;
     }
 
     if (name == SVGNames::tableValuesAttr) {
-        m_tableValues->baseVal()->parse(value);
+        m_tableValues->baseVal()->parse(newValue);
         return;
     }
 
     if (name == SVGNames::slopeAttr) {
-        m_slope->setBaseValInternal(value.toFloat());
+        m_slope->setBaseValInternal(newValue.toFloat());
         return;
     }
 
     if (name == SVGNames::interceptAttr) {
-        m_intercept->setBaseValInternal(value.toFloat());
+        m_intercept->setBaseValInternal(newValue.toFloat());
         return;
     }
 
     if (name == SVGNames::amplitudeAttr) {
-        m_amplitude->setBaseValInternal(value.toFloat());
+        m_amplitude->setBaseValInternal(newValue.toFloat());
         return;
     }
 
     if (name == SVGNames::exponentAttr) {
-        m_exponent->setBaseValInternal(value.toFloat());
+        m_exponent->setBaseValInternal(newValue.toFloat());
         return;
     }
 
     if (name == SVGNames::offsetAttr) {
-        m_offset->setBaseValInternal(value.toFloat());
+        m_offset->setBaseValInternal(newValue.toFloat());
         return;
     }
-
-    SVGElement::parseAttribute(name, value);
 }
 
 void SVGComponentTransferFunctionElement::svgAttributeChanged(const QualifiedName& attrName)

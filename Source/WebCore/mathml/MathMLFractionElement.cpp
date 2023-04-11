@@ -109,7 +109,7 @@ MathMLFractionElement::FractionAlignment MathMLFractionElement::denominatorAlign
     return cachedFractionAlignment(denomalignAttr, m_denominatorAlignment);
 }
 
-void MathMLFractionElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void MathMLFractionElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     if (name == linethicknessAttr)
         m_lineThickness = std::nullopt;
@@ -118,7 +118,7 @@ void MathMLFractionElement::parseAttribute(const QualifiedName& name, const Atom
     else if (name == denomalignAttr)
         m_denominatorAlignment = std::nullopt;
 
-    MathMLElement::parseAttribute(name, value);
+    MathMLElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }
 
 RenderPtr<RenderElement> MathMLFractionElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)

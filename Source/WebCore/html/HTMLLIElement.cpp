@@ -93,13 +93,13 @@ void HTMLLIElement::collectPresentationalHintsForAttribute(const QualifiedName& 
         HTMLElement::collectPresentationalHintsForAttribute(name, value, style);
 }
 
-void HTMLLIElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void HTMLLIElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     if (name == valueAttr) {
         if (renderer() && renderer()->isListItem())
-            parseValue(value);
+            parseValue(newValue);
     } else
-        HTMLElement::parseAttribute(name, value);
+        HTMLElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }
 
 void HTMLLIElement::didAttachRenderers()

@@ -50,16 +50,15 @@ Ref<SVGClipPathElement> SVGClipPathElement::create(const QualifiedName& tagName,
     return adoptRef(*new SVGClipPathElement(tagName, document));
 }
 
-void SVGClipPathElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void SVGClipPathElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
+    SVGGraphicsElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
+
     if (name == SVGNames::clipPathUnitsAttr) {
-        auto propertyValue = SVGPropertyTraits<SVGUnitTypes::SVGUnitType>::fromString(value);
+        auto propertyValue = SVGPropertyTraits<SVGUnitTypes::SVGUnitType>::fromString(newValue);
         if (propertyValue > 0)
             m_clipPathUnits->setBaseValInternal<SVGUnitTypes::SVGUnitType>(propertyValue);
-        return;
     }
-
-    SVGGraphicsElement::parseAttribute(name, value);
 }
 
 void SVGClipPathElement::svgAttributeChanged(const QualifiedName& attrName)

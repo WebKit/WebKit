@@ -161,20 +161,20 @@ void SVGTextContentElement::collectPresentationalHintsForAttribute(const Qualifi
     SVGGraphicsElement::collectPresentationalHintsForAttribute(name, value, style);
 }
 
-void SVGTextContentElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void SVGTextContentElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     SVGParsingError parseError = NoError;
 
     if (name == SVGNames::lengthAdjustAttr) {
-        auto propertyValue = SVGPropertyTraits<SVGLengthAdjustType>::fromString(value);
+        auto propertyValue = SVGPropertyTraits<SVGLengthAdjustType>::fromString(newValue);
         if (propertyValue > 0)
             m_lengthAdjust->setBaseValInternal<SVGLengthAdjustType>(propertyValue);
     } else if (name == SVGNames::textLengthAttr)
-        m_textLength->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Other, value, parseError, SVGLengthNegativeValuesMode::Forbid));
+        m_textLength->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Other, newValue, parseError, SVGLengthNegativeValuesMode::Forbid));
 
-    reportAttributeParsingError(parseError, name, value);
+    reportAttributeParsingError(parseError, name, newValue);
 
-    SVGGraphicsElement::parseAttribute(name, value);
+    SVGGraphicsElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }
 
 void SVGTextContentElement::svgAttributeChanged(const QualifiedName& attrName)

@@ -55,22 +55,22 @@ Ref<SVGForeignObjectElement> SVGForeignObjectElement::create(const QualifiedName
     return adoptRef(*new SVGForeignObjectElement(tagName, document));
 }
 
-void SVGForeignObjectElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void SVGForeignObjectElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     SVGParsingError parseError = NoError;
 
     if (name == SVGNames::xAttr)
-        m_x->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Width, value, parseError));
+        m_x->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Width, newValue, parseError));
     else if (name == SVGNames::yAttr)
-        m_y->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Height, value, parseError));
+        m_y->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Height, newValue, parseError));
     else if (name == SVGNames::widthAttr)
-        m_width->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Width, value, parseError));
+        m_width->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Width, newValue, parseError));
     else if (name == SVGNames::heightAttr)
-        m_height->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Height, value, parseError));
+        m_height->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Height, newValue, parseError));
 
-    reportAttributeParsingError(parseError, name, value);
+    reportAttributeParsingError(parseError, name, newValue);
 
-    SVGGraphicsElement::parseAttribute(name, value);
+    SVGGraphicsElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }
 
 void SVGForeignObjectElement::svgAttributeChanged(const QualifiedName& attrName)

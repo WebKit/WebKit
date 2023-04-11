@@ -167,11 +167,11 @@ void HTMLCanvasElement::collectPresentationalHintsForAttribute(const QualifiedNa
         HTMLElement::collectPresentationalHintsForAttribute(name, value, style);
 }
 
-void HTMLCanvasElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void HTMLCanvasElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     if (name == widthAttr || name == heightAttr)
         reset();
-    HTMLElement::parseAttribute(name, value);
+    HTMLElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }
 
 RenderPtr<RenderElement> HTMLCanvasElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition& insertionPosition)

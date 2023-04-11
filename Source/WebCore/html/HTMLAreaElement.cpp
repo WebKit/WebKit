@@ -53,14 +53,14 @@ Ref<HTMLAreaElement> HTMLAreaElement::create(const QualifiedName& tagName, Docum
     return adoptRef(*new HTMLAreaElement(tagName, document));
 }
 
-void HTMLAreaElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void HTMLAreaElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     if (name == shapeAttr) {
-        if (equalLettersIgnoringASCIICase(value, "default"_s))
+        if (equalLettersIgnoringASCIICase(newValue, "default"_s))
             m_shape = Default;
-        else if (equalLettersIgnoringASCIICase(value, "circle"_s) || equalLettersIgnoringASCIICase(value, "circ"_s))
+        else if (equalLettersIgnoringASCIICase(newValue, "circle"_s) || equalLettersIgnoringASCIICase(newValue, "circ"_s))
             m_shape = Circle;
-        else if (equalLettersIgnoringASCIICase(value, "poly"_s) || equalLettersIgnoringASCIICase(value, "polygon"_s))
+        else if (equalLettersIgnoringASCIICase(newValue, "poly"_s) || equalLettersIgnoringASCIICase(newValue, "polygon"_s))
             m_shape = Poly;
         else {
             // The missing value default is the rectangle state.
@@ -68,12 +68,12 @@ void HTMLAreaElement::parseAttribute(const QualifiedName& name, const AtomString
         }
         invalidateCachedRegion();
     } else if (name == coordsAttr) {
-        m_coords = parseHTMLListOfOfFloatingPointNumberValues(value.string());
+        m_coords = parseHTMLListOfOfFloatingPointNumberValues(newValue.string());
         invalidateCachedRegion();
     } else if (name == altAttr) {
         // Do nothing.
     } else
-        HTMLAnchorElement::parseAttribute(name, value);
+        HTMLAnchorElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }
 
 void HTMLAreaElement::invalidateCachedRegion()

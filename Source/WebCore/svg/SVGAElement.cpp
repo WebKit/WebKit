@@ -79,18 +79,17 @@ String SVGAElement::title() const
     return SVGElement::title();
 }
 
-void SVGAElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void SVGAElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
+    SVGURIReference::parseAttribute(name, newValue);
+    SVGGraphicsElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
     if (name == SVGNames::targetAttr) {
-        m_target->setBaseValInternal(value);
+        m_target->setBaseValInternal(newValue);
         return;
     } else if (name == SVGNames::relAttr) {
         if (m_relList)
-            m_relList->associatedAttributeValueChanged(value);
+            m_relList->associatedAttributeValueChanged(newValue);
     }
-
-    SVGGraphicsElement::parseAttribute(name, value);
-    SVGURIReference::parseAttribute(name, value);
 }
 
 void SVGAElement::svgAttributeChanged(const QualifiedName& attrName)

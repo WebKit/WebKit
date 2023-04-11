@@ -46,7 +46,7 @@ protected:
 
 private:
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
-    void parseAttribute(const QualifiedName&, const AtomString&) override;
+    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
 
     const ScriptType m_scriptType;
     std::optional<Length> m_subscriptShift;

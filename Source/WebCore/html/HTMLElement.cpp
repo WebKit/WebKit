@@ -369,15 +369,17 @@ bool HTMLElement::matchesReadWritePseudoClass() const
     return editabilityFromContentEditableAttr(*this, PageIsEditable::No) != Editability::ReadOnly;
 }
 
-void HTMLElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void HTMLElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
+    StyledElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
+
     if (name == dirAttr) {
-        dirAttributeChanged(value);
+        dirAttributeChanged(newValue);
         return;
     }
 
     if (name == tabindexAttr) {
-        if (auto optionalTabIndex = parseHTMLInteger(value))
+        if (auto optionalTabIndex = parseHTMLInteger(newValue))
             setTabIndexExplicitly(optionalTabIndex.value());
         else
             setTabIndexExplicitly(std::nullopt);
@@ -396,11 +398,11 @@ void HTMLElement::parseAttribute(const QualifiedName& name, const AtomString& va
     }
 
     if (document().settings().popoverAttributeEnabled() && name == popoverAttr)
-        popoverAttributeChanged(value);
+        popoverAttributeChanged(newValue);
 
     auto& eventName = eventNameForEventHandlerAttribute(name);
     if (!eventName.isNull())
-        setAttributeEventListener(eventName, name, value);
+        setAttributeEventListener(eventName, name, newValue);
 }
 
 Node::InsertedIntoAncestorResult HTMLElement::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)

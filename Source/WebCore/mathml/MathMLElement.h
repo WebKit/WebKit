@@ -92,7 +92,7 @@ public:
 protected:
     MathMLElement(const QualifiedName& tagName, Document&, ConstructionType = CreateMathMLElement);
 
-    void parseAttribute(const QualifiedName&, const AtomString&) override;
+    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
     bool childShouldCreateRenderer(const Node&) const override;
 
     bool hasPresentationalHintsForAttribute(const QualifiedName&) const override;

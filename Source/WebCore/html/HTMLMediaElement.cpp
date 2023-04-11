@@ -771,20 +771,10 @@ bool HTMLMediaElement::isInteractiveContent() const
     return controls();
 }
 
-void HTMLMediaElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason reason)
-{
-#if ENABLE(WIRELESS_PLAYBACK_TARGET)
-    if (name == webkitwirelessvideoplaybackdisabledAttr)
-        mediaSession().setWirelessVideoPlaybackDisabled(newValue != nullAtom());
-    else
-#endif
-        HTMLElement::attributeChanged(name, oldValue, newValue, reason);
-}
-
-void HTMLMediaElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void HTMLMediaElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     if (name == idAttr)
-        m_id = value;
+        m_id = newValue;
 
     if (name == srcAttr) {
         // https://html.spec.whatwg.org/multipage/embedded-content.html#location-of-the-media-resource
@@ -793,16 +783,16 @@ void HTMLMediaElement::parseAttribute(const QualifiedName& name, const AtomStrin
 
         // If a src attribute of a media element is set or changed, the user
         // agent must invoke the media element's media element load algorithm.
-        if (!value.isNull())
+        if (!newValue.isNull())
             prepareForLoad();
     } else if (name == controlsAttr)
         configureMediaControls();
     else if (name == loopAttr)
         updateSleepDisabling();
     else if (name == preloadAttr) {
-        if (equalLettersIgnoringASCIICase(value, "none"_s))
+        if (equalLettersIgnoringASCIICase(newValue, "none"_s))
             m_preload = MediaPlayer::Preload::None;
-        else if (equalLettersIgnoringASCIICase(value, "metadata"_s))
+        else if (equalLettersIgnoringASCIICase(newValue, "metadata"_s))
             m_preload = MediaPlayer::Preload::MetaData;
         else {
             // The spec does not define an "invalid value default" but "auto" is suggested as the
@@ -815,7 +805,7 @@ void HTMLMediaElement::parseAttribute(const QualifiedName& name, const AtomStrin
             m_player->setPreload(mediaSession().effectivePreloadForElement());
 
     } else if (name == mediagroupAttr)
-        setMediaGroup(value);
+        setMediaGroup(newValue);
     else if (name == autoplayAttr) {
         if (processingUserGestureForMedia())
             removeBehaviorRestrictionsAfterFirstUserGesture();
@@ -823,8 +813,12 @@ void HTMLMediaElement::parseAttribute(const QualifiedName& name, const AtomStrin
         if (m_mediaSession)
             m_mediaSession->clientCharacteristicsChanged(false);
     }
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+    else if (name == webkitwirelessvideoplaybackdisabledAttr)
+        mediaSession().setWirelessVideoPlaybackDisabled(newValue != nullAtom());
+#endif
     else
-        HTMLElement::parseAttribute(name, value);
+        HTMLElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }
 
 void HTMLMediaElement::finishParsingChildren()

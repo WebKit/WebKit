@@ -52,46 +52,46 @@ Ref<SVGFECompositeElement> SVGFECompositeElement::create(const QualifiedName& ta
     return adoptRef(*new SVGFECompositeElement(tagName, document));
 }
 
-void SVGFECompositeElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void SVGFECompositeElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
+    SVGFilterPrimitiveStandardAttributes::attributeChanged(name, oldValue, newValue, attributeModificationReason);
+
     if (name == SVGNames::operatorAttr) {
-        CompositeOperationType propertyValue = SVGPropertyTraits<CompositeOperationType>::fromString(value);
+        CompositeOperationType propertyValue = SVGPropertyTraits<CompositeOperationType>::fromString(newValue);
         if (propertyValue > 0)
             m_svgOperator->setBaseValInternal<CompositeOperationType>(propertyValue);
         return;
     }
 
     if (name == SVGNames::inAttr) {
-        m_in1->setBaseValInternal(value);
+        m_in1->setBaseValInternal(newValue);
         return;
     }
 
     if (name == SVGNames::in2Attr) {
-        m_in2->setBaseValInternal(value);
+        m_in2->setBaseValInternal(newValue);
         return;
     }
 
     if (name == SVGNames::k1Attr) {
-        m_k1->setBaseValInternal(value.toFloat());
+        m_k1->setBaseValInternal(newValue.toFloat());
         return;
     }
 
     if (name == SVGNames::k2Attr) {
-        m_k2->setBaseValInternal(value.toFloat());
+        m_k2->setBaseValInternal(newValue.toFloat());
         return;
     }
 
     if (name == SVGNames::k3Attr) {
-        m_k3->setBaseValInternal(value.toFloat());
+        m_k3->setBaseValInternal(newValue.toFloat());
         return;
     }
 
     if (name == SVGNames::k4Attr) {
-        m_k4->setBaseValInternal(value.toFloat());
+        m_k4->setBaseValInternal(newValue.toFloat());
         return;
     }
-
-    SVGFilterPrimitiveStandardAttributes::parseAttribute(name, value);
 }
 
 bool SVGFECompositeElement::setFilterEffectAttribute(FilterEffect& effect, const QualifiedName& attrName)

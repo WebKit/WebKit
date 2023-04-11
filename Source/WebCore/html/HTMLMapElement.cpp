@@ -84,31 +84,29 @@ HTMLImageElement* HTMLMapElement::imageElement()
     return treeScope().imageElementByUsemap(*m_name.impl());
 }
 
-void HTMLMapElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void HTMLMapElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
+    HTMLElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
+
     // FIXME: This logic seems wrong for XML documents.
     // Either the id or name will be used depending on the order the attributes are parsed.
 
     if (name == HTMLNames::idAttr || name == HTMLNames::nameAttr) {
         if (name == HTMLNames::idAttr) {
             // Call base class so that hasID bit gets set.
-            HTMLElement::parseAttribute(name, value);
+            HTMLElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
             if (document().isHTMLDocument())
                 return;
         }
         if (isInTreeScope())
             treeScope().removeImageMap(*this);
-        AtomString mapName = value;
+        AtomString mapName = newValue;
         if (mapName[0] == '#')
             mapName = StringView(mapName).substring(1).toAtomString();
         m_name = WTFMove(mapName);
         if (isInTreeScope())
             treeScope().addImageMap(*this);
-
-        return;
     }
-
-    HTMLElement::parseAttribute(name, value);
 }
 
 Ref<HTMLCollection> HTMLMapElement::areas()

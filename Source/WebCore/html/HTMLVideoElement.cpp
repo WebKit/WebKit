@@ -133,7 +133,7 @@ bool HTMLVideoElement::hasPresentationalHintsForAttribute(const QualifiedName& n
     return HTMLMediaElement::hasPresentationalHintsForAttribute(name);
 }
 
-void HTMLVideoElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void HTMLVideoElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     if (name == posterAttr) {
         if (shouldDisplayPosterImage()) {
@@ -148,7 +148,7 @@ void HTMLVideoElement::parseAttribute(const QualifiedName& name, const AtomStrin
         }
     }
     else {
-        HTMLMediaElement::parseAttribute(name, value);    
+        HTMLMediaElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 
 #if PLATFORM(IOS_FAMILY) && ENABLE(WIRELESS_PLAYBACK_TARGET)
         if (name == webkitairplayAttr) {

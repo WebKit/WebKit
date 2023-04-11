@@ -163,33 +163,37 @@ void SVGSVGElement::updateCurrentTranslate()
         document().renderView()->repaint();
 }
 
-void SVGSVGElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void SVGSVGElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
+    SVGFitToViewBox::parseAttribute(name, newValue);
+    SVGZoomAndPan::parseAttribute(name, newValue);
+    SVGGraphicsElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
+
     if (!nearestViewportElement() && isConnected()) {
         // For these events, the outermost <svg> element works like a <body> element does,
         // setting certain event handlers directly on the window object.
         if (name == HTMLNames::onunloadAttr) {
-            document().setWindowAttributeEventListener(eventNames().unloadEvent, name, value, mainThreadNormalWorld());
+            document().setWindowAttributeEventListener(eventNames().unloadEvent, name, newValue, mainThreadNormalWorld());
             return;
         }
         if (name == HTMLNames::onresizeAttr) {
-            document().setWindowAttributeEventListener(eventNames().resizeEvent, name, value, mainThreadNormalWorld());
+            document().setWindowAttributeEventListener(eventNames().resizeEvent, name, newValue, mainThreadNormalWorld());
             return;
         }
         if (name == HTMLNames::onscrollAttr) {
-            document().setWindowAttributeEventListener(eventNames().scrollEvent, name, value, mainThreadNormalWorld());
+            document().setWindowAttributeEventListener(eventNames().scrollEvent, name, newValue, mainThreadNormalWorld());
             return;
         }
         if (name == SVGNames::onzoomAttr) {
-            document().setWindowAttributeEventListener(eventNames().zoomEvent, name, value, mainThreadNormalWorld());
+            document().setWindowAttributeEventListener(eventNames().zoomEvent, name, newValue, mainThreadNormalWorld());
             return;
         }
         if (name == HTMLNames::onabortAttr) {
-            document().setWindowAttributeEventListener(eventNames().abortEvent, name, value, mainThreadNormalWorld());
+            document().setWindowAttributeEventListener(eventNames().abortEvent, name, newValue, mainThreadNormalWorld());
             return;
         }
         if (name == HTMLNames::onerrorAttr) {
-            document().setWindowAttributeEventListener(eventNames().errorEvent, name, value, mainThreadNormalWorld());
+            document().setWindowAttributeEventListener(eventNames().errorEvent, name, newValue, mainThreadNormalWorld());
             return;
         }
     }
@@ -197,20 +201,20 @@ void SVGSVGElement::parseAttribute(const QualifiedName& name, const AtomString& 
     SVGParsingError parseError = NoError;
 
     if (name == SVGNames::xAttr)
-        m_x->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Width, value, parseError));
+        m_x->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Width, newValue, parseError));
     else if (name == SVGNames::yAttr)
-        m_y->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Height, value, parseError));
+        m_y->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Height, newValue, parseError));
     else if (name == SVGNames::widthAttr) {
-        auto length = SVGLengthValue::construct(SVGLengthMode::Width, value, parseError, SVGLengthNegativeValuesMode::Forbid);
-        if (parseError != NoError || value.isEmpty()) {
+        auto length = SVGLengthValue::construct(SVGLengthMode::Width, newValue, parseError, SVGLengthNegativeValuesMode::Forbid);
+        if (parseError != NoError || newValue.isEmpty()) {
             // FIXME: This is definitely the correct behavior for a missing/removed attribute.
             // Not sure it's correct for the empty string or for something that can't be parsed.
             length = SVGLengthValue(SVGLengthMode::Width, "100%"_s);
         }
         m_width->setBaseValInternal(length);
     } else if (name == SVGNames::heightAttr) {
-        auto length = SVGLengthValue::construct(SVGLengthMode::Height, value, parseError, SVGLengthNegativeValuesMode::Forbid);
-        if (parseError != NoError || value.isEmpty()) {
+        auto length = SVGLengthValue::construct(SVGLengthMode::Height, newValue, parseError, SVGLengthNegativeValuesMode::Forbid);
+        if (parseError != NoError || newValue.isEmpty()) {
             // FIXME: This is definitely the correct behavior for a removed attribute.
             // Not sure it's correct for the empty string or for something that can't be parsed.
             length = SVGLengthValue(SVGLengthMode::Height, "100%"_s);
@@ -218,11 +222,7 @@ void SVGSVGElement::parseAttribute(const QualifiedName& name, const AtomString& 
         m_height->setBaseValInternal(length);
     }
 
-    reportAttributeParsingError(parseError, name, value);
-
-    SVGGraphicsElement::parseAttribute(name, value);
-    SVGFitToViewBox::parseAttribute(name, value);
-    SVGZoomAndPan::parseAttribute(name, value);
+    reportAttributeParsingError(parseError, name, newValue);
 }
 
 void SVGSVGElement::svgAttributeChanged(const QualifiedName& attrName)

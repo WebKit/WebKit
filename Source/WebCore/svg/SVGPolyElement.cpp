@@ -43,15 +43,14 @@ SVGPolyElement::SVGPolyElement(const QualifiedName& tagName, Document& document)
     });
 }
 
-void SVGPolyElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void SVGPolyElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
-    if (name == SVGNames::pointsAttr) {
-        if (!m_points->baseVal()->parse(value))
-            document().accessSVGExtensions().reportError("Problem parsing points=\"" + value + "\"");
-        return;
-    }
+    SVGGeometryElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 
-    SVGGeometryElement::parseAttribute(name, value);
+    if (name == SVGNames::pointsAttr) {
+        if (!m_points->baseVal()->parse(newValue))
+            document().accessSVGExtensions().reportError("Problem parsing points=\"" + newValue + "\"");
+    }
 }
 
 void SVGPolyElement::svgAttributeChanged(const QualifiedName& attrName)

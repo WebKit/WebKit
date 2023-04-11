@@ -135,7 +135,7 @@ private:
     // DOM overrides.
     void didMoveToNewDocument(Document& oldDocument, Document& newDocument) final;
     bool isURLAttribute(const Attribute&) const final;
-    void parseAttribute(const QualifiedName&, const AtomString&) final;
+    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
 
     // StyledElement
     bool hasPresentationalHintsForAttribute(const QualifiedName&) const final;

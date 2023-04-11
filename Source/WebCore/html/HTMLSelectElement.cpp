@@ -290,11 +290,11 @@ bool HTMLSelectElement::hasPresentationalHintsForAttribute(const QualifiedName& 
     return HTMLFormControlElement::hasPresentationalHintsForAttribute(name);
 }
 
-void HTMLSelectElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void HTMLSelectElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     if (name == sizeAttr) {
         unsigned oldSize = m_size;
-        unsigned size = limitToOnlyHTMLNonNegative(value);
+        unsigned size = limitToOnlyHTMLNonNegative(newValue);
 
         // Ensure that we've determined selectedness of the items at least once prior to changing the size.
         if (oldSize != size)
@@ -308,9 +308,9 @@ void HTMLSelectElement::parseAttribute(const QualifiedName& name, const AtomStri
             updateValidity();
         }
     } else if (name == multipleAttr)
-        parseMultipleAttribute(value);
+        parseMultipleAttribute(newValue);
     else
-        HTMLFormControlElement::parseAttribute(name, value);
+        HTMLFormControlElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }
 
 int HTMLSelectElement::defaultTabIndex() const

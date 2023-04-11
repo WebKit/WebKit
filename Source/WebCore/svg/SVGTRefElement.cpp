@@ -172,22 +172,21 @@ void SVGTRefElement::detachTarget()
         document().accessSVGExtensions().addPendingResource(target.identifier, *this);
 }
 
-void SVGTRefElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void SVGTRefElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
-    SVGTextPositioningElement::parseAttribute(name, value);
-    SVGURIReference::parseAttribute(name, value);
+    SVGURIReference::parseAttribute(name, newValue);
+    SVGTextPositioningElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }
 
 void SVGTRefElement::svgAttributeChanged(const QualifiedName& attrName)
 {
+    SVGTextPositioningElement::svgAttributeChanged(attrName);
+
     if (SVGURIReference::isKnownAttribute(attrName)) {
         InstanceInvalidationGuard guard(*this);
         buildPendingResource();
         updateSVGRendererForElementChange();
-        return;
     }
-
-    SVGTextPositioningElement::svgAttributeChanged(attrName);
 }
 
 RenderPtr<RenderElement> SVGTRefElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)

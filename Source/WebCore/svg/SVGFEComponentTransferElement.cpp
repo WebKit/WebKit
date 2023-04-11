@@ -51,14 +51,12 @@ Ref<SVGFEComponentTransferElement> SVGFEComponentTransferElement::create(const Q
     return adoptRef(*new SVGFEComponentTransferElement(tagName, document));
 }
 
-void SVGFEComponentTransferElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void SVGFEComponentTransferElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
-    if (name == SVGNames::inAttr) {
-        m_in1->setBaseValInternal(value);
-        return;
-    }
+    SVGFilterPrimitiveStandardAttributes::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 
-    SVGFilterPrimitiveStandardAttributes::parseAttribute(name, value);
+    if (name == SVGNames::inAttr)
+        m_in1->setBaseValInternal(newValue);
 }
 
 void SVGFEComponentTransferElement::svgAttributeChanged(const QualifiedName& attrName)

@@ -129,15 +129,13 @@ AffineTransform* SVGGraphicsElement::ensureSupplementalTransform()
     return m_supplementalTransform.get();
 }
 
-void SVGGraphicsElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void SVGGraphicsElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
-    if (name == SVGNames::transformAttr) {
-        m_transform->baseVal()->parse(value);
-        return;
-    }
+    SVGTests::parseAttribute(name, newValue);
+    SVGElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 
-    SVGElement::parseAttribute(name, value);
-    SVGTests::parseAttribute(name, value);
+    if (name == SVGNames::transformAttr)
+        m_transform->baseVal()->parse(newValue);
 }
 
 void SVGGraphicsElement::svgAttributeChanged(const QualifiedName& attrName)

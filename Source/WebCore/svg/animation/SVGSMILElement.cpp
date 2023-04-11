@@ -475,15 +475,17 @@ bool SVGSMILElement::isSupportedAttribute(const QualifiedName& attrName)
     return supportedAttributes.get().contains<SVGAttributeHashTranslator>(attrName);
 }
 
-void SVGSMILElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void SVGSMILElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
+    SVGElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
+
     if (name == SVGNames::beginAttr) {
         if (!m_conditions.isEmpty()) {
             disconnectConditions();
             m_conditions.clear();
             parseBeginOrEnd(attributeWithoutSynchronization(SVGNames::endAttr), End);
         }
-        parseBeginOrEnd(value, Begin);
+        parseBeginOrEnd(newValue, Begin);
         if (isConnected())
             connectConditions();
     } else if (name == SVGNames::endAttr) {
@@ -492,15 +494,13 @@ void SVGSMILElement::parseAttribute(const QualifiedName& name, const AtomString&
             m_conditions.clear();
             parseBeginOrEnd(attributeWithoutSynchronization(SVGNames::beginAttr), Begin);
         }
-        parseBeginOrEnd(value, End);
+        parseBeginOrEnd(newValue, End);
         if (isConnected())
             connectConditions();
     } else if (name == SVGNames::onendAttr)
-        setAttributeEventListener(eventNames().endEventEvent, name, value);
+        setAttributeEventListener(eventNames().endEventEvent, name, newValue);
     else if (name == SVGNames::onbeginAttr)
-        setAttributeEventListener(eventNames().beginEventEvent, name, value);
-    else
-        SVGElement::parseAttribute(name, value);
+        setAttributeEventListener(eventNames().beginEventEvent, name, newValue);
 }
 
 void SVGSMILElement::svgAttributeChanged(const QualifiedName& attrName)

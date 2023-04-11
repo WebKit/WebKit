@@ -720,24 +720,26 @@ inline void HTMLInputElement::initializeInputType()
     updateValidity();
 }
 
-void HTMLInputElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void HTMLInputElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     ASSERT(m_inputType);
     Ref protectedInputType { *m_inputType };
 
+    HTMLTextFormControlElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
+
     if (name == nameAttr) {
         removeFromRadioButtonGroup();
-        m_name = value;
+        m_name = newValue;
         addToRadioButtonGroup();
-        HTMLTextFormControlElement::parseAttribute(name, value);
+        HTMLTextFormControlElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
     } else if (name == autocompleteAttr) {
-        if (equalLettersIgnoringASCIICase(value, "off"_s)) {
+        if (equalLettersIgnoringASCIICase(newValue, "off"_s)) {
             m_autocomplete = Off;
             registerForSuspensionCallbackIfNeeded();
         } else {
             bool needsToUnregister = m_autocomplete == Off;
 
-            if (value.isEmpty())
+            if (newValue.isEmpty())
                 m_autocomplete = Uninitialized;
             else
                 m_autocomplete = On;
@@ -770,36 +772,34 @@ void HTMLInputElement::parseAttribute(const QualifiedName& name, const AtomStrin
         // attribute. So, delay the setChecked() call until
         // finishParsingChildren() is called if parsing is in progress.
         if ((!m_parsingInProgress || !document().formController().hasFormStateToRestore()) && !m_dirtyCheckednessFlag) {
-            setChecked(!value.isNull());
+            setChecked(!newValue.isNull());
             // setChecked() above sets the dirty checkedness flag so we need to reset it.
             m_dirtyCheckednessFlag = false;
         }
     } else if (name == maxlengthAttr)
-        maxLengthAttributeChanged(value);
+        maxLengthAttributeChanged(newValue);
     else if (name == minlengthAttr)
-        minLengthAttributeChanged(value);
+        minLengthAttributeChanged(newValue);
     else if (name == sizeAttr) {
         unsigned oldSize = m_size;
-        m_size = limitToOnlyHTMLNonNegativeNumbersGreaterThanZero(value, defaultSize);
+        m_size = limitToOnlyHTMLNonNegativeNumbersGreaterThanZero(newValue, defaultSize);
         if (m_size != oldSize && renderer())
             renderer()->setNeedsLayoutAndPrefWidthsRecalc();
     } else if (name == resultsAttr)
-        m_maxResults = value.isNull() ? -1 : std::min(parseHTMLInteger(value).value_or(0), maxSavedResults);
+        m_maxResults = newValue.isNull() ? -1 : std::min(parseHTMLInteger(newValue).value_or(0), maxSavedResults);
     else if (name == autosaveAttr || name == incrementalAttr)
         invalidateStyleForSubtree();
     else if (name == maxAttr || name == minAttr || name == multipleAttr || name == patternAttr || name == stepAttr)
         updateValidity();
 #if ENABLE(DATALIST_ELEMENT)
     else if (name == listAttr) {
-        m_hasNonEmptyList = !value.isEmpty();
+        m_hasNonEmptyList = !newValue.isEmpty();
         if (m_hasNonEmptyList) {
             resetListAttributeTargetObserver();
             dataListMayHaveChanged();
         }
     }
 #endif
-    else
-        HTMLTextFormControlElement::parseAttribute(name, value);
 
     m_inputType->attributeChanged(name);
 }

@@ -46,14 +46,12 @@ Ref<SVGFETileElement> SVGFETileElement::create(const QualifiedName& tagName, Doc
     return adoptRef(*new SVGFETileElement(tagName, document));
 }
 
-void SVGFETileElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void SVGFETileElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
-    if (name == SVGNames::inAttr) {
-        m_in1->setBaseValInternal(value);
-        return;
-    }
+    SVGFilterPrimitiveStandardAttributes::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 
-    SVGFilterPrimitiveStandardAttributes::parseAttribute(name, value);
+    if (name == SVGNames::inAttr)
+        m_in1->setBaseValInternal(newValue);
 }
 
 void SVGFETileElement::svgAttributeChanged(const QualifiedName& attrName)

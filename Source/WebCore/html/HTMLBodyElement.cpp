@@ -109,10 +109,10 @@ const AtomString& HTMLBodyElement::eventNameForWindowEventHandlerAttribute(const
     return eventNameForEventHandlerAttribute(attributeName, map);
 }
 
-void HTMLBodyElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void HTMLBodyElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     if (name == vlinkAttr || name == alinkAttr || name == linkAttr) {
-        auto parsedColor = parseLegacyColorValue(value);
+        auto parsedColor = parseLegacyColorValue(newValue);
         if (name == linkAttr) {
             if (parsedColor)
                 document().setLinkColor(*parsedColor);
@@ -137,17 +137,17 @@ void HTMLBodyElement::parseAttribute(const QualifiedName& name, const AtomString
     // FIXME: Emit "selectionchange" event at <input> / <textarea> elements and remove this special-case.
     // https://bugs.webkit.org/show_bug.cgi?id=234348
     if (name == onselectionchangeAttr) {
-        document().setAttributeEventListener(eventNames().selectionchangeEvent, name, value, mainThreadNormalWorld());
+        document().setAttributeEventListener(eventNames().selectionchangeEvent, name, newValue, mainThreadNormalWorld());
         return;
     }
 
     auto& eventName = eventNameForWindowEventHandlerAttribute(name);
     if (!eventName.isNull()) {
-        document().setWindowAttributeEventListener(eventName, name, value, mainThreadNormalWorld());
+        document().setWindowAttributeEventListener(eventName, name, newValue, mainThreadNormalWorld());
         return;
     }
 
-    HTMLElement::parseAttribute(name, value);
+    HTMLElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }
 
 Node::InsertedIntoAncestorResult HTMLBodyElement::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)

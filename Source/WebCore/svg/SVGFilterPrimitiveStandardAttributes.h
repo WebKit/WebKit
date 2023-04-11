@@ -66,7 +66,7 @@ public:
 protected:
     SVGFilterPrimitiveStandardAttributes(const QualifiedName&, Document&, UniqueRef<SVGPropertyRegistry>&&);
 
-    void parseAttribute(const QualifiedName&, const AtomString&) override;
+    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
     void svgAttributeChanged(const QualifiedName&) override;
     void childrenChanged(const ChildChange&) override;
     void primitiveAttributeOnChildChanged(const Element&, const QualifiedName&);

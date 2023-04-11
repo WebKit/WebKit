@@ -229,7 +229,7 @@ static std::optional<MathMLOperatorDictionary::Flag> attributeNameToPropertyFlag
     return std::nullopt;
 }
 
-void MathMLOperatorElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void MathMLOperatorElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     if (name == formAttr) {
         m_dictionaryProperty = std::nullopt;
@@ -250,7 +250,7 @@ void MathMLOperatorElement::parseAttribute(const QualifiedName& name, const Atom
         return;
     }
 
-    MathMLTokenElement::parseAttribute(name, value);
+    MathMLTokenElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }
 
 RenderPtr<RenderElement> MathMLOperatorElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)

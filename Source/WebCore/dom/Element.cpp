@@ -2095,8 +2095,6 @@ void Element::attributeChanged(const QualifiedName& name, const AtomString& oldV
         }
     }
 
-    parseAttribute(name, newValue);
-
     document().incDOMTreeVersion();
 
     if (UNLIKELY(isDefinedCustomElement()))

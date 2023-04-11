@@ -72,23 +72,24 @@ void HTMLTableColElement::collectPresentationalHintsForAttribute(const Qualified
         HTMLTablePartElement::collectPresentationalHintsForAttribute(name, value, style);
 }
 
-void HTMLTableColElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void HTMLTableColElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
+    HTMLTablePartElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
+
     if (name == spanAttr) {
-        m_span = clampHTMLNonNegativeIntegerToRange(value, minSpan, maxSpan, defaultSpan);
+        m_span = clampHTMLNonNegativeIntegerToRange(newValue, minSpan, maxSpan, defaultSpan);
         if (is<RenderTableCol>(renderer()))
             downcast<RenderTableCol>(*renderer()).updateFromElement();
     } else if (name == widthAttr) {
-        if (!value.isEmpty()) {
+        if (!newValue.isEmpty()) {
             if (is<RenderTableCol>(renderer())) {
                 auto& col = downcast<RenderTableCol>(*renderer());
-                int newWidth = parseHTMLInteger(value).value_or(0);
+                int newWidth = parseHTMLInteger(newValue).value_or(0);
                 if (newWidth != col.width())
                     col.setNeedsLayoutAndPrefWidthsRecalc();
             }
         }
-    } else
-        HTMLTablePartElement::parseAttribute(name, value);
+    }
 }
 
 const MutableStyleProperties* HTMLTableColElement::additionalPresentationalHintStyle() const

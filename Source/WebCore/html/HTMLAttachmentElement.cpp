@@ -455,31 +455,31 @@ RefPtr<HTMLImageElement> HTMLAttachmentElement::enclosingImageElement() const
     return { };
 }
 
-void HTMLAttachmentElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void HTMLAttachmentElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     if (name == actionAttr || name == subtitleAttr() || name == titleAttr || name == typeAttr) {
         if (m_innerLegacyAttachment)
-            m_innerLegacyAttachment->setAttributeWithoutSynchronization(name, value);
+            m_innerLegacyAttachment->setAttributeWithoutSynchronization(name, newValue);
         invalidateRendering();
     } else if (name == progressAttr && m_implementation == Implementation::Legacy) {
         invalidateRendering();
     }
 
-    HTMLElement::parseAttribute(name, value);
+    HTMLElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 
     if (name == actionAttr) {
         if (m_actionTextElement)
-            m_actionTextElement->setTextContent(String(value.string()));
+            m_actionTextElement->setTextContent(String(newValue.string()));
     } else if (name == titleAttr) {
         if (m_titleElement)
-            m_titleElement->setTextContent(String(value.string()));
+            m_titleElement->setTextContent(String(newValue.string()));
     } else if (name == subtitleAttr()) {
         if (m_subtitleElement)
-            m_subtitleElement->setTextContent(String(value.string()));
+            m_subtitleElement->setTextContent(String(newValue.string()));
     } else if (name == progressAttr)
-        updateProgress(value);
+        updateProgress(newValue);
     else if (name == saveAttr())
-        updateSaveButton(!value.isNull());
+        updateSaveButton(!newValue.isNull());
 
 #if ENABLE(SERVICE_CONTROLS)
     if (name == typeAttr && attachmentType() == "application/pdf"_s) {
