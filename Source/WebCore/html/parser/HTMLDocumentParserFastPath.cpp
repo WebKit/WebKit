@@ -209,7 +209,7 @@ public:
         // to the context tag.
         switch (contextElement.elementName()) {
 #define TAG_CASE(TagName, TagClassName)                                                                      \
-        case ElementName::HTML_ ## TagName:                                                                  \
+        case ElementNames::HTML::TagName:                                                                    \
             if constexpr (!TagInfo::TagClassName::isVoid) {                                                  \
                 parseCompleteInput<typename TagInfo::TagClassName>();                                        \
                 return !m_parsingFailed;                                                                     \
@@ -836,26 +836,22 @@ private:
         // complex re-parenting rules that cannot be captured in this way, so we
         // cannot support them.
         switch (tagName) {
-#define TAG_CASE(TagName, TagClassName)                                                  \
-        case ElementName::HTML_ ## TagName:                                              \
-            if (std::is_same_v<typename TagInfo::A, typename TagInfo::TagClassName>)     \
-                goto caseA;                                                              \
-            if constexpr (nonPhrasingContent ? TagInfo::TagClassName::allowedInFlowContent() : TagInfo::TagClassName::allowedInPhrasingOrFlowContent()) \
-                return parseElementAfterTagName<typename TagInfo::TagClassName>();   \
+#define TAG_CASE(TagName, TagClassName)                                                              \
+        case ElementNames::HTML::TagName:                                                            \
+            if constexpr (std::is_same_v<typename TagInfo::A, typename TagInfo::TagClassName>) {     \
+                /* <a> tags must not be nested, because HTML parsing would auto-close */             \
+                /* the outer one when encountering a nested one. */                                  \
+                if (!m_insideOfTagA) {                                                               \
+                    if constexpr (nonPhrasingContent)                                                \
+                        return parseElementAfterTagName<typename TagInfo::A>();                      \
+                    else                                                                             \
+                        return parseElementAfterTagName<typename TagInfo::AWithPhrasingContent>();   \
+                }                                                                                    \
+            } else if constexpr (nonPhrasingContent ? TagInfo::TagClassName::allowedInFlowContent() : TagInfo::TagClassName::allowedInPhrasingOrFlowContent()) \
+                return parseElementAfterTagName<typename TagInfo::TagClassName>();                   \
             break;
-
         FOR_EACH_SUPPORTED_TAG(TAG_CASE)
 #undef TAG_CASE
-
-            caseA:
-            // <a> tags must not be nested, because HTML parsing would auto-close
-            // the outer one when encountering a nested one.
-            if (!m_insideOfTagA) {
-                return nonPhrasingContent
-                    ? parseElementAfterTagName<typename TagInfo::A>()
-                    : parseElementAfterTagName<typename TagInfo::AWithPhrasingContent>();
-            }
-            break;
         default:
             break;
         }
