@@ -101,15 +101,13 @@ class TimeControl extends LayoutItem
     get minimumWidth()
     {
         this._performIdealLayout();
-        const scrubberMargin = this.computedValueForStylePropertyInPx("--scrubber-margin");
-        return MinimumScrubberWidth + scrubberMargin + this._durationOrRemainingTimeLabel().width;
+        return MinimumScrubberWidth + this._scrubberMargin + this._durationOrRemainingTimeLabel().width;
     }
 
     get idealMinimumWidth()
     {
         this._performIdealLayout();
-        const scrubberMargin = this.computedValueForStylePropertyInPx("--scrubber-margin");
-        return this.elapsedTimeLabel.width + MinimumScrubberWidth + (2 * scrubberMargin) + this._durationOrRemainingTimeLabel().width;
+        return this.elapsedTimeLabel.width + MinimumScrubberWidth + (2 * this._scrubberMargin) + this._durationOrRemainingTimeLabel().width;
     }
 
     // Protected
@@ -122,20 +120,11 @@ class TimeControl extends LayoutItem
         if (this._loading)
             return;
 
-        if (this.scrubber.width >= MinimumScrubberWidth) {
-            this.elapsedTimeLabel.visible = true;
-            return;
-        }
-
-        let durationOrRemainingTimeLabel = this._durationOrRemainingTimeLabel();
-
-        // We drop the elapsed time label if width is constrained and we can't guarantee
-        // the scrubber minimum size otherwise.
-        this.scrubber.x = 0;
-        const scrubberMargin = this.computedValueForStylePropertyInPx("--scrubber-margin");
-        this.scrubber.width = this.width - scrubberMargin - durationOrRemainingTimeLabel.width;
-        durationOrRemainingTimeLabel.x = this.scrubber.x + this.scrubber.width + scrubberMargin;
-        this.elapsedTimeLabel.visible = false;
+        // If the scrubber width is larger or equal to the minimal scrubber width, this means we determined during ideal layout
+        // that there is enough space to fit both the elapsed time label and either the duration or remaining time label. Otherwise
+        // it must be hidden.
+        this.elapsedTimeLabel.visible = this.scrubber.width >= MinimumScrubberWidth;
+        this._performLayoutWithRightTimeLabel(this._durationOrRemainingTimeLabel());
     }
 
     handleEvent(event)
@@ -160,6 +149,11 @@ class TimeControl extends LayoutItem
 
     // Private
 
+    get _scrubberMargin()
+    {
+        return this.computedValueForStylePropertyInPx("--scrubber-margin");
+    }
+
     get _canShowDurationTimeLabel()
     {
         return this.elapsedTimeLabel.visible;
@@ -172,8 +166,14 @@ class TimeControl extends LayoutItem
 
     _performIdealLayout()
     {
+        // During an ideal layout, we want the elapsed time label to be visible so we only account for _shouldShowDurationTimeLabel
+        // to determine whether to show the duration or remaining time label.
+        const durationOrRemainingTimeLabel = this._shouldShowDurationTimeLabel ? this.durationTimeLabel : this.remainingTimeLabel;
+
+        // We can only show the duration time label if the elapsed time label is visible.
+        // During an ideal layout, we must assume the elapsed time label is visible.
         if (this._loading)
-            this._durationOrRemainingTimeLabel().setValueWithNumberOfDigits(NaN, 4);
+            durationOrRemainingTimeLabel.setValueWithNumberOfDigits(NaN, 4);
         else {
             const shouldShowZeroDurations = isNaN(this._duration) || this._duration === Number.POSITIVE_INFINITY;
 
@@ -187,24 +187,36 @@ class TimeControl extends LayoutItem
             else
                 numberOfDigitsForTimeLabels = 6;
 
+            // Even though we only care about the metrics of durationOrRemainingTimeLabel, we set the values for both
+            // labels here since this is the only place where we set such values.
             this.elapsedTimeLabel.setValueWithNumberOfDigits(shouldShowZeroDurations ? 0 : this._currentTime, numberOfDigitsForTimeLabels);
-            if (this._canShowDurationTimeLabel && this._shouldShowDurationTimeLabel)
+            this.remainingTimeLabel.setValueWithNumberOfDigits(shouldShowZeroDurations ? 0 : this._currentTime - this._duration, numberOfDigitsForTimeLabels);
+            if (this.durationTimeLabel)
                 this.durationTimeLabel.setValueWithNumberOfDigits(shouldShowZeroDurations ? 0 : this._duration, numberOfDigitsForTimeLabels);
-            else
-                this.remainingTimeLabel.setValueWithNumberOfDigits(shouldShowZeroDurations ? 0 : this._currentTime - this._duration, numberOfDigitsForTimeLabels);
         }
 
         if (this._duration)
             this.scrubber.value = this._currentTime / this._duration;
 
-        let durationOrRemainingTimeLabel = this._durationOrRemainingTimeLabel();
+        this._performLayoutWithRightTimeLabel(durationOrRemainingTimeLabel);
+    }
 
-        const scrubberMargin = this.computedValueForStylePropertyInPx("--scrubber-margin");
-        this.scrubber.x = (this._loading ? this.activityIndicator.width : this.elapsedTimeLabel.width) + scrubberMargin;
-        this.scrubber.width = this.width - this.scrubber.x - scrubberMargin - durationOrRemainingTimeLabel.width;
-        durationOrRemainingTimeLabel.x = this.scrubber.x + this.scrubber.width + scrubberMargin;
+    _performLayoutWithRightTimeLabel(rightTimeLabel)
+    {
+        const scrubberMargin = this._scrubberMargin;
 
-        this.children = [this._loading ? this.activityIndicator : this.elapsedTimeLabel, this.scrubber, durationOrRemainingTimeLabel];
+        this.scrubber.x = (() => {
+            if (this._loading)
+                return this.activityIndicator.width + scrubberMargin;
+            if (this.elapsedTimeLabel.visible)
+                return this.elapsedTimeLabel.width + scrubberMargin;
+            return 0;
+        })();
+
+        this.scrubber.width = this.width - this.scrubber.x - scrubberMargin - rightTimeLabel.width;
+        rightTimeLabel.x = this.scrubber.x + this.scrubber.width + scrubberMargin;
+
+        this.children = [this._loading ? this.activityIndicator : this.elapsedTimeLabel, this.scrubber, rightTimeLabel];
     }
 
     updateScrubberLabel()
