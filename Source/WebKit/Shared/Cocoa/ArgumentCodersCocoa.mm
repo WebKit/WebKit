@@ -602,6 +602,9 @@ static bool shouldEnableStrictMode(Decoder& decoder, NSArray<Class> *allowedClas
         || (supportsDataDetectors && [allowedClasses containsObject:PAL::getDDActionContextClass()]) // rdar://107553348 - relying on NSMutableArray re-write, don't re-introduce rdar://107676726
 #endif // PLATFORM(MAC)
 #endif // ENABLE(DATA_DETECTION)
+#if ENABLE(REVEAL)
+        || (supportsRevealCore && [allowedClasses containsObject:PAL::getRVItemClass()]) // rdar://107553310 - relying on NSMutableArray re-write, don't re-introduce rdar://107673064
+#endif // ENABLE(REVEAL)
     ) {
         return false;
     }
@@ -611,9 +614,6 @@ static bool shouldEnableStrictMode(Decoder& decoder, NSArray<Class> *allowedClas
         || [allowedClasses containsObject:NSParagraphStyle.class] // rdar://107553230
         || [allowedClasses containsObject:NSShadow.class] // rdar://107553244
         || [allowedClasses containsObject:NSTextAttachment.class] // rdar://107553273
-#if ENABLE(REVEAL)
-        || (supportsRevealCore && [allowedClasses containsObject:PAL::getRVItemClass()]) // rdar://107553310
-#endif // ENABLE(REVEAL)
 #if ENABLE(APPLE_PAY)
         || (supportsPassKitCore && [allowedClasses containsObject:PAL::getPKPaymentSetupFeatureClass()]) // rdar://107553409
         || (supportsPassKitCore && [allowedClasses containsObject:PAL::getPKPaymentMerchantSessionClass()]) // rdar://107553452
