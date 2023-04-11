@@ -844,6 +844,7 @@ TEST(WKHTTPCookieStore, WebSocketCookies)
     serverPort = server.port();
 
     auto webView = adoptNS([WKWebView new]);
+    [[[webView configuration] websiteDataStore] _setResourceLoadStatisticsEnabled:YES];
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://127.0.0.1:%d/com", serverPort]]]];
     [webView _test_waitForDidFinishNavigation];
 
@@ -898,6 +899,7 @@ TEST(WKHTTPCookieStore, WebSocketCookiesFromRedirect)
     serverPort = server.port();
 
     auto webView = adoptNS([WKWebView new]);
+    [[[webView configuration] websiteDataStore] _setResourceLoadStatisticsEnabled:YES];
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://127.0.0.1:%d/redirect", serverPort]]]];
     [webView _test_waitForDidFinishNavigation];
 
@@ -947,6 +949,7 @@ TEST(WKHTTPCookieStore, WebSocketCookiesThroughRedirect)
     serverPort = server.port();
 
     auto webView = adoptNS([WKWebView new]);
+    [[[webView configuration] websiteDataStore] _setResourceLoadStatisticsEnabled:YES];
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://127.0.0.1:%d/redirect", serverPort]]]];
     Util::run(&receivedWebSocket);
 }
@@ -987,6 +990,7 @@ TEST(WKHTTPCookieStore, WebSocketSetCookiesThroughFirstPartyRedirect)
     serverPort = server.port();
 
     auto webView = adoptNS([WKWebView new]);
+    [[[webView configuration] websiteDataStore] _setResourceLoadStatisticsEnabled:YES];
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://127.0.0.1:%d/ninja", serverPort]]]];
     Util::run(&receivedWebSocket);
 }
@@ -1038,6 +1042,7 @@ TEST(WKHTTPCookieStore, WebSocketSetCookiesThroughRedirectToThirdParty)
     serverPort = server.port();
 
     auto webView = adoptNS([WKWebView new]);
+    [[[webView configuration] websiteDataStore] _setResourceLoadStatisticsEnabled:YES];
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://127.0.0.1:%d/ninja", serverPort]]]];
     Util::run(&receivedWebSocket);
 }
