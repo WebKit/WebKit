@@ -204,8 +204,8 @@ class GitHubEWS(GitHub):
                           ['bindings', 'ios-sim', 'mac-AS-debug', 'wpe-wk2', ''],
                           ['webkitperl', 'ios-wk2', 'api-mac', 'gtk', ''],
                           ['webkitpy', 'ios-wk2-wpt', 'mac-wk1', 'gtk-wk2', ''],
-                          ['jsc', 'tv', 'api-ios', 'api-gtk', ''],
-                          ['jsc-arm64', 'mac-wk2', 'mac-AS-debug-wk2', 'jsc-armv7', ''],
+                          ['jsc', 'api-ios', 'mac-wk2', 'api-gtk', ''],
+                          ['jsc-arm64', 'tv', 'mac-AS-debug-wk2', 'jsc-armv7', ''],
                           ['services', 'tv-sim', 'mac-wk2-stress', 'jsc-armv7-tests', ''],
                           ['merge', 'watch', '', 'jsc-mips', ''],
                           ['unsafe-merge', 'watch-sim', '', 'jsc-mips-tests', '']]
