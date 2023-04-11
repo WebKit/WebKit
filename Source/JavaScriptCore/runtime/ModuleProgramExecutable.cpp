@@ -42,7 +42,7 @@ ModuleProgramExecutable::ModuleProgramExecutable(JSGlobalObject* globalObject, c
 }
 
 
-UnlinkedModuleProgramCodeBlock* ModuleProgramExecutable::getUnlinkedCodeBlock(JSGlobalObject* globalObject, PossibleExceptionsExpected possibleExceptionsExpected)
+UnlinkedModuleProgramCodeBlock* ModuleProgramExecutable::getUnlinkedCodeBlock(JSGlobalObject* globalObject)
 {
     VM& vm = globalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -59,7 +59,6 @@ UnlinkedModuleProgramCodeBlock* ModuleProgramExecutable::getUnlinkedCodeBlock(JS
         globalObject->debugger()->sourceParsed(globalObject, source().provider(), error.line(), error.message());
 
     if (error.isValid()) {
-        RELEASE_ASSERT(possibleExceptionsExpected == PossibleExceptionsExpected::Yes);
         throwVMError(globalObject, throwScope, error.toErrorObject(globalObject, source()));
         return nullptr;
     }
@@ -76,7 +75,7 @@ ModuleProgramExecutable* ModuleProgramExecutable::create(JSGlobalObject* globalO
     VM& vm = globalObject->vm();
     ModuleProgramExecutable* executable = new (NotNull, allocateCell<ModuleProgramExecutable>(vm)) ModuleProgramExecutable(globalObject, source);
     executable->finishCreation(vm);
-    executable->getUnlinkedCodeBlock(globalObject, PossibleExceptionsExpected::Yes); // This generates and binds unlinked code block.
+    executable->getUnlinkedCodeBlock(globalObject); // This generates and binds unlinked code block.
     return executable;
 }
 
