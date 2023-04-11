@@ -46,7 +46,8 @@ struct FloatMarkableTraits {
 struct FontSizeAdjust {
     bool operator==(const FontSizeAdjust& other) const
     {
-        return metric == other.metric && value == other.value;
+        return metric == other.metric && value == other.value
+            && isFromFont == other.isFromFont;
     }
 
     bool operator!=(const FontSizeAdjust& other) const
@@ -62,6 +63,7 @@ struct FontSizeAdjust {
         IcHeight
     } metric;
     Markable<float, FloatMarkableTraits> value;
+    bool isFromFont { false };
 };
 
 inline void add(Hasher& hasher, const FontSizeAdjust& fontSizeAdjust)
@@ -86,10 +88,14 @@ inline TextStream& operator<<(TextStream& ts, const FontSizeAdjust& fontSizeAdju
         break;
     case FontSizeAdjust::Metric::ExHeight:
     default:
+        if (fontSizeAdjust.isFromFont)
+            return ts << "from-font";
         return ts << *fontSizeAdjust.value;
     }
-    ts << " " << fontSizeAdjust.value;
-    return ts;
+
+    if (fontSizeAdjust.isFromFont)
+        return ts << " " << "from-font";
+    return ts << " " << fontSizeAdjust.value;
 }
 
 }

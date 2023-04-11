@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2013 Google Inc. All rights reserved.
  * Copyright (C) 2014-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 ChangSeok Oh <changseok@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -64,6 +65,7 @@
 #include "SVGURIReference.h"
 #include "Settings.h"
 #include "StyleBuilderState.h"
+#include "StyleFontSizeFunctions.h"
 #include "StyleGridData.h"
 #include "StyleScrollSnapPoints.h"
 #include "StyleTextEdge.h"
@@ -1516,7 +1518,7 @@ inline FontVariationSettings BuilderConverter::convertFontVariationSettings(Buil
     return settings;
 }
 
-inline FontSizeAdjust BuilderConverter::convertFontSizeAdjust(BuilderState&, const CSSValue& value)
+inline FontSizeAdjust BuilderConverter::convertFontSizeAdjust(BuilderState& builderState, const CSSValue& value)
 {
     if (is<CSSPrimitiveValue>(value)) {
         auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
@@ -1524,16 +1526,26 @@ inline FontSizeAdjust BuilderConverter::convertFontSizeAdjust(BuilderState&, con
             || CSSPropertyParserHelpers::isSystemFontShorthand(primitiveValue.valueID()))
             return FontCascadeDescription::initialFontSizeAdjust();
 
-        ASSERT(primitiveValue.isNumber());
-        return { FontSizeAdjust::Metric::ExHeight, primitiveValue.floatValue() };
+        auto defaultMetric = FontSizeAdjust::Metric::ExHeight;
+        if (primitiveValue.isNumber())
+            return { defaultMetric, primitiveValue.floatValue(), false };
+
+        ASSERT(primitiveValue.valueID() == CSSValueFromFont);
+        // The primary font could be null in the current builder state where
+        // a fallback font is used. So, we use the parent style instead.
+        return { defaultMetric, aspectValueOfPrimaryFont(builderState.parentStyle(), defaultMetric), true };
     }
 
     ASSERT(value.isPair());
     const auto& pair = downcast<CSSValuePair>(value);
 
     auto metric = fromCSSValueID<FontSizeAdjust::Metric>(downcast<CSSPrimitiveValue>(pair.first()).valueID());
-    float aValue = downcast<CSSPrimitiveValue>(pair.second()).floatValue();
-    return { metric, aValue };
+    auto& primitiveValue = downcast<CSSPrimitiveValue>(pair.second());
+    if (primitiveValue.isNumber())
+        return { metric, primitiveValue.floatValue(), false };
+
+    ASSERT(primitiveValue.valueID() == CSSValueFromFont);
+    return { metric, aspectValueOfPrimaryFont(builderState.parentStyle(), metric), true };
 }
 
 #if PLATFORM(IOS_FAMILY)

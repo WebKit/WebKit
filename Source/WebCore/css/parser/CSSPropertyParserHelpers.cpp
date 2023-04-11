@@ -4898,7 +4898,7 @@ static std::optional<Vector<FontFamilyRaw>> consumeFontFamilyRaw(CSSParserTokenR
 
 RefPtr<CSSValue> consumeFontSizeAdjust(CSSParserTokenRange& range)
 {
-    if (range.peek().id() == CSSValueNone)
+    if (range.peek().id() == CSSValueNone || range.peek().id() == CSSValueFromFont)
         return consumeIdent(range);
 
     if (auto value = consumeNumber(range, ValueRange::NonNegative))
@@ -4909,8 +4909,12 @@ RefPtr<CSSValue> consumeFontSizeAdjust(CSSParserTokenRange& range)
         return nullptr;
 
     auto value = consumeNumber(range, ValueRange::NonNegative);
-    if (!value)
-        return nullptr;
+    if (!value) {
+        value = consumeIdent<CSSValueFromFont>(range);
+        if (!value)
+            return nullptr;
+    }
+
     if (metric->valueID() == CSSValueExHeight)
         return value;
 
