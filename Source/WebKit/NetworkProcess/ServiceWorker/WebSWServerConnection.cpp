@@ -191,7 +191,8 @@ void WebSWServerConnection::controlClient(const NetworkResourceLoadParameters& p
 
     auto ancestorOrigins = map(parameters.frameAncestorOrigins, [](auto& origin) { return origin->toString(); });
     ServiceWorkerClientData data { clientIdentifier, clientType, ServiceWorkerClientFrameType::None, request.url(), URL(), parameters.webPageID, parameters.webFrameID, request.isAppInitiated() ? WebCore::LastNavigationWasAppInitiated::Yes : WebCore::LastNavigationWasAppInitiated::No, false, false, 0, WTFMove(ancestorOrigins) };
-    registerServiceWorkerClient(ClientOrigin { registration.key().topOrigin(), SecurityOriginData::fromURLWithoutStrictOpaqueness(request.url()) }, WTFMove(data), registration.identifier(), request.httpUserAgent());
+
+    registerServiceWorkerClientInternal(ClientOrigin { registration.key().topOrigin(), SecurityOriginData::fromURLWithoutStrictOpaqueness(request.url()) }, WTFMove(data), registration.identifier(), request.httpUserAgent(), WebCore::SWServer::IsBeingCreatedClient::Yes);
 }
 
 std::unique_ptr<ServiceWorkerFetchTask> WebSWServerConnection::createFetchTask(NetworkResourceLoader& loader, const ResourceRequest& request)
@@ -386,17 +387,8 @@ void WebSWServerConnection::scheduleUnregisterJobInServer(ServiceWorkerJobIdenti
 
 void WebSWServerConnection::postMessageToServiceWorkerClient(ScriptExecutionContextIdentifier destinationContextIdentifier, const MessageWithMessagePorts& message, ServiceWorkerIdentifier sourceIdentifier, const String& sourceOrigin)
 {
-    auto* sourceServiceWorker = server().workerByID(sourceIdentifier);
-    if (!sourceServiceWorker)
-        return;
-
-    auto sourceServiceWorkerData = sourceServiceWorker->data();
-
-    sendWithAsyncReply(Messages::WebSWClientConnection::PostMessageToServiceWorkerClient { destinationContextIdentifier, message, sourceServiceWorkerData, sourceOrigin }, [this, weakThis = WeakPtr { *this }, destinationContextIdentifier, message, sourceServiceWorkerData, sourceOrigin] (bool result) {
-        if (result)
-            return;
-
-        server().addServiceWorkerClientPendingMessage(destinationContextIdentifier, { message, sourceServiceWorkerData, sourceOrigin });
+    server().postMessageToServiceWorkerClient(destinationContextIdentifier, message, sourceIdentifier, sourceOrigin, [this] (auto destinationContextIdentifier, auto& message, auto sourceServiceWorkerData, auto& sourceOrigin) {
+        send(Messages::WebSWClientConnection::PostMessageToServiceWorkerClient { destinationContextIdentifier, message, sourceServiceWorkerData, sourceOrigin }, 0);
     });
 }
 
@@ -419,6 +411,11 @@ void WebSWServerConnection::registerServiceWorkerClient(WebCore::ClientOrigin&& 
     CONNECTION_MESSAGE_CHECK(data.identifier.processIdentifier() == identifier());
     CONNECTION_MESSAGE_CHECK(!clientOrigin.topOrigin.isNull());
 
+    registerServiceWorkerClientInternal(WTFMove(clientOrigin), WTFMove(data), controllingServiceWorkerRegistrationIdentifier, WTFMove(userAgent), SWServer::IsBeingCreatedClient::No);
+}
+
+void WebSWServerConnection::registerServiceWorkerClientInternal(WebCore::ClientOrigin&& clientOrigin, ServiceWorkerClientData&& data, const std::optional<ServiceWorkerRegistrationIdentifier>& controllingServiceWorkerRegistrationIdentifier, String&& userAgent, WebCore::SWServer::IsBeingCreatedClient isBeingCreatedClient)
+{
     auto& contextOrigin = clientOrigin.clientOrigin;
     if (data.url.protocolIsInHTTPFamily()) {
         // We do not register any sandbox document.
@@ -434,7 +431,13 @@ void WebSWServerConnection::registerServiceWorkerClient(WebCore::ClientOrigin&& 
     auto* contextConnection = isNewOrigin ? server().contextConnectionForRegistrableDomain(RegistrableDomain { contextOrigin }) : nullptr;
 
     m_clientOrigins.add(data.identifier, clientOrigin);
-    server().registerServiceWorkerClient(WTFMove(clientOrigin), WTFMove(data), controllingServiceWorkerRegistrationIdentifier, WTFMove(userAgent));
+
+    if (isBeingCreatedClient == SWServer::IsBeingCreatedClient::No) {
+        for (auto&& pendingMessage : server().releaseServiceWorkerClientPendingMessage(data.identifier))
+            send(Messages::WebSWClientConnection::PostMessageToServiceWorkerClient { data.identifier, pendingMessage.message, pendingMessage.sourceData, pendingMessage.sourceOrigin }, 0);
+    }
+
+    server().registerServiceWorkerClient(WTFMove(clientOrigin), WTFMove(data), controllingServiceWorkerRegistrationIdentifier, WTFMove(userAgent), isBeingCreatedClient);
 
     if (!m_isThrottleable)
         updateThrottleState();
@@ -702,11 +705,6 @@ void WebSWServerConnection::getNavigationPreloadState(WebCore::ServiceWorkerRegi
 void WebSWServerConnection::focusServiceWorkerClient(WebCore::ScriptExecutionContextIdentifier clientIdentifier, CompletionHandler<void(std::optional<ServiceWorkerClientData>&&)>&& callback)
 {
     sendWithAsyncReply(Messages::WebSWClientConnection::FocusServiceWorkerClient { clientIdentifier }, WTFMove(callback));
-}
-
-void WebSWServerConnection::getServiceWorkerClientPendingMessages(const WebCore::ScriptExecutionContextIdentifier& identifier, CompletionHandler<void(Vector<WebCore::ServiceWorkerClientPendingMessage>&&)>&& completionHandler)
-{
-    completionHandler(server().releaseServiceWorkerClientPendingMessage(identifier));
 }
 
 void WebSWServerConnection::transferServiceWorkerLoadToNewWebProcess(NetworkResourceLoader& loader, WebCore::SWServerRegistration& registration, WebCore::ProcessIdentifier webProcessIdentifier)

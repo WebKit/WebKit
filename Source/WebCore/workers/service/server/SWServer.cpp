@@ -1096,7 +1096,7 @@ void SWServer::updateAppInitiatedValueForWorkers(const ClientOrigin& clientOrigi
     }
 }
 
-void SWServer::registerServiceWorkerClient(ClientOrigin&& clientOrigin, ServiceWorkerClientData&& data, const std::optional<ServiceWorkerRegistrationIdentifier>& controllingServiceWorkerRegistrationIdentifier, String&& userAgent)
+void SWServer::registerServiceWorkerClient(ClientOrigin&& clientOrigin, ServiceWorkerClientData&& data, const std::optional<ServiceWorkerRegistrationIdentifier>& controllingServiceWorkerRegistrationIdentifier, String&& userAgent, IsBeingCreatedClient isBeingCreatedClient)
 {
     auto clientIdentifier = data.identifier;
 
@@ -1118,8 +1118,10 @@ void SWServer::registerServiceWorkerClient(ClientOrigin&& clientOrigin, ServiceW
 
     ASSERT(!m_clientsById.contains(clientIdentifier));
     m_clientsById.add(clientIdentifier, makeUniqueRef<ServiceWorkerClientData>(WTFMove(data)));
+
     ASSERT(!m_clientPendingMessagesById.contains(clientIdentifier));
-    m_clientPendingMessagesById.add(clientIdentifier, Vector<ServiceWorkerClientPendingMessage> { });
+    if (isBeingCreatedClient == IsBeingCreatedClient::Yes)
+        m_clientPendingMessagesById.add(clientIdentifier, Vector<ServiceWorkerClientPendingMessage> { });
 
     auto& clientIdentifiersForOrigin = m_clientIdentifiersPerOrigin.ensure(clientOrigin, [] {
         return Clients { };
@@ -1673,12 +1675,18 @@ void SWServer::fireFunctionalEvent(SWServerRegistration& registration, Completio
     });
 }
 
-void SWServer::addServiceWorkerClientPendingMessage(ScriptExecutionContextIdentifier contextIdentifier, ServiceWorkerClientPendingMessage&& message)
+void SWServer::postMessageToServiceWorkerClient(ScriptExecutionContextIdentifier destinationContextIdentifier, const MessageWithMessagePorts& message, ServiceWorkerIdentifier sourceIdentifier, const String& sourceOrigin, const Function<void(ScriptExecutionContextIdentifier, const MessageWithMessagePorts&, const ServiceWorkerData&, const String&)>& callbackIfClientIsReady)
 {
-    auto iterator = m_clientPendingMessagesById.find(contextIdentifier);
-    if (iterator == m_clientPendingMessagesById.end())
+    auto* sourceServiceWorker = workerByID(sourceIdentifier);
+    if (!sourceServiceWorker)
         return;
-    iterator->value.append(WTFMove(message));
+
+    auto iterator = m_clientPendingMessagesById.find(destinationContextIdentifier);
+    if (iterator == m_clientPendingMessagesById.end()) {
+        callbackIfClientIsReady(destinationContextIdentifier, message, sourceServiceWorker->data(), sourceOrigin);
+        return;
+    }
+    iterator->value.append({ message, sourceServiceWorker->data(), sourceOrigin });
 }
 
 Vector<ServiceWorkerClientPendingMessage> SWServer::releaseServiceWorkerClientPendingMessage(ScriptExecutionContextIdentifier contextIdentifier)

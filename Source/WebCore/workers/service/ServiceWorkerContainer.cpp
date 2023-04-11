@@ -358,24 +358,13 @@ void ServiceWorkerContainer::startMessages()
         return;
     }
 
-    ensureSWClientConnection().getServiceWorkerClientPendingMessages(context->identifier(), [this, protectedThis = Ref { *this }](Vector<ServiceWorkerClientPendingMessage>&& pendingMessages) {
-        if (!this->context())
-            return;
+    m_shouldDeferMessageEvents = false;
 
-        m_shouldDeferMessageEvents = false;
-
-        // Pending messages that were saved off in the networking process come first.
-        for (auto& message : pendingMessages)
-            postMessage(WTFMove(message.message), WTFMove(message.sourceData), WTFMove(message.sourceOrigin));
-
-        // Then locally deferred messages come next.
-        for (auto&& messageEvent : std::exchange(m_deferredMessageEvents, Vector<MessageEvent::MessageEventWithStrongData> { })) {
-            queueTaskKeepingObjectAlive(*this, TaskSource::DOMManipulation, [this, messageEvent = WTFMove(messageEvent)] {
-                dispatchEvent(messageEvent.event);
-            });
-        }
-
-    });
+    for (auto&& messageEvent : std::exchange(m_deferredMessageEvents, Vector<MessageEvent::MessageEventWithStrongData> { })) {
+        queueTaskKeepingObjectAlive(*this, TaskSource::DOMManipulation, [this, messageEvent = WTFMove(messageEvent)] {
+            dispatchEvent(messageEvent.event);
+        });
+    }
 }
 
 void ServiceWorkerContainer::jobFailedWithException(ServiceWorkerJob& job, const Exception& exception)
