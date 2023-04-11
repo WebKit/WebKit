@@ -1669,9 +1669,9 @@ webkit.org/b/79203 fast/mediastream/RTCPeerConnection-stats.html [ Timeout Crash
 webkit.org/b/79203 webkit.org/b/186678 fast/mediastream/MediaStream-video-element-track-stop.html [ Timeout Failure Crash ]
 webkit.org/b/230415 fast/mediastream/RTCPeerConnection-iceconnectionstatechange-event.html [ Timeout ]
 webkit.org/b/187603 fast/mediastream/media-stream-track-source-failure.html [ Timeout Failure Pass ]
-webkit.org/b/233731 fast/mediastream/getDisplayMedia-size.html [ Failure ]
-fast/mediastream/mediastreamtrack-configurationchange.html [ Failure ]
-fast/mediastream/getDisplayMedia-displaySurface.html [ Failure ]
+
+# This ends up calling WKPageTriggerMockMicrophoneConfigurationChange which is specific to GPUProcess.
+fast/mediastream/mediastreamtrack-configurationchange.html [ Skip ]
 
 fast/mediastream/MediaDevices-addEventListener.html [ DumpJSConsoleLogInStdErr ]
 

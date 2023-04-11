@@ -70,6 +70,8 @@ protected:
     IntSize captureSize() const;
 
 private:
+    friend class MockDisplayCaptureSourceGStreamer;
+
     const RealtimeMediaSourceCapabilities& capabilities() final;
     const RealtimeMediaSourceSettings& settings() final;
 

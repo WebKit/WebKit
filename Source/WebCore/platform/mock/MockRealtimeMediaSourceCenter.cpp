@@ -189,8 +189,7 @@ public:
 #if PLATFORM(MAC)
             return DisplayCaptureSourceCocoa::create(UniqueRef<DisplayCaptureSourceCocoa::Capturer>(makeUniqueRef<MockDisplayCapturer>(device, pageIdentifier)), device, WTFMove(hashSalts), constraints, pageIdentifier);
 #elif USE(GSTREAMER)
-            UNUSED_PARAM(pageIdentifier);
-            return MockDisplayCaptureSourceGStreamer::create(device, WTFMove(hashSalts), constraints);
+            return MockDisplayCaptureSourceGStreamer::create(device, WTFMove(hashSalts), constraints, pageIdentifier);
 #else
             return MockRealtimeVideoSource::create(String { device.persistentId() }, AtomString { device.label() }, WTFMove(hashSalts), constraints, pageIdentifier);
 #endif
