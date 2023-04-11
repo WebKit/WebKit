@@ -1,8 +1,8 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../../resources/js-test.js"></script>
 <script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
 </head>
 <body id="body" role="group">
 
@@ -20,31 +20,32 @@
 <div id="checkbox" role="checkbox">checkbox</div>
 
 <script>
-    let output = "This tests that when aria-hidden is toggled, it will clear out the cached children for non-ignored elements that are descendants.\n\n";
+let output = "This tests that when aria-hidden is toggled, it will clear out the cached children for non-ignored elements that are descendants.\n\n";
 
-    if (window.accessibilityController) {
-        window.jsTestIsAsync = true;
-        var axBody = accessibilityController.accessibleElementById("body");
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+    var axBody = accessibilityController.accessibleElementById("body");
 
-        // Verify we can access the button inside the tab panel.
+    // Verify we can access the button inside the tab panel.
+    output += expect("axBody.childAtIndex(3).childAtIndex(0).role", "'AXRole: AXButton'");
+
+    var main = document.getElementById("main");
+    // Toggle aria-hidden, and we should not be able to access the same elements anymore.
+    main.setAttribute("aria-hidden", "true");
+    setTimeout(async () => {
+        output += expect("axBody.childAtIndex(0).role", "'AXRole: AXCheckBox'");
+
+        // Toggle aria-hidden off again and we should again be able to access elements inside the tab panel.
+        main.setAttribute("aria-hidden", "false");
+        await waitFor(() => axBody.childAtIndex(3));
         output += expect("axBody.childAtIndex(3).childAtIndex(0).role", "'AXRole: AXButton'");
 
-        var main = document.getElementById("main");
-        // Toggle aria-hidden, and we should not be able to access the same elements anymore.
-        main.setAttribute("aria-hidden", "true");
-        setTimeout(async () => {
-            output += expect("axBody.childAtIndex(0).role", "'AXRole: AXCheckBox'");
-
-            // Toggle aria-hidden off again and we should again be able to access elements inside the tab panel.
-            main.setAttribute("aria-hidden", "false");
-            output += expect("axBody.childAtIndex(3).childAtIndex(0).role", "'AXRole: AXButton'");
-
-            main.style.visibility = "hidden";
-            document.getElementById("checkbox").style.visibility = "hidden";
-            debug(output);
-            finishJSTest();
-        }, 0);
-    }
+        main.style.visibility = "hidden";
+        document.getElementById("checkbox").style.visibility = "hidden";
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
 </script>
 </body>
 </html>
