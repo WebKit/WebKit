@@ -23,12 +23,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-enum BufferingPolicy {
-    "low",
-    "medium",
-    "high"
-};
-
 enum PreferredQuality {
     "low",
     "medium",
@@ -43,8 +37,8 @@ enum PreferredQuality {
 ] interface ManagedMediaSource : MediaSource {
     [CallWith=CurrentScriptExecutionContext] constructor();
 
-    readonly attribute BufferingPolicy buffering;
     readonly attribute PreferredQuality quality;
+    attribute EventHandler onqualitychange;
 
     readonly attribute boolean streaming;
     attribute EventHandler onstartstreaming;

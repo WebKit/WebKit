@@ -230,6 +230,7 @@ namespace WebCore {
     macro(progress) \
     macro(push) \
     macro(pushsubscriptionchange) \
+    macro(qualitychange) \
     macro(ratechange) \
     macro(readystatechange) \
     macro(rejectionhandled) \

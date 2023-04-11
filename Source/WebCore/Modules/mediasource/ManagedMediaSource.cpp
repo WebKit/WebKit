@@ -52,11 +52,6 @@ ManagedMediaSource::ManagedMediaSource(ScriptExecutionContext& context)
 
 ManagedMediaSource::~ManagedMediaSource() = default;
 
-ExceptionOr<ManagedMediaSource::BufferingPolicy> ManagedMediaSource::buffering() const
-{
-    return BufferingPolicy::Medium;
-}
-
 ExceptionOr<ManagedMediaSource::PreferredQuality> ManagedMediaSource::quality() const
 {
     return PreferredQuality::High;

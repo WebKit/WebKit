@@ -38,9 +38,6 @@ public:
     static Ref<ManagedMediaSource> create(ScriptExecutionContext&);
     ~ManagedMediaSource();
 
-    enum class BufferingPolicy { Low, Medium, High };
-    ExceptionOr<BufferingPolicy> buffering() const;
-
     enum class PreferredQuality { Low, Medium, High };
     ExceptionOr<PreferredQuality> quality() const;
 
