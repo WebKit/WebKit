@@ -589,6 +589,22 @@ $isFTLPlatform = !($architecture == "x86" || $architecture == "arm" || $architec
 $isWasmPlatform = $isFTLPlatform || $architecture == "arm"
 $isSIMDPlatform = $architecture == "arm64" || $architecture == "x86_64"
 
+# This is meant for skipping execution of tests than require a lot of address
+# space. Cf. $memoryLimited, which is meant for tests that actually make use of
+# a lot of memory.
+# Technically, this should be the bits available in userspace, but right now we
+# don't need to be this precise.
+$addressBits = case $architecture
+               when /.*64.*/
+                   # We only have 36 bits on iOS. We'll need to differentiate
+                   # between iOS and other 64-bit systems (possibly by adding an
+                   # --address-bits flag to this script) when we acquire tests
+                   # that require > 36 bits of address space.
+                   36
+               else
+                   32
+               end
+
 if $architecture == "x86"
     # The JIT is temporarily disabled on this platform since
     # https://trac.webkit.org/changeset/237547

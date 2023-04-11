@@ -1,4 +1,4 @@
-//@ skip if $memoryLimited or ($architecture != "arm64" && $architecture != "x86_64")
+//@ skip if $memoryLimited or $addressBits <= 32
 //@ runDefault()
 function getArrayLength(array)
 {
