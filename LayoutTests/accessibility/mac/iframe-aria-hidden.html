@@ -1,48 +1,37 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script>
-var successfullyParsed = false;
-</script>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
 </head>
-<body id="body">
+<body id="body" role="group">
 
 <iframe aria-hidden="true" id="iframe" src="resources/cake.png" width="400" height="500" scrolling="auto" frameborder="1">fall back content</iframe>
 
-<p id="description"></p>
-<div id="console"></div>
+<input type="text" aria-label="Non-hidden textbox">
 
 <script>
-description("This tests that aria-hidden will affect the visibility of the web area and scroll view.");
+var output = "This tests that aria-hidden will affect the visibility of the web area and scroll view.\n\n";
 
 if (window.accessibilityController) {
-    jsTestIsAsync = true;
+    window.jsTestIsAsync = true;
 
-    // Get the iframe reference.
-    document.getElementById("body").focus();
-    var body = accessibilityController.focusedElement;
-
-    window.onload = function() {
-        shouldBe("body.childrenCount", "2");
-        shouldBe("body.childAtIndex(0).childrenCount", "1");
-
+    var body = accessibilityController.accessibleElementById("body");
+    output += expect("body.childrenCount", "1");
+    output += expect("body.childAtIndex(0).role", "'AXRole: AXTextField'");
+    window.onload = async function() {
         document.getElementById("iframe").setAttribute("aria-hidden", "false");
-    
         document.getElementById("iframe").contentWindow.document.body.offsetWidth;
         document.body.offsetWidth;
 
-        shouldBe("body.childrenCount", "4");
-        shouldBe("body.childAtIndex(0).childAtIndex(0).role", "'AXRole: AXWebArea'");
+        output += await expectAsync("body.childrenCount", "2");
+        output += await expectAsync("body.childAtIndex(0).childAtIndex(0).role", "'AXRole: AXWebArea'");
 
+        debug(output);
         finishJSTest();
     }
-} else
-    testFailed("This test relies on accessibilityController, please use run-webkit-tests to run it.")
-
-successfullyParsed = true;
+}
 </script>
-
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>
+
