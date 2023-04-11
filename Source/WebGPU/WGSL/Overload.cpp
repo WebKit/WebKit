@@ -51,6 +51,7 @@ inline void logLn(Arguments&&... arguments)
 struct ViableOverload {
     const OverloadCandidate* candidate;
     FixedVector<unsigned> ranks;
+    FixedVector<Type*> parameters;
     Type* result;
 };
 
@@ -58,7 +59,7 @@ class OverloadResolver {
 public:
     OverloadResolver(TypeStore&, const Vector<OverloadCandidate>&, const Vector<Type*>& valueArguments, const Vector<Type*>& typeArguments, unsigned numberOfTypeSubstitutions, unsigned numberOfValueSubstitutions);
 
-    Type* resolve();
+    std::optional<SelectedOverload> resolve();
 
 private:
     FixedVector<std::optional<ViableOverload>> considerCandidates();
@@ -94,7 +95,7 @@ OverloadResolver::OverloadResolver(TypeStore& types, const Vector<OverloadCandid
 {
 }
 
-Type* OverloadResolver::resolve()
+std::optional<SelectedOverload> OverloadResolver::resolve()
 {
     auto candidates = considerCandidates();
     std::optional<ViableOverload> selectedCandidate = std::nullopt;
@@ -125,13 +126,13 @@ Type* OverloadResolver::resolve()
 
     if (!selectedCandidate.has_value()) {
         logLn("no suitable overload found");
-        return nullptr;
+        return std::nullopt;
     }
 
     logLn("selected overload: ", *selectedCandidate->candidate);
     logLn("materialized result type: ", *selectedCandidate->result);
 
-    return selectedCandidate->result;
+    return { { WTFMove(selectedCandidate->parameters), selectedCandidate->result } };
 }
 
 Type* OverloadResolver::materialize(const AbstractType& abstractType) const
@@ -199,7 +200,12 @@ std::optional<ViableOverload> OverloadResolver::considerCandidate(const Overload
 
     logLn("Considering overload: ", candidate);
 
-    ViableOverload viableOverload { &candidate, FixedVector<unsigned>(m_valueArguments.size()), nullptr };
+    ViableOverload viableOverload {
+        &candidate,
+        FixedVector<unsigned>(m_valueArguments.size()),
+        FixedVector<Type*>(m_valueArguments.size()),
+        nullptr
+    };
     for (unsigned i = 0; i < m_valueArguments.size(); ++i) {
         auto& parameter = candidate.parameters[i];
         auto* argument = m_valueArguments[i];
@@ -215,6 +221,7 @@ std::optional<ViableOverload> OverloadResolver::considerCandidate(const Overload
         auto rank = calculateRank(parameter, argument);
         ASSERT(!!rank);
         viableOverload.ranks[i] = *rank;
+        viableOverload.parameters[i] = materialize(parameter);
     }
 
     viableOverload.result = materialize(candidate.result);
@@ -445,7 +452,7 @@ ConversionRank OverloadResolver::conversionRank(Type* from, Type* to) const
     return rank;
 }
 
-Type* resolveOverloads(TypeStore& types, const Vector<OverloadCandidate>& candidates, const Vector<Type*>& valueArguments, const Vector<Type*>& typeArguments)
+std::optional<SelectedOverload> resolveOverloads(TypeStore& types, const Vector<OverloadCandidate>& candidates, const Vector<Type*>& valueArguments, const Vector<Type*>& typeArguments)
 {
 
     unsigned numberOfTypeSubstitutions = 0;

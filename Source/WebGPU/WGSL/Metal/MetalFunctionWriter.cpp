@@ -474,7 +474,7 @@ void FunctionDefinitionWriter::visit(AST::CallExpression& call)
         }
     }
 
-    visit(call.target());
+    visit(call.inferredType());
     visitArguments(this, call);
 }
 

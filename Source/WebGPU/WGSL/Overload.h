@@ -92,7 +92,12 @@ struct OverloadCandidate {
     AbstractType result;
 };
 
-Type* resolveOverloads(TypeStore&, const Vector<OverloadCandidate>&, const Vector<Type*>& valueArguments, const Vector<Type*>& typeArguments);
+struct SelectedOverload {
+    FixedVector<Type*> parameters;
+    Type* result;
+};
+
+std::optional<SelectedOverload> resolveOverloads(TypeStore&, const Vector<OverloadCandidate>&, const Vector<Type*>& valueArguments, const Vector<Type*>& typeArguments);
 
 } // namespace WGSL
 
