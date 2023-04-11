@@ -716,8 +716,8 @@ TEST(WKWebsiteDataStoreConfiguration, OriginQuotaRatio)
     auto uuid = adoptNS([[NSUUID alloc] initWithUUIDString:@"68753a44-4d6f-1226-9c60-0050e4c00067"]);
     auto websiteDataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initWithIdentifier:uuid.get()]);
     EXPECT_NULL([websiteDataStoreConfiguration.get() originQuotaRatio]);
-    // 1 GB disk has 1 byte quota.
-    auto ratioNumber = [NSNumber numberWithFloat:0.000000001];
+    [websiteDataStoreConfiguration.get() setVolumeCapacityOverride:[NSNumber numberWithInteger:2 * MB]];
+    auto ratioNumber = [NSNumber numberWithFloat:0.5];
     [websiteDataStoreConfiguration.get() setOriginQuotaRatio:ratioNumber];
     EXPECT_TRUE([[websiteDataStoreConfiguration.get() originQuotaRatio] isEqualToNumber:ratioNumber]);
     auto websiteDataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()]);
@@ -738,7 +738,7 @@ TEST(WKWebsiteDataStoreConfiguration, OriginQuotaRatio)
         request.onupgradeneeded = function(event) { \
             db = event.target.result; \
             os = db.createObjectStore('os'); \
-            const item = new Array(100000).join('x');\
+            const item = new Array(1024 * 1024).join('x'); \
             os.put(item, 'key').onerror = function(event) { sendMessage(event.target.error.name); }; \
         }; \
         request.onsuccess = function() { sendMessage('Unexpected success'); }; \
@@ -775,7 +775,7 @@ TEST(WKWebsiteDataStoreConfiguration, TotalQuotaRatio)
     auto websiteDataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initWithIdentifier:uuid.get()]);
     EXPECT_NULL([websiteDataStoreConfiguration.get() totalQuotaRatio]);
     [websiteDataStoreConfiguration.get() setTotalQuotaRatio:[NSNumber numberWithFloat:0.5]];
-    [websiteDataStoreConfiguration.get() setVolumeCapacityOverride:[NSNumber numberWithFloat:100000]];
+    [websiteDataStoreConfiguration.get() setVolumeCapacityOverride:[NSNumber numberWithInteger:100000]];
     auto handler = adoptNS([[WKWebsiteDataStoreMessageHandler alloc] init]);
     auto websiteDataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()]);
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
