@@ -340,6 +340,65 @@ void TypeChecker::visit(AST::CallExpression& call)
         }
     }
 
+    if (is<AST::ArrayTypeName>(target)) {
+        AST::ArrayTypeName& array = downcast<AST::ArrayTypeName>(target);
+        Type* elementType = nullptr;
+        unsigned elementCount;
+
+        if (array.maybeElementType()) {
+            if (!array.maybeElementCount()) {
+                typeError(call.span(), "cannot construct a runtime-sized array");
+                return;
+            }
+            elementType = resolve(*array.maybeElementType());
+            elementCount = *extractInteger(*array.maybeElementCount());
+            if (!elementCount) {
+                typeError(call.span(), "array count must be greater than 0");
+                return;
+            }
+            if (call.arguments().size() != elementCount) {
+                const char* errorKind = call.arguments().size() < elementCount ? "few" : "many";
+                typeError(call.span(), "array constructor has too ", errorKind, " elements: expected ", String::number(elementCount), ", found ", String::number(call.arguments().size()));
+                return;
+            }
+            for (auto& argument : call.arguments()) {
+                auto* argumentType = infer(argument);
+                if (!unify(elementType, argumentType)) {
+                    typeError(argument.span(), "'", *argumentType, "' cannot be used to construct an array of '", *elementType, "'");
+                    return;
+                }
+                argument.m_inferredType = elementType;
+            }
+        } else {
+            ASSERT(!array.maybeElementCount());
+            elementCount = call.arguments().size();
+            if (!elementCount) {
+                typeError(call.span(), "cannot infer array element type from constructor");
+                return;
+            }
+            for (auto& argument : call.arguments()) {
+                if (!elementType) {
+                    elementType = infer(argument);
+                    continue;
+                }
+                auto* argumentType = infer(argument);
+                if (unify(elementType, argumentType))
+                    continue;
+                if (unify(argumentType, elementType)) {
+                    elementType = argumentType;
+                    continue;
+                }
+                typeError(argument.span(), "cannot infer common array element type from constructor arguments");
+                return;
+            }
+            for (auto& argument : call.arguments())
+                argument.m_inferredType = elementType;
+        }
+        auto* result = m_types.arrayType(elementType, { elementCount });
+        inferred(result);
+        return;
+    }
+
     // FIXME: add support for user-defined function calls
     auto* result = resolve(target);
     inferred(result);

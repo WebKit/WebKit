@@ -16,3 +16,20 @@ fn testConcretizationOfArguments() {
   // CHECK-L: vec<float, 2>(0, 0);
   let x3 = 0f + vec2(0, 0);
 }
+
+@vertex
+fn testArrayConcretization() {
+  // CHECK-L: vec<int, 2>(0, 0),
+  let x1 = array<vec2<i32>, 1>(vec2(0, 0));
+
+  // CHECK-L: vec<float, 2>(0, 0),
+  let x2 = array<vec2<f32>, 1>(vec2(0, 0));
+
+  // CHECK-L: vec<float, 2>(0, 0),
+  // CHECK-L: vec<float, 2>(0, 0),
+  let x3 = array(vec2(0, 0), vec2(0.0, 0.0));
+
+  // CHECK-L: vec<unsigned, 2>(0, 0),
+  // CHECK-L: vec<unsigned, 2>(0, 0),
+  let x4 = array(vec2(0, 0), vec2(0u, 0u));
+}
