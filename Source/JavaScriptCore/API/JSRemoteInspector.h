@@ -50,8 +50,8 @@ JS_EXPORT void JSRemoteInspectorSetLogToSystemConsole(bool) JSC_API_AVAILABLE(ma
 JS_EXPORT bool JSRemoteInspectorGetInspectionEnabledByDefault(void) JSC_API_AVAILABLE(macos(10.11), ios(9.0));
 JS_EXPORT void JSRemoteInspectorSetInspectionEnabledByDefault(bool) JSC_API_DEPRECATED("Use JSGlobalContextSetInspectable on a single JSGlobalContextRef.", macos(10.11, 13.3), ios(9.0, 16.4));
 
-JS_EXPORT bool JSRemoteInspectorGetInspectionFollowsInternalPolicies(void) JSC_API_AVAILABLE(macos(JSC_MAC_TBA), ios(JSC_IOS_TBA));
-JS_EXPORT void JSRemoteInspectorSetInspectionFollowsInternalPolicies(bool) JSC_API_AVAILABLE(macos(JSC_MAC_TBA), ios(JSC_IOS_TBA));
+JS_EXPORT bool JSRemoteInspectorGetInspectionFollowsInternalPolicies(void) JSC_API_AVAILABLE(macos(13.3), ios(16.4));
+JS_EXPORT void JSRemoteInspectorSetInspectionFollowsInternalPolicies(bool) JSC_API_AVAILABLE(macos(13.3), ios(16.4));
 
 #ifdef __cplusplus
 }
