@@ -1,4 +1,5 @@
 //@ skip if $buildType == "debug"
+//@ skip if $hostOS == "windows"
 
 const startNumberOfParentheses = 1500;
 const endNumberOfParentheses = 2000;
