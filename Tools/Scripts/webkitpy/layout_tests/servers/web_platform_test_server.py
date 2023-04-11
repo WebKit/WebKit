@@ -45,6 +45,7 @@ def wpt_config_json(port_obj):
         return
     config = json.loads(fs.read_text_file(config_wk_filepath))
     if port_obj.supports_localhost_aliases and not port_obj.get_option('disable_wpt_hostname_aliases'):
+        config['server_host'] = '127.0.0.1'
         config['browser_host'] = 'web-platform.test'
         config['alternate_hosts'] = {'alt': 'not-web-platform.test'}
     config['ssl']['openssl']['base_path'] = fs.join(port_obj.results_directory(), "_wpt_certs")
