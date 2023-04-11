@@ -40,7 +40,6 @@
 #include "PropertyDescriptor.h"
 #include "PropertyNameArray.h"
 #include "ProxyObject.h"
-#include "SuperSampler.h"
 #include "TypeError.h"
 #include "VMInlines.h"
 #include "VMTrapsInlines.h"

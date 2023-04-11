@@ -326,6 +326,8 @@ JSC_DEFINE_HOST_FUNCTION(objectConstructorAssign, (JSGlobalObject* globalObject,
     bool targetCanPerformFastPut = jsDynamicCast<JSFinalObject*>(target) && target->canPerformFastPutInlineExcludingProto() && target->isStructureExtensible();
     unsigned argsCount = callFrame->argumentCount();
 
+    // argsCount == 2 case does not need to use arguments' batching.
+    // We limit argsCount < 5 not to increase properties / values vector super large.
     if (argsCount > 2 && argsCount < 5 && targetCanPerformFastPut) {
         bool willBatch = true;
         for (unsigned i = 1; i < argsCount; ++i) {

@@ -35,7 +35,6 @@
 #include "Structure.h"
 #include "StructureChain.h"
 #include "StructureRareDataInlines.h"
-#include "SuperSampler.h"
 #include "Watchpoint.h"
 #include <wtf/CompactRefPtr.h>
 #include <wtf/Threading.h>
@@ -712,16 +711,10 @@ inline Structure* Structure::addPropertyTransitionToExistingStructureImpl(Struct
     if (structure->hasBeenDictionary())
         return nullptr;
 
-    Structure* existingTransition = nullptr;
-    {
-        {
-            existingTransition = structure->m_transitionTable.get(uid, attributes, TransitionKind::PropertyAddition);
-        }
-        if (existingTransition) {
-            validateOffset(existingTransition->transitionOffset(), existingTransition->inlineCapacity());
-            offset = existingTransition->transitionOffset();
-            return existingTransition;
-        }
+    if (Structure* existingTransition = structure->m_transitionTable.get(uid, attributes, TransitionKind::PropertyAddition)) {
+        validateOffset(existingTransition->transitionOffset(), existingTransition->inlineCapacity());
+        offset = existingTransition->transitionOffset();
+        return existingTransition;
     }
 
     return nullptr;
@@ -758,9 +751,8 @@ inline Structure* StructureTransitionTable::get(UniquedStringImpl* rep, unsigned
 
 inline void StructureTransitionTable::finalizeUnconditionally(VM& vm, CollectionScope)
 {
-    if (isUsingSingleSlot()) {
-        auto* transition = trySingleTransition();
-        if (transition && !vm.heap.isMarked(transition))
+    if (auto* transition = trySingleTransition()) {
+        if (!vm.heap.isMarked(transition))
             m_data = UsingSingleSlotFlag;
     }
 }
