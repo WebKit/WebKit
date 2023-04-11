@@ -32,7 +32,7 @@
 namespace WebKit {
 
 enum GraphicsContextGLIdentifierType { };
-using GraphicsContextGLIdentifier = ObjectIdentifier<GraphicsContextGLIdentifierType>;
+using GraphicsContextGLIdentifier = AtomicObjectIdentifier<GraphicsContextGLIdentifierType>;
 
 } // namespace WebKit
 
