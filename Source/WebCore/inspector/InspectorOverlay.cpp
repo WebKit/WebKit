@@ -1419,10 +1419,10 @@ void InspectorOverlay::drawGridOverlay(GraphicsContext& context, const Inspector
 
 static Vector<String> authoredGridTrackSizes(Node* node, GridTrackSizingDirection direction, unsigned expectedTrackCount)
 {
-    if (!is<StyledElement>(node))
+    auto* element = dynamicDowncast<StyledElement>(node);
+    if (!element)
         return { };
 
-    auto element = downcast<StyledElement>(node);
     auto directionCSSPropertyID = direction == GridTrackSizingDirection::ForColumns ? CSSPropertyID::CSSPropertyGridTemplateColumns : CSSPropertyID::CSSPropertyGridTemplateRows;
     RefPtr<CSSValue> cssValue;
     if (auto* inlineStyle = element->inlineStyle())
@@ -1441,7 +1441,8 @@ static Vector<String> authoredGridTrackSizes(Node* node, GridTrackSizingDirectio
         }
     }
 
-    if (!is<CSSValueList>(cssValue))
+    auto* cssValueList = dynamicDowncast<CSSValueList>(*cssValue);
+    if (!cssValueList)
         return { };
     
     Vector<String> trackSizes;
@@ -1451,11 +1452,11 @@ static Vector<String> authoredGridTrackSizes(Node* node, GridTrackSizingDirectio
             trackSizes.append(currentValue.cssText());
     };
 
-    for (auto& currentValue : downcast<CSSValueList>(*cssValue)) {
-        if (is<CSSGridAutoRepeatValue>(currentValue)) {
+    for (auto& currentValue : *cssValueList) {
+        if (auto* cssGridAutoRepeatValue = dynamicDowncast<CSSGridAutoRepeatValue>(currentValue)) {
             // Auto-repeated values will be looped through until no more values were used in layout based on the expected track count.
             while (trackSizes.size() < expectedTrackCount) {
-                for (auto& autoRepeatValue : downcast<CSSValueList>(currentValue)) {
+                for (auto& autoRepeatValue : *cssGridAutoRepeatValue) {
                     handleValueIgnoringLineNames(autoRepeatValue);
                     if (trackSizes.size() >= expectedTrackCount)
                         break;
@@ -1464,10 +1465,10 @@ static Vector<String> authoredGridTrackSizes(Node* node, GridTrackSizingDirectio
             break;
         }
 
-        if (is<CSSGridIntegerRepeatValue>(currentValue)) {
-            size_t repetitions = downcast<CSSGridIntegerRepeatValue>(currentValue).repetitions();
+        if (auto* cssGridIntegerRepeatValue = dynamicDowncast<CSSGridIntegerRepeatValue>(currentValue)) {
+            size_t repetitions = cssGridIntegerRepeatValue->repetitions();
             for (size_t i = 0; i < repetitions; ++i) {
-                for (auto& integerRepeatValue : downcast<CSSValueList>(currentValue))
+                for (auto& integerRepeatValue : *cssGridIntegerRepeatValue)
                     handleValueIgnoringLineNames(integerRepeatValue);
             }
             continue;
