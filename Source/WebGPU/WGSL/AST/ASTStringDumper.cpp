@@ -307,6 +307,22 @@ void StringDumper::visit(CompoundStatement& block)
     m_out.print("}\n");
 }
 
+void StringDumper::visit(IfStatement& statement)
+{
+    m_out.print(m_indent, "if ");
+    visit(statement.test());
+    m_out.print("\n");
+    visit(statement.trueBody());
+    if (statement.maybeFalseBody()) {
+        m_out.print(m_indent, "else");
+        if (is<IfStatement>(*statement.maybeFalseBody()))
+            m_out.print(" ");
+        else
+            m_out.print("\n");
+        visit(*statement.maybeFalseBody());
+    }
+}
+
 void StringDumper::visit(ReturnStatement& statement)
 {
     m_out.print(m_indent, "return");

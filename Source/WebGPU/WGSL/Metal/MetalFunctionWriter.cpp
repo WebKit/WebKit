@@ -66,6 +66,7 @@ public:
     void visit(AST::Structure&) override;
     void visit(AST::Variable&) override;
 
+    void visit(AST::BoolLiteral&) override;
     void visit(AST::AbstractFloatLiteral&) override;
     void visit(AST::AbstractIntegerLiteral&) override;
     void visit(AST::BinaryExpression&) override;
@@ -82,6 +83,8 @@ public:
 
     void visit(AST::Statement&) override;
     void visit(AST::AssignmentStatement&) override;
+    void visit(AST::CompoundStatement&) override;
+    void visit(AST::IfStatement&) override;
     void visit(AST::ReturnStatement&) override;
 
     void visit(AST::TypeName&) override;
@@ -146,10 +149,8 @@ void FunctionDefinitionWriter::visit(AST::Function& functionDefinition)
     m_entryPointStage = std::nullopt;
 
     m_stringBuilder.append(")\n");
-    m_stringBuilder.append("{\n");
-    IndentationScope scope(m_indent);
     checkErrorAndVisit(functionDefinition.body());
-    m_stringBuilder.append("}\n\n");
+    m_stringBuilder.append("\n");
 }
 
 void FunctionDefinitionWriter::visit(AST::Structure& structDecl)
@@ -180,7 +181,6 @@ void FunctionDefinitionWriter::visit(AST::Structure& structDecl)
 
 void FunctionDefinitionWriter::visit(AST::Variable& variable)
 {
-    m_stringBuilder.append(m_indent);
     if (variable.maybeTypeName())
         visit(*variable.maybeTypeName());
     else {
@@ -557,6 +557,11 @@ void FunctionDefinitionWriter::visit(AST::FieldAccessExpression& access)
     m_stringBuilder.append(".", access.fieldName());
 }
 
+void FunctionDefinitionWriter::visit(AST::BoolLiteral& literal)
+{
+    m_stringBuilder.append(literal.value() ? "true" : "false");
+}
+
 void FunctionDefinitionWriter::visit(AST::AbstractIntegerLiteral& literal)
 {
     // FIXME: this might not serialize all values correctly
@@ -594,16 +599,40 @@ void FunctionDefinitionWriter::visit(AST::Statement& statement)
 
 void FunctionDefinitionWriter::visit(AST::AssignmentStatement& assignment)
 {
-    m_stringBuilder.append(m_indent);
     visit(assignment.lhs());
     m_stringBuilder.append(" = ");
     visit(assignment.rhs());
     m_stringBuilder.append(";\n");
 }
 
+void FunctionDefinitionWriter::visit(AST::CompoundStatement& statement)
+{
+    m_stringBuilder.append(m_indent, "{\n");
+    {
+        IndentationScope scope(m_indent);
+        for (auto& statement : statement.statements()) {
+            m_stringBuilder.append(m_indent);
+            checkErrorAndVisit(statement);
+        }
+    }
+    m_stringBuilder.append(m_indent, "}\n");
+}
+
+void FunctionDefinitionWriter::visit(AST::IfStatement& statement)
+{
+    m_stringBuilder.append("if (");
+    visit(statement.test());
+    m_stringBuilder.append(")\n");
+    visit(statement.trueBody());
+    if (statement.maybeFalseBody()) {
+        m_stringBuilder.append(m_indent, "else ");
+        visit(*statement.maybeFalseBody());
+    }
+}
+
 void FunctionDefinitionWriter::visit(AST::ReturnStatement& statement)
 {
-    m_stringBuilder.append(m_indent, "return");
+    m_stringBuilder.append("return");
     if (statement.maybeExpression()) {
         m_stringBuilder.append(" ");
         visit(*statement.maybeExpression());

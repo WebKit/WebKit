@@ -54,6 +54,7 @@ public:
 
     // Statements
     void visit(AST::AssignmentStatement&) override;
+    void visit(AST::IfStatement&) override;
     void visit(AST::ReturnStatement&) override;
     void visit(AST::CompoundStatement&) override;
 
@@ -224,6 +225,18 @@ void TypeChecker::visit(AST::AssignmentStatement& statement)
     auto* rhs = infer(statement.rhs());
     if (!unify(lhs, rhs))
         typeError(InferBottom::No, statement.span(), "cannot assign value of type '", *rhs, "' to '", *lhs, "'");
+}
+
+void TypeChecker::visit(AST::IfStatement& statement)
+{
+    auto* test = infer(statement.test());
+
+    if (!unify(test, m_types.boolType()))
+        typeError(statement.test().span(), "expected 'bool', found ", *test);
+
+    AST::Visitor::visit(statement.trueBody());
+    if (statement.maybeFalseBody())
+        AST::Visitor::visit(*statement.maybeFalseBody());
 }
 
 void TypeChecker::visit(AST::ReturnStatement& statement)
