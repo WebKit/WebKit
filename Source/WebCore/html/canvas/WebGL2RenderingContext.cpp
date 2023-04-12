@@ -692,7 +692,7 @@ void WebGL2RenderingContext::getBufferSubData(GCGLenum target, long long srcByte
         return;
 
     // FIXME: Coalesce multiple getBufferSubData() calls to use a single map() call
-    m_context->getBufferSubData(target, srcByteOffset, makeGCGLSpan(static_cast<char*>(dstData->baseAddress()) + dstOffset * elementSize, copyLength * elementSize));
+    m_context->getBufferSubData(target, srcByteOffset, makeSpan(static_cast<uint8_t*>(dstData->baseAddress()) + dstOffset * elementSize, copyLength * elementSize));
 }
 
 void WebGL2RenderingContext::bindFramebuffer(GCGLenum target, WebGLFramebuffer* buffer)
@@ -1219,7 +1219,7 @@ void WebGL2RenderingContext::compressedTexImage2D(GCGLenum target, GCGLint level
     auto slice = sliceArrayBufferView("compressedTexImage2D", srcData, srcOffset, srcLengthOverride);
     if (!slice)
         return;
-    m_context->compressedTexImage2D(target, level, internalformat, width, height, border, slice->byteLength(), makeGCGLSpan(slice->baseAddress(), slice->byteLength()));
+    m_context->compressedTexImage2D(target, level, internalformat, width, height, border, slice->byteLength(), makeSpan(static_cast<const uint8_t*>(slice->baseAddress()), slice->byteLength()));
 }
 
 void WebGL2RenderingContext::compressedTexImage3D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLsizei depth, GCGLint border, GCGLsizei imageSize, GCGLint64 offset)
@@ -1252,10 +1252,7 @@ void WebGL2RenderingContext::compressedTexImage3D(GCGLenum target, GCGLint level
     auto slice = sliceArrayBufferView("compressedTexImage3D", srcData, srcOffset, srcLengthOverride);
     if (!slice)
         return;
-    m_context->compressedTexImage3D(
-        target, level, internalformat, width, height,
-        depth, border, slice->byteLength(),
-        makeGCGLSpan(slice->baseAddress(), slice->byteLength()));
+    m_context->compressedTexImage3D(target, level, internalformat, width, height, depth, border, slice->byteLength(), makeSpan(static_cast<const uint8_t*>(slice->baseAddress()), slice->byteLength()));
 }
 
 void WebGL2RenderingContext::compressedTexSubImage2D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLsizei width, GCGLsizei height, GCGLenum format, ArrayBufferView& srcData)
@@ -1301,7 +1298,7 @@ void WebGL2RenderingContext::compressedTexSubImage2D(GCGLenum target, GCGLint le
     auto slice = sliceArrayBufferView("compressedTexSubImage2D", srcData, srcOffset, srcLengthOverride);
     if (!slice)
         return;
-    m_context->compressedTexSubImage2D(target, level, xoffset, yoffset, width, height, format, slice->byteLength(), makeGCGLSpan(slice->baseAddress(), slice->byteLength()));
+    m_context->compressedTexSubImage2D(target, level, xoffset, yoffset, width, height, format, slice->byteLength(), makeSpan(static_cast<const uint8_t*>(slice->baseAddress()), slice->byteLength()));
 }
 
 void WebGL2RenderingContext::compressedTexSubImage3D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLint zoffset, GCGLsizei width, GCGLsizei height, GCGLsizei depth, GCGLenum format, GCGLsizei imageSize, GCGLint64 offset)
@@ -1334,7 +1331,7 @@ void WebGL2RenderingContext::compressedTexSubImage3D(GCGLenum target, GCGLint le
     auto slice = sliceArrayBufferView("compressedTexSubImage3D", srcData, srcOffset, srcLengthOverride);
     if (!slice)
         return;
-    m_context->compressedTexSubImage3D(target, level, xoffset, yoffset, zoffset, width, height, depth, format, slice->byteLength(), makeGCGLSpan(slice->baseAddress(), slice->byteLength()));
+    m_context->compressedTexSubImage3D(target, level, xoffset, yoffset, zoffset, width, height, depth, format, slice->byteLength(), makeSpan(static_cast<const uint8_t*>(slice->baseAddress()), slice->byteLength()));
 }
 
 GCGLint WebGL2RenderingContext::getFragDataLocation(WebGLProgram& program, const String& name)
@@ -1505,7 +1502,7 @@ void WebGL2RenderingContext::vertexAttribI4iv(GCGLuint index, Int32List&& list)
         synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "vertexAttribI4iv", "index out of range");
         return;
     }
-    m_context->vertexAttribI4iv(index, makeGCGLSpan<4>(data));
+    m_context->vertexAttribI4iv(index, Span<const GCGLint, 4> { data, 4 });
     m_vertexAttribValue[index].type = GraphicsContextGL::INT;
     memcpy(m_vertexAttribValue[index].iValue, data, sizeof(m_vertexAttribValue[index].iValue));
 }
@@ -1543,7 +1540,7 @@ void WebGL2RenderingContext::vertexAttribI4uiv(GCGLuint index, Uint32List&& list
         synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "vertexAttribI4uiv", "index out of range");
         return;
     }
-    m_context->vertexAttribI4uiv(index, makeGCGLSpan<4>(data));
+    m_context->vertexAttribI4uiv(index, Span<const GCGLuint, 4> { data, 4 });
     m_vertexAttribValue[index].type = GraphicsContextGL::UNSIGNED_INT;
     memcpy(m_vertexAttribValue[index].uiValue, data, sizeof(m_vertexAttribValue[index].uiValue));
 }
@@ -3278,7 +3275,7 @@ bool WebGL2RenderingContext::validateCapability(const char* functionName, GCGLen
 }
 
 template<typename T, typename TypedArrayType>
-std::optional<GCGLSpan<const T>> WebGL2RenderingContext::validateClearBuffer(const char* functionName, GCGLenum buffer, TypedList<TypedArrayType, T>& values, GCGLuint srcOffset)
+std::optional<Span<const T>> WebGL2RenderingContext::validateClearBuffer(const char* functionName, GCGLenum buffer, TypedList<TypedArrayType, T>& values, GCGLuint srcOffset)
 {
     Checked<GCGLsizei, RecordOverflow> checkedSize(values.length());
     checkedSize -= srcOffset;
@@ -3292,14 +3289,14 @@ std::optional<GCGLSpan<const T>> WebGL2RenderingContext::validateClearBuffer(con
             synthesizeGLError(GraphicsContextGL::INVALID_VALUE, functionName, "invalid array size / srcOffset");
             return { };
         }
-        return makeGCGLSpan(values.data() + srcOffset, 4);
+        return Span<const T> { values.data() + srcOffset, 4 };
     case GraphicsContextGL::DEPTH:
     case GraphicsContextGL::STENCIL:
         if (checkedSize < 1) {
             synthesizeGLError(GraphicsContextGL::INVALID_VALUE, functionName, "invalid array size / srcOffset");
             return { };
         }
-        return makeGCGLSpan(values.data() + srcOffset, 1);
+        return Span<const T> { values.data() + srcOffset, 1 };
 
     default:
         synthesizeGLError(GraphicsContextGL::INVALID_ENUM, functionName, "invalid buffer");

@@ -233,9 +233,9 @@ class cpp_type_container(cpp_type):
     def is_container(self) -> bool:
         return True
     def is_span(self) -> bool:
-        return self.container_name == "GCGLSpan"
+        return self.container_name == "Span"
     def is_dynamic_span(self) -> bool:
-        return (self.container_name == "GCGLSpan" and self.arity is None) or self.container_name == "GCGLSpanTuple"
+        return (self.container_name == "Span" and self.arity is None) or self.container_name == "GCGLSpanTuple"
     def get_container_name(self):
         return self.container_name
     def get_arity(self) -> Optional[int]:
@@ -525,11 +525,12 @@ def webkit_ipc_get_span_store_type(type: cpp_type_container) -> cpp_type:
 
 def webkit_ipc_make_gcglspan_conversion(expr : cpp_expr, type : cpp_type_container) -> cpp_expr:
     pointer_cast_type = type.get_contained_type().get_pointer_type()
+    element_type = type.get_contained_type()
     if type.is_dynamic_span():
-        return cpp_expr(type, f"makeGCGLSpan(reinterpret_cast<{str(pointer_cast_type)}>({str(expr)}.data()), {str(expr)}.size())")
+        return cpp_expr(type, f"makeSpan(reinterpret_cast<{str(pointer_cast_type)}>({str(expr)}.data()), {str(expr)}.size())")
 
     assert(type.is_span())
-    return cpp_expr(type, f"makeGCGLSpan<{str(type.get_arity())}>(reinterpret_cast<{str(pointer_cast_type)}>({str(expr)}.data()))")
+    return cpp_expr(type, f"Span<{element_type}, {str(type.get_arity())}> {{ reinterpret_cast<{str(pointer_cast_type)}>({str(expr)}.data()), {str(type.get_arity())} }}")
 
 # See messages.py function_parameter_type
 webkit_ipc_builtin_types = set(
@@ -961,6 +962,9 @@ def main():
     ai_type = get_cpp_type("ActiveInfo&")
     ai_transfer_type = get_cpp_type("WebCore::GraphicsContextGL::ActiveInfo")
     webkit_ipc_types[ai_type] = ai_transfer_type
+    for builtin_type in webkit_ipc_builtin_types:
+        cpp_type = get_cpp_type(builtin_type)
+        webkit_ipc_types[cpp_type] = cpp_type
 
     with open(types_input_fn) as f:
         lines = iter(f.readlines())
