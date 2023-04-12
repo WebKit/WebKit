@@ -46,7 +46,7 @@ enum MouseButtonListenerResultFilter {
 
 class AccessibilityNodeObject : public AccessibilityObject {
 public:
-    static Ref<AccessibilityNodeObject> create(Node*);
+    static Ref<AccessibilityNodeObject> create(Node&);
     virtual ~AccessibilityNodeObject();
 
     void init() override;

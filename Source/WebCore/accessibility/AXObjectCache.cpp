@@ -671,7 +671,7 @@ Ref<AccessibilityObject> AXObjectCache::createObjectFromRenderer(RenderObject* r
     return AccessibilityRenderObject::create(renderer);
 }
 
-static Ref<AccessibilityObject> createFromNode(Node* node)
+static Ref<AccessibilityObject> createFromNode(Node& node)
 {
     return AccessibilityNodeObject::create(node);
 }
@@ -767,20 +767,20 @@ AccessibilityObject* AXObjectCache::getOrCreate(Node* node)
     if (inCanvasSubtree)
         node->document().updateStyleIfNeeded();
 
-    RefPtr<AccessibilityObject> newObj = createFromNode(node);
+    RefPtr<AccessibilityObject> newObject = createFromNode(*node);
 
     // Will crash later if we have two objects for the same node.
     ASSERT(!get(node));
 
-    cacheAndInitializeWrapper(newObj.get(), node);
+    cacheAndInitializeWrapper(newObject.get(), node);
     // Compute the object's initial ignored status.
-    newObj->recomputeIsIgnored();
+    newObject->recomputeIsIgnored();
     // Sometimes asking accessibilityIsIgnored() will cause the newObject to be deallocated, and then
     // it will disappear when this function is finished, leading to a use-after-free.
-    if (newObj->isDetached())
+    if (newObject->isDetached())
         return nullptr;
     
-    return newObj.get();
+    return newObject.get();
 }
 
 AccessibilityObject* AXObjectCache::getOrCreate(RenderObject* renderer)

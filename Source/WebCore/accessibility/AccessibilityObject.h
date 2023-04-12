@@ -211,7 +211,7 @@ public:
     bool isFocused() const override { return false; }
     virtual bool isHovered() const { return false; }
     bool isIndeterminate() const override { return false; }
-    bool isLoaded() const override { return false; }
+    bool isLoaded() const final;
     bool isMultiSelectable() const override { return false; }
     bool isOffScreen() const override { return false; }
     bool isPressed() const override { return false; }

@@ -1235,20 +1235,9 @@ static AccessibilityObjectInclusion objectInclusionFromAltText(const String& alt
 
 AccessibilityObjectInclusion AccessibilityRenderObject::defaultObjectInclusion() const
 {
-    // The following cases can apply to any element that's a subclass of AccessibilityRenderObject.
-    
     if (!m_renderer)
         return AccessibilityObjectInclusion::IgnoreObject;
-
-    if (m_renderer->style().visibility() != Visibility::Visible) {
-        // aria-hidden is meant to override visibility as the determinant in AX hierarchy inclusion.
-        if (equalLettersIgnoringASCIICase(getAttribute(aria_hiddenAttr), "false"_s))
-            return AccessibilityObjectInclusion::DefaultBehavior;
-
-        return AccessibilityObjectInclusion::IgnoreObject;
-    }
-
-    return AccessibilityObject::defaultObjectInclusion();
+    return AccessibilityNodeObject::defaultObjectInclusion();
 }
     
 static bool webAreaIsPresentational(RenderObject* renderer)
@@ -1532,11 +1521,6 @@ bool AccessibilityRenderObject::computeAccessibilityIsIgnored() const
     // By default, objects should be ignored so that the AX hierarchy is not
     // filled with unnecessary items.
     return true;
-}
-
-bool AccessibilityRenderObject::isLoaded() const
-{
-    return m_renderer ? !m_renderer->document().parser() : false;
 }
 
 double AccessibilityRenderObject::loadingProgress() const

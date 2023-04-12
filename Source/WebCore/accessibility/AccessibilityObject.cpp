@@ -2700,7 +2700,13 @@ String AccessibilityObject::linkRelValue() const
 {
     return getAttribute(relAttr);
 }
-    
+
+bool AccessibilityObject::isLoaded() const
+{
+    auto* document = this->document();
+    return document && !document->parser();
+}
+
 bool AccessibilityObject::isInlineText() const
 {
     return is<RenderInline>(renderer());
@@ -3578,13 +3584,20 @@ String AccessibilityObject::validationMessage() const
 
 AccessibilityObjectInclusion AccessibilityObject::defaultObjectInclusion() const
 {
+    if (auto* style = this->style()) {
+        if (style->effectiveInert())
+            return AccessibilityObjectInclusion::IgnoreObject;
+        if (style->visibility() != Visibility::Visible) {
+            // aria-hidden is meant to override visibility as the determinant in AX hierarchy inclusion.
+            if (equalLettersIgnoringASCIICase(getAttribute(aria_hiddenAttr), "false"_s))
+                return AccessibilityObjectInclusion::DefaultBehavior;
+
+            return AccessibilityObjectInclusion::IgnoreObject;
+        }
+    }
+
     bool useParentData = !m_isIgnoredFromParentData.isNull();
-
     if (useParentData ? m_isIgnoredFromParentData.isAXHidden : isAXHidden())
-        return AccessibilityObjectInclusion::IgnoreObject;
-
-    auto* style = this->style();
-    if (style && style->effectiveInert())
         return AccessibilityObjectInclusion::IgnoreObject;
 
     if (useParentData ? m_isIgnoredFromParentData.isPresentationalChildOfAriaRole : isPresentationalChildOfAriaRole())

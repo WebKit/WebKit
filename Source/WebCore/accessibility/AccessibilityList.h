@@ -47,7 +47,7 @@ private:
 
     bool computeAccessibilityIsIgnored() const override;
     AccessibilityRole determineAccessibilityRole() override;
-    bool childHasPseudoVisibleListItemMarkers(RenderObject*);
+    bool childHasPseudoVisibleListItemMarkers(Node*);
 };
 
 } // namespace WebCore
