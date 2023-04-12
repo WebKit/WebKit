@@ -174,7 +174,7 @@ using namespace JSC;
 {
     DOMRange *range = [self createRange];
 
-    if (DOMNode* documentElement = [self documentElement])
+    if (DOMNode* documentElement = self.documentElement)
         [range selectNode:documentElement];
 
     return range;
@@ -201,7 +201,7 @@ using namespace JSC;
 
 - (WebFrame *)contentFrame
 {
-    return [[self contentDocument] webFrame];
+    return self.contentDocument.webFrame;
 }
 
 @end
@@ -210,7 +210,7 @@ using namespace JSC;
 
 - (WebFrame *)contentFrame
 {
-    return [[self contentDocument] webFrame];
+    return self.contentDocument.webFrame;
 }
 
 @end
@@ -243,7 +243,7 @@ using namespace JSC;
 
 - (WebFrame *)contentFrame
 {
-    return [[self contentDocument] webFrame];
+    return self.contentDocument.webFrame;
 }
 
 @end

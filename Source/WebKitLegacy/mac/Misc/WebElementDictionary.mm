@@ -63,6 +63,7 @@ static void addLookupKey(NSString *key, SEL selector)
 static void cacheValueForKey(const void *key, const void *value, void *self)
 {
     // calling objectForKey will cache the value in our _cache dictionary
+    // Intentionally not using subscript notation as we explicitly override objectForKey
     [(__bridge WebElementDictionary *)self objectForKey:(__bridge NSString *)key];
 }
 
@@ -105,7 +106,7 @@ static void cacheValueForKey(const void *key, const void *value, void *self)
     addLookupKey(WebElementIsInScrollBarKey, @selector(_isInScrollBar));
 }
 
-- (id)initWithHitTestResult:(const HitTestResult&)result
+- (instancetype)initWithHitTestResult:(const HitTestResult&)result
 {
     [[self class] initializeLookupTable];
     self = [super init];
@@ -136,7 +137,7 @@ static void cacheValueForKey(const void *key, const void *value, void *self)
 {
     if (!_cacheComplete)
         [self _fillCache];
-    return [_cache count];
+    return _cache.count;
 }
 
 - (NSEnumerator *)keyEnumerator
@@ -148,7 +149,7 @@ static void cacheValueForKey(const void *key, const void *value, void *self)
 
 - (id)objectForKey:(id)key
 {
-    id value = [_cache objectForKey:key];
+    id value = _cache[key];
     if (value || _cacheComplete || [_nilValues containsObject:key])
         return value;
 
@@ -161,14 +162,14 @@ static void cacheValueForKey(const void *key, const void *value, void *self)
     if (value) {
         if (!_cache)
             _cache = [[NSMutableDictionary alloc] initWithCapacity:lookupTableCount];
-        [_cache setObject:value forKey:key];
+        _cache[key] = value;
     } else {
         if (!_nilValues)
             _nilValues = [[NSMutableSet alloc] initWithCapacity:lookupTableCount];
         [_nilValues addObject:key];
     }
 
-    _cacheComplete = ([_cache count] + [_nilValues count]) == lookupTableCount;
+    _cacheComplete = (_cache.count + _nilValues.count) == lookupTableCount;
 
     return value;
 }
@@ -180,7 +181,7 @@ static void cacheValueForKey(const void *key, const void *value, void *self)
 
 - (WebFrame *)_webFrame
 {
-    return [[[self _domNode] ownerDocument] webFrame];
+    return [self _domNode].ownerDocument.webFrame;
 }
 
 // String's NSString* operator converts null Strings to empty NSStrings for compatibility
@@ -231,7 +232,7 @@ static NSString* NSStringOrNil(String coreString)
 
 - (NSNumber *)_isSelected
 {
-    return [NSNumber numberWithBool:_result->isSelected()];
+    return @(_result->isSelected());
 }
 
 - (NSString *)_title
@@ -263,17 +264,17 @@ static NSString* NSStringOrNil(String coreString)
 - (NSNumber *)_isLiveLink
 {
     Element* urlElement = _result->URLElement();
-    return [NSNumber numberWithBool:(urlElement && isDraggableLink(*urlElement))];
+    return @(urlElement && isDraggableLink(*urlElement));
 }
 
 - (NSNumber *)_isContentEditable
 {
-    return [NSNumber numberWithBool:_result->isContentEditable()];
+    return @(_result->isContentEditable());
 }
 
 - (NSNumber *)_isInScrollBar
 {
-    return [NSNumber numberWithBool:_result->scrollbar() != 0];
+    return @(_result->scrollbar() != 0);
 }
 
 @end

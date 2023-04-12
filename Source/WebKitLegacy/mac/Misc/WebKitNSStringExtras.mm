@@ -63,12 +63,12 @@ static bool canUseFastRenderer(const UniChar* buffer, unsigned length)
     if (!font)
         return;
 
-    unsigned length = [self length];
+    unsigned length = self.length;
     Vector<UniChar, 2048> buffer(length);
     [self getCharacters:buffer.data()];
 
     if (canUseFastRenderer(buffer.data(), length)) {
-        FontCascade webCoreFont(FontPlatformData((__bridge CTFontRef)font, [font pointSize]));
+        FontCascade webCoreFont(FontPlatformData((__bridge CTFontRef)font, font.pointSize));
         TextRun run(StringView(reinterpret_cast<const UChar*>(buffer.data()), length));
 
         // The following is a half-assed attempt to match AppKit's rounding rules for drawAtPoint.
@@ -77,11 +77,11 @@ static bool canUseFastRenderer(const UniChar* buffer, unsigned length)
         point.y = CGCeiling(point.y);
 
         NSGraphicsContext *nsContext = [NSGraphicsContext currentContext];
-        CGContextRef cgContext = [nsContext CGContext];
+        CGContextRef cgContext = nsContext.CGContext;
         GraphicsContextCG graphicsContext { cgContext };
 
         // WebCore requires a flipped graphics context.
-        bool flipped = [nsContext isFlipped];
+        bool flipped = nsContext.flipped;
         if (!flipped)
             CGContextScaleCTM(cgContext, 1, -1);
 
@@ -92,10 +92,10 @@ static bool canUseFastRenderer(const UniChar* buffer, unsigned length)
             CGContextScaleCTM(cgContext, 1, -1);
     } else {
         // The given point is on the baseline.
-        if ([[NSView focusView] isFlipped])
-            point.y -= [font ascender];
+        if ([NSView focusView].flipped)
+            point.y -= font.ascender;
         else
-            point.y += [font descender];
+            point.y += font.descender;
 
         [self drawAtPoint:point withAttributes:@{ NSFontAttributeName: font, NSForegroundColorAttributeName: textColor }];
     }
@@ -103,12 +103,12 @@ static bool canUseFastRenderer(const UniChar* buffer, unsigned length)
 
 - (float)_web_widthWithFont:(NSFont *)font
 {
-    unsigned length = [self length];
+    unsigned length = self.length;
     Vector<UniChar, 2048> buffer(length);
     [self getCharacters:buffer.data()];
 
     if (canUseFastRenderer(buffer.data(), length)) {
-        FontCascade webCoreFont(FontPlatformData((__bridge CTFontRef)font, [font pointSize]));
+        FontCascade webCoreFont(FontPlatformData((__bridge CTFontRef)font, font.pointSize));
         TextRun run(StringView(reinterpret_cast<const UChar*>(buffer.data()), length));
         return webCoreFont.width(run);
     }
@@ -123,17 +123,17 @@ static bool canUseFastRenderer(const UniChar* buffer, unsigned length)
     // Handles home directories that have symlinks in their paths as well as what stringByAbbreviatingWithTildeInPath handles.
     // This works around Radar bug 2774250.
 
-    NSString *resolvedHomeDirectory = [NSHomeDirectory() stringByResolvingSymlinksInPath];
+    NSString *resolvedHomeDirectory = NSHomeDirectory().stringByResolvingSymlinksInPath;
     NSString *path;
 
     if ([self hasPrefix:resolvedHomeDirectory]) {
-        NSString *relativePath = [self substringFromIndex:[resolvedHomeDirectory length]];
+        NSString *relativePath = [self substringFromIndex:resolvedHomeDirectory.length];
         path = [NSHomeDirectory() stringByAppendingPathComponent:relativePath];
     } else {
         path = self;
     }
 
-    return [path stringByAbbreviatingWithTildeInPath];
+    return path.stringByAbbreviatingWithTildeInPath;
 }
 
 - (BOOL)_webkit_isCaseInsensitiveEqualToString:(NSString *)string

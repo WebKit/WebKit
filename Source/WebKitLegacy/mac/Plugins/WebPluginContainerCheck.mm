@@ -53,7 +53,7 @@
 
 @implementation WebPluginContainerCheck
 
-- (id)initWithRequest:(NSURLRequest *)request target:(NSString *)target resultObject:(id)obj selector:(SEL)selector controller:(id <WebPluginContainerCheckController>)controller contextInfo:(id)contextInfo /*optional*/
+- (instancetype)initWithRequest:(NSURLRequest *)request target:(NSString *)target resultObject:(id)obj selector:(SEL)selector controller:(id <WebPluginContainerCheckController>)controller contextInfo:(id)contextInfo /*optional*/
 {
     if (!(self = [super init]))
         return nil;
@@ -70,7 +70,7 @@
     return self;
 }
 
-+ (id)checkWithRequest:(NSURLRequest *)request target:(NSString *)target resultObject:(id)obj selector:(SEL)selector controller:(id <WebPluginContainerCheckController>)controller contextInfo:(id)contextInfo /*optional*/
++ (instancetype)checkWithRequest:(NSURLRequest *)request target:(NSString *)target resultObject:(id)obj selector:(SEL)selector controller:(id <WebPluginContainerCheckController>)controller contextInfo:(id)contextInfo /*optional*/
 {
     return adoptNS([[self alloc] initWithRequest:request target:target resultObject:obj selector:selector controller:controller contextInfo:contextInfo]).autorelease();
 }
@@ -97,7 +97,7 @@
 {
     auto* coreFrame = core([_controller webFrame]);
     ASSERT(coreFrame);
-    if (!coreFrame->document()->securityOrigin().canDisplay([_request URL])) {
+    if (!coreFrame->document()->securityOrigin().canDisplay(_request.URL)) {
         [self _continueWithPolicy:WebCore::PolicyAction::Ignore];
         return YES;
     }
@@ -119,13 +119,13 @@
     WebView *webView = [_controller webView];
 
     WebFrame *targetFrame;
-    if ([_target length] > 0) {
+    if (_target.length > 0) {
         targetFrame = [[_controller webFrame] findFrameNamed:_target];
     } else {
         targetFrame = [_controller webFrame];
     }
 
-    NSDictionary *action = [self _actionInformationWithURL:[_request URL]];
+    NSDictionary *action = [self _actionInformationWithURL:_request.URL];
 
     _listener = [[WebPolicyDecisionListener alloc] _initWithTarget:self action:@selector(_continueWithPolicy:)];
 

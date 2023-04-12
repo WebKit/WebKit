@@ -33,6 +33,6 @@
     WebDeviceOrientationInternal* m_internal;
 }
 
-- (id)initWithCanProvideAlpha:(bool)canProvideAlpha alpha:(double)alpha canProvideBeta:(bool)canProvideBeta beta:(double)beta canProvideGamma:(bool)canProvideGamma gamma:(double)gamma;
+- (instancetype)initWithCanProvideAlpha:(bool)canProvideAlpha alpha:(double)alpha canProvideBeta:(bool)canProvideBeta beta:(double)beta canProvideGamma:(bool)canProvideGamma gamma:(double)gamma;
 
 @end

@@ -46,12 +46,12 @@ static bool returnTypeIsObject(NSInvocation *invocation)
 {
     // Could use either _C_ID or NSObjCObjectType, but it seems that neither is
     // both available and non-deprecated on all versions of Mac OS X we support.
-    return strchr([[invocation methodSignature] methodReturnType], '@');
+    return strchr(invocation.methodSignature.methodReturnType, '@');
 }
 
 @implementation WebMainThreadInvoker
 
-- (id)initWithTarget:(id)passedTarget
+- (instancetype)initWithTarget:(id)passedTarget
 {
     target = passedTarget;
     return self;
@@ -59,7 +59,7 @@ static bool returnTypeIsObject(NSInvocation *invocation)
 
 - (void)forwardInvocation:(NSInvocation *)invocation
 {
-    [invocation setTarget:target];
+    invocation.target = target;
     [invocation performSelectorOnMainThread:@selector(_webkit_invokeAndHandleException:) withObject:self waitUntilDone:YES];
     if (exception) {
         auto exceptionToThrow = std::exchange(exception, nil);

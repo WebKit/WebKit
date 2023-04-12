@@ -53,7 +53,7 @@
     NSMutableArray *titlesOrEmptyStrings;
     NSUInteger index, count;
 
-    count = [URLs count];
+    count = URLs.count;
     if (count == 0) {
         return;
     }
@@ -62,15 +62,23 @@
         return;
     }
 
-    if (count != [titles count]) {
+    if (count != titles.count) {
         titles = nil;
     }
 
     URLStrings = [NSMutableArray arrayWithCapacity:count];
     titlesOrEmptyStrings = [NSMutableArray arrayWithCapacity:count];
-    for (index = 0; index < count; ++index) {
-        [URLStrings addObject:[[URLs objectAtIndex:index] _web_originalDataAsString]];
-        [titlesOrEmptyStrings addObject:(titles == nil) ? @"" : [[titles objectAtIndex:index] _webkit_stringByTrimmingWhitespace]];
+    
+    if (titles == nil) {
+        for (index = 0; index < count; ++index) {
+            [URLStrings addObject:[URLs[index] _web_originalDataAsString]];
+            [titlesOrEmptyStrings addObject:[titles[index] _webkit_stringByTrimmingWhitespace]];
+        }
+    } else {
+        for (NSURL* url in URLs) {
+            [URLStrings addObject:[url _web_originalDataAsString]];
+            [titlesOrEmptyStrings addObject:@""];
+        }
     }
 
     [pasteboard setPropertyList:@[URLStrings, titlesOrEmptyStrings]
@@ -83,24 +91,24 @@
         return nil;
     }
 
-    return [[pasteboard propertyListForType:WebURLsWithTitlesPboardType] objectAtIndex:1];
+    return [pasteboard propertyListForType:WebURLsWithTitlesPboardType][1];
 }
 
 +(NSArray *)URLsFromPasteboard:(NSPasteboard *)pasteboard
 {
     NSArray *URLStrings;
     NSMutableArray *URLs;
-    unsigned index, count;
+    NSUInteger count;
     
     if ([pasteboard availableTypeFromArray:[self arrayWithIFURLsWithTitlesPboardType]] == nil) {
         return nil;
     }
 
-    URLStrings = [[pasteboard propertyListForType:WebURLsWithTitlesPboardType] objectAtIndex:0];
-    count = [URLStrings count];
+    URLStrings = [pasteboard propertyListForType:WebURLsWithTitlesPboardType][0];
+    count = URLStrings.count;
     URLs = [NSMutableArray arrayWithCapacity:count];
-    for (index = 0; index < count; ++index) {
-        [URLs addObject:[NSURL _web_URLWithDataAsString:[URLStrings objectAtIndex:index]]];
+    for (NSString *URLString in URLStrings) {
+        [URLs addObject:[NSURL _web_URLWithDataAsString:URLString]];
     }
 
     return URLs;

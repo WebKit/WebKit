@@ -76,7 +76,7 @@ static const CGFloat initialWindowHeight = 650;
     BOOL _visible;
     BOOL _destroyingInspectorView;
 }
-- (id)initWithInspectedWebView:(WebView *)inspectedWebView isUnderTest:(BOOL)isUnderTest;
+- (instancetype)initWithInspectedWebView:(WebView *)inspectedWebView isUnderTest:(BOOL)isUnderTest;
 - (NSString *)inspectorPagePath;
 - (NSString *)inspectorTestPagePath;
 - (WebView *)frontendWebView;
@@ -160,8 +160,8 @@ void WebInspectorClient::didSetSearchingForNode(bool enabled)
     ASSERT(isMainThread());
 
     if (enabled) {
-        [[m_inspectedWebView window] makeKeyAndOrderFront:nil];
-        [[m_inspectedWebView window] makeFirstResponder:m_inspectedWebView];
+        [m_inspectedWebView.window makeKeyAndOrderFront:nil];
+        [m_inspectedWebView.window makeFirstResponder:m_inspectedWebView];
         [[NSNotificationCenter defaultCenter] postNotificationName:WebInspectorDidStartSearchingForNode object:inspector];
     } else
         [[NSNotificationCenter defaultCenter] postNotificationName:WebInspectorDidStopSearchingForNode object:inspector];
@@ -190,7 +190,7 @@ void WebInspectorFrontendClient::attachAvailabilityChanged(bool available)
 
 bool WebInspectorFrontendClient::canAttach()
 {
-    if ([[m_frontendWindowController window] styleMask] & NSWindowStyleMaskFullScreen)
+    if (m_frontendWindowController.get().window.styleMask & NSWindowStyleMaskFullScreen)
         return false;
 
     return canAttachWindow();
@@ -204,12 +204,12 @@ void WebInspectorFrontendClient::frontendLoaded()
 
     InspectorFrontendClientLocal::frontendLoaded();
 
-    WebFrame *frame = [m_inspectedWebView mainFrame];
+    WebFrame *frame = m_inspectedWebView.mainFrame;
 
     WebFrameLoadDelegateImplementationCache* implementations = WebViewGetFrameLoadDelegateImplementations(m_inspectedWebView);
     if (implementations->didClearInspectorWindowObjectForFrameFunc)
         CallFrameLoadDelegate(implementations->didClearInspectorWindowObjectForFrameFunc, m_inspectedWebView,
-                              @selector(webView:didClearInspectorWindowObject:forFrame:), [frame windowObject], frame);
+                              @selector(webView:didClearInspectorWindowObject:forFrame:), frame.windowObject, frame);
 
     bool attached = [m_frontendWindowController.get() attached];
     setAttachedWindow(attached ? DockSide::Bottom : DockSide::Undocked);
@@ -217,7 +217,7 @@ void WebInspectorFrontendClient::frontendLoaded()
 
 void WebInspectorFrontendClient::startWindowDrag()
 {
-    [[m_frontendWindowController window] performWindowDragWithEvent:[NSApp currentEvent]];
+    [m_frontendWindowController.get().window performWindowDragWithEvent:NSApp.currentEvent];
 }
 
 String WebInspectorFrontendClient::localizedStringsURL() const
@@ -242,7 +242,7 @@ void WebInspectorFrontendClient::bringToFront()
     // Use the window from the WebView since m_frontendWindowController's window
     // is not the same when the Inspector is docked.
     WebView *frontendWebView = [m_frontendWindowController.get() frontendWebView];
-    [[frontendWebView window] makeFirstResponder:frontendWebView];
+    [frontendWebView.window makeFirstResponder:frontendWebView];
 }
 
 void WebInspectorFrontendClient::closeWindow()
@@ -265,12 +265,12 @@ void WebInspectorFrontendClient::resetState()
     inspectorClient->deleteInspectorStartsAttached();
     inspectorClient->deleteInspectorAttachDisabled();
 
-    [NSWindow removeFrameUsingName:[[m_frontendWindowController window] frameAutosaveName]];
+    [NSWindow removeFrameUsingName:m_frontendWindowController.get().window.frameAutosaveName];
 }
 
 void WebInspectorFrontendClient::setForcedAppearance(InspectorFrontendClient::Appearance appearance)
 {
-    NSWindow *window = [m_frontendWindowController window];
+    NSWindow *window = m_frontendWindowController.get().window;
     ASSERT(window);
 
     switch (appearance) {
@@ -344,9 +344,9 @@ void WebInspectorFrontendClient::showCertificate(const CertificateInfo& certific
 
     RetainPtr<SFCertificatePanel> certificatePanel = adoptNS([[SFCertificatePanel alloc] init]);
 
-    NSWindow *window = [[m_frontendWindowController frontendWebView] window];
+    NSWindow *window = [m_frontendWindowController frontendWebView].window;
     if (!window)
-        window = [NSApp keyWindow];
+        window = NSApp.keyWindow;
 
     [certificatePanel beginSheetForWindow:window modalDelegate:nil didEndSelector:NULL contextInfo:nullptr trust:certificateInfo.trust().get() showGroup:YES];
 
@@ -375,7 +375,7 @@ void WebInspectorFrontendClient::logDiagnosticEvent(const String& eventName, con
 void WebInspectorFrontendClient::updateWindowTitle() const
 {
     NSString *title = [NSString stringWithFormat:UI_STRING_INTERNAL("Web Inspector — %@", "Web Inspector window title"), (NSString *)m_inspectedURL];
-    [[m_frontendWindowController.get() window] setTitle:title];
+    m_frontendWindowController.get().window.title = title;
 }
 
 bool WebInspectorFrontendClient::canSave(InspectorFrontendClient::SaveMode saveMode)
@@ -444,7 +444,7 @@ void WebInspectorFrontendClient::save(Vector<InspectorFrontendClient::SaveData>&
     // can provide a good directory to show. Otherwise, use the system's
     // default behavior for the initial directory to show in the dialog.
     if (platformURL.isFileURL)
-        panel.directoryURL = [platformURL URLByDeletingLastPathComponent];
+        panel.directoryURL = platformURL.URLByDeletingLastPathComponent;
 
     auto completionHandler = ^(NSInteger result) {
         if (result == NSModalResponseCancel)
@@ -453,8 +453,8 @@ void WebInspectorFrontendClient::save(Vector<InspectorFrontendClient::SaveData>&
         saveToURL(panel.URL);
     };
 
-    NSWindow *frontendWindow = [[m_frontendWindowController frontendWebView] window];
-    NSWindow *window = frontendWindow ? frontendWindow : [NSApp keyWindow];
+    NSWindow *frontendWindow = [m_frontendWindowController frontendWebView].window;
+    NSWindow *window = frontendWindow ? frontendWindow : NSApp.keyWindow;
     if (window)
         [panel beginSheetModalForWindow:window completionHandler:completionHandler];
     else
@@ -464,7 +464,7 @@ void WebInspectorFrontendClient::save(Vector<InspectorFrontendClient::SaveData>&
 // MARK: -
 
 @implementation WebInspectorWindowController
-- (id)init
+- (instancetype)init
 {
     if (!(self = [super initWithWindow:nil]))
         return nil;
@@ -475,31 +475,31 @@ void WebInspectorFrontendClient::save(Vector<InspectorFrontendClient::SaveData>&
     [preferences setAllowsAnimatedImages:YES];
     [preferences setAuthorAndUserStylesEnabled:YES];
     [preferences setAutosaves:NO];
-    [preferences setDefaultFixedFontSize:11];
-    [preferences setFixedFontFamily:@"Menlo"];
+    preferences.get().defaultFixedFontSize = 11;
+    preferences.get().fixedFontFamily = @"Menlo";
     [preferences setJavaScriptEnabled:YES];
     [preferences setLoadsImagesAutomatically:YES];
-    [preferences setMinimumFontSize:0];
-    [preferences setMinimumLogicalFontSize:9];
+    preferences.get().minimumFontSize = 0;
+    preferences.get().minimumLogicalFontSize = 9;
     [preferences setPlugInsEnabled:NO];
     [preferences setTabsToLinks:NO];
     [preferences setUserStyleSheetEnabled:NO];
     [preferences setAllowFileAccessFromFileURLs:YES];
     [preferences setAllowUniversalAccessFromFileURLs:YES];
     [preferences setAllowTopNavigationToDataURLs:YES];
-    [preferences setStorageBlockingPolicy:WebAllowAllStorage];
+    preferences.get().storageBlockingPolicy = WebAllowAllStorage;
 
     _frontendWebView = adoptNS([[WebView alloc] init]);
-    [_frontendWebView setPreferences:preferences.get()];
+    _frontendWebView.get().preferences = preferences.get();
     [_frontendWebView setProhibitsMainFrameScrolling:YES];
-    [_frontendWebView setUIDelegate:self];
-    [_frontendWebView setPolicyDelegate:self];
+    _frontendWebView.get().UIDelegate = self;
+    _frontendWebView.get().policyDelegate = self;
 
-    [self setWindowFrameAutosaveName:@"Web Inspector 2"];
+    self.windowFrameAutosaveName = @"Web Inspector 2";
     return self;
 }
 
-- (id)initWithInspectedWebView:(WebView *)webView isUnderTest:(BOOL)isUnderTest
+- (instancetype)initWithInspectedWebView:(WebView *)webView isUnderTest:(BOOL)isUnderTest
 {
     if (!(self = [self init]))
         return nil;
@@ -508,7 +508,7 @@ void WebInspectorFrontendClient::save(Vector<InspectorFrontendClient::SaveData>&
 
     NSString *pagePath = isUnderTest ? [self inspectorTestPagePath] : [self inspectorPagePath];
     auto request = adoptNS([[NSURLRequest alloc] initWithURL:[NSURL fileURLWithPath:pagePath]]);
-    [[_frontendWebView mainFrame] loadRequest:request.get()];
+    [_frontendWebView.get().mainFrame loadRequest:request.get()];
 
     return self;
 }
@@ -543,26 +543,26 @@ void WebInspectorFrontendClient::save(Vector<InspectorFrontendClient::SaveData>&
 
 - (NSWindow *)window
 {
-    if (auto *window = [super window])
+    if (auto *window = super.window)
         return window;
-
+    
     NSUInteger styleMask = NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskMiniaturizable | NSWindowStyleMaskResizable | NSWindowStyleMaskFullSizeContentView;
     auto window = adoptNS([[NSWindow alloc] initWithContentRect:NSMakeRect(0, 0, initialWindowWidth, initialWindowHeight) styleMask:styleMask backing:NSBackingStoreBuffered defer:NO]);
     [window setDelegate:self];
     [window setMinSize:NSMakeSize(minimumWindowWidth, minimumWindowHeight)];
     [window setCollectionBehavior:([window collectionBehavior] | NSWindowCollectionBehaviorFullScreenPrimary)];
-
+    
     CGFloat approximatelyHalfScreenSize = ([window screen].frame.size.width / 2) - 4;
     CGFloat minimumFullScreenWidth = std::max<CGFloat>(636, approximatelyHalfScreenSize);
     [window setMinFullScreenContentSize:NSMakeSize(minimumFullScreenWidth, minimumWindowHeight)];
     [window setCollectionBehavior:([window collectionBehavior] | NSWindowCollectionBehaviorFullScreenAllowsTiling)];
-
+    
 #if HAVE(STAGE_MANAGER_NS_WINDOW_COLLECTION_BEHAVIORS)
     [window setCollectionBehavior:([window collectionBehavior] | NSWindowCollectionBehaviorAuxiliary)];
 #endif
     
     [window setTitlebarAppearsTransparent:YES];
-
+    
     [self setWindow:window.get()];
     return window.get();
 }
@@ -609,16 +609,16 @@ void WebInspectorFrontendClient::save(Vector<InspectorFrontendClient::SaveData>&
 
         [_frontendWebView removeFromSuperview];
 
-        WebFrameView *frameView = [[_inspectedWebView.get() mainFrame] frameView];
-        NSRect frameViewRect = [frameView frame];
+        WebFrameView *frameView = _inspectedWebView.get().mainFrame.frameView;
+        NSRect frameViewRect = frameView.frame;
 
         // Setting the height based on the previous height is done to work with
         // Safari's find banner. This assumes the previous height is the Y origin.
         frameViewRect.size.height += NSMinY(frameViewRect);
         frameViewRect.origin.y = 0.0;
 
-        [frameView setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
-        [frameView setFrame:frameViewRect];
+        frameView.autoresizingMask = (NSViewWidthSizable | NSViewHeightSizable);
+        frameView.frame = frameViewRect;
 
         [_inspectedWebView.get() displayIfNeeded];
     } else
@@ -643,22 +643,22 @@ void WebInspectorFrontendClient::save(Vector<InspectorFrontendClient::SaveData>&
     _shouldAttach = _inspectorClient->inspectorStartsAttached() && _frontendClient->canAttach();
 
     if (_shouldAttach) {
-        WebFrameView *frameView = [[_inspectedWebView.get() mainFrame] frameView];
+        WebFrameView *frameView = _inspectedWebView.get().mainFrame.frameView;
 
         [_frontendWebView removeFromSuperview];
         [_inspectedWebView.get() addSubview:_frontendWebView.get() positioned:NSWindowBelow relativeTo:(NSView *)frameView];
-        [[_inspectedWebView.get() window] makeFirstResponder:_frontendWebView.get()];
+        [_inspectedWebView.get().window makeFirstResponder:_frontendWebView.get()];
 
-        [_frontendWebView setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable | NSViewMaxYMargin)];
-        [frameView setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable | NSViewMinYMargin)];
+        _frontendWebView.get().autoresizingMask = (NSViewWidthSizable | NSViewHeightSizable | NSViewMaxYMargin);
+        frameView.autoresizingMask = (NSViewWidthSizable | NSViewHeightSizable | NSViewMinYMargin);
 
         _attachedToInspectedWebView = YES;
     } else {
         _attachedToInspectedWebView = NO;
 
-        NSView *contentView = [[self window] contentView];
-        [_frontendWebView setFrame:[contentView frame]];
-        [_frontendWebView setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
+        NSView *contentView = self.window.contentView;
+        _frontendWebView.get().frame = contentView.frame;
+        _frontendWebView.get().autoresizingMask = (NSViewWidthSizable | NSViewHeightSizable);
         [_frontendWebView removeFromSuperview];
         [contentView addSubview:_frontendWebView.get()];
 
@@ -717,8 +717,8 @@ void WebInspectorFrontendClient::save(Vector<InspectorFrontendClient::SaveData>&
     if (!_attachedToInspectedWebView)
         return;
 
-    WebFrameView *frameView = [[_inspectedWebView.get() mainFrame] frameView];
-    NSRect frameViewRect = [frameView frame];
+    WebFrameView *frameView = _inspectedWebView.get().mainFrame.frameView;
+    NSRect frameViewRect = frameView.frame;
 
     // Setting the height based on the difference is done to work with
     // Safari's find banner. This assumes the previous height is the Y origin.
@@ -726,8 +726,8 @@ void WebInspectorFrontendClient::save(Vector<InspectorFrontendClient::SaveData>&
     frameViewRect.size.height += heightDifference;
     frameViewRect.origin.y = height;
 
-    [_frontendWebView setFrame:NSMakeRect(0.0, 0.0, NSWidth(frameViewRect), height)];
-    [frameView setFrame:frameViewRect];
+    _frontendWebView.get().frame = NSMakeRect(0.0, 0.0, NSWidth(frameViewRect), height);
+    frameView.frame = frameViewRect;
 }
 
 - (void)setDockingUnavailable:(BOOL)unavailable
@@ -783,8 +783,8 @@ void WebInspectorFrontendClient::save(Vector<InspectorFrontendClient::SaveData>&
         [resultListener chooseFilenames:filenames];
     };
 
-    if ([_frontendWebView window])
-        [panel beginSheetModalForWindow:[_frontendWebView window] completionHandler:completionHandler];
+    if (_frontendWebView.get().window)
+        [panel beginSheetModalForWindow:_frontendWebView.get().window completionHandler:completionHandler];
     else
         completionHandler([panel runModal]);
 }
@@ -823,20 +823,20 @@ void WebInspectorFrontendClient::save(Vector<InspectorFrontendClient::SaveData>&
 - (void)webView:(WebView *)webView decidePolicyForNavigationAction:(NSDictionary *)actionInformation request:(NSURLRequest *)request frame:(WebFrame *)frame decisionListener:(id<WebPolicyDecisionListener>)listener
 {
     // Allow non-main frames to navigate anywhere.
-    if (frame != [webView mainFrame]) {
+    if (frame != webView.mainFrame) {
         [listener use];
         return;
     }
 
     // Allow loading of the main inspector file.
-    if ([[request URL] isFileURL] && [[[request URL] path] isEqualToString:[self inspectorPagePath]]) {
+    if (request.URL.fileURL && [request.URL.path isEqualToString:[self inspectorPagePath]]) {
         [listener use];
         return;
     }
 
     // Allow loading of the test inspector file.
     NSString *testPagePath = [self inspectorTestPagePath];
-    if (testPagePath && [[request URL] isFileURL] && [[[request URL] path] isEqualToString:testPagePath]) {
+    if (testPagePath && request.URL.fileURL && [request.URL.path isEqualToString:testPagePath]) {
         [listener use];
         return;
     }
@@ -845,7 +845,7 @@ void WebInspectorFrontendClient::save(Vector<InspectorFrontendClient::SaveData>&
     [listener ignore];
 
     // And instead load it in the inspected page.
-    [[_inspectedWebView.get() mainFrame] loadRequest:request];
+    [_inspectedWebView.get().mainFrame loadRequest:request];
 }
 
 // MARK: -
@@ -875,13 +875,13 @@ void WebInspectorFrontendClient::save(Vector<InspectorFrontendClient::SaveData>&
 - (BOOL)validateUserInterfaceItem:(id <NSValidatedUserInterfaceItem>)item
 {
     BOOL isMenuItem = [(id)item isKindOfClass:[NSMenuItem class]];
-    if ([item action] == @selector(toggleDebuggingJavaScript:) && isMenuItem) {
+    if (item.action == @selector(toggleDebuggingJavaScript:) && isMenuItem) {
         NSMenuItem *menuItem = (NSMenuItem *)item;
         if ([[_inspectedWebView.get() inspector] isDebuggingJavaScript])
             [menuItem setTitle:UI_STRING_INTERNAL("Stop Debugging JavaScript", "title for Stop Debugging JavaScript menu item")];
         else
             [menuItem setTitle:UI_STRING_INTERNAL("Start Debugging JavaScript", "title for Start Debugging JavaScript menu item")];
-    } else if ([item action] == @selector(toggleProfilingJavaScript:) && isMenuItem) {
+    } else if (item.action == @selector(toggleProfilingJavaScript:) && isMenuItem) {
         NSMenuItem *menuItem = (NSMenuItem *)item;
         if ([[_inspectedWebView.get() inspector] isProfilingJavaScript])
             [menuItem setTitle:UI_STRING_INTERNAL("Stop Profiling JavaScript", "title for Stop Profiling JavaScript menu item")];

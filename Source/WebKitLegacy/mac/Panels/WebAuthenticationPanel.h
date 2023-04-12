@@ -50,7 +50,7 @@
     NSURLAuthenticationChallenge *challenge;
 }
 
--(id)initWithCallback:(id)cb selector:(SEL)sel;
+-(instancetype)initWithCallback:(id)cb selector:(SEL)sel;
 
 // Interface-related methods
 - (IBAction)cancel:(id)sender;

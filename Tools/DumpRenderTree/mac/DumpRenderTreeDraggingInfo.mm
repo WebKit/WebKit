@@ -146,7 +146,8 @@ static std::pair<NSURL *, NSError *> copyFile(NSURL *sourceURL, NSURL *destinati
     draggingSource = [source retain];
     offset = o;
     
-    return [super init];
+    self = [super init];
+    return self;
 }
 
 - (void)dealloc

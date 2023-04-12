@@ -34,8 +34,8 @@
 @private
     WebNavigationDataPrivate *_private;
 }
-
-- (id)initWithURLString:(NSString *)url title:(NSString *)title originalRequest:(NSURLRequest *)request response:(NSURLResponse *)response hasSubstituteData:(BOOL)hasSubstituteData clientRedirectSource:(NSString *)redirectSource;
+- (instancetype)init NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithURLString:(NSString *)url title:(NSString *)title originalRequest:(NSURLRequest *)request response:(NSURLResponse *)response hasSubstituteData:(BOOL)hasSubstituteData clientRedirectSource:(NSString *)redirectSource NS_DESIGNATED_INITIALIZER;
 - (NSString *)url;
 - (NSString *)title;
 - (NSURLRequest *)originalRequest;

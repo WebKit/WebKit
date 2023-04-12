@@ -201,7 +201,7 @@ void WKNotifyHistoryItemChanged(HistoryItem&)
 - (NSImage *)icon
 {
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    return [[WebIconDatabase sharedIconDatabase] iconForURL:[self URLString] withSize:WebIconSmallSize];
+    return [[WebIconDatabase sharedIconDatabase] iconForURL:self.URLString withSize:WebIconSmallSize];
     ALLOW_DEPRECATED_DECLARATIONS_END
 }
 #endif
@@ -213,7 +213,7 @@ void WKNotifyHistoryItemChanged(HistoryItem&)
 
 - (NSUInteger)hash
 {
-    return [(NSString*)core(_private)->urlString() hash];
+    return ((NSString*)core(_private)->urlString()).hash;
 }
 
 - (BOOL)isEqual:(id)anObject
@@ -227,7 +227,7 @@ void WKNotifyHistoryItemChanged(HistoryItem&)
 - (NSString *)description
 {
     HistoryItem* coreItem = core(_private);
-    NSMutableString *result = [NSMutableString stringWithFormat:@"%@ %@", [super description], (NSString*)coreItem->urlString()];
+    NSMutableString *result = [NSMutableString stringWithFormat:@"%@ %@", super.description, (NSString*)coreItem->urlString()];
     if (!coreItem->target().isEmpty()) {
         NSString *target = coreItem->target();
         [result appendFormat:@" in \"%@\"", target];
@@ -241,15 +241,15 @@ void WKNotifyHistoryItemChanged(HistoryItem&)
     
     if (coreItem->children().size()) {
         const auto& children = coreItem->children();
-        int currPos = [result length];
+        int currPos = result.length;
         unsigned size = children.size();        
         for (unsigned i = 0; i < size; ++i) {
             WebHistoryItem *child = kit(const_cast<HistoryItem*>(children[i].ptr()));
             [result appendString:@"\n"];
-            [result appendString:[child description]];
+            [result appendString:child.description];
         }
         // shift all the contents over.  A bit slow, but hey, this is for debugging.
-        NSRange replRange = { static_cast<NSUInteger>(currPos), [result length] - currPos };
+        NSRange replRange = { static_cast<NSUInteger>(currPos), result.length - currPos };
         [result replaceOccurrencesOfString:@"\n" withString:@"\n    " options:0 range:replRange];
     }
     
@@ -278,7 +278,7 @@ WebHistoryItem *kit(HistoryItem* item)
     return adoptNS([[self alloc] initWithURL:URL title:nil]).autorelease();
 }
 
-- (id)initWithURLString:(NSString *)URLString title:(NSString *)title displayTitle:(NSString *)displayTitle lastVisitedTimeInterval:(NSTimeInterval)time
+- (instancetype)initWithURLString:(NSString *)URLString title:(NSString *)title displayTitle:(NSString *)displayTitle lastVisitedTimeInterval:(NSTimeInterval)time
 {
     auto item = [self initWithWebCoreHistoryItem:HistoryItem::create(URLString, title, displayTitle)];
     if (!item)
@@ -287,7 +287,7 @@ WebHistoryItem *kit(HistoryItem* item)
     return item;
 }
 
-- (id)initWithWebCoreHistoryItem:(Ref<HistoryItem>&&)item
+- (instancetype)initWithWebCoreHistoryItem:(Ref<HistoryItem>&&)item
 {   
     WebCoreThreadViolationCheckRoundOne();
 
@@ -320,7 +320,7 @@ WebHistoryItem *kit(HistoryItem* item)
     core(_private)->setViewState(statePList);
 }
 
-- (id)initFromDictionaryRepresentation:(NSDictionary *)dict
+- (instancetype)initFromDictionaryRepresentation:(NSDictionary *)dict
 {
     NSString *URLString = [dict _webkit_stringForKey:@""];
     NSString *title = [dict _webkit_stringForKey:titleKey];
@@ -328,7 +328,7 @@ WebHistoryItem *kit(HistoryItem* item)
     // Do an existence check to avoid calling doubleValue on a nil string. Leave
     // time interval at 0 if there's no value in dict.
     NSString *timeIntervalString = [dict _webkit_stringForKey:lastVisitedTimeIntervalKey];
-    NSTimeInterval lastVisited = timeIntervalString == nil ? 0 : [timeIntervalString doubleValue];
+    NSTimeInterval lastVisited = timeIntervalString == nil ? 0 : timeIntervalString.doubleValue;
 
     self = [self initWithURLString:URLString title:title displayTitle:[dict _webkit_stringForKey:displayTitleKey] lastVisitedTimeInterval:lastVisited];
     
@@ -348,24 +348,24 @@ WebHistoryItem *kit(HistoryItem* item)
     if (NSArray *redirectURLs = [dict _webkit_arrayForKey:redirectURLsKey])
         _private->_redirectURLs = makeUnique<Vector<String>>(makeVector<String>(redirectURLs));
 
-    for (id childDict in [[dict objectForKey:childrenKey] reverseObjectEnumerator]) {
+    for (id childDict in [dict[childrenKey] reverseObjectEnumerator]) {
         auto child = adoptNS([[WebHistoryItem alloc] initFromDictionaryRepresentation:childDict]);
         core(_private)->addChildItem(*core(child->_private));
     }
 
 #if PLATFORM(IOS_FAMILY)
-    NSNumber *scaleValue = [dict objectForKey:scaleKey];
-    NSNumber *scaleIsInitialValue = [dict objectForKey:scaleIsInitialKey];
+    NSNumber *scaleValue = dict[scaleKey];
+    NSNumber *scaleIsInitialValue = dict[scaleIsInitialKey];
     if (scaleValue && scaleIsInitialValue)
-        core(_private)->setScale([scaleValue floatValue], [scaleIsInitialValue boolValue]);
+        core(_private)->setScale(scaleValue.floatValue, scaleIsInitialValue.boolValue);
 
-    if (id viewportArguments = [dict objectForKey:@"WebViewportArguments"])
+    if (id viewportArguments = dict[@"WebViewportArguments"])
         [self _setViewportArguments:viewportArguments];
 
-    NSNumber *scrollPointXValue = [dict objectForKey:scrollPointXKey];
-    NSNumber *scrollPointYValue = [dict objectForKey:scrollPointYKey];
+    NSNumber *scrollPointXValue = dict[scrollPointXKey];
+    NSNumber *scrollPointYValue = dict[scrollPointYKey];
     if (scrollPointXValue && scrollPointYValue)
-        core(_private)->setScrollPosition(IntPoint([scrollPointXValue intValue], [scrollPointYValue intValue]));
+        core(_private)->setScrollPosition(IntPoint(scrollPointXValue.intValue, scrollPointYValue.intValue));
 #endif
 
     return self;
@@ -386,7 +386,7 @@ WebHistoryItem *kit(HistoryItem* item)
 
 @implementation WebHistoryItem (WebPrivate)
 
-- (id)initWithURL:(NSURL *)URL title:(NSString *)title
+- (instancetype)initWithURL:(NSURL *)URL title:(NSString *)title
 {
     return [self initWithURLString:[URL _web_originalDataAsString] title:title lastVisitedTimeInterval:0];
 }
@@ -408,20 +408,19 @@ WebHistoryItem *kit(HistoryItem* item)
     HistoryItem* coreItem = core(_private);
     
     if (!coreItem->urlString().isEmpty())
-        [dict setObject:(NSString*)coreItem->urlString() forKey:@""];
+        dict[@""] = (NSString*)coreItem->urlString();
     if (!coreItem->title().isEmpty())
-        [dict setObject:(NSString*)coreItem->title() forKey:titleKey];
+        dict[titleKey] = (NSString*)coreItem->title();
     if (!coreItem->alternateTitle().isEmpty())
-        [dict setObject:(NSString*)coreItem->alternateTitle() forKey:displayTitleKey];
+        dict[displayTitleKey] = (NSString*)coreItem->alternateTitle();
     if (_private->_lastVisitedTime) {
         // Store as a string to maintain backward compatibility. (See 3245793)
-        [dict setObject:[NSString stringWithFormat:@"%.1lf", _private->_lastVisitedTime]
-                 forKey:lastVisitedTimeIntervalKey];
+        dict[lastVisitedTimeIntervalKey] = [NSString stringWithFormat:@"%.1lf", _private->_lastVisitedTime];
     }
     if (coreItem->lastVisitWasFailure())
-        [dict setObject:@YES forKey:lastVisitWasFailureKey];
+        dict[lastVisitWasFailureKey] = @YES;
     if (auto redirectURLs = _private->_redirectURLs.get())
-        [dict setObject:createNSArray(*redirectURLs).get() forKey:redirectURLsKey];
+        dict[redirectURLsKey] = createNSArray(*redirectURLs).get();
 
 #if PLATFORM(IOS_FAMILY)
     if (includesChildren && coreItem->children().size()) {
@@ -431,22 +430,23 @@ WebHistoryItem *kit(HistoryItem* item)
         const auto& children = coreItem->children();
         NSMutableArray *childDicts = [NSMutableArray arrayWithCapacity:children.size()];
         
-        for (int i = children.size() - 1; i >= 0; i--)
+        size_t i = children.size();
+        while (i--)
             [childDicts addObject:[kit(const_cast<HistoryItem*>(children[i].ptr())) dictionaryRepresentation]];
-        [dict setObject: childDicts forKey:childrenKey];
+        dict[childrenKey] = childDicts;
     }
 
 #if PLATFORM(IOS_FAMILY)
-    [dict setObject:[NSNumber numberWithFloat:core(_private)->scale()] forKey:scaleKey];
-    [dict setObject:[NSNumber numberWithBool:core(_private)->scaleIsInitial()] forKey:scaleIsInitialKey];
+    dict[scaleKey] = @(core(_private)->scale());
+    dict[scaleIsInitialKey] = @(core(_private)->scaleIsInitial());
 
     NSDictionary *viewportArguments = [self _viewportArguments];
     if (viewportArguments)
-        [dict setObject:viewportArguments forKey:@"WebViewportArguments"];
+        dict[@"WebViewportArguments"] = viewportArguments;
 
     IntPoint scrollPosition = core(_private)->scrollPosition();
-    [dict setObject:@(scrollPosition.x()) forKey:scrollPointXKey];
-    [dict setObject:@(scrollPosition.y()) forKey:scrollPointYKey];
+    dict[scrollPointXKey] = @(scrollPosition.x());
+    dict[scrollPointYKey] = @(scrollPosition.y());
 #endif
 
     return dict;
@@ -531,26 +531,26 @@ WebHistoryItem *kit(HistoryItem* item)
 {
     const ViewportArguments& viewportArguments = core(_private)->viewportArguments();
     NSMutableDictionary *argumentsDictionary = [NSMutableDictionary dictionary];
-    [argumentsDictionary setObject:[NSNumber numberWithFloat:viewportArguments.zoom] forKey:WebViewportInitialScaleKey];
-    [argumentsDictionary setObject:[NSNumber numberWithFloat:viewportArguments.minZoom] forKey:WebViewportMinimumScaleKey];
-    [argumentsDictionary setObject:[NSNumber numberWithFloat:viewportArguments.maxZoom] forKey:WebViewportMaximumScaleKey];
-    [argumentsDictionary setObject:[NSNumber numberWithFloat:viewportArguments.width] forKey:WebViewportWidthKey];
-    [argumentsDictionary setObject:[NSNumber numberWithFloat:viewportArguments.height] forKey:WebViewportHeightKey];
-    [argumentsDictionary setObject:[NSNumber numberWithFloat:viewportArguments.userZoom] forKey:WebViewportUserScalableKey];
-    [argumentsDictionary setObject:[NSNumber numberWithFloat:viewportArguments.shrinkToFit] forKey:WebViewportShrinkToFitKey];
+    argumentsDictionary[WebViewportInitialScaleKey] = @(viewportArguments.zoom);
+    argumentsDictionary[WebViewportMinimumScaleKey] = @(viewportArguments.minZoom);
+    argumentsDictionary[WebViewportMaximumScaleKey] = @(viewportArguments.maxZoom);
+    argumentsDictionary[WebViewportWidthKey] = @(viewportArguments.width);
+    argumentsDictionary[WebViewportHeightKey] = @(viewportArguments.height);
+    argumentsDictionary[WebViewportUserScalableKey] = @(viewportArguments.userZoom);
+    argumentsDictionary[WebViewportShrinkToFitKey] = @(viewportArguments.shrinkToFit);
     return argumentsDictionary;
 }
 
 - (void)_setViewportArguments:(NSDictionary *)arguments
 {
     ViewportArguments viewportArguments;
-    viewportArguments.zoom = [[arguments objectForKey:WebViewportInitialScaleKey] floatValue];
-    viewportArguments.minZoom = [[arguments objectForKey:WebViewportMinimumScaleKey] floatValue];
-    viewportArguments.maxZoom = [[arguments objectForKey:WebViewportMaximumScaleKey] floatValue];
-    viewportArguments.width = [[arguments objectForKey:WebViewportWidthKey] floatValue];
-    viewportArguments.height = [[arguments objectForKey:WebViewportHeightKey] floatValue];
-    viewportArguments.userZoom = [[arguments objectForKey:WebViewportUserScalableKey] floatValue];
-    viewportArguments.shrinkToFit = [[arguments objectForKey:WebViewportShrinkToFitKey] floatValue];
+    viewportArguments.zoom = [arguments[WebViewportInitialScaleKey] floatValue];
+    viewportArguments.minZoom = [arguments[WebViewportMinimumScaleKey] floatValue];
+    viewportArguments.maxZoom = [arguments[WebViewportMaximumScaleKey] floatValue];
+    viewportArguments.width = [arguments[WebViewportWidthKey] floatValue];
+    viewportArguments.height = [arguments[WebViewportHeightKey] floatValue];
+    viewportArguments.userZoom = [arguments[WebViewportUserScalableKey] floatValue];
+    viewportArguments.shrinkToFit = [arguments[WebViewportShrinkToFitKey] floatValue];
     core(_private)->setViewportArguments(viewportArguments);
 }
 

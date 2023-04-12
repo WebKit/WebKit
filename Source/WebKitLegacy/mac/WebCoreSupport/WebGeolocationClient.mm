@@ -52,7 +52,7 @@ using namespace WebCore;
 {
     RefPtr<Geolocation> _geolocation;
 }
-- (id)initWithGeolocation:(NakedRef<Geolocation>)geolocation;
+- (instancetype)initWithGeolocation:(NakedRef<Geolocation>)geolocation;
 @end
 #else
 @interface WebGeolocationPolicyListener : NSObject <WebAllowDenyPolicyListener>
@@ -60,7 +60,7 @@ using namespace WebCore;
     RefPtr<Geolocation> _geolocation;
     RetainPtr<WebView> _webView;
 }
-- (id)initWithGeolocation:(NakedPtr<Geolocation>)geolocation forWebView:(WebView*)webView;
+- (instancetype)initWithGeolocation:(NakedPtr<Geolocation>)geolocation forWebView:(WebView*)webView;
 @end
 #endif
 
@@ -69,7 +69,7 @@ using namespace WebCore;
 @private
     RefPtr<Geolocation> m_geolocation;
 }
-- (id)initWithGeolocation:(NakedRef<Geolocation>)geolocation;
+- (instancetype)initWithGeolocation:(NakedRef<Geolocation>)geolocation;
 @end
 #endif
 
@@ -115,7 +115,7 @@ void WebGeolocationClient::requestPermission(Geolocation& geolocation)
     BEGIN_BLOCK_OBJC_EXCEPTIONS
 
     SEL selector = @selector(webView:decidePolicyForGeolocationRequestFromOrigin:frame:listener:);
-    if (![[m_webView UIDelegate] respondsToSelector:selector]) {
+    if (![m_webView.UIDelegate respondsToSelector:selector]) {
         geolocation.setIsAllowed(false, { });
         return;
     }
@@ -147,7 +147,7 @@ std::optional<GeolocationPositionData> WebGeolocationClient::lastPosition()
 #if !PLATFORM(IOS_FAMILY)
 @implementation WebGeolocationPolicyListener
 
-- (id)initWithGeolocation:(NakedRef<Geolocation>)geolocation
+- (instancetype)initWithGeolocation:(NakedRef<Geolocation>)geolocation
 {
     if (!(self = [super init]))
         return nil;
@@ -169,7 +169,7 @@ std::optional<GeolocationPositionData> WebGeolocationClient::lastPosition()
 
 #else
 @implementation WebGeolocationPolicyListener
-- (id)initWithGeolocation:(NakedPtr<Geolocation>)geolocation forWebView:(WebView*)webView
+- (instancetype)initWithGeolocation:(NakedPtr<Geolocation>)geolocation forWebView:(WebView*)webView
 {
     self = [super init];
     if (!self)
@@ -208,12 +208,13 @@ std::optional<GeolocationPositionData> WebGeolocationClient::lastPosition()
     // We lock to be on the safe side.
     WebThreadLock();
 
-    return [[_webView.get() preferences] _alwaysRequestGeolocationPermission];
+    return _webView.get().preferences._alwaysRequestGeolocationPermission;
 }
 @end
 
 @implementation WebGeolocationProviderInitializationListener
-- (id)initWithGeolocation:(NakedRef<Geolocation>)geolocation
+
+- (instancetype)initWithGeolocation:(NakedRef<Geolocation>)geolocation
 {
     self = [super init];
     if (self)

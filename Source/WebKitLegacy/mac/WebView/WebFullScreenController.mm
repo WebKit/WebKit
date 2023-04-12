@@ -64,7 +64,7 @@ static WebCore::IntRect screenRectOfContents(WebCore::Element* element)
 - (void)_updateMenuAndDockForFullScreen;
 - (void)_swapView:(NSView*)view with:(NSView*)otherView;
 - (NakedPtr<WebCore::Document>)_document;
-- (WebCore::FullscreenManager*)_manager;
+- (WebCore::FullscreenManager*)_manager NS_RETURNS_INNER_POINTER;
 - (void)_startEnterFullScreenAnimationWithDuration:(NSTimeInterval)duration;
 - (void)_startExitFullScreenAnimationWithDuration:(NSTimeInterval)duration;
 @end
@@ -78,7 +78,7 @@ static NSRect convertRectToScreen(NSWindow *window, NSRect rect)
 
 #pragma mark -
 #pragma mark Initialization
-- (id)init
+- (instancetype)init
 {
     // Do not defer window creation, to make sure -windowNumber is created (needed by WebWindowScaleAnimation).
     auto window = adoptNS([[WebCoreFullScreenWindow alloc] initWithContentRect:NSZeroRect styleMask:NSWindowStyleMaskClosable backing:NSBackingStoreBuffered defer:NO]);
@@ -159,7 +159,7 @@ static NSRect convertRectToScreen(NSWindow *window, NSRect rect)
 
 - (void)applicationDidResignActive:(NSNotification*)notification
 {   
-    NSWindow* fullscreenWindow = [self window];
+    NSWindow* fullscreenWindow = self.window;
 
     // Replicate the QuickTime Player (X) behavior when losing active application status:
     // Is the fullscreen screen the main screen? (Note: this covers the case where only a 
@@ -176,8 +176,8 @@ static NSRect convertRectToScreen(NSWindow *window, NSRect rect)
     // Update our presentation parameters, and ensure that the full screen window occupies the 
     // entire screen:
     [self _updateMenuAndDockForFullScreen];
-    NSWindow* window = [self window];
-    NSRect screenFrame = [[window screen] frame];
+    NSWindow* window = self.window;
+    NSRect screenFrame = window.screen.frame;
     [window setFrame:screenFrame display:YES];
     [_backgroundWindow.get() setFrame:screenFrame display:YES];
 }
@@ -195,45 +195,45 @@ static NSRect convertRectToScreen(NSWindow *window, NSRect rect)
     
     if (!screen)
         screen = [NSScreen mainScreen];
-    NSRect screenFrame = [screen frame];
+    NSRect screenFrame = screen.frame;
 
-    NSRect webViewFrame = convertRectToScreen([_webView window], [_webView convertRect:[_webView frame] toView:nil]);
+    NSRect webViewFrame = convertRectToScreen(_webView.window, [_webView convertRect:_webView.frame toView:nil]);
 
     // Flip coordinate system:
-    webViewFrame.origin.y = NSMaxY([[[NSScreen screens] objectAtIndex:0] frame]) - NSMaxY(webViewFrame);
+    webViewFrame.origin.y = NSMaxY([NSScreen screens][0].frame) - NSMaxY(webViewFrame);
     
-    CGWindowID windowID = [[_webView window] windowNumber];
+    CGWindowID windowID = _webView.window.windowNumber;
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     RetainPtr<CGImageRef> webViewContents = adoptCF(CGWindowListCreateImage(NSRectToCGRect(webViewFrame), kCGWindowListOptionIncludingWindow, windowID, kCGWindowImageShouldBeOpaque));
     ALLOW_DEPRECATED_DECLARATIONS_END
 
     // Screen updates to be re-enabled in beganEnterFullScreenWithInitialFrame:finalFrame:
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    [[self window] setAutodisplay:NO];
+    [self.window setAutodisplay:NO];
     ALLOW_DEPRECATED_DECLARATIONS_END
 
-    NSResponder *webWindowFirstResponder = [[_webView window] firstResponder];
-    [[self window] setFrame:screenFrame display:NO];
+    NSResponder *webWindowFirstResponder = _webView.window.firstResponder;
+    [self.window setFrame:screenFrame display:NO];
 
     _initialFrame = screenRectOfContents(_element.get());
 
     // Swap the webView placeholder into place.
     if (!_webViewPlaceholder) {
         _webViewPlaceholder = adoptNS([[NSView alloc] init]);
-        [_webViewPlaceholder.get() setLayer:[CALayer layer]];
+        _webViewPlaceholder.get().layer = [CALayer layer];
         [_webViewPlaceholder.get() setWantsLayer:YES];
     }
-    [[_webViewPlaceholder.get() layer] setContents:(__bridge id)webViewContents.get()];
+    _webViewPlaceholder.get().layer.contents = (__bridge id)webViewContents.get();
     _scrollPosition = [_webView _mainCoreFrame]->view()->scrollPosition();
     [self _swapView:_webView with:_webViewPlaceholder.get()];
     
     // Then insert the WebView into the full screen window
-    NSView* contentView = [[self window] contentView];
+    NSView* contentView = self.window.contentView;
     [contentView addSubview:_webView positioned:NSWindowBelow relativeTo:nil];
-    [_webView setFrame:[contentView bounds]];
-    [[_webViewPlaceholder.get() window] recalculateKeyViewLoop];
+    _webView.frame = contentView.bounds;
+    [_webViewPlaceholder.get().window recalculateKeyViewLoop];
     
-    [[self window] makeResponder:webWindowFirstResponder firstResponderIfDescendantOfView:_webView];
+    [self.window makeResponder:webWindowFirstResponder firstResponderIfDescendantOfView:_webView];
 
     _savedScale = [_webView _viewScaleFactor];
     [_webView _scaleWebView:1 atOrigin:NSMakePoint(0, 0)];
@@ -270,17 +270,17 @@ static void setClipRectForWindow(NSWindow *window, NSRect clipRect)
         [self _manager]->setAnimatingFullscreen(false);
         [self _manager]->didEnterFullscreen();
         
-        NSRect windowBounds = [[self window] frame];
+        NSRect windowBounds = self.window.frame;
         windowBounds.origin = NSZeroPoint;
         setClipRectForWindow(self.window, windowBounds);
         
-        NSWindow *webWindow = [_webViewPlaceholder.get() window];
+        NSWindow *webWindow = _webViewPlaceholder.get().window;
         // In Lion, NSWindow will animate into and out of orderOut operations. Suppress that
         // behavior here, making sure to reset the animation behavior afterward.
-        NSWindowAnimationBehavior animationBehavior = [webWindow animationBehavior];
-        [webWindow setAnimationBehavior:NSWindowAnimationBehaviorNone];
+        NSWindowAnimationBehavior animationBehavior = webWindow.animationBehavior;
+        webWindow.animationBehavior = NSWindowAnimationBehaviorNone;
         [webWindow orderOut:self];
-        [webWindow setAnimationBehavior:animationBehavior];
+        webWindow.animationBehavior = animationBehavior;
         
         [_fadeAnimation.get() stopAnimation];
         [_fadeAnimation.get() setWindow:nil];
@@ -306,7 +306,7 @@ static void setClipRectForWindow(NSWindow *window, NSRect clipRect)
     _isFullScreen = NO;
 
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    [[self window] setAutodisplay:NO];
+    [self.window setAutodisplay:NO];
     ALLOW_DEPRECATED_DECLARATIONS_END
 
     _finalFrame = screenRectOfContents(_element.get());
@@ -319,21 +319,21 @@ static void setClipRectForWindow(NSWindow *window, NSRect clipRect)
     
     [self _updateMenuAndDockForFullScreen];
     
-    NSWindow* webWindow = [_webViewPlaceholder.get() window];
+    NSWindow* webWindow = _webViewPlaceholder.get().window;
     // In Lion, NSWindow will animate into and out of orderOut operations. Suppress that
     // behavior here, making sure to reset the animation behavior afterward.
-    NSWindowAnimationBehavior animationBehavior = [webWindow animationBehavior];
-    [webWindow setAnimationBehavior:NSWindowAnimationBehaviorNone];
+    NSWindowAnimationBehavior animationBehavior = webWindow.animationBehavior;
+    webWindow.animationBehavior = NSWindowAnimationBehaviorNone;
     // If the user has moved the fullScreen window into a new space, temporarily change
     // the collectionBehavior of the webView's window so that it is pulled into the active space:
     if (!webWindow.onActiveSpace) {
-        NSWindowCollectionBehavior behavior = [webWindow collectionBehavior];
-        [webWindow setCollectionBehavior:NSWindowCollectionBehaviorCanJoinAllSpaces];
-        [webWindow orderWindow:NSWindowBelow relativeTo:[[self window] windowNumber]];
-        [webWindow setCollectionBehavior:behavior];
+        NSWindowCollectionBehavior behavior = webWindow.collectionBehavior;
+        webWindow.collectionBehavior = NSWindowCollectionBehaviorCanJoinAllSpaces;
+        [webWindow orderWindow:NSWindowBelow relativeTo:self.window.windowNumber];
+        webWindow.collectionBehavior = behavior;
     } else
-        [webWindow orderWindow:NSWindowBelow relativeTo:[[self window] windowNumber]];
-    [webWindow setAnimationBehavior:animationBehavior];
+        [webWindow orderWindow:NSWindowBelow relativeTo:self.window.windowNumber];
+    webWindow.animationBehavior = animationBehavior;
 
     [self _startExitFullScreenAnimationWithDuration:defaultAnimationDuration];
     _isExitingFullScreen = YES;    
@@ -351,17 +351,17 @@ static void setClipRectForWindow(NSWindow *window, NSRect clipRect)
     [self _manager]->didExitFullscreen();
     [_webView _scaleWebView:_savedScale atOrigin:NSMakePoint(0, 0)];
 
-    NSResponder *firstResponder = [[self window] firstResponder];
+    NSResponder *firstResponder = self.window.firstResponder;
     [self _swapView:_webViewPlaceholder.get() with:_webView];
     [_webView _mainCoreFrame]->view()->setScrollPosition(_scrollPosition);
-    [[_webView window] makeResponder:firstResponder firstResponderIfDescendantOfView:_webView];
+    [_webView.window makeResponder:firstResponder firstResponderIfDescendantOfView:_webView];
     
-    NSRect windowBounds = [[self window] frame];
+    NSRect windowBounds = self.window.frame;
     windowBounds.origin = NSZeroPoint;
     setClipRectForWindow(self.window, windowBounds);
     
-    [[self window] orderOut:self];
-    [[self window] setFrame:NSZeroRect display:YES];
+    [self.window orderOut:self];
+    [self.window setFrame:NSZeroRect display:YES];
     
     [_fadeAnimation.get() stopAnimation];
     [_fadeAnimation.get() setWindow:nil];
@@ -370,7 +370,7 @@ static void setClipRectForWindow(NSWindow *window, NSRect clipRect)
     [_backgroundWindow.get() orderOut:self];
     [_backgroundWindow.get() setFrame:NSZeroRect display:YES];
 
-    [[_webView window] makeKeyAndOrderFront:self];
+    [_webView.window makeKeyAndOrderFront:self];
 }
 
 - (void)performClose:(id)sender
@@ -411,18 +411,18 @@ static void setClipRectForWindow(NSWindow *window, NSRect clipRect)
 - (void)_updateMenuAndDockForFullScreen
 {
     NSApplicationPresentationOptions options = NSApplicationPresentationDefault;
-    NSScreen* fullscreenScreen = [[self window] screen];
+    NSScreen* fullscreenScreen = self.window.screen;
     
     if (_isFullScreen) {
         // Auto-hide the menu bar if the fullscreenScreen contains the menu bar:
         // NOTE: if the fullscreenScreen contains the menu bar but not the dock, we must still 
         // auto-hide the dock, or an exception will be thrown.
-        if ([[NSScreen screens] objectAtIndex:0] == fullscreenScreen)
+        if ([NSScreen screens][0] == fullscreenScreen)
             options |= (NSApplicationPresentationAutoHideMenuBar | NSApplicationPresentationAutoHideDock);
         // Check if the current screen contains the dock by comparing the screen's frame to its
         // visibleFrame; if a dock is present, the visibleFrame will differ. If the current screen
         // contains the dock, hide it.
-        else if (!NSEqualRects([fullscreenScreen frame], [fullscreenScreen visibleFrame]))
+        else if (!NSEqualRects(fullscreenScreen.frame, fullscreenScreen.visibleFrame))
             options |= NSApplicationPresentationAutoHideDock;
     }
     
@@ -446,10 +446,10 @@ static void setClipRectForWindow(NSWindow *window, NSRect clipRect)
 {
     [CATransaction begin];
     [CATransaction setDisableActions:YES];
-    [otherView setFrame:[view frame]];        
-    [otherView setAutoresizingMask:[view autoresizingMask]];
+    otherView.frame = view.frame;        
+    otherView.autoresizingMask = view.autoresizingMask;
     [otherView removeFromSuperview];
-    [[view superview] addSubview:otherView positioned:NSWindowAbove relativeTo:view];
+    [view.superview addSubview:otherView positioned:NSWindowAbove relativeTo:view];
     [view removeFromSuperview];
     [CATransaction commit];
 }
@@ -458,7 +458,7 @@ static RetainPtr<NSWindow> createBackgroundFullscreenWindow(NSRect frame)
 {
     auto window = adoptNS([[NSWindow alloc] initWithContentRect:frame styleMask:NSWindowStyleMaskBorderless backing:NSBackingStoreBuffered defer:NO]);
     [window setOpaque:YES];
-    [window setBackgroundColor:[NSColor blackColor]];
+    window.backgroundColor = [NSColor blackColor];
     [window setReleasedWhenClosed:NO];
     return window;
 }
@@ -482,24 +482,24 @@ static NSRect windowFrameFromApparentFrames(NSRect screenFrame, NSRect initialFr
 
 - (void)_startEnterFullScreenAnimationWithDuration:(NSTimeInterval)duration
 {
-    NSRect screenFrame = [[[self window] screen] frame];
+    NSRect screenFrame = self.window.screen.frame;
     NSRect initialWindowFrame = windowFrameFromApparentFrames(screenFrame, _initialFrame, _finalFrame);
     
-    _scaleAnimation = adoptNS([[WebWindowScaleAnimation alloc] initWithHintedDuration:duration window:[self window] initalFrame:initialWindowFrame finalFrame:screenFrame]);
+    _scaleAnimation = adoptNS([[WebWindowScaleAnimation alloc] initWithHintedDuration:duration window:self.window initalFrame:initialWindowFrame finalFrame:screenFrame]);
     
-    [_scaleAnimation.get() setAnimationBlockingMode:NSAnimationNonblocking];
-    [_scaleAnimation.get() setDelegate:self];
-    [_scaleAnimation.get() setCurrentProgress:0];
+    _scaleAnimation.get().animationBlockingMode = NSAnimationNonblocking;
+    _scaleAnimation.get().delegate = self;
+    _scaleAnimation.get().currentProgress = 0;
     [_scaleAnimation.get() startAnimation];
     
     // setClipRectForWindow takes window coordinates, so convert from screen coordinates here:
     NSRect finalBounds = _finalFrame;
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    finalBounds.origin = [[self window] convertScreenToBase:finalBounds.origin];
+    finalBounds.origin = [self.window convertScreenToBase:finalBounds.origin];
     ALLOW_DEPRECATED_DECLARATIONS_END
     setClipRectForWindow(self.window, finalBounds);
     
-    [[self window] makeKeyAndOrderFront:self];
+    [self.window makeKeyAndOrderFront:self];
     
     if (!_backgroundWindow)
         _backgroundWindow = createBackgroundFullscreenWindow(screenFrame);
@@ -517,29 +517,29 @@ static NSRect windowFrameFromApparentFrames(NSRect screenFrame, NSRect initialFr
                                                                        window:_backgroundWindow.get() 
                                                                  initialAlpha:currentAlpha 
                                                                    finalAlpha:1]);
-    [_fadeAnimation.get() setAnimationBlockingMode:NSAnimationNonblocking];
-    [_fadeAnimation.get() setCurrentProgress:0];
+    _fadeAnimation.get().animationBlockingMode = NSAnimationNonblocking;
+    _fadeAnimation.get().currentProgress = 0;
     [_fadeAnimation.get() startAnimation];
     
-    [_backgroundWindow.get() orderWindow:NSWindowBelow relativeTo:[[self window] windowNumber]];
+    [_backgroundWindow.get() orderWindow:NSWindowBelow relativeTo:self.window.windowNumber];
     
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    [[self window] setAutodisplay:YES];
+    [self.window setAutodisplay:YES];
     ALLOW_DEPRECATED_DECLARATIONS_END
-    [[self window] displayIfNeeded];
+    [self.window displayIfNeeded];
 }
 
 - (void)_startExitFullScreenAnimationWithDuration:(NSTimeInterval)duration
 {
-    NSRect screenFrame = [[[self window] screen] frame];
+    NSRect screenFrame = self.window.screen.frame;
     NSRect initialWindowFrame = windowFrameFromApparentFrames(screenFrame, _initialFrame, _finalFrame);
     
-    NSRect currentFrame = _scaleAnimation ? [_scaleAnimation.get() currentFrame] : [[self window] frame];
-    _scaleAnimation = adoptNS([[WebWindowScaleAnimation alloc] initWithHintedDuration:duration window:[self window] initalFrame:currentFrame finalFrame:initialWindowFrame]);
+    NSRect currentFrame = _scaleAnimation ? [_scaleAnimation.get() currentFrame] : self.window.frame;
+    _scaleAnimation = adoptNS([[WebWindowScaleAnimation alloc] initWithHintedDuration:duration window:self.window initalFrame:currentFrame finalFrame:initialWindowFrame]);
     
-    [_scaleAnimation.get() setAnimationBlockingMode:NSAnimationNonblocking];
-    [_scaleAnimation.get() setDelegate:self];
-    [_scaleAnimation.get() setCurrentProgress:0];
+    _scaleAnimation.get().animationBlockingMode = NSAnimationNonblocking;
+    _scaleAnimation.get().delegate = self;
+    _scaleAnimation.get().currentProgress = 0;
     [_scaleAnimation.get() startAnimation];
     
     if (!_backgroundWindow)
@@ -557,23 +557,23 @@ static NSRect windowFrameFromApparentFrames(NSRect screenFrame, NSRect initialFr
                                                                        window:_backgroundWindow.get() 
                                                                  initialAlpha:currentAlpha 
                                                                    finalAlpha:0]);
-    [_fadeAnimation.get() setAnimationBlockingMode:NSAnimationNonblocking];
-    [_fadeAnimation.get() setCurrentProgress:0];
+    _fadeAnimation.get().animationBlockingMode = NSAnimationNonblocking;
+    _fadeAnimation.get().currentProgress = 0;
     [_fadeAnimation.get() startAnimation];
     
-    [_backgroundWindow.get() orderWindow:NSWindowBelow relativeTo:[[self window] windowNumber]];
+    [_backgroundWindow.get() orderWindow:NSWindowBelow relativeTo:self.window.windowNumber];
     
     // setClipRectForWindow takes window coordinates, so convert from screen coordinates here:
     NSRect finalBounds = _finalFrame;
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    finalBounds.origin = [[self window] convertScreenToBase:finalBounds.origin];
+    finalBounds.origin = [self.window convertScreenToBase:finalBounds.origin];
     ALLOW_DEPRECATED_DECLARATIONS_END
     setClipRectForWindow(self.window, finalBounds);
     
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    [[self window] setAutodisplay:YES];
+    [self.window setAutodisplay:YES];
     ALLOW_DEPRECATED_DECLARATIONS_END
-    [[self window] displayIfNeeded];
+    [self.window displayIfNeeded];
 }
 
 @end

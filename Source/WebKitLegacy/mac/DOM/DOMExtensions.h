@@ -51,7 +51,8 @@ typedef struct _WKQuad {
 } WKQuad;
 
 @interface WKQuadObject : NSObject
-- (id)initWithQuad:(WKQuad)quad;
+- (instancetype)init NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithQuad:(WKQuad)quad NS_DESIGNATED_INITIALIZER;
 - (WKQuad)quad;
 - (CGRect)boundingBox;
 @end

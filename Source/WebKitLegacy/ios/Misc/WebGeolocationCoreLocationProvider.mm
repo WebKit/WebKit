@@ -68,10 +68,10 @@ using namespace WebCore;
     _locationManager = adoptNS([allocCLLocationManagerInstance() init]);
     _lastAuthorizationStatus = [getCLLocationManagerClass() authorizationStatus];
 
-    [ _locationManager setDelegate:self];
+    _locationManager.get().delegate = self;
 }
 
-- (id)initWithListener:(id<WebGeolocationCoreLocationUpdateListener>)listener
+- (instancetype)initWithListener:(id<WebGeolocationCoreLocationUpdateListener>)listener
 {
     self = [super init];
     if (self) {
@@ -183,18 +183,18 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     ASSERT(error);
     UNUSED_PARAM(manager);
 
-    if ([error code] == kCLErrorDenied) {
+    if (error.code == kCLErrorDenied) {
         // Ignore the error here and let locationManager:didChangeAuthorizationStatus: handle the permission.
         return;
     }
 
-    NSString *errorMessage = [error localizedDescription];
+    NSString *errorMessage = error.localizedDescription;
     [_positionListener errorOccurred:errorMessage];
 }
 
 - (void)setEnableHighAccuracy:(BOOL)flag
 {
-    [_locationManager setDesiredAccuracy:flag ? kCLLocationAccuracyBest : kCLLocationAccuracyHundredMeters];
+    _locationManager.get().desiredAccuracy = flag ? kCLLocationAccuracyBest : kCLLocationAccuracyHundredMeters;
 }
 
 @end

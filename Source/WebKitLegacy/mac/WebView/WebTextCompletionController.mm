@@ -51,7 +51,7 @@ using namespace WebCore;
 
 @implementation WebTextCompletionController
 
-- (id)initWithWebView:(WebView *)view HTMLView:(WebHTMLView *)htmlView
+- (instancetype)initWithWebView:(WebView *)view HTMLView:(WebHTMLView *)htmlView
 {
     self = [super init];
     if (!self)
@@ -88,31 +88,31 @@ using namespace WebCore;
     tableFrame.size = [NSScrollView contentSizeForFrameSize:scrollFrame.size hasHorizontalScroller:NO hasVerticalScroller:YES borderType:NSNoBorder];
     ALLOW_DEPRECATED_DECLARATIONS_END
     auto column = adoptNS([[NSTableColumn alloc] init]);
-    [column setWidth:tableFrame.size.width];
+    column.get().width = tableFrame.size.width;
     [column setEditable:NO];
     
     _tableView = [[NSTableView alloc] initWithFrame:tableFrame];
-    [_tableView setAutoresizingMask:NSViewWidthSizable];
+    _tableView.autoresizingMask = NSViewWidthSizable;
     [_tableView addTableColumn:column.get()];
-    [_tableView setGridStyleMask:NSTableViewGridNone];
+    _tableView.gridStyleMask = NSTableViewGridNone;
     [_tableView setCornerView:nil];
     [_tableView setHeaderView:nil];
-    [_tableView setColumnAutoresizingStyle:NSTableViewUniformColumnAutoresizingStyle];
-    [_tableView setDelegate:self];
-    [_tableView setDataSource:self];
-    [_tableView setTarget:self];
-    [_tableView setDoubleAction:@selector(tableAction:)];
+    _tableView.columnAutoresizingStyle = NSTableViewUniformColumnAutoresizingStyle;
+    _tableView.delegate = self;
+    _tableView.dataSource = self;
+    _tableView.target = self;
+    _tableView.doubleAction = @selector(tableAction:);
     
     auto scrollView = adoptNS([[NSScrollView alloc] initWithFrame:scrollFrame]);
-    [scrollView setBorderType:NSNoBorder];
+    scrollView.get().borderType = NSNoBorder;
     [scrollView setHasVerticalScroller:YES];
-    [scrollView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
-    [scrollView setDocumentView:_tableView];
+    scrollView.get().autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
+    scrollView.get().documentView = _tableView;
     [_tableView release];
     
     _popupWindow = [[NSWindow alloc] initWithContentRect:scrollFrame styleMask:NSWindowStyleMaskBorderless backing:NSBackingStoreBuffered defer:NO];
-    [_popupWindow setAlphaValue:0.88f];
-    [_popupWindow setContentView:scrollView.get()];
+    _popupWindow.alphaValue = 0.88f;
+    _popupWindow.contentView = scrollView.get();
     [_popupWindow setHasShadow:YES];
     [_popupWindow _setForceActiveControls:YES];
     [_popupWindow setReleasedWhenClosed:NO];
@@ -121,22 +121,22 @@ using namespace WebCore;
 // mostly lifted from NSTextView_KeyBinding.m
 - (void)_placePopupWindow:(NSPoint)topLeft
 {
-    NSUInteger numberToShow = [_completions count];
+    NSUInteger numberToShow = _completions.count;
     if (numberToShow > 20)
         numberToShow = 20;
 
     NSRect windowFrame;
     NSPoint wordStart = topLeft;
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    windowFrame.origin = [[_view window] convertBaseToScreen:[_htmlView convertPoint:wordStart toView:nil]];
+    windowFrame.origin = [_view.window convertBaseToScreen:[_htmlView convertPoint:wordStart toView:nil]];
     ALLOW_DEPRECATED_DECLARATIONS_END
-    windowFrame.size.height = numberToShow * [_tableView rowHeight] + (numberToShow + 1) * [_tableView intercellSpacing].height;
+    windowFrame.size.height = numberToShow * _tableView.rowHeight + (numberToShow + 1) * _tableView.intercellSpacing.height;
     windowFrame.origin.y -= windowFrame.size.height;
     NSDictionary *attributes = @{ NSFontAttributeName: [NSFont systemFontOfSize:12.0f] };
     CGFloat maxWidth = 0;
     int maxIndex = -1;
     for (NSUInteger i = 0; i < numberToShow; i++) {
-        float width = ceilf([[_completions objectAtIndex:i] sizeWithAttributes:attributes].width);
+        float width = ceilf([_completions[i] sizeWithAttributes:attributes].width);
         if (width > maxWidth) {
             maxWidth = width;
             maxIndex = i;
@@ -157,9 +157,9 @@ using namespace WebCore;
     [_tableView selectRowIndexes:[NSIndexSet indexSetWithIndex:0] byExtendingSelection:NO];
     [_tableView scrollRowToVisible:0];
     [self _reflectSelection];
-    [_popupWindow setLevel:NSPopUpMenuWindowLevel];
+    _popupWindow.level = NSPopUpMenuWindowLevel;
     [_popupWindow orderFront:nil];    
-    [[_view window] addChildWindow:_popupWindow ordered:NSWindowAbove];
+    [_view.window addChildWindow:_popupWindow ordered:NSWindowAbove];
 }
 
 - (void)doCompletion
@@ -177,35 +177,35 @@ using namespace WebCore;
         DOMRange *wholeWord = [frame _rangeByAlteringCurrentSelection:FrameSelection::AlterationExtend
             direction:SelectionDirection::Backward granularity:TextGranularity::WordGranularity];
         DOMRange *prefix = [wholeWord cloneRange];
-        [prefix setEnd:[selection startContainer] offset:[selection startOffset]];
+        [prefix setEnd:selection.startContainer offset:selection.startOffset];
 
         // Reject some NOP cases
-        if ([prefix collapsed]) {
+        if (prefix.collapsed) {
             NSBeep();
             return;
         }
         NSString *prefixStr = [frame _stringForRange:prefix];
         NSString *trimmedPrefix = [prefixStr stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
-        if ([trimmedPrefix length] == 0) {
+        if (trimmedPrefix.length == 0) {
             NSBeep();
             return;
         }
-        prefixLength = [prefixStr length];
+        prefixLength = prefixStr.length;
 
         // Lookup matches
         [_completions release];
-        _completions = [checker completionsForPartialWordRange:NSMakeRange(0, [prefixStr length]) inString:prefixStr language:nil inSpellDocumentWithTag:[_view spellCheckerDocumentTag]];
+        _completions = [checker completionsForPartialWordRange:NSMakeRange(0, prefixStr.length) inString:prefixStr language:nil inSpellDocumentWithTag:_view.spellCheckerDocumentTag];
         [_completions retain];
     
-        if (!_completions || [_completions count] == 0) {
+        if (!_completions || _completions.count == 0) {
             NSBeep();
-        } else if ([_completions count] == 1) {
-            [self _insertMatch:[_completions objectAtIndex:0]];
+        } else if (_completions.count == 1) {
+            [self _insertMatch:_completions[0]];
         } else {
             ASSERT(!_originalString);       // this should only be set IFF we have a popup window
             _originalString = [[frame _stringForRange:selection] retain];
             [self _buildUI];
-            NSRect wordRect = [frame _caretRectAtPosition:Position(core([wholeWord startContainer]), [wholeWord startOffset], Position::PositionIsOffsetInAnchor) affinity:NSSelectionAffinityDownstream];
+            NSRect wordRect = [frame _caretRectAtPosition:Position(core(wholeWord.startContainer), wholeWord.startOffset, Position::PositionIsOffsetInAnchor) affinity:NSSelectionAffinityDownstream];
             // +1 to be under the word, not the caret
             // FIXME - 3769652 - Wrong positioning for right to left languages.  We should line up the upper
             // right corner with the caret instead of upper left, and the +1 would be a -1.
@@ -221,7 +221,7 @@ using namespace WebCore;
 {
     if (_popupWindow) {
         // tear down UI
-        [[_view window] removeChildWindow:_popupWindow];
+        [_view.window removeChildWindow:_popupWindow];
         [_popupWindow orderOut:self];
         // Must autorelease because event tracking code may be on the stack touching UI
         [_popupWindow autorelease];
@@ -253,12 +253,12 @@ using namespace WebCore;
 {
     if (!_popupWindow)
         return NO;
-    NSString *string = [event charactersIgnoringModifiers];
-    if (![string length])
+    NSString *string = event.charactersIgnoringModifiers;
+    if (!string.length)
         return NO;
     unichar c = [string characterAtIndex:0];
     if (c == NSUpArrowFunctionKey) {
-        int selectedRow = [_tableView selectedRow];
+        int selectedRow = _tableView.selectedRow;
         if (0 < selectedRow) {
             [_tableView selectRowIndexes:[NSIndexSet indexSetWithIndex:selectedRow - 1] byExtendingSelection:NO];
             [_tableView scrollRowToVisible:selectedRow - 1];
@@ -266,8 +266,8 @@ using namespace WebCore;
         return YES;
     }
     if (c == NSDownArrowFunctionKey) {
-        int selectedRow = [_tableView selectedRow];
-        if (selectedRow < (int)[_completions count] - 1) {
+        int selectedRow = _tableView.selectedRow;
+        if (selectedRow < (int)_completions.count - 1) {
             [_tableView selectRowIndexes:[NSIndexSet indexSetWithIndex:selectedRow + 1] byExtendingSelection:NO];
             [_tableView scrollRowToVisible:selectedRow + 1];
         }
@@ -298,10 +298,10 @@ using namespace WebCore;
 
 - (void)_reflectSelection
 {
-    int selectedRow = [_tableView selectedRow];
+    int selectedRow = _tableView.selectedRow;
     ASSERT(selectedRow >= 0);
     ASSERT(selectedRow < (int)[_completions count]);
-    [self _insertMatch:[_completions objectAtIndex:selectedRow]];
+    [self _insertMatch:_completions[selectedRow]];
 }
 
 - (void)tableAction:(id)sender
@@ -312,12 +312,12 @@ using namespace WebCore;
 
 - (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView
 {
-    return [_completions count];
+    return _completions.count;
 }
 
 - (id)tableView:(NSTableView *)tableView objectValueForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row
 {
-    return [_completions objectAtIndex:row];
+    return _completions[row];
 }
 
 - (void)tableViewSelectionDidChange:(NSNotification *)notification

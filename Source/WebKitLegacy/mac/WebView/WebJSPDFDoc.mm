@@ -51,8 +51,8 @@ static JSValueRef jsPDFDocPrint(JSContextRef ctx, JSObjectRef function, JSObject
 
     WebDataSource *dataSource = (__bridge WebDataSource *)JSObjectGetPrivate(thisObject);
 
-    WebView *webView = [[dataSource webFrame] webView];
-    CallUIDelegate(webView, @selector(webView:printFrameView:), [[dataSource webFrame] frameView]);
+    WebView *webView = dataSource.webFrame.webView;
+    CallUIDelegate(webView, @selector(webView:printFrameView:), dataSource.webFrame.frameView);
 
     return JSValueMakeUndefined(ctx);
 }

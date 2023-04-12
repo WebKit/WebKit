@@ -103,7 +103,7 @@ static Class customScrollerClass;
     customScrollerClass = scrollerClass;
 }
 
-- (id)initWithFrame:(NSRect)frame
+- (instancetype)initWithFrame:(NSRect)frame
 {
     if (!(self = [super initWithFrame:frame]))
         return nil;
@@ -113,7 +113,7 @@ static Class customScrollerClass;
     return self;
 }
 
-- (id)initWithCoder:(NSCoder *)aDecoder
+- (instancetype)initWithCoder:(NSCoder *)aDecoder
 {
     if (!(self = [super initWithCoder:aDecoder]))
         return nil;
@@ -147,9 +147,9 @@ static Class customScrollerClass;
 
     _private->allowsScrollersToOverlapContent = flag;
 
-    [[self contentView] setFrame:[self contentViewFrame]];
-    [[self documentView] setNeedsLayout:YES];
-    [[self documentView] layout];
+    self.contentView.frame = [self contentViewFrame];
+    [self.documentView setNeedsLayout:YES];
+    [self.documentView layout];
 }
 
 - (void)setAlwaysHideHorizontalScroller:(BOOL)shouldBeHidden
@@ -172,17 +172,17 @@ static Class customScrollerClass;
 
 - (BOOL)horizontalScrollingAllowed
 {
-    return _private->horizontalScrollingAllowedButScrollerHidden || [self hasHorizontalScroller];
+    return _private->horizontalScrollingAllowedButScrollerHidden || self.hasHorizontalScroller;
 }
 
 - (BOOL)verticalScrollingAllowed
 {
-    return _private->verticalScrollingAllowedButScrollerHidden || [self hasVerticalScroller];
+    return _private->verticalScrollingAllowedButScrollerHidden || self.hasVerticalScroller;
 }
 
 static BOOL shouldRoundScrollOrigin(WebDynamicScrollBarsView *view)
 {
-    NSView *documentView = [view documentView];
+    NSView *documentView = view.documentView;
     if (![documentView isKindOfClass:[WebHTMLView class]])
         return NO;
 
@@ -216,12 +216,12 @@ static BOOL shouldRoundScrollOrigin(WebDynamicScrollBarsView *view)
 
 - (NSRect)contentViewFrame
 {
-    NSRect frame = [[self contentView] frame];
+    NSRect frame = self.contentView.frame;
 
-    if ([self hasHorizontalScroller])
-        frame.size.height = (_private->allowsScrollersToOverlapContent ? NSMaxY([[self horizontalScroller] frame]) : NSMinY([[self horizontalScroller] frame]));
-    if ([self hasVerticalScroller])
-        frame.size.width = (_private->allowsScrollersToOverlapContent ? NSMaxX([[self verticalScroller] frame]) : NSMinX([[self verticalScroller] frame]));
+    if (self.hasHorizontalScroller)
+        frame.size.height = (_private->allowsScrollersToOverlapContent ? NSMaxY(self.horizontalScroller.frame) : NSMinY(self.horizontalScroller.frame));
+    if (self.hasVerticalScroller)
+        frame.size.width = (_private->allowsScrollersToOverlapContent ? NSMaxX(self.verticalScroller.frame) : NSMinX(self.verticalScroller.frame));
     return frame;
 }
 
@@ -232,7 +232,7 @@ static BOOL shouldRoundScrollOrigin(WebDynamicScrollBarsView *view)
     // [super tile] sets the contentView size so that it does not overlap with the scrollers,
     // we want to re-set the contentView to overlap scrollers before displaying.
     if (_private->allowsScrollersToOverlapContent)
-        [[self contentView] setFrame:[self contentViewFrame]];
+        self.contentView.frame = [self contentViewFrame];
 }
 
 - (void)setSuppressLayout:(BOOL)flag
@@ -245,12 +245,12 @@ static BOOL shouldRoundScrollOrigin(WebDynamicScrollBarsView *view)
     _private->suppressScrollers = suppressed;
 
     if (suppressed) {
-        [[self verticalScroller] setNeedsDisplay:NO];
-        [[self horizontalScroller] setNeedsDisplay:NO];
+        [self.verticalScroller setNeedsDisplay:NO];
+        [self.horizontalScroller setNeedsDisplay:NO];
     }
 
     if (!suppressed && repaint)
-        [super reflectScrolledClipView:[self contentView]];
+        [super reflectScrolledClipView:self.contentView];
 }
 
 - (void)adjustForScrollOriginChange
@@ -260,8 +260,8 @@ static BOOL shouldRoundScrollOrigin(WebDynamicScrollBarsView *view)
 
     _private->scrollOriginChanged = false;
 
-    NSView *documentView = [self documentView];
-    NSRect documentRect = [documentView bounds];
+    NSView *documentView = self.documentView;
+    NSRect documentRect = documentView.bounds;
 
     // The call to [NSView scrollPoint:] fires off notification the handler for which needs to know that
     // we're setting the initial scroll position so it doesn't interpret this as a user action and
@@ -275,7 +275,7 @@ static const unsigned cMaxUpdateScrollbarsPass = 2;
 
 - (void)updateScrollers
 {
-    NSView *documentView = [self documentView];
+    NSView *documentView = self.documentView;
 
     // If we came in here with the view already needing a layout, then do that first.
     // (This will be the common case, e.g., when the page changes due to window resizing for example).
@@ -289,8 +289,8 @@ static const unsigned cMaxUpdateScrollbarsPass = 2;
         }
     }
 
-    BOOL hasHorizontalScroller = [self hasHorizontalScroller];
-    BOOL hasVerticalScroller = [self hasVerticalScroller];
+    BOOL hasHorizontalScroller = self.hasHorizontalScroller;
+    BOOL hasVerticalScroller = self.hasVerticalScroller;
 
     BOOL newHasHorizontalScroller = hasHorizontalScroller;
     BOOL newHasVerticalScroller = hasVerticalScroller;
@@ -316,12 +316,12 @@ static const unsigned cMaxUpdateScrollbarsPass = 2;
 
         _private->inUpdateScrollers = YES;
         if (hasHorizontalScroller != newHasHorizontalScroller)
-            [self setHasHorizontalScroller:newHasHorizontalScroller];
+            self.hasHorizontalScroller = newHasHorizontalScroller;
         if (hasVerticalScroller != newHasVerticalScroller)
-            [self setHasVerticalScroller:newHasVerticalScroller];
+            self.hasVerticalScroller = newHasVerticalScroller;
         if (_private->suppressScrollers) {
-            [[self verticalScroller] setNeedsDisplay:NO];
-            [[self horizontalScroller] setNeedsDisplay:NO];
+            [self.verticalScroller setNeedsDisplay:NO];
+            [self.horizontalScroller setNeedsDisplay:NO];
         }
         _private->inUpdateScrollers = NO;
         return;
@@ -329,9 +329,9 @@ static const unsigned cMaxUpdateScrollbarsPass = 2;
 
     BOOL needsLayout = NO;
 
-    NSSize documentSize = [documentView frame].size;
-    NSSize visibleSize = [self documentVisibleRect].size;
-    NSSize frameSize = [self frame].size;
+    NSSize documentSize = documentView.frame.size;
+    NSSize visibleSize = self.documentVisibleRect.size;
+    NSSize frameSize = self.frame.size;
     
     // When in HiDPI with a scale factor > 1, the visibleSize and frameSize may be non-integral values,
     // while the documentSize (set by WebCore) will be integral.  Round up the non-integral sizes so that
@@ -371,22 +371,22 @@ static const unsigned cMaxUpdateScrollbarsPass = 2;
 
     if (hasHorizontalScroller != newHasHorizontalScroller) {
         _private->inUpdateScrollers = YES;
-        [self setHasHorizontalScroller:newHasHorizontalScroller];
+        self.hasHorizontalScroller = newHasHorizontalScroller;
         _private->inUpdateScrollers = NO;
         needsLayout = YES;
-        NSView *documentView = [self documentView];
-        NSRect documentRect = [documentView bounds];
+        NSView *documentView = self.documentView;
+        NSRect documentRect = documentView.bounds;
         if (documentRect.origin.y < 0 && !newHasHorizontalScroller)
             [documentView setBoundsOrigin:NSMakePoint(documentRect.origin.x, documentRect.origin.y + 15)];
     }
 
     if (hasVerticalScroller != newHasVerticalScroller) {
         _private->inUpdateScrollers = YES;
-        [self setHasVerticalScroller:newHasVerticalScroller];
+        self.hasVerticalScroller = newHasVerticalScroller;
         _private->inUpdateScrollers = NO;
         needsLayout = YES;
-        NSView *documentView = [self documentView];
-        NSRect documentRect = [documentView bounds];
+        NSView *documentView = self.documentView;
+        NSRect documentRect = documentView.bounds;
         if (documentRect.origin.x < 0 && !newHasVerticalScroller)
             [documentView setBoundsOrigin:NSMakePoint(documentRect.origin.x + 15, documentRect.origin.y)];
     }
@@ -396,7 +396,7 @@ static const unsigned cMaxUpdateScrollbarsPass = 2;
         _private->inUpdateScrollersLayoutPass++;
         [(id <WebDocumentView>)documentView setNeedsLayout:YES];
         [(id <WebDocumentView>)documentView layout];
-        NSSize newDocumentSize = [documentView frame].size;
+        NSSize newDocumentSize = documentView.frame.size;
         if (NSEqualSizes(documentSize, newDocumentSize)) {
             // The layout with the new scroll state had no impact on
             // the document's overall size, so updateScrollers didn't get called.
@@ -410,7 +410,7 @@ static const unsigned cMaxUpdateScrollbarsPass = 2;
 // Make the horizontal and vertical scroll bars come and go as needed.
 - (void)reflectScrolledClipView:(NSClipView *)clipView
 {
-    if (clipView == [self contentView]) {
+    if (clipView == self.contentView) {
         // Prevent appearance of trails because of overlapping views
         if (_private->allowsScrollersToOverlapContent)
             [self setDrawsBackground:NO];
@@ -422,7 +422,7 @@ static const unsigned cMaxUpdateScrollbarsPass = 2;
         // The underlying cause is some problem in the NSText machinery, but I was not
         // able to pin it down.
         NSGraphicsContext *currentContext = [NSGraphicsContext currentContext];
-        if (!_private->inUpdateScrollers && (!currentContext || [currentContext isDrawingToScreen]))
+        if (!_private->inUpdateScrollers && (!currentContext || currentContext.drawingToScreen))
             [self updateScrollers];
     }
 
@@ -535,28 +535,28 @@ static const unsigned cMaxUpdateScrollbarsPass = 2;
     BOOL isContinuous;
     getWheelEventDeltas(event, deltaX, deltaY, isContinuous);
 
-    NSEventPhase momentumPhase = [event momentumPhase];
+    NSEventPhase momentumPhase = event.momentumPhase;
     BOOL isLatchingEvent = momentumPhase & NSEventPhaseBegan || momentumPhase & NSEventPhaseStationary;
 
     if (std::abs(deltaY) > std::abs(deltaX)) {
         if (![self allowsVerticalScrolling]) {
-            [[self nextResponder] scrollWheel:event];
+            [self.nextResponder scrollWheel:event];
             return;
         }
 
         if (isLatchingEvent && !_private->verticallyPinnedByPreviousWheelEvent) {
-            double verticalPosition = [[self verticalScroller] doubleValue];
+            double verticalPosition = self.verticalScroller.doubleValue;
             if ((deltaY >= 0.0 && verticalPosition == 0.0) || (deltaY <= 0.0 && verticalPosition == 1.0))
                 return;
         }
     } else {
         if (![self allowsHorizontalScrolling]) {
-            [[self nextResponder] scrollWheel:event];
+            [self.nextResponder scrollWheel:event];
             return;
         }
 
         if (isLatchingEvent && !_private->horizontallyPinnedByPreviousWheelEvent) {
-            double horizontalPosition = [[self horizontalScroller] doubleValue];
+            double horizontalPosition = self.horizontalScroller.doubleValue;
             if ((deltaX >= 0.0 && horizontalPosition == 0.0) || (deltaX <= 0.0 && horizontalPosition == 1.0))
                 return;
         }
@@ -569,8 +569,8 @@ static const unsigned cMaxUpdateScrollbarsPass = 2;
     [super scrollWheel:event];
 
     if (!isLatchingEvent) {
-        double verticalPosition = [[self verticalScroller] doubleValue];
-        double horizontalPosition = [[self horizontalScroller] doubleValue];
+        double verticalPosition = self.verticalScroller.doubleValue;
+        double horizontalPosition = self.horizontalScroller.doubleValue;
 
         _private->verticallyPinnedByPreviousWheelEvent = (verticalPosition == 0.0 || verticalPosition == 1.0);
         _private->horizontallyPinnedByPreviousWheelEvent = (horizontalPosition == 0.0 || horizontalPosition == 1.0);
@@ -592,9 +592,9 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     // The cross-platform ScrollView call already checked to see if the old/new scroll origins were the same or not
     // so we don't have to check for equivalence here.
     _private->scrollOrigin = scrollOrigin;
-    id docView = [self documentView];
+    id docView = self.documentView;
 
-    NSRect visibleRect = [self documentVisibleRect];
+    NSRect visibleRect = self.documentVisibleRect;
 
     [docView setBoundsOrigin:NSMakePoint(-scrollOrigin.x, -scrollOrigin.y)];
 
@@ -620,7 +620,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 - (void)setContentInsets:(NSEdgeInsets)edgeInsets
 {
-    [super setContentInsets:edgeInsets];
+    super.contentInsets = edgeInsets;
     [self tile];
 }
 

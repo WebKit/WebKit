@@ -40,7 +40,7 @@ NSString *WebPlugInContainingElementKey =       @"WebPlugInContainingElementKey"
 
 @implementation WebPluginPackage
 
-- (id)initWithPath:(NSString *)pluginPath
+- (instancetype)initWithPath:(NSString *)pluginPath
 {
     if (!(self = [super initWithPath:pluginPath]))
         return nil;
@@ -52,7 +52,7 @@ NSString *WebPlugInContainingElementKey =       @"WebPlugInContainingElementKey"
         return nil;
     }
     
-    if (![[pluginPath pathExtension] _webkit_isCaseInsensitiveEqualToString:@"webplugin"]) {
+    if (![pluginPath.pathExtension _webkit_isCaseInsensitiveEqualToString:@"webplugin"]) {
         UInt32 type = 0;
         CFBundleGetPackageInfo(cfBundle.get(), &type, NULL);
         if (type != FOUR_CHAR_CODE('WBPL')) {
@@ -62,7 +62,7 @@ NSString *WebPlugInContainingElementKey =       @"WebPlugInContainingElementKey"
     }
     
 #if !PLATFORM(IOS_FAMILY)
-    NSFileHandle *executableFile = [NSFileHandle fileHandleForReadingAtPath:[nsBundle executablePath]];
+    NSFileHandle *executableFile = [NSFileHandle fileHandleForReadingAtPath:nsBundle.executablePath];
     NSData *data = [executableFile readDataOfLength:512];
     [executableFile closeFile];
     if (![self isNativeLibraryData:data]) {
@@ -88,7 +88,7 @@ NSString *WebPlugInContainingElementKey =       @"WebPlugInContainingElementKey"
 
 - (Class)viewFactory
 {
-    return [nsBundle principalClass];
+    return nsBundle.principalClass;
 }
 
 - (BOOL)load
@@ -98,7 +98,7 @@ NSString *WebPlugInContainingElementKey =       @"WebPlugInContainingElementKey"
 #endif
     
     // Load the bundle
-    if (![nsBundle isLoaded]) {
+    if (!nsBundle.loaded) {
         if (![nsBundle load])
             return NO;
     }

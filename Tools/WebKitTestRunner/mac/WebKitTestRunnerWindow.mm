@@ -50,7 +50,8 @@ static Vector<WebKitTestRunnerWindow *> allWindows;
 {
     ASSERT(isMainThread());
     allWindows.append(self);
-    return [super initWithContentRect:contentRect styleMask:windowStyle backing:bufferingType defer:deferCreation];
+    self = [super initWithView:view control:adoptNS([[WKDateTimePicker alloc] initWithView:view datePickerMode:mode])];
+    return self;
 }
 
 - (void)close

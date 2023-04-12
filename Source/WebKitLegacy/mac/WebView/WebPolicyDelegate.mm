@@ -46,14 +46,20 @@ NSString *WebActionOriginalURLKey = @"WebActionOriginalURLKey";
     RetainPtr<id> target;
     SEL action;
 }
-
-- (id)initWithTarget:(id)target action:(SEL)action;
+- (instancetype)init NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithTarget:(id)target action:(SEL)action NS_DESIGNATED_INITIALIZER;
 
 @end
 
 @implementation WebPolicyDecisionListenerPrivate
 
-- (id)initWithTarget:(id)t action:(SEL)a
+- (instancetype)init
+{
+    self = [super init];
+    return self;
+}
+
+- (instancetype)initWithTarget:(id)t action:(SEL)a
 {
     self = [super init];
     if (!self)

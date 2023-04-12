@@ -49,7 +49,7 @@ class GeolocationPositionData;
 
 
 @interface WebGeolocationCoreLocationProvider : NSObject
-- (id)initWithListener:(id<WebGeolocationCoreLocationUpdateListener>)listener;
+- (instancetype)initWithListener:(id<WebGeolocationCoreLocationUpdateListener>)listener;
 
 - (void)requestGeolocationAuthorization;
 

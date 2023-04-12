@@ -35,13 +35,13 @@
 - (void)centerOverMainWindow
 {
     NSRect frameToCenterOver;
-    if ([NSApp mainWindow]) {
-        frameToCenterOver = [[NSApp mainWindow] frame];
+    if (NSApp.mainWindow) {
+        frameToCenterOver = NSApp.mainWindow.frame;
     } else {
-        frameToCenterOver = [[NSScreen mainScreen] visibleFrame];
+        frameToCenterOver = [NSScreen mainScreen].visibleFrame;
     }
     
-    NSSize size = [self frame].size;
+    NSSize size = self.frame.size;
     NSPoint origin;
     origin.y = NSMaxY(frameToCenterOver)
         - (frameToCenterOver.size.height - size.height) / 3

@@ -40,7 +40,8 @@ extern NSString *WebInspectorDidStopSearchingForNode;
     WebView *_inspectedWebView;
     WebInspectorFrontend *_frontend;
 }
-- (id)initWithInspectedWebView:(WebView *)inspectedWebView;
+- (instancetype)init NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithInspectedWebView:(WebView *)inspectedWebView NS_DESIGNATED_INITIALIZER;
 - (void)inspectedWebViewClosed;
 - (void)show:(id)sender;
 - (void)showConsole:(id)sender;

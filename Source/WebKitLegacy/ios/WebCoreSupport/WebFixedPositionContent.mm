@@ -86,7 +86,7 @@ WebFixedPositionContentData::~WebFixedPositionContentData()
     struct WebFixedPositionContentData* _private;
 }
 
-- (id)initWithWebView:(WebView *)webView
+- (instancetype)initWithWebView:(WebView *)webView
 {
     if ((self = [super init])) {
         _private = new WebFixedPositionContentData(webView);
@@ -116,11 +116,11 @@ WebFixedPositionContentData::~WebFixedPositionContentData()
 
                 FloatPoint layerPosition = fixedConstraints.layerPositionForViewportRect(positionedObjectsRect);
             
-                CGRect layerBounds = [layer bounds];
-                CGPoint anchorPoint = [layer anchorPoint];
+                CGRect layerBounds = layer.bounds;
+                CGPoint anchorPoint = layer.anchorPoint;
                 CGPoint newPosition = CGPointMake(layerPosition.x() - constraints.alignmentOffset().width() + anchorPoint.x * layerBounds.size.width,
                                                   layerPosition.y() - constraints.alignmentOffset().height() + anchorPoint.y * layerBounds.size.height);
-                [layer setPosition:newPosition];
+                layer.position = newPosition;
                 break;
             }
         case ViewportConstraints::StickyPositionConstraint: {
@@ -128,11 +128,11 @@ WebFixedPositionContentData::~WebFixedPositionContentData()
 
                 FloatPoint layerPosition = stickyConstraints.layerPositionForConstrainingRect(positionedObjectsRect);
 
-                CGRect layerBounds = [layer bounds];
-                CGPoint anchorPoint = [layer anchorPoint];
+                CGRect layerBounds = layer.bounds;
+                CGPoint anchorPoint = layer.anchorPoint;
                 CGPoint newPosition = CGPointMake(layerPosition.x() - constraints.alignmentOffset().width() + anchorPoint.x * layerBounds.size.width,
                                                   layerPosition.y() - constraints.alignmentOffset().height() + anchorPoint.y * layerBounds.size.height);
-                [layer setPosition:newPosition];
+                layer.position = newPosition;
                 break;
             }
         }
@@ -154,11 +154,11 @@ WebFixedPositionContentData::~WebFixedPositionContentData()
             FloatRect scrolledConstrainingRect = FloatRect(scrollPosition.x, scrollPosition.y, constrainingRectAtLastLayout.width(), constrainingRectAtLastLayout.height());
             FloatPoint layerPosition = stickyConstraints.layerPositionForConstrainingRect(scrolledConstrainingRect);
 
-            CGRect layerBounds = [layer bounds];
-            CGPoint anchorPoint = [layer anchorPoint];
+            CGRect layerBounds = layer.bounds;
+            CGPoint anchorPoint = layer.anchorPoint;
             CGPoint newPosition = CGPointMake(layerPosition.x() - stickyConstraints.alignmentOffset().width() + anchorPoint.x * layerBounds.size.width,
                                               layerPosition.y() - stickyConstraints.alignmentOffset().height() + anchorPoint.y * layerBounds.size.height);
-            [layer setPosition:newPosition];
+            layer.position = newPosition;
         }
     }
 }

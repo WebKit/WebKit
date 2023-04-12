@@ -32,7 +32,13 @@ using namespace WebCore;
 
 @implementation WebInspectorFrontend
 
-- (id)initWithFrontendClient:(NakedPtr<WebInspectorFrontendClient>)frontendClient
+- (instancetype)init
+{
+    self = [super init];
+    return self;
+}
+
+- (instancetype)initWithFrontendClient:(NakedPtr<WebInspectorFrontendClient>)frontendClient
 {
     if (!(self = [super init]))
         return nil;

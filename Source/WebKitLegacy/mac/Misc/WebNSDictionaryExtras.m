@@ -34,19 +34,19 @@
 
 -(NSNumber *)_webkit_numberForKey:(id)key
 {
-    id object = [self objectForKey:key];
+    id object = self[key];
     return [object isKindOfClass:[NSNumber class]] ? object : nil;
 }
 
 -(NSString *)_webkit_stringForKey:(id)key
 {
-    id object = [self objectForKey:key];
+    id object = self[key];
     return [object isKindOfClass:[NSString class]] ? object : nil;
 }
 
 -(NSArray *)_webkit_arrayForKey:(id)key
 {
-    id object = [self objectForKey:key];
+    id object = self[key];
     return [object isKindOfClass:[NSArray class]] ? object : nil;
 }
 
@@ -55,7 +55,7 @@
     id result;
     NSRange slashRange;
     
-    result = [self objectForKey:MIMEType];
+    result = self[MIMEType];
     if (result) {
         return result;
     }
@@ -65,13 +65,13 @@
         return nil;
     }
     
-    return [self objectForKey:[MIMEType substringToIndex:slashRange.location + 1]];
+    return self[[MIMEType substringToIndex:slashRange.location + 1]];
 }
 
 - (BOOL)_webkit_boolForKey:(id)key
 {
     NSNumber *number = [self _webkit_numberForKey:key];
-    return number && [number boolValue];
+    return number && number.boolValue;
 }
 
 @end

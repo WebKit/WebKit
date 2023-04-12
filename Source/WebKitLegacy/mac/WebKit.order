@@ -2113,8 +2113,6 @@ __ZN7WebCore20ResourceResponseBaseD2Ev
 -[WebHostedNetscapePluginView pluginViewFinishedLoading:]
 -[WebPluginDatabase destroyAllPluginInstanceViews]
 -[WebPluginDatabase dealloc]
--[NSData(WebNSDataExtras) _web_startsWithBlankLine]
--[NSData(WebNSDataExtras) _web_locationAfterFirstBlankLine]
 -[WebHostedNetscapePluginView webFrame:didFinishLoadWithError:]
 -[WebHostedNetscapePluginView webFrame:didFinishLoadWithReason:]
 __ZN6WebKit27NetscapePluginInstanceProxy31webFrameDidFinishLoadWithReasonEP8WebFrames

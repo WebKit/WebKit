@@ -58,9 +58,9 @@
 - (NSMenuItem *)menuItemWithTag:(int)tag target:(id)target representedObject:(id)representedObject
 {
     auto menuItem = adoptNS([[NSMenuItem alloc] init]);
-    [menuItem setTag:tag];
-    [menuItem setTarget:target]; // can be nil
-    [menuItem setRepresentedObject:representedObject];
+    menuItem.tag = tag;
+    menuItem.target = target; // can be nil
+    menuItem.representedObject = representedObject;
     
     NSString *title = nil;
     SEL action = NULL;
@@ -110,9 +110,9 @@
     }
 
     if (title)
-        [menuItem setTitle:title];
+        menuItem.title = title;
 
-    [menuItem setAction:action];
+    menuItem.action = action;
     
     return menuItem.autorelease();
 }
@@ -120,9 +120,9 @@
 - (void)appendDefaultItems:(NSArray *)defaultItems toArray:(NSMutableArray *)menuItems
 {
     ASSERT_ARG(menuItems, menuItems != nil);
-    if ([defaultItems count] > 0) {
+    if (defaultItems.count) {
         ASSERT(![[menuItems lastObject] isSeparatorItem]);
-        if (![[defaultItems objectAtIndex:0] isSeparatorItem]) {
+        if (![defaultItems[0] isSeparatorItem]) {
             [menuItems addObject:[NSMenuItem separatorItem]];
             
             NSEnumerator *e = [defaultItems objectEnumerator];
@@ -140,9 +140,9 @@
     // one case that has non-nil default items here.
     NSMutableArray *menuItems = [NSMutableArray array];
 
-    WebFrame *webFrame = [element objectForKey:WebElementFrameKey];
+    WebFrame *webFrame = element[WebElementFrameKey];
     
-    if ([[element objectForKey:WebElementIsSelectedKey] boolValue]) {
+    if ([element[WebElementIsSelectedKey] boolValue]) {
         // The Spotlight and Google items are implemented in WebView, and require that the
         // current document view conforms to WebDocumentText
         ASSERT([[[webFrame frameView] documentView] conformsToProtocol:@protocol(WebDocumentText)]);
@@ -154,8 +154,8 @@
         // but Safari has such code).
 
         NSMenuItem *lookupMenuItem = [self menuItemWithTag:WebMenuItemTagLookUpInDictionary target:nil representedObject:element];
-        NSString *selectedString = [(id <WebDocumentText>)[[webFrame frameView] documentView] selectedString];
-        [lookupMenuItem setTitle:[NSString stringWithFormat:UI_STRING_INTERNAL("Look Up “%@”", "Look Up context menu item with selected word"), selectedString]];
+        NSString *selectedString = [(id <WebDocumentText>)webFrame.frameView.documentView selectedString];
+        lookupMenuItem.title = [NSString stringWithFormat:UI_STRING_INTERNAL("Look Up “%@”", "Look Up context menu item with selected word"), selectedString];
         [menuItems addObject:lookupMenuItem];
 
         [menuItems addObject:[self menuItemWithTag:WebMenuItemTagSearchWeb target:nil representedObject:element]];
@@ -163,20 +163,20 @@
         [menuItems addObject:[NSMenuItem separatorItem]];
         [menuItems addObject:[self menuItemWithTag:WebMenuItemTagCopy target:nil representedObject:element]];
     } else {
-        WebView *wv = [webFrame webView];
-        if ([wv canGoBack]) {
+        WebView *wv = webFrame.webView;
+        if (wv.canGoBack) {
             [menuItems addObject:[self menuItemWithTag:WebMenuItemTagGoBack target:wv representedObject:element]];
         }
-        if ([wv canGoForward]) {
+        if (wv.canGoForward) {
             [menuItems addObject:[self menuItemWithTag:WebMenuItemTagGoForward target:wv representedObject:element]];
         }
-        if ([wv isLoading]) {
+        if (wv.loading) {
             [menuItems addObject:[self menuItemWithTag:WebMenuItemTagStop target:wv representedObject:element]];
         } else {
             [menuItems addObject:[self menuItemWithTag:WebMenuItemTagReload target:wv representedObject:element]];
         }
 
-        if (webFrame != [wv mainFrame]) {
+        if (webFrame != wv.mainFrame) {
             [menuItems addObject:[self menuItemWithTag:WebMenuItemTagOpenFrameInNewWindow target:wv representedObject:element]];
         }
     }

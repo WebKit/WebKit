@@ -47,7 +47,7 @@ using namespace WebCore;
 NetworkStorageSession& WebFrameNetworkingContext::ensurePrivateBrowsingSession()
 {
     ASSERT(isMainThread());
-    NetworkStorageSessionMap::ensureSession(PAL::SessionID::legacyPrivateSessionID(), [[NSBundle mainBundle] bundleIdentifier]);
+    NetworkStorageSessionMap::ensureSession(PAL::SessionID::legacyPrivateSessionID(), [NSBundle mainBundle].bundleIdentifier);
     return *NetworkStorageSessionMap::storageSession(PAL::SessionID::legacyPrivateSessionID());
 }
 

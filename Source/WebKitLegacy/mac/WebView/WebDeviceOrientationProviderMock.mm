@@ -32,7 +32,7 @@ using namespace WebCore;
 
 @implementation WebDeviceOrientationProviderMockInternal
 
-- (id)init
+- (instancetype)init
 {
     self = [super init];
     if (!self)
@@ -76,7 +76,7 @@ using namespace WebCore;
     return provider;
 }
 
-- (id)init
+- (instancetype)init
 {
     self = [super init];
     if (!self)

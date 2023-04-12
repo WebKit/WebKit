@@ -131,6 +131,6 @@ NSArray *allScriptsInPDFDocument(CGPDFDocumentRef pdfDocument)
 #if !PLATFORM(IOS_FAMILY)
 NSArray *allScriptsInPDFDocument(PDFDocument *document)
 {
-    return allScriptsInPDFDocument([document documentRef]);
+    return allScriptsInPDFDocument(document.documentRef);
 }
 #endif

@@ -42,7 +42,7 @@
 @interface NSWindow ()
 
 - (id)_oldFirstResponderBeforeBecoming;
-- (id)_newFirstResponderAfterResigning;
+- (id)_newFirstResponderAfterResigning NS_RETURNS_NOT_RETAINED;
 - (void)_setCursorForMouseLocation:(NSPoint)point;
 - (void)exitFullScreenMode:(id)sender;
 - (void)enterFullScreenMode:(id)sender;

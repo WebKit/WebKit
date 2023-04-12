@@ -125,7 +125,7 @@ enum {
 - (float)_verticalKeyboardScrollDistance
 {
     // Arrow keys scroll the same distance that clicking the scroll arrow does.
-    return [[self _scrollView] verticalLineScroll];
+    return [self _scrollView].verticalLineScroll;
 }
 
 - (NakedPtr<WebCore::LocalFrame>)_web_frame
@@ -140,7 +140,7 @@ enum {
 // Note that the WebVew is not retained.
 - (WebView *)_webView
 {
-    return [_private->webFrame webView];
+    return _private->webFrame.webView;
 }
 
 - (void)_setDocumentView:(NSView <WebDocumentView> *)view
@@ -156,15 +156,15 @@ enum {
     
     // If the old view is the first responder, transfer first responder status to the new view as 
     // a convenience and so that we don't leave the window pointing to a view that's no longer in it.
-    NSWindow *window = [sv window];
-    NSResponder *firstResponder = [window firstResponder];
-    bool makeNewViewFirstResponder = [firstResponder isKindOfClass:[NSView class]] && [(NSView *)firstResponder isDescendantOf:[sv documentView]];
+    NSWindow *window = sv.window;
+    NSResponder *firstResponder = window.firstResponder;
+    bool makeNewViewFirstResponder = [firstResponder isKindOfClass:[NSView class]] && [(NSView *)firstResponder isDescendantOf:sv.documentView];
 
     // Suppress the resetting of drag margins since we know we can't affect them.
     BOOL resetDragMargins = [window _needsToResetDragMargins];
     [window _setNeedsToResetDragMargins:NO];
 #endif
-    [sv setDocumentView:view];
+    sv.documentView = view;
 #if !PLATFORM(IOS_FAMILY)
     [window _setNeedsToResetDragMargins:resetDragMargins];
 
@@ -180,7 +180,7 @@ enum {
     ASSERT(frame->page());
 
     if (frame == &frame->page()->mainFrame())
-        [[self window] makeFirstResponder:[self documentView]];
+        [[self window] makeFirstResponder:self.documentView];
 #endif
 }
 
@@ -195,7 +195,7 @@ enum {
         // If the dataSource's representation has already been created, and it is also the
         // same class as the desired documentView, then use it as the documentView instead
         // of creating another one (Radar 4340787).
-        id <WebDocumentRepresentation> dataSourceRepresentation = [dataSource representation];
+        id <WebDocumentRepresentation> dataSourceRepresentation = dataSource.representation;
         if (dataSourceRepresentation && [dataSourceRepresentation class] == viewClass)
             documentView = (NSView <WebDocumentView> *)dataSourceRepresentation;
         else
@@ -209,7 +209,7 @@ enum {
 - (void)_setWebFrame:(WebFrame *)webFrame
 {
     if (!webFrame) {
-        NSView *docV = [self documentView];
+        NSView *docV = self.documentView;
         if ([docV respondsToSelector:@selector(close)])
             [docV performSelector:@selector(close)];
     }
@@ -234,7 +234,7 @@ enum {
 
 - (float)_verticalPageScrollDistance
 {
-    float height = [[self _contentView] bounds].size.height;
+    float height = [self _contentView].bounds.size.height;
     return std::max<float>(height * WebCore::Scrollbar::minFractionToStepWhenPaging(), height - WebCore::Scrollbar::maxOverlapBetweenPages());
 }
 
@@ -280,11 +280,11 @@ enum {
 
 - (Class)_viewClassForMIMEType:(NSString *)MIMEType
 {
-    Class retVal = [[self class] _viewClassForMIMEType:MIMEType allowingPlugins:[[[self _webView] preferences] arePlugInsEnabled]];
+    Class retVal = [[self class] _viewClassForMIMEType:MIMEType allowingPlugins:[self _webView].preferences.plugInsEnabled];
 
 #if PLATFORM(IOS_FAMILY)   
     if ([retVal respondsToSelector:@selector(_representationClassForWebFrame:)])
-        retVal = [retVal performSelector:@selector(_representationClassForWebFrame:) withObject:[self webFrame]];
+        retVal = [retVal performSelector:@selector(_representationClassForWebFrame:) withObject:self.webFrame];
 #endif
         
     return retVal;
@@ -320,7 +320,7 @@ enum {
 - (void)_frameSizeChanged
 {
     // See WebFrameLoaderClient::provisionalLoadStarted.
-    if ([[[self webFrame] webView] drawsBackground])
+    if (self.webFrame.webView.drawsBackground)
         [[self _scrollView] setDrawsBackground:YES];
     if (auto coreFrame = [self _web_frame]) {
         if (auto* coreFrameView = coreFrame->view())
@@ -332,7 +332,7 @@ enum {
 
 @implementation WebFrameView
 
-- (id)initWithFrame:(NSRect)frame
+- (instancetype)initWithFrame:(NSRect)frame
 {
     self = [super initWithFrame:frame];
     if (!self)
@@ -366,21 +366,21 @@ enum {
     auto scrollView = adoptNS([[WebDynamicScrollBarsView alloc] initWithFrame:NSMakeRect(0.0f, 0.0f, frame.size.width, frame.size.height)]);
     _private->frameScrollView = scrollView;
 #if PLATFORM(IOS_FAMILY)
-    [scrollView setDelegate:self];
+    scrollView.get().delegate = self;
 #else
-    [scrollView setContentView:adoptNS([[WebClipView alloc] initWithFrame:[scrollView bounds]]).get()];
+    scrollView.get().contentView = adoptNS([[WebClipView alloc] initWithFrame:scrollView.bounds]).get();
 #endif
     [scrollView setDrawsBackground:NO];
     [scrollView setHasVerticalScroller:NO];
     [scrollView setHasHorizontalScroller:NO];
-    [scrollView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
-    [scrollView setLineScroll:WebCore::Scrollbar::pixelsPerLineStep()];
+    scrollView.get().autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
+    scrollView.get().lineScroll = WebCore::Scrollbar::pixelsPerLineStep();
     [self addSubview:scrollView.get()];
 
     // Don't call our overridden version of setNextKeyView here; we need to make the standard NSView
     // link between us and our subview so that previousKeyView and previousValidKeyView work as expected.
     // This works together with our becomeFirstResponder and setNextKeyView overrides.
-    [super setNextKeyView:scrollView.get()];
+    super.nextKeyView = scrollView.get();
     
     return self;
 }
@@ -412,14 +412,14 @@ enum {
 
 - (void)setAllowsScrolling:(BOOL)flag
 {
-    WebCore::LocalFrame *frame = core([self webFrame]);
+    WebCore::LocalFrame *frame = core(self.webFrame);
     if (auto* view = frame? frame->view() : 0)
         view->setCanHaveScrollbars(flag);
 }
 
 - (BOOL)allowsScrolling
 {
-    auto* frame = core([self webFrame]);
+    auto* frame = core(self.webFrame);
     if (auto* view = frame? frame->view() : 0)
         return view->canHaveScrollbars();
     return YES;
@@ -427,7 +427,7 @@ enum {
 
 - (NSView <WebDocumentView> *)documentView
 {
-    return [[self _scrollView] documentView];
+    return [self _scrollView].documentView;
 }
 
 - (BOOL)acceptsFirstResponder
@@ -443,20 +443,20 @@ enum {
     // the key loop similar to the way NSScrollView does this. Note that
     // WebView has similar code.
     
-    NSWindow *window = [self window];
-    if ([window keyViewSelectionDirection] == NSSelectingPrevious) {
-        NSView *previousValidKeyView = [self previousValidKeyView];
+    NSWindow *window = self.window;
+    if (window.keyViewSelectionDirection == NSSelectingPrevious) {
+        NSView *previousValidKeyView = self.previousValidKeyView;
         // If we couldn't find a previous valid key view, ask the WebView. This handles frameset
         // cases (one is mentioned in Radar bug 3748628). Note that previousValidKeyView should
         // never be self but can be due to AppKit oddness (mentioned in Radar bug 3748628).
         if (previousValidKeyView == nil || previousValidKeyView == self)
-            previousValidKeyView = [[[self webFrame] webView] previousValidKeyView];
+            previousValidKeyView = self.webFrame.webView.previousValidKeyView;
         [window makeFirstResponder:previousValidKeyView];
     } else {
         // If the scroll view won't accept first-responderness now, then just become
         // the first responder ourself like a normal view. This lets us be the first 
         // responder in cases where no page has yet been loaded.
-        if ([[self _scrollView] acceptsFirstResponder])
+        if ([self _scrollView].acceptsFirstResponder)
             [window makeFirstResponder:[self _scrollView]];
     }
     
@@ -469,27 +469,27 @@ enum {
     // the key loop similar to the way NSScrollView does this. Note that
     // WebView has very similar code.
     if ([self _scrollView] != nil) {
-        [[self _scrollView] setNextKeyView:aView];
+        [self _scrollView].nextKeyView = aView;
     } else {
-        [super setNextKeyView:aView];
+        super.nextKeyView = aView;
     }
 }
 
 - (BOOL)isOpaque
 {
-    return [[self _webView] drawsBackground];
+    return [self _webView].drawsBackground;
 }
 
 - (void)drawRect:(NSRect)rect
 {
 #if !PLATFORM(IOS_FAMILY)
-    if (![self documentView])
+    if (!self.documentView)
 #else
-    if (![self documentView] || [[self documentView] frame].size.height == 0 || [[self webFrame] _isCommitting])
+    if (!self.documentView || [self.documentView frame].size.height == 0 || [self.webFrame _isCommitting])
 #endif
     {
         // Need to paint ourselves if there's no documentView to do it instead.
-        if ([[self _webView] drawsBackground]) {
+        if ([self _webView].drawsBackground) {
 #if !PLATFORM(IOS_FAMILY)
             [[[self _webView] backgroundColor] set];
             NSRectFill(rect);
@@ -501,7 +501,7 @@ enum {
         }
     } else {
 #ifndef NDEBUG
-        if ([[self _scrollView] drawsBackground]) {
+        if ([self _scrollView].drawsBackground) {
 #if !PLATFORM(IOS_FAMILY)
             [[NSColor cyanColor] set];
             NSRectFill(rect);
@@ -525,14 +525,14 @@ enum {
 {
     // Do what -drawRect: does but by setting a backgroundColor on the view. This avoids
     // backing store for this view when the WebView is layer-backed.
-    if (![self documentView]) {
-        if ([[self _webView] drawsBackground]) {
+    if (!self.documentView) {
+        if ([self _webView].drawsBackground) {
             [self setBackgroundColor:[[self _webView] backgroundColor]];
             return;
         }
     } else {
 #ifndef NDEBUG
-        if ([[self _scrollView] drawsBackground]) {
+        if ([self _scrollView].drawsBackground) {
             [self setBackgroundColor:[NSColor cyanColor]];
             return;
         }
@@ -547,7 +547,7 @@ enum {
 {
     // This method can be called beneath -[NSView dealloc] after we have cleared _private.
     if (!_private)
-        return [super visibleRect];
+        return super.visibleRect;
 
     // FIXME: <rdar://problem/6213380> This method does not work correctly with transforms, for two reasons:
     // 1) [super visibleRect] does not account for the transform, since it is not represented
@@ -555,17 +555,17 @@ enum {
     // 2) -_getVisibleRect: does not correct for transforms.
 
     NSRect rendererVisibleRect;
-    if (![[self webFrame] _getVisibleRect:&rendererVisibleRect])
-        return [super visibleRect];
+    if (![self.webFrame _getVisibleRect:&rendererVisibleRect])
+        return super.visibleRect;
 
     if (NSIsEmptyRect(rendererVisibleRect))
         return NSZeroRect;
 
-    NSRect viewVisibleRect = [super visibleRect];
+    NSRect viewVisibleRect = super.visibleRect;
     if (NSIsEmptyRect(viewVisibleRect))
         return NSZeroRect;
 
-    NSRect frame = [self frame];
+    NSRect frame = self.frame;
     // rendererVisibleRect is in the parent's coordinate space, and frame is in the superview's coordinate space.
     // The return value from this method needs to be in this view's coordinate space. We get that right by subtracting
     // the origins (and correcting for flipping), but when we support transforms, we will need to do better than this.
@@ -576,7 +576,7 @@ enum {
 
 - (void)setFrameSize:(NSSize)size
 {
-    if (!NSEqualSizes(size, [self frame].size))
+    if (!NSEqualSizes(size, self.frame.size))
         [self _frameSizeChanged];
 
     [super setFrameSize:size];
@@ -586,7 +586,7 @@ enum {
 {
     // See WebFrameLoaderClient::provisionalLoadStarted.
     // Need to check _private for nil because this can be called inside -[WebView initWithCoder:].
-    if (_private && [[[self webFrame] webView] drawsBackground])
+    if (_private && self.webFrame.webView.drawsBackground)
         [[self _scrollView] setDrawsBackground:YES];
     [super viewDidMoveToWindow];
 }
@@ -594,9 +594,9 @@ enum {
 - (BOOL)_scrollOverflowInDirection:(WebCore::ScrollDirection)direction granularity:(WebCore::ScrollGranularity)granularity
 {
     // scrolling overflows is only applicable if we're dealing with an WebHTMLView
-    if (![[self documentView] isKindOfClass:[WebHTMLView class]])
+    if (![self.documentView isKindOfClass:[WebHTMLView class]])
         return NO;
-    auto* frame = core([self webFrame]);
+    auto* frame = core(self.webFrame);
     if (!frame)
         return NO;
     return frame->eventHandler().scrollOverflow(direction, granularity);
@@ -637,7 +637,7 @@ enum {
         return YES;
     if (![self _isScrollable])
         return NO;
-    NSPoint point = [(NSView *)[[self _scrollView] documentView] frame].origin;
+    NSPoint point = ((NSView *)[self _scrollView].documentView).frame.origin;
     point.x += [[self _scrollView] scrollOrigin].x;
     point.y += [[self _scrollView] scrollOrigin].y;
     return [[self _contentView] _scrollTo:&point animate:YES];
@@ -649,7 +649,7 @@ enum {
         return YES;
     if (![self _isScrollable])
         return NO;
-    NSRect frame = [(NSView *)[[self _scrollView] documentView] frame];
+    NSRect frame = ((NSView *)[self _scrollView].documentView).frame;
     
     bool isVertical = [self _isVerticalDocument];
     bool isFlipped = [self _isFlippedDocument];
@@ -684,7 +684,7 @@ enum {
         if ([child _scrollToBeginningOfDocument])
             return;
     }
-    [[self nextResponder] tryToPerform:@selector(scrollToBeginningOfDocument:) with:sender];
+    [self.nextResponder tryToPerform:@selector(scrollToBeginningOfDocument:) with:sender];
 }
 
 - (void)scrollToEndOfDocument:(id)sender
@@ -696,7 +696,7 @@ enum {
         if ([child _scrollToEndOfDocument])
             return;
     }
-    [[self nextResponder] tryToPerform:@selector(scrollToEndOfDocument:) with:sender];
+    [self.nextResponder tryToPerform:@selector(scrollToEndOfDocument:) with:sender];
 }
 
 - (void)_goBack
@@ -716,14 +716,14 @@ enum {
     // done or not to help implement the "scroll parent if we are at the limit" feature.
     // In the presence of smooth scrolling, there's no easy way to tell if the method
     // did any scrolling or not with the public API.
-    NSPoint point = [[self _contentView] bounds].origin;
+    NSPoint point = [self _contentView].bounds.origin;
     point.y += delta;
     return [[self _contentView] _scrollTo:&point animate:YES];
 }
 
 - (BOOL)_scrollHorizontallyBy:(float)delta
 {
-    NSPoint point = [[self _contentView] bounds].origin;
+    NSPoint point = [self _contentView].bounds.origin;
     point.x += delta;
     return [[self _contentView] _scrollTo:&point animate:YES];
 }
@@ -731,12 +731,12 @@ enum {
 - (float)_horizontalKeyboardScrollDistance
 {
     // Arrow keys scroll the same distance that clicking the scroll arrow does.
-    return [[self _scrollView] horizontalLineScroll];
+    return [self _scrollView].horizontalLineScroll;
 }
 
 - (float)_horizontalPageScrollDistance
 {
-    float width = [[self _contentView] bounds].size.width;
+    float width = [self _contentView].bounds.size.width;
     return std::max<float>(width * WebCore::Scrollbar::minFractionToStepWhenPaging(), width - WebCore::Scrollbar::maxOverlapBetweenPages());
 }
 
@@ -802,7 +802,7 @@ enum {
 {
     if (![self _pageInBlockProgressionDirection:YES]) {
         // If we were already at the top, tell the next responder to scroll if it can.
-        [[self nextResponder] tryToPerform:@selector(scrollPageUp:) with:sender];
+        [self.nextResponder tryToPerform:@selector(scrollPageUp:) with:sender];
     }
 }
 
@@ -810,20 +810,20 @@ enum {
 {
     if (![self _pageInBlockProgressionDirection:NO]) {
         // If we were already at the bottom, tell the next responder to scroll if it can.
-        [[self nextResponder] tryToPerform:@selector(scrollPageDown:) with:sender];
+        [self.nextResponder tryToPerform:@selector(scrollPageDown:) with:sender];
     }
 }
 
 - (void)scrollLineUp:(id)sender
 {
     if (![self _scrollLineVertically:YES])
-        [[self nextResponder] tryToPerform:@selector(scrollLineUp:) with:sender];
+        [self.nextResponder tryToPerform:@selector(scrollLineUp:) with:sender];
 }
 
 - (void)scrollLineDown:(id)sender
 {
     if (![self _scrollLineVertically:NO])
-        [[self nextResponder] tryToPerform:@selector(scrollLineDown:) with:sender];
+        [self.nextResponder tryToPerform:@selector(scrollLineDown:) with:sender];
 }
 
 - (BOOL)_firstResponderIsFormControl
@@ -831,7 +831,7 @@ enum {
 #if PLATFORM(IOS_FAMILY)
     return NO;
 #else
-    NSResponder *firstResponder = [[self window] firstResponder];
+    NSResponder *firstResponder = self.window.firstResponder;
     
     // WebHTMLView is an NSControl subclass these days, but it's not a form control
     if ([firstResponder isKindOfClass:[WebHTMLView class]]) {
@@ -879,8 +879,8 @@ enum {
     // by Editor when focus is not in editable content.
 
 #if !PLATFORM(IOS_FAMILY)
-    NSString *characters = [event characters];
-    int modifierFlags = [event modifierFlags];
+    NSString *characters = event.characters;
+    int modifierFlags = event.modifierFlags;
 #else
     NSString *characters = event.characters;
     int modifierFlags = event.modifierFlags;
@@ -890,11 +890,11 @@ enum {
     auto coreFrame = [self _web_frame];
     BOOL maintainsBackForwardList = coreFrame && static_cast<BackForwardList&>(coreFrame->page()->backForward().client()).enabled() ? YES : NO;
 
-    count = [characters length];
+    count = characters.length;
     for (index = 0; index < count; ++index) {
         switch ([characters characterAtIndex:index]) {
             case NSDeleteCharacter:
-                if (!maintainsBackForwardList || ![[[self _webView] preferences] backspaceKeyNavigationEnabled]) {
+                if (!maintainsBackForwardList || ![self _webView].preferences.backspaceKeyNavigationEnabled) {
                     callSuper = YES;
                     break;
                 }
@@ -911,7 +911,7 @@ enum {
                 // Checking for a control will allow events to percolate 
                 // correctly when the focus is on a form control and we
                 // are in full keyboard access mode.
-                if ((![self allowsScrolling] && ![self _largestScrollableChild]) || [self _firstResponderIsFormControl]) {
+                if ((!self.allowsScrolling && ![self _largestScrollableChild]) || [self _firstResponderIsFormControl]) {
                     callSuper = YES;
                     break;
                 }
@@ -923,7 +923,7 @@ enum {
                 callSuper = NO;
                 break;
             case NSPageUpFunctionKey:
-                if (![self allowsScrolling] && ![self _largestScrollableChild]) {
+                if (!self.allowsScrolling && ![self _largestScrollableChild]) {
                     callSuper = YES;
                     break;
                 }
@@ -931,7 +931,7 @@ enum {
                 callSuper = NO;
                 break;
             case NSPageDownFunctionKey:
-                if (![self allowsScrolling] && ![self _largestScrollableChild]) {
+                if (!self.allowsScrolling && ![self _largestScrollableChild]) {
                     callSuper = YES;
                     break;
                 }
@@ -939,7 +939,7 @@ enum {
                 callSuper = NO;
                 break;
             case NSHomeFunctionKey:
-                if (![self allowsScrolling] && ![self _largestScrollableChild]) {
+                if (!self.allowsScrolling && ![self _largestScrollableChild]) {
                     callSuper = YES;
                     break;
                 }
@@ -947,7 +947,7 @@ enum {
                 callSuper = NO;
                 break;
             case NSEndFunctionKey:
-                if (![self allowsScrolling] && ![self _largestScrollableChild]) {
+                if (!self.allowsScrolling && ![self _largestScrollableChild]) {
                     callSuper = YES;
                     break;
                 }
@@ -961,8 +961,8 @@ enum {
                     break;
                 }
 #if !PLATFORM(IOS_FAMILY)
-                if ((![self allowsScrolling] && ![self _largestScrollableChild]) ||
-                    [[[self window] firstResponder] isKindOfClass:[NSPopUpButton class]]) {
+                if ((!self.allowsScrolling && ![self _largestScrollableChild]) ||
+                    [self.window.firstResponder isKindOfClass:[NSPopUpButton class]]) {
                     // Let arrow keys go through to pop up buttons
                     // <rdar://problem/3455910>: hitting up or down arrows when focus is on a 
                     // pop-up menu should pop the menu
@@ -986,8 +986,8 @@ enum {
                     break;
                 }
 #if !PLATFORM(IOS_FAMILY)
-                if ((![self allowsScrolling] && ![self _largestScrollableChild]) ||
-                    [[[self window] firstResponder] isKindOfClass:[NSPopUpButton class]]) {
+                if ((!self.allowsScrolling && ![self _largestScrollableChild]) ||
+                    [self.window.firstResponder isKindOfClass:[NSPopUpButton class]]) {
                     // Let arrow keys go through to pop up buttons
                     // <rdar://problem/3455910>: hitting up or down arrows when focus is on a 
                     // pop-up menu should pop the menu
@@ -1019,7 +1019,7 @@ enum {
                     [self _goBack];
                 } else {
                     // Now check scrolling related keys.
-                    if ((![self allowsScrolling] && ![self _largestScrollableChild])) {
+                    if ((!self.allowsScrolling && ![self _largestScrollableChild])) {
                         callSuper = YES;
                         break;
                     }
@@ -1047,7 +1047,7 @@ enum {
                     [self _goForward];
                 } else {
                     // Now check scrolling related keys.
-                    if ((![self allowsScrolling] && ![self _largestScrollableChild])) {
+                    if ((!self.allowsScrolling && ![self _largestScrollableChild])) {
                         callSuper = YES;
                         break;
                     }
@@ -1074,14 +1074,14 @@ enum {
 
 - (NSView *)_webcore_effectiveFirstResponder
 {
-    NSView *view = [self documentView];
+    NSView *view = self.documentView;
     return view ? [view _webcore_effectiveFirstResponder] : [super _webcore_effectiveFirstResponder];
 }
 
 #if !PLATFORM(IOS_FAMILY)
 - (BOOL)canPrintHeadersAndFooters
 {
-    NSView *documentView = [[self _scrollView] documentView];
+    NSView *documentView = [self _scrollView].documentView;
     if ([documentView respondsToSelector:@selector(canPrintHeadersAndFooters)]) {
         return [(id)documentView canPrintHeadersAndFooters];
     }
@@ -1090,7 +1090,7 @@ enum {
 
 - (NSPrintOperation *)printOperationWithPrintInfo:(NSPrintInfo *)printInfo
 {
-    NSView *documentView = [[self _scrollView] documentView];
+    NSView *documentView = [self _scrollView].documentView;
     if (!documentView) {
         return nil;
     }
@@ -1103,7 +1103,7 @@ enum {
 
 - (BOOL)documentViewShouldHandlePrint
 {
-    NSView *documentView = [[self _scrollView] documentView];
+    NSView *documentView = [self _scrollView].documentView;
     if (documentView && [documentView respondsToSelector:@selector(documentViewShouldHandlePrint)])
         return [(id)documentView documentViewShouldHandlePrint];
     
@@ -1112,7 +1112,7 @@ enum {
 
 - (void)printDocumentView
 {
-    NSView *documentView = [[self _scrollView] documentView];
+    NSView *documentView = [self _scrollView].documentView;
     if (documentView && [documentView respondsToSelector:@selector(printDocumentView)])
         [(id)documentView printDocumentView];
 }
@@ -1123,7 +1123,7 @@ enum {
 
 - (float)_area
 {
-    NSRect frame = [self frame];
+    NSRect frame = self.frame;
     return frame.size.height * frame.size.width;
 }
 
@@ -1140,11 +1140,10 @@ enum {
 - (WebFrameView *)_largestScrollableChild
 {
     WebFrameView *largest = nil;
-    NSArray *frameChildren = [[self webFrame] childFrames];
-    
-    unsigned i;
-    for (i=0; i < [frameChildren count]; i++) {
-        WebFrameView *childFrameView = [[frameChildren objectAtIndex:i] frameView];
+    NSArray *frameChildren = self.webFrame.childFrames;
+
+    for (WebFrame *childFrame in frameChildren) {
+        WebFrameView *childFrameView = childFrame.frameView;
         WebFrameView *scrollableFrameView = [childFrameView _isScrollable] ? childFrameView : [childFrameView _largestScrollableChild];
         if (!scrollableFrameView)
             continue;
@@ -1169,7 +1168,7 @@ enum {
     // clients to my knowledge, and will not be used by future versions of Safari. It can probably be removed 
     // once we no longer need to keep nightly WebKit builds working with Safari 4.0.x and earlier.
     NSScrollView *scrollView = [self _scrollView];
-    return [scrollView hasHorizontalScroller] || [scrollView hasVerticalScroller];
+    return scrollView.hasHorizontalScroller || scrollView.hasVerticalScroller;
 }
 
 - (WebFrameView *)_largestChildWithScrollBars
@@ -1178,11 +1177,11 @@ enum {
     // clients to my knowledge, and will not be used by future versions of Safari. It can probably be removed 
     // once we no longer need to keep nightly WebKit builds working with Safari 4.0.x and earlier.
     WebFrameView *largest = nil;
-    NSArray *frameChildren = [[self webFrame] childFrames];
+    NSArray *frameChildren = self.webFrame.childFrames;
     
     unsigned i;
-    for (i=0; i < [frameChildren count]; i++) {
-        WebFrameView *childFrameView = [[frameChildren objectAtIndex:i] frameView];
+    for (i=0; i < frameChildren.count; i++) {
+        WebFrameView *childFrameView = [frameChildren[i] frameView];
         WebFrameView *scrollableFrameView = [childFrameView _hasScrollBars] ? childFrameView : [childFrameView _largestChildWithScrollBars];
         if (!scrollableFrameView)
             continue;
@@ -1203,7 +1202,7 @@ enum {
 
 - (NSClipView *)_contentView
 {
-    return [[self _scrollView] contentView];
+    return [self _scrollView].contentView;
 }
 
 - (Class)_customScrollViewClass
@@ -1225,21 +1224,21 @@ enum {
         return;
 
     auto oldScrollView = _private->frameScrollView; // already retained
-    auto documentView = retainPtr([self documentView]);
+    auto documentView = retainPtr(self.documentView);
 
-    RetainPtr<WebDynamicScrollBarsView> scrollView  = adoptNS([[customClass alloc] initWithFrame:[oldScrollView frame]]);
-    [scrollView setContentView:adoptNS([[WebClipView alloc] initWithFrame:[scrollView bounds]]).get()];
-    [scrollView setDrawsBackground:[oldScrollView drawsBackground]];
-    [scrollView setHasVerticalScroller:[oldScrollView hasVerticalScroller]];
-    [scrollView setHasHorizontalScroller:[oldScrollView hasHorizontalScroller]];
-    [scrollView setAutoresizingMask:[oldScrollView autoresizingMask]];
-    [scrollView setLineScroll:[oldScrollView lineScroll]];
+    RetainPtr<WebDynamicScrollBarsView> scrollView  = adoptNS([[customClass alloc] initWithFrame:oldScrollView.frame]);
+    scrollView.contentView = adoptNS([[WebClipView alloc] initWithFrame:scrollView.bounds]).get();
+    scrollView.drawsBackground = oldScrollView.drawsBackground;
+    scrollView.hasVerticalScroller = oldScrollView.hasVerticalScroller;
+    scrollView.hasHorizontalScroller = oldScrollView.hasHorizontalScroller;
+    scrollView.autoresizingMask = oldScrollView.autoresizingMask;
+    scrollView.lineScroll = oldScrollView.lineScroll;
     [self addSubview:scrollView.get()];
 
     // don't call our overridden version here; we need to make the standard NSView link between us
     // and our subview so that previousKeyView and previousValidKeyView work as expected. This works
     // together with our becomeFirstResponder and setNextKeyView overrides.
-    [super setNextKeyView:scrollView.get()];
+    super.nextKeyView = scrollView.get();
 
     _private->frameScrollView = WTFMove(scrollView);
 

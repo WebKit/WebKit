@@ -38,7 +38,7 @@
     NSString *_originalString;
     int prefixLength;
 }
-- (id)initWithWebView:(WebView *)view HTMLView:(WebHTMLView *)htmlView;
+- (instancetype)initWithWebView:(WebView *)view HTMLView:(WebHTMLView *)htmlView;
 - (void)doCompletion;
 - (void)endRevertingChange:(BOOL)revertChange moveLeft:(BOOL)goLeft;
 - (BOOL)popupWindowIsOpen;

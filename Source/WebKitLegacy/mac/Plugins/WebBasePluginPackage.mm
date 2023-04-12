@@ -54,6 +54,12 @@ static constexpr auto QuickTimeCocoaPluginIdentifier = "com.apple.quicktime.webp
 
 @implementation WebBasePluginPackage
 
+- (instancetype)init 
+{
+    self = [super init];
+    return self;
+}
+
 + (void)initialize
 {
 #if !PLATFORM(IOS_FAMILY)
@@ -68,12 +74,12 @@ static constexpr auto QuickTimeCocoaPluginIdentifier = "com.apple.quicktime.webp
     return adoptNS([[WebPluginPackage alloc] initWithPath:pluginPath]).autorelease();
 }
 
-- (id)initWithPath:(NSString *)pluginPath
+- (instancetype)initWithPath:(NSString *)pluginPath
 {
     if (!(self = [super init]))
         return nil;
     
-    path = [pluginPath stringByResolvingSymlinksInPath];
+    path = pluginPath.stringByResolvingSymlinksInPath;
     cfBundle = adoptCF(CFBundleCreate(kCFAllocatorDefault, (CFURLRef)[NSURL fileURLWithPath:path]));
 
     if (!cfBundle) {
@@ -132,16 +138,16 @@ static constexpr auto QuickTimeCocoaPluginIdentifier = "com.apple.quicktime.webp
     NSString *MIME;
 
     while ((MIME = [keyEnumerator nextObject]) != nil) {
-        MIMEDictionary = [MIMETypes objectForKey:MIME];
+        MIMEDictionary = MIMETypes[MIME];
         
         // FIXME: Consider storing disabled MIME types.
-        NSNumber *isEnabled = [MIMEDictionary objectForKey:WebPluginTypeEnabledKey];
-        if (isEnabled && [isEnabled boolValue] == NO)
+        NSNumber *isEnabled = MIMEDictionary[WebPluginTypeEnabledKey];
+        if (isEnabled && isEnabled.boolValue == NO)
             continue;
 
         WebCore::MimeClassInfo mimeClassInfo;
         
-        NSArray *extensions = [[MIMEDictionary objectForKey:WebPluginExtensionsKey] _web_lowercaseStrings];
+        NSArray *extensions = [MIMEDictionary[WebPluginExtensionsKey] _web_lowercaseStrings];
         for (NSString *extension in extensions) {
             // The DivX plug-in lists multiple extensions in a comma separated string instead of using
             // multiple array elements in the property list. Work around this here by splitting the
@@ -151,12 +157,12 @@ static constexpr auto QuickTimeCocoaPluginIdentifier = "com.apple.quicktime.webp
         }
 
         mimeClassInfo.type = AtomString { String(MIME).convertToASCIILowercase() };
-        mimeClassInfo.desc = [MIMEDictionary objectForKey:WebPluginTypeDescriptionKey];
+        mimeClassInfo.desc = MIMEDictionary[WebPluginTypeDescriptionKey];
 
         pluginInfo.mimes.append(mimeClassInfo);
     }
 
-    NSString *filename = [(NSString *)path lastPathComponent];
+    NSString *filename = ((NSString *)path).lastPathComponent;
     pluginInfo.file = filename;
 
     NSString *theName = [self _objectForInfoDictionaryKey:WebPluginNameKey];
@@ -261,9 +267,9 @@ static inline void swapIntsInHeader(uint32_t* rawData, size_t length)
 
 - (BOOL)isNativeLibraryData:(NSData *)data
 {
-    NSUInteger sizeInBytes = [data length];
+    NSUInteger sizeInBytes = data.length;
     Vector<uint32_t, 128> rawData((sizeInBytes + 3) / 4);
-    memcpy(rawData.data(), [data bytes], sizeInBytes);
+    memcpy(rawData.data(), data.bytes, sizeInBytes);
     
     unsigned numArchs = 0;
     struct fat_arch singleArch = { 0, 0, 0, 0, 0 };
@@ -381,13 +387,13 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (NSArray *)_web_lowercaseStrings
 {
-    NSMutableArray *lowercaseStrings = [NSMutableArray arrayWithCapacity:[self count]];
+    NSMutableArray *lowercaseStrings = [NSMutableArray arrayWithCapacity:self.count];
     NSEnumerator *strings = [self objectEnumerator];
     NSString *string;
 
     while ((string = [strings nextObject]) != nil) {
         if ([string isKindOfClass:[NSString class]])
-            [lowercaseStrings addObject:[string lowercaseString]];
+            [lowercaseStrings addObject:string.lowercaseString];
     }
 
     return lowercaseStrings;

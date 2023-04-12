@@ -74,7 +74,7 @@ static inline NSCorrectionResponse toCorrectionResponse(AutocorrectionResponse r
 
 void WebAlternativeTextClient::recordAutocorrectionResponse(AutocorrectionResponse response, const String& replacedString, const String& replacementString)
 {
-    CorrectionPanel::recordAutocorrectionResponse([m_webView spellCheckerDocumentTag], toCorrectionResponse(response), replacedString, replacementString);
+    CorrectionPanel::recordAutocorrectionResponse(m_webView.spellCheckerDocumentTag, toCorrectionResponse(response), replacedString, replacementString);
 }
 #endif
 

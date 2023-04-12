@@ -36,7 +36,7 @@
 
 + (WebDeviceOrientationProviderMock *)shared;
 
-- (id)init;
+- (instancetype)init;
 - (void)setOrientation:(WebDeviceOrientation*)orientation;
 
 @end

@@ -50,7 +50,8 @@
 - (NSView *)plugInViewWithArguments:(NSDictionary *)arguments fromPluginPackage:(WebPluginPackage *)plugin;
 + (BOOL)isPlugInView:(NSView *)view;
 
-- (id)initWithDocumentView:(NSView *)view;
+- (instancetype)init NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithDocumentView:(NSView *)view NS_DESIGNATED_INITIALIZER;
 
 - (void)setDataSource:(WebDataSource *)dataSource;
 

@@ -49,7 +49,7 @@
         return;
 
     // Don't allow empty Referer: headers; some servers refuse them
-    if ([referrer length] == 0)
+    if (referrer.length == 0)
         return;
 
     [self setValue:referrer forHTTPHeaderField:WebReferrer];

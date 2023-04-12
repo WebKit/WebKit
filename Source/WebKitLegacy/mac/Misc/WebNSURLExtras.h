@@ -44,7 +44,7 @@
 
 - (NSData *)_web_originalData;
 - (NSString *)_web_originalDataAsString;
-- (const char*)_web_URLCString;
+- (const char*)_web_URLCString NS_RETURNS_INNER_POINTER;
 
 - (NSString *)_web_hostString;
 

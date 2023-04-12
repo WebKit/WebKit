@@ -56,7 +56,7 @@ WebCore::Page* WebSharingServicePickerClient::pageForSharingServicePicker(WebSha
 
 RetainPtr<NSWindow> WebSharingServicePickerClient::windowForSharingServicePicker(WebSharingServicePickerController &)
 {
-    return [m_webView window];
+    return m_webView.window;
 }
 
 WebCore::FloatRect WebSharingServicePickerClient::screenRectForCurrentSharingServicePickerItem(WebSharingServicePickerController &)
@@ -78,8 +78,8 @@ RetainPtr<NSImage> WebSharingServicePickerClient::imageForCurrentSharingServiceP
         return nil;
 
     _picker = adoptNS([[NSSharingServicePicker alloc] initWithItems:items]);
-    [_picker setStyle:style];
-    [_picker setDelegate:self];
+    _picker.style = style;
+    _picker.delegate = self;
 
     _includeEditorServices = includeEditorServices;
     _handleEditingReplacement = includeEditorServices;
@@ -94,7 +94,7 @@ RetainPtr<NSImage> WebSharingServicePickerClient::imageForCurrentSharingServiceP
         return nil;
 
     _picker = sharingServicePicker;
-    [_picker setDelegate:self];
+    _picker.delegate = self;
 
     _includeEditorServices = YES;
     _pickerClient = &pickerClient;
@@ -134,7 +134,7 @@ RetainPtr<NSImage> WebSharingServicePickerClient::imageForCurrentSharingServiceP
             return;
         }
 
-        data = [nsImage TIFFRepresentation];
+        data = nsImage.TIFFRepresentation;
     }
 
     NSPasteboard *pasteboard = [NSPasteboard pasteboardWithName:serviceControlsPasteboardName];
@@ -185,10 +185,10 @@ RetainPtr<NSImage> WebSharingServicePickerClient::imageForCurrentSharingServiceP
         return;
 
     // We only send one item, so we should only get one item back.
-    if ([items count] != 1)
+    if (items.count != 1)
         return;
 
-    id item = [items objectAtIndex:0];
+    id item = items[0];
 
     if ([item isKindOfClass:[NSImage class]])
         [self didShareImageData:[item TIFFRepresentation] confirmDataIsValidTIFFData:NO];

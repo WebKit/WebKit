@@ -98,8 +98,8 @@
 
 - (NSString *)_webkit_guessedMIMETypeForXML
 {
-    NSUInteger length = [self length];
-    const UInt8* bytes = static_cast<const UInt8*>([self bytes]);
+    NSUInteger length = self.length;
+    const UInt8* bytes = static_cast<const UInt8*>(self.bytes);
 
 #define CHANNEL_TAG_LENGTH 7
 
@@ -152,11 +152,11 @@
 #define VCAL_HEADER_LENGTH 15
 
     NSString *MIMEType = [self _webkit_guessedMIMETypeForXML];
-    if ([MIMEType length])
+    if (MIMEType.length)
         return MIMEType;
 
-    NSUInteger length = [self length];
-    const char* bytes = static_cast<const char*>([self bytes]);
+    NSUInteger length = self.length;
+    const char* bytes = static_cast<const char*>(self.bytes);
 
     const char* p = bytes;
     int remaining = std::min<NSUInteger>(length, WEB_GUESS_MIME_TYPE_PEEK_LENGTH) - (SCRIPT_TAG_LENGTH - 1);
@@ -247,8 +247,8 @@
 {
     ASSERT(string);
 
-    const char* bytes = static_cast<const char*>([self bytes]);
-    return !strncasecmp(bytes, string, [self length]);
+    const char* bytes = static_cast<const char*>(self.bytes);
+    return !strncasecmp(bytes, string, self.length);
 }
 
 static const UInt8 *_findEOL(const UInt8 *bytes, CFIndex len)
@@ -284,8 +284,8 @@ static const UInt8 *_findEOL(const UInt8 *bytes, CFIndex len)
 {
     NSMutableDictionary *headerFields = [NSMutableDictionary dictionary];
 
-    const UInt8* bytes = static_cast<const UInt8*>([self bytes]);
-    NSUInteger length = [self length];
+    const UInt8* bytes = static_cast<const UInt8*>(self.bytes);
+    NSUInteger length = self.length;
     RetainPtr<NSString> lastKey;
     const UInt8 *eol;
 
@@ -311,11 +311,11 @@ static const UInt8 *_findEOL(const UInt8 *bytes, CFIndex len)
                 continue;
             }
             // Merge the continuation of the previous header
-            NSString *currentValue = [headerFields objectForKey:lastKey.get()];
+            NSString *currentValue = headerFields[lastKey.get()];
             auto newValue = adoptNS([[NSString alloc] initWithBytes:line length:lineLength encoding:NSISOLatin1StringEncoding]);
             ASSERT(currentValue);
             ASSERT(newValue);
-            [headerFields setObject:[currentValue stringByAppendingString:newValue.get()] forKey:lastKey.get()];
+            headerFields[lastKey.get()] = [currentValue stringByAppendingString:newValue.get()];
         } else {
             // Brand new header
             const UInt8* colon;
@@ -331,48 +331,13 @@ static const UInt8 *_findEOL(const UInt8 *bytes, CFIndex len)
                     break;
             }
             auto value = adoptNS([[NSString alloc] initWithBytes:colon length:eol - colon encoding:NSISOLatin1StringEncoding]);
-            if (NSString *oldValue = [headerFields objectForKey:lastKey.get()])
+            if (NSString *oldValue = headerFields[lastKey.get()])
                 value = adoptNS([[NSString alloc] initWithFormat:@"%@, %@", oldValue, value.get()]);
-            [headerFields setObject:value.get() forKey:lastKey.get()];
+            headerFields[lastKey.get()] = value.get();
         }
     }
 
     return headerFields;
-}
-
-- (BOOL)_web_startsWithBlankLine
-{
-    return [self length] > 0 && ((const char *)[self bytes])[0] == '\n';
-}
-
-- (NSInteger)_web_locationAfterFirstBlankLine
-{
-    const char *bytes = (const char *)[self bytes];
-    NSUInteger length = [self length];
-
-    unsigned i;
-    for (i = 0; i < length - 4; i++) {
-
-        //  Support for Acrobat. It sends "\n\n".
-        if (bytes[i] == '\n' && bytes[i+1] == '\n')
-            return i+2;
-
-        // Returns the position after 2 CRLF's or 1 CRLF if it is the first line.
-        if (bytes[i] == '\r' && bytes[i+1] == '\n') {
-            i += 2;
-            if (i == 2)
-                return i;
-            if (bytes[i] == '\n') {
-                // Support for Director. It sends "\r\n\n" (3880387).
-                return i+1;
-            }
-            if (bytes[i] == '\r' && bytes[i+1] == '\n') {
-                // Support for Flash. It sends "\r\n\r\n" (3758113).
-                return i+2;
-            }
-        }
-    }
-    return NSNotFound;
 }
 
 @end

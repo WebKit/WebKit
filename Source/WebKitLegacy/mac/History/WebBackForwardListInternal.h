@@ -35,5 +35,5 @@ BackForwardList* core(WebBackForwardList *);
 WebBackForwardList *kit(BackForwardList*);
 
 @interface WebBackForwardList ()
-- (id)initWithBackForwardList:(Ref<BackForwardList>&&)backForwardList;
+- (instancetype)initWithBackForwardList:(Ref<BackForwardList>&&)backForwardList;
 @end

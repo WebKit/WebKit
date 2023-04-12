@@ -104,7 +104,7 @@ static inline id CallDelegate(WebView *self, id delegate, SEL selector)
     id returnValue;
     @try {
         WebThreadCallDelegate(invocation);
-        if ([[invocation methodSignature] methodReturnLength] == 0) {
+        if (invocation.methodSignature.methodReturnLength == 0) {
             return nil;
         }
         [invocation getReturnValue:&returnValue];
@@ -138,7 +138,7 @@ static inline id CallDelegate(WebView *self, id delegate, SEL selector, id objec
     id returnValue;
     @try {
         WebThreadCallDelegate(invocation);
-        if ([[invocation methodSignature] methodReturnLength] == 0) {
+        if (invocation.methodSignature.methodReturnLength == 0) {
             return nil;
         }
         [invocation getReturnValue:&returnValue];
@@ -172,7 +172,7 @@ static inline id CallDelegate(WebView *self, id delegate, SEL selector, NSRect r
     id returnValue;
     @try {
         WebThreadCallDelegate(invocation);
-        if ([[invocation methodSignature] methodReturnLength] == 0) {
+        if (invocation.methodSignature.methodReturnLength == 0) {
             return nil;
         }
         [invocation getReturnValue:&returnValue];
@@ -207,7 +207,7 @@ static inline id CallDelegate(WebView *self, id delegate, SEL selector, id objec
     id returnValue;
     @try {
         WebThreadCallDelegate(invocation);
-        if ([[invocation methodSignature] methodReturnLength] == 0) {
+        if (invocation.methodSignature.methodReturnLength == 0) {
             return nil;
         }
         [invocation getReturnValue:&returnValue];
@@ -242,7 +242,7 @@ static inline id CallDelegate(WebView *self, id delegate, SEL selector, id objec
     id returnValue;
     @try {
         WebThreadCallDelegate(invocation);
-        if ([[invocation methodSignature] methodReturnLength] == 0) {
+        if (invocation.methodSignature.methodReturnLength == 0) {
             return nil;
         }
         [invocation getReturnValue:&returnValue];
@@ -278,7 +278,7 @@ static inline id CallDelegate(WebView *self, id delegate, SEL selector, id objec
     id returnValue;
     @try {
         WebThreadCallDelegate(invocation);
-        if ([[invocation methodSignature] methodReturnLength] == 0) {
+        if (invocation.methodSignature.methodReturnLength == 0) {
             return nil;
         }
         [invocation getReturnValue:&returnValue];
@@ -313,7 +313,7 @@ static inline id CallDelegate(WebView *self, id delegate, SEL selector, id objec
     id returnValue;
     @try {
         WebThreadCallDelegate(invocation);
-        if ([[invocation methodSignature] methodReturnLength] == 0) {
+        if (invocation.methodSignature.methodReturnLength == 0) {
             return nil;
         }
         [invocation getReturnValue:&returnValue];
@@ -537,7 +537,7 @@ static inline id CallDelegate(IMP implementation, WebView *self, id delegate, SE
     id returnValue;
     @try {
         WebThreadCallDelegate(invocation);
-        if ([[invocation methodSignature] methodReturnLength] == 0) {
+        if (invocation.methodSignature.methodReturnLength == 0) {
             return nil;
         }
         [invocation getReturnValue:&returnValue];
@@ -571,7 +571,7 @@ static inline id CallDelegate(IMP implementation, WebView *self, id delegate, SE
     id returnValue;
     @try {
         WebThreadCallDelegate(invocation);
-        if ([[invocation methodSignature] methodReturnLength] == 0) {
+        if (invocation.methodSignature.methodReturnLength == 0) {
             return nil;
         }
         [invocation getReturnValue:&returnValue];
@@ -605,7 +605,7 @@ static inline id CallDelegate(IMP implementation, WebView *self, id delegate, SE
     id returnValue;
     @try {
         WebThreadCallDelegate(invocation);
-        if ([[invocation methodSignature] methodReturnLength] == 0) {
+        if (invocation.methodSignature.methodReturnLength == 0) {
             return nil;
         }
         [invocation getReturnValue:&returnValue];
@@ -691,7 +691,7 @@ static inline id CallDelegate(IMP implementation, WebView *self, id delegate, SE
     id returnValue;
     @try {
         WebThreadCallDelegate(invocation);
-        if ([[invocation methodSignature] methodReturnLength] == 0) {
+        if (invocation.methodSignature.methodReturnLength == 0) {
             return nil;
         }
         [invocation getReturnValue:&returnValue];
@@ -717,7 +717,7 @@ static inline id CallDelegate(IMP implementation, WebView *self, id delegate, SE
     id returnValue;
     @try {
         WebThreadCallDelegate(invocation);
-        if ([[invocation methodSignature] methodReturnLength] == 0) {
+        if (invocation.methodSignature.methodReturnLength == 0) {
             return nil;
         }
         [invocation getReturnValue:&returnValue];
@@ -753,7 +753,7 @@ static inline id CallDelegate(IMP implementation, WebView *self, id delegate, SE
     id returnValue;
     @try {
         WebThreadCallDelegate(invocation);
-        if ([[invocation methodSignature] methodReturnLength] == 0) {
+        if (invocation.methodSignature.methodReturnLength == 0) {
             return nil;
         }
         [invocation getReturnValue:&returnValue];
@@ -790,7 +790,7 @@ static inline id CallDelegate(IMP implementation, WebView *self, id delegate, SE
     id returnValue;
     @try {
         WebThreadCallDelegate(invocation);
-        if ([[invocation methodSignature] methodReturnLength] == 0) {
+        if (invocation.methodSignature.methodReturnLength == 0) {
             return nil;
         }
         [invocation getReturnValue:&returnValue];
@@ -826,7 +826,7 @@ static inline id CallDelegate(IMP implementation, WebView *self, id delegate, SE
     id returnValue;
     @try {
         WebThreadCallDelegate(invocation);
-        if ([[invocation methodSignature] methodReturnLength] == 0) {
+        if (invocation.methodSignature.methodReturnLength == 0) {
             return nil;
         }
         [invocation getReturnValue:&returnValue];
@@ -891,7 +891,7 @@ static inline id CallDelegate(IMP implementation, WebView *self, id delegate, SE
     id returnValue;
     @try {
         WebThreadCallDelegate(invocation);
-        if ([[invocation methodSignature] methodReturnLength] == 0) {
+        if (invocation.methodSignature.methodReturnLength == 0) {
             return nil;
         }
         [invocation getReturnValue:&returnValue];
@@ -985,7 +985,7 @@ static inline id CallDelegate(IMP implementation, WebView *self, id delegate, SE
     id returnValue;
     @try {
         WebThreadCallDelegate(invocation);
-        if ([[invocation methodSignature] methodReturnLength] == 0) {
+        if (invocation.methodSignature.methodReturnLength == 0) {
             return nil;
         }
         [invocation getReturnValue:&returnValue];
@@ -1394,7 +1394,7 @@ id CallFormDelegate(WebView *self, SEL selector, id object1, id object2)
     id returnValue;
     @try {
         WebThreadCallDelegate(invocation);
-        if ([[invocation methodSignature] methodReturnLength] == 0) {
+        if (invocation.methodSignature.methodReturnLength == 0) {
             return nil;
         }
         [invocation getReturnValue:&returnValue];
@@ -1431,7 +1431,7 @@ id CallFormDelegate(WebView *self, SEL selector, id object1, id object2, id obje
     id returnValue;
     @try {
         WebThreadCallDelegate(invocation);
-        if ([[invocation methodSignature] methodReturnLength] == 0) {
+        if (invocation.methodSignature.methodReturnLength == 0) {
             return nil;
         }
         [invocation getReturnValue:&returnValue];
@@ -1470,7 +1470,7 @@ id CallFormDelegate(WebView *self, SEL selector, id object1, id object2, id obje
     id returnValue;
     @try {
         WebThreadCallDelegate(invocation);
-        if ([[invocation methodSignature] methodReturnLength] == 0) {
+        if (invocation.methodSignature.methodReturnLength == 0) {
             return nil;
         }
         [invocation getReturnValue:&returnValue];

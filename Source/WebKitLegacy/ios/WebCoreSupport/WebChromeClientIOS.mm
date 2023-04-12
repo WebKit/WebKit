@@ -174,7 +174,7 @@ void WebChromeClientIOS::didReceiveMobileDocType(bool isMobileDoctype)
 
 void WebChromeClientIOS::setNeedsScrollNotifications(WebCore::LocalFrame& frame, bool flag)
 {
-    [[webView() _UIKitDelegateForwarder] webView:webView() needsScrollNotifications:[NSNumber numberWithBool:flag] forFrame:kit(&frame)];
+    [[webView() _UIKitDelegateForwarder] webView:webView() needsScrollNotifications:@(flag) forFrame:kit(&frame)];
 }
 
 void WebChromeClientIOS::didFinishContentChangeObserving(WebCore::LocalFrame& frame, WKContentChange observedContentChange)
@@ -368,7 +368,7 @@ void WebChromeClientIOS::focusedElementChanged(Element* element)
 void WebChromeClientIOS::showPlaybackTargetPicker(bool hasVideo, WebCore::RouteSharingPolicy, const String&)
 {
     CGPoint point = [[webView() _UIKitDelegateForwarder] interactionLocation];
-    CGRect elementRect = [[webView() mainFrame] elementRectAtPoint:point];
+    CGRect elementRect = [webView().mainFrame elementRectAtPoint:point];
     [[webView() _UIKitDelegateForwarder] showPlaybackTargetPicker:hasVideo fromRect:elementRect];
 }
 

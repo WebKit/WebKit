@@ -66,8 +66,8 @@
 {
     // If the new API method doesn't exist, fallback to the old version of createWebViewWithRequest
     // for backwards compatability
-    if (![[wv UIDelegate] respondsToSelector:@selector(webView:createWebViewWithRequest:windowFeatures:)] && [[wv UIDelegate] respondsToSelector:@selector(webView:createWebViewWithRequest:)])
-        return [[wv UIDelegate] webView:wv createWebViewWithRequest:request];
+    if (![wv.UIDelegate respondsToSelector:@selector(webView:createWebViewWithRequest:windowFeatures:)] && [wv.UIDelegate respondsToSelector:@selector(webView:createWebViewWithRequest:)])
+        return [wv.UIDelegate webView:wv createWebViewWithRequest:request];
     return nil;
 }
 
@@ -85,33 +85,33 @@
 - (void)webViewClose: (WebView *)wv
 {
 #if PLATFORM(MAC)
-    [[wv window] close];
+    [wv.window close];
 #endif
 }
 
 - (void)webViewFocus: (WebView *)wv
 {
 #if PLATFORM(MAC)
-    [[wv window] makeKeyAndOrderFront:wv];
+    [wv.window makeKeyAndOrderFront:wv];
 #endif
 }
 
 - (void)webViewUnfocus: (WebView *)wv
 {
 #if PLATFORM(MAC)
-    if ([[wv window] isKeyWindow] || [[[wv window] attachedSheet] isKeyWindow])
+    if (wv.window.keyWindow || wv.window.attachedSheet.keyWindow)
         [NSApp _cycleWindowsReversed:FALSE];
 #endif
 }
 
 - (NSResponder *)webViewFirstResponder: (WebView *)wv
 {
-    return [[wv window] firstResponder];
+    return wv.window.firstResponder;
 }
 
 - (void)webView: (WebView *)wv makeFirstResponder:(NSResponder *)responder
 {
-    [[wv window] makeFirstResponder:responder];
+    [wv.window makeFirstResponder:responder];
 }
 
 - (void)webView: (WebView *)wv setStatusText:(NSString *)text
@@ -150,7 +150,7 @@
 #if PLATFORM(IOS_FAMILY)
     return NO;
 #else
-    return [[wv window] showsResizeIndicator];
+    return wv.window.showsResizeIndicator;
 #endif
 }
 
@@ -159,21 +159,21 @@
 #if PLATFORM(MAC)
     // FIXME: This doesn't actually change the resizability of the window,
     // only visibility of the indicator.
-    [[wv window] setShowsResizeIndicator:resizable];
+    wv.window.showsResizeIndicator = resizable;
 #endif
 }
 
 - (void)webView: (WebView *)wv setFrame:(NSRect)frame
 {
 #if PLATFORM(MAC)
-    [[wv window] setFrame:frame display:YES];
+    [wv.window setFrame:frame display:YES];
 #endif
 }
 
 - (NSRect)webViewFrame: (WebView *)wv
 {
-    NSWindow *window = [wv window];
-    return window == nil ? NSZeroRect : [window frame];
+    NSWindow *window = wv.window;
+    return window == nil ? NSZeroRect : window.frame;
 }
 
 - (void)webView: (WebView *)wv runJavaScriptAlertPanelWithMessage:(NSString *)message initiatedByFrame:(WebFrame *)frame
@@ -193,11 +193,11 @@
     auto panel = adoptNS([[WebJavaScriptTextInputPanel alloc] initWithPrompt:prompt text:defaultText]);
     [panel showWindow:nil];
     NSString *result;
-    if ([NSApp runModalForWindow:[panel window]])
+    if ([NSApp runModalForWindow:panel.get().window])
         result = [panel text];
     else
         result = nil;
-    [[panel window] close];
+    [panel.get().window close];
     return result;
 #else
     return nil;

@@ -28,8 +28,7 @@
 using namespace WebCore;
 
 @implementation WebDeviceOrientationInternal
-
-- (id)initWithCoreDeviceOrientation:(RefPtr<DeviceOrientationData>&&)coreDeviceOrientation
+- (instancetype)initWithCoreDeviceOrientation:(RefPtr<DeviceOrientationData>&&)coreDeviceOrientation
 {
     self = [super init];
     if (!self)
@@ -42,7 +41,7 @@ using namespace WebCore;
 
 @implementation WebDeviceOrientation (Internal)
 
-- (id)initWithCoreDeviceOrientation:(RefPtr<WebCore::DeviceOrientationData>&&)coreDeviceOrientation
+- (instancetype)initWithCoreDeviceOrientation:(RefPtr<WebCore::DeviceOrientationData>&&)coreDeviceOrientation
 {
     self = [super init];
     if (!self)
@@ -67,7 +66,7 @@ static std::optional<double> convert(bool canProvide, double value)
     return value;
 }
 
-- (id)initWithCanProvideAlpha:(bool)canProvideAlpha alpha:(double)alpha canProvideBeta:(bool)canProvideBeta beta:(double)beta canProvideGamma:(bool)canProvideGamma gamma:(double)gamma
+- (instancetype)initWithCanProvideAlpha:(bool)canProvideAlpha alpha:(double)alpha canProvideBeta:(bool)canProvideBeta beta:(double)beta canProvideGamma:(bool)canProvideGamma gamma:(double)gamma
 {
     self = [super init];
     if (!self)

@@ -45,7 +45,7 @@ static inline bool needsDataLoadWorkaround(WebView *webView)
 {
 #if !PLATFORM(IOS_FAMILY)
     static bool needsWorkaround = !WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITHOUT_ADOBE_INSTALLER_QUIRK) 
-                                  && [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.adobe.Installers.Setup"];
+                                  && [[NSBundle mainBundle].bundleIdentifier isEqualToString:@"com.adobe.Installers.Setup"];
     return needsWorkaround;
 #else
     return NO;
@@ -60,8 +60,8 @@ void WebDocumentLoaderMac::setDataSource(WebDataSource *dataSource, WebView *web
     m_dataSource = dataSource;
     retainDataSource();
 
-    m_resourceLoadDelegate = [webView resourceLoadDelegate];
-    m_downloadDelegate = [webView downloadDelegate];
+    m_resourceLoadDelegate = webView.resourceLoadDelegate;
+    m_downloadDelegate = webView.downloadDelegate;
     
     // Some clients run the run loop in a way that prevents the data load timer
     // from firing. We work around that issue here. See <rdar://problem/5266289>

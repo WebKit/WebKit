@@ -116,7 +116,7 @@ using namespace WebCore;
 - (NSString *)description
 {
     
-    NSMutableString *description = [NSMutableString stringWithString:[super description]];
+    NSMutableString *description = [NSMutableString stringWithString:super.description];
     VisiblePosition vp = [self _visiblePosition];
     int offset = vp.deepEquivalent().offsetInContainerNode();
 
@@ -487,9 +487,9 @@ static inline SelectionDirection toSelectionDirection(WebTextAdjustmentDirection
 
 - (DOMRange *)rangeOfContents
 {
-    DOMRange *range = [[self ownerDocument] createRange];
+    DOMRange *range = [self.ownerDocument createRange];
     [range setStart:self offset:0];
-    [range setEnd:self offset:[[self childNodes] length]];
+    [range setEnd:self offset:self.childNodes.length];
     return range;    
 }
 

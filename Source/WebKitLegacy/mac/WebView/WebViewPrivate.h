@@ -425,7 +425,7 @@ Could be worth adding to the API.
 + (BOOL)canCloseAllWebViews;
 
 #if TARGET_OS_IPHONE
-- (id)initSimpleHTMLDocumentWithStyle:(NSString *)style frame:(CGRect)frame preferences:(WebPreferences *)preferences groupName:(NSString *)groupName;
+- (instancetype)initSimpleHTMLDocumentWithStyle:(NSString *)style frame:(CGRect)frame preferences:(WebPreferences *)preferences groupName:(NSString *)groupName;
 - (id)_formDelegateForwarder;
 - (id)_formDelegateForSelector:(SEL)selector;
 - (id)_webMailDelegate;

@@ -132,10 +132,10 @@ using namespace WebCore;
 {
 #if !PLATFORM(IOS_FAMILY)
     // Try previously stored credential first.
-    if (![challenge previousFailureCount]) {
-        NSURLCredential *credential = NetworkStorageSessionMap::defaultStorageSession().credentialStorage().get(emptyString(), ProtectionSpace([challenge protectionSpace])).nsCredential();
+    if (!challenge.previousFailureCount) {
+        NSURLCredential *credential = NetworkStorageSessionMap::defaultStorageSession().credentialStorage().get(emptyString(), ProtectionSpace(challenge.protectionSpace)).nsCredential();
         if (credential) {
-            [[challenge sender] useCredential:credential forAuthenticationChallenge:challenge];
+            [challenge.sender useCredential:credential forAuthenticationChallenge:challenge];
             return;
         }
     }
@@ -222,7 +222,7 @@ using namespace WebCore;
     }
 }
 
-- (id)init
+- (instancetype)init
 {
     self = [super init];
     if (self != nil) {
@@ -241,11 +241,14 @@ using namespace WebCore;
 }
 
 ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
-- (id)initWithRequest:(NSURLRequest *)request delegate:(id<NSURLDownloadDelegate>)delegate
+- (instancetype)initWithRequest:(NSURLRequest *)request delegate:(id<NSURLDownloadDelegate>)delegate
 ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
+    self = [super initWithRequest:request delegate:_webInternal];
+    if (!self)
+        return nil;
     [self _setRealDelegate:delegate];
-    return [super initWithRequest:request delegate:_webInternal];
+    return self;
 }
 
 ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
@@ -256,8 +259,11 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
                            proxy:(NSURLConnectionDelegateProxy *)proxy
 IGNORE_WARNINGS_END
 {
+    self = [super _initWithLoadingConnection:connection request:request response:response delegate:_webInternal proxy:proxy];
+    if (!self)
+        return nil;
     [self _setRealDelegate:delegate];
-    return [super _initWithLoadingConnection:connection request:request response:response delegate:_webInternal proxy:proxy];
+    return self;
 }
 
 ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN

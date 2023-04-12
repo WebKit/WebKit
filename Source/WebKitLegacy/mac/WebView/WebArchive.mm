@@ -59,8 +59,9 @@ static NSString * const WebSubframeArchivesKey = @"WebSubframeArchives";
     RefPtr<LegacyWebArchive> coreArchive;
 }
 
-- (instancetype)initWithCoreArchive:(RefPtr<LegacyWebArchive>&&)coreArchive;
-- (LegacyWebArchive*)coreArchive;
+- (instancetype)init NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithCoreArchive:(RefPtr<LegacyWebArchive>&&)coreArchive NS_DESIGNATED_INITIALIZER;
+- (LegacyWebArchive*)coreArchive NS_RETURNS_INNER_POINTER;
 - (void)setCoreArchive:(Ref<LegacyWebArchive>&&)newCoreArchive;
 @end
 
@@ -134,10 +135,10 @@ static BOOL isArrayOfClass(id object, Class elementClass)
     if (![object isKindOfClass:[NSArray class]])
         return NO;
     NSArray *array = (NSArray *)object;
-    NSUInteger count = [array count];
-    for (NSUInteger i = 0; i < count; ++i)
-        if (![[array objectAtIndex:i] isKindOfClass:elementClass])
+    for (id object in array) {
+        if (![object isKindOfClass:elementClass])
             return NO;
+    }
     return YES;
 }
 
@@ -239,9 +240,9 @@ static BOOL isArrayOfClass(id object, Class elementClass)
 
 - (void)encodeWithCoder:(NSCoder *)encoder
 {
-    [encoder encodeObject:[self mainResource] forKey:WebMainResourceKey];
-    [encoder encodeObject:[self subresources] forKey:WebSubresourcesKey];
-    [encoder encodeObject:[self subframeArchives] forKey:WebSubframeArchivesKey];    
+    [encoder encodeObject:self.mainResource forKey:WebMainResourceKey];
+    [encoder encodeObject:self.subresources forKey:WebSubresourcesKey];
+    [encoder encodeObject:self.subframeArchives forKey:WebSubframeArchivesKey];    
 }
 
 - (void)dealloc
@@ -290,7 +291,7 @@ static BOOL isArrayOfClass(id object, Class elementClass)
     }
     // Maintain the WebKit 3 behavior of this API, which is documented and
     // relied upon by some clients, of returning nil if there are no subresources.
-    if (![_private->cachedSubresources count])
+    if (!_private->cachedSubresources.get().count)
         return nil;
 
     auto cachedSubresourcesCopy = _private->cachedSubresources;

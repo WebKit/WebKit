@@ -26,9 +26,9 @@
 
 static String defaultSearchFieldRecentSearchesStorageDirectory()
 {
-    NSString *appName = [[NSBundle mainBundle] bundleIdentifier];
+    NSString *appName = [NSBundle mainBundle].bundleIdentifier;
     if (!appName)
-        appName = [[NSProcessInfo processInfo] processName];
+        appName = [NSProcessInfo processInfo].processName;
 
     return [[NSHomeDirectory() stringByAppendingPathComponent:@"Library/WebKit"] stringByAppendingPathComponent:appName];
 }

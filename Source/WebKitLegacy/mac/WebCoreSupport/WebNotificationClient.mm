@@ -46,7 +46,7 @@ using namespace WebCore;
 {
     NotificationClient::PermissionHandler _permissionHandler;
 }
-- (id)initWithPermissionHandler:(NotificationClient::PermissionHandler&&)permissionHandler;
+- (instancetype)initWithPermissionHandler:(NotificationClient::PermissionHandler&&)permissionHandler;
 @end
 
 WebNotificationClient::WebNotificationClient(WebView *webView)
@@ -100,7 +100,7 @@ void WebNotificationClient::clearNotificationPermissionState()
 void WebNotificationClient::requestPermission(ScriptExecutionContext& context, WebNotificationPolicyListener *listener)
 {
     SEL selector = @selector(webView:decidePolicyForNotificationRequestFromOrigin:listener:);
-    if (![[m_webView UIDelegate] respondsToSelector:selector])
+    if (![m_webView.UIDelegate respondsToSelector:selector])
         return;
 
     m_everRequestedPermission = true;
@@ -125,7 +125,7 @@ NotificationClient::Permission WebNotificationClient::checkPermission(ScriptExec
 {
     if (!context || !context->isDocument())
         return NotificationClient::Permission::Denied;
-    if (![[m_webView preferences] notificationsEnabled])
+    if (!m_webView.preferences.notificationsEnabled)
         return NotificationClient::Permission::Denied;
     auto webOrigin = adoptNS([[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:context->securityOrigin()]);
     WebNotificationPermission permission = [[m_webView _notificationProvider] policyForOrigin:webOrigin.get()];
@@ -149,7 +149,7 @@ NotificationClient::Permission WebNotificationClient::checkPermission(ScriptExec
 
 @implementation WebNotificationPolicyListener
 
-- (id)initWithPermissionHandler:(NotificationClient::PermissionHandler&&)permissionHandler
+- (instancetype)initWithPermissionHandler:(NotificationClient::PermissionHandler&&)permissionHandler
 {
     if (!(self = [super init]))
         return nil;

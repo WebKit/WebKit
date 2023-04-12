@@ -36,8 +36,13 @@
 using namespace WebCore;
 
 @implementation WebOpenPanelResultListener
+- (instancetype)init
+{
+    self = [super init];
+    return self;
+}
 
-- (id)initWithChooser:(FileChooser&)chooser
+- (instancetype)initWithChooser:(FileChooser&)chooser
 {
     self = [super init];
     if (!self)

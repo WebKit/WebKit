@@ -37,7 +37,13 @@
 
 @implementation WebNodeHighlighter
 
-- (id)initWithInspectedWebView:(WebView *)webView
+- (instancetype)init
+{
+    self = [super init];
+    return self;
+}
+
+- (instancetype)initWithInspectedWebView:(WebView *)webView
 {
     if (!(self = [super init]))
         return nil;
@@ -60,11 +66,11 @@
 {
 #if !PLATFORM(IOS_FAMILY)
     // The scrollview's content view stays around between page navigations, so target it.
-    NSView *view = [[[[[_inspectedWebView mainFrame] frameView] documentView] enclosingScrollView] contentView];
+    NSView *view = _inspectedWebView.mainFrame.frameView.documentView.enclosingScrollView.contentView;
 #else
     NSView *view = _inspectedWebView;
 #endif
-    if (![view window])
+    if (!view.window)
         return; // Skip the highlight if we have no window (e.g. hidden tab).
     
     if (!_currentHighlight) {

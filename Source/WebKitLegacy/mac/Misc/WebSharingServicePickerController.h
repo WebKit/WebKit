@@ -67,8 +67,8 @@ protected:
     BOOL _handleEditingReplacement;
 }
 
-- (instancetype)initWithItems:(NSArray *)items includeEditorServices:(BOOL)includeEditorServices client:(WebSharingServicePickerClient*)pickerClient style:(NSSharingServicePickerStyle)style;
-- (instancetype)initWithSharingServicePicker:(NSSharingServicePicker *)sharingServicePicker client:(WebSharingServicePickerClient&)pickerClient;
+- (instancetype)initWithItems:(NSArray *)items includeEditorServices:(BOOL)includeEditorServices client:(WebSharingServicePickerClient*)pickerClient style:(NSSharingServicePickerStyle)style NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithSharingServicePicker:(NSSharingServicePicker *)sharingServicePicker client:(WebSharingServicePickerClient&)pickerClient NS_DESIGNATED_INITIALIZER;
 - (NSMenu *)menu;
 - (void)didShareImageData:(NSData *)data confirmDataIsValidTIFFData:(BOOL)confirmData;
 - (void)clear;

@@ -108,7 +108,7 @@ void CorrectionPanel::handleAcceptedReplacement(NSString* acceptedReplacement, N
     if (!m_view)
         return;
     
-    NSInteger documentTag = [m_view.get() spellCheckerDocumentTag];
+    NSInteger documentTag = m_view.get().spellCheckerDocumentTag;
 
     switch (correctionIndicatorType) {
     case NSCorrectionIndicatorTypeDefault:

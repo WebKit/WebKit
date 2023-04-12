@@ -158,7 +158,8 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 - (instancetype)initWithView:(WKContentView *)view
 {
     RetainPtr<NSObject <WKFormControl>> control = adoptNS([[WKColorPicker alloc] initWithView:view]);
-    return [super initWithView:view control:WTFMove(control)];
+    self = [super initWithView:view control:WTFMove(control)];
+    return self;
 }
 
 @end

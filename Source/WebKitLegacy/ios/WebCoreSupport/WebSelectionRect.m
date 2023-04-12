@@ -67,7 +67,7 @@
         }
     }
     if (!selectionRect)
-        selectionRect = [rects objectAtIndex:0];
+        selectionRect = rects[0];
     
     CGRect rect = selectionRect.rect;
     
@@ -115,7 +115,7 @@
         }
     }
     if (!selectionRect)
-        selectionRect = [rects lastObject];
+        selectionRect = rects.lastObject;
 
     CGRect rect = selectionRect.rect;
     
@@ -150,7 +150,7 @@
     return rect;
 }
 
-- (id)init
+- (instancetype)init
 {
     self = [super init];
     if (!self)

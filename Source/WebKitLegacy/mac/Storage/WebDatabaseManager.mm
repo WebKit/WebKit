@@ -69,7 +69,7 @@ static NSString *databasesDirectoryPath();
     return sharedManager;
 }
 
-- (id)init
+- (instancetype)init
 {
     if (!(self = [super init]))
         return nil;
@@ -159,11 +159,9 @@ static bool isFileHidden(NSString *file)
     if (!array)
         return;
     
-    NSUInteger count = [array count];
-    for (NSUInteger i = 0; i < count; ++i) {
-        NSString *fileName = [array objectAtIndex:i];
+    for (NSString *fileName in array) {
         // Skip hidden files.
-        if (![fileName length] || isFileHidden(fileName))
+        if (!fileName.length || isFileHidden(fileName))
             continue;
         
         NSString *path = [databasesDirectory stringByAppendingPathComponent:fileName];
@@ -178,12 +176,10 @@ static bool isFileHidden(NSString *file)
             continue;
         
         NSArray *databaseFilesInOrigin = [fileManager contentsOfDirectoryAtPath:path error:0];
-        NSUInteger databaseFileCount = [databaseFilesInOrigin count];
         NSUInteger deletedDatabaseFileCount = 0;
-        for (NSUInteger j = 0; j < databaseFileCount; ++j) {
-            NSString *dbFileName = [databaseFilesInOrigin objectAtIndex:j];
+        for (NSString *dbFileName in databaseFilesInOrigin) {
             // Skip hidden files.
-            if (![dbFileName length] || isFileHidden(dbFileName))
+            if (!dbFileName.length || isFileHidden(dbFileName))
                 continue;
             
             NSString *dbFilePath = [path stringByAppendingPathComponent:dbFileName];
@@ -197,9 +193,9 @@ static bool isFileHidden(NSString *file)
         }
         
         // If we have removed every database file for this origin, delete the folder for this origin.
-        if (databaseFileCount == deletedDatabaseFileCount || ![fileManager contentsOfDirectoryAtPath:path error:nullptr].count) {
+        if (deletedDatabaseFileCount == databaseFilesInOrigin.count || ![fileManager contentsOfDirectoryAtPath:path error:nullptr].count) {
             // Use rmdir - we don't want the deletion to happen if the folder is not empty.
-            rmdir([path fileSystemRepresentation]);
+            rmdir(path.fileSystemRepresentation);
         }
     }
 }
@@ -225,5 +221,5 @@ static NSString *databasesDirectoryPath()
     if (!databasesDirectory || ![databasesDirectory isKindOfClass:[NSString class]])
         databasesDirectory = @"~/Library/WebKit/Databases";
     
-    return [databasesDirectory stringByStandardizingPath];
+    return databasesDirectory.stringByStandardizingPath;
 }

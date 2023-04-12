@@ -35,7 +35,8 @@
     WebView *_inspectedWebView;
     WebNodeHighlight *_currentHighlight;
 }
-- (id)initWithInspectedWebView:(WebView *)webView;
+- (instancetype)init NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithInspectedWebView:(WebView *)webView NS_DESIGNATED_INITIALIZER;
 - (void)highlight;
 - (void)hideHighlight;
 @end

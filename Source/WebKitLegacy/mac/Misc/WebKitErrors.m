@@ -70,12 +70,10 @@ static NSMutableDictionary *descriptions = nil;
 - (instancetype)_webkit_initWithDomain:(NSString *)domain code:(int)code URL:(NSURL *)URL
 {
     // Insert a localized string here for those folks not savvy to our category methods.
-    NSString *localizedDescription = [[descriptions objectForKey:domain] objectForKey:@(code)];
-    NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-        URL, @"NSErrorFailingURLKey",
-        [URL absoluteString], NSURLErrorFailingURLStringErrorKey,
-        localizedDescription, NSLocalizedDescriptionKey,
-        nil];
+    NSString *localizedDescription = descriptions[domain][@(code)];
+    NSDictionary *userInfo = @{@"NSErrorFailingURLKey": URL,
+        NSURLErrorFailingURLStringErrorKey: URL.absoluteString,
+        NSLocalizedDescriptionKey: localizedDescription};
     return [self initWithDomain:domain code:code userInfo:userInfo];
 }
 
@@ -88,24 +86,21 @@ static NSMutableDictionary *descriptions = nil;
     static dispatch_once_t flag;
     dispatch_once(&flag, ^{
         @autoreleasepool {
-            NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:
-                // Policy errors
-                WebKitErrorDescriptionCannotShowMIMEType,                   @(WebKitErrorCannotShowMIMEType),
-                WebKitErrorDescriptionCannotShowURL,                        @(WebKitErrorCannotShowURL),
-                WebKitErrorDescriptionFrameLoadInterruptedByPolicyChange,   @(WebKitErrorFrameLoadInterruptedByPolicyChange),
-                WebKitErrorDescriptionCannotUseRestrictedPort,              @(WebKitErrorCannotUseRestrictedPort),
-                WebKitErrorDescriptionFrameLoadBlockedByContentFilter,      @(WebKitErrorFrameLoadBlockedByContentFilter),
+            NSDictionary *dict = @{@(WebKitErrorCannotShowMIMEType): WebKitErrorDescriptionCannotShowMIMEType,
+                @(WebKitErrorCannotShowURL): WebKitErrorDescriptionCannotShowURL,
+                @(WebKitErrorFrameLoadInterruptedByPolicyChange): WebKitErrorDescriptionFrameLoadInterruptedByPolicyChange,
+                @(WebKitErrorCannotUseRestrictedPort): WebKitErrorDescriptionCannotUseRestrictedPort,
+                @(WebKitErrorFrameLoadBlockedByContentFilter): WebKitErrorDescriptionFrameLoadBlockedByContentFilter,
 
                 // Plug-in and java errors
-                WebKitErrorDescriptionCannotFindPlugin,                     @(WebKitErrorCannotFindPlugIn),
-                WebKitErrorDescriptionCannotLoadPlugin,                     @(WebKitErrorCannotLoadPlugIn),
-                WebKitErrorDescriptionJavaUnavailable,                      @(WebKitErrorJavaUnavailable),
-                WebKitErrorDescriptionPlugInCancelledConnection,            @(WebKitErrorPlugInCancelledConnection),
-                WebKitErrorDescriptionPlugInWillHandleLoad,                 @(WebKitErrorPlugInWillHandleLoad),
+                @(WebKitErrorCannotFindPlugIn): WebKitErrorDescriptionCannotFindPlugin,
+                @(WebKitErrorCannotLoadPlugIn): WebKitErrorDescriptionCannotLoadPlugin,
+                @(WebKitErrorJavaUnavailable): WebKitErrorDescriptionJavaUnavailable,
+                @(WebKitErrorPlugInCancelledConnection): WebKitErrorDescriptionPlugInCancelledConnection,
+                @(WebKitErrorPlugInWillHandleLoad): WebKitErrorDescriptionPlugInWillHandleLoad,
 
                 // Geolocation errors
-                WebKitErrorDescriptionGeolocationLocationUnknown,           @(WebKitErrorGeolocationLocationUnknown),
-                nil];
+                @(WebKitErrorGeolocationLocationUnknown): WebKitErrorDescriptionGeolocationLocationUnknown};
 
             [NSError _webkit_addErrorsWithCodesAndDescriptions:dict inDomain:WebKitErrorDomain];
         }
@@ -137,25 +132,25 @@ static NSMutableDictionary *descriptions = nil;
     [[self class] _registerWebKitErrors];
     
     NSMutableDictionary *userInfo = [[NSMutableDictionary alloc] init];
-    NSDictionary *descriptionsForWebKitErrorDomain = [descriptions objectForKey:WebKitErrorDomain];
-    NSString *localizedDescription = [descriptionsForWebKitErrorDomain objectForKey:@(code)];
+    NSDictionary *descriptionsForWebKitErrorDomain = descriptions[WebKitErrorDomain];
+    NSString *localizedDescription = descriptionsForWebKitErrorDomain[@(code)];
     if (localizedDescription)
-        [userInfo setObject:localizedDescription forKey:NSLocalizedDescriptionKey];
+        userInfo[NSLocalizedDescriptionKey] = localizedDescription;
     if (contentURL) {
-        [userInfo setObject:contentURL forKey:@"NSErrorFailingURLKey"];
-        [userInfo setObject:[contentURL _web_userVisibleString] forKey:NSURLErrorFailingURLStringErrorKey];
+        userInfo[@"NSErrorFailingURLKey"] = contentURL;
+        userInfo[NSURLErrorFailingURLStringErrorKey] = [contentURL _web_userVisibleString];
     }
     if (pluginPageURL) {
-        [userInfo setObject:[pluginPageURL _web_userVisibleString] forKey:WebKitErrorPlugInPageURLStringKey];
+        userInfo[WebKitErrorPlugInPageURLStringKey] = [pluginPageURL _web_userVisibleString];
     }
     if (pluginName) {
-        [userInfo setObject:pluginName forKey:WebKitErrorPlugInNameKey];
+        userInfo[WebKitErrorPlugInNameKey] = pluginName;
     }
     if (MIMEType) {
-        [userInfo setObject:MIMEType forKey:WebKitErrorMIMETypeKey];
+        userInfo[WebKitErrorMIMETypeKey] = MIMEType;
     }
 
-    NSDictionary *userInfoCopy = [userInfo count] > 0 ? [[NSDictionary alloc] initWithDictionary:userInfo] : nil;
+    NSDictionary *userInfoCopy = userInfo.count ? [[NSDictionary alloc] initWithDictionary:userInfo] : nil;
     [userInfo release];
     NSError *error = [self initWithDomain:WebKitErrorDomain code:code userInfo:userInfoCopy];
     [userInfoCopy release];
@@ -168,7 +163,7 @@ static NSMutableDictionary *descriptions = nil;
     if (!descriptions)
         descriptions = [[NSMutableDictionary alloc] init];
 
-    [descriptions setObject:dictionary forKey:domain];
+    descriptions[domain] = dictionary;
 }
 
 @end

@@ -36,7 +36,7 @@
     @param origin The security origin this will manage.
     @result A new WebQuotaManager object.
 */
-- (id)initWithOrigin:(WebSecurityOrigin *)origin;
+- (instancetype)initWithOrigin:(WebSecurityOrigin *)origin;
 
 /*!
     @method origin
