@@ -191,7 +191,9 @@ void TypeChecker::visit(AST::Variable& variable)
         auto* initializerType = infer(*variable.maybeInitializer());
         if (!result)
             result = initializerType;
-        else if (!unify(result, initializerType))
+        else if (unify(result, initializerType))
+            variable.maybeInitializer()->m_inferredType = result;
+        else
             typeError(InferBottom::No, variable.span(), "cannot initialize var of type '", *result, "' with value of type '", *initializerType, "'");
     }
     introduceVariable(variable.name(), result);

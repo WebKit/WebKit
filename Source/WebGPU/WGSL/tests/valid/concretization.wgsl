@@ -33,3 +33,12 @@ fn testArrayConcretization() {
   // CHECK-L: vec<unsigned, 2>(0, 0),
   let x4 = array(vec2(0, 0), vec2(0u, 0u));
 }
+
+@vertex
+fn testInitializerConcretization() {
+  // CHECK-L: vec<int, 2>(0, 0)
+  let x1 = vec2(0, 0);
+
+  // CHECK-L: vec<unsigned, 2>(0, 0)
+  let x2 : vec2<u32> = vec2(0, 0);
+}
