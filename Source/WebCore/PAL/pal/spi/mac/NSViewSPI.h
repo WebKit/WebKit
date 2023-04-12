@@ -49,6 +49,8 @@ typedef NS_ENUM(NSInteger, NSViewSemanticContext) {
 @property (nonatomic, setter=_setSemanticContext:) NSViewSemanticContext _semanticContext;
 #endif
 
+@property BOOL clipsToBounds;
+
 @end
 
 #endif // USE(APPLE_INTERNAL_SDK)

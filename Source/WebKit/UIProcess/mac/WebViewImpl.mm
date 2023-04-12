@@ -1194,6 +1194,8 @@ WebViewImpl::WebViewImpl(NSView <WebViewImplDelegate> *view, WKWebView *outerWeb
         [view addSubview:m_layerHostingView.get() positioned:NSWindowBelow relativeTo:nil];
     }
 
+    [m_layerHostingView setClipsToBounds:YES];
+
     // Create a root layer that will back the NSView.
     RetainPtr<CALayer> layer = adoptNS([[CALayer alloc] init]);
     [layer setDelegate:[WebActionDisablingCALayerDelegate shared]];
