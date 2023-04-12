@@ -36,6 +36,7 @@ namespace JSC {
 class CallFrame;
 class CodeBlock;
 class Exception;
+class JSFunction;
 class JSGlobalObject;
 class Microtask;
 class SourceProvider;
@@ -151,6 +152,9 @@ public:
     void didCreateNativeExecutable(NativeExecutable&);
     void willCallNativeExecutable(CallFrame*);
 
+    void willChangeDisplayName(JSFunction*);
+    void didChangeDisplayName(JSFunction*);
+
     class Client {
     public:
         virtual ~Client() = default;
@@ -188,6 +192,9 @@ public:
 
         virtual void didCreateNativeExecutable(NativeExecutable&) { }
         virtual void willCallNativeExecutable(CallFrame*) { }
+
+        virtual void willChangeDisplayName(JSFunction*) { }
+        virtual void didChangeDisplayName(JSFunction*) { }
 
         virtual void willEnter(CallFrame*) { }
 
