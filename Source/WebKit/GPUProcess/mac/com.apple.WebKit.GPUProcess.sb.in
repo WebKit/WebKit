@@ -520,6 +520,10 @@
         (iokit-property "acoustic-id") ;; <rdar://problem/65290967>
     ))
 
+(with-filter (iokit-registry-entry-class "IOSCSIHierarchicalLogicalUnit")
+    (allow iokit-get-properties
+        (iokit-property "Product Identification")))
+
 (with-filter (iokit-registry-entry-class "IOService")
     (allow iokit-get-properties
         (iokit-property "supports-advanced-vp-chatflavor")))
@@ -1228,3 +1232,8 @@
 
 (when (defined? 'SYS_map_with_linking_np)
     (allow syscall-unix (syscall-number SYS_map_with_linking_np)))
+
+(with-filter (uid 0)
+    (allow syscall-unix (syscall-number
+        SYS_getegid
+        SYS_gettid)))
