@@ -79,7 +79,7 @@ public:
             consumedCharacters.append(cc);
             source.advancePastNonNewline();
         }
-        notEnoughCharacters = source.isEmpty();
+        notEnoughCharacters = source.isEmpty() && cc != ';';
         if (notEnoughCharacters) {
             // We can't decide on an entity because there might be a longer entity
             // that we could match if we had more data.

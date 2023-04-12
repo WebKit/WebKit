@@ -696,17 +696,17 @@ private:
             out.append(0xa0);
         else {
             // This handles uncommon named references.
-            String inputString { reference.data(), static_cast<unsigned>(reference.size()) };
-            SegmentedString inputSegmented { inputString };
+            // We need +1 to include the trailing semicolon. Without it, the HTMLEntityParser would think
+            // the input is incomplete and would fail parsing.
+            String inputString { reference.data(), static_cast<unsigned>(reference.size() + 1) };
+            SegmentedString inputSegmented { WTFMove(inputString) };
             bool notEnoughCharacters = false;
             if (!consumeHTMLEntity(inputSegmented, out, notEnoughCharacters) || notEnoughCharacters)
                 return didFail(HTMLFastPathResult::FailedParsingCharacterReference);
             // consumeHTMLEntity() may not have consumed all the input.
             if (auto remainingLength = inputSegmented.length()) {
-                if (*(m_parsingBuffer.position() - 1) == ';')
-                    m_parsingBuffer.setPosition(m_parsingBuffer.position() - remainingLength - 1);
-                else
-                    m_parsingBuffer.setPosition(m_parsingBuffer.position() - remainingLength);
+                ASSERT(*(m_parsingBuffer.position() - 1) == ';');
+                m_parsingBuffer.setPosition(m_parsingBuffer.position() - remainingLength);
             }
         }
     }

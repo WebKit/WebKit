@@ -69,7 +69,7 @@ public:
     void parserRemoveChild(Node&);
     void parserInsertBefore(Node& newChild, Node& refChild);
 
-    void removeChildren();
+    WEBCORE_EXPORT void removeChildren();
 
     void takeAllChildrenFrom(ContainerNode*);
 
