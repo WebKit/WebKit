@@ -5272,6 +5272,9 @@ imported/w3c/web-platform-tests/css/css-writing-modes/float-lft-orthog-htb-in-vl
 # Disagreeing with the expected result (content should not wrap).
 webkit.org/b/245080 fast/text/whitespace/nowrap-clear-float.html [ Failure ]
 
+webkit.org/b/255255 fast/text/text-underline-vertical-first-line-decoration.html [ ImageOnlyFailure ]
+webkit.org/b/255287 fast/block/lineboxcontain/inline-box-vertical.html [ Failure ]
+
 # This is marked as passing on WK2.
 fast/canvas/large-getImageData.html [ Skip ]
 
