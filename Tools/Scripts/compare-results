@@ -54,6 +54,7 @@ def readJSONFile(path):
         return result
 
 Speedometer2 = "Speedometer2"
+JetStream3 = "JetStream3"
 JetStream2 = "JetStream2"
 PLT5 = "PLT5"
 CompetitivePLT = "CompetitivePLT"
@@ -107,6 +108,23 @@ def detailedJetStream2Breakdown(jsonObject):
     for test in breakdown._results["JetStream2.0"]["tests"].keys():
         for subtest in breakdown._results["JetStream2.0"]["tests"][test]["tests"]:
             result[test + "-" + subtest] = breakdown._results["JetStream2.0"]["tests"][test]["tests"][subtest]["metrics"]["Time"][None]["current"]
+    return result
+
+def jetStream3Breakdown(jsonObject):
+    breakdown = BenchmarkResults(jsonObject)
+    result = {}
+    result[unitMarker] = "pts"
+    for test in breakdown._results["JetStream3.0"]["tests"].keys():
+        result[test] = breakdown._results["JetStream3.0"]["tests"][test]["metrics"]["Score"][None]["current"]
+    return result
+
+def detailedJetStream3Breakdown(jsonObject):
+    breakdown = BenchmarkResults(jsonObject)
+    result = {}
+    result[unitMarker] = "ms"
+    for test in breakdown._results["JetStream3.0"]["tests"].keys():
+        for subtest in breakdown._results["JetStream3.0"]["tests"][test]["tests"]:
+            result[test + "-" + subtest] = breakdown._results["JetStream3.0"]["tests"][test]["tests"][subtest]["metrics"]["Time"][None]["current"]
     return result
 
 def motionMarkBreakdown(jsonObject):
@@ -321,6 +339,8 @@ def writeCSV(a, b, fileName):
     f.write(result)
     f.close()
 
+def detectJetStream3(payload):
+    return "JetStream3.0" in payload
 
 def detectJetStream2(payload):
     return "JetStream2.0" in payload
@@ -329,6 +349,30 @@ def JetStream2Results(payload):
     assert detectJetStream2(payload)
 
     js = payload["JetStream2.0"]
+
+    iterations = 0
+    if "gaussian-blur" in js["tests"]:
+        iterations = len(js["tests"]["gaussian-blur"]["metrics"]["Score"]["current"])
+    else:
+        obj = js["tests"]
+        first_key = list(obj.keys())[0]
+        iterations = len(obj[first_key]["metrics"]["Score"]["current"])
+
+    results = []
+    for i in range(iterations):
+        scores = []
+        for test in js["tests"].keys():
+            scores.append(js["tests"][test]["metrics"]["Score"]["current"][i])
+        geomean = stats.gmean(scores)
+        
+        results.append(geomean)
+
+    return results
+
+def JetStream3Results(payload):
+    assert detectJetStream3(payload)
+
+    js = payload["JetStream3.0"]
 
     iterations = 0
     if "gaussian-blur" in js["tests"]:
@@ -442,6 +486,8 @@ def motionMarkResults(payload):
     return results
 
 def detectBenchmark(payload):
+    if detectJetStream3(payload):
+        return JetStream3
     if detectJetStream2(payload):
         return JetStream2
     if detectSpeedometer2(payload):
@@ -461,6 +507,8 @@ def detectBenchmark(payload):
     return None
 
 def biggerIsBetter(benchmarkType):
+    if benchmarkType == JetStream3:
+        return True
     if benchmarkType == JetStream2:
         return True
     if benchmarkType == Speedometer2:
@@ -572,6 +620,17 @@ def main():
 
         if args.csv:
             writeCSV(jetStream2Breakdown(a), jetStream2Breakdown(b), args.csv)
+    elif typeA == JetStream3:
+        if args.breakdown:
+            if args.detailed_breakdown:
+                dumpBreakdowns(detailedJetStream3Breakdown(a), detailedJetStream3Breakdown(b))
+            else:
+                dumpBreakdowns(jetStream3Breakdown(a), jetStream3Breakdown(b))
+
+        ttest(typeA, JetStream3Results(a), JetStream3Results(b))
+
+        if args.csv:
+            writeCSV(jetStream3Breakdown(a), jetStream3Breakdown(b), args.csv)
     elif typeA == Speedometer2:
         if args.breakdown:
             if args.detailed_breakdown:
