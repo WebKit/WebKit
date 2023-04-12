@@ -222,14 +222,28 @@ static PKShippingContactEditingMode toPKShippingContactEditingMode(WebCore::Appl
 {
     switch (shippingContactEditingMode) {
     case WebCore::ApplePayShippingContactEditingMode::Enabled:
+#if USE(PKSHIPPINGCONTACTEDITINGMODEENABLED)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         return PKShippingContactEditingModeEnabled;
+#pragma clang diagnostic pop
+#else
+        return PKShippingContactEditingModeAvailable;
+#endif
 
     case WebCore::ApplePayShippingContactEditingMode::StorePickup:
         return PKShippingContactEditingModeStorePickup;
     }
 
     ASSERT_NOT_REACHED();
+#if USE(PKSHIPPINGCONTACTEDITINGMODEENABLED)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     return PKShippingContactEditingModeEnabled;
+#pragma clang diagnostic pop
+#else
+    return PKShippingContactEditingModeAvailable;
+#endif
 }
 
 #endif // HAVE(PASSKIT_SHIPPING_CONTACT_EDITING_MODE)
