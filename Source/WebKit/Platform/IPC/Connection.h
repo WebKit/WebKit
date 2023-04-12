@@ -304,29 +304,29 @@ public:
     template<typename> bool waitForAsyncReplyAndDispatchImmediately(AsyncReplyID, Timeout); // Main thread only.
 
     // Thread-safe.
-    template<typename T, typename C, typename U, typename V>
-    AsyncReplyID sendWithAsyncReply(T&& message, C&& completionHandler, ObjectIdentifierGeneric<U, V> destinationID = { }, OptionSet<SendOption> sendOptions = { })
+    template<typename T, typename C>
+    AsyncReplyID sendWithAsyncReply(T&& message, C&& completionHandler, const ObjectIdentifierGenericBase& destinationID, OptionSet<SendOption> sendOptions = { })
     {
         return sendWithAsyncReply<T, C>(WTFMove(message), WTFMove(completionHandler), destinationID.toUInt64(), sendOptions);
     }
 
     // Thread-safe.
-    template<typename T, typename U, typename V>
-    bool send(T&& message, ObjectIdentifierGeneric<U, V> destinationID, OptionSet<SendOption> sendOptions = { }, std::optional<Thread::QOS> qos = std::nullopt)
+    template<typename T>
+    bool send(T&& message, const ObjectIdentifierGenericBase& destinationID, OptionSet<SendOption> sendOptions = { }, std::optional<Thread::QOS> qos = std::nullopt)
     {
         return send<T>(WTFMove(message), destinationID.toUInt64(), sendOptions, qos);
     }
 
     // Main thread only.
-    template<typename T, typename U, typename V>
-    SendSyncResult<T> sendSync(T&& message, ObjectIdentifierGeneric<U, V> destinationID, Timeout timeout = Timeout::infinity(), OptionSet<SendSyncOption> sendSyncOptions = { })
+    template<typename T>
+    SendSyncResult<T> sendSync(T&& message, const ObjectIdentifierGenericBase& destinationID, Timeout timeout = Timeout::infinity(), OptionSet<SendSyncOption> sendSyncOptions = { })
     {
         return sendSync<T>(WTFMove(message), destinationID.toUInt64(), timeout, sendSyncOptions);
     }
 
     // Main thread only.
-    template<typename T, typename U, typename V>
-    bool waitForAndDispatchImmediately(ObjectIdentifierGeneric<U, V> destinationID, Timeout timeout, OptionSet<WaitForOption> waitForOptions = { })
+    template<typename T>
+    bool waitForAndDispatchImmediately(const ObjectIdentifierGenericBase& destinationID, Timeout timeout, OptionSet<WaitForOption> waitForOptions = { })
     {
         return waitForAndDispatchImmediately<T>(destinationID.toUInt64(), timeout, waitForOptions);
     }

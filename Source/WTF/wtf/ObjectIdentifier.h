@@ -205,5 +205,6 @@ bool operator<=(const ObjectIdentifierGeneric<T, ThreadSafety>& a, const ObjectI
 } // namespace WTF
 
 using WTF::AtomicObjectIdentifier;
+using WTF::ObjectIdentifierGenericBase;
 using WTF::ObjectIdentifierGeneric;
 using WTF::ObjectIdentifier;
