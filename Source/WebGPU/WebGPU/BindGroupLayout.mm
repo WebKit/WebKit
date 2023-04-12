@@ -48,10 +48,18 @@ static MTLArgumentDescriptor *createArgumentDescriptor(const WGPUBufferBindingLa
     switch (buffer.type) {
     case WGPUBufferBindingType_Uniform:
     case WGPUBufferBindingType_ReadOnlyStorage:
+#if USE(METAL_ARGUMENT_ACCESS_ENUMS)
         descriptor.access = MTLArgumentAccessReadOnly;
+#else
+        descriptor.access = MTLBindingAccessReadOnly;
+#endif
         break;
     case WGPUBufferBindingType_Storage:
+#if USE(METAL_ARGUMENT_ACCESS_ENUMS)
         descriptor.access = MTLArgumentAccessReadWrite;
+#else
+        descriptor.access = MTLBindingAccessReadWrite;
+#endif
         break;
     case WGPUBufferBindingType_Undefined:
     case WGPUBufferBindingType_Force32:
@@ -74,7 +82,11 @@ static MTLArgumentDescriptor *createArgumentDescriptor(const WGPUSamplerBindingL
     UNUSED_PARAM(sampler);
     auto descriptor = [MTLArgumentDescriptor new];
     descriptor.dataType = MTLDataTypeSampler;
+#if USE(METAL_ARGUMENT_ACCESS_ENUMS)
     descriptor.access = MTLArgumentAccessReadOnly;
+#else
+    descriptor.access = MTLBindingAccessReadOnly;
+#endif
     return descriptor;
 }
 
@@ -92,7 +104,11 @@ static MTLArgumentDescriptor *createArgumentDescriptor(const WGPUTextureBindingL
     UNUSED_PARAM(texture);
     auto descriptor = [MTLArgumentDescriptor new];
     descriptor.dataType = MTLDataTypeTexture;
+#if USE(METAL_ARGUMENT_ACCESS_ENUMS)
     descriptor.access = MTLArgumentAccessReadOnly;
+#else
+    descriptor.access = MTLBindingAccessReadOnly;
+#endif
     return descriptor;
 }
 
