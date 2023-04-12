@@ -157,6 +157,8 @@ WI.ObjectTreePropertyTreeElement = class ObjectTreePropertyTreeElement extends W
 
         // Property attributes.
         if (this._mode === WI.ObjectTreeView.Mode.Properties) {
+            if (this.property.isPrivateProperty)
+                nameElement.classList.add("private");
             if (!this.property.enumerable)
                 nameElement.classList.add("not-enumerable");
         }

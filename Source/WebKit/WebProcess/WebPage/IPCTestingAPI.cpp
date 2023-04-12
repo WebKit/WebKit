@@ -2836,7 +2836,7 @@ JSMessageListener::JSMessageListener(JSIPC& jsIPC, Type type, JSContextRef conte
 
     // We can't retain the global context here as that would cause a leak
     // since this object is supposed to live as long as the global object is alive.
-    JSC::PrivateName uniquePrivateName;
+    JSC::PrivateName uniquePrivateName(JSC::PrivateName::Description, "listener"_s);
     globalObject->putDirect(vm, uniquePrivateName, toJS(globalObject, callback));
 
     UNUSED_PARAM(catchScope);

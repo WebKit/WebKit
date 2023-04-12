@@ -114,6 +114,49 @@ Internal Properties:
     "boundThis"       =>  null (object null)  []
     "boundArgs"       =>  "Array" (object array)  []
 
+-- Running test case: Runtime.getProperties.Private.Instance
+Evaluating expression...
+Getting own properties...
+Properties:
+    "#parentInstancePrivateProperty"  =>  "parentInstancePrivatePropertyValue" (string)  [writable | enumerable | configurable | isOwn | private]
+    "#childInstancePrivateProperty"   =>  "childInstancePrivatePropertyValue" (string)  [writable | enumerable | configurable | isOwn | private]
+    "parentInstancePublicProperty"    =>  "parentInstancePublicPropertyValue" (string)  [writable | enumerable | configurable | isOwn]
+    "childInstancePublicProperty"     =>  "childInstancePublicPropertyValue" (string)  [writable | enumerable | configurable | isOwn]
+    "__proto__"                       =>  "PrivateMembersTestClassChild" (object)  [writable | configurable | isOwn]
+
+-- Running test case: Runtime.getProperties.Private.Constructor
+Evaluating expression...
+Getting own properties...
+Properties:
+    "#childClassPrivateProperty"    =>  "childClassPrivatePropertyValue" (string)  [writable | enumerable | configurable | isOwn | private]
+    "length"                        =>  0 (number)  [configurable | isOwn]
+    "prototype"                     =>  "PrivateMembersTestClassChild" (object)  [isOwn]
+    "childClassPublicMethod"        =>  "function childClassPublicMethod() { }" (function)  [writable | configurable | isOwn]
+    "childClassPublicGetter"        =>  get "function () { }" (function)  [configurable | isOwn]
+    "childClassPublicGetter"        =>  set undefined (undefined)  [configurable | isOwn]
+    "childClassPublicSetter"        =>  get undefined (undefined)  [configurable | isOwn]
+    "childClassPublicSetter"        =>  set "function (x) { }" (function)  [configurable | isOwn]
+    "childClassPublicGetterSetter"  =>  get "function () { }" (function)  [configurable | isOwn]
+    "childClassPublicGetterSetter"  =>  set "function (x) { }" (function)  [configurable | isOwn]
+    "toString"                      =>  "function toString() { return \"<redacted>\"; }" (function)  [writable | configurable | isOwn]
+    "childClassPublicProperty"      =>  "childClassPublicPropertyValue" (string)  [writable | enumerable | configurable | isOwn]
+    "name"                          =>  "PrivateMembersTestClassChild" (string)  [configurable | isOwn]
+    "__proto__"                     =>  "<redacted>" (function class)  [writable | configurable | isOwn]
+
+-- Running test case: Runtime.getProperties.Private.Prototype
+Evaluating expression...
+Getting own properties...
+Properties:
+    "constructor"                      =>  "<redacted>" (function class)  [writable | configurable | isOwn]
+    "childInstancePublicMethod"        =>  "function childInstancePublicMethod() { }" (function)  [writable | configurable | isOwn]
+    "childInstancePublicGetter"        =>  get "function () { }" (function)  [configurable | isOwn]
+    "childInstancePublicGetter"        =>  set undefined (undefined)  [configurable | isOwn]
+    "childInstancePublicSetter"        =>  get undefined (undefined)  [configurable | isOwn]
+    "childInstancePublicSetter"        =>  set "function (x) { }" (function)  [configurable | isOwn]
+    "childInstancePublicGetterSetter"  =>  get "function () { }" (function)  [configurable | isOwn]
+    "childInstancePublicGetterSetter"  =>  set "function (x) { }" (function)  [configurable | isOwn]
+    "__proto__"                        =>  "PrivateMembersTestClassParent" (object)  [writable | configurable | isOwn]
+
 -- Running test case: Runtime.getProperties.Promise.Resolved
 Evaluating expression...
 Getting own properties...

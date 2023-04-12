@@ -65,11 +65,6 @@ Ref<PrivateSymbolImpl> PrivateSymbolImpl::create(StringImpl& rep)
     return adoptRef(*new PrivateSymbolImpl(rep.m_data16, rep.length(), *ownerRep));
 }
 
-Ref<PrivateSymbolImpl> PrivateSymbolImpl::createNullSymbol()
-{
-    return adoptRef(*new PrivateSymbolImpl);
-}
-
 Ref<RegisteredSymbolImpl> RegisteredSymbolImpl::create(StringImpl& rep, SymbolRegistry& symbolRegistry)
 {
     auto* ownerRep = (rep.bufferOwnership() == BufferSubstring) ? rep.substringBuffer() : &rep;

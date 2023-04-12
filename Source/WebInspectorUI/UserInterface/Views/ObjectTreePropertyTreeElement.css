@@ -84,7 +84,7 @@
     font-size: 12px;
 }
 
-.object-tree-property .property-name.not-enumerable {
+.object-tree-property .property-name:is(.private, .not-enumerable) {
     opacity: 0.6;
 }
 
