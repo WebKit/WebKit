@@ -183,6 +183,7 @@ GetByStatus::GetByStatus(StubInfoSummary summary, StructureStubInfo* stubInfo)
     case StubInfoSummary::MakesCalls:
         RELEASE_ASSERT_NOT_REACHED();
         return;
+    case StubInfoSummary::Megamorphic:
     case StubInfoSummary::TakesSlowPath:
         ASSERT(stubInfo);
         m_state = stubInfo->tookSlowPath ? ObservedTakesSlowPath : LikelyTakesSlowPath;

@@ -167,7 +167,9 @@ void JSTestSerializedScriptValueInterface::finishCreation(VM& vm)
 
 JSObject* JSTestSerializedScriptValueInterface::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    return JSTestSerializedScriptValueInterfacePrototype::create(vm, &globalObject, JSTestSerializedScriptValueInterfacePrototype::createStructure(vm, &globalObject, globalObject.objectPrototype()));
+    auto* structure = JSTestSerializedScriptValueInterfacePrototype::createStructure(vm, &globalObject, globalObject.objectPrototype());
+    structure->setMayBePrototype(true);
+    return JSTestSerializedScriptValueInterfacePrototype::create(vm, &globalObject, structure);
 }
 
 JSObject* JSTestSerializedScriptValueInterface::prototype(VM& vm, JSDOMGlobalObject& globalObject)

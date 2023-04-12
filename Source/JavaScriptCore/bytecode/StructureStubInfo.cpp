@@ -387,6 +387,8 @@ StubInfoSummary StructureStubInfo::summary(VM& vm) const
                 break;
             }
         }
+        if (list->size() == 1 && list->at(0).type() == AccessCase::LoadMegamorphic)
+            return StubInfoSummary::Megamorphic;
     }
     
     if (tookSlowPath || sawNonCell)

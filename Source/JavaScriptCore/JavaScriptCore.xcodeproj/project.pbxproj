@@ -1996,6 +1996,7 @@
 		E3A421431D6F58930007C617 /* PreciseJumpTargetsInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = E3A421421D6F588F0007C617 /* PreciseJumpTargetsInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3AC277721FDB4940024452C /* RegExpCachedResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 86F75EFC151C062F007C9BA3 /* RegExpCachedResult.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3B24859291224540029C08A /* BufferMemoryHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = E3B24857291224530029C08A /* BufferMemoryHandle.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E3BAEA8B29CEA43900A8E3BB /* MegamorphicCache.h in Headers */ = {isa = PBXBuildFile; fileRef = E3BAEA8929CEA43800A8E3BB /* MegamorphicCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3BD2B7622F275020011765C /* WasmCompilationMode.h in Headers */ = {isa = PBXBuildFile; fileRef = E3BD2B7522F275020011765C /* WasmCompilationMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3BF1BAE238AAEDB003A1C2B /* IsoHeapCellType.h in Headers */ = {isa = PBXBuildFile; fileRef = E3BF1BAD238AAED1003A1C2B /* IsoHeapCellType.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3BF3C4D2390D1E8008BC752 /* JSWebAssemblyGlobal.h in Headers */ = {isa = PBXBuildFile; fileRef = E3BF3C4B2390D1E2008BC752 /* JSWebAssemblyGlobal.h */; };
@@ -5517,6 +5518,8 @@
 		E3A421421D6F588F0007C617 /* PreciseJumpTargetsInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PreciseJumpTargetsInlines.h; sourceTree = "<group>"; };
 		E3B24857291224530029C08A /* BufferMemoryHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BufferMemoryHandle.h; sourceTree = "<group>"; };
 		E3B24858291224530029C08A /* BufferMemoryHandle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BufferMemoryHandle.cpp; sourceTree = "<group>"; };
+		E3BAEA8929CEA43800A8E3BB /* MegamorphicCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MegamorphicCache.h; sourceTree = "<group>"; };
+		E3BAEA8A29CEA43800A8E3BB /* MegamorphicCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MegamorphicCache.cpp; sourceTree = "<group>"; };
 		E3BD2B7522F275020011765C /* WasmCompilationMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmCompilationMode.h; sourceTree = "<group>"; };
 		E3BF1BAD238AAED1003A1C2B /* IsoHeapCellType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IsoHeapCellType.h; sourceTree = "<group>"; };
 		E3BF3C4B2390D1E2008BC752 /* JSWebAssemblyGlobal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = JSWebAssemblyGlobal.h; path = js/JSWebAssemblyGlobal.h; sourceTree = "<group>"; };
@@ -8159,6 +8162,8 @@
 				4340A4831A9051AF00D73CCA /* MathCommon.h */,
 				F692A86A0255597D01FF60F7 /* MathObject.cpp */,
 				F692A86B0255597D01FF60F7 /* MathObject.h */,
+				E3BAEA8A29CEA43800A8E3BB /* MegamorphicCache.cpp */,
+				E3BAEA8929CEA43800A8E3BB /* MegamorphicCache.h */,
 				E320B66B2912298000E87CDB /* MemoryMode.cpp */,
 				E320B66A2912298000E87CDB /* MemoryMode.h */,
 				90213E3B123A40C200D422F3 /* MemoryStatistics.cpp */,
@@ -10965,6 +10970,7 @@
 				4340A4851A9051AF00D73CCA /* MathCommon.h in Headers */,
 				BC18C43C0E16F5CD00B34460 /* MathObject.h in Headers */,
 				E328C6C71DA4304500D255FD /* MaxFrameExtentForSlowPathCall.h in Headers */,
+				E3BAEA8B29CEA43900A8E3BB /* MegamorphicCache.h in Headers */,
 				E320B66C2912298100E87CDB /* MemoryMode.h in Headers */,
 				90213E3E123A40C200D422F3 /* MemoryStatistics.h in Headers */,
 				142F16E021558802003D49C9 /* MetadataTable.h in Headers */,

@@ -136,7 +136,9 @@ void JSTestNamedGetterNoIdentifier::finishCreation(VM& vm)
 
 JSObject* JSTestNamedGetterNoIdentifier::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    return JSTestNamedGetterNoIdentifierPrototype::create(vm, &globalObject, JSTestNamedGetterNoIdentifierPrototype::createStructure(vm, &globalObject, globalObject.objectPrototype()));
+    auto* structure = JSTestNamedGetterNoIdentifierPrototype::createStructure(vm, &globalObject, globalObject.objectPrototype());
+    structure->setMayBePrototype(true);
+    return JSTestNamedGetterNoIdentifierPrototype::create(vm, &globalObject, structure);
 }
 
 JSObject* JSTestNamedGetterNoIdentifier::prototype(VM& vm, JSDOMGlobalObject& globalObject)

@@ -105,8 +105,8 @@ bool objectPrototypeHasOwnProperty(JSGlobalObject* globalObject, JSObject* thisO
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     Structure* structure = thisObject->structure();
-    HasOwnPropertyCache* hasOwnPropertyCache = vm.ensureHasOwnPropertyCache();
-    if (std::optional<bool> result = hasOwnPropertyCache->get(structure, propertyName)) {
+    HasOwnPropertyCache& hasOwnPropertyCache = vm.ensureHasOwnPropertyCache();
+    if (std::optional<bool> result = hasOwnPropertyCache.get(structure, propertyName)) {
         ASSERT(*result == thisObject->hasOwnProperty(globalObject, propertyName) || vm.hasPendingTerminationException());
         scope.assertNoExceptionExceptTermination();
         return *result;
@@ -116,7 +116,7 @@ bool objectPrototypeHasOwnProperty(JSGlobalObject* globalObject, JSObject* thisO
     bool result = thisObject->hasOwnProperty(globalObject, propertyName, slot);
     RETURN_IF_EXCEPTION(scope, false);
 
-    hasOwnPropertyCache->tryAdd(slot, thisObject, propertyName, result);
+    hasOwnPropertyCache.tryAdd(slot, thisObject, propertyName, result);
     return result;
 }
 

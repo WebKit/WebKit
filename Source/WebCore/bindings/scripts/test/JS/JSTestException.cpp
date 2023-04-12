@@ -138,7 +138,9 @@ void JSTestException::finishCreation(VM& vm)
 
 JSObject* JSTestException::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    return JSTestExceptionPrototype::create(vm, &globalObject, JSTestExceptionPrototype::createStructure(vm, &globalObject, globalObject.errorPrototype()));
+    auto* structure = JSTestExceptionPrototype::createStructure(vm, &globalObject, globalObject.errorPrototype());
+    structure->setMayBePrototype(true);
+    return JSTestExceptionPrototype::create(vm, &globalObject, structure);
 }
 
 JSObject* JSTestException::prototype(VM& vm, JSDOMGlobalObject& globalObject)

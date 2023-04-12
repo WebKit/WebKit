@@ -136,7 +136,9 @@ void JSTestNamedDeleterThrowingException::finishCreation(VM& vm)
 
 JSObject* JSTestNamedDeleterThrowingException::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    return JSTestNamedDeleterThrowingExceptionPrototype::create(vm, &globalObject, JSTestNamedDeleterThrowingExceptionPrototype::createStructure(vm, &globalObject, globalObject.objectPrototype()));
+    auto* structure = JSTestNamedDeleterThrowingExceptionPrototype::createStructure(vm, &globalObject, globalObject.objectPrototype());
+    structure->setMayBePrototype(true);
+    return JSTestNamedDeleterThrowingExceptionPrototype::create(vm, &globalObject, structure);
 }
 
 JSObject* JSTestNamedDeleterThrowingException::prototype(VM& vm, JSDOMGlobalObject& globalObject)

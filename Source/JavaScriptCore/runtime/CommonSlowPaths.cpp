@@ -191,7 +191,7 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_create_this)
             JSObject* prototype = allocationProfile->prototype();
             ASSERT(prototype == constructor->prototypeForConstruction(vm, globalObject));
             result->putDirectOffset(vm, knownPolyProtoOffset, prototype);
-            prototype->didBecomePrototype();
+            prototype->didBecomePrototype(vm);
             ASSERT_WITH_MESSAGE(!hasIndexedProperties(result->indexingType()), "We rely on JSFinalObject not starting out with an indexing type otherwise we would potentially need to convert to slow put storage");
         }
     } else {

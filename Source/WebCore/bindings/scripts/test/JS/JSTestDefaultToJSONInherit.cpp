@@ -162,7 +162,9 @@ void JSTestDefaultToJSONInherit::finishCreation(VM& vm)
 
 JSObject* JSTestDefaultToJSONInherit::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    return JSTestDefaultToJSONInheritPrototype::create(vm, &globalObject, JSTestDefaultToJSONInheritPrototype::createStructure(vm, &globalObject, JSTestDefaultToJSON::prototype(vm, globalObject)));
+    auto* structure = JSTestDefaultToJSONInheritPrototype::createStructure(vm, &globalObject, JSTestDefaultToJSON::prototype(vm, globalObject));
+    structure->setMayBePrototype(true);
+    return JSTestDefaultToJSONInheritPrototype::create(vm, &globalObject, structure);
 }
 
 JSObject* JSTestDefaultToJSONInherit::prototype(VM& vm, JSDOMGlobalObject& globalObject)

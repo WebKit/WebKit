@@ -498,7 +498,9 @@ void JSTestInterface::finishCreation(VM& vm)
 
 JSObject* JSTestInterface::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    return JSTestInterfacePrototype::create(vm, &globalObject, JSTestInterfacePrototype::createStructure(vm, &globalObject, globalObject.objectPrototype()));
+    auto* structure = JSTestInterfacePrototype::createStructure(vm, &globalObject, globalObject.objectPrototype());
+    structure->setMayBePrototype(true);
+    return JSTestInterfacePrototype::create(vm, &globalObject, structure);
 }
 
 JSObject* JSTestInterface::prototype(VM& vm, JSDOMGlobalObject& globalObject)

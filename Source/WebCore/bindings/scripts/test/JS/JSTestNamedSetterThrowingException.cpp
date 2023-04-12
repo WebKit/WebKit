@@ -136,7 +136,9 @@ void JSTestNamedSetterThrowingException::finishCreation(VM& vm)
 
 JSObject* JSTestNamedSetterThrowingException::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    return JSTestNamedSetterThrowingExceptionPrototype::create(vm, &globalObject, JSTestNamedSetterThrowingExceptionPrototype::createStructure(vm, &globalObject, globalObject.objectPrototype()));
+    auto* structure = JSTestNamedSetterThrowingExceptionPrototype::createStructure(vm, &globalObject, globalObject.objectPrototype());
+    structure->setMayBePrototype(true);
+    return JSTestNamedSetterThrowingExceptionPrototype::create(vm, &globalObject, structure);
 }
 
 JSObject* JSTestNamedSetterThrowingException::prototype(VM& vm, JSDOMGlobalObject& globalObject)

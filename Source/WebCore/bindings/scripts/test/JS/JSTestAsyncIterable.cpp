@@ -149,7 +149,9 @@ void JSTestAsyncIterable::finishCreation(VM& vm)
 
 JSObject* JSTestAsyncIterable::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    return JSTestAsyncIterablePrototype::create(vm, &globalObject, JSTestAsyncIterablePrototype::createStructure(vm, &globalObject, globalObject.objectPrototype()));
+    auto* structure = JSTestAsyncIterablePrototype::createStructure(vm, &globalObject, globalObject.objectPrototype());
+    structure->setMayBePrototype(true);
+    return JSTestAsyncIterablePrototype::create(vm, &globalObject, structure);
 }
 
 JSObject* JSTestAsyncIterable::prototype(VM& vm, JSDOMGlobalObject& globalObject)

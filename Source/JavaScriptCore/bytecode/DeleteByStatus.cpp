@@ -74,6 +74,7 @@ DeleteByStatus::DeleteByStatus(StubInfoSummary summary, StructureStubInfo& stubI
         m_state = NoInformation;
         return;
     case StubInfoSummary::Simple:
+    case StubInfoSummary::Megamorphic:
     case StubInfoSummary::MakesCalls:
     case StubInfoSummary::TakesSlowPathAndMakesCalls:
         RELEASE_ASSERT_NOT_REACHED();

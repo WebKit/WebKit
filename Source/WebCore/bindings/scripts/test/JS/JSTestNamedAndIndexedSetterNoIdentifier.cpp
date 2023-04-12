@@ -137,7 +137,9 @@ void JSTestNamedAndIndexedSetterNoIdentifier::finishCreation(VM& vm)
 
 JSObject* JSTestNamedAndIndexedSetterNoIdentifier::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    return JSTestNamedAndIndexedSetterNoIdentifierPrototype::create(vm, &globalObject, JSTestNamedAndIndexedSetterNoIdentifierPrototype::createStructure(vm, &globalObject, globalObject.objectPrototype()));
+    auto* structure = JSTestNamedAndIndexedSetterNoIdentifierPrototype::createStructure(vm, &globalObject, globalObject.objectPrototype());
+    structure->setMayBePrototype(true);
+    return JSTestNamedAndIndexedSetterNoIdentifierPrototype::create(vm, &globalObject, structure);
 }
 
 JSObject* JSTestNamedAndIndexedSetterNoIdentifier::prototype(VM& vm, JSDOMGlobalObject& globalObject)

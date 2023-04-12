@@ -144,7 +144,9 @@ void JSTestNamedSetterWithIdentifier::finishCreation(VM& vm)
 
 JSObject* JSTestNamedSetterWithIdentifier::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    return JSTestNamedSetterWithIdentifierPrototype::create(vm, &globalObject, JSTestNamedSetterWithIdentifierPrototype::createStructure(vm, &globalObject, globalObject.objectPrototype()));
+    auto* structure = JSTestNamedSetterWithIdentifierPrototype::createStructure(vm, &globalObject, globalObject.objectPrototype());
+    structure->setMayBePrototype(true);
+    return JSTestNamedSetterWithIdentifierPrototype::create(vm, &globalObject, structure);
 }
 
 JSObject* JSTestNamedSetterWithIdentifier::prototype(VM& vm, JSDOMGlobalObject& globalObject)

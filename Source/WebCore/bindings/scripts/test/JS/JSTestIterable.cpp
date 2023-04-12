@@ -151,7 +151,9 @@ void JSTestIterable::finishCreation(VM& vm)
 
 JSObject* JSTestIterable::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    return JSTestIterablePrototype::create(vm, &globalObject, JSTestIterablePrototype::createStructure(vm, &globalObject, globalObject.objectPrototype()));
+    auto* structure = JSTestIterablePrototype::createStructure(vm, &globalObject, globalObject.objectPrototype());
+    structure->setMayBePrototype(true);
+    return JSTestIterablePrototype::create(vm, &globalObject, structure);
 }
 
 JSObject* JSTestIterable::prototype(VM& vm, JSDOMGlobalObject& globalObject)

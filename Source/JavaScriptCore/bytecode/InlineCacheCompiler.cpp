@@ -49,6 +49,7 @@
 #include "JSWebAssemblyInstance.h"
 #include "LLIntThunks.h"
 #include "LinkBuffer.h"
+#include "MegamorphicCache.h"
 #include "ModuleNamespaceAccessCase.h"
 #include "ProxyObjectAccessCase.h"
 #include "ScopedArguments.h"
@@ -1258,6 +1259,88 @@ void InlineCacheCompiler::generateWithGuard(AccessCase& accessCase, CCallHelpers
         return;
     }
 
+    case AccessCase::LoadMegamorphic: {
+#if USE(JSVALUE64)
+        ASSERT(!accessCase.viaProxy());
+        CCallHelpers::JumpList primaryFail;
+        CCallHelpers::JumpList failAndRepatch;
+        unsigned hash = accessCase.m_identifier.uid()->hash();
+
+        auto allocator = makeDefaultScratchAllocator(scratchGPR);
+        GPRReg scratch2GPR = allocator.allocateScratchGPR();
+        GPRReg scratch3GPR = allocator.allocateScratchGPR();
+        GPRReg scratch4GPR = allocator.allocateScratchGPR();
+
+        ScratchRegisterAllocator::PreservedState preservedState = allocator.preserveReusedRegistersByPushing(jit, ScratchRegisterAllocator::ExtraStackSpace::NoExtraSpace);
+
+        jit.load32(CCallHelpers::Address(baseGPR, JSCell::structureIDOffset()), scratchGPR);
+
+        // Primary cache lookup
+        jit.urshift32(scratchGPR, CCallHelpers::TrustedImm32(MegamorphicCache::structureIDHashShift1), scratch2GPR);
+        jit.urshift32(scratchGPR, CCallHelpers::TrustedImm32(MegamorphicCache::structureIDHashShift2), scratch3GPR);
+        jit.xor32(scratch2GPR, scratch3GPR);
+        jit.add32(CCallHelpers::TrustedImm32(hash), scratch3GPR);
+        jit.and32(CCallHelpers::TrustedImm32(MegamorphicCache::primaryMask), scratch3GPR);
+        if constexpr (hasOneBitSet(sizeof(MegamorphicCache::Entry))) // is a power of 2
+            jit.lshift32(CCallHelpers::TrustedImm32(getLSBSet(sizeof(MegamorphicCache::Entry))), scratch3GPR);
+        else
+            jit.mul32(CCallHelpers::TrustedImm32(sizeof(MegamorphicCache::Entry)), scratch3GPR, scratch3GPR);
+        auto& cache = vm.ensureMegamorphicCache();
+        jit.move(CCallHelpers::TrustedImmPtr(&cache), scratch2GPR);
+        ASSERT(!MegamorphicCache::offsetOfPrimaryEntries());
+        jit.addPtr(scratch2GPR, scratch3GPR);
+
+        jit.load16(CCallHelpers::Address(scratch2GPR, MegamorphicCache::offsetOfEpoch()), scratch4GPR);
+
+        jit.load16(CCallHelpers::Address(scratch3GPR, MegamorphicCache::Entry::offsetOfEpoch()), scratch2GPR);
+        primaryFail.append(jit.branch32(CCallHelpers::NotEqual, scratch4GPR, scratch2GPR));
+        primaryFail.append(jit.branch32(CCallHelpers::NotEqual, scratchGPR, CCallHelpers::Address(scratch3GPR, MegamorphicCache::Entry::offsetOfStructureID())));
+        primaryFail.append(jit.branchPtr(CCallHelpers::NotEqual, CCallHelpers::Address(scratch3GPR, MegamorphicCache::Entry::offsetOfUid()), CCallHelpers::TrustedImmPtr(accessCase.m_identifier.uid())));
+
+        // Cache hit!
+        CCallHelpers::Label cacheHit = jit.label();
+        jit.loadPtr(CCallHelpers::Address(scratch3GPR, MegamorphicCache::Entry::offsetOfHolder()), scratch2GPR);
+        auto missed = jit.branchTestPtr(CCallHelpers::Zero, scratch2GPR);
+        jit.moveConditionally64(CCallHelpers::Equal, scratch2GPR, CCallHelpers::TrustedImm32(bitwise_cast<uintptr_t>(JSCell::seenMultipleCalleeObjects())), baseGPR, scratch2GPR, scratchGPR);
+        jit.load16(CCallHelpers::Address(scratch3GPR, MegamorphicCache::Entry::offsetOfOffset()), scratch2GPR);
+        jit.loadProperty(scratchGPR, scratch2GPR, valueRegs);
+        auto done = jit.jump();
+
+        missed.link(&jit);
+        jit.moveTrustedValue(jsUndefined(), valueRegs);
+
+        done.link(&jit);
+        allocator.restoreReusedRegistersByPopping(jit, preservedState);
+        succeed();
+
+        // Secondary cache lookup
+        primaryFail.link(&jit);
+        jit.add32(CCallHelpers::TrustedImm32(static_cast<uint32_t>(bitwise_cast<uintptr_t>(accessCase.m_identifier.uid()))), scratchGPR, scratch2GPR);
+        jit.urshift32(scratch2GPR, CCallHelpers::TrustedImm32(MegamorphicCache::structureIDHashShift3), scratch3GPR);
+        jit.add32(scratch2GPR, scratch3GPR);
+        jit.and32(CCallHelpers::TrustedImm32(MegamorphicCache::secondaryMask), scratch3GPR);
+        if constexpr (hasOneBitSet(sizeof(MegamorphicCache::Entry))) // is a power of 2
+            jit.lshift32(CCallHelpers::TrustedImm32(getLSBSet(sizeof(MegamorphicCache::Entry))), scratch3GPR);
+        else
+            jit.mul32(CCallHelpers::TrustedImm32(sizeof(MegamorphicCache::Entry)), scratch3GPR, scratch3GPR);
+        jit.addPtr(CCallHelpers::TrustedImmPtr(bitwise_cast<uint8_t*>(&cache) + MegamorphicCache::offsetOfSecondaryEntries()), scratch3GPR);
+
+        jit.load16(CCallHelpers::Address(scratch3GPR, MegamorphicCache::Entry::offsetOfEpoch()), scratch2GPR);
+        failAndRepatch.append(jit.branch32(CCallHelpers::NotEqual, scratch4GPR, scratch2GPR));
+        failAndRepatch.append(jit.branch32(CCallHelpers::NotEqual, scratchGPR, CCallHelpers::Address(scratch3GPR, MegamorphicCache::Entry::offsetOfStructureID())));
+        failAndRepatch.append(jit.branchPtr(CCallHelpers::NotEqual, CCallHelpers::Address(scratch3GPR, MegamorphicCache::Entry::offsetOfUid()), CCallHelpers::TrustedImmPtr(accessCase.m_identifier.uid())));
+        jit.jump().linkTo(cacheHit, &jit);
+
+        if (allocator.didReuseRegisters()) {
+            failAndRepatch.link(&jit);
+            allocator.restoreReusedRegistersByPopping(jit, preservedState);
+            m_failAndRepatch.append(jit.jump());
+        } else
+            m_failAndRepatch.append(failAndRepatch);
+#endif
+        return;
+    }
+
     default:
         emitDefaultGuard();
         break;
@@ -2027,6 +2110,7 @@ void InlineCacheCompiler::generateImpl(AccessCase& accessCase)
     case AccessCase::ProxyObjectLoad:
     case AccessCase::ProxyObjectStore:
     case AccessCase::InstanceOfGeneric:
+    case AccessCase::LoadMegamorphic:
     case AccessCase::IndexedInt32Load:
     case AccessCase::IndexedDoubleLoad:
     case AccessCase::IndexedContiguousLoad:
@@ -2598,6 +2682,54 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
     }
     poly.m_list.resize(dstIndex);
 
+    bool generatedMegamorphicCode = false;
+
+    // If the resulting set of cases is so big that we would stop caching and this is InstanceOf,
+    // then we want to generate the generic InstanceOf and then stop.
+    if (cases.size() >= Options::maxAccessVariantListSize()) {
+        switch (m_stubInfo->accessType) {
+        case AccessType::InstanceOf: {
+            while (!cases.isEmpty())
+                poly.m_list.append(cases.takeLast());
+            cases.append(AccessCase::create(vm(), codeBlock, AccessCase::InstanceOfGeneric, nullptr));
+            generatedMegamorphicCode = true;
+            break;
+        }
+        case AccessType::GetById: {
+            auto identifier = cases.last()->m_identifier;
+            bool allAreSimpleLoadOrMiss = true;
+            for (auto& accessCase : cases) {
+                if (accessCase->type() != AccessCase::Load && accessCase->type() != AccessCase::Miss)
+                    allAreSimpleLoadOrMiss = false;
+                if (accessCase->usesPolyProto())
+                    allAreSimpleLoadOrMiss = false;
+                if (accessCase->viaProxy())
+                    allAreSimpleLoadOrMiss = false;
+            }
+
+            // Currently, we do not apply megamorphic cache for "length" property since Array#length and String#length are too common.
+            if (identifier.uid() == vm().propertyNames->length || identifier.uid() == vm().propertyNames->name || identifier.uid() == vm().propertyNames->prototype)
+                allAreSimpleLoadOrMiss = false;
+
+#if USE(JSVALUE32_64)
+            allAreSimpleLoadOrMiss = false;
+#endif
+
+            if (allAreSimpleLoadOrMiss) {
+                while (!cases.isEmpty())
+                    poly.m_list.append(cases.takeLast());
+                cases.append(AccessCase::create(vm(), codeBlock, AccessCase::LoadMegamorphic, identifier));
+                generatedMegamorphicCode = true;
+            }
+            break;
+        }
+        default:
+            break;
+        }
+    }
+
+    dataLogLnIf(InlineCacheCompilerInternal::verbose, "Optimized cases: ", listDump(cases));
+
     auto allocator = makeDefaultScratchAllocator();
     m_allocator = &allocator;
     m_scratchGPR = allocator.allocateScratchGPR();
@@ -2608,20 +2740,6 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
             break;
         }
     }
-
-    bool generatedFinalCode = false;
-
-    // If the resulting set of cases is so big that we would stop caching and this is InstanceOf,
-    // then we want to generate the generic InstanceOf and then stop.
-    if (cases.size() >= Options::maxAccessVariantListSize()
-        && m_stubInfo->accessType == AccessType::InstanceOf) {
-        while (!cases.isEmpty())
-            poly.m_list.append(cases.takeLast());
-        cases.append(AccessCase::create(vm(), codeBlock, AccessCase::InstanceOfGeneric, nullptr));
-        generatedFinalCode = true;
-    }
-
-    dataLogLnIf(InlineCacheCompilerInternal::verbose, "Optimized cases: ", listDump(cases));
 
     bool doesCalls = false;
     bool doesJSCalls = false;
@@ -2690,7 +2808,9 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
         poly.m_list.shrinkToFit();
 
         AccessGenerationResult::Kind resultKind;
-        if (poly.m_list.size() >= Options::maxAccessVariantListSize() || generatedFinalCode)
+        if (generatedMegamorphicCode)
+            resultKind = AccessGenerationResult::GeneratedMegamorphicCode;
+        else if (poly.m_list.size() >= Options::maxAccessVariantListSize())
             resultKind = AccessGenerationResult::GeneratedFinalCode;
         else
             resultKind = AccessGenerationResult::GeneratedNewCode;
@@ -3150,6 +3270,9 @@ void printInternal(PrintStream& out, AccessGenerationResult::Kind kind)
         return;
     case AccessGenerationResult::GeneratedFinalCode:
         out.print("GeneratedFinalCode");
+        return;
+    case AccessGenerationResult::GeneratedMegamorphicCode:
+        out.print("GeneratedMegamorphicCode");
         return;
     case AccessGenerationResult::ResetStubAndFireWatchpoints:
         out.print("ResetStubAndFireWatchpoints");

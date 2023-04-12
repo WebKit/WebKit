@@ -165,7 +165,9 @@ void JSTestDefaultToJSONInheritFinal::finishCreation(VM& vm)
 
 JSObject* JSTestDefaultToJSONInheritFinal::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    return JSTestDefaultToJSONInheritFinalPrototype::create(vm, &globalObject, JSTestDefaultToJSONInheritFinalPrototype::createStructure(vm, &globalObject, JSTestDefaultToJSONInherit::prototype(vm, globalObject)));
+    auto* structure = JSTestDefaultToJSONInheritFinalPrototype::createStructure(vm, &globalObject, JSTestDefaultToJSONInherit::prototype(vm, globalObject));
+    structure->setMayBePrototype(true);
+    return JSTestDefaultToJSONInheritFinalPrototype::create(vm, &globalObject, structure);
 }
 
 JSObject* JSTestDefaultToJSONInheritFinal::prototype(VM& vm, JSDOMGlobalObject& globalObject)

@@ -84,6 +84,9 @@ void resetHasPrivateBrand(CodeBlock*, StructureStubInfo&);
 void resetInstanceOf(CodeBlock*, StructureStubInfo&);
 void resetCheckPrivateBrand(CodeBlock*, StructureStubInfo&);
 void resetSetPrivateBrand(CodeBlock*, StructureStubInfo&);
+
+void repatchGetBySlowPathCall(CodeBlock*, StructureStubInfo&, GetByKind);
+
 void ftlThunkAwareRepatchCall(CodeBlock*, CodeLocationCall<JSInternalPtrTag>, CodePtr<CFunctionPtrTag> newCalleeFunction);
 CodePtr<JSEntryPtrTag> jsToWasmICCodePtr(CodeSpecializationKind, JSObject* callee);
 

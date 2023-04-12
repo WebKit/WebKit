@@ -235,7 +235,9 @@ void JSTestDefaultToJSON::finishCreation(VM& vm)
 
 JSObject* JSTestDefaultToJSON::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    return JSTestDefaultToJSONPrototype::create(vm, &globalObject, JSTestDefaultToJSONPrototype::createStructure(vm, &globalObject, globalObject.objectPrototype()));
+    auto* structure = JSTestDefaultToJSONPrototype::createStructure(vm, &globalObject, globalObject.objectPrototype());
+    structure->setMayBePrototype(true);
+    return JSTestDefaultToJSONPrototype::create(vm, &globalObject, structure);
 }
 
 JSObject* JSTestDefaultToJSON::prototype(VM& vm, JSDOMGlobalObject& globalObject)

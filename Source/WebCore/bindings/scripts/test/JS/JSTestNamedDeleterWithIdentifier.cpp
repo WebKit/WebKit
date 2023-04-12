@@ -144,7 +144,9 @@ void JSTestNamedDeleterWithIdentifier::finishCreation(VM& vm)
 
 JSObject* JSTestNamedDeleterWithIdentifier::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    return JSTestNamedDeleterWithIdentifierPrototype::create(vm, &globalObject, JSTestNamedDeleterWithIdentifierPrototype::createStructure(vm, &globalObject, globalObject.objectPrototype()));
+    auto* structure = JSTestNamedDeleterWithIdentifierPrototype::createStructure(vm, &globalObject, globalObject.objectPrototype());
+    structure->setMayBePrototype(true);
+    return JSTestNamedDeleterWithIdentifierPrototype::create(vm, &globalObject, structure);
 }
 
 JSObject* JSTestNamedDeleterWithIdentifier::prototype(VM& vm, JSDOMGlobalObject& globalObject)

@@ -33,6 +33,7 @@
 #include "JSObject.h"
 #include "JSTypedArrays.h"
 #include "Lookup.h"
+#include "MegamorphicCache.h"
 #include "StructureInlines.h"
 #include "TypedArrayType.h"
 
@@ -272,6 +273,8 @@ ALWAYS_INLINE PropertyOffset JSObject::prepareToPutDirectWithoutTransition(VM& v
             ASSERT(!getDirect(offset) || !JSValue::encode(getDirect(offset)));
             result = offset;
         });
+    if (UNLIKELY(mayBePrototype()))
+        vm.invalidateStructureChainIntegrity(VM::StructureChainIntegrityEvent::Add);
     return result;
 }
 
@@ -369,6 +372,8 @@ ALWAYS_INLINE ASCIILiteral JSObject::putDirectInternal(VM& vm, PropertyName prop
             if (mode == PutModeDefineOwnProperty && (attributes != currentAttributes || (attributes & PropertyAttribute::AccessorOrCustomAccessorOrValue))) {
                 DeferredStructureTransitionWatchpointFire deferred(vm, structure);
                 setStructure(vm, Structure::attributeChangeTransition(vm, structure, propertyName, attributes, &deferred));
+                if (UNLIKELY(mayBePrototype()))
+                    vm.invalidateStructureChainIntegrity(VM::StructureChainIntegrityEvent::Change);
             } else {
                 ASSERT(!(currentAttributes & PropertyAttribute::AccessorOrCustomAccessorOrValue));
                 slot.setExistingProperty(this, offset);
@@ -410,6 +415,8 @@ ALWAYS_INLINE ASCIILiteral JSObject::putDirectInternal(VM& vm, PropertyName prop
         putDirectOffset(vm, offset, value);
         setStructure(vm, newStructure);
         slot.setNewProperty(this, offset);
+        if (UNLIKELY(mayBePrototype()))
+            vm.invalidateStructureChainIntegrity(VM::StructureChainIntegrityEvent::Add);
         return { };
     }
 
@@ -429,6 +436,8 @@ ALWAYS_INLINE ASCIILiteral JSObject::putDirectInternal(VM& vm, PropertyName prop
             // This allows adaptive watchpoints to observe if the new structure is the one we want.
             DeferredStructureTransitionWatchpointFire deferredWatchpointFire(vm, structure);
             setStructure(vm, Structure::attributeChangeTransition(vm, structure, propertyName, attributes, &deferredWatchpointFire));
+            if (UNLIKELY(mayBePrototype()))
+                vm.invalidateStructureChainIntegrity(VM::StructureChainIntegrityEvent::Change);
         } else {
             ASSERT(!(currentAttributes & PropertyAttribute::AccessorOrCustomAccessorOrValue));
             slot.setExistingProperty(this, offset);
@@ -463,17 +472,23 @@ ALWAYS_INLINE ASCIILiteral JSObject::putDirectInternal(VM& vm, PropertyName prop
     slot.setNewProperty(this, offset);
     if (attributes & PropertyAttribute::ReadOnly)
         newStructure->setContainsReadOnlyProperties();
+    if (UNLIKELY(mayBePrototype()))
+        vm.invalidateStructureChainIntegrity(VM::StructureChainIntegrityEvent::Add);
     return { };
 }
 
 inline bool JSObject::mayBePrototype() const
 {
-    return perCellBit();
+    return structure()->mayBePrototype();
 }
 
-inline void JSObject::didBecomePrototype()
+inline void JSObject::didBecomePrototype(VM& vm)
 {
-    setPerCellBit(true);
+    Structure* oldStructure = structure();
+    if (UNLIKELY(!oldStructure->mayBePrototype())) {
+        DeferredStructureTransitionWatchpointFire deferred(vm, oldStructure);
+        setStructure(vm, Structure::becomePrototypeTransition(vm, oldStructure, &deferred));
+    }
 }
 
 inline bool JSObject::canGetIndexQuicklyForTypedArray(unsigned i) const

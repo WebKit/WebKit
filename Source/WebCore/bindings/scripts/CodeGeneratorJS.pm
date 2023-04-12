@@ -4859,10 +4859,14 @@ sub GenerateImplementation
         push(@implContent, "{\n");
         if ($interface->parentType) {
             my $parentClassNameForPrototype = "JS" . $interface->parentType->name;
-            push(@implContent, "    return ${className}Prototype::create(vm, &globalObject, ${className}Prototype::createStructure(vm, &globalObject, ${parentClassNameForPrototype}::prototype(vm, globalObject)));\n");
+            push(@implContent, "    auto* structure = ${className}Prototype::createStructure(vm, &globalObject, ${parentClassNameForPrototype}::prototype(vm, globalObject));\n");
+            push(@implContent, "    structure->setMayBePrototype(true);\n");
+            push(@implContent, "    return ${className}Prototype::create(vm, &globalObject, structure);\n");
         } else {
             my $prototype = $interface->extendedAttributes->{Exception} ? "errorPrototype" : "objectPrototype";
-            push(@implContent, "    return ${className}Prototype::create(vm, &globalObject, ${className}Prototype::createStructure(vm, &globalObject, globalObject.${prototype}()));\n");
+            push(@implContent, "    auto* structure = ${className}Prototype::createStructure(vm, &globalObject, globalObject.${prototype}());\n");
+            push(@implContent, "    structure->setMayBePrototype(true);\n");
+            push(@implContent, "    return ${className}Prototype::create(vm, &globalObject, structure);\n");
         }
         push(@implContent, "}\n\n");
 

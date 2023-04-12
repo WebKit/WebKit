@@ -155,7 +155,9 @@ void JSWorkerGlobalScope::finishCreation(VM& vm, JSProxy* proxy)
 
 JSObject* JSWorkerGlobalScope::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    return JSWorkerGlobalScopePrototype::create(vm, &globalObject, JSWorkerGlobalScopePrototype::createStructure(vm, &globalObject, JSEventTarget::prototype(vm, globalObject)));
+    auto* structure = JSWorkerGlobalScopePrototype::createStructure(vm, &globalObject, JSEventTarget::prototype(vm, globalObject));
+    structure->setMayBePrototype(true);
+    return JSWorkerGlobalScopePrototype::create(vm, &globalObject, structure);
 }
 
 JSObject* JSWorkerGlobalScope::prototype(VM& vm, JSDOMGlobalObject& globalObject)
