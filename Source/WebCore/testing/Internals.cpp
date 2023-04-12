@@ -859,14 +859,19 @@ bool Internals::isPreloaded(const String& url)
 
 bool Internals::isLoadingFromMemoryCache(const String& url)
 {
+    CachedResource* resource = resourceFromMemoryCache(url);
+    return resource && resource->status() == CachedResource::Cached;
+}
+
+CachedResource* Internals::resourceFromMemoryCache(const String& url)
+{   
     if (!contextDocument() || !contextDocument()->page())
-        return false;
+        return nullptr;
 
     ResourceRequest request(contextDocument()->completeURL(url));
     request.setDomainForCachePartition(contextDocument()->domainForCachePartition());
 
-    CachedResource* resource = MemoryCache::singleton().resourceForRequest(request, contextDocument()->page()->sessionID());
-    return resource && resource->status() == CachedResource::Cached;
+    return MemoryCache::singleton().resourceForRequest(request, contextDocument()->page()->sessionID());
 }
 
 static String responseSourceToString(const ResourceResponse& response)
@@ -1012,7 +1017,10 @@ std::optional<Internals::ResourceLoadPriority> Internals::getResourcePriority(co
     auto* document = contextDocument();
     if (!document)
         return std::nullopt;
-    if (auto* resource = document->cachedResourceLoader().cachedResource(url))
+    auto* resource = document->cachedResourceLoader().cachedResource(url);
+    if (!resource)
+        resource = resourceFromMemoryCache(url);
+    if (resource)
         return toInternalsResourceLoadPriority(resource->loadPriority());
     return std::nullopt;
 }

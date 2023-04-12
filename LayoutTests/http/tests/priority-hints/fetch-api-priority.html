@@ -7,42 +7,42 @@
 
   const tests = [
     // fetch("url", request_init) tests
-    {description: 'fetch() with URL and request_init whose priority is "high" must be fetched with high load priority', request_info: `${resource_url}?1`, request_init: {priority: 'high'}, expected_priority: "ResourceLoadPriorityHigh"},
-    {description: 'fetch() with URL and request_init whose priority is "auto" must have no effect on resource load priority', request_info: `${resource_url}?2`, request_init: {priority: 'auto'}, expected_priority: "ResourceLoadPriorityMedium"},
-    {description: 'fetch() with URL and request_init whose priority is missing must have no effect on resource load priority', request_info: `${resource_url}?3`, request_init: {}, expected_priority: "ResourceLoadPriorityMedium"},
-    {description: 'fetch() with URL and request_init whose priority is "low" must be fetched with low resource load priority', request_info: `${resource_url}?4`, request_init: {priority: 'low'}, expected_priority: "ResourceLoadPriorityLow"},
+    {description: 'fetch() with URL and request_init whose priority is "high" must be fetched with high load priority', request_info: `${resource_url}?fa1`, request_init: {priority: 'high'}, expected_priority: "ResourceLoadPriorityHigh"},
+    {description: 'fetch() with URL and request_init whose priority is "auto" must have no effect on resource load priority', request_info: `${resource_url}?fa2`, request_init: {priority: 'auto'}, expected_priority: "ResourceLoadPriorityMedium"},
+    {description: 'fetch() with URL and request_init whose priority is missing must have no effect on resource load priority', request_info: `${resource_url}?fa3`, request_init: {}, expected_priority: "ResourceLoadPriorityMedium"},
+    {description: 'fetch() with URL and request_init whose priority is "low" must be fetched with low resource load priority', request_info: `${resource_url}?fa4`, request_init: {priority: 'low'}, expected_priority: "ResourceLoadPriorityLow"},
     // fetch(Request, request_init) tests
     {
       description: 'fetch() with Request whose priority is "low" and request_init whose priority is "high" must have no effect on resource load priority',
-      request_info: new Request(`${resource_url}?5`, {priority: 'low'}),
+      request_info: new Request(`${resource_url}?fa5`, {priority: 'low'}),
       request_init: {priority: 'high'},
       expected_priority: "ResourceLoadPriorityHigh"
     },
     {
       description: 'fetch() with Request whose priority is "high" and request_init whose priority is "low" must be fetched with low resource load priority',
-      request_info: new Request(`${resource_url}?6`, {priority: 'high'}),
+      request_info: new Request(`${resource_url}?fa6`, {priority: 'high'}),
       request_init: {priority: 'low'},
       expected_priority: "ResourceLoadPriorityLow"
     },
     // fetch(Request) tests
     {
       description: 'fetch() with Request whose priority is "high" and no request_init must be fetched with high resource load priority',
-      request_info: new Request(`${resource_url}?7`, {priority: 'high'}),
+      request_info: new Request(`${resource_url}?fa7`, {priority: 'high'}),
       expected_priority: "ResourceLoadPriorityHigh"
     },
     {
       description: 'fetch() with Request whose priority is "auto" and no request_init must have no effect on resource load priority',
-      request_info: new Request(`${resource_url}?8`, {priority: 'auto'}),
+      request_info: new Request(`${resource_url}?fa8`, {priority: 'auto'}),
       expected_priority: "ResourceLoadPriorityMedium"
     },
     {
       description: 'fetch() with Request whose priority is missing and no request_init must have no effect on resource load priority',
-      request_info: new Request(`${resource_url}?9`),
+      request_info: new Request(`${resource_url}?fa9`),
       expected_priority: "ResourceLoadPriorityMedium"
     },
     {
       description: 'fetch() with Request whose priority is "low" and no request_init must be fetched with low resource load priority',
-      request_info: new Request(`${resource_url}?10`, {priority: 'low'}),
+      request_info: new Request(`${resource_url}?fa10`, {priority: 'low'}),
       expected_priority: "ResourceLoadPriorityLow"
     }
   ];

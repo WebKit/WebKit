@@ -3,18 +3,18 @@
 import sys
 
 sys.stdout.write(
-    'Link: <../resources/dummy.css>; rel=preload; as=style; fetchpriority=low;\r\n'
-    'Link: <../resources/dummy.css?1>; rel=preload; as=style;\r\n'
-    'Link: <../resources/dummy.css?2>; rel=preload; as=style; fetchpriority=high;\r\n'
-    'Link: <../resources/dummy.js>; rel=preload; as=script; fetchpriority=low;\r\n'
-    'Link: <../resources/dummy.js?1>; rel=preload; as=script;\r\n'
-    'Link: <../resources/dummy.js?2>; rel=preload; as=script; fetchpriority=high;\r\n'
-    'Link: <../resources/dummy.txt>; rel=preload; as=fetch; fetchpriority=low;\r\n'
-    'Link: <../resources/dummy.txt?1>; rel=preload; as=fetch;\r\n'
-    'Link: <../resources/dummy.txt?2>; rel=preload; as=fetch; fetchpriority=high;\r\n'
-    'Link: <../resources/square.png>; rel=preload; as=image; fetchpriority=low;\r\n'
-    'Link: <../resources/square.png?1>; rel=preload; as=image;\r\n'
-    'Link: <../resources/square.png?2>; rel=preload; as=image; fetchpriority=high;\r\n'
+    'Link: <../resources/dummy.css?lh0>; rel=preload; as=style; fetchpriority=low;\r\n'
+    'Link: <../resources/dummy.css?lh1>; rel=preload; as=style;\r\n'
+    'Link: <../resources/dummy.css?lh2>; rel=preload; as=style; fetchpriority=high;\r\n'
+    'Link: <../resources/dummy.js?lh0>; rel=preload; as=script; fetchpriority=low;\r\n'
+    'Link: <../resources/dummy.js?lh1>; rel=preload; as=script;\r\n'
+    'Link: <../resources/dummy.js?lh2>; rel=preload; as=script; fetchpriority=high;\r\n'
+    'Link: <../resources/dummy.txt?lh0>; rel=preload; as=fetch; fetchpriority=low;\r\n'
+    'Link: <../resources/dummy.txt?lh1>; rel=preload; as=fetch;\r\n'
+    'Link: <../resources/dummy.txt?lh2>; rel=preload; as=fetch; fetchpriority=high;\r\n'
+    'Link: <../resources/square.png?lh0>; rel=preload; as=image; fetchpriority=low;\r\n'
+    'Link: <../resources/square.png?lh1>; rel=preload; as=image;\r\n'
+    'Link: <../resources/square.png?lh2>; rel=preload; as=image; fetchpriority=high;\r\n'
     'Content-Type: text/html\r\n\r\n'
 )
 
@@ -28,51 +28,51 @@ print('''<!DOCTYPE html>
 <script>
 const priority_tests = [
   {
-    url: new URL('../resources/dummy.css', location), expected_priority: "ResourceLoadPriorityMedium",
+    url: new URL('../resources/dummy.css?lh0', location), expected_priority: "ResourceLoadPriorityMedium",
     description: 'low fetchpriority on <link rel=preload as=style> must be fetched with medium resource load priority'
   },
   {
-    url: new URL('../resources/dummy.css?1', location), expected_priority: "ResourceLoadPriorityHigh",
+    url: new URL('../resources/dummy.css?lh1', location), expected_priority: "ResourceLoadPriorityHigh",
     description: 'missing fetchpriority on <link rel=preload as=style> must have no effect on resource load priority'
   },
   {
-    url: new URL('../resources/dummy.css?2', location), expected_priority: "ResourceLoadPriorityVeryHigh",
+    url: new URL('../resources/dummy.css?lh2', location), expected_priority: "ResourceLoadPriorityVeryHigh",
     description: 'high fetchpriority on <link rel=preload as=style> must be fetched with very high resource load priority'
   },
   {
-    url: new URL('../resources/dummy.css', location), expected_priority: "ResourceLoadPriorityMedium",
+    url: new URL('../resources/dummy.js?lh0', location), expected_priority: "ResourceLoadPriorityMedium",
     description: 'low fetchpriority on <link rel=preload as=script> must be fetched with medium resource load priority'
   },
   {
-    url: new URL('../resources/dummy.css?1', location), expected_priority: "ResourceLoadPriorityHigh",
+    url: new URL('../resources/dummy.js?lh1', location), expected_priority: "ResourceLoadPriorityHigh",
     description: 'missing fetchpriority on <link rel=preload as=script> must have no effect on resource load priority'
   },
   {
-    url: new URL('../resources/dummy.css?2', location), expected_priority: "ResourceLoadPriorityVeryHigh",
+    url: new URL('../resources/dummy.js?lh2', location), expected_priority: "ResourceLoadPriorityVeryHigh",
     description: 'high fetchpriority on <link rel=preload as=script> must be fetched with very high resource load priority'
   },
   {
-    url: new URL('../resources/dummy.css', location), expected_priority: "ResourceLoadPriorityMedium",
-    description: 'low fetchpriority on <link rel=preload as=fetch> must be fetched with medium resource load priority'
+    url: new URL('../resources/dummy.txt?lh0', location), expected_priority: "ResourceLoadPriorityLow",
+    description: 'low fetchpriority on <link rel=preload as=fetch> must be fetched with low resource load priority'
   },
   {
-    url: new URL('../resources/dummy.css?1', location), expected_priority: "ResourceLoadPriorityHigh",
+    url: new URL('../resources/dummy.txt?lh1', location), expected_priority: "ResourceLoadPriorityMedium",
     description: 'missing fetchpriority on <link rel=preload as=fetch> must have no effect on resource load priority'
   },
   {
-    url: new URL('../resources/dummy.css?2', location), expected_priority: "ResourceLoadPriorityVeryHigh",
-    description: 'high fetchpriority on <link rel=preload as=fetch> must be fetched with very high resource load priority'
+    url: new URL('../resources/dummy.txt?lh2', location), expected_priority: "ResourceLoadPriorityHigh",
+    description: 'high fetchpriority on <link rel=preload as=fetch> must be fetched with high resource load priority'
   },
   {
-    url: new URL('../resources/square.png', location), expected_priority: "ResourceLoadPriorityVeryLow",
+    url: new URL('../resources/square.png?lh0', location), expected_priority: "ResourceLoadPriorityVeryLow",
     description: 'low fetchpriority on <link rel=preload as=image> must be fetched with very low resource load priority'
   },
   {
-    url: new URL('../resources/square.png?1', location), expected_priority: "ResourceLoadPriorityLow",
+    url: new URL('../resources/square.png?lh1', location), expected_priority: "ResourceLoadPriorityLow",
     description: 'missing fetchpriority on <link rel=preload as=image> must have no effect on resource load priority'
   },
   {
-    url: new URL('../resources/square.png?2', location), expected_priority: "ResourceLoadPriorityMedium",
+    url: new URL('../resources/square.png?lh2', location), expected_priority: "ResourceLoadPriorityMedium",
     description: 'high fetchpriority on <link rel=preload as=image> must be fetched with medium resource load priority'
   }
 ];

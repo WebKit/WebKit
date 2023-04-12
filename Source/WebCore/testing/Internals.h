@@ -69,6 +69,7 @@ class AudioTrack;
 class BaseAudioContext;
 class Blob;
 class CacheStorageConnection;
+class CachedResource;
 class CaptionUserPreferencesTestingModeToken;
 class DOMPointReadOnly;
 class DOMRect;
@@ -1403,6 +1404,8 @@ private:
 #endif
 
     static RefPtr<SharedBuffer> pngDataForTesting();
+
+    CachedResource* resourceFromMemoryCache(const String& url);
 
 #if ENABLE(MEDIA_STREAM)
     // RealtimeMediaSource::Observer API
