@@ -348,12 +348,30 @@ void ServiceWorkerContainer::getRegistrations(Ref<DeferredPromise>&& promise)
 
 void ServiceWorkerContainer::startMessages()
 {
-    m_shouldDeferMessageEvents = false;
-    for (auto&& messageEvent : std::exchange(m_deferredMessageEvents, Vector<MessageEvent::MessageEventWithStrongData> { })) {
-        queueTaskKeepingObjectAlive(*this, TaskSource::DOMManipulation, [this, messageEvent = WTFMove(messageEvent)] {
-            dispatchEvent(messageEvent.event);
-        });
+    auto* context = this->context();
+    if (!context) {
+        CONTAINER_RELEASE_LOG_ERROR("Container without ScriptExecutionContext is attempting to start post message delivery");
+        return;
     }
+
+    ensureSWClientConnection().getServiceWorkerClientPendingMessages(context->identifier(), [this, protectedThis = Ref { *this }](Vector<ServiceWorkerClientPendingMessage>&& pendingMessages) {
+        if (!this->context())
+            return;
+
+        m_shouldDeferMessageEvents = false;
+
+        // Pending messages that were saved off in the networking process come first.
+        for (auto& message : pendingMessages)
+            postMessage(WTFMove(message.message), WTFMove(message.sourceData), WTFMove(message.sourceOrigin));
+
+        // Then locally deferred messages come next.
+        for (auto&& messageEvent : std::exchange(m_deferredMessageEvents, Vector<MessageEvent::MessageEventWithStrongData> { })) {
+            queueTaskKeepingObjectAlive(*this, TaskSource::DOMManipulation, [this, messageEvent = WTFMove(messageEvent)] {
+                dispatchEvent(messageEvent.event);
+            });
+        }
+
+    });
 }
 
 void ServiceWorkerContainer::jobFailedWithException(ServiceWorkerJob& job, const Exception& exception)

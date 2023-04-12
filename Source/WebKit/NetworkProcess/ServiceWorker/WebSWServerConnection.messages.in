@@ -56,6 +56,8 @@ messages -> WebSWServerConnection NotRefCounted {
     DisableNavigationPreload(WebCore::ServiceWorkerRegistrationIdentifier identifier) -> (std::optional<WebCore::ExceptionData> result)
     SetNavigationPreloadHeaderValue(WebCore::ServiceWorkerRegistrationIdentifier identifier, String value) -> (std::optional<WebCore::ExceptionData> result)
     GetNavigationPreloadState(WebCore::ServiceWorkerRegistrationIdentifier identifier) -> (Expected<WebCore::NavigationPreloadState, WebCore::ExceptionData> result)
+
+    GetServiceWorkerClientPendingMessages(WebCore::ScriptExecutionContextIdentifier identifier) -> (Vector<WebCore::ServiceWorkerClientPendingMessage> messages)
 }
 
 #endif // ENABLE(SERVICE_WORKER)

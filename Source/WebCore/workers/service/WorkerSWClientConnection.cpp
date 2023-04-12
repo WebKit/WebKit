@@ -31,6 +31,7 @@
 #include "NotificationData.h"
 #include "SecurityOrigin.h"
 #include "ServiceWorkerClientData.h"
+#include "ServiceWorkerClientPendingMessage.h"
 #include "ServiceWorkerJobData.h"
 #include "ServiceWorkerProvider.h"
 #include "ServiceWorkerRegistration.h"
@@ -379,6 +380,11 @@ void WorkerSWClientConnection::getNavigationPreloadState(ServiceWorkerRegistrati
             }, WorkerRunLoop::defaultMode());
         });
     });
+}
+
+void WorkerSWClientConnection::getServiceWorkerClientPendingMessages(ScriptExecutionContextIdentifier, CompletionHandler<void(Vector<ServiceWorkerClientPendingMessage>&&)>&& completionHandler)
+{
+    completionHandler({ });
 }
 
 } // namespace WebCore

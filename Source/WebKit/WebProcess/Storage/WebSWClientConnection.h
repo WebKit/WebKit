@@ -101,6 +101,9 @@ private:
     void disableNavigationPreload(WebCore::ServiceWorkerRegistrationIdentifier, ExceptionOrVoidCallback&&) final;
     void setNavigationPreloadHeaderValue(WebCore::ServiceWorkerRegistrationIdentifier, String&&, ExceptionOrVoidCallback&&) final;
     void getNavigationPreloadState(WebCore::ServiceWorkerRegistrationIdentifier, ExceptionOrNavigationPreloadStateCallback&&) final;
+
+    void getServiceWorkerClientPendingMessages(WebCore::ScriptExecutionContextIdentifier clientIdentifier, CompletionHandler<void(Vector<WebCore::ServiceWorkerClientPendingMessage>&&)>&&) final;
+
     void focusServiceWorkerClient(WebCore::ScriptExecutionContextIdentifier, CompletionHandler<void(std::optional<WebCore::ServiceWorkerClientData>&&)>&&);
 
     void scheduleStorageJob(const WebCore::ServiceWorkerJobData&);

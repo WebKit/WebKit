@@ -69,6 +69,8 @@ private:
     void setNavigationPreloadHeaderValue(ServiceWorkerRegistrationIdentifier, String&&, ExceptionOrVoidCallback&&) final;
     void getNavigationPreloadState(ServiceWorkerRegistrationIdentifier, ExceptionOrNavigationPreloadStateCallback&&) final;
 
+    void getServiceWorkerClientPendingMessages(ScriptExecutionContextIdentifier, CompletionHandler<void(Vector<ServiceWorkerClientPendingMessage>&&)>&&) final;
+
     Ref<WorkerThread> m_thread;
 
     uint64_t m_lastRequestIdentifier { 0 };

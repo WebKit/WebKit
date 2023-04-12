@@ -3081,3 +3081,10 @@ enum class WebCore::MediaPlayerPitchCorrectionAlgorithm : uint8_t {
     BestForMusic,
     BestForSpeech,
 };
+
+header: <WebCore/ServiceWorkerClientPendingMessage.h>
+[CustomHeader] struct WebCore::ServiceWorkerClientPendingMessage {
+    WebCore::MessageWithMessagePorts message;
+    WebCore::ServiceWorkerData sourceData;
+    String sourceOrigin;
+};

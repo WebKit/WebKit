@@ -385,7 +385,14 @@ void WebSWServerConnection::postMessageToServiceWorkerClient(ScriptExecutionCont
     if (!sourceServiceWorker)
         return;
 
-    send(Messages::WebSWClientConnection::PostMessageToServiceWorkerClient { destinationContextIdentifier, message, sourceServiceWorker->data(), sourceOrigin });
+    auto sourceServiceWorkerData = sourceServiceWorker->data();
+
+    sendWithAsyncReply(Messages::WebSWClientConnection::PostMessageToServiceWorkerClient { destinationContextIdentifier, message, sourceServiceWorkerData, sourceOrigin }, [this, weakThis = WeakPtr { *this }, destinationContextIdentifier, message, sourceServiceWorkerData, sourceOrigin] (bool result) {
+        if (result)
+            return;
+
+        server().addServiceWorkerClientPendingMessage(destinationContextIdentifier, { message, sourceServiceWorkerData, sourceOrigin });
+    });
 }
 
 void WebSWServerConnection::matchRegistration(const SecurityOriginData& topOrigin, const URL& clientURL, CompletionHandler<void(std::optional<ServiceWorkerRegistrationData>&&)>&& callback)
@@ -690,6 +697,11 @@ void WebSWServerConnection::getNavigationPreloadState(WebCore::ServiceWorkerRegi
 void WebSWServerConnection::focusServiceWorkerClient(WebCore::ScriptExecutionContextIdentifier clientIdentifier, CompletionHandler<void(std::optional<ServiceWorkerClientData>&&)>&& callback)
 {
     sendWithAsyncReply(Messages::WebSWClientConnection::FocusServiceWorkerClient { clientIdentifier }, WTFMove(callback));
+}
+
+void WebSWServerConnection::getServiceWorkerClientPendingMessages(const WebCore::ScriptExecutionContextIdentifier& identifier, CompletionHandler<void(Vector<WebCore::ServiceWorkerClientPendingMessage>&&)>&& completionHandler)
+{
+    completionHandler(server().releaseServiceWorkerClientPendingMessage(identifier));
 }
 
 void WebSWServerConnection::transferServiceWorkerLoadToNewWebProcess(NetworkResourceLoader& loader, WebCore::SWServerRegistration& registration)

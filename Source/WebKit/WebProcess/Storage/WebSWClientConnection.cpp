@@ -327,6 +327,11 @@ void WebSWClientConnection::getNavigationPreloadState(WebCore::ServiceWorkerRegi
     });
 }
 
+void WebSWClientConnection::getServiceWorkerClientPendingMessages(ScriptExecutionContextIdentifier clientIdentifier, CompletionHandler<void(Vector<ServiceWorkerClientPendingMessage>&&)>&& completionHandler)
+{
+    sendWithAsyncReply(Messages::WebSWServerConnection::GetServiceWorkerClientPendingMessages { clientIdentifier }, WTFMove(completionHandler));
+}
+
 void WebSWClientConnection::focusServiceWorkerClient(ScriptExecutionContextIdentifier clientIdentifier, CompletionHandler<void(std::optional<ServiceWorkerClientData>&&)>&& callback)
 {
     auto* client = Document::allDocumentsMap().get(clientIdentifier);
