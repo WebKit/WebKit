@@ -2848,8 +2848,9 @@ void BytecodeGenerator::emitCreatePrivateBrand(const JSTextPosition& divot, cons
 {
     RefPtr<RegisterID> createPrivateSymbol = moveLinkTimeConstant(nullptr, LinkTimeConstant::createPrivateSymbol);
 
-    CallArguments arguments(*this, nullptr, 0);
+    CallArguments arguments(*this, nullptr, 1);
     emitLoad(arguments.thisRegister(), jsUndefined());
+    emitLoad(arguments.argumentRegister(0), jsEmptyString(m_vm));
     RegisterID* newSymbol = emitCall(finalDestination(nullptr, createPrivateSymbol.get()), createPrivateSymbol.get(), NoExpectedFunction, arguments, divot, divotStart, divotEnd, DebuggableCall::No);
 
     Variable privateBrandVar = variable(propertyNames().builtinNames().privateBrandPrivateName());

@@ -768,7 +768,7 @@ let InjectedScript = class InjectedScript extends PrototypelessObjectBase
             }
         }
 
-        function processProperty(o, propertyName, isOwnProperty)
+        function processProperty(o, propertyName, isOwnProperty, privateDescriptor)
         {
             if (nameProcessed.@has(propertyName))
                 return InjectedScript.PropertyFetchAction.Continue;
@@ -778,7 +778,7 @@ let InjectedScript = class InjectedScript extends PrototypelessObjectBase
             let name = toString(propertyName);
             let symbol = isSymbol(propertyName) ? propertyName : null;
 
-            let descriptor = @Object.@getOwnPropertyDescriptor(o, propertyName);
+            let descriptor = privateDescriptor || @Object.@getOwnPropertyDescriptor(o, propertyName);
             if (!descriptor) {
                 // FIXME: Bad descriptor. Can we get here?
                 // Fall back to very restrictive settings.
@@ -800,6 +800,8 @@ let InjectedScript = class InjectedScript extends PrototypelessObjectBase
                 descriptor.isOwn = true;
             if (symbol)
                 descriptor.symbol = symbol;
+            if (privateDescriptor)
+                descriptor.isPrivate = true;
             return processDescriptor(descriptor, isOwnProperty);
         }
 
@@ -811,6 +813,19 @@ let InjectedScript = class InjectedScript extends PrototypelessObjectBase
         for (let o = object; isDefined(o); o = @Object.@getPrototypeOf(o)) {
             let isOwnProperty = o === object;
             let shouldBreak = false;
+
+            let privatePropertyDescriptors = InjectedScriptHost.getOwnPrivatePropertyDescriptors(o);
+            let privatePropertyNames = @Object.@getOwnPropertyNames(privatePropertyDescriptors);
+            for (let i = 0; i < privatePropertyNames.length; ++i) {
+                let privatePropertyName = privatePropertyNames[i];
+                let result = processProperty(o, privatePropertyName, isOwnProperty, privatePropertyDescriptors[privatePropertyName]);
+                shouldBreak = result === InjectedScript.PropertyFetchAction.Stop;
+                if (shouldBreak)
+                    break;
+            }
+
+            if (shouldBreak)
+                break;
 
             // FIXME: <https://webkit.org/b/201861> Web Inspector: show autocomplete entries for non-index properties on arrays
             if (isArrayLike && isOwnProperty) {

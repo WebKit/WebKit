@@ -187,6 +187,12 @@ WI.ObjectTreeView = class ObjectTreeView extends WI.Object
         if (propertyB.isInternalProperty && !propertyA.isInternalProperty)
             return 1;
 
+        // Put private properties at the top.
+        if (propertyA.isPrivateProperty && !propertyB.isPrivateProperty)
+            return -1;
+        if (propertyB.isPrivateProperty && !propertyA.isPrivateProperty)
+            return 1;
+
         // Put Symbol properties at the bottom.
         if (propertyA.symbol && !propertyB.symbol)
             return 1;

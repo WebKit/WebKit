@@ -31,6 +31,7 @@
 #include "DateInstance.h"
 #include "DeferGCInlines.h"
 #include "DirectArguments.h"
+#include "EnumerationMode.h"
 #include "FunctionPrototype.h"
 #include "HeapAnalyzer.h"
 #include "HeapIterationScope.h"
@@ -56,6 +57,7 @@
 #include "MarkedSpaceInlines.h"
 #include "ObjectConstructor.h"
 #include "PreventCollectionScope.h"
+#include "PropertyNameArray.h"
 #include "ProxyObject.h"
 #include "RegExpObject.h"
 #include "ScopedArguments.h"
@@ -290,6 +292,38 @@ static JSObject* constructInternalProperty(JSGlobalObject* globalObject, const S
     JSObject* result = constructEmptyObject(globalObject);
     result->putDirect(vm, Identifier::fromString(vm, "name"_s), jsString(vm, name));
     result->putDirect(vm, Identifier::fromString(vm, "value"_s), value);
+    return result;
+}
+
+JSValue JSInjectedScriptHost::getOwnPrivatePropertyDescriptors(JSGlobalObject* globalObject, CallFrame* callFrame)
+{
+    if (callFrame->argumentCount() < 1)
+        return jsUndefined();
+
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    JSValue value = callFrame->uncheckedArgument(0);
+
+    JSObject* result = constructEmptyObject(globalObject);
+    RETURN_IF_EXCEPTION(scope, JSValue());
+
+    JSObject* object = jsDynamicCast<JSObject*>(value);
+    if (!object)
+        return result;
+
+    PropertyNameArray propertyNames(vm, PropertyNameMode::StringsAndSymbols, PrivateSymbolMode::Include);
+    JSObject::getOwnPropertyNames(object, globalObject, propertyNames, DontEnumPropertiesMode::Include);
+    for (const auto& propertyName : propertyNames) {
+        if (!propertyName.isPrivateName())
+            continue;
+
+        // Authored private properties are indistinguishable from internal private properties except for their use of the `#` prefix.
+        if (!propertyName.string().startsWith('#'))
+            continue;
+
+        result->putDirect(vm, Identifier::fromString(vm, String(propertyName.impl()->isolatedCopy())), objectConstructorGetOwnPropertyDescriptor(globalObject, object, propertyName));
+    }
+
     return result;
 }
 

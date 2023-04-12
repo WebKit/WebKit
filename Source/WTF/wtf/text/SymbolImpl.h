@@ -126,7 +126,6 @@ static_assert(sizeof(SymbolImpl) == sizeof(SymbolImpl::StaticSymbolImpl));
 
 class PrivateSymbolImpl final : public SymbolImpl {
 public:
-    WTF_EXPORT_PRIVATE static Ref<PrivateSymbolImpl> createNullSymbol();
     WTF_EXPORT_PRIVATE static Ref<PrivateSymbolImpl> create(StringImpl& rep);
 
 private:
@@ -137,11 +136,6 @@ private:
 
     PrivateSymbolImpl(const UChar* characters, unsigned length, Ref<StringImpl>&& base)
         : SymbolImpl(characters, length, WTFMove(base), s_flagIsPrivate)
-    {
-    }
-
-    PrivateSymbolImpl()
-        : SymbolImpl(s_flagIsPrivate)
     {
     }
 };

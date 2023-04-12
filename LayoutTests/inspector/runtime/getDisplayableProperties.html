@@ -110,6 +110,24 @@ function test()
     });
 
     addTestCase({
+        name: "Runtime.getDisplayableProperties.Private.Instance",
+        expression: `new PrivateMembersTestClassChild`,
+        ownProperties: true,
+    });
+
+    addTestCase({
+        name: "Runtime.getDisplayableProperties.Private.Constructor",
+        expression: `PrivateMembersTestClassChild`,
+        ownProperties: true,
+    });
+
+    addTestCase({
+        name: "Runtime.getDisplayableProperties.Private.Prototype",
+        expression: `PrivateMembersTestClassChild.prototype`,
+        ownProperties: true,
+    });
+
+    addTestCase({
         name: "Runtime.getDisplayableProperties.Promise.Resolved",
         expression: `Promise.resolve(123)`,
     });

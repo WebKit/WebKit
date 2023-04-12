@@ -73,6 +73,7 @@ public:
     JSC::JSValue isPromiseRejectedWithNativeGetterTypeError(JSC::JSGlobalObject*, JSC::CallFrame*);
     JSC::JSValue subtype(JSC::JSGlobalObject*, JSC::CallFrame*);
     JSC::JSValue functionDetails(JSC::JSGlobalObject*, JSC::CallFrame*);
+    JSC::JSValue getOwnPrivatePropertyDescriptors(JSC::JSGlobalObject*, JSC::CallFrame*);
     JSC::JSValue getInternalProperties(JSC::JSGlobalObject*, JSC::CallFrame*);
     JSC::JSValue proxyTargetValue(JSC::CallFrame*);
     JSC::JSValue weakMapSize(JSC::JSGlobalObject*, JSC::CallFrame*);
