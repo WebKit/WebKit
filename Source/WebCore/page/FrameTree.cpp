@@ -37,7 +37,7 @@
 namespace WebCore {
 
 FrameTree::FrameTree(Frame& thisFrame, Frame* parentFrame)
-    : m_thisFrame(static_cast<LocalFrame&>(thisFrame))
+    : m_thisFrame(thisFrame)
     , m_parent(parentFrame)
 {
 }
