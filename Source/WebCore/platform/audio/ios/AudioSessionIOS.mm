@@ -110,39 +110,11 @@ void AudioSessionIOS::addAudioSessionCategoryChangedObserver(const CategoryChang
     observer(AudioSession::sharedSession(), AudioSession::sharedSession().category());
 }
 
-static void setEligibleForSmartRouting(bool eligible)
-{
-#if PLATFORM(IOS)
-    if (!AudioSession::shouldManageAudioSessionCategory())
-        return;
-
-    AVAudioSession *session = [PAL::getAVAudioSessionClass() sharedInstance];
-    if (![session respondsToSelector:@selector(setEligibleForBTSmartRoutingConsideration:error:)]
-        || ![session respondsToSelector:@selector(eligibleForBTSmartRoutingConsideration)])
-        return;
-
-    if (session.eligibleForBTSmartRoutingConsideration == eligible)
-        return;
-
-    NSError *error = nil;
-    if (![session setEligibleForBTSmartRoutingConsideration:eligible error:&error])
-        RELEASE_LOG_ERROR(Media, "failed to set eligible to %d with error: %@", eligible, error.localizedDescription);
-#else
-    UNUSED_PARAM(eligible);
-#endif
-}
-
 AudioSessionIOS::AudioSessionIOS()
-    : m_workQueue(WorkQueue::create("AudioSession Activation Queue"))
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     m_interruptionObserverHelper = adoptNS([[WebInterruptionObserverHelper alloc] initWithCallback:this]);
     END_BLOCK_OBJC_EXCEPTIONS
-
-    m_workQueue->dispatch([] {
-        setEligibleForSmartRouting(false);
-    });
-
 }
 
 AudioSessionIOS::~AudioSessionIOS()
@@ -334,31 +306,6 @@ size_t AudioSessionIOS::numberOfOutputChannels() const
 size_t AudioSessionIOS::maximumNumberOfOutputChannels() const
 {
     return [[PAL::getAVAudioSessionClass() sharedInstance] maximumOutputNumberOfChannels];
-}
-
-bool AudioSessionIOS::tryToSetActiveInternal(bool active)
-{
-    // We need to deactivate the session on another queue because the AVAudioSessionSetActiveOptionNotifyOthersOnDeactivation option
-    // means that AVAudioSession may synchronously unduck previously ducked clients. Activation needs to complete before this method
-    // returns, so do it synchronously on the same serial queue.
-    if (active) {
-        bool success = false;
-        m_workQueue->dispatchSync([&success] {
-            NSError *error = nil;
-            setEligibleForSmartRouting(true);
-            [[PAL::getAVAudioSessionClass() sharedInstance] setActive:YES withOptions:0 error:&error];
-            success = !error;
-        });
-        return success;
-    }
-
-    m_workQueue->dispatch([] {
-        NSError *error = nil;
-        [[PAL::getAVAudioSessionClass() sharedInstance] setActive:NO withOptions:0 error:&error];
-        setEligibleForSmartRouting(false);
-    });
-
-    return true;
 }
 
 size_t AudioSessionIOS::preferredBufferSize() const
