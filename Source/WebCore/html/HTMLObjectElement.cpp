@@ -180,17 +180,6 @@ void HTMLObjectElement::parametersForPlugin(Vector<AtomString>& paramNames, Vect
         }
     }
 
-    // When OBJECT is used for an applet via Sun's Java plugin, the CODEBASE attribute in the tag
-    // points to the Java plugin itself (an ActiveX component) while the actual applet CODEBASE is
-    // in a PARAM tag. See <http://java.sun.com/products/plugin/1.2/docs/tags.html>. This means
-    // we have to explicitly suppress the tag's CODEBASE attribute if there is none in a PARAM,
-    // else our Java plugin will misinterpret it. [4004531]
-    String codebase;
-    if (MIMETypeRegistry::isJavaAppletMIMEType(serviceType)) {
-        codebase = "codebase"_s;
-        uniqueParamNames.add(codebase.impl()); // pretend we found it in a PARAM already
-    }
-
     // Turn the attributes of the <object> element into arrays, but don't override <param> values.
     if (hasAttributes()) {
         for (const Attribute& attribute : attributesIterator()) {
@@ -231,9 +220,6 @@ bool HTMLObjectElement::hasFallbackContent() const
 
 bool HTMLObjectElement::hasValidClassId()
 {
-    if (MIMETypeRegistry::isJavaAppletMIMEType(serviceType()) && protocolIs(attributeWithoutSynchronization(classidAttr), "java"_s))
-        return true;
-
     // HTML5 says that fallback content should be rendered if a non-empty
     // classid is specified for which the UA can't find a suitable plug-in.
     return attributeWithoutSynchronization(classidAttr).isEmpty();
