@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -83,7 +83,7 @@ protected:
         XPACI  = 1 << 30 | 0b00001 << 16 | 0b10000 << 10,
         XPACD  = 1 << 30 | 0b00001 << 16 | 0b10001 << 10,
 
-        PACGA  = 0 << 30 | 0b01100,
+        PACGA  = 0 << 30 | 0b01100 << 10,
     };
 
     ALWAYS_INLINE static int encodeGroup2(Group2Op op, RegisterID rn, RegisterID rd, RegisterID rm)
