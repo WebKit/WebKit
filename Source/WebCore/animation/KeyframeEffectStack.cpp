@@ -265,5 +265,10 @@ void KeyframeEffectStack::cascadeDidOverrideProperties(const HashSet<AnimatableP
         effect->acceleratedPropertiesOverriddenByCascadeDidChange();
 }
 
+void KeyframeEffectStack::applyPendingAcceleratedActions() const
+{
+    for (auto& effect : m_effects)
+        effect->applyPendingAcceleratedActionsOrUpdateTimingProperties();
+}
 
 } // namespace WebCore

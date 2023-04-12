@@ -2002,6 +2002,21 @@ void KeyframeEffect::animationSuspensionStateDidChange(bool animationIsSuspended
         addPendingAcceleratedAction(animationIsSuspended ? AcceleratedAction::Pause : AcceleratedAction::Play);
 }
 
+void KeyframeEffect::applyPendingAcceleratedActionsOrUpdateTimingProperties()
+{
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
+    if (threadedAnimationResolutionEnabled())
+        return;
+#endif
+
+    if (m_pendingAcceleratedActions.isEmpty()) {
+        m_pendingAcceleratedActions.append(AcceleratedAction::UpdateProperties);
+        applyPendingAcceleratedActions();
+        m_pendingAcceleratedActions.clear();
+    } else
+        applyPendingAcceleratedActions();
+}
+
 void KeyframeEffect::applyPendingAcceleratedActions()
 {
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)
