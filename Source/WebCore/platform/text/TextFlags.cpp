@@ -280,11 +280,11 @@ FeaturesMap computeFeatureSettingsFromVariants(const FontVariantSettings& varian
             features.set(fontFeatureTag("hist"), 1);
         
         if (fontFeatureValues) {
-            auto lookupTags = [](const std::optional<String>& name, const auto& tags) -> Span<const unsigned> {
-                if (!name)
+            auto lookupTags = [] (const auto& name, const auto& tags) -> Span<const unsigned> {
+                if (name.isNull())
                     return { };
 
-                auto found = tags.find(*name);
+                auto found = tags.find(name);
                 if (found == tags.end())
                     return { };
 
@@ -308,7 +308,7 @@ FeaturesMap computeFeatureSettingsFromVariants(const FontVariantSettings& varian
             };
 
             // For styleset and character-variant, the tag name itself is the actual conveyor of information.
-            auto addFeatureTags = [&](const Vector<String>& names, const auto& tags, std::array<char, 2> codename) {
+            auto addFeatureTags = [&](const auto& names, const auto& tags, std::array<char, 2> codename) {
                 for (const auto& name : names) {
                     for (unsigned value : lookupTags(name, tags)) {
                         if (value < 1 || value > 99)
