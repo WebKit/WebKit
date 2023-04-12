@@ -2566,6 +2566,9 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
         return ![self shouldDeferGestureDueToImageAnalysis:gestureRecognizer];
 #endif
 
+    if (gestureRecognizer == _singleTapGestureRecognizer && [otherGestureRecognizer isKindOfClass:UIPanGestureRecognizer.class])
+        return YES;
+
     if (isSamePair(gestureRecognizer, otherGestureRecognizer, _highlightLongPressGestureRecognizer.get(), _longPressGestureRecognizer.get()))
         return YES;
 

@@ -1,0 +1,10 @@
+This test verifies that a pan gesture that immediately follows a tap still results in the web view being scrolled.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Observed scrolling after a tap
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
