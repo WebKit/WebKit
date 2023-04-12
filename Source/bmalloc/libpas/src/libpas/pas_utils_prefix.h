@@ -55,13 +55,13 @@ __PAS_BEGIN_EXTERN_C;
 #define __PAS_NEVER_INLINE __attribute__((__noinline__))
 #define __PAS_NO_RETURN __attribute((__noreturn__))
 
-#if defined(PAS_LIBMALLOC) && PAS_LIBMALLOC
+#if defined(PAS_LIBMALLOC) && PAS_LIBMALLOC || defined(PAS_BMALLOC_HIDDEN) && PAS_BMALLOC_HIDDEN
 #define __PAS_API __attribute__((visibility("hidden")))
 #else
 #define __PAS_API __attribute__((visibility("default")))
 #endif
 
-#if defined(PAS_BMALLOC) && PAS_BMALLOC
+#if defined(PAS_BMALLOC) && PAS_BMALLOC && !(defined(PAS_BMALLOC_HIDDEN) && PAS_BMALLOC_HIDDEN)
 #define __PAS_BAPI __attribute__((visibility("default")))
 #else
 #define __PAS_BAPI __PAS_API
