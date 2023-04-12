@@ -174,7 +174,9 @@ void WebSWServerConnection::controlClient(const NetworkResourceLoadParameters& p
     else
         clientType = ServiceWorkerClientType::Window;
 
+    ASSERT(parameters.options.resultingClientIdentifier);
     auto clientIdentifier = *parameters.options.resultingClientIdentifier;
+
     // As per step 12 of https://w3c.github.io/ServiceWorker/#on-fetch-request-algorithm, the active service worker should be controlling the document.
     // We register the service worker client using the identifier provided by DocumentLoader and notify DocumentLoader about it.
     // If notification is successful, DocumentLoader is responsible to unregister the service worker client as needed.
@@ -203,7 +205,7 @@ std::unique_ptr<ServiceWorkerFetchTask> WebSWServerConnection::createFetchTask(N
         return nullptr;
 
     std::optional<ServiceWorkerRegistrationIdentifier> serviceWorkerRegistrationIdentifier;
-    if (loader.parameters().options.mode == FetchOptions::Mode::Navigate || loader.parameters().options.destination == FetchOptions::Destination::Worker || loader.parameters().options.destination == FetchOptions::Destination::Sharedworker) {
+    if (auto resultingClientIdentifier = loader.parameters().options.resultingClientIdentifier) {
         auto topOrigin = loader.parameters().isMainFrameNavigation ? SecurityOriginData::fromURL(request.url()) : loader.parameters().topOrigin->data();
         auto* registration = doRegistrationMatching(topOrigin, request.url());
         if (!registration)
@@ -211,8 +213,7 @@ std::unique_ptr<ServiceWorkerFetchTask> WebSWServerConnection::createFetchTask(N
 
         serviceWorkerRegistrationIdentifier = registration->identifier();
         controlClient(loader.parameters(), *registration, request);
-        if (auto resultingClientIdentifier = loader.parameters().options.resultingClientIdentifier)
-            loader.setResultingClientIdentifier(resultingClientIdentifier->toString());
+        loader.setResultingClientIdentifier(resultingClientIdentifier->toString());
         loader.setServiceWorkerRegistration(*registration);
     } else {
         if (!loader.parameters().serviceWorkerRegistrationIdentifier)
