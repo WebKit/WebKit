@@ -1845,11 +1845,11 @@ webkit.org/b/227891 http/tests/appcache/fail-on-update.html [ Pass Timeout DumpJ
 # rdar://65641438 ([WebGL2] tex-srgb-mipmap test fails on macOS Intel + iOS (but passes on macOS Apple Silicon) (214392))
 [ arm64 ] webgl/2.0.0/conformance2/textures/misc/tex-srgb-mipmap.html [ Failure ]
 
-# rdar://66660924 ([ASi Layout Tests] 6 WPT css-backgrounds tests consistently failing)
-[ arm64 ] imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/tall--contain--height.html [ ImageOnlyFailure ]
-[ arm64 ] imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/tall--contain--width.html [ ImageOnlyFailure ]
-[ arm64 ] imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/wide--contain--height.html [ ImageOnlyFailure ]
-[ arm64 ] imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/wide--contain--width.html [ ImageOnlyFailure ]
+# rdar://107964187 Updated Expectations for all macOS ( previous was only for arm64 )
+imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/tall--contain--height.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/tall--contain--width.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/wide--contain--height.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/wide--contain--width.html [ ImageOnlyFailure ]
 
 [ x86_64 ] imported/w3c/web-platform-tests/css/filter-effects/css-filters-animation-opacity.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/filter-effects/css-filters-animation-saturate.html [ ImageOnlyFailure ]
