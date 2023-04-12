@@ -161,7 +161,7 @@
 #endif
 
 #if ENABLE(DATA_DETECTION) && PLATFORM(IOS_FAMILY)
-#import <pal/spi/ios/DataDetectorsUISPI.h>
+SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(DataDetectorsUI)
 #endif
 
 #import <WebCore/MediaAccessibilitySoftLink.h>
