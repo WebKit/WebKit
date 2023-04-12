@@ -162,12 +162,6 @@ WI.PropertyPath = class PropertyPath
         return new WI.PropertyPath(object, component, this);
     }
 
-    appendPrivatePropertyName(object, propertyName)
-    {
-        let component = WI.PropertyPath.SpecialPathComponent.PrivatePropertyName + "[" + propertyName + "]";
-        return new WI.PropertyPath(object, component, this);
-    }
-
     appendInternalPropertyName(object, propertyName)
     {
         var component = WI.PropertyPath.SpecialPathComponent.InternalPropertyName + "[" + propertyName + "]";
@@ -234,8 +228,6 @@ WI.PropertyPath = class PropertyPath
 
         if (descriptor.isInternalProperty)
             return this.appendInternalPropertyName(object, descriptor.name);
-        if (descriptor.isPrivateProperty)
-            return this.appendPrivatePropertyName(object, descriptor.name);
         if (descriptor.symbol)
             return this.appendSymbolProperty(object);
 
@@ -261,7 +253,6 @@ WI.PropertyPath = class PropertyPath
 };
 
 WI.PropertyPath.SpecialPathComponent = {
-    PrivatePropertyName: "@private",
     InternalPropertyName: "@internal",
     SymbolPropertyName: "@symbol",
     MapKey: "@mapkey",

@@ -572,9 +572,8 @@ void PropertyListNode::emitDeclarePrivateFieldNames(BytecodeGenerator& generator
             if (!createPrivateSymbol)
                 createPrivateSymbol = generator.moveLinkTimeConstant(nullptr, LinkTimeConstant::createPrivateSymbol);
 
-            CallArguments arguments(generator, nullptr, 1);
+            CallArguments arguments(generator, nullptr, 0);
             generator.emitLoad(arguments.thisRegister(), jsUndefined());
-            generator.emitLoad(arguments.argumentRegister(0), *node.name());
             RefPtr<RegisterID> symbol = generator.emitCall(generator.finalDestination(nullptr, createPrivateSymbol.get()), createPrivateSymbol.get(), NoExpectedFunction, arguments, position(), position(), position(), DebuggableCall::No);
 
             Variable var = generator.variable(*node.name());

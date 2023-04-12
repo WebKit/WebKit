@@ -347,14 +347,10 @@ static JSValue createConsoleProperty(VM& vm, JSObject* object)
 
 // FIXME: use a bytecode or intrinsic for creating a private symbol.
 // https://bugs.webkit.org/show_bug.cgi?id=212782
-JSC_DEFINE_HOST_FUNCTION(createPrivateSymbol, (JSGlobalObject* globalObject, CallFrame* callFrame))
+JSC_DEFINE_HOST_FUNCTION(createPrivateSymbol, (JSGlobalObject* globalObject, CallFrame*))
 {
     VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-    auto description = callFrame->argument(0).toWTFString(globalObject);
-    RETURN_IF_EXCEPTION(scope, { });
-
-    return JSValue::encode(Symbol::create(vm, PrivateSymbolImpl::create(*description.impl()).get()));
+    return JSValue::encode(Symbol::create(vm, PrivateSymbolImpl::createNullSymbol().get()));
 }
 
 JSC_DEFINE_HOST_FUNCTION(jsonParse, (JSGlobalObject* globalObject, CallFrame* callFrame))
@@ -1615,7 +1611,7 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
 
     // PrivateSymbols / PrivateNames
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::createPrivateSymbol)].initLater([] (const Initializer<JSCell>& init) {
-            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 1, "createPrivateSymbol"_s, createPrivateSymbol, ImplementationVisibility::Private));
+            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 0, "createPrivateSymbol"_s, createPrivateSymbol, ImplementationVisibility::Private));
         });
 
     // JSON helpers

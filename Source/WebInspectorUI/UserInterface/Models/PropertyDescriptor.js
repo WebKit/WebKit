@@ -25,7 +25,7 @@
 
 WI.PropertyDescriptor = class PropertyDescriptor
 {
-    constructor(descriptor, symbol, isOwnProperty, wasThrown, nativeGetter, isPrivateProperty, isInternalProperty)
+    constructor(descriptor, symbol, isOwnProperty, wasThrown, nativeGetter, isInternalProperty)
     {
         console.assert(descriptor);
         console.assert(descriptor.name);
@@ -48,7 +48,6 @@ WI.PropertyDescriptor = class PropertyDescriptor
         this._own = isOwnProperty || false;
         this._wasThrown = wasThrown || false;
         this._nativeGetterValue = nativeGetter || false;
-        this._private = isPrivateProperty || false;
         this._internal = isInternalProperty || false;
     }
 
@@ -73,7 +72,7 @@ WI.PropertyDescriptor = class PropertyDescriptor
             payload.isOwn = true;
         }
 
-        return new WI.PropertyDescriptor(payload, payload.symbol, payload.isOwn, payload.wasThrown, payload.nativeGetter, payload.private, internal);
+        return new WI.PropertyDescriptor(payload, payload.symbol, payload.isOwn, payload.wasThrown, payload.nativeGetter, internal);
     }
 
     // Public
@@ -89,7 +88,6 @@ WI.PropertyDescriptor = class PropertyDescriptor
     get isOwnProperty() { return this._own; }
     get wasThrown() { return this._wasThrown; }
     get nativeGetter() { return this._nativeGetterValue; }
-    get isPrivateProperty() { return this._private; }
     get isInternalProperty() { return this._internal; }
 
     hasValue()
