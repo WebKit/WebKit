@@ -643,6 +643,13 @@ struct WebCore::ApplePayDateComponentsRange {
 #endif // ENABLE(APPLE_PAY_SHIPPING_METHOD_DATE_COMPONENTS_RANGE)
 
 #if ENABLE(APPLE_PAY)
+struct WebCore::ApplePaySetupConfiguration {
+    String merchantIdentifier;
+    String referrerIdentifier;
+    String signature;
+    Vector<String> signedFields;
+};
+
 [Nested] enum class WebCore::ApplePayLineItem::Type : bool;
 
 struct WebCore::ApplePayLineItem {

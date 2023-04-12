@@ -24,7 +24,8 @@
 
 header: "PaymentSetupConfigurationWebKit.h"
 [CustomHeader] class WebKit::PaymentSetupConfiguration {
-    [SecureCodingAllowed=[PAL::getPKPaymentSetupConfigurationClass()]] RetainPtr<PKPaymentSetupConfiguration> m_configuration;
+    WebCore::ApplePaySetupConfiguration configuration()
+    URL url()
 };
 
 #endif

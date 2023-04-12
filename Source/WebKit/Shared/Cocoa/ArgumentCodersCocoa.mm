@@ -593,9 +593,6 @@ static bool shouldEnableStrictMode(Decoder& decoder, NSArray<Class> *allowedClas
             ) && isInWebProcess()
         )
 #endif
-#if ENABLE(APPLE_PAY)
-        || (supportsPassKitCore && [allowedClasses containsObject:PAL::getPKPaymentSetupConfigurationClass()]) // rdar://107553429, Don't re-introduce rdar://107626990
-#endif
 #if ENABLE(DATA_DETECTION)
         || (supportsDataDetectorsCore && [allowedClasses containsObject:PAL::getDDScannerResultClass()]) // rdar://107553330 - relying on NSMutableArray re-write, don't re-introduce rdar://107676726
 #if PLATFORM(MAC)
