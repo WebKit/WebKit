@@ -35,7 +35,6 @@ public:
     static Ref<HTMLObjectElement> create(const QualifiedName&, Document&, HTMLFormElement*);
 
     bool isExposed() const { return m_isExposed; }
-    bool containsJavaApplet() const;
 
     bool hasFallbackContent() const;
     bool useFallbackContent() const final { return m_useFallbackContent; }

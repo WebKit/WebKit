@@ -433,24 +433,6 @@ void HTMLObjectElement::updateExposedState()
     }
 }
 
-bool HTMLObjectElement::containsJavaApplet() const
-{
-    if (MIMETypeRegistry::isJavaAppletMIMEType(attributeWithoutSynchronization(typeAttr)))
-        return true;
-
-    for (auto& child : childrenOfType<Element>(*this)) {
-        if (child.hasTagName(paramTag) && equalLettersIgnoringASCIICase(child.getNameAttribute(), "type"_s)
-            && MIMETypeRegistry::isJavaAppletMIMEType(child.attributeWithoutSynchronization(valueAttr).string()))
-            return true;
-        if (child.hasTagName(objectTag) && downcast<HTMLObjectElement>(child).containsJavaApplet())
-            return true;
-        if (child.hasTagName(appletTag))
-            return true;
-    }
-
-    return false;
-}
-
 void HTMLObjectElement::addSubresourceAttributeURLs(ListHashSet<URL>& urls) const
 {
     HTMLPlugInImageElement::addSubresourceAttributeURLs(urls);

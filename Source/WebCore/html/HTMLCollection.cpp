@@ -38,7 +38,7 @@ inline auto HTMLCollection::rootTypeFromCollectionType(CollectionType type) -> R
 {
     switch (type) {
     case DocImages:
-    case DocApplets:
+    case DocEmpty:
     case DocEmbeds:
     case DocForms:
     case DocLinks:
@@ -88,8 +88,8 @@ static NodeListInvalidationType invalidationTypeExcludingIdAndNameAttributes(Col
     case TRCells:
     case SelectOptions:
     case MapAreas:
+    case DocEmpty:
         return DoNotInvalidateOnAttributeChanges;
-    case DocApplets:
     case SelectedOptions:
     case DataListOptions:
         // FIXME: We can do better some day.
@@ -191,7 +191,7 @@ bool HTMLCollection::isSupportedPropertyName(const AtomString& name)
 {
     updateNamedElementCache();
     ASSERT(m_namedElementCache);
-    
+
     if (m_namedElementCache->findElementsWithId(name))
         return true;
     if (m_namedElementCache->findElementsWithName(name))

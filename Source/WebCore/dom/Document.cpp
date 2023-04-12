@@ -478,7 +478,7 @@ static bool canAccessAncestor(const SecurityOrigin& activeSecurityOrigin, LocalF
         const SecurityOrigin& ancestorSecurityOrigin = ancestorDocument->securityOrigin();
         if (activeSecurityOrigin.isSameOriginDomain(ancestorSecurityOrigin))
             return true;
-        
+
         // Allow file URL descendant navigation even when allowFileAccessFromFileURLs is false.
         // FIXME: It's a bit strange to special-case local origins here. Should we be doing
         // something more general instead?
@@ -517,7 +517,7 @@ const Logger& Document::sharedLogger()
         staticSharedLogger() = &Logger::create(sharedLoggerOwner()).leakRef();
         configureSharedLogger();
     }
-    
+
     return *staticSharedLogger();
 }
 
@@ -820,11 +820,11 @@ void Document::removedLastRef()
         removeDetachedChildren();
         RELEASE_ASSERT(m_topLayerElements.isEmpty());
         m_formController = nullptr;
-        
+
         m_markers->detach();
-        
+
         m_cssCanvasElements.clear();
-        
+
         commonTeardown();
 
 #if ASSERT_ENABLED
@@ -1189,7 +1189,7 @@ ExceptionOr<Ref<Node>> Document::adoptNode(Node& source)
                 return result.releaseException();
         }
         break;
-    }       
+    }
     default:
         if (source.isShadowRoot()) {
             // ShadowRoot cannot disconnect itself from the host node.
@@ -1465,7 +1465,7 @@ void Document::setVisualUpdatesAllowed(ReadyState readyState)
         break;
     }
 }
-    
+
 void Document::setVisualUpdatesAllowed(bool visualUpdatesAllowed)
 {
     if (m_visualUpdatesAllowed == visualUpdatesAllowed)
@@ -1827,7 +1827,7 @@ void Document::setTitle(String&& title)
         // appendChild above may have run scripts which removed m_titleElement.
         if (!m_titleElement)
             return;
-    
+
         m_titleElement->setTextContent(String { title });
         auto* textManipulationController = textManipulationControllerIfExists();
         if (UNLIKELY(textManipulationController)) {
@@ -2099,7 +2099,7 @@ void Document::resolveStyle(ResolveStyleType type)
     Ref protectedFrameView { frameView };
     if (frameView.isPainting())
         return;
-    
+
     if (m_inStyleRecalc)
         return; // Guard against re-entrancy. -dwh
 
@@ -2157,7 +2157,7 @@ void Document::resolveStyle(ResolveStyleType type)
         while (resolver.hasUnresolvedQueryContainers()) {
             if (styleUpdate) {
                 SetForScope resolvingContainerQueriesScope(m_isResolvingContainerQueries, true);
-                
+
                 updateRenderTree(WTFMove(styleUpdate));
 
                 if (frameView.layoutContext().needsLayout())
@@ -2366,13 +2366,13 @@ std::unique_ptr<RenderStyle> Document::styleForElementIgnoringPendingStylesheets
 bool Document::updateLayoutIfDimensionsOutOfDate(Element& element, DimensionsCheck dimensionsCheck)
 {
     ASSERT(isMainThread());
-    
+
     // If the stylesheets haven't loaded, just give up and do a full layout ignoring pending stylesheets.
     if (!haveStylesheetsLoaded()) {
         updateLayoutIgnorePendingStylesheets();
         return true;
     }
-    
+
     // Check for re-entrancy and assert (same code that is in updateLayout()).
     RefPtr frameView = view();
     if (frameView && frameView->layoutContext().isInRenderTreeLayout()) {
@@ -2380,9 +2380,9 @@ bool Document::updateLayoutIfDimensionsOutOfDate(Element& element, DimensionsChe
         ASSERT_NOT_REACHED();
         return true;
     }
-    
+
     RenderView::RepaintRegionAccumulator repaintRegionAccumulator(renderView());
-    
+
     // Mimic the structure of updateLayout(), but at each step, see if we have been forced into doing a full
     // layout.
     bool requireFullLayout = false;
@@ -2390,7 +2390,7 @@ bool Document::updateLayoutIfDimensionsOutOfDate(Element& element, DimensionsChe
         if (owner->document().updateLayoutIfDimensionsOutOfDate(*owner))
             requireFullLayout = true;
     }
-    
+
     updateStyleIfNeeded();
 
     RenderObject* renderer = element.renderer();
@@ -2407,20 +2407,20 @@ bool Document::updateLayoutIfDimensionsOutOfDate(Element& element, DimensionsChe
     bool checkingLogicalWidth = ((dimensionsCheck & WidthDimensionsCheck) && !isVertical) || ((dimensionsCheck & HeightDimensionsCheck) && isVertical);
     bool checkingLogicalHeight = ((dimensionsCheck & HeightDimensionsCheck) && !isVertical) || ((dimensionsCheck & WidthDimensionsCheck) && isVertical);
     bool hasSpecifiedLogicalHeight = renderer && renderer->style().logicalMinHeight() == Length(0, LengthType::Fixed) && renderer->style().logicalHeight().isFixed() && renderer->style().logicalMaxHeight().isAuto();
-    
+
     if (!requireFullLayout) {
         RenderBox* previousBox = nullptr;
         RenderBox* currentBox = nullptr;
-        
+
         // Check our containing block chain. If anything in the chain needs a layout, then require a full layout.
         for (RenderObject* currRenderer = element.renderer(); currRenderer && !currRenderer->isRenderView(); currRenderer = currRenderer->container()) {
-            
+
             // Require the entire container chain to be boxes.
             if (!is<RenderBox>(currRenderer)) {
                 requireFullLayout = true;
                 break;
             }
-            
+
             previousBox = currentBox;
             currentBox = downcast<RenderBox>(currRenderer);
 
@@ -2436,7 +2436,7 @@ bool Document::updateLayoutIfDimensionsOutOfDate(Element& element, DimensionsChe
                 requireFullLayout = true;
                 break;
             }
-            
+
             // If a block contains floats and the child's height isn't specified, then
             // give up also, since our height could end up being influenced by the floats.
             if (checkingLogicalHeight && !hasSpecifiedLogicalHeight && currentBox->isRenderBlockFlow()) {
@@ -2446,7 +2446,7 @@ bool Document::updateLayoutIfDimensionsOutOfDate(Element& element, DimensionsChe
                     break;
                 }
             }
-            
+
             if (!currentBox->isRenderBlockFlow() || currentBox->enclosingFragmentedFlow() || currentBox->isWritingModeRoot()) {
                 // FIXME: For now require only block flows all the way back to the root. This limits the optimization
                 // for now, and we'll expand it in future patches to apply to more and more scenarios.
@@ -2455,18 +2455,18 @@ bool Document::updateLayoutIfDimensionsOutOfDate(Element& element, DimensionsChe
                 requireFullLayout = true;
                 break;
             }
-            
+
             if (currRenderer == frameView->layoutContext().subtreeLayoutRoot())
                 break;
         }
     }
-    
+
     StackStats::LayoutCheckPoint layoutCheckPoint;
 
     // Only do a layout if changes have occurred that make it necessary.
     if (requireFullLayout)
         updateLayout();
-    
+
     return requireFullLayout;
 }
 
@@ -2813,7 +2813,7 @@ void Document::removeAllEventListeners()
         m_domWindow->removeAllEventListeners();
 
     m_reportingScope->removeAllObservers();
-    
+
 #if ENABLE(IOS_TOUCH_EVENTS)
     clearTouchEventHandlersAndListeners();
 #endif
@@ -2920,7 +2920,7 @@ AXObjectCache* Document::axObjectCache() const
 {
     if (!AXObjectCache::accessibilityEnabled())
         return nullptr;
-    
+
     // The only document that actually has a AXObjectCache is the top-level
     // document.  This is because we need to be able to get from any WebCoreAXObject
     // to any other WebCoreAXObject on the same page.  Using a single cache allows
@@ -2955,7 +2955,7 @@ Ref<DocumentParser> Document::createParser()
 bool Document::hasHighlight() const
 {
     return (m_highlightRegister && !m_highlightRegister->isEmpty())
-        || (m_fragmentHighlightRegister && !m_fragmentHighlightRegister->isEmpty()) 
+        || (m_fragmentHighlightRegister && !m_fragmentHighlightRegister->isEmpty())
 #if ENABLE(APP_HIGHLIGHTS)
         || (m_appHighlightRegister && !m_appHighlightRegister->isEmpty())
 #endif
@@ -3030,7 +3030,7 @@ void Document::updateHighlightPositions()
                 endPosition = visibleSelection.visibleEnd().deepEquivalent();
             if (!weakRangeData.get())
                 continue;
-            
+
             rangeData->startPosition = startPosition;
             rangeData->endPosition = endPosition;
         }
@@ -3282,7 +3282,7 @@ void Document::implicitClose()
     RELEASE_ASSERT(!m_inStyleRecalc);
     bool wasLocationChangePending = frame() && frame()->navigationScheduler().locationChangePending();
     bool doload = !parsing() && m_parser && !m_processingLoadEvent && !wasLocationChangePending;
-    
+
     if (!doload)
         return;
 
@@ -3302,7 +3302,7 @@ void Document::implicitClose()
     // There are earlier opportunities we could start it:
     //  -When the <head> finishes parsing
     //  -When any new HTMLLinkElement is inserted into the document
-    // But those add a dynamic component to the favicon that has UI 
+    // But those add a dynamic component to the favicon that has UI
     // ramifications, and we need to decide what is the Right Thing To Do(tm)
     RefPtr f = frame();
     if (f) {
@@ -3340,13 +3340,13 @@ void Document::implicitClose()
     }
 
     frame()->loader().checkCallImplicitClose();
-    
+
     // We used to force a synchronous display and flush here. This really isn't
     // necessary and can in fact be actively harmful if pages are loading at a rate of > 60fps
     // (if your platform is syncing flushes and limiting them to 60fps).
     if (!ownerElement() || (ownerElement()->renderer() && !ownerElement()->renderer()->needsLayout())) {
         updateStyleIfNeeded();
-        
+
         // Always do a layout after loading if needed.
         if (view() && renderView() && (!renderView()->firstChild() || renderView()->needsLayout()))
             view()->layoutContext().layout();
@@ -3361,12 +3361,12 @@ void Document::implicitClose()
     if (f && hasLivingRenderTree() && AXObjectCache::accessibilityEnabled()) {
         // The AX cache may have been cleared at this point, but we need to make sure it contains an
         // AX object to send the notification to. getOrCreate will make sure that an valid AX object
-        // exists in the cache (we ignore the return value because we don't need it here). This is 
+        // exists in the cache (we ignore the return value because we don't need it here). This is
         // only safe to call when a layout is not in progress, so it can not be used in postNotification.
         //
         // This notification is now called AXNewDocumentLoadComplete because there are other handlers that will
         // catch new AND page history loads, and that uses AXLoadComplete
-        
+
         axObjectCache()->getOrCreate(renderView());
         if (this == &topDocument())
             axObjectCache()->postNotification(renderView(), AXObjectCache::AXNewDocumentLoadComplete);
@@ -3407,7 +3407,7 @@ bool Document::shouldScheduleLayout() const
         return false;
     return true;
 }
-    
+
 bool Document::isLayoutPending() const
 {
     return view() && view()->layoutContext().isLayoutPending();
@@ -3557,7 +3557,7 @@ void Document::setURL(const URL& url)
     URL newURL = url.isEmpty() ? aboutBlankURL() : url;
     if (newURL == m_url)
         return;
-    
+
     m_fragmentDirective = newURL.consumefragmentDirective();
 
     if (SecurityOrigin::shouldIgnoreHost(newURL))
@@ -4224,7 +4224,7 @@ void Document::processReferrerPolicy(const String& policy, ReferrerPolicySource 
     if (shouldEnforceQuickLookSandbox())
         return;
 #endif
-    
+
     auto referrerPolicy = parseReferrerPolicy(policy, source);
     if (!referrerPolicy) {
         // Unknown policy values are ignored (https://w3c.github.io/webappsec-referrer-policy/#unknown-policy-values).
@@ -4523,7 +4523,7 @@ void Document::runScrollSteps()
             for (auto& area : *userScrollableAreas)
                 scrollableAreasToUpdate.add(CheckedPtr<ScrollableArea>(area));
         }
-            
+
         if (auto nonUserScrollableAreas = frameView->scrollableAreasForAnimatedScroll()) {
             for (auto& area : *nonUserScrollableAreas)
                 scrollableAreasToUpdate.add(CheckedPtr<ScrollableArea>(area));
@@ -4621,7 +4621,7 @@ void Document::updateIsPlayingMedia()
 #if ENABLE(MEDIA_STREAM)
     bool captureStateChanged = MediaProducer::isCapturing(m_mediaState) != MediaProducer::isCapturing(state);
 #endif
-    
+
     m_mediaState = state;
 
     if (auto* page = this->page())
@@ -4986,7 +4986,7 @@ Element* Document::focusNavigationStartingNode(FocusDirection direction) const
         return nullptr;
 
     Node* node = m_focusNavigationStartingNode.get();
-    
+
     // When the node was removed from the document tree. This case is not specified in the spec:
     // https://html.spec.whatwg.org/multipage/interaction.html#sequential-focus-navigation-starting-point
     // Current behaivor is to move the sequential navigation node to / after (based on the focus direction)
@@ -6294,7 +6294,7 @@ Ref<HTMLCollection> Document::images()
 
 Ref<HTMLCollection> Document::applets()
 {
-    return ensureCachedCollection<DocApplets>();
+    return ensureCachedCollection<DocEmpty>();
 }
 
 Ref<HTMLCollection> Document::embeds()
@@ -6414,7 +6414,7 @@ void Document::finishedParsing()
             serviceWorkerContainer->startMessages();
     }
 #endif
-    
+
 #if ENABLE(APP_HIGHLIGHTS)
     if (auto* appHighlightStorage = appHighlightStorageIfExists())
         appHighlightStorage->restoreUnrestoredAppHighlights();
@@ -6699,7 +6699,7 @@ void Document::statePopped(Ref<SerializedScriptValue>&& stateObject)
 {
     if (!frame())
         return;
-    
+
     dispatchPopstateEvent(WTFMove(stateObject));
 }
 
@@ -6774,7 +6774,7 @@ void Document::initDNSPrefetch()
     m_haveExplicitlyDisabledDNSPrefetch = false;
     m_isDNSPrefetchEnabled = settings().dnsPrefetchingEnabled() && securityOrigin().protocol() == "http"_s;
 
-    // Inherit DNS prefetch opt-out from parent frame    
+    // Inherit DNS prefetch opt-out from parent frame
     if (Document* parent = parentDocument()) {
         if (!parent->isDNSPrefetchEnabled())
             m_isDNSPrefetchEnabled = false;
@@ -6948,7 +6948,7 @@ void Document::resumeScheduledTasks(ReasonForSuspension reason)
     scriptRunner().resume();
     resumeActiveDOMObjects(reason);
     resumeScriptedAnimationControllerCallbacks();
-    
+
     m_scheduledTasksAreSuspended = false;
 }
 
@@ -7382,7 +7382,7 @@ LayoutRect Document::absoluteEventHandlerBounds(bool& includesFixedPositionEleme
     includesFixedPositionElements = false;
     if (RenderView* renderView = this->renderView())
         return renderView->documentRect();
-    
+
     return LayoutRect();
 }
 
@@ -7446,7 +7446,7 @@ void Document::updateLastHandledUserGestureTimestamp(MonotonicTime time)
 
     // DOM Timer alignment may depend on the user having interacted with the document.
     didChangeTimerAlignmentInterval();
-    
+
     if (RefPtr element = ownerElement())
         element->document().updateLastHandledUserGestureTimestamp(time);
 }
@@ -7495,14 +7495,14 @@ DocumentLoader* Document::loader() const
 {
     if (!m_frame)
         return nullptr;
-    
+
     DocumentLoader* loader = m_frame->loader().documentLoader();
     if (!loader)
         return nullptr;
-    
+
     if (m_frame->document() != this)
         return nullptr;
-    
+
     return loader;
 }
 
@@ -7551,20 +7551,20 @@ void Document::convertAbsoluteToClientQuads(Vector<FloatQuad>& quads, const Rend
         quad.move(documentToClientOffset);
     }
 }
-    
+
 void Document::convertAbsoluteToClientRects(Vector<FloatRect>& rects, const RenderStyle& style)
 {
     if (!view())
         return;
-    
+
     auto& frameView = *view();
     float inverseFrameScale = frameView.absoluteToDocumentScaleFactor(style.effectiveZoom());
     auto documentToClientOffset = frameView.documentToClientOffset();
-    
+
     for (auto& rect : rects) {
         if (inverseFrameScale != 1)
             rect.scale(inverseFrameScale);
-        
+
         rect.move(documentToClientOffset);
     }
 }
@@ -7575,7 +7575,7 @@ void Document::convertAbsoluteToClientRect(FloatRect& rect, const RenderStyle& s
         return;
 
     const auto& frameView = *view();
-    rect = frameView.absoluteToDocumentRect(rect, style.effectiveZoom()); 
+    rect = frameView.absoluteToDocumentRect(rect, style.effectiveZoom());
     rect = frameView.documentToClientRect(rect);
 }
 
@@ -7808,7 +7808,7 @@ Ref<FontFaceSet> Document::fonts()
 {
     return fontSelector().fontFaceSet();
 }
-    
+
 EditingBehavior Document::editingBehavior() const
 {
     return EditingBehavior { settings().editingBehaviorType() };
@@ -8221,7 +8221,7 @@ static void expandRootBoundsWithRootMargin(FloatRect& localRootBounds, const Len
     auto zoomAdjustedLength = [](const Length& length, float maximumValue, float zoomFactor) {
         if (length.isPercent())
             return floatValueForLength(length, maximumValue);
-    
+
         return floatValueForLength(length, maximumValue) * zoomFactor;
     };
 
@@ -8249,7 +8249,7 @@ static std::optional<LayoutRect> computeClippedRectInRootContentsSpace(const Lay
     auto* ownerRenderer = renderer->frame().ownerRenderer();
     if (!ownerRenderer)
         return std::nullopt;
-    
+
     LayoutRect rectInFrameViewSpace { renderer->view().frameView().contentsToView(*rectInFrameAbsoluteSpace) };
 
     rectInFrameViewSpace.moveBy(ownerRenderer->contentBoxLocation());
@@ -8685,7 +8685,7 @@ Logger& Document::logger()
 
     return *m_logger;
 }
-    
+
 std::optional<PageIdentifier> Document::pageID() const
 {
     return m_frame ? m_frame->loader().pageID() : std::nullopt;
@@ -9292,7 +9292,7 @@ ContentChangeObserver& Document::contentChangeObserver()
 {
     if (!m_contentChangeObserver)
         m_contentChangeObserver = makeUnique<ContentChangeObserver>(*this);
-    return *m_contentChangeObserver; 
+    return *m_contentChangeObserver;
 }
 
 DOMTimerHoldingTank& Document::domTimerHoldingTank()
