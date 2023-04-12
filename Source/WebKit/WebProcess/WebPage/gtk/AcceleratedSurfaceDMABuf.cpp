@@ -28,6 +28,7 @@
 
 #if USE(GBM)
 #include "AcceleratedBackingStoreDMABufMessages.h"
+#include "ShareableBitmap.h"
 #include "WebPage.h"
 #include "WebProcess.h"
 #include <WebCore/DMABufFormat.h>
@@ -47,6 +48,7 @@ std::unique_ptr<AcceleratedSurfaceDMABuf> AcceleratedSurfaceDMABuf::create(WebPa
 
 AcceleratedSurfaceDMABuf::AcceleratedSurfaceDMABuf(WebPage& webPage, Client& client)
     : AcceleratedSurface(webPage, client)
+    , m_isSoftwareRast(!WebCore::PlatformDisplay::sharedDisplayForCompositing().eglExtensions().EXT_image_dma_buf_import)
 {
 }
 
@@ -54,68 +56,42 @@ AcceleratedSurfaceDMABuf::~AcceleratedSurfaceDMABuf()
 {
 }
 
-void AcceleratedSurfaceDMABuf::didCreateGLContext()
+AcceleratedSurfaceDMABuf::RenderTarget::RenderTarget(WebCore::PageIdentifier pageID, const WebCore::IntSize& size)
+    : m_pageID(pageID)
 {
-    glGenFramebuffers(1, &m_fbo);
-    glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
+    std::array<unsigned, 3> renderbuffers;
+    glGenRenderbuffers(3, renderbuffers.data());
+    m_backColorBuffer = renderbuffers[0];
+    m_frontColorBuffer = renderbuffers[1];
+    m_depthStencilBuffer = renderbuffers[2];
+    glBindRenderbuffer(GL_RENDERBUFFER, m_depthStencilBuffer);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8_OES, size.width(), size.height());
 }
 
-void AcceleratedSurfaceDMABuf::willDestroyGLContext()
+AcceleratedSurfaceDMABuf::RenderTarget::~RenderTarget()
 {
-    auto& display = WebCore::PlatformDisplay::sharedDisplayForCompositing();
-
-    if (m_back.image)
-        display.destroyEGLImage(m_back.image);
-    if (m_back.colorBuffer)
-        glDeleteRenderbuffers(1, &m_back.colorBuffer);
-    m_back = { };
-
-    if (m_front.image)
-        display.destroyEGLImage(m_front.image);
-    if (m_front.colorBuffer)
-        glDeleteRenderbuffers(1, &m_front.colorBuffer);
-    m_front = { };
-
-    if (m_depthStencilBuffer) {
+    if (m_backColorBuffer)
+        glDeleteRenderbuffers(1, &m_backColorBuffer);
+    if (m_frontColorBuffer)
+        glDeleteRenderbuffers(1, &m_frontColorBuffer);
+    if (m_depthStencilBuffer)
         glDeleteRenderbuffers(1, &m_depthStencilBuffer);
-        m_depthStencilBuffer = 0;
-    }
-
-    if (m_fbo) {
-        glDeleteFramebuffers(1, &m_fbo);
-        m_fbo = 0;
-    }
 }
 
-uint64_t AcceleratedSurfaceDMABuf::surfaceID() const
+void AcceleratedSurfaceDMABuf::RenderTarget::willRenderFrame() const
 {
-    return m_webPage.identifier().toUInt64();
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, m_backColorBuffer);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_depthStencilBuffer);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_depthStencilBuffer);
 }
 
-void AcceleratedSurfaceDMABuf::clientResize(const WebCore::IntSize& size)
+void AcceleratedSurfaceDMABuf::RenderTarget::swap()
 {
-    auto& display = WebCore::PlatformDisplay::sharedDisplayForCompositing();
+    std::swap(m_backColorBuffer, m_frontColorBuffer);
+}
 
-    if (m_back.image)
-        display.destroyEGLImage(m_back.image);
-    if (m_back.colorBuffer)
-        glDeleteRenderbuffers(1, &m_back.colorBuffer);
-    m_back = { };
-
-    if (m_front.image)
-        display.destroyEGLImage(m_front.image);
-    if (m_front.colorBuffer)
-        glDeleteRenderbuffers(1, &m_front.colorBuffer);
-    m_front = { };
-
-    if (m_depthStencilBuffer) {
-        glDeleteRenderbuffers(1, &m_depthStencilBuffer);
-        m_depthStencilBuffer = 0;
-    }
-
-    if (size.isEmpty())
-        return;
-
+std::unique_ptr<AcceleratedSurfaceDMABuf::RenderTarget> AcceleratedSurfaceDMABuf::RenderTargetEGLImage::create(WebCore::PageIdentifier pageID, const WebCore::IntSize& size)
+{
     struct {
         uint32_t format;
         uint32_t offset;
@@ -123,6 +99,7 @@ void AcceleratedSurfaceDMABuf::clientResize(const WebCore::IntSize& size)
         uint64_t modifier;
     } metadata;
 
+    auto& display = WebCore::PlatformDisplay::sharedDisplayForCompositing();
     auto createImage = [&]() -> std::pair<UnixFileDescriptor, EGLImage> {
         auto* bo = gbm_bo_create(WebCore::GBMDevice::singleton().device(), size.width(), size.height(), uint32_t(WebCore::DMABufFormat::FourCC::ARGB8888), 0);
         if (!bo) {
@@ -167,57 +144,153 @@ void AcceleratedSurfaceDMABuf::clientResize(const WebCore::IntSize& size)
             display.destroyEGLImage(backImage.second);
         if (frontImage.second)
             display.destroyEGLImage(frontImage.second);
-        return;
+        return nullptr;
     }
 
-    m_back.image = backImage.second;
-    m_front.image = frontImage.second;
+    return makeUnique<RenderTargetEGLImage>(pageID, size, backImage.second, frontImage.second, WTFMove(backImage.first), WTFMove(frontImage.first), metadata.format, metadata.offset, metadata.stride, metadata.modifier);
+}
 
-    std::array<unsigned, 3> renderbuffers;
-    glGenRenderbuffers(3, renderbuffers.data());
+AcceleratedSurfaceDMABuf::RenderTargetEGLImage::RenderTargetEGLImage(WebCore::PageIdentifier pageID, const WebCore::IntSize& size, EGLImage backImage, EGLImage frontImage, UnixFileDescriptor&& backFD, UnixFileDescriptor&& frontFD, uint32_t format, uint32_t offset, uint32_t stride, uint64_t modifier)
+    : RenderTarget(pageID, size)
+    , m_backImage(backImage)
+    , m_frontImage(frontImage)
+{
+    glBindRenderbuffer(GL_RENDERBUFFER, m_backColorBuffer);
+    glEGLImageTargetRenderbufferStorageOES(GL_RENDERBUFFER, m_backImage);
 
-    m_back.colorBuffer = renderbuffers[0];
-    glBindRenderbuffer(GL_RENDERBUFFER, m_back.colorBuffer);
-    glEGLImageTargetRenderbufferStorageOES(GL_RENDERBUFFER, m_back.image);
+    glBindRenderbuffer(GL_RENDERBUFFER, m_frontColorBuffer);
+    glEGLImageTargetRenderbufferStorageOES(GL_RENDERBUFFER, m_frontImage);
 
-    m_front.colorBuffer = renderbuffers[1];
-    glBindRenderbuffer(GL_RENDERBUFFER, m_front.colorBuffer);
-    glEGLImageTargetRenderbufferStorageOES(GL_RENDERBUFFER, m_front.image);
+    WebProcess::singleton().parentProcessConnection()->send(Messages::AcceleratedBackingStoreDMABuf::Configure(WTFMove(backFD), WTFMove(frontFD),
+        size, format, offset, stride, modifier), pageID);
+}
 
-    m_depthStencilBuffer = renderbuffers[2];
-    glBindRenderbuffer(GL_RENDERBUFFER, m_depthStencilBuffer);
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8_OES, size.width(), size.height());
+AcceleratedSurfaceDMABuf::RenderTargetEGLImage::~RenderTargetEGLImage()
+{
+    auto& display = WebCore::PlatformDisplay::sharedDisplayForCompositing();
+    if (m_backImage)
+        display.destroyEGLImage(m_backImage);
+    if (m_frontImage)
+        display.destroyEGLImage(m_frontImage);
+}
 
-    WebProcess::singleton().parentProcessConnection()->send(Messages::AcceleratedBackingStoreDMABuf::Configure(WTFMove(backImage.first), WTFMove(frontImage.first),
-        size, metadata.format, metadata.offset, metadata.stride, metadata.modifier), m_webPage.identifier());
+void AcceleratedSurfaceDMABuf::RenderTargetEGLImage::swap()
+{
+    std::swap(m_backImage, m_frontImage);
+    RenderTarget::swap();
+}
+
+std::unique_ptr<AcceleratedSurfaceDMABuf::RenderTarget> AcceleratedSurfaceDMABuf::RenderTargetSHMImage::create(WebCore::PageIdentifier pageID, const WebCore::IntSize& size)
+{
+    auto backBuffer = ShareableBitmap::create({ size });
+    if (!backBuffer) {
+        WTFLogAlways("Failed to allocate shared memory buffer of size %dx%d", size.width(), size.height());
+        return nullptr;
+    }
+
+    auto frontBuffer = ShareableBitmap::create({ size });
+    if (!frontBuffer) {
+        WTFLogAlways("Failed to allocate shared memory buffer of size %dx%d", size.width(), size.height());
+        return nullptr;
+    }
+
+    auto backBufferHandle = backBuffer->createReadOnlyHandle();
+    if (!backBufferHandle) {
+        WTFLogAlways("Failed to create handle for shared memory buffer");
+        return nullptr;
+    }
+
+    auto frontBufferHandle = frontBuffer->createReadOnlyHandle();
+    if (!frontBufferHandle) {
+        WTFLogAlways("Failed to create handle for shared memory buffer");
+        return nullptr;
+    }
+
+    return makeUnique<RenderTargetSHMImage>(pageID, size, Ref { *backBuffer }, WTFMove(*backBufferHandle), Ref { *frontBuffer }, WTFMove(*frontBufferHandle));
+}
+
+AcceleratedSurfaceDMABuf::RenderTargetSHMImage::RenderTargetSHMImage(WebCore::PageIdentifier pageID, const WebCore::IntSize& size, Ref<ShareableBitmap>&& backBitmap, ShareableBitmapHandle&& backBitmapHandle, Ref<ShareableBitmap>&& frontBitmap, ShareableBitmapHandle&& frontBitmapHandle)
+    : RenderTarget(pageID, size)
+    , m_backBitmap(WTFMove(backBitmap))
+    , m_frontBitmap(WTFMove(frontBitmap))
+{
+    glBindRenderbuffer(GL_RENDERBUFFER, m_backColorBuffer);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, size.width(), size.height());
+
+    glBindRenderbuffer(GL_RENDERBUFFER, m_frontColorBuffer);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, size.width(), size.height());
+
+    WebProcess::singleton().parentProcessConnection()->send(Messages::AcceleratedBackingStoreDMABuf::ConfigureSHM(WTFMove(backBitmapHandle), WTFMove(frontBitmapHandle)), m_pageID);
+}
+
+void AcceleratedSurfaceDMABuf::RenderTargetSHMImage::didRenderFrame() const
+{
+    glReadPixels(0, 0, m_backBitmap->size().width(), m_backBitmap->size().height(), GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, m_backBitmap->data());
+}
+
+void AcceleratedSurfaceDMABuf::RenderTargetSHMImage::swap()
+{
+    std::swap(m_backBitmap, m_frontBitmap);
+    RenderTarget::swap();
+}
+
+void AcceleratedSurfaceDMABuf::didCreateGLContext()
+{
+    glGenFramebuffers(1, &m_fbo);
+    glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
+}
+
+void AcceleratedSurfaceDMABuf::willDestroyGLContext()
+{
+    m_target = nullptr;
+
+    if (m_fbo) {
+        glDeleteFramebuffers(1, &m_fbo);
+        m_fbo = 0;
+    }
+}
+
+uint64_t AcceleratedSurfaceDMABuf::surfaceID() const
+{
+    return m_webPage.identifier().toUInt64();
+}
+
+void AcceleratedSurfaceDMABuf::clientResize(const WebCore::IntSize& size)
+{
+    m_target = nullptr;
+    if (size.isEmpty())
+        return;
+    m_target = m_isSoftwareRast ? RenderTargetSHMImage::create(m_webPage.identifier(), size) : RenderTargetEGLImage::create(m_webPage.identifier(), size);
 }
 
 void AcceleratedSurfaceDMABuf::willRenderFrame()
 {
-    if (!m_back.image)
+    if (!m_target)
         return;
 
     glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, m_back.colorBuffer);
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_depthStencilBuffer);
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_depthStencilBuffer);
-
+    m_target->willRenderFrame();
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
         WTFLogAlways("AcceleratedSurfaceDMABuf was unable to construct a complete framebuffer");
 }
 
 void AcceleratedSurfaceDMABuf::didRenderFrame()
 {
-    if (!m_back.image)
+    if (!m_target)
         return;
 
     glFlush();
+
+    m_target->didRenderFrame();
     WebProcess::singleton().parentProcessConnection()->sendWithAsyncReply(Messages::AcceleratedBackingStoreDMABuf::Frame(), [this, weakThis = WeakPtr { *this }, runLoop = Ref { RunLoop::current() }]() mutable {
         // FIXME: it would be great if there was an option to send replies to the current run loop directly.
         runLoop->dispatch([this, weakThis = WTFMove(weakThis)] {
             if (!weakThis)
                 return;
-            std::swap(m_back, m_front);
+
+            if (m_target)
+                m_target->swap();
+
             m_client.frameComplete();
         });
     }, m_webPage.identifier());

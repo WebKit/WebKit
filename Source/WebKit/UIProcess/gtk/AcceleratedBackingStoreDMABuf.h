@@ -49,6 +49,8 @@ class UnixFileDescriptor;
 
 namespace WebKit {
 
+class ShareableBitmap;
+class ShareableBitmapHandle;
 class WebPageProxy;
 
 class AcceleratedBackingStoreDMABuf final : public AcceleratedBackingStore, public IPC::MessageReceiver {
@@ -64,6 +66,7 @@ private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
     void configure(WTF::UnixFileDescriptor&&, WTF::UnixFileDescriptor&&, const WebCore::IntSize&, uint32_t format, uint32_t offset, uint32_t stride, uint64_t modifier);
+    void configureSHM(ShareableBitmapHandle&&, ShareableBitmapHandle&&);
     void frame(CompletionHandler<void()>&&);
     void ensureGLContext();
 
@@ -125,6 +128,7 @@ private:
     class Surface final : public RenderSource {
     public:
         Surface(const WTF::UnixFileDescriptor&, const WTF::UnixFileDescriptor&, const WebCore::IntSize&, uint32_t format, uint32_t offset, uint32_t stride, float deviceScaleFactor);
+        Surface(RefPtr<ShareableBitmap>&, RefPtr<ShareableBitmap>&, float deviceScaleFactor);
         ~Surface();
 
         cairo_surface_t* surface() const { return m_surface.get(); }
@@ -138,9 +142,12 @@ private:
 #endif
 
         RefPtr<cairo_surface_t> map(struct gbm_bo*) const;
+        RefPtr<cairo_surface_t> map(RefPtr<ShareableBitmap>&) const;
 
         struct gbm_bo* m_backBuffer { nullptr };
         struct gbm_bo* m_frontBuffer { nullptr };
+        RefPtr<ShareableBitmap> m_backBitmap;
+        RefPtr<ShareableBitmap> m_frontBitmap;
         RefPtr<cairo_surface_t> m_surface;
         RefPtr<cairo_surface_t> m_backSurface;
     };
@@ -149,10 +156,13 @@ private:
 
     GRefPtr<GdkGLContext> m_gdkGLContext;
     bool m_glContextInitialized { false };
+    bool m_isSoftwareRast { false };
     struct {
         uint64_t id { 0 };
         WTF::UnixFileDescriptor backFD;
         WTF::UnixFileDescriptor frontFD;
+        RefPtr<ShareableBitmap> backBitmap;
+        RefPtr<ShareableBitmap> frontBitmap;
         WebCore::IntSize size;
         uint32_t format { 0 };
         uint32_t offset { 0 };

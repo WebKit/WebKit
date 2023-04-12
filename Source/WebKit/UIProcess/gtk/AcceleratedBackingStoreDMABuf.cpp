@@ -29,6 +29,7 @@
 #if USE(GBM)
 #include "AcceleratedBackingStoreDMABufMessages.h"
 #include "LayerTreeContext.h"
+#include "ShareableBitmap.h"
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
 #include <WebCore/DMABufFormat.h>
@@ -78,7 +79,6 @@ bool AcceleratedBackingStoreDMABuf::checkRequirements()
         const auto& eglExtensions = WebCore::PlatformDisplay::sharedDisplay().eglExtensions();
         available = eglExtensions.KHR_image_base
             && eglExtensions.KHR_surfaceless_context
-            && eglExtensions.EXT_image_dma_buf_import
             && WebCore::GLContext::isExtensionSupported(eglQueryString(nullptr, EGL_EXTENSIONS), "EGL_MESA_platform_surfaceless");
     });
     return available;
@@ -235,6 +235,13 @@ AcceleratedBackingStoreDMABuf::Surface::Surface(const UnixFileDescriptor& backFD
     }
 }
 
+AcceleratedBackingStoreDMABuf::Surface::Surface(RefPtr<ShareableBitmap>& backBitmap, RefPtr<ShareableBitmap>& frontBitmap, float deviceScaleFactor)
+    : RenderSource(backBitmap ? backBitmap->size() : WebCore::IntSize(), deviceScaleFactor)
+    , m_backBitmap(backBitmap)
+    , m_frontBitmap(frontBitmap)
+{
+}
+
 AcceleratedBackingStoreDMABuf::Surface::~Surface()
 {
     m_surface = nullptr;
@@ -272,10 +279,23 @@ RefPtr<cairo_surface_t> AcceleratedBackingStoreDMABuf::Surface::map(struct gbm_b
     return surface;
 }
 
+RefPtr<cairo_surface_t> AcceleratedBackingStoreDMABuf::Surface::map(RefPtr<ShareableBitmap>& bitmap) const
+{
+    if (!bitmap)
+        return nullptr;
+
+    return bitmap->createCairoSurface();
+}
+
 bool AcceleratedBackingStoreDMABuf::Surface::swap()
 {
-    std::swap(m_backBuffer, m_frontBuffer);
-    m_surface = map(m_frontBuffer);
+    if (m_backBitmap && m_frontBitmap) {
+        std::swap(m_backBitmap, m_frontBitmap);
+        m_surface = map(m_frontBitmap);
+    } else {
+        std::swap(m_backBuffer, m_frontBuffer);
+        m_surface = map(m_frontBuffer);
+    }
     if (m_surface) {
         cairo_surface_mark_dirty(m_surface.get());
         return true;
@@ -315,6 +335,7 @@ void AcceleratedBackingStoreDMABuf::Surface::paint(GtkWidget*, cairo_t* cr, cons
 
 void AcceleratedBackingStoreDMABuf::configure(UnixFileDescriptor&& backFD, UnixFileDescriptor&& frontFD, const WebCore::IntSize& size, uint32_t format, uint32_t offset, uint32_t stride, uint64_t modifier)
 {
+    m_isSoftwareRast = false;
     m_surface.backFD = WTFMove(backFD);
     m_surface.frontFD = WTFMove(frontFD);
     m_surface.size = size;
@@ -326,8 +347,20 @@ void AcceleratedBackingStoreDMABuf::configure(UnixFileDescriptor&& backFD, UnixF
         m_pendingSource = createSource();
 }
 
+void AcceleratedBackingStoreDMABuf::configureSHM(ShareableBitmapHandle&& backBufferHandle, ShareableBitmapHandle&& frontBufferHandle)
+{
+    m_isSoftwareRast = true;
+    m_surface.backBitmap = ShareableBitmap::create(backBufferHandle, SharedMemory::Protection::ReadOnly);
+    m_surface.frontBitmap = ShareableBitmap::create(frontBufferHandle, SharedMemory::Protection::ReadOnly);
+    if (gtk_widget_get_realized(m_webPage.viewWidget()))
+        m_pendingSource = createSource();
+}
+
 std::unique_ptr<AcceleratedBackingStoreDMABuf::RenderSource> AcceleratedBackingStoreDMABuf::createSource()
 {
+    if (m_isSoftwareRast)
+        return makeUnique<Surface>(m_surface.backBitmap, m_surface.frontBitmap, m_webPage.deviceScaleFactor());
+
     if (!gtkGLContextIsEGL())
         return makeUnique<Surface>(m_surface.backFD, m_surface.frontFD, m_surface.size, m_surface.format, m_surface.offset, m_surface.stride, m_webPage.deviceScaleFactor());
 
@@ -340,7 +373,11 @@ void AcceleratedBackingStoreDMABuf::frame(CompletionHandler<void()>&& completion
     if (m_pendingSource)
         m_committedSource = WTFMove(m_pendingSource);
 
-    std::swap(m_surface.backFD, m_surface.frontFD);
+    if (m_isSoftwareRast)
+        std::swap(m_surface.backBitmap, m_surface.frontBitmap);
+    else
+        std::swap(m_surface.backFD, m_surface.frontFD);
+
     if (!m_committedSource || !m_committedSource->swap()) {
         completionHandler();
         return;
@@ -353,7 +390,10 @@ void AcceleratedBackingStoreDMABuf::frame(CompletionHandler<void()>&& completion
 
 void AcceleratedBackingStoreDMABuf::realize()
 {
-    if (!m_surface.backFD && !m_surface.frontFD)
+    if (m_isSoftwareRast && !m_surface.backBitmap && !m_surface.frontBitmap)
+        return;
+
+    if (!m_isSoftwareRast && !m_surface.backFD && !m_surface.frontFD)
         return;
 
     m_committedSource = createSource();
