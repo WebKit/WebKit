@@ -162,7 +162,7 @@ inline bool shouldAcceptUnitlessValue(double value, CSSParserMode parserMode, Un
 
     if (isUnitlessValueParsingEnabledForMode(parserMode))
         return true;
-    
+
     return parserMode == HTMLQuirksMode && unitless == UnitlessQuirk::Allow;
 }
 
@@ -277,7 +277,7 @@ struct IntegerTypeRawKnownTokenTypeNumberConsumer {
     static std::optional<IntType> consume(CSSParserTokenRange& range, const CSSCalcSymbolTable&, ValueRange, CSSParserMode, UnitlessQuirk, UnitlessZeroQuirk)
     {
         ASSERT(range.peek().type() == NumberToken);
-        
+
         if (range.peek().numericValueType() == NumberValueType || range.peek().numericValue() < computeMinimumValue(integerRange))
             return std::nullopt;
         return clampTo<IntType>(range.consumeIncludingWhitespace().numericValue());
@@ -305,7 +305,7 @@ struct IntegerTypeKnownTokenTypeNumberConsumer {
     static RefPtr<CSSPrimitiveValue> consume(CSSParserTokenRange& range, const CSSCalcSymbolTable& symbolTable, ValueRange valueRange, CSSParserMode parserMode, UnitlessQuirk unitless, UnitlessZeroQuirk unitlessZero)
     {
         ASSERT(range.peek().type() == NumberToken);
-        
+
         if (auto integer = IntegerTypeRawKnownTokenTypeNumberConsumer<IntType, integerRange>::consume(range, symbolTable, valueRange, parserMode, unitless, unitlessZero))
             return CSSPrimitiveValue::createInteger(*integer);
         return nullptr;
@@ -344,7 +344,7 @@ struct NumberRawKnownTokenTypeNumberConsumer {
     static std::optional<NumberRaw> consume(CSSParserTokenRange& range, const CSSCalcSymbolTable&, ValueRange valueRange, CSSParserMode, UnitlessQuirk, UnitlessZeroQuirk)
     {
         ASSERT(range.peek().type() == NumberToken);
-        
+
         if (auto validatedValue = validatedNumberRaw(range.peek().numericValue(), valueRange)) {
             range.consumeIncludingWhitespace();
             return validatedValue;
@@ -394,9 +394,9 @@ struct NumberCSSPrimitiveValueWithCalcWithKnownTokenTypeNumberConsumer {
     static RefPtr<CSSPrimitiveValue> consume(CSSParserTokenRange& range, const CSSCalcSymbolTable&, ValueRange valueRange, CSSParserMode, UnitlessQuirk, UnitlessZeroQuirk)
     {
         ASSERT(range.peek().type() == NumberToken);
-        
+
         auto token = range.peek();
-        
+
         if (auto validatedValue = validatedNumberRaw(token.numericValue(), valueRange)) {
             auto unitType = token.unitType();
             range.consumeIncludingWhitespace();
@@ -490,7 +490,7 @@ struct PercentCSSPrimitiveValueWithCalcWithKnownTokenTypePercentConsumer {
     static RefPtr<CSSPrimitiveValue> consume(CSSParserTokenRange& range, const CSSCalcSymbolTable&, ValueRange valueRange, CSSParserMode, UnitlessQuirk, UnitlessZeroQuirk)
     {
         ASSERT(range.peek().type() == PercentageToken);
-        
+
         if (auto validatedValue = validatedPercentRaw(range.peek().numericValue(), valueRange)) {
             range.consumeIncludingWhitespace();
             return CSSPrimitiveValue::create(validatedValue->value, CSSUnitType::CSS_PERCENTAGE);
@@ -1065,7 +1065,7 @@ auto consumeMetaConsumer(CSSParserTokenRange& range, const CSSCalcSymbolTable& s
 
     case IdentToken:
         return MetaConsumerDispatcher<IdentToken, Consumer>::consume(range, symbolTable, valueRange, parserMode, unitless, unitlessZero, std::forward<Args>(args)...);
-    
+
     default:
         return { };
     }
@@ -1915,7 +1915,7 @@ static Color parseNonRelativeRGBParametersRaw(CSSParserTokenRange& args)
 {
     struct Component {
         enum class Type { Number, Percentage, Unknown };
-        
+
         double value;
         Type type;
     };
@@ -2904,7 +2904,7 @@ static std::optional<ColorInterpolationMethod> consumeColorInterpolationMethod(C
         auto hueInterpolationMethod = consumeHueInterpolationMethod(args);
         if (!hueInterpolationMethod)
             return {{ colorInterpolationMethod, AlphaPremultiplication::Premultiplied }};
-        
+
         // If the hue-interpolation-method was provided it must be followed immediately by the 'hue' identifier.
         if (!consumeIdentRaw<CSSValueHue>(args))
             return { };
@@ -3020,10 +3020,10 @@ static Color parseColorMixFunctionParametersRaw(CSSParserTokenRange& range, cons
         return { };
 
     auto args = consumeFunction(range);
-    
+
     if (args.peek().id() != CSSValueIn)
         return { };
-    
+
     auto colorInterpolationMethod = consumeColorInterpolationMethod(args);
     if (!colorInterpolationMethod)
         return { };
@@ -3465,13 +3465,13 @@ std::optional<PositionCoordinates> consumePositionCoordinates(CSSParserTokenRang
     auto value2 = consumePositionComponent(range, parserMode, unitless, negativePercentagePolicy);
     if (!value2)
         return positionFromOneValue(*value1);
-    
+
     auto value3 = consumePositionComponent(range, parserMode, unitless, negativePercentagePolicy);
     if (!value3)
         return positionFromTwoValues(*value1, *value2);
-    
+
     auto value4 = consumePositionComponent(range, parserMode, unitless, negativePercentagePolicy);
-    
+
     std::array<CSSPrimitiveValue*, 5> values {
         value1.get(),
         value2.get(),
@@ -3479,10 +3479,10 @@ std::optional<PositionCoordinates> consumePositionCoordinates(CSSParserTokenRang
         value4.get(),
         nullptr
     };
-    
+
     if (value4)
         return positionFromFourValues(values);
-    
+
     if (positionSyntax != PositionSyntax::BackgroundPosition)
         return std::nullopt;
 
@@ -3787,7 +3787,7 @@ static RefPtr<CSSValue> consumePrefixedRadialGradient(CSSParserTokenRange& range
         { CSSValueEllipse, CSSPrefixedRadialGradientValue::ShapeKeyword::Ellipse },
     };
     static constexpr SortedArrayMap shapeMap { shapeMappings };
-    
+
     static constexpr std::pair<CSSValueID, CSSPrefixedRadialGradientValue::ExtentKeyword> extentMappings[] {
         { CSSValueContain, CSSPrefixedRadialGradientValue::ExtentKeyword::Contain },
         { CSSValueCover, CSSPrefixedRadialGradientValue::ExtentKeyword::Cover },
@@ -3898,7 +3898,7 @@ static RefPtr<CSSValue> consumeRadialGradient(CSSParserTokenRange& range, const 
         { CSSValueEllipse, CSSRadialGradientValue::ShapeKeyword::Ellipse },
     };
     static constexpr SortedArrayMap shapeMap { shapeMappings };
-    
+
     static constexpr std::pair<CSSValueID, CSSRadialGradientValue::ExtentKeyword> extentMappings[] {
         { CSSValueClosestSide, CSSRadialGradientValue::ExtentKeyword::ClosestSide },
         { CSSValueClosestCorner, CSSRadialGradientValue::ExtentKeyword::ClosestCorner },
@@ -4077,7 +4077,7 @@ static RefPtr<CSSValue> consumePrefixedLinearGradient(CSSParserTokenRange& range
         { CSSValueBottom, CSSPrefixedLinearGradientValue::Vertical::Bottom },
     };
     static constexpr SortedArrayMap verticalMap { verticalMappings };
-    
+
     static constexpr std::pair<CSSValueID, CSSPrefixedLinearGradientValue::Horizontal> horizontalMappings[] {
         { CSSValueLeft, CSSPrefixedLinearGradientValue::Horizontal::Left },
         { CSSValueRight, CSSPrefixedLinearGradientValue::Horizontal::Right },
@@ -4154,7 +4154,7 @@ static RefPtr<CSSValue> consumeLinearGradient(CSSParserTokenRange& range, const 
         { CSSValueBottom, CSSLinearGradientValue::Vertical::Bottom },
     };
     static constexpr SortedArrayMap verticalMap { verticalMappings };
-    
+
     static constexpr std::pair<CSSValueID, CSSLinearGradientValue::Horizontal> horizontalMappings[] {
         { CSSValueLeft, CSSLinearGradientValue::Horizontal::Left },
         { CSSValueRight, CSSLinearGradientValue::Horizontal::Right },
@@ -4268,7 +4268,7 @@ static RefPtr<CSSValue> consumeConicGradient(CSSParserTokenRange& range, const C
         if (!angle)
             return nullptr;
     }
-    
+
     std::optional<CSSGradientPosition> position;
     if (consumeIdent<CSSValueAt>(range)) {
         auto positionCoordinate = consumePositionCoordinates(range, context.mode, UnitlessQuirk::Forbid, PositionSyntax::Position);
@@ -4534,7 +4534,7 @@ static bool isGeneratedImage(CSSValueID id)
 #endif
         || id == CSSValueFilter;
 }
-    
+
 static bool isPixelFilterFunction(CSSValueID filterFunction)
 {
     switch (filterFunction) {
@@ -4662,23 +4662,23 @@ RefPtr<CSSShadowValue> consumeSingleShadow(CSSParserTokenRange& range, const CSS
     RefPtr<CSSPrimitiveValue> verticalOffset;
     RefPtr<CSSPrimitiveValue> blurRadius;
     RefPtr<CSSPrimitiveValue> spreadDistance;
-    
+
     for (size_t i = 0; i < 3; i++) {
         if (range.atEnd())
             break;
-        
+
         const CSSParserToken& nextToken = range.peek();
         // If we have come to a comma (e.g. if this range represents a comma-separated list of <shadow>s), we are done parsing this <shadow>.
         if (nextToken.type() == CommaToken)
             break;
-        
+
         if (nextToken.id() == CSSValueInset) {
             if (!allowInset || style)
                 return nullptr;
             style = consumeIdent(range);
             continue;
         }
-        
+
         auto maybeColor = consumeColor(range, context);
         if (maybeColor) {
             // If we just parsed a color but already had one, the given token range is not a valid <shadow>.
@@ -4687,7 +4687,7 @@ RefPtr<CSSShadowValue> consumeSingleShadow(CSSParserTokenRange& range, const CSS
             color = maybeColor;
             continue;
         }
-        
+
         // If the current token is neither a color nor the `inset` keyword, it must be the lengths component of this value.
         if (horizontalOffset || verticalOffset || blurRadius || spreadDistance) {
             // If we've already parsed these lengths, the given value is invalid as there cannot be two lengths components in a single <shadow> value.
@@ -4711,7 +4711,7 @@ RefPtr<CSSShadowValue> consumeSingleShadow(CSSParserTokenRange& range, const CSS
         if (blurRadius && allowSpread)
             spreadDistance = consumeLength(range, context.mode, ValueRange::All);
     }
-    
+
     // In order for this to be a valid <shadow>, at least these lengths must be present.
     if (!horizontalOffset || !verticalOffset)
         return nullptr;
@@ -4874,7 +4874,7 @@ Vector<AtomString> consumeFamilyNameList(CSSParserTokenRange& range)
         auto name = consumeFamilyNameRaw(range);
         if (name.isNull())
             return { };
-        
+
         result.append(name);
     } while (consumeCommaIncludingWhitespace(range));
     return result;
@@ -5268,11 +5268,11 @@ RefPtr<CSSValue> consumeFontVariantEastAsian(CSSParserTokenRange& range)
 {
     if (range.peek().id() == CSSValueNormal)
         return consumeIdent(range);
-    
+
     std::optional<FontVariantEastAsianVariant> variant;
     std::optional<FontVariantEastAsianWidth> width;
     std::optional<FontVariantEastAsianRuby> ruby;
-    
+
     auto parseSomethingWithoutError = [&range, &variant, &width, &ruby] () {
         bool hasParsedSomething = false;
 
@@ -5329,12 +5329,12 @@ RefPtr<CSSValue> consumeFontVariantEastAsian(CSSParserTokenRange& range)
             default:
                 return hasParsedSomething;
             }
-        
+
             range.consumeIncludingWhitespace();
             hasParsedSomething = true;
         }
     };
-    
+
     if (!parseSomethingWithoutError())
         return nullptr;
 
@@ -5408,10 +5408,10 @@ RefPtr<CSSValue> consumeFontVariantAlternates(CSSParserTokenRange& range)
             auto ident = consumeCustomIdent(args);
             if (!args.atEnd())
                 return false;
-        
+
             if (!ident)
                 return false;
-        
+
             hasParsedSomething = true;
             value = ident->stringValue();
             return true;
@@ -5430,7 +5430,7 @@ RefPtr<CSSValue> consumeFontVariantAlternates(CSSParserTokenRange& range)
 
             if (!args.atEnd())
                 return false;
-        
+
             hasParsedSomething = true;
             return true;
         };
@@ -5438,7 +5438,7 @@ RefPtr<CSSValue> consumeFontVariantAlternates(CSSParserTokenRange& range)
             const CSSParserToken& token = range.peek();
             if (token.id() == CSSValueHistoricalForms) {
                 consumeIdent<CSSValueHistoricalForms>(range);
-                
+
                 if (result.valuesRef().historicalForms)
                     return false;
 
@@ -5766,7 +5766,7 @@ RefPtr<CSSValue> consumeClip(CSSParserTokenRange& range, CSSParserMode mode)
     auto left = consumeClipComponent(args, mode);
     if (!left || !args.atEnd())
         return nullptr;
-    
+
     return CSSRectValue::create({ top.releaseNonNull(), right.releaseNonNull(), bottom.releaseNonNull(), left.releaseNonNull() });
 }
 
@@ -5860,11 +5860,11 @@ static RefPtr<CSSValue> consumeSteps(CSSParserTokenRange& range)
     ASSERT(range.peek().functionId() == CSSValueSteps);
     CSSParserTokenRange rangeCopy = range;
     CSSParserTokenRange args = consumeFunction(rangeCopy);
-    
+
     auto stepsValue = consumePositiveIntegerRaw(args);
     if (!stepsValue)
         return nullptr;
-    
+
     std::optional<StepsTimingFunction::StepPosition> stepPosition;
     if (consumeCommaIncludingWhitespace(args)) {
         switch (args.consumeIncludingWhitespace().id()) {
@@ -5890,7 +5890,7 @@ static RefPtr<CSSValue> consumeSteps(CSSParserTokenRange& range)
             return nullptr;
         }
     }
-    
+
     if (!args.atEnd())
         return nullptr;
 
@@ -5910,7 +5910,7 @@ static RefPtr<CSSValue> consumeCubicBezier(CSSParserTokenRange& range)
     auto x1 = consumeNumberRaw(args);
     if (!x1 || x1->value < 0 || x1->value > 1)
         return nullptr;
-    
+
     if (!consumeCommaIncludingWhitespace(args))
         return nullptr;
 
@@ -5949,17 +5949,17 @@ static RefPtr<CSSValue> consumeSpringFunction(CSSParserTokenRange& range)
     auto mass = consumeNumberRaw(args);
     if (!mass || mass->value <= 0)
         return nullptr;
-    
+
     // Stiffness must be greater than 0.
     auto stiffness = consumeNumberRaw(args);
     if (!stiffness || stiffness->value <= 0)
         return nullptr;
-    
+
     // Damping coefficient must be greater than or equal to 0.
     auto damping = consumeNumberRaw(args);
     if (!damping || damping->value < 0)
         return nullptr;
-    
+
     // Initial velocity may have any value.
     auto initialVelocity = consumeNumberRaw(args);
     if (!initialVelocity)
@@ -6159,7 +6159,7 @@ RefPtr<CSSValue> consumeTransformFunction(CSSParserTokenRange& range, const CSSP
     CSSParserTokenRange args = consumeFunction(range);
     if (args.atEnd())
         return nullptr;
-    
+
     CSSValueListBuilder arguments;
     RefPtr<CSSValue> parsedValue;
     switch (functionId) {
@@ -6565,7 +6565,7 @@ RefPtr<CSSValue> consumeAttr(CSSParserTokenRange args, const CSSParserContext& c
 {
     if (args.peek().type() != IdentToken)
         return nullptr;
-    
+
     CSSParserToken token = args.consumeIncludingWhitespace();
     AtomString attrName;
     if (context.isHTMLDocument)
@@ -6777,11 +6777,11 @@ static RefPtr<CSSPathValue> consumeBasicShapePath(CSSParserTokenRange& args)
 
     if (args.peek().type() != StringToken)
         return nullptr;
-    
+
     SVGPathByteStream byteStream;
     if (!buildSVGPathByteStreamFromString(args.consumeIncludingWhitespace().value().toString(), byteStream, UnalteredParsing))
         return nullptr;
-    
+
     return CSSPathValue::create(WTFMove(byteStream), rule);
 }
 
@@ -7208,7 +7208,7 @@ RefPtr<CSSValue> consumeReflect(CSSParserTokenRange& range, const CSSParserConte
 {
     if (range.peek().id() == CSSValueNone)
         return consumeIdent(range);
-    
+
     auto direction = consumeIdentRaw<CSSValueAbove, CSSValueBelow, CSSValueLeft, CSSValueRight>(range);
     if (!direction)
         return nullptr;
@@ -7250,8 +7250,7 @@ template<CSSPropertyID property> RefPtr<CSSValue> consumeBackgroundSize(CSSParse
     bool shouldCoalesce = true;
     RefPtr<CSSPrimitiveValue> horizontal = consumeIdent<CSSValueAuto>(range);
     if (!horizontal) {
-        // FIXME: We're allowing the unitless quirk on this property because our tests assume that. Other browser engines don't allow it though.
-        horizontal = consumeLengthOrPercent(range, mode, ValueRange::NonNegative, UnitlessQuirk::Allow);
+        horizontal = consumeLengthOrPercent(range, mode, ValueRange::NonNegative, UnitlessQuirk::Forbid);
         if (!horizontal)
             return nullptr;
         shouldCoalesce = false;
@@ -7261,7 +7260,7 @@ template<CSSPropertyID property> RefPtr<CSSValue> consumeBackgroundSize(CSSParse
     if (!range.atEnd()) {
         vertical = consumeIdent<CSSValueAuto>(range);
         if (!vertical)
-            vertical = consumeLengthOrPercent(range, mode, ValueRange::NonNegative, UnitlessQuirk::Allow);
+            vertical = consumeLengthOrPercent(range, mode, ValueRange::NonNegative, UnitlessQuirk::Forbid);
     }
     if (!vertical) {
         if constexpr (property == CSSPropertyWebkitBackgroundSize) {
@@ -7280,7 +7279,7 @@ template<CSSPropertyID property> RefPtr<CSSValue> consumeBackgroundSize(CSSParse
 }
 
 RefPtr<CSSValueList> consumeAlignTracks(CSSParserTokenRange& range)
-{    
+{
     CSSValueListBuilder parsedValues;
     do {
         if (range.atEnd())
@@ -7294,7 +7293,7 @@ RefPtr<CSSValueList> consumeAlignTracks(CSSParserTokenRange& range)
 }
 
 RefPtr<CSSValueList> consumeJustifyTracks(CSSParserTokenRange& range)
-{    
+{
     CSSValueListBuilder parsedValues;
     do {
         if (range.atEnd())
@@ -7951,12 +7950,12 @@ RefPtr<CSSValue> consumeSpeakAs(CSSParserTokenRange& range)
         return nullptr;
     return CSSValueList::createSpaceSeparated(WTFMove(list));
 }
-    
+
 RefPtr<CSSValue> consumeHangingPunctuation(CSSParserTokenRange& range)
 {
     if (range.peek().id() == CSSValueNone)
         return consumeIdent(range);
-    
+
     CSSValueListBuilder list;
 
     bool seenForceEnd = false;

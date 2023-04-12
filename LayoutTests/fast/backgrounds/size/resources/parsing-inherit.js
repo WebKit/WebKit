@@ -5,11 +5,11 @@ function test(value)
     var div = document.createElement("div");
     div.setAttribute("style", value);
     document.body.appendChild(div);
-    
+
     var child = document.createElement("div");
     child.setAttribute("style", "background-size: inherit;");
     div.appendChild(child);
-    
+
     var result = getComputedStyle(child, null).getPropertyValue("background-size");
     document.body.removeChild(div);
     return result;
@@ -17,7 +17,7 @@ function test(value)
 
 shouldBe('test("background-size: contain;")', '"contain"');
 shouldBe('test("background-size: cover;")', '"cover"');
-shouldBe('test("background-size: 100 100;")', '"100px 100px"');
+shouldBe('test("background-size: 100 100;")', '"auto"');
 shouldBe('test("background-size: 100px 100px;")', '"100px 100px"');
 shouldBe('test("background-size: auto 50px;")', '"auto 50px"');
 shouldBe('test("background-size: 50px auto;")', '"50px auto"');
