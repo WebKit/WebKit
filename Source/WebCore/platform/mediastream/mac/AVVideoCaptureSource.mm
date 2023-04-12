@@ -309,10 +309,14 @@ double AVVideoCaptureSource::facingModeFitnessScoreAdjustment() const
             [devicePriorities addObject:AVCaptureDeviceTypeBuiltInTripleCamera];
         if (PAL::canLoad_AVFoundation_AVCaptureDeviceTypeBuiltInDualWideCamera())
             [devicePriorities addObject:AVCaptureDeviceTypeBuiltInDualWideCamera];
-        [devicePriorities addObject:AVCaptureDeviceTypeBuiltInUltraWideCamera];
-        [devicePriorities addObject:AVCaptureDeviceTypeBuiltInDualCamera];
-        [devicePriorities addObject:AVCaptureDeviceTypeBuiltInWideAngleCamera];
-        [devicePriorities addObject:AVCaptureDeviceTypeBuiltInTelephotoCamera];
+        if (PAL::canLoad_AVFoundation_AVCaptureDeviceTypeBuiltInUltraWideCamera())
+            [devicePriorities addObject:AVCaptureDeviceTypeBuiltInUltraWideCamera];
+        if (PAL::canLoad_AVFoundation_AVCaptureDeviceTypeBuiltInDualCamera())
+            [devicePriorities addObject:AVCaptureDeviceTypeBuiltInDualCamera];
+        if (PAL::canLoad_AVFoundation_AVCaptureDeviceTypeBuiltInWideAngleCamera())
+            [devicePriorities addObject:AVCaptureDeviceTypeBuiltInWideAngleCamera];
+        if (PAL::canLoad_AVFoundation_AVCaptureDeviceTypeBuiltInTelephotoCamera())
+            [devicePriorities addObject:AVCaptureDeviceTypeBuiltInTelephotoCamera];
         if (PAL::canLoad_AVFoundation_AVCaptureDeviceTypeDeskViewCamera())
             [devicePriorities addObject:AVCaptureDeviceTypeDeskViewCamera];
     }
