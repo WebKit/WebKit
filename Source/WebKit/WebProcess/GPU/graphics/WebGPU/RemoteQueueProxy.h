@@ -27,7 +27,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
-#include "RemoteDeviceProxy.h"
+#include "RemoteAdapterProxy.h"
 #include "WebGPUIdentifier.h"
 #include <pal/graphics/WebGPU/WebGPUQueue.h>
 #include <wtf/Deque.h>
@@ -39,20 +39,20 @@ class ConvertToBackingContext;
 class RemoteQueueProxy final : public PAL::WebGPU::Queue {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RemoteQueueProxy> create(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
+    static Ref<RemoteQueueProxy> create(RemoteAdapterProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
     {
         return adoptRef(*new RemoteQueueProxy(parent, convertToBackingContext, identifier));
     }
 
     virtual ~RemoteQueueProxy();
 
-    RemoteDeviceProxy& parent() { return m_parent; }
-    RemoteGPUProxy& root() { return m_parent.root(); }
+    RemoteAdapterProxy& parent() { return m_parent; }
+    RemoteGPUProxy& root() { return m_parent->root(); }
 
 private:
     friend class DowncastConvertToBackingContext;
 
-    RemoteQueueProxy(RemoteDeviceProxy&, ConvertToBackingContext&, WebGPUIdentifier);
+    RemoteQueueProxy(RemoteAdapterProxy&, ConvertToBackingContext&, WebGPUIdentifier);
 
     RemoteQueueProxy(const RemoteQueueProxy&) = delete;
     RemoteQueueProxy(RemoteQueueProxy&&) = delete;
@@ -103,7 +103,7 @@ private:
 
     WebGPUIdentifier m_backing;
     Ref<ConvertToBackingContext> m_convertToBackingContext;
-    RemoteDeviceProxy& m_parent;
+    Ref<RemoteAdapterProxy> m_parent;
 };
 
 } // namespace WebKit::WebGPU

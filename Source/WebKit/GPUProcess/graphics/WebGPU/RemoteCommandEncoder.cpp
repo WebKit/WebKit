@@ -50,6 +50,11 @@ RemoteCommandEncoder::RemoteCommandEncoder(PAL::WebGPU::CommandEncoder& commandE
 
 RemoteCommandEncoder::~RemoteCommandEncoder() = default;
 
+void RemoteCommandEncoder::destruct()
+{
+    m_objectHeap.removeObject(m_identifier);
+}
+
 void RemoteCommandEncoder::stopListeningForIPC()
 {
     m_streamConnection->stopReceivingMessages(Messages::RemoteCommandEncoder::messageReceiverName(), m_identifier.toUInt64());

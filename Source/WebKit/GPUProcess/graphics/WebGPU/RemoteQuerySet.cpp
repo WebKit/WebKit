@@ -56,6 +56,11 @@ void RemoteQuerySet::destroy()
     m_backing->destroy();
 }
 
+void RemoteQuerySet::destruct()
+{
+    m_objectHeap.removeObject(m_identifier);
+}
+
 void RemoteQuerySet::setLabel(String&& label)
 {
     m_backing->setLabel(WTFMove(label));

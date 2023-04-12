@@ -53,12 +53,14 @@ RemoteDeviceProxy::RemoteDeviceProxy(Ref<PAL::WebGPU::SupportedFeatures>&& featu
     , m_backing(identifier)
     , m_convertToBackingContext(convertToBackingContext)
     , m_parent(parent)
-    , m_queue(RemoteQueueProxy::create(*this, convertToBackingContext, queueIdentifier))
+    , m_queue(RemoteQueueProxy::create(parent, convertToBackingContext, queueIdentifier))
 {
 }
 
 RemoteDeviceProxy::~RemoteDeviceProxy()
 {
+    auto sendResult = send(Messages::RemoteDevice::Destruct());
+    UNUSED_VARIABLE(sendResult);
 }
 
 Ref<PAL::WebGPU::Queue> RemoteDeviceProxy::queue()

@@ -42,6 +42,8 @@ RemoteBufferProxy::RemoteBufferProxy(RemoteDeviceProxy& parent, ConvertToBacking
 
 RemoteBufferProxy::~RemoteBufferProxy()
 {
+    auto sendResult = send(Messages::RemoteBuffer::Destruct());
+    UNUSED_VARIABLE(sendResult);
 }
 
 void RemoteBufferProxy::mapAsync(PAL::WebGPU::MapModeFlags mapModeFlags, PAL::WebGPU::Size64 offset, std::optional<PAL::WebGPU::Size64> size, CompletionHandler<void(bool)>&& callback)

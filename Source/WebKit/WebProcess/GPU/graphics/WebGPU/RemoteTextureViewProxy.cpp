@@ -42,6 +42,8 @@ RemoteTextureViewProxy::RemoteTextureViewProxy(RemoteTextureProxy& parent, Conve
 
 RemoteTextureViewProxy::~RemoteTextureViewProxy()
 {
+    auto sendResult = send(Messages::RemoteTextureView::Destruct());
+    UNUSED_VARIABLE(sendResult);
 }
 
 void RemoteTextureViewProxy::setLabelInternal(const String& label)

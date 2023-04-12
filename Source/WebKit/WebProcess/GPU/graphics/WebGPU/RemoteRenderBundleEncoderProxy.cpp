@@ -43,6 +43,8 @@ RemoteRenderBundleEncoderProxy::RemoteRenderBundleEncoderProxy(RemoteDeviceProxy
 
 RemoteRenderBundleEncoderProxy::~RemoteRenderBundleEncoderProxy()
 {
+    auto sendResult = send(Messages::RemoteRenderBundleEncoder::Destruct());
+    UNUSED_VARIABLE(sendResult);
 }
 
 void RemoteRenderBundleEncoderProxy::setPipeline(const PAL::WebGPU::RenderPipeline& renderPipeline)

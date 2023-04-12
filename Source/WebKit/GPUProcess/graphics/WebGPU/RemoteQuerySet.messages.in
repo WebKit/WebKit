@@ -25,6 +25,7 @@
 
 messages -> RemoteQuerySet NotRefCounted Stream {
     void Destroy()
+    void Destruct()
     void SetLabel(String label)
 }
 

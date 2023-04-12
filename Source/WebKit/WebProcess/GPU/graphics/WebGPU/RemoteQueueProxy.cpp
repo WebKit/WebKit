@@ -33,7 +33,7 @@
 
 namespace WebKit::WebGPU {
 
-RemoteQueueProxy::RemoteQueueProxy(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
+RemoteQueueProxy::RemoteQueueProxy(RemoteAdapterProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
     : m_backing(identifier)
     , m_convertToBackingContext(convertToBackingContext)
     , m_parent(parent)
@@ -42,6 +42,8 @@ RemoteQueueProxy::RemoteQueueProxy(RemoteDeviceProxy& parent, ConvertToBackingCo
 
 RemoteQueueProxy::~RemoteQueueProxy()
 {
+    auto sendResult = send(Messages::RemoteQueue::Destruct());
+    UNUSED_VARIABLE(sendResult);
 }
 
 void RemoteQueueProxy::submit(Vector<std::reference_wrapper<PAL::WebGPU::CommandBuffer>>&& commandBuffers)

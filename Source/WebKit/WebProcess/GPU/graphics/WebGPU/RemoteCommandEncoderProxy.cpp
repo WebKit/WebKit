@@ -45,6 +45,8 @@ RemoteCommandEncoderProxy::RemoteCommandEncoderProxy(RemoteDeviceProxy& parent, 
 
 RemoteCommandEncoderProxy::~RemoteCommandEncoderProxy()
 {
+    auto sendResult = send(Messages::RemoteCommandEncoder::Destruct());
+    UNUSED_VARIABLE(sendResult);
 }
 
 Ref<PAL::WebGPU::RenderPassEncoder> RemoteCommandEncoderProxy::beginRenderPass(const PAL::WebGPU::RenderPassDescriptor& descriptor)

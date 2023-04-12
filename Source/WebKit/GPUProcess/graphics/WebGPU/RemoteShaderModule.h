@@ -78,6 +78,7 @@ private:
     void compilationInfo(CompletionHandler<void(Vector<WebGPU::CompilationMessage>&&)>&&);
 
     void setLabel(String&&);
+    void destruct();
 
     Ref<PAL::WebGPU::ShaderModule> m_backing;
     WebGPU::ObjectHeap& m_objectHeap;

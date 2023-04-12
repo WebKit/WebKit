@@ -26,6 +26,7 @@
 messages -> RemoteTexture NotRefCounted Stream {
     void CreateView(std::optional<WebKit::WebGPU::TextureViewDescriptor> descriptor, WebKit::WebGPUIdentifier identifier)
     void Destroy()
+    void Destruct()
     void SetLabel(String label)
 }
 

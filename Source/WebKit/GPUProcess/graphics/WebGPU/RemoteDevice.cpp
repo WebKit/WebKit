@@ -106,6 +106,11 @@ void RemoteDevice::destroy()
     m_backing->destroy();
 }
 
+void RemoteDevice::destruct()
+{
+    m_objectHeap.removeObject(m_identifier);
+}
+
 void RemoteDevice::createBuffer(const WebGPU::BufferDescriptor& descriptor, WebGPUIdentifier identifier)
 {
     auto convertedDescriptor = m_objectHeap.convertFromBacking(descriptor);
