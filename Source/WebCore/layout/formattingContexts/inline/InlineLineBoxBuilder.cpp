@@ -603,6 +603,7 @@ void LineBoxBuilder::adjustIdeographicBaselineIfApplicable(LineBox& lineBox)
             InlineLayoutUnit ideographicBaseline = roundToInt(inlineLevelBoxHeight / 2);
             // Move the baseline position but keep the same logical height.
             inlineLevelBox.setAscent(ideographicBaseline);
+            inlineLevelBox.setDescent(inlineLevelBoxHeight - ideographicBaseline);
         }
 
         auto needsFontFallbackAdjustment = inlineLevelBox.isInlineBox();
