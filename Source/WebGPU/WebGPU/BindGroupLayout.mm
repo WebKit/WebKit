@@ -49,14 +49,20 @@ static MTLArgumentDescriptor *createArgumentDescriptor(const WGPUBufferBindingLa
     case WGPUBufferBindingType_Uniform:
     case WGPUBufferBindingType_ReadOnlyStorage:
 #if USE(METAL_ARGUMENT_ACCESS_ENUMS)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         descriptor.access = MTLArgumentAccessReadOnly;
+#pragma clang diagnostic pop
 #else
         descriptor.access = MTLBindingAccessReadOnly;
 #endif
         break;
     case WGPUBufferBindingType_Storage:
 #if USE(METAL_ARGUMENT_ACCESS_ENUMS)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         descriptor.access = MTLArgumentAccessReadWrite;
+#pragma clang diagnostic pop
 #else
         descriptor.access = MTLBindingAccessReadWrite;
 #endif
@@ -83,7 +89,10 @@ static MTLArgumentDescriptor *createArgumentDescriptor(const WGPUSamplerBindingL
     auto descriptor = [MTLArgumentDescriptor new];
     descriptor.dataType = MTLDataTypeSampler;
 #if USE(METAL_ARGUMENT_ACCESS_ENUMS)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     descriptor.access = MTLArgumentAccessReadOnly;
+#pragma clang diagnostic pop
 #else
     descriptor.access = MTLBindingAccessReadOnly;
 #endif
@@ -105,7 +114,10 @@ static MTLArgumentDescriptor *createArgumentDescriptor(const WGPUTextureBindingL
     auto descriptor = [MTLArgumentDescriptor new];
     descriptor.dataType = MTLDataTypeTexture;
 #if USE(METAL_ARGUMENT_ACCESS_ENUMS)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     descriptor.access = MTLArgumentAccessReadOnly;
+#pragma clang diagnostic pop
 #else
     descriptor.access = MTLBindingAccessReadOnly;
 #endif
