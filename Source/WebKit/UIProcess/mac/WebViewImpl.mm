@@ -1133,6 +1133,11 @@ static NSTrackingAreaOptions trackingAreaOptions()
 
 static RetainPtr<NSObject> subscribeToTextInputNotifications(WebViewImpl*);
 
+static bool isInRecoveryOS()
+{
+    return !getuid();
+}
+
 WebViewImpl::WebViewImpl(NSView <WebViewImplDelegate> *view, WKWebView *outerWebView, WebProcessPool& processPool, Ref<API::PageConfiguration>&& configuration)
     : m_view(view)
     , m_pageClient(makeUnique<PageClientImpl>(view, outerWebView))
@@ -1160,6 +1165,13 @@ WebViewImpl::WebViewImpl(NSView <WebViewImplDelegate> *view, WKWebView *outerWeb
         useRemoteLayerTree = [useRemoteLayerTreeBoolean boolValue];
     if (m_page->preferences().siteIsolationEnabled())
         useRemoteLayerTree = true;
+
+    if (isInRecoveryOS()) {
+        // Temporarily disable UI side compositing in Recovery OS.
+        // FIXME: remove this workaround once a proper fix is in place.
+        WTFLogAlways("Disabling UI side compositing in Recovery OS");
+        useRemoteLayerTree = false;
+    }
 
     if (useRemoteLayerTree)
         m_drawingAreaType = DrawingAreaType::RemoteLayerTree;
