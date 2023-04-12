@@ -268,5 +268,10 @@ void KeyframeEffectStack::didApplyCascade(const RenderStyle& styleBeforeCascade,
         effect->acceleratedPropertiesOverriddenByCascadeDidChange();
 }
 
+void KeyframeEffectStack::applyPendingAcceleratedActions() const
+{
+    for (auto& effect : m_effects)
+        effect->applyPendingAcceleratedActionsOrUpdateTimingProperties();
+}
 
 } // namespace WebCore

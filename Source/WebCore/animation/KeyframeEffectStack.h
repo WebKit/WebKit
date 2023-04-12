@@ -72,6 +72,8 @@ public:
 
     const HashSet<AnimatableProperty>& acceleratedPropertiesOverriddenByCascade() const { return m_acceleratedPropertiesOverriddenByCascade; }
 
+    void applyPendingAcceleratedActions() const;
+
 private:
     void ensureEffectsAreSorted();
     bool hasMatchingEffect(const Function<bool(const KeyframeEffect&)>&) const;

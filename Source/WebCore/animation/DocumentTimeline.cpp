@@ -412,14 +412,32 @@ void DocumentTimeline::applyPendingAcceleratedAnimations()
     auto acceleratedAnimationsPendingRunningStateChange = m_acceleratedAnimationsPendingRunningStateChange;
     m_acceleratedAnimationsPendingRunningStateChange.clear();
 
+    HashSet<KeyframeEffectStack*> keyframeEffectStacksToUpdate;
+
     bool hasForcedLayout = false;
     for (auto& animation : acceleratedAnimationsPendingRunningStateChange) {
         if (auto* keyframeEffect = dynamicDowncast<KeyframeEffect>(animation->effect())) {
             if (!hasForcedLayout)
                 hasForcedLayout |= keyframeEffect->forceLayoutIfNeeded();
-            keyframeEffect->applyPendingAcceleratedActions();
+
+            // If the animation is no longer relevant, apply the pending accelerations in isolation.
+            if (!animation->isRelevant()) {
+                keyframeEffect->applyPendingAcceleratedActions();
+                continue;
+            }
+
+            // Otherwise, this accelerated animation exists in the context of an effect stack and we must
+            // update all effects in that stack to ensure their sort order is respected.
+            if (auto target = keyframeEffect->targetStyleable()) {
+                auto* keyframeEffectStack = target ? target->keyframeEffectStack() : nullptr;
+                if (keyframeEffectStack)
+                    keyframeEffectStacksToUpdate.add(keyframeEffectStack);
+            }
         }
     }
+
+    for (auto* keyframeEffectStack : keyframeEffectStacksToUpdate)
+        keyframeEffectStack->applyPendingAcceleratedActions();
 }
 
 void DocumentTimeline::enqueueAnimationEvent(AnimationEventBase& event)
