@@ -758,6 +758,10 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 
     m_backgroundColor = parameters.backgroundColor;
 
+    // We need to set the device scale factor before creating the drawing area
+    // to ensure it's created with the right size.
+    m_page->setDeviceScaleFactor(parameters.deviceScaleFactor);
+
     m_drawingArea = DrawingArea::create(*this, parameters);
     m_drawingArea->setShouldScaleViewToFitDocument(parameters.shouldScaleViewToFitDocument);
 
@@ -813,7 +817,6 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
         m_page->setOpenedByDOM();
 
     m_page->setGroupName(m_pageGroup->identifier());
-    m_page->setDeviceScaleFactor(parameters.deviceScaleFactor);
     m_page->setUserInterfaceLayoutDirection(m_userInterfaceLayoutDirection);
 #if PLATFORM(IOS_FAMILY)
     m_page->setTextAutosizingWidth(parameters.textAutosizingWidth);
