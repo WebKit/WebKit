@@ -469,11 +469,7 @@ MediaTime MediaPlayerPrivateMediaSourceAVFObjC::currentMediaTime() const
 
 bool MediaPlayerPrivateMediaSourceAVFObjC::currentMediaTimeMayProgress() const
 {
-    if (!m_mediaSourcePrivate)
-        return false;
-    if (auto ranges = buffered())
-        return m_mediaSourcePrivate->hasFutureTime(currentMediaTime(), durationMediaTime(), *ranges);
-    return false;
+    return m_mediaSourcePrivate ? m_mediaSourcePrivate->hasFutureTime(currentMediaTime(), durationMediaTime(), buffered()) : false;
 }
 
 MediaTime MediaPlayerPrivateMediaSourceAVFObjC::clampTimeToLastSeekTime(const MediaTime& time) const
@@ -651,11 +647,6 @@ MediaPlayer::ReadyState MediaPlayerPrivateMediaSourceAVFObjC::readyState() const
     return m_readyState;
 }
 
-std::unique_ptr<PlatformTimeRanges> MediaPlayerPrivateMediaSourceAVFObjC::seekable() const
-{
-    return makeUnique<PlatformTimeRanges>(minMediaTimeSeekable(), maxMediaTimeSeekable());
-}
-
 MediaTime MediaPlayerPrivateMediaSourceAVFObjC::maxMediaTimeSeekable() const
 {
     return durationMediaTime();
@@ -666,9 +657,9 @@ MediaTime MediaPlayerPrivateMediaSourceAVFObjC::minMediaTimeSeekable() const
     return startTime();
 }
 
-std::unique_ptr<PlatformTimeRanges> MediaPlayerPrivateMediaSourceAVFObjC::buffered() const
+const PlatformTimeRanges& MediaPlayerPrivateMediaSourceAVFObjC::buffered() const
 {
-    return m_mediaSourcePrivate ? m_mediaSourcePrivate->buffered() : makeUnique<PlatformTimeRanges>();
+    return m_mediaSourcePrivate ? m_mediaSourcePrivate->buffered() : PlatformTimeRanges::emptyRanges();
 }
 
 bool MediaPlayerPrivateMediaSourceAVFObjC::didLoadingProgress() const

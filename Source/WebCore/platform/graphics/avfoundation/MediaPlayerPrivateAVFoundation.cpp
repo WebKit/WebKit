@@ -411,12 +411,9 @@ void MediaPlayerPrivateAVFoundation::setDelayCharacteristicsChangedNotification(
         characteristicsChanged();
 }
 
-std::unique_ptr<PlatformTimeRanges> MediaPlayerPrivateAVFoundation::buffered() const
+const PlatformTimeRanges& MediaPlayerPrivateAVFoundation::buffered() const
 {
-    if (!m_cachedLoadedTimeRanges)
-        m_cachedLoadedTimeRanges = platformBufferedTimeRanges();
-
-    return makeUnique<PlatformTimeRanges>(*m_cachedLoadedTimeRanges);
+    return PlatformTimeRanges::emptyRanges();
 }
 
 MediaTime MediaPlayerPrivateAVFoundation::maxMediaTimeSeekable() const
@@ -640,7 +637,6 @@ void MediaPlayerPrivateAVFoundation::rateChanged()
 
 void MediaPlayerPrivateAVFoundation::loadedTimeRangesChanged()
 {
-    m_cachedLoadedTimeRanges = nullptr;
     m_cachedMaxTimeLoaded = MediaTime::zeroTime();
     invalidateCachedDuration();
     m_player->bufferedTimeRangesChanged();

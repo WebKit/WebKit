@@ -164,12 +164,12 @@ public:
     virtual MediaPlayer::NetworkState networkState() const = 0;
     virtual MediaPlayer::ReadyState readyState() const = 0;
 
-    virtual std::unique_ptr<PlatformTimeRanges> seekable() const { return maxMediaTimeSeekable() == MediaTime::zeroTime() ? makeUnique<PlatformTimeRanges>() : makeUnique<PlatformTimeRanges>(minMediaTimeSeekable(), maxMediaTimeSeekable()); }
+    WEBCORE_EXPORT virtual const PlatformTimeRanges& seekable() const;
     virtual float maxTimeSeekable() const { return 0; }
     virtual MediaTime maxMediaTimeSeekable() const { return MediaTime::createWithDouble(maxTimeSeekable()); }
     virtual double minTimeSeekable() const { return 0; }
     virtual MediaTime minMediaTimeSeekable() const { return MediaTime::createWithDouble(minTimeSeekable()); }
-    virtual std::unique_ptr<PlatformTimeRanges> buffered() const = 0;
+    virtual const PlatformTimeRanges& buffered() const = 0;
     virtual double seekableTimeRangesLastModifiedTime() const { return 0; }
     virtual double liveUpdateInterval() const { return 0; }
 
@@ -296,7 +296,7 @@ public:
         if (!duration)
             return 0;
 
-        unsigned long long extra = totalBytes() * buffered()->totalDuration().toDouble() / duration.toDouble();
+        unsigned long long extra = totalBytes() * buffered().totalDuration().toDouble() / duration.toDouble();
         return static_cast<unsigned>(extra);
     }
 
@@ -345,6 +345,9 @@ public:
     virtual String errorMessage() const { return { }; }
 
     virtual void renderVideoWillBeDestroyed() { }
+
+protected:
+    mutable PlatformTimeRanges m_seekable;
 };
 
 }

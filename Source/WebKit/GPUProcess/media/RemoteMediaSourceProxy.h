@@ -64,7 +64,7 @@ public:
     // MediaSourcePrivateClient overrides
     void setPrivateAndOpen(Ref<WebCore::MediaSourcePrivate>&&) final;
     MediaTime duration() const final;
-    std::unique_ptr<WebCore::PlatformTimeRanges> buffered() const final;
+    const WebCore::PlatformTimeRanges& buffered() const final;
     void seekToTime(const MediaTime&) final;
     void monitorSourceBuffers() final;
 

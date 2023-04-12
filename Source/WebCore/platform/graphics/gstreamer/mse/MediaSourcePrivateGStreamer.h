@@ -76,7 +76,7 @@ public:
     void sourceBufferPrivateDidChangeActiveState(SourceBufferPrivateGStreamer*, bool);
     void startPlaybackIfHasAllTracks();
 
-    std::unique_ptr<PlatformTimeRanges> buffered();
+    const PlatformTimeRanges& buffered();
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger; }

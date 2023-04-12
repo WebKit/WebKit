@@ -77,7 +77,7 @@ public:
     void seekCompleted() override;
 
     MediaTime duration() const;
-    std::unique_ptr<PlatformTimeRanges> buffered();
+    const PlatformTimeRanges& buffered();
 
     bool hasAudio() const;
     bool hasVideo() const;

@@ -175,12 +175,9 @@ MediaTime MockMediaPlayerMediaSource::maxMediaTimeSeekable() const
     return m_duration;
 }
 
-std::unique_ptr<PlatformTimeRanges> MockMediaPlayerMediaSource::buffered() const
+const PlatformTimeRanges& MockMediaPlayerMediaSource::buffered() const
 {
-    if (m_mediaSourcePrivate)
-        return m_mediaSourcePrivate->buffered();
-
-    return makeUnique<PlatformTimeRanges>();
+    return m_mediaSourcePrivate ? m_mediaSourcePrivate->buffered() : PlatformTimeRanges::emptyRanges();
 }
 
 bool MockMediaPlayerMediaSource::didLoadingProgress() const
@@ -203,11 +200,7 @@ MediaTime MockMediaPlayerMediaSource::currentMediaTime() const
 
 bool MockMediaPlayerMediaSource::currentMediaTimeMayProgress() const
 {
-    if (!m_mediaSourcePrivate)
-        return false;
-    if (auto ranges = buffered())
-        return m_mediaSourcePrivate->hasFutureTime(currentMediaTime(), durationMediaTime(), *ranges);
-    return false;
+    return m_mediaSourcePrivate && m_mediaSourcePrivate->hasFutureTime(currentMediaTime(), durationMediaTime(), buffered());
 }
 
 MediaTime MockMediaPlayerMediaSource::durationMediaTime() const
@@ -240,13 +233,13 @@ void MockMediaPlayerMediaSource::advanceCurrentTime()
     if (!m_mediaSourcePrivate)
         return;
 
-    auto buffered = m_mediaSourcePrivate->buffered();
-    size_t pos = buffered->find(m_currentTime);
+    auto& buffered = m_mediaSourcePrivate->buffered();
+    size_t pos = buffered.find(m_currentTime);
     if (pos == notFound)
         return;
 
     bool ignoreError;
-    m_currentTime = std::min(m_duration, buffered->end(pos, ignoreError));
+    m_currentTime = std::min(m_duration, buffered.end(pos, ignoreError));
     m_player->timeChanged();
 }
 

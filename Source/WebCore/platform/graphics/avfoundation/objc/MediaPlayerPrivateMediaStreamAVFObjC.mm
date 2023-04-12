@@ -979,14 +979,14 @@ void MediaPlayerPrivateMediaStreamAVFObjC::updateTracks()
     updateTracksOfKind(m_videoTrackMap, TrackKind::Video, currentTracks, &VideoTrackPrivateMediaStream::create, WTFMove(setVideoTrackState));
 }
 
-std::unique_ptr<PlatformTimeRanges> MediaPlayerPrivateMediaStreamAVFObjC::seekable() const
+const PlatformTimeRanges& MediaPlayerPrivateMediaStreamAVFObjC::seekable() const
 {
-    return makeUnique<PlatformTimeRanges>();
+    return PlatformTimeRanges::emptyRanges();
 }
 
-std::unique_ptr<PlatformTimeRanges> MediaPlayerPrivateMediaStreamAVFObjC::buffered() const
+const PlatformTimeRanges& MediaPlayerPrivateMediaStreamAVFObjC::buffered() const
 {
-    return makeUnique<PlatformTimeRanges>();
+    return PlatformTimeRanges::emptyRanges();
 }
 
 void MediaPlayerPrivateMediaStreamAVFObjC::paint(GraphicsContext& context, const FloatRect& rect)

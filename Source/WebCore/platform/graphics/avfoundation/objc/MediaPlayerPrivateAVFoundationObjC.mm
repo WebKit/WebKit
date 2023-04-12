@@ -1732,21 +1732,20 @@ void MediaPlayerPrivateAVFoundationObjC::setPitchCorrectionAlgorithm(MediaPlayer
         [m_avPlayerItem setAudioTimePitchAlgorithm:audioTimePitchAlgorithmForMediaPlayerPitchCorrectionAlgorithm(pitchCorrectionAlgorithm, player()->preservesPitch(), m_requestedRate)];
 }
 
-std::unique_ptr<PlatformTimeRanges> MediaPlayerPrivateAVFoundationObjC::platformBufferedTimeRanges() const
+const PlatformTimeRanges& MediaPlayerPrivateAVFoundationObjC::platformBufferedTimeRanges() const
 {
     using namespace PAL; // For CMTIMERANGE_IS_EMPTY.
 
-    auto timeRanges = makeUnique<PlatformTimeRanges>();
-
     if (!m_avPlayerItem)
-        return timeRanges;
+        return PlatformTimeRanges::emptyRanges();
 
+    m_buffered.clear();
     for (NSValue *thisRangeValue in m_cachedLoadedRanges.get()) {
         CMTimeRange timeRange = [thisRangeValue CMTimeRangeValue];
         if (CMTIMERANGE_IS_VALID(timeRange) && !CMTIMERANGE_IS_EMPTY(timeRange))
-            timeRanges->add(PAL::toMediaTime(timeRange.start), PAL::toMediaTime(PAL::CMTimeRangeGetEnd(timeRange)));
+            m_buffered.add(PAL::toMediaTime(timeRange.start), PAL::toMediaTime(PAL::CMTimeRangeGetEnd(timeRange)));
     }
-    return timeRanges;
+    return m_buffered;
 }
 
 MediaTime MediaPlayerPrivateAVFoundationObjC::platformMinTimeSeekable() const

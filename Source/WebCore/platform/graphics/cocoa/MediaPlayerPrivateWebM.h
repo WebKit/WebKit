@@ -131,10 +131,9 @@ private:
     MediaPlayer::NetworkState networkState() const final { return m_networkState; }
     MediaPlayer::ReadyState readyState() const final { return m_readyState; }
 
-    std::unique_ptr<PlatformTimeRanges> seekable() const final;
     MediaTime maxMediaTimeSeekable() const final { return durationMediaTime(); }
     MediaTime minMediaTimeSeekable() const final { return startTime(); }
-    std::unique_ptr<PlatformTimeRanges> buffered() const final;
+    const PlatformTimeRanges& buffered() const final;
 
     void setBufferedRanges(PlatformTimeRanges);
     void updateBufferedFromTrackBuffers(bool);
@@ -267,7 +266,7 @@ private:
     Vector<RefPtr<VideoTrackPrivateWebM>> m_videoTracks;
     Vector<RefPtr<AudioTrackPrivateWebM>> m_audioTracks;
     HashMap<uint64_t, UniqueRef<TrackBuffer>, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> m_trackBufferMap;
-    RefPtr<TimeRanges> m_buffered { TimeRanges::create() };
+    PlatformTimeRanges m_buffered;
 
     RetainPtr<AVSampleBufferDisplayLayer> m_displayLayer;
     HashMap<uint64_t, RetainPtr<AVSampleBufferAudioRenderer>, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> m_audioRenderers;

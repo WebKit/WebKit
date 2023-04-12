@@ -36,13 +36,15 @@ class PrintStream;
 
 namespace WebCore {
 
-class WEBCORE_EXPORT PlatformTimeRanges {
+class WEBCORE_EXPORT PlatformTimeRanges final {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit PlatformTimeRanges() { }
+    PlatformTimeRanges();
     PlatformTimeRanges(const MediaTime& start, const MediaTime& end);
 
     PlatformTimeRanges copyWithEpsilon(const MediaTime&) const;
+
+    static const PlatformTimeRanges& emptyRanges();
 
     MediaTime start(unsigned index) const;
     MediaTime start(unsigned index, bool& valid) const;

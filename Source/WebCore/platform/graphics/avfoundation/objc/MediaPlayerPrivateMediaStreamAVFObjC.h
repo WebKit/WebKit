@@ -135,8 +135,8 @@ private:
 
     bool seeking() const override { return false; }
 
-    std::unique_ptr<PlatformTimeRanges> seekable() const override;
-    std::unique_ptr<PlatformTimeRanges> buffered() const override;
+    const PlatformTimeRanges& seekable() const override;
+    const PlatformTimeRanges& buffered() const override;
 
     bool didLoadingProgress() const override { return m_playing; }
 

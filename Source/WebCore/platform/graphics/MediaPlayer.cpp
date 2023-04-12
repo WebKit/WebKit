@@ -150,7 +150,7 @@ public:
 
     float maxTimeSeekable() const final { return 0; }
     double minTimeSeekable() const final { return 0; }
-    std::unique_ptr<PlatformTimeRanges> buffered() const final { return makeUnique<PlatformTimeRanges>(); }
+    const PlatformTimeRanges& buffered() const final { return PlatformTimeRanges::emptyRanges(); }
 
     double seekableTimeRangesLastModifiedTime() const final { return 0; }
     double liveUpdateInterval() const final { return 0; }
@@ -1027,22 +1027,22 @@ void MediaPlayer::setPitchCorrectionAlgorithm(PitchCorrectionAlgorithm pitchCorr
     m_private->setPitchCorrectionAlgorithm(pitchCorrectionAlgorithm);
 }
 
-std::unique_ptr<PlatformTimeRanges> MediaPlayer::buffered()
+const PlatformTimeRanges& MediaPlayer::buffered() const
 {
     return m_private->buffered();
 }
 
-std::unique_ptr<PlatformTimeRanges> MediaPlayer::seekable()
+const PlatformTimeRanges& MediaPlayer::seekable() const
 {
     return m_private->seekable();
 }
 
-MediaTime MediaPlayer::maxTimeSeekable()
+MediaTime MediaPlayer::maxTimeSeekable() const
 {
     return m_private->maxMediaTimeSeekable();
 }
 
-MediaTime MediaPlayer::minTimeSeekable()
+MediaTime MediaPlayer::minTimeSeekable() const
 {
     return m_private->minMediaTimeSeekable();
 }

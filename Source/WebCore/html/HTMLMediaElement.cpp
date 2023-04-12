@@ -4510,10 +4510,10 @@ double HTMLMediaElement::percentLoaded() const
 
     MediaTime buffered = MediaTime::zeroTime();
     bool ignored;
-    std::unique_ptr<PlatformTimeRanges> timeRanges = m_player->buffered();
-    for (unsigned i = 0; i < timeRanges->length(); ++i) {
-        MediaTime start = timeRanges->start(i, ignored);
-        MediaTime end = timeRanges->end(i, ignored);
+    auto& timeRanges = m_player->buffered();
+    for (unsigned i = 0; i < timeRanges.length(); ++i) {
+        MediaTime start = timeRanges.start(i, ignored);
+        MediaTime end = timeRanges.end(i, ignored);
         buffered += end - start;
     }
     return buffered.toDouble() / duration.toDouble();
@@ -5727,10 +5727,10 @@ Ref<TimeRanges> HTMLMediaElement::buffered() const
 
 #if ENABLE(MEDIA_SOURCE)
     if (m_mediaSource)
-        return TimeRanges::create(*m_mediaSource->buffered());
+        return TimeRanges::create(m_mediaSource->buffered());
 #endif
 
-    return TimeRanges::create(*m_player->buffered());
+    return TimeRanges::create(m_player->buffered());
 }
 
 double HTMLMediaElement::maxBufferedTime() const
@@ -5764,7 +5764,7 @@ Ref<TimeRanges> HTMLMediaElement::seekable() const
 #endif
 
     if (m_player)
-        return TimeRanges::create(*m_player->seekable());
+        return TimeRanges::create(m_player->seekable());
 
     return TimeRanges::create();
 }
@@ -7819,22 +7819,18 @@ void HTMLMediaElement::mediaPlayerBufferedTimeRangesChanged()
         if (!m_player || !m_textTracks)
             return;
 
-        std::unique_ptr<PlatformTimeRanges> buffered;
         for (unsigned i = 0; i < m_textTracks->length(); ++i) {
             auto& track = *m_textTracks->item(i);
             if (!track.shouldPurgeCuesFromUnbufferedRanges())
                 continue;
 
-            if (!buffered) {
+            auto& buffered =
 #if ENABLE(MEDIA_SOURCE)
-                if (m_mediaSource)
-                    buffered = m_mediaSource->buffered();
-                else
+                m_mediaSource ? m_mediaSource->buffered() :
 #endif
-                    buffered = m_player->buffered();
+                m_player->buffered();
 
-                track.removeCuesNotInTimeRanges(*buffered);
-            }
+            track.removeCuesNotInTimeRanges(buffered);
         }
     });
 }

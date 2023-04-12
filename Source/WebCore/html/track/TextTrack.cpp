@@ -381,7 +381,7 @@ ExceptionOr<void> TextTrack::removeCue(TextTrackCue& cue)
     return { };
 }
 
-void TextTrack::removeCuesNotInTimeRanges(PlatformTimeRanges& buffered)
+void TextTrack::removeCuesNotInTimeRanges(const PlatformTimeRanges& buffered)
 {
     ASSERT(shouldPurgeCuesFromUnbufferedRanges());
 

@@ -336,9 +336,9 @@ void MediaPlayerPrivateGStreamerMSE::asyncStateChangeDone()
     propagateReadyStateToPlayer();
 }
 
-std::unique_ptr<PlatformTimeRanges> MediaPlayerPrivateGStreamerMSE::buffered() const
+const PlatformTimeRanges& MediaPlayerPrivateGStreamerMSE::buffered() const
 {
-    return m_mediaSource ? m_mediaSource->buffered() : makeUnique<PlatformTimeRanges>();
+    return m_mediaSource ? m_mediaSource->buffered() : PlatformTimeRanges::emptyRanges();
 }
 
 void MediaPlayerPrivateGStreamerMSE::sourceSetup(GstElement* sourceElement)
@@ -368,7 +368,7 @@ void MediaPlayerPrivateGStreamerMSE::updateStates()
 
 bool MediaPlayerPrivateGStreamerMSE::isTimeBuffered(const MediaTime &time) const
 {
-    bool result = m_mediaSource && m_mediaSource->buffered()->contain(time);
+    bool result = m_mediaSource && m_mediaSource->buffered().contain(time);
     GST_DEBUG("Time %s buffered? %s", toString(time).utf8().data(), boolForPrinting(result));
     return result;
 }
@@ -482,7 +482,7 @@ MediaTime MediaPlayerPrivateGStreamerMSE::maxMediaTimeSeekable() const
     MediaTime result = durationMediaTime();
     // Infinite duration means live stream.
     if (result.isPositiveInfinite()) {
-        MediaTime maxBufferedTime = buffered()->maximumBufferedTime();
+        MediaTime maxBufferedTime = buffered().maximumBufferedTime();
         // Return the highest end time reported by the buffered attribute.
         result = maxBufferedTime.isValid() ? maxBufferedTime : MediaTime::zeroTime();
     }
@@ -494,9 +494,7 @@ bool MediaPlayerPrivateGStreamerMSE::currentMediaTimeMayProgress() const
 {
     if (!m_mediaSourcePrivate)
         return false;
-    if (auto ranges = buffered())
-        return m_mediaSourcePrivate->hasFutureTime(currentMediaTime(), durationMediaTime(), *ranges);
-    return false;
+    return m_mediaSourcePrivate->hasFutureTime(currentMediaTime(), durationMediaTime(), buffered());
 }
 
 } // namespace WebCore.

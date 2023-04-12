@@ -69,9 +69,9 @@ MediaTime RemoteMediaSourceProxy::duration() const
     return m_duration;
 }
 
-std::unique_ptr<PlatformTimeRanges> RemoteMediaSourceProxy::buffered() const
+const PlatformTimeRanges& RemoteMediaSourceProxy::buffered() const
 {
-    return makeUnique<PlatformTimeRanges>(m_buffered);
+    return m_buffered;
 }
 
 void RemoteMediaSourceProxy::seekToTime(const MediaTime& time)

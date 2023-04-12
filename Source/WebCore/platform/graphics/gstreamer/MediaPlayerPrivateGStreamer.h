@@ -148,7 +148,7 @@ public:
     void seek(const MediaTime&) override;
     void setRate(float) override;
     double rate() const final;
-    void setPreservesPitch(bool) final; 
+    void setPreservesPitch(bool) final;
     void setPreload(MediaPlayer::Preload) final;
     FloatSize naturalSize() const final;
     void setVolume(float) final;
@@ -165,7 +165,7 @@ public:
     float currentTime() const final { return currentMediaTime().toFloat(); }
     double currentTimeDouble() const final { return currentMediaTime().toDouble(); }
     MediaTime currentMediaTime() const override;
-    std::unique_ptr<PlatformTimeRanges> buffered() const override;
+    const PlatformTimeRanges& buffered() const override;
     void seek(float time) final { seek(MediaTime::createWithFloat(time)); }
     void seekDouble(double time) final { seek(MediaTime::createWithDouble(time)); }
     float maxTimeSeekable() const final { return maxMediaTimeSeekable().toFloat(); }
@@ -591,6 +591,7 @@ private:
     std::optional<VideoFrameMetadata> videoFrameMetadata() final;
     uint64_t m_sampleCount { 0 };
     uint64_t m_lastVideoFrameMetadataSampleCount { 0 };
+    mutable PlatformTimeRanges m_buffered;
 #if USE(WPE_VIDEO_PLANE_DISPLAY_DMABUF)
     GUniquePtr<struct wpe_video_plane_display_dmabuf_source> m_wpeVideoPlaneDisplayDmaBuf;
 #endif

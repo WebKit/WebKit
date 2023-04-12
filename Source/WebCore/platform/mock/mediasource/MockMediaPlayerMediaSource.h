@@ -83,7 +83,7 @@ private:
     bool paused() const override;
     MediaPlayer::NetworkState networkState() const override;
     MediaTime maxMediaTimeSeekable() const override;
-    std::unique_ptr<PlatformTimeRanges> buffered() const override;
+    const PlatformTimeRanges& buffered() const override;
     bool didLoadingProgress() const override;
     void setPresentationSize(const IntSize&) override;
     void paint(GraphicsContext&, const FloatRect&) override;

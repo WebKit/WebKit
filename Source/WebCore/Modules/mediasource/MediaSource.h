@@ -81,7 +81,7 @@ public:
     void streamEndedWithError(std::optional<EndOfStreamError>);
 
     MediaTime duration() const final;
-    std::unique_ptr<PlatformTimeRanges> buffered() const final;
+    const PlatformTimeRanges& buffered() const final;
 
     bool attachToElement(HTMLMediaElement&);
     void detachFromElement(HTMLMediaElement&);
@@ -173,8 +173,8 @@ private:
 
     RefPtr<SourceBufferList> m_sourceBuffers;
     RefPtr<SourceBufferList> m_activeSourceBuffers;
-    UniqueRef<PlatformTimeRanges> m_buffered;
-    std::unique_ptr<PlatformTimeRanges> m_liveSeekable;
+    PlatformTimeRanges m_buffered;
+    PlatformTimeRanges m_liveSeekable;
     WeakPtr<HTMLMediaElement, WeakPtrImplWithEventTargetData> m_mediaElement;
     MediaTime m_duration;
     MediaTime m_pendingSeekTime;

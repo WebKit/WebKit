@@ -315,12 +315,9 @@ bool MediaPlayerPrivateRemote::hasAudio() const
     return m_cachedState.hasAudio;
 }
 
-std::unique_ptr<PlatformTimeRanges> MediaPlayerPrivateRemote::buffered() const
+const PlatformTimeRanges& MediaPlayerPrivateRemote::buffered() const
 {
-    if (!m_cachedBufferedTimeRanges)
-        return makeUnique<PlatformTimeRanges>();
-
-    return makeUnique<PlatformTimeRanges>(*m_cachedBufferedTimeRanges);
+    return m_cachedBufferedTimeRanges;
 }
 
 MediaPlayer::MovieLoadType MediaPlayerPrivateRemote::movieLoadType() const
@@ -542,8 +539,7 @@ void MediaPlayerPrivateRemote::updateCachedState(RemoteMediaPlayerState&& state)
     m_cachedState.didPassCORSAccessCheck = state.didPassCORSAccessCheck;
     m_cachedState.documentIsCrossOrigin = state.documentIsCrossOrigin;
 
-    if (state.bufferedRanges.length())
-        m_cachedBufferedTimeRanges = makeUnique<PlatformTimeRanges>(state.bufferedRanges);
+    m_cachedBufferedTimeRanges = state.bufferedRanges;
 }
 
 bool MediaPlayerPrivateRemote::shouldIgnoreIntrinsicSize()

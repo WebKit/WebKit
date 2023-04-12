@@ -132,7 +132,7 @@ public:
     const std::optional<Vector<String>>& styleSheets() const { return m_styleSheets; }
 
     virtual bool shouldPurgeCuesFromUnbufferedRanges() const { return false; }
-    virtual void removeCuesNotInTimeRanges(PlatformTimeRanges&);
+    virtual void removeCuesNotInTimeRanges(const PlatformTimeRanges&);
 
     Document& document() const;
 

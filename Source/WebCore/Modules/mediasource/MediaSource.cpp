@@ -109,7 +109,6 @@ MediaSource::MediaSource(ScriptExecutionContext& context)
     : ActiveDOMObject(&context)
     , m_sourceBuffers(SourceBufferList::create(scriptExecutionContext()))
     , m_activeSourceBuffers(SourceBufferList::create(scriptExecutionContext()))
-    , m_buffered(makeUniqueRef<PlatformTimeRanges>())
     , m_duration(MediaTime::invalidTime())
     , m_pendingSeekTime(MediaTime::invalidTime())
 #if !RELEASE_LOG_DISABLED
@@ -179,9 +178,9 @@ MediaTime MediaSource::currentTime() const
     return m_mediaElement ? m_mediaElement->currentMediaTime() : MediaTime::zeroTime();
 }
 
-std::unique_ptr<PlatformTimeRanges> MediaSource::buffered() const
+const PlatformTimeRanges& MediaSource::buffered() const
 {
-    return makeUnique<PlatformTimeRanges>(m_buffered);
+    return m_buffered;
 }
 
 void MediaSource::seekToTime(const MediaTime& time)
@@ -268,23 +267,23 @@ Ref<TimeRanges> MediaSource::seekable()
     if (m_duration.isPositiveInfinite()) {
         auto buffered = this->buffered();
         // If live seekable range is not empty:
-        if (m_liveSeekable && m_liveSeekable->length()) {
+        if (m_liveSeekable.length()) {
             // Let union ranges be the union of live seekable range and the HTMLMediaElement.buffered attribute.
-            buffered->unionWith(*m_liveSeekable);
+            buffered.unionWith(m_liveSeekable);
             // Return a single range with a start time equal to the earliest start time in union ranges
             // and an end time equal to the highest end time in union ranges and abort these steps.
-            buffered->add(buffered->start(0), buffered->maximumBufferedTime());
-            return TimeRanges::create(*buffered);
+            buffered.add(buffered.start(0), buffered.maximumBufferedTime());
+            return TimeRanges::create(buffered);
         }
 
         // If the HTMLMediaElement.buffered attribute returns an empty TimeRanges object, then return
         // an empty TimeRanges object and abort these steps.
-        if (!buffered->length())
+        if (!buffered.length())
             return TimeRanges::create();
 
         // Return a single range with a start time of 0 and an end time equal to the highest end time
         // reported by the HTMLMediaElement.buffered attribute.
-        return TimeRanges::create({MediaTime::zeroTime(), buffered->maximumBufferedTime()});
+        return TimeRanges::create({ MediaTime::zeroTime(), buffered.maximumBufferedTime() });
     }
 
     // ↳ Otherwise:
@@ -309,7 +308,7 @@ ExceptionOr<void> MediaSource::setLiveSeekableRange(double start, double end)
 
     // Set live seekable range to be a new normalized TimeRanges object containing a single range
     // whose start position is start and end position is end.
-    m_liveSeekable = makeUnique<PlatformTimeRanges>(MediaTime::createWithDouble(start), MediaTime::createWithDouble(end));
+    m_liveSeekable = { MediaTime::createWithDouble(start), MediaTime::createWithDouble(end) };
 
     return { };
 }
@@ -324,7 +323,7 @@ ExceptionOr<void> MediaSource::clearLiveSeekableRange()
     // If the readyState attribute is not "open" then throw an InvalidStateError exception and abort these steps.
     if (!isOpen())
         return Exception { InvalidStateError };
-    m_liveSeekable = nullptr;
+    m_liveSeekable.clear();
     return { };
 }
 
@@ -348,11 +347,11 @@ bool MediaSource::hasBufferedTime(const MediaTime& time)
     if (time > duration())
         return false;
 
-    auto ranges = buffered();
-    if (!ranges->length())
+    auto& ranges = buffered();
+    if (!ranges.length())
         return false;
 
-    return abs(ranges->nearest(time) - time) <= m_private->timeFudgeFactor();
+    return abs(ranges.nearest(time) - time) <= m_private->timeFudgeFactor();
 }
 
 bool MediaSource::hasCurrentTime()
@@ -404,9 +403,8 @@ void MediaSource::monitorSourceBuffers()
 
     // ↳ If HTMLMediaElement.buffered contains a TimeRange that includes the current
     //  playback position and enough data to ensure uninterrupted playback:
-    auto ranges = buffered();
     if (std::all_of(m_activeSourceBuffers->begin(), m_activeSourceBuffers->end(), [&](auto& sourceBuffer) {
-        return sourceBuffer->canPlayThroughRange(*ranges);
+        return sourceBuffer->canPlayThroughRange(buffered());
     })) {
         // 1. Set the HTMLMediaElement.readyState attribute to HAVE_ENOUGH_DATA.
         // 2. Queue a task to fire a simple event named canplaythrough at the media element.
@@ -1151,10 +1149,9 @@ void MediaSource::updateBufferedIfNeeded(bool force)
     for (auto& sourceBuffer : *m_activeSourceBuffers)
         sourceBuffer->setBufferedDirty(false);
 
-    auto buffered = WTFMove(m_buffered);
-    m_buffered = makeUniqueRef<PlatformTimeRanges>();
+    auto buffered = std::exchange(m_buffered, { });
     auto updatePrivate = makeScopeExit([&] {
-        if (!m_private || buffered.get() == m_buffered.get())
+        if (!m_private || buffered == m_buffered)
             return;
         m_private->bufferedChanged(m_buffered);
         monitorSourceBuffers();
@@ -1182,7 +1179,7 @@ void MediaSource::updateBufferedIfNeeded(bool force)
         return;
 
     // 4. Let intersection ranges equal a TimeRange object containing a single range from 0 to highest end time.
-    m_buffered->add(MediaTime::zeroTime(), highestEndTime);
+    m_buffered.add(MediaTime::zeroTime(), highestEndTime);
 
     // 5. For each SourceBuffer object in activeSourceBuffers run the following steps:
     bool ended = readyState() == ReadyState::Ended;
@@ -1194,7 +1191,7 @@ void MediaSource::updateBufferedIfNeeded(bool force)
 
         // 5.3 Let new intersection ranges equal the intersection between the intersection ranges and the source ranges.
         // 5.4 Replace the ranges in intersection ranges with the new intersection ranges.
-        m_buffered->intersectWith(sourceRanges);
+        m_buffered.intersectWith(sourceRanges);
     }
 }
 

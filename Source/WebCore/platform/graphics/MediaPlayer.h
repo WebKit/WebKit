@@ -445,12 +445,12 @@ public:
     void setPitchCorrectionAlgorithm(PitchCorrectionAlgorithm);
     PitchCorrectionAlgorithm pitchCorrectionAlgorithm() const { return m_pitchCorrectionAlgorithm; }
 
-    std::unique_ptr<PlatformTimeRanges> buffered();
-    std::unique_ptr<PlatformTimeRanges> seekable();
+    const PlatformTimeRanges& buffered() const;
+    const PlatformTimeRanges& seekable() const;
     void bufferedTimeRangesChanged();
     void seekableTimeRangesChanged();
-    MediaTime minTimeSeekable();
-    MediaTime maxTimeSeekable();
+    MediaTime minTimeSeekable() const;
+    MediaTime maxTimeSeekable() const;
 
     double seekableTimeRangesLastModifiedTime();
     double liveUpdateInterval();

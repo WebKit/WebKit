@@ -63,7 +63,7 @@ public:
     void durationChanged() override;
     MediaTime durationMediaTime() const override;
 
-    std::unique_ptr<PlatformTimeRanges> buffered() const override;
+    const PlatformTimeRanges& buffered() const override;
     MediaTime maxMediaTimeSeekable() const override;
     bool currentMediaTimeMayProgress() const override;
 

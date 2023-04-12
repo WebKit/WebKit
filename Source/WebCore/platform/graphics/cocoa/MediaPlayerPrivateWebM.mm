@@ -320,22 +320,14 @@ void MediaPlayerPrivateWebM::setMuted(bool muted)
         [renderer setMuted:muted];
 }
 
-std::unique_ptr<PlatformTimeRanges> MediaPlayerPrivateWebM::seekable() const
+const PlatformTimeRanges& MediaPlayerPrivateWebM::buffered() const
 {
-    return makeUnique<PlatformTimeRanges>(minMediaTimeSeekable(), maxMediaTimeSeekable());
-}
-
-std::unique_ptr<PlatformTimeRanges> MediaPlayerPrivateWebM::buffered() const
-{
-    if (!m_buffered)
-        return makeUnique<PlatformTimeRanges>();
-
-    return makeUnique<PlatformTimeRanges>(m_buffered->ranges());
+    return m_buffered;
 }
 
 void MediaPlayerPrivateWebM::setBufferedRanges(PlatformTimeRanges timeRanges)
 {
-    m_buffered->ranges() = WTFMove(timeRanges);
+    m_buffered = WTFMove(timeRanges);
 }
 
 void MediaPlayerPrivateWebM::updateBufferedFromTrackBuffers(bool ended)

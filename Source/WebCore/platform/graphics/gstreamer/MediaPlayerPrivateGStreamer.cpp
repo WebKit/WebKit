@@ -658,39 +658,39 @@ void MediaPlayerPrivateGStreamer::setPreload(MediaPlayer::Preload preload)
     }
 }
 
-std::unique_ptr<PlatformTimeRanges> MediaPlayerPrivateGStreamer::buffered() const
+const PlatformTimeRanges& MediaPlayerPrivateGStreamer::buffered() const
 {
-    auto timeRanges = makeUnique<PlatformTimeRanges>();
     if (m_didErrorOccur || m_isLiveStream.value_or(false))
-        return timeRanges;
+        return PlatformTimeRanges::emptyRanges();
 
     MediaTime mediaDuration = durationMediaTime();
     if (!mediaDuration || mediaDuration.isPositiveInfinite())
-        return timeRanges;
+        return PlatformTimeRanges::emptyRanges();
 
     GRefPtr<GstQuery> query = adoptGRef(gst_query_new_buffering(GST_FORMAT_PERCENT));
 
     if (!gst_element_query(m_pipeline.get(), query.get()))
-        return timeRanges;
+        return PlatformTimeRanges::emptyRanges();
 
+    m_buffered.clear();
     unsigned numBufferingRanges = gst_query_get_n_buffering_ranges(query.get());
     for (unsigned index = 0; index < numBufferingRanges; index++) {
         gint64 rangeStart = 0, rangeStop = 0;
         if (gst_query_parse_nth_buffering_range(query.get(), index, &rangeStart, &rangeStop)) {
             uint64_t startTime = gst_util_uint64_scale_int_round(toGstUnsigned64Time(mediaDuration), rangeStart, GST_FORMAT_PERCENT_MAX);
             uint64_t stopTime = gst_util_uint64_scale_int_round(toGstUnsigned64Time(mediaDuration), rangeStop, GST_FORMAT_PERCENT_MAX);
-            timeRanges->add(MediaTime(startTime, GST_SECOND), MediaTime(stopTime, GST_SECOND));
+            m_buffered.add(MediaTime(startTime, GST_SECOND), MediaTime(stopTime, GST_SECOND));
         }
     }
 
     // Fallback to the more general maxTimeLoaded() if no range has been found.
-    if (!timeRanges->length()) {
+    if (!m_buffered.length()) {
         MediaTime loaded = maxTimeLoaded();
         if (loaded.isValid() && loaded)
-            timeRanges->add(MediaTime::zeroTime(), loaded);
+            m_buffered.add(MediaTime::zeroTime(), loaded);
     }
 
-    return timeRanges;
+    return m_buffered;
 }
 
 MediaTime MediaPlayerPrivateGStreamer::maxMediaTimeSeekable() const

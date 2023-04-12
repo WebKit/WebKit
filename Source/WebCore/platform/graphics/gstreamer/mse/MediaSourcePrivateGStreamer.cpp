@@ -207,11 +207,11 @@ void MediaSourcePrivateGStreamer::startPlaybackIfHasAllTracks()
     m_playerPrivate.startSource(tracks);
 }
 
-std::unique_ptr<PlatformTimeRanges> MediaSourcePrivateGStreamer::buffered()
+const PlatformTimeRanges& MediaSourcePrivateGStreamer::buffered()
 {
     if (m_mediaSource)
         return m_mediaSource->buffered();
-    return nullptr;
+    return PlatformTimeRanges::emptyRanges();
 }
 
 #if !RELEASE_LOG_DISABLED

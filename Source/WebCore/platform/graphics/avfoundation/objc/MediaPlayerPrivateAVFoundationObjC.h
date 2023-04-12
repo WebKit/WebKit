@@ -214,7 +214,7 @@ private:
     void setPitchCorrectionAlgorithm(MediaPlayer::PitchCorrectionAlgorithm) final;
     void seekToTime(const MediaTime&, const MediaTime& negativeTolerance, const MediaTime& positiveTolerance) final;
     unsigned long long totalBytes() const final;
-    std::unique_ptr<PlatformTimeRanges> platformBufferedTimeRanges() const final;
+    const PlatformTimeRanges& platformBufferedTimeRanges() const final;
     MediaTime platformMinTimeSeekable() const final;
     MediaTime platformMaxTimeSeekable() const final;
     MediaTime platformDuration() const final;
@@ -485,6 +485,7 @@ private:
     std::unique_ptr<Observer<void()>> m_currentImageChangedObserver;
     std::unique_ptr<Observer<void()>> m_waitForVideoOutputMediaDataWillChangeObserver;
     ProcessIdentity m_resourceOwner;
+    mutable PlatformTimeRanges m_buffered;
 };
 
 }

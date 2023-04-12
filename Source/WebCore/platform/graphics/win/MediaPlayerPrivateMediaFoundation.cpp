@@ -324,9 +324,11 @@ float MediaPlayerPrivateMediaFoundation::currentTime() const
     // clockTime is in 100 nanoseconds, we need to convert to seconds.
     float currentTime = clockTime / tenMegahertz;
 
-    if (currentTime > m_maxTimeLoaded)
-        m_maxTimeLoaded = currentTime;
-
+    if (m_buffered.length() && currentTime > m_buffered.maximumBufferedTime().toFloat()) {
+        PlatformTimeRanges ranges;
+        ranges.add(MediaTime::zeroTime(), MediaTime::createWithFloat(currentTime));
+        m_buffered = WTFMove(ranges);
+    }
     return currentTime;
 }
 
@@ -375,12 +377,9 @@ float MediaPlayerPrivateMediaFoundation::maxTimeSeekable() const
     return durationDouble();
 }
 
-std::unique_ptr<PlatformTimeRanges> MediaPlayerPrivateMediaFoundation::buffered() const
-{ 
-    auto ranges = makeUnique<PlatformTimeRanges>();
-    if (maxTimeLoaded() > 0)
-        ranges->add(MediaTime::zeroTime(), MediaTime::createWithDouble(maxTimeLoaded()));
-    return ranges;
+const PlatformTimeRanges& MediaPlayerPrivateMediaFoundation::buffered() const
+{
+    return m_buffered;
 }
 
 bool MediaPlayerPrivateMediaFoundation::didLoadingProgress() const

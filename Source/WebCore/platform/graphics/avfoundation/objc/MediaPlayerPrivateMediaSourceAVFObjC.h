@@ -216,10 +216,9 @@ private:
 
     void setPreservesPitch(bool) override;
 
-    std::unique_ptr<PlatformTimeRanges> seekable() const override;
     MediaTime maxMediaTimeSeekable() const override;
     MediaTime minMediaTimeSeekable() const override;
-    std::unique_ptr<PlatformTimeRanges> buffered() const override;
+    const PlatformTimeRanges& buffered() const override;
 
     bool didLoadingProgress() const override;
 
