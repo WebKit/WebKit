@@ -511,13 +511,12 @@ void FunctionDefinitionWriter::visit(AST::BinaryExpression& binary)
     case AST::BinaryOperation::Multiply:
         m_stringBuilder.append(" * ");
         break;
-
     case AST::BinaryOperation::Divide:
-    case AST::BinaryOperation::Modulo:
-        // FIXME: Implement these
-        RELEASE_ASSERT_NOT_REACHED();
+        m_stringBuilder.append(" / ");
         break;
-
+    case AST::BinaryOperation::Modulo:
+        m_stringBuilder.append(" % ");
+        break;
     case AST::BinaryOperation::And:
         m_stringBuilder.append(" & ");
         break;

@@ -286,6 +286,7 @@ module DSL
         N = Variable.new(:N, @NumericVariable)
         C = Variable.new(:C, @NumericVariable)
         R = Variable.new(:R, @NumericVariable)
+        K = Variable.new(:K, @NumericVariable)
 
         Number = Constraint.new(:Number)
         Integer = Constraint.new(:Integer)

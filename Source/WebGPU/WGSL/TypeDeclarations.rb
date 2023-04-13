@@ -1,13 +1,31 @@
 # FIXME: add all the missing type declarations here
 operator :+, {
     [T < Number].(T, T) => T,
+
+    # vector addition
     [T < Number, N].(Vector[T, N], T) => Vector[T, N],
     [T < Number, N].(T, Vector[T, N]) => Vector[T, N],
     [T < Number, N].(Vector[T, N], Vector[T, N]) => Vector[T, N],
+
+    # matrix-matrix addition
     [T < Float, C, R].(Matrix[T, C, R], Matrix[T, C, R]) => Matrix[T, C, R],
 }
 
+operator :-, {
+    # unary
+    [T < SignedNumber].(T) => T,
+    [T < SignedNumber, N].(Vector[T, N]) => Vector[T, N],
+
+    # binary
+    [T < Number].(T, T) => T,
+    [T < Number, N].(Vector[T, N], T) => Vector[T, N],
+    [T < Number, N].(T, Vector[T, N]) => Vector[T, N],
+    [T < Number, N].(Vector[T, N], Vector[T, N]) => Vector[T, N],
+}
+
 operator :*, {
+    [T < Number].(T, T) => T,
+
     # vector scaling
     [T < Number, N].(Vector[T, N], T) => Vector[T, N],
     [T < Number, N].(T, Vector[T, N]) => Vector[T, N],
@@ -16,17 +34,27 @@ operator :*, {
     # matrix-vector multiplication
     [T < Float, C, R].(Matrix[T, C, R], Vector[T, C]) => Vector[T, R],
     [T < Float, C, R].(Vector[T, R], Matrix[T, C, R]) => Vector[T, C],
+
+    # matrix-matrix multiplication
+    [T < Float, C, R, K].(Matrix[T, K, R], Matrix[T, C, K]) => Matrix[T, C, R],
 }
 
-operator :-, {
-  # unary
-  [T < SignedNumber].(T) => T,
-  [T < SignedNumber, N].(Vector[T, N]) => Vector[T, N],
+operator :/, {
+    [T < Number].(T, T) => T,
 
-  # binary
-  [T < Number, N].(Vector[T, N], T) => Vector[T, N],
-  [T < Number, N].(T, Vector[T, N]) => Vector[T, N],
-  [T < Number, N].(Vector[T, N], Vector[T, N]) => Vector[T, N],
+    # vector scaling
+    [T < Number, N].(Vector[T, N], T) => Vector[T, N],
+    [T < Number, N].(T, Vector[T, N]) => Vector[T, N],
+    [T < Number, N].(Vector[T, N], Vector[T, N]) => Vector[T, N],
+}
+
+operator :%, {
+    [T < Number].(T, T) => T,
+
+    # vector scaling
+    [T < Number, N].(Vector[T, N], T) => Vector[T, N],
+    [T < Number, N].(T, Vector[T, N]) => Vector[T, N],
+    [T < Number, N].(Vector[T, N], Vector[T, N]) => Vector[T, N],
 }
 
 # Comparison operations

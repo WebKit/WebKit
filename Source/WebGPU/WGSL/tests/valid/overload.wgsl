@@ -37,6 +37,14 @@ fn testAdd() {
 }
 
 fn testMultiply() {
+  {
+    let x = 0 * 0;
+    let x1 = 0i * 0i;
+    let x2 = 0u * 0u;
+    let x3 = 0.0 * 0.0;
+    let x4 = 0.0f * 0.0f;
+  }
+
   let v2 = vec2<f32>(0, 0);
   let v4 = vec4<f32>(0, 0, 0, 0);
   let m = mat2x4<f32>(0, 0, 0, 0, 0, 0, 0, 0);
@@ -45,6 +53,32 @@ fn testMultiply() {
   let r3 = vec2(1, 1) * 1;
   let r4 = 1 * vec2(1, 1);
   let r5 = vec2(1, 1) * vec2(1, 1);
+
+  let x0 = mat2x2(0, 0, 0, 0) * mat2x2(0, 0, 0, 0);
+  let x1 = mat2x2(0, 0, 0, 0) * mat3x2(0, 0, 0, 0, 0, 0);
+  let x2 = mat2x2(0, 0, 0, 0) * mat4x2(0, 0, 0, 0, 0, 0, 0, 0);
+}
+
+fn testDivision() {
+   let x = 0 / 1;
+   let x1 = 0i / 1i;
+   let x2 = 0u / 1u;
+   let x3 = 0.0 / 1.0;
+   let x4 = 0.0f / 1.0f;
+   let x5 = vec2(0.0) / 1.0;
+   let x6 = 0.0 / vec2(1.0, 1.0);
+   let x7 = vec2(0.0, 0.0) / vec2(1.0, 1.0);
+}
+
+fn testModulo() {
+   let x = 0 % 1;
+   let x1 = 0i % 1i;
+   let x2 = 0u % 1u;
+   let x3 = 0.0 % 1.0;
+   let x4 = 0.0f % 1.0f;
+   let x5 = vec2(0.0) % 1.0;
+   let x6 = 0.0 % vec2(1.0, 1.0);
+   let x7 = vec2(0.0, 0.0) % vec2(1.0, 1.0);
 }
 
 fn testTextureSample() {
