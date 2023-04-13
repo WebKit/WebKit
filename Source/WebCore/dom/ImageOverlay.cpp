@@ -47,7 +47,6 @@
 #include "ImageOverlayController.h"
 #include "MediaControlsHost.h"
 #include "Page.h"
-#include "Quirks.h"
 #include "RenderImage.h"
 #include "RenderText.h"
 #include "ShadowRoot.h"
@@ -438,11 +437,6 @@ static Elements updateSubtree(HTMLElement& element, const TextRecognitionResult&
 
             elements.root->appendChild(blockContainer);
             elements.blocks.uncheckedAppend(WTFMove(blockContainer));
-        }
-
-        if (document->quirks().needsToForceUserSelectAndUserDragWhenInstallingImageOverlay()) {
-            element.setInlineStyleProperty(CSSPropertyWebkitUserSelect, CSSValueText);
-            element.setInlineStyleProperty(CSSPropertyWebkitUserDrag, CSSValueAuto);
         }
     }
 

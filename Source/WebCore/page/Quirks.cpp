@@ -1411,27 +1411,6 @@ bool Quirks::shouldAllowNavigationToCustomProtocolWithoutUserGesture(StringView 
     return protocol == "msteams"_s && (requesterOrigin.host() == "teams.live.com"_s || requesterOrigin.host() == "teams.microsoft.com"_s);
 }
 
-#if ENABLE(IMAGE_ANALYSIS)
-// google.com rdar://76500331
-// youtube.com https://bugs.webkit.org/show_bug.cgi?id=233670
-bool Quirks::needsToForceUserSelectAndUserDragWhenInstallingImageOverlay() const
-{
-    if (!needsQuirks())
-        return false;
-
-    auto& url = m_document->topDocument().url();
-    if (topPrivatelyControlledDomain(url.host().toString()).startsWith("google."_s) && url.path() == "/search"_s)
-        return true;
-
-    auto host = url.host();
-    if (equalLettersIgnoringASCIICase(host, "youtube.com"_s) || host.endsWithIgnoringASCIICase(".youtube.com"_s))
-        return true;
-
-    return false;
-}
-
-#endif // ENABLE(IMAGE_ANALYSIS)
-
 #if PLATFORM(IOS)
 bool Quirks::allowLayeredFullscreenVideos() const
 {
