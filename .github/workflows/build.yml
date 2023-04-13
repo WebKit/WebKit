@@ -47,7 +47,7 @@ jobs:
         run: |
           echo "${{matrix.brew_prefix}}/llvm@15/bin" >> $GITHUB_PATH
           brew install llvm@15 python icu4c ninja
-          brew link llvm@15 --force
+          brew link llvm@15 --overwrite
       - name: Run
         env:
           ICU_INCLUDE_DIRS: ${{matrix.brew_prefix}}/icu4c/include
