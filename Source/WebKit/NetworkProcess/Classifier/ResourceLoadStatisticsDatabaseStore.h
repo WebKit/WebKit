@@ -126,7 +126,6 @@ private:
     const MemoryCompactLookupOnlyRobinHoodHashMap<String, TableAndIndexPair>& expectedTableAndIndexQueries() final;
     Span<const ASCIILiteral> sortedTables() final;
     void includeTodayAsOperatingDateIfNecessary() override;
-    void clearOperatingDates() override { }
     bool hasStatisticsExpired(WallTime mostRecentUserInteractionTime, OperatingDatesWindow) const override;
     void updateOperatingDatesParameters();
 
@@ -220,7 +219,6 @@ private:
 
     mutable std::unique_ptr<WebCore::SQLiteStatement> m_observedDomainCountStatement;
     std::unique_ptr<WebCore::SQLiteStatement> m_insertObservedDomainStatement;
-    std::unique_ptr<WebCore::SQLiteStatement> m_insertTopLevelDomainStatement;
     mutable std::unique_ptr<WebCore::SQLiteStatement> m_domainIDFromStringStatement;
     mutable std::unique_ptr<WebCore::SQLiteStatement> m_topFrameLinkDecorationsFromExistsStatement;
     mutable std::unique_ptr<WebCore::SQLiteStatement> m_topFrameLoadedThirdPartyScriptsExistsStatement;
