@@ -1,0 +1,37 @@
+#!/usr/bin/env python3
+import argparse
+import boto3
+
+from botocore.config import Config
+
+S3_DEFAULT_BUCKET = 'archives.webkit.org'
+S3_EWS_BUCKET = 'ews-archives.webkit.org'
+
+def generateS3URL(bucket, identifier, revision):
+    key = '/'.join([identifier, revision + '.zip'])
+    print(f'\tS3 Bucket: {bucket}\n\tS3 Key: {key}')
+    config = Config(region_name = 'us-west-2')
+    s3 = boto3.client('s3', config=config)
+    params = {'Bucket': bucket, 'Key': key}
+    url = s3.generate_presigned_url(ClientMethod='put_object', Params=params, ExpiresIn=600)
+    print(f'S3 URL: {url}\n')
+    return url
+
+def main():
+    parser = argparse.ArgumentParser(add_help=True)
+
+    group = parser.add_mutually_exclusive_group(required=True)
+    group.add_argument('--revision', action="store", help='Revision number or change identifier for the built archive')
+    group.add_argument('--change-id', dest='change_id', action="store", help='patch id or hash of specified change')
+    parser.add_argument('--identifier', action="store", required=True, help='S3 destination identifier, in the form of fullPlatform-architecture-configuration. [mac-mojave-x86_64-release]')
+    args = parser.parse_args()
+
+    s3_bucket = S3_DEFAULT_BUCKET
+    if args.change_id:
+        s3_bucket = S3_EWS_BUCKET
+
+    url = generateS3URL(s3_bucket, args.identifier, args.revision or args.change_id)
+    return url
+
+if __name__ == "__main__":
+    main()

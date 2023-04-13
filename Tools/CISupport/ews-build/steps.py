@@ -2723,7 +2723,12 @@ class CompileWebKit(shell.Compile, AddToLogMixin):
         else:
             triggers = self.getProperty('triggers', None)
             if triggers or not self.skipUpload:
-                steps_to_add = [ArchiveBuiltProduct(), UploadBuiltProduct(), TransferToS3()]
+                steps_to_add = [ArchiveBuiltProduct()]
+                if CURRENT_HOSTNAME == EWS_BUILD_HOSTNAME:
+                    steps_to_add.extend([GenerateS3URL(), UploadFileToS3()])
+                else:
+                    # S3 might not be configured on uat or local instances, achieve similar functionality without S3.
+                    steps_to_add.extend([UploadBuiltProduct()])
                 if triggers:
                     steps_to_add.append(Trigger(
                         schedulerNames=triggers,
@@ -4384,6 +4389,78 @@ class UploadBuiltProduct(transfer.FileUpload):
     def getResultSummary(self):
         if self.results != SUCCESS:
             return {'step': 'Failed to upload built product'}
+        return super().getResultSummary()
+
+
+class UploadFileToS3(shell.ShellCommandNewStyle):
+    name = 'upload-file-to-s3'
+    descriptionDone = name
+    haltOnFailure = False
+    flunkOnFailure = False
+
+    def __init__(self, **kwargs):
+        super().__init__(timeout=5 * 60, logEnviron=False, **kwargs)
+
+    @defer.inlineCallbacks
+    def run(self):
+        s3url = self.build.s3url
+        steps_to_add = [UploadBuiltProduct(), TransferToS3()]
+        if not s3url:
+            rc = FAILURE
+            self.build.addStepsAfterCurrentStep(steps_to_add)
+            return defer.returnValue(rc)
+
+        self.env = dict(UPLOAD_URL=s3url)
+        configuration = self.getProperty('configuration')
+        workersrc = f'WebKitBuild/{configuration}.zip'
+
+        self.command = ['python3', 'Tools/Scripts/upload-file-to-url', '--filename', workersrc]
+        rc = yield super().run()
+        if rc in [FAILURE, EXCEPTION]:
+            self.build.addStepsAfterCurrentStep(steps_to_add)
+        return defer.returnValue(rc)
+
+    def doStepIf(self, step):
+        return CURRENT_HOSTNAME == EWS_BUILD_HOSTNAME
+
+
+class GenerateS3URL(master.MasterShellCommand):
+    name = 'generate-s3-url'
+    descriptionDone = ['Generated S3 URL']
+    identifier = WithProperties('%(fullPlatform)s-%(architecture)s-%(configuration)s')
+    change_id = WithProperties('%(change_id)s')
+    command = ['python3', '../Shared/generate-s3-url', '--change-id', change_id, '--identifier', identifier]
+    haltOnFailure = False
+    flunkOnFailure = False
+
+    def __init__(self, **kwargs):
+        kwargs['command'] = self.command
+        super().__init__(logEnviron=False, **kwargs)
+
+    def start(self):
+        self.log_observer = logobserver.BufferLogObserver(wantStderr=True)
+        self.addLogObserver('stdio', self.log_observer)
+        return super().start()
+
+    def finished(self, results):
+        log_text = self.log_observer.getStdout() + self.log_observer.getStderr()
+        match = re.search(r'S3 URL: (?P<url>[^\s]+)', log_text)
+        # Sample log: S3 URL: https://s3-us-west-2.amazonaws.com/ews-archives.webkit.org/ios-simulator-12-x86_64-release/123456.zip
+        s3url = ''
+        if match:
+            s3url = match.group('url')
+        self.build.s3url = s3url
+        return super().finished(results)
+
+    def hideStepIf(self, results, step):
+        return results == SUCCESS
+
+    def doStepIf(self, step):
+        return CURRENT_HOSTNAME == EWS_BUILD_HOSTNAME
+
+    def getResultSummary(self):
+        if self.results == FAILURE:
+            return {'step': 'Failed to generate S3 URL'}
         return super().getResultSummary()
 
 
