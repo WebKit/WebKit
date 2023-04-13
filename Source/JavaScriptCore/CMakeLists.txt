@@ -839,6 +839,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     inspector/ScriptCallStack.h
     inspector/ScriptCallStackFactory.h
     
+    inspector/augmentable/AugmentableInspectorController.h
     inspector/JSGlobalObjectInspectorController.h
     runtime/JSGlobalObjectDebuggable.h
     inspector/JSGlobalObjectDebugger.h
