@@ -27,6 +27,10 @@
 
 #include <wtf/RefCounted.h>
 
+#ifndef JS_EXPORT
+#include "JSBase.h"
+#endif
+
 namespace JSC {
 
 class ArrayBuffer;

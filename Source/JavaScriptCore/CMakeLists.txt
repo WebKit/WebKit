@@ -1342,7 +1342,6 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
 
     jit/JIT.h
     bytecode/StructureStubInfo.h
-    bytecode/PolymorphicAccess.h
     bytecode/AccessCase.h
     bytecode/ObjectPropertyConditionSet.h
     bytecode/PolyProtoAccessChain.h
