@@ -583,7 +583,7 @@ Exception* VM::ensureTerminationException()
 }
 
 #if ENABLE(JIT)
-static ThunkGenerator thunkGeneratorForIntrinsic(Intrinsic intrinsic)
+ThunkGenerator VM::thunkGeneratorForIntrinsic(Intrinsic intrinsic)
 {
     switch (intrinsic) {
     case CharCodeAtIntrinsic:
@@ -631,7 +631,7 @@ static ThunkGenerator thunkGeneratorForIntrinsic(Intrinsic intrinsic)
 
 MacroAssemblerCodeRef<JITThunkPtrTag> VM::getCTIStub(ThunkGenerator generator)
 {
-    return jitStubs->ctiStub(*this, generator);
+    return jitStubs->ctiStub(*this, generator, IncludeDebuggerHook::No);
 }
 
 #endif // ENABLE(JIT)
@@ -667,7 +667,7 @@ NativeExecutable* VM::getHostFunction(NativeFunction function, ImplementationVis
     if (Options::useJIT()) {
         return jitStubs->hostFunctionStub(
             *this, toTagged(function), toTagged(constructor),
-            intrinsic != NoIntrinsic ? thunkGeneratorForIntrinsic(intrinsic) : nullptr,
+            thunkGeneratorForIntrinsic(intrinsic),
             implementationVisibility, intrinsic, signature, name);
     }
 #endif // ENABLE(JIT)
@@ -729,8 +729,8 @@ CodePtr<JSEntryPtrTag> VM::getCTIInternalFunctionTrampolineFor(CodeSpecializatio
 #if ENABLE(JIT)
     if (Options::useJIT()) {
         if (kind == CodeForCall)
-            return jitStubs->ctiInternalFunctionCall(*this).retagged<JSEntryPtrTag>();
-        return jitStubs->ctiInternalFunctionConstruct(*this).retagged<JSEntryPtrTag>();
+            return jitStubs->ctiInternalFunctionCall(*this, IncludeDebuggerHook::No).retagged<JSEntryPtrTag>();
+        return jitStubs->ctiInternalFunctionConstruct(*this, IncludeDebuggerHook::No).retagged<JSEntryPtrTag>();
     }
 #endif
     if (kind == CodeForCall)

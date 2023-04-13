@@ -31,6 +31,7 @@
 #include "GPRInfo.h"
 #include "JSCJSValue.h"
 #include "JSString.h"
+#include "LinkBuffer.h"
 #include "MacroAssembler.h"
 
 #if ENABLE(JIT)

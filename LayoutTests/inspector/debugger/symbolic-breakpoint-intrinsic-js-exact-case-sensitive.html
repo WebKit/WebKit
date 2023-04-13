@@ -5,7 +5,7 @@
 <script src="resources/breakpoint-options-utilities.js"></script>
 <script>
 function triggerSymbolicBreakpoint() {
-    [1, 2, 3].reverse();
+    "test".charCodeAt(0);
     TestPage.dispatchEventToFrontend("TestPage-SymbolicBreakpoint");
 }
 
@@ -21,9 +21,9 @@ function test()
     let suite = InspectorTest.createAsyncSuite("SymbolicBreakpoint");
 
     InspectorTest.BreakpointOptions.addTestCases(suite, {
-        testCaseNamePrefix: "ExactCaseInsensitive.Native.JS.Hit.",
+        testCaseNamePrefix: "ExactCaseSensitive.Intrinsic.JS.Hit.",
         createBreakpoint() {
-            let breakpoint = new WI.SymbolicBreakpoint("rEvErSe", {caseSensitive: false});
+            let breakpoint = new WI.SymbolicBreakpoint("charCodeAt");
             WI.debuggerManager.addSymbolicBreakpoint(breakpoint);
             return breakpoint;
         },
@@ -31,7 +31,7 @@ function test()
     });
 
     suite.addTestCase({
-        name: "SymbolicBreakpoint.ExactCaseInsensitive.Native.JS.Miss",
+        name: "SymbolicBreakpoint.ExactCaseSensitive.Intrinsic.JS.Miss",
         async test() {
             let pauseCount = 0;
             let pausedListener = WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.Paused, (event) => {
@@ -40,9 +40,9 @@ function test()
             });
 
             InspectorTest.log("Adding breakpoint...");
-            let breakpoint = new WI.SymbolicBreakpoint("rEvErS", {caseSensitive: false});
+            let breakpoint = new WI.SymbolicBreakpoint("cHaRcOdEaT");
             WI.debuggerManager.addSymbolicBreakpoint(breakpoint);
-            InspectorTest.assert(!WI.debuggerManager.symbolicBreakpointsForSymbol("reverse").length, "Should not match breakpoint.");
+            InspectorTest.assert(!WI.debuggerManager.symbolicBreakpointsForSymbol("charCodeAt").length, "Should not match breakpoint.");
 
             InspectorTest.log("Triggering breakpoint...");
             await triggerBreakpoint();
@@ -62,7 +62,7 @@ function test()
     });
 
     suite.addTestCase({
-        name: "SymbolicBreakpoint.ExactCaseInsensitive.Native.JS.Disabled",
+        name: "SymbolicBreakpoint.ExactCaseSensitive.Intrinsic.JS.Disabled",
         async test() {
             let pauseCount = 0;
             let pausedListener = WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.Paused, (event) => {
@@ -71,9 +71,9 @@ function test()
             });
 
             InspectorTest.log("Adding breakpoint...");
-            let breakpoint = new WI.SymbolicBreakpoint("rEvErSe", {caseSensitive: false, disabled: true});
+            let breakpoint = new WI.SymbolicBreakpoint("charCodeAt", {disabled: true});
             WI.debuggerManager.addSymbolicBreakpoint(breakpoint);
-            InspectorTest.assert(!WI.debuggerManager.symbolicBreakpointsForSymbol("reverse").length, "Should not match breakpoint.");
+            InspectorTest.assert(!WI.debuggerManager.symbolicBreakpointsForSymbol("charCodeAt").length, "Should not match breakpoint.");
 
             InspectorTest.log("Triggering breakpoint...");
             await triggerBreakpoint();

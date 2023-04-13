@@ -978,6 +978,8 @@ public:
 
     void emitCTIThunkPrologue(bool returnAddressAlreadyTagged = false);
     void emitCTIThunkEpilogue();
+
+    void emitDebuggerHook(VM&);
 };
 
 } // namespace JSC
