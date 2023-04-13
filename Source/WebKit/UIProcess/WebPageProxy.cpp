@@ -9040,7 +9040,7 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
 #endif
 
 #if USE(GRAPHICS_LAYER_TEXTURE_MAPPER) || USE(GRAPHICS_LAYER_WC)
-    parameters.nativeWindowHandle = reinterpret_cast<uint64_t>(viewWidget());
+    parameters.nativeWindowHandle = viewWidget();
 #endif
 #if USE(GRAPHICS_LAYER_WC)
     parameters.usesOffscreenRendering = pageClient().usesOffscreenRendering();

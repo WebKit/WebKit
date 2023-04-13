@@ -1069,8 +1069,8 @@ public:
     const std::optional<WebCore::Color>& backgroundColor() const;
     void setBackgroundColor(const std::optional<WebCore::Color>&);
 
-#if PLATFORM(WIN)
-    HWND viewWidget();
+#if USE(GRAPHICS_LAYER_TEXTURE_MAPPER) || USE(GRAPHICS_LAYER_WC)
+    uint64_t viewWidget();
 #endif
 
 #if USE(LIBWPE)
