@@ -393,6 +393,8 @@ localizedStrings["Compute Shader"] = "Compute Shader";
 localizedStrings["Computed"] = "Computed";
 localizedStrings["Condition"] = "Condition";
 localizedStrings["Conditional expression"] = "Conditional expression";
+/* Part of the tooltip indicating that the hovered property is configurable. */
+localizedStrings["Configurable @ Object Tree Property"] = "Configurable";
 localizedStrings["Conic Gradient"] = "Conic Gradient";
 localizedStrings["Connecting"] = "Connecting";
 localizedStrings["Connection"] = "Connection";
@@ -668,6 +670,8 @@ localizedStrings["Ensure that only one live region is used on the page."] = "Ens
 localizedStrings["Ensure that only one main content section is used on the page."] = "Ensure that only one main content section is used on the page.";
 localizedStrings["Ensure that values for \u201C%s\u201D are valid."] = "Ensure that values for \u201C%s\u201D are valid.";
 localizedStrings["Entire Recording"] = "Entire Recording";
+/* Part of the tooltip indicating that the hovered property is enumerable. */
+localizedStrings["Enumerable @ Object Tree Property"] = "Enumerable";
 localizedStrings["Error"] = "Error";
 /* Title of icon indicating that the selected audit threw an error. */
 localizedStrings["Error @ Audit Tab - Test Case"] = "Error";
@@ -1104,7 +1108,13 @@ localizedStrings["Nodes"] = "Nodes";
 localizedStrings["None"] = "None";
 /* Property value for any `normal` CSS value. */
 localizedStrings["Normal @ Font Details Sidebar Property Value"] = "Normal";
+/* Part of the tooltip indicating that the hovered property is not configurable. */
+localizedStrings["Not configurable @ Object Tree Property"] = "Not configurable";
+/* Part of the tooltip indicating that the hovered property is not enumerable. */
+localizedStrings["Not enumerable @ Object Tree Property"] = "Not enumerable";
 localizedStrings["Not found"] = "Not found";
+/* Part of the tooltip indicating that the hovered property is not writable. */
+localizedStrings["Not writable @ Object Tree Property"] = "Not writable";
 /* Title of icon indicating that the selected audit has not been run yet. */
 localizedStrings["Not yet run @ Audit Tab - Test Case"] = "Not yet run";
 /* Section header for the group of CSS variables with numbers as values */
@@ -1868,6 +1878,8 @@ localizedStrings["Worker: %s"] = "Worker: %s";
 /* Title for list of JavaScript web worker execution contexts */
 localizedStrings["Workers @ Execution Context Picker"] = "Workers";
 localizedStrings["Wrap lines to editor width"] = "Wrap lines to editor width";
+/* Part of the tooltip indicating that the hovered property is writable. */
+localizedStrings["Writable @ Object Tree Property"] = "Writable";
 localizedStrings["XBM"] = "XBM";
 localizedStrings["XHR"] = "XHR";
 localizedStrings["XHR Breakpoint\u2026"] = "XHR Breakpoint\u2026";

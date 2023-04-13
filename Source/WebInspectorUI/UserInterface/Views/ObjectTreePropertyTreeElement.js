@@ -159,8 +159,27 @@ WI.ObjectTreePropertyTreeElement = class ObjectTreePropertyTreeElement extends W
         if (this._mode === WI.ObjectTreeView.Mode.Properties) {
             if (this.property.isPrivateProperty)
                 nameElement.classList.add("private");
-            if (!this.property.enumerable)
-                nameElement.classList.add("not-enumerable");
+
+            if (this.property.isInternalProperty)
+                nameElement.classList.add("internal");
+            else {
+                nameElement.title += "\n";
+
+                if (this.property.configurable)
+                    nameElement.title += "\n" + WI.UIString("Configurable", "Configurable @ Object Tree Property", "Part of the tooltip indicating that the hovered property is configurable.");
+                else
+                    nameElement.title += "\n" + WI.UIString("Not configurable", "Not configurable @ Object Tree Property", "Part of the tooltip indicating that the hovered property is not configurable.");
+
+                if (this.property.enumerable)
+                    nameElement.title += "\n" + WI.UIString("Enumerable", "Enumerable @ Object Tree Property", "Part of the tooltip indicating that the hovered property is enumerable.");
+                else
+                    nameElement.title += "\n" + WI.UIString("Not enumerable", "Not enumerable @ Object Tree Property", "Part of the tooltip indicating that the hovered property is not enumerable.");
+
+                if (this.property.writable)
+                    nameElement.title += "\n" + WI.UIString("Writable", "Writable @ Object Tree Property", "Part of the tooltip indicating that the hovered property is writable.");
+                else
+                    nameElement.title += "\n" + WI.UIString("Not writable", "Not writable @ Object Tree Property", "Part of the tooltip indicating that the hovered property is not writable.");
+            }
         }
 
         // Value / Getter Value / Getter.
