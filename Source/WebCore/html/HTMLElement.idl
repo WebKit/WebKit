@@ -51,10 +51,10 @@
     [CEReactions, Reflect, EnabledBySetting=InertAttributeEnabled] attribute boolean inert;
 
     // The popover API
-    [EnabledBySetting=PopoverAttributeEnabled] undefined showPopover();
-    [EnabledBySetting=PopoverAttributeEnabled] undefined hidePopover();
-    [EnabledBySetting=PopoverAttributeEnabled] undefined togglePopover(optional boolean force);
-    [CEReactions, EnabledBySetting=PopoverAttributeEnabled] attribute [AtomString] DOMString? popover;
+    [EnabledBySetting=PopoverAttributeEnabled, DisabledByQuirk=shouldDisablePopoverAttribute] undefined showPopover();
+    [EnabledBySetting=PopoverAttributeEnabled, DisabledByQuirk=shouldDisablePopoverAttribute] undefined hidePopover();
+    [EnabledBySetting=PopoverAttributeEnabled, DisabledByQuirk=shouldDisablePopoverAttribute] undefined togglePopover(optional boolean force);
+    [CEReactions, EnabledBySetting=PopoverAttributeEnabled, DisabledByQuirk=shouldDisablePopoverAttribute] attribute [AtomString] DOMString? popover;
 
     // Non-standard: IE extension. May get added to the specification (https://github.com/whatwg/html/issues/668).
     [CEReactions] attribute [LegacyNullToEmptyString] DOMString outerText;

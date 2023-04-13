@@ -163,6 +163,8 @@ public:
     bool shouldAdvertiseSupportForHLSSubtitleTypes() const;
 #endif
 
+    bool shouldDisablePopoverAttributeQuirk() const;
+
 private:
     bool needsQuirks() const;
 

@@ -397,7 +397,8 @@ void HTMLElement::attributeChanged(const QualifiedName& name, const AtomString& 
         }
     }
 
-    if (document().settings().popoverAttributeEnabled() && name == popoverAttr)
+    bool popoverAttributeEnabled = document().settings().popoverAttributeEnabled() && !document().quirks().shouldDisablePopoverAttributeQuirk();
+    if (popoverAttributeEnabled && name == popoverAttr)
         popoverAttributeChanged(newValue);
 
     auto& eventName = eventNameForEventHandlerAttribute(name);
