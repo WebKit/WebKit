@@ -30,7 +30,7 @@
 
 #import "FullscreenTouchSecheuristic.h"
 #import "PlaybackSessionManagerProxy.h"
-#import "UIAlertControllerUtilities.h"
+#import "UIKitSPI.h"
 #import "VideoFullscreenManagerProxy.h"
 #import "WKFullscreenStackView.h"
 #import "WKWebViewIOS.h"
@@ -712,7 +712,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     ASSERT(_valid);
     NSString *alertTitle = WEB_UI_STRING("It looks like you are typing while in full screen", "Full Screen Deceptive Website Warning Sheet Title");
     NSString *alertMessage = [NSString stringWithFormat:WEB_UI_NSSTRING(@"Typing is not allowed in full screen websites. “%@” may be showing a fake keyboard to trick you into disclosing personal or financial information.", "Full Screen Deceptive Website Warning Sheet Content Text"), (NSString *)self.location];
-    auto alert = WebKit::createUIAlertController(alertTitle, alertMessage);
+    UIAlertController* alert = [UIAlertController alertControllerWithTitle:alertTitle message:alertMessage preferredStyle:UIAlertControllerStyleAlert];
 
     if (auto page = [self._webView _page]) {
         page->suspendAllMediaPlayback([] { });
@@ -737,7 +737,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     [alert addAction:exitAction];
     [alert addAction:stayAction];
-    [self presentViewController:alert.get() animated:YES completion:nil];
+    [self presentViewController:alert animated:YES completion:nil];
 }
 
 @end

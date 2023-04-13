@@ -38,7 +38,6 @@
 #import "RemoteScrollingCoordinatorProxyIOS.h"
 #import "ScrollingTreeScrollingNodeDelegateIOS.h"
 #import "TapHandlingResult.h"
-#import "UIAlertControllerUtilities.h"
 #import "UIKitSPI.h"
 #import "VideoFullscreenManagerProxy.h"
 #import "ViewGestureController.h"
@@ -3145,12 +3144,12 @@ static bool isLockdownModeWarningNeeded()
             if (!appDisplayName)
                 appDisplayName = [[NSBundle mainBundle] objectForInfoDictionaryKey:(__bridge NSString *)kCFBundleNameKey];
 
-            auto alert = WebKit::createUIAlertController([NSString stringWithFormat:WEB_UI_NSSTRING(@"Lockdown Mode is Turned On For “%@“", "Lockdown Mode alert title"), appDisplayName], message.get());
+            UIAlertController *alert = [UIAlertController alertControllerWithTitle:[NSString stringWithFormat:WEB_UI_NSSTRING(@"Lockdown Mode is Turned On For “%@“", "Lockdown Mode alert title"), appDisplayName] message:message.get() preferredStyle:UIAlertControllerStyleAlert];
 
             [alert addAction:[UIAlertAction actionWithTitle:WEB_UI_NSSTRING(@"OK", "Lockdown Mode alert OK button") style:UIAlertActionStyleDefault handler:nil]];
 
             UIViewController *presentationViewController = [UIViewController _viewControllerForFullScreenPresentationFromView:protectedSelf.get()];
-            [presentationViewController presentViewController:alert.get() animated:YES completion:nil];
+            [presentationViewController presentViewController:alert animated:YES completion:nil];
             [[NSUserDefaults standardUserDefaults] setBool:YES forKey:WebKitLockdownModeAlertShownKey];
         });
     });

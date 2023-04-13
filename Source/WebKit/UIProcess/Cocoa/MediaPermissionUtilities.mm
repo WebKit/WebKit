@@ -38,10 +38,6 @@
 #import <wtf/spi/cf/CFBundleSPI.h>
 #import <wtf/spi/darwin/SandboxSPI.h>
 
-#if PLATFORM(IOS_FAMILY)
-#import "UIAlertControllerUtilities.h"
-#endif
-
 #import "TCCSoftLink.h"
 #import <pal/cocoa/AVFoundationSoftLink.h>
 #import <pal/cocoa/SpeechSoftLink.h>
@@ -231,7 +227,7 @@ void alertForPermission(WebPageProxy& page, MediaPermissionReason reason, const 
         completionBlock(shouldAllow);
     }];
 #else
-    auto alert = WebKit::createUIAlertController(alertTitle, nil);
+    UIAlertController* alert = [UIAlertController alertControllerWithTitle:alertTitle message:nil preferredStyle:UIAlertControllerStyleAlert];
     UIAlertAction* allowAction = [UIAlertAction actionWithTitle:allowButtonString style:UIAlertActionStyleDefault handler:[completionBlock](UIAlertAction *action) {
         completionBlock(true);
     }];
@@ -243,7 +239,7 @@ void alertForPermission(WebPageProxy& page, MediaPermissionReason reason, const 
     [alert addAction:doNotAllowAction];
     [alert addAction:allowAction];
 
-    [[UIViewController _viewControllerForFullScreenPresentationFromView:webView.get()] presentViewController:alert.get() animated:YES completion:nil];
+    [[UIViewController _viewControllerForFullScreenPresentationFromView:webView.get()] presentViewController:alert animated:YES completion:nil];
 #endif
 }
 
