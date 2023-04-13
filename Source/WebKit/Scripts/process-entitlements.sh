@@ -376,8 +376,11 @@ function ios_family_process_webcontent_shared_entitlements()
 
 function ios_family_process_webcontent_entitlements()
 {
-    plistbuddy Add :com.apple.private.verified-jit bool YES
-    plistbuddy Add :dynamic-codesigning bool YES
+    if [[ "${WK_PLATFORM_NAME}" != watchos ]]
+    then
+        plistbuddy Add :com.apple.private.verified-jit bool YES
+        plistbuddy Add :dynamic-codesigning bool YES
+    fi
 
     ios_family_process_webcontent_shared_entitlements
 }
