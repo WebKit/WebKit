@@ -260,7 +260,7 @@ JSValue IntlPluralRules::select(JSGlobalObject* globalObject, double value) cons
     status = callBufferProducingFunction(uplrules_selectFormatted, m_pluralRules.get(), formattedNumber.get(), buffer);
     if (U_FAILURE(status))
         return throwTypeError(globalObject, scope, "failed to select plural value"_s);
-    return jsString(vm, String(WTFMove(buffer)));
+    return jsString(vm, String::fromSpan(buffer));
 #else
     Vector<UChar, 8> result(8);
     auto length = uplrules_selectWithFormat(m_pluralRules.get(), value, m_numberFormat.get(), result.data(), result.size(), &status);
@@ -295,7 +295,7 @@ JSValue IntlPluralRules::selectRange(JSGlobalObject* globalObject, double start,
     status = callBufferProducingFunction(uplrules_selectForRange, m_pluralRules.get(), range.get(), buffer);
     if (U_FAILURE(status))
         return throwTypeError(globalObject, scope, "failed to select plural value"_s);
-    return jsString(vm, String(WTFMove(buffer)));
+    return jsString(vm, String::fromSpan(buffer));
 }
 #endif
 

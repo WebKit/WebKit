@@ -60,18 +60,24 @@ public:
     StringView& operator=(const StringView&);
 #endif
 
+    // Construct a string view with UTF-16 data.
+    StringView(const UChar*, unsigned length);
+    ALWAYS_INLINE static StringView fromSpan(Span<const UChar> span) { return StringView { span.data(), static_cast<unsigned>(span.size()) }; }
+
+    // Construct a string view with Latin-1 data.
+    StringView(const LChar*, unsigned length);
+    StringView(const char*, unsigned length);
+    ALWAYS_INLINE static StringView fromLatin1(const char* characters) { return StringView { characters }; }
+    ALWAYS_INLINE static StringView fromLatin1Span(Span<const LChar> span) { return StringView { span.data(), static_cast<unsigned>(span.size()) }; }
+
+    // Construct a string view referencing an existing StringImpl.
     StringView(const AtomString&);
     StringView(const String&);
     StringView(const StringImpl&);
     StringView(const StringImpl*);
-    StringView(const LChar*, unsigned length);
-    StringView(const UChar*, unsigned length);
-    StringView(const char*, unsigned length);
-    StringView(ASCIILiteral);
-    ALWAYS_INLINE StringView(Span<const LChar> characters) : StringView(characters.data(), characters.size()) { }
-    ALWAYS_INLINE StringView(Span<const UChar> characters) : StringView(characters.data(), characters.size()) { }
 
-    ALWAYS_INLINE static StringView fromLatin1(const char* characters) { return StringView { characters }; }
+    // Construct a string view from a constant string literal.
+    StringView(ASCIILiteral);
 
     static StringView empty();
 

@@ -100,7 +100,7 @@ String ThreadableWebSocketChannelClientWrapper::subprotocol() const
 {
     if (m_subprotocol.isEmpty())
         return emptyString();
-    return String(m_subprotocol);
+    return String::fromSpan(m_subprotocol);
 }
 
 void ThreadableWebSocketChannelClientWrapper::setSubprotocol(const String& subprotocol)
@@ -114,7 +114,7 @@ String ThreadableWebSocketChannelClientWrapper::extensions() const
 {
     if (m_extensions.isEmpty())
         return emptyString();
-    return String(m_extensions);
+    return String::fromSpan(m_extensions);
 }
 
 void ThreadableWebSocketChannelClientWrapper::setExtensions(const String& extensions)
