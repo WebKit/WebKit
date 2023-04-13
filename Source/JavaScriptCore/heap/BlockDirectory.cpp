@@ -83,6 +83,8 @@ void BlockDirectory::updatePercentageOfPagedOutPages(SimpleStats& stats)
         for (unsigned i = 0; i < numberOfPagesInMarkedBlock; ++i)
             stats.add(!(pagedBits[i] & pageIsResidentAndNotCompressed));
     }
+#else
+    UNUSED_PARAM(stats);
 #endif
 }
 
