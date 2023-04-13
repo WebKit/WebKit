@@ -28,6 +28,7 @@
 
 #if PLATFORM(IOS_FAMILY)
 
+#import "UIAlertControllerUtilities.h"
 #import "UIKitSPI.h"
 #import "WKWebViewPrivateForTesting.h"
 #import <CoreLocation/CoreLocation.h>
@@ -182,8 +183,7 @@ struct PermissionRequest {
         NSString *allowActionTitle = WEB_UI_STRING("Allow", "Action authorizing a webpage to access the user’s location.");
         NSString *denyActionTitle = WEB_UI_STRING_KEY("Don’t Allow", "Don’t Allow (website location dialog)", "Action denying a webpage access to the user’s location.");
 
-        UIAlertController *alert = [UIAlertController alertControllerWithTitle:title message:message preferredStyle:UIAlertControllerStyleAlert];
-        [alert _setTitleMaximumLineCount:0]; // No limit, we need to make sure the title doesn't get truncated.
+        auto alert = WebKit::createUIAlertController(title, message);
         UIAlertAction *denyAction = [UIAlertAction actionWithTitle:denyActionTitle style:UIAlertActionStyleDefault handler:[weakSelf = WeakObjCPtr<WKWebGeolocationPolicyDecider>(self)](UIAlertAction *) mutable {
             if (auto strongSelf = weakSelf.get())
                 [strongSelf _finishActiveChallenge:NO];
@@ -196,7 +196,7 @@ struct PermissionRequest {
         [alert addAction:denyAction];
         [alert addAction:allowAction];
 
-        [[UIViewController _viewControllerForFullScreenPresentationFromView:_activeChallenge->view.get()] presentViewController:alert animated:YES completion:nil];
+        [[UIViewController _viewControllerForFullScreenPresentationFromView:_activeChallenge->view.get()] presentViewController:alert.get() animated:YES completion:nil];
     }];
 }
 
