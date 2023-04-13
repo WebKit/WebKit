@@ -27,6 +27,7 @@
 
 #include "Environment.h"
 #if BPLATFORM(IOS_FAMILY)
+#include "BAllowProhibitedAPIs.h"
 #include "MemoryStatusSPI.h"
 #endif
 #include "PerProcess.h"

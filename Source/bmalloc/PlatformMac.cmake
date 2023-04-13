@@ -6,5 +6,6 @@ list(APPEND bmalloc_SOURCES
 )
 
 list(APPEND bmalloc_PUBLIC_HEADERS
+    bmalloc/darwin/BAllowProhibitedAPIs.h
     bmalloc/darwin/MemoryStatusSPI.h
 )

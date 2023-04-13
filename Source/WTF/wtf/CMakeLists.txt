@@ -205,6 +205,7 @@ set(WTF_PUBLIC_HEADERS
     PlatformEnableWinCairo.h
     PlatformHave.h
     PlatformLegacy.h
+    PlatformMacroOverrides.h
     PlatformOS.h
     PlatformRegisters.h
     PlatformUse.h

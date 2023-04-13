@@ -139,30 +139,6 @@ XCSPEC_INFO = [dict(
 ''',
 )]
 
-AVAILABILITY_FILE = pathlib.Path("usr/local/include/AvailabilityProhibitedInternal.h")
-AVAILABILTY_TEXT = """\
-// Handle __IOS_PROHIBITED and friends.
-#undef __OS_AVAILABILITY
-#define __OS_AVAILABILITY(...)
-
-// Take care of {A,S}PI_AVAILABLE{,_BEGIN,_END}
-#undef __API_AVAILABLE_GET_MACRO
-#define __API_AVAILABLE_GET_MACRO(...) __NULL_AVAILABILITY
-
-#undef SWIFT_AVAILABILITY
-#define SWIFT_AVAILABILITY __NULL_AVAILABILITY
-
-// Take care of {A,S}PI_DEPRECATED{,WITH_REPLACEMENT}{,_BEGIN,_END}
-#undef __API_DEPRECATED_MSG_GET_MACRO
-#define __API_DEPRECATED_MSG_GET_MACRO(...) __NULL_AVAILABILITY
-
-// Take care of API_UNAVAILABLE{,_BEGIN,_END}
-#undef __API_UNAVAILABLE_GET_MACRO
-#define __API_UNAVAILABLE_GET_MACRO(...) __NULL_AVAILABILITY
-
-#define __NULL_AVAILABILITY(...)
-"""
-
 SDKS_TO_UPDATE = [
     "iphoneos",
     "iphonesimulator",
@@ -338,20 +314,6 @@ def copy_missing_frameworks(source_sdk, dest_sdk):
             patch_tbd_architecture(dest_framework_path)
 
 
-# Some functions that WebKit needs to call are marked as "unavailable" on the
-# embedded platforms. Create a stub header that will nullify the effect of the
-# annotations on those functions. Note that there's no guarantee that the
-# resulting product can run -- we just want to build.
-
-def create_availability_header(sdk):
-    sdk_path = sdk_directory(sdk)
-    availability_header_path = sdk_path / AVAILABILITY_FILE
-    print(f"Creating/updating {availability_header_path}")
-    os.makedirs(availability_header_path.parent, exist_ok=True)
-    with open(availability_header_path, "w") as f:
-        f.write(AVAILABILTY_TEXT)
-
-
 def main():
     if not os.geteuid() == 0 and not os.access(xcode_developer_dir(), os.R_OK | os.W_OK | os.X_OK, effective_ids=True):
         raise RuntimeError(f"{__file__} must be run as root")
@@ -361,7 +323,6 @@ def main():
     for sdk in SDKS_TO_UPDATE:
         copy_missing_headers("macosx", sdk)
         copy_missing_frameworks("iphoneos", sdk)
-        create_availability_header(sdk)
     return 0
 
 
