@@ -74,13 +74,18 @@ using AbstractType = std::variant<
     Type*
 >;
 
+using AbstractScalarType = std::variant<
+    TypeVariable,
+    Type*
+>;
+
 struct AbstractVector {
-    TypeVariable element;
+    AbstractScalarType element;
     AbstractValue size;
 };
 
 struct AbstractMatrix {
-    TypeVariable element;
+    AbstractScalarType element;
     AbstractValue columns;
     AbstractValue rows;
 };
@@ -106,5 +111,6 @@ void printInternal(PrintStream&, const WGSL::NumericVariable&);
 void printInternal(PrintStream&, const WGSL::AbstractValue&);
 void printInternal(PrintStream&, const WGSL::TypeVariable&);
 void printInternal(PrintStream&, const WGSL::AbstractType&);
+void printInternal(PrintStream&, const WGSL::AbstractScalarType&);
 void printInternal(PrintStream&, const WGSL::OverloadCandidate&);
 } // namespace WTF

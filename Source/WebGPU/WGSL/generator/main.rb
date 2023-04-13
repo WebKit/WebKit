@@ -98,7 +98,7 @@ class AbstractType
         #    later be promoted to a concrete type once an overload is chosen.
         # 2) A concrete type if it's given a concrete type. Since there are no
         #    variables involved, we can immediately construct a concrete type.
-        if arguments[0].is_a? Variable
+        if arguments.any? do |arg| arg.is_a? Variable end
             ParameterizedAbstractType.new(self, arguments)
         else
             Constructor.new(@name.downcase)[*arguments]

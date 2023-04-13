@@ -65,12 +65,16 @@ private:
     FixedVector<std::optional<ViableOverload>> considerCandidates();
     std::optional<ViableOverload> considerCandidate(const OverloadCandidate&);
     ConversionRank calculateRank(const AbstractType&, Type*);
+    ConversionRank calculateRank(const AbstractScalarType&, Type*);
     ConversionRank conversionRank(Type*, Type*) const;
 
+    bool unify(const TypeVariable*, Type*);
     bool unify(const AbstractType&, Type*);
+    bool unify(const AbstractScalarType&, Type*);
     bool assign(TypeVariable, Type*);
     Type* resolve(TypeVariable) const;
     Type* materialize(const AbstractType&) const;
+    Type* materialize(const AbstractScalarType&) const;
 
     bool unify(const AbstractValue&, unsigned);
     void assign(NumericVariable, unsigned);
@@ -158,6 +162,17 @@ Type* OverloadResolver::materialize(const AbstractType& abstractType) const
                 return m_types.matrixType(element, columns, rows);
             }
             return nullptr;
+        });
+}
+
+Type* OverloadResolver::materialize(const AbstractScalarType& abstractScalarType) const
+{
+    return WTF::switchOn(abstractScalarType,
+        [&](Type* type) -> Type* {
+            return type;
+        },
+        [&](TypeVariable variable) -> Type* {
+            return resolve(variable);
         });
 }
 
@@ -267,50 +282,66 @@ ConversionRank OverloadResolver::calculateRank(const AbstractType& parameter, Ty
     return conversionRank(argumentType, parameterType);
 }
 
+ConversionRank OverloadResolver::calculateRank(const AbstractScalarType& parameter, Type* argumentType)
+{
+    if (auto* variable = std::get_if<TypeVariable>(&parameter)) {
+        auto* resolvedType = resolve(*variable);
+        ASSERT(resolvedType);
+        return conversionRank(argumentType, resolvedType);
+    }
+
+    auto* parameterType = std::get<Type*>(parameter);
+    return conversionRank(argumentType, parameterType);
+}
+
+bool OverloadResolver::unify(const TypeVariable* variable, Type* argumentType)
+{
+    auto* resolvedType = resolve(*variable);
+    if (!resolvedType)
+        return assign(*variable, argumentType);
+
+    logLn("resolved '", *variable, "' to '", *resolvedType, "'");
+
+    // Consider the following:
+    // + :: (T, T) -> T
+    // 1 + 1u
+    //
+    // We first unify `Var(T)` with `Type(AbstractInt)`, and assign `T` to `AbstractInt`
+    // Next, we unify `Var(T) with `Type(u32)`, we look up `T => AbstractInt`,
+    //   and promote `T` to `u32`.
+    //
+    // A few more examples to illustrate it:
+    //
+    // vec3 :: (T, T, T) -> T
+    // vec3(1, 1.0, 1.0f) -> vec3<f32>
+    // 1) unify(Var(T), Type(AbstractInt); T => AbstractInt (assign)
+    // 2) unify(Var(T), Type(AbstractFloat); T => AbstractFloat (promote T)
+    // 3) unify(Var(T), Type(f32); T => f32 (promote T again)
+    //
+    // vec3 :: (T, T, T) -> T
+    // vec3(1.0, 1, 1.0f) -> vec3<f32>
+    // 1) unify(Var(T), Type(AbstractFloat); T => AbstractFloat (assign)
+    // 2) unify(Var(T), Type(AbstractInt); T => AbstractFloat (convert the argument to AbstractInt)
+    // 3) unify(Var(T), Type(f32); T => f32 (promote T)
+    //
+    // vec3 :: (T, T, T) -> T
+    // vec3(1.0, 1u, 1.0f) -> vec3<f32>
+    // 1) unify(Var(T), Type(AbstractInt); T => AbstractFloat (assign)
+    // 2) unify(Var(T), Type(u32); Failed! Can't unify AbstractFloat and u32
+    auto variablePromotionRank = conversionRank(resolvedType, argumentType);
+    auto argumentConversionRank = conversionRank(argumentType, resolvedType);
+    logLn("variablePromotionRank: ", variablePromotionRank.value(), ", argumentConversionRank: ", argumentConversionRank.value());
+    if (variablePromotionRank.value() < argumentConversionRank.value())
+        return assign(*variable, argumentType);
+
+    return !!argumentConversionRank;
+}
+
 bool OverloadResolver::unify(const AbstractType& parameter, Type* argumentType)
 {
     logLn("unify parameter type '", parameter, "' with argument '", *argumentType, "'");
-    if (auto* variable = std::get_if<TypeVariable>(&parameter)) {
-        auto* resolvedType = resolve(*variable);
-        if (!resolvedType)
-            return assign(*variable, argumentType);
-
-        logLn("resolved '", *variable, "' to '", *resolvedType, "'");
-
-        // Consider the following:
-        // + :: (T, T) -> T
-        // 1 + 1u
-        //
-        // We first unify `Var(T)` with `Type(AbstractInt)`, and assign `T` to `AbstractInt`
-        // Next, we unify `Var(T) with `Type(u32)`, we look up `T => AbstractInt`,
-        //   and promote `T` to `u32`.
-        //
-        // A few more examples to illustrate it:
-        //
-        // vec3 :: (T, T, T) -> T
-        // vec3(1, 1.0, 1.0f) -> vec3<f32>
-        // 1) unify(Var(T), Type(AbstractInt); T => AbstractInt (assign)
-        // 2) unify(Var(T), Type(AbstractFloat); T => AbstractFloat (promote T)
-        // 3) unify(Var(T), Type(f32); T => f32 (promote T again)
-        //
-        // vec3 :: (T, T, T) -> T
-        // vec3(1.0, 1, 1.0f) -> vec3<f32>
-        // 1) unify(Var(T), Type(AbstractFloat); T => AbstractFloat (assign)
-        // 2) unify(Var(T), Type(AbstractInt); T => AbstractFloat (convert the argument to AbstractInt)
-        // 3) unify(Var(T), Type(f32); T => f32 (promote T)
-        //
-        // vec3 :: (T, T, T) -> T
-        // vec3(1.0, 1u, 1.0f) -> vec3<f32>
-        // 1) unify(Var(T), Type(AbstractInt); T => AbstractFloat (assign)
-        // 2) unify(Var(T), Type(u32); Failed! Can't unify AbstractFloat and u32
-        auto variablePromotionRank = conversionRank(resolvedType, argumentType);
-        auto argumentConversionRank = conversionRank(argumentType, resolvedType);
-        logLn("variablePromotionRank: ", variablePromotionRank.value(), ", argumentConversionRank: ", argumentConversionRank.value());
-        if (variablePromotionRank.value() < argumentConversionRank.value())
-            return assign(*variable, argumentType);
-
-        return !!argumentConversionRank;
-    }
+    if (auto* variable = std::get_if<TypeVariable>(&parameter))
+        return unify(variable, argumentType);
 
     if (auto* vectorParameter = std::get_if<AbstractVector>(&parameter)) {
         auto* vectorArgument = std::get_if<Types::Vector>(argumentType);
@@ -331,6 +362,16 @@ bool OverloadResolver::unify(const AbstractType& parameter, Type* argumentType)
             return false;
         return unify(matrixParameter->rows, matrixArgument->rows);
     }
+
+    auto* parameterType = std::get<Type*>(parameter);
+    return !!conversionRank(argumentType, parameterType);
+}
+
+bool OverloadResolver::unify(const AbstractScalarType& parameter, Type* argumentType)
+{
+    logLn("unify parameter type '", parameter, "' with argument '", *argumentType, "'");
+    if (auto* variable = std::get_if<TypeVariable>(&parameter))
+        return unify(variable, argumentType);
 
     auto* parameterType = std::get<Type*>(parameter);
     return !!conversionRank(argumentType, parameterType);
@@ -514,6 +555,17 @@ void printInternal(PrintStream& out, const WGSL::AbstractType& type)
             out.print(", ");
             printInternal(out, matrix.rows);
             out.print(">");
+        });
+}
+
+void printInternal(PrintStream& out, const WGSL::AbstractScalarType& type)
+{
+    WTF::switchOn(type,
+        [&](WGSL::Type* type) {
+            printInternal(out, *type);
+        },
+        [&](WGSL::TypeVariable variable) {
+            printInternal(out, variable);
         });
 }
 

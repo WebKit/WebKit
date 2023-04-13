@@ -341,3 +341,87 @@ fn testBinaryMinus() {
   let x2 = 1 - vec2(1, 1);
   let x3 = vec2(1, 1) - vec2(1, 1);
 }
+
+fn testComparison() {
+  {
+    let x = false == true;
+    let x1 = 0 == 1;
+    let x2 = 0i == 1i;
+    let x3 = 0u == 1u;
+    let x4 = 0.0 == 1.0;
+    let x5 = 0.0f == 1.0f;
+    let x6 = vec2(false) == vec2(true);
+    let x7 = vec2(0) == vec2(1);
+    let x8 = vec2(0i) == vec2(1i);
+    let x9 = vec2(0u) == vec2(1u);
+    let x10 = vec2(0.0) == vec2(1.0);
+    let x11 = vec2(0.0f) == vec2(1.0f);
+  }
+
+  {
+    let x = false != true;
+    let x1 = 0 != 1;
+    let x2 = 0i != 1i;
+    let x3 = 0u != 1u;
+    let x4 = 0.0 != 1.0;
+    let x5 = 0.0f != 1.0f;
+    let x6 = vec2(false) != vec2(true);
+    let x7 = vec2(0) != vec2(1);
+    let x8 = vec2(0i) != vec2(1i);
+    let x9 = vec2(0u) != vec2(1u);
+    let x10 = vec2(0.0) != vec2(1.0);
+    let x11 = vec2(0.0f) != vec2(1.0f);
+  }
+
+  {
+    let x = 0 > 1;
+    let x1 = 0i > 1i;
+    let x2 = 0u > 1u;
+    let x3 = 0.0 > 1.0;
+    let x4 = 0.0f > 1.0f;
+    let x5 = vec2(0) > vec2(1);
+    let x6 = vec2(0i) > vec2(1i);
+    let x7 = vec2(0u) > vec2(1u);
+    let x8 = vec2(0.0) > vec2(1.0);
+    let x9 = vec2(0.0f) > vec2(1.0f);
+  }
+
+  {
+    let x = 0 >= 1;
+    let x1 = 0i >= 1i;
+    let x2 = 0u >= 1u;
+    let x3 = 0.0 >= 1.0;
+    let x4 = 0.0f >= 1.0f;
+    let x5 = vec2(0) >= vec2(1);
+    let x6 = vec2(0i) >= vec2(1i);
+    let x7 = vec2(0u) >= vec2(1u);
+    let x8 = vec2(0.0) >= vec2(1.0);
+    let x9 = vec2(0.0f) >= vec2(1.0f);
+  }
+
+  {
+    let x = 0 < 1;
+    let x1 = 0i < 1i;
+    let x2 = 0u < 1u;
+    let x3 = 0.0 < 1.0;
+    let x4 = 0.0f < 1.0f;
+    let x5 = vec2(0) < vec2(1);
+    let x6 = vec2(0i) < vec2(1i);
+    let x7 = vec2(0u) < vec2(1u);
+    let x8 = vec2(0.0) < vec2(1.0);
+    let x9 = vec2(0.0f) < vec2(1.0f);
+  }
+
+  {
+    let x = 0 <= 1;
+    let x1 = 0i <= 1i;
+    let x2 = 0u <= 1u;
+    let x3 = 0.0 <= 1.0;
+    let x4 = 0.0f <= 1.0f;
+    let x5 = vec2(0) <= vec2(1);
+    let x6 = vec2(0i) <= vec2(1i);
+    let x7 = vec2(0u) <= vec2(1u);
+    let x8 = vec2(0.0) <= vec2(1.0);
+    let x9 = vec2(0.0f) <= vec2(1.0f);
+  }
+}

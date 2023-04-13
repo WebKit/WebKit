@@ -517,12 +517,29 @@ void FunctionDefinitionWriter::visit(AST::BinaryExpression& binary)
     case AST::BinaryOperation::Xor:
     case AST::BinaryOperation::LeftShift:
     case AST::BinaryOperation::RightShift:
+        // FIXME: Implement these
+        RELEASE_ASSERT_NOT_REACHED();
+        break;
+
     case AST::BinaryOperation::Equal:
+        m_stringBuilder.append(" == ");
+        break;
     case AST::BinaryOperation::NotEqual:
+        m_stringBuilder.append(" != ");
+        break;
     case AST::BinaryOperation::GreaterThan:
+        m_stringBuilder.append(" > ");
+        break;
     case AST::BinaryOperation::GreaterEqual:
+        m_stringBuilder.append(" >= ");
+        break;
     case AST::BinaryOperation::LessThan:
+        m_stringBuilder.append(" < ");
+        break;
     case AST::BinaryOperation::LessEqual:
+        m_stringBuilder.append(" <= ");
+        break;
+
     case AST::BinaryOperation::ShortCircuitAnd:
     case AST::BinaryOperation::ShortCircuitOr:
         // FIXME: Implement these

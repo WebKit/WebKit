@@ -29,6 +29,21 @@ operator :-, {
   [T < Number, N].(Vector[T, N], Vector[T, N]) => Vector[T, N],
 }
 
+# Comparison operations
+["==", "!="].each do |op|
+    operator :"#{op}", {
+        [T < Scalar].(T, T) => Bool,
+        [T < Scalar, N].(Vector[T, N], Vector[T, N]) => Vector[Bool, N],
+    }
+end
+
+["<", "<=", ">", ">="].each do |op|
+    operator :"#{op}", {
+        [T < Number].(T, T) => Bool,
+        [T < Number, N].(Vector[T, N], Vector[T, N]) => Vector[Bool, N],
+    }
+end
+
 operator :textureSample, {
     [].(Texture[F32, Texture1d], Sampler, F32) => Vector[F32, 4],
     [].(Texture[F32, Texture2d], Sampler, Vector[F32, 2]) => Vector[F32, 4],
