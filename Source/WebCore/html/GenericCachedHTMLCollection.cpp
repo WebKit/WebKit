@@ -76,8 +76,6 @@ bool GenericCachedHTMLCollection<traversalType>::elementMatches(Element& element
         return element.hasTagName(areaTag);
     case DocEmbeds:
         return element.hasTagName(embedTag);
-    case DocEmpty:
-        return false;
     case DocLinks:
         return (element.hasTagName(aTag) || element.hasTagName(areaTag)) && element.hasAttributeWithoutSynchronization(hrefAttr);
     case DocAnchors:
@@ -89,6 +87,7 @@ bool GenericCachedHTMLCollection<traversalType>::elementMatches(Element& element
     case ByHTMLTag:
     case AllDescendants:
     case DocAll:
+    case DocEmpty:
     case DocumentAllNamedItems:
     case DocumentNamedItems:
     case FormControls:

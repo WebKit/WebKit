@@ -80,6 +80,7 @@
 #include "ElementIterator.h"
 #include "ElementRareData.h"
 #include "ElementTraversal.h"
+#include "EmptyHTMLCollection.h"
 #include "EventHandler.h"
 #include "ExtensionStyleSheets.h"
 #include "FocusController.h"
@@ -6294,7 +6295,7 @@ Ref<HTMLCollection> Document::images()
 
 Ref<HTMLCollection> Document::applets()
 {
-    return ensureCachedCollection<DocEmpty>();
+    return ensureRareData().ensureNodeLists().addCachedCollection<EmptyHTMLCollection>(*this, DocEmpty);
 }
 
 Ref<HTMLCollection> Document::embeds()
