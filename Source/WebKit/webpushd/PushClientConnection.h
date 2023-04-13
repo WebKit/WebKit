@@ -87,6 +87,7 @@ private:
     void maybeStartNextAppBundleRequest();
     void setHostAppAuditTokenData(const Vector<uint8_t>&);
 
+    String bundleIdentifierFromAuditToken(audit_token_t);
     bool hostHasEntitlement(ASCIILiteral);
 
     template<DaemonMessageType messageType, typename... Args>

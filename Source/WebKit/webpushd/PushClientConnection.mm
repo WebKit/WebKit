@@ -38,6 +38,11 @@
 #import <wtf/Vector.h>
 #import <wtf/cocoa/Entitlements.h>
 
+#if PLATFORM(MAC)
+#import <bsm/libbsm.h>
+#import <pal/spi/cocoa/LaunchServicesSPI.h>
+#endif
+
 using WebKit::Daemon::Encoder;
 
 namespace WebPushD {
@@ -102,11 +107,30 @@ const String& ClientConnection::hostAppCodeSigningIdentifier()
         if (!m_hostAppAuditToken)
             m_hostAppCodeSigningIdentifier = String();
         else
-            m_hostAppCodeSigningIdentifier = WebKit::codeSigningIdentifier(*m_hostAppAuditToken);
+            m_hostAppCodeSigningIdentifier = bundleIdentifierFromAuditToken(*m_hostAppAuditToken);
 #endif
     }
 
     return *m_hostAppCodeSigningIdentifier;
+}
+
+String ClientConnection::bundleIdentifierFromAuditToken(audit_token_t audit_token)
+{
+#if PLATFORM(MAC)
+    LSSessionID sessionID = (LSSessionID)audit_token_to_asid(audit_token);
+    auto auditTokenDataRef = adoptCF(CFDataCreate(kCFAllocatorDefault, (const UInt8 *)(&audit_token), sizeof(audit_token)));
+    CFTypeRef keys[] = { auditTokenDataRef.get() };
+    CFTypeRef values[] = { _kLSAuditTokenKey };
+    auto matchingAppsRef = adoptCF(_LSCopyMatchingApplicationsWithItems(sessionID, 1, keys, values));
+    if (matchingAppsRef && CFArrayGetCount(matchingAppsRef.get())) {
+        auto asnRef = adoptCF((LSASNRef)CFArrayGetValueAtIndex(matchingAppsRef.get(), 0));
+        auto bundleIdentifierRef = adoptCF((CFStringRef)_LSCopyApplicationInformationItem(sessionID, asnRef.get(), kCFBundleIdentifierKey));
+        if (bundleIdentifierRef && CFStringGetLength(bundleIdentifierRef.get()))
+            return bundleIdentifierRef.get();
+    }
+#endif // PLATFORM(MAC)
+
+    return WebKit::codeSigningIdentifier(audit_token);
 }
 
 bool ClientConnection::hostAppHasPushEntitlement()
