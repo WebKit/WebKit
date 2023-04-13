@@ -552,11 +552,9 @@ static bool PropertyCatchalls_setProperty(JSContextRef context, JSObjectRef obje
 
     if (JSStringIsEqualToUTF8CString(propertyName, "x")) {
         static size_t count;
-        if (count++ < 5)
-            return false;
 
         // Swallow all .x sets after 4.
-        return true;
+        return count++ > 4;
     }
 
     if (JSStringIsEqualToUTF8CString(propertyName, "make_throw") || JSStringIsEqualToUTF8CString(propertyName, "0")) {
