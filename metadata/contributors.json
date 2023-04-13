@@ -5239,11 +5239,11 @@
    },
    {
       "emails" : [
-         "mcatanzaro@gnome.org",
          "mcatanzaro@redhat.com",
+         "mcatanzaro@gnome.org",
          "mcatanzaro@igalia.com"
       ],
-      "expertise" : "The WebKitGTK Port, Epiphany, Soup HTTP Backend",
+      "expertise" : "WebKitGTK, Epiphany",
       "github" : "mcatanzaro",
       "name" : "Michael Catanzaro",
       "nicks" : [
