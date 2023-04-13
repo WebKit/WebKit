@@ -653,6 +653,10 @@
 (allow mach-lookup 
     (global-name "com.apple.mobileasset.autoasset"))
 
+;; <rdar://106216542>
+(allow mach-lookup
+    (global-name "com.apple.ciphermld"))
+
 ;; <rdar://problem/103895412>
 (allow file-read*
     (subpath "/private/var/MobileAsset/AssetsV2/com_apple_MobileAsset_WebContentRestrictions"))

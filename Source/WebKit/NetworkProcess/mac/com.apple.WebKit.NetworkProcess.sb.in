@@ -380,6 +380,7 @@
     (global-name "com.apple.SystemConfiguration.configd")
     (global-name "com.apple.cfnetwork.AuthBrokerAgent")
     (global-name "com.apple.cfnetwork.cfnetworkagent")
+    (global-name "com.apple.ciphermld") ;; <rdar://106216542>
 #if __MAC_OS_X_VERSION_MIN_REQUIRED < 120000
     (global-name "com.apple.cookied")
 #endif

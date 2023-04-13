@@ -159,6 +159,11 @@ function mac_process_network_entitlements()
             plistbuddy Add :com.apple.private.assets.accessible-asset-types:0 string com.apple.MobileAsset.WebContentRestrictions
         fi
 
+        if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 140000 ))
+        then
+            plistbuddy Add :com.apple.private.ciphermld.allow bool YES
+        fi
+
         plistbuddy Add :com.apple.private.launchservices.allowedtochangethesekeysinotherapplications array
         plistbuddy Add :com.apple.private.launchservices.allowedtochangethesekeysinotherapplications:0 string LSActivePageUserVisibleOriginsKey
         plistbuddy Add :com.apple.private.launchservices.allowedtochangethesekeysinotherapplications:1 string LSDisplayName
@@ -459,6 +464,7 @@ function ios_family_process_network_entitlements()
     plistbuddy Add :com.apple.multitasking.systemappassertions bool YES
     plistbuddy Add :com.apple.payment.all-access bool YES
     plistbuddy Add :com.apple.private.accounts.bundleidspoofing bool YES
+    plistbuddy Add :com.apple.private.ciphermld.allow bool YES
     plistbuddy Add :com.apple.private.dmd.policy bool YES
     plistbuddy Add :com.apple.private.memorystatus bool YES
     plistbuddy Add :com.apple.private.network.socket-delegate bool YES
