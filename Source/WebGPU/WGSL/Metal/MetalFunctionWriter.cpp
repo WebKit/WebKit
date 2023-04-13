@@ -481,12 +481,14 @@ void FunctionDefinitionWriter::visit(AST::CallExpression& call)
 void FunctionDefinitionWriter::visit(AST::UnaryExpression& unary)
 {
     switch (unary.operation()) {
+    case AST::UnaryOperation::Complement:
+        m_stringBuilder.append("~");
+        break;
     case AST::UnaryOperation::Negate:
         m_stringBuilder.append("-");
         break;
 
     case AST::UnaryOperation::AddressOf:
-    case AST::UnaryOperation::Complement:
     case AST::UnaryOperation::Dereference:
     case AST::UnaryOperation::Not:
         // FIXME: Implement these
@@ -512,9 +514,20 @@ void FunctionDefinitionWriter::visit(AST::BinaryExpression& binary)
 
     case AST::BinaryOperation::Divide:
     case AST::BinaryOperation::Modulo:
+        // FIXME: Implement these
+        RELEASE_ASSERT_NOT_REACHED();
+        break;
+
     case AST::BinaryOperation::And:
+        m_stringBuilder.append(" & ");
+        break;
     case AST::BinaryOperation::Or:
+        m_stringBuilder.append(" | ");
+        break;
     case AST::BinaryOperation::Xor:
+        m_stringBuilder.append(" ^ ");
+        break;
+
     case AST::BinaryOperation::LeftShift:
     case AST::BinaryOperation::RightShift:
         // FIXME: Implement these

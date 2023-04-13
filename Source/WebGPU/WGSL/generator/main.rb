@@ -288,6 +288,7 @@ module DSL
         R = Variable.new(:R, @NumericVariable)
 
         Number = Constraint.new(:Number)
+        Integer = Constraint.new(:Integer)
         Float = Constraint.new(:Float)
         Scalar = Constraint.new(:Scalar)
         ConcreteInteger = Constraint.new(:ConcreteInteger)

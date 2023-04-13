@@ -425,3 +425,30 @@ fn testComparison() {
     let x9 = vec2(0.0f) <= vec2(1.0f);
   }
 }
+
+fn testBitwise()
+{
+  {
+    let x = ~0;
+    let x1 = ~0i;
+    let x2 = ~0u;
+  }
+
+  {
+    let x = 0 & 1;
+    let x1 = 0i & 1i;
+    let x2 = 0u & 1u;
+  }
+
+  {
+    let x = 0 | 1;
+    let x1 = 0i | 1i;
+    let x2 = 0u | 1u;
+  }
+
+  {
+    let x = 0 ^ 1;
+    let x1 = 0i ^ 1i;
+    let x2 = 0u ^ 1u;
+  }
+}

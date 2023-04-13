@@ -44,6 +44,19 @@ end
     }
 end
 
+# Bitwise operations
+operator :~, {
+    [T < Integer].(T) => T,
+    [T < Integer, N].(Vector[T, N]) => Vector[T, N]
+}
+
+["|", "&", "^"].each do |op|
+    operator :"#{op}", {
+        [T < Integer].(T, T) => T,
+        [T < Integer, N].(Vector[T, N], Vector[T, N]) => Vector[T, N]
+    }
+end
+
 operator :textureSample, {
     [].(Texture[F32, Texture1d], Sampler, F32) => Vector[F32, 4],
     [].(Texture[F32, Texture2d], Sampler, Vector[F32, 2]) => Vector[F32, 4],
