@@ -25,6 +25,7 @@
 #include "config.h"
 #include "HTMLTableElement.h"
 
+#include "AttributeName.h"
 #include "CSSImageValue.h"
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
@@ -369,19 +370,24 @@ void HTMLTableElement::attributeChanged(const QualifiedName& name, const AtomStr
     CellBorders bordersBefore = cellBorders();
     unsigned short oldPadding = m_padding;
 
-    if (name == borderAttr)  {
+    switch (name.attributeName()) {
+    case AttributeName::borderAttr:
         // FIXME: This attribute is a mess.
         m_borderAttr = parseBorderWidthAttribute(newValue);
-    } else if (name == bordercolorAttr) {
+        break;
+    case AttributeName::bordercolorAttr:
         m_borderColorAttr = !newValue.isEmpty();
-    } else if (name == frameAttr) {
+        break;
+    case AttributeName::frameAttr: {
         // FIXME: This attribute is a mess.
         bool borderTop;
         bool borderRight;
         bool borderBottom;
         bool borderLeft;
         m_frameAttr = getBordersFromFrameAttributeValue(newValue, borderTop, borderRight, borderBottom, borderLeft);
-    } else if (name == rulesAttr) {
+        break;
+    }
+    case AttributeName::rulesAttr:
         m_rulesAttr = UnsetRules;
         if (equalLettersIgnoringASCIICase(newValue, "none"_s))
             m_rulesAttr = NoneRules;
@@ -393,11 +399,15 @@ void HTMLTableElement::attributeChanged(const QualifiedName& name, const AtomStr
             m_rulesAttr = ColsRules;
         else if (equalLettersIgnoringASCIICase(newValue, "all"_s))
             m_rulesAttr = AllRules;
-    } else if (name == cellpaddingAttr) {
+        break;
+    case AttributeName::cellpaddingAttr:
         if (!newValue.isEmpty())
             m_padding = std::max(0, parseHTMLInteger(newValue).value_or(0));
         else
             m_padding = 1;
+        break;
+    default:
+        break;
     }
 
     if (bordersBefore != cellBorders() || oldPadding != m_padding) {

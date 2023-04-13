@@ -28,6 +28,7 @@
 #include "HTMLOptionElement.h"
 
 #include "AXObjectCache.h"
+#include "AttributeName.h"
 #include "Document.h"
 #include "DocumentInlines.h"
 #include "ElementAncestorIteratorInlines.h"
@@ -175,13 +176,8 @@ int HTMLOptionElement::index() const
 
 void HTMLOptionElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
-#if ENABLE(DATALIST_ELEMENT)
-    if (name == valueAttr) {
-        for (auto& dataList : ancestorsOfType<HTMLDataListElement>(*this))
-            dataList.optionElementChildrenChanged();
-    } else
-#endif
-    if (name == disabledAttr) {
+    switch (name.attributeName()) {
+    case AttributeName::disabledAttr: {
         bool newDisabled = !newValue.isNull();
         if (m_disabled != newDisabled) {
             Style::PseudoClassChangeInvalidation disabledInvalidation(*this, { { CSSSelector::PseudoClassDisabled, newDisabled },  { CSSSelector::PseudoClassEnabled, !newDisabled } });
@@ -189,7 +185,9 @@ void HTMLOptionElement::attributeChanged(const QualifiedName& name, const AtomSt
             if (renderer() && renderer()->style().hasEffectiveAppearance())
                 renderer()->theme().stateChanged(*renderer(), ControlStates::States::Enabled);
         }
-    } else if (name == selectedAttr) {
+        break;
+    }
+    case AttributeName::selectedAttr: {
         // FIXME: Use PseudoClassChangeInvalidation in other elements that implement matchesDefaultPseudoClass().
         Style::PseudoClassChangeInvalidation defaultInvalidation(*this, CSSSelector::PseudoClassDefault, !newValue.isNull());
         m_isDefault = !newValue.isNull();
@@ -199,8 +197,18 @@ void HTMLOptionElement::attributeChanged(const QualifiedName& name, const AtomSt
         // changing the value of a selected attribute that is already present
         // has no effect on whether the element is selected.
         setSelectedState(!newValue.isNull());
-    } else
+        break;
+    }
+#if ENABLE(DATALIST_ELEMENT)
+    case AttributeName::valueAttr:
+        for (auto& dataList : ancestorsOfType<HTMLDataListElement>(*this))
+            dataList.optionElementChildrenChanged();
+        break;
+#endif
+    default:
         HTMLElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
+        break;
+    }
 }
 
 String HTMLOptionElement::value() const

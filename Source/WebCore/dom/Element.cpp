@@ -29,6 +29,7 @@
 #include "AXObjectCache.h"
 #include "Attr.h"
 #include "AttributeChangeInvalidation.h"
+#include "AttributeName.h"
 #include "CSSParser.h"
 #include "ChildChangeInvalidation.h"
 #include "ChildListMutationScope.h"
@@ -2030,13 +2031,20 @@ bool Element::isElementsArrayReflectionAttribute(const Settings& settings, const
 {
     if (!settings.ariaReflectionForElementReferencesEnabled())
         return false;
-    return name == HTMLNames::aria_controlsAttr
-        || name == HTMLNames::aria_describedbyAttr
-        || name == HTMLNames::aria_detailsAttr
-        || name == HTMLNames::aria_errormessageAttr
-        || name == HTMLNames::aria_flowtoAttr
-        || name == HTMLNames::aria_labelledbyAttr
-        || name == HTMLNames::aria_ownsAttr;
+
+    switch (name.attributeName()) {
+    case AttributeName::aria_controlsAttr:
+    case AttributeName::aria_describedbyAttr:
+    case AttributeName::aria_detailsAttr:
+    case AttributeName::aria_errormessageAttr:
+    case AttributeName::aria_flowtoAttr:
+    case AttributeName::aria_labelledbyAttr:
+    case AttributeName::aria_ownsAttr:
+        return true;
+    default:
+        break;
+    }
+    return false;
 }
 
 void Element::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason)
@@ -2044,11 +2052,11 @@ void Element::attributeChanged(const QualifiedName& name, const AtomString& oldV
     bool valueIsSameAsBefore = oldValue == newValue;
 
     if (!valueIsSameAsBefore) {
-        if (name == HTMLNames::accesskeyAttr)
-            document().invalidateAccessKeyCache();
-        else if (name == HTMLNames::classAttr)
+        switch (name.attributeName()) {
+        case AttributeName::classAttr:
             classAttributeChanged(newValue);
-        else if (name == HTMLNames::idAttr) {
+            break;
+        case AttributeName::idAttr: {
             AtomString oldId = elementData()->idForStyleResolution();
             AtomString newId = makeIdForStyleResolution(newValue, document().inQuirksMode());
             if (newId != oldId) {
@@ -2060,30 +2068,39 @@ void Element::attributeChanged(const QualifiedName& name, const AtomString& oldV
                 treeScope().idTargetObserverRegistry().notifyObservers(*oldValue.impl());
             if (!newValue.isEmpty())
                 treeScope().idTargetObserverRegistry().notifyObservers(*newValue.impl());
-        } else if (name == HTMLNames::nameAttr)
+            break;
+        }
+        case AttributeName::nameAttr:
             elementData()->setHasNameAttribute(!newValue.isNull());
-        else if (name == HTMLNames::nonceAttr) {
+            break;
+        case AttributeName::nonceAttr:
             if (is<HTMLElement>(*this) || is<SVGElement>(*this))
                 setNonce(newValue.isNull() ? emptyAtom() : newValue);
-        } else if (name == HTMLNames::pseudoAttr) {
+            break;
+        case AttributeName::pseudoAttr:
             if (needsStyleInvalidation() && isInShadowTree())
                 invalidateStyleForSubtree();
-        } else if (name == HTMLNames::slotAttr) {
+            break;
+        case AttributeName::slotAttr:
             if (auto* parent = parentElement()) {
                 if (auto* shadowRoot = parent->shadowRoot())
                     shadowRoot->hostChildElementDidChangeSlotAttribute(*this, oldValue, newValue);
             }
-        } else if (name == HTMLNames::partAttr)
+            break;
+        case AttributeName::partAttr:
             partAttributeChanged(newValue);
-        else if (isElementReflectionAttribute(document().settings(), name) || isElementsArrayReflectionAttribute(document().settings(), name)) {
-            if (auto* map = explicitlySetAttrElementsMapIfExists())
-                map->remove(name);
-        } else if (name == HTMLNames::exportpartsAttr) {
+            break;
+        case AttributeName::exportpartsAttr:
             if (auto* shadowRoot = this->shadowRoot()) {
                 shadowRoot->invalidatePartMappings();
                 Style::Invalidator::invalidateShadowParts(*shadowRoot);
             }
-        } else if (name == HTMLNames::langAttr || name.matches(XMLNames::langAttr)) {
+            break;
+        case AttributeName::accesskeyAttr:
+            document().invalidateAccessKeyCache();
+            break;
+        case AttributeName::XML_langAttr:
+        case AttributeName::langAttr:
             if (name == HTMLNames::langAttr)
                 setHasLangAttr(!newValue.isNull());
             else
@@ -2092,6 +2109,13 @@ void Element::attributeChanged(const QualifiedName& name, const AtomString& oldV
                 document().setDocumentElementLanguage(langFromAttribute());
             else
                 updateEffectiveLangStateAndPropagateToDescendants();
+            break;
+        default:
+            if (isElementReflectionAttribute(document().settings(), name) || isElementsArrayReflectionAttribute(document().settings(), name)) {
+                if (auto* map = explicitlySetAttrElementsMapIfExists())
+                    map->remove(name);
+            }
+            break;
         }
     }
 

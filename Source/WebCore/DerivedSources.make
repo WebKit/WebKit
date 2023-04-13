@@ -1685,6 +1685,8 @@ all : \
     $(JS_DOM_IMPLEMENTATIONS) \
     $(WEB_DOM_HEADERS) \
     \
+    AttributeName.cpp \
+    AttributeName.h \
     CSSPropertyNames.cpp \
     CSSPropertyNames.h \
     CSSPropertyParsing.cpp \
@@ -2184,7 +2186,7 @@ $(MATH_ML_GENERATED_PATTERNS) : $(WebCore)/dom/make_names.pl $(WebCore)/bindings
 
 # --------
 
-# TagName, ElementName, and Namespace enums
+# TagName, AttributeName, ElementName, and Namespace enums
 
 DOM_NAME_ENUM_DEPS = \
     $(WebCore)/dom/make_names.pl \
@@ -2232,6 +2234,16 @@ ELEMENT_NAME_GENERATED_PATTERNS = $(subst .,%,$(ELEMENT_NAME_GENERATED_FILES))
 all : $(ELEMENT_NAME_GENERATED_FILES)
 $(ELEMENT_NAME_GENERATED_PATTERNS) : $(DOM_NAME_ENUM_DEPS)
 	$(PERL) $< --enum ElementName $(DOM_NAME_ENUM_ARGUMENTS)
+
+ATTRIBUTE_NAME_GENERATED_FILES = \
+    AttributeName.cpp \
+    AttributeName.h \
+#
+ATTRIBUTE_NAME_GENERATED_PATTERNS = $(subst .,%,$(ATTRIBUTE_NAME_GENERATED_FILES))
+
+all : $(ATTRIBUTE_NAME_GENERATED_FILES)
+$(ATTRIBUTE_NAME_GENERATED_PATTERNS) : $(DOM_NAME_ENUM_DEPS)
+	$(PERL) $< --enum AttributeName $(DOM_NAME_ENUM_ARGUMENTS)
 
 NAMESPACE_GENERATED_FILES = \
     Namespace.cpp \

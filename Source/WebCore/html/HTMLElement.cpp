@@ -25,6 +25,7 @@
 #include "config.h"
 #include "HTMLElement.h"
 
+#include "AttributeName.h"
 #include "CSSMarkup.h"
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
@@ -157,8 +158,18 @@ void HTMLElement::mapLanguageAttributeToLocale(const AtomString& value, MutableS
 
 bool HTMLElement::hasPresentationalHintsForAttribute(const QualifiedName& name) const
 {
-    if (name == alignAttr || name == contenteditableAttr || name == hiddenAttr || name == langAttr || name.matches(XMLNames::langAttr) || name == draggableAttr || name == dirAttr)
+    switch (name.attributeName()) {
+    case AttributeName::alignAttr:
+    case AttributeName::contenteditableAttr:
+    case AttributeName::hiddenAttr:
+    case AttributeName::langAttr:
+    case AttributeName::XML_langAttr:
+    case AttributeName::draggableAttr:
+    case AttributeName::dirAttr:
         return true;
+    default:
+        break;
+    }
     return StyledElement::hasPresentationalHintsForAttribute(name);
 }
 
@@ -223,12 +234,14 @@ static bool elementAffectsDirectionality(const Node& node)
 
 void HTMLElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
 {
-    if (name == alignAttr) {
+    switch (name.attributeName()) {
+    case AttributeName::alignAttr:
         if (equalLettersIgnoringASCIICase(value, "middle"_s))
             addPropertyToPresentationalHintStyle(style, CSSPropertyTextAlign, CSSValueCenter);
         else
             addPropertyToPresentationalHintStyle(style, CSSPropertyTextAlign, value);
-    } else if (name == contenteditableAttr) {
+        break;
+    case AttributeName::contenteditableAttr: {
         CSSValueID userModifyValue = CSSValueReadWrite;
         switch (contentEditableType(value)) {
         case ContentEditableType::Inherit:
@@ -249,16 +262,20 @@ void HTMLElement::collectPresentationalHintsForAttribute(const QualifiedName& na
             break;
         }
         addPropertyToPresentationalHintStyle(style, CSSPropertyWebkitUserModify, userModifyValue);
-    } else if (name == hiddenAttr) {
+        break;
+    }
+    case AttributeName::hiddenAttr:
         addPropertyToPresentationalHintStyle(style, CSSPropertyDisplay, CSSValueNone);
-    } else if (name == draggableAttr) {
+        break;
+    case AttributeName::draggableAttr:
         if (equalLettersIgnoringASCIICase(value, "true"_s)) {
             addPropertyToPresentationalHintStyle(style, CSSPropertyWebkitUserDrag, CSSValueElement);
             if (!isDraggableIgnoringAttributes())
                 addPropertyToPresentationalHintStyle(style, CSSPropertyWebkitUserSelect, CSSValueNone);
         } else if (equalLettersIgnoringASCIICase(value, "false"_s))
             addPropertyToPresentationalHintStyle(style, CSSPropertyWebkitUserDrag, CSSValueNone);
-    } else if (name == dirAttr) {
+        break;
+    case AttributeName::dirAttr:
         if (equalLettersIgnoringASCIICase(value, "auto"_s))
             addPropertyToPresentationalHintStyle(style, CSSPropertyUnicodeBidi, unicodeBidiAttributeForDirAuto(*this));
         else if (equalLettersIgnoringASCIICase(value, "rtl"_s) || equalLettersIgnoringASCIICase(value, "ltr"_s)) {
@@ -266,14 +283,19 @@ void HTMLElement::collectPresentationalHintsForAttribute(const QualifiedName& na
             if (!hasTagName(bdiTag) && !hasTagName(bdoTag) && !hasTagName(outputTag))
                 addPropertyToPresentationalHintStyle(style, CSSPropertyUnicodeBidi, CSSValueIsolate);
         }
-    } else if (name.matches(XMLNames::langAttr))
+        break;
+    case AttributeName::XML_langAttr:
         mapLanguageAttributeToLocale(value, style);
-    else if (name == langAttr) {
+        break;
+    case AttributeName::langAttr:
         // xml:lang has a higher priority than lang.
         if (!hasAttributeWithoutSynchronization(XMLNames::langAttr))
             mapLanguageAttributeToLocale(value, style);
-    } else
+        break;
+    default:
         StyledElement::collectPresentationalHintsForAttribute(name, value, style);
+        break;
+    }
 }
 
 const AtomString& HTMLElement::eventNameForEventHandlerAttribute(const QualifiedName& attributeName, const EventHandlerNameMap& map)
@@ -373,33 +395,33 @@ void HTMLElement::attributeChanged(const QualifiedName& name, const AtomString& 
 {
     StyledElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 
-    if (name == dirAttr) {
+    switch (name.attributeName()) {
+    case AttributeName::dirAttr:
         dirAttributeChanged(newValue);
         return;
-    }
-
-    if (name == tabindexAttr) {
+    case AttributeName::tabindexAttr:
         if (auto optionalTabIndex = parseHTMLInteger(newValue))
             setTabIndexExplicitly(optionalTabIndex.value());
         else
             setTabIndexExplicitly(std::nullopt);
         return;
-    }
-
-    if (document().settings().inertAttributeEnabled() && name == inertAttr)
-        invalidateStyleInternal();
-
-    if (name == inputmodeAttr) {
-        auto& document = this->document();
-        if (this == document.focusedElement()) {
+    case AttributeName::inertAttr:
+        if (document().settings().inertAttributeEnabled())
+            invalidateStyleInternal();
+        return;
+    case AttributeName::inputmodeAttr:
+        if (auto& document = this->document(); this == document.focusedElement()) {
             if (auto* page = document.page())
                 page->chrome().client().focusedElementDidChangeInputMode(*this, canonicalInputMode());
         }
+        return;
+    case AttributeName::popoverAttr:
+        if (document().settings().popoverAttributeEnabled() && !document().quirks().shouldDisablePopoverAttributeQuirk())
+            popoverAttributeChanged(newValue);
+        return;
+    default:
+        break;
     }
-
-    bool popoverAttributeEnabled = document().settings().popoverAttributeEnabled() && !document().quirks().shouldDisablePopoverAttributeQuirk();
-    if (popoverAttributeEnabled && name == popoverAttr)
-        popoverAttributeChanged(newValue);
 
     auto& eventName = eventNameForEventHandlerAttribute(name);
     if (!eventName.isNull())

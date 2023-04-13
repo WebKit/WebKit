@@ -24,6 +24,7 @@
 #include "config.h"
 #include "HTMLBodyElement.h"
 
+#include "AttributeName.h"
 #include "CSSImageValue.h"
 #include "CSSParser.h"
 #include "CSSValueKeywords.h"
@@ -67,31 +68,52 @@ HTMLBodyElement::~HTMLBodyElement() = default;
 
 bool HTMLBodyElement::hasPresentationalHintsForAttribute(const QualifiedName& name) const
 {
-    if (name == backgroundAttr || name == marginwidthAttr || name == leftmarginAttr || name == marginheightAttr || name == topmarginAttr || name == bgcolorAttr || name == textAttr)
+    switch (name.attributeName()) {
+    case AttributeName::backgroundAttr:
+    case AttributeName::marginwidthAttr:
+    case AttributeName::leftmarginAttr:
+    case AttributeName::marginheightAttr:
+    case AttributeName::topmarginAttr:
+    case AttributeName::bgcolorAttr:
+    case AttributeName::textAttr:
         return true;
+    default:
+        break;
+    }
     return HTMLElement::hasPresentationalHintsForAttribute(name);
 }
 
 void HTMLBodyElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
 {
-    if (name == backgroundAttr) {
+    switch (name.attributeName()) {
+    case AttributeName::backgroundAttr: {
         String url = stripLeadingAndTrailingHTMLSpaces(value);
         if (!url.isEmpty()) {
             auto imageValue = CSSImageValue::create(document().completeURL(url), LoadedFromOpaqueSource::No, localName());
             style.setProperty(CSSProperty(CSSPropertyBackgroundImage, WTFMove(imageValue)));
         }
-    } else if (name == marginwidthAttr || name == leftmarginAttr) {
+        break;
+    }
+    case AttributeName::marginwidthAttr:
+    case AttributeName::leftmarginAttr:
         addHTMLLengthToStyle(style, CSSPropertyMarginRight, value);
         addHTMLLengthToStyle(style, CSSPropertyMarginLeft, value);
-    } else if (name == marginheightAttr || name == topmarginAttr) {
+        break;
+    case AttributeName::marginheightAttr:
+    case AttributeName::topmarginAttr:
         addHTMLLengthToStyle(style, CSSPropertyMarginBottom, value);
         addHTMLLengthToStyle(style, CSSPropertyMarginTop, value);
-    } else if (name == bgcolorAttr) {
+        break;
+    case AttributeName::bgcolorAttr:
         addHTMLColorToStyle(style, CSSPropertyBackgroundColor, value);
-    } else if (name == textAttr) {
+        break;
+    case AttributeName::textAttr:
         addHTMLColorToStyle(style, CSSPropertyColor, value);
-    } else
+        break;
+    default:
         HTMLElement::collectPresentationalHintsForAttribute(name, value, style);
+        break;
+    }
 }
 
 const AtomString& HTMLBodyElement::eventNameForWindowEventHandlerAttribute(const QualifiedName& attributeName)

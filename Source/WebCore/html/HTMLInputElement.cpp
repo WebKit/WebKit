@@ -30,6 +30,7 @@
 #include "HTMLInputElement.h"
 
 #include "AXObjectCache.h"
+#include "AttributeName.h"
 #include "BeforeTextInsertedEvent.h"
 #include "CSSGradientValue.h"
 #include "CSSPropertyNames.h"
@@ -664,40 +665,59 @@ bool HTMLInputElement::accessKeyAction(bool sendMouseEvents)
 
 bool HTMLInputElement::hasPresentationalHintsForAttribute(const QualifiedName& name) const
 {
-    if (name == vspaceAttr || name == hspaceAttr || name == widthAttr || name == heightAttr || (name == borderAttr && isImageButton()))
+    switch (name.attributeName()) {
+    case AttributeName::vspaceAttr:
+    case AttributeName::hspaceAttr:
+    case AttributeName::widthAttr:
+    case AttributeName::heightAttr:
         return true;
-    return HTMLTextFormControlElement::hasPresentationalHintsForAttribute(name);
+    case AttributeName::borderAttr:
+        return isImageButton();
+    default:
+        return HTMLTextFormControlElement::hasPresentationalHintsForAttribute(name);
+        break;
+    }
 }
 
 void HTMLInputElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
 {
-    if (name == vspaceAttr) {
+    switch (name.attributeName()) {
+    case AttributeName::vspaceAttr:
         if (isImageButton()) {
             addHTMLLengthToStyle(style, CSSPropertyMarginTop, value);
             addHTMLLengthToStyle(style, CSSPropertyMarginBottom, value);
         }
-    } else if (name == hspaceAttr) {
+        break;
+    case AttributeName::hspaceAttr:
         if (isImageButton()) {
-        addHTMLLengthToStyle(style, CSSPropertyMarginLeft, value);
-        addHTMLLengthToStyle(style, CSSPropertyMarginRight, value);
+            addHTMLLengthToStyle(style, CSSPropertyMarginLeft, value);
+            addHTMLLengthToStyle(style, CSSPropertyMarginRight, value);
         }
-    } else if (name == alignAttr) {
+        break;
+    case AttributeName::alignAttr:
         if (m_inputType->shouldRespectAlignAttribute())
             applyAlignmentAttributeToStyle(value, style);
-    } else if (name == widthAttr) {
+        break;
+    case AttributeName::widthAttr:
         if (m_inputType->shouldRespectHeightAndWidthAttributes())
             addHTMLLengthToStyle(style, CSSPropertyWidth, value);
         if (isImageButton())
             applyAspectRatioFromWidthAndHeightAttributesToStyle(value, attributeWithoutSynchronization(heightAttr), style);
-    } else if (name == heightAttr) {
+        break;
+    case AttributeName::heightAttr:
         if (m_inputType->shouldRespectHeightAndWidthAttributes())
             addHTMLLengthToStyle(style, CSSPropertyHeight, value);
         if (isImageButton())
             applyAspectRatioFromWidthAndHeightAttributesToStyle(attributeWithoutSynchronization(widthAttr), value, style);
-    } else if (name == borderAttr && isImageButton())
-        applyBorderAttributeToStyle(value, style);
-    else
+        break;
+    case AttributeName::borderAttr:
+        if (isImageButton())
+            applyBorderAttributeToStyle(value, style);
+        break;
+    default:
         HTMLTextFormControlElement::collectPresentationalHintsForAttribute(name, value, style);
+        break;
+    }
 }
 
 inline void HTMLInputElement::initializeInputType()
@@ -727,29 +747,11 @@ void HTMLInputElement::attributeChanged(const QualifiedName& name, const AtomStr
 
     HTMLTextFormControlElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 
-    if (name == nameAttr) {
-        removeFromRadioButtonGroup();
-        m_name = newValue;
-        addToRadioButtonGroup();
-        HTMLTextFormControlElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
-    } else if (name == autocompleteAttr) {
-        if (equalLettersIgnoringASCIICase(newValue, "off"_s)) {
-            m_autocomplete = Off;
-            registerForSuspensionCallbackIfNeeded();
-        } else {
-            bool needsToUnregister = m_autocomplete == Off;
-
-            if (newValue.isEmpty())
-                m_autocomplete = Uninitialized;
-            else
-                m_autocomplete = On;
-
-            if (needsToUnregister)
-                unregisterForSuspensionCallbackIfNeeded();
-        }
-    } else if (name == typeAttr)
+    switch (name.attributeName()) {
+    case AttributeName::typeAttr:
         updateType();
-    else if (name == valueAttr) {
+        break;
+    case AttributeName::valueAttr:
         // Changes to the value attribute may change whether or not this element has a default value.
         // If this field is autocomplete=off that might affect the return value of needsSuspensionCallback.
         if (m_autocomplete == Off) {
@@ -764,7 +766,14 @@ void HTMLInputElement::attributeChanged(const QualifiedName& name, const AtomStr
         }
         updateValidity();
         m_valueAttributeWasUpdatedAfterParsing = !m_parsingInProgress;
-    } else if (name == checkedAttr) {
+        break;
+    case AttributeName::nameAttr:
+        removeFromRadioButtonGroup();
+        m_name = newValue;
+        addToRadioButtonGroup();
+        HTMLTextFormControlElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
+        break;
+    case AttributeName::checkedAttr:
         if (m_inputType->isCheckable())
             invalidateStyleForSubtree();
         // Another radio button in the same group might be checked by state
@@ -776,30 +785,62 @@ void HTMLInputElement::attributeChanged(const QualifiedName& name, const AtomStr
             // setChecked() above sets the dirty checkedness flag so we need to reset it.
             m_dirtyCheckednessFlag = false;
         }
-    } else if (name == maxlengthAttr)
+        break;
+    case AttributeName::autocompleteAttr:
+        if (equalLettersIgnoringASCIICase(newValue, "off"_s)) {
+            m_autocomplete = Off;
+            registerForSuspensionCallbackIfNeeded();
+        } else {
+            bool needsToUnregister = m_autocomplete == Off;
+
+            if (newValue.isEmpty())
+                m_autocomplete = Uninitialized;
+            else
+                m_autocomplete = On;
+
+            if (needsToUnregister)
+                unregisterForSuspensionCallbackIfNeeded();
+        }
+        break;
+    case AttributeName::maxlengthAttr:
         maxLengthAttributeChanged(newValue);
-    else if (name == minlengthAttr)
+        break;
+    case AttributeName::minlengthAttr:
         minLengthAttributeChanged(newValue);
-    else if (name == sizeAttr) {
+        break;
+    case AttributeName::sizeAttr: {
         unsigned oldSize = m_size;
         m_size = limitToOnlyHTMLNonNegativeNumbersGreaterThanZero(newValue, defaultSize);
         if (m_size != oldSize && renderer())
             renderer()->setNeedsLayoutAndPrefWidthsRecalc();
-    } else if (name == resultsAttr)
+        break;
+    }
+    case AttributeName::resultsAttr:
         m_maxResults = newValue.isNull() ? -1 : std::min(parseHTMLInteger(newValue).value_or(0), maxSavedResults);
-    else if (name == autosaveAttr || name == incrementalAttr)
+        break;
+    case AttributeName::autosaveAttr:
+    case AttributeName::incrementalAttr:
         invalidateStyleForSubtree();
-    else if (name == maxAttr || name == minAttr || name == multipleAttr || name == patternAttr || name == stepAttr)
+        break;
+    case AttributeName::maxAttr:
+    case AttributeName::minAttr:
+    case AttributeName::multipleAttr:
+    case AttributeName::patternAttr:
+    case AttributeName::stepAttr:
         updateValidity();
+        break;
 #if ENABLE(DATALIST_ELEMENT)
-    else if (name == listAttr) {
+    case AttributeName::listAttr:
         m_hasNonEmptyList = !newValue.isEmpty();
         if (m_hasNonEmptyList) {
             resetListAttributeTargetObserver();
             dataListMayHaveChanged();
         }
-    }
+        break;
 #endif
+    default:
+        break;
+    }
 
     m_inputType->attributeChanged(name);
 }

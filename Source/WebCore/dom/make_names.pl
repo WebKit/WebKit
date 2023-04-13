@@ -57,6 +57,7 @@ my %allAttrs = ();
 my %allCppNamespaces = ();
 my %allElementsPerNamespace = ();
 my %allAttrsPerNamespace = ();
+my %allNamespacesPerAttributeLocalName = ();
 my %allNamespacesPerElementLocalName = ();
 my %parameters = ();
 my $initDefaults = 1;
@@ -173,7 +174,7 @@ die "You must specify at least one of --elements <file> or --attrs <file>" unles
 die "You must not specify multiple --elements <file> arguments unless --domNames is also specified" if $printEnum eq "" && @elementsFiles > 1;
 die "You must not specify multiple --attrs <file> arguments unless --domNames is also specified" if $printEnum eq "" && @attrsFiles > 1;
 die "--enum must not be specified with --factory, --wrapperFactory, or --fonts" if $printEnum ne "" && ($printFactory || $printWrapperFactory || length($fontNamesIn));
-die "Unsupported value for --enum" if $printEnum !~ /^(:?TagName|ElementName|Namespace)?$/;
+die "Unsupported value for --enum" if $printEnum !~ /^(:?TagName|AttributeName|ElementName|Namespace)?$/;
 
 for my $elementsFile (@elementsFiles) {
     readElements(\%allElements, $elementsFile);
@@ -217,6 +218,11 @@ if ($printWrapperFactory) {
 if ($printEnum eq "TagName") {
     printTagNameHeaderFile("$outputDir/TagName.h");
     printTagNameCppFile("$outputDir/TagName.cpp");
+}
+
+if ($printEnum eq "AttributeName") {
+    printAttributeNameHeaderFile("$outputDir/AttributeName.h");
+    printAttributeNameCppFile("$outputDir/AttributeName.cpp");
 }
 
 if ($printEnum eq "ElementName") {
@@ -268,12 +274,18 @@ sub defaultAttrPropertyHash
     my $localName = shift;
 
     my $identifier = $localName =~ s/^x-webkit-/webkit/r =~ s/-/_/gr;
+    my $tagEnumValue = $identifier . "Attr";
+    my $namespace = $parameters{attrsNullNamespace} ? "" : $parameters{namespace};
+    my $prefix = $namespace eq "" ? "" : "${namespace}_";
+    my $attributeEnumValue = "$prefix${identifier}Attr";
 
     return (
         cppNamespace => $parameters{namespace},
-        namespace => $parameters{attrsNullNamespace} ? "" : $parameters{namespace},
+        namespace => $namespace,
         localName => $localName,
         identifier => $identifier,
+        tagEnumValue => $tagEnumValue,
+        attributeEnumValue => $attributeEnumValue
     );
 }
 
@@ -396,6 +408,13 @@ sub readAttrs($$)
     $allCppNamespaces{$parameters{namespace}} = { %parameters };
 }
 
+sub attributeCount
+{       
+    my $localName = shift;
+    
+    return scalar(keys %{$allNamespacesPerAttributeLocalName{$localName}});
+} 
+
 sub readElements($$)
 {
     my ($namesRef, $namesFile) = @_;
@@ -424,8 +443,11 @@ sub collectAllElementsAndAttrsPerNamespace
     }
     for my $attrKey (keys %allAttrs) {
         my $namespace = $allAttrs{$attrKey}{namespace};
+        my $localName = $allAttrs{$attrKey}{localName};
         $allAttrsPerNamespace{$namespace} = { } unless exists $allAttrsPerNamespace{$namespace};
         $allAttrsPerNamespace{$namespace}{$attrKey} = $allAttrs{$attrKey};
+        $allNamespacesPerAttributeLocalName{$localName} = { } unless exists $allNamespacesPerAttributeLocalName{$localName};
+        $allNamespacesPerAttributeLocalName{$localName}{$namespace} = 1;
     }
 }
 
@@ -838,6 +860,12 @@ sub byElementNameOrder
         || $allElements{$a}{elementEnumValue} cmp $allElements{$b}{elementEnumValue}
 }
 
+sub byAttributeNameOrder
+{
+    attributeCount($allAttrs{$a}{localName}) <=> attributeCount($allAttrs{$b}{localName})
+        || $allAttrs{$a}{attributeEnumValue} cmp $allAttrs{$b}{attributeEnumValue}
+}  
+
 sub printTagNameHeaderFile
 {
     my ($headerPath) = shift;
@@ -1012,6 +1040,87 @@ sub printTagNameCppFile
     close F;
 }
 
+sub printAttributeNameHeaderFile
+{
+    my ($headerPath) = shift;
+    my $F;
+    open F, ">$headerPath";
+
+    printLicenseHeader($F);
+    print F "#pragma once\n";
+    print F "\n";
+    print F "#include <wtf/Forward.h>\n";
+    print F "namespace WebCore {\n";
+    print F "\n";
+    print F "enum class Namespace : uint8_t;\n";
+    print F "\n";
+    print F "enum class AttributeName : uint16_t {\n";
+    print F "    Unknown,\n";
+    my %handledAttrs = ();
+    for my $attributeKey (sort byAttributeNameOrder keys %allAttrs) {
+        my $attributeEnumValue = $allAttrs{$attributeKey}{attributeEnumValue};
+        print F "    $attributeEnumValue,\n" unless $handledAttrs{$attributeEnumValue};
+        $handledAttrs{$attributeEnumValue} = 1;
+    }
+    print F "};\n";
+    print F "\n";
+    print F "AttributeName findAttributeName(Namespace, const String&);\n";
+    print F "\n";
+    print F "} // namespace WebCore\n";
+    close F; 
+}
+
+sub printAttributeNameCppFile
+{
+    my $cppPath = shift;
+    my $F;
+    open F, ">$cppPath";
+
+    printLicenseHeader($F);
+    print F "#include \"config.h\"\n";
+    print F "#include \"AttributeName.h\"\n";
+    print F "\n";
+    print F "#include \"Namespace.h\"\n";
+    print F "#include <wtf/Span.h>\n";
+    print F "#include <wtf/text/WTFString.h>\n";
+    print F "\n";
+    print F "namespace WebCore {\n";
+    print F "\n";
+    for my $namespace (sort keys %allAttrsPerNamespace) {
+        my $namespaceIdentifier = $namespace eq "" ? "NoNamespace" : $namespace;
+        print F "template <typename characterType>\n";
+        print F "static inline AttributeName find${namespaceIdentifier}Attribute(Span<const characterType> buffer)\n";
+        print F "{\n";
+        generateFindBody($allAttrsPerNamespace{$namespace}, \&byAttributeNameOrder, "localName", "AttributeName", "attributeEnumValue");
+        print F "}\n";
+        print F "\n";
+    }
+    print F "template <typename characterType>\n";
+    print F "static inline AttributeName findAttributeFromBuffer(Namespace ns, Span<const characterType> buffer)\n";
+    print F "{\n";
+    print F "    switch (ns) {\n";
+    for my $namespace (sort keys %allAttrsPerNamespace) {
+        my $namespaceEnumValue = $namespace eq "" ? "None" : $namespace;
+        my $namespaceIdentifier = $namespace eq "" ? "NoNamespace" : $namespace;
+        print F "    case Namespace::$namespaceEnumValue:\n";
+        print F "        return find${namespaceIdentifier}Attribute(buffer);\n";
+    }
+    print F "    default:\n";
+    print F "        return AttributeName::Unknown;\n";
+    print F "    }\n";
+    print F "}\n";
+    print F "\n";
+    print F "AttributeName findAttributeName(Namespace ns, const String& name)\n";
+    print F "{\n";
+    print F "    if (name.is8Bit())\n";
+    print F "        return findAttributeFromBuffer(ns, makeSpan(name.characters8(), name.length()));\n";
+    print F "    return findAttributeFromBuffer(ns, makeSpan(name.characters16(), name.length()));\n";
+    print F "}\n";
+    print F "\n";
+    print F "} // namespace WebCore\n";
+    close F;
+}
+
 sub printElementNameHeaderFile
 {
     my ($headerPath) = shift;
@@ -1138,6 +1247,7 @@ sub printElementNameCppFile
     for my $namespace (sort keys %allCppNamespaces) {
         print F "#include \"${namespace}Names.h\"\n";
     }
+    print F "#include \"Namespace.h\"\n";
     print F "\n";
     print F "namespace WebCore {\n";
     print F "\n";
@@ -1353,6 +1463,7 @@ sub printNamesCppFile
 
     printLicenseHeader($F);
     printCppHead($F, "DOM", $parameters{namespace}, <<END, "WebCore");
+#include "AttributeName.h"
 #include "ElementName.h"
 #include "Namespace.h"
 END
@@ -1538,7 +1649,8 @@ sub printDefinitions
     my @tableEntryFields = (
         "LazyNeverDestroyed<const QualifiedName>* targetAddress",
         "const StaticStringImpl& name",
-        "ElementName elementName"
+        "ElementName elementName",
+        "AttributeName attributeName"
     );
 
     my $cast = $type eq "tags" ? "(LazyNeverDestroyed<const QualifiedName>*)" : "";
@@ -1555,14 +1667,15 @@ sub printDefinitions
     for my $key (sort keys %$namesRef) {
         my $identifier = $namesRef->{$key}{identifier};
         my $elementEnumValue = $namesRef->{$key}{elementEnumValue} || "Unknown";
+        my $attributeEnumValue = $namesRef->{$key}{attributeEnumValue} || "Unknown";
         # Attribute names never correspond to a recognized ElementName.
-        print F "        { $cast&$identifier$shortCamelType, *(&${identifier}Data), ElementName::$elementEnumValue },\n";
+        print F "        { $cast&$identifier$shortCamelType, *(&${identifier}Data), ElementName::$elementEnumValue, AttributeName::$attributeEnumValue },\n";
     }
 
     print F "    };\n";
     print F "\n";
     print F "    for (auto& entry : ${type}Table)\n";
-    print F "        entry.targetAddress->construct(nullAtom(), AtomString(&entry.name), $namespaceURI, Namespace::$namespaceEnumValue, entry.elementName);\n";
+    print F "        entry.targetAddress->construct(nullAtom(), AtomString(&entry.name), $namespaceURI, Namespace::$namespaceEnumValue, entry.elementName, entry.attributeName);\n";
 }
 
 ## ElementFactory routines
@@ -1602,6 +1715,7 @@ END
 
 #include "DeprecatedGlobalSettings.h"
 #include "Document.h"
+#include "AttributeName.h"
 #include "ElementName.h"
 #include "Settings.h"
 #include "TagName.h"
@@ -1889,6 +2003,7 @@ sub printWrapperFactoryCppFile
 
 #include "DeprecatedGlobalSettings.h"
 #include "Document.h"
+#include "AttributeName.h"
 #include "ElementName.h"
 #include "Settings.h"
 #include <wtf/NeverDestroyed.h>

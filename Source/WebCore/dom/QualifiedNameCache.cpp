@@ -27,6 +27,7 @@
 #include "config.h"
 #include "QualifiedNameCache.h"
 
+#include "AttributeName.h"
 #include "ElementName.h"
 #include "Namespace.h"
 
@@ -49,10 +50,11 @@ struct QNameComponentsTranslator {
     }
 };
 
-static void updateImplWithNamespaceAndElementName(QualifiedName::QualifiedNameImpl& impl, Namespace nodeNamespace, ElementName elementName)
+static void updateImplWithNamespaceAndElementName(QualifiedName::QualifiedNameImpl& impl, Namespace nodeNamespace, ElementName elementName, AttributeName attributeName)
 {
     impl.m_namespace = nodeNamespace;
     impl.m_elementName = elementName;
+    impl.m_attributeName = attributeName;
     bool needsLowercasing = nodeNamespace != Namespace::HTML || elementName == ElementName::Unknown;
     impl.m_localNameLower = needsLowercasing ? impl.m_localName.convertToASCIILowercase() : impl.m_localName;
 }
@@ -65,21 +67,23 @@ Ref<QualifiedName::QualifiedNameImpl> QualifiedNameCache::getOrCreate(const Qual
     if (addResult.isNewEntry) {
         auto nodeNamespace = findNamespace(components.m_namespaceURI);
         auto elementName = findElementName(nodeNamespace, components.m_localName);
-
-        updateImplWithNamespaceAndElementName(impl, nodeNamespace, elementName);
+        auto attributeName = AttributeName::Unknown;
+        if (elementName == ElementName::Unknown)
+            attributeName = findAttributeName(nodeNamespace, components.m_localName);
+        updateImplWithNamespaceAndElementName(impl, nodeNamespace, elementName, attributeName);
         return adoptRef(impl);
     }
 
     return Ref { impl };
 }
 
-Ref<QualifiedName::QualifiedNameImpl> QualifiedNameCache::getOrCreate(const QualifiedNameComponents& components, Namespace nodeNamespace, ElementName elementName)
+Ref<QualifiedName::QualifiedNameImpl> QualifiedNameCache::getOrCreate(const QualifiedNameComponents& components, Namespace nodeNamespace, ElementName elementName, AttributeName attributeName)
 {
     auto addResult = m_cache.add<QNameComponentsTranslator>(components);
     auto& impl = **addResult.iterator;
 
     if (addResult.isNewEntry) {
-        updateImplWithNamespaceAndElementName(impl, nodeNamespace, elementName);
+        updateImplWithNamespaceAndElementName(impl, nodeNamespace, elementName, attributeName);
         return adoptRef(impl);
     }
 

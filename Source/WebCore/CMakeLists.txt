@@ -2680,6 +2680,9 @@ list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/TagName.cpp)
 GENERATE_DOM_NAME_ENUM(ElementName)
 list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/ElementName.cpp)
 
+GENERATE_DOM_NAME_ENUM(AttributeName)
+list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/AttributeName.cpp)
+
 GENERATE_DOM_NAME_ENUM(Namespace)
 list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/Namespace.cpp)
 

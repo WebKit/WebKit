@@ -39,6 +39,7 @@
 #include "MathMLNames.h"
 #endif
 
+enum class AttributeName : uint16_t;
 enum class ElementName : uint16_t;
 enum class Namespace : uint8_t;
 
@@ -50,7 +51,7 @@ public:
     QualifiedNameCache() = default;
 
     Ref<QualifiedName::QualifiedNameImpl> getOrCreate(const QualifiedNameComponents&);
-    Ref<QualifiedName::QualifiedNameImpl> getOrCreate(const QualifiedNameComponents&, Namespace, ElementName);
+    Ref<QualifiedName::QualifiedNameImpl> getOrCreate(const QualifiedNameComponents&, Namespace, ElementName, AttributeName);
     void remove(QualifiedName::QualifiedNameImpl&);
 
 private:

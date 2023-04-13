@@ -25,8 +25,9 @@
  */
 
 #include "config.h"
-#include "HTMLTreeBuilder.h"
+#include "HTMLConstructionSite.h"
 
+#include "AttributeName.h"
 #include "Comment.h"
 #include "CustomElementRegistry.h"
 #include "DocumentFragment.h"
@@ -46,6 +47,7 @@
 #include "HTMLPictureElement.h"
 #include "HTMLScriptElement.h"
 #include "HTMLTemplateElement.h"
+#include "HTMLTreeBuilder.h"
 #include "HTMLUnknownElement.h"
 #include "JSCustomElementInterface.h"
 #include "LocalDOMWindow.h"
@@ -730,7 +732,7 @@ static inline QualifiedName qualifiedNameForTag(AtomHTMLToken& token, const Atom
     auto elementName = elementNameForTag(nodeNamespace, token.tagName());
     if (LIKELY(elementName != ElementName::Unknown))
         return qualifiedNameForElement(elementName);
-    return { nullAtom(), token.name(), namespaceURI, nodeNamespace, elementName };
+    return { nullAtom(), token.name(), namespaceURI, nodeNamespace, elementName, AttributeName::Unknown };
 }
 
 static inline QualifiedName qualifiedNameForHTMLTag(const AtomHTMLToken& token)
@@ -738,7 +740,7 @@ static inline QualifiedName qualifiedNameForHTMLTag(const AtomHTMLToken& token)
     auto elementName = elementNameForTag(Namespace::HTML, token.tagName());
     if (LIKELY(elementName != ElementName::Unknown))
         return qualifiedNameForElement(elementName);
-    return { nullAtom(), token.name(), xhtmlNamespaceURI, Namespace::HTML, elementName };
+    return { nullAtom(), token.name(), xhtmlNamespaceURI, Namespace::HTML, elementName, AttributeName::Unknown };
 }
 
 Ref<Element> HTMLConstructionSite::createElement(AtomHTMLToken& token, const AtomString& namespaceURI)

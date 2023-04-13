@@ -29,6 +29,7 @@
 #include "HTMLSelectElement.h"
 
 #include "AXObjectCache.h"
+#include "AttributeName.h"
 #include "DOMFormData.h"
 #include "DocumentInlines.h"
 #include "ElementChildIteratorInlines.h"
@@ -292,7 +293,8 @@ bool HTMLSelectElement::hasPresentationalHintsForAttribute(const QualifiedName& 
 
 void HTMLSelectElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
-    if (name == sizeAttr) {
+    switch (name.attributeName()) {
+    case AttributeName::sizeAttr: {
         unsigned oldSize = m_size;
         unsigned size = limitToOnlyHTMLNonNegative(newValue);
 
@@ -307,10 +309,15 @@ void HTMLSelectElement::attributeChanged(const QualifiedName& name, const AtomSt
             setRecalcListItems();
             updateValidity();
         }
-    } else if (name == multipleAttr)
+        break;
+    }
+    case AttributeName::multipleAttr:
         parseMultipleAttribute(newValue);
-    else
+        break;
+    default:
         HTMLFormControlElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
+        break;
+    }
 }
 
 int HTMLSelectElement::defaultTabIndex() const

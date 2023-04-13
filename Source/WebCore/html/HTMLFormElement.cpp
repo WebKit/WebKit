@@ -25,6 +25,7 @@
 #include "config.h"
 #include "HTMLFormElement.h"
 
+#include "AttributeName.h"
 #include "CommonAtomStrings.h"
 #include "DOMFormData.h"
 #include "DOMTokenList.h"
@@ -504,33 +505,42 @@ void HTMLFormElement::resetListedFormControlElements()
 
 void HTMLFormElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
-    if (name == actionAttr) {
+    switch (name.attributeName()) {
+    case AttributeName::actionAttr:
         m_attributes.parseAction(newValue);
-        
         if (!m_attributes.action().isEmpty()) {
             if (RefPtr f = document().frame()) {
                 if (auto* topFrame = dynamicDowncast<LocalFrame>(f->tree().top()))
                     MixedContentChecker::checkFormForMixedContent(*topFrame, topFrame->document()->securityOrigin(), document().completeURL(m_attributes.action()));
             }
         }
-    } else if (name == targetAttr)
+        break;
+    case AttributeName::targetAttr:
         m_attributes.setTarget(newValue);
-    else if (name == methodAttr)
+        break;
+    case AttributeName::methodAttr:
         m_attributes.updateMethodType(newValue, document().settings().dialogElementEnabled());
-    else if (name == enctypeAttr)
+        break;
+    case AttributeName::enctypeAttr:
         m_attributes.updateEncodingType(newValue);
-    else if (name == accept_charsetAttr)
+        break;
+    case AttributeName::accept_charsetAttr:
         m_attributes.setAcceptCharset(newValue);
-    else if (name == autocompleteAttr) {
+        break;
+    case AttributeName::autocompleteAttr:
         if (!shouldAutocomplete())
             document().registerForDocumentSuspensionCallbacks(*this);
         else
             document().unregisterForDocumentSuspensionCallbacks(*this);
-    } else if (name == relAttr) {
+        break;
+    case AttributeName::relAttr:
         if (m_relList)
             m_relList->associatedAttributeValueChanged(newValue);
-    } else
+        break;
+    default:
         HTMLElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
+        break;
+    }
 }
 
 unsigned HTMLFormElement::formElementIndexWithFormAttribute(Element* element, unsigned rangeStart, unsigned rangeEnd)

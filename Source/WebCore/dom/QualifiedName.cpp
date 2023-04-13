@@ -20,6 +20,7 @@
 #include "config.h"
 #include "QualifiedName.h"
 
+#include "AttributeName.h"
 #include "CommonAtomStrings.h"
 #include "ElementName.h"
 #include "Namespace.h"
@@ -34,6 +35,7 @@ DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(QualifiedNameQualifiedNameImpl);
 
 QualifiedName::QualifiedNameImpl::QualifiedNameImpl(const AtomString& prefix, const AtomString& localName, const AtomString& namespaceURI)
     : m_namespace(Namespace::Unknown)
+    , m_attributeName(AttributeName::Unknown)
     , m_elementName(ElementName::Unknown)
     , m_prefix(prefix)
     , m_localName(localName)
@@ -52,8 +54,8 @@ QualifiedName::QualifiedName(const AtomString& prefix, const AtomString& localNa
 {
 }
 
-QualifiedName::QualifiedName(const AtomString& prefix, const AtomString& localName, const AtomString& namespaceURI, Namespace nodeNamespace, ElementName elementName)
-    : m_impl(threadGlobalData().qualifiedNameCache().getOrCreate(makeComponents(prefix, localName, namespaceURI), nodeNamespace, elementName))
+QualifiedName::QualifiedName(const AtomString& prefix, const AtomString& localName, const AtomString& namespaceURI, Namespace nodeNamespace, ElementName elementName, AttributeName attributeName)
+    : m_impl(threadGlobalData().qualifiedNameCache().getOrCreate(makeComponents(prefix, localName, namespaceURI), nodeNamespace, elementName, attributeName))
 {
 }
 
@@ -71,13 +73,13 @@ void QualifiedName::init()
     if (initialized)
         return;
 
-    anyName.construct(nullAtom(), starAtom(), starAtom(), Namespace::Unknown, ElementName::Unknown);
+    anyName.construct(nullAtom(), starAtom(), starAtom(), Namespace::Unknown, ElementName::Unknown, AttributeName::Unknown);
     initialized = true;
 }
 
 const QualifiedName& nullQName()
 {
-    static NeverDestroyed<QualifiedName> nullName(nullAtom(), nullAtom(), nullAtom(), Namespace::None, ElementName::Unknown);
+    static NeverDestroyed<QualifiedName> nullName(nullAtom(), nullAtom(), nullAtom(), Namespace::None, ElementName::Unknown, AttributeName::Unknown);
     return nullName;
 }
 
