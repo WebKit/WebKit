@@ -987,6 +987,8 @@ webkit.org/b/246952 imported/w3c/web-platform-tests/css/css-fonts/font-variant-a
 webkit.org/b/246952 imported/w3c/web-platform-tests/css/css-fonts/font-variant-alternates-10.html [ ImageOnlyFailure ]
 webkit.org/b/246952 imported/w3c/web-platform-tests/css/css-fonts/font-variant-alternates-11.html [ ImageOnlyFailure ]
 webkit.org/b/246952 imported/w3c/web-platform-tests/css/css-fonts/font-variant-alternates-12.html [ ImageOnlyFailure ]
+webkit.org/b/246952 imported/w3c/web-platform-tests/css/css-fonts/font-variant-alternates-13.html [ ImageOnlyFailure ]
+webkit.org/b/246952 imported/w3c/web-platform-tests/css/css-fonts/font-variant-alternates-14.html [ ImageOnlyFailure ]
 webkit.org/b/246952 imported/w3c/web-platform-tests/css/css-fonts/font-variant-alternates-15.html [ ImageOnlyFailure ]
 webkit.org/b/246952 imported/w3c/web-platform-tests/css/css-fonts/font-variant-alternates-16.html [ ImageOnlyFailure ]
 webkit.org/b/246952 imported/w3c/web-platform-tests/css/css-fonts/font-variant-alternates-17.html [ ImageOnlyFailure ]

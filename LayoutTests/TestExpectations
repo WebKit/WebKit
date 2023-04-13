@@ -3717,10 +3717,6 @@ webkit.org/b/182042 imported/w3c/web-platform-tests/css/css-fonts/font-default-0
 webkit.org/b/182042 imported/w3c/web-platform-tests/css/css-fonts/font-kerning-03.html [ ImageOnlyFailure ]
 webkit.org/b/86071 imported/w3c/web-platform-tests/css/css-fonts/font-kerning-05.html [ ImageOnlyFailure ]
 
-# font-variant-alternates: swash doesn't work
-webkit.org/b/246121 imported/w3c/web-platform-tests/css/css-fonts/font-variant-alternates-13.html [ ImageOnlyFailure ]
-webkit.org/b/246121 imported/w3c/web-platform-tests/css/css-fonts/font-variant-alternates-14.html [ ImageOnlyFailure ]
-
 # @font-face: ascent-override, descent-override, and line-gap-override
 webkit.org/b/219735 imported/w3c/web-platform-tests/css/css-fonts/ascent-descent-override.html [ ImageOnlyFailure ]
 webkit.org/b/219735 imported/w3c/web-platform-tests/css/css-fonts/line-gap-override.html [ ImageOnlyFailure ]
