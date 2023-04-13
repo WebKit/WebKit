@@ -394,7 +394,7 @@ void InlineCacheCompiler::generateWithGuard(AccessCase& accessCase, CCallHelpers
 
     auto emitDefaultGuard = [&] () {
         if (accessCase.m_polyProtoAccessChain) {
-            ASSERT(!accessCase.viaProxy());
+            ASSERT(!accessCase.viaGlobalProxy());
             GPRReg baseForAccessGPR = m_scratchGPR;
             jit.move(baseGPR, baseForAccessGPR);
             accessCase.m_polyProtoAccessChain->forEach(vm, accessCase.structure(), [&] (Structure* structure, bool atEnd) {
@@ -437,11 +437,11 @@ void InlineCacheCompiler::generateWithGuard(AccessCase& accessCase, CCallHelpers
             return;
         }
 
-        if (accessCase.viaProxy()) {
+        if (accessCase.viaGlobalProxy()) {
             fallThrough.append(
-                jit.branchIfNotType(baseGPR, PureForwardingProxyType));
+                jit.branchIfNotType(baseGPR, GlobalProxyType));
 
-            jit.loadPtr(CCallHelpers::Address(baseGPR, JSProxy::targetOffset()), scratchGPR);
+            jit.loadPtr(CCallHelpers::Address(baseGPR, JSGlobalProxy::targetOffset()), scratchGPR);
 
             fallThrough.append(
                 jit.branchStructure(
@@ -460,7 +460,7 @@ void InlineCacheCompiler::generateWithGuard(AccessCase& accessCase, CCallHelpers
 
     switch (accessCase.m_type) {
     case AccessCase::ArrayLength: {
-        ASSERT(!accessCase.viaProxy());
+        ASSERT(!accessCase.viaGlobalProxy());
         jit.load8(CCallHelpers::Address(baseGPR, JSCell::indexingTypeAndMiscOffset()), scratchGPR);
         fallThrough.append(
             jit.branchTest32(
@@ -472,14 +472,14 @@ void InlineCacheCompiler::generateWithGuard(AccessCase& accessCase, CCallHelpers
     }
 
     case AccessCase::StringLength: {
-        ASSERT(!accessCase.viaProxy());
+        ASSERT(!accessCase.viaGlobalProxy());
         fallThrough.append(
             jit.branchIfNotString(baseGPR));
         break;
     }
 
     case AccessCase::DirectArgumentsLength: {
-        ASSERT(!accessCase.viaProxy());
+        ASSERT(!accessCase.viaGlobalProxy());
         fallThrough.append(
             jit.branchIfNotType(baseGPR, DirectArgumentsType));
 
@@ -496,7 +496,7 @@ void InlineCacheCompiler::generateWithGuard(AccessCase& accessCase, CCallHelpers
     }
 
     case AccessCase::ScopedArgumentsLength: {
-        ASSERT(!accessCase.viaProxy());
+        ASSERT(!accessCase.viaGlobalProxy());
         fallThrough.append(
             jit.branchIfNotType(baseGPR, ScopedArgumentsType));
 
@@ -513,7 +513,7 @@ void InlineCacheCompiler::generateWithGuard(AccessCase& accessCase, CCallHelpers
     }
 
     case AccessCase::ModuleNamespaceLoad: {
-        ASSERT(!accessCase.viaProxy());
+        ASSERT(!accessCase.viaGlobalProxy());
         emitModuleNamespaceLoad(accessCase.as<ModuleNamespaceAccessCase>(), fallThrough);
         return;
     }
@@ -521,13 +521,13 @@ void InlineCacheCompiler::generateWithGuard(AccessCase& accessCase, CCallHelpers
     case AccessCase::ProxyObjectHas:
     case AccessCase::ProxyObjectLoad:
     case AccessCase::ProxyObjectStore: {
-        ASSERT(!accessCase.viaProxy());
+        ASSERT(!accessCase.viaGlobalProxy());
         emitProxyObjectAccess(accessCase.as<ProxyObjectAccessCase>(), fallThrough);
         return;
     }
 
     case AccessCase::IndexedScopedArgumentsLoad: {
-        ASSERT(!accessCase.viaProxy());
+        ASSERT(!accessCase.viaGlobalProxy());
         // This code is written such that the result could alias with the base or the property.
         GPRReg propertyGPR = stubInfo.propertyGPR();
 
@@ -589,7 +589,7 @@ void InlineCacheCompiler::generateWithGuard(AccessCase& accessCase, CCallHelpers
     }
 
     case AccessCase::IndexedDirectArgumentsLoad: {
-        ASSERT(!accessCase.viaProxy());
+        ASSERT(!accessCase.viaGlobalProxy());
         // This code is written such that the result could alias with the base or the property.
         GPRReg propertyGPR = stubInfo.propertyGPR();
         jit.load8(CCallHelpers::Address(baseGPR, JSCell::typeInfoTypeOffset()), scratchGPR);
@@ -622,7 +622,7 @@ void InlineCacheCompiler::generateWithGuard(AccessCase& accessCase, CCallHelpers
     case AccessCase::IndexedResizableTypedArrayUint32Load:
     case AccessCase::IndexedResizableTypedArrayFloat32Load:
     case AccessCase::IndexedResizableTypedArrayFloat64Load: {
-        ASSERT(!accessCase.viaProxy());
+        ASSERT(!accessCase.viaGlobalProxy());
         // This code is written such that the result could alias with the base or the property.
 
         TypedArrayType type = toTypedArrayType(accessCase.m_type);
@@ -738,7 +738,7 @@ void InlineCacheCompiler::generateWithGuard(AccessCase& accessCase, CCallHelpers
     }
 
     case AccessCase::IndexedStringLoad: {
-        ASSERT(!accessCase.viaProxy());
+        ASSERT(!accessCase.viaGlobalProxy());
         // This code is written such that the result could alias with the base or the property.
         GPRReg propertyGPR = stubInfo.propertyGPR();
 
@@ -797,7 +797,7 @@ void InlineCacheCompiler::generateWithGuard(AccessCase& accessCase, CCallHelpers
     case AccessCase::IndexedDoubleLoad:
     case AccessCase::IndexedContiguousLoad:
     case AccessCase::IndexedArrayStorageLoad: {
-        ASSERT(!accessCase.viaProxy());
+        ASSERT(!accessCase.viaGlobalProxy());
         // This code is written such that the result could alias with the base or the property.
         GPRReg propertyGPR = stubInfo.propertyGPR();
 
@@ -898,7 +898,7 @@ void InlineCacheCompiler::generateWithGuard(AccessCase& accessCase, CCallHelpers
     case AccessCase::IndexedDoubleStore:
     case AccessCase::IndexedContiguousStore:
     case AccessCase::IndexedArrayStorageStore: {
-        ASSERT(!accessCase.viaProxy());
+        ASSERT(!accessCase.viaGlobalProxy());
         GPRReg propertyGPR = stubInfo.propertyGPR();
 
         // int32 check done in polymorphic access.
@@ -1058,7 +1058,7 @@ void InlineCacheCompiler::generateWithGuard(AccessCase& accessCase, CCallHelpers
     case AccessCase::IndexedResizableTypedArrayUint32Store:
     case AccessCase::IndexedResizableTypedArrayFloat32Store:
     case AccessCase::IndexedResizableTypedArrayFloat64Store: {
-        ASSERT(!accessCase.viaProxy());
+        ASSERT(!accessCase.viaGlobalProxy());
         // This code is written such that the result could alias with the base or the property.
 
         TypedArrayType type = toTypedArrayType(accessCase.m_type);
@@ -1195,7 +1195,7 @@ void InlineCacheCompiler::generateWithGuard(AccessCase& accessCase, CCallHelpers
         break;
 
     case AccessCase::InstanceOfGeneric: {
-        ASSERT(!accessCase.viaProxy());
+        ASSERT(!accessCase.viaGlobalProxy());
         GPRReg prototypeGPR = stubInfo.prototypeGPR();
         // Legend: value = `base instanceof prototypeGPR`.
 
@@ -1261,7 +1261,7 @@ void InlineCacheCompiler::generateWithGuard(AccessCase& accessCase, CCallHelpers
 
     case AccessCase::LoadMegamorphic: {
 #if USE(JSVALUE64)
-        ASSERT(!accessCase.viaProxy());
+        ASSERT(!accessCase.viaGlobalProxy());
         CCallHelpers::JumpList primaryFail;
         CCallHelpers::JumpList failAndRepatch;
         unsigned hash = accessCase.m_identifier.uid()->hash();
@@ -1460,11 +1460,11 @@ void InlineCacheCompiler::generateImpl(AccessCase& accessCase)
             jit.move(
                 CCallHelpers::TrustedImmPtr(accessCase.alternateBase()), scratchGPR);
             propertyOwnerGPR = scratchGPR;
-        } else if (accessCase.viaProxy() && doesPropertyStorageLoads) {
+        } else if (accessCase.viaGlobalProxy() && doesPropertyStorageLoads) {
             // We only need this when loading an inline or out of line property. For customs accessors,
-            // we can invoke with a receiver value that is a JSProxy. For custom values, we unbox to the
-            // JSProxy's target. For getters/setters, we'll also invoke them with the JSProxy as |this|,
-            // but we need to load the actual GetterSetter cell from the JSProxy's target.
+            // we can invoke with a receiver value that is a JSGlobalProxy. For custom values, we unbox to the
+            // JSGlobalProxy's target. For getters/setters, we'll also invoke them with the JSGlobalProxy as |this|,
+            // but we need to load the actual GetterSetter cell from the JSGlobalProxy's target.
 
             if (accessCase.m_type == AccessCase::Getter || accessCase.m_type == AccessCase::Setter)
                 propertyOwnerGPR = scratchGPR;
@@ -1472,11 +1472,11 @@ void InlineCacheCompiler::generateImpl(AccessCase& accessCase)
                 propertyOwnerGPR = valueRegsPayloadGPR;
 
             jit.loadPtr(
-                CCallHelpers::Address(baseGPR, JSProxy::targetOffset()), propertyOwnerGPR);
-        } else if (accessCase.viaProxy() && takesPropertyOwnerAsCFunctionArgument) {
+                CCallHelpers::Address(baseGPR, JSGlobalProxy::targetOffset()), propertyOwnerGPR);
+        } else if (accessCase.viaGlobalProxy() && takesPropertyOwnerAsCFunctionArgument) {
             propertyOwnerGPR = scratchGPR;
             jit.loadPtr(
-                CCallHelpers::Address(baseGPR, JSProxy::targetOffset()), propertyOwnerGPR);
+                CCallHelpers::Address(baseGPR, JSGlobalProxy::targetOffset()), propertyOwnerGPR);
         } else
             propertyOwnerGPR = receiverGPR;
 
@@ -1790,7 +1790,7 @@ void InlineCacheCompiler::generateImpl(AccessCase& accessCase)
 
     case AccessCase::Replace: {
         GPRReg base = baseGPR;
-        if (accessCase.viaProxy()) {
+        if (accessCase.viaGlobalProxy()) {
             // This aint pretty, but the path that structure checks loads the real base into scratchGPR.
             base = scratchGPR;
         }
@@ -1810,14 +1810,14 @@ void InlineCacheCompiler::generateImpl(AccessCase& accessCase)
                     scratchGPR, offsetInButterfly(accessCase.m_offset) * sizeof(JSValue)));
         }
 
-        if (accessCase.viaProxy()) {
+        if (accessCase.viaGlobalProxy()) {
             CCallHelpers::JumpList skipBarrier;
             skipBarrier.append(jit.branchIfNotCell(valueRegs));
             if (!isInlineOffset(accessCase.m_offset))
-                jit.loadPtr(CCallHelpers::Address(baseGPR, JSProxy::targetOffset()), scratchGPR);
+                jit.loadPtr(CCallHelpers::Address(baseGPR, JSGlobalProxy::targetOffset()), scratchGPR);
             skipBarrier.append(jit.barrierBranch(vm, scratchGPR, scratchGPR));
 
-            jit.loadPtr(CCallHelpers::Address(baseGPR, JSProxy::targetOffset()), scratchGPR);
+            jit.loadPtr(CCallHelpers::Address(baseGPR, JSGlobalProxy::targetOffset()), scratchGPR);
 
             auto spillState = preserveLiveRegistersToStackForCallWithoutExceptions();
 
@@ -1837,7 +1837,7 @@ void InlineCacheCompiler::generateImpl(AccessCase& accessCase)
     }
 
     case AccessCase::Transition: {
-        ASSERT(!accessCase.viaProxy());
+        ASSERT(!accessCase.viaGlobalProxy());
         // AccessCase::createTransition() should have returned null if this wasn't true.
         RELEASE_ASSERT(GPRInfo::numberOfRegisters >= 6 || !accessCase.structure()->outOfLineCapacity() || accessCase.structure()->outOfLineCapacity() == accessCase.newStructure()->outOfLineCapacity());
 
@@ -2703,7 +2703,7 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
                     allAreSimpleLoadOrMiss = false;
                 if (accessCase->usesPolyProto())
                     allAreSimpleLoadOrMiss = false;
-                if (accessCase->viaProxy())
+                if (accessCase->viaGlobalProxy())
                     allAreSimpleLoadOrMiss = false;
             }
 

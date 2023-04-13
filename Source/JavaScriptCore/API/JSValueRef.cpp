@@ -220,8 +220,8 @@ bool JSValueIsObjectOfClass(JSContextRef ctx, JSValueRef value, JSClassRef jsCla
     JSValue jsValue = toJS(globalObject, value);
     
     if (JSObject* o = jsValue.getObject()) {
-        if (o->inherits<JSProxy>())
-            o = jsCast<JSProxy*>(o)->target();
+        if (o->inherits<JSGlobalProxy>())
+            o = jsCast<JSGlobalProxy*>(o)->target();
 
         if (o->inherits<JSCallbackObject<JSGlobalObject>>())
             return jsCast<JSCallbackObject<JSGlobalObject>*>(o)->inherits(jsClass);

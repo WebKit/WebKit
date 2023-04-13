@@ -34,8 +34,8 @@
 #include "JSCJSValue.h"
 #include "JSCellInlines.h"
 #include "JSFunction.h"
+#include "JSGlobalProxy.h"
 #include "JSObject.h"
-#include "JSProxy.h"
 #include "JSStringInlines.h"
 #include "MathCommon.h"
 #include <wtf/text/StringImpl.h>
@@ -1433,8 +1433,8 @@ ALWAYS_INLINE bool isThisValueAltered(const PutPropertySlot& slot, JSObject* bas
     if (!thisValue.isObject())
         return true;
     JSObject* thisObject = asObject(thisValue);
-    // Only PureForwardingProxyType can be seen as the same to the original target object.
-    if (thisObject->type() == PureForwardingProxyType && jsCast<JSProxy*>(thisObject)->target() == baseObject)
+    // Only GlobalProxyType can be seen as the same to the original target object.
+    if (thisObject->type() == GlobalProxyType && jsCast<JSGlobalProxy*>(thisObject)->target() == baseObject)
         return false;
     return true;
 }

@@ -66,7 +66,7 @@ public:
 
 protected:
     JSWorkerGlobalScopeBase(JSC::VM&, JSC::Structure*, RefPtr<WorkerGlobalScope>&&);
-    void finishCreation(JSC::VM&, JSC::JSProxy*);
+    void finishCreation(JSC::VM&, JSC::JSGlobalProxy*);
 
     DECLARE_VISIT_CHILDREN;
 

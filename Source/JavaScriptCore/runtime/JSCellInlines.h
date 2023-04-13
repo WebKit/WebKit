@@ -241,7 +241,7 @@ inline bool JSCell::isCustomGetterSetter() const
 
 inline bool JSCell::isProxy() const
 {
-    return m_type == PureForwardingProxyType || m_type == ProxyObjectType;
+    return m_type == GlobalProxyType || m_type == ProxyObjectType;
 }
 
 // FIXME: Consider making getCallData concurrency-safe once NPAPI support is removed.

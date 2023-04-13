@@ -34,7 +34,7 @@
 #include <JavaScriptCore/GlobalObjectMethodTable.h>
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/JSCJSValueInlines.h>
-#include <JavaScriptCore/JSProxy.h>
+#include <JavaScriptCore/JSGlobalProxy.h>
 #include <JavaScriptCore/Microtask.h>
 #include <wtf/Language.h>
 
@@ -81,7 +81,7 @@ JSShadowRealmGlobalScopeBase::JSShadowRealmGlobalScopeBase(JSC::VM& vm, JSC::Str
 {
 }
 
-void JSShadowRealmGlobalScopeBase::finishCreation(VM& vm, JSProxy* proxy)
+void JSShadowRealmGlobalScopeBase::finishCreation(VM& vm, JSGlobalProxy* proxy)
 {
     m_proxy.set(vm, this, proxy);
     m_wrapped->m_wrapper = JSC::Weak(this);

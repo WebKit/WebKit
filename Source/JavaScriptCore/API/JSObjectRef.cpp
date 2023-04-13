@@ -558,8 +558,8 @@ void* JSObjectGetPrivate(JSObjectRef object)
     const ClassInfo* classInfo = classInfoPrivate(jsObject);
     
     // Get wrapped object if proxied
-    if (classInfo->isSubClassOf(JSProxy::info())) {
-        jsObject = static_cast<JSProxy*>(jsObject)->target();
+    if (classInfo->isSubClassOf(JSGlobalProxy::info())) {
+        jsObject = static_cast<JSGlobalProxy*>(jsObject)->target();
         classInfo = jsObject->classInfo();
     }
 
@@ -582,8 +582,8 @@ bool JSObjectSetPrivate(JSObjectRef object, void* data)
     const ClassInfo* classInfo = classInfoPrivate(jsObject);
     
     // Get wrapped object if proxied
-    if (classInfo->isSubClassOf(JSProxy::info())) {
-        jsObject = static_cast<JSProxy*>(jsObject)->target();
+    if (classInfo->isSubClassOf(JSGlobalProxy::info())) {
+        jsObject = static_cast<JSGlobalProxy*>(jsObject)->target();
         classInfo = jsObject->classInfo();
     }
 
@@ -616,8 +616,8 @@ JSValueRef JSObjectGetPrivateProperty(JSContextRef ctx, JSObjectRef object, JSSt
 
 
     // Get wrapped object if proxied
-    if (jsObject->inherits<JSProxy>())
-        jsObject = jsCast<JSProxy*>(jsObject)->target();
+    if (jsObject->inherits<JSGlobalProxy>())
+        jsObject = jsCast<JSGlobalProxy*>(jsObject)->target();
 
     if (jsObject->inherits<JSCallbackObject<JSGlobalObject>>())
         result = jsCast<JSCallbackObject<JSGlobalObject>*>(jsObject)->getPrivateProperty(name);
@@ -640,8 +640,8 @@ bool JSObjectSetPrivateProperty(JSContextRef ctx, JSObjectRef object, JSStringRe
     Identifier name(propertyName->identifier(&vm));
 
     // Get wrapped object if proxied
-    if (jsObject->inherits<JSProxy>())
-        jsObject = jsCast<JSProxy*>(jsObject)->target();
+    if (jsObject->inherits<JSGlobalProxy>())
+        jsObject = jsCast<JSGlobalProxy*>(jsObject)->target();
 
     if (jsObject->inherits<JSCallbackObject<JSGlobalObject>>()) {
         jsCast<JSCallbackObject<JSGlobalObject>*>(jsObject)->setPrivateProperty(vm, name, jsValue);
@@ -669,8 +669,8 @@ bool JSObjectDeletePrivateProperty(JSContextRef ctx, JSObjectRef object, JSStrin
     Identifier name(propertyName->identifier(&vm));
 
     // Get wrapped object if proxied
-    if (jsObject->inherits<JSProxy>())
-        jsObject = jsCast<JSProxy*>(jsObject)->target();
+    if (jsObject->inherits<JSGlobalProxy>())
+        jsObject = jsCast<JSGlobalProxy*>(jsObject)->target();
 
     if (jsObject->inherits<JSCallbackObject<JSGlobalObject>>()) {
         jsCast<JSCallbackObject<JSGlobalObject>*>(jsObject)->deletePrivateProperty(name);
@@ -857,7 +857,7 @@ JSObjectRef JSObjectGetProxyTarget(JSObjectRef objectRef)
     VM& vm = object->vm();
     JSLockHolder locker(vm);
     JSObject* result = nullptr;
-    if (JSProxy* proxy = jsDynamicCast<JSProxy*>(object))
+    if (JSGlobalProxy* proxy = jsDynamicCast<JSGlobalProxy*>(object))
         result = proxy->target();
     else if (ProxyObject* proxy = jsDynamicCast<ProxyObject*>(object))
         result = proxy->target();

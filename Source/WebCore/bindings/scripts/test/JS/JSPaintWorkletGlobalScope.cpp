@@ -119,7 +119,7 @@ JSPaintWorkletGlobalScope::JSPaintWorkletGlobalScope(VM& vm, Structure* structur
 {
 }
 
-void JSPaintWorkletGlobalScope::finishCreation(VM& vm, JSProxy* proxy)
+void JSPaintWorkletGlobalScope::finishCreation(VM& vm, JSGlobalProxy* proxy)
 {
     Base::finishCreation(vm, proxy);
 

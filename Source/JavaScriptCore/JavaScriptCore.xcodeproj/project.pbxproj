@@ -1246,7 +1246,7 @@
 		86158AB3155C8B4000B45C9C /* PropertyName.h in Headers */ = {isa = PBXBuildFile; fileRef = 86158AB2155C8B3F00B45C9C /* PropertyName.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		861816771FB7924200ECC4EC /* BigIntObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 861816761FB7922F00ECC4EC /* BigIntObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		861AF60725D18C9D000B63E1 /* BrandedStructure.h in Headers */ = {isa = PBXBuildFile; fileRef = 861AF60625D18C9D000B63E1 /* BrandedStructure.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		862553D216136E1A009F17D0 /* JSProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 862553CF16136AA5009F17D0 /* JSProxy.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		862553D216136E1A009F17D0 /* JSGlobalProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 862553CF16136AA5009F17D0 /* JSGlobalProxy.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		86281EF025B6160000367004 /* CheckPrivateBrandVariant.h in Headers */ = {isa = PBXBuildFile; fileRef = 86281EEF25B6160000367004 /* CheckPrivateBrandVariant.h */; };
 		86281EF425B61AF000367004 /* CheckPrivateBrandStatus.h in Headers */ = {isa = PBXBuildFile; fileRef = 86281EF325B61AF000367004 /* CheckPrivateBrandStatus.h */; };
 		863B23E00FC6118900703AA4 /* MacroAssemblerCodeRef.h in Headers */ = {isa = PBXBuildFile; fileRef = 863B23DF0FC60E6200703AA4 /* MacroAssemblerCodeRef.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4393,8 +4393,8 @@
 		861816761FB7922F00ECC4EC /* BigIntObject.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BigIntObject.h; sourceTree = "<group>"; };
 		861816781FB7931300ECC4EC /* BigIntObject.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = BigIntObject.cpp; sourceTree = "<group>"; };
 		861AF60625D18C9D000B63E1 /* BrandedStructure.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BrandedStructure.h; sourceTree = "<group>"; };
-		862553CE16136AA5009F17D0 /* JSProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSProxy.cpp; sourceTree = "<group>"; };
-		862553CF16136AA5009F17D0 /* JSProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSProxy.h; sourceTree = "<group>"; };
+		862553CE16136AA5009F17D0 /* JSGlobalProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSGlobalProxy.cpp; sourceTree = "<group>"; };
+		862553CF16136AA5009F17D0 /* JSGlobalProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSGlobalProxy.h; sourceTree = "<group>"; };
 		86281EEF25B6160000367004 /* CheckPrivateBrandVariant.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CheckPrivateBrandVariant.h; sourceTree = "<group>"; };
 		86281EF125B6165E00367004 /* CheckPrivateBrandVariant.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CheckPrivateBrandVariant.cpp; sourceTree = "<group>"; };
 		86281EF325B61AF000367004 /* CheckPrivateBrandStatus.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CheckPrivateBrandStatus.h; sourceTree = "<group>"; };
@@ -8029,6 +8029,8 @@
 				BC756FC60E2031B200DE7D12 /* JSGlobalObjectFunctions.cpp */,
 				BC756FC70E2031B200DE7D12 /* JSGlobalObjectFunctions.h */,
 				79B819921DD25CF500DDC714 /* JSGlobalObjectInlines.h */,
+				862553CE16136AA5009F17D0 /* JSGlobalProxy.cpp */,
+				862553CF16136AA5009F17D0 /* JSGlobalProxy.h */,
 				53F11F422091749800E411A7 /* JSImmutableButterfly.cpp */,
 				53F11F40209138D700E411A7 /* JSImmutableButterfly.h */,
 				0F2B66CA17B6B5AB00A7AE3F /* JSInt16Array.h */,
@@ -8078,8 +8080,6 @@
 				7C184E1D17BEE22E007CB63A /* JSPromisePrototype.h */,
 				2A05ABD31961DF2400341750 /* JSPropertyNameEnumerator.cpp */,
 				2A05ABD41961DF2400341750 /* JSPropertyNameEnumerator.h */,
-				862553CE16136AA5009F17D0 /* JSProxy.cpp */,
-				862553CF16136AA5009F17D0 /* JSProxy.h */,
 				5B40327F2798D1FD00F37939 /* JSRemoteFunction.cpp */,
 				5B40327E2798D1FD00F37939 /* JSRemoteFunction.h */,
 				534638721E70D01500F12AC1 /* JSRunLoopTimer.cpp */,
@@ -10790,6 +10790,7 @@
 				79B819931DD25CF500DDC714 /* JSGlobalObjectInlines.h in Headers */,
 				A51007C1187CC3C600B38879 /* JSGlobalObjectInspectorController.h in Headers */,
 				A50E4B6418809DD50068A46D /* JSGlobalObjectRuntimeAgent.h in Headers */,
+				862553D216136E1A009F17D0 /* JSGlobalProxy.h in Headers */,
 				0F0CAEFC1EC4DA6B00970D12 /* JSHeapFinalizerPrivate.h in Headers */,
 				53F11F41209138D700E411A7 /* JSImmutableButterfly.h in Headers */,
 				A513E5C0185BFACC007E95AD /* JSInjectedScriptHost.h in Headers */,
@@ -10835,7 +10836,6 @@
 				7C184E1F17BEE22E007CB63A /* JSPromisePrototype.h in Headers */,
 				996B731F1BDA08EF00331B84 /* JSPromisePrototype.lut.h in Headers */,
 				2A05ABD61961DF2400341750 /* JSPropertyNameEnumerator.h in Headers */,
-				862553D216136E1A009F17D0 /* JSProxy.h in Headers */,
 				5B4032802798D20600F37939 /* JSRemoteFunction.h in Headers */,
 				A552C3801ADDB8FE00139726 /* JSRemoteInspector.h in Headers */,
 				BC18C4260E16F5CD00B34460 /* JSRetainPtr.h in Headers */,

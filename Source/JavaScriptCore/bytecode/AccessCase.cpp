@@ -231,10 +231,10 @@ Ref<AccessCase> AccessCase::createSetPrivateBrand(
     return adoptRef(*new AccessCase(vm, owner, SetPrivateBrand, identifier, invalidOffset, newStructure, { }, { }));
 }
 
-Ref<AccessCase> AccessCase::createReplace(VM& vm, JSCell* owner, CacheableIdentifier identifier, PropertyOffset offset, Structure* oldStructure, bool viaProxy)
+Ref<AccessCase> AccessCase::createReplace(VM& vm, JSCell* owner, CacheableIdentifier identifier, PropertyOffset offset, Structure* oldStructure, bool viaGlobalProxy)
 {
     auto result = adoptRef(*new AccessCase(vm, owner, Replace, identifier, offset, oldStructure, { }, { }));
-    result->m_viaProxy = viaProxy;
+    result->m_viaGlobalProxy = viaGlobalProxy;
     return result;
 }
 
@@ -330,7 +330,7 @@ bool AccessCase::guardedByStructureCheck(const StructureStubInfo& stubInfo) cons
 
 bool AccessCase::guardedByStructureCheckSkippingConstantIdentifierCheck() const
 {
-    if (viaProxy())
+    if (viaGlobalProxy())
         return false;
 
     if (m_polyProtoAccessChain)
@@ -905,7 +905,7 @@ bool AccessCase::doesCalls(VM& vm, Vector<JSCell*>* cellsToMarkIfDoesCalls) cons
         doesCalls = false;
         break;
     case Replace:
-        doesCalls = viaProxy();
+        doesCalls = viaGlobalProxy();
         break;
     }
 
@@ -942,7 +942,7 @@ bool AccessCase::canReplace(const AccessCase& other) const
     if (m_identifier != other.m_identifier)
         return false;
 
-    if (viaProxy() != other.viaProxy())
+    if (viaGlobalProxy() != other.viaGlobalProxy())
         return false;
 
     auto checkPolyProtoAndStructure = [&] {
@@ -1298,7 +1298,7 @@ bool AccessCase::canBeShared(const AccessCase& lhs, const AccessCase& rhs)
         return false;
     if (lhs.m_offset != rhs.m_offset)
         return false;
-    if (lhs.m_viaProxy != rhs.m_viaProxy)
+    if (lhs.m_viaGlobalProxy != rhs.m_viaGlobalProxy)
         return false;
     if (lhs.m_structureID.get() != rhs.m_structureID.get())
         return false;

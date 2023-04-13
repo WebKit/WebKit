@@ -124,7 +124,7 @@ class Heap;
     v(getterSetterSpace, cellHeapCellType, GetterSetter) \
     v(globalLexicalEnvironmentSpace, globalLexicalEnvironmentHeapCellType, JSGlobalLexicalEnvironment) \
     v(internalFunctionSpace, cellHeapCellType, InternalFunction) \
-    v(jsProxySpace, cellHeapCellType, JSProxy) \
+    v(jsGlobalProxySpace, cellHeapCellType, JSGlobalProxy) \
     v(nativeExecutableSpace, destructibleCellHeapCellType, NativeExecutable) \
     v(numberObjectSpace, cellHeapCellType, NumberObject) \
     v(plainObjectSpace, cellHeapCellType, JSNonFinalObject) \

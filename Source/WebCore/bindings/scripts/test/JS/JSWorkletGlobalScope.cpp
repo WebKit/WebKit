@@ -114,7 +114,7 @@ JSWorkletGlobalScope::JSWorkletGlobalScope(VM& vm, Structure* structure, Ref<Wor
 {
 }
 
-void JSWorkletGlobalScope::finishCreation(VM& vm, JSProxy* proxy)
+void JSWorkletGlobalScope::finishCreation(VM& vm, JSGlobalProxy* proxy)
 {
     Base::finishCreation(vm, proxy);
 

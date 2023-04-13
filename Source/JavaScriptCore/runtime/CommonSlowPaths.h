@@ -146,8 +146,8 @@ inline bool canAccessArgumentIndexQuickly(JSObject& object, uint32_t index)
 
 ALWAYS_INLINE Structure* originalStructureBeforePut(JSCell* cell)
 {
-    if (cell->type() == PureForwardingProxyType)
-        return jsCast<JSProxy*>(cell)->target()->structure();
+    if (cell->type() == GlobalProxyType)
+        return jsCast<JSGlobalProxy*>(cell)->target()->structure();
     return cell->structure();
 }
 

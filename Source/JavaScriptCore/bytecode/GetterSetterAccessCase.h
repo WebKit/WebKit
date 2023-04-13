@@ -51,17 +51,17 @@ public:
 
     static Ref<AccessCase> create(
         VM&, JSCell* owner, AccessType, CacheableIdentifier, PropertyOffset, Structure*,
-        const ObjectPropertyConditionSet&, bool viaProxy, WatchpointSet* additionalSet, CodePtr<CustomAccessorPtrTag> customGetter,
+        const ObjectPropertyConditionSet&, bool viaGlobalProxy, WatchpointSet* additionalSet, CodePtr<CustomAccessorPtrTag> customGetter,
         JSObject* customSlotBase, std::optional<DOMAttributeAnnotation>, RefPtr<PolyProtoAccessChain>&&);
 
     static Ref<AccessCase> create(VM&, JSCell* owner, AccessType, Structure*, CacheableIdentifier, PropertyOffset,
-        const ObjectPropertyConditionSet&, RefPtr<PolyProtoAccessChain>&&, bool viaProxy = false,
+        const ObjectPropertyConditionSet&, RefPtr<PolyProtoAccessChain>&&, bool viaGlobalProxy = false,
         CodePtr<CustomAccessorPtrTag> customSetter = nullptr, JSObject* customSlotBase = nullptr);
 
     CodePtr<CustomAccessorPtrTag> customAccessor() const { return m_customAccessor; }
 
 private:
-    GetterSetterAccessCase(VM&, JSCell*, AccessType, CacheableIdentifier, PropertyOffset, Structure*, const ObjectPropertyConditionSet&, bool viaProxy, WatchpointSet* additionalSet, JSObject* customSlotBase, RefPtr<PolyProtoAccessChain>&&);
+    GetterSetterAccessCase(VM&, JSCell*, AccessType, CacheableIdentifier, PropertyOffset, Structure*, const ObjectPropertyConditionSet&, bool viaGlobalProxy, WatchpointSet* additionalSet, JSObject* customSlotBase, RefPtr<PolyProtoAccessChain>&&);
 
     GetterSetterAccessCase(const GetterSetterAccessCase&);
 

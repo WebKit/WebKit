@@ -199,7 +199,7 @@ PutByStatus PutByStatus::computeForStubInfo(const ConcurrentJSLocker& locker, Co
         
         for (unsigned i = 0; i < list->size(); ++i) {
             const AccessCase& access = list->at(i);
-            if (access.viaProxy())
+            if (access.viaGlobalProxy())
                 return PutByStatus(JSC::slowVersion(summary), *stubInfo);
             if (access.usesPolyProto())
                 return PutByStatus(JSC::slowVersion(summary), *stubInfo);

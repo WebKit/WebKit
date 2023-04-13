@@ -29,7 +29,7 @@
 
 namespace JSC {
 
-class JSProxy : public JSNonFinalObject {
+class JSGlobalProxy : public JSNonFinalObject {
 public:
     using Base = JSNonFinalObject;
     static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | OverridesGetOwnPropertyNames | OverridesPut | OverridesGetPrototype | InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero;
@@ -37,38 +37,38 @@ public:
     template<typename CellType, SubspaceAccess>
     static GCClient::IsoSubspace* subspaceFor(VM& vm)
     {
-        static_assert(sizeof(CellType) == sizeof(JSProxy));
-        return &vm.jsProxySpace();
+        static_assert(sizeof(CellType) == sizeof(JSGlobalProxy));
+        return &vm.jsGlobalProxySpace();
     }
 
-    static JSProxy* create(VM& vm, Structure* structure, JSObject* target)
+    static JSGlobalProxy* create(VM& vm, Structure* structure)
     {
-        JSProxy* proxy = new (NotNull, allocateCell<JSProxy>(vm)) JSProxy(vm, structure);
-        proxy->finishCreation(vm, target);
+        JSGlobalProxy* proxy = new (NotNull, allocateCell<JSGlobalProxy>(vm)) JSGlobalProxy(vm, structure);
+        proxy->finishCreation(vm);
         return proxy;
     }
 
-    static JSProxy* create(VM& vm, Structure* structure)
+    static JSGlobalProxy* create(VM& vm, Structure* structure, JSGlobalObject* globalObject)
     {
-        JSProxy* proxy = new (NotNull, allocateCell<JSProxy>(vm)) JSProxy(vm, structure);
-        proxy->finishCreation(vm);
+        JSGlobalProxy* proxy = new (NotNull, allocateCell<JSGlobalProxy>(vm)) JSGlobalProxy(vm, structure);
+        proxy->finishCreation(vm, globalObject);
         return proxy;
     }
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
     {
-        return Structure::create(vm, globalObject, prototype, TypeInfo(PureForwardingProxyType, StructureFlags), info());
+        return Structure::create(vm, globalObject, prototype, TypeInfo(GlobalProxyType, StructureFlags), info());
     }
 
     DECLARE_EXPORT_INFO;
 
-    JSObject* target() const { return m_target.get(); }
-    static ptrdiff_t targetOffset() { return OBJECT_OFFSETOF(JSProxy, m_target); }
+    JSGlobalObject* target() const { return m_target.get(); }
+    static ptrdiff_t targetOffset() { return OBJECT_OFFSETOF(JSGlobalProxy, m_target); }
 
     JS_EXPORT_PRIVATE void setTarget(VM&, JSGlobalObject*);
 
 protected:
-    JSProxy(VM& vm, Structure* structure)
+    JSGlobalProxy(VM& vm, Structure* structure)
         : Base(vm, structure)
     {
     }
@@ -78,7 +78,7 @@ protected:
         Base::finishCreation(vm);
     }
 
-    void finishCreation(VM& vm, JSObject* target)
+    void finishCreation(VM& vm, JSGlobalObject* target)
     {
         Base::finishCreation(vm);
         m_target.set(vm, this, target);
@@ -100,7 +100,7 @@ protected:
     JS_EXPORT_PRIVATE static bool preventExtensions(JSObject*, JSGlobalObject*);
 
 private:
-    WriteBarrier<JSObject> m_target;
+    WriteBarrier<JSGlobalObject> m_target;
 };
 
 } // namespace JSC

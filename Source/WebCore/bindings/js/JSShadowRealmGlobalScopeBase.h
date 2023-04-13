@@ -58,7 +58,7 @@ private:
 
 protected:
     JSShadowRealmGlobalScopeBase(JSC::VM&, JSC::Structure*, RefPtr<ShadowRealmGlobalScope>&&);
-    void finishCreation(JSC::VM&, JSC::JSProxy*);
+    void finishCreation(JSC::VM&, JSC::JSGlobalProxy*);
 
     DECLARE_VISIT_CHILDREN;
 

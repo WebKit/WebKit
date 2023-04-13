@@ -268,7 +268,7 @@ GetByStatus GetByStatus::computeForStubInfoWithoutExitSiteFeedback(
 
         for (unsigned listIndex = 0; listIndex < list->size(); ++listIndex) {
             const AccessCase& access = list->at(listIndex);
-            if (access.viaProxy())
+            if (access.viaGlobalProxy())
                 return GetByStatus(JSC::slowVersion(summary), stubInfo);
 
             if (access.usesPolyProto())

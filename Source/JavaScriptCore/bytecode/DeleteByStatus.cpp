@@ -104,7 +104,7 @@ DeleteByStatus DeleteByStatus::computeForStubInfoWithoutExitSiteFeedback(
 
         for (unsigned listIndex = 0; listIndex < list->size(); ++listIndex) {
             const AccessCase& access = list->at(listIndex);
-            ASSERT(!access.viaProxy());
+            ASSERT(!access.viaGlobalProxy());
 
             Structure* structure = access.structure();
             ASSERT(structure);

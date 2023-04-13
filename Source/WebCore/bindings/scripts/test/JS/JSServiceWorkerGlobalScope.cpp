@@ -119,7 +119,7 @@ JSServiceWorkerGlobalScope::JSServiceWorkerGlobalScope(VM& vm, Structure* struct
 {
 }
 
-void JSServiceWorkerGlobalScope::finishCreation(VM& vm, JSProxy* proxy)
+void JSServiceWorkerGlobalScope::finishCreation(VM& vm, JSGlobalProxy* proxy)
 {
     Base::finishCreation(vm, proxy);
 

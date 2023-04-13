@@ -163,7 +163,7 @@ InByStatus InByStatus::computeForStubInfoWithoutExitSiteFeedback(const Concurren
         PolymorphicAccess* list = stubInfo->m_stub.get();
         for (unsigned listIndex = 0; listIndex < list->size(); ++listIndex) {
             const AccessCase& access = list->at(listIndex);
-            if (access.viaProxy())
+            if (access.viaGlobalProxy())
                 return InByStatus(TakesSlowPath);
 
             if (access.usesPolyProto())

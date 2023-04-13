@@ -95,7 +95,7 @@ JSShadowRealmGlobalScope::JSShadowRealmGlobalScope(VM& vm, Structure* structure,
 {
 }
 
-void JSShadowRealmGlobalScope::finishCreation(VM& vm, JSProxy* proxy)
+void JSShadowRealmGlobalScope::finishCreation(VM& vm, JSGlobalProxy* proxy)
 {
     Base::finishCreation(vm, proxy);
 

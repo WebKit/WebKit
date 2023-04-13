@@ -120,7 +120,7 @@ JSSharedWorkerGlobalScope::JSSharedWorkerGlobalScope(VM& vm, Structure* structur
 {
 }
 
-void JSSharedWorkerGlobalScope::finishCreation(VM& vm, JSProxy* proxy)
+void JSSharedWorkerGlobalScope::finishCreation(VM& vm, JSGlobalProxy* proxy)
 {
     Base::finishCreation(vm, proxy);
 

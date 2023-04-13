@@ -900,8 +900,8 @@ bool JSObject::definePropertyOnReceiver(JSGlobalObject* globalObject, PropertyNa
     if (!receiver)
         return typeError(globalObject, scope, slot.isStrictMode(), ReadonlyPropertyWriteError);
     scope.release();
-    if (receiver->type() == PureForwardingProxyType)
-        receiver = jsCast<JSProxy*>(receiver)->target();
+    if (receiver->type() == GlobalProxyType)
+        receiver = jsCast<JSGlobalProxy*>(receiver)->target();
 
     if (slot.isTaintedByOpaqueObject() || slot.context() == PutPropertySlot::ReflectSet) {
         if (receiver->methodTable()->defineOwnProperty != JSObject::defineOwnProperty)

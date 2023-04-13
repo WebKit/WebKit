@@ -89,7 +89,7 @@ public:
         if (!slot.isCacheable() && !slot.isUnset())
             return;
 
-        if (object->type() == PureForwardingProxyType)
+        if (object->type() == GlobalProxyType)
             return;
 
         Structure* structure = object->structure();
