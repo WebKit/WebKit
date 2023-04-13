@@ -838,6 +838,10 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     inspector/ScriptCallFrame.h
     inspector/ScriptCallStack.h
     inspector/ScriptCallStackFactory.h
+    
+    inspector/JSGlobalObjectInspectorController.h
+    runtime/JSGlobalObjectDebuggable.h
+    inspector/JSGlobalObjectDebugger.h
 
     inspector/agents/InspectorAgent.h
     inspector/agents/InspectorAuditAgent.h
@@ -1348,6 +1352,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     bytecode/PutKind.h
     bytecode/StructureStubClearingWatchpoint.h
     bytecode/AdaptiveInferredPropertyValueWatchpointBase.h
+    bytecode/InlineCacheCompiler.h
     bytecode/StubInfoSummary.h
     runtime/CommonSlowPaths.h
     runtime/DirectArguments.h
