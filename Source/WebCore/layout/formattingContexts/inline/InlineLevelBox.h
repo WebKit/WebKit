@@ -57,7 +57,7 @@ public:
         InlineLayoutUnit ascent { 0 };
         InlineLayoutUnit descent { 0 };
     };
-    std::optional<LayoutBounds> layoutBounds() const { return m_layoutBounds; }
+    LayoutBounds layoutBounds() const { return m_layoutBounds; }
 
     bool hasContent() const { return m_hasContent; }
     void setHasContent();
@@ -147,7 +147,7 @@ private:
     CheckedRef<const Box> m_layoutBox;
     // This is the combination of margin and border boxes. Inline level boxes are vertically aligned using their margin boxes.
     InlineRect m_logicalRect;
-    std::optional<LayoutBounds> m_layoutBounds { };
+    LayoutBounds m_layoutBounds;
     InlineLayoutUnit m_inlineBoxContentOffsetForLeadingTrim { 0.f };
     InlineLayoutUnit m_ascent { 0 };
     std::optional<InlineLayoutUnit> m_descent;
