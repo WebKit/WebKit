@@ -26,7 +26,7 @@
 
 #pragma once
 
-#if ENABLE(ASSEMBLER)
+#if ENABLE(ASSEMBLER) && CPU(ARM_THUMB2)
 
 #include <initializer_list>
 
@@ -3114,4 +3114,4 @@ private:
 
 } // namespace JSC
 
-#endif // ENABLE(ASSEMBLER)
+#endif // ENABLE(ASSEMBLER) && CPU(ARM_THUMB2)

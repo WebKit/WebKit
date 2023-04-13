@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include "FrameTracers.h"
+#include "LLIntEntrypoint.h"
 #include "Repatch.h"
 
 #include "VMTrapsInlines.h"

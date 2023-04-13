@@ -101,7 +101,7 @@ public:
     Protocol::ErrorStringOr<void> setBlackboxBreakpointEvaluations(bool) final;
 
     // JSC::Debugger::Client
-    bool isInspectorDebuggerAgent() const final { return true; }
+    bool isInspectorDebuggerAgent() const final;
     JSC::JSObject* debuggerScopeExtensionObject(JSC::Debugger&, JSC::JSGlobalObject*, JSC::DebuggerCallFrame&) final;
 
     // JSC::Debugger::Observer

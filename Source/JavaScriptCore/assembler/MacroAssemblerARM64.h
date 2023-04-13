@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(ASSEMBLER)
+#if ENABLE(ASSEMBLER) && CPU(ARM64)
 
 #include "ARM64Assembler.h"
 #include "AbstractMacroAssembler.h"
@@ -6483,4 +6483,4 @@ inline MacroAssemblerARM64::Jump MacroAssemblerARM64::branch<64>(RelationalCondi
 
 } // namespace JSC
 
-#endif // ENABLE(ASSEMBLER)
+#endif // ENABLE(ASSEMBLER) && CPU(ARM64)

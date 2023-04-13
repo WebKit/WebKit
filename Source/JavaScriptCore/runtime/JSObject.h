@@ -99,7 +99,6 @@ class JSObject : public JSCell {
     friend class JSCell;
     friend class JSFinalObject;
     friend class MarkedBlock;
-    JS_EXPORT_PRIVATE friend bool setUpStaticFunctionSlot(VM&, const HashTableValue*, JSObject*, PropertyName, PropertySlot&);
 
     enum PutMode : uint8_t {
         PutModePut,

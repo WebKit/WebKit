@@ -909,6 +909,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     jit/Width.h
 
     llint/LLIntOpcode.h
+    llint/LLIntThunks.h
 
     parser/Lexer.h
     parser/ParserArena.h

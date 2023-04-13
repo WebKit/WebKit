@@ -81,6 +81,11 @@ inline Width MemoryValue::accessWidth() const
     }
 }
 
+inline bool MemoryValue::isCanonicalWidth() const
+{
+    return JSC::isCanonicalWidth(accessWidth());
+}
+
 } } // namespace JSC::B3
 
 #endif // ENABLE(B3_JIT)

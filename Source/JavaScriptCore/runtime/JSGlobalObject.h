@@ -1037,7 +1037,6 @@ public:
             return m_importMapStatusPromise.get(this);
         return nullptr;
     }
-    JS_EXPORT_PRIVATE void registerImportMap() const;
     JS_EXPORT_PRIVATE bool isAcquiringImportMaps() const;
     JS_EXPORT_PRIVATE void setAcquiringImportMaps();
     JS_EXPORT_PRIVATE void setPendingImportMaps();

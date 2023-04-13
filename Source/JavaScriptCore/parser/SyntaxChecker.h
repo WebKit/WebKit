@@ -32,6 +32,8 @@
 
 namespace JSC {
 
+enum class InferName;
+
 class SyntaxChecker {
 public:
     struct BinaryExprContext {

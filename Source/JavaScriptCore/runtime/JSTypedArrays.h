@@ -59,6 +59,4 @@ inline bool isResizableOrGrowableSharedTypedArrayIncludingDataView(const ClassIn
     return classInfo->isResizableOrGrowableSharedTypedArray;
 }
 
-JS_EXPORT_PRIVATE JSUint8Array* createUint8TypedArray(JSGlobalObject*, Structure*, RefPtr<ArrayBuffer>&&, unsigned byteOffset, unsigned length);
-
 } // namespace JSC

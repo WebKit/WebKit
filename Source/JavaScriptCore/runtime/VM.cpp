@@ -773,10 +773,6 @@ MacroAssemblerCodeRef<JITStubRoutinePtrTag> VM::getCTIVirtualCall(CallMode callM
     return LLInt::getCodeRef<JITStubRoutinePtrTag>(llint_virtual_call_trampoline);
 }
 
-VM::ClientData::~ClientData()
-{
-}
-
 void VM::whenIdle(Function<void()>&& callback)
 {
     if (!entryScope) {

@@ -1514,6 +1514,11 @@ void InspectorDebuggerAgent::willCallNativeExecutable(JSC::CallFrame* callFrame)
     breakProgram(DebuggerFrontendDispatcher::Reason::FunctionCall, WTFMove(pauseData), m_symbolicBreakpoints[index].specialBreakpoint.copyRef());
 }
 
+bool InspectorDebuggerAgent::isInspectorDebuggerAgent() const
+{
+    return true;
+}
+
 JSC::JSObject* InspectorDebuggerAgent::debuggerScopeExtensionObject(JSC::Debugger& debugger, JSC::JSGlobalObject* globalObject, JSC::DebuggerCallFrame& debuggerCallFrame)
 {
     auto injectedScript = m_injectedScriptManager.injectedScriptFor(globalObject);

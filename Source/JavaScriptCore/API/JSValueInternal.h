@@ -28,6 +28,10 @@
 
 #import <JavaScriptCore/JSValuePrivate.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #if JSC_OBJC_API_ENABLED
 
 @interface JSValue(Internal)
@@ -52,6 +56,10 @@ id valueToDictionary(JSGlobalContextRef, JSValueRef, JSValueRef* exception);
 NSInvocation *typeToValueInvocationFor(const char* encodedType);
 NSInvocation *valueToTypeInvocationFor(const char* encodedType);
 
+#endif
+
+#ifdef __cplusplus
+}
 #endif
 
 #endif // JSValueInternal_h

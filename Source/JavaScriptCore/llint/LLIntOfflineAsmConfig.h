@@ -188,6 +188,12 @@
 #define OFFLINE_ASM_JIT 0
 #endif
 
+#if ENABLE(JIT_CAGE)
+#define OFFLINE_ASM_JIT_CAGE 1
+#else
+#define OFFLINE_ASM_JIT_CAGE 0
+#endif
+
 #if ENABLE(WEBASSEMBLY)
 #define OFFLINE_ASM_WEBASSEMBLY 1
 #else

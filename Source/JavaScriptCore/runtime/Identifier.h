@@ -157,9 +157,6 @@ public:
     static bool equal(const StringImpl*, const UChar*, unsigned length);
     static bool equal(const StringImpl* a, const StringImpl* b) { return ::equal(a, b); }
 
-    // Only to be used with string literals.
-    JS_EXPORT_PRIVATE static Ref<AtomStringImpl> add(VM&, const char*);
-
     void dump(PrintStream&) const;
 
 private:

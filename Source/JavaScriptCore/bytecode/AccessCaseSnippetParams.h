@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
+
 #if ENABLE(JIT)
 
 #include "SnippetParams.h"

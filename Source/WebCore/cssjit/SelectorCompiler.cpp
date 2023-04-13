@@ -2267,7 +2267,7 @@ inline void SelectorCodeGenerator::generateReturn()
 {
 #if CPU(ARM64E)
     if (JSC::Options::useJITCage()) {
-        m_assembler.farJump(Assembler::TrustedImmPtr(retagCodePtr<void*, CFunctionPtrTag, JSC::OperationPtrTag>(&vmEntryToCSSJITAfter)), JSC::OperationPtrTag);
+        m_assembler.farJump(Assembler::TrustedImmPtr(retagCodePtr<void*, CFunctionPtrTag, JSC::OperationPtrTag>(&JSC::vmEntryToCSSJITAfter)), JSC::OperationPtrTag);
         return;
     }
 #endif

@@ -54,8 +54,6 @@ public:
 
     void clearException() { m_vm.clearException(); }
 
-    JS_EXPORT_PRIVATE void printIfNeedCheck(const char* functionName, const char* file, unsigned line);
-
 private:
     void simulateThrow();
 
@@ -64,9 +62,6 @@ private:
 
 #define DECLARE_THROW_SCOPE(vm__) \
     JSC::ThrowScope((vm__), JSC::ExceptionEventLocation(EXCEPTION_SCOPE_POSITION_FOR_ASAN(vm__), __FUNCTION__, __FILE__, __LINE__))
-
-#define throwScopePrintIfNeedCheck(scope__) \
-    scope__.printIfNeedCheck(__FUNCTION__, __FILE__, __LINE__)
 
 #else // not ENABLE(EXCEPTION_SCOPE_VERIFICATION)
 

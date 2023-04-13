@@ -29,11 +29,13 @@
 
 #if ENABLE(WEBASSEMBLY)
 
+#include "JITExceptions.h"
 #include "JSWebAssemblyHelpers.h"
 #include "JSWebAssemblyStruct.h"
 #include "TypedArrayController.h"
 #include "WaiterListManager.h"
 #include "WasmInstance.h"
+#include "WasmLLIntGenerator.h"
 
 namespace JSC {
 namespace Wasm {

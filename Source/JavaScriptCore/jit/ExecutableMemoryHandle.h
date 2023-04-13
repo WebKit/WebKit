@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include "JSExportMacros.h"
+
 #if ENABLE(LIBPAS_JIT_HEAP) && ENABLE(JIT)
 #include <wtf/CodePtr.h>
 #include <wtf/ThreadSafeRefCounted.h>

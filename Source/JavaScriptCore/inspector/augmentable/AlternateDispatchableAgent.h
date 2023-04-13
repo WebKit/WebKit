@@ -27,6 +27,7 @@
 
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
 
+#include "AugmentableInspectorController.h"
 #include "InspectorAgentBase.h"
 #include "InspectorAlternateBackendDispatchers.h"
 #include <wtf/Forward.h>

@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "ARM64Assembler.h"
 #include "AbortReason.h"
 #include "AssemblerBuffer.h"
 #include "AssemblerCommon.h"

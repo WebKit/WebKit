@@ -28,6 +28,8 @@
 
 #include <wtf/Platform.h>
 
+#if CPU(X86)
+
 #define RegisterNames X86Registers
 
 #define FOR_EACH_REGISTER(macro)                \
@@ -58,3 +60,4 @@
     macro(eip,    "eip",    0, 0)               \
     macro(eflags, "eflags", 0, 0)
 
+#endif

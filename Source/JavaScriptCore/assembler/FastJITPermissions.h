@@ -25,6 +25,9 @@
 
 #pragma once
 
+#include <stdint.h>
+#include <wtf/Platform.h>
+
 #if OS(DARWIN) && CPU(ARM64)
 
 #include "JSCConfig.h"
