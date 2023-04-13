@@ -826,6 +826,8 @@ http/tests/cache-storage [ Skip ]
 http/tests/canvas/canvas-slow-font-loading.html [ ImageOnlyFailure ]
 http/tests/canvas/color-fonts [ Skip ]
 
+http/wpt/clear-site-data/partitioning.html [ Skip ] # Not supported yet. This test is slow.
+
 http/tests/contentdispositionattachmentsandbox [ Skip ]
 http/tests/contentfiltering [ Skip ]
 
@@ -862,6 +864,7 @@ http/tests/inspector/network/xhr-response-body.html [ Failure ]
 http/tests/inspector/network/intercept-request-main-resource.html [ Skip ] # Timeout
 
 http/tests/inspector/network/copy-as-fetch.html [ Pass Failure ]
+http/tests/inspector/network/resource-mime-type.html [ Pass Failure ]
 
 http/tests/loading/hidpi-preload-picture-sizes.html [ Failure ]
 http/tests/loading/oauth.html [ Failure ]
@@ -998,8 +1001,9 @@ webkit.org/b/192406 http/tests/inspector/network/resource-security-connection.ht
 webkit.org/b/191498 http/tests/inspector/network/resource-security-certificate.html [ Pass ]
 webkit.org/b/191498 http/tests/inspector/network/getSerializedCertificate.html [ Pass ]
 
+http/wpt/service-workers/mac [ Skip ]
+
 http/wpt/service-workers/fetchEvent.https.html [ Pass Failure ]
-http/wpt/service-workers/mac/throttleable.https.html [ Failure ]
 http/wpt/service-workers/service-worker-networkprocess-crash.html [ Pass Failure ]
 http/wpt/service-workers/service-worker-spinning-activate.https.html [ Pass Failure ]
 http/wpt/service-workers/service-worker-spinning-message.https.html [ Pass Failure ]
@@ -1047,7 +1051,6 @@ http/tests/workers/service/service-worker-download-body.https.html [ Failure ]
 http/tests/workers/service/service-worker-download-stream.https.html [ Failure ]
 http/tests/workers/service/serviceworker-websocket.https.html [ Failure ]
 http/tests/workers/service/shownotification-denied.html [ Failure ]
-http/wpt/clear-site-data/partitioning.html [ Failure ]
 http/wpt/push-api/pushManager.any.html [ Failure ]
 http/wpt/push-api/pushManager.any.serviceworker.html [ Failure ]
 http/wpt/service-workers/fetch-service-worker-preload-download-through-direct-preload.https.html [ Failure ]
