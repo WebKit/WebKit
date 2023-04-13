@@ -8,12 +8,12 @@ layer at (0,0) size 800x600
           RenderSVGInlineText {#text} at (0,0) size 24x27
             chunk 1 (middle anchor) text run 1 at (38.00,-30.00) startOffset 0 endOffset 2 width 24.00: "no"
         RenderSVGText {text} at (6,-22) size 88x28 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 88x27
+          RenderSVGInlineText {#text} at (0,0) size 87x27
             chunk 1 (middle anchor) text run 1 at (6.50,0.00) startOffset 0 endOffset 8 width 87.00: "xml:base"
         RenderSVGImage {image} at (83,200) size 167x167
       RenderSVGContainer {g} at (316,81) size 168x286 [transform={m=((1.00,0.00)(0.00,1.00)) t=(180.00,100.00)}]
         RenderSVGText {text} at (6,-52) size 88x28 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 88x27
+          RenderSVGInlineText {#text} at (0,0) size 87x27
             chunk 1 (middle anchor) text run 1 at (6.50,-30.00) startOffset 0 endOffset 8 width 87.00: "xml:base"
         RenderSVGText {text} at (5,-22) size 90x28 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 89x27
@@ -21,7 +21,7 @@ layer at (0,0) size 800x600
         RenderSVGImage {image} at (316,200) size 168x167
       RenderSVGContainer {g} at (550,81) size 167x286 [transform={m=((1.00,0.00)(0.00,1.00)) t=(320.00,100.00)}]
         RenderSVGText {text} at (6,-52) size 88x28 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 88x27
+          RenderSVGInlineText {#text} at (0,0) size 87x27
             chunk 1 (middle anchor) text run 1 at (6.50,-30.00) startOffset 0 endOffset 8 width 87.00: "xml:base"
         RenderSVGText {text} at (5,-22) size 90x28 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 90x27

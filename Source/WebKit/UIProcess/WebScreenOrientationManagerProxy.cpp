@@ -27,8 +27,11 @@
 #include "WebScreenOrientationManagerProxy.h"
 
 #include "APIUIClient.h"
+#include "MessageSenderInlines.h"
+#include "WebCoreArgumentCoders.h"
 #include "WebFullScreenManagerProxy.h"
 #include "WebPageProxy.h"
+#include "WebProcessProxy.h"
 #include "WebScreenOrientationManagerMessages.h"
 #include "WebScreenOrientationManagerProxyMessages.h"
 #include <WebCore/Exception.h>
@@ -75,11 +78,16 @@ static WebCore::ScreenOrientationType resolveScreenOrientationLockType(WebCore::
         return WebCore::ScreenOrientationType::LandscapePrimary;
     case WebCore::ScreenOrientationLockType::LandscapeSecondary:
         return WebCore::ScreenOrientationType::LandscapeSecondary;
-    case WebCore::ScreenOrientationLockType::Natural:
+    case WebCore::ScreenOrientationLockType::Natural: {
+        auto naturalOrientation = WebCore::naturalScreenOrientationType();
+        if (WebCore::isPortrait(naturalOrientation) == WebCore::isPortrait(currentOrientation))
+            return currentOrientation;
+        return naturalOrientation;
+    }
     case WebCore::ScreenOrientationLockType::Portrait:
         break;
     }
-    if (WebCore::isPortait(currentOrientation))
+    if (WebCore::isPortrait(currentOrientation))
         return currentOrientation;
     return WebCore::ScreenOrientationType::PortraitPrimary;
 }

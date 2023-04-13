@@ -39,9 +39,6 @@ using WindowIdentifier = ObjectIdentifier<WindowIdentifierType>;
 struct GlobalWindowIdentifier {
     ProcessIdentifier processIdentifier;
     WindowIdentifier windowIdentifier;
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<GlobalWindowIdentifier> decode(Decoder&);
 };
 
 inline bool operator==(const GlobalWindowIdentifier& a, const GlobalWindowIdentifier& b)
@@ -52,28 +49,6 @@ inline bool operator==(const GlobalWindowIdentifier& a, const GlobalWindowIdenti
 inline void add(Hasher& hasher, const GlobalWindowIdentifier& identifier)
 {
     add(hasher, identifier.processIdentifier, identifier.windowIdentifier);
-}
-
-template<class Encoder>
-void GlobalWindowIdentifier::encode(Encoder& encoder) const
-{
-    encoder << processIdentifier << windowIdentifier;
-}
-
-template<class Decoder>
-std::optional<GlobalWindowIdentifier> GlobalWindowIdentifier::decode(Decoder& decoder)
-{
-    std::optional<ProcessIdentifier> processIdentifier;
-    decoder >> processIdentifier;
-    if (!processIdentifier)
-        return std::nullopt;
-
-    std::optional<WindowIdentifier> windowIdentifier;
-    decoder >> windowIdentifier;
-    if (!windowIdentifier)
-        return std::nullopt;
-
-    return { { WTFMove(*processIdentifier), WTFMove(*windowIdentifier) } };
 }
 
 } // namespace WebCore

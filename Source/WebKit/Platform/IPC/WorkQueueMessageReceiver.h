@@ -30,7 +30,7 @@
 
 namespace IPC {
 
-class WorkQueueMessageReceiver : public MessageReceiver, public ThreadSafeRefCounted<WorkQueueMessageReceiver> {
+class WorkQueueMessageReceiver : public MessageReceiver, public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<WorkQueueMessageReceiver> {
 
 };
 

@@ -185,3 +185,27 @@ gboolean webkit_navigation_action_is_redirect(WebKitNavigationAction* navigation
     g_return_val_if_fail(navigation, FALSE);
     return navigation->action->isRedirect();
 }
+
+/**
+ * webkit_navigation_action_get_frame_name:
+ * @navigation: a #WebKitNavigationAction
+ *
+ * Gets the @navigation target frame name. For example if navigation was triggered by clicking a
+ * link with a target attribute equal to "_blank", this will return the value of that attribute.
+ * In all other cases this function will return %NULL.
+ *
+ * Returns: (nullable): The name of the new frame this navigation action targets or %NULL
+ *
+ * Since: 2.40
+ */
+const char* webkit_navigation_action_get_frame_name(WebKitNavigationAction* navigation)
+{
+    g_return_val_if_fail(navigation, nullptr);
+    if (!navigation->frameName) {
+        if (auto targetFrameName = navigation->action->targetFrameName())
+            navigation->frameName = targetFrameName->utf8();
+        else
+            navigation->frameName = CString();
+    }
+    return navigation->frameName->data();
+}

@@ -28,6 +28,7 @@
 #include <optional>
 
 #if HAVE(TASK_IDENTITY_TOKEN)
+#include <wtf/ArgumentCoder.h>
 #include <wtf/MachSendRight.h>
 #else
 #include <variant>
@@ -55,37 +56,12 @@ public:
     task_id_token_t taskIdToken() const { return m_taskIdToken.sendRight(); }
 #endif
 
-    template<typename Encoder> void encode(Encoder&) const;
-    template<typename Decoder> static std::optional<ProcessIdentity> decode(Decoder&);
-
 private:
 #if HAVE(TASK_IDENTITY_TOKEN)
+    friend struct IPC::ArgumentCoder<ProcessIdentity, void>;
     WEBCORE_EXPORT ProcessIdentity(MachSendRight&& taskIdToken);
     MachSendRight m_taskIdToken;
 #endif
 };
-
-template<typename Encoder> void ProcessIdentity::encode(Encoder& encoder) const
-{
-#if HAVE(TASK_IDENTITY_TOKEN)
-    encoder << m_taskIdToken;
-#else
-    UNUSED_PARAM(encoder);
-#endif
-}
-
-template<typename Decoder> std::optional<ProcessIdentity> ProcessIdentity::decode(Decoder& decoder)
-{
-#if HAVE(TASK_IDENTITY_TOKEN)
-    std::optional<MachSendRight> identitySendRight;
-    decoder >> identitySendRight;
-    if (identitySendRight)
-        return ProcessIdentity { WTFMove(*identitySendRight) };
-    return std::nullopt;
-#else
-    UNUSED_PARAM(decoder);
-    return ProcessIdentity { };
-#endif
-}
 
 }

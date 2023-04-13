@@ -37,7 +37,7 @@ static unsigned long s_lastUsedIdentifier = 0;
 
 static String addPrefixToIdentifier(unsigned long identifier)
 {
-    return makeString("0.", identifier);
+    return makeString("0."_s, identifier);
 }
 
 String IdentifiersFactory::createIdentifier()

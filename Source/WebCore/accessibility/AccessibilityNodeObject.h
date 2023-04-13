@@ -46,7 +46,7 @@ enum MouseButtonListenerResultFilter {
 
 class AccessibilityNodeObject : public AccessibilityObject {
 public:
-    static Ref<AccessibilityNodeObject> create(Node*);
+    static Ref<AccessibilityNodeObject> create(Node&);
     virtual ~AccessibilityNodeObject();
 
     void init() override;
@@ -56,23 +56,15 @@ public:
     bool isBusy() const override;
     bool isControl() const override;
     bool isFieldset() const override;
-    bool isGroup() const override;
-    bool isHeading() const override;
     bool isHovered() const override;
     bool isInputImage() const override;
     bool isLink() const override;
-    bool isMenu() const override;
-    bool isMenuBar() const override;
-    bool isMenuButton() const override;
-    bool isMenuItem() const override;
-    bool isMenuRelated() const override;
     bool isMultiSelectable() const override;
     bool isNativeImage() const;
     bool isNativeTextControl() const override;
-    bool isPasswordField() const override;
+    bool isSecureField() const override;
     bool isProgressIndicator() const override;
     bool isSearchField() const override;
-    bool isSlider() const override;
 
     bool isChecked() const override;
     bool isEnabled() const override;
@@ -84,7 +76,7 @@ public:
     bool canSetSelectedAttribute() const override;
 
     void setNode(Node*);
-    Node* node() const override { return m_node; }
+    Node* node() const override { return m_node.get(); }
     Document* document() const override;
 
     void setFocused(bool) override;
@@ -102,14 +94,12 @@ public:
 
     AccessibilityOrientation orientation() const override;
 
-    AXCoreObject* selectedRadioButton() override;
-    AXCoreObject* selectedTabItem() override;
     AccessibilityButtonState checkboxOrRadioValue() const override;
 
     unsigned hierarchicalLevel() const override;
     String textUnderElement(AccessibilityTextUnderElementMode = AccessibilityTextUnderElementMode()) const override;
     String accessibilityDescriptionForChildren() const;
-    String accessibilityDescription() const override;
+    String description() const override;
     String helpText() const override;
     String title() const override;
     String text() const override;
@@ -136,6 +126,7 @@ public:
     AccessibilityObject* parentObjectIfExists() const override;
 
     void updateRole() override;
+    bool matchesTextAreaRole() const;
 
     void increment() override;
     void decrement() override;
@@ -155,12 +146,9 @@ protected:
     bool isDetached() const override { return !m_node; }
 
     virtual AccessibilityRole determineAccessibilityRole();
-    enum class TreatStyleFormatGroupAsInline {
-        No,
-        Yes
-    };
+    enum class TreatStyleFormatGroupAsInline : bool { No, Yes };
     AccessibilityRole determineAccessibilityRoleFromNode(TreatStyleFormatGroupAsInline = TreatStyleFormatGroupAsInline::No) const;
-    AccessibilityRole ariaRoleAttribute() const override;
+    AccessibilityRole ariaRoleAttribute() const override { return m_ariaRole; }
     virtual AccessibilityRole determineAriaRoleAttribute() const;
     AccessibilityRole remapAriaRoleDueToParent(AccessibilityRole) const;
 
@@ -169,7 +157,9 @@ protected:
     void updateChildrenIfNecessary() override;
     bool canHaveChildren() const override;
     bool isDescendantOfBarrenParent() const override;
-
+    void updateOwnedChildren();
+    AccessibilityObject* ownerParentObject() const;
+    
     enum class StepAction : bool { Decrement, Increment };
     void alterRangeValue(StepAction);
     void changeValueByStep(StepAction);
@@ -222,7 +212,7 @@ private:
 
     bool isDescendantOfElementType(const HashSet<QualifiedName>&) const;
 
-    Node* m_node;
+    WeakPtr<Node, WeakPtrImplWithEventTargetData> m_node;
 };
 
 } // namespace WebCore

@@ -26,7 +26,6 @@
 #pragma once
 
 #include "FloatSize.h"
-#include "FontRenderingMode.h"
 #include "ImageOrientation.h"
 #include "IntSize.h"
 #include "Path.h"
@@ -52,9 +51,9 @@ typedef struct HBITMAP__* HBITMAP;
 namespace WebCore {
 
 class Element;
-class Frame;
 class Image;
 class IntRect;
+class LocalFrame;
 class Node;
 
 #if PLATFORM(IOS_FAMILY)
@@ -86,12 +85,12 @@ DragImageRef dissolveDragImageToFraction(DragImageRef, float delta);
 DragImageRef createDragImageFromImage(Image*, ImageOrientation);
 DragImageRef createDragImageIconForCachedImageFilename(const String&);
 
-WEBCORE_EXPORT DragImageRef createDragImageForNode(Frame&, Node&);
-WEBCORE_EXPORT DragImageRef createDragImageForSelection(Frame&, TextIndicatorData&, bool forceBlackText = false);
-WEBCORE_EXPORT DragImageRef createDragImageForRange(Frame&, const SimpleRange&, bool forceBlackText = false);
+WEBCORE_EXPORT DragImageRef createDragImageForNode(LocalFrame&, Node&);
+WEBCORE_EXPORT DragImageRef createDragImageForSelection(LocalFrame&, TextIndicatorData&, bool forceBlackText = false);
+WEBCORE_EXPORT DragImageRef createDragImageForRange(LocalFrame&, const SimpleRange&, bool forceBlackText = false);
 DragImageRef createDragImageForColor(const Color&, const FloatRect&, float, Path&);
-DragImageRef createDragImageForImage(Frame&, Node&, IntRect& imageRect, IntRect& elementRect);
-DragImageRef createDragImageForLink(Element&, URL&, const String& label, TextIndicatorData&, FontRenderingMode, float deviceScaleFactor);
+DragImageRef createDragImageForImage(LocalFrame&, Node&, IntRect& imageRect, IntRect& elementRect);
+DragImageRef createDragImageForLink(Element&, URL&, const String& label, TextIndicatorData&, float deviceScaleFactor);
 void deleteDragImage(DragImageRef);
 
 IntPoint dragOffsetForLinkDragImage(DragImageRef);

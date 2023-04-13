@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -81,6 +81,7 @@
 #include "LLIntData.h"
 #include "LLIntExceptions.h"
 #include "MarkedBlockInlines.h"
+#include "MegamorphicCache.h"
 #include "MinimumReservedZoneSize.h"
 #include "ModuleProgramCodeBlock.h"
 #include "ModuleProgramExecutable.h"
@@ -106,7 +107,7 @@
 #include "ThunkGenerators.h"
 #include "TypeProfiler.h"
 #include "TypeProfilerLog.h"
-#include "VMEntryScope.h"
+#include "VMEntryScopeInlines.h"
 #include "VMInlines.h"
 #include "VMInspector.h"
 #include "VariableEnvironment.h"
@@ -121,6 +122,7 @@
 #include <wtf/SimpleStats.h>
 #include <wtf/StackTrace.h>
 #include <wtf/StringPrintStream.h>
+#include <wtf/SystemTracing.h>
 #include <wtf/Threading.h>
 #include <wtf/text/AtomStringTable.h>
 
@@ -193,7 +195,7 @@ void VM::computeCanUseJIT()
 static bool vmCreationShouldCrash = false;
 
 VM::VM(VMType vmType, HeapType heapType, WTF::RunLoop* runLoop, bool* success)
-    : m_identifier(VMIdentifier::generateThreadSafe())
+    : m_identifier(VMIdentifier::generate())
     , m_apiLock(adoptRef(new JSLock(this)))
     , m_runLoop(runLoop ? *runLoop : WTF::RunLoop::current())
     , m_random(Options::seedOfVMRandomForFuzzer() ? Options::seedOfVMRandomForFuzzer() : cryptographicallyRandomNumber<uint32_t>())
@@ -283,6 +285,7 @@ VM::VM(VMType vmType, HeapType heapType, WTF::RunLoop* runLoop, bool* success)
         sentinelMapBucket();
         sentinelSetBucket();
         emptyPropertyNameEnumerator();
+        ensureMegamorphicCache();
     }
     {
         auto* bigInt = JSBigInt::tryCreateFrom(*this, 1);
@@ -330,7 +333,7 @@ VM::VM(VMType vmType, HeapType heapType, WTF::RunLoop* runLoop, bool* success)
         setShouldBuildPCToCodeOriginMapping();
         Ref<Stopwatch> stopwatch = Stopwatch::create();
         stopwatch->start();
-        m_samplingProfiler = adoptRef(new SamplingProfiler(*this, WTFMove(stopwatch)));
+        ensureSamplingProfiler(WTFMove(stopwatch));
         if (Options::samplingProfilerPath())
             m_samplingProfiler->registerForReportAtExit();
         m_samplingProfiler->start();
@@ -358,6 +361,9 @@ VM::VM(VMType vmType, HeapType heapType, WTF::RunLoop* runLoop, bool* success)
         watchdog.setTimeLimit(Seconds::fromMilliseconds(Options::watchdog()));
     }
 
+    if (Options::useTracePoints())
+        requestEntryScopeService(EntryScopeService::TracePoints);
+
 #if ENABLE(JIT)
     // Make sure that any stubs that the JIT is going to use are initialized in non-compilation threads.
     if (Options::useJIT()) {
@@ -368,6 +374,7 @@ VM::VM(VMType vmType, HeapType heapType, WTF::RunLoop* runLoop, bool* success)
         getCTIInternalFunctionTrampolineFor(CodeForCall);
         getCTIInternalFunctionTrampolineFor(CodeForConstruct);
         m_sharedJITStubs = makeUnique<SharedJITStubSet>();
+        getBoundFunction(/* isJSFunction */ true);
     }
 #endif // ENABLE(JIT)
 
@@ -475,7 +482,7 @@ void VM::primitiveGigacageDisabled()
  
     // This is totally racy, and that's OK. The point is, it's up to the user to ensure that they pass the
     // uncaged buffer in a nicely synchronized manner.
-    m_needToFirePrimitiveGigacageEnabled = true;
+    requestEntryScopeService(EntryScopeService::FirePrimitiveGigacageEnabled);
 }
 
 void VM::setLastStackTop(const Thread& thread)
@@ -542,6 +549,7 @@ Watchdog& VM::ensureWatchdog()
     if (!m_watchdog) {
         m_watchdog = adoptRef(new Watchdog(this));
         ensureTerminationException();
+        requestEntryScopeService(EntryScopeService::Watchdog);
     }
     return *m_watchdog;
 }
@@ -556,8 +564,10 @@ HeapProfiler& VM::ensureHeapProfiler()
 #if ENABLE(SAMPLING_PROFILER)
 SamplingProfiler& VM::ensureSamplingProfiler(Ref<Stopwatch>&& stopwatch)
 {
-    if (!m_samplingProfiler)
+    if (!m_samplingProfiler) {
         m_samplingProfiler = adoptRef(new SamplingProfiler(*this, WTFMove(stopwatch)));
+        requestEntryScopeService(EntryScopeService::SamplingProfiler);
+    }
     return *m_samplingProfiler;
 }
 #endif // ENABLE(SAMPLING_PROFILER)
@@ -612,6 +622,8 @@ static ThunkGenerator thunkGeneratorForIntrinsic(Intrinsic intrinsic)
         return remoteFunctionCallGenerator;
     case NumberConstructorIntrinsic:
         return numberConstructorCallThunkGenerator;
+    case StringConstructorIntrinsic:
+        return stringConstructorCallThunkGenerator;
     default:
         return nullptr;
     }
@@ -664,30 +676,25 @@ NativeExecutable* VM::getHostFunction(NativeFunction function, ImplementationVis
     return NativeExecutable::create(*this, jitCodeForCallTrampoline(), toTagged(function), jitCodeForConstructTrampoline(), toTagged(constructor), implementationVisibility, name);
 }
 
-NativeExecutable* VM::getBoundFunction(bool isJSFunction, bool canConstruct)
+NativeExecutable* VM::getBoundFunction(bool isJSFunction)
 {
     bool slowCase = !isJSFunction;
 
-    auto getOrCreate = [&] (Weak<NativeExecutable>& slot) -> NativeExecutable* {
+    auto getOrCreate = [&](Strong<NativeExecutable>& slot) -> NativeExecutable* {
         if (auto* cached = slot.get())
             return cached;
         NativeExecutable* result = getHostFunction(
             slowCase ? boundFunctionCall : boundThisNoArgsFunctionCall,
-            ImplementationVisibility::Public,
+            ImplementationVisibility::Private, // Bound function's visibility is private on the stack.
             slowCase ? NoIntrinsic : BoundFunctionCallIntrinsic,
-            canConstruct ? (slowCase ? boundFunctionConstruct : boundThisNoArgsFunctionConstruct) : callHostFunctionAsConstructor, nullptr, String());
-        slot = Weak<NativeExecutable>(result);
+            boundFunctionConstruct, nullptr, String());
+        slot.set(*this, result);
         return result;
     };
 
-    if (slowCase) {
-        if (canConstruct)
-            return getOrCreate(m_slowCanConstructBoundExecutable);
-        return getOrCreate(m_slowBoundExecutable);
-    }
-    if (canConstruct)
-        return getOrCreate(m_fastCanConstructBoundExecutable);
-    return getOrCreate(m_fastBoundExecutable);
+    if (slowCase)
+        return getOrCreate(m_slowCanConstructBoundExecutable);
+    return getOrCreate(m_fastCanConstructBoundExecutable);
 }
 
 NativeExecutable* VM::getRemoteFunction(bool isJSFunction)
@@ -776,8 +783,8 @@ void VM::whenIdle(Function<void()>&& callback)
         callback();
         return;
     }
-
-    entryScope->addDidPopListener(WTFMove(callback));
+    m_didPopListeners.append(WTFMove(callback));
+    requestEntryScopeService(EntryScopeService::PopListeners);
 }
 
 void VM::deleteAllLinkedCode(DeleteAllCodeEffort effort)
@@ -843,7 +850,7 @@ void VM::clearException()
 
 void VM::setException(Exception* exception)
 {
-    ASSERT(!exception || !isTerminationException(exception) || terminationInProgress());
+    ASSERT(!exception || !isTerminationException(exception) || hasTerminationRequest());
     m_exception = exception;
     m_lastException = exception;
     if (exception)
@@ -852,7 +859,7 @@ void VM::setException(Exception* exception)
 
 void VM::throwTerminationException()
 {
-    ASSERT(terminationInProgress());
+    ASSERT(hasTerminationRequest());
     ASSERT(!m_traps.isDeferringTermination());
     setException(terminationException());
     if (m_executionForbiddenOnTermination)
@@ -881,7 +888,7 @@ Exception* VM::throwException(JSGlobalObject* globalObject, Exception* exception
     if (UNLIKELY(Options::breakOnThrow())) {
         CodeBlock* codeBlock = throwOriginFrame && !throwOriginFrame->isWasmFrame() ? throwOriginFrame->codeBlock() : nullptr;
         dataLog("Throwing exception in call frame ", RawPointer(throwOriginFrame), " for code block ", codeBlock, "\n");
-        CRASH();
+        WTFBreakpointTrap();
     }
 
     interpreter.notifyDebuggerOfExceptionToBeThrown(*this, globalObject, throwOriginFrame, exceptionToThrow);
@@ -1377,6 +1384,7 @@ void VM::clearScratchBuffers()
     Locker locker { m_scratchBufferLock };
     for (auto* scratchBuffer : m_scratchBuffers)
         scratchBuffer->setActiveLength(0);
+    clearEntryScopeService(EntryScopeService::ClearScratchBuffers);
 }
 
 bool VM::isScratchBuffer(void* ptr)
@@ -1425,6 +1433,65 @@ JSPropertyNameEnumerator* VM::emptyPropertyNameEnumeratorSlow()
     auto* enumerator = JSPropertyNameEnumerator::create(*this, nullptr, 0, 0, WTFMove(propertyNames));
     m_emptyPropertyNameEnumerator.set(*this, enumerator);
     return enumerator;
+}
+
+void VM::executeEntryScopeServicesOnEntry()
+{
+    if (UNLIKELY(hasEntryScopeServiceRequest(EntryScopeService::FirePrimitiveGigacageEnabled))) {
+        m_primitiveGigacageEnabled.fireAll(*this, "Primitive gigacage disabled asynchronously");
+        clearEntryScopeService(EntryScopeService::FirePrimitiveGigacageEnabled);
+    }
+
+    // Reset the date cache between JS invocations to force the VM to
+    // observe time zone changes.
+    dateCache.resetIfNecessary();
+
+    auto* watchdog = this->watchdog();
+    if (UNLIKELY(watchdog))
+        watchdog->enteredVM();
+
+#if ENABLE(SAMPLING_PROFILER)
+    auto* samplingProfiler = this->samplingProfiler();
+    if (UNLIKELY(samplingProfiler))
+        samplingProfiler->noticeVMEntry();
+#endif
+
+    if (UNLIKELY(Options::useTracePoints()))
+        tracePoint(VMEntryScopeStart);
+}
+
+void VM::executeEntryScopeServicesOnExit()
+{
+    if (UNLIKELY(Options::useTracePoints()))
+        tracePoint(VMEntryScopeEnd);
+
+    auto* watchdog = this->watchdog();
+    if (UNLIKELY(watchdog))
+        watchdog->exitedVM();
+
+    if (hasEntryScopeServiceRequest(EntryScopeService::PopListeners)) {
+        auto listeners = WTFMove(m_didPopListeners);
+        for (auto& listener : listeners)
+            listener();
+        clearEntryScopeService(EntryScopeService::PopListeners);
+    }
+
+    // Normally, we want to clear the hasTerminationRequest flag here. However, if the
+    // VMTraps::NeedTermination bit is still set at this point, then it means that
+    // VMTraps::handleTraps() has not yet been called for this termination request. As a
+    // result, the TerminationException has not been thrown yet. Some client code relies
+    // on detecting the presence of the TerminationException in order to signal that a
+    // termination was requested. Hence, don't clear the hasTerminationRequest flag until
+    // VMTraps::handleTraps() has been called, and the TerminationException is thrown.
+    //
+    // Note: perhaps there's a better way for the client to know that a termination was
+    // requested (after all, the request came from the client). However, this is how the
+    // client code currently works. Changing that will take some significant effort to hunt
+    // down all the places in client code that currently rely on this behavior.
+    if (!traps().needHandling(VMTraps::NeedTermination))
+        clearHasTerminationRequest();
+
+    clearScratchBuffers();
 }
 
 JSGlobalObject* VM::deprecatedVMEntryGlobalObject(JSGlobalObject* globalObject) const
@@ -1518,5 +1585,17 @@ void MicrotaskQueue::visitAggregateImpl(Visitor& visitor)
     m_markedBefore = m_queue.size();
 }
 DEFINE_VISIT_AGGREGATE(MicrotaskQueue);
+
+void VM::ensureMegamorphicCacheSlow()
+{
+    ASSERT(!m_megamorphicCache);
+    m_megamorphicCache = makeUnique<MegamorphicCache>();
+}
+
+void VM::invalidateStructureChainIntegrity(StructureChainIntegrityEvent)
+{
+    if (m_megamorphicCache)
+        m_megamorphicCache->bumpEpoch();
+}
 
 } // namespace JSC

@@ -35,7 +35,7 @@ bool InspectorInstrumentationWebKit::shouldInterceptRequestInternal(const Resour
     return InspectorInstrumentation::shouldInterceptRequest(loader);
 }
 
-bool InspectorInstrumentationWebKit::shouldInterceptResponseInternal(const Frame& frame, const ResourceResponse& response)
+bool InspectorInstrumentationWebKit::shouldInterceptResponseInternal(const LocalFrame& frame, const ResourceResponse& response)
 {
     return InspectorInstrumentation::shouldInterceptResponse(frame, response);
 }
@@ -45,7 +45,7 @@ void InspectorInstrumentationWebKit::interceptRequestInternal(ResourceLoader& lo
     InspectorInstrumentation::interceptRequest(loader, WTFMove(handler));
 }
 
-void InspectorInstrumentationWebKit::interceptResponseInternal(const Frame& frame, const ResourceResponse& response, ResourceLoaderIdentifier identifier, CompletionHandler<void(const ResourceResponse&, RefPtr<FragmentedSharedBuffer>)>&& handler)
+void InspectorInstrumentationWebKit::interceptResponseInternal(const LocalFrame& frame, const ResourceResponse& response, ResourceLoaderIdentifier identifier, CompletionHandler<void(const ResourceResponse&, RefPtr<FragmentedSharedBuffer>)>&& handler)
 {
     InspectorInstrumentation::interceptResponse(frame, response, identifier, WTFMove(handler));
 }

@@ -54,15 +54,13 @@ RefPtr<Icon> Icon::createIconForFiles(const Vector<String>& filenames)
         if (!image)
             return nullptr;
 
-        PlatformImagePtr platformImage = [image CGImageForProposedRect:nil context:nil hints:nil];
-        return adoptRef(new Icon(NativeImage::create(WTFMove(platformImage))));
+        return adoptRef(new Icon(image));
     }
     NSImage *image = [NSImage imageNamed:NSImageNameMultipleDocuments];
     if (!image)
         return nullptr;
 
-    PlatformImagePtr platformImage = [image CGImageForProposedRect:nil context:nil hints:nil];
-    return adoptRef(new Icon(NativeImage::create(WTFMove(platformImage))));
+    return adoptRef(new Icon(image));
 }
 
 RefPtr<Icon> Icon::createIconForFileExtension(const String& fileExtension)
@@ -73,8 +71,7 @@ RefPtr<Icon> Icon::createIconForFileExtension(const String& fileExtension)
     if (!image)
         return nullptr;
 
-    PlatformImagePtr platformImage = [image CGImageForProposedRect:nil context:nil hints:nil];
-    return adoptRef(new Icon(NativeImage::create(WTFMove(platformImage))));
+    return adoptRef(new Icon(image));
 }
 
 RefPtr<Icon> Icon::createIconForUTI(const String& UTI)
@@ -85,8 +82,7 @@ RefPtr<Icon> Icon::createIconForUTI(const String& UTI)
     if (!image)
         return nullptr;
 
-    PlatformImagePtr platformImage = [image CGImageForProposedRect:nil context:nil hints:nil];
-    return adoptRef(new Icon(NativeImage::create(WTFMove(platformImage))));
+    return adoptRef(new Icon(image));
 }
 
 }

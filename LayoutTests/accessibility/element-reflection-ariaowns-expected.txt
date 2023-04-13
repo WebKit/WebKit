@@ -3,15 +3,20 @@ Checks that element reflection is exposed to the a11y tree for 'ariaOwnsElements
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS axTarget1.ariaOwnsElementAtIndex(0).isEqual(axOwn1) is true
-PASS axTarget2.ariaOwnsElementAtIndex(0).isEqual(axOwn2) is true
-PASS axTarget2.ariaOwnsElementAtIndex(0).isEqual(axOwn1) is true
-PASS axInnerTarget.ariaOwnsElementAtIndex(0).isEqual(axOwn3) is true
-PASS axTarget2.ariaOwnsElementAtIndex(0).isEqual(axOwn1) is true
-PASS axTarget2.ariaOwnsElementAtIndex(1).isEqual(axOwn2) is true
-PASS axTarget2.ariaOwnsElementAtIndex(2).isEqual(axOwn3) is true
-PASS axTarget4.ariaOwnsElementAtIndex(0).isEqual(axOwn4) is true
-PASS axTarget5.ariaOwnsElementAtIndex(0).isEqual(axOwn5) is true
+PASS: axTarget1.ariaOwnsElementAtIndex(0).isEqual(axOwn1) === true
+PASS: axOwn1.parentElement().isEqual(axTarget1) === true
+PASS: axTarget2.role === 'AXRole: AXGroup'
+PASS: wrapper.childrenCount === 0
+PASS: axOwn2.role === 'AXRole: AXGroup'
+PASS: axTarget2.ariaOwnsElementAtIndex(0).isEqual(axOwn2) === true
+PASS: axTarget2.ariaOwnsElementAtIndex(0).isEqual(axOwn1) === true
+PASS: axInnerTarget.ariaOwnsElementAtIndex(0).isEqual(axOwn3) === true
+PASS: axTarget2.ariaOwnsElementAtIndex(0).isEqual(axOwn1) === true
+PASS: axTarget2.ariaOwnsElementAtIndex(1).isEqual(axOwn2) === true
+PASS: axTarget2.ariaOwnsElementAtIndex(2).isEqual(axOwn3) === true
+PASS: axTarget4.ariaOwnsElementAtIndex(0).isEqual(axOwn4) === true
+PASS: axTarget5.ariaOwnsElementAtIndex(0).isEqual(axOwn5) === true
+
 PASS successfullyParsed is true
 
 TEST COMPLETE

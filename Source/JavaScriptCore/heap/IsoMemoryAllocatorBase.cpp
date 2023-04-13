@@ -31,9 +31,6 @@
 namespace JSC {
 
 IsoMemoryAllocatorBase::IsoMemoryAllocatorBase(CString name)
-#if ENABLE(MALLOC_HEAP_BREAKDOWN)
-    : m_debugHeap(name.data())
-#endif
 {
     UNUSED_PARAM(name);
 }
@@ -62,9 +59,6 @@ void* IsoMemoryAllocatorBase::tryAllocateAlignedMemory(size_t alignment, size_t 
     RELEASE_ASSERT(alignment == MarkedBlock::blockSize);
     RELEASE_ASSERT(size == MarkedBlock::blockSize);
 
-#if ENABLE(MALLOC_HEAP_BREAKDOWN)
-    return m_debugHeap.memalign(MarkedBlock::blockSize, MarkedBlock::blockSize, true);
-#else
     Locker locker { m_lock };
     
     m_firstUncommitted = m_committed.findBit(m_firstUncommitted, false);
@@ -85,14 +79,10 @@ void* IsoMemoryAllocatorBase::tryAllocateAlignedMemory(size_t alignment, size_t 
         m_committed.resize(m_blocks.capacity());
     m_committed.quickSet(index);
     return result;
-#endif
 }
 
 void IsoMemoryAllocatorBase::freeAlignedMemory(void* basePtr)
 {
-#if ENABLE(MALLOC_HEAP_BREAKDOWN)
-    m_debugHeap.free(basePtr);
-#else
     Locker locker { m_lock };
     
     auto iter = m_blockIndices.find(basePtr);
@@ -101,7 +91,6 @@ void IsoMemoryAllocatorBase::freeAlignedMemory(void* basePtr)
     m_committed.quickClear(index);
     m_firstUncommitted = std::min(index, m_firstUncommitted);
     decommitBlock(basePtr);
-#endif
 }
 
 } // namespace JSC

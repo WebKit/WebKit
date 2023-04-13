@@ -1,4 +1,4 @@
-# Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+# Copyright (C) 2021-2023 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -20,6 +20,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import os
 import re
 import subprocess
 import sys
@@ -28,6 +29,7 @@ import time
 from .canonicalize import Canonicalize
 from .command import Command
 from .branch import Branch
+from .install_hooks import InstallHooks
 from .pull_request import PullRequest
 from .squash import Squash
 from argparse import Namespace
@@ -118,7 +120,7 @@ class Land(Command):
         )
 
     @classmethod
-    def main(cls, args, repository, identifier_template=None, canonical_svn=False, **kwargs):
+    def main(cls, args, repository, identifier_template=None, canonical_svn=False, hooks=None, **kwargs):
         if not repository:
             sys.stderr.write('No repository provided\n')
             return 1
@@ -136,6 +138,11 @@ class Land(Command):
             return 1
 
         if not PullRequest.check_pull_request_args(repository, args):
+            return 1
+
+        if hooks and InstallHooks.hook_needs_update(repository, os.path.join(hooks, 'pre-push')):
+            sys.stderr.write("Cannot run a command which invokes `git push` with an out-of-date pre-push hook\n")
+            sys.stderr.write("Please re-run `git-webkit setup` to update all local hooks\n")
             return 1
 
         modified_files = [] if args.will_add is False else repository.modified()
@@ -273,6 +280,9 @@ class Land(Command):
         # Need to compute the remote source
         remote_target = 'fork' if isinstance(rmt, remote.GitHub) else 'origin'
 
+        push_env = os.environ.copy()
+        push_env['VERBOSITY'] = str(args.verbose)
+
         if canonical_svn:
             if run([repository.executable(), 'svn', 'fetch'], cwd=repository.root_path).returncode:
                 sys.stderr.write("Failed to update subversion refs\n".format(target))
@@ -324,7 +334,7 @@ class Land(Command):
 
             if pull_request:
                 run([repository.executable(), 'branch', '-f', source_branch, target], cwd=repository.root_path)
-                run([repository.executable(), 'push', '-f', remote_target, source_branch], cwd=repository.root_path)
+                run([repository.executable(), 'push', '-f', remote_target, source_branch], cwd=repository.root_path, env=push_env)
                 rmt.pull_requests.update(
                     pull_request=pull_request,
                     title=PullRequest.title_for(commits),
@@ -337,7 +347,7 @@ class Land(Command):
             if pull_request:
                 log.info("Updating '{}' to match landing commits...".format(pull_request))
                 commits = list(repository.commits(begin=dict(argument='{}~{}'.format(source_branch, len(commits))), end=dict(branch=source_branch)))
-                run([repository.executable(), 'push', '-f', remote_target, source_branch], cwd=repository.root_path)
+                run([repository.executable(), 'push', '-f', remote_target, source_branch], cwd=repository.root_path, env=push_env)
                 rmt.pull_requests.update(
                     pull_request=pull_request,
                     title=PullRequest.title_for(commits),
@@ -346,7 +356,7 @@ class Land(Command):
                     head=source_branch,
                 )
 
-            if run([repository.executable(), 'push', cls.REMOTE, target], cwd=repository.root_path).returncode:
+            if run([repository.executable(), 'push', cls.REMOTE, target], cwd=repository.root_path, env=push_env).returncode:
                 sys.stderr.write("Failed to push '{}' to '{}'\n".format(target, cls.REMOTE))
                 return 1 if cls.revert_branch(repository, cls.REMOTE, target) else -1
             repository.checkout(target)
@@ -370,5 +380,5 @@ class Land(Command):
             for to_delete in repository.branches_for(remote=remote_target):
                 if to_delete == source_branch or regex.match(to_delete) and remote_target == 'fork':
                     run([repository.executable(), 'branch', '-D', to_delete], cwd=repository.root_path)
-                    run([repository.executable(), 'push', remote_target, '--delete', to_delete], cwd=repository.root_path)
+                    run([repository.executable(), 'push', remote_target, '--delete', to_delete], cwd=repository.root_path, env=push_env)
         return 0

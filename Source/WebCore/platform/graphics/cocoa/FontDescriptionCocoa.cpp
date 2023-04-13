@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,7 +37,7 @@ static inline Vector<RetainPtr<CTFontDescriptorRef>> systemFontCascadeList(const
 
 unsigned FontCascadeDescription::effectiveFamilyCount() const
 {
-    // FIXME: Move all the other system font keywords from fontWithFamilySpecialCase() to here.
+    // FIXME: Move all the other system font keywords from fontDescriptorWithFamilySpecialCase() to here.
     unsigned result = 0;
     for (unsigned i = 0; i < familyCount(); ++i) {
         const auto& cssFamily = familyAt(i);

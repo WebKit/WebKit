@@ -55,12 +55,14 @@ private:
 
     void updateState()
     {
-        if (!m_screenSleepDisablerCount.value())
-            [PAL::getUIApplicationClass() sharedApplication].idleTimerDisabled = NO;
-        else if (m_screenSleepDisablerCount.value() == 1)
-            [PAL::getUIApplicationClass() sharedApplication].idleTimerDisabled = YES;
-    }
+        if (m_screenSleepDisablerCount.value() > 1)
+            return;
 
+        bool idleTimerDisabled = !!m_screenSleepDisablerCount.value();
+        ensureOnMainRunLoop([idleTimerDisabled] {
+            [PAL::getUIApplicationClass() sharedApplication].idleTimerDisabled = idleTimerDisabled;
+        });
+    }
     ScreenSleepDisablerCounter m_screenSleepDisablerCount;
 };
 

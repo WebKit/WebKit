@@ -1,7 +1,7 @@
 This tests ensures contents inside a button element is properly editable.
 You should see "hello, world WebKit" inside the button and "world" should be bolded.
 | <button>
-|   "hello, "
+|   "hello, <#selection-anchor>"
 |   <b>
-|     "<#selection-anchor>world<#selection-focus>"
+|     "world<#selection-focus>"
 |   " WebKit"

@@ -198,9 +198,11 @@ TEST(FontManagerTests, ChangeFontWithPanel)
     [webView waitForNextPresentationUpdate];
 
     auto expectSameAttributes = [](NSFont *font1, NSFont *font2) {
-        auto fontAttributes1 = font1.fontDescriptor.fontAttributes;
-        auto fontAttributes2 = font2.fontDescriptor.fontAttributes;
-        BOOL attributesAreEqual = [fontAttributes1 isEqualToDictionary:fontAttributes2];
+        auto fontAttributes1 = adoptNS(font1.fontDescriptor.fontAttributes.mutableCopy);
+        auto fontAttributes2 = adoptNS(font2.fontDescriptor.fontAttributes.mutableCopy);
+        [fontAttributes1 removeObjectForKey:NSFontVariationAttribute];
+        [fontAttributes2 removeObjectForKey:NSFontVariationAttribute];
+        BOOL attributesAreEqual = [fontAttributes1 isEqualToDictionary:fontAttributes2.get()];
         EXPECT_TRUE(attributesAreEqual);
         if (!attributesAreEqual)
             NSLog(@"Expected %@ to have the same attributes as %@", font1, font2);
@@ -395,6 +397,7 @@ TEST(FontManagerTests, ChangeTypingAttributesWithInspectorBar)
     auto inspectorBar = adoptNS([[TestInspectorBar alloc] initWithWebView:webView.get()]);
     {
         [webView selectAll:nil];
+        [webView waitForNextPresentationUpdate];
         NSFont *originalFont = [webView typingAttributes][NSFontAttributeName];
         EXPECT_WK_STREQ("Times", originalFont.familyName);
         EXPECT_EQ(16, originalFont.pointSize);

@@ -28,15 +28,25 @@
 G_BEGIN_DECLS
 
 #define WEBKIT_TYPE_HIT_TEST_RESULT            (webkit_hit_test_result_get_type())
+#if !ENABLE(2022_GLIB_API)
 #define WEBKIT_HIT_TEST_RESULT(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), WEBKIT_TYPE_HIT_TEST_RESULT, WebKitHitTestResult))
 #define WEBKIT_IS_HIT_TEST_RESULT(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), WEBKIT_TYPE_HIT_TEST_RESULT))
 #define WEBKIT_HIT_TEST_RESULT_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass),  WEBKIT_TYPE_HIT_TEST_RESULT, WebKitHitTestResultClass))
 #define WEBKIT_IS_HIT_TEST_RESULT_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass),  WEBKIT_TYPE_HIT_TEST_RESULT))
 #define WEBKIT_HIT_TEST_RESULT_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj),  WEBKIT_TYPE_HIT_TEST_RESULT, WebKitHitTestResultClass))
 
-typedef struct _WebKitHitTestResult        WebKitHitTestResult;
-typedef struct _WebKitHitTestResultClass   WebKitHitTestResultClass;
-typedef struct _WebKitHitTestResultPrivate WebKitHitTestResultPrivate;
+struct _WebKitHitTestResultClass {
+    GObjectClass parent_class;
+
+    /*< private >*/
+    void (*_webkit_reserved0) (void);
+    void (*_webkit_reserved1) (void);
+    void (*_webkit_reserved2) (void);
+    void (*_webkit_reserved3) (void);
+};
+#endif
+
+WEBKIT_DECLARE_FINAL_TYPE (WebKitHitTestResult, webkit_hit_test_result, WEBKIT, HIT_TEST_RESULT, GObject)
 
 /**
  * WebKitHitTestResultContext:
@@ -60,26 +70,6 @@ typedef enum
     WEBKIT_HIT_TEST_RESULT_CONTEXT_SCROLLBAR = 1 << 6,
     WEBKIT_HIT_TEST_RESULT_CONTEXT_SELECTION = 1 << 7
 } WebKitHitTestResultContext;
-
-struct _WebKitHitTestResult {
-    GObject parent;
-
-    /*< private >*/
-    WebKitHitTestResultPrivate *priv;
-};
-
-struct _WebKitHitTestResultClass {
-    GObjectClass parent_class;
-
-    /*< private >*/
-    void (*_webkit_reserved0) (void);
-    void (*_webkit_reserved1) (void);
-    void (*_webkit_reserved2) (void);
-    void (*_webkit_reserved3) (void);
-};
-
-WEBKIT_API GType
-webkit_hit_test_result_get_type             (void);
 
 WEBKIT_API guint
 webkit_hit_test_result_get_context          (WebKitHitTestResult *hit_test_result);

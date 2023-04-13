@@ -13,7 +13,7 @@
                 let device = devices[0];
                 
                 assert_true(device instanceof MediaDeviceInfo);
-                assert_class_string(device, "MediaDeviceInfo");
+                assert_class_string(device, "InputDeviceInfo");
                 assert_true('deviceId' in device);
                 assert_true('kind' in device);
                 assert_true('label' in device);

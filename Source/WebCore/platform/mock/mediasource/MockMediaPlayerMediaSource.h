@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #ifndef MockMediaPlayerMediaSource_h
@@ -51,6 +51,7 @@ public:
 
     void advanceCurrentTime();
     MediaTime currentMediaTime() const override;
+    bool currentMediaTimeMayProgress() const override;
     void updateDuration(const MediaTime&);
 
     MediaPlayer::ReadyState readyState() const override;
@@ -82,7 +83,7 @@ private:
     bool paused() const override;
     MediaPlayer::NetworkState networkState() const override;
     MediaTime maxMediaTimeSeekable() const override;
-    std::unique_ptr<PlatformTimeRanges> buffered() const override;
+    const PlatformTimeRanges& buffered() const override;
     bool didLoadingProgress() const override;
     void setPresentationSize(const IntSize&) override;
     void paint(GraphicsContext&, const FloatRect&) override;
@@ -96,10 +97,10 @@ private:
 
     MediaTime m_currentTime;
     MediaTime m_duration;
-    MediaPlayer::ReadyState m_readyState;
-    MediaPlayer::NetworkState m_networkState;
-    bool m_playing;
-    bool m_seekCompleted;
+    MediaPlayer::ReadyState m_readyState { MediaPlayer::ReadyState::HaveNothing };
+    MediaPlayer::NetworkState m_networkState { MediaPlayer::NetworkState::Empty };
+    bool m_playing { false };
+    bool m_seekCompleted { false };
 };
 
 }

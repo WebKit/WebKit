@@ -219,13 +219,8 @@ NS_DIRECT_MEMBERS
 namespace WebKit {
 using namespace WebCore;
 
-static void registerUserDefaultsIfNeeded()
+static void registerUserDefaults()
 {
-    static bool didRegister;
-    if (didRegister)
-        return;
-
-    didRegister = true;
     NSMutableDictionary *registrationDictionary = [NSMutableDictionary dictionary];
     
     [registrationDictionary setObject:@YES forKey:WebKitJSCJITEnabledDefaultsKey];
@@ -302,38 +297,39 @@ static void logProcessPoolState(const WebProcessPool& pool)
 }
 
 #if ENABLE(WEBCONTENT_CRASH_TESTING)
-static bool determineIfWeShouldCrashWhenCreatingWebProcess()
+void WebProcessPool::initializeShouldCrashWhenCreatingWebProcess()
 {
-    static bool shouldCrashResult { false };
-    static std::once_flag onceFlag;
-    std::call_once(
-        onceFlag,
-        [&] {
-            if (isInternalBuild()) {
-                auto resultAutomatedDeviceGroup = [getOSASystemConfigurationClass() automatedDeviceGroup];
+    ASSERT(!s_didGlobalStaticInitialization);
 
-                RELEASE_LOG(Process, "shouldCrashWhenCreatingWebProcess: automatedDeviceGroup default: %s , canaryInBaseState: %s", resultAutomatedDeviceGroup ? [resultAutomatedDeviceGroup UTF8String] : "[nil]", canaryInBaseState() ? "true" : "false");
+    // Do the check on a background queue to avoid an app launch time regression. Note that this means we're racing with the
+    // construction of the first WebProcess. However, the race is OK, we just want to make sure a WebProcess will crash in
+    // the future, it doesn't have to be the very first one.
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
+        if (!isInternalBuild())
+            return;
 
-                if (![resultAutomatedDeviceGroup isEqualToString:@"CanaryExperimentOptOut"]
-                    && !canaryInBaseState())
-                    shouldCrashResult = true;
-            }
+        auto resultAutomatedDeviceGroup = [getOSASystemConfigurationClass() automatedDeviceGroup];
+        RELEASE_LOG(Process, "initializeShouldCrashWhenCreatingWebProcess: automatedDeviceGroup default: %s , canaryInBaseState: %s", resultAutomatedDeviceGroup ? [resultAutomatedDeviceGroup UTF8String] : "[nil]", canaryInBaseState() ? "true" : "false");
+        bool shouldCrashWhenCreatingWebProcess = ![resultAutomatedDeviceGroup isEqualToString:@"CanaryExperimentOptOut"] && !canaryInBaseState();
+        dispatch_async(dispatch_get_main_queue(), ^{
+            s_shouldCrashWhenCreatingWebProcess = shouldCrashWhenCreatingWebProcess;
         });
-
-    return shouldCrashResult;
+    });
 }
 #endif
 
 void WebProcessPool::platformInitialize()
 {
-    registerUserDefaultsIfNeeded();
     registerNotificationObservers();
-    initializeClassesForParameterCoding();
+
+    if (s_didGlobalStaticInitialization)
+        return;
+
+    registerUserDefaults();
 
     // FIXME: This should be able to share code with WebCore's MemoryPressureHandler (and be platform independent).
     // Right now it cannot because WebKit1 and WebKit2 need to be able to coexist in the UI process,
     // and you can only have one WebCore::MemoryPressureHandler.
-
     if (![[NSUserDefaults standardUserDefaults] boolForKey:@"WebKitSuppressMemoryPressureHandler"])
         installMemoryPressureHandler();
 
@@ -349,12 +345,9 @@ void WebProcessPool::platformInitialize()
     [WKWebInspectorPreferenceObserver sharedInstance];
 #endif
 
-    static dispatch_once_t once;
-    dispatch_once(&once, ^{
-        PAL::registerNotifyCallback("com.apple.WebKit.logProcessState"_s, ^{
-            for (const auto& pool : WebProcessPool::allProcessPools())
-                logProcessPoolState(pool.get());
-        });
+    PAL::registerNotifyCallback("com.apple.WebKit.logProcessState"_s, ^{
+        for (const auto& pool : WebProcessPool::allProcessPools())
+            logProcessPoolState(pool.get());
     });
 
 #if ENABLE(WEBCONTENT_CRASH_TESTING)
@@ -363,9 +356,8 @@ void WebProcessPool::platformInitialize()
 #elif PLATFORM(MAC)
     bool isSafari = WebCore::MacApplication::isSafari();
 #endif
-
     if (isSafari)
-        m_shouldCrashWhenCreatingWebProcess = determineIfWeShouldCrashWhenCreatingWebProcess();
+        initializeShouldCrashWhenCreatingWebProcess();
 #endif
 }
 
@@ -907,64 +899,6 @@ bool WebProcessPool::isURLKnownHSTSHost(const String& urlString) const
     return _CFNetworkIsKnownHSTSHostWithSession(url.get(), nullptr);
 }
 
-#if HAVE(CVDISPLAYLINK)
-
-std::optional<unsigned> WebProcessPool::nominalFramesPerSecondForDisplay(WebCore::PlatformDisplayID displayID)
-{
-    if (auto* displayLink = m_displayLinks.displayLinkForDisplay(displayID))
-        return displayLink->nominalFramesPerSecond();
-
-    // Note that this creates a DisplayLink with no observers, but it's highly likely that we'll soon call startDisplayLink() for it.
-    auto displayLink = makeUnique<DisplayLink>(displayID);
-    auto frameRate = displayLink->nominalFramesPerSecond();
-    m_displayLinks.add(WTFMove(displayLink));
-    return frameRate;
-}
-
-void WebProcessPool::startDisplayLink(WebProcessProxy& processProxy, DisplayLinkObserverID observerID, PlatformDisplayID displayID, WebCore::FramesPerSecond preferredFramesPerSecond)
-{
-    if (auto* displayLink = m_displayLinks.displayLinkForDisplay(displayID)) {
-        displayLink->addObserver(processProxy.displayLinkClient(), observerID, preferredFramesPerSecond);
-        return;
-    }
-
-    auto displayLink = makeUnique<DisplayLink>(displayID);
-    displayLink->addObserver(processProxy.displayLinkClient(), observerID, preferredFramesPerSecond);
-    m_displayLinks.add(WTFMove(displayLink));
-}
-
-void WebProcessPool::stopDisplayLink(WebProcessProxy& processProxy, DisplayLinkObserverID observerID, PlatformDisplayID displayID)
-{
-    if (auto* displayLink = m_displayLinks.displayLinkForDisplay(displayID))
-        displayLink->removeObserver(processProxy.displayLinkClient(), observerID);
-}
-
-void WebProcessPool::stopDisplayLinks(WebProcessProxy& processProxy)
-{
-    for (auto& displayLink : m_displayLinks.displayLinks())
-        displayLink->removeClient(processProxy.displayLinkClient());
-}
-
-void WebProcessPool::setDisplayLinkPreferredFramesPerSecond(WebProcessProxy& processProxy, DisplayLinkObserverID observerID, PlatformDisplayID displayID, WebCore::FramesPerSecond preferredFramesPerSecond)
-{
-    LOG_WITH_STREAM(DisplayLink, stream << "[UI ] WebProcessPool::setDisplayLinkPreferredFramesPerSecond - display " << displayID << " observer " << observerID << " fps " << preferredFramesPerSecond);
-
-    if (auto* displayLink = m_displayLinks.displayLinkForDisplay(displayID))
-        displayLink->setObserverPreferredFramesPerSecond(processProxy.displayLinkClient(), observerID, preferredFramesPerSecond);
-}
-
-void WebProcessPool::setDisplayLinkForDisplayWantsFullSpeedUpdates(WebProcessProxy& processProxy, WebCore::PlatformDisplayID displayID, bool wantsFullSpeedUpdates)
-{
-    if (auto* displayLink = m_displayLinks.displayLinkForDisplay(displayID)) {
-        if (wantsFullSpeedUpdates)
-            displayLink->incrementFullSpeedRequestClientCount(processProxy.displayLinkClient());
-        else
-            displayLink->decrementFullSpeedRequestClientCount(processProxy.displayLinkClient());
-    }
-}
-
-#endif // HAVE(CVDISPLAYLINK)
-
 // FIXME: Deprecated. Left here until a final decision is made.
 void WebProcessPool::setCookieStoragePartitioningEnabled(bool enabled)
 {
@@ -1132,36 +1066,6 @@ void WebProcessPool::setProcessesShouldSuspend(bool shouldSuspend)
 
 #endif
 
-void WebProcessPool::initializeClassesForParameterCoding()
-{
-    const auto& customClasses = m_configuration->customClassesForParameterCoder();
-    if (customClasses.isEmpty())
-        return;
-
-    auto standardClasses = [NSSet setWithObjects:[NSArray class], [NSData class], [NSDate class], [NSDictionary class], [NSNull class],
-        [NSNumber class], [NSSet class], [NSString class], [NSTimeZone class], [NSURL class], [NSUUID class], nil];
-    
-    auto mutableSet = adoptNS([standardClasses mutableCopy]);
-
-    for (const auto& customClass : customClasses) {
-        auto className = customClass.utf8();
-        Class objectClass = objc_lookUpClass(className.data());
-        if (!objectClass) {
-            WTFLogAlways("InjectedBundle::extendClassesForParameterCoder - Class %s is not a valid Objective C class.\n", className.data());
-            break;
-        }
-
-        [mutableSet.get() addObject:objectClass];
-    }
-
-    m_classesForParameterCoder = mutableSet;
-}
-
-NSSet *WebProcessPool::allowedClassesForParameterCoding() const
-{
-    return m_classesForParameterCoder.get();
-}
-
 #if ENABLE(CFPREFS_DIRECT_MODE)
 void WebProcessPool::notifyPreferencesChanged(const String& domain, const String& key, const std::optional<String>& encodedValue)
 {
@@ -1200,7 +1104,7 @@ void WebProcessPool::displayPropertiesChanged(const WebCore::ScreenProperties& s
     sendToAllProcesses(Messages::WebProcess::SetScreenProperties(screenProperties));
     sendToAllProcesses(Messages::WebProcess::DisplayConfigurationChanged(displayID, flags));
 
-    if (auto* displayLink = displayLinks().displayLinkForDisplay(displayID))
+    if (auto* displayLink = displayLinks().existingDisplayLinkForDisplay(displayID))
         displayLink->displayPropertiesChanged();
 
 #if ENABLE(GPU_PROCESS)

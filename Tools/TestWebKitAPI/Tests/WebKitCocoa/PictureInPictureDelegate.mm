@@ -38,7 +38,6 @@
 #import <WebKit/WKSerializedScriptValue.h>
 #import <WebKit/WKUIDelegatePrivate.h>
 #import <WebKit/WKURLCF.h>
-#import <WebKit/WKView.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
@@ -201,12 +200,14 @@ TEST(PictureInPicture, WKPageUIClient)
 {
     WKRetainPtr<WKContextRef> context = adoptWK(WKContextCreateWithConfiguration(nullptr));
     WKRetainPtr<WKPageGroupRef> pageGroup = adoptWK(WKPageGroupCreateWithIdentifier(Util::toWK("PictureInPicture").get()));
-    WKPreferencesRef preferences = WKPageGroupGetPreferences(pageGroup.get());
-    WKPreferencesSetFullScreenEnabled(preferences, true);
-    WKPreferencesSetAllowsPictureInPictureMediaPlayback(preferences, true);
     
     PlatformWebView webView(context.get(), pageGroup.get());
-    
+
+    auto configuration = adoptWK(WKPageCopyPageConfiguration(webView.page()));
+    auto* preferences = WKPageConfigurationGetPreferences(configuration.get());
+    WKPreferencesSetFullScreenEnabled(preferences, true);
+    WKPreferencesSetAllowsPictureInPictureMediaPlayback(preferences, true);
+
     WKPageUIClientV10 uiClient;
     memset(&uiClient, 0, sizeof(uiClient));
     uiClient.base.version = 10;

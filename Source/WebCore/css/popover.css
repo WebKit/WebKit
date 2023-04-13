@@ -1,0 +1,30 @@
+/* https://html.spec.whatwg.org/#flow-content-3 */
+
+@namespace "http://www.w3.org/1999/xhtml";
+
+[popover]:not(:popover-open):not(dialog[open]) {
+    display: none;
+}
+dialog:popover-open {
+    display: block;
+}
+
+[popover] {
+    position: fixed;
+    inset: 0;
+    width: fit-content;
+    height: fit-content;
+    margin: auto;
+    border: solid;
+    padding: 0.25em;
+    overflow: auto;
+    color: CanvasText;
+    background-color: Canvas;
+}
+
+[popover]:popover-open::backdrop {
+    position: fixed;
+    inset: 0;
+    pointer-events: none !important;
+    background-color: transparent;
+}

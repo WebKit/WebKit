@@ -548,7 +548,6 @@ TextStream& operator<<(TextStream& ts, GridAutoFlow gridAutoFlow)
 TextStream& operator<<(TextStream& ts, HangingPunctuation punctuation)
 {
     switch (punctuation) {
-    case HangingPunctuation::None: ts << "none"; break;
     case HangingPunctuation::First: ts << "first"; break;
     case HangingPunctuation::Last: ts << "last"; break;
     case HangingPunctuation::AllowEnd: ts << "allow-end"; break;
@@ -668,11 +667,6 @@ TextStream& operator<<(TextStream& ts, ListStylePosition position)
     case ListStylePosition::Inside: ts << "inside"; break;
     }
     return ts;
-}
-
-TextStream& operator<<(TextStream& ts, ListStyleType styleType)
-{
-    return ts << nameLiteral(toCSSValueID(styleType)).characters();
 }
 
 TextStream& operator<<(TextStream& ts, MarginTrimType marginTrimType)
@@ -1158,6 +1152,8 @@ TextStream& operator<<(TextStream& ts, TextTransform textTransform)
     case TextTransform::Capitalize: ts << "capitalize"; break;
     case TextTransform::Uppercase: ts << "uppercase"; break;
     case TextTransform::Lowercase: ts << "lowercase"; break;
+    case TextTransform::FullSizeKana: ts << "full-size-kana"; break;
+    case TextTransform::FullWidth: ts << "full-width"; break;
     case TextTransform::None: ts << "none"; break;
     }
     return ts;
@@ -1169,6 +1165,8 @@ TextStream& operator<<(TextStream& ts, TextUnderlinePosition underlinePosition)
     case TextUnderlinePosition::Auto: ts << "Auto"; break;
     case TextUnderlinePosition::Under: ts << "Under"; break;
     case TextUnderlinePosition::FromFont: ts << "FromFont"; break;
+    case TextUnderlinePosition::Left: ts << "Left"; break;
+    case TextUnderlinePosition::Right: ts << "Right"; break;
     }
     return ts;
 }

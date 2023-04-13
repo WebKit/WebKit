@@ -1,0 +1,15 @@
+
+PASS Loading data…
+PASS Parsing: <javascript:/example.com/> against <http://example.org/foo/bar>
+PASS Parsing: <javascript:example.com/> against <http://example.org/foo/bar>
+PASS Parsing: <javascript:/example.com/> without base
+PASS Parsing: <javascript:example.com/> without base
+PASS Parsing: <javascript:/../> without base
+PASS Parsing: <> without base
+PASS Parsing: <javascript://example.com:8080/pathname?search#hash> without base
+PASS Parsing: <javascript:///test> without base
+PASS Parsing: <javascript://test/a/../b> without base
+PASS Parsing: <javascript://:443> without base
+PASS Parsing: <javascript://test:test> without base
+PASS Parsing: <javascript://[:1]> without base
+

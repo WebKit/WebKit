@@ -74,7 +74,7 @@ void GCController::garbageCollectSoon()
     JSLockHolder lock(commonVM());
     commonVM().heap.reportAbandonedObjectGraph();
 #else
-    garbageCollectOnNextRunLoop();
+    garbageCollectNow();
 #endif
 }
 
@@ -105,7 +105,7 @@ void GCController::garbageCollectNowIfNotDoneRecently()
     if (!commonVM().heap.currentThreadIsDoingGCWork())
         commonVM().heap.collectNowFullIfNotDoneRecently(Async);
 #else
-    garbageCollectSoon();
+    garbageCollectNow();
 #endif
 }
 

@@ -108,6 +108,15 @@ struct FrontendFeatures : FeatureSetBase
     FeatureInfo cacheCompiledShader = {"cacheCompiledShader", FeatureCategory::FrontendFeatures,
                                        "Enable to cache compiled shaders", &members,
                                        "http://anglebug.com/7036"};
+
+    FeatureInfo dumpShaderSource = {"dumpShaderSource", FeatureCategory::FrontendFeatures,
+                                    "Write shader source to temp directory", &members,
+                                    "http://anglebug.com/7760"};
+
+    FeatureInfo enableShaderSubstitution = {
+        "enableShaderSubstitution", FeatureCategory::FrontendWorkarounds,
+        "Check the filesystem for shaders to use instead of those provided through glShaderSource",
+        &members, "http://anglebug.com/7761"};
 };
 
 inline FrontendFeatures::FrontendFeatures()  = default;

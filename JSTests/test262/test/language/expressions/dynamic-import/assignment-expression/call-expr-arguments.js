@@ -25,6 +25,7 @@ info: |
         CallExpression[?Yield, ?Await]TemplateLiteral[?Yield, ?Await, +Tagged]
 flags: [async]
 features: [dynamic-import]
+includes: [asyncHelpers.js]
 ---*/
 
 const a = () => () => './module-code_FIXTURE.js';
@@ -42,4 +43,4 @@ async function fn() {
     assert.sameValue(ns2.default, 1612);
 }
 
-fn().then($DONE, $DONE).catch($DONE);
+asyncTest(fn);

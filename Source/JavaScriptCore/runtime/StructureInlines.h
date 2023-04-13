@@ -25,11 +25,13 @@
 
 #pragma once
 
+#include "BigIntPrototype.h"
 #include "BrandedStructure.h"
 #include "JSArrayBufferView.h"
 #include "JSCJSValueInlines.h"
 #include "JSGlobalObject.h"
 #include "PropertyTable.h"
+#include "StringPrototype.h"
 #include "Structure.h"
 #include "StructureChain.h"
 #include "StructureRareDataInlines.h"
@@ -71,7 +73,7 @@ inline Structure* Structure::create(VM& vm, JSGlobalObject* globalObject, JSValu
     ASSERT(classInfo);
     if (auto* object = prototype.getObject()) {
         ASSERT(!object->anyObjectInChainMayInterceptIndexedAccesses() || hasSlowPutArrayStorage(indexingModeIncludingHistory) || !hasIndexedProperties(indexingModeIncludingHistory));
-        object->didBecomePrototype();
+        object->didBecomePrototype(vm);
     }
 
     Structure* structure = new (NotNull, allocateCell<Structure>(vm)) Structure(vm, globalObject, prototype, typeInfo, classInfo, indexingModeIncludingHistory, inlineCapacity);
@@ -683,11 +685,10 @@ ALWAYS_INLINE bool Structure::shouldConvertToPolyProto(const Structure* a, const
 
 inline Structure* Structure::nonPropertyTransition(VM& vm, Structure* structure, TransitionKind transitionKind, DeferredStructureTransitionWatchpointFire* deferred)
 {
-    IndexingType indexingModeIncludingHistory = newIndexingType(structure->indexingModeIncludingHistory(), transitionKind);
-
     if (changesIndexingType(transitionKind)) {
         if (JSGlobalObject* globalObject = structure->m_globalObject.get()) {
             if (globalObject->isOriginalArrayStructure(structure)) {
+                IndexingType indexingModeIncludingHistory = newIndexingType(structure->indexingModeIncludingHistory(), transitionKind);
                 Structure* result = globalObject->originalArrayStructureForIndexingType(indexingModeIncludingHistory);
                 if (result->indexingModeIncludingHistory() == indexingModeIncludingHistory) {
                     structure->didTransitionFromThisStructure(deferred);
@@ -731,23 +732,29 @@ ALWAYS_INLINE Structure* Structure::addPropertyTransitionToExistingStructureConc
     return addPropertyTransitionToExistingStructureImpl(structure, uid, attributes, offset);
 }
 
-inline Structure* StructureTransitionTable::singleTransition() const
+inline Structure* StructureTransitionTable::trySingleTransition() const
 {
-    ASSERT(isUsingSingleSlot());
-    if (WeakImpl* impl = this->weakImpl()) {
-        if (impl->state() == WeakImpl::Live)
-            return jsCast<Structure*>(impl->jsValue().asCell());
-    }
+    uintptr_t pointer = m_data;
+    if (pointer & UsingSingleSlotFlag)
+        return bitwise_cast<Structure*>(pointer & ~UsingSingleSlotFlag);
     return nullptr;
 }
 
 inline Structure* StructureTransitionTable::get(UniquedStringImpl* rep, unsigned attributes, TransitionKind transitionKind) const
 {
     if (isUsingSingleSlot()) {
-        Structure* transition = singleTransition();
+        auto* transition = trySingleTransition();
         return (transition && transition->m_transitionPropertyName == rep && transition->transitionPropertyAttributes() == attributes && transition->transitionKind() == transitionKind) ? transition : nullptr;
     }
     return map()->get(StructureTransitionTable::Hash::Key(rep, attributes, transitionKind));
+}
+
+inline void StructureTransitionTable::finalizeUnconditionally(VM& vm, CollectionScope)
+{
+    if (auto* transition = trySingleTransition()) {
+        if (!vm.heap.isMarked(transition))
+            m_data = UsingSingleSlotFlag;
+    }
 }
 
 inline void Structure::clearCachedPrototypeChain()
@@ -768,11 +775,9 @@ ALWAYS_INLINE bool Structure::canPerformFastPropertyEnumeration() const
     // https://bugs.webkit.org/show_bug.cgi?id=185358
     if (hasIndexedProperties(indexingType()))
         return false;
-    if (hasGetterSetterProperties())
+    if (hasAnyKindOfGetterSetterProperties())
         return false;
     if (hasReadOnlyOrGetterSetterPropertiesExcludingProto())
-        return false;
-    if (hasCustomGetterSetterProperties())
         return false;
     if (isUncacheableDictionary())
         return false;

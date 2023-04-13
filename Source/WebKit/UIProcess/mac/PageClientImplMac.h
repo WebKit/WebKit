@@ -45,6 +45,7 @@ struct PromisedAttachmentInfo;
 
 namespace WebKit {
 
+class RemoteLayerTreeNode;
 class WebViewImpl;
 
 class PageClientImpl final : public PageClientImplCocoa
@@ -82,6 +83,8 @@ private:
     WebCore::DestinationColorSpace colorSpace() override;
     void setRemoteLayerTreeRootNode(RemoteLayerTreeNode*) override;
     CALayer *acceleratedCompositingRootLayer() const override;
+    CALayer *headerBannerLayer() const override;
+    CALayer *footerBannerLayer() const override;
 
     void processDidExit() override;
     void processWillSwap() override;
@@ -203,12 +206,10 @@ private:
 
     void registerInsertionUndoGrouping() override;
 
-#if ENABLE(UI_PROCESS_PDF_HUD)
     void createPDFHUD(PDFPluginIdentifier, const WebCore::IntRect&) override;
     void updatePDFHUDLocation(PDFPluginIdentifier, const WebCore::IntRect&) override;
     void removePDFHUD(PDFPluginIdentifier) override;
     void removeAllPDFHUDs() override;
-#endif
 
     // Auxiliary Client Creation
 #if ENABLE(FULLSCREEN_API)

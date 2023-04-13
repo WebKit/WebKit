@@ -26,55 +26,53 @@
 #include "config.h"
 #include "WebPageProxy.h"
 
-#include "WebPage.h"
-#include "WebPageMessages.h"
+#if ENABLE(VIDEO) && USE(GSTREAMER) && ENABLE(SPEECH_SYNTHESIS)
 
-#if ENABLE(VIDEO) && USE(GSTREAMER)
-#include "PageClient.h"
+#include "MessageSenderInlines.h"
+#include "WebPageMessages.h"
+#include "WebPageProxyInternals.h"
 
 namespace WebKit {
 
-#if ENABLE(SPEECH_SYNTHESIS)
-void WebPageProxy::didStartSpeaking(WebCore::PlatformSpeechSynthesisUtterance&)
+void WebPageProxy::Internals::didStartSpeaking(WebCore::PlatformSpeechSynthesisUtterance&)
 {
-    if (speechSynthesisData().speakingStartedCompletionHandler)
-        speechSynthesisData().speakingStartedCompletionHandler();
+    if (auto& handler = speechSynthesisData().speakingStartedCompletionHandler)
+        handler();
 }
 
-void WebPageProxy::didFinishSpeaking(WebCore::PlatformSpeechSynthesisUtterance&)
+void WebPageProxy::Internals::didFinishSpeaking(WebCore::PlatformSpeechSynthesisUtterance&)
 {
-    if (speechSynthesisData().speakingFinishedCompletionHandler)
-        speechSynthesisData().speakingFinishedCompletionHandler();
+    if (auto& handler = speechSynthesisData().speakingFinishedCompletionHandler)
+        handler();
 }
 
-void WebPageProxy::didPauseSpeaking(WebCore::PlatformSpeechSynthesisUtterance&)
+void WebPageProxy::Internals::didPauseSpeaking(WebCore::PlatformSpeechSynthesisUtterance&)
 {
-    if (speechSynthesisData().speakingPausedCompletionHandler)
-        speechSynthesisData().speakingPausedCompletionHandler();
+    if (auto& handler = speechSynthesisData().speakingPausedCompletionHandler)
+        handler();
 }
 
-void WebPageProxy::didResumeSpeaking(WebCore::PlatformSpeechSynthesisUtterance&)
+void WebPageProxy::Internals::didResumeSpeaking(WebCore::PlatformSpeechSynthesisUtterance&)
 {
-    if (speechSynthesisData().speakingResumedCompletionHandler)
-        speechSynthesisData().speakingResumedCompletionHandler();
+    if (auto& handler = speechSynthesisData().speakingResumedCompletionHandler)
+        handler();
 }
 
-void WebPageProxy::speakingErrorOccurred(WebCore::PlatformSpeechSynthesisUtterance&)
+void WebPageProxy::Internals::speakingErrorOccurred(WebCore::PlatformSpeechSynthesisUtterance&)
 {
-    send(Messages::WebPage::SpeakingErrorOccurred());
+    page.send(Messages::WebPage::SpeakingErrorOccurred());
 }
 
-void WebPageProxy::boundaryEventOccurred(WebCore::PlatformSpeechSynthesisUtterance&, WebCore::SpeechBoundary speechBoundary, unsigned charIndex, unsigned charLength)
+void WebPageProxy::Internals::boundaryEventOccurred(WebCore::PlatformSpeechSynthesisUtterance&, WebCore::SpeechBoundary speechBoundary, unsigned charIndex, unsigned charLength)
 {
-    send(Messages::WebPage::BoundaryEventOccurred(speechBoundary == WebCore::SpeechBoundary::SpeechWordBoundary, charIndex, charLength));
+    page.send(Messages::WebPage::BoundaryEventOccurred(speechBoundary == WebCore::SpeechBoundary::SpeechWordBoundary, charIndex, charLength));
 }
 
-void WebPageProxy::voicesDidChange()
+void WebPageProxy::Internals::voicesDidChange()
 {
-    send(Messages::WebPage::VoicesDidChange());
+    page.send(Messages::WebPage::VoicesDidChange());
 }
-#endif // ENABLE(SPEECH_SYNTHESIS)
 
 } // namespace WebKit
 
-#endif // ENABLE(VIDEO) && USE(GSTREAMER)
+#endif // ENABLE(VIDEO) && USE(GSTREAMER) && ENABLE(SPEECH_SYNTHESIS)

@@ -92,6 +92,7 @@ static int64_t changeCountForPasteboard(const String& pasteboardName = { }, cons
 // FIXME: Does this need to be declared in the header file?
 WEBCORE_EXPORT NSString *WebArchivePboardType = @"Apple Web Archive pasteboard type";
 NSString *UIColorPboardType = @"com.apple.uikit.color";
+NSString *UIImagePboardType = @"com.apple.uikit.image";
 
 Pasteboard::Pasteboard(std::unique_ptr<PasteboardContext>&& context)
     : m_context(WTFMove(context))

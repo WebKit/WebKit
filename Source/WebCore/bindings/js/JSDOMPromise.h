@@ -44,7 +44,7 @@ public:
         return guarded();
     }
 
-    enum class IsCallbackRegistered { No, Yes };
+    enum class IsCallbackRegistered : bool { No, Yes };
     IsCallbackRegistered whenSettled(std::function<void()>&&);
     JSC::JSValue result() const;
 

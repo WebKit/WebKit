@@ -1,0 +1,33 @@
+<style>
+  p~div { display: contents; }
+  span { padding-block-end: 1em; float: left; }
+</style>
+<script>
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function gc() {
+  if (window.GCController)
+    return GCController.collect();
+}
+function runTest() {
+  video.addEventListener("DOMNodeRemovedFromDocument", () => { });
+  range = window.document.caretRangeFromPoint();
+  range.setEnd(video, 1);
+  range.extractContents();
+  document.getElementById("span").innerText="This test passes if it doesn't crash.";
+}
+</script>
+<body id="body" onload="gc()">
+  <span id="span"></span>
+  <p></p>
+  <div>
+    foo
+    <a href="x"></a>
+  </div>
+  <video id="video" src="foo.png">
+    <kbd></kbd>
+    <details ontoggle="runTest()" open="">
+  </video>
+</body>

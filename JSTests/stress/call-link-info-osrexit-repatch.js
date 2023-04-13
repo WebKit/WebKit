@@ -14,5 +14,6 @@ function foo(a, b) {
     return foo(b / 1, a, 0);
     0 === 0
 }
+noInline(foo);
 
 foo(1, 5);

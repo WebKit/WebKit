@@ -29,7 +29,9 @@
 
 #include "PageClient.h"
 #include "WebKitWebResourceLoadManager.h"
+#include "WebPreferences.h"
 #include <WebCore/NotImplemented.h>
+#include <WebCore/SearchPopupMenu.h>
 #include <WebCore/UserAgent.h>
 
 namespace WebKit {

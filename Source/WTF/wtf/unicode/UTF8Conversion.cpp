@@ -33,7 +33,7 @@
 
 namespace WTF::Unicode {
 
-bool convertLatin1ToUTF8(const LChar** sourceStart, const LChar* sourceEnd, char** targetStart, char* targetEnd)
+bool convertLatin1ToUTF8(const LChar** sourceStart, const LChar* sourceEnd, char** targetStart, const char* targetEnd)
 {
     const LChar* source;
     char* target = *targetStart;
@@ -53,7 +53,7 @@ bool convertLatin1ToUTF8(const LChar** sourceStart, const LChar* sourceEnd, char
     return true;
 }
 
-ConversionResult convertUTF16ToUTF8(const UChar** sourceStart, const UChar* sourceEnd, char** targetStart, char* targetEnd, bool strict)
+ConversionResult convertUTF16ToUTF8(const UChar** sourceStart, const UChar* sourceEnd, char** targetStart, const char* targetEnd, bool strict)
 {
     auto result = ConversionResult::Success;
     const UChar* source = *sourceStart;
@@ -88,7 +88,7 @@ ConversionResult convertUTF16ToUTF8(const UChar** sourceStart, const UChar* sour
 }
 
 template<bool replaceInvalidSequences>
-bool convertUTF8ToUTF16Impl(const char* source, const char* sourceEnd, UChar** targetStart, UChar* targetEnd, bool* sourceAllASCII)
+bool convertUTF8ToUTF16Impl(const char* source, const char* sourceEnd, UChar** targetStart, const UChar* targetEnd, bool* sourceAllASCII)
 {
     RELEASE_ASSERT(sourceEnd - source <= std::numeric_limits<int>::max());
     UBool error = false;
@@ -117,12 +117,12 @@ bool convertUTF8ToUTF16Impl(const char* source, const char* sourceEnd, UChar** t
     return true;
 }
 
-bool convertUTF8ToUTF16(const char* source, const char* sourceEnd, UChar** targetStart, UChar* targetEnd, bool* sourceAllASCII)
+bool convertUTF8ToUTF16(const char* source, const char* sourceEnd, UChar** targetStart, const UChar* targetEnd, bool* sourceAllASCII)
 {
     return convertUTF8ToUTF16Impl<false>(source, sourceEnd, targetStart, targetEnd, sourceAllASCII);
 }
 
-bool convertUTF8ToUTF16ReplacingInvalidSequences(const char* source, const char* sourceEnd, UChar** targetStart, UChar* targetEnd, bool* sourceAllASCII)
+bool convertUTF8ToUTF16ReplacingInvalidSequences(const char* source, const char* sourceEnd, UChar** targetStart, const UChar* targetEnd, bool* sourceAllASCII)
 {
     return convertUTF8ToUTF16Impl<true>(source, sourceEnd, targetStart, targetEnd, sourceAllASCII);
 }

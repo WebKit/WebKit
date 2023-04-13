@@ -52,7 +52,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)setSupportedOrientations:(UIInterfaceOrientationMask)supportedOrientations;
 - (void)resetSupportedOrientations;
 #if HAVE(UIKIT_WEBKIT_INTERNALS)
-- (void)hideMediaControls:(BOOL)hidden;
+- (void)hideCancelAndPIPButtons:(BOOL)hidden;
 #endif
 @end
 

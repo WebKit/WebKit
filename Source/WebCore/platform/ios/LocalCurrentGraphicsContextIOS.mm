@@ -26,7 +26,7 @@
 
 namespace WebCore {
 
-LocalCurrentGraphicsContext::LocalCurrentGraphicsContext(GraphicsContext& graphicsContext)
+LocalCurrentGraphicsContext::LocalCurrentGraphicsContext(GraphicsContext& graphicsContext, bool)
     : m_savedGraphicsContext(graphicsContext)
 {
     m_savedGraphicsContext.save();

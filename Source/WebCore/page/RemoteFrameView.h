@@ -25,19 +25,21 @@
 
 #pragma once
 
-#include "AbstractFrameView.h"
+#include "FrameView.h"
 
 namespace WebCore {
 
 class RemoteFrame;
 
-class RemoteFrameView final : public AbstractFrameView {
+class RemoteFrameView final : public FrameView {
 public:
     static Ref<RemoteFrameView> create(RemoteFrame& frame) { return adoptRef(*new RemoteFrameView(frame)); }
 
-    FrameViewType viewType() const final { return FrameViewType::Remote; }
+    Type viewType() const final { return Type::Remote; }
 private:
     WEBCORE_EXPORT RemoteFrameView(RemoteFrame&);
+
+    bool isRemoteFrameView() const final { return true; }
 
     void invalidateRect(const IntRect&) final;
     bool isActive() const final;
@@ -64,11 +66,14 @@ private:
     void updateLayerPositionsAfterScrolling() final;
     void updateCompositingLayersAfterScrolling() final;
 
+    void setFrameRect(const IntRect&) final;
+
     const Ref<RemoteFrame> m_frame;
 };
 
 }
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::RemoteFrameView)
-static bool isType(const WebCore::AbstractFrameView& view) { return view.viewType() == WebCore::AbstractFrameView::FrameViewType::Remote; }
+static bool isType(const WebCore::FrameView& view) { return view.viewType() == WebCore::FrameView::Type::Remote; }
+static bool isType(const WebCore::Widget& widget) { return widget.isRemoteFrameView(); }
 SPECIALIZE_TYPE_TRAITS_END()

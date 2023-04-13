@@ -28,8 +28,10 @@
 
 #include "CSSKeyframesRule.h"
 #include "CSSParser.h"
+#include "MutableStyleProperties.h"
 #include "PropertySetCSSStyleDeclaration.h"
 #include "StyleProperties.h"
+#include "StylePropertiesInlines.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
@@ -92,17 +94,6 @@ String StyleRuleKeyframe::cssText() const
     if (auto declarations = m_properties->asText(); !declarations.isEmpty())
         return makeString(keyText(), " { ", declarations, " }");
     return makeString(keyText(), " { }");
-}
-
-bool StyleRuleKeyframe::containsCSSVariableReferences() const
-{
-    for (auto property : m_properties.get()) {
-        if (auto* cssValue = property.value()) {
-            if (cssValue->hasVariableReferences())
-                return true;
-        }
-    }
-    return false;
 }
 
 CSSKeyframeRule::CSSKeyframeRule(StyleRuleKeyframe& keyframe, CSSKeyframesRule* parent)

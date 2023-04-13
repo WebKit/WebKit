@@ -31,6 +31,8 @@
 
 #include "DateComponents.h"
 #include "DateTimeFieldsState.h"
+#include "HTMLNames.h"
+#include "LocalizedStrings.h"
 #include "ScriptDisallowedScope.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -49,6 +51,8 @@ Ref<DateTimeDayFieldElement> DateTimeDayFieldElement::create(Document& document,
     static MainThreadNeverDestroyed<const AtomString> dayPseudoId("-webkit-datetime-edit-day-field"_s);
     ScriptDisallowedScope::EventAllowedScope eventAllowedScope { element };
     element->initialize(dayPseudoId);
+    element->setAttributeWithoutSynchronization(HTMLNames::aria_labelAttr, AtomString { AXDateFieldDayText() });
+    element->setAttributeWithoutSynchronization(HTMLNames::roleAttr, AtomString { "spinbutton"_s });
     return element;
 }
 
@@ -223,6 +227,8 @@ Ref<DateTimeMonthFieldElement> DateTimeMonthFieldElement::create(Document& docum
     static MainThreadNeverDestroyed<const AtomString> monthPseudoId("-webkit-datetime-edit-month-field"_s);
     ScriptDisallowedScope::EventAllowedScope eventAllowedScope { element };
     element->initialize(monthPseudoId);
+    element->setAttributeWithoutSynchronization(HTMLNames::aria_labelAttr, AtomString { AXDateFieldMonthText() });
+    element->setAttributeWithoutSynchronization(HTMLNames::roleAttr, AtomString { "spinbutton"_s });
     return element;
 }
 
@@ -278,6 +284,8 @@ Ref<DateTimeSymbolicMonthFieldElement> DateTimeSymbolicMonthFieldElement::create
     static MainThreadNeverDestroyed<const AtomString> monthPseudoId("-webkit-datetime-edit-month-field"_s);
     ScriptDisallowedScope::EventAllowedScope eventAllowedScope { element };
     element->initialize(monthPseudoId);
+    element->setAttributeWithoutSynchronization(HTMLNames::aria_labelAttr, AtomString { AXDateFieldMonthText() });
+    element->setAttributeWithoutSynchronization(HTMLNames::roleAttr, AtomString { "spinbutton"_s });
     return element;
 }
 
@@ -305,6 +313,8 @@ Ref<DateTimeYearFieldElement> DateTimeYearFieldElement::create(Document& documen
     static MainThreadNeverDestroyed<const AtomString> yearPseudoId("-webkit-datetime-edit-year-field"_s);
     ScriptDisallowedScope::EventAllowedScope eventAllowedScope { element };
     element->initialize(yearPseudoId);
+    element->setAttributeWithoutSynchronization(HTMLNames::aria_labelAttr, AtomString { AXDateFieldYearText() });
+    element->setAttributeWithoutSynchronization(HTMLNames::roleAttr, AtomString { "spinbutton"_s });
     return element;
 }
 

@@ -91,8 +91,8 @@ private:
     String m_displayName;
     uint64_t m_expectedUsage { 0 };
     uint64_t m_currentUsage { 0 };
-    Markable<WallTime, WallTime::MarkableTraits> m_creationTime;
-    Markable<WallTime, WallTime::MarkableTraits> m_modificationTime;
+    Markable<WallTime> m_creationTime;
+    Markable<WallTime> m_modificationTime;
 #if ASSERT_ENABLED
     Ref<Thread> m_thread { Thread::current() };
 #endif

@@ -39,6 +39,7 @@ public:
         uint32_t maxTextureDimension3D,
         uint32_t maxTextureArrayLayers,
         uint32_t maxBindGroups,
+        uint32_t maxBindingsPerBindGroup,
         uint32_t maxDynamicUniformBuffersPerPipelineLayout,
         uint32_t maxDynamicStorageBuffersPerPipelineLayout,
         uint32_t maxSampledTexturesPerShaderStage,
@@ -51,9 +52,13 @@ public:
         uint32_t minUniformBufferOffsetAlignment,
         uint32_t minStorageBufferOffsetAlignment,
         uint32_t maxVertexBuffers,
+        uint64_t maxBufferSize,
         uint32_t maxVertexAttributes,
         uint32_t maxVertexBufferArrayStride,
         uint32_t maxInterStageShaderComponents,
+        uint32_t maxInterStageShaderVariables,
+        uint32_t maxColorAttachments,
+        uint32_t maxColorAttachmentBytesPerSample,
         uint32_t maxComputeWorkgroupStorageSize,
         uint32_t maxComputeInvocationsPerWorkgroup,
         uint32_t maxComputeWorkgroupSizeX,
@@ -67,6 +72,7 @@ public:
             maxTextureDimension3D,
             maxTextureArrayLayers,
             maxBindGroups,
+            maxBindingsPerBindGroup,
             maxDynamicUniformBuffersPerPipelineLayout,
             maxDynamicStorageBuffersPerPipelineLayout,
             maxSampledTexturesPerShaderStage,
@@ -79,9 +85,13 @@ public:
             minUniformBufferOffsetAlignment,
             minStorageBufferOffsetAlignment,
             maxVertexBuffers,
+            maxBufferSize,
             maxVertexAttributes,
             maxVertexBufferArrayStride,
             maxInterStageShaderComponents,
+            maxInterStageShaderVariables,
+            maxColorAttachments,
+            maxColorAttachmentBytesPerSample,
             maxComputeWorkgroupStorageSize,
             maxComputeInvocationsPerWorkgroup,
             maxComputeWorkgroupSizeX,
@@ -98,6 +108,7 @@ public:
             limits.maxTextureDimension3D(),
             limits.maxTextureArrayLayers(),
             limits.maxBindGroups(),
+            limits.maxBindingsPerBindGroup(),
             limits.maxDynamicUniformBuffersPerPipelineLayout(),
             limits.maxDynamicStorageBuffersPerPipelineLayout(),
             limits.maxSampledTexturesPerShaderStage(),
@@ -110,9 +121,13 @@ public:
             limits.minUniformBufferOffsetAlignment(),
             limits.minStorageBufferOffsetAlignment(),
             limits.maxVertexBuffers(),
+            limits.maxBufferSize(),
             limits.maxVertexAttributes(),
             limits.maxVertexBufferArrayStride(),
             limits.maxInterStageShaderComponents(),
+            limits.maxInterStageShaderVariables(),
+            limits.maxColorAttachments(),
+            limits.maxColorAttachmentBytesPerSample(),
             limits.maxComputeWorkgroupStorageSize(),
             limits.maxComputeInvocationsPerWorkgroup(),
             limits.maxComputeWorkgroupSizeX(),
@@ -126,6 +141,7 @@ public:
     uint32_t maxTextureDimension3D() const { return m_maxTextureDimension3D; }
     uint32_t maxTextureArrayLayers() const { return m_maxTextureArrayLayers; }
     uint32_t maxBindGroups() const { return m_maxBindGroups; }
+    uint32_t maxBindingsPerBindGroup() const { return m_maxBindingsPerBindGroup; }
     uint32_t maxDynamicUniformBuffersPerPipelineLayout() const { return m_maxDynamicUniformBuffersPerPipelineLayout; }
     uint32_t maxDynamicStorageBuffersPerPipelineLayout() const { return m_maxDynamicStorageBuffersPerPipelineLayout; }
     uint32_t maxSampledTexturesPerShaderStage() const { return m_maxSampledTexturesPerShaderStage; }
@@ -138,9 +154,13 @@ public:
     uint32_t minUniformBufferOffsetAlignment() const { return m_minUniformBufferOffsetAlignment; }
     uint32_t minStorageBufferOffsetAlignment() const { return m_minStorageBufferOffsetAlignment; }
     uint32_t maxVertexBuffers() const { return m_maxVertexBuffers; }
+    uint64_t maxBufferSize() const { return m_maxBufferSize; }
     uint32_t maxVertexAttributes() const { return m_maxVertexAttributes; }
     uint32_t maxVertexBufferArrayStride() const { return m_maxVertexBufferArrayStride; }
     uint32_t maxInterStageShaderComponents() const { return m_maxInterStageShaderComponents; }
+    uint32_t maxInterStageShaderVariables() const { return m_maxInterStageShaderVariables; }
+    uint32_t maxColorAttachments() const { return m_maxColorAttachments; }
+    uint32_t maxColorAttachmentBytesPerSample() const { return m_maxColorAttachmentBytesPerSample; }
     uint32_t maxComputeWorkgroupStorageSize() const { return m_maxComputeWorkgroupStorageSize; }
     uint32_t maxComputeInvocationsPerWorkgroup() const { return m_maxComputeInvocationsPerWorkgroup; }
     uint32_t maxComputeWorkgroupSizeX() const { return m_maxComputeWorkgroupSizeX; }
@@ -155,6 +175,7 @@ private:
         uint32_t maxTextureDimension3D,
         uint32_t maxTextureArrayLayers,
         uint32_t maxBindGroups,
+        uint32_t maxBindingsPerBindGroup,
         uint32_t maxDynamicUniformBuffersPerPipelineLayout,
         uint32_t maxDynamicStorageBuffersPerPipelineLayout,
         uint32_t maxSampledTexturesPerShaderStage,
@@ -167,9 +188,13 @@ private:
         uint32_t minUniformBufferOffsetAlignment,
         uint32_t minStorageBufferOffsetAlignment,
         uint32_t maxVertexBuffers,
+        uint64_t maxBufferSize,
         uint32_t maxVertexAttributes,
         uint32_t maxVertexBufferArrayStride,
         uint32_t maxInterStageShaderComponents,
+        uint32_t maxInterStageShaderVariables,
+        uint32_t maxColorAttachments,
+        uint32_t maxColorAttachmentBytesPerSample,
         uint32_t maxComputeWorkgroupStorageSize,
         uint32_t maxComputeInvocationsPerWorkgroup,
         uint32_t maxComputeWorkgroupSizeX,
@@ -181,6 +206,7 @@ private:
             , m_maxTextureDimension3D(maxTextureDimension3D)
             , m_maxTextureArrayLayers(maxTextureArrayLayers)
             , m_maxBindGroups(maxBindGroups)
+            , m_maxBindingsPerBindGroup(maxBindingsPerBindGroup)
             , m_maxDynamicUniformBuffersPerPipelineLayout(maxDynamicUniformBuffersPerPipelineLayout)
             , m_maxDynamicStorageBuffersPerPipelineLayout(maxDynamicStorageBuffersPerPipelineLayout)
             , m_maxSampledTexturesPerShaderStage(maxSampledTexturesPerShaderStage)
@@ -193,9 +219,13 @@ private:
             , m_minUniformBufferOffsetAlignment(minUniformBufferOffsetAlignment)
             , m_minStorageBufferOffsetAlignment(minStorageBufferOffsetAlignment)
             , m_maxVertexBuffers(maxVertexBuffers)
+            , m_maxBufferSize(maxBufferSize)
             , m_maxVertexAttributes(maxVertexAttributes)
             , m_maxVertexBufferArrayStride(maxVertexBufferArrayStride)
             , m_maxInterStageShaderComponents(maxInterStageShaderComponents)
+            , m_maxInterStageShaderVariables(maxInterStageShaderVariables)
+            , m_maxColorAttachments(maxColorAttachments)
+            , m_maxColorAttachmentBytesPerSample(maxColorAttachmentBytesPerSample)
             , m_maxComputeWorkgroupStorageSize(maxComputeWorkgroupStorageSize)
             , m_maxComputeInvocationsPerWorkgroup(maxComputeInvocationsPerWorkgroup)
             , m_maxComputeWorkgroupSizeX(maxComputeWorkgroupSizeX)
@@ -215,6 +245,7 @@ private:
     uint32_t m_maxTextureDimension3D { 0 };
     uint32_t m_maxTextureArrayLayers { 0 };
     uint32_t m_maxBindGroups { 0 };
+    uint32_t m_maxBindingsPerBindGroup { 0 };
     uint32_t m_maxDynamicUniformBuffersPerPipelineLayout { 0 };
     uint32_t m_maxDynamicStorageBuffersPerPipelineLayout { 0 };
     uint32_t m_maxSampledTexturesPerShaderStage { 0 };
@@ -227,9 +258,13 @@ private:
     uint32_t m_minUniformBufferOffsetAlignment { 0 };
     uint32_t m_minStorageBufferOffsetAlignment { 0 };
     uint32_t m_maxVertexBuffers { 0 };
+    uint64_t m_maxBufferSize { 0 };
     uint32_t m_maxVertexAttributes { 0 };
     uint32_t m_maxVertexBufferArrayStride { 0 };
     uint32_t m_maxInterStageShaderComponents { 0 };
+    uint32_t m_maxInterStageShaderVariables { 0 };
+    uint32_t m_maxColorAttachments { 0 };
+    uint32_t m_maxColorAttachmentBytesPerSample { 0 };
     uint32_t m_maxComputeWorkgroupStorageSize { 0 };
     uint32_t m_maxComputeInvocationsPerWorkgroup { 0 };
     uint32_t m_maxComputeWorkgroupSizeX { 0 };

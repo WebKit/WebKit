@@ -39,6 +39,7 @@
 #include "LLIntData.h"
 #include "LLIntSlowPaths.h"
 #include "JSCInlines.h"
+#include "SuperSampler.h"
 #include <wtf/Assertions.h>
 #include <wtf/MathExtras.h>
 
@@ -229,7 +230,7 @@ static void double2Ints(double val, CLoopRegister& lo, CLoopRegister& hi)
 }
 #endif // USE(JSVALUE32_64)
 
-static void decodeResult(SlowPathReturnType result, CLoopRegister& t0, CLoopRegister& t1)
+static void decodeResult(UGPRPair result, CLoopRegister& t0, CLoopRegister& t1)
 {
     const void* t0Result;
     const void* t1Result;

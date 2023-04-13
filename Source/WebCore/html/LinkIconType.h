@@ -40,16 +40,3 @@ enum class LinkIconType : uint8_t {
 };
 
 } // namespace WebCore
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::LinkIconType> {
-    using values = EnumValues<
-        WebCore::LinkIconType,
-        WebCore::LinkIconType::Favicon,
-        WebCore::LinkIconType::TouchIcon,
-        WebCore::LinkIconType::TouchPrecomposedIcon
-    >;
-};
-
-} // namespace WTF

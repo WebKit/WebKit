@@ -28,7 +28,9 @@
 
 #import "RemoteLayerTreeDrawingAreaProxy.h"
 #import "RemoteLayerTreeHost.h"
+#import "WebPageProxy.h"
 #import <QuartzCore/CALayer.h>
+#import <WebCore/PerformanceLoggingClient.h>
 #import <WebCore/TileController.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
@@ -47,37 +49,58 @@ RemoteLayerTreeScrollingPerformanceData::~RemoteLayerTreeScrollingPerformanceDat
 void RemoteLayerTreeScrollingPerformanceData::didCommitLayerTree(const FloatRect& visibleRect)
 {
     // FIXME: maybe we only care about newly created tiles?
-    appendBlankPixelCount(BlankPixelCount::Filled, blankPixelCount(visibleRect));
+    appendBlankPixelCount(ScrollingLogEvent::Filled, blankPixelCount(visibleRect));
+    logData();
 }
 
 void RemoteLayerTreeScrollingPerformanceData::didScroll(const FloatRect& visibleRect)
 {
-    appendBlankPixelCount(BlankPixelCount::Exposed, blankPixelCount(visibleRect));
+    auto pixelCount = blankPixelCount(visibleRect);
+#if PLATFORM(MAC)
+    if (pixelCount || m_lastUnfilledArea)
+        m_lastUnfilledArea = pixelCount;
+    else
+        return;
+#endif
+    appendBlankPixelCount(ScrollingLogEvent::Exposed, pixelCount);
+    logData();
 }
 
-bool RemoteLayerTreeScrollingPerformanceData::BlankPixelCount::canCoalesce(BlankPixelCount::EventType type, unsigned pixelCount) const
+bool RemoteLayerTreeScrollingPerformanceData::ScrollingLogEvent::canCoalesce(ScrollingLogEvent::EventType type, uint64_t pixelCount) const
 {
-    return eventType == type && blankPixelCount == pixelCount;
+    return eventType == type && value == pixelCount;
 }
 
-void RemoteLayerTreeScrollingPerformanceData::appendBlankPixelCount(BlankPixelCount::EventType eventType, unsigned blankPixelCount)
+void RemoteLayerTreeScrollingPerformanceData::didChangeSynchronousScrollingReasons(WTF::MonotonicTime timestamp, uint64_t data)
 {
-    double now = CFAbsoluteTimeGetCurrent();
-    if (!m_blankPixelCounts.isEmpty() && m_blankPixelCounts.last().canCoalesce(eventType, blankPixelCount)) {
-        m_blankPixelCounts.last().endTime = now;
+    appendSynchronousScrollingChange(timestamp, data);
+    logData();
+}
+
+void RemoteLayerTreeScrollingPerformanceData::appendBlankPixelCount(ScrollingLogEvent::EventType eventType, uint64_t blankPixelCount)
+{
+    auto now = MonotonicTime::now();
+#if !PLATFORM(MAC)
+    if (!m_events.isEmpty() && m_events.last().canCoalesce(eventType, blankPixelCount)) {
+        m_events.last().endTime = now;
         return;
     }
+#endif
+    m_events.append(ScrollingLogEvent(now, now, eventType, blankPixelCount));
+}
 
-    m_blankPixelCounts.append(BlankPixelCount(now, now, eventType, blankPixelCount));
+void RemoteLayerTreeScrollingPerformanceData::appendSynchronousScrollingChange(WTF::MonotonicTime timestamp, uint64_t scrollingChangeData)
+{
+    m_events.append(ScrollingLogEvent(timestamp, timestamp, ScrollingLogEvent::SwitchedScrollingMode, scrollingChangeData));
 }
 
 NSArray *RemoteLayerTreeScrollingPerformanceData::data()
 {
-    return createNSArray(m_blankPixelCounts, [] (auto& pixelData) {
+    return createNSArray(m_events, [] (auto& pixelData) {
         return @[
-            @(pixelData.startTime),
-            (pixelData.eventType == BlankPixelCount::Filled) ? @"filled" : @"exposed",
-            @(pixelData.blankPixelCount)
+            @(pixelData.startTime.toMachAbsoluteTime()),
+            (pixelData.eventType == ScrollingLogEvent::Filled) ? @"filled" : @"exposed",
+            @(pixelData.value)
         ];
     }).autorelease();
 }
@@ -125,6 +148,31 @@ unsigned RemoteLayerTreeScrollingPerformanceData::blankPixelCount(const FloatRec
     uncoveredRegion.subtract(paintedVisibleTileRegion);
 
     return uncoveredRegion.totalArea();
+}
+
+void RemoteLayerTreeScrollingPerformanceData::logData()
+{
+#if PLATFORM(MAC)
+    for (auto event : m_events) {
+        switch (event.eventType) {
+        case ScrollingLogEvent::SwitchedScrollingMode: {
+            m_drawingArea.page().logScrollingEvent(static_cast<uint32_t>(PerformanceLoggingClient::ScrollingEvent::SwitchedScrollingMode), event.startTime, event.value);
+            break;
+        }
+        case ScrollingLogEvent::Exposed: {
+            m_drawingArea.page().logScrollingEvent(static_cast<uint32_t>(PerformanceLoggingClient::ScrollingEvent::ExposedTilelessArea), event.startTime, event.value);
+            break;
+        }
+        case ScrollingLogEvent::Filled: {
+            m_drawingArea.page().logScrollingEvent(static_cast<uint32_t>(PerformanceLoggingClient::ScrollingEvent::FilledTile), event.startTime, event.value);
+            break;
+        }
+        default:
+            break;
+        }
+    }
+    m_events.clear();
+#endif
 }
 
 }

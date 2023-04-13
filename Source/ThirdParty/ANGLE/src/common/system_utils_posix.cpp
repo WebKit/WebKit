@@ -197,7 +197,7 @@ void *OpenSystemLibraryWithExtensionAndGetError(const char *libraryName,
     std::string directory;
     if (searchType == SearchType::ModuleDir)
     {
-#if ANGLE_PLATFORM_IOS
+#if ANGLE_PLATFORM_APPLE_EMBEDDED
         // On iOS, shared libraries must be loaded from within the app bundle.
         directory = GetExecutableDirectory() + "/Frameworks/";
 #elif ANGLE_PLATFORM_FUCHSIA

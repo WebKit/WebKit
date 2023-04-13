@@ -94,12 +94,12 @@ void TextCodecCJK::registerEncodingNames(EncodingNameRegistrar registrar)
         "ksc5601",
         "ksc_5601",
         "windows-949",
-        
+
         // These aliases are not in the specification, but WebKit has historically supported them.
         "x-windows-949",
         "x-uhc",
     });
-    
+
     registerAliases({
         "ISO-2022-JP",
         "csiso2022jp"
@@ -423,7 +423,7 @@ String TextCodecCJK::iso2022JPDecode(const uint8_t* bytes, size_t length, bool f
         }
         return SawError::No;
     };
-    
+
     StringBuilder result;
     result.reserveCapacity(length);
 
@@ -506,14 +506,14 @@ static Vector<uint8_t> iso2022JPEncode(StringView string, Function<void(UChar32,
 
     Vector<uint8_t> result;
     result.reserveInitialCapacity(string.length());
-    
+
     auto changeStateToASCII = [&] {
         state = State::ASCII;
         result.append(0x1B);
         result.append(0x28);
         result.append(0x42);
     };
-    
+
     auto statefulUnencodableHandler = [&] (UChar32 codePoint, Vector<uint8_t>& result) {
         if (state == State::Jis0208)
             changeStateToASCII();
@@ -588,14 +588,14 @@ static Vector<uint8_t> iso2022JPEncode(StringView string, Function<void(UChar32,
         result.append(*pointer / 94 + 0x21);
         result.append(*pointer % 94 + 0x21);
     };
-    
+
     auto characters = string.upconvertedCharacters();
     for (WTF::CodePointIterator<UChar> iterator(characters.get(), characters.get() + string.length()); !iterator.atEnd(); ++iterator)
         parseCodePoint(*iterator);
 
     if (state != State::ASCII)
         changeStateToASCII();
-    
+
     return result;
 }
 
@@ -664,7 +664,7 @@ static Vector<uint8_t> shiftJISEncode(StringView string, Function<void(UChar32, 
         }
         if (codePoint == 0x2212)
             codePoint = 0xFF0D;
-        
+
         auto range = findInSortedPairs(jis0208EncodeIndex(), codePoint);
         if (range.first == range.second) {
             unencodableHandler(codePoint, result);
@@ -718,7 +718,7 @@ static Vector<uint8_t> eucKREncode(StringView string, Function<void(UChar32, Vec
             result.append(codePoint);
             continue;
         }
-        
+
         auto pointer = findFirstInSortedPairs(eucKREncodingIndex(), codePoint);
         if (!pointer) {
             unencodableHandler(codePoint, result);
@@ -806,7 +806,7 @@ static Vector<uint8_t> big5Encode(StringView string, Function<void(UChar32, Vect
             unencodableHandler(codePoint, result);
             continue;
         }
-        
+
         uint8_t lead = pointer / 157 + 0x81;
         uint8_t trail = pointer % 157;
         uint8_t offset = trail < 0x3F ? 0x40 : 0x62;
@@ -1081,16 +1081,9 @@ static void entityUnencodableHandler(UChar32 c, Vector<uint8_t>& result)
     result.uncheckedAppend(';');
 }
 
-static void questionMarkUnencodableHandler(UChar32, Vector<uint8_t>& result)
-{
-    result.append('?');
-}
-
 Function<void(UChar32, Vector<uint8_t>&)> unencodableHandler(UnencodableHandling handling)
 {
     switch (handling) {
-    case UnencodableHandling::QuestionMarks:
-        return questionMarkUnencodableHandler;
     case UnencodableHandling::Entities:
         return entityUnencodableHandler;
     case UnencodableHandling::URLEncodedEntities:

@@ -43,23 +43,3 @@ enum class PlatformVideoMatrixCoefficients : uint8_t {
 };
 
 } // namespace WebCore
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::PlatformVideoMatrixCoefficients> {
-    using values = EnumValues<
-        WebCore::PlatformVideoMatrixCoefficients,
-        WebCore::PlatformVideoMatrixCoefficients::Rgb,
-        WebCore::PlatformVideoMatrixCoefficients::Bt709,
-        WebCore::PlatformVideoMatrixCoefficients::Bt470bg,
-        WebCore::PlatformVideoMatrixCoefficients::Smpte170m,
-        WebCore::PlatformVideoMatrixCoefficients::Smpte240m,
-        WebCore::PlatformVideoMatrixCoefficients::Fcc,
-        WebCore::PlatformVideoMatrixCoefficients::YCgCo,
-        WebCore::PlatformVideoMatrixCoefficients::Bt2020NonconstantLuminance,
-        WebCore::PlatformVideoMatrixCoefficients::Bt2020ConstantLuminance,
-        WebCore::PlatformVideoMatrixCoefficients::Unspecified
-    >;
-};
-
-}

@@ -195,6 +195,13 @@ class TCompiler : public TShHandleBase
 
     sh::GLenum getShaderType() const { return mShaderType; }
 
+    // Generate a self-contained binary representation of the shader.
+    bool getShaderBinary(const ShHandle compilerHandle,
+                         const char *const shaderStrings[],
+                         size_t numStrings,
+                         const ShCompileOptions &compileOptions,
+                         ShaderBinaryBlob *const binaryOut);
+
     // Validate the AST and produce errors if it is inconsistent.
     bool validateAST(TIntermNode *root);
     // Some transformations may need to temporarily disable validation until they are complete.  A

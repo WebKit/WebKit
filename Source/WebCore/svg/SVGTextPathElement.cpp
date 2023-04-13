@@ -63,26 +63,26 @@ void SVGTextPathElement::clearResourceReferences()
     removeElementReference();
 }
 
-void SVGTextPathElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void SVGTextPathElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     SVGParsingError parseError = NoError;
 
     if (name == SVGNames::startOffsetAttr)
-        m_startOffset->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Other, value, parseError));
+        m_startOffset->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Other, newValue, parseError));
     else if (name == SVGNames::methodAttr) {
-        SVGTextPathMethodType propertyValue = SVGPropertyTraits<SVGTextPathMethodType>::fromString(value);
+        SVGTextPathMethodType propertyValue = SVGPropertyTraits<SVGTextPathMethodType>::fromString(newValue);
         if (propertyValue > 0)
             m_method->setBaseValInternal<SVGTextPathMethodType>(propertyValue);
     } else if (name == SVGNames::spacingAttr) {
-        SVGTextPathSpacingType propertyValue = SVGPropertyTraits<SVGTextPathSpacingType>::fromString(value);
+        SVGTextPathSpacingType propertyValue = SVGPropertyTraits<SVGTextPathSpacingType>::fromString(newValue);
         if (propertyValue > 0)
             m_spacing->setBaseValInternal<SVGTextPathSpacingType>(propertyValue);
     }
 
-    reportAttributeParsingError(parseError, name, value);
+    reportAttributeParsingError(parseError, name, newValue);
 
-    SVGTextContentElement::parseAttribute(name, value);
-    SVGURIReference::parseAttribute(name, value);
+    SVGURIReference::parseAttribute(name, newValue);
+    SVGTextContentElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }
 
 void SVGTextPathElement::svgAttributeChanged(const QualifiedName& attrName)

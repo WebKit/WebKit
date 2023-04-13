@@ -69,11 +69,13 @@ public:
 
     float inkOverflowTop() const;
     float inkOverflowBottom() const;
+    float scrollableOverflowTop() const;
+    float scrollableOverflowBottom() const;
 
     const RenderStyle& style() const { return isFirst() ? formattingContextRoot().firstLineStyle() : formattingContextRoot().style(); }
 
     bool hasEllipsis() const;
-    enum AdjustedForSelection : uint8_t { No, Yes };
+    enum AdjustedForSelection : bool { No, Yes };
     FloatRect ellipsisVisualRect(AdjustedForSelection = AdjustedForSelection::No) const;
     TextRun ellipsisText() const;
     RenderObject::HighlightState ellipsisSelectionState() const;
@@ -92,6 +94,8 @@ public:
 
     LineBoxIterator next() const;
     LineBoxIterator previous() const;
+
+    size_t lineIndex() const;
 
 private:
     friend class LineBoxIterator;
@@ -129,6 +133,8 @@ private:
 
 WEBCORE_EXPORT LineBoxIterator firstLineBoxFor(const RenderBlockFlow&);
 LineBoxIterator lastLineBoxFor(const RenderBlockFlow&);
+LineBoxIterator lineBoxFor(const LayoutIntegration::InlineContent&, size_t lineIndex);
+
 LeafBoxIterator closestBoxForHorizontalPosition(const LineBox&, float horizontalPosition, bool editableOnly = false);
 
 // -----------------------------------------------
@@ -209,6 +215,20 @@ inline float LineBox::inkOverflowBottom() const
 {
     return WTF::switchOn(m_pathVariant, [](const auto& path) {
         return path.inkOverflowBottom();
+    });
+}
+
+inline float LineBox::scrollableOverflowTop() const
+{
+    return WTF::switchOn(m_pathVariant, [](const auto& path) {
+        return path.scrollableOverflowTop();
+    });
+}
+
+inline float LineBox::scrollableOverflowBottom() const
+{
+    return WTF::switchOn(m_pathVariant, [](const auto& path) {
+        return path.scrollableOverflowBottom();
     });
 }
 
@@ -312,6 +332,13 @@ inline bool LineBox::isFirstAfterPageBreak() const
 inline bool LineBox::isFirst() const
 {
     return !previous();
+}
+
+inline size_t LineBox::lineIndex() const
+{
+    return WTF::switchOn(m_pathVariant, [](const auto& path) {
+        return path.lineIndex();
+    });
 }
 
 }

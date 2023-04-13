@@ -23,6 +23,7 @@
 
 #include "ActiveDOMObject.h"
 #include "DeprecatedGlobalSettings.h"
+#include "Document.h"
 #include "EventNames.h"
 #include "ExtendedDOMClientIsoSubspaces.h"
 #include "ExtendedDOMIsoSubspaces.h"
@@ -165,28 +166,28 @@ template<> void JSTestDefaultToJSONDOMConstructor::initializeProperties(VM& vm, 
 
 static const HashTableValue JSTestDefaultToJSONPrototypeTableValues[] =
 {
-    { "constructor"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestDefaultToJSONConstructor, 0 } },
-    { "longAttribute"_s, static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestDefaultToJSON_longAttribute, 0 } },
-    { "enabledBySettingsAttribute"_s, static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestDefaultToJSON_enabledBySettingsAttribute, 0 } },
+    { "constructor"_s, static_cast<unsigned>(PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestDefaultToJSONConstructor, 0 } },
+    { "longAttribute"_s, JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestDefaultToJSON_longAttribute, 0 } },
+    { "enabledBySettingsAttribute"_s, JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestDefaultToJSON_enabledBySettingsAttribute, 0 } },
 #if ENABLE(TEST_CONDITIONAL)
-    { "enabledByConditionalAttribute"_s, static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestDefaultToJSON_enabledByConditionalAttribute, 0 } },
+    { "enabledByConditionalAttribute"_s, JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestDefaultToJSON_enabledByConditionalAttribute, 0 } },
 #else
     { { }, 0, NoIntrinsic, { HashTableValue::End } },
 #endif
-    { "eventHandlerAttribute"_s, static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestDefaultToJSON_eventHandlerAttribute, setJSTestDefaultToJSON_eventHandlerAttribute } },
-    { "firstStringAttribute"_s, static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestDefaultToJSON_firstStringAttribute, setJSTestDefaultToJSON_firstStringAttribute } },
-    { "secondLongAttribute"_s, static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestDefaultToJSON_secondLongAttribute, setJSTestDefaultToJSON_secondLongAttribute } },
-    { "thirdUnJSONableAttribute"_s, static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestDefaultToJSON_thirdUnJSONableAttribute, setJSTestDefaultToJSON_thirdUnJSONableAttribute } },
-    { "fourthUnrestrictedDoubleAttribute"_s, static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestDefaultToJSON_fourthUnrestrictedDoubleAttribute, setJSTestDefaultToJSON_fourthUnrestrictedDoubleAttribute } },
-    { "fifthLongClampedAttribute"_s, static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestDefaultToJSON_fifthLongClampedAttribute, setJSTestDefaultToJSON_fifthLongClampedAttribute } },
-    { "sixthTypedefAttribute"_s, static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestDefaultToJSON_sixthTypedefAttribute, setJSTestDefaultToJSON_sixthTypedefAttribute } },
-    { "seventhDirectlyToJSONableAttribute"_s, static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestDefaultToJSON_seventhDirectlyToJSONableAttribute, setJSTestDefaultToJSON_seventhDirectlyToJSONableAttribute } },
-    { "eighthIndirectlyAttribute"_s, static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestDefaultToJSON_eighthIndirectlyAttribute, setJSTestDefaultToJSON_eighthIndirectlyAttribute } },
-    { "ninthOptionalDirectlyToJSONableAttribute"_s, static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestDefaultToJSON_ninthOptionalDirectlyToJSONableAttribute, setJSTestDefaultToJSON_ninthOptionalDirectlyToJSONableAttribute } },
-    { "tenthFrozenArrayAttribute"_s, static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestDefaultToJSON_tenthFrozenArrayAttribute, setJSTestDefaultToJSON_tenthFrozenArrayAttribute } },
-    { "eleventhSequenceAttribute"_s, static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestDefaultToJSON_eleventhSequenceAttribute, setJSTestDefaultToJSON_eleventhSequenceAttribute } },
-    { "twelfthInterfaceSequenceAttribute"_s, static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestDefaultToJSON_twelfthInterfaceSequenceAttribute, setJSTestDefaultToJSON_twelfthInterfaceSequenceAttribute } },
-    { "thirteenthRecordAttribute"_s, static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestDefaultToJSON_thirteenthRecordAttribute, setJSTestDefaultToJSON_thirteenthRecordAttribute } },
+    { "eventHandlerAttribute"_s, JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestDefaultToJSON_eventHandlerAttribute, setJSTestDefaultToJSON_eventHandlerAttribute } },
+    { "firstStringAttribute"_s, JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestDefaultToJSON_firstStringAttribute, setJSTestDefaultToJSON_firstStringAttribute } },
+    { "secondLongAttribute"_s, JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestDefaultToJSON_secondLongAttribute, setJSTestDefaultToJSON_secondLongAttribute } },
+    { "thirdUnJSONableAttribute"_s, JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestDefaultToJSON_thirdUnJSONableAttribute, setJSTestDefaultToJSON_thirdUnJSONableAttribute } },
+    { "fourthUnrestrictedDoubleAttribute"_s, JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestDefaultToJSON_fourthUnrestrictedDoubleAttribute, setJSTestDefaultToJSON_fourthUnrestrictedDoubleAttribute } },
+    { "fifthLongClampedAttribute"_s, JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestDefaultToJSON_fifthLongClampedAttribute, setJSTestDefaultToJSON_fifthLongClampedAttribute } },
+    { "sixthTypedefAttribute"_s, JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestDefaultToJSON_sixthTypedefAttribute, setJSTestDefaultToJSON_sixthTypedefAttribute } },
+    { "seventhDirectlyToJSONableAttribute"_s, JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestDefaultToJSON_seventhDirectlyToJSONableAttribute, setJSTestDefaultToJSON_seventhDirectlyToJSONableAttribute } },
+    { "eighthIndirectlyAttribute"_s, JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestDefaultToJSON_eighthIndirectlyAttribute, setJSTestDefaultToJSON_eighthIndirectlyAttribute } },
+    { "ninthOptionalDirectlyToJSONableAttribute"_s, JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestDefaultToJSON_ninthOptionalDirectlyToJSONableAttribute, setJSTestDefaultToJSON_ninthOptionalDirectlyToJSONableAttribute } },
+    { "tenthFrozenArrayAttribute"_s, JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestDefaultToJSON_tenthFrozenArrayAttribute, setJSTestDefaultToJSON_tenthFrozenArrayAttribute } },
+    { "eleventhSequenceAttribute"_s, JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestDefaultToJSON_eleventhSequenceAttribute, setJSTestDefaultToJSON_eleventhSequenceAttribute } },
+    { "twelfthInterfaceSequenceAttribute"_s, JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestDefaultToJSON_twelfthInterfaceSequenceAttribute, setJSTestDefaultToJSON_twelfthInterfaceSequenceAttribute } },
+    { "thirteenthRecordAttribute"_s, JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestDefaultToJSON_thirteenthRecordAttribute, setJSTestDefaultToJSON_thirteenthRecordAttribute } },
     { "toJSON"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestDefaultToJSONPrototypeFunction_toJSON, 0 } },
 };
 
@@ -204,7 +205,7 @@ void JSTestDefaultToJSONPrototype::finishCreation(VM& vm)
         DeletePropertySlot slot;
         JSObject::deleteProperty(this, globalObject(), propertyName, slot);
     }
-    if (!jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->settingsValues().testSettingEnabled) {
+    if (!downcast<Document>(jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext())->settingsValues().testSettingEnabled) {
         hasDisabledRuntimeProperties = true;
         auto propertyName = Identifier::fromString(vm, "enabledBySettingsAttribute"_s);
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
@@ -234,7 +235,9 @@ void JSTestDefaultToJSON::finishCreation(VM& vm)
 
 JSObject* JSTestDefaultToJSON::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    return JSTestDefaultToJSONPrototype::create(vm, &globalObject, JSTestDefaultToJSONPrototype::createStructure(vm, &globalObject, globalObject.objectPrototype()));
+    auto* structure = JSTestDefaultToJSONPrototype::createStructure(vm, &globalObject, globalObject.objectPrototype());
+    structure->setMayBePrototype(true);
+    return JSTestDefaultToJSONPrototype::create(vm, &globalObject, structure);
 }
 
 JSObject* JSTestDefaultToJSON::prototype(VM& vm, JSDOMGlobalObject& globalObject)
@@ -760,7 +763,7 @@ static inline EncodedJSValue jsTestDefaultToJSONPrototypeFunction_toJSONBody(JSG
         RETURN_IF_EXCEPTION(throwScope, { });
         result->putDirect(vm, Identifier::fromString(vm, "longAttribute"_s), longAttributeValue);
     }
-    if (jsCast<JSDOMGlobalObject*>(castedThis->globalObject())->scriptExecutionContext()->settingsValues().testSettingEnabled) {
+    if (downcast<Document>(jsCast<JSDOMGlobalObject*>(castedThis->globalObject())->scriptExecutionContext())->settingsValues().testSettingEnabled) {
         auto enabledBySettingsAttributeValue = toJS<IDLUnsignedShort>(*lexicalGlobalObject, throwScope, impl.enabledBySettingsAttribute());
         RETURN_IF_EXCEPTION(throwScope, { });
         result->putDirect(vm, Identifier::fromString(vm, "enabledBySettingsAttribute"_s), enabledBySettingsAttributeValue);
@@ -830,7 +833,7 @@ void JSTestDefaultToJSON::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
     auto* thisObject = jsCast<JSTestDefaultToJSON*>(cell);
     analyzer.setWrappedObjectForCell(cell, &thisObject->wrapped());
     if (thisObject->scriptExecutionContext())
-        analyzer.setLabelForCell(cell, "url " + thisObject->scriptExecutionContext()->url().string());
+        analyzer.setLabelForCell(cell, "url "_s + thisObject->scriptExecutionContext()->url().string());
     Base::analyzeHeap(cell, analyzer);
 }
 

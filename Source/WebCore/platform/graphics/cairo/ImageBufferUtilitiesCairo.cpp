@@ -82,7 +82,7 @@ static bool encodeImage(cairo_surface_t* surface, const String& mimeType, std::o
     if (type != "jpeg"_s && type != "png"_s && type != "tiff"_s && type != "ico"_s && type != "bmp"_s)
         return false;
 
-    GRefPtr<GdkPixbuf> pixbuf = adoptGRef(cairoSurfaceToGdkPixbuf(surface));
+    auto pixbuf = cairoSurfaceToGdkPixbuf(surface);
     if (!pixbuf)
         return false;
 

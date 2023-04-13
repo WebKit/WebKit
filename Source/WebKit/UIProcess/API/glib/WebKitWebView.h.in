@@ -36,7 +36,9 @@
 #include <@API_INCLUDE_PREFIX@/WebKitFormSubmissionRequest.h>
 #include <@API_INCLUDE_PREFIX@/WebKitHitTestResult.h>
 #include <@API_INCLUDE_PREFIX@/WebKitInputMethodContext.h>
+#if !ENABLE(2022_GLIB_API)
 #include <@API_INCLUDE_PREFIX@/WebKitJavascriptResult.h>
+#endif
 #include <@API_INCLUDE_PREFIX@/WebKitNavigationAction.h>
 #include <@API_INCLUDE_PREFIX@/WebKitNotification.h>
 #include <@API_INCLUDE_PREFIX@/WebKitOptionMenu.h>
@@ -59,7 +61,9 @@
 #endif
 
 #if PLATFORM(GTK)
+#if !ENABLE(2022_GLIB_API)
 #include <JavaScriptCore/JSBase.h>
+#endif
 #include <webkit/WebKitColorChooserRequest.h>
 #include <webkit/WebKitWebInspector.h>
 #include <webkit/WebKitWebViewBase.h>
@@ -72,17 +76,22 @@
 G_BEGIN_DECLS
 
 #define WEBKIT_TYPE_WEB_VIEW            (webkit_web_view_get_type())
+#if !ENABLE(2022_GLIB_API)
 #define WEBKIT_WEB_VIEW(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), WEBKIT_TYPE_WEB_VIEW, WebKitWebView))
 #define WEBKIT_IS_WEB_VIEW(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), WEBKIT_TYPE_WEB_VIEW))
 #define WEBKIT_WEB_VIEW_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass),  WEBKIT_TYPE_WEB_VIEW, WebKitWebViewClass))
 #define WEBKIT_IS_WEB_VIEW_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass),  WEBKIT_TYPE_WEB_VIEW))
 #define WEBKIT_WEB_VIEW_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj),  WEBKIT_TYPE_WEB_VIEW, WebKitWebViewClass))
+#endif
+
+#if PLATFORM(GTK)
+WEBKIT_DECLARE_DERIVABLE_TYPE (WebKitWebView, webkit_web_view, WEBKIT, WEB_VIEW, WebKitWebViewBase)
+#elif PLATFORM(WPE)
+WEBKIT_DECLARE_DERIVABLE_TYPE (WebKitWebView, webkit_web_view, WEBKIT, WEB_VIEW, GObject)
+#else
+#endif
 
 typedef struct _WebKitPrintOperation WebKitPrintOperation;
-
-typedef struct _WebKitWebView        WebKitWebView;
-typedef struct _WebKitWebViewClass   WebKitWebViewClass;
-typedef struct _WebKitWebViewPrivate WebKitWebViewPrivate;
 
 /**
  * WebKitPolicyDecisionType:
@@ -267,17 +276,6 @@ typedef void (* WebKitFrameDisplayedCallback) (WebKitWebView *web_view,
                                                gpointer       user_data);
 #endif
 
-struct _WebKitWebView {
-#if PLATFORM(GTK)
-    WebKitWebViewBase parent;
-#elif PLATFORM(WPE)
-    GObject parent;
-#endif
-
-    /*< private >*/
-    WebKitWebViewPrivate *priv;
-};
-
 struct _WebKitWebViewClass {
 #if PLATFORM(GTK)
     WebKitWebViewBaseClass parent;
@@ -427,17 +425,14 @@ struct _WebKitWebViewClass {
 #endif
 };
 
-WEBKIT_API GType
-webkit_web_view_get_type                             (void);
-
 #if PLATFORM(GTK)
 WEBKIT_API GtkWidget *
 webkit_web_view_new                                  (void);
 
+#if !ENABLE(2022_GLIB_API)
 WEBKIT_API GtkWidget *
 webkit_web_view_new_with_related_view                (WebKitWebView             *web_view);
 
-#if !ENABLE(2022_GLIB_API)
 WEBKIT_API GtkWidget *
 webkit_web_view_new_with_context                     (WebKitWebContext          *context);
 
@@ -453,11 +448,11 @@ webkit_web_view_new_with_user_content_manager        (WebKitUserContentManager  
 WEBKIT_API WebKitWebView *
 webkit_web_view_new                                  (WebKitWebViewBackend      *backend);
 
+#if !ENABLE(2022_GLIB_API)
 WEBKIT_API WebKitWebView *
 webkit_web_view_new_with_related_view                (WebKitWebViewBackend      *backend,
                                                       WebKitWebView             *web_view);
 
-#if !ENABLE(2022_GLIB_API)
 WEBKIT_API WebKitWebView *
 webkit_web_view_new_with_context                     (WebKitWebViewBackend      *backend,
                                                       WebKitWebContext          *context);
@@ -581,8 +576,13 @@ WEBKIT_API const gchar *
 webkit_web_view_get_uri                              (WebKitWebView             *web_view);
 
 #if PLATFORM(GTK)
+#if USE(GTK4)
+WEBKIT_API GdkTexture *
+webkit_web_view_get_favicon                          (WebKitWebView             *web_view);
+#else
 WEBKIT_API cairo_surface_t *
 webkit_web_view_get_favicon                          (WebKitWebView             *web_view);
+#endif
 #endif
 
 WEBKIT_API const gchar *
@@ -632,35 +632,67 @@ webkit_web_view_execute_editing_command_with_argument(WebKitWebView             
 WEBKIT_API WebKitFindController *
 webkit_web_view_get_find_controller                  (WebKitWebView             *web_view);
 
-#if PLATFORM(GTK) && !USE(GTK4)
+#if PLATFORM(GTK) && !ENABLE(2022_GLIB_API)
 WEBKIT_DEPRECATED JSGlobalContextRef
 webkit_web_view_get_javascript_global_context        (WebKitWebView             *web_view);
 #endif
 
 WEBKIT_API void
+webkit_web_view_evaluate_javascript                  (WebKitWebView             *web_view,
+                                                      const char                *script,
+                                                      gssize                     length,
+                                                      const char                *world_name,
+                                                      const char                *source_uri,
+                                                      GCancellable              *cancellable,
+                                                      GAsyncReadyCallback        callback,
+                                                      gpointer                   user_data);
+
+WEBKIT_API JSCValue *
+webkit_web_view_evaluate_javascript_finish           (WebKitWebView             *web_view,
+                                                      GAsyncResult              *result,
+                                                      GError                   **error);
+
+WEBKIT_API void
+webkit_web_view_call_async_javascript_function       (WebKitWebView             *web_view,
+                                                      const char                *body,
+                                                      gssize                     length,
+                                                      GVariant                  *arguments,
+                                                      const char                *world_name,
+                                                      const char                *source_uri,
+                                                      GCancellable              *cancellable,
+                                                      GAsyncReadyCallback        callback,
+                                                      gpointer                   user_data);
+
+WEBKIT_API JSCValue *
+webkit_web_view_call_async_javascript_function_finish(WebKitWebView             *web_view,
+                                                      GAsyncResult              *result,
+                                                      GError                   **error);
+
+#if !ENABLE(2022_GLIB_API)
+WEBKIT_DEPRECATED_FOR(webkit_web_view_evaluate_javascript) void
 webkit_web_view_run_javascript                       (WebKitWebView             *web_view,
                                                       const gchar               *script,
                                                       GCancellable              *cancellable,
                                                       GAsyncReadyCallback        callback,
                                                       gpointer                   user_data);
-WEBKIT_API WebKitJavascriptResult *
+WEBKIT_DEPRECATED_FOR(webkit_web_view_evaluate_javascript_finish) WebKitJavascriptResult *
 webkit_web_view_run_javascript_finish                (WebKitWebView             *web_view,
                                                       GAsyncResult              *result,
                                                       GError                   **error);
 
-WEBKIT_API void
+WEBKIT_DEPRECATED_FOR(webkit_web_view_evaluate_javascript) void
 webkit_web_view_run_javascript_in_world              (WebKitWebView             *web_view,
                                                       const gchar               *script,
                                                       const gchar               *world_name,
                                                       GCancellable              *cancellable,
                                                       GAsyncReadyCallback        callback,
                                                       gpointer                   user_data);
-WEBKIT_API WebKitJavascriptResult *
+WEBKIT_DEPRECATED_FOR(webkit_web_view_evaluate_javascript_finish) WebKitJavascriptResult *
 webkit_web_view_run_javascript_in_world_finish       (WebKitWebView             *web_view,
                                                       GAsyncResult              *result,
                                                       GError                   **error);
 
-WEBKIT_API void
+WEBKIT_DEPRECATED_FOR(webkit_web_view_call_async_javascript_function) void
 webkit_web_view_run_async_javascript_function_in_world (WebKitWebView           *web_view,
                                                         const gchar             *body,
                                                         GVariant                *arguments,
@@ -669,17 +701,18 @@ webkit_web_view_run_async_javascript_function_in_world (WebKitWebView           
                                                         GAsyncReadyCallback      callback,
                                                         gpointer                 user_data);
 
-WEBKIT_API void
+WEBKIT_DEPRECATED_FOR(webkit_web_view_evaluate_javascript) void
 webkit_web_view_run_javascript_from_gresource        (WebKitWebView             *web_view,
                                                       const gchar               *resource,
                                                       GCancellable              *cancellable,
                                                       GAsyncReadyCallback        callback,
                                                       gpointer                   user_data);
 
-WEBKIT_API WebKitJavascriptResult *
+WEBKIT_DEPRECATED_FOR(webkit_web_view_evaluate_javascript_finish) WebKitJavascriptResult *
 webkit_web_view_run_javascript_from_gresource_finish (WebKitWebView             *web_view,
                                                       GAsyncResult              *result,
                                                       GError                   **error);
+#endif
 
 WEBKIT_API WebKitWebResource *
 webkit_web_view_get_main_resource                    (WebKitWebView             *web_view);
@@ -735,11 +768,17 @@ webkit_web_view_get_snapshot                         (WebKitWebView             
                                                       GCancellable              *cancellable,
                                                       GAsyncReadyCallback        callback,
                                                       gpointer                   user_data);
-
+#if USE(GTK4)
+WEBKIT_API GdkTexture *
+webkit_web_view_get_snapshot_finish                  (WebKitWebView             *web_view,
+                                                      GAsyncResult              *result,
+                                                      GError                   **error);
+#else
 WEBKIT_API cairo_surface_t *
 webkit_web_view_get_snapshot_finish                  (WebKitWebView             *web_view,
                                                       GAsyncResult              *result,
                                                       GError                   **error);
+#endif
 #endif
 
 WEBKIT_API WebKitUserContentManager *

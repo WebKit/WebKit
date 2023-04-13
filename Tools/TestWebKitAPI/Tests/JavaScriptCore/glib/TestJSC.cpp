@@ -631,6 +631,10 @@ static JSCClassVTable moduleVTable = {
     nullptr,
     // padding
     nullptr, nullptr, nullptr, nullptr
+#if ENABLE(2022_GLIB_API)
+    // more padding
+    , nullptr, nullptr, nullptr, nullptr
+#endif
 };
 
 static void testJSCEvaluateInObject()
@@ -1834,6 +1838,10 @@ static JSCClassVTable fooVTable = {
     },
     // padding
     nullptr, nullptr, nullptr, nullptr
+#if ENABLE(2022_GLIB_API)
+    // more padding
+    , nullptr, nullptr, nullptr, nullptr
+#endif
 };
 
 static GFile* createGFile(const char* path)
@@ -3368,6 +3376,10 @@ static JSCClassVTable barVTable = {
     },
     // padding
     nullptr, nullptr, nullptr, nullptr
+#if ENABLE(2022_GLIB_API)
+    // more padding
+    , nullptr, nullptr, nullptr, nullptr
+#endif
 };
 
 static void testJSCPrototypes()

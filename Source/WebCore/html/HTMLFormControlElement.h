@@ -43,6 +43,8 @@ public:
 
     bool matchesValidPseudoClass() const override { return ValidatedFormListedElement::matchesValidPseudoClass(); }
     bool matchesInvalidPseudoClass() const override { return ValidatedFormListedElement::matchesInvalidPseudoClass(); }
+    bool matchesUserValidPseudoClass() const override { return ValidatedFormListedElement::matchesUserValidPseudoClass(); }
+    bool matchesUserInvalidPseudoClass() const override { return ValidatedFormListedElement::matchesUserInvalidPseudoClass(); }
 
     bool isDisabledFormControl() const final { return isDisabled(); }
     bool supportsFocus() const override { return !isDisabled(); }
@@ -75,6 +77,7 @@ public:
     virtual bool isSuccessfulSubmitButton() const { return false; }
     virtual bool isActivatedSubmit() const { return false; }
     virtual void setActivatedSubmit(bool) { }
+    void finishParsingChildren() override;
 
 #if ENABLE(AUTOCORRECT)
     WEBCORE_EXPORT bool shouldAutocorrect() const final;
@@ -95,10 +98,15 @@ public:
 
     virtual String resultForDialogSubmit() const;
 
+    HTMLElement* popoverTargetElement() const;
+    const AtomString& popoverTargetAction() const;
+    void setPopoverTargetAction(const AtomString& value);
+
     using Node::ref;
     using Node::deref;
 
 protected:
+    constexpr static auto CreateHTMLFormControlElement = CreateHTMLElement | NodeFlag::HasCustomStyleResolveCallbacks;
     HTMLFormControlElement(const QualifiedName& tagName, Document&, HTMLFormElement*);
 
     InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) override;
@@ -106,8 +114,7 @@ protected:
     void didAttachRenderers() override;
     void didMoveToNewDocument(Document& oldDocument, Document& newDocument) override;
     void removedFromAncestor(RemovalType, ContainerNode&) override;
-    void parseAttribute(const QualifiedName&, const AtomString&) override;
-    void finishParsingChildren() override;
+    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
 
     void disabledStateChanged() override;
     void readOnlyStateChanged() override;
@@ -119,6 +126,10 @@ protected:
     void didRecalcStyle(Style::Change) override;
 
     void dispatchBlurEvent(RefPtr<Element>&& newFocusedElement) override;
+
+    void handlePopoverTargetAction() const;
+
+    void didChangeForm() override;
 
 private:
     void refFormAssociatedElement() const final { ref(); }

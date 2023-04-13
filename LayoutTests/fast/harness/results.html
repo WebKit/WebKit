@@ -1457,11 +1457,11 @@ class FailuresSectionBuilder extends SectionBuilder {
             let testExtension = Utils.splitExtension(testResult.name)[1];
 
             if (testResult.isMismatchRefTest()) {
-                result += TestResultsController.resultLink(this._resultsController.layoutTestsBasePath() + testPrefix, '-expected-mismatch.' + testExtension, 'ref mismatch');
+                result += TestResultsController.resultLink(this._resultsController.layoutTestsBasePath() + testPrefix, '-expected-mismatch' + testExtension, 'ref mismatch');
                 result += TestResultsController.resultLink(testPrefix, '-actual.png', 'actual');
             } else {
                 if (testResult.isMatchRefTest())
-                    result += TestResultsController.resultLink(this._resultsController.layoutTestsBasePath() + testPrefix, '-expected.' + testExtension, 'reference');
+                    result += TestResultsController.resultLink(this._resultsController.layoutTestsBasePath() + testPrefix, '-expected' + testExtension, 'reference');
 
                 if (this._resultsController.shouldToggleImages)
                     result += TestResultsController.resultLink(testPrefix, '-diffs.html', 'images');

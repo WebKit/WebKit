@@ -66,7 +66,7 @@ CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 // FIXME: <http://webkit.org/b/118590> DumpRenderTree should build with -Wshorten-64-to-32
 GCC_WARN_64_TO_32_BIT_CONVERSION[arch=arm64*] = NO;
 GCC_WARN_64_TO_32_BIT_CONVERSION[arch=x86_64] = NO;
-WARNING_CFLAGS = $(WK_COMMON_WARNING_CFLAGS) $(WK_FIXME_WARNING_CFLAGS);
+WARNING_CFLAGS = $(inherited) $(WK_FIXME_WARNING_CFLAGS);
 
 // Remove WK_FIXME_WARNING_CFLAGS once all warnings are fixed.
 WK_FIXME_WARNING_CFLAGS = -Wno-unused-parameter;
@@ -74,7 +74,7 @@ WK_FIXME_WARNING_CFLAGS = -Wno-unused-parameter;
 DEBUG_DEFINES = NDEBUG;
 DEBUG_DEFINES[config=Debug] = ;
 
-GCC_OPTIMIZATION_LEVEL[config=Debug] = 0;
+WK_DEFAULT_GCC_OPTIMIZATION_LEVEL[config=Debug] = 0;
 
 SDKROOT = macosx.internal;
 
@@ -85,12 +85,8 @@ SUPPORTED_PLATFORMS = iphoneos iphonesimulator macosx appletvos appletvsimulator
 SUPPORTS_MACCATALYST = YES;
 
 OTHER_CFLAGS = $(inherited) -isystem $(SDKROOT)/System/Library/Frameworks/System.framework/PrivateHeaders;
-OTHER_CPLUSPLUSFLAGS = $(inherited) -isystem $(SDKROOT)/System/Library/Frameworks/System.framework/PrivateHeaders;
 
 FRAMEWORK_SEARCH_PATHS = $(WK_PRIVATE_FRAMEWORK_STUBS_DIR) $(WK_QUOTED_OVERRIDE_FRAMEWORKS_DIR) $(inherited);
-
-WK_WHICH_BUILD_SYSTEM = not_;
-WK_WHICH_BUILD_SYSTEM = $(inherited)legacy;
 
 HEADER_SEARCH_PATHS = $(BUILT_PRODUCTS_DIR)/usr/local/include $(WEBCORE_TEST_SUPPORT_DIR) $(SDK_DIR)$(WK_ALTERNATE_WEBKIT_SDK_PATH)$(WK_LIBRARY_HEADERS_FOLDER_PATH) ForwardingHeaders $(HEADER_SEARCH_PATHS_$(WK_COCOA_TOUCH));
 HEADER_SEARCH_PATHS_ = mac/InternalHeaders $(SRCROOT)/../../Source/WebKitLegacy/mac/WebView;

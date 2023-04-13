@@ -35,7 +35,7 @@ class TextStream;
 namespace WebCore {
 
 class Element;
-class Frame;
+class LocalFrame;
 class RenderObject;
 
 enum class RenderAsTextFlag {
@@ -54,7 +54,7 @@ enum class RenderAsTextFlag {
 };
 
 // You don't need pageWidthInPixels if you don't specify RenderAsTextInPrintingMode.
-WEBCORE_EXPORT String externalRepresentation(Frame*, OptionSet<RenderAsTextFlag> = { });
+WEBCORE_EXPORT String externalRepresentation(LocalFrame*, OptionSet<RenderAsTextFlag> = { });
 WEBCORE_EXPORT String externalRepresentation(Element*, OptionSet<RenderAsTextFlag> = { });
 void write(WTF::TextStream&, const RenderObject&, OptionSet<RenderAsTextFlag> = { });
 void writeDebugInfo(WTF::TextStream&, const RenderObject&, OptionSet<RenderAsTextFlag> = { });

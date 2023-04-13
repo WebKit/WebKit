@@ -32,6 +32,7 @@
 #include <WebCore/ImageBuffer.h>
 #include <WebCore/PixelBuffer.h>
 #include <cmath>
+#include <type_traits>
 #include <wtf/MemoryFootprint.h>
 
 namespace TestWebKitAPI {
@@ -63,15 +64,16 @@ static TestPattern g_testPattern[] = {
     { { 0.5f, 0.5f, 0.5f, 0.5f }, Color::transparentBlack },
 };
 
-static ::testing::AssertionResult hasTestPattern(ImageBuffer& buffer)
+static ::testing::AssertionResult hasTestPattern(ImageBuffer& buffer, int seed)
 {
     // Test pattern draws fractional pixels when deviceScaleFactor is < 1.
     // For now, account this by sampling somewhere where the fractional pixels
     // are guaranteed to not exist (4 logical pixels inwards of the pattern
     // borders).
     static constexpr float fuzz = 4.0f;
-
-    for (auto pattern : g_testPattern) {
+    constexpr auto patternCount = std::extent_v<decltype(g_testPattern)>;
+    for (size_t i = 0; i < patternCount; ++i) {
+        auto& pattern = g_testPattern[(i + seed) % patternCount];
         auto rect = pattern.unitRect;
         rect.scale(buffer.logicalSize());
         rect = enclosingIntRect(rect);
@@ -89,14 +91,35 @@ static ::testing::AssertionResult hasTestPattern(ImageBuffer& buffer)
     return ::testing::AssertionSuccess();
 }
 
-static void drawTestPattern(ImageBuffer& buffer)
+static void drawTestPattern(ImageBuffer& buffer, int seed)
 {
-    for (auto pattern : g_testPattern) {
+    auto& context = buffer.context();
+    bool savedShouldAntialias = context.shouldAntialias();
+    context.setShouldAntialias(false);
+    constexpr auto patternCount = std::extent_v<decltype(g_testPattern)>;
+    for (size_t i = 0; i < patternCount; ++i) {
+        auto& pattern = g_testPattern[(i + seed) % patternCount];
         auto rect = pattern.unitRect;
         rect.scale(buffer.logicalSize());
         rect = enclosingIntRect(rect);
-        buffer.context().fillRect(rect, pattern.color);
+        context.fillRect(rect, pattern.color);
     }
+    context.setShouldAntialias(savedShouldAntialias);
+}
+
+static RefPtr<PixelBuffer> createPixelBufferTestPattern(IntSize size, AlphaPremultiplication alphaFormat, int seed)
+{
+    auto pattern = ImageBuffer::create(size, RenderingPurpose::Unspecified, 1.0f, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
+    if (!pattern)
+        return nullptr;
+    drawTestPattern(*pattern, 1);
+    EXPECT_TRUE(hasTestPattern(*pattern, 1));
+    if (!hasTestPattern(*pattern, 1)) {
+        ASSERT_NOT_REACHED();
+        return nullptr;
+    }
+    PixelBufferFormat testFormat { alphaFormat, PixelFormat::BGRA8, DestinationColorSpace::SRGB() };
+    return pattern->getPixelBuffer(testFormat, { { }, size }); 
 }
 
 // Tests that the specialized image buffer constructors construct the expected type of object.
@@ -196,7 +219,7 @@ TEST(ImageBufferTests, DISABLED_DrawImageBufferDoesNotReferenceExtraMemory)
     auto accelerated = ImageBuffer::create(logicalSize, RenderingPurpose::Unspecified, scale, colorSpace, pixelFormat, { ImageBufferOptions::Accelerated });
     auto fillRect = FloatRect { { }, logicalSize };
     accelerated->context().fillRect(fillRect, Color::green);
-    accelerated->flushContext();
+    accelerated->flushDrawingContext();
     EXPECT_TRUE(memoryFootprintChangedBy(lastFootprint, logicalSizeBytes, footprintError));
 
     auto unaccelerated = ImageBuffer::create(logicalSize, RenderingPurpose::Unspecified, scale, colorSpace, pixelFormat);
@@ -220,6 +243,13 @@ enum class TestImageBufferOptions {
     Accelerated, NoOptions
 };
 
+OptionSet<ImageBufferOptions> toImageBufferOptions(TestImageBufferOptions testOptions)
+{
+    if (testOptions == TestImageBufferOptions::Accelerated)
+        return ImageBufferOptions::Accelerated;
+    return { };
+} 
+
 void PrintTo(TestImageBufferOptions value, ::std::ostream* o)
 {
     if (value == TestImageBufferOptions::Accelerated)
@@ -230,10 +260,7 @@ void PrintTo(TestImageBufferOptions value, ::std::ostream* o)
         *o << "Unknown";
 }
 
-enum class TestPreserveResolution {
-    No,
-    Yes
-};
+enum class TestPreserveResolution : bool { No, Yes };
 
 void PrintTo(TestPreserveResolution value, ::std::ostream* o)
 {
@@ -251,10 +278,7 @@ public:
     float deviceScaleFactor() const { return std::get<0>(GetParam()); }
     OptionSet<ImageBufferOptions> imageBufferOptions() const
     {
-        auto testOptions = std::get<1>(GetParam());
-        if (testOptions == TestImageBufferOptions::Accelerated)
-            return ImageBufferOptions::Accelerated;
-        return { };
+        return toImageBufferOptions(std::get<1>(GetParam()));
     }
     PreserveResolution operationPreserveResolution()
     {
@@ -273,7 +297,7 @@ TEST_P(PreserveResolutionOperationTest, SinkIntoImageWorks)
     ASSERT_NE(buffer, nullptr);
     auto verifyBuffer = ImageBuffer::create(buffer->logicalSize(), RenderingPurpose::Unspecified, 1.f, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
     ASSERT_NE(verifyBuffer, nullptr);
-    drawTestPattern(*buffer);
+    drawTestPattern(*buffer, 0);
 
     auto image = ImageBuffer::sinkIntoImage(WTFMove(buffer), operationPreserveResolution());
     ASSERT_NE(image, nullptr);
@@ -283,7 +307,7 @@ TEST_P(PreserveResolutionOperationTest, SinkIntoImageWorks)
     else
         EXPECT_EQ(image->size(), testSize);
     verifyBuffer->context().drawImage(*image, FloatRect { { }, verifyBuffer->logicalSize() }, CompositeOperator::Copy);
-    EXPECT_TRUE(hasTestPattern(*verifyBuffer));
+    EXPECT_TRUE(hasTestPattern(*verifyBuffer, 0));
 }
 
 // ImageBuffer test fixture for tests that are variant to the image buffer device scale factor and options
@@ -292,10 +316,7 @@ public:
     float deviceScaleFactor() const { return std::get<0>(GetParam()); }
     OptionSet<ImageBufferOptions> imageBufferOptions() const
     {
-        auto testOptions = std::get<1>(GetParam());
-        if (testOptions == TestImageBufferOptions::Accelerated)
-            return ImageBufferOptions::Accelerated;
-        return { };
+        return toImageBufferOptions(std::get<1>(GetParam()));
     }
 };
 
@@ -305,7 +326,7 @@ TEST_P(AnyScaleTest, GetPixelBufferDimensionsContainScale)
     IntSize testSize { 50, 57 };
     auto buffer = ImageBuffer::create(testSize, RenderingPurpose::Unspecified, deviceScaleFactor(), DestinationColorSpace::SRGB(), PixelFormat::BGRA8, imageBufferOptions());
     ASSERT_NE(buffer, nullptr);
-    drawTestPattern(*buffer);
+    drawTestPattern(*buffer, 0);
 
     // Test that ImageBuffer::getPixelBuffer() returns pixel buffer with dimensions that are scaled to resolutionScale() of the source.
     PixelBufferFormat testFormat { AlphaPremultiplication::Premultiplied, PixelFormat::BGRA8, DestinationColorSpace::SRGB() };
@@ -318,7 +339,40 @@ TEST_P(AnyScaleTest, GetPixelBufferDimensionsContainScale)
     auto verifyBuffer = ImageBuffer::create(pixelBuffer->size(), RenderingPurpose::Unspecified, 1.f, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
     ASSERT_NE(verifyBuffer, nullptr);
     verifyBuffer->putPixelBuffer(*pixelBuffer, { { }, pixelBuffer->size() });
-    EXPECT_TRUE(hasTestPattern(*verifyBuffer));
+    EXPECT_TRUE(hasTestPattern(*verifyBuffer, 0));
+}
+
+// ImageBuffer test fixture for tests that are variant to two image buffer options. Mostly useful
+// for example source - destination tests
+class AnyTwoImageBufferOptionsTest : public testing::TestWithParam<std::tuple<TestImageBufferOptions, TestImageBufferOptions>> {
+public:
+    OptionSet<ImageBufferOptions> imageBufferOptions0() const
+    {
+        return toImageBufferOptions(std::get<0>(GetParam()));
+    }
+    OptionSet<ImageBufferOptions> imageBufferOptions1() const
+    {
+        return toImageBufferOptions(std::get<1>(GetParam()));
+    }
+};
+
+TEST_P(AnyTwoImageBufferOptionsTest, PutPixelBufferAffectsDrawOutput)
+{
+    IntSize testSize { 50, 57 };
+    auto source = ImageBuffer::create(testSize, RenderingPurpose::Unspecified, 1.0f, DestinationColorSpace::SRGB(), PixelFormat::BGRA8, imageBufferOptions0());
+    ASSERT_NE(source, nullptr);
+    auto destination = ImageBuffer::create(testSize, RenderingPurpose::Unspecified, 1.0f, DestinationColorSpace::SRGB(), PixelFormat::BGRA8, imageBufferOptions1());
+    ASSERT_NE(destination, nullptr);
+    auto pattern1Buffer = createPixelBufferTestPattern(testSize, AlphaPremultiplication::Unpremultiplied, 1);
+    ASSERT_NE(pattern1Buffer, nullptr);
+
+    drawTestPattern(*source, 0);
+    EXPECT_TRUE(hasTestPattern(*source, 0));
+    destination->context().drawImageBuffer(*source, FloatRect { { }, testSize }, FloatRect { { }, testSize }, { WebCore::CompositeOperator::Copy });
+    EXPECT_TRUE(hasTestPattern(*destination, 0));
+    source->putPixelBuffer(*pattern1Buffer, { { }, pattern1Buffer->size() });
+    destination->context().drawImageBuffer(*source, FloatRect { { }, testSize }, FloatRect { { }, testSize }, { WebCore::CompositeOperator::Copy });
+    EXPECT_TRUE(hasTestPattern(*destination, 1));
 }
 
 INSTANTIATE_TEST_SUITE_P(ImageBufferTests,
@@ -333,6 +387,13 @@ INSTANTIATE_TEST_SUITE_P(ImageBufferTests,
     AnyScaleTest,
     testing::Combine(
         testing::Values(0.5f, 1.f, 2.f, 5.f),
+        testing::Values(TestImageBufferOptions::NoOptions, TestImageBufferOptions::Accelerated)),
+    TestParametersToStringFormatter());
+
+INSTANTIATE_TEST_SUITE_P(ImageBufferTests,
+    AnyTwoImageBufferOptionsTest,
+    testing::Combine(
+        testing::Values(TestImageBufferOptions::NoOptions, TestImageBufferOptions::Accelerated),
         testing::Values(TestImageBufferOptions::NoOptions, TestImageBufferOptions::Accelerated)),
     TestParametersToStringFormatter());
 

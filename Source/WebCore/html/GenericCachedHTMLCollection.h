@@ -42,9 +42,7 @@ public:
     bool elementMatches(Element&) const;
 
 private:
-    GenericCachedHTMLCollection(ContainerNode& base, CollectionType collectionType)
-        : CachedHTMLCollection<GenericCachedHTMLCollection<traversalType>, traversalType>(base, collectionType)
-    { }
+    GenericCachedHTMLCollection(ContainerNode&, CollectionType);
 };
 
 } // namespace WebCore

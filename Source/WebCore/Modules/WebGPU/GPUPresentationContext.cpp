@@ -26,14 +26,14 @@
 #include "config.h"
 #include "GPUPresentationContext.h"
 
-#include "GPUPresentationConfiguration.h"
+#include "GPUCanvasConfiguration.h"
 #include "GPUTexture.h"
 
 namespace WebCore {
 
-void GPUPresentationContext::configure(const GPUPresentationConfiguration& presentationConfiguration)
+void GPUPresentationContext::configure(const GPUCanvasConfiguration& canvasConfiguration)
 {
-    m_backing->configure(presentationConfiguration.convertToBacking());
+    m_backing->configure(canvasConfiguration.convertToBacking());
 }
 
 void GPUPresentationContext::unconfigure()
@@ -41,17 +41,19 @@ void GPUPresentationContext::unconfigure()
     m_backing->unconfigure();
 }
 
-GPUTexture* GPUPresentationContext::getCurrentTexture()
+RefPtr<GPUTexture> GPUPresentationContext::getCurrentTexture()
 {
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=250958 Figure out how the lifetime of these objects should behave.
-    return nullptr;
+    if (!m_currentTexture) {
+        if (auto currentTexture = m_backing->getCurrentTexture())
+            m_currentTexture = GPUTexture::create(*currentTexture).ptr();
+    }
+
+    return m_currentTexture;
 }
 
-#if PLATFORM(COCOA)
-void GPUPresentationContext::prepareForDisplay(CompletionHandler<void(WTF::MachSendRight&&)>&& completionHandler)
+void GPUPresentationContext::present()
 {
-    m_backing->prepareForDisplay(WTFMove(completionHandler));
+    m_currentTexture = nullptr;
 }
-#endif
 
 } // namespace WebCore

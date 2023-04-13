@@ -16,6 +16,7 @@ info: |
         f. Otherwise, perform ! Call(promiseCapability.[[Resolve]], undefined, « namespace.[[Value]] »).
 flags: [async]
 features: [dynamic-import]
+includes: [asyncHelpers.js]
 ---*/
 
 async function fn() {
@@ -29,4 +30,4 @@ async function fn() {
     assert.sameValue(String(value), '42', 'namespace fallsback to valueOf as its prototype is null');
 }
 
-fn().then($DONE, $DONE);
+asyncTest(fn);

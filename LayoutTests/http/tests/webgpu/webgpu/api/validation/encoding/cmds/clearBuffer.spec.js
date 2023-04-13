@@ -27,7 +27,7 @@ export const g = makeTestGroup(F);
 g.test('buffer_state')
   .desc(`Test that clearing an invalid or destroyed buffer fails.`)
   .params(u => u.combine('bufferState', kResourceStates))
-  .fn(async t => {
+  .fn(t => {
     const { bufferState } = t.params;
 
     const buffer = t.createBufferWithState(bufferState, {
@@ -53,21 +53,18 @@ g.test('buffer_state')
 g.test('buffer,device_mismatch')
   .desc(`Tests clearBuffer cannot be called with buffer created from another device.`)
   .paramsSubcasesOnly(u => u.combine('mismatched', [true, false]))
-  .fn(async t => {
+  .beforeAllSubcases(t => {
+    t.selectMismatchedDeviceOrSkipTestCase(undefined);
+  })
+  .fn(t => {
     const { mismatched } = t.params;
-
-    if (mismatched) {
-      await t.selectMismatchedDeviceOrSkipTestCase(undefined);
-    }
-
-    const device = mismatched ? t.mismatchedDevice : t.device;
+    const sourceDevice = mismatched ? t.mismatchedDevice : t.device;
     const size = 8;
 
-    const buffer = device.createBuffer({
+    const buffer = sourceDevice.createBuffer({
       size,
       usage: GPUBufferUsage.COPY_DST,
     });
-
     t.trackForCleanup(buffer);
 
     t.TestClearBuffer({
@@ -85,7 +82,7 @@ g.test('default_args')
     { offset: 4, size: undefined },
     { offset: undefined, size: 8 },
   ])
-  .fn(async t => {
+  .fn(t => {
     const { offset, size } = t.params;
 
     const buffer = t.device.createBuffer({
@@ -107,7 +104,7 @@ g.test('buffer_usage')
     u //
       .combine('usage', kBufferUsages)
   )
-  .fn(async t => {
+  .fn(t => {
     const { usage } = t.params;
 
     const buffer = t.device.createBuffer({
@@ -142,7 +139,7 @@ g.test('size_alignment')
     { size: 20, _isSuccess: false },
     { size: undefined, _isSuccess: true },
   ])
-  .fn(async t => {
+  .fn(t => {
     const { size, _isSuccess: isSuccess } = t.params;
 
     const buffer = t.device.createBuffer({
@@ -176,7 +173,7 @@ g.test('offset_alignment')
     { offset: 20, _isSuccess: false },
     { offset: undefined, _isSuccess: true },
   ])
-  .fn(async t => {
+  .fn(t => {
     const { offset, _isSuccess: isSuccess } = t.params;
 
     const buffer = t.device.createBuffer({
@@ -200,7 +197,7 @@ g.test('overflow')
     { offset: kMaxSafeMultipleOf8, size: 16 },
     { offset: kMaxSafeMultipleOf8, size: kMaxSafeMultipleOf8 },
   ])
-  .fn(async t => {
+  .fn(t => {
     const { offset, size } = t.params;
 
     const buffer = t.device.createBuffer({
@@ -228,7 +225,7 @@ g.test('out_of_bounds')
     { offset: 20, size: 16 },
     { offset: 20, size: 12, _isSuccess: true },
   ])
-  .fn(async t => {
+  .fn(t => {
     const { offset, size, _isSuccess = false } = t.params;
 
     const buffer = t.device.createBuffer({

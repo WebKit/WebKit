@@ -68,11 +68,6 @@ void ScopedEventQueue::dispatchAllEvents()
         dispatchEvent(queuedEvent);
 }
 
-void ScopedEventQueue::incrementScopingLevel()
-{
-    ++m_scopingLevel;
-}
-
 void ScopedEventQueue::decrementScopingLevel()
 {
     ASSERT(m_scopingLevel);

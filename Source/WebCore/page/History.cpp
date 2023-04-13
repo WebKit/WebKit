@@ -28,11 +28,11 @@
 
 #include "BackForwardController.h"
 #include "Document.h"
-#include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "HistoryController.h"
 #include "HistoryItem.h"
+#include "LocalFrame.h"
 #include "Logging.h"
 #include "NavigationScheduler.h"
 #include "Page.h"
@@ -51,8 +51,8 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(History);
 
-History::History(DOMWindow& window)
-    : DOMWindowProperty(&window)
+History::History(LocalDOMWindow& window)
+    : LocalDOMWindowProperty(&window)
 {
 }
 
@@ -225,7 +225,8 @@ ExceptionOr<void> History::stateObjectAdded(RefPtr<SerializedScriptValue>&& data
     if (!allowSandboxException && !documentSecurityOrigin.canRequest(fullURL) && (fullURL.path() != documentURL.path() || fullURL.query() != documentURL.query()))
         return createBlockedURLSecurityErrorWithMessageSuffix("Paths and fragments must match for a sandboxed document.");
 
-    auto* mainWindow = frame->page()->mainFrame().window();
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(frame->page()->mainFrame());
+    auto* mainWindow = localMainFrame ? localMainFrame->window() : nullptr;
     if (!mainWindow)
         return { };
 

@@ -37,11 +37,11 @@
 #include "FrameLoader.h"
 #include "HTTPHeaderValues.h"
 #include "Page.h"
+#include "Quirks.h"
 #include "ScriptExecutionContext.h"
 #include "SocketProvider.h"
 #include "ThreadableWebSocketChannelClientWrapper.h"
 #include "UserContentProvider.h"
-#include "WebSocketChannel.h"
 #include "WebSocketChannelClient.h"
 #include "WorkerGlobalScope.h"
 #include "WorkerRunLoop.h"
@@ -50,28 +50,12 @@
 
 namespace WebCore {
 
-Ref<ThreadableWebSocketChannel> ThreadableWebSocketChannel::create(Document& document, WebSocketChannelClient& client, SocketProvider& provider)
+RefPtr<ThreadableWebSocketChannel> ThreadableWebSocketChannel::create(Document& document, WebSocketChannelClient& client, SocketProvider& provider)
 {
-#if USE(CURL) || USE(SOUP)
-    bool enabled = true;
-#elif HAVE(NSURLSESSION_WEBSOCKET)
-    bool enabled = document.settings().isNSURLSessionWebSocketEnabled();
-#else
-    bool enabled = false;
-#endif
-    if (enabled) {
-        if (auto channel = provider.createWebSocketChannel(document, client))
-            return channel.releaseNonNull();
-    }
-
-#if USE(SOUP)
-    RELEASE_ASSERT_NOT_REACHED();
-#else
-    return WebSocketChannel::create(document, client, provider);
-#endif
+    return provider.createWebSocketChannel(document, client);
 }
 
-Ref<ThreadableWebSocketChannel> ThreadableWebSocketChannel::create(ScriptExecutionContext& context, WebSocketChannelClient& client, SocketProvider& provider)
+RefPtr<ThreadableWebSocketChannel> ThreadableWebSocketChannel::create(ScriptExecutionContext& context, WebSocketChannelClient& client, SocketProvider& provider)
 {
     if (is<WorkerGlobalScope>(context)) {
         WorkerGlobalScope& workerGlobalScope = downcast<WorkerGlobalScope>(context);
@@ -83,7 +67,7 @@ Ref<ThreadableWebSocketChannel> ThreadableWebSocketChannel::create(ScriptExecuti
 }
 
 ThreadableWebSocketChannel::ThreadableWebSocketChannel()
-    : m_identifier(WebSocketIdentifier::generateThreadSafe())
+    : m_identifier(WebSocketIdentifier::generate())
 {
 }
 
@@ -139,7 +123,7 @@ std::optional<ResourceRequest> ThreadableWebSocketChannel::webSocketConnectReque
     auto httpURL = request.url();
     httpURL.setProtocol(url.protocolIs("ws"_s) ? "http"_s : "https"_s);
     auto requestOrigin = SecurityOrigin::create(httpURL);
-    if (document.settings().fetchMetadataEnabled() && requestOrigin->isPotentiallyTrustworthy()) {
+    if (document.settings().fetchMetadataEnabled() && requestOrigin->isPotentiallyTrustworthy() && !document.quirks().shouldDisableFetchMetadata()) {
         request.addHTTPHeaderField(HTTPHeaderName::SecFetchDest, "websocket"_s);
         request.addHTTPHeaderField(HTTPHeaderName::SecFetchMode, "websocket"_s);
 

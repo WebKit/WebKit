@@ -28,6 +28,7 @@
 #include "WebPageProxy.h"
 
 #include "InputMethodState.h"
+#include "MessageSenderInlines.h"
 #include "PageClientImpl.h"
 #include "WebKitUserMessage.h"
 #include "WebKitWebViewBasePrivate.h"

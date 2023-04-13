@@ -1,0 +1,5 @@
+
+
+PASS fetchpriority attribute on <img> elements should reflect valid IDL values
+PASS fetchPriority of new Image() is 'auto'
+

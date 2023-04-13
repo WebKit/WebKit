@@ -28,6 +28,7 @@
 
 #if ENABLE(WEBXR)
 
+#include "MessageSenderInlines.h"
 #include "PlatformXRSystemMessages.h"
 #include "PlatformXRSystemProxyMessages.h"
 #include "WebPageProxy.h"

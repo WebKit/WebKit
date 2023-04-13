@@ -4,5 +4,5 @@ It should traverse focusable elements in the increasing numerical order and then
 
 2. Assigned to slot5 whose tabindex is 2.
 
-FAIL Default tabindex for a slot node should be 0. promise_test: Unhandled rejection with value: object "Error: Unknown source type "key"."
+PASS Default tabindex for a slot node should be 0.
 

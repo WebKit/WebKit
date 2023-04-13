@@ -39,11 +39,18 @@ namespace WebCore {
 
 class FragmentedSharedBuffer;
 
+struct ImageDecoderFrameInfo {
+    bool hasAlpha;
+    Seconds duration;
+};
+
 class ImageDecoder : public ThreadSafeRefCounted<ImageDecoder> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static RefPtr<ImageDecoder> create(FragmentedSharedBuffer&, const String& mimeType, AlphaOption, GammaAndColorProfileOption);
     virtual ~ImageDecoder() = default;
+    
+    using FrameInfo = ImageDecoderFrameInfo;
 
     enum class MediaType {
         Image,
@@ -53,37 +60,6 @@ public:
     struct FrameMetadata {
         ImageOrientation orientation;
         std::optional<IntSize> densityCorrectedSize;
-    };
-
-    struct FrameInfo {
-        bool hasAlpha;
-        Seconds duration;
-
-        template<class Encoder>
-        void encode(Encoder& encoder) const
-        {
-            encoder << hasAlpha;
-            encoder << duration;
-        }
-
-        template<class Decoder>
-        static std::optional<FrameInfo> decode(Decoder& decoder)
-        {
-            std::optional<bool> hasAlpha;
-            decoder >> hasAlpha;
-            if (!hasAlpha)
-                return std::nullopt;
-
-            std::optional<Seconds> duration;
-            decoder >> duration;
-            if (!duration)
-                return std::nullopt;
-
-            return {{
-                *hasAlpha,
-                *duration
-            }};
-        }
     };
 
     static bool supportsMediaType(MediaType);
@@ -111,6 +87,7 @@ public:
     virtual bool isSizeAvailable() const { return encodedDataStatus() >= EncodedDataStatus::SizeAvailable; }
     virtual IntSize size() const = 0;
     virtual size_t frameCount() const = 0;
+    virtual size_t primaryFrameIndex() const { return 0; }
     virtual RepetitionCount repetitionCount() const = 0;
     virtual String uti() const { return emptyString(); }
     virtual String filenameExtension() const = 0;

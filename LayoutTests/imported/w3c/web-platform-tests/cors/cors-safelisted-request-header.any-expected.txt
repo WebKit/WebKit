@@ -14,4 +14,27 @@ PASS Preflight for {"content-type":"application/www-form-urlencoded"}
 PASS Preflight for {"content-type":"application/x-www-form-urlencoded;"}
 PASS No preflight for {"content-type":"multipart/form-data"}
 PASS Preflight for {"content-type":"multipart/form-data;\""}
+PASS Preflight for {"range":"100-200"}
+PASS Preflight for {"range":"MB=100-200"}
+PASS No preflight for {"range":"bytes=100-200"}
+PASS Preflight for {"range":"bytes =100-200"}
+PASS Preflight for {"range":"bytes\t=100-200"}
+PASS Preflight for {"range":"bytes=  100-200"}
+PASS Preflight for {"range":"bytes=\t\t100-200"}
+PASS Preflight for {"range":"bytes= \t100-200"}
+PASS Preflight for {"range":"bytes=100 -200"}
+PASS Preflight for {"range":"bytes=100\t-200"}
+PASS Preflight for {"range":"bytes=100- 200"}
+PASS Preflight for {"range":"bytes=100-\t200"}
+PASS Preflight for {"range":"bytes=100-200hello"}
+PASS Preflight for {"range":"bytes=abc-def"}
+PASS Preflight for {"range":"bytes=100-200,300-400"}
+PASS Preflight for {"range":"bytes=-200"}
+PASS No preflight for {"range":"bytes=200-"}
+PASS Preflight for {"range":"bytes=200-100"}
+PASS Preflight for {"range":"bytes=1000000000000000000000000000000000000000000000000000000000000-2000000000000000000000000000000000000000000000000000000000000"}
+PASS Preflight for {"range":"bytes 100-200"}
+PASS Preflight for {"range":"bytes = 100-200"}
+PASS Preflight for {"range":",bytes=100-200"}
+PASS Preflight for {"range":"bytes=,100-200"}
 

@@ -49,12 +49,10 @@ public:
     WebContextMenuClient(WebView *webView);
     virtual ~WebContextMenuClient();
 
-    void contextMenuDestroyed() override;
-
     void downloadURL(const URL&) override;
-    void searchWithGoogle(const WebCore::Frame*) override;
-    void lookUpInDictionary(WebCore::Frame*) override;
-    bool isSpeaking() override;
+    void searchWithGoogle(const WebCore::LocalFrame*) override;
+    void lookUpInDictionary(WebCore::LocalFrame*) override;
+    bool isSpeaking() const override;
     void speak(const WTF::String&) override;
     void stopSpeaking() override;
     void searchWithSpotlight() override;

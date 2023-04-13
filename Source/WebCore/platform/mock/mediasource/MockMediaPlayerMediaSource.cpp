@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
@@ -29,6 +29,7 @@
 #if ENABLE(MEDIA_SOURCE)
 
 #include "MediaPlayer.h"
+#include "MediaSourcePrivate.h"
 #include "MediaSourcePrivateClient.h"
 #include "MockMediaSourcePrivate.h"
 #include <wtf/MainThread.h>
@@ -96,11 +97,6 @@ MediaPlayer::SupportsType MockMediaPlayerMediaSource::supportsType(const MediaEn
 
 MockMediaPlayerMediaSource::MockMediaPlayerMediaSource(MediaPlayer* player)
     : m_player(player)
-    , m_currentTime(MediaTime::zeroTime())
-    , m_readyState(MediaPlayer::ReadyState::HaveNothing)
-    , m_networkState(MediaPlayer::NetworkState::Empty)
-    , m_playing(false)
-    , m_seekCompleted(true)
 {
 }
 
@@ -179,12 +175,9 @@ MediaTime MockMediaPlayerMediaSource::maxMediaTimeSeekable() const
     return m_duration;
 }
 
-std::unique_ptr<PlatformTimeRanges> MockMediaPlayerMediaSource::buffered() const
+const PlatformTimeRanges& MockMediaPlayerMediaSource::buffered() const
 {
-    if (m_mediaSourcePrivate)
-        return m_mediaSourcePrivate->buffered();
-
-    return makeUnique<PlatformTimeRanges>();
+    return m_mediaSourcePrivate ? m_mediaSourcePrivate->buffered() : PlatformTimeRanges::emptyRanges();
 }
 
 bool MockMediaPlayerMediaSource::didLoadingProgress() const
@@ -203,6 +196,11 @@ void MockMediaPlayerMediaSource::paint(GraphicsContext&, const FloatRect&)
 MediaTime MockMediaPlayerMediaSource::currentMediaTime() const
 {
     return m_currentTime;
+}
+
+bool MockMediaPlayerMediaSource::currentMediaTimeMayProgress() const
+{
+    return m_mediaSourcePrivate && m_mediaSourcePrivate->hasFutureTime(currentMediaTime(), durationMediaTime(), buffered());
 }
 
 MediaTime MockMediaPlayerMediaSource::durationMediaTime() const
@@ -235,13 +233,13 @@ void MockMediaPlayerMediaSource::advanceCurrentTime()
     if (!m_mediaSourcePrivate)
         return;
 
-    auto buffered = m_mediaSourcePrivate->buffered();
-    size_t pos = buffered->find(m_currentTime);
+    auto& buffered = m_mediaSourcePrivate->buffered();
+    size_t pos = buffered.find(m_currentTime);
     if (pos == notFound)
         return;
 
     bool ignoreError;
-    m_currentTime = std::min(m_duration, buffered->end(pos, ignoreError));
+    m_currentTime = std::min(m_duration, buffered.end(pos, ignoreError));
     m_player->timeChanged();
 }
 

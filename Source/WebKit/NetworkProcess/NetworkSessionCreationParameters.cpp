@@ -97,9 +97,10 @@ void NetworkSessionCreationParameters::encode(IPC::Encoder& encoder) const
 #if !HAVE(NSURLSESSION_WEBSOCKET)
     encoder << shouldAcceptInsecureCertificatesForWebSockets;
 #endif
+    encoder << isBlobRegistryTopOriginPartitioningEnabled;
 
     encoder << unifiedOriginStorageLevel;
-    encoder << perOriginStorageQuota << perThirdPartyOriginStorageQuota;
+    encoder << perOriginStorageQuota << originQuotaRatio << totalQuotaRatio << volumeCapacityOverride;
     encoder << localStorageDirectory << localStorageDirectoryExtensionHandle;
     encoder << indexedDBDirectory << indexedDBDirectoryExtensionHandle;
     encoder << cacheStorageDirectory << cacheStorageDirectoryExtensionHandle;
@@ -117,7 +118,7 @@ std::optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters
     if (!sessionID)
         return std::nullopt;
     
-    std::optional<std::optional<UUID>> dataStoreIdentifier;
+    std::optional<Markable<UUID>> dataStoreIdentifier;
     decoder >> dataStoreIdentifier;
     if (!dataStoreIdentifier)
         return std::nullopt;
@@ -356,6 +357,11 @@ std::optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters
         return std::nullopt;
 #endif
 
+    std::optional<bool> isBlobRegistryTopOriginPartitioningEnabled;
+    decoder >> isBlobRegistryTopOriginPartitioningEnabled;
+    if (!isBlobRegistryTopOriginPartitioningEnabled)
+        return std::nullopt;
+
     std::optional<UnifiedOriginStorageLevel> unifiedOriginStorageLevel;
     decoder >> unifiedOriginStorageLevel;
     if (!unifiedOriginStorageLevel)
@@ -366,9 +372,19 @@ std::optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters
     if (!perOriginStorageQuota)
         return std::nullopt;
 
-    std::optional<uint64_t> perThirdPartyOriginStorageQuota;
-    decoder >> perThirdPartyOriginStorageQuota;
-    if (!perThirdPartyOriginStorageQuota)
+    std::optional<std::optional<double>> originQuotaRatio;
+    decoder >> originQuotaRatio;
+    if (!originQuotaRatio)
+        return std::nullopt;
+
+    std::optional<std::optional<double>> totalQuotaRatio;
+    decoder >> totalQuotaRatio;
+    if (!totalQuotaRatio)
+        return std::nullopt;
+
+    std::optional<std::optional<uint64_t>> volumeCapacityOverride;
+    decoder >> volumeCapacityOverride;
+    if (!volumeCapacityOverride)
         return std::nullopt;
 
     std::optional<String> localStorageDirectory;
@@ -491,9 +507,12 @@ std::optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters
 #if !HAVE(NSURLSESSION_WEBSOCKET)
         , WTFMove(*shouldAcceptInsecureCertificatesForWebSockets)
 #endif
+        , *isBlobRegistryTopOriginPartitioningEnabled
         , *unifiedOriginStorageLevel
         , WTFMove(*perOriginStorageQuota)
-        , WTFMove(*perThirdPartyOriginStorageQuota)
+        , WTFMove(*originQuotaRatio)
+        , WTFMove(*totalQuotaRatio)
+        , WTFMove(*volumeCapacityOverride)
         , WTFMove(*localStorageDirectory)
         , WTFMove(*localStorageDirectoryExtensionHandle)
         , WTFMove(*indexedDBDirectory)

@@ -32,9 +32,9 @@
 #include "AccessibilityObjectInterface.h"
 #include "ContainerNode.h"
 #include "Document.h"
-#include "ElementIterator.h"
 #include "HTMLNames.h"
 #include "SpaceSplitString.h"
+#include "TypedElementDescendantIteratorInlines.h"
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 

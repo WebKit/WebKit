@@ -1,0 +1,46 @@
+This test ensures that buttons within a label that has a for='' don't use the label's text over their own.
+
+
+AXRole: AXGroup
+	AXTitle:
+	AXDescription:
+	AXHelp:
+
+AXRole: AXGroup
+	AXTitle:
+	AXDescription:
+	AXHelp:
+
+AXRole: AXHeading
+	AXTitle: Enter the characters in the image below.
+	AXDescription:
+	AXHelp:
+
+AXRole: AXStaticText
+	AXTitle:
+	AXDescription:
+	AXHelp:
+	AXValue: Enter the characters in the image below.
+
+AXRole: AXButton
+	AXTitle: Switch to audio
+	AXDescription:
+	AXHelp:
+
+AXRole: AXButton
+	AXTitle: Try another
+	AXDescription:
+	AXHelp:
+
+AXRole: AXTextField
+	AXTitle: Enter the characters in the image below. Switch to audio Try another
+	AXDescription:
+	AXHelp:
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+Enter the characters in the image below.
+
+Switch to audio  Try another

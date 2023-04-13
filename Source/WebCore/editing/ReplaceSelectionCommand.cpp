@@ -40,10 +40,9 @@
 #include "DocumentFragment.h"
 #include "Editing.h"
 #include "EditingBehavior.h"
-#include "ElementIterator.h"
+#include "ElementIteratorInlines.h"
 #include "ElementName.h"
 #include "EventNames.h"
-#include "Frame.h"
 #include "FrameSelection.h"
 #include "HTMLBRElement.h"
 #include "HTMLBaseElement.h"
@@ -55,6 +54,7 @@
 #include "HTMLNames.h"
 #include "HTMLStyleElement.h"
 #include "HTMLTitleElement.h"
+#include "LocalFrame.h"
 #include "NodeList.h"
 #include "NodeRenderStyle.h"
 #include "Position.h"
@@ -67,6 +67,7 @@
 #include "StylePropertiesInlines.h"
 #include "Text.h"
 #include "TextIterator.h"
+#include "TypedElementDescendantIteratorInlines.h"
 #include "VisibleUnits.h"
 #include "markup.h"
 #include <wtf/NeverDestroyed.h>
@@ -182,7 +183,11 @@ ReplacementFragment::ReplacementFragment(DocumentFragment* fragment, const Visib
     }
 
     auto page = createPageForSanitizingWebContent();
-    RefPtr stagingDocument { page->mainFrame().document() };
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(page->mainFrame());
+    if (!localMainFrame)
+        return;
+
+    RefPtr stagingDocument { localMainFrame->document() };
     ASSERT(stagingDocument->body());
 
     ComputedStyleExtractor computedStyleOfEditableRoot(editableRoot.get());
@@ -1737,7 +1742,7 @@ static HTMLElement* singleChildList(HTMLElement& element)
     return isListHTMLElement(child.get()) ? &downcast<HTMLElement>(*child) : nullptr;
 }
 
-static HTMLElement& deepestSingleChildList(HTMLElement& topLevelList)
+static Ref<HTMLElement> deepestSingleChildList(HTMLElement& topLevelList)
 {
     Ref list { topLevelList };
     while (auto childList = singleChildList(list))
@@ -1749,7 +1754,7 @@ static HTMLElement& deepestSingleChildList(HTMLElement& topLevelList)
 // we put the list items into the existing list.
 Node* ReplaceSelectionCommand::insertAsListItems(HTMLElement& passedListElement, Node* insertionBlock, const Position& insertPos, InsertedNodes& insertedNodes)
 {
-    Ref<HTMLElement> listElement = deepestSingleChildList(passedListElement);
+    Ref listElement = deepestSingleChildList(passedListElement);
 
     bool isStart = isStartOfParagraph(insertPos);
     bool isEnd = isEndOfParagraph(insertPos);

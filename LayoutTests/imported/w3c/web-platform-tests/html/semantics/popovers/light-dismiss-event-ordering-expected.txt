@@ -1,0 +1,14 @@
+target
+
+PASS Tests the interactions between popover light dismiss and pointer/mouse events. eventName: pointerdown, capture: true
+PASS Tests the interactions between popover light dismiss and pointer/mouse events. eventName: pointerup, capture: true
+PASS Tests the interactions between popover light dismiss and pointer/mouse events. eventName: mousedown, capture: true
+PASS Tests the interactions between popover light dismiss and pointer/mouse events. eventName: mouseup, capture: true
+PASS Tests the interactions between popover light dismiss and pointer/mouse events. eventName: click, capture: true
+PASS Tests the interactions between popover light dismiss and pointer/mouse events. eventName: pointerdown, capture: false
+PASS Tests the interactions between popover light dismiss and pointer/mouse events. eventName: pointerup, capture: false
+PASS Tests the interactions between popover light dismiss and pointer/mouse events. eventName: mousedown, capture: false
+PASS Tests the interactions between popover light dismiss and pointer/mouse events. eventName: mouseup, capture: false
+PASS Tests the interactions between popover light dismiss and pointer/mouse events. eventName: click, capture: false
+PASS Tests the order of pointer/mouse events during popover light dismiss.
+

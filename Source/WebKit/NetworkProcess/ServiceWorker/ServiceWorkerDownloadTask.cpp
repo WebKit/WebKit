@@ -155,7 +155,7 @@ void ServiceWorkerDownloadTask::setPendingDownloadLocation(const WTF::String& fi
             }
         }
 
-        m_downloadFile = FileSystem::openFile(m_pendingDownloadLocation, FileSystem::FileOpenMode::Write);
+        m_downloadFile = FileSystem::openFile(m_pendingDownloadLocation, FileSystem::FileOpenMode::Truncate);
         if (m_downloadFile == FileSystem::invalidPlatformFileHandle)
             didFailDownload();
     });

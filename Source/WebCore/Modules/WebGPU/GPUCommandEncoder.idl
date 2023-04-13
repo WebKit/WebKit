@@ -62,9 +62,10 @@ interface GPUCommandEncoder {
         GPUImageCopyTexture destination,
         GPUExtent3D copySize);
 
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=240219, second parameter should have default value of 0
     undefined clearBuffer(
         GPUBuffer buffer,
-        optional GPUSize64 offset = 0,
+        optional GPUSize64 offset,
         optional GPUSize64 size);
 
     undefined writeTimestamp(GPUQuerySet querySet, GPUSize32 queryIndex);

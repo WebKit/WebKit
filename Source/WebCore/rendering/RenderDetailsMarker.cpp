@@ -132,7 +132,7 @@ void RenderDetailsMarker::paint(PaintInfo& paintInfo, const LayoutPoint& paintOf
 
     const Color color(style().visitedDependentColorWithColorFilter(CSSPropertyColor));
     paintInfo.context().setStrokeColor(color);
-    paintInfo.context().setStrokeStyle(SolidStroke);
+    paintInfo.context().setStrokeStyle(StrokeStyle::SolidStroke);
     paintInfo.context().setStrokeThickness(1.0f);
     paintInfo.context().setFillColor(color);
 

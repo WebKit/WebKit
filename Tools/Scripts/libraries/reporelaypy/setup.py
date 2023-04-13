@@ -30,7 +30,7 @@ def readme():
 
 setup(
     name='reporelaypy',
-    version='0.7.7',
+    version='0.8.1',
     description='Library for visualizing, processing and storing test results.',
     long_description=readme(),
     classifiers=[
@@ -54,8 +54,6 @@ setup(
         'reporelaypy.test',
     ],
     install_requires=[
-        'fakeredis',
-        'redis',
         'xmltodict',
         'webkitcorepy',
         'webkitscmpy',

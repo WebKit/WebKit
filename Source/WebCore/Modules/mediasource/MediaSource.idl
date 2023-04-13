@@ -40,6 +40,7 @@ enum ReadyState {
 };
 
 [
+    SkipVTableValidation,
     ActiveDOMObject,
     Conditional=MEDIA_SOURCE,
     EnabledBySetting=MediaSourceEnabled,
@@ -62,7 +63,7 @@ enum ReadyState {
     
     undefined endOfStream(optional EndOfStreamError error);
 
-    [CallWith=CurrentScriptExecutionContext] static boolean isTypeSupported (DOMString type);
+    [CallWith=CurrentScriptExecutionContext] static boolean isTypeSupported(DOMString type);
 
     undefined setLiveSeekableRange(double start, double end);
     undefined clearLiveSeekableRange();

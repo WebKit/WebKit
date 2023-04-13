@@ -29,7 +29,7 @@
 
 namespace WebKit {
 
-enum GeolocationIdentifierType { };
+struct GeolocationIdentifierType;
 using GeolocationIdentifier = ObjectIdentifier<GeolocationIdentifierType>;
 
 }

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2021 Sony Interactive Entertainment Inc.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,7 +30,7 @@
 
 #if USE(JPEGXL)
 
-#include <jxl/decode_cxx.h>
+#include "JxlDecoderPtr.h"
 
 #if USE(LCMS)
 #include "LCMSUniquePtr.h"
@@ -49,10 +50,10 @@ public:
 
     // ScalableImageDecoder
     String filenameExtension() const override { return "jxl"_s; }
-    size_t frameCount() const override;
+    size_t frameCount() const override WTF_REQUIRES_LOCK(m_lock);
     RepetitionCount repetitionCount() const override;
-    ScalableImageDecoderFrame* frameBufferAtIndex(size_t index) override;
-    void clearFrameBufferCache(size_t clearBeforeFrame) override;
+    ScalableImageDecoderFrame* frameBufferAtIndex(size_t index) override WTF_REQUIRES_LOCK(m_lock);
+    void clearFrameBufferCache(size_t clearBeforeFrame) override WTF_REQUIRES_LOCK(m_lock);
 
     bool setFailed() override;
 
@@ -72,7 +73,7 @@ private:
 
     void clear();
 
-    void tryDecodeSize(bool allDataReceived) override;
+    void tryDecodeSize(bool allDataReceived) override WTF_REQUIRES_LOCK(m_lock);
 
     bool hasAlpha() const;
     bool hasAnimation() const;
@@ -80,12 +81,12 @@ private:
     void ensureDecoderInitialized();
     bool shouldRewind(Query , size_t frameIndex) const;
     void rewind();
-    void updateFrameCount();
+    void updateFrameCount() WTF_REQUIRES_LOCK(m_lock);
 
-    void decode(Query, size_t frameIndex, bool allDataReceived);
-    JxlDecoderStatus processInput(Query);
+    void decode(Query, size_t frameIndex, bool allDataReceived) WTF_REQUIRES_LOCK(m_lock);
+    JxlDecoderStatus processInput(Query) WTF_REQUIRES_LOCK(m_lock);
     static void imageOutCallback(void*, size_t x, size_t y, size_t numPixels, const void* pixels);
-    void imageOut(size_t x, size_t y, size_t numPixels, const uint8_t* pixels);
+    void imageOut(size_t x, size_t y, size_t numPixels, const uint8_t* pixels) WTF_REQUIRES_LOCK(m_lock);
 
 #if USE(LCMS)
     void clearColorTransform();

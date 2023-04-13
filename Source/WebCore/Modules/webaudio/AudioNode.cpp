@@ -38,6 +38,7 @@
 #include <wtf/Atomics.h>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/MainThread.h>
+#include <wtf/NeverDestroyed.h>
 
 #if DEBUG_AUDIONODE_REFERENCES
 #include <stdio.h>
@@ -710,6 +711,11 @@ const BaseAudioContext& AudioNode::context() const
     }, [](const WeakPtr<BaseAudioContext, WeakPtrImplWithEventTargetData>& context) -> const BaseAudioContext& {
         return *context;
     });
+}
+
+NoiseInjectionPolicy AudioNode::noiseInjectionPolicy() const
+{
+    return context().noiseInjectionPolicy();
 }
 
 #if DEBUG_AUDIONODE_REFERENCES

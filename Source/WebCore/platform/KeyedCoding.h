@@ -61,7 +61,7 @@ public:
             return false;
 
         vector.resize(size);
-        std::copy(bytes, bytes + size, vector.data());
+        std::copy_n(bytes, size, vector.data());
         return true;
     }
 

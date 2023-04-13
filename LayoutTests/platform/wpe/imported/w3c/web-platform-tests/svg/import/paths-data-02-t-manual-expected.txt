@@ -30,9 +30,9 @@ layer at (0,0) size 800x600
       RenderSVGRect {rect} at (370,168) size 7x7 [fill={[type=SOLID] [color=#0000FF]}] [x=222.00] [y=101.00] [width=4.00] [height=4.00]
       RenderSVGRect {rect} at (503,51) size 7x8 [fill={[type=SOLID] [color=#0000FF]}] [x=302.00] [y=31.00] [width=4.00] [height=4.00]
       RenderSVGPath {path} at (295,168) size 247x197 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#00C000]}] [data="M 208 168 C 241.333 234.667 274.667 234.667 308 168 C 341.333 101.333 324.667 84.6667 258 118 C 171.333 98 154.667 114.667 208 168 Z"]
-      RenderSVGText {text} at (308,177) size 72x14 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 72x14
-          chunk 1 text run 1 at (308.00,188.00) startOffset 0 endOffset 13 width 71.40: "M, Q, T, Q, z"
+      RenderSVGText {text} at (308,177) size 71x14 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 71x14
+          chunk 1 text run 1 at (308.00,188.00) startOffset 0 endOffset 13 width 70.07: "M, Q, T, Q, z"
       RenderSVGRect {rect} at (343,276) size 7x8 [fill={[type=SOLID] [color=#0000FF]}] [x=206.00] [y=166.00] [width=4.00] [height=4.00]
       RenderSVGRect {rect} at (510,276) size 7x8 [fill={[type=SOLID] [color=#0000FF]}] [x=306.00] [y=166.00] [width=4.00] [height=4.00]
       RenderSVGRect {rect} at (426,193) size 8x7 [fill={[type=SOLID] [color=#0000FF]}] [x=256.00] [y=116.00] [width=4.00] [height=4.00]

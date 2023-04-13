@@ -29,7 +29,7 @@
 
 #if USE(ANGLE) && USE(NICOSIA)
 
-#include "GLContextEGL.h"
+#include "GLContext.h"
 
 #if USE(LIBEPOXY)
 #include "EpoxyEGL.h"
@@ -84,7 +84,7 @@ void TextureMapperPlatformLayerDmabuf::validateTexture()
         return;
 
     auto* context = GLContext::current();
-    ASSERT(context->isEGLContext());
+    auto& display = context->display();
 
     context->makeContextCurrent();
 
@@ -98,7 +98,7 @@ void TextureMapperPlatformLayerDmabuf::validateTexture()
         EGL_DMA_BUF_PLANE0_OFFSET_EXT, 0,
         EGL_NONE
     };
-    auto image = downcast<GLContextEGL>(*context).createImage(EGL_LINUX_DMA_BUF_EXT, (EGLClientBuffer)nullptr, imageAttributes);
+    auto image = display.createEGLImage(EGL_NO_CONTEXT, EGL_LINUX_DMA_BUF_EXT, nullptr, imageAttributes);
     if (!image)
         return;
 
@@ -108,7 +108,7 @@ void TextureMapperPlatformLayerDmabuf::validateTexture()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
-    RELEASE_ASSERT(downcast<GLContextEGL>(*context).destroyImage(image));
+    RELEASE_ASSERT(display.destroyEGLImage(image));
 }
 
 void TextureMapperPlatformLayerDmabuf::paintToTextureMapper(TextureMapper& textureMapper, const FloatRect& targetRect, const TransformationMatrix& modelViewMatrix, float opacity)

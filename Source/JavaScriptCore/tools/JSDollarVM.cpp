@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,18 +28,22 @@
 
 #include "ArrayPrototype.h"
 #include "BuiltinNames.h"
+#include "CachedCall.h"
 #include "CodeBlock.h"
 #include "ControlFlowProfiler.h"
 #include "DOMAttributeGetterSetter.h"
 #include "DOMJITGetterSetter.h"
 #include "Debugger.h"
+#include "ExecutableBaseInlines.h"
 #include "FrameTracers.h"
 #include "FunctionCodeBlock.h"
 #include "GetterSetter.h"
+#include "InterpreterInlines.h"
 #include "JITSizeStatistics.h"
 #include "JSArray.h"
 #include "JSCInlines.h"
 #include "JSONObject.h"
+#include "JSPromise.h"
 #include "JSString.h"
 #include "LinkBuffer.h"
 #include "Options.h"
@@ -50,6 +54,7 @@
 #include "SnippetParams.h"
 #include "TypeProfiler.h"
 #include "TypeProfilerLog.h"
+#include "VMEntryScopeInlines.h"
 #include "VMInspector.h"
 #include "VMTrapsInlines.h"
 #include "WasmCapabilities.h"
@@ -61,6 +66,7 @@
 #include <wtf/Language.h>
 #include <wtf/ProcessID.h>
 #include <wtf/StringPrintStream.h>
+#include <wtf/WTFProcess.h>
 #include <wtf/unicode/icu/ICUHelpers.h>
 
 #if !USE(SYSTEM_MALLOC)
@@ -391,6 +397,7 @@ public:
         CallData constructData;
         constructData.type = CallData::Type::Native;
         constructData.native.function = callHostFunctionAsConstructor;
+        constructData.native.isBoundFunction = false;
         return constructData;
     }
 
@@ -755,7 +762,7 @@ static const struct HashTableValue staticCustomAccessorTableValues[3] = {
 };
 
 static const struct HashTable staticCustomAccessorTable =
-    { 3, 7, true, nullptr, staticCustomAccessorTableValues, staticCustomAccessorTableIndex };
+    { 3, 7, PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum | PropertyAttribute::CustomAccessor, nullptr, staticCustomAccessorTableValues, staticCustomAccessorTableIndex };
 
 class StaticCustomAccessor : public JSNonFinalObject {
     using Base = JSNonFinalObject;
@@ -855,7 +862,7 @@ static const struct HashTableValue staticCustomValueTableValues[4] = {
 };
 
 static const struct HashTable staticCustomValueTable =
-    { 4, 7, true, nullptr, staticCustomValueTableValues, staticCustomValueTableIndex };
+    { 4, 7, PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum | PropertyAttribute::CustomValue, nullptr, staticCustomValueTableValues, staticCustomValueTableIndex };
 
 class StaticCustomValue : public JSNonFinalObject {
     using Base = JSNonFinalObject;
@@ -951,7 +958,7 @@ static const struct HashTableValue staticDontDeleteDontEnumTableValues[3] = {
 };
 
 static const struct HashTable staticDontDeleteDontEnumTable =
-    { 3, 7, false, nullptr, staticDontDeleteDontEnumTableValues, staticDontDeleteDontEnumTableIndex };
+    { 3, 7, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete, nullptr, staticDontDeleteDontEnumTableValues, staticDontDeleteDontEnumTableIndex };
 
 class ObjectDoingSideEffectPutWithoutCorrectSlotStatus : public JSNonFinalObject {
     using Base = JSNonFinalObject;
@@ -2193,6 +2200,8 @@ static JSC_DECLARE_HOST_FUNCTION(functionSecurityAssertEnabled);
 static JSC_DECLARE_HOST_FUNCTION(functionAsanEnabled);
 static JSC_DECLARE_HOST_FUNCTION(functionIsMemoryLimited);
 static JSC_DECLARE_HOST_FUNCTION(functionUseJIT);
+static JSC_DECLARE_HOST_FUNCTION(functionUseDFGJIT);
+static JSC_DECLARE_HOST_FUNCTION(functionUseFTLJIT);
 static JSC_DECLARE_HOST_FUNCTION(functionIsGigacageEnabled);
 static JSC_DECLARE_HOST_FUNCTION(functionToCacheableDictionary);
 static JSC_DECLARE_HOST_FUNCTION(functionToUncacheableDictionary);
@@ -2211,8 +2220,12 @@ static JSC_DECLARE_HOST_FUNCTION(functionResetJITSizeStatistics);
 static JSC_DECLARE_HOST_FUNCTION(functionAllowDoubleShape);
 static JSC_DECLARE_HOST_FUNCTION(functionEnsureArrayStorage);
 #if PLATFORM(COCOA)
-static JSC_DECLARE_HOST_FUNCTION(functionSetCrashLogMessage);;
+static JSC_DECLARE_HOST_FUNCTION(functionSetCrashLogMessage);
 #endif
+static JSC_DECLARE_HOST_FUNCTION(functionAssertFrameAligned);
+static JSC_DECLARE_HOST_FUNCTION(functionCallFromCPPAsFirstEntry);
+static JSC_DECLARE_HOST_FUNCTION(functionCallFromCPP);
+static JSC_DECLARE_HOST_FUNCTION(functionCachedCallFromCPP);
 
 const ClassInfo JSDollarVM::s_info = { "DollarVM"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSDollarVM) };
 
@@ -2275,12 +2288,12 @@ JSC_DEFINE_HOST_FUNCTION(functionBreakpoint, (JSGlobalObject* globalObject, Call
     return encodedJSUndefined();
 }
 
-// Executes exit(EXIT_SUCCESS).
+// Executes exitProcess(EXIT_SUCCESS).
 // Usage: $vm.exit()
 JSC_DEFINE_HOST_FUNCTION(functionExit, (JSGlobalObject*, CallFrame*))
 {
     DollarVMAssertScope assertScope;
-    exit(EXIT_SUCCESS);
+    exitProcess(EXIT_SUCCESS);
 }
 
 // Returns true if the current frame is a DFG frame.
@@ -3347,7 +3360,7 @@ JSC_DEFINE_HOST_FUNCTION(functionShadowChickenFunctionsOnStack, (JSGlobalObject*
     RETURN_IF_EXCEPTION(scope, { });
     StackVisitor::visit(callFrame, vm, [&] (StackVisitor& visitor) -> IterationStatus {
         DollarVMAssertScope assertScope;
-        if (visitor->isInlinedFrame())
+        if (visitor->isInlinedDFGFrame())
             return IterationStatus::Continue;
         if (visitor->isWasmFrame())
             return IterationStatus::Continue;
@@ -3636,11 +3649,7 @@ JSC_DEFINE_HOST_FUNCTION(functionParseCount, (JSGlobalObject*, CallFrame*))
 JSC_DEFINE_HOST_FUNCTION(functionIsWasmSupported, (JSGlobalObject*, CallFrame*))
 {
     DollarVMAssertScope assertScope;
-#if ENABLE(WEBASSEMBLY)
     return JSValue::encode(jsBoolean(Wasm::isSupported()));
-#else
-    return JSValue::encode(jsBoolean(false));
-#endif
 }
 
 JSC_DEFINE_HOST_FUNCTION(functionMake16BitStringIfPossible, (JSGlobalObject* globalObject, CallFrame* callFrame))
@@ -3802,6 +3811,18 @@ JSC_DEFINE_HOST_FUNCTION(functionUseJIT, (JSGlobalObject*, CallFrame*))
     return JSValue::encode(jsBoolean(Options::useJIT()));
 }
 
+JSC_DEFINE_HOST_FUNCTION(functionUseDFGJIT, (JSGlobalObject*, CallFrame*))
+{
+    DollarVMAssertScope assertScope;
+    return JSValue::encode(jsBoolean(Options::useDFGJIT()));
+}
+
+JSC_DEFINE_HOST_FUNCTION(functionUseFTLJIT, (JSGlobalObject*, CallFrame*))
+{
+    DollarVMAssertScope assertScope;
+    return JSValue::encode(jsBoolean(Options::useFTLJIT()));
+}
+
 JSC_DEFINE_HOST_FUNCTION(functionIsGigacageEnabled, (JSGlobalObject*, CallFrame*))
 {
     DollarVMAssertScope assertScope;
@@ -3959,6 +3980,97 @@ JSC_DEFINE_HOST_FUNCTION(functionSetCrashLogMessage, (JSGlobalObject* globalObje
 }
 #endif
 
+JSC_DEFINE_HOST_FUNCTION(functionAssertFrameAligned, (JSGlobalObject*, CallFrame* callFrame))
+{
+    DollarVMAssertScope assertScope;
+#if CPU(X86_64) || CPU(ARM64)
+    RELEASE_ASSERT(bitwise_cast<uintptr_t>(callFrame) % stackAlignmentBytes() == 0);
+#else
+    UNUSED_PARAM(callFrame);
+#endif
+    return JSValue::encode(jsUndefined());
+}
+
+JSC_DEFINE_HOST_FUNCTION(functionCallFromCPPAsFirstEntry, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    DollarVMAssertScope assertScope;
+    VM& vm = globalObject->vm();
+    VMEntryScope* origEntryScope = vm.entryScope;
+    vm.entryScope = nullptr;
+
+    auto restoreEntryScope = makeScopeExit([&] {
+        vm.entryScope = origEntryScope;
+    });
+
+    return functionCallFromCPP(globalObject, callFrame);
+}
+
+JSC_DEFINE_HOST_FUNCTION(functionCallFromCPP, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    DollarVMAssertScope assertScope;
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue callback = callFrame->argument(0);
+    auto callData = JSC::getCallData(callback);
+    if (callData.type == CallData::Type::None)
+        return JSValue::encode(jsUndefined());
+    auto* callbackObject = jsCast<JSObject*>(callback);
+
+    int32_t count = callFrame->argument(1).toInt32(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+    if (count < 0)
+        return JSValue::encode(jsUndefined());
+
+    MarkedArgumentBuffer arguments;
+    for (unsigned i = 2; i < callFrame->argumentCount(); ++i)
+        arguments.append(callFrame->argument(i));
+    ASSERT(!arguments.hasOverflowed());
+    RETURN_IF_EXCEPTION(scope, { });
+
+    for (int32_t i = 0; i < count; ++i) {
+        call(globalObject, callbackObject, callData, jsNull(), arguments);
+        RETURN_IF_EXCEPTION(scope, { });
+    }
+
+    return JSValue::encode(jsUndefined());
+}
+
+JSC_DEFINE_HOST_FUNCTION(functionCachedCallFromCPP, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    DollarVMAssertScope assertScope;
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue callback = callFrame->argument(0);
+    auto callData = JSC::getCallData(callback);
+    if (callData.type != CallData::Type::JS)
+        return JSValue::encode(jsUndefined());
+    auto* callbackObject = jsCast<JSFunction*>(callback);
+
+    int32_t count = callFrame->argument(1).toInt32(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+    if (count < 0)
+        return JSValue::encode(jsUndefined());
+
+    CachedCall cachedCall(globalObject, callbackObject, callFrame->argumentCount() - 2);
+    RETURN_IF_EXCEPTION(scope, { });
+    cachedCall.clearArguments();
+    for (unsigned i = 2; i < callFrame->argumentCount(); ++i)
+        cachedCall.appendArgument(callFrame->argument(i));
+    cachedCall.setThis(jsNull());
+
+    if (UNLIKELY(cachedCall.hasOverflowedArguments()))
+        return JSValue::encode(jsUndefined());
+
+    for (int32_t i = 0; i < count; ++i) {
+        cachedCall.call();
+        RETURN_IF_EXCEPTION(scope, { });
+    }
+
+    return JSValue::encode(jsUndefined());
+}
+
 constexpr unsigned jsDollarVMPropertyAttributes = PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum | PropertyAttribute::DontDelete;
 
 void JSDollarVM::finishCreation(VM& vm)
@@ -4113,6 +4225,8 @@ void JSDollarVM::finishCreation(VM& vm)
 
     addFunction(vm, "isMemoryLimited"_s, functionIsMemoryLimited, 0);
     addFunction(vm, "useJIT"_s, functionUseJIT, 0);
+    addFunction(vm, "useDFGJIT"_s, functionUseDFGJIT, 0);
+    addFunction(vm, "useFTLJIT"_s, functionUseFTLJIT, 0);
     addFunction(vm, "isGigacageEnabled"_s, functionIsGigacageEnabled, 0);
 
     addFunction(vm, "toCacheableDictionary"_s, functionToCacheableDictionary, 1);
@@ -4139,6 +4253,12 @@ void JSDollarVM::finishCreation(VM& vm)
 #if PLATFORM(COCOA)
     addFunction(vm, "setCrashLogMessage"_s, functionSetCrashLogMessage, 1);
 #endif
+
+    addFunction(vm, "assertFrameAligned"_s, functionAssertFrameAligned, 0);
+
+    addFunction(vm, "callFromCPPAsFirstEntry"_s, functionCallFromCPPAsFirstEntry, 2);
+    addFunction(vm, "callFromCPP"_s, functionCallFromCPP, 2);
+    addFunction(vm, "cachedCallFromCPP"_s, functionCachedCallFromCPP, 2);
 
     m_objectDoingSideEffectPutWithoutCorrectSlotStatusStructureID.set(vm, this, ObjectDoingSideEffectPutWithoutCorrectSlotStatus::createStructure(vm, globalObject, jsNull()));
 }

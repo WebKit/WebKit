@@ -9,9 +9,6 @@
 <script>
 description("Checks for proper getActiveUniforms() behavior on a simple WebGL 2 program.");
 
-if (window.internals)
-	internals.settings.setWebGL2Enabled(true);
-
 var canvas = document.getElementById("c");
 var gl = canvas.getContext("webgl2");
 shouldBe("gl.getError()", "gl.NO_ERROR");

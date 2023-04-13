@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -48,11 +48,17 @@ public:
 
     void didRefreshDisplay() override;
 
+    DisplayLink& displayLink();
+
 private:
     WebCore::DelegatedScrollingMode delegatedScrollingMode() const override;
     std::unique_ptr<RemoteScrollingCoordinatorProxy> createScrollingCoordinatorProxy() const override;
 
-    void didCommitLayerTree(const RemoteLayerTreeTransaction&, const RemoteScrollingCoordinatorTransaction&) override;
+    bool isRemoteLayerTreeDrawingAreaProxyMac() const override { return true; }
+
+    void layoutBannerLayers(const RemoteLayerTreeTransaction&);
+
+    void didCommitLayerTree(IPC::Connection&, const RemoteLayerTreeTransaction&, const RemoteScrollingCoordinatorTransaction&) override;
 
     void adjustTransientZoom(double, WebCore::FloatPoint) override;
     void commitTransientZoom(double, WebCore::FloatPoint) override;
@@ -73,7 +79,8 @@ private:
     void removeObserver(std::optional<DisplayLinkObserverID>&);
 
     DisplayLink* exisingDisplayLink();
-    DisplayLink& ensureDisplayLink();
+
+    WTF::MachSendRight createFence() override;
 
     std::optional<WebCore::PlatformDisplayID> m_displayID; // Would be nice to make this non-optional, and ensure we always get one on creation.
     std::optional<WebCore::FramesPerSecond> m_displayNominalFramesPerSecond;
@@ -82,7 +89,8 @@ private:
     std::optional<DisplayLinkObserverID> m_displayRefreshObserverID;
     std::optional<DisplayLinkObserverID> m_fullSpeedUpdateObserverID;
     std::unique_ptr<RemoteLayerTreeDisplayLinkClient> m_displayLinkClient;
-    WebCore::GraphicsLayer::PlatformLayerID m_pageScalingLayerID;
+    WebCore::PlatformLayerIdentifier m_pageScalingLayerID;
+    bool m_usesOverlayScrollbars { false };
 
     std::optional<TransactionID> m_transactionIDAfterEndingTransientZoom;
     std::optional<double> m_transientZoomScale;

@@ -193,9 +193,9 @@ bool ValidReadPixelsFormatType(const Context *context,
             switch (format)
             {
                 case GL_RGBA:
-                    return ((type == GL_UNSIGNED_BYTE) && info->pixelBytes >= 1) ||
+                    return type == GL_UNSIGNED_BYTE ||
                            (context->getExtensions().textureNorm16EXT &&
-                            (type == GL_UNSIGNED_SHORT) && info->pixelBytes >= 2);
+                            type == GL_UNSIGNED_SHORT && info->type == GL_UNSIGNED_SHORT);
                 case GL_BGRA_EXT:
                     return context->getExtensions().readFormatBgraEXT && (type == GL_UNSIGNED_BYTE);
                 case GL_STENCIL_INDEX_OES:
@@ -212,9 +212,10 @@ bool ValidReadPixelsFormatType(const Context *context,
                     return false;
             }
         case GL_SIGNED_NORMALIZED:
-            return (format == GL_RGBA && type == GL_BYTE && info->pixelBytes >= 1) ||
-                   (context->getExtensions().textureNorm16EXT && format == GL_RGBA &&
-                    type == GL_UNSIGNED_SHORT && info->pixelBytes >= 2);
+            ASSERT(context->getExtensions().renderSnormEXT);
+            return format == GL_RGBA &&
+                   (type == GL_BYTE || (context->getExtensions().textureNorm16EXT &&
+                                        type == GL_SHORT && info->type == GL_SHORT));
 
         case GL_INT:
             return (format == GL_RGBA_INTEGER && type == GL_INT);
@@ -259,13 +260,33 @@ bool ValidateTextureWrapModeValue(const Context *context,
                 context->validationError(entryPoint, GL_INVALID_ENUM, kExtensionNotEnabled);
                 return false;
             }
+            if (restrictedWrapModes)
+            {
+                // OES_EGL_image_external and ANGLE_texture_rectangle specify this error.
+                context->validationError(entryPoint, GL_INVALID_ENUM, kInvalidWrapModeTexture);
+                return false;
+            }
             break;
 
         case GL_REPEAT:
         case GL_MIRRORED_REPEAT:
             if (restrictedWrapModes)
             {
-                // OES_EGL_image_external and ANGLE_texture_rectangle specifies this error.
+                // OES_EGL_image_external and ANGLE_texture_rectangle specify this error.
+                context->validationError(entryPoint, GL_INVALID_ENUM, kInvalidWrapModeTexture);
+                return false;
+            }
+            break;
+
+        case GL_MIRROR_CLAMP_TO_EDGE_EXT:
+            if (!context->getExtensions().textureMirrorClampToEdgeEXT)
+            {
+                context->validationError(entryPoint, GL_INVALID_ENUM, kExtensionNotEnabled);
+                return false;
+            }
+            if (restrictedWrapModes)
+            {
+                // OES_EGL_image_external and ANGLE_texture_rectangle specify this error.
                 context->validationError(entryPoint, GL_INVALID_ENUM, kInvalidWrapModeTexture);
                 return false;
             }
@@ -1251,7 +1272,12 @@ bool ValidImageDataSize(const Context *context,
     // ...the data would be unpacked from the buffer object such that the memory reads required
     // would exceed the data store size.
     const InternalFormat &formatInfo = GetInternalFormatInfo(format, type);
-    ASSERT(formatInfo.internalFormat != GL_NONE);
+    if (formatInfo.internalFormat == GL_NONE)
+    {
+        UNREACHABLE();
+        context->validationError(entryPoint, GL_INVALID_OPERATION, kInternalErrorFormatNotFound);
+        return false;
+    }
     const Extents size(width, height, depth);
     const auto &unpack = context->getState().getUnpackState();
 
@@ -7084,6 +7110,14 @@ bool ValidateGetTexParameterBase(const Context *context,
             break;
 
         case GL_DEPTH_STENCIL_TEXTURE_MODE:
+            if (context->getClientVersion() < ES_3_1 &&
+                !context->getExtensions().stencilTexturingANGLE)
+            {
+                context->validationErrorF(entryPoint, GL_INVALID_ENUM, kEnumNotSupported, pname);
+                return false;
+            }
+            break;
+
         case GL_IMAGE_FORMAT_COMPATIBILITY_TYPE:
             if (context->getClientVersion() < ES_3_1)
             {
@@ -7112,7 +7146,7 @@ bool ValidateGetTexParameterBase(const Context *context,
             break;
 
         case GL_TEXTURE_BORDER_COLOR:
-            if (!context->getExtensions().textureBorderClampOES &&
+            if (!context->getExtensions().textureBorderClampAny() &&
                 context->getClientVersion() < ES_3_2)
             {
                 context->validationError(entryPoint, GL_INVALID_ENUM, kExtensionNotEnabled);
@@ -7801,9 +7835,10 @@ bool ValidateTexParameterBase(const Context *context,
             break;
 
         case GL_DEPTH_STENCIL_TEXTURE_MODE:
-            if (context->getClientVersion() < Version(3, 1))
+            if (context->getClientVersion() < ES_3_1 &&
+                !context->getExtensions().stencilTexturingANGLE)
             {
-                context->validationError(entryPoint, GL_INVALID_ENUM, kEnumRequiresGLES31);
+                context->validationErrorF(entryPoint, GL_INVALID_ENUM, kEnumNotSupported, pname);
                 return false;
             }
             switch (ConvertToGLenum(params[0]))
@@ -7855,7 +7890,7 @@ bool ValidateTexParameterBase(const Context *context,
             break;
 
         case GL_TEXTURE_BORDER_COLOR:
-            if (!context->getExtensions().textureBorderClampOES &&
+            if (!context->getExtensions().textureBorderClampAny() &&
                 context->getClientVersion() < ES_3_2)
             {
                 context->validationError(entryPoint, GL_INVALID_ENUM, kExtensionNotEnabled);
@@ -8076,7 +8111,7 @@ bool ValidateSamplerParameterBase(const Context *context,
         break;
 
         case GL_TEXTURE_BORDER_COLOR:
-            if (!context->getExtensions().textureBorderClampOES &&
+            if (!context->getExtensions().textureBorderClampAny() &&
                 context->getClientVersion() < ES_3_2)
             {
                 context->validationError(entryPoint, GL_INVALID_ENUM, kExtensionNotEnabled);
@@ -8171,7 +8206,7 @@ bool ValidateGetSamplerParameterBase(const Context *context,
             break;
 
         case GL_TEXTURE_BORDER_COLOR:
-            if (!context->getExtensions().textureBorderClampOES &&
+            if (!context->getExtensions().textureBorderClampAny() &&
                 context->getClientVersion() < ES_3_2)
             {
                 context->validationError(entryPoint, GL_INVALID_ENUM, kExtensionNotEnabled);

@@ -24,8 +24,8 @@
 #include "APIInjectedBundleBundleClient.h"
 #include "APIString.h"
 #include "WebKitUserMessagePrivate.h"
-#include "WebKitWebExtensionPrivate.h"
 #include "WebKitWebPagePrivate.h"
+#include "WebKitWebProcessExtensionPrivate.h"
 #include "WebProcess.h"
 #include "WebProcessProxyMessages.h"
 #include <WebCore/GCController.h>
@@ -130,7 +130,7 @@ struct _WebKitWebExtensionPrivate {
 
 static guint signals[LAST_SIGNAL] = { 0, };
 
-WEBKIT_DEFINE_TYPE(WebKitWebExtension, webkit_web_extension, G_TYPE_OBJECT)
+WEBKIT_DEFINE_FINAL_TYPE(WebKitWebExtension, webkit_web_extension, G_TYPE_OBJECT, GObject)
 
 static void webkit_web_extension_class_init(WebKitWebExtensionClass* klass)
 {
@@ -201,21 +201,21 @@ private:
     WebKitWebExtension* m_extension;
 };
 
-WebKitWebExtension* webkitWebExtensionCreate(InjectedBundle* bundle)
+WebKitWebExtension* webkitWebProcessExtensionCreate(InjectedBundle* bundle)
 {
     WebKitWebExtension* extension = WEBKIT_WEB_EXTENSION(g_object_new(WEBKIT_TYPE_WEB_EXTENSION, NULL));
     bundle->setClient(makeUnique<WebExtensionInjectedBundleClient>(extension));
     return extension;
 }
 
-void webkitWebExtensionDidReceiveUserMessage(WebKitWebExtension* extension, UserMessage&& message)
+void webkitWebProcessExtensionDidReceiveUserMessage(WebKitWebExtension* extension, UserMessage&& message)
 {
     // Sink the floating ref.
     GRefPtr<WebKitUserMessage> userMessage = webkitUserMessageCreate(WTFMove(message), [](UserMessage&&) { });
     g_signal_emit(extension, signals[USER_MESSAGE_RECEIVED], 0, userMessage.get());
 }
 
-void webkitWebExtensionSetGarbageCollectOnPageDestroy(WebKitWebExtension* extension)
+void webkitWebProcessExtensionSetGarbageCollectOnPageDestroy(WebKitWebExtension* extension)
 {
 #if ENABLE(DEVELOPER_MODE)
     extension->priv->garbageCollectOnPageDestroy = true;
@@ -238,9 +238,10 @@ WebKitWebPage* webkit_web_extension_get_page(WebKitWebExtension* extension, guin
 
     WebKitWebExtensionPrivate* priv = extension->priv;
     WebPageMap::const_iterator end = priv->pages.end();
-    for (WebPageMap::const_iterator it = priv->pages.begin(); it != end; ++it)
+    for (WebPageMap::const_iterator it = priv->pages.begin(); it != end; ++it) {
         if (it->key->identifier().toUInt64() == pageID)
             return it->value.get();
+    }
 
     return 0;
 }

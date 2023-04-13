@@ -54,4 +54,6 @@
     DOMString serviceWorkerClientInternalIdentifier(ServiceWorkerClient client);
 
     undefined setAsInspected(boolean isInspected);
+    [CallWith=CurrentScriptExecutionContext] undefined enableConsoleMessageReporting();
+    [CallWith=CurrentScriptExecutionContext] undefined logReportedConsoleMessage(DOMString value);
 };

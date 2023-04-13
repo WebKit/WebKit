@@ -34,11 +34,11 @@
 
 #include "DOMWrapperWorld.h"
 #include "Document.h"
-#include "Frame.h"
 #include "InspectorPageAgent.h"
 #include "InstrumentingAgents.h"
-#include "JSDOMWindowCustom.h"
 #include "JSExecState.h"
+#include "JSLocalDOMWindowCustom.h"
+#include "LocalFrame.h"
 #include "Page.h"
 #include "PageConsoleClient.h"
 #include "ScriptController.h"
@@ -88,13 +88,13 @@ Protocol::ErrorStringOr<void> PageRuntimeAgent::disable()
     return InspectorRuntimeAgent::disable();
 }
 
-void PageRuntimeAgent::frameNavigated(Frame& frame)
+void PageRuntimeAgent::frameNavigated(LocalFrame& frame)
 {
     // Ensure execution context is created for the frame even if it doesn't have scripts.
     mainWorldGlobalObject(frame);
 }
 
-void PageRuntimeAgent::didClearWindowObjectInWorld(Frame& frame, DOMWrapperWorld& world)
+void PageRuntimeAgent::didClearWindowObjectInWorld(LocalFrame& frame, DOMWrapperWorld& world)
 {
     auto* pageAgent = m_instrumentingAgents.enabledPageAgent();
     if (!pageAgent)
@@ -106,7 +106,11 @@ void PageRuntimeAgent::didClearWindowObjectInWorld(Frame& frame, DOMWrapperWorld
 InjectedScript PageRuntimeAgent::injectedScriptForEval(Protocol::ErrorString& errorString, std::optional<Protocol::Runtime::ExecutionContextId>&& executionContextId)
 {
     if (!executionContextId) {
-        InjectedScript result = injectedScriptManager().injectedScriptFor(&mainWorldGlobalObject(m_inspectedPage.mainFrame()));
+        auto* localMainFrame = dynamicDowncast<LocalFrame>(m_inspectedPage.mainFrame());
+        if (!localMainFrame)
+            return InjectedScript();
+
+        InjectedScript result = injectedScriptManager().injectedScriptFor(&mainWorldGlobalObject(*localMainFrame));
         if (result.hasNoValue())
             errorString = "Internal error: main world execution context not found"_s;
         return result;
@@ -134,7 +138,7 @@ void PageRuntimeAgent::reportExecutionContextCreation()
     if (!pageAgent)
         return;
 
-    m_inspectedPage.forEachFrame([&](Frame& frame) {
+    m_inspectedPage.forEachFrame([&](LocalFrame& frame) {
         if (!frame.script().canExecuteScripts(NotAboutToExecuteScript))
             return;
 
@@ -149,7 +153,7 @@ void PageRuntimeAgent::reportExecutionContextCreation()
             if (globalObject == &mainGlobalObject)
                 continue;
 
-            auto& securityOrigin = downcast<DOMWindow>(jsWindowProxy->wrapped()).document()->securityOrigin();
+            auto& securityOrigin = downcast<LocalDOMWindow>(jsWindowProxy->wrapped()).document()->securityOrigin();
             notifyContextCreated(frameId, globalObject, jsWindowProxy->world(), &securityOrigin);
         }
     });

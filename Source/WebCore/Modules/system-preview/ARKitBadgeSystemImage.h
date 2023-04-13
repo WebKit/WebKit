@@ -30,6 +30,7 @@
 #include "NativeImage.h"
 #include "SystemImage.h"
 #include <optional>
+#include <wtf/ArgumentCoder.h>
 #include <wtf/Forward.h>
 #include <wtf/Ref.h>
 #include <wtf/RefPtr.h>
@@ -57,12 +58,10 @@ public:
     Image* image() const { return m_image.get(); }
     void setImage(Image& image) { m_image = &image; }
 
-    RenderingResourceIdentifier imageIdentifier() const { return m_renderingResourceIdentifier; }
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<Ref<ARKitBadgeSystemImage>> decode(Decoder&);
+    RenderingResourceIdentifier imageIdentifier() const;
 
 private:
+    friend struct IPC::ArgumentCoder<ARKitBadgeSystemImage, void>;
     ARKitBadgeSystemImage(Image& image)
         : SystemImage(SystemImageType::ARKitBadge)
         , m_image(&image)
@@ -81,31 +80,6 @@ private:
     RenderingResourceIdentifier m_renderingResourceIdentifier;
     FloatSize m_imageSize;
 };
-
-template<class Encoder>
-void ARKitBadgeSystemImage::encode(Encoder& encoder) const
-{
-    ASSERT(m_image);
-    ASSERT(m_image->nativeImage());
-    encoder << m_image->nativeImage()->renderingResourceIdentifier();
-    encoder << m_imageSize;
-}
-
-template<class Decoder>
-std::optional<Ref<ARKitBadgeSystemImage>> ARKitBadgeSystemImage::decode(Decoder& decoder)
-{
-    std::optional<RenderingResourceIdentifier> renderingResourceIdentifier;
-    decoder >> renderingResourceIdentifier;
-    if (!renderingResourceIdentifier)
-        return std::nullopt;
-
-    std::optional<FloatSize> imageSize;
-    decoder >> imageSize;
-    if (!imageSize)
-        return std::nullopt;
-
-    return ARKitBadgeSystemImage::create(WTFMove(*renderingResourceIdentifier), WTFMove(*imageSize));
-}
 
 } // namespace WebCore
 

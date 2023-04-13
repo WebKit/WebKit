@@ -58,6 +58,8 @@ public:
     static Ref<WebFullScreenManager> create(WebPage*);
     virtual ~WebFullScreenManager();
 
+    void invalidate();
+
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
 
     bool supportsFullScreen(bool withKeyboard);
@@ -68,6 +70,9 @@ public:
     void didEnterFullScreen();
     void willExitFullScreen();
     void didExitFullScreen();
+
+    void saveScrollPosition();
+    void restoreScrollPosition();
 
     WebCore::Element* element();
 
@@ -83,8 +88,6 @@ protected:
     void setAnimatingFullScreen(bool);
     void requestRestoreFullScreen();
     void requestExitFullScreen();
-    void saveScrollPosition();
-    void restoreScrollPosition();
     void setFullscreenInsets(const WebCore::FloatBoxExtent&);
     void setFullscreenAutoHideDuration(Seconds);
     void setFullscreenControlsHidden(bool);

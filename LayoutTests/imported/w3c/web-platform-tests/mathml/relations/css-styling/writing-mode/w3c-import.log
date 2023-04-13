@@ -14,5 +14,9 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/writing-mode/force-horizontal-tb.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/writing-mode/reset-and-logicial-property-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/writing-mode/reset-and-logicial-property-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/writing-mode/reset-and-logicial-property.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/writing-mode/writing-mode-001.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/writing-mode/writing-mode-002.html

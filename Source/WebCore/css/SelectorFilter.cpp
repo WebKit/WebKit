@@ -46,18 +46,9 @@ static bool isExcludedAttribute(const AtomString& name)
     return name == HTMLNames::classAttr->localName() || name == HTMLNames::idAttr->localName() || name == HTMLNames::styleAttr->localName();
 }
 
-static inline bool localNameIsKnownToBeLowercase(const Element& element)
-{
-    // Known HTML element always return a localName() that is defined inside HTMLNames.h. All known HTML
-    // tags are lowercase.
-    return element.isHTMLElement() && !element.isUnknownElement();
-}
-
 void SelectorFilter::collectElementIdentifierHashes(const Element& element, Vector<unsigned, 4>& identifierHashes)
 {
-    AtomString tagLowercaseLocalName = LIKELY(localNameIsKnownToBeLowercase(element)) ? element.localName() : element.localName().convertToASCIILowercase();
-    ASSERT(tagLowercaseLocalName == tagLowercaseLocalName.convertToASCIILowercase());
-    identifierHashes.append(tagLowercaseLocalName.impl()->existingHash() * TagNameSalt);
+    identifierHashes.append(element.localNameLowercase().impl()->existingHash() * TagNameSalt);
 
     auto& id = element.idForStyleResolution();
     if (!id.isNull())
@@ -72,7 +63,7 @@ void SelectorFilter::collectElementIdentifierHashes(const Element& element, Vect
     
     if (element.hasAttributesWithoutUpdate()) {
         for (auto& attribute : element.attributesIterator()) {
-            auto attributeName = element.isHTMLElement() ? attribute.localName() : attribute.localName().convertToASCIILowercase();
+            auto attributeName = element.isHTMLElement() ? attribute.localName() : attribute.localNameLowercase();
             if (isExcludedAttribute(attributeName))
                 continue;
             identifierHashes.append(attributeName.impl()->existingHash() * AttributeSalt);
@@ -93,6 +84,7 @@ void SelectorFilter::initializeParentStack(Element& parent)
     Vector<Element*, 20> ancestors;
     for (auto* ancestor = &parent; ancestor; ancestor = ancestor->parentElement())
         ancestors.append(ancestor);
+    m_parentStack.reserveCapacity(m_parentStack.capacity() + ancestors.size());
     for (unsigned i = ancestors.size(); i--;)
         pushParent(ancestors[i]);
 }
@@ -167,7 +159,7 @@ void SelectorFilter::collectSimpleSelectorHash(CollectedSelectorHashes& collecte
     case CSSSelector::Contain:
     case CSSSelector::Begin:
     case CSSSelector::End: {
-        auto attributeName = selector.attributeCanonicalLocalName().convertToASCIILowercase();
+        auto attributeName = selector.attribute().localNameLowercase();
         if (!isExcludedAttribute(attributeName))
             collectedHashes.attributes.append(attributeName.impl()->existingHash() * AttributeSalt);
         break;

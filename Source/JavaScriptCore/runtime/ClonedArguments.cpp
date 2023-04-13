@@ -324,12 +324,12 @@ bool ClonedArguments::isIteratorProtocolFastAndNonObservable()
     if (!globalObject->isArgumentsPrototypeIteratorProtocolFastAndNonObservable())
         return false;
 
-    if (UNLIKELY(structure->mayInterceptIndexedAccesses() || structure->storedPrototypeObject()->needsSlowPutIndexing()))
-        return false;
-
     // FIXME: We should relax this restriction, or reorganize ClonedArguments's @@iterator property materialization to go to this condition.
     // Probably, we should make ClonedArguments more similar to DirectArguments, and tracking changes on them instead of using relatively plain objects.
     if (structure->didTransition())
+        return false;
+
+    if (UNLIKELY(structure->mayInterceptIndexedAccesses() || structure->storedPrototypeObject()->needsSlowPutIndexing()))
         return false;
 
     // Even though Structure is not transitioned, it is possible that length property is replaced with random value.

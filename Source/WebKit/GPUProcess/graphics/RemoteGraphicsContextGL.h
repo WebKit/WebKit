@@ -121,11 +121,10 @@ protected:
 #else
     void prepareForDisplay(CompletionHandler<void()>&&);
 #endif
-    void getError(CompletionHandler<void(uint32_t)>&&);
-    void synthesizeGLError(uint32_t error);
+    void getErrors(CompletionHandler<void(GCGLErrorCodeSet)>&&);
     void paintRenderingResultsToCanvas(WebCore::RenderingResourceIdentifier, CompletionHandler<void()>&&);
     void paintCompositedResultsToCanvas(WebCore::RenderingResourceIdentifier, CompletionHandler<void()>&&);
-#if ENABLE(MEDIA_STREAM)
+#if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
     void paintCompositedResultsToVideoFrame(CompletionHandler<void(std::optional<WebKit::RemoteVideoFrameProxy::Properties>&&)>&&);
 #endif
 #if ENABLE(VIDEO) && PLATFORM(COCOA)
@@ -149,7 +148,7 @@ protected:
 private:
     void paintRenderingResultsToCanvasWithQualifiedIdentifier(QualifiedRenderingResourceIdentifier, CompletionHandler<void()>&&);
     void paintCompositedResultsToCanvasWithQualifiedIdentifier(QualifiedRenderingResourceIdentifier, CompletionHandler<void()>&&);
-    void paintPixelBufferToImageBuffer(RefPtr<WebCore::PixelBuffer>&&, QualifiedRenderingResourceIdentifier, CompletionHandler<void()>&&);
+    void paintNativeImageToImageBuffer(WebCore::NativeImage&, QualifiedRenderingResourceIdentifier, CompletionHandler<void()>&&);
 
 protected:
     WeakPtr<GPUConnectionToWebProcess> m_gpuConnectionToWebProcess;

@@ -26,9 +26,9 @@
 #include "config.h"
 #include "InspectorFrontendAPIDispatcher.h"
 
-#include "Frame.h"
 #include "InspectorController.h"
 #include "JSDOMPromise.h"
+#include "LocalFrame.h"
 #include "Page.h"
 #include "ScriptController.h"
 #include "ScriptDisallowedScope.h"
@@ -106,8 +106,12 @@ JSDOMGlobalObject* InspectorFrontendAPIDispatcher::frontendGlobalObject()
 {
     if (!m_frontendPage)
         return nullptr;
+
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_frontendPage->mainFrame());
+    if (!localMainFrame)
+        return nullptr;
     
-    return m_frontendPage->mainFrame().script().globalObject(mainThreadNormalWorld());
+    return localMainFrame->script().globalObject(mainThreadNormalWorld());
 }
 
 static String expressionForEvaluatingCommand(const String& command, Vector<Ref<JSON::Value>>&& arguments)
@@ -259,7 +263,9 @@ ValueOrException InspectorFrontendAPIDispatcher::evaluateExpression(const String
     ASSERT(m_queuedEvaluations.isEmpty());
 
     JSC::SuspendExceptionScope scope(m_frontendPage->inspectorController().vm());
-    return m_frontendPage->mainFrame().script().evaluateInWorld(ScriptSourceCode(expression), mainThreadNormalWorld());
+
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_frontendPage->mainFrame());
+    return localMainFrame->script().evaluateInWorld(ScriptSourceCode(expression), mainThreadNormalWorld());
 }
 
 void InspectorFrontendAPIDispatcher::evaluateExpressionForTesting(const String& expression)

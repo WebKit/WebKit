@@ -24,10 +24,10 @@
 # This is for writing a bit complex tests to drive in JSC shell (e.g. including multiple files with some special options).
 
 - path: complex/generator-regeneration.js
-  cmd: runComplexTest [], ["generator-regeneration-after.js"], "", "--useDollarVM=1"
+  cmd: runComplexTest [], ["generator-regeneration-after.js"], nil, "--useDollarVM=1"
 
 - path: complex/tagged-template-regeneration.js
-  cmd: runComplexTest [], ["tagged-template-regeneration-after.js"], "", "--useDollarVM=1"
+  cmd: runComplexTest [], ["tagged-template-regeneration-after.js"], nil, "--useDollarVM=1"
 
 - path: complex/timezone-format-de.js
   cmd: runComplexTest [], [], "TZ=Europe/Berlin", "--useDollarVM=1"
@@ -57,10 +57,15 @@
   cmd: runComplexTest [], [], "TZ=America/Los_Angeles", "--useDollarVM=1", "--useTemporal=1"
 
 - path: complex/temporal-now-timezone-with-broken-tz.js
-  cmd: runComplexTest [], [], "TZ=UNDEFINED", "--useDollarVM=1", "--useTemporal=1"
+  cmd: |
+      if ($hostOS == "windows")
+          skip
+      else
+          runComplexTest [], [], "TZ=UNDEFINED", "--useDollarVM=1", "--useTemporal=1"
+      end
 
 - path: complex/for-in-clobberize.js
-  cmd: runComplexTest [], [], "", "--destroy-vm"
+  cmd: runComplexTest [], [], nil, "--destroy-vm"
 
 - path: complex/intl-date-time-format-date-parse.js
   cmd: runComplexTest [], [], "TZ=America/New_York"

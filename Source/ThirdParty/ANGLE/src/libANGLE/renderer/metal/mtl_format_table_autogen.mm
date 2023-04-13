@@ -158,6 +158,8 @@ angle::FormatID Format::MetalToAngleFormatID(MTLPixelFormat formatMtl)
             return angle::FormatID::BC7_RGBA_UNORM_BLOCK;
         case MTLPixelFormatBC7_RGBAUnorm_sRGB:
             return angle::FormatID::BC7_RGBA_UNORM_SRGB_BLOCK;
+        case MTLPixelFormatDepth16Unorm:
+            return angle::FormatID::D16_UNORM;
         case MTLPixelFormatDepth24Unorm_Stencil8:
             return angle::FormatID::D24_UNORM_S8_UINT;
 #endif  // TARGET_OS_OSX || TARGET_OS_MACCATALYST
@@ -702,7 +704,7 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
 
             this->metalFormat    = MTLPixelFormatRGBA16Unorm;
             this->actualFormatId = angle::FormatID::R16G16B16A16_UNORM;
-            this->initFunction = Initialize4ComponentData<GLubyte, 0x0000, 0x0000, 0x0000, 0xFFFF>;
+            this->initFunction = Initialize4ComponentData<GLushort, 0x0000, 0x0000, 0x0000, 0xFFFF>;
             break;
 
         case angle::FormatID::R32G32B32_FLOAT:
@@ -849,6 +851,20 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             this->actualFormatId = angle::FormatID::BC7_RGBA_UNORM_SRGB_BLOCK;
             break;
 
+        case angle::FormatID::D16_UNORM:
+
+            if (display->supportsAppleGPUFamily(1))
+            {
+                this->metalFormat    = MTLPixelFormatDepth16Unorm;
+                this->actualFormatId = angle::FormatID::D16_UNORM;
+            }
+            else
+            {
+                this->metalFormat    = MTLPixelFormatDepth32Float;
+                this->actualFormatId = angle::FormatID::D32_FLOAT;
+            }
+            break;
+
         case angle::FormatID::D24_UNORM_S8_UINT:
 
             if (metalDevice.depth24Stencil8PixelFormatSupported &&
@@ -862,12 +878,6 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
                 this->metalFormat    = MTLPixelFormatDepth32Float_Stencil8;
                 this->actualFormatId = angle::FormatID::D32_FLOAT_S8X24_UINT;
             }
-            break;
-
-        case angle::FormatID::D16_UNORM:
-
-            this->metalFormat    = MTLPixelFormatDepth32Float;
-            this->actualFormatId = angle::FormatID::D32_FLOAT;
             break;
 
         case angle::FormatID::BC1_RGB_UNORM_BLOCK:
@@ -1551,6 +1561,12 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
             this->actualFormatId = angle::FormatID::ASTC_8x8_SRGB_BLOCK;
             break;
 
+        case angle::FormatID::D16_UNORM:
+
+            this->metalFormat    = MTLPixelFormatDepth16Unorm;
+            this->actualFormatId = angle::FormatID::D16_UNORM;
+            break;
+
         case angle::FormatID::EAC_R11G11_SNORM_BLOCK:
 
             this->metalFormat    = MTLPixelFormatEAC_RG11Snorm;
@@ -1693,12 +1709,6 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
 
             this->metalFormat    = MTLPixelFormatR8Unorm_sRGB;
             this->actualFormatId = angle::FormatID::R8_UNORM_SRGB;
-            break;
-
-        case angle::FormatID::D16_UNORM:
-
-            this->metalFormat    = MTLPixelFormatDepth32Float;
-            this->actualFormatId = angle::FormatID::D32_FLOAT;
             break;
 
         case angle::FormatID::D24_UNORM_S8_UINT:
@@ -3611,7 +3621,7 @@ void FormatTable::initNativeFormatCapsAutogen(const DisplayMtl *display)
                   /** resolve*/ display->supportsMacGPUFamily(1), /** colorRenderable*/ true,
                   /** depthRenderable*/ false);
 
-    setFormatCaps(MTLPixelFormatR32Float, /** filterable*/ display->supportsEitherGPUFamily(1, 1),
+    setFormatCaps(MTLPixelFormatR32Float, /** filterable*/ display->supportsMacGPUFamily(1),
                   /** writable*/ true, /** blendable*/ true, /** multisample*/ true,
                   /** resolve*/ display->supportsMacGPUFamily(1), /** colorRenderable*/ true,
                   /** depthRenderable*/ false);
@@ -3668,9 +3678,9 @@ void FormatTable::initNativeFormatCapsAutogen(const DisplayMtl *display)
                   /** resolve*/ display->supportsMacGPUFamily(1), /** colorRenderable*/ true,
                   /** depthRenderable*/ false);
 
-    setFormatCaps(MTLPixelFormatRG32Float, /** filterable*/ display->supportsEitherGPUFamily(1, 1),
+    setFormatCaps(MTLPixelFormatRG32Float, /** filterable*/ display->supportsMacGPUFamily(1),
                   /** writable*/ true, /** blendable*/ true,
-                  /** multisample*/ display->supportsMacGPUFamily(1),
+                  /** multisample*/ display->supportsEitherGPUFamily(7, 1),
                   /** resolve*/ display->supportsMacGPUFamily(1), /** colorRenderable*/ true,
                   /** depthRenderable*/ false);
 
@@ -3739,9 +3749,8 @@ void FormatTable::initNativeFormatCapsAutogen(const DisplayMtl *display)
                   /** resolve*/ display->supportsMacGPUFamily(1), /** colorRenderable*/ true,
                   /** depthRenderable*/ false);
 
-    setFormatCaps(MTLPixelFormatRGBA32Float,
-                  /** filterable*/ display->supportsEitherGPUFamily(1, 1), /** writable*/ true,
-                  /** blendable*/ display->supportsMacGPUFamily(1),
+    setFormatCaps(MTLPixelFormatRGBA32Float, /** filterable*/ display->supportsMacGPUFamily(1),
+                  /** writable*/ true, /** blendable*/ display->supportsMacGPUFamily(1),
                   /** multisample*/ display->supportsEitherGPUFamily(7, 1),
                   /** resolve*/ display->supportsMacGPUFamily(1), /** colorRenderable*/ true,
                   /** depthRenderable*/ false);
@@ -3995,6 +4004,11 @@ void FormatTable::initNativeFormatCapsAutogen(const DisplayMtl *display)
                   /** resolve*/ display->supportsAppleGPUFamily(1),
                   /** colorRenderable*/ display->supportsAppleGPUFamily(1),
                   /** depthRenderable*/ false);
+
+    setFormatCaps(MTLPixelFormatDepth16Unorm, /** filterable*/ true, /** writable*/ false,
+                  /** blendable*/ false, /** multisample*/ true,
+                  /** resolve*/ supportDepthAutoResolve, /** colorRenderable*/ false,
+                  /** depthRenderable*/ true);
 
     setFormatCaps(MTLPixelFormatEAC_R11Snorm, /** filterable*/ display->supportsAppleGPUFamily(1),
                   /** writable*/ false, /** blendable*/ false, /** multisample*/ false,

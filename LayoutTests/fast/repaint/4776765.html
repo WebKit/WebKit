@@ -3,14 +3,28 @@
 <script type="text/javascript">
 function repaintTest() {
     document.execCommand("InsertParagraph");
+    requestAnimationFrame(() => {
+        setTimeout(() => {
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }, 0);
+    });
+}
+
+function startTest() {
+    requestAnimationFrame(() => {
+        setTimeout(runRepaintTest, 0);
+    });
 }
 </script>
-<body onload="runRepaintTest();">
+<body onload="startTest()">
 <div contenteditable="true">
 <div><br></div>
 <div id="div"><br></div>
 </div>
 <script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
 var div = document.getElementById("div");
 var sel = window.getSelection();
 sel.setPosition(div, 0);

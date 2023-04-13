@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include <wtf/text/WTFString.h>
+#include <unicode/umachine.h>
 
 namespace WebCore {
 
@@ -37,33 +37,27 @@ public:
 
     void advance(UChar);
 
-    bool isEntityPrefix() const { return !!m_first; }
-    int currentLength() const { return m_currentLength; }
+    bool isEntityPrefix() const { return m_first; }
+    unsigned currentLength() const { return m_currentLength; }
 
-    const HTMLEntityTableEntry* mostRecentMatch() const { return m_mostRecentMatch; }
+    const HTMLEntityTableEntry* match() const { return m_mostRecentMatch; }
 
 private:
-    enum CompareResult {
-        Before,
-        Prefix,
-        After,
-    };
-
+    enum CompareResult { Before, Prefix, After };
     CompareResult compare(const HTMLEntityTableEntry*, UChar) const;
     const HTMLEntityTableEntry* findFirst(UChar) const;
     const HTMLEntityTableEntry* findLast(UChar) const;
 
     void fail()
     {
-        m_first = 0;
-        m_last = 0;
+        m_first = nullptr;
+        m_last = nullptr;
     }
 
-    int m_currentLength;
-
-    const HTMLEntityTableEntry* m_mostRecentMatch;
-    const HTMLEntityTableEntry* m_first;
-    const HTMLEntityTableEntry* m_last;
+    unsigned m_currentLength { 0 };
+    const HTMLEntityTableEntry* m_mostRecentMatch { nullptr };
+    const HTMLEntityTableEntry* m_first { nullptr };
+    const HTMLEntityTableEntry* m_last { nullptr };
 };
 
 } // namespace WebCore

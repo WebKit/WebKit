@@ -1,9 +1,0 @@
-Test of drawArraysInstancedANGLE and drawElementsInstancedANGLE with out-of-bounds parameters
-
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
-
- PASS No ANGLE_instanced_arrays support -- this is legal
-PASS successfullyParsed is true
-
-TEST COMPLETE
-

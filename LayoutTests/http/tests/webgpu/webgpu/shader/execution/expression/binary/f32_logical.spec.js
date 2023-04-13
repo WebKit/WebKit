@@ -7,8 +7,9 @@ import { makeTestGroup } from '../../../../../common/framework/test_group.js';
 import { GPUTest } from '../../../../gpu_test.js';
 import { anyOf } from '../../../../util/compare.js';
 import { bool, f32, TypeBool, TypeF32 } from '../../../../util/conversion.js';
-import { flushSubnormalScalar, fullF32Range } from '../../../../util/math.js';
-import { run } from '../expression.js';
+import { flushSubnormalScalarF32, vectorF32Range } from '../../../../util/math.js';
+import { makeCaseCache } from '../case_cache.js';
+import { allInputSources, run } from '../expression.js';
 
 import { binary } from './binary.js';
 
@@ -21,8 +22,8 @@ export const g = makeTestGroup(GPUTest);
 function makeCase(lhs, rhs, truthFunc) {
   const f32_lhs = f32(lhs);
   const f32_rhs = f32(rhs);
-  const lhs_options = new Set([f32_lhs, flushSubnormalScalar(f32_lhs)]);
-  const rhs_options = new Set([f32_rhs, flushSubnormalScalar(f32_rhs)]);
+  const lhs_options = new Set([f32_lhs, flushSubnormalScalarF32(f32_lhs)]);
+  const rhs_options = new Set([f32_rhs, flushSubnormalScalarF32(f32_rhs)]);
   const expected = [];
   lhs_options.forEach(l => {
     rhs_options.forEach(r => {
@@ -36,8 +37,118 @@ function makeCase(lhs, rhs, truthFunc) {
   return { input: [f32_lhs, f32_rhs], expected: anyOf(...expected) };
 }
 
+export const d = makeCaseCache('binary/f32_logical', {
+  equals_non_const: () => {
+    const truthFunc = (lhs, rhs) => {
+      return lhs.value === rhs.value;
+    };
+
+    return vectorF32Range(2).map(v => {
+      return makeCase(v[0], v[1], truthFunc);
+    });
+  },
+  equals_const: () => {
+    const truthFunc = (lhs, rhs) => {
+      return lhs.value === rhs.value;
+    };
+
+    return vectorF32Range(2).map(v => {
+      return makeCase(v[0], v[1], truthFunc);
+    });
+  },
+  not_equals_non_const: () => {
+    const truthFunc = (lhs, rhs) => {
+      return lhs.value !== rhs.value;
+    };
+
+    return vectorF32Range(2).map(v => {
+      return makeCase(v[0], v[1], truthFunc);
+    });
+  },
+  not_equals_const: () => {
+    const truthFunc = (lhs, rhs) => {
+      return lhs.value !== rhs.value;
+    };
+
+    return vectorF32Range(2).map(v => {
+      return makeCase(v[0], v[1], truthFunc);
+    });
+  },
+  less_than_non_const: () => {
+    const truthFunc = (lhs, rhs) => {
+      return lhs.value < rhs.value;
+    };
+
+    return vectorF32Range(2).map(v => {
+      return makeCase(v[0], v[1], truthFunc);
+    });
+  },
+  less_than_const: () => {
+    const truthFunc = (lhs, rhs) => {
+      return lhs.value < rhs.value;
+    };
+
+    return vectorF32Range(2).map(v => {
+      return makeCase(v[0], v[1], truthFunc);
+    });
+  },
+  less_equals_non_const: () => {
+    const truthFunc = (lhs, rhs) => {
+      return lhs.value <= rhs.value;
+    };
+
+    return vectorF32Range(2).map(v => {
+      return makeCase(v[0], v[1], truthFunc);
+    });
+  },
+  less_equals_const: () => {
+    const truthFunc = (lhs, rhs) => {
+      return lhs.value <= rhs.value;
+    };
+
+    return vectorF32Range(2).map(v => {
+      return makeCase(v[0], v[1], truthFunc);
+    });
+  },
+  greater_than_non_const: () => {
+    const truthFunc = (lhs, rhs) => {
+      return lhs.value > rhs.value;
+    };
+
+    return vectorF32Range(2).map(v => {
+      return makeCase(v[0], v[1], truthFunc);
+    });
+  },
+  greater_than_const: () => {
+    const truthFunc = (lhs, rhs) => {
+      return lhs.value > rhs.value;
+    };
+
+    return vectorF32Range(2).map(v => {
+      return makeCase(v[0], v[1], truthFunc);
+    });
+  },
+  greater_equals_non_const: () => {
+    const truthFunc = (lhs, rhs) => {
+      return lhs.value >= rhs.value;
+    };
+
+    return vectorF32Range(2).map(v => {
+      return makeCase(v[0], v[1], truthFunc);
+    });
+  },
+  greater_equals_const: () => {
+    const truthFunc = (lhs, rhs) => {
+      return lhs.value >= rhs.value;
+    };
+
+    return vectorF32Range(2).map(v => {
+      return makeCase(v[0], v[1], truthFunc);
+    });
+  },
+});
+
 g.test('equals')
-  .uniqueId('xxxxxxxxx')
   .specURL('https://www.w3.org/TR/WGSL/#floating-point-evaluation')
   .desc(
     `
@@ -45,29 +156,16 @@ Expression: x == y
 Accuracy: Correct result
 `
   )
-  .params(u =>
-    u
-      .combine('storageClass', ['uniform', 'storage_r', 'storage_rw'])
-      .combine('vectorize', [undefined, 2, 3, 4])
-  )
+  .params(u => u.combine('inputSource', allInputSources).combine('vectorize', [undefined, 2, 3, 4]))
   .fn(async t => {
-    const truthFunc = (lhs, rhs) => {
-      return lhs.value === rhs.value;
-    };
+    const cases = await d.get(
+      t.params.inputSource === 'const' ? 'equals_const' : 'equals_non_const'
+    );
 
-    const cases = [];
-    const numeric_range = fullF32Range();
-    numeric_range.forEach(lhs => {
-      numeric_range.forEach(rhs => {
-        cases.push(makeCase(lhs, rhs, truthFunc));
-      });
-    });
-
-    run(t, binary('=='), [TypeF32, TypeF32], TypeBool, t.params, cases);
+    await run(t, binary('=='), [TypeF32, TypeF32], TypeBool, t.params, cases);
   });
 
 g.test('not_equals')
-  .uniqueId('xxxxxxxxx')
   .specURL('https://www.w3.org/TR/WGSL/#floating-point-evaluation')
   .desc(
     `
@@ -75,29 +173,16 @@ Expression: x != y
 Accuracy: Correct result
 `
   )
-  .params(u =>
-    u
-      .combine('storageClass', ['uniform', 'storage_r', 'storage_rw'])
-      .combine('vectorize', [undefined, 2, 3, 4])
-  )
+  .params(u => u.combine('inputSource', allInputSources).combine('vectorize', [undefined, 2, 3, 4]))
   .fn(async t => {
-    const truthFunc = (lhs, rhs) => {
-      return lhs.value !== rhs.value;
-    };
+    const cases = await d.get(
+      t.params.inputSource === 'const' ? 'not_equals_const' : 'not_equals_non_const'
+    );
 
-    const cases = [];
-    const numeric_range = fullF32Range();
-    numeric_range.forEach(lhs => {
-      numeric_range.forEach(rhs => {
-        cases.push(makeCase(lhs, rhs, truthFunc));
-      });
-    });
-
-    run(t, binary('!='), [TypeF32, TypeF32], TypeBool, t.params, cases);
+    await run(t, binary('!='), [TypeF32, TypeF32], TypeBool, t.params, cases);
   });
 
 g.test('less_than')
-  .uniqueId('xxxxxxxxx')
   .specURL('https://www.w3.org/TR/WGSL/#floating-point-evaluation')
   .desc(
     `
@@ -105,29 +190,16 @@ Expression: x < y
 Accuracy: Correct result
 `
   )
-  .params(u =>
-    u
-      .combine('storageClass', ['uniform', 'storage_r', 'storage_rw'])
-      .combine('vectorize', [undefined, 2, 3, 4])
-  )
+  .params(u => u.combine('inputSource', allInputSources).combine('vectorize', [undefined, 2, 3, 4]))
   .fn(async t => {
-    const truthFunc = (lhs, rhs) => {
-      return lhs.value < rhs.value;
-    };
+    const cases = await d.get(
+      t.params.inputSource === 'const' ? 'less_than_const' : 'less_than_non_const'
+    );
 
-    const cases = [];
-    const numeric_range = fullF32Range();
-    numeric_range.forEach(lhs => {
-      numeric_range.forEach(rhs => {
-        cases.push(makeCase(lhs, rhs, truthFunc));
-      });
-    });
-
-    run(t, binary('<'), [TypeF32, TypeF32], TypeBool, t.params, cases);
+    await run(t, binary('<'), [TypeF32, TypeF32], TypeBool, t.params, cases);
   });
 
 g.test('less_equals')
-  .uniqueId('xxxxxxxxx')
   .specURL('https://www.w3.org/TR/WGSL/#floating-point-evaluation')
   .desc(
     `
@@ -135,29 +207,16 @@ Expression: x <= y
 Accuracy: Correct result
 `
   )
-  .params(u =>
-    u
-      .combine('storageClass', ['uniform', 'storage_r', 'storage_rw'])
-      .combine('vectorize', [undefined, 2, 3, 4])
-  )
+  .params(u => u.combine('inputSource', allInputSources).combine('vectorize', [undefined, 2, 3, 4]))
   .fn(async t => {
-    const truthFunc = (lhs, rhs) => {
-      return lhs.value <= rhs.value;
-    };
+    const cases = await d.get(
+      t.params.inputSource === 'const' ? 'less_equals_const' : 'less_equals_non_const'
+    );
 
-    const cases = [];
-    const numeric_range = fullF32Range();
-    numeric_range.forEach(lhs => {
-      numeric_range.forEach(rhs => {
-        cases.push(makeCase(lhs, rhs, truthFunc));
-      });
-    });
-
-    run(t, binary('<='), [TypeF32, TypeF32], TypeBool, t.params, cases);
+    await run(t, binary('<='), [TypeF32, TypeF32], TypeBool, t.params, cases);
   });
 
 g.test('greater_than')
-  .uniqueId('xxxxxxxxx')
   .specURL('https://www.w3.org/TR/WGSL/#floating-point-evaluation')
   .desc(
     `
@@ -165,29 +224,16 @@ Expression: x > y
 Accuracy: Correct result
 `
   )
-  .params(u =>
-    u
-      .combine('storageClass', ['uniform', 'storage_r', 'storage_rw'])
-      .combine('vectorize', [undefined, 2, 3, 4])
-  )
+  .params(u => u.combine('inputSource', allInputSources).combine('vectorize', [undefined, 2, 3, 4]))
   .fn(async t => {
-    const truthFunc = (lhs, rhs) => {
-      return lhs.value > rhs.value;
-    };
+    const cases = await d.get(
+      t.params.inputSource === 'const' ? 'greater_than_const' : 'greater_than_non_const'
+    );
 
-    const cases = [];
-    const numeric_range = fullF32Range();
-    numeric_range.forEach(lhs => {
-      numeric_range.forEach(rhs => {
-        cases.push(makeCase(lhs, rhs, truthFunc));
-      });
-    });
-
-    run(t, binary('>'), [TypeF32, TypeF32], TypeBool, t.params, cases);
+    await run(t, binary('>'), [TypeF32, TypeF32], TypeBool, t.params, cases);
   });
 
 g.test('greater_equals')
-  .uniqueId('xxxxxxxxx')
   .specURL('https://www.w3.org/TR/WGSL/#floating-point-evaluation')
   .desc(
     `
@@ -195,23 +241,11 @@ Expression: x >= y
 Accuracy: Correct result
 `
   )
-  .params(u =>
-    u
-      .combine('storageClass', ['uniform', 'storage_r', 'storage_rw'])
-      .combine('vectorize', [undefined, 2, 3, 4])
-  )
+  .params(u => u.combine('inputSource', allInputSources).combine('vectorize', [undefined, 2, 3, 4]))
   .fn(async t => {
-    const truthFunc = (lhs, rhs) => {
-      return lhs.value >= rhs.value;
-    };
+    const cases = await d.get(
+      t.params.inputSource === 'const' ? 'greater_equals_const' : 'greater_equals_non_const'
+    );
 
-    const cases = [];
-    const numeric_range = fullF32Range();
-    numeric_range.forEach(lhs => {
-      numeric_range.forEach(rhs => {
-        cases.push(makeCase(lhs, rhs, truthFunc));
-      });
-    });
-
-    run(t, binary('>='), [TypeF32, TypeF32], TypeBool, t.params, cases);
+    await run(t, binary('>='), [TypeF32, TypeF32], TypeBool, t.params, cases);
   });

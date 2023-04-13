@@ -29,6 +29,7 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "JSCInlines.h"
+#include "TypeError.h"
 #include "WasmFormat.h"
 #include "WasmTypeDefinition.h"
 
@@ -36,32 +37,32 @@ namespace JSC {
 
 const ClassInfo JSWebAssemblyArray::s_info = { "WebAssembly.Array"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSWebAssemblyArray) };
 
-JSWebAssemblyArray::JSWebAssemblyArray(VM& vm, Structure* structure, Wasm::FieldType elementType, size_t size, FixedVector<uint8_t>&& payload)
-    : Base(vm, structure)
+JSWebAssemblyArray::JSWebAssemblyArray(VM& vm, Structure* structure, Wasm::FieldType elementType, size_t size, FixedVector<uint8_t>&& payload, RefPtr<const Wasm::RTT> rtt)
+    : Base(vm, structure, rtt)
     , m_elementType(elementType)
     , m_size(size)
     , m_payload8(WTFMove(payload))
 {
 }
 
-JSWebAssemblyArray::JSWebAssemblyArray(VM& vm, Structure* structure, Wasm::FieldType elementType, size_t size, FixedVector<uint16_t>&& payload)
-    : Base(vm, structure)
+JSWebAssemblyArray::JSWebAssemblyArray(VM& vm, Structure* structure, Wasm::FieldType elementType, size_t size, FixedVector<uint16_t>&& payload, RefPtr<const Wasm::RTT> rtt)
+    : Base(vm, structure, rtt)
     , m_elementType(elementType)
     , m_size(size)
     , m_payload16(WTFMove(payload))
 {
 }
 
-JSWebAssemblyArray::JSWebAssemblyArray(VM& vm, Structure* structure, Wasm::FieldType elementType, size_t size, FixedVector<uint32_t>&& payload)
-    : Base(vm, structure)
+JSWebAssemblyArray::JSWebAssemblyArray(VM& vm, Structure* structure, Wasm::FieldType elementType, size_t size, FixedVector<uint32_t>&& payload, RefPtr<const Wasm::RTT> rtt)
+    : Base(vm, structure, rtt)
     , m_elementType(elementType)
     , m_size(size)
     , m_payload32(WTFMove(payload))
 {
 }
 
-JSWebAssemblyArray::JSWebAssemblyArray(VM& vm, Structure* structure, Wasm::FieldType elementType, size_t size, FixedVector<uint64_t>&& payload)
-    : Base(vm, structure)
+JSWebAssemblyArray::JSWebAssemblyArray(VM& vm, Structure* structure, Wasm::FieldType elementType, size_t size, FixedVector<uint64_t>&& payload, RefPtr<const Wasm::RTT> rtt)
+    : Base(vm, structure, rtt)
     , m_elementType(elementType)
     , m_size(size)
     , m_payload64(WTFMove(payload))
@@ -97,11 +98,6 @@ void JSWebAssemblyArray::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
-
-    // FIXME: When the JS API is further defined, the precise semantics of how
-    // the array should be exposed to JS may changed. For now, we seal it to
-    // ensure that nobody can accidentally depend on being able to extend arrays.
-    seal(vm);
 }
 
 void JSWebAssemblyArray::destroy(JSCell* cell)

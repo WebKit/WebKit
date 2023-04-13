@@ -142,7 +142,7 @@ function test()
 
             InspectorTest.log("Requesting to show flex overlay for invalid nodeId -1");
             await InspectorTest.expectException(async () => {
-                await DOMAgent.showFlexOverlay(-1, WI.Color.fromString("magenta").toProtocol());
+                await DOMAgent.showFlexOverlay(-1, { flexColor: WI.Color.fromString("magenta").toProtocol() });
             });
 
         await checkFlexOverlayCount(0);

@@ -50,7 +50,7 @@ class ScrollingTreeScrollingNodeDelegateIOS final : public WebCore::ScrollingTre
     WTF_MAKE_FAST_ALLOCATED;
 public:
     
-    enum class AllowOverscrollToPreventScrollPropagation : bool { Yes, No };
+    enum class AllowOverscrollToPreventScrollPropagation : bool { No, Yes };
     
     explicit ScrollingTreeScrollingNodeDelegateIOS(WebCore::ScrollingTreeScrollingNode&);
     ~ScrollingTreeScrollingNodeDelegateIOS() final;
@@ -90,6 +90,9 @@ public:
 
 private:
     RetainPtr<CALayer> m_scrollLayer;
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+    RetainPtr<CALayer> m_interactionRegionsLayer;
+#endif
     RetainPtr<CALayer> m_scrolledContentsLayer;
     RetainPtr<WKScrollingNodeScrollViewDelegate> m_scrollViewDelegate;
     OptionSet<WebCore::TouchAction> m_activeTouchActions { };

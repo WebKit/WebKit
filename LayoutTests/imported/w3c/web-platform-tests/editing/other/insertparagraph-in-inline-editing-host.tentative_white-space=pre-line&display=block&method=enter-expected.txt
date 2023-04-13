@@ -1,0 +1,21 @@
+abcd
+
+PASS insertParagraph in <span contenteditable style="display:block;white-space:pre-line">{}</span> (defaultParagraphSeparator=div)
+PASS insertParagraph in <span contenteditable style="display:block;white-space:pre-line">{}</span> followed by a <br> (defaultParagraphSeparator=div)
+PASS insertParagraph in <span contenteditable style="display:block;white-space:pre-line">{}</span> followed by text (defaultParagraphSeparator=div)
+PASS insertParagraph in <span contenteditable style="display:block;white-space:pre-line">{}<br></span> (defaultParagraphSeparator=div)
+PASS insertParagraph in <span contenteditable style="display:block;white-space:pre-line">[]abcd</span> (defaultParagraphSeparator=div)
+PASS insertParagraph in <span contenteditable style="display:block;white-space:pre-line">ab[]cd</span> (defaultParagraphSeparator=div)
+PASS insertParagraph in <span contenteditable style="display:block;white-space:pre-line">abcd[]</span> (defaultParagraphSeparator=div)
+PASS insertParagraph in <span contenteditable style="display:block;white-space:pre-line">abcd[]</span> followed by a <br> element (defaultParagraphSeparator=div)
+PASS insertParagraph in <span contenteditable style="display:block;white-space:pre-line">abcd[]</span> followed by text (defaultParagraphSeparator=div)
+PASS insertParagraph in <span contenteditable style="display:block;white-space:pre-line">{}</span> (defaultParagraphSeparator=p)
+PASS insertParagraph in <span contenteditable style="display:block;white-space:pre-line">{}</span> followed by a <br> (defaultParagraphSeparator=p)
+PASS insertParagraph in <span contenteditable style="display:block;white-space:pre-line">{}</span> followed by text (defaultParagraphSeparator=p)
+PASS insertParagraph in <span contenteditable style="display:block;white-space:pre-line">{}<br></span> (defaultParagraphSeparator=p)
+PASS insertParagraph in <span contenteditable style="display:block;white-space:pre-line">[]abcd</span> (defaultParagraphSeparator=p)
+PASS insertParagraph in <span contenteditable style="display:block;white-space:pre-line">ab[]cd</span> (defaultParagraphSeparator=p)
+PASS insertParagraph in <span contenteditable style="display:block;white-space:pre-line">abcd[]</span> (defaultParagraphSeparator=p)
+PASS insertParagraph in <span contenteditable style="display:block;white-space:pre-line">abcd[]</span> followed by a <br> element (defaultParagraphSeparator=p)
+PASS insertParagraph in <span contenteditable style="display:block;white-space:pre-line">abcd[]</span> followed by text (defaultParagraphSeparator=p)
+

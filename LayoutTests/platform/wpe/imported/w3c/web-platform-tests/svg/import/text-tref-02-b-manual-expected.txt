@@ -3,10 +3,10 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-    RenderSVGContainer {g} at (125,23) size 574x324
-      RenderSVGText {text} at (75,14) size 344x14 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 344x14
-          chunk 1 text run 1 at (75.00,25.00) startOffset 0 endOffset 63 width 343.80: "Test 'tref' element pointing outside the SVG document fragment."
+    RenderSVGContainer {g} at (125,23) size 571x324
+      RenderSVGText {text} at (75,14) size 343x14 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 343x14
+          chunk 1 text run 1 at (75.00,25.00) startOffset 0 endOffset 63 width 342.47: "Test 'tref' element pointing outside the SVG document fragment."
       RenderSVGText {text} at (75,167) size 81x41 contains 1 chunk(s)
         RenderSVGInline {tref} at (0,0) size 81x41
           RenderSVGInlineText {#text} at (0,0) size 81x41

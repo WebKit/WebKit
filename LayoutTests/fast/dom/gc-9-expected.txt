@@ -37,8 +37,6 @@ PASS: document.styleSheets[0].cssRules.myCustomProperty should be 1 and is.
 PASS: document.styleSheets[0].cssRules[0].myCustomProperty should be 1 and is.
 PASS: new XPathEvaluator().myCustomProperty should be undefined and is.
 PASS: new XPathEvaluator().evaluate('/', document, null, 0, null).myCustomProperty should be undefined and is.
-PASS: document.createNSResolver(document).myCustomProperty should be undefined and is.
-PASS: document.createExpression('/', document.createNSResolver(document)).myCustomProperty should be undefined and is.
 DOM OBJECTS AFTER GARBAGE COLLECTION:
 PASS: document.implementation.myCustomProperty should be 1 and is.
 PASS: document.myCustomProperty should be 1 and is.
@@ -72,8 +70,6 @@ PASS: document.styleSheets[0].cssRules.myCustomProperty should be 1 and is.
 PASS: document.styleSheets[0].cssRules[0].myCustomProperty should be 1 and is.
 PASS: new XPathEvaluator().myCustomProperty should be undefined and is.
 PASS: new XPathEvaluator().evaluate('/', document, null, 0, null).myCustomProperty should be undefined and is.
-PASS: document.createNSResolver(document).myCustomProperty should be undefined and is.
-PASS: document.createExpression('/', document.createNSResolver(document)).myCustomProperty should be undefined and is.
 DOM EVENT BEFORE GARBAGE COLLECTION
 PASS: event.myCustomProperty should be 1 and is.
 DOM EVENT AFTER GARBAGE COLLECTION

@@ -44,6 +44,8 @@
 
 namespace bmalloc { namespace api {
 
+#if !BUSE(LIBPAS)
+
 #if BENABLE_MALLOC_HEAP_BREAKDOWN
 template<typename Type>
 IsoHeap<Type>::IsoHeap(const char* heapClass)
@@ -53,8 +55,6 @@ IsoHeap<Type>::IsoHeap(const char* heapClass)
         malloc_set_zone_name(m_zone, heapClass);
 }
 #endif
-
-#if !BUSE(LIBPAS)
 
 template<typename Type>
 void* IsoHeap<Type>::allocate()

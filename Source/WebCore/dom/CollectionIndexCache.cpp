@@ -27,8 +27,8 @@
 #include "CollectionIndexCache.h"
 
 #include "CommonVM.h"
-#include "DOMWindow.h"
 #include "JSDOMBinding.h"
+#include "LocalDOMWindow.h"
 
 namespace WebCore {
 

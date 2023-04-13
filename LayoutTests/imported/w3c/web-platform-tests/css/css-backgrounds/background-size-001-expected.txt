@@ -3,20 +3,20 @@ PASS background-size_initial
 PASS background-size_auto
 PASS background-size_cover
 PASS background-size_contain
-PASS background-size_length_zero
-PASS background-size_length_negative_zero
-PASS background-size_length_positive_zero
-PASS background-size_length_normal
-PASS background-size_percentage_min
-PASS background-size_percentage_normal
-PASS background-size_percentage_max
+FAIL background-size_length_zero assert_equals: background-size supporting value expected "0px" but got "0px auto"
+FAIL background-size_length_negative_zero assert_equals: background-size supporting value expected "0px" but got "0px auto"
+FAIL background-size_length_positive_zero assert_equals: background-size supporting value expected "0px" but got "0px auto"
+FAIL background-size_length_normal assert_equals: background-size supporting value expected "15px" but got "15px auto"
+FAIL background-size_percentage_min assert_equals: background-size supporting value expected "0%" but got "0% auto"
+FAIL background-size_percentage_normal assert_equals: background-size supporting value expected "50%" but got "50% auto"
+FAIL background-size_percentage_max assert_equals: background-size supporting value expected "100%" but got "100% auto"
 PASS background-size_auto_auto
 PASS background-size_auto_length
 PASS background-size_auto_percentage
-PASS background-size_length_auto
+FAIL background-size_length_auto assert_equals: background-size supporting value expected "15px" but got "15px auto"
 PASS background-size_length_length
 PASS background-size_length_percentage
-PASS background-size_percentage_auto
+FAIL background-size_percentage_auto assert_equals: background-size supporting value expected "50%" but got "50% auto"
 PASS background-size_percentage_length
 PASS background-size_percentage_percentage
 

@@ -18,19 +18,11 @@ namespace rx
 namespace vk
 {
 angle::Result VulkanSecondaryCommandBuffer::InitializeCommandPool(Context *context,
-                                                                  CommandPool *pool,
+                                                                  SecondaryCommandPool *pool,
                                                                   uint32_t queueFamilyIndex,
-                                                                  bool hasProtectedContent)
+                                                                  ProtectionType protectionType)
 {
-    VkCommandPoolCreateInfo poolInfo = {};
-    poolInfo.sType                   = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
-    poolInfo.flags                   = VK_COMMAND_POOL_CREATE_TRANSIENT_BIT;
-    poolInfo.queueFamilyIndex        = queueFamilyIndex;
-    if (hasProtectedContent)
-    {
-        poolInfo.flags |= VK_COMMAND_POOL_CREATE_PROTECTED_BIT;
-    }
-    ANGLE_VK_TRY(context, pool->init(context->getDevice(), poolInfo));
+    ANGLE_TRY(pool->init(context, queueFamilyIndex, protectionType));
     return angle::Result::Continue;
 }
 
@@ -40,7 +32,7 @@ angle::Result VulkanSecondaryCommandBuffer::InitializeRenderPassInheritanceInfo(
     const RenderPassDesc &renderPassDesc,
     VkCommandBufferInheritanceInfo *inheritanceInfoOut)
 {
-    const vk::RenderPass *compatibleRenderPass = nullptr;
+    const RenderPass *compatibleRenderPass = nullptr;
     ANGLE_TRY(contextVk->getCompatibleRenderPass(renderPassDesc, &compatibleRenderPass));
 
     inheritanceInfoOut->sType       = VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_INFO;
@@ -52,22 +44,15 @@ angle::Result VulkanSecondaryCommandBuffer::InitializeRenderPassInheritanceInfo(
 }
 
 angle::Result VulkanSecondaryCommandBuffer::initialize(Context *context,
-                                                       vk::CommandPool *pool,
+                                                       SecondaryCommandPool *pool,
                                                        bool isRenderPassCommandBuffer,
                                                        SecondaryCommandMemoryAllocator *allocator)
 {
-    VkDevice device = context->getDevice();
-
+    mCommandPool = pool;
     mCommandTracker.reset();
     mAnyCommand = false;
 
-    VkCommandBufferAllocateInfo allocInfo = {};
-    allocInfo.sType                       = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-    allocInfo.level                       = VK_COMMAND_BUFFER_LEVEL_SECONDARY;
-    allocInfo.commandBufferCount          = 1;
-    allocInfo.commandPool                 = pool->getHandle();
-
-    ANGLE_VK_TRY(context, init(device, allocInfo));
+    ANGLE_TRY(pool->allocate(context, this));
 
     // Outside-RP command buffers are begun automatically here.  RP command buffers are begun when
     // the render pass itself starts, as they require inheritance info.
@@ -79,6 +64,15 @@ angle::Result VulkanSecondaryCommandBuffer::initialize(Context *context,
     }
 
     return angle::Result::Continue;
+}
+
+void VulkanSecondaryCommandBuffer::destroy()
+{
+    if (valid())
+    {
+        ASSERT(mCommandPool != nullptr);
+        mCommandPool->collect(this);
+    }
 }
 
 angle::Result VulkanSecondaryCommandBuffer::begin(

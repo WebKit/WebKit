@@ -11,12 +11,11 @@ flags:
   resizable-arraybuffer: useArrayBufferTransfer
 skip:
   features:
-    - regexp-v-flag
     - callable-boundary-realms
     - FinalizationRegistry.prototype.cleanupSome
     - decorators
     - Intl.DurationFormat
-    - regexp-duplicate-named-groups
+    - Intl.Locale-info # Getters are replaced with methods.
   paths:
     - test/built-ins/Temporal/Calendar
     - test/built-ins/Temporal/Instant/prototype/toZonedDateTime
@@ -223,6 +222,8 @@ skip:
     - test/built-ins/Temporal/Duration/prototype/add/nanoseconds-is-number-max-safe-integer.js
     - test/built-ins/Temporal/Duration/prototype/add/nanoseconds-is-number-max-value-1.js
     - test/built-ins/Temporal/Duration/prototype/add/nanoseconds-is-number-max-value-2.js
+    - test/built-ins/Temporal/Duration/prototype/add/nanoseconds-to-days-loop-indefinitely-1.js
+    - test/built-ins/Temporal/Duration/prototype/add/nanoseconds-to-days-loop-indefinitely-2.js
     - test/built-ins/Temporal/Duration/prototype/add/negative-infinity-throws-rangeerror.js
     - test/built-ins/Temporal/Duration/prototype/add/options-wrong-type.js
     - test/built-ins/Temporal/Duration/prototype/add/order-of-operations.js
@@ -331,6 +332,8 @@ skip:
     - test/built-ins/Temporal/Duration/prototype/subtract/nanoseconds-is-number-max-safe-integer.js
     - test/built-ins/Temporal/Duration/prototype/subtract/nanoseconds-is-number-max-value-1.js
     - test/built-ins/Temporal/Duration/prototype/subtract/nanoseconds-is-number-max-value-2.js
+    - test/built-ins/Temporal/Duration/prototype/subtract/nanoseconds-to-days-loop-indefinitely-1.js
+    - test/built-ins/Temporal/Duration/prototype/subtract/nanoseconds-to-days-loop-indefinitely-2.js
     - test/built-ins/Temporal/Duration/prototype/subtract/negative-infinity-throws-rangeerror.js
     - test/built-ins/Temporal/Duration/prototype/subtract/options-wrong-type.js
     - test/built-ins/Temporal/Duration/prototype/subtract/order-of-operations.js
@@ -371,6 +374,8 @@ skip:
     - test/built-ins/Temporal/Duration/prototype/total/calendar-possibly-required.js
     - test/built-ins/Temporal/Duration/prototype/total/calendar-temporal-object.js
     - test/built-ins/Temporal/Duration/prototype/total/dateuntil-field.js
+    - test/built-ins/Temporal/Duration/prototype/total/nanoseconds-to-days-loop-indefinitely-1.js
+    - test/built-ins/Temporal/Duration/prototype/total/nanoseconds-to-days-loop-indefinitely-2.js
     - test/built-ins/Temporal/Duration/prototype/total/order-of-operations.js
     - test/built-ins/Temporal/Duration/prototype/total/read-time-fields-before-datefromfields.js
     - test/built-ins/Temporal/Duration/prototype/total/relativeto-infinity-throws-rangeerror.js
@@ -805,23 +810,27 @@ skip:
     - test/built-ins/Temporal/Duration/compare/relativeto-zoneddatetime-timezone-getoffsetnanosecondsfor-not-callable.js
     - test/built-ins/Temporal/Duration/compare/relativeto-zoneddatetime-timezone-getoffsetnanosecondsfor-out-of-range.js
     - test/built-ins/Temporal/Duration/compare/relativeto-zoneddatetime-timezone-getoffsetnanosecondsfor-wrong-type.js
+    - test/built-ins/Temporal/Duration/prototype/add/relativeto-zoneddatetime-nanoseconds-to-days-range-errors.js
     - test/built-ins/Temporal/Duration/prototype/add/relativeto-zoneddatetime-negative-epochnanoseconds.js
     - test/built-ins/Temporal/Duration/prototype/add/relativeto-zoneddatetime-timezone-getoffsetnanosecondsfor-non-integer.js
     - test/built-ins/Temporal/Duration/prototype/add/relativeto-zoneddatetime-timezone-getoffsetnanosecondsfor-not-callable.js
     - test/built-ins/Temporal/Duration/prototype/add/relativeto-zoneddatetime-timezone-getoffsetnanosecondsfor-out-of-range.js
     - test/built-ins/Temporal/Duration/prototype/add/relativeto-zoneddatetime-timezone-getoffsetnanosecondsfor-wrong-type.js
     - test/built-ins/Temporal/Duration/prototype/round/relativeto-zoneddatetime-convert.js
+    - test/built-ins/Temporal/Duration/prototype/round/relativeto-zoneddatetime-nanoseconds-to-days-range-errors.js
     - test/built-ins/Temporal/Duration/prototype/round/relativeto-zoneddatetime-negative-epochnanoseconds.js
     - test/built-ins/Temporal/Duration/prototype/round/relativeto-zoneddatetime-slots.js
     - test/built-ins/Temporal/Duration/prototype/round/relativeto-zoneddatetime-timezone-getoffsetnanosecondsfor-non-integer.js
     - test/built-ins/Temporal/Duration/prototype/round/relativeto-zoneddatetime-timezone-getoffsetnanosecondsfor-not-callable.js
     - test/built-ins/Temporal/Duration/prototype/round/relativeto-zoneddatetime-timezone-getoffsetnanosecondsfor-out-of-range.js
     - test/built-ins/Temporal/Duration/prototype/round/relativeto-zoneddatetime-timezone-getoffsetnanosecondsfor-wrong-type.js
+    - test/built-ins/Temporal/Duration/prototype/subtract/relativeto-zoneddatetime-nanoseconds-to-days-range-errors.js
     - test/built-ins/Temporal/Duration/prototype/subtract/relativeto-zoneddatetime-negative-epochnanoseconds.js
     - test/built-ins/Temporal/Duration/prototype/subtract/relativeto-zoneddatetime-timezone-getoffsetnanosecondsfor-non-integer.js
     - test/built-ins/Temporal/Duration/prototype/subtract/relativeto-zoneddatetime-timezone-getoffsetnanosecondsfor-not-callable.js
     - test/built-ins/Temporal/Duration/prototype/subtract/relativeto-zoneddatetime-timezone-getoffsetnanosecondsfor-out-of-range.js
     - test/built-ins/Temporal/Duration/prototype/subtract/relativeto-zoneddatetime-timezone-getoffsetnanosecondsfor-wrong-type.js
+    - test/built-ins/Temporal/Duration/prototype/total/relativeto-zoneddatetime-nanoseconds-to-days-range-errors.js
     - test/built-ins/Temporal/Duration/prototype/total/relativeto-zoneddatetime-negative-epochnanoseconds.js
     - test/built-ins/Temporal/Duration/prototype/total/relativeto-zoneddatetime-timezone-getoffsetnanosecondsfor-non-integer.js
     - test/built-ins/Temporal/Duration/prototype/total/relativeto-zoneddatetime-timezone-getoffsetnanosecondsfor-not-callable.js

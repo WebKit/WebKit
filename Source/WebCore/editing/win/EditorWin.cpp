@@ -28,9 +28,9 @@
 
 #include "ClipboardUtilitiesWin.h"
 #include "DocumentFragment.h"
-#include "Frame.h"
 #include "FrameDestructionObserverInlines.h"
 #include "FrameSelection.h"
+#include "LocalFrame.h"
 #include "Pasteboard.h"
 #include "Range.h"
 #include "windows.h"
@@ -62,7 +62,7 @@ void Editor::platformPasteFont()
 }
 
 template <typename PlatformDragData>
-static RefPtr<DocumentFragment> createFragmentFromPlatformData(PlatformDragData& platformDragData, Frame& frame)
+static RefPtr<DocumentFragment> createFragmentFromPlatformData(PlatformDragData& platformDragData, LocalFrame& frame)
 {
     if (containsFilenames(&platformDragData)) {
         if (auto fragment = fragmentFromFilenames(frame.document(), &platformDragData))

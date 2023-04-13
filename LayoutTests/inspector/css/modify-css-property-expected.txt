@@ -45,3 +45,19 @@ PASS: Uncommented property should be enabled.
 PASS: Style declaration text should be empty.
 PASS: Style declaration text should have new property name.
 
+-- Running test case: ModifyCSSProperty.EnsureNestedRulesEditingDoesNotTrampleInnerRules
+PASS: Outer style declaration text should contain the expected `color` property.
+PASS: Outer style declaration text should contain the new `color` value.
+PASS: Inner implicit style declaration text should contain the expected `color` property.
+PASS: Inner implicit style declaration text should contain the new `color` value.
+PASS: Inner explicit style declaration text should contain the expected `color` property.
+PASS: Inner explicit style declaration text should contain the new `color` value.
+
+-- Running test case: ModifyCSSProperty.EnsureNestedRulesEditingDoesNotTrampleInnerRulesOriginalExcludesNewlines
+PASS: Outer style declaration text should contain the expected `color` property.
+PASS: Outer style declaration text should contain the new `color` value.
+PASS: Inner implicit style declaration text should contain the expected `color` property.
+PASS: Inner implicit style declaration text should contain the new `color` value.
+PASS: Inner explicit style declaration text should contain the expected `color` property.
+PASS: Inner explicit style declaration text should contain the new `color` value.
+

@@ -26,10 +26,10 @@
 #include "config.h"
 #include "JSDOMWrapper.h"
 
-#include "DOMWindow.h"
 #include "DOMWrapperWorld.h"
-#include "JSDOMWindow.h"
+#include "JSLocalDOMWindow.h"
 #include "JSRemoteDOMWindow.h"
+#include "LocalDOMWindow.h"
 #include "SerializedScriptValue.h"
 #include "WebCoreJSClientData.h"
 #include <JavaScriptCore/Error.h>

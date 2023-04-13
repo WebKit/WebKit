@@ -137,7 +137,7 @@ static inline T toSmallerInt(JSGlobalObject& lexicalGlobalObject, JSValue value)
     if (std::isnan(x) || std::isinf(x) || !x)
         return 0;
 
-    x = x < 0 ? -floor(fabs(x)) : floor(fabs(x));
+    x = x < 0 ? -floor(-x) : floor(x);
     x = fmod(x, LimitsTrait::numberOfValues);
 
     return static_cast<T>(x > LimitsTrait::maxValue ? x - LimitsTrait::numberOfValues : x);
@@ -183,11 +183,10 @@ static inline T toSmallerUInt(JSGlobalObject& lexicalGlobalObject, JSValue value
     if (std::isnan(x) || std::isinf(x) || !x)
         return 0;
 
-    x = x < 0 ? -floor(fabs(x)) : floor(fabs(x));
+    x = x < 0 ? -floor(-x) : floor(x);
     x = fmod(x, LimitsTrait::numberOfValues);
-    if (x < 0)
-        x += LimitsTrait::numberOfValues;
-    return static_cast<T>(x);
+
+    return static_cast<T>(x < 0 ? x + LimitsTrait::numberOfValues : x);
 }
 
 template<> int8_t convertToIntegerEnforceRange<int8_t>(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)

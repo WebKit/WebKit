@@ -18,7 +18,6 @@ function run() {
         return;
     }
 
-    window.internals.settings.setWebGL2Enabled(true);
     var ctx = getContext("webgl2");
     if (ctx)
         output.textContent = "PASS: WebGL 2.0 was available when enabled.";
@@ -27,7 +26,7 @@ function run() {
 
     output = document.getElementById("output2");
 
-    window.internals.settings.setWebGL2Enabled(false);
+    window.internals.settings.setWebGLEnabled(false);
     var ctx = getContext("webgl2");
     if (ctx)
         output.textContent = "FAIL: WebGL 2.0 was available when disabled.";

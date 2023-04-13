@@ -4,7 +4,7 @@ require_once('../include/admin-header.php');
 require_once('../include/test-name-resolver.php');
 
 if ($action == 'update') {
-    if (!update_field('tests', 'test', 'url'))
+    if (!update_field('tests', 'test', 'url') && !update_boolean_field('tests', 'test', 'hidden'))
         notice('Invalid parameters');
 } else if ($action == 'add') {
     if (array_key_exists('test_id', $_POST) && array_key_exists('metric_name', $_POST)) {
@@ -57,7 +57,7 @@ if ($db) {
 ?>
 <table>
 <thead>
-    <tr><td>Test ID</td><td>Full Name</td><td>Parent ID</td><td>URL</td><td>Triggerables</td>
+    <tr><td>Test ID</td><td>Full Name</td><td>Parent ID</td><td>Hidden</td><td>URL</td><td>Triggerables</td>
         <td>Metric ID</td><td>Metric Name</td><td>Aggregator</td>
 </thead>
 <tbody>
@@ -79,6 +79,7 @@ if ($db) {
             $odd = !$odd;
 
             $test_url = htmlspecialchars($test['test_url']);
+            $checkedness = Database::is_true($test['test_hidden']) ? ' checked' : '';
 
             $triggerable_platform_list = '';
 
@@ -103,6 +104,11 @@ if ($db) {
         <td rowspan="$row_count">$test_id</td>
         <td rowspan="$row_count">$linked_test_name</td>
         <td rowspan="$row_count">{$test['test_parent']}</td>
+        <td rowspan="$row_count">
+        <form method="POST"><input type="hidden" name="id" value="$test_id">
+        <input type="hidden" name="updated-column" value="hidden">
+        <input type="checkbox" name="hidden" $checkedness>
+        <button type="submit" name="action" value="update">Update</button></form></td>
         <td rowspan="$row_count">
         <form method="POST"><input type="hidden" name="id" value="$test_id">
         <input type="hidden" name="action" value="update">

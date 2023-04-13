@@ -71,15 +71,12 @@ enum class FrameLoadType : uint8_t {
 
 enum class IsMetaRefresh : bool { No, Yes };
 enum class WillContinueLoading : bool { No, Yes };
+enum class WillInternallyHandleFailure : bool { No, Yes };
 
-enum LocalPolicyCheckIdentifierType { };
-using LocalPolicyCheckIdentifier = ObjectIdentifier<LocalPolicyCheckIdentifierType>;
-using PolicyCheckIdentifier = ProcessQualified<LocalPolicyCheckIdentifier>;
+struct PolicyCheckIdentifierType;
+using PolicyCheckIdentifier = ProcessQualified<ObjectIdentifier<PolicyCheckIdentifierType>>;
 
-enum class ShouldContinuePolicyCheck : bool {
-    Yes,
-    No
-};
+enum class ShouldContinuePolicyCheck : bool { No, Yes };
 
 enum class NewFrameOpenerPolicy : uint8_t {
     Suppress,
@@ -106,10 +103,7 @@ enum class InitiatedByMainFrame : uint8_t {
     Unknown,
 };
 
-enum class ClearProvisionalItem : bool {
-    Yes,
-    No
-};
+enum class ClearProvisionalItem : bool { No, Yes };
 
 enum class StopLoadingPolicy {
     PreventDuringUnloadEvents,
@@ -167,72 +161,3 @@ enum class AllowsContentJavaScript : bool {
 };
 
 } // namespace WebCore
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::FrameLoadType> {
-    using values = EnumValues<
-        WebCore::FrameLoadType,
-        WebCore::FrameLoadType::Standard,
-        WebCore::FrameLoadType::Back,
-        WebCore::FrameLoadType::Forward,
-        WebCore::FrameLoadType::IndexedBackForward,
-        WebCore::FrameLoadType::Reload,
-        WebCore::FrameLoadType::Same,
-        WebCore::FrameLoadType::RedirectWithLockedBackForwardList,
-        WebCore::FrameLoadType::Replace,
-        WebCore::FrameLoadType::ReloadFromOrigin,
-        WebCore::FrameLoadType::ReloadExpiredOnly
-    >;
-};
-
-template<> struct EnumTraits<WebCore::NavigationType> {
-    using values = EnumValues<
-        WebCore::NavigationType,
-        WebCore::NavigationType::LinkClicked,
-        WebCore::NavigationType::FormSubmitted,
-        WebCore::NavigationType::BackForward,
-        WebCore::NavigationType::Reload,
-        WebCore::NavigationType::FormResubmitted,
-        WebCore::NavigationType::Other
-    >;
-};
-
-template<> struct EnumTraits<WebCore::PolicyAction> {
-    using values = EnumValues<
-        WebCore::PolicyAction,
-        WebCore::PolicyAction::Use,
-        WebCore::PolicyAction::Download,
-        WebCore::PolicyAction::Ignore,
-        WebCore::PolicyAction::StopAllLoads
-    >;
-};
-
-template<> struct EnumTraits<WebCore::ReloadOption> {
-    using values = EnumValues<
-        WebCore::ReloadOption,
-        WebCore::ReloadOption::ExpiredOnly,
-        WebCore::ReloadOption::FromOrigin,
-        WebCore::ReloadOption::DisableContentBlockers
-    >;
-};
-
-template<> struct EnumTraits<WebCore::BrowsingContextGroupSwitchDecision> {
-    using values = EnumValues<
-        WebCore::BrowsingContextGroupSwitchDecision,
-        WebCore::BrowsingContextGroupSwitchDecision::StayInGroup,
-        WebCore::BrowsingContextGroupSwitchDecision::NewSharedGroup,
-        WebCore::BrowsingContextGroupSwitchDecision::NewIsolatedGroup
-    >;
-};
-
-template<> struct EnumTraits<WebCore::ShouldOpenExternalURLsPolicy> {
-    using values = EnumValues<
-        WebCore::ShouldOpenExternalURLsPolicy,
-        WebCore::ShouldOpenExternalURLsPolicy::ShouldNotAllow,
-        WebCore::ShouldOpenExternalURLsPolicy::ShouldAllowExternalSchemesButNotAppLinks,
-        WebCore::ShouldOpenExternalURLsPolicy::ShouldAllow
-    >;
-};
-
-} // namespace WTF

@@ -145,6 +145,10 @@ template<> GRefPtr<GstClock> adoptGRef(GstClock*);
 template<> GstClock* refGPtr<GstClock>(GstClock*);
 template<> void derefGPtr<GstClock>(GstClock*);
 
+template<> GRefPtr<GstDeviceMonitor> adoptGRef(GstDeviceMonitor*);
+template<> GstDeviceMonitor* refGPtr<GstDeviceMonitor>(GstDeviceMonitor*);
+template<> void derefGPtr<GstDeviceMonitor>(GstDeviceMonitor*);
+
 #if USE(GSTREAMER_GL)
 template<> GRefPtr<GstGLDisplay> adoptGRef(GstGLDisplay* ptr);
 template<> GstGLDisplay* refGPtr<GstGLDisplay>(GstGLDisplay* ptr);

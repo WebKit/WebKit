@@ -27,29 +27,14 @@
 
 #if ENABLE(SERVICE_WORKER)
 
-#include <wtf/EnumTraits.h>
-
 namespace WebCore {
 
-enum class ServiceWorkerJobType {
+enum class ServiceWorkerJobType : uint8_t {
     Register,
     Unregister,
     Update,
 };
 
 } // namespace WebCore
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::ServiceWorkerJobType> {
-    using values = EnumValues<
-        WebCore::ServiceWorkerJobType,
-        WebCore::ServiceWorkerJobType::Register,
-        WebCore::ServiceWorkerJobType::Unregister,
-        WebCore::ServiceWorkerJobType::Update
-    >;
-};
-
-} // namespace WTF
 
 #endif // ENABLE(SERVICE_WORKER)

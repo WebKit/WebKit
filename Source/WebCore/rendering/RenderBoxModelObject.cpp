@@ -33,8 +33,6 @@
 #include "ColorBlending.h"
 #include "Document.h"
 #include "FloatRoundedRect.h"
-#include "Frame.h"
-#include "FrameView.h"
 #include "GeometryUtilities.h"
 #include "GraphicsContext.h"
 #include "HTMLImageElement.h"
@@ -42,6 +40,8 @@
 #include "ImageBuffer.h"
 #include "ImageQualityController.h"
 #include "InlineIteratorInlineBox.h"
+#include "LocalFrame.h"
+#include "LocalFrameView.h"
 #include "Path.h"
 #include "RenderBlock.h"
 #include "RenderFlexibleBox.h"
@@ -299,7 +299,7 @@ DecodingMode RenderBoxModelObject::decodingModeForImageDraw(const Image& image, 
 {
     if (!is<BitmapImage>(image))
         return DecodingMode::Synchronous;
-    
+
     const BitmapImage& bitmapImage = downcast<BitmapImage>(image);
     if (bitmapImage.canAnimate()) {
         // The DecodingMode for the current frame has to be Synchronous. The DecodingMode
@@ -312,16 +312,18 @@ DecodingMode RenderBoxModelObject::decodingModeForImageDraw(const Image& image, 
     if (IOSApplication::isIBooksStorytime())
         return DecodingMode::Synchronous;
 #endif
+    if (paintInfo.paintBehavior.contains(PaintBehavior::Snapshotting))
+        return DecodingMode::Synchronous;
     if (is<HTMLImageElement>(element())) {
         auto decodingMode = downcast<HTMLImageElement>(*element()).decodingMode();
-        if (decodingMode != DecodingMode::Auto)
-            return decodingMode;
+        if (decodingMode == DecodingMode::Asynchronous)
+            return DecodingMode::Asynchronous;
+        if (decodingMode == DecodingMode::Synchronous)
+            return DecodingMode::Synchronous;
     }
     if (bitmapImage.isLargeImageAsyncDecodingEnabledForTesting())
         return DecodingMode::Asynchronous;
     if (document().isImageDocument())
-        return DecodingMode::Synchronous;
-    if (paintInfo.paintBehavior.contains(PaintBehavior::Snapshotting))
         return DecodingMode::Synchronous;
     if (!settings().largeImageAsyncDecodingEnabled())
         return DecodingMode::Synchronous;

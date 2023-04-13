@@ -1,0 +1,8 @@
+Visible button
+
+PASS Popover combination: Popover Dialog
+PASS Popover combination: Open Non-modal Popover Dialog
+PASS Popover combination: Fullscreen Popover
+PASS Popover combination: Fullscreen Popover Dialog
+PASS Popover combination: Fullscreen Open Non-modal Popover Dialog
+

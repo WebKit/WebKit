@@ -30,6 +30,7 @@
 #include "CSSAnimation.h"
 #include "CSSPropertyAnimation.h"
 #include "CSSTransition.h"
+#include "Document.h"
 #include "KeyframeEffect.h"
 #include "WebAnimation.h"
 #include "WebAnimationUtilities.h"
@@ -117,7 +118,7 @@ void KeyframeEffectStack::ensureEffectsAreSorted()
     if (m_isSorted || m_effects.size() < 2)
         return;
 
-    std::stable_sort(m_effects.begin(), m_effects.end(), [&](auto& lhs, auto& rhs) {
+    std::stable_sort(m_effects.begin(), m_effects.end(), [](auto& lhs, auto& rhs) {
         RELEASE_ASSERT(lhs.get());
         RELEASE_ASSERT(rhs.get());
         
@@ -153,38 +154,13 @@ OptionSet<AnimationImpact> KeyframeEffectStack::applyKeyframeEffects(RenderStyle
             || targetStyle.transform() != previousStyle.transform();
     }();
 
-    auto fontSizeChanged = previousLastStyleChangeEventStyle && previousLastStyleChangeEventStyle->computedFontSize() != targetStyle.computedFontSize();
-    auto propertyAffectingLogicalPropertiesChanged = previousLastStyleChangeEventStyle && (previousLastStyleChangeEventStyle->direction() != targetStyle.direction() || previousLastStyleChangeEventStyle->writingMode() != targetStyle.writingMode());
-
     auto unanimatedStyle = RenderStyle::clone(targetStyle);
 
     for (const auto& effect : sortedEffects()) {
+        auto keyframeRecomputationReason = effect->recomputeKeyframesIfNecessary(previousLastStyleChangeEventStyle, unanimatedStyle, resolutionContext);
+
         ASSERT(effect->animation());
         auto* animation = effect->animation();
-
-        auto inheritedPropertyChanged = [&]() {
-            if (previousLastStyleChangeEventStyle) {
-                for (auto property : effect->inheritedProperties()) {
-                    ASSERT(effect->target());
-                    if (!CSSPropertyAnimation::propertiesEqual(property, *previousLastStyleChangeEventStyle, targetStyle, effect->target()->document()))
-                        return true;
-                }
-            }
-            return false;
-        };
-
-        auto cssVariableChanged = [&]() {
-            if (previousLastStyleChangeEventStyle && effect->containsCSSVariableReferences()) {
-                if (!previousLastStyleChangeEventStyle->customPropertiesEqual(targetStyle))
-                    return true;
-            }
-            return false;
-        };
-
-        auto logicalPropertyDidChange = propertyAffectingLogicalPropertiesChanged && effect->animatesDirectionAwareProperty();
-        if (logicalPropertyDidChange || fontSizeChanged || inheritedPropertyChanged() || cssVariableChanged())
-            effect->propertyAffectingKeyframeResolutionDidChange(unanimatedStyle, resolutionContext);
-
         animation->resolve(targetStyle, resolutionContext);
 
         if (effect->isRunningAccelerated() || effect->isAboutToRunAccelerated())
@@ -197,7 +173,7 @@ OptionSet<AnimationImpact> KeyframeEffectStack::applyKeyframeEffects(RenderStyle
             effect->transformRelatedPropertyDidChange();
 
         // If one of the effect's resolved property changed it could affect whether that effect's animation is removed.
-        if (logicalPropertyDidChange) {
+        if (keyframeRecomputationReason && *keyframeRecomputationReason == KeyframeEffect::RecomputationReason::LogicalPropertyChange) {
             ASSERT(animation->timeline());
             animation->timeline()->animationTimingDidChange(*animation);
         }
@@ -270,6 +246,29 @@ void KeyframeEffectStack::lastStyleChangeEventStyleDidChange(const RenderStyle* 
 {
     for (auto& effect : m_effects)
         effect->lastStyleChangeEventStyleDidChange(previousStyle, currentStyle);
+}
+
+void KeyframeEffectStack::cascadeDidOverrideProperties(const HashSet<AnimatableProperty>& overriddenProperties, const Document& document)
+{
+    HashSet<AnimatableProperty> acceleratedPropertiesOverriddenByCascade;
+    for (auto animatedProperty : overriddenProperties) {
+        if (CSSPropertyAnimation::animationOfPropertyIsAccelerated(animatedProperty, document.settings()))
+            acceleratedPropertiesOverriddenByCascade.add(animatedProperty);
+    }
+
+    if (acceleratedPropertiesOverriddenByCascade == m_acceleratedPropertiesOverriddenByCascade)
+        return;
+
+    m_acceleratedPropertiesOverriddenByCascade = WTFMove(acceleratedPropertiesOverriddenByCascade);
+
+    for (auto& effect : m_effects)
+        effect->acceleratedPropertiesOverriddenByCascadeDidChange();
+}
+
+void KeyframeEffectStack::applyPendingAcceleratedActions() const
+{
+    for (auto& effect : m_effects)
+        effect->applyPendingAcceleratedActionsOrUpdateTimingProperties();
 }
 
 } // namespace WebCore

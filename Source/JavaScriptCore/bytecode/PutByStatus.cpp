@@ -32,12 +32,15 @@
 #include "ComplexGetStatus.h"
 #include "GetterSetterAccessCase.h"
 #include "ICStatusUtils.h"
-#include "PolymorphicAccess.h"
+#include "InlineCacheCompiler.h"
+#include "ProxyObjectAccessCase.h"
 #include "StructureInlines.h"
 #include "StructureStubInfo.h"
 #include <wtf/ListDump.h>
 
 namespace JSC {
+
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(PutByStatus);
 
 bool PutByStatus::appendVariant(const PutByVariant& variant)
 {
@@ -120,6 +123,7 @@ PutByStatus::PutByStatus(StubInfoSummary summary, StructureStubInfo& stubInfo)
         m_state = NoInformation;
         return;
     case StubInfoSummary::Simple:
+    case StubInfoSummary::Megamorphic:
     case StubInfoSummary::MakesCalls:
         RELEASE_ASSERT_NOT_REACHED();
         return;
@@ -238,8 +242,7 @@ PutByStatus PutByStatus::computeForStubInfo(const ConcurrentJSLocker& locker, Co
                     return PutByStatus(JSC::slowVersion(summary), *stubInfo);
                     
                 case ComplexGetStatus::Inlineable: {
-                    std::unique_ptr<CallLinkStatus> callLinkStatus =
-                        makeUnique<CallLinkStatus>();
+                    auto callLinkStatus = makeUnique<CallLinkStatus>();
                     if (CallLinkInfo* callLinkInfo = access.as<GetterSetterAccessCase>().callLinkInfo()) {
                         *callLinkStatus = CallLinkStatus::computeFor(
                             locker, profiledBlock, *callLinkInfo, callExitSiteData);
@@ -256,6 +259,17 @@ PutByStatus PutByStatus::computeForStubInfo(const ConcurrentJSLocker& locker, Co
             case AccessCase::CustomValueSetter:
             case AccessCase::CustomAccessorSetter:
                 return PutByStatus(MakesCalls);
+
+            case AccessCase::ProxyObjectStore: {
+                auto& accessCase = access.as<ProxyObjectAccessCase>();
+                auto callLinkStatus = makeUnique<CallLinkStatus>();
+                if (CallLinkInfo* callLinkInfo = accessCase.callLinkInfo())
+                    *callLinkStatus = CallLinkStatus::computeFor(locker, profiledBlock, *callLinkInfo, callExitSiteData);
+                auto variant = PutByVariant::proxy(accessCase.identifier(), access.structure(), WTFMove(callLinkStatus));
+                if (!result.appendVariant(variant))
+                    return PutByStatus(JSC::slowVersion(summary), *stubInfo);
+                break;
+            }
 
             default:
                 return PutByStatus(JSC::slowVersion(summary), *stubInfo);
@@ -381,6 +395,10 @@ PutByStatus PutByStatus::computeFor(JSGlobalObject* globalObject, const Structur
         // we don't want to be adding properties to strings.
         if (!structure->typeInfo().isObject())
             return PutByStatus(LikelyTakesSlowPath);
+
+        // If the structure is for prototype, we should do a slow path which can invalidate MegamorphicCache.
+        if (structure->mayBePrototype())
+            return PutByStatus(LikelyTakesSlowPath);
     
         ObjectPropertyConditionSet conditionSet;
         if (!isDirect) {
@@ -392,8 +410,7 @@ PutByStatus PutByStatus::computeFor(JSGlobalObject* globalObject, const Structur
         }
     
         // We only optimize if there is already a structure that the transition is cached to.
-        Structure* transition =
-            Structure::addPropertyTransitionToExistingStructureConcurrently(structure, uid, 0, offset);
+        Structure* transition = Structure::addPropertyTransitionToExistingStructureConcurrently(structure, uid, 0, offset);
         if (!transition)
             return PutByStatus(LikelyTakesSlowPath);
         ASSERT(isValidOffset(offset));

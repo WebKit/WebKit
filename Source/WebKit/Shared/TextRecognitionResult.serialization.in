@@ -34,6 +34,7 @@ header: <WebCore/TextRecognitionResult.h>
     WebCore::FloatQuad normalizedQuad;
     Vector<WebCore::TextRecognitionWordData> children;
     bool hasTrailingNewline;
+    bool isVertical;
 };
 
 header: <WebCore/TextRecognitionResult.h>

@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #import "config.h"
@@ -81,14 +81,6 @@
 @end
 
 @interface AVSampleBufferAudioRenderer (WebCoreSampleBufferKeySession) <AVContentKeyRecipient>
-@end
-
-#pragma mark -
-#pragma mark AVStreamSession
-
-@interface AVStreamSession : NSObject
-- (void)addStreamDataParser:(AVStreamDataParser *)streamDataParser;
-- (void)removeStreamDataParser:(AVStreamDataParser *)streamDataParser;
 @end
 
 @interface WebAVSampleBufferErrorListener : NSObject {
@@ -297,13 +289,6 @@ static bool sampleBufferRenderersSupportKeySession()
     return supports;
 }
 
-static Vector<Ref<SharedBuffer>> copyKeyIDs(const Vector<Ref<SharedBuffer>> keyIDs)
-{
-    return keyIDs.map([] (auto& keyID) {
-        return keyID.copyRef();
-    });
-}
-
 static void bufferWasConsumedCallback(CMNotificationCenterRef, const void* listener, CFStringRef notificationName, const void*, CFTypeRef)
 {
     if (!CFEqual(PAL::kCMSampleBufferConsumerNotification_BufferConsumed, notificationName))
@@ -370,115 +355,107 @@ SourceBufferPrivateAVFObjC::~SourceBufferPrivateAVFObjC()
         PAL::CMNotificationCenterRemoveListener(PAL::CMNotificationCenterGetDefaultLocalCenter(), this, bufferWasConsumedCallback, PAL::kCMSampleBufferConsumerNotification_BufferConsumed, nullptr);
 
     abort();
-    resetParserState();
+}
+
+void SourceBufferPrivateAVFObjC::setTrackChangeCallbacks(const Vector<Ref<TrackPrivateBase>>& tracks, bool initialized)
+{
+    for (auto& track : tracks) {
+        if (auto videoTrack = dynamicDowncast<VideoTrackPrivate>(track.get())) {
+            videoTrack->setSelectedChangedCallback([weakThis = WeakPtr { *this }, this, initialized] (VideoTrackPrivate& track, bool selected) {
+                if (!weakThis)
+                    return;
+
+                if (initialized) {
+                    trackDidChangeSelected(track, selected);
+                    return;
+                }
+                m_pendingTrackChangeTasks.append([weakThis, trackRef = Ref { track }, selected] {
+                    if (weakThis)
+                        weakThis->trackDidChangeSelected(trackRef, selected);
+                });
+            });
+            continue;
+        }
+        if (auto audioTrack = dynamicDowncast<AudioTrackPrivate>(track.get())) {
+            audioTrack->setEnabledChangedCallback([weakThis = WeakPtr { *this }, this, initialized] (AudioTrackPrivate& track, bool enabled) {
+                if (!weakThis)
+                    return;
+
+                if (initialized) {
+                    trackDidChangeEnabled(track, enabled);
+                    return;
+                }
+
+                m_pendingTrackChangeTasks.append([weakThis, trackRef = Ref { track }, enabled] {
+                    if (weakThis)
+                        weakThis->trackDidChangeEnabled(trackRef, enabled);
+                });
+            });
+        }
+    }
 }
 
 void SourceBufferPrivateAVFObjC::didParseInitializationData(InitializationSegment&& segment)
 {
     ALWAYS_LOG(LOGIDENTIFIER);
 
-    if (!m_mediaSource) {
-        return;
-    }
+    Vector<Ref<TrackPrivateBase>> tracks;
+    for (auto& videoTrackInfo : segment.videoTracks)
+        tracks.append(*videoTrackInfo.track);
 
-    if (auto player = this->player(); player && player->shouldCheckHardwareSupport()) {
-        for (auto& info : segment.videoTracks) {
-            auto codec = FourCC::fromString(info.description->codec());
-            if (!codec)
-                continue;
-            if (!codecsMeetHardwareDecodeRequirements({{ *codec }}, player->mediaContentTypesRequiringHardwareSupport())) {
-                m_parsingSucceeded = false;
-                return;
+    for (auto& audioTrackInfo : segment.audioTracks)
+        tracks.append(*audioTrackInfo.track);
+
+    auto initCheckTask = [weakThis = WeakPtr { *this }, this, tracks] (InitializationSegment& segment) {
+        if (!weakThis)
+            return false;
+
+        if (!m_mediaSource)
+            return false;
+
+        if (auto player = this->player(); player && player->shouldCheckHardwareSupport()) {
+            for (auto& info : segment.videoTracks) {
+                auto codec = FourCC::fromString(info.description->codec());
+                if (!codec)
+                    continue;
+                if (!codecsMeetHardwareDecodeRequirements({ { *codec } }, player->mediaContentTypesRequiringHardwareSupport()))
+                    return false;
             }
         }
-    }
 
-    m_protectedTrackInitDataMap.swap(m_pendingProtectedTrackInitDataMap);
-    m_pendingProtectedTrackInitDataMap.clear();
+        m_protectedTrackInitDataMap = std::exchange(m_pendingProtectedTrackInitDataMap, { });
 
-    for (auto videoTrackInfo : segment.videoTracks) {
-        videoTrackInfo.track->setSelectedChangedCallback([weakThis = WeakPtr { *this }, this] (VideoTrackPrivate& track, bool selected) {
-            if (!weakThis)
-                return;
+        for (auto& videoTrackInfo : segment.videoTracks)
+            m_videoTracks.set(videoTrackInfo.track->id(), videoTrackInfo.track);
 
-            auto videoTrackSelectedChanged = [weakThis, this, trackRef = Ref { track }, selected] {
-                if (!weakThis)
-                    return;
-                trackDidChangeSelected(trackRef, selected);
-            };
+        for (auto& audioTrackInfo : segment.audioTracks)
+            m_audioTracks.set(audioTrackInfo.track->id(), audioTrackInfo.track);
 
-            if (!m_processingInitializationSegment) {
-                videoTrackSelectedChanged();
-                return;
-            }
+        setTrackChangeCallbacks(tracks, false);
+        return true;
+    };
 
-            m_pendingTrackChangeCallbacks.append(WTFMove(videoTrackSelectedChanged));
-        });
-
-        m_videoTracks.set(videoTrackInfo.track->id(), videoTrackInfo.track);
-    }
-
-    for (auto audioTrackInfo : segment.audioTracks) {
-        audioTrackInfo.track->setEnabledChangedCallback([weakThis = WeakPtr { *this }, this] (AudioTrackPrivate& track, bool enabled) {
-            if (!weakThis)
-                return;
-
-            auto audioTrackEnabledChanged= [weakThis, this, trackRef = Ref { track }, enabled] {
-                if (!weakThis)
-                    return;
-
-                trackDidChangeEnabled(trackRef, enabled);
-            };
-
-            if (!m_processingInitializationSegment) {
-                audioTrackEnabledChanged();
-                return;
-            }
-
-            m_pendingTrackChangeCallbacks.append(WTFMove(audioTrackEnabledChanged));
-        });
-
-        m_audioTracks.set(audioTrackInfo.track->id(), audioTrackInfo.track);
-    }
-
-    m_processingInitializationSegment = true;
-    didReceiveInitializationSegment(WTFMove(segment), [this, weakThis = WeakPtr { *this }, abortCalled = m_abortCalled] (SourceBufferPrivateClient::ReceiveResult result) {
+    didReceiveInitializationSegment(WTFMove(segment), WTFMove(initCheckTask), [this, weakThis = WeakPtr { *this }, tracks] (SourceBufferPrivateClient::ReceiveResult result) {
         ASSERT(isMainThread());
         if (!weakThis)
             return;
 
-        m_processingInitializationSegment = false;
-        auto didAbort = abortCalled != weakThis->m_abortCalled;
-        if (didAbort || result != SourceBufferPrivateClient::ReceiveResult::RecieveSucceeded) {
-            ERROR_LOG(LOGIDENTIFIER, "failed to process initialization segment: didAbort = ", didAbort, " recieveResult = ", result);
-            m_pendingTrackChangeCallbacks.clear();
-            m_mediaSamples.clear();
+        if (result != SourceBufferPrivateClient::ReceiveResult::Succeeded) {
+            ERROR_LOG(LOGIDENTIFIER, "failed to process initialization segment receiveResult = ", result);
+            m_pendingTrackChangeTasks.clear();
             return;
         }
 
-        auto callbacks = std::exchange(m_pendingTrackChangeCallbacks, { });
-        for (auto& callback : callbacks)
-            callback();
+        auto tasks = std::exchange(m_pendingTrackChangeTasks, { });
+        for (auto& task : tasks)
+            task();
+
+        setTrackChangeCallbacks(tracks, true);
 
         if (auto player = this->player())
             player->characteristicsChanged();
 
-        auto mediaSamples = std::exchange(m_mediaSamples, { });
-        for (auto& trackIdMediaSamplePair : mediaSamples) {
-            auto trackId = trackIdMediaSamplePair.first;
-            auto& mediaSample = trackIdMediaSamplePair.second;
-            if (trackId == m_enabledVideoTrackID || m_audioRenderers.contains(trackId)) {
-                DEBUG_LOG(LOGIDENTIFIER, mediaSample.get());
-                didReceiveSample(WTFMove(mediaSample));
-            }
-        }
-
         ALWAYS_LOG(LOGIDENTIFIER, "initialization segment was processed");
-
-        if (m_hasPendingAppendCompletedCallback) {
-            m_hasPendingAppendCompletedCallback = false;
-            appendCompleted();
-        }
     });
 }
 
@@ -495,27 +472,17 @@ void SourceBufferPrivateAVFObjC::didEncounterErrorDuringParsing(int32_t code)
 void SourceBufferPrivateAVFObjC::didProvideMediaDataForTrackId(Ref<MediaSampleAVFObjC>&& mediaSample, uint64_t trackId, const String& mediaType)
 {
     UNUSED_PARAM(mediaType);
+    UNUSED_PARAM(trackId);
 
-#if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
-    auto findResult = m_protectedTrackInitDataMap.find(trackId);
-    if (findResult != m_protectedTrackInitDataMap.end())
-        mediaSample->setKeyIDs(copyKeyIDs(findResult->value.keyIDs));
-#endif
-
-    if (m_processingInitializationSegment) {
-        DEBUG_LOG(LOGIDENTIFIER, mediaSample.get());
-        m_mediaSamples.append(std::make_pair(trackId, WTFMove(mediaSample)));
-        return;
-    }
-
-    if (trackId != m_enabledVideoTrackID && !m_audioRenderers.contains(trackId)) {
-        // FIXME(125161): We don't handle text tracks, and passing this sample up to SourceBuffer
-        // will just confuse its state. Drop this sample until we can handle text tracks properly.
-        return;
-    }
-
-    DEBUG_LOG(LOGIDENTIFIER, mediaSample.get());
     didReceiveSample(WTFMove(mediaSample));
+}
+
+bool SourceBufferPrivateAVFObjC::isMediaSampleAllowed(const MediaSample& sample) const
+{
+    // FIXME(125161): We don't handle text tracks, and passing this sample up to SourceBuffer
+    // will just confuse its state. Drop this sample until we can handle text tracks properly.
+    auto trackId = parseIntegerAllowingTrailingJunk<uint64_t>(sample.trackID()).value_or(0);
+    return trackId == m_enabledVideoTrackID || m_audioRenderers.contains(trackId);
 }
 
 void SourceBufferPrivateAVFObjC::willProvideContentKeyRequestInitializationDataForTrackID(uint64_t trackID)
@@ -523,29 +490,7 @@ void SourceBufferPrivateAVFObjC::willProvideContentKeyRequestInitializationDataF
     if (!m_mediaSource)
         return;
 
-#if HAVE(AVSTREAMSESSION) && ENABLE(LEGACY_ENCRYPTED_MEDIA)
-    ALWAYS_LOG(LOGIDENTIFIER, "track = ", trackID);
-
-    m_protectedTrackID = trackID;
-
-    auto parser = this->streamDataParser();
-    if (!parser)
-        return;
-
-    auto player = this->player();
-    if (!player)
-        return;
-
-    if (CDMSessionMediaSourceAVFObjC* session = player->cdmSession())
-        session->addParser(parser);
-    else if (!CDMSessionAVContentKeySession::isAvailable()) {
-        BEGIN_BLOCK_OBJC_EXCEPTIONS
-        [player->streamSession() addStreamDataParser:parser];
-        END_BLOCK_OBJC_EXCEPTIONS
-    }
-#else
     UNUSED_PARAM(trackID);
-#endif
 }
 
 void SourceBufferPrivateAVFObjC::didProvideContentKeyRequestInitializationDataForTrackID(Ref<SharedBuffer>&& initData, uint64_t trackID, Box<BinarySemaphore> hasSessionSemaphore)
@@ -575,7 +520,7 @@ void SourceBufferPrivateAVFObjC::didProvideContentKeyRequestInitializationDataFo
     if (m_hasSessionSemaphore)
         m_hasSessionSemaphore->signal();
     m_hasSessionSemaphore = hasSessionSemaphore;
-    
+
 #if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
     auto keyIDs = CDMPrivateFairPlayStreaming::extractKeyIDsSinf(*m_initData);
     if (!keyIDs)
@@ -626,7 +571,7 @@ bool SourceBufferPrivateAVFObjC::needsVideoLayer() const
     return sampleBufferRenderersSupportKeySession();
 }
 
-void SourceBufferPrivateAVFObjC::append(Ref<SharedBuffer>&& data)
+void SourceBufferPrivateAVFObjC::appendInternal(Ref<SharedBuffer>&& data)
 {
     ALWAYS_LOG(LOGIDENTIFIER, "data length = ", data->size());
 
@@ -636,34 +581,34 @@ void SourceBufferPrivateAVFObjC::append(Ref<SharedBuffer>&& data)
     if (m_client)
         m_client->sourceBufferPrivateReportExtraMemoryCost(totalTrackBufferSizeInBytes());
 
-    m_parser->setDidParseInitializationDataCallback([weakThis = WeakPtr { *this }, abortCalled = m_abortCalled] (InitializationSegment&& segment) {
+    m_parser->setDidParseInitializationDataCallback([weakThis = WeakPtr { *this }] (InitializationSegment&& segment) {
         ASSERT(isMainThread());
-        if (!weakThis || abortCalled != weakThis->m_abortCalled)
+        if (!weakThis)
             return;
         weakThis->didParseInitializationData(WTFMove(segment));
     });
 
-    m_parser->setDidEncounterErrorDuringParsingCallback([weakThis = WeakPtr { *this }, abortCalled = m_abortCalled] (int32_t errorCode) {
+    m_parser->setDidEncounterErrorDuringParsingCallback([weakThis = WeakPtr { *this }] (int32_t errorCode) {
         ASSERT(isMainThread());
-        if (!weakThis || abortCalled != weakThis->m_abortCalled)
+        if (!weakThis)
             return;
         weakThis->didEncounterErrorDuringParsing(errorCode);
     });
 
-    m_parser->setDidProvideMediaDataCallback([weakThis = WeakPtr { *this }, abortCalled = m_abortCalled] (Ref<MediaSampleAVFObjC>&& sample, uint64_t trackId, const String& mediaType) {
+    m_parser->setDidProvideMediaDataCallback([weakThis = WeakPtr { *this }] (Ref<MediaSampleAVFObjC>&& sample, uint64_t trackId, const String& mediaType) {
         ASSERT(isMainThread());
-        if (!weakThis || abortCalled != weakThis->m_abortCalled)
+        if (!weakThis)
             return;
         weakThis->didProvideMediaDataForTrackId(WTFMove(sample), trackId, mediaType);
     });
 
     m_abortSemaphore = Box<Semaphore>::create(0);
-    m_parser->setWillProvideContentKeyRequestInitializationDataForTrackIDCallback([weakThis = WeakPtr { *this }, abortSemaphore = m_abortSemaphore, abortCalled = m_abortCalled] (uint64_t trackID) mutable {
+    m_parser->setWillProvideContentKeyRequestInitializationDataForTrackIDCallback([weakThis = WeakPtr { *this }, abortSemaphore = m_abortSemaphore] (uint64_t trackID) mutable {
         // We must call synchronously to the main thread, as the AVStreamSession must be associated
         // with the streamDataParser before the delegate method returns.
         Box<BinarySemaphore> respondedSemaphore = Box<BinarySemaphore>::create();
-        callOnMainThread([weakThis = WTFMove(weakThis), abortCalled, trackID, respondedSemaphore]() {
-            if (weakThis && abortCalled == weakThis->m_abortCalled)
+        callOnMainThread([weakThis = WTFMove(weakThis), trackID, respondedSemaphore]() {
+            if (weakThis)
                 weakThis->willProvideContentKeyRequestInitializationDataForTrackID(trackID);
             respondedSemaphore->signal();
         });
@@ -679,11 +624,11 @@ void SourceBufferPrivateAVFObjC::append(Ref<SharedBuffer>&& data)
         }
     });
 
-    m_parser->setDidProvideContentKeyRequestInitializationDataForTrackIDCallback([weakThis = WeakPtr { *this }, abortSemaphore = m_abortSemaphore, abortCalled = m_abortCalled](Ref<SharedBuffer>&& initData, uint64_t trackID) mutable {
+    m_parser->setDidProvideContentKeyRequestInitializationDataForTrackIDCallback([weakThis = WeakPtr { *this }, abortSemaphore = m_abortSemaphore](Ref<SharedBuffer>&& initData, uint64_t trackID) mutable {
         // Called on the data parser queue.
         Box<BinarySemaphore> hasSessionSemaphore = Box<BinarySemaphore>::create();
-        callOnMainThread([weakThis = WTFMove(weakThis), abortCalled, initData = WTFMove(initData), trackID, hasSessionSemaphore] () mutable {
-            if (!weakThis || abortCalled != weakThis->m_abortCalled)
+        callOnMainThread([weakThis = WTFMove(weakThis), initData = WTFMove(initData), trackID, hasSessionSemaphore] () mutable {
+            if (!weakThis)
                 return;
             weakThis->didProvideContentKeyRequestInitializationDataForTrackID(WTFMove(initData), trackID, hasSessionSemaphore);
         });
@@ -699,27 +644,20 @@ void SourceBufferPrivateAVFObjC::append(Ref<SharedBuffer>&& data)
         }
     });
 
-    m_parser->setDidProvideContentKeyRequestIdentifierForTrackIDCallback([weakThis = WeakPtr { *this }, abortCalled = m_abortCalled] (Ref<SharedBuffer>&& initData, uint64_t trackID) {
+    m_parser->setDidProvideContentKeyRequestIdentifierForTrackIDCallback([weakThis = WeakPtr { *this }] (Ref<SharedBuffer>&& initData, uint64_t trackID) {
         ASSERT(isMainThread());
-        if (!weakThis || abortCalled != weakThis->m_abortCalled)
+        if (!weakThis)
             return;
         weakThis->didProvideContentKeyRequestInitializationDataForTrackID(WTFMove(initData), trackID, nullptr);
     });
 
     m_parsingSucceeded = true;
 
-    m_appendQueue->dispatch([data = WTFMove(data), weakThis = m_appendWeakFactory.createWeakPtr(*this), parser = m_parser, abortCalled = m_abortCalled]() mutable {
-        parser->appendData(WTFMove(data), [weakThis = WTFMove(weakThis), abortCalled]() mutable {
-            callOnMainThread([weakThis = WTFMove(weakThis), abortCalled] {
-                if (!weakThis || abortCalled != weakThis->m_abortCalled)
-                    return;
-
-                if (weakThis->m_processingInitializationSegment) {
-                    weakThis->m_hasPendingAppendCompletedCallback = true;
-                    return;
-                }
-
-                weakThis->appendCompleted();
+    m_appendQueue->dispatch([data = WTFMove(data), weakThis = WeakPtr { *this }, parser = m_parser]() mutable {
+        parser->appendData(WTFMove(data), [weakThis = WTFMove(weakThis)]() mutable {
+            callOnMainThread([weakThis = WTFMove(weakThis)] {
+                if (weakThis)
+                    weakThis->appendCompleted();
             });
         });
     });
@@ -728,29 +666,29 @@ void SourceBufferPrivateAVFObjC::append(Ref<SharedBuffer>&& data)
 void SourceBufferPrivateAVFObjC::appendCompleted()
 {
     ALWAYS_LOG(LOGIDENTIFIER);
-    if (m_abortSemaphore) {
-        m_abortSemaphore->signal();
-        m_abortSemaphore = nil;
-    }
 
-    if (m_hasSessionSemaphore) {
-        m_hasSessionSemaphore->signal();
-        m_hasSessionSemaphore = nil;
-    }
+    SourceBufferPrivate::appendCompleted(m_parsingSucceeded, m_mediaSource ? m_mediaSource->isEnded() : true, [this, weakThis = WeakPtr { *this }] {
+        if (!weakThis)
+            return;
+        if (m_abortSemaphore) {
+            m_abortSemaphore->signal();
+            m_abortSemaphore = nil;
+        }
 
-    if (auto player = this->player(); player && m_parsingSucceeded)
-        player->setLoadingProgresssed(true);
-
-    SourceBufferPrivate::appendCompleted(m_parsingSucceeded, m_mediaSource ? m_mediaSource->isEnded() : true);
+        if (m_hasSessionSemaphore) {
+            m_hasSessionSemaphore->signal();
+            m_hasSessionSemaphore = nil;
+        }
+        if (auto player = this->player(); player && m_parsingSucceeded)
+            player->setLoadingProgresssed(true);
+    });
 }
 
 void SourceBufferPrivateAVFObjC::abort()
 {
     ALWAYS_LOG(LOGIDENTIFIER);
 
-    // The parsing queue may be blocked waiting for the main thread to provide it an AVStreamSession. We
-    // were asked to abort, and that cancels all outstanding append operations. Without cancelling this
-    // semaphore, the m_isAppendingGroup wait operation will deadlock.
+    // The parsing queue may be blocked waiting for the main thread to provide it an AVStreamSession.
     if (m_hasSessionSemaphore) {
         m_hasSessionSemaphore->signal();
         m_hasSessionSemaphore = nullptr;
@@ -759,20 +697,16 @@ void SourceBufferPrivateAVFObjC::abort()
         m_abortSemaphore->signal();
         m_abortSemaphore = nullptr;
     }
-
-    m_abortCalled++;
+    SourceBufferPrivate::abort();
 }
 
-void SourceBufferPrivateAVFObjC::resetParserState()
+void SourceBufferPrivateAVFObjC::resetParserStateInternal()
 {
     ALWAYS_LOG(LOGIDENTIFIER);
 
-    // Wait until all tasks in the workqueue have run.
-    m_appendQueue->dispatchSync([] { });
-    m_mediaSamples.clear();
-    m_hasPendingAppendCompletedCallback = false;
-    m_processingInitializationSegment = false;
-    m_parser->resetParserState();
+    m_appendQueue->dispatch([parser = m_parser] {
+        parser->resetParserState();
+    });
 }
 
 void SourceBufferPrivateAVFObjC::destroyStreamDataParser()
@@ -780,10 +714,6 @@ void SourceBufferPrivateAVFObjC::destroyStreamDataParser()
     auto parser = this->streamDataParser();
     if (!parser)
         return;
-#if HAVE(AVSTREAMSESSION) && ENABLE(LEGACY_ENCRYPTED_MEDIA)
-    if (auto player = this->player(); player && player->hasStreamSession())
-        [player->streamSession() removeStreamDataParser:parser];
-#endif
 #if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
     if (m_cdmInstance) {
         if (auto instanceSession = m_cdmInstance->sessionForKeyIDs(m_keyIDs))
@@ -1255,7 +1185,7 @@ bool SourceBufferPrivateAVFObjC::canEnqueueSample(uint64_t trackID, const MediaS
         return false;
 
     // DecompressionSessions doesn't support encrypted media.
-    if (!m_displayLayer)
+    if (trackID == m_enabledVideoTrackID && !m_displayLayer)
         return false;
 
     // if sample is encrypted, and keyIDs match the current set of keyIDs: enqueue sample.
@@ -1360,7 +1290,7 @@ void SourceBufferPrivateAVFObjC::enqueueSample(Ref<MediaSampleAVFObjC>&& sample,
                     callOnMainThread([this, logSiteIdentifier, weakThis = WTFMove(weakThis), success] () {
                         if (!weakThis)
                             return;
-                        
+
                         if (!success) {
                             ERROR_LOG(logSiteIdentifier, "prerollDecodeWithCompletionHandler failed");
                             return;

@@ -185,6 +185,15 @@
           'gtest_tests': 'mac_amd_and_intel_gtests',
         },
       },
+      'mac-exp-amd': {
+        'os_type': 'mac',
+        'mixins': [
+          'mac_retina_amd_gpu_experimental',
+        ],
+        'test_suites': {
+          'gtest_tests': 'mac_amd_and_intel_gtests',
+        },
+      },
       'mac-exp-intel': {
         'os_type': 'mac',
         'mixins': [

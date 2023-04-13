@@ -40,13 +40,13 @@
 #include "JSCDATASection.h"
 #include "JSComment.h"
 #include "JSDOMBinding.h"
-#include "JSDOMWindowCustom.h"
 #include "JSDocument.h"
 #include "JSDocumentFragment.h"
 #include "JSDocumentType.h"
 #include "JSEventListener.h"
 #include "JSHTMLElement.h"
 #include "JSHTMLElementWrapperFactory.h"
+#include "JSLocalDOMWindowCustom.h"
 #include "JSMathMLElementWrapperFactory.h"
 #include "JSProcessingInstruction.h"
 #include "JSSVGElementWrapperFactory.h"
@@ -60,7 +60,7 @@
 #include "ShadowRoot.h"
 #include "GCReachableRef.h"
 #include "Text.h"
-#include "WebCoreOpaqueRoot.h"
+#include "WebCoreOpaqueRootInlines.h"
 
 namespace WebCore {
 
@@ -175,7 +175,8 @@ void willCreatePossiblyOrphanedTreeByRemovalSlowCase(Node& root)
 
     auto& globalObject = mainWorldGlobalObject(*frame);
     JSLockHolder lock(&globalObject);
-    toJS(&globalObject, &globalObject, root);
+    ASSERT(!root.wrapper());
+    createWrapper(&globalObject, &globalObject, root);
 }
 
 } // namespace WebCore

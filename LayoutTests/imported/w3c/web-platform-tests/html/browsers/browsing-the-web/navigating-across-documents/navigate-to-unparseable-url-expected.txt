@@ -1,6 +1,4 @@
 
-FAIL location.href setter throws a SyntaxError DOMException for unparseable URLs assert_throws_dom: location.href setter throws a SyntaxError DOMException function "() => {
-    win.location.href = kUnparseableURL;
-  }" threw object "TypeError: Invalid URL" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+PASS location.href setter throws a SyntaxError DOMException for unparseable URLs
 PASS <a> tag navigate fails for unparseable URLs
 

@@ -163,17 +163,6 @@ static bool canUseFastRenderer(const UniChar* buffer, unsigned length)
     return trimmed.autorelease();
 }
 
-#if PLATFORM(MAC)
-
-// FIXME: This is here only for binary compatibility with Safari 8 and earlier.
-// Remove it once we don't have to support that any more.
--(NSString *)_webkit_fixedCarbonPOSIXPath
-{
-    return self;
-}
-
-#endif
-
 + (NSString *)_webkit_localCacheDirectoryWithBundleIdentifier:(NSString*)bundleIdentifier
 {
     NSString *cacheDirectory = [[NSUserDefaults standardUserDefaults] objectForKey:WebKitLocalCacheDefaultsKey];

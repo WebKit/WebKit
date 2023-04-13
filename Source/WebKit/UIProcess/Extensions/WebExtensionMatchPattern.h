@@ -35,6 +35,8 @@
 
 OBJC_CLASS NSArray;
 OBJC_CLASS NSError;
+OBJC_CLASS NSSet;
+OBJC_CLASS NSString;
 OBJC_CLASS _WKWebExtensionMatchPattern;
 
 namespace WebKit {
@@ -65,6 +67,7 @@ public:
     ~WebExtensionMatchPattern() { }
 
     using URLSchemeSet = HashSet<String>;
+    using MatchPatternSet = HashSet<Ref<WebExtensionMatchPattern>>;
 
     enum class Options : uint8_t {
         IgnoreSchemes        = 1 << 0, // Ignore the scheme component when matching.
@@ -118,6 +121,12 @@ private:
     bool m_valid { false };
     unsigned m_hash { 0 };
 };
+
+using MatchPatternSet = HashSet<Ref<WebExtensionMatchPattern>>;
+
+NSSet *toAPI(MatchPatternSet&);
+HashSet<String> toStrings(const MatchPatternSet&);
+MatchPatternSet toPatterns(HashSet<String>&);
 
 } // namespace WebKit
 

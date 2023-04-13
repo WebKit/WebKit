@@ -20,7 +20,7 @@
 #include "config.h"
 #include "WebProcessTest.h"
 
-#include <WebKitWebExtensionPrivate.h>
+#include <WebKitWebProcessExtensionPrivate.h>
 #include <gio/gio.h>
 #include <jsc/jsc.h>
 #include <wtf/HashSet.h>
@@ -84,9 +84,9 @@ static void webProcessTestRunnerFinalize(WebKitWebPage* webPage)
     checkLeaks();
 }
 
-static void windowObjectClearedCallback(WebKitScriptWorld* world, WebKitWebPage* webPage, WebKitFrame* frame, WebKitWebExtension* extension)
+static void windowObjectClearedCallback(WebKitScriptWorld* world, WebKitWebPage* webPage, WebKitFrame* frame, WebKitWebProcessExtension* extension)
 {
-    if (g_strcmp0(webkit_web_page_get_uri(webPage), "webprocess://test"))
+    if (g_strcmp0(webkit_web_page_get_uri(webPage), "webprocess://test") || !webkit_frame_is_main_frame(frame))
         return;
 
     GRefPtr<JSCContext> context = adoptGRef(webkit_frame_get_js_context_for_script_world(frame, world));
@@ -99,9 +99,13 @@ static void windowObjectClearedCallback(WebKitScriptWorld* world, WebKitWebPage*
     jsc_context_set_value(context.get(), "WebProcessTestRunner", testRunner.get());
 }
 
+#if ENABLE(2022_GLIB_API)
+extern "C" WTF_EXPORT_DECLARATION void webkit_web_process_extension_initialize(WebKitWebProcessExtension* extension)
+#else
 extern "C" WTF_EXPORT_DECLARATION void webkit_web_extension_initialize(WebKitWebExtension* extension)
+#endif
 {
-    webkitWebExtensionSetGarbageCollectOnPageDestroy(extension);
+    webkitWebProcessExtensionSetGarbageCollectOnPageDestroy(extension);
     g_signal_connect(webkit_script_world_get_default(), "window-object-cleared", G_CALLBACK(windowObjectClearedCallback), extension);
 }
 

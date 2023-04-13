@@ -320,7 +320,7 @@ PASS SVGFEDropShadowElement interface: attribute dx
 PASS SVGFEDropShadowElement interface: attribute dy
 PASS SVGFEDropShadowElement interface: attribute stdDeviationX
 PASS SVGFEDropShadowElement interface: attribute stdDeviationY
-FAIL SVGFEDropShadowElement interface: operation setStdDeviation(float, float) assert_equals: property has wrong .length expected 2 but got 0
+PASS SVGFEDropShadowElement interface: operation setStdDeviation(float, float)
 PASS SVGFEDropShadowElement interface: attribute x
 PASS SVGFEDropShadowElement interface: attribute y
 PASS SVGFEDropShadowElement interface: attribute width
@@ -355,7 +355,7 @@ PASS SVGFEGaussianBlurElement interface: attribute in1
 PASS SVGFEGaussianBlurElement interface: attribute stdDeviationX
 PASS SVGFEGaussianBlurElement interface: attribute stdDeviationY
 PASS SVGFEGaussianBlurElement interface: attribute edgeMode
-FAIL SVGFEGaussianBlurElement interface: operation setStdDeviation(float, float) assert_equals: property has wrong .length expected 2 but got 0
+PASS SVGFEGaussianBlurElement interface: operation setStdDeviation(float, float)
 PASS SVGFEGaussianBlurElement interface: attribute x
 PASS SVGFEGaussianBlurElement interface: attribute y
 PASS SVGFEGaussianBlurElement interface: attribute width

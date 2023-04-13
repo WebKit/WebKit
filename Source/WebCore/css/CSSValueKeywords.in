@@ -58,6 +58,15 @@ small-caption
 // This has to go after the -apple-system versions.
 status-bar
 
+// font-size-adjust:
+//
+ex-height
+cap-height
+ch-width
+ic-width
+ic-height
+//from-font
+
 //
 // CSS_PROP_FONT_STYLE:
 //
@@ -302,6 +311,7 @@ accentcolortext
 -apple-system-opaque-secondary-fill enable-if=WTF_PLATFORM_IOS_FAMILY
 -apple-system-opaque-secondary-fill-disabled enable-if=WTF_PLATFORM_IOS_FAMILY
 -apple-system-opaque-tertiary-fill enable-if=WTF_PLATFORM_IOS_FAMILY
+-apple-system-quaternary-fill enable-if=WTF_PLATFORM_IOS_FAMILY
 -apple-system-opaque-separator enable-if=WTF_PLATFORM_IOS_FAMILY
 -webkit-control-background enable-if=WTF_PLATFORM_COCOA|HAVE_OS_DARK_MODE_SUPPORT
 activebuttontext
@@ -484,8 +494,6 @@ simp-chinese-formal
 trad-chinese-informal
 trad-chinese-formal
 ethiopic-numeric
-// FIXME: enable representation for custom-counter-style rdar://102988393.
-custom-counter-style
 //none
 //
 // CSS_PROP_DISPLAY:
@@ -576,7 +584,9 @@ rtl
 capitalize
 uppercase
 lowercase
-//none
+full-size-kana
+// full-width
+// none
 //
 // CSS_PROP_VISIBILITY:
 //
@@ -911,6 +921,9 @@ padding
 padding-box
 // text
 -webkit-text
+
+// block-step-insert
+margin
 
 //
 // CSS_PROP_MASK_CLIP
@@ -1267,6 +1280,9 @@ filter
 -webkit-filter
 paint enable-if=ENABLE_CSS_PAINTING_API
 
+// image-set's MIME type
+type
+
 // deprecated gradients
 from
 to
@@ -1601,9 +1617,11 @@ numbers
 words
 // spell-out
 
-// @supports selector()
+// @supports
 // https://drafts.csswg.org/css-conditional-4/#typedef-supports-selector-fn
+// https://drafts.csswg.org/css-conditional-5/#typedef-supports-font-format-fn
 selector
+font-format
 
 // math-style
 // normal
@@ -1655,3 +1673,8 @@ only
 // inherits
 true
 false
+
+// text-spacing-trim
+space-all
+// text-autospace
+no-autospace

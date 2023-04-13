@@ -40,7 +40,7 @@ const myself = 'src/common/tools/gen_listings.ts';
 
 const outDir = argv[2];
 
-(async () => {
+void (async () => {
   for (const suiteDir of argv.slice(3)) {
     const listing = await crawl(suiteDir, validate);
 
@@ -58,8 +58,8 @@ export const listing = ${JSON.stringify(listing, undefined, 2)};
     try {
       fs.unlinkSync(outFile + '.map');
     } catch (ex) {
+
       // ignore if file didn't exist
-    }
-  }
+    }}
 })();
 //# sourceMappingURL=gen_listings.js.map

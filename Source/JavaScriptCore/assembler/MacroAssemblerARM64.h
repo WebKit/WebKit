@@ -49,6 +49,8 @@ public:
 
     static constexpr RegisterID InvalidGPRReg = ARM64Registers::InvalidGPRReg;
 
+    static constexpr ARM64Registers::FPRegisterID fpTempRegister = ARM64Registers::q31;
+
     RegisterID scratchRegister()
     {
         RELEASE_ASSERT(m_allowScratchRegister);
@@ -56,7 +58,6 @@ public:
     }
 
 protected:
-    static constexpr ARM64Registers::FPRegisterID fpTempRegister = ARM64Registers::q31;
     static constexpr Assembler::SetFlags S = Assembler::S;
     static constexpr int64_t maskHalfWord0 = 0xffffl;
     static constexpr int64_t maskHalfWord1 = 0xffff0000l;
@@ -1861,6 +1862,16 @@ public:
         m_assembler.sxth<32>(dest, src);
     }
 
+    void zeroExtend16To64(RegisterID src, RegisterID dest)
+    {
+        m_assembler.uxth<64>(dest, src);
+    }
+
+    void signExtend16To64(RegisterID src, RegisterID dest)
+    {
+        m_assembler.sxth<64>(dest, src);
+    }
+
     void load8(Address address, RegisterID dest)
     {
         if (tryLoadWithOffset<8>(dest, address.base, address.offset))
@@ -1936,6 +1947,16 @@ public:
     void signExtend8To32(RegisterID src, RegisterID dest)
     {
         m_assembler.sxtb<32>(dest, src);
+    }
+
+    void zeroExtend8To64(RegisterID src, RegisterID dest)
+    {
+        m_assembler.uxtb<64>(dest, src);
+    }
+
+    void signExtend8To64(RegisterID src, RegisterID dest)
+    {
+        m_assembler.sxtb<64>(dest, src);
     }
 
     void store64(RegisterID src, Address address)
@@ -2023,6 +2044,12 @@ public:
 
         moveToCachedReg(imm, dataMemoryTempRegister());
         store64(dataTempRegister, address);
+    }
+
+    void transfer32(Address src, Address dest)
+    {
+        load32(src, getCachedDataTempRegisterIDAndInvalidate());
+        store32(getCachedDataTempRegisterIDAndInvalidate(), dest);
     }
 
     void transfer64(Address src, Address dest)
@@ -2637,6 +2664,14 @@ public:
         m_assembler.vorr<128>(dest, src, src);
     }
 
+    void materializeVector(v128_t value, FPRegisterID dest)
+    {
+        move(TrustedImm64(value.u64x2[0]), scratchRegister());
+        vectorReplaceLaneInt64(TrustedImm32(0), scratchRegister(), dest);
+        move(TrustedImm64(value.u64x2[1]), scratchRegister());
+        vectorReplaceLaneInt64(TrustedImm32(1), scratchRegister(), dest);
+    }
+
     void moveZeroToDouble(FPRegisterID reg)
     {
         m_assembler.fmov<64>(reg, ARM64Registers::zr);
@@ -2662,9 +2697,21 @@ public:
         m_assembler.fmov<64>(dest, src);
     }
 
+    void move64ToDouble(TrustedImm64 imm, FPRegisterID dest)
+    {
+        move(imm, getCachedDataTempRegisterIDAndInvalidate());
+        m_assembler.fmov<64>(dest, dataTempRegister);
+    }
+
     void move32ToFloat(RegisterID src, FPRegisterID dest)
     {
         m_assembler.fmov<32>(dest, src);
+    }
+
+    void move32ToFloat(TrustedImm32 imm, FPRegisterID dest)
+    {
+        move(imm, getCachedDataTempRegisterIDAndInvalidate());
+        m_assembler.fmov<32>(dest, dataTempRegister);
     }
 
     void moveConditionallyDouble(DoubleCondition cond, FPRegisterID left, FPRegisterID right, RegisterID src, RegisterID dest)
@@ -3154,26 +3201,40 @@ public:
 
     void swap(RegisterID reg1, RegisterID reg2)
     {
+        if (reg1 == reg2)
+            return;
         move(reg1, getCachedDataTempRegisterIDAndInvalidate());
         move(reg2, reg1);
         move(dataTempRegister, reg2);
     }
 
-    void swap(FPRegisterID reg1, FPRegisterID reg2)
+    void swapDouble(FPRegisterID reg1, FPRegisterID reg2)
     {
+        if (reg1 == reg2)
+            return;
         moveDouble(reg1, fpTempRegister);
         moveDouble(reg2, reg1);
         moveDouble(fpTempRegister, reg2);
     }
 
-    void signExtend32ToPtr(TrustedImm32 imm, RegisterID dest)
+    void signExtend32To64(TrustedImm32 imm, RegisterID dest)
     {
         move(TrustedImm64(imm.m_value), dest);
     }
 
-    void signExtend32ToPtr(RegisterID src, RegisterID dest)
+    void signExtend32To64(RegisterID src, RegisterID dest)
     {
         m_assembler.sxtw(dest, src);
+    }
+
+    void signExtend32ToPtr(TrustedImm32 imm, RegisterID dest)
+    {
+        signExtend32To64(imm, dest);
+    }
+
+    void signExtend32ToPtr(RegisterID src, RegisterID dest)
+    {
+        signExtend32To64(src, dest);
     }
 
     void zeroExtend32ToWord(RegisterID src, RegisterID dest)
@@ -4947,6 +5008,11 @@ public:
 
     void vectorExtractLane(SIMDLane simdLane, TrustedImm32 lane, FPRegisterID src, FPRegisterID dest)
     {
+        if (!lane.m_value) {
+            if (src != dest)
+                moveDouble(src, dest);
+            return;
+        }
         m_assembler.dupElement(dest, src, simdLane, lane.m_value);
     }
 
@@ -5074,6 +5140,16 @@ public:
             m_assembler.vectorFmul(dest, left, right, simdInfo.lane);
         else
             m_assembler.vectorMul(dest, left, right, simdInfo.lane);
+    }
+
+    void vectorMulByElementFloat32(FPRegisterID left, FPRegisterID right, TrustedImm32 lane, FPRegisterID dest)
+    {
+        m_assembler.vectorFmulByElement(dest, left, right, SIMDLane::f32x4, lane.m_value);
+    }
+
+    void vectorMulByElementFloat64(FPRegisterID left, FPRegisterID right, TrustedImm32 lane, FPRegisterID dest)
+    {
+        m_assembler.vectorFmulByElement(dest, left, right, SIMDLane::f64x2, lane.m_value);
     }
 
     void vectorDiv(SIMDInfo simdInfo, FPRegisterID left, FPRegisterID right, FPRegisterID dest)
@@ -5509,9 +5585,12 @@ public:
 
     void vectorDotProduct(FPRegisterID a, FPRegisterID b, FPRegisterID dest, FPRegisterID scratch) 
     {
+        ASSERT(scratch != dest);
+        ASSERT(scratch != a);
+        ASSERT(scratch != b);
         m_assembler.smullv(scratch, a, b, SIMDLane::i16x8);
         m_assembler.smull2v(dest, a, b, SIMDLane::i16x8);
-        m_assembler.addpv(dest, dest, scratch, SIMDLane::i32x4);
+        m_assembler.addpv(dest, scratch, dest, SIMDLane::i32x4);
     }
     void vectorSwizzle(FPRegisterID a, FPRegisterID control, FPRegisterID dest) { m_assembler.tbl(dest, a, control); }
     void vectorSwizzle2(FPRegisterID a, FPRegisterID b, FPRegisterID control, FPRegisterID dest)

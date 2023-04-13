@@ -1,4 +1,4 @@
-# Copyright (C) 2021, 2022 Apple Inc. All rights reserved.
+# Copyright (C) 2021-2023 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -62,7 +62,7 @@ class TestSetup(testing.PathTestCase):
 
         self.assertEqual(
             captured.stdout.getvalue(),
-            "Create a private fork of 'WebKit' belonging to 'username' ([Yes]/No): \n"
+            "Create a private fork of 'WebKit/WebKit' named 'WebKit' belonging to 'username' ([Yes]/No): \n"
             'Setup succeeded!\n',
         )
         self.assertEqual(captured.stderr.getvalue(), '')
@@ -157,7 +157,7 @@ a pull request branch? ([when-user-owned]/disabled/always/never):
 Pick a commit message editor for this repository:
     {}
 : 
-Create a private fork of 'WebKit' belonging to 'username' ([Yes]/No): 
+Create a private fork of 'WebKit/WebKit' named 'WebKit' belonging to 'username' ([Yes]/No): 
 Setup succeeded!
 '''.format('\n    '.join([
             '{}) {}'.format(

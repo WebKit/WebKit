@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/dump-as-markup.js"></script>
+<script>
+
+const phrasingContentElements = ['a', 'abbr', 'b', 'bdi', 'bdo', 'button', 'cite', 'code', 'data', 'del', 'dfn',
+    'em', 'i', 'ins', 'kbd', 'label', 'link', 'mark', 'q', 'ruby',
+    's', 'samp', 'slot', 'small', 'span', 'strong', 'sub', 'sup', 'time', 'u', 'var'];
+
+for (elementName of phrasingContentElements) {
+    const element = document.createElement(elementName);
+    element.style.display = 'block';
+    element.setAttribute('contenteditable', 'true');
+    element.innerHTML = '<br>';
+    document.body.appendChild(element);
+    element.focus();
+    document.execCommand('insertParagraph', false, null);
+    Markup.dump(element, elementName);
+    element.remove();
+}
+
+</script>
+</body>
+</html>

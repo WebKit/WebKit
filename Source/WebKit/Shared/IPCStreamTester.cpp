@@ -26,6 +26,8 @@
 #include "config.h"
 #include "IPCStreamTester.h"
 
+#include <wtf/WTFProcess.h>
+
 #if ENABLE(IPC_TESTING_API)
 #include "Decoder.h"
 #include "IPCStreamTesterMessages.h"
@@ -93,12 +95,7 @@ void IPCStreamTester::syncCrashOnZero(int32_t value, CompletionHandler<void(int3
 {
     if (!value) {
         // Use exit so that we don't leave a crash report.
-#if OS(WINDOWS)
-        // Calling _exit in non-main threads may cause a deadlock in WTF::Thread::ThreadHolder::~ThreadHolder.
-        TerminateProcess(GetCurrentProcess(), EXIT_SUCCESS);
-#else
-        _exit(EXIT_SUCCESS);
-#endif
+        terminateProcess(EXIT_SUCCESS);
     }
     completionHandler(value);
 }

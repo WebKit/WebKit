@@ -53,6 +53,8 @@ public:
     float logicalWidth() const { return m_rootInlineBox->lineBoxWidth().toFloat(); }
     float inkOverflowTop() const { return m_rootInlineBox->logicalTopVisualOverflow(); }
     float inkOverflowBottom() const { return m_rootInlineBox->logicalBottomVisualOverflow(); }
+    float scrollableOverflowTop() const { return m_rootInlineBox->logicalTopLayoutOverflow(); }
+    float scrollableOverflowBottom() const { return m_rootInlineBox->logicalBottomLayoutOverflow(); }
 
     bool hasEllipsis() const { return !!m_rootInlineBox->ellipsisBox(); }
     FloatRect ellipsisVisualRectIgnoringBlockDirection() const
@@ -76,6 +78,16 @@ public:
 
     RenderFragmentContainer* containingFragment() const { return m_rootInlineBox->containingFragment(); }
     bool isFirstAfterPageBreak() const { return m_rootInlineBox->isFirstAfterPageBreak(); }
+
+    size_t lineIndex() const
+    {
+        size_t count = 0;
+        for (auto* box = formattingContextRoot().firstRootBox(); box && box != m_rootInlineBox; box = box->nextRootBox())
+            ++count;
+
+        return count;
+    }
+
 
     void traverseNext()
     {

@@ -15,4 +15,5 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/hidpi/simple-bg-color-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/hidpi/simple-bg-color-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/hidpi/simple-bg-color.html

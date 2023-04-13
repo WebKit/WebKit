@@ -44,7 +44,6 @@ class F extends ValidationTest {
         },
       ],
     });
-
     pass.setViewport(v.x, v.y, v.w, v.h, v.minDepth, v.maxDepth);
     pass.end();
 
@@ -70,7 +69,6 @@ class F extends ValidationTest {
         },
       ],
     });
-
     if (success === 'type-error') {
       this.shouldThrow('TypeError', () => {
         pass.setScissorRect(s.x, s.y, s.w, s.h);

@@ -4,8 +4,10 @@
 
 let currentDraftExtensions = {
     "webgl": [
+        "EXT_polygon_offset_clamp",
     ],
     "webgl2" : [
+        "EXT_polygon_offset_clamp",
         "WEBGL_clip_cull_distance",
         "WEBGL_draw_instanced_base_vertex_base_instance",
         "WEBGL_multi_draw_instanced_base_vertex_base_instance",

@@ -29,6 +29,7 @@
 #include "ArrayPrototype.h"
 #include "ExceptionHelpers.h"
 #include "GetVM.h"
+#include "JSGlobalObject.h"
 
 namespace JSC {
 

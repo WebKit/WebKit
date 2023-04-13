@@ -72,12 +72,14 @@ public:
             m_client->configurationChanged(m_configuration);
     }
     
-    virtual bool operator==(const VideoTrackPrivate& track) const
+    bool operator==(const VideoTrackPrivate& track) const
     {
         return TrackPrivateBase::operator==(track)
             && configuration() == track.configuration()
             && kind() == track.kind();
     }
+
+    Type type() const final { return Type::Video; }
 
 protected:
     VideoTrackPrivate() = default;
@@ -91,6 +93,10 @@ private:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::VideoTrackPrivate)
+static bool isType(const WebCore::TrackPrivateBase& track) { return track.type() == WebCore::TrackPrivateBase::Type::Video; }
+SPECIALIZE_TYPE_TRAITS_END()
 
 namespace WTF {
 

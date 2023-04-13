@@ -4,7 +4,7 @@
  * Copyright (C) 2005 Eric Seidel <eric@webkit.org>
  * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
  * Copyright (C) 2010 Renata Hodovan <reni@inf.u-szeged.hu>
- * Copyright (C) 2017-2022 Apple Inc.  All rights reserved.
+ * Copyright (C) 2017-2023 Apple Inc.  All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -57,9 +57,6 @@ public:
     bool stitchTiles() const { return m_stitchTiles; }
     bool setStitchTiles(bool);
 
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<Ref<FETurbulence>> decode(Decoder&);
-
 private:
     FETurbulence(TurbulenceType, float baseFrequencyX, float baseFrequencyY, int numOctaves, float seed, bool stitchTiles);
 
@@ -78,53 +75,6 @@ private:
     float m_seed;
     bool m_stitchTiles;
 };
-
-template<class Encoder>
-void FETurbulence::encode(Encoder& encoder) const
-{
-    encoder << m_type;
-    encoder << m_baseFrequencyX;
-    encoder << m_baseFrequencyY;
-    encoder << m_numOctaves;
-    encoder << m_seed;
-    encoder << m_stitchTiles;
-}
-
-template<class Decoder>
-std::optional<Ref<FETurbulence>> FETurbulence::decode(Decoder& decoder)
-{
-    std::optional<TurbulenceType> type;
-    decoder >> type;
-    if (!type)
-        return std::nullopt;
-
-    std::optional<float> baseFrequencyX;
-    decoder >> baseFrequencyX;
-    if (!baseFrequencyX)
-        return std::nullopt;
-
-    std::optional<float> baseFrequencyY;
-    decoder >> baseFrequencyY;
-    if (!baseFrequencyY)
-        return std::nullopt;
-
-    std::optional<int> numOctaves;
-    decoder >> numOctaves;
-    if (!numOctaves)
-        return std::nullopt;
-
-    std::optional<float> seed;
-    decoder >> seed;
-    if (!seed)
-        return std::nullopt;
-
-    std::optional<bool> stitchTiles;
-    decoder >> stitchTiles;
-    if (!stitchTiles)
-        return std::nullopt;
-
-    return FETurbulence::create(*type, *baseFrequencyX, *baseFrequencyY, *numOctaves, *seed, *stitchTiles);
-}
 
 } // namespace WebCore
 

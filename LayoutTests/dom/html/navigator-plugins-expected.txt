@@ -1,0 +1,21 @@
+Check that navigator.plugins contains only the expected items
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS navigator.plugins.length == 5 is true
+PASS plugin.name == validPluginNames[i] is true
+PASS plugin.description == 'Portable Document Format' is true
+PASS plugin.name == validPluginNames[i] is true
+PASS plugin.description == 'Portable Document Format' is true
+PASS plugin.name == validPluginNames[i] is true
+PASS plugin.description == 'Portable Document Format' is true
+PASS plugin.name == validPluginNames[i] is true
+PASS plugin.description == 'Portable Document Format' is true
+PASS plugin.name == validPluginNames[i] is true
+PASS plugin.description == 'Portable Document Format' is true
+PASS hasInvalidPlugin is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

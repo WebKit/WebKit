@@ -52,6 +52,8 @@ public:
     const String& group() const { return m_group; }
     bool synchronizable() const { return m_synchronizable; }
     LAContext * laContext() const { return m_laContext.get(); }
+    RefPtr<ArrayBuffer> largeBlob() const { return m_largeBlob; }
+    const String& accessGroup() const { return m_accessGroup; }
 
     WEBCORE_EXPORT void setAuthenticatorData(Vector<uint8_t>&&);
     void setSignature(Ref<ArrayBuffer>&& signature) { m_signature = WTFMove(signature); }
@@ -61,6 +63,8 @@ public:
     void setGroup(const String& group) { m_group = group; }
     void setSynchronizable(bool synchronizable) { m_synchronizable = synchronizable; }
     void setLAContext(LAContext *context) { m_laContext = context; }
+    void setLargeBlob(Ref<ArrayBuffer>&& largeBlob) { m_largeBlob = WTFMove(largeBlob); }
+    void setAccessGroup(const String& accessGroup) { m_accessGroup = accessGroup; }
 
 private:
     AuthenticatorAssertionResponse(Ref<ArrayBuffer>&&, Ref<ArrayBuffer>&&, Ref<ArrayBuffer>&&, RefPtr<ArrayBuffer>&&, AuthenticatorAttachment);
@@ -80,6 +84,8 @@ private:
     size_t m_numberOfCredentials { 0 };
     RetainPtr<SecAccessControlRef> m_accessControl;
     RetainPtr<LAContext> m_laContext;
+    RefPtr<ArrayBuffer> m_largeBlob;
+    String m_accessGroup;
 };
 
 } // namespace WebCore

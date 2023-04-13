@@ -94,8 +94,8 @@
     }
 
     API::Object::constructInWrapper<API::FrameHandle>(self, WebCore::FrameIdentifier {
-        makeObjectIdentifier<WebCore::FrameIdentifierType>(frameID.unsignedLongLongValue),
-        makeObjectIdentifier<WebCore::ProcessIdentifierType>(processID.unsignedLongLongValue)
+        ObjectIdentifier<WebCore::FrameIdentifierType>(frameID.unsignedLongLongValue),
+        ObjectIdentifier<WebCore::ProcessIdentifierType>(processID.unsignedLongLongValue)
     }, false);
 
     return self;

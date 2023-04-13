@@ -1,0 +1,5 @@
+
+PASS Register service worker
+PASS Verify dedicated worker gets messages if setting event listener early
+PASS Verify dedicated worker does not get all messages if not setting event listener early
+

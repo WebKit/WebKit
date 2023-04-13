@@ -34,13 +34,13 @@
 
 #if ENABLE(USER_MESSAGE_HANDLERS)
 
-#include "DOMWindow.h"
+#include "LocalDOMWindow.h"
 #include "UserMessageHandlersNamespace.h"
 
 namespace WebCore {
 
-WebKitNamespace::WebKitNamespace(DOMWindow& window, UserContentProvider& userContentProvider)
-    : DOMWindowProperty(&window)
+WebKitNamespace::WebKitNamespace(LocalDOMWindow& window, UserContentProvider& userContentProvider)
+    : LocalDOMWindowProperty(&window)
     , m_messageHandlerNamespace(UserMessageHandlersNamespace::create(*window.frame(), userContentProvider))
 {
     ASSERT(window.frame());

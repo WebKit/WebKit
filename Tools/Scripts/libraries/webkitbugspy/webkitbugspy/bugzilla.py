@@ -50,6 +50,7 @@ class Tracker(GenericTracker):
                 result = dict(
                     type='bugzilla',
                     url=obj.url,
+                    hide_title=obj.hide_title,
                 )
                 if obj._res[len(Tracker.RE_TEMPLATES):]:
                     result['res'] = [compiled.pattern for compiled in obj._res[len(Tracker.RE_TEMPLATES):]]
@@ -60,8 +61,8 @@ class Tracker(GenericTracker):
                 raise TypeError('Cannot invoke parent class when classmethod')
             return super(Tracker.Encoder, context).default(obj)
 
-    def __init__(self, url, users=None, res=None, login_attempts=3, redact=None, radar_importer=None):
-        super(Tracker, self).__init__(users=users, redact=redact)
+    def __init__(self, url, users=None, res=None, login_attempts=3, redact=None, radar_importer=None, hide_title=None, redact_exemption=None):
+        super(Tracker, self).__init__(users=users, redact=redact, redact_exemption=redact_exemption, hide_title=hide_title)
 
         self._logins_left = login_attempts + 1 if login_attempts else 1
         match = self.ROOT_RE.match(url)
@@ -164,8 +165,9 @@ class Tracker(GenericTracker):
     def populate(self, issue, member=None):
         issue._link = '{}/show_bug.cgi?id={}'.format(self.url, issue.id)
         issue._labels = []
+        issue._classification = ''  # Bugzilla doesn't have a concept of "classification"
 
-        if member in ('title', 'timestamp', 'creator', 'opened', 'assignee', 'watchers', 'project', 'component', 'version'):
+        if member in ('title', 'timestamp', 'creator', 'opened', 'assignee', 'watchers', 'project', 'component', 'version', 'keywords'):
             response = requests.get('{}/rest/bug/{}{}'.format(self.url, issue.id, self._login_arguments(required=False)))
             if response.status_code // 100 == 4 and self._logins_left:
                 self._logins_left -= 1
@@ -198,6 +200,7 @@ class Tracker(GenericTracker):
                 issue._project = response.get('product', '')
                 issue._component = response.get('component', '')
                 issue._version = response.get('version', '')
+                issue._keywords = response.get('keywords', [])
 
             else:
                 sys.stderr.write("Failed to fetch '{}'\n".format(issue.link))
@@ -229,7 +232,7 @@ class Tracker(GenericTracker):
 
             # Attempt to match radar importer first
             if self.radar_importer:
-                for comment in issue.comments:
+                for comment in (issue.comments or []):
                     if not comment:
                         continue
                     if comment.user != self.radar_importer:
@@ -240,7 +243,7 @@ class Tracker(GenericTracker):
                     issue._references.append(candidate)
                     refs.add(candidate.link)
 
-            for text in [issue.description] + [comment.content for comment in issue.comments if comment]:
+            for text in [issue.description] + [comment.content for comment in (issue.comments or []) if comment]:
                 if not text:
                     continue
                 for match in self.REFERENCE_RE.findall(text):
@@ -486,9 +489,9 @@ class Tracker(GenericTracker):
 
         keyword_to_add = None
         comment_to_make = None
-        user_to_cc = self.radar_importer.name if self.radar_importer not in issue.watchers else None
+        user_to_cc = self.radar_importer.name if self.radar_importer not in (issue.watchers or []) else None
         if radar and isinstance(radar.tracker, RadarTracker):
-            if radar not in issue.references:
+            if radar not in (issue.references or []):
                 comment_to_make = '<rdar://problem/{}>'.format(radar.id)
             if user_to_cc:
                 keyword_to_add = 'InRadar'
@@ -536,7 +539,7 @@ class Tracker(GenericTracker):
 
         start = time.time()
         while start + (timeout or 60) > time.time():
-            for reference in issue.references:
+            for reference in (issue.references or []):
                 if isinstance(reference.tracker, RadarTracker):
                     return reference
             if not block or not did_modify_cc:

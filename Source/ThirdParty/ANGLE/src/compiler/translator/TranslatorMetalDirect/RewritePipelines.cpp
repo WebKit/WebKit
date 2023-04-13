@@ -137,11 +137,13 @@ class GeneratePipelineStruct : private TIntermRebuild
         }();
 
         ModifiedStructMachineries modifiedMachineries;
-        const bool isUBO    = mPipeline.type == Pipeline::Type::UniformBuffer;
+        const bool isUBO     = mPipeline.type == Pipeline::Type::UniformBuffer;
+        const bool isUniform = mPipeline.type == Pipeline::Type::UniformBuffer ||
+                               mPipeline.type == Pipeline::Type::UserUniforms;
         const bool modified = TryCreateModifiedStruct(
             mCompiler, mSymbolEnv, mIdGen, mPipeline.externalStructModifyConfig(), pipelineStruct,
             mPipeline.getStructTypeName(Pipeline::Variant::Modified), modifiedMachineries, isUBO,
-            !isUBO);
+            !isUniform);
 
         if (modified)
         {
@@ -500,32 +502,6 @@ class PipelineFunctionEnv
                 }
                 else
                 {
-                    if (mPipeline.type == Pipeline::Type::UniformBuffer)
-                    {
-                        TranslatorMetalReflection *reflection =
-                            ((sh::TranslatorMetalDirect *)&mCompiler)
-                                ->getTranslatorMetalReflection();
-                        // TODO: need more checks to make sure they line up? Could be reordered?
-                        ASSERT(mPipelineStruct.external->fields().size() ==
-                               mPipelineStruct.internal->fields().size());
-                        for (size_t i = 0; i < mPipelineStruct.external->fields().size(); i++)
-                        {
-                            const TField *externalField = mPipelineStruct.external->fields()[i];
-                            const TField *internalField = mPipelineStruct.internal->fields()[i];
-                            const TType &externalType   = *externalField->type();
-                            const TType &internalType   = *internalField->type();
-                            ASSERT(externalType.getBasicType() == internalType.getBasicType());
-                            if (externalType.getBasicType() == TBasicType::EbtStruct)
-                            {
-                                const TStructure *externalEnv = externalType.getStruct();
-                                const TStructure *internalEnv = internalType.getStruct();
-                                const std::string internalName =
-                                    reflection->getOriginalName(internalEnv->uniqueId().get());
-                                reflection->addOriginalName(externalEnv->uniqueId().get(),
-                                                            internalName);
-                            }
-                        }
-                    }
                     var = &CreateInstanceVariable(
                         mSymbolTable, *mPipelineStruct.internal,
                         mPipeline.getStructInstanceName(Pipeline::Variant::Original));

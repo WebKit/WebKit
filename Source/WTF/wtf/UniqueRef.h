@@ -84,6 +84,9 @@ public:
     operator T&() { ASSERT(m_ref); return *m_ref; }
     operator const T&() const { ASSERT(m_ref); return *m_ref; }
 
+    T& operator*() { ASSERT(m_ref); return *m_ref.get(); }
+    const T& operator*() const { ASSERT(m_ref); return *m_ref.get(); }
+
     std::unique_ptr<T> moveToUniquePtr() { return WTFMove(m_ref); }
 
     explicit UniqueRef(HashTableEmptyValueType) { }

@@ -316,8 +316,8 @@ const TSymbol *TSymbolTable::findBuiltInWithConversion(const std::vector<Immutab
 bool TSymbolTable::declare(TSymbol *symbol)
 {
     ASSERT(!mTable.empty());
-    // The following built-ins may be redeclared by the shader: gl_ClipDistance, gl_CullDistance and
-    // gl_LastFragData.
+    // The following built-ins may be redeclared by the shader: gl_ClipDistance, gl_CullDistance,
+    // gl_LastFragData, and gl_LastFragColorARM.
     ASSERT(symbol->symbolType() == SymbolType::UserDefined ||
            (symbol->symbolType() == SymbolType::BuiltIn && IsRedeclarableBuiltIn(symbol->name())));
     ASSERT(!symbol->isFunction());

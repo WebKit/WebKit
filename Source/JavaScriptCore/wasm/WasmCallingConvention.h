@@ -90,8 +90,6 @@ struct CallInformation {
 
     bool argumentsIncludeI64 : 1 { false };
     bool resultsIncludeI64 : 1 { false };
-    bool argumentsIncludeGCTypeIndex : 1 { false };
-    bool resultsIncludeGCTypeIndex : 1 { false };
     bool argumentsOrResultsIncludeV128 : 1 { false };
     ArgumentLocation thisArgument;
     Vector<ArgumentLocation> params;
@@ -183,6 +181,9 @@ public:
             case TypeKind::Structref:
             case TypeKind::Array:
             case TypeKind::Arrayref:
+            case TypeKind::Eqref:
+            case TypeKind::Anyref:
+            case TypeKind::Nullref:
             case TypeKind::I31ref:
             case TypeKind::Sub:
             case TypeKind::Rec:
@@ -226,6 +227,9 @@ public:
             case TypeKind::Structref:
             case TypeKind::Array:
             case TypeKind::Arrayref:
+            case TypeKind::Eqref:
+            case TypeKind::Anyref:
+            case TypeKind::Nullref:
             case TypeKind::I31ref:
             case TypeKind::Sub:
             case TypeKind::Rec:
@@ -245,8 +249,6 @@ public:
         const auto& signature = *type.as<FunctionSignature>();
         bool argumentsIncludeI64 = false;
         bool resultsIncludeI64 = false;
-        bool argumentsIncludeGCTypeIndex = false;
-        bool resultsIncludeGCTypeIndex = false;
         bool argumentsOrResultsIncludeV128 = false;
         size_t gpArgumentCount = 0;
         size_t fpArgumentCount = 0;
@@ -262,7 +264,6 @@ public:
         for (size_t i = 0; i < signature.argumentCount(); ++i) {
             argumentsIncludeI64 |= signature.argumentType(i).isI64();
             argumentsOrResultsIncludeV128 |= signature.argumentType(i).isV128();
-            argumentsIncludeGCTypeIndex |= isRefWithTypeIndex(signature.argumentType(i)) && !TypeInformation::get(signature.argumentType(i).index).is<FunctionSignature>();
             params[i] = marshallLocation(role, signature.argumentType(i), gpArgumentCount, fpArgumentCount, argStackOffset);
         }
         uint32_t stackArgs = argStackOffset - headerSize;
@@ -276,15 +277,12 @@ public:
         for (size_t i = 0; i < signature.returnCount(); ++i) {
             resultsIncludeI64 |= signature.returnType(i).isI64();
             argumentsOrResultsIncludeV128 |= signature.returnType(i).isV128();
-            resultsIncludeGCTypeIndex |= isRefWithTypeIndex(signature.returnType(i)) && !TypeInformation::get(signature.returnType(i).index).is<FunctionSignature>();
             results[i] = marshallLocation(role, signature.returnType(i), gpArgumentCount, fpArgumentCount, resultStackOffset);
         }
 
         CallInformation result(thisArgument, WTFMove(params), WTFMove(results), std::max(argStackOffset, resultStackOffset));
         result.argumentsIncludeI64 = argumentsIncludeI64;
         result.resultsIncludeI64 = resultsIncludeI64;
-        result.argumentsIncludeGCTypeIndex = argumentsIncludeGCTypeIndex;
-        result.resultsIncludeGCTypeIndex = resultsIncludeGCTypeIndex;
         result.argumentsOrResultsIncludeV128 = argumentsOrResultsIncludeV128;
         return result;
     }

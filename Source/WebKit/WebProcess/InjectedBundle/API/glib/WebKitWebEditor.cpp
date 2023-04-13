@@ -51,7 +51,7 @@ struct _WebKitWebEditorPrivate {
 
 static guint signals[LAST_SIGNAL] = { 0, };
 
-WEBKIT_DEFINE_TYPE(WebKitWebEditor, webkit_web_editor, G_TYPE_OBJECT)
+WEBKIT_DEFINE_FINAL_TYPE(WebKitWebEditor, webkit_web_editor, G_TYPE_OBJECT, GObject)
 
 static void webkit_web_editor_class_init(WebKitWebEditorClass* klass)
 {

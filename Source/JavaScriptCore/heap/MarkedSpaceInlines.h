@@ -76,5 +76,72 @@ template<typename Functor> inline void MarkedSpace::forEachDeadCell(HeapIteratio
     }
 }
 
+template<typename Visitor>
+inline Ref<SharedTask<void(Visitor&)>> MarkedSpace::forEachWeakInParallel()
+{
+    constexpr unsigned batchSize = 16;
+    class Task final : public SharedTask<void(Visitor&)> {
+    public:
+        Task(MarkedSpace& markedSpace)
+            : m_markedSpace(markedSpace)
+            , m_newActiveCursor(markedSpace.m_newActiveWeakSets.begin())
+            , m_activeCursor(markedSpace.heap().collectionScope() == CollectionScope::Full ? markedSpace.m_activeWeakSets.begin() : markedSpace.m_activeWeakSets.end())
+        {
+        }
+
+        void drain(Vector<WeakBlock*, batchSize>& results)
+        {
+            Locker locker { m_lock };
+            while (true) {
+                if (m_current) {
+                    auto* block = m_current;
+                    m_current = m_current->next();
+                    if (block->isEmpty())
+                        continue;
+                    results.uncheckedAppend(block);
+                    if (results.size() == batchSize)
+                        return;
+                    continue;
+                }
+
+                if (m_newActiveCursor != m_markedSpace.m_newActiveWeakSets.end()) {
+                    m_current = m_newActiveCursor->head();
+                    ++m_newActiveCursor;
+                    continue;
+                }
+
+                if (m_activeCursor != m_markedSpace.m_activeWeakSets.end()) {
+                    m_current = m_activeCursor->head();
+                    ++m_activeCursor;
+                    continue;
+                }
+                return;
+            }
+        }
+
+        void run(Visitor& visitor) final
+        {
+            Vector<WeakBlock*, batchSize> results;
+            while (true) {
+                drain(results);
+                if (results.isEmpty())
+                    return;
+                for (WeakBlock* block : results)
+                    block->visit(visitor);
+                results.clear();
+            }
+        }
+
+    private:
+        MarkedSpace& m_markedSpace;
+        WeakBlock* m_current { nullptr };
+        SentinelLinkedList<WeakSet, BasicRawSentinelNode<WeakSet>>::iterator m_newActiveCursor;
+        SentinelLinkedList<WeakSet, BasicRawSentinelNode<WeakSet>>::iterator m_activeCursor;
+        Lock m_lock;
+    };
+
+    return adoptRef(*new Task(*this));
+}
+
 } // namespace JSC
 

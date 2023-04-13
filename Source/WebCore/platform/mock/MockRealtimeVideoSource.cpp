@@ -43,6 +43,7 @@
 #include "PlatformLayer.h"
 #include "RealtimeMediaSourceSettings.h"
 #include "RealtimeVideoSource.h"
+#include "VideoFrame.h"
 #include <math.h>
 #include <wtf/UUID.h>
 #include <wtf/text/StringConcatenateNumbers.h>
@@ -76,6 +77,7 @@ static HashSet<MockRealtimeVideoSource*>& allMockRealtimeVideoSource()
 MockRealtimeVideoSource::MockRealtimeVideoSource(String&& deviceID, AtomString&& name, MediaDeviceHashSalts&& hashSalts, PageIdentifier pageIdentifier)
     : RealtimeVideoCaptureSource(CaptureDevice { WTFMove(deviceID), CaptureDevice::DeviceType::Camera, WTFMove(name) }, WTFMove(hashSalts), pageIdentifier)
     , m_emitFrameTimer(RunLoop::current(), this, &MockRealtimeVideoSource::generateFrame)
+    , m_deviceOrientation { VideoFrame::Rotation::None }
 {
     allMockRealtimeVideoSource().add(this);
 
@@ -106,26 +108,26 @@ MockRealtimeVideoSource::~MockRealtimeVideoSource()
     allMockRealtimeVideoSource().remove(this);
 }
 
-bool MockRealtimeVideoSource::supportsSizeAndFrameRate(std::optional<int> width, std::optional<int> height, std::optional<double> rate)
+bool MockRealtimeVideoSource::supportsSizeFrameRateAndZoom(std::optional<int> width, std::optional<int> height, std::optional<double> frameRate, std::optional<double> zoom)
 {
-    // FIXME: consider splitting mock display into another class so we don't don't have to do this silly dance
+    // FIXME: consider splitting mock display into another class so we don't have to do this silly dance
     // because of the RealtimeVideoSource inheritance.
     if (mockCamera())
-        return RealtimeVideoCaptureSource::supportsSizeAndFrameRate(width, height, rate);
+        return RealtimeVideoCaptureSource::supportsSizeFrameRateAndZoom(width, height, frameRate, zoom);
 
-    return RealtimeMediaSource::supportsSizeAndFrameRate(width, height, rate);
+    return RealtimeMediaSource::supportsSizeFrameRateAndZoom(width, height, frameRate, zoom);
 }
 
-void MockRealtimeVideoSource::setSizeAndFrameRate(std::optional<int> width, std::optional<int> height, std::optional<double> rate)
+void MockRealtimeVideoSource::setSizeFrameRateAndZoom(std::optional<int> width, std::optional<int> height, std::optional<double> frameRate, std::optional<double> zoom)
 {
-    // FIXME: consider splitting mock display into another class so we don't don't have to do this silly dance
+    // FIXME: consider splitting mock display into another class so we don't have to do this silly dance
     // because of the RealtimeVideoSource inheritance.
     if (mockCamera()) {
-        RealtimeVideoCaptureSource::setSizeAndFrameRate(width, height, rate);
+        RealtimeVideoCaptureSource::setSizeFrameRateAndZoom(width, height, frameRate, zoom);
         return;
     }
 
-    RealtimeMediaSource::setSizeAndFrameRate(width, height, rate);
+    RealtimeMediaSource::setSizeFrameRateAndZoom(width, height, frameRate, zoom);
 }
 
 void MockRealtimeVideoSource::generatePresets()
@@ -140,9 +142,17 @@ const RealtimeMediaSourceCapabilities& MockRealtimeVideoSource::capabilities()
         RealtimeMediaSourceCapabilities capabilities(settings().supportedConstraints());
 
         if (mockCamera()) {
-            capabilities.addFacingMode(std::get<MockCameraProperties>(m_device.properties).facingMode);
+            auto facingMode = std::get<MockCameraProperties>(m_device.properties).facingMode;
+            capabilities.addFacingMode(facingMode);
             capabilities.setDeviceId(hashedId());
             updateCapabilities(capabilities);
+
+            if (facingMode == VideoFacingMode::Environment) {
+                capabilities.setFocusDistance(CapabilityValueOrRange(0.2, std::numeric_limits<double>::max()));
+                auto supportedConstraints = settings().supportedConstraints();
+                supportedConstraints.setSupportsFocusDistance(true);
+                capabilities.setSupportedConstraints(supportedConstraints);
+            }
         } else if (mockDisplay()) {
             capabilities.setWidth(CapabilityValueOrRange(72, std::get<MockDisplayProperties>(m_device.properties).defaultSize.width()));
             capabilities.setHeight(CapabilityValueOrRange(45, std::get<MockDisplayProperties>(m_device.properties).defaultSize.height()));
@@ -159,6 +169,13 @@ const RealtimeMediaSourceCapabilities& MockRealtimeVideoSource::capabilities()
     return m_capabilities.value();
 }
 
+static bool isZoomSupported(const Vector<VideoPreset>& presets)
+{
+    return anyOf(presets, [](auto& preset) {
+        return preset.isZoomSupported();
+    });
+}
+
 const RealtimeMediaSourceSettings& MockRealtimeVideoSource::settings()
 {
     if (m_currentSettings)
@@ -166,11 +183,10 @@ const RealtimeMediaSourceSettings& MockRealtimeVideoSource::settings()
 
     RealtimeMediaSourceSettings settings;
     settings.setLabel(name());
-    if (mockCamera()) {
+    if (mockCamera())
         settings.setFacingMode(facingMode());
-        settings.setDeviceId(hashedId());
-    } else {
-        settings.setDisplaySurface(mockScreen() ? RealtimeMediaSourceSettings::DisplaySurfaceType::Monitor : RealtimeMediaSourceSettings::DisplaySurfaceType::Window);
+    else {
+        settings.setDisplaySurface(mockScreen() ? DisplaySurfaceType::Monitor : DisplaySurfaceType::Window);
         settings.setLogicalSurface(false);
     }
     settings.setDeviceId(hashedId());
@@ -191,9 +207,13 @@ const RealtimeMediaSourceSettings& MockRealtimeVideoSource::settings()
     supportedConstraints.setSupportsHeight(true);
     supportedConstraints.setSupportsAspectRatio(true);
     supportedConstraints.setSupportsDeviceId(true);
-    if (mockCamera())
+    if (mockCamera()) {
         supportedConstraints.setSupportsFacingMode(true);
-    else {
+        if (isZoomSupported(presets())) {
+            supportedConstraints.setSupportsZoom(true);
+            settings.setZoom(zoom());
+        }
+    } else {
         supportedConstraints.setSupportsDisplaySurface(true);
         supportedConstraints.setSupportsLogicalSurface(true);
     }
@@ -204,18 +224,19 @@ const RealtimeMediaSourceSettings& MockRealtimeVideoSource::settings()
     return m_currentSettings.value();
 }
 
-void MockRealtimeVideoSource::setFrameRateWithPreset(double frameRate, RefPtr<VideoPreset> preset)
+void MockRealtimeVideoSource::setFrameRateAndZoomWithPreset(double frameRate, double zoom, std::optional<VideoPreset>&& preset)
 {
+    UNUSED_PARAM(zoom);
     m_preset = WTFMove(preset);
     if (m_preset)
-        setIntrinsicSize(m_preset->size);
+        setIntrinsicSize(m_preset->size());
     if (isProducingData())
         m_emitFrameTimer.startRepeating(1_s / frameRate);
 }
 
 IntSize MockRealtimeVideoSource::captureSize() const
 {
-    return m_preset ? m_preset->size : this->size();
+    return m_preset ? m_preset->size() : this->size();
 }
 
 void MockRealtimeVideoSource::settingsDidChange(OptionSet<RealtimeMediaSourceSettings::Flag> settings)
@@ -394,19 +415,19 @@ void MockRealtimeVideoSource::drawText(GraphicsContext& context)
 
         const char* camera;
         switch (facingMode()) {
-        case RealtimeMediaSourceSettings::User:
+        case VideoFacingMode::User:
             camera = "User facing";
             break;
-        case RealtimeMediaSourceSettings::Environment:
+        case VideoFacingMode::Environment:
             camera = "Environment facing";
             break;
-        case RealtimeMediaSourceSettings::Left:
+        case VideoFacingMode::Left:
             camera = "Left facing";
             break;
-        case RealtimeMediaSourceSettings::Right:
+        case VideoFacingMode::Right:
             camera = "Right facing";
             break;
-        case RealtimeMediaSourceSettings::Unknown:
+        case VideoFacingMode::Unknown:
             camera = "Unknown";
             break;
         }
@@ -454,7 +475,7 @@ void MockRealtimeVideoSource::generateFrame()
     auto size = this->captureSize();
     FloatRect frameRect(FloatPoint(), size);
 
-    context.fillRect(FloatRect(FloatPoint(), size), m_fillColor);
+    context.fillRect(FloatRect(FloatPoint(), size), zoom() >=  2 ? m_fillColorWithZoom : m_fillColor);
 
     if (!muted()) {
         drawText(context);
@@ -488,7 +509,7 @@ bool MockRealtimeVideoSource::mockDisplayType(CaptureDevice::DeviceType type) co
     return std::get<MockDisplayProperties>(m_device.properties).type == type;
 }
 
-void MockRealtimeVideoSource::orientationChanged(int orientation)
+void MockRealtimeVideoSource::orientationChanged(IntDegrees orientation)
 {
     auto deviceOrientation = m_deviceOrientation;
     switch (orientation) {

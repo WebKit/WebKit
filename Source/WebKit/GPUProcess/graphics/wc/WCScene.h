@@ -56,7 +56,7 @@ public:
 
 private:
     struct Layer;
-    using LayerMap = HashMap<WebCore::GraphicsLayer::PlatformLayerID, std::unique_ptr<Layer>>;
+    using LayerMap = HashMap<WebCore::PlatformLayerIdentifier, std::unique_ptr<Layer>>;
 
     WebCore::ProcessIdentifier m_webProcessIdentifier;
     WCSceneContext* m_context { nullptr };

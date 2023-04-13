@@ -38,7 +38,7 @@
 
 namespace WebCore {
 
-#if PLATFORM(IOS_FAMILY) || USE(CFURLCONNECTION)
+#if PLATFORM(IOS_FAMILY)
 double ResourceRequestBase::s_defaultTimeoutInterval = INT_MAX;
 #else
 // Will use NSURLRequest default timeout unless set to a non-zero value with setDefaultTimeoutInterval().
@@ -765,7 +765,19 @@ void ResourceRequestBase::updateResourceRequest(HTTPBodyUpdatePolicy bodyPolicy)
     }
 }
 
-#if !PLATFORM(COCOA) && !USE(CFURLCONNECTION) && !USE(SOUP)
+void ResourceRequestBase::upgradeToHTTPS()
+{
+    const URL& originalURL = url();
+    ASSERT(originalURL.protocolIs("http"_s));
+
+    URL newURL = originalURL;
+    newURL.setProtocol("https"_s);
+    if (originalURL.port() && WTF::isDefaultPortForProtocol(originalURL.port().value(), originalURL.protocol()))
+        newURL.setPort(std::nullopt);
+    setURL(newURL);
+}
+
+#if !PLATFORM(COCOA) && !USE(SOUP)
 unsigned initializeMaximumHTTPConnectionCountPerHost()
 {
     // This is used by the loader to control the number of issued parallel load requests. 

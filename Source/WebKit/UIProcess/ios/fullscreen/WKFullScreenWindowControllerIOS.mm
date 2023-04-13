@@ -564,12 +564,12 @@ static constexpr CGFloat kFullScreenWindowCornerRadius = 12;
     auto screenSize = page->overrideScreenSize();
     CGFloat preferredWidth = screenSize.width();
     CGFloat preferredHeight = screenSize.height();
-    CGFloat preferredAspectRatio = preferredWidth / preferredHeight;
-    CGFloat videoAspectRatio = videoDimensions.height ? (videoDimensions.width / videoDimensions.height) : preferredAspectRatio;
 
     CGFloat targetWidth = preferredWidth;
     CGFloat targetHeight = preferredHeight;
     if (videoDimensions.height && videoDimensions.width) {
+        CGFloat preferredAspectRatio = preferredWidth / preferredHeight;
+        CGFloat videoAspectRatio = videoDimensions.height ? (videoDimensions.width / videoDimensions.height) : preferredAspectRatio;
         if (videoAspectRatio > preferredAspectRatio)
             targetHeight = videoDimensions.height * preferredWidth / videoDimensions.width;
         else
@@ -601,7 +601,7 @@ static constexpr CGFloat kFullScreenWindowCornerRadius = 12;
     [_fullscreenViewController setExitFullScreenAction:@selector(requestExitFullScreen)];
     _fullscreenViewController.get().view.frame = _rootViewController.get().view.bounds;
 #if HAVE(UIKIT_WEBKIT_INTERNALS)
-    [_fullscreenViewController hideMediaControls:manager->isVideoElementWithControls()];
+    [_fullscreenViewController hideCancelAndPIPButtons:manager->isVideoElement()];
 #endif
     [self _updateLocationInfo];
 
@@ -743,7 +743,7 @@ static constexpr CGFloat kFullScreenWindowCornerRadius = 12;
 
 #if ENABLE(FULLSCREEN_WINDOW_EFFECTS)
             CompletionHandler<void()> completionHandler = []() { };
-            performFullscreenTransition(_lastKnownParentWindow.get(), _window.get(), _parentWindowState.get(), true, WTFMove(completionHandler));
+            performFullscreenTransition(self, _lastKnownParentWindow.get(), _window.get(), _parentWindowState.get(), true, WTFMove(completionHandler));
 #endif
 
             if (auto* videoFullscreenManager = self._videoFullscreenManager) {
@@ -1082,6 +1082,13 @@ static constexpr CGFloat kFullScreenWindowCornerRadius = 12;
     if (page)
         page->setSuppressVisibilityUpdates(true);
 
+#if ENABLE(FULLSCREEN_WINDOW_EFFECTS)
+    [UIView performWithoutAnimation:^{
+        CompletionHandler<void()> completionHandler = []() { };
+        performFullscreenTransition(self, _lastKnownParentWindow.get(), _window.get(), _parentWindowState.get(), false, WTFMove(completionHandler));
+    }];
+#endif
+
     [self _reinsertWebViewUnderPlaceholder];
 
     if (auto* manager = self._manager) {
@@ -1230,7 +1237,7 @@ static constexpr CGFloat kFullScreenWindowCornerRadius = 12;
         [self _completedExitFullScreen];
     };
 
-    performFullscreenTransition(_lastKnownParentWindow.get(), _window.get(), _parentWindowState.get(), false, WTFMove(completionHandler));
+    performFullscreenTransition(self, _lastKnownParentWindow.get(), _window.get(), _parentWindowState.get(), false, WTFMove(completionHandler));
 
 #else
 

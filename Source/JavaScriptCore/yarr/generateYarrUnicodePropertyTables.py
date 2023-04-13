@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Copyright (C) 2017 Apple Inc. All rights reserved.
+# Copyright (C) 2017-2023 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -32,10 +32,12 @@ import copy
 import optparse
 import os
 import re
+import struct
+from functools import cmp_to_key
 from hasher import stringHash
 
 header = """/*
-* Copyright (C) 2017-2022 Apple Inc. All rights reserved.
+* Copyright (C) 2017-2023 Apple Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions
@@ -66,7 +68,10 @@ header = """/*
 footer = """
 """
 
-RequiredUCDFiles = ["DerivedBinaryProperties.txt", "DerivedCoreProperties.txt", "DerivedNormalizationProps.txt", "PropList.txt", "PropertyAliases.txt", "PropertyValueAliases.txt", "ScriptExtensions.txt", "UnicodeData.txt", "emoji-data.txt"]
+RequiredUCDFiles = [
+    "DerivedBinaryProperties.txt", "DerivedCoreProperties.txt", "DerivedNormalizationProps.txt", "PropList.txt", "PropertyAliases.txt",
+    "PropertyValueAliases.txt", "ScriptExtensions.txt", "UnicodeData.txt", "emoji-data.txt", "emoji-sequences.txt", "emoji-zwj-sequences.txt"]
+
 UCDDirectoryPath = None
 
 SupportedBinaryProperties = [
@@ -79,6 +84,10 @@ SupportedBinaryProperties = [
     "Math", "Noncharacter_Code_Point", "Pattern_Syntax", "Pattern_White_Space", "Quotation_Mark", "Radical",
     "Regional_Indicator", "Sentence_Terminal", "Soft_Dotted", "Terminal_Punctuation", "Unified_Ideograph", "Uppercase",
     "Variation_Selector", "White_Space", "XID_Continue", "XID_Start"]
+
+SupportedSequenceProperties = [
+    "Basic_Emoji", "Emoji_Keycap_Sequence", "RGI_Emoji", "RGI_Emoji_Flag_Sequence", "RGI_Emoji_Modifier_Sequence",
+    "RGI_Emoji_Tag_Sequence", "RGI_Emoji_ZWJ_Sequence"]
 
 lastASCIICodePoint = 0x7f
 firstUnicodeCodePoint = 0x80
@@ -227,6 +236,8 @@ class PropertyData:
         self.index = len(PropertyData.allPropertyData)
         self.hasBMPCharacters = False
         self.hasNonBMPCharacters = False
+        self.hasStrings = False
+        self.matchStrings = []
         self.matches = []
         self.ranges = []
         self.unicodeMatches = []
@@ -282,6 +293,10 @@ class PropertyData:
                 self.unicodeRanges.append((priorRange[0], codePoint))
             else:
                 self.unicodeMatches.append(codePoint)
+
+    def addMatchString(self, string):
+        self.matchStrings.append(string)
+        self.hasStrings = True
 
     def addRange(self, lowCodePoint, highCodePoint):
         if lowCodePoint <= MaxBMP:
@@ -509,6 +524,27 @@ class PropertyData:
             else:
                 self.removeMatchFromRanges(codePoint, self.unicodeRanges)
 
+    def stringsCompare(self, bstr1, bstr2):
+        # Longest strings first, then sort lexical.
+        b1Len = len(bstr1)
+        b2Len = len(bstr2)
+
+        diff = b2Len - b1Len
+
+        if diff != 0:
+            return diff
+
+        if bstr1 < bstr2:
+            return -1
+
+        if bstr1 > bstr2:
+            return 1
+
+        return 0
+
+    def sortStrings(self):
+        self.matchStrings.sort(key=cmp_to_key(self.stringsCompare))
+
     def dumpMatchData(self, file, valuesPerLine, dataList, formatter):
         valuesThisLine = 0
         firstValue = True
@@ -521,15 +557,33 @@ class PropertyData:
                 file.write(", ")
             valuesThisLine = valuesThisLine + 1
             if valuesThisLine > valuesPerLine:
-                file.write("\n                 ")
+                file.write("\n            ")
                 valuesThisLine = 1
             formatter(file, elem)
         file.write("}")
 
+    def convertStringToCppFormat(self, file, utf32String):
+        output = ""
+        for codePoint in utf32String:
+            if codePoint <= '\xff':
+                output += codePoint
+            else:
+                output += "\\x{:x}".format(ord(codePoint))
+        file.write("{{ reinterpret_cast<UChar32*>(const_cast<char32_t*>(U\"{}\")), {}}}".format(output, len(utf32String)))
+
     def dump(self, file, commaAfter):
         file.write("static std::unique_ptr<CharacterClass> {}()\n{{\n".format(self.getCreateFuncName()))
-        file.write("    // Name = {}, number of codePoints: {}\n".format(self.name, self.codePointCount))
+        file.write("    // Name = {},".format(self.name))
+        if self.hasStrings:
+            file.write(" number of strings: {}".format(len(self.matchStrings)))
+        if self.codePointCount:
+            file.write(" number of codePoints: {}".format(self.codePointCount))
+        file.write("\n")
         file.write("    auto characterClass = makeUnique<CharacterClass>(\n")
+        if self.hasStrings:
+            file.write("        std::initializer_list<Vector<UChar32>>(")
+            self.dumpMatchData(file, 1, self.matchStrings, self.convertStringToCppFormat)
+            file.write("),\n")
         file.write("        std::initializer_list<UChar32>(")
         self.dumpMatchData(file, 8, self.matches, lambda file, match: (file.write("{0:0=#4x}".format(match))))
         file.write("),\n")
@@ -543,7 +597,10 @@ class PropertyData:
         self.dumpMatchData(file, 4, self.unicodeRanges, lambda file, range: (file.write("{{{0:0=#6x}, {1:0=#6x}}}".format(range[0], range[1]))))
         file.write("),\n")
 
-        file.write("        CharacterClassWidths::{});\n".format(("Unknown", "HasBMPChars", "HasNonBMPChars", "HasBothBMPAndNonBMP")[int(self.hasNonBMPCharacters) * 2 + int(self.hasBMPCharacters)]))
+        file.write("        CharacterClassWidths::{}".format(("Unknown", "HasBMPChars", "HasNonBMPChars", "HasBothBMPAndNonBMP")[int(self.hasNonBMPCharacters) * 2 + int(self.hasBMPCharacters)]))
+        if self.hasStrings:
+            file.write(",\n        true")  # inCanonicalForm
+        file.write(");\n")
         file.write("    return characterClass;\n}\n\n")
 
     @classmethod
@@ -552,7 +609,7 @@ class PropertyData:
             propertyData.dump(file, propertyData != cls.allPropertyData[-1])
 
         file.write("using CreateCharacterClass = std::unique_ptr<CharacterClass> (*)();\n")
-        file.write("static CreateCharacterClass createFunctions[{}] = {{\n   ".format(len(cls.allPropertyData)))
+        file.write("static CreateCharacterClass createCharacterClassFunctions[{}] = {{\n   ".format(len(cls.allPropertyData)))
         functionsOnThisLine = 0
         for propertyData in cls.allPropertyData:
             file.write(" {},".format(propertyData.getCreateFuncName()))
@@ -616,6 +673,39 @@ class PropertyData:
 
         file.write("static const struct HashTable {}HashTable = \n".format(tablePrefix))
         file.write("    {{ {}, {}, {}TableValue, {}TableIndex }};\n\n".format(len(valueTable), hashMask, tablePrefix, tablePrefix))
+
+    @classmethod
+    def dumpMayContainStringFunc(cls, file):
+        hasStringRanges = []
+        currentRange = None
+        for propertyData in cls.allPropertyData:
+            if propertyData.hasStrings:
+                propertyIndex = propertyData.index
+                if not currentRange:
+                    currentRange = propertyIndex, propertyIndex
+                elif currentRange[-1] == propertyIndex - 1:
+                    currentRange = currentRange[0], propertyIndex
+                else:
+                    hasStringRanges.append(currentRange)
+                    currentRange = propertyIndex, propertyIndex
+
+        if currentRange:
+            hasStringRanges.append(currentRange)
+
+        file.write("static bool unicodeCharacterClassMayContainStrings(unsigned unicodeClassId)\n")
+        file.write("{\n")
+        file.write("    if (unicodeClassId >= {})\n".format(len(cls.allPropertyData)))
+        file.write("        return false;\n")
+        file.write("\n")
+        for range in hasStringRanges:
+            if range[0] == range[1]:
+                file.write("    if (unicodeClassId == {})\n".format(range[0]))
+            else:
+                file.write("    if (unicodeClassId >= {} && unicodeClassId <= {})\n".format(range[0], range[1]))
+            file.write("        return true;\n")
+            file.write("\n")
+        file.write("    return false;\n")
+        file.write("}\n\n")
 
 
 class Scripts:
@@ -931,6 +1021,72 @@ class BinaryProperty:
         file.write("// binary properties:\n")
         PropertyData.createAndDumpHashTable(file, self.propertyDataByProperty, "binaryProperty")
 
+
+class SequenceProperty:
+    def __init__(self):
+        self.allPropertyData = []
+        self.propertyDataByProperty = {}
+        self.RGIEmojiPropertyData = PropertyData("RGI_Emoji")
+        self.allPropertyData.append(self.RGIEmojiPropertyData)
+        self.propertyDataByProperty["RGI_Emoji"] = self.RGIEmojiPropertyData
+
+    def parsePropertyFile(self, file):
+        currentPropertyName = None
+        currentPropertyData = None
+
+        for line in file:
+            line = line.split('#', 1)[0]
+            line = line.rstrip()
+            if (not len(line)):
+                continue
+
+            fields = line.split(';')
+            if (not fields):
+                continue
+
+            codePoints = fields[0].strip()
+            propertyName = fields[1].strip()
+
+            if propertyName != currentPropertyName:
+                if propertyName not in SupportedSequenceProperties:
+                    continue
+
+                if currentPropertyData is not None:
+                    currentPropertyData.sortStrings()
+
+                currentPropertyName = propertyName
+                currentPropertyData = PropertyData(propertyName)
+                self.allPropertyData.append(currentPropertyData)
+                self.propertyDataByProperty[propertyName] = currentPropertyData
+
+            dotDot = codePoints.find("..")
+            if dotDot == -1:
+                space = codePoints.find(" ")
+                if space == -1:
+                    currentPropertyData.addMatch(int(codePoints, 16))
+                    self.RGIEmojiPropertyData.addMatch(int(codePoints, 16))
+                else:
+                    # String, convert into UTF16 format with surrogate pairs as needed.
+                    utf32String = ""
+                    for hex in codePoints.split(' '):
+                        c = int(hex, 16)
+                        utf32String += "".join(chr(c))
+
+                    currentPropertyData.addMatchString(utf32String)
+                    self.RGIEmojiPropertyData.addMatchString(utf32String)
+
+            else:
+                currentPropertyData.addRange(int(codePoints[:dotDot], 16), int(codePoints[dotDot + 2:], 16))
+                self.RGIEmojiPropertyData.addRange(int(codePoints[:dotDot], 16), int(codePoints[dotDot + 2:], 16))
+
+        currentPropertyData.sortStrings()
+        self.RGIEmojiPropertyData.sortStrings()
+
+    def dump(self, file):
+        file.write("// sequences properties:\n")
+        PropertyData.createAndDumpHashTable(file, self.propertyDataByProperty, "sequenceProperty")
+
+
 if __name__ == "__main__":
     parser = optparse.OptionParser(usage="usage: %prog <UCD-Directory> <YarrUnicodePropertyData.h>")
     (options, args) = parser.parse_args()
@@ -953,6 +1109,8 @@ if __name__ == "__main__":
     derivedNormalizationPropertiesFile = openUCDFileOrExit("DerivedNormalizationProps.txt")
     propListFile = openUCDFileOrExit("PropList.txt")
     emojiDataFile = openUCDFileOrExit("emoji-data.txt")
+    emojiSequencesFile = openUCDFileOrExit("emoji-sequences.txt")
+    emojiZWJSequencesFile = openUCDFileOrExit("emoji-zwj-sequences.txt")
 
     aliases = Aliases()
 
@@ -977,10 +1135,17 @@ if __name__ == "__main__":
     scripts.parseScriptsFile(scriptsFile)
     scripts.parseScriptExtensionsFile(scriptExtensionsFile)
 
+    sequenceProperty = SequenceProperty()
+    sequenceProperty.parsePropertyFile(emojiSequencesFile)
+    sequenceProperty.parsePropertyFile(emojiZWJSequencesFile)
+
     PropertyData.dumpAll(propertyDataHFile)
     generalCategory.dump(propertyDataHFile)
     binaryProperty.dump(propertyDataHFile)
     scripts.dump(propertyDataHFile)
+    sequenceProperty.dump(propertyDataHFile)
+
+    PropertyData.dumpMayContainStringFunc(propertyDataHFile)
 
     propertyDataHFile.write(footer)
 

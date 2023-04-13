@@ -28,6 +28,7 @@
 #include "config.h"
 #include "PageClientImpl.h"
 
+#include "Clipboard.h"
 #include "DrawingAreaProxyCoordinatedGraphics.h"
 #include "NativeWebKeyboardEvent.h"
 #include "NativeWebMouseEvent.h"
@@ -37,6 +38,7 @@
 #include "WebContextMenuProxyGtk.h"
 #include "WebDataListSuggestionsDropdownGtk.h"
 #include "WebEventFactory.h"
+#include "WebKitClipboardPermissionRequestPrivate.h"
 #include "WebKitColorChooser.h"
 #include "WebKitPopupMenu.h"
 #include "WebKitWebViewBaseInternal.h"
@@ -50,9 +52,12 @@
 #include <WebCore/EventNames.h>
 #include <WebCore/GtkUtilities.h>
 #include <WebCore/NotImplemented.h>
+#include <WebCore/PasteboardCustomData.h>
 #include <WebCore/RefPtrCairo.h>
+#include <WebCore/SharedBuffer.h>
 #include <WebCore/ValidationBubble.h>
 #include <wtf/Compiler.h>
+#include <wtf/glib/GWeakPtr.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 #include <wtf/unix/UnixFileDescriptor.h>
@@ -277,8 +282,8 @@ void PageClientImpl::doneWithKeyEvent(const NativeWebKeyboardEvent& event, bool 
 RefPtr<WebPopupMenuProxy> PageClientImpl::createPopupMenuProxy(WebPageProxy& page)
 {
     if (WEBKIT_IS_WEB_VIEW(m_viewWidget))
-        return WebKitPopupMenu::create(m_viewWidget, page);
-    return WebPopupMenuProxyGtk::create(m_viewWidget, page);
+        return WebKitPopupMenu::create(m_viewWidget, page.popupMenuClient());
+    return WebPopupMenuProxyGtk::create(m_viewWidget, page.popupMenuClient());
 }
 
 Ref<WebContextMenuProxy> PageClientImpl::createContextMenuProxy(WebPageProxy& page, ContextMenuContextData&& context, const UserData& userData)
@@ -546,9 +551,23 @@ void PageClientImpl::derefView()
     g_object_unref(m_viewWidget);
 }
 
-void PageClientImpl::requestDOMPasteAccess(WebCore::DOMPasteAccessCategory, const IntRect&, const String&, CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&& completionHandler)
+void PageClientImpl::requestDOMPasteAccess(WebCore::DOMPasteAccessCategory, const IntRect&, const String& originIdentifier, CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&& completionHandler)
 {
-    completionHandler(WebCore::DOMPasteAccessResponse::DeniedForGesture);
+    auto& clipboard = Clipboard::get("CLIPBOARD"_s);
+    clipboard.readBuffer(PasteboardCustomData::gtkType().characters(), [weakWebView = GWeakPtr<GtkWidget>(m_viewWidget), originIdentifier, completionHandler = WTFMove(completionHandler)](Ref<SharedBuffer>&& buffer) mutable {
+        if (PasteboardCustomData::fromSharedBuffer(buffer.get()).origin() == originIdentifier) {
+            completionHandler(DOMPasteAccessResponse::GrantedForGesture);
+            return;
+        }
+
+        if (!WEBKIT_IS_WEB_VIEW(weakWebView.get())) {
+            completionHandler(DOMPasteAccessResponse::DeniedForGesture);
+            return;
+        }
+
+        GRefPtr<WebKitClipboardPermissionRequest> request = adoptGRef(webkitClipboardPermissionRequestCreate(WTFMove(completionHandler)));
+        webkitWebViewMakePermissionRequest(WEBKIT_WEB_VIEW(weakWebView.get()), WEBKIT_PERMISSION_REQUEST(request.get()));
+    });
 }
 
 UserInterfaceLayoutDirection PageClientImpl::userInterfaceLayoutDirection()

@@ -25,6 +25,8 @@
 
 #import <WebKit/WKContextMenuElementInfo.h>
 
+#if TARGET_OS_IPHONE
+
 @class _WKActivatedElementInfo;
 
 @interface WKContextMenuElementInfo (WKPrivate)
@@ -32,3 +34,5 @@
 @property (nonatomic, copy, readonly) _WKActivatedElementInfo *_activatedElementInfo;
 
 @end
+
+#endif

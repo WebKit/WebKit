@@ -26,8 +26,6 @@
 
 #pragma once
 
-#include "DocumentInlines.h"
-#include "ElementInlines.h"
 #include "JSDOMBinding.h"
 #include "JSNode.h"
 #include "WebCoreOpaqueRoot.h"
@@ -78,20 +76,9 @@ inline void willCreatePossiblyOrphanedTreeByRemoval(Node& root)
         willCreatePossiblyOrphanedTreeByRemovalSlowCase(root);
 }
 
-inline WebCoreOpaqueRoot root(Node& node)
-{
-    return node.opaqueRoot();
-}
-
-inline WebCoreOpaqueRoot root(Node* node)
-{
-    return node ? root(*node) : nullptr;
-}
-
-inline WebCoreOpaqueRoot root(Document* document)
-{
-    return root(static_cast<Node*>(document));
-}
+inline WebCoreOpaqueRoot root(Node&);
+inline WebCoreOpaqueRoot root(Node*);
+inline WebCoreOpaqueRoot root(Document*);
 
 ALWAYS_INLINE JSC::JSValue JSNode::nodeType(JSC::JSGlobalObject&) const
 {

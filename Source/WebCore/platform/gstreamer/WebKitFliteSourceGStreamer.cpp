@@ -107,6 +107,8 @@ static void webkitFliteSrcReset(WebKitFliteSrc* src)
 
 static void webkitFliteSrcConstructed(GObject* object)
 {
+    GST_CALL_PARENT(G_OBJECT_CLASS, constructed, (object));
+
     WebKitFliteSrc* src = WEBKIT_FLITE_SRC(object);
     WebKitFliteSrcPrivate* priv = src->priv;
 

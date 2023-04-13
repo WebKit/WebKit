@@ -28,6 +28,7 @@
 
 #if ENABLE(ARKIT_INLINE_PREVIEW)
 
+#import "MessageSenderInlines.h"
 #import "WebPage.h"
 
 namespace WebKit {

@@ -31,6 +31,7 @@
 #include "MediaPlayerIdentifier.h"
 #include "PlaybackSessionInterfaceMac.h"
 #include "PlaybackSessionModel.h"
+#include "VideoFullscreenCaptions.h"
 #include "VideoFullscreenModel.h"
 #include <wtf/RefCounted.h>
 #include <wtf/RetainPtr.h>
@@ -48,6 +49,7 @@ class VideoFullscreenChangeObserver;
 class VideoFullscreenInterfaceMac
     : public VideoFullscreenModelClient
     , private PlaybackSessionModelClient
+    , public VideoFullscreenCaptions
     , public RefCounted<VideoFullscreenInterfaceMac> {
 
 public:

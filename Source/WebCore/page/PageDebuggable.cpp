@@ -29,8 +29,8 @@
 #if ENABLE(REMOTE_INSPECTOR)
 
 #include "Document.h"
-#include "Frame.h"
 #include "InspectorController.h"
+#include "LocalFrame.h"
 #include "Page.h"
 #include "Settings.h"
 #include <JavaScriptCore/InspectorAgentBase.h>
@@ -49,18 +49,26 @@ String PageDebuggable::name() const
     if (!m_nameOverride.isNull())
         return m_nameOverride;
 
-    if (!m_page.mainFrame().document())
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page.mainFrame());
+    if (!localMainFrame)
         return String();
 
-    return m_page.mainFrame().document()->title();
+    if (!localMainFrame->document())
+        return String();
+
+    return localMainFrame->document()->title();
 }
 
 String PageDebuggable::url() const
 {
-    if (!m_page.mainFrame().document())
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page.mainFrame());
+    if (!localMainFrame)
         return String();
 
-    String url = m_page.mainFrame().document()->url().string();
+    if (!localMainFrame->document())
+        return String();
+
+    String url = localMainFrame->document()->url().string();
     return url.isEmpty() ? "about:blank"_s : url;
 }
 

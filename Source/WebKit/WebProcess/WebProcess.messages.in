@@ -76,6 +76,7 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
     DeleteWebsiteData(OptionSet<WebKit::WebsiteDataType> websiteDataTypes, WallTime modifiedSince) -> ()
     DeleteWebsiteDataForOrigins(OptionSet<WebKit::WebsiteDataType> websiteDataTypes, Vector<WebCore::SecurityOriginData> origins) -> ()
     DeleteWebsiteDataForOrigin(OptionSet<WebKit::WebsiteDataType> websiteDataTypes, struct WebCore::ClientOrigin origin) -> ()
+    ReloadExecutionContextsForOrigin(struct WebCore::ClientOrigin origin, std::optional<WebCore::FrameIdentifier> triggeringFrame) -> ()
     DeleteAllCookies() -> ()
 
     SetHiddenPageDOMTimerThrottlingIncreaseLimit(int milliseconds)
@@ -95,7 +96,7 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
     BackgroundResponsivenessPing()
 
 #if ENABLE(GAMEPAD)
-    SetInitialGamepads(Vector<WebKit::GamepadData> gamepadDatas)
+    SetInitialGamepads(Vector<std::optional<WebKit::GamepadData>> gamepadDatas)
     GamepadConnected(WebKit::GamepadData gamepadData, enum:bool WebCore::EventMakesGamepadsVisible eventVisibility)
     GamepadDisconnected(unsigned index)
 #endif
@@ -155,7 +156,7 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
     ClearCachedPage(WebCore::BackForwardItemIdentifier backForwardItemID) -> ()
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
-    SendMessageToWebExtension(struct WebKit::UserMessage userMessage)
+    SendMessageToWebProcessExtension(struct WebKit::UserMessage userMessage)
 #endif
 
 #if ENABLE(TRACKING_PREVENTION)
@@ -188,7 +189,7 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
 #endif
 
 #if HAVE(CVDISPLAYLINK)
-    DisplayWasRefreshed(uint32_t displayID, struct WebCore::DisplayUpdate update)
+    DisplayDidRefresh(uint32_t displayID, struct WebCore::DisplayUpdate update)
 #endif
 
 #if PLATFORM(MAC)
@@ -212,4 +213,6 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
 #if PLATFORM(MAC)
     OpenDirectoryCacheInvalidated(WebKit::SandboxExtension::Handle handle, WebKit::SandboxExtension::Handle machBootstrapHandle)
 #endif
+
+    RemotePostMessage(struct WebCore::FrameIdentifier frameIdentifier, std::optional<WebCore::SecurityOriginData> target, struct WebCore::MessageWithMessagePorts message)
 }

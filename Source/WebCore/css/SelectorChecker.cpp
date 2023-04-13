@@ -33,16 +33,16 @@
 #include "CSSSelectorList.h"
 #include "CommonAtomStrings.h"
 #include "Document.h"
-#include "ElementInlines.h"
+#include "ElementChildIteratorInlines.h"
 #include "ElementRareData.h"
 #include "ElementTraversal.h"
-#include "Frame.h"
 #include "FrameSelection.h"
 #include "HTMLDocument.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
 #include "HTMLSlotElement.h"
 #include "InspectorInstrumentation.h"
+#include "LocalFrame.h"
 #include "Page.h"
 #include "RenderElement.h"
 #include "RuleFeature.h"
@@ -51,7 +51,7 @@
 #include "StyleRule.h"
 #include "StyleScope.h"
 #include "Text.h"
-#include "TypedElementDescendantIterator.h"
+#include "TypedElementDescendantIteratorInlines.h"
 
 namespace WebCore {
 
@@ -560,8 +560,9 @@ static bool attributeValueMatches(const Attribute& attribute, CSSSelector::Match
 static bool anyAttributeMatches(const Element& element, const CSSSelector& selector, const QualifiedName& selectorAttr, bool caseSensitive)
 {
     ASSERT(element.hasAttributesWithoutUpdate());
+    bool isHTML = element.isHTMLElement() && element.document().isHTMLDocument();
     for (const Attribute& attribute : element.attributesIterator()) {
-        if (!attribute.matches(selectorAttr.prefix(), element.isHTMLElement() ? selector.attributeCanonicalLocalName() : selectorAttr.localName(), selectorAttr.namespaceURI()))
+        if (!attribute.matches(selectorAttr.prefix(), isHTML ? selectorAttr.localNameLowercase() : selectorAttr.localName(), selectorAttr.namespaceURI()))
             continue;
 
         if (attributeValueMatches(attribute, selector.match(), selector.value(), caseSensitive))
@@ -575,7 +576,8 @@ bool SelectorChecker::attributeSelectorMatches(const Element& element, const Qua
 {
     ASSERT(selector.isAttributeSelector());
     auto& selectorAttribute = selector.attribute();
-    auto& selectorName = element.isHTMLElement() ? selector.attributeCanonicalLocalName() : selectorAttribute.localName();
+    bool isHTML = element.isHTMLElement() && element.document().isHTMLDocument();
+    auto& selectorName = isHTML ? selectorAttribute.localNameLowercase() : selectorAttribute.localName();
     if (!Attribute::nameMatchesFilter(attributeName, selectorAttribute.prefix(), selectorName, selectorAttribute.namespaceURI()))
         return false;
     bool caseSensitive = true;
@@ -1127,6 +1129,8 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
         case CSSSelector::PseudoClassHasAttachment:
             return hasAttachment(element);
 #endif
+        case CSSSelector::PseudoClassPopoverOpen:
+            return matchesPopoverOpenPseudoClass(element);
 
         case CSSSelector::PseudoClassModal:
             return matchesModalPseudoClass(element);

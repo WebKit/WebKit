@@ -13,6 +13,7 @@
 
 #include <GLSLANG/ShaderLang.h>
 #include "common/angleutils.h"
+#include "common/debug.h"
 
 namespace sh
 {

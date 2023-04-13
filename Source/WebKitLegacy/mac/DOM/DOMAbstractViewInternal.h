@@ -26,14 +26,14 @@
 #import <WebKitLegacy/DOMAbstractView.h>
 
 namespace WebCore {
-class AbstractDOMWindow;
 class DOMWindow;
+class LocalDOMWindow;
 class WindowProxy;
 }
 
-WebCore::DOMWindow* core(DOMAbstractView *);
+WebCore::LocalDOMWindow* core(DOMAbstractView *);
+DOMAbstractView *kit(WebCore::LocalDOMWindow*);
 DOMAbstractView *kit(WebCore::DOMWindow*);
-DOMAbstractView *kit(WebCore::AbstractDOMWindow*);
 DOMAbstractView *kit(WebCore::WindowProxy*);
 WebCore::WindowProxy* toWindowProxy(DOMAbstractView *);
 

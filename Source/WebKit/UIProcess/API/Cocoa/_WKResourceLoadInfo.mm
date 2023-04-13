@@ -189,7 +189,7 @@ static _WKResourceLoadInfoResourceType toWKResourceLoadInfoResourceType(WebKit::
     }
 
     WebKit::ResourceLoadInfo info {
-        makeObjectIdentifier<WebKit::NetworkResourceLoadIdentifierType>(resourceLoadID.unsignedLongLongValue),
+        ObjectIdentifier<WebKit::NetworkResourceLoadIdentifierType>(resourceLoadID.unsignedLongLongValue),
         frame->_frameHandle->frameID(),
         parentFrame ? std::optional<WebCore::FrameIdentifier>(parentFrame->_frameHandle->frameID()) : std::nullopt,
         originalURL,

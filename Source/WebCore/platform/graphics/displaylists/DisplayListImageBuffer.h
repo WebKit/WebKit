@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2021 Apple Inc.  All rights reserved.
+ * Copyright (C) 2020-2023 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -48,7 +48,7 @@ public:
 
     ImageBuffer(const ImageBufferBackend::Parameters& parameters, const ImageBufferBackend::Info& info, std::unique_ptr<ImageBufferBackend>&& backend)
         : WebCore::ImageBuffer(parameters, info, WTFMove(backend))
-        , m_drawingContext(logicalSize(), baseTransform())
+        , m_drawingContext(logicalSize(), baseTransform(), colorSpace())
         , m_writingClient(makeUnique<InMemoryDisplayList::WritingClient>())
         , m_readingClient(makeUnique<InMemoryDisplayList::ReadingClient>())
     {
@@ -58,7 +58,7 @@ public:
 
     ImageBuffer(const ImageBufferBackend::Parameters& parameters, const ImageBufferBackend::Info& info)
         : WebCore::ImageBuffer(parameters, info)
-        , m_drawingContext(logicalSize(), baseTransform())
+        , m_drawingContext(logicalSize(), baseTransform(), colorSpace())
         , m_writingClient(makeUnique<InMemoryDisplayList::WritingClient>())
         , m_readingClient(makeUnique<InMemoryDisplayList::ReadingClient>())
     {

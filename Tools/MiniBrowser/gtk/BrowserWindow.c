@@ -462,8 +462,12 @@ static void webViewReadyToShow(WebKitWebView *webView, BrowserWindow *window)
 
 static GtkWidget *webViewCreate(WebKitWebView *webView, WebKitNavigationAction *navigation, BrowserWindow *window)
 {
-    WebKitWebView *newWebView = WEBKIT_WEB_VIEW(webkit_web_view_new_with_related_view(webView));
-    webkit_web_view_set_settings(newWebView, webkit_web_view_get_settings(webView));
+    WebKitWebView *newWebView = WEBKIT_WEB_VIEW(g_object_new(WEBKIT_TYPE_WEB_VIEW,
+        "related-view", webView,
+        "settings", webkit_web_view_get_settings(webView),
+        "user-content-manager", webkit_web_view_get_user_content_manager(webView),
+        "website-policies", webkit_web_view_get_website_policies(webView),
+        NULL));
 
 #if GTK_CHECK_VERSION(3, 98, 0)
     GtkWidget *newWindow = browser_window_new(GTK_WINDOW(window), window->webContext, window->networkSession);
@@ -637,24 +641,20 @@ static void updateUriEntryIcon(BrowserWindow *window)
 static void faviconChanged(WebKitWebView *webView, GParamSpec *paramSpec, BrowserWindow *window)
 {
 #if GTK_CHECK_VERSION(3, 98, 0)
-    GdkTexture *favicon = NULL;
+    GdkTexture *favicon = webkit_web_view_get_favicon(webView);
+    if (favicon)
+        g_object_ref(favicon);
 #else
-    GdkPixbuf *favicon = NULL;
-#endif
     cairo_surface_t *surface = webkit_web_view_get_favicon(webView);
+    GdkPixbuf *favicon = NULL;
 
     if (surface) {
         int width = cairo_image_surface_get_width(surface);
         int height = cairo_image_surface_get_height(surface);
-#if GTK_CHECK_VERSION(3, 98, 0)
-        int stride = cairo_image_surface_get_stride(surface);
-        GBytes *bytes = g_bytes_new(cairo_image_surface_get_data(surface), stride * height);
-        favicon = gdk_memory_texture_new(width, height, GDK_MEMORY_DEFAULT, bytes, stride);
-        g_bytes_unref(bytes);
-#else
+
         favicon = gdk_pixbuf_get_from_surface(surface, 0, 0, width, height);
-#endif
     }
+#endif
 
     if (window->favicon)
         g_object_unref(window->favicon);
@@ -795,7 +795,13 @@ static void openPrivateWindow(GSimpleAction *action, GVariant *parameter, gpoint
 #if GTK_CHECK_VERSION(3, 98, 0)
     WebKitNetworkSession *networkSession = NULL;
     if (!webkit_web_view_is_controlled_by_automation(webView)) {
+        WebKitWebsiteDataManager *manager;
+
         networkSession = webkit_network_session_new_ephemeral();
+
+        manager = webkit_network_session_get_website_data_manager(networkSession);
+        webkit_website_data_manager_set_favicons_enabled(manager, TRUE);
+
         webkit_network_session_set_tls_errors_policy(networkSession, webkit_network_session_get_tls_errors_policy(window->networkSession));
         // FIXME: we need public api to get proxy settings.
     }
@@ -1516,7 +1522,7 @@ GtkWidget *browser_window_new(GtkWindow *parent, WebKitWebContext *webContext)
 
     window->webContext = g_object_ref(webContext);
 #if GTK_CHECK_VERSION(3, 98, 0)
-    window->networkSession = networkSession ? g_object_ref(networkSession) : NULL;
+    window->networkSession = g_object_ref(networkSession);
 #else
     g_signal_connect(window->webContext, "download-started", G_CALLBACK(downloadStarted), window);
 #endif

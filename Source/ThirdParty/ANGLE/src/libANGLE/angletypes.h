@@ -130,12 +130,6 @@ bool operator!=(const RectangleImpl<T> &a, const RectangleImpl<T> &b);
 
 using Rectangle = RectangleImpl<int>;
 
-enum class ClipSpaceOrigin
-{
-    LowerLeft = 0,
-    UpperLeft = 1
-};
-
 // Calculate the intersection of two rectangles.  Returns false if the intersection is empty.
 [[nodiscard]] bool ClipRectangle(const Rectangle &source,
                                  const Rectangle &clip,
@@ -242,6 +236,9 @@ struct RasterizerState final
     bool polygonOffsetFill;
     GLfloat polygonOffsetFactor;
     GLfloat polygonOffsetUnits;
+    GLfloat polygonOffsetClamp;
+
+    bool depthClamp;
 
     // pointDrawMode/multiSample are only used in the D3D back-end right now.
     bool pointDrawMode;
@@ -366,6 +363,12 @@ class SamplerState final
     GLenum getWrapR() const { return mWrapR; }
 
     bool setWrapR(GLenum wrapR);
+
+    bool usesBorderColor() const
+    {
+        return mWrapS == GL_CLAMP_TO_BORDER || mWrapT == GL_CLAMP_TO_BORDER ||
+               mWrapR == GL_CLAMP_TO_BORDER;
+    }
 
     float getMaxAnisotropy() const { return mMaxAnisotropy; }
 

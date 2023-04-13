@@ -105,7 +105,8 @@ WebXRRigidTransform::WebXRRigidTransform(const TransformationMatrix& transform)
     }
 
     TransformationMatrix::Decomposed4Type decomp = { };
-    transform.decompose4(decomp);
+    if (!transform.decompose4(decomp))
+        return;
 
     m_position = DOMPointReadOnly::create(decomp.translateX, decomp.translateY, decomp.translateZ, 1.0f);
 

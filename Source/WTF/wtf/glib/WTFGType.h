@@ -43,16 +43,27 @@ static void destroy##structName(structName* data) \
 #define WEBKIT_DEFINE_ABSTRACT_TYPE(TypeName, type_name, TYPE_PARENT) _WEBKIT_DEFINE_TYPE_EXTENDED(TypeName, type_name, TYPE_PARENT, G_TYPE_FLAG_ABSTRACT, { })
 #define WEBKIT_DEFINE_TYPE_WITH_CODE(TypeName, type_name, TYPE_PARENT, Code) _WEBKIT_DEFINE_TYPE_EXTENDED_BEGIN(TypeName, type_name, TYPE_PARENT, 0) {Code;} _WEBKIT_DEFINE_TYPE_EXTENDED_END()
 
+#define _WEBKIT_DEFINE_FINAL_TYPE_STRUCTS(TypeName, ParentName)  \
+    typedef struct _ ## TypeName ## Private TypeName ## Private; \
+    struct _ ## TypeName { \
+        ParentName parent; \
+        TypeName ## Private *priv; \
+    };
+
 // Only the 2022 API uses final types for now. If the old API ever gains
 // a final type, move the corresponding macro above out of the #if block.
 #if ENABLE(2022_GLIB_API)
-#define WEBKIT_DEFINE_FINAL_TYPE(TypeName, type_name, TYPE_PARENT) _WEBKIT_DEFINE_TYPE_EXTENDED(TypeName, type_name, TYPE_PARENT, G_TYPE_FLAG_FINAL, { })
-#define WEBKIT_DEFINE_FINAL_TYPE_WITH_CODE(TypeName, type_name, TYPE_PARENT, Code) _WEBKIT_DEFINE_TYPE_EXTENDED_BEGIN(TypeName, type_name, TYPE_PARENT, G_TYPE_FLAG_FINAL) { Code; } _WEBKIT_DEFINE_TYPE_EXTENDED_END()
-#define WEBKIT_DEFINE_FINAL_TYPE_IN_2022_API WEBKIT_DEFINE_FINAL_TYPE
-#define WEBKIT_DEFINE_FINAL_TYPE_WITH_CODE_IN_2022_API WEBKIT_DEFINE_FINAL_TYPE_WITH_CODE
+#define WEBKIT_DEFINE_FINAL_TYPE(TypeName, type_name, TYPE_PARENT, ParentName) \
+    _WEBKIT_DEFINE_FINAL_TYPE_STRUCTS(TypeName, ParentName) \
+    _WEBKIT_DEFINE_TYPE_EXTENDED(TypeName, type_name, TYPE_PARENT, G_TYPE_FLAG_FINAL, { })
+#define WEBKIT_DEFINE_FINAL_TYPE_WITH_CODE(TypeName, type_name, TYPE_PARENT, ParentName, Code) \
+    _WEBKIT_DEFINE_FINAL_TYPE_STRUCTS(TypeName, ParentName) \
+    _WEBKIT_DEFINE_TYPE_EXTENDED_BEGIN(TypeName, type_name, TYPE_PARENT, G_TYPE_FLAG_FINAL) { Code; } _WEBKIT_DEFINE_TYPE_EXTENDED_END()
 #else
-#define WEBKIT_DEFINE_FINAL_TYPE_IN_2022_API WEBKIT_DEFINE_TYPE
-#define WEBKIT_DEFINE_FINAL_TYPE_WITH_CODE_IN_2022_API WEBKIT_DEFINE_TYPE_WITH_CODE
+#define WEBKIT_DEFINE_FINAL_TYPE(TypeName, type_name, TYPE_PARENT, ParentName) \
+    WEBKIT_DEFINE_TYPE(TypeName, type_name, TYPE_PARENT)
+#define WEBKIT_DEFINE_FINAL_TYPE_WITH_CODE(TypeName, type_name, TYPE_PARENT, ParentName, Code) \
+    _WEBKIT_DEFINE_TYPE_EXTENDED_BEGIN(TypeName, type_name, TYPE_PARENT, 0) { Code; } _WEBKIT_DEFINE_TYPE_EXTENDED_END()
 #endif
 
 #define _WEBKIT_DEFINE_TYPE_EXTENDED(TypeName, type_name, TYPE_PARENT, flags, Code) _WEBKIT_DEFINE_TYPE_EXTENDED_BEGIN(TypeName, type_name, TYPE_PARENT, flags) {Code;} _WEBKIT_DEFINE_TYPE_EXTENDED_END()

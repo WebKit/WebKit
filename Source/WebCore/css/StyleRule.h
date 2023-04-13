@@ -65,6 +65,7 @@ public:
     bool isMediaRule() const { return type() == StyleRuleType::Media; }
     bool isPageRule() const { return type() == StyleRuleType::Page; }
     bool isStyleRule() const { return type() == StyleRuleType::Style; }
+    bool isStyleRuleWithNesting() const { return type() == StyleRuleType::StyleWithNesting; }
     bool isGroupRule() const { return type() == StyleRuleType::Media || type() == StyleRuleType::Supports || type() == StyleRuleType::LayerBlock || type() == StyleRuleType::Container; }
     bool isSupportsRule() const { return type() == StyleRuleType::Supports; }
     bool isImportRule() const { return type() == StyleRuleType::Import; }
@@ -88,6 +89,7 @@ protected:
     StyleRuleBase(const StyleRuleBase&);
 
     bool hasDocumentSecurityOrigin() const { return m_hasDocumentSecurityOrigin; }
+    void setType(StyleRuleType type) { m_type = static_cast<unsigned>(type); }
 
 private:
     template<typename Visitor> constexpr decltype(auto) visitDerived(Visitor&&);
@@ -102,22 +104,16 @@ private:
 };
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleRule);
-class StyleRule final : public StyleRuleBase {
+class StyleRule : public StyleRuleBase {
     WTF_MAKE_STRUCT_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(StyleRule);
 public:
-    static Ref<StyleRule> create(bool hasDocumentSecurityOrigin, CSSSelectorList&&);
-    static Ref<StyleRule> create(Ref<StyleProperties>&&, bool hasDocumentSecurityOrigin, CSSSelectorList&&, Vector<Ref<StyleRuleBase>>&& nestedRules);
+    static Ref<StyleRule> create(Ref<StyleProperties>&&, bool hasDocumentSecurityOrigin, CSSSelectorList&&);
     Ref<StyleRule> copy() const;
     ~StyleRule();
 
     const CSSSelectorList& selectorList() const { return m_selectorList; }
-    const CSSSelectorList& resolvedSelectorList() const
-    { 
-        if (!m_resolvedSelectorList.isEmpty())
-            return m_resolvedSelectorList;
-        return m_selectorList;
-    }
-
+    const CSSSelectorList& resolvedSelectorList() const;
+    
     const StyleProperties& properties() const { return m_properties.get(); }
     MutableStyleProperties& mutableProperties();
 
@@ -139,29 +135,46 @@ public:
 
     static unsigned averageSizeInBytes();
     void setProperties(Ref<StyleProperties>&&);
-    void setNestedRules(Vector<Ref<StyleRuleBase>> nestedRules) { m_nestedRules = nestedRules; }
-    void setResolvedSelectorList(CSSSelectorList&& resolvedSelectorList) const { m_resolvedSelectorList = WTFMove(resolvedSelectorList); }
-    const Vector<Ref<StyleRuleBase>>& nestedRules() const { return m_nestedRules; }
-    void appendNestedRule(Ref<StyleRuleBase> rule) { m_nestedRules.append(rule); }
 
-private:
-    StyleRule(Ref<StyleProperties>&&, bool hasDocumentSecurityOrigin, CSSSelectorList&&, Vector<Ref<StyleRuleBase>>&&);
-    StyleRule(bool hasDocumentSecurityOrigin, CSSSelectorList&&);
+protected:
+    StyleRule(Ref<StyleProperties>&&, bool hasDocumentSecurityOrigin, CSSSelectorList&&);
     StyleRule(const StyleRule&);
 
+private:
     static Ref<StyleRule> createForSplitting(const Vector<const CSSSelector*>&, Ref<StyleProperties>&&, bool hasDocumentSecurityOrigin);
-
-    mutable Ref<StyleProperties> m_properties;
-    CSSSelectorList m_selectorList;
-    mutable CSSSelectorList m_resolvedSelectorList;
-    Vector<Ref<StyleRuleBase>> m_nestedRules;
-
-#if ENABLE(CSS_SELECTOR_JIT)
-    mutable UniqueArray<CompiledSelector> m_compiledSelectors;
-#endif
 
     bool m_isSplitRule { false };
     bool m_isLastRuleInSplitRule { false };
+
+    mutable Ref<StyleProperties> m_properties;
+    CSSSelectorList m_selectorList;
+#if ENABLE(CSS_SELECTOR_JIT)
+    mutable UniqueArray<CompiledSelector> m_compiledSelectors;
+#endif
+};
+
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleRuleWithNesting);
+class StyleRuleWithNesting final : public StyleRule {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(StyleRuleWithNesting);
+public:
+    static Ref<StyleRuleWithNesting> create(Ref<StyleProperties>&&, bool hasDocumentSecurityOrigin, CSSSelectorList&&, Vector<Ref<StyleRuleBase>>&& nestedRules);
+    static Ref<StyleRuleWithNesting> create(StyleRule&&);
+    Ref<StyleRuleWithNesting> copy() const;
+    ~StyleRuleWithNesting();
+
+    const Vector<Ref<StyleRuleBase>>& nestedRules() const { return m_nestedRules; }
+    Vector<Ref<StyleRuleBase>>& nestedRules() { return m_nestedRules; }
+    const CSSSelectorList& originalSelectorList() const { return m_originalSelectorList; }
+
+protected:
+    StyleRuleWithNesting(const StyleRuleWithNesting&);
+
+private:
+    StyleRuleWithNesting(Ref<StyleProperties>&&, bool hasDocumentSecurityOrigin, CSSSelectorList&&, Vector<Ref<StyleRuleBase>>&& nestedRules);
+    StyleRuleWithNesting(StyleRule&&);
+
+    Vector<Ref<StyleRuleBase>> m_nestedRules;
+    CSSSelectorList m_originalSelectorList;
 };
 
 class StyleRuleFontFace final : public StyleRuleBase {
@@ -272,6 +285,9 @@ public:
 
     void wrapperInsertRule(unsigned, Ref<StyleRuleBase>&&);
     void wrapperRemoveRule(unsigned);
+
+    friend class CSSGroupingRule;
+    friend class CSSStyleSheet;
 
 protected:
     StyleRuleGroup(StyleRuleType, Vector<RefPtr<StyleRuleBase>>&&);
@@ -428,7 +444,11 @@ inline CompiledSelector& StyleRule::compiledSelectorForListIndex(unsigned index)
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::StyleRule)
-    static bool isType(const WebCore::StyleRuleBase& rule) { return rule.isStyleRule(); }
+    static bool isType(const WebCore::StyleRuleBase& rule) { return rule.type() == WebCore::StyleRuleType::Style; }
+SPECIALIZE_TYPE_TRAITS_END()
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::StyleRuleWithNesting)
+    static bool isType(const WebCore::StyleRuleBase& rule) { return rule.type() == WebCore::StyleRuleType::StyleWithNesting; }
 SPECIALIZE_TYPE_TRAITS_END()
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::StyleRuleGroup)

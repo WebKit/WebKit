@@ -39,7 +39,7 @@ String deviceName(); // Thread-safe.
 WEBCORE_EXPORT bool deviceClassIsSmallScreen();
 
 // FIXME: How does this differ from !deviceClassIsSmallScreen()?
-bool deviceHasIPadCapability();
+WEBCORE_EXPORT bool deviceHasIPadCapability();
 
 }
 

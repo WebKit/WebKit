@@ -13,7 +13,7 @@ PASS [Worker] fileHandle2.kind is "file"
 [Worker] Test move to a file handle:
 PASS [Worker] moveFileError.toString() is "TypeMismatchError: The type of an object was incompatible with the expected type of the parameter associated to the object."
 [Worker] Test move to a destination with existing file:
-PASS [Worker] moveFileError.toString() is "UnknownError: The operation failed for an unknown transient reason (e.g. out of memory)."
+PASS [Worker] fileHandle.name is "secondFile"
 [Worker] Test move with an invalid name:
 PASS [Worker] moveFileError.toString() is "TypeError: Name is invalid"
 PASS [Worker] moveFileError.toString() is "TypeError: Name is invalid"

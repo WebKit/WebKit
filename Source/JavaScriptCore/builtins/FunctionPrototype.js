@@ -56,38 +56,3 @@ function symbolHasInstance(value)
     var target = this.prototype;
     return @instanceOf(value, target);
 }
-
-function bind(thisValue)
-{
-    "use strict";
-
-    var target = this;
-    if (!@isCallable(target))
-        @throwTypeError("|this| is not a function inside Function.prototype.bind");
-
-    var argumentCount = @argumentCount();
-    var boundArgs = null;
-    var numBoundArgs = 0;
-    if (argumentCount > 1) {
-        numBoundArgs = argumentCount - 1;
-        boundArgs = @createArgumentsButterfly();
-    }
-
-    var length = 0;
-    if (@hasOwnLengthProperty(target)) {
-        var lengthValue = target.length;
-        if (typeof lengthValue === "number") {
-            lengthValue = @toIntegerOrInfinity(lengthValue);
-            // Note that we only care about positive lengthValues, however, this comparision
-            // against numBoundArgs suffices to prove we're not a negative number.
-            if (lengthValue > numBoundArgs)
-                length = lengthValue - numBoundArgs;
-        }
-    }
-
-    var name = target.name;
-    if (typeof name !== "string")
-        name = "";
-
-    return @makeBoundFunction(target, thisValue, boundArgs, length, name);
-}

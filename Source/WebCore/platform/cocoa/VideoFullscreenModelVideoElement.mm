@@ -29,13 +29,13 @@
 #if ENABLE(VIDEO_PRESENTATION_MODE)
 
 #import "AddEventListenerOptions.h"
-#import "DOMWindow.h"
 #import "Event.h"
 #import "EventListener.h"
 #import "EventNames.h"
 #import "HTMLElement.h"
 #import "HTMLVideoElement.h"
 #import "History.h"
+#import "LocalDOMWindow.h"
 #import "Logging.h"
 #import "MediaControlsHost.h"
 #import "Page.h"
@@ -151,8 +151,8 @@ void VideoFullscreenModelVideoElement::setVideoFullscreenLayer(PlatformLayer* vi
 #else
     [m_videoFullscreenLayer setAnchorPoint:CGPointMake(0.5, 0.5)];
 #endif
-    [m_videoFullscreenLayer setBounds:m_videoFrame];
-    
+    [m_videoFullscreenLayer setFrame:m_videoFrame];
+
     if (!m_videoElement) {
         completionHandler();
         return;
@@ -187,9 +187,15 @@ void VideoFullscreenModelVideoElement::requestFullscreenMode(HTMLMediaElementEnu
 void VideoFullscreenModelVideoElement::setVideoLayerFrame(FloatRect rect)
 {
     m_videoFrame = rect;
-    [m_videoFullscreenLayer setBounds:CGRect(rect)];
+    [m_videoFullscreenLayer setFrame:CGRect(rect)];
     if (m_videoElement)
         m_videoElement->setVideoFullscreenFrame(rect);
+}
+
+void VideoFullscreenModelVideoElement::setVideoInlineSizeFenced(const FloatSize& size, const WTF::MachSendRight& fence)
+{
+    if (m_videoElement)
+        m_videoElement->setVideoInlineSizeFenced(size, fence);
 }
 
 void VideoFullscreenModelVideoElement::setVideoLayerGravity(MediaPlayer::VideoGravity gravity)

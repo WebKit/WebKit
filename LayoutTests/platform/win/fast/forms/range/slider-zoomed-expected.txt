@@ -1,2 +1,0 @@
-
-FAIL: expected slider value 72, got 71

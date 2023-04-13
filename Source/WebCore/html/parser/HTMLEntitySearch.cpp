@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2010 Google, Inc. All Rights Reserved.
+ * Copyright (C) 2023 Apple, Inc. All Rights Reserved.
+ * Copyright (C) 2010-2014 Google, Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,24 +31,26 @@
 
 namespace WebCore {
 
-static const HTMLEntityTableEntry* halfway(const HTMLEntityTableEntry* left, const HTMLEntityTableEntry* right)
+static const HTMLEntityTableEntry* midpoint(const HTMLEntityTableEntry* left, const HTMLEntityTableEntry* right)
 {
     return &left[(right - left) / 2];
 }
 
 HTMLEntitySearch::HTMLEntitySearch()
-    : m_currentLength(0)
-    , m_mostRecentMatch(0)
-    , m_first(HTMLEntityTable::firstEntry())
+    : m_first(HTMLEntityTable::firstEntry())
     , m_last(HTMLEntityTable::lastEntry())
 {
 }
 
 HTMLEntitySearch::CompareResult HTMLEntitySearch::compare(const HTMLEntityTableEntry* entry, UChar nextCharacter) const
 {
-    if (entry->length < m_currentLength + 1)
-        return Before;
-    UChar entryNextCharacter = entry->entity[m_currentLength];
+    UChar entryNextCharacter;
+    if (entry->nameLengthExcludingSemicolon < m_currentLength + 1) {
+        if (!entry->nameIncludesTrailingSemicolon || entry->nameLengthExcludingSemicolon < m_currentLength)
+            return Before;
+        entryNextCharacter = ';';
+    } else
+        entryNextCharacter = entry->nameCharacters()[m_currentLength];
     if (entryNextCharacter == nextCharacter)
         return Prefix;
     return entryNextCharacter < nextCharacter ? Before : After;
@@ -55,8 +58,8 @@ HTMLEntitySearch::CompareResult HTMLEntitySearch::compare(const HTMLEntityTableE
 
 const HTMLEntityTableEntry* HTMLEntitySearch::findFirst(UChar nextCharacter) const
 {
-    const HTMLEntityTableEntry* left = m_first;
-    const HTMLEntityTableEntry* right = m_last;
+    auto* left = m_first;
+    auto* right = m_last;
     if (left == right)
         return left;
     CompareResult result = compare(left, nextCharacter);
@@ -65,7 +68,7 @@ const HTMLEntityTableEntry* HTMLEntitySearch::findFirst(UChar nextCharacter) con
     if (result == After)
         return right;
     while (left + 1 < right) {
-        const HTMLEntityTableEntry* probe = halfway(left, right);
+        auto* probe = midpoint(left, right);
         result = compare(probe, nextCharacter);
         if (result == Before)
             left = probe;
@@ -80,8 +83,8 @@ const HTMLEntityTableEntry* HTMLEntitySearch::findFirst(UChar nextCharacter) con
 
 const HTMLEntityTableEntry* HTMLEntitySearch::findLast(UChar nextCharacter) const
 {
-    const HTMLEntityTableEntry* left = m_first;
-    const HTMLEntityTableEntry* right = m_last;
+    auto* left = m_first;
+    auto* right = m_last;
     if (left == right)
         return right;
     CompareResult result = compare(right, nextCharacter);
@@ -90,7 +93,7 @@ const HTMLEntityTableEntry* HTMLEntitySearch::findLast(UChar nextCharacter) cons
     if (result == Before)
         return left;
     while (left + 1 < right) {
-        const HTMLEntityTableEntry* probe = halfway(left, right);
+        auto* probe = midpoint(left, right);
         result = compare(probe, nextCharacter);
         if (result == After)
             right = probe;
@@ -118,9 +121,8 @@ void HTMLEntitySearch::advance(UChar nextCharacter)
             return fail();
     }
     ++m_currentLength;
-    if (m_first->length != m_currentLength) {
+    if (m_first->nameLength() != m_currentLength)
         return;
-    }
     m_mostRecentMatch = m_first;
 }
 

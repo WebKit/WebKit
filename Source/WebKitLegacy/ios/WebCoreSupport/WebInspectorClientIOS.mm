@@ -52,7 +52,6 @@ WebInspectorClient::WebInspectorClient(WebView* inspectedWebView)
 
 void WebInspectorClient::inspectedPageDestroyed()
 {
-    delete this;
 }
 
 Inspector::FrontendChannel* WebInspectorClient::openLocalFrontend(InspectorController*)
@@ -67,7 +66,7 @@ void WebInspectorClient::bringFrontendToFront()
     // iOS does not have a local inspector, nothing to do here.
 }
 
-void WebInspectorClient::didResizeMainFrame(Frame*)
+void WebInspectorClient::didResizeMainFrame(LocalFrame*)
 {
     // iOS does not have a local inspector, nothing to do here.
 }
@@ -137,7 +136,10 @@ void WebInspectorFrontendClient::setSheetRect(const FloatRect&) { }
 void WebInspectorFrontendClient::startWindowDrag() { }
 void WebInspectorFrontendClient::inspectedURLChanged(const String&) { }
 void WebInspectorFrontendClient::showCertificate(const CertificateInfo&) { }
+bool WebInspectorFrontendClient::supportsDiagnosticLogging() { return false; }
+void WebInspectorFrontendClient::logDiagnosticEvent(const String& eventName, const WebCore::DiagnosticLoggingClient::ValueDictionary&) { }
 void WebInspectorFrontendClient::updateWindowTitle() const { }
+bool WebInspectorFrontendClient::canSave(WebCore::InspectorFrontendClient::SaveMode) { return false; }
 void WebInspectorFrontendClient::save(Vector<InspectorFrontendClient::SaveData>&&, bool /* forceSaveAs */) { }
 
 #endif // PLATFORM(IOS_FAMILY)

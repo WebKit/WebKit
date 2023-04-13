@@ -3,10 +3,10 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-    RenderSVGContainer {g} at (16,39) size 656x243
-      RenderSVGText {text} at (10,23) size 394x21 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 394x21
-          chunk 1 text run 1 at (10.00,40.00) startOffset 0 endOffset 49 width 393.00: "Test pointer events with zero opacity mask pixels"
+    RenderSVGContainer {g} at (16,39) size 653x243
+      RenderSVGText {text} at (10,23) size 392x21 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 392x21
+          chunk 1 text run 1 at (10.00,40.00) startOffset 0 endOffset 49 width 391.00: "Test pointer events with zero opacity mask pixels"
       RenderSVGResourceMasker {mask} [id="m"] [maskUnits=userSpaceOnUse] [maskContentUnits=userSpaceOnUse]
       RenderSVGRect {rect} at (16,133) size 84x84 [fill={[type=SOLID] [color=#000000]}] [x=10.00] [y=80.00] [width=50.00] [height=50.00]
       RenderSVGRect {rect} at (0,0) size 0x0 [fill={[type=SOLID] [color=#FF0000]}] [x=10.00] [y=80.00] [width=50.00] [height=50.00]

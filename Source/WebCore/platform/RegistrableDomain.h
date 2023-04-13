@@ -45,7 +45,7 @@ public:
     }
 
     explicit RegistrableDomain(const SecurityOriginData& origin)
-        : RegistrableDomain(registrableDomainFromHost(origin.host))
+        : RegistrableDomain(registrableDomainFromHost(origin.host()))
     {
     }
 
@@ -68,7 +68,7 @@ public:
 
     bool matches(const SecurityOriginData& origin) const
     {
-        return matches(origin.host);
+        return matches(origin.host());
     }
 
     RegistrableDomain isolatedCopy() const & { return RegistrableDomain { m_registrableDomain.isolatedCopy() }; }

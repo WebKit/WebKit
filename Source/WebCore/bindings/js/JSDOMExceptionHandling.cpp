@@ -24,10 +24,10 @@
 
 #include "CachedScript.h"
 #include "DOMException.h"
-#include "DOMWindow.h"
 #include "JSDOMException.h"
 #include "JSDOMPromiseDeferred.h"
-#include "JSDOMWindow.h"
+#include "JSLocalDOMWindow.h"
+#include "LocalDOMWindow.h"
 #include "ScriptExecutionContext.h"
 #include <JavaScriptCore/ErrorHandlingScope.h>
 #include <JavaScriptCore/Exception.h>
@@ -107,7 +107,7 @@ void reportException(JSGlobalObject* lexicalGlobalObject, JSC::Exception* except
     vm.clearLastException();
 
     auto* globalObject = jsCast<JSDOMGlobalObject*>(lexicalGlobalObject);
-    if (auto* window = jsDynamicCast<JSDOMWindow*>(globalObject)) {
+    if (auto* window = jsDynamicCast<JSLocalDOMWindow*>(globalObject)) {
         if (!window->wrapped().isCurrentlyDisplayedInFrame())
             return;
     }

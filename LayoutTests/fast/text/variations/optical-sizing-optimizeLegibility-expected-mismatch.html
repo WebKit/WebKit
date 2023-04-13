@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+@font-face {
+    font-family: "Amstelvar";
+    src: url("resources/Amstelvar/Amstelvar-Roman-VF104.ttf") format("truetype");
+}
+#target {
+    font: 60px "Amstelvar";
+    text-rendering: optimizeLegibility;
+    font-variation-settings: "opsz" 90;
+}
+</style>
+</head>
+<body>
+<p>This test makes sure that <code>font-variation-settings</code> is applied after <code>text-rendering: optimizeLegibility</code>. The test passes if the text below has a different opsz value used.</p>
+<span id="target">Hello, world!</span>
+</body>
+</html>

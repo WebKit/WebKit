@@ -30,6 +30,7 @@
 #include "DFGAbstractValue.h"
 #include "InitializeThreading.h"
 #include <wtf/DataLog.h>
+#include <wtf/WTFProcess.h>
 #include <wtf/text/StringCommon.h>
 
 // We don't have a NO_RETURN_DUE_TO_EXIT, nor should we. That's ridiculous.
@@ -39,7 +40,7 @@ static void usage()
 {
     dataLog("Usage: testdfg [<filter>]\n");
     if (hiddenTruthBecauseNoReturnIsStupid())
-        exit(1);
+        exitProcess(1);
 }
 
 #if ENABLE(DFG_JIT)

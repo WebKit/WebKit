@@ -1,0 +1,93 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ ManagedMediaSourceEnabled=true MediaSourceEnabled=true ] -->
+<html>
+<head>
+    <title>managedmediasource-memoryPressure</title>
+    <script src="../../media/media-source/media-source-loader.js"></script>
+    <script src="../../media/video-test.js"></script>
+    <script>
+    var loader;
+    var source;
+    var sourceBuffer;
+    var gotBufferedChange = false;
+    var bufferedStart;
+
+    function loaderPromise(loader) {
+        return new Promise((resolve, reject) => {
+            loader.onload = resolve;
+            loader.onerror = reject;
+        });
+    }
+
+    async function loadData() {
+        for (let i = 1; i < 10; i++) {
+                consoleWrite('Append a media segment.')
+                run('sourceBuffer.appendBuffer(loader.mediaSegment(0))');
+                await waitFor(sourceBuffer, 'update');
+                run('sourceBuffer.timestampOffset = sourceBuffer.buffered.end(sourceBuffer.buffered.length - 1)');
+            }
+        run('source.endOfStream()');
+        return waitFor(source, 'sourceended');
+    }
+
+    window.addEventListener('load', async event => {
+        try {
+            findMediaElement();
+
+            let manifests = [ 'content/test-opus-manifest.json', 'content/test-vorbis-manifest.json', 'content/test-48khz-manifest.json', 'content/test-xhe-aac-manifest.json' ];
+            for (const manifest of manifests) {
+                loader = new MediaSourceLoader(manifest);
+                await loaderPromise(loader);
+                if (ManagedMediaSource.isTypeSupported(loader.type()))
+                    break;
+            }
+
+            source = new ManagedMediaSource();
+            run('video.src = URL.createObjectURL(source)');
+            await waitFor(source, 'sourceopen');
+            waitFor(video, 'error').then(failTest);
+
+            run('sourceBuffer = source.addSourceBuffer(loader.type())');
+
+            run('sourceBuffer.appendBuffer(loader.initSegment())');
+            await waitFor(sourceBuffer, 'update');
+
+            await loadData();
+
+            run('video.currentTime = video.duration / 2');
+            await waitFor(video, 'seeked');
+
+            run('bufferedStart = sourceBuffer.buffered.start(0)');
+            run('internals.beginSimulatedMemoryPressure()');
+            await waitFor(sourceBuffer, 'bufferedchange');
+            testExpected('bufferedStart', 'sourceBuffer.buffered.start(0)', '!=');
+            run('internals.endSimulatedMemoryPressure()');
+
+            // Remove all content.
+            run('sourceBuffer.remove(0, 999999)');
+            await waitFor(sourceBuffer, 'updateend');
+
+            // Check that data is evicted even if media is currently playing.
+            await loadData();
+            // Seek to middle of buffered range.
+            run('video.currentTime = sourceBuffer.buffered.start(0) + (sourceBuffer.buffered.end(0) - sourceBuffer.buffered.start(0)) / 2');
+            await waitFor(video, 'seeked');
+            await video.play();
+            testExpected('video.paused', false);
+
+            run('bufferedStart = sourceBuffer.buffered.start(0)');
+            run('internals.beginSimulatedMemoryPressure()');
+            await waitFor(sourceBuffer, 'bufferedchange');
+            testExpected('bufferedStart', 'sourceBuffer.buffered.start(0)', '!=');
+            run('internals.endSimulatedMemoryPressure()');
+
+            endTest();
+        } catch (e) {
+            failTest(`Caught exception: "${e}"`);
+        }
+    });
+    </script>
+</head>
+<body>
+    <video controls></video>
+</body>
+</html>

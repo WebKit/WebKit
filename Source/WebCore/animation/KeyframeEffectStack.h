@@ -33,6 +33,7 @@
 
 namespace WebCore {
 
+class Document;
 class KeyframeEffect;
 class RenderStyle;
 
@@ -67,6 +68,11 @@ public:
     void addInvalidCSSAnimationName(const String&);
 
     void lastStyleChangeEventStyleDidChange(const RenderStyle* previousStyle, const RenderStyle* currentStyle);
+    void cascadeDidOverrideProperties(const HashSet<AnimatableProperty>&, const Document&);
+
+    const HashSet<AnimatableProperty>& acceleratedPropertiesOverriddenByCascade() const { return m_acceleratedPropertiesOverriddenByCascade; }
+
+    void applyPendingAcceleratedActions() const;
 
 private:
     void ensureEffectsAreSorted();
@@ -76,6 +82,7 @@ private:
 
     Vector<WeakPtr<KeyframeEffect>> m_effects;
     HashSet<String> m_invalidCSSAnimationNames;
+    HashSet<AnimatableProperty> m_acceleratedPropertiesOverriddenByCascade;
     RefPtr<const AnimationList> m_cssAnimationList;
     bool m_isSorted { true };
 };

@@ -28,6 +28,7 @@
 
 #if PLATFORM(IOS_FAMILY) && ENABLE(DEVICE_ORIENTATION)
 
+#include "MessageSenderInlines.h"
 #include "WebDeviceOrientationUpdateProviderMessages.h"
 #include "WebDeviceOrientationUpdateProviderProxyMessages.h"
 #include "WebPage.h"

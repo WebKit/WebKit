@@ -5,7 +5,9 @@ Before extending the selection:
 |   "The quick brown fox jumped over the "
 |   <span>
 |     id="start"
-|     "<#selection-anchor>lazy dog.<#selection-focus>"
+|     <#selection-anchor>
+|     "lazy dog."
+|     <#selection-focus>
 | "\n    "
 | <p>
 |   <span>

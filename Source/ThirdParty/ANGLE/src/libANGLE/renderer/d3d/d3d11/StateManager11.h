@@ -140,14 +140,11 @@ class ShaderConstants11 : angle::NonCopyable
 
     struct SamplerMetadata
     {
-        SamplerMetadata()
-            : baseLevel(0), internalFormatBits(0), wrapModes(0), padding(0), intBorderColor{0}
-        {}
+        SamplerMetadata() : baseLevel(0), wrapModes(0), padding{0}, intBorderColor{0} {}
 
         int baseLevel;
-        int internalFormatBits;
         int wrapModes;
-        int padding;  // This just pads the struct to 32 bytes
+        int padding[2];  // This just pads the struct to 32 bytes
         int intBorderColor[4];
     };
 
@@ -198,6 +195,7 @@ class StateManager11 final : angle::NonCopyable
 
     void syncState(const gl::Context *context,
                    const gl::State::DirtyBits &dirtyBits,
+                   const gl::State::ExtendedDirtyBits &extendedDirtyBits,
                    gl::Command command);
 
     angle::Result updateStateForCompute(const gl::Context *context,

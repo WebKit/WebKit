@@ -8,7 +8,7 @@ layer at (0,0) size 800x600
     RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
     RenderSVGText {text} at (170,10) size 140x19 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 140x18
-        chunk 1 (middle anchor) text run 1 at (170.10,25.00) startOffset 0 endOffset 18 width 139.80: "<animateTransform>"
+        chunk 1 (middle anchor) text run 1 at (170.38,25.00) startOffset 0 endOffset 18 width 139.23: "<animateTransform>"
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
       RenderSVGContainer {g} at (0,0) size 75x75
         RenderSVGEllipse {circle} at (0,0) size 69x69 [stroke={[type=SOLID] [color=#C0C0C0] [stroke width=2.00]}] [cx=0.00] [cy=0.00] [r=40.00]
@@ -73,7 +73,7 @@ layer at (0,0) size 800x600
           RenderSVGInlineText {#text} at (0,0) size 76x18
             chunk 1 (middle anchor) text run 1 at (2.20,100.00) startOffset 0 endOffset 11 width 75.60: "type=rotate"
         RenderSVGText {text} at (-1,100) size 82x19 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 82x18
+          RenderSVGInlineText {#text} at (0,0) size 81x18
             chunk 1 (middle anchor) text run 1 at (-0.50,115.00) startOffset 0 endOffset 12 width 81.00: "(with cx/cy)"
       RenderSVGContainer {g} at (213,346) size 174x152 [transform={m=((1.00,0.00)(0.00,1.00)) t=(180.00,220.00)}]
         RenderSVGEllipse {circle} at (213,346) size 41x41 [stroke={[type=SOLID] [color=#C0C0C0] [stroke width=4.00]}] [cx=-40.00] [cy=0.00] [r=10.00]
@@ -110,6 +110,6 @@ layer at (0,0) size 800x600
         RenderSVGText {text} at (-36,45) size 72x19 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 71x18
             chunk 1 (middle anchor) text run 1 at (-35.40,60.00) startOffset 0 endOffset 10 width 70.80: "type=scale"
-        RenderSVGText {text} at (-31,60) size 61x19 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 61x18
+        RenderSVGText {text} at (-30,60) size 60x19 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 60x18
             chunk 1 (middle anchor) text run 1 at (-30.00,75.00) startOffset 0 endOffset 9 width 60.00: "(sx only)"

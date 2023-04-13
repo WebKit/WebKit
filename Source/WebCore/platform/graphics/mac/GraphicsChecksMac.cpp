@@ -43,12 +43,17 @@ enum {
 
 static io_connect_t attachToAppleGraphicsControl()
 {
-    mach_port_t masterPort = MACH_PORT_NULL;
+    mach_port_t mainPort;
 
+#if HAVE(IOKIT_MAIN_PORT)
+    if (IOMainPort(MACH_PORT_NULL, &mainPort) != KERN_SUCCESS)
+        return IO_OBJECT_NULL;
+#else
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    if (IOMasterPort(MACH_PORT_NULL, &masterPort) != KERN_SUCCESS)
+    if (IOMasterPort(MACH_PORT_NULL, &mainPort) != KERN_SUCCESS)
         return IO_OBJECT_NULL;
     ALLOW_DEPRECATED_DECLARATIONS_END
+#endif
 
     CFDictionaryRef classToMatch = IOServiceMatching("AppleGraphicsControl");
     if (!classToMatch)
@@ -56,7 +61,7 @@ static io_connect_t attachToAppleGraphicsControl()
 
     kern_return_t kernResult;
     io_iterator_t iterator;
-    if ((kernResult = IOServiceGetMatchingServices(masterPort, classToMatch, &iterator)) != KERN_SUCCESS)
+    if ((kernResult = IOServiceGetMatchingServices(mainPort, classToMatch, &iterator)) != KERN_SUCCESS)
         return IO_OBJECT_NULL;
 
     io_service_t serviceObject = IOIteratorNext(iterator);
@@ -65,9 +70,7 @@ static io_connect_t attachToAppleGraphicsControl()
         return IO_OBJECT_NULL;
 
     io_connect_t dataPort;
-    IOObjectRetain(serviceObject);
     kernResult = IOServiceOpen(serviceObject, mach_task_self(), 0, &dataPort);
-    IOObjectRelease(serviceObject);
 
     return (kernResult == KERN_SUCCESS) ? dataPort : IO_OBJECT_NULL;
 }

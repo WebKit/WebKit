@@ -206,6 +206,10 @@
     _data = adoptNS([data copy]);
     _suggestedFilename = adoptNS([filename copy]);
 
+#if HAVE(SETUSEIOSURFACEFORTILES)
+    [PDFHostViewController setUseIOSurfaceForTiles:false];
+#endif
+
     [PDFHostViewController createHostView:[self, weakSelf = WeakObjCPtr<WKPDFView>(self)](PDFHostViewController *hostViewController) {
         ASSERT(isMainRunLoop());
 
@@ -697,6 +701,16 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (UITextRange *)selectedTextRange
 {
     return nil;
+}
+
+- (BOOL)supportsTextReplacement
+{
+    return NO;
+}
+
+- (void)scrollRangeToVisible:(UITextRange *)range inDocument:(UITextSearchDocumentIdentifier)document
+{
+    // Intentionally empty. PDFHostViewController has a single method for decoration and scrolling, so scrolling is performed in `decorateFoundTextRange`.
 }
 
 - (NSComparisonResult)compareFoundRange:(UITextRange *)fromRange toRange:(UITextRange *)toRange inDocument:(UITextSearchDocumentIdentifier)document

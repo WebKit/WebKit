@@ -58,4 +58,21 @@ const CSSParserContext& CSSRule::parserContext() const
     return styleSheet ? styleSheet->contents().parserContext() : strictCSSParserContext();
 }
 
+bool CSSRule::hasStyleRuleAncestor() const
+{
+    auto current = this->parentRule();
+    while (current) {
+        if (current->styleRuleType() == StyleRuleType::Style)
+            return true;
+
+        current = current->parentRule();
+    }
+    return false;
+}
+
+RefPtr<StyleRuleWithNesting> CSSRule::prepareChildStyleRuleForNesting(StyleRule&)
+{
+    return nullptr;
+}
+
 } // namespace WebCore

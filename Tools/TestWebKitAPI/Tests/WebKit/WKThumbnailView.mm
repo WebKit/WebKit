@@ -27,13 +27,15 @@
 
 #if PLATFORM(MAC)
 
+#import "CGImagePixelReader.h"
+#import "EnableUISideCompositingScope.h"
 #import "JavaScriptTest.h"
 #import "OffscreenWindow.h"
 #import "PlatformUtilities.h"
 #import "PlatformWebView.h"
 #import "TestWKWebView.h"
 #import "WKWebViewConfigurationExtras.h"
-#import <WebKit/WKViewPrivate.h>
+#import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/_WKThumbnailView.h>
 #import <wtf/RetainPtr.h>
 
@@ -41,6 +43,24 @@ static bool didFinishLoad;
 static bool didTakeSnapshot;
 
 static void *snapshotSizeChangeKVOContext = &snapshotSizeChangeKVOContext;
+
+@interface NSView (TestWebKitAPI)
+@property (readonly, nonatomic) CGImageRef _test_cgImage;
+@end
+
+@implementation NSView (TestWebKitAPI)
+
+- (CGImageRef)_test_cgImage
+{
+    auto bounds = self.bounds;
+    auto image = adoptNS([[NSImage alloc] initWithSize:bounds.size]);
+    [image lockFocus];
+    [self.layer renderInContext:NSGraphicsContext.currentContext.CGContext];
+    [image unlockFocus];
+    return [image CGImageForProposedRect:nil context:nil hints:nil];
+}
+
+@end
 
 @interface WKWebView ()
 - (WKPageRef)_pageForTesting;
@@ -87,7 +107,7 @@ TEST(WebKit, WKThumbnailViewKeepSnapshotWhenRemovedFromSuperview)
 {
     WKRetainPtr<WKContextRef> context = adoptWK(WKContextCreateWithConfiguration(nullptr));
     PlatformWebView webView(context.get());
-    WKView *wkView = webView.platformView();
+    WKWebView *wkView = webView.platformView();
     setPageLoaderClient(webView.page());
     WKPageSetCustomBackingScaleFactor(webView.page(), 1);
 
@@ -96,7 +116,7 @@ TEST(WebKit, WKThumbnailViewKeepSnapshotWhenRemovedFromSuperview)
     Util::run(&didFinishLoad);
     didFinishLoad = false;
 
-    RetainPtr<_WKThumbnailView> thumbnailView = adoptNS([[_WKThumbnailView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100) fromWKView:wkView]);
+    RetainPtr<_WKThumbnailView> thumbnailView = adoptNS([[_WKThumbnailView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100) fromWKWebView:wkView]);
 
     RetainPtr<SnapshotSizeObserver> observer = adoptNS([[SnapshotSizeObserver alloc] init]);
 
@@ -133,7 +153,7 @@ TEST(WebKit, WKThumbnailViewMaximumSnapshotSize)
 {
     WKRetainPtr<WKContextRef> context = adoptWK(WKContextCreateWithConfiguration(nullptr));
     PlatformWebView webView(context.get());
-    WKView *wkView = webView.platformView();
+    WKWebView *wkView = webView.platformView();
     setPageLoaderClient(webView.page());
     WKPageSetCustomBackingScaleFactor(webView.page(), 1);
 
@@ -142,7 +162,7 @@ TEST(WebKit, WKThumbnailViewMaximumSnapshotSize)
     Util::run(&didFinishLoad);
     didFinishLoad = false;
 
-    RetainPtr<_WKThumbnailView> thumbnailView = adoptNS([[_WKThumbnailView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100) fromWKView:wkView]);
+    RetainPtr<_WKThumbnailView> thumbnailView = adoptNS([[_WKThumbnailView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100) fromWKWebView:wkView]);
 
     RetainPtr<SnapshotSizeObserver> observer = adoptNS([[SnapshotSizeObserver alloc] init]);
 
@@ -302,6 +322,55 @@ TEST(WebKit, WKThumbnailViewResetsViewStateWhenUnparented)
     [thumbnailView removeObserver:observer.get() forKeyPath:@"snapshotSize" context:snapshotSizeChangeKVOContext];
 }
 
+static std::pair<WebCore::Color, WebCore::Color> leftCornerColorsForThumbnailView(_WKThumbnailView *thumbnailView)
+{
+    __block RetainPtr<CGImageRef> snapshot;
+    __block bool done = false;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        snapshot = thumbnailView._test_cgImage;
+        done = true;
+    });
+    Util::run(&done);
+    CGImagePixelReader pixelReader { snapshot.get() };
+    return std::pair { pixelReader.at(10, 10), pixelReader.at(10, pixelReader.height() - 10) };
+}
+
+void checkThumbnailViewSnapshotConsistency(TestWKWebView *webView)
+{
+    auto thumbnail = adoptNS([[_WKThumbnailView alloc] initWithFrame:webView.frame fromWKWebView:webView]);
+    [webView.window.contentView addSubview:thumbnail.get()];
+
+    auto [topLeftBeforeSnapshot, bottomLeftBeforeSnapshot] = leftCornerColorsForThumbnailView(thumbnail.get());
+    [webView stringByEvaluatingJavaScript:@"1"];
+    auto [topLeftAfterSnapshot, bottomLeftAfterSnapshot] = leftCornerColorsForThumbnailView(thumbnail.get());
+
+    EXPECT_EQ(topLeftBeforeSnapshot, topLeftAfterSnapshot);
+    EXPECT_EQ(bottomLeftBeforeSnapshot, bottomLeftAfterSnapshot);
+}
+
+TEST(WebKit, WKThumbnailViewLayerReparentingWithUISideCompositing)
+{
+    EnableUISideCompositingScope enableUISideCompositing;
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
+    [webView synchronouslyLoadTestPageNamed:@"fixed-nav-bar"];
+    [webView waitForNextPresentationUpdate];
+
+    checkThumbnailViewSnapshotConsistency(webView.get());
+}
+
+TEST(WebKit, WKThumbnailViewLayerReparentingWithUISideCompositingAndTopContentInset)
+{
+    EnableUISideCompositingScope enableUISideCompositing;
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
+    [webView _setAutomaticallyAdjustsContentInsets:NO];
+    [webView _setTopContentInset:100];
+    [webView synchronouslyLoadTestPageNamed:@"fixed-nav-bar"];
+    [webView waitForNextPresentationUpdate];
+
+    checkThumbnailViewSnapshotConsistency(webView.get());
+}
 
 } // namespace TestWebKitAPI
 

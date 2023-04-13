@@ -16,9 +16,6 @@
 if (window.testRunner) {
     testRunner.waitUntilDone();
 }
-// Emulate a big PDF on iOS (which has the PDFImageCachingPolicy set to BelowMemoryLimit).
-if (window.internals)
-    internals.settings.setPDFImageCachingPolicy("Disabled");
 let canvas = document.getElementById("canvas");
 let context = canvas.getContext("2d");
 let image = document.getElementById("image");

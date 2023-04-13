@@ -28,27 +28,20 @@
 #include "ProtectionSpaceBase.h"
 #include <wtf/RetainPtr.h>
 
-#if USE(CFURLCONNECTION)
-typedef struct _CFURLProtectionSpace* CFURLProtectionSpaceRef;
-#endif
-
 OBJC_CLASS NSURLProtectionSpace;
 
 namespace WebCore {
 
 class ProtectionSpace : public ProtectionSpaceBase {
 public:
-    ProtectionSpace() : ProtectionSpaceBase() { }
-    ProtectionSpace(const String& host, int port, ServerType serverType, const String& realm, AuthenticationScheme authenticationScheme)
-        : ProtectionSpaceBase(host, port, serverType, realm, authenticationScheme)
-    {
-    }
+    struct PlatformData {
+        RetainPtr<NSURLProtectionSpace> nsSpace;
+    };
 
+    ProtectionSpace() : ProtectionSpaceBase() { }
+    WEBCORE_EXPORT ProtectionSpace(const String& host, int port, ServerType, const String& realm, AuthenticationScheme, std::optional<PlatformData> = std::nullopt);
     ProtectionSpace(WTF::HashTableDeletedValueType deletedValue) : ProtectionSpaceBase(deletedValue) { }
 
-#if USE(CFURLCONNECTION)
-    explicit ProtectionSpace(CFURLProtectionSpaceRef);
-#endif
     WEBCORE_EXPORT explicit ProtectionSpace(NSURLProtectionSpace *);
 
     static bool platformCompare(const ProtectionSpace& a, const ProtectionSpace& b);
@@ -56,11 +49,9 @@ public:
     bool encodingRequiresPlatformData() const { return m_nsSpace && encodingRequiresPlatformData(m_nsSpace.get()); }
 
     WEBCORE_EXPORT bool receivesCredentialSecurely() const;
-
-#if USE(CFURLCONNECTION)
-    CFURLProtectionSpaceRef cfSpace() const;
-#endif
     WEBCORE_EXPORT NSURLProtectionSpace *nsSpace() const;
+    
+    WEBCORE_EXPORT std::optional<PlatformData> getPlatformDataToSerialize() const;
 
 private:
     WEBCORE_EXPORT static bool encodingRequiresPlatformData(NSURLProtectionSpace *);

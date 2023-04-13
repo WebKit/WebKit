@@ -32,7 +32,7 @@
 namespace WebCore {
 
 CSSContentDistributionValue::CSSContentDistributionValue(CSSValueID distribution, CSSValueID position, CSSValueID overflow)
-    : CSSValue(CSSContentDistributionClass)
+    : CSSValue(ContentDistributionClass)
     , m_distribution(distribution)
     , m_position(position)
     , m_overflow(overflow)

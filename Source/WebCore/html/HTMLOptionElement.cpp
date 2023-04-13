@@ -30,7 +30,7 @@
 #include "AXObjectCache.h"
 #include "Document.h"
 #include "DocumentInlines.h"
-#include "ElementAncestorIterator.h"
+#include "ElementAncestorIteratorInlines.h"
 #include "HTMLDataListElement.h"
 #include "HTMLNames.h"
 #include "HTMLOptGroupElement.h"
@@ -54,10 +54,9 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLOptionElement);
 using namespace HTMLNames;
 
 HTMLOptionElement::HTMLOptionElement(const QualifiedName& tagName, Document& document)
-    : HTMLElement(tagName, document)
+    : HTMLElement(tagName, document, CreateHTMLOptionElement)
 {
     ASSERT(hasTagName(optionTag));
-    setHasCustomStyleResolveCallbacks();
 }
 
 Ref<HTMLOptionElement> HTMLOptionElement::create(Document& document)
@@ -174,7 +173,7 @@ int HTMLOptionElement::index() const
     return 0;
 }
 
-void HTMLOptionElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void HTMLOptionElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
 #if ENABLE(DATALIST_ELEMENT)
     if (name == valueAttr) {
@@ -183,7 +182,7 @@ void HTMLOptionElement::parseAttribute(const QualifiedName& name, const AtomStri
     } else
 #endif
     if (name == disabledAttr) {
-        bool newDisabled = !value.isNull();
+        bool newDisabled = !newValue.isNull();
         if (m_disabled != newDisabled) {
             Style::PseudoClassChangeInvalidation disabledInvalidation(*this, { { CSSSelector::PseudoClassDisabled, newDisabled },  { CSSSelector::PseudoClassEnabled, !newDisabled } });
             m_disabled = newDisabled;
@@ -192,16 +191,16 @@ void HTMLOptionElement::parseAttribute(const QualifiedName& name, const AtomStri
         }
     } else if (name == selectedAttr) {
         // FIXME: Use PseudoClassChangeInvalidation in other elements that implement matchesDefaultPseudoClass().
-        Style::PseudoClassChangeInvalidation defaultInvalidation(*this, CSSSelector::PseudoClassDefault, !value.isNull());
-        m_isDefault = !value.isNull();
+        Style::PseudoClassChangeInvalidation defaultInvalidation(*this, CSSSelector::PseudoClassDefault, !newValue.isNull());
+        m_isDefault = !newValue.isNull();
 
         // FIXME: This doesn't match what the HTML specification says.
         // The specification implies that removing the selected attribute or
         // changing the value of a selected attribute that is already present
         // has no effect on whether the element is selected.
-        setSelectedState(!value.isNull());
+        setSelectedState(!newValue.isNull());
     } else
-        HTMLElement::parseAttribute(name, value);
+        HTMLElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }
 
 String HTMLOptionElement::value() const

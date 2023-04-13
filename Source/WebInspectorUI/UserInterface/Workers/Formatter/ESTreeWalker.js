@@ -67,6 +67,9 @@ ESTreeWalker = class ESTreeWalker
 
     _walkArray(array, parent)
     {
+        if (!array)
+            return;
+
         for (let i = 0; i < array.length; ++i)
             this._walk(array[i], parent);
     }
@@ -90,6 +93,7 @@ ESTreeWalker = class ESTreeWalker
             this._walk(node.argument, node);
             break;
         case "BlockStatement":
+        case "StaticBlock":
             this._walkArray(node.body, node);
             break;
         case "BinaryExpression":
@@ -107,6 +111,9 @@ ESTreeWalker = class ESTreeWalker
         case "CatchClause":
             this._walk(node.param, node);
             this._walk(node.body, node);
+            break;
+        case "ChainExpression":
+            this._walk(node.expression);
             break;
         case "ClassBody":
             this._walkArray(node.body, node);
@@ -243,11 +250,13 @@ ESTreeWalker = class ESTreeWalker
 
         case "ExportAllDeclaration":
             this._walk(node.source, node);
+            this._walkArray(node.assertions, node);
             break;
         case "ExportNamedDeclaration":
             this._walk(node.declaration, node);
             this._walkArray(node.specifiers, node);
             this._walk(node.source, node);
+            this._walkArray(node.assertions, node);
             break;
         case "ExportDefaultDeclaration":
             this._walk(node.declaration, node);
@@ -256,12 +265,21 @@ ESTreeWalker = class ESTreeWalker
             this._walk(node.local, node);
             this._walk(node.exported, node);
             break;
+        case "ImportAttribute":
+            this._walk(node.key, node);
+            this._walk(node.value, node);
+            break;
         case "ImportDeclaration":
             this._walkArray(node.specifiers, node);
             this._walk(node.source, node);
+            this._walkArray(node.assertions, node);
             break;
         case "ImportDefaultSpecifier":
             this._walk(node.local, node);
+            break;
+        case "ImportExpression":
+            this._walk(node.source, node);
+            this._walk(node.attributes, node);
             break;
         case "ImportNamespaceSpecifier":
             this._walk(node.local, node);
@@ -288,7 +306,7 @@ ESTreeWalker = class ESTreeWalker
         case "DebuggerStatement":
         case "EmptyStatement":
         case "Identifier":
-        case "Import":
+        case "PrivateIdentifier":
         case "Literal":
         case "Super":
         case "ThisExpression":

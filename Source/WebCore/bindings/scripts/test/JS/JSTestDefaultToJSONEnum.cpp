@@ -42,9 +42,9 @@ String convertEnumerationToString(TestDefaultToJSONEnum enumerationValue)
     return values[static_cast<size_t>(enumerationValue)];
 }
 
-template<> JSString* convertEnumerationToJS(JSGlobalObject& lexicalGlobalObject, TestDefaultToJSONEnum enumerationValue)
+template<> JSString* convertEnumerationToJS(VM& vm, TestDefaultToJSONEnum enumerationValue)
 {
-    return jsStringWithCache(lexicalGlobalObject.vm(), convertEnumerationToString(enumerationValue));
+    return jsStringWithCache(vm, convertEnumerationToString(enumerationValue));
 }
 
 template<> std::optional<TestDefaultToJSONEnum> parseEnumerationFromString<TestDefaultToJSONEnum>(const String& stringValue)

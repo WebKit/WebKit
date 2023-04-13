@@ -1,0 +1,22 @@
+<style>
+.mtableStyleClass { list-style: url('foo') inside; position: absolute; }
+</style>
+<script>
+function test() {
+    if (window.testRunner)
+        testRunner.dumpAsText();
+    mtrID.replaceWith("foo");
+    document.body.offsetTop;
+    document.body.innerHTML = 'PASS if no crash.';
+}
+</script>
+
+<body onload=test()>
+    <math display="inline">
+        <mover>
+            <mtable class="mtableStyleClass">
+                <mtr id="mtrID"></mtr>
+            </mtable>
+        </mover>
+    </math>
+</body>

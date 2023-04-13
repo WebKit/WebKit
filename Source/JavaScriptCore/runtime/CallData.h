@@ -47,6 +47,7 @@ struct CallData {
     union {
         struct {
             TaggedNativeFunction function;
+            bool isBoundFunction;
         } native;
         struct {
             FunctionExecutable* functionExecutable;

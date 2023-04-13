@@ -7,6 +7,7 @@ PASS rootHandle.name is ""
 PASS rootHandle.kind is "directory"
 PASS dirHandle.name is "dir"
 PASS dirHandle.kind is "directory"
+PASS getError.toString() is "TypeMismatchError: File type is incompatible with handle type"
 PASS isSameEntry is false
 PASS fileHandle.name is "file"
 PASS fileHandle.kind is "file"

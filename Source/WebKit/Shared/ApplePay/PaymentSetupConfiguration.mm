@@ -67,13 +67,14 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     return configuration;
 }
 
-PaymentSetupConfiguration::PaymentSetupConfiguration(const WebCore::ApplePaySetupConfiguration& configuration, const URL& url)
-    : m_configuration { toPlatformConfiguration(configuration, url) }
+RetainPtr<PKPaymentSetupConfiguration> PaymentSetupConfiguration::platformConfiguration() const
 {
+    return toPlatformConfiguration(m_configuration, m_url);
 }
 
-PaymentSetupConfiguration::PaymentSetupConfiguration(RetainPtr<PKPaymentSetupConfiguration>&& configuration)
-    : m_configuration { WTFMove(configuration) }
+PaymentSetupConfiguration::PaymentSetupConfiguration(const WebCore::ApplePaySetupConfiguration& configuration, const URL& url)
+    : m_configuration(configuration)
+    , m_url(url)
 {
 }
 

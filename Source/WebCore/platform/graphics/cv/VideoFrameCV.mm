@@ -526,13 +526,13 @@ ImageOrientation VideoFrameCV::orientation() const
     // Sample transform first flips x-coordinates, then rotates.
     switch (rotation()) {
     case VideoFrame::Rotation::None:
-        return isMirrored() ? ImageOrientation::OriginTopRight : ImageOrientation::OriginTopLeft;
+        return isMirrored() ? ImageOrientation::Orientation::OriginTopRight : ImageOrientation::Orientation::OriginTopLeft;
     case VideoFrame::Rotation::Right:
-        return isMirrored() ? ImageOrientation::OriginRightBottom : ImageOrientation::OriginRightTop;
+        return isMirrored() ? ImageOrientation::Orientation::OriginRightBottom : ImageOrientation::Orientation::OriginRightTop;
     case VideoFrame::Rotation::UpsideDown:
-        return isMirrored() ? ImageOrientation::OriginBottomLeft : ImageOrientation::OriginBottomRight;
+        return isMirrored() ? ImageOrientation::Orientation::OriginBottomLeft : ImageOrientation::Orientation::OriginBottomRight;
     case VideoFrame::Rotation::Left:
-        return isMirrored() ? ImageOrientation::OriginLeftTop : ImageOrientation::OriginLeftBottom;
+        return isMirrored() ? ImageOrientation::Orientation::OriginLeftTop : ImageOrientation::Orientation::OriginLeftBottom;
     }
 }
 

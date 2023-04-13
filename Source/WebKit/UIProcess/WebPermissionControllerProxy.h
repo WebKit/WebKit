@@ -33,7 +33,7 @@ enum class PermissionQuerySource : uint8_t;
 enum class PermissionState : uint8_t;
 struct ClientOrigin;
 struct PermissionDescriptor;
-struct SecurityOriginData;
+class SecurityOriginData;
 }
 
 namespace WebKit {

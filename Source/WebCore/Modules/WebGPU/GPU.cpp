@@ -57,7 +57,7 @@ void GPU::requestAdapter(const std::optional<GPURequestAdapterOptions>& options,
 {
     m_backing->requestAdapter(convertToBacking(options), [promise = WTFMove(promise)] (RefPtr<PAL::WebGPU::Adapter>&& adapter) mutable {
         if (!adapter) {
-            promise.reject(nullptr);
+            promise.resolve(nullptr);
             return;
         }
         promise.resolve(GPUAdapter::create(adapter.releaseNonNull()).ptr());
@@ -72,6 +72,11 @@ GPUTextureFormat GPU::getPreferredCanvasFormat()
 Ref<GPUPresentationContext> GPU::createPresentationContext(const GPUPresentationContextDescriptor& presentationContextDescriptor)
 {
     return GPUPresentationContext::create(m_backing->createPresentationContext(presentationContextDescriptor.convertToBacking()));
+}
+
+Ref<GPUCompositorIntegration> GPU::createCompositorIntegration()
+{
+    return GPUCompositorIntegration::create(m_backing->createCompositorIntegration());
 }
 
 } // namespace WebCore

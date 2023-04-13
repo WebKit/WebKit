@@ -53,15 +53,13 @@ Ref<SVGPathElement> SVGPathElement::create(const QualifiedName& tagName, Documen
     return adoptRef(*new SVGPathElement(tagName, document));
 }
 
-void SVGPathElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void SVGPathElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
+    SVGGeometryElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
     if (name == SVGNames::dAttr) {
-        if (!m_pathSegList->baseVal()->parse(value))
-            document().accessSVGExtensions().reportError("Problem parsing d=\"" + value + "\"");
-        return;
+        if (!m_pathSegList->baseVal()->parse(newValue))
+            document().accessSVGExtensions().reportError("Problem parsing d=\"" + newValue + "\"");
     }
-
-    SVGGeometryElement::parseAttribute(name, value);
 }
 
 void SVGPathElement::svgAttributeChanged(const QualifiedName& attrName)

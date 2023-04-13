@@ -1,0 +1,9 @@
+
+
+PASS all images must be fetched by the preload scanner
+PASS image-initial-load
+PASS image-initial-load 1
+PASS image-initial-load 2
+PASS image-initial-load 3
+PASS image-initial-load 4
+

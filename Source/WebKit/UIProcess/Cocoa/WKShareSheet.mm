@@ -34,6 +34,7 @@
 #import <WebCore/ShareData.h>
 #import <pal/spi/mac/QuarantineSPI.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/RunLoop.h>
 #import <wtf/Scope.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/UUID.h>
@@ -470,11 +471,11 @@ static void appendFilesAsShareableURLs(RetainPtr<NSMutableArray>&& shareDataArra
     ASSERT(!RunLoop::isMain());
     if (!temporaryDirectory || ![fileName length] || !fileData)
         return nil;
-    
+
     NSURL *temporaryDirectoryForFile = [WKShareSheet createRandomSharingDirectoryForFile:temporaryDirectory];
     if (!temporaryDirectoryForFile)
         return nil;
-    
+
     NSURL *fileURL = [temporaryDirectoryForFile URLByAppendingPathComponent:fileName isDirectory:NO];
 
     if (![fileData writeToURL:fileURL options:NSDataWritingAtomic error:nil])

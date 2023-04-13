@@ -151,15 +151,18 @@ void HTMLSourceElement::stop()
     cancelPendingErrorEvent();
 }
 
-void HTMLSourceElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void HTMLSourceElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
-    HTMLElement::parseAttribute(name, value);
+    HTMLElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
     if (name == srcsetAttr || name == sizesAttr || name == mediaAttr || name == typeAttr) {
         if (name == mediaAttr)
             m_cachedParsedMediaAttribute = std::nullopt;
         RefPtr parent = parentNode();
-        if (m_shouldCallSourcesChanged)
+        if (m_shouldCallSourcesChanged && parent)
             downcast<HTMLPictureElement>(*parent).sourcesChanged();
+    } else if (name == widthAttr || name == heightAttr) {
+        if (RefPtr parent = parentNode(); is<HTMLPictureElement>(parent))
+            downcast<HTMLPictureElement>(*parent).sourceDimensionAttributesChanged(*this);
     }
 #if ENABLE(MODEL_ELEMENT)
     if (name == srcAttr ||  name == typeAttr) {
@@ -177,15 +180,6 @@ const MQ::MediaQueryList& HTMLSourceElement::parsedMediaAttribute(Document& docu
         m_cachedParsedMediaAttribute = MQ::MediaQueryParser::parse(value, MediaQueryParserContext { document });
     }
     return m_cachedParsedMediaAttribute.value();
-}
-
-void HTMLSourceElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason reason)
-{
-    if (name == widthAttr || name == heightAttr) {
-        if (RefPtr parent = parentNode(); is<HTMLPictureElement>(parent))
-            downcast<HTMLPictureElement>(*parent).sourceDimensionAttributesChanged(*this);
-    }
-    HTMLElement::attributeChanged(name, oldValue, newValue, reason);
 }
 
 }

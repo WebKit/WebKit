@@ -35,16 +35,16 @@
 #include "DocumentEventTiming.h"
 #include "DocumentLoadTiming.h"
 #include "DocumentLoader.h"
-#include "Frame.h"
 #include "FrameLoader.h"
+#include "LocalFrame.h"
 #include "NetworkLoadMetrics.h"
 #include "Performance.h"
 #include "ResourceResponse.h"
 
 namespace WebCore {
 
-PerformanceTiming::PerformanceTiming(DOMWindow* window)
-    : DOMWindowProperty(window)
+PerformanceTiming::PerformanceTiming(LocalDOMWindow* window)
+    : LocalDOMWindowProperty(window)
 {
 }
 

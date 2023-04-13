@@ -35,5 +35,7 @@ typedef struct pas_enumerator pas_enumerator;
 
 PAS_API bool pas_enumerate_initially_unaccounted_pages(pas_enumerator* enumerator);
 
+PAS_END_EXTERN_C;
+
 #endif /* PAS_ENUMERATE_INITIALLY_UNACCOUNTED_PAGES_H */
 

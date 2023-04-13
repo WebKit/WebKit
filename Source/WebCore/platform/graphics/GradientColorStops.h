@@ -101,9 +101,6 @@ public:
 
     const StopVector& stops() const { return m_stops; }
 
-    template<typename Encoder> void encode(Encoder&) const;
-    template<typename Decoder> static std::optional<GradientColorStops> decode(Decoder&);
-
 private:
     GradientColorStops(StopVector stops, bool isSorted)
         : m_stops { WTFMove(stops) }
@@ -123,21 +120,6 @@ private:
     StopVector m_stops;
     bool m_isSorted;
 };
-
-template<typename Encoder> void GradientColorStops::encode(Encoder& encoder) const
-{
-    encoder << m_stops;
-}
-
-template<typename Decoder> std::optional<GradientColorStops> GradientColorStops::decode(Decoder& decoder)
-{
-    std::optional<StopVector> stops;
-    decoder >> stops;
-    if (!stops)
-        return std::nullopt;
-
-    return {{ WTFMove(*stops) }};
-}
 
 TextStream& operator<<(TextStream&, const GradientColorStops&);
 

@@ -50,7 +50,7 @@ CalleeGroup::CalleeGroup(MemoryMode mode, const CalleeGroup& other)
     : m_calleeCount(other.m_calleeCount)
     , m_mode(mode)
     , m_llintCallees(other.m_llintCallees)
-    , m_embedderCallees(other.m_embedderCallees)
+    , m_jsEntrypointCallees(other.m_jsEntrypointCallees)
     , m_wasmIndirectCallEntryPoints(other.m_wasmIndirectCallEntryPoints)
     , m_wasmToWasmExitStubs(other.m_wasmToWasmExitStubs)
     , m_callsiteCollection(m_calleeCount)
@@ -85,7 +85,7 @@ CalleeGroup::CalleeGroup(VM& vm, MemoryMode mode, ModuleInformation& moduleInfor
 
             m_wasmToWasmExitStubs = m_plan->takeWasmToWasmExitStubs();
             m_callsiteCollection.addCalleeGroupCallsites(locker, *this, m_plan->takeWasmToWasmCallsites());
-            m_embedderCallees = static_cast<LLIntPlan*>(m_plan.get())->takeEmbedderCallees();
+            m_jsEntrypointCallees = static_cast<LLIntPlan*>(m_plan.get())->takeJSCallees();
 
             setCompilationFinished();
         })));
@@ -103,9 +103,9 @@ CalleeGroup::CalleeGroup(VM& vm, MemoryMode mode, ModuleInformation& moduleInfor
             m_wasmIndirectCallEntryPoints = FixedVector<CodePtr<WasmEntryPtrTag>>(m_calleeCount);
 
             BBQPlan* bbqPlan = static_cast<BBQPlan*>(m_plan.get());
-            bbqPlan->initializeCallees([&] (unsigned calleeIndex, RefPtr<EmbedderEntrypointCallee>&& embedderEntrypointCallee, RefPtr<BBQCallee>&& wasmEntrypoint) {
-                if (embedderEntrypointCallee) {
-                    auto result = m_embedderCallees.set(calleeIndex, WTFMove(embedderEntrypointCallee));
+            bbqPlan->initializeCallees([&] (unsigned calleeIndex, RefPtr<JSEntrypointCallee>&& jsEntrypointCallee, RefPtr<BBQCallee>&& wasmEntrypoint) {
+                if (jsEntrypointCallee) {
+                    auto result = m_jsEntrypointCallees.set(calleeIndex, WTFMove(jsEntrypointCallee));
                     ASSERT_UNUSED(result, result.isNewEntry);
                 }
                 m_wasmIndirectCallEntryPoints[calleeIndex] = wasmEntrypoint->entrypoint();

@@ -52,7 +52,7 @@ public:
     using EvaluationResult = Expected<ValueOrException, EvaluationError>;
     using EvaluationResultHandler = CompletionHandler<void(EvaluationResult)>;
 
-    enum class UnsuspendSoon { Yes, No };
+    enum class UnsuspendSoon : bool { No, Yes };
     
     WEBCORE_EXPORT ~InspectorFrontendAPIDispatcher();
 

@@ -39,7 +39,7 @@
 OBJC_CLASS CALayer;
 
 namespace WebCore {
-class FrameView;
+class LocalFrameView;
 class PlatformCALayer;
 class RunLoopObserver;
 class TiledBacking;
@@ -64,7 +64,7 @@ private:
     void forceRepaintAsync(WebPage&, CompletionHandler<void()>&&) override;
     void setLayerTreeStateIsFrozen(bool) override;
     bool layerTreeStateIsFrozen() const override;
-    void setRootCompositingLayer(WebCore::GraphicsLayer*) override;
+    void setRootCompositingLayer(WebCore::Frame&, WebCore::GraphicsLayer*) override;
     void triggerRenderingUpdate() override;
 
     void updatePreferences(const WebPreferencesStore&) override;
@@ -83,9 +83,9 @@ private:
 
     void dispatchAfterEnsuringUpdatedScrollPosition(WTF::Function<void ()>&&) override;
 
-    bool shouldUseTiledBackingForFrameView(const WebCore::FrameView&) const override;
+    bool shouldUseTiledBackingForFrameView(const WebCore::LocalFrameView&) const override;
 
-    void activityStateDidChange(OptionSet<WebCore::ActivityState::Flag> changed, ActivityStateChangeID, CompletionHandler<void()>&&) override;
+    void activityStateDidChange(OptionSet<WebCore::ActivityState> changed, ActivityStateChangeID, CompletionHandler<void()>&&) override;
 
     void attachViewOverlayGraphicsLayer(WebCore::GraphicsLayer*) override;
 
@@ -98,7 +98,7 @@ private:
     void didCompleteRenderingUpdateDisplay() override;
 
     // Message handlers.
-    void updateGeometry(const WebCore::IntSize& viewSize, bool flushSynchronously, const WTF::MachSendRight& fencePort) override;
+    void updateGeometry(const WebCore::IntSize& viewSize, bool flushSynchronously, const WTF::MachSendRight& fencePort, CompletionHandler<void()>&&) override;
     void setDeviceScaleFactor(float) override;
     void suspendPainting();
     void resumePainting();
@@ -107,7 +107,7 @@ private:
     std::optional<WebCore::DestinationColorSpace> displayColorSpace() const override;
     void addFence(const WTF::MachSendRight&) override;
 
-    void addTransactionCallbackID(CallbackID) override;
+    void dispatchAfterEnsuringDrawing(IPC::AsyncReplyID) final;
 
     void sendEnterAcceleratedCompositingModeIfNeeded() override;
     void sendDidFirstLayerFlushIfNeeded();
@@ -162,7 +162,7 @@ private:
     RefPtr<WebCore::GraphicsLayer> m_viewOverlayRootLayer;
 
     OptionSet<WebCore::LayoutMilestone> m_pendingNewlyReachedPaintingMilestones;
-    Vector<CallbackID> m_pendingCallbackIDs;
+    Vector<IPC::AsyncReplyID> m_pendingCallbackIDs;
 
     std::unique_ptr<WebCore::RunLoopObserver> m_renderingUpdateRunLoopObserver;
     std::unique_ptr<WebCore::RunLoopObserver> m_postRenderingUpdateRunLoopObserver;

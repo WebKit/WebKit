@@ -34,14 +34,14 @@ namespace TestWebKitAPI {
 
 using namespace WebCore;
 
-static unsigned computeNumberOfTracks(CSSValueList& valueList)
+static unsigned computeNumberOfTracks(const CSSValueContainingVector& valueList)
 {
     unsigned numberOfTracks = 0;
-    for (const auto& value : valueList) {
-        if (value->isGridLineNamesValue())
+    for (auto& value : valueList) {
+        if (value.isGridLineNamesValue())
             continue;
         if (is<CSSGridIntegerRepeatValue>(value)) {
-            auto& repeatValue = downcast<CSSGridIntegerRepeatValue>(value.get());
+            auto& repeatValue = downcast<CSSGridIntegerRepeatValue>(value);
             numberOfTracks += repeatValue.repetitions() * computeNumberOfTracks(repeatValue);
             continue;
         }
@@ -82,8 +82,8 @@ TEST(CSSPropertyParserTest, GridTrackLimits)
         ASSERT_TRUE(parser.parseDeclaration(properties, testCase.input));
         RefPtr<CSSValue> value = properties->getPropertyCSSValue(testCase.propertyID);
 
-        ASSERT_TRUE(value->isValueList());
-        EXPECT_EQ(computeNumberOfTracks(*downcast<CSSValueList>(value.get())), testCase.output);
+        ASSERT_TRUE(is<CSSValueContainingVector>(value.get()));
+        EXPECT_EQ(computeNumberOfTracks(downcast<CSSValueContainingVector>(*value)), testCase.output);
     }
 }
 

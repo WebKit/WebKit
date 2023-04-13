@@ -128,7 +128,7 @@ var CODE_REVIEW_UNITTEST;
 
   function findCommentPositionFor(line) {
     var previous_comments = previousCommentsFor(line);
-    var num_previous_comments = previous_comments.size();
+    var num_previous_comments = previous_comments.length;
     if (num_previous_comments)
       return $(previous_comments[num_previous_comments - 1])
     return line;
@@ -361,7 +361,7 @@ var CODE_REVIEW_UNITTEST;
     line.addClass('commentContext');
 
     var comment_block = $('<div class="comment"><textarea data-comment-for="' + line.attr('id') + '"></textarea><div class="actions"><button class="ok">OK</button><button class="discard">Discard</button></div></div>');
-    $('textarea', comment_block).bind('input', handleOverallCommentsInput);
+    $('textarea', comment_block).on('input', handleOverallCommentsInput);
     insertCommentFor(line, comment_block);
     return comment_block;
   }
@@ -531,7 +531,7 @@ var CODE_REVIEW_UNITTEST;
         requestee = ' (' + requestee + ')';
       }
       var control = findControlForFlag(this)
-      control.attr('selectedIndex', $(this).attr('selectedIndex'));
+      control[0].selectedIndex = $(this)[0].selectedIndex;
       control.parent().prepend(requestee);
     });
   }
@@ -719,7 +719,7 @@ var CODE_REVIEW_UNITTEST;
 
   function convertDiff(difftype, convert_link) {
     var file_diffs = $(convert_link).parents('.FileDiff');
-    if (!file_diffs.size()) {
+    if (!file_diffs.length) {
       localStorage.setItem('code-review-diffstate', difftype);
       file_diffs = $('.FileDiff');
     }
@@ -775,7 +775,7 @@ var CODE_REVIEW_UNITTEST;
     var to = -1;
     var from = -1;
 
-    var size = set.size();
+    var size = set.length;
     var start = is_last ? (size - 1) : 0;
     var end = is_last ? -1 : size;
     var offset = is_last ? -1 : 1;
@@ -1080,8 +1080,8 @@ var CODE_REVIEW_UNITTEST;
         '<div class="autosave-state"></div>' +
         '</div>');
 
-    $('.overallComments textarea').bind('click', openOverallComments);
-    $('.overallComments textarea').bind('input', handleOverallCommentsInput);
+    $('.overallComments textarea').on('click', openOverallComments);
+    $('.overallComments textarea').on('input', handleOverallCommentsInput);
 
     var toolbar = $('#toolbar');
     toolbar.css('position', '-webkit-sticky');
@@ -1122,7 +1122,7 @@ var CODE_REVIEW_UNITTEST;
     appendToolbar();
 
     $(document.body).prepend('<div id="comment_form" class="inactive"><div class="winter"></div><div class="lightbox"><iframe id="reviewform" src="attachment.cgi?id=' + attachment_id + '&action=reviewform"></iframe></div></div>');
-    $('#reviewform').bind('load', handleReviewFormLoad);
+    $('#reviewform').on('load', handleReviewFormLoad);
 
     loadDiffState();
     generateFileDiffResizeStyleElement();
@@ -1135,7 +1135,7 @@ var CODE_REVIEW_UNITTEST;
     Array.prototype.forEach.call(nodeList, callback);
   }
 
-  $('#line-number-on-copy').live('click', toggleShouldStripLineNumbersOnCopy);
+  $('body').on('click', '#line-number-on-copy', toggleShouldStripLineNumbersOnCopy);
 
   function updateLineNumberOnCopyLinkContents() {
     document.getElementById('line-number-on-copy').checked = shouldStripLineNumbersOnCopy();
@@ -1194,7 +1194,7 @@ var CODE_REVIEW_UNITTEST;
   function handleReviewFormLoad() {
     var review_form_contents = $('#reviewform').contents();
     if (review_form_contents[0].querySelector('#form-controls #flags')) {
-      review_form_contents.bind('keydown', function(e) {
+      review_form_contents.on('keydown', function(e) {
         if (e.keyCode == KEY_CODE.escape)
           hideCommentForm();
       });
@@ -1381,7 +1381,7 @@ var CODE_REVIEW_UNITTEST;
     });
 
     var active_comments = activeCommentFor(line);
-    var num_active_comments = active_comments.size();
+    var num_active_comments = active_comments.length;
     if (num_active_comments > 0) {
       if (num_active_comments > 1)
         console.log('ERROR: There is more than one active comment for ' + line.attr('id') + '.');
@@ -1440,16 +1440,16 @@ var CODE_REVIEW_UNITTEST;
     return frozen_comment;
   }
 
-  $('.FileDiff').live('mouseenter', showFileDiffLinks);
-  $('.FileDiff').live('mouseleave', hideFileDiffLinks);
-  $('.side-by-side-link').live('click', handleSideBySideLinkClick);
-  $('.unify-link').live('click', handleUnifyLinkClick);
-  $('.ExpandLink').live('click', handleExpandLinkClick);
-  $('.frozenComment').live('click', handleUnfreezeComment);
-  $('.comment .discard').live('click', handleDiscardComment);
-  $('.comment .ok').live('click', handleAcceptComment);
-  $('.more').live('click', showMoreHelp);
-  $('.more-help .winter').live('click', hideMoreHelp);
+  $('body').on('mouseenter', '.FileDiff', showFileDiffLinks);
+  $('body').on('mouseleave', '.FileDiff', hideFileDiffLinks);
+  $('body').on('click', '.side-by-side-link', handleSideBySideLinkClick);
+  $('body').on('click', '.unify-link', handleUnifyLinkClick);
+  $('body').on('click', '.ExpandLink', handleExpandLinkClick);
+  $('body').on('click', '.frozenComment', handleUnfreezeComment);
+  $('body').on('click', '.comment .discard', handleDiscardComment);
+  $('body').on('click', '.comment .ok', handleAcceptComment);
+  $('body').on('click', '.more', showMoreHelp );
+  $('body').on('click', '.more-help .winter', hideMoreHelp);
 
   function freezeComment(comment_block) {
     var comment_textarea = comment_block.find('textarea');
@@ -1473,7 +1473,7 @@ var CODE_REVIEW_UNITTEST;
     node.attr('tabindex', -1);
     node.focus();
     // Remove the tabindex on blur to avoid having the node be mouse-focusable.
-    node.bind('blur', function() { node.removeAttr('tabindex'); });
+    node.on('blur', function() { node.removeAttr('tabindex'); });
     
     var node_top = node.offset().top;
     var is_top_offscreen = node_top <= $(document).scrollTop();
@@ -1519,7 +1519,7 @@ var CODE_REVIEW_UNITTEST;
 
   function focusNext(filter, direction) {
     var focusable_nodes = $('a,.Line,.frozenComment,.previousComment,.DiffBlock,.overallComments').filter(function() {
-      return !$(this).hasClass('DiffBlock') || $('.add,.remove', this).size();
+      return !$(this).hasClass('DiffBlock') || $('.add,.remove', this).length;
     });
 
     var is_backward = direction == DIRECTION.BACKWARD;
@@ -1534,7 +1534,7 @@ var CODE_REVIEW_UNITTEST;
     }
 
     var offset = is_backward ? -1 : 1;
-    var end = is_backward ? -1 : focusable_nodes.size();
+    var end = is_backward ? -1 : focusable_nodes.length;
     for (var i = index + offset; i != end; i = i + offset) {
       var node = $(focusable_nodes[i]);
       if (filter(node) && (!extra_filter || extra_filter(node))) {
@@ -1564,7 +1564,7 @@ var CODE_REVIEW_UNITTEST;
       return $(key_target);
 
     var comment_textarea = $(document.activeElement).prev().find('textarea');
-    if (!comment_textarea.size())
+    if (!comment_textarea.length)
       return null;
     return comment_textarea;
   }
@@ -1593,7 +1593,7 @@ var CODE_REVIEW_UNITTEST;
     var comment_base_line = comment_textarea.attr('data-comment-for');
     var diff_section = diffSectionFor(comment_textarea);
     var lines = contextLinesFor(comment_base_line, diff_section);
-    if (lines.size() > 1)
+    if (lines.length > 1)
       removeDataCommentBaseLine(lines[0], comment_base_line);
   }
 
@@ -1620,7 +1620,7 @@ var CODE_REVIEW_UNITTEST;
     return handled;
   }
 
-  $('textarea').live('keydown', function(e) {
+  $('body').on('keydown', 'textarea', function(e) {
     if (handleModifyContextKey(e))
       return;
 
@@ -1628,7 +1628,7 @@ var CODE_REVIEW_UNITTEST;
       handleEscapeKeyInTextarea(this);
   });
 
-  $('body').live('keydown', function(e) {
+  $('body').on('keydown', function(e) {
     // FIXME: There's got to be a better way to avoid seeing these keypress
     // events.
     if (e.target.nodeName == 'TEXTAREA')
@@ -1686,7 +1686,7 @@ var CODE_REVIEW_UNITTEST;
   
   function handleEscapeKeyInTextarea(textarea) {
     var comment = $(textarea).parents('.comment');
-    if (comment.size())
+    if (comment.length)
       acceptComment(comment);
 
     textarea.blur();
@@ -1768,7 +1768,7 @@ var CODE_REVIEW_UNITTEST;
     return lineOffsetFrom(line, 1);
   }
 
-  $('.resizeHandle').live('mousedown', function(event) {
+  $('body').on('mousedown', '.resizeHandle', function(event) {
     file_diff_being_resized = $(this).parent('.FileDiff');
   });
 
@@ -1795,7 +1795,7 @@ var CODE_REVIEW_UNITTEST;
     document.head.appendChild(styleElement);
   }
 
-  $(document).bind('mousemove', function(event) {
+  $(document).on('mousemove', function(event) {
     if (!file_diff_being_resized)
       return;
 
@@ -1809,12 +1809,12 @@ var CODE_REVIEW_UNITTEST;
     event.preventDefault();
   });
 
-  $(document).bind('mouseup', function(event) {
+  $(document).on('mouseup', function(event) {
     file_diff_being_resized = null;
     processSelectedLines();
   });
 
-  $('.lineNumber').live('click', function(e) {
+  $('body').on('click', '.lineNumber', function(e) {
     var line = lineFromLineDescendant($(this));
     if (line.hasClass('commentContext')) {
       var previous_line = previousLineFor(line);
@@ -1822,7 +1822,7 @@ var CODE_REVIEW_UNITTEST;
         trimCommentContextToBefore(previous_line, line.attr('data-comment-base-line'));
     } else if (e.shiftKey)
       extendCommentContextTo(line);
-  }).live('mousedown', function(e) {
+  }).on('mousedown', '.lineNumber', function(e) {
     // preventDefault to avoid selecting text when dragging to select comment context lines.
     // FIXME: should we use user-modify CSS instead?
     e.preventDefault();
@@ -1837,11 +1837,11 @@ var CODE_REVIEW_UNITTEST;
     line.addClass('selected');
   });
 
-  $('.LineContainer:not(.context)').live('mouseenter', function(e) {
+  $('body').on('mouseenter', '.LineContainer:not(.context)', function(e) {
     if (drag_select_start_index == -1 || e.shiftKey)
       return;
     selectToLineContainer(this);
-  }).live('mouseup', function(e) {
+  }).on('mouseup', '.LineContainer:not(.context)', function(e) {
     if (drag_select_start_index == -1 || e.shiftKey)
       return;
 
@@ -1914,7 +1914,7 @@ var CODE_REVIEW_UNITTEST;
   }
   
   function addCommentForLines(lines) {    
-    if (!lines.size())
+    if (!lines.length)
       return;
 
     var already_has_comment = lines.last().hasClass('commentContext');
@@ -2026,7 +2026,7 @@ var CODE_REVIEW_UNITTEST;
 
   function quotePreviousComments(comments) {
     var quoted_comments = [];
-    var depth = comments.size();
+    var depth = comments.length;
     comments.each(function() {
       var indent = indentFor(depth--);
       var text = $(this).children('.content').text();
@@ -2035,7 +2035,7 @@ var CODE_REVIEW_UNITTEST;
     return quoted_comments.join('\n');
   }
 
-  $('#comment_form .winter').live('click', hideCommentForm);
+  $('body').on('click', '#comment_form .winter', hideCommentForm);
 
   function serializedComments() {
     var comments_in_context = []
@@ -2046,7 +2046,7 @@ var CODE_REVIEW_UNITTEST;
       if (comment == '')
         return;
       var previous_comments = previousCommentsFor(line);
-      var snippet = snippetFor(line, indentFor(previous_comments.size() + 1));
+      var snippet = snippetFor(line, indentFor(previous_comments.length + 1));
       var quoted_comments = quotePreviousComments(previous_comments);
       var comment_with_context = [];
       comment_with_context.push(snippet);
@@ -2069,9 +2069,9 @@ var CODE_REVIEW_UNITTEST;
     review_form.find('#comment').val(serializedComments());
     review_form.find('#flags select').each(function() {
       var control = findControlForFlag(this);
-      if (!control.size())
+      if (!control.length)
         return;
-      $(this).attr('selectedIndex', control.attr('selectedIndex'));
+      $(this)[0].selectedIndex = control[0].selectedIndex;
     });
   }
 
@@ -2088,12 +2088,12 @@ var CODE_REVIEW_UNITTEST;
     document.body.focus();
   }
 
-  $('#preview_comments').live('click', function() {
+  $('body').on('click', '#preview_comments', function() {
     fillInReviewForm();
     showCommentForm();
   });
 
-  $('#post_comments').live('click', function() {
+  $('body').on('click', '#post_comments', function() {
     fillInReviewForm();
     $('#reviewform').contents().find('form').submit();
   });

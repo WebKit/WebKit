@@ -74,6 +74,7 @@ class ManifestGenerator {
                 'name' => $test_row['test_name'],
                 'url' => $test_row['test_url'],
                 'parentId' => $test_row['test_parent'],
+                'hidden' => Database::is_true($test_row['test_hidden']),
             );
         }
         return $tests;
@@ -122,14 +123,14 @@ class ManifestGenerator {
         $platforms = array();
         if ($platform_table) {
             foreach ($platform_table as $platform_row) {
-                if (Database::is_true($platform_row['platform_hidden']))
-                    continue;
                 $id = $platform_row['platform_id'];
                 if (array_key_exists($id, $platform_metrics)) {
                     $platforms[$id] = array(
                         'name' => $platform_row['platform_name'],
+                        'label' => $platform_row['platform_label'],
                         'metrics' => $platform_metrics[$id]['metrics'],
                         'group' => $platform_row['platform_group'],
+                        'hidden' => Database::is_true($platform_row['platform_hidden']),
                         'lastModified' => $platform_metrics[$id]['last_modified']);
                 }
             }

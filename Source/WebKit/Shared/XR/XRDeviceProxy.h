@@ -34,7 +34,7 @@
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
-struct SecurityOriginData;
+class SecurityOriginData;
 }
 
 namespace WebKit {

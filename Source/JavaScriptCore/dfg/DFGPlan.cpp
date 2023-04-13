@@ -236,8 +236,6 @@ Plan::CompilationPath Plan::compileInThreadImpl()
         dfg.dump();
     }
 
-    RUN_PHASE(performLiveCatchVariablePreservationPhase);
-
     RUN_PHASE(performCPSRethreading);
     RUN_PHASE(performUnification);
     RUN_PHASE(performPredictionInjection);

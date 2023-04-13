@@ -66,11 +66,6 @@ ExceptionOr<RefPtr<Uint8Array>> DecompressionStreamDecoder::flush()
 
 inline ExceptionOr<RefPtr<JSC::ArrayBuffer>> DecompressionStreamDecoder::decompress(const uint8_t* input, const size_t inputLength)
 {
-#if PLATFORM(COCOA)
-    if (m_usingAppleCompressionFramework)
-        return decompressAppleCompressionFramework(input, inputLength);
-#endif
-
     return decompressZlib(input, inputLength);
 }
 

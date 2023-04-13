@@ -24,7 +24,7 @@
 
 #include "AXObjectCache.h"
 #include "DocumentInlines.h"
-#include "ElementIterator.h"
+#include "ElementChildIteratorInlines.h"
 #include "ElementRareData.h"
 #include "EventLoop.h"
 #include "EventNames.h"
@@ -130,11 +130,11 @@ bool HTMLDetailsElement::isActiveSummary(const HTMLSummaryElement& summary) cons
     return slot == m_summarySlot.get();
 }
 
-void HTMLDetailsElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void HTMLDetailsElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     if (name == openAttr) {
         bool oldValue = m_isOpen;
-        m_isOpen = !value.isNull();
+        m_isOpen = !newValue.isNull();
         if (oldValue != m_isOpen) {
             RefPtr root = shadowRoot();
             ASSERT(root);
@@ -154,7 +154,7 @@ void HTMLDetailsElement::parseAttribute(const QualifiedName& name, const AtomStr
             m_isToggleEventTaskQueued = true;
         }
     } else
-        HTMLElement::parseAttribute(name, value);
+        HTMLElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }
 
 

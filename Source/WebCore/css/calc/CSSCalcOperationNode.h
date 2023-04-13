@@ -27,6 +27,7 @@
 
 #include "CSSCalcExpressionNode.h"
 #include "CalcOperator.h"
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -131,7 +132,7 @@ private:
     
     static double convertToTopLevelValue(double value)
     {
-        if (isnan(value))
+        if (std::isnan(value))
             value = std::numeric_limits<double>::infinity();
         return value;
     }

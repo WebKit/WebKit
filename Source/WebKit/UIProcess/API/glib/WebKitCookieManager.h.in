@@ -31,15 +31,25 @@
 G_BEGIN_DECLS
 
 #define WEBKIT_TYPE_COOKIE_MANAGER            (webkit_cookie_manager_get_type())
+#if !ENABLE(2022_GLIB_API)
 #define WEBKIT_COOKIE_MANAGER(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), WEBKIT_TYPE_COOKIE_MANAGER, WebKitCookieManager))
 #define WEBKIT_IS_COOKIE_MANAGER(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), WEBKIT_TYPE_COOKIE_MANAGER))
 #define WEBKIT_COOKIE_MANAGER_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass),  WEBKIT_TYPE_COOKIE_MANAGER, WebKitCookieManagerClass))
 #define WEBKIT_IS_COOKIE_MANAGER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass),  WEBKIT_TYPE_COOKIE_MANAGER))
 #define WEBKIT_COOKIE_MANAGER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj),  WEBKIT_TYPE_COOKIE_MANAGER, WebKitCookieManagerClass))
 
-typedef struct _WebKitCookieManager        WebKitCookieManager;
-typedef struct _WebKitCookieManagerClass   WebKitCookieManagerClass;
-typedef struct _WebKitCookieManagerPrivate WebKitCookieManagerPrivate;
+struct _WebKitCookieManagerClass {
+    GObjectClass parent_class;
+
+    /*< private >*/
+    void (*_webkit_reserved0) (void);
+    void (*_webkit_reserved1) (void);
+    void (*_webkit_reserved2) (void);
+    void (*_webkit_reserved3) (void);
+};
+#endif
+
+WEBKIT_DECLARE_FINAL_TYPE (WebKitCookieManager, webkit_cookie_manager, WEBKIT, COOKIE_MANAGER, GObject)
 
 /**
  * WebKitCookiePersistentStorage:
@@ -68,26 +78,6 @@ typedef enum {
     WEBKIT_COOKIE_POLICY_ACCEPT_NEVER,
     WEBKIT_COOKIE_POLICY_ACCEPT_NO_THIRD_PARTY
 } WebKitCookieAcceptPolicy;
-
-struct _WebKitCookieManager {
-    GObject parent;
-
-    /*< private >*/
-    WebKitCookieManagerPrivate *priv;
-};
-
-struct _WebKitCookieManagerClass {
-    GObjectClass parent_class;
-
-    /*< private >*/
-    void (*_webkit_reserved0) (void);
-    void (*_webkit_reserved1) (void);
-    void (*_webkit_reserved2) (void);
-    void (*_webkit_reserved3) (void);
-};
-
-WEBKIT_API GType
-webkit_cookie_manager_get_type                        (void);
 
 WEBKIT_API void
 webkit_cookie_manager_set_persistent_storage          (WebKitCookieManager          *cookie_manager,

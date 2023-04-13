@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<title>Test that calling updateQuotaBasedOnSpaceUsageForTesting (which should be blocked behind AllowTestOnlyIPC) kills the calling process if AllowTestOnlyIPC isn't set</title>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<body>
+<script>
+
+function sleep(delay) { return new Promise((resolve) => { setTimeout(resolve, delay); }); }
+
+promise_test(async t => {
+    if (!window.internals)
+        return Promise.reject("Test requires internals");
+
+    window.internals.updateQuotaBasedOnSpaceUsage();
+    await sleep(500);
+}, "Send updateQuotaBasedOnSpaceUsage without AllowTestOnlyIPC being set");
+
+</script>
+</body>

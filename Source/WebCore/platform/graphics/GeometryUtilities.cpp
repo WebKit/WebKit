@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -55,29 +56,20 @@ float findSlope(const FloatPoint& p1, const FloatPoint& p2, float& c)
 
 bool findIntersection(const FloatPoint& p1, const FloatPoint& p2, const FloatPoint& d1, const FloatPoint& d2, FloatPoint& intersection) 
 {
-    float pOffset = 0;
-    float pSlope = findSlope(p1, p2, pOffset);
+    float pxLength = p2.x() - p1.x();
+    float pyLength = p2.y() - p1.y();
 
-    float dOffset = 0;
-    float dSlope = findSlope(d1, d2, dOffset);
+    float dxLength = d2.x() - d1.x();
+    float dyLength = d2.y() - d1.y();
 
-    if (dSlope == pSlope)
+    float denom = pxLength * dyLength - pyLength * dxLength;
+    if (!denom)
         return false;
     
-    if (pSlope == std::numeric_limits<float>::infinity()) {
-        intersection.setX(p1.x());
-        intersection.setY(dSlope * intersection.x() + dOffset);
-        return true;
-    }
-    if (dSlope == std::numeric_limits<float>::infinity()) {
-        intersection.setX(d1.x());
-        intersection.setY(pSlope * intersection.x() + pOffset);
-        return true;
-    }
-    
-    // Find x at intersection, where ys overlap; x = (c' - c) / (m - m')
-    intersection.setX((dOffset - pOffset) / (pSlope - dSlope));
-    intersection.setY(pSlope * intersection.x() + pOffset);
+    float param = ((d1.x() - p1.x()) * dyLength - (d1.y() - p1.y()) * dxLength) / denom;
+
+    intersection.setX(p1.x() + param * pxLength);
+    intersection.setY(p1.y() + param * pyLength);
     return true;
 }
 

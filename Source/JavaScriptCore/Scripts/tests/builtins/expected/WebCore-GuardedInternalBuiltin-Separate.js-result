@@ -202,13 +202,10 @@ template void GuardedInternalBuiltinBuiltinFunctions::visit(JSC::SlotVisitor&);
 #if ENABLE(TEST_GUARDED_INTERNAL_BUILTIN_SEPARATED_A) || ENABLE(TEST_GUARDED_INTERNAL_BUILTIN_SEPARATED_B)
 
 #include "WebCoreJSClientData.h"
-#include <JavaScriptCore/HeapInlines.h>
 #include <JavaScriptCore/IdentifierInlines.h>
 #include <JavaScriptCore/ImplementationVisibility.h>
 #include <JavaScriptCore/Intrinsic.h>
-#include <JavaScriptCore/JSCJSValueInlines.h>
-#include <JavaScriptCore/JSCellInlines.h>
-#include <JavaScriptCore/StructureInlines.h>
+#include <JavaScriptCore/JSObjectInlines.h>
 #include <JavaScriptCore/VM.h>
 
 namespace WebCore {

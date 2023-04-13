@@ -32,6 +32,7 @@ class HTMLLabelElement final : public HTMLElement {
     WTF_MAKE_ISO_ALLOCATED(HTMLLabelElement);
 public:
     static Ref<HTMLLabelElement> create(const QualifiedName&, Document&);
+    static Ref<HTMLLabelElement> create(Document&);
 
     WEBCORE_EXPORT RefPtr<HTMLElement> control() const;
     WEBCORE_EXPORT HTMLFormElement* form() const;

@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if PLATFORM(IOS_FAMILY) && ENABLE(VIDEO_PRESENTATION_MODE)
+#if HAVE(AVKIT)
 
 #include "FloatRect.h"
 #include <CoreGraphics/CGGeometry.h>
@@ -38,6 +38,7 @@ OBJC_CLASS NSString;
 namespace WebCore {
 class VideoFullscreenModel;
 class VideoFullscreenInterfaceAVKit;
+class VideoFullscreenInterfaceMac;
 }
 
 #if PLATFORM(IOS_FAMILY)
@@ -46,7 +47,7 @@ typedef WebCore::VideoFullscreenInterfaceAVKit PlatformVideoFullscreenInterface;
 typedef WebCore::VideoFullscreenInterfaceMac PlatformVideoFullscreenInterface;
 #endif
 
-@interface WebAVPlayerLayer : CALayer
+WEBCORE_EXPORT @interface WebAVPlayerLayer : CALayer
 @property (nonatomic, retain, nullable) NSString *videoGravity;
 @property (nonatomic, getter=isReadyForDisplay) BOOL readyForDisplay;
 @property (nonatomic, assign, nullable) PlatformVideoFullscreenInterface* fullscreenInterface;
@@ -54,9 +55,8 @@ typedef WebCore::VideoFullscreenInterfaceMac PlatformVideoFullscreenInterface;
 @property (nonatomic, retain, nonnull) CALayer *videoSublayer;
 @property (nonatomic, copy, nullable) NSDictionary *pixelBufferAttributes;
 @property CGSize videoDimensions;
-@property CGRect modelVideoLayerFrame;
 - (WebCore::FloatRect)calculateTargetVideoFrame;
 @end
 
-#endif // PLATFORM(IOS_FAMILY) && ENABLE(VIDEO_PRESENTATION_MODE)
+#endif // HAVE(AVKIT)
 

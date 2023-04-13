@@ -96,25 +96,42 @@ RegisterSet RegisterSetBuilder::stubUnavailableRegisters()
     return RegisterSetBuilder(specialRegisters(), vmCalleeSaveRegisters()).buildAndValidate();
 }
 
-RegisterSet RegisterSetBuilder::macroClobberedRegisters()
+RegisterSet RegisterSetBuilder::macroClobberedGPRs()
 {
 #if CPU(X86_64)
     return RegisterSetBuilder(MacroAssembler::s_scratchRegister).buildAndValidate();
 #elif CPU(ARM64) || CPU(RISCV64)
     return RegisterSetBuilder(MacroAssembler::dataTempRegister, MacroAssembler::memoryTempRegister).buildAndValidate();
 #elif CPU(ARM_THUMB2)
-    RegisterSet result;
-    result.add(MacroAssembler::dataTempRegister, IgnoreVectors);
-    result.add(MacroAssembler::addressTempRegister, IgnoreVectors);
-    result.add(MacroAssembler::fpTempRegister, IgnoreVectors);
-    return result;
+    return RegisterSetBuilder(MacroAssembler::dataTempRegister, MacroAssembler::addressTempRegister).buildAndValidate();
 #elif CPU(MIPS)
-    RegisterSet result;
-    result.add(MacroAssembler::immTempRegister, IgnoreVectors);
-    result.add(MacroAssembler::dataTempRegister, IgnoreVectors);
-    result.add(MacroAssembler::addrTempRegister, IgnoreVectors);
-    result.add(MacroAssembler::cmpTempRegister, IgnoreVectors);
-    return result;
+    return RegisterSetBuilder(MacroAssembler::immTempRegister, MacroAssembler::dataTempRegister, MacroAssembler::addrTempRegister, MacroAssembler::cmpTempRegister).buildAndValidate();
+#else
+    return { };
+#endif
+}
+
+RegisterSet RegisterSetBuilder::macroClobberedFPRs()
+{
+#if CPU(X86_64)
+    return { };
+#elif CPU(ARM64)
+    RegisterSetBuilder builder;
+    builder.add(MacroAssembler::fpTempRegister, IgnoreVectors);
+    return builder.buildAndValidate();
+#elif CPU(RISCV64)
+    RegisterSetBuilder builder;
+    builder.add(MacroAssembler::fpTempRegister, IgnoreVectors);
+    builder.add(MacroAssembler::fpTempRegister2, IgnoreVectors);
+    return builder.buildAndValidate();
+#elif CPU(ARM_THUMB2)
+    RegisterSetBuilder builder;
+    builder.add(MacroAssembler::fpTempRegister, IgnoreVectors);
+    return builder.buildAndValidate();
+#elif CPU(MIPS)
+    RegisterSetBuilder builder;
+    builder.add(MacroAssembler::fpTempRegister, IgnoreVectors);
+    return builder.buildAndValidate();
 #else
     return { };
 #endif
@@ -422,17 +439,15 @@ RegisterSet RegisterSetBuilder::allScalarRegisters()
 }
 
 #if ENABLE(WEBASSEMBLY)
-RegisterSet RegisterSetBuilder::wasmPinnedRegisters(MemoryMode memoryMode)
+RegisterSet RegisterSetBuilder::wasmPinnedRegisters()
 {
     RegisterSet result;
     if constexpr (GPRInfo::wasmBaseMemoryPointer != InvalidGPRReg)
         result.add(GPRInfo::wasmBaseMemoryPointer, IgnoreVectors);
     if constexpr (GPRInfo::wasmContextInstancePointer != InvalidGPRReg)
         result.add(GPRInfo::wasmContextInstancePointer, IgnoreVectors);
-    if constexpr (GPRInfo::wasmBoundsCheckingSizeRegister != InvalidGPRReg) {
-        if (memoryMode == MemoryMode::BoundsChecking)
-            result.add(GPRInfo::wasmBoundsCheckingSizeRegister, IgnoreVectors);
-    }
+    if constexpr (GPRInfo::wasmBoundsCheckingSizeRegister != InvalidGPRReg)
+        result.add(GPRInfo::wasmBoundsCheckingSizeRegister, IgnoreVectors);
     return result;
 }
 #endif

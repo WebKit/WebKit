@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,10 +43,13 @@ RemoteRenderPipelineProxy::RemoteRenderPipelineProxy(RemoteDeviceProxy& parent, 
 
 RemoteRenderPipelineProxy::~RemoteRenderPipelineProxy()
 {
+    auto sendResult = send(Messages::RemoteRenderPipeline::Destruct());
+    UNUSED_VARIABLE(sendResult);
 }
 
 Ref<PAL::WebGPU::BindGroupLayout> RemoteRenderPipelineProxy::getBindGroupLayout(uint32_t index)
 {
+    // "A new GPUBindGroupLayout wrapper is returned each time"
     auto identifier = WebGPUIdentifier::generate();
     auto sendResult = send(Messages::RemoteRenderPipeline::GetBindGroupLayout(index, identifier));
     UNUSED_VARIABLE(sendResult);

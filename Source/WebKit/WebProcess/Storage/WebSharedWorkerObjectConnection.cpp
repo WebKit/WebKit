@@ -27,6 +27,7 @@
 #include "WebSharedWorkerObjectConnection.h"
 
 #include "Logging.h"
+#include "MessageSenderInlines.h"
 #include "NetworkProcessConnection.h"
 #include "WebMessagePortChannelProvider.h"
 #include "WebProcess.h"

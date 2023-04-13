@@ -54,7 +54,7 @@ private:
     // For some reason friendship doesn't extend to parent classes...
     using Base::m_lock;
 
-    void dumpDisassembly(CompilationContext&, LinkBuffer&);
+    void dumpDisassembly(CompilationContext&, LinkBuffer&, unsigned functionIndex, const TypeDefinition&, unsigned functionIndexSpace);
     bool isComplete() const final { return m_completed; }
     void complete() WTF_REQUIRES_LOCK(m_lock) final
     {

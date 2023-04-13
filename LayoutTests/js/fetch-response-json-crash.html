@@ -1,0 +1,10 @@
+<script>
+  onload = async () => {
+    if (window.testRunner)
+      testRunner.dumpAsText();
+    for (let i = 0; i < 100; i++) {
+      await caches.has('a');
+      Response.json({});
+    }
+  };
+</script>

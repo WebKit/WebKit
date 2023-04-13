@@ -698,7 +698,7 @@ class WebkitFlatpak:
         if building:
             Console.message("Building local dependencies from %s ", src_dir)
             if self.run_in_sandbox('meson', 'compile', '-C', sandbox_build_dir, building_local_deps=True, start_sccache=False) != 0:
-                raise RuntimeError('Error while building local dependencies.')
+                raise RuntimeError(f'Error while building local dependencies in {sandbox_build_dir}')
 
         command = ['meson', 'devenv', '-C', sandbox_build_dir, '--dump']
         local_env = self.run_in_sandbox(*command, building_local_deps=True, start_sccache=False, gather_output=True)
@@ -1272,7 +1272,7 @@ class WebkitFlatpak:
                                        self.flathub_repo, arch))
         packages.append(FlatpakPackage("org.freedesktop.Sdk.Extension.rust-stable", SDK_BRANCH,
                                        self.flathub_repo, arch))
-        packages.append(FlatpakPackage("org.freedesktop.Platform.GL.default", SDK_BRANCH,
+        packages.append(FlatpakPackage("org.freedesktop.Platform.GL.default", f"{SDK_BRANCH}-extra",
                                        self.flathub_repo, arch))
         return packages
 

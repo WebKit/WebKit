@@ -43,6 +43,8 @@ class AudioNodeOutput;
 class AudioParam;
 class BaseAudioContext;
 
+enum class NoiseInjectionPolicy : bool;
+
 // An AudioNode is the basic building block for handling audio within an AudioContext.
 // It may be an audio source, an intermediate processing module, or an audio destination.
 // Each AudioNode can have inputs and/or outputs. An AudioSourceNode has no inputs and a single output.
@@ -194,6 +196,8 @@ public:
     // We rely on this flag to avoid unnecessary linear searches in those vectors.
     bool isTailProcessing() const { return m_isTailProcessing; }
     void setIsTailProcessing(bool isTailProcessing) { m_isTailProcessing = isTailProcessing; }
+
+    NoiseInjectionPolicy noiseInjectionPolicy() const;
 
 protected:
     // Inputs and outputs must be created before the AudioNode is initialized.

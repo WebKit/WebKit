@@ -27,6 +27,7 @@
 #import "APIAttachment.h"
 
 #import "PageClient.h"
+#import "WebPageProxy.h"
 #import <WebCore/MIMETypeRegistry.h>
 #import <WebCore/SharedBuffer.h>
 

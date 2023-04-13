@@ -75,6 +75,8 @@ public:
 
     String serviceWorkerClientInternalIdentifier(const ServiceWorkerClient&);
     void setAsInspected(bool);
+    void enableConsoleMessageReporting(ScriptExecutionContext&);
+    void logReportedConsoleMessage(ScriptExecutionContext&, const String&);
 
 private:
     ServiceWorkerInternals(ServiceWorkerGlobalScope&, ServiceWorkerIdentifier);

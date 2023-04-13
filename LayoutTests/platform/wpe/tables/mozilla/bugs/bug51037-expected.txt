@@ -11,9 +11,9 @@ layer at (0,0) size 800x600
           text run at (0,3) width 34: "Left: "
         RenderTextControl {INPUT} at (34,0) size 173x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
       RenderBlock {P} at (0,74) size 784x24
-        RenderText {#text} at (0,3) size 34x17
-          text run at (0,3) width 34: "Top: "
-        RenderTextControl {INPUT} at (34,0) size 173x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+        RenderText {#text} at (0,3) size 33x17
+          text run at (0,3) width 33: "Top: "
+        RenderTextControl {INPUT} at (32,0) size 174x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
       RenderBlock {P} at (0,114) size 784x27
         RenderButton {INPUT} at (0,0) size 53x27 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
           RenderBlock (anonymous) at (8,4) size 37x18
@@ -23,7 +23,7 @@ layer at (45,45) size 167x18
   RenderBlock {DIV} at (3,3) size 167x18
     RenderText {#text} at (0,0) size 40x17
       text run at (0,0) width 40: "120px"
-layer at (45,85) size 167x18
+layer at (44,85) size 167x18
   RenderBlock {DIV} at (3,3) size 167x18
     RenderText {#text} at (0,0) size 40x17
       text run at (0,0) width 40: "120px"

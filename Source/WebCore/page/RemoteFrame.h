@@ -25,7 +25,8 @@
 
 #pragma once
 
-#include "AbstractFrame.h"
+#include "Frame.h"
+#include "LayerHostingContextIdentifier.h"
 #include <wtf/RefPtr.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/UniqueRef.h>
@@ -37,18 +38,17 @@ class RemoteFrameClient;
 class RemoteFrameView;
 class WeakPtrImplWithEventTargetData;
 
-class RemoteFrame final : public AbstractFrame {
+class RemoteFrame final : public Frame {
 public:
-    static Ref<RemoteFrame> create(Page& page, FrameIdentifier frameID, HTMLFrameOwnerElement* ownerElement, UniqueRef<RemoteFrameClient>&& client)
-    {
-        return adoptRef(*new RemoteFrame(page, frameID, ownerElement, WTFMove(client)));
-    }
+    WEBCORE_EXPORT static Ref<RemoteFrame> createMainFrame(Page&, UniqueRef<RemoteFrameClient>&&, FrameIdentifier, ProcessIdentifier);
+    WEBCORE_EXPORT static Ref<RemoteFrame> createSubframe(Page&, UniqueRef<RemoteFrameClient>&&, FrameIdentifier, Frame& parent, ProcessIdentifier);
+    WEBCORE_EXPORT static Ref<RemoteFrame> createSubframeWithContentsInAnotherProcess(Page&, UniqueRef<RemoteFrameClient>&&, FrameIdentifier, HTMLFrameOwnerElement&, LayerHostingContextIdentifier, ProcessIdentifier);
     ~RemoteFrame();
 
     RemoteDOMWindow& window() const;
 
-    void setOpener(AbstractFrame* opener) { m_opener = opener; }
-    AbstractFrame* opener() const { return m_opener.get(); }
+    void setOpener(Frame* opener) { m_opener = opener; }
+    Frame* opener() const { return m_opener.get(); }
 
     WEBCORE_EXPORT void didFinishLoadInAnotherProcess();
 
@@ -58,22 +58,30 @@ public:
     RemoteFrameView* view() const { return m_view.get(); }
     WEBCORE_EXPORT void setView(RefPtr<RemoteFrameView>&&);
 
+    Markable<LayerHostingContextIdentifier> layerHostingContextIdentifier() const { return m_layerHostingContextIdentifier; }
+
+    ProcessIdentifier remoteProcessIdentifier() const { return m_remoteProcessIdentifier; }
+
 private:
-    WEBCORE_EXPORT explicit RemoteFrame(Page&, FrameIdentifier, HTMLFrameOwnerElement*, UniqueRef<RemoteFrameClient>&&);
+    WEBCORE_EXPORT explicit RemoteFrame(Page&, UniqueRef<RemoteFrameClient>&&, FrameIdentifier, HTMLFrameOwnerElement*, Frame*, Markable<LayerHostingContextIdentifier>, ProcessIdentifier);
 
-    FrameType frameType() const final { return FrameType::Remote; }
+    void frameDetached() final;
+    bool preventsParentFromBeingComplete() const final;
 
-    AbstractFrameView* virtualView() const final;
-    AbstractDOMWindow* virtualWindow() const final;
+    FrameView* virtualView() const final;
+    DOMWindow* virtualWindow() const final;
 
     Ref<RemoteDOMWindow> m_window;
-    RefPtr<AbstractFrame> m_opener;
+    RefPtr<Frame> m_opener;
     RefPtr<RemoteFrameView> m_view;
     UniqueRef<RemoteFrameClient> m_client;
+    Markable<LayerHostingContextIdentifier> m_layerHostingContextIdentifier;
+    ProcessIdentifier m_remoteProcessIdentifier;
+    bool m_preventsParentFromBeingComplete { true };
 };
 
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::RemoteFrame)
-static bool isType(const WebCore::AbstractFrame& frame) { return frame.frameType() == WebCore::AbstractFrame::FrameType::Remote; }
+static bool isType(const WebCore::Frame& frame) { return frame.frameType() == WebCore::Frame::FrameType::Remote; }
 SPECIALIZE_TYPE_TRAITS_END()

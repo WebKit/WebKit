@@ -46,7 +46,7 @@
     max-height: 100%;
 }
 
-.content-view.canvas > :matches(header, footer) {
+.content-view.canvas > :is(header, footer) {
     display: none;
 }
 

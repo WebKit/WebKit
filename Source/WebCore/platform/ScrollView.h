@@ -416,6 +416,9 @@ public:
     bool managesScrollbars() const;
     virtual void updateScrollbarSteps();
 
+    // Called to update the scrollbars to accurately reflect the state of the view.
+    void updateScrollbars(const ScrollPosition& desiredPosition);
+
 protected:
     ScrollView();
 
@@ -446,9 +449,6 @@ protected:
     // Subclassed by FrameView to check the writing-mode of the document.
     virtual bool isVerticalDocument() const = 0;
     virtual bool isFlippedDocument() const = 0;
-
-    // Called to update the scrollbars to accurately reflect the state of the view.
-    void updateScrollbars(const ScrollPosition& desiredPosition);
 
     float platformTopContentInset() const;
     void platformSetTopContentInset(float);

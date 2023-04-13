@@ -1,5 +1,5 @@
 
-FAIL Focus should jump to fallback elements when a slot does not have any assigned nodes. promise_test: Unhandled rejection with value: object "Error: Unknown source type "key"."
+PASS Focus should jump to fallback elements when a slot does not have any assigned nodes.
 document tree: [i0 -> [x-foo]]
 x-foo's shadow tree: [j1 -> j2 -> [s1]]
 slot #s1: [k1 -> [x-bar] -> k0 -> [s2] -> [s3]]

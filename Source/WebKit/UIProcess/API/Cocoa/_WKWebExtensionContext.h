@@ -37,7 +37,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /*! @abstract Indicates a @link WKWebExtensionContext @/link error. */
-WK_EXTERN NSErrorDomain const _WKWebExtensionContextErrorDomain NS_SWIFT_NAME(_WKWebExtensionContext.ErrorDomain) WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+WK_EXTERN NSErrorDomain const _WKWebExtensionContextErrorDomain NS_SWIFT_NAME(_WKWebExtensionContext.ErrorDomain) WK_API_AVAILABLE(macos(13.3), ios(16.4));
 
 /*!
  @abstract Constants used by NSError to indicate errors in the @link WKWebExtensionContext @/link domain.
@@ -51,7 +51,7 @@ typedef NS_ERROR_ENUM(_WKWebExtensionContextErrorDomain, _WKWebExtensionContextE
     _WKWebExtensionContextErrorAlreadyLoaded,
     _WKWebExtensionContextErrorNotLoaded,
     _WKWebExtensionContextErrorBaseURLAlreadyInUse,
-} NS_SWIFT_NAME(_WKWebExtensionContext.Error) WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+} NS_SWIFT_NAME(_WKWebExtensionContext.Error) WK_API_AVAILABLE(macos(13.3), ios(16.4));
 
 /*!
  @abstract Constants used to indicate permission status in @link WKWebExtensionContext @/link.
@@ -71,50 +71,50 @@ typedef NS_ENUM(NSInteger, _WKWebExtensionContextPermissionStatus) {
     _WKWebExtensionContextPermissionStatusRequestedExplicitly =  1,
     _WKWebExtensionContextPermissionStatusGrantedImplicitly   =  2,
     _WKWebExtensionContextPermissionStatusGrantedExplicitly   =  3,
-} NS_SWIFT_NAME(_WKWebExtensionContext.PermissionState) WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+} NS_SWIFT_NAME(_WKWebExtensionContext.PermissionState) WK_API_AVAILABLE(macos(13.3), ios(16.4));
 
 /*! @abstract This notification is sent whenever a @link WKWebExtensionContext @/link has newly granted permissions. */
-WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
+WK_API_AVAILABLE(macos(13.3), ios(16.4))
 WK_EXTERN NSNotificationName const _WKWebExtensionContextPermissionsWereGrantedNotification NS_SWIFT_NAME(_WKWebExtensionContext.permissionsWereGrantedNotification);
 
 /*! @abstract This notification is sent whenever a @link WKWebExtensionContext @/link has newly denied permissions. */
-WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
+WK_API_AVAILABLE(macos(13.3), ios(16.4))
 WK_EXTERN NSNotificationName const _WKWebExtensionContextPermissionsWereDeniedNotification NS_SWIFT_NAME(_WKWebExtensionContext.permissionsWereDeniedNotification);
 
 /*! @abstract This notification is sent whenever a @link WKWebExtensionContext @/link has newly removed granted permissions. */
-WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
+WK_API_AVAILABLE(macos(13.3), ios(16.4))
 WK_EXTERN NSNotificationName const _WKWebExtensionContextGrantedPermissionsWereRemovedNotification NS_SWIFT_NAME(_WKWebExtensionContext.grantedPermissionsWereRemovedNotification);
 
 /*! @abstract This notification is sent whenever a @link WKWebExtensionContext @/link has newly removed denied permissions. */
-WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
+WK_API_AVAILABLE(macos(13.3), ios(16.4))
 WK_EXTERN NSNotificationName const _WKWebExtensionContextDeniedPermissionsWereRemovedNotification NS_SWIFT_NAME(_WKWebExtensionContext.deniedPermissionsWereRemovedNotification);
 
 /*! @abstract This notification is sent whenever a @link WKWebExtensionContext @/link has newly granted permission match patterns. */
-WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
+WK_API_AVAILABLE(macos(13.3), ios(16.4))
 WK_EXTERN NSNotificationName const _WKWebExtensionContextPermissionMatchPatternsWereGrantedNotification NS_SWIFT_NAME(_WKWebExtensionContext.permissionMatchPatternsWereGrantedNotification);
 
 /*! @abstract This notification is sent whenever a @link WKWebExtensionContext @/link has newly denied permission match patterns. */
-WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
+WK_API_AVAILABLE(macos(13.3), ios(16.4))
 WK_EXTERN NSNotificationName const _WKWebExtensionContextPermissionMatchPatternsWereDeniedNotification NS_SWIFT_NAME(_WKWebExtensionContext.permissionMatchPatternsWereDeniedNotification);
 
 /*! @abstract This notification is sent whenever a @link WKWebExtensionContext @/link has newly removed granted permission match patterns. */
-WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
+WK_API_AVAILABLE(macos(13.3), ios(16.4))
 WK_EXTERN NSNotificationName const _WKWebExtensionContextGrantedPermissionMatchPatternsWereRemovedNotification NS_SWIFT_NAME(_WKWebExtensionContext.grantedPermissionMatchPatternsWereRemovedNotification);
 
 /*! @abstract This notification is sent whenever a @link WKWebExtensionContext @/link has newly removed denied permission match patterns. */
-WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
+WK_API_AVAILABLE(macos(13.3), ios(16.4))
 WK_EXTERN NSNotificationName const _WKWebExtensionContextDeniedPermissionMatchPatternsWereRemovedNotification NS_SWIFT_NAME(_WKWebExtensionContext.deniedPermissionMatchPatternsWereRemovedNotification);
 
 /*! @abstract Constants for specifying @link WKWebExtensionContext @/link information in notifications. */
-WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
+WK_API_AVAILABLE(macos(13.3), ios(16.4))
 typedef NSString * _WKWebExtensionContextNotificationUserInfoKey NS_TYPED_EXTENSIBLE_ENUM NS_SWIFT_NAME(_WKWebExtensionContext.NotificationUserInfoKey);
 
 /*! @abstract The corresponding value represents the affected permissions in @link WKWebExtensionContext @/link notifications. */
-WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
+WK_API_AVAILABLE(macos(13.3), ios(16.4))
 WK_EXTERN _WKWebExtensionContextNotificationUserInfoKey const _WKWebExtensionContextNotificationUserInfoKeyPermissions;
 
 /*! @abstract The corresponding value represents the affected permission match patterns in @link WKWebExtensionContext @/link notifications. */
-WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
+WK_API_AVAILABLE(macos(13.3), ios(16.4))
 WK_EXTERN _WKWebExtensionContextNotificationUserInfoKey const _WKWebExtensionContextNotificationUserInfoKeyMatchPatterns;
 
 /*!
@@ -122,7 +122,7 @@ WK_EXTERN _WKWebExtensionContextNotificationUserInfoKey const _WKWebExtensionCon
  @discussion This class provides methods for managing the extension's permissions, allowing it to inject content, run
  background logic, show popovers, and display other web-based UI to the user.
  */
-WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
+WK_CLASS_AVAILABLE(macos(13.3), ios(16.4))
 @interface _WKWebExtensionContext : NSObject
 
 + (instancetype)new NS_UNAVAILABLE;

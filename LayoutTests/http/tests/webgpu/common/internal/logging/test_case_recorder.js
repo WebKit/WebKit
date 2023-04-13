@@ -1,6 +1,7 @@
 /**
 * AUTO-GENERATED - DO NOT EDIT. Source: https://github.com/gpuweb/cts
-**/import { SkipTestCase, UnexpectedPassError } from '../../framework/fixture.js';import { now, assert } from '../../util/util.js';
+**/import { SkipTestCase, UnexpectedPassError } from '../../framework/fixture.js';import { globalTestConfig } from '../../framework/test_config.js';import { now, assert } from '../../util/util.js';
+
 import { LogMessageWithStack } from './log_message.js';var
 
 
@@ -121,6 +122,7 @@ export class TestCaseRecorder {
 
   logImpl(level, name, baseException) {
     assert(baseException instanceof Error, 'test threw a non-Error object');
+    globalTestConfig.testHeartbeatCallback();
     const logMessage = new LogMessageWithStack(name, baseException);
 
     // Final case status should be the "worst" of all log entries.
@@ -152,5 +154,6 @@ export class TestCaseRecorder {
     }
 
     this.logs.push(logMessage);
-  }}
+  }
+}
 //# sourceMappingURL=test_case_recorder.js.map

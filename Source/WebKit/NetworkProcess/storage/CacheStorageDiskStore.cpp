@@ -29,6 +29,7 @@
 #include "CacheStorageRecord.h"
 #include "Logging.h"
 #include "NetworkCacheCoders.h"
+#include <WebCore/ResourceResponse.h>
 #include <wtf/PageBlock.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Scope.h>
@@ -86,7 +87,7 @@ struct RecordHeader {
     WebCore::FetchOptions options;
     String referrer;
     WebCore::FetchHeaders::Guard responseHeadersGuard { WebCore::FetchHeaders::Guard::None };
-    WebCore::ResourceResponse response;
+    WebCore::ResourceResponse::CrossThreadData responseData;
     uint64_t responseBodySize { 0 };
 };
 
@@ -243,8 +244,14 @@ static std::optional<RecordHeader> decodeRecordHeader(Span<const uint8_t> header
     if (!responseHeadersGuard)
         return std::nullopt;
 
-    WebCore::ResourceResponse response;
-    if (!WebCore::ResourceResponse::decode(decoder, response))
+    std::optional<bool> isNull;
+    decoder >> isNull;
+    if (!isNull || *isNull)
+        return std::nullopt;
+
+    std::optional<WebCore::ResourceResponse::CrossThreadData> responseData;
+    decoder >> responseData;
+    if (!responseData)
         return std::nullopt;
 
     std::optional<uint64_t> responseBodySize;
@@ -259,11 +266,11 @@ static std::optional<RecordHeader> decodeRecordHeader(Span<const uint8_t> header
         *insertionTime,
         *size,
         *requestHeadersGuard,
-        *request,
+        WTFMove(*request),
         WTFMove(options),
         WTFMove(*referrer),
         *responseHeadersGuard,
-        WTFMove(response),
+        WTFMove(*responseData),
         WTFMove(*responseBodySize)
     };
 }
@@ -273,7 +280,7 @@ static std::optional<StoredRecordInformation> readRecordInfoFromFileData(const F
     if (buffer.isEmpty())
         return std::nullopt;
 
-    auto fileData = Span { buffer.data(), buffer.size() };
+    auto fileData = makeSpan(buffer.data(), buffer.size());
     auto metaData = decodeRecordMetaData(fileData);
     if (!metaData)
         return std::nullopt;
@@ -290,8 +297,8 @@ static std::optional<StoredRecordInformation> readRecordInfoFromFileData(const F
         return std::nullopt;
 
     CacheStorageRecordInformation info { metaData->key, header->insertionTime, 0, 0, header->responseBodySize, header->request.url(), false, { } };
-    info.updateVaryHeaders(header->request, header->response.httpHeaderField(WebCore::HTTPHeaderName::Vary));
-    return StoredRecordInformation { info, *metaData, *header };
+    info.updateVaryHeaders(header->request, header->responseData);
+    return StoredRecordInformation { info, WTFMove(*metaData), WTFMove(*header) };
 }
 
 std::optional<CacheStorageRecord> CacheStorageDiskStore::readRecordFromFileData(const Vector<uint8_t>& buffer, const Vector<uint8_t>& blobBuffer)
@@ -307,7 +314,7 @@ std::optional<CacheStorageRecord> CacheStorageDiskStore::readRecordFromFileData(
         if (bodyOffset + bodySize != buffer.size())
             return std::nullopt;
 
-        auto bodyData = Span { buffer.data()  + bodyOffset, bodySize };
+        auto bodyData = makeSpan(buffer.data() + bodyOffset, bodySize);
         if (storedInfo->metaData.bodyHash != computeSHA1(bodyData, m_salt))
             return std::nullopt;
 
@@ -317,7 +324,7 @@ std::optional<CacheStorageRecord> CacheStorageDiskStore::readRecordFromFileData(
             return std::nullopt;
 
         auto sharedBuffer = WebCore::SharedBuffer::create(blobBuffer.data(), blobBuffer.size());
-        auto bodyData = Span { sharedBuffer->data(), sharedBuffer->size() };
+        auto bodyData = makeSpan(sharedBuffer->data(), sharedBuffer->size());
         if (storedInfo->metaData.bodyHash != computeSHA1(bodyData, m_salt))
             return std::nullopt;
 
@@ -327,7 +334,7 @@ std::optional<CacheStorageRecord> CacheStorageDiskStore::readRecordFromFileData(
     if (!responseBody)
         return std::nullopt;
 
-    return CacheStorageRecord { storedInfo->info, storedInfo->header.requestHeadersGuard, storedInfo->header.request, storedInfo->header.options, storedInfo->header.referrer, storedInfo->header.responseHeadersGuard, storedInfo->header.response.crossThreadData(), storedInfo->header.responseBodySize, WTFMove(*responseBody) };
+    return CacheStorageRecord { storedInfo->info, storedInfo->header.requestHeadersGuard, storedInfo->header.request, storedInfo->header.options, storedInfo->header.referrer, storedInfo->header.responseHeadersGuard, WTFMove(storedInfo->header.responseData), storedInfo->header.responseBodySize, WTFMove(*responseBody) };
 }
 
 void CacheStorageDiskStore::readAllRecordInfos(ReadAllRecordInfosCallback&& callback)
@@ -421,7 +428,7 @@ void CacheStorageDiskStore::deleteRecords(const Vector<CacheStorageRecordInforma
         return recordFilePath(recordInfo.key);
     });
 
-    m_ioQueue->dispatch([this, protectedThis = Ref { *this }, recordFiles = WTFMove(recordFiles), callback = WTFMove(callback)]() mutable {
+    m_ioQueue->dispatch([this, protectedThis = Ref { *this }, recordFiles = crossThreadCopy(WTFMove(recordFiles)), callback = WTFMove(callback)]() mutable {
         bool result = true;
         for (auto recordFile : recordFiles) {
             FileSystem::deleteFile(recordBlobFilePath(recordFile));
@@ -447,7 +454,11 @@ static Vector<uint8_t> encodeRecordHeader(CacheStorageRecord&& record)
     record.options.encodePersistent(encoder);
     encoder << record.referrer;
     encoder << record.responseHeadersGuard;
-    encoder << WebCore::ResourceResponse::fromCrossThreadData(WTFMove(record.responseData));
+    // isNull is needed as we switched from encoding ResourceResponse to encoding ResourceResponse::CrossThreadData,
+    // and we don't want to change storage format on disk.
+    bool isNull = false;
+    encoder << isNull;
+    encoder << record.responseData;
     encoder << record.responseBodySize;
     encoder.encodeChecksum();
 
@@ -506,15 +517,16 @@ void CacheStorageDiskStore::writeRecords(Vector<CacheStorageRecord>&& records, W
         auto bodyData = encodeRecordBody(record);
         auto bodyHash = computeSHA1(bodyData.span(), m_salt);
         bool shouldCreateBlob = shouldStoreBodyAsBlob(bodyData);
+        auto recordInfoKey = record.info.key;
         auto headerData = encodeRecordHeader(WTFMove(record));
-        auto recordData = encodeRecord(record.info.key, headerData, !shouldCreateBlob, bodyData, bodyHash, m_salt);
+        auto recordData = encodeRecord(recordInfoKey, headerData, !shouldCreateBlob, bodyData, bodyHash, m_salt);
         recordDatas.append(WTFMove(recordData));
         if (!shouldCreateBlob)
             bodyData = { };
         recordBlobDatas.append(WTFMove(bodyData));
     }
 
-    m_ioQueue->dispatch([this, protectedThis = Ref { *this }, recordFiles = WTFMove(recordFiles), recordDatas = WTFMove(recordDatas), recordBlobDatas = WTFMove(recordBlobDatas), callback = WTFMove(callback)]() mutable {
+    m_ioQueue->dispatch([this, protectedThis = Ref { *this }, recordFiles = crossThreadCopy(WTFMove(recordFiles)), recordDatas = crossThreadCopy(WTFMove(recordDatas)), recordBlobDatas = crossThreadCopy(WTFMove(recordBlobDatas)), callback = WTFMove(callback)]() mutable {
         bool result = true;
         // FIXME: we should probably stop writing and revert changes when result becomes false.
         for (size_t index = 0; index < recordFiles.size(); ++index) {
@@ -523,12 +535,12 @@ void CacheStorageDiskStore::writeRecords(Vector<CacheStorageRecord>&& records, W
             auto recordBlobData = recordBlobDatas[index];
             FileSystem::makeAllDirectories(FileSystem::parentPath(recordFile));
             if (!recordBlobData.isEmpty())  {
-                if (FileSystem::overwriteEntireFile(recordBlobFilePath(recordFile), Span { recordBlobData.data(), recordBlobData.size() }) == -1) {
+                if (FileSystem::overwriteEntireFile(recordBlobFilePath(recordFile), makeSpan(recordBlobData.data(), recordBlobData.size())) == -1) {
                     result = false;
                     continue;
                 }
             }
-            if (FileSystem::overwriteEntireFile(recordFile, Span { recordData.data(), recordData.size() }) == -1)
+            if (FileSystem::overwriteEntireFile(recordFile, makeSpan(recordData.data(), recordData.size())) == -1)
                 result = false;
         }
 

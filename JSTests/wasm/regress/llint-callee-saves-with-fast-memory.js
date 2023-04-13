@@ -1,4 +1,4 @@
-//@ skip if $architecture == "arm"
+//@ skip if $addressBits <= 32
 //@ requireOptions("--useWebAssemblyFastMemory=true")
 
 import * as assert from '../assert.js';

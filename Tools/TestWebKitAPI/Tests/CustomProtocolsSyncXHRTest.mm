@@ -36,7 +36,7 @@
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKRetainPtr.h>
 #import <WebKit/WKString.h>
-#import <WebKit/WKViewPrivate.h>
+#import <WebKit/WKWebViewPrivate.h>
 #import <wtf/RetainPtr.h>
 
 static bool testFinished = false;
@@ -47,22 +47,16 @@ TEST(WebKit2CustomProtocolsTest, SyncXHR)
 {
     [TestProtocol registerWithScheme:@"http"];
 
-    RetainPtr<WKProcessGroup> processGroup = adoptNS([[WKProcessGroup alloc] init]);
-    RetainPtr<WKBrowsingContextGroup> browsingContextGroup = adoptNS([[WKBrowsingContextGroup alloc] initWithIdentifier:@"TestIdentifier"]);
-
     // Allow file URLs to load non-file resources
-    WKRetainPtr<WKPreferencesRef> preferences = adoptWK(WKPreferencesCreate());
-    WKPreferencesSetUniversalAccessFromFileURLsAllowed(preferences.get(), true);
-    WKPageGroupSetPreferences(browsingContextGroup.get()._pageGroupRef, preferences.get());
-
-    RetainPtr<WKView> wkView = adoptNS([[WKView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) processGroup:processGroup.get() browsingContextGroup:browsingContextGroup.get()]);
-     RetainPtr<TestBrowsingContextLoadDelegate> delegate = adoptNS([[TestBrowsingContextLoadDelegate alloc] initWithBlockToRunOnLoad:^(WKBrowsingContextController *sender) {
-         EXPECT_JS_EQ(wkView.get().pageRef, "window._testResult", "PASS");
-         testFinished = true;
+    auto wkView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    wkView.get().configuration.preferences._universalAccessFromFileURLsAllowed = YES;
+    RetainPtr<TestBrowsingContextLoadDelegate> delegate = adoptNS([[TestBrowsingContextLoadDelegate alloc] initWithBlockToRunOnLoad:^(WKWebView *sender) {
+        EXPECT_JS_EQ(wkView.get()._pageRefForTransitionToWKWebView, "window._testResult", "PASS");
+        testFinished = true;
     }]);
-    wkView.get().browsingContextController.loadDelegate = delegate.get();
+    wkView.get().navigationDelegate = delegate.get();
 
-    WKPageLoadURL(wkView.get().pageRef, Util::createURLForResource("custom-protocol-sync-xhr", "html"));
+    WKPageLoadURL(wkView.get()._pageRefForTransitionToWKWebView, Util::createURLForResource("custom-protocol-sync-xhr", "html"));
 
     TestWebKitAPI::Util::run(&testFinished);
     [TestProtocol unregister];

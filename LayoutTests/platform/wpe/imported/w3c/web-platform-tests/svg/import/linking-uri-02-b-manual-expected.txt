@@ -67,11 +67,11 @@ layer at (0,0) size 800x600
           RenderSVGInlineText {#text} at (0,0) size 51x16
             chunk 1 (middle anchor) text run 1 at (59.80,295.00) startOffset 0 endOffset 7 width 50.40: "Polygon"
         RenderSVGRect {rect} at (59,345) size 169x151 [stroke={[type=SOLID] [color=#000000]}] [x=36.00] [y=208.00] [width=100.00] [height=89.00]
-        RenderSVGText {text} at (52,185) size 67x13 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 67x12
-            chunk 1 (middle anchor) text run 1 at (52.00,195.00) startOffset 0 endOffset 14 width 66.00: "viewTarget, no"
+        RenderSVGText {text} at (52,185) size 66x13 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 65x12
+            chunk 1 (middle anchor) text run 1 at (52.57,195.00) startOffset 0 endOffset 14 width 64.87: "viewTarget, no"
         RenderSVGText {text} at (40,194) size 90x13 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 91x12
+          RenderSVGInlineText {#text} at (0,0) size 90x12
             chunk 1 (middle anchor) text run 1 at (40.00,204.00) startOffset 0 endOffset 19 width 90.00: "changes to viewport"
     RenderSVGContainer {g} at (16,518) size 409x60
       RenderSVGText {text} at (10,311) size 245x36 contains 1 chunk(s)

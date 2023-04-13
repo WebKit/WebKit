@@ -96,23 +96,9 @@
     _impl->effectiveAppearanceDidChange();
 }
 
-- (void)_setHeaderBannerHeight:(int)height
-{
-    _page->setHeaderBannerHeightForTesting(height);
-}
-
-- (void)_setFooterBannerHeight:(int)height
-{
-    _page->setFooterBannerHeightForTesting(height);
-}
-
 - (NSSet<NSView *> *)_pdfHUDs
 {
-#if ENABLE(UI_PROCESS_PDF_HUD)
     return _impl->pdfHUDs();
-#else
-    return nil;
-#endif
 }
 
 - (NSMenu *)_activeMenu

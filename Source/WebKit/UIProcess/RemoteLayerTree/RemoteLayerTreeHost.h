@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "PlaybackSessionContextIdentifier.h"
 #include "RemoteLayerTreeNode.h"
 #include "RemoteLayerTreeTransaction.h"
 #include <WebCore/PlatformCALayer.h>
@@ -45,26 +46,26 @@ public:
     explicit RemoteLayerTreeHost(RemoteLayerTreeDrawingAreaProxy&);
     ~RemoteLayerTreeHost();
 
-    RemoteLayerTreeNode* nodeForID(WebCore::GraphicsLayer::PlatformLayerID) const;
+    RemoteLayerTreeNode* nodeForID(WebCore::PlatformLayerIdentifier) const;
     RemoteLayerTreeNode* rootNode() const { return m_rootNode.get(); }
 
-    CALayer *layerForID(WebCore::GraphicsLayer::PlatformLayerID) const;
+    CALayer *layerForID(WebCore::PlatformLayerIdentifier) const;
     CALayer *rootLayer() const;
 
     RemoteLayerTreeDrawingAreaProxy& drawingArea() const { return *m_drawingArea; }
 
     // Returns true if the root layer changed.
     bool updateLayerTree(const RemoteLayerTreeTransaction&, float indicatorScaleFactor  = 1);
-    void asyncSetLayerContents(WebCore::GraphicsLayer::PlatformLayerID, ImageBufferBackendHandle&&);
+    void asyncSetLayerContents(WebCore::PlatformLayerIdentifier, ImageBufferBackendHandle&&);
 
     void setIsDebugLayerTreeHost(bool flag) { m_isDebugLayerTreeHost = flag; }
     bool isDebugLayerTreeHost() const { return m_isDebugLayerTreeHost; }
 
-    typedef HashMap<WebCore::GraphicsLayer::PlatformLayerID, RetainPtr<WKAnimationDelegate>> LayerAnimationDelegateMap;
+    typedef HashMap<WebCore::PlatformLayerIdentifier, RetainPtr<WKAnimationDelegate>> LayerAnimationDelegateMap;
     LayerAnimationDelegateMap& animationDelegates() { return m_animationDelegates; }
 
-    void animationDidStart(WebCore::GraphicsLayer::PlatformLayerID, CAAnimation *, MonotonicTime startTime);
-    void animationDidEnd(WebCore::GraphicsLayer::PlatformLayerID, CAAnimation *);
+    void animationDidStart(WebCore::PlatformLayerIdentifier, CAAnimation *, MonotonicTime startTime);
+    void animationDidEnd(WebCore::PlatformLayerIdentifier, CAAnimation *);
 
     void detachFromDrawingArea();
     void clearLayers();
@@ -76,28 +77,35 @@ public:
     // This avoids keeping an outstanding InUse reference when suspended.
     void mapAllIOSurfaceBackingStore();
 
-    CALayer *layerWithIDForTesting(WebCore::GraphicsLayer::PlatformLayerID) const;
+    CALayer *layerWithIDForTesting(WebCore::PlatformLayerIdentifier) const;
 
     bool replayCGDisplayListsIntoBackingStore() const;
+    bool css3DTransformInteroperabilityEnabled() const;
 #if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
-    const HashSet<WebCore::GraphicsLayer::PlatformLayerID>& overlayRegionIDs() const { return m_overlayRegionIDs; }
-    void updateOverlayRegionIDs(const HashSet<WebCore::GraphicsLayer::PlatformLayerID> &overlayRegionNodes) { m_overlayRegionIDs = overlayRegionNodes; }
+    const HashSet<WebCore::PlatformLayerIdentifier>& overlayRegionIDs() const { return m_overlayRegionIDs; }
+    void updateOverlayRegionIDs(const HashSet<WebCore::PlatformLayerIdentifier> &overlayRegionNodes) { m_overlayRegionIDs = overlayRegionNodes; }
 #endif
-
 private:
     void createLayer(const RemoteLayerTreeTransaction::LayerCreationProperties&);
     std::unique_ptr<RemoteLayerTreeNode> makeNode(const RemoteLayerTreeTransaction::LayerCreationProperties&);
 
-    void layerWillBeRemoved(WebCore::GraphicsLayer::PlatformLayerID);
+    bool updateBannerLayers(const RemoteLayerTreeTransaction&);
 
-    RemoteLayerBackingStore::LayerContentsType layerContentsType() const;
+    void layerWillBeRemoved(WebCore::PlatformLayerIdentifier);
+
+    RemoteLayerBackingStoreProperties::LayerContentsType layerContentsType() const;
 
     RemoteLayerTreeDrawingAreaProxy* m_drawingArea { nullptr };
     WeakPtr<RemoteLayerTreeNode> m_rootNode;
-    HashMap<WebCore::GraphicsLayer::PlatformLayerID, std::unique_ptr<RemoteLayerTreeNode>> m_nodes;
-    HashMap<WebCore::GraphicsLayer::PlatformLayerID, RetainPtr<WKAnimationDelegate>> m_animationDelegates;
+    HashMap<WebCore::PlatformLayerIdentifier, std::unique_ptr<RemoteLayerTreeNode>> m_nodes;
+    HashMap<WebCore::LayerHostingContextIdentifier, WebCore::PlatformLayerIdentifier> m_hostingLayers;
+    HashMap<WebCore::LayerHostingContextIdentifier, WebCore::PlatformLayerIdentifier> m_hostedLayers;
+    HashMap<WebCore::PlatformLayerIdentifier, RetainPtr<WKAnimationDelegate>> m_animationDelegates;
+#if HAVE(AVKIT)
+    HashMap<WebCore::PlatformLayerIdentifier, PlaybackSessionContextIdentifier> m_videoLayers;
+#endif
 #if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
-    HashSet<WebCore::GraphicsLayer::PlatformLayerID> m_overlayRegionIDs;
+    HashSet<WebCore::PlatformLayerIdentifier> m_overlayRegionIDs;
 #endif
     bool m_isDebugLayerTreeHost { false };
 };

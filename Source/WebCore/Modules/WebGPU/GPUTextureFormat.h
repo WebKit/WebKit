@@ -85,9 +85,6 @@ enum class GPUTextureFormat : uint8_t {
     Depth24plusStencil8,
     Depth32float,
 
-    // depth24unorm-stencil8 feature
-    Depth24unormStencil8,
-
     // depth32float-stencil8 feature
     Depth32floatStencil8,
 
@@ -238,8 +235,6 @@ inline PAL::WebGPU::TextureFormat convertToBacking(GPUTextureFormat textureForma
         return PAL::WebGPU::TextureFormat::Depth24plusStencil8;
     case GPUTextureFormat::Depth32float:
         return PAL::WebGPU::TextureFormat::Depth32float;
-    case GPUTextureFormat::Depth24unormStencil8:
-        return PAL::WebGPU::TextureFormat::Depth24unormStencil8;
     case GPUTextureFormat::Depth32floatStencil8:
         return PAL::WebGPU::TextureFormat::Depth32floatStencil8;
     case GPUTextureFormat::Bc1RgbaUnorm:

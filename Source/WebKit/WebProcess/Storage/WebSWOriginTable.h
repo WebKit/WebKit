@@ -31,7 +31,7 @@
 #include "SharedStringHashTableReadOnly.h"
 
 namespace WebCore {
-struct SecurityOriginData;
+class SecurityOriginData;
 }
 
 namespace WebKit {

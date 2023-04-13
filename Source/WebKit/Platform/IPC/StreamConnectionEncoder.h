@@ -54,10 +54,13 @@ public:
 
     ~StreamConnectionEncoder() = default;
 
-    bool encodeFixedLengthData(const uint8_t* data, size_t size, size_t alignment)
+    template<typename T, size_t Extent>
+    bool encodeSpan(const Span<T, Extent>& span)
     {
+        auto* data = reinterpret_cast<const uint8_t*>(span.data());
+        size_t size = span.size_bytes();
         size_t bufferPointer = static_cast<size_t>(reinterpret_cast<intptr_t>(m_buffer + m_encodedSize));
-        size_t newBufferPointer = roundUpToMultipleOf(alignment, bufferPointer);
+        size_t newBufferPointer = roundUpToMultipleOf<alignof(T)>(bufferPointer);
         if (newBufferPointer < bufferPointer)
             return false;
         intptr_t alignedSize = m_encodedSize + (newBufferPointer - bufferPointer);
@@ -69,10 +72,11 @@ public:
         return true;
     }
 
-    template<typename T, size_t Extent>
-    bool encodeSpan(const Span<T, Extent>& data)
+    template<typename T>
+    bool encodeObject(const T& object)
     {
-        return encodeFixedLengthData(reinterpret_cast<const uint8_t*>(data.data()), data.size_bytes(), alignof(T));
+        static_assert(std::is_trivially_copyable_v<T>);
+        return encodeSpan(makeSpan(std::addressof(object), 1));
     }
 
     template<typename T>

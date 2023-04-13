@@ -33,6 +33,7 @@
 #include "JSArrayInlines.h"
 #include "JSCInlines.h"
 #include "LiteralParser.h"
+#include "NumberObject.h"
 #include "ObjectConstructorInlines.h"
 #include "PropertyNameArray.h"
 #include "VMInlines.h"
@@ -73,7 +74,7 @@ public:
     PropertyNameForFunctionCall(PropertyName);
     PropertyNameForFunctionCall(unsigned);
 
-    JSValue value(JSGlobalObject*) const;
+    JSValue value(VM&) const;
 
 private:
     PropertyName m_propertyName;
@@ -208,10 +209,9 @@ inline PropertyNameForFunctionCall::PropertyNameForFunctionCall(unsigned number)
 {
 }
 
-JSValue PropertyNameForFunctionCall::value(JSGlobalObject* globalObject) const
+JSValue PropertyNameForFunctionCall::value(VM& vm) const
 {
     if (!m_value) {
-        VM& vm = globalObject->vm();
         if (!m_propertyName.isNull())
             m_value = jsString(vm, String { m_propertyName.uid() });
         else {
@@ -323,7 +323,7 @@ ALWAYS_INLINE JSValue Stringifier::toJSON(JSValue baseValue, const PropertyNameF
         return baseValue;
 
     MarkedArgumentBuffer args;
-    args.append(propertyName.value(m_globalObject));
+    args.append(propertyName.value(vm));
     ASSERT(!args.hasOverflowed());
     RELEASE_AND_RETURN(scope, call(m_globalObject, asObject(toJSONFunction), callData, baseValue, args));
 }
@@ -352,7 +352,7 @@ Stringifier::StringifyResult Stringifier::appendStringifiedValue(StringBuilder& 
     // Call the replacer function.
     if (isCallableReplacer()) {
         MarkedArgumentBuffer args;
-        args.append(propertyName.value(m_globalObject));
+        args.append(propertyName.value(vm));
         args.append(value);
         ASSERT(!args.hasOverflowed());
         ASSERT(holder.object());
@@ -879,12 +879,10 @@ void FastStringifier::recordFastPropertyEnumerationFailure(JSObject& object)
         recordFailure("overridesAnyFormOfGetOwnPropertyNames"_s);
     else if (hasIndexedProperties(structure.indexingType()))
         recordFailure("hasIndexedProperties"_s);
-    else if (structure.hasGetterSetterProperties())
+    else if (structure.hasAnyKindOfGetterSetterProperties())
         recordFailure("getter/setter: "_s + firstGetterSetterPropertyName(object));
     else if (structure.hasReadOnlyOrGetterSetterPropertiesExcludingProto())
         recordFailure("hasReadOnlyOrGetterSetterPropertiesExcludingProto"_s);
-    else if (structure.hasCustomGetterSetterProperties())
-        recordFailure("hasCustomGetterSetterProperties"_s);
     else if (structure.isUncacheableDictionary())
         recordFailure("isUncacheableDictionary"_s);
     else if (structure.hasUnderscoreProtoPropertyExcludingOriginalProto())

@@ -30,10 +30,6 @@ class MediaStreamPrivate;
 class MediaStreamTrackPrivate;
 }
 
-#define WEBKIT_MEDIA_TRACK_TAG_WIDTH "webkit-media-stream-width"
-#define WEBKIT_MEDIA_TRACK_TAG_HEIGHT "webkit-media-stream-height"
-#define WEBKIT_MEDIA_TRACK_TAG_KIND "webkit-media-stream-kind"
-
 #define WEBKIT_MEDIA_STREAM_SRC(o) (G_TYPE_CHECK_INSTANCE_CAST((o), WEBKIT_TYPE_MEDIA_STREAM_SRC, WebKitMediaStreamSrc))
 #define WEBKIT_IS_MEDIA_STREAM_SRC(o) (G_TYPE_CHECK_INSTANCE_TYPE((o), WEBKIT_TYPE_MEDIA_STREAM_SRC))
 #define WEBKIT_MEDIA_STREAM_SRC_CAST(o) ((WebKitMediaStreamSrc*) o)

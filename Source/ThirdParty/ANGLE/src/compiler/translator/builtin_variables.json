@@ -890,7 +890,7 @@
             "ARMShaderFramebufferFetch":{
                 "variables":{
                     "gl_LastFragColorARM":{
-                        "essl_level":"ESSL1_BUILTINS",
+                        "essl_level":"COMMON_BUILTINS",
                         "essl_extension":"ARM_shader_framebuffer_fetch",
                         "type":{
                             "basic":"Float",

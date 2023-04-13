@@ -64,11 +64,11 @@
 #import <WebCore/FontCache.h>
 #import <WebCore/FontCacheCoreText.h>
 #import <WebCore/FontCascade.h>
-#import <WebCore/FrameView.h>
 #import <WebCore/HistoryController.h>
 #import <WebCore/HistoryItem.h>
 #import <WebCore/IOSurface.h>
 #import <WebCore/ImageDecoderCG.h>
+#import <WebCore/LocalFrameView.h>
 #import <WebCore/LocalizedDeviceModel.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/LogInitialization.h>
@@ -90,6 +90,7 @@
 #import <algorithm>
 #import <dispatch/dispatch.h>
 #import <mach/mach.h>
+#import <malloc/malloc.h>
 #import <objc/runtime.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <pal/spi/cf/CFUtilitiesSPI.h>
@@ -146,6 +147,7 @@
 #import "AppKitSPI.h"
 #import "WKAccessibilityWebPageObjectMac.h"
 #import "WebSwitchingGPUClient.h"
+#import <Security/SecStaticCode.h>
 #import <WebCore/DisplayConfigurationMonitor.h>
 #import <WebCore/ScrollbarThemeMac.h>
 #import <pal/spi/cf/CoreTextSPI.h>
@@ -243,25 +245,10 @@ static void softlinkDataDetectorsFrameworks()
 #endif // ENABLE(DATA_DETECTION)
 }
 
-static void initializeLogd()
-{
-    os_trace_set_mode(OS_TRACE_MODE_INFO | OS_TRACE_MODE_DEBUG);
-
-    // Log a long message to make sure the XPC connection to the log daemon for oversized messages is opened.
-    // This is needed to block launchd after the WebContent process has launched, since access to launchd is
-    // required when opening new XPC connections.
-    char stringWithSpaces[1024];
-    memset(stringWithSpaces, ' ', sizeof(stringWithSpaces));
-    stringWithSpaces[sizeof(stringWithSpaces) - 1] = 0;
-    RELEASE_LOG(Process, "Initialized logd %s", stringWithSpaces);
-}
-
 void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& parameters)
 {
     WEBPROCESS_RELEASE_LOG(Process, "WebProcess::platformInitializeWebProcess");
 
-    initializeLogd();
-    
     applyProcessCreationParameters(parameters.auxiliaryProcessParameters);
 
     setQOS(parameters.latencyQOS, parameters.throughputQOS);
@@ -291,7 +278,18 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
 
 #if HAVE(VIDEO_RESTRICTED_DECODING)
 #if PLATFORM(MAC)
-    SandboxExtension::consumePermanently(parameters.trustdExtensionHandle);
+    if (SandboxExtension::consumePermanently(parameters.trustdExtensionHandle)) {
+        // Open up a Mach connection to trustd by doing a code check validation on the main bundle.
+        // This is required since launchd will be blocked after process launch, which prevents new Mach connections to be created.
+        // FIXME: remove this once <rdar://90127163> is fixed.
+        auto bundleURL = adoptCF(CFBundleCopyBundleURL(CFBundleGetMainBundle()));
+        SecStaticCodeRef code = nullptr;
+        SecStaticCodeCreateWithPath(bundleURL.get(), kSecCSDefaultFlags, &code);
+        if (code) {
+            SecStaticCodeCheckValidity(code, kSecCSDoNotValidateResources, nullptr);
+            CFRelease(code);
+        }
+    }
 #endif // PLATFORM(MAC)
 #if USE(APPLE_INTERNAL_SDK)
     OptionSet<VideoDecoderBehavior> videoDecoderBehavior;
@@ -655,8 +653,55 @@ NEVER_INLINE NO_RETURN_DUE_TO_CRASH static void deliberateCrashForTesting()
 }
 #endif
 
+#if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
+static void registerLogHook()
+{
+    if (os_trace_get_mode() != OS_TRACE_MODE_DISABLE && os_trace_get_mode() != OS_TRACE_MODE_OFF)
+        return;
+
+    os_log_set_hook(OS_LOG_TYPE_DEFAULT, ^(os_log_type_t type, os_log_message_t msg) {
+        if (msg->buffer_sz > 1024)
+            return;
+
+        CString logFormat(msg->format);
+        CString logChannel(msg->subsystem);
+        CString logCategory(msg->category);
+
+        Vector<uint8_t> buffer(msg->buffer, msg->buffer_sz);
+        Vector<uint8_t> privdata(msg->privdata, msg->privdata_sz);
+
+        static NeverDestroyed<Ref<WorkQueue>> queue(WorkQueue::create("Log Queue", WorkQueue::QOS::Background));
+
+        queue.get()->dispatch([logFormat = WTFMove(logFormat), logChannel = WTFMove(logChannel), logCategory = WTFMove(logCategory), type = type, buffer = WTFMove(buffer), privdata = WTFMove(privdata)] {
+            os_log_message_s msg = { 0 };
+
+            msg.format = logFormat.data();
+            msg.buffer = buffer.data();
+            msg.buffer_sz = buffer.size();
+            msg.privdata = privdata.data();
+            msg.privdata_sz = privdata.size();
+
+            char* messageString = os_log_copy_message_string(&msg);
+            if (!messageString)
+                return;
+            IPC::DataReference logString(reinterpret_cast<uint8_t*>(messageString), strlen(messageString) + 1);
+
+            auto connectionID = WebProcess::singleton().networkProcessConnectionID();
+            if (connectionID)
+                IPC::Connection::send(connectionID, Messages::NetworkConnectionToWebProcess::LogOnBehalfOfWebContent(logChannel.bytesInludingNullTerminator(), logCategory.bytesInludingNullTerminator(), logString, type, getpid()), 0);
+
+            free(messageString);
+        });
+    });
+}
+#endif
+
 void WebProcess::platformInitializeProcess(const AuxiliaryProcessInitializationParameters& parameters)
 {
+#if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
+    registerLogHook();
+#endif
+
 #if PLATFORM(MAC)
     // Deny the WebContent process access to the WindowServer.
     // This call will not succeed if there are open WindowServer connections at this point.
@@ -912,7 +957,7 @@ RefPtr<ObjCObjectGraph> WebProcess::transformHandlesToObjects(ObjCObjectGraph& o
         RetainPtr<id> transformObject(id object) const override
         {
             if (auto* handle = dynamic_objc_cast<WKBrowsingContextHandle>(object)) {
-                if (auto* webPage = m_webProcess.webPage(makeObjectIdentifier<WebCore::PageIdentifierType>(handle._webPageID)))
+                if (auto* webPage = m_webProcess.webPage(ObjectIdentifier<WebCore::PageIdentifierType>(handle._webPageID)))
                     return wrapper(*webPage);
 
                 return [NSNull null];
@@ -972,6 +1017,22 @@ void WebProcess::destroyRenderingResources()
     MonotonicTime endTime = MonotonicTime::now();
 #endif
     WEBPROCESS_RELEASE_LOG(ProcessSuspension, "destroyRenderingResources: took %.2fms", (endTime - startTime).milliseconds());
+}
+
+void WebProcess::releaseSystemMallocMemory()
+{
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
+#if !RELEASE_LOG_DISABLED
+        MonotonicTime startTime = MonotonicTime::now();
+#endif
+        malloc_zone_pressure_relief(NULL, 0);
+#if !RELEASE_LOG_DISABLED
+        MonotonicTime endTime = MonotonicTime::now();
+#endif
+        WEBPROCESS_RELEASE_LOG(ProcessSuspension, "releaseSystemMallocMemory: took %.2fms", (endTime - startTime).milliseconds());
+    });
+#endif
 }
 
 #if PLATFORM(IOS_FAMILY)

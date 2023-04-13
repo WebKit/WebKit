@@ -25,8 +25,6 @@
 
 #pragma once
 
-#include <wtf/EnumTraits.h>
-
 namespace WebKit {
 
 enum class WebsiteDataType : uint32_t {
@@ -53,39 +51,9 @@ enum class WebsiteDataType : uint32_t {
     AlternativeServices = 1 << 18,
 #endif
     FileSystem = 1 << 19,
+#if ENABLE(SERVICE_WORKER)
+    BackgroundFetchStorage = 1 << 20,
+#endif
 };
 
 } // namespace WebKit
-
-namespace WTF {
-
-template<> struct EnumTraits<WebKit::WebsiteDataType> {
-    using values = EnumValues<
-        WebKit::WebsiteDataType,
-        WebKit::WebsiteDataType::Cookies,
-        WebKit::WebsiteDataType::DiskCache,
-        WebKit::WebsiteDataType::MemoryCache,
-        WebKit::WebsiteDataType::OfflineWebApplicationCache,
-        WebKit::WebsiteDataType::SessionStorage,
-        WebKit::WebsiteDataType::LocalStorage,
-        WebKit::WebsiteDataType::WebSQLDatabases,
-        WebKit::WebsiteDataType::IndexedDBDatabases,
-        WebKit::WebsiteDataType::MediaKeys,
-        WebKit::WebsiteDataType::HSTSCache,
-        WebKit::WebsiteDataType::SearchFieldRecentSearches,
-        WebKit::WebsiteDataType::ResourceLoadStatistics,
-        WebKit::WebsiteDataType::Credentials,
-#if ENABLE(SERVICE_WORKER)
-        WebKit::WebsiteDataType::ServiceWorkerRegistrations,
-#endif
-        WebKit::WebsiteDataType::DOMCache,
-        WebKit::WebsiteDataType::DeviceIdHashSalt,
-        WebKit::WebsiteDataType::PrivateClickMeasurements,
-#if HAVE(CFNETWORK_ALTERNATIVE_SERVICE)
-        WebKit::WebsiteDataType::AlternativeServices,
-#endif
-        WebKit::WebsiteDataType::FileSystem
-    >;
-};
-
-} // namespace WTF

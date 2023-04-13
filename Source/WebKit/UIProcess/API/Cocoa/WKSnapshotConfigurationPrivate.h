@@ -31,7 +31,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface WKSnapshotConfiguration (WKPrivate)
 
-@property (nonatomic, setter=_setIncludesSelectionHighlighting:) BOOL _includesSelectionHighlighting WK_API_AVAILABLE(macos(WK_MAC_TBA));
+@property (nonatomic, setter=_setIncludesSelectionHighlighting:) BOOL _includesSelectionHighlighting WK_API_AVAILABLE(macos(13.3));
 
 @end
 

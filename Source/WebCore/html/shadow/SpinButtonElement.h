@@ -29,6 +29,7 @@
 #include "HTMLDivElement.h"
 #include "PopupOpeningObserver.h"
 #include "Timer.h"
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -41,7 +42,7 @@ public:
         Up,
     };
 
-    class SpinButtonOwner {
+    class SpinButtonOwner : public CanMakeWeakPtr<SpinButtonOwner> {
     public:
         virtual ~SpinButtonOwner() = default;
         virtual void focusAndSelectSpinButtonOwner() = 0;
@@ -57,7 +58,7 @@ public:
     static Ref<SpinButtonElement> create(Document&, SpinButtonOwner&);
     UpDownState upDownState() const { return m_upDownState; }
     void releaseCapture();
-    void removeSpinButtonOwner() { m_spinButtonOwner = 0; }
+    void removeSpinButtonOwner() { m_spinButtonOwner = nullptr; }
 
     void step(int amount);
     
@@ -67,6 +68,7 @@ public:
     void forwardEvent(Event&);
 
 private:
+    constexpr static auto CreateSpinButtonElement = CreateHTMLDivElement | NodeFlag::HasCustomStyleResolveCallbacks;
     SpinButtonElement(Document&, SpinButtonOwner&);
 
     void willDetachRenderers() override;
@@ -83,7 +85,7 @@ private:
     bool shouldRespondToMouseEvents() const;
     bool isMouseFocusable() const override { return false; }
 
-    SpinButtonOwner* m_spinButtonOwner;
+    WeakPtr<SpinButtonOwner> m_spinButtonOwner;
     bool m_capturing;
     UpDownState m_upDownState;
     UpDownState m_pressStartingState;

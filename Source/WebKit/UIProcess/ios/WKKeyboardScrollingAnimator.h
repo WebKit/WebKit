@@ -50,6 +50,8 @@ class FloatPoint;
 
 - (BOOL)scrollTriggeringKeyIsPressed;
 
+- (void)stopScrollingImmediately;
+
 @property (nonatomic, weak) id <WKKeyboardScrollViewAnimatorDelegate> delegate;
 
 @end

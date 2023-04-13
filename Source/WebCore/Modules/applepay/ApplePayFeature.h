@@ -33,6 +33,9 @@ enum class ApplePayFeature : uint8_t {
 #if ENABLE(APPLE_PAY_LATER)
     ApplePayLater,
 #endif
+#if ENABLE(APPLE_PAY_LATER_MODE)
+    ApplePayLaterMode,
+#endif
 #if ENABLE(APPLE_PAY_PAYMENT_ORDER_DETAILS)
     AuthorizationResultOrderDetails,
 #endif
@@ -54,6 +57,9 @@ enum class ApplePayFeature : uint8_t {
 #endif
 #if ENABLE(APPLE_PAY_AUTOMATIC_RELOAD_LINE_ITEM)
     PaymentTimingAutomaticReload,
+#endif
+#if ENABLE(APPLE_PAY_DEFERRED_PAYMENTS)
+    PaymentRequestDeferred,
 #endif
 #if ENABLE(APPLE_PAY_DEFERRED_LINE_ITEM)
     PaymentTimingDeferred,
@@ -81,6 +87,9 @@ template<> struct EnumTraits<WebCore::ApplePayFeature> {
 #if ENABLE(APPLE_PAY_LATER)
         , WebCore::ApplePayFeature::ApplePayLater
 #endif
+#if ENABLE(APPLE_PAY_LATER_MODE)
+        , WebCore::ApplePayFeature::ApplePayLaterMode
+#endif
 #if ENABLE(APPLE_PAY_PAYMENT_ORDER_DETAILS)
         , WebCore::ApplePayFeature::AuthorizationResultOrderDetails
 #endif
@@ -102,6 +111,9 @@ template<> struct EnumTraits<WebCore::ApplePayFeature> {
 #endif
 #if ENABLE(APPLE_PAY_AUTOMATIC_RELOAD_LINE_ITEM)
         , WebCore::ApplePayFeature::PaymentTimingAutomaticReload
+#endif
+#if ENABLE(APPLE_PAY_DEFERRED_PAYMENTS)
+        , WebCore::ApplePayFeature::PaymentRequestDeferred
 #endif
 #if ENABLE(APPLE_PAY_DEFERRED_LINE_ITEM)
         , WebCore::ApplePayFeature::PaymentTimingDeferred

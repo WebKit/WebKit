@@ -41,6 +41,7 @@
 #include "JSPlaneLayout.h"
 #include "OffscreenCanvas.h"
 #include "PixelBuffer.h"
+#include "SVGImageElement.h"
 #include "VideoColorSpace.h"
 #include "WebCodecsVideoFrameAlgorithms.h"
 
@@ -81,6 +82,14 @@ static std::optional<Exception> checkImageUsability(const WebCodecsVideoFrame::C
 {
     return switchOn(source,
     [] (const RefPtr<HTMLImageElement>& imageElement) -> std::optional<Exception> {
+        auto* image = imageElement->cachedImage() ? imageElement->cachedImage()->image() : nullptr;
+        if (!image)
+            return Exception { InvalidStateError,  "Image element has no data"_s };
+        if (!image->width() || !image->height())
+            return Exception { InvalidStateError,  "Image element has a bad size"_s };
+        return { };
+    },
+    [] (const RefPtr<SVGImageElement>& imageElement) -> std::optional<Exception> {
         auto* image = imageElement->cachedImage() ? imageElement->cachedImage()->image() : nullptr;
         if (!image)
             return Exception { InvalidStateError,  "Image element has no data"_s };
@@ -131,6 +140,16 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(ScriptExecutio
 
     return switchOn(source,
     [&] (RefPtr<HTMLImageElement>& imageElement) -> ExceptionOr<Ref<WebCodecsVideoFrame>> {
+        if (!init.timestamp)
+            return Exception { TypeError,  "timestamp is not provided"_s };
+
+        auto image = imageElement->cachedImage()->image()->nativeImageForCurrentFrame();
+        if (!image)
+            return Exception { InvalidStateError,  "Image element has no video frame"_s };
+
+        return initializeFrameWithResourceAndSize(context, image.releaseNonNull(), WTFMove(init));
+    },
+    [&] (RefPtr<SVGImageElement>& imageElement) -> ExceptionOr<Ref<WebCodecsVideoFrame>> {
         if (!init.timestamp)
             return Exception { TypeError,  "timestamp is not provided"_s };
 

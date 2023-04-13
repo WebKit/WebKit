@@ -20,7 +20,7 @@
 #include "config.h"
 #include "SVGAltGlyphDefElement.h"
 
-#include "ElementIterator.h"
+#include "ElementChildIteratorInlines.h"
 #include "SVGAltGlyphItemElement.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGGlyphRefElement.h"

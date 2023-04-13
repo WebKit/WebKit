@@ -42,7 +42,7 @@ class JSValue;
 
 namespace WebCore {
 
-class Frame;
+class LocalFrame;
 class SWClientConnection;
 
 struct StructuredSerializeOptions;

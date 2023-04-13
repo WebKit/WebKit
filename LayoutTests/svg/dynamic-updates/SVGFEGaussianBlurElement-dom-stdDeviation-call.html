@@ -48,7 +48,13 @@ shouldBe("blurElement.stdDeviationX.baseVal", "5");
 shouldBe("blurElement.stdDeviationY.baseVal", "5");
 
 function repaintTest() {
-    blurElement.setStdDeviation(10, 10);
+    shouldNotThrow('blurElement.setStdDeviation(10, 10)');
+
+    shouldThrow('dropShadowElement.setStdDeviation(NaN, NaN)');
+    shouldThrow('dropShadowElement.setStdDeviation(Infinity, Infinity)');
+    shouldThrow('dropShadowElement.setStdDeviation()');
+    shouldThrow('dropShadowElement.setStdDeviation(0)');
+
     shouldBe("blurElement.stdDeviationX.baseVal", "10");
     shouldBe("blurElement.stdDeviationY.baseVal", "10");
 

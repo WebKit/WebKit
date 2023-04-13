@@ -28,6 +28,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "GPUConnectionToWebProcessMessages.h"
 #include "Logging.h"
 #include "PlatformImageBufferShareableBackend.h"
 #include "RemoteRenderingBackendProxy.h"
@@ -172,24 +173,26 @@ ImageBufferBackend* RemoteImageBufferProxy::ensureBackendCreated() const
 
 RefPtr<NativeImage> RemoteImageBufferProxy::copyNativeImage(BackingStoreCopy copyBehavior) const
 {
-    if (canMapBackingStore())
+    if (canMapBackingStore()) {
+        const_cast<RemoteImageBufferProxy*>(this)->flushDrawingContext();
         return ImageBuffer::copyNativeImage(copyBehavior);
-
+    }
     if (UNLIKELY(!m_remoteRenderingBackendProxy))
         return { };
 
-    const_cast<RemoteImageBufferProxy*>(this)->flushDrawingContext();
     auto bitmap = m_remoteRenderingBackendProxy->getShareableBitmap(m_renderingResourceIdentifier, PreserveResolution::Yes);
     if (!bitmap)
         return { };
     return NativeImage::create(bitmap->createPlatformImage(DontCopyBackingStore));
 }
 
-RefPtr<NativeImage> RemoteImageBufferProxy::copyNativeImageForDrawing(BackingStoreCopy copyBehavior) const
+RefPtr<NativeImage> RemoteImageBufferProxy::copyNativeImageForDrawing(GraphicsContext& destination) const
 {
-    if (canMapBackingStore())
-        return ImageBuffer::copyNativeImageForDrawing(copyBehavior);
-    return copyNativeImage(copyBehavior);
+    if (canMapBackingStore()) {
+        const_cast<RemoteImageBufferProxy*>(this)->flushDrawingContext();
+        return ImageBuffer::copyNativeImageForDrawing(destination);
+    }
+    return copyNativeImage(DontCopyBackingStore);
 }
 
 void RemoteImageBufferProxy::drawConsuming(GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
@@ -224,16 +227,18 @@ RefPtr<Image> RemoteImageBufferProxy::filteredImage(Filter& filter)
 {
     if (UNLIKELY(!m_remoteRenderingBackendProxy))
         return { };
-    flushDrawingContext();
     return m_remoteRenderingBackendProxy->getFilteredImage(m_renderingResourceIdentifier, filter);
 }
 
 RefPtr<PixelBuffer> RemoteImageBufferProxy::getPixelBuffer(const PixelBufferFormat& destinationFormat, const IntRect& srcRect, const ImageBufferAllocator& allocator) const
 {
+    if (canMapBackingStore()) {
+        const_cast<RemoteImageBufferProxy&>(*this).flushDrawingContext();
+        return ImageBuffer::getPixelBuffer(destinationFormat, srcRect, allocator);
+    }
+
     if (UNLIKELY(!m_remoteRenderingBackendProxy))
         return nullptr;
-    auto& mutableThis = const_cast<RemoteImageBufferProxy&>(*this);
-    mutableThis.flushDrawingContextAsync();
     IntRect sourceRectScaled = srcRect;
     sourceRectScaled.scale(resolutionScale());
     auto pixelBuffer = allocator.createPixelBuffer(destinationFormat, sourceRectScaled.size());
@@ -260,13 +265,20 @@ GraphicsContext& RemoteImageBufferProxy::context() const
 
 void RemoteImageBufferProxy::putPixelBuffer(const PixelBuffer& pixelBuffer, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat)
 {
+    if (canMapBackingStore()) {
+        const_cast<RemoteImageBufferProxy&>(*this).flushDrawingContext();
+        ImageBuffer::putPixelBuffer(pixelBuffer, srcRect, destPoint, destFormat);
+        // Simulate a write so that read caches are cleared.
+        // FIXME: This should not be done via the context draw, as that induces a flush.
+        context().fillRect({ });
+        return;
+    }
+
     if (UNLIKELY(!m_remoteRenderingBackendProxy))
         return;
     // The math inside PixelBuffer::create() doesn't agree with the math inside ImageBufferBackend::putPixelBuffer() about how m_resolutionScale interacts with the data in the ImageBuffer.
     // This means that putPixelBuffer() is only called when resolutionScale() == 1.
     ASSERT(resolutionScale() == 1);
-    auto& mutableThis = const_cast<RemoteImageBufferProxy&>(*this);
-    mutableThis.flushDrawingContextAsync();
     backingStoreWillChange();
     m_remoteRenderingBackendProxy->putPixelBufferForImageBuffer(m_renderingResourceIdentifier, pixelBuffer, srcRect, destPoint, destFormat);
 }
@@ -279,12 +291,6 @@ void RemoteImageBufferProxy::convertToLuminanceMask()
 void RemoteImageBufferProxy::transformToColorSpace(const DestinationColorSpace& colorSpace)
 {
     m_remoteDisplayList.transformToColorSpace(colorSpace);
-}
-
-void RemoteImageBufferProxy::flushContext()
-{
-    flushDrawingContext();
-    m_backend->flushContext();
 }
 
 void RemoteImageBufferProxy::flushDrawingContext()
@@ -390,7 +396,7 @@ std::unique_ptr<SerializedImageBuffer> RemoteImageBufferProxy::sinkIntoSerialize
 }
 
 RemoteSerializedImageBufferProxy::RemoteSerializedImageBufferProxy(const WebCore::ImageBufferBackend::Parameters& parameters, const WebCore::ImageBufferBackend::Info& info, const WebCore::RenderingResourceIdentifier& renderingResourceIdentifier, RemoteRenderingBackendProxy& backend)
-    : m_referenceTracker(RemoteSerializedImageBufferIdentifier::generateThreadSafe())
+    : m_referenceTracker(RemoteSerializedImageBufferIdentifier::generate())
     , m_parameters(parameters)
     , m_info(info)
     , m_renderingResourceIdentifier(renderingResourceIdentifier)
@@ -398,15 +404,15 @@ RemoteSerializedImageBufferProxy::RemoteSerializedImageBufferProxy(const WebCore
 {
     backend.remoteResourceCacheProxy().forgetImageBuffer(m_renderingResourceIdentifier);
     backend.moveToSerializedBuffer(m_renderingResourceIdentifier, m_referenceTracker.write());
-
-    // Record an implicit read, since we always do a read+write (to get+remove) as a single
-    // operation.
-    m_referenceTracker.read();
 }
 
 RefPtr<ImageBuffer> RemoteSerializedImageBufferProxy::sinkIntoImageBuffer(std::unique_ptr<RemoteSerializedImageBufferProxy> buffer, RemoteRenderingBackendProxy& backend)
 {
     auto result = adoptRef(new RemoteImageBufferProxy(buffer->m_parameters, buffer->m_info, backend, nullptr, buffer->m_renderingResourceIdentifier));
+
+    // Record an implicit read, since we always do a read+write (to get+remove) as a single
+    // operation.
+    buffer->m_referenceTracker.read();
     backend.moveToImageBuffer(buffer->m_referenceTracker.write(), result->renderingResourceIdentifier());
     buffer->m_connection = nullptr;
     return result;

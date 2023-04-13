@@ -29,11 +29,25 @@
 G_BEGIN_DECLS
 
 #define WEBKIT_TYPE_AUTOMATION_SESSION            (webkit_automation_session_get_type())
+#if !ENABLE(2022_GLIB_API)
 #define WEBKIT_AUTOMATION_SESSION(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), WEBKIT_TYPE_AUTOMATION_SESSION, WebKitAutomationSession))
 #define WEBKIT_IS_AUTOMATION_SESSION(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), WEBKIT_TYPE_AUTOMATION_SESSION))
 #define WEBKIT_AUTOMATION_SESSION_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass),  WEBKIT_TYPE_AUTOMATION_SESSION, WebKitAutomationSessionClass))
 #define WEBKIT_IS_AUTOMATION_SESSION_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass),  WEBKIT_TYPE_AUTOMATION_SESSION))
 #define WEBKIT_AUTOMATION_SESSION_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj),  WEBKIT_TYPE_AUTOMATION_SESSION, WebKitAutomationSessionClass))
+
+struct _WebKitAutomationSessionClass {
+    GObjectClass parent_class;
+
+    /*< private >*/
+    void (*_webkit_reserved0) (void);
+    void (*_webkit_reserved1) (void);
+    void (*_webkit_reserved2) (void);
+    void (*_webkit_reserved3) (void);
+};
+#endif
+
+WEBKIT_DECLARE_FINAL_TYPE (WebKitAutomationSession, webkit_automation_session, WEBKIT, AUTOMATION_SESSION, GObject)
 
 /**
  * WebKitAutomationBrowsingContextPresentation:
@@ -48,30 +62,6 @@ typedef enum {
     WEBKIT_AUTOMATION_BROWSING_CONTEXT_PRESENTATION_WINDOW,
     WEBKIT_AUTOMATION_BROWSING_CONTEXT_PRESENTATION_TAB
 } WebKitAutomationBrowsingContextPresentation;
-
-typedef struct _WebKitAutomationSession        WebKitAutomationSession;
-typedef struct _WebKitAutomationSessionClass   WebKitAutomationSessionClass;
-typedef struct _WebKitAutomationSessionPrivate WebKitAutomationSessionPrivate;
-
-struct _WebKitAutomationSession {
-    GObject parent;
-
-    /*< private >*/
-    WebKitAutomationSessionPrivate *priv;
-};
-
-struct _WebKitAutomationSessionClass {
-    GObjectClass parent_class;
-
-    /*< private >*/
-    void (*_webkit_reserved0) (void);
-    void (*_webkit_reserved1) (void);
-    void (*_webkit_reserved2) (void);
-    void (*_webkit_reserved3) (void);
-};
-
-WEBKIT_API GType
-webkit_automation_session_get_type             (void);
 
 WEBKIT_API const char *
 webkit_automation_session_get_id               (WebKitAutomationSession *session);

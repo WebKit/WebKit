@@ -22,6 +22,7 @@ customElements.define('custom-element', class CustomElement extends HTMLElement 
         internals.ariaDescribedByElements = Array.from(document.querySelectorAll('.note'));
         internals.ariaDetailsElements = Array.from(document.querySelectorAll('.details'));
         internals.ariaErrorMessageElements = Array.from(document.querySelectorAll('.error'));
+        internals.ariaInvalid = true;
     }
 });
 

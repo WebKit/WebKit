@@ -1,7 +1,7 @@
 /*
  * <%= @warning %>
  *
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,6 +31,7 @@
 #include "WebPreferencesDefinitions.h"
 #include "WebPreferencesKeys.h"
 #include <wtf/ExperimentalFeatureNames.h>
+#include <wtf/NeverDestroyed.h>
 
 namespace WebKit {
 
@@ -41,7 +42,7 @@ const Vector<RefPtr<API::Object>>& WebPreferences::features()
 <%- if @pref.condition -%>
 #if <%= @pref.condition %>
 <%- end -%>
-        API::Feature::create(<%= @pref.humanReadableName %>""_s, "<%= @pref.name %>"_s, <%= @pref.apiStatus %>, <%= @pref.humanReadableDescription %>""_s, DEFAULT_VALUE_FOR_<%= @pref.name %>, <%= @pref.hidden %>),
+        API::Feature::create(<%= @pref.humanReadableName %>""_s, "<%= @pref.name %>"_s, <%= @pref.apiStatus %>, <%= @pref.apiCategory %>, <%= @pref.humanReadableDescription %>""_s, DEFAULT_VALUE_FOR_<%= @pref.name %>, <%= @pref.hidden %>),
 <%- if @pref.condition -%>
 #endif
 <%- end -%>

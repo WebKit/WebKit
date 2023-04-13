@@ -32,28 +32,38 @@
 
 namespace WebCore {
 
+struct ListStyleType;
 class StyleRuleCounterStyle;
+enum CSSValueID : uint16_t;
+
 using CounterStyleMap = HashMap<AtomString, RefPtr<CSSCounterStyle>>;
 
 class CSSCounterStyleRegistry {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    RefPtr<CSSCounterStyle> resolvedCounterStyle(const AtomString&);
-    RefPtr<CSSCounterStyle> decimalCounter() const;
+    CSSCounterStyleRegistry() = default;
+    RefPtr<CSSCounterStyle> resolvedCounterStyle(const ListStyleType&);
+    static RefPtr<CSSCounterStyle> decimalCounter();
+    static void addUserAgentCounterStyle(const CSSCounterStyleDescriptors&);
     void addCounterStyle(const CSSCounterStyleDescriptors&);
+    static void resolveUserAgentReferences();
     void resolveReferencesIfNeeded();
     bool operator==(const CSSCounterStyleRegistry& other) const;
-    CSSCounterStyleRegistry() = default;
+    void clearAuthorCounterStyles();
 
 private:
     static CounterStyleMap& userAgentCounterStyles();
-    void resolveFallbackReference(CSSCounterStyle&);
-    void resolveExtendsReference(CSSCounterStyle&);
-    void resolveExtendsReference(CSSCounterStyle&, HashSet<CSSCounterStyle*>&);
-    RefPtr<CSSCounterStyle> counterStyle(const AtomString&);
+    // If no map is passed on, user-agent counter styles map will be used
+    static void resolveFallbackReference(CSSCounterStyle&, CounterStyleMap* = nullptr);
+    static void resolveExtendsReference(CSSCounterStyle&, CounterStyleMap* = nullptr);
+    static void resolveExtendsReference(CSSCounterStyle&, HashSet<CSSCounterStyle*>&, CounterStyleMap* = nullptr);
+    static RefPtr<CSSCounterStyle> counterStyle(const AtomString&, CounterStyleMap* = nullptr);
+    void invalidate();
 
     CounterStyleMap m_authorCounterStyles;
-    bool hasUnresolvedReferences { true };
+    bool m_hasUnresolvedReferences { true };
 };
+
+bool isCounterStyleUnsupportedByUserAgent(CSSValueID);
 
 } // namespace WebCore

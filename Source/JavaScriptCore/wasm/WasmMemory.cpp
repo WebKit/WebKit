@@ -160,9 +160,11 @@ RefPtr<Memory> Memory::tryCreate(VM& vm, PageCount initial, PageCount maximum, M
     if (!done)
         return nullptr;
         
-#if ENABLE(WEBASSEMBLY_SIGNALING_MEMORY)
     char* fastMemory = nullptr;
     if (Options::useWebAssemblyFastMemory()) {
+#if CPU(ADDRESS32)
+        RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("32-bit platforms don't support fast memory.");
+#endif
         tryAllocate(vm,
             [&] () -> BufferMemoryResult::Kind {
                 auto result = BufferMemoryManager::singleton().tryAllocateFastMemory();
@@ -198,7 +200,6 @@ RefPtr<Memory> Memory::tryCreate(VM& vm, PageCount initial, PageCount maximum, M
         RELEASE_ASSERT_NOT_REACHED();
         return nullptr;
     }
-#endif
 
     if (UNLIKELY(Options::crashIfWebAssemblyCantFastMemory()))
         webAssemblyCouldntGetFastMemory();
@@ -259,15 +260,6 @@ bool Memory::addressIsInGrowableOrFastMemory(void* address)
 
 Expected<PageCount, GrowFailReason> Memory::growShared(VM& vm, PageCount delta)
 {
-#if !ENABLE(WEBASSEMBLY_SIGNALING_MEMORY)
-    // Shared memory requires signaling memory which is not available on ARMv7 or others
-    // yet. In order to get more of the test suite to run, we can still use
-    // a shared mmeory by using bounds checking, but we cannot grow it safely
-    // in case it's used by multiple threads. Once the signal handler are
-    // available, this can be relaxed.
-    return makeUnexpected(GrowFailReason::GrowSharedUnavailable);
-#endif
-
     PageCount oldPageCount;
     PageCount newPageCount;
     Expected<int64_t, GrowFailReason> result;
@@ -372,7 +364,6 @@ Expected<PageCount, GrowFailReason> Memory::grow(VM& vm, PageCount delta)
         return success();
     }
     case MemoryMode::Signaling: {
-#if ENABLE(WEBASSEMBLY_SIGNALING_MEMORY)
         size_t extraBytes = desiredSize - size();
         RELEASE_ASSERT(extraBytes);
         bool allocationSuccess = tryAllocate(vm,
@@ -402,9 +393,6 @@ Expected<PageCount, GrowFailReason> Memory::grow(VM& vm, PageCount delta)
 
         m_handle->updateSize(desiredSize);
         return success();
-#else
-        return oldPageCount;
-#endif
     }
     }
 

@@ -30,16 +30,16 @@
 #include "CSSParserTokenRange.h"
 #include "CSSPropertyParserHelpers.h"
 #include "CSSTokenizer.h"
-#include "DOMWindow.h"
 #include "Element.h"
 #include "FrameDestructionObserverInlines.h"
 #include "InspectorInstrumentation.h"
 #include "IntersectionObserverCallback.h"
 #include "IntersectionObserverEntry.h"
 #include "JSNodeCustom.h"
+#include "LocalDOMWindow.h"
 #include "Logging.h"
 #include "Performance.h"
-#include "WebCoreOpaqueRoot.h"
+#include "WebCoreOpaqueRootInlines.h"
 #include <JavaScriptCore/AbstractSlotVisitorInlines.h>
 #include <wtf/Vector.h>
 
@@ -130,8 +130,10 @@ IntersectionObserver::IntersectionObserver(Document& document, Ref<IntersectionO
     } else if (root) {
         auto& observerData = downcast<Element>(*root).ensureIntersectionObserverData();
         observerData.observers.append(*this);
-    } else if (auto* frame = document.frame())
-        m_implicitRootDocument = frame->mainFrame().document();
+    } else if (auto* frame = document.frame()) {
+        if (auto* localFrame = dynamicDowncast<LocalFrame>(frame->mainFrame()))
+            m_implicitRootDocument = localFrame->document();
+    }
 
     std::sort(m_thresholds.begin(), m_thresholds.end());
     

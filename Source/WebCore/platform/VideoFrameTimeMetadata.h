@@ -36,41 +36,6 @@ struct VideoFrameTimeMetadata {
     std::optional<Seconds> captureTime;
     std::optional<Seconds> receiveTime;
     std::optional<unsigned> rtpTimestamp;
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<VideoFrameTimeMetadata> decode(Decoder&);
 };
-
-template<class Encoder>
-inline void VideoFrameTimeMetadata::encode(Encoder& encoder) const
-{
-    encoder << processingDuration << captureTime << receiveTime << rtpTimestamp;
-}
-
-template<class Decoder>
-inline std::optional<VideoFrameTimeMetadata> VideoFrameTimeMetadata::decode(Decoder& decoder)
-{
-    std::optional<std::optional<double>> processingDuration;
-    decoder >> processingDuration;
-    if (!processingDuration)
-        return std::nullopt;
-
-    std::optional<std::optional<Seconds>> captureTime;
-    decoder >> captureTime;
-    if (!captureTime)
-        return std::nullopt;
-
-    std::optional<std::optional<Seconds>> receiveTime;
-    decoder >> receiveTime;
-    if (!receiveTime)
-        return std::nullopt;
-
-    std::optional<std::optional<unsigned>> rtpTimestamp;
-    decoder >> rtpTimestamp;
-    if (!rtpTimestamp)
-        return std::nullopt;
-
-    return VideoFrameTimeMetadata { *processingDuration, *captureTime, *receiveTime, *rtpTimestamp };
-}
 
 }

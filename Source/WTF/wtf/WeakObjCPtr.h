@@ -76,7 +76,7 @@ public:
 #if __has_feature(objc_arc)
         m_weakReference = ptr;
 #else
-        objc_storeWeak(&m_weakReference, ptr);
+        objc_storeWeak(&m_weakReference, (id)ptr);
 #endif
 
         return *this;

@@ -144,6 +144,8 @@ enum ContextMenuAction {
     ContextMenuItemTagDictationAlternative,
     ContextMenuItemTagPlayAllAnimations,
     ContextMenuItemTagPauseAllAnimations,
+    ContextMenuItemTagPlayAnimation,
+    ContextMenuItemTagPauseAnimation,
     ContextMenuItemTagToggleVideoFullscreen,
     ContextMenuItemTagShareMenu,
     ContextMenuItemTagToggleVideoEnhancedFullscreen,

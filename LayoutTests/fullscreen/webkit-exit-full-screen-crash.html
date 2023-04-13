@@ -1,0 +1,10 @@
+<script>
+function test() {
+    if (window.testRunner)
+        testRunner.dumpAsText();
+    document.webkitExitFullscreen();
+    document.body.innerHTML = 'PASS if no crash';
+}
+</script>
+<body onload="test()">
+</body>

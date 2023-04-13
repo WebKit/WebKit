@@ -1,6 +1,4 @@
 
-Harness Error (FAIL), message = Unhandled rejection: releasing lock of reader whose stream is still in readable state
-
 PASS a signal argument 'null' should cause pipeTo() to reject
 PASS a signal argument 'AbortSignal' should cause pipeTo() to reject
 PASS a signal argument 'true' should cause pipeTo() to reject

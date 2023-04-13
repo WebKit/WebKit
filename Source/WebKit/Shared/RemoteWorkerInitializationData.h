@@ -38,7 +38,6 @@ namespace WebKit {
 class WebCompiledContentRuleListData;
 
 struct RemoteWorkerInitializationData {
-
     void encode(IPC::Encoder&) const;
     static std::optional<RemoteWorkerInitializationData> decode(IPC::Decoder&);
 

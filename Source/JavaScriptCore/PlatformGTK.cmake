@@ -18,9 +18,11 @@ install(FILES "${CMAKE_BINARY_DIR}/Source/JavaScriptCore/javascriptcoregtk-${WEB
         DESTINATION "${LIB_INSTALL_DIR}/pkgconfig"
 )
 
-install(FILES ${JavaScriptCore_PUBLIC_FRAMEWORK_HEADERS}
-        DESTINATION "${WEBKITGTK_HEADER_INSTALL_DIR}/JavaScriptCore"
-)
+if (NOT ENABLE_2022_GLIB_API)
+    install(FILES ${JavaScriptCore_PUBLIC_FRAMEWORK_HEADERS}
+            DESTINATION "${WEBKITGTK_HEADER_INSTALL_DIR}/JavaScriptCore"
+    )
+endif ()
 
 install(FILES ${JavaScriptCore_INSTALLED_HEADERS}
         DESTINATION "${WEBKITGTK_HEADER_INSTALL_DIR}/jsc"

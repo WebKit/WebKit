@@ -313,8 +313,16 @@ class GitRepository(Repository):
     def _fetch_all_hashes(self):
         self._fetch_remote()
         scope = self._git_branch or '--all'
-        lines = self._run_git_command(['log', scope, '--date-order', '--reverse', '--pretty=%H %ct %ce %P']).split('\n')
-        self._tokenized_hashes = [line.split() for line in lines]
+        lines = self._run_git_command(['log', scope, '--date-order', '--reverse', '--pretty=%H %ct <%ce> %P']).split('\n')
+        self._tokenized_hashes = []
+        GIT_LOG_LINE_RE = re.compile(r'(?P<H>\w+) (?P<ct>\d+) \<(?P<ce>.*)\>\s*(?P<P>\w+)?')
+        for line in lines:
+            if not line:
+                continue
+            match = GIT_LOG_LINE_RE.match(line)
+            if not match:
+                raise Exception('Failed to tokenize hash "{}"'.format(line))
+            self._tokenized_hashes.append(filter(None, list(match.groups())))
 
     def _run_git_command(self, args):
         return subprocess.check_output(['git', '-C', self._git_checkout] + args, stderr=subprocess.STDOUT)

@@ -78,6 +78,7 @@ def main():
     if sys.platform.startswith('win'):
         tester.skip(('webkitpy.common.checkout', 'webkitpy.tool'), 'fail horribly on win32', 54526)
         tester.skip(('reporelaypy',), 'fail to install lupa and don\'t have to test on win32', 243316)
+        tester.skip(('webkitflaskpy',), 'fail to install lupa and don\'t have to test on win32', 253419)
 
     # Tests that are platform specific
     mac_only_tests = (
@@ -196,7 +197,8 @@ class Tester(object):
         # Force registration of all autoinstalled packages.
         if any([n.startswith('reporelaypy') for n in names]):
             import reporelaypy
-        import webkitflaskpy
+        if any([n.startswith('webkitflaskpy') for n in names]):
+            import webkitflaskpy
 
         AutoInstall.install_everything()
 

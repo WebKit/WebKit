@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,8 +38,9 @@ namespace WebKit {
 
 static NSString *const WKRemoteLayerTreeNodePropertyKey = @"WKRemoteLayerTreeNode";
 
-RemoteLayerTreeNode::RemoteLayerTreeNode(WebCore::GraphicsLayer::PlatformLayerID layerID, RetainPtr<CALayer> layer)
+RemoteLayerTreeNode::RemoteLayerTreeNode(WebCore::PlatformLayerIdentifier layerID, Markable<WebCore::LayerHostingContextIdentifier> hostIdentifier, RetainPtr<CALayer> layer)
     : m_layerID(layerID)
+    , m_remoteContextHostingIdentifier(hostIdentifier)
     , m_layer(WTFMove(layer))
 {
     initializeLayer();
@@ -47,8 +48,9 @@ RemoteLayerTreeNode::RemoteLayerTreeNode(WebCore::GraphicsLayer::PlatformLayerID
 }
 
 #if PLATFORM(IOS_FAMILY)
-RemoteLayerTreeNode::RemoteLayerTreeNode(WebCore::GraphicsLayer::PlatformLayerID layerID, RetainPtr<UIView> uiView)
+RemoteLayerTreeNode::RemoteLayerTreeNode(WebCore::PlatformLayerIdentifier layerID, Markable<WebCore::LayerHostingContextIdentifier> hostIdentifier, RetainPtr<UIView> uiView)
     : m_layerID(layerID)
+    , m_remoteContextHostingIdentifier(hostIdentifier)
     , m_layer([uiView.get() layer])
     , m_uiView(WTFMove(uiView))
 {
@@ -61,22 +63,23 @@ RemoteLayerTreeNode::~RemoteLayerTreeNode()
     [layer() setValue:nil forKey:WKRemoteLayerTreeNodePropertyKey];
 }
 
-std::unique_ptr<RemoteLayerTreeNode> RemoteLayerTreeNode::createWithPlainLayer(WebCore::GraphicsLayer::PlatformLayerID layerID)
+std::unique_ptr<RemoteLayerTreeNode> RemoteLayerTreeNode::createWithPlainLayer(WebCore::PlatformLayerIdentifier layerID)
 {
     RetainPtr<CALayer> layer = adoptNS([[WKCompositingLayer alloc] init]);
-    return makeUnique<RemoteLayerTreeNode>(layerID, WTFMove(layer));
+    return makeUnique<RemoteLayerTreeNode>(layerID, std::nullopt, WTFMove(layer));
 }
 
 void RemoteLayerTreeNode::detachFromParent()
 {
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+    [interactionRegionsLayer() removeFromSuperlayer];
+#endif
+
 #if PLATFORM(IOS_FAMILY)
     if (auto view = uiView()) {
         [view removeFromSuperview];
         return;
     }
-#endif
-#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
-    [interactionRegionsLayer() removeFromSuperlayer];
 #endif
     [layer() removeFromSuperlayer];
 }
@@ -92,13 +95,14 @@ void RemoteLayerTreeNode::initializeLayer()
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
     m_interactionRegionsLayer = adoptNS([[CALayer alloc] init]);
     [m_interactionRegionsLayer setName:@"InteractionRegions Container"];
+    [m_interactionRegionsLayer setDelegate:[WebActionDisablingCALayerDelegate shared]];
 #endif
 }
 
-WebCore::GraphicsLayer::PlatformLayerID RemoteLayerTreeNode::layerID(CALayer *layer)
+WebCore::PlatformLayerIdentifier RemoteLayerTreeNode::layerID(CALayer *layer)
 {
     auto* node = forCALayer(layer);
-    return node ? node->layerID() : WebCore::GraphicsLayer::PlatformLayerID { };
+    return node ? node->layerID() : WebCore::PlatformLayerIdentifier { };
 }
 
 RemoteLayerTreeNode* RemoteLayerTreeNode::forCALayer(CALayer *layer)

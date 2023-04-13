@@ -28,6 +28,7 @@
 
 #if PLATFORM(IOS_FAMILY) && ENABLE(DEVICE_ORIENTATION)
 
+#import "MessageSenderInlines.h"
 #import "WebDeviceOrientationUpdateProviderMessages.h"
 #import "WebDeviceOrientationUpdateProviderProxyMessages.h"
 #import "WebPageProxy.h"

@@ -21,7 +21,6 @@
 #include "APIHitTestResult.h"
 
 namespace API {
-using namespace WebCore;
 
 Ref<HitTestResult> HitTestResult::create(const WebKit::WebHitTestResultData& hitTestResultData)
 {

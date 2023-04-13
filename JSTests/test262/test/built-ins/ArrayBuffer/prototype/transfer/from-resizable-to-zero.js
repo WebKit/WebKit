@@ -24,7 +24,7 @@ info: |
       this method as a zero-copy move or a realloc.
   14. Perform ! DetachArrayBuffer(O).
   15. Return new.
-features: [resizable-arraybuffer]
+features: [resizable-arraybuffer, arraybuffer-transfer]
 ---*/
 
 var source = new ArrayBuffer(4, { maxByteLength: 8 });
@@ -42,6 +42,6 @@ assert.throws(TypeError, function() {
   source.slice();
 });
 
-assert.sameValue(dest.resizable, false, 'dest.resizable');
+assert.sameValue(dest.resizable, true, 'dest.resizable');
 assert.sameValue(dest.byteLength, 0, 'dest.byteLength');
-assert.sameValue(dest.maxByteLength, 0, 'dest.maxByteLength');
+assert.sameValue(dest.maxByteLength, 8, 'dest.maxByteLength');

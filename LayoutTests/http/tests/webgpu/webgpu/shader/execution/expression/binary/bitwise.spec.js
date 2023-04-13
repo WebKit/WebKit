@@ -6,14 +6,13 @@ Execution Tests for the bitwise binary expression operations
 import { makeTestGroup } from '../../../../../common/framework/test_group.js';
 import { GPUTest } from '../../../../gpu_test.js';
 import { i32, scalarType, u32 } from '../../../../util/conversion.js';
-import { run } from '../expression.js';
+import { allInputSources, run } from '../expression.js';
 
 import { binary } from './binary.js';
 
 export const g = makeTestGroup(GPUTest);
 
 g.test('bitwise_or')
-  .uniqueId('xxxxxxxxx')
   .specURL('https://www.w3.org/TR/WGSL/#bit-expr')
   .desc(
     `
@@ -26,7 +25,7 @@ Bitwise-or. Component-wise when T is a vector.
   .params(u =>
     u
       .combine('type', ['i32', 'u32'])
-      .combine('storageClass', ['uniform', 'storage_r', 'storage_rw'])
+      .combine('inputSource', allInputSources)
       .combine('vectorize', [undefined, 2, 3, 4])
   )
   .fn(async t => {
@@ -38,32 +37,26 @@ Bitwise-or. Component-wise when T is a vector.
         input: [V(0b00000000000000000000000000000000), V(0b00000000000000000000000000000000)],
         expected: V(0b00000000000000000000000000000000),
       },
-
       {
         input: [V(0b11111111111111111111111111111111), V(0b00000000000000000000000000000000)],
         expected: V(0b11111111111111111111111111111111),
       },
-
       {
         input: [V(0b00000000000000000000000000000000), V(0b11111111111111111111111111111111)],
         expected: V(0b11111111111111111111111111111111),
       },
-
       {
         input: [V(0b11111111111111111111111111111111), V(0b11111111111111111111111111111111)],
         expected: V(0b11111111111111111111111111111111),
       },
-
       {
         input: [V(0b10100100010010100100010010100100), V(0b00000000000000000000000000000000)],
         expected: V(0b10100100010010100100010010100100),
       },
-
       {
         input: [V(0b00000000000000000000000000000000), V(0b10100100010010100100010010100100)],
         expected: V(0b10100100010010100100010010100100),
       },
-
       {
         input: [V(0b01010010001001010010001001010010), V(0b10100100010010100100010010100100)],
         expected: V(0b11110110011011110110011011110110),
@@ -81,11 +74,10 @@ Bitwise-or. Component-wise when T is a vector.
         });
       }
     }
-    run(t, binary('|'), [type, type], type, t.params, cases);
+    await run(t, binary('|'), [type, type], type, t.params, cases);
   });
 
 g.test('bitwise_and')
-  .uniqueId('xxxxxxxxx')
   .specURL('https://www.w3.org/TR/WGSL/#bit-expr')
   .desc(
     `
@@ -98,7 +90,7 @@ Bitwise-and. Component-wise when T is a vector.
   .params(u =>
     u
       .combine('type', ['i32', 'u32'])
-      .combine('storageClass', ['uniform', 'storage_r', 'storage_rw'])
+      .combine('inputSource', allInputSources)
       .combine('vectorize', [undefined, 2, 3, 4])
   )
   .fn(async t => {
@@ -110,42 +102,34 @@ Bitwise-and. Component-wise when T is a vector.
         input: [V(0b00000000000000000000000000000000), V(0b00000000000000000000000000000000)],
         expected: V(0b00000000000000000000000000000000),
       },
-
       {
         input: [V(0b11111111111111111111111111111111), V(0b00000000000000000000000000000000)],
         expected: V(0b00000000000000000000000000000000),
       },
-
       {
         input: [V(0b00000000000000000000000000000000), V(0b11111111111111111111111111111111)],
         expected: V(0b00000000000000000000000000000000),
       },
-
       {
         input: [V(0b11111111111111111111111111111111), V(0b11111111111111111111111111111111)],
         expected: V(0b11111111111111111111111111111111),
       },
-
       {
         input: [V(0b10100100010010100100010010100100), V(0b00000000000000000000000000000000)],
         expected: V(0b00000000000000000000000000000000),
       },
-
       {
         input: [V(0b10100100010010100100010010100100), V(0b11111111111111111111111111111111)],
         expected: V(0b10100100010010100100010010100100),
       },
-
       {
         input: [V(0b00000000000000000000000000000000), V(0b10100100010010100100010010100100)],
         expected: V(0b00000000000000000000000000000000),
       },
-
       {
         input: [V(0b11111111111111111111111111111111), V(0b10100100010010100100010010100100)],
         expected: V(0b10100100010010100100010010100100),
       },
-
       {
         input: [V(0b01010010001001010010001001010010), V(0b01011011101101011011101101011011)],
         expected: V(0b01010010001001010010001001010010),
@@ -163,11 +147,10 @@ Bitwise-and. Component-wise when T is a vector.
         });
       }
     }
-    run(t, binary('&'), [type, type], type, t.params, cases);
+    await run(t, binary('&'), [type, type], type, t.params, cases);
   });
 
 g.test('bitwise_exclusive_or')
-  .uniqueId('xxxxxxxxx')
   .specURL('https://www.w3.org/TR/WGSL/#bit-expr')
   .desc(
     `
@@ -180,7 +163,7 @@ Bitwise-exclusive-or. Component-wise when T is a vector.
   .params(u =>
     u
       .combine('type', ['i32', 'u32'])
-      .combine('storageClass', ['uniform', 'storage_r', 'storage_rw'])
+      .combine('inputSource', allInputSources)
       .combine('vectorize', [undefined, 2, 3, 4])
   )
   .fn(async t => {
@@ -192,42 +175,34 @@ Bitwise-exclusive-or. Component-wise when T is a vector.
         input: [V(0b00000000000000000000000000000000), V(0b00000000000000000000000000000000)],
         expected: V(0b00000000000000000000000000000000),
       },
-
       {
         input: [V(0b11111111111111111111111111111111), V(0b00000000000000000000000000000000)],
         expected: V(0b11111111111111111111111111111111),
       },
-
       {
         input: [V(0b00000000000000000000000000000000), V(0b11111111111111111111111111111111)],
         expected: V(0b11111111111111111111111111111111),
       },
-
       {
         input: [V(0b11111111111111111111111111111111), V(0b11111111111111111111111111111111)],
         expected: V(0b00000000000000000000000000000000),
       },
-
       {
         input: [V(0b10100100010010100100010010100100), V(0b00000000000000000000000000000000)],
         expected: V(0b10100100010010100100010010100100),
       },
-
       {
         input: [V(0b10100100010010100100010010100100), V(0b11111111111111111111111111111111)],
         expected: V(0b01011011101101011011101101011011),
       },
-
       {
         input: [V(0b00000000000000000000000000000000), V(0b10100100010010100100010010100100)],
         expected: V(0b10100100010010100100010010100100),
       },
-
       {
         input: [V(0b11111111111111111111111111111111), V(0b10100100010010100100010010100100)],
         expected: V(0b01011011101101011011101101011011),
       },
-
       {
         input: [V(0b01010010001001010010001001010010), V(0b01011011101101011011101101011011)],
         expected: V(0b00001001100100001001100100001001),
@@ -245,5 +220,5 @@ Bitwise-exclusive-or. Component-wise when T is a vector.
         });
       }
     }
-    run(t, binary('^'), [type, type], type, t.params, cases);
+    await run(t, binary('^'), [type, type], type, t.params, cases);
   });

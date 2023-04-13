@@ -989,7 +989,7 @@ inline void unpackHalf2x16(uint32_t u, float *f1, float *f2)
     *f2 = float16ToFloat32(mostSignificantBits);
 }
 
-inline uint8_t sRGBToLinear(uint8_t srgbValue)
+inline float sRGBToLinear(uint8_t srgbValue)
 {
     float value = srgbValue / 255.0f;
     if (value <= 0.04045f)
@@ -1000,29 +1000,22 @@ inline uint8_t sRGBToLinear(uint8_t srgbValue)
     {
         value = std::pow((value + 0.055f) / 1.055f, 2.4f);
     }
-    return static_cast<uint8_t>(clamp(value * 255.0f + 0.5f, 0.0f, 255.0f));
+    ASSERT(value >= 0.0f && value <= 1.0f);
+    return value;
 }
 
-inline uint8_t linearToSRGB(uint8_t linearValue)
+inline uint8_t linearToSRGB(float value)
 {
-    float value = linearValue / 255.0f;
-    if (value <= 0.0f)
-    {
-        value = 0.0f;
-    }
-    else if (value < 0.0031308f)
+    ASSERT(value >= 0.0f && value <= 1.0f);
+    if (value < 0.0031308f)
     {
         value = value * 12.92f;
     }
-    else if (value < 1.0f)
+    else
     {
         value = std::pow(value, 0.41666f) * 1.055f - 0.055f;
     }
-    else
-    {
-        value = 1.0f;
-    }
-    return static_cast<uint8_t>(clamp(value * 255.0f + 0.5f, 0.0f, 255.0f));
+    return static_cast<uint8_t>(value * 255.0f + 0.5f);
 }
 
 // Reverse the order of the bits.

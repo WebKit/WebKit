@@ -25,8 +25,9 @@
 
 #pragma once
 
-#include "AbstractDOMWindow.h"
+#include "DOMWindow.h"
 #include "RemoteFrame.h"
+#include "WindowPostMessageOptions.h"
 #include <JavaScriptCore/Strong.h>
 #include <wtf/IsoMalloc.h>
 #include <wtf/TypeCasts.h>
@@ -40,11 +41,11 @@ class JSValue;
 
 namespace WebCore {
 
-class DOMWindow;
+class LocalDOMWindow;
 class Document;
 class Location;
 
-class RemoteDOMWindow final : public AbstractDOMWindow {
+class RemoteDOMWindow final : public DOMWindow {
     WTF_MAKE_ISO_ALLOCATED_EXPORT(RemoteDOMWindow, WEBCORE_EXPORT);
 public:
     static Ref<RemoteDOMWindow> create(RemoteFrame& frame, GlobalWindowIdentifier&& identifier)
@@ -62,13 +63,17 @@ public:
     Location* location() const;
     void close(Document&);
     bool closed() const;
-    void focus(DOMWindow& incumbentWindow);
+    void focus(LocalDOMWindow& incumbentWindow);
     void blur();
     unsigned length() const;
     WindowProxy* top() const;
     WindowProxy* opener() const;
     WindowProxy* parent() const;
-    void postMessage(JSC::JSGlobalObject&, DOMWindow& incumbentWindow, JSC::JSValue message, const String& targetOrigin, Vector<JSC::Strong<JSC::JSObject>>&&);
+    ExceptionOr<void> postMessage(JSC::JSGlobalObject&, LocalDOMWindow& incumbentWindow, JSC::JSValue message, WindowPostMessageOptions&&);
+    ExceptionOr<void> postMessage(JSC::JSGlobalObject& globalObject, LocalDOMWindow& incumbentWindow, JSC::JSValue message, String&& targetOrigin, Vector<JSC::Strong<JSC::JSObject>>&& transfer)
+    {
+        return postMessage(globalObject, incumbentWindow, message, WindowPostMessageOptions { WTFMove(targetOrigin), WTFMove(transfer) });
+    }
 
 private:
     WEBCORE_EXPORT RemoteDOMWindow(RemoteFrame&, GlobalWindowIdentifier&&);
@@ -82,5 +87,5 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::RemoteDOMWindow)
-    static bool isType(const WebCore::AbstractDOMWindow& window) { return window.isRemoteDOMWindow(); }
+    static bool isType(const WebCore::DOMWindow& window) { return window.isRemoteDOMWindow(); }
 SPECIALIZE_TYPE_TRAITS_END()

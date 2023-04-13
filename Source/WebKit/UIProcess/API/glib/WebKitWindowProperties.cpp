@@ -123,7 +123,7 @@ struct _WebKitWindowPropertiesPrivate {
     bool fullscreen : 1;
 };
 
-WEBKIT_DEFINE_FINAL_TYPE_IN_2022_API(WebKitWindowProperties, webkit_window_properties, G_TYPE_OBJECT)
+WEBKIT_DEFINE_FINAL_TYPE(WebKitWindowProperties, webkit_window_properties, G_TYPE_OBJECT, GObject)
 
 static void webkitWindowPropertiesGetProperty(GObject* object, guint propId, GValue* value, GParamSpec* paramSpec)
 {

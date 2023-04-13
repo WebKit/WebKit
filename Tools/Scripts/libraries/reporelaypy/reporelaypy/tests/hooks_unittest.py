@@ -24,9 +24,9 @@ import os
 import json
 import unittest
 
-from reporelaypy import Checkout, Database, HookProcessor, HookReceiver
+from reporelaypy import Checkout, HookProcessor, HookReceiver
 from webkitcorepy import testing, OutputCapture
-from webkitflaskpy import mock_app
+from webkitflaskpy import Database, mock_app
 from webkitscmpy import mocks, Commit
 
 

@@ -80,7 +80,10 @@ class BufferPool
                            size_t *offsetOut           = nullptr,
                            bool *newBufferAllocatedOut = nullptr);
 
-    // After a sequence of CPU writes, call commit to ensure the data is visible to the device.
+    // After a sequence of CPU writes, call commit to ensure the data is visible to the GPU.
+    // Note: the data will only be made visible to the GPU if the buffer's storage mode is not
+    // shared AND a non-null pointer was passed to allocate(). Otherwise, this call only advances
+    // the flush pointer.
     angle::Result commit(ContextMtl *contextMtl, bool flushEntireBuffer = false);
 
     // This releases all the buffers that have been allocated since this was last called.
@@ -126,7 +129,7 @@ class BufferPool
 
     size_t mBuffersAllocated;
     size_t mMaxBuffers;
-    BufferPoolMemPolicy mMemPolicy = BufferPoolMemPolicy::Auto;
+    BufferPoolMemPolicy mMemPolicy;
     bool mAlwaysAllocateNewBuffer;
 };
 

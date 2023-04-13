@@ -26,6 +26,7 @@
 #pragma once
 
 #include "InlineFormattingState.h"
+#include "InlineLineTypes.h"
 #include "LayoutElementBox.h"
 #include <wtf/text/StringBuilder.h>
 
@@ -36,14 +37,14 @@ class InlineTextBox;
 class InlineItemsBuilder {
 public:
     InlineItemsBuilder(const ElementBox& formattingContextRoot, InlineFormattingState&);
-    InlineItems build();
+    void build(InlineItemPosition startPosition);
 
 private:
-    void collectInlineItems(InlineItems&);
+    void collectInlineItems(InlineItems&, InlineItemPosition startPosition);
     void breakAndComputeBidiLevels(InlineItems&);
     void computeInlineTextItemWidths(InlineItems&);
 
-    void handleTextContent(const InlineTextBox&, InlineItems&);
+    void handleTextContent(const InlineTextBox&, InlineItems&, std::optional<size_t> partialContentOffset);
     void handleInlineBoxStart(const Box&, InlineItems&);
     void handleInlineBoxEnd(const Box&, InlineItems&);
     void handleInlineLevelBox(const Box&, InlineItems&);

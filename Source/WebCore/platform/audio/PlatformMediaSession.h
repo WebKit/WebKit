@@ -44,7 +44,7 @@ class Document;
 class MediaPlaybackTarget;
 class PlatformMediaSessionClient;
 class PlatformMediaSessionManager;
-enum class DelayCallingUpdateNowPlaying { No, Yes };
+enum class DelayCallingUpdateNowPlaying : bool { No, Yes };
 struct NowPlayingInfo;
 
 class PlatformMediaSession
@@ -159,6 +159,7 @@ public:
     bool isHidden() const;
     bool isSuspended() const;
     bool isPlaying() const;
+    bool isAudible() const;
 
     bool shouldOverrideBackgroundLoadingRestriction() const;
 
@@ -258,6 +259,7 @@ public:
     virtual bool canProduceAudio() const { return false; }
     virtual bool isSuspended() const { return false; };
     virtual bool isPlaying() const { return false; };
+    virtual bool isAudible() const { return false; };
 
     virtual bool shouldOverrideBackgroundPlaybackRestriction(PlatformMediaSession::InterruptionType) const = 0;
     virtual bool shouldOverrideBackgroundLoadingRestriction() const { return false; }

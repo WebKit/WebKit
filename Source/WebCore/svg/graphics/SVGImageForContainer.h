@@ -43,7 +43,7 @@ public:
 
     bool isSVGImageForContainer() const final { return true; }
 
-    FloatSize size(ImageOrientation = ImageOrientation::FromImage) const final;
+    FloatSize size(ImageOrientation = ImageOrientation::Orientation::FromImage) const final;
 
     bool usesContainerSize() const final { return m_image->usesContainerSize(); }
     bool hasRelativeWidth() const final { return m_image->hasRelativeWidth(); }
@@ -64,8 +64,6 @@ public:
 
 private:
     WEBCORE_EXPORT SVGImageForContainer(SVGImage*, const FloatSize& containerSize, float containerZoom, const URL& initialFragmentURL);
-
-    void destroyDecodedData(bool /*destroyAll*/ = true) final { }
 
     SVGImage* m_image;
     const FloatSize m_containerSize;

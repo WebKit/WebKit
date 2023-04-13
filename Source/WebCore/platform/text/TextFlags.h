@@ -29,8 +29,8 @@
 #include <optional>
 #include <variant>
 #include <vector>
-#include <wtf/EnumTraits.h>
 #include <wtf/Hasher.h>
+#include <wtf/Markable.h>
 
 namespace WTF {
 class TextStream;
@@ -167,17 +167,6 @@ enum class FontVariantNumericFraction : uint8_t {
 enum class FontVariantNumericOrdinal : bool { Normal, Yes };
 enum class FontVariantNumericSlashedZero : bool { Normal, Yes };
 
-struct FontVariantAlternatesNormal {
-    bool operator==(const FontVariantAlternatesNormal&) const
-    {
-        return true;
-    }
-    bool operator!=(const FontVariantAlternatesNormal& other) const
-    {
-        return !(*this == other);
-    }
-};
-
 struct FontVariantAlternatesValues {
     bool operator==(const FontVariantAlternatesValues& other) const
     {
@@ -195,15 +184,33 @@ struct FontVariantAlternatesValues {
         return !(*this == other);
     }
 
-    std::optional<String> stylistic;
+    String stylistic;
     Vector<String> styleset;
     Vector<String> characterVariant;
-    std::optional<String> swash;
-    std::optional<String> ornaments;
-    std::optional<String> annotation;
+    String swash;
+    String ornaments;
+    String annotation;
     bool historicalForms = false;
 
     friend void add(Hasher&, const FontVariantAlternatesValues&);
+
+    struct MarkableTraits {
+        static bool isEmptyValue(const FontVariantAlternatesValues& value)
+        {
+            return value.m_isEmpty;
+        }
+
+        static FontVariantAlternatesValues emptyValue()
+        {
+            FontVariantAlternatesValues emptyValue;
+            emptyValue.m_isEmpty = true;
+            return emptyValue;
+        }
+    };
+
+private:
+    friend MarkableTraits;
+    bool m_isEmpty { false };
 };
 
 class FontVariantAlternates {
@@ -212,18 +219,18 @@ class FontVariantAlternates {
 public:
     bool operator==(const FontVariantAlternates& other) const
     {
-        return m_val == other.m_val;
+        return m_values == other.m_values;
     }
 
     bool isNormal() const
     {
-        return std::holds_alternative<FontVariantAlternatesNormal>(m_val);
+        return !m_values;
     }
 
-    Values values() const
+    const Values& values() const
     {
         ASSERT(!isNormal());
-        return *std::get_if<Values>(&m_val);
+        return *m_values;
     }
 
     Values& valuesRef()
@@ -231,25 +238,23 @@ public:
         if (isNormal())
             setValues();
 
-        return *std::get_if<Values>(&m_val);
+        return *m_values;
     }
 
     void setValues()
     {
-        m_val = Values { };
+        m_values = Values { };
     }
 
     static FontVariantAlternates Normal()
     {
-        FontVariantAlternates result;
-        result.m_val = FontVariantAlternatesNormal { };
-        return result;
+        return { };
     }
 
     friend void add(Hasher&, const FontVariantAlternates&);
 
 private:
-    std::variant<FontVariantAlternatesNormal, Values> m_val;
+    Markable<Values> m_values;
     FontVariantAlternates() = default;
 };
 
@@ -481,10 +486,7 @@ enum class FontStyleAxis : uint8_t {
     ital
 };
 
-enum class AllowUserInstalledFonts : uint8_t {
-    No,
-    Yes
-};
+enum class AllowUserInstalledFonts : bool { No, Yes };
 
 using FeaturesMap = HashMap<FontTag, int, FourCharacterTagHash, FourCharacterTagHashTraits>;
 FeaturesMap computeFeatureSettingsFromVariants(const FontVariantSettings&, RefPtr<FontFeatureValues>);

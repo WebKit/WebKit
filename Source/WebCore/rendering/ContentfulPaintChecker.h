@@ -22,11 +22,11 @@
 
 namespace WebCore {
 
-class FrameView;
+class LocalFrameView;
 
 class ContentfulPaintChecker {
 public:
-    static bool qualifiesForContentfulPaint(FrameView&);
+    static bool qualifiesForContentfulPaint(LocalFrameView&);
 };
 
 }

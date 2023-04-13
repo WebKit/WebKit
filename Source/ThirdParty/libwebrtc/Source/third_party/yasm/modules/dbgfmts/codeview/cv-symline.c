@@ -465,7 +465,7 @@ cv_generate_line_bc(yasm_bytecode *bc, /*@null@*/ void *d)
         if (sectbc->symrecs && sectbc->symrecs[0])
             info->cv8_cur_li->sectsym = sectbc->symrecs[0];
         else {
-            sprintf(symname, ".%06u", info->num_lineinfos++);
+            snprintf(symname, 8, ".%06u", info->num_lineinfos++);
             info->cv8_cur_li->sectsym =
                 yasm_symtab_define_label(info->object->symtab, symname, sectbc,
                                          1, 0);

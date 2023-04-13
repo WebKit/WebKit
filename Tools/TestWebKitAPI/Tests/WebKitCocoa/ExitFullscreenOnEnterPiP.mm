@@ -102,11 +102,7 @@ TEST(ExitFullscreenOnEnterPiP, VideoFullscreen)
 
 // FIXME: Re-enable this test for Big Sur once webkit.org/b/245241 is resolved
 // FIXME: Re-enable this test once webkit.org/b/248093 is resolved.
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 120000) || !defined(NDEBUG)
 TEST(ExitFullscreenOnEnterPiP, DISABLED_ElementFullscreen)
-#else
-TEST(ExitFullscreenOnEnterPiP, ElementFullscreen)
-#endif
 {
     [[NSUserDefaults standardUserDefaults] registerDefaults:@{
         @"WebCoreLogging": @"Fullscreen=debug",

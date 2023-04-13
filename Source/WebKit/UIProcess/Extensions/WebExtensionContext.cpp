@@ -70,6 +70,20 @@ WebExtensionContextParameters WebExtensionContext::parameters() const
     return parameters;
 }
 
+WeakHashSet<WebProcessProxy> WebExtensionContext::processes(WebExtensionEventListenerType type) const
+{
+    WeakHashSet<WebProcessProxy> processes;
+    auto page = m_eventListenerPages.find(type);
+    if (page != m_eventListenerPages.end()) {
+        for (auto entry : page->value) {
+            auto& process = entry.key.process();
+            if (process.canSendMessage())
+                processes.add(process);
+        }
+    }
+    return processes;
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)

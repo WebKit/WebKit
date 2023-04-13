@@ -1,0 +1,605 @@
+      a
+
+PASS execCommand("forwarddelete", false, ""): "a[]&nbsp;" (length of whitespace sequence: 1)
+PASS execCommand("forwarddelete", false, ""): "a[]&nbsp;&nbsp;" (length of whitespace sequence: 2)
+PASS execCommand("forwarddelete", false, ""): "a&nbsp;[]&nbsp;" (length of whitespace sequence: 2)
+PASS execCommand("forwarddelete", false, ""): "a[] &nbsp;" (length of whitespace sequence: 2)
+PASS execCommand("forwarddelete", false, ""): "a []&nbsp;" (length of whitespace sequence: 2)
+FAIL execCommand("forwarddelete", false, ""): "a[]&nbsp;&nbsp;&nbsp;" (length of whitespace sequence: 3) assert_equals: Modified text is wrong expected "a&nbsp;&nbsp;" but got "a &nbsp;"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;[]&nbsp;&nbsp;" (length of whitespace sequence: 3) assert_equals: Modified text is wrong expected "a&nbsp;&nbsp;" but got "a &nbsp;"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;&nbsp;[]&nbsp;" (length of whitespace sequence: 3) assert_equals: Modified text is wrong expected "a&nbsp;&nbsp;" but got "a &nbsp;"
+FAIL execCommand("forwarddelete", false, ""): "a[]&nbsp; &nbsp;" (length of whitespace sequence: 3) assert_equals: Modified text is wrong expected "a&nbsp;&nbsp;" but got "a &nbsp;"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;[] &nbsp;" (length of whitespace sequence: 3) assert_equals: Modified text is wrong expected "a&nbsp;&nbsp;" but got "a &nbsp;"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp; []&nbsp;" (length of whitespace sequence: 3) assert_equals: Modified text is wrong expected "a&nbsp;&nbsp;" but got "a &nbsp;"
+FAIL execCommand("forwarddelete", false, ""): "a[] &nbsp;&nbsp;" (length of whitespace sequence: 3) assert_equals: Modified text is wrong expected "a&nbsp;&nbsp;" but got "a &nbsp;"
+FAIL execCommand("forwarddelete", false, ""): "a []&nbsp;&nbsp;" (length of whitespace sequence: 3) assert_equals: Modified text is wrong expected "a&nbsp;&nbsp;" but got "a &nbsp;"
+FAIL execCommand("forwarddelete", false, ""): "a &nbsp;[]&nbsp;" (length of whitespace sequence: 3) assert_equals: Modified text is wrong expected "a&nbsp;&nbsp;" but got "a &nbsp;"
+FAIL execCommand("forwarddelete", false, ""): "a[]&nbsp;&nbsp;&nbsp;&nbsp;" (length of whitespace sequence: 4) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;" but got "a &nbsp;&nbsp;"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;[]&nbsp;&nbsp;&nbsp;" (length of whitespace sequence: 4) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;" but got "a &nbsp;&nbsp;"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;&nbsp;[]&nbsp;&nbsp;" (length of whitespace sequence: 4) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;" but got "a &nbsp;&nbsp;"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;&nbsp;&nbsp;[]&nbsp;" (length of whitespace sequence: 4) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;" but got "a &nbsp;&nbsp;"
+FAIL execCommand("forwarddelete", false, ""): "a[]&nbsp;&nbsp; &nbsp;" (length of whitespace sequence: 4) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;" but got "a &nbsp;&nbsp;"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;[]&nbsp; &nbsp;" (length of whitespace sequence: 4) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;" but got "a &nbsp;&nbsp;"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;&nbsp;[] &nbsp;" (length of whitespace sequence: 4) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;" but got "a &nbsp;&nbsp;"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;&nbsp; []&nbsp;" (length of whitespace sequence: 4) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;" but got "a &nbsp;&nbsp;"
+FAIL execCommand("forwarddelete", false, ""): "a[]&nbsp; &nbsp;&nbsp;" (length of whitespace sequence: 4) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;" but got "a &nbsp;&nbsp;"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;[] &nbsp;&nbsp;" (length of whitespace sequence: 4) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;" but got "a &nbsp;&nbsp;"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp; []&nbsp;&nbsp;" (length of whitespace sequence: 4) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;" but got "a &nbsp;&nbsp;"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp; &nbsp;[]&nbsp;" (length of whitespace sequence: 4) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;" but got "a &nbsp;&nbsp;"
+FAIL execCommand("forwarddelete", false, ""): "a[] &nbsp; &nbsp;" (length of whitespace sequence: 4) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;" but got "a &nbsp;&nbsp;"
+FAIL execCommand("forwarddelete", false, ""): "a []&nbsp; &nbsp;" (length of whitespace sequence: 4) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;" but got "a &nbsp;&nbsp;"
+FAIL execCommand("forwarddelete", false, ""): "a &nbsp;[] &nbsp;" (length of whitespace sequence: 4) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;" but got "a &nbsp;&nbsp;"
+FAIL execCommand("forwarddelete", false, ""): "a &nbsp; []&nbsp;" (length of whitespace sequence: 4) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;" but got "a &nbsp;&nbsp;"
+FAIL execCommand("forwarddelete", false, ""): "a[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" (length of whitespace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;&nbsp;" but got "a &nbsp; &nbsp;"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;" (length of whitespace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;&nbsp;" but got "a &nbsp; &nbsp;"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;" (length of whitespace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;&nbsp;" but got "a &nbsp; &nbsp;"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;" (length of whitespace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;&nbsp;" but got "a &nbsp; &nbsp;"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;" (length of whitespace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;&nbsp;" but got "a &nbsp; &nbsp;"
+FAIL execCommand("forwarddelete", false, ""): "a[]&nbsp; &nbsp; &nbsp;" (length of whitespace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;&nbsp;" but got "a &nbsp; &nbsp;"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;[] &nbsp; &nbsp;" (length of whitespace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;&nbsp;" but got "a &nbsp; &nbsp;"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp; []&nbsp; &nbsp;" (length of whitespace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;&nbsp;" but got "a &nbsp; &nbsp;"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp; &nbsp;[] &nbsp;" (length of whitespace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;&nbsp;" but got "a &nbsp; &nbsp;"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp; &nbsp; []&nbsp;" (length of whitespace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;&nbsp;" but got "a &nbsp; &nbsp;"
+FAIL execCommand("forwarddelete", false, ""): "a[]&nbsp;&nbsp;&nbsp; &nbsp;" (length of whitespace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;&nbsp;" but got "a &nbsp; &nbsp;"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;[]&nbsp;&nbsp; &nbsp;" (length of whitespace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;&nbsp;" but got "a &nbsp; &nbsp;"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;&nbsp;[]&nbsp; &nbsp;" (length of whitespace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;&nbsp;" but got "a &nbsp; &nbsp;"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;&nbsp;&nbsp;[] &nbsp;" (length of whitespace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;&nbsp;" but got "a &nbsp; &nbsp;"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;&nbsp;&nbsp; []&nbsp;" (length of whitespace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;&nbsp;" but got "a &nbsp; &nbsp;"
+FAIL execCommand("forwarddelete", false, ""): "a[]&nbsp;&nbsp; &nbsp;&nbsp;" (length of whitespace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;&nbsp;" but got "a &nbsp; &nbsp;"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;[]&nbsp; &nbsp;&nbsp;" (length of whitespace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;&nbsp;" but got "a &nbsp; &nbsp;"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;&nbsp;[] &nbsp;&nbsp;" (length of whitespace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;&nbsp;" but got "a &nbsp; &nbsp;"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;&nbsp; []&nbsp;&nbsp;" (length of whitespace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;&nbsp;" but got "a &nbsp; &nbsp;"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;&nbsp; &nbsp;[]&nbsp;" (length of whitespace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;&nbsp;" but got "a &nbsp; &nbsp;"
+FAIL execCommand("forwarddelete", false, ""): "a[]&nbsp; &nbsp;&nbsp;&nbsp;" (length of whitespace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;&nbsp;" but got "a &nbsp; &nbsp;"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;[] &nbsp;&nbsp;&nbsp;" (length of whitespace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;&nbsp;" but got "a &nbsp; &nbsp;"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp; []&nbsp;&nbsp;&nbsp;" (length of whitespace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;&nbsp;" but got "a &nbsp; &nbsp;"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp; &nbsp;[]&nbsp;&nbsp;" (length of whitespace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;&nbsp;" but got "a &nbsp; &nbsp;"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp; &nbsp;&nbsp;[]&nbsp;" (length of whitespace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;&nbsp;" but got "a &nbsp; &nbsp;"
+FAIL execCommand("forwarddelete", false, ""): "a[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" (length of whitespace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" (length of whitespace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" (length of whitespace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" (length of whitespace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" (length of whitespace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" (length of whitespace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;" (length of whitespace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;" (length of whitespace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;" (length of whitespace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;" (length of whitespace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;"
+FAIL execCommand("forwarddelete", false, ""): "a[]&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;" (length of whitespace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;[] &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;" (length of whitespace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp; []&nbsp; &nbsp; &nbsp; &nbsp;&nbsp;" (length of whitespace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp; &nbsp;[] &nbsp; &nbsp; &nbsp;&nbsp;" (length of whitespace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp; &nbsp; []&nbsp; &nbsp; &nbsp;&nbsp;" (length of whitespace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp; &nbsp; &nbsp;[] &nbsp; &nbsp;&nbsp;" (length of whitespace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp; &nbsp; &nbsp; []&nbsp; &nbsp;&nbsp;" (length of whitespace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp; &nbsp; &nbsp; &nbsp;[] &nbsp;&nbsp;" (length of whitespace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp; &nbsp; &nbsp; &nbsp; []&nbsp;&nbsp;" (length of whitespace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;[]&nbsp;" (length of whitespace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;"
+FAIL execCommand("forwarddelete", false, ""): "a[] &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;" (length of whitespace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;"
+FAIL execCommand("forwarddelete", false, ""): "a []&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;" (length of whitespace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;"
+FAIL execCommand("forwarddelete", false, ""): "a &nbsp;[] &nbsp; &nbsp; &nbsp; &nbsp;" (length of whitespace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;"
+FAIL execCommand("forwarddelete", false, ""): "a &nbsp; []&nbsp; &nbsp; &nbsp; &nbsp;" (length of whitespace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;"
+FAIL execCommand("forwarddelete", false, ""): "a &nbsp; &nbsp;[] &nbsp; &nbsp; &nbsp;" (length of whitespace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;"
+FAIL execCommand("forwarddelete", false, ""): "a &nbsp; &nbsp; []&nbsp; &nbsp; &nbsp;" (length of whitespace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;"
+FAIL execCommand("forwarddelete", false, ""): "a &nbsp; &nbsp; &nbsp;[] &nbsp; &nbsp;" (length of whitespace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;"
+FAIL execCommand("forwarddelete", false, ""): "a &nbsp; &nbsp; &nbsp; []&nbsp; &nbsp;" (length of whitespace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;"
+FAIL execCommand("forwarddelete", false, ""): "a &nbsp; &nbsp; &nbsp; &nbsp;[] &nbsp;" (length of whitespace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;"
+FAIL execCommand("forwarddelete", false, ""): "a &nbsp; &nbsp; &nbsp; &nbsp; []&nbsp;" (length of whitespace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;"
+FAIL execCommand("forwarddelete", false, ""): "a[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" (length of whitespace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" (length of whitespace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" (length of whitespace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" (length of whitespace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" (length of whitespace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" (length of whitespace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" (length of whitespace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;" (length of whitespace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;" (length of whitespace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;" (length of whitespace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;" (length of whitespace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;"
+FAIL execCommand("forwarddelete", false, ""): "a[]&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;" (length of whitespace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;[] &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;" (length of whitespace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp; []&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;" (length of whitespace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp; &nbsp;[] &nbsp; &nbsp; &nbsp; &nbsp;" (length of whitespace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp; &nbsp; []&nbsp; &nbsp; &nbsp; &nbsp;" (length of whitespace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp; &nbsp; &nbsp;[] &nbsp; &nbsp; &nbsp;" (length of whitespace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp; &nbsp; &nbsp; []&nbsp; &nbsp; &nbsp;" (length of whitespace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp; &nbsp; &nbsp; &nbsp;[] &nbsp; &nbsp;" (length of whitespace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp; &nbsp; &nbsp; &nbsp; []&nbsp; &nbsp;" (length of whitespace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;[] &nbsp;" (length of whitespace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; []&nbsp;" (length of whitespace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;"
+PASS execCommand("forwarddelete", false, ""): "a[]&nbsp;b" (length of whitespace sequence: 1)
+PASS execCommand("forwarddelete", false, ""): "a[] b" (length of whitespace sequence: 1)
+PASS execCommand("forwarddelete", false, ""): "a[]&nbsp;&nbsp;b" (length of whitespace sequence: 2)
+PASS execCommand("forwarddelete", false, ""): "a&nbsp;[]&nbsp;b" (length of whitespace sequence: 2)
+PASS execCommand("forwarddelete", false, ""): "a[]&nbsp; b" (length of whitespace sequence: 2)
+PASS execCommand("forwarddelete", false, ""): "a&nbsp;[] b" (length of whitespace sequence: 2)
+PASS execCommand("forwarddelete", false, ""): "a[] &nbsp;b" (length of whitespace sequence: 2)
+PASS execCommand("forwarddelete", false, ""): "a []&nbsp;b" (length of whitespace sequence: 2)
+FAIL execCommand("forwarddelete", false, ""): "a[]&nbsp;&nbsp;&nbsp;b" (length of whitespace sequence: 3) assert_equals: Modified text is wrong expected "a&nbsp; b" but got "a &nbsp;b"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;[]&nbsp;&nbsp;b" (length of whitespace sequence: 3) assert_equals: Modified text is wrong expected "a&nbsp; b" but got "a &nbsp;b"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;&nbsp;[]&nbsp;b" (length of whitespace sequence: 3) assert_equals: Modified text is wrong expected "a&nbsp; b" but got "a &nbsp;b"
+FAIL execCommand("forwarddelete", false, ""): "a[]&nbsp; &nbsp;b" (length of whitespace sequence: 3) assert_equals: Modified text is wrong expected "a&nbsp; b" but got "a &nbsp;b"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;[] &nbsp;b" (length of whitespace sequence: 3) assert_equals: Modified text is wrong expected "a&nbsp; b" but got "a &nbsp;b"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp; []&nbsp;b" (length of whitespace sequence: 3) assert_equals: Modified text is wrong expected "a&nbsp; b" but got "a &nbsp;b"
+FAIL execCommand("forwarddelete", false, ""): "a[] &nbsp; b" (length of whitespace sequence: 3) assert_equals: Modified text is wrong expected "a&nbsp; b" but got "a &nbsp;b"
+FAIL execCommand("forwarddelete", false, ""): "a []&nbsp; b" (length of whitespace sequence: 3) assert_equals: Modified text is wrong expected "a&nbsp; b" but got "a &nbsp;b"
+FAIL execCommand("forwarddelete", false, ""): "a &nbsp;[] b" (length of whitespace sequence: 3) assert_equals: Modified text is wrong expected "a&nbsp; b" but got "a &nbsp;b"
+FAIL execCommand("forwarddelete", false, ""): "a[] &nbsp;&nbsp;b" (length of whitespace sequence: 3) assert_equals: Modified text is wrong expected "a&nbsp; b" but got "a &nbsp;b"
+FAIL execCommand("forwarddelete", false, ""): "a []&nbsp;&nbsp;b" (length of whitespace sequence: 3) assert_equals: Modified text is wrong expected "a&nbsp; b" but got "a &nbsp;b"
+FAIL execCommand("forwarddelete", false, ""): "a &nbsp;[]&nbsp;b" (length of whitespace sequence: 3) assert_equals: Modified text is wrong expected "a&nbsp; b" but got "a &nbsp;b"
+FAIL execCommand("forwarddelete", false, ""): "a[]&nbsp;&nbsp;&nbsp;&nbsp;b" (length of whitespace sequence: 4) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;b" but got "a &nbsp; b"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;[]&nbsp;&nbsp;&nbsp;b" (length of whitespace sequence: 4) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;b" but got "a &nbsp; b"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;&nbsp;[]&nbsp;&nbsp;b" (length of whitespace sequence: 4) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;b" but got "a &nbsp; b"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;&nbsp;&nbsp;[]&nbsp;b" (length of whitespace sequence: 4) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;b" but got "a &nbsp; b"
+FAIL execCommand("forwarddelete", false, ""): "a[]&nbsp; &nbsp; b" (length of whitespace sequence: 4) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;b" but got "a &nbsp; b"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;[] &nbsp; b" (length of whitespace sequence: 4) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;b" but got "a &nbsp; b"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp; []&nbsp; b" (length of whitespace sequence: 4) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;b" but got "a &nbsp; b"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp; &nbsp;[] b" (length of whitespace sequence: 4) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;b" but got "a &nbsp; b"
+FAIL execCommand("forwarddelete", false, ""): "a[] &nbsp; &nbsp;b" (length of whitespace sequence: 4) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;b" but got "a &nbsp; b"
+FAIL execCommand("forwarddelete", false, ""): "a []&nbsp; &nbsp;b" (length of whitespace sequence: 4) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;b" but got "a &nbsp; b"
+FAIL execCommand("forwarddelete", false, ""): "a &nbsp;[] &nbsp;b" (length of whitespace sequence: 4) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;b" but got "a &nbsp; b"
+FAIL execCommand("forwarddelete", false, ""): "a &nbsp; []&nbsp;b" (length of whitespace sequence: 4) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;b" but got "a &nbsp; b"
+FAIL execCommand("forwarddelete", false, ""): "a[]&nbsp;&nbsp; &nbsp;b" (length of whitespace sequence: 4) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;b" but got "a &nbsp; b"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;[]&nbsp; &nbsp;b" (length of whitespace sequence: 4) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;b" but got "a &nbsp; b"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;&nbsp;[] &nbsp;b" (length of whitespace sequence: 4) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;b" but got "a &nbsp; b"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;&nbsp; []&nbsp;b" (length of whitespace sequence: 4) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;b" but got "a &nbsp; b"
+FAIL execCommand("forwarddelete", false, ""): "a[]&nbsp; &nbsp;&nbsp;b" (length of whitespace sequence: 4) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;b" but got "a &nbsp; b"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;[] &nbsp;&nbsp;b" (length of whitespace sequence: 4) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;b" but got "a &nbsp; b"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp; []&nbsp;&nbsp;b" (length of whitespace sequence: 4) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;b" but got "a &nbsp; b"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp; &nbsp;[]&nbsp;b" (length of whitespace sequence: 4) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;b" but got "a &nbsp; b"
+FAIL execCommand("forwarddelete", false, ""): "a[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b" (length of whitespace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; b" but got "a &nbsp; &nbsp;b"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;b" (length of whitespace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; b" but got "a &nbsp; &nbsp;b"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;b" (length of whitespace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; b" but got "a &nbsp; &nbsp;b"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;b" (length of whitespace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; b" but got "a &nbsp; &nbsp;b"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;b" (length of whitespace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; b" but got "a &nbsp; &nbsp;b"
+FAIL execCommand("forwarddelete", false, ""): "a[]&nbsp; &nbsp; &nbsp;b" (length of whitespace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; b" but got "a &nbsp; &nbsp;b"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;[] &nbsp; &nbsp;b" (length of whitespace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; b" but got "a &nbsp; &nbsp;b"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp; []&nbsp; &nbsp;b" (length of whitespace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; b" but got "a &nbsp; &nbsp;b"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp; &nbsp;[] &nbsp;b" (length of whitespace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; b" but got "a &nbsp; &nbsp;b"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp; &nbsp; []&nbsp;b" (length of whitespace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; b" but got "a &nbsp; &nbsp;b"
+FAIL execCommand("forwarddelete", false, ""): "a[] &nbsp; &nbsp; b" (length of whitespace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; b" but got "a &nbsp; &nbsp;b"
+FAIL execCommand("forwarddelete", false, ""): "a []&nbsp; &nbsp; b" (length of whitespace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; b" but got "a &nbsp; &nbsp;b"
+FAIL execCommand("forwarddelete", false, ""): "a &nbsp;[] &nbsp; b" (length of whitespace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; b" but got "a &nbsp; &nbsp;b"
+FAIL execCommand("forwarddelete", false, ""): "a &nbsp; []&nbsp; b" (length of whitespace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; b" but got "a &nbsp; &nbsp;b"
+FAIL execCommand("forwarddelete", false, ""): "a &nbsp; &nbsp;[] b" (length of whitespace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; b" but got "a &nbsp; &nbsp;b"
+FAIL execCommand("forwarddelete", false, ""): "a[]&nbsp;&nbsp;&nbsp;&nbsp; b" (length of whitespace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; b" but got "a &nbsp; &nbsp;b"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;[]&nbsp;&nbsp;&nbsp; b" (length of whitespace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; b" but got "a &nbsp; &nbsp;b"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;&nbsp;[]&nbsp;&nbsp; b" (length of whitespace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; b" but got "a &nbsp; &nbsp;b"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;&nbsp;&nbsp;[]&nbsp; b" (length of whitespace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; b" but got "a &nbsp; &nbsp;b"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;&nbsp;&nbsp;&nbsp;[] b" (length of whitespace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; b" but got "a &nbsp; &nbsp;b"
+FAIL execCommand("forwarddelete", false, ""): "a[]&nbsp;&nbsp;&nbsp; &nbsp;b" (length of whitespace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; b" but got "a &nbsp; &nbsp;b"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;[]&nbsp;&nbsp; &nbsp;b" (length of whitespace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; b" but got "a &nbsp; &nbsp;b"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;&nbsp;[]&nbsp; &nbsp;b" (length of whitespace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; b" but got "a &nbsp; &nbsp;b"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;&nbsp;&nbsp;[] &nbsp;b" (length of whitespace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; b" but got "a &nbsp; &nbsp;b"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;&nbsp;&nbsp; []&nbsp;b" (length of whitespace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; b" but got "a &nbsp; &nbsp;b"
+FAIL execCommand("forwarddelete", false, ""): "a[]&nbsp;&nbsp; &nbsp;&nbsp;b" (length of whitespace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; b" but got "a &nbsp; &nbsp;b"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;[]&nbsp; &nbsp;&nbsp;b" (length of whitespace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; b" but got "a &nbsp; &nbsp;b"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;&nbsp;[] &nbsp;&nbsp;b" (length of whitespace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; b" but got "a &nbsp; &nbsp;b"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;&nbsp; []&nbsp;&nbsp;b" (length of whitespace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; b" but got "a &nbsp; &nbsp;b"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;&nbsp; &nbsp;[]&nbsp;b" (length of whitespace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; b" but got "a &nbsp; &nbsp;b"
+FAIL execCommand("forwarddelete", false, ""): "a[]&nbsp; &nbsp;&nbsp;&nbsp;b" (length of whitespace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; b" but got "a &nbsp; &nbsp;b"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;[] &nbsp;&nbsp;&nbsp;b" (length of whitespace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; b" but got "a &nbsp; &nbsp;b"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp; []&nbsp;&nbsp;&nbsp;b" (length of whitespace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; b" but got "a &nbsp; &nbsp;b"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp; &nbsp;[]&nbsp;&nbsp;b" (length of whitespace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; b" but got "a &nbsp; &nbsp;b"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp; &nbsp;&nbsp;[]&nbsp;b" (length of whitespace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; b" but got "a &nbsp; &nbsp;b"
+FAIL execCommand("forwarddelete", false, ""): "a[] &nbsp;&nbsp;&nbsp;&nbsp;b" (length of whitespace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; b" but got "a &nbsp; &nbsp;b"
+FAIL execCommand("forwarddelete", false, ""): "a []&nbsp;&nbsp;&nbsp;&nbsp;b" (length of whitespace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; b" but got "a &nbsp; &nbsp;b"
+FAIL execCommand("forwarddelete", false, ""): "a &nbsp;[]&nbsp;&nbsp;&nbsp;b" (length of whitespace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; b" but got "a &nbsp; &nbsp;b"
+FAIL execCommand("forwarddelete", false, ""): "a &nbsp;&nbsp;[]&nbsp;&nbsp;b" (length of whitespace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; b" but got "a &nbsp; &nbsp;b"
+FAIL execCommand("forwarddelete", false, ""): "a &nbsp;&nbsp;&nbsp;[]&nbsp;b" (length of whitespace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; b" but got "a &nbsp; &nbsp;b"
+FAIL execCommand("forwarddelete", false, ""): "a[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b" (length of whitespace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; b"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b" (length of whitespace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; b"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b" (length of whitespace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; b"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b" (length of whitespace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; b"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b" (length of whitespace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; b"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b" (length of whitespace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; b"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;b" (length of whitespace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; b"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;b" (length of whitespace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; b"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;b" (length of whitespace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; b"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;b" (length of whitespace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; b"
+FAIL execCommand("forwarddelete", false, ""): "a[]&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; b" (length of whitespace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; b"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;[] &nbsp; &nbsp; &nbsp; &nbsp; b" (length of whitespace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; b"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp; []&nbsp; &nbsp; &nbsp; &nbsp; b" (length of whitespace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; b"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp; &nbsp;[] &nbsp; &nbsp; &nbsp; b" (length of whitespace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; b"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp; &nbsp; []&nbsp; &nbsp; &nbsp; b" (length of whitespace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; b"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp; &nbsp; &nbsp;[] &nbsp; &nbsp; b" (length of whitespace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; b"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp; &nbsp; &nbsp; []&nbsp; &nbsp; b" (length of whitespace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; b"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp; &nbsp; &nbsp; &nbsp;[] &nbsp; b" (length of whitespace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; b"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp; &nbsp; &nbsp; &nbsp; []&nbsp; b" (length of whitespace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; b"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;[] b" (length of whitespace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; b"
+FAIL execCommand("forwarddelete", false, ""): "a[] &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b" (length of whitespace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; b"
+FAIL execCommand("forwarddelete", false, ""): "a []&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b" (length of whitespace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; b"
+FAIL execCommand("forwarddelete", false, ""): "a &nbsp;[] &nbsp; &nbsp; &nbsp; &nbsp;b" (length of whitespace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; b"
+FAIL execCommand("forwarddelete", false, ""): "a &nbsp; []&nbsp; &nbsp; &nbsp; &nbsp;b" (length of whitespace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; b"
+FAIL execCommand("forwarddelete", false, ""): "a &nbsp; &nbsp;[] &nbsp; &nbsp; &nbsp;b" (length of whitespace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; b"
+FAIL execCommand("forwarddelete", false, ""): "a &nbsp; &nbsp; []&nbsp; &nbsp; &nbsp;b" (length of whitespace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; b"
+FAIL execCommand("forwarddelete", false, ""): "a &nbsp; &nbsp; &nbsp;[] &nbsp; &nbsp;b" (length of whitespace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; b"
+FAIL execCommand("forwarddelete", false, ""): "a &nbsp; &nbsp; &nbsp; []&nbsp; &nbsp;b" (length of whitespace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; b"
+FAIL execCommand("forwarddelete", false, ""): "a &nbsp; &nbsp; &nbsp; &nbsp;[] &nbsp;b" (length of whitespace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; b"
+FAIL execCommand("forwarddelete", false, ""): "a &nbsp; &nbsp; &nbsp; &nbsp; []&nbsp;b" (length of whitespace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; b"
+FAIL execCommand("forwarddelete", false, ""): "a[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b" (length of whitespace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b" (length of whitespace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b" (length of whitespace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b" (length of whitespace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b" (length of whitespace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b" (length of whitespace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b" (length of whitespace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;b" (length of whitespace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;b" (length of whitespace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;b" (length of whitespace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;b" (length of whitespace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b"
+FAIL execCommand("forwarddelete", false, ""): "a[]&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b" (length of whitespace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;[] &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b" (length of whitespace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp; []&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b" (length of whitespace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp; &nbsp;[] &nbsp; &nbsp; &nbsp; &nbsp;b" (length of whitespace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp; &nbsp; []&nbsp; &nbsp; &nbsp; &nbsp;b" (length of whitespace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp; &nbsp; &nbsp;[] &nbsp; &nbsp; &nbsp;b" (length of whitespace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp; &nbsp; &nbsp; []&nbsp; &nbsp; &nbsp;b" (length of whitespace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp; &nbsp; &nbsp; &nbsp;[] &nbsp; &nbsp;b" (length of whitespace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp; &nbsp; &nbsp; &nbsp; []&nbsp; &nbsp;b" (length of whitespace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;[] &nbsp;b" (length of whitespace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; []&nbsp;b" (length of whitespace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b"
+FAIL execCommand("forwarddelete", false, ""): "a[] &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; b" (length of whitespace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b"
+FAIL execCommand("forwarddelete", false, ""): "a []&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; b" (length of whitespace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b"
+FAIL execCommand("forwarddelete", false, ""): "a &nbsp;[] &nbsp; &nbsp; &nbsp; &nbsp; b" (length of whitespace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b"
+FAIL execCommand("forwarddelete", false, ""): "a &nbsp; []&nbsp; &nbsp; &nbsp; &nbsp; b" (length of whitespace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b"
+FAIL execCommand("forwarddelete", false, ""): "a &nbsp; &nbsp;[] &nbsp; &nbsp; &nbsp; b" (length of whitespace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b"
+FAIL execCommand("forwarddelete", false, ""): "a &nbsp; &nbsp; []&nbsp; &nbsp; &nbsp; b" (length of whitespace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b"
+FAIL execCommand("forwarddelete", false, ""): "a &nbsp; &nbsp; &nbsp;[] &nbsp; &nbsp; b" (length of whitespace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b"
+FAIL execCommand("forwarddelete", false, ""): "a &nbsp; &nbsp; &nbsp; []&nbsp; &nbsp; b" (length of whitespace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b"
+FAIL execCommand("forwarddelete", false, ""): "a &nbsp; &nbsp; &nbsp; &nbsp;[] &nbsp; b" (length of whitespace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b"
+FAIL execCommand("forwarddelete", false, ""): "a &nbsp; &nbsp; &nbsp; &nbsp; []&nbsp; b" (length of whitespace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b"
+FAIL execCommand("forwarddelete", false, ""): "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;[] b" (length of whitespace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b"
+PASS execCommand("forwarddelete", false, ""): "[]&nbsp;b" (length of whitespace sequence: 1)
+PASS execCommand("forwarddelete", false, ""): "[]&nbsp;&nbsp;b" (length of whitespace sequence: 2)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;[]&nbsp;b" (length of whitespace sequence: 2)
+PASS execCommand("forwarddelete", false, ""): "[]&nbsp; b" (length of whitespace sequence: 2)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;[] b" (length of whitespace sequence: 2)
+PASS execCommand("forwarddelete", false, ""): "[]&nbsp;&nbsp;&nbsp;b" (length of whitespace sequence: 3)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;[]&nbsp;&nbsp;b" (length of whitespace sequence: 3)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;&nbsp;[]&nbsp;b" (length of whitespace sequence: 3)
+PASS execCommand("forwarddelete", false, ""): "[]&nbsp; &nbsp;b" (length of whitespace sequence: 3)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;[] &nbsp;b" (length of whitespace sequence: 3)
+PASS execCommand("forwarddelete", false, ""): "&nbsp; []&nbsp;b" (length of whitespace sequence: 3)
+PASS execCommand("forwarddelete", false, ""): "[]&nbsp;&nbsp; b" (length of whitespace sequence: 3)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;[]&nbsp; b" (length of whitespace sequence: 3)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;&nbsp;[] b" (length of whitespace sequence: 3)
+PASS execCommand("forwarddelete", false, ""): "[]&nbsp;&nbsp;&nbsp;&nbsp;b" (length of whitespace sequence: 4)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;[]&nbsp;&nbsp;&nbsp;b" (length of whitespace sequence: 4)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;&nbsp;[]&nbsp;&nbsp;b" (length of whitespace sequence: 4)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;&nbsp;&nbsp;[]&nbsp;b" (length of whitespace sequence: 4)
+PASS execCommand("forwarddelete", false, ""): "[]&nbsp; &nbsp; b" (length of whitespace sequence: 4)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;[] &nbsp; b" (length of whitespace sequence: 4)
+PASS execCommand("forwarddelete", false, ""): "&nbsp; []&nbsp; b" (length of whitespace sequence: 4)
+PASS execCommand("forwarddelete", false, ""): "&nbsp; &nbsp;[] b" (length of whitespace sequence: 4)
+PASS execCommand("forwarddelete", false, ""): "[]&nbsp;&nbsp;&nbsp; b" (length of whitespace sequence: 4)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;[]&nbsp;&nbsp; b" (length of whitespace sequence: 4)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;&nbsp;[]&nbsp; b" (length of whitespace sequence: 4)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;&nbsp;&nbsp;[] b" (length of whitespace sequence: 4)
+PASS execCommand("forwarddelete", false, ""): "[]&nbsp;&nbsp; &nbsp;b" (length of whitespace sequence: 4)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;[]&nbsp; &nbsp;b" (length of whitespace sequence: 4)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;&nbsp;[] &nbsp;b" (length of whitespace sequence: 4)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;&nbsp; []&nbsp;b" (length of whitespace sequence: 4)
+PASS execCommand("forwarddelete", false, ""): "[]&nbsp; &nbsp;&nbsp;b" (length of whitespace sequence: 4)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;[] &nbsp;&nbsp;b" (length of whitespace sequence: 4)
+PASS execCommand("forwarddelete", false, ""): "&nbsp; []&nbsp;&nbsp;b" (length of whitespace sequence: 4)
+PASS execCommand("forwarddelete", false, ""): "&nbsp; &nbsp;[]&nbsp;b" (length of whitespace sequence: 4)
+PASS execCommand("forwarddelete", false, ""): "[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b" (length of whitespace sequence: 5)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;b" (length of whitespace sequence: 5)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;b" (length of whitespace sequence: 5)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;b" (length of whitespace sequence: 5)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;b" (length of whitespace sequence: 5)
+PASS execCommand("forwarddelete", false, ""): "[]&nbsp; &nbsp; &nbsp;b" (length of whitespace sequence: 5)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;[] &nbsp; &nbsp;b" (length of whitespace sequence: 5)
+PASS execCommand("forwarddelete", false, ""): "&nbsp; []&nbsp; &nbsp;b" (length of whitespace sequence: 5)
+PASS execCommand("forwarddelete", false, ""): "&nbsp; &nbsp;[] &nbsp;b" (length of whitespace sequence: 5)
+PASS execCommand("forwarddelete", false, ""): "&nbsp; &nbsp; []&nbsp;b" (length of whitespace sequence: 5)
+PASS execCommand("forwarddelete", false, ""): "[]&nbsp;&nbsp;&nbsp; &nbsp;b" (length of whitespace sequence: 5)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;[]&nbsp;&nbsp; &nbsp;b" (length of whitespace sequence: 5)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;&nbsp;[]&nbsp; &nbsp;b" (length of whitespace sequence: 5)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;&nbsp;&nbsp;[] &nbsp;b" (length of whitespace sequence: 5)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;&nbsp;&nbsp; []&nbsp;b" (length of whitespace sequence: 5)
+PASS execCommand("forwarddelete", false, ""): "[]&nbsp;&nbsp; &nbsp;&nbsp;b" (length of whitespace sequence: 5)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;[]&nbsp; &nbsp;&nbsp;b" (length of whitespace sequence: 5)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;&nbsp;[] &nbsp;&nbsp;b" (length of whitespace sequence: 5)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;&nbsp; []&nbsp;&nbsp;b" (length of whitespace sequence: 5)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;&nbsp; &nbsp;[]&nbsp;b" (length of whitespace sequence: 5)
+PASS execCommand("forwarddelete", false, ""): "[]&nbsp; &nbsp;&nbsp;&nbsp;b" (length of whitespace sequence: 5)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;[] &nbsp;&nbsp;&nbsp;b" (length of whitespace sequence: 5)
+PASS execCommand("forwarddelete", false, ""): "&nbsp; []&nbsp;&nbsp;&nbsp;b" (length of whitespace sequence: 5)
+PASS execCommand("forwarddelete", false, ""): "&nbsp; &nbsp;[]&nbsp;&nbsp;b" (length of whitespace sequence: 5)
+PASS execCommand("forwarddelete", false, ""): "&nbsp; &nbsp;&nbsp;[]&nbsp;b" (length of whitespace sequence: 5)
+PASS execCommand("forwarddelete", false, ""): "[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b" (length of whitespace sequence: 10)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b" (length of whitespace sequence: 10)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b" (length of whitespace sequence: 10)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b" (length of whitespace sequence: 10)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b" (length of whitespace sequence: 10)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b" (length of whitespace sequence: 10)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;b" (length of whitespace sequence: 10)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;b" (length of whitespace sequence: 10)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;b" (length of whitespace sequence: 10)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;b" (length of whitespace sequence: 10)
+PASS execCommand("forwarddelete", false, ""): "[]&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; b" (length of whitespace sequence: 10)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;[] &nbsp; &nbsp; &nbsp; &nbsp; b" (length of whitespace sequence: 10)
+PASS execCommand("forwarddelete", false, ""): "&nbsp; []&nbsp; &nbsp; &nbsp; &nbsp; b" (length of whitespace sequence: 10)
+PASS execCommand("forwarddelete", false, ""): "&nbsp; &nbsp;[] &nbsp; &nbsp; &nbsp; b" (length of whitespace sequence: 10)
+PASS execCommand("forwarddelete", false, ""): "&nbsp; &nbsp; []&nbsp; &nbsp; &nbsp; b" (length of whitespace sequence: 10)
+PASS execCommand("forwarddelete", false, ""): "&nbsp; &nbsp; &nbsp;[] &nbsp; &nbsp; b" (length of whitespace sequence: 10)
+PASS execCommand("forwarddelete", false, ""): "&nbsp; &nbsp; &nbsp; []&nbsp; &nbsp; b" (length of whitespace sequence: 10)
+PASS execCommand("forwarddelete", false, ""): "&nbsp; &nbsp; &nbsp; &nbsp;[] &nbsp; b" (length of whitespace sequence: 10)
+PASS execCommand("forwarddelete", false, ""): "&nbsp; &nbsp; &nbsp; &nbsp; []&nbsp; b" (length of whitespace sequence: 10)
+PASS execCommand("forwarddelete", false, ""): "&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;[] b" (length of whitespace sequence: 10)
+PASS execCommand("forwarddelete", false, ""): "[]&nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b" (length of whitespace sequence: 10)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;[]&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b" (length of whitespace sequence: 10)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;&nbsp;[] &nbsp; &nbsp; &nbsp; &nbsp;b" (length of whitespace sequence: 10)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;&nbsp; []&nbsp; &nbsp; &nbsp; &nbsp;b" (length of whitespace sequence: 10)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;&nbsp; &nbsp;[] &nbsp; &nbsp; &nbsp;b" (length of whitespace sequence: 10)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;&nbsp; &nbsp; []&nbsp; &nbsp; &nbsp;b" (length of whitespace sequence: 10)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;&nbsp; &nbsp; &nbsp;[] &nbsp; &nbsp;b" (length of whitespace sequence: 10)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;&nbsp; &nbsp; &nbsp; []&nbsp; &nbsp;b" (length of whitespace sequence: 10)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;&nbsp; &nbsp; &nbsp; &nbsp;[] &nbsp;b" (length of whitespace sequence: 10)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;&nbsp; &nbsp; &nbsp; &nbsp; []&nbsp;b" (length of whitespace sequence: 10)
+PASS execCommand("forwarddelete", false, ""): "[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b" (length of whitespace sequence: 11)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b" (length of whitespace sequence: 11)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b" (length of whitespace sequence: 11)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b" (length of whitespace sequence: 11)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b" (length of whitespace sequence: 11)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b" (length of whitespace sequence: 11)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b" (length of whitespace sequence: 11)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;b" (length of whitespace sequence: 11)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;b" (length of whitespace sequence: 11)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;b" (length of whitespace sequence: 11)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;b" (length of whitespace sequence: 11)
+PASS execCommand("forwarddelete", false, ""): "[]&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b" (length of whitespace sequence: 11)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;[] &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b" (length of whitespace sequence: 11)
+PASS execCommand("forwarddelete", false, ""): "&nbsp; []&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b" (length of whitespace sequence: 11)
+PASS execCommand("forwarddelete", false, ""): "&nbsp; &nbsp;[] &nbsp; &nbsp; &nbsp; &nbsp;b" (length of whitespace sequence: 11)
+PASS execCommand("forwarddelete", false, ""): "&nbsp; &nbsp; []&nbsp; &nbsp; &nbsp; &nbsp;b" (length of whitespace sequence: 11)
+PASS execCommand("forwarddelete", false, ""): "&nbsp; &nbsp; &nbsp;[] &nbsp; &nbsp; &nbsp;b" (length of whitespace sequence: 11)
+PASS execCommand("forwarddelete", false, ""): "&nbsp; &nbsp; &nbsp; []&nbsp; &nbsp; &nbsp;b" (length of whitespace sequence: 11)
+PASS execCommand("forwarddelete", false, ""): "&nbsp; &nbsp; &nbsp; &nbsp;[] &nbsp; &nbsp;b" (length of whitespace sequence: 11)
+PASS execCommand("forwarddelete", false, ""): "&nbsp; &nbsp; &nbsp; &nbsp; []&nbsp; &nbsp;b" (length of whitespace sequence: 11)
+PASS execCommand("forwarddelete", false, ""): "&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;[] &nbsp;b" (length of whitespace sequence: 11)
+PASS execCommand("forwarddelete", false, ""): "&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; []&nbsp;b" (length of whitespace sequence: 11)
+PASS execCommand("forwarddelete", false, ""): "[]&nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; b" (length of whitespace sequence: 11)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;[]&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; b" (length of whitespace sequence: 11)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;&nbsp;[] &nbsp; &nbsp; &nbsp; &nbsp; b" (length of whitespace sequence: 11)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;&nbsp; []&nbsp; &nbsp; &nbsp; &nbsp; b" (length of whitespace sequence: 11)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;&nbsp; &nbsp;[] &nbsp; &nbsp; &nbsp; b" (length of whitespace sequence: 11)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;&nbsp; &nbsp; []&nbsp; &nbsp; &nbsp; b" (length of whitespace sequence: 11)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;&nbsp; &nbsp; &nbsp;[] &nbsp; &nbsp; b" (length of whitespace sequence: 11)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;&nbsp; &nbsp; &nbsp; []&nbsp; &nbsp; b" (length of whitespace sequence: 11)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;&nbsp; &nbsp; &nbsp; &nbsp;[] &nbsp; b" (length of whitespace sequence: 11)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;&nbsp; &nbsp; &nbsp; &nbsp; []&nbsp; b" (length of whitespace sequence: 11)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;[] b" (length of whitespace sequence: 11)
+PASS execCommand("forwarddelete", false, ""): "[]&nbsp;" (length of whitespace sequence: 1)
+PASS execCommand("forwarddelete", false, ""): "[]&nbsp;&nbsp;" (length of whitespace sequence: 2)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;[]&nbsp;" (length of whitespace sequence: 2)
+PASS execCommand("forwarddelete", false, ""): "[]&nbsp;&nbsp;&nbsp;" (length of whitespace sequence: 3)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;[]&nbsp;&nbsp;" (length of whitespace sequence: 3)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;&nbsp;[]&nbsp;" (length of whitespace sequence: 3)
+PASS execCommand("forwarddelete", false, ""): "[]&nbsp; &nbsp;" (length of whitespace sequence: 3)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;[] &nbsp;" (length of whitespace sequence: 3)
+PASS execCommand("forwarddelete", false, ""): "&nbsp; []&nbsp;" (length of whitespace sequence: 3)
+PASS execCommand("forwarddelete", false, ""): "[]&nbsp;&nbsp;&nbsp;&nbsp;" (length of whitespace sequence: 4)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;[]&nbsp;&nbsp;&nbsp;" (length of whitespace sequence: 4)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;&nbsp;[]&nbsp;&nbsp;" (length of whitespace sequence: 4)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;&nbsp;&nbsp;[]&nbsp;" (length of whitespace sequence: 4)
+PASS execCommand("forwarddelete", false, ""): "[]&nbsp;&nbsp; &nbsp;" (length of whitespace sequence: 4)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;[]&nbsp; &nbsp;" (length of whitespace sequence: 4)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;&nbsp;[] &nbsp;" (length of whitespace sequence: 4)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;&nbsp; []&nbsp;" (length of whitespace sequence: 4)
+PASS execCommand("forwarddelete", false, ""): "[]&nbsp; &nbsp;&nbsp;" (length of whitespace sequence: 4)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;[] &nbsp;&nbsp;" (length of whitespace sequence: 4)
+PASS execCommand("forwarddelete", false, ""): "&nbsp; []&nbsp;&nbsp;" (length of whitespace sequence: 4)
+PASS execCommand("forwarddelete", false, ""): "&nbsp; &nbsp;[]&nbsp;" (length of whitespace sequence: 4)
+PASS execCommand("forwarddelete", false, ""): "[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" (length of whitespace sequence: 5)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;" (length of whitespace sequence: 5)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;" (length of whitespace sequence: 5)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;" (length of whitespace sequence: 5)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;" (length of whitespace sequence: 5)
+PASS execCommand("forwarddelete", false, ""): "[]&nbsp; &nbsp; &nbsp;" (length of whitespace sequence: 5)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;[] &nbsp; &nbsp;" (length of whitespace sequence: 5)
+PASS execCommand("forwarddelete", false, ""): "&nbsp; []&nbsp; &nbsp;" (length of whitespace sequence: 5)
+PASS execCommand("forwarddelete", false, ""): "&nbsp; &nbsp;[] &nbsp;" (length of whitespace sequence: 5)
+PASS execCommand("forwarddelete", false, ""): "&nbsp; &nbsp; []&nbsp;" (length of whitespace sequence: 5)
+PASS execCommand("forwarddelete", false, ""): "[]&nbsp;&nbsp;&nbsp; &nbsp;" (length of whitespace sequence: 5)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;[]&nbsp;&nbsp; &nbsp;" (length of whitespace sequence: 5)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;&nbsp;[]&nbsp; &nbsp;" (length of whitespace sequence: 5)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;&nbsp;&nbsp;[] &nbsp;" (length of whitespace sequence: 5)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;&nbsp;&nbsp; []&nbsp;" (length of whitespace sequence: 5)
+PASS execCommand("forwarddelete", false, ""): "[]&nbsp;&nbsp; &nbsp;&nbsp;" (length of whitespace sequence: 5)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;[]&nbsp; &nbsp;&nbsp;" (length of whitespace sequence: 5)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;&nbsp;[] &nbsp;&nbsp;" (length of whitespace sequence: 5)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;&nbsp; []&nbsp;&nbsp;" (length of whitespace sequence: 5)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;&nbsp; &nbsp;[]&nbsp;" (length of whitespace sequence: 5)
+PASS execCommand("forwarddelete", false, ""): "[]&nbsp; &nbsp;&nbsp;&nbsp;" (length of whitespace sequence: 5)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;[] &nbsp;&nbsp;&nbsp;" (length of whitespace sequence: 5)
+PASS execCommand("forwarddelete", false, ""): "&nbsp; []&nbsp;&nbsp;&nbsp;" (length of whitespace sequence: 5)
+PASS execCommand("forwarddelete", false, ""): "&nbsp; &nbsp;[]&nbsp;&nbsp;" (length of whitespace sequence: 5)
+PASS execCommand("forwarddelete", false, ""): "&nbsp; &nbsp;&nbsp;[]&nbsp;" (length of whitespace sequence: 5)
+PASS execCommand("forwarddelete", false, ""): "[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" (length of whitespace sequence: 10)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" (length of whitespace sequence: 10)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" (length of whitespace sequence: 10)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" (length of whitespace sequence: 10)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" (length of whitespace sequence: 10)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" (length of whitespace sequence: 10)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;" (length of whitespace sequence: 10)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;" (length of whitespace sequence: 10)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;" (length of whitespace sequence: 10)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;" (length of whitespace sequence: 10)
+PASS execCommand("forwarddelete", false, ""): "[]&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;" (length of whitespace sequence: 10)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;[] &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;" (length of whitespace sequence: 10)
+PASS execCommand("forwarddelete", false, ""): "&nbsp; []&nbsp; &nbsp; &nbsp; &nbsp;&nbsp;" (length of whitespace sequence: 10)
+PASS execCommand("forwarddelete", false, ""): "&nbsp; &nbsp;[] &nbsp; &nbsp; &nbsp;&nbsp;" (length of whitespace sequence: 10)
+PASS execCommand("forwarddelete", false, ""): "&nbsp; &nbsp; []&nbsp; &nbsp; &nbsp;&nbsp;" (length of whitespace sequence: 10)
+PASS execCommand("forwarddelete", false, ""): "&nbsp; &nbsp; &nbsp;[] &nbsp; &nbsp;&nbsp;" (length of whitespace sequence: 10)
+PASS execCommand("forwarddelete", false, ""): "&nbsp; &nbsp; &nbsp; []&nbsp; &nbsp;&nbsp;" (length of whitespace sequence: 10)
+PASS execCommand("forwarddelete", false, ""): "&nbsp; &nbsp; &nbsp; &nbsp;[] &nbsp;&nbsp;" (length of whitespace sequence: 10)
+PASS execCommand("forwarddelete", false, ""): "&nbsp; &nbsp; &nbsp; &nbsp; []&nbsp;&nbsp;" (length of whitespace sequence: 10)
+PASS execCommand("forwarddelete", false, ""): "&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;[]&nbsp;" (length of whitespace sequence: 10)
+PASS execCommand("forwarddelete", false, ""): "[]&nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;" (length of whitespace sequence: 10)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;[]&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;" (length of whitespace sequence: 10)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;&nbsp;[] &nbsp; &nbsp; &nbsp; &nbsp;" (length of whitespace sequence: 10)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;&nbsp; []&nbsp; &nbsp; &nbsp; &nbsp;" (length of whitespace sequence: 10)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;&nbsp; &nbsp;[] &nbsp; &nbsp; &nbsp;" (length of whitespace sequence: 10)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;&nbsp; &nbsp; []&nbsp; &nbsp; &nbsp;" (length of whitespace sequence: 10)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;&nbsp; &nbsp; &nbsp;[] &nbsp; &nbsp;" (length of whitespace sequence: 10)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;&nbsp; &nbsp; &nbsp; []&nbsp; &nbsp;" (length of whitespace sequence: 10)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;&nbsp; &nbsp; &nbsp; &nbsp;[] &nbsp;" (length of whitespace sequence: 10)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;&nbsp; &nbsp; &nbsp; &nbsp; []&nbsp;" (length of whitespace sequence: 10)
+PASS execCommand("forwarddelete", false, ""): "[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" (length of whitespace sequence: 11)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" (length of whitespace sequence: 11)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" (length of whitespace sequence: 11)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" (length of whitespace sequence: 11)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" (length of whitespace sequence: 11)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" (length of whitespace sequence: 11)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" (length of whitespace sequence: 11)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;" (length of whitespace sequence: 11)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;" (length of whitespace sequence: 11)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;" (length of whitespace sequence: 11)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;" (length of whitespace sequence: 11)
+PASS execCommand("forwarddelete", false, ""): "[]&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;" (length of whitespace sequence: 11)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;[] &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;" (length of whitespace sequence: 11)
+PASS execCommand("forwarddelete", false, ""): "&nbsp; []&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;" (length of whitespace sequence: 11)
+PASS execCommand("forwarddelete", false, ""): "&nbsp; &nbsp;[] &nbsp; &nbsp; &nbsp; &nbsp;" (length of whitespace sequence: 11)
+PASS execCommand("forwarddelete", false, ""): "&nbsp; &nbsp; []&nbsp; &nbsp; &nbsp; &nbsp;" (length of whitespace sequence: 11)
+PASS execCommand("forwarddelete", false, ""): "&nbsp; &nbsp; &nbsp;[] &nbsp; &nbsp; &nbsp;" (length of whitespace sequence: 11)
+PASS execCommand("forwarddelete", false, ""): "&nbsp; &nbsp; &nbsp; []&nbsp; &nbsp; &nbsp;" (length of whitespace sequence: 11)
+PASS execCommand("forwarddelete", false, ""): "&nbsp; &nbsp; &nbsp; &nbsp;[] &nbsp; &nbsp;" (length of whitespace sequence: 11)
+PASS execCommand("forwarddelete", false, ""): "&nbsp; &nbsp; &nbsp; &nbsp; []&nbsp; &nbsp;" (length of whitespace sequence: 11)
+PASS execCommand("forwarddelete", false, ""): "&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;[] &nbsp;" (length of whitespace sequence: 11)
+PASS execCommand("forwarddelete", false, ""): "&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; []&nbsp;" (length of whitespace sequence: 11)
+PASS execCommand("forwarddelete", false, ""): "[]&nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;" (length of whitespace sequence: 11)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;[]&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;" (length of whitespace sequence: 11)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;&nbsp;[] &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;" (length of whitespace sequence: 11)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;&nbsp; []&nbsp; &nbsp; &nbsp; &nbsp;&nbsp;" (length of whitespace sequence: 11)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;&nbsp; &nbsp;[] &nbsp; &nbsp; &nbsp;&nbsp;" (length of whitespace sequence: 11)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;&nbsp; &nbsp; []&nbsp; &nbsp; &nbsp;&nbsp;" (length of whitespace sequence: 11)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;&nbsp; &nbsp; &nbsp;[] &nbsp; &nbsp;&nbsp;" (length of whitespace sequence: 11)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;&nbsp; &nbsp; &nbsp; []&nbsp; &nbsp;&nbsp;" (length of whitespace sequence: 11)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;&nbsp; &nbsp; &nbsp; &nbsp;[] &nbsp;&nbsp;" (length of whitespace sequence: 11)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;&nbsp; &nbsp; &nbsp; &nbsp; []&nbsp;&nbsp;" (length of whitespace sequence: 11)
+PASS execCommand("forwarddelete", false, ""): "&nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;[]&nbsp;" (length of whitespace sequence: 11)
+PASS execCommand("forwarddelete", false, ""): "a&nbsp; []&nbsp;|&nbsp; &nbsp;b"
+PASS execCommand("forwarddelete", false, ""): "a&nbsp; []&nbsp;| &nbsp; b"
+PASS execCommand("forwarddelete", false, ""): "a&nbsp; &nbsp;[]|&nbsp; &nbsp;b"
+PASS execCommand("forwarddelete", false, ""): "a&nbsp; &nbsp;[]| &nbsp; b"
+PASS execCommand("forwarddelete", false, ""): "a&nbsp; &nbsp;|[]&nbsp; &nbsp;b"
+PASS execCommand("forwarddelete", false, ""): "a&nbsp; &nbsp;|[] &nbsp; b"
+PASS execCommand("forwarddelete", false, ""): "a&nbsp; &nbsp;| []&nbsp; b"
+PASS execCommand("forwarddelete", false, ""): "a &nbsp; |[]&nbsp; &nbsp;b"
+PASS execCommand("forwarddelete", false, ""): "a &nbsp; []|&nbsp; &nbsp;b"
+PASS execCommand("forwarddelete", false, ""): "a &nbsp;[] |&nbsp; &nbsp;b"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;&nbsp;[]&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;b" assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;" but got "a &nbsp;&nbsp;"
+PASS execCommand("forwarddelete", false, ""): "a&nbsp;&nbsp;&nbsp;[]&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;b"
+PASS execCommand("forwarddelete", false, ""): "a&nbsp;&nbsp;&nbsp;&nbsp;[]|&nbsp;&nbsp;&nbsp;&nbsp;b"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;[]b&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;c" assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;" but got "a &nbsp;&nbsp;"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;&nbsp;[]b&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;c" assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;&nbsp;" but got "a &nbsp; &nbsp;"
+PASS execCommand("forwarddelete", false, ""): "a&nbsp;&nbsp;&nbsp;[]b|&nbsp;&nbsp;&nbsp;&nbsp;c"
+PASS execCommand("forwarddelete", false, ""): "a&nbsp;&nbsp;&nbsp;[]|b&nbsp;&nbsp;&nbsp;&nbsp;c"
+PASS execCommand("forwarddelete", false, ""): "a&nbsp;&nbsp;&nbsp;|[]b&nbsp;&nbsp;&nbsp;&nbsp;c"
+PASS execCommand("forwarddelete", false, ""): "a&nbsp;&nbsp;[]&nbsp;|b&nbsp;&nbsp;&nbsp;&nbsp;c"
+PASS execCommand("forwarddelete", false, ""): "a&nbsp;&nbsp;&nbsp;|&nbsp;[]b&nbsp;&nbsp;&nbsp;c"
+PASS execCommand("forwarddelete", false, ""): "a&nbsp;&nbsp;&nbsp;|&nbsp;|[]&nbsp;&nbsp;&nbsp;&nbsp;c"
+PASS execCommand("forwarddelete", false, ""): "a&nbsp;&nbsp;&nbsp;| |[]&nbsp;&nbsp;&nbsp;&nbsp;c"
+PASS execCommand("forwarddelete", false, ""): "a&nbsp;&nbsp;&nbsp;| []|&nbsp;&nbsp;&nbsp;&nbsp;c"
+PASS execCommand("forwarddelete", false, ""): "a&nbsp;&nbsp;&nbsp;|[] |&nbsp;&nbsp;&nbsp;&nbsp;c"
+PASS execCommand("forwarddelete", false, ""): "a&nbsp;&nbsp;&nbsp;&nbsp;[]| |&nbsp;&nbsp;&nbsp;c"
+PASS execCommand("forwarddelete", false, ""): "a&nbsp;&nbsp;&nbsp;[]&nbsp;| |&nbsp;&nbsp;&nbsp;c"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;|&nbsp;|&nbsp;&nbsp;&nbsp;c" assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;&nbsp;" but got "a &nbsp; &nbsp;"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;| |&nbsp;&nbsp;&nbsp;c" assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;&nbsp;" but got "a &nbsp; &nbsp;"
+PASS execCommand("forwarddelete", false, ""): "a&nbsp;&nbsp;&nbsp;&nbsp;||&nbsp;[]&nbsp;&nbsp;&nbsp;c"
+PASS execCommand("forwarddelete", false, ""): "a&nbsp;&nbsp;&nbsp;&nbsp;||[]&nbsp;&nbsp;&nbsp;&nbsp;c"
+PASS execCommand("forwarddelete", false, ""): "a&nbsp;&nbsp;&nbsp;&nbsp;|[]|&nbsp;&nbsp;&nbsp;&nbsp;c"
+PASS execCommand("forwarddelete", false, ""): "a&nbsp;&nbsp;&nbsp;&nbsp;[]||&nbsp;&nbsp;&nbsp;&nbsp;c"
+PASS execCommand("forwarddelete", false, ""): "a&nbsp;&nbsp;&nbsp;[]&nbsp;||&nbsp;&nbsp;&nbsp;&nbsp;c"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;&nbsp;[]&nbsp;&nbsp;||&nbsp;&nbsp;&nbsp;&nbsp;c" assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;" but got "a &nbsp;&nbsp;"
+PASS execCommand("forwarddelete", false, ""): "<span>abc[] <span>&nbsp;def</span></span>"
+PASS execCommand("forwarddelete", false, ""): "<span>abc[]&nbsp;<span>&nbsp;def</span></span>"
+PASS execCommand("forwarddelete", false, ""): "<span>abc[]&nbsp;<span> def</span></span>"
+PASS execCommand("forwarddelete", false, ""): "<span>abc []<span>&nbsp;def</span></span>"
+PASS execCommand("forwarddelete", false, ""): "<span>abc&nbsp;[]<span>&nbsp;def</span></span>"
+PASS execCommand("forwarddelete", false, ""): "<span>abc&nbsp;[]<span> def</span></span>"
+PASS execCommand("forwarddelete", false, ""): "<span>abc[]&nbsp;<span>&nbsp; def</span></span>"
+PASS execCommand("forwarddelete", false, ""): "<span>abc[]&nbsp;<span> &nbsp;def</span></span>"
+PASS execCommand("forwarddelete", false, ""): "<span>abc[]&nbsp; <span>&nbsp;&nbsp;def</span></span>"
+PASS execCommand("forwarddelete", false, ""): "<span>abc[]&nbsp; <span>&nbsp; def</span></span>"
+PASS execCommand("forwarddelete", false, ""): "<span>abc[]&nbsp;&nbsp;<span>&nbsp;&nbsp;def</span></span>"
+PASS execCommand("forwarddelete", false, ""): "<span>abc[] &nbsp;<span>&nbsp;&nbsp;def</span></span>"
+PASS execCommand("forwarddelete", false, ""): "<span>abc[] &nbsp;<span> &nbsp;def</span></span>"
+PASS execCommand("forwarddelete", false, ""): "<span>abc[] &nbsp;<span>&nbsp; def</span></span>"
+PASS execCommand("forwarddelete", false, ""): "<span>abc&nbsp; []<span>&nbsp; def</span></span>"
+PASS execCommand("forwarddelete", false, ""): "<span>abc&nbsp; <span>[]&nbsp; def</span></span>"
+PASS execCommand("forwarddelete", false, ""): "<span>abc&nbsp;&nbsp;[]<span> &nbsp;def</span></span>"
+PASS execCommand("forwarddelete", false, ""): "<span>abc&nbsp;&nbsp;<span>[] &nbsp;def</span></span>"
+PASS execCommand("forwarddelete", false, ""): "<span>abc &nbsp;[]<span>&nbsp; def</span></span>"
+PASS execCommand("forwarddelete", false, ""): "<span>abc &nbsp;<span>[]&nbsp; def</span></span>"
+PASS execCommand("forwarddelete", false, ""): "<span>abc&nbsp; <span>&nbsp;[] def</span></span>"
+PASS execCommand("forwarddelete", false, ""): "<span>abc &nbsp;<span>&nbsp;[] def</span></span>"
+PASS execCommand("forwarddelete", false, ""): "<span>abc &nbsp;<span> []&nbsp;def</span></span>"
+PASS execCommand("forwarddelete", false, ""): "<span><span>abc[] </span>&nbsp;def</span>"
+PASS execCommand("forwarddelete", false, ""): "<span><span>abc[]&nbsp;</span>&nbsp;def</span>"
+PASS execCommand("forwarddelete", false, ""): "<span><span>abc[]&nbsp;</span> def</span>"
+PASS execCommand("forwarddelete", false, ""): "<span><span>abc []</span>&nbsp;def</span>"
+PASS execCommand("forwarddelete", false, ""): "<span><span>abc&nbsp;[]</span>&nbsp;def</span>"
+PASS execCommand("forwarddelete", false, ""): "<span><span>abc&nbsp;[]</span> def</span>"
+PASS execCommand("forwarddelete", false, ""): "<span><span>abc[]&nbsp;</span>&nbsp; def</span>"
+PASS execCommand("forwarddelete", false, ""): "<span><span>abc[]&nbsp;</span> &nbsp;def</span>"
+PASS execCommand("forwarddelete", false, ""): "<span><span>abc[]&nbsp; </span>&nbsp;&nbsp;def</span>"
+PASS execCommand("forwarddelete", false, ""): "<span><span>abc[]&nbsp; </span>&nbsp; def</span>"
+PASS execCommand("forwarddelete", false, ""): "<span><span>abc[]&nbsp;&nbsp;</span>&nbsp;&nbsp;def</span>"
+PASS execCommand("forwarddelete", false, ""): "<span><span>abc[] &nbsp;</span>&nbsp;&nbsp;def</span>"
+PASS execCommand("forwarddelete", false, ""): "<span><span>abc[] &nbsp;</span> &nbsp;def</span>"
+PASS execCommand("forwarddelete", false, ""): "<span><span>abc[] &nbsp;</span>&nbsp; def</span>"
+PASS execCommand("forwarddelete", false, ""): "<span><span>abc&nbsp; []</span>&nbsp; def</span>"
+PASS execCommand("forwarddelete", false, ""): "<span><span>abc&nbsp; </span>[]&nbsp; def</span>"
+PASS execCommand("forwarddelete", false, ""): "<span><span>abc&nbsp;&nbsp;[]</span> &nbsp;def</span>"
+PASS execCommand("forwarddelete", false, ""): "<span><span>abc&nbsp;&nbsp;</span>[] &nbsp;def</span>"
+PASS execCommand("forwarddelete", false, ""): "<span><span>abc &nbsp;[]</span>&nbsp; def</span>"
+PASS execCommand("forwarddelete", false, ""): "<span><span>abc &nbsp;</span>[]&nbsp; def</span>"
+PASS execCommand("forwarddelete", false, ""): "<span><span>abc&nbsp; </span>&nbsp;[] def</span>"
+PASS execCommand("forwarddelete", false, ""): "<span><span>abc &nbsp;</span>&nbsp;[] def</span>"
+PASS execCommand("forwarddelete", false, ""): "<span><span>abc &nbsp;</span> []&nbsp;def</span>"
+PASS execCommand("forwarddelete", false, ""): "<span>abc[] </span><span>&nbsp;def</span>"
+PASS execCommand("forwarddelete", false, ""): "<span>abc[]&nbsp;</span><span>&nbsp;def</span>"
+PASS execCommand("forwarddelete", false, ""): "<span>abc[]&nbsp;</span><span> def</span>"
+PASS execCommand("forwarddelete", false, ""): "<span>abc []</span><span>&nbsp;def</span>"
+PASS execCommand("forwarddelete", false, ""): "<span>abc&nbsp;[]</span><span>&nbsp;def</span>"
+PASS execCommand("forwarddelete", false, ""): "<span>abc&nbsp;[]</span><span> def</span>"
+PASS execCommand("forwarddelete", false, ""): "<span>abc[]&nbsp;</span><span>&nbsp; def</span>"
+PASS execCommand("forwarddelete", false, ""): "<span>abc[]&nbsp;</span><span> &nbsp;def</span>"
+PASS execCommand("forwarddelete", false, ""): "<span>abc[]&nbsp; </span><span>&nbsp;&nbsp;def</span>"
+PASS execCommand("forwarddelete", false, ""): "<span>abc[]&nbsp; </span><span>&nbsp; def</span>"
+PASS execCommand("forwarddelete", false, ""): "<span>abc[]&nbsp;&nbsp;</span><span>&nbsp;&nbsp;def</span>"
+PASS execCommand("forwarddelete", false, ""): "<span>abc[] &nbsp;</span><span>&nbsp;&nbsp;def</span>"
+PASS execCommand("forwarddelete", false, ""): "<span>abc[] &nbsp;</span><span> &nbsp;def</span>"
+PASS execCommand("forwarddelete", false, ""): "<span>abc[] &nbsp;</span><span>&nbsp; def</span>"
+PASS execCommand("forwarddelete", false, ""): "<span>abc&nbsp; []</span><span>&nbsp; def</span>"
+PASS execCommand("forwarddelete", false, ""): "<span>abc&nbsp; </span><span>[]&nbsp; def</span>"
+PASS execCommand("forwarddelete", false, ""): "<span>abc&nbsp;&nbsp;[]</span><span> &nbsp;def</span>"
+PASS execCommand("forwarddelete", false, ""): "<span>abc&nbsp;&nbsp;</span><span>[] &nbsp;def</span>"
+PASS execCommand("forwarddelete", false, ""): "<span>abc &nbsp;[]</span><span>&nbsp; def</span>"
+PASS execCommand("forwarddelete", false, ""): "<span>abc &nbsp;</span><span>[]&nbsp; def</span>"
+PASS execCommand("forwarddelete", false, ""): "<span>abc&nbsp; </span><span>&nbsp;[] def</span>"
+PASS execCommand("forwarddelete", false, ""): "<span>abc &nbsp;</span><span>&nbsp;[] def</span>"
+PASS execCommand("forwarddelete", false, ""): "<span>abc &nbsp;</span><span> []&nbsp;def</span>"
+PASS execCommand("forwarddelete", false, ""): "a[]<span style=white-space:pre;>b   </span>c"
+PASS execCommand("forwarddelete", false, ""): "a<span style=white-space:pre;>b[]   </span>c"
+PASS execCommand("forwarddelete", false, ""): "a<span style=white-space:pre;>b []  </span>c"
+PASS execCommand("forwarddelete", false, ""): "a<span style=white-space:pre;>b  [] </span>c"
+PASS execCommand("forwarddelete", false, ""): "a<span style=white-space:pre;>b   []</span>c"
+PASS execCommand("forwarddelete", false, ""): "a<span style=white-space:pre;>b  [] </span>"
+PASS execCommand("forwarddelete", false, ""): "a[]<span style=white-space:pre;> </span>b"
+PASS execCommand("forwarddelete", false, ""): "a&nbsp;&nbsp;&nbsp;[]<span style=white-space:pre;>   </span>"
+PASS execCommand("forwarddelete", false, ""): "a&nbsp;&nbsp;[]&nbsp;<span style=white-space:pre;>   </span>"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;[]&nbsp;&nbsp;<span style=white-space:pre;>   </span>" assert_equals: expected "a&nbsp;&nbsp;<span style=\"white-space:pre;\">   </span>" but got "a &nbsp;<span style=\"white-space:pre;\">   </span>"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;[]&nbsp;&nbsp;<span style=white-space:pre;>b  </span>" assert_equals: expected "a&nbsp;&nbsp;<span style=\"white-space:pre;\">b  </span>" but got "a &nbsp;<span style=\"white-space:pre;\">b  </span>"
+PASS execCommand("forwarddelete", false, ""): "a&nbsp;&nbsp;&nbsp;[]&nbsp;<span style=white-space:pre;>   </span>"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;&nbsp;[]&nbsp;&nbsp;<span style=white-space:pre;>   </span>" assert_equals: expected "a&nbsp; &nbsp;<span style=\"white-space:pre;\">   </span>" but got "a &nbsp;&nbsp;<span style=\"white-space:pre;\">   </span>"
+FAIL execCommand("forwarddelete", false, ""): "a&nbsp;&nbsp;[]&nbsp;&nbsp;<span style=white-space:pre;>b  </span>" assert_equals: expected "a&nbsp; &nbsp;<span style=\"white-space:pre;\">b  </span>" but got "a &nbsp;&nbsp;<span style=\"white-space:pre;\">b  </span>"
+PASS execCommand("forwarddelete", false, ""): "<span style=white-space:pre;> []  </span>&nbsp;&nbsp;&nbsp;a"
+PASS execCommand("forwarddelete", false, ""): "<span style=white-space:pre;>  [] </span>&nbsp;&nbsp;&nbsp;a"
+PASS execCommand("forwarddelete", false, ""): "<span style=white-space:pre;>   []</span>&nbsp;&nbsp;&nbsp;&nbsp;a"
+PASS execCommand("forwarddelete", false, ""): "<span style=white-space:pre;>   </span>[]&nbsp;&nbsp;&nbsp;&nbsp;a"
+

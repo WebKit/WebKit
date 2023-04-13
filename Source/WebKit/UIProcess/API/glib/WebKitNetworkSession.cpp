@@ -95,7 +95,7 @@ struct _WebKitNetworkSessionPrivate {
     PAL::HysteresisActivity dnsPrefetchHystereris;
 };
 
-WEBKIT_DEFINE_FINAL_TYPE(WebKitNetworkSession, webkit_network_session, G_TYPE_OBJECT)
+WEBKIT_DEFINE_FINAL_TYPE(WebKitNetworkSession, webkit_network_session, G_TYPE_OBJECT, GObject)
 
 static void webkitNetworkSessionGetProperty(GObject* object, guint propID, GValue* value, GParamSpec* paramSpec)
 {
@@ -144,9 +144,6 @@ static void webkitNetworkSessionConstructed(GObject* object)
 
     priv->tlsErrorsPolicy = WEBKIT_TLS_ERRORS_POLICY_FAIL;
     webkitWebsiteDataManagerGetDataStore(priv->websiteDataManager.get()).setIgnoreTLSErrors(false);
-
-    // Enable favicons by default.
-    webkit_website_data_manager_set_favicons_enabled(priv->websiteDataManager.get(), TRUE);
 }
 
 static void webkit_network_session_class_init(WebKitNetworkSessionClass* sessionClass)
@@ -252,10 +249,10 @@ WebKitNetworkSession* webkit_network_session_get_default()
 /**
  * webkit_network_session_new:
  * @data_directory: (nullable): a base directory for data, or %NULL
- * @cache_directrory: (nullable): a base direfctory for caches, or %NULL
+ * @cache_directory: (nullable): a base directory for caches, or %NULL
  *
  * Creates a new #WebKitNetworkSession with a persistent #WebKitWebsiteDataManager.
- * The parameters @data_directory and @cache_directrory will be used as construct
+ * The parameters @data_directory and @cache_directory will be used as construct
  * properties of the #WebKitWebsiteDataManager of the network session. Note that if
  * %NULL is passed, the default directory will be passed to #WebKitWebsiteDataManager
  * so that webkit_website_data_manager_get_base_data_directory() and
@@ -651,9 +648,9 @@ WebKitDownload* webkit_network_session_download_uri(WebKitNetworkSession* sessio
 
     WebCore::ResourceRequest request(String::fromUTF8(uri));
     auto& websiteDataStore = webkitWebsiteDataManagerGetDataStore(session->priv->websiteDataManager.get());
-    auto& downloadProxy = websiteDataStore.createDownloadProxy(adoptRef(*new API::DownloadClient), request, nullptr, { });
+    auto downloadProxy = websiteDataStore.createDownloadProxy(adoptRef(*new API::DownloadClient), request, nullptr, { });
     auto download = webkitDownloadCreate(downloadProxy);
-    downloadProxy.setDidStartCallback([session = GRefPtr<WebKitNetworkSession> { session }, download = download.get()](auto* downloadProxy) {
+    downloadProxy->setDidStartCallback([session = GRefPtr<WebKitNetworkSession> { session }, download = download.get()](auto* downloadProxy) {
         if (!downloadProxy)
             return;
 

@@ -85,7 +85,7 @@ public:
     void setGrowthLimitCap(std::optional<LayoutUnit>);
     std::optional<LayoutUnit> growthLimitCap() const { return m_growthLimitCap; }
 
-    const GridTrackSize& cachedTrackSize() const { return *m_cachedTrackSize; }
+    const GridTrackSize& cachedTrackSize() const;
     void setCachedTrackSize(const GridTrackSize&);
 
 private:
@@ -287,6 +287,7 @@ public:
     virtual LayoutUnit freeSpaceForStretchAutoTracksStep() const = 0;
     virtual bool isComputingSizeContainment() const = 0;
     virtual bool isComputingInlineSizeContainment() const = 0;
+    virtual bool isComputingSizeOrInlineSizeContainment() const = 0;
 
 protected:
     GridTrackSizingAlgorithmStrategy(GridTrackSizingAlgorithm& algorithm)

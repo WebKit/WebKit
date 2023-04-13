@@ -33,6 +33,9 @@
 
 OBJC_CLASS NSDictionary;
 
+typedef const struct __CTFont* CTFontRef;
+typedef const struct __CTLine * CTLineRef;
+
 namespace WebCore {
 
 class Image;

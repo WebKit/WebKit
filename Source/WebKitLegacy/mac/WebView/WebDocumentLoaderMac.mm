@@ -67,7 +67,7 @@ void WebDocumentLoaderMac::setDataSource(WebDataSource *dataSource, WebView *web
     // from firing. We work around that issue here. See <rdar://problem/5266289>
     // and <rdar://problem/5049509>.
     if (needsDataLoadWorkaround(webView))
-        m_deferMainResourceDataLoad = false;
+        setDeferMainResourceDataLoad(false);
 }
 
 WebDataSource *WebDocumentLoaderMac::dataSource() const

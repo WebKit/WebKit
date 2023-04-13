@@ -1,6 +1,0 @@
-Panscrolling starting in the blue box should scroll the outer div.
-Panscrolling outside the blue boxes should scroll the outer div.
-Panscrolling starting in the blue box should scroll the outer div.
-Test for bug 28023 This tests that pan scrolling propogates correctly up the DOM tree. On success, our scroll offset should be non-zero.
-
-Success! Div with overflow was scrolled

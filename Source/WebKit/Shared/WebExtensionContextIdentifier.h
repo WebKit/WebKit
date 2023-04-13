@@ -25,15 +25,11 @@
 
 #pragma once
 
-#if ENABLE(WK_WEB_EXTENSIONS)
-
 #include <wtf/ObjectIdentifier.h>
 
 namespace WebKit {
 
-enum WebExtensionContextIdentifierType { };
+struct WebExtensionContextIdentifierType;
 using WebExtensionContextIdentifier = ObjectIdentifier<WebExtensionContextIdentifierType>;
 
 }
-
-#endif // ENABLE(WK_WEB_EXTENSIONS)

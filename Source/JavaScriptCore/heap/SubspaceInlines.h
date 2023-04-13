@@ -106,14 +106,10 @@ Ref<SharedTask<void(Visitor&)>> Subspace::forEachMarkedCellInParallel(const Func
                         return IterationStatus::Continue;
                     });
             }
-            
-            {
-                Locker locker { m_lock };
-                if (!m_needToVisitPreciseAllocations)
-                    return;
-                m_needToVisitPreciseAllocations = false;
-            }
-            
+
+            if (m_doneVisitingPreciseAllocations.test_and_set(std::memory_order_relaxed))
+                return;
+
             CellAttributes attributes = m_subspace.attributes();
             m_subspace.forEachPreciseAllocation(
                 [&] (PreciseAllocation* allocation) {
@@ -126,8 +122,7 @@ Ref<SharedTask<void(Visitor&)>> Subspace::forEachMarkedCellInParallel(const Func
         Subspace& m_subspace;
         Ref<SharedTask<MarkedBlock::Handle*()>> m_blockSource;
         Func m_func;
-        Lock m_lock;
-        bool m_needToVisitPreciseAllocations { true };
+        std::atomic_flag m_doneVisitingPreciseAllocations { };
     };
     
     return adoptRef(*new Task(*this, func));

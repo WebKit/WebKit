@@ -25,41 +25,45 @@
 
 #pragma once
 
-#include "Frame.h"
+#include "LocalFrame.h"
 
 namespace WebCore {
 
 class NavigationDisabler {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    NavigationDisabler(Frame* frame)
+    NavigationDisabler(LocalFrame* frame)
         : m_frame(frame)
     {
-        if (frame)
-            ++frame->mainFrame().m_navigationDisableCount;
-        else // Disable all navigations when destructing a frame-less document.
+        if (frame) {
+            if (auto* localFrame = dynamicDowncast<LocalFrame>(frame->mainFrame()))
+                ++localFrame->m_navigationDisableCount;
+        } else // Disable all navigations when destructing a frame-less document.
             ++s_globalNavigationDisableCount;
     }
 
     ~NavigationDisabler()
     {
         if (m_frame) {
-            auto& mainFrame = m_frame->mainFrame();
-            ASSERT(mainFrame.m_navigationDisableCount);
-            --mainFrame.m_navigationDisableCount;
+            if (auto* mainFrame = dynamicDowncast<LocalFrame>(m_frame->mainFrame())) {
+                ASSERT(mainFrame->m_navigationDisableCount);
+                --mainFrame->m_navigationDisableCount;
+            }
         } else {
             ASSERT(s_globalNavigationDisableCount);
             --s_globalNavigationDisableCount;
         }
     }
 
-    static bool isNavigationAllowed(Frame& frame)
+    static bool isNavigationAllowed(LocalFrame& frame)
     {
-        return !frame.mainFrame().m_navigationDisableCount && !s_globalNavigationDisableCount;
+        if (auto* localFrame = dynamicDowncast<LocalFrame>(frame.mainFrame()))
+            return !localFrame->m_navigationDisableCount && !s_globalNavigationDisableCount;
+        return true;
     }
 
 private:
-    RefPtr<Frame> m_frame;
+    RefPtr<LocalFrame> m_frame;
 
     static unsigned s_globalNavigationDisableCount;
 };

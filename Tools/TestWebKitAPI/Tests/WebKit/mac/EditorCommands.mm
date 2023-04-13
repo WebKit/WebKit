@@ -31,6 +31,7 @@
 #import <WebKit/WKPage.h>
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKRetainPtr.h>
+#import <WebKit/WKWebViewPrivate.h>
 
 namespace TestWebKitAPI {
 
@@ -70,10 +71,22 @@ TEST(WebKit, ScrollByLineCommands)
     ASSERT_TRUE([webView.platformView() respondsToSelector:@selector(scrollLineDown:)]);
     [webView.platformView() scrollLineDown:nil];
 
+    __block bool didUpdatePresentation = false;
+    [webView.platformView() _doAfterNextPresentationUpdate:^{
+        didUpdatePresentation = true;
+    }];
+    Util::run(&didUpdatePresentation);
+
     EXPECT_JS_EQ(webView.page(), "window.scrollY", "40");
 
     ASSERT_TRUE([webView.platformView() respondsToSelector:@selector(scrollLineUp:)]);
     [webView.platformView() scrollLineUp:nil];
+
+    didUpdatePresentation = false;
+    [webView.platformView() _doAfterNextPresentationUpdate:^{
+        didUpdatePresentation = true;
+    }];
+    Util::run(&didUpdatePresentation);
 
     EXPECT_JS_EQ(webView.page(), "window.scrollY", "0");
 }

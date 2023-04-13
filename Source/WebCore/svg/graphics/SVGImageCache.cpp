@@ -21,11 +21,11 @@
 #include "config.h"
 #include "SVGImageCache.h"
 
-#include "FrameView.h"
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
 #include "LayoutSize.h"
 #include "LegacyRenderSVGRoot.h"
+#include "LocalFrameView.h"
 #include "SVGImage.h"
 #include "SVGImageForContainer.h"
 

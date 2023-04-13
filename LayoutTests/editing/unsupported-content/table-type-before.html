@@ -16,13 +16,14 @@
 .expected:first-line { font-weight: bold; font-size: 24px; }
 .results { margin-bottom: 10px; border: 2px solid green; font-size: 24px; }
 </style>
-<script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
-
+<script src="../editing.js"></script>
+<script src="../../resources/dump-as-markup.js"></script>
 <script>
 
 function editingTest() {
     for (i = 0; i < 3; i++)
         typeCharacterCommand("x");
+    Markup.dump('root');
 }
 
 </script>

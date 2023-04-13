@@ -24,6 +24,7 @@
 #if ENABLE(GPU_PROCESS)
 
 messages -> RemoteRenderBundleEncoder NotRefCounted Stream {
+    void Destruct()
     void SetPipeline(WebKit::WebGPUIdentifier identifier)
     void SetIndexBuffer(WebKit::WebGPUIdentifier identifier, PAL::WebGPU::IndexFormat indexFormat, std::optional<PAL::WebGPU::Size64> offset, std::optional<PAL::WebGPU::Size64> size)
     void SetVertexBuffer(PAL::WebGPU::Index32 slot, WebKit::WebGPUIdentifier identifier, std::optional<PAL::WebGPU::Size64> offset, std::optional<PAL::WebGPU::Size64> size)

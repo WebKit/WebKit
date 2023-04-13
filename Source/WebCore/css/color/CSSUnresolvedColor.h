@@ -28,7 +28,6 @@
 #include "CSSUnresolvedColorMix.h"
 #include <variant>
 #include <wtf/Forward.h>
-#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
@@ -39,11 +38,14 @@ enum class ForVisitedLink : bool;
 class Document;
 class RenderStyle;
 
-class CSSUnresolvedColor final : public RefCounted<CSSUnresolvedColor> {
+class CSSUnresolvedColor {
 public:
-    template<typename T>
-    static Ref<CSSUnresolvedColor> create(T&& value) { return adoptRef(*new CSSUnresolvedColor(std::forward<T>(value))); }
-
+    template<typename T> explicit CSSUnresolvedColor(T&& value)
+        : m_value { std::forward<T>(value) }
+    {
+    }
+    CSSUnresolvedColor(CSSUnresolvedColor&&) = default;
+    CSSUnresolvedColor& operator=(CSSUnresolvedColor&&) = default;
     ~CSSUnresolvedColor();
 
     void serializationForCSS(StringBuilder&) const;
@@ -54,12 +56,6 @@ public:
     StyleColor createStyleColor(const Document&, RenderStyle&, Style::ForVisitedLink) const;
 
 private:
-    template<typename T>
-    explicit CSSUnresolvedColor(T&& value)
-        : m_value { std::forward<T>(value) }
-    {
-    }
-
     // FIXME: Add support for unresolved relative colors.
     std::variant<
         CSSUnresolvedColorMix

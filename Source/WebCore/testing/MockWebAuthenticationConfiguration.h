@@ -75,9 +75,6 @@ struct MockWebAuthenticationConfiguration {
         String userCertificateBase64;
         String intermediateCACertificateBase64;
         String preferredCredentialIdBase64;
-
-        template<class Encoder> void encode(Encoder&) const;
-        template<class Decoder> static std::optional<LocalConfiguration> decode(Decoder&);
     };
 
     struct HidConfiguration {
@@ -93,9 +90,6 @@ struct MockWebAuthenticationConfiguration {
         bool expectCancel { false };
         bool supportClientPin { false };
         bool supportInternalUV { false };
-
-        template<class Encoder> void encode(Encoder&) const;
-        template<class Decoder> static std::optional<HidConfiguration> decode(Decoder&);
     };
 
     struct NfcConfiguration {
@@ -103,16 +97,10 @@ struct MockWebAuthenticationConfiguration {
         Vector<String> payloadBase64;
         bool multipleTags { false };
         bool multiplePhysicalTags { false };
-
-        template<class Encoder> void encode(Encoder&) const;
-        template<class Decoder> static std::optional<NfcConfiguration> decode(Decoder&);
     };
 
     struct CcidConfiguration {
         Vector<String> payloadBase64;
-
-        template<class Encoder> void encode(Encoder&) const;
-        template<class Decoder> static std::optional<CcidConfiguration> decode(Decoder&);
     };
 
     bool silentFailure { false };
@@ -120,232 +108,8 @@ struct MockWebAuthenticationConfiguration {
     std::optional<HidConfiguration> hid;
     std::optional<NfcConfiguration> nfc;
     std::optional<CcidConfiguration> ccid;
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<MockWebAuthenticationConfiguration> decode(Decoder&);
 };
-
-template<class Encoder>
-void MockWebAuthenticationConfiguration::LocalConfiguration::encode(Encoder& encoder) const
-{
-    encoder << userVerification << acceptAttestation << privateKeyBase64 << userCertificateBase64 << intermediateCACertificateBase64 << preferredCredentialIdBase64;
-}
-
-template<class Decoder>
-std::optional<MockWebAuthenticationConfiguration::LocalConfiguration> MockWebAuthenticationConfiguration::LocalConfiguration::decode(Decoder& decoder)
-{
-    MockWebAuthenticationConfiguration::LocalConfiguration result;
-
-    std::optional<UserVerification> userVerification;
-    decoder >> userVerification;
-    if (!userVerification)
-        return std::nullopt;
-    result.userVerification = *userVerification;
-
-    std::optional<bool> acceptAttestation;
-    decoder >> acceptAttestation;
-    if (!acceptAttestation)
-        return std::nullopt;
-    result.acceptAttestation = *acceptAttestation;
-
-    std::optional<String> privateKeyBase64;
-    decoder >> privateKeyBase64;
-    if (!privateKeyBase64)
-        return std::nullopt;
-    result.privateKeyBase64 = WTFMove(*privateKeyBase64);
-
-    std::optional<String> userCertificateBase64;
-    decoder >> userCertificateBase64;
-    if (!userCertificateBase64)
-        return std::nullopt;
-    result.userCertificateBase64 = WTFMove(*userCertificateBase64);
-
-    std::optional<String> intermediateCACertificateBase64;
-    decoder >> intermediateCACertificateBase64;
-    if (!intermediateCACertificateBase64)
-        return std::nullopt;
-    result.intermediateCACertificateBase64 = WTFMove(*intermediateCACertificateBase64);
-
-    std::optional<String> preferredCredentialIdBase64;
-    decoder >> preferredCredentialIdBase64;
-    if (!preferredCredentialIdBase64)
-        return std::nullopt;
-    result.preferredCredentialIdBase64 = WTFMove(*preferredCredentialIdBase64);
-
-    return result;
-}
-
-template<class Encoder>
-void MockWebAuthenticationConfiguration::HidConfiguration::encode(Encoder& encoder) const
-{
-    encoder << payloadBase64 << stage << subStage << error << isU2f << keepAlive << fastDataArrival << continueAfterErrorData << canDowngrade << expectCancel << supportClientPin << supportInternalUV;
-}
-
-template<class Decoder>
-std::optional<MockWebAuthenticationConfiguration::HidConfiguration> MockWebAuthenticationConfiguration::HidConfiguration::decode(Decoder& decoder)
-{
-    MockWebAuthenticationConfiguration::HidConfiguration result;
-    if (!decoder.decode(result.payloadBase64))
-        return std::nullopt;
-    if (!decoder.decode(result.stage))
-        return std::nullopt;
-    if (!decoder.decode(result.subStage))
-        return std::nullopt;
-    if (!decoder.decode(result.error))
-        return std::nullopt;
-    if (!decoder.decode(result.isU2f))
-        return std::nullopt;
-    if (!decoder.decode(result.keepAlive))
-        return std::nullopt;
-    if (!decoder.decode(result.fastDataArrival))
-        return std::nullopt;
-    if (!decoder.decode(result.continueAfterErrorData))
-        return std::nullopt;
-    if (!decoder.decode(result.canDowngrade))
-        return std::nullopt;
-    if (!decoder.decode(result.expectCancel))
-        return std::nullopt;
-    if (!decoder.decode(result.supportClientPin))
-        return std::nullopt;
-    if (!decoder.decode(result.supportInternalUV))
-        return std::nullopt;
-    return result;
-}
-
-template<class Encoder>
-void MockWebAuthenticationConfiguration::CcidConfiguration::encode(Encoder& encoder) const
-{
-    encoder << payloadBase64;
-}
-
-template<class Decoder>
-std::optional<MockWebAuthenticationConfiguration::CcidConfiguration> MockWebAuthenticationConfiguration::CcidConfiguration::decode(Decoder& decoder)
-{
-    MockWebAuthenticationConfiguration::CcidConfiguration result;
-    if (!decoder.decode(result.payloadBase64))
-        return std::nullopt;
-    return result;
-}
-
-template<class Encoder>
-void MockWebAuthenticationConfiguration::NfcConfiguration::encode(Encoder& encoder) const
-{
-    encoder << error << payloadBase64 << multipleTags << multiplePhysicalTags;
-}
-
-template<class Decoder>
-std::optional<MockWebAuthenticationConfiguration::NfcConfiguration> MockWebAuthenticationConfiguration::NfcConfiguration::decode(Decoder& decoder)
-{
-    MockWebAuthenticationConfiguration::NfcConfiguration result;
-    if (!decoder.decode(result.error))
-        return std::nullopt;
-    if (!decoder.decode(result.payloadBase64))
-        return std::nullopt;
-    if (!decoder.decode(result.multipleTags))
-        return std::nullopt;
-    if (!decoder.decode(result.multiplePhysicalTags))
-        return std::nullopt;
-    return result;
-}
-
-template<class Encoder>
-void MockWebAuthenticationConfiguration::encode(Encoder& encoder) const
-{
-    encoder << silentFailure << local << hid << nfc << ccid;
-}
-
-template<class Decoder>
-std::optional<MockWebAuthenticationConfiguration> MockWebAuthenticationConfiguration::decode(Decoder& decoder)
-{
-    MockWebAuthenticationConfiguration result;
-
-    std::optional<bool> silentFailure;
-    decoder >> silentFailure;
-    if (!silentFailure)
-        return std::nullopt;
-    result.silentFailure = *silentFailure;
-
-    std::optional<std::optional<LocalConfiguration>> local;
-    decoder >> local;
-    if (!local)
-        return std::nullopt;
-    result.local = WTFMove(*local);
-
-    std::optional<std::optional<HidConfiguration>> hid;
-    decoder >> hid;
-    if (!hid)
-        return std::nullopt;
-    result.hid = WTFMove(*hid);
-
-    std::optional<std::optional<NfcConfiguration>> nfc;
-    decoder >> nfc;
-    if (!nfc)
-        return std::nullopt;
-    result.nfc = WTFMove(*nfc);
-
-    std::optional<std::optional<CcidConfiguration>> ccid;
-    decoder >> ccid;
-    if (!ccid)
-        return std::nullopt;
-    result.ccid = WTFMove(*ccid);
-
-    return result;
-}
 
 } // namespace WebCore
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::MockWebAuthenticationConfiguration::HidStage> {
-    using values = EnumValues<
-        WebCore::MockWebAuthenticationConfiguration::HidStage,
-        WebCore::MockWebAuthenticationConfiguration::HidStage::Info,
-        WebCore::MockWebAuthenticationConfiguration::HidStage::Request
-    >;
-};
-
-template<> struct EnumTraits<WebCore::MockWebAuthenticationConfiguration::HidSubStage> {
-    using values = EnumValues<
-        WebCore::MockWebAuthenticationConfiguration::HidSubStage,
-        WebCore::MockWebAuthenticationConfiguration::HidSubStage::Init,
-        WebCore::MockWebAuthenticationConfiguration::HidSubStage::Msg
-    >;
-};
-
-template<> struct EnumTraits<WebCore::MockWebAuthenticationConfiguration::HidError> {
-    using values = EnumValues<
-        WebCore::MockWebAuthenticationConfiguration::HidError,
-        WebCore::MockWebAuthenticationConfiguration::HidError::Success,
-        WebCore::MockWebAuthenticationConfiguration::HidError::DataNotSent,
-        WebCore::MockWebAuthenticationConfiguration::HidError::EmptyReport,
-        WebCore::MockWebAuthenticationConfiguration::HidError::WrongChannelId,
-        WebCore::MockWebAuthenticationConfiguration::HidError::MaliciousPayload,
-        WebCore::MockWebAuthenticationConfiguration::HidError::UnsupportedOptions,
-        WebCore::MockWebAuthenticationConfiguration::HidError::WrongNonce
-    >;
-};
-
-template<> struct EnumTraits<WebCore::MockWebAuthenticationConfiguration::NfcError> {
-    using values = EnumValues<
-        WebCore::MockWebAuthenticationConfiguration::NfcError,
-        WebCore::MockWebAuthenticationConfiguration::NfcError::Success,
-        WebCore::MockWebAuthenticationConfiguration::NfcError::NoTags,
-        WebCore::MockWebAuthenticationConfiguration::NfcError::WrongTagType,
-        WebCore::MockWebAuthenticationConfiguration::NfcError::NoConnections,
-        WebCore::MockWebAuthenticationConfiguration::NfcError::MaliciousPayload
-    >;
-};
-
-template<> struct EnumTraits<WebCore::MockWebAuthenticationConfiguration::UserVerification> {
-    using values = EnumValues<
-        WebCore::MockWebAuthenticationConfiguration::UserVerification,
-        WebCore::MockWebAuthenticationConfiguration::UserVerification::No,
-        WebCore::MockWebAuthenticationConfiguration::UserVerification::Yes,
-        WebCore::MockWebAuthenticationConfiguration::UserVerification::Cancel,
-        WebCore::MockWebAuthenticationConfiguration::UserVerification::Presence
-    >;
-};
-
-} // namespace WTF
 
 #endif // ENABLE(WEB_AUTHN)

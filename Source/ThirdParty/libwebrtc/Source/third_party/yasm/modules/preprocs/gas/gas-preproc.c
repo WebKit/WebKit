@@ -1091,7 +1091,7 @@ static int substitute_values(yasm_preproc_gas *pp, char **line_ptr)
                 int cursor = pp->expr.string_cursor;
                 int len = strlen(tokval.t_charptr);
                 char value[64];
-                int value_length = sprintf(value, "%ld", eval_expr(pp, tokval.t_charptr));
+                int value_length = snprintf(value, 64, "%ld", eval_expr(pp, tokval.t_charptr));
                 int delta = value_length - len;
 
                 line_length += delta;

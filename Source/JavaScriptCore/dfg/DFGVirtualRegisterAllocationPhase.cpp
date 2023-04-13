@@ -69,6 +69,13 @@ public:
                 case GetLocal:
                     ASSERT(!node->child1()->hasResult());
                     break;
+
+                case ExtractFromTuple:
+                    ASSERT(m_graph.m_tupleData.at(node->tupleIndex()).refCount == 1);
+                    node->setVirtualRegister(m_graph.m_tupleData.at(node->tupleIndex()).virtualRegister);
+                    ASSERT(!node->mustGenerate());
+                    continue;
+
                 default:
                     break;
                 }
@@ -84,6 +91,17 @@ public:
                     scoreBoard.useIfHasResult(node->child1());
                     scoreBoard.useIfHasResult(node->child2());
                     scoreBoard.useIfHasResult(node->child3());
+                }
+
+                if (node->isTuple()) {
+                    ASSERT(node->refCount() <= node->tupleSize());
+                    for (unsigned i = 0; i < node->tupleSize(); ++i) {
+                        auto& tupleData = m_graph.m_tupleData.at(node->tupleOffset() + i);
+                        if (tupleData.refCount)
+                            tupleData.virtualRegister = scoreBoard.allocate();
+                    }
+                    ASSERT(!node->hasResult());
+                    continue;
                 }
 
                 if (!node->hasResult())

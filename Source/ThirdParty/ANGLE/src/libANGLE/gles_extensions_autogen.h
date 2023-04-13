@@ -64,6 +64,10 @@ struct Extensions
     {
         return (primitiveBoundingBoxEXT || primitiveBoundingBoxOES);
     }
+    bool shaderFramebufferFetchAny() const
+    {
+        return (shaderFramebufferFetchARM || shaderFramebufferFetchEXT);
+    }
     bool shaderIoBlocksAny() const { return (shaderIoBlocksEXT || shaderIoBlocksOES); }
     bool textureBorderClampAny() const { return (textureBorderClampEXT || textureBorderClampOES); }
     bool textureBufferAny() const { return (textureBufferEXT || textureBufferOES); }
@@ -144,6 +148,9 @@ struct Extensions
     // GL_OES_compressed_paletted_texture
     bool compressedPalettedTextureOES = false;
 
+    // GL_EXT_conservative_depth
+    bool conservativeDepthEXT = false;
+
     // GL_EXT_copy_image
     bool copyImageEXT = false;
 
@@ -167,6 +174,9 @@ struct Extensions
 
     // GL_NV_depth_buffer_float2
     bool depthBufferFloat2NV = false;
+
+    // GL_EXT_depth_clamp
+    bool depthClampEXT = false;
 
     // GL_ANGLE_depth_texture
     bool depthTextureANGLE = false;
@@ -351,6 +361,12 @@ struct Extensions
     // GL_NV_read_stencil
     bool readStencilNV = false;
 
+    // GL_QCOM_render_shared_exponent
+    bool renderSharedExponentQCOM = false;
+
+    // GL_EXT_render_snorm
+    bool renderSnormEXT = false;
+
     // GL_OES_rgb8_rgba8
     bool rgb8Rgba8OES = false;
 
@@ -377,6 +393,9 @@ struct Extensions
 
     // GL_EXT_separate_shader_objects
     bool separateShaderObjectsEXT = false;
+
+    // GL_ARM_shader_framebuffer_fetch
+    bool shaderFramebufferFetchARM = false;
 
     // GL_EXT_shader_framebuffer_fetch
     bool shaderFramebufferFetchEXT = false;
@@ -486,6 +505,9 @@ struct Extensions
     // GL_EXT_texture_filter_anisotropic
     bool textureFilterAnisotropicEXT = false;
 
+    // GL_EXT_texture_filter_minmax
+    bool textureFilterMinmaxEXT = false;
+
     // GL_OES_texture_float
     bool textureFloatOES = false;
 
@@ -503,6 +525,9 @@ struct Extensions
 
     // GL_OES_texture_half_float_linear
     bool textureHalfFloatLinearOES = false;
+
+    // GL_EXT_texture_mirror_clamp_to_edge
+    bool textureMirrorClampToEdgeEXT = false;
 
     // GL_EXT_texture_norm16
     bool textureNorm16EXT = false;
@@ -669,11 +694,17 @@ struct Extensions
     // GL_ANGLE_semaphore_fuchsia
     bool semaphoreFuchsiaANGLE = false;
 
+    // GL_ANGLE_shader_binary
+    bool shaderBinaryANGLE = false;
+
     // GL_ANGLE_shader_pixel_local_storage
     bool shaderPixelLocalStorageANGLE = false;
 
     // GL_ANGLE_shader_pixel_local_storage_coherent
     bool shaderPixelLocalStorageCoherentANGLE = false;
+
+    // GL_ANGLE_stencil_texturing
+    bool stencilTexturingANGLE = false;
 
     // GL_CHROMIUM_sync_query
     bool syncQueryCHROMIUM = false;

@@ -31,19 +31,18 @@
 #include "CacheStorageProvider.h"
 #include "Chrome.h"
 #include "CommonVM.h"
-#include "DOMWindow.h"
 #include "DocumentLoader.h"
 #include "DocumentSVG.h"
 #include "EditorClient.h"
-#include "ElementIterator.h"
-#include "Frame.h"
 #include "FrameLoader.h"
-#include "FrameView.h"
 #include "ImageBuffer.h"
 #include "ImageObserver.h"
 #include "IntRect.h"
 #include "JSDOMWindowBase.h"
 #include "LegacyRenderSVGRoot.h"
+#include "LocalDOMWindow.h"
+#include "LocalFrame.h"
+#include "LocalFrameView.h"
 #include "Page.h"
 #include "PageConfiguration.h"
 #include "RenderSVGRoot.h"
@@ -58,6 +57,7 @@
 #include "ScriptDisallowedScope.h"
 #include "Settings.h"
 #include "SocketProvider.h"
+#include "TypedElementDescendantIteratorInlines.h"
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/JSLock.h>
 #include <wtf/text/TextStream.h>
@@ -81,16 +81,18 @@ SVGImage::~SVGImage()
         // Clear m_page, so that SVGImageChromeClient knows we're destructed.
         m_page = nullptr;
     }
-
-    // Verify that page teardown destroyed the Chrome
-    ASSERT(!m_chromeClient || !m_chromeClient->image());
 }
 
 inline RefPtr<SVGSVGElement> SVGImage::rootElement() const
 {
     if (!m_page)
         return nullptr;
-    return DocumentSVG::rootElement(*m_page->mainFrame().document());
+
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
+    if (!localMainFrame)
+        return nullptr;
+
+    return DocumentSVG::rootElement(*localMainFrame->document());
 }
 
 bool SVGImage::renderingTaintsOrigin() const
@@ -339,11 +341,16 @@ RenderBox* SVGImage::embeddedContentBox() const
     return downcast<RenderBox>(rootElement->renderer());
 }
 
-FrameView* SVGImage::frameView() const
+LocalFrameView* SVGImage::frameView() const
 {
     if (!m_page)
         return nullptr;
-    return m_page->mainFrame().view();
+
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
+    if (!localMainFrame)
+        return nullptr;
+
+    return localMainFrame->view();
 }
 
 bool SVGImage::hasRelativeWidth() const
@@ -432,7 +439,10 @@ bool SVGImage::isAnimating() const
 
 void SVGImage::reportApproximateMemoryCost() const
 {
-    RefPtr document = m_page->mainFrame().document();
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
+    if (!localMainFrame)
+        return;
+    RefPtr document = localMainFrame->document();
     size_t decodedImageMemoryCost = 0;
 
     for (RefPtr<Node> node = document; node; node = NodeTraversal::next(*node))
@@ -453,8 +463,7 @@ EncodedDataStatus SVGImage::dataChanged(bool allDataReceived)
 
     if (allDataReceived) {
         auto pageConfiguration = pageConfigurationWithEmptyClients(PAL::SessionID::defaultSessionID());
-        m_chromeClient = makeUnique<SVGImageChromeClient>(this);
-        pageConfiguration.chromeClient = m_chromeClient.get();
+        pageConfiguration.chromeClient = makeUniqueRef<SVGImageChromeClient>(this);
 
         // FIXME: If this SVG ends up loading itself, we might leak the world.
         // The Cache code does not know about CachedImages holding Frames and
@@ -475,9 +484,12 @@ EncodedDataStatus SVGImage::dataChanged(bool allDataReceived)
         if (auto* observer = imageObserver())
             m_page->settings().setLayerBasedSVGEngineEnabled(observer->layerBasedSVGEngineEnabled());
 #endif
+        auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
+        if (!localMainFrame)
+            return EncodedDataStatus::Unknown;
 
-        Frame& frame = m_page->mainFrame();
-        frame.setView(FrameView::create(frame));
+        LocalFrame& frame = *localMainFrame;
+        frame.setView(LocalFrameView::create(frame));
         frame.init();
         FrameLoader& loader = frame.loader();
         loader.forceSandboxFlags(SandboxAll);

@@ -27,26 +27,27 @@
 #include "CustomElementRegistry.h"
 
 #include "CustomElementReactionQueue.h"
-#include "DOMWindow.h"
 #include "Document.h"
 #include "ElementRareData.h"
+#include "ElementTraversal.h"
 #include "JSCustomElementInterface.h"
 #include "JSDOMPromiseDeferred.h"
+#include "LocalDOMWindow.h"
 #include "MathMLNames.h"
 #include "QualifiedName.h"
 #include "ShadowRoot.h"
-#include "TypedElementDescendantIterator.h"
+#include "TypedElementDescendantIteratorInlines.h"
 #include <JavaScriptCore/JSCJSValueInlines.h>
 #include <wtf/text/AtomString.h>
 
 namespace WebCore {
 
-Ref<CustomElementRegistry> CustomElementRegistry::create(DOMWindow& window, ScriptExecutionContext* scriptExecutionContext)
+Ref<CustomElementRegistry> CustomElementRegistry::create(LocalDOMWindow& window, ScriptExecutionContext* scriptExecutionContext)
 {
     return adoptRef(*new CustomElementRegistry(window, scriptExecutionContext));
 }
 
-CustomElementRegistry::CustomElementRegistry(DOMWindow& window, ScriptExecutionContext* scriptExecutionContext)
+CustomElementRegistry::CustomElementRegistry(LocalDOMWindow& window, ScriptExecutionContext* scriptExecutionContext)
     : ContextDestructionObserver(scriptExecutionContext)
     , m_window(window)
 {

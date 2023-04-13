@@ -44,17 +44,20 @@ OBJC_CLASS AVCaptureSession;
 OBJC_CLASS AVCaptureVideoDataOutput;
 OBJC_CLASS AVFrameRateRange;
 OBJC_CLASS NSError;
+OBJC_CLASS NSMutableArray;
 OBJC_CLASS NSNotification;
 OBJC_CLASS WebCoreAVVideoCaptureSourceObserver;
 
 namespace WebCore {
 
-class AVVideoPreset;
 class ImageTransferSessionVT;
+
+enum class VideoFrameRotation : uint16_t;
 
 class AVVideoCaptureSource : public RealtimeVideoCaptureSource, private OrientationNotifier::Observer {
 public:
     static CaptureSourceOrError create(const CaptureDevice&, MediaDeviceHashSalts&&, const MediaConstraints*, PageIdentifier);
+    static NSMutableArray* cameraCaptureDeviceTypes();
 
     WEBCORE_EXPORT static VideoCaptureFactory& factory();
 
@@ -81,7 +84,7 @@ private:
 
     const RealtimeMediaSourceCapabilities& capabilities() final;
     const RealtimeMediaSourceSettings& settings() final;
-    double facingModeFitnessDistanceAdjustment() const final;
+    double facingModeFitnessScoreAdjustment() const final;
     void startProducingData() final;
     void stopProducingData() final;
     void settingsDidChange(OptionSet<RealtimeMediaSourceSettings::Flag>) final;
@@ -92,19 +95,19 @@ private:
     CaptureDevice::DeviceType deviceType() const final { return CaptureDevice::DeviceType::Camera; }
     bool interrupted() const final;
 
-    VideoFrame::Rotation videoFrameRotation() const final { return m_videoFrameRotation; }
-    void setFrameRateWithPreset(double, RefPtr<VideoPreset>) final;
-    bool prefersPreset(VideoPreset&) final;
+    VideoFrameRotation videoFrameRotation() const final { return m_videoFrameRotation; }
+    void setFrameRateAndZoomWithPreset(double, double, std::optional<VideoPreset>&&) final;
+    bool prefersPreset(const VideoPreset&) final;
     void generatePresets() final;
     bool canResizeVideoFrames() const final { return true; }
 
-    void setSessionSizeAndFrameRate();
+    void setSessionSizeFrameRateAndZoom();
     bool setPreset(NSString*);
     void computeVideoFrameRotation();
     AVFrameRateRange* frameDurationForFrameRate(double);
 
     // OrientationNotifier::Observer API
-    void orientationChanged(int orientation) final;
+    void orientationChanged(IntDegrees orientation) final;
 
     bool setFrameRateConstraint(double minFrameRate, double maxFrameRate);
 
@@ -119,13 +122,16 @@ private:
     void updateVerifyCapturingTimer();
     void verifyIsCapturing();
 
+    std::optional<double> computeMinZoom() const;
+    std::optional<double> computeMaxZoom(AVCaptureDeviceFormat*) const;
+
     RefPtr<VideoFrame> m_buffer;
     RetainPtr<AVCaptureVideoDataOutput> m_videoOutput;
     std::unique_ptr<ImageTransferSessionVT> m_imageTransferSession;
 
-    int m_sensorOrientation { 0 };
-    int m_deviceOrientation { 0 };
-    VideoFrame::Rotation m_videoFrameRotation { VideoFrame::Rotation::None };
+    IntDegrees m_sensorOrientation { 0 };
+    IntDegrees m_deviceOrientation { 0 };
+    VideoFrameRotation m_videoFrameRotation { };
 
     std::optional<RealtimeMediaSourceSettings> m_currentSettings;
     std::optional<RealtimeMediaSourceCapabilities> m_capabilities;
@@ -133,11 +139,14 @@ private:
     RetainPtr<AVCaptureSession> m_session;
     RetainPtr<AVCaptureDevice> m_device;
 
-    RefPtr<AVVideoPreset> m_currentPreset;
-    RefPtr<AVVideoPreset> m_appliedPreset;
+    std::optional<VideoPreset> m_currentPreset;
+    std::optional<VideoPreset> m_appliedPreset;
     RetainPtr<AVFrameRateRange> m_appliedFrameRateRange;
+    double m_appliedZoom { 1 };
 
     double m_currentFrameRate;
+    double m_currentZoom { 1 };
+    double m_zoomScaleFactor { 1 };
     bool m_interrupted { false };
     bool m_isRunning { false };
 
@@ -150,9 +159,5 @@ private:
 };
 
 } // namespace WebCore
-
-SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::AVVideoPreset)
-    static bool isType(const WebCore::VideoPreset& preset) { return preset.type == WebCore::VideoPreset::VideoPresetType::AVCapture; }
-SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // ENABLE(MEDIA_STREAM)

@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2003, 2006 Apple Inc.  All rights reserved.
+ * Copyright (C) 2003-2023 Apple Inc.  All rights reserved.§
+ * Copyright (C) 2014 Google Inc.  All rights reserved.
  * Copyright (C) 2005 Nokia.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -36,12 +37,6 @@
 
 namespace WebCore {
 
-FloatSize::FloatSize(const IntSize& size)
-    : m_width(size.width())
-    , m_height(size.height())
-{
-}
-
 FloatSize FloatSize::constrainedBetween(const FloatSize& min, const FloatSize& max) const
 {
     return {
@@ -52,7 +47,7 @@ FloatSize FloatSize::constrainedBetween(const FloatSize& min, const FloatSize& m
 
 bool FloatSize::isZero() const
 {
-    return fabs(m_width) < std::numeric_limits<float>::epsilon() && fabs(m_height) < std::numeric_limits<float>::epsilon();
+    return std::abs(m_width) < std::numeric_limits<float>::epsilon() && std::abs(m_height) < std::numeric_limits<float>::epsilon();
 }
 
 bool FloatSize::isExpressibleAsIntSize() const

@@ -70,7 +70,7 @@ PermissionStatus::PermissionStatus(ScriptExecutionContext& context, PermissionSt
     auto originData = origin ? origin->data() : SecurityOriginData { };
     ClientOrigin clientOrigin { context.topOrigin().data(), WTFMove(originData) };
 
-    m_mainThreadPermissionObserverIdentifier = MainThreadPermissionObserverIdentifier::generateThreadSafe();
+    m_mainThreadPermissionObserverIdentifier = MainThreadPermissionObserverIdentifier::generate();
 
     ensureOnMainThread([weakThis = WeakPtr { *this }, contextIdentifier = context.identifier(), state = m_state, descriptor = m_descriptor, source, page = WTFMove(page), origin = WTFMove(clientOrigin).isolatedCopy(), identifier = m_mainThreadPermissionObserverIdentifier]() mutable {
         auto mainThreadPermissionObserver = makeUnique<MainThreadPermissionObserver>(WTFMove(weakThis), contextIdentifier, state, descriptor, source, WTFMove(page), WTFMove(origin));

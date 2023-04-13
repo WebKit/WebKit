@@ -46,7 +46,6 @@
 #include "File.h"
 #include "FloatRect.h"
 #include "FocusController.h"
-#include "Frame.h"
 #include "FrameDestructionObserverInlines.h"
 #include "HTMLIFrameElement.h"
 #include "HitTestResult.h"
@@ -57,6 +56,7 @@
 #include "JSDOMPromiseDeferred.h"
 #include "JSExecState.h"
 #include "JSInspectorFrontendHost.h"
+#include "LocalFrame.h"
 #include "MouseEvent.h"
 #include "Node.h"
 #include "Page.h"
@@ -175,7 +175,10 @@ void InspectorFrontendHost::addSelfToGlobalObjectInWorld(DOMWrapperWorld& world)
 {
     // FIXME: What guarantees m_frontendPage is non-null?
     // FIXME: What guarantees globalObject's return value is non-null?
-    auto& globalObject = *m_frontendPage->mainFrame().script().globalObject(world);
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_frontendPage->mainFrame());
+    if (!localMainFrame)
+        return;
+    auto& globalObject = *localMainFrame->script().globalObject(world);
     auto& vm = globalObject.vm();
     JSC::JSLockHolder lock(vm);
     auto scope = DECLARE_CATCH_SCOPE(vm);
@@ -262,14 +265,18 @@ void InspectorFrontendHost::inspectedURLChanged(const String& newURL)
 
 void InspectorFrontendHost::setZoomFactor(float zoom)
 {
-    if (m_frontendPage)
-        m_frontendPage->mainFrame().setPageAndTextZoomFactors(zoom, 1);
+    if (m_frontendPage) {
+        if (auto* localMainFrame = dynamicDowncast<LocalFrame>(m_frontendPage->mainFrame()))
+            localMainFrame->setPageAndTextZoomFactors(zoom, 1);
+    }
 }
 
 float InspectorFrontendHost::zoomFactor()
 {
-    if (m_frontendPage)
-        return m_frontendPage->mainFrame().pageZoomFactor();
+    if (m_frontendPage) {
+        if (auto* localMainFrame = dynamicDowncast<LocalFrame>(m_frontendPage->mainFrame()))
+            return localMainFrame->pageZoomFactor();
+    }
 
     return 1.0;
 }
@@ -421,7 +428,8 @@ String InspectorFrontendHost::platformVersionName() const
 
 void InspectorFrontendHost::copyText(const String& text)
 {
-    auto pageID = m_frontendPage ? m_frontendPage->mainFrame().pageID() : std::nullopt;
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_frontendPage->mainFrame());
+    auto pageID = m_frontendPage && localMainFrame ? localMainFrame->pageID() : std::nullopt;
     Pasteboard::createForCopyAndPaste(PagePasteboardContext::create(WTFMove(pageID)))->writePlainText(text, Pasteboard::CannotSmartReplace);
 }
 
@@ -565,7 +573,10 @@ void InspectorFrontendHost::showContextMenu(Event& event, Vector<ContextMenuItem
     // FIXME: What guarantees m_frontendPage is non-null?
     // FIXME: What guarantees globalObject's return value is non-null?
     ASSERT(m_frontendPage);
-    auto& globalObject = *m_frontendPage->mainFrame().script().globalObject(debuggerWorld());
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_frontendPage->mainFrame());
+    if (!localMainFrame)
+        return;
+    auto& globalObject = *localMainFrame->script().globalObject(debuggerWorld());
     auto& vm = globalObject.vm();
     auto value = globalObject.get(&globalObject, JSC::Identifier::fromString(vm, "InspectorFrontendAPI"_s));
     ASSERT(value);
@@ -803,7 +814,7 @@ ExceptionOr<JSC::JSValue> InspectorFrontendHost::evaluateScriptInExtensionTab(HT
     if (!frame)
         return Exception { InvalidStateError, "Unable to find global object for <iframe>"_s };
 
-    Ref<Frame> protectedFrame(*frame);
+    Ref protectedFrame(*frame);
 
     JSDOMGlobalObject* frameGlobalObject = frame->script().globalObject(mainThreadNormalWorld());
     if (!frameGlobalObject)

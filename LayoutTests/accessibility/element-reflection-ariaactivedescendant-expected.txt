@@ -3,15 +3,18 @@ Checks that element reflection is exposed to the a11y tree for 'ariaActiveDescen
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS axTarget1.selectedChildrenCount is 1
-PASS axTarget1.selectedChildAtIndex(0).isEqual(axDescendant1) is true
-PASS axTarget2.selectedChildrenCount is 1
-PASS axTarget2.selectedChildAtIndex(0).isEqual(axDescendantFirstChild) is true
-PASS axTarget2.selectedChildrenCount is 1
-PASS axTarget2.selectedChildAtIndex(0).isEqual(axDescendant2) is true
-PASS axTarget3.selectedChildrenCount is 1
-PASS axTarget3.selectedChildAtIndex(0).isEqual(axDescendant3) is true
+PASS: axTarget1.selectedChildrenCount === 1
+PASS: axTarget1.selectedChildAtIndex(0).isEqual(axDescendant1) === true
+PASS: axTarget2.selectedChildrenCount === 1
+PASS: axTarget2.selectedChildAtIndex(0).isEqual(axDescendantFirstChild) === true
+PASS: axTarget2.selectedChildrenCount === 1
+PASS: axTarget2.selectedChildAtIndex(0).isEqual(axDescendant2) === true
+PASS: axTarget3.selectedChildrenCount === 1
+PASS: axTarget3.selectedChildAtIndex(0).isEqual(axDescendant3) === true
+
 PASS successfullyParsed is true
 
 TEST COMPLETE
-
+a
+b
+c

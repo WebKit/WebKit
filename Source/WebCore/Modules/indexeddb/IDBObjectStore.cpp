@@ -43,7 +43,7 @@
 #include "Page.h"
 #include "ScriptExecutionContext.h"
 #include "SerializedScriptValue.h"
-#include "WebCoreOpaqueRoot.h"
+#include "WebCoreOpaqueRootInlines.h"
 #include <JavaScriptCore/CatchScope.h>
 #include <JavaScriptCore/HeapInlines.h>
 #include <JavaScriptCore/JSCJSValueInlines.h>

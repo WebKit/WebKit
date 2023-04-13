@@ -10,7 +10,7 @@ import { checkElementsEqual } from '../../../util/check_contents.js';
 
 export const g = makeTestGroup(GPUTest);
 
-g.test('clear').fn(async t => {
+g.test('clear').fn(t => {
   const dst = t.device.createBuffer({
     size: 4,
     usage: GPUBufferUsage.COPY_SRC | GPUBufferUsage.COPY_DST,
@@ -21,7 +21,6 @@ g.test('clear').fn(async t => {
     size: { width: 1, height: 1, depthOrArrayLayers: 1 },
     usage: GPUTextureUsage.COPY_SRC | GPUTextureUsage.RENDER_ATTACHMENT,
   });
-
   const colorAttachmentView = colorAttachment.createView();
 
   const encoder = t.device.createCommandEncoder();
@@ -35,7 +34,6 @@ g.test('clear').fn(async t => {
       },
     ],
   });
-
   pass.end();
   encoder.copyTextureToBuffer(
     { texture: colorAttachment, mipLevel: 0, origin: { x: 0, y: 0, z: 0 } },
@@ -48,7 +46,7 @@ g.test('clear').fn(async t => {
   t.expectGPUBufferValuesEqual(dst, new Uint8Array([0x00, 0xff, 0x00, 0xff]));
 });
 
-g.test('fullscreen_quad').fn(async t => {
+g.test('fullscreen_quad').fn(t => {
   const dst = t.device.createBuffer({
     size: 4,
     usage: GPUBufferUsage.COPY_SRC | GPUBufferUsage.COPY_DST,
@@ -59,14 +57,14 @@ g.test('fullscreen_quad').fn(async t => {
     size: { width: 1, height: 1, depthOrArrayLayers: 1 },
     usage: GPUTextureUsage.COPY_SRC | GPUTextureUsage.RENDER_ATTACHMENT,
   });
-
   const colorAttachmentView = colorAttachment.createView();
 
   const pipeline = t.device.createRenderPipeline({
+    layout: 'auto',
     vertex: {
       module: t.device.createShaderModule({
         code: `
-        @stage(vertex) fn main(
+        @vertex fn main(
           @builtin(vertex_index) VertexIndex : u32
           ) -> @builtin(position) vec4<f32> {
             var pos : array<vec2<f32>, 3> = array<vec2<f32>, 3>(
@@ -77,23 +75,19 @@ g.test('fullscreen_quad').fn(async t => {
           }
           `,
       }),
-
       entryPoint: 'main',
     },
-
     fragment: {
       module: t.device.createShaderModule({
         code: `
-          @stage(fragment) fn main() -> @location(0) vec4<f32> {
+          @fragment fn main() -> @location(0) vec4<f32> {
             return vec4<f32>(0.0, 1.0, 0.0, 1.0);
           }
           `,
       }),
-
       entryPoint: 'main',
       targets: [{ format: 'rgba8unorm' }],
     },
-
     primitive: { topology: 'triangle-list' },
   });
 
@@ -108,7 +102,6 @@ g.test('fullscreen_quad').fn(async t => {
       },
     ],
   });
-
   pass.setPipeline(pipeline);
   pass.draw(3);
   pass.end();
@@ -170,7 +163,6 @@ g.test('large_draw')
       size: 20,
       usage: GPUBufferUsage.INDIRECT | GPUBufferUsage.COPY_DST,
     });
-
     const writeIndirectParams = (count, instanceCount) => {
       const params = new Uint32Array(5);
       params[0] = count; // Vertex or index count
@@ -189,7 +181,6 @@ g.test('large_draw')
         usage: GPUBufferUsage.INDEX | GPUBufferUsage.COPY_DST,
         mappedAtCreation: true,
       });
-
       t.trackForCleanup(indexBuffer);
       const indexData = new Uint32Array(indexBuffer.getMappedRange());
       for (let i = 0; i < kMaxIndices; ++i) {
@@ -203,7 +194,6 @@ g.test('large_draw')
       size: { width: 3, height: 3, depthOrArrayLayers: 1 },
       usage: GPUTextureUsage.COPY_SRC | GPUTextureUsage.RENDER_ATTACHMENT,
     });
-
     const colorAttachmentView = colorAttachment.createView();
 
     const bgLayout = t.device.createBindGroupLayout({
@@ -244,7 +234,7 @@ g.test('large_draw')
 
           @group(0) @binding(0) var<uniform> params: Params;
 
-          @stage(vertex) fn main(
+          @vertex fn main(
               @builtin(vertex_index) v: u32,
               @builtin(instance_index) i: u32)
               -> @builtin(position) vec4<f32> {
@@ -254,27 +244,23 @@ g.test('large_draw')
           }
           `,
         }),
-
         entryPoint: 'main',
       },
-
       fragment: {
         module: t.device.createShaderModule({
           code: `
-            @stage(fragment) fn main() -> @location(0) vec4<f32> {
+            @fragment fn main() -> @location(0) vec4<f32> {
               return vec4<f32>(1.0, 1.0, 0.0, 1.0);
             }
             `,
         }),
-
         entryPoint: 'main',
         targets: [{ format: 'rgba8unorm' }],
       },
-
       primitive: { topology: 'point-list' },
     });
 
-    const runPipeline = async (numVertices, numInstances) => {
+    const runPipeline = (numVertices, numInstances) => {
       const encoder = t.device.createCommandEncoder();
       const pass = encoder.beginRenderPass({
         colorAttachments: [
@@ -339,22 +325,18 @@ g.test('large_draw')
         numInstances: 4,
         vertexCounts: [2 ** 10, 2 ** 16, 2 ** 18, 2 ** 20, 2 ** 22, 2 ** 24],
       },
-
       {
         numInstances: 2 ** 8,
         vertexCounts: [2 ** 10, 2 ** 16, 2 ** 18, 2 ** 20, 2 ** 22],
       },
-
       {
         numInstances: 2 ** 10,
         vertexCounts: [2 ** 8, 2 ** 10, 2 ** 12, 2 ** 16, 2 ** 18, 2 ** 20],
       },
-
       {
         numInstances: 2 ** 16,
         vertexCounts: [2 ** 4, 2 ** 8, 2 ** 10, 2 ** 12, 2 ** 14],
       },
-
       {
         numInstances: 2 ** 20,
         vertexCounts: [2 ** 4, 2 ** 8, 2 ** 10],

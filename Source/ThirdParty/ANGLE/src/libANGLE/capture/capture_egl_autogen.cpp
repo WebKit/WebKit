@@ -625,7 +625,7 @@ CallCapture CaptureGetCurrentContext(egl::Thread *thread, bool isCallValid, EGLC
 CallCapture CaptureClientWaitSync(egl::Thread *thread,
                                   bool isCallValid,
                                   egl::Display *dpyPacked,
-                                  egl::Sync *syncPacked,
+                                  egl::SyncID syncPacked,
                                   EGLint flags,
                                   EGLTime timeout,
                                   EGLint returnValue)
@@ -633,7 +633,7 @@ CallCapture CaptureClientWaitSync(egl::Thread *thread,
     ParamBuffer paramBuffer;
 
     paramBuffer.addValueParam("dpyPacked", ParamType::Tegl_DisplayPointer, dpyPacked);
-    paramBuffer.addValueParam("syncPacked", ParamType::Tegl_SyncPointer, syncPacked);
+    paramBuffer.addValueParam("syncPacked", ParamType::Tegl_SyncID, syncPacked);
     paramBuffer.addValueParam("flags", ParamType::TEGLint, flags);
     paramBuffer.addValueParam("timeout", ParamType::TEGLTime, timeout);
 
@@ -753,13 +753,13 @@ CallCapture CaptureDestroyImage(egl::Thread *thread,
 CallCapture CaptureDestroySync(egl::Thread *thread,
                                bool isCallValid,
                                egl::Display *dpyPacked,
-                               egl::Sync *syncPacked,
+                               egl::SyncID syncPacked,
                                EGLBoolean returnValue)
 {
     ParamBuffer paramBuffer;
 
     paramBuffer.addValueParam("dpyPacked", ParamType::Tegl_DisplayPointer, dpyPacked);
-    paramBuffer.addValueParam("syncPacked", ParamType::Tegl_SyncPointer, syncPacked);
+    paramBuffer.addValueParam("syncPacked", ParamType::Tegl_SyncID, syncPacked);
 
     ParamCapture returnValueCapture("returnValue", ParamType::TEGLBoolean);
     InitParamValue(ParamType::TEGLBoolean, returnValue, &returnValueCapture.value);
@@ -791,7 +791,7 @@ CallCapture CaptureGetPlatformDisplay(egl::Thread *thread,
 CallCapture CaptureGetSyncAttrib(egl::Thread *thread,
                                  bool isCallValid,
                                  egl::Display *dpyPacked,
-                                 egl::Sync *syncPacked,
+                                 egl::SyncID syncPacked,
                                  EGLint attribute,
                                  EGLAttrib *value,
                                  EGLBoolean returnValue)
@@ -799,7 +799,7 @@ CallCapture CaptureGetSyncAttrib(egl::Thread *thread,
     ParamBuffer paramBuffer;
 
     paramBuffer.addValueParam("dpyPacked", ParamType::Tegl_DisplayPointer, dpyPacked);
-    paramBuffer.addValueParam("syncPacked", ParamType::Tegl_SyncPointer, syncPacked);
+    paramBuffer.addValueParam("syncPacked", ParamType::Tegl_SyncID, syncPacked);
     paramBuffer.addValueParam("attribute", ParamType::TEGLint, attribute);
     paramBuffer.addValueParam("value", ParamType::TEGLAttribPointer, value);
 
@@ -813,14 +813,14 @@ CallCapture CaptureGetSyncAttrib(egl::Thread *thread,
 CallCapture CaptureWaitSync(egl::Thread *thread,
                             bool isCallValid,
                             egl::Display *dpyPacked,
-                            egl::Sync *syncPacked,
+                            egl::SyncID syncPacked,
                             EGLint flags,
                             EGLBoolean returnValue)
 {
     ParamBuffer paramBuffer;
 
     paramBuffer.addValueParam("dpyPacked", ParamType::Tegl_DisplayPointer, dpyPacked);
-    paramBuffer.addValueParam("syncPacked", ParamType::Tegl_SyncPointer, syncPacked);
+    paramBuffer.addValueParam("syncPacked", ParamType::Tegl_SyncID, syncPacked);
     paramBuffer.addValueParam("flags", ParamType::TEGLint, flags);
 
     ParamCapture returnValueCapture("returnValue", ParamType::TEGLBoolean);
@@ -993,13 +993,13 @@ CallCapture CaptureGetNativeClientBufferANDROID(egl::Thread *thread,
 CallCapture CaptureDupNativeFenceFDANDROID(egl::Thread *thread,
                                            bool isCallValid,
                                            egl::Display *dpyPacked,
-                                           egl::Sync *syncPacked,
+                                           egl::SyncID syncPacked,
                                            EGLint returnValue)
 {
     ParamBuffer paramBuffer;
 
     paramBuffer.addValueParam("dpyPacked", ParamType::Tegl_DisplayPointer, dpyPacked);
-    paramBuffer.addValueParam("syncPacked", ParamType::Tegl_SyncPointer, syncPacked);
+    paramBuffer.addValueParam("syncPacked", ParamType::Tegl_SyncID, syncPacked);
 
     ParamCapture returnValueCapture("returnValue", ParamType::TEGLint);
     InitParamValue(ParamType::TEGLint, returnValue, &returnValueCapture.value);
@@ -1107,13 +1107,13 @@ CallCapture CaptureQueryDisplayAttribANGLE(egl::Thread *thread,
 CallCapture CaptureCopyMetalSharedEventANGLE(egl::Thread *thread,
                                              bool isCallValid,
                                              egl::Display *dpyPacked,
-                                             egl::Sync *syncPacked,
+                                             egl::SyncID syncPacked,
                                              void *returnValue)
 {
     ParamBuffer paramBuffer;
 
     paramBuffer.addValueParam("dpyPacked", ParamType::Tegl_DisplayPointer, dpyPacked);
-    paramBuffer.addValueParam("syncPacked", ParamType::Tegl_SyncPointer, syncPacked);
+    paramBuffer.addValueParam("syncPacked", ParamType::Tegl_SyncID, syncPacked);
 
     ParamCapture returnValueCapture("returnValue", ParamType::TvoidPointer);
     InitParamValue(ParamType::TvoidPointer, returnValue, &returnValueCapture.value);
@@ -1669,7 +1669,7 @@ CallCapture CaptureQueryDebugKHR(egl::Thread *thread,
 CallCapture CaptureClientWaitSyncKHR(egl::Thread *thread,
                                      bool isCallValid,
                                      egl::Display *dpyPacked,
-                                     egl::Sync *syncPacked,
+                                     egl::SyncID syncPacked,
                                      EGLint flags,
                                      EGLTimeKHR timeout,
                                      EGLint returnValue)
@@ -1677,7 +1677,7 @@ CallCapture CaptureClientWaitSyncKHR(egl::Thread *thread,
     ParamBuffer paramBuffer;
 
     paramBuffer.addValueParam("dpyPacked", ParamType::Tegl_DisplayPointer, dpyPacked);
-    paramBuffer.addValueParam("syncPacked", ParamType::Tegl_SyncPointer, syncPacked);
+    paramBuffer.addValueParam("syncPacked", ParamType::Tegl_SyncID, syncPacked);
     paramBuffer.addValueParam("flags", ParamType::TEGLint, flags);
     paramBuffer.addValueParam("timeout", ParamType::TEGLTimeKHR, timeout);
 
@@ -1711,13 +1711,13 @@ CallCapture CaptureCreateSyncKHR(egl::Thread *thread,
 CallCapture CaptureDestroySyncKHR(egl::Thread *thread,
                                   bool isCallValid,
                                   egl::Display *dpyPacked,
-                                  egl::Sync *syncPacked,
+                                  egl::SyncID syncPacked,
                                   EGLBoolean returnValue)
 {
     ParamBuffer paramBuffer;
 
     paramBuffer.addValueParam("dpyPacked", ParamType::Tegl_DisplayPointer, dpyPacked);
-    paramBuffer.addValueParam("syncPacked", ParamType::Tegl_SyncPointer, syncPacked);
+    paramBuffer.addValueParam("syncPacked", ParamType::Tegl_SyncID, syncPacked);
 
     ParamCapture returnValueCapture("returnValue", ParamType::TEGLBoolean);
     InitParamValue(ParamType::TEGLBoolean, returnValue, &returnValueCapture.value);
@@ -1729,7 +1729,7 @@ CallCapture CaptureDestroySyncKHR(egl::Thread *thread,
 CallCapture CaptureGetSyncAttribKHR(egl::Thread *thread,
                                     bool isCallValid,
                                     egl::Display *dpyPacked,
-                                    egl::Sync *syncPacked,
+                                    egl::SyncID syncPacked,
                                     EGLint attribute,
                                     EGLint *value,
                                     EGLBoolean returnValue)
@@ -1737,7 +1737,7 @@ CallCapture CaptureGetSyncAttribKHR(egl::Thread *thread,
     ParamBuffer paramBuffer;
 
     paramBuffer.addValueParam("dpyPacked", ParamType::Tegl_DisplayPointer, dpyPacked);
-    paramBuffer.addValueParam("syncPacked", ParamType::Tegl_SyncPointer, syncPacked);
+    paramBuffer.addValueParam("syncPacked", ParamType::Tegl_SyncID, syncPacked);
     paramBuffer.addValueParam("attribute", ParamType::TEGLint, attribute);
     paramBuffer.addValueParam("value", ParamType::TEGLintPointer, value);
 
@@ -1875,14 +1875,14 @@ CallCapture CaptureSetDamageRegionKHR(egl::Thread *thread,
 CallCapture CaptureSignalSyncKHR(egl::Thread *thread,
                                  bool isCallValid,
                                  egl::Display *dpyPacked,
-                                 egl::Sync *syncPacked,
+                                 egl::SyncID syncPacked,
                                  EGLenum mode,
                                  EGLBoolean returnValue)
 {
     ParamBuffer paramBuffer;
 
     paramBuffer.addValueParam("dpyPacked", ParamType::Tegl_DisplayPointer, dpyPacked);
-    paramBuffer.addValueParam("syncPacked", ParamType::Tegl_SyncPointer, syncPacked);
+    paramBuffer.addValueParam("syncPacked", ParamType::Tegl_SyncID, syncPacked);
     paramBuffer.addValueParam("mode", ParamType::TEGLenum, mode);
 
     ParamCapture returnValueCapture("returnValue", ParamType::TEGLBoolean);
@@ -2074,14 +2074,14 @@ CallCapture CaptureSwapBuffersWithDamageKHR(egl::Thread *thread,
 CallCapture CaptureWaitSyncKHR(egl::Thread *thread,
                                bool isCallValid,
                                egl::Display *dpyPacked,
-                               egl::Sync *syncPacked,
+                               egl::SyncID syncPacked,
                                EGLint flags,
                                EGLint returnValue)
 {
     ParamBuffer paramBuffer;
 
     paramBuffer.addValueParam("dpyPacked", ParamType::Tegl_DisplayPointer, dpyPacked);
-    paramBuffer.addValueParam("syncPacked", ParamType::Tegl_SyncPointer, syncPacked);
+    paramBuffer.addValueParam("syncPacked", ParamType::Tegl_SyncID, syncPacked);
     paramBuffer.addValueParam("flags", ParamType::TEGLint, flags);
 
     ParamCapture returnValueCapture("returnValue", ParamType::TEGLint);

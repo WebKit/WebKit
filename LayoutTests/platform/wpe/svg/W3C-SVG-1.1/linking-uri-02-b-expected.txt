@@ -3,14 +3,14 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
     RenderSVGContainer {g} at (59,8) size 684x490
-      RenderSVGText {text} at (50,5) size 316x14 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 316x14
+      RenderSVGText {text} at (50,5) size 315x14 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 315x14
           chunk 1 text run 1 at (50.00,16.00) startOffset 0 endOffset 69 width 315.00: "Link test of the 'view' element and its attributes, 2 of 2, external."
       RenderSVGContainer {g} at (250,216) size 214x204 [transform={m=((1.00,0.00)(0.00,1.00)) t=(-150.00,75.00)}]
         RenderSVGRect {rect} at (250,216) size 209x143 [fill={[type=SOLID] [color=#AAAAAA]}] [x=300.00] [y=55.00] [width=125.00] [height=85.00]
         RenderSVGContainer {a} at (283,217) size 181x31
           RenderSVGText {text} at (320,55) size 108x19 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 109x18
+            RenderSVGInlineText {#text} at (0,0) size 108x18
               chunk 1 text run 1 at (320.00,70.00) startOffset 0 endOffset 15 width 108.00: "Go to Rectangle"
         RenderSVGContainer {a} at (283,250) size 149x31
           RenderSVGText {text} at (320,75) size 89x19 contains 1 chunk(s)
@@ -65,9 +65,9 @@ layer at (0,0) size 800x600
         RenderSVGInlineText {#text} at (0,0) size 56x18
           chunk 1 text run 1 at (65.00,295.00) startOffset 0 endOffset 7 width 55.80: "Polygon"
       RenderSVGRect {rect} at (59,345) size 169x151 [stroke={[type=SOLID] [color=#000000]}] [x=36.00] [y=208.00] [width=100.00] [height=89.00]
-      RenderSVGText {text} at (46,187) size 82x13 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 82x12
-          chunk 1 text run 1 at (46.00,197.00) startOffset 0 endOffset 18 width 81.60: "viewTarget, should"
+      RenderSVGText {text} at (46,187) size 81x13 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 81x12
+          chunk 1 text run 1 at (46.00,197.00) startOffset 0 endOffset 18 width 80.70: "viewTarget, should"
       RenderSVGText {text} at (46,196) size 77x13 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 77x12
           chunk 1 text run 1 at (46.00,206.00) startOffset 0 endOffset 17 width 76.80: "highlight polygon"

@@ -34,11 +34,9 @@ enum FrameEdge { LeftFrameEdge, RightFrameEdge, TopFrameEdge, BottomFrameEdge };
 
 struct FrameEdgeInfo {
     explicit FrameEdgeInfo(bool preventResize = false, bool allowBorder = true)
-        : m_preventResize(4)
-        , m_allowBorder(4)
+        : m_preventResize(4, preventResize)
+        , m_allowBorder(4, allowBorder)
     {
-        m_preventResize.fill(preventResize);
-        m_allowBorder.fill(allowBorder);
     }
 
     bool preventResize(FrameEdge edge) const { return m_preventResize[edge]; }

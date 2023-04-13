@@ -26,7 +26,7 @@
 #pragma once
 
 #include "DebugOverlayRegions.h"
-#include "Frame.h"
+#include "LocalFrame.h"
 #include <wtf/HashMap.h>
 #include <wtf/OptionSet.h>
 #include <wtf/Vector.h>
@@ -47,8 +47,8 @@ public:
     };
     static constexpr unsigned NumberOfRegionTypes = static_cast<unsigned>(RegionType::InteractionRegion) + 1;
 
-    static void didLayout(Frame&);
-    static void didChangeEventHandlers(Frame&);
+    static void didLayout(LocalFrame&);
+    static void didChangeEventHandlers(LocalFrame&);
     static void doAfterUpdateRendering(Page&);
 
     static bool shouldPaintOverlayIntoLayerForRegionType(Page&, RegionType);
@@ -63,7 +63,7 @@ private:
 
     void updateRegionIfNecessary(Page&, RegionType);
 
-    void regionChanged(Frame&, RegionType);
+    void regionChanged(LocalFrame&, RegionType);
 
     bool hasOverlaysForPage(Page& page) const
     {
@@ -92,7 +92,7 @@ inline bool DebugPageOverlays::hasOverlays(Page& page)
     return sharedDebugOverlays->hasOverlaysForPage(page);
 }
 
-inline void DebugPageOverlays::didLayout(Frame& frame)
+inline void DebugPageOverlays::didLayout(LocalFrame& frame)
 {
     FAST_RETURN_IF_NO_OVERLAYS(frame.page());
 
@@ -101,7 +101,7 @@ inline void DebugPageOverlays::didLayout(Frame& frame)
     sharedDebugOverlays->regionChanged(frame, RegionType::InteractionRegion);
 }
 
-inline void DebugPageOverlays::didChangeEventHandlers(Frame& frame)
+inline void DebugPageOverlays::didChangeEventHandlers(LocalFrame& frame)
 {
     FAST_RETURN_IF_NO_OVERLAYS(frame.page());
 

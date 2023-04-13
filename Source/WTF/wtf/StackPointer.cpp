@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,9 +26,121 @@
 #include "config.h"
 #include "StackPointer.h"
 
+#include "InlineASM.h"
+
 namespace WTF {
 
-#if USE(GENERIC_CURRENT_STACK_POINTER)
+#if USE(ASM_CURRENT_STACK_POINTER)
+
+#if CPU(X86) && COMPILER(MSVC)
+extern "C" __declspec(naked) void currentStackPointer()
+{
+    __asm {
+        mov eax, esp
+        add eax, 4
+        ret
+    }
+}
+
+#elif CPU(X86) & COMPILER(GCC_COMPATIBLE)
+asm (
+    ".text" "\n"
+    ".globl " SYMBOL_STRING(currentStackPointer) "\n"
+    SYMBOL_STRING(currentStackPointer) ":" "\n"
+    "movl %esp, %eax" "\n"
+    "addl $4, %eax" "\n"
+    "ret" "\n"
+    ".previous" "\n"
+);
+
+#elif CPU(X86_64) && OS(WINDOWS)
+
+// The Win64 port will use a hack where we define currentStackPointer in
+// LowLevelInterpreter.asm.
+
+#elif CPU(X86_64) && COMPILER(GCC_COMPATIBLE)
+asm (
+    ".text" "\n"
+    ".globl " SYMBOL_STRING(currentStackPointer) "\n"
+    SYMBOL_STRING(currentStackPointer) ":" "\n"
+
+    "movq  %rsp, %rax" "\n"
+    "addq $8, %rax" "\n" // Account for return address.
+    "ret" "\n"
+    ".previous" "\n"
+);
+
+#elif CPU(ARM64E) && COMPILER(GCC_COMPATIBLE)
+asm (
+    ".text" "\n"
+    ".balign 16" "\n"
+    ".globl " SYMBOL_STRING(currentStackPointer) "\n"
+    SYMBOL_STRING(currentStackPointer) ":" "\n"
+
+    "pacibsp" "\n"
+    "mov x0, sp" "\n"
+    "retab" "\n"
+    ".previous" "\n"
+);
+
+#elif CPU(ARM64) && COMPILER(GCC_COMPATIBLE)
+asm (
+    ".text" "\n"
+    ".balign 16" "\n"
+    ".globl " SYMBOL_STRING(currentStackPointer) "\n"
+    SYMBOL_STRING(currentStackPointer) ":" "\n"
+
+    "mov x0, sp" "\n"
+    "ret" "\n"
+    ".previous" "\n"
+);
+
+#elif CPU(ARM_THUMB2) && COMPILER(GCC_COMPATIBLE)
+asm (
+    ".text" "\n"
+    ".align 2" "\n"
+    ".globl " SYMBOL_STRING(currentStackPointer) "\n"
+    ".thumb" "\n"
+    ".thumb_func " THUMB_FUNC_PARAM(currentStackPointer) "\n"
+    SYMBOL_STRING(currentStackPointer) ":" "\n"
+
+    "mov r0, sp" "\n"
+    "bx  lr" "\n"
+    ".previous" "\n"
+);
+
+#elif CPU(MIPS) && COMPILER(GCC_COMPATIBLE)
+asm (
+    ".text" "\n"
+    ".globl " SYMBOL_STRING(currentStackPointer) "\n"
+    SYMBOL_STRING(currentStackPointer) ":" "\n"
+    ".set push" "\n"
+    ".set noreorder" "\n"
+    ".set noat" "\n"
+
+    "move $v0, $sp" "\n"
+    "jr   $ra" "\n"
+    "nop" "\n"
+    ".set pop" "\n"
+    ".previous" "\n"
+);
+
+#elif CPU(RISCV64) && COMPILER(GCC_COMPATIBLE)
+asm (
+    ".text" "\n"
+    ".globl " SYMBOL_STRING(currentStackPointer) "\n"
+    SYMBOL_STRING(currentStackPointer) ":" "\n"
+
+     "mv x10, sp" "\n"
+     "ret" "\n"
+     ".previous" "\n"
+);
+
+#else
+#error "Unsupported platform: need implementation of currentStackPointer."
+#endif
+
+#elif USE(GENERIC_CURRENT_STACK_POINTER)
 constexpr size_t sizeOfFrameHeader = 2 * sizeof(void*);
 
 SUPPRESS_ASAN NEVER_INLINE

@@ -82,7 +82,7 @@ static ExpectedParts invalidParts(StringView urlStringWithTab)
     return { ""_s, ""_s, ""_s, ""_s, 0, ""_s , ""_s, ""_s, urlStringWithTab };
 }
 
-enum class TestTabs { No, Yes };
+enum class TestTabs : bool { No, Yes };
 
 // Inserting tabs between surrogate pairs changes the encoded value instead of being skipped by the URLParser.
 const TestTabs testTabsValueForSurrogatePairs = TestTabs::No;

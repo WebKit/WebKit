@@ -27,7 +27,7 @@
 
 namespace WebCore {
 
-enum DiagnosticLoggingResultType {
+enum DiagnosticLoggingResultType : uint8_t {
     DiagnosticLoggingResultPass,
     DiagnosticLoggingResultFail,
     DiagnosticLoggingResultNoop,

@@ -94,12 +94,17 @@
 #include <wtf/UUID.h>
 #include <wtf/UniqueArray.h>
 #include <wtf/UniqueRef.h>
+#include <wtf/WTFProcess.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringConcatenateNumbers.h>
 
 #if PLATFORM(COCOA)
 #include <WebKit/WKContextPrivateMac.h>
 #include <WebKit/WKPagePrivateMac.h>
+#endif
+
+#if PLATFORM(GTK) || PLATFORM(WPE)
+#include <WebKit/WKContextConfigurationGlib.h>
 #endif
 
 #if PLATFORM(WIN)
@@ -323,16 +328,6 @@ static bool shouldAllowDeviceOrientationAndMotionAccess(WKPageRef, WKSecurityOri
 // A placeholder to tell WebKit the client is WebKitTestRunner.
 static void runWebAuthenticationPanel()
 {
-}
-
-static void decidePolicyForSpeechRecognitionPermissionRequest(WKPageRef, WKSecurityOriginRef, WKSpeechRecognitionPermissionCallbackRef callback)
-{
-    TestController::singleton().completeSpeechRecognitionPermissionCheck(callback);
-}
-
-void TestController::completeSpeechRecognitionPermissionCheck(WKSpeechRecognitionPermissionCallbackRef callback)
-{
-    WKSpeechRecognitionPermissionCallbackComplete(callback, m_isSpeechRecognitionPermissionGranted);
 }
 
 void TestController::setIsSpeechRecognitionPermissionGranted(bool granted)
@@ -597,10 +592,10 @@ void TestController::initialize(int argc, const char* argv[])
 
     if (argc < 2) {
         optionsHandler.printHelp();
-        exit(1);
+        exitProcess(1);
     }
     if (!optionsHandler.parse(argc, argv))
-        exit(1);
+        exitProcess(1);
 
     platformInitialize(options);
 
@@ -659,6 +654,10 @@ WKRetainPtr<WKContextConfigurationRef> TestController::generateContextConfigurat
     }
 
     WKContextConfigurationSetShouldConfigureJSCForTesting(configuration.get(), true);
+
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    WKContextConfigurationSetDisableFontHintingForTesting(configuration.get(), true);
+#endif
 
     return configuration;
 }
@@ -844,6 +843,29 @@ bool TestController::denyNotificationPermissionOnPrompt(WKStringRef originString
     return true;
 }
 
+#if !PLATFORM(COCOA)
+WKRetainPtr<WKStringRef> TestController::getBackgroundFetchIdentifier()
+{
+    return { };
+}
+
+void TestController::abortBackgroundFetch(WKStringRef)
+{
+}
+
+void TestController::pauseBackgroundFetch(WKStringRef)
+{
+}
+
+void TestController::resumeBackgroundFetch(WKStringRef)
+{
+}
+
+void TestController::simulateClickBackgroundFetch(WKStringRef)
+{
+}
+#endif
+
 void TestController::createWebViewWithOptions(const TestOptions& options)
 {
     auto applicationBundleIdentifier = options.applicationBundleIdentifier();
@@ -941,7 +963,7 @@ void TestController::createWebViewWithOptions(const TestOptions& options)
         0, // requestStorageAccessConfirm
         shouldAllowDeviceOrientationAndMotionAccess,
         runWebAuthenticationPanel,
-        decidePolicyForSpeechRecognitionPermissionRequest,
+        0,
         decidePolicyForMediaKeySystemPermissionRequest,
         nullptr, // requestWebAuthenticationNoGesture
         queryPermission,
@@ -1102,7 +1124,6 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
 
     WKContextSetCacheModel(TestController::singleton().context(), kWKCacheModelDocumentBrowser);
 
-    WKWebsiteDataStoreClearCachedCredentials(websiteDataStore());
     WKWebsiteDataStoreResetServiceWorkerFetchTimeoutForTesting(websiteDataStore());
 
     WKWebsiteDataStoreSetResourceLoadStatisticsEnabled(websiteDataStore(), true);
@@ -1196,6 +1217,8 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
     m_shouldLogCanAuthenticateAgainstProtectionSpace = false;
 
     setHidden(false);
+    setAllowStorageQuotaIncrease(true);
+    setQuota(40 * KB);
 
     if (!platformResetStateToConsistentValues(options))
         return false;
@@ -1213,6 +1236,7 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
 #endif
 
     setAllowsAnySSLCertificate(true);
+    setBackgroundFetchPermission(true);
 
     statisticsResetToConsistentState();
     clearLoadedSubresourceDomains();
@@ -1410,6 +1434,31 @@ void TestController::setAllowsAnySSLCertificate(bool allows)
     m_allowsAnySSLCertificate = allows;
     WKWebsiteDataStoreSetAllowsAnySSLCertificateForWebSocketTesting(websiteDataStore(), allows);
 }
+
+void TestController::setBackgroundFetchPermission(bool)
+{
+    // FIXME: Add support.
+}
+
+WKRetainPtr<WKStringRef> TestController::lastAddedBackgroundFetchIdentifier() const
+{
+    return adoptWK(WKStringCreateWithUTF8CString("not implemented"));
+}
+
+WKRetainPtr<WKStringRef> TestController::lastRemovedBackgroundFetchIdentifier() const
+{
+    return adoptWK(WKStringCreateWithUTF8CString("not implemented"));
+}
+
+WKRetainPtr<WKStringRef> TestController::lastUpdatedBackgroundFetchIdentifier() const
+{
+    return adoptWK(WKStringCreateWithUTF8CString("not implemented"));
+}
+
+WKRetainPtr<WKStringRef> TestController::backgroundFetchState(WKStringRef)
+{
+    return { };
+}
 #endif
 
 WKURLRef TestController::createTestURL(const char* pathOrURL)
@@ -1539,7 +1588,6 @@ void TestController::configureContentExtensionForTest(const TestInvocation& test
         contentExtensionsPath = "/tmp/wktr-contentextensions";
 
     if (!test.urlContains("contentextensions/"_s)) {
-        WKPageSetUserContentExtensionsEnabled(m_mainWebView->page(), false);
         return;
     }
 
@@ -1565,7 +1613,6 @@ void TestController::configureContentExtensionForTest(const TestInvocation& test
     ASSERT(context.status == kWKUserContentExtensionStoreSuccess);
     ASSERT(context.filter);
 
-    WKPageSetUserContentExtensionsEnabled(mainWebView()->page(), true);
     WKUserContentControllerAddUserContentFilter(userContentController(), context.filter.get());
 }
 
@@ -1573,8 +1620,6 @@ void TestController::resetContentExtensions()
 {
     if (!mainWebView())
         return;
-
-    WKPageSetUserContentExtensionsEnabled(mainWebView()->page(), false);
 
     const char* contentExtensionsPath = libraryPathForTesting();
     if (!contentExtensionsPath)
@@ -1780,10 +1825,10 @@ void TestController::didReceiveLiveDocumentsList(WKArrayRef liveDocumentList)
 {
     auto numDocuments = WKArrayGetSize(liveDocumentList);
 
-    HashMap<uint64_t, String> documentInfo;
+    HashMap<String, String> documentInfo;
     for (size_t i = 0; i < numDocuments; ++i) {
         if (auto dictionary = dictionaryValue(WKArrayGetItemAtIndex(liveDocumentList, i)))
-            documentInfo.add(uint64Value(dictionary, "id"), toWTFString(stringValue(dictionary, "url")));
+            documentInfo.add(toWTFString(stringValue(dictionary, "id")), toWTFString(stringValue(dictionary, "url")));
     }
 
     if (!documentInfo.size()) {
@@ -2101,7 +2146,7 @@ void TestController::networkProcessDidCrash(WKProcessID processID, WKProcessTerm
     fprintf(stderr, "%s terminated (pid %ld) for reason: %s\n", networkProcessName(), static_cast<long>(processID), terminationReasonToString(reason));
     fprintf(stderr, "#CRASHED - %s (pid %ld)\n", networkProcessName(), static_cast<long>(processID));
     if (m_shouldExitWhenAuxiliaryProcessCrashes)
-        exit(1);
+        exitProcess(1);
 }
 
 void TestController::serviceWorkerProcessDidCrash(WKProcessID processID, WKProcessTerminationReason reason)
@@ -2109,7 +2154,7 @@ void TestController::serviceWorkerProcessDidCrash(WKProcessID processID, WKProce
     fprintf(stderr, "%s terminated (pid %ld) for reason: %s\n", "ServiceWorkerProcess", static_cast<long>(processID), terminationReasonToString(reason));
     fprintf(stderr, "#CRASHED - ServiceWorkerProcess (pid %ld)\n", static_cast<long>(processID));
     if (m_shouldExitWhenAuxiliaryProcessCrashes)
-        exit(1);
+        exitProcess(1);
 }
 
 void TestController::gpuProcessDidCrash(WKProcessID processID, WKProcessTerminationReason reason)
@@ -2117,7 +2162,7 @@ void TestController::gpuProcessDidCrash(WKProcessID processID, WKProcessTerminat
     fprintf(stderr, "%s terminated (pid %ld) for reason: %s\n", gpuProcessName(), static_cast<long>(processID), terminationReasonToString(reason));
     fprintf(stderr, "#CRASHED - %s (pid %ld)\n", gpuProcessName(), static_cast<long>(processID));
     if (m_shouldExitWhenAuxiliaryProcessCrashes)
-        exit(1);
+        exitProcess(1);
 }
 
 // WKPageNavigationClient
@@ -2437,6 +2482,11 @@ void TestController::downloadDidFail(WKDownloadRef, WKErrorRef error)
     m_currentInvocation->notifyDownloadDone();
 }
 
+void TestController::receivedServiceWorkerConsoleMessage(const String& message)
+{
+    m_currentInvocation->outputText(makeString("Received ServiceWorker Console Message: ", message, "\n"));
+}
+
 void TestController::downloadDidReceiveAuthenticationChallenge(WKDownloadRef, WKAuthenticationChallengeRef authenticationChallenge, const void *clientInfo)
 {
     static_cast<TestController*>(const_cast<void*>(clientInfo))->didReceiveAuthenticationChallenge(nullptr, authenticationChallenge);
@@ -2472,7 +2522,7 @@ void TestController::webProcessDidTerminate(WKProcessTerminationReason reason)
     }
 
     if (m_shouldExitWhenAuxiliaryProcessCrashes)
-        exit(1);
+        exitProcess(1);
 }
 
 void TestController::didBeginNavigationGesture(WKPageRef)
@@ -2722,7 +2772,7 @@ void TestController::decidePolicyForUserMediaPermissionRequestIfPossible()
         auto audioDeviceUIDs = adoptWK(WKUserMediaPermissionRequestAudioDeviceUIDs(request));
         auto videoDeviceUIDs = adoptWK(WKUserMediaPermissionRequestVideoDeviceUIDs(request));
 
-        if (!WKArrayGetSize(videoDeviceUIDs.get()) && !WKArrayGetSize(audioDeviceUIDs.get())) {
+        if (!WKUserMediaPermissionRequestRequiresDisplayCapture(request) && !WKArrayGetSize(videoDeviceUIDs.get()) && !WKArrayGetSize(audioDeviceUIDs.get())) {
             WKUserMediaPermissionRequestDeny(request, kWKNoConstraints);
             continue;
         }
@@ -3080,6 +3130,7 @@ UniqueRef<PlatformWebView> TestController::platformCreateOtherPage(PlatformWebVi
 
 WKContextRef TestController::platformAdjustContext(WKContextRef context, WKContextConfigurationRef)
 {
+    WKPageGroupSetPreferences(m_pageGroup.get(), adoptWK(WKPreferencesCreate()).get());
     return context;
 }
 
@@ -3386,6 +3437,11 @@ uint64_t TestController::domCacheSize(WKStringRef origin)
 
 #if !PLATFORM(COCOA)
 void TestController::setAllowStorageQuotaIncrease(bool)
+{
+    // FIXME: To implement.
+}
+
+void TestController::setQuota(uint64_t)
 {
     // FIXME: To implement.
 }

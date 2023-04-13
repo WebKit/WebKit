@@ -64,6 +64,8 @@ inline float decibelsToLinear(float decibels)
     return powf(10, 0.05f * decibels);
 }
 
+void applyNoise(float* values, size_t numberOfElementsToProcess, float magnitude);
+
 } // AudioUtilites
 
 } // WebCore

@@ -28,6 +28,7 @@
 
 #if ENABLE(DRAG_SUPPORT) && !USE(GTK4)
 
+#include "SandboxExtension.h"
 #include "WebKitWebViewBasePrivate.h"
 #include <WebCore/DragData.h>
 #include <WebCore/GRefPtrGtk.h>

@@ -84,33 +84,25 @@ SourceBufferPrivateGStreamer::SourceBufferPrivateGStreamer(MediaSourcePrivateGSt
 {
 }
 
-void SourceBufferPrivateGStreamer::append(Vector<unsigned char>&& data)
+void SourceBufferPrivateGStreamer::appendInternal(Ref<SharedBuffer>&& data)
 {
     ASSERT(isMainThread());
     ASSERT(m_mediaSource);
     ASSERT(m_client);
 
-    GST_DEBUG_OBJECT(m_playerPrivate.pipeline(), "Appending %zu bytes", data.size());
-    // Wrap the whole Vector object in case the data is stored in the inlined buffer.
-    auto* bufferData = data.data();
-    auto bufferLength = data.size();
-    GRefPtr<GstBuffer> buffer = adoptGRef(gst_buffer_new_wrapped_full(static_cast<GstMemoryFlags>(0), bufferData, bufferLength, 0, bufferLength, new Vector<unsigned char>(WTFMove(data)),
+    GST_DEBUG_OBJECT(m_playerPrivate.pipeline(), "Appending %zu bytes", data->size());
+    gpointer bufferData = const_cast<void*>(static_cast<const void*>(data->data()));
+    auto bufferLength = data->size();
+    GRefPtr<GstBuffer> buffer = adoptGRef(gst_buffer_new_wrapped_full(static_cast<GstMemoryFlags>(0), bufferData, bufferLength, 0, bufferLength, &data.leakRef(),
         [](gpointer data)
         {
-            delete static_cast<Vector<unsigned char>*>(data);
+            static_cast<SharedBuffer*>(data)->deref();
         }));
 
     m_appendPipeline->pushNewBuffer(WTFMove(buffer));
 }
 
-void SourceBufferPrivateGStreamer::abort()
-{
-    ASSERT(isMainThread());
-    GST_DEBUG_OBJECT(m_playerPrivate.pipeline(), "aborting");
-    m_appendPipeline->resetParserState();
-}
-
-void SourceBufferPrivateGStreamer::resetParserState()
+void SourceBufferPrivateGStreamer::resetParserStateInternal()
 {
     ASSERT(isMainThread());
     GST_DEBUG_OBJECT(m_playerPrivate.pipeline(), "resetting parser state");
@@ -214,31 +206,36 @@ bool SourceBufferPrivateGStreamer::isActive() const
     return m_isActive;
 }
 
-void SourceBufferPrivateGStreamer::didReceiveInitializationSegment(SourceBufferPrivateClient::InitializationSegment&& initializationSegment, CompletionHandler<void(SourceBufferPrivateClient::ReceiveResult)>&& completionHandler)
+void SourceBufferPrivateGStreamer::didReceiveInitializationSegment(InitializationSegment&& initializationSegment, CompletionHandler<void(ReceiveResult)>&& completionHandler)
 {
-    m_hasReceivedInitializationSegment = true;
-    for (auto& trackInfo : initializationSegment.videoTracks) {
-        GRefPtr<GstCaps> initialCaps = static_cast<VideoTrackPrivateGStreamer*>(trackInfo.track.get())->initialCaps();
-        ASSERT(initialCaps);
-        if (!m_tracks.contains(trackInfo.track->id()))
-            m_tracks.add(trackInfo.track->id(), MediaSourceTrackGStreamer::create(TrackPrivateBaseGStreamer::TrackType::Video, trackInfo.track->id(), WTFMove(initialCaps)));
-    }
-    for (auto& trackInfo : initializationSegment.audioTracks) {
-        GRefPtr<GstCaps> initialCaps = static_cast<AudioTrackPrivateGStreamer*>(trackInfo.track.get())->initialCaps();
-        ASSERT(initialCaps);
-        if (!m_tracks.contains(trackInfo.track->id()))
-            m_tracks.add(trackInfo.track->id(), MediaSourceTrackGStreamer::create(TrackPrivateBaseGStreamer::TrackType::Audio, trackInfo.track->id(), WTFMove(initialCaps)));
-    }
-    for (auto& trackInfo : initializationSegment.textTracks) {
-        GRefPtr<GstCaps> initialCaps = static_cast<InbandTextTrackPrivateGStreamer*>(trackInfo.track.get())->initialCaps();
-        ASSERT(initialCaps);
-        if (!m_tracks.contains(trackInfo.track->id()))
-            m_tracks.add(trackInfo.track->id(), MediaSourceTrackGStreamer::create(TrackPrivateBaseGStreamer::TrackType::Text, trackInfo.track->id(), WTFMove(initialCaps)));
-    }
+    auto initCheckTask = [weakThis = WeakPtr { *this }, this] (InitializationSegment& segment) {
+        if (!weakThis)
+            return false;
 
-    m_mediaSource->startPlaybackIfHasAllTracks();
+        m_hasReceivedInitializationSegment = true;
+        for (auto& trackInfo : segment.videoTracks) {
+            GRefPtr<GstCaps> initialCaps = static_cast<VideoTrackPrivateGStreamer*>(trackInfo.track.get())->initialCaps();
+            ASSERT(initialCaps);
+            if (!m_tracks.contains(trackInfo.track->id()))
+                m_tracks.add(trackInfo.track->id(), MediaSourceTrackGStreamer::create(TrackPrivateBaseGStreamer::TrackType::Video, trackInfo.track->id(), WTFMove(initialCaps)));
+        }
+        for (auto& trackInfo : segment.audioTracks) {
+            GRefPtr<GstCaps> initialCaps = static_cast<AudioTrackPrivateGStreamer*>(trackInfo.track.get())->initialCaps();
+            ASSERT(initialCaps);
+            if (!m_tracks.contains(trackInfo.track->id()))
+                m_tracks.add(trackInfo.track->id(), MediaSourceTrackGStreamer::create(TrackPrivateBaseGStreamer::TrackType::Audio, trackInfo.track->id(), WTFMove(initialCaps)));
+        }
+        for (auto& trackInfo : segment.textTracks) {
+            GRefPtr<GstCaps> initialCaps = static_cast<InbandTextTrackPrivateGStreamer*>(trackInfo.track.get())->initialCaps();
+            ASSERT(initialCaps);
+            if (!m_tracks.contains(trackInfo.track->id()))
+                m_tracks.add(trackInfo.track->id(), MediaSourceTrackGStreamer::create(TrackPrivateBaseGStreamer::TrackType::Text, trackInfo.track->id(), WTFMove(initialCaps)));
+        }
 
-    SourceBufferPrivate::didReceiveInitializationSegment(WTFMove(initializationSegment), WTFMove(completionHandler));
+        m_mediaSource->startPlaybackIfHasAllTracks();
+        return true;
+    };
+    SourceBufferPrivate::didReceiveInitializationSegment(WTFMove(initializationSegment), WTFMove(initCheckTask), WTFMove(completionHandler));
 }
 
 void SourceBufferPrivateGStreamer::didReceiveSample(Ref<MediaSample>&& sample)

@@ -36,8 +36,6 @@
 
 namespace WebCore {
 
-static constexpr Seconds clientDataBufferingTimerThrottleDelay { 100_ms };
-
 String convertEnumerationToString(PlatformMediaSession::State state)
 {
     static const NeverDestroyed<String> values[] = {
@@ -326,6 +324,11 @@ bool PlatformMediaSession::isSuspended() const
 bool PlatformMediaSession::isPlaying() const
 {
     return m_client.isPlaying();
+}
+
+bool PlatformMediaSession::isAudible() const
+{
+    return m_client.isAudible();
 }
 
 bool PlatformMediaSession::shouldOverrideBackgroundLoadingRestriction() const

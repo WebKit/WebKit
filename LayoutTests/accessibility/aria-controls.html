@@ -1,7 +1,8 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
 </head>
 <body id="body">
 
@@ -18,21 +19,29 @@
 <script>
     description("This tests that aria-controls returns correct element at the given index");
 
-    if (window.accessibilityController) {
-        var tablist = accessibilityController.accessibleElementById("tablist");
-        var tab1 = tablist.childAtIndex(0);
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+    var output = "";
+    var tablist;
+    var tab1;
+
+    setTimeout(function() {
+        tablist = accessibilityController.accessibleElementById("tablist");
+        tab1 = tablist.childAtIndex(0);
 
         if (accessibilityController.platformName == "mac") {
-            shouldBe("tab1.ariaControlsElementAtIndex(0).childAtIndex(0).stringValue", "'AXValue: Panel 1'");
-            shouldBe("tab1.ariaControlsElementAtIndex(1).childAtIndex(0).stringValue", "'AXValue: Panel 2'");
+           output += expect("tab1.ariaControlsElementAtIndex(0).childAtIndex(0).stringValue", "'AXValue: Panel 1'");
+           output += expect("tab1.ariaControlsElementAtIndex(1).childAtIndex(0).stringValue", "'AXValue: Panel 2'");
         } else {
-            shouldBe("tab1.ariaControlsElementAtIndex(0).stringValue", "'AXValue: Panel 1'");
-            shouldBe("tab1.ariaControlsElementAtIndex(1).stringValue", "'AXValue: Panel 2'");
+            output += expect("tab1.ariaControlsElementAtIndex(0).stringValue", "'AXValue: Panel 1'");
+            output += expect("tab1.ariaControlsElementAtIndex(1).stringValue", "'AXValue: Panel 2'");
         }
-    }
 
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
 </script>
 
-<script src="../resources/js-test-post.js"></script>
 </body>
 </html>

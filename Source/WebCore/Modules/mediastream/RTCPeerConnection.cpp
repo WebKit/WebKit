@@ -39,11 +39,11 @@
 #include "Document.h"
 #include "Event.h"
 #include "EventNames.h"
-#include "Frame.h"
 #include "FrameDestructionObserverInlines.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSRTCPeerConnection.h"
 #include "JSRTCSessionDescriptionInit.h"
+#include "LocalFrame.h"
 #include "Logging.h"
 #include "MediaEndpointConfiguration.h"
 #include "MediaStream.h"
@@ -100,8 +100,12 @@ ExceptionOr<Ref<RTCPeerConnection>> RTCPeerConnection::create(Document& document
         if (auto* page = document.page()) {
             peerConnection->registerToController(page->rtcController());
 #if USE(LIBWEBRTC) && (!LOG_DISABLED || !RELEASE_LOG_DISABLED)
-            if (!page->sessionID().isEphemeral())
-                page->webRTCProvider().setLoggingLevel(LogWebRTC.level);
+            if (!page->sessionID().isEphemeral()) {
+                WTFLogLevel level = LogWebRTC.level;
+                if (level != WTFLogLevel::Debug && document.settings().webRTCMediaPipelineAdditionalLoggingEnabled())
+                    level = WTFLogLevel::Info;
+                page->webRTCProvider().setLoggingLevel(level);
+            }
 #endif
         }
     }

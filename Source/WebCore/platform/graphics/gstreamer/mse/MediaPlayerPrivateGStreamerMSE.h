@@ -24,7 +24,7 @@
 
 #pragma once
 
-#if ENABLE(VIDEO) && USE(GSTREAMER) && ENABLE(MEDIA_SOURCE) 
+#if ENABLE(VIDEO) && USE(GSTREAMER) && ENABLE(MEDIA_SOURCE)
 
 #include "GStreamerCommon.h"
 #include "MediaPlayerPrivateGStreamer.h"
@@ -63,8 +63,9 @@ public:
     void durationChanged() override;
     MediaTime durationMediaTime() const override;
 
-    std::unique_ptr<PlatformTimeRanges> buffered() const override;
+    const PlatformTimeRanges& buffered() const override;
     MediaTime maxMediaTimeSeekable() const override;
+    bool currentMediaTimeMayProgress() const override;
 
     void sourceSetup(GstElement*) override;
 
@@ -78,9 +79,6 @@ public:
     MediaSourcePrivateClient* mediaSourcePrivateClient() { return m_mediaSource.get(); }
 
     void setInitialVideoSize(const FloatSize&);
-
-    void blockDurationChanges();
-    void unblockDurationChanges();
 
     void asyncStateChangeDone() override;
 
@@ -113,8 +111,6 @@ private:
     WeakPtr<MediaSourcePrivateClient> m_mediaSource;
     RefPtr<MediaSourcePrivateGStreamer> m_mediaSourcePrivate;
     MediaTime m_mediaTimeDuration { MediaTime::invalidTime() };
-    bool m_areDurationChangesBlocked = false;
-    bool m_shouldReportDurationWhenUnblocking = false;
     bool m_isPipelinePlaying = true;
     bool m_hasAllTracks = false;
     Vector<RefPtr<MediaSourceTrackGStreamer>> m_tracks;

@@ -1,5 +1,9 @@
 
 PASS document.applets is always empty
+PASS <attachment> is HTMLUnknownElement
+PASS <applet> is HTMLUnknownElement
+PASS <layer> is HTMLUnknownElement
+PASS <nolayer> is HTMLUnknownElement
 PASS HTMLAppletElement is no more
 PASS document.all cannot find applet
 PASS document cannot find applet

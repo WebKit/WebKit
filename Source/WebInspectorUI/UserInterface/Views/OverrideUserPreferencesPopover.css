@@ -23,29 +23,19 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.popover .user-preferences-content {
-    display: grid;
-    padding: 5px;
-    gap: 4px 8px;
+.popover .settings-content.user-preferences-content {
     grid-template-columns: auto auto;
 }
 
-.popover .user-preferences-content > h1 {
+.popover .settings-content.user-preferences-content > h1 {
     grid-column: 1 / -1;
-    font-size: 11px;
-    margin-block-start: 0;
-    margin-block-end: 4px;
 }
 
-.popover .user-preferences-content > h1:not(:first-child) {
-    margin-block-start: 12px;
-}
-
-.popover .user-preferences-content > label {
+.popover .settings-content.user-preferences-content > label {
     grid-column: 1;
     align-self: center;
 }
 
-.popover .user-preferences-content > select {
+.popover .settings-content.user-preferences-content > select {
     grid-column: 2;
 }

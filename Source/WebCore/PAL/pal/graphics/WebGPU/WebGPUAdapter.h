@@ -47,7 +47,7 @@ public:
     SupportedLimits& limits() const { return m_limits; }
     bool isFallbackAdapter() const { return m_isFallbackAdapter; }
 
-    virtual void requestDevice(const DeviceDescriptor&, CompletionHandler<void(Ref<Device>&&)>&&) = 0;
+    virtual void requestDevice(const DeviceDescriptor&, CompletionHandler<void(RefPtr<Device>&&)>&&) = 0;
 
 protected:
     Adapter(String&& name, SupportedFeatures& features, SupportedLimits& limits, bool isFallbackAdapter)

@@ -77,7 +77,9 @@ TEST(WebKit, HTTPReferer)
     };
     
     Vector<char> a5k(5000, 'a');
+    a5k.append(0);
     Vector<char> a3k(3000, 'a');
+    a3k.append(0);
     NSString *longPath = [NSString stringWithFormat:@"http://webkit.org/%s?asdf", a5k.data()];
     NSString *shorterPath = [NSString stringWithFormat:@"http://webkit.org/%s?asdf", a3k.data()];
     NSString *longHost = [NSString stringWithFormat:@"http://webkit.org%s/path", a5k.data()];

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "JSDOMMapLike.h"
 
+#include "WebCoreJSBuiltinInternals.h"
 #include "WebCoreJSClientData.h"
 #include <JavaScriptCore/CatchScope.h>
 #include <JavaScriptCore/HashMapImplInlines.h>

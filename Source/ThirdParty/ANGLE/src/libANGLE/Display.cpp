@@ -53,7 +53,7 @@
 #if defined(ANGLE_ENABLE_OPENGL)
 #    if defined(ANGLE_PLATFORM_WINDOWS)
 #        include "libANGLE/renderer/gl/wgl/DisplayWGL.h"
-#    elif defined(ANGLE_PLATFORM_MACOS) || defined(ANGLE_PLATFORM_IOS)
+#    elif defined(ANGLE_PLATFORM_MACOS) || defined(ANGLE_PLATFORM_APPLE_EMBEDDED)
 #        include "libANGLE/renderer/gl/apple/DisplayApple_api.h"
 #    elif defined(ANGLE_PLATFORM_LINUX)
 #        include "libANGLE/renderer/gl/egl/DisplayEGL.h"
@@ -124,18 +124,20 @@ struct ANGLEPlatformDisplay
                          EGLAttrib powerPreference,
                          EGLAttrib platformANGLEType,
                          EGLAttrib deviceIdHigh,
-                         EGLAttrib deviceIdLow)
+                         EGLAttrib deviceIdLow,
+                         EGLAttrib displayKey)
         : nativeDisplayType(nativeDisplayType),
           powerPreference(powerPreference),
           platformANGLEType(platformANGLEType),
           deviceIdHigh(deviceIdHigh),
-          deviceIdLow(deviceIdLow)
+          deviceIdLow(deviceIdLow),
+          displayKey(displayKey)
     {}
 
     auto tie() const
     {
         return std::tie(nativeDisplayType, powerPreference, platformANGLEType, deviceIdHigh,
-                        deviceIdLow);
+                        deviceIdLow, displayKey);
     }
 
     EGLNativeDisplayType nativeDisplayType{EGL_DEFAULT_DISPLAY};
@@ -143,6 +145,7 @@ struct ANGLEPlatformDisplay
     EGLAttrib platformANGLEType{EGL_PLATFORM_ANGLE_TYPE_DEFAULT_ANGLE};
     EGLAttrib deviceIdHigh{0};
     EGLAttrib deviceIdLow{0};
+    EGLAttrib displayKey{0};
 };
 
 inline bool operator==(const ANGLEPlatformDisplay &a, const ANGLEPlatformDisplay &b)
@@ -339,7 +342,7 @@ rx::DisplayImpl *CreateDisplayFromAttribs(EGLAttrib displayType,
             impl = new rx::DisplayWGL(state);
             break;
 
-#    elif defined(ANGLE_PLATFORM_MACOS) || defined(ANGLE_PLATFORM_IOS)
+#    elif defined(ANGLE_PLATFORM_MACOS) || defined(ANGLE_PLATFORM_APPLE_EMBEDDED)
             impl = rx::CreateDisplayCGLOrEAGL(state);
             break;
 
@@ -717,10 +720,11 @@ Display *Display::GetDisplayFromNativeDisplay(EGLenum platform,
         updatedAttribMap.get(EGL_PLATFORM_ANGLE_TYPE_ANGLE, EGL_PLATFORM_ANGLE_TYPE_DEFAULT_ANGLE);
     EGLAttrib deviceIdHigh = updatedAttribMap.get(EGL_PLATFORM_ANGLE_DEVICE_ID_HIGH_ANGLE, 0);
     EGLAttrib deviceIdLow  = updatedAttribMap.get(EGL_PLATFORM_ANGLE_DEVICE_ID_LOW_ANGLE, 0);
+    EGLAttrib displayKey   = updatedAttribMap.get(EGL_PLATFORM_ANGLE_DISPLAY_KEY_ANGLE, 0);
     ANGLEPlatformDisplayMap *displays = GetANGLEPlatformDisplayMap();
-    ANGLEPlatformDisplay displayKey(nativeDisplay, powerPreference, platformANGLEType, deviceIdHigh,
-                                    deviceIdLow);
-    const auto &iter = displays->find(displayKey);
+    ANGLEPlatformDisplay combinedDisplayKey(nativeDisplay, powerPreference, platformANGLEType,
+                                            deviceIdHigh, deviceIdLow, displayKey);
+    const auto &iter = displays->find(combinedDisplayKey);
     if (iter != displays->end())
     {
         display = iter->second;
@@ -735,7 +739,7 @@ Display *Display::GetDisplayFromNativeDisplay(EGLenum platform,
         }
 
         display = new Display(platform, nativeDisplay, nullptr);
-        displays->insert(std::make_pair(displayKey, display));
+        displays->insert(std::make_pair(combinedDisplayKey, display));
     }
     // Apply new attributes if the display is not initialized yet.
     if (!display->isInitialized())
@@ -902,7 +906,8 @@ Display::~Display()
                 mAttributeMap.get(EGL_PLATFORM_ANGLE_TYPE_ANGLE,
                                   EGL_PLATFORM_ANGLE_TYPE_DEFAULT_ANGLE),
                 mAttributeMap.get(EGL_PLATFORM_ANGLE_DEVICE_ID_HIGH_ANGLE, 0),
-                mAttributeMap.get(EGL_PLATFORM_ANGLE_DEVICE_ID_LOW_ANGLE, 0)));
+                mAttributeMap.get(EGL_PLATFORM_ANGLE_DEVICE_ID_LOW_ANGLE, 0),
+                mAttributeMap.get(EGL_PLATFORM_ANGLE_DISPLAY_KEY_ANGLE, 0)));
             if (iter != displays->end())
             {
                 displays->erase(iter);
@@ -1444,7 +1449,7 @@ Error Display::createImage(const gl::Context *context,
     ImageID id = {mImageHandleAllocator.allocate()};
     angle::UniqueObjectPointer<Image, Display> imagePtr(
         new Image(mImplementation, id, context, target, sibling, attribs), this);
-    ANGLE_TRY(imagePtr->initialize(this));
+    ANGLE_TRY(imagePtr->initialize(this, context));
 
     Image *image = imagePtr.release();
 
@@ -1574,13 +1579,15 @@ Error Display::createSync(const gl::Context *currentContext,
 {
     ASSERT(isInitialized());
 
+    SyncID id = {mSyncHandleAllocator.allocate()};
+
     if (mImplementation->testDeviceLost())
     {
         ANGLE_TRY(restoreLostDevice());
     }
 
-    angle::UniqueObjectPointer<egl::Sync, Display> syncPtr(new Sync(mImplementation, type, attribs),
-                                                           this);
+    angle::UniqueObjectPointer<egl::Sync, Display> syncPtr(
+        new Sync(mImplementation, id, type, attribs), this);
 
     ANGLE_TRY(syncPtr->initialize(this, currentContext));
 
@@ -1826,6 +1833,7 @@ void Display::destroySyncImpl(Sync *sync, SyncSet *syncs)
 {
     auto iter = syncs->find(sync);
     ASSERT(iter != syncs->end());
+    mSyncHandleAllocator.release((*iter)->id().value);
     (*iter)->release(this);
     syncs->erase(iter);
 }
@@ -1963,9 +1971,9 @@ bool Display::isValidStream(const Stream *stream) const
     return mStreamSet.find(const_cast<Stream *>(stream)) != mStreamSet.end();
 }
 
-bool Display::isValidSync(const Sync *sync) const
+bool Display::isValidSync(SyncID syncID) const
 {
-    return mSyncSet.find(const_cast<Sync *>(sync)) != mSyncSet.end();
+    return getSync(syncID) != nullptr;
 }
 
 bool Display::hasExistingWindowSurface(EGLNativeWindowType window)
@@ -2042,7 +2050,7 @@ static ClientExtensions GenerateClientExtensions()
     extensions.platformANGLEDeviceTypeEGLANGLE = true;
 #endif
 
-#if (defined(ANGLE_PLATFORM_IOS) && !defined(ANGLE_PLATFORM_MACCATALYST)) || \
+#if (defined(ANGLE_PLATFORM_APPLE_EMBEDDED) && !defined(ANGLE_PLATFORM_MACCATALYST)) || \
     (defined(ANGLE_PLATFORM_MACCATALYST) && defined(ANGLE_CPU_ARM64))
     extensions.platformANGLEDeviceContextVolatileEagl = true;
 #endif
@@ -2232,8 +2240,8 @@ void Display::initializeFrontendFeatures()
     // No longer enable this on any Impl - crbug.com/1165751
     ANGLE_FEATURE_CONDITION((&mFrontendFeatures), scalarizeVecAndMatConstructorArgs, false);
 
-    // Disabled by default until work on the extension is complete - anglebug.com/7279.
-    ANGLE_FEATURE_CONDITION(&mFrontendFeatures, emulatePixelLocalStorage, false);
+    // Togglable until work on the extension is complete - anglebug.com/7279.
+    ANGLE_FEATURE_CONDITION(&mFrontendFeatures, emulatePixelLocalStorage, true);
 
     mImplementation->initializeFrontendFeatures(&mFrontendFeatures);
 
@@ -2558,6 +2566,11 @@ const egl::Image *Display::getImage(egl::ImageID imageID) const
     return GetResourceFromHashSet<const egl::Image *>(imageID, mImageSet);
 }
 
+const egl::Sync *Display::getSync(egl::SyncID syncID) const
+{
+    return GetResourceFromHashSet<const egl::Sync *>(syncID, mSyncSet);
+}
+
 gl::Context *Display::getContext(gl::ContextID contextID)
 {
     return GetResourceFromHashSet<gl::Context *>(contextID, mState.contextSet);
@@ -2571,4 +2584,10 @@ egl::Image *Display::getImage(egl::ImageID imageID)
 {
     return GetResourceFromHashSet<egl::Image *>(imageID, mImageSet);
 }
+
+egl::Sync *Display::getSync(egl::SyncID syncID)
+{
+    return GetResourceFromHashSet<egl::Sync *>(syncID, mSyncSet);
+}
+
 }  // namespace egl

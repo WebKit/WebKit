@@ -30,6 +30,7 @@
 namespace WebCore {
 
 using GPUBufferDynamicOffset = uint32_t;
+using GPUBufferUsageFlags = uint32_t;
 using GPUStencilValue = uint32_t;
 using GPUSampleMask = uint32_t;
 using GPUDepthBias = int32_t;

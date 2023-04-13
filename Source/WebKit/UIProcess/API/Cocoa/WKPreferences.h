@@ -54,7 +54,7 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 /*! @abstract A Boolean value indicating whether the web view should include backgrounds when printing.
  @discussion The default value is `NO`.
  */
-@property (nonatomic) BOOL shouldPrintBackgrounds WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic) BOOL shouldPrintBackgrounds WK_API_AVAILABLE(macos(13.3), ios(16.4));
 
 #if !TARGET_OS_IPHONE
 /*!
@@ -79,6 +79,23 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
  @discussion The default value is NO. We can set it to YES to enable support for the fullscreen API.
  */
 @property (nonatomic, getter=isElementFullscreenEnabled) BOOL elementFullscreenEnabled WK_API_AVAILABLE(macos(12.3), ios(15.4));
+
+/*
+@enum WKInactiveSchedulingPolicy
+@abstract An enum that represents the available options for scheduling behavior when a web view is idle and detached from all windows.
+@discussion The WKInactiveSchedulingSuspend case indicates that the web view should be fully suspended when idle. The WKInactiveSchedulingThrottle case indicates that the web view should be CPU-throttled when idle, but not fully suspended. The WKInactiveSchedulingNone case indicates that no special scheduling behavior should be applied, and the web view should continue running normally even when idle.
+*/
+typedef NS_ENUM(NSInteger, WKInactiveSchedulingPolicy) {
+    WKInactiveSchedulingPolicySuspend,
+    WKInactiveSchedulingPolicyThrottle,
+    WKInactiveSchedulingPolicyNone
+} NS_SWIFT_NAME(WKPreferences.InactiveSchedulingPolicy) WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
+/*! @abstract Specify the scheduling policy for the web view when it is inactive
+ and detached from the view hierarchy. Web views are not considered idle when playing media or loading web pages.
+ A suspended web view will pause JavaScript execution and page layout.
+ */
+@property (nonatomic) WKInactiveSchedulingPolicy inactiveSchedulingPolicy WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 @end
 

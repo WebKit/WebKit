@@ -8,10 +8,7 @@ list(APPEND WebKitTestRunner_SOURCES
     win/main.cpp
 )
 
-set(wrapper_DEFINITIONS
-    USE_CONSOLE_ENTRY_POINT
-    WIN_CAIRO
-)
+set(wrapper_DEFINITIONS USE_CONSOLE_ENTRY_POINT)
 
 list(APPEND WebKitTestRunner_INCLUDE_DIRECTORIES
     ${WebKitTestRunner_DIR}/InjectedBundle/win

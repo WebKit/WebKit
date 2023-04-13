@@ -41,7 +41,6 @@
 #include "FormData.h"
 #include "FormDataBuilder.h"
 #include "FormState.h"
-#include "Frame.h"
 #include "FrameLoadRequest.h"
 #include "FrameLoader.h"
 #include "HTMLFormControlElement.h"
@@ -49,6 +48,7 @@
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
+#include "LocalFrame.h"
 #include "ScriptDisallowedScope.h"
 #include <pal/text/TextEncoding.h>
 #include <wtf/WallTime.h>

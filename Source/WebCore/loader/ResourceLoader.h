@@ -52,9 +52,9 @@ namespace WebCore {
 class AuthenticationChallenge;
 class CachedResource;
 class DocumentLoader;
-class Frame;
 class FrameLoader;
 class LegacyPreviewLoader;
+class LocalFrame;
 class NetworkLoadMetrics;
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(ResourceLoader);
@@ -88,6 +88,7 @@ public:
     WEBCORE_EXPORT ResourceError blockedError();
     ResourceError blockedByContentBlockerError();
     ResourceError cannotShowURLError();
+    ResourceError httpsUpgradeRedirectLoopError();
     
     virtual void setDefersLoading(bool);
     bool defersLoading() const { return m_defersLoading; }
@@ -152,7 +153,7 @@ public:
     void unschedule(WTF::SchedulePair&);
 #endif
 
-    const Frame* frame() const { return m_frame.get(); }
+    const LocalFrame* frame() const { return m_frame.get(); }
 
     const ResourceLoaderOptions& options() const { return m_options; }
 
@@ -162,7 +163,7 @@ public:
     bool isPDFJSResourceLoad() const;
 
 protected:
-    ResourceLoader(Frame&, ResourceLoaderOptions);
+    ResourceLoader(LocalFrame&, ResourceLoaderOptions);
 
     void didFinishLoadingOnePart(const NetworkLoadMetrics&);
     void cleanupForError(const ResourceError&);
@@ -179,7 +180,7 @@ protected:
     virtual void willSendRequestInternal(ResourceRequest&&, const ResourceResponse& redirectResponse, CompletionHandler<void(ResourceRequest&&)>&&);
 
     RefPtr<ResourceHandle> m_handle;
-    RefPtr<Frame> m_frame;
+    RefPtr<LocalFrame> m_frame;
     RefPtr<DocumentLoader> m_documentLoader;
     ResourceResponse m_response;
     ResourceLoadTiming m_loadTiming;
@@ -216,10 +217,6 @@ private:
     void receivedCancellation(ResourceHandle*, const AuthenticationChallenge& challenge) override { receivedCancellation(challenge); }
 #if PLATFORM(IOS_FAMILY)
     RetainPtr<CFDictionaryRef> connectionProperties(ResourceHandle*) override;
-#endif
-#if USE(CFURLCONNECTION)
-    // FIXME: Windows should use willCacheResponse - <https://bugs.webkit.org/show_bug.cgi?id=57257>.
-    bool shouldCacheResponse(ResourceHandle*, CFCachedURLResponseRef) override;
 #endif
 
 #if USE(SOUP)

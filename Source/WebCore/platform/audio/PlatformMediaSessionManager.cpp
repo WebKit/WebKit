@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -49,6 +49,10 @@ bool PlatformMediaSessionManager::m_opusDecoderEnabled;
 
 #if ENABLE(ALTERNATE_WEBM_PLAYER)
 bool PlatformMediaSessionManager::m_alternateWebMPlayerEnabled;
+#endif
+
+#if HAVE(SC_CONTENT_SHARING_PICKER)
+bool PlatformMediaSessionManager::s_useSCContentSharingPicker;
 #endif
 
 #if ENABLE(VP9)
@@ -725,6 +729,24 @@ bool PlatformMediaSessionManager::alternateWebMPlayerEnabled()
 {
 #if ENABLE(ALTERNATE_WEBM_PLAYER)
     return m_alternateWebMPlayerEnabled;
+#else
+    return false;
+#endif
+}
+
+void PlatformMediaSessionManager::setUseSCContentSharingPicker(bool use)
+{
+#if HAVE(SC_CONTENT_SHARING_PICKER)
+    s_useSCContentSharingPicker = use;
+#else
+    UNUSED_PARAM(use);
+#endif
+}
+
+bool PlatformMediaSessionManager::useSCContentSharingPicker()
+{
+#if HAVE(SC_CONTENT_SHARING_PICKER)
+    return s_useSCContentSharingPicker;
 #else
     return false;
 #endif

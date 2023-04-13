@@ -26,12 +26,14 @@
 #include "config.h"
 #include "WKView.h"
 
+#include "APIClient.h"
 #include "APIPageConfiguration.h"
 #include "APIViewClient.h"
 #include "PlayStationWebView.h"
 #include "WKAPICast.h"
 #include "WKSharedAPICast.h"
 #include <WebCore/Cursor.h>
+#include <WebCore/Region.h>
 
 namespace API {
 template<> struct ClientTraits<WKViewClientBase> {
@@ -67,7 +69,7 @@ void WKViewSetSize(WKViewRef view, WKSize viewSize)
     WebKit::toImpl(view)->setViewSize(WebKit::toIntSize(viewSize));
 }
 
-static void setViewActivityStateFlag(WKViewRef view, WebCore::ActivityState::Flag flag, bool set)
+static void setViewActivityStateFlag(WKViewRef view, WebCore::ActivityState flag, bool set)
 {
     auto viewState = WebKit::toImpl(view)->viewState();
     if (set)

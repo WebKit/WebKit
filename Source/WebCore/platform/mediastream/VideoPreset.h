@@ -30,114 +30,74 @@
 #include "ImageBuffer.h"
 #include "RealtimeMediaSource.h"
 #include <wtf/Lock.h>
+#include <wtf/RetainPtr.h>
 #include <wtf/RunLoop.h>
+
+OBJC_CLASS AVCaptureDeviceFormat;
 
 namespace WebCore {
 
 struct FrameRateRange {
     double minimum;
     double maximum;
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<FrameRateRange> decode(Decoder&);
 };
-
-template<class Encoder>
-void FrameRateRange::encode(Encoder& encoder) const
-{
-    encoder << minimum;
-    encoder << maximum;
-}
-
-template <class Decoder>
-std::optional<FrameRateRange> FrameRateRange::decode(Decoder& decoder)
-{
-    std::optional<double> minimum;
-    decoder >> minimum;
-    if (!minimum)
-        return std::nullopt;
-
-    std::optional<double> maximum;
-    decoder >> maximum;
-    if (!maximum)
-        return std::nullopt;
-
-    return FrameRateRange { *minimum, *maximum };
-}
 
 struct VideoPresetData {
     IntSize size;
     Vector<FrameRateRange> frameRateRanges;
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<VideoPresetData> decode(Decoder&);
+    double minZoom { 1 };
+    double maxZoom { 1 };
 };
 
-template<class Encoder>
-void VideoPresetData::encode(Encoder& encoder) const
-{
-    encoder << size;
-    encoder << frameRateRanges;
-}
-
-template <class Decoder>
-std::optional<VideoPresetData> VideoPresetData::decode(Decoder& decoder)
-{
-    std::optional<IntSize> size;
-    decoder >> size;
-    if (!size)
-        return std::nullopt;
-
-    std::optional<Vector<FrameRateRange>> frameRateRanges;
-    decoder >> frameRateRanges;
-    if (!frameRateRanges)
-        return std::nullopt;
-
-    return VideoPresetData { *size, *frameRateRanges };
-}
-
-class VideoPreset : public RefCounted<VideoPreset> {
+class VideoPreset {
 public:
-    static Ref<VideoPreset> create(VideoPresetData&& data)
+    explicit VideoPreset(VideoPresetData&& data)
+        : m_data(WTFMove(data))
     {
-        return adoptRef(*new VideoPreset(data.size, WTFMove(data.frameRateRanges), Base));
+    }
+    VideoPreset(IntSize size, Vector<FrameRateRange>&& frameRateRanges, std::optional<double> minZoom, std::optional<double> maxZoom)
+        : m_data { size, WTFMove(frameRateRanges), minZoom.value_or(1), maxZoom.value_or(1) }
+    {
+        ASSERT(m_data.maxZoom >= m_data.minZoom);
     }
 
-    enum VideoPresetType {
-        Base,
-        AVCapture,
-        GStreamer
-    };
+    IntSize size() const { return m_data.size; }
+    const Vector<FrameRateRange>& frameRateRanges() const { return m_data.frameRateRanges; }
+    double minZoom() const { return m_data.minZoom; }
+    double maxZoom() const { return m_data.maxZoom; }
 
-    IntSize size;
-    Vector<FrameRateRange> frameRateRanges;
-    VideoPresetType type;
+    void sortFrameRateRanges();
+
+#if PLATFORM(COCOA) && USE(AVFOUNDATION)
+    void setFormat(AVCaptureDeviceFormat* format) { m_format = format; }
+    AVCaptureDeviceFormat* format() const { return m_format.get(); }
+#endif
 
     double maxFrameRate() const;
     double minFrameRate() const;
 
+    bool isZoomSupported() const { return m_data.minZoom != 1 || m_data.maxZoom != 1; }
+
     void log()const;
 
 protected:
-    VideoPreset(IntSize size, Vector<FrameRateRange>&& frameRateRanges, VideoPresetType type)
-        : size(size)
-        , frameRateRanges(WTFMove(frameRateRanges))
-        , type(type)
-    {
-    }
+    VideoPresetData m_data;
+#if PLATFORM(COCOA) && USE(AVFOUNDATION)
+    RetainPtr<AVCaptureDeviceFormat> m_format;
+#endif
 };
 
 inline void VideoPreset::log() const
 {
-    WTFLogAlways("VideoPreset of size (%d,%d) and type %d", size.width(), size.height(), type);
-    for (auto range : frameRateRanges)
+    WTFLogAlways("VideoPreset of size (%d,%d), zoom is [%f, %f]", m_data.size.width(), m_data.size.height(), m_data.minZoom, m_data.maxZoom);
+    for (auto range : m_data.frameRateRanges)
         WTFLogAlways("VideoPreset frame rate range [%f, %f]", range.minimum, range.maximum);
 }
 
 inline double VideoPreset::minFrameRate() const
 {
     double minFrameRate = std::numeric_limits<double>::max();
-    for (auto& range : frameRateRanges) {
+    for (auto& range : m_data.frameRateRanges) {
         if (minFrameRate > range.minimum)
             minFrameRate = range.minimum;
     }
@@ -147,18 +107,22 @@ inline double VideoPreset::minFrameRate() const
 inline double VideoPreset::maxFrameRate() const
 {
     double maxFrameRate = 0;
-    for (auto& range : frameRateRanges) {
+    for (auto& range : m_data.frameRateRanges) {
         if (maxFrameRate < range.maximum)
             maxFrameRate = range.maximum;
     }
     return maxFrameRate;
 }
 
-} // namespace WebCore
+inline void VideoPreset::sortFrameRateRanges()
+{
+    std::sort(m_data.frameRateRanges.begin(), m_data.frameRateRanges.end(),
+        [&] (const auto& a, const auto& b) -> bool {
+            return a.minimum < b.minimum;
+    });
+}
 
-SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::VideoPreset)
-    static bool isType(const WebCore::VideoPreset& preset) { return preset.type == WebCore::VideoPreset::VideoPresetType::Base; }
-SPECIALIZE_TYPE_TRAITS_END()
+} // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM)
 

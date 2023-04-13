@@ -63,9 +63,9 @@ public:
     void didFinishTransition(const Element&, CSSPropertyID);
     void didRemoveTransition(const Element&, CSSPropertyID);
 
-    WEBCORE_EXPORT static void didRecognizeLongPress(Frame& mainFrame);
-    WEBCORE_EXPORT static void didPreventDefaultForEvent(Frame& mainFrame);
-    WEBCORE_EXPORT static void didCancelPotentialTap(Frame& mainFrame);
+    WEBCORE_EXPORT static void didRecognizeLongPress(LocalFrame& mainFrame);
+    WEBCORE_EXPORT static void didPreventDefaultForEvent(LocalFrame& mainFrame);
+    WEBCORE_EXPORT static void didCancelPotentialTap(LocalFrame& mainFrame);
 
     void didSuspendActiveDOMObjects();
     void willDetachPage();
@@ -182,7 +182,7 @@ private:
     bool visibleRendererWasDestroyed(const Element& element) const { return m_elementsWithDestroyedVisibleRenderer.contains(element); }
     bool shouldObserveVisibilityChangeForElement(const Element&);
 
-    enum class ElementHadRenderer { No, Yes };
+    enum class ElementHadRenderer : bool { No, Yes };
     bool isConsideredActionableContent(const Element&, ElementHadRenderer) const;
     
     bool isContentChangeObserverEnabled();

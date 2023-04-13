@@ -58,7 +58,7 @@ TEST_F(GStreamerTest, harnessBasic)
     EXPECT_EQ(mappedInputBuffer.size(), 64);
     auto caps = adoptGRef(gst_caps_new_empty_simple("foo"));
     auto sample = adoptGRef(gst_sample_new(buffer.get(), caps.get(), nullptr, nullptr));
-    EXPECT_TRUE(harness->pushSample(sample.get()));
+    EXPECT_TRUE(harness->pushSample(WTFMove(sample)));
 
     auto event = stream->pullEvent();
     ASSERT_NOT_NULL(event.get());
@@ -103,7 +103,7 @@ TEST_F(GStreamerTest, harnessManualStart)
     ASSERT_NULL(stream->pullEvent());
 
     // Pushing a buffer before start is not allowed.
-    EXPECT_FALSE(harness->pushBuffer(gst_buffer_new_allocate(nullptr, 64, nullptr)));
+    EXPECT_FALSE(harness->pushBuffer(adoptGRef(gst_buffer_new_allocate(nullptr, 64, nullptr))));
 
     // Start the harness and expect initial events.
     auto caps = adoptGRef(gst_caps_new_empty_simple("foo"));
@@ -128,10 +128,10 @@ TEST_F(GStreamerTest, harnessManualStart)
     // Push a buffer and expect an output buffer.
     auto buffer = adoptGRef(gst_buffer_new_allocate(nullptr, 64, nullptr));
     gst_buffer_memset(buffer.get(), 0, 2, 64);
-    EXPECT_TRUE(harness->pushBuffer(gst_buffer_ref(buffer.get())));
     GstMappedBuffer mappedInputBuffer(buffer.get(), GST_MAP_READ);
     ASSERT_TRUE(mappedInputBuffer);
     EXPECT_EQ(mappedInputBuffer.size(), 64);
+    EXPECT_TRUE(harness->pushBuffer(GRefPtr<GstBuffer>(buffer.get())));
 
     // The harnessed element is identity, so output buffers should be the same as input buffers.
     auto outputBuffer = stream->pullBuffer();
@@ -172,7 +172,7 @@ TEST_F(GStreamerTest, harnessBufferProcessing)
         auto buffer = adoptGRef(gst_buffer_new_allocate(nullptr, 64, nullptr));
         gst_buffer_memset(buffer.get(), 0, i, 64);
         auto sample = adoptGRef(gst_sample_new(buffer.get(), caps.get(), nullptr, nullptr));
-        EXPECT_TRUE(harness->pushSample(sample.get()));
+        EXPECT_TRUE(harness->pushSample(WTFMove(sample)));
     }
     harness->processOutputBuffers();
     ASSERT_EQ(counter, 3);
@@ -206,7 +206,7 @@ TEST_F(GStreamerTest, harnessFlush)
         auto buffer = adoptGRef(gst_buffer_new_allocate(nullptr, 64, nullptr));
         gst_buffer_memset(buffer.get(), 0, i, 64);
         auto sample = adoptGRef(gst_sample_new(buffer.get(), caps.get(), nullptr, nullptr));
-        EXPECT_TRUE(harness->pushSample(sample.get()));
+        EXPECT_TRUE(harness->pushSample(WTFMove(sample)));
     }
     auto firstOutputBuffer = stream->pullBuffer();
     GstMappedBuffer mappedFirstOutputBuffer(firstOutputBuffer.get(), GST_MAP_READ);
@@ -266,7 +266,7 @@ TEST_F(GStreamerTest, harnessParseMP4)
             FileSystem::readFromFile(handle, mappedBuffer.data(), bytesToRead);
         }
         auto sample = adoptGRef(gst_sample_new(buffer.get(), caps.get(), nullptr, nullptr));
-        EXPECT_TRUE(harness->pushSample(sample.get()));
+        EXPECT_TRUE(harness->pushSample(WTFMove(sample)));
 
         totalRead += bytesToRead;
     }
@@ -344,7 +344,7 @@ TEST_F(GStreamerTest, harnessDecodeMP4Video)
             GstMappedBuffer mappedBuffer(buffer.get(), GST_MAP_WRITE);
             FileSystem::readFromFile(handle, mappedBuffer.data(), bytesToRead);
         }
-        EXPECT_TRUE(harness->pushBuffer(buffer.leakRef()));
+        EXPECT_TRUE(harness->pushBuffer(WTFMove(buffer)));
         totalRead += bytesToRead;
 
         // Process events, if a stream collection is received, interrupt the buffer feed.
@@ -393,7 +393,7 @@ TEST_F(GStreamerTest, harnessDecodeMP4Video)
             GstMappedBuffer mappedBuffer(buffer.get(), GST_MAP_WRITE);
             FileSystem::readFromFile(handle, mappedBuffer.data(), bytesToRead);
         }
-        EXPECT_TRUE(harness->pushBuffer(buffer.leakRef()));
+        EXPECT_TRUE(harness->pushBuffer(WTFMove(buffer)));
 
         totalRead += bytesToRead;
     }

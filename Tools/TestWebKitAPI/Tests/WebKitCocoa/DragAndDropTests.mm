@@ -160,12 +160,13 @@ TEST(DragAndDropTests, DragAndDropOnEmptyView)
     [pasteboard writeObjects:@[ url ]];
     [simulator setExternalDragPasteboard:pasteboard];
 
-    [simulator runFrom:CGPointMake(0, 0) to:CGPointMake(100, 100)];
-
     __block bool finished = false;
     [webView performAfterLoading:^{
         finished = true;
     }];
+
+    [simulator runFrom:CGPointMake(0, 0) to:CGPointMake(100, 100)];
+
     TestWebKitAPI::Util::run(&finished);
 
     EXPECT_WK_STREQ("Simple HTML file.", [webView stringByEvaluatingJavaScript:@"document.body.innerText"]);

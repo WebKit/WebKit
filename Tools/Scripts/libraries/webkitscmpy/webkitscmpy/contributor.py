@@ -1,4 +1,4 @@
-# Copyright (C) 2020-2022 Apple Inc. All rights reserved.
+# Copyright (C) 2020-2023 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -29,10 +29,11 @@ from webkitcorepy import string_utils
 
 
 class Contributor(object):
-    GIT_AUTHOR_RE = re.compile(r'Author: (?P<author>.*) <(?P<email>[^@]+@[^@]+)(@.*)?>')
+    GIT_AUTHOR_RE = re.compile(r'Author: (?P<author>.*) <(?P<email>[^@,]+@[^@,]+)(@.*)?>')
     AUTOMATED_CHECKIN_RE = re.compile(r'Author: (?P<author>.*) <devnull>')
     UNKNOWN_AUTHOR = re.compile(r'Author: (?P<author>.*) <None>')
     EMPTY_AUTHOR = re.compile(r'Author: (?P<author>.*) <>')
+    MULTIPLE_EMAIL_RE = re.compile(r'Author: (?P<author>.*) <(?P<emails>([^@ ,]+@[^@ , ]+[, ]\s?)+[^@ ,]+@[^@ , ]+)>')
     SVN_AUTHOR_RE = re.compile(r'r(?P<revision>\d+) \| (?P<email>.*) \| (?P<date>.*) \| \d+ lines?')
     SVN_AUTHOR_Q_RE = re.compile(r'r(?P<revision>\d+) \| (?P<email>.*) \| (?P<date>.*)')
     SVN_PATCH_FROM_RE = re.compile(r'Patch by (?P<author>.*) <(?P<email>.*)> on \d+-\d+-\d+')
@@ -168,7 +169,7 @@ class Contributor(object):
 
     @classmethod
     def from_scm_log(cls, line, contributors=None):
-        email = None
+        emails = []
         author = None
 
         for expression in [
@@ -179,6 +180,7 @@ class Contributor(object):
             cls.UNKNOWN_AUTHOR,
             cls.EMPTY_AUTHOR,
             cls.SVN_AUTHOR_Q_RE,
+            cls.MULTIPLE_EMAIL_RE,
         ]:
             match = expression.match(line)
             if match:
@@ -187,19 +189,23 @@ class Contributor(object):
                     if '(no author)' in author or 'Automated Checkin' in author or 'Unknown' in author:
                         author = None
                 if 'email' in expression.groupindex:
-                    email = match.group('email')
-                    if '(no author)' in email:
-                        email = None
+                    if '(no author)' not in match.group('email'):
+                        emails.append(match.group('email'))
+                if 'emails' in expression.groupindex:
+                    candidates = [email.rstrip().lstrip() for email in match.group('emails').split(',')]
+                    for candidate in candidates:
+                        if '(no author)' not in candidate:
+                            emails.append(candidate)
                 break
         else:
             raise ValueError("'{}' does not match a known SCM log".format(line))
 
-        if not email and not author:
+        if not emails and not author:
             return None
 
         if contributors is not None:
-            return contributors.create(author, email)
-        return cls(author or email, emails=[email])
+            return contributors.create(author, *emails)
+        return cls(author or emails[0], emails=emails)
 
     def __init__(self, name, emails=None, status=None, github=None, bitbucket=None):
         self.name = string_utils.decode(name)

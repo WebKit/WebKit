@@ -27,6 +27,7 @@
 #include "WebURLSchemeHandlerProxy.h"
 
 #include "DataReference.h"
+#include "MessageSenderInlines.h"
 #include "URLSchemeTaskParameters.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebErrors.h"

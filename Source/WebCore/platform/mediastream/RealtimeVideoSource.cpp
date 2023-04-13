@@ -88,25 +88,25 @@ void RealtimeVideoSource::endProducingData()
     m_source->requestToEnd(*this);
 }
 
-bool RealtimeVideoSource::supportsSizeAndFrameRate(std::optional<int> width, std::optional<int> height, std::optional<double> frameRate)
+bool RealtimeVideoSource::supportsSizeFrameRateAndZoom(std::optional<int> width, std::optional<int> height, std::optional<double> frameRate, std::optional<double> zoom)
 {
-    return m_source->supportsSizeAndFrameRate(width, height, frameRate);
+    return m_source->supportsSizeFrameRateAndZoom(width, height, frameRate, zoom);
 }
 
-void RealtimeVideoSource::setSizeAndFrameRate(std::optional<int> width, std::optional<int> height, std::optional<double> frameRate)
+void RealtimeVideoSource::setSizeFrameRateAndZoom(std::optional<int> width, std::optional<int> height, std::optional<double> frameRate, std::optional<double> zoom)
 {
     if (!width && !height) {
         width = size().width();
         height = size().height();
     }
 
-    m_source->clientUpdatedSizeAndFrameRate(width, height, frameRate);
+    m_source->clientUpdatedSizeFrameRateAndZoom(width, height, frameRate, zoom);
     auto sourceSize = m_source->size();
     ASSERT(sourceSize.height());
     ASSERT(sourceSize.width());
 
-    auto* currentPreset = m_source->currentPreset();
-    auto intrinsicSize = currentPreset ? currentPreset->size : sourceSize;
+    auto currentPreset = m_source->currentPreset();
+    auto intrinsicSize = currentPreset ? currentPreset->size() : sourceSize;
 
     if (!width)
         width = intrinsicSize.width() * height.value() / intrinsicSize.height();
@@ -119,14 +119,17 @@ void RealtimeVideoSource::setSizeAndFrameRate(std::optional<int> width, std::opt
     if (frameRate)
         m_currentSettings.setFrameRate(static_cast<float>(*frameRate));
 
-    RealtimeMediaSource::setSizeAndFrameRate(width, height, frameRate);
+    if (zoom)
+        m_currentSettings.setZoom(*zoom);
+
+    RealtimeMediaSource::setSizeFrameRateAndZoom(width, height, frameRate, zoom);
 }
 
 void RealtimeVideoSource::settingsDidChange(OptionSet<RealtimeMediaSourceSettings::Flag> settings)
 {
     if (settings.containsAny({ RealtimeMediaSourceSettings::Flag::Width, RealtimeMediaSourceSettings::Flag::Height })) {
         auto size = this->size();
-        setSizeAndFrameRate(size.width(), size.height(), { });
+        setSizeFrameRateAndZoom(size.width(), size.height(), { }, { });
     }
 }
 

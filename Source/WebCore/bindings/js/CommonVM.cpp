@@ -26,8 +26,8 @@
 #include "config.h"
 #include "CommonVM.h"
 
-#include "DOMWindow.h"
-#include "Frame.h"
+#include "LocalDOMWindow.h"
+#include "LocalFrame.h"
 #include "ScriptController.h"
 #include "WebCoreJSClientData.h"
 #include <JavaScriptCore/HeapInlines.h>
@@ -78,12 +78,12 @@ JSC::VM& commonVMSlow()
     return vm;
 }
 
-Frame* lexicalFrameFromCommonVM()
+LocalFrame* lexicalFrameFromCommonVM()
 {
     JSC::VM& vm = commonVM();
     if (auto* topCallFrame = vm.topCallFrame) {
         if (auto* globalObject = JSC::jsCast<JSDOMGlobalObject*>(topCallFrame->lexicalGlobalObject(vm))) {
-            if (auto* window = JSC::jsDynamicCast<JSDOMWindow*>(globalObject)) {
+            if (auto* window = JSC::jsDynamicCast<JSLocalDOMWindow*>(globalObject)) {
                 if (auto* frame = window->wrapped().frame())
                     return frame;
             }

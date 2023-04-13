@@ -29,23 +29,21 @@
 
 namespace WGSL::AST {
 
-class PointerDereference final : public Expression {
+class PointerDereferenceExpression final : public Expression {
     WTF_MAKE_FAST_ALLOCATED;
-
 public:
-    PointerDereference(SourceSpan span, UniqueRef<Expression>&& target)
+    PointerDereferenceExpression(SourceSpan span, Expression::Ref&& target)
         : Expression(span)
         , m_target(WTFMove(target))
-    {
-    }
+    { }
 
-    Kind kind() const override;
+    NodeKind kind() const override;
     Expression& target() { return m_target.get(); }
 
 private:
-    UniqueRef<Expression> m_target;
+    Expression::Ref m_target;
 };
 
 } // namespace WGSL::AST
 
-SPECIALIZE_TYPE_TRAITS_WGSL_AST(PointerDereference)
+SPECIALIZE_TYPE_TRAITS_WGSL_AST(PointerDereferenceExpression)

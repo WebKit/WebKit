@@ -59,6 +59,10 @@ uint64_t SubframePageProxy::messageSenderDestinationID() const
 
 void SubframePageProxy::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
+    // FIXME: Removing this will be necessary to getting layout tests to work with site isolation.
+    if (decoder.messageName() == Messages::WebPageProxy::HandleMessage::name())
+        return;
+
     if (m_page)
         m_page->didReceiveMessage(connection, decoder);
 }

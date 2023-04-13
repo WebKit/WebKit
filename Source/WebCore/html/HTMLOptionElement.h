@@ -30,7 +30,7 @@ namespace WebCore {
 
 class HTMLSelectElement;
 
-enum class AllowStyleInvalidation { Yes, No };
+enum class AllowStyleInvalidation : bool { No, Yes };
 
 class HTMLOptionElement final : public HTMLElement {
     WTF_MAKE_ISO_ALLOCATED(HTMLOptionElement);
@@ -68,13 +68,14 @@ public:
     bool selectedWithoutUpdate() const { return m_isSelected; }
 
 private:
+    constexpr static auto CreateHTMLOptionElement = CreateHTMLElement | NodeFlag::HasCustomStyleResolveCallbacks;
     HTMLOptionElement(const QualifiedName&, Document&);
 
     bool isFocusable() const final;
     bool rendererIsNeeded(const RenderStyle&) final { return false; }
     bool matchesDefaultPseudoClass() const final;
 
-    void parseAttribute(const QualifiedName&, const AtomString&) final;
+    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
 
     bool accessKeyAction(bool) final;
 

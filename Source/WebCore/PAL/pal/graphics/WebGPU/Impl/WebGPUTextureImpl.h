@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@
 #if HAVE(WEBGPU_IMPLEMENTATION)
 
 #include "WebGPUIntegralTypes.h"
+#include "WebGPUSwapChainWrapper.h"
 #include "WebGPUTexture.h"
 #include "WebGPUTextureDimension.h"
 #include "WebGPUTextureFormat.h"
@@ -44,6 +45,10 @@ public:
     {
         return adoptRef(*new TextureImpl(texture, format, dimension, convertToBackingContext));
     }
+    static Ref<TextureImpl> create(WGPUTexture texture, TextureFormat format, TextureDimension dimension, ConvertToBackingContext& convertToBackingContext, Ref<SwapChainWrapper>&& swapChainWrapper)
+    {
+        return adoptRef(*new TextureImpl(texture, format, dimension, convertToBackingContext, WTFMove(swapChainWrapper)));
+    }
 
     virtual ~TextureImpl();
 
@@ -51,6 +56,7 @@ private:
     friend class DowncastConvertToBackingContext;
 
     TextureImpl(WGPUTexture, TextureFormat, TextureDimension, ConvertToBackingContext&);
+    TextureImpl(WGPUTexture, TextureFormat, TextureDimension, ConvertToBackingContext&, Ref<SwapChainWrapper>&&);
 
     TextureImpl(const TextureImpl&) = delete;
     TextureImpl(TextureImpl&&) = delete;
@@ -70,6 +76,12 @@ private:
 
     WGPUTexture m_backing { nullptr };
     Ref<ConvertToBackingContext> m_convertToBackingContext;
+
+    // Some textures are internally owned by their WGPUSwapChain, and wgpuSwapChainGetCurrentTexture() is
+    // supposed to return the same object each time it's called within the same frame. This means that both PresentationContextImpl and TextureImpl need to
+    // have strong references to the same WGPUSwapChain. However, WGPUSwapChains aren't reference counted, so we use a reference
+    // counted wrapper around it.
+    RefPtr<SwapChainWrapper> m_swapChainWrapper;
 };
 
 } // namespace PAL::WebGPU

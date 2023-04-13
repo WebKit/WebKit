@@ -327,6 +327,35 @@ WI.urlWithoutFragment = function(urlString)
     return urlString;
 };
 
+WI.urlWithoutUserQueryOrFragment = function(urlString)
+{
+    try {
+        let url = new URL(urlString);
+
+        if (url.username) {
+            url.username = "";
+        }
+        if (url.password) {
+            url.password = "";
+        }
+        if (url.search) {
+            url.search = "";
+        }
+        if (url.hash) {
+            url.hash = "";
+        }
+
+        let result = url.toString();
+        if (result.endsWith("#"))
+            return result.substring(0, result.length - 1);
+
+        return result;
+
+    } catch { }
+
+    return urlString;
+}
+
 WI.displayNameForHost = function(host)
 {
     let extensionName = WI.browserManager.extensionNameForId(host);

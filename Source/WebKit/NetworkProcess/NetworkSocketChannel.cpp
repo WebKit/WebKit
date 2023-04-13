@@ -26,6 +26,7 @@
 #include "config.h"
 #include "NetworkSocketChannel.h"
 
+#include "MessageSenderInlines.h"
 #include "NetworkConnectionToWebProcess.h"
 #include "NetworkProcess.h"
 #include "NetworkSession.h"

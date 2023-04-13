@@ -20,8 +20,6 @@ function create_typed_array(type) {
 
 let context, methods = [];
 setup(function() {
-  window.internals.settings.setWebGL2Enabled(true);
-
   context = document.createElement("canvas").getContext("webgl2");
   if (!context) {
     throw new Error("Could not create webgl2 context");

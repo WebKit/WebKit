@@ -53,7 +53,7 @@ static bool areEssentiallyEqual(LayoutUnit a, LayoutUnit b)
         return true;
     // 1/4th CSS pixel.
     constexpr float epsilon = kFixedPointDenominator / 4;
-    return abs(a.rawValue() - b.rawValue()) <= epsilon;
+    return std::abs(a.rawValue() - b.rawValue()) <= epsilon;
 }
 
 static bool areEssentiallyEqual(float a, InlineLayoutUnit b)
@@ -80,13 +80,13 @@ static bool checkForMatchingNonTextRuns(const InlineDisplay::Box& box, const Web
 
 static bool checkForMatchingTextRuns(InlineDisplay::Box& box, const WebCore::LegacyInlineTextBox& inlineTextBox)
 {
-    if (!box.text())
+    if (!box.isTextOrSoftLineBreak())
         return false;
     return areEssentiallyEqual(inlineTextBox.left(), box.left())
         && areEssentiallyEqual(inlineTextBox.right(), box.right())
         && areEssentiallyEqual(inlineTextBox.top(), box.top())
         && areEssentiallyEqual(inlineTextBox.bottom(), box.bottom())
-        && (inlineTextBox.isLineBreak() || (inlineTextBox.start() == box.text()->start() && inlineTextBox.end() == box.text()->end()));
+        && (inlineTextBox.isLineBreak() || (inlineTextBox.start() == box.text().start() && inlineTextBox.end() == box.text().end()));
 }
 
 static void collectFlowBoxSubtree(const LegacyInlineFlowBox& flowbox, Vector<WebCore::LegacyInlineBox*>& inlineBoxes)
@@ -152,8 +152,8 @@ static bool outputMismatchingComplexLineInformationIfNeeded(TextStream& stream, 
             stream << " (" << inlineBox->logicalLeft() << ", " << inlineBox->logicalTop() << ") (" << inlineBox->logicalWidth() << "x" << inlineBox->logicalHeight() << ")";
 
             stream << " inline box";
-            if (box.text())
-                stream << " (" << box.text()->start() << ", " << box.text()->end() << ")";
+            if (box.isTextOrSoftLineBreak())
+                stream << " (" << box.text().start() << ", " << box.text().end() << ")";
             stream << " (" << box.left() << ", " << box.top() << ") (" << box.width() << "x" << box.height() << ")";
             stream.nextLine();
             mismatched = true;

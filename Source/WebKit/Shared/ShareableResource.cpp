@@ -35,16 +35,16 @@
 namespace WebKit {
 using namespace WebCore;
 
-ShareableResource::Handle::Handle() = default;
+ShareableResourceHandle::ShareableResourceHandle() = default;
 
-void ShareableResource::Handle::encode(IPC::Encoder& encoder) const
+void ShareableResourceHandle::encode(IPC::Encoder& encoder) const
 {
     encoder << m_handle;
     encoder << m_offset;
     encoder << m_size;
 }
 
-bool ShareableResource::Handle::decode(IPC::Decoder& decoder, Handle& handle)
+bool ShareableResourceHandle::decode(IPC::Decoder& decoder, ShareableResourceHandle& handle)
 {
     SharedMemory::Handle memoryHandle;
     if (UNLIKELY(!decoder.decode(memoryHandle)))
@@ -70,7 +70,7 @@ RefPtr<SharedBuffer> ShareableResource::wrapInSharedBuffer()
     });
 }
 
-RefPtr<SharedBuffer> ShareableResource::Handle::tryWrapInSharedBuffer() const
+RefPtr<SharedBuffer> ShareableResourceHandle::tryWrapInSharedBuffer() const
 {
     RefPtr<ShareableResource> resource = ShareableResource::map(*this);
     if (!resource) {

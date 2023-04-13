@@ -29,6 +29,8 @@
 #include "APISecurityOrigin.h"
 #include "APIUIClient.h"
 #include "MediaPermissionUtilities.h"
+#include "WebPageProxy.h"
+#include "WebPreferences.h"
 
 namespace WebKit {
 

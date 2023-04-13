@@ -33,31 +33,40 @@ API_SINGLE_HEADER_CHECK = {
     "gtk": '''#if !defined(__WEBKIT_H_INSIDE__) && !defined(BUILDING_WEBKIT)
 #error \"Only <webkit2/webkit2.h> can be included directly.\"
 #endif''',
+    "wpe2": '''#if !defined(__WEBKIT_H_INSIDE__) && !defined(BUILDING_WEBKIT)
+#error \"Only <wpe/webkit.h> can be included directly.\"
+#endif''',
     "wpe": '''#if !defined(__WEBKIT_H_INSIDE__) && !defined(BUILDING_WEBKIT)
 #error \"Only <wpe/webkit.h> can be included directly.\"
 #endif'''
 }
 
 INJECTED_BUNDLE_API_SINGLE_HEADER_CHECK = {
-    "gtk4": '''#if !defined(__WEBKIT_WEB_EXTENSION_H_INSIDE__) && !defined(BUILDING_WEBKIT)
-#error \"Only <webkit/webkit-web-extension.h> can be included directly.\"
+    "gtk4": '''#if !defined(__WEBKIT_WEB_PROCESS_EXTENSION_H_INSIDE__) && !defined(BUILDING_WEBKIT)
+#error \"Only <webkit/webkit-web-process-extension.h> can be included directly.\"
 #endif''',
-    "gtk": '''#if !defined(__WEBKIT_WEB_EXTENSION_H_INSIDE__) && !defined(BUILDING_WEBKIT)
+    "gtk": '''#if !defined(__WEBKIT_WEB_PROCESS_EXTENSION_H_INSIDE__) && !defined(BUILDING_WEBKIT)
 #error \"Only <webkit2/webkit-web-extension.h> can be included directly.\"
 #endif''',
-    "wpe": '''#if !defined(__WEBKIT_WEB_EXTENSION_H_INSIDE__) && !defined(BUILDING_WEBKIT)
+    "wpe2": '''#if !defined(__WEBKIT_WEB_PROCESS_EXTENSION_H_INSIDE__) && !defined(BUILDING_WEBKIT)
+#error \"Only <wpe/webkit-web-process-extension.h> can be included directly.\"
+#endif''',
+    "wpe": '''#if !defined(__WEBKIT_WEB_PROCESS_EXTENSION_H_INSIDE__) && !defined(BUILDING_WEBKIT)
 #error \"Only <wpe/webkit-web-extension.h> can be included directly.\"
 #endif'''
 }
 
 SHARED_API_SINGLE_HEADER_CHECK = {
-    "gtk4": '''#if !defined(__WEBKIT_H_INSIDE__) && !defined(__WEBKIT_WEB_EXTENSION_H_INSIDE__) && !defined(BUILDING_WEBKIT)
+    "gtk4": '''#if !defined(__WEBKIT_H_INSIDE__) && !defined(__WEBKIT_WEB_PROCESS_EXTENSION_H_INSIDE__) && !defined(BUILDING_WEBKIT)
 #error \"Only <webkit/webkit.h> can be included directly.\"
 #endif''',
-    "gtk": '''#if !defined(__WEBKIT_H_INSIDE__) && !defined(__WEBKIT_WEB_EXTENSION_H_INSIDE__) && !defined(BUILDING_WEBKIT)
+    "gtk": '''#if !defined(__WEBKIT_H_INSIDE__) && !defined(__WEBKIT_WEB_PROCESS_EXTENSION_H_INSIDE__) && !defined(BUILDING_WEBKIT)
 #error \"Only <webkit2/webkit2.h> can be included directly.\"
 #endif''',
-    "wpe": '''#if !defined(__WEBKIT_H_INSIDE__) && !defined(__WEBKIT_WEB_EXTENSION_H_INSIDE__) && !defined(BUILDING_WEBKIT)
+    "wpe2": '''#if !defined(__WEBKIT_H_INSIDE__) && !defined(__WEBKIT_WEB_PROCESS_EXTENSION_H_INSIDE__) && !defined(BUILDING_WEBKIT)
+#error \"Only <wpe/webkit.h> can be included directly.\"
+#endif''',
+    "wpe": '''#if !defined(__WEBKIT_H_INSIDE__) && !defined(__WEBKIT_WEB_PROCESS_EXTENSION_H_INSIDE__) && !defined(BUILDING_WEBKIT)
 #error \"Only <wpe/webkit.h> can be included directly.\"
 #endif'''
 }
@@ -65,6 +74,7 @@ SHARED_API_SINGLE_HEADER_CHECK = {
 API_INCLUDE_PREFIX = {
     "gtk4": "webkit",
     "gtk": "webkit",
+    "wpe2": "wpe",
     "wpe": "wpe"
 }
 
@@ -83,6 +93,8 @@ def main(args):
 
     if port == "gtk" and "-DUSE_GTK4=1" in unifdef_args:
         port = "gtk4"
+    if port == "wpe" and "-DENABLE_2022_GLIB_API=1" in unifdef_args:
+        port = "wpe2"
 
     input_data = ""
     with open(input, "r", encoding="utf-8") as fd:
@@ -100,7 +112,7 @@ def main(args):
                 input_data += expand_ifdefs(line)
 
     command = [unifdef, "-x1", "-o%s" % output] + unifdef_args + ["-"]
-    p = subprocess.Popen(command, stdin=subprocess.PIPE, text=True, encoding="utf-8")
+    p = subprocess.Popen(command, stdin=subprocess.PIPE, universal_newlines=True, encoding="utf-8")
     p.communicate(input_data)
 
     # unifdef returns 1 when no changes were made and output file is unmodified.

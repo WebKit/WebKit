@@ -26,7 +26,7 @@
 
 namespace WebCore {
 
-LocalCurrentGraphicsContext::LocalCurrentGraphicsContext(GraphicsContext& graphicsContext)
+LocalCurrentGraphicsContext::LocalCurrentGraphicsContext(GraphicsContext& graphicsContext, bool isFlipped)
     : m_savedGraphicsContext(graphicsContext)
 {
     m_savedGraphicsContext.save();
@@ -42,7 +42,7 @@ LocalCurrentGraphicsContext::LocalCurrentGraphicsContext(GraphicsContext& graphi
         return;
 
     m_savedNSGraphicsContext = [NSGraphicsContext currentContext];
-    NSGraphicsContext* newContext = [NSGraphicsContext graphicsContextWithCGContext:cgContext flipped:YES];
+    NSGraphicsContext* newContext = [NSGraphicsContext graphicsContextWithCGContext:cgContext flipped:isFlipped];
     [NSGraphicsContext setCurrentContext:newContext];
     m_didSetGraphicsContext = true;
 }

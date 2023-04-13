@@ -43,12 +43,15 @@ public:
 private:
     ScrollingTreeStickyNodeCocoa(ScrollingTree&, ScrollingNodeID);
 
-    void commitStateBeforeChildren(const ScrollingStateNode&) final;
+    bool commitStateBeforeChildren(const ScrollingStateNode&) final;
     void applyLayerPositions() final WTF_REQUIRES_LOCK(scrollingTree().treeLock());
     FloatPoint layerTopLeft() const final;
     CALayer* layer() const final { return m_layer.get(); }
 
     RetainPtr<CALayer> m_layer;
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+    RetainPtr<CALayer> m_interactionRegionsLayer;
+#endif
 };
 
 } // namespace WebCore

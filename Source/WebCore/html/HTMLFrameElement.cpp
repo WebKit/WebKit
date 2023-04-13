@@ -25,10 +25,10 @@
 #include "HTMLFrameElement.h"
 
 #include "ElementInlines.h"
-#include "Frame.h"
 #include "HTMLFrameSetElement.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
+#include "LocalFrame.h"
 #include "RenderFrame.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -42,7 +42,6 @@ inline HTMLFrameElement::HTMLFrameElement(const QualifiedName& tagName, Document
     : HTMLFrameElementBase(tagName, document)
 {
     ASSERT(hasTagName(frameTag));
-    setHasCustomStyleResolveCallbacks();
 }
 
 Ref<HTMLFrameElement> HTMLFrameElement::create(const QualifiedName& tagName, Document& document)
@@ -81,17 +80,17 @@ int HTMLFrameElement::defaultTabIndex() const
     return 0;
 }
 
-void HTMLFrameElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void HTMLFrameElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     if (name == frameborderAttr) {
-        m_frameBorder = parseHTMLInteger(value).value_or(0);
-        m_frameBorderSet = !value.isNull();
+        m_frameBorder = parseHTMLInteger(newValue).value_or(0);
+        m_frameBorderSet = !newValue.isNull();
         // FIXME: If we are already attached, this has no effect.
     } else if (name == noresizeAttr) {
         if (auto* renderer = this->renderer())
             renderer->updateFromElement();
     } else
-        HTMLFrameElementBase::parseAttribute(name, value);
+        HTMLFrameElementBase::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }
 
 } // namespace WebCore

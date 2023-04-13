@@ -24,18 +24,22 @@
 
 <script>
     if (window.accessibilityController) {
-        let output = "This tests that the aria-activedescendant attributes works properly.\n\n";
+        window.jsTestIsAsync = true;
+        var output = "This tests that the aria-activedescendant attributes works properly.\n\n";
+        var axtree, activeDescendant, newActiveDescendant;
+        setTimeout(function() {
+            axtree = accessibilityController.rootElement.childAtIndex(0).childAtIndex(0);
+            activeDescendant = axtree.childAtIndex(0);
+            output += expect("axtree.selectedRowAtIndex(0).isEqual(activeDescendant)", "true");
 
-        var axtree = accessibilityController.rootElement.childAtIndex(0).childAtIndex(0);
-        var activeDescendant = axtree.childAtIndex(0);
-        output += expect("axtree.selectedRowAtIndex(0).isEqual(activeDescendant)", "true");
+            newActiveDescendant = axtree.childAtIndex(2);
+            document.getElementById("tree0").setAttribute("aria-activedescendant", "tree0_item0_1");
+            output += expect("axtree.selectedRowAtIndex(0).isEqual(newActiveDescendant)", "true");
 
-        var newActiveDescendant = axtree.childAtIndex(2);
-        document.getElementById("tree0").setAttribute("aria-activedescendant", "tree0_item0_1");
-        output += expect("axtree.selectedRowAtIndex(0).isEqual(newActiveDescendant)", "true");
-
-        debug(output);
-        tree0.style.visibility = "hidden";
+            debug(output);
+            tree0.style.visibility = "hidden";
+            finishJSTest();
+        }, 0);
     }
 </script>
 </body>

@@ -41,9 +41,8 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(MathMLMathElement);
 using namespace MathMLNames;
 
 inline MathMLMathElement::MathMLMathElement(const QualifiedName& tagName, Document& document)
-    : MathMLRowElement(tagName, document)
+    : MathMLRowElement(tagName, document, CreateMathMLMathElement)
 {
-    setHasCustomStyleResolveCallbacks();
 }
 
 Ref<MathMLMathElement> MathMLMathElement::create(const QualifiedName& tagName, Document& document)
@@ -56,7 +55,7 @@ RenderPtr<RenderElement> MathMLMathElement::createElementRenderer(RenderStyle&& 
     return createRenderer<RenderMathMLMath>(*this, WTFMove(style));
 }
 
-void MathMLMathElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void MathMLMathElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     bool mathVariantAttribute = name == mathvariantAttr;
     if (mathVariantAttribute)
@@ -64,7 +63,7 @@ void MathMLMathElement::parseAttribute(const QualifiedName& name, const AtomStri
     if ((mathVariantAttribute) && renderer())
         MathMLStyle::resolveMathMLStyleTree(renderer());
 
-    MathMLElement::parseAttribute(name, value);
+    MathMLElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }
 
 void MathMLMathElement::didAttachRenderers()

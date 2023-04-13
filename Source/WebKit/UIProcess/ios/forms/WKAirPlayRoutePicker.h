@@ -25,8 +25,6 @@
 
 #if PLATFORM(IOS_FAMILY) && ENABLE(AIRPLAY_PICKER)
 
-#if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
-
 #import <Foundation/Foundation.h>
 
 namespace WebCore {
@@ -38,19 +36,6 @@ enum class RouteSharingPolicy : uint8_t;
 @interface WKAirPlayRoutePicker : NSObject
 - (void)showFromView:(UIView *)view routeSharingPolicy:(WebCore::RouteSharingPolicy)policy routingContextUID:(NSString *)contextUID hasVideo:(BOOL)hasVideo;
 @end
-
-#else
-
-#import <UIKit/UIPopoverController.h>
-
-@class WKContentView;
-
-@interface WKAirPlayRoutePicker : UIView <UIPopoverControllerDelegate>
-- (instancetype)initWithView:(WKContentView *)view;
-- (void)show:(BOOL)hasVideo fromRect:(CGRect)elementRect;
-@end
-
-#endif
 
 #endif // PLATFORM(IOS_FAMILY) && ENABLE(AIRPLAY_PICKER)
 

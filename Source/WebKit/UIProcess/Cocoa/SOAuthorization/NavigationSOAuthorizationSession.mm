@@ -28,6 +28,7 @@
 
 #if HAVE(APP_SSO)
 
+#import "PageLoadState.h"
 #import "WebPageProxy.h"
 #import <WebCore/ResourceResponse.h>
 

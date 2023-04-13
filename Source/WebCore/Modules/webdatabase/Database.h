@@ -48,7 +48,7 @@ class SQLTransactionCoordinator;
 class SQLTransactionErrorCallback;
 class SQLTransactionWrapper;
 class VoidCallback;
-struct SecurityOriginData;
+class SecurityOriginData;
 
 using DatabaseGUID = int;
 

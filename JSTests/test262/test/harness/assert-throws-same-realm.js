@@ -4,7 +4,7 @@
 /*---
 description: >
     Functions that throw instances of the realm specified constructor function
-    satisfy the assertion, without cross realms collisions.
+    do not satisfy the assertion with cross realms collisions.
 ---*/
 
 var intrinsicTypeError = TypeError; 

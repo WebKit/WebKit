@@ -209,9 +209,9 @@ namespace JSC {
         }
 
 #if OS(WINDOWS) && CPU(X86_64)
-        Call appendCallWithSlowPathReturnType(const CodePtr<CFunctionPtrTag> function)
+        Call appendCallWithUGPRPair(const CodePtr<CFunctionPtrTag> function)
         {
-            Call functionCall = callWithSlowPathReturnType(OperationPtrTag);
+            Call functionCall = callWithUGPRPair(OperationPtrTag);
             m_farCalls.append(FarCallRecord(functionCall, function.retagged<OperationPtrTag>()));
             return functionCall;
         }
@@ -589,6 +589,7 @@ namespace JSC {
         void emitSlow_op_jstricteq(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_jnstricteq(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_loop_hint(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_enter(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_check_traps(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_mod(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_pow(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
@@ -625,6 +626,8 @@ namespace JSC {
         void emitVarInjectionCheck(bool needsVarInjectionChecks, GPRReg);
         void emitVarReadOnlyCheck(ResolveType, GPRReg scratchGPR);
         void emitNotifyWriteWatchpoint(GPRReg pointerToSet);
+        void emitGetScope(VirtualRegister destination);
+        void emitCheckTraps();
 
         bool isKnownCell(VirtualRegister);
 
@@ -745,7 +748,7 @@ namespace JSC {
             if constexpr (is64BitType<typename FunctionTraits<OperationType>::ResultType>::value)
                 return appendCallWithExceptionCheck(operation);
             updateTopCallFrame();
-            MacroAssembler::Call call = appendCallWithSlowPathReturnType(operation);
+            MacroAssembler::Call call = appendCallWithUGPRPair(operation);
             exceptionCheck();
             return call;
         }
@@ -803,7 +806,7 @@ namespace JSC {
             // x64 Windows cannot use standard call when the return type is larger than 64 bits.
             if constexpr (is64BitType<typename FunctionTraits<OperationType>::ResultType>::value)
                 return appendCall(operation);
-            return appendCallWithSlowPathReturnType(operation);
+            return appendCallWithUGPRPair(operation);
         }
 #else // OS(WINDOWS) && CPU(X86_64)
         template<typename OperationType, typename... Args>

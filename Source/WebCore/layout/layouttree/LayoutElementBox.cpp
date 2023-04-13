@@ -103,19 +103,45 @@ const Box* ElementBox::lastInFlowOrFloatingChild() const
 
 void ElementBox::appendChild(UniqueRef<Box> childRef)
 {
+    insertChild(WTFMove(childRef), m_lastChild.get());
+}
+
+void ElementBox::insertChild(UniqueRef<Box> childRef, Box* beforeChild)
+{
     auto childBox = childRef.moveToUniquePtr();
     ASSERT(!childBox->m_parent);
     ASSERT(!childBox->m_previousSibling);
     ASSERT(!childBox->m_nextSibling);
 
     childBox->m_parent = this;
-    childBox->m_previousSibling = m_lastChild;
 
-    auto& nextOrFirst = m_lastChild ? m_lastChild->m_nextSibling : m_firstChild;
-    ASSERT(!nextOrFirst);
+    if (!m_firstChild || (beforeChild && !beforeChild->m_nextSibling)) {
+        // Append as first and/or last.
+        childBox->m_previousSibling = m_lastChild;
+        auto& nextOrFirst = m_lastChild ? m_lastChild->m_nextSibling : m_firstChild;
+        ASSERT(!nextOrFirst);
 
-    m_lastChild = childBox.get();
-    nextOrFirst = WTFMove(childBox);
+        m_lastChild = childBox.get();
+        nextOrFirst = WTFMove(childBox);
+        return;
+    }
+
+    if (!beforeChild) {
+        // Insert as first.
+        ASSERT(m_firstChild && m_lastChild);
+        m_firstChild->m_previousSibling = childBox.get();
+        childBox->m_nextSibling = WTFMove(m_firstChild);
+        m_firstChild = WTFMove(childBox);
+        return;
+    }
+
+    ASSERT(&beforeChild->parent() == this);
+    auto* nextSibling = beforeChild->m_nextSibling.get();
+    ASSERT(nextSibling);
+    childBox->m_previousSibling = beforeChild;
+    childBox->m_nextSibling = WTFMove(beforeChild->m_nextSibling);
+    nextSibling->m_previousSibling = childBox.get();
+    beforeChild->m_nextSibling = WTFMove(childBox);
 }
 
 void ElementBox::destroyChildren()

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,6 +40,7 @@
 #include "WebPage.h"
 #include "WebProcess.h"
 #include <JavaScriptCore/TypedArrayInlines.h>
+#include <WebCore/FontCustomPlatformData.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebKit {
@@ -82,6 +83,8 @@ void RemoteRenderingBackendProxy::ensureGPUProcessConnection()
     if (!m_streamConnection) {
         static constexpr auto connectionBufferSizeLog2 = 21;
         auto [streamConnection, serverHandle] = IPC::StreamClientConnection::create(connectionBufferSizeLog2);
+        if (!streamConnection)
+            CRASH();
         m_streamConnection = WTFMove(streamConnection);
         m_streamConnection->open(*this, m_dispatcher);
 
@@ -232,7 +235,7 @@ RefPtr<ShareableBitmap> RemoteRenderingBackendProxy::getShareableBitmap(Renderin
 
 RefPtr<Image> RemoteRenderingBackendProxy::getFilteredImage(RenderingResourceIdentifier imageBuffer, Filter& filter)
 {
-    auto sendResult = sendSync(Messages::RemoteRenderingBackend::GetFilteredImageForImageBuffer(imageBuffer, IPC::FilterReference { filter }));
+    auto sendResult = sendSync(Messages::RemoteRenderingBackend::GetFilteredImageForImageBuffer(imageBuffer, filter));
     auto [handle] = sendResult.takeReplyOr(ShareableBitmapHandle { });
     if (handle.isNull())
         return { };
@@ -250,9 +253,15 @@ void RemoteRenderingBackendProxy::cacheNativeImage(const ShareableBitmapHandle& 
     send(Messages::RemoteRenderingBackend::CacheNativeImage(handle, renderingResourceIdentifier));
 }
 
-void RemoteRenderingBackendProxy::cacheFont(Ref<Font>&& font)
+void RemoteRenderingBackendProxy::cacheFont(const WebCore::Font::Attributes& fontAttributes, const WebCore::FontPlatformData::Attributes& platformData, std::optional<WebCore::RenderingResourceIdentifier> ident)
 {
-    send(Messages::RemoteRenderingBackend::CacheFont(WTFMove(font)));
+    send(Messages::RemoteRenderingBackend::CacheFont(fontAttributes, platformData, ident));
+}
+
+void RemoteRenderingBackendProxy::cacheFontCustomPlatformData(Ref<const FontCustomPlatformData>&& customPlatformData)
+{
+    Ref<FontCustomPlatformData> data = adoptRef(const_cast<FontCustomPlatformData&>(customPlatformData.leakRef()));
+    send(Messages::RemoteRenderingBackend::CacheFontCustomPlatformData(WTFMove(data)));
 }
 
 void RemoteRenderingBackendProxy::cacheDecomposedGlyphs(Ref<DecomposedGlyphs>&& decomposedGlyphs)
@@ -260,16 +269,34 @@ void RemoteRenderingBackendProxy::cacheDecomposedGlyphs(Ref<DecomposedGlyphs>&& 
     send(Messages::RemoteRenderingBackend::CacheDecomposedGlyphs(WTFMove(decomposedGlyphs)));
 }
 
+void RemoteRenderingBackendProxy::cacheGradient(Ref<Gradient>&& gradient)
+{
+    auto renderingResourceIdentifier = gradient->renderingResourceIdentifier();
+    send(Messages::RemoteRenderingBackend::CacheGradient(WTFMove(gradient), renderingResourceIdentifier));
+}
+
 void RemoteRenderingBackendProxy::releaseAllRemoteResources()
 {
+    if (!m_streamConnection)
+        return;
     send(Messages::RemoteRenderingBackend::ReleaseAllResources());
 }
 
-void RemoteRenderingBackendProxy::releaseRemoteResource(RenderingResourceIdentifier renderingResourceIdentifier)
+void RemoteRenderingBackendProxy::releaseRenderingResource(RenderingResourceIdentifier renderingResourceIdentifier)
 {
-    send(Messages::RemoteRenderingBackend::ReleaseResource(renderingResourceIdentifier));
+    if (!m_streamConnection)
+        return;
+    send(Messages::RemoteRenderingBackend::ReleaseRenderingResource(renderingResourceIdentifier));
 }
 
+void RemoteRenderingBackendProxy::releaseAllImageResources()
+{
+    if (!m_streamConnection)
+        return;
+    send(Messages::RemoteRenderingBackend::ReleaseAllImageResources());
+}
+
+#if PLATFORM(COCOA)
 auto RemoteRenderingBackendProxy::prepareBuffersForDisplay(const Vector<LayerPrepareBuffersData>& prepareBuffersInput) -> Vector<SwapBuffersResult>
 {
     if (prepareBuffersInput.isEmpty())
@@ -313,6 +340,8 @@ auto RemoteRenderingBackendProxy::prepareBuffersForDisplay(const Vector<LayerPre
         });
     }
 
+    LOG_WITH_STREAM(RemoteLayerBuffers, stream << "RemoteRenderingBackendProxy::prepareBuffersForDisplay - input buffers  " << inputData);
+
     Vector<PrepareBackingStoreBuffersOutputData> outputData;
     auto sendResult = sendSync(Messages::RemoteRenderingBackend::PrepareBuffersForDisplay(inputData));
     if (!sendResult) {
@@ -324,6 +353,8 @@ auto RemoteRenderingBackendProxy::prepareBuffersForDisplay(const Vector<LayerPre
         std::tie(outputData) = sendResult.takeReply();
 
     RELEASE_ASSERT_WITH_MESSAGE(inputData.size() == outputData.size(), "PrepareBuffersForDisplay: mismatched buffer vector sizes");
+
+    LOG_WITH_STREAM(RemoteLayerBuffers, stream << "RemoteRenderingBackendProxy::prepareBuffersForDisplay - output buffers " << outputData);
 
     auto fetchBufferWithIdentifier = [&](std::optional<RenderingResourceIdentifier> identifier, std::optional<ImageBufferBackendHandle>&& handle = std::nullopt, bool isFrontBuffer = false) -> RefPtr<ImageBuffer> {
         if (!identifier)
@@ -365,6 +396,7 @@ auto RemoteRenderingBackendProxy::prepareBuffersForDisplay(const Vector<LayerPre
 
     return result;
 }
+#endif
 
 void RemoteRenderingBackendProxy::markSurfacesVolatile(Vector<WebCore::RenderingResourceIdentifier>&& identifiers, CompletionHandler<void(bool)>&& completionHandler)
 {

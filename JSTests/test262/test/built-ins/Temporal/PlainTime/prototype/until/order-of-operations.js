@@ -31,17 +31,25 @@ const expected = [
   "get other.second",
   "get other.second.valueOf",
   "call other.second.valueOf",
-  // GetDifferenceSettings
+  // CopyDataProperties
+  "ownKeys options",
+  "getOwnPropertyDescriptor options.roundingIncrement",
+  "get options.roundingIncrement",
+  "getOwnPropertyDescriptor options.roundingMode",
+  "get options.roundingMode",
+  "getOwnPropertyDescriptor options.largestUnit",
   "get options.largestUnit",
+  "getOwnPropertyDescriptor options.smallestUnit",
+  "get options.smallestUnit",
+  "getOwnPropertyDescriptor options.additional",
+  "get options.additional",
+  // GetDifferenceSettings
   "get options.largestUnit.toString",
   "call options.largestUnit.toString",
-  "get options.roundingIncrement",
   "get options.roundingIncrement.valueOf",
   "call options.roundingIncrement.valueOf",
-  "get options.roundingMode",
   "get options.roundingMode.toString",
   "call options.roundingMode.toString",
-  "get options.smallestUnit",
   "get options.smallestUnit.toString",
   "call options.smallestUnit.toString",
 ];
@@ -60,10 +68,11 @@ const other = TemporalHelpers.propertyBagObserver(actual, {
 }, "other");
 
 const options = TemporalHelpers.propertyBagObserver(actual, {
-  smallestUnit: "nanoseconds",
-  largestUnit: "hours",
-  roundingMode: "trunc",
   roundingIncrement: 1,
+  roundingMode: "trunc",
+  largestUnit: "hours",
+  smallestUnit: "nanoseconds",
+  additional: true,
 }, "options");
 
 const result = instance.until(other, options);

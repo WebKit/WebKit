@@ -424,6 +424,8 @@ protected:
         case SExt8:
         case SExt16:
         case Trunc:
+        case SExt8To64:
+        case SExt16To64:
         case SExt32:
         case ZExt32:
         case FloatToDouble:
@@ -536,6 +538,8 @@ protected:
         case VectorShr:
         case VectorMulSat:
         case VectorAvgRound:
+        case VectorMulByElement:
+        case VectorShiftByVector:
             return 2 * sizeof(Value*);
         case Select:
         case AtomicWeakCAS:
@@ -656,6 +660,8 @@ private:
         case SExt8:
         case SExt16:
         case Trunc:
+        case SExt8To64:
+        case SExt16To64:
         case SExt32:
         case ZExt32:
         case FloatToDouble:
@@ -684,7 +690,7 @@ private:
         case VectorPromote:
         case VectorDemote:
         case VectorBitmask:
-        case VectorAnyTrue: 
+        case VectorAnyTrue:
         case VectorAllTrue:
         case VectorExtaddPairwise:
         case VectorDupElement:
@@ -750,6 +756,8 @@ private:
         case VectorShr:
         case VectorMulSat:
         case VectorAvgRound:
+        case VectorMulByElement:
+        case VectorShiftByVector:
             if (UNLIKELY(numArgs != 2))
                 badKind(kind, numArgs);
             return Two;
@@ -856,8 +864,9 @@ private:
     NO_RETURN_DUE_TO_CRASH static void badKind(Kind, unsigned);
 
 #if ASSERT_ENABLED
-    String m_compilerConstructionSite { generateCompilerConstructionSite() };
+    String m_compilerConstructionSite { emptyString() };
 
+public:
     static String generateCompilerConstructionSite();
 #endif
 

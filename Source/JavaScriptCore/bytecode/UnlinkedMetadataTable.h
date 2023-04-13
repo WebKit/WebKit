@@ -34,13 +34,32 @@ namespace JSC {
 class VM;
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(MetadataTable);
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(UnlinkedMetadataTable);
 
 class MetadataTable;
 
+#if ENABLE(METADATA_STATISTICS)
+struct MetadataStatistics {
+    static size_t unlinkedMetadataCount;
+    static size_t size32MetadataCount;
+    static size_t totalMemory;
+    static size_t perOpcodeCount[NUMBER_OF_BYTECODE_WITH_METADATA];
+    static size_t numberOfCopiesFromLinking;
+    static size_t linkingCopyMemory;
+
+    static void reportMetadataStatistics();
+};
+#endif
+
+
 class UnlinkedMetadataTable : public RefCounted<UnlinkedMetadataTable> {
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(UnlinkedMetadataTable);
     friend class LLIntOffsetsExtractor;
     friend class MetadataTable;
     friend class CachedMetadataTable;
+#if ENABLE(METADATA_STATISTICS)
+    friend struct MetadataStatistics;
+#endif
 public:
     static constexpr unsigned s_maxMetadataAlignment = 8;
 

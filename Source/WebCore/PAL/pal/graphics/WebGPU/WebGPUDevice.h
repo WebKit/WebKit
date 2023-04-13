@@ -93,13 +93,12 @@ public:
     SupportedLimits& limits() { return m_limits; }
     const SupportedLimits& limits() const { return m_limits; }
 
-    virtual Queue& queue() = 0;
+    virtual Ref<Queue> queue() = 0;
 
     virtual void destroy() = 0;
 
     virtual Ref<Buffer> createBuffer(const BufferDescriptor&) = 0;
     virtual Ref<Texture> createTexture(const TextureDescriptor&) = 0;
-    virtual Ref<Texture> createSurfaceTexture(const TextureDescriptor&, const PresentationContext&) = 0;
     virtual Ref<Sampler> createSampler(const SamplerDescriptor&) = 0;
     virtual Ref<ExternalTexture> importExternalTexture(const ExternalTextureDescriptor&) = 0;
 
@@ -110,8 +109,8 @@ public:
     virtual Ref<ShaderModule> createShaderModule(const ShaderModuleDescriptor&) = 0;
     virtual Ref<ComputePipeline> createComputePipeline(const ComputePipelineDescriptor&) = 0;
     virtual Ref<RenderPipeline> createRenderPipeline(const RenderPipelineDescriptor&) = 0;
-    virtual void createComputePipelineAsync(const ComputePipelineDescriptor&, CompletionHandler<void(Ref<ComputePipeline>&&)>&&) = 0;
-    virtual void createRenderPipelineAsync(const RenderPipelineDescriptor&, CompletionHandler<void(Ref<RenderPipeline>&&)>&&) = 0;
+    virtual void createComputePipelineAsync(const ComputePipelineDescriptor&, CompletionHandler<void(RefPtr<ComputePipeline>&&)>&&) = 0;
+    virtual void createRenderPipelineAsync(const RenderPipelineDescriptor&, CompletionHandler<void(RefPtr<RenderPipeline>&&)>&&) = 0;
 
     virtual Ref<CommandEncoder> createCommandEncoder(const std::optional<CommandEncoderDescriptor>&) = 0;
     virtual Ref<RenderBundleEncoder> createRenderBundleEncoder(const RenderBundleEncoderDescriptor&) = 0;

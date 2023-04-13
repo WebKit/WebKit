@@ -31,10 +31,11 @@
 
 namespace WebKit {
 
-WebNotification::WebNotification(const WebCore::NotificationData& data, WebPageProxyIdentifier pageIdentifier, IPC::Connection& sourceConnection)
+WebNotification::WebNotification(const WebCore::NotificationData& data, WebPageProxyIdentifier pageIdentifier, const std::optional<UUID>& dataStoreIdentifier, IPC::Connection& sourceConnection)
     : m_data(data)
     , m_origin(API::SecurityOrigin::createFromString(data.originString))
     , m_pageIdentifier(pageIdentifier)
+    , m_dataStoreIdentifier(dataStoreIdentifier)
     , m_sourceConnection(sourceConnection)
 {
 }

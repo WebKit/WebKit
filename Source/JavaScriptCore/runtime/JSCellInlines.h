@@ -350,8 +350,7 @@ ALWAYS_INLINE JSValue JSCell::fastGetOwnProperty(VM& vm, Structure& structure, P
 
 inline bool JSCell::canUseFastGetOwnProperty(const Structure& structure)
 {
-    return !structure.hasGetterSetterProperties() 
-        && !structure.hasCustomGetterSetterProperties()
+    return !structure.hasAnyKindOfGetterSetterProperties()
         && !structure.typeInfo().overridesGetOwnPropertySlot();
 }
 

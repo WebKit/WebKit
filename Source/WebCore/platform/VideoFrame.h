@@ -58,6 +58,13 @@ struct ComputedPlaneLayout {
     size_t sourceWidthBytes { 0 };
 };
 
+enum class VideoFrameRotation : uint16_t {
+    None = 0,
+    UpsideDown = 180,
+    Right = 90,
+    Left = 270,
+};
+
 // A class representing a video frame from a decoder, capture source, or similar.
 class VideoFrame : public ThreadSafeRefCounted<VideoFrame> {
 public:
@@ -69,12 +76,7 @@ public:
     static RefPtr<VideoFrame> createBGRA(Span<const uint8_t>, size_t width, size_t height, const ComputedPlaneLayout&, PlatformVideoColorSpace&&);
     static RefPtr<VideoFrame> createI420(Span<const uint8_t>, size_t width, size_t height, const ComputedPlaneLayout&, const ComputedPlaneLayout&, const ComputedPlaneLayout&, PlatformVideoColorSpace&&);
 
-    enum class Rotation {
-        None = 0,
-        UpsideDown = 180,
-        Right = 90,
-        Left = 270,
-    };
+    using Rotation = VideoFrameRotation;
 
     MediaTime presentationTime() const { return m_presentationTime; }
     Rotation rotation() const { return m_rotation; }
@@ -116,20 +118,6 @@ private:
     const bool m_isMirrored;
     const Rotation m_rotation;
     const PlatformVideoColorSpace m_colorSpace;
-};
-
-}
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::VideoFrame::Rotation> {
-    using values = EnumValues<
-        WebCore::VideoFrame::Rotation,
-        WebCore::VideoFrame::Rotation::None,
-        WebCore::VideoFrame::Rotation::UpsideDown,
-        WebCore::VideoFrame::Rotation::Right,
-        WebCore::VideoFrame::Rotation::Left
-    >;
 };
 
 }

@@ -56,7 +56,7 @@ public:
 
     void clearAllProcessesForSession(PAL::SessionID);
 
-    enum class ShouldShutDownProcess { No, Yes };
+    enum class ShouldShutDownProcess : bool { No, Yes };
     void removeProcess(WebProcessProxy&, ShouldShutDownProcess);
     static void setCachedProcessSuspensionDelayForTesting(Seconds);
 

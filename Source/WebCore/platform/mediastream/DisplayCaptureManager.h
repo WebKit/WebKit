@@ -39,7 +39,7 @@ public:
         String m_application;
     };
 
-    virtual void windowDevices(Vector<WindowCaptureDevice>&) { }
+    virtual bool requiresCaptureDevicesEnumeration() const { return false; }
 };
 
 } // namespace WebCore

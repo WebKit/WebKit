@@ -47,6 +47,8 @@ public:
     class Client {
     public:
         virtual uint64_t nativeSurfaceHandleForCompositing() = 0;
+        virtual void didCreateGLContext() = 0;
+        virtual void willDestroyGLContext() = 0;
         virtual void didDestroyGLContext() = 0;
 
         virtual void resize(const WebCore::IntSize&) = 0;
@@ -70,7 +72,7 @@ public:
 
     void forceRepaint();
 
-    RefPtr<WebCore::DisplayRefreshMonitor> displayRefreshMonitor(WebCore::PlatformDisplayID);
+    WebCore::DisplayRefreshMonitor& displayRefreshMonitor() const;
 
     void frameComplete();
     void targetRefreshRateDidChange(unsigned);
@@ -88,6 +90,8 @@ private:
     void sceneUpdateFinished();
 
     void createGLContext();
+
+    void displayUpdateFired();
 
     Client& m_client;
     RefPtr<CoordinatedGraphicsScene> m_scene;
@@ -109,6 +113,12 @@ private:
 
         bool clientRendersNextFrame { false };
     } m_attributes;
+
+    struct {
+        WebCore::PlatformDisplayID displayID;
+        WebCore::DisplayUpdate displayUpdate;
+        std::unique_ptr<RunLoop::Timer> updateTimer;
+    } m_display;
 
     Ref<ThreadedDisplayRefreshMonitor> m_displayRefreshMonitor;
 };

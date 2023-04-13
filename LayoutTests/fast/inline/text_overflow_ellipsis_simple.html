@@ -1,0 +1,24 @@
+<style>
+div {
+  font-size: 20px;
+  overflow: hidden;
+  white-space: pre;
+  width: 50px;
+  text-overflow: ellipsis;
+}
+</style>
+<div>ABCD EFGH</div>
+<div style="border-left: 10px solid">ABCD EFGH</div>
+<div style="border-left: 10px solid; padding-left: 20px;">ABCD EFGH</div>
+<div style="border: 10px solid; padding: 20px;">ABCD EFGH</div>
+
+<div style="direction: rtl;">ABCD EFGH</div>
+<div style="direction: rtl; border-left: 10px solid">ABCD EFGH</div>
+<div style="direction: rtl; border-left: 10px solid; padding-left: 20px;">ABCD EFGH</div>
+<div style="direction: rtl; border: 10px solid; padding: 20px;">ABCD EFGH</div>
+
+
+<!-- Needs some painting work, see webkit.org/b/251610
+<div style="writing-mode: vertical-lr; width: auto; height: 50px; border: 10px solid; padding: 20px;">ABCD EFGH</div>
+<div style="writing-mode: vertical-lr; direction: rtl; width: auto; height: 50px; border: 10px solid; padding: 20px;">ABCD EFGH</div>
+ -->

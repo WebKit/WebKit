@@ -58,6 +58,11 @@ public:
     };
     enum class IsSanitized : bool { No, Yes };
 
+    enum class ErrorRecoveryMethod : bool {
+        NoRecovery,
+        HTTPFallback
+    };
+
     bool isNull() const { return m_type == Type::Null; }
     bool isGeneral() const { return m_type == Type::General; }
     bool isAccessControl() const { return m_type == Type::AccessControl; }

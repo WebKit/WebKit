@@ -15,6 +15,7 @@ info: |
               NewTarget
 features: [new.target, async-functions]
 flags: [async]
+includes: [asyncHelpers.js]
 ---*/
 
 (function() { assert.sameValue(delete (new.target), true); })();
@@ -26,6 +27,6 @@ new function() { assert.sameValue(~new.target, -1); };
 (function() { assert.sameValue(!new.target, true); })();
 new function() { assert.sameValue(delete void typeof +-~!(new.target), true); };
 
-(async function() {
+asyncTest(async function() {
   assert.sameValue(await new.target, undefined);
-})().then($DONE, $DONE);
+});

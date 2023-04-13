@@ -21,7 +21,7 @@
 
 #if ENABLE(GEOLOCATION)
 
-#include "DOMWindowProperty.h"
+#include "LocalDOMWindowProperty.h"
 #include "Supplementable.h"
 
 namespace WebCore {

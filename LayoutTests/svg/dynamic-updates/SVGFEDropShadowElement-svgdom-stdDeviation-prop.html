@@ -47,7 +47,13 @@ shouldBe("dropShadowElement.stdDeviationX.baseVal", "0");
 shouldBe("dropShadowElement.stdDeviationY.baseVal", "0");
 
 function repaintTest() {
-    dropShadowElement.setStdDeviation(10, 10);
+    shouldNotThrow('dropShadowElement.setStdDeviation(10, 10)');
+
+    shouldThrow('dropShadowElement.setStdDeviation(NaN, NaN)');
+    shouldThrow('dropShadowElement.setStdDeviation(Infinity, Infinity)');
+    shouldThrow('dropShadowElement.setStdDeviation()');
+    shouldThrow('dropShadowElement.setStdDeviation(0)');
+
     shouldBe("dropShadowElement.stdDeviationX.baseVal", "10");
     shouldBe("dropShadowElement.stdDeviationY.baseVal", "10");
 

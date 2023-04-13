@@ -129,6 +129,22 @@
                 "Enable to cache compiled shaders"
             ],
             "issue": "http://anglebug.com/7036"
+        },
+        {
+            "name": "dump_shader_source",
+            "category": "Features",
+            "description": [
+                "Write shader source to temp directory"
+            ],
+            "issue": "http://anglebug.com/7760"
+        },
+        {
+            "name": "enable_shader_substitution",
+            "category": "Workarounds",
+            "description": [
+                "Check the filesystem for shaders to use instead of those provided through glShaderSource"
+            ],
+            "issue": "http://anglebug.com/7761"
         }
     ]
 }

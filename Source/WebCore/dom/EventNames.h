@@ -61,18 +61,24 @@ namespace WebCore {
     macro(audiostart) \
     macro(autocomplete) \
     macro(autocompleteerror) \
+    macro(backgroundfetchsuccess) \
+    macro(backgroundfetchfail) \
+    macro(backgroundfetchabort) \
+    macro(backgroundfetchclick) \
     macro(beforecopy) \
     macro(beforecut) \
     macro(beforeinput) \
     macro(beforeload) \
     macro(beforepaste) \
     macro(beforeprint) \
+    macro(beforetoggle) \
     macro(beforeunload) \
     macro(beginEvent) \
     macro(blocked) \
     macro(blur) \
     macro(boundary) \
     macro(bufferedamountlow) \
+    macro(bufferedchange) \
     macro(cached) \
     macro(cancel) \
     macro(canplay) \
@@ -122,6 +128,7 @@ namespace WebCore {
     macro(end) \
     macro(endEvent) \
     macro(ended) \
+    macro(endstreaming) \
     macro(enter) \
     macro(enterpictureinpicture) \
     macro(error) \
@@ -223,6 +230,7 @@ namespace WebCore {
     macro(progress) \
     macro(push) \
     macro(pushsubscriptionchange) \
+    macro(qualitychange) \
     macro(ratechange) \
     macro(readystatechange) \
     macro(rejectionhandled) \
@@ -267,6 +275,7 @@ namespace WebCore {
     macro(stalled) \
     macro(start) \
     macro(started) \
+    macro(startstreaming) \
     macro(statechange) \
     macro(stop) \
     macro(storage) \
@@ -371,6 +380,8 @@ public:
     bool isTouchScrollBlockingEventType(const AtomString& eventType) const;
     bool isMouseClickRelatedEventType(const AtomString& eventType) const;
     bool isMouseMoveRelatedEventType(const AtomString& eventType) const;
+    bool isCSSTransitionEventType(const AtomString& eventType) const;
+    bool isCSSAnimationEventType(const AtomString& eventType) const;
 #if ENABLE(GAMEPAD)
     bool isGamepadEventType(const AtomString& eventType) const;
 #endif
@@ -447,6 +458,26 @@ inline bool EventNames::isMouseMoveRelatedEventType(const AtomString& eventType)
     return eventType == mousemoveEvent
         || eventType == mouseoverEvent
         || eventType == mouseoutEvent;
+}
+
+inline bool EventNames::isCSSTransitionEventType(const AtomString& eventType) const
+{
+    return eventType == transitioncancelEvent
+        || eventType == transitionendEvent
+        || eventType == transitionrunEvent
+        || eventType == transitionstartEvent
+        || eventType == webkitTransitionEndEvent;
+}
+
+inline bool EventNames::isCSSAnimationEventType(const AtomString& eventType) const
+{
+    return eventType == animationcancelEvent
+        || eventType == animationendEvent
+        || eventType == animationiterationEvent
+        || eventType == animationstartEvent
+        || eventType == webkitAnimationEndEvent
+        || eventType == webkitAnimationIterationEvent
+        || eventType == webkitAnimationStartEvent;
 }
 
 inline std::array<std::reference_wrapper<const AtomString>, 13> EventNames::touchRelatedEventNames() const

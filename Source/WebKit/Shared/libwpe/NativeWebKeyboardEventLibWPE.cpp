@@ -30,8 +30,8 @@
 
 namespace WebKit {
 
-NativeWebKeyboardEvent::NativeWebKeyboardEvent(struct wpe_input_keyboard_event* event, const String& text, HandledByInputMethod handledByInputMethod, std::optional<Vector<WebCore::CompositionUnderline>>&& preeditUnderlines, std::optional<EditingRange>&& preeditSelectionRange)
-    : WebKeyboardEvent(WebEventFactory::createWebKeyboardEvent(event, text, handledByInputMethod == HandledByInputMethod::Yes, WTFMove(preeditUnderlines), WTFMove(preeditSelectionRange)))
+NativeWebKeyboardEvent::NativeWebKeyboardEvent(struct wpe_input_keyboard_event* event, const String& text, bool isAutoRepeat, HandledByInputMethod handledByInputMethod, std::optional<Vector<WebCore::CompositionUnderline>>&& preeditUnderlines, std::optional<EditingRange>&& preeditSelectionRange)
+    : WebKeyboardEvent(WebEventFactory::createWebKeyboardEvent(event, text, isAutoRepeat, handledByInputMethod == HandledByInputMethod::Yes, WTFMove(preeditUnderlines), WTFMove(preeditSelectionRange)))
 {
 }
 

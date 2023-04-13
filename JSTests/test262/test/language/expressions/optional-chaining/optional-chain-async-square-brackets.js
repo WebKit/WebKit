@@ -11,6 +11,7 @@ info: |
         OptionalChain ?.[Expression]
 features: [optional-chaining]
 flags: [async]
+includes: [asyncHelpers.js]
 ---*/
 
 async function checkAssertions() {
@@ -21,4 +22,4 @@ async function checkAssertions() {
     await Promise.reject(new Error('unreachable'))
   ], undefined);
 }
-checkAssertions().then($DONE, $DONE);
+asyncTest(checkAssertions);

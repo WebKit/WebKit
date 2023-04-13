@@ -36,10 +36,12 @@ class FileSystemStorageHandleRegistry;
 class FileSystemStorageManager : public CanMakeWeakPtr<FileSystemStorageManager> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    FileSystemStorageManager(String&& path, FileSystemStorageHandleRegistry&);
+    using QuotaCheckFunction = Function<void(uint64_t spaceRequested, CompletionHandler<void(bool)>&&)>;
+    FileSystemStorageManager(String&& path, FileSystemStorageHandleRegistry&, QuotaCheckFunction&&);
     ~FileSystemStorageManager();
 
     bool isActive() const;
+    uint64_t allocatedUnusedCapacity() const;
     Expected<WebCore::FileSystemHandleIdentifier, FileSystemStorageError> createHandle(IPC::Connection::UniqueID, FileSystemStorageHandle::Type, String&& path, String&& name, bool createIfNecessary);
     const String& getPath(WebCore::FileSystemHandleIdentifier);
     FileSystemStorageHandle::Type getType(WebCore::FileSystemHandleIdentifier);
@@ -48,12 +50,14 @@ public:
     Expected<WebCore::FileSystemHandleIdentifier, FileSystemStorageError> getDirectory(IPC::Connection::UniqueID);
     bool acquireLockForFile(const String& path, WebCore::FileSystemHandleIdentifier);
     bool releaseLockForFile(const String& path, WebCore::FileSystemHandleIdentifier);
+    void requestSpace(uint64_t spaceRequested, CompletionHandler<void(bool)>&&);
 
 private:
     void close();
 
     String m_path;
     FileSystemStorageHandleRegistry& m_registry;
+    QuotaCheckFunction m_quotaCheckFunction;
     HashMap<IPC::Connection::UniqueID, HashSet<WebCore::FileSystemHandleIdentifier>> m_handlesByConnection;
     HashMap<WebCore::FileSystemHandleIdentifier, std::unique_ptr<FileSystemStorageHandle>> m_handles;
     HashMap<String, WebCore::FileSystemHandleIdentifier> m_lockMap;

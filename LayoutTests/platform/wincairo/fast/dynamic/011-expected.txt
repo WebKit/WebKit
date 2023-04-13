@@ -4,13 +4,13 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock (anonymous) at (0,0) size 784x40
-        RenderInline {SPAN} at (0,0) size 742x39
-          RenderInline {SPAN} at (0,0) size 742x39
-            RenderText {#text} at (0,0) size 742x39
-              text run at (0,0) width 100: "Bug #3810389. "
-              text run at (100,0) width 365: "Make sure we don't crash manipulating blocks inside inlines. "
-              text run at (465,0) width 277: "You should see the numbers 1 and 2 vertically"
-              text run at (0,20) width 140: "stacked below this line."
+        RenderInline {SPAN} at (0,0) size 779x39
+          RenderInline {SPAN} at (0,0) size 779x39
+            RenderText {#text} at (0,0) size 779x39
+              text run at (0,0) width 103: "Bug #3810389. "
+              text run at (103,0) width 386: "Make sure we don't crash manipulating blocks inside inlines. "
+              text run at (489,0) width 290: "You should see the numbers 1 and 2 vertically"
+              text run at (0,20) width 147: "stacked below this line."
       RenderBlock (anonymous) at (0,40) size 784x20
         RenderBlock {DIV} at (0,0) size 784x20
           RenderText {#text} at (0,0) size 8x19

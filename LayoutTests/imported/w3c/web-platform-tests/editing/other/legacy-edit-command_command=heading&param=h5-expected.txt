@@ -1,0 +1,12 @@
+abc
+
+
+PASS Wait for load...
+PASS command: "heading", param: "h5"
+PASS execCommand("heading", false, "h5")
+PASS queryCommandState("heading")
+PASS queryCommandEnabled("heading")
+PASS queryCommandIndeterm("heading")
+PASS queryCommandValue("heading")
+PASS queryCommandSupported("heading")
+

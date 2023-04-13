@@ -42,6 +42,7 @@ class BindGroupLayout;
 class Buffer;
 class CommandBuffer;
 class CommandEncoder;
+class CompositorIntegration;
 class ComputePassEncoder;
 class ComputePipeline;
 class Device;
@@ -68,6 +69,7 @@ class RemoteBindGroupLayout;
 class RemoteBuffer;
 class RemoteCommandBuffer;
 class RemoteCommandEncoder;
+class RemoteCompositorIntegration;
 class RemoteComputePassEncoder;
 class RemoteComputePipeline;
 class RemoteDevice;
@@ -104,6 +106,7 @@ public:
     void addObject(WebGPUIdentifier, RemoteBuffer&);
     void addObject(WebGPUIdentifier, RemoteCommandBuffer&);
     void addObject(WebGPUIdentifier, RemoteCommandEncoder&);
+    void addObject(WebGPUIdentifier, RemoteCompositorIntegration&);
     void addObject(WebGPUIdentifier, RemoteComputePassEncoder&);
     void addObject(WebGPUIdentifier, RemoteComputePipeline&);
     void addObject(WebGPUIdentifier, RemoteDevice&);
@@ -131,6 +134,7 @@ public:
     PAL::WebGPU::Buffer* convertBufferFromBacking(WebGPUIdentifier) final;
     PAL::WebGPU::CommandBuffer* convertCommandBufferFromBacking(WebGPUIdentifier) final;
     PAL::WebGPU::CommandEncoder* convertCommandEncoderFromBacking(WebGPUIdentifier) final;
+    PAL::WebGPU::CompositorIntegration* convertCompositorIntegrationFromBacking(WebGPUIdentifier) final;
     PAL::WebGPU::ComputePassEncoder* convertComputePassEncoderFromBacking(WebGPUIdentifier) final;
     PAL::WebGPU::ComputePipeline* convertComputePipelineFromBacking(WebGPUIdentifier) final;
     PAL::WebGPU::Device* convertDeviceFromBacking(WebGPUIdentifier) final;
@@ -159,6 +163,7 @@ private:
         IPC::ScopedActiveMessageReceiveQueue<RemoteBuffer>,
         IPC::ScopedActiveMessageReceiveQueue<RemoteCommandBuffer>,
         IPC::ScopedActiveMessageReceiveQueue<RemoteCommandEncoder>,
+        IPC::ScopedActiveMessageReceiveQueue<RemoteCompositorIntegration>,
         IPC::ScopedActiveMessageReceiveQueue<RemoteComputePassEncoder>,
         IPC::ScopedActiveMessageReceiveQueue<RemoteComputePipeline>,
         IPC::ScopedActiveMessageReceiveQueue<RemoteDevice>,

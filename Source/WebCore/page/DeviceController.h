@@ -26,8 +26,8 @@
 
 #pragma once
 
-#include "DOMWindow.h"
 #include "Event.h"
+#include "LocalDOMWindow.h"
 #include "Supplementable.h"
 #include "Timer.h"
 #include <wtf/HashCountedSet.h>
@@ -43,10 +43,10 @@ public:
     explicit DeviceController(DeviceClient&);
     virtual ~DeviceController() = default;
 
-    void addDeviceEventListener(DOMWindow&);
-    void removeDeviceEventListener(DOMWindow&);
-    void removeAllDeviceEventListeners(DOMWindow&);
-    bool hasDeviceEventListener(DOMWindow&) const;
+    void addDeviceEventListener(LocalDOMWindow&);
+    void removeDeviceEventListener(LocalDOMWindow&);
+    void removeAllDeviceEventListeners(LocalDOMWindow&);
+    bool hasDeviceEventListener(LocalDOMWindow&) const;
 
     void dispatchDeviceEvent(Event&);
     bool isActive() { return !m_listeners.isEmpty(); }
@@ -58,8 +58,8 @@ public:
 protected:
     void fireDeviceEvent();
 
-    HashCountedSet<RefPtr<DOMWindow>> m_listeners;
-    HashCountedSet<RefPtr<DOMWindow>> m_lastEventListeners;
+    HashCountedSet<RefPtr<LocalDOMWindow>> m_listeners;
+    HashCountedSet<RefPtr<LocalDOMWindow>> m_lastEventListeners;
     DeviceClient& m_client;
     Timer m_timer;
 };

@@ -164,24 +164,18 @@ body[dir=rtl] .details-section > .header::before {
     margin-inline-start: 3px;
 }
 
-.details-section > .content {
-    display: table;
-    width: 100%;
-    border-spacing: 0;
-    border-collapse: collapse;
-}
-
 .details-section.collapsed > .content {
     display: none;
 }
 
 .details-section > .content > .group {
-    display: table-row-group;
+    display: grid;
+    grid-template-columns: [label] minmax(85px, max-content) [value] 1fr;
     border-bottom: 1px solid var(--border-color);
 }
 
-.details-section > .content > .group:has(.row.font-variation) {
-    display: unset; /* Unsets `display: table-row-group` because it affects sizing of child elements that are grid containers. */
+.details-section > .content > .group > * {
+    grid-column: 1 / -1;
 }
 
 .details-section > .content > .group:last-child {
@@ -192,12 +186,13 @@ body[dir=rtl] .details-section > .header::before {
     background-color: var(--background-color-intermediate);
 }
 
-.details-section > .content > .group > .row.simple {
-    display: table-row;
+.details-section > .content > .group:has(> .row.simple:last-child) {
+    padding-block-end: 3px;
 }
 
-.details-section > .content > .group > .row.simple:last-child > * {
-    padding-bottom: 5px !important;
+.details-section > .content > .group > .row.simple {
+    display: grid;
+    grid-template-columns: subgrid;
 }
 
 .details-section > .content > .group > .row.simple.empty {
@@ -208,34 +203,16 @@ body[dir=rtl] .details-section > .header::before {
     font-size: 10px;
 }
 
-.details-section > .content > .group > .row.simple.empty:last-child {
-    display: table-row;
-}
-
-.details-section > .content > .group > .row.simple.empty:last-child > * {
-    display: table-cell;
-    height: 1px;
-    font-size: 0;
-    color: transparent;
-    padding-top: 0;
-    padding-bottom: 3px !important;
-}
-
-.details-section > .content > .group > .row.simple.empty:last-child > * > * {
-    display: none;
-}
-
 .details-section > .content > .group > .row.simple > * {
-    display: table-cell;
     vertical-align: top;
     padding: 5px 4px 2px;
 }
 
 .details-section > .content > .group > .row.simple > .label {
-    width: 85px;
     padding-inline-start: 6px;
     color: hsl(0, 0%, 20%);
     text-align: end;
+    grid-column: label;
 }
 
 .details-section > .content > .group > .row.simple > .value {
@@ -244,6 +221,7 @@ body[dir=rtl] .details-section > .header::before {
     word-wrap: break-word;
     cursor: text;
     -webkit-user-select: text;
+    grid-column: value;
 }
 
 .details-section > .content > .group > .row.simple > .value .go-to-arrow {
@@ -252,12 +230,12 @@ body[dir=rtl] .details-section > .header::before {
     margin-inline-start: 5px;
 }
 
-.details-section > .content > .group > .row:is(.simple, .font-variation):has(.warning) {
+.details-section > .content > .group > .row.simple:has(.warning) {
     background-color: var(--warning-background-color-secondary);
     position: relative;
 }
 
-.details-section > .content > .group > .row:is(.simple, .font-variation) > .warning {
+.details-section > .content > .group > .row.simple > .warning {
     position: absolute;
     right: 0;
     align-self: center;
@@ -281,7 +259,7 @@ body[dir=rtl] .details-section > .header::before {
     word-break: break-all;
 }
 
-.details-section > .content > .group > .row:matches(.empty, .text) {
+.details-section > .content > .group > .row:is(.empty, .text) {
     padding: 0 6px 7px 6px;
     text-align: center;
     color: var(--text-color-secondary);

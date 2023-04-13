@@ -76,7 +76,7 @@ ExceptionOr<Ref<CSSRotate>> CSSRotate::create(CSSFunctionValue& cssFunctionValue
 {
     auto makeRotate = [&](const Function<ExceptionOr<Ref<CSSRotate>>(Vector<RefPtr<CSSNumericValue>>&&)>& create, size_t expectedNumberOfComponents) -> ExceptionOr<Ref<CSSRotate>> {
         Vector<RefPtr<CSSNumericValue>> components;
-        for (auto componentCSSValue : cssFunctionValue) {
+        for (auto& componentCSSValue : cssFunctionValue) {
             auto valueOrException = CSSStyleValueFactory::reifyValue(componentCSSValue, std::nullopt);
             if (valueOrException.hasException())
                 return valueOrException.releaseException();
@@ -204,28 +204,24 @@ ExceptionOr<Ref<DOMMatrix>> CSSRotate::toMatrix()
 
 RefPtr<CSSValue> CSSRotate::toCSSValue() const
 {
-    auto result = CSSFunctionValue::create(is2D() ? CSSValueRotate : CSSValueRotate3d);
-    if (!is2D()) {
-        auto x = m_x->toCSSValue();
-        if (!x)
-            return nullptr;
-        auto y = m_y->toCSSValue();
-        if (!y)
-            return nullptr;
-        auto z = m_z->toCSSValue();
-        if (!z)
-            return nullptr;
-
-        result->append(x.releaseNonNull());
-        result->append(y.releaseNonNull());
-        result->append(z.releaseNonNull());
-    }
-
     auto angle = m_angle->toCSSValue();
     if (!angle)
         return nullptr;
-    result->append(angle.releaseNonNull());
-    return result;
+
+    if (is2D())
+        return CSSFunctionValue::create(CSSValueRotate, angle.releaseNonNull());
+
+    auto x = m_x->toCSSValue();
+    if (!x)
+        return nullptr;
+    auto y = m_y->toCSSValue();
+    if (!y)
+        return nullptr;
+    auto z = m_z->toCSSValue();
+    if (!z)
+        return nullptr;
+
+    return CSSFunctionValue::create(CSSValueRotate3d, x.releaseNonNull(), y.releaseNonNull(), z.releaseNonNull(), angle.releaseNonNull());
 }
 
 } // namespace WebCore

@@ -42,6 +42,7 @@ typedef NS_ENUM(NSInteger, _WKAttestationConveyancePreference) {
     _WKAttestationConveyancePreferenceNone,
     _WKAttestationConveyancePreferenceIndirect,
     _WKAttestationConveyancePreferenceDirect,
+    _WKAttestationConveyancePreferenceEnterprise,
 } WK_API_AVAILABLE(macos(12.0), ios(15.0));
 
 WK_CLASS_AVAILABLE(macos(12.0), ios(15.0))

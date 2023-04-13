@@ -29,6 +29,8 @@
 
 namespace JSC {
 
+class UnlinkedModuleProgramCodeBlock;
+
 class ModuleProgramExecutable final : public GlobalExecutable {
     friend class LLIntOffsetsExtractor;
 public:
@@ -49,6 +51,8 @@ public:
     {
         return bitwise_cast<ModuleProgramCodeBlock*>(Base::codeBlock());
     }
+
+    UnlinkedModuleProgramCodeBlock* getUnlinkedCodeBlock(JSGlobalObject*);
 
     UnlinkedModuleProgramCodeBlock* unlinkedCodeBlock() const
     {

@@ -28,13 +28,13 @@
 
 #if ENABLE(SERVICE_WORKER)
 
-#include "DOMWindow.h"
 #include "DocumentInlines.h"
 #include "EventLoop.h"
 #include "Exception.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSPushPermissionState.h"
 #include "JSPushSubscription.h"
+#include "LocalDOMWindow.h"
 #include "Logging.h"
 #include "NotificationClient.h"
 #include "PushCrypto.h"

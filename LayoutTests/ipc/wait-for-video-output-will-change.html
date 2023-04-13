@@ -1,0 +1,34 @@
+<!DOCTYPE html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] --> 
+<html><head> <script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    setTimeout(() => {
+        testRunner.notifyDone();
+    }, 2000);
+    testRunner.dumpAsText();
+}
+
+function test() {
+    const video = document.createElement('video');
+    const canvas = document.createElement('canvas');
+    if (window.IPC) {
+        IPC.addOutgoingMessageListener("GPU", (msg) => {
+            if (msg.name == IPC.messages.RemoteMediaPlayerProxy_SetShouldDisableSleep.name) {
+                const remoteMediaPlayerProxyConnectionID = msg.destinationID;
+                IPC.sendMessage('GPU', remoteMediaPlayerProxyConnectionID, IPC.messages.RemoteMediaPlayerProxy_SetPreferredDynamicRangeMode.name, [{type: 'uint8_t', value: 175}]);
+                IPC.sendMessage('GPU', remoteMediaPlayerProxyConnectionID, IPC.messages.RemoteMediaPlayerProxy_StartVideoFrameMetadataGathering.name, []);
+                video.srcObject = canvas.captureStream();
+                IPC.sendSyncMessage('GPU', remoteMediaPlayerProxyConnectionID, IPC.messages.RemoteMediaPlayerProxy_ColorSpace.name, 1, []);
+                location.reload();
+            }
+        });
+    }
+    video.src = 'content/test.mp4';
+    video.controls = 1;
+    document.body.appendChild(video);
+}
+</script></head>
+<body onload = 'test()'>
+This test passes if it does not crash.
+</body>
+</html>

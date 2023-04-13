@@ -2,8 +2,8 @@
     "url": "content/test-vorbis.webm",
     "type": "audio/webm; codecs=\"vorbis\"",
     "init": { "offset": 0, "size": 3744 },
-    "duration": 1.33,
+    "duration": 1.325,
     "media": [
-        { "offset": 3744, "size": 10004, "timestamp": 0, "duration": 1.33 }
+        { "offset": 3744, "size": 10004, "timestamp": 0, "duration": 1.3392 }
     ]
 }

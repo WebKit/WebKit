@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,6 +34,7 @@
 #include "ProcessThrottlerClient.h"
 #include "ShareableBitmap.h"
 #include "WebPageProxyIdentifier.h"
+#include <WebCore/IntDegrees.h>
 #include <WebCore/MediaPlayerIdentifier.h>
 #include <WebCore/PageIdentifier.h>
 #include <memory>
@@ -49,9 +50,10 @@
 
 namespace WebCore {
 class CaptureDevice;
+enum class DisplayCapturePromptType : uint8_t;
 struct MockMediaDevice;
 struct ScreenProperties;
-struct SecurityOriginData;
+class SecurityOriginData;
 }
 
 namespace WebKit {
@@ -77,7 +79,8 @@ public:
 
 #if ENABLE(MEDIA_STREAM)
     void setUseMockCaptureDevices(bool);
-    void setOrientationForMediaCapture(uint64_t orientation);
+    void setUseSCContentSharingPicker(bool);
+    void setOrientationForMediaCapture(WebCore::IntDegrees);
     void updateCaptureAccess(bool allowAudioCapture, bool allowVideoCapture, bool allowDisplayCapture, WebCore::ProcessIdentifier, CompletionHandler<void()>&&);
     void updateCaptureOrigin(const WebCore::SecurityOriginData&, WebCore::ProcessIdentifier);
     void addMockMediaDevice(const WebCore::MockMediaDevice&);
@@ -90,9 +93,8 @@ public:
     void updateSandboxAccess(bool allowAudioCapture, bool allowVideoCapture, bool allowDisplayCapture);
 #endif
 
-#if HAVE(SC_CONTENT_SHARING_SESSION)
-    void showWindowPicker(CompletionHandler<void(std::optional<WebCore::CaptureDevice>)>&&);
-    void showScreenPicker(CompletionHandler<void(std::optional<WebCore::CaptureDevice>)>&&);
+#if HAVE(SCREEN_CAPTURE_KIT)
+    void promptForGetDisplayMedia(WebCore::DisplayCapturePromptType, CompletionHandler<void(std::optional<WebCore::CaptureDevice>)>&&);
 #endif
 
     void removeSession(PAL::SessionID);
@@ -113,7 +115,9 @@ public:
     void terminateForTesting();
     void webProcessConnectionCountForTesting(CompletionHandler<void(uint64_t)>&&);
 
+#if ENABLE(VIDEO)
     void requestBitmapImageForCurrentTime(WebCore::ProcessIdentifier, WebCore::MediaPlayerIdentifier, CompletionHandler<void(const ShareableBitmapHandle&)>&&);
+#endif
 
 private:
     explicit GPUProcessProxy();
@@ -168,7 +172,10 @@ private:
     ProcessThrottler::ActivityVariant m_activityFromWebProcesses;
 #if ENABLE(MEDIA_STREAM)
     bool m_useMockCaptureDevices { false };
-    uint64_t m_orientation { 0 };
+    WebCore::IntDegrees m_orientation { 0 };
+#endif
+#if HAVE(SC_CONTENT_SHARING_PICKER)
+    bool m_useSCContentSharingPicker { false };
 #endif
 #if PLATFORM(COCOA)
     bool m_hasSentTCCDSandboxExtension { false };

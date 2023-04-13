@@ -46,6 +46,11 @@ RemoteSampler::RemoteSampler(PAL::WebGPU::Sampler& sampler, WebGPU::ObjectHeap& 
 
 RemoteSampler::~RemoteSampler() = default;
 
+void RemoteSampler::destruct()
+{
+    m_objectHeap.removeObject(m_identifier);
+}
+
 void RemoteSampler::stopListeningForIPC()
 {
     m_streamConnection->stopReceivingMessages(Messages::RemoteSampler::messageReceiverName(), m_identifier.toUInt64());

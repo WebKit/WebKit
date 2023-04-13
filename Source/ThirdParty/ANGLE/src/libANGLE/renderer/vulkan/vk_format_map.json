@@ -220,7 +220,7 @@
         },
         "D32_UNORM": {
             "buffer": "NONE",
-            "image": ["D24_UNORM_S8_UINT", "D32_FLOAT"]
+            "image": ["D24_UNORM_X8_UINT", "D24_UNORM_S8_UINT", "D32_FLOAT"]
         },
         "ETC1_R8G8B8_UNORM_BLOCK": {
             "buffer": "NONE",
@@ -407,10 +407,12 @@
             "buffer_compressed": "R16G16_FLOAT"
         },
         "R16G16B16_UNORM": {
+            "image": ["R16G16B16A16_UNORM", "R32G32B32_FLOAT", "R32G32B32A32_FLOAT"],
             "buffer": ["R16G16B16A16_UNORM", "R32G32B32_FLOAT"],
             "buffer_compressed": ["R16G16B16_FLOAT", "R16G16B16A16_FLOAT"]
         },
         "R16G16B16_SNORM": {
+            "image": ["R16G16B16A16_SNORM", "R32G32B32_FLOAT", "R32G32B32A32_FLOAT"],
             "buffer": ["R16G16B16A16_SNORM", "R32G32B32_FLOAT"],
             "buffer_compressed": ["R16G16B16_FLOAT", "R16G16B16A16_FLOAT"]
         },

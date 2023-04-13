@@ -65,7 +65,7 @@ void PlayStationWebView::setViewSize(WebCore::IntSize viewSize)
     m_viewSize = viewSize;
 }
 
-void PlayStationWebView::setViewState(OptionSet<WebCore::ActivityState::Flag> flags)
+void PlayStationWebView::setViewState(OptionSet<WebCore::ActivityState> flags)
 {
     auto changedFlags = m_viewStateFlags ^ flags;
     m_viewStateFlags = flags;

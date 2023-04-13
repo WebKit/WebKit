@@ -27,13 +27,13 @@
 #import "IOSurface.h"
 
 #import "DestinationColorSpace.h"
-#import "GraphicsContextCG.h"
 #import "HostWindow.h"
 #import "IOSurfacePool.h"
 #import "Logging.h"
 #import "PlatformScreen.h"
 #import "ProcessCapabilities.h"
 #import "ProcessIdentity.h"
+#import <pal/cocoa/QuartzCoreSoftLink.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <wtf/Assertions.h>
 #import <wtf/MachSendRight.h>
@@ -45,20 +45,51 @@
 
 namespace WebCore {
 
-std::unique_ptr<IOSurface> IOSurface::create(IOSurfacePool* pool, IntSize size, const DestinationColorSpace& colorSpace, Format pixelFormat)
+static auto surfaceNameToNSString(IOSurface::Name name)
+{
+    switch (name) {
+    case IOSurface::Name::Default:
+        return @"WebKit";
+    case IOSurface::Name::DOM:
+        return @"WebKit DOM";
+    case IOSurface::Name::Canvas:
+        return @"WebKit Canvas";
+    case IOSurface::Name::GraphicsContextGL:
+        return @"WebKit GraphicsContextGL";
+    case IOSurface::Name::ImageBuffer:
+        return @"WebKit ImageBuffer";
+    case IOSurface::Name::ImageBufferShareableMapped:
+        return @"WebKit ImageBufferShareableMapped";
+    case IOSurface::Name::LayerBacking:
+        return @"WebKit LayerBacking";
+    case IOSurface::Name::MediaPainting:
+        return @"WebKit MediaPainting";
+    case IOSurface::Name::Snapshot:
+        return @"WKWebView Snapshot";
+    case IOSurface::Name::ShareableSnapshot:
+        return @"WKWebView Snapshot (shareable)";
+    case IOSurface::Name::ShareableLocalSnapshot:
+        return @"WKWebView Snapshot (shareable local)";
+    }
+}
+
+std::unique_ptr<IOSurface> IOSurface::create(IOSurfacePool* pool, IntSize size, const DestinationColorSpace& colorSpace, IOSurface::Name name, Format pixelFormat)
 {
     ASSERT(ProcessCapabilities::canUseAcceleratedBuffers());
 
     if (pool) {
         if (auto cachedSurface = pool->takeSurface(size, colorSpace, pixelFormat)) {
-            cachedSurface->releaseGraphicsContext();
             LOG_WITH_STREAM(IOSurface, stream << "IOSurface::create took from pool: " << *cachedSurface);
+            if (cachedSurface->name() != name) {
+                IOSurfaceSetValue(cachedSurface->surface(), kIOSurfaceName, surfaceNameToNSString(name));
+                cachedSurface->setName(name);
+            }
             return cachedSurface;
         }
     }
 
     bool success = false;
-    auto surface = std::unique_ptr<IOSurface>(new IOSurface(size, colorSpace, pixelFormat, success));
+    auto surface = std::unique_ptr<IOSurface>(new IOSurface(size, colorSpace, name, pixelFormat, success));
     if (!success) {
         LOG(IOSurface, "IOSurface::create failed to create %dx%d surface", size.width(), size.height());
         return nullptr;
@@ -92,12 +123,11 @@ std::unique_ptr<IOSurface> IOSurface::createFromImage(IOSurfacePool* pool, CGIma
     size_t width = CGImageGetWidth(image);
     size_t height = CGImageGetHeight(image);
 
-    auto surface = IOSurface::create(pool, IntSize(width, height), DestinationColorSpace { CGImageGetColorSpace(image) });
+    auto surface = IOSurface::create(pool, IntSize(width, height), DestinationColorSpace { CGImageGetColorSpace(image) }, Name::ImageBuffer);
     if (!surface)
         return nullptr;
-    auto surfaceContext = surface->ensurePlatformContext();
-    CGContextDrawImage(surfaceContext, CGRectMake(0, 0, width, height), image);
-    CGContextFlush(surfaceContext);
+    auto context = surface->createPlatformContext();
+    CGContextDrawImage(context.get(), CGRectMake(0, 0, width, height), image);
     return surface;
 }
 
@@ -107,7 +137,7 @@ void IOSurface::moveToPool(std::unique_ptr<IOSurface>&& surface, IOSurfacePool* 
         pool->addSurface(WTFMove(surface));
 }
 
-static NSDictionary *optionsForBiplanarSurface(IntSize size, unsigned pixelFormat, size_t firstPlaneBytesPerPixel, size_t secondPlaneBytesPerPixel)
+static NSDictionary *optionsForBiplanarSurface(IntSize size, unsigned pixelFormat, size_t firstPlaneBytesPerPixel, size_t secondPlaneBytesPerPixel, IOSurface::Name name)
 {
     int width = size.width();
     int height = size.height();
@@ -147,10 +177,11 @@ static NSDictionary *optionsForBiplanarSurface(IntSize size, unsigned pixelForma
         (id)kIOSurfaceCacheMode: @(kIOMapWriteCombineCache),
 #endif
         (id)kIOSurfacePlaneInfo: planeInfo,
+        (id)kIOSurfaceName: surfaceNameToNSString(name)
     };
 }
 
-static NSDictionary *optionsFor32BitSurface(IntSize size, unsigned pixelFormat)
+static NSDictionary *optionsFor32BitSurface(IntSize size, unsigned pixelFormat, IOSurface::Name name)
 {
     int width = size.width();
     int height = size.height();
@@ -174,15 +205,17 @@ static NSDictionary *optionsFor32BitSurface(IntSize size, unsigned pixelFormat)
 #if PLATFORM(IOS_FAMILY)
         (id)kIOSurfaceCacheMode: @(kIOMapWriteCombineCache),
 #endif
-        (id)kIOSurfaceElementHeight: @(1)
+        (id)kIOSurfaceElementHeight: @(1),
+        (id)kIOSurfaceName: surfaceNameToNSString(name)
     };
 
 }
 
-IOSurface::IOSurface(IntSize size, const DestinationColorSpace& colorSpace, Format format, bool& success)
+IOSurface::IOSurface(IntSize size, const DestinationColorSpace& colorSpace, IOSurface::Name name, Format format, bool& success)
     : m_format(format)
     , m_colorSpace(colorSpace)
     , m_size(size)
+    , m_name(name)
 {
     ASSERT(!success);
     ASSERT(!size.isEmpty());
@@ -192,18 +225,18 @@ IOSurface::IOSurface(IntSize size, const DestinationColorSpace& colorSpace, Form
     switch (format) {
     case Format::BGRX:
     case Format::BGRA:
-        options = optionsFor32BitSurface(size, 'BGRA');
+        options = optionsFor32BitSurface(size, 'BGRA', name);
         break;
 #if HAVE(IOSURFACE_RGB10)
     case Format::RGB10:
-        options = optionsFor32BitSurface(size, 'w30r');
+        options = optionsFor32BitSurface(size, 'w30r', name);
         break;
     case Format::RGB10A8:
-        options = optionsForBiplanarSurface(size, 'b3a8', 4, 1);
+        options = optionsForBiplanarSurface(size, 'b3a8', 4, 1, name);
         break;
 #endif
     case Format::YUV422:
-        options = optionsForBiplanarSurface(size, '422f', 1, 1);
+        options = optionsForBiplanarSurface(size, '422f', 1, 1, name);
         break;
     }
     m_surface = adoptCF(IOSurfaceCreate((CFDictionaryRef)options));
@@ -337,14 +370,27 @@ MachSendRight IOSurface::createSendRight() const
     return MachSendRight::adopt(IOSurfaceCreateMachPort(m_surface.get()));
 }
 
-RetainPtr<CGImageRef> IOSurface::createImage()
+RetainPtr<id> IOSurface::asCAIOSurfaceLayerContents() const
 {
-    return adoptCF(CGIOSurfaceContextCreateImage(ensurePlatformContext()));
+    // CAIOSurface keeps most of the server-side rendering ojects alive,
+    // but doesn't mark the IOSurface as in-use. We can retain it for efficiency
+    // without breaking use-counting.
+    if (PAL::canLoad_QuartzCore_CAIOSurfaceCreate())
+        return bridge_id_cast(adoptCF(CAIOSurfaceCreate(m_surface.get())));
+    return nil;
 }
 
-RetainPtr<CGImageRef> IOSurface::sinkIntoImage(std::unique_ptr<IOSurface> surface)
+RetainPtr<CGImageRef> IOSurface::createImage(CGContextRef context)
 {
-    return adoptCF(CGIOSurfaceContextCreateImageReference(surface->ensurePlatformContext()));
+    ASSERT(CGIOSurfaceContextGetSurface(context) == m_surface);
+    return adoptCF(CGIOSurfaceContextCreateImage(context));
+}
+
+RetainPtr<CGImageRef> IOSurface::sinkIntoImage(std::unique_ptr<IOSurface> surface, RetainPtr<CGContextRef> context)
+{
+    ASSERT(CGIOSurfaceContextGetSurface(context.get()) == surface->m_surface);
+    UNUSED_PARAM(surface);
+    return adoptCF(CGIOSurfaceContextCreateImageReference(context.get()));
 }
 
 IOSurface::BitmapConfiguration IOSurface::bitmapConfiguration() const
@@ -388,23 +434,20 @@ RetainPtr<CGContextRef> IOSurface::createCompatibleBitmap(unsigned width, unsign
     return adoptCF(CGBitmapContextCreate(NULL, width, height, configuration.bitsPerComponent, bytesPerRow, m_colorSpace->platformColorSpace(), configuration.bitmapInfo));
 }
 
-CGContextRef IOSurface::ensurePlatformContext(PlatformDisplayID displayID)
+RetainPtr<CGContextRef> IOSurface::createPlatformContext(PlatformDisplayID displayID)
 {
-    if (m_cgContext)
-        return m_cgContext.get();
-
     auto configuration = bitmapConfiguration();
     auto bitsPerPixel = configuration.bitsPerComponent * 4;
 
     ensureColorSpace();
-    m_cgContext = adoptCF(CGIOSurfaceContextCreate(m_surface.get(), m_size.width(), m_size.height(), configuration.bitsPerComponent, bitsPerPixel, m_colorSpace->platformColorSpace(), configuration.bitmapInfo));
+    auto cgContext = adoptCF(CGIOSurfaceContextCreate(m_surface.get(), m_size.width(), m_size.height(), configuration.bitsPerComponent, bitsPerPixel, m_colorSpace->platformColorSpace(), configuration.bitmapInfo));
 
 #if PLATFORM(MAC)
     if (auto displayMask = primaryOpenGLDisplayMask()) {
         if (displayID)
             displayMask = displayMaskForDisplay(displayID);
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        CGIOSurfaceContextSetDisplayMask(m_cgContext.get(), displayMask);
+        CGIOSurfaceContextSetDisplayMask(cgContext.get(), displayMask); // NOLINT
 ALLOW_DEPRECATED_DECLARATIONS_END
     }
 #else
@@ -412,20 +455,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
 #if HAVE(CG_CONTEXT_SET_OWNER_IDENTITY)
     if (m_resourceOwner && CGContextSetOwnerIdentity)
-        CGContextSetOwnerIdentity(m_cgContext.get(), m_resourceOwner.taskIdToken());
+        CGContextSetOwnerIdentity(cgContext.get(), m_resourceOwner.taskIdToken());
 #endif
-    return m_cgContext.get();
-}
-
-GraphicsContext& IOSurface::ensureGraphicsContext()
-{
-    if (m_graphicsContext)
-        return *m_graphicsContext;
-
-    m_graphicsContext = makeUnique<GraphicsContextCG>(ensurePlatformContext());
-    m_graphicsContext->setIsAcceleratedContext(true);
-
-    return *m_graphicsContext;
+    return cgContext;
 }
 
 SetNonVolatileResult IOSurface::state() const
@@ -469,13 +501,7 @@ DestinationColorSpace IOSurface::colorSpace()
 
 IOSurfaceID IOSurface::surfaceID() const
 {
-// FIXME: Should be able to do this even without the Apple internal SDK.
-// FIXME: Should be able to do this on watchOS and tvOS.
-#if PLATFORM(IOS_FAMILY) && (!USE(APPLE_INTERNAL_SDK) || PLATFORM(WATCHOS) || PLATFORM(APPLETV))
-    return 0;
-#else
     return IOSurfaceGetID(m_surface.get());
-#endif
 }
 
 size_t IOSurface::bytesPerRow() const
@@ -486,12 +512,6 @@ size_t IOSurface::bytesPerRow() const
 bool IOSurface::isInUse() const
 {
     return IOSurfaceIsInUse(m_surface.get());
-}
-
-void IOSurface::releaseGraphicsContext()
-{
-    m_graphicsContext = nullptr;
-    m_cgContext = nullptr;
 }
 
 #if HAVE(IOSURFACE_ACCELERATOR)
@@ -506,7 +526,7 @@ bool IOSurface::allowConversionFromFormatToFormat(Format sourceFormat, Format de
     return true;
 }
 
-void IOSurface::convertToFormat(IOSurfacePool* pool, std::unique_ptr<IOSurface>&& inSurface, Format format, WTF::Function<void(std::unique_ptr<IOSurface>)>&& callback)
+void IOSurface::convertToFormat(IOSurfacePool* pool, std::unique_ptr<IOSurface>&& inSurface, Name name, Format format, WTF::Function<void(std::unique_ptr<IOSurface>)>&& callback)
 {
     static IOSurfaceAcceleratorRef accelerator;
     if (!accelerator) {
@@ -526,7 +546,7 @@ void IOSurface::convertToFormat(IOSurfacePool* pool, std::unique_ptr<IOSurface>&
         return;
     }
 
-    auto destinationSurface = IOSurface::create(pool, inSurface->size(), inSurface->colorSpace(), format);
+    auto destinationSurface = IOSurface::create(pool, inSurface->size(), inSurface->colorSpace(), name, format);
     if (!destinationSurface) {
         callback(nullptr);
         return;
@@ -557,10 +577,6 @@ void IOSurface::setOwnershipIdentity(const ProcessIdentity& resourceOwner)
     ASSERT(resourceOwner);
     m_resourceOwner = resourceOwner;
     setOwnershipIdentity(m_surface.get(), resourceOwner);
-#if HAVE(CG_CONTEXT_SET_OWNER_IDENTITY)
-    if (m_cgContext && CGContextSetOwnerIdentity)
-        CGContextSetOwnerIdentity(m_cgContext.get(), m_resourceOwner.taskIdToken());
-#endif
 }
 
 void IOSurface::setOwnershipIdentity(IOSurfaceRef surface, const ProcessIdentity& resourceOwner)
@@ -633,6 +649,37 @@ IOSurface::Format IOSurface::formatForPixelFormat(PixelFormat format)
     return IOSurface::Format::BGRA;
 }
 
+IOSurface::Name IOSurface::nameForRenderingPurpose(RenderingPurpose purpose)
+{
+    switch (purpose) {
+    case RenderingPurpose::Unspecified:
+        return Name::ImageBufferShareableMapped;
+
+    case RenderingPurpose::Canvas:
+        return Name::Canvas;
+
+    case RenderingPurpose::DOM:
+        return Name::DOM;
+
+    case RenderingPurpose::LayerBacking:
+        return Name::LayerBacking;
+
+    case RenderingPurpose::Snapshot:
+        return Name::Snapshot;
+
+    case RenderingPurpose::ShareableSnapshot:
+        return Name::ShareableSnapshot;
+
+    case RenderingPurpose::ShareableLocalSnapshot:
+        return Name::ShareableLocalSnapshot;
+
+    case RenderingPurpose::MediaPainting:
+        return Name::MediaPainting;
+    }
+
+    return Name::Default;
+}
+
 TextStream& operator<<(TextStream& ts, IOSurface::Format format)
 {
     switch (format) {
@@ -672,7 +719,7 @@ static TextStream& operator<<(TextStream& ts, SetNonVolatileResult state)
 
 TextStream& operator<<(TextStream& ts, const IOSurface& surface)
 {
-    return ts << "IOSurface " << surface.surfaceID() << " size " << surface.size() << " format " << surface.m_format << " state " << surface.state();
+    return ts << "IOSurface " << surface.surfaceID() << " name " << [surfaceNameToNSString(surface.name()) UTF8String] << " size " << surface.size() << " format " << surface.m_format << " state " << surface.state();
 }
 
 } // namespace WebCore

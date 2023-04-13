@@ -5209,6 +5209,132 @@ void main()
     }
 }
 
+// Replicate the dEQP test dEQP-GLES31.functional.synchronization.in_invocation.ssbo_alias_overwrite
+TEST_P(ComputeShaderTest, SSBOAliasOverWrite)
+{
+    constexpr char kCSSource[] = R"(#version 310 es
+    layout (local_size_x=16, local_size_y=8) in;
+    layout(binding=0, std430) buffer Output {
+        highp int values[];
+    } sb_result;
+    layout(binding=1, std430) coherent buffer Storage0
+    {
+        highp int values[];
+    } sb_store0;
+    layout(binding=2, std430) coherent buffer Storage1
+    {
+        highp int values[];
+    } sb_store1;
+
+    highp int getIndex(in highp uvec2 localID, in highp int element)
+    {
+        highp uint groupNdx = gl_NumWorkGroups.x * gl_WorkGroupID.y + gl_WorkGroupID.x;
+        return int((localID.y * gl_NumWorkGroups.x * gl_NumWorkGroups.y * gl_WorkGroupSize.x) + (groupNdx * gl_WorkGroupSize.x) + localID.x) * 8 + element;
+    }
+
+    void main (void)
+    {
+        int resultNdx = int(gl_GlobalInvocationID.y * gl_NumWorkGroups.x * gl_WorkGroupSize.x + gl_GlobalInvocationID.x);
+        int groupNdx = int(gl_NumWorkGroups.x * gl_WorkGroupID.y + gl_WorkGroupID.x);
+        bool allOk = true;
+
+        sb_store0.values[getIndex(gl_LocalInvocationID.xy, 0)] = 456;
+        sb_store0.values[getIndex(gl_LocalInvocationID.xy, 1)] = 456;
+        sb_store0.values[getIndex(gl_LocalInvocationID.xy, 2)] = 456;
+        sb_store0.values[getIndex(gl_LocalInvocationID.xy, 3)] = 456;
+        sb_store0.values[getIndex(gl_LocalInvocationID.xy, 4)] = 456;
+        sb_store0.values[getIndex(gl_LocalInvocationID.xy, 5)] = 456;
+        sb_store0.values[getIndex(gl_LocalInvocationID.xy, 6)] = 456;
+        sb_store0.values[getIndex(gl_LocalInvocationID.xy, 7)] = 456;
+
+        sb_store1.values[getIndex(gl_LocalInvocationID.xy, 0)] = groupNdx;
+        sb_store1.values[getIndex(gl_LocalInvocationID.xy, 1)] = groupNdx;
+        sb_store1.values[getIndex(gl_LocalInvocationID.xy, 2)] = groupNdx;
+        sb_store1.values[getIndex(gl_LocalInvocationID.xy, 3)] = groupNdx;
+        sb_store1.values[getIndex(gl_LocalInvocationID.xy, 4)] = groupNdx;
+        sb_store1.values[getIndex(gl_LocalInvocationID.xy, 5)] = groupNdx;
+        sb_store1.values[getIndex(gl_LocalInvocationID.xy, 6)] = groupNdx;
+        sb_store1.values[getIndex(gl_LocalInvocationID.xy, 7)] = groupNdx;
+
+        allOk = allOk && (sb_store0.values[getIndex(gl_LocalInvocationID.xy, 0)] == groupNdx);
+        allOk = allOk && (sb_store0.values[getIndex(gl_LocalInvocationID.xy, 1)] == groupNdx);
+        allOk = allOk && (sb_store0.values[getIndex(gl_LocalInvocationID.xy, 2)] == groupNdx);
+        allOk = allOk && (sb_store0.values[getIndex(gl_LocalInvocationID.xy, 3)] == groupNdx);
+        allOk = allOk && (sb_store0.values[getIndex(gl_LocalInvocationID.xy, 4)] == groupNdx);
+        allOk = allOk && (sb_store0.values[getIndex(gl_LocalInvocationID.xy, 5)] == groupNdx);
+        allOk = allOk && (sb_store0.values[getIndex(gl_LocalInvocationID.xy, 6)] == groupNdx);
+        allOk = allOk && (sb_store0.values[getIndex(gl_LocalInvocationID.xy, 7)] == groupNdx);
+
+        sb_result.values[resultNdx] = allOk ? (1) : (2);
+
+    })";
+
+    const int totalWorkWidth        = 256;
+    const int totalWorkHeight       = 256;
+    const int elementsPerInvocation = 8;
+
+    // define compute shader input storage buffer
+    const int inputSSBOBufferSizeInBytes =
+        totalWorkWidth * totalWorkHeight * elementsPerInvocation * sizeof(uint32_t);
+    const int inputSSBOBufferElementsCount =
+        totalWorkWidth * totalWorkHeight * elementsPerInvocation;
+    std::vector<uint32_t> zeros(inputSSBOBufferElementsCount, 0);
+    GLBuffer ssbo;
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, ssbo);
+    glBufferData(GL_SHADER_STORAGE_BUFFER, inputSSBOBufferSizeInBytes, zeros.data(),
+                 GL_STATIC_DRAW);
+    ASSERT_GL_NO_ERROR();
+
+    // define compute shader output buffer
+    const int outputBufferSizeInBytes   = totalWorkWidth * totalWorkHeight * sizeof(int32_t);
+    const int outputBufferElementsCount = totalWorkWidth * totalWorkHeight;
+    std::vector<int32_t> minusOnes(outputBufferElementsCount, -1);
+    GLBuffer resultBuffer;
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, resultBuffer);
+    glBufferData(GL_SHADER_STORAGE_BUFFER, outputBufferSizeInBytes, &minusOnes[0], GL_STATIC_DRAW);
+    ASSERT_GL_NO_ERROR();
+
+    // dispatch compute shader
+    const int localWidth  = 16;
+    const int localHeight = 8;
+    ASSERT(totalWorkWidth % localWidth == 0);
+    ASSERT(totalWorkHeight % localHeight == 0);
+    const int numGroupDimX = totalWorkWidth / localWidth;
+    const int numGroupDimY = totalWorkHeight / localHeight;
+
+    ANGLE_GL_COMPUTE_PROGRAM(csProgram, kCSSource);
+    glUseProgram(csProgram);
+    ASSERT_GL_NO_ERROR();
+
+    // Bind storage buffer to compute shader binding locations
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, ssbo);
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, ssbo);
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, resultBuffer);
+
+    glDispatchCompute(numGroupDimX, numGroupDimY, 1);
+    ASSERT_GL_NO_ERROR();
+
+    // verify the result
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, resultBuffer);
+    glMemoryBarrier(GL_BUFFER_UPDATE_BARRIER_BIT);
+    void *mappedResults =
+        glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, outputBufferSizeInBytes, GL_MAP_READ_BIT);
+    std::vector<int32_t> results(outputBufferElementsCount);
+    memcpy(results.data(), mappedResults, outputBufferSizeInBytes);
+    glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
+    ASSERT_GL_NO_ERROR();
+
+    bool error = false;
+    for (int index = 0; index < static_cast<int>(results.size()); ++index)
+    {
+        if (results[index] != 1)
+        {
+            error = true;
+        }
+    }
+    EXPECT_EQ(false, error);
+}
+
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(ComputeShaderTest);
 ANGLE_INSTANTIATE_TEST_ES31(ComputeShaderTest);
 

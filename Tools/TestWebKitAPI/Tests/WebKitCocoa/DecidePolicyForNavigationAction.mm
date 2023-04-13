@@ -482,7 +482,7 @@ TEST(WebKit, DecidePolicyForNavigationActionForTargetedFormSubmission)
     action = nullptr;
 }
 
-enum class ShouldEnableProcessSwap { No, Yes };
+enum class ShouldEnableProcessSwap : bool { No, Yes };
 static void runDecidePolicyForNavigationActionForHyperlinkThatRedirects(ShouldEnableProcessSwap shouldEnableProcessSwap)
 {
     auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);

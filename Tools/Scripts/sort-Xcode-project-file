@@ -85,6 +85,11 @@ for my $projectFile (@ARGV) {
     }
     close(IN);
 
+    # Guess the basename of any umbrella header, based on the project name.
+    # Umbrella headers are sorted to the top of their Headers phase to work
+    # around rdar://104432605.
+    (my $umbrellaHeaderBasename = $projectFile) =~ s/.*\/(\w+?)(Legacy)?\.xcodeproj\/project\.pbxproj$/$1/;
+
     my ($OUT, $tempFileName) = tempfile(
         basename($projectFile) . "-XXXXXXXX",
         DIR => dirname($projectFile),
@@ -110,7 +115,13 @@ for my $projectFile (@ARGV) {
                     $endMarker = $fileLine;
                     last;
                 }
-                push @files, $fileLine;
+                if ($fileLine =~ /$umbrellaHeaderBasename(Private)?\.h/) {
+                    # Sort umbrella headers to the top. Needed until
+                    # rdar://104432605 is fixed in all shipping Xcodes.
+                    print $OUT $fileLine;
+                } else {
+                    push @files, $fileLine;
+                }
             }
             print $OUT sort sortFilesByFileName @files;
             print $OUT $endMarker;

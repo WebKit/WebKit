@@ -29,8 +29,8 @@
 
 #pragma once
 
-#include "DOMWindowProperty.h"
 #include "ExceptionOr.h"
+#include "LocalDOMWindowProperty.h"
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -40,19 +40,21 @@ namespace WebCore {
 class Node;
 class Position;
 class Range;
+class StaticRange;
 class VisibleSelection;
 
 struct SimpleRange;
 
-class DOMSelection : public RefCounted<DOMSelection>, public DOMWindowProperty {
+class DOMSelection : public RefCounted<DOMSelection>, public LocalDOMWindowProperty {
 public:
-    static Ref<DOMSelection> create(DOMWindow&);
+    static Ref<DOMSelection> create(LocalDOMWindow&);
 
     RefPtr<Node> baseNode() const;
     RefPtr<Node> extentNode() const;
     unsigned baseOffset() const;
     unsigned extentOffset() const;
     String type() const;
+    String direction() const;
     ExceptionOr<void> setBaseAndExtent(Node* baseNode, unsigned baseOffset, Node* extentNode, unsigned extentOffset);
     ExceptionOr<void> setPosition(Node*, unsigned offset);
     void modify(const String& alter, const String& direction, const String& granularity);
@@ -74,6 +76,9 @@ public:
     void removeAllRanges();
     void addRange(Range&);
     ExceptionOr<void> removeRange(Range&);
+
+    Vector<Ref<StaticRange>> getComposedRanges(FixedVector<std::reference_wrapper<ShadowRoot>>&&);
+
     void deleteFromDocument();
     bool containsNode(Node&, bool partlyContained) const;
     ExceptionOr<void> selectAllChildren(Node&);
@@ -83,10 +88,10 @@ public:
     void empty();
 
 private:
-    explicit DOMSelection(DOMWindow&);
+    explicit DOMSelection(LocalDOMWindow&);
 
-    // FIXME: Change DOMWindowProperty::frame to return RefPtr and then delete this.
-    RefPtr<Frame> frame() const;
+    // FIXME: Change LocalDOMWindowProperty::frame to return RefPtr and then delete this.
+    RefPtr<LocalFrame> frame() const;
     std::optional<SimpleRange> range() const;
 
     Position anchorPosition() const;

@@ -27,7 +27,6 @@
 #pragma once
 
 #include "FocusController.h"
-#include "Frame.h"
 #include "FrameSelection.h"
 #include "HTMLDialogElement.h"
 #include "HTMLFrameElement.h"
@@ -36,6 +35,7 @@
 #include "HTMLInputElement.h"
 #include "HTMLOptionElement.h"
 #include "InspectorInstrumentation.h"
+#include "LocalFrame.h"
 #include "Page.h"
 #include "SelectorChecker.h"
 #include "Settings.h"
@@ -571,6 +571,14 @@ ALWAYS_INLINE bool matchesModalPseudoClass(const Element& element)
 #else
     return false;
 #endif
+}
+
+ALWAYS_INLINE bool matchesPopoverOpenPseudoClass(const Element& element)
+{
+    if (auto* popoverData = element.popoverData())
+        return popoverData->visibilityState() == PopoverVisibilityState::Showing;
+
+    return false;
 }
 
 ALWAYS_INLINE bool matchesUserInvalidPseudoClass(const Element& element)

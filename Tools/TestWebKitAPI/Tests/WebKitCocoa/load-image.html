@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+function canLoadImage(url) {
+    return new Promise(resolve => {
+        let element = document.createElement("img");
+        let complete = event => {
+            element.remove();
+            resolve(event.type !== "error");
+        };
+        element.addEventListener("load", complete);
+        element.addEventListener("error", complete);
+        element.setAttribute("src", url);
+        document.body.appendChild(element);
+    });
+};
+</script>
+</body>
+</html>

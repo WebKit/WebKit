@@ -33,10 +33,12 @@
 namespace WebCore {
 namespace DisplayList {
 
-DrawingContext::DrawingContext(const FloatSize& logicalSize, const AffineTransform& initialCTM)
-    : m_context(m_displayList, GraphicsContextState(), FloatRect({ }, logicalSize), initialCTM)
+DrawingContext::DrawingContext(const FloatSize& logicalSize, const AffineTransform& initialCTM, const DestinationColorSpace& colorSpace)
+    : m_context(m_displayList, GraphicsContextState(), FloatRect({ }, logicalSize), initialCTM, colorSpace)
 {
 }
+
+DrawingContext::~DrawingContext() = default;
 
 void DrawingContext::setTracksDisplayListReplay(bool tracksDisplayListReplay)
 {

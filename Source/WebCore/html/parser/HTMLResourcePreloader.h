@@ -34,7 +34,7 @@ namespace WebCore {
 class PreloadRequest {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    PreloadRequest(ASCIILiteral initiatorType, const String& resourceURL, const URL& baseURL, CachedResource::Type resourceType, const String& mediaAttribute, ScriptType scriptType, const ReferrerPolicy& referrerPolicy)
+    PreloadRequest(ASCIILiteral initiatorType, const String& resourceURL, const URL& baseURL, CachedResource::Type resourceType, const String& mediaAttribute, ScriptType scriptType, const ReferrerPolicy& referrerPolicy, RequestPriority fetchPriorityHint = RequestPriority::Auto)
         : m_initiatorType(initiatorType)
         , m_resourceURL(resourceURL)
         , m_baseURL(baseURL.isolatedCopy())
@@ -42,6 +42,7 @@ public:
         , m_mediaAttribute(mediaAttribute)
         , m_scriptType(scriptType)
         , m_referrerPolicy(referrerPolicy)
+        , m_fetchPriorityHint(fetchPriorityHint)
     {
     }
 
@@ -69,6 +70,7 @@ private:
     bool m_scriptIsAsync { false };
     ScriptType m_scriptType;
     ReferrerPolicy m_referrerPolicy;
+    RequestPriority m_fetchPriorityHint;
 };
 
 typedef Vector<std::unique_ptr<PreloadRequest>> PreloadRequestStream;

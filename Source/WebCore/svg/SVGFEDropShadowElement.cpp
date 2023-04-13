@@ -57,10 +57,12 @@ void SVGFEDropShadowElement::setStdDeviation(float x, float y)
     updateSVGRendererForElementChange();
 }
 
-void SVGFEDropShadowElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void SVGFEDropShadowElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
+    SVGFilterPrimitiveStandardAttributes::attributeChanged(name, oldValue, newValue, attributeModificationReason);
+
     if (name == SVGNames::stdDeviationAttr) {
-        if (auto result = parseNumberOptionalNumber(value)) {
+        if (auto result = parseNumberOptionalNumber(newValue)) {
             m_stdDeviationX->setBaseValInternal(result->first);
             m_stdDeviationY->setBaseValInternal(result->second);
         }
@@ -68,21 +70,19 @@ void SVGFEDropShadowElement::parseAttribute(const QualifiedName& name, const Ato
     }
 
     if (name == SVGNames::inAttr) {
-        m_in1->setBaseValInternal(value);
+        m_in1->setBaseValInternal(newValue);
         return;
     }
 
     if (name == SVGNames::dxAttr) {
-        m_dx->setBaseValInternal(value.toFloat());
+        m_dx->setBaseValInternal(newValue.toFloat());
         return;
     }
 
     if (name == SVGNames::dyAttr) {
-        m_dy->setBaseValInternal(value.toFloat());
+        m_dy->setBaseValInternal(newValue.toFloat());
         return;
     }
-
-    SVGFilterPrimitiveStandardAttributes::parseAttribute(name, value);
 }
 
 void SVGFEDropShadowElement::svgAttributeChanged(const QualifiedName& attrName)

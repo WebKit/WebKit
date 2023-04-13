@@ -14,42 +14,33 @@
 <body>
 <script src="../resources/testharness.js"></script>
 <script src="../resources/testharnessreport.js"></script>
+<script src="resources/rendering-frames.js"></script>
 <div id="target"></div>
 
 <script>
 
-function waitNFrames(numberOfFrames, continuation)
-{
-    let elapsedFrames = 0;
-    (function rAFCallback() {
-        if (elapsedFrames++ >= numberOfFrames)
-            continuation();
-        else
-            requestAnimationFrame(rAFCallback);
-    })();
-}
-
-async_test(t => {
+promise_test(async () => {
     const target = document.getElementById("target");
     target.animate({ transform: ["translateX(100px)", "none"] }, 1000 * 1000);
 
-    waitNFrames(3, () => {
-        const initialAnimations = internals.acceleratedAnimationsForElement(target);
-        assert_equals(initialAnimations.length, 1, "There should be a single accelerated animation before suspension.");
-        assert_object_equals(initialAnimations[0], { property: "transform", speed: 1 },
-                             'The single accelerated animation before suspension should be running and targeting the "transform" property.');
+    await renderingFrames(3);
 
-        internals.suspendAnimations();
+    const initialAnimations = internals.acceleratedAnimationsForElement(target);
+    assert_equals(initialAnimations.length, 1, "There should be a single accelerated animation before suspension.");
+    assert_object_equals(initialAnimations[0], { property: "transform", speed: 1 },
+                         'The single accelerated animation before suspension should be running and targeting the "transform" property.');
 
-        waitNFrames(2, () => {
-            const suspendedAnimations = internals.acceleratedAnimationsForElement(target);
-            assert_equals(suspendedAnimations.length, 1, "There should be a single accelerated animation after suspension.");
-            assert_object_equals(suspendedAnimations[0], { property: "transform", speed: 0 },
-                                 'The single accelerated animation after suspension should be paused and targeting the "transform" property.');
-            internals.resumeAnimations();
-            setTimeout(() => t.done());
-        });
-    });
+    internals.suspendAnimations();
+
+    await renderingFrames(2);
+
+    const suspendedAnimations = internals.acceleratedAnimationsForElement(target);
+    assert_equals(suspendedAnimations.length, 1, "There should be a single accelerated animation after suspension.");
+    assert_object_equals(suspendedAnimations[0], { property: "transform", speed: 0 },
+                         'The single accelerated animation after suspension should be paused and targeting the "transform" property.');
+    internals.resumeAnimations();
+
+    await new Promise(setTimeout);
 }, "Suspending animations should pause running accelerated animations.");
 
 </script>

@@ -30,6 +30,7 @@
 #include "ApplePaySessionPaymentRequest.h"
 #include <wtf/Expected.h>
 #include <wtf/Function.h>
+#include <wtf/UniqueRef.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -55,10 +56,10 @@ struct ExceptionDetails;
 class PaymentCoordinator : public CanMakeWeakPtr<PaymentCoordinator> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    WEBCORE_EXPORT explicit PaymentCoordinator(PaymentCoordinatorClient&);
+    WEBCORE_EXPORT explicit PaymentCoordinator(UniqueRef<PaymentCoordinatorClient>&&);
     WEBCORE_EXPORT ~PaymentCoordinator();
 
-    PaymentCoordinatorClient& client() { return m_client; }
+    PaymentCoordinatorClient& client() { return m_client.get(); }
 
     bool supportsVersion(Document&, unsigned version) const;
     bool canMakePayments();
@@ -96,7 +97,7 @@ public:
     void endApplePaySetup();
 
 private:
-    PaymentCoordinatorClient& m_client;
+    UniqueRef<PaymentCoordinatorClient> m_client;
     RefPtr<PaymentSession> m_activeSession;
 };
 

@@ -199,6 +199,13 @@ struct FeaturesMtl : FeatureSetBase
         &members,
     };
 
+    FeatureInfo avoidStencilTextureSwizzle = {
+        "avoidStencilTextureSwizzle",
+        FeatureCategory::MetalFeatures,
+        "Do not create swizzled views of stencil textures",
+        &members,
+    };
+
     FeatureInfo multisampleColorFormatShaderReadWorkaround = {
         "multisampleColorFormatShaderReadWorkaround", FeatureCategory::MetalWorkarounds,
         "Add shaderRead usage to some multisampled texture formats", &members,
@@ -236,31 +243,6 @@ struct FeaturesMtl : FeatureSetBase
         "When uploading data to IOSurface-backed textures, use a staging buffer.", &members,
         "http://anglebug.com/7573"};
 
-    FeatureInfo alwaysUseStagedBufferUpdates = {
-        "alwaysUseStagedBufferUpdates", FeatureCategory::MetalFeatures,
-        "Always update buffers by copying the data to a staging buffer and then blitting it to the "
-        "actual buffer",
-        &members, "http://anglebug.com/7544"};
-
-    FeatureInfo useShadowBuffersWhenAppropriate = {
-        "useShadowBuffersWhenAppropriate", FeatureCategory::MetalFeatures,
-        "On some architectures using a shadow buffer can be faster for certain size buffers",
-        &members, "http://anglebug.com/7544"};
-
-    FeatureInfo alwaysUseManagedStorageModeForBuffers = {
-        "alwaysUseManagedStorageModeForBuffers", FeatureCategory::MetalFeatures,
-        "Metal buffers can be managed, shared, or private. Sometimes managed is fastest", &members,
-        "http://anglebug.com/7544"};
-
-    FeatureInfo alwaysUseSharedStorageModeForBuffers = {
-        "alwaysUseSharedStorageModeForBuffers", FeatureCategory::MetalFeatures,
-        "Metal buffers can be managed, shared, or private. Sometimes shared is fastest", &members,
-        "http://anglebug.com/7544"};
-
-    FeatureInfo preferCpuForBuffersubdata = {
-        "preferCpuForBuffersubdata", FeatureCategory::MetalFeatures,
-        "Makes bufferSubData always update via CPU", &members, "http://anglebug.com/7544"};
-
     FeatureInfo disableProgrammableBlending = {
         "disableProgrammableBlending", FeatureCategory::MetalFeatures,
         "Disable programmable blending in order to test read_write pixel local storage textures",
@@ -275,6 +257,14 @@ struct FeaturesMtl : FeatureSetBase
         "disableRasterOrderGroups", FeatureCategory::MetalFeatures,
         "Disable raster order groups in order to test pixel local storage memory barriers",
         &members, "http://anglebug.com/7279"};
+
+    FeatureInfo enableInMemoryMtlLibraryCache = {
+        "enableInMemoryMtlLibraryCache", FeatureCategory::MetalFeatures,
+        "Cache MTLLibrary objects in memory.", &members, "http://crbug.com/1385510"};
+
+    FeatureInfo enableParallelMtlLibraryCompilation = {
+        "enableParallelMtlLibraryCompilation", FeatureCategory::MetalFeatures,
+        "Compile MTLLibrary in multiple threads.", &members, "http://crbug.com/1385510"};
 };
 
 inline FeaturesMtl::FeaturesMtl()  = default;

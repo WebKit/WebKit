@@ -1,0 +1,19 @@
+<script>
+  function test() {
+    if (window.testRunner)
+      testRunner.dumpAsText();
+    let ms0 = document.createElementNS('http://www.w3.org/1998/Math/MathML', 'ms');
+    document.body.append(ms0);
+    let svg0 = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg0.style.position = 'absolute';
+    ms0.append(svg0);
+    document.body.offsetTop;
+    document.body.append(document.createElement('div'));
+    let path0 = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    svg0.append(path0);
+    path0.isPointInFill();
+    document.body.innerHTML = 'PASS if no crash';
+  };
+</script>
+<body onload="test()">
+</body>

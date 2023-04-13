@@ -4,8 +4,8 @@ layer at (0,0) size 800x581
   RenderBlock {HTML} at (0,0) size 800x581
     RenderBody {BODY} at (8,16) size 784x557
       RenderBlock {P} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 473x19
-          text run at (0,0) width 473: "-webkit-perspective should take units. All four should look qualitatively similar."
+        RenderText {#text} at (0,0) size 501x19
+          text run at (0,0) width 501: "-webkit-perspective should take units. All four should look qualitatively similar."
       RenderBlock (anonymous) at (0,36) size 784x521
         RenderText {#text} at (242,157) size 4x19
           text run at (242,157) width 4: " "

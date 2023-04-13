@@ -228,6 +228,7 @@ struct WebProcessCreationParameters {
 #endif
 
 #if PLATFORM(GTK)
+    bool useDMABufSurfaceForCompositing { false };
     bool useSystemAppearanceForScrollbars { false };
     GtkSettingsState gtkSettings;
 #endif
@@ -248,6 +249,7 @@ struct WebProcessCreationParameters {
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
     std::optional<MemoryPressureHandler::Configuration> memoryPressureHandlerConfiguration;
+    bool disableFontHintingForTesting { false };
 #endif
 
 #if USE(GLIB)

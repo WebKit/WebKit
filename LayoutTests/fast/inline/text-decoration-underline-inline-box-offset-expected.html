@@ -1,19 +1,23 @@
 <style>
+@font-face {
+  font-family: "Gulf";
+  src: url("resources/Gulf-regular.ttf");
+}
 div {
-  font-family: Monospace;
+  font-family: Gulf;
   font-size: 40px;
   margin: 50px;
 }
 span {
-  text-decoration: underline;
-  border: 20px solid transparent;
-  padding: 30px;
+  padding: 0;
+}
+.horizontal {
+  border-bottom: 2px solid black;
 }
 .vertical {
   writing-mode: vertical-lr;
-  text-underline-position: under;
-  text-underline-offset: -10px;
+  border-left: 2px solid black;
 }
 </style>
-<div><span>XXX</span></div>
-<div class=vertical><span>XXX</span></div>
+<div><span class="horizontal">XXX</span></div>
+<div><span class="vertical">XXX</span></div>

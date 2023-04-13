@@ -115,8 +115,6 @@ webkit.org/b/217414 [ Release ] imported/w3c/web-platform-tests/user-timing/meas
 
 webkit.org/b/217461 imported/w3c/web-platform-tests/css/css-masking/clip-path/svg-clipPath.svg [ Skip ]
 
-webkit.org/b/217462 [ Release ] imported/w3c/web-platform-tests/service-workers/cache-storage/serviceworker/cache-add.https.html [ Pass Failure ]
-
 webkit.org/b/217357 http/wpt/cache-storage/cache-quota-after-restart.any.html [ Pass Failure ]
 
 webkit.org/b/217412 http/wpt/cache-storage/cache-quota.any.html [ Pass Failure ]
@@ -158,7 +156,6 @@ webkit.org/b/226600 imported/w3c/web-platform-tests/navigation-timing/test_navig
 # These failures are happening only in iOS simulator on an arm64 host
 webkit.org/b/236928 fast/canvas/webgl/gl-teximage.html [ Failure Pass ]
 webkit.org/b/236928 fast/canvas/webgl/premultiplyalpha-test.html [ Failure Pass ]
-webkit.org/b/236928 webgl/1.0.3/conformance/context/premultiplyalpha-test.html [ Failure Pass ]
 webkit.org/b/236928 webgl/1.0.3/conformance/textures/gl-teximage.html [ Failure Pass ]
 webkit.org/b/236928 imported/w3c/web-platform-tests/xhr/event-timeout-order.any.worker.html [ Failure Pass ]
 webkit.org/b/236926 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-biquadfilternode-interface/no-dezippering.html [ Failure Pass ]
@@ -167,3 +164,5 @@ webkit.org/b/236926 webrtc/vp9-profile2.html [ Timeout Pass ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/adopt-from-image-document.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/242748 [ Release arm64 ] css3/color-filters/svg/color-filter-inline-svg.html [ ImageOnlyFailure ]
+
+webkit.org/b/254872 webrtc/video-rotation.html [ Pass Timeout ]

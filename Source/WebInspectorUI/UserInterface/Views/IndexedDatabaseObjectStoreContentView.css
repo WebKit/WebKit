@@ -43,7 +43,7 @@
     border-right-color: hsl(210, 70%, 75%);
 }
 
-.content-view.indexed-database-object-store > .data-grid .object-tree > :matches(.title, .object-preview)::before {
+.content-view.indexed-database-object-store > .data-grid .object-tree > :is(.title, .object-preview)::before {
  /* The line-height inside a data-grid is 17px instead of 13px, this will center vertically on the top line. */
     top: 2px;
 }

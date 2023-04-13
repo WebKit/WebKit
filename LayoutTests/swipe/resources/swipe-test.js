@@ -9,14 +9,16 @@ function log(s)
     window.localStorage["swipeLogging"] += s + "<br/>";
 }
 
-function dumpLog()
+function dumpLog(logContainer)
 {
-    window.document.body.innerHTML = window.localStorage["swipeLogging"];
+    if (!logContainer)
+        logContainer = document.body;
+    logContainer.innerHTML = window.localStorage["swipeLogging"];
 }
 
-function testComplete()
+function testComplete(logContainer)
 {
-    dumpLog();
+    dumpLog(logContainer);
     window.testRunner.notifyDone();
 }
 
@@ -37,6 +39,37 @@ function measuredDurationShouldBeLessThan(key, timeInMS, message)
     var duration = Date.now() - window.localStorage[key + "swipeStartTime"];
     if (duration >= timeInMS)
         log("Failure. " + message + " (expected: " + timeInMS + ", actual: " + duration + ")");
+}
+
+async function startSlowSwipeGesture()
+{
+    if (!window.eventSender)
+        return;
+
+    log("startSlowSwipeGesture");
+
+    await UIHelper.ensurePresentationUpdate();
+
+    // Similar to uiController.beginBackSwipe(), but with a gap between events to allow
+    // for DOM wheel event handlers to fire.
+    eventSender.mouseMoveTo(400, 300);
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(1, 0, "began", "none");
+    await UIHelper.renderingUpdate();
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(8, 0, "changed", "none");
+    await UIHelper.renderingUpdate();
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(10, 0, "changed", "none");
+    await UIHelper.renderingUpdate();
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(10, 0, "changed", "none");
+    await UIHelper.renderingUpdate();
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(10, 0, "changed", "none");
+    await UIHelper.renderingUpdate();
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(10, 0, "changed", "none");
+    await UIHelper.renderingUpdate();
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(10, 0, "changed", "none");
+    await UIHelper.renderingUpdate();
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(5, 0, "changed", "none");
+    await UIHelper.renderingUpdate();
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "ended", "none");
 }
 
 async function startSwipeGesture()

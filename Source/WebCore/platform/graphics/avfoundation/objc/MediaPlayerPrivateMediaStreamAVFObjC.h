@@ -30,7 +30,6 @@
 #include "MediaPlayerPrivate.h"
 #include "MediaStreamPrivate.h"
 #include "SampleBufferDisplayLayer.h"
-#include "VideoFrame.h"
 #include <wtf/Deque.h>
 #include <wtf/Forward.h>
 #include <wtf/Lock.h>
@@ -48,6 +47,8 @@ class MediaSourcePrivateClient;
 class PixelBufferConformerCV;
 class VideoLayerManagerObjC;
 class VideoTrackPrivateMediaStream;
+
+enum class VideoFrameRotation : uint16_t;
 
 class MediaPlayerPrivateMediaStreamAVFObjC final
     : public MediaPlayerPrivateInterface
@@ -134,8 +135,8 @@ private:
 
     bool seeking() const override { return false; }
 
-    std::unique_ptr<PlatformTimeRanges> seekable() const override;
-    std::unique_ptr<PlatformTimeRanges> buffered() const override;
+    const PlatformTimeRanges& seekable() const override;
+    const PlatformTimeRanges& buffered() const override;
 
     bool didLoadingProgress() const override { return m_playing; }
 
@@ -230,6 +231,9 @@ private:
 
     MediaStreamTrackPrivate* activeVideoTrack() const;
 
+    LayerHostingContextID hostingContextID() const final;
+    void setVideoInlineSizeFenced(const FloatSize&, const WTF::MachSendRight&) final;
+
     MediaPlayer* m_player { nullptr };
     RefPtr<MediaStreamPrivate> m_mediaStreamPrivate;
     RefPtr<VideoTrackPrivateMediaStream> m_activeVideoTrack;
@@ -264,7 +268,7 @@ private:
     // Written on main thread, read on sample thread.
     bool m_canEnqueueDisplayLayer { false };
     // Used on sample thread.
-    VideoFrame::Rotation m_videoRotation { VideoFrame::Rotation::None };
+    VideoFrameRotation m_videoRotation { };
     bool m_videoMirrored { false };
 
     Ref<const Logger> m_logger;

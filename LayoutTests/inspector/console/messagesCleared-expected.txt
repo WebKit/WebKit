@@ -12,5 +12,7 @@ PASS: Cleared event should fire.
 PASS: Cleared event should fire.
 
 -- Running test case: ClearViaPageReload
-PASS: Cleared event should fire.
+Received `WI.ConsoleManager.Event.SessionStarted` event.
+PASS: Expected `WI.ConsoleManager.Event.SessionStarted` to be a reload-based session start.
+Received `WI.ConsoleManager.Event.Cleared` event.
 

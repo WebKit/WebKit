@@ -24,19 +24,20 @@
 #include "Document.h"
 #include "Element.h"
 #include "FloatQuad.h"
-#include "Frame.h"
-#include "FrameView.h"
 #include "GraphicsContext.h"
 #include "HTMLBodyElement.h"
 #include "HTMLFrameOwnerElement.h"
 #include "HTMLFrameSetElement.h"
 #include "HTMLHtmlElement.h"
 #include "HTMLIFrameElement.h"
+#include "HTMLImageElement.h"
 #include "HitTestResult.h"
 #include "ImageQualityController.h"
 #include "LayoutInitialContainingBlock.h"
 #include "LayoutState.h"
 #include "LegacyRenderSVGRoot.h"
+#include "LocalFrame.h"
+#include "LocalFrameView.h"
 #include "NodeTraversal.h"
 #include "Page.h"
 #include "RenderDescendantIterator.h"
@@ -104,9 +105,9 @@ void RenderView::styleDidChange(StyleDifference diff, const RenderStyle* oldStyl
     bool directionChanged = oldStyle && style().direction() != oldStyle->direction();
 
     if ((writingModeChanged || directionChanged) && multiColumnFlow()) {
-        if (frameView().pagination().mode != Pagination::Unpaginated)
+        if (frameView().pagination().mode != Unpaginated)
             updateColumnProgressionFromStyle(style());
-        updateStylesForColumnChildren();
+        updateStylesForColumnChildren(oldStyle);
     }
 
     if (directionChanged)
@@ -330,7 +331,7 @@ void RenderView::mapAbsoluteToLocalPoint(OptionSet<MapCoordinatesMode> mode, Tra
 
 bool RenderView::requiresColumns(int) const
 {
-    return frameView().pagination().mode != Pagination::Unpaginated;
+    return frameView().pagination().mode != Unpaginated;
 }
 
 void RenderView::computeColumnCountAndWidth()
@@ -351,7 +352,7 @@ void RenderView::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     ASSERT(LayoutPoint(IntPoint(paintOffset.x(), paintOffset.y())) == paintOffset);
 
     // This avoids painting garbage between columns if there is a column gap.
-    if (frameView().pagination().mode != Pagination::Unpaginated && paintInfo.shouldPaintWithinRoot(*this))
+    if (frameView().pagination().mode != Unpaginated && paintInfo.shouldPaintWithinRoot(*this))
         paintInfo.context().fillRect(paintInfo.rect, frameView().baseBackgroundColor());
 
     paintObject(paintInfo, paintOffset);
@@ -523,7 +524,7 @@ void RenderView::repaintViewRectangle(const LayoutRect& repaintRect) const
         // that the coordinate system is mapped appropriately between the iframe's contents
         // and the Renderer that contains the iframe. This transformation must account for a
         // left scrollbar (if one exists).
-        FrameView& frameView = this->frameView();
+        LocalFrameView& frameView = this->frameView();
         if (frameView.shouldPlaceVerticalScrollbarOnLeft() && frameView.verticalScrollbar())
             adjustedRect.move(LayoutSize(frameView.verticalScrollbar()->occupiedWidth(), 0));
 
@@ -547,7 +548,6 @@ void RenderView::repaintViewRectangle(const LayoutRect& repaintRect) const
 
 void RenderView::flushAccumulatedRepaintRegion() const
 {
-    ASSERT(!document().ownerElement());
     ASSERT(m_accumulatedRepaintRegion);
     auto repaintRects = m_accumulatedRepaintRegion->rects();
     for (auto& rect : repaintRects)
@@ -596,7 +596,7 @@ bool RenderView::isScrollableOrRubberbandableBox() const
 {
     // The main frame might be allowed to rubber-band even if there is no content to scroll to. This is unique to
     // the main frame; subframes and overflow areas have to have content that can be scrolled to in order to rubber-band.
-    FrameView::Scrollability defineScrollable = frame().ownerElement() ? FrameView::Scrollability::Scrollable : FrameView::Scrollability::ScrollableOrRubberbandable;
+    LocalFrameView::Scrollability defineScrollable = frame().ownerElement() ? LocalFrameView::Scrollability::Scrollable : LocalFrameView::Scrollability::ScrollableOrRubberbandable;
     return frameView().isScrollable(defineScrollable);
 }
 
@@ -931,6 +931,7 @@ void RenderView::resumePausedImageAnimationsIfNeeded(const IntRect& visibleRect)
         m_SVGSVGElementsWithPausedImageAnimation.remove(*svgSvgElement);
 }
 
+#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
 static SVGSVGElement* svgSvgElementFrom(RenderElement& renderElement)
 {
     if (auto* svgSvgElement = dynamicDowncast<SVGSVGElement>(renderElement.element()))
@@ -967,6 +968,12 @@ void RenderView::updatePlayStateForAllAnimations(const IntRect& visibleRect)
                     addRendererWithPausedImageAnimations(renderElement, *cachedImage);
                 }
             } else if (image && image->isAnimated()) {
+                // Override any individual animation play state that may have been set.
+                if (auto* imageElement = dynamicDowncast<HTMLImageElement>(renderElement.element()))
+                    imageElement->setAllowsAnimation(std::nullopt);
+                else
+                    image->setAllowsAnimation(std::nullopt);
+
                 // Animations of this type require a repaint to be paused or resumed.
                 if (shouldAnimate && hasPausedAnimation) {
                     needsRepaint = true;
@@ -998,6 +1005,7 @@ void RenderView::updatePlayStateForAllAnimations(const IntRect& visibleRect)
         }
     }
 }
+#endif // ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
 
 RenderView::RepaintRegionAccumulator::RepaintRegionAccumulator(RenderView* view)
 {
@@ -1027,7 +1035,7 @@ unsigned RenderView::pageNumberForBlockProgressionOffset(int offset) const
 {
     int columnNumber = 0;
     const Pagination& pagination = page().pagination();
-    if (pagination.mode == Pagination::Unpaginated)
+    if (pagination.mode == Unpaginated)
         return columnNumber;
     
     bool progressionIsInline = false;
@@ -1052,7 +1060,7 @@ unsigned RenderView::pageNumberForBlockProgressionOffset(int offset) const
 unsigned RenderView::pageCount() const
 {
     const Pagination& pagination = page().pagination();
-    if (pagination.mode == Pagination::Unpaginated)
+    if (pagination.mode == Unpaginated)
         return 0;
     
     if (multiColumnFlow() && multiColumnFlow()->firstMultiColumnSet())

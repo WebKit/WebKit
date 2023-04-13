@@ -6,9 +6,11 @@
 if (window.testRunner)
     testRunner.waitUntilDone();
 
-function wait(seconds)
+function wait()
 {
-    return new Promise((resolve) => setTimeout(resolve, seconds))
+    return new Promise((resolve) => {
+        requestAnimationFrame(() => setTimeout(resolve, 0));
+    });
 }
 
 async function runTest()
@@ -20,21 +22,21 @@ async function runTest()
 
     var a = document.getElementById("a");
     a.focus();
-    await wait(0);
+    await wait();
     a.setSelectionRange(66, 66);
     if (window.eventSender)
         eventSender.keyDown("l");
 
     var b = document.getElementById("b");
     b.focus();
-    await wait(0);
+    await wait();
     b.setSelectionRange(66, 66);
     if (window.eventSender)
         eventSender.keyDown("l");
 
     var c = document.getElementById("c");
     c.focus();
-    await wait(0);
+    await wait();
     c.setSelectionRange(66, 66);
     if (window.eventSender)
         eventSender.keyDown("l");

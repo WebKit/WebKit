@@ -10,13 +10,13 @@
 # are met:
 #
 # 1.  Redistributions of source code must retain the above copyright
-#     notice, this list of conditions and the following disclaimer. 
+#     notice, this list of conditions and the following disclaimer.
 # 2.  Redistributions in binary form must reproduce the above copyright
 #     notice, this list of conditions and the following disclaimer in the
-#     documentation and/or other materials provided with the distribution. 
+#     documentation and/or other materials provided with the distribution.
 # 3.  Neither the name of Apple Inc. ("Apple") nor the names of
 #     its contributors may be used to endorse or promote products derived
-#     from this software without specific prior written permission. 
+#     from this software without specific prior written permission.
 #
 # THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
 # EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -45,9 +45,9 @@ use InFilesParser;
 sub readElements($$);
 sub readAttrs($$);
 
-my $printFactory = 0; 
+my $printFactory = 0;
 my $printEnum = "";
-my $printWrapperFactory = 0; 
+my $printWrapperFactory = 0;
 my $fontNamesIn = "";
 my @elementsFiles = ();
 my @attrsFiles = ();
@@ -470,7 +470,7 @@ sub printConstructorSignature
     print F ")\n{\n";
 }
 
-# Helper method to dump the constructor interior and call the 
+# Helper method to dump the constructor interior and call the
 # Element constructor with the right arguments.
 # The variable names should be kept in sync with the previous method.
 sub printConstructorInterior
@@ -486,7 +486,7 @@ sub printConstructorInterior
         print F <<END
     if (!document.settings().mediaEnabled())
         return $parameters{fallbackInterfaceName}::create($constructorTagName, document);
-    
+
 END
 ;
     }
@@ -617,13 +617,13 @@ sub svgCapitalizationHacks
 sub upperCaseName
 {
     my $name = shift;
-    
+
     $name = svgCapitalizationHacks($name) if ($parameters{namespace} eq "SVG");
 
     while ($name =~ /^(.*?)_(.*)/) {
         $name = $1 . ucfirst $2;
     }
-    
+
     return ucfirst $name;
 }
 
@@ -826,7 +826,6 @@ END
 
     if (keys %allAttrs) {
         print F "const unsigned $parameters{namespace}AttrsCount = ", scalar(keys %allAttrs), ";\n";
-        print F "const WebCore::QualifiedName* const* get$parameters{namespace}Attrs();\n";
     }
 
     printInit($F, 1);
@@ -968,7 +967,7 @@ sub printTagNameCppFile
     print F "static constexpr StringImpl::StaticStringImpl unadjustedTagNames[] = {\n";
     for my $elementKey (sort byElementNameOrder keys %allElements) {
         next if $allElements{$elementKey}{unadjustedTagEnumValue} eq "";
-        print F "    \"$allElements{$elementKey}{parsedTagName}\",\n";
+        print F "    StringImpl::StaticStringImpl { \"$allElements{$elementKey}{parsedTagName}\" },\n";
     }
     print F "};\n";
     print F "\n";
@@ -1004,8 +1003,8 @@ sub printTagNameCppFile
     print F "TagName findTagName(const String& name)\n";
     print F "{\n";
     print F "    if (name.is8Bit())\n";
-    print F "        return findTagFromBuffer(Span(name.characters8(), name.length()));\n";
-    print F "    return findTagFromBuffer(Span(name.characters16(), name.length()));\n";
+    print F "        return findTagFromBuffer(makeSpan(name.characters8(), name.length()));\n";
+    print F "    return findTagFromBuffer(makeSpan(name.characters16(), name.length()));\n";
     print F "}\n";
     print F "#endif\n";
     print F "\n";
@@ -1048,6 +1047,8 @@ sub printElementNameHeaderFile
     print F "} // namespace ElementNames\n";
     print F "\n";
     print F "ElementName findElementName(Namespace, const String&);\n";
+    print F "ElementName findHTMLElementName(Span<const LChar>);\n";
+    print F "ElementName findHTMLElementName(Span<const UChar>);\n";
     print F "TagName tagNameForElement(ElementName);\n";
     print F "ElementName elementNameForTag(Namespace, TagName);\n";
     print F "const QualifiedName& qualifiedNameForElement(ElementName);\n";
@@ -1167,8 +1168,18 @@ sub printElementNameCppFile
     print F "ElementName findElementName(Namespace ns, const String& name)\n";
     print F "{\n";
     print F "    if (name.is8Bit())\n";
-    print F "        return findElementFromBuffer(ns, Span(name.characters8(), name.length()));\n";
-    print F "    return findElementFromBuffer(ns, Span(name.characters16(), name.length()));\n";
+    print F "        return findElementFromBuffer(ns, makeSpan(name.characters8(), name.length()));\n";
+    print F "    return findElementFromBuffer(ns, makeSpan(name.characters16(), name.length()));\n";
+    print F "}\n";
+    print F "\n";
+    print F "ElementName findHTMLElementName(Span<const LChar> buffer)\n";
+    print F "{\n";
+    print F "    return findHTMLElement(buffer);\n";
+    print F "}\n";
+    print F "\n";
+    print F "ElementName findHTMLElementName(Span<const UChar> buffer)\n";
+    print F "{\n";
+    print F "    return findHTMLElement(buffer);\n";
     print F "}\n";
     print F "\n";
     print F "const QualifiedName& qualifiedNameForElement(ElementName elementName)\n";
@@ -1272,12 +1283,13 @@ sub generateFindNameForLength
         }
         return;
     }
+    print F "${indent}switch (buffer[$currentIndex]) {\n";
     for (my $i = 0; $i < $candidateCount;) {
         my $candidate = $candidates->[$i];
         my $string = $candidate->{string};
         my $enumValue = $candidate->{enumValue};
         my $letterAtIndex = substr($string, $currentIndex, 1);
-        print F "${indent}if (buffer[$currentIndex] == '$letterAtIndex') {\n";
+        print F "${indent}case '$letterAtIndex': {\n";
         my @candidatesWithPrefix = ($candidate);
         for ($i = $i + 1; $i < $candidateCount; $i = $i + 1) {
             my $nextCandidate = $candidates->[$i];
@@ -1291,9 +1303,14 @@ sub generateFindNameForLength
         generateFindNameForLength($indent . "    ", \@candidatesWithPrefix, $length, $currentIndex + 1, $enumClass);
         if (@candidatesWithPrefix > 1) {
             print F "${indent}    return ${enumClass}::Unknown;\n";
+        } elsif ($currentIndex + 1 < $length) {
+            print F "${indent}    break;\n";
         }
         print F "$indent}\n";
     }
+    print F "${indent}default:\n";
+    print F "${indent}    break;\n";
+    print F "${indent}}\n";
 }
 
 sub generateFindBody {
@@ -1333,13 +1350,13 @@ sub printNamesCppFile
     my $cppPath = shift;
     my $F;
     open F, ">$cppPath";
-    
+
     printLicenseHeader($F);
     printCppHead($F, "DOM", $parameters{namespace}, <<END, "WebCore");
 #include "ElementName.h"
 #include "Namespace.h"
 END
-    
+
     my $lowercaseNamespacePrefix = lc($parameters{namespacePrefix});
 
     print F "MainThreadLazyNeverDestroyed<const AtomString> ${lowercaseNamespacePrefix}NamespaceURI;\n\n";
@@ -1375,14 +1392,6 @@ END
         for my $attrKey (sort keys %allAttrs) {
             print F "WEBCORE_EXPORT LazyNeverDestroyed<const QualifiedName> $allAttrs{$attrKey}{identifier}Attr;\n";
         }
-        print F "\n\nconst WebCore::QualifiedName* const* get$parameters{namespace}Attrs()\n";
-        print F "{\n    static const WebCore::QualifiedName* const $parameters{namespace}Attrs[] = {\n";
-        for my $attrKey (sort keys %allAttrs) {
-            print F "        &$allAttrs{$attrKey}{identifier}Attr.get(),\n";
-        }
-        print F "    };\n";
-        print F "    return $parameters{namespace}Attrs;\n";
-        print F "}\n";
     }
 
     printInit($F, 0);
@@ -1593,6 +1602,7 @@ END
 
 #include "DeprecatedGlobalSettings.h"
 #include "Document.h"
+#include "ElementName.h"
 #include "Settings.h"
 #include "TagName.h"
 #include <wtf/RobinHoodHashMap.h>
@@ -1879,9 +1889,9 @@ sub printWrapperFactoryCppFile
 
 #include "DeprecatedGlobalSettings.h"
 #include "Document.h"
+#include "ElementName.h"
 #include "Settings.h"
 #include <wtf/NeverDestroyed.h>
-#include <wtf/RobinHoodHashMap.h>
 #include <wtf/StdLibExtras.h>
 END
 ;
@@ -1893,8 +1903,6 @@ END
 using namespace JSC;
 
 namespace WebCore {
-
-using Create$parameters{namespace}ElementWrapperFunction = JSDOMObject* (*)(JSDOMGlobalObject*, Ref<$parameters{namespace}Element>&&);
 
 END
 ;
@@ -1909,17 +1917,11 @@ END
 
 print F <<END
 
-static NEVER_INLINE MemoryCompactLookupOnlyRobinHoodHashMap<AtomString, Create$parameters{namespace}ElementWrapperFunction> create$parameters{namespace}WrapperMap()
+JSDOMObject* createJS$parameters{namespace}Wrapper(JSDOMGlobalObject* globalObject, Ref<$parameters{namespace}Element>&& element)
 {
-    struct TableEntry {
-        decltype($parameters{namespace}Names::${firstTagIdentifier}Tag)& name;
-        Create$parameters{namespace}ElementWrapperFunction function;
-    };
-
-    static constexpr TableEntry table[] = {
+    switch (element->elementName()) {
 END
 ;
-
     for my $elementKey (sort keys %allElements) {
         # Do not add the name to the map if it does not have a JS wrapper constructor or uses the default wrapper.
         next if usesDefaultJSWrapper($elementKey) && ($parameters{fallbackJSInterfaceName} eq $parameters{namespace} . "Element");
@@ -1936,31 +1938,13 @@ END
         } else {
             $ucName = $allElements{$elementKey}{JSInterfaceName};
         }
-
-        print F "        { $parameters{namespace}Names::$allElements{$elementKey}{identifier}Tag, create${ucName}Wrapper },\n";
-
-        if ($conditional) {
-            print F "#endif\n";
-        }
+        print F "    case ElementName::" . $parameters{namespace} . "_" . $allElements{$elementKey}{identifier} . ":\n";
+        print F "        return create${ucName}Wrapper(globalObject, WTFMove(element));\n";
+        print F "#endif\n" if $conditional;
     }
-
-    print F <<END
-    };
-
-    MemoryCompactLookupOnlyRobinHoodHashMap<AtomString, Create$parameters{namespace}ElementWrapperFunction> map;
-    for (auto& entry : table)
-        map.add(entry.name.get().localName(), entry.function);
-    return map;
-}
-
-JSDOMObject* createJS$parameters{namespace}Wrapper(JSDOMGlobalObject* globalObject, Ref<$parameters{namespace}Element>&& element)
-{
-    static NeverDestroyed functions = create$parameters{namespace}WrapperMap();
-    if (auto function = functions.get().get(element->localName()))
-        return function(globalObject, WTFMove(element));
-END
-;
-
+    print F "    default:\n";
+    print F "        break;\n";
+    print F "    }\n";
     if ($parameters{customElementInterfaceName}) {
         print F <<END
     if (!element->isUnknownElement())
@@ -1983,7 +1967,6 @@ END
 }
 END
 ;
-
     print F "\n#endif\n" if $parameters{guardFactoryWith};
 
     close F;
@@ -2012,7 +1995,7 @@ namespace WebCore {
     JSDOMObject* createJS$parameters{namespace}Wrapper(JSDOMGlobalObject*, Ref<$parameters{namespace}Element>&&);
 
 }
- 
+
 END
     ;
 

@@ -28,14 +28,14 @@
 
 #if ENABLE(USER_MESSAGE_HANDLERS)
 
-#include "Frame.h"
 #include "JSDOMPromiseDeferred.h"
+#include "LocalFrame.h"
 #include "SerializedScriptValue.h"
 #include <JavaScriptCore/JSCJSValue.h>
 
 namespace WebCore {
 
-UserMessageHandler::UserMessageHandler(Frame& frame, UserMessageHandlerDescriptor& descriptor)
+UserMessageHandler::UserMessageHandler(LocalFrame& frame, UserMessageHandlerDescriptor& descriptor)
     : FrameDestructionObserver(&frame)
     , m_descriptor(&descriptor)
 {

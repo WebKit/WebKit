@@ -31,10 +31,9 @@
 #include "ContentData.h"
 #include "CursorList.h"
 #include "DocumentInlines.h"
-#include "ElementChildIterator.h"
+#include "ElementChildIteratorInlines.h"
 #include "EventHandler.h"
 #include "FocusController.h"
-#include "Frame.h"
 #include "FrameSelection.h"
 #include "HTMLAnchorElement.h"
 #include "HTMLBodyElement.h"
@@ -45,6 +44,7 @@
 #include "InlineIteratorTextBox.h"
 #include "LayoutElementBox.h"
 #include "LengthFunctions.h"
+#include "LocalFrame.h"
 #include "Logging.h"
 #include "Page.h"
 #include "PathUtilities.h"
@@ -55,6 +55,7 @@
 #include "RenderDeprecatedFlexibleBox.h"
 #include "RenderDescendantIterator.h"
 #include "RenderFlexibleBox.h"
+#include "RenderFragmentContainer.h"
 #include "RenderFragmentedFlow.h"
 #include "RenderGrid.h"
 #include "RenderImage.h"
@@ -68,7 +69,7 @@
 #if ASSERT_ENABLED
 #include "RenderListMarker.h"
 #endif
-#include "RenderFragmentContainer.h"
+#include "RenderMultiColumnSpannerPlaceholder.h"
 #include "RenderSVGViewportContainer.h"
 #include "RenderStyle.h"
 #include "RenderTableCaption.h"
@@ -1461,6 +1462,8 @@ void RenderElement::notifyFinished(CachedResource& resource, const NetworkLoadMe
 
 bool RenderElement::allowsAnimation() const
 {
+    if (auto* imageElement = dynamicDowncast<HTMLImageElement>(element()))
+        return imageElement->allowsAnimation();
     return page().imageAnimationEnabled();
 }
 
@@ -1479,7 +1482,7 @@ void RenderElement::scheduleRenderingUpdateForImage(CachedImage&)
 bool RenderElement::repaintForPausedImageAnimationsIfNeeded(const IntRect& visibleRect, CachedImage& cachedImage)
 {
     ASSERT(m_hasPausedImageAnimations);
-    if (!page().imageAnimationEnabled() || !isVisibleInDocumentRect(visibleRect))
+    if (!allowsAnimation() || !isVisibleInDocumentRect(visibleRect))
         return false;
 
     repaint();
@@ -1836,6 +1839,12 @@ void RenderElement::issueRepaintForOutlineAuto(float outlineSize)
 
 void RenderElement::updateOutlineAutoAncestor(bool hasOutlineAuto)
 {
+    if (is<RenderMultiColumnSpannerPlaceholder>(*this)) {
+        auto* spanner = downcast<RenderMultiColumnSpannerPlaceholder>(*this).spanner();
+        spanner->setHasOutlineAutoAncestor(hasOutlineAuto);
+        spanner->updateOutlineAutoAncestor(hasOutlineAuto);
+    }
+
     for (auto& child : childrenOfType<RenderObject>(*this)) {
         if (hasOutlineAuto == child.hasOutlineAutoAncestor())
             continue;
@@ -1876,7 +1885,7 @@ bool RenderElement::checkForRepaintDuringLayout() const
 ImageOrientation RenderElement::imageOrientation() const
 {
     auto* imageElement = dynamicDowncast<HTMLImageElement>(element());
-    return (imageElement && !imageElement->allowsOrientationOverride()) ? ImageOrientation(ImageOrientation::FromImage) : style().imageOrientation();
+    return (imageElement && !imageElement->allowsOrientationOverride()) ? ImageOrientation(ImageOrientation::Orientation::FromImage) : style().imageOrientation();
 }
 
 void RenderElement::adjustFragmentedFlowStateOnContainingBlockChangeIfNeeded(const RenderStyle& oldStyle, const RenderStyle& newStyle)
@@ -2121,7 +2130,7 @@ bool RenderElement::createsNewFormattingContext() const
 
 bool RenderElement::establishesIndependentFormattingContext() const
 {
-    return isFloatingOrOutOfFlowPositioned() || hasPotentiallyScrollableOverflow() || style().containsLayout() || paintContainmentApplies();
+    return isFloatingOrOutOfFlowPositioned() || hasPotentiallyScrollableOverflow() || style().containsLayout() || paintContainmentApplies() || (style().isDisplayBlockLevel() && style().blockStepSize());
 }
 
 FloatRect RenderElement::referenceBoxRect(CSSBoxType boxType) const

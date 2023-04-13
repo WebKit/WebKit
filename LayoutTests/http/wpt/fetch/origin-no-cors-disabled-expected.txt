@@ -1,0 +1,3 @@
+
+PASS Check origin in case referrer is set and CORS is disabled
+

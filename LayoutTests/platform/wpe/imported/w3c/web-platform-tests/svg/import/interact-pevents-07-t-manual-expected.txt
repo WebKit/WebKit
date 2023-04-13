@@ -5,10 +5,10 @@ layer at (0,0) size 800x600
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
     RenderSVGContainer {g} at (24,24) size 752x468
       RenderSVGRect {rect} at (24,24) size 752x468 [stroke={[type=SOLID] [color=#000000] [stroke width=0.25]}] [x=15.00] [y=15.00] [width=450.00] [height=280.00]
-      RenderSVGContainer {g} at (161,27) size 478x67
-        RenderSVGText {text} at (96,16) size 288x18 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 287x17
-            chunk 1 (middle anchor) text run 1 at (96.90,30.00) startOffset 0 endOffset 42 width 286.20: "Testing pointer-events and rendering order"
+      RenderSVGContainer {g} at (162,27) size 476x67
+        RenderSVGText {text} at (97,16) size 286x18 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 285x17
+            chunk 1 (middle anchor) text run 1 at (97.73,30.00) startOffset 0 endOffset 42 width 284.54: "Testing pointer-events and rendering order"
         RenderSVGText {text} at (143,32) size 194x13 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 194x12
             chunk 1 (middle anchor) text run 1 at (143.10,42.00) startOffset 0 endOffset 39 width 193.80: "Rectangles should turn RED on mouseover"

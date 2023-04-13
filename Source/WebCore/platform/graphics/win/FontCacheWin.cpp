@@ -42,25 +42,10 @@
 #include <wtf/text/win/WCharStringExtras.h>
 #include <wtf/win/GDIObject.h>
 
-#if USE(CG)
-#include <pal/spi/cg/CoreGraphicsSPI.h>
-#endif
-
-using std::min;
-
-namespace WebCore
-{
+namespace WebCore {
 
 void FontCache::platformInit()
 {
-#if USE(CG)
-    // Turn on CG's local font cache.
-    size_t size = 1536 * 1024 * 4; // This size matches Mac.
-    CGFontSetShouldUseMulticache(true);
-    CGFontCache* fontCache = CGFontCacheGetLocalCache();
-    CGFontCacheSetShouldAutoExpire(fontCache, false);
-    CGFontCacheSetMaxSize(fontCache, size);
-#endif
 }
 
 IMLangFontLinkType* FontCache::getFontLinkInterface()
@@ -423,7 +408,7 @@ Ref<Font> FontCache::lastResortFallbackFont(const FontDescription& fontDescripti
     }
 
     auto hFont = adoptGDIObject(static_cast<HFONT>(GetStockObject(DEFAULT_GUI_FONT)));
-    FontPlatformData platformData(WTFMove(hFont), fontDescription.computedPixelSize(), false, false, false);
+    FontPlatformData platformData(WTFMove(hFont), fontDescription.computedPixelSize(), false, false);
     return fontForPlatformData(platformData);
 }
 
@@ -495,11 +480,11 @@ static int CALLBACK matchImprovingEnumProc(CONST LOGFONT* candidate, CONST TEXTM
         return 1;
     }
 
-    unsigned chosenWeightDeltaMagnitude = abs(matchData->m_chosen.lfWeight - matchData->m_desiredWeight);
-    unsigned candidateWeightDeltaMagnitude = abs(candidate->lfWeight - matchData->m_desiredWeight);
+    unsigned chosenWeightDeltaMagnitude = std::abs(matchData->m_chosen.lfWeight - matchData->m_desiredWeight);
+    unsigned candidateWeightDeltaMagnitude = std::abs(candidate->lfWeight - matchData->m_desiredWeight);
 
     // If both are the same distance from the desired weight, prefer the candidate if it is further from regular.
-    if (chosenWeightDeltaMagnitude == candidateWeightDeltaMagnitude && abs(candidate->lfWeight - FW_NORMAL) > abs(matchData->m_chosen.lfWeight - FW_NORMAL)) {
+    if (chosenWeightDeltaMagnitude == candidateWeightDeltaMagnitude && std::abs(candidate->lfWeight - FW_NORMAL) > std::abs(matchData->m_chosen.lfWeight - FW_NORMAL)) {
         matchData->m_chosen = *candidate;
         return 1;
     }
@@ -511,7 +496,7 @@ static int CALLBACK matchImprovingEnumProc(CONST LOGFONT* candidate, CONST TEXTM
     return 1;
 }
 
-static GDIObject<HFONT> createGDIFont(const AtomString& family, LONG desiredWeight, bool desiredItalic, int size, bool synthesizeItalic)
+static GDIObject<HFONT> createGDIFont(const AtomString& family, LONG desiredWeight, bool desiredItalic, int size)
 {
     HWndDC hdc(0);
 
@@ -535,21 +520,12 @@ static GDIObject<HFONT> createGDIFont(const AtomString& family, LONG desiredWeig
     matchData.m_chosen.lfUnderline = false;
     matchData.m_chosen.lfStrikeOut = false;
     matchData.m_chosen.lfCharSet = DEFAULT_CHARSET;
-#if USE(CG) || USE(CAIRO)
     matchData.m_chosen.lfOutPrecision = OUT_TT_ONLY_PRECIS;
-#else
-    matchData.m_chosen.lfOutPrecision = OUT_TT_PRECIS;
-#endif
     matchData.m_chosen.lfQuality = DEFAULT_QUALITY;
     matchData.m_chosen.lfPitchAndFamily = DEFAULT_PITCH | FF_DONTCARE;
 
-#if USE(CAIRO)
     if (isGDIFontWeightBold(desiredWeight) && !isGDIFontWeightBold(matchData.m_chosen.lfWeight))
         matchData.m_chosen.lfWeight = desiredWeight;
-#endif
-
-    if (desiredItalic && !matchData.m_chosen.lfItalic && synthesizeItalic)
-        matchData.m_chosen.lfItalic = 1;
 
     auto chosenFont = adoptGDIObject(::CreateFontIndirect(&matchData.m_chosen));
     if (!chosenFont)
@@ -647,23 +623,12 @@ Vector<FontSelectionCapabilities> FontCache::getFontSelectionCapabilitiesInFamil
 
 std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDescription& fontDescription, const AtomString& family, const FontCreationContext&)
 {
-    bool isLucidaGrande = equalLettersIgnoringASCIICase(family, "lucida grande"_s);
-
-    bool useGDI = fontDescription.renderingMode() == FontRenderingMode::Alternate && !isLucidaGrande;
-
-    // The logical size constant is 32. We do this for subpixel precision when rendering using Uniscribe.
-    // This masks rounding errors related to the HFONT metrics being  different from the CGFont metrics.
-    // FIXME: We will eventually want subpixel precision for GDI mode, but the scaled rendering doesn't
-    // look as nice. That may be solvable though.
     LONG weight = adjustedGDIFontWeight(toGDIFontWeight(fontDescription.weight()), family);
     auto hfont = createGDIFont(family, weight, isItalic(fontDescription.italic()),
-        fontDescription.computedPixelSize() * (useGDI ? 1 : 32), useGDI);
+        fontDescription.computedPixelSize() * cWindowsFontScaleFactor);
 
     if (!hfont)
         return nullptr;
-
-    if (isLucidaGrande)
-        useGDI = false; // Never use GDI for Lucida Grande.
 
     LOGFONT logFont;
     GetObject(hfont.get(), sizeof(LOGFONT), &logFont);
@@ -671,16 +636,12 @@ std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDe
     bool synthesizeBold = isGDIFontWeightBold(weight) && !isGDIFontWeightBold(logFont.lfWeight);
     bool synthesizeItalic = isItalic(fontDescription.italic()) && !logFont.lfItalic;
 
-    auto result = makeUnique<FontPlatformData>(WTFMove(hfont), fontDescription.computedPixelSize(), synthesizeBold, synthesizeItalic, useGDI);
+    auto result = makeUnique<FontPlatformData>(WTFMove(hfont), fontDescription.computedPixelSize(), synthesizeBold, synthesizeItalic);
 
-#if USE(CG)
-    bool fontCreationFailed = !result->cgFont();
-#elif USE(CAIRO)
     bool fontCreationFailed = !result->scaledFont();
-#endif
 
     if (fontCreationFailed) {
-        // The creation of the CGFontRef failed for some reason.  We already asserted in debug builds, but to make
+        // The creation of the cairo scaled font failed for some reason. We already asserted in debug builds, but to make
         // absolutely sure that we don't use this font, go ahead and return 0 so that we can fall back to the next
         // font.
         return nullptr;

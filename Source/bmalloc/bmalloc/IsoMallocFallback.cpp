@@ -62,7 +62,7 @@ void determineMallocFallbackState()
 MallocResult tryMalloc(
     size_t size
 #if BENABLE_MALLOC_HEAP_BREAKDOWN
-    , malloc_zone_t* zone = nullptr
+    , malloc_zone_t* zone
 #endif
     )
 {
@@ -87,7 +87,7 @@ MallocResult tryMalloc(
 bool tryFree(
     void* ptr
 #if BENABLE_MALLOC_HEAP_BREAKDOWN
-    , malloc_zone_t* zone = nullptr
+    , malloc_zone_t* zone
 #endif
     )
 {

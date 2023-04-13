@@ -41,6 +41,7 @@ public:
     uint32_t maxTextureDimension3D() const;
     uint32_t maxTextureArrayLayers() const;
     uint32_t maxBindGroups() const;
+    uint32_t maxBindingsPerBindGroup() const;
     uint32_t maxDynamicUniformBuffersPerPipelineLayout() const;
     uint32_t maxDynamicStorageBuffersPerPipelineLayout() const;
     uint32_t maxSampledTexturesPerShaderStage() const;
@@ -53,9 +54,13 @@ public:
     uint32_t minUniformBufferOffsetAlignment() const;
     uint32_t minStorageBufferOffsetAlignment() const;
     uint32_t maxVertexBuffers() const;
+    uint64_t maxBufferSize() const;
     uint32_t maxVertexAttributes() const;
     uint32_t maxVertexBufferArrayStride() const;
     uint32_t maxInterStageShaderComponents() const;
+    uint32_t maxInterStageShaderVariables() const;
+    uint32_t maxColorAttachments() const;
+    uint32_t maxColorAttachmentBytesPerSample() const;
     uint32_t maxComputeWorkgroupStorageSize() const;
     uint32_t maxComputeInvocationsPerWorkgroup() const;
     uint32_t maxComputeWorkgroupSizeX() const;

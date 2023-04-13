@@ -7,7 +7,9 @@ Before:
 |     <tr>
 |       <td>
 |         id="element"
-|         "<#selection-anchor>fsdf<#selection-focus>"
+|         <#selection-anchor>
+|         "fsdf"
+|         <#selection-focus>
 |       <td>
 |         "fsdf"
 |     <tr>

@@ -48,7 +48,7 @@ static WKStylusDeviceObserver *getStylusDeviceObserver()
     return [NSClassFromString(@"WKStylusDeviceObserver") sharedInstance];
 }
 
-enum class HasStylusDevice { Yes, No };
+enum class HasStylusDevice : bool { No, Yes };
 static RetainPtr<TestWKWebView> createWebView(HasStylusDevice hasStylusDevice)
 {
     WKStylusDeviceObserver *stylusDeviceObserver = getStylusDeviceObserver();

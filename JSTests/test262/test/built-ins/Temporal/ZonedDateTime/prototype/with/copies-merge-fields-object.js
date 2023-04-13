@@ -46,7 +46,6 @@ const expected = [
   "get second",
   "get second.valueOf",
   "call second.valueOf",
-  "get timeZone",
   "get year",
   "get year.valueOf",
   "call year.valueOf",

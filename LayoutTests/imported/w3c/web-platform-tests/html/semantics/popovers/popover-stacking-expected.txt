@@ -1,0 +1,24 @@
+Direct DOM children
+
+Grandchildren
+
+popovertarget attribute relationship
+
+nested popovertarget attribute relationship
+
+anchor attribute relationship
+
+indirect anchor attribute relationship
+
+Popover 1  Dialog
+
+PASS Direct DOM children
+PASS Grandchildren
+PASS popovertarget attribute relationship
+PASS nested popovertarget attribute relationship
+FAIL anchor attribute relationship assert_true: expected true got false
+FAIL indirect anchor attribute relationship assert_true: expected true got false
+FAIL more complex nesting, all using anchor ancestry assert_equals: Popover #1 incorrect state expected true but got false
+FAIL popovers should be closed by dialogs assert_equals: Popover #1 incorrect state expected true but got false
+PASS dialogs should not be closed by popovers
+

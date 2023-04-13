@@ -42,6 +42,8 @@ RemoteExternalTextureProxy::RemoteExternalTextureProxy(RemoteDeviceProxy& parent
 
 RemoteExternalTextureProxy::~RemoteExternalTextureProxy()
 {
+    auto sendResult = send(Messages::RemoteExternalTexture::Destruct());
+    UNUSED_VARIABLE(sendResult);
 }
 
 void RemoteExternalTextureProxy::setLabelInternal(const String& label)

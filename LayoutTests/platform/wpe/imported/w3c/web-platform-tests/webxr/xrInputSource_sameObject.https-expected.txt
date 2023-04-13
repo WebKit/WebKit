@@ -1,4 +1,0 @@
-
-PASS XRInputSource attributes meet [SameObject] requirement - webgl
-PASS XRInputSource attributes meet [SameObject] requirement - webgl2
-

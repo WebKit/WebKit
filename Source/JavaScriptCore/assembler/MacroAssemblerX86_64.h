@@ -190,41 +190,24 @@ public:
     }
 
 #if OS(WINDOWS)
-    Call callWithSlowPathReturnType(PtrTag)
+    Call callWithUGPRPair(PtrTag)
     {
-        // On Win64, when the return type is larger than 8 bytes, we need to allocate space on the stack for the return value.
-        // On entry, rcx should contain a pointer to this stack space. The other parameters are shifted to the right,
-        // rdx should contain the first argument, r8 should contain the second argument, and r9 should contain the third argument.
-        // On return, rax contains a pointer to this stack value. See http://msdn.microsoft.com/en-us/library/7572ztz4.aspx.
-        // We then need to copy the 16 byte return value into rax and rdx, since JIT expects the return value to be split between the two.
-        // It is assumed that the parameters are already shifted to the right, when entering this method.
-        // Note: this implementation supports up to 3 parameters.
-
-        // JIT relies on the CallerFrame (frame pointer) being put on the stack,
-        // On Win64 we need to manually copy the frame pointer to the stack, since MSVC may not maintain a frame pointer on 64-bit.
-        // See http://msdn.microsoft.com/en-us/library/9z1stfyw.aspx where it's stated that rbp MAY be used as a frame pointer.
-        store64(X86Registers::ebp, Address(X86Registers::esp, -16));
-
-        // We also need to allocate the shadow space on the stack for the 4 parameter registers.
-        // In addition, we need to allocate 16 bytes for the return value.
-        // Also, we should allocate 16 bytes for the frame pointer, and return address (not populated).
-        sub64(TrustedImm32(8 * sizeof(int64_t)), X86Registers::esp);
-
-        // The first parameter register should contain a pointer to the stack allocated space for the return value.
-        move(X86Registers::esp, X86Registers::ecx);
-        add64(TrustedImm32(4 * sizeof(int64_t)), X86Registers::ecx);
-
         DataLabelPtr label = moveWithPatch(TrustedImmPtr(nullptr), scratchRegister());
         Call result = Call(m_assembler.call(scratchRegister()), Call::Linkable);
-
-        add64(TrustedImm32(8 * sizeof(int64_t)), X86Registers::esp);
-
         // Copy the return value into rax and rdx.
         load64(Address(X86Registers::eax, sizeof(int64_t)), X86Registers::edx);
         load64(Address(X86Registers::eax), X86Registers::eax);
 
         ASSERT_UNUSED(label, differenceBetween(label, result) == REPATCH_OFFSET_CALL_R11);
         return result;
+    }
+
+    void callWithUGPRPair(Address address, PtrTag)
+    {
+        m_assembler.call_m(address.offset, address.base);
+        // Copy the return value into rax and rdx.
+        load64(Address(X86Registers::eax, sizeof(int64_t)), X86Registers::edx);
+        load64(Address(X86Registers::eax), X86Registers::eax);
     }
 #endif
 
@@ -611,6 +594,18 @@ public:
         }
     }
 
+    void lshift64(RegisterID src, RegisterID shiftAmount, RegisterID dest)
+    {
+        if (shiftAmount == dest) {
+            move(shiftAmount, scratchRegister());
+            move(src, dest);
+            lshift64(scratchRegister(), dest);
+        } else {
+            move(src, dest);
+            lshift64(shiftAmount, dest);
+        }
+    }
+
     void rshift64(TrustedImm32 imm, RegisterID dest)
     {
         m_assembler.sarq_i8r(imm.m_value, dest);
@@ -634,6 +629,18 @@ public:
     {
         move(src, dest);
         rshift64(imm, dest);
+    }
+
+    void rshift64(RegisterID src, RegisterID shiftAmount, RegisterID dest)
+    {
+        if (shiftAmount == dest) {
+            move(shiftAmount, scratchRegister());
+            move(src, dest);
+            rshift64(scratchRegister(), dest);
+        } else {
+            move(src, dest);
+            rshift64(shiftAmount, dest);
+        }
     }
 
     void urshift64(TrustedImm32 imm, RegisterID dest)
@@ -667,6 +674,12 @@ public:
         }
     }
 
+    void urshift64(RegisterID src, TrustedImm32 imm, RegisterID dest)
+    {
+        move(src, dest);
+        urshift64(imm, dest);
+    }
+
     void rotateRight64(TrustedImm32 imm, RegisterID dest)
     {
         m_assembler.rorq_i8r(imm.m_value, dest);
@@ -686,6 +699,24 @@ public:
         }
     }
 
+    void rotateRight64(RegisterID src, RegisterID shiftAmount, RegisterID dest)
+    {
+        if (shiftAmount == dest) {
+            move(shiftAmount, scratchRegister());
+            move(src, dest);
+            rotateRight64(scratchRegister(), dest);
+        } else {
+            move(src, dest);
+            rotateRight64(shiftAmount, dest);
+        }
+    }
+
+    void rotateRight64(RegisterID src, TrustedImm32 shiftAmount, RegisterID dest)
+    {
+        move(src, dest);
+        rotateRight64(shiftAmount, dest);
+    }
+
     void rotateLeft64(TrustedImm32 imm, RegisterID dest)
     {
         m_assembler.rolq_i8r(imm.m_value, dest);
@@ -703,6 +734,24 @@ public:
             m_assembler.rolq_CLr(dest == X86Registers::ecx ? src : dest);
             swap(src, X86Registers::ecx);
         }
+    }
+
+    void rotateLeft64(RegisterID src, RegisterID shiftAmount, RegisterID dest)
+    {
+        if (shiftAmount == dest) {
+            move(shiftAmount, scratchRegister());
+            move(src, dest);
+            rotateLeft64(scratchRegister(), dest);
+        } else {
+            move(src, dest);
+            rotateLeft64(shiftAmount, dest);
+        }
+    }
+
+    void rotateLeft64(RegisterID src, TrustedImm32 shiftAmount, RegisterID dest)
+    {
+        move(src, dest);
+        rotateLeft64(shiftAmount, dest);
     }
 
     void mul64(RegisterID src, RegisterID dest)
@@ -853,9 +902,14 @@ public:
     
     void sub64(RegisterID a, RegisterID b, RegisterID dest)
     {
-        ASSERT(b != dest);
-        move(a, dest);
-        sub64(b, dest);
+        if (b != dest) {
+            move(a, dest);
+            sub64(b, dest);
+        } else if (a != b) {
+            neg64(b);
+            add64(a, b);
+        } else
+            move(TrustedImm32(0), dest);
     }
 
     void sub64(TrustedImm32 imm, RegisterID dest)
@@ -991,6 +1045,26 @@ public:
         m_assembler.notq_m(dest.offset, dest.base, dest.index, dest.scale);
     }
 
+    void zeroExtend8To64(RegisterID src, RegisterID dest)
+    {
+        zeroExtend8To32(src, dest);
+    }
+
+    void signExtend8To64(RegisterID src, RegisterID dest)
+    {
+        m_assembler.movsbq_rr(src, dest);
+    }
+
+    void zeroExtend16To64(RegisterID src, RegisterID dest)
+    {
+        zeroExtend16To32(src, dest);
+    }
+
+    void signExtend16To64(RegisterID src, RegisterID dest)
+    {
+        m_assembler.movswq_rr(src, dest);
+    }
+
     void load64(Address address, RegisterID dest)
     {
         m_assembler.movq_mr(address.offset, address.base, dest);
@@ -1122,6 +1196,12 @@ public:
         store64(src2, Address(dest, offset.m_value + 8));
     }
 
+    void transfer32(Address src, Address dest)
+    {
+        load32(src, scratchRegister());
+        store32(scratchRegister(), dest);
+    }
+
     void transfer64(Address src, Address dest)
     {
         load64(src, scratchRegister());
@@ -1150,6 +1230,19 @@ public:
         m_assembler.xchgq_rm(src, dest.offset, dest.base);
     }
 
+    void swapDouble(FPRegisterID reg1, FPRegisterID reg2)
+    {
+        if (reg1 == reg2)
+            return;
+
+        // FIXME: This is kinda a hack since we don't use xmm7 as a temp.
+        ASSERT(reg1 != FPRegisterID::xmm7);
+        ASSERT(reg2 != FPRegisterID::xmm7);
+        moveDouble(reg1, FPRegisterID::xmm7);
+        moveDouble(reg2, reg1);
+        moveDouble(FPRegisterID::xmm7, reg2);
+    }
+
     void move32ToFloat(RegisterID src, FPRegisterID dest)
     {
         if (supportsAVX())
@@ -1158,12 +1251,30 @@ public:
             m_assembler.movd_rr(src, dest);
     }
 
+    void move32ToFloat(TrustedImm32 imm, FPRegisterID dest)
+    {
+        move(imm, scratchRegister());
+        if (supportsAVX())
+            m_assembler.vmovd_rr(scratchRegister(), dest);
+        else
+            m_assembler.movd_rr(scratchRegister(), dest);
+    }
+
     void move64ToDouble(RegisterID src, FPRegisterID dest)
     {
         if (supportsAVX())
             m_assembler.vmovq_rr(src, dest);
         else
             m_assembler.movq_rr(src, dest);
+    }
+
+    void move64ToDouble(TrustedImm64 imm, FPRegisterID dest)
+    {
+        move(imm, scratchRegister());
+        if (supportsAVX())
+            m_assembler.vmovq_rr(scratchRegister(), dest);
+        else
+            m_assembler.movq_rr(scratchRegister(), dest);
     }
 
     void moveDoubleTo64(FPRegisterID src, RegisterID dest)
@@ -1181,7 +1292,15 @@ public:
         else
             m_assembler.movaps_rr(src, dest);
     }
-    
+
+    void materializeVector(v128_t value, FPRegisterID dest)
+    {
+        move(TrustedImm64(value.u64x2[0]), scratchRegister());
+        vectorReplaceLaneInt64(TrustedImm32(0), scratchRegister(), dest);
+        move(TrustedImm64(value.u64x2[1]), scratchRegister());
+        vectorReplaceLaneInt64(TrustedImm32(1), scratchRegister(), dest);
+    }
+
     void loadVector(TrustedImmPtr address, FPRegisterID dest)
     {
         move(address, scratchRegister());

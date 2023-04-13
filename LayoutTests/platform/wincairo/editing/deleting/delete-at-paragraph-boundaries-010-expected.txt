@@ -19,28 +19,29 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x322 [border: (2px solid #0000FF)]
         RenderBlock {DIV} at (14,14) size 756x111
-          RenderText {#text} at (0,0) size 66x26
-            text run at (0,0) width 66: "Tests: "
-          RenderBR {BR} at (66,0) size 0x26
-          RenderText {#text} at (0,27) size 730x55
-            text run at (0,27) width 730: "Deleting when a selection starts at the beginning of a text following a nested"
-            text run at (0,55) width 680: "block, and extends out of the enclosing block into the following block. "
-          RenderBR {BR} at (680,55) size 0x27
-          RenderText {#text} at (0,83) size 547x27
-            text run at (0,83) width 265: "FIXME: Currently broken! "
-            text run at (265,83) width 282: "See rdar://problem/4099839/."
+          RenderText {#text} at (0,0) size 65x26
+            text run at (0,0) width 65: "Tests: "
+          RenderBR {BR} at (65,0) size 0x26
+          RenderText {#text} at (0,27) size 743x55
+            text run at (0,27) width 743: "Deleting when a selection starts at the beginning of a text following a nested"
+            text run at (0,55) width 691: "block, and extends out of the enclosing block into the following block. "
+          RenderBR {BR} at (691,55) size 0x27
+          RenderText {#text} at (0,83) size 553x27
+            text run at (0,83) width 267: "FIXME: Currently broken! "
+            text run at (267,83) width 286: "See rdar://problem/4099839/."
         RenderBlock {DIV} at (14,141) size 756x167
           RenderText {#text} at (0,0) size 189x26
             text run at (0,0) width 189: "Expected Results: "
           RenderBR {BR} at (189,0) size 0x26
-          RenderText {#text} at (0,27) size 756x139
-            text run at (0,27) width 714: "Should see a total of five lines in the red box, with the third line inside of a"
-            text run at (0,55) width 668: "nested red box. First line should be \"one\". Next line should be \"two\". "
-            text run at (668,55) width 88: "Next line"
-            text run at (0,83) width 740: "should be \"cha cha cha\", inside of a nested red box. Next line should be \"ur\"."
-            text run at (0,111) width 367: "The last line should be \"cha cha cha\". "
-            text run at (367,111) width 381: "Insertion point should be blinking at the"
-            text run at (0,139) width 278: "start of the fourth line (\"ur\")."
+          RenderText {#text} at (0,27) size 752x139
+            text run at (0,27) width 727: "Should see a total of five lines in the red box, with the third line inside of a"
+            text run at (0,55) width 675: "nested red box. First line should be \"one\". Next line should be \"two\". "
+            text run at (675,55) width 47: "Next"
+            text run at (0,83) width 737: "line should be \"cha cha cha\", inside of a nested red box. Next line should be"
+            text run at (0,111) width 52: "\"ur\". "
+            text run at (52,111) width 372: "The last line should be \"cha cha cha\". "
+            text run at (424,111) width 328: "Insertion point should be blinking"
+            text run at (0,139) width 340: "at the start of the fourth line (\"ur\")."
       RenderBlock {DIV} at (0,346) size 784x148
         RenderBlock {DIV} at (0,0) size 784x148 [border: (2px solid #FF0000)]
           RenderBlock (anonymous) at (2,2) size 780x28

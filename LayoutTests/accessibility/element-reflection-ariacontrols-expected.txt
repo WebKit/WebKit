@@ -3,15 +3,16 @@ Checks that element reflection is exposed to the a11y tree for 'ariaControlsElem
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS axTab1.ariaControlsElementAtIndex(0).isEqual(axPanel1) is true
-PASS axTab2.ariaControlsElementAtIndex(0).isEqual(axPanel2) is true
-PASS axTab2.ariaControlsElementAtIndex(0).isEqual(axPanel1) is true
-PASS axTab3.ariaControlsElementAtIndex(0).isEqual(axPanel3) is true
-PASS axTab2.ariaControlsElementAtIndex(0).isEqual(axPanel1) is true
-PASS axTab2.ariaControlsElementAtIndex(1).isEqual(axPanel2) is true
-PASS axTab2.ariaControlsElementAtIndex(2).isEqual(axPanel3) is true
-PASS axTab4.ariaControlsElementAtIndex(0).isEqual(axPanel4) is true
-PASS axTab5.ariaControlsElementAtIndex(0).isEqual(axPanel5) is true
+PASS: axTab1.ariaControlsElementAtIndex(0).isEqual(axPanel1) === true
+PASS: axTab2.ariaControlsElementAtIndex(0).isEqual(axPanel2) === true
+PASS: axTab2.ariaControlsElementAtIndex(0).isEqual(axPanel1) === true
+PASS: axTab3.ariaControlsElementAtIndex(0).isEqual(axPanel3) === true
+PASS: axTab2.ariaControlsElementAtIndex(0).isEqual(axPanel1) === true
+PASS: axTab2.ariaControlsElementAtIndex(1).isEqual(axPanel2) === true
+PASS: axTab2.ariaControlsElementAtIndex(2).isEqual(axPanel3) === true
+PASS: axTab4.ariaControlsElementAtIndex(0).isEqual(axPanel4) === true
+PASS: axTab5.ariaControlsElementAtIndex(0).isEqual(axPanel5) === true
+
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include "ListStyleType.h"
 #include "RenderStyleConstants.h"
 #include <wtf/text/AtomString.h>
 
@@ -37,11 +38,11 @@ public:
         , m_listStyle(style)
         , m_separator(separator)
     {
-        ASSERT(style != ListStyleType::String);
+        ASSERT(style.type != ListStyleType::Type::String);
     }
 
     const AtomString& identifier() const { return m_identifier; }
-    ListStyleType listStyle() const { return m_listStyle; }
+    ListStyleType listStyleType() const { return m_listStyle; }
     const AtomString& separator() const { return m_separator; }
 
 private:
@@ -53,7 +54,7 @@ private:
 static inline bool operator==(const CounterContent& a, const CounterContent& b)
 {
     return a.identifier() == b.identifier()
-        && a.listStyle() == b.listStyle()
+        && a.listStyleType() == b.listStyleType()
         && a.separator() == b.separator();
 }
 

@@ -29,6 +29,7 @@
 #include "APIViewClient.h"
 #include "DrawingAreaProxyCoordinatedGraphics.h"
 #include "NativeWebMouseEvent.h"
+#include "NativeWebTouchEvent.h"
 #include "NativeWebWheelEvent.h"
 #include "TouchGestureController.h"
 #include "WPEView.h"
@@ -241,7 +242,7 @@ void PageClientImpl::doneWithTouchEvent(const NativeWebTouchEvent& touchEvent, b
             auto* event = &axisEvent.event;
 #endif
             if (event->type != wpe_input_axis_event_type_null) {
-                page.handleWheelEvent(WebKit::NativeWebWheelEvent(event, page.deviceScaleFactor(),
+                page.handleNativeWheelEvent(WebKit::NativeWebWheelEvent(event, page.deviceScaleFactor(),
                     axisEvent.phase, WebWheelEvent::Phase::PhaseNone));
             }
         });
@@ -256,7 +257,7 @@ RefPtr<WebPopupMenuProxy> PageClientImpl::createPopupMenuProxy(WebPageProxy& pag
 {
     if (!m_view.client().isGLibBasedAPI())
         return nullptr;
-    return WebKitPopupMenu::create(m_view, page);
+    return WebKitPopupMenu::create(m_view, page.popupMenuClient());
 }
 
 #if ENABLE(CONTEXT_MENUS)

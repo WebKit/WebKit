@@ -191,16 +191,10 @@ void RemoteGraphicsContextGL::prepareForDisplay(CompletionHandler<void()>&& comp
 }
 #endif
 
-void RemoteGraphicsContextGL::synthesizeGLError(uint32_t error)
+void RemoteGraphicsContextGL::getErrors(CompletionHandler<void(GCGLErrorCodeSet)>&& completionHandler)
 {
     assertIsCurrent(workQueue());
-    m_context->synthesizeGLError(static_cast<GCGLenum>(error));
-}
-
-void RemoteGraphicsContextGL::getError(CompletionHandler<void(uint32_t)>&& completionHandler)
-{
-    assertIsCurrent(workQueue());
-    completionHandler(static_cast<uint32_t>(m_context->getError()));
+    completionHandler(m_context->getErrors());
 }
 
 void RemoteGraphicsContextGL::ensureExtensionEnabled(String&& extension)
@@ -225,7 +219,9 @@ void RemoteGraphicsContextGL::paintRenderingResultsToCanvas(WebCore::RenderingRe
 void RemoteGraphicsContextGL::paintRenderingResultsToCanvasWithQualifiedIdentifier(QualifiedRenderingResourceIdentifier imageBuffer, CompletionHandler<void()>&& completionHandler)
 {
     assertIsCurrent(workQueue());
-    paintPixelBufferToImageBuffer(m_context->readRenderingResultsForPainting(), imageBuffer, WTFMove(completionHandler));
+    m_context->withDrawingBufferAsNativeImage([&](NativeImage& image) {
+        paintNativeImageToImageBuffer(image, imageBuffer, WTFMove(completionHandler));
+    });
 }
 
 void RemoteGraphicsContextGL::paintCompositedResultsToCanvas(WebCore::RenderingResourceIdentifier imageBuffer, CompletionHandler<void()>&& completionHandler)
@@ -238,10 +234,12 @@ void RemoteGraphicsContextGL::paintCompositedResultsToCanvas(WebCore::RenderingR
 void RemoteGraphicsContextGL::paintCompositedResultsToCanvasWithQualifiedIdentifier(QualifiedRenderingResourceIdentifier imageBuffer, CompletionHandler<void()>&& completionHandler)
 {
     assertIsCurrent(workQueue());
-    paintPixelBufferToImageBuffer(m_context->readCompositedResultsForPainting(), imageBuffer, WTFMove(completionHandler));
+    m_context->withDisplayBufferAsNativeImage([&](NativeImage& image) {
+        paintNativeImageToImageBuffer(image, imageBuffer, WTFMove(completionHandler));
+    });
 }
 
-#if ENABLE(MEDIA_STREAM)
+#if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
 void RemoteGraphicsContextGL::paintCompositedResultsToVideoFrame(CompletionHandler<void(std::optional<WebKit::RemoteVideoFrameProxy::Properties>&&)>&& completionHandler)
 {
     assertIsCurrent(workQueue());
@@ -252,7 +250,7 @@ void RemoteGraphicsContextGL::paintCompositedResultsToVideoFrame(CompletionHandl
 }
 #endif
 
-void RemoteGraphicsContextGL::paintPixelBufferToImageBuffer(RefPtr<WebCore::PixelBuffer>&& pixelBuffer, QualifiedRenderingResourceIdentifier target, CompletionHandler<void()>&& completionHandler)
+void RemoteGraphicsContextGL::paintNativeImageToImageBuffer(NativeImage& image, QualifiedRenderingResourceIdentifier target, CompletionHandler<void()>&& completionHandler)
 {
     assertIsCurrent(workQueue());
     // FIXME: We do not have functioning read/write fences in RemoteRenderingBackend. Thus this is synchronous,
@@ -261,20 +259,16 @@ void RemoteGraphicsContextGL::paintPixelBufferToImageBuffer(RefPtr<WebCore::Pixe
     Condition conditionVariable;
     bool isFinished = false;
 
-    // FIXME: This should not be needed. Maybe ArrayBufferView should be ThreadSafeRefCounted as it is used in accross multiple threads.
-    // The call below is synchronous and we transfer the ownership of the `pixelBuffer`.
-    if (is<ByteArrayPixelBuffer>(pixelBuffer))
-        downcast<ByteArrayPixelBuffer>(*pixelBuffer).data().disableThreadingChecks();
-    m_renderingBackend->dispatch([&, contextAttributes = m_context->contextAttributes()]() mutable {
+    m_renderingBackend->dispatch([&]() mutable {
         if (auto imageBuffer = m_renderingBackend->remoteResourceCache().cachedImageBuffer(target)) {
             // Here we do not try to play back pending commands for imageBuffer. Currently this call is only made for empty
             // image buffers and there's no good way to add display lists.
-            if (pixelBuffer)
-                GraphicsContextGL::paintToCanvas(contextAttributes, pixelBuffer.releaseNonNull(), imageBuffer->backendSize(), imageBuffer->context());
-            else
-                imageBuffer->context().clearRect({ IntPoint(), imageBuffer->backendSize() });
+            GraphicsContextGL::paintToCanvas(image, imageBuffer->backendSize(), imageBuffer->context());
+
+
+            // We know that the image might be updated afterwards, so flush the drawing so that read back does not occur.
             // Unfortunately "flush" implementation in RemoteRenderingBackend overloads ordering and effects.
-            imageBuffer->flushContext();
+            imageBuffer->flushDrawingContext();
         }
         Locker locker { lock };
         isFinished = true;
@@ -333,11 +327,11 @@ void RemoteGraphicsContextGL::readnPixels2(int32_t x, int32_t y, int32_t width, 
     if (!handle.isNull()) {
         handle.setOwnershipOfMemory(m_resourceOwner, WebKit::MemoryLedger::Default);
         if (auto buffer = SharedMemory::map(WTFMove(handle), SharedMemory::Protection::ReadWrite))
-            success = m_context->readnPixelsWithStatus(x, y, width, height, format, type, GCGLSpan<void> { buffer->data(), buffer->size() });
+            success = m_context->readnPixelsWithStatus(x, y, width, height, format, type, makeSpan(static_cast<uint8_t*>(buffer->data()), buffer->size()));
         else
-            m_context->synthesizeGLError(GraphicsContextGL::INVALID_OPERATION);
+            m_context->addError(GCGLErrorCode::InvalidOperation);
     } else
-        m_context->synthesizeGLError(GraphicsContextGL::INVALID_OPERATION);
+        m_context->addError(GCGLErrorCode::InvalidOperation);
     completionHandler(success);
 }
 

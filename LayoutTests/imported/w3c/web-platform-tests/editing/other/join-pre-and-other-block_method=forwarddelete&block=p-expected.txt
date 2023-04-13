@@ -1,0 +1,55 @@
+abcdef
+
+ghi
+
+PASS forwarddelete at <pre>abc[]</pre><p>def</p>
+PASS forwarddelete at <pre>abc[]</pre>\n<p>def</p>
+PASS forwarddelete at <p>abc[]</p><pre>def</pre>
+PASS forwarddelete at <p>abc[]</p>\n<pre>def</pre>
+PASS forwarddelete at <pre>abc[]</pre><p>def<br>ghi</p>
+PASS forwarddelete at <pre>abc[]</pre>\n<p>def<br>ghi</p>
+PASS forwarddelete at <p>abc[]</p><pre>def\nghi</pre>
+PASS forwarddelete at <p>abc[]</p>\n<pre>def\nghi</pre>
+PASS forwarddelete at <p>abc[]</p><pre>def<br>ghi</pre>
+PASS forwarddelete at <p>abc[]</p>\n<pre>def<br>ghi</pre>
+PASS forwarddelete at <pre>abc[]</pre><p><b>def</b></p>
+PASS forwarddelete at <pre>abc[]</pre>\n<p><b>def</b></p>
+PASS forwarddelete at <pre>abc[]</pre><p><b>def<br>ghi</b></p>
+PASS forwarddelete at <pre>abc[]</pre>\n<p><b>def<br>ghi</b></p>
+PASS forwarddelete at <p>abc[]</p><pre><b>def\nghi</b></pre>
+PASS forwarddelete at <p>abc[]</p>\n<pre><b>def\nghi</b></pre>
+PASS forwarddelete at <p>abc[]</p><pre><b>def<br>ghi</b></pre>
+PASS forwarddelete at <p>abc[]</p>\n<pre><b>def<br>ghi</b></pre>
+PASS forwarddelete at <p>abc[]</p><pre><b>def</b>\nghi</pre>
+PASS forwarddelete at <p>abc[]</p>\n<pre><b>def</b>\nghi</pre>
+PASS forwarddelete at <p>abc[]</p><pre><b>def</b><br>ghi</pre>
+PASS forwarddelete at <p>abc[]</p>\n<pre><b>def</b><br>ghi</pre>
+PASS forwarddelete at <p>abc[]</p><pre><b>def\n</b>ghi</pre>
+PASS forwarddelete at <p>abc[]</p>\n<pre><b>def\n</b>ghi</pre>
+PASS forwarddelete at <p>abc[]</p><pre><b>def<br></b>ghi</pre>
+PASS forwarddelete at <p>abc[]</p>\n<pre><b>def<br></b>ghi</pre>
+PASS forwarddelete at <p>abc[]</p><pre>\ndef\nghi</pre>
+PASS forwarddelete at <p>abc[]</p>\n<pre>\ndef\nghi</pre>
+PASS forwarddelete at <p>abc[]</p><pre>\n\ndef\nghi</pre>
+PASS forwarddelete at <p>abc[]</p>\n<pre>\n\ndef\nghi</pre>
+PASS forwarddelete at <p>abc[]</p><pre>def</pre> (with <style>pre { white-space: pre; }</style>)
+PASS forwarddelete at <p>abc[]</p>\n<pre>def</pre> (with <style>pre { white-space: pre; }</style>)
+PASS forwarddelete at <p>abc[]</p><pre>def\nghi</pre> (with <style>pre { white-space: pre; }</style>)
+PASS forwarddelete at <p>abc[]</p>\n<pre>def\nghi</pre> (with <style>pre { white-space: pre; }</style>)
+PASS forwarddelete at <p>abc[]</p><pre>def<br>ghi</pre> (with <style>pre { white-space: pre; }</style>)
+PASS forwarddelete at <p>abc[]</p>\n<pre>def<br>ghi</pre> (with <style>pre { white-space: pre; }</style>)
+PASS forwarddelete at <p>abc[]</p><pre><b>def\nghi</b></pre> (with <style>pre { white-space: pre; }</style>)
+PASS forwarddelete at <p>abc[]</p>\n<pre><b>def\nghi</b></pre> (with <style>pre { white-space: pre; }</style>)
+PASS forwarddelete at <p>abc[]</p><pre><b>def<br>ghi</b></pre> (with <style>pre { white-space: pre; }</style>)
+PASS forwarddelete at <p>abc[]</p>\n<pre><b>def<br>ghi</b></pre> (with <style>pre { white-space: pre; }</style>)
+PASS forwarddelete at <p>abc[]</p><pre><b>def</b>\nghi</pre> (with <style>pre { white-space: pre; }</style>)
+PASS forwarddelete at <p>abc[]</p>\n<pre><b>def</b>\nghi</pre> (with <style>pre { white-space: pre; }</style>)
+PASS forwarddelete at <p>abc[]</p><pre><b>def</b><br>ghi</pre> (with <style>pre { white-space: pre; }</style>)
+PASS forwarddelete at <p>abc[]</p>\n<pre><b>def</b><br>ghi</pre> (with <style>pre { white-space: pre; }</style>)
+PASS forwarddelete at <p>abc[]</p><pre><b>def\n</b>ghi</pre> (with <style>pre { white-space: pre; }</style>)
+PASS forwarddelete at <p>abc[]</p>\n<pre><b>def\n</b>ghi</pre> (with <style>pre { white-space: pre; }</style>)
+PASS forwarddelete at <p>abc[]</p><pre><b>def<br></b>ghi</pre> (with <style>pre { white-space: pre; }</style>)
+PASS forwarddelete at <p>abc[]</p>\n<pre><b>def<br></b>ghi</pre> (with <style>pre { white-space: pre; }</style>)
+PASS forwarddelete at <p>abc[]</p><pre>\ndef\nghi</pre> (with <style>pre { white-space: pre; }</style>)
+PASS forwarddelete at <p>abc[]</p>\n<pre>\ndef\nghi</pre> (with <style>pre { white-space: pre; }</style>)
+

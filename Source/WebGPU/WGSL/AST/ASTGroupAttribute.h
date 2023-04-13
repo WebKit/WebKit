@@ -25,21 +25,19 @@
 
 #pragma once
 
-#include "ASTNode.h"
+#include "ASTAttribute.h"
 
 namespace WGSL::AST {
 
 class GroupAttribute final : public Attribute {
     WTF_MAKE_FAST_ALLOCATED;
-
 public:
     GroupAttribute(SourceSpan span, unsigned group)
         : Attribute(span)
         , m_value(group)
-    {
-    }
+    { }
 
-    Kind kind() const override;
+    NodeKind kind() const override;
     unsigned group() const { return m_value; }
 
 private:

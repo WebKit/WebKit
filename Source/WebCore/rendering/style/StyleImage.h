@@ -91,7 +91,7 @@ public:
     ALWAYS_INLINE bool isCachedImage() const { return m_type == Type::CachedImage; }
     ALWAYS_INLINE bool isCursorImage() const { return m_type == Type::CursorImage; }
     ALWAYS_INLINE bool isImageSet() const { return m_type == Type::ImageSet; }
-    ALWAYS_INLINE bool isGeneratedImage() const { return isFilterImage() || isCanvasImage() || isCrossfadeImage() || isGradientImage() || isNamedImage() || isPaintImage(); }
+    ALWAYS_INLINE bool isGeneratedImage() const { return isFilterImage() || isCanvasImage() || isCrossfadeImage() || isGradientImage() || isNamedImage() || isPaintImage() || isInvalidImage(); }
     ALWAYS_INLINE bool isFilterImage() const { return m_type == Type::FilterImage; }
     ALWAYS_INLINE bool isCanvasImage() const { return m_type == Type::CanvasImage; }
     ALWAYS_INLINE bool isCrossfadeImage() const { return m_type == Type::CrossfadeImage; }
@@ -102,6 +102,7 @@ public:
 #else
     ALWAYS_INLINE bool isPaintImage() const { return false; }
 #endif
+    ALWAYS_INLINE bool isInvalidImage() const { return m_type == Type::InvalidImage; }
 
     bool hasCachedImage() const { return m_type == Type::CachedImage || selectedImage()->isCachedImage(); }
 
@@ -115,6 +116,7 @@ protected:
         CrossfadeImage,
         GradientImage,
         NamedImage,
+        InvalidImage,
 #if ENABLE(CSS_PAINTING_API)
         PaintImage,
 #endif

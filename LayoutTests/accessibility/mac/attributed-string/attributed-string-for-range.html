@@ -1,38 +1,30 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
-    <head>
-        <script>
-            var successfullyParsed = false;
-        </script>
-        <script src="../../../resources/js-test-pre.js"></script>
-    </head>
-    <body id="body">
+<head>
+<script src="../../../resources/accessibility-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+</head>
+<body>
 
-        <div id="content" contenteditable>
-            word mispelled word
-        </div>
+<div id="content" contenteditable>
+word mispelled word
+</div>
 
-        <p id="description"></p>
-        <div id="console"></div>
+<script>
+if (window.accessibilityController) {
+    let output = "This test ensures that attributed string for text marker range works and does include misspelled attribute.\n\n";
 
-        <script>
+    var text = null;
+    var expected = "AXFont - {\n    AXFontFamily = Times;\n    AXFontName = \"Times-Roman\";\n    AXFontSize = 16;\n    AXVisibleName = \"Times Roman\";\n}, Misspelled, AXFont - {\n    AXFontFamily = Times;\n    AXFontName = \"Times-Roman\";\n    AXFontSize = 16;\n    AXVisibleName = \"Times Roman\";\n}, AXFont - {\n    AXFontFamily = Times;\n    AXFontName = \"Times-Roman\";\n    AXFontSize = 16;\n    AXVisibleName = \"Times Roman\";\n}, word mispelled word";
 
-            description("This test ensures that attributed string for text marker range works and does include misspelled attribute.");
-            
-            var text = 0;
-            var expected = "AXFont - {\n    AXFontFamily = Times;\n    AXFontName = \"Times-Roman\";\n    AXFontSize = 16;\n    AXVisibleName = \"Times Roman\";\n}, Misspelled, AXFont - {\n    AXFontFamily = Times;\n    AXFontName = \"Times-Roman\";\n    AXFontSize = 16;\n    AXVisibleName = \"Times Roman\";\n}, AXFont - {\n    AXFontFamily = Times;\n    AXFontName = \"Times-Roman\";\n    AXFontSize = 16;\n    AXVisibleName = \"Times Roman\";\n}, word mispelled word";
+    let axElement = accessibilityController.accessibleElementById("content");
+    let range = axElement.textMarkerRangeForElement(axElement);
+    text = axElement.attributedStringForTextMarkerRange(range);
+    output += expect("text", "expected");
 
-            if (window.accessibilityController) {
-
-                var obj = accessibilityController.accessibleElementById("content");
-                var range = obj.textMarkerRangeForElement(obj)
-                text = obj.attributedStringForTextMarkerRange(range);
-                shouldBe("text", "expected");
-            }
-
-            successfullyParsed = true;
-        </script>
-        <script src="../../../resources/js-test-post.js"></script>
-    </body>
+    document.getElementById("content").style.visibility = "hidden";
+    debug(output);
+}
+</script>
+</body>
 </html>
-

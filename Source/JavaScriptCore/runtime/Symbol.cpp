@@ -36,7 +36,7 @@ const ClassInfo Symbol::s_info = { "symbol"_s, nullptr, nullptr, nullptr, CREATE
 
 Symbol::Symbol(VM& vm)
     : Base(vm, vm.symbolStructure.get())
-    , m_privateName()
+    , m_privateName(SymbolImpl::createNullSymbol())
 {
 }
 
@@ -85,7 +85,7 @@ void Symbol::destroy(JSCell* cell)
 
 String Symbol::descriptiveString() const
 {
-    return makeString("Symbol(", String(m_privateName.uid()), ')');
+    return makeString("Symbol("_s, StringView(m_privateName.uid()), ')');
 }
 
 String Symbol::description() const

@@ -524,4 +524,31 @@ TEST(MathUtilTest, convert999E5toRGBFloats)
     }
 }
 
+// Test sRGB conversions
+TEST(MathUtilTest, sRGB)
+{
+    // Check simple roundtrip
+    for (size_t c = 0; c < 256; c++)
+    {
+        ASSERT_EQ(c, linearToSRGB(sRGBToLinear(c)));
+    }
+
+    // Check average of identical values
+    for (size_t c = 0; c < 256; c++)
+    {
+        ASSERT_EQ(c, linearToSRGB((sRGBToLinear(c) + sRGBToLinear(c)) * 0.5));
+    }
+
+    // Check that all average values are in range
+    for (size_t a = 0; a < 256; a++)
+    {
+        for (size_t b = 0; b < 256; b++)
+        {
+            const float avg = (sRGBToLinear(a) + sRGBToLinear(b)) * 0.5f;
+            ASSERT_GE(avg, 0.0f);
+            ASSERT_LE(avg, 1.0f);
+        }
+    }
+}
+
 }  // anonymous namespace

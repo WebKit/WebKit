@@ -32,6 +32,7 @@
 
 #include "AsyncScrollingCoordinator.h"
 #include "NicosiaPlatformLayer.h"
+#include "ScrollingThread.h"
 #include "ScrollingTreeFixedNodeNicosia.h"
 #include "ScrollingTreeFrameHostingNode.h"
 #include "ScrollingTreeFrameScrollingNodeNicosia.h"
@@ -73,6 +74,19 @@ Ref<ScrollingTreeNode> ScrollingTreeNicosia::createScrollingTreeNode(ScrollingNo
     }
 
     RELEASE_ASSERT_NOT_REACHED();
+}
+
+void ScrollingTreeNicosia::applyLayerPositionsInternal()
+{
+    std::unique_ptr<Nicosia::SceneIntegration::UpdateScope> updateScope;
+    if (ScrollingThread::isCurrentThread()) {
+        if (auto* rootScrollingNode = rootNode()) {
+            auto rootContentsLayer = static_cast<ScrollingTreeFrameScrollingNodeNicosia*>(rootScrollingNode)->rootContentsLayer();
+            updateScope = rootContentsLayer->createUpdateScope();
+        }
+    }
+
+    ThreadedScrollingTree::applyLayerPositionsInternal();
 }
 
 using Nicosia::CompositionLayer;

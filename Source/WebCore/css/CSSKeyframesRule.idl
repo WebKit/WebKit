@@ -31,7 +31,8 @@
 ] interface CSSKeyframesRule : CSSRule {
     attribute [AtomString] DOMString name;
     readonly attribute CSSRuleList cssRules;
-    
+    readonly attribute unsigned long length;
+
     undefined appendRule(DOMString rule);
     undefined deleteRule(DOMString key);
     CSSKeyframeRule? findRule(DOMString key);

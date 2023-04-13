@@ -26,6 +26,6 @@
 #import <WebKit/WKSecurityOrigin.h>
 
 @interface WKSecurityOrigin (WKPrivate)
--(BOOL)isSameSiteAsOrigin:(WKSecurityOrigin *)origin WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
--(BOOL)isSameSiteAsURL:(NSURL *)url WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+-(BOOL)isSameSiteAsOrigin:(WKSecurityOrigin *)origin WK_API_AVAILABLE(macos(13.3), ios(16.4));
+-(BOOL)isSameSiteAsURL:(NSURL *)url WK_API_AVAILABLE(macos(13.3), ios(16.4));
 @end

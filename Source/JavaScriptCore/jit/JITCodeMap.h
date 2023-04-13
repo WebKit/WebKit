@@ -27,11 +27,14 @@
 
 #if ENABLE(JIT)
 
+#include "BytecodeIndex.h"
 #include "CodeLocation.h"
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
 
 namespace JSC {
+
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(JITCodeMap);
 
 class JITCodeMap {
 public:
@@ -43,7 +46,7 @@ public:
         : m_size(indexes.size())
     {
         ASSERT(indexes.size() == codeLocations.size());
-        m_pointer = MallocPtr<uint8_t>::malloc(sizeof(CodeLocationLabel<JSEntryPtrTag>) * m_size + sizeof(BytecodeIndex) * m_size);
+        m_pointer = MallocPtr<uint8_t, JITCodeMapMalloc>::malloc(sizeof(CodeLocationLabel<JSEntryPtrTag>) * m_size + sizeof(BytecodeIndex) * m_size);
         std::copy(codeLocations.begin(), codeLocations.end(), this->codeLocations());
         std::copy(indexes.begin(), indexes.end(), this->indexes());
     }
@@ -69,7 +72,7 @@ private:
         return bitwise_cast<BytecodeIndex*>(m_pointer.get() + sizeof(CodeLocationLabel<JSEntryPtrTag>) * m_size);
     }
 
-    MallocPtr<uint8_t> m_pointer;
+    MallocPtr<uint8_t, JITCodeMapMalloc> m_pointer;
     unsigned m_size { 0 };
 };
 

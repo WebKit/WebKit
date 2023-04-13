@@ -1,0 +1,35 @@
+<script src=/resources/testharness.js></script>
+<script src=/resources/testharnessreport.js></script>
+<script src="http://127.0.0.1:8000/resources/checkResourcePriority.js"></script>
+
+<script>
+  const tests = [
+    // Dynamically-inserted <script> tests.
+    {description: 'high fetchPriority on dynamically-inserted <script>s translates to very high resource load priority', fetchPriority: 'high', expected_priority: "ResourceLoadPriorityVeryHigh"},
+    {description: 'low fetchPriority on dynamically-inserted <script>s  translates to medium resource load priority', fetchPriority: 'low', expected_priority: "ResourceLoadPriorityMedium"},
+    {description: 'auto fetchPriority on dynamically-inserted <script>s has no effect on resource load priority', fetchPriority: 'auto', expected_priority: "ResourceLoadPriorityHigh"},
+    {description: 'invalid fetchPriority on dynamically-inserted <script>s has no effect on resource load priority', fetchPriority: 'xyz', expected_priority: "ResourceLoadPriorityHigh"},
+    {description: 'missing fetchPriority on dynamically-inserted <script>s has no effect on resource load priority', expected_priority: "ResourceLoadPriorityHigh"},
+
+    // Dynamically-inserted <script type=module> tests.
+    {description: 'high fetchPriority on dynamically-inserted module <script>s translates to very high resource load priority', fetchPriority: 'high', module: true, expected_priority: "ResourceLoadPriorityVeryHigh"},
+    {description: 'low fetchPriority on dynamically-inserted module <script>s translates to medium resource load priority', fetchPriority: 'low', module: true, expected_priority: "ResourceLoadPriorityMedium"},
+    {description: 'auto fetchPriority on dynamically-inserted module <script>s has no effect on resource load priority', fetchPriority: 'auto', module: true, expected_priority: "ResourceLoadPriorityHigh"},
+    {description: 'invalid fetchPriority on dynamically-inserted module <script>s has no effect on resource load priority', fetchPriority: 'xyz', module: true, expected_priority: "ResourceLoadPriorityHigh"},
+    {description: 'missing fetchPriority on dynamically-inserted module <script>s has no effect on resource load priority', module: true, expected_priority: "ResourceLoadPriorityHigh"}
+  ];
+
+  let iteration = 0;
+  for (const test of tests) {
+    async_test(t => {
+      const script = document.createElement('script');
+      if (test.fetchPriority) script.fetchPriority = test.fetchPriority;
+      if (test.module) script.type = "module";
+
+      const url = new URL(`../resources/dummy.js?${iteration++}`, location);
+      script.src = url;
+      script.onload = t.step_func(() => { checkResourcePriority(url, test.expected_priority, test.description); t.done(); });
+      document.head.appendChild(script);
+    });
+  }
+</script>

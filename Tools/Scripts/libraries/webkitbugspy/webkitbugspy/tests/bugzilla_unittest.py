@@ -41,6 +41,7 @@ class TestBugzilla(unittest.TestCase):
             )), dict(
                 type='bugzilla',
                 url='https://bugs.example.com',
+                hide_title=False,
                 res=['\\Aexample.com/b/(?P<id>\\d+)\\Z']
             ),
         )
@@ -431,6 +432,21 @@ What component in 'WebKit' should the bug be associated with?:
                 bugzilla.Tracker.Redaction(True, "matches 'version:Other'"),
             )
 
+    def test_redaction_exception(self):
+        with mocks.Bugzilla(self.URL.split('://')[1], issues=mocks.ISSUES, projects=mocks.PROJECTS):
+            self.assertEqual(bugzilla.Tracker(
+                self.URL,
+                redact={'.*': True},
+                redact_exemption={'component:Text': True},
+            ).issue(1).redacted, bugzilla.Tracker.Redaction(
+                exemption=True, reason="matches 'component:Text'",
+            ))
+            self.assertEqual(bugzilla.Tracker(
+                self.URL,
+                redact={'.*': True},
+                redact_exemption={'component:Scrolling': True},
+            ).issue(1).redacted, bugzilla.Tracker.Redaction(True, 'is a Bugzilla'))
+
     def test_cc_no_radar(self):
         with OutputCapture(level=logging.INFO), mocks.Bugzilla(self.URL.split('://')[1], environment=wkmocks.Environment(
             BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',
@@ -510,3 +526,13 @@ What component in 'WebKit' should the bug be associated with?:
         with mocks.Bugzilla(self.URL.split('://')[1], issues=mocks.ISSUES):
             tracker = bugzilla.Tracker(self.URL)
             self.assertEqual(tracker.issue(1).milestone, None)
+
+    def test_keywords(self):
+        with mocks.Bugzilla(self.URL.split('://')[1], issues=mocks.ISSUES):
+            tracker = bugzilla.Tracker(self.URL)
+            self.assertEqual(tracker.issue(1).keywords, ['Keyword A'])
+
+    def test_classification(self):
+        with mocks.Bugzilla(self.URL.split('://')[1], issues=mocks.ISSUES):
+            tracker = bugzilla.Tracker(self.URL)
+            self.assertEqual(tracker.issue(1).classification, '')

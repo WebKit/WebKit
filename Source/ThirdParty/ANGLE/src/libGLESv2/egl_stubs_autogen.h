@@ -46,7 +46,7 @@ EGLBoolean ChooseConfig(Thread *thread,
                         EGLint *num_config);
 EGLint ClientWaitSync(Thread *thread,
                       egl::Display *dpyPacked,
-                      egl::Sync *syncPacked,
+                      egl::SyncID syncPacked,
                       EGLint flags,
                       EGLTime timeout);
 EGLBoolean CopyBuffers(Thread *thread,
@@ -101,7 +101,7 @@ EGLSurface CreateWindowSurface(Thread *thread,
 EGLBoolean DestroyContext(Thread *thread, egl::Display *dpyPacked, gl::ContextID ctxPacked);
 EGLBoolean DestroyImage(Thread *thread, egl::Display *dpyPacked, ImageID imagePacked);
 EGLBoolean DestroySurface(Thread *thread, egl::Display *dpyPacked, SurfaceID surfacePacked);
-EGLBoolean DestroySync(Thread *thread, egl::Display *dpyPacked, egl::Sync *syncPacked);
+EGLBoolean DestroySync(Thread *thread, egl::Display *dpyPacked, egl::SyncID syncPacked);
 EGLBoolean GetConfigAttrib(Thread *thread,
                            egl::Display *dpyPacked,
                            egl::Config *configPacked,
@@ -124,7 +124,7 @@ EGLDisplay GetPlatformDisplay(Thread *thread,
 __eglMustCastToProperFunctionPointerType GetProcAddress(Thread *thread, const char *procname);
 EGLBoolean GetSyncAttrib(Thread *thread,
                          egl::Display *dpyPacked,
-                         egl::Sync *syncPacked,
+                         egl::SyncID syncPacked,
                          EGLint attribute,
                          EGLAttrib *value);
 EGLBoolean Initialize(Thread *thread, egl::Display *dpyPacked, EGLint *major, EGLint *minor);
@@ -161,6 +161,6 @@ EGLBoolean Terminate(Thread *thread, egl::Display *dpyPacked);
 EGLBoolean WaitClient(Thread *thread);
 EGLBoolean WaitGL(Thread *thread);
 EGLBoolean WaitNative(Thread *thread, EGLint engine);
-EGLBoolean WaitSync(Thread *thread, egl::Display *dpyPacked, egl::Sync *syncPacked, EGLint flags);
+EGLBoolean WaitSync(Thread *thread, egl::Display *dpyPacked, egl::SyncID syncPacked, EGLint flags);
 }  // namespace egl
 #endif  // LIBGLESV2_EGL_STUBS_AUTOGEN_H_

@@ -34,7 +34,7 @@
 #include "SlotAssignment.h"
 #include "StyleResolver.h"
 #include "StyleScopeRuleSets.h"
-#include "TypedElementDescendantIterator.h"
+#include "TypedElementDescendantIteratorInlines.h"
 
 namespace WebCore::Style {
 

@@ -1090,8 +1090,8 @@ bool ValidateClearNamedFramebufferuiv(const Context *context,
 
 bool ValidateClipControl(const Context *context,
                          angle::EntryPoint entryPoint,
-                         GLenum origin,
-                         GLenum depth)
+                         ClipOrigin originPacked,
+                         ClipDepthMode depthPacked)
 {
     return true;
 }

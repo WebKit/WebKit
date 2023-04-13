@@ -45,25 +45,37 @@ BufferImpl::~BufferImpl()
     wgpuBufferRelease(m_backing);
 }
 
-void BufferImpl::mapAsync(MapModeFlags mapModeFlags, Size64 offset, std::optional<Size64> size, CompletionHandler<void()>&& callback)
+static Size64 getMappedSize(WGPUBuffer buffer, std::optional<Size64> size, Size64 offset)
+{
+    if (size.has_value())
+        return size.value();
+
+    auto bufferSize = wgpuBufferGetSize(buffer);
+    return bufferSize > offset ? (bufferSize - offset) : 0;
+}
+
+void BufferImpl::mapAsync(MapModeFlags mapModeFlags, Size64 offset, std::optional<Size64> size, CompletionHandler<void(bool)>&& callback)
 {
     auto backingMapModeFlags = m_convertToBackingContext->convertMapModeFlagsToBacking(mapModeFlags);
-
-    auto usedSize = size.value_or(WGPU_WHOLE_MAP_SIZE);
+    auto usedSize = getMappedSize(m_backing, size, offset);
 
     // FIXME: Check the casts.
-    wgpuBufferMapAsyncWithBlock(m_backing, backingMapModeFlags, static_cast<size_t>(offset), static_cast<size_t>(usedSize), makeBlockPtr([callback = WTFMove(callback)](WGPUBufferMapAsyncStatus) mutable {
-        callback();
+    wgpuBufferMapAsyncWithBlock(m_backing, backingMapModeFlags, static_cast<size_t>(offset), static_cast<size_t>(usedSize), makeBlockPtr([callback = WTFMove(callback)](WGPUBufferMapAsyncStatus status) mutable {
+        callback(status == WGPUBufferMapAsyncStatus_Success ? true : false);
     }).get());
 }
 
 auto BufferImpl::getMappedRange(Size64 offset, std::optional<Size64> size) -> MappedRange
 {
-    auto usedSize = size.value_or(wgpuBufferGetSize(m_backing));
+    auto usedSize = getMappedSize(m_backing, size, offset);
+
     // FIXME: Check the casts.
     auto* pointer = wgpuBufferGetMappedRange(m_backing, static_cast<size_t>(offset), static_cast<size_t>(usedSize));
     // FIXME: Check the type narrowing.
-    return { pointer, static_cast<size_t>(usedSize) };
+    auto bufferSize = wgpuBufferGetSize(m_backing);
+    size_t actualSize = pointer ? static_cast<size_t>(bufferSize) : 0;
+    size_t actualOffset = pointer ? static_cast<size_t>(offset) : 0;
+    return { static_cast<uint8_t*>(pointer) - actualOffset, actualSize };
 }
 
 void BufferImpl::unmap()

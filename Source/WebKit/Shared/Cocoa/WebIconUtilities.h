@@ -27,14 +27,15 @@
 
 #if PLATFORM(COCOA)
 
+#import "CocoaImage.h"
 #import <wtf/RetainPtr.h>
 
 namespace WebKit {
 
-WebCore::PlatformImagePtr fallbackIconForFile(NSURL *file);
-WebCore::PlatformImagePtr iconForImageFile(NSURL *file);
-WebCore::PlatformImagePtr iconForVideoFile(NSURL *file);
-WebCore::PlatformImagePtr iconForFiles(const Vector<String>& filenames);
+RetainPtr<CocoaImage> fallbackIconForFile(NSURL *file);
+RetainPtr<CocoaImage> iconForImageFile(NSURL *file);
+RetainPtr<CocoaImage> iconForVideoFile(NSURL *file);
+RetainPtr<CocoaImage> iconForFiles(const Vector<String>& filenames);
 
 }
 

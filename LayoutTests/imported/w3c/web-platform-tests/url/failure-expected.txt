@@ -892,6 +892,10 @@ PASS XHR: file://xn--/p should throw
 PASS sendBeacon(): file://xn--/p should throw
 PASS Location's href: file://xn--/p should throw
 PASS window.open(): file://xn--/p should throw
+PASS URL's constructor's base argument: # should throw
+PASS URL's href: # should throw
+PASS URL's constructor's base argument: ? should throw
+PASS URL's href: ? should throw
 PASS URL's constructor's base argument: http://0..0x300/ should throw
 PASS URL's href: http://0..0x300/ should throw
 PASS XHR: http://0..0x300/ should throw
@@ -1042,4 +1046,162 @@ PASS XHR: http://💩.123/ should throw
 PASS sendBeacon(): http://💩.123/ should throw
 PASS Location's href: http://💩.123/ should throw
 PASS window.open(): http://💩.123/ should throw
+PASS URL's constructor's base argument: https://\0y should throw
+PASS URL's href: https://\0y should throw
+PASS XHR: https://\0y should throw
+PASS sendBeacon(): https://\0y should throw
+PASS Location's href: https://\0y should throw
+PASS window.open(): https://\0y should throw
+PASS URL's constructor's base argument: https://￿y should throw
+PASS URL's href: https://￿y should throw
+PASS XHR: https://￿y should throw
+PASS sendBeacon(): https://￿y should throw
+PASS Location's href: https://￿y should throw
+PASS window.open(): https://￿y should throw
+PASS URL's constructor's base argument:  should throw
+PASS URL's href:  should throw
+PASS URL's constructor's base argument: https://­/ should throw
+PASS URL's href: https://­/ should throw
+PASS XHR: https://­/ should throw
+PASS sendBeacon(): https://­/ should throw
+PASS Location's href: https://­/ should throw
+PASS window.open(): https://­/ should throw
+PASS URL's constructor's base argument: https://%C2%AD/ should throw
+PASS URL's href: https://%C2%AD/ should throw
+PASS XHR: https://%C2%AD/ should throw
+PASS sendBeacon(): https://%C2%AD/ should throw
+PASS Location's href: https://%C2%AD/ should throw
+PASS window.open(): https://%C2%AD/ should throw
+PASS URL's constructor's base argument: https://xn--/ should throw
+PASS URL's href: https://xn--/ should throw
+PASS XHR: https://xn--/ should throw
+PASS sendBeacon(): https://xn--/ should throw
+PASS Location's href: https://xn--/ should throw
+PASS window.open(): https://xn--/ should throw
+PASS URL's constructor's base argument: data://:443 should throw
+PASS URL's href: data://:443 should throw
+PASS XHR: data://:443 should throw
+PASS sendBeacon(): data://:443 should throw
+PASS Location's href: data://:443 should throw
+PASS window.open(): data://:443 should throw
+PASS URL's constructor's base argument: data://test:test should throw
+PASS URL's href: data://test:test should throw
+PASS XHR: data://test:test should throw
+PASS sendBeacon(): data://test:test should throw
+PASS Location's href: data://test:test should throw
+PASS window.open(): data://test:test should throw
+PASS URL's constructor's base argument: data://[:1] should throw
+PASS URL's href: data://[:1] should throw
+PASS XHR: data://[:1] should throw
+PASS sendBeacon(): data://[:1] should throw
+PASS Location's href: data://[:1] should throw
+PASS window.open(): data://[:1] should throw
+PASS URL's constructor's base argument: javascript://:443 should throw
+PASS URL's href: javascript://:443 should throw
+PASS XHR: javascript://:443 should throw
+PASS sendBeacon(): javascript://:443 should throw
+PASS Location's href: javascript://:443 should throw
+PASS window.open(): javascript://:443 should throw
+PASS URL's constructor's base argument: javascript://test:test should throw
+PASS URL's href: javascript://test:test should throw
+PASS XHR: javascript://test:test should throw
+PASS sendBeacon(): javascript://test:test should throw
+PASS Location's href: javascript://test:test should throw
+PASS window.open(): javascript://test:test should throw
+PASS URL's constructor's base argument: javascript://[:1] should throw
+PASS URL's href: javascript://[:1] should throw
+PASS XHR: javascript://[:1] should throw
+PASS sendBeacon(): javascript://[:1] should throw
+PASS Location's href: javascript://[:1] should throw
+PASS window.open(): javascript://[:1] should throw
+PASS URL's constructor's base argument: mailto://:443 should throw
+PASS URL's href: mailto://:443 should throw
+PASS XHR: mailto://:443 should throw
+PASS sendBeacon(): mailto://:443 should throw
+PASS Location's href: mailto://:443 should throw
+PASS window.open(): mailto://:443 should throw
+PASS URL's constructor's base argument: mailto://test:test should throw
+PASS URL's href: mailto://test:test should throw
+PASS XHR: mailto://test:test should throw
+PASS sendBeacon(): mailto://test:test should throw
+PASS Location's href: mailto://test:test should throw
+PASS window.open(): mailto://test:test should throw
+PASS URL's constructor's base argument: mailto://[:1] should throw
+PASS URL's href: mailto://[:1] should throw
+PASS XHR: mailto://[:1] should throw
+PASS sendBeacon(): mailto://[:1] should throw
+PASS Location's href: mailto://[:1] should throw
+PASS window.open(): mailto://[:1] should throw
+PASS URL's constructor's base argument: intent://:443 should throw
+PASS URL's href: intent://:443 should throw
+PASS XHR: intent://:443 should throw
+PASS sendBeacon(): intent://:443 should throw
+PASS Location's href: intent://:443 should throw
+PASS window.open(): intent://:443 should throw
+PASS URL's constructor's base argument: intent://test:test should throw
+PASS URL's href: intent://test:test should throw
+PASS XHR: intent://test:test should throw
+PASS sendBeacon(): intent://test:test should throw
+PASS Location's href: intent://test:test should throw
+PASS window.open(): intent://test:test should throw
+PASS URL's constructor's base argument: intent://[:1] should throw
+PASS URL's href: intent://[:1] should throw
+PASS XHR: intent://[:1] should throw
+PASS sendBeacon(): intent://[:1] should throw
+PASS Location's href: intent://[:1] should throw
+PASS window.open(): intent://[:1] should throw
+PASS URL's constructor's base argument: urn://:443 should throw
+PASS URL's href: urn://:443 should throw
+PASS XHR: urn://:443 should throw
+PASS sendBeacon(): urn://:443 should throw
+PASS Location's href: urn://:443 should throw
+PASS window.open(): urn://:443 should throw
+PASS URL's constructor's base argument: urn://test:test should throw
+PASS URL's href: urn://test:test should throw
+PASS XHR: urn://test:test should throw
+PASS sendBeacon(): urn://test:test should throw
+PASS Location's href: urn://test:test should throw
+PASS window.open(): urn://test:test should throw
+PASS URL's constructor's base argument: urn://[:1] should throw
+PASS URL's href: urn://[:1] should throw
+PASS XHR: urn://[:1] should throw
+PASS sendBeacon(): urn://[:1] should throw
+PASS Location's href: urn://[:1] should throw
+PASS window.open(): urn://[:1] should throw
+PASS URL's constructor's base argument: turn://:443 should throw
+PASS URL's href: turn://:443 should throw
+PASS XHR: turn://:443 should throw
+PASS sendBeacon(): turn://:443 should throw
+PASS Location's href: turn://:443 should throw
+PASS window.open(): turn://:443 should throw
+PASS URL's constructor's base argument: turn://test:test should throw
+PASS URL's href: turn://test:test should throw
+PASS XHR: turn://test:test should throw
+PASS sendBeacon(): turn://test:test should throw
+PASS Location's href: turn://test:test should throw
+PASS window.open(): turn://test:test should throw
+PASS URL's constructor's base argument: turn://[:1] should throw
+PASS URL's href: turn://[:1] should throw
+PASS XHR: turn://[:1] should throw
+PASS sendBeacon(): turn://[:1] should throw
+PASS Location's href: turn://[:1] should throw
+PASS window.open(): turn://[:1] should throw
+PASS URL's constructor's base argument: stun://:443 should throw
+PASS URL's href: stun://:443 should throw
+PASS XHR: stun://:443 should throw
+PASS sendBeacon(): stun://:443 should throw
+PASS Location's href: stun://:443 should throw
+PASS window.open(): stun://:443 should throw
+PASS URL's constructor's base argument: stun://test:test should throw
+PASS URL's href: stun://test:test should throw
+PASS XHR: stun://test:test should throw
+PASS sendBeacon(): stun://test:test should throw
+PASS Location's href: stun://test:test should throw
+PASS window.open(): stun://test:test should throw
+PASS URL's constructor's base argument: stun://[:1] should throw
+PASS URL's href: stun://[:1] should throw
+PASS XHR: stun://[:1] should throw
+PASS sendBeacon(): stun://[:1] should throw
+PASS Location's href: stun://[:1] should throw
+PASS window.open(): stun://[:1] should throw
 

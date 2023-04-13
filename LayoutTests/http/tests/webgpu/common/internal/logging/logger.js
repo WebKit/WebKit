@@ -26,5 +26,6 @@ export class Logger {
 
   asJSON(space) {
     return JSON.stringify({ version, results: Array.from(this.results) }, undefined, space);
-  }}
+  }
+}
 //# sourceMappingURL=logger.js.map

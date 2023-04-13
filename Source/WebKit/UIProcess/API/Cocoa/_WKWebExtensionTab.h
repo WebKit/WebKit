@@ -59,9 +59,9 @@ typedef NS_OPTIONS(NSUInteger, _WKWebExtensionTabChangedProperties) {
     _WKWebExtensionTabChangedPropertiesPinned     = 1 << 8,
     _WKWebExtensionTabChangedPropertiesReaderMode = 1 << 9,
     _WKWebExtensionTabChangedPropertiesAll        = NSUIntegerMax,
-} WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+} WK_API_AVAILABLE(macos(13.3), ios(16.4));
 
-WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
+WK_API_AVAILABLE(macos(13.3), ios(16.4))
 @protocol _WKWebExtensionTab <NSObject>
 @optional
 

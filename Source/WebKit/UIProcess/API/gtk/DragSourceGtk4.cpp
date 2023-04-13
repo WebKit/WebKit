@@ -75,7 +75,7 @@ void DragSource::begin(SelectionData&& selectionData, OptionSet<DragOperation> o
     }
 
     if (m_selectionData->hasImage()) {
-        GRefPtr<GdkPixbuf> pixbuf = adoptGRef(m_selectionData->image()->getGdkPixbuf());
+        auto pixbuf = m_selectionData->image()->gdkPixbuf();
         providers.append(gdk_content_provider_new_typed(GDK_TYPE_PIXBUF, pixbuf.get()));
     }
 
@@ -128,7 +128,7 @@ void DragSource::begin(SelectionData&& selectionData, OptionSet<DragOperation> o
     auto* dragIcon = gtk_drag_icon_get_for_drag(m_drag.get());
     RefPtr<Image> iconImage = image ? image->createImage() : nullptr;
     if (iconImage) {
-        if (GRefPtr<GdkTexture> texture = adoptGRef(iconImage->gdkTexture())) {
+        if (auto texture = iconImage->gdkTexture()) {
             gdk_drag_set_hotspot(m_drag.get(), -imageHotspot.x(), -imageHotspot.y());
             auto* picture = gtk_picture_new_for_paintable(GDK_PAINTABLE(texture.get()));
             gtk_drag_icon_set_child(GTK_DRAG_ICON(dragIcon), picture);

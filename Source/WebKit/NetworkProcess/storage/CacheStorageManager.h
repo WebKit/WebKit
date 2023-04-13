@@ -69,7 +69,6 @@ public:
     void sizeDecreased(uint64_t amount);
 
 private:
-    String saltFilePath() const;
     void makeDirty();
     bool initializeCaches();
     void removeUnusedCache(WebCore::DOMCacheIdentifier);

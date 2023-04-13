@@ -48,12 +48,13 @@ public:
 
     static std::optional<CaptureDevice> screenCaptureDeviceWithPersistentID(const String&);
     static void screenCaptureDevices(Vector<CaptureDevice>&);
+    WEBCORE_EXPORT static std::optional<CaptureDevice> screenCaptureDeviceForMainDisplay();
 
 private:
 
     // DisplayCaptureSourceCocoa::Capturer
     CaptureDevice::DeviceType deviceType() const final { return CaptureDevice::DeviceType::Screen; }
-    RealtimeMediaSourceSettings::DisplaySurfaceType surfaceType() const final { return RealtimeMediaSourceSettings::DisplaySurfaceType::Monitor; }
+    DisplaySurfaceType surfaceType() const final { return DisplaySurfaceType::Monitor; }
     IntSize intrinsicSize() const final;
 #if !RELEASE_LOG_DISABLED
     const char* logClassName() const final { return "CGDisplayStreamScreenCaptureSource"; }

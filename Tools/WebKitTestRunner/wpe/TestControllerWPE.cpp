@@ -30,6 +30,7 @@
 #include <cairo.h>
 #include <glib.h>
 #include <wtf/RunLoop.h>
+#include <wtf/WTFProcess.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/Base64.h>
 
@@ -97,7 +98,7 @@ static char* getEnvironmentVariableAsUTF8String(const char* variableName)
     const char* value = g_getenv(variableName);
     if (!value) {
         fprintf(stderr, "%s environment variable not found\n", variableName);
-        exit(0);
+        exitProcess(0);
     }
     gsize bytesWritten;
     return g_filename_to_utf8(value, -1, 0, &bytesWritten, 0);

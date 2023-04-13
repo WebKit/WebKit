@@ -43,5 +43,10 @@ BlockFormattingState::~BlockFormattingState()
 {
 }
 
+void BlockFormattingState::shrinkToFit()
+{
+    m_floatingState.shrinkToFit();
+}
+
 }
 }

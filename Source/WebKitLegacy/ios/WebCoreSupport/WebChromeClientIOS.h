@@ -37,17 +37,17 @@ public:
 
 private:
     void setWindowRect(const WebCore::FloatRect&) final;
-    WebCore::FloatRect windowRect() final;
+    WebCore::FloatRect windowRect() const final;
     void setStatusbarText(const WTF::String&) final { }
 
     void focus() final;
     void takeFocus(WebCore::FocusDirection) final { }
 
-    void runJavaScriptAlert(WebCore::Frame&, const WTF::String&) final;
-    bool runJavaScriptConfirm(WebCore::Frame&, const WTF::String&) final;
-    bool runJavaScriptPrompt(WebCore::Frame&, const WTF::String& message, const WTF::String& defaultValue, WTF::String& result) final;
+    void runJavaScriptAlert(WebCore::LocalFrame&, const WTF::String&) final;
+    bool runJavaScriptConfirm(WebCore::LocalFrame&, const WTF::String&) final;
+    bool runJavaScriptPrompt(WebCore::LocalFrame&, const WTF::String& message, const WTF::String& defaultValue, WTF::String& result) final;
 
-    void runOpenPanel(WebCore::Frame&, WebCore::FileChooser&) final;
+    void runOpenPanel(WebCore::LocalFrame&, WebCore::FileChooser&) final;
     void showShareSheet(WebCore::ShareDataWithParsedURL&, CompletionHandler<void(bool)>&&) final;
 
     bool hoverSupportedByPrimaryPointingDevice() const final { return false; }
@@ -63,14 +63,14 @@ private:
 #endif
 
     void didReceiveMobileDocType(bool) final;
-    void setNeedsScrollNotifications(WebCore::Frame&, bool) final;
-    void didFinishContentChangeObserving(WebCore::Frame&, WKContentChange) final;
+    void setNeedsScrollNotifications(WebCore::LocalFrame&, bool) final;
+    void didFinishContentChangeObserving(WebCore::LocalFrame&, WKContentChange) final;
     WebCore::FloatSize screenSize() const final;
     WebCore::FloatSize availableScreenSize() const final;
     WebCore::FloatSize overrideScreenSize() const final;
     void dispatchDisabledAdaptationsDidChange(const OptionSet<WebCore::DisabledAdaptations>&) const final;
     void dispatchViewportPropertiesDidChange(const WebCore::ViewportArguments&) const final;
-    void notifyRevealedSelectionByScrollingFrame(WebCore::Frame&) final;
+    void notifyRevealedSelectionByScrollingFrame(WebCore::LocalFrame&) final;
     bool isStopping() final;
     void didLayout(LayoutType) final;
     void didStartOverflowScroll() final;
@@ -82,7 +82,7 @@ private:
     void elementDidFocus(WebCore::Element&, const WebCore::FocusOptions&) final;
     void elementDidBlur(WebCore::Element&) final;
 
-    void attachRootGraphicsLayer(WebCore::Frame&, WebCore::GraphicsLayer*) final;
+    void attachRootGraphicsLayer(WebCore::LocalFrame&, WebCore::GraphicsLayer*) final;
 
     void didFlushCompositingLayers() final;
 
@@ -105,7 +105,7 @@ private:
     bool showDataDetectorsUIForElement(const WebCore::Element&, const WebCore::Event&) final { return false; }
 
 #if ENABLE(ORIENTATION_EVENTS)
-    int deviceOrientation() const final;
+    WebCore::IntDegrees deviceOrientation() const final;
 #endif
 
     int m_formNotificationSuppressions { 0 };

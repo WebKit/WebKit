@@ -1,0 +1,50 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<!-- Standalone spinbutton (it doesn't have separate increment and decrement controls) -->
+<div role="spinbutton"
+     tabindex="0"
+     aria-valuenow="2022"
+     aria-valuemin="2000"
+     aria-valuemax="2040"
+     aria-label="Year"
+     id="standalone-spinbutton">
+    2022
+</div>
+
+<!-- The spinbutton exposed by input type="number" has dedicated increment and decrement controls. -->
+<input type="number" id="number-input">
+
+<script>
+var output = "This test ensures that the different types of spinbuttons advertise support for the right attributes.\n\n";
+
+if (window.accessibilityController) {
+    var standaloneSpinbutton = accessibilityController.accessibleElementById("standalone-spinbutton");
+    var numberInputSpinbutton = accessibilityController.accessibleElementById("number-input").childAtIndex(0);
+    output += expect("standaloneSpinbutton.role", "'AXRole: AXIncrementor'");
+    output += expect("standaloneSpinbutton.isAttributeSupported('AXIncrementButton')", "false");
+    output += expect("standaloneSpinbutton.isAttributeSupported('AXDecrementButton')", "false");
+    output += expect("standaloneSpinbutton.isAttributeSupported('AXValueDescription')", "true");
+    output += expect("standaloneSpinbutton.isAttributeSupported('AXMinValue')", "true");
+    output += expect("standaloneSpinbutton.isAttributeSupported('AXMaxValue')", "true");
+    output += "\n";
+
+    output += expect("numberInputSpinbutton.role", "'AXRole: AXIncrementor'");
+    output += expect("numberInputSpinbutton.isAttributeSupported('AXIncrementButton')", "true");
+    output += expect("numberInputSpinbutton.isAttributeSupported('AXDecrementButton')", "true");
+    output += expect("standaloneSpinbutton.isAttributeSupported('AXValueDescription')", "true");
+    output += expect("standaloneSpinbutton.isAttributeSupported('AXMinValue')", "true");
+    output += expect("standaloneSpinbutton.isAttributeSupported('AXMaxValue')", "true");
+
+    debug(output);
+    finishJSTest();
+}
+</script>
+</body>
+</html>
+

@@ -73,7 +73,7 @@ struct _WebKitAutomationSessionPrivate {
 
 static guint signals[LAST_SIGNAL] = { 0, };
 
-WEBKIT_DEFINE_FINAL_TYPE_IN_2022_API(WebKitAutomationSession, webkit_automation_session, G_TYPE_OBJECT)
+WEBKIT_DEFINE_FINAL_TYPE(WebKitAutomationSession, webkit_automation_session, G_TYPE_OBJECT, GObject)
 
 class AutomationSessionClient final : public API::AutomationSessionClient {
     WTF_MAKE_FAST_ALLOCATED;
@@ -355,7 +355,7 @@ WebKitAutomationSession* webkitAutomationSessionCreate(WebKitWebContext* webCont
     auto* session = WEBKIT_AUTOMATION_SESSION(g_object_new(WEBKIT_TYPE_AUTOMATION_SESSION, "id", sessionID, nullptr));
     session->priv->webContext = webContext;
 #if ENABLE(2022_GLIB_API)
-    WebKitNetworkSession* networkSession = webkitWebContextGetNetworkSessionForAutomation(webContext);
+    WebKitNetworkSession* networkSession = webkit_web_context_get_network_session_for_automation(webContext);
 #endif
 
     if (capabilities.acceptInsecureCertificates) {

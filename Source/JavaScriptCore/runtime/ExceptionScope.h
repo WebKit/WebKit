@@ -116,6 +116,11 @@ protected:
         } \
     } while (false)
 
+#define RETURN_IF_EXCEPTION_WITH_TRAPS_DEFERRED(scope__, value__) do { \
+        if (UNLIKELY((scope__).exception())) \
+            return value__; \
+    } while (false)
+
 #define RELEASE_AND_RETURN(scope__, expression__) do { \
         scope__.release(); \
         return expression__; \

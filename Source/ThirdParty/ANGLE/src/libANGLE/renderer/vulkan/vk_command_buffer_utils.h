@@ -10,10 +10,29 @@
 #ifndef LIBANGLE_RENDERER_VULKAN_VK_COMMAND_BUFFER_UTILS_H_
 #define LIBANGLE_RENDERER_VULKAN_VK_COMMAND_BUFFER_UTILS_H_
 
+#include "common/PackedEnums.h"
+#include "common/angleutils.h"
+
 namespace rx
 {
 namespace vk
 {
+
+enum class ProtectionType : uint8_t
+{
+    Unprotected = 0,
+    Protected   = 1,
+
+    InvalidEnum = 2,
+    EnumCount   = 2,
+};
+
+using ProtectionTypes = angle::PackedEnumBitSet<ProtectionType, uint8_t>;
+
+ANGLE_INLINE ProtectionType ConvertProtectionBoolToType(bool isProtected)
+{
+    return (isProtected ? ProtectionType::Protected : ProtectionType::Unprotected);
+}
 
 // A helper class to track commands recorded to a command buffer.
 class CommandBufferCommandTracker

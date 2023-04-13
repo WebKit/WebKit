@@ -51,16 +51,14 @@
 #include "DocumentMarkerController.h"
 #include "Editing.h"
 #include "EditorClient.h"
-#include "ElementIterator.h"
+#include "ElementAncestorIteratorInlines.h"
 #include "EventHandler.h"
 #include "EventNames.h"
 #include "File.h"
 #include "FocusController.h"
 #include "FontAttributes.h"
-#include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameTree.h"
-#include "FrameView.h"
 #include "GraphicsContext.h"
 #include "HTMLAttachmentElement.h"
 #include "HTMLBRElement.h"
@@ -81,6 +79,8 @@
 #include "InsertListCommand.h"
 #include "InsertTextCommand.h"
 #include "KeyboardEvent.h"
+#include "LocalFrame.h"
+#include "LocalFrameView.h"
 #include "Logging.h"
 #include "ModifySelectionListLevel.h"
 #include "NodeList.h"
@@ -532,7 +532,11 @@ bool Editor::canCopy() const
 
 bool Editor::canPaste() const
 {
-    if (m_document.frame()->mainFrame().loader().shouldSuppressTextInputFromEditing())
+    auto* localFrame = dynamicDowncast<LocalFrame>(m_document.frame()->mainFrame());
+    if (!localFrame)
+        return false;
+
+    if (localFrame->loader().shouldSuppressTextInputFromEditing())
         return false;
 
     return canEdit();
@@ -642,7 +646,10 @@ void Editor::pasteAsPlainText(const String& pastingText, bool smartReplace)
     auto target = findEventTargetFromSelection();
     if (!target)
         return;
-    target->dispatchEvent(TextEvent::createForPlainTextPaste(document().windowProxy(), pastingText, smartReplace));
+    auto sanitizedText = pastingText;
+    if (auto* page = m_document.page())
+        sanitizedText = page->sanitizeLookalikeCharacters(sanitizedText, LookalikeCharacterSanitizationTrigger::Paste);
+    target->dispatchEvent(TextEvent::createForPlainTextPaste(document().windowProxy(), WTFMove(sanitizedText), smartReplace));
 }
 
 void Editor::pasteAsFragment(Ref<DocumentFragment>&& pastingFragment, bool smartReplace, bool matchStyle, MailBlockquoteHandling respectsMailBlockquote, EditAction action)
@@ -796,7 +803,11 @@ bool Editor::tryDHTMLCut()
 
 bool Editor::shouldInsertText(const String& text, const std::optional<SimpleRange>& range, EditorInsertAction action) const
 {
-    if (m_document.frame()->mainFrame().loader().shouldSuppressTextInputFromEditing() && action == EditorInsertAction::Typed)
+    auto* localFrame = dynamicDowncast<LocalFrame>(m_document.frame()->mainFrame());
+    if (!localFrame)
+        return false;
+
+    if (localFrame->loader().shouldSuppressTextInputFromEditing() && action == EditorInsertAction::Typed)
         return false;
 
     return client() && client()->shouldInsertText(text, range, action);
@@ -1115,6 +1126,31 @@ static void notifyTextFromControls(Element* startRoot, Element* endRoot)
         endingTextControl->didEditInnerTextValue();
 }
 
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/EditorAdditions.cpp>
+#else
+static inline bool shouldRemoveAutocorrectionIndicator(bool shouldConsiderApplyingAutocorrection, bool autocorrectionWasApplied, bool isAutocompletion)
+{
+    UNUSED_PARAM(shouldConsiderApplyingAutocorrection);
+    UNUSED_PARAM(isAutocompletion);
+    return !autocorrectionWasApplied;
+}
+
+static inline bool didApplyAutocorrection(Document&, AlternativeTextController& alternativeTextController)
+{
+    return alternativeTextController.applyAutocorrectionBeforeTypingIfAppropriate();
+}
+
+static inline void respondToAppliedEditing(Document&, AlternativeTextController& alternativeTextController, CompositeEditCommand& command)
+{
+    alternativeTextController.respondToAppliedEditing(&command);
+}
+
+static inline void adjustMarkerTypesToRemoveForWordsAffectedByEditing(OptionSet<DocumentMarker::MarkerType>&)
+{
+}
+#endif
+
 static bool dispatchBeforeInputEvents(RefPtr<Element> startRoot, RefPtr<Element> endRoot, const AtomString& inputTypeName, IsInputMethodComposing isInputMethodComposing,
     const String& data = { }, RefPtr<DataTransfer>&& dataTransfer = nullptr, const Vector<RefPtr<StaticRange>>& targetRanges = { }, Event::IsCancelable cancelable = Event::IsCancelable::Yes)
 {
@@ -1184,7 +1220,7 @@ void Editor::appliedEditing(CompositeEditCommand& command)
     if (command.isTopLevelCommand()) {
         updateEditorUINowIfScheduled();
 
-        m_alternativeTextController->respondToAppliedEditing(&command);
+        respondToAppliedEditing(m_document, *m_alternativeTextController, command);
 
         if (!command.preservesTypingStyle())
             m_document.selection().clearTypingStyle();
@@ -1330,7 +1366,7 @@ bool Editor::insertTextWithoutSendingTextEvent(const String& text, bool selectIn
     if (text.length() == 1 && u_ispunct(text[0]) && !isAmbiguousBoundaryCharacter(text[0]))
         shouldConsiderApplyingAutocorrection = true;
 
-    bool autocorrectionWasApplied = shouldConsiderApplyingAutocorrection && m_alternativeTextController->applyAutocorrectionBeforeTypingIfAppropriate();
+    bool autocorrectionWasApplied = shouldConsiderApplyingAutocorrection && didApplyAutocorrection(document(), *m_alternativeTextController);
 
     // Get the selection to use for the event that triggered this insertText.
     // If the event handler changed the selection, we may want to use a different selection
@@ -1344,13 +1380,13 @@ bool Editor::insertTextWithoutSendingTextEvent(const String& text, bool selectIn
             if (triggeringEvent && triggeringEvent->isDictation())
                 DictationCommand::insertText(document, text, triggeringEvent->dictationAlternatives(), selection);
             else {
-                TypingCommand::Options options = 0;
+                TypingCommand::Options options = TypingCommand::RetainAutocorrectionIndicator;
                 if (selectInsertedText)
                     options |= TypingCommand::SelectInsertedText;
-                if (autocorrectionWasApplied)
-                    options |= TypingCommand::RetainAutocorrectionIndicator;
                 if (triggeringEvent && triggeringEvent->isAutocompletion())
                     options |= TypingCommand::IsAutocompletion;
+                if (shouldRemoveAutocorrectionIndicator(shouldConsiderApplyingAutocorrection, autocorrectionWasApplied, options & TypingCommand::IsAutocompletion))
+                    options &= ~TypingCommand::RetainAutocorrectionIndicator;
                 TypingCommand::insertText(document, text, selection, options, triggeringEvent && triggeringEvent->isComposition() ? TypingCommand::TextCompositionFinal : TypingCommand::TextCompositionNone);
             }
 
@@ -1710,6 +1746,7 @@ void Editor::revealSelectionIfNeededAfterLoadingImageForElement(HTMLImageElement
 
     // FIXME: This should be queued as a task for the next rendering update.
     document().updateLayout();
+    document().selection().setCaretRectNeedsUpdate();
     revealSelectionAfterEditingOperation();
 }
 
@@ -2894,7 +2931,11 @@ void Editor::markAndReplaceFor(const SpellCheckRequest& request, const Vector<Te
 
     for (unsigned i = 0; i < results.size(); i++) {
         auto spellingRangeEndOffset = paragraph.checkingEnd() + offsetDueToReplacement;
-        TextCheckingType resultType = results[i].type;
+        if (!results[i].type.hasExactlyOneBitSet()) {
+            ASSERT_NOT_REACHED();
+            continue;
+        }
+        TextCheckingType resultType = *results[i].type.toSingleValue();
         auto resultLocation = results[i].range.location + offsetDueToReplacement;
         auto resultLength = results[i].range.length;
         auto resultEndLocation = resultLocation + resultLength;
@@ -3168,6 +3209,8 @@ void Editor::updateMarkersForWordsAffectedByEditing(bool doNotRemoveIfSelectionA
         DocumentMarker::Grammar,
 #endif
     };
+    adjustMarkerTypesToRemoveForWordsAffectedByEditing(markerTypesToRemove);
+
     removeMarkers(wordRange, markerTypesToRemove, RemovePartiallyOverlappingMarker::Yes);
     document().markers().clearDescriptionOnMarkersIntersectingRange(wordRange, DocumentMarker::Replacement);
 }
@@ -3331,14 +3374,14 @@ void Editor::handleAlternativeTextUIResult(const String& correction)
 
 void Editor::dismissCorrectionPanelAsIgnored()
 {
-    m_alternativeTextController->dismiss(ReasonForDismissingAlternativeTextIgnored);
+    m_alternativeTextController->dismiss(ReasonForDismissingAlternativeText::Ignored);
 }
 
 void Editor::changeSelectionAfterCommand(const VisibleSelection& newSelection, OptionSet<FrameSelection::SetSelectionOption> options)
 {
     Ref<Document> protectedDocument(m_document);
 
-    if (newSelection.isOrphan())
+    if (newSelection.isOrphan() || newSelection.document() != protectedDocument.ptr())
         return;
 
     // If there is no selection change, don't bother sending shouldChangeSelection, but still call setSelection,
@@ -3348,6 +3391,8 @@ void Editor::changeSelectionAfterCommand(const VisibleSelection& newSelection, O
     bool selectionDidNotChangeDOMPosition = newSelection == m_document.selection().selection();
     if (selectionDidNotChangeDOMPosition || m_document.selection().shouldChangeSelection(newSelection))
         m_document.selection().setSelection(newSelection, options);
+
+    ASSERT_WITH_SECURITY_IMPLICATION(!m_document.selection().selection().isOrphan());
 
     // Some editing operations change the selection visually without affecting its position within the DOM.
     // For example when you press return in the following (the caret is marked by ^):
@@ -3643,7 +3688,7 @@ std::optional<SimpleRange> Editor::rangeOfString(const String& target, const std
     return resultRange.collapsed() ? std::nullopt : std::make_optional(resultRange);
 }
 
-static bool isFrameInRange(Frame& frame, const SimpleRange& range)
+static bool isFrameInRange(LocalFrame& frame, const SimpleRange& range)
 {
     for (auto* ownerElement = frame.ownerElement(); ownerElement; ownerElement = ownerElement->document().ownerElement()) {
         if (&ownerElement->document() == &range.start.document())
@@ -4084,7 +4129,10 @@ static Vector<TextList> editableTextListsAtPositionInDescendingOrder(const Posit
     for (auto iterator = enclosingLists.rbegin(); iterator != enclosingLists.rend(); ++iterator) {
         auto& list = iterator->get();
         bool ordered = is<HTMLOListElement>(list);
-        textLists.uncheckedAppend({ list.renderer()->style().listStyleType(), ordered ? downcast<HTMLOListElement>(list).start() : 1, ordered });
+        if (!list.renderer())
+            continue;
+        auto style = list.renderer()->style().listStyleType();
+        textLists.uncheckedAppend({ style, ordered ? downcast<HTMLOListElement>(list).start() : 1, ordered });
     }
 
     return textLists;
@@ -4284,6 +4332,9 @@ void Editor::cloneAttachmentData(const String& fromIdentifier, const String& toI
 
 void Editor::didInsertAttachmentElement(HTMLAttachmentElement& attachment)
 {
+    if (attachment.isImageOnly())
+        return;
+
     auto identifier = attachment.uniqueIdentifier();
     if (identifier.isEmpty())
         return;

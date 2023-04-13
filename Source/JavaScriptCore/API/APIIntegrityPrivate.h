@@ -41,7 +41,7 @@ extern "C" {
 @result JSContextRef that was passed in.
 @discussion This function will crash if the audit detects any errors.
  */
-JS_EXPORT JSContextRef jsAuditJSContextRef(JSContextRef ctx) JSC_API_AVAILABLE(macos(JSC_MAC_TBA), ios(JSC_IOS_TBA));
+JS_EXPORT JSContextRef jsAuditJSContextRef(JSContextRef ctx) JSC_API_AVAILABLE(macos(13.0), ios(16.1));
 
 /*!
 @function
@@ -50,7 +50,7 @@ JS_EXPORT JSContextRef jsAuditJSContextRef(JSContextRef ctx) JSC_API_AVAILABLE(m
 @result JSGlobalContextRef that was passed in.
 @discussion This function will crash if the audit detects any errors.
  */
-JS_EXPORT JSGlobalContextRef jsAuditJSGlobalContextRef(JSGlobalContextRef ctx) JSC_API_AVAILABLE(macos(JSC_MAC_TBA), ios(JSC_IOS_TBA));
+JS_EXPORT JSGlobalContextRef jsAuditJSGlobalContextRef(JSGlobalContextRef ctx) JSC_API_AVAILABLE(macos(13.0), ios(16.1));
 
 /*!
 @function
@@ -59,7 +59,7 @@ JS_EXPORT JSGlobalContextRef jsAuditJSGlobalContextRef(JSGlobalContextRef ctx) J
 @result JSObjectRef that was passed in.
 @discussion This function will crash if the audit detects any errors.
  */
-JS_EXPORT JSObjectRef jsAuditJSObjectRef(JSObjectRef obj) JSC_API_AVAILABLE(macos(JSC_MAC_TBA), ios(JSC_IOS_TBA));
+JS_EXPORT JSObjectRef jsAuditJSObjectRef(JSObjectRef obj) JSC_API_AVAILABLE(macos(13.0), ios(16.1));
 
 /*!
 @function
@@ -68,7 +68,7 @@ JS_EXPORT JSObjectRef jsAuditJSObjectRef(JSObjectRef obj) JSC_API_AVAILABLE(maco
 @result JSValueRef that was passed in.
 @discussion This function will crash if the audit detects any errors.
  */
-JS_EXPORT JSValueRef jsAuditJSValueRef(JSValueRef value) JSC_API_AVAILABLE(macos(JSC_MAC_TBA), ios(JSC_IOS_TBA));
+JS_EXPORT JSValueRef jsAuditJSValueRef(JSValueRef value) JSC_API_AVAILABLE(macos(13.0), ios(16.1));
 
 #ifdef __cplusplus
 }

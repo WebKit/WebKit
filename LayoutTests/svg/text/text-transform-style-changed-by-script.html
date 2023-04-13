@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<svg width="100" height="100">
+  <text y="50" style="transform: scale(0)">Hello World</text>
+</svg>
+<script>
+
+if (window.testRunner)
+    window.testRunner.waitUntilDone();
+
+requestAnimationFrame(() => {
+    document.querySelector("text").style.transform = "scale(1)";
+
+    if (window.testRunner)
+        window.testRunner.notifyDone();    
+});
+
+</script>

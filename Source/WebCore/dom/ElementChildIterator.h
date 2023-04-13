@@ -40,8 +40,8 @@ class ElementChildIterator : public ElementIterator<ElementType> {
 public:
     ElementChildIterator() = default;
     ElementChildIterator(const ContainerNode& parent, ElementType* current);
-    ElementChildIterator& operator--();
-    ElementChildIterator& operator++();
+    inline ElementChildIterator& operator--();
+    inline ElementChildIterator& operator++();
 };
 
 template <typename ElementType>
@@ -49,12 +49,12 @@ class ElementChildRange {
 public:
     ElementChildRange(const ContainerNode& parent);
 
-    ElementChildIterator<ElementType> begin() const;
-    static constexpr std::nullptr_t end() { return nullptr; }
-    ElementChildIterator<ElementType> beginAt(ElementType&) const;
-
-    ElementType* first() const;
-    ElementType* last() const;
+    inline ElementChildIterator<ElementType> begin() const;
+    inline static constexpr std::nullptr_t end() { return nullptr; }
+    inline ElementChildIterator<ElementType> beginAt(ElementType&) const;
+    
+    inline ElementType* first() const;
+    inline ElementType* last() const;
 
 private:
     const ContainerNode& m_parent;
@@ -68,51 +68,12 @@ inline ElementChildIterator<ElementType>::ElementChildIterator(const ContainerNo
 {
 }
 
-template <typename ElementType>
-inline ElementChildIterator<ElementType>& ElementChildIterator<ElementType>::operator--()
-{
-    ElementIterator<ElementType>::traversePreviousSibling();
-    return *this;
-}
-
-template <typename ElementType>
-inline ElementChildIterator<ElementType>& ElementChildIterator<ElementType>::operator++()
-{
-    ElementIterator<ElementType>::traverseNextSibling();
-    return *this;
-}
-
 // ElementChildRange
 
 template <typename ElementType>
 inline ElementChildRange<ElementType>::ElementChildRange(const ContainerNode& parent)
     : m_parent(parent)
 {
-}
-
-template <typename ElementType>
-inline ElementChildIterator<ElementType> ElementChildRange<ElementType>::begin() const
-{
-    return ElementChildIterator<ElementType>(m_parent, Traversal<ElementType>::firstChild(m_parent));
-}
-
-template <typename ElementType>
-inline ElementType* ElementChildRange<ElementType>::first() const
-{
-    return Traversal<ElementType>::firstChild(m_parent);
-}
-
-template <typename ElementType>
-inline ElementType* ElementChildRange<ElementType>::last() const
-{
-    return Traversal<ElementType>::lastChild(m_parent);
-}
-
-template <typename ElementType>
-inline ElementChildIterator<ElementType> ElementChildRange<ElementType>::beginAt(ElementType& child) const
-{
-    ASSERT(child.parentNode() == &m_parent);
-    return ElementChildIterator<ElementType>(m_parent, &child);
 }
 
 // Standalone functions

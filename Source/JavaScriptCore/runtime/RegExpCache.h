@@ -38,7 +38,7 @@
 namespace JSC {
 
 namespace Yarr {
-enum class Flags : uint8_t;
+enum class Flags : uint16_t;
 }
 
 class RegExpCache final : private WeakHandleOwner {

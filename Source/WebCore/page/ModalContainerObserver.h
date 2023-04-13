@@ -38,9 +38,9 @@ namespace WebCore {
 
 class Document;
 class Element;
-class FrameView;
 class HTMLElement;
 class HTMLFrameOwnerElement;
+class LocalFrameView;
 class WeakPtrImplWithEventTargetData;
 
 class ModalContainerObserver {
@@ -53,7 +53,7 @@ public:
 
     bool shouldMakeVerticallyScrollable(const Element&) const;
     inline bool shouldHide(const Element&) const;
-    void updateModalContainerIfNeeded(const FrameView&);
+    void updateModalContainerIfNeeded(const LocalFrameView&);
 
     inline void overrideSearchTermForTesting(AtomString&&);
 

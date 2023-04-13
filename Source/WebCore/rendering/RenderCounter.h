@@ -27,6 +27,7 @@
 
 namespace WebCore {
 
+class CSSCounterStyle;
 class CounterNode;
 
 class RenderCounter final : public RenderText {
@@ -54,8 +55,10 @@ private:
     
     void computePreferredLogicalWidths(float leadWidth) override;
 
+    RefPtr<CSSCounterStyle> counterStyle() const;
+
     CounterContent m_counter;
-    CounterNode* m_counterNode { nullptr };
+    CheckedPtr<CounterNode> m_counterNode;
     RenderCounter* m_nextForSameCounter { nullptr };
     friend class CounterNode;
 };

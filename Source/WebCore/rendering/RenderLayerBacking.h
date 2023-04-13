@@ -192,6 +192,10 @@ public:
     void suspendAnimations(MonotonicTime = MonotonicTime());
     void resumeAnimations();
 
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
+    bool updateAcceleratedEffectsAndBaseValues();
+#endif
+
     WEBCORE_EXPORT LayoutRect compositedBounds() const;
     // Returns true if changed.
     bool setCompositedBounds(const LayoutRect&);
@@ -229,6 +233,8 @@ public:
 
     float deviceScaleFactor() const override;
     float contentsScaleMultiplierForNewTiles(const GraphicsLayer*) const override;
+
+    bool layerContainsBitmapOnly(const GraphicsLayer*) const override { return isBitmapOnly(); }
 
     bool paintsOpaquelyAtNonIntegralScales(const GraphicsLayer*) const override;
 
@@ -373,6 +379,7 @@ private:
     bool isDirectlyCompositedImage() const;
     void updateImageContents(PaintedContentsInfo&);
     bool isUnscaledBitmapOnly() const;
+    bool isBitmapOnly() const;
 
     void updateDirectlyCompositedBoxDecorations(PaintedContentsInfo&, bool& didUpdateContentsRect);
     void updateDirectlyCompositedBackgroundColor(PaintedContentsInfo&, bool& didUpdateContentsRect);

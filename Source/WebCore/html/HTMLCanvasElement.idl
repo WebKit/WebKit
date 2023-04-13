@@ -27,8 +27,6 @@
 typedef (
 #if defined(ENABLE_WEBGL) && ENABLE_WEBGL
     WebGLRenderingContext or
-#endif
-#if defined(ENABLE_WEBGL2) && ENABLE_WEBGL2
     WebGL2RenderingContext or
 #endif
     GPUCanvasContext or

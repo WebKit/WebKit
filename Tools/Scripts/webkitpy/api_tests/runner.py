@@ -90,8 +90,12 @@ class Runner(object):
             args.append('--gtest_also_run_disabled_tests=1')
         if (port.get_option('remote_layer_tree')):
             args.append('--remote-layer-tree')
+        if (port.get_option('no_remote_layer_tree')):
+            args.append('--no-remote-layer-tree')
         if (port.get_option('use_gpu_process')):
             args.append('--use-gpu-process')
+        if (port.get_option('no_use_gpu_process')):
+            args.append('--no-use-gpu-process')
         if getattr(port, 'DEVICE_MANAGER', None):
             assert port.DEVICE_MANAGER.INITIALIZED_DEVICES
             return ['/usr/bin/xcrun', 'simctl', 'spawn', port.DEVICE_MANAGER.INITIALIZED_DEVICES[0].udid] + args

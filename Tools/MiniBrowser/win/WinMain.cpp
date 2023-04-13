@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2008, 2013-2015 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006-2023 Apple Inc.  All rights reserved.
  * Copyright (C) 2009, 2011 Brent Fulgham.  All rights reserved.
  * Copyright (C) 2009, 2010, 2011 Appcelerator, Inc. All rights reserved.
  * Copyright (C) 2013 Alex Christensen. All rights reserved.
@@ -31,20 +31,8 @@
 #include "stdafx.h"
 #include "Common.h"
 #include "MiniBrowserLibResource.h"
-#include <wtf/win/SoftLinking.h>
-
-#if USE(CF)
-#include <CoreFoundation/CoreFoundation.h>
-#endif
-
-#if ENABLE(WEBKIT)
 #include "WebKitBrowserWindow.h"
-#endif
-
-#if ENABLE(WEBKIT_LEGACY)
-#include "WebKitLegacyBrowserWindow.h"
-#include <WebKitLegacy/WebKitCOMAPI.h>
-#endif
+#include <wtf/win/SoftLinking.h>
 
 SOFT_LINK_LIBRARY(user32);
 SOFT_LINK_OPTIONAL(user32, SetProcessDpiAwarenessContext, BOOL, STDAPICALLTYPE, (DPI_AWARENESS_CONTEXT));
@@ -78,13 +66,7 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
     else
         ::SetProcessDPIAware();
 
-#if !ENABLE(WEBKIT_LEGACY)
     auto factory = WebKitBrowserWindow::create;
-#elif !ENABLE(WEBKIT)
-    auto factory = WebKitLegacyBrowserWindow::create;
-#else
-    auto factory = options.windowType == BrowserWindowType::WebKit ? WebKitBrowserWindow::create : WebKitLegacyBrowserWindow::create;
-#endif
     auto& mainWindow = MainWindow::create().leakRef();
     HRESULT hr = mainWindow.init(factory, hInst, options.usesLayeredWebView);
     if (FAILED(hr))
@@ -105,9 +87,6 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
     // Main message loop:
     __try {
         while (GetMessage(&msg, nullptr, 0, 0)) {
-#if USE(CF)
-            CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, true);
-#endif
             if (TranslateAccelerator(msg.hwnd, hPreAccelTable, &msg))
                 continue;
             bool processed = false;
@@ -121,9 +100,6 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
     } __except(createCrashReport(GetExceptionInformation()), EXCEPTION_EXECUTE_HANDLER) { }
 
 exit:
-#if !ENABLE(WEBKIT)
-    shutDownWebKit();
-#endif
 #ifdef _CRTDBG_MAP_ALLOC
     _CrtDumpMemoryLeaks();
 #endif

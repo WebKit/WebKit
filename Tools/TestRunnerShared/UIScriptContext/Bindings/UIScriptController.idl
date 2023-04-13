@@ -85,6 +85,7 @@ interface UIScriptController {
     undefined setContinuousSpellCheckingEnabled(boolean enabled);
     undefined setSpellCheckerResults(object results);
 
+    readonly attribute unsigned long keyboardWillHideCount;
     readonly attribute boolean keyboardIsAutomaticallyShifted;
 
     undefined rawKeyDown(DOMString key);
@@ -342,6 +343,8 @@ interface UIScriptController {
     boolean mayContainEditableElementsInRect(unsigned long x, unsigned long y, unsigned long width, unsigned long height);
 
     object propertiesOfLayerWithID(unsigned long long layerID);
+    
+    DOMString scrollbarStateForScrollingNodeID(unsigned long long scrollingNodeID, boolean isVertical);
 
     undefined retrieveSpeakSelectionContent(object callback);
     readonly attribute DOMString accessibilitySpeakSelectionContent;
@@ -383,4 +386,6 @@ interface UIScriptController {
 
     readonly attribute DOMString lastUndoLabel;
     readonly attribute DOMString firstRedoLabel;
+    
+    readonly attribute unsigned long countOfUpdatesWithLayerChanges;
 };

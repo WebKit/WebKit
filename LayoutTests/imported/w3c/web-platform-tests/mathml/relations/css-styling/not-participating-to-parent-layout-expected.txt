@@ -24,9 +24,9 @@ PASS merror layout is not affected by children with "position: fixed" style
 PASS mfrac preferred width calculation is not affected by children with "display: none" style
 PASS mfrac layout is not affected by children with "display: none" style
 PASS mfrac preferred width calculation is not affected by children with "position: absolute" style
-FAIL mfrac layout is not affected by children with "position: absolute" style assert_approx_equals: block size expected 4.78125 +/- 1 but got 0
+FAIL mfrac layout is not affected by children with "position: absolute" style assert_approx_equals: block size expected 18.71875 +/- 1 but got 0
 PASS mfrac preferred width calculation is not affected by children with "position: fixed" style
-FAIL mfrac layout is not affected by children with "position: fixed" style assert_approx_equals: block size expected 4.78125 +/- 1 but got 0
+FAIL mfrac layout is not affected by children with "position: fixed" style assert_approx_equals: block size expected 18.71875 +/- 1 but got 0
 PASS mi preferred width calculation is not affected by children with "display: none" style
 PASS mi layout is not affected by children with "display: none" style
 PASS mi preferred width calculation is not affected by children with "position: absolute" style
@@ -36,9 +36,9 @@ PASS mi layout is not affected by children with "position: fixed" style
 PASS mmultiscripts preferred width calculation is not affected by children with "display: none" style
 PASS mmultiscripts layout is not affected by children with "display: none" style
 PASS mmultiscripts preferred width calculation is not affected by children with "position: absolute" style
-FAIL mmultiscripts layout is not affected by children with "position: absolute" style assert_approx_equals: inline size expected 3.1875 +/- 1 but got 0
+FAIL mmultiscripts layout is not affected by children with "position: absolute" style assert_approx_equals: block size expected 9.109375 +/- 1 but got 0
 PASS mmultiscripts preferred width calculation is not affected by children with "position: fixed" style
-FAIL mmultiscripts layout is not affected by children with "position: fixed" style assert_approx_equals: inline size expected 3.1875 +/- 1 but got 0
+FAIL mmultiscripts layout is not affected by children with "position: fixed" style assert_approx_equals: block size expected 9.109375 +/- 1 but got 0
 PASS mn preferred width calculation is not affected by children with "display: none" style
 PASS mn layout is not affected by children with "display: none" style
 PASS mn preferred width calculation is not affected by children with "position: absolute" style
@@ -54,9 +54,9 @@ PASS mo layout is not affected by children with "position: fixed" style
 PASS mover preferred width calculation is not affected by children with "display: none" style
 PASS mover layout is not affected by children with "display: none" style
 PASS mover preferred width calculation is not affected by children with "position: absolute" style
-FAIL mover layout is not affected by children with "position: absolute" style assert_approx_equals: block size expected 3.1875 +/- 1 but got 0
+FAIL mover layout is not affected by children with "position: absolute" style assert_approx_equals: block size expected 3.875 +/- 1 but got 0
 PASS mover preferred width calculation is not affected by children with "position: fixed" style
-FAIL mover layout is not affected by children with "position: fixed" style assert_approx_equals: block size expected 3.1875 +/- 1 but got 0
+FAIL mover layout is not affected by children with "position: fixed" style assert_approx_equals: block size expected 3.875 +/- 1 but got 0
 PASS mpadded preferred width calculation is not affected by children with "display: none" style
 PASS mpadded layout is not affected by children with "display: none" style
 PASS mpadded preferred width calculation is not affected by children with "display: contents" style
@@ -76,9 +76,9 @@ PASS mphantom layout is not affected by children with "position: fixed" style
 PASS mroot preferred width calculation is not affected by children with "display: none" style
 PASS mroot layout is not affected by children with "display: none" style
 PASS mroot preferred width calculation is not affected by children with "position: absolute" style
-FAIL mroot layout is not affected by children with "position: absolute" style assert_approx_equals: inline size expected 10.40625 +/- 1 but got 0
+FAIL mroot layout is not affected by children with "position: absolute" style assert_approx_equals: inline size expected 8.375 +/- 1 but got 0
 PASS mroot preferred width calculation is not affected by children with "position: fixed" style
-FAIL mroot layout is not affected by children with "position: fixed" style assert_approx_equals: inline size expected 10.40625 +/- 1 but got 0
+FAIL mroot layout is not affected by children with "position: fixed" style assert_approx_equals: inline size expected 8.375 +/- 1 but got 0
 PASS mrow preferred width calculation is not affected by children with "display: none" style
 PASS mrow layout is not affected by children with "display: none" style
 PASS mrow preferred width calculation is not affected by children with "display: contents" style
@@ -112,21 +112,21 @@ PASS mstyle layout is not affected by children with "position: fixed" style
 PASS msub preferred width calculation is not affected by children with "display: none" style
 PASS msub layout is not affected by children with "display: none" style
 PASS msub preferred width calculation is not affected by children with "position: absolute" style
-FAIL msub layout is not affected by children with "position: absolute" style assert_approx_equals: inline size expected 3.1875 +/- 1 but got 0
+FAIL msub layout is not affected by children with "position: absolute" style assert_approx_equals: block size expected 3.359375 +/- 1 but got 0
 PASS msub preferred width calculation is not affected by children with "position: fixed" style
-FAIL msub layout is not affected by children with "position: fixed" style assert_approx_equals: inline size expected 3.1875 +/- 1 but got 0
+FAIL msub layout is not affected by children with "position: fixed" style assert_approx_equals: block size expected 3.359375 +/- 1 but got 0
 PASS msubsup preferred width calculation is not affected by children with "display: none" style
 PASS msubsup layout is not affected by children with "display: none" style
 PASS msubsup preferred width calculation is not affected by children with "position: absolute" style
-FAIL msubsup layout is not affected by children with "position: absolute" style assert_approx_equals: inline size expected 3.1875 +/- 1 but got 0
+FAIL msubsup layout is not affected by children with "position: absolute" style assert_approx_equals: block size expected 9.109375 +/- 1 but got 0
 PASS msubsup preferred width calculation is not affected by children with "position: fixed" style
-FAIL msubsup layout is not affected by children with "position: fixed" style assert_approx_equals: inline size expected 3.1875 +/- 1 but got 0
+FAIL msubsup layout is not affected by children with "position: fixed" style assert_approx_equals: block size expected 9.109375 +/- 1 but got 0
 PASS msup preferred width calculation is not affected by children with "display: none" style
 PASS msup layout is not affected by children with "display: none" style
 PASS msup preferred width calculation is not affected by children with "position: absolute" style
-FAIL msup layout is not affected by children with "position: absolute" style assert_approx_equals: inline size expected 3.1875 +/- 1 but got 0
+FAIL msup layout is not affected by children with "position: absolute" style assert_approx_equals: block size expected 5.75 +/- 1 but got 0
 PASS msup preferred width calculation is not affected by children with "position: fixed" style
-FAIL msup layout is not affected by children with "position: fixed" style assert_approx_equals: inline size expected 3.1875 +/- 1 but got 0
+FAIL msup layout is not affected by children with "position: fixed" style assert_approx_equals: block size expected 5.75 +/- 1 but got 0
 PASS mtable preferred width calculation is not affected by children with "display: none" style
 PASS mtable layout is not affected by children with "display: none" style
 PASS mtable preferred width calculation is not affected by children with "position: absolute" style
@@ -142,15 +142,15 @@ PASS mtext layout is not affected by children with "position: fixed" style
 PASS munder preferred width calculation is not affected by children with "display: none" style
 PASS munder layout is not affected by children with "display: none" style
 PASS munder preferred width calculation is not affected by children with "position: absolute" style
-FAIL munder layout is not affected by children with "position: absolute" style assert_approx_equals: block size expected 3.1875 +/- 1 but got 0
+FAIL munder layout is not affected by children with "position: absolute" style assert_approx_equals: block size expected 3.875 +/- 1 but got 0
 PASS munder preferred width calculation is not affected by children with "position: fixed" style
-FAIL munder layout is not affected by children with "position: fixed" style assert_approx_equals: block size expected 3.1875 +/- 1 but got 0
+FAIL munder layout is not affected by children with "position: fixed" style assert_approx_equals: block size expected 3.875 +/- 1 but got 0
 PASS munderover preferred width calculation is not affected by children with "display: none" style
 PASS munderover layout is not affected by children with "display: none" style
 PASS munderover preferred width calculation is not affected by children with "position: absolute" style
-FAIL munderover layout is not affected by children with "position: absolute" style assert_approx_equals: block size expected 6.375 +/- 1 but got 0
+FAIL munderover layout is not affected by children with "position: absolute" style assert_approx_equals: block size expected 7.75 +/- 1 but got 0
 PASS munderover preferred width calculation is not affected by children with "position: fixed" style
-FAIL munderover layout is not affected by children with "position: fixed" style assert_approx_equals: block size expected 6.375 +/- 1 but got 0
+FAIL munderover layout is not affected by children with "position: fixed" style assert_approx_equals: block size expected 7.75 +/- 1 but got 0
 PASS semantics preferred width calculation is not affected by children with "display: none" style
 PASS semantics layout is not affected by children with "display: none" style
 PASS semantics preferred width calculation is not affected by children with "position: absolute" style

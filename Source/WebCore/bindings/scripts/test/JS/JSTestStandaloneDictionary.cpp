@@ -343,9 +343,9 @@ String convertEnumerationToString(TestStandaloneDictionary::EnumInStandaloneDict
     return values[static_cast<size_t>(enumerationValue)];
 }
 
-template<> JSString* convertEnumerationToJS(JSGlobalObject& lexicalGlobalObject, TestStandaloneDictionary::EnumInStandaloneDictionaryFile enumerationValue)
+template<> JSString* convertEnumerationToJS(VM& vm, TestStandaloneDictionary::EnumInStandaloneDictionaryFile enumerationValue)
 {
-    return jsStringWithCache(lexicalGlobalObject.vm(), convertEnumerationToString(enumerationValue));
+    return jsStringWithCache(vm, convertEnumerationToString(enumerationValue));
 }
 
 template<> std::optional<TestStandaloneDictionary::EnumInStandaloneDictionaryFile> parseEnumerationFromString<TestStandaloneDictionary::EnumInStandaloneDictionaryFile>(const String& stringValue)

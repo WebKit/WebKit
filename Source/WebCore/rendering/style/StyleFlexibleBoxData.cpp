@@ -30,6 +30,8 @@
 
 namespace WebCore {
 
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleFlexibleBoxData);
+
 StyleFlexibleBoxData::StyleFlexibleBoxData()
     : flexGrow(RenderStyle::initialFlexGrow())
     , flexShrink(RenderStyle::initialFlexShrink())

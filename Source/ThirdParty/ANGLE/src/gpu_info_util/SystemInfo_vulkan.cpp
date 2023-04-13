@@ -255,6 +255,11 @@ bool GetSystemInfoVulkanWithICD(SystemInfo *info, vk::ICD preferredICD)
                     gpu.detailedDriverVersion.major = properties.driverVersion;
                 }
                 break;
+            case kVendorID_Samsung:
+                gpu.driverVendor                = "Samsung";
+                gpu.driverVersion               = FormatString("0x%x", properties.driverVersion);
+                gpu.detailedDriverVersion.major = properties.driverVersion;
+                break;
             case kVendorID_VeriSilicon:
                 gpu.driverVendor                = "VeriSilicon";
                 gpu.driverVersion               = FormatString("0x%x", properties.driverVersion);

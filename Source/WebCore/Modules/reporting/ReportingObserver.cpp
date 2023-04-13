@@ -26,9 +26,9 @@
 #include "config.h"
 #include "ReportingObserver.h"
 
-#include "DOMWindow.h"
 #include "EventLoop.h"
 #include "InspectorInstrumentation.h"
+#include "LocalDOMWindow.h"
 #include "Report.h"
 #include "ReportBody.h"
 #include "ReportingObserverCallback.h"

@@ -42,7 +42,7 @@ class CallFrame;
 namespace WebCore {
 
 class DOMWrapperWorld;
-class Frame;
+class LocalFrame;
 class Page;
 class SecurityOrigin;
 
@@ -60,8 +60,8 @@ public:
     Inspector::Protocol::ErrorStringOr<std::tuple<Ref<Inspector::Protocol::Runtime::RemoteObject>, std::optional<bool> /* wasThrown */>> callFunctionOn(const Inspector::Protocol::Runtime::RemoteObjectId&, const String& expression, RefPtr<JSON::Array>&& arguments, std::optional<bool>&& doNotPauseOnExceptionsAndMuteConsole, std::optional<bool>&& returnByValue, std::optional<bool>&& generatePreview, std::optional<bool>&& emulateUserGesture);
 
     // InspectorInstrumentation
-    void frameNavigated(Frame&);
-    void didClearWindowObjectInWorld(Frame&, DOMWrapperWorld&);
+    void frameNavigated(LocalFrame&);
+    void didClearWindowObjectInWorld(LocalFrame&, DOMWrapperWorld&);
 
 private:
     Inspector::InjectedScript injectedScriptForEval(Inspector::Protocol::ErrorString&, std::optional<Inspector::Protocol::Runtime::ExecutionContextId>&&);

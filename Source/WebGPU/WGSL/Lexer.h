@@ -47,6 +47,7 @@ public:
         }
 
         m_current = (m_code != m_codeEnd) ? *m_code : 0;
+        m_currentPosition = { 1, 0, 0 };
     }
 
     Token lex();
@@ -54,8 +55,8 @@ public:
     SourcePosition currentPosition() const { return m_currentPosition; }
 
 private:
-    unsigned currentOffset() const { return m_currentPosition.m_offset; }
-    unsigned currentTokenLength() const { return currentOffset() - m_tokenStartingPosition.m_offset; }
+    unsigned currentOffset() const { return m_currentPosition.offset; }
+    unsigned currentTokenLength() const { return currentOffset() - m_tokenStartingPosition.offset; }
 
     Token makeToken(TokenType type)
     {
@@ -70,9 +71,12 @@ private:
         return { WGSL::TokenType::Identifier, m_tokenStartingPosition, currentTokenLength(), WTFMove(identifier) };
     }
 
-    void shift();
-    T peek(unsigned);
-    void skipWhitespace();
+    T shift(unsigned = 1);
+    T peek(unsigned = 0);
+    void newLine();
+    void skipBlockComments();
+    void skipLineComment();
+    void skipWhitespaceAndComments();
 
     // Reads [0-9]+
     std::optional<uint64_t> parseDecimalInteger();

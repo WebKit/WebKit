@@ -179,6 +179,8 @@ void LibWebRTCProvider::willCreatePeerConnectionFactory()
 {
 #if ENABLE(GPU_PROCESS) && PLATFORM(COCOA) && !PLATFORM(MACCATALYST)
     LibWebRTCCodecs::initializeIfNeeded();
+    if (isSupportingVP9VTB())
+        WebProcess::singleton().libWebRTCCodecs().setVP9VTBSupport(true);
 #endif
 }
 

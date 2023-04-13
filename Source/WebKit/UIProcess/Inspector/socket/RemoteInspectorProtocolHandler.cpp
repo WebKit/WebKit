@@ -31,11 +31,13 @@
 #include "APIContentWorld.h"
 #include "APILoaderClient.h"
 #include "APINavigation.h"
+#include "PageLoadState.h"
 #include "WebPageGroup.h"
 #include "WebPageProxy.h"
 #include "WebScriptMessageHandler.h"
 #include "WebUserContentControllerProxy.h"
 #include <WebCore/JSDOMExceptionHandling.h>
+#include <WebCore/RunJavaScriptParameters.h>
 #include <WebCore/SerializedScriptValue.h>
 #include <wtf/URL.h>
 #include <wtf/text/StringBuilder.h>

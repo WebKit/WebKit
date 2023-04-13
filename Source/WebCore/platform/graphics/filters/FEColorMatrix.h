@@ -2,7 +2,7 @@
  * Copyright (C) 2004, 2005, 2006, 2007 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005 Rob Buis <buis@kde.org>
  * Copyright (C) 2005 Eric Seidel <eric@webkit.org>
- * Copyright (C) 2021-2022 Apple Inc.  All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc.  All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -49,9 +49,6 @@ public:
     static void calculateHueRotateComponents(float* components, float value);
     static Vector<float> normalizedFloats(const Vector<float>& values);
 
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<Ref<FEColorMatrix>> decode(Decoder&);
-
 private:
     FEColorMatrix(ColorMatrixType, Vector<float>&&);
 
@@ -68,29 +65,6 @@ private:
     ColorMatrixType m_type;
     Vector<float> m_values;
 };
-
-template<class Encoder>
-void FEColorMatrix::encode(Encoder& encoder) const
-{
-    encoder << m_type;
-    encoder << m_values;
-}
-
-template<class Decoder>
-std::optional<Ref<FEColorMatrix>> FEColorMatrix::decode(Decoder& decoder)
-{
-    std::optional<ColorMatrixType> type;
-    decoder >> type;
-    if (!type)
-        return std::nullopt;
-
-    std::optional<Vector<float>> values;
-    decoder >> values;
-    if (!values)
-        return std::nullopt;
-
-    return FEColorMatrix::create(*type, WTFMove(*values));
-}
 
 } // namespace WebCore
 

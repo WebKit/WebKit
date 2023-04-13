@@ -37,12 +37,13 @@ messages -> WebSWServerToContextConnection NotRefCounted {
     Claim(WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier) -> (std::optional<WebCore::ExceptionData> result)
     Focus(WebCore::ScriptExecutionContextIdentifier serviceWorkerClientIdentifier) -> (std::optional<WebCore::ServiceWorkerClientData> result)
     Navigate(WebCore::ScriptExecutionContextIdentifier clientIdentifier, WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, URL url) -> (Expected<std::optional<WebCore::ServiceWorkerClientData>, WebCore::ExceptionData> result)
-    SetScriptResource(WebCore::ServiceWorkerIdentifier identifier, URL scriptURL, WebCore::ServiceWorkerContextData::ImportedScript script)
+    SetScriptResource(WebCore::ServiceWorkerIdentifier identifier, URL scriptURL, struct WebCore::ServiceWorkerImportedScript script)
     PostMessageToServiceWorkerClient(WebCore::ScriptExecutionContextIdentifier destination, struct WebCore::MessageWithMessagePorts message, WebCore::ServiceWorkerIdentifier source, String sourceOrigin)
     DidFailHeartBeatCheck(WebCore::ServiceWorkerIdentifier identifier)
     SetAsInspected(WebCore::ServiceWorkerIdentifier identifier, bool isInspected)
 
     OpenWindow(WebCore::ServiceWorkerIdentifier identifier, URL url) -> (Expected<std::optional<WebCore::ServiceWorkerClientData>, WebCore::ExceptionData> newClientData)
+    ReportConsoleMessage(WebCore::ServiceWorkerIdentifier identifier, enum:uint8_t JSC::MessageSource messageSource, enum:uint8_t JSC::MessageLevel messageLevel, String message, unsigned long requestIdentifier);
 }
 
 #endif // ENABLE(SERVICE_WORKER)

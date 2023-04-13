@@ -4,13 +4,13 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock (anonymous) at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 395x19
-          text run at (0,0) width 395: "Pixel test for complex text rendering with opacity (Chromium bug "
+        RenderText {#text} at (0,0) size 419x19
+          text run at (0,0) width 419: "Pixel test for complex text rendering with opacity (Chromium bug "
         RenderInline {A} at (0,0) size 32x19 [color=#0000EE]
-          RenderText {#text} at (395,0) size 32x19
-            text run at (395,0) width 32: "8768"
-        RenderText {#text} at (427,0) size 9x19
-          text run at (427,0) width 9: ")."
+          RenderText {#text} at (419,0) size 32x19
+            text run at (419,0) width 32: "8768"
+        RenderText {#text} at (451,0) size 9x19
+          text run at (451,0) width 9: ")."
       RenderBlock {P} at (0,36) size 784x0
       RenderBlock {DIV} at (0,36) size 784x35
         RenderInline {SPAN} at (0,0) size 47x29

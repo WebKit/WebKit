@@ -8,9 +8,6 @@
 <script>
 description("Make sure that reading from WebGL2 buffers into offset ArrayBufferView works as expected.");
 
-if (window.internals)
-    internals.settings.setWebGL2Enabled(true);
-
 var arrayBuffer = new ArrayBuffer(40);
 var fullArrayView = new Float32Array(arrayBuffer); // [15, 16, 17, 18, 19, 20, 21, 22, 23, 24], 40 bytes
 

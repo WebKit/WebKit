@@ -1,2 +1,0 @@
-CONSOLE MESSAGE: WebGL: INVALID_OPERATION: drawElements: no buffer is bound to enabled attribute
-PASS: Unable to draw with invalid vertexAttribArray0

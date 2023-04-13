@@ -63,7 +63,6 @@ ALWAYS_INLINE static void appendQuotedJSONStringInternal(OutputCharacterType*& o
         *output++ = lowerNibbleToLowercaseASCIIHexDigit(upper);
         *output++ = upperNibbleToLowercaseASCIIHexDigit(lower);
         *output++ = lowerNibbleToLowercaseASCIIHexDigit(lower);
-        continue;
     }
 }
 

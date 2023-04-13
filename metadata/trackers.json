@@ -9,7 +9,8 @@
             "\\A<https?://webkit.org/b/(?P<id>\\d+)>\\Z"
         ],
         "redact" : {
-            "product:Security": true
+            "project:Security": true,
+            "component:Security": true
         }, "radar_importer": {
             "name": "Radar WebKit Bug Importer",
             "emails": ["webkit-bug-importer@group.apple.com"],
@@ -20,7 +21,12 @@
         "type" : "radar",
         "projects" : ["JavaScriptCore", "WebKit"],
         "redact" : {
-            ".*": true
+            "classification:Security": true,
+            "tentpole:.*Security.*": true
+        },
+        "redact_exemption" : {
+            "keywords:[^:]*WebKit Security Does Not Repro in Shipping" : true,
+            "keywords:[^:]*WebKit Security Merge-Back Approved" : true
         }
     }
 ]

@@ -49,6 +49,22 @@
         completionHandler();
 }
 
+- (void)webView:(WKWebView *)webView runJavaScriptConfirmPanelWithMessage:(NSString *)message initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(BOOL))completionHandler
+{
+    if (_runJavaScriptConfirmPanelWithMessage)
+        _runJavaScriptConfirmPanelWithMessage(webView, message, frame, completionHandler);
+    else
+        completionHandler(YES);
+}
+
+- (void)webView:(WKWebView *)webView runJavaScriptTextInputPanelWithPrompt:(NSString *)prompt defaultText:(NSString *)defaultText initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(NSString *))completionHandler
+{
+    if (_runJavaScriptPromptPanelWithMessage)
+        _runJavaScriptPromptPanelWithMessage(webView, prompt, defaultText, frame, completionHandler);
+    else
+        completionHandler(@"foo");
+}
+
 #if PLATFORM(MAC)
 - (void)_webView:(WKWebView *)webView getContextMenuFromProposedMenu:(NSMenu *)menu forElement:(_WKContextMenuElementInfo *)element userInfo:(id <NSSecureCoding>)userInfo completionHandler:(void (^)(NSMenu *))completionHandler
 {
@@ -56,6 +72,14 @@
         _getContextMenuFromProposedMenu(menu, element, userInfo, completionHandler);
     else
         completionHandler(menu);
+}
+
+- (void)_webView:(WKWebView *)webView getWindowFrameWithCompletionHandler:(void (^)(CGRect))completionHandler
+{
+    if (_getWindowFrameWithCompletionHandler)
+        _getWindowFrameWithCompletionHandler(webView, completionHandler);
+    else
+        completionHandler(CGRectZero);
 }
 
 - (void)_focusWebView:(WKWebView *)webView
@@ -89,6 +113,43 @@
     return result.autorelease();
 }
 
+- (NSString *)waitForConfirm
+{
+    EXPECT_FALSE(self.runJavaScriptConfirmPanelWithMessage);
+
+    __block bool finished = false;
+    __block RetainPtr<NSString> result;
+    self.runJavaScriptConfirmPanelWithMessage = ^(WKWebView *, NSString *message, WKFrameInfo *, void (^completionHandler)(BOOL)) {
+        result = message;
+        finished = true;
+        completionHandler(YES);
+    };
+
+    TestWebKitAPI::Util::run(&finished);
+
+    self.runJavaScriptConfirmPanelWithMessage = nil;
+    return result.autorelease();
+}
+
+- (NSString *)waitForPromptWithReply:(NSString *)reply
+{
+    EXPECT_FALSE(self.runJavaScriptPromptPanelWithMessage);
+
+    __block bool finished = false;
+    __block RetainPtr<NSString> result;
+    self.runJavaScriptPromptPanelWithMessage = ^(WKWebView *, NSString *message, NSString *defaultInput, WKFrameInfo *, void (^completionHandler)(NSString *)) {
+        EXPECT_TRUE([reply isEqualToString:defaultInput]);
+        result = message;
+        finished = true;
+        completionHandler(@"foo");
+    };
+
+    TestWebKitAPI::Util::run(&finished);
+
+    self.runJavaScriptPromptPanelWithMessage = nil;
+    return result.autorelease();
+}
+
 - (void)_webView:(WKWebView *)webView didAttachLocalInspector:(_WKInspector *)inspector
 {
     _showedInspector = YES;
@@ -112,6 +173,26 @@
     NSString *alert = [uiDelegate waitForAlert];
     self.UIDelegate = nil;
     return alert;
+}
+
+- (NSString *)_test_waitForConfirm
+{
+    EXPECT_FALSE(self.UIDelegate);
+    auto uiDelegate = adoptNS([TestUIDelegate new]);
+    self.UIDelegate = uiDelegate.get();
+    NSString *message = [uiDelegate waitForConfirm];
+    self.UIDelegate = nil;
+    return message;
+}
+
+- (NSString *)_test_waitForPromptWithReply:(NSString *)reply
+{
+    EXPECT_FALSE(self.UIDelegate);
+    auto uiDelegate = adoptNS([TestUIDelegate new]);
+    self.UIDelegate = uiDelegate.get();
+    NSString *prompt = [uiDelegate waitForPromptWithReply:reply];
+    self.UIDelegate = nil;
+    return prompt;
 }
 
 - (void)_test_waitForInspectorToShow

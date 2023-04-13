@@ -21,7 +21,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #pragma once
@@ -146,7 +146,7 @@ inline bool isNumberedHeaderElement(const HTMLStackItem& item)
     }
 }
 
-// http://www.whatwg.org/specs/web-apps/current-work/multipage/parsing.html#special
+// https://html.spec.whatwg.org/multipage/parsing.html#special
 inline bool isSpecialNode(const HTMLStackItem& item)
 {
     using namespace ElementNames;
@@ -171,7 +171,6 @@ inline bool isSpecialNode(const HTMLStackItem& item)
     case HTML::center:
     case HTML::col:
     case HTML::colgroup:
-    case HTML::command:
     case HTML::dd:
     case HTML::details:
     case HTML::dir:

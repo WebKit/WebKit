@@ -12,9 +12,41 @@ const expected = [
   // RejectObjectWithCalendarOrTimeZone
   "get fields.calendar",
   "get fields.timeZone",
-  // CalendarFields / PrepareTemporalFields
+  // CalendarFields
   "get this.calendar.fields",
   "call this.calendar.fields",
+  // PrepareTemporalFields on receiver
+  "get this.timeZone.getOffsetNanosecondsFor",
+  "call this.timeZone.getOffsetNanosecondsFor",
+  "get this.calendar.day",
+  "call this.calendar.day",
+  "get this.timeZone.getOffsetNanosecondsFor",  // ZonedDateTime.p.hour
+  "call this.timeZone.getOffsetNanosecondsFor",
+  "get this.timeZone.getOffsetNanosecondsFor",  // ZonedDateTime.p.microsecond
+  "call this.timeZone.getOffsetNanosecondsFor",
+  "get this.timeZone.getOffsetNanosecondsFor",  // ZonedDateTime.p.millisecond
+  "call this.timeZone.getOffsetNanosecondsFor",
+  "get this.timeZone.getOffsetNanosecondsFor",  // ZonedDateTime.p.minute
+  "call this.timeZone.getOffsetNanosecondsFor",
+  "get this.timeZone.getOffsetNanosecondsFor",
+  "call this.timeZone.getOffsetNanosecondsFor",
+  "get this.calendar.month",
+  "call this.calendar.month",
+  "get this.timeZone.getOffsetNanosecondsFor",
+  "call this.timeZone.getOffsetNanosecondsFor",
+  "get this.calendar.monthCode",
+  "call this.calendar.monthCode",
+  "get this.timeZone.getOffsetNanosecondsFor",  // ZonedDateTime.p.nanosecond
+  "call this.timeZone.getOffsetNanosecondsFor",
+  "get this.timeZone.getOffsetNanosecondsFor",  // ZonedDateTime.p.offset
+  "call this.timeZone.getOffsetNanosecondsFor",
+  "get this.timeZone.getOffsetNanosecondsFor",  // ZonedDateTime.p.second
+  "call this.timeZone.getOffsetNanosecondsFor",
+  "get this.timeZone.getOffsetNanosecondsFor",
+  "call this.timeZone.getOffsetNanosecondsFor",
+  "get this.calendar.year",
+  "call this.calendar.year",
+  // PrepareTemporalFields on argument
   "get fields.day",
   "get fields.day.valueOf",
   "call fields.day.valueOf",
@@ -48,37 +80,6 @@ const expected = [
   "get fields.year",
   "get fields.year.valueOf",
   "call fields.year.valueOf",
-  // PrepareTemporalFields
-  "get this.timeZone.getOffsetNanosecondsFor",
-  "call this.timeZone.getOffsetNanosecondsFor",
-  "get this.calendar.day",
-  "call this.calendar.day",
-  "get this.timeZone.getOffsetNanosecondsFor",  // ZonedDateTime.p.hour
-  "call this.timeZone.getOffsetNanosecondsFor",
-  "get this.timeZone.getOffsetNanosecondsFor",  // ZonedDateTime.p.microsecond
-  "call this.timeZone.getOffsetNanosecondsFor",
-  "get this.timeZone.getOffsetNanosecondsFor",  // ZonedDateTime.p.millisecond
-  "call this.timeZone.getOffsetNanosecondsFor",
-  "get this.timeZone.getOffsetNanosecondsFor",  // ZonedDateTime.p.minute
-  "call this.timeZone.getOffsetNanosecondsFor",
-  "get this.timeZone.getOffsetNanosecondsFor",
-  "call this.timeZone.getOffsetNanosecondsFor",
-  "get this.calendar.month",
-  "call this.calendar.month",
-  "get this.timeZone.getOffsetNanosecondsFor",
-  "call this.timeZone.getOffsetNanosecondsFor",
-  "get this.calendar.monthCode",
-  "call this.calendar.monthCode",
-  "get this.timeZone.getOffsetNanosecondsFor",  // ZonedDateTime.p.nanosecond
-  "call this.timeZone.getOffsetNanosecondsFor",
-  "get this.timeZone.getOffsetNanosecondsFor",  // ZonedDateTime.p.offset
-  "call this.timeZone.getOffsetNanosecondsFor",
-  "get this.timeZone.getOffsetNanosecondsFor",  // ZonedDateTime.p.second
-  "call this.timeZone.getOffsetNanosecondsFor",
-  "get this.timeZone.getOffsetNanosecondsFor",
-  "call this.timeZone.getOffsetNanosecondsFor",
-  "get this.calendar.year",
-  "call this.calendar.year",
   // CalendarMergeFields
   "get this.calendar.mergeFields",
   "call this.calendar.mergeFields",

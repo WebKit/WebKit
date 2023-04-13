@@ -36,21 +36,17 @@ class MachSendRight;
 
 namespace PAL::WebGPU {
 
-struct PresentationConfiguration;
+struct CanvasConfiguration;
 class Texture;
 
 class PresentationContext : public RefCounted<PresentationContext> {
 public:
     virtual ~PresentationContext() = default;
 
-    virtual void configure(const PresentationConfiguration&) = 0;
+    virtual void configure(const CanvasConfiguration&) = 0;
     virtual void unconfigure() = 0;
 
-    virtual Texture* getCurrentTexture() = 0;
-
-#if PLATFORM(COCOA)
-    virtual void prepareForDisplay(CompletionHandler<void(WTF::MachSendRight&&)>&&) = 0;
-#endif
+    virtual RefPtr<Texture> getCurrentTexture() = 0;
 
 protected:
     PresentationContext() = default;

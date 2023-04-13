@@ -166,7 +166,7 @@ x86_dir_cpu(yasm_object *object, yasm_valparamhead *valparams,
                                N_("invalid argument to [%s]"), "CPU");
             else {
                 char strcpu[16];
-                sprintf(strcpu, "%lu", yasm_intnum_get_uint(intcpu));
+                snprintf(strcpu, 16, "%lu", yasm_intnum_get_uint(intcpu));
                 yasm_x86__parse_cpu(arch_x86, strcpu, strlen(strcpu));
             }
         } else

@@ -32,33 +32,28 @@ Tests setPipeline should generate an error iff using an 'invalid' pipeline.
 g.test('pipeline,device_mismatch')
   .desc('Tests setPipeline cannot be called with a render pipeline created from another device')
   .paramsSubcasesOnly(kRenderEncodeTypeParams.combine('mismatched', [true, false]))
-  .fn(async t => {
+  .beforeAllSubcases(t => {
+    t.selectMismatchedDeviceOrSkipTestCase(undefined);
+  })
+  .fn(t => {
     const { encoderType, mismatched } = t.params;
+    const sourceDevice = mismatched ? t.mismatchedDevice : t.device;
 
-    if (mismatched) {
-      await t.selectMismatchedDeviceOrSkipTestCase(undefined);
-    }
-
-    const device = mismatched ? t.mismatchedDevice : t.device;
-
-    const pipeline = device.createRenderPipeline({
+    const pipeline = sourceDevice.createRenderPipeline({
+      layout: 'auto',
       vertex: {
-        module: device.createShaderModule({
-          code: `@stage(vertex) fn main() -> @builtin(position) vec4<f32> { return vec4<f32>(); }`,
+        module: sourceDevice.createShaderModule({
+          code: `@vertex fn main() -> @builtin(position) vec4<f32> { return vec4<f32>(); }`,
         }),
-
         entryPoint: 'main',
       },
-
       fragment: {
-        module: device.createShaderModule({
-          code: '@stage(fragment) fn main() {}',
+        module: sourceDevice.createShaderModule({
+          code: '@fragment fn main() {}',
         }),
-
         entryPoint: 'main',
         targets: [{ format: 'rgba8unorm', writeMask: 0 }],
       },
-
       primitive: { topology: 'triangle-list' },
     });
 

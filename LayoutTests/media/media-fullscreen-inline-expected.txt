@@ -24,7 +24,6 @@ EVENT(canplaythrough)
 EXPECTED (mediaElement.webkitSupportsFullscreen == 'true') OK
 EXPECTED (mediaElement.webkitSupportsPresentationMode('fullscreen') == 'true') OK
 EXPECTED (mediaElement.webkitDisplayingFullscreen == 'false') OK
-TEST(mediaElement.webkitEnterFullScreen()) THROWS(DOMException.INVALID_STATE_ERR) OK
 * clicking on button
 EVENT(mouseup)
 * event handler triggered by user gesture

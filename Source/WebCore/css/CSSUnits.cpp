@@ -109,20 +109,14 @@ CSSUnitCategory unitCategory(CSSUnitType type)
     case CSSUnitType::CSS_CALC:
     case CSSUnitType::CSS_CALC_PERCENTAGE_WITH_LENGTH:
     case CSSUnitType::CSS_CALC_PERCENTAGE_WITH_NUMBER:
-    case CSSUnitType::CSS_COUNTER:
     case CSSUnitType::CSS_COUNTER_NAME:
     case CSSUnitType::CSS_DIMENSION:
     case CSSUnitType::CSS_FONT_FAMILY:
     case CSSUnitType::CSS_IDENT:
-    case CSSUnitType::CSS_PAIR:
     case CSSUnitType::CSS_PROPERTY_ID:
-    case CSSUnitType::CSS_QUAD:
     case CSSUnitType::CSS_QUIRKY_EMS:
-    case CSSUnitType::CSS_RECT:
     case CSSUnitType::CSS_RGBCOLOR:
-    case CSSUnitType::CSS_SHAPE:
     case CSSUnitType::CSS_STRING:
-    case CSSUnitType::CSS_UNICODE_RANGE:
     case CSSUnitType::CSS_UNKNOWN:
     case CSSUnitType::CSS_UNRESOLVED_COLOR:
     case CSSUnitType::CSS_URI:
@@ -213,8 +207,6 @@ TextStream& operator<<(TextStream& ts, CSSUnitType unitType)
     case CSSUnitType::CSS_IDENT: ts << "ident"; break;
     case CSSUnitType::CustomIdent: ts << "custom-ident"; break;
     case CSSUnitType::CSS_ATTR: ts << "attr"; break;
-    case CSSUnitType::CSS_COUNTER: ts << "counter"; break;
-    case CSSUnitType::CSS_RECT: ts << "rect"; break;
     case CSSUnitType::CSS_RGBCOLOR: ts << "rgbcolor"; break;
     case CSSUnitType::CSS_VW: ts << "vw"; break;
     case CSSUnitType::CSS_VH: ts << "vh"; break;
@@ -254,15 +246,11 @@ TextStream& operator<<(TextStream& ts, CSSUnitType unitType)
     case CSSUnitType::CSS_CQB: ts << "cqb"; break;
     case CSSUnitType::CSS_CQMAX: ts << "cqmax"; break;
     case CSSUnitType::CSS_CQMIN: ts << "cqmin"; break;
-    case CSSUnitType::CSS_PAIR: ts << "pair"; break;
-    case CSSUnitType::CSS_UNICODE_RANGE: ts << "unicode_range"; break;
     case CSSUnitType::CSS_TURN: ts << "turn"; break;
     case CSSUnitType::CSS_REMS: ts << "rems"; break;
     case CSSUnitType::CSS_CHS: ts << "chs"; break;
     case CSSUnitType::CSS_IC: ts << "ics"; break;
     case CSSUnitType::CSS_COUNTER_NAME: ts << "counter_name"; break;
-    case CSSUnitType::CSS_SHAPE: ts << "shape"; break;
-    case CSSUnitType::CSS_QUAD: ts << "quad"; break;
     case CSSUnitType::CSS_CALC: ts << "calc"; break;
     case CSSUnitType::CSS_CALC_PERCENTAGE_WITH_NUMBER: ts << "calc_percentage_with_number"; break;
     case CSSUnitType::CSS_CALC_PERCENTAGE_WITH_LENGTH: ts << "calc_percentage_with_length"; break;

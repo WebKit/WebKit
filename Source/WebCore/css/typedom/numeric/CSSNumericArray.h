@@ -41,7 +41,7 @@ public:
     static Ref<CSSNumericArray> create(FixedVector<CSSNumberish>&&);
     static Ref<CSSNumericArray> create(Vector<Ref<CSSNumericValue>>&&);
     size_t length() const { return m_array.size(); };
-    ExceptionOr<Ref<CSSNumericValue>> item(size_t index);
+    RefPtr<CSSNumericValue> item(size_t index);
     const Vector<Ref<CSSNumericValue>>& array() const { return m_array; }
     void forEach(Function<void(const CSSNumericValue&, bool first)>);
 

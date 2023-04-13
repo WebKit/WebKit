@@ -298,4 +298,9 @@ void UIScriptControllerCocoa::dismissContactPickerWithContacts(JSValueRef contac
     [webView() _dismissContactPickerWithContacts:[value toArray]];
 }
 
+unsigned long UIScriptControllerCocoa::countOfUpdatesWithLayerChanges() const
+{
+    return webView()._countOfUpdatesWithLayerChanges;
+}
+
 } // namespace WTR

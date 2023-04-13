@@ -54,7 +54,7 @@ struct _WebKitSecurityManagerPrivate {
     WebKitWebContext* webContext;
 };
 
-WEBKIT_DEFINE_FINAL_TYPE_IN_2022_API(WebKitSecurityManager, webkit_security_manager, G_TYPE_OBJECT)
+WEBKIT_DEFINE_FINAL_TYPE(WebKitSecurityManager, webkit_security_manager, G_TYPE_OBJECT, GObject)
 
 static void webkit_security_manager_class_init(WebKitSecurityManagerClass*)
 {

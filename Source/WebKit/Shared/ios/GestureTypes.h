@@ -58,9 +58,11 @@ enum class GestureRecognizerState : uint8_t {
     Failed
 };
 
-enum class SheetAction : bool {
+enum class SheetAction : uint8_t {
     Copy,
-    SaveImage
+    SaveImage,
+    PauseAnimation,
+    PlayAnimation
 };
 
 enum SelectionFlags : uint8_t {
@@ -69,10 +71,7 @@ enum SelectionFlags : uint8_t {
     PhraseBoundaryChanged = 1 << 2,
 };
 
-enum class RespectSelectionAnchor : bool {
-    No,
-    Yes
-};
+enum class RespectSelectionAnchor : bool { No, Yes };
 
 } // namespace WebKit
 

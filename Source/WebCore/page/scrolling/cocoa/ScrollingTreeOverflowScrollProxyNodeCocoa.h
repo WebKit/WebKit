@@ -39,12 +39,15 @@ public:
 protected:
     WEBCORE_EXPORT ScrollingTreeOverflowScrollProxyNodeCocoa(ScrollingTree&, ScrollingNodeID);
 
-    void commitStateBeforeChildren(const ScrollingStateNode&) override;
+    bool commitStateBeforeChildren(const ScrollingStateNode&) override;
     void applyLayerPositions() override;
 
     CALayer* layer() const override { return m_layer.get(); }
 
     RetainPtr<CALayer> m_layer;
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+    RetainPtr<CALayer> m_interactionRegionsLayer;
+#endif
 };
 
 } // namespace WebCore

@@ -195,7 +195,7 @@ static ImageOrientation readImageOrientation(jpeg_decompress_struct* info)
         }
     }
 
-    return ImageOrientation::None;
+    return ImageOrientation::Orientation::None;
 }
 
 #if USE(LCMS)

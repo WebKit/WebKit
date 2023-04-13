@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,7 +27,7 @@
 
 #if HAVE(WEBGPU_IMPLEMENTATION)
 
-#include "WebGPUDeviceHolderImpl.h"
+#include "WebGPUDeviceWrapper.h"
 #include "WebGPUQueue.h"
 #include <WebGPU/WebGPU.h>
 #include <wtf/Deque.h>
@@ -39,9 +39,13 @@ class ConvertToBackingContext;
 class QueueImpl final : public Queue {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<QueueImpl> create(Ref<DeviceHolderImpl>&& deviceHolder, ConvertToBackingContext& convertToBackingContext)
+    static Ref<QueueImpl> create(WGPUQueue queue, ConvertToBackingContext& convertToBackingContext)
     {
-        return adoptRef(*new QueueImpl(WTFMove(deviceHolder), convertToBackingContext));
+        return adoptRef(*new QueueImpl(queue, convertToBackingContext));
+    }
+    static Ref<QueueImpl> create(WGPUQueue queue, ConvertToBackingContext& convertToBackingContext, Ref<DeviceWrapper>&& deviceWrapper)
+    {
+        return adoptRef(*new QueueImpl(queue, convertToBackingContext, WTFMove(deviceWrapper)));
     }
 
     virtual ~QueueImpl();
@@ -49,14 +53,15 @@ public:
 private:
     friend class DowncastConvertToBackingContext;
 
-    QueueImpl(Ref<DeviceHolderImpl>&&, ConvertToBackingContext&);
+    QueueImpl(WGPUQueue, ConvertToBackingContext&);
+    QueueImpl(WGPUQueue, ConvertToBackingContext&, Ref<DeviceWrapper>&&);
 
     QueueImpl(const QueueImpl&) = delete;
     QueueImpl(QueueImpl&&) = delete;
     QueueImpl& operator=(const QueueImpl&) = delete;
     QueueImpl& operator=(QueueImpl&&) = delete;
 
-    WGPUQueue backing() const { return m_deviceHolder->backingQueue(); }
+    WGPUQueue backing() const { return m_backing; }
 
     void submit(Vector<std::reference_wrapper<CommandBuffer>>&&) final;
 
@@ -84,10 +89,14 @@ private:
 
     void setLabelInternal(const String&) final;
 
-    uint64_t m_signalValue { 1 };
-
-    Ref<DeviceHolderImpl> m_deviceHolder;
+    WGPUQueue m_backing { nullptr };
     Ref<ConvertToBackingContext> m_convertToBackingContext;
+
+    // Some queues (actually, all queues, for now) are internally owned by their WGPUDevice, and wgpuDeviceGetQueue() is
+    // supposed to return the same object each time it's called. This means that both DeviceImpl and QueueImpl need to
+    // have strong references to the same WGPUDevice. However, WGPUDevices aren't reference counted, so we use a reference
+    // counted wrapper around it.
+    RefPtr<DeviceWrapper> m_deviceWrapper;
 };
 
 } // namespace PAL::WebGPU

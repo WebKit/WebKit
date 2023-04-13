@@ -55,10 +55,13 @@ ScrollingTreeScrollingNodeDelegateNicosia& ScrollingTreeOverflowScrollingNodeNic
     return *static_cast<ScrollingTreeScrollingNodeDelegateNicosia*>(m_delegate.get());
 }
 
-void ScrollingTreeOverflowScrollingNodeNicosia::commitStateBeforeChildren(const ScrollingStateNode& stateNode)
+bool ScrollingTreeOverflowScrollingNodeNicosia::commitStateBeforeChildren(const ScrollingStateNode& stateNode)
 {
-    ScrollingTreeOverflowScrollingNode::commitStateBeforeChildren(stateNode);
+    if (!ScrollingTreeOverflowScrollingNode::commitStateBeforeChildren(stateNode))
+        return false;
+
     m_delegate->updateFromStateNode(downcast<ScrollingStateScrollingNode>(stateNode));
+    return true;
 }
 
 void ScrollingTreeOverflowScrollingNodeNicosia::repositionScrollingLayers()

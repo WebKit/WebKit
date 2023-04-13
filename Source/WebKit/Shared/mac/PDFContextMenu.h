@@ -35,82 +35,12 @@ struct PDFContextMenuItem {
     int state;
     bool hasAction;
     int tag;
-
-    template<class Encoder> void encode(Encoder& encoder) const
-    {
-        encoder << title << enabled << separator << state << hasAction << tag;
-    }
-    
-    template<class Decoder> static std::optional<PDFContextMenuItem> decode(Decoder& decoder)
-    {
-        std::optional<String> title;
-        decoder >> title;
-        if (!title)
-            return std::nullopt;
-
-        std::optional<bool> enabled;
-        decoder >> enabled;
-        if (!enabled)
-            return std::nullopt;
-
-        std::optional<bool> separator;
-        decoder >> separator;
-        if (!separator)
-            return std::nullopt;
-
-        std::optional<int> state;
-        decoder >> state;
-        if (!state)
-            return std::nullopt;
-
-        std::optional<bool> hasAction;
-        decoder >> hasAction;
-        if (!hasAction)
-            return std::nullopt;
-
-        std::optional<int> tag;
-        decoder >> tag;
-        if (!tag)
-            return std::nullopt;
-
-        return { { WTFMove(*title), WTFMove(*enabled), WTFMove(*separator), WTFMove(*state), WTFMove(*hasAction), WTFMove(*tag) } };
-    }
 };
 
 struct PDFContextMenu {
     WebCore::IntPoint point;
     Vector<PDFContextMenuItem> items;
     std::optional<int> openInPreviewIndex;
-    
-    template<class Encoder> void encode(Encoder& encoder) const
-    {
-        encoder << point << items << openInPreviewIndex;
-    }
-    
-    template<class Decoder> static std::optional<PDFContextMenu> decode(Decoder& decoder)
-    {
-        std::optional<WebCore::IntPoint> point;
-        decoder >> point;
-        if (!point)
-            return std::nullopt;
-
-        std::optional<Vector<PDFContextMenuItem>> items;
-        decoder >> items;
-        if (!items)
-            return std::nullopt;
-
-        std::optional<std::optional<int>> openInPreviewIndex;
-        decoder >> openInPreviewIndex;
-        if (!openInPreviewIndex)
-            return std::nullopt;
-
-        return {{
-            WTFMove(*point),
-            WTFMove(*items),
-            WTFMove(*openInPreviewIndex)
-        }};
-    }
-
 };
     
 };

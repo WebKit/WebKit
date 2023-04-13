@@ -27,32 +27,37 @@
 
 #if ENABLE(MEDIA_STREAM)
 
+#include "CaptureDevice.h"
 #include "ContextDestructionObserver.h"
 #include "ScriptWrappable.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class MediaDeviceInfo final : public RefCounted<MediaDeviceInfo>, public ScriptWrappable {
+class MediaDeviceInfo : public RefCounted<MediaDeviceInfo>, public ScriptWrappable {
     WTF_MAKE_ISO_ALLOCATED(MediaDeviceInfo);
 public:
     enum class Kind { Audioinput, Audiooutput, Videoinput };
 
     static Ref<MediaDeviceInfo> create(const String&, const String&, const String&, Kind);
+    virtual ~MediaDeviceInfo() = default;
 
     const String& label() const { return m_label; }
     const String& deviceId() const { return m_deviceId; }
     const String& groupId() const { return m_groupId; }
     Kind kind() const { return m_kind; }
 
-private:
+protected:
     MediaDeviceInfo(const String&, const String&, const String&, Kind);
 
+private:
     const String m_label;
     const String m_deviceId;
     const String m_groupId;
     const Kind m_kind;
 };
+
+MediaDeviceInfo::Kind toMediaDeviceInfoKind(CaptureDevice::DeviceType);
 
 typedef Vector<RefPtr<MediaDeviceInfo>> MediaDeviceInfoVector;
 

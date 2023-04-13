@@ -1,8 +1,14 @@
 /**
  * AUTO-GENERATED - DO NOT EDIT. Source: https://github.com/gpuweb/cts
  **/ import { SkipTestCase } from '../../common/framework/fixture.js';
+import { attemptGarbageCollection } from '../../common/util/collect_garbage.js';
 import { getGPU } from '../../common/util/navigator_gpu.js';
-import { assert, raceWithRejectOnTimeout, assertReject } from '../../common/util/util.js';
+import {
+  assert,
+  raceWithRejectOnTimeout,
+  assertReject,
+  unreachable,
+} from '../../common/util/util.js';
 import { kLimitInfo, kLimits } from '../capability_info.js';
 
 class TestFailedButDeviceReusable extends Error {}
@@ -10,52 +16,47 @@ class FeaturesNotSupported extends Error {}
 export class TestOOMedShouldAttemptGC extends Error {}
 
 export class DevicePool {
-  /** Device with no descriptor. */
-  defaultHolder = 'uninitialized';
-  /** Devices with descriptors. */
-  nonDefaultHolders = new DescriptorToHolderMap();
+  holders = 'uninitialized';
 
-  /** Request a device from the pool. */
-  async reserve(descriptor) {
-    // Always attempt to initialize default device, to see if it succeeds.
+  /** Acquire a device from the pool and begin the error scopes. */
+  async acquire(descriptor) {
     let errorMessage = '';
-    if (this.defaultHolder === 'uninitialized') {
+    if (this.holders === 'uninitialized') {
+      this.holders = new DescriptorToHolderMap();
       try {
-        this.defaultHolder = await DeviceHolder.create(undefined);
+        await this.holders.getOrCreate(undefined);
       } catch (ex) {
-        this.defaultHolder = 'failed';
+        this.holders = 'failed';
         if (ex instanceof Error) {
           errorMessage = ` with ${ex.name} "${ex.message}"`;
         }
       }
     }
+
     assert(
-      this.defaultHolder !== 'failed',
+      this.holders !== 'failed',
       `WebGPU device failed to initialize${errorMessage}; not retrying`
     );
 
-    let holder;
-    if (descriptor === undefined) {
-      holder = this.defaultHolder;
-    } else {
-      holder = await this.nonDefaultHolders.getOrCreate(descriptor);
-    }
+    const holder = await this.holders.getOrCreate(descriptor);
 
     assert(holder.state === 'free', 'Device was in use on DevicePool.acquire');
-    holder.state = 'reserved';
+    holder.state = 'acquired';
+    holder.beginTestScope();
     return holder;
   }
 
-  // When a test is done using a device, it's released back into the pool.
-  // This waits for error scopes, checks their results, and checks for various error conditions.
+  /**
+   * End the error scopes and check for errors.
+   * Then, if the device seems reusable, release it back into the pool. Otherwise, drop it.
+   */
   async release(holder) {
-    assert(this.defaultHolder instanceof DeviceHolder);
-    assert(holder instanceof DeviceHolder);
+    assert(this.holders instanceof DescriptorToHolderMap, 'DevicePool got into a bad state');
+    assert(holder instanceof DeviceHolder, 'DeviceProvider should always be a DeviceHolder');
 
-    assert(holder.state !== 'free', 'trying to release a device while already released');
-
+    assert(holder.state === 'acquired', 'trying to release a device while already released');
     try {
-      await holder.ensureRelease();
+      await holder.endTestScope();
 
       // (Hopefully if the device was lost, it has been reported by the time endErrorScopes()
       // has finished (or timed out). If not, it could cause a finite number of extra test
@@ -68,13 +69,17 @@ export class DevicePool {
       // Any error that isn't explicitly TestFailedButDeviceReusable forces a new device to be
       // created for the next test.
       if (!(ex instanceof TestFailedButDeviceReusable)) {
-        if (holder === this.defaultHolder) {
-          this.defaultHolder = 'uninitialized';
-        } else {
-          this.nonDefaultHolders.deleteByDevice(holder.device);
-        }
+        this.holders.delete(holder);
         if ('destroy' in holder.device) {
           holder.device.destroy();
+        }
+
+        // Release the (hopefully only) ref to the GPUDevice.
+        holder.releaseGPUDevice();
+
+        // Try to clean up, in case there are stray GPU resources in need of collection.
+        if (ex instanceof TestOOMedShouldAttemptGC) {
+          await attemptGarbageCollection();
         }
       }
       // In the try block, we may throw an error if the device is lost in order to force device
@@ -89,8 +94,7 @@ export class DevicePool {
         throw ex;
       }
     } finally {
-      // Mark the holder as free. (This only has an effect if the pool still has the holder.)
-      // This could be done at the top but is done here to guard against async-races during release.
+      // Mark the holder as free so the device can be reused (if it's still in this.devices).
       holder.state = 'free';
     }
   }
@@ -100,28 +104,33 @@ export class DevicePool {
  * Map from GPUDeviceDescriptor to DeviceHolder.
  */
 class DescriptorToHolderMap {
+  /** Map keys that are known to be unsupported and can be rejected quickly. */
   unsupported = new Set();
   holders = new Map();
 
-  /** Deletes an item from the map by GPUDevice value. */
-  deleteByDevice(device) {
+  /** Deletes an item from the map by DeviceHolder value. */
+  delete(holder) {
     for (const [k, v] of this.holders) {
-      if (v.device === device) {
+      if (v === holder) {
         this.holders.delete(k);
         return;
       }
     }
+    unreachable("internal error: couldn't find DeviceHolder to delete");
   }
 
   /**
    * Gets a DeviceHolder from the map if it exists; otherwise, calls create() to create one,
    * inserts it, and returns it.
    *
+   * If an `uncanonicalizedDescriptor` is provided, it is canonicalized and used as the map key.
+   * If one is not provided, the map key is `""` (empty string).
+   *
    * Throws SkipTestCase if devices with this descriptor are unsupported.
    */
   async getOrCreate(uncanonicalizedDescriptor) {
     const [descriptor, key] = canonicalizeDescriptor(uncanonicalizedDescriptor);
-    // Never retry unsupported configurations.
+    // Quick-reject descriptors that are known to be unsupported already.
     if (this.unsupported.has(key)) {
       throw new SkipTestCase(
         `GPUDeviceDescriptor previously failed: ${JSON.stringify(descriptor)}`
@@ -176,8 +185,16 @@ class DescriptorToHolderMap {
  * Make a stringified map-key from a GPUDeviceDescriptor.
  * Tries to make sure all defaults are resolved, first - but it's okay if some are missed
  * (it just means some GPUDevice objects won't get deduplicated).
+ *
+ * This does **not** canonicalize `undefined` (the "default" descriptor) into a fully-qualified
+ * GPUDeviceDescriptor. This is just because `undefined` is a common case and we want to use it
+ * as a sanity check that WebGPU is working.
  */
 function canonicalizeDescriptor(desc) {
+  if (desc === undefined) {
+    return [undefined, ''];
+  }
+
   const featuresCanonicalized = desc.requiredFeatures
     ? Array.from(new Set(desc.requiredFeatures)).sort()
     : [];
@@ -202,7 +219,6 @@ function canonicalizeDescriptor(desc) {
     requiredLimits: limitsCanonicalized,
     defaultQueue: {},
   };
-
   return [descriptorCanonicalized, JSON.stringify(descriptorCanonicalized)];
 }
 
@@ -223,16 +239,18 @@ function supportsFeature(adapter, descriptor) {
 /**
  * DeviceHolder has three states:
  * - 'free': Free to be used for a new test.
- * - 'reserved': Reserved by a running test, but has not had error scopes created yet.
- * - 'acquired': Reserved by a running test, and has had error scopes created.
+ * - 'acquired': In use by a running test.
  */
 
 /**
- * Holds a GPUDevice and tracks its state (free/reserved/acquired) and handles device loss.
+ * Holds a GPUDevice and tracks its state (free/acquired) and handles device loss.
  */
 class DeviceHolder {
+  /** The device. Will be cleared during cleanup if there were unexpected errors. */
+
+  /** Whether the device is in use by a test or not. */
   state = 'free';
-  // initially undefined; becomes set when the device is lost
+  /** initially undefined; becomes set when the device is lost */
 
   // Gets a device and creates a DeviceHolder.
   // If the device is lost, DeviceHolder.lost gets set.
@@ -250,46 +268,48 @@ class DeviceHolder {
   }
 
   constructor(device) {
-    this.device = device;
-    this.device.lost.then(ev => {
+    this._device = device;
+    void this._device.lost.then(ev => {
       this.lostInfo = ev;
     });
   }
 
-  acquire() {
-    assert(this.state === 'reserved');
-    this.state = 'acquired';
-    this.device.pushErrorScope('out-of-memory');
-    this.device.pushErrorScope('validation');
-    return this.device;
+  get device() {
+    assert(this._device !== undefined);
+    return this._device;
   }
 
+  /** Push error scopes that surround test execution. */
+  beginTestScope() {
+    assert(this.state === 'acquired');
+    this.device.pushErrorScope('out-of-memory');
+    this.device.pushErrorScope('validation');
+  }
+
+  /** Mark the DeviceHolder as expecting a device loss when the test scope ends. */
   expectDeviceLost(reason) {
+    assert(this.state === 'acquired');
     this.expectedLostReason = reason;
   }
 
-  async ensureRelease() {
-    const kPopErrorScopeTimeoutMS = 5000;
+  /**
+   * Attempt to end test scopes: Check that there are no extra error scopes, and that no
+   * otherwise-uncaptured errors occurred during the test. Time out if it takes too long.
+   */
+  endTestScope() {
+    assert(this.state === 'acquired');
+    const kTimeout = 5000;
 
-    assert(this.state !== 'free');
-    try {
-      if (this.state === 'acquired') {
-        // Time out if popErrorScope never completes. This could happen due to a browser bug - e.g.,
-        // as of this writing, on Chrome GPU process crash, popErrorScope just hangs.
-        await raceWithRejectOnTimeout(
-          this.release(),
-          kPopErrorScopeTimeoutMS,
-          'finalization popErrorScope timed out'
-        );
-      }
-    } finally {
-      this.state = 'free';
-    }
+    // Time out if attemptEndTestScope (popErrorScope or onSubmittedWorkDone) never completes. If
+    // this rejects, the device won't be reused, so it's OK that popErrorScope calls may not have
+    // finished.
+    //
+    // This could happen due to a browser bug - e.g.,
+    // as of this writing, on Chrome GPU process crash, popErrorScope just hangs.
+    return raceWithRejectOnTimeout(this.attemptEndTestScope(), kTimeout, 'endTestScope timed out');
   }
 
-  async release() {
-    // End the whole-test error scopes. Check that there are no extra error scopes, and that no
-    // otherwise-uncaptured errors occurred during the test.
+  async attemptEndTestScope() {
     let gpuValidationError;
     let gpuOutOfMemoryError;
 
@@ -298,14 +318,12 @@ class DeviceHolder {
 
     try {
       // May reject if the device was lost.
-      gpuValidationError = await this.device.popErrorScope();
-      gpuOutOfMemoryError = await this.device.popErrorScope();
+      [gpuValidationError, gpuOutOfMemoryError] = await Promise.all([
+        this.device.popErrorScope(),
+        this.device.popErrorScope(),
+      ]);
     } catch (ex) {
-      assert(
-        this.lostInfo !== undefined,
-        'popErrorScope failed; should only happen if device has been lost'
-      );
-
+      assert(this.lostInfo !== undefined, 'popErrorScope failed; did beginTestScope get missed?');
       throw ex;
     }
 
@@ -331,5 +349,13 @@ class DeviceHolder {
       // Don't allow the device to be reused; unexpected OOM could break the device.
       throw new TestOOMedShouldAttemptGC('Unexpected out-of-memory error occurred');
     }
+  }
+
+  /**
+   * Release the ref to the GPUDevice. This should be the only ref held by the DevicePool or
+   * GPUTest, so in theory it can get garbage collected.
+   */
+  releaseGPUDevice() {
+    this._device = undefined;
   }
 }

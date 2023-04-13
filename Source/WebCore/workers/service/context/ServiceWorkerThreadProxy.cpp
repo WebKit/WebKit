@@ -33,9 +33,9 @@
 #include "EventLoop.h"
 #include "EventNames.h"
 #include "FetchLoader.h"
-#include "Frame.h"
 #include "FrameLoader.h"
 #include "LoaderStrategy.h"
+#include "LocalFrame.h"
 #include "Logging.h"
 #include "MessageWithMessagePorts.h"
 #include "NotificationData.h"
@@ -65,11 +65,11 @@ static HashSet<ServiceWorkerThreadProxy*>& allServiceWorkerThreadProxies()
 
 ServiceWorkerThreadProxy::ServiceWorkerThreadProxy(UniqueRef<Page>&& page, ServiceWorkerContextData&& contextData, ServiceWorkerData&& workerData, String&& userAgent, WorkerThreadMode workerThreadMode, CacheStorageProvider& cacheStorageProvider, std::unique_ptr<NotificationClient>&& notificationClient)
     : m_page(WTFMove(page))
-    , m_document(*m_page->mainFrame().document())
+    , m_document(*dynamicDowncast<LocalFrame>(m_page->mainFrame())->document())
 #if ENABLE(REMOTE_INSPECTOR)
     , m_remoteDebuggable(makeUnique<ServiceWorkerDebuggable>(*this, contextData))
 #endif
-    , m_serviceWorkerThread(ServiceWorkerThread::create(WTFMove(contextData), WTFMove(workerData), WTFMove(userAgent), workerThreadMode, m_document->settingsValues(), *this, *this, *this, idbConnectionProxy(m_document), m_document->socketProvider(), WTFMove(notificationClient), m_page->sessionID()))
+    , m_serviceWorkerThread(ServiceWorkerThread::create(WTFMove(contextData), WTFMove(workerData), WTFMove(userAgent), workerThreadMode, m_document->settingsValues(), *this, *this, *this, idbConnectionProxy(m_document), m_document->socketProvider(), WTFMove(notificationClient), m_page->sessionID(), m_document->noiseInjectionHashSalt()))
     , m_cacheStorageProvider(cacheStorageProvider)
     , m_inspectorProxy(*this)
 {
@@ -421,6 +421,50 @@ void ServiceWorkerThreadProxy::fireNotificationEvent(NotificationData&& data, No
     UNUSED_PARAM(eventType);
     callback(false);
 #endif
+}
+
+void ServiceWorkerThreadProxy::fireBackgroundFetchEvent(BackgroundFetchInformation&& info, CompletionHandler<void(bool)>&& callback)
+{
+    if (m_ongoingFunctionalEventTasks.isEmpty())
+        thread().startFunctionalEventMonitoring();
+
+    auto identifier = ++m_functionalEventTasksCounter;
+    ASSERT(!m_ongoingFunctionalEventTasks.contains(identifier));
+    m_ongoingFunctionalEventTasks.add(identifier, WTFMove(callback));
+    bool isPosted = postTaskForModeToWorkerOrWorkletGlobalScope([this, protectedThis = Ref { *this }, identifier, info = crossThreadCopy(WTFMove(info))](auto&) mutable {
+        thread().queueTaskToFireBackgroundFetchEvent(WTFMove(info), [this, protectedThis = WTFMove(protectedThis), identifier](bool result) mutable {
+            callOnMainThread([this, protectedThis = WTFMove(protectedThis), identifier, result]() mutable {
+                if (auto callback = m_ongoingFunctionalEventTasks.take(identifier))
+                    callback(result);
+                if (m_ongoingFunctionalEventTasks.isEmpty())
+                    thread().stopFunctionalEventMonitoring();
+            });
+        });
+    }, WorkerRunLoop::defaultMode());
+    if (!isPosted)
+        m_ongoingFunctionalEventTasks.take(identifier)(false);
+}
+
+void ServiceWorkerThreadProxy::fireBackgroundFetchClickEvent(BackgroundFetchInformation&& info, CompletionHandler<void(bool)>&& callback)
+{
+    if (m_ongoingFunctionalEventTasks.isEmpty())
+        thread().startFunctionalEventMonitoring();
+
+    auto identifier = ++m_functionalEventTasksCounter;
+    ASSERT(!m_ongoingFunctionalEventTasks.contains(identifier));
+    m_ongoingFunctionalEventTasks.add(identifier, WTFMove(callback));
+    bool isPosted = postTaskForModeToWorkerOrWorkletGlobalScope([this, protectedThis = Ref { *this }, identifier, info = crossThreadCopy(WTFMove(info))](auto&) mutable {
+        thread().queueTaskToFireBackgroundFetchClickEvent(WTFMove(info), [this, protectedThis = WTFMove(protectedThis), identifier](bool result) mutable {
+            callOnMainThread([this, protectedThis = WTFMove(protectedThis), identifier, result]() mutable {
+                if (auto callback = m_ongoingFunctionalEventTasks.take(identifier))
+                    callback(result);
+                if (m_ongoingFunctionalEventTasks.isEmpty())
+                    thread().stopFunctionalEventMonitoring();
+            });
+        });
+    }, WorkerRunLoop::defaultMode());
+    if (!isPosted)
+        m_ongoingFunctionalEventTasks.take(identifier)(false);
 }
 
 void ServiceWorkerThreadProxy::setAppBadge(std::optional<uint64_t> badge)

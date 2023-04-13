@@ -1,0 +1,39 @@
+<!DOCTYPE html><!-- webkit-test-runner [ UsesBackForwardCache=true ] -->
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+
+jsTestIsAsync = true;
+
+onpageshow = (event) => {
+    if (event.persisted) {
+        shouldBeEqualToString('event.type', 'pageshow');
+        shouldBe('event.target', 'document');
+        shouldBe('event.composedPath().length', '1');
+        shouldBe('event.composedPath()[0]', 'window');
+        window.onpagehide = null;
+        setTimeout(() => {
+            if (window.testRunner)
+                testRunner.notifyDone();            
+        }, 0);
+    }
+}
+
+window.onpagehide = (event) => {
+    shouldBeEqualToString('event.type', 'pagehide');
+    shouldBe('event.target', 'document');
+    shouldBe('event.composedPath().length', '1');
+    shouldBe('event.composedPath()[0]', 'window');
+}
+
+onload = () => {
+    setTimeout(() => {
+        blob = new Blob(['<!DOCTYPE html><script>history.back();</' + 'script>'], { type: "text/html" });
+        location.href = URL.createObjectURL(blob);
+    }, 0);
+}
+
+</script>
+</body>
+</html>

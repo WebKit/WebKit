@@ -154,6 +154,8 @@ class GDBCrashLogGenerator(object):
                 coredump_path = list(reversed(sorted(dumps)))[0]
                 if not self.newer_than or self._filesystem.mtime(coredump_path) > self.newer_than:
                     crash_log, errors = self._get_gdb_output(coredump_path)
+                    if os.environ.get('WEBKIT_CORE_DUMPS_AUTODELETE', '0') == '1':
+                        os.remove(coredump_path)
         elif coredumpctl:
             crash_log, errors = self._get_trace_from_systemd(coredumpctl, pid_representation)
 

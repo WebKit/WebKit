@@ -26,6 +26,7 @@
 
 #if ENABLE(WEB_RTC)
 
+#include "ExceptionOr.h"
 #include "RTCRtpTransceiverDirection.h"
 #include <wtf/Forward.h>
 

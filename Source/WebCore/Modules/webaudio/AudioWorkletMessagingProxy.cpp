@@ -36,7 +36,7 @@
 #include "BaseAudioContext.h"
 #include "CacheStorageConnection.h"
 #include "Document.h"
-#include "Frame.h"
+#include "LocalFrame.h"
 #include "Page.h"
 #include "Settings.h"
 #include "WebRTCProvider.h"
@@ -59,7 +59,8 @@ static WorkletParameters generateWorkletParameters(AudioWorklet& worklet)
         *document->sessionID(),
         document->settingsValues(),
         document->referrerPolicy(),
-        worklet.audioContext() ? !worklet.audioContext()->isOfflineContext() : false
+        worklet.audioContext() ? !worklet.audioContext()->isOfflineContext() : false,
+        document->noiseInjectionHashSalt()
     };
 }
 

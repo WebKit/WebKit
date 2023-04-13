@@ -1,8 +1,0 @@
-No user activation through 'Escape' key
-
-Tests that pressing/releasing 'Escape' key is not treated as a user activation.
-
-
-
-FAIL 'Escape' key doesn't activate a page. assert_false: No user activation on keydown expected false got true
-

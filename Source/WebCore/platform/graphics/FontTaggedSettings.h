@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,7 @@
 #pragma once
 
 #include <array>
+#include <wtf/HashCountedSet.h>
 #include <wtf/HashTraits.h>
 #include <wtf/Hasher.h>
 #include <wtf/Vector.h>
@@ -98,12 +99,6 @@ bool FontTaggedSetting<T>::operator==(const FontTaggedSetting<T>& other) const
 }
 
 template <typename T>
-bool FontTaggedSetting<T>::operator<(const FontTaggedSetting<T>& other) const
-{
-    return (m_tag < other.m_tag) || (m_tag == other.m_tag && m_value < other.m_value);
-}
-
-template <typename T>
 template <class Encoder>
 void FontTaggedSetting<T>::encode(Encoder& encoder) const
 {
@@ -159,6 +154,8 @@ template<typename T> void add(Hasher& hasher, const FontTaggedSetting<T>& settin
 template <typename T>
 class FontTaggedSettings {
 public:
+    using Setting = FontTaggedSetting<T>;
+
     void insert(FontTaggedSetting<T>&&);
     bool operator==(const FontTaggedSettings<T>& other) const { return m_list == other.m_list; }
     bool operator!=(const FontTaggedSettings<T>& other) const { return !(*this == other); }
@@ -184,13 +181,15 @@ template <typename T>
 void FontTaggedSettings<T>::insert(FontTaggedSetting<T>&& feature)
 {
     // This vector will almost always have 0 or 1 items in it. Don't bother with the overhead of a binary search or a hash set.
+    // We keep the vector sorted alphabetically and replace any pre-existing value for a given tag.
     size_t i;
     for (i = 0; i < m_list.size(); ++i) {
-        if (!(feature < m_list[i]))
-            break;
+        if (m_list[i].tag() < feature.tag())
+            continue;
+        if (m_list[i].tag() == feature.tag())
+            m_list.remove(i);
+        break;
     }
-    if (i < m_list.size() && feature.tag() == m_list[i].tag())
-        m_list.remove(i);
     m_list.insert(i, WTFMove(feature));
 }
 

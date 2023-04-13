@@ -74,6 +74,7 @@ interface TestRunner {
     boolean hasDOMCache(DOMString origin);
     unsigned long domCacheSize(DOMString origin);
     undefined setAllowStorageQuotaIncrease(boolean value);
+    undefined setQuota(unsigned long long quota);
 
     // Special options.
     undefined keepWebHistory();
@@ -212,6 +213,18 @@ interface TestRunner {
     undefined removeAllWebNotificationPermissions();
     undefined simulateWebNotificationClick(object notification);
     undefined simulateWebNotificationClickForServiceWorkerNotifications();
+
+    // Background fech support
+    DOMString getBackgroundFetchIdentifier();
+    undefined abortBackgroundFetch(DOMString identifier);
+    undefined pauseBackgroundFetch(DOMString identifier);
+    undefined resumeBackgroundFetch(DOMString identifier);
+    undefined simulateClickBackgroundFetch(DOMString identifier);
+    undefined setBackgroundFetchPermission(boolean value);
+    DOMString lastAddedBackgroundFetchIdentifier();
+    DOMString lastRemovedBackgroundFetchIdentifier();
+    DOMString lastUpdatedBackgroundFetchIdentifier();
+    DOMString backgroundFetchState(DOMString identifier);
 
     // Geolocation
     undefined setGeolocationPermission(boolean value);

@@ -134,12 +134,12 @@ public:
 
     template<typename T = CrashOnOverflow> Checked<unsigned, T> area() const
     {
-        return Checked<unsigned, T>(abs(m_width)) * abs(m_height);
+        return Checked<unsigned, T>(std::abs(m_width)) * std::abs(m_height);
     }
 
     uint64_t unclampedArea() const
     {
-        return static_cast<uint64_t>(abs(m_width)) * abs(m_height);
+        return static_cast<uint64_t>(std::abs(m_width)) * std::abs(m_height);
     }
 
     constexpr int diagonalLengthSquared() const

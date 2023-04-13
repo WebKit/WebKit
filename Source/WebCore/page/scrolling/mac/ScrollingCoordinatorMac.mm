@@ -29,8 +29,8 @@
 
 #import "ScrollingCoordinatorMac.h"
 
-#import "Frame.h"
-#import "FrameView.h"
+#import "LocalFrame.h"
+#import "LocalFrameView.h"
 #import "Logging.h"
 #import "Page.h"
 #import "PlatformCALayerContentsDelayedReleaser.h"
@@ -82,7 +82,11 @@ void ScrollingCoordinatorMac::didCompletePlatformRenderingUpdate()
 
 void ScrollingCoordinatorMac::updateTiledScrollingIndicator()
 {
-    FrameView* frameView = m_page->mainFrame().view();
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
+    if (!localMainFrame)
+        return;
+
+    auto* frameView = localMainFrame->view();
     if (!frameView)
         return;
     

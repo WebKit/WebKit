@@ -23,6 +23,7 @@
 #include "config.h"
 #include "ChildNodeList.h"
 
+#include "CollectionIndexCacheInlines.h"
 #include "ElementIterator.h"
 #include "NodeRareData.h"
 #include <wtf/IsoMallocInlines.h>

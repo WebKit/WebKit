@@ -102,10 +102,12 @@ bool BackgroundPainter::paintsOwnBackground(const RenderBoxModelObject& renderer
 {
     if (!renderer.isBody())
         return true;
+    if (renderer.shouldApplyAnyContainment())
+        return true;
     // The <body> only paints its background if the root element has defined a background independent of the body,
     // or if the <body>'s parent is not the document element's renderer (e.g. inside SVG foreignObject).
     auto documentElementRenderer = renderer.document().documentElement()->renderer();
-    return !documentElementRenderer || documentElementRenderer->hasBackground() || documentElementRenderer != renderer.parent();
+    return !documentElementRenderer || documentElementRenderer->shouldApplyAnyContainment() || documentElementRenderer->hasBackground() || documentElementRenderer != renderer.parent();
 }
 
 void BackgroundPainter::paintFillLayers(const Color& color, const FillLayer& fillLayer, const LayoutRect& rect, BackgroundBleedAvoidance bleedAvoidance, CompositeOperator op, RenderElement* backgroundObject)
@@ -401,7 +403,7 @@ void BackgroundPainter::paintFillLayer(const Color& color, const FillLayer& bgLa
                 op == CompositeOperator::SourceOver ? bgLayer.compositeForPainting() : op,
                 bgLayer.blendMode(),
                 m_renderer.decodingModeForImageDraw(*image, m_paintInfo),
-                ImageOrientation::FromImage,
+                ImageOrientation::Orientation::FromImage,
                 m_renderer.chooseInterpolationQuality(context, *image, &bgLayer, geometry.tileSize)
             };
 
@@ -556,7 +558,7 @@ BackgroundImageGeometry BackgroundPainter::calculateBackgroundImageGeometry(cons
         if (renderer.settings().fixedBackgroundsPaintRelativeToDocument())
             viewportRect = view.unscaledDocumentRect();
         else {
-            FrameView& frameView = view.frameView();
+            LocalFrameView& frameView = view.frameView();
             bool useFixedLayout = frameView.useFixedLayout() && !frameView.fixedLayoutSize().isEmpty();
 
             if (useFixedLayout) {

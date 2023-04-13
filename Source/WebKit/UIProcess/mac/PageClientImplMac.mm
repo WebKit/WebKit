@@ -38,6 +38,7 @@
 #import "NativeWebMouseEvent.h"
 #import "NativeWebWheelEvent.h"
 #import "NavigationState.h"
+#import "RemoteLayerTreeNode.h"
 #import "StringUtilities.h"
 #import "UndoOrRedo.h"
 #import "ViewGestureController.h"
@@ -355,8 +356,6 @@ void PageClientImpl::registerInsertionUndoGrouping()
     registerInsertionUndoGroupingWithUndoManager([m_view undoManager]);
 }
 
-#if ENABLE(UI_PROCESS_PDF_HUD)
-
 void PageClientImpl::createPDFHUD(PDFPluginIdentifier identifier, const WebCore::IntRect& rect)
 {
     m_impl->createPDFHUD(identifier, rect);
@@ -376,8 +375,6 @@ void PageClientImpl::removeAllPDFHUDs()
 {
     m_impl->removeAllPDFHUDs();
 }
-
-#endif // ENABLE(UI_PROCESS_PDF_HUD)
 
 void PageClientImpl::clearAllEditCommands()
 {
@@ -403,7 +400,7 @@ void PageClientImpl::setPromisedDataForImage(const String& pasteboardName, Ref<F
 {
     auto image = BitmapImage::create();
     image->setData(WTFMove(imageBuffer), true);
-    m_impl->setPromisedDataForImage(image.ptr(), filename, extension, title, url, visibleURL, archiveBuffer.get(), pasteboardName, originIdentifier);
+    m_impl->setPromisedDataForImage(image.get(), filename, extension, title, url, visibleURL, archiveBuffer.get(), pasteboardName, originIdentifier);
 }
 
 void PageClientImpl::updateSecureInputState()
@@ -498,7 +495,7 @@ void PageClientImpl::computeHasVisualSearchResults(const URL& imageURL, Shareabl
 
 RefPtr<WebPopupMenuProxy> PageClientImpl::createPopupMenuProxy(WebPageProxy& page)
 {
-    return WebPopupMenuProxyMac::create(m_view, page);
+    return WebPopupMenuProxyMac::create(m_view, page.popupMenuClient());
 }
 
 #if ENABLE(CONTEXT_MENUS)
@@ -523,7 +520,7 @@ void PageClientImpl::didDismissContextMenu()
 #if ENABLE(INPUT_TYPE_COLOR)
 RefPtr<WebColorPicker> PageClientImpl::createColorPicker(WebPageProxy* page, const WebCore::Color& initialColor, const WebCore::IntRect& rect, Vector<WebCore::Color>&& suggestions)
 {
-    return WebColorPickerMac::create(page, initialColor, rect, WTFMove(suggestions), m_view);
+    return WebColorPickerMac::create(&page->colorPickerClient(), initialColor, rect, WTFMove(suggestions), m_view);
 }
 #endif
 
@@ -627,6 +624,16 @@ void PageClientImpl::setRemoteLayerTreeRootNode(RemoteLayerTreeNode* rootNode)
 CALayer *PageClientImpl::acceleratedCompositingRootLayer() const
 {
     return m_impl->acceleratedCompositingRootLayer();
+}
+
+CALayer *PageClientImpl::headerBannerLayer() const
+{
+    return m_impl->headerBannerLayer();
+}
+
+CALayer *PageClientImpl::footerBannerLayer() const
+{
+    return m_impl->footerBannerLayer();
 }
 
 RefPtr<ViewSnapshot> PageClientImpl::takeViewSnapshot(std::optional<WebCore::IntRect>&&)

@@ -54,8 +54,6 @@ private:
     const char* activeDOMObjectName() const final;
     void stop() final;
 
-    void parseAttribute(const QualifiedName&, const AtomString&) final;
-
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
 
     TaskCancellationGroup m_errorEventCancellationGroup;

@@ -23,7 +23,7 @@
 #pragma once
 
 #include "FontBaseline.h"
-#include "FrameView.h"
+#include "LocalFrameView.h"
 #include "RenderBoxModelObject.h"
 #include "RenderOverflow.h"
 #include "ScrollSnapOffsetsInfo.h"
@@ -46,6 +46,9 @@ enum OverlayScrollbarSizeRelevancy { IgnoreOverlayScrollbarSize, IncludeOverlayS
 enum ShouldComputePreferred { ComputeActual, ComputePreferred };
 
 enum class StretchingMode { Any, Explicit };
+
+using PhysicalDirection = BoxSide;
+using FlowRelativeDirection = LogicalBoxSide;
 
 class RenderBox : public RenderBoxModelObject {
     WTF_MAKE_ISO_ALLOCATED(RenderBox);
@@ -86,7 +89,7 @@ public:
     LayoutUnit logicalWidth() const { return style().isHorizontalWritingMode() ? width() : height(); }
     LayoutUnit logicalHeight() const { return style().isHorizontalWritingMode() ? height() : width(); }
 
-    enum class AllowIntrinsic { Yes, No };
+    enum class AllowIntrinsic : bool { No, Yes };
     LayoutUnit constrainLogicalWidthInFragmentByMinMax(LayoutUnit, LayoutUnit, RenderBlock&, RenderFragmentContainer*, AllowIntrinsic = AllowIntrinsic::Yes) const;
     LayoutUnit constrainLogicalHeightByMinMax(LayoutUnit logicalHeight, std::optional<LayoutUnit> intrinsicContentHeight) const;
     LayoutUnit constrainContentBoxLogicalHeightByMinMax(LayoutUnit logicalHeight, std::optional<LayoutUnit> intrinsicContentHeight) const;
@@ -185,6 +188,7 @@ public:
     FloatRect repaintRectInLocalCoordinates() const override { return borderBoxRect(); }
     FloatRect objectBoundingBox() const override { return borderBoxRect(); }
 
+    const RenderBlockFlow* blockFormattingContextRoot() const;    
     // Note these functions are not equivalent of childrenOfType<RenderBox>
     RenderBox* parentBox() const;
     RenderBox* firstChildBox() const;
@@ -306,7 +310,6 @@ public:
     virtual LayoutUnit collapsedMarginBefore() const { return marginBefore(); }
     virtual LayoutUnit collapsedMarginAfter() const { return marginAfter(); }
 
-    virtual bool shouldTrimChildMargin(MarginTrimType, const RenderBox&) const { return false; }
     LayoutUnit constrainBlockMarginInAvailableSpaceOrTrim(const RenderBox& containingBlock, LayoutUnit availableSpace, MarginTrimType marginSide) const;
 
     void absoluteRects(Vector<IntRect>&, const LayoutPoint& accumulatedOffset) const override;
@@ -363,6 +366,17 @@ public:
     void clearOverridingLogicalHeightLength();
     void clearOverridingLogicalWidthLength();
 
+    // Mapping is done according to the table in section 6.4 (Abstract-to-Physical Mappings)
+    // in CSS Writing Modes Level 4. It the writing-mode of the box establishes an orthogonal flow,
+    // then the writing-mode that is used for the mapping is determined on the value of LayoutCalculationPhase
+    // as specified in section 7.3 (Orhotonal Flows) in CSS Writing Modes Level 4.
+    FlowRelativeDirection physicalToFlowRelativeDirectionMapping(PhysicalDirection) const;
+
+    void markMarginAsTrimmed(MarginTrimType);
+    void clearTrimmedMarginsMarkings();
+    bool hasTrimmedMargin(std::optional<MarginTrimType>) const;
+    bool hasTrimmedMargin(PhysicalDirection) const;
+
     LayoutSize offsetFromContainer(RenderElement&, const LayoutPoint&, bool* offsetDependsOnPoint = nullptr) const override;
     
     LayoutUnit adjustBorderBoxLogicalWidthForBoxSizing(const Length& logicalWidth) const;
@@ -393,7 +407,6 @@ public:
     // Resolve auto margins in the inline direction of the containing block so that objects can be pushed to the start, middle or end
     // of the containing block.
     void computeInlineDirectionMargins(const RenderBlock& containingBlock, LayoutUnit containerWidth, std::optional<LayoutUnit> availableSpaceAdjustedWithFloats, LayoutUnit childWidth, LayoutUnit& marginStart, LayoutUnit& marginEnd) const;
-    LayoutUnit computeOrTrimInlineMargin(const RenderBlock& containingBlock, MarginTrimType marginSide, std::function<LayoutUnit()> computeInlineMargin) const;
 
     // Used to resolve margins in the containing block's block-flow direction.
     void computeBlockDirectionMargins(const RenderBlock& containingBlock, LayoutUnit& marginBefore, LayoutUnit& marginAfter) const;
@@ -485,7 +498,7 @@ public:
     virtual LayoutUnit computeReplacedLogicalWidth(ShouldComputePreferred  = ComputeActual) const;
     virtual LayoutUnit computeReplacedLogicalHeight(std::optional<LayoutUnit> estimatedUsedWidth = std::nullopt) const;
 
-    enum class UpdatePercentageHeightDescendants { Yes , No };
+    enum class UpdatePercentageHeightDescendants : bool { No, Yes };
     std::optional<LayoutUnit> computePercentageLogicalHeight(const Length& height, UpdatePercentageHeightDescendants = UpdatePercentageHeightDescendants::Yes) const;
 
     LayoutUnit availableLogicalWidth() const { return contentLogicalWidth(); }
@@ -705,6 +718,7 @@ public:
     }
 
     bool establishesIndependentFormattingContext() const override;
+    bool establishesBlockFormattingContext() const;
 
 protected:
     RenderBox(Element&, RenderStyle&&, BaseTypeFlags);
@@ -715,6 +729,9 @@ protected:
     void updateFromStyle() override;
 
     void willBeDestroyed() override;
+
+    bool shouldTrimChildMargin(MarginTrimType, const RenderBox&) const;
+    virtual bool isChildEligibleForMarginTrim(MarginTrimType, const RenderBox&) const { return false; }
 
     virtual bool shouldResetLogicalHeightBeforeLayout() const { return false; }
     void resetLogicalHeightBeforeLayoutIfNeeded();
@@ -755,7 +772,7 @@ protected:
     std::pair<LayoutUnit, LayoutUnit> computeMinMaxLogicalWidthFromAspectRatio() const;
     std::pair<LayoutUnit, LayoutUnit> computeMinMaxLogicalHeightFromAspectRatio() const;
     enum class ConstrainDimension { Width, Height };
-    enum class MinimumSizeIsAutomaticContentBased { Yes, No };
+    enum class MinimumSizeIsAutomaticContentBased : bool { No, Yes };
     void constrainLogicalMinMaxSizesByAspectRatio(LayoutUnit& minSize, LayoutUnit& maxSize, LayoutUnit computedSize, MinimumSizeIsAutomaticContentBased, ConstrainDimension) const;
 
     static LayoutUnit blockSizeFromAspectRatio(LayoutUnit borderPaddingInlineSum, LayoutUnit borderPaddingBlockSum, double aspectRatio, BoxSizing boxSizing, LayoutUnit inlineSize, AspectRatioType aspectRatioType, bool isRenderReplaced)
@@ -778,7 +795,9 @@ private:
 
     bool scrollLayer(ScrollDirection, ScrollGranularity, unsigned stepCount, Element** stopElement);
 
-    bool fixedElementLaysOutRelativeToFrame(const FrameView&) const;
+    bool fixedElementLaysOutRelativeToFrame(const LocalFrameView&) const;
+
+    template<typename Function> LayoutUnit computeOrTrimInlineMargin(const RenderBlock& containingBlock, MarginTrimType marginSide, const Function& computeInlineMargin) const;
 
     bool includeVerticalScrollbarSize() const;
     bool includeHorizontalScrollbarSize() const;
@@ -933,6 +952,18 @@ inline void RenderBox::setInlineBoxWrapper(LegacyInlineElementBox* boxWrapper)
     }
 
     m_inlineBoxWrapper = boxWrapper;
+}
+
+inline LayoutRect RenderBox::contentBoxRect() const
+{
+    return { contentBoxLocation(), contentSize() };
+}
+
+inline bool RenderBox::shouldTrimChildMargin(MarginTrimType marginTrimType, const RenderBox& child) const
+{
+    if (!style().marginTrim().contains(marginTrimType))
+        return false;
+    return isChildEligibleForMarginTrim(marginTrimType, child);
 }
 
 LayoutUnit synthesizedBaseline(const RenderBox&, const RenderStyle& parentStyle, LineDirectionMode, BaselineSynthesisEdge);

@@ -31,9 +31,7 @@
 #include "ElementInlines.h"
 #include "EventRegion.h"
 #include "FloatQuad.h"
-#include "Frame.h"
 #include "FrameSelection.h"
-#include "FrameView.h"
 #include "GraphicsContext.h"
 #include "HTMLNames.h"
 #include "HTMLTextFormControlElement.h"
@@ -42,6 +40,8 @@
 #include "ImageBuffer.h"
 #include "InlineIteratorInlineBox.h"
 #include "LayoutRepainter.h"
+#include "LocalFrame.h"
+#include "LocalFrameView.h"
 #include "Logging.h"
 #include "LogicalSelectionOffsetCaches.h"
 #include "OverflowEvent.h"
@@ -81,6 +81,15 @@
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
+
+#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/RenderBlockAdditions.h>)
+#include <WebKitAdditions/RenderBlockAdditions.h>
+#else
+inline static bool renderCaretInsideContentsClip()
+{
+    return true;
+}
+#endif
 
 using namespace HTMLNames;
 using namespace WTF::Unicode;
@@ -1093,6 +1102,14 @@ void RenderBlock::markForPaginationRelayoutIfNeeded()
         setChildNeedsLayout(MarkOnlyThis);
 }
 
+void RenderBlock::paintCarets(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
+{
+    if (paintInfo.phase == PaintPhase::Foreground) {
+        paintCaret(paintInfo, paintOffset, CursorCaret);
+        paintCaret(paintInfo, paintOffset, DragCaret);
+    }
+}
+
 void RenderBlock::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     auto adjustedPaintOffset = paintOffset + location();
@@ -1120,6 +1137,9 @@ void RenderBlock::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     if (pushedClip)
         popContentsClip(paintInfo, phase, adjustedPaintOffset);
 
+    if (!renderCaretInsideContentsClip())
+        paintCarets(paintInfo, adjustedPaintOffset);
+
     // Our scrollbar widgets paint exactly when we tell them to, so that they work properly with
     // z-index. We paint after we painted the background/border, so that the scrollbars will
     // sit above the background/border.
@@ -1130,10 +1150,7 @@ void RenderBlock::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 
 void RenderBlock::paintContents(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-    // Style is non-final if the element has a pending stylesheet before it. We end up with renderers with such styles if a script
-    // forces renderer construction by querying something layout dependent.
-    // Avoid FOUC by not painting. Switching to final style triggers repaint.
-    if (style().isNotFinal() || shouldSkipContent())
+    if (shouldSkipContent())
         return;
 
     if (childrenInline())
@@ -1265,7 +1282,7 @@ void RenderBlock::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffs
 
         if (paintInfo.paintBehavior.contains(PaintBehavior::EventRegionIncludeBackground) && visibleToHitTesting()) {
             auto borderRegion = approximateAsRegion(style().getRoundedBorderFor(borderRect));
-            LOG_WITH_STREAM(EventRegions, stream << "RenderBlock " << *this << " uniting region " << borderRegion);
+            LOG_WITH_STREAM(EventRegions, stream << "RenderBlock " << *this << " uniting region " << borderRegion << " event listener types " << style().eventListenerRegionTypes());
             paintInfo.eventRegionContext->unite(borderRegion, *this, style(), isTextControl() && downcast<RenderTextControl>(*this).textFormControlElement().isInnerTextElementEditable());
         }
 
@@ -1367,10 +1384,8 @@ void RenderBlock::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffs
     // 7. paint caret.
     // If the caret's node's render object's containing block is this block, and the paint action is PaintPhase::Foreground,
     // then paint the caret.
-    if (paintPhase == PaintPhase::Foreground) {
-        paintCaret(paintInfo, paintOffset, CursorCaret);
-        paintCaret(paintInfo, paintOffset, DragCaret);
-    }
+    if (renderCaretInsideContentsClip())
+        paintCarets(paintInfo, paintOffset);
 }
 
 static ContinuationOutlineTableMap* continuationOutlineTable()
@@ -2265,7 +2280,7 @@ void RenderBlock::offsetForContents(LayoutPoint& offset) const
 void RenderBlock::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const
 {
     ASSERT(!childrenInline());
-    if (shouldApplySizeContainment()) {
+    if (shouldApplySizeOrInlineSizeContainment()) {
         if (auto width = explicitIntrinsicInnerLogicalWidth()) {
             minLogicalWidth = width.value();
             maxLogicalWidth = width.value();
@@ -2349,8 +2364,16 @@ void RenderBlock::computeBlockPreferredLogicalWidths(LayoutUnit& minLogicalWidth
         // A margin basically has three types: fixed, percentage, and auto (variable).
         // Auto and percentage margins simply become 0 when computing min/max width.
         // Fixed margins can be added in as is.
-        Length startMarginLength = childStyle.marginStartUsing(&styleToUse);
-        Length endMarginLength = childStyle.marginEndUsing(&styleToUse);
+        //
+        // Floats inside a block level box may not use their margins in their
+        // intrinsic size contributions if margin-trim is set for that margin type
+        Length startMarginLength;
+        Length endMarginLength;
+        if (auto* renderElement = dynamicDowncast<RenderElement>(child); renderElement && shouldChildInlineMarginContributeToContainerIntrinsicSize(MarginTrimType::InlineStart, *renderElement))
+            startMarginLength = childStyle.marginStartUsing(&styleToUse);
+        if (auto* renderElement = dynamicDowncast<RenderElement>(child); renderElement && shouldChildInlineMarginContributeToContainerIntrinsicSize(MarginTrimType::InlineEnd, *renderElement))
+            endMarginLength = shouldChildInlineMarginContributeToContainerIntrinsicSize(MarginTrimType::InlineEnd, *dynamicDowncast<RenderElement>(child)) ? childStyle.marginEndUsing(&styleToUse) : Length { 0, LengthType::Fixed };
+
         LayoutUnit margin;
         LayoutUnit marginStart;
         LayoutUnit marginEnd;
@@ -3012,6 +3035,30 @@ bool RenderBlock::updateFragmentRangeForBoxChild(const RenderBox& box) const
         return true;
 
     return false;
+}
+
+void RenderBlock::setTrimmedMarginForChild(RenderBox &child, MarginTrimType marginTrimType)
+{
+    switch (marginTrimType) {
+    case MarginTrimType::BlockStart:
+        setMarginBeforeForChild(child, 0_lu);
+        child.markMarginAsTrimmed(MarginTrimType::BlockStart);
+        break;
+    case MarginTrimType::BlockEnd:
+        setMarginAfterForChild(child, 0_lu);
+        child.markMarginAsTrimmed(MarginTrimType::BlockEnd);
+        break;
+    case MarginTrimType::InlineStart:
+        setMarginStartForChild(child, 0_lu);
+        child.markMarginAsTrimmed(MarginTrimType::InlineStart);
+        break;
+    case MarginTrimType::InlineEnd:
+        setMarginEndForChild(child, 0_lu);
+        child.markMarginAsTrimmed(MarginTrimType::InlineEnd);
+        break;
+    default:
+        ASSERT_NOT_IMPLEMENTED_YET();
+    }
 }
 
 LayoutUnit RenderBlock::collapsedMarginBeforeForChild(const RenderBox& child) const

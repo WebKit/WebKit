@@ -31,18 +31,13 @@
 #include "WebContextMenu.h"
 #include "WebPage.h"
 #include <WebCore/Editor.h>
-#include <WebCore/Frame.h>
 #include <WebCore/FrameLoader.h>
+#include <WebCore/LocalFrame.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/Page.h>
 #include <WebCore/UserGestureIndicator.h>
 
 namespace WebKit {
-
-void WebContextMenuClient::contextMenuDestroyed()
-{
-    delete this;
-}
 
 void WebContextMenuClient::downloadURL(const URL&)
 {
@@ -52,7 +47,7 @@ void WebContextMenuClient::downloadURL(const URL&)
 
 #if !PLATFORM(COCOA)
 
-void WebContextMenuClient::searchWithGoogle(const WebCore::Frame* frame)
+void WebContextMenuClient::searchWithGoogle(const WebCore::LocalFrame* frame)
 {
     auto page = frame->page();
     if (!page)
@@ -63,15 +58,18 @@ void WebContextMenuClient::searchWithGoogle(const WebCore::Frame* frame)
     auto searchURL = URL { "https://www.google.com/search?q=" + searchString + "&ie=UTF-8&oe=UTF-8" };
 
     WebCore::UserGestureIndicator indicator { WebCore::ProcessingUserGesture };
-    page->mainFrame().loader().changeLocation(searchURL, { }, nullptr, WebCore::ReferrerPolicy::EmptyString, WebCore::ShouldOpenExternalURLsPolicy::ShouldNotAllow);
+    auto* localMainFrame = dynamicDowncast<WebCore::LocalFrame>(page->mainFrame());
+    if (!localMainFrame)
+        return;
+    localMainFrame->loader().changeLocation(searchURL, { }, nullptr, WebCore::ReferrerPolicy::EmptyString, WebCore::ShouldOpenExternalURLsPolicy::ShouldNotAllow);
 }
 
-void WebContextMenuClient::lookUpInDictionary(WebCore::Frame*)
+void WebContextMenuClient::lookUpInDictionary(WebCore::LocalFrame*)
 {
     notImplemented();
 }
 
-bool WebContextMenuClient::isSpeaking()
+bool WebContextMenuClient::isSpeaking() const
 {
     notImplemented();
     return false;

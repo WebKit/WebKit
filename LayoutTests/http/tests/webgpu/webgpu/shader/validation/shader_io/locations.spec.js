@@ -8,41 +8,94 @@ import { generateShader } from './util.js';
 
 export const g = makeTestGroup(ShaderValidationTest);
 
-// List of types to test against.
-const kTestTypes = [
-  { type: 'bool', _valid: false },
-  { type: 'u32', _valid: true },
-  { type: 'i32', _valid: true },
-  { type: 'f32', _valid: true },
-  { type: 'vec2<bool>', _valid: false },
-  { type: 'vec2<u32>', _valid: true },
-  { type: 'vec2<i32>', _valid: true },
-  { type: 'vec2<f32>', _valid: true },
-  { type: 'vec3<bool>', _valid: false },
-  { type: 'vec3<u32>', _valid: true },
-  { type: 'vec3<i32>', _valid: true },
-  { type: 'vec3<f32>', _valid: true },
-  { type: 'vec4<bool>', _valid: false },
-  { type: 'vec4<u32>', _valid: true },
-  { type: 'vec4<i32>', _valid: true },
-  { type: 'vec4<f32>', _valid: true },
-  { type: 'mat2x2<f32>', _valid: false },
-  { type: 'mat2x3<f32>', _valid: false },
-  { type: 'mat2x4<f32>', _valid: false },
-  { type: 'mat3x2<f32>', _valid: false },
-  { type: 'mat3x3<f32>', _valid: false },
-  { type: 'mat3x4<f32>', _valid: false },
-  { type: 'mat4x2<f32>', _valid: false },
-  { type: 'mat4x3<f32>', _valid: false },
-  { type: 'mat4x4<f32>', _valid: false },
-  { type: 'atomic<u32>', _valid: false },
-  { type: 'atomic<i32>', _valid: false },
-  { type: 'array<bool,4>', _valid: false },
-  { type: 'array<u32,4>', _valid: false },
-  { type: 'array<i32,4>', _valid: false },
-  { type: 'array<f32,4>', _valid: false },
-  { type: 'MyStruct', _valid: false },
-];
+const kValidLocationTypes = new Set([
+  'f16',
+  'f32',
+  'i32',
+  'u32',
+  'vec2<f32>',
+  'vec2<i32>',
+  'vec2<u32>',
+  'vec3<f32>',
+  'vec3<i32>',
+  'vec3<u32>',
+  'vec4<f32>',
+  'vec4<i32>',
+  'vec4<u32>',
+  'vec2h',
+  'vec2f',
+  'vec2i',
+  'vec2u',
+  'vec3h',
+  'vec3f',
+  'vec3i',
+  'vec3u',
+  'vec4h',
+  'vec4f',
+  'vec4i',
+  'vec4u',
+  'MyAlias',
+]);
+
+const kInvalidLocationTypes = new Set([
+  'bool',
+  'vec2<bool>',
+  'vec3<bool>',
+  'vec4<bool>',
+  'mat2x2<f32>',
+  'mat2x3<f32>',
+  'mat2x4<f32>',
+  'mat3x2<f32>',
+  'mat3x3<f32>',
+  'mat3x4<f32>',
+  'mat4x2<f32>',
+  'mat4x3<f32>',
+  'mat4x4<f32>',
+  'mat2x2f',
+  'mat2x3f',
+  'mat2x4f',
+  'mat3x2f',
+  'mat3x3f',
+  'mat3x4f',
+  'mat4x2f',
+  'mat4x3f',
+  'mat4x4f',
+  'mat2x2h',
+  'mat2x3h',
+  'mat2x4h',
+  'mat3x2h',
+  'mat3x3h',
+  'mat3x4h',
+  'mat4x2h',
+  'mat4x3h',
+  'mat4x4h',
+  'array<f32, 12>',
+  'array<i32, 12>',
+  'array<u32, 12>',
+  'array<bool, 12>',
+  'atomic<i32>',
+  'atomic<u32>',
+  'MyStruct',
+  'texture_1d<i32>',
+  'texture_2d<f32>',
+  'texture_2d_array<i32>',
+  'texture_3d<f32>',
+  'texture_cube<u32>',
+  'texture_cube_array<i32>',
+  'texture_multisampled_2d<i32>',
+  'texture_external',
+  'texture_storage_1d<rgba8unorm, write>',
+  'texture_storage_2d<rg32float, write>',
+  'texture_storage_2d_array<r32float, write>',
+  'texture_storage_3d<r32float, write>',
+  'texture_depth_2d',
+  'texture_depth_2d_array',
+  'texture_depth_cube',
+  'texture_depth_cube_array',
+  'texture_depth_multisampled_2d',
+  'sampler',
+  'sampler_comparison',
+]);
 
 g.test('stage_inout')
   .desc(`Test validation of user-defined IO stage and in/out usage`)
@@ -72,15 +125,41 @@ g.test('stage_inout')
 
 g.test('type')
   .desc(`Test validation of user-defined IO types`)
-  .params(u => u.combine('use_struct', [true, false]).combineWithParams(kTestTypes).beginSubcases())
+  .params(u =>
+    u
+      .combine('use_struct', [true, false])
+      .combine('type', new Set([...kValidLocationTypes, ...kInvalidLocationTypes]))
+      .beginSubcases()
+  )
+  .beforeAllSubcases(t => {
+    if (
+      t.params.type === 'f16' ||
+      ((t.params.type.startsWith('mat') || t.params.type.startsWith('vec')) &&
+        t.params.type.endsWith('h'))
+    ) {
+      t.selectDeviceOrSkipTestCase('shader-f16');
+    }
+  })
   .fn(t => {
     let code = '';
 
+    if (
+      t.params.type === 'f16' ||
+      ((t.params.type.startsWith('mat') || t.params.type.startsWith('vec')) &&
+        t.params.type.endsWith('h'))
+    ) {
+      code += 'enable f16;\n';
+    }
+
     if (t.params.type === 'MyStruct') {
       // Generate a struct that contains a valid type.
-      code += 'struct MyStruct {\n';
-      code += `  value : f32\n`;
-      code += '};\n\n';
+      code += `struct MyStruct {
+                value : f32,
+              }
+              `;
+    }
+    if (t.params.type === 'MyAlias') {
+      code += 'type MyAlias = i32;\n';
     }
 
     code += generateShader({
@@ -91,8 +170,7 @@ g.test('type')
       use_struct: t.params.use_struct,
     });
 
-    // Expect to pass iff a valid type is used.
-    t.expectCompileResult(t.params._valid, code);
+    t.expectCompileResult(kValidLocationTypes.has(t.params.type), code);
   });
 
 g.test('nesting')
@@ -107,12 +185,13 @@ g.test('nesting')
     let code = '';
 
     // Generate a struct that contains a valid type.
-    code += 'struct Inner {\n';
-    code += `  @location(0) value : f32\n`;
-    code += '};\n\n';
-    code += 'struct Outer {\n';
-    code += `  inner : Inner\n`;
-    code += '};\n\n';
+    code += `struct Inner {
+               @location(0) value : f32,
+             }
+             struct Outer {
+               inner : Inner,
+             }
+             `;
 
     code += generateShader({
       attribute: '',
@@ -162,7 +241,7 @@ g.test('duplicates')
       @location(${ra}) a : f32,
       @location(${rb}) b : f32,
     };
-    @stage(fragment)
+    @fragment
     fn main(@location(${p1}) p1 : f32,
             @location(${p2}) p2 : f32,
             s1 : S1,

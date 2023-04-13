@@ -103,11 +103,6 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
     callLinkInfo = OptimizingCallLinkInfo(CodeOrigin(), CallLinkInfo::UseDataIC::No);
     callLinkInfo.setUpCall(CallLinkInfo::Call, importJSCellGPRReg);
 
-    // GC support is experimental and currently will throw a runtime error when struct
-    // and array type indices are exported via a function signature to JS.
-    if (Options::useWebAssemblyGC() && (wasmCallInfo.argumentsIncludeGCTypeIndex || wasmCallInfo.resultsIncludeGCTypeIndex))
-        return handleBadImportTypeUse(jit, importIndex, Wasm::ExceptionType::InvalidGCTypeUse);
-
     // https://webassembly.github.io/spec/js-api/index.html#exported-function-exotic-objects
     // If parameters or results contain v128, throw a TypeError.
     // Note: the above error is thrown each time the [[Call]] method is invoked.
@@ -158,6 +153,9 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
             case TypeKind::Structref:
             case TypeKind::Array:
             case TypeKind::Arrayref:
+            case TypeKind::Eqref:
+            case TypeKind::Anyref:
+            case TypeKind::Nullref:
             case TypeKind::I31ref:
             case TypeKind::Rec:
             case TypeKind::Sub:
@@ -246,6 +244,9 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
             case TypeKind::Structref:
             case TypeKind::Array:
             case TypeKind::Arrayref:
+            case TypeKind::Eqref:
+            case TypeKind::Anyref:
+            case TypeKind::Nullref:
             case TypeKind::I31ref:
             case TypeKind::Rec:
             case TypeKind::Sub:
@@ -408,7 +409,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
             jit.setupArguments<decltype(operationConvertToF32)>(GPRInfo::wasmContextInstancePointer, JSRInfo::returnValueJSR);
             auto call = jit.call(OperationPtrTag);
             exceptionChecks.append(jit.emitJumpIfException(vm));
-            jit.move(FPRInfo::returnValueFPR , dest);
+            jit.moveDouble(FPRInfo::returnValueFPR , dest);
 
             jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
                 linkBuffer.link<OperationPtrTag>(call, operationConvertToF32);
@@ -440,7 +441,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
             jit.setupArguments<decltype(operationConvertToF64)>(GPRInfo::wasmContextInstancePointer, JSRInfo::returnValueJSR);
             auto call = jit.call(OperationPtrTag);
             exceptionChecks.append(jit.emitJumpIfException(vm));
-            jit.move(FPRInfo::returnValueFPR, dest);
+            jit.moveDouble(FPRInfo::returnValueFPR, dest);
 
             jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
                 linkBuffer.link<OperationPtrTag>(call, operationConvertToF64);

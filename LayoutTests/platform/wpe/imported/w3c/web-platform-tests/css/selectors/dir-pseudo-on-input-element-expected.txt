@@ -1,0 +1,21 @@
+
+
+PASS input element whose type attribute is in the telephone state
+FAIL input element whose type attribute is in the telephone state in a RTL block assert_equals: expected "ltr" but got "rtl"
+PASS input element whose type attribute is in the text state
+PASS input element whose type attribute is in the search state
+PASS input element whose type attribute is in the url state
+PASS input element whose type attribute is in the email state
+PASS input element whose type attribute is in the password state
+FAIL input element whose type attribute is in the date state assert_true: expected true got false
+FAIL input element whose type attribute is in the time state assert_true: expected true got false
+PASS input element whose type attribute is in the number state
+PASS input element whose type attribute is in the range state
+FAIL input element whose type attribute is in the color state assert_true: expected true got false
+PASS input element whose type attribute is in the checkbox state
+PASS input element whose type attribute is in the radio state
+PASS input element whose type attribute is in the submit state
+PASS input element whose type attribute is in the image state
+PASS input element whose type attribute is in the reset state
+PASS input element whose type attribute is in the button state
+

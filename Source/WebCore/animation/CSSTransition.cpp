@@ -69,6 +69,8 @@ void CSSTransition::resolve(RenderStyle& targetStyle, const Style::ResolutionCon
 
 void CSSTransition::animationDidFinish()
 {
+    DeclarativeAnimation::animationDidFinish();
+
     if (auto owningElement = this->owningElement())
         owningElement->removeDeclarativeAnimationFromListsForOwningElement(*this);
 }

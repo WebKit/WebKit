@@ -1683,7 +1683,7 @@ void testAbsArg(double a)
             proc, Abs, Origin(),
                 root->appendNew<ArgumentRegValue>(proc, Origin(), FPRInfo::argumentFPR0)));
 
-    CHECK(isIdentical(compileAndRun<double>(proc, a), fabs(a)));
+    CHECK(isIdentical(compileAndRun<double>(proc, a), std::abs(a)));
 }
 
 void testAbsImm(double a)
@@ -1695,7 +1695,7 @@ void testAbsImm(double a)
         proc, Return, Origin(),
         root->appendNew<Value>(proc, Abs, Origin(), argument));
 
-    CHECK(isIdentical(compileAndRun<double>(proc), fabs(a)));
+    CHECK(isIdentical(compileAndRun<double>(proc), std::abs(a)));
 }
 
 void testAbsMem(double a)
@@ -1708,7 +1708,7 @@ void testAbsMem(double a)
         proc, Return, Origin(),
         root->appendNew<Value>(proc, Abs, Origin(), loadDouble));
 
-    CHECK(isIdentical(compileAndRun<double>(proc, &a), fabs(a)));
+    CHECK(isIdentical(compileAndRun<double>(proc, &a), std::abs(a)));
 }
 
 void testAbsAbsArg(double a)
@@ -1720,7 +1720,7 @@ void testAbsAbsArg(double a)
     Value* secondAbs = root->appendNew<Value>(proc, Abs, Origin(), firstAbs);
     root->appendNewControlValue(proc, Return, Origin(), secondAbs);
 
-    CHECK(isIdentical(compileAndRun<double>(proc, a), fabs(fabs(a))));
+    CHECK(isIdentical(compileAndRun<double>(proc, a), std::abs(std::abs(a))));
 }
 
 void testAbsNegArg(double a)
@@ -1732,7 +1732,7 @@ void testAbsNegArg(double a)
     Value* abs = root->appendNew<Value>(proc, Abs, Origin(), neg);
     root->appendNewControlValue(proc, Return, Origin(), abs);
 
-    CHECK(isIdentical(compileAndRun<double>(proc, a), fabs(- a)));
+    CHECK(isIdentical(compileAndRun<double>(proc, a), std::abs(- a)));
 }
 
 void testAbsBitwiseCastArg(double a)
@@ -1744,7 +1744,7 @@ void testAbsBitwiseCastArg(double a)
     Value* absValue = root->appendNew<Value>(proc, Abs, Origin(), argumentAsDouble);
     root->appendNewControlValue(proc, Return, Origin(), absValue);
 
-    CHECK(isIdentical(compileAndRun<double>(proc, bitwise_cast<int64_t>(a)), fabs(a)));
+    CHECK(isIdentical(compileAndRun<double>(proc, bitwise_cast<int64_t>(a)), std::abs(a)));
 }
 
 void testBitwiseCastAbsBitwiseCastArg(double a)
@@ -1758,7 +1758,7 @@ void testBitwiseCastAbsBitwiseCastArg(double a)
 
     root->appendNewControlValue(proc, Return, Origin(), resultAsInt64);
 
-    int64_t expectedResult = bitwise_cast<int64_t>(fabs(a));
+    int64_t expectedResult = bitwise_cast<int64_t>(std::abs(a));
     CHECK(isIdentical(compileAndRun<int64_t>(proc, bitwise_cast<int64_t>(a)), expectedResult));
 }
 
@@ -1773,7 +1773,7 @@ void testAbsArg(float a)
     Value* result32 = root->appendNew<Value>(proc, BitwiseCast, Origin(), result);
     root->appendNewControlValue(proc, Return, Origin(), result32);
 
-    CHECK(isIdentical(compileAndRun<int32_t>(proc, bitwise_cast<int32_t>(a)), bitwise_cast<int32_t>(static_cast<float>(fabs(a)))));
+    CHECK(isIdentical(compileAndRun<int32_t>(proc, bitwise_cast<int32_t>(a)), bitwise_cast<int32_t>(static_cast<float>(std::abs(a)))));
 }
 
 void testAbsImm(float a)
@@ -1785,7 +1785,7 @@ void testAbsImm(float a)
     Value* result32 = root->appendNew<Value>(proc, BitwiseCast, Origin(), result);
     root->appendNewControlValue(proc, Return, Origin(), result32);
 
-    CHECK(isIdentical(compileAndRun<int32_t>(proc, bitwise_cast<int32_t>(a)), bitwise_cast<int32_t>(static_cast<float>(fabs(a)))));
+    CHECK(isIdentical(compileAndRun<int32_t>(proc, bitwise_cast<int32_t>(a)), bitwise_cast<int32_t>(static_cast<float>(std::abs(a)))));
 }
 
 void testAbsMem(float a)
@@ -1798,7 +1798,7 @@ void testAbsMem(float a)
     Value* result32 = root->appendNew<Value>(proc, BitwiseCast, Origin(), result);
     root->appendNewControlValue(proc, Return, Origin(), result32);
 
-    CHECK(isIdentical(compileAndRun<int32_t>(proc, &a), bitwise_cast<int32_t>(static_cast<float>(fabs(a)))));
+    CHECK(isIdentical(compileAndRun<int32_t>(proc, &a), bitwise_cast<int32_t>(static_cast<float>(std::abs(a)))));
 }
 
 void testAbsAbsArg(float a)
@@ -1812,7 +1812,7 @@ void testAbsAbsArg(float a)
     Value* secondAbs = root->appendNew<Value>(proc, Abs, Origin(), firstAbs);
     root->appendNewControlValue(proc, Return, Origin(), secondAbs);
 
-    CHECK(isIdentical(compileAndRun<float>(proc, bitwise_cast<int32_t>(a)), static_cast<float>(fabs(fabs(a)))));
+    CHECK(isIdentical(compileAndRun<float>(proc, bitwise_cast<int32_t>(a)), static_cast<float>(std::abs(std::abs(a)))));
 }
 
 void testAbsNegArg(float a)
@@ -1826,7 +1826,7 @@ void testAbsNegArg(float a)
     Value* abs = root->appendNew<Value>(proc, Abs, Origin(), neg);
     root->appendNewControlValue(proc, Return, Origin(), abs);
 
-    CHECK(isIdentical(compileAndRun<float>(proc, bitwise_cast<int32_t>(a)), static_cast<float>(fabs(- a))));
+    CHECK(isIdentical(compileAndRun<float>(proc, bitwise_cast<int32_t>(a)), static_cast<float>(std::abs(- a))));
 }
 
 void testAbsBitwiseCastArg(float a)
@@ -1839,7 +1839,7 @@ void testAbsBitwiseCastArg(float a)
     Value* absValue = root->appendNew<Value>(proc, Abs, Origin(), argumentAsfloat);
     root->appendNewControlValue(proc, Return, Origin(), absValue);
 
-    CHECK(isIdentical(compileAndRun<float>(proc, bitwise_cast<int32_t>(a)), static_cast<float>(fabs(a))));
+    CHECK(isIdentical(compileAndRun<float>(proc, bitwise_cast<int32_t>(a)), static_cast<float>(std::abs(a))));
 }
 
 void testBitwiseCastAbsBitwiseCastArg(float a)
@@ -1854,7 +1854,7 @@ void testBitwiseCastAbsBitwiseCastArg(float a)
 
     root->appendNewControlValue(proc, Return, Origin(), resultAsInt64);
 
-    int32_t expectedResult = bitwise_cast<int32_t>(static_cast<float>(fabs(a)));
+    int32_t expectedResult = bitwise_cast<int32_t>(static_cast<float>(std::abs(a)));
     CHECK(isIdentical(compileAndRun<int32_t>(proc, bitwise_cast<int32_t>(a)), expectedResult));
 }
 
@@ -1871,7 +1871,7 @@ void testAbsArgWithUselessDoubleConversion(float a)
     Value* result32 = root->appendNew<Value>(proc, BitwiseCast, Origin(), floatResult);
     root->appendNewControlValue(proc, Return, Origin(), result32);
 
-    CHECK(isIdentical(compileAndRun<int32_t>(proc, bitwise_cast<int32_t>(a)), bitwise_cast<int32_t>(static_cast<float>(fabs(a)))));
+    CHECK(isIdentical(compileAndRun<int32_t>(proc, bitwise_cast<int32_t>(a)), bitwise_cast<int32_t>(static_cast<float>(std::abs(a)))));
 }
 
 void testAbsArgWithEffectfulDoubleConversion(float a)
@@ -1891,8 +1891,8 @@ void testAbsArgWithEffectfulDoubleConversion(float a)
 
     double effect = 0;
     int32_t resultValue = compileAndRun<int32_t>(proc, bitwise_cast<int32_t>(a), &effect);
-    CHECK(isIdentical(resultValue, bitwise_cast<int32_t>(static_cast<float>(fabs(a)))));
-    CHECK(isIdentical(effect, static_cast<double>(fabs(a))));
+    CHECK(isIdentical(resultValue, bitwise_cast<int32_t>(static_cast<float>(std::abs(a)))));
+    CHECK(isIdentical(effect, static_cast<double>(std::abs(a))));
 }
 
 void testCeilArg(double a)
@@ -3999,7 +3999,10 @@ void addCallTests(const char* filter, Deque<RefPtr<SharedTask<void()>>>& tasks)
     RUN(testCallFunctionWithHellaArguments());
     RUN(testCallFunctionWithHellaArguments2());
     RUN(testCallFunctionWithHellaArguments3());
-    
+
+    RUN(testCallPairResult(1, 100));
+    RUN(testCallPairResultRare(1, 100));
+
     RUN(testReturnDouble(0.0));
     RUN(testReturnDouble(negativeZero()));
     RUN(testReturnDouble(42.5));

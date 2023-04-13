@@ -31,7 +31,7 @@
 #include "MemoryMode.h"
 #include "WasmCallee.h"
 #include "WasmCallsiteCollection.h"
-#include "WasmEmbedder.h"
+#include "WasmJS.h"
 #include <wtf/CrossThreadCopier.h>
 #include <wtf/FixedVector.h>
 #include <wtf/Lock.h>
@@ -79,13 +79,13 @@ public:
 
     // These two callee getters are only valid once the callees have been populated.
 
-    Callee& embedderEntrypointCalleeFromFunctionIndexSpace(unsigned functionIndexSpace)
+    Callee& jsEntrypointCalleeFromFunctionIndexSpace(unsigned functionIndexSpace)
     {
         ASSERT(runnable());
         RELEASE_ASSERT(functionIndexSpace >= functionImportCount());
         unsigned calleeIndex = functionIndexSpace - functionImportCount();
 
-        auto callee = m_embedderCallees.get(calleeIndex);
+        auto callee = m_jsEntrypointCallees.get(calleeIndex);
         RELEASE_ASSERT(callee);
         return *callee;
     }
@@ -182,7 +182,7 @@ private:
     FixedVector<RefPtr<BBQCallee>> m_bbqCallees;
 #endif
     RefPtr<LLIntCallees> m_llintCallees;
-    HashMap<uint32_t, RefPtr<EmbedderEntrypointCallee>, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_embedderCallees;
+    HashMap<uint32_t, RefPtr<JSEntrypointCallee>, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_jsEntrypointCallees;
     FixedVector<CodePtr<WasmEntryPtrTag>> m_wasmIndirectCallEntryPoints;
     FixedVector<MacroAssemblerCodeRef<WasmEntryPtrTag>> m_wasmToWasmExitStubs;
     RefPtr<EntryPlan> m_plan;

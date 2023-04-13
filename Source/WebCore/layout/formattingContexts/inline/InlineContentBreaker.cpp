@@ -36,20 +36,6 @@
 namespace WebCore {
 namespace Layout {
 
-
-#if ASSERT_ENABLED
-static inline bool hasTrailingTextContent(const InlineContentBreaker::ContinuousContent& continuousContent)
-{
-    for (auto& run : makeReversedRange(continuousContent.runs())) {
-        auto& inlineItem = run.inlineItem;
-        if (inlineItem.isInlineBoxStart() || inlineItem.isInlineBoxEnd())
-            continue;
-        return inlineItem.isText();
-    }
-    return false;
-}
-#endif
-
 static inline bool hasLeadingTextContent(const InlineContentBreaker::ContinuousContent& continuousContent)
 {
     for (auto& run : continuousContent.runs()) {

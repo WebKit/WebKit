@@ -30,8 +30,8 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 14x27
           text run at (0,0) width 14: "T"
       RenderBlock (anonymous) at (0,28) size 784x28
-        RenderText {#text} at (0,0) size 194x27
-          text run at (0,0) width 194: "in the affairs of men"
+        RenderText {#text} at (0,0) size 197x27
+          text run at (0,0) width 197: "in the affairs of men"
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
 caret: position 1 of child 0 {#text} of child 1 {DIV} of body

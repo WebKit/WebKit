@@ -108,6 +108,20 @@ LayoutRect shrinkRectByOneDevicePixel(const GraphicsContext& context, const Layo
     return shrunkRect;
 }
 
+static bool decorationHasAllSolidEdges(const RectEdges<BorderEdge>& edges)
+{
+    for (auto side : allBoxSides) {
+        auto& currEdge = edges.at(side);
+
+        if (currEdge.presentButInvisible() || !currEdge.widthForPainting())
+            continue;
+
+        if (currEdge.style() != BorderStyle::Solid)
+            return false;
+    }
+    return true;
+}
+
 void BorderPainter::paintBorder(const LayoutRect& rect, const RenderStyle& style, BackgroundBleedAvoidance bleedAvoidance, bool includeLogicalLeftEdge, bool includeLogicalRightEdge)
 {
     GraphicsContext& graphicsContext = m_paintInfo.context();
@@ -144,23 +158,11 @@ void BorderPainter::paintBorder(const LayoutRect& rect, const RenderStyle& style
     if (paintNinePieceImage(rect, style, style.borderImage()))
         return;
 
-    auto edges = borderEdges(style, document().deviceScaleFactor(), includeLogicalLeftEdge, includeLogicalRightEdge);
     RoundedRect outerBorder = style.getRoundedBorderFor(rect, includeLogicalLeftEdge, includeLogicalRightEdge);
     RoundedRect innerBorder = style.getRoundedInnerBorderFor(borderInnerRectAdjustedForBleedAvoidance(rect, bleedAvoidance), includeLogicalLeftEdge, includeLogicalRightEdge);
     RoundedRect unadjustedInnerBorder = (bleedAvoidance == BackgroundBleedBackgroundOverBorder) ? style.getRoundedInnerBorderFor(rect, includeLogicalLeftEdge, includeLogicalRightEdge) : innerBorder;
-
-    auto haveAllSolidEdges = true;
-    for (auto side : allBoxSides) {
-        auto& currEdge = edges.at(side);
-
-        if (currEdge.presentButInvisible() || !currEdge.widthForPainting())
-            continue;
-
-        if (currEdge.style() != BorderStyle::Solid) {
-            haveAllSolidEdges = false;
-            break;
-        }
-    }
+    auto edges = borderEdges(style, document().deviceScaleFactor(), includeLogicalLeftEdge, includeLogicalRightEdge);
+    auto haveAllSolidEdges = decorationHasAllSolidEdges(edges);
 
     if (haveAllSolidEdges && outerBorder.isRounded() && allCornersClippedOut(outerBorder, m_paintInfo.rect))
         outerBorder.setRadii(RoundedRect::Radii());
@@ -240,14 +242,15 @@ void BorderPainter::paintOutline(const LayoutRect& paintRect)
     auto outerBorder = roundedBorderRectFor(outer, LayoutUnit { outlineWidth + outlineOffset });
     auto bleedAvoidance = BackgroundBleedShrinkBackground;
     auto appliedClipAlready = false;
-    auto haveAllSolidEdges = true;
+    auto edges = borderEdgesForOutline(styleToUse, document().deviceScaleFactor());
+    auto haveAllSolidEdges = decorationHasAllSolidEdges(edges);
 
     paintSides({
         outerBorder,
         innerBorder,
         innerBorder,
         hasBorderRadius ? std::make_optional(styleToUse.borderRadii()) : std::nullopt,
-        borderEdgesForOutline(styleToUse, document().deviceScaleFactor()),
+        edges,
         haveAllSolidEdges,
         bleedAvoidance,
         includeLogicalLeftEdge,
@@ -299,7 +302,7 @@ void BorderPainter::paintOutline(const LayoutPoint& paintOffset, const Vector<La
 
     graphicsContext.setStrokeColor(outlineColor);
     graphicsContext.setStrokeThickness(outlineWidth);
-    graphicsContext.setStrokeStyle(SolidStroke);
+    graphicsContext.setStrokeStyle(StrokeStyle::SolidStroke);
     graphicsContext.strokePath(path);
 
     if (useTransparencyLayer)
@@ -342,7 +345,7 @@ void BorderPainter::paintSides(const Sides& sides)
 
         if (!firstVisibleSide)
             firstVisibleSide = boxSide;
-        else if (currEdge.color() != sides.edges.at(*firstVisibleSide).color())
+        else if (!equalIgnoringSemanticColor(currEdge.color(), sides.edges.at(*firstVisibleSide).color()))
             allEdgesShareColor = false;
 
         if (!currEdge.color().isOpaque())
@@ -513,7 +516,7 @@ void BorderPainter::paintTranslucentBorderSides(const RoundedRect& outerBorder, 
                 commonColor = edge.color();
                 includeEdge = true;
             } else
-                includeEdge = edge.color() == commonColor;
+                includeEdge = equalIgnoringSemanticColor(edge.color(), commonColor);
 
             if (includeEdge)
                 commonColorEdgeSet.add(edgeFlagForSide(side));
@@ -881,7 +884,7 @@ void BorderPainter::drawBoxSideFromPath(const LayoutRect& borderRect, const Path
         // The extra multiplier is so that the clipping mask can antialias
         // the edges to prevent jaggies.
         graphicsContext.setStrokeThickness(drawThickness * 2 * 1.1f);
-        graphicsContext.setStrokeStyle(borderStyle == BorderStyle::Dashed ? DashedStroke : DottedStroke);
+        graphicsContext.setStrokeStyle(borderStyle == BorderStyle::Dashed ? StrokeStyle::DashedStroke : StrokeStyle::DottedStroke);
 
         // If the number of dashes that fit in the path is odd and non-integral then we
         // will have an awkwardly-sized dash at the end of the path. To try to avoid that
@@ -1002,7 +1005,7 @@ void BorderPainter::drawBoxSideFromPath(const LayoutRect& borderRect, const Path
         break;
     }
 
-    graphicsContext.setStrokeStyle(NoStroke);
+    graphicsContext.setStrokeStyle(StrokeStyle::NoStroke);
     graphicsContext.setFillColor(color);
     graphicsContext.drawRect(snapRectToDevicePixels(borderRect, document().deviceScaleFactor()));
 }
@@ -1157,7 +1160,7 @@ void BorderPainter::drawLineForBoxSide(GraphicsContext& graphicsContext, const D
         graphicsContext.setShouldAntialias(antialias);
         graphicsContext.setStrokeColor(color);
         graphicsContext.setStrokeThickness(thickness);
-        graphicsContext.setStrokeStyle(borderStyle == BorderStyle::Dashed ? DashedStroke : DottedStroke);
+        graphicsContext.setStrokeStyle(borderStyle == BorderStyle::Dashed ? StrokeStyle::DashedStroke : StrokeStyle::DottedStroke);
         graphicsContext.drawLine(roundPointToDevicePixels(LayoutPoint(x1, y1), deviceScaleFactor), roundPointToDevicePixels(LayoutPoint(x2, y2), deviceScaleFactor));
         graphicsContext.setShouldAntialias(wasAntialiased);
         graphicsContext.setStrokeStyle(oldStrokeStyle);
@@ -1169,7 +1172,7 @@ void BorderPainter::drawLineForBoxSide(GraphicsContext& graphicsContext, const D
 
         if (!adjacentWidth1 && !adjacentWidth2) {
             StrokeStyle oldStrokeStyle = graphicsContext.strokeStyle();
-            graphicsContext.setStrokeStyle(NoStroke);
+            graphicsContext.setStrokeStyle(StrokeStyle::NoStroke);
             graphicsContext.setFillColor(color);
 
             bool wasAntialiased = graphicsContext.shouldAntialias();
@@ -1194,8 +1197,8 @@ void BorderPainter::drawLineForBoxSide(GraphicsContext& graphicsContext, const D
             float adjacent1BigThird = ceilToDevicePixel(adjacentWidth1 / 3, deviceScaleFactor);
             float adjacent2BigThird = ceilToDevicePixel(adjacentWidth2 / 3, deviceScaleFactor);
 
-            float offset1 = floorToDevicePixel(fabs(adjacentWidth1) * 2 / 3, deviceScaleFactor);
-            float offset2 = floorToDevicePixel(fabs(adjacentWidth2) * 2 / 3, deviceScaleFactor);
+            float offset1 = floorToDevicePixel(std::abs(adjacentWidth1) * 2 / 3, deviceScaleFactor);
+            float offset2 = floorToDevicePixel(std::abs(adjacentWidth2) * 2 / 3, deviceScaleFactor);
 
             float mitreOffset1 = adjacentWidth1 < 0 ? offset1 : 0;
             float mitreOffset2 = adjacentWidth1 > 0 ? offset1 : 0;
@@ -1268,7 +1271,7 @@ void BorderPainter::drawLineForBoxSide(GraphicsContext& graphicsContext, const D
             offset2 = ceilToDevicePixel(adjacentWidth2 / 2, deviceScaleFactor);
 
         if (((side == BoxSide::Top || side == BoxSide::Left) && adjacentWidth1 > 0) || ((side == BoxSide::Bottom || side == BoxSide::Right) && adjacentWidth1 < 0))
-            offset3 = floorToDevicePixel(fabs(adjacentWidth1) / 2, deviceScaleFactor);
+            offset3 = floorToDevicePixel(std::abs(adjacentWidth1) / 2, deviceScaleFactor);
 
         if (((side == BoxSide::Top || side == BoxSide::Left) && adjacentWidth2 > 0) || ((side == BoxSide::Bottom || side == BoxSide::Right) && adjacentWidth2 < 0))
             offset4 = ceilToDevicePixel(adjacentWidth2 / 2, deviceScaleFactor);
@@ -1310,7 +1313,7 @@ void BorderPainter::drawLineForBoxSide(GraphicsContext& graphicsContext, const D
         ASSERT(x2 >= x1);
         ASSERT(y2 >= y1);
         if (!adjacentWidth1 && !adjacentWidth2) {
-            graphicsContext.setStrokeStyle(NoStroke);
+            graphicsContext.setStrokeStyle(StrokeStyle::NoStroke);
             graphicsContext.setFillColor(color);
             bool wasAntialiased = graphicsContext.shouldAntialias();
             graphicsContext.setShouldAntialias(antialias);
@@ -1362,7 +1365,7 @@ void BorderPainter::drawLineForBoxSide(GraphicsContext& graphicsContext, const D
             break;
         }
 
-        graphicsContext.setStrokeStyle(NoStroke);
+        graphicsContext.setStrokeStyle(StrokeStyle::NoStroke);
         graphicsContext.setFillColor(color);
         bool wasAntialiased = graphicsContext.shouldAntialias();
         graphicsContext.setShouldAntialias(antialias);

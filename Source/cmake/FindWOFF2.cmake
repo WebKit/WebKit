@@ -87,7 +87,7 @@ else ()
 endif ()
 
 if ("dec" IN_LIST WOFF2_FIND_COMPONENTS)
-    pkg_check_modules(PC_WOFF2_DEC libwoff2dec)
+    pkg_check_modules(PC_WOFF2_DEC QUIET libwoff2dec)
 
     find_path(WOFF2_INCLUDE_DIR
         NAMES woff2/decode.h

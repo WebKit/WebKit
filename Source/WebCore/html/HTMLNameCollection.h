@@ -52,14 +52,6 @@ HTMLNameCollection<HTMLCollectionClass, traversalType>::HTMLNameCollection(Docum
 {
 }
 
-template <typename HTMLCollectionClass, CollectionTraversalType traversalType>
-HTMLNameCollection<HTMLCollectionClass, traversalType>::~HTMLNameCollection()
-{
-    ASSERT(this->type() == WindowNamedItems || this->type() == DocumentNamedItems);
-
-    document().nodeLists()->removeCachedCollection(this, m_name);
-}
-
 class WindowNameCollection final : public HTMLNameCollection<WindowNameCollection, CollectionTraversalType::Descendants> {
     WTF_MAKE_ISO_ALLOCATED(WindowNameCollection);
 public:

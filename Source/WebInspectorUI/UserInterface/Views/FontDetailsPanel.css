@@ -24,7 +24,7 @@
  */
 
 .sidebar > .panel.details.style-font > .content .details-section > .content > .group > .row.simple > .label {
-    width: 105px; /* Width of `Historical Figures` or `Optical Size (opsz)`. */
+    min-width: 105px; /* Width of `Historical Figures` or `Optical Size (opsz)` in English. */
 }
 
 .sidebar > .panel.details.style-font > .content .details-section > .content > .group > .row.simple > .value .secondary {

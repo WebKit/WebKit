@@ -1,10 +1,9 @@
 // Copyright (C) 2022 André Bargull. All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
-
 /*---
 esid: sec-temporal.duration.prototype.round
 description: >
-  NanosecondsToDays can loop indefinitely.
+  NanosecondsToDays can loop infinitely.
 info: |
   NanosecondsToDays ( nanoseconds, relativeTo )
 
@@ -23,43 +22,51 @@ includes: [temporalHelpers.js]
 features: [Temporal]
 ---*/
 
-// Intentionally not Test262Error to ensure assertion errors are correctly propagated.
-class StopExecution extends Error {}
+const calls = [];
+const duration = Temporal.Duration.from({ days: 1 });
 
-const stopAt = 1000;
-
-// Number of calls to getPossibleInstantsFor.
-let count = 0;
-
-// UTC time zones so we don't have to worry about time zone offsets.
-let tz = new class extends Temporal.TimeZone {
-  getPossibleInstantsFor(dt) {
-    // Stop when we've reached the test limit.
-    count += 1;
-    if (count === stopAt) {
-      throw new StopExecution();
-    }
-
-    if (count < 4) {
-      // The first couple calls request the instant for 1970-01-02.
-      TemporalHelpers.assertPlainDateTime(dt, 1970, 1, "M01", 2, 0, 0, 0, 0, 0, 0);
-    } else {
-      // Later on the instant for 1970-01-03 is requested.
-      TemporalHelpers.assertPlainDateTime(dt, 1970, 1, "M01", 3, 0, 0, 0, 0, 0, 0);
-    }
-
-    // Always return "1970-01-02T00:00:00Z". This leads to iterating indefinitely
-    // in NanosecondsToDays.
-    return [new Temporal.Instant(86400000000000n)];
+function createRelativeTo(count) {
+  const dayLengthNs = 86400000000000n;
+  const dayInstant = new Temporal.Instant(dayLengthNs);
+  const substitutions = [];
+  const timeZone = new Temporal.TimeZone("UTC");
+  // Return constant value for first _count_ calls
+  TemporalHelpers.substituteMethod(
+    timeZone,
+    "getPossibleInstantsFor",
+    substitutions
+  );
+  substitutions.length = count;
+  let i = 0;
+  for (i = 0; i < substitutions.length; i++) {
+    // (this value)
+    substitutions[i] = [dayInstant];
   }
-}("UTC");
+  // Record calls in calls[]
+  TemporalHelpers.observeMethod(calls, timeZone, "getPossibleInstantsFor");
+  return new Temporal.ZonedDateTime(0n, timeZone);
+}
 
-let zdt = new Temporal.ZonedDateTime(0n, tz);
-let duration = Temporal.Duration.from({days: 1});
-let options = {
+let zdt = createRelativeTo(200);
+calls.splice(0); // Reset calls list after ZonedDateTime construction
+duration.round({
   smallestUnit: "days",
   relativeTo: zdt,
-};
+});
+assert.sameValue(
+  calls.length,
+  200 + 1,
+  "Expected duration.round to call getPossibleInstantsFor correct number of times"
+);
 
-assert.throws(StopExecution, () => duration.round(options));
-assert.sameValue(count, stopAt);
+zdt = createRelativeTo(300);
+calls.splice(0); // Reset calls list after previous loop + ZonedDateTime construction
+duration.round({
+  smallestUnit: "days",
+  relativeTo: zdt,
+});
+assert.sameValue(
+  calls.length,
+  300 + 1,
+  "Expected duration.round to call getPossibleInstantsFor correct number of times"
+);

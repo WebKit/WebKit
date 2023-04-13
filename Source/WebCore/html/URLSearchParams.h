@@ -44,6 +44,8 @@ public:
         return adoptRef(*new URLSearchParams(string, associatedURL));
     }
 
+    size_t size() const { return m_pairs.size(); }
+
     void append(const String& name, const String& value);
     void remove(const String& name);
     String get(const String& name) const;

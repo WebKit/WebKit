@@ -34,12 +34,10 @@
 #include "CommonAtomStrings.h"
 #include "CustomElementReactionQueue.h"
 #include "CustomElementRegistry.h"
-#include "DOMWindow.h"
 #include "Document.h"
 #include "DocumentFragment.h"
 #include "DocumentType.h"
 #include "EventLoop.h"
-#include "Frame.h"
 #include "FrameDestructionObserverInlines.h"
 #include "FrameLoader.h"
 #include "HTMLEntityParser.h"
@@ -48,6 +46,8 @@
 #include "HTMLTemplateElement.h"
 #include "HTTPParsers.h"
 #include "InlineClassicScript.h"
+#include "LocalDOMWindow.h"
+#include "LocalFrame.h"
 #include "MIMETypeRegistry.h"
 #include "Page.h"
 #include "PageConsoleClient.h"
@@ -406,7 +406,7 @@ static inline void setAttributes(Element* element, Vector<Attribute>& attributeV
 {
     if (!scriptingContentIsAllowed(parserContentPolicy))
         element->stripScriptingAttributes(attributeVector);
-    element->parserSetAttributes(attributeVector);
+    element->parserSetAttributes(attributeVector.span());
 }
 
 static void switchToUTF16(xmlParserCtxtPtr ctxt)
@@ -598,7 +598,7 @@ bool XMLDocumentParser::supportsXMLVersion(const String& version)
     return version == "1.0"_s;
 }
 
-XMLDocumentParser::XMLDocumentParser(Document& document, FrameView* frameView, OptionSet<ParserContentPolicy> policy)
+XMLDocumentParser::XMLDocumentParser(Document& document, LocalFrameView* frameView, OptionSet<ParserContentPolicy> policy)
     : ScriptableDocumentParser(document, policy)
     , m_view(frameView)
     , m_pendingCallbacks(makeUnique<PendingCallbacks>())

@@ -39,6 +39,7 @@
 G_BEGIN_DECLS
 
 #define WEBKIT_TYPE_FRAME            (webkit_frame_get_type())
+#if !ENABLE(2022_GLIB_API)
 #define WEBKIT_FRAME(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), WEBKIT_TYPE_FRAME, WebKitFrame))
 #define WEBKIT_IS_FRAME(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), WEBKIT_TYPE_FRAME))
 #define WEBKIT_FRAME_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass),  WEBKIT_TYPE_FRAME, WebKitFrameClass))
@@ -49,19 +50,12 @@ typedef struct _WebKitFrame        WebKitFrame;
 typedef struct _WebKitFrameClass   WebKitFrameClass;
 typedef struct _WebKitFramePrivate WebKitFramePrivate;
 
-struct _WebKitFrame {
-    GObject parent;
-
-    /*< private >*/
-    WebKitFramePrivate *priv;
-};
-
 struct _WebKitFrameClass {
     GObjectClass parent_class;
 };
+#endif
 
-WEBKIT_API GType
-webkit_frame_get_type                                    (void);
+WEBKIT_DECLARE_FINAL_TYPE (WebKitFrame, webkit_frame, WEBKIT, FRAME, GObject)
 
 WEBKIT_API guint64
 webkit_frame_get_id                                      (WebKitFrame       *frame);

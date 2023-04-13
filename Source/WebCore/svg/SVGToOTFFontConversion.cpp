@@ -27,7 +27,7 @@
 #include "SVGToOTFFontConversion.h"
 
 #include "CSSStyleDeclaration.h"
-#include "ElementChildIterator.h"
+#include "ElementChildIteratorInlines.h"
 #include "Glyph.h"
 #include "HTMLParserIdioms.h"
 #include "SVGElementTypeHelpers.h"

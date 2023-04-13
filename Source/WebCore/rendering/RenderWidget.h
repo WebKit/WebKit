@@ -28,6 +28,8 @@
 
 namespace WebCore {
 
+class RemoteFrame;
+
 class WidgetHierarchyUpdatesSuspensionScope {
 public:
     WidgetHierarchyUpdatesSuspensionScope()
@@ -43,10 +45,10 @@ public:
     }
 
     static bool isSuspended() { return s_widgetHierarchyUpdateSuspendCount; }
-    static void scheduleWidgetToMove(Widget&, FrameView*);
+    static void scheduleWidgetToMove(Widget&, LocalFrameView*);
 
 private:
-    using WidgetToParentMap = HashMap<RefPtr<Widget>, FrameView*>;
+    using WidgetToParentMap = HashMap<RefPtr<Widget>, LocalFrameView*>;
     static WidgetToParentMap& widgetNewParentMap();
 
     WEBCORE_EXPORT void moveWidgets();
@@ -54,7 +56,7 @@ private:
     WEBCORE_EXPORT static bool s_haveScheduledWidgetToMove;
 };
 
-inline void WidgetHierarchyUpdatesSuspensionScope::scheduleWidgetToMove(Widget& widget, FrameView* frame)
+inline void WidgetHierarchyUpdatesSuspensionScope::scheduleWidgetToMove(Widget& widget, LocalFrameView* frame)
 {
     s_haveScheduledWidgetToMove = true;
     widgetNewParentMap().set(&widget, frame);
@@ -77,6 +79,8 @@ public:
     WEBCORE_EXPORT IntRect windowClipRect() const;
 
     bool requiresAcceleratedCompositing() const;
+
+    RemoteFrame* remoteFrame() const;
 
     void ref() { ++m_refCount; }
     void deref();

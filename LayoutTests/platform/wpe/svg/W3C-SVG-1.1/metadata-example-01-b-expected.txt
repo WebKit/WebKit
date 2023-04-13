@@ -81,7 +81,7 @@ layer at (0,0) size 800x600
               chunk 1 text run 1 at (177.00,213.00) startOffset 0 endOffset 7 width 40.00: "online:"
           RenderSVGText {text} at (601,311) size 100x13 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 100x12
-              chunk 1 text run 1 at (601.00,321.00) startOffset 0 endOffset 16 width 100.00: "Sibyll Trelawney"
+              chunk 1 text run 1 at (601.00,321.00) startOffset 0 endOffset 16 width 99.63: "Sibyll Trelawney"
         RenderSVGContainer {g} at (331,103) size 30x28
           RenderSVGText {text} at (256,148) size 190x13 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 190x12

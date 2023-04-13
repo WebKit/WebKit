@@ -75,6 +75,8 @@ namespace JSC { namespace B3 {
     case SExt8: \
     case SExt16: \
     case Trunc: \
+    case SExt8To64: \
+    case SExt16To64: \
     case SExt32: \
     case ZExt32: \
     case FloatToDouble: \
@@ -228,6 +230,8 @@ namespace JSC { namespace B3 {
     case VectorExtaddPairwise: \
     case VectorMulSat: \
     case VectorSwizzle: \
+    case VectorMulByElement: \
+    case VectorShiftByVector: \
         return MACRO(SIMDValue); \
     default: \
         RELEASE_ASSERT_NOT_REACHED(); \

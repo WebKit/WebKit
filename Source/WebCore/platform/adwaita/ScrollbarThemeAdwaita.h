@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if USE(THEME_ADWAITA)
+
 #include "ScrollbarThemeComposite.h"
 
 namespace WebCore {
@@ -56,3 +58,5 @@ protected:
 };
 
 } // namespace WebCore
+
+#endif // USE(THEME_ADWAITA)

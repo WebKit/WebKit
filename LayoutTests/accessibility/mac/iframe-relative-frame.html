@@ -1,0 +1,40 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+<script>
+window.jsTestIsAsync = true;
+var output = "This test ensures we compute the relative frame of iframes and their descendants correctly.\n\n";
+
+function runTest() {
+    if (window.accessibilityController) {
+        traverseBodyContent();
+        debug(output);
+        finishJSTest();
+    }
+}
+
+function traverseBodyContent() {
+    const body = accessibilityController.accessibleElementById("body");
+
+    let searchResult = null;
+    while (true) {
+        searchResult = body.uiElementForSearchPredicate(searchResult, true, "AXAnyTypeSearchKey", "", false);
+        if (!searchResult)
+            break;
+
+        const id = searchResult.domIdentifier;
+        output += `\n{ ${searchResult.role}${id ? ` #${id}` : ''} } has AXRelativeFrame: ${searchResult.stringDescriptionOfAttributeValue("AXRelativeFrame")}\n`;
+    }
+}
+</script>
+</head>
+<body onload="runTest()" role="group" id="body">
+
+<button id="outer-button" style="margin-top: 3000px; margin-bottom: 300px">Outer button</button>
+<iframe id="iframe" srcdoc="<button style='margin-top: 2000px; margin-bottom: 300px;' id='inner-button'>Inner button</button>">
+
+</body>
+</html>
+

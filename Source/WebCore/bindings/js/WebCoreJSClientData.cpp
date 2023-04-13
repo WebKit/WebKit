@@ -33,10 +33,10 @@
 #include "JSAudioWorkletGlobalScope.h"
 #include "JSDOMBinding.h"
 #include "JSDOMBuiltinConstructorBase.h"
-#include "JSDOMWindow.h"
 #include "JSDOMWindowProperties.h"
 #include "JSDedicatedWorkerGlobalScope.h"
 #include "JSIDBSerializationGlobalObject.h"
+#include "JSLocalDOMWindow.h"
 #include "JSObservableArray.h"
 #include "JSPaintWorkletGlobalScope.h"
 #include "JSRemoteDOMWindow.h"
@@ -62,12 +62,14 @@
 namespace WebCore {
 using namespace JSC;
 
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(JSHeapData);
+
 JSHeapData::JSHeapData(Heap& heap)
     : m_runtimeArrayHeapCellType(JSC::IsoHeapCellType::Args<RuntimeArray>())
     , m_observableArrayHeapCellType(JSC::IsoHeapCellType::Args<JSObservableArray>())
     , m_runtimeObjectHeapCellType(JSC::IsoHeapCellType::Args<JSC::Bindings::RuntimeObject>())
     , m_windowProxyHeapCellType(JSC::IsoHeapCellType::Args<JSWindowProxy>())
-    , m_heapCellTypeForJSDOMWindow(JSC::IsoHeapCellType::Args<JSDOMWindow>())
+    , m_heapCellTypeForJSLocalDOMWindow(JSC::IsoHeapCellType::Args<JSLocalDOMWindow>())
     , m_heapCellTypeForJSDedicatedWorkerGlobalScope(JSC::IsoHeapCellType::Args<JSDedicatedWorkerGlobalScope>())
     , m_heapCellTypeForJSRemoteDOMWindow(JSC::IsoHeapCellType::Args<JSRemoteDOMWindow>())
     , m_heapCellTypeForJSWorkerGlobalScope(JSC::IsoHeapCellType::Args<JSWorkerGlobalScope>())
@@ -113,6 +115,8 @@ JSHeapData* JSHeapData::ensureHeapData(Heap& heap)
 
 #define CLIENT_ISO_SUBSPACE_INIT(subspace) subspace(m_heapData->subspace)
 
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(JSVMClientData);
+
 JSVMClientData::JSVMClientData(VM& vm)
     : m_builtinFunctions(vm)
     , m_builtinNames(vm)
@@ -135,6 +139,10 @@ JSVMClientData::JSVMClientData(VM& vm)
 
 JSVMClientData::~JSVMClientData()
 {
+    m_clients.forEach([](auto& client) {
+        client.willDestroyVM();
+    });
+
     ASSERT(m_worldSet.contains(m_normalWorld.get()));
     ASSERT(m_worldSet.size() == 1);
     ASSERT(m_normalWorld->hasOneRef());

@@ -59,8 +59,8 @@ void BlockDirectory::setSubspace(Subspace* subspace)
 
 void BlockDirectory::updatePercentageOfPagedOutPages(SimpleStats& stats)
 {
-    // FIXME: We should figure out a solution for Windows.
-#if OS(UNIX)
+    // FIXME: We should figure out a solution for Windows and PlayStation.
+#if OS(UNIX) && !PLATFORM(PLAYSTATION)
     size_t pageSize = WTF::pageSize();
     ASSERT(!(MarkedBlock::blockSize % pageSize));
     auto numberOfPagesInMarkedBlock = MarkedBlock::blockSize / pageSize;

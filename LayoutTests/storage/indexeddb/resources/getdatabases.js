@@ -35,8 +35,8 @@ function continueTest() {
         indexedDB.databases().then((result) => {
             databases = result;
             shouldBeEqualToNumber("databases.length", 2);
-            shouldBeEqualToNumber("databases[0].version", 2);
-            shouldBeEqualToString("databases[0].name", "getdatabase-second");
+            shouldBeEqualToNumber("databases[1].version", 2);
+            shouldBeEqualToString("databases[1].name", "getdatabase-second");
             finishJSTest();
         });
     }

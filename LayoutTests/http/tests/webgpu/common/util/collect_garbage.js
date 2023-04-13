@@ -10,7 +10,7 @@
  */
 export async function attemptGarbageCollection() {
 
-  const w = self;
+  const w = globalThis;
   if (w.GCController) {
     w.GCController.collect();
     return;
@@ -27,9 +27,9 @@ export async function attemptGarbageCollection() {
     garbageCollect();
     return;
   } catch (e) {
+
     // ignore any failure
   }
-
   if (w.gc) {
     w.gc();
     return;
@@ -43,7 +43,9 @@ export async function attemptGarbageCollection() {
   let i;
   function gcRec(n) {
     if (n < 1) return;
+
     let temp = { i: 'ab' + i + i / 100000 };
+
     temp = temp + 'foo';
     temp; // dummy use of unused variable
     gcRec(n - 1);

@@ -19,17 +19,53 @@ import { loadTreeForQuery } from './tree.js';
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // Base class for DefaultTestFileLoader and FakeTestFileLoader.
-export class TestFileLoader {
+export class TestFileLoader extends EventTarget {
 
 
 
   importSpecFile(suite, path) {
-    return this.import(`${suite}/${path.join('/')}.spec.js`);
+    const url = `${suite}/${path.join('/')}.spec.js`;
+    this.dispatchEvent(
+    new MessageEvent('import', { data: { url } }));
+
+    return this.import(url);
   }
 
   async loadTree(query, subqueriesToExpand = []) {
-    return loadTreeForQuery(
+    const tree = await loadTreeForQuery(
     this,
     query,
     subqueriesToExpand.map((s) => {
@@ -38,13 +74,15 @@ export class TestFileLoader {
       return q;
     }));
 
+    this.dispatchEvent(new MessageEvent('finish'));
+    return tree;
   }
 
   async loadCases(query) {
     const tree = await this.loadTree(query);
     return tree.iterateLeaves();
-  }}
-
+  }
+}
 
 export class DefaultTestFileLoader extends TestFileLoader {
   async listing(suite) {
@@ -53,5 +91,6 @@ export class DefaultTestFileLoader extends TestFileLoader {
 
   import(path) {
     return import(`../../${path}`);
-  }}
+  }
+}
 //# sourceMappingURL=file_loader.js.map

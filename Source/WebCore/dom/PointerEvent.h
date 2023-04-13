@@ -55,7 +55,7 @@ public:
         bool isPrimary { false };
     };
 
-    enum class IsPrimary : uint8_t { No, Yes };
+    enum class IsPrimary : bool { No, Yes };
 
     static Ref<PointerEvent> create(const AtomString& type, Init&& initializer)
     {

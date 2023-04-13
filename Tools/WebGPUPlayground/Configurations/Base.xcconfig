@@ -92,7 +92,7 @@ GCC_WARN_UNINITIALIZED_AUTOS = YES;
 GCC_WARN_UNUSED_FUNCTION = YES;
 GCC_WARN_UNUSED_VARIABLE = YES;
 PREBINDING = NO;
-WARNING_CFLAGS = $(WK_COMMON_WARNING_CFLAGS) -Wcast-qual -Wchar-subscripts -Wextra-tokens -Winit-self -Wmissing-noreturn -Wpacked -Wpointer-arith -Wredundant-decls -Wwrite-strings -Wexit-time-destructors -Wglobal-constructors -Wtautological-compare -Wimplicit-fallthrough -Wvla -Wliteral-conversion -Wthread-safety -Wno-typedef-redefinition -Wno-strict-prototypes;
+WARNING_CFLAGS = $(inherited) -Wcast-qual -Wchar-subscripts -Wextra-tokens -Winit-self -Wmissing-noreturn -Wpacked -Wpointer-arith -Wredundant-decls -Wwrite-strings -Wexit-time-destructors -Wglobal-constructors -Wtautological-compare -Wimplicit-fallthrough -Wvla -Wliteral-conversion -Wthread-safety -Wno-typedef-redefinition -Wno-strict-prototypes;
 
 SUPPORTED_PLATFORMS = iphoneos iphonesimulator macosx appletvos appletvsimulator watchos watchsimulator;
 SUPPORTS_MACCATALYST = YES;
@@ -105,8 +105,8 @@ DEBUG_DEFINES[config=Debug] = ;
 
 GCC_PREPROCESSOR_DEFINITIONS = $(DEBUG_DEFINES) METALCPP_SYMBOL_VISIBILITY_HIDDEN;
 
-GCC_OPTIMIZATION_LEVEL = 3;
-GCC_OPTIMIZATION_LEVEL[config=Debug] = 0;
+WK_DEFAULT_GCC_OPTIMIZATION_LEVEL = 3;
+WK_DEFAULT_GCC_OPTIMIZATION_LEVEL[config=Debug] = 0;
 
 STRIP_INSTALLED_PRODUCT = YES;
 STRIP_INSTALLED_PRODUCT[config=Debug] = NO;
@@ -141,12 +141,6 @@ WK_USER_LTO_MODE_thin = YES_THIN;
 WK_USER_LTO_MODE_none = NO;
 WK_USER_LTO_MODE_ = $(WK_DEFAULT_LTO_MODE);
 WK_DEFAULT_LTO_MODE = $(WK_USER_LTO_MODE_thin);
-
-WK_WHICH_BUILD_SYSTEM = not_
-WK_WHICH_BUILD_SYSTEM = $(inherited)legacy
-WK_USE_NEW_BUILD_SYSTEM = $(WK_USE_NEW_BUILD_SYSTEM_$(WK_WHICH_BUILD_SYSTEM))
-WK_USE_NEW_BUILD_SYSTEM_legacy = NO
-WK_USE_NEW_BUILD_SYSTEM_not_legacy = YES
 
 NORMAL_WEBGPU_FRAMEWORKS_DIR = $(SYSTEM_LIBRARY_DIR)/PrivateFrameworks;
 

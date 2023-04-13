@@ -41,9 +41,15 @@
         var axSpinbutton = accessibilityController.accessibleElementById("spinbutton");
 
         let lastKnownValue = axSpinbutton.stringValue;
-        testOutput += `#spinbutton initial value: ${lastKnownValue}\n\n`;
-        axSpinbutton.increment();
+        testOutput += `#spinbutton initial value: ${lastKnownValue}\n`;
+        if (accessibilityController.platformName === "mac") {
+            // The notion of "supported attributes" is not relevant for other platforms.
+            testOutput += expect("axSpinbutton.isIncrementActionSupported()", "true");
+            testOutput += expect("axSpinbutton.isDecrementActionSupported()", "true");
+        }
+        testOutput += "\n";
 
+        axSpinbutton.increment();
         setTimeout(async () => {
             await waitFor(() => axSpinbutton.stringValue !== lastKnownValue);
             lastKnownValue = axSpinbutton.stringValue;

@@ -1,0 +1,17 @@
+This test ensures that the 'Play Animation' and 'Pause Animation' context menu items appear and behave correctly when activated.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS internals.isImageAnimating(gif) became true
+PASS internals.isImageAnimating(png) became true
+Pausing #gif via the context menu item.
+PASS internals.isImageAnimating(gif) became false
+PASS internals.isImageAnimating(png) became true
+Playing #gif via the context menu item.
+PASS internals.isImageAnimating(gif) became true
+PASS internals.isImageAnimating(png) became true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

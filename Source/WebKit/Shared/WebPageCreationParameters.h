@@ -26,6 +26,7 @@
 #pragma once
 
 #include "DrawingAreaInfo.h"
+#include "FrameTreeCreationParameters.h"
 #include "LayerTreeContext.h"
 #include "SandboxExtension.h"
 #include "SessionState.h"
@@ -42,7 +43,9 @@
 #include <WebCore/FloatSize.h>
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/HighlightVisibility.h>
+#include <WebCore/IntDegrees.h>
 #include <WebCore/IntSize.h>
+#include <WebCore/LayerHostingContextIdentifier.h>
 #include <WebCore/LayoutMilestone.h>
 #include <WebCore/MediaProducer.h>
 #include <WebCore/PageIdentifier.h>
@@ -56,6 +59,10 @@
 
 #if ENABLE(APPLICATION_MANIFEST)
 #include <WebCore/ApplicationManifest.h>
+#endif
+
+#if ENABLE(NETWORK_CONNECTION_INTEGRITY)
+#include <WebCore/LookalikeCharactersSanitizationData.h>
 #endif
 
 #if ENABLE(WK_WEB_EXTENSIONS)
@@ -75,7 +82,7 @@ struct WebPageCreationParameters {
 
     WebCore::IntSize viewSize;
 
-    OptionSet<WebCore::ActivityState::Flag> activityState;
+    OptionSet<WebCore::ActivityState> activityState;
     
     WebPreferencesStore store;
     DrawingAreaType drawingAreaType;
@@ -158,6 +165,8 @@ struct WebPageCreationParameters {
     std::optional<WebCore::DestinationColorSpace> colorSpace;
     bool useSystemAppearance { false };
     bool useFormSemanticContext { false };
+    int headerBannerHeight { 0 };
+    int footerBannerHeight { 0 };
 #endif
 #if ENABLE(META_VIEWPORT)
     bool ignoresViewportScaleLimits;
@@ -172,7 +181,7 @@ struct WebPageCreationParameters {
     WebCore::FloatSize availableScreenSize;
     WebCore::FloatSize overrideScreenSize;
     float textAutosizingWidth;
-    int32_t deviceOrientation { 0 };
+    WebCore::IntDegrees deviceOrientation { 0 };
     bool keyboardIsAttached { false };
     bool canShowWhileLocked { false };
     bool isCapturingScreen { false };
@@ -280,10 +289,19 @@ struct WebPageCreationParameters {
 
     WebCore::ContentSecurityPolicyModeForExtension contentSecurityPolicyModeForExtension { WebCore::ContentSecurityPolicyModeForExtension::None };
 
-    std::optional<WebCore::FrameIdentifier> mainFrameIdentifier;
+    struct SubframeProcessFrameTreeInitializationParameters {
+        WebCore::FrameIdentifier localFrameIdentifier;
+        FrameTreeCreationParameters treeCreationParameters;
+        WebCore::LayerHostingContextIdentifier layerHostingContextIdentifier;
+
+        void encode(IPC::Encoder&) const;
+        static std::optional<SubframeProcessFrameTreeInitializationParameters> decode(IPC::Decoder&);
+    };
+    std::optional<SubframeProcessFrameTreeInitializationParameters> subframeProcessFrameTreeInitializationParameters;
 
 #if ENABLE(NETWORK_CONNECTION_INTEGRITY)
-    Vector<String> lookalikeCharacterStrings;
+    Vector<WebCore::LookalikeCharactersSanitizationData> lookalikeCharacterStrings;
+    Vector<WebCore::LookalikeCharactersSanitizationData> allowedLookalikeCharacterStrings;
 #endif
 
 #if HAVE(MACH_BOOTSTRAP_EXTENSION)

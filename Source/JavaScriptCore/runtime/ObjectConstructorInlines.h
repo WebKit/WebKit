@@ -63,12 +63,7 @@ ALWAYS_INLINE bool objectAssignFast(VM& vm, JSObject* target, JSObject* source, 
     if (!canUseFastPath)
         return false;
 
-    for (size_t i = 0; i < properties.size(); ++i) {
-        // FIXME: We could put properties in a batching manner to accelerate Object.assign more.
-        // https://bugs.webkit.org/show_bug.cgi?id=185358
-        PutPropertySlot putPropertySlot(target, true);
-        target->putOwnDataProperty(vm, properties[i].get(), values.at(i), putPropertySlot);
-    }
+    target->putOwnDataPropertyBatching(vm, properties.data(), values.data(), properties.size());
     return true;
 }
 

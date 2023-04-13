@@ -33,8 +33,17 @@
 namespace WebKit {
 using namespace WebCore;
 
-bool RemoteWebInspectorUI::canSave(InspectorFrontendClient::SaveMode)
+bool RemoteWebInspectorUI::canSave(InspectorFrontendClient::SaveMode saveMode)
 {
+    switch (saveMode) {
+    case InspectorFrontendClient::SaveMode::SingleFile:
+        return true;
+
+    case InspectorFrontendClient::SaveMode::FileVariants:
+        return false;
+    }
+
+    ASSERT_NOT_REACHED();
     return false;
 }
 

@@ -82,6 +82,7 @@ private:
     void unmap(Vector<uint8_t>&&);
 
     void destroy();
+    void destruct();
 
     void setLabel(String&&);
 

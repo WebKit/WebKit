@@ -52,20 +52,18 @@ void RemoteBuffer::stopListeningForIPC()
 
 void RemoteBuffer::mapAsync(PAL::WebGPU::MapModeFlags mapModeFlags, PAL::WebGPU::Size64 offset, std::optional<PAL::WebGPU::Size64> size, CompletionHandler<void(std::optional<Vector<uint8_t>>&&)>&& callback)
 {
-    if (m_isMapped) {
-        callback(std::nullopt);
-        return;
-    }
     m_isMapped = true;
     m_mapModeFlags = mapModeFlags;
 
-    m_backing->mapAsync(mapModeFlags, offset, size, [mapModeFlags, offset, size, strongThis = Ref<RemoteBuffer>(*this), callback = WTFMove(callback)] () mutable {
-        auto mappedRange = strongThis->m_backing->getMappedRange(offset, size);
-        strongThis->m_mappedRange = mappedRange;
-        if (mapModeFlags.contains(PAL::WebGPU::MapMode::Read))
-            callback(Vector<uint8_t>(static_cast<const uint8_t*>(mappedRange.source), mappedRange.byteLength));
-        else
-            callback({ { } });
+    m_backing->mapAsync(mapModeFlags, offset, size, [offset, size, protectedThis = Ref<RemoteBuffer>(*this), callback = WTFMove(callback)] (bool success) mutable {
+        if (!success) {
+            callback(std::nullopt);
+            return;
+        }
+
+        auto mappedRange = protectedThis->m_backing->getMappedRange(offset, size);
+        protectedThis->m_mappedRange = mappedRange;
+        callback(Vector<uint8_t>(static_cast<const uint8_t*>(mappedRange.source), mappedRange.byteLength));
     });
 }
 
@@ -81,7 +79,7 @@ void RemoteBuffer::getMappedRange(PAL::WebGPU::Size64 offset, std::optional<PAL:
 
 void RemoteBuffer::unmap(Vector<uint8_t>&& data)
 {
-    if (!m_mappedRange)
+    if (!m_mappedRange || m_mappedRange->byteLength < data.size())
         return;
     ASSERT(m_isMapped);
 
@@ -97,6 +95,11 @@ void RemoteBuffer::unmap(Vector<uint8_t>&& data)
 void RemoteBuffer::destroy()
 {
     m_backing->destroy();
+}
+
+void RemoteBuffer::destruct()
+{
+    m_objectHeap.removeObject(m_identifier);
 }
 
 void RemoteBuffer::setLabel(String&& label)

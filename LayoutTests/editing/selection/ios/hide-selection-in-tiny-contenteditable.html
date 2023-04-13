@@ -80,6 +80,8 @@ async function checkCaretRect(description)
     await UIHelper.typeCharacter("g");
     await checkCaretRect("After making editor opaque again");
 
+    document.activeElement.blur();
+    await UIHelper.waitForKeyboardToHide();
     finishJSTest();
 })();
 </script>

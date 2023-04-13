@@ -35,14 +35,12 @@ inline NSUInteger GetMipSize(NSUInteger baseSize, const MipmapNativeLevel level)
 // Asynchronously synchronize the content of a resource between GPU memory and its CPU cache.
 // NOTE: This operation doesn't finish immediately upon function's return.
 template <class T>
-void InvokeCPUMemSync(ContextMtl *context,
-                      mtl::BlitCommandEncoder *blitEncoder,
-                      const std::shared_ptr<T> &resource)
+void InvokeCPUMemSync(ContextMtl *context, mtl::BlitCommandEncoder *blitEncoder, T *resource)
 {
 #if TARGET_OS_OSX || TARGET_OS_MACCATALYST
     if (blitEncoder)
     {
-        blitEncoder->synchronizeResource(resource.get());
+        blitEncoder->synchronizeResource(resource);
 
         resource->resetCPUReadMemNeedSync();
         resource->setCPUReadMemSyncPending(true);
@@ -51,7 +49,7 @@ void InvokeCPUMemSync(ContextMtl *context,
 }
 
 template <class T>
-void EnsureCPUMemWillBeSynced(ContextMtl *context, const std::shared_ptr<T> &resource)
+void EnsureCPUMemWillBeSynced(ContextMtl *context, T *resource)
 {
 #if TARGET_OS_OSX || TARGET_OS_MACCATALYST
     // Make sure GPU & CPU contents are synchronized.
@@ -404,6 +402,12 @@ Texture::Texture(ContextMtl *context,
         {
             ASSERT(allowFormatView);
         }
+#if TARGET_OS_OSX || TARGET_OS_MACCATALYST
+        if (desc.pixelFormat == MTLPixelFormatDepth24Unorm_Stencil8)
+        {
+            ASSERT(allowFormatView);
+        }
+#endif
 
         if (allowFormatView)
         {
@@ -484,7 +488,7 @@ Texture::Texture(Texture *original, MTLTextureType type, NSRange mipmapLevelRang
     }
 }
 
-Texture::Texture(Texture *original, const TextureSwizzleChannels &swizzle)
+Texture::Texture(Texture *original, MTLPixelFormat format, const TextureSwizzleChannels &swizzle)
     : Resource(original),
       mColorWritableMask(original->mColorWritableMask)  // Share color write mask property
 {
@@ -492,7 +496,7 @@ Texture::Texture(Texture *original, const TextureSwizzleChannels &swizzle)
     ANGLE_MTL_OBJC_SCOPE
     {
         auto view = [original->get()
-            newTextureViewWithPixelFormat:original->pixelFormat()
+            newTextureViewWithPixelFormat:format
                               textureType:original->textureType()
                                    levels:NSMakeRange(0, original->mipmapLevels())
                                    slices:NSMakeRange(0, original->cubeFacesOrArrayLength())
@@ -531,12 +535,12 @@ Texture::Texture(Texture *original,
 
 void Texture::syncContent(ContextMtl *context, mtl::BlitCommandEncoder *blitEncoder)
 {
-    InvokeCPUMemSync(context, blitEncoder, shared_from_this());
+    InvokeCPUMemSync(context, blitEncoder, this);
 }
 
 void Texture::syncContentIfNeeded(ContextMtl *context)
 {
-    EnsureCPUMemWillBeSynced(context, shared_from_this());
+    EnsureCPUMemWillBeSynced(context, this);
 }
 
 bool Texture::isCPUAccessible() const
@@ -711,10 +715,10 @@ TextureRef Texture::createViewWithCompatibleFormat(MTLPixelFormat format)
     return TextureRef(new Texture(this, format));
 }
 
-TextureRef Texture::createSwizzleView(const TextureSwizzleChannels &swizzle)
+TextureRef Texture::createSwizzleView(MTLPixelFormat format, const TextureSwizzleChannels &swizzle)
 {
 #if ANGLE_MTL_SWIZZLE_AVAILABLE
-    return TextureRef(new Texture(this, swizzle));
+    return TextureRef(new Texture(this, format, swizzle));
 #else
     WARN() << "Texture swizzle is not supported on pre iOS 13.0 and macOS 15.0";
     UNIMPLEMENTED();
@@ -1030,7 +1034,7 @@ angle::Result Buffer::resetWithResOpt(ContextMtl *context,
 
 void Buffer::syncContent(ContextMtl *context, mtl::BlitCommandEncoder *blitEncoder)
 {
-    InvokeCPUMemSync(context, blitEncoder, shared_from_this());
+    InvokeCPUMemSync(context, blitEncoder, this);
 }
 
 const uint8_t *Buffer::mapReadOnly(ContextMtl *context)
@@ -1051,7 +1055,7 @@ uint8_t *Buffer::mapWithOpt(ContextMtl *context, bool readonly, bool noSync)
     {
         CommandQueue &cmdQueue = context->cmdQueue();
 
-        EnsureCPUMemWillBeSynced(context, shared_from_this());
+        EnsureCPUMemWillBeSynced(context, this);
 
         if (this->isBeingUsedByGPU(context))
         {
@@ -1093,9 +1097,8 @@ void Buffer::flush(ContextMtl *context, size_t offsetWritten, size_t sizeWritten
     {
         if (get().storageMode == MTLStorageModeManaged)
         {
-            size_t bufferSize  = size();
-            size_t startOffset = std::min(offsetWritten, bufferSize);
-            size_t endOffset   = std::min(offsetWritten + sizeWritten, bufferSize);
+            size_t startOffset = std::min(offsetWritten, size());
+            size_t endOffset   = std::min(offsetWritten + sizeWritten, size());
             size_t clampedSize = endOffset - startOffset;
             if (clampedSize > 0)
             {

@@ -36,16 +36,3 @@ enum class WebsiteMediaSourcePolicy : uint8_t {
 };
 
 } // namespace WebKit
-
-namespace WTF {
-
-template<> struct EnumTraits<WebKit::WebsiteMediaSourcePolicy> {
-    using values = EnumValues<
-        WebKit::WebsiteMediaSourcePolicy,
-        WebKit::WebsiteMediaSourcePolicy::Default,
-        WebKit::WebsiteMediaSourcePolicy::Disable,
-        WebKit::WebsiteMediaSourcePolicy::Enable
-    >;
-};
-
-} // namespace WTF

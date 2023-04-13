@@ -26,8 +26,8 @@
 
 #pragma once
 
+#include "Connection.h"
 #include "DrawingAreaInfo.h"
-#include "GenericCallback.h"
 #include "MessageReceiver.h"
 #include <WebCore/FloatRect.h>
 #include <WebCore/IntRect.h>
@@ -87,7 +87,7 @@ public:
     bool setSize(const WebCore::IntSize&, const WebCore::IntSize& scrollOffset = { });
 
 #if USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)
-    // The timeout we use when waiting for a DidUpdateGeometry message.
+    // The timeout we use when waiting for a UpdateGeometry reply.
     static constexpr Seconds didUpdateBackingStoreStateTimeout() { return Seconds::fromMilliseconds(500); }
     virtual void targetRefreshRateDidChange(unsigned) { }
 #endif
@@ -108,7 +108,7 @@ public:
 
     virtual void waitForDidUpdateActivityState(ActivityStateChangeID, WebProcessProxy&) { }
     
-    virtual void dispatchAfterEnsuringDrawing(WTF::Function<void (CallbackBase::Error)>&&) { ASSERT_NOT_REACHED(); }
+    virtual void dispatchAfterEnsuringDrawing(CompletionHandler<void()>&&) = 0;
 
     // Hide the content until the currently pending update arrives.
     virtual void hideContentUntilPendingUpdate() { ASSERT_NOT_REACHED(); }
@@ -118,20 +118,20 @@ public:
 
     virtual bool hasVisibleContent() const { return true; }
 
-    virtual void willSendUpdateGeometry() { }
-
     virtual void prepareForAppSuspension() { }
 
 #if PLATFORM(COCOA)
     virtual WTF::MachSendRight createFence();
 #endif
 
-    virtual void dispatchPresentationCallbacksAfterFlushingLayers(const Vector<CallbackID>&) { }
+    virtual void dispatchPresentationCallbacksAfterFlushingLayers(IPC::Connection&, Vector<IPC::AsyncReplyID>&&) { }
 
     virtual bool shouldCoalesceVisualEditorStateUpdates() const { return false; }
     virtual bool shouldSendWheelEventsToEventDispatcher() const { return false; }
 
     WebPageProxy& page() const { return m_webPageProxy; }
+    virtual void viewWillStartLiveResize() { };
+    virtual void viewWillEndLiveResize() { };
 
 protected:
     DrawingAreaProxy(DrawingAreaType, WebPageProxy&);
@@ -155,14 +155,10 @@ private:
     virtual void enterAcceleratedCompositingMode(uint64_t /* backingStoreStateID */, const LayerTreeContext&) { }
     virtual void updateAcceleratedCompositingMode(uint64_t /* backingStoreStateID */, const LayerTreeContext&) { }
     virtual void didFirstLayerFlush(uint64_t /* backingStoreStateID */, const LayerTreeContext&) { }
-#if PLATFORM(COCOA)
-    virtual void didUpdateGeometry() { }
-
 #if PLATFORM(MAC)
     RunLoop::Timer m_viewExposedRectChangedTimer;
     std::optional<WebCore::FloatRect> m_lastSentViewExposedRect;
 #endif // PLATFORM(MAC)
-#endif
 
 #if USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)
     virtual void update(uint64_t /* backingStoreStateID */, const UpdateInfo&) { }

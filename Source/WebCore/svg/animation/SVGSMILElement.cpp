@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2008-2023 Apple Inc. All rights reserved.
- * Copyright (C) 2013-2014 Google Inc. All rights reserved.
+ * Copyright (C) 2013-2017 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,7 +35,8 @@
 #include "EventNames.h"
 #include "EventSender.h"
 #include "FloatConversion.h"
-#include "FrameView.h"
+#include "LocalFrameView.h"
+#include "Page.h"
 #include "SMILTimeContainer.h"
 #include "SVGDocumentExtensions.h"
 #include "SVGElementInlines.h"
@@ -474,15 +475,17 @@ bool SVGSMILElement::isSupportedAttribute(const QualifiedName& attrName)
     return supportedAttributes.get().contains<SVGAttributeHashTranslator>(attrName);
 }
 
-void SVGSMILElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void SVGSMILElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
+    SVGElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
+
     if (name == SVGNames::beginAttr) {
         if (!m_conditions.isEmpty()) {
             disconnectConditions();
             m_conditions.clear();
             parseBeginOrEnd(attributeWithoutSynchronization(SVGNames::endAttr), End);
         }
-        parseBeginOrEnd(value, Begin);
+        parseBeginOrEnd(newValue, Begin);
         if (isConnected())
             connectConditions();
     } else if (name == SVGNames::endAttr) {
@@ -491,15 +494,13 @@ void SVGSMILElement::parseAttribute(const QualifiedName& name, const AtomString&
             m_conditions.clear();
             parseBeginOrEnd(attributeWithoutSynchronization(SVGNames::beginAttr), Begin);
         }
-        parseBeginOrEnd(value, End);
+        parseBeginOrEnd(newValue, End);
         if (isConnected())
             connectConditions();
     } else if (name == SVGNames::onendAttr)
-        setAttributeEventListener(eventNames().endEventEvent, name, value);
+        setAttributeEventListener(eventNames().endEventEvent, name, newValue);
     else if (name == SVGNames::onbeginAttr)
-        setAttributeEventListener(eventNames().beginEventEvent, name, value);
-    else
-        SVGElement::parseAttribute(name, value);
+        setAttributeEventListener(eventNames().beginEventEvent, name, newValue);
 }
 
 void SVGSMILElement::svgAttributeChanged(const QualifiedName& attrName)
@@ -1029,7 +1030,8 @@ float SVGSMILElement::calculateAnimationPercentAndRepeat(SMILTime elapsed, unsig
         if (!fmod(repeatingDuration.value(), simpleDuration.value()))
             --repeat;
 
-        double percent = (m_intervalEnd.value() - m_intervalBegin.value()) / simpleDuration.value();
+        double lastActiveDuration = elapsed >= m_intervalEnd ? m_intervalEnd.value() - m_intervalBegin.value() : repeatingDuration.value();
+        double percent = lastActiveDuration / simpleDuration.value();
         percent = percent - floor(percent);
         if (percent < std::numeric_limits<float>::epsilon() || 1 - percent < std::numeric_limits<float>::epsilon())
             return 1.0f;

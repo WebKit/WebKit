@@ -1,0 +1,17 @@
+This test ensures that summary elements are only given the summary role when the proper conditions are met.
+
+PASS: accessibilityController.accessibleElementById('first-summary').subrole === 'AXSubrole: AXSummary'
+PASS: !accessibilityController.accessibleElementById('second-summary') === true
+PASS: !accessibilityController.accessibleElementById('orphan-summary') === true
+
+Moving #orphan-summary into #initially-empty-details.
+PASS: accessibilityController.accessibleElementById('orphan-summary').subrole === 'AXSubrole: AXSummary'
+
+Deleting #first-summary. #second-summary should become a valid summary AX object.
+PASS: accessibilityController.accessibleElementById('second-summary').subrole === 'AXSubrole: AXSummary'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Second summary
+Orphan summary

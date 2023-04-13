@@ -36,20 +36,20 @@
 #include "DebugOverlayRegions.h"
 #include "DebugPageOverlays.h"
 #include "EventRegion.h"
-#include "Frame.h"
-#include "FrameView.h"
 #include "GraphicsContext.h"
 #include "GraphicsLayer.h"
 #include "HTMLBodyElement.h"
 #include "HTMLCanvasElement.h"
 #include "HTMLIFrameElement.h"
-#include "HTMLMediaElement.h"
 #include "HTMLModelElement.h"
 #include "HTMLNames.h"
 #include "HTMLPlugInElement.h"
+#include "HTMLVideoElement.h"
 #include "InspectorInstrumentation.h"
 #include "KeyframeList.h"
 #include "LayerAncestorClippingStack.h"
+#include "LocalFrame.h"
+#include "LocalFrameView.h"
 #include "Logging.h"
 #include "Model.h"
 #include "NullGraphicsContext.h"
@@ -57,6 +57,7 @@
 #include "PerformanceLoggingClient.h"
 #include "PluginViewBase.h"
 #include "ProgressTracker.h"
+#include "RemoteFrame.h"
 #include "RenderAncestorIterator.h"
 #include "RenderEmbeddedObject.h"
 #include "RenderFragmentContainer.h"
@@ -80,12 +81,24 @@
 #include <wtf/SystemTracing.h>
 #include <wtf/text/TextStream.h>
 
+#if ENABLE(FULLSCREEN_API)
+#include "FullscreenManager.h"
+#endif
+
 #if PLATFORM(IOS_FAMILY)
 #include "RuntimeApplicationChecks.h"
 #endif
 
 #if PLATFORM(MAC)
 #include "LocalDefaultSystemAppearance.h"
+#endif
+
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
+#include "AcceleratedEffect.h"
+#include "AcceleratedEffectStack.h"
+#include "AcceleratedEffectValues.h"
+#include "KeyframeEffect.h"
+#include "KeyframeEffectStack.h"
 #endif
 
 namespace WebCore {
@@ -217,6 +230,11 @@ RenderLayerBacking::RenderLayerBacking(RenderLayer& layer)
             return false;
 
         if (!is<RenderBox>(renderer))
+            return false;
+
+        // Only use background layers on the fullscreen element's backdrop.
+        auto* fullscreenElement = renderer.document().fullscreenManager().fullscreenElement();
+        if (!fullscreenElement || !fullscreenElement->renderer() || fullscreenElement->renderer()->backdropRenderer() != &renderer)
             return false;
 
         auto rendererRect = downcast<RenderBox>(renderer).frameRect();
@@ -932,7 +950,7 @@ void RenderLayerBacking::updateAllowsBackingStoreDetaching(const LayoutRect& abs
 
     // We'll allow detaching if the layer is outside the layout viewport. Fixed layers inside
     // the layout viewport can be revealed by async scrolling, so we want to pin their backing store.
-    FrameView& frameView = renderer().view().frameView();
+    LocalFrameView& frameView = renderer().view().frameView();
     LayoutRect fixedLayoutRect;
     if (frameView.useFixedLayout())
         fixedLayoutRect = renderer().view().unscaledDocumentRect();
@@ -1100,6 +1118,15 @@ bool RenderLayerBacking::updateConfiguration(const RenderLayer* compositingAnces
         layerConfigChanged = true;
     }
 
+#if ENABLE(CSS_COMPOSITING)
+    bool shouldPaintUsingCompositeCopy = unscaledBitmap && is<RenderHTMLCanvas>(renderer());
+    if (shouldPaintUsingCompositeCopy != m_owningLayer.shouldPaintUsingCompositeCopy()) {
+        m_owningLayer.setShouldPaintUsingCompositeCopy(shouldPaintUsingCompositeCopy);
+        m_graphicsLayer->setShouldPaintUsingCompositeCopy(shouldPaintUsingCompositeCopy);
+        layerConfigChanged = true;
+    }
+#endif
+
     if (is<RenderEmbeddedObject>(renderer()) && downcast<RenderEmbeddedObject>(renderer()).allowsAcceleratedCompositing()) {
         auto* pluginViewBase = downcast<PluginViewBase>(downcast<RenderWidget>(renderer()).widget());
 #if PLATFORM(IOS_FAMILY)
@@ -1113,11 +1140,22 @@ bool RenderLayerBacking::updateConfiguration(const RenderLayer* compositingAnces
     }
 #if ENABLE(VIDEO)
     else if (is<RenderVideo>(renderer()) && downcast<RenderVideo>(renderer()).shouldDisplayVideo()) {
-        auto* mediaElement = downcast<HTMLMediaElement>(renderer().element());
-        m_graphicsLayer->setContentsToPlatformLayer(mediaElement->platformLayer(), GraphicsLayer::ContentsLayerPurpose::Media);
+        auto& videoElement = downcast<HTMLVideoElement>(*renderer().element());
+        if (m_graphicsLayer->layerMode() == GraphicsLayer::LayerMode::LayerHostingContextId
+#if ENABLE(GPU_PROCESS)
+            && videoElement.document().settings().blockMediaLayerRehostingInWebContentProcess()
+            && videoElement.document().page()
+            && videoElement.document().page()->chrome().client().isUsingUISideCompositing()
+#endif
+            )
+            m_graphicsLayer->setContentsToVideoElement(videoElement, GraphicsLayer::ContentsLayerPurpose::Media);
+        else
+            m_graphicsLayer->setContentsToPlatformLayer(videoElement.platformLayer(), GraphicsLayer::ContentsLayerPurpose::Media);
         updateContentsRects();
     }
 #endif
+    else if (auto* remoteFrame = is<RenderWidget>(renderer()) ? downcast<RenderWidget>(renderer()).remoteFrame() : nullptr; remoteFrame && remoteFrame->layerHostingContextIdentifier())
+        m_graphicsLayer->setContentsToPlatformLayerHost(*remoteFrame->layerHostingContextIdentifier());
     else if (shouldSetContentsDisplayDelegate()) {
         auto* canvas = downcast<HTMLCanvasElement>(renderer().element());
         if (auto* context = canvas->renderingContext())
@@ -1512,7 +1550,7 @@ void RenderLayerBacking::updateGeometry(const RenderLayer* compositedAncestor)
         FloatPoint backgroundPosition;
         FloatSize backgroundSize = primaryGraphicsLayerRect.size();
         if (backgroundLayerPaintsFixedRootBackground()) {
-            const FrameView& frameView = renderer().view().frameView();
+            const LocalFrameView& frameView = renderer().view().frameView();
             backgroundPosition = frameView.scrollPositionForFixedPosition();
             backgroundSize = frameView.layoutSize();
         } else {
@@ -2276,9 +2314,9 @@ static bool ancestorLayerIsDOMParent(RenderLayer& layer, const RenderLayer* comp
 {
     if (!compositingAncestor)
         return false;
-    if (!layer.renderer().element() || !layer.renderer().element()->parentElement())
+    if (!layer.renderer().element() || !layer.renderer().element()->parentElementInComposedTree())
         return false;
-    return compositingAncestor->renderer().element() == layer.renderer().element()->parentElement();
+    return compositingAncestor->renderer().element() == layer.renderer().element()->parentElementInComposedTree();
 }
 
 static bool ancestorLayerWillCombineTransform(const RenderLayer* compositingAncestor)
@@ -3002,7 +3040,7 @@ bool RenderLayerBacking::isDirectlyCompositedImage() const
         if (!is<BitmapImage>(image))
             return false;
 
-        if (downcast<BitmapImage>(*image).orientationForCurrentFrame() != ImageOrientation::None)
+        if (downcast<BitmapImage>(*image).orientationForCurrentFrame() != ImageOrientation::Orientation::None)
             return false;
 
 #if (PLATFORM(GTK) || PLATFORM(WPE))
@@ -3018,6 +3056,28 @@ bool RenderLayerBacking::isDirectlyCompositedImage() const
 
     return false;
 }
+
+bool RenderLayerBacking::isBitmapOnly() const
+{
+    if (m_owningLayer.hasVisibleBoxDecorationsOrBackground())
+        return false;
+
+    if (is<RenderHTMLCanvas>(renderer()))
+        return true;
+
+    if (is<RenderImage>(renderer())) {
+        auto& imageRenderer = downcast<RenderImage>(renderer());
+        if (auto* cachedImage = imageRenderer.cachedImage()) {
+            if (!cachedImage->hasImage())
+                return false;
+            return is<BitmapImage>(cachedImage->imageForRenderer(&imageRenderer));
+        }
+        return false;
+    }
+
+    return false;
+}
+
 
 bool RenderLayerBacking::isUnscaledBitmapOnly() const
 {
@@ -3044,7 +3104,7 @@ bool RenderLayerBacking::isUnscaledBitmapOnly() const
             if (!is<BitmapImage>(image))
                 return false;
 
-            if (downcast<BitmapImage>(*image).orientationForCurrentFrame() != ImageOrientation::None)
+            if (downcast<BitmapImage>(*image).orientationForCurrentFrame() != ImageOrientation::Orientation::None)
                 return false;
 
             return contents.size() == image->size();
@@ -3373,7 +3433,7 @@ void RenderLayerBacking::paintIntoLayer(const GraphicsLayer* graphicsLayer, Grap
     RenderObject::SetLayoutNeededForbiddenScope forbidSetNeedsLayout(renderer());
 
     auto paintOneLayer = [&](RenderLayer& layer, OptionSet<RenderLayer::PaintLayerFlag> paintFlags) {
-        FrameView::PaintingState paintingState;
+        LocalFrameView::PaintingState paintingState;
         if (!eventRegionContext) {
             InspectorInstrumentation::willPaint(layer.renderer());
 
@@ -3630,15 +3690,18 @@ void RenderLayerBacking::paintDebugOverlays(const GraphicsLayer* graphicsLayer, 
 
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
     if (DebugPageOverlays::shouldPaintOverlayIntoLayerForRegionType(renderer().page(), DebugPageOverlays::RegionType::InteractionRegion)) {
-        context.setStrokeColor(Color::green);
         context.setStrokeThickness(1);
 
         for (const auto& region : eventRegion.interactionRegions()) {
-            for (auto rect : region.regionInLayerCoordinates.rects()) {
-                Path path;
-                path.addRoundedRect(rect, { region.borderRadius, region.borderRadius });
-                context.strokePath(path);
-            }
+            if (region.type == InteractionRegion::Type::Occlusion)
+                context.setStrokeColor(Color::red);
+            else
+                context.setStrokeColor(Color::green);
+            
+            auto rect = region.rectInLayerCoordinates;
+            Path path;
+            path.addRoundedRect(rect, { region.borderRadius, region.borderRadius });
+            context.strokePath(path);
         }
     }
 #endif
@@ -3938,6 +4001,50 @@ bool RenderLayerBacking::startAnimation(double timeOffset, const Animation& anim
 
     return didAnimate;
 }
+
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
+bool RenderLayerBacking::updateAcceleratedEffectsAndBaseValues()
+{
+    if (!renderer().settings().acceleratedCompositedAnimationsEnabled())
+        return false;
+
+    auto target = Styleable::fromRenderer(renderer());
+    ASSERT(target);
+
+    bool hasInterpolatingEffect = false;
+    auto borderBoxRect = snappedIntRect(m_owningLayer.rendererBorderBoxRect());
+
+    AcceleratedEffects acceleratedEffects;
+    if (auto* effectStack = target->keyframeEffectStack()) {
+        for (const auto& effect : effectStack->sortedEffects()) {
+            if (!effect || !effect->canBeAccelerated())
+                continue;
+            if (!hasInterpolatingEffect && effect->isRunningAccelerated())
+                hasInterpolatingEffect = true;
+            acceleratedEffects.append(AcceleratedEffect::create(*effect, borderBoxRect));
+        }
+    }
+
+    // If all of the effects in the stack are either idle, paused or filling, then the
+    // effect stack will not produce an interpolated value and we don't need to run
+    // any of these effects.
+    if (!hasInterpolatingEffect)
+        acceleratedEffects.clear();
+
+    auto baseValues = [&]() -> AcceleratedEffectValues {
+        if (auto* style = target->lastStyleChangeEventStyle())
+            return { *style, borderBoxRect };
+        return { };
+    }();
+
+    m_graphicsLayer->setAcceleratedEffectsAndBaseValues(WTFMove(acceleratedEffects), WTFMove(baseValues));
+
+    m_owningLayer.setNeedsPostLayoutCompositingUpdate();
+    m_owningLayer.setNeedsCompositingGeometryUpdate();
+
+    return hasInterpolatingEffect;
+}
+#endif
 
 void RenderLayerBacking::animationPaused(double timeOffset, const String& animationName)
 {

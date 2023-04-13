@@ -66,6 +66,8 @@ static UIActionIdentifier const WKElementActionTypeRevealImageIdentifier = @"WKE
 static UIActionIdentifier const WKElementActionTypeCopySubjectIdentifier = @"WKElementActionTypeCopySubject";
 static UIActionIdentifier const WKElementActionPlayAllAnimationsIdentifier = @"WKElementActionPlayAllAnimations";
 static UIActionIdentifier const WKElementActionPauseAllAnimationsIdentifier = @"WKElementActionPauseAllAnimations";
+static UIActionIdentifier const WKElementActionPlayAnimationIdentifier = @"WKElementActionPlayAnimation";
+static UIActionIdentifier const WKElementActionPauseAnimationIdentifier = @"WKElementActionPauseAnimation";
 
 static NSString * const webkitShowLinkPreviewsPreferenceKey = @"WebKitShowLinkPreviews";
 static NSString * const webkitShowLinkPreviewsPreferenceChangedNotification = @"WebKitShowLinkPreviewsPreferenceChanged";
@@ -188,6 +190,22 @@ static void addToReadingList(NSURL *targetURL, NSString *title)
         };
 #endif
         break;
+    case _WKElementActionPlayAnimation:
+#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
+        title = WEB_UI_STRING("Play Animation", "Title for play animation action button");
+        handler = ^(WKActionSheetAssistant *assistant, _WKActivatedElementInfo *actionInfo) {
+            [assistant handleElementActionWithType:type element:actionInfo needsInteraction:YES];
+        };
+#endif
+        break;
+    case _WKElementActionPauseAnimation:
+#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
+        title = WEB_UI_STRING("Pause Animation", "Title for pause animation action button");
+        handler = ^(WKActionSheetAssistant *assistant, _WKActivatedElementInfo *actionInfo) {
+            [assistant handleElementActionWithType:type element:actionInfo needsInteraction:YES];
+        };
+#endif
+        break;
     default:
         [NSException raise:NSInvalidArgumentException format:@"There is no standard web element action of type %ld.", (long)type];
         return nil;
@@ -271,6 +289,10 @@ static void addToReadingList(NSURL *targetURL, NSString *title)
 #endif
     case _WKElementActionTypeCopyCroppedImage:
         return [UIImage _systemImageNamed:@"circle.dashed.rectangle"];
+    case _WKElementActionPlayAnimation:
+        return [UIImage systemImageNamed:@"play.circle"];
+    case _WKElementActionPauseAnimation:
+        return [UIImage systemImageNamed:@"pause.circle"];
     }
 }
 
@@ -307,6 +329,10 @@ UIActionIdentifier elementActionTypeToUIActionIdentifier(_WKElementActionType ac
         return WKElementActionTypeRevealImageIdentifier;
     case _WKElementActionTypeCopyCroppedImage:
         return WKElementActionTypeCopySubjectIdentifier;
+    case _WKElementActionPlayAnimation:
+        return WKElementActionPlayAnimationIdentifier;
+    case _WKElementActionPauseAnimation:
+        return WKElementActionPauseAnimationIdentifier;
     }
 }
 
@@ -342,6 +368,10 @@ static _WKElementActionType uiActionIdentifierToElementActionType(UIActionIdenti
         return _WKElementActionTypeRevealImage;
     if ([identifier isEqualToString:WKElementActionTypeCopySubjectIdentifier])
         return _WKElementActionTypeCopyCroppedImage;
+    if ([identifier isEqualToString:WKElementActionPlayAnimationIdentifier])
+        return _WKElementActionPlayAnimation;
+    if ([identifier isEqualToString:WKElementActionPauseAnimationIdentifier])
+        return _WKElementActionPauseAnimation;
     return _WKElementActionTypeCustom;
 }
 

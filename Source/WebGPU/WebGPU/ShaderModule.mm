@@ -30,17 +30,19 @@
 #import "Device.h"
 #import "PipelineLayout.h"
 
+#import <WebGPU/WebGPU.h>
+
 namespace WebGPU {
 
 struct ShaderModuleParameters {
     const WGPUShaderModuleWGSLDescriptor& wgsl;
-    const WGPUShaderModuleDescriptorHints* hints;
+    const WGPUShaderModuleCompilationHint* hints;
 };
 
 static std::optional<ShaderModuleParameters> findShaderModuleParameters(const WGPUShaderModuleDescriptor& descriptor)
 {
     const WGPUShaderModuleWGSLDescriptor* wgsl = nullptr;
-    const WGPUShaderModuleDescriptorHints* hints = nullptr;
+    const WGPUShaderModuleCompilationHint* hints = descriptor.hints;
 
     for (const WGPUChainedStruct* ptr = descriptor.nextInChain; ptr; ptr = ptr->next) {
         auto type = ptr->sType;
@@ -50,11 +52,6 @@ static std::optional<ShaderModuleParameters> findShaderModuleParameters(const WG
             if (wgsl)
                 return std::nullopt;
             wgsl = reinterpret_cast<const WGPUShaderModuleWGSLDescriptor*>(ptr);
-            break;
-        case WGPUSTypeExtended_ShaderModuleDescriptorHints:
-            if (hints)
-                return std::nullopt;
-            hints = reinterpret_cast<const WGPUShaderModuleDescriptorHints*>(ptr);
             break;
         default:
             return std::nullopt;
@@ -82,17 +79,17 @@ id<MTLLibrary> ShaderModule::createLibrary(id<MTLDevice> device, const String& m
     return library;
 }
 
-static RefPtr<ShaderModule> earlyCompileShaderModule(Device& device, std::variant<WGSL::SuccessfulCheck, WGSL::FailedCheck>&& checkResult, const WGPUShaderModuleDescriptorHints& suppliedHints, String&& label)
+static RefPtr<ShaderModule> earlyCompileShaderModule(Device& device, std::variant<WGSL::SuccessfulCheck, WGSL::FailedCheck>&& checkResult, const WGPUShaderModuleDescriptor& suppliedHints, String&& label)
 {
     HashMap<String, Ref<PipelineLayout>> hints;
     HashMap<String, WGSL::PipelineLayout> wgslHints;
-    for (uint32_t i = 0; i < suppliedHints.hintsCount; ++i) {
+    for (uint32_t i = 0; i < suppliedHints.hintCount; ++i) {
         const auto& hint = suppliedHints.hints[i];
         if (hint.nextInChain)
             return nullptr;
-        auto hintKey = fromAPI(hint.key);
-        hints.add(hintKey, WebGPU::fromAPI(hint.hint.layout));
-        auto convertedPipelineLayout = ShaderModule::convertPipelineLayout(WebGPU::fromAPI(hint.hint.layout));
+        auto hintKey = fromAPI(hint.entryPoint);
+        hints.add(hintKey, WebGPU::fromAPI(hint.layout));
+        auto convertedPipelineLayout = ShaderModule::convertPipelineLayout(WebGPU::fromAPI(hint.layout));
         wgslHints.add(hintKey, WTFMove(convertedPipelineLayout));
     }
 
@@ -112,11 +109,12 @@ Ref<ShaderModule> Device::createShaderModule(const WGPUShaderModuleDescriptor& d
     if (!shaderModuleParameters)
         return ShaderModule::createInvalid(*this);
 
-    auto checkResult = WGSL::staticCheck(fromAPI(shaderModuleParameters->wgsl.code), std::nullopt);
+    auto checkResult = WGSL::staticCheck(fromAPI(shaderModuleParameters->wgsl.code), std::nullopt, { maxBuffersPlusVertexBuffersForVertexStage() });
 
-    if (std::holds_alternative<WGSL::SuccessfulCheck>(checkResult) && shaderModuleParameters->hints && shaderModuleParameters->hints->hintsCount) {
-        if (auto result = earlyCompileShaderModule(*this, WTFMove(checkResult), *shaderModuleParameters->hints, fromAPI(descriptor.label)))
-            return result.releaseNonNull();
+    if (std::holds_alternative<WGSL::SuccessfulCheck>(checkResult) && shaderModuleParameters->hints && descriptor.hintCount) {
+        // FIXME: re-enable early compilation later on once deferred compilation is fully implemented
+        // https://bugs.webkit.org/show_bug.cgi?id=254258
+        UNUSED_PARAM(earlyCompileShaderModule);
     } else {
         // FIXME: remove shader library generation from MSL after compiler bringup
         auto library = ShaderModule::createLibrary(device(), String::fromUTF8(shaderModuleParameters->wgsl.code), fromAPI(descriptor.label));
@@ -188,13 +186,16 @@ static CompilationMessageData convertMessages(const Messages& messages1, const s
         for (size_t i = 0; i < compilationMessages.messages.size(); ++i) {
             const auto& compilationMessage = compilationMessages.messages[i];
             flattenedCompilationMessages.append({
-                nullptr,
-                flattenedMessages[i + base].data(),
-                compilationMessages.type,
-                compilationMessage.lineNumber(),
-                compilationMessage.lineOffset(),
-                compilationMessage.offset(),
-                compilationMessage.length(),
+                .nextInChain = nullptr,
+                .message = flattenedMessages[i + base].data(),
+                .type = compilationMessages.type,
+                .lineNum = compilationMessage.lineNumber(),
+                .linePos = compilationMessage.lineOffset(),
+                .offset = compilationMessage.offset(),
+                .length = compilationMessage.length(),
+                .utf16LinePos = compilationMessage.lineOffset(),
+                .utf16Offset = compilationMessage.offset(),
+                .utf16Length = compilationMessage.length(),
             });
         }
     };
@@ -241,9 +242,12 @@ void ShaderModule::setLabel(String&& label)
         m_library.label = label;
 }
 
-id<MTLFunction> ShaderModule::getNamedFunction(const String& name, const HashMap<String, double>& keyValueReplacements) const
+id<MTLFunction> ShaderModule::getNamedFunction(const String& originalName, const HashMap<String, double>& keyValueReplacements) const
 {
+    const auto* information = entryPointInformation(originalName);
+    const String& name = information ? information->mangledName : originalName;
     auto originalFunction = [m_library newFunctionWithName:name];
+
     if (!keyValueReplacements.size())
         return originalFunction;
 
@@ -293,20 +297,133 @@ id<MTLFunction> ShaderModule::getNamedFunction(const String& name, const HashMap
     return result;
 }
 
-WGSL::PipelineLayout ShaderModule::convertPipelineLayout(const PipelineLayout& pipelineLayout)
+static auto wgslBindingType(WGPUBufferBindingType bindingType)
 {
-    UNUSED_PARAM(pipelineLayout);
-    // FIXME: Implement this
-    return { { } };
+    switch (bindingType) {
+    case WGPUBufferBindingType_Uniform:
+        return WGSL::BufferBindingType::Uniform;
+    case WGPUBufferBindingType_Storage:
+        return WGSL::BufferBindingType::Storage;
+    case WGPUBufferBindingType_ReadOnlyStorage:
+        return WGSL::BufferBindingType::ReadOnlyStorage;
+    case WGPUBufferBindingType_Undefined:
+    case WGPUBufferBindingType_Force32:
+        ASSERT_NOT_REACHED("Unexpected buffer bindingType");
+        return WGSL::BufferBindingType::Uniform;
+    }
 }
 
-WGSL::AST::ShaderModule* ShaderModule::ast() const
+static auto wgslSamplerType(WGPUSamplerBindingType bindingType)
 {
-    return WTF::switchOn(m_checkResult, [&](const WGSL::SuccessfulCheck& successfulCheck) -> WGSL::AST::ShaderModule* {
+    switch (bindingType) {
+    case WGPUSamplerBindingType_Filtering:
+        return WGSL::SamplerBindingType::Filtering;
+    case WGPUSamplerBindingType_Comparison:
+        return WGSL::SamplerBindingType::Comparison;
+    case WGPUSamplerBindingType_NonFiltering:
+        return WGSL::SamplerBindingType::NonFiltering;
+    case WGPUSamplerBindingType_Force32:
+    case WGPUSamplerBindingType_Undefined:
+        ASSERT_NOT_REACHED("Unexpected sampler bindingType");
+        return WGSL::SamplerBindingType::Filtering;
+    }
+}
+
+static auto wgslSampleType(WGPUTextureSampleType sampleType)
+{
+    switch (sampleType) {
+    case WGPUTextureSampleType_Sint:
+        return WGSL::TextureSampleType::SignedInt;
+    case WGPUTextureSampleType_Uint:
+        return WGSL::TextureSampleType::UnsignedInt;
+    case WGPUTextureSampleType_Depth:
+        return WGSL::TextureSampleType::Depth;
+    case WGPUTextureSampleType_Float:
+        return WGSL::TextureSampleType::Float;
+    case WGPUTextureSampleType_UnfilterableFloat:
+        return WGSL::TextureSampleType::UnfilterableFloat;
+    case WGPUTextureSampleType_Force32:
+    case WGPUTextureSampleType_Undefined:
+        ASSERT_NOT_REACHED("Unexpected sampleType");
+        return WGSL::TextureSampleType::Float;
+    }
+}
+
+static auto wgslViewDimension(WGPUTextureViewDimension viewDimension)
+{
+    switch (viewDimension) {
+    case WGPUTextureViewDimension_Cube:
+    case WGPUTextureViewDimension_1D:
+        return WGSL::TextureViewDimension::OneDimensional;
+    case WGPUTextureViewDimension_2D:
+        return WGSL::TextureViewDimension::TwoDimensional;
+    case WGPUTextureViewDimension_3D:
+        return WGSL::TextureViewDimension::ThreeDimensional;
+    case WGPUTextureViewDimension_CubeArray:
+        return WGSL::TextureViewDimension::CubeArray;
+    case WGPUTextureViewDimension_2DArray:
+        return WGSL::TextureViewDimension::TwoDimensionalArray;
+    case WGPUTextureViewDimension_Force32:
+    case WGPUTextureViewDimension_Undefined:
+        ASSERT_NOT_REACHED("Unexpected viewDimension");
+        return WGSL::TextureViewDimension::TwoDimensional;
+    }
+}
+
+static decltype(WGSL::BindGroupLayoutEntry::bindingMember) populateBindingMember(const WGPUBindGroupLayoutEntry& entry)
+{
+    if (BindGroupLayout::isPresent(entry.buffer)) {
+        return WGSL::BufferBindingLayout {
+            .type = wgslBindingType(entry.buffer.type),
+            .hasDynamicOffset = entry.buffer.hasDynamicOffset,
+            .minBindingSize = entry.buffer.minBindingSize
+        };
+    } else if (BindGroupLayout::isPresent(entry.sampler)) {
+        return WGSL::SamplerBindingLayout {
+            .type = wgslSamplerType(entry.sampler.type)
+        };
+    } else if (BindGroupLayout::isPresent(entry.texture)) {
+        return WGSL::TextureBindingLayout {
+            .sampleType = wgslSampleType(entry.texture.sampleType),
+            .viewDimension = wgslViewDimension(entry.texture.viewDimension),
+            .multisampled = entry.texture.multisampled
+        };
+    } else {
+        ASSERT(BindGroupLayout::isPresent(entry.storageTexture));
+        return WGSL::StorageTextureBindingLayout {
+            .viewDimension = wgslViewDimension(entry.storageTexture.viewDimension)
+        };
+    }
+}
+
+WGSL::PipelineLayout ShaderModule::convertPipelineLayout(const PipelineLayout& pipelineLayout)
+{
+    Vector<WGSL::BindGroupLayout> bindGroupLayouts;
+
+    for (size_t i = 0; i < pipelineLayout.numberOfBindGroupLayouts(); ++i) {
+        auto& bindGroupLayout = pipelineLayout.bindGroupLayout(i);
+        WGSL::BindGroupLayout wgslBindGroupLayout;
+        for (auto& entry : bindGroupLayout.entries()) {
+            WGSL::BindGroupLayoutEntry wgslEntry;
+            wgslEntry.visibility.fromRaw(entry.visibility);
+            wgslEntry.binding = entry.binding;
+            wgslEntry.bindingMember = populateBindingMember(entry);
+            wgslBindGroupLayout.entries.append(wgslEntry);
+        }
+
+        bindGroupLayouts.append(wgslBindGroupLayout);
+    }
+
+    return { .bindGroupLayouts = bindGroupLayouts };
+}
+
+WGSL::ShaderModule* ShaderModule::ast() const
+{
+    return WTF::switchOn(m_checkResult, [&](const WGSL::SuccessfulCheck& successfulCheck) -> WGSL::ShaderModule* {
         return successfulCheck.ast.ptr();
-    }, [&](const WGSL::FailedCheck&) -> WGSL::AST::ShaderModule* {
+    }, [&](const WGSL::FailedCheck&) -> WGSL::ShaderModule* {
         return nullptr;
-    }, [](std::monostate) -> WGSL::AST::ShaderModule* {
+    }, [](std::monostate) -> WGSL::ShaderModule* {
         ASSERT_NOT_REACHED();
         return nullptr;
     });

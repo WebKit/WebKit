@@ -1,5 +1,5 @@
-/*
- * Copyright (C) 2019 Apple Inc.  All rights reserved.
+/**
+ * Copyright (C) 2019-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,41 +26,65 @@
 #include "config.h"
 #include "JSAPIGlobalObject.h"
 
+#include "GlobalObjectMethodTable.h"
 #include "JSCellInlines.h"
-
-#if !JSC_OBJC_API_ENABLED
 
 namespace JSC {
 
 const ClassInfo JSAPIGlobalObject::s_info = { "GlobalObject"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSAPIGlobalObject) };
 
-const GlobalObjectMethodTable JSAPIGlobalObject::s_globalObjectMethodTable = {
-    &supportsRichSourceInfo,
-    &shouldInterruptScript,
-    &javaScriptRuntimeFlags,
-    nullptr, // queueMicrotaskToEventLoop
-    &shouldInterruptScriptBeforeTimeout,
-    nullptr, // moduleLoaderImportModule
-    nullptr, // moduleLoaderResolve
-    nullptr, // moduleLoaderFetch
-    nullptr, // moduleLoaderCreateImportMetaProperties
-    nullptr, // moduleLoaderEvaluate
-    nullptr, // promiseRejectionTracker
-    &reportUncaughtExceptionAtEventLoop,
-    &currentScriptExecutionOwner,
-    &scriptExecutionStatus,
-    &reportViolationForUnsafeEval,
-    nullptr, // defaultLanguage
-    nullptr, // compileStreaming
-    nullptr, // instantiateStreaming
-    nullptr, // deriveShadowRealmGlobalObject
-};
+#if !JSC_OBJC_API_ENABLED
+
+const GlobalObjectMethodTable* JSAPIGlobalObject::globalObjectMethodTable()
+{
+    static constexpr GlobalObjectMethodTable table {
+        &supportsRichSourceInfo,
+        &shouldInterruptScript,
+        &javaScriptRuntimeFlags,
+        nullptr, // queueMicrotaskToEventLoop
+        &shouldInterruptScriptBeforeTimeout,
+        nullptr, // moduleLoaderImportModule
+        nullptr, // moduleLoaderResolve
+        nullptr, // moduleLoaderFetch
+        nullptr, // moduleLoaderCreateImportMetaProperties
+        nullptr, // moduleLoaderEvaluate
+        nullptr, // promiseRejectionTracker
+        &reportUncaughtExceptionAtEventLoop,
+        &currentScriptExecutionOwner,
+        &scriptExecutionStatus,
+        &reportViolationForUnsafeEval,
+        nullptr, // defaultLanguage
+        nullptr, // compileStreaming
+        nullptr, // instantiateStreaming
+        nullptr, // deriveShadowRealmGlobalObject
+    };
+    return &table;
+}
 
 void JSAPIGlobalObject::reportUncaughtExceptionAtEventLoop(JSGlobalObject* globalObject, Exception* exception)
 {
     Base::reportUncaughtExceptionAtEventLoop(globalObject, exception);
 }
 
+#endif
+
+JSAPIGlobalObject::JSAPIGlobalObject(VM& vm, Structure* structure)
+    : Base(vm, structure, globalObjectMethodTable())
+{
 }
 
-#endif
+JSAPIGlobalObject* JSAPIGlobalObject::create(VM& vm, Structure* structure)
+{
+    auto* object = new (NotNull, allocateCell<JSAPIGlobalObject>(vm)) JSAPIGlobalObject(vm, structure);
+    object->finishCreation(vm);
+    return object;
+}
+
+Structure* JSAPIGlobalObject::createStructure(VM& vm, JSValue prototype)
+{
+    auto* result = Structure::create(vm, nullptr, prototype, TypeInfo(GlobalObjectType, StructureFlags), info());
+    result->setTransitionWatchpointIsLikelyToBeFired(true);
+    return result;
+}
+
+}

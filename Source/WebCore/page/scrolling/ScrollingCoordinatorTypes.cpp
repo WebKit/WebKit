@@ -28,6 +28,25 @@
 
 namespace WebCore {
 
+void RequestedScrollData::merge(RequestedScrollData&& other)
+{
+    if (other.requestType == ScrollRequestType::CancelAnimatedScroll && animated == ScrollIsAnimated::No) {
+        // Carry over the previously requested scroll position so that we can set `requestedDataBeforeAnimatedScroll`
+        // below in the case where the cancelled animated scroll is immediately followed by another animated scroll.
+        other.scrollPosition = scrollPosition;
+    } else if (other.requestType == ScrollRequestType::PositionUpdate && other.animated == ScrollIsAnimated::Yes) {
+        switch (animated) {
+        case ScrollIsAnimated::No:
+            other.requestedDataBeforeAnimatedScroll = { scrollPosition, scrollType, clamping };
+            break;
+        case ScrollIsAnimated::Yes:
+            other.requestedDataBeforeAnimatedScroll = requestedDataBeforeAnimatedScroll;
+            break;
+        }
+    }
+    *this = WTFMove(other);
+}
+
 TextStream& operator<<(TextStream& ts, SynchronousScrollingReason reason)
 {
     switch (reason) {
@@ -124,13 +143,19 @@ TextStream& operator<<(TextStream& ts, ViewportRectStability stability)
     return ts;
 }
 
+TextStream& operator<<(TextStream& ts, WheelEventHandlingResult result)
+{
+    ts << "steps " << result.steps << " was handled " << result.wasHandled;
+    return ts;
+}
+
 TextStream& operator<<(TextStream& ts, WheelEventProcessingSteps steps)
 {
     switch (steps) {
-    case WheelEventProcessingSteps::ScrollingThread: ts << "scrolling thread"; break;
-    case WheelEventProcessingSteps::MainThreadForScrolling: ts << "main thread scrolling"; break;
-    case WheelEventProcessingSteps::MainThreadForNonBlockingDOMEventDispatch: ts << "main thread non-blocking DOM event dispatch"; break;
-    case WheelEventProcessingSteps::MainThreadForBlockingDOMEventDispatch: ts << "main thread blocking DOM event dispatch"; break;
+    case WheelEventProcessingSteps::AsyncScrolling: ts << "async scrolling"; break;
+    case WheelEventProcessingSteps::SynchronousScrolling: ts << "synchronous scrolling"; break;
+    case WheelEventProcessingSteps::NonBlockingDOMEventDispatch: ts << "non-blocking DOM event dispatch"; break;
+    case WheelEventProcessingSteps::BlockingDOMEventDispatch: ts << "blocking DOM event dispatch"; break;
     }
     return ts;
 }

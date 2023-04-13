@@ -31,6 +31,7 @@
 
 #include "JSCJSValue.h"
 #include "MacroAssemblerCodeRef.h"
+#include "NativeFunction.h"
 #include "Opcode.h"
 #include <variant>
 #include <wtf/HashMap.h>
@@ -58,11 +59,13 @@ using WasmInstruction = BaseInstruction<WasmOpcodeTraits>;
 using JSOrWasmInstruction = std::variant<const JSInstruction*, const WasmInstruction*>;
 
     class ArgList;
+    class CachedCall;
     class CodeBlock;
     class EvalExecutable;
     class Exception;
     class FunctionExecutable;
     class VM;
+    class JSBoundFunction;
     class JSFunction;
     class JSGlobalObject;
     class JSModuleEnvironment;
@@ -76,7 +79,6 @@ using JSOrWasmInstruction = std::variant<const JSInstruction*, const WasmInstruc
     class SourceCode;
     class StackFrame;
     enum class HandlerType : uint8_t;
-    struct CallFrameClosure;
     struct HandlerInfo;
     struct ProtoCallFrame;
 
@@ -110,8 +112,8 @@ using JSOrWasmInstruction = std::variant<const JSInstruction*, const WasmInstruc
         HandlerType m_type;
 #if ENABLE(JIT)
         CodePtr<ExceptionHandlerPtrTag> m_nativeCode;
+        CodePtr<ExceptionHandlerPtrTag> m_nativeCodeForDispatchAndCatch;
 #endif
-
         JSOrWasmInstruction m_catchPCForInterpreter;
     };
 
@@ -125,7 +127,7 @@ using JSOrWasmInstruction = std::variant<const JSInstruction*, const WasmInstruc
     public:
         Interpreter();
         ~Interpreter();
-        
+
 #if ENABLE(C_LOOP)
         CLoopStack& cloopStack() { return m_cloopStack; }
         const CLoopStack& cloopStack() const { return m_cloopStack; }
@@ -141,9 +143,9 @@ using JSOrWasmInstruction = std::variant<const JSInstruction*, const WasmInstruc
 
         JSValue executeProgram(const SourceCode&, JSGlobalObject*, JSObject* thisObj);
         JSValue executeModuleProgram(JSModuleRecord*, ModuleProgramExecutable*, JSGlobalObject*, JSModuleEnvironment*, JSValue sentValue, JSValue resumeMode);
-        JSValue executeCall(JSGlobalObject*, JSObject* function, const CallData&, JSValue thisValue, const ArgList&);
-        JSObject* executeConstruct(JSGlobalObject*, JSObject* function, const CallData&, const ArgList&, JSValue newTarget);
-        JSValue executeEval(EvalExecutable*, JSGlobalObject*, JSValue thisValue, JSScope*);
+        JSValue executeCall(JSObject* function, const CallData&, JSValue thisValue, const ArgList&);
+        JSObject* executeConstruct(JSObject* function, const CallData&, const ArgList&, JSValue newTarget);
+        JSValue executeEval(EvalExecutable*, JSValue thisValue, JSScope*);
 
         void getArgumentsData(CallFrame*, JSFunction*&, ptrdiff_t& firstParameterIndex, Register*& argv, int& argc);
 
@@ -157,9 +159,11 @@ using JSOrWasmInstruction = std::variant<const JSInstruction*, const WasmInstruc
     private:
         enum ExecutionFlag { Normal, InitializeAndReturn };
         
-        CallFrameClosure prepareForRepeatCall(FunctionExecutable*, ProtoCallFrame*, JSFunction*, int argumentCountIncludingThis, JSScope*, const ArgList&);
+        void prepareForCachedCall(CachedCall&, JSFunction*, int argumentCountIncludingThis, const ArgList&);
 
-        JSValue executeCachedCall(CallFrameClosure&);
+        JSValue executeCachedCall(CachedCall&);
+        JSValue executeBoundCall(VM&, JSBoundFunction*, const ArgList&);
+        JSValue executeCallImpl(VM&, JSObject*, const CallData&, JSValue, const ArgList&);
 
         inline VM& vm();
 #if ENABLE(C_LOOP)

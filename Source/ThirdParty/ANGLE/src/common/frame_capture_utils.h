@@ -361,9 +361,9 @@ void WriteParamValueReplay<ParamType::Tegl_ConfigPointer>(std::ostream &os,
                                                           egl::Config *value);
 
 template <>
-void WriteParamValueReplay<ParamType::Tegl_SyncPointer>(std::ostream &os,
-                                                        const CallCapture &call,
-                                                        egl::Sync *value);
+void WriteParamValueReplay<ParamType::Tegl_SyncID>(std::ostream &os,
+                                                   const CallCapture &call,
+                                                   egl::SyncID value);
 
 template <>
 void WriteParamValueReplay<ParamType::TEGLTime>(std::ostream &os,

@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
+#if ENABLE(GPU_PROCESS)
 
 #include "ObjectIdentifierReferenceTracker.h"
 #include <wtf/ObjectIdentifier.h>
@@ -33,7 +33,7 @@
 namespace WebKit {
 
 enum RemoteSerializedImageBufferIdentifierType { };
-using RemoteSerializedImageBufferIdentifier = ObjectIdentifier<RemoteSerializedImageBufferIdentifierType>;
+using RemoteSerializedImageBufferIdentifier = AtomicObjectIdentifier<RemoteSerializedImageBufferIdentifierType>;
 using RemoteSerializedImageBufferReadReference = ObjectIdentifierReadReference<RemoteSerializedImageBufferIdentifier>;
 using RemoteSerializedImageBufferWriteReference = ObjectIdentifierWriteReference<RemoteSerializedImageBufferIdentifier>;
 using RemoteSerializedImageBufferReference = ObjectIdentifierReference<RemoteSerializedImageBufferIdentifier>;
@@ -43,4 +43,4 @@ using RemoteSerializedImageBufferReferenceTracker = ObjectIdentifierReferenceTra
 
 } // namespace WebKit
 
-#endif
+#endif // ENABLE(GPU_PROCESS)

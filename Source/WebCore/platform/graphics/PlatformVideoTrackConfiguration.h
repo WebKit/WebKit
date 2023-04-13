@@ -38,9 +38,6 @@ struct PlatformVideoTrackConfiguration : PlatformTrackConfiguration {
     PlatformVideoColorSpace colorSpace;
     double framerate { 0 };
     uint64_t bitrate { 0 };
-
-    template <class Encoder> void encode(Encoder&) const;
-    template <class Decoder> static WARN_UNUSED_RETURN bool decode(Decoder&, PlatformVideoTrackConfiguration&);
 };
 
 inline bool operator==(const PlatformVideoTrackConfiguration& a, const PlatformVideoTrackConfiguration& b)
@@ -51,28 +48,6 @@ inline bool operator==(const PlatformVideoTrackConfiguration& a, const PlatformV
         && a.colorSpace == b.colorSpace
         && a.framerate == b.framerate
         && a.bitrate == b.bitrate;
-}
-
-template <class Encoder>
-void PlatformVideoTrackConfiguration::encode(Encoder& encoder) const
-{
-    encoder << codec;
-    encoder << width;
-    encoder << height;
-    encoder << colorSpace;
-    encoder << framerate;
-    encoder << bitrate;
-}
-
-template <class Decoder>
-bool PlatformVideoTrackConfiguration::decode(Decoder& decoder, PlatformVideoTrackConfiguration& configuration)
-{
-    return decoder.decode(configuration.codec)
-        && decoder.decode(configuration.width)
-        && decoder.decode(configuration.height)
-        && decoder.decode(configuration.colorSpace)
-        && decoder.decode(configuration.framerate)
-        && decoder.decode(configuration.bitrate);
 }
 
 }

@@ -187,8 +187,8 @@ ALWAYS_INLINE JSString* jsSpliceSubstringsWithSeparators(JSGlobalObject* globalO
     RELEASE_AND_RETURN(scope, jsString(vm, impl.releaseNonNull()));
 }
 
-enum class StringReplaceSubstitutions : bool { Yes, No };
-enum class StringReplaceUseTable : bool { Yes, No };
+enum class StringReplaceSubstitutions : bool { No, Yes };
+enum class StringReplaceUseTable : bool { No, Yes };
 template<StringReplaceSubstitutions substitutions, StringReplaceUseTable useTable, typename TableType>
 ALWAYS_INLINE JSString* stringReplaceStringString(JSGlobalObject* globalObject, JSString* stringCell, String string, String search, String replacement, const TableType* table)
 {

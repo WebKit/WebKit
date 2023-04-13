@@ -7,34 +7,47 @@ description: Validate result returned from calendar inLeapYear() method
 features: [Temporal]
 ---*/
 
-const convertedResults = [
-  [undefined, false],
-  [null, false],
-  [true, true],
-  [false, false],
-  [0, false],
-  [-0, false],
-  [42, true],
-  [7.1, true],
-  [NaN, false],
-  [Infinity, true],
-  [-Infinity, true],
-  ["", false],
-  ["a string", true],
-  ["0", true],
-  [Symbol("foo"), true],
-  [0n, false],
-  [42n, true],
-  [{}, true],
-  [{valueOf() { return false; }}, true],
+const badResults = [
+  [undefined, TypeError],
+  [null, TypeError],
+  [0, TypeError],
+  [-0, TypeError],
+  [42, TypeError],
+  [7.1, TypeError],
+  [NaN, TypeError],
+  [Infinity, TypeError],
+  [-Infinity, TypeError],
+  ["", TypeError],
+  ["a string", TypeError],
+  ["0", TypeError],
+  [Symbol("foo"), TypeError],
+  [0n, TypeError],
+  [42n, TypeError],
+  [{}, TypeError],
+  [{valueOf() { return false; }}, TypeError],
 ];
 
-convertedResults.forEach(([result, convertedResult]) => {
+badResults.forEach(([result, error]) => {
   const calendar = new class extends Temporal.Calendar {
     inLeapYear() {
       return result;
     }
   }("iso8601");
   const instance = new Temporal.PlainDateTime(1981, 12, 15, 14, 15, 45, 987, 654, 321, calendar);
-  assert.sameValue(instance.inLeapYear, convertedResult, `${typeof result} converted to boolean ${convertedResult}`);
+  assert.throws(error, () => instance.inLeapYear, `${typeof result} ${String(result)} not converted to boolean`);
+});
+
+const preservedResults = [
+  true,
+  false,
+];
+
+preservedResults.forEach(result => {
+  const calendar = new class extends Temporal.Calendar {
+    inLeapYear() {
+      return result;
+    }
+  }("iso8601");
+  const instance = new Temporal.PlainDateTime(1981, 12, 15, 14, 15, 45, 987, 654, 321, calendar);
+  assert.sameValue(instance.inLeapYear, result, `${typeof result} ${String(result)} preserved`);
 });

@@ -28,6 +28,7 @@
 #if ENABLE(GAMEPAD)
 
 #include <wtf/Forward.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -38,7 +39,7 @@ enum class EventMakesGamepadsVisible : bool {
     Yes,
 };
 
-class GamepadProviderClient {
+class GamepadProviderClient : public CanMakeWeakPtr<GamepadProviderClient> {
 public:
     virtual ~GamepadProviderClient() = default;
 

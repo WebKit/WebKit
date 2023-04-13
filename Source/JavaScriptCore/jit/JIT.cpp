@@ -224,7 +224,7 @@ void JIT::privateCompileMainPass()
 
         std::optional<JITSizeStatistics::Marker> sizeMarker;
         if (UNLIKELY(m_bytecodeIndex >= startBytecodeIndex && Options::dumpBaselineJITSizeStatistics())) {
-            String id = makeString("Baseline_fast_", opcodeNames[opcodeID]);
+            String id = makeString("Baseline_fast_"_s, opcodeNames[opcodeID]);
             sizeMarker = m_vm->jitSizeStatistics->markStart(id, *this);
         }
 
@@ -289,7 +289,6 @@ void JIT::privateCompileMainPass()
         DEFINE_SLOW_OP(create_direct_arguments)
         DEFINE_SLOW_OP(create_scoped_arguments)
         DEFINE_SLOW_OP(create_cloned_arguments)
-        DEFINE_SLOW_OP(create_arguments_butterfly)
         DEFINE_SLOW_OP(create_rest)
         DEFINE_SLOW_OP(create_promise)
         DEFINE_SLOW_OP(new_promise)
@@ -523,7 +522,7 @@ void JIT::privateCompileSlowCases()
 
         std::optional<JITSizeStatistics::Marker> sizeMarker;
         if (UNLIKELY(Options::dumpBaselineJITSizeStatistics())) {
-            String id = makeString("Baseline_slow_", opcodeNames[opcodeID]);
+            String id = makeString("Baseline_slow_"_s, opcodeNames[opcodeID]);
             sizeMarker = m_vm->jitSizeStatistics->markStart(id, *this);
         }
 
@@ -578,6 +577,7 @@ void JIT::privateCompileSlowCases()
         DEFINE_SLOWCASE_OP(op_jstricteq)
         DEFINE_SLOWCASE_OP(op_jnstricteq)
         DEFINE_SLOWCASE_OP(op_loop_hint)
+        DEFINE_SLOWCASE_OP(op_enter)
         DEFINE_SLOWCASE_OP(op_check_traps)
         DEFINE_SLOWCASE_OP(op_mod)
         DEFINE_SLOWCASE_OP(op_pow)
@@ -880,7 +880,7 @@ void JIT::compileAndLinkWithoutFinalizing(JITCompilationEffort effort)
         m_disassembler->setEndOfCode(label());
     m_pcToCodeOriginMapBuilder.appendItem(label(), PCToCodeOriginMapBuilder::defaultCodeOrigin());
 
-    m_linkBuffer = std::unique_ptr<LinkBuffer>(new LinkBuffer(*this, m_unlinkedCodeBlock, LinkBuffer::Profile::BaselineJIT, effort));
+    m_linkBuffer = makeUnique<LinkBuffer>(*this, m_unlinkedCodeBlock, LinkBuffer::Profile::BaselineJIT, effort);
     link();
 }
 

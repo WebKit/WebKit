@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,12 +34,14 @@
 #include "AuthenticatorPresenterCoordinator.h"
 #include "LocalService.h"
 #include "NfcService.h"
+#include "WebFrameProxy.h"
 #include "WebPageProxy.h"
 #include "WebPreferencesKeys.h"
 #include "WebProcessProxy.h"
 #include <WebCore/AuthenticatorAssertionResponse.h>
 #include <WebCore/AuthenticatorAttachment.h>
 #include <WebCore/AuthenticatorTransport.h>
+#include <WebCore/EventRegion.h>
 #include <WebCore/PublicKeyCredentialCreationOptions.h>
 #include <WebCore/WebAuthenticationConstants.h>
 #include <wtf/MonotonicTime.h>
@@ -148,19 +150,6 @@ static AuthenticatorManager::TransportSet collectTransports(const Vector<PublicK
 
     ASSERT(result.size() <= AuthenticatorManager::maxTransportNumber);
     return result;
-}
-
-// Only roaming authenticators are supported for Google legacy AppID support.
-static void processGoogleLegacyAppIdSupportExtension(const std::optional<AuthenticationExtensionsClientInputs>& extensions, AuthenticatorManager::TransportSet& transports)
-{
-    if (!extensions) {
-        // AuthenticatorCoordinator::create should always set it.
-        ASSERT_NOT_REACHED();
-        return;
-    }
-    if (!extensions->googleLegacyAppidSupport)
-        return;
-    transports.remove(AuthenticatorTransport::Internal);
 }
 
 static String getRpId(const std::variant<PublicKeyCredentialCreationOptions, PublicKeyCredentialRequestOptions>& options)
@@ -299,8 +288,10 @@ void AuthenticatorManager::respondReceived(Respond&& respond)
     ASSERT(m_pendingCompletionHandler);
 
     auto shouldComplete = std::holds_alternative<Ref<AuthenticatorResponse>>(respond);
-    if (!shouldComplete)
-        shouldComplete = std::get<ExceptionData>(respond).code == InvalidStateError;
+    if (!shouldComplete) {
+        auto code = std::get<ExceptionData>(respond).code;
+        shouldComplete = code == InvalidStateError || code == NotSupportedError;
+    }
     if (shouldComplete) {
         invokePendingCompletionHandler(WTFMove(respond));
         clearStateAsync();
@@ -540,7 +531,6 @@ auto AuthenticatorManager::getTransports() const -> TransportSet
     TransportSet transports;
     WTF::switchOn(m_pendingRequestData.options, [&](const PublicKeyCredentialCreationOptions& options) {
         transports = collectTransports(options.authenticatorSelection);
-        processGoogleLegacyAppIdSupportExtension(options.extensions, transports);
     }, [&](const PublicKeyCredentialRequestOptions& options) {
         transports = collectTransports(options.allowCredentials, options.authenticatorAttachment);
     });

@@ -29,20 +29,23 @@
 #include "ApplicationCacheHost.h"
 #include "BackForwardController.h"
 #include "CachedPage.h"
-#include "DOMWindow.h"
 #include "DeviceMotionController.h"
 #include "DeviceOrientationController.h"
 #include "DiagnosticLoggingClient.h"
 #include "DiagnosticLoggingKeys.h"
+#include "DiagnosticLoggingResultType.h"
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "FocusController.h"
-#include "Frame.h"
+#include "FrameDestructionObserverInlines.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
-#include "FrameView.h"
+#include "HTTPParsers.h"
 #include "HistoryController.h"
 #include "IgnoreOpensDuringUnloadCountIncrementer.h"
+#include "LocalDOMWindow.h"
+#include "LocalFrame.h"
+#include "LocalFrameView.h"
 #include "Logging.h"
 #include "Page.h"
 #include "Quirks.h"
@@ -74,7 +77,7 @@ static inline void logBackForwardCacheFailureDiagnosticMessage(Page* page, const
     logBackForwardCacheFailureDiagnosticMessage(page->diagnosticLoggingClient(), reason);
 }
 
-static bool canCacheFrame(Frame& frame, DiagnosticLoggingClient& diagnosticLoggingClient, unsigned indentLevel)
+static bool canCacheFrame(LocalFrame& frame, DiagnosticLoggingClient& diagnosticLoggingClient, unsigned indentLevel)
 {
     PCLOG("+---");
     FrameLoader& frameLoader = frame.loader();
@@ -202,7 +205,10 @@ static bool canCachePage(Page& page)
     PCLOG("--------\n Determining if page can be cached:");
 
     DiagnosticLoggingClient& diagnosticLoggingClient = page.diagnosticLoggingClient();
-    bool isCacheable = canCacheFrame(page.mainFrame(), diagnosticLoggingClient, indentLevel + 1);
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(page.mainFrame());
+    if (!localMainFrame)
+        return false;
+    bool isCacheable = canCacheFrame(*localMainFrame, diagnosticLoggingClient, indentLevel + 1);
 
     if (!page.settings().usesBackForwardCache() || page.isResourceCachingDisabledByWebInspector()) {
         PCLOG("   -Page settings says b/f cache disabled");
@@ -222,7 +228,7 @@ static bool canCachePage(Page& page)
     }
 #endif
 
-    FrameLoadType loadType = page.mainFrame().loader().loadType();
+    FrameLoadType loadType = localMainFrame->loader().loadType();
     switch (loadType) {
     case FrameLoadType::Reload:
         // No point writing to the cache on a reload, since we will just write over it again when we leave that page.
@@ -268,6 +274,19 @@ static bool canCachePage(Page& page)
     case FrameLoadType::IndexedBackForward: // a multi-item hop in the backforward list
         // Cacheable.
         break;
+    }
+
+    // If this is a same-origin navigation and the navigated-to main resource serves the
+    // `Clear-Site-Data: "cache"` HTTP header, then we shouldn't cache the current page.
+    if (auto* provisionalDocumentLoader = localMainFrame->loader().provisionalDocumentLoader()) {
+        if (provisionalDocumentLoader->responseClearSiteDataValues().contains(ClearSiteDataValue::Cache)) {
+            if (auto* topDocument = localMainFrame->document()) {
+                if (topDocument->securityOrigin().isSameOriginAs(SecurityOrigin::create(provisionalDocumentLoader->response().url()))) {
+                    PCLOG("   -`Clear-Site-Data: cache` HTTP header is present");
+                    isCacheable = false;
+                }
+            }
+        }
     }
     
     if (isCacheable)
@@ -346,7 +365,8 @@ void BackForwardCache::markPagesForDeviceOrPageScaleChanged(Page& page)
 {
     for (auto& item : m_items) {
         CachedPage& cachedPage = *item->m_cachedPage;
-        if (&page.mainFrame() == &cachedPage.cachedMainFrame()->view()->frame())
+        auto* localMainFrame = dynamicDowncast<LocalFrame>(page.mainFrame());
+        if (localMainFrame == &cachedPage.cachedMainFrame()->view()->frame())
             cachedPage.markForDeviceOrPageScaleChanged();
     }
 }
@@ -355,7 +375,8 @@ void BackForwardCache::markPagesForContentsSizeChanged(Page& page)
 {
     for (auto& item : m_items) {
         CachedPage& cachedPage = *item->m_cachedPage;
-        if (&page.mainFrame() == &cachedPage.cachedMainFrame()->view()->frame())
+        auto* localMainFrame = dynamicDowncast<LocalFrame>(page.mainFrame());
+        if (localMainFrame == &cachedPage.cachedMainFrame()->view()->frame())
             cachedPage.markForContentsSizeChanged();
     }
 }
@@ -396,7 +417,7 @@ static void setBackForwardCacheState(Page& page, Document::BackForwardCacheState
 // When entering back/forward cache, tear down the render tree before setting the in-cache flag.
 // This maintains the invariant that render trees are never present in the back/forward cache.
 // Note that destruction happens bottom-up so that the main frame's tree dies last.
-static void destroyRenderTree(Frame& mainFrame)
+static void destroyRenderTree(LocalFrame& mainFrame)
 {
     for (auto* abstractFrame = mainFrame.tree().traversePrevious(CanWrap::Yes); abstractFrame; abstractFrame = abstractFrame->tree().traversePrevious(CanWrap::No)) {
         auto* frame = dynamicDowncast<LocalFrame>(abstractFrame);
@@ -410,7 +431,7 @@ static void destroyRenderTree(Frame& mainFrame)
     }
 }
 
-static void firePageHideEventRecursively(Frame& frame)
+static void firePageHideEventRecursively(LocalFrame& frame)
 {
     auto* document = frame.document();
     if (!document)
@@ -434,7 +455,11 @@ static void firePageHideEventRecursively(Frame& frame)
 
 std::unique_ptr<CachedPage> BackForwardCache::trySuspendPage(Page& page, ForceSuspension forceSuspension)
 {
-    page.mainFrame().loader().stopForBackForwardCache();
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(page.mainFrame());
+    if (!localMainFrame)
+        return nullptr;
+
+    localMainFrame->loader().stopForBackForwardCache();
 
     if (forceSuspension == ForceSuspension::No && !canCache(page))
         return nullptr;
@@ -446,16 +471,16 @@ std::unique_ptr<CachedPage> BackForwardCache::trySuspendPage(Page& page, ForceSu
     // Focus the main frame, defocusing a focused subframe (if we have one). We do this here,
     // before the page enters the back/forward cache, while we still can dispatch DOM blur/focus events.
     if (CheckedRef focusController { page.focusController() }; focusController->focusedFrame())
-        focusController->setFocusedFrame(&page.mainFrame());
+        focusController->setFocusedFrame(localMainFrame);
 
     // Fire the pagehide event in all frames.
-    firePageHideEventRecursively(page.mainFrame());
+    firePageHideEventRecursively(*localMainFrame);
 
-    destroyRenderTree(page.mainFrame());
+    destroyRenderTree(*localMainFrame);
 
     // Stop all loads again before checking if we can still cache the page after firing the pagehide
     // event, since the page may have started ping loads in its pagehide event handler.
-    page.mainFrame().loader().stopForBackForwardCache();
+    localMainFrame->loader().stopForBackForwardCache();
 
     // Check that the page is still page-cacheable after firing the pagehide event. The JS event handlers
     // could have altered the page in a way that could prevent caching.

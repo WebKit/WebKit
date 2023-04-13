@@ -23,6 +23,7 @@
 #pragma once
 
 #include "LightSource.h"
+#include <wtf/ArgumentCoder.h>
 #include <wtf/Ref.h>
 
 namespace WebCore {
@@ -43,38 +44,13 @@ public:
 
     WTF::TextStream& externalRepresentation(WTF::TextStream&) const override;
 
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<Ref<DistantLightSource>> decode(Decoder&);
-
 private:
+    friend struct IPC::ArgumentCoder<DistantLightSource, void>;
     DistantLightSource(float azimuth, float elevation);
 
     float m_azimuth;
     float m_elevation;
 };
-
-template<class Encoder>
-void DistantLightSource::encode(Encoder& encoder) const
-{
-    encoder << m_azimuth;
-    encoder << m_elevation;
-}
-
-template<class Decoder>
-std::optional<Ref<DistantLightSource>> DistantLightSource::decode(Decoder& decoder)
-{
-    std::optional<float> azimuth;
-    decoder >> azimuth;
-    if (!azimuth)
-        return std::nullopt;
-
-    std::optional<float> elevation;
-    decoder >> elevation;
-    if (!elevation)
-        return std::nullopt;
-
-    return DistantLightSource::create(*azimuth, *elevation);
-}
 
 } // namespace WebCore
 

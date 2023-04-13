@@ -26,8 +26,10 @@
 #pragma once
 
 #include "CSSSelectorList.h"
+#include "CSSSelectorParser.h"
 #include "ExceptionOr.h"
 #include "NodeList.h"
+#include "SecurityOriginData.h"
 #include "SelectorCompiler.h"
 #include <wtf/HashMap.h>
 #include <wtf/Vector.h>
@@ -59,16 +61,16 @@ private:
     bool selectorMatches(const SelectorData&, Element&, const ContainerNode& rootNode) const;
     Element* selectorClosest(const SelectorData&, Element&, const ContainerNode& rootNode) const;
 
-    template <typename SelectorQueryTrait> void execute(ContainerNode& rootNode, typename SelectorQueryTrait::OutputType&) const;
-    template <typename SelectorQueryTrait> void executeFastPathForIdSelector(const ContainerNode& rootNode, const SelectorData&, const CSSSelector* idSelector, typename SelectorQueryTrait::OutputType&) const;
-    template <typename SelectorQueryTrait> void executeSingleTagNameSelectorData(const ContainerNode& rootNode, const SelectorData&, typename SelectorQueryTrait::OutputType&) const;
-    template <typename SelectorQueryTrait> void executeSingleClassNameSelectorData(const ContainerNode& rootNode, const SelectorData&, typename SelectorQueryTrait::OutputType&) const;
-    template <typename SelectorQueryTrait> void executeSingleSelectorData(const ContainerNode& rootNode, const ContainerNode& searchRootNode, const SelectorData&, typename SelectorQueryTrait::OutputType&) const;
-    template <typename SelectorQueryTrait> void executeSingleMultiSelectorData(const ContainerNode& rootNode, typename SelectorQueryTrait::OutputType&) const;
+    template <typename OutputType> void execute(ContainerNode& rootNode, OutputType&) const;
+    template <typename OutputType> void executeFastPathForIdSelector(const ContainerNode& rootNode, const SelectorData&, const CSSSelector* idSelector, OutputType&) const;
+    template <typename OutputType> void executeSingleTagNameSelectorData(const ContainerNode& rootNode, const SelectorData&, OutputType&) const;
+    template <typename OutputType> void executeSingleClassNameSelectorData(const ContainerNode& rootNode, const SelectorData&, OutputType&) const;
+    template <typename OutputType> void executeSingleSelectorData(const ContainerNode& rootNode, const ContainerNode& searchRootNode, const SelectorData&, OutputType&) const;
+    template <typename OutputType> void executeSingleMultiSelectorData(const ContainerNode& rootNode, OutputType&) const;
 #if ENABLE(CSS_SELECTOR_JIT)
-    template <typename SelectorQueryTrait, typename Checker> void executeCompiledSimpleSelectorChecker(const ContainerNode& searchRootNode, Checker, typename SelectorQueryTrait::OutputType&, const SelectorData&) const;
-    template <typename SelectorQueryTrait, typename Checker> void executeCompiledSelectorCheckerWithCheckingContext(const ContainerNode& rootNode, const ContainerNode& searchRootNode, Checker, typename SelectorQueryTrait::OutputType&, const SelectorData&) const;
-    template <typename SelectorQueryTrait> void executeCompiledSingleMultiSelectorData(const ContainerNode& rootNode, typename SelectorQueryTrait::OutputType&) const;
+    template <typename Checker, typename OutputType> void executeCompiledSimpleSelectorChecker(const ContainerNode& searchRootNode, Checker, OutputType&, const SelectorData&) const;
+    template <typename Checker, typename OutputType> void executeCompiledSelectorCheckerWithCheckingContext(const ContainerNode& rootNode, const ContainerNode& searchRootNode, Checker, OutputType&, const SelectorData&) const;
+    template <typename OutputType> void executeCompiledSingleMultiSelectorData(const ContainerNode& rootNode, OutputType&) const;
     static bool compileSelector(const SelectorData&);
 #endif // ENABLE(CSS_SELECTOR_JIT)
 
@@ -108,9 +110,14 @@ private:
 class SelectorQueryCache {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    ExceptionOr<SelectorQuery&> add(const String&, Document&);
+    static SelectorQueryCache& singleton();
+
+    SelectorQuery* add(const String&, const Document&);
+    void clear();
+
 private:
-    HashMap<String, std::unique_ptr<SelectorQuery>> m_entries;
+    using Key = std::tuple<String, CSSSelectorParserContext, SecurityOriginData>;
+    HashMap<Key, std::unique_ptr<SelectorQuery>> m_entries;
 };
 
 inline bool SelectorQuery::matches(Element& element) const

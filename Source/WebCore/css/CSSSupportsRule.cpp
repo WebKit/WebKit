@@ -32,6 +32,7 @@
 #include "CSSSupportsRule.h"
 
 #include "CSSStyleSheet.h"
+#include "StyleProperties.h"
 #include "StyleRule.h"
 #include <wtf/text/StringBuilder.h>
 
@@ -49,11 +50,10 @@ Ref<CSSSupportsRule> CSSSupportsRule::create(StyleRuleSupports& rule, CSSStyleSh
 
 String CSSSupportsRule::cssText() const
 {
-    StringBuilder result;
-    result.append("@supports ", conditionText(), " {\n");
-    appendCSSTextForItems(result);
-    result.append('}');
-    return result.toString();
+    StringBuilder builder;
+    builder.append("@supports ", conditionText());
+    appendCSSTextForItems(builder);
+    return builder.toString();
 }
 
 String CSSSupportsRule::conditionText() const

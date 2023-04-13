@@ -48,28 +48,6 @@ struct AttributionSecondsUntilSendData {
 
         return sourceSeconds ? sourceSeconds : destinationSeconds;
     }
-
-    template<class Encoder>
-    void encode(Encoder& encoder) const
-    {
-        encoder << sourceSeconds << destinationSeconds;
-    }
-
-    template<class Decoder>
-    static std::optional<AttributionSecondsUntilSendData> decode(Decoder& decoder)
-    {
-        std::optional<std::optional<Seconds>> sourceSeconds;
-        decoder >> sourceSeconds;
-        if (!sourceSeconds)
-            return std::nullopt;
-
-        std::optional<std::optional<Seconds>> destinationSeconds;
-        decoder >> destinationSeconds;
-        if (!destinationSeconds)
-            return std::nullopt;
-
-        return AttributionSecondsUntilSendData { WTFMove(*sourceSeconds), WTFMove(*destinationSeconds) };
-    }
 };
 
 

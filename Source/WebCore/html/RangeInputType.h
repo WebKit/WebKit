@@ -81,7 +81,7 @@ private:
 
     void disabledStateChanged() final;
 
-#if ENABLE(TOUCH_EVENTS) && !PLATFORM(IOS_FAMILY) && ENABLE(TOUCH_SLIDER)
+#if ENABLE(TOUCH_EVENTS) && !PLATFORM(IOS_FAMILY)
     bool hasTouchEventHandler() const final;
 #endif
 };

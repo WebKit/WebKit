@@ -1,0 +1,37 @@
+<style>
+.container {
+  display: flex;
+  font-size: 20px;
+  font-family: Monospace;
+}
+</style>
+<div class=container><div id=inlinebox>not great</div></div>
+<script src="../../resources/ui-helper.js"></script>
+<script>
+if (window.testRunner) {
+  testRunner.dumpAsText();
+  testRunner.waitUntilDone();
+}
+
+async function repaintTest() {
+  if (window.internals)
+    internals.startTrackingRepaints();
+
+  inlinebox.firstChild.nodeValue = "Pass if this line is properly repainted.";
+
+  await UIHelper.renderingUpdate();
+ 
+  if (window.internals) {
+    var repaintRects = internals.repaintRectsAsText();
+    internals.stopTrackingRepaints();
+    var pre = document.createElement('pre');
+    document.body.appendChild(pre);
+    pre.innerText = repaintRects.indexOf("8 8 108 23") != -1 ? "PASS" : "FAIL";
+  }
+
+  if (window.testRunner)
+    testRunner.notifyDone();
+}
+setTimeout(repaintTest, 0);
+
+</script>

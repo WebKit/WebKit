@@ -40,8 +40,8 @@ public:
     FormController();
     ~FormController();
 
-    Vector<AtomString> formElementsState(const Document&) const;
-    void setStateForNewFormElements(const Vector<AtomString>& stateVector);
+    WEBCORE_EXPORT Vector<AtomString> formElementsState(const Document&) const;
+    WEBCORE_EXPORT void setStateForNewFormElements(const Vector<AtomString>& stateVector);
 
     void willDeleteForm(HTMLFormElement&);
     void restoreControlStateFor(ValidatedFormListedElement&);

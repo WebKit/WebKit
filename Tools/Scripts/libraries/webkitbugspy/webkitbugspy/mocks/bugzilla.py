@@ -1,4 +1,4 @@
-# Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+# Copyright (C) 2021-2023 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -169,6 +169,7 @@ class Bugzilla(Base, mocks.Requests):
                         project=issue.get('project'),
                         component=issue.get('component'),
                         watchers=[candidate, user],
+                        keywords=issue.get('keywords', []),
                     ))
                 issue['comments'].append(
                     Issue.Comment(user=candidate, timestamp=int(time.time()), content='<rdar://problem/{}>'.format(radar_id)),
@@ -185,6 +186,7 @@ class Bugzilla(Base, mocks.Requests):
                 product=issue.get('project'),
                 component=issue.get('component'),
                 version=issue.get('version'),
+                keywords=issue.get('keywords', []),
                 creator_detail=dict(
                     email=issue['creator'].email,
                     name=self.users[issue['creator'].name].username,
@@ -339,6 +341,7 @@ class Bugzilla(Base, mocks.Requests):
             project=data.get('product'),
             component=data.get('component'),
             version=data.get('version'),
+            keywords=[],
             comments=[], watchers=[user, assignee] if assignee else [user],
         )
 

@@ -50,5 +50,5 @@ if ($vm.icuVersion() >= 64 && $vm.icuHeaderVersion() >= 64) {
         style: "currency",
         currency: "USD",
         currencyDisplay: "narrowSymbol"
-    }), `$100.00`);
+    }), $vm.icuVersion() >= 72 ? `US$100.00` : `$100.00`);
 }

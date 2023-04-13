@@ -25,18 +25,21 @@
 
 #pragma once
 
+#include "FrameIdentifier.h"
 #include "TextManipulationItem.h"
 
 namespace WebCore {
 
 struct TextManipulationControllerManipulationFailure {
     enum class Type : uint8_t {
+        NotAvailable,
         ContentChanged,
         InvalidItem,
         InvalidToken,
         ExclusionViolation,
     };
-    
+
+    FrameIdentifier frameID;
     TextManipulationItemIdentifier identifier;
     uint64_t index;
     Type type;

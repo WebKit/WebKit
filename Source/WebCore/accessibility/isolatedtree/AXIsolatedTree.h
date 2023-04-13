@@ -34,7 +34,9 @@
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
 #include <wtf/RefPtr.h>
+#include <wtf/RetainPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/ThreadSafeWeakPtr.h>
 
 namespace WTF {
 class TextStream;
@@ -50,16 +52,14 @@ enum class AXStreamOptions : uint8_t;
 
 enum class AXPropertyName : uint16_t {
     ARIAIsMultiline,
-    ARIALandmarkRoleDescription,
     ARIATreeItemContent,
     ARIATreeRows,
-    ARIARoleAttribute,
+    AttributedText,
     AXColumnCount,
     AXColumnIndex,
     AXRowCount,
     AXRowIndex,
     AccessKey,
-    AccessibilityDescription,
     AccessibilityText,
     ActionVerb,
     AncestorFlags,
@@ -68,13 +68,9 @@ enum class AXPropertyName : uint16_t {
     BrailleLabel,
     BrailleRoleDescription,
     ButtonState,
-    CanHaveSelectedChildren,
-    CanSetExpandedAttribute,
     CanSetFocusAttribute,
-    CanSetNumericValue,
     CanSetSelectedAttribute,
     CanSetSelectedChildren,
-    CanSetTextRangeAttributes,
     CanSetValueAttribute,
 #if PLATFORM(MAC)
     CaretBrowsingEnabled,
@@ -87,12 +83,11 @@ enum class AXPropertyName : uint16_t {
     ColumnHeaders,
     ColumnIndex,
     ColumnIndexRange,
-    ComputedRoleString,
-    Contents,
     CurrentState,
     DatetimeAttributeValue,
     DecrementButton,
     Description,
+    DescriptionAttributeValue,
     DisclosedByRow,
     DisclosedRows,
     DocumentEncoding,
@@ -106,7 +101,6 @@ enum class AXPropertyName : uint16_t {
     HasHighlighting,
     HasItalicFont,
     HasPlainText,
-    HasPopup,
     HasUnderline,
     HeaderContainer,
     HeadingLevel,
@@ -120,7 +114,6 @@ enum class AXPropertyName : uint16_t {
     IsGrabbed,
     IsARIATreeGridRow,
     IsAttachment,
-    IsButton,
     IsBusy,
     IsChecked,
     IsControl,
@@ -129,14 +122,10 @@ enum class AXPropertyName : uint16_t {
     IsExposable,
     IsFieldset,
     IsFocused,
-    IsGroup,
     IsIndeterminate,
     IsInlineText,
     IsInputImage,
-    IsInsideLiveRegion,
-    IsHeading,
     IsKeyboardFocusable,
-    IsLandmark,
     IsLink,
     IsList,
     IsListBox,
@@ -153,29 +142,17 @@ enum class AXPropertyName : uint16_t {
     IsMathTableCell,
     IsMathMultiscript,
     IsMathToken,
-    IsMenu,
-    IsMenuBar,
-    IsMenuButton,
-    IsMenuItem,
-    IsMenuList,
-    IsMenuListOption,
-    IsMenuListPopup,
-    IsMenuRelated,
     IsMultiSelectable,
-    IsPasswordField,
     IsPressed,
     IsProgressIndicator,
     IsRequired,
-    IsScrollbar,
+    IsSecureField,
     IsSelected,
     IsSelectedOptionActive,
-    IsSlider,
-    IsStyleFormatGroup,
     IsTable,
     IsTableCell,
     IsTableColumn,
     IsTableRow,
-    IsTextControl,
     IsTree,
     IsTreeItem,
     IsUnvisited,
@@ -185,7 +162,6 @@ enum class AXPropertyName : uint16_t {
     IsWidget,
     KeyShortcuts,
     Language,
-    LinkRelValue,
     LinkedObjects,
     LiveRegionAtomic,
     LiveRegionRelevant,
@@ -225,8 +201,6 @@ enum class AXPropertyName : uint16_t {
     RowIndex,
     RowIndexRange,
     SelectedChildren,
-    SelectedRadioButton,
-    SelectedTabItem,
     SessionID,
     SetSize,
     SortDirection,
@@ -242,7 +216,6 @@ enum class AXPropertyName : uint16_t {
     SupportsExpanded,
     SupportsExpandedTextValue,
     SupportsKeyShortcuts,
-    SupportsLiveRegion,
     SupportsPath,
     SupportsPosInSet,
     SupportsPressAction,
@@ -250,9 +223,8 @@ enum class AXPropertyName : uint16_t {
     SupportsRequiredAttribute,
     SupportsSelectedRows,
     SupportsSetSize,
-    TabChildren,
     TableLevel,
-    TextLength,
+    TextContent,
     Title,
     TitleAttributeValue,
     TitleUIElement,
@@ -265,7 +237,7 @@ enum class AXPropertyName : uint16_t {
     VisibleRows,
 };
 
-using AXPropertyValueVariant = std::variant<std::nullptr_t, AXID, String, bool, int, unsigned, double, float, uint64_t, AccessibilityButtonState, Color, URL, LayoutRect, FloatRect, PAL::SessionID, IntPoint, std::pair<unsigned, unsigned>, Vector<AccessibilityText>, Vector<AXID>, Vector<std::pair<AXID, AXID>>, Vector<String>, Path, OptionSet<AXAncestorFlag>>;
+using AXPropertyValueVariant = std::variant<std::nullptr_t, AXID, String, bool, int, unsigned, double, float, uint64_t, AccessibilityButtonState, Color, URL, LayoutRect, FloatRect, PAL::SessionID, IntPoint, std::pair<unsigned, unsigned>, Vector<AccessibilityText>, Vector<AXID>, Vector<std::pair<AXID, AXID>>, Vector<String>, Path, OptionSet<AXAncestorFlag>, RetainPtr<NSAttributedString>>;
 using AXPropertyMap = HashMap<AXPropertyName, AXPropertyValueVariant, IntHash<AXPropertyName>, WTF::StrongEnumHashTraits<AXPropertyName>>;
 
 struct AXPropertyChange {
@@ -273,8 +245,7 @@ struct AXPropertyChange {
     AXPropertyMap properties; // Changed properties.
 };
 
-class AXIsolatedTree : public ThreadSafeRefCounted<AXIsolatedTree>
-    , public CanMakeWeakPtr<AXIsolatedTree>
+class AXIsolatedTree : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<AXIsolatedTree>
     , public AXTreeStore<AXIsolatedTree> {
     WTF_MAKE_NONCOPYABLE(AXIsolatedTree);
     WTF_MAKE_FAST_ALLOCATED;
@@ -293,7 +264,7 @@ public:
     RefPtr<AXIsolatedObject> rootNode();
     RefPtr<AXIsolatedObject> focusedNode();
 
-    RefPtr<AXIsolatedObject> nodeForID(const AXID&) const;
+    RefPtr<AXIsolatedObject> objectForID(const AXID) const;
     Vector<RefPtr<AXCoreObject>> objectsForIDs(const Vector<AXID>&);
 
     struct NodeChange {

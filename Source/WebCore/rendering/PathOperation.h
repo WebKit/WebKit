@@ -53,6 +53,8 @@ public:
 
     virtual ~PathOperation() = default;
 
+    virtual Ref<PathOperation> clone() const = 0;
+
     virtual bool operator==(const PathOperation&) const = 0;
     bool operator!=(const PathOperation& o) const { return !(*this == o); }
 
@@ -74,6 +76,7 @@ class ReferencePathOperation final : public PathOperation {
 public:
     static Ref<ReferencePathOperation> create(const String& url, const AtomString& fragment, const RefPtr<SVGElement>);
     WEBCORE_EXPORT static Ref<ReferencePathOperation> create(std::optional<Path>&&);
+    Ref<PathOperation> clone() const final;
     const String& url() const { return m_url; }
     const AtomString& fragment() const { return m_fragment; }
     const SVGElement* element() const;
@@ -107,6 +110,11 @@ public:
     static Ref<ShapePathOperation> create(Ref<BasicShape>&& shape, CSSBoxType referenceBox)
     {
         return adoptRef(*new ShapePathOperation(WTFMove(shape), referenceBox));
+    }
+
+    Ref<PathOperation> clone() const final
+    {
+        return adoptRef(*new ShapePathOperation(m_shape->clone(), m_referenceBox));
     }
 
     bool canBlend(const PathOperation& to) const final
@@ -167,6 +175,12 @@ public:
     static Ref<BoxPathOperation> create(Path&& path, CSSBoxType referenceBox)
     {
         return adoptRef(*new BoxPathOperation(WTFMove(path), referenceBox));
+    }
+
+    Ref<PathOperation> clone() const final
+    {
+        auto path = m_path;
+        return adoptRef(*new BoxPathOperation(WTFMove(path), m_referenceBox));
     }
 
     const Path pathForReferenceRect(const FloatRoundedRect& boundingRect) const
@@ -230,12 +244,14 @@ public:
 
     WEBCORE_EXPORT static Ref<RayPathOperation> create(float angle, Size, bool isContaining, FloatRect&& containingBlockBoundingRect, FloatPoint&& position);
 
+    Ref<PathOperation> clone() const final;
+
     float angle() const { return m_angle; }
     Size size() const { return m_size; }
     bool isContaining() const { return m_isContaining; }
 
     bool canBlend(const PathOperation&) const final;
-    RefPtr<PathOperation> blend(const PathOperation*, const BlendingContext&) const final;
+    WEBCORE_EXPORT RefPtr<PathOperation> blend(const PathOperation*, const BlendingContext&) const final;
 
     double lengthForPath() const;
     double lengthForContainPath(const FloatRect& elementRect, double computedPathLength, const FloatPoint& anchor, const OffsetRotation rotation) const;

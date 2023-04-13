@@ -24,15 +24,15 @@
  */
 
 #include "config.h"
-#include "Frame.h"
 #include "FrameWin.h"
 
+#include "LocalFrame.h"
 #include "NotImplemented.h"
 #include <wtf/win/GDIObject.h>
 
 namespace WebCore {
 
-GDIObject<HBITMAP> imageFromRect(const Frame*, IntRect&)
+GDIObject<HBITMAP> imageFromRect(const LocalFrame*, IntRect&)
 {
     notImplemented();
     return GDIObject<HBITMAP>();

@@ -34,6 +34,7 @@
 #include "AirInsertionSet.h"
 #include "AirPhaseScope.h"
 #include "B3CCallValue.h"
+#include "B3ProcedureInlines.h"
 #include "B3ValueInlines.h"
 
 namespace JSC { namespace B3 { namespace Air {
@@ -53,14 +54,14 @@ void lowerMacros(Code& code)
 
                 Vector<Arg> destinations = computeCCallingConvention(code, value);
 
-                unsigned resultCount = cCallResultCount(value);
-                ASSERT_IMPLIES(is64Bit(), resultCount <= 1);
+                unsigned resultCount = cCallResultCount(code, value);
                 
                 Vector<ShufflePair, 16> shufflePairs;
                 bool hasRegisterSource = false;
                 unsigned offset = 1;
                 auto addNextPair = [&](Width width) {
-                    ShufflePair pair(inst.args[offset + resultCount], destinations[offset], width);
+                    // Skip the special Arg in CCall
+                    ShufflePair pair(inst.args[offset + resultCount + 1], destinations[offset], width);
                     shufflePairs.append(pair);
                     hasRegisterSource |= pair.src().isReg();
                     ++offset;
@@ -68,7 +69,7 @@ void lowerMacros(Code& code)
                 for (unsigned i = 1; i < value->numChildren(); ++i) {
                     Value* child = value->child(i);
                     for (unsigned j = 0; j < cCallArgumentRegisterCount(child); j++)
-                        addNextPair(cCallArgumentRegisterWidth(child));
+                        addNextPair(cCallArgumentRegisterWidth(child->type()));
                 }
                 ASSERT(offset = inst.args.size());
                 
@@ -97,13 +98,11 @@ void lowerMacros(Code& code)
                 }
 
                 // Indicate that we're using our original callee argument.
-                destinations[0] = inst.args[0];
+                destinations[0] = inst.args[1];
 
                 // Save where the original instruction put its result.
-                Arg resultDst0 = resultCount >= 1 ? inst.args[1] : Arg();
-#if USE(JSVALUE32_64)
-                Arg resultDst1 = resultCount >= 2 ? inst.args[2] : Arg();
-#endif
+                Arg resultDst0 = resultCount >= 1 ? inst.args[2] : Arg();
+                Arg resultDst1 = resultCount >= 2 ? inst.args[3] : Arg();
 
                 inst = buildCCall(code, inst.origin, destinations);
                 if (oldKind.effects)
@@ -111,26 +110,29 @@ void lowerMacros(Code& code)
 
                 switch (value->type().kind()) {
                 case Void:
+                    break;
                 case Tuple:
+                    insertionSet.insert(instIndex + 1, Move, value, cCallResult(code, value, 0), resultDst0);
+                    insertionSet.insert(instIndex + 1, Move, value, cCallResult(code, value, 1), resultDst1);
                     break;
                 case Float:
-                    insertionSet.insert(instIndex + 1, MoveFloat, value, cCallResult(value, 0), resultDst0);
+                    insertionSet.insert(instIndex + 1, MoveFloat, value, cCallResult(code, value, 0), resultDst0);
                     break;
                 case Double:
-                    insertionSet.insert(instIndex + 1, MoveDouble, value, cCallResult(value, 0), resultDst0);
+                    insertionSet.insert(instIndex + 1, MoveDouble, value, cCallResult(code, value, 0), resultDst0);
                     break;
                 case Int32:
-                    insertionSet.insert(instIndex + 1, Move32, value, cCallResult(value, 0), resultDst0);
+                    insertionSet.insert(instIndex + 1, Move32, value, cCallResult(code, value, 0), resultDst0);
                     break;
                 case Int64:
-                    insertionSet.insert(instIndex + 1, Move, value, cCallResult(value, 0), resultDst0);
+                    insertionSet.insert(instIndex + 1, Move, value, cCallResult(code, value, 0), resultDst0);
 #if USE(JSVALUE32_64)
-                    insertionSet.insert(instIndex + 1, Move, value, cCallResult(value, 1), resultDst1);
+                    insertionSet.insert(instIndex + 1, Move, value, cCallResult(code, value, 1), resultDst1);
 #endif
                     break;
                 case V128:
                     ASSERT(is64Bit());
-                    insertionSet.insert(instIndex + 1, MoveVector, value, cCallResult(value, 0), resultDst0);
+                    insertionSet.insert(instIndex + 1, MoveVector, value, cCallResult(code, value, 0), resultDst0);
                     break;
                 }
             };
@@ -167,8 +169,6 @@ void lowerMacros(Code& code)
                 Tmp rhsLower = code.newTmp(GP);
                 Tmp rhsUpper = code.newTmp(GP);
 
-                Tmp tmp = code.newTmp(FP);
-
                 insertionSet.insert(instIndex, VectorExtractLaneInt64, origin, Arg::imm(0), lhs, lhsLower);
                 insertionSet.insert(instIndex, VectorExtractLaneInt64, origin, Arg::imm(1), lhs, lhsUpper);
                 insertionSet.insert(instIndex, VectorExtractLaneInt64, origin, Arg::imm(0), rhs, rhsLower);
@@ -176,10 +176,9 @@ void lowerMacros(Code& code)
 
                 insertionSet.insert(instIndex, Mul64, origin, lhsLower, rhsLower);
                 insertionSet.insert(instIndex, Mul64, origin, lhsUpper, rhsUpper);
-                insertionSet.insert(instIndex, MoveZeroToVector, origin, tmp);
-                insertionSet.insert(instIndex, VectorReplaceLaneInt64, origin, Arg::imm(0), rhsLower, tmp);
-                insertionSet.insert(instIndex, VectorReplaceLaneInt64, origin, Arg::imm(1), rhsUpper, tmp);
-                insertionSet.insert(instIndex, MoveVector, origin, tmp, dst);
+                insertionSet.insert(instIndex, MoveZeroToVector, origin, dst);
+                insertionSet.insert(instIndex, VectorReplaceLaneInt64, origin, Arg::imm(0), rhsLower, dst);
+                insertionSet.insert(instIndex, VectorReplaceLaneInt64, origin, Arg::imm(1), rhsUpper, dst);
 
                 inst = Inst();
             };

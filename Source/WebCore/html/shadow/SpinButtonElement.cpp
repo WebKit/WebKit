@@ -30,8 +30,8 @@
 #include "Chrome.h"
 #include "EventHandler.h"
 #include "EventNames.h"
-#include "Frame.h"
 #include "HTMLNames.h"
+#include "LocalFrame.h"
 #include "MouseEvent.h"
 #include "Page.h"
 #include "RenderBox.h"
@@ -50,14 +50,13 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(SpinButtonElement);
 using namespace HTMLNames;
 
 inline SpinButtonElement::SpinButtonElement(Document& document, SpinButtonOwner& spinButtonOwner)
-    : HTMLDivElement(divTag, document)
-    , m_spinButtonOwner(&spinButtonOwner)
+    : HTMLDivElement(divTag, document, CreateSpinButtonElement)
+    , m_spinButtonOwner(spinButtonOwner)
     , m_capturing(false)
     , m_upDownState(Indeterminate)
     , m_pressStartingState(Indeterminate)
     , m_repeatingTimer(*this, &SpinButtonElement::repeatingTimerFired)
 {
-    setHasCustomStyleResolveCallbacks();
 }
 
 Ref<SpinButtonElement> SpinButtonElement::create(Document& document, SpinButtonOwner& spinButtonOwner)
@@ -122,7 +121,7 @@ void SpinButtonElement::defaultEventHandler(Event& event)
     else if (mouseEvent.type() == eventNames().mousemoveEvent) {
         if (box->borderBoxRect().contains(local)) {
             if (!m_capturing) {
-                if (RefPtr<Frame> frame = document().frame()) {
+                if (RefPtr frame = document().frame()) {
                     frame->eventHandler().setCapturingMouseEventsElement(this);
                     m_capturing = true;
                     if (Page* page = document().page())
@@ -205,7 +204,7 @@ void SpinButtonElement::releaseCapture()
 {
     stopRepeatingTimer();
     if (m_capturing) {
-        if (RefPtr<Frame> frame = document().frame()) {
+        if (RefPtr frame = document().frame()) {
             frame->eventHandler().setCapturingMouseEventsElement(nullptr);
             m_capturing = false;
             if (Page* page = document().page())

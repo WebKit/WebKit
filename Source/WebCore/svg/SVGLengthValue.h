@@ -69,7 +69,7 @@ public:
     static SVGLengthValue construct(SVGLengthMode, StringView, SVGParsingError&, SVGLengthNegativeValuesMode = SVGLengthNegativeValuesMode::Allow);
     static SVGLengthValue blend(const SVGLengthValue& from, const SVGLengthValue& to, float progress);
 
-    static SVGLengthValue fromCSSPrimitiveValue(const CSSPrimitiveValue&, ShouldConvertNumberToPxLength = ShouldConvertNumberToPxLength::No);
+    static SVGLengthValue fromCSSPrimitiveValue(const CSSPrimitiveValue&, const CSSToLengthConversionData&, ShouldConvertNumberToPxLength = ShouldConvertNumberToPxLength::No);
     Ref<CSSPrimitiveValue> toCSSPrimitiveValue(const Element* = nullptr) const;
 
     SVGLengthType lengthType() const { return m_lengthType; }

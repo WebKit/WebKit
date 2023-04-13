@@ -1,8 +1,8 @@
 
 PASS Computed value for background-image after setting background shorthand
 PASS background_specified_position
-FAIL background_specified_size assert_equals: background specified value for background-size expected "10em 10em" but got "160px auto"
-FAIL background_specified_repeat assert_equals: background specified value for background-repeat expected "round round" but got "round"
+FAIL background_specified_size assert_equals: background specified value for background-size expected "160px" but got "160px auto"
+PASS background_specified_repeat
 PASS background_specified_attachment
 PASS background_specified_origin
 PASS background_specified_clip

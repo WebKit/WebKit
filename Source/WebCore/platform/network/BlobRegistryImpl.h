@@ -56,7 +56,6 @@ public:
     BlobData* getBlobDataFromURL(const URL&) const;
 
     Ref<ResourceHandle> createResourceHandle(const ResourceRequest&, ResourceHandleClient*);
-    void writeBlobToFilePath(const URL& blobURL, const String& path, Function<void(bool success)>&& completionHandler);
 
     void appendStorageItems(BlobData*, const BlobDataItemList&, long long offset, long long length);
 
@@ -83,6 +82,7 @@ public:
     Vector<RefPtr<BlobDataFileReference>> filesInBlob(const URL&) const;
 
     void setFileDirectory(String&&);
+    void setPartitioningEnabled(bool enabled) { m_isPartitioningEnabled = enabled; }
 
 private:
     void addBlobData(const String& url, RefPtr<BlobData>&&);
@@ -91,6 +91,7 @@ private:
     HashCountedSet<String> m_blobReferences;
     MemoryCompactRobinHoodHashMap<String, RefPtr<BlobData>> m_blobs;
     String m_fileDirectory;
+    bool m_isPartitioningEnabled { false };
 };
 
 inline void BlobRegistryImpl::setFileDirectory(String&& filePath)

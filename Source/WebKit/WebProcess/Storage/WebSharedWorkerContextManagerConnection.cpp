@@ -26,9 +26,11 @@
 #include "config.h"
 #include "WebSharedWorkerContextManagerConnection.h"
 
+#include "Logging.h"
 #include "NetworkConnectionToWebProcessMessages.h"
 #include "RemoteWebLockRegistry.h"
 #include "RemoteWorkerFrameLoaderClient.h"
+#include "RemoteWorkerInitializationData.h"
 #include "RemoteWorkerLibWebRTCProvider.h"
 #include "WebBadgeClient.h"
 #include "WebBroadcastChannelRegistry.h"
@@ -44,6 +46,7 @@
 #include <WebCore/EmptyClients.h>
 #include <WebCore/Page.h>
 #include <WebCore/PageConfiguration.h>
+#include <WebCore/RemoteFrameClient.h>
 #include <WebCore/ScriptExecutionContextIdentifier.h>
 #include <WebCore/SharedWorkerContextManager.h>
 #include <WebCore/SharedWorkerThreadProxy.h>
@@ -106,7 +109,7 @@ void WebSharedWorkerContextManagerConnection::launchSharedWorker(WebCore::Client
     pageConfiguration.webRTCProvider = makeUniqueRef<RemoteWorkerLibWebRTCProvider>();
 #endif
 
-    pageConfiguration.loaderClientForMainFrame = makeUniqueRef<RemoteWorkerFrameLoaderClient>(m_webPageProxyID, m_pageID, m_userAgent);
+    pageConfiguration.clientForMainFrame = UniqueRef<WebCore::FrameLoaderClient>(makeUniqueRef<RemoteWorkerFrameLoaderClient>(m_webPageProxyID, m_pageID, m_userAgent));
 
     auto page = makeUniqueRef<WebCore::Page>(WTFMove(pageConfiguration));
     if (m_preferencesStore) {

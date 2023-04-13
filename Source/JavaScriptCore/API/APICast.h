@@ -23,14 +23,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef APICast_h
-#define APICast_h
+#pragma once
 
 #include "Integrity.h"
 #include "JSAPIValueWrapper.h"
 #include "JSCJSValue.h"
 #include "JSCJSValueInlines.h"
-#include "JSGlobalObject.h"
 #include "HeapCellInlines.h"
 
 namespace JSC {
@@ -196,5 +194,3 @@ inline JSContextGroupRef toRef(JSC::VM* g)
 {
     return reinterpret_cast<JSContextGroupRef>(JSC::Integrity::audit(g));
 }
-
-#endif // APICast_h

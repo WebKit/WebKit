@@ -77,7 +77,7 @@ inline bool operator==(const CSSGradientColorInterpolationMethod& a, const CSSGr
 
 // MARK: Gradient Definitions.
 
-using CSSGradientPosition = std::pair<Ref<CSSPrimitiveValue>, Ref<CSSPrimitiveValue>>;
+using CSSGradientPosition = std::pair<Ref<CSSValue>, Ref<CSSValue>>;
 
 // MARK: - Linear.
 
@@ -117,6 +117,7 @@ private:
         , m_stops(other.m_stops)
         , m_repeating(other.m_repeating)
         , m_colorInterpolationMethod(other.m_colorInterpolationMethod)
+        , m_cachedStyleImage(other.m_cachedStyleImage)
     {
     }
 
@@ -124,6 +125,7 @@ private:
     CSSGradientColorStopList m_stops;
     CSSGradientRepeat m_repeating { CSSGradientRepeat::NonRepeating };
     CSSGradientColorInterpolationMethod m_colorInterpolationMethod;
+    mutable RefPtr<StyleImage> m_cachedStyleImage;
 };
 
 bool operator==(const CSSLinearGradientValue::Data&, const CSSLinearGradientValue::Data&);
@@ -164,6 +166,7 @@ private:
         , m_stops(other.m_stops)
         , m_repeating(other.m_repeating)
         , m_colorInterpolationMethod(other.m_colorInterpolationMethod)
+        , m_cachedStyleImage(other.m_cachedStyleImage)
     {
     }
 
@@ -171,6 +174,7 @@ private:
     CSSGradientColorStopList m_stops;
     CSSGradientRepeat m_repeating { CSSGradientRepeat::NonRepeating };
     CSSGradientColorInterpolationMethod m_colorInterpolationMethod;
+    mutable RefPtr<StyleImage> m_cachedStyleImage;
 };
 
 bool operator==(const CSSPrefixedLinearGradientValue::Data&, const CSSPrefixedLinearGradientValue::Data&);
@@ -178,10 +182,10 @@ bool operator==(const CSSPrefixedLinearGradientValue::Data&, const CSSPrefixedLi
 class CSSDeprecatedLinearGradientValue final : public CSSValue {
 public:
     struct Data {
-        Ref<CSSPrimitiveValue> firstX;
-        Ref<CSSPrimitiveValue> firstY;
-        Ref<CSSPrimitiveValue> secondX;
-        Ref<CSSPrimitiveValue> secondY;
+        Ref<CSSValue> firstX;
+        Ref<CSSValue> firstY;
+        Ref<CSSValue> secondX;
+        Ref<CSSValue> secondY;
     };
 
     static Ref<CSSDeprecatedLinearGradientValue> create(Data data, CSSGradientColorInterpolationMethod colorInterpolationMethod, CSSGradientColorStopList stops)
@@ -207,12 +211,14 @@ private:
         , m_data(other.m_data)
         , m_stops(other.m_stops)
         , m_colorInterpolationMethod(other.m_colorInterpolationMethod)
+        , m_cachedStyleImage(other.m_cachedStyleImage)
     {
     }
 
     Data m_data;
     CSSGradientColorStopList m_stops;
     CSSGradientColorInterpolationMethod m_colorInterpolationMethod;
+    mutable RefPtr<StyleImage> m_cachedStyleImage;
 };
 
 bool operator==(const CSSDeprecatedLinearGradientValue::Data&, const CSSDeprecatedLinearGradientValue::Data&);
@@ -285,6 +291,7 @@ private:
         , m_stops(other.m_stops)
         , m_repeating(other.m_repeating)
         , m_colorInterpolationMethod(other.m_colorInterpolationMethod)
+        , m_cachedStyleImage(other.m_cachedStyleImage)
     {
     }
 
@@ -292,6 +299,7 @@ private:
     CSSGradientColorStopList m_stops;
     CSSGradientRepeat m_repeating { CSSGradientRepeat::NonRepeating };
     CSSGradientColorInterpolationMethod m_colorInterpolationMethod;
+    mutable RefPtr<StyleImage> m_cachedStyleImage;
 };
 
 bool operator==(const CSSRadialGradientValue::Data&, const CSSRadialGradientValue::Data&);
@@ -340,6 +348,7 @@ private:
         , m_stops(other.m_stops)
         , m_repeating(other.m_repeating)
         , m_colorInterpolationMethod(other.m_colorInterpolationMethod)
+        , m_cachedStyleImage(other.m_cachedStyleImage)
     {
     }
 
@@ -347,6 +356,7 @@ private:
     CSSGradientColorStopList m_stops;
     CSSGradientRepeat m_repeating { CSSGradientRepeat::NonRepeating };
     CSSGradientColorInterpolationMethod m_colorInterpolationMethod;
+    mutable RefPtr<StyleImage> m_cachedStyleImage;
 };
 
 bool operator==(const CSSPrefixedRadialGradientValue::Data&, const CSSPrefixedRadialGradientValue::Data&);
@@ -354,10 +364,10 @@ bool operator==(const CSSPrefixedRadialGradientValue::Data&, const CSSPrefixedRa
 class CSSDeprecatedRadialGradientValue final : public CSSValue {
 public:
     struct Data {
-        Ref<CSSPrimitiveValue> firstX;
-        Ref<CSSPrimitiveValue> firstY;
-        Ref<CSSPrimitiveValue> secondX;
-        Ref<CSSPrimitiveValue> secondY;
+        Ref<CSSValue> firstX;
+        Ref<CSSValue> firstY;
+        Ref<CSSValue> secondX;
+        Ref<CSSValue> secondY;
         Ref<CSSPrimitiveValue> firstRadius;
         Ref<CSSPrimitiveValue> secondRadius;
     };
@@ -385,12 +395,14 @@ private:
         , m_data(other.m_data)
         , m_stops(other.m_stops)
         , m_colorInterpolationMethod(other.m_colorInterpolationMethod)
+        , m_cachedStyleImage(other.m_cachedStyleImage)
     {
     }
 
     Data m_data;
     CSSGradientColorStopList m_stops;
     CSSGradientColorInterpolationMethod m_colorInterpolationMethod;
+    mutable RefPtr<StyleImage> m_cachedStyleImage;
 };
 
 bool operator==(const CSSDeprecatedRadialGradientValue::Data&, const CSSDeprecatedRadialGradientValue::Data&);
@@ -431,6 +443,7 @@ private:
         , m_stops(other.m_stops)
         , m_repeating(other.m_repeating)
         , m_colorInterpolationMethod(other.m_colorInterpolationMethod)
+        , m_cachedStyleImage(other.m_cachedStyleImage)
     {
     }
 
@@ -438,6 +451,7 @@ private:
     CSSGradientColorStopList m_stops;
     CSSGradientRepeat m_repeating { CSSGradientRepeat::NonRepeating };
     CSSGradientColorInterpolationMethod m_colorInterpolationMethod;
+    mutable RefPtr<StyleImage> m_cachedStyleImage;
 };
 
 bool operator==(const CSSConicGradientValue::Data&, const CSSConicGradientValue::Data&);

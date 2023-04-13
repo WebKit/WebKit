@@ -26,6 +26,7 @@
 #include "config.h"
 #include "SpeechRecognitionErrorEvent.h"
 
+#include "ScriptExecutionContext.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {

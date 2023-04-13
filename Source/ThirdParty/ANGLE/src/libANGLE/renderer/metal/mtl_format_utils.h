@@ -29,8 +29,6 @@ namespace mtl
 {
 class ContextDevice;
 
-LoadFunctionMap GetLoadFunctionsMap(GLenum internalFormat, angle::FormatID angleFormat);
-
 struct FormatBase
 {
     inline bool operator==(const FormatBase &rhs) const

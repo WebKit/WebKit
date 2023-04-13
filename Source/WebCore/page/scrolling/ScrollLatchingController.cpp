@@ -29,8 +29,8 @@
 #if ENABLE(WHEEL_EVENT_LATCHING)
 
 #include "Element.h"
-#include "Frame.h"
-#include "FrameView.h"
+#include "LocalFrame.h"
+#include "LocalFrameView.h"
 #include "Logging.h"
 #include "PlatformWheelEvent.h"
 #include "ScrollableArea.h"
@@ -99,7 +99,7 @@ void ScrollLatchingController::receivedWheelEvent(const PlatformWheelEvent& whee
         m_cumulativeEventDelta += wheelEvent.delta();
 }
 
-bool ScrollLatchingController::latchingAllowsScrollingInFrame(const Frame& frame, WeakPtr<ScrollableArea>& latchedScroller) const
+bool ScrollLatchingController::latchingAllowsScrollingInFrame(const LocalFrame& frame, WeakPtr<ScrollableArea>& latchedScroller) const
 {
     if (m_frameStateStack.isEmpty())
         return true;
@@ -111,7 +111,7 @@ bool ScrollLatchingController::latchingAllowsScrollingInFrame(const Frame& frame
     return false;
 }
 
-void ScrollLatchingController::updateAndFetchLatchingStateForFrame(Frame& frame, const PlatformWheelEvent& wheelEvent, RefPtr<Element>& latchedElement, WeakPtr<ScrollableArea>& scrollableArea, bool& isOverWidget)
+void ScrollLatchingController::updateAndFetchLatchingStateForFrame(LocalFrame& frame, const PlatformWheelEvent& wheelEvent, RefPtr<Element>& latchedElement, WeakPtr<ScrollableArea>& scrollableArea, bool& isOverWidget)
 {
     if (wheelEvent.isGestureStart()) {
         // We can have existing state here because state is cleared on a timer.
@@ -169,7 +169,7 @@ void ScrollLatchingController::removeLatchingStateForTarget(const Element& eleme
         m_frameStateStack.clear();
 }
 
-void ScrollLatchingController::removeLatchingStateForFrame(const Frame& frame)
+void ScrollLatchingController::removeLatchingStateForFrame(const LocalFrame& frame)
 {
     if (m_frameStateStack.isEmpty())
         return;
@@ -184,7 +184,7 @@ static bool deltaIsPredominantlyVertical(FloatSize delta)
     return std::abs(delta.height()) > std::abs(delta.width());
 }
 
-bool ScrollLatchingController::shouldLatchToScrollableArea(const Frame& frame, ScrollableArea* scrollableArea, FloatSize scrollDelta) const
+bool ScrollLatchingController::shouldLatchToScrollableArea(const LocalFrame& frame, ScrollableArea* scrollableArea, FloatSize scrollDelta) const
 {
     if (!scrollableArea)
         return false;
@@ -218,7 +218,7 @@ bool ScrollLatchingController::shouldLatchToScrollableArea(const Frame& frame, S
     return !scrollableArea->scrolledToTop();
 }
 
-bool ScrollLatchingController::hasStateForFrame(const Frame& frame) const
+bool ScrollLatchingController::hasStateForFrame(const LocalFrame& frame) const
 {
     for (const auto& state : m_frameStateStack) {
         if (state.frame == &frame)
@@ -227,7 +227,7 @@ bool ScrollLatchingController::hasStateForFrame(const Frame& frame) const
     return false;
 }
 
-ScrollLatchingController::FrameState* ScrollLatchingController::stateForFrame(const Frame& frame)
+ScrollLatchingController::FrameState* ScrollLatchingController::stateForFrame(const LocalFrame& frame)
 {
     for (auto& state : m_frameStateStack) {
         if (state.frame == &frame)
@@ -236,7 +236,7 @@ ScrollLatchingController::FrameState* ScrollLatchingController::stateForFrame(co
     return nullptr;
 }
 
-const ScrollLatchingController::FrameState* ScrollLatchingController::stateForFrame(const Frame& frame) const
+const ScrollLatchingController::FrameState* ScrollLatchingController::stateForFrame(const LocalFrame& frame) const
 {
     for (const auto& state : m_frameStateStack) {
         if (state.frame == &frame)

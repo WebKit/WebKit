@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(GPU_PROCESS)
+#if ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
 
 #include "LayerHostingContext.h"
 #include <WebCore/IntSize.h>
@@ -40,4 +40,4 @@ PlatformLayerContainer createVideoLayerRemote(MediaPlayerPrivateRemote*, LayerHo
 
 } // namespace WebKit
 
-#endif
+#endif // ENABLE(GPU_PROCESS) && ENABLE(VIDEO)

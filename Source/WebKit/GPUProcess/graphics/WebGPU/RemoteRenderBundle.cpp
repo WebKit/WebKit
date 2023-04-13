@@ -46,6 +46,11 @@ RemoteRenderBundle::RemoteRenderBundle(PAL::WebGPU::RenderBundle& renderBundle, 
 
 RemoteRenderBundle::~RemoteRenderBundle() = default;
 
+void RemoteRenderBundle::destruct()
+{
+    m_objectHeap.removeObject(m_identifier);
+}
+
 void RemoteRenderBundle::stopListeningForIPC()
 {
     m_streamConnection->stopReceivingMessages(Messages::RemoteRenderBundle::messageReceiverName(), m_identifier.toUInt64());

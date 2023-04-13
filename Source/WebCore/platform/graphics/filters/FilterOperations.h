@@ -37,6 +37,9 @@ struct BlendingContext;
 class FilterOperations {
     WTF_MAKE_FAST_ALLOCATED;
 public:
+    explicit FilterOperations() { };
+    explicit FilterOperations(Vector<RefPtr<FilterOperation>>&&);
+
     WEBCORE_EXPORT bool operator==(const FilterOperations&) const;
     bool operator!=(const FilterOperations& other) const { return !(*this == other); }
 
@@ -44,6 +47,7 @@ public:
 
     Vector<RefPtr<FilterOperation>>& operations() { return m_operations; }
     const Vector<RefPtr<FilterOperation>>& operations() const { return m_operations; }
+    void setOperations(Vector<RefPtr<FilterOperation>>&& operations) { m_operations = WTFMove(operations); }
 
     bool isEmpty() const { return m_operations.isEmpty(); }
     size_t size() const { return m_operations.size(); }

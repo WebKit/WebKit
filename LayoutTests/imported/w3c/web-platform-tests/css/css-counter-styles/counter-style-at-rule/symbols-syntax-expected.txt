@@ -1,0 +1,13 @@
+
+PASS @counter-style 'symbols: "X"' is valid
+PASS @counter-style 'symbols: "X" "X"' is valid
+PASS @counter-style 'symbols: ident "X"' is valid
+FAIL @counter-style 'symbols: ident "X" url("foo.jpg")' is valid assert_not_equals: got disallowed value -1
+PASS @counter-style 'symbols: ' is invalid
+PASS @counter-style 'symbols: initial "X" "X"' is invalid
+PASS @counter-style 'symbols: inherit "X" "X"' is invalid
+PASS @counter-style 'symbols: unset "X" "X"' is invalid
+PASS @counter-style 'symbols: default "X"' is invalid
+PASS @counter-style 'symbols: revert "X"' is invalid
+PASS @counter-style 'symbols: revert-layer "X"' is invalid
+

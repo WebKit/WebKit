@@ -24,8 +24,13 @@
 #include "Shared/Sandbox/macOS/common.sb"
 #include "Shared/Sandbox/preferences.sb"
 
+(define (lockdown-mode)
+    (require-not (require-entitlement "com.apple.security.cs.allow-jit")))
+
 #if USE(SANDBOX_VERSION_3)
 (allow dynamic-code-generation)
+(with-filter (lockdown-mode)
+    (deny dynamic-code-generation))
 
 (with-filter (mac-policy-name "Sandbox")
     (allow system-mac-syscall (mac-syscall-number 5 65)))
@@ -33,22 +38,33 @@
 (with-filter (mac-policy-name "Quarantine")
     (allow system-mac-syscall (mac-syscall-number 180)))
 
+(with-filter (mac-policy-name "AMFI")
+    (allow system-mac-syscall (mac-syscall-number 95)))
+
 (allow process-info-rusage (target self))
 
 (allow iokit-open-service (iokit-user-client-class "IOSurfaceRoot"))
 (allow iokit-open-service (iokit-registry-entry-class
     "AGPM"
-    "IOAccelerator"
-    "AppleM2ScalerCSCDriver"))
+    "AppleAPFSContainer"
+    "AppleM2ScalerCSCDriver"
+    "AppleVideoToolboxParavirtualizationDriver"
+    "IOAccelerator"))
 
 (deny iokit-open-service (with no-report) (iokit-registry-entry-class "AppleJPEGDriver"))
+
+(allow fs-quota-get)
 
 #if HAVE(SANDBOX_STATE_FLAGS)
 (with-filter (require-not (state-flag "WebContentProcessLaunched"))
     (allow file-map-executable))
 (allow file-map-executable
-    (subpath "/System/Library/Components")
-    (subpath "/System/Library/Video/Plug-Ins"))
+    (subpath
+        "/System/Library/Accessibility/BundlesBase"
+        "/System/Library/Components"
+        "/System/Library/CoreServices"
+        "/System/Library/Extensions"
+        "/System/Library/Video/Plug-Ins"))
 #else
     (allow file-map-executable)
 #endif
@@ -1382,12 +1398,24 @@
         (extension "com.apple.webkit.extension.mach")
         (global-name "com.apple.trustd.agent")))
 
-;; Various services required by AppKit and other frameworks
-(allow mach-lookup
-       (global-name "com.apple.logd")
-       (global-name "com.apple.logd.events")
-       (global-name "com.apple.CARenderServer") ; Needed for [CAContext remoteContextWithOptions]
-)
+#if HAVE(SANDBOX_STATE_FLAGS)
+(with-filter (require-not (state-flag "DisableLogging"))
+    (allow mach-lookup (global-name
+        "com.apple.logd"
+        "com.apple.logd.events")))
+#else
+(allow mach-lookup (global-name
+    "com.apple.logd"
+    "com.apple.logd.events"))
+#endif
+
+; Needed for [CAContext remoteContextWithOptions]
+#if HAVE(SANDBOX_STATE_FLAGS)
+(with-filter (require-not (lockdown-mode))
+    (allow mach-lookup (global-name "com.apple.CARenderServer")))
+#else
+(allow mach-lookup (global-name "com.apple.CARenderServer"))
+#endif
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED <= 110000
 (allow mach-lookup
@@ -1768,7 +1796,7 @@
 (allow system-fsctl
     (fsctl-command (_IO "h" 47))) ;; See <rdar://74387453>
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000
 (deny file-ioctl)
 (allow file-ioctl (literal "/dev/dtracehelper"))
 (deny socket-ioctl)
@@ -1783,11 +1811,13 @@
             F_GETCONFINED
             F_GETFL ;; LibJPEGReadPlugin::copyImageBlockSetStandard
             F_GETPATH ;; used by dyld4 and CGFontURLCreate, getcwd (at least)
+            F_GETPROTECTIONCLASS
             F_GETSIGSINFO
             F_NOCACHE ;; Security::UnixPlusPlus::FileDesc::fcnt <- MTRegisterPluginFormatReaderBundleDirectory <- invocation function for block in WebCore::registerFormatReaderIfNecessary()
             F_RDADVISE ;; CoreNLP::ReadOnlyFile <- +[DDScannerService scanString:range:configuration:] <- WebCore::DictionaryLookup::rangeAtHitTestResult(WebCore::HitTestResult const&)
             F_SETCONFINED
-            F_SETFD)) ;; libwebrtc.dylib (no backtrace)
+            F_SETFD ;; libwebrtc.dylib (no backtrace)
+            F_SETPROTECTIONCLASS))
 
     (define (appcache-fcntl-commands)
         (fcntl-command
@@ -1805,19 +1835,10 @@
     (with-filter (require-not (state-flag "AppCacheDisabled"))
         (allow system-fcntl (appcache-fcntl-commands)))
     (with-filter (state-flag "AppCacheDisabled")
-        (deny system-fcntl
-            
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000
-            
-#endif
-            (appcache-fcntl-commands)))
+        (deny system-fcntl (appcache-fcntl-commands)))
 #else
     (allow system-fcntl (appcache-fcntl-commands))
 #endif
-
-    (allow system-fcntl
-        (fcntl-command F_GETPROTECTIONCLASS)
-        (fcntl-command F_SETPROTECTIONCLASS))
 )
 
 (when (defined? 'process-codesigning*)
@@ -1852,6 +1873,7 @@
     (syscall-number
         SYS___disable_threadsignal
         SYS___mac_syscall
+        SYS___semwait_signal
         SYS_access
         SYS_bsdthread_create
         SYS_bsdthread_ctl
@@ -1864,6 +1886,8 @@
         SYS_dup ;; Remove when <rdar://88210738> is fixed
         SYS_exit
         SYS_fcntl
+        SYS_fcntl_nocancel
+        SYS_fgetxattr
         SYS_flock
         SYS_fsetxattr ;; <rdar://problem/56332491>
         SYS_fsgetpath
@@ -1871,11 +1895,13 @@
         SYS_fstatfs64
         SYS_ftruncate
         SYS_getattrlist
+        SYS_getattrlistbulk
         SYS_getaudit_addr
         SYS_getdirentries64
         SYS_getentropy
         SYS_geteuid
         SYS_getfsstat64
+        SYS_getgid
         SYS_getrlimit
         SYS_getrusage
         SYS_gettimeofday
@@ -1906,6 +1932,7 @@
         SYS_pread
         SYS_proc_info
         SYS_psynch_cvbroad
+        SYS_psynch_cvclrprepost
         SYS_psynch_cvsignal
         SYS_psynch_cvwait
         SYS_psynch_mutexdrop
@@ -1914,6 +1941,7 @@
         SYS_read_nocancel
         SYS_readlink
         SYS_rename
+        SYS_sendto
         SYS_stat64
         SYS_statfs64
         SYS_sysctl
@@ -1935,18 +1963,22 @@
 
 (define (syscalls-rarely-used)
     (syscall-number
+        SYS_getegid
+        SYS_kdebug_typefilter
+        SYS_write))
+
+(define (syscalls-rarely-used-blocked-in-lockdown-mode)
+    (syscall-number
         SYS___pthread_kill
         SYS___semwait_signal_nocancel
         SYS_change_fdguard_np
         SYS_chmod
         SYS_fchmod
         SYS_fsync
-        SYS_getegid
         SYS_getpriority ;; rdar://81727094. Required for CoreAudio AudioOutputUnitStart call. Remove when GPU process is enabled by default.
         SYS_guarded_close_np
         SYS_guarded_open_np
         SYS_guarded_pwrite_np
-        SYS_kdebug_typefilter
         SYS_kevent ;; <rdar://89072361>
         SYS_mlock
         SYS_munlock
@@ -1965,7 +1997,6 @@
         SYS_shm_open
         SYS_sigaction
         SYS_unlink
-        SYS_write
 #if !PLATFORM(MAC)
         SYS_abort_with_payload
         SYS_fgetattrlist
@@ -1980,23 +2011,16 @@
 
 (define (syscall-unix-blocked-in-lockdown-mode) (syscall-number
     SYS___pthread_sigmask
-    SYS___semwait_signal
     SYS_faccessat
-    SYS_fcntl_nocancel
-    SYS_fgetxattr
     SYS_fileport_makefd
     SYS_fstatat64
-    SYS_getattrlistbulk
-    SYS_getgid
     SYS_gethostuuid
     SYS_kqueue ;; See <rdar://problem/88241768>. Remove after <rdar://56634240> is resolved.
     SYS_kqueue_workloop_ctl ;; <rdar://problem/50999499>
     SYS_listxattr
     SYS_mincore
-    SYS_psynch_cvclrprepost
     SYS_psynch_rw_unlock
     SYS_psynch_rw_wrlock
-    SYS_sendto
     SYS_sigaltstack
     SYS_sigprocmask
     SYS_sysctlbyname
@@ -2006,18 +2030,19 @@
 (deny syscall-unix)
 
 (allow syscall-unix (syscall-unix-common))
+(allow syscall-unix (syscalls-rarely-used))
 
 #if ENABLE(LOCKDOWN_MODE_TELEMETRY)
-(with-filter (require-entitlement "com.apple.security.cs.allow-jit")
+(with-filter (require-not (lockdown-mode))
     (allow syscall-unix (syscall-unix-blocked-in-lockdown-mode))
     (when (equal? (param "CPU") "arm64")
         (allow syscall-unix (syscall-unix-apple-silicon)))
-    (allow syscall-unix (syscalls-rarely-used)))
+    (allow syscall-unix (syscalls-rarely-used-blocked-in-lockdown-mode)))
 #else
 (allow syscall-unix (syscall-unix-blocked-in-lockdown-mode))
 (when (equal? (param "CPU") "arm64")
     (allow syscall-unix (syscall-unix-apple-silicon)))
-(allow syscall-unix (syscalls-rarely-used))
+(allow syscall-unix (syscalls-rarely-used-blocked-in-lockdown-mode))
 #endif
 
 (when (defined? 'SYS_objc_bp_assist_cfg_np)
@@ -2034,11 +2059,11 @@
 #endif
 
 #if ENABLE(LOCKDOWN_MODE_TELEMETRY)
-(with-filter (require-not (require-entitlement "com.apple.security.cs.allow-jit"))
-    (allow syscall-unix (with report) (with telemetry) (syscall-unix-blocked-in-lockdown-mode))
-    (allow syscall-unix (with report) (with telemetry) (syscalls-rarely-used))
+(with-filter (lockdown-mode)
+    (deny syscall-unix (with telemetry) (syscall-unix-blocked-in-lockdown-mode))
+    (deny syscall-unix (with telemetry) (syscalls-rarely-used-blocked-in-lockdown-mode))
     (when (equal? (param "CPU") "arm64")
-        (allow syscall-unix (with report) (with telemetry) (syscall-unix-apple-silicon))))
+        (deny syscall-unix (with telemetry) (syscall-unix-apple-silicon))))
 #endif
 
 #if HAVE(ADDITIONAL_APPLE_CAMERA_SERVICE)
@@ -2094,6 +2119,7 @@
     _mach_make_memory_entry
     host_get_io_master
     host_info
+    io_connect_add_client
     io_connect_async_method
     io_connect_method
     io_connect_method_var_output
@@ -2111,16 +2137,19 @@
     io_service_add_interest_notification_64
     io_service_add_notification_bin_64
     io_service_get_matching_service_bin
+    io_service_get_matching_services_bin
     io_service_open_extended
     mach_exception_raise
     mach_memory_entry_ownership
     mach_port_extract_right
+    mach_port_get_context_from_user
     mach_port_get_refs
     mach_port_request_notification
     mach_port_set_attributes
     mach_vm_copy
     mach_vm_map_external
     mach_vm_region
+    mach_vm_region_recurse
     mach_vm_remap_external
     semaphore_create
     semaphore_destroy
@@ -2129,14 +2158,13 @@
     task_info_from_user
     task_policy_set
     task_restartable_ranges_synchronize
+    thread_get_state_to_user
     thread_resume
-    thread_set_exception_ports
     thread_suspend))
 
 (define (kernel-mig-routines-blocked-in-lockdown-mode) (kernel-mig-routine
     clock_get_time
     host_request_notification
-    io_connect_add_client
     io_connect_map_memory_into_task
     io_registry_create_iterator
     io_registry_entry_get_child_iterator
@@ -2145,11 +2173,7 @@
     io_registry_entry_get_properties_bin_buf
     io_registry_get_root_entry
     io_service_close
-    io_service_get_matching_services_bin
-    mach_port_get_context_from_user
-    mach_vm_region_recurse
     task_threads_from_user
-    thread_get_state_to_user
     thread_info
     thread_policy
     thread_policy_set))
@@ -2159,13 +2183,16 @@
         (apply-message-filter
             (deny mach-message-send)
 #if ENABLE(LOCKDOWN_MODE_TELEMETRY)
-            (with-filter (require-entitlement "com.apple.security.cs.allow-jit")
+            (with-filter (require-not (lockdown-mode))
                 (allow mach-message-send (kernel-mig-routines-blocked-in-lockdown-mode)))
-            (with-filter (require-not (require-entitlement "com.apple.security.cs.allow-jit"))
-                (allow mach-message-send (with report) (with telemetry) (kernel-mig-routines-blocked-in-lockdown-mode)))
+            (with-filter (lockdown-mode)
+                (deny mach-message-send (with telemetry) (kernel-mig-routines-blocked-in-lockdown-mode)))
 #else
             (allow mach-message-send (kernel-mig-routines-blocked-in-lockdown-mode))
 #endif
+            (with-filter (require-not (lockdown-mode))
+                (allow mach-message-send (kernel-mig-routine thread_set_exception_ports)))
+
             (allow mach-message-send (kernel-mig-routines-common)))))
 
 (define (syscall-mach-common) (machtrap-number
@@ -2198,6 +2225,7 @@
     MSC_mk_timer_destroy
     MSC_pid_for_task
     MSC_semaphore_signal_trap
+    MSC_semaphore_timedwait_trap
     MSC_semaphore_wait_trap
     MSC_syscall_thread_switch
     MSC_task_name_for_pid
@@ -2208,7 +2236,6 @@
     MSC_mach_msg_trap
     MSC_mach_reply_port
     MSC_mach_voucher_extract_attr_recipe_trap
-    MSC_semaphore_timedwait_trap
     MSC_swtch_pri
     MSC_thread_self_trap))
 
@@ -2216,10 +2243,10 @@
     (deny syscall-mach)
     (allow syscall-mach (syscall-mach-common))
 #if ENABLE(LOCKDOWN_MODE_TELEMETRY)
-    (with-filter (require-entitlement "com.apple.security.cs.allow-jit")
+    (with-filter (require-not (lockdown-mode))
         (allow syscall-mach (syscall-mach-blocked-in-lockdown-mode)))
-    (with-filter (require-not (require-entitlement "com.apple.security.cs.allow-jit"))
-        (allow syscall-mach (with report) (with telemetry) (syscall-mach-blocked-in-lockdown-mode)))
+    (with-filter (lockdown-mode)
+        (deny syscall-mach (with telemetry) (syscall-mach-blocked-in-lockdown-mode)))
 #else
     (allow syscall-mach (syscall-mach-blocked-in-lockdown-mode))
 #endif
@@ -2377,4 +2404,10 @@
     (literal "/Library/Preferences/com.apple.networkd.plist")
 #endif
 )
+#endif
+
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 140000
+(with-filter (state-flag "WebContentProcessLaunched")
+    (deny mach-task-special-port-get (with telemetry))
+    (deny mach-task-special-port-set (with telemetry)))
 #endif

@@ -35,8 +35,8 @@ layer at (0,0) size 800x600
               RenderText {#text} at (2,2) size 69x14
                 text run at (2,2) width 69: "rowIndex = 1"
       RenderBlock {P} at (0,122) size 784x14
-        RenderText {#text} at (0,0) size 366x14
-          text run at (0,0) width 366: "B: This table has the footer before the body and both before the header."
+        RenderText {#text} at (0,0) size 367x14
+          text run at (0,0) width 367: "B: This table has the footer before the body and both before the header."
       RenderTable {TABLE} at (0,146) size 162x64 [border: (1px outset #808080)]
         RenderTableSection {TFOOT} at (1,43) size 160x20
           RenderTableRow {TR} at (0,0) size 160x18
@@ -63,8 +63,8 @@ layer at (0,0) size 800x600
               RenderText {#text} at (2,2) size 69x14
                 text run at (2,2) width 69: "rowIndex = 0"
       RenderBlock {P} at (0,220) size 784x14
-        RenderText {#text} at (0,0) size 698x14
-          text run at (0,0) width 698: "C: This table has two footers before two bodies before two heads. The rows inside the extra footers and heads don't get row indices at all."
+        RenderText {#text} at (0,0) size 699x14
+          text run at (0,0) width 699: "C: This table has two footers before two bodies before two heads. The rows inside the extra footers and heads don't get row indices at all."
       RenderTable {TABLE} at (0,244) size 212x244 [border: (1px outset #808080)]
         RenderTableSection {TFOOT} at (1,203) size 210x40
           RenderTableRow {TR} at (0,0) size 210x18

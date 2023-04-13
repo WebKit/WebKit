@@ -24,14 +24,17 @@
  */
 
 #pragma once
+
+#include "FrameIdentifier.h"
+#include "TextManipulationItemIdentifier.h"
 #include "TextManipulationToken.h"
 
 namespace WebCore {
 
-enum TextManipulationItemIdentifierType { };
-using TextManipulationItemIdentifier = ObjectIdentifier<TextManipulationItemIdentifierType>;
-
 struct TextManipulationItem {
+    FrameIdentifier frameID;
+    bool isSubframe { false };
+    bool isCrossSiteSubframe { false };
     TextManipulationItemIdentifier identifier;
     Vector<TextManipulationToken> tokens;
 };

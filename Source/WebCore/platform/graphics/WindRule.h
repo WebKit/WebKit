@@ -27,25 +27,8 @@
 
 #pragma once
 
-#include <wtf/EnumTraits.h>
-
 namespace WebCore {
 
-enum class WindRule : uint8_t {
-    NonZero = 0,
-    EvenOdd = 1
-};
+enum class WindRule : bool { NonZero, EvenOdd };
 
-} // namespace WebCore
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::WindRule> {
-    using values = EnumValues<
-    WebCore::WindRule,
-    WebCore::WindRule::NonZero,
-    WebCore::WindRule::EvenOdd
-    >;
-};
-
-} // namespace WTF
+}

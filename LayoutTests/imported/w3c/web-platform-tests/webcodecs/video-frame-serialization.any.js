@@ -26,7 +26,9 @@ test(t => {
   assert_equals(frame.visibleRect.height, clone.visibleRect.height);
 
   frame.close();
+  assert_true(isFrameClosed(frame));
   clone.close();
+  assert_true(isFrameClosed(clone));
 }, 'Test we can clone a VideoFrame.');
 
 test(t => {
@@ -37,8 +39,11 @@ test(t => {
 
   frame.close();
 
-  assert_not_equals(copy.timestamp, defaultInit.timestamp);
+  assert_equals(copy.timestamp, defaultInit.timestamp);
+  assert_equals(copy.duration, defaultInit.duration);
+  assert_true(isFrameClosed(copy));
   assert_equals(clone.timestamp, defaultInit.timestamp);
+  assert_false(isFrameClosed(clone));
 
   clone.close();
 }, 'Verify closing a frame doesn\'t affect its clones.');
@@ -88,7 +93,7 @@ async_test(t => {
   })
 
   localPort.postMessage(localFrame, [localFrame]);
-  assert_not_equals(localFrame.timestamp, defaultInit.timestamp);
+  assert_true(isFrameClosed(localFrame));
 }, 'Verify transferring frames closes them.');
 
 async_test(t => {
@@ -107,3 +112,28 @@ async_test(t => {
 
   t.done();
 }, 'Verify posting closed frames throws.');
+
+promise_test(async t => {
+  const open = indexedDB.open('VideoFrameTestDB', 1);
+  open.onerror = t.unreached_func('open should succeed');
+  open.onupgradeneeded = (event) => {
+    let db = event.target.result;
+    db.createObjectStore('MyVideoFrames', { keyPath: 'id' });
+  };
+  let db = await new Promise((resolve) => {
+    open.onsuccess = (e) => {
+      resolve(e.target.result);
+    };
+  });
+  t.add_cleanup(() => {
+    db.close();
+    indexedDB.deleteDatabase(db.name);
+  });
+
+  let transaction = db.transaction(['MyVideoFrames'], 'readwrite');
+  const store = transaction.objectStore('MyVideoFrames');
+  let frame = createDefaultVideoFrame();
+  assert_throws_dom("DataCloneError", () => {
+    store.add(frame);
+  });
+}, 'Verify storing a frame throws.');

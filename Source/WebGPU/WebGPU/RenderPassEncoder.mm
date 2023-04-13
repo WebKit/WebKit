@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (c) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,13 +35,29 @@
 
 namespace WebGPU {
 
-RenderPassEncoder::RenderPassEncoder(id<MTLRenderCommandEncoder> renderCommandEncoder, NSUInteger visibilityResultBufferSize, bool depthReadOnly, bool stencilReadOnly, Device& device)
+RenderPassEncoder::RenderPassEncoder(id<MTLRenderCommandEncoder> renderCommandEncoder, const WGPURenderPassDescriptor& descriptor, NSUInteger visibilityResultBufferSize, bool depthReadOnly, bool stencilReadOnly, Device& device)
     : m_renderCommandEncoder(renderCommandEncoder)
     , m_device(device)
     , m_visibilityResultBufferSize(visibilityResultBufferSize)
     , m_depthReadOnly(depthReadOnly)
     , m_stencilReadOnly(stencilReadOnly)
 {
+    if (m_device->baseCapabilities().counterSamplingAPI == HardwareCapabilities::BaseCapabilities::CounterSamplingAPI::CommandBoundary) {
+        for (uint32_t i = 0; i < descriptor.timestampWriteCount; ++i) {
+            const auto& timestampWrite = descriptor.timestampWrites[i];
+            switch (timestampWrite.location) {
+            case WGPURenderPassTimestampLocation_Beginning:
+                [m_renderCommandEncoder sampleCountersInBuffer:fromAPI(timestampWrite.querySet).counterSampleBuffer() atSampleIndex:timestampWrite.queryIndex withBarrier:NO];
+                break;
+            case WGPURenderPassTimestampLocation_End:
+                m_pendingTimestampWrites.append({ fromAPI(timestampWrite.querySet), timestampWrite.queryIndex });
+                break;
+            case WGPURenderPassTimestampLocation_Force32:
+                ASSERT_NOT_REACHED();
+                break;
+            }
+        }
+    }
 }
 
 RenderPassEncoder::RenderPassEncoder(Device& device)
@@ -51,12 +67,12 @@ RenderPassEncoder::RenderPassEncoder(Device& device)
 
 RenderPassEncoder::~RenderPassEncoder()
 {
-    // FIXME: Metal driver requires the command encoder to end before being destroyed.
-    // Might have to explicitly end encoding here if the user forgets to?
+    [m_renderCommandEncoder endEncoding];
 }
 
 void RenderPassEncoder::beginOcclusionQuery(uint32_t queryIndex)
 {
+    queryIndex *= sizeof(uint64_t);
     if (queryIndex < m_visibilityResultBufferSize) {
         m_visibilityResultBufferOffset = queryIndex;
         [m_renderCommandEncoder setVisibilityResultMode:MTLVisibilityResultModeCounting offset:queryIndex];
@@ -104,7 +120,12 @@ void RenderPassEncoder::endOcclusionQuery()
 
 void RenderPassEncoder::endPass()
 {
+    ASSERT(m_pendingTimestampWrites.isEmpty() || m_device->baseCapabilities().counterSamplingAPI == HardwareCapabilities::BaseCapabilities::CounterSamplingAPI::CommandBoundary);
+    for (const auto& pendingTimestampWrite : m_pendingTimestampWrites)
+        [m_renderCommandEncoder sampleCountersInBuffer:pendingTimestampWrite.querySet->counterSampleBuffer() atSampleIndex:pendingTimestampWrite.queryIndex withBarrier:NO];
+    m_pendingTimestampWrites.clear();
     [m_renderCommandEncoder endEncoding];
+    m_renderCommandEncoder = nil;
 }
 
 void RenderPassEncoder::endPipelineStatisticsQuery()
@@ -209,6 +230,7 @@ void RenderPassEncoder::setPipeline(const RenderPipeline& pipeline)
         [m_renderCommandEncoder setDepthStencilState:pipeline.depthStencilState()];
     [m_renderCommandEncoder setCullMode:pipeline.cullMode()];
     [m_renderCommandEncoder setFrontFacingWinding:pipeline.frontFace()];
+    [m_renderCommandEncoder setDepthClipMode:pipeline.depthClipMode()];
 }
 
 void RenderPassEncoder::setScissorRect(uint32_t x, uint32_t y, uint32_t width, uint32_t height)
@@ -219,7 +241,7 @@ void RenderPassEncoder::setScissorRect(uint32_t x, uint32_t y, uint32_t width, u
 
 void RenderPassEncoder::setStencilReference(uint32_t reference)
 {
-    UNUSED_PARAM(reference);
+    [m_renderCommandEncoder setStencilReferenceValue:reference];
 }
 
 void RenderPassEncoder::setVertexBuffer(uint32_t slot, const Buffer& buffer, uint64_t offset, uint64_t size)
@@ -282,7 +304,7 @@ void wgpuRenderPassEncoderEndOcclusionQuery(WGPURenderPassEncoder renderPassEnco
     WebGPU::fromAPI(renderPassEncoder).endOcclusionQuery();
 }
 
-void wgpuRenderPassEncoderEndPass(WGPURenderPassEncoder renderPassEncoder)
+void wgpuRenderPassEncoderEnd(WGPURenderPassEncoder renderPassEncoder)
 {
     WebGPU::fromAPI(renderPassEncoder).endPass();
 }

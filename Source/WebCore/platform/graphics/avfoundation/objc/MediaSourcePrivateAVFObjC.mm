@@ -129,11 +129,9 @@ MediaTime MediaSourcePrivateAVFObjC::duration() const
     return MediaTime::invalidTime();
 }
 
-std::unique_ptr<PlatformTimeRanges> MediaSourcePrivateAVFObjC::buffered()
+const PlatformTimeRanges& MediaSourcePrivateAVFObjC::buffered()
 {
-    if (m_client)
-        return m_client->buffered();
-    return nullptr;
+    return m_client ? m_client->buffered() : PlatformTimeRanges::emptyRanges();
 }
 
 void MediaSourcePrivateAVFObjC::durationChanged(const MediaTime&)

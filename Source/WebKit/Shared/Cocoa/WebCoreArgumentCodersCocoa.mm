@@ -190,6 +190,12 @@ void ArgumentCoder<WebCore::ApplePaySessionPaymentRequest>::encode(Encoder& enco
 #if ENABLE(APPLE_PAY_MULTI_MERCHANT_PAYMENTS)
     encoder << request.multiTokenContexts();
 #endif
+#if ENABLE(APPLE_PAY_DEFERRED_PAYMENTS)
+    encoder << request.deferredPaymentRequest();
+#endif
+#if ENABLE(APPLE_PAY_LATER_MODE)
+    encoder << request.applePayLaterMode();
+#endif
 }
 
 bool ArgumentCoder<WebCore::ApplePaySessionPaymentRequest>::decode(Decoder& decoder, WebCore::ApplePaySessionPaymentRequest& request)
@@ -327,6 +333,22 @@ bool ArgumentCoder<WebCore::ApplePaySessionPaymentRequest>::decode(Decoder& deco
     request.setMultiTokenContexts(WTFMove(*multiTokenContexts));
 #endif
 
+#if ENABLE(APPLE_PAY_DEFERRED_PAYMENTS)
+    std::optional<std::optional<WebCore::ApplePayDeferredPaymentRequest>> deferredPaymentRequest;
+    decoder >> deferredPaymentRequest;
+    if (!deferredPaymentRequest)
+        return false;
+    request.setDeferredPaymentRequest(WTFMove(*deferredPaymentRequest));
+#endif
+
+#if ENABLE(APPLE_PAY_LATER_MODE)
+    std::optional<std::optional<WebCore::ApplePayLaterMode>> applePayLaterMode;
+    decoder >> applePayLaterMode;
+    if (!applePayLaterMode)
+        return false;
+    request.setApplePayLaterMode(WTFMove(*applePayLaterMode));
+#endif
+
     return true;
 }
 
@@ -455,47 +477,6 @@ void ArgumentCoder<WebCore::Font>::encodePlatformData(Encoder& encoder, const We
     }
 }
 
-static RetainPtr<CTFontDescriptorRef> findFontDescriptor(CFStringRef referenceURL, CFStringRef postScriptName)
-{
-    auto url = adoptCF(CFURLCreateWithString(kCFAllocatorDefault, referenceURL, nullptr));
-    if (!url)
-        return nullptr;
-    auto fontDescriptors = adoptCF(CTFontManagerCreateFontDescriptorsFromURL(url.get()));
-    if (!fontDescriptors || !CFArrayGetCount(fontDescriptors.get()))
-        return nullptr;
-    if (CFArrayGetCount(fontDescriptors.get()) == 1)
-        return static_cast<CTFontDescriptorRef>(CFArrayGetValueAtIndex(fontDescriptors.get(), 0));
-
-    for (CFIndex i = 0; i < CFArrayGetCount(fontDescriptors.get()); ++i) {
-        auto fontDescriptor = static_cast<CTFontDescriptorRef>(CFArrayGetValueAtIndex(fontDescriptors.get(), i));
-        auto currentPostScriptName = adoptCF(CTFontDescriptorCopyAttribute(fontDescriptor, kCTFontNameAttribute));
-        if (CFEqual(currentPostScriptName.get(), postScriptName))
-            return fontDescriptor;
-    }
-    return nullptr;
-}
-
-static RetainPtr<CTFontRef> createCTFont(CFDictionaryRef attributes, float size, CTFontDescriptorOptions options, CFStringRef referenceURL, CFStringRef desiredPostScriptName)
-{
-    auto fontDescriptor = adoptCF(CTFontDescriptorCreateWithAttributes(attributes));
-    if (fontDescriptor) {
-        auto font = adoptCF(CTFontCreateWithFontDescriptorAndOptions(fontDescriptor.get(), size, nullptr, options));
-        auto actualPostScriptName = adoptCF(CTFontCopyPostScriptName(font.get()));
-        if (CFEqual(actualPostScriptName.get(), desiredPostScriptName))
-            return font;
-    }
-
-    // CoreText couldn't round-trip the font.
-    // We can fall back to doing our best to find it ourself.
-    fontDescriptor = findFontDescriptor(referenceURL, desiredPostScriptName);
-    if (!fontDescriptor) {
-        ASSERT_NOT_REACHED();
-        fontDescriptor = adoptCF(CTFontDescriptorCreateLastResort());
-    }
-    ASSERT(fontDescriptor);
-    return adoptCF(CTFontCreateWithFontDescriptorAndOptions(fontDescriptor.get(), size, nullptr, options));
-}
-
 std::optional<WebCore::FontPlatformData> ArgumentCoder<WebCore::Font>::decodePlatformData(Decoder& decoder)
 {
     std::optional<WebCore::FontOrientation> orientation;
@@ -572,8 +553,7 @@ std::optional<WebCore::FontPlatformData> ArgumentCoder<WebCore::Font>::decodePla
         auto fontDescriptor = adoptCF(CTFontDescriptorCreateCopyWithAttributes(baseFontDescriptor, attributes->get()));
         auto ctFont = adoptCF(CTFontCreateWithFontDescriptor(fontDescriptor.get(), *size, nullptr));
 
-        auto creationData = WebCore::FontPlatformData::CreationData { fontFaceData, *itemInCollection };
-        return WebCore::FontPlatformData(ctFont.get(), *size, *syntheticBold, *syntheticOblique, *orientation, *widthVariant, *textRenderingMode, &creationData);
+        return WebCore::FontPlatformData(ctFont.get(), *size, *syntheticBold, *syntheticOblique, *orientation, *widthVariant, *textRenderingMode, fontCustomPlatformData.get());
     }
 
     std::optional<CTFontDescriptorOptions> options;
@@ -591,13 +571,95 @@ std::optional<WebCore::FontPlatformData> ArgumentCoder<WebCore::Font>::decodePla
     if (!postScriptName || !*postScriptName)
         return std::nullopt;
 
-    auto ctFont = createCTFont(attributes->get(), *size, *options, referenceURL->get(), postScriptName->get());
+    auto ctFont = WebCore::createCTFont(attributes->get(), *size, *options, referenceURL->get(), postScriptName->get());
     if (!ctFont)
         return std::nullopt;
 
     return WebCore::FontPlatformData(ctFont.get(), *size, *syntheticBold, *syntheticOblique, *orientation, *widthVariant, *textRenderingMode);
 }
 
+void ArgumentCoder<WebCore::FontCustomPlatformData>::encodePlatformData(Encoder& encoder, const WebCore::FontCustomPlatformData& customPlatformData)
+{
+    WebKit::SharedMemory::Handle handle;
+    {
+        auto sharedMemoryBuffer = WebKit::SharedMemory::copyBuffer(customPlatformData.creationData.fontFaceData);
+        if (auto memoryHandle = sharedMemoryBuffer->createHandle(WebKit::SharedMemory::Protection::ReadOnly))
+            handle = WTFMove(*memoryHandle);
+    }
+    encoder << customPlatformData.creationData.fontFaceData->size();
+    encoder << WTFMove(handle);
+    encoder << customPlatformData.creationData.itemInCollection;
+}
+
+std::optional<Ref<WebCore::FontCustomPlatformData>> ArgumentCoder<WebCore::FontCustomPlatformData>::decodePlatformData(Decoder& decoder)
+{
+    std::optional<uint64_t> bufferSize;
+    decoder >> bufferSize;
+    if (!bufferSize)
+        return std::nullopt;
+
+    std::optional<WebKit::SharedMemory::Handle> handle;
+    decoder >> handle;
+    if (!handle)
+        return std::nullopt;
+
+    auto sharedMemoryBuffer = WebKit::SharedMemory::map(*handle, WebKit::SharedMemory::Protection::ReadOnly);
+    if (!sharedMemoryBuffer)
+        return std::nullopt;
+
+    if (sharedMemoryBuffer->size() < *bufferSize)
+        return std::nullopt;
+
+    auto fontFaceData = sharedMemoryBuffer->createSharedBuffer(*bufferSize);
+
+    std::optional<String> itemInCollection;
+    decoder >> itemInCollection;
+    if (!itemInCollection)
+        return std::nullopt;
+
+    auto fontCustomPlatformData = createFontCustomPlatformData(fontFaceData, *itemInCollection);
+    if (!fontCustomPlatformData)
+        return std::nullopt;
+    return fontCustomPlatformData.releaseNonNull();
+}
+
+void ArgumentCoder<WebCore::FontPlatformData::Attributes>::encodePlatformData(Encoder& encoder, const WebCore::FontPlatformData::Attributes& data)
+{
+    encoder << data.m_attributes;
+    encoder << data.m_options;
+    encoder << data.m_url;
+    encoder << data.m_psName;
+}
+
+bool ArgumentCoder<WebCore::FontPlatformData::Attributes>::decodePlatformData(Decoder& decoder, WebCore::FontPlatformData::Attributes& data)
+{
+    std::optional<RetainPtr<CFDictionaryRef>> attributes;
+    decoder >> attributes;
+    if (!attributes)
+        return false;
+
+    std::optional<CTFontDescriptorOptions> options;
+    decoder >> options;
+    if (!options)
+        return false;
+
+
+    std::optional<RetainPtr<CFStringRef>> url;
+    decoder >> url;
+    if (!url)
+        return false;
+
+    std::optional<RetainPtr<CFStringRef>> psName;
+    decoder >> psName;
+    if (!psName)
+        return false;
+
+    data.m_attributes = attributes.value();
+    data.m_options = options.value();
+    data.m_url = url.value();
+    data.m_psName = psName.value();
+    return true;
+}
 
 #if ENABLE(DATA_DETECTION)
 

@@ -37,11 +37,10 @@ list(APPEND WebCore_SOURCES
     platform/generic/KeyedDecoderGeneric.cpp
     platform/generic/KeyedEncoderGeneric.cpp
 
-    platform/graphics/GLContext.cpp
     platform/graphics/PlatformDisplay.cpp
 
-    platform/graphics/egl/GLContextEGL.cpp
-    platform/graphics/egl/GLContextEGLLibWPE.cpp
+    platform/graphics/egl/GLContext.cpp
+    platform/graphics/egl/GLContextLibWPE.cpp
 
     platform/graphics/libwpe/PlatformDisplayLibWPE.cpp
 
@@ -80,6 +79,7 @@ set(WebCore_USER_AGENT_SCRIPTS
 
 list(APPEND WebCore_LIBRARIES
     WPE::libwpe
+    WebKitRequirements::WebKitResources
 )
 
 if (ENABLE_GAMEPAD)
@@ -123,6 +123,7 @@ if (EGL_EXTRAS)
 endif ()
 
 set(WebCore_MODULES
+    Brotli
     CURL
     Cairo
     EGL
@@ -131,8 +132,11 @@ set(WebCore_MODULES
     HarfBuzz
     ICU
     JPEG
+    LibPSL
+    LibXml2
     OpenSSL
     PNG
+    SQLite
     WebKitRequirements
     WebP
 )

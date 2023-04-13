@@ -38,7 +38,7 @@ WebsitePolicies::WebsitePolicies() = default;
 Ref<WebsitePolicies> WebsitePolicies::copy() const
 {
     auto policies = WebsitePolicies::create();
-    policies->setContentBlockersEnabled(m_contentBlockersEnabled);
+    policies->m_contentExtensionEnablement = m_contentExtensionEnablement;
     policies->m_activeContentRuleListActionPatterns = m_activeContentRuleListActionPatterns;
     policies->setAllowedAutoplayQuirks(m_allowedAutoplayQuirks);
     policies->setAutoplayPolicy(m_autoplayPolicy);
@@ -91,7 +91,7 @@ WebKit::WebsitePoliciesData WebsitePolicies::data()
     customHeaderFields.appendVector(this->customHeaderFields());
 
     return {
-        contentBlockersEnabled(),
+        m_contentExtensionEnablement,
         activeContentRuleListActionPatterns(),
         allowedAutoplayQuirks(),
         autoplayPolicy(),

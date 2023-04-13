@@ -63,6 +63,7 @@
 #include <WebCore/MessageWithMessagePorts.h>
 #include <WebCore/NotificationData.h>
 #include <WebCore/PageConfiguration.h>
+#include <WebCore/RemoteFrameClient.h>
 #include <WebCore/ScriptExecutionContextIdentifier.h>
 #include <WebCore/SerializedScriptValue.h>
 #include <WebCore/ServiceWorkerClientData.h>
@@ -176,7 +177,7 @@ void WebSWContextManagerConnection::installServiceWorker(ServiceWorkerContextDat
         auto loaderClientForMainFrame = makeUniqueRef<RemoteWorkerFrameLoaderClient>(m_webPageProxyID, m_pageID, effectiveUserAgent);
         if (contextData.serviceWorkerPageIdentifier)
             loaderClientForMainFrame->setServiceWorkerPageIdentifier(*contextData.serviceWorkerPageIdentifier);
-        pageConfiguration.loaderClientForMainFrame = WTFMove(loaderClientForMainFrame);
+        pageConfiguration.clientForMainFrame = UniqueRef<WebCore::FrameLoaderClient>(WTFMove(loaderClientForMainFrame));
 
 #if !RELEASE_LOG_DISABLED
         auto serviceWorkerIdentifier = contextData.serviceWorkerIdentifier;
@@ -317,8 +318,36 @@ void WebSWContextManagerConnection::fireNotificationEvent(ServiceWorkerIdentifie
             callback(result);
         });
     };
-    callOnMainRunLoop([identifier, data = WTFMove(data), eventType, callback = WTFMove(inQueueCallback)]() mutable {
+    callOnMainRunLoop([identifier, data = WTFMove(data).isolatedCopy(), eventType, callback = WTFMove(inQueueCallback)]() mutable {
         SWContextManager::singleton().fireNotificationEvent(identifier, WTFMove(data), eventType, WTFMove(callback));
+    });
+}
+
+void WebSWContextManagerConnection::fireBackgroundFetchEvent(ServiceWorkerIdentifier identifier, BackgroundFetchInformation&& info, CompletionHandler<void(bool)>&& callback)
+{
+    assertIsCurrent(m_queue.get());
+
+    auto inQueueCallback = [queue = m_queue, callback = WTFMove(callback)](bool result) mutable {
+        queue->dispatch([result, callback = WTFMove(callback)]() mutable {
+            callback(result);
+        });
+    };
+    callOnMainRunLoop([identifier, info = WTFMove(info).isolatedCopy(), callback = WTFMove(inQueueCallback)]() mutable {
+        SWContextManager::singleton().fireBackgroundFetchEvent(identifier, WTFMove(info), WTFMove(callback));
+    });
+}
+
+void WebSWContextManagerConnection::fireBackgroundFetchClickEvent(ServiceWorkerIdentifier identifier, BackgroundFetchInformation&& info, CompletionHandler<void(bool)>&& callback)
+{
+    assertIsCurrent(m_queue.get());
+
+    auto inQueueCallback = [queue = m_queue, callback = WTFMove(callback)](bool result) mutable {
+        queue->dispatch([result, callback = WTFMove(callback)]() mutable {
+            callback(result);
+        });
+    };
+    callOnMainRunLoop([identifier, info = WTFMove(info).isolatedCopy(), callback = WTFMove(inQueueCallback)]() mutable {
+        SWContextManager::singleton().fireBackgroundFetchClickEvent(identifier, WTFMove(info), WTFMove(callback));
     });
 }
 
@@ -515,6 +544,11 @@ void WebSWContextManagerConnection::didFailHeartBeatCheck(ServiceWorkerIdentifie
 void WebSWContextManagerConnection::setAsInspected(WebCore::ServiceWorkerIdentifier identifier, bool isInspected)
 {
     m_connectionToNetworkProcess->send(Messages::WebSWServerToContextConnection::SetAsInspected { identifier, isInspected }, 0);
+}
+
+void WebSWContextManagerConnection::reportConsoleMessage(WebCore::ServiceWorkerIdentifier identifier, MessageSource source, MessageLevel level, const String& message, unsigned long requestIdentifier)
+{
+    m_connectionToNetworkProcess->send(Messages::WebSWServerToContextConnection::ReportConsoleMessage { identifier, source, level, message, requestIdentifier }, 0);
 }
 
 } // namespace WebCore

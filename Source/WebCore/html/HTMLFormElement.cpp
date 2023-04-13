@@ -28,16 +28,14 @@
 #include "CommonAtomStrings.h"
 #include "DOMFormData.h"
 #include "DOMTokenList.h"
-#include "DOMWindow.h"
 #include "DiagnosticLoggingClient.h"
 #include "Document.h"
-#include "ElementIterator.h"
+#include "ElementAncestorIteratorInlines.h"
 #include "Event.h"
 #include "EventNames.h"
 #include "FormController.h"
 #include "FormData.h"
 #include "FormDataEvent.h"
-#include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "HTMLDialogElement.h"
@@ -50,6 +48,8 @@
 #include "HTMLParserIdioms.h"
 #include "HTMLTableElement.h"
 #include "InputTypeNames.h"
+#include "LocalDOMWindow.h"
+#include "LocalFrame.h"
 #include "MixedContentChecker.h"
 #include "NodeRareData.h"
 #include "Page.h"
@@ -59,6 +59,7 @@
 #include "ScriptDisallowedScope.h"
 #include "Settings.h"
 #include "SubmitEvent.h"
+#include "TypedElementDescendantIteratorInlines.h"
 #include "UserGestureIndicator.h"
 #include <limits>
 #include <wtf/IsoMallocInlines.h>
@@ -282,7 +283,7 @@ void HTMLFormElement::submitIfPossible(Event* event, HTMLFormControlElement* sub
     if (!isConnected())
         return;
 
-    RefPtr<Frame> frame = document().frame();
+    RefPtr frame { document().frame() };
     if (m_isSubmittingOrPreparingForSubmission || !frame)
         return;
 
@@ -354,13 +355,11 @@ ExceptionOr<void> HTMLFormElement::requestSubmit(HTMLElement* submitter)
     RefPtr<HTMLFormControlElement> control;
     if (submitter) {
         // https://html.spec.whatwg.org/multipage/forms.html#dom-form-requestsubmit
-        if (!is<HTMLFormControlElement>(submitter))
-            return Exception { TypeError };
-        control = downcast<HTMLFormControlElement>(submitter);
-        if (!control->isSubmitButton())
-            return Exception { TypeError };
+        control = dynamicDowncast<HTMLFormControlElement>(*submitter);
+        if (!control || !control->isSubmitButton())
+            return Exception { TypeError, "The specified element is not a submit button."_s };
         if (control->form() != this)
-            return Exception { NotFoundError };
+            return Exception { NotFoundError, "The specified element is not owned by this form element."_s };
     }
 
     submitIfPossible(nullptr, control.get(), SubmittedByJavaScript);
@@ -412,8 +411,8 @@ void HTMLFormElement::submit(Event* event, bool processingUserGesture, FormSubmi
     if (m_isConstructingEntryList)
         return;
 
-    RefPtr<FrameView> view = document().view();
-    RefPtr<Frame> frame = document().frame();
+    RefPtr view { document().view() };
+    RefPtr frame { document().frame() };
     if (!view || !frame)
         return;
 
@@ -480,7 +479,7 @@ void HTMLFormElement::reset()
     if (m_isInResetFunction)
         return;
 
-    RefPtr<Frame> protectedFrame = document().frame();
+    RefPtr protectedFrame { document().frame() };
     if (!protectedFrame)
         return;
 
@@ -503,25 +502,25 @@ void HTMLFormElement::resetListedFormControlElements()
         control->reset();
 }
 
-void HTMLFormElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void HTMLFormElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     if (name == actionAttr) {
-        m_attributes.parseAction(value);
+        m_attributes.parseAction(newValue);
         
         if (!m_attributes.action().isEmpty()) {
-            if (RefPtr<Frame> f = document().frame()) {
+            if (RefPtr f = document().frame()) {
                 if (auto* topFrame = dynamicDowncast<LocalFrame>(f->tree().top()))
                     MixedContentChecker::checkFormForMixedContent(*topFrame, topFrame->document()->securityOrigin(), document().completeURL(m_attributes.action()));
             }
         }
     } else if (name == targetAttr)
-        m_attributes.setTarget(value);
+        m_attributes.setTarget(newValue);
     else if (name == methodAttr)
-        m_attributes.updateMethodType(value, document().settings().dialogElementEnabled());
+        m_attributes.updateMethodType(newValue, document().settings().dialogElementEnabled());
     else if (name == enctypeAttr)
-        m_attributes.updateEncodingType(value);
+        m_attributes.updateEncodingType(newValue);
     else if (name == accept_charsetAttr)
-        m_attributes.setAcceptCharset(value);
+        m_attributes.setAcceptCharset(newValue);
     else if (name == autocompleteAttr) {
         if (!shouldAutocomplete())
             document().registerForDocumentSuspensionCallbacks(*this);
@@ -529,9 +528,9 @@ void HTMLFormElement::parseAttribute(const QualifiedName& name, const AtomString
             document().unregisterForDocumentSuspensionCallbacks(*this);
     } else if (name == relAttr) {
         if (m_relList)
-            m_relList->associatedAttributeValueChanged(value);
+            m_relList->associatedAttributeValueChanged(newValue);
     } else
-        HTMLElement::parseAttribute(name, value);
+        HTMLElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }
 
 unsigned HTMLFormElement::formElementIndexWithFormAttribute(Element* element, unsigned rangeStart, unsigned rangeEnd)

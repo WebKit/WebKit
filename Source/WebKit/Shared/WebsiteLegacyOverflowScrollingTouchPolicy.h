@@ -36,16 +36,3 @@ enum class WebsiteLegacyOverflowScrollingTouchPolicy : uint8_t {
 };
 
 }
-
-namespace WTF {
-
-template<> struct EnumTraits<WebKit::WebsiteLegacyOverflowScrollingTouchPolicy> {
-    using values = EnumValues<
-    WebKit::WebsiteLegacyOverflowScrollingTouchPolicy,
-    WebKit::WebsiteLegacyOverflowScrollingTouchPolicy::Default,
-    WebKit::WebsiteLegacyOverflowScrollingTouchPolicy::Disable,
-    WebKit::WebsiteLegacyOverflowScrollingTouchPolicy::Enable
-    >;
-};
-
-} // namespace WTF

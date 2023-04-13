@@ -136,11 +136,15 @@ typedef enum {
 /**
  * WebKitJavascriptError:
  * @WEBKIT_JAVASCRIPT_ERROR_SCRIPT_FAILED: An exception was raised in JavaScript execution
+ * @WEBKIT_JAVASCRIPT_ERROR_INVALID_PARAMETER: An unsupported parameter has been used to call and async function from API. Since 2.40
+ * @WEBKIT_JAVASCRIPT_ERROR_INVALID_RESULT: The result of JavaScript execution could not be returned. Since 2.40
  *
  * Enum values used to denote errors happening when executing JavaScript
  */
 typedef enum {
-    WEBKIT_JAVASCRIPT_ERROR_SCRIPT_FAILED = 699
+    WEBKIT_JAVASCRIPT_ERROR_SCRIPT_FAILED = 699,
+    WEBKIT_JAVASCRIPT_ERROR_INVALID_PARAMETER = 600,
+    WEBKIT_JAVASCRIPT_ERROR_INVALID_RESULT = 601,
 } WebKitJavascriptError;
 
 /**

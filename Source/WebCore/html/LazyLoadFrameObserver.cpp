@@ -26,9 +26,9 @@
 #include "config.h"
 #include "LazyLoadFrameObserver.h"
 
-#include "Frame.h"
 #include "HTMLIFrameElement.h"
 #include "IntersectionObserverCallback.h"
+#include "LocalFrame.h"
 #include "RenderStyle.h"
 
 #include <limits>

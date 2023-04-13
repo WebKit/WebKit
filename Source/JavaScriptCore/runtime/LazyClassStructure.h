@@ -27,10 +27,12 @@
 
 #include "LazyProperty.h"
 #include "Structure.h"
+#include "WriteBarrier.h"
 
 namespace JSC {
 
 class JSGlobalObject;
+class Structure;
 class VM;
 
 class LazyClassStructure {

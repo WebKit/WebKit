@@ -31,6 +31,7 @@
 #import "DOMPrivate.h"
 #import <WebCore/Document.h>
 #import "ExceptionHandlers.h"
+#import <WebCore/ElementInlines.h>
 #import <WebCore/HTMLFormElement.h>
 #import <WebCore/HTMLNames.h>
 #import <WebCore/HTMLObjectElement.h>

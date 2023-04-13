@@ -35,7 +35,7 @@
 #include "WebView.h"
 #include <WebCore/BitmapInfo.h>
 #include <WebCore/GDIUtilities.h>
-#include <WebCore/GraphicsContextWin.h>
+#include <WebCore/GraphicsContextCairo.h>
 #include <WebCore/HWndDC.h>
 #include <WebCore/PlatformMouseEvent.h>
 #include <WebCore/ScrollbarTheme.h>
@@ -743,14 +743,14 @@ LRESULT WebPopupMenuProxyWin::onMouseWheel(HWND hWnd, UINT message, WPARAM wPara
         return 0;
 
     int i = 0;
-    for (incrementWheelDelta(GET_WHEEL_DELTA_WPARAM(wParam)); abs(wheelDelta()) >= WHEEL_DELTA; reduceWheelDelta(WHEEL_DELTA)) {
+    for (incrementWheelDelta(GET_WHEEL_DELTA_WPARAM(wParam)); std::abs(wheelDelta()) >= WHEEL_DELTA; reduceWheelDelta(WHEEL_DELTA)) {
         if (wheelDelta() > 0)
             ++i;
         else
             --i;
     }
 
-    ScrollableArea::scroll(i > 0 ? ScrollUp : ScrollDown, ScrollGranularity::Line, abs(i));
+    ScrollableArea::scroll(i > 0 ? ScrollUp : ScrollDown, ScrollGranularity::Line, std::abs(i));
     return 0;
 }
 
@@ -839,7 +839,7 @@ void WebPopupMenuProxyWin::paint(const IntRect& damageRect, HDC hdc)
         ::SelectObject(m_DC.get(), m_bmp.get());
     }
 
-    GraphicsContextWin context(m_DC.get());
+    GraphicsContextCairo context(m_DC.get());
 
     IntRect translatedDamageRect = damageRect;
     translatedDamageRect.move(IntSize(0, m_scrollOffset * m_itemHeight));
@@ -930,7 +930,7 @@ void WebPopupMenuProxyWin::incrementWheelDelta(int delta)
 void WebPopupMenuProxyWin::reduceWheelDelta(int delta)
 {
     ASSERT(delta >= 0);
-    ASSERT(delta <= abs(m_wheelDelta));
+    ASSERT(delta <= std::abs(m_wheelDelta));
 
     if (m_wheelDelta > 0)
         m_wheelDelta -= delta;

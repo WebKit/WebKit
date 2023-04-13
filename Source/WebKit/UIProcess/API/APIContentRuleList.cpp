@@ -30,6 +30,7 @@
 
 #include "WebCompiledContentRuleList.h"
 #include <WebCore/CombinedURLFilters.h>
+#include <WebCore/ContentExtensionParser.h>
 #include <WebCore/URLFilterParser.h>
 
 namespace API {
@@ -75,6 +76,15 @@ bool ContentRuleList::supportsRegularExpression(const WTF::String& regex)
         break;
     }
     return false;
+}
+
+std::error_code ContentRuleList::parseRuleList(const WTF::String& ruleList)
+{
+    auto result = WebCore::ContentExtensions::parseRuleList(ruleList);
+    if (result.has_value())
+        return { };
+
+    return result.error();
 }
 
 } // namespace API

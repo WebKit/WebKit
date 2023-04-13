@@ -39,7 +39,7 @@
 - (void)_addUserScriptImmediately:(WKUserScript *)userScript WK_API_AVAILABLE(macos(10.14), ios(12.0));
 
 // FIXME: Remove this once rdar://100785999 is unblocked.
-- (void)_addUserContentFilter:(_WKUserContentFilter *)userContentFilter WK_API_DEPRECATED_WITH_REPLACEMENT("addContentRuleList", macos(10.11, WK_MAC_TBA), ios(9.0, WK_IOS_TBA));
+- (void)_addUserContentFilter:(_WKUserContentFilter *)userContentFilter WK_API_DEPRECATED_WITH_REPLACEMENT("addContentRuleList", macos(10.11, 13.3), ios(9.0, 16.4));
 
 - (void)_removeUserContentFilter:(NSString *)userContentFilterName WK_API_AVAILABLE(macos(10.11), ios(9.0));
 - (void)_removeAllUserContentFilters WK_API_AVAILABLE(macos(10.11), ios(9.0));

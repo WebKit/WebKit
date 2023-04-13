@@ -44,6 +44,7 @@ class Buildbot():
     QUEUE_TRIGGERS = {
         'api-ios': 'ios-sim',
         'ios-wk2': 'ios-sim',
+        'ios-wk2-wpt': 'ios-sim',
         'api-mac': 'mac',
         'mac-wk1': 'mac',
         'mac-wk2': 'mac',
@@ -52,6 +53,7 @@ class Buildbot():
         'mac-AS-debug-wk2': 'mac-AS-debug',
         'api-gtk': 'gtk',
         'gtk-wk2': 'gtk',
+        'wpe-wk2': 'wpe',
         'jsc-mips-tests': 'jsc-mips',
         'jsc-armv7-tests': 'jsc-armv7',
     }

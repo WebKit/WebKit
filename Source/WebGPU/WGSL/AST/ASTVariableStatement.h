@@ -25,28 +25,24 @@
 
 #pragma once
 
-#include "ASTDecl.h"
 #include "ASTStatement.h"
-
-#include <wtf/UniqueRef.h>
+#include "ASTVariable.h"
 
 namespace WGSL::AST {
 
 class VariableStatement final : public Statement {
     WTF_MAKE_FAST_ALLOCATED;
-
 public:
-    VariableStatement(SourceSpan span, VariableDecl&& decl)
+    VariableStatement(SourceSpan span, Variable::Ref&& variable)
         : Statement(span)
-        , m_decl(makeUniqueRef<VariableDecl>(WTFMove(decl)))
-    {
-    }
+        , m_variable(WTFMove(variable))
+    { }
 
-    Kind kind() const override;
-    Decl& declaration() { return m_decl.get(); }
+    NodeKind kind() const override;
+    Variable& variable() { return m_variable.get(); }
 
 private:
-    UniqueRef<Decl> m_decl;
+    Variable::Ref m_variable;
 };
 
 } // namespace WGSL::AST

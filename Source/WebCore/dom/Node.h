@@ -636,7 +636,7 @@ protected:
     constexpr static auto CreateText = CreateCharacterData | NodeFlag::IsText;
     constexpr static auto CreateContainer = DefaultNodeFlags | NodeFlag::IsContainerNode;
     constexpr static auto CreateElement = CreateContainer | NodeFlag::IsElement;
-    constexpr static auto CreatePseudoElement = CreateElement | NodeFlag::IsConnected;
+    constexpr static auto CreatePseudoElement = CreateElement | NodeFlag::IsConnected | NodeFlag::HasCustomStyleResolveCallbacks;
     constexpr static auto CreateDocumentFragment = CreateContainer | NodeFlag::IsDocumentFragment;
     constexpr static auto CreateShadowRoot = CreateDocumentFragment | NodeFlag::IsShadowRoot | NodeFlag::IsInShadowTree;
     constexpr static auto CreateHTMLElement = CreateElement | NodeFlag::IsHTMLElement;
@@ -702,8 +702,6 @@ protected:
     NodeRareData& ensureRareData();
     void clearRareData();
 
-    void setHasCustomStyleResolveCallbacks() { setNodeFlag(NodeFlag::HasCustomStyleResolveCallbacks); }
-
     void setTreeScope(TreeScope& scope) { m_treeScope = &scope; }
 
     void invalidateStyle(Style::Validity, Style::InvalidationMode = Style::InvalidationMode::Normal);
@@ -728,7 +726,7 @@ private:
     void materializeRareData();
 
     Vector<std::unique_ptr<MutationObserverRegistration>>* mutationObserverRegistry();
-    HashSet<MutationObserverRegistration*>* transientMutationObserverRegistry();
+    WeakHashSet<MutationObserverRegistration>* transientMutationObserverRegistry();
 
     void adjustStyleValidity(Style::Validity, Style::InvalidationMode);
 
@@ -935,6 +933,22 @@ constexpr bool is_lteq(PartialOrdering ordering)
 constexpr bool is_gteq(PartialOrdering ordering)
 {
     return is_gt(ordering) || is_eq(ordering);
+}
+
+inline void EventTarget::ref()
+{
+    if (LIKELY(isNode()))
+        downcast<Node>(*this).ref();
+    else
+        refEventTarget();
+}
+
+inline void EventTarget::deref()
+{
+    if (LIKELY(isNode()))
+        downcast<Node>(*this).deref();
+    else
+        derefEventTarget();
 }
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const Node&);

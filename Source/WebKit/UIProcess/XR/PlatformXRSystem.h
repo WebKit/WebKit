@@ -34,7 +34,7 @@
 #include <WebCore/PlatformXR.h>
 
 namespace WebCore {
-struct SecurityOriginData;
+class SecurityOriginData;
 }
 
 namespace WebKit {
@@ -55,6 +55,8 @@ public:
     using PlatformXRCoordinator::SessionEventClient::WeakPtrImplType;
 
     void invalidate();
+
+    bool hasActiveSession() const { return !!m_immersiveSessionActivity; }
 
 private:
     static PlatformXRCoordinator* xrCoordinator();

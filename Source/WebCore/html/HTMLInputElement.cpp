@@ -37,20 +37,18 @@
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "ColorInputType.h"
-#include "DOMWindow.h"
 #include "DateComponents.h"
 #include "DateTimeChooser.h"
 #include "DocumentInlines.h"
 #include "Editor.h"
 #include "ElementInlines.h"
+#include "EventLoop.h"
 #include "EventNames.h"
 #include "FileChooser.h"
 #include "FileInputType.h"
 #include "FileList.h"
 #include "FormController.h"
-#include "Frame.h"
 #include "FrameSelection.h"
-#include "FrameView.h"
 #include "HTMLDataListElement.h"
 #include "HTMLFormElement.h"
 #include "HTMLImageLoader.h"
@@ -58,6 +56,9 @@
 #include "HTMLParserIdioms.h"
 #include "IdTargetObserver.h"
 #include "KeyboardEvent.h"
+#include "LocalDOMWindow.h"
+#include "LocalFrame.h"
+#include "LocalFrameView.h"
 #include "LocalizedStrings.h"
 #include "MouseEvent.h"
 #include "NodeRenderStyle.h"
@@ -73,7 +74,7 @@
 #include "StepRange.h"
 #include "StyleGradientImage.h"
 #include "TextControlInnerElements.h"
-#include "TypedElementDescendantIterator.h"
+#include "TypedElementDescendantIteratorInlines.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/Language.h>
 #include <wtf/MathExtras.h>
@@ -113,7 +114,6 @@ HTMLInputElement::HTMLInputElement(const QualifiedName& tagName, Document& docum
     , m_inputType(createdByParser ? nullptr : RefPtr { InputType::createText(*this) })
 {
     ASSERT(hasTagName(inputTag));
-    setHasCustomStyleResolveCallbacks();
 }
 
 Ref<HTMLInputElement> HTMLInputElement::create(const QualifiedName& tagName, Document& document, HTMLFormElement* form, bool createdByParser)
@@ -130,9 +130,6 @@ HTMLImageLoader& HTMLInputElement::ensureImageLoader()
 
 HTMLInputElement::~HTMLInputElement()
 {
-    if (needsSuspensionCallback())
-        document().unregisterForDocumentSuspensionCallbacks(*this);
-
     // Need to remove form association while this is still an HTMLInputElement
     // so that virtual functions are called correctly.
     setForm(nullptr);
@@ -141,7 +138,7 @@ HTMLInputElement::~HTMLInputElement()
     // a radio button that was in a form. The call to setForm(nullptr) above
     // actually adds the button to the document groups in the latter case.
     // That is inelegant, but harmless since we remove it here.
-    if (isRadioButton())
+    if (m_inputType && isRadioButton())
         treeScope().radioButtonGroups().removeButton(*this);
 
 #if ENABLE(TOUCH_EVENTS)
@@ -288,8 +285,7 @@ bool HTMLInputElement::tooShort(StringView value, NeedsToCheckDirtyFlag check) c
     if (value.isEmpty())
         return false;
 
-    // FIXME: The HTML specification says that the "number of characters" is measured using code-unit length.
-    return numGraphemeClusters(value) < static_cast<unsigned>(min);
+    return value.length() < static_cast<unsigned>(min);
 }
 
 bool HTMLInputElement::tooLong(StringView value, NeedsToCheckDirtyFlag check) const
@@ -303,8 +299,7 @@ bool HTMLInputElement::tooLong(StringView value, NeedsToCheckDirtyFlag check) co
         if (!hasDirtyValue() || !m_wasModifiedByUser)
             return false;
     }
-    // FIXME: The HTML specification says that the "number of characters" is measured using code-unit length.
-    return numGraphemeClusters(value) > max;
+    return value.length() > max;
 }
 
 bool HTMLInputElement::rangeUnderflow() const
@@ -592,6 +587,8 @@ void HTMLInputElement::updateType()
     }
 
     updateValidity();
+
+    checkAndPossiblyClosePopoverStack();
 }
 
 inline void HTMLInputElement::runPostTypeUpdateTasks()
@@ -723,24 +720,26 @@ inline void HTMLInputElement::initializeInputType()
     updateValidity();
 }
 
-void HTMLInputElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void HTMLInputElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     ASSERT(m_inputType);
     Ref protectedInputType { *m_inputType };
 
+    HTMLTextFormControlElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
+
     if (name == nameAttr) {
         removeFromRadioButtonGroup();
-        m_name = value;
+        m_name = newValue;
         addToRadioButtonGroup();
-        HTMLTextFormControlElement::parseAttribute(name, value);
+        HTMLTextFormControlElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
     } else if (name == autocompleteAttr) {
-        if (equalLettersIgnoringASCIICase(value, "off"_s)) {
+        if (equalLettersIgnoringASCIICase(newValue, "off"_s)) {
             m_autocomplete = Off;
             registerForSuspensionCallbackIfNeeded();
         } else {
             bool needsToUnregister = m_autocomplete == Off;
 
-            if (value.isEmpty())
+            if (newValue.isEmpty())
                 m_autocomplete = Uninitialized;
             else
                 m_autocomplete = On;
@@ -773,36 +772,34 @@ void HTMLInputElement::parseAttribute(const QualifiedName& name, const AtomStrin
         // attribute. So, delay the setChecked() call until
         // finishParsingChildren() is called if parsing is in progress.
         if ((!m_parsingInProgress || !document().formController().hasFormStateToRestore()) && !m_dirtyCheckednessFlag) {
-            setChecked(!value.isNull());
+            setChecked(!newValue.isNull());
             // setChecked() above sets the dirty checkedness flag so we need to reset it.
             m_dirtyCheckednessFlag = false;
         }
     } else if (name == maxlengthAttr)
-        maxLengthAttributeChanged(value);
+        maxLengthAttributeChanged(newValue);
     else if (name == minlengthAttr)
-        minLengthAttributeChanged(value);
+        minLengthAttributeChanged(newValue);
     else if (name == sizeAttr) {
         unsigned oldSize = m_size;
-        m_size = limitToOnlyHTMLNonNegativeNumbersGreaterThanZero(value, defaultSize);
+        m_size = limitToOnlyHTMLNonNegativeNumbersGreaterThanZero(newValue, defaultSize);
         if (m_size != oldSize && renderer())
             renderer()->setNeedsLayoutAndPrefWidthsRecalc();
     } else if (name == resultsAttr)
-        m_maxResults = value.isNull() ? -1 : std::min(parseHTMLInteger(value).value_or(0), maxSavedResults);
+        m_maxResults = newValue.isNull() ? -1 : std::min(parseHTMLInteger(newValue).value_or(0), maxSavedResults);
     else if (name == autosaveAttr || name == incrementalAttr)
         invalidateStyleForSubtree();
     else if (name == maxAttr || name == minAttr || name == multipleAttr || name == patternAttr || name == stepAttr)
         updateValidity();
 #if ENABLE(DATALIST_ELEMENT)
     else if (name == listAttr) {
-        m_hasNonEmptyList = !value.isEmpty();
+        m_hasNonEmptyList = !newValue.isEmpty();
         if (m_hasNonEmptyList) {
             resetListAttributeTargetObserver();
             dataListMayHaveChanged();
         }
     }
 #endif
-    else
-        HTMLTextFormControlElement::parseAttribute(name, value);
 
     m_inputType->attributeChanged(name);
 }
@@ -928,8 +925,10 @@ bool HTMLInputElement::appendFormData(DOMFormData& formData)
 
 void HTMLInputElement::reset()
 {
-    if (m_inputType->storesValueSeparateFromAttribute())
+    if (m_inputType->storesValueSeparateFromAttribute()) {
         setValue({ });
+        updateValidity();
+    }
 
     setAutoFilled(false);
     setAutoFilledAndViewable(false);
@@ -1195,6 +1194,7 @@ void HTMLInputElement::defaultEventHandler(Event& event)
     // must dispatch a DOMActivate event - a click event will not do the job.
     if (event.type() == eventNames().DOMActivateEvent) {
         m_inputType->handleDOMActivateEvent(event);
+        handlePopoverTargetAction();
         if (event.defaultHandled())
             return;
     }
@@ -1400,6 +1400,9 @@ void HTMLInputElement::setAutoFilledAndObscured(bool autoFilledAndObscured)
 
     Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClassAutofillAndObscured, autoFilledAndObscured);
     m_isAutoFilledAndObscured = autoFilledAndObscured;
+
+    if (auto* cache = document().existingAXObjectCache())
+        cache->onTextSecurityChanged(*this);
 }
 
 void HTMLInputElement::setShowAutoFillButton(AutoFillButtonType autoFillButtonType)
@@ -1487,6 +1490,9 @@ bool HTMLInputElement::isOutOfRange() const
 
 bool HTMLInputElement::needsSuspensionCallback()
 {
+    if (!m_inputType)
+        return false;
+
     if (m_inputType->shouldResetOnDocumentActivation())
         return true;
 

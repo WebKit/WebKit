@@ -28,22 +28,22 @@
 
 #include "CSSCounterStyleRegistry.h"
 #include "CSSCounterStyleRule.h"
+#include "CSSCounterValue.h"
 #include "CSSCursorImageValue.h"
 #include "CSSFontValue.h"
 #include "CSSFontVariantAlternatesValue.h"
 #include "CSSGradientValue.h"
 #include "CSSGridTemplateAreasValue.h"
 #include "CSSPropertyParserHelpers.h"
+#include "CSSRectValue.h"
 #include "CSSRegisteredCustomProperty.h"
 #include "CSSShadowValue.h"
-#include "Counter.h"
 #include "CounterContent.h"
 #include "CursorList.h"
-#include "ElementAncestorIterator.h"
+#include "ElementAncestorIteratorInlines.h"
 #include "FontVariantBuilder.h"
-#include "Frame.h"
 #include "HTMLElement.h"
-#include "Rect.h"
+#include "LocalFrame.h"
 #include "SVGElement.h"
 #include "SVGRenderStyle.h"
 #include "StyleBuilderConverter.h"
@@ -112,7 +112,6 @@ public:
 #if ENABLE(TEXT_AUTOSIZING)
     DECLARE_PROPERTY_CUSTOM_HANDLERS(LineHeight);
 #endif
-    DECLARE_PROPERTY_CUSTOM_HANDLERS(ListStyleType);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(OutlineStyle);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(Size);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(Stroke);
@@ -139,9 +138,10 @@ public:
     static void applyValueDisplay(BuilderState&, CSSValue&);
     static void applyInheritVerticalAlign(BuilderState&);
     static void applyValueVerticalAlign(BuilderState&, CSSValue&);
+    static void applyInheritBaselineShift(BuilderState&);
+    static void applyValueBaselineShift(BuilderState&, CSSValue&);
 
     // Custom handling of value setting only.
-    static void applyValueBaselineShift(BuilderState&, CSSValue&);
     static void applyValueDirection(BuilderState&, CSSValue&);
     static void applyValueWebkitLocale(BuilderState&, CSSValue&);
     static void applyValueTextOrientation(BuilderState&, CSSValue&);
@@ -163,7 +163,7 @@ public:
 
     static void applyInitialCustomProperty(BuilderState&, const CSSRegisteredCustomProperty*, const AtomString& name);
     static void applyInheritCustomProperty(BuilderState&, const CSSRegisteredCustomProperty*, const AtomString& name);
-    static void applyValueCustomProperty(BuilderState&, const CSSRegisteredCustomProperty*, CSSCustomPropertyValue&);
+    static void applyValueCustomProperty(BuilderState&, const CSSRegisteredCustomProperty*, const CSSCustomPropertyValue&);
 
     static void applyValueColor(BuilderState&, CSSValue&);
 
@@ -172,7 +172,7 @@ private:
 
     static Length mmLength(double mm);
     static Length inchLength(double inch);
-    static bool getPageSizeFromName(CSSPrimitiveValue* pageSizeName, CSSPrimitiveValue* pageOrientation, Length& width, Length& height);
+    static bool getPageSizeFromName(const CSSPrimitiveValue& pageSizeName, const CSSPrimitiveValue* pageOrientation, Length& width, Length& height);
 
     template <CSSPropertyID id>
     static void applyTextOrBoxShadowValue(BuilderState&, CSSValue&);
@@ -191,7 +191,7 @@ private:
 
 inline void BuilderCustom::applyValueDirection(BuilderState& builderState, CSSValue& value)
 {
-    builderState.style().setDirection(downcast<CSSPrimitiveValue>(value));
+    builderState.style().setDirection(fromCSSValue<TextDirection>(value));
     builderState.style().setHasExplicitlySetDirection(true);
 }
 
@@ -248,7 +248,7 @@ inline Length BuilderCustom::inchLength(double inch)
     return CSSPrimitiveValue::create(inch, CSSUnitType::CSS_IN).get().computeLength<Length>({ });
 }
 
-bool BuilderCustom::getPageSizeFromName(CSSPrimitiveValue* pageSizeName, CSSPrimitiveValue* pageOrientation, Length& width, Length& height)
+bool BuilderCustom::getPageSizeFromName(const CSSPrimitiveValue& pageSizeName, const CSSPrimitiveValue* pageOrientation, Length& width, Length& height)
 {
     static NeverDestroyed<Length> a5Width(mmLength(148));
     static NeverDestroyed<Length> a5Height(mmLength(210));
@@ -267,10 +267,7 @@ bool BuilderCustom::getPageSizeFromName(CSSPrimitiveValue* pageSizeName, CSSPrim
     static NeverDestroyed<Length> ledgerWidth(inchLength(11));
     static NeverDestroyed<Length> ledgerHeight(inchLength(17));
 
-    if (!pageSizeName)
-        return false;
-
-    switch (pageSizeName->valueID()) {
+    switch (pageSizeName.valueID()) {
     case CSSValueA5:
         width = a5Width;
         height = a5Height;
@@ -331,8 +328,8 @@ inline void BuilderCustom::applyInheritVerticalAlign(BuilderState& builderState)
 inline void BuilderCustom::applyValueVerticalAlign(BuilderState& builderState, CSSValue& value)
 {
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
-    if (primitiveValue.valueID())
-        builderState.style().setVerticalAlign(primitiveValue);
+    if (primitiveValue.valueID() != CSSValueInvalid)
+        builderState.style().setVerticalAlign(fromCSSValueID<VerticalAlign>(primitiveValue.valueID()));
     else
         builderState.style().setVerticalAlignLength(primitiveValue.convertToLength<FixedIntegerConversion | PercentConversion | CalculatedConversion>(builderState.cssToLengthConversionData()));
 }
@@ -413,7 +410,7 @@ inline void BuilderCustom::applyValueSize(BuilderState& builderState, CSSValue& 
         } else {
             // <page-size> <orientation>
             // The value order is guaranteed. See CSSParser::parseSizeParameter.
-            if (!getPageSizeFromName(&firstPrimitiveValue, &secondPrimitiveValue, width, height))
+            if (!getPageSizeFromName(firstPrimitiveValue, &secondPrimitiveValue, width, height))
                 return;
         }
         pageSizeType = PAGE_SIZE_RESOLVED;
@@ -445,7 +442,7 @@ inline void BuilderCustom::applyValueSize(BuilderState& builderState, CSSValue& 
             default:
                 // <page-size>
                 pageSizeType = PAGE_SIZE_RESOLVED;
-                if (!getPageSizeFromName(&primitiveValue, nullptr, width, height))
+                if (!getPageSizeFromName(primitiveValue, nullptr, width, height))
                     return;
             }
         }
@@ -480,7 +477,7 @@ inline void BuilderCustom::applyValueTextIndent(BuilderState& builderState, CSSV
 
     if (auto* valueList = dynamicDowncast<CSSValueList>(value)) {
         for (auto& item : *valueList) {
-            auto& primitiveValue = downcast<CSSPrimitiveValue>(item.get());
+            auto& primitiveValue = downcast<CSSPrimitiveValue>(item);
             if (!primitiveValue.valueID())
                 lengthOrPercentageValue = primitiveValue.convertToLength<FixedIntegerConversion | PercentConversion | CalculatedConversion>(builderState.cssToLengthConversionData());
             else if (primitiveValue.valueID() == CSSValueEachLine)
@@ -540,7 +537,7 @@ public:
             break;
         case Slice:
             // Masks have a different initial value for slices. Preserve the value of "0 fill" for backwards compatibility.
-            image.setImageSlices(type == BorderImage ? LengthBox(Length(100, LengthType::Percent), Length(100, LengthType::Percent), Length(100, LengthType::Percent), Length(100, LengthType::Percent)) : LengthBox());
+            image.setImageSlices(type == BorderImage ? LengthBox(Length(100, LengthType::Percent), Length(100, LengthType::Percent), Length(100, LengthType::Percent), Length(100, LengthType::Percent)) : LengthBox(LengthType::Fixed));
             image.setFill(type != BorderImage);
             break;
         case Width:
@@ -730,63 +727,30 @@ static inline float computeLineHeightMultiplierDueToFontSize(const Document& doc
 
 inline void BuilderCustom::applyValueLineHeight(BuilderState& builderState, CSSValue& value)
 {
-    if (is<CSSPrimitiveValue>(value) && CSSPropertyParserHelpers::isSystemFontShorthand(downcast<CSSPrimitiveValue>(value).valueID())) {
+    if (CSSPropertyParserHelpers::isSystemFontShorthand(value.valueID())) {
         applyInitialLineHeight(builderState);
         return;
     }
 
-    std::optional<Length> lineHeight = BuilderConverter::convertLineHeight(builderState, value, 1);
-    if (!lineHeight)
-        return;
+    auto lineHeight = BuilderConverter::convertLineHeight(builderState, value, 1);
 
     Length computedLineHeight;
-    if (lineHeight.value().isNegative())
-        computedLineHeight = lineHeight.value();
+    if (lineHeight.isNegative())
+        computedLineHeight = lineHeight;
     else {
         auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
         auto multiplier = computeLineHeightMultiplierDueToFontSize(builderState.document(), builderState.style(), primitiveValue);
         if (multiplier == 1)
-            computedLineHeight = lineHeight.value();
+            computedLineHeight = lineHeight;
         else
-            computedLineHeight = BuilderConverter::convertLineHeight(builderState, value, multiplier).value();
+            computedLineHeight = BuilderConverter::convertLineHeight(builderState, value, multiplier);
     }
 
     builderState.style().setLineHeight(WTFMove(computedLineHeight));
-    builderState.style().setSpecifiedLineHeight(WTFMove(lineHeight.value()));
+    builderState.style().setSpecifiedLineHeight(WTFMove(lineHeight));
 }
 
 #endif
-
-inline void BuilderCustom::applyInheritListStyleType(BuilderState& builderState)
-{
-    builderState.style().setListStyleType(builderState.parentStyle().listStyleType());
-    builderState.style().setListStyleStringValue(builderState.parentStyle().listStyleStringValue());
-}
-
-inline void BuilderCustom::applyInitialListStyleType(BuilderState& builderState)
-{
-    builderState.style().setListStyleType(RenderStyle::initialListStyleType());
-    builderState.style().setListStyleStringValue(RenderStyle::initialListStyleStringValue());
-}
-
-inline void BuilderCustom::applyValueListStyleType(BuilderState& builderState, CSSValue& value)
-{
-    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
-    if (primitiveValue.isValueID()) {
-        builderState.style().setListStyleType(primitiveValue);
-        builderState.style().setListStyleStringValue(RenderStyle::initialListStyleStringValue());
-        return;
-    }
-    // FIXME: handle counter-style: rdar://102988393.
-    // We should skip handling counter style until we can represent all systems with CSSCounterStyle::text(). We currently don't accept custom-ident in list-style-type parser-grammar (CSSProperties.json).
-    if (primitiveValue.isCustomIdent()) {
-        builderState.style().setListStyleType(ListStyleType::CustomCounterStyle);
-        builderState.style().setListStyleStringValue(makeAtomString(primitiveValue.stringValue()));
-        return;
-    }
-    builderState.style().setListStyleType(ListStyleType::String);
-    builderState.style().setListStyleStringValue(AtomString { primitiveValue.stringValue() });
-}
 
 inline void BuilderCustom::applyInheritOutlineStyle(BuilderState& builderState)
 {
@@ -802,10 +766,8 @@ inline void BuilderCustom::applyInitialOutlineStyle(BuilderState& builderState)
 
 inline void BuilderCustom::applyValueOutlineStyle(BuilderState& builderState, CSSValue& value)
 {
-    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
-
-    builderState.style().setOutlineStyleIsAuto(primitiveValue);
-    builderState.style().setOutlineStyle(primitiveValue);
+    builderState.style().setOutlineStyleIsAuto(fromCSSValue<OutlineIsAuto>(value));
+    builderState.style().setOutlineStyle(fromCSSValue<BorderStyle>(value));
 }
 
 inline void BuilderCustom::applyInitialCaretColor(BuilderState& builderState)
@@ -868,17 +830,16 @@ inline void BuilderCustom::applyInheritClip(BuilderState& builderState)
 
 inline void BuilderCustom::applyValueClip(BuilderState& builderState, CSSValue& value)
 {
-    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
-    if (auto* rect = primitiveValue.rectValue()) {
-        auto conversionData = builderState.cssToLengthConversionData();
-        auto top = rect->top()->convertToLength<FixedIntegerConversion | PercentConversion | AutoConversion>(conversionData);
-        auto right = rect->right()->convertToLength<FixedIntegerConversion | PercentConversion | AutoConversion>(conversionData);
-        auto bottom = rect->bottom()->convertToLength<FixedIntegerConversion | PercentConversion | AutoConversion>(conversionData);
-        auto left = rect->left()->convertToLength<FixedIntegerConversion | PercentConversion | AutoConversion>(conversionData);
+    if (value.isRect()) {
+        auto& conversionData = builderState.cssToLengthConversionData();
+        auto top = value.rect().top().convertToLength<FixedIntegerConversion | PercentConversion | AutoConversion>(conversionData);
+        auto right = value.rect().right().convertToLength<FixedIntegerConversion | PercentConversion | AutoConversion>(conversionData);
+        auto bottom = value.rect().bottom().convertToLength<FixedIntegerConversion | PercentConversion | AutoConversion>(conversionData);
+        auto left = value.rect().left().convertToLength<FixedIntegerConversion | PercentConversion | AutoConversion>(conversionData);
         builderState.style().setClip(WTFMove(top), WTFMove(right), WTFMove(bottom), WTFMove(left));
         builderState.style().setHasClip(true);
     } else {
-        ASSERT(primitiveValue.valueID() == CSSValueAuto);
+        ASSERT(value.valueID() == CSSValueAuto);
         applyInitialClip(builderState);
     }
 }
@@ -897,13 +858,13 @@ inline void BuilderCustom::applyValueWebkitLocale(BuilderState& builderState, CS
 
 inline void BuilderCustom::applyValueWritingMode(BuilderState& builderState, CSSValue& value)
 {
-    builderState.setWritingMode(downcast<CSSPrimitiveValue>(value));
+    builderState.setWritingMode(fromCSSValue<WritingMode>(value));
     builderState.style().setHasExplicitlySetWritingMode(true);
 }
 
 inline void BuilderCustom::applyValueTextOrientation(BuilderState& builderState, CSSValue& value)
 {
-    builderState.setTextOrientation(downcast<CSSPrimitiveValue>(value));
+    builderState.setTextOrientation(fromCSSValue<TextOrientation>(value));
 }
 
 #if ENABLE(TEXT_AUTOSIZING)
@@ -942,8 +903,7 @@ inline void BuilderCustom::applyValueColorScheme(BuilderState& builderState, CSS
 template<CSSPropertyID property>
 inline void BuilderCustom::applyTextOrBoxShadowValue(BuilderState& builderState, CSSValue& value)
 {
-    if (is<CSSPrimitiveValue>(value)) {
-        ASSERT(downcast<CSSPrimitiveValue>(value).valueID() == CSSValueNone);
+    if (value.valueID() == CSSValueNone) {
         if (property == CSSPropertyTextShadow)
             builderState.style().setTextShadow(nullptr);
         else
@@ -953,8 +913,8 @@ inline void BuilderCustom::applyTextOrBoxShadowValue(BuilderState& builderState,
 
     bool isFirstEntry = true;
     for (auto& item : downcast<CSSValueList>(value)) {
-        auto& shadowValue = downcast<CSSShadowValue>(item.get());
-        auto conversionData = builderState.cssToLengthConversionData();
+        auto& shadowValue = downcast<CSSShadowValue>(item);
+        auto& conversionData = builderState.cssToLengthConversionData();
         auto x = shadowValue.x->computeLength<Length>(conversionData);
         auto y = shadowValue.y->computeLength<Length>(conversionData);
         auto blur = shadowValue.blur ? shadowValue.blur->computeLength<Length>(conversionData) : Length(0, LengthType::Fixed);
@@ -1055,7 +1015,7 @@ inline void BuilderCustom::applyValueFontFamily(BuilderState& builderState, CSSV
     Vector<AtomString> families;
 
     if (is<CSSPrimitiveValue>(value)) {
-        auto valueID = downcast<CSSPrimitiveValue>(value).valueID();
+        auto valueID = value.valueID();
         ASSERT(CSSPropertyParserHelpers::isSystemFontShorthand(valueID));
         AtomString family = SystemFontDatabase::singleton().systemFontShorthandFamily(CSSPropertyParserHelpers::lowerFontShorthand(valueID));
         ASSERT(!family.isEmpty());
@@ -1065,7 +1025,7 @@ inline void BuilderCustom::applyValueFontFamily(BuilderState& builderState, CSSV
         auto& valueList = downcast<CSSValueList>(value);
         families.reserveInitialCapacity(valueList.length());
         for (auto& item : valueList) {
-            auto& contentValue = downcast<CSSPrimitiveValue>(item.get());
+            auto& contentValue = downcast<CSSPrimitiveValue>(item);
             AtomString family;
             bool isGenericFamily = false;
             if (contentValue.isFontFamily())
@@ -1194,9 +1154,17 @@ inline void BuilderCustom::applyInheritDisplay(BuilderState& builderState)
 
 inline void BuilderCustom::applyValueDisplay(BuilderState& builderState, CSSValue& value)
 {
-    DisplayType display = downcast<CSSPrimitiveValue>(value);
+    auto display = fromCSSValue<DisplayType>(value);
     if (isValidDisplayValue(builderState, display))
         builderState.style().setDisplay(display);
+}
+
+inline void BuilderCustom::applyInheritBaselineShift(BuilderState& builderState)
+{
+    auto& svgStyle = builderState.style().accessSVGStyle();
+    auto& svgParentStyle = builderState.parentStyle().svgStyle();
+    svgStyle.setBaselineShift(forwardInheritedValue(svgParentStyle.baselineShift()));
+    svgStyle.setBaselineShiftValue(forwardInheritedValue(svgParentStyle.baselineShiftValue()));
 }
 
 inline void BuilderCustom::applyValueBaselineShift(BuilderState& builderState, CSSValue& value)
@@ -1219,7 +1187,7 @@ inline void BuilderCustom::applyValueBaselineShift(BuilderState& builderState, C
         }
     } else {
         svgStyle.setBaselineShift(BaselineShift::Length);
-        svgStyle.setBaselineShiftValue(SVGLengthValue::fromCSSPrimitiveValue(primitiveValue));
+        svgStyle.setBaselineShiftValue(SVGLengthValue::fromCSSPrimitiveValue(primitiveValue, builderState.cssToLengthConversionData()));
     }
 }
 
@@ -1249,10 +1217,8 @@ inline void BuilderCustom::applyInheritAspectRatio(BuilderState&)
 
 inline void BuilderCustom::applyValueAspectRatio(BuilderState& builderState, CSSValue& value)
 {
-    if (is<CSSPrimitiveValue>(value)) {
-        ASSERT(downcast<CSSPrimitiveValue>(value).valueID() == CSSValueAuto);
+    if (value.valueID() == CSSValueAuto)
         return builderState.style().setAspectRatioType(AspectRatioType::Auto);
-    }
 
     if (!is<CSSValueList>(value))
         return;
@@ -1289,9 +1255,9 @@ inline void BuilderCustom::applyInheritContain(BuilderState& builderState)
 inline void BuilderCustom::applyValueContain(BuilderState& builderState, CSSValue& value)
 {
     if (is<CSSPrimitiveValue>(value)) {
-        if (downcast<CSSPrimitiveValue>(value).valueID() == CSSValueNone)
+        if (value.valueID() == CSSValueNone)
             return builderState.style().setContain(RenderStyle::initialContainment());
-        if (downcast<CSSPrimitiveValue>(value).valueID() == CSSValueStrict)
+        if (value.valueID() == CSSValueStrict)
             return builderState.style().setContain(RenderStyle::strictContainment());
         return builderState.style().setContain(RenderStyle::contentContainment());
     }
@@ -1302,7 +1268,7 @@ inline void BuilderCustom::applyValueContain(BuilderState& builderState, CSSValu
     OptionSet<Containment> containment;
     auto& list = downcast<CSSValueList>(value);
     for (auto& item : list) {
-        auto& value = downcast<CSSPrimitiveValue>(item.get());
+        auto& value = downcast<CSSPrimitiveValue>(item);
         switch (value.valueID()) {
         case CSSValueSize:
             containment.add(Containment::Size);
@@ -1333,11 +1299,11 @@ inline void BuilderCustom::applyValueTextEmphasisStyle(BuilderState& builderStat
         ASSERT(list.length() == 2);
 
         for (auto& item : list) {
-            CSSPrimitiveValue& value = downcast<CSSPrimitiveValue>(item.get());
-            if (value.valueID() == CSSValueFilled || value.valueID() == CSSValueOpen)
-                builderState.style().setTextEmphasisFill(value);
+            auto valueID = item.valueID();
+            if (valueID == CSSValueFilled || valueID == CSSValueOpen)
+                builderState.style().setTextEmphasisFill(fromCSSValueID<TextEmphasisFill>(valueID));
             else
-                builderState.style().setTextEmphasisMark(value);
+                builderState.style().setTextEmphasisMark(fromCSSValueID<TextEmphasisMark>(valueID));
         }
         builderState.style().setTextEmphasisCustomMark(nullAtom());
         return;
@@ -1354,11 +1320,11 @@ inline void BuilderCustom::applyValueTextEmphasisStyle(BuilderState& builderStat
     builderState.style().setTextEmphasisCustomMark(nullAtom());
 
     if (primitiveValue.valueID() == CSSValueFilled || primitiveValue.valueID() == CSSValueOpen) {
-        builderState.style().setTextEmphasisFill(primitiveValue);
+        builderState.style().setTextEmphasisFill(fromCSSValue<TextEmphasisFill>(value));
         builderState.style().setTextEmphasisMark(TextEmphasisMark::Auto);
     } else {
         builderState.style().setTextEmphasisFill(TextEmphasisFill::Filled);
-        builderState.style().setTextEmphasisMark(primitiveValue);
+        builderState.style().setTextEmphasisMark(fromCSSValue<TextEmphasisMark>(value));
     }
 }
 
@@ -1378,7 +1344,7 @@ inline void BuilderCustom::applyInheritCounter(BuilderState& builderState)
 template <BuilderCustom::CounterBehavior counterBehavior>
 inline void BuilderCustom::applyValueCounter(BuilderState& builderState, CSSValue& value)
 {
-    bool setCounterIncrementToNone = counterBehavior == Increment && is<CSSPrimitiveValue>(value) && downcast<CSSPrimitiveValue>(value).valueID() == CSSValueNone;
+    bool setCounterIncrementToNone = counterBehavior == Increment && value.valueID() == CSSValueNone;
 
     if (!is<CSSValueList>(value) && !setCounterIncrementToNone)
         return;
@@ -1395,14 +1361,13 @@ inline void BuilderCustom::applyValueCounter(BuilderState& builderState, CSSValu
         return;
 
     for (auto& item : downcast<CSSValueList>(value)) {
-        Pair* pair = downcast<CSSPrimitiveValue>(item.get()).pairValue();
-        AtomString identifier { pair->first()->stringValue() };
-        int value = pair->second()->intValue();
+        AtomString identifier { downcast<CSSPrimitiveValue>(item.first()).stringValue() };
+        int value = downcast<CSSPrimitiveValue>(item.second()).intValue();
         auto& directives = map.add(identifier, CounterDirectives { }).iterator->value;
         if (counterBehavior == Reset)
             directives.resetValue = value;
         else
-            directives.incrementValue = saturatedSum<int>(directives.incrementValue.value_or(0), value);
+            directives.incrementValue = saturatedSum(directives.incrementValue.value_or(0), value);
     }
 }
 
@@ -1450,7 +1415,7 @@ inline void BuilderCustom::applyValueCursor(BuilderState& builderState, CSSValue
 {
     builderState.style().clearCursorList();
     if (is<CSSPrimitiveValue>(value)) {
-        CursorType cursor = downcast<CSSPrimitiveValue>(value);
+        auto cursor = fromCSSValue<CursorType>(value);
         if (builderState.style().cursor() != cursor)
             builderState.style().setCursor(cursor);
         return;
@@ -1460,13 +1425,13 @@ inline void BuilderCustom::applyValueCursor(BuilderState& builderState, CSSValue
     auto& list = downcast<CSSValueList>(value);
     for (auto& item : list) {
         if (is<CSSCursorImageValue>(item)) {
-            auto& image = downcast<CSSCursorImageValue>(item.get());
+            auto& image = downcast<CSSCursorImageValue>(item);
             builderState.style().addCursor(builderState.createStyleImage(image), image.hotSpot());
             continue;
         }
 
-        builderState.style().setCursor(downcast<CSSPrimitiveValue>(item.get()));
-        ASSERT_WITH_MESSAGE(item.ptr() == list.item(list.length() - 1), "Cursor ID fallback should always be last in the list");
+        builderState.style().setCursor(fromCSSValue<CursorType>(item));
+        ASSERT_WITH_MESSAGE(&item == list.item(list.length() - 1), "Cursor ID fallback should always be last in the list");
         return;
     }
 }
@@ -1566,52 +1531,45 @@ inline void BuilderCustom::applyInheritContent(BuilderState&)
 inline void BuilderCustom::applyValueContent(BuilderState& builderState, CSSValue& value)
 {
     if (is<CSSPrimitiveValue>(value)) {
-        const auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
-        ASSERT_UNUSED(primitiveValue, primitiveValue.valueID() == CSSValueNormal || primitiveValue.valueID() == CSSValueNone);
+        ASSERT(value.valueID() == CSSValueNormal || value.valueID() == CSSValueNone);
         builderState.style().clearContent();
-        builderState.style().setHasContentNone(primitiveValue.valueID() == CSSValueNone);
+        builderState.style().setHasContentNone(value.valueID() == CSSValueNone);
         return;
     }
 
     bool didSet = false;
     for (auto& item : downcast<CSSValueList>(value)) {
-        if (item->isImage()) {
-            builderState.style().setContent(builderState.createStyleImage(item.get()), didSet);
+        if (item.isImage()) {
+            builderState.style().setContent(builderState.createStyleImage(item), didSet);
             didSet = true;
             continue;
         }
 
-        if (!is<CSSPrimitiveValue>(item))
-            continue;
-
-        auto& contentValue = downcast<CSSPrimitiveValue>(item.get());
-        if (contentValue.isString()) {
-            builderState.style().setContent(contentValue.stringValue().impl(), didSet);
+        auto* primitive = dynamicDowncast<CSSPrimitiveValue>(item);
+        if (primitive && primitive->isString()) {
+            builderState.style().setContent(primitive->stringValue().impl(), didSet);
             didSet = true;
-        } else if (contentValue.isAttr()) {
+        } else if (primitive && primitive->isAttr()) {
             // FIXME: Can a namespace be specified for an attr(foo)?
             if (builderState.style().styleType() == PseudoId::None)
                 builderState.style().setHasAttrContent();
             else
                 const_cast<RenderStyle&>(builderState.parentStyle()).setHasAttrContent();
-            QualifiedName attr(nullAtom(), contentValue.stringValue().impl(), nullAtom());
+            QualifiedName attr(nullAtom(), primitive->stringValue().impl(), nullAtom());
             const AtomString& value = builderState.element() ? builderState.element()->getAttribute(attr) : nullAtom();
             builderState.style().setContent(value.isNull() ? emptyAtom() : value.impl(), didSet);
             didSet = true;
             // Register the fact that the attribute value affects the style.
             builderState.registerContentAttribute(attr.localName());
-        } else if (contentValue.isCounter()) {
-            // FIXME: counter-style: we probably want to review this for custom counter-style.
-            auto* counterValue = contentValue.counterValue();
-            ListStyleType listStyleType = ListStyleType::None;
-            CSSValueID listStyleIdent = counterValue->listStyleIdent();
-            if (listStyleIdent != CSSValueNone)
-                listStyleType = static_cast<ListStyleType>(listStyleIdent - CSSValueDisc);
-            auto counter = makeUnique<CounterContent>(AtomString { counterValue->identifier() }, listStyleType, AtomString { counterValue->separator() });
-            builderState.style().setContent(WTFMove(counter), didSet);
+        } else if (item.isCounter()) {
+            auto& counter = downcast<CSSCounterValue>(item);
+            ListStyleType listStyleType;
+            if (counter.counterStyle())
+                listStyleType = BuilderConverter::convertListStyleType(builderState, *counter.counterStyle());
+            builderState.style().setContent(makeUnique<CounterContent>(counter.identifier(), listStyleType, counter.separator()), didSet);
             didSet = true;
         } else {
-            switch (contentValue.valueID()) {
+            switch (item.valueID()) {
             case CSSValueOpenQuote:
                 builderState.style().setContent(QuoteType::OpenQuote, didSet);
                 didSet = true;
@@ -1660,7 +1618,7 @@ inline void BuilderCustom::applyInitialFontVariantLigatures(BuilderState& builde
 
 inline void BuilderCustom::applyValueFontVariantLigatures(BuilderState& builderState, CSSValue& value)
 {
-    if (is<CSSPrimitiveValue>(value) && CSSPropertyParserHelpers::isSystemFontShorthand(downcast<CSSPrimitiveValue>(value).valueID())) {
+    if (CSSPropertyParserHelpers::isSystemFontShorthand(value.valueID())) {
         applyInitialFontVariantLigatures(builderState);
         return;
     }
@@ -1697,7 +1655,7 @@ inline void BuilderCustom::applyInitialFontVariantNumeric(BuilderState& builderS
 
 inline void BuilderCustom::applyValueFontVariantNumeric(BuilderState& builderState, CSSValue& value)
 {
-    if (is<CSSPrimitiveValue>(value) && CSSPropertyParserHelpers::isSystemFontShorthand(downcast<CSSPrimitiveValue>(value).valueID())) {
+    if (CSSPropertyParserHelpers::isSystemFontShorthand(value.valueID())) {
         applyInitialFontVariantNumeric(builderState);
         return;
     }
@@ -1731,7 +1689,7 @@ inline void BuilderCustom::applyInitialFontVariantEastAsian(BuilderState& builde
 
 inline void BuilderCustom::applyValueFontVariantEastAsian(BuilderState& builderState, CSSValue& value)
 {
-    if (is<CSSPrimitiveValue>(value) && CSSPropertyParserHelpers::isSystemFontShorthand(downcast<CSSPrimitiveValue>(value).valueID())) {
+    if (CSSPropertyParserHelpers::isSystemFontShorthand(value.valueID())) {
         applyInitialFontVariantEastAsian(builderState);
         return;
     }
@@ -1946,13 +1904,7 @@ inline void BuilderCustom::applyValueFontSize(BuilderState& builderState, CSSVal
 inline void BuilderCustom::applyValueFontSizeAdjust(BuilderState& builderState, CSSValue& value)
 {
     auto fontDescription = builderState.fontDescription();
-    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
-    if (primitiveValue.isNumber())
-        fontDescription.setFontSizeAdjust(primitiveValue.floatValue());
-    else {
-        ASSERT(primitiveValue.valueID() == CSSValueNone || CSSPropertyParserHelpers::isSystemFontShorthand(primitiveValue.valueID()));
-        fontDescription.setFontSizeAdjust(std::nullopt);
-    }
+    fontDescription.setFontSizeAdjust(BuilderConverter::convertFontSizeAdjust(builderState, value));
     builderState.setFontDescription(WTFMove(fontDescription));
 }
 
@@ -1978,8 +1930,7 @@ inline void BuilderCustom::applyInheritGridTemplateAreas(BuilderState& builderSt
 
 inline void BuilderCustom::applyValueGridTemplateAreas(BuilderState& builderState, CSSValue& value)
 {
-    if (is<CSSPrimitiveValue>(value)) {
-        ASSERT(downcast<CSSPrimitiveValue>(value).valueID() == CSSValueNone);
+    if (value.valueID() == CSSValueNone) {
         applyInitialGridTemplateAreas(builderState);
         return;
     }
@@ -2076,8 +2027,7 @@ void BuilderCustom::applyValueAlt(BuilderState& builderState, CSSValue& value)
 
 inline void BuilderCustom::applyValueWillChange(BuilderState& builderState, CSSValue& value)
 {
-    if (is<CSSPrimitiveValue>(value)) {
-        ASSERT(downcast<CSSPrimitiveValue>(value).valueID() == CSSValueAuto);
+    if (value.valueID() == CSSValueAuto) {
         builderState.style().setWillChange(nullptr);
         return;
     }
@@ -2086,7 +2036,7 @@ inline void BuilderCustom::applyValueWillChange(BuilderState& builderState, CSSV
     for (auto& item : downcast<CSSValueList>(value)) {
         if (!is<CSSPrimitiveValue>(item))
             continue;
-        auto& primitiveValue = downcast<CSSPrimitiveValue>(item.get());
+        auto& primitiveValue = downcast<CSSPrimitiveValue>(item);
         switch (primitiveValue.valueID()) {
         case CSSValueScrollPosition:
             willChange->addFeature(WillChangeData::Feature::ScrollPosition);
@@ -2149,7 +2099,7 @@ inline void BuilderCustom::applyValueColor(BuilderState& builderState, CSSValue&
 inline void BuilderCustom::applyInitialCustomProperty(BuilderState& builderState, const CSSRegisteredCustomProperty* registered, const AtomString& name)
 {
     if (registered && registered->initialValue) {
-        applyValueCustomProperty(builderState, registered, const_cast<CSSCustomPropertyValue&>(*registered->initialValue));
+        applyValueCustomProperty(builderState, registered, *registered->initialValue);
         return;
     }
 
@@ -2161,20 +2111,19 @@ inline void BuilderCustom::applyInheritCustomProperty(BuilderState& builderState
 {
     auto* parentValue = builderState.parentStyle().inheritedCustomProperties().get(name);
     if (parentValue && !(registered && !registered->inherits))
-        applyValueCustomProperty(builderState, registered, *parentValue);
+        applyValueCustomProperty(builderState, registered, const_cast<CSSCustomPropertyValue&>(*parentValue));
+    else if (auto* nonInheritedParentValue = builderState.parentStyle().nonInheritedCustomProperties().get(name))
+        applyValueCustomProperty(builderState, registered, const_cast<CSSCustomPropertyValue&>(*nonInheritedParentValue));
     else
         applyInitialCustomProperty(builderState, registered, name);
 }
 
-inline void BuilderCustom::applyValueCustomProperty(BuilderState& builderState, const CSSRegisteredCustomProperty* registered, CSSCustomPropertyValue& value)
+inline void BuilderCustom::applyValueCustomProperty(BuilderState& builderState, const CSSRegisteredCustomProperty* registered, const CSSCustomPropertyValue& value)
 {
     ASSERT(value.isResolved());
-    const auto& name = value.name();
 
-    if (!registered || registered->inherits)
-        builderState.style().setInheritedCustomPropertyValue(name, value);
-    else
-        builderState.style().setNonInheritedCustomPropertyValue(name, value);
+    bool isInherited = !registered || registered->inherits;
+    builderState.style().setCustomPropertyValue(value, isInherited);
 }
 
 inline void BuilderCustom::applyInitialContainIntrinsicWidth(BuilderState& builderState)

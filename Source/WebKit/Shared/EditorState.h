@@ -95,6 +95,7 @@ struct EditorState {
         WebCore::Color textColor { WebCore::Color::black }; // FIXME: Maybe this should be on VisualData?
         uint32_t enclosingListType { NoList };
         WebCore::WritingDirection baseWritingDirection { WebCore::WritingDirection::Natural };
+        bool editableRootIsTransparentOrFullyClipped { false };
 #endif
 #if PLATFORM(IOS_FAMILY)
         String markedText;
@@ -110,7 +111,6 @@ struct EditorState {
         bool isStableStateUpdate { false };
         bool insideFixedPosition { false };
         bool hasPlainText { false };
-        bool editableRootIsTransparentOrFullyClipped { false };
         WebCore::Color caretColor; // FIXME: Maybe this should be on VisualData?
         bool atStartOfSentence { false };
         bool selectionStartIsAtParagraphBoundary { false };
@@ -122,7 +122,6 @@ struct EditorState {
         uint64_t candidateRequestStartPosition { 0 };
         String paragraphContextForCandidateRequest;
         String stringForCandidateRequest;
-        Vector<WebCore::FloatRect> evasionRectsAroundSelection;
 #endif
 #if PLATFORM(GTK) || PLATFORM(WPE)
         String surroundingContext;

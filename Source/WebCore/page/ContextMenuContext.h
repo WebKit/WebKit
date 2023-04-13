@@ -62,9 +62,19 @@ public:
     void setSelectedText(const String& selectedText) { m_selectedText = selectedText; }
     const String& selectedText() const { return m_selectedText; }
 
+    bool hasEntireImage() const { return m_hasEntireImage; }
+
 #if ENABLE(SERVICE_CONTROLS)
     void setControlledImage(Image* controlledImage) { m_controlledImage = controlledImage; }
     Image* controlledImage() const { return m_controlledImage.get(); }
+#endif
+
+#if ENABLE(CONTEXT_MENU_QR_CODE_DETECTION)
+    void setPotentialQRCodeNodeSnapshotImage(Image* image) { m_potentialQRCodeNodeSnapshotImage = image; }
+    Image* potentialQRCodeNodeSnapshotImage() const { return m_potentialQRCodeNodeSnapshotImage.get(); }
+
+    void setPotentialQRCodeViewportSnapshotImage(Image* image) { m_potentialQRCodeViewportSnapshotImage = image; }
+    Image* potentialQRCodeViewportSnapshotImage() const { return m_potentialQRCodeViewportSnapshotImage.get(); }
 #endif
 
 private:
@@ -72,9 +82,15 @@ private:
     HitTestResult m_hitTestResult;
     RefPtr<Event> m_event;
     String m_selectedText;
+    bool m_hasEntireImage;
 
 #if ENABLE(SERVICE_CONTROLS)
     RefPtr<Image> m_controlledImage;
+#endif
+
+#if ENABLE(CONTEXT_MENU_QR_CODE_DETECTION)
+    RefPtr<Image> m_potentialQRCodeNodeSnapshotImage;
+    RefPtr<Image> m_potentialQRCodeViewportSnapshotImage;
 #endif
 };
 

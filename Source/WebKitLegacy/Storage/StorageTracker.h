@@ -36,7 +36,7 @@ namespace WebCore {
 class StorageThread;
 class SecurityOrigin;
 class StorageTrackerClient;
-struct SecurityOriginData;
+class SecurityOriginData;
 }
 
 namespace WebKit {

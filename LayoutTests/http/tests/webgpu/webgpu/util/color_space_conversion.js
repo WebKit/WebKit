@@ -135,7 +135,7 @@ function XYZ_to_lin_P3(XYZ) {
 }
 
 /**
- * @returns the converted pixels in {R: number, G: number, B: number, A: number}.
+ * @returns the converted pixels in `{R: number, G: number, B: number, A: number}`.
  *
  * Follow conversion steps in CSS Color Module Level 4
  * https://drafts.csswg.org/css-color/#predefined-to-predefined
@@ -161,7 +161,7 @@ export function displayP3ToSrgb(pixel) {
   return pixel;
 }
 /**
- * @returns the converted pixels in {R: number, G: number, B: number, A: number}.
+ * @returns the converted pixels in `{R: number, G: number, B: number, A: number}`.
  *
  * Follow conversion steps in CSS Color Module Level 4
  * https://drafts.csswg.org/css-color/#predefined-to-predefined

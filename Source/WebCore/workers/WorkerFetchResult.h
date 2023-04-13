@@ -43,45 +43,10 @@ struct WorkerFetchResult {
     ResourceError error;
 
     WorkerFetchResult isolatedCopy() const { return { script.isolatedCopy(), responseURL.isolatedCopy(), certificateInfo.isolatedCopy(), contentSecurityPolicy.isolatedCopy(), crossOriginEmbedderPolicy.isolatedCopy(), referrerPolicy.isolatedCopy(), error.isolatedCopy() }; }
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static WARN_UNUSED_RETURN bool decode(Decoder&, WorkerFetchResult&);
 };
 
 inline WorkerFetchResult workerFetchError(const ResourceError& error)
 {
     return { { }, { }, { }, { }, { }, { }, error };
 }
-
-template<class Encoder>
-void WorkerFetchResult::encode(Encoder& encoder) const
-{
-    encoder << script << responseURL << contentSecurityPolicy << crossOriginEmbedderPolicy << referrerPolicy << error << certificateInfo;
-}
-
-template<class Decoder>
-bool WorkerFetchResult::decode(Decoder& decoder, WorkerFetchResult& result)
-{
-    if (!decoder.decode(result.script))
-        return false;
-    if (!decoder.decode(result.responseURL))
-        return false;
-    if (!decoder.decode(result.contentSecurityPolicy))
-        return false;
-    if (!decoder.decode(result.crossOriginEmbedderPolicy))
-        return false;
-    if (!decoder.decode(result.referrerPolicy))
-        return false;
-    if (!decoder.decode(result.error))
-        return false;
-
-    std::optional<CertificateInfo> certificateInfo;
-    decoder >> certificateInfo;
-    if (!certificateInfo)
-        return false;
-    result.certificateInfo = WTFMove(*certificateInfo);
-
-    return true;
-}
-
 } // namespace WebCore

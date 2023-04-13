@@ -49,9 +49,9 @@ public:
 
     void gamepadConnected(const GamepadData&, WebCore::EventMakesGamepadsVisible);
     void gamepadDisconnected(unsigned index);
-    void gamepadActivity(const Vector<GamepadData>&, WebCore::EventMakesGamepadsVisible);
+    void gamepadActivity(const Vector<std::optional<GamepadData>>&, WebCore::EventMakesGamepadsVisible);
 
-    void setInitialGamepads(const Vector<GamepadData>&);
+    void setInitialGamepads(const Vector<std::optional<GamepadData>>&);
 
 private:
     friend NeverDestroyed<WebGamepadProvider>;
@@ -60,14 +60,14 @@ private:
     
     void startMonitoringGamepads(WebCore::GamepadProviderClient&) final;
     void stopMonitoringGamepads(WebCore::GamepadProviderClient&) final;
-    const Vector<WebCore::PlatformGamepad*>& platformGamepads() final;
+    const Vector<WeakPtr<WebCore::PlatformGamepad>>& platformGamepads() final;
     void playEffect(unsigned gamepadIndex, const String& gamepadID, WebCore::GamepadHapticEffectType, const WebCore::GamepadEffectParameters&, CompletionHandler<void(bool)>&&) final;
     void stopEffects(unsigned gamepadIndex, const String& gamepadID, CompletionHandler<void()>&&) final;
 
     HashSet<WebCore::GamepadProviderClient*> m_clients;
 
     Vector<std::unique_ptr<WebGamepad>> m_gamepads;
-    Vector<WebCore::PlatformGamepad*> m_rawGamepads;
+    Vector<WeakPtr<WebCore::PlatformGamepad>> m_rawGamepads;
 };
 
 } // namespace WebKit

@@ -29,7 +29,7 @@
 
 #include "Chrome.h"
 #include "ChromeClient.h"
-#include "Frame.h"
+#include "LocalFrame.h"
 #include "NodeTraversal.h"
 #include "Page.h"
 #include "RenderBlockFlow.h"
@@ -41,6 +41,9 @@
 
 namespace WebCore {
 
+constexpr Seconds markerFadeAnimationDuration = 200_ms;
+constexpr double markerFadeAnimationFrameRate = 30;
+
 inline bool DocumentMarkerController::possiblyHasMarkers(OptionSet<DocumentMarker::MarkerType> types)
 {
     return m_possiblyExistingMarkerTypes.containsAny(types);
@@ -48,6 +51,7 @@ inline bool DocumentMarkerController::possiblyHasMarkers(OptionSet<DocumentMarke
 
 DocumentMarkerController::DocumentMarkerController(Document& document)
     : m_document(document)
+    , m_fadeAnimationTimer(*this, &DocumentMarkerController::fadeAnimationTimerFired)
 {
 }
 
@@ -57,6 +61,7 @@ void DocumentMarkerController::detach()
 {
     m_markers.clear();
     m_possiblyExistingMarkerTypes = { };
+    m_fadeAnimationTimer.stop();
 }
 
 auto DocumentMarkerController::collectTextRanges(const SimpleRange& range) -> Vector<TextRange>
@@ -139,11 +144,15 @@ void DocumentMarkerController::invalidateRectsForMarkersInNode(Node& node)
 
 static void updateMainFrameLayoutIfNeeded(Document& document)
 {
-    Frame* frame = document.frame();
+    auto* frame = document.frame();
     if (!frame)
         return;
 
-    FrameView* mainFrameView = frame->mainFrame().view();
+    auto* localFrame = dynamicDowncast<LocalFrame>(frame->mainFrame());
+    if (!localFrame)
+        return;
+
+    auto* mainFrameView = localFrame->view();
     if (!mainFrameView)
         return;
 
@@ -178,10 +187,10 @@ Vector<FloatRect> DocumentMarkerController::renderedRectsForMarkers(DocumentMark
         return result;
     ASSERT(!m_markers.isEmpty());
 
-    RefPtr<Frame> frame = m_document.frame();
+    RefPtr frame = m_document.frame();
     if (!frame)
         return result;
-    FrameView* frameView = frame->view();
+    auto* frameView = frame->view();
     if (!frameView)
         return result;
 
@@ -479,6 +488,22 @@ void DocumentMarkerController::forEach(const SimpleRange& range, OptionSet<Docum
     }
 }
 
+void DocumentMarkerController::forEachOfTypes(OptionSet<DocumentMarker::MarkerType> types, const Function<bool(Node&, RenderedDocumentMarker&)> function)
+{
+    if (!possiblyHasMarkers(types))
+        return;
+    ASSERT(!m_markers.isEmpty());
+
+    for (auto& nodeMarkers : m_markers) {
+        for (auto& marker : *nodeMarkers.value) {
+            if (!types.contains(marker.type()))
+                continue;
+
+            function(*nodeMarkers.key, marker);
+        }
+    }
+}
+
 Vector<RenderedDocumentMarker*> DocumentMarkerController::markersInRange(const SimpleRange& range, OptionSet<DocumentMarker::MarkerType> types)
 {
     // FIXME: Consider making forEach public and changing callers to use that function instead of this one.
@@ -503,32 +528,47 @@ void DocumentMarkerController::removeMarkers(Node& node, OptionSet<DocumentMarke
 
 void DocumentMarkerController::removeMarkers(OptionSet<DocumentMarker::MarkerType> types)
 {
+    removeMarkers(types, nullptr);
+}
+
+void DocumentMarkerController::removeMarkers(OptionSet<DocumentMarker::MarkerType> types, const Function<FilterMarkerResult(const RenderedDocumentMarker&)>& filter)
+{
     if (!possiblyHasMarkers(types))
         return;
     ASSERT(!m_markers.isEmpty());
 
+    auto removedMarkerTypes = types;
     for (auto& node : copyToVector(m_markers.keys()))
-        removeMarkersFromList(m_markers.find(node), types);
-    m_possiblyExistingMarkerTypes.remove(types);
+        removedMarkerTypes = removedMarkerTypes & removeMarkersFromList(m_markers.find(node), types, filter);
+
+    m_possiblyExistingMarkerTypes.remove(removedMarkerTypes);
 }
 
-void DocumentMarkerController::removeMarkersFromList(MarkerMap::iterator iterator, OptionSet<DocumentMarker::MarkerType> types)
+OptionSet<DocumentMarker::MarkerType> DocumentMarkerController::removeMarkersFromList(MarkerMap::iterator iterator, OptionSet<DocumentMarker::MarkerType> types, const Function<FilterMarkerResult(const RenderedDocumentMarker&)>& filter)
 {
     bool needsRepainting = false;
     bool listCanBeRemoved;
+    auto removedMarkerTypes = types;
 
-    if (types == DocumentMarker::allMarkers()) {
+    if (types == DocumentMarker::allMarkers() && !filter) {
         needsRepainting = true;
         listCanBeRemoved = true;
     } else {
         auto list = iterator->value.get();
 
         for (size_t i = 0; i != list->size(); ) {
-            DocumentMarker marker = list->at(i);
+            auto& marker = list->at(i);
 
             // skip nodes that are not of the specified type
-            if (!types.contains(marker.type())) {
+            auto markerType = marker.type();
+            if (!types.contains(markerType)) {
                 ++i;
+                continue;
+            }
+
+            if (filter && filter(marker) == FilterMarkerResult::Keep) {
+                ++i;
+                removedMarkerTypes.remove(markerType);
                 continue;
             }
 
@@ -551,6 +591,8 @@ void DocumentMarkerController::removeMarkersFromList(MarkerMap::iterator iterato
         if (m_markers.isEmpty())
             m_possiblyExistingMarkerTypes = { };
     }
+
+    return removedMarkerTypes;
 }
 
 void DocumentMarkerController::repaintMarkers(OptionSet<DocumentMarker::MarkerType> types)
@@ -619,6 +661,66 @@ void DocumentMarkerController::shiftMarkers(Node& node, unsigned startOffset, in
         if (auto renderer = node.renderer())
             renderer->repaint();
     }
+}
+
+void DocumentMarkerController::dismissMarkers(OptionSet<DocumentMarker::MarkerType> types)
+{
+    if (!possiblyHasMarkers(types))
+        return;
+    ASSERT(!m_markers.isEmpty());
+
+    bool requiresAnimation = false;
+    forEachOfTypes(types, [&] (Node&, RenderedDocumentMarker& marker) {
+        if (!marker.isBeingDismissed()) {
+            requiresAnimation = true;
+            marker.setBeingDismissed(true);
+        }
+        return false;
+    });
+
+    if (requiresAnimation && !m_fadeAnimationTimer.isActive())
+        m_fadeAnimationTimer.startRepeating(1_s / markerFadeAnimationFrameRate);
+}
+
+void DocumentMarkerController::fadeAnimationTimerFired()
+{
+    bool shouldRemoveMarkers = false;
+    bool cancelTimer = true;
+
+    forEachOfTypes(DocumentMarker::allMarkers(), [&] (Node& node, RenderedDocumentMarker& marker) {
+        if (!marker.isBeingDismissed())
+            return false;
+
+        float animationProgress = 1;
+        if (auto animationStartTime = marker.animationStartTime())
+            animationProgress = (WallTime::now() - animationStartTime.value()) / markerFadeAnimationDuration;
+
+        animationProgress = std::min<float>(animationProgress, 1.0);
+
+        float opacity = 1 - animationProgress;
+        marker.setOpacity(opacity);
+
+        if (!opacity)
+            shouldRemoveMarkers = true;
+        else {
+            cancelTimer = false;
+            if (auto* renderer = node.renderer())
+                renderer->repaint();
+        }
+
+        return false;
+    });
+
+    if (shouldRemoveMarkers) {
+        removeMarkers(DocumentMarker::allMarkers(), [&] (const RenderedDocumentMarker& marker) {
+            if (marker.isBeingDismissed() && !marker.opacity())
+                return FilterMarkerResult::Remove;
+            return FilterMarkerResult::Keep;
+        });
+    }
+
+    if (cancelTimer)
+        m_fadeAnimationTimer.stop();
 }
 
 bool DocumentMarkerController::hasMarkers(const SimpleRange& range, OptionSet<DocumentMarker::MarkerType> types)

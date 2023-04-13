@@ -51,7 +51,7 @@
 {
     auto layer = WebCore::PlatformCALayer::platformCALayerForLayer((__bridge void*)self);
     if (layer) {
-        WebCore::GraphicsContextCG graphicsContext(context);
+        WebCore::GraphicsContextCG graphicsContext(context, WebCore::GraphicsContextCG::CGContextFromCALayer);
         WebCore::PlatformCALayer::RepaintRectList rectsToPaint = WebCore::PlatformCALayer::collectRectsToPaint(graphicsContext, layer.get());
         WebCore::PlatformCALayer::drawLayerContents(graphicsContext, layer.get(), rectsToPaint, self.isRenderingInContext ? WebCore::GraphicsLayerPaintSnapshotting : WebCore::GraphicsLayerPaintNormal);
     }
@@ -135,10 +135,7 @@
     ASSERT(isMainThread());
     auto layer = WebCore::PlatformCALayer::platformCALayerForLayer((__bridge void*)self);
     if (layer && layer->owner()) {
-        WebCore::GraphicsContextCG graphicsContext(context);
-        graphicsContext.setIsCALayerContext(true);
-        graphicsContext.setIsAcceleratedContext(layer->acceleratesDrawing());
-
+        WebCore::GraphicsContextCG graphicsContext(context, WebCore::GraphicsContextCG::CGContextFromCALayer);
         WebCore::FloatRect clipBounds = CGContextGetClipBoundingBox(context);
         layer->owner()->platformCALayerPaintContents(layer.get(), graphicsContext, clipBounds, self.isRenderingInContext ? WebCore::GraphicsLayerPaintSnapshotting : WebCore::GraphicsLayerPaintNormal);
     }

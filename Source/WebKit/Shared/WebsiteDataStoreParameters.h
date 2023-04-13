@@ -28,7 +28,6 @@
 #include "NetworkSessionCreationParameters.h"
 #include "SandboxExtension.h"
 #include <WebCore/Cookie.h>
-#include <WebCore/StorageQuotaManager.h>
 #include <pal/SessionID.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>

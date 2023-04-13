@@ -28,6 +28,7 @@
 
 #include "Document.h"
 #include "SleepDisabler.h"
+#include "VisibilityState.h"
 #include "WakeLockSentinel.h"
 
 namespace WebCore {

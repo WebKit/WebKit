@@ -36,8 +36,8 @@
 #import "WKStringCF.h"
 #import <WebCore/AXObjectCache.h>
 #import <WebCore/Document.h>
-#import <WebCore/Frame.h>
-#import <WebCore/FrameView.h>
+#import <WebCore/LocalFrame.h>
+#import <WebCore/LocalFrameView.h>
 #import <WebCore/Page.h>
 #import <WebCore/ScrollView.h>
 #import <WebCore/Scrollbar.h>
@@ -57,11 +57,11 @@ namespace ax = WebCore::Accessibility;
     if (!page)
         return nullptr;
 
-    auto& core = page->mainFrame();
-    if (!core.document())
+    auto* localMainFrame = dynamicDowncast<WebCore::LocalFrame>(page->mainFrame());
+    if (!localMainFrame || !localMainFrame->document())
         return nullptr;
 
-    return core.document()->axObjectCache();
+    return localMainFrame->document()->axObjectCache();
 }
 
 - (id)accessibilityPluginObject
@@ -106,7 +106,7 @@ namespace ax = WebCore::Accessibility;
     if (page) {
         m_pageID = page->identifier();
 
-        auto* frame = page->mainFrame();
+        auto* frame = dynamicDowncast<WebCore::LocalFrame>(page->mainFrame());
         m_hasMainFramePlugin = frame && frame->document() ? frame->document()->isPluginDocument() : false;
     } else {
         m_pageID = { };

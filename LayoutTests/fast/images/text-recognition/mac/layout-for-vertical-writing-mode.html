@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+<script src="../../../../resources/js-test.js"></script>
+<style>
+img {
+    width: 100px;
+    height: 100px;
+    box-sizing: border-box;
+    border: 1px solid black;
+    display: block;
+}
+
+a {
+    display: block;
+}
+</style>
+<script>
+addEventListener("load", () => {
+    let image = document.getElementById("inside-link");
+
+    internals.installImageOverlay(image, [
+        {
+            topLeft : new DOMPointReadOnly(0, 0.3),
+            topRight : new DOMPointReadOnly(1, 0.3),
+            bottomRight : new DOMPointReadOnly(1, 0.7),
+            bottomLeft : new DOMPointReadOnly(0, 0.7),
+            children: [{
+                text : "Hello",
+                topLeft : new DOMPointReadOnly(0, 0.3),
+                topRight : new DOMPointReadOnly(1, 0.3),
+                bottomRight : new DOMPointReadOnly(1, 0.7),
+                bottomLeft : new DOMPointReadOnly(0, 0.7),
+            }],
+            isVertical : true
+        }
+    ]);
+
+    let rect = image.getBoundingClientRect();
+    eventSender.mouseMoveTo(rect.left + rect.width / 2, rect.top + rect.height / 2);
+    const overlay = internals.shadowRoot(image).getElementById("image-overlay");
+    writingMode = getComputedStyle(overlay.childNodes[0].childNodes[0]).writingMode;
+    shouldBeEqualToString("writingMode", "vertical-rl");
+});
+</script>
+</head>
+<body>
+<a href="#">
+    <img id="inside-link" src="../../resources/green-400x400.png"></img>
+</a>
+</body>
+</html>

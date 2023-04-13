@@ -27,9 +27,9 @@
 
 #import "DOMNodeInternal.h"
 #import <WebCore/Document.h>
-#import <WebCore/Frame.h>
 #import <WebCore/FrameDestructionObserverInlines.h>
 #import <WebCore/JSNode.h>
+#import <WebCore/LocalFrame.h>
 #import <WebCore/ScriptController.h>
 #import <WebCore/WebScriptObjectPrivate.h>
 #import <WebCore/runtime_root.h>
@@ -114,7 +114,7 @@ void removeDOMWrapper(DOMObjectInternal* impl)
     WebCore::Node *nodeImpl = core(n);
 
     // Dig up Interpreter and ExecState.
-    WebCore::Frame *frame = nodeImpl->document().frame();
+    auto* frame = nodeImpl->document().frame();
     if (!frame)
         return;
 

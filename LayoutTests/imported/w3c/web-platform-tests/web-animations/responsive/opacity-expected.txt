@@ -1,8 +1,8 @@
 
 PASS fillOpacity responsive to inherited changes
-FAIL floodOpacity responsive to inherited changes assert_equals: expected "0.375" but got "0.75"
-FAIL opacity responsive to inherited changes assert_equals: expected "0.375" but got "0.75"
-FAIL shapeImageThreshold responsive to inherited changes assert_equals: expected "0.375" but got "0.75"
-FAIL stopOpacity responsive to inherited changes assert_equals: expected "0.375" but got "0.75"
+PASS floodOpacity responsive to inherited changes
+PASS opacity responsive to inherited changes
+PASS shapeImageThreshold responsive to inherited changes
+PASS stopOpacity responsive to inherited changes
 PASS strokeOpacity responsive to inherited changes
 

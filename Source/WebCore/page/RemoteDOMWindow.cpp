@@ -26,7 +26,12 @@
 #include "config.h"
 #include "RemoteDOMWindow.h"
 
+#include "LocalDOMWindow.h"
+#include "MessagePort.h"
 #include "RemoteFrame.h"
+#include "RemoteFrameClient.h"
+#include "SecurityOrigin.h"
+#include "SerializedScriptValue.h"
 #include <JavaScriptCore/JSCJSValue.h>
 #include <JavaScriptCore/JSCJSValueInlines.h>
 #include <wtf/IsoMallocInlines.h>
@@ -36,7 +41,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(RemoteDOMWindow);
 
 RemoteDOMWindow::RemoteDOMWindow(RemoteFrame& frame, GlobalWindowIdentifier&& identifier)
-    : AbstractDOMWindow(WTFMove(identifier))
+    : DOMWindow(WTFMove(identifier))
     , m_frame(frame)
 {
 }
@@ -66,7 +71,7 @@ bool RemoteDOMWindow::closed() const
     return !m_frame;
 }
 
-void RemoteDOMWindow::focus(DOMWindow& incumbentWindow)
+void RemoteDOMWindow::focus(LocalDOMWindow& incumbentWindow)
 {
     UNUSED_PARAM(incumbentWindow);
     // FIXME: Implemented this.
@@ -113,13 +118,33 @@ WindowProxy* RemoteDOMWindow::parent() const
     return &m_frame->windowProxy();
 }
 
-void RemoteDOMWindow::postMessage(JSC::JSGlobalObject&, DOMWindow& incumbentWindow, JSC::JSValue message, const String& targetOrigin, Vector<JSC::Strong<JSC::JSObject>>&&)
+ExceptionOr<void> RemoteDOMWindow::postMessage(JSC::JSGlobalObject& lexicalGlobalObject, LocalDOMWindow& incumbentWindow, JSC::JSValue message, WindowPostMessageOptions&& options)
 {
-    UNUSED_PARAM(incumbentWindow);
-    UNUSED_PARAM(message);
-    UNUSED_PARAM(targetOrigin);
+    RefPtr sourceDocument = incumbentWindow.document();
+    if (!sourceDocument)
+        return { };
 
-    // FIXME: Implemented this.
+    auto targetSecurityOrigin = createTargetOriginForPostMessage(options.targetOrigin, *sourceDocument);
+    if (targetSecurityOrigin.hasException())
+        return targetSecurityOrigin.releaseException();
+
+    std::optional<SecurityOriginData> target;
+    if (auto origin = targetSecurityOrigin.releaseReturnValue())
+        target = origin->data();
+
+    Vector<RefPtr<MessagePort>> ports;
+    auto messageData = SerializedScriptValue::create(lexicalGlobalObject, message, WTFMove(options.transfer), ports, SerializationForStorage::No, SerializationContext::WindowPostMessage);
+    if (messageData.hasException())
+        return messageData.releaseException();
+
+    auto disentangledPorts = MessagePort::disentanglePorts(WTFMove(ports));
+    if (disentangledPorts.hasException())
+        return messageData.releaseException();
+
+    MessageWithMessagePorts messageWithPorts { messageData.releaseReturnValue(), disentangledPorts.releaseReturnValue() };
+    if (auto* remoteFrame = frame())
+        remoteFrame->client().postMessageToRemote(remoteFrame->remoteProcessIdentifier(), remoteFrame->frameID(), target, messageWithPorts);
+    return { };
 }
 
 } // namespace WebCore

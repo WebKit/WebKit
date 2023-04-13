@@ -209,6 +209,17 @@ void CGDisplayStreamScreenCaptureSource::screenCaptureDevices(Vector<CaptureDevi
     }
 }
 
+std::optional<CaptureDevice> CGDisplayStreamScreenCaptureSource::screenCaptureDeviceForMainDisplay()
+{
+    auto screenID = displayID([NSScreen mainScreen]);
+    if (!CGDisplayIDToOpenGLDisplayMask(screenID))
+        return std::nullopt;
+
+    CaptureDevice device(String::number(screenID), CaptureDevice::DeviceType::Screen, makeString("Screen 0"));
+    device.setEnabled(true);
+    return { WTFMove(device) };
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM) && PLATFORM(MAC)

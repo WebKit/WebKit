@@ -72,7 +72,7 @@ private:
     void didFinishInsertingNode() final;
     void didMoveToNewDocument(Document&, Document&) final;
     void removedFromAncestor(RemovalType, ContainerNode&) final;
-    void parseAttribute(const QualifiedName&, const AtomString&) final;
+    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
     void finishParsingChildren() final;
 };
 

@@ -861,6 +861,8 @@ class Program final : public LabeledObject, public angle::Subject
                                  GLboolean transpose,
                                  const UniformT *v);
 
+    void dumpProgramInfo() const;
+
     rx::UniqueSerial mSerial;
     ProgramState mState;
     rx::ProgramImpl *mProgram;

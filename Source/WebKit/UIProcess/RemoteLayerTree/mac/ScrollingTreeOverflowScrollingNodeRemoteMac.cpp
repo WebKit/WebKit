@@ -29,8 +29,8 @@
 #if ENABLE(ASYNC_SCROLLING) && PLATFORM(MAC)
 
 #include "RemoteScrollingTree.h"
-#include "ScrollerPairMac.h"
 #include <WebCore/ScrollingStateOverflowScrollingNode.h>
+#include <WebCore/ScrollingTreeScrollingNodeDelegate.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -42,52 +42,33 @@ Ref<ScrollingTreeOverflowScrollingNodeRemoteMac> ScrollingTreeOverflowScrollingN
 
 ScrollingTreeOverflowScrollingNodeRemoteMac::ScrollingTreeOverflowScrollingNodeRemoteMac(ScrollingTree& tree, ScrollingNodeID nodeID)
     : ScrollingTreeOverflowScrollingNodeMac(tree, nodeID)
-    , m_scrollerPair(makeUnique<ScrollerPairMac>(*this))
 {
+    m_delegate->initScrollbars();
 }
 
 ScrollingTreeOverflowScrollingNodeRemoteMac::~ScrollingTreeOverflowScrollingNodeRemoteMac()
 {
 }
 
-void ScrollingTreeOverflowScrollingNodeRemoteMac::commitStateBeforeChildren(const ScrollingStateNode& stateNode)
-{
-    ScrollingTreeOverflowScrollingNodeMac::commitStateBeforeChildren(stateNode);
-    const auto& scrollingStateNode = downcast<ScrollingStateOverflowScrollingNode>(stateNode);
-
-    if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::HorizontalScrollbarLayer) && horizontalNativeScrollbarVisibility() == NativeScrollbarVisibility::Visible)
-        m_scrollerPair->horizontalScroller().setHostLayer(static_cast<CALayer*>(scrollingStateNode.horizontalScrollbarLayer()));
-    
-    if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::VerticalScrollbarLayer) && verticalNativeScrollbarVisibility() == NativeScrollbarVisibility::Visible)
-        m_scrollerPair->verticalScroller().setHostLayer(static_cast<CALayer*>(scrollingStateNode.verticalScrollbarLayer()));
-
-    if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::ScrollableAreaParams)) {
-        if (scrollingStateNode.scrollableAreaParameters().horizontalNativeScrollbarVisibility != NativeScrollbarVisibility::Visible)
-            m_scrollerPair->horizontalScroller().setHostLayer(nullptr);
-        if (scrollingStateNode.scrollableAreaParameters().verticalNativeScrollbarVisibility != NativeScrollbarVisibility::Visible)
-            m_scrollerPair->verticalScroller().setHostLayer(nullptr);
-    }
-
-    m_scrollerPair->updateValues();
-}
-
 void ScrollingTreeOverflowScrollingNodeRemoteMac::repositionRelatedLayers()
 {
     ScrollingTreeOverflowScrollingNodeMac::repositionRelatedLayers();
-
-    m_scrollerPair->updateValues();
+    m_delegate->updateScrollbarLayers();
 }
 
-WheelEventHandlingResult ScrollingTreeOverflowScrollingNodeRemoteMac::handleWheelEvent(const PlatformWheelEvent& wheelEvent, EventTargeting eventTargeting)
+void ScrollingTreeOverflowScrollingNodeRemoteMac::handleWheelEventPhase(const PlatformWheelEventPhase phase)
 {
-    auto result = ScrollingTreeOverflowScrollingNodeMac::handleWheelEvent(wheelEvent, eventTargeting);
-    m_scrollerPair->handleWheelEvent(wheelEvent);
-    return result;
+    m_delegate->handleWheelEventPhase(phase);
 }
 
 bool ScrollingTreeOverflowScrollingNodeRemoteMac::handleMouseEvent(const PlatformMouseEvent& mouseEvent)
 {
-    return m_scrollerPair->handleMouseEvent(mouseEvent);
+    return m_delegate->handleMouseEventForScrollbars(mouseEvent);
+}
+
+String ScrollingTreeOverflowScrollingNodeRemoteMac::scrollbarStateForOrientation(ScrollbarOrientation orientation) const
+{
+    return m_delegate->scrollbarStateForOrientation(orientation);
 }
 
 }

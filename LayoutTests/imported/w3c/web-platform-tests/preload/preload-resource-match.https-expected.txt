@@ -1,0 +1,72 @@
+CONSOLE MESSAGE: Cannot load image https://127.0.0.1:9443/preload/resources/echo-with-cors.py?type=image%2Fsvg%2Bxml&content=%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%222%22%20height%3D%222%22%20%2F%3E&uid=da60a10d-04d1-4700-9bc5-19570da71e91&312d2158-fa25-44cb-8ecb-374220605c7d due to access control checks.
+CONSOLE MESSAGE: Cannot load image https://127.0.0.1:9443/preload/resources/echo-with-cors.py?type=image%2Fsvg%2Bxml&content=%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%222%22%20height%3D%222%22%20%2F%3E&uid=da60a10d-04d1-4700-9bc5-19570da71e91&d0b2f580-523c-4226-af8f-58dc9d580ba5 due to access control checks.
+CONSOLE MESSAGE: The resource https://127.0.0.1:9443/preload/resources/echo-with-cors.py?type=image%2Fsvg%2Bxml&content=%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%222%22%20height%3D%222%22%20%2F%3E&uid=da60a10d-04d1-4700-9bc5-19570da71e91&7ec547cd-7ea0-49f2-988a-0b233a8e31a5 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it wasn't preloaded for nothing.
+CONSOLE MESSAGE: The resource https://127.0.0.1:9443/preload/resources/echo-with-cors.py?type=image%2Fsvg%2Bxml&content=%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%222%22%20height%3D%222%22%20%2F%3E&uid=da60a10d-04d1-4700-9bc5-19570da71e91&3d90dcce-bdc8-430a-bb43-e2f585ddc4f0 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it wasn't preloaded for nothing.
+CONSOLE MESSAGE: The resource https://127.0.0.1:9443/preload/resources/echo-with-cors.py?type=image%2Fsvg%2Bxml&content=%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%222%22%20height%3D%222%22%20%2F%3E&uid=da60a10d-04d1-4700-9bc5-19570da71e91&312d2158-fa25-44cb-8ecb-374220605c7d was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it wasn't preloaded for nothing.
+CONSOLE MESSAGE: The resource https://127.0.0.1:9443/preload/resources/echo-with-cors.py?type=image%2Fsvg%2Bxml&content=%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%222%22%20height%3D%222%22%20%2F%3E&uid=da60a10d-04d1-4700-9bc5-19570da71e91&d0b2f580-523c-4226-af8f-58dc9d580ba5 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it wasn't preloaded for nothing.
+CONSOLE MESSAGE: The resource https://127.0.0.1:9443/preload/resources/font.ttf?x&5a52fe16-c2a7-4d97-8ef3-fc3f7f9a12de was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it wasn't preloaded for nothing.
+CONSOLE MESSAGE: The resource https://localhost:9443/preload/resources/font.ttf?x&a006506a-c1c4-4f58-8bc6-1a0b9f31ad3b was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it wasn't preloaded for nothing.
+CONSOLE MESSAGE: The resource https://127.0.0.1:9443/preload/resources/echo-with-cors.py?type=image%2Fsvg%2Bxml&content=%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%222%22%20height%3D%222%22%20%2F%3E&uid=da60a10d-04d1-4700-9bc5-19570da71e91&fd25056c-cfac-4702-96be-b65668f83eb7 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it wasn't preloaded for nothing.
+CONSOLE MESSAGE: Cross-origin script load denied by Cross-Origin Resource Sharing policy.
+
+Harness Error (TIMEOUT), message = null
+
+PASS Loading image (same-origin) with link (same-origin) should reuse the preloaded response
+PASS Loading image (no-cors) with link (no-cors) should reuse the preloaded response
+FAIL Loading image (no-cors) with link (anonymous) should discard the preloaded response assert_equals: https://127.0.0.1:9443/preload/resources/echo-with-cors.py?type=image%2Fsvg%2Bxml&content=%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%222%22%20height%3D%222%22%20%2F%3E&uid=da60a10d-04d1-4700-9bc5-19570da71e91&7ec547cd-7ea0-49f2-988a-0b233a8e31a5 expected 2 but got 1
+FAIL Loading image (no-cors) with link (use-credentials) should discard the preloaded response assert_equals: https://127.0.0.1:9443/preload/resources/echo-with-cors.py?type=image%2Fsvg%2Bxml&content=%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%222%22%20height%3D%222%22%20%2F%3E&uid=da60a10d-04d1-4700-9bc5-19570da71e91&3d90dcce-bdc8-430a-bb43-e2f585ddc4f0 expected 2 but got 1
+FAIL Loading image (anonymous) with link (no-cors) should discard the preloaded response assert_equals: https://127.0.0.1:9443/preload/resources/echo-with-cors.py?type=image%2Fsvg%2Bxml&content=%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%222%22%20height%3D%222%22%20%2F%3E&uid=da60a10d-04d1-4700-9bc5-19570da71e91&312d2158-fa25-44cb-8ecb-374220605c7d expected 2 but got 1
+PASS Loading image (anonymous) with link (anonymous) should reuse the preloaded response
+FAIL Loading image (anonymous) with link (use-credentials) should discard the preloaded response assert_equals: https://127.0.0.1:9443/preload/resources/echo-with-cors.py?type=image%2Fsvg%2Bxml&content=%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%222%22%20height%3D%222%22%20%2F%3E&uid=da60a10d-04d1-4700-9bc5-19570da71e91&5c42cffa-558b-4a4d-a6a1-3783d9807211 expected 2 but got 1
+FAIL Loading image (use-credentials) with link (no-cors) should discard the preloaded response assert_equals: https://127.0.0.1:9443/preload/resources/echo-with-cors.py?type=image%2Fsvg%2Bxml&content=%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%222%22%20height%3D%222%22%20%2F%3E&uid=da60a10d-04d1-4700-9bc5-19570da71e91&d0b2f580-523c-4226-af8f-58dc9d580ba5 expected 2 but got 1
+FAIL Loading image (use-credentials) with link (anonymous) should discard the preloaded response assert_equals: https://127.0.0.1:9443/preload/resources/echo-with-cors.py?type=image%2Fsvg%2Bxml&content=%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%222%22%20height%3D%222%22%20%2F%3E&uid=da60a10d-04d1-4700-9bc5-19570da71e91&d235fad9-99a0-41a9-8533-eb7211b5ccda expected 2 but got 1
+PASS Loading image (use-credentials) with link (use-credentials) should reuse the preloaded response
+FAIL Loading font (anonymous) with link (no-cors) should discard the preloaded response assert_equals: https://127.0.0.1:9443/preload/resources/font.ttf?x&9c968aa2-0f24-4d88-a230-c5b97bf39f99 expected 2 but got 1
+PASS Loading font (anonymous) with link (anonymous) should reuse the preloaded response
+FAIL Loading font (anonymous) with link (use-credentials) should discard the preloaded response assert_equals: https://127.0.0.1:9443/preload/resources/font.ttf?x&d462461a-b73e-40b8-a97a-e9911499b9e8 expected 2 but got 1
+PASS Loading font (same-origin) with link (same-origin) should reuse the preloaded response
+PASS Loading backgroundImage (no-cors) with link (no-cors) should reuse the preloaded response
+FAIL Loading backgroundImage (no-cors) with link (anonymous) should discard the preloaded response assert_equals: https://127.0.0.1:9443/preload/resources/echo-with-cors.py?type=image%2Fsvg%2Bxml&content=%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%222%22%20height%3D%222%22%20%2F%3E&uid=da60a10d-04d1-4700-9bc5-19570da71e91&fd25056c-cfac-4702-96be-b65668f83eb7 expected 2 but got 1
+FAIL Loading backgroundImage (no-cors) with link (use-credentials) should discard the preloaded response assert_equals: https://127.0.0.1:9443/preload/resources/echo-with-cors.py?type=image%2Fsvg%2Bxml&content=%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%222%22%20height%3D%222%22%20%2F%3E&uid=da60a10d-04d1-4700-9bc5-19570da71e91&9079890a-c6bd-41a6-a099-e6fcdb2e2218 expected 2 but got 1
+PASS Loading backgroundImage (same-origin) with link (same-origin) should reuse the preloaded response
+FAIL Loading fetch (same-origin) with link (same-origin) should reuse the preloaded response assert_equals: https://localhost:9443/preload/resources/echo-with-cors.py?type=text%2Fplain&content=hello&uid=fe7de7d7-8c52-467c-a820-47ad9e8fdba8&36fb90b4-40d4-4690-a389-e03f6b83c387 expected 1 but got 2
+FAIL Loading fetch (no-cors) with link (no-cors) should reuse the preloaded response assert_equals: https://127.0.0.1:9443/preload/resources/echo-with-cors.py?type=text%2Fplain&content=hello&uid=fe7de7d7-8c52-467c-a820-47ad9e8fdba8&5d1d0e6b-f8e4-449f-92e4-a9ebdced6715 expected 1 but got 2
+PASS Loading fetch (no-cors) with link (anonymous) should discard the preloaded response
+PASS Loading fetch (no-cors) with link (use-credentials) should discard the preloaded response
+PASS Loading fetch (anonymous) with link (no-cors) should discard the preloaded response
+PASS Loading fetch (anonymous) with link (anonymous) should reuse the preloaded response
+PASS Loading fetch (anonymous) with link (use-credentials) should discard the preloaded response
+PASS Loading fetch (use-credentials) with link (no-cors) should discard the preloaded response
+PASS Loading fetch (use-credentials) with link (anonymous) should discard the preloaded response
+PASS Loading fetch (use-credentials) with link (use-credentials) should reuse the preloaded response
+PASS Loading script (same-origin) with link (same-origin) should reuse the preloaded response
+PASS Loading script (no-cors) with link (no-cors) should reuse the preloaded response
+FAIL Loading script (no-cors) with link (anonymous) should discard the preloaded response assert_equals: https://127.0.0.1:9443/preload/resources/echo-with-cors.py?type=application%2Fjavascript&content=function%20dummy()%20%7B%20%7D&uid=414a6641-1b36-4950-ad17-4d63c88e4ee1&13330abf-af11-4411-bd5e-3db306580949 expected 2 but got 1
+FAIL Loading script (no-cors) with link (use-credentials) should discard the preloaded response assert_equals: https://127.0.0.1:9443/preload/resources/echo-with-cors.py?type=application%2Fjavascript&content=function%20dummy()%20%7B%20%7D&uid=414a6641-1b36-4950-ad17-4d63c88e4ee1&a414f534-885a-48f5-bb09-813d3672e24e expected 2 but got 1
+TIMEOUT Loading script (anonymous) with link (no-cors) should discard the preloaded response Test timed out
+NOTRUN Loading script (anonymous) with link (anonymous) should reuse the preloaded response
+NOTRUN Loading script (anonymous) with link (use-credentials) should discard the preloaded response
+NOTRUN Loading script (use-credentials) with link (no-cors) should discard the preloaded response
+NOTRUN Loading script (use-credentials) with link (anonymous) should discard the preloaded response
+NOTRUN Loading script (use-credentials) with link (use-credentials) should reuse the preloaded response
+NOTRUN Loading module (same-origin) with link (same-origin) should reuse the preloaded response
+NOTRUN Loading module (no-cors) with link (no-cors) should reuse the preloaded response
+NOTRUN Loading module (no-cors) with link (anonymous) should discard the preloaded response
+NOTRUN Loading module (no-cors) with link (use-credentials) should discard the preloaded response
+NOTRUN Loading module (anonymous) with link (no-cors) should discard the preloaded response
+NOTRUN Loading module (anonymous) with link (anonymous) should reuse the preloaded response
+NOTRUN Loading module (anonymous) with link (use-credentials) should discard the preloaded response
+NOTRUN Loading module (use-credentials) with link (no-cors) should discard the preloaded response
+NOTRUN Loading module (use-credentials) with link (anonymous) should discard the preloaded response
+NOTRUN Loading module (use-credentials) with link (use-credentials) should reuse the preloaded response
+NOTRUN Loading style (same-origin) with link (same-origin) should reuse the preloaded response
+NOTRUN Loading style (no-cors) with link (no-cors) should reuse the preloaded response
+NOTRUN Loading style (no-cors) with link (anonymous) should discard the preloaded response
+NOTRUN Loading style (no-cors) with link (use-credentials) should discard the preloaded response
+NOTRUN Loading style (anonymous) with link (no-cors) should discard the preloaded response
+NOTRUN Loading style (anonymous) with link (anonymous) should reuse the preloaded response
+NOTRUN Loading style (anonymous) with link (use-credentials) should discard the preloaded response
+NOTRUN Loading style (use-credentials) with link (no-cors) should discard the preloaded response
+NOTRUN Loading style (use-credentials) with link (anonymous) should discard the preloaded response
+NOTRUN Loading style (use-credentials) with link (use-credentials) should reuse the preloaded response
+

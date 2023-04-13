@@ -1,55 +1,97 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x600
-  RenderBlock {HTML} at (0,0) size 800x600
-    RenderBody {BODY} at (8,8) size 784x584
+layer at (0,0) size 800x8
+  RenderBlock {html} at (0,0) size 800x8
+    RenderBody {body} at (8,8) size 784x0
 layer at (0,0) size 500x200
-  RenderSVGRoot {svg} at (0,13) size 405x187
-    RenderSVGContainer {g} at (0,13) size 405x100
-      RenderSVGText {text} at (0,14) size 200x45 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 105x45
-          chunk 1 text run 1 at (0.00,50.00) startOffset 0 endOffset 5 width 105.00: "PASS "
-        RenderSVGTSpan {tspan} at (0,0) size 95x45
-          RenderSVGInlineText {#text} at (105,0) size 95x45
-            chunk 1 text run 1 at (105.00,50.00) startOffset 0 endOffset 4 width 95.00: "PASS"
-        RenderSVGInlineText {#text} at (0,0) size 0x0
-      RenderSVGForeignObject {foreignObject} at (210,13) size 100x100
-        RenderBlock {P} at (0,0) size 100x47 [color=#008800]
-          RenderText {#text} at (0,1) size 95x45
-            text run at (0,1) width 95: "PASS"
-      RenderSVGViewportContainer {svg} at (310,14) size 95x45
-        RenderSVGText {text} at (0,1) size 95x45 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 95x45
-            chunk 1 text run 1 at (0.00,37.00) startOffset 0 endOffset 4 width 95.00: "PASS"
-    RenderSVGContainer {g} at (0,63) size 405x100
-      RenderSVGText {text} at (0,64) size 200x45 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 105x45
-          chunk 1 text run 1 at (0.00,100.00) startOffset 0 endOffset 5 width 105.00: "PASS "
-        RenderSVGTSpan {tspan} at (0,0) size 95x45
-          RenderSVGInlineText {#text} at (105,0) size 95x45
-            chunk 1 text run 1 at (105.00,100.00) startOffset 0 endOffset 4 width 95.00: "PASS"
-        RenderSVGInlineText {#text} at (0,0) size 0x0
-      RenderSVGForeignObject {foreignObject} at (210,63) size 100x100
-        RenderBlock {P} at (0,0) size 100x47 [color=#008800]
-          RenderText {#text} at (0,1) size 95x45
-            text run at (0,1) width 95: "PASS"
-      RenderSVGViewportContainer {svg} at (310,64) size 95x45
-        RenderSVGText {text} at (0,1) size 95x45 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 95x45
-            chunk 1 text run 1 at (0.00,37.00) startOffset 0 endOffset 4 width 95.00: "PASS"
-    RenderSVGContainer {g} at (0,113) size 405x87
-      RenderSVGText {text} at (0,114) size 200x45 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 105x45
-          chunk 1 text run 1 at (0.00,150.00) startOffset 0 endOffset 5 width 105.00: "PASS "
-        RenderSVGTSpan {tspan} at (0,0) size 95x45
-          RenderSVGInlineText {#text} at (105,0) size 95x45
-            chunk 1 text run 1 at (105.00,150.00) startOffset 0 endOffset 4 width 95.00: "PASS"
-        RenderSVGInlineText {#text} at (0,0) size 0x0
-      RenderSVGForeignObject {foreignObject} at (210,113) size 100x100
-        RenderBlock {P} at (0,0) size 100x47 [color=#008800]
-          RenderText {#text} at (0,1) size 95x45
-            text run at (0,1) width 95: "PASS"
-      RenderSVGViewportContainer {svg} at (310,114) size 95x45
-        RenderSVGText {text} at (0,1) size 95x45 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 95x45
-            chunk 1 text run 1 at (0.00,37.00) startOffset 0 endOffset 4 width 95.00: "PASS"
+  RenderBlock (positioned) {svg} at (0,0) size 500x200
+    RenderBlock (anonymous) at (0,0) size 500x18
+      RenderInline {g} at (0,0) size 80x17
+        RenderText {#text} at (0,0) size 0x0
+        RenderInline {text} at (0,0) size 80x17
+          RenderText {#text} at (0,0) size 42x17
+            text run at (0,0) width 42: "PASS "
+          RenderInline {tspan} at (0,0) size 39x17
+            RenderText {#text} at (41,0) size 39x17
+              text run at (41,0) width 39: "PASS"
+          RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+        RenderInline {foreignObject} at (0,0) size 0x17
+          RenderText {#text} at (0,0) size 0x0
+    RenderBlock (anonymous) at (0,26) size 500x47
+      RenderBody {body} at (8,0) size 484x47
+        RenderBlock {p} at (0,0) size 484x47 [color=#008800]
+          RenderText {#text} at (0,1) size 92x45
+            text run at (0,1) width 92: "PASS"
+    RenderBlock (anonymous) at (0,81) size 500x18
+      RenderInline {g} at (0,0) size 42x17
+        RenderInline {foreignObject} at (0,0) size 0x17
+        RenderText {#text} at (0,0) size 0x0
+        RenderInline {svg} at (0,0) size 42x17
+          RenderText {#text} at (0,0) size 0x0
+          RenderInline {text} at (0,0) size 38x17
+            RenderText {#text} at (0,0) size 38x17
+              text run at (0,0) width 38: "PASS"
+          RenderText {#text} at (37,0) size 5x17
+            text run at (37,0) width 5: " "
+        RenderText {#text} at (0,0) size 0x0
+      RenderText {#text} at (0,0) size 0x0
+      RenderInline {g} at (0,0) size 80x17
+        RenderText {#text} at (0,0) size 0x0
+        RenderInline {text} at (0,0) size 80x17
+          RenderText {#text} at (41,0) size 43x17
+            text run at (41,0) width 43: "PASS "
+          RenderInline {tspan} at (0,0) size 38x17
+            RenderText {#text} at (83,0) size 38x17
+              text run at (83,0) width 38: "PASS"
+          RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+        RenderInline {foreignObject} at (0,0) size 0x17
+          RenderText {#text} at (0,0) size 0x0
+    RenderBlock (anonymous) at (0,107) size 500x47
+      RenderBody {body} at (8,0) size 484x47
+        RenderBlock {p} at (0,0) size 484x47 [color=#008800]
+          RenderText {#text} at (0,1) size 92x45
+            text run at (0,1) width 92: "PASS"
+    RenderBlock (anonymous) at (0,162) size 500x18
+      RenderInline {g} at (0,0) size 42x17
+        RenderInline {foreignObject} at (0,0) size 0x17
+        RenderText {#text} at (0,0) size 0x0
+        RenderInline {svg} at (0,0) size 42x17
+          RenderText {#text} at (0,0) size 0x0
+          RenderInline {text} at (0,0) size 38x17
+            RenderText {#text} at (0,0) size 38x17
+              text run at (0,0) width 38: "PASS"
+          RenderText {#text} at (37,0) size 5x17
+            text run at (37,0) width 5: " "
+        RenderText {#text} at (0,0) size 0x0
+      RenderText {#text} at (0,0) size 0x0
+      RenderInline {g} at (0,0) size 80x17
+        RenderText {#text} at (0,0) size 0x0
+        RenderInline {text} at (0,0) size 80x17
+          RenderText {#text} at (41,0) size 43x17
+            text run at (41,0) width 43: "PASS "
+          RenderInline {tspan} at (0,0) size 38x17
+            RenderText {#text} at (83,0) size 38x17
+              text run at (83,0) width 38: "PASS"
+          RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+        RenderInline {foreignObject} at (0,0) size 0x17
+          RenderText {#text} at (0,0) size 0x0
+    RenderBlock (anonymous) at (0,188) size 500x47
+      RenderBody {body} at (8,0) size 484x47
+        RenderBlock {p} at (0,0) size 484x47 [color=#008800]
+          RenderText {#text} at (0,1) size 92x45
+            text run at (0,1) width 92: "PASS"
+    RenderBlock (anonymous) at (0,243) size 500x18
+      RenderInline {g} at (0,0) size 38x17
+        RenderInline {foreignObject} at (0,0) size 0x17
+        RenderText {#text} at (0,0) size 0x0
+        RenderInline {svg} at (0,0) size 38x17
+          RenderText {#text} at (0,0) size 0x0
+          RenderInline {text} at (0,0) size 38x17
+            RenderText {#text} at (0,0) size 38x17
+              text run at (0,0) width 38: "PASS"
+          RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+      RenderText {#text} at (0,0) size 0x0

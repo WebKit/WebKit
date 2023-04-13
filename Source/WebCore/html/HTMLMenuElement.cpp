@@ -26,7 +26,7 @@
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "Document.h"
-#include "ElementChildIterator.h"
+#include "ElementChildIteratorInlines.h"
 #include "HTMLMenuItemElement.h"
 #include "HTMLNames.h"
 #include "Page.h"
@@ -63,14 +63,14 @@ void HTMLMenuElement::removedFromAncestor(RemovalType type, ContainerNode& ances
     }
 }
 
-void HTMLMenuElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void HTMLMenuElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     if (name != typeAttr || !document().settings().menuItemElementEnabled()) {
-        HTMLElement::parseAttribute(name, value);
+        HTMLElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
         return;
     }
     bool wasTouchBarMenu = m_isTouchBarMenu;
-    m_isTouchBarMenu = equalLettersIgnoringASCIICase(value, "touchbar"_s);
+    m_isTouchBarMenu = equalLettersIgnoringASCIICase(newValue, "touchbar"_s);
     if (!wasTouchBarMenu && m_isTouchBarMenu) {
         if (auto* page = document().page()) {
             page->chrome().client().didInsertMenuElement(*this);

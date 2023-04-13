@@ -42,6 +42,11 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if ([firstResponder isKindOfClass:[WKContentView class]])
         return ((WKContentView *)firstResponder).page;
 
+#if ENABLE(WEBXR) && !USE(OPENXR)
+    if (auto page = WebProcessProxy::webPageWithActiveXRSession())
+        return page.get();
+#endif
+
     return nullptr;
 }
 

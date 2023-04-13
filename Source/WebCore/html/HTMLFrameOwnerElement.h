@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2006-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -20,7 +21,7 @@
 
 #pragma once
 
-#include "AbstractFrame.h"
+#include "Frame.h"
 #include "HTMLElement.h"
 #include "ReferrerPolicy.h"
 #include "SecurityContext.h"
@@ -36,11 +37,11 @@ class HTMLFrameOwnerElement : public HTMLElement {
 public:
     virtual ~HTMLFrameOwnerElement();
 
-    AbstractFrame* contentFrame() const { return m_contentFrame.get(); }
+    Frame* contentFrame() const { return m_contentFrame.get(); }
     WEBCORE_EXPORT WindowProxy* contentWindow() const;
     WEBCORE_EXPORT Document* contentDocument() const;
 
-    WEBCORE_EXPORT void setContentFrame(AbstractFrame&);
+    WEBCORE_EXPORT void setContentFrame(Frame&);
     void clearContentFrame();
 
     void disconnectContentFrame();
@@ -50,13 +51,13 @@ public:
     // RenderElement when using fallback content.
     RenderWidget* renderWidget() const;
 
-    ExceptionOr<Document&> getSVGDocument() const;
+    Document* getSVGDocument() const;
 
     virtual ScrollbarMode scrollingMode() const { return ScrollbarMode::Auto; }
 
     SandboxFlags sandboxFlags() const { return m_sandboxFlags; }
 
-    void scheduleInvalidateStyleAndLayerComposition();
+    WEBCORE_EXPORT void scheduleInvalidateStyleAndLayerComposition();
 
     virtual bool canLoadScriptURL(const URL&) const = 0;
 
@@ -66,7 +67,8 @@ public:
     virtual bool isLazyLoadObserverActive() const { return false; }
 
 protected:
-    HTMLFrameOwnerElement(const QualifiedName& tagName, Document&);
+    constexpr static auto CreateHTMLFrameOwnerElement = CreateHTMLElement;
+    HTMLFrameOwnerElement(const QualifiedName& tagName, Document&, ConstructionType = CreateHTMLFrameOwnerElement);
     void setSandboxFlags(SandboxFlags);
     bool isProhibitedSelfReference(const URL&) const;
 
@@ -74,7 +76,7 @@ private:
     bool isKeyboardFocusable(KeyboardEvent*) const override;
     bool isFrameOwnerElement() const final { return true; }
 
-    WeakPtr<AbstractFrame> m_contentFrame;
+    WeakPtr<Frame> m_contentFrame;
     SandboxFlags m_sandboxFlags { SandboxNone };
 };
 
@@ -104,6 +106,11 @@ private:
 
     ContainerNode* m_root;
 };
+
+inline HTMLFrameOwnerElement* Frame::ownerElement() const
+{
+    return m_ownerElement.get();
+}
 
 } // namespace WebCore
 

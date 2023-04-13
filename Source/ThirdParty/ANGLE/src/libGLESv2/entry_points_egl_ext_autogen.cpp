@@ -232,7 +232,7 @@ EGLint EGLAPIENTRY EGL_DupNativeFenceFDANDROID(EGLDisplay dpy, EGLSyncKHR sync)
     Thread *thread = egl::GetCurrentThread();
 
     egl::Display *dpyPacked = PackParam<egl::Display *>(dpy);
-    egl::Sync *syncPacked   = PackParam<egl::Sync *>(sync);
+    egl::SyncID syncPacked  = PackParam<egl::SyncID>(sync);
 
     ANGLE_EGL_VALIDATE(thread, DupNativeFenceFDANDROID, GetDisplayIfValid(dpyPacked), EGLint,
                        dpyPacked, syncPacked);
@@ -362,7 +362,7 @@ void *EGLAPIENTRY EGL_CopyMetalSharedEventANGLE(EGLDisplay dpy, EGLSyncKHR sync)
     Thread *thread = egl::GetCurrentThread();
 
     egl::Display *dpyPacked = PackParam<egl::Display *>(dpy);
-    egl::Sync *syncPacked   = PackParam<egl::Sync *>(sync);
+    egl::SyncID syncPacked  = PackParam<egl::SyncID>(sync);
 
     ANGLE_EGL_VALIDATE(thread, CopyMetalSharedEventANGLE, GetDisplayIfValid(dpyPacked), void *,
                        dpyPacked, syncPacked);
@@ -1041,7 +1041,7 @@ EGLint EGLAPIENTRY EGL_ClientWaitSyncKHR(EGLDisplay dpy,
     Thread *thread = egl::GetCurrentThread();
 
     egl::Display *dpyPacked = PackParam<egl::Display *>(dpy);
-    egl::Sync *syncPacked   = PackParam<egl::Sync *>(sync);
+    egl::SyncID syncPacked  = PackParam<egl::SyncID>(sync);
 
     ANGLE_EGL_VALIDATE(thread, ClientWaitSyncKHR, GetDisplayIfValid(dpyPacked), EGLint, dpyPacked,
                        syncPacked, flags, timeout);
@@ -1083,7 +1083,7 @@ EGLBoolean EGLAPIENTRY EGL_DestroySyncKHR(EGLDisplay dpy, EGLSyncKHR sync)
     Thread *thread = egl::GetCurrentThread();
 
     egl::Display *dpyPacked = PackParam<egl::Display *>(dpy);
-    egl::Sync *syncPacked   = PackParam<egl::Sync *>(sync);
+    egl::SyncID syncPacked  = PackParam<egl::SyncID>(sync);
 
     ANGLE_EGL_VALIDATE(thread, DestroySyncKHR, GetDisplayIfValid(dpyPacked), EGLBoolean, dpyPacked,
                        syncPacked);
@@ -1108,7 +1108,7 @@ EGLBoolean EGLAPIENTRY EGL_GetSyncAttribKHR(EGLDisplay dpy,
     Thread *thread = egl::GetCurrentThread();
 
     egl::Display *dpyPacked = PackParam<egl::Display *>(dpy);
-    egl::Sync *syncPacked   = PackParam<egl::Sync *>(sync);
+    egl::SyncID syncPacked  = PackParam<egl::SyncID>(sync);
 
     ANGLE_EGL_VALIDATE(thread, GetSyncAttribKHR, GetDisplayIfValid(dpyPacked), EGLBoolean,
                        dpyPacked, syncPacked, attribute, value);
@@ -1284,7 +1284,7 @@ EGLBoolean EGLAPIENTRY EGL_SignalSyncKHR(EGLDisplay dpy, EGLSyncKHR sync, EGLenu
     Thread *thread = egl::GetCurrentThread();
 
     egl::Display *dpyPacked = PackParam<egl::Display *>(dpy);
-    egl::Sync *syncPacked   = PackParam<egl::Sync *>(sync);
+    egl::SyncID syncPacked  = PackParam<egl::SyncID>(sync);
 
     ANGLE_EGL_VALIDATE(thread, SignalSyncKHR, GetDisplayIfValid(dpyPacked), EGLBoolean, dpyPacked,
                        syncPacked, mode);
@@ -1523,7 +1523,7 @@ EGLint EGLAPIENTRY EGL_WaitSyncKHR(EGLDisplay dpy, EGLSyncKHR sync, EGLint flags
     Thread *thread = egl::GetCurrentThread();
 
     egl::Display *dpyPacked = PackParam<egl::Display *>(dpy);
-    egl::Sync *syncPacked   = PackParam<egl::Sync *>(sync);
+    egl::SyncID syncPacked  = PackParam<egl::SyncID>(sync);
 
     ANGLE_EGL_VALIDATE(thread, WaitSyncKHR, GetDisplayIfValid(dpyPacked), EGLint, dpyPacked,
                        syncPacked, flags);

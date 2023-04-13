@@ -36,9 +36,11 @@
 
 namespace WebKit {
 
+using namespace WebCore;
+
 constexpr unsigned maxFireCountWithoutObservers { 20 };
 
-DisplayLink::DisplayLink(WebCore::PlatformDisplayID displayID)
+DisplayLink::DisplayLink(PlatformDisplayID displayID)
     : m_displayID(displayID)
 {
     // FIXME: We can get here with displayID == 0 (webkit.org/b/212120), in which case CVDisplayLinkCreateWithCGDisplay()
@@ -74,17 +76,17 @@ DisplayLink::~DisplayLink()
     CVDisplayLinkRelease(m_displayLink);
 }
 
-WebCore::FramesPerSecond DisplayLink::nominalFramesPerSecondFromDisplayLink(CVDisplayLinkRef displayLink)
+FramesPerSecond DisplayLink::nominalFramesPerSecondFromDisplayLink(CVDisplayLinkRef displayLink)
 {
     CVTime refreshPeriod = CVDisplayLinkGetNominalOutputVideoRefreshPeriod(displayLink);
     if (!refreshPeriod.timeValue)
-        return WebCore::FullSpeedFramesPerSecond;
+        return FullSpeedFramesPerSecond;
 
-    WebCore::FramesPerSecond result = round((double)refreshPeriod.timeScale / (double)refreshPeriod.timeValue);
-    return result ?: WebCore::FullSpeedFramesPerSecond;
+    FramesPerSecond result = round((double)refreshPeriod.timeScale / (double)refreshPeriod.timeValue);
+    return result ?: FullSpeedFramesPerSecond;
 }
 
-void DisplayLink::addObserver(Client& client, DisplayLinkObserverID observerID, WebCore::FramesPerSecond preferredFramesPerSecond)
+void DisplayLink::addObserver(Client& client, DisplayLinkObserverID observerID, FramesPerSecond preferredFramesPerSecond)
 {
     ASSERT(RunLoop::isMain());
 
@@ -190,7 +192,7 @@ void DisplayLink::displayPropertiesChanged()
     // FIXME: Detect whether the refresh frequency changed.
 }
 
-void DisplayLink::setObserverPreferredFramesPerSecond(Client& client, DisplayLinkObserverID observerID, WebCore::FramesPerSecond preferredFramesPerSecond)
+void DisplayLink::setObserverPreferredFramesPerSecond(Client& client, DisplayLinkObserverID observerID, FramesPerSecond preferredFramesPerSecond)
 {
     LOG_WITH_STREAM(DisplayLink, stream << "[UI ] DisplayLink " << this << " setPreferredFramesPerSecond - display " << m_displayID << " observer " << observerID << " fps " << preferredFramesPerSecond);
 
@@ -211,18 +213,18 @@ void DisplayLink::setObserverPreferredFramesPerSecond(Client& client, DisplayLin
 
 CVReturn DisplayLink::displayLinkCallback(CVDisplayLinkRef displayLinkRef, const CVTimeStamp*, const CVTimeStamp*, CVOptionFlags, CVOptionFlags*, void* data)
 {
-    static_cast<DisplayLink*>(data)->notifyObserversDisplayWasRefreshed();
+    static_cast<DisplayLink*>(data)->notifyObserversDisplayDidRefresh();
     return kCVReturnSuccess;
 }
 
-void DisplayLink::notifyObserversDisplayWasRefreshed()
+void DisplayLink::notifyObserversDisplayDidRefresh()
 {
     ASSERT(!RunLoop::isMain());
 
     Locker locker { m_clientsLock };
 
     auto maxFramesPerSecond = [](const Vector<ObserverInfo>& observers) {
-        std::optional<WebCore::FramesPerSecond> observersMaxFramesPerSecond;
+        std::optional<FramesPerSecond> observersMaxFramesPerSecond;
         for (const auto& observer : observers)
             observersMaxFramesPerSecond = std::max(observersMaxFramesPerSecond.value_or(0), observer.preferredFramesPerSecond);
         return observersMaxFramesPerSecond;
@@ -236,7 +238,7 @@ void DisplayLink::notifyObserversDisplayWasRefreshed()
         anyConnectionHadObservers = true;
 
         auto observersMaxFramesPerSecond = maxFramesPerSecond(clientInfo.observers);
-        bool anyObserverWantsCallback = m_currentUpdate.relevantForUpdateFrequency(observersMaxFramesPerSecond.value_or(WebCore::FullSpeedFramesPerSecond));
+        bool anyObserverWantsCallback = m_currentUpdate.relevantForUpdateFrequency(observersMaxFramesPerSecond.value_or(FullSpeedFramesPerSecond));
 
         LOG_WITH_STREAM(DisplayLink, stream << "[UI ] DisplayLink " << this << " for display " << m_displayID << " (display fps " << m_displayNominalFramesPerSecond << ") update " << m_currentUpdate << " " << clientInfo.observers.size()
             << " observers, maxFramesPerSecond " << observersMaxFramesPerSecond << " full speed client count " << clientInfo.fullSpeedUpdatesClientCount << " relevant " << anyObserverWantsCallback);
@@ -257,7 +259,18 @@ void DisplayLink::notifyObserversDisplayWasRefreshed()
     m_fireCountWithoutObservers = 0;
 }
 
-DisplayLink* DisplayLinkCollection::displayLinkForDisplay(WebCore::PlatformDisplayID displayID) const
+DisplayLink& DisplayLinkCollection::displayLinkForDisplay(PlatformDisplayID displayID)
+{
+    if (auto* displayLink = existingDisplayLinkForDisplay(displayID))
+        return *displayLink;
+
+    auto displayLink = makeUnique<DisplayLink>(displayID);
+    auto displayLinkPtr = displayLink.get();
+    add(WTFMove(displayLink));
+    return *displayLinkPtr;
+}
+
+DisplayLink* DisplayLinkCollection::existingDisplayLinkForDisplay(PlatformDisplayID displayID) const
 {
     for (auto& displayLink : m_displayLinks) {
         if (displayLink->displayID() == displayID)
@@ -271,6 +284,53 @@ void DisplayLinkCollection::add(std::unique_ptr<DisplayLink>&& displayLink)
 {
     ASSERT(!m_displayLinks.containsIf([&](auto &entry) { return entry->displayID() == displayLink->displayID(); }));
     m_displayLinks.append(WTFMove(displayLink));
+}
+
+std::optional<unsigned> DisplayLinkCollection::nominalFramesPerSecondForDisplay(PlatformDisplayID displayID)
+{
+    // Note that this may create a DisplayLink with no observers, but it's highly likely that we'll soon call startDisplayLink() for it.
+    auto& displayLink = displayLinkForDisplay(displayID);
+    return displayLink.nominalFramesPerSecond();
+}
+
+void DisplayLinkCollection::startDisplayLink(DisplayLink::Client& client, DisplayLinkObserverID observerID, PlatformDisplayID displayID, FramesPerSecond preferredFramesPerSecond)
+{
+    auto& displayLink = displayLinkForDisplay(displayID);
+    displayLink.addObserver(client, observerID, preferredFramesPerSecond);
+}
+
+void DisplayLinkCollection::stopDisplayLink(DisplayLink::Client& client, DisplayLinkObserverID observerID, PlatformDisplayID displayID)
+{
+    if (auto* displayLink = existingDisplayLinkForDisplay(displayID))
+        displayLink->removeObserver(client, observerID);
+
+    // FIXME: Remove unused display links?
+}
+
+void DisplayLinkCollection::stopDisplayLinks(DisplayLink::Client& client)
+{
+    for (auto& displayLink : m_displayLinks)
+        displayLink->removeClient(client);
+    
+    // FIXME: Remove unused display links?
+}
+
+void DisplayLinkCollection::setDisplayLinkPreferredFramesPerSecond(DisplayLink::Client& client, DisplayLinkObserverID observerID, PlatformDisplayID displayID, FramesPerSecond preferredFramesPerSecond)
+{
+    LOG_WITH_STREAM(DisplayLink, stream << "[UI ] WebProcessPool::setDisplayLinkPreferredFramesPerSecond - display " << displayID << " observer " << observerID << " fps " << preferredFramesPerSecond);
+
+    if (auto* displayLink = existingDisplayLinkForDisplay(displayID))
+        displayLink->setObserverPreferredFramesPerSecond(client, observerID, preferredFramesPerSecond);
+}
+
+void DisplayLinkCollection::setDisplayLinkForDisplayWantsFullSpeedUpdates(DisplayLink::Client& client, PlatformDisplayID displayID, bool wantsFullSpeedUpdates)
+{
+    if (auto* displayLink = existingDisplayLinkForDisplay(displayID)) {
+        if (wantsFullSpeedUpdates)
+            displayLink->incrementFullSpeedRequestClientCount(client);
+        else
+            displayLink->decrementFullSpeedRequestClientCount(client);
+    }
 }
 
 } // namespace WebKit

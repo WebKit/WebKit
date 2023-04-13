@@ -57,7 +57,7 @@ inline WebCore::Exception convertToException(FileSystemStorageError error)
     case FileSystemStorageError::InvalidState:
         return WebCore::Exception { WebCore::InvalidStateError };
     case FileSystemStorageError::TypeMismatch:
-        return WebCore::Exception { WebCore::TypeError };
+        return WebCore::Exception { WebCore::TypeMismatchError, "File type is incompatible with handle type"_s };
     case FileSystemStorageError::Unknown:
         break;
     }

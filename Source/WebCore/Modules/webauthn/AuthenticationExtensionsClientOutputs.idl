@@ -32,7 +32,17 @@
 [
     Conditional=WEB_AUTHN,
     JSGenerateToJSObject,
+] dictionary AuthenticationExtensionsLargeBlobOutputs {
+    boolean supported;
+    ArrayBuffer blob;
+    boolean written;
+};
+
+[
+    Conditional=WEB_AUTHN,
+    JSGenerateToJSObject,
 ] dictionary AuthenticationExtensionsClientOutputs {
     boolean appid;
     CredentialPropertiesOutput credProps;
+    AuthenticationExtensionsLargeBlobOutputs largeBlob;
 };

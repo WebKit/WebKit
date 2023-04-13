@@ -48,8 +48,17 @@ int main(int argc, char** argv)
     }
 
     loadLibraryOrExit(OpenSSL_LOAD_AT);
+#if defined(Brotli_LOAD_AT)
+    loadLibraryOrExit(Brotli_LOAD_AT);
+#endif
     loadLibraryOrExit(CURL_LOAD_AT);
     loadLibraryOrExit(ICU_LOAD_AT);
+#if defined(LibPSL_LOAD_AT)
+    loadLibraryOrExit(LibPSL_LOAD_AT);
+#endif
+#if defined(SQLite_LOAD_AT)
+    loadLibraryOrExit(SQLite_LOAD_AT);
+#endif
     loadLibraryOrExit(WebKitRequirements_LOAD_AT);
 #if !ENABLE(STATIC_JSC)
     loadLibraryOrExit("libJavaScriptCore");

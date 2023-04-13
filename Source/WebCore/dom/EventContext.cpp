@@ -28,11 +28,11 @@
 #include "config.h"
 #include "EventContext.h"
 
-#include "DOMWindow.h"
 #include "Document.h"
 #include "EventNames.h"
 #include "FocusEvent.h"
 #include "HTMLFormElement.h"
+#include "LocalDOMWindow.h"
 #include "MouseEvent.h"
 #include "TouchEvent.h"
 
@@ -112,7 +112,7 @@ void EventContext::initializeTouchLists()
 bool EventContext::isUnreachableNode(EventTarget* target) const
 {
     // FIXME: Checks also for SVG elements.
-    return is<Node>(target) && !downcast<Node>(*target).isSVGElement() && m_node->isClosedShadowHidden(downcast<Node>(*target));
+    return is<Node>(target) && !downcast<Node>(*target).isSVGElement() && m_node && m_node->isClosedShadowHidden(downcast<Node>(*target));
 }
 
 #endif

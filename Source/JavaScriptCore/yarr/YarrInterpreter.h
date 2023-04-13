@@ -51,8 +51,12 @@ struct ByteTerm {
                 CharacterClass* characterClass;
                 struct {
                     unsigned subpatternId;
+                    unsigned duplicateNamedGroupId;
+                } parenIds;
+                struct {
+                    unsigned firstSubpatternId;
                     unsigned lastSubpatternId;
-                } ids;
+                } assertionIds;
             };
             union {
                 ByteDisjunction* parenthesesDisjunction;
@@ -191,7 +195,8 @@ struct ByteTerm {
         , m_matchDirection(Forward)
         , inputPosition(inputPos)
     {
-        atom.ids.subpatternId = subpatternId;
+        atom.parenIds.subpatternId = subpatternId;
+        atom.parenIds.duplicateNamedGroupId = 0;
         atom.parenthesesDisjunction = parenthesesInfo;
         atom.quantityType = QuantifierType::FixedCount;
         atom.quantityMinCount = 1;
@@ -216,7 +221,8 @@ struct ByteTerm {
         , m_matchDirection(Forward)
         , inputPosition(inputPos)
     {
-        atom.ids.subpatternId = subpatternId;
+        atom.parenIds.subpatternId = subpatternId;
+        atom.parenIds.duplicateNamedGroupId = 0;
         atom.quantityType = QuantifierType::FixedCount;
         atom.quantityMinCount = 1;
         atom.quantityMaxCount = 1;
@@ -229,7 +235,8 @@ struct ByteTerm {
         , m_matchDirection(matchDirection)
         , inputPosition(inputPos)
     {
-        atom.ids.subpatternId = subpatternId;
+        atom.parenIds.subpatternId = subpatternId;
+        atom.parenIds.duplicateNamedGroupId = 0;
         atom.quantityType = QuantifierType::FixedCount;
         atom.quantityMinCount = 1;
         atom.quantityMaxCount = 1;
@@ -346,7 +353,26 @@ struct ByteTerm {
     {
         return ByteTerm(Type::SubpatternEnd);
     }
-    
+
+    static ByteTerm ParentheticalAssertionBegin(unsigned firstSubpatternId, bool invert, MatchDirection matchDirection)
+    {
+        ByteTerm term(Type::ParentheticalAssertionBegin);
+        term.atom.assertionIds.firstSubpatternId = firstSubpatternId;
+        term.m_invert = invert;
+        term.m_matchDirection = matchDirection;
+        return term;
+    }
+
+    static ByteTerm ParentheticalAssertionEnd(unsigned firstSubpatternId, unsigned lastSubpatternId, bool invert, MatchDirection matchDirection)
+    {
+        ByteTerm term(Type::ParentheticalAssertionEnd);
+        term.atom.assertionIds.firstSubpatternId = firstSubpatternId;
+        term.atom.assertionIds.lastSubpatternId = lastSubpatternId;
+        term.m_invert = invert;
+        term.m_matchDirection = matchDirection;
+        return term;
+    }
+
     static ByteTerm DotStarEnclosure(bool bolAnchor, bool eolAnchor)
     {
         ByteTerm term(Type::DotStarEnclosure);
@@ -374,17 +400,27 @@ struct ByteTerm {
     {
         ASSERT(this->type == Type::ParentheticalAssertionBegin
             || this->type == Type::ParentheticalAssertionEnd);
-        return lastSubpatternId() >= subpatternId();
+        return lastSubpatternId() >= firstSubpatternId();
     }
 
     unsigned subpatternId()
     {
-        return atom.ids.subpatternId;
+        return atom.parenIds.subpatternId;
+    }
+
+    unsigned duplicateNamedGroupId()
+    {
+        return atom.parenIds.duplicateNamedGroupId;
+    }
+
+    unsigned firstSubpatternId()
+    {
+        return atom.assertionIds.firstSubpatternId;
     }
 
     unsigned lastSubpatternId()
     {
-        return atom.ids.lastSubpatternId;
+        return atom.assertionIds.lastSubpatternId;
     }
     bool invert()
     {
@@ -421,16 +457,19 @@ public:
 struct BytecodePattern {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    BytecodePattern(std::unique_ptr<ByteDisjunction> body, Vector<std::unique_ptr<ByteDisjunction>>& parenthesesInfoToAdopt, YarrPattern& pattern, BumpPointerAllocator* allocator, ConcurrentJSLock* lock)
+    BytecodePattern(std::unique_ptr<ByteDisjunction> body, Vector<std::unique_ptr<ByteDisjunction>>& parenthesesInfoToAdopt, YarrPattern& pattern, BumpPointerAllocator* allocator, ConcurrentJSLock* lock, unsigned offsetVectorBaseForNamedCaptures, unsigned offsetsSize)
         : m_body(WTFMove(body))
         , m_flags(pattern.m_flags)
         , m_allocator(allocator)
         , m_lock(lock)
+        , m_offsetVectorBaseForNamedCaptures(offsetVectorBaseForNamedCaptures)
+        , m_offsetsSize(offsetsSize)
+        , m_duplicateNamedGroupForSubpatternId(pattern.m_duplicateNamedGroupForSubpatternId)
     {
         m_body->terms.shrinkToFit();
 
         newlineCharacterClass = pattern.newlineCharacterClass();
-        if (unicode() && ignoreCase())
+        if (eitherUnicode() && ignoreCase())
             wordcharCharacterClass = pattern.wordUnicodeIgnoreCaseCharCharacterClass();
         else
             wordcharCharacterClass = pattern.wordcharCharacterClass();
@@ -440,15 +479,38 @@ public:
 
         m_userCharacterClasses.swap(pattern.m_userCharacterClasses);
         m_userCharacterClasses.shrinkToFit();
+
+        m_numDuplicateNamedCaptureGroups = pattern.m_numDuplicateNamedCaptureGroups;
     }
 
     size_t estimatedSizeInBytes() const { return m_body->estimatedSizeInBytes(); }
-    
+
+    bool hasDuplicateNamedCaptureGroups() const { return !!m_numDuplicateNamedCaptureGroups; }
+
+    unsigned offsetForDuplicateNamedGroupId(unsigned duplicateNamedGroupId)
+    {
+        ASSERT(duplicateNamedGroupId);
+        return m_offsetVectorBaseForNamedCaptures + duplicateNamedGroupId - 1;
+    }
+
+    CompileMode compileMode() const
+    {
+        if (unicode())
+            return CompileMode::Unicode;
+
+        if (unicodeSets())
+            return CompileMode::UnicodeSets;
+
+        return CompileMode::Legacy;
+    }
+
     bool ignoreCase() const { return m_flags.contains(Flags::IgnoreCase); }
     bool multiline() const { return m_flags.contains(Flags::Multiline); }
     bool hasIndices() const { return m_flags.contains(Flags::HasIndices); }
     bool sticky() const { return m_flags.contains(Flags::Sticky); }
     bool unicode() const { return m_flags.contains(Flags::Unicode); }
+    bool unicodeSets() const { return m_flags.contains(Flags::UnicodeSets); }
+    bool eitherUnicode() const { return unicode() || unicodeSets(); }
     bool dotAll() const { return m_flags.contains(Flags::DotAll); }
 
     std::unique_ptr<ByteDisjunction> m_body;
@@ -457,6 +519,11 @@ public:
     // with a VM.  Cache a pointer to our VM's m_regExpAllocator.
     BumpPointerAllocator* m_allocator;
     ConcurrentJSLock* m_lock;
+
+    unsigned m_numDuplicateNamedCaptureGroups;
+    unsigned m_offsetVectorBaseForNamedCaptures;
+    unsigned m_offsetsSize;
+    Vector<unsigned> m_duplicateNamedGroupForSubpatternId;
 
     CharacterClass* newlineCharacterClass;
     CharacterClass* wordcharCharacterClass;

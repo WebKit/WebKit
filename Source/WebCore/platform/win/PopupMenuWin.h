@@ -33,16 +33,16 @@
 
 namespace WebCore {
 
-class FrameView;
-class Scrollbar;
 class AccessiblePopupMenu;
+class LocalFrameView;
+class Scrollbar;
 
 class PopupMenuWin : public PopupMenu, private ScrollableArea {
 public:
     WEBCORE_EXPORT PopupMenuWin(PopupMenuClient*);
     ~PopupMenuWin();
 
-    void show(const IntRect&, FrameView*, int index) override;
+    void show(const IntRect&, LocalFrameView*, int index) override;
     void hide() override;
     void updateFromElement() override;
     void disconnectClient() override;
@@ -109,7 +109,7 @@ private:
     // NOTE: This should only be called by the overriden setScrollOffset from ScrollableArea.
     void scrollTo(int offset);
 
-    void calculatePositionAndSize(const IntRect&, FrameView*);
+    void calculatePositionAndSize(const IntRect&, LocalFrameView*);
     void invalidateItem(int index);
 
     bool onGetObject(WPARAM wParam, LPARAM lParam, LRESULT& lResult);

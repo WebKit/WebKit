@@ -6,7 +6,7 @@ layer at (0,0) size 800x600
       RenderSVGContainer {g} at (50,15) size 655x410
         RenderSVGText {text} at (5,1) size 54x8 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 54x7
-            chunk 1 text run 1 at (5.00,7.00) startOffset 0 endOffset 21 width 53.90: "Test default value of"
+            chunk 1 text run 1 at (5.00,7.00) startOffset 0 endOffset 21 width 53.23: "Test default value of"
         RenderSVGText {text} at (5,8) size 61x8 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 61x7
             chunk 1 text run 1 at (5.00,14.00) startOffset 0 endOffset 21 width 60.80: "zoomAndPan attribute."

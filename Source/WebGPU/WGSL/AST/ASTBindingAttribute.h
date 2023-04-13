@@ -31,15 +31,13 @@ namespace WGSL::AST {
 
 class BindingAttribute final : public Attribute {
     WTF_MAKE_FAST_ALLOCATED;
-
 public:
     BindingAttribute(SourceSpan span, unsigned binding)
         : Attribute(span)
         , m_value(binding)
-    {
-    }
+    { }
 
-    Kind kind() const override;
+    NodeKind kind() const override;
     unsigned binding() const { return m_value; }
 
 private:

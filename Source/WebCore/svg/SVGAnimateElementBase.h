@@ -49,9 +49,9 @@ private:
     void setAttributeName(const QualifiedName&) override;
     void resetAnimation() override;
 
-    bool calculateFromAndToValues(const String& fromString, const String& toString) override;
-    bool calculateFromAndByValues(const String& fromString, const String& byString) override;
-    bool calculateToAtEndOfDurationValue(const String& toAtEndOfDurationString) override;
+    bool setFromAndToValues(const String& fromString, const String& toString) override;
+    bool setFromAndByValues(const String& fromString, const String& byString) override;
+    bool setToAtEndOfDurationValue(const String& toAtEndOfDurationString) override;
 
     void startAnimation() override;
     void calculateAnimatedValue(float progress, unsigned repeatCount) override;

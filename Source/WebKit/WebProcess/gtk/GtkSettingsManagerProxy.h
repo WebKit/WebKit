@@ -47,6 +47,9 @@ private:
 
     void settingsDidChange(GtkSettingsState&&);
 
+    void applyHintingSettings();
+    void applyAntialiasSettings();
+
     GtkSettings* m_settings;
 };
 

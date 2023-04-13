@@ -44,11 +44,11 @@
     content: url(../Images/TypeIcons.svg#PseudoElement-light);
 }
 
-.panel.details.layer .name-column :matches(.pseudo-element, .reflection) {
+.panel.details.layer .name-column :is(.pseudo-element, .reflection) {
     color: var(--text-color-gray-medium);
 }
 
-.panel.details.layer tr.selected .name-column :matches(.pseudo-element, .reflection) {
+.panel.details.layer tr.selected .name-column :is(.pseudo-element, .reflection) {
     color: var(--selected-secondary-text-color);
 }
 

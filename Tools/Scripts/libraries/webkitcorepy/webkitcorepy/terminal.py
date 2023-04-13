@@ -1,4 +1,4 @@
-# Copyright (C) 2021, 2022 Apple Inc. All rights reserved.
+# Copyright (C) 2021-2023 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -22,7 +22,9 @@
 
 import contextlib
 import io
+import logging
 import sys
+import webbrowser
 
 if not sys.platform.startswith('win'):
     import readline
@@ -139,6 +141,17 @@ class Terminal(object):
                 cls._atty_overrides[key] = previous
 
     @classmethod
+    @contextlib.contextmanager
+    def disable_keyboard_interrupt_stacktracktrace(cls, logging_level=logging.INFO):
+        try:
+            yield
+        except KeyboardInterrupt:
+            if logging.root.level <= logging_level:
+                raise
+            sys.stderr.write('\nUser interrupted program\n')
+            sys.exit(1)
+
+    @classmethod
     def open_url(cls, url, prompt=None, alert_after=RING_INTERVAL):
         if all(not url.startswith(prefix) for prefix in cls.URL_PREFIXES):
             sys.stderr.write("'{}' is not a valid URL\n")
@@ -153,16 +166,25 @@ class Terminal(object):
                 sys.stderr.write('User aborted URL open\n')
                 return False
 
-        if sys.platform.startswith('win'):
-            process = run(['explorer', url])
+        if (url.startswith('http://') or url.startswith('https://')):
+            try:
+                webbrowser.open(url)
+                return True
+            except webbrowser.Error:
+                sys.stderr.write(
+                    "Failed to open '{}' in the browser, continuing\n".format(url))
+                return False
         else:
-            # TODO: Use shutil directly when Python 2.7 is removed
-            from whichcraft import which
-            if sys.platform.startswith('linux') and which('xdg-open'):
-                process = run(['xdg-open', url])
+            if sys.platform.startswith('win'):
+                process = run(['explorer', url])
             else:
-                process = run(['open', url])
-        return True if process.returncode == 0 else False
+                # TODO: Use shutil directly when Python 2.7 is removed
+                from whichcraft import which
+                if sys.platform.startswith('linux') and which('xdg-open'):
+                    process = run(['xdg-open', url])
+                else:
+                    process = run(['open', url])
+            return True if process.returncode == 0 else False
 
     class Text(object):
         value = lambda value: '\033[{}m'.format(value)

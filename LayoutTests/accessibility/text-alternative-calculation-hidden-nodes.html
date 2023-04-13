@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/js-test.js"></script>
 <script src="../resources/accessibility-helper.js"></script>
 </head>
 <body>
@@ -34,17 +34,23 @@
     description("This tests text alternative calculation with hidden nodes.");
 
     if (window.accessibilityController) {
-        for (var i = 1; i <= 5; i++) {
-            var axElement = accessibilityController.accessibleElementById("test" + i);
-            debug("Test " + i);
-            debug("\tW3C Name: " + platformValueForW3CName(axElement));
-            debug("\tW3C Description: " + platformValueForW3CDescription(axElement));
-         }
-       document.getElementById("content").style.visibility = "hidden";
-       document.getElementById("table").style.visibility = "hidden";
+        window.jsTestIsAsync = true;
+        var output = "";
+        var axElement;
+        setTimeout(function() {
+            for (var i = 1; i <= 5; i++) {
+                axElement = accessibilityController.accessibleElementById("test" + i);
+                output += "Test " + i + "\n";
+                output += "\tW3C Name: " + platformValueForW3CName(axElement) + "\n";
+                output += "\tW3C Description: " + platformValueForW3CDescription(axElement) + "\n";
+            }
+            debug(output);
+            document.getElementById("content").style.visibility = "hidden";
+            document.getElementById("table").style.visibility = "hidden";
+            finishJSTest();
+         }, 0);
     }
 </script>
 
-<script src="../resources/js-test-post.js"></script>
 </body>
 </html>

@@ -1,0 +1,76 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/preload/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/preload/avoid-delaying-onload-link-modulepreload-exec.html
+/LayoutTests/imported/w3c/web-platform-tests/preload/avoid-delaying-onload-link-modulepreload.html
+/LayoutTests/imported/w3c/web-platform-tests/preload/avoid-delaying-onload-link-preload-style.html
+/LayoutTests/imported/w3c/web-platform-tests/preload/avoid-delaying-onload-link-preload.html
+/LayoutTests/imported/w3c/web-platform-tests/preload/avoid-prefetching-on-text-plain-inner.html
+/LayoutTests/imported/w3c/web-platform-tests/preload/avoid-prefetching-on-text-plain-inner.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/preload/avoid-prefetching-on-text-plain.html
+/LayoutTests/imported/w3c/web-platform-tests/preload/delaying-onload-link-preload-after-discovery.html
+/LayoutTests/imported/w3c/web-platform-tests/preload/download-resources.html
+/LayoutTests/imported/w3c/web-platform-tests/preload/dynamic-adding-preload-imagesrcset.html
+/LayoutTests/imported/w3c/web-platform-tests/preload/dynamic-adding-preload-nonce.html
+/LayoutTests/imported/w3c/web-platform-tests/preload/dynamic-adding-preload-nonce.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/preload/dynamic-adding-preload.html
+/LayoutTests/imported/w3c/web-platform-tests/preload/link-header-modulepreload.html
+/LayoutTests/imported/w3c/web-platform-tests/preload/link-header-on-subresource.html
+/LayoutTests/imported/w3c/web-platform-tests/preload/link-header-preload-delay-onload.html
+/LayoutTests/imported/w3c/web-platform-tests/preload/link-header-preload-delay-onload.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/preload/link-header-preload-imagesrcset.html
+/LayoutTests/imported/w3c/web-platform-tests/preload/link-header-preload-imagesrcset.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/preload/link-header-preload-non-html.html
+/LayoutTests/imported/w3c/web-platform-tests/preload/link-header-preload-nonce.html
+/LayoutTests/imported/w3c/web-platform-tests/preload/link-header-preload.html
+/LayoutTests/imported/w3c/web-platform-tests/preload/link-header-preload.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/preload/modulepreload.html
+/LayoutTests/imported/w3c/web-platform-tests/preload/onerror-event.html
+/LayoutTests/imported/w3c/web-platform-tests/preload/onload-event.html
+/LayoutTests/imported/w3c/web-platform-tests/preload/preconnect-onerror-event.html
+/LayoutTests/imported/w3c/web-platform-tests/preload/preconnect.html
+/LayoutTests/imported/w3c/web-platform-tests/preload/prefetch-accept.html
+/LayoutTests/imported/w3c/web-platform-tests/preload/prefetch-cache.html
+/LayoutTests/imported/w3c/web-platform-tests/preload/prefetch-document.html
+/LayoutTests/imported/w3c/web-platform-tests/preload/prefetch-events.html
+/LayoutTests/imported/w3c/web-platform-tests/preload/prefetch-headers.html
+/LayoutTests/imported/w3c/web-platform-tests/preload/prefetch-load-event.html
+/LayoutTests/imported/w3c/web-platform-tests/preload/prefetch-types.html
+/LayoutTests/imported/w3c/web-platform-tests/preload/preload-connect-to-doc.html
+/LayoutTests/imported/w3c/web-platform-tests/preload/preload-csp.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/preload/preload-default-csp.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/preload/preload-dynamic-csp.html
+/LayoutTests/imported/w3c/web-platform-tests/preload/preload-error.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/preload/preload-font-crossorigin.html
+/LayoutTests/imported/w3c/web-platform-tests/preload/preload-in-data-doc-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/preload/preload-in-data-doc-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/preload/preload-in-data-doc.html
+/LayoutTests/imported/w3c/web-platform-tests/preload/preload-invalid-resources.html
+/LayoutTests/imported/w3c/web-platform-tests/preload/preload-link-cached-stylesheet-different-doc.html
+/LayoutTests/imported/w3c/web-platform-tests/preload/preload-referrer-policy.html
+/LayoutTests/imported/w3c/web-platform-tests/preload/preload-resource-match.https.html
+/LayoutTests/imported/w3c/web-platform-tests/preload/preload-strict-dynamic.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/preload/preload-time-to-fetch.https.html
+/LayoutTests/imported/w3c/web-platform-tests/preload/preload-type-match.html
+/LayoutTests/imported/w3c/web-platform-tests/preload/preload-with-type.html
+/LayoutTests/imported/w3c/web-platform-tests/preload/preload-xhr.html
+/LayoutTests/imported/w3c/web-platform-tests/preload/reflected-as-value.html
+/LayoutTests/imported/w3c/web-platform-tests/preload/single-download-late-used-preload.html
+/LayoutTests/imported/w3c/web-platform-tests/preload/single-download-preload.html
+/LayoutTests/imported/w3c/web-platform-tests/preload/subresource-integrity-font.html
+/LayoutTests/imported/w3c/web-platform-tests/preload/subresource-integrity-partial-image.html
+/LayoutTests/imported/w3c/web-platform-tests/preload/subresource-integrity.html

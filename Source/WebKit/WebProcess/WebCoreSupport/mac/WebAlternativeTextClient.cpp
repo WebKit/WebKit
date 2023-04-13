@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebAlternativeTextClient.h"
 
+#include "MessageSenderInlines.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
@@ -41,7 +42,7 @@ WebAlternativeTextClient::WebAlternativeTextClient(WebPage* webPage)
 WebAlternativeTextClient::~WebAlternativeTextClient()
 {
 #if USE(AUTOCORRECTION_PANEL)
-    m_page->send(Messages::WebPageProxy::DismissCorrectionPanel(ReasonForDismissingAlternativeTextIgnored));
+    m_page->send(Messages::WebPageProxy::DismissCorrectionPanel(ReasonForDismissingAlternativeText::Ignored));
 #endif
 }
 
@@ -65,7 +66,7 @@ String WebAlternativeTextClient::dismissAlternativeSoon(ReasonForDismissingAlter
 
 void WebAlternativeTextClient::recordAutocorrectionResponse(AutocorrectionResponse response, const String& replacedString, const String& replacementString)
 {
-    m_page->send(Messages::WebPageProxy::RecordAutocorrectionResponse(static_cast<int32_t>(response), replacedString, replacementString));
+    m_page->send(Messages::WebPageProxy::RecordAutocorrectionResponse(response, replacedString, replacementString));
 }
 #endif
 

@@ -41,9 +41,7 @@ public:
     bool elementMatches(Element&) const { return true; }
 
 protected:
-    AllDescendantsCollection(ContainerNode& rootNode, CollectionType type)
-        : CachedHTMLCollection(rootNode, type)
-    { }
+    AllDescendantsCollection(ContainerNode&, CollectionType);
 };
 
 }

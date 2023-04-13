@@ -47,11 +47,11 @@ class JSGlobalObject;
 
 namespace WebCore {
 
-class DOMWindow;
+class LocalDOMWindow;
 class Navigator;
 class ScriptExecutionContext;
 class WebXRSession;
-struct SecurityOriginData;
+class SecurityOriginData;
 struct XRSessionInit;
 
 class WebXRSystem final : public RefCounted<WebXRSystem>, public EventTarget, public ActiveDOMObject {
@@ -99,8 +99,8 @@ private:
     using JSFeatureList = Vector<JSC::JSValue>;
     void obtainCurrentDevice(XRSessionMode, const JSFeatureList& requiredFeatures, const JSFeatureList& optionalFeatures, CompletionHandler<void(PlatformXR::Device*)>&&);
 
-    bool immersiveSessionRequestIsAllowedForGlobalObject(DOMWindow&, Document&) const;
-    bool inlineSessionRequestIsAllowedForGlobalObject(DOMWindow&, Document&, const XRSessionInit&) const;
+    bool immersiveSessionRequestIsAllowedForGlobalObject(LocalDOMWindow&, Document&) const;
+    bool inlineSessionRequestIsAllowedForGlobalObject(LocalDOMWindow&, Document&, const XRSessionInit&) const;
 
     bool isFeatureSupported(PlatformXR::SessionFeature, XRSessionMode, const PlatformXR::Device&) const;
     struct ResolvedRequestedFeatures;

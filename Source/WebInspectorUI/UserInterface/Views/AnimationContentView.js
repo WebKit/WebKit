@@ -397,7 +397,7 @@ WI.AnimationContentView = class AnimationContentView extends WI.ContentView
                     return;
 
                 const text = WI.UIString("Selected Animation", "Appears as a label when a given web animation is logged to the Console");
-                WI.consoleLogViewController.appendImmediateExecutionWithResult(text, remoteObject, {addSpecialUserLogClass: true});
+                WI.consoleLogViewController.appendImmediateExecutionWithResult(text, remoteObject, {addSpecialUserLogClass: true, shouldRevealConsole: true});
             });
         });
 

@@ -1,33 +1,37 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x212
-  RenderBlock {HTML} at (0,0) size 800x212
-    RenderBody {BODY} at (8,16) size 784x180
-      RenderBlock {P} at (20,0) size 764x82 [color=#0000FF] [border: none (10px double #0000FF)]
-        RenderText {#text} at (10,2) size 336x19
-          text run at (10,2) width 336: "\x{21E6} This paragraph should have two blue lines on its left. "
-        RenderInline {SPAN} at (0,0) size 750x79 [color=#C0C0C0]
-          RenderText {#text} at (346,2) size 750x79
-            text run at (346,2) width 414: "dummy text dummy text dummy text dummy text dummy text dummy"
-            text run at (10,22) width 444: "text dummy text dummy text dummy text dummy text dummy text dummy "
-            text run at (454,22) width 292: "text dummy text dummy text dummy text dummy"
-            text run at (10,42) width 148: "text dummy text dummy "
-            text run at (158,42) width 444: "text dummy text dummy text dummy text dummy text dummy text dummy "
-            text run at (602,42) width 144: "text dummy text dummy"
-            text run at (10,62) width 296: "text dummy text dummy text dummy text dummy "
-            text run at (306,62) width 318: "text dummy text dummy text dummy text dummy text"
+layer at (0,0) size 800x252
+  RenderBlock {HTML} at (0,0) size 800x252
+    RenderBody {BODY} at (8,16) size 784x220
+      RenderBlock {P} at (20,0) size 764x102 [color=#0000FF] [border: none (10px double #0000FF)]
+        RenderText {#text} at (10,2) size 356x19
+          text run at (10,2) width 356: "\x{21E6} This paragraph should have two blue lines on its left. "
+        RenderInline {SPAN} at (0,0) size 747x99 [color=#C0C0C0]
+          RenderText {#text} at (366,2) size 747x99
+            text run at (366,2) width 391: "dummy text dummy text dummy text dummy text dummy text"
+            text run at (10,22) width 52: "dummy "
+            text run at (62,22) width 474: "text dummy text dummy text dummy text dummy text dummy text dummy "
+            text run at (536,22) width 181: "text dummy text dummy text"
+            text run at (10,42) width 289: "dummy text dummy text dummy text dummy "
+            text run at (299,42) width 418: "text dummy text dummy text dummy text dummy text dummy text"
+            text run at (10,62) width 52: "dummy "
+            text run at (62,62) width 474: "text dummy text dummy text dummy text dummy text dummy text dummy "
+            text run at (536,62) width 181: "text dummy text dummy text"
+            text run at (10,82) width 154: "dummy text dummy text"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (20,98) size 764x82 [color=#0000FF] [border: none (1px solid #0000FF)]
-        RenderText {#text} at (1,2) size 339x19
-          text run at (1,2) width 339: "\x{21E6} This paragraph should have a thin blue line on its left. "
-        RenderInline {SPAN} at (0,0) size 762x79 [color=#C0C0C0]
-          RenderText {#text} at (340,2) size 762x79
-            text run at (340,2) width 414: "dummy text dummy text dummy text dummy text dummy text dummy"
-            text run at (1,22) width 444: "text dummy text dummy text dummy text dummy text dummy text dummy "
-            text run at (445,22) width 318: "text dummy text dummy text dummy text dummy text"
-            text run at (1,42) width 122: "dummy text dummy "
-            text run at (123,42) width 444: "text dummy text dummy text dummy text dummy text dummy text dummy "
-            text run at (567,42) width 170: "text dummy text dummy text"
-            text run at (1,62) width 270: "dummy text dummy text dummy text dummy "
-            text run at (271,62) width 318: "text dummy text dummy text dummy text dummy text"
+      RenderBlock {P} at (20,118) size 764x102 [color=#0000FF] [border: none (1px solid #0000FF)]
+        RenderText {#text} at (1,2) size 361x19
+          text run at (1,2) width 361: "\x{21E6} This paragraph should have a thin blue line on its left. "
+        RenderInline {SPAN} at (0,0) size 759x99 [color=#C0C0C0]
+          RenderText {#text} at (362,2) size 759x99
+            text run at (362,2) width 391: "dummy text dummy text dummy text dummy text dummy text"
+            text run at (1,22) width 52: "dummy "
+            text run at (53,22) width 474: "text dummy text dummy text dummy text dummy text dummy text dummy "
+            text run at (527,22) width 233: "text dummy text dummy text dummy"
+            text run at (1,42) width 237: "text dummy text dummy text dummy "
+            text run at (238,42) width 474: "text dummy text dummy text dummy text dummy text dummy text dummy "
+            text run at (712,42) width 23: "text"
+            text run at (1,62) width 447: "dummy text dummy text dummy text dummy text dummy text dummy "
+            text run at (448,62) width 312: "text dummy text dummy text dummy text dummy"
+            text run at (1,82) width 23: "text"
         RenderText {#text} at (0,0) size 0x0

@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "CallFrameClosure.h"
 #include "ExceptionHelpers.h"
 #include "JSFunction.h"
 #include "Interpreter.h"
@@ -33,55 +32,78 @@
 #include "VMEntryScope.h"
 #include "VMInlines.h"
 #include <wtf/ForbidHeapAllocation.h>
+#include <wtf/Scope.h>
 
 namespace JSC {
-    class CachedCall {
-        WTF_MAKE_NONCOPYABLE(CachedCall);
-        WTF_FORBID_HEAP_ALLOCATION;
-    public:
-        CachedCall(JSGlobalObject* globalObject, JSFunction* function, int argumentCount)
-            : m_vm(globalObject->vm())
-            , m_interpreter(m_vm.interpreter)
-            , m_entryScope(m_vm, function->scope()->globalObject())
-        {
-            VM& vm = m_entryScope.vm();
-            auto scope = DECLARE_THROW_SCOPE(vm);
 
-            ASSERT(!function->isHostFunctionNonInline());
-            if (LIKELY(vm.isSafeToRecurseSoft())) {
-                m_arguments.ensureCapacity(argumentCount);
-                if (LIKELY(!m_arguments.hasOverflowed()))
-                    m_closure = m_interpreter.prepareForRepeatCall(function->jsExecutable(), &m_protoCallFrame, function, argumentCount + 1, function->scope(), m_arguments);
-                else
-                    throwOutOfMemoryError(globalObject, scope);
-            } else
-                throwStackOverflowError(globalObject, scope);
+class CachedCall {
+    WTF_MAKE_NONCOPYABLE(CachedCall);
+    WTF_FORBID_HEAP_ALLOCATION;
+public:
+    CachedCall(JSGlobalObject* globalObject, JSFunction* function, int argumentCount)
+        : m_vm(globalObject->vm())
+        , m_entryScope(m_vm, function->scope()->globalObject())
+        , m_functionExecutable(function->jsExecutable())
+        , m_scope(function->scope())
+    {
+        VM& vm = m_vm;
+        auto scope = DECLARE_THROW_SCOPE(vm);
 #if ASSERT_ENABLED
+        auto updateValidStatus = makeScopeExit([&] {
             m_valid = !scope.exception();
+        });
 #endif
+        ASSERT(!function->isHostFunctionNonInline());
+        if (UNLIKELY(!vm.isSafeToRecurseSoft())) {
+            throwStackOverflowError(globalObject, scope);
+            return;
         }
 
-        ALWAYS_INLINE JSValue call()
-        {
-            ASSERT(m_valid);
-            ASSERT(m_arguments.size() == static_cast<size_t>(m_protoCallFrame.argumentCount()));
-            return m_interpreter.executeCachedCall(m_closure);
+        m_arguments.ensureCapacity(argumentCount);
+        if (UNLIKELY(m_arguments.hasOverflowed())) {
+            throwOutOfMemoryError(globalObject, scope);
+            return;
         }
-        void setThis(JSValue v) { m_protoCallFrame.setThisValue(v); }
 
-        void clearArguments() { m_arguments.clear(); }
-        void appendArgument(JSValue v) { m_arguments.append(v); }
-        bool hasOverflowedArguments() { return m_arguments.hasOverflowed(); }
+        scope.release();
+        m_vm.interpreter.prepareForCachedCall(*this, function, argumentCount + 1, m_arguments);
+    }
 
-    private:
+    ALWAYS_INLINE JSValue call()
+    {
+        ASSERT(m_valid);
+        ASSERT(m_arguments.size() == static_cast<size_t>(m_protoCallFrame.argumentCount()));
+        return m_vm.interpreter.executeCachedCall(*this);
+    }
+
+    JSFunction* function()
+    {
+        ASSERT(m_valid);
+        return jsCast<JSFunction*>(m_protoCallFrame.calleeValue.unboxedCell());
+    }
+    FunctionExecutable* functionExecutable() { return m_functionExecutable; }
+    JSScope* scope() { return m_scope; }
+
+    void setThis(JSValue v) { m_protoCallFrame.setThisValue(v); }
+
+    void clearArguments() { m_arguments.clear(); }
+    void appendArgument(JSValue v) { m_arguments.append(v); }
+    bool hasOverflowedArguments() { return m_arguments.hasOverflowed(); }
+
+private:
+    VM& m_vm;
+    VMEntryScope m_entryScope;
+    ProtoCallFrame m_protoCallFrame;
+    MarkedArgumentBuffer m_arguments;
+
+    FunctionExecutable* m_functionExecutable;
+    JSScope* m_scope;
+    void* m_addressForCall;
 #if ASSERT_ENABLED
-        bool m_valid { false };
+    bool m_valid { false };
 #endif
-        VM& m_vm;
-        Interpreter& m_interpreter;
-        VMEntryScope m_entryScope;
-        ProtoCallFrame m_protoCallFrame;
-        MarkedArgumentBuffer m_arguments;
-        CallFrameClosure m_closure;
-    };
-}
+
+    friend class Interpreter;
+};
+
+} // namespace JSC

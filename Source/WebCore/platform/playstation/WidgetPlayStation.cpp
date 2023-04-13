@@ -26,8 +26,8 @@
 #include "config.h"
 #include "Widget.h"
 
-#include "FrameView.h"
 #include "HostWindow.h"
+#include "LocalFrameView.h"
 #include "NotImplemented.h"
 
 namespace WebCore {
@@ -56,10 +56,8 @@ void Widget::setFocus(bool)
 
 void Widget::setCursor(const Cursor& cursor)
 {
-    FrameView* view = root();
-    if (!view)
-        return;
-    view->hostWindow()->setCursor(cursor);
+    if (auto* view = root())
+        view->hostWindow()->setCursor(cursor);
 }
 
 void Widget::show()

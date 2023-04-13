@@ -26,10 +26,10 @@
 #include "config.h"
 #include "UserGestureIndicator.h"
 
-#include "DOMWindow.h"
 #include "Document.h"
-#include "Frame.h"
 #include "FrameDestructionObserverInlines.h"
+#include "LocalDOMWindow.h"
+#include "LocalFrame.h"
 #include "ResourceLoadObserver.h"
 #include "SecurityOrigin.h"
 #include <wtf/MainThread.h>
@@ -44,9 +44,10 @@ static RefPtr<UserGestureToken>& currentToken()
     return token;
 }
 
-UserGestureToken::UserGestureToken(ProcessingUserGestureState state, UserGestureType gestureType, Document* document)
+UserGestureToken::UserGestureToken(ProcessingUserGestureState state, UserGestureType gestureType, Document* document, std::optional<UUID> authorizationToken)
     : m_state(state)
     , m_gestureType(gestureType)
+    , m_authorizationToken(authorizationToken)
 {
     if (!document || !processingUserGesture())
         return;
@@ -68,7 +69,7 @@ UserGestureToken::UserGestureToken(ProcessingUserGestureState state, UserGesture
     }
 
     auto& documentOrigin = document->securityOrigin();
-    for (AbstractFrame* frame = &documentFrame->tree().top(); frame; frame = frame->tree().traverseNext()) {
+    for (Frame* frame = &documentFrame->tree().top(); frame; frame = frame->tree().traverseNext()) {
         auto* localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
@@ -100,13 +101,13 @@ bool UserGestureToken::isValidForDocument(const Document& document) const
     return m_documentsImpactedByUserGesture.contains(document);
 }
 
-UserGestureIndicator::UserGestureIndicator(std::optional<ProcessingUserGestureState> state, Document* document, UserGestureType gestureType, ProcessInteractionStyle processInteractionStyle)
+UserGestureIndicator::UserGestureIndicator(std::optional<ProcessingUserGestureState> state, Document* document, UserGestureType gestureType, ProcessInteractionStyle processInteractionStyle, std::optional<UUID> authorizationToken)
     : m_previousToken { currentToken() }
 {
     ASSERT(isMainThread());
 
     if (state)
-        currentToken() = UserGestureToken::create(state.value(), gestureType, document);
+        currentToken() = UserGestureToken::create(state.value(), gestureType, document, authorizationToken);
 
     if (state && document && currentToken()->processingUserGesture()) {
         document->updateLastHandledUserGestureTimestamp(currentToken()->startTime());
@@ -115,7 +116,7 @@ UserGestureIndicator::UserGestureIndicator(std::optional<ProcessingUserGestureSt
         document->topDocument().setUserDidInteractWithPage(true);
         if (auto* frame = document->frame()) {
             if (!frame->hasHadUserInteraction()) {
-                for (AbstractFrame *ancestor = frame; ancestor; ancestor = ancestor->tree().parent()) {
+                for (Frame *ancestor = frame; ancestor; ancestor = ancestor->tree().parent()) {
                     auto* localAncestor = dynamicDowncast<LocalFrame>(ancestor);
                     if (!localAncestor)
                         continue;
@@ -184,6 +185,14 @@ bool UserGestureIndicator::processingUserGestureForMedia()
         return false;
 
     return currentToken() ? currentToken()->processingUserGestureForMedia() : false;
+}
+
+std::optional<UUID> UserGestureIndicator::authorizationToken() const
+{
+    if (!isMainThread())
+        return std::nullopt;
+
+    return currentToken() ? currentToken()->authorizationToken() : std::nullopt;
 }
 
 }

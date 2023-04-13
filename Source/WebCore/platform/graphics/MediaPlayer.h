@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #pragma once
@@ -38,8 +38,6 @@
 #include "PlatformTextTrack.h"
 #include "SecurityOriginData.h"
 #include "Timer.h"
-#include "VideoFrame.h"
-#include "VideoFrameMetadata.h"
 #include "VideoPlaybackQualityMetrics.h"
 #include <JavaScriptCore/Forward.h>
 #include <wtf/CompletionHandler.h>
@@ -60,7 +58,13 @@ OBJC_CLASS NSArray;
 typedef struct __CVBuffer* CVPixelBufferRef;
 #endif
 
+namespace WTF {
+class MachSendRight;
+}
+
 namespace WebCore {
+
+using LayerHostingContextID = uint32_t;
 
 enum class AudioSessionCategory : uint8_t;
 enum class DynamicRangeMode : uint8_t;
@@ -87,10 +91,12 @@ class PlatformMediaResourceLoader;
 class PlatformTimeRanges;
 class SharedBuffer;
 class TextTrackRepresentation;
+class VideoFrame;
 class VideoTrackPrivate;
 
 struct GraphicsDeviceAdapter;
-struct SecurityOriginData;
+class SecurityOriginData;
+struct VideoFrameMetadata;
 
 struct MediaEngineSupportParameters {
     ContentType type;
@@ -184,7 +190,7 @@ public:
 
     // A characteristic of the media file, eg. video, audio, closed captions, etc, has changed.
     virtual void mediaPlayerCharacteristicChanged() { }
-    
+
     // whether the rendering system can accelerate the display of this MediaPlayer.
     virtual bool mediaPlayerRenderingCanBeAccelerated() { return false; }
 
@@ -197,10 +203,6 @@ public:
 
     virtual void mediaPlayerActiveSourceBuffersChanged() { }
 
-#if PLATFORM(WIN) && USE(AVFOUNDATION)
-    virtual GraphicsDeviceAdapter* mediaPlayerGraphicsDeviceAdapter() const { return nullptr; }
-#endif
-
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     virtual RefPtr<ArrayBuffer> mediaPlayerCachedKeyForKeyId(const String&) const = 0;
     virtual void mediaPlayerKeyNeeded(const SharedBuffer&) { }
@@ -211,7 +213,7 @@ public:
     virtual void mediaPlayerInitializationDataEncountered(const String&, RefPtr<ArrayBuffer>&&) { }
     virtual void mediaPlayerWaitingForKeyChanged() { }
 #endif
-    
+
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     virtual void mediaPlayerCurrentPlaybackTargetIsWirelessChanged(bool) { };
 #endif
@@ -343,6 +345,10 @@ public:
     bool isVideoFullscreenStandby() const;
 #endif
 
+    LayerHostingContextID hostingContextID() const;
+    FloatSize videoInlineSize() const;
+    void setVideoInlineSizeFenced(const FloatSize&, const WTF::MachSendRight&);
+
 #if PLATFORM(IOS_FAMILY)
     NSArray *timedMetadata() const;
     String accessLog() const;
@@ -415,6 +421,7 @@ public:
 
     using CurrentTimeDidChangeCallback = std::function<void(const MediaTime&)>;
     bool setCurrentTimeDidChangeCallback(CurrentTimeDidChangeCallback&&);
+    bool currentTimeMayProgress() const;
 
     MediaTime startTime() const;
     MediaTime initialTime() const;
@@ -438,12 +445,12 @@ public:
     void setPitchCorrectionAlgorithm(PitchCorrectionAlgorithm);
     PitchCorrectionAlgorithm pitchCorrectionAlgorithm() const { return m_pitchCorrectionAlgorithm; }
 
-    std::unique_ptr<PlatformTimeRanges> buffered();
-    std::unique_ptr<PlatformTimeRanges> seekable();
+    const PlatformTimeRanges& buffered() const;
+    const PlatformTimeRanges& seekable() const;
     void bufferedTimeRangesChanged();
     void seekableTimeRangesChanged();
-    MediaTime minTimeSeekable();
-    MediaTime maxTimeSeekable();
+    MediaTime minTimeSeekable() const;
+    MediaTime maxTimeSeekable() const;
 
     double seekableTimeRangesLastModifiedTime();
     double liveUpdateInterval();
@@ -488,7 +495,7 @@ public:
     NetworkState networkState();
 
     using MediaPlayerEnums::ReadyState;
-    ReadyState readyState();
+    ReadyState readyState() const;
 
     using MediaPlayerEnums::MovieLoadType;
     MovieLoadType movieLoadType() const;
@@ -542,10 +549,6 @@ public:
     void acceleratedRenderingStateChanged();
 
     void setShouldMaintainAspectRatio(bool);
-
-#if PLATFORM(WIN) && USE(AVFOUNDATION)
-    GraphicsDeviceAdapter* graphicsDeviceAdapter() const;
-#endif
 
     bool didPassCORSAccessCheck() const;
     bool isCrossOrigin(const SecurityOrigin&) const;

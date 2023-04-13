@@ -22,7 +22,7 @@
 #include "config.h"
 #include "SVGSwitchElement.h"
 
-#include "ElementIterator.h"
+#include "ElementChildIteratorInlines.h"
 #include "LegacyRenderSVGTransformableContainer.h"
 #include "RenderSVGTransformableContainer.h"
 #include "SVGElementTypeHelpers.h"

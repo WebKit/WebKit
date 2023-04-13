@@ -27,10 +27,10 @@
 namespace WebCore {
 
 class HTMLDocument : public Document {
-    WTF_MAKE_ISO_ALLOCATED(HTMLDocument);
+    WTF_MAKE_ISO_ALLOCATED_EXPORT(HTMLDocument, WEBCORE_EXPORT);
 public:
-    static Ref<HTMLDocument> create(Frame*, const Settings&, const URL&, ScriptExecutionContextIdentifier = { });
-    static Ref<HTMLDocument> createSynthesizedDocument(Frame&, const URL&);
+    static Ref<HTMLDocument> create(LocalFrame*, const Settings&, const URL&, ScriptExecutionContextIdentifier = { });
+    static Ref<HTMLDocument> createSynthesizedDocument(LocalFrame&, const URL&);
     virtual ~HTMLDocument();
 
     WEBCORE_EXPORT int width();
@@ -54,7 +54,7 @@ public:
     static bool isCaseSensitiveAttribute(const QualifiedName&);
 
 protected:
-    HTMLDocument(Frame*, const Settings&, const URL&, ScriptExecutionContextIdentifier, DocumentClasses = { }, unsigned constructionFlags = 0);
+    WEBCORE_EXPORT HTMLDocument(LocalFrame*, const Settings&, const URL&, ScriptExecutionContextIdentifier, DocumentClasses = { }, unsigned constructionFlags = 0);
 
 private:
     bool isFrameSet() const final;
@@ -65,7 +65,7 @@ private:
     TreeScopeOrderedMap m_windowNamedItem;
 };
 
-inline Ref<HTMLDocument> HTMLDocument::create(Frame* frame, const Settings& settings, const URL& url, ScriptExecutionContextIdentifier identifier)
+inline Ref<HTMLDocument> HTMLDocument::create(LocalFrame* frame, const Settings& settings, const URL& url, ScriptExecutionContextIdentifier identifier)
 {
     auto document = adoptRef(*new HTMLDocument(frame, settings, url, identifier, { DocumentClass::HTML }, 0));
     document->addToContextsMap();

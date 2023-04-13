@@ -1475,9 +1475,9 @@ macho_objfmt_section_switch(yasm_object *object, yasm_valparamhead *valparams,
     }
 
     /* Build a unique sectname from f_segname and f_sectname. */
-    realname = yasm_xmalloc(strlen("LC_SEGMENT") + 1 + strlen(data.f_segname) + 1 +
-                            strlen(f_sectname) + 1);
-    sprintf(realname, "LC_SEGMENT.%s.%s", data.f_segname, f_sectname);
+    size_t realname_length = strlen("LC_SEGMENT") + 1 + strlen(data.f_segname) + 1 + strlen(f_sectname) + 1;
+    realname = yasm_xmalloc(realname_length);
+    snprintf(realname, realname_length, "LC_SEGMENT.%s.%s", data.f_segname, f_sectname);
     retval = yasm_object_get_general(object, realname, align, 1, resonly,
                                      &isnew, line);
     yasm_xfree(realname);

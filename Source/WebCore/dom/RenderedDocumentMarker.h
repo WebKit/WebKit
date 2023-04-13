@@ -27,7 +27,9 @@
 #pragma once
 
 #include "DocumentMarker.h"
+#include <wtf/Markable.h>
 #include <wtf/Vector.h>
+#include <wtf/WallTime.h>
 
 namespace WebCore {
 
@@ -68,9 +70,32 @@ public:
 
     bool isValid() const { return m_isValid; }
 
+    float opacity() const { return m_opacity; }
+    void setOpacity(float opacity) { m_opacity = opacity; }
+
+    bool isBeingDismissed() const { return m_isBeingDismissed; }
+
+    void setBeingDismissed(bool beingDismissed)
+    {
+        if (m_isBeingDismissed == beingDismissed)
+            return;
+
+        m_isBeingDismissed = beingDismissed;
+        if (m_isBeingDismissed)
+            m_animationStartTime = WallTime::now();
+        else
+            m_animationStartTime.reset();
+    }
+
+    Markable<WallTime> animationStartTime() const { return m_animationStartTime; }
+
 private:
     Vector<FloatRect, 1> m_rects;
     bool m_isValid { false };
+    bool m_isBeingDismissed { false };
+
+    float m_opacity { 1.0 };
+    Markable<WallTime> m_animationStartTime;
 };
 
 } // namespace WebCore

@@ -194,6 +194,7 @@ public:
     virtual void removeDataForDomain(const RegistrableDomain&) = 0;
 
     virtual Vector<RegistrableDomain> allDomains() const = 0;
+    virtual HashMap<RegistrableDomain, WallTime> allDomainsWithLastAccessedTime() const = 0;
 
     void didCreateNetworkProcess();
 

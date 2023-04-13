@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2009-2022 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -305,32 +305,6 @@ void MarkupAccumulator::appendCustomAttributes(StringBuilder&, const Element&, N
 {
 }
 
-void MarkupAccumulator::appendQuotedURLAttributeValue(StringBuilder& result, const Element& element, const Attribute& attribute)
-{
-    ASSERT(element.isURLAttribute(attribute));
-    String resolvedURLString = resolveURLIfNeeded(element, attribute.value());
-    char quoteChar = '"';
-    if (WTF::protocolIsJavaScript(resolvedURLString)) {
-        // minimal escaping for javascript urls
-        if (resolvedURLString.contains('&'))
-            resolvedURLString = makeStringByReplacingAll(resolvedURLString, '&', "&amp;"_s);
-
-        if (resolvedURLString.contains('"')) {
-            if (resolvedURLString.contains('\''))
-                resolvedURLString = makeStringByReplacingAll(resolvedURLString, '"', "&quot;"_s);
-            else
-                quoteChar = '\'';
-        }
-        result.append(quoteChar, resolvedURLString, quoteChar);
-        return;
-    }
-
-    // FIXME: This does not fully match other browsers. Firefox percent-escapes non-ASCII characters for innerHTML.
-    result.append(quoteChar);
-    appendAttributeValue(result, resolvedURLString, false);
-    result.append(quoteChar);
-}
-
 static bool shouldAddNamespaceElement(const Element& element)
 {
     // Don't add namespace attribute if it is already defined for this elem.
@@ -401,7 +375,9 @@ EntityMask MarkupAccumulator::entityMaskForText(const Text& text) const
     if (text.parentElement())
         parentName = &text.parentElement()->tagQName();
 
-    if (parentName && (*parentName == scriptTag || *parentName == styleTag || *parentName == xmpTag))
+    if (parentName && (*parentName == scriptTag || *parentName == styleTag || *parentName == xmpTag
+        || *parentName == noembedTag || *parentName == noframesTag || *parentName == plaintextTag
+        || *parentName == iframeTag))
         return EntityMaskInCDATA;
     return EntityMaskInHTMLPCDATA;
 }
@@ -494,7 +470,7 @@ void MarkupAccumulator::generateUniquePrefix(QualifiedName& prefixedName, const 
     AtomString name;
     do {
         // FIXME: We should create makeAtomString, which would be more efficient.
-        name = makeAtomString("NS"_s, ++m_prefixLevel);
+        name = makeAtomString("ns"_s, ++m_prefixLevel);
     } while (namespaces.get(name.impl()));
     prefixedName.setPrefix(name);
 }
@@ -546,28 +522,32 @@ void MarkupAccumulator::appendAttribute(StringBuilder& result, const Element& el
 {
     bool isSerializingHTML = element.document().isHTMLDocument() && !inXMLFragmentSerialization();
 
+    std::optional<QualifiedName> effectiveXMLPrefixedName;
+
+    // Per https://w3c.github.io/DOM-Parsing/#dfn-xml-serialization-of-the-attributes the xmlns attribute is serialized first
+    if (!isSerializingHTML) {
+        effectiveXMLPrefixedName = xmlAttributeSerialization(attribute, namespaces);
+        if (namespaces && shouldAddNamespaceAttribute(attribute, *namespaces))
+            appendNamespace(result, effectiveXMLPrefixedName->prefix(), effectiveXMLPrefixedName->namespaceURI(), *namespaces);
+    }
+
     result.append(' ');
 
-    std::optional<QualifiedName> effectiveXMLPrefixedName;
     if (isSerializingHTML)
         result.append(htmlAttributeSerialization(attribute));
-    else {
-        effectiveXMLPrefixedName = xmlAttributeSerialization(attribute, namespaces);
+    else
         result.append(effectiveXMLPrefixedName->toString());
-    }
 
     result.append('=');
 
-    if (element.isURLAttribute(attribute))
-        appendQuotedURLAttributeValue(result, element, attribute);
-    else {
-        result.append('"');
+    result.append('"');
+    if (element.isURLAttribute(attribute)) {
+        // FIXME: This does not fully match other browsers. Firefox percent-escapes
+        // non-ASCII characters for innerHTML.
+        appendAttributeValue(result, resolveURLIfNeeded(element, attribute.value()), isSerializingHTML);
+    } else
         appendAttributeValue(result, attribute.value(), isSerializingHTML);
-        result.append('"');
-    }
-
-    if (!isSerializingHTML && namespaces && shouldAddNamespaceAttribute(attribute, *namespaces))
-        appendNamespace(result, effectiveXMLPrefixedName->prefix(), effectiveXMLPrefixedName->namespaceURI(), *namespaces);
+    result.append('"');
 }
 
 void MarkupAccumulator::appendNonElementNode(StringBuilder& result, const Node& node, Namespaces* namespaces)

@@ -50,6 +50,8 @@ private:
 
     bool usesDelegatedPageScaling() const override { return false; }
 
+    void mainFrameContentSizeChanged(const WebCore::IntSize&) override;
+
     void adjustTransientZoom(double scale, WebCore::FloatPoint origin) override;
     void commitTransientZoom(double scale, WebCore::FloatPoint origin) override;
     void applyTransientZoomToPage(double scale, WebCore::FloatPoint);

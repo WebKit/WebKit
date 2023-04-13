@@ -69,15 +69,15 @@ WKStringRef WKSecurityOriginCopyToString(WKSecurityOriginRef securityOrigin)
 
 WKStringRef WKSecurityOriginCopyProtocol(WKSecurityOriginRef securityOrigin)
 {
-    return WebKit::toCopiedAPI(WebKit::toImpl(securityOrigin)->securityOrigin().protocol);
+    return WebKit::toCopiedAPI(WebKit::toImpl(securityOrigin)->securityOrigin().protocol());
 }
 
 WKStringRef WKSecurityOriginCopyHost(WKSecurityOriginRef securityOrigin)
 {
-    return WebKit::toCopiedAPI(WebKit::toImpl(securityOrigin)->securityOrigin().host);
+    return WebKit::toCopiedAPI(WebKit::toImpl(securityOrigin)->securityOrigin().host());
 }
 
 unsigned short WKSecurityOriginGetPort(WKSecurityOriginRef securityOrigin)
 {
-    return WebKit::toImpl(securityOrigin)->securityOrigin().port.value_or(0);
+    return WebKit::toImpl(securityOrigin)->securityOrigin().port().value_or(0);
 }

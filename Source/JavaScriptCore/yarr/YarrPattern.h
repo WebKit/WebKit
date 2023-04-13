@@ -41,6 +41,12 @@ namespace JSC { namespace Yarr {
 struct YarrPattern;
 struct PatternDisjunction;
 
+enum class CompileMode : uint8_t {
+    Legacy,
+    Unicode,
+    UnicodeSets
+};
+
 struct CharacterRange {
     UChar32 begin { 0 };
     UChar32 end { 0x10ffff };
@@ -87,6 +93,7 @@ public:
         , m_anyCharacter(false)
     {
     }
+
     CharacterClass(const char* table, bool inverted)
         : m_table(table)
         , m_characterWidths(CharacterClassWidths::Unknown)
@@ -94,6 +101,7 @@ public:
         , m_anyCharacter(false)
     {
     }
+
     CharacterClass(std::initializer_list<UChar32> matches, std::initializer_list<CharacterRange> ranges, std::initializer_list<UChar32> matchesUnicode, std::initializer_list<CharacterRange> rangesUnicode, CharacterClassWidths widths)
         : m_matches(matches)
         , m_ranges(ranges)
@@ -106,11 +114,28 @@ public:
     {
     }
 
-    bool hasNonBMPCharacters() { return m_characterWidths & CharacterClassWidths::HasNonBMPChars; }
+    CharacterClass(std::initializer_list<Vector<UChar32>> strings, std::initializer_list<UChar32> matches, std::initializer_list<CharacterRange> ranges, std::initializer_list<UChar32> matchesUnicode, std::initializer_list<CharacterRange> rangesUnicode, CharacterClassWidths widths, bool inCanonicalForm)
+        : m_strings(strings)
+        , m_matches(matches)
+        , m_ranges(ranges)
+        , m_matchesUnicode(matchesUnicode)
+        , m_rangesUnicode(rangesUnicode)
+        , m_table(nullptr)
+        , m_characterWidths(widths)
+        , m_tableInverted(false)
+        , m_anyCharacter(false)
+        , m_inCanonicalForm(inCanonicalForm)
+    {
+    }
 
-    bool hasOneCharacterSize() { return m_characterWidths == CharacterClassWidths::HasBMPChars || m_characterWidths == CharacterClassWidths::HasNonBMPChars; }
-    bool hasOnlyNonBMPCharacters() { return m_characterWidths == CharacterClassWidths::HasNonBMPChars; }
+    bool hasNonBMPCharacters() const { return m_characterWidths & CharacterClassWidths::HasNonBMPChars; }
+
+    bool hasOneCharacterSize() const { return m_characterWidths == CharacterClassWidths::HasBMPChars || m_characterWidths == CharacterClassWidths::HasNonBMPChars; }
+    bool hasOnlyNonBMPCharacters() const { return m_characterWidths == CharacterClassWidths::HasNonBMPChars; }
+    bool hasStrings() const { return !m_strings.isEmpty(); }
+    bool hasSingleCharacters() const { return !m_matches.isEmpty() || !m_ranges.isEmpty() || !m_matchesUnicode.isEmpty() || !m_rangesUnicode.isEmpty(); }
     
+    Vector<Vector<UChar32>> m_strings;
     Vector<UChar32> m_matches;
     Vector<CharacterRange> m_ranges;
     Vector<UChar32> m_matchesUnicode;
@@ -120,6 +145,45 @@ public:
     CharacterClassWidths m_characterWidths;
     bool m_tableInverted : 1;
     bool m_anyCharacter : 1;
+    bool m_inCanonicalForm : 1;
+};
+
+struct ClassSet : public CharacterClass {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    ClassSet()
+        : CharacterClass()
+        , m_inCanonicalForm(true)
+    {
+    }
+
+    ClassSet(const char* table, bool inverted)
+        : CharacterClass(table, inverted)
+        , m_inCanonicalForm(true)
+    {
+    }
+
+    ClassSet(std::initializer_list<UChar32> matches, std::initializer_list<CharacterRange> ranges, std::initializer_list<UChar32> matchesUnicode, std::initializer_list<CharacterRange> rangesUnicode, CharacterClassWidths widths)
+        : CharacterClass(matches, ranges, matchesUnicode, rangesUnicode, widths)
+        , m_inCanonicalForm(true)
+    {
+    }
+
+    ClassSet(std::initializer_list<Vector<UChar32>> strings, std::initializer_list<UChar32> matches, std::initializer_list<CharacterRange> ranges, std::initializer_list<UChar32> matchesUnicode, std::initializer_list<CharacterRange> rangesUnicode, CharacterClassWidths widths)
+        : CharacterClass(matches, ranges, matchesUnicode, rangesUnicode, widths)
+        , m_strings(strings)
+        , m_inCanonicalForm(true)
+    {
+    }
+
+    ClassSet(std::initializer_list<Vector<UChar32>> strings, bool inCanonicalForm)
+        : m_strings(strings)
+        , m_inCanonicalForm(inCanonicalForm)
+    {
+    }
+
+    Vector<Vector<UChar32>> m_strings;
+    bool m_inCanonicalForm : 1;
 };
 
 enum class QuantifierType : uint8_t {
@@ -241,10 +305,12 @@ struct PatternTerm {
         quantityType = QuantifierType::FixedCount;
         quantityMinCount = quantityMaxCount = 1;
     }
-    
+
     static PatternTerm ForwardReference()
     {
-        return PatternTerm(Type::ForwardReference);
+        auto term = PatternTerm(Type::ForwardReference);
+        term.backReferenceSubpatternId = 0;
+        return term;
     }
 
     static PatternTerm BOL()
@@ -336,10 +402,15 @@ public:
     {
     }
 
-    PatternTerm& lastTerm()
+    unsigned lastTermIndex()
     {
         ASSERT(m_terms.size());
-        return m_terms[m_terms.size() - 1];
+        return m_terms.size() - 1;
+    }
+
+    PatternTerm& lastTerm()
+    {
+        return m_terms[lastTermIndex()];
     }
     
     void removeLastTerm()
@@ -452,12 +523,14 @@ struct YarrPattern {
     {
         m_numSubpatterns = 0;
         m_initialStartValueFrameLocation = 0;
+        m_numDuplicateNamedCaptureGroups = 0;
 
         m_containsBackreferences = false;
         m_containsBOL = false;
         m_containsLookbehinds = false;
         m_containsUnsignedLengthPattern = false;
         m_hasCopiedParenSubexpressions = false;
+        m_hasNamedCaptureGroups = false;
         m_saveInitialStartValue = false;
 
         anycharCached = nullptr;
@@ -475,6 +548,8 @@ struct YarrPattern {
         m_disjunctions.clear();
         m_userCharacterClasses.clear();
         m_captureGroupNames.clear();
+        m_namedGroupToParenIndices.clear();
+        m_duplicateNamedGroupForSubpatternId.clear();
     }
 
     bool containsUnsignedLengthPattern()
@@ -578,6 +653,22 @@ struct YarrPattern {
         return unicodePropertiesCached.get(classID);
     }
 
+    unsigned offsetVectorBaseForNamedCaptures() const
+    {
+        return (m_numSubpatterns + 1) * 2;
+    }
+
+    unsigned offsetsSize() const
+    {
+        return offsetVectorBaseForNamedCaptures() + m_numDuplicateNamedCaptureGroups;
+    }
+
+    unsigned offsetForDuplicateNamedGroupId(unsigned duplicateNamedGroupId)
+    {
+        ASSERT(duplicateNamedGroupId);
+        return offsetVectorBaseForNamedCaptures() + duplicateNamedGroupId - 1;
+    }
+
     void dumpPatternString(PrintStream& out, StringView patternString);
     void dumpPattern(StringView pattern);
     void dumpPattern(PrintStream& out, StringView pattern);
@@ -588,22 +679,46 @@ struct YarrPattern {
     bool hasIndices() const { return m_flags.contains(Flags::HasIndices); }
     bool sticky() const { return m_flags.contains(Flags::Sticky); }
     bool unicode() const { return m_flags.contains(Flags::Unicode); }
+    bool unicodeSets() const { return m_flags.contains(Flags::UnicodeSets); }
+    bool eitherUnicode() const { return unicode() || unicodeSets(); }
     bool dotAll() const { return m_flags.contains(Flags::DotAll); }
+
+    bool hasDuplicateNamedCaptureGroups() const { return !!m_numDuplicateNamedCaptureGroups; }
+
+    CompileMode compileMode() const
+    {
+        if (unicode())
+            return CompileMode::Unicode;
+
+        if (unicodeSets())
+            return CompileMode::UnicodeSets;
+
+        return CompileMode::Legacy;
+    }
 
     bool m_containsBackreferences : 1;
     bool m_containsBOL : 1;
     bool m_containsLookbehinds : 1;
     bool m_containsUnsignedLengthPattern : 1;
     bool m_hasCopiedParenSubexpressions : 1;
+    bool m_hasNamedCaptureGroups : 1;
     bool m_saveInitialStartValue : 1;
     OptionSet<Flags> m_flags;
     unsigned m_numSubpatterns { 0 };
     unsigned m_initialStartValueFrameLocation { 0 };
+    unsigned m_numDuplicateNamedCaptureGroups { 0 };
     PatternDisjunction* m_body;
     Vector<std::unique_ptr<PatternDisjunction>, 4> m_disjunctions;
     Vector<std::unique_ptr<CharacterClass>> m_userCharacterClasses;
     Vector<String> m_captureGroupNames;
-    HashMap<String, unsigned> m_namedGroupToParenIndex;
+    // The contents of the RHS Vector of m_namedGroupToParenIndices depends on whether the String is a
+    // duplicate named group or not.
+    // For a named group that is only used once in the pattern, the vector size is one and the only entry
+    // is the subpatterenId for a non-duplicate named group.
+    // For a duplicate named group, the size will be greater than 2. The first vector entry it is the
+    // duplicateNamedGroupId. Subsequent vector entries are the subpatternId's for that duplicateNamedGroupId.
+    HashMap<String, Vector<unsigned>> m_namedGroupToParenIndices;
+    Vector<unsigned> m_duplicateNamedGroupForSubpatternId;
 
 private:
     ErrorCode compile(StringView patternString);
@@ -644,9 +759,11 @@ private:
     struct BackTrackInfoBackReference {
         uintptr_t begin; // Not really needed for greedy quantifiers.
         uintptr_t matchAmount; // Not really needed for fixed quantifiers.
+        uintptr_t backReferenceSize; // Used by greedy quantifiers to backtrack.
 
         static unsigned beginIndex() { return offsetof(BackTrackInfoBackReference, begin) / sizeof(uintptr_t); }
         static unsigned matchAmountIndex() { return offsetof(BackTrackInfoBackReference, matchAmount) / sizeof(uintptr_t); }
+        static unsigned backReferenceSizeIndex() { return offsetof(BackTrackInfoBackReference, backReferenceSize) / sizeof(uintptr_t); }
     };
 
     struct BackTrackInfoAlternative {

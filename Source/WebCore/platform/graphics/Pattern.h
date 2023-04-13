@@ -50,14 +50,14 @@ class Pattern final : public RefCounted<Pattern> {
 public:
     struct Parameters {
         Parameters(bool repeatX = true, bool repeatY = true, AffineTransform patternSpaceTransform = { })
-            : patternSpaceTransform(patternSpaceTransform)
-            , repeatX(repeatX)
+            : repeatX(repeatX)
             , repeatY(repeatY)
+            , patternSpaceTransform(patternSpaceTransform)
         {
         }
-        AffineTransform patternSpaceTransform;
         bool repeatX;
         bool repeatY;
+        AffineTransform patternSpaceTransform;
     };
 
     WEBCORE_EXPORT static Ref<Pattern> create(SourceImage&& tileImage, const Parameters& = { });

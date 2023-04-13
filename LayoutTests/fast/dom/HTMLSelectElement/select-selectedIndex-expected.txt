@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: Blocked attempt to expand the option list to 4294967295 items. The maximum number of items allowed is 10000.
+CONSOLE MESSAGE: Unable to expand the option list to length 4294967295 items. The maximum number of items allowed is 100000.
 
 1) setting length to a negative length
 PASS mySelect.options.length is 2

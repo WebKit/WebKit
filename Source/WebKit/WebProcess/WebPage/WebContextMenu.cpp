@@ -33,8 +33,8 @@
 #include "WebProcess.h"
 #include <WebCore/ContextMenu.h>
 #include <WebCore/ContextMenuController.h>
-#include <WebCore/Frame.h>
-#include <WebCore/FrameView.h>
+#include <WebCore/LocalFrame.h>
+#include <WebCore/LocalFrameView.h>
 #include <WebCore/Page.h>
 
 namespace WebKit {
@@ -52,10 +52,10 @@ WebContextMenu::~WebContextMenu()
 void WebContextMenu::show()
 {
     ContextMenuController& controller = m_page->corePage()->contextMenuController();
-    Frame* frame = controller.hitTestResult().innerNodeFrame();
+    auto* frame = controller.hitTestResult().innerNodeFrame();
     if (!frame)
         return;
-    FrameView* view = frame->view();
+    auto* view = frame->view();
     if (!view)
         return;
 

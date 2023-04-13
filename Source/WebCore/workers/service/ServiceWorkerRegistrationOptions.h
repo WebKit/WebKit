@@ -41,37 +41,7 @@ struct ServiceWorkerRegistrationOptions {
 
     ServiceWorkerRegistrationOptions isolatedCopy() const &;
     ServiceWorkerRegistrationOptions isolatedCopy() &&;
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<ServiceWorkerRegistrationOptions> decode(Decoder&);
 };
-
-template<class Encoder>
-void ServiceWorkerRegistrationOptions::encode(Encoder& encoder) const
-{
-    encoder << scope << type << updateViaCache;
-}
-
-template<class Decoder>
-std::optional<ServiceWorkerRegistrationOptions> ServiceWorkerRegistrationOptions::decode(Decoder& decoder)
-{
-    std::optional<String> scope;
-    decoder >> scope;
-    if (!scope)
-        return std::nullopt;
-
-    std::optional<WorkerType> type;
-    decoder >> type;
-    if (!type)
-        return std::nullopt;
-
-    std::optional<ServiceWorkerUpdateViaCache> updateViaCache;
-    decoder >> updateViaCache;
-    if (!updateViaCache)
-        return std::nullopt;
-
-    return ServiceWorkerRegistrationOptions { WTFMove(*scope), WTFMove(*type), WTFMove(*updateViaCache) };
-}
 
 } // namespace WebCore
 

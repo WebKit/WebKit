@@ -29,6 +29,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <wtf/Vector.h>
+#include <wtf/WTFProcess.h>
 #include <wtf/text/StringBuilder.h>
 
 #if COMPILER(MSVC)
@@ -495,7 +496,7 @@ static NO_RETURN void printUsageStatement(bool help = false)
     fprintf(stderr, "  -h|--help  Prints this help message\n");
     fprintf(stderr, "  -v|--verbose  Verbose output\n");
 
-    exit(help ? EXIT_SUCCESS : EXIT_FAILURE);
+    exitProcess(help ? EXIT_SUCCESS : EXIT_FAILURE);
 }
 
 static void parseArguments(int argc, char** argv, CommandLine& options)

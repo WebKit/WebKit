@@ -26,6 +26,8 @@
 #include "config.h"
 #include "MessageSender.h"
 
+#include "Connection.h"
+
 namespace IPC {
 
 MessageSender::~MessageSender() = default;

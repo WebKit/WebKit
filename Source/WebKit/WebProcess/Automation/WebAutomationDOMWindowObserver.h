@@ -25,18 +25,18 @@
 
 #pragma once
 
-#include <WebCore/DOMWindow.h>
+#include <WebCore/LocalDOMWindow.h>
 #include <wtf/Forward.h>
 
 namespace WebCore {
-class Frame;
+class LocalFrame;
 }
 
 namespace WebKit {
 
-class WebAutomationDOMWindowObserver final : public RefCounted<WebAutomationDOMWindowObserver>, public WebCore::DOMWindow::Observer {
+class WebAutomationDOMWindowObserver final : public RefCounted<WebAutomationDOMWindowObserver>, public WebCore::LocalDOMWindow::Observer {
 public:
-    static Ref<WebAutomationDOMWindowObserver> create(WebCore::DOMWindow& window, WTF::Function<void(WebAutomationDOMWindowObserver&)>&& callback)
+    static Ref<WebAutomationDOMWindowObserver> create(WebCore::LocalDOMWindow& window, WTF::Function<void(WebAutomationDOMWindowObserver&)>&& callback)
     {
         return adoptRef(*new WebAutomationDOMWindowObserver(window, WTFMove(callback)));
     }
@@ -50,9 +50,9 @@ public:
     void willDetachGlobalObjectFromFrame() final;
 
 private:
-    WebAutomationDOMWindowObserver(WebCore::DOMWindow&, WTF::Function<void(WebAutomationDOMWindowObserver&)>&&);
+    WebAutomationDOMWindowObserver(WebCore::LocalDOMWindow&, WTF::Function<void(WebAutomationDOMWindowObserver&)>&&);
 
-    WeakPtr<WebCore::DOMWindow, WebCore::WeakPtrImplWithEventTargetData> m_window;
+    WeakPtr<WebCore::LocalDOMWindow, WebCore::WeakPtrImplWithEventTargetData> m_window;
     bool m_wasDetached { false };
     WTF::Function<void(WebAutomationDOMWindowObserver&)> m_callback;
 };

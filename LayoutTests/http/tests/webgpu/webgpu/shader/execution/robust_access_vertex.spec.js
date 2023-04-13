@@ -235,24 +235,21 @@ const typeInfoMap = {
     sizeInBytes: 4,
     validationFunc: 'return valid(v);',
   },
-
   float32x2: {
     wgslType: 'vec2<f32>',
     sizeInBytes: 8,
     validationFunc: 'return valid(v.x) && valid(v.y);',
   },
-
   float32x3: {
     wgslType: 'vec3<f32>',
     sizeInBytes: 12,
     validationFunc: 'return valid(v.x) && valid(v.y) && valid(v.z);',
   },
-
   float32x4: {
     wgslType: 'vec4<f32>',
     sizeInBytes: 16,
-    validationFunc: `return valid(v.x) && valid(v.y) && valid(v.z) && valid(v.w) ||
-                            v.x == 0.0 && v.y == 0.0 && v.z == 0.0 && (v.w == 0.0 || v.w == 1.0);`,
+    validationFunc: `return (valid(v.x) && valid(v.y) && valid(v.z) && valid(v.w)) ||
+                            (v.x == 0.0 && v.y == 0.0 && v.z == 0.0 && (v.w == 0.0 || v.w == 1.0));`,
   },
 };
 
@@ -277,8 +274,8 @@ class F extends GPUTest {
     return bufferContents;
   }
 
-  generateVertexBufferDescriptors(bufferCount, attributesPerBuffer, type) {
-    const typeInfo = typeInfoMap[type];
+  generateVertexBufferDescriptors(bufferCount, attributesPerBuffer, format) {
+    const typeInfo = typeInfoMap[format];
     // Vertex buffer descriptors
     const buffers = [];
     {
@@ -292,7 +289,7 @@ class F extends GPUTest {
             .map((_, i) => ({
               shaderLocation: currAttribute++,
               offset: i * typeInfo.sizeInBytes,
-              format: type,
+              format,
             })),
         });
       }
@@ -335,7 +332,7 @@ class F extends GPUTest {
         ${typeInfo.validationFunc}
       }
 
-      @stage(vertex) fn main(
+      @vertex fn main(
         @builtin(vertex_index) VertexIndex : u32,
         attributes : Attributes
         ) -> @builtin(position) vec4<f32> {
@@ -372,6 +369,7 @@ class F extends GPUTest {
     buffers,
   }) {
     const pipeline = this.device.createRenderPipeline({
+      layout: 'auto',
       vertex: {
         module: this.device.createShaderModule({
           code: this.generateVertexShaderCode({
@@ -384,26 +382,21 @@ class F extends GPUTest {
             isIndexed,
           }),
         }),
-
         entryPoint: 'main',
         buffers,
       },
-
       fragment: {
         module: this.device.createShaderModule({
           code: `
-            @stage(fragment) fn main() -> @location(0) vec4<f32> {
+            @fragment fn main() -> @location(0) vec4<f32> {
               return vec4<f32>(1.0, 0.0, 0.0, 1.0);
             }`,
         }),
-
         entryPoint: 'main',
         targets: [{ format: 'rgba8unorm' }],
       },
-
       primitive: { topology: 'point-list' },
     });
-
     return pipeline;
   }
 
@@ -442,7 +435,6 @@ class F extends GPUTest {
       size: { width: 2, height: 1, depthOrArrayLayers: 1 },
       usage: GPUTextureUsage.COPY_SRC | GPUTextureUsage.RENDER_ATTACHMENT,
     });
-
     const colorAttachmentView = colorAttachment.createView();
 
     const encoder = this.device.createCommandEncoder();
@@ -456,7 +448,6 @@ class F extends GPUTest {
         },
       ],
     });
-
     pass.setPipeline(pipeline);
 
     // Run the draw variant
@@ -503,7 +494,7 @@ g.test('vertex_buffer_access')
         .combine('errorScale', [0, 1, 4, 10 ** 2, 10 ** 4, 10 ** 6])
         .unless(p => p.drawCallTestParameter === 'instanceCount' && p.errorScale > 10 ** 4) // To avoid timeout
   )
-  .fn(async t => {
+  .fn(t => {
     const p = t.params;
     const typeInfo = typeInfoMap[p.type];
 

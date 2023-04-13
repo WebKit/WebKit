@@ -1,0 +1,41 @@
+<html>
+<head>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/service-workers/service-worker/resources/test-helpers.sub.js"></script>
+</head>
+<body>
+<script>
+var scope = "resources";
+var activeWorker;
+
+if (window.internals) {
+    var settings = window.internals.mockContentFilterSettings;
+    settings.enabled = true;
+    settings.decisionPoint = "afterAddData";
+    settings.decision = "block";
+    settings.blockedString = "<!DOCTYPE html><body>PASS";
+}
+
+promise_test(async (test) => {
+    var registration = await navigator.serviceWorker.register("basic-fetch-with-contentfilter.js", { scope : scope });
+    activeWorker = registration.active;
+    if (activeWorker)
+        return;
+    activeWorker = registration.installing;
+    return new Promise(resolve => {
+        activeWorker.addEventListener('statechange', () => {
+            if (activeWorker.state === "activated")
+                resolve();
+        });
+    });
+}, "Setup worker");
+
+promise_test(async (test) => {
+    const iframe = await with_iframe(scope);
+
+    assert_equals(iframe.contentWindow.document.body.innerHTML, "");
+}, "Fetch with content filter");
+</script>
+</body>
+</html>

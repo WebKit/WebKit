@@ -29,6 +29,7 @@
 
 #include "MessageReceiver.h"
 #include "WebExtensionContextParameters.h"
+#include "WebExtensionEventListenerType.h"
 #include "WebPageProxyIdentifier.h"
 #include <WebCore/DOMWrapperWorld.h>
 #include <WebCore/FrameIdentifier.h>
@@ -39,6 +40,7 @@
 namespace WebKit {
 
 class WebExtensionAPINamespace;
+class WebExtensionMatchPattern;
 class WebFrame;
 
 class WebExtensionContextProxy final : public RefCounted<WebExtensionContextProxy>, public IPC::MessageReceiver {
@@ -85,6 +87,9 @@ private:
     void dispatchWebNavigationOnDOMContentLoadedEvent(WebPageProxyIdentifier, WebCore::FrameIdentifier, URL);
     void dispatchWebNavigationOnCompletedEvent(WebPageProxyIdentifier, WebCore::FrameIdentifier, URL);
     void dispatchWebNavigationOnErrorOccurredEvent(WebPageProxyIdentifier, WebCore::FrameIdentifier, URL);
+
+    // Permissions support
+    void dispatchPermissionsEvent(const WebKit::WebExtensionEventListenerType&, HashSet<String> permissions, HashSet<String> origins);
 
     // IPC::MessageReceiver.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;

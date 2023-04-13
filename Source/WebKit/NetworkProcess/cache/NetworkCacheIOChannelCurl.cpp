@@ -41,10 +41,10 @@ IOChannel::IOChannel(String&& filePath, Type type, std::optional<WorkQueue::QOS>
         mode = FileSystem::FileOpenMode::Read;
         break;
     case Type::Write:
-        mode = FileSystem::FileOpenMode::Write;
+        mode = FileSystem::FileOpenMode::ReadWrite;
         break;
     case Type::Create:
-        mode = FileSystem::FileOpenMode::Write;
+        mode = FileSystem::FileOpenMode::ReadWrite;
         break;
     }
     m_fileDescriptor = FileSystem::openFile(m_path, mode);

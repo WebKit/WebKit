@@ -1,0 +1,56 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/preload/resources/A4.ogv
+/LayoutTests/imported/w3c/web-platform-tests/preload/resources/A4.ogv.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/preload/resources/cross-origin-module.py
+/LayoutTests/imported/w3c/web-platform-tests/preload/resources/dummy-preloads-subresource.css
+/LayoutTests/imported/w3c/web-platform-tests/preload/resources/dummy-preloads-subresource.css.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/preload/resources/dummy.css
+/LayoutTests/imported/w3c/web-platform-tests/preload/resources/dummy.css.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/preload/resources/dummy.js
+/LayoutTests/imported/w3c/web-platform-tests/preload/resources/dummy.js.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/preload/resources/dummy.xml
+/LayoutTests/imported/w3c/web-platform-tests/preload/resources/dummy.xml.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/preload/resources/echo-preload-header.py
+/LayoutTests/imported/w3c/web-platform-tests/preload/resources/echo-referrer.py
+/LayoutTests/imported/w3c/web-platform-tests/preload/resources/echo-with-cors.py
+/LayoutTests/imported/w3c/web-platform-tests/preload/resources/empty.html
+/LayoutTests/imported/w3c/web-platform-tests/preload/resources/empty.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/preload/resources/font.ttf
+/LayoutTests/imported/w3c/web-platform-tests/preload/resources/font.ttf.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/preload/resources/foo.vtt
+/LayoutTests/imported/w3c/web-platform-tests/preload/resources/foo.vtt.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/preload/resources/link-header-referrer-policy.html
+/LayoutTests/imported/w3c/web-platform-tests/preload/resources/link-header-referrer-policy.py
+/LayoutTests/imported/w3c/web-platform-tests/preload/resources/module1.js
+/LayoutTests/imported/w3c/web-platform-tests/preload/resources/module1.mjs
+/LayoutTests/imported/w3c/web-platform-tests/preload/resources/module2.js
+/LayoutTests/imported/w3c/web-platform-tests/preload/resources/modulepreload-iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/preload/resources/prefetch-exec.html
+/LayoutTests/imported/w3c/web-platform-tests/preload/resources/prefetch-helper.js
+/LayoutTests/imported/w3c/web-platform-tests/preload/resources/prefetch-info.py
+/LayoutTests/imported/w3c/web-platform-tests/preload/resources/preload_helper.js
+/LayoutTests/imported/w3c/web-platform-tests/preload/resources/slow-exec.js
+/LayoutTests/imported/w3c/web-platform-tests/preload/resources/sound_5.oga
+/LayoutTests/imported/w3c/web-platform-tests/preload/resources/sound_5.oga.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/preload/resources/square.png
+/LayoutTests/imported/w3c/web-platform-tests/preload/resources/square.png.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/preload/resources/stash-put.py
+/LayoutTests/imported/w3c/web-platform-tests/preload/resources/stash-take.py
+/LayoutTests/imported/w3c/web-platform-tests/preload/resources/syntax-error.js
+/LayoutTests/imported/w3c/web-platform-tests/preload/resources/white.mp4
+/LayoutTests/imported/w3c/web-platform-tests/preload/resources/white.mp4.sub.headers

@@ -34,7 +34,7 @@
 #include <wtf/text/TextStream.h>
 #include <wtf/text/WTFString.h>
 
-#if USE(CF) && !PLATFORM(WIN)
+#if USE(CF)
 #include <CoreFoundation/CoreFoundation.h>
 #endif
 
@@ -229,7 +229,7 @@ size_t indexOfBestMatchingLanguageInList(const String& language, const Vector<St
 
 String displayNameForLanguageLocale(const String& localeName)
 {
-#if USE(CF) && !PLATFORM(WIN)
+#if USE(CF)
     if (!localeName.isEmpty())
         return adoptCF(CFLocaleCopyDisplayNameForPropertyValue(adoptCF(CFLocaleCopyCurrent()).get(), kCFLocaleIdentifier, localeName.createCFString().get())).get();
 #endif

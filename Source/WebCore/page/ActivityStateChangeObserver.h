@@ -36,7 +36,7 @@ public:
     {
     }
     
-    virtual void activityStateDidChange(OptionSet<ActivityState::Flag> oldActivityState, OptionSet<ActivityState::Flag> newActivityState) = 0;
+    virtual void activityStateDidChange(OptionSet<ActivityState> oldActivityState, OptionSet<ActivityState> newActivityState) = 0;
 };
 
 } // namespace WebCore

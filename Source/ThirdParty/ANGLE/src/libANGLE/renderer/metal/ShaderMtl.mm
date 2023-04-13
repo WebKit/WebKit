@@ -119,7 +119,7 @@ std::shared_ptr<WaitableCompileEvent> ShaderMtl::compile(const gl::Context *cont
     }
 
     options->clampPointSize = true;
-#if defined(ANGLE_PLATFORM_IOS) && !defined(ANGLE_PLATFORM_MACCATALYST)
+#if defined(AANGLE_PLATFORM_APPLE_EMBEDDED) && !defined(ANGLE_PLATFORM_MACCATALYST)
     options->clampFragDepth = true;
 #endif
 

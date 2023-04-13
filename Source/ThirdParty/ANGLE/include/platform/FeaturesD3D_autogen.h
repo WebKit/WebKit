@@ -20,6 +20,13 @@ struct FeaturesD3D : FeatureSetBase
     FeaturesD3D();
     ~FeaturesD3D();
 
+    FeatureInfo borderColorSrgb = {
+        "borderColorSrgb",
+        FeatureCategory::D3DWorkarounds,
+        "Some drivers expect sRGB border color for sRGB texture formats",
+        &members,
+    };
+
     FeatureInfo mrtPerfWorkaround = {
         "mrtPerfWorkaround",
         FeatureCategory::D3DWorkarounds,

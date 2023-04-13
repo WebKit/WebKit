@@ -31,7 +31,7 @@ body[dir] .resource-headers > section.error > .details {
     border-color: var(--network-error-color);
 }
 
-body[dir] .resource-headers > section:matches(.redirect, .headers) > .details {
+body[dir] .resource-headers > section:is(.redirect, .headers) > .details {
     border-color: var(--network-header-color);
 }
 

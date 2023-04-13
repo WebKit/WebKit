@@ -30,6 +30,7 @@
 
 #include "InbandTextTrackPrivate.h"
 #include "Logging.h"
+#include "ScriptExecutionContext.h"
 #include "VTTCue.h"
 #include "VTTRegionList.h"
 #include <wtf/IsoMallocInlines.h>

@@ -29,7 +29,9 @@
 #include "WebCoreJSClientData.h"
 #include <JavaScriptCore/BlockDirectoryInlines.h>
 #include <JavaScriptCore/HeapInlines.h>
+#include <JavaScriptCore/JSCellInlines.h>
 #include <JavaScriptCore/MarkedBlockInlines.h>
+#include <JavaScriptCore/SlotVisitorInlines.h>
 #include <JavaScriptCore/SubspaceInlines.h>
 #include <JavaScriptCore/VM.h>
 

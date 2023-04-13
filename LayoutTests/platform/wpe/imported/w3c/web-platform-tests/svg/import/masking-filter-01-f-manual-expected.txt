@@ -3,11 +3,11 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-    RenderSVGContainer {g} at (16,31) size 409x219
-      RenderSVGContainer {g} at (16,31) size 409x219
-        RenderSVGText {text} at (10,18) size 245x21 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 245x21
-            chunk 1 text run 1 at (10.00,35.00) startOffset 0 endOffset 34 width 244.80: "Testing 'filter' applied to 'mask'"
+    RenderSVGContainer {g} at (16,31) size 406x219
+      RenderSVGContainer {g} at (16,31) size 406x219
+        RenderSVGText {text} at (10,18) size 243x21 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 243x21
+            chunk 1 text run 1 at (10.00,35.00) startOffset 0 endOffset 34 width 242.80: "Testing 'filter' applied to 'mask'"
         RenderSVGHiddenContainer {defs} at (0,0) size 0x0
           RenderSVGResourceFilter {filter} [id="f"] [filterUnits=userSpaceOnUse] [primitiveUnits=userSpaceOnUse]
             [feOffset dx="100.00" dy="100.00"]

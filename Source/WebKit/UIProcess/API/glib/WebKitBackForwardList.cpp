@@ -63,7 +63,7 @@ struct _WebKitBackForwardListPrivate {
 
 static guint signals[LAST_SIGNAL] = { 0, };
 
-WEBKIT_DEFINE_FINAL_TYPE_IN_2022_API(WebKitBackForwardList, webkit_back_forward_list, G_TYPE_OBJECT)
+WEBKIT_DEFINE_FINAL_TYPE(WebKitBackForwardList, webkit_back_forward_list, G_TYPE_OBJECT, GObject)
 
 static void webkit_back_forward_list_class_init(WebKitBackForwardListClass* listClass)
 {

@@ -53,5 +53,6 @@
     [LegacyUnforgeable] readonly attribute WindowProxy? top;
     readonly attribute WindowProxy? opener;
     [Replaceable] readonly attribute WindowProxy? parent;
-    [CallWith=CurrentGlobalObject&IncumbentWindow] undefined postMessage(any message, USVString targetOrigin, optional sequence<object> transfer = []);
 };
+
+RemoteDOMWindow includes DOMWindow;

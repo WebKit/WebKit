@@ -27,7 +27,7 @@
     PAL::WebGPU::AddressMode addressModeW;
     PAL::WebGPU::FilterMode magFilter;
     PAL::WebGPU::FilterMode minFilter;
-    PAL::WebGPU::FilterMode mipmapFilter;
+    PAL::WebGPU::MipmapFilterMode mipmapFilter;
     float lodMinClamp;
     float lodMaxClamp;
     std::optional<PAL::WebGPU::CompareFunction> compare;

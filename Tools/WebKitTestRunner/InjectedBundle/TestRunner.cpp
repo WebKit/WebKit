@@ -51,6 +51,7 @@
 #include <WebKit/WKPagePrivate.h>
 #include <WebKit/WKRetainPtr.h>
 #include <WebKit/WKSerializedScriptValue.h>
+#include <WebKit/WKStringPrivate.h>
 #include <WebKit/WebKit2_C.h>
 #include <wtf/HashMap.h>
 #include <wtf/StdLibExtras.h>
@@ -449,6 +450,35 @@ void TestRunner::setAllowsAnySSLCertificate(bool enabled)
 {
     InjectedBundle::singleton().setAllowsAnySSLCertificate(enabled);
     postSynchronousPageMessage("SetAllowsAnySSLCertificate", enabled);
+}
+
+void TestRunner::setBackgroundFetchPermission(bool enabled)
+{
+    postSynchronousPageMessage("SetBackgroundFetchPermission", enabled);
+}
+
+JSRetainPtr<JSStringRef>  TestRunner::lastAddedBackgroundFetchIdentifier() const
+{
+    auto identifier = InjectedBundle::singleton().lastAddedBackgroundFetchIdentifier();
+    return WKStringCopyJSString(identifier.get());
+}
+
+JSRetainPtr<JSStringRef>  TestRunner::lastRemovedBackgroundFetchIdentifier() const
+{
+    auto identifier = InjectedBundle::singleton().lastRemovedBackgroundFetchIdentifier();
+    return WKStringCopyJSString(identifier.get());
+}
+
+JSRetainPtr<JSStringRef> TestRunner::lastUpdatedBackgroundFetchIdentifier() const
+{
+    auto identifier = InjectedBundle::singleton().lastUpdatedBackgroundFetchIdentifier();
+    return WKStringCopyJSString(identifier.get());
+}
+
+JSRetainPtr<JSStringRef> TestRunner::backgroundFetchState(JSStringRef identifier)
+{
+    auto state = InjectedBundle::singleton().backgroundFetchState(toWK(identifier).get());
+    return WKStringCopyJSString(state.get());
 }
 
 void TestRunner::setShouldSwapToEphemeralSessionOnNextNavigation(bool shouldSwap)
@@ -911,6 +941,32 @@ void TestRunner::simulateWebNotificationClick(JSValueRef notification)
 void TestRunner::simulateWebNotificationClickForServiceWorkerNotifications()
 {
     InjectedBundle::singleton().postSimulateWebNotificationClickForServiceWorkerNotifications();
+}
+
+JSRetainPtr<JSStringRef> TestRunner::getBackgroundFetchIdentifier()
+{
+    auto identifier = InjectedBundle::singleton().getBackgroundFetchIdentifier();
+    return WKStringCopyJSString(identifier.get());
+}
+
+void TestRunner::abortBackgroundFetch(JSStringRef identifier)
+{
+    postSynchronousPageMessageWithReturnValue("AbortBackgroundFetch", toWK(identifier));
+}
+
+void TestRunner::pauseBackgroundFetch(JSStringRef identifier)
+{
+    postSynchronousPageMessageWithReturnValue("PauseBackgroundFetch", toWK(identifier));
+}
+
+void TestRunner::resumeBackgroundFetch(JSStringRef identifier)
+{
+    postSynchronousPageMessageWithReturnValue("ResumeBackgroundFetch", toWK(identifier));
+}
+
+void TestRunner::simulateClickBackgroundFetch(JSStringRef identifier)
+{
+    postSynchronousPageMessageWithReturnValue("SimulateClickBackgroundFetch", toWK(identifier));
 }
 
 void TestRunner::setGeolocationPermission(bool enabled)
@@ -2022,6 +2078,11 @@ uint64_t TestRunner::domCacheSize(JSStringRef origin)
 void TestRunner::setAllowStorageQuotaIncrease(bool willIncrease)
 {
     postSynchronousPageMessage("SetAllowStorageQuotaIncrease", willIncrease);
+}
+
+void TestRunner::setQuota(uint64_t quota)
+{
+    postSynchronousMessage("SetQuota", quota);
 }
 
 void TestRunner::getApplicationManifestThen(JSValueRef callback)

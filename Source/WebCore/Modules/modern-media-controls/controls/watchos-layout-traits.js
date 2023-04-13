@@ -62,7 +62,7 @@ class WatchOSLayoutTraits extends LayoutTraits
 
     supportsAirPlay()
     {
-        return true;
+        return false;
     }
 
     supportsPiP()

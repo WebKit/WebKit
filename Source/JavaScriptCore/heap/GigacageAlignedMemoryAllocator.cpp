@@ -31,7 +31,7 @@ namespace JSC {
 GigacageAlignedMemoryAllocator::GigacageAlignedMemoryAllocator(Gigacage::Kind kind)
     : m_kind(kind)
 #if ENABLE(MALLOC_HEAP_BREAKDOWN)
-    , m_heap(makeString("WebKit GigacageAlignedMemoryAllocator ", Gigacage::name(m_kind)).utf8().data())
+    , m_heap(makeString("GigacageAlignedMemoryAllocator ", Gigacage::name(m_kind)).utf8().data())
 #endif
 {
 }

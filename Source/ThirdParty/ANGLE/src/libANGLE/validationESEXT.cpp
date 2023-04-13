@@ -1612,6 +1612,28 @@ bool ValidatePLSCommon(const Context *context,
         return false;
     }
 
+    Framebuffer *framebuffer = context->getState().getDrawFramebuffer();
+    if (expectedStatus != PLSExpectedStatus::Active)
+    {
+        // INVALID_FRAMEBUFFER_OPERATION is generated if the default framebuffer object name 0 is
+        // bound to DRAW_FRAMEBUFFER.
+        if (framebuffer->id().value == 0)
+        {
+            context->validationError(entryPoint, GL_INVALID_FRAMEBUFFER_OPERATION,
+                                     kPLSDefaultFramebufferBound);
+            return false;
+        }
+    }
+
+    // INVALID_FRAMEBUFFER_OPERATION is generated if pixel local storage on the draw framebuffer is
+    // in an interrupted state.
+    const PixelLocalStorage *pls = framebuffer->peekPixelLocalStorage();
+    if (pls != nullptr && pls->interruptCount() != 0)
+    {
+        context->validationError(entryPoint, GL_INVALID_FRAMEBUFFER_OPERATION, kPLSInterrupted);
+        return false;
+    }
+
     if (expectedStatus == PLSExpectedStatus::Active)
     {
         // INVALID_OPERATION is generated if PIXEL_LOCAL_STORAGE_ACTIVE_PLANES_ANGLE is zero.
@@ -1624,19 +1646,8 @@ bool ValidatePLSCommon(const Context *context,
     else
     {
         // PLSExpectedStatus::Inactive is validated by the allow list.
-        if (expectedStatus == PLSExpectedStatus::Inactive)
-        {
-            ASSERT(context->getState().getPixelLocalStorageActivePlanes() == 0);
-        }
-
-        // INVALID_FRAMEBUFFER_OPERATION is generated if the default framebuffer object name 0 is
-        // bound to DRAW_FRAMEBUFFER.
-        if (context->getState().getDrawFramebuffer()->id().value == 0)
-        {
-            context->validationError(entryPoint, GL_INVALID_FRAMEBUFFER_OPERATION,
-                                     kPLSDefaultFramebufferBound);
-            return false;
-        }
+        ASSERT(expectedStatus != PLSExpectedStatus::Inactive ||
+               context->getState().getPixelLocalStorageActivePlanes() == 0);
     }
 
     return true;
@@ -1724,7 +1735,6 @@ bool ValidatePLSLoadOperation(const Context *context, angle::EntryPoint entryPoi
         case GL_LOAD_OP_CLEAR_ANGLE:
         case GL_LOAD_OP_LOAD_ANGLE:
         case GL_DONT_CARE:
-        case GL_LOAD_OP_DISABLE_ANGLE:
             return true;
         default:
             context->validationErrorF(entryPoint, GL_INVALID_ENUM, kPLSInvalidLoadOperation,
@@ -1747,6 +1757,28 @@ bool ValidatePLSStoreOperation(const Context *context, angle::EntryPoint entryPo
                                       storeop);
             return false;
     }
+}
+
+bool ValidatePLSQueryCommon(const Context *context,
+                            angle::EntryPoint entryPoint,
+                            GLsizei paramCount,
+                            GLsizei bufSize,
+                            const void *params)
+{
+    // INVALID_OPERATION is generated if <bufSize> is not large enough to receive the requested
+    // parameter.
+    if (paramCount > bufSize)
+    {
+        context->validationError(entryPoint, GL_INVALID_OPERATION, kInsufficientParams);
+        return false;
+    }
+    // INVALID_VALUE is generated if <params> is NULL.
+    if (params == nullptr)
+    {
+        context->validationError(entryPoint, GL_INVALID_VALUE, kPLSParamsNULL);
+        return false;
+    }
+    return true;
 }
 }  // namespace
 
@@ -1974,9 +2006,9 @@ bool ValidateBeginPixelLocalStorageANGLE(const Context *context,
     }
 
     // INVALID_VALUE is generated if <loadops> is NULL.
-    if (!loadops)
+    if (loadops == nullptr)
     {
-        context->validationError(entryPoint, GL_INVALID_VALUE, kPLSNullLoadOps);
+        context->validationError(entryPoint, GL_INVALID_VALUE, kPLSLoadOpsNULL);
         return false;
     }
 
@@ -1993,13 +2025,8 @@ bool ValidateBeginPixelLocalStorageANGLE(const Context *context,
             return false;
         }
 
-        if (loadops[i] == GL_LOAD_OP_DISABLE_ANGLE)
-        {
-            continue;
-        }
-
-        // INVALID_OPERATION is generated if <loadops>[0..<n>-1] is not LOAD_OP_DISABLE_ANGLE, and
-        // the pixel local storage plane at that same index is is in a deinitialized state.
+        // INVALID_OPERATION is generated if a pixel local storage plane at index [0..<n>-1] is in a
+        // deinitialized state.
         if (pls == nullptr || pls->getPlane(i).isDeinitialized())
         {
             context->validationError(entryPoint, GL_INVALID_OPERATION,
@@ -2121,24 +2148,67 @@ bool ValidatePixelLocalStorageBarrierANGLE(const Context *context, angle::EntryP
     return ValidatePLSCommon(context, entryPoint, PLSExpectedStatus::Active);
 }
 
+bool ValidateFramebufferPixelLocalStorageInterruptANGLE(const Context *context,
+                                                        angle::EntryPoint entryPoint)
+{
+    // Check that the pixel local storage extension is enabled at all.
+    if (!context->getExtensions().shaderPixelLocalStorageANGLE)
+    {
+        context->validationError(entryPoint, GL_INVALID_OPERATION, kPLSExtensionNotEnabled);
+        return false;
+    }
+
+    // INVALID_FRAMEBUFFER_OPERATION is generated if the current interrupt count on the draw
+    // framebuffer is greater than or equal to 255.
+    const PixelLocalStorage *pls =
+        context->getState().getDrawFramebuffer()->peekPixelLocalStorage();
+    if (pls != nullptr && pls->interruptCount() >= 255)
+    {
+        context->validationError(entryPoint, GL_INVALID_FRAMEBUFFER_OPERATION,
+                                 kPLSInterruptOverflow);
+        return false;
+    }
+
+    return true;
+}
+
+bool ValidateFramebufferPixelLocalStorageRestoreANGLE(const Context *context,
+                                                      angle::EntryPoint entryPoint)
+{
+    // Check that the pixel local storage extension is enabled at all.
+    if (!context->getExtensions().shaderPixelLocalStorageANGLE)
+    {
+        context->validationError(entryPoint, GL_INVALID_OPERATION, kPLSExtensionNotEnabled);
+        return false;
+    }
+
+    // This command is ignored when the default framebuffer object name 0 is bound.
+    const Framebuffer *framebuffer = context->getState().getDrawFramebuffer();
+    if (context->getState().getDrawFramebuffer()->id().value == 0)
+    {
+        return true;
+    }
+
+    // INVALID_FRAMEBUFFER_OPERATION is generated if pixel local storage on the draw framebuffer is
+    // not in an interrupted state.
+    const PixelLocalStorage *pls = framebuffer->peekPixelLocalStorage();
+    if (pls == nullptr || pls->interruptCount() == 0)
+    {
+        context->validationError(entryPoint, GL_INVALID_FRAMEBUFFER_OPERATION, kPLSNotInterrupted);
+        return false;
+    }
+
+    return true;
+}
+
 bool ValidateGetFramebufferPixelLocalStorageParameterfvANGLE(const Context *context,
                                                              angle::EntryPoint entryPoint,
                                                              GLint plane,
                                                              GLenum pname,
                                                              const GLfloat *params)
 {
-    if (!ValidatePLSCommon(context, entryPoint, plane, PLSExpectedStatus::Any))
-    {
-        return false;
-    }
-    switch (pname)
-    {
-        case GL_PIXEL_LOCAL_CLEAR_VALUE_FLOAT_ANGLE:
-            return true;
-        default:
-            context->validationErrorF(entryPoint, GL_INVALID_ENUM, kEnumNotSupported, pname);
-            return false;
-    }
+    return ValidateGetFramebufferPixelLocalStorageParameterfvRobustANGLE(
+        context, entryPoint, plane, pname, std::numeric_limits<GLsizei>::max(), nullptr, params);
 }
 
 bool ValidateGetFramebufferPixelLocalStorageParameterivANGLE(const Context *context,
@@ -2147,23 +2217,69 @@ bool ValidateGetFramebufferPixelLocalStorageParameterivANGLE(const Context *cont
                                                              GLenum pname,
                                                              const GLint *params)
 {
+    return ValidateGetFramebufferPixelLocalStorageParameterivRobustANGLE(
+        context, entryPoint, plane, pname, std::numeric_limits<GLsizei>::max(), nullptr, params);
+}
+
+bool ValidateGetFramebufferPixelLocalStorageParameterfvRobustANGLE(const Context *context,
+                                                                   angle::EntryPoint entryPoint,
+                                                                   GLint plane,
+                                                                   GLenum pname,
+                                                                   GLsizei bufSize,
+                                                                   const GLsizei *length,
+                                                                   const GLfloat *params)
+{
     if (!ValidatePLSCommon(context, entryPoint, plane, PLSExpectedStatus::Any))
     {
         return false;
     }
+    GLsizei paramCount = 0;
+    switch (pname)
+    {
+        case GL_PIXEL_LOCAL_CLEAR_VALUE_FLOAT_ANGLE:
+            paramCount = 4;
+            break;
+        default:
+            // INVALID_ENUM is generated if <pname> is not in Table 6.Y, or if the command issued is
+            // not the associated "Get Command" for <pname> in Table 6.Y.
+            context->validationErrorF(entryPoint, GL_INVALID_ENUM, kEnumNotSupported, pname);
+            return false;
+    }
+    return ValidatePLSQueryCommon(context, entryPoint, paramCount, bufSize, params);
+}
+
+bool ValidateGetFramebufferPixelLocalStorageParameterivRobustANGLE(const Context *context,
+                                                                   angle::EntryPoint entryPoint,
+                                                                   GLint plane,
+                                                                   GLenum pname,
+                                                                   GLsizei bufSize,
+                                                                   const GLsizei *length,
+                                                                   const GLint *params)
+{
+    if (!ValidatePLSCommon(context, entryPoint, plane, PLSExpectedStatus::Any))
+    {
+        return false;
+    }
+    GLsizei paramCount = 0;
     switch (pname)
     {
         case GL_PIXEL_LOCAL_FORMAT_ANGLE:
         case GL_PIXEL_LOCAL_TEXTURE_NAME_ANGLE:
         case GL_PIXEL_LOCAL_TEXTURE_LEVEL_ANGLE:
         case GL_PIXEL_LOCAL_TEXTURE_LAYER_ANGLE:
+            paramCount = 1;
+            break;
         case GL_PIXEL_LOCAL_CLEAR_VALUE_INT_ANGLE:
         case GL_PIXEL_LOCAL_CLEAR_VALUE_UNSIGNED_INT_ANGLE:
-            return true;
+            paramCount = 4;
+            break;
         default:
+            // INVALID_ENUM is generated if <pname> is not in Table 6.Y, or if the command issued is
+            // not the associated "Get Command" for <pname> in Table 6.Y.
             context->validationErrorF(entryPoint, GL_INVALID_ENUM, kEnumNotSupported, pname);
             return false;
     }
+    return ValidatePLSQueryCommon(context, entryPoint, paramCount, bufSize, params);
 }
 
 bool ValidateFramebufferFetchBarrierEXT(const Context *context, angle::EntryPoint entryPoint)
@@ -2385,16 +2501,22 @@ bool ValidateBufferStorageEXT(const Context *context,
 // GL_EXT_clip_control
 bool ValidateClipControlEXT(const Context *context,
                             angle::EntryPoint entryPoint,
-                            GLenum origin,
-                            GLenum depth)
+                            ClipOrigin originPacked,
+                            ClipDepthMode depthPacked)
 {
-    if ((origin != GL_LOWER_LEFT_EXT) && (origin != GL_UPPER_LEFT_EXT))
+    if (!context->getExtensions().clipControlEXT)
+    {
+        context->validationError(entryPoint, GL_INVALID_OPERATION, kExtensionNotEnabled);
+        return false;
+    }
+
+    if (originPacked == ClipOrigin::InvalidEnum)
     {
         context->validationError(entryPoint, GL_INVALID_ENUM, kInvalidOriginEnum);
         return false;
     }
 
-    if ((depth != GL_NEGATIVE_ONE_TO_ONE_EXT) && (depth != GL_ZERO_TO_ONE_EXT))
+    if (depthPacked == ClipDepthMode::InvalidEnum)
     {
         context->validationError(entryPoint, GL_INVALID_ENUM, kInvalidDepthEnum);
         return false;

@@ -3,7 +3,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-    RenderSVGContainer {g} at (0,0) size 759x600
+    RenderSVGContainer {g} at (0,0) size 754x600
       RenderSVGViewportContainer {svg} at (0,0) size 289x240
         RenderSVGEllipse {circle} at (80,80) size 160x160 [fill={[type=SOLID] [color=#000000]}] [cx=96.00] [cy=96.00] [r=48.00]
         RenderSVGEllipse {ellipse} at (80,80) size 160x160 [fill={[type=SOLID] [color=#000000]}] [cx=96.00] [cy=96.00] [rx=48.00] [ry=48.00]
@@ -18,9 +18,9 @@ layer at (0,0) size 800x600
         RenderSVGText {text} at (100,83) size 74x21 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 74x21
             chunk 1 text run 1 at (100.00,100.00) startOffset 0 endOffset 11 width 73.20: "Filler text"
-      RenderSVGText {text} at (350,304) size 105x57 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 105x56
-          chunk 1 text run 1 at (350.00,350.00) startOffset 0 endOffset 4 width 105.00: "FAIL"
+      RenderSVGText {text} at (350,304) size 103x57 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 103x56
+          chunk 1 text run 1 at (350.00,350.00) startOffset 0 endOffset 4 width 102.25: "FAIL"
     RenderSVGContainer {g} at (16,518) size 380x60
       RenderSVGText {text} at (10,311) size 228x36 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 228x36

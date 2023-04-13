@@ -19,11 +19,13 @@
 
 #pragma once
 
+#include "APIDownloadClient.h"
 #include "DownloadProxy.h"
 #include "WebKitDownload.h"
 #include <WebCore/ResourceError.h>
 #include <WebCore/ResourceRequest.h>
 #include <wtf/glib/GRefPtr.h>
+#include <wtf/text/WTFString.h>
 
 GRefPtr<WebKitDownload> webkitDownloadCreate(WebKit::DownloadProxy&, WebKitWebView* = nullptr);
 void webkitDownloadStarted(WebKitDownload*);
@@ -33,5 +35,5 @@ void webkitDownloadNotifyProgress(WebKitDownload*, guint64 bytesReceived);
 void webkitDownloadFailed(WebKitDownload*, const WebCore::ResourceError&);
 void webkitDownloadCancelled(WebKitDownload*);
 void webkitDownloadFinished(WebKitDownload*);
-String webkitDownloadDecideDestinationWithSuggestedFilename(WebKitDownload*, const CString& suggestedFilename, bool& allowOverwrite);
+void webkitDownloadDecideDestinationWithSuggestedFilename(WebKitDownload*, CString&& suggestedFilename, CompletionHandler<void(WebKit::AllowOverwrite, WTF::String)>&&);
 void webkitDownloadDestinationCreated(WebKitDownload*, const String& destinationPath);

@@ -333,6 +333,9 @@ enum TestConfidence { "high", "kinda-low" };
     [Conditional=Condition1] static undefined overloadedMethod1(long arg);
     [Conditional=Condition1] static undefined overloadedMethod1(DOMString type);
 
+    undefined instanceAndStaticMethodWithTheSameIdentifier();
+    [ImplementedAs=instanceAndStaticMethodWithTheSameIdentifier2] static undefined instanceAndStaticMethodWithTheSameIdentifier();
+
     undefined classMethodWithClamp([Clamp] unsigned short objArgsShort, [Clamp] unsigned long objArgsLong);
     undefined classMethodWithClampOnOptional(optional [Clamp] long objArgsLong = 0);
     undefined classMethodWithEnforceRange([EnforceRange] unsigned short objArgsShort, [EnforceRange] unsigned long objArgsLong);

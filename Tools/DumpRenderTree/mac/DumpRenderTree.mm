@@ -102,6 +102,7 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/Threading.h>
 #import <wtf/UniqueArray.h>
+#import <wtf/WTFProcess.h>
 #import <wtf/WorkQueue.h>
 #import <wtf/cocoa/CrashReporter.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
@@ -178,7 +179,7 @@ static RetainPtr<NSString> toNS(const std::string& string)
 
 #if !PLATFORM(IOS_FAMILY)
 @interface WebView (WebViewInternalForTesting)
-- (WebCore::Frame*)_mainCoreFrame;
+- (WebCore::LocalFrame*)_mainCoreFrame;
 @end
 #endif
 
@@ -540,7 +541,7 @@ static void activateTestingFonts()
     if (!CTFontManagerRegisterFontsForURLs((CFArrayRef)fontURLs.get(), kCTFontManagerScopeProcess, &errors)) {
         NSLog(@"Failed to activate fonts: %@", errors);
         CFRelease(errors);
-        exit(1);
+        exitProcess(1);
     }
 }
 
@@ -557,20 +558,20 @@ static void activateFontIOS(const uint8_t* fontData, unsigned long length, std::
     auto data = adoptCF(CGDataProviderCreateWithData(nullptr, fontData, length, nullptr));
     if (!data) {
         fprintf(stderr, "Failed to create CGDataProviderRef for the %s font.\n", sectionName.c_str());
-        exit(1);
+        exitProcess(1);
     }
 
     auto cgFont = adoptCF(CGFontCreateWithDataProvider(data.get()));
     if (!cgFont) {
         fprintf(stderr, "Failed to create CGFontRef for the %s font.\n", sectionName.c_str());
-        exit(1);
+        exitProcess(1);
     }
 
     CFErrorRef error = nullptr;
     CTFontManagerRegisterGraphicsFont(cgFont.get(), &error);
     if (error) {
         fprintf(stderr, "Failed to add CGFont to CoreText for the %s font: %s.\n", sectionName.c_str(), CFStringGetCStringPtr(CFErrorCopyDescription(error), kCFStringEncodingUTF8));
-        exit(1);
+        exitProcess(1);
     }
 }
 
@@ -1028,7 +1029,7 @@ static void initializeGlobalsFromCommandLineOptions(int argc, const char *argv[]
         switch (option) {
             case '?':   // unknown or ambiguous option
             case ':':   // missing argument
-                exit(1);
+                exitProcess(1);
                 break;
             case 'a': // "allowed-host"
                 allowedHosts.insert(optarg);
@@ -1800,7 +1801,7 @@ static void resetWebViewToConsistentState(const WTR::TestOptions& options, Reset
         WebCoreTestSupport::resetInternalsObject([mainFrame globalContext]);
 
 #if !PLATFORM(IOS_FAMILY)
-    if (WebCore::Frame* frame = [webView _mainCoreFrame])
+    if (auto* frame = [webView _mainCoreFrame])
         WebCoreTestSupport::clearWheelEventTestMonitor(*frame);
 #endif
 

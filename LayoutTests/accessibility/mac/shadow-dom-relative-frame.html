@@ -1,0 +1,46 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<span id="text-before-header">I am some text before the header, and I exist only to take up some space and move the header around.</span>
+<custom-header></custom-header>
+
+<script>
+window.jsTestIsAsync = true;
+class CustomHeader extends HTMLElement {
+    constructor() {
+        super();
+
+        this.attachShadow({ mode: 'open' });
+        this.shadowRoot.innerHTML = `
+        <h1 id="h1">I am an H1 web component</h1>
+        `;
+    }
+}
+customElements.define("custom-header", CustomHeader, { extends: "h1" });
+
+var output = "This test ensures we compute the relative frame of shadow DOM components correctly.\n\n";
+
+if (window.accessibilityController) {
+    const initialRelativeFrame = accessibilityController.accessibleElementById("h1").stringDescriptionOfAttributeValue("AXRelativeFrame");
+    output += `Initial #h1 AXRelativeFrame: ${initialRelativeFrame}\n`;
+
+    output += "\nIncreasing the size of the text before the header enough to cause the header to change position.\n";
+    document.getElementById("text-before-header").style.fontSize = "248px";
+    setTimeout(async () => {
+        await waitFor(() => initialRelativeFrame !== accessibilityController.accessibleElementById("h1").stringDescriptionOfAttributeValue("AXRelativeFrame"));
+
+        output += `\nFinal #h1 AXRelativeFrame: ${accessibilityController.accessibleElementById("h1").stringDescriptionOfAttributeValue("AXRelativeFrame")}\n`;
+
+        debug(output);
+        finishJSTest();
+    });
+}
+</script>
+</body>
+</html>
+

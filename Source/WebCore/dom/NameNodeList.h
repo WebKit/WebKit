@@ -42,9 +42,4 @@ private:
     AtomString m_name;
 };
 
-inline bool NameNodeList::elementMatches(Element& element) const
-{
-    return element.getNameAttribute() == m_name;
-}
-
 } // namespace WebCore

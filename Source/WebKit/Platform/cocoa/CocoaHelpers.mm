@@ -235,4 +235,22 @@ WallTime toImpl(NSDate *date)
     return WallTime::fromRawSeconds(date.timeIntervalSince1970);
 }
 
+NSSet *toAPI(HashSet<String>& set)
+{
+    NSMutableSet *result = [[NSMutableSet alloc] initWithCapacity:set.size()];
+    for (auto& element : set)
+        [result addObject:static_cast<NSString *>(element)];
+
+    return [result copy];
+}
+
+NSArray *toAPIArray(HashSet<String>& set)
+{
+    NSMutableArray *result = [[NSMutableArray alloc] initWithCapacity:set.size()];
+    for (auto& element : set)
+        [result addObject:static_cast<NSString *>(element)];
+
+    return [result copy];
+}
+
 } // namespace WebKit

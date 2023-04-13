@@ -219,6 +219,12 @@ void printInternal(PrintStream& out, Opcode opcode)
     case SExt16:
         out.print("SExt16");
         return;
+    case SExt8To64:
+        out.print("SExt8To64");
+        return;
+    case SExt16To64:
+        out.print("SExt16To64");
+        return;
     case SExt32:
         out.print("SExt32");
         return;
@@ -524,6 +530,12 @@ void printInternal(PrintStream& out, Opcode opcode)
         return;
     case VectorSwizzle:
         out.print("VectorSwizzle");
+        return;
+    case VectorMulByElement:
+        out.print("VectorMulByElement");
+        return;
+    case VectorShiftByVector:
+        out.print("VectorShiftByVector");
         return;
     case Upsilon:
         out.print("Upsilon");

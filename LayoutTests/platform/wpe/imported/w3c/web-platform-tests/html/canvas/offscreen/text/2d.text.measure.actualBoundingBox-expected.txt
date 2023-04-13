@@ -1,7 +1,0 @@
-2d.text.measure.actualBoundingBox
-
-Testing actualBoundingBox for OffscreenCanvas
-
-
-PASS Testing actualBoundingBox for OffscreenCanvas
-

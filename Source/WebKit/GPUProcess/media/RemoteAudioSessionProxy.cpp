@@ -30,10 +30,13 @@
 
 #include "GPUConnectionToWebProcess.h"
 #include "GPUProcess.h"
+#include "Logging.h"
 #include "RemoteAudioSessionMessages.h"
 #include "RemoteAudioSessionProxyManager.h"
 #include "RemoteAudioSessionProxyMessages.h"
 #include <WebCore/AudioSession.h>
+
+#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, (&connection()))
 
 namespace WebKit {
 
@@ -136,11 +139,13 @@ IPC::Connection& RemoteAudioSessionProxy::connection()
 
 void RemoteAudioSessionProxy::triggerBeginInterruptionForTesting()
 {
+    MESSAGE_CHECK(m_gpuConnection.allowTestOnlyIPC());
     AudioSession::sharedSession().beginInterruptionForTesting();
 }
 
 void RemoteAudioSessionProxy::triggerEndInterruptionForTesting()
 {
+    MESSAGE_CHECK(m_gpuConnection.allowTestOnlyIPC());
     AudioSession::sharedSession().endInterruptionForTesting();
 }
 

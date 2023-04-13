@@ -41,9 +41,7 @@ public:
 
     Exception isolatedCopy() const & { return Exception { m_code, m_message.isolatedCopy() }; }
     Exception isolatedCopy() && { return Exception { m_code, WTFMove(m_message).isolatedCopy() }; }
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<Exception> decode(Decoder&);
+    
 private:
     ExceptionCode m_code;
     String m_message;
@@ -55,29 +53,5 @@ inline Exception::Exception(ExceptionCode code, String message)
 {
 }
 
-template<class Encoder>
-void Exception::encode(Encoder& encoder) const
-{
-    encoder << m_code << m_message;
-}
-
-template<class Decoder>
-std::optional<Exception> Exception::decode(Decoder& decoder)
-{
-    std::optional<ExceptionCode> code;
-    decoder >> code;
-    if (!code)
-        return std::nullopt;
-
-    std::optional<String> message;
-    decoder >> message;
-    if (!message)
-        return std::nullopt;
-
-    return Exception {
-        *code,
-        WTFMove(*message)
-    };
-}
 
 } // namespace WebCore

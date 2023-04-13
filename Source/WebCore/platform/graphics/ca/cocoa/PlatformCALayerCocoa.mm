@@ -36,6 +36,7 @@
 #import "PlatformCAAnimationCocoa.h"
 #import "PlatformCAFilters.h"
 #import "PlatformCALayerContentsDelayedReleaser.h"
+#import "PlatformCALayerDelegatedContents.h"
 #import "ScrollbarThemeMac.h"
 #import "TileController.h"
 #import "TiledBacking.h"
@@ -261,6 +262,9 @@ PlatformCALayerCocoa::PlatformCALayerCocoa(LayerType layerType, PlatformCALayerC
         layerClass = [CALayer class];
         break;
 #endif
+    case LayerTypeHost:
+        layerClass = CALayer.class;
+        break;
     case LayerTypeShapeLayer:
         layerClass = [CAShapeLayer class];
         // fillColor defaults to opaque black.
@@ -783,18 +787,16 @@ void PlatformCALayerCocoa::setContents(CFTypeRef value)
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-#if HAVE(IOSURFACE)
-void PlatformCALayerCocoa::setContents(const WebCore::IOSurface& surface)
+void PlatformCALayerCocoa::setDelegatedContentsFinishedEvent(const PlatformCALayerInProcessDelegatedContentsFinishedEvent&)
 {
-    setContents(surface.asLayerContents());
+    // FIXME: To be implemented.
 }
 
-void PlatformCALayerCocoa::setContents(const WTF::MachSendRight& surfaceHandle)
+void PlatformCALayerCocoa::setDelegatedContents(const PlatformCALayerInProcessDelegatedContents& contents)
 {
-    auto surface = WebCore::IOSurface::createFromSendRight(surfaceHandle.copySendRight());
-    setContents(*surface);
+    setContents(contents.surface.asLayerContents());
+    // FIXME: m_delegatedContentsFinishedIdentifier = contents.finishedIdentifier;
 }
-#endif
 
 void PlatformCALayerCocoa::setContentsRect(const FloatRect& value)
 {
@@ -1205,7 +1207,6 @@ void PlatformCALayer::drawLayerContents(GraphicsContext& graphicsContext, WebCor
 #if PLATFORM(IOS_FAMILY)
         std::optional<FontAntialiasingStateSaver> fontAntialiasingState;
 #endif
-
         // We never use CompositingCoordinatesOrientation::BottomUp on Mac.
         ASSERT(layerContents->platformCALayerContentsOrientation() == GraphicsLayer::CompositingCoordinatesOrientation::TopDown);
 
@@ -1217,8 +1218,6 @@ void PlatformCALayer::drawLayerContents(GraphicsContext& graphicsContext, WebCor
             fontAntialiasingState.emplace(context, !![platformCALayer->platformLayer() isOpaque]);
             fontAntialiasingState->setup([WAKWindow hasLandscapeOrientation]);
 #endif
-            graphicsContext.setIsCALayerContext(true);
-            graphicsContext.setIsAcceleratedContext(platformCALayer->acceleratesDrawing());
         }
 
         {

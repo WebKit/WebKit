@@ -30,7 +30,7 @@
 #include "ChromeClient.h"
 #include "DiagnosticLoggingClient.h"
 #include "DiagnosticLoggingKeys.h"
-#include "Frame.h"
+#include "LocalFrame.h"
 #include "Logging.h"
 #include "Page.h"
 #include "PerformanceLogging.h"
@@ -55,7 +55,7 @@ static constexpr const double postPageLoadCPUUsageDomainReportingThreshold { 20.
 static constexpr const uint64_t postPageLoadMemoryUsageDomainReportingThreshold { 2048 * MB };
 #endif
 
-static inline ActivityStateForCPUSampling activityStateForCPUSampling(OptionSet<ActivityState::Flag> state)
+static inline ActivityStateForCPUSampling activityStateForCPUSampling(OptionSet<ActivityState> state)
 {
     if (!(state & ActivityState::IsVisible))
         return ActivityStateForCPUSampling::NonVisible;
@@ -101,7 +101,7 @@ void PerformanceMonitor::didFinishLoad()
         m_postPageLoadMemoryUsageTimer.startOneShot(memoryUsageMeasurementDelay);
 }
 
-void PerformanceMonitor::activityStateChanged(OptionSet<ActivityState::Flag> oldState, OptionSet<ActivityState::Flag> newState)
+void PerformanceMonitor::activityStateChanged(OptionSet<ActivityState> oldState, OptionSet<ActivityState> newState)
 {
     auto changed = oldState ^ newState;
     bool visibilityChanged = changed.contains(ActivityState::IsVisible);
@@ -144,7 +144,11 @@ enum class ReportingReason { HighCPUUsage, HighMemoryUsage };
 static void reportPageOverPostLoadResourceThreshold(Page& page, ReportingReason reason)
 {
 #if ENABLE(PUBLIC_SUFFIX_LIST)
-    auto* document = page.mainFrame().document();
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(page.mainFrame());
+    if (!localMainFrame)
+        return;
+
+    auto* document = localMainFrame->document();
     if (!document)
         return;
 

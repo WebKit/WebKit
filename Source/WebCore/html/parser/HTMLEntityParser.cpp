@@ -1,7 +1,7 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008-2023 Apple Inc. All Rights Reserved.
  * Copyright (C) 2009 Torch Mobile, Inc. http://www.torchmobile.com/
- * Copyright (C) 2010 Google, Inc. All Rights Reserved.
+ * Copyright (C) 2010-2014 Google, Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,6 +43,16 @@ static const UChar windowsLatin1ExtensionArray[32] = {
     0x02DC, 0x2122, 0x0161, 0x203A, 0x0153, 0x009D, 0x017E, 0x0178, // 98-9F
 };
 
+template<> void appendCharacterTo(Vector<UChar>& output, UChar32 c)
+{
+    if (U_IS_BMP(c)) {
+        output.append(static_cast<UChar>(c));
+        return;
+    }
+    output.append(U16_LEAD(c));
+    output.append(U16_TRAIL(c));
+}
+
 class HTMLEntityParser {
 public:
     static UChar32 legalEntityFor(UChar32 value)
@@ -56,7 +66,8 @@ public:
 
     static bool acceptMalformed() { return true; }
 
-    static bool consumeNamedEntity(SegmentedString& source, StringBuilder& decodedEntity, bool& notEnoughCharacters, UChar additionalAllowedCharacter, UChar& cc)
+    template<typename DecodedIdentityType>
+    static bool consumeNamedEntity(SegmentedString& source, DecodedIdentityType& decodedEntity, bool& notEnoughCharacters, UChar additionalAllowedCharacter, UChar& cc)
     {
         StringBuilder consumedCharacters;
         HTMLEntitySearch entitySearch;
@@ -68,40 +79,37 @@ public:
             consumedCharacters.append(cc);
             source.advancePastNonNewline();
         }
-        notEnoughCharacters = source.isEmpty();
+        notEnoughCharacters = source.isEmpty() && cc != ';';
         if (notEnoughCharacters) {
-            // We can't an entity because there might be a longer entity
+            // We can't decide on an entity because there might be a longer entity
             // that we could match if we had more data.
             unconsumeCharacters(source, consumedCharacters);
             return false;
         }
-        if (!entitySearch.mostRecentMatch()) {
+        if (!entitySearch.match()) {
             unconsumeCharacters(source, consumedCharacters);
             return false;
         }
-        if (entitySearch.mostRecentMatch()->length != entitySearch.currentLength()) {
-            // We've consumed too many characters. We need to walk the
-            // source back to the point at which we had consumed an
-            // actual entity.
+        auto& match = *entitySearch.match();
+        auto nameLength = match.nameLength();
+        if (nameLength != entitySearch.currentLength()) {
+            // We've consumed too many characters. Walk the source back
+            // to the point at which we had consumed an actual entity.
             unconsumeCharacters(source, consumedCharacters);
             consumedCharacters.clear();
-            const int length = entitySearch.mostRecentMatch()->length;
-            const LChar* reference = entitySearch.mostRecentMatch()->entity;
-            for (int i = 0; i < length; ++i) {
-                cc = source.currentCharacter();
-                ASSERT_UNUSED(reference, cc == *reference++);
-                consumedCharacters.append(cc);
+            for (unsigned i = 0; i < nameLength; ++i) {
+                consumedCharacters.append(source.currentCharacter());
                 source.advancePastNonNewline();
                 ASSERT(!source.isEmpty());
             }
             cc = source.currentCharacter();
         }
-        if (entitySearch.mostRecentMatch()->lastCharacter() == ';'
+        if (match.nameIncludesTrailingSemicolon
             || !additionalAllowedCharacter
             || !(isASCIIAlphanumeric(cc) || cc == '=')) {
-            decodedEntity.appendCharacter(entitySearch.mostRecentMatch()->firstValue);
-            if (entitySearch.mostRecentMatch()->secondValue)
-                decodedEntity.appendCharacter(entitySearch.mostRecentMatch()->secondValue);
+            appendCharacterTo(decodedEntity, match.firstCharacter);
+            if (match.optionalSecondCharacter)
+                appendCharacterTo(decodedEntity, match.optionalSecondCharacter);
             return true;
         }
         unconsumeCharacters(source, consumedCharacters);
@@ -114,18 +122,9 @@ bool consumeHTMLEntity(SegmentedString& source, StringBuilder& decodedEntity, bo
     return consumeCharacterReference<HTMLEntityParser>(source, decodedEntity, notEnoughCharacters, additionalAllowedCharacter);
 }
 
-static size_t appendUChar32ToUCharArray(UChar32 value, UChar* result)
+bool consumeHTMLEntity(SegmentedString& source, Vector<UChar>& decodedEntity, bool& notEnoughCharacters, UChar additionalAllowedCharacter)
 {
-    if (U_IS_BMP(value)) {
-        UChar character = static_cast<UChar>(value);
-        ASSERT(character == value);
-        result[0] = character;
-        return 1;
-    }
-
-    result[0] = U16_LEAD(value);
-    result[1] = U16_TRAIL(value);
-    return 2;
+    return consumeCharacterReference<HTMLEntityParser>(source, decodedEntity, notEnoughCharacters, additionalAllowedCharacter);
 }
 
 size_t decodeNamedEntityToUCharArray(const char* name, UChar result[4])
@@ -139,11 +138,16 @@ size_t decodeNamedEntityToUCharArray(const char* name, UChar result[4])
     search.advance(';');
     if (!search.isEntityPrefix())
         return 0;
+    size_t index = 0;
+    U16_APPEND_UNSAFE(result, index, search.match()->firstCharacter);
+    if (search.match()->optionalSecondCharacter)
+        U16_APPEND_UNSAFE(result, index, search.match()->optionalSecondCharacter);
+    return index;
+}
 
-    size_t numberOfCodePoints = appendUChar32ToUCharArray(search.mostRecentMatch()->firstValue, result);
-    if (!search.mostRecentMatch()->secondValue)
-        return numberOfCodePoints;
-    return numberOfCodePoints + appendUChar32ToUCharArray(search.mostRecentMatch()->secondValue, result + numberOfCodePoints);
+void appendLegalEntityFor(UChar32 character, Vector<UChar>& outputBuffer)
+{
+    appendCharacterTo(outputBuffer, HTMLEntityParser::legalEntityFor(character));
 }
 
 } // namespace WebCore

@@ -5,17 +5,36 @@
 esid: sec-temporal.instant.prototype.tozoneddatetime
 description: Fast path for converting other Temporal objects to Temporal.Calendar by reading internal slots
 info: |
-    sec-temporal.instant.prototype.tozoneddatetime step 6:
-      6. Let _calendar_ be ? ToTemporalCalendar(_calendarLike_).
-    sec-temporal-totemporalcalendar step 1.a:
-      a. If _temporalCalendarLike_ has an [[InitializedTemporalDate]], [[InitializedTemporalDateTime]], [[InitializedTemporalMonthDay]], [[InitializedTemporalYearMonth]], or [[InitializedTemporalZonedDateTime]] internal slot, then
+    sec-temporal-totemporalcalendar step 1.b:
+      b. If _temporalCalendarLike_ has an [[InitializedTemporalDate]], [[InitializedTemporalDateTime]], [[InitializedTemporalTime]], [[InitializedTemporalMonthDay]], [[InitializedTemporalYearMonth]], or [[InitializedTemporalZonedDateTime]] internal slot, then
         i. Return _temporalCalendarLike_.[[Calendar]].
-includes: [compareArray.js, temporalHelpers.js]
+includes: [compareArray.js]
 features: [Temporal]
 ---*/
 
-TemporalHelpers.checkToTemporalCalendarFastPath((temporalObject, calendar) => {
-  const instant = new Temporal.Instant(1_000_000_000_987_654_321n);
-  const result = instant.toZonedDateTime({ timeZone: "UTC", calendar: temporalObject });
+const plainDate = new Temporal.PlainDate(2000, 5, 2);
+const plainDateTime = new Temporal.PlainDateTime(2000, 5, 2, 12, 34, 56, 987, 654, 321);
+const plainTime = new Temporal.PlainTime(12, 34, 56, 987, 654, 321);
+const plainMonthDay = new Temporal.PlainMonthDay(5, 2);
+const plainYearMonth = new Temporal.PlainYearMonth(2000, 5);
+const zonedDateTime = new Temporal.ZonedDateTime(1_000_000_000_000_000_000n, "UTC");
+
+[plainDate, plainDateTime, plainTime, plainMonthDay, plainYearMonth, zonedDateTime].forEach((arg) => {
+  const actual = [];
+  const expected = [];
+
+  const calendar = arg.getISOFields().calendar;
+
+  Object.defineProperty(arg, "calendar", {
+    get() {
+      actual.push("get calendar");
+      return calendar;
+    },
+  });
+
+  const instance = new Temporal.Instant(1_000_000_000_000_000_000n);
+  const result = instance.toZonedDateTime({ calendar: arg, timeZone: "UTC" });
   assert.sameValue(result.calendar, calendar, "Temporal object coerced to calendar");
+
+  assert.compareArray(actual, expected, "calendar getter not called");
 });

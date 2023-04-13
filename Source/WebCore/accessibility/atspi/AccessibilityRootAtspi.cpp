@@ -26,8 +26,8 @@
 #include "AccessibilityAtspiInterfaces.h"
 #include "Document.h"
 #include "FocusController.h"
-#include "Frame.h"
-#include "FrameView.h"
+#include "LocalFrame.h"
+#include "LocalFrameView.h"
 #include "Page.h"
 #include <glib/gi18n-lib.h>
 #include <locale.h>
@@ -205,7 +205,11 @@ AccessibilityObjectAtspi* AccessibilityRootAtspi::child() const
     if (!m_page)
         return nullptr;
 
-    Frame& frame = m_page->mainFrame();
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
+    if (!localMainFrame)
+        return nullptr;
+
+    auto& frame = *localMainFrame;
     if (!frame.document())
         return nullptr;
 
@@ -277,7 +281,7 @@ GDBusInterfaceVTable AccessibilityRootAtspi::s_componentFunctions = {
             auto rect = rootObject.frameRect(Atspi::CoordinateType::ParentCoordinates);
             g_dbus_method_invocation_return_value(invocation, g_variant_new("((ii))", rect.width(), rect.height()));
         } else if (!g_strcmp0(methodName, "GetLayer"))
-            g_dbus_method_invocation_return_value(invocation, g_variant_new("(u)", Atspi::ComponentLayer::WidgetLayer));
+            g_dbus_method_invocation_return_value(invocation, g_variant_new("(u)", static_cast<uint32_t>(Atspi::ComponentLayer::WidgetLayer)));
         else if (!g_strcmp0(methodName, "GetMDIZOrder"))
             g_dbus_method_invocation_return_value(invocation, g_variant_new("(n)", 0));
         else if (!g_strcmp0(methodName, "GrabFocus"))
@@ -300,7 +304,11 @@ IntRect AccessibilityRootAtspi::frameRect(Atspi::CoordinateType coordinateType) 
     if (!m_page)
         return { };
 
-    auto* frameView = m_page->mainFrame().view();
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
+    if (!localMainFrame)
+        return { };
+
+    auto* frameView = localMainFrame->view();
     if (!frameView)
         return { };
 

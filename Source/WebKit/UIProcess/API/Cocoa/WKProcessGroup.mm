@@ -212,22 +212,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return self;
 }
 
-static Vector<WTF::String> toStringVector(NSSet *input)
-{
-    Vector<WTF::String> vector;
-
-    NSUInteger size = input.count;
-    if (!size)
-        return vector;
-
-    vector.reserveInitialCapacity(size);
-    for (id classObj : input) {
-        if (auto* string = NSStringFromClass(classObj))
-            vector.uncheckedAppend(string);
-    }
-    return vector;
-}
-
 - (id)initWithInjectedBundleURL:(NSURL *)bundleURL andCustomClassesForParameterCoder:(NSSet *)classesForCoder
 {
     self = [super init];
@@ -236,7 +220,6 @@ static Vector<WTF::String> toStringVector(NSSet *input)
 
     auto configuration = API::ProcessPoolConfiguration::create();
     configuration->setInjectedBundlePath(bundleURL ? String(bundleURL.path) : String());
-    configuration->setCustomClassesForParameterCoder(toStringVector(classesForCoder));
 
     _processPool = WebKit::WebProcessPool::create(configuration);
 

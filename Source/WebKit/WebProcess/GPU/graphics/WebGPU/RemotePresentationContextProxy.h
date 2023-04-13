@@ -35,6 +35,7 @@
 namespace WebKit::WebGPU {
 
 class ConvertToBackingContext;
+class RemoteTextureProxy;
 
 class RemotePresentationContextProxy final : public PAL::WebGPU::PresentationContext {
     WTF_MAKE_FAST_ALLOCATED;
@@ -48,6 +49,8 @@ public:
 
     RemoteGPUProxy& parent() { return m_parent; }
     RemoteGPUProxy& root() { return m_parent->root(); }
+
+    void present();
 
 private:
     friend class DowncastConvertToBackingContext;
@@ -73,18 +76,15 @@ private:
         return root().streamClientConnection().sendSync(WTFMove(message), backing(), defaultSendTimeout);
     }
 
-    void configure(const PAL::WebGPU::PresentationConfiguration&) final;
+    void configure(const PAL::WebGPU::CanvasConfiguration&) final;
     void unconfigure() final;
 
-    PAL::WebGPU::Texture* getCurrentTexture() final;
-
-#if PLATFORM(COCOA)
-    void prepareForDisplay(CompletionHandler<void(WTF::MachSendRight&&)>&&) final;
-#endif
+    RefPtr<PAL::WebGPU::Texture> getCurrentTexture() final;
 
     WebGPUIdentifier m_backing;
     Ref<ConvertToBackingContext> m_convertToBackingContext;
     Ref<RemoteGPUProxy> m_parent;
+    RefPtr<RemoteTextureProxy> m_currentTexture;
 };
 
 } // namespace WebKit::WebGPU

@@ -55,7 +55,7 @@ public:
     static void setUsesGameControllerFramework();
 #endif
 
-    Vector<GamepadData> snapshotGamepads();
+    Vector<std::optional<GamepadData>> snapshotGamepads();
 
     size_t numberOfConnectedGamepads() const { return m_gamepads.size(); }
 

@@ -63,7 +63,6 @@ enum class PAL::WebGPU::TextureFormat : uint8_t {
     Depth24plus,
     Depth24plusStencil8,
     Depth32float,
-    Depth24unormStencil8,
     Depth32floatStencil8,
     Bc1RgbaUnorm,
     Bc1RgbaUnormSRGB,

@@ -43,6 +43,7 @@
 #include "GetterSetterAccessCase.h"
 #include "ICStats.h"
 #include "InlineAccess.h"
+#include "InlineCacheCompiler.h"
 #include "InstanceOfAccessCase.h"
 #include "IntrinsicGetterAccessCase.h"
 #include "JIT.h"
@@ -54,7 +55,6 @@
 #include "JSWebAssemblyModule.h"
 #include "LinkBuffer.h"
 #include "ModuleNamespaceAccessCase.h"
-#include "PolymorphicAccess.h"
 #include "ProxyObjectAccessCase.h"
 #include "ScopedArguments.h"
 #include "ScratchRegisterAllocator.h"
@@ -247,7 +247,8 @@ static void repatchSlowPathCall(CodeBlock* codeBlock, StructureStubInfo& stubInf
 enum InlineCacheAction {
     GiveUpOnCache,
     RetryCacheLater,
-    AttemptToCache
+    AttemptToCache,
+    PromoteToMegamorphic,
 };
 
 static InlineCacheAction actionForCell(VM& vm, JSCell* cell)
@@ -398,14 +399,8 @@ static InlineCacheAction tryCacheGetBy(JSGlobalObject* globalObject, CodeBlock* 
                 newCase = ModuleNamespaceAccessCase::create(vm, codeBlock, propertyName, jsCast<JSModuleNamespaceObject*>(baseCell), moduleNamespaceSlot->environment, ScopeOffset(moduleNamespaceSlot->scopeOffset));
         }
 
-        if ((kind == GetByKind::ById || kind == GetByKind::ByVal || kind == GetByKind::ByIdWithThis || kind == GetByKind::ByValWithThis) && (!propertyName.uid()->isSymbol() || !static_cast<SymbolImpl&>(*propertyName.uid()).isPrivate()) && baseCell->inherits<ProxyObject>()) {
-            if (!propertyName.isCell()) {
-                if (propertyName.uid()->isSymbol())
-                    propertyName = CacheableIdentifier::createFromCell(Symbol::create(vm, static_cast<SymbolImpl&>(*propertyName.uid())));
-                else
-                    propertyName = CacheableIdentifier::createFromCell(jsString(vm, String(static_cast<AtomStringImpl*>(propertyName.uid()))));
-            }
-            ASSERT(propertyName.isCell());
+        if ((kind == GetByKind::ById || kind == GetByKind::ByVal || kind == GetByKind::ByIdWithThis || kind == GetByKind::ByValWithThis) && !propertyName.isPrivateName() && baseCell->inherits<ProxyObject>()) {
+            propertyName.ensureIsCell(vm);
             newCase = ProxyObjectAccessCase::create(vm, codeBlock, AccessCase::ProxyObjectLoad, propertyName);
         }
         
@@ -537,7 +532,7 @@ static InlineCacheAction tryCacheGetBy(JSGlobalObject* globalObject, CodeBlock* 
                     RELEASE_ASSERT_NOT_REACHED();
 
                 newCase = ProxyableAccessCase::create(vm, codeBlock, type, propertyName, offset, structure, conditionSet, loadTargetFromProxy, slot.watchpointSet(), WTFMove(prototypeAccessChain));
-            } else if (!loadTargetFromProxy && getter && IntrinsicGetterAccessCase::canEmitIntrinsicGetter(stubInfo, getter, structure))
+            } else if (!loadTargetFromProxy && getter && InlineCacheCompiler::canEmitIntrinsicGetter(stubInfo, getter, structure))
                 newCase = IntrinsicGetterAccessCase::create(vm, codeBlock, propertyName, slot.cachedOffset(), structure, conditionSet, getter, WTFMove(prototypeAccessChain));
             else {
                 if (isPrivate) {
@@ -602,6 +597,8 @@ static InlineCacheAction tryCacheGetBy(JSGlobalObject* globalObject, CodeBlock* 
 
     fireWatchpointsAndClearStubIfNeeded(vm, stubInfo, codeBlock, result);
 
+    if (result.generatedMegamorphicCode())
+        return PromoteToMegamorphic;
     return result.shouldGiveUpNow() ? GiveUpOnCache : RetryCacheLater;
 }
 
@@ -609,10 +606,19 @@ void repatchGetBy(JSGlobalObject* globalObject, CodeBlock* codeBlock, JSValue ba
 {
     SuperSamplerScope superSamplerScope(false);
     
-    if (tryCacheGetBy(globalObject, codeBlock, baseValue, propertyName, slot, stubInfo, kind) == GiveUpOnCache)
+    auto result = tryCacheGetBy(globalObject, codeBlock, baseValue, propertyName, slot, stubInfo, kind);
+    if (result == PromoteToMegamorphic)
+        repatchSlowPathCall(codeBlock, stubInfo, operationGetByIdMegamorphic);
+    else if (result == GiveUpOnCache)
         repatchSlowPathCall(codeBlock, stubInfo, appropriateGetByFunction(kind));
 }
 
+// Mainly used to transition from megamorphic case to generic case.
+void repatchGetBySlowPathCall(CodeBlock* codeBlock, StructureStubInfo& stubInfo, GetByKind kind)
+{
+    resetGetBy(codeBlock, stubInfo, kind);
+    repatchSlowPathCall(codeBlock, stubInfo, appropriateGetByFunction(kind));
+}
 
 static InlineCacheAction tryCacheArrayGetByVal(JSGlobalObject* globalObject, CodeBlock* codeBlock, JSValue baseValue, JSValue index, StructureStubInfo& stubInfo)
 {
@@ -852,21 +858,24 @@ static InlineCacheAction tryCachePutBy(JSGlobalObject* globalObject, CodeBlock* 
         
         if (!baseValue.isCell())
             return GiveUpOnCache;
-        
-        if (!slot.isCacheablePut() && !slot.isCacheableCustom() && !slot.isCacheableSetter())
-            return GiveUpOnCache;
-
-        // FIXME: We should try to do something smarter here...
-        if (isCopyOnWrite(oldStructure->indexingMode()))
-            return GiveUpOnCache;
-        // We can't end up storing to a CoW on the prototype since it shouldn't own properties.
-        ASSERT(!isCopyOnWrite(slot.base()->indexingMode()));
-
-        if (!oldStructure->propertyAccessesAreCacheable())
-            return GiveUpOnCache;
 
         JSCell* baseCell = baseValue.asCell();
 
+        bool isProxyObject = baseCell->type() == ProxyObjectType;
+        if (!isProxyObject) {
+            if (!slot.isCacheablePut() && !slot.isCacheableCustom() && !slot.isCacheableSetter())
+                return GiveUpOnCache;
+
+            // FIXME: We should try to do something smarter here...
+            if (isCopyOnWrite(oldStructure->indexingMode()))
+                return GiveUpOnCache;
+            // We can't end up storing to a CoW on the prototype since it shouldn't own properties.
+            ASSERT(!isCopyOnWrite(slot.base()->indexingMode()));
+
+            if (!oldStructure->propertyAccessesAreCacheable())
+                return GiveUpOnCache;
+        }
+        
         bool isProxy = false;
         if (baseCell->type() == PureForwardingProxyType) {
             baseCell = jsCast<JSProxy*>(baseCell)->target();
@@ -920,6 +929,10 @@ static InlineCacheAction tryCachePutBy(JSGlobalObject* globalObject, CodeBlock* 
                 ASSERT(slot.type() == PutPropertySlot::NewProperty);
 
                 if (!oldStructure->isObject())
+                    return GiveUpOnCache;
+
+                // Right now, we disable IC for put onto prototype for NewProperty case.
+                if (oldStructure->mayBePrototype())
                     return GiveUpOnCache;
 
                 // If the old structure is dictionary, it means that this is one-on-one between an object and a structure.
@@ -1040,6 +1053,9 @@ static InlineCacheAction tryCachePutBy(JSGlobalObject* globalObject, CodeBlock* 
                 newCase = GetterSetterAccessCase::create(
                     vm, codeBlock, AccessCase::Setter, oldStructure, propertyName, offset, conditionSet, WTFMove(prototypeAccessChain), isProxy);
             }
+        } else if (!propertyName.isPrivateName() && isProxyObject) {
+            propertyName.ensureIsCell(vm);
+            newCase = ProxyObjectAccessCase::create(vm, codeBlock, AccessCase::ProxyObjectStore, propertyName);
         }
 
         LOG_IC((ICEvent::PutByAddAccessCase, oldStructure->classInfoForCells(), ident, slot.base() == baseValue));
@@ -1204,6 +1220,10 @@ static InlineCacheAction tryCacheDeleteBy(JSGlobalObject* globalObject, CodeBloc
                 return RetryCacheLater;
             if (!newStructure->propertyAccessesAreCacheable() || newStructure->isDictionary())
                 return GiveUpOnCache;
+            // Right now, we disable IC for put onto prototype.
+            if (oldStructure->mayBePrototype())
+                return GiveUpOnCache;
+
             ASSERT(newOffset == slot.cachedOffset());
             ASSERT(newStructure->previousID() == oldStructure);
             ASSERT(newStructure->transitionKind() == TransitionKind::PropertyDeletion);
@@ -1213,7 +1233,9 @@ static InlineCacheAction tryCacheDeleteBy(JSGlobalObject* globalObject, CodeBloc
         } else if (slot.isNonconfigurable()) {
             if (ecmaMode.isStrict())
                 return GiveUpOnCache;
-
+            // Right now, we disable IC for put onto prototype.
+            if (oldStructure->mayBePrototype())
+                return GiveUpOnCache;
             newCase = AccessCase::create(vm, codeBlock, AccessCase::DeleteNonConfigurable, propertyName, invalidOffset, oldStructure, { }, nullptr);
         } else
             newCase = AccessCase::create(vm, codeBlock, AccessCase::DeleteMiss, propertyName, invalidOffset, oldStructure, { }, nullptr);
@@ -1284,19 +1306,21 @@ static InlineCacheAction tryCacheInBy(
         if (forceICFailure(globalObject))
             return GiveUpOnCache;
         
-        if (!base->structure()->propertyAccessesAreCacheable() || (!wasFound && !base->structure()->propertyAccessesAreCacheableForAbsence()))
-            return GiveUpOnCache;
-        
-        if (wasFound) {
-            if (!slot.isCacheable())
-                return GiveUpOnCache;
-        }
-        
+        RefPtr<AccessCase> newCase;
         Structure* structure = base->structure();
         
         RefPtr<PolyProtoAccessChain> prototypeAccessChain;
         ObjectPropertyConditionSet conditionSet;
-        if (wasFound) {
+        if ((kind == InByKind::ById || kind == InByKind::ByVal) && !propertyName.isPrivateName() && base->inherits<ProxyObject>()) {
+            propertyName.ensureIsCell(vm);
+            newCase = ProxyObjectAccessCase::create(vm, codeBlock, AccessCase::ProxyObjectHas, propertyName);
+        } else if (wasFound) {
+            if (!structure->propertyAccessesAreCacheable())
+                return GiveUpOnCache;
+
+            if (!slot.isCacheable())
+                return GiveUpOnCache;
+
             InlineCacheAction action = actionForCell(vm, base);
             if (action != AttemptToCache)
                 return action;
@@ -1339,6 +1363,9 @@ static InlineCacheAction tryCacheInBy(
                 }
             }
         } else {
+            if (!structure->propertyAccessesAreCacheable() || !structure->propertyAccessesAreCacheableForAbsence())
+                return GiveUpOnCache;
+
             auto cacheStatus = prepareChainForCaching(globalObject, base, propertyName.uid(), nullptr);
             if (!cacheStatus)
                 return GiveUpOnCache;
@@ -1358,8 +1385,8 @@ static InlineCacheAction tryCacheInBy(
 
         LOG_IC((ICEvent::InAddAccessCase, structure->classInfoForCells(), ident, slot.slotBase() == base));
 
-        Ref<AccessCase> newCase = AccessCase::create(
-            vm, codeBlock, wasFound ? AccessCase::InHit : AccessCase::InMiss, propertyName, wasFound ? slot.cachedOffset() : invalidOffset, structure, conditionSet, WTFMove(prototypeAccessChain));
+        if (!newCase)
+            newCase = AccessCase::create(vm, codeBlock, wasFound ? AccessCase::InHit : AccessCase::InMiss, propertyName, wasFound ? slot.cachedOffset() : invalidOffset, structure, conditionSet, WTFMove(prototypeAccessChain));
 
         result = stubInfo.addAccessCase(locker, globalObject, codeBlock, ECMAMode::strict(), propertyName, WTFMove(newCase));
 

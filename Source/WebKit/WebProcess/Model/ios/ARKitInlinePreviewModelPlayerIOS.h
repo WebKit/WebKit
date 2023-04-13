@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,15 +38,15 @@ public:
     static Ref<ARKitInlinePreviewModelPlayerIOS> create(WebPage&, WebCore::ModelPlayerClient&);
     virtual ~ARKitInlinePreviewModelPlayerIOS();
 
-    static void pageLoadedModelInlinePreview(WebPage&, WebCore::GraphicsLayer::PlatformLayerID);
-    static void pageFailedToLoadModelInlinePreview(WebPage&, WebCore::GraphicsLayer::PlatformLayerID, const WebCore::ResourceError&);
+    static void pageLoadedModelInlinePreview(WebPage&, WebCore::PlatformLayerIdentifier);
+    static void pageFailedToLoadModelInlinePreview(WebPage&, WebCore::PlatformLayerIdentifier, const WebCore::ResourceError&);
 
 private:
     ARKitInlinePreviewModelPlayerIOS(WebPage&, WebCore::ModelPlayerClient&);
 
     std::optional<ModelIdentifier> modelIdentifier() override;
 
-    static ARKitInlinePreviewModelPlayerIOS* modelPlayerForPageAndLayerID(WebPage&, WebCore::GraphicsLayer::PlatformLayerID);
+    static ARKitInlinePreviewModelPlayerIOS* modelPlayerForPageAndLayerID(WebPage&, WebCore::PlatformLayerIdentifier);
 
     // WebCore::ModelPlayer overrides.
     void enterFullscreen() override;

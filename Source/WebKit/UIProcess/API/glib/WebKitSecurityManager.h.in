@@ -28,22 +28,12 @@
 G_BEGIN_DECLS
 
 #define WEBKIT_TYPE_SECURITY_MANAGER            (webkit_security_manager_get_type())
+#if !ENABLE(2022_GLIB_API)
 #define WEBKIT_SECURITY_MANAGER(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), WEBKIT_TYPE_SECURITY_MANAGER, WebKitSecurityManager))
 #define WEBKIT_IS_SECURITY_MANAGER(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), WEBKIT_TYPE_SECURITY_MANAGER))
 #define WEBKIT_SECURITY_MANAGER_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass),  WEBKIT_TYPE_SECURITY_MANAGER, WebKitSecurityManagerClass))
 #define WEBKIT_IS_SECURITY_MANAGER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass),  WEBKIT_TYPE_SECURITY_MANAGER))
 #define WEBKIT_SECURITY_MANAGER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj),  WEBKIT_TYPE_SECURITY_MANAGER, WebKitSecurityManagerClass))
-
-typedef struct _WebKitSecurityManager        WebKitSecurityManager;
-typedef struct _WebKitSecurityManagerClass   WebKitSecurityManagerClass;
-typedef struct _WebKitSecurityManagerPrivate WebKitSecurityManagerPrivate;
-
-struct _WebKitSecurityManager {
-    GObject parent;
-
-    /*< private >*/
-    WebKitSecurityManagerPrivate *priv;
-};
 
 struct _WebKitSecurityManagerClass {
     GObjectClass parent_class;
@@ -54,9 +44,9 @@ struct _WebKitSecurityManagerClass {
     void (*_webkit_reserved2) (void);
     void (*_webkit_reserved3) (void);
 };
+#endif
 
-WEBKIT_API GType
-webkit_security_manager_get_type                                (void);
+WEBKIT_DECLARE_FINAL_TYPE (WebKitSecurityManager, webkit_security_manager, WEBKIT, SECURITY_MANAGER, GObject)
 
 WEBKIT_API void
 webkit_security_manager_register_uri_scheme_as_local            (WebKitSecurityManager *security_manager,

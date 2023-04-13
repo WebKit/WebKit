@@ -31,7 +31,7 @@
 
 find_package(PkgConfig QUIET)
 
-pkg_check_modules(PC_EGL egl)
+pkg_check_modules(PC_EGL QUIET egl)
 
 if (PC_EGL_FOUND)
     set(EGL_DEFINITIONS ${PC_EGL_CFLAGS_OTHER})

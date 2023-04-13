@@ -15,10 +15,12 @@ set(PAL_PUBLIC_HEADERS
     graphics/WebGPU/Impl/WebGPUBufferImpl.h
     graphics/WebGPU/Impl/WebGPUCommandBufferImpl.h
     graphics/WebGPU/Impl/WebGPUCommandEncoderImpl.h
+    graphics/WebGPU/Impl/WebGPUCompositorIntegrationImpl.h
     graphics/WebGPU/Impl/WebGPUComputePassEncoderImpl.h
     graphics/WebGPU/Impl/WebGPUComputePipelineImpl.h
     graphics/WebGPU/Impl/WebGPUConvertToBackingContext.h
     graphics/WebGPU/Impl/WebGPUDeviceImpl.h
+    graphics/WebGPU/Impl/WebGPUDeviceWrapper.h
     graphics/WebGPU/Impl/WebGPUDowncastConvertToBackingContext.h
     graphics/WebGPU/Impl/WebGPUExternalTextureImpl.h
     graphics/WebGPU/Impl/WebGPUImpl.h
@@ -32,6 +34,7 @@ set(PAL_PUBLIC_HEADERS
     graphics/WebGPU/Impl/WebGPURenderPipelineImpl.h
     graphics/WebGPU/Impl/WebGPUSamplerImpl.h
     graphics/WebGPU/Impl/WebGPUShaderModuleImpl.h
+    graphics/WebGPU/Impl/WebGPUSwapChainWrapper.h
     graphics/WebGPU/Impl/WebGPUTextureImpl.h
     graphics/WebGPU/Impl/WebGPUTextureViewImpl.h
 
@@ -67,6 +70,7 @@ set(PAL_PUBLIC_HEADERS
     graphics/WebGPU/WebGPUCompilationInfo.h
     graphics/WebGPU/WebGPUCompilationMessage.h
     graphics/WebGPU/WebGPUCompilationMessageType.h
+    graphics/WebGPU/WebGPUCompositorIntegration.h
     graphics/WebGPU/WebGPUComputePassDescriptor.h
     graphics/WebGPU/WebGPUComputePassEncoder.h
     graphics/WebGPU/WebGPUComputePassTimestampLocation.h
@@ -95,6 +99,7 @@ set(PAL_PUBLIC_HEADERS
     graphics/WebGPU/WebGPUImageCopyTextureTagged.h
     graphics/WebGPU/WebGPUImageDataLayout.h
     graphics/WebGPU/WebGPUIndexFormat.h
+    graphics/WebGPU/WebGPUInternalError.h
     graphics/WebGPU/WebGPUIntegralTypes.h
     graphics/WebGPU/WebGPULoadOp.h
     graphics/WebGPU/WebGPUMapMode.h
@@ -108,7 +113,6 @@ set(PAL_PUBLIC_HEADERS
     graphics/WebGPU/WebGPUPipelineLayoutDescriptor.h
     graphics/WebGPU/WebGPUPowerPreference.h
     graphics/WebGPU/WebGPUPredefinedColorSpace.h
-    graphics/WebGPU/WebGPUPresentationConfiguration.h
     graphics/WebGPU/WebGPUPresentationContext.h
     graphics/WebGPU/WebGPUPresentationContextDescriptor.h
     graphics/WebGPU/WebGPUPrimitiveState.h
@@ -204,10 +208,12 @@ set(PAL_SOURCES
     graphics/WebGPU/Impl/WebGPUBufferImpl.cpp
     graphics/WebGPU/Impl/WebGPUCommandBufferImpl.cpp
     graphics/WebGPU/Impl/WebGPUCommandEncoderImpl.cpp
+    graphics/WebGPU/Impl/WebGPUCompositorIntegrationImpl.cpp
     graphics/WebGPU/Impl/WebGPUComputePassEncoderImpl.cpp
     graphics/WebGPU/Impl/WebGPUComputePipelineImpl.cpp
     graphics/WebGPU/Impl/WebGPUConvertToBackingContext.cpp
     graphics/WebGPU/Impl/WebGPUDeviceImpl.cpp
+    graphics/WebGPU/Impl/WebGPUDeviceWrapper.cpp
     graphics/WebGPU/Impl/WebGPUDowncastConvertToBackingContext.cpp
     graphics/WebGPU/Impl/WebGPUExternalTextureImpl.cpp
     graphics/WebGPU/Impl/WebGPUImpl.cpp
@@ -221,6 +227,7 @@ set(PAL_SOURCES
     graphics/WebGPU/Impl/WebGPURenderPipelineImpl.cpp
     graphics/WebGPU/Impl/WebGPUSamplerImpl.cpp
     graphics/WebGPU/Impl/WebGPUShaderModuleImpl.cpp
+    graphics/WebGPU/Impl/WebGPUSwapChainWrapper.cpp
     graphics/WebGPU/Impl/WebGPUTextureImpl.cpp
     graphics/WebGPU/Impl/WebGPUTextureViewImpl.cpp
 

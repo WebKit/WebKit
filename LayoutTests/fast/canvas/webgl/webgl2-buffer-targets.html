@@ -8,9 +8,6 @@
 <script>
 description("Checks that using WebGL 2 buffer targets don't cause errors");
 
-if (window.internals)
-	internals.settings.setWebGL2Enabled(true);
-
 var canvas = document.getElementById("c");
 var context = canvas.getContext("webgl2");
 shouldBe("context.getError()", "context.NO_ERROR");

@@ -26,10 +26,10 @@
 #include "RenderSVGRoot.h"
 
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
-#include "Frame.h"
 #include "GraphicsContext.h"
 #include "HitTestResult.h"
 #include "LayoutRepainter.h"
+#include "LocalFrame.h"
 #include "Page.h"
 #include "RenderChildIterator.h"
 #include "RenderFragmentedFlow.h"
@@ -364,12 +364,6 @@ void RenderSVGRoot::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOf
 
 void RenderSVGRoot::paintContents(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-    // Style is non-final if the element has a pending stylesheet before it. We end up with renderers with such styles if a script
-    // forces renderer construction by querying something layout dependent.
-    // Avoid FOUC by not painting. Switching to final style triggers repaint.
-    if (style().isNotFinal())
-        return;
-
     // We don't paint our own background, but we do let the kids paint their backgrounds.
     auto paintInfoForChild(paintInfo);
     if (paintInfo.phase == PaintPhase::ChildOutlines)
@@ -620,7 +614,7 @@ void RenderSVGRoot::mapLocalToContainer(const RenderLayerModelObject* repaintCon
     }
 
     // Respect scroll offset, after mapping to container coordinates.
-    if (RefPtr<FrameView> view = document().view()) {
+    if (RefPtr view = document().view()) {
         LayoutPoint scrollPosition = view->scrollPosition();
         scrollPosition.scale(scale);
         transformState.move(-toLayoutSize(scrollPosition));

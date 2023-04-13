@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Legacy EME + HLS Certificate Error</title>
+    <script src=../../media-resources/video-test.js></script>
+    <script src=legacy-eme.js></script>
+    <script src="eme2016.js"></script>
+    <script src="support.js"></script>
+    <script>
+    window.addEventListener('load', async event => {
+        startTest().then(endTest).catch(failTest);
+    });
+
+    async function startTest() {
+        findMediaElement();
+        video.src = 'content/prog_index.m3u8';
+        event = await waitFor(video, 'webkitneedkey');
+
+        consoleWrite('Create media keys:')
+        let keys = await startLegacyEME({
+            video: video,
+            protocolVersion: 1,
+            mimeType: 'application/vnd.apple.mpegurl'
+        });
+
+        consoleWrite('Attempt to create key session with invalid certificate:')
+        let certificate = stringToUint16Array('abcde');
+        let contentId = this.extractContentId(event.initData);
+        let initDataArray = this.concatInitDataIdAndCertificate(event.initData, contentId, certificate);
+
+        let keySession = keys.createSession("application/vnd.apple.mpegurl", initDataArray);
+        waitFor(keySession, 'webkitkeyupdate').then(() => {
+            consoleWrite('FAIL: update() with invalid certificate succeeded incorrectly');
+            endTest();
+        });
+        await waitFor(keySession, 'webkitkeyerror');
+    }
+    </script>
+</head>
+<body>
+    <video controls width="480"></video>
+</body>
+</html>

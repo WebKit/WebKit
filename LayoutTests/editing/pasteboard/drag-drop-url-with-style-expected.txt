@@ -6,7 +6,9 @@ before:
 |   style="color:orange"
 |   target="_blank"
 |   title="some title"
-|   "<#selection-anchor>drag me<#selection-focus>"
+|   <#selection-anchor>
+|   "drag me"
+|   <#selection-focus>
 
 after:
 | <a>

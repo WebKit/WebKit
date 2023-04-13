@@ -34,14 +34,17 @@
 
 G_BEGIN_DECLS
 
+#define WEBKIT_TYPE_INPUT_METHOD_UNDERLINE          (webkit_input_method_underline_get_type())
 #define WEBKIT_TYPE_INPUT_METHOD_CONTEXT            (webkit_input_method_context_get_type())
+#if !ENABLE(2022_GLIB_API)
 #define WEBKIT_INPUT_METHOD_CONTEXT(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), WEBKIT_TYPE_INPUT_METHOD_CONTEXT, WebKitInputMethodContext))
 #define WEBKIT_INPUT_METHOD_CONTEXT_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass),  WEBKIT_TYPE_INPUT_METHOD_CONTEXT, WebKitInputMethodContextClass))
 #define WEBKIT_IS_INPUT_METHOD_CONTEXT(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), WEBKIT_TYPE_INPUT_METHOD_CONTEXT))
 #define WEBKIT_IS_INPUT_METHOD_CONTEXT_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass),  WEBKIT_TYPE_INPUT_METHOD_CONTEXT))
 #define WEBKIT_INPUT_METHOD_CONTEXT_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj),  WEBKIT_TYPE_INPUT_METHOD_CONTEXT, WebKitInputMethodContextClass))
+#endif
 
-#define WEBKIT_TYPE_INPUT_METHOD_UNDERLINE          (webkit_input_method_underline_get_type())
+WEBKIT_DECLARE_DERIVABLE_TYPE (WebKitInputMethodContext, webkit_input_method_context, WEBKIT, INPUT_METHOD_CONTEXT, GObject)
 
 /**
  * WebKitInputPurpose:
@@ -91,17 +94,7 @@ typedef enum {
     WEBKIT_INPUT_HINT_INHIBIT_OSK         = 1 << 5
 } WebKitInputHints;
 
-typedef struct _WebKitInputMethodContext        WebKitInputMethodContext;
-typedef struct _WebKitInputMethodContextClass   WebKitInputMethodContextClass;
-typedef struct _WebKitInputMethodContextPrivate WebKitInputMethodContextPrivate;
 typedef struct _WebKitInputMethodUnderline      WebKitInputMethodUnderline;
-
-struct _WebKitInputMethodContext {
-    GObject parent;
-
-    /*< private >*/
-    WebKitInputMethodContextPrivate *priv;
-};
 
 struct _WebKitInputMethodContextClass {
     GObjectClass parent_class;
@@ -169,9 +162,6 @@ struct _WebKitInputMethodContextClass {
     void (*_webkit_reserved15) (void);
 #endif
 };
-
-WEBKIT_API GType
-webkit_input_method_context_get_type           (void);
 
 WEBKIT_API void
 webkit_input_method_context_set_enable_preedit (WebKitInputMethodContext   *context,

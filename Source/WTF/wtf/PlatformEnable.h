@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2007-2009 Torch Mobile, Inc.
  * Copyright (C) 2010, 2011 Research In Motion Limited. All rights reserved.
  * Copyright (C) 2013 Samsung Electronics. All rights reserved.
@@ -85,13 +85,8 @@
 #include <wtf/PlatformEnableCocoa.h>
 #endif
 
-/* --------- Apple Windows port --------- */
-#if PLATFORM(WIN) && !PLATFORM(WIN_CAIRO)
-#include <wtf/PlatformEnableWinApple.h>
-#endif
-
-/* --------- Windows CAIRO port --------- */
-#if PLATFORM(WIN_CAIRO)
+/* --------- Windows port --------- */
+#if PLATFORM(WIN)
 #include <wtf/PlatformEnableWinCairo.h>
 #endif
 
@@ -367,6 +362,10 @@
 #define ENABLE_MEDIA_SOURCE 0
 #endif
 
+#if !defined(ENABLE_MANAGED_MEDIA_SOURCE)
+#define ENABLE_MANAGED_MEDIA_SOURCE 0
+#endif
+
 #if !defined(ENABLE_MEDIA_STATISTICS)
 #define ENABLE_MEDIA_STATISTICS 0
 #endif
@@ -411,6 +410,7 @@
 #define ENABLE_THUNDER 0
 #endif
 
+// ORIENTATION_EVENTS should never get enabled on Desktop, only Mobile.
 #if !defined(ENABLE_ORIENTATION_EVENTS)
 #define ENABLE_ORIENTATION_EVENTS 0
 #endif
@@ -598,6 +598,8 @@
 #define ENABLE_WEBASSEMBLY 0
 #undef ENABLE_WEBASSEMBLY_B3JIT
 #define ENABLE_WEBASSEMBLY_B3JIT 0
+#undef ENABLE_WEBASSEMBLY_BBQJIT
+#define ENABLE_WEBASSEMBLY_BBQJIT 0
 #endif
 #if ((CPU(ARM_THUMB2) && CPU(ARM_HARDFP)) || CPU(MIPS)) && OS(LINUX)
 /* On ARMv7 and MIPS on Linux the JIT is enabled unless explicitly disabled. */
@@ -615,7 +617,9 @@
 #undef ENABLE_WEBASSEMBLY
 #define ENABLE_WEBASSEMBLY 1
 #undef ENABLE_WEBASSEMBLY_B3JIT
-#define ENABLE_WEBASSEMBLY_B3JIT 0
+#define ENABLE_WEBASSEMBLY_B3JIT 1
+#undef ENABLE_WEBASSEMBLY_BBQJIT
+#define ENABLE_WEBASSEMBLY_BBQJIT 0
 #endif
 
 #if !defined(ENABLE_C_LOOP)
@@ -715,11 +719,14 @@
 #define ENABLE_B3_JIT 1
 #undef ENABLE_WEBASSEMBLY_B3JIT
 #define ENABLE_WEBASSEMBLY_B3JIT 1
+#undef ENABLE_WEBASSEMBLY_BBQJIT
+#define ENABLE_WEBASSEMBLY_BBQJIT 0
 #endif
 
 #if !defined(ENABLE_WEBASSEMBLY) && (ENABLE(B3_JIT) && PLATFORM(COCOA) && CPU(ADDRESS64))
 #define ENABLE_WEBASSEMBLY 1
 #define ENABLE_WEBASSEMBLY_B3JIT 1
+#define ENABLE_WEBASSEMBLY_BBQJIT 1
 #endif
 
 /* The SamplingProfiler is the probabilistic and low-overhead profiler used by
@@ -728,10 +735,6 @@
  * sampling profiler is enabled if WebKit uses pthreads and glibc. */
 #if !defined(ENABLE_SAMPLING_PROFILER) && (!ENABLE(C_LOOP) && (OS(WINDOWS) || HAVE(MACHINE_CONTEXT)))
 #define ENABLE_SAMPLING_PROFILER 1
-#endif
-
-#if ENABLE(WEBASSEMBLY) && HAVE(MACHINE_CONTEXT) && CPU(ADDRESS64)
-#define ENABLE_WEBASSEMBLY_SIGNALING_MEMORY 1
 #endif
 
 /* Counts uses of write barriers using sampling counters. Be sure to also
@@ -883,7 +886,7 @@
 #define ENABLE_OPENTYPE_VERTICAL 1
 #endif
 
-#if !defined(ENABLE_OPENTYPE_MATH) && (OS(DARWIN) && USE(CG)) || (USE(FREETYPE) && !PLATFORM(GTK)) || (PLATFORM(WIN) && (USE(CG) || USE(CAIRO)))
+#if !defined(ENABLE_OPENTYPE_MATH) && (OS(DARWIN) && USE(CG)) || PLATFORM(WIN) || PLATFORM(PLAYSTATION)
 #define ENABLE_OPENTYPE_MATH 1
 #endif
 
@@ -929,7 +932,7 @@
 #define ENABLE_PREDEFINED_COLOR_SPACE_DISPLAY_P3 0
 #endif
 
-#if !defined(ENABLE_GPU_PROCESS_DOM_RENDERING_BY_DEFAULT) && PLATFORM(IOS_FAMILY) && !PLATFORM(WATCHOS) && !HAVE(UIKIT_WEBKIT_INTERNALS)
+#if !defined(ENABLE_GPU_PROCESS_DOM_RENDERING_BY_DEFAULT) && (PLATFORM(IOS_FAMILY) && !PLATFORM(WATCHOS) && !HAVE(UIKIT_WEBKIT_INTERNALS) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 140000))
 #define ENABLE_GPU_PROCESS_DOM_RENDERING_BY_DEFAULT 1
 #endif
 
@@ -938,7 +941,9 @@
 #define ENABLE_GPU_PROCESS_WEBGL_BY_DEFAULT 1
 #endif
 
-
+#if !defined(ENABLE_REMOTE_LAYER_TREE_ON_MAC_BY_DEFAULT) && PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 140000
+#define ENABLE_REMOTE_LAYER_TREE_ON_MAC_BY_DEFAULT 1
+#endif
 
 /* Asserts, invariants for macro definitions */
 
@@ -952,10 +957,6 @@
 
 #if ENABLE(IOS_TOUCH_EVENTS) && !ENABLE(TOUCH_EVENTS)
 #error "ENABLE(IOS_TOUCH_EVENTS) requires ENABLE(TOUCH_EVENTS)"
-#endif
-
-#if ENABLE(WEBGL2) && !ENABLE(WEBGL)
-#error "ENABLE(WEBGL2) requires ENABLE(WEBGL)"
 #endif
 
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS) && !ENABLE(OFFSCREEN_CANVAS)

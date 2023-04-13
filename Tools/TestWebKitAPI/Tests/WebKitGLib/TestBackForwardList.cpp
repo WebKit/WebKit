@@ -349,7 +349,7 @@ static void testWebKitWebViewSessionStateWithFormData(BackForwardListTest* test,
     test->loadURI(htmlURL.get());
     test->waitUntilLoadFinished();
 
-    webkit_web_view_run_javascript(test->m_webView, "submitForm();", nullptr, nullptr, nullptr);
+    webkit_web_view_evaluate_javascript(test->m_webView, "submitForm();", -1, nullptr, nullptr, nullptr, nullptr, nullptr);
     test->waitUntilLoadFinished();
 
     WebKitWebViewSessionState* state = webkit_web_view_get_session_state(test->m_webView);

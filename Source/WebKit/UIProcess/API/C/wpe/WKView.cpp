@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WKView.h"
 
+#include "APIClient.h"
 #include "APIPageConfiguration.h"
 #include "APIViewClient.h"
 #include "PageClientImpl.h"

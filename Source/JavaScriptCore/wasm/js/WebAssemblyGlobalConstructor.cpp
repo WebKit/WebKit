@@ -137,6 +137,9 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyGlobal, (JSGlobalObject* globalOb
         }
         break;
     }
+    case Wasm::TypeKind::V128:
+        RELEASE_ASSERT_NOT_REACHED();
+        break;
     default: {
         if (Wasm::isFuncref(type)) {
             if (argument.isUndefined())

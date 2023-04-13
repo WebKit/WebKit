@@ -4,9 +4,9 @@ layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
     RenderSVGContainer {g} at (0,0) size 731x375
-      RenderSVGText {text} at (10,3) size 346x21 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 346x21
-          chunk 1 text run 1 at (10.00,20.00) startOffset 0 endOffset 44 width 345.60: "Testing inapplicable presentation attributes"
+      RenderSVGText {text} at (10,3) size 344x21 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 344x21
+          chunk 1 text run 1 at (10.00,20.00) startOffset 0 endOffset 44 width 343.60: "Testing inapplicable presentation attributes"
       RenderSVGContainer {g} at (0,0) size 67x17
         RenderSVGPath {path} at (0,0) size 0x0 [fill={[type=SOLID] [color=#000000]}] [data="M 0 0"]
         RenderSVGImage {image} at (0,0) size 17x17
@@ -43,7 +43,7 @@ layer at (0,0) size 800x600
             chunk 1 text run 1 at (40.00,70.00) startOffset 0 endOffset 21 width 132.60: "stop-opacity on tspan"
         RenderSVGRect {rect} at (16,141) size 34x34 [fill={[type=SOLID] [color=#008000]}] [x=10.00] [y=85.00] [width=20.00] [height=20.00]
         RenderSVGText {text} at (40,87) size 99x16 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 100x16
+          RenderSVGInlineText {#text} at (0,0) size 99x16
             chunk 1 text run 1 at (40.00,100.00) startOffset 0 endOffset 17 width 99.00: "font-size on rect"
         RenderSVGRect {rect} at (16,191) size 34x34 [fill={[type=SOLID] [color=#008000]}] [x=10.00] [y=115.00] [width=20.00] [height=20.00]
         RenderSVGText {text} at (40,117) size 113x16 contains 1 chunk(s)
@@ -63,7 +63,7 @@ layer at (0,0) size 800x600
             chunk 1 text run 1 at (40.00,220.00) startOffset 0 endOffset 26 width 154.20: "letter-spacing on polyline"
         RenderSVGRect {rect} at (416,41) size 34x34 [fill={[type=SOLID] [color=#008000]}] [x=250.00] [y=25.00] [width=20.00] [height=20.00]
         RenderSVGText {text} at (280,27) size 108x16 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 109x16
+          RenderSVGInlineText {#text} at (0,0) size 108x16
             chunk 1 text run 1 at (280.00,40.00) startOffset 0 endOffset 19 width 108.00: "flood-color on tref"
         RenderSVGRect {rect} at (416,91) size 34x34 [fill={[type=SOLID] [color=#008000]}] [x=250.00] [y=55.00] [width=20.00] [height=20.00]
         RenderSVGText {text} at (280,57) size 153x16 contains 1 chunk(s)

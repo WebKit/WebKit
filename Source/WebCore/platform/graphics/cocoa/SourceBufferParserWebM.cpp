@@ -1105,7 +1105,7 @@ webm::Status WebMParser::VideoTrackData::consumeFrameData(webm::Reader& reader, 
 
     processPendingMediaSamples(presentationTime);
 
-    m_pendingMediaSamples.append({ presentationTime, presentationTime, MediaTime::indefiniteTime(), WTFMove(m_completeFrameData), isKey ? MediaSample::SampleFlags::IsSync : MediaSample::SampleFlags::None });
+    m_pendingMediaSamples.append({ presentationTime, presentationTime, MediaTime::indefiniteTime(), MediaTime::zeroTime(), WTFMove(m_completeFrameData), isKey ? MediaSample::SampleFlags::IsSync : MediaSample::SampleFlags::None });
 
     ASSERT(!*bytesRemaining);
     return webm::Status(webm::Status::kOkCompleted);
@@ -1174,6 +1174,22 @@ void WebMParser::VideoTrackData::flushPendingSamples()
         duration = *m_lastDuration;
     processPendingMediaSamples(presentationTime + duration);
     m_lastPresentationTime.reset();
+}
+
+WebMParser::AudioTrackData::AudioTrackData(CodecType codecType, const webm::TrackEntry& trackEntry, WebMParser& parser)
+    : TrackData { codecType, trackEntry, TrackInfo::TrackType::Audio, parser }
+{
+    // https://wiki.xiph.org/MatroskaOpus#Element_Additions
+    // CodecDelay is a new unsigned integer element added to the TrackEntry element.
+    // The value is the number of nanoseconds that must be discarded, for that stream, from the
+    // start of that stream. The value is also the number of nanoseconds that all encoded
+    // timestamps for that stream must be shifted to get the presentation timestamp.
+    // (This will fix Vorbis encoding as well.)
+    if (trackEntry.codec_delay.is_present()) {
+        constexpr uint32_t k_us_in_seconds = 1000000000;
+        m_remainingTrimDuration = MediaTime(trackEntry.codec_delay.value(), k_us_in_seconds);
+        m_presentationTimeShift = -m_remainingTrimDuration;
+    }
 }
 
 void WebMParser::AudioTrackData::resetCompletedFramesState()
@@ -1250,7 +1266,41 @@ webm::Status WebMParser::AudioTrackData::consumeFrameData(webm::Reader& reader, 
     else if (formatDescription() && *formatDescription() != *m_processedMediaSamples.info())
         drainPendingSamples();
 
-    m_processedMediaSamples.append({ presentationTime, MediaTime::invalidTime(), m_packetDuration, WTFMove(m_completeFrameData), MediaSample::SampleFlags::IsSync });
+    auto trimDuration = MediaTime::zeroTime();
+    MediaTime localPresentationTime = presentationTime;
+    if (m_remainingTrimDuration.isFinite() && m_remainingTrimDuration > MediaTime::zeroTime()) {
+        if (m_remainingTrimDuration < m_packetDuration)
+            std::swap(trimDuration, m_remainingTrimDuration);
+        else {
+            m_remainingTrimDuration -= m_packetDuration;
+            trimDuration = m_packetDuration;
+        }
+    }
+
+    ASSERT(m_presentationTimeShift.isFinite());
+    if (m_presentationTimeShift != MediaTime::zeroTime())
+        localPresentationTime += m_presentationTimeShift;
+
+    if (m_lastPresentationEndTime.isValid()) {
+        MediaTime discontinuityGap = localPresentationTime - m_lastPresentationEndTime;
+        // ATSC IS-191: Relative Timing of Sound and Vision for Broadcast Operations
+        // "The sound program should never lead the video program by more than
+        // 15 milliseconds, and should never lag the video program by more than
+        // 45 milliseconds."
+        // By collapsing gaps between samples, we effectively advance the timing
+        // of the subsequent samples, which may result in the sound content leading
+        // the video content. With a reasonable assumption that the media file starts
+        // with A/V content in perfect sync, we can advance samples up to 15 ms.
+        // Any gaps larger than that amount must have a discontiuity in order to bring
+        // the audio and video presenatations into sync.
+        constexpr MediaTime maximumAllowableDiscontinuity = MediaTime(15, 1000);
+        if (discontinuityGap > MediaTime::zeroTime() && discontinuityGap < maximumAllowableDiscontinuity)
+            localPresentationTime -= discontinuityGap;
+    }
+
+    m_lastPresentationEndTime = localPresentationTime + m_packetDuration;
+
+    m_processedMediaSamples.append({ localPresentationTime, MediaTime::invalidTime(), m_packetDuration, trimDuration, WTFMove(m_completeFrameData), MediaSample::SampleFlags::IsSync });
 
     drainPendingSamples();
 

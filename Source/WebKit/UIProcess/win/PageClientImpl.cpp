@@ -27,12 +27,16 @@
 #include "config.h"
 #include "PageClientImpl.h"
 
+#include "APIOpenPanelParameters.h"
 #include "DrawingAreaProxyCoordinatedGraphics.h"
 #include "WebContextMenuProxyWin.h"
+#include "WebOpenPanelResultListenerProxy.h"
 #include "WebPageProxy.h"
 #include "WebPopupMenuProxyWin.h"
+#include "WebPreferences.h"
 #include "WebView.h"
 #include <WebCore/DOMPasteAccess.h>
+#include <WebCore/LocalizedStrings.h>
 #include <WebCore/NotImplemented.h>
 
 #if USE(GRAPHICS_LAYER_WC)
@@ -190,7 +194,7 @@ void PageClientImpl::doneWithKeyEvent(const NativeWebKeyboardEvent& event, bool 
 
 RefPtr<WebPopupMenuProxy> PageClientImpl::createPopupMenuProxy(WebPageProxy& page)
 {
-    return WebPopupMenuProxyWin::create(&m_view, page);
+    return WebPopupMenuProxyWin::create(&m_view, page.popupMenuClient());
 }
 
 #if ENABLE(CONTEXT_MENUS)
@@ -230,6 +234,69 @@ void PageClientImpl::pageClosed()
 void PageClientImpl::preferencesDidChange()
 {
     notImplemented();
+}
+
+bool PageClientImpl::handleRunOpenPanel(WebPageProxy*, WebFrameProxy*, const FrameInfoData&, API::OpenPanelParameters* parameters, WebOpenPanelResultListenerProxy* listener)
+{
+    ASSERT(parameters);
+    ASSERT(listener);
+
+    HWND viewWindow = viewWidget();
+    if (!IsWindow(viewWindow))
+        return false;
+
+    // When you call GetOpenFileName, if the size of the buffer is too small,
+    // MSDN says that the first two bytes of the buffer contain the required size for the file selection, in bytes or characters
+    // So we can assume the required size can't be more than the maximum value for a short.
+    constexpr size_t maxFilePathsListSize = USHRT_MAX;
+
+    bool isAllowMultipleFiles = parameters->allowMultipleFiles();
+    Vector<wchar_t> fileBuffer(isAllowMultipleFiles ? maxFilePathsListSize : MAX_PATH);
+
+    OPENFILENAME ofn { };
+
+    // Need to zero out the first char of fileBuffer so GetOpenFileName doesn't think it's an initialization string
+    fileBuffer[0] = L'\0';
+
+    ofn.lStructSize = sizeof(ofn);
+    ofn.hwndOwner = viewWindow;
+    ofn.lpstrFile = fileBuffer.data();
+    ofn.nMaxFile = fileBuffer.size();
+    auto dialogTitle = uploadFileText();
+    auto dialogTitleCharacters = dialogTitle.wideCharacters(); // Retain buffer long enough to make the GetOpenFileName call
+    ofn.lpstrTitle = dialogTitleCharacters.data();
+    ofn.Flags = OFN_FILEMUSTEXIST | OFN_PATHMUSTEXIST | OFN_EXPLORER;
+    if (isAllowMultipleFiles)
+        ofn.Flags |= OFN_ALLOWMULTISELECT;
+
+    if (GetOpenFileName(&ofn)) {
+        Vector<String> fileList;
+        auto p = fileBuffer.data();
+        auto length = wcslen(p);
+        auto firstValue = String(p, length);
+
+        // The value set in the buffer depends on whether one or more files are actually selected, regardless of the OFN_ALLOWMULTISELECT flag.
+        // The number of selected files cannot be determined by the flags, so check the character at address nOffsetFile - 1.
+        // This character is the path separator if only one file is selected, or the null character if multiple files are selected.
+        if (!*(p + ofn.nFileOffset - 1)) {
+            // If multiple files are selected, the first value is the directory name, the second and subsequent values are the file names.
+            p += length + 1;
+            while (*p) {
+                length = wcslen(p);
+                String fileName(p, length);
+                fileList.append(FileSystem::pathByAppendingComponent(firstValue, WTFMove(fileName)));
+                p += length + 1;
+            }
+        } else
+            // If only one file is selected, one full path string is set in the buffer.
+            fileList.append(WTFMove(firstValue));
+
+        ASSERT(fileList.size());
+        listener->chooseFiles(fileList);
+        return true;
+    }
+    // FIXME: Show some sort of error if too many files are selected and the buffer is too small. For now, this will fail silently.
+    return false;
 }
 
 void PageClientImpl::didChangeContentSize(const IntSize& size)

@@ -3,7 +3,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-    RenderSVGContainer {g} at (32,39) size 756x448
+    RenderSVGContainer {g} at (32,39) size 755x448
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0
         RenderSVGResourceFilter {filter} [id="distantLightUp"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
           [feDiffuseLighting surfaceScale="10.00" diffuseConstant="1.00" kernelUnitLength="0.00, 0.00"]
@@ -55,7 +55,7 @@ layer at (0,0) size 800x600
               [SourceGraphic]
       RenderSVGText {text} at (70,23) size 335x21 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 335x21
-          chunk 1 text run 1 at (70.00,40.00) startOffset 0 endOffset 42 width 334.80: "feDiffuseLight using feDistantLight source"
+          chunk 1 text run 1 at (70.00,40.00) startOffset 0 endOffset 42 width 334.47: "feDiffuseLight using feDistantLight source"
       RenderSVGContainer {g} at (32,82) size 286x61 [transform={m=((1.50,0.00)(0.00,1.50)) t=(7.50,67.50)}]
         RenderSVGEllipse {circle} at (32,82) size 61x61 [transform={m=((1.00,0.00)(0.00,1.00)) t=(20.00,0.00)}] [fill={[type=SOLID] [color=#FF0000]}] [cx=0.00] [cy=0.00] [r=10.00]
           [filter="distantLightUp"] RenderSVGResourceFilter {filter} at (-12,-12) size 24x24
@@ -101,9 +101,9 @@ layer at (0,0) size 800x600
       RenderSVGText {text} at (160,185) size 25x13 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 25x12
           chunk 1 text run 1 at (160.00,195.00) startOffset 0 endOffset 5 width 24.60: "0 deg"
-      RenderSVGText {text} at (30,213) size 443x21 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 443x21
-          chunk 1 text run 1 at (30.00,230.00) startOffset 0 endOffset 55 width 442.20: "feDiffuseLight and feSpecularLight using feDistantLight"
+      RenderSVGText {text} at (30,213) size 442x21 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 442x21
+          chunk 1 text run 1 at (30.00,230.00) startOffset 0 endOffset 55 width 441.87: "feDiffuseLight and feSpecularLight using feDistantLight"
       RenderSVGContainer {g} at (32,395) size 286x60 [transform={m=((1.50,0.00)(0.00,1.50)) t=(7.50,255.00)}]
         RenderSVGEllipse {circle} at (32,395) size 61x60 [transform={m=((1.00,0.00)(0.00,1.00)) t=(20.00,0.00)}] [fill={[type=SOLID] [color=#FF0000]}] [cx=0.00] [cy=0.00] [r=10.00]
           [filter="combinedUp"] RenderSVGResourceFilter {filter} at (-12,-12) size 24x24

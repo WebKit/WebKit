@@ -30,12 +30,16 @@
 #include <wtf/RetainPtr.h>
 #include <wtf/text/WTFString.h>
 
-#if PLATFORM(COCOA)
 OBJC_CLASS AVOutputContext;
 OBJC_CLASS NSData;
-#endif
 
 namespace WebCore {
+
+enum class MediaPlaybackTargetContextMockState : uint8_t {
+    Unknown = 0,
+    OutputDeviceUnavailable = 1,
+    OutputDeviceAvailable = 2,
+};
 
 class MediaPlaybackTargetContext {
 public:
@@ -46,11 +50,7 @@ public:
         Mock,
     };
 
-    enum class MockState : uint8_t {
-        Unknown = 0,
-        OutputDeviceUnavailable = 1,
-        OutputDeviceAvailable = 2,
-    };
+    using MockState = MediaPlaybackTargetContextMockState;
 
     MediaPlaybackTargetContext() = default;
     WEBCORE_EXPORT explicit MediaPlaybackTargetContext(RetainPtr<AVOutputContext>&&);

@@ -28,6 +28,7 @@
 
 #if PLATFORM(IOS_FAMILY)
 
+#import "UIKitSPI.h"
 #import "WKWebViewInternal.h"
 #import "_WKFrameHandle.h"
 #import <wtf/Condition.h>
@@ -47,6 +48,7 @@
     Lock _printLock;
     Condition _printCompletionCondition;
     RetainPtr<CGPDFDocumentRef> _printedDocument;
+    RetainPtr<CGImageRef> _printPreviewImage;
 }
 
 - (BOOL)requiresMainThread
@@ -71,6 +73,20 @@
     return static_cast<WKWebView *>(view);
 }
 
+- (BOOL)_shouldDrawUsingBitmap
+{
+    if (self.snapshotFirstPage)
+        return NO;
+
+    if (![self._webView._printProvider respondsToSelector:@selector(_wk_requestImageForPrintFormatter:)])
+        return NO;
+
+    if (self.printPageRenderer.requestedRenderingQuality == UIPrintRenderingQualityBest)
+        return NO;
+
+    return YES;
+}
+
 - (CGPDFDocumentRef)_printedDocument
 {
     if (self.requiresMainThread)
@@ -92,7 +108,28 @@
     _printCompletionCondition.notifyOne();
 }
 
-- (void)_waitForPrintedDocument
+- (CGImageRef)_printPreviewImage
+{
+    if (self.requiresMainThread)
+        return _printPreviewImage.get();
+
+    Locker locker { _printLock };
+    return _printPreviewImage.get();
+}
+
+- (void)_setPrintPreviewImage:(CGImageRef)printPreviewImage
+{
+    if (self.requiresMainThread) {
+        _printPreviewImage = printPreviewImage;
+        return;
+    }
+
+    Locker locker { _printLock };
+    _printPreviewImage = printPreviewImage;
+    _printCompletionCondition.notifyOne();
+}
+
+- (void)_waitForPrintedDocumentOrImage
 {
     Locker locker { _printLock };
     _printCompletionCondition.wait(_printLock);
@@ -106,10 +143,17 @@
     printPageRenderer.printableRect = paperRect;
 }
 
+- (void)_invalidatePrintRenderingState
+{
+    [self _setPrintPreviewImage:nullptr];
+    [self _setPrintedDocument:nullptr];
+}
+
 - (NSInteger)_recalcPageCount
 {
-    [self _setPrintedDocument:nullptr];
+    [self _invalidatePrintRenderingState];
     NSUInteger pageCount = [self._webView._printProvider _wk_pageCountForPrintFormatter:self];
+    RELEASE_LOG(Printing, "Recalculated page count. Page count = %zu", pageCount);
     return std::min<NSUInteger>(pageCount, NSIntegerMax);
 }
 
@@ -127,6 +171,50 @@
 }
 
 - (void)drawInRect:(CGRect)rect forPageAtIndex:(NSInteger)pageIndex
+{
+    if ([self _shouldDrawUsingBitmap])
+        [self _drawInRectUsingBitmap:rect forPageAtIndex:pageIndex];
+    else
+        [self _drawInRectUsingPDF:rect forPageAtIndex:pageIndex];
+}
+
+- (void)_drawInRectUsingBitmap:(CGRect)rect forPageAtIndex:(NSInteger)pageIndex
+{
+    RetainPtr printPreviewImage = [self _printPreviewImage];
+    if (!printPreviewImage) {
+        [self._webView._printProvider _wk_requestImageForPrintFormatter:self];
+        printPreviewImage = [self _printPreviewImage];
+        if (!printPreviewImage)
+            return;
+    }
+
+    if (!self.pageCount)
+        return;
+
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    CGContextSaveGState(context);
+
+    CGImageRef documentImage = _printPreviewImage.get();
+
+    CGFloat pageImageWidth = CGImageGetWidth(documentImage);
+    CGFloat pageImageHeight = CGImageGetHeight(documentImage) / self.pageCount;
+
+    if (!pageImageWidth || !pageImageHeight) {
+        CGContextRestoreGState(context);
+        return;
+    }
+
+    RetainPtr pageImage = adoptCF(CGImageCreateWithImageInRect(documentImage, CGRectMake(0, pageIndex * pageImageHeight, pageImageWidth, pageImageHeight)));
+
+    CGContextTranslateCTM(context, CGRectGetMinX(rect), CGRectGetMaxY(rect));
+    CGContextScaleCTM(context, 1, -1);
+    CGContextScaleCTM(context, CGRectGetWidth(rect) / pageImageWidth, CGRectGetHeight(rect) / pageImageHeight);
+    CGContextDrawImage(context, CGRectMake(0, 0, pageImageWidth, pageImageHeight), pageImage.get());
+
+    CGContextRestoreGState(context);
+}
+
+- (void)_drawInRectUsingPDF:(CGRect)rect forPageAtIndex:(NSInteger)pageIndex
 {
     RetainPtr<CGPDFDocumentRef> printedDocument = [self _printedDocument];
     if (!printedDocument) {

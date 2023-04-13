@@ -1,41 +1,32 @@
 /**
  * AUTO-GENERATED - DO NOT EDIT. Source: https://github.com/gpuweb/cts
  **/ export const description = `
-Execution Tests for the 'countLeadingZeros' builtin function
+Execution tests for the 'countLeadingZeros' builtin function
+
+S is i32 or u32
+T is S or vecN<S>
+@const fn countLeadingZeros(e: T ) -> T
+The number of consecutive 0 bits starting from the most significant bit of e,
+when T is a scalar type.
+Component-wise when T is a vector.
+Also known as "clz" in some languages.
 `;
 import { makeTestGroup } from '../../../../../../common/framework/test_group.js';
 import { GPUTest } from '../../../../../gpu_test.js';
 import { TypeU32, u32Bits, u32, TypeI32, i32Bits, i32 } from '../../../../../util/conversion.js';
-import { run } from '../../expression.js';
+import { allInputSources, run } from '../../expression.js';
 
 import { builtin } from './builtin.js';
 
 export const g = makeTestGroup(GPUTest);
 
 g.test('u32')
-  .uniqueId('xxxxxxxxxxxxxxxx')
-  .specURL('https://www.w3.org/TR/2021/WD-WGSL-20210929/#integer-builtin-functions')
-  .desc(
-    `
-countLeadingZeros:
-T is i32, u32, vecN<i32>, or vecN<u32> countLeadingZeros(e: T) -> T
-
-The number of consecutive 0 bits starting from the most significant bit of e, when T is a scalar type.
-Component-wise when T is a vector.
-Also known as "clz" in some languages.
-
-Please read the following guidelines before contributing:
-https://github.com/gpuweb/cts/blob/main/docs/plan_autogen.md
-`
-  )
-  .params(u =>
-    u
-      .combine('storageClass', ['uniform', 'storage_r', 'storage_rw'])
-      .combine('vectorize', [undefined, 2, 3, 4])
-  )
+  .specURL('https://www.w3.org/TR/WGSL/#integer-builtin-functions')
+  .desc(`u32 tests`)
+  .params(u => u.combine('inputSource', allInputSources).combine('vectorize', [undefined, 2, 3, 4]))
   .fn(async t => {
     const cfg = t.params;
-    run(t, builtin('countLeadingZeros'), [TypeU32], TypeU32, cfg, [
+    await run(t, builtin('countLeadingZeros'), [TypeU32], TypeU32, cfg, [
       // Zero
       { input: u32Bits(0b00000000000000000000000000000000), expected: u32(32) },
 
@@ -143,29 +134,12 @@ https://github.com/gpuweb/cts/blob/main/docs/plan_autogen.md
   });
 
 g.test('i32')
-  .uniqueId('xxxxxxxxxxxxxxxx')
-  .specURL('https://www.w3.org/TR/2021/WD-WGSL-20210929/#integer-builtin-functions')
-  .desc(
-    `
-countLeadingZeros:
-T is i32, u32, vecN<i32>, or vecN<u32> countLeadingZeros(e: T) -> T
-
-The number of consecutive 0 bits starting from the most significant bit of e, when T is a scalar type.
-Component-wise when T is a vector.
-Also known as "clz" in some languages.
-
-Please read the following guidelines before contributing:
-https://github.com/gpuweb/cts/blob/main/docs/plan_autogen.md
-`
-  )
-  .params(u =>
-    u
-      .combine('storageClass', ['uniform', 'storage_r', 'storage_rw'])
-      .combine('vectorize', [undefined, 2, 3, 4])
-  )
+  .specURL('https://www.w3.org/TR/WGSL/#integer-builtin-functions')
+  .desc(`i32 tests`)
+  .params(u => u.combine('inputSource', allInputSources).combine('vectorize', [undefined, 2, 3, 4]))
   .fn(async t => {
     const cfg = t.params;
-    run(t, builtin('countLeadingZeros'), [TypeI32], TypeI32, cfg, [
+    await run(t, builtin('countLeadingZeros'), [TypeI32], TypeI32, cfg, [
       // Zero
       { input: i32Bits(0b00000000000000000000000000000000), expected: i32(32) },
 

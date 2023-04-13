@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2022 Apple Inc.  All rights reserved.
+ * Copyright (C) 2020-2023 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,17 +44,22 @@ public:
     void cacheNativeImage(Ref<WebCore::NativeImage>&&, QualifiedRenderingResourceIdentifier);
     void cacheFont(Ref<WebCore::Font>&&, QualifiedRenderingResourceIdentifier);
     void cacheDecomposedGlyphs(Ref<WebCore::DecomposedGlyphs>&&, QualifiedRenderingResourceIdentifier);
+    void cacheGradient(Ref<WebCore::Gradient>&&, QualifiedRenderingResourceIdentifier);
+    void cacheFontCustomPlatformData(Ref<WebCore::FontCustomPlatformData>&&, QualifiedRenderingResourceIdentifier);
 
     RemoteImageBuffer* cachedImageBuffer(QualifiedRenderingResourceIdentifier) const;
     RefPtr<RemoteImageBuffer> takeImageBuffer(QualifiedRenderingResourceIdentifier);
     WebCore::NativeImage* cachedNativeImage(QualifiedRenderingResourceIdentifier) const;
     WebCore::Font* cachedFont(QualifiedRenderingResourceIdentifier) const;
     WebCore::DecomposedGlyphs* cachedDecomposedGlyphs(QualifiedRenderingResourceIdentifier) const;
+    WebCore::Gradient* cachedGradient(QualifiedRenderingResourceIdentifier) const;
+    WebCore::FontCustomPlatformData* cachedFontCustomPlatformData(QualifiedRenderingResourceIdentifier) const;
 
     std::optional<WebCore::SourceImage> cachedSourceImage(QualifiedRenderingResourceIdentifier) const;
 
     void releaseAllResources();
-    bool releaseResource(QualifiedRenderingResourceIdentifier);
+    void releaseAllImageResources();
+    bool releaseRenderingResource(QualifiedRenderingResourceIdentifier);
 
 private:
     QualifiedResourceHeap m_resourceHeap;

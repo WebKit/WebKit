@@ -37,7 +37,7 @@
     border-top: none;
 }
 
-.data-grid th.graph-column:matches(.sort-ascending, .sort-descending) {
+.data-grid th.graph-column:is(.sort-ascending, .sort-descending) {
     background-color: var(--background-color-selected);
 }
 
@@ -53,7 +53,7 @@
     position: absolute;
 }
 
-.data-grid.timeline th:matches(.sort-ascending, .sort-descending) > .header-cell-content.timeline-ruler:first-child::after {
+.data-grid.timeline th:is(.sort-ascending, .sort-descending) > .header-cell-content.timeline-ruler:first-child::after {
     top: calc(var(--data-grid-header-height) / 2 - var(--data-grid-sorting-indicator-height) / 2);
     bottom: unset;
 }

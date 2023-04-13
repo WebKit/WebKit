@@ -59,10 +59,7 @@ String CSSFilterImageValue::customCSSText() const
 
 RefPtr<StyleImage> CSSFilterImageValue::createStyleImage(Style::BuilderState& state) const
 {
-    auto styleImage = state.createStyleImage(m_imageValueOrNone);
-    auto filterOperations = state.createFilterOperations(m_filterValue);
-
-    return StyleFilterImage::create(WTFMove(styleImage), filterOperations.value_or(FilterOperations { }));
+    return StyleFilterImage::create(state.createStyleImage(m_imageValueOrNone), state.createFilterOperations(m_filterValue).value_or(FilterOperations { }));
 }
 
 } // namespace WebCore

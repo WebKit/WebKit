@@ -48,6 +48,7 @@ PASS Adding invalid no-cors request header "proxy: KO"
 PASS Adding invalid no-cors request header "proxya: KO"
 PASS Adding invalid no-cors request header "sec: KO"
 PASS Adding invalid no-cors request header "secb: KO"
+PASS Adding invalid no-cors request header "Empty-Value: "
 PASS Check that request constructor is filtering headers provided as init parameter
 PASS Check that no-cors request constructor is filtering headers provided as init parameter
 PASS Check that no-cors request constructor is filtering headers provided as part of request parameter

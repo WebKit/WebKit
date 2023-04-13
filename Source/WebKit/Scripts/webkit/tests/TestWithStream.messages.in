@@ -25,6 +25,7 @@ messages -> TestWithStream NotRefCounted Stream {
     void SendString(String url)
     void SendStringAsync(String url) -> (int64_t returnValue)
     void SendStringSync(String url) -> (int64_t returnValue) Synchronous
+    void CallWithIdentifier() -> () CallWithReplyID
 #if PLATFORM(COCOA)
     void SendMachSendRight(MachSendRight a1) NotStreamEncodable
     void ReceiveMachSendRight() -> (MachSendRight r1) Synchronous NotStreamEncodableReply

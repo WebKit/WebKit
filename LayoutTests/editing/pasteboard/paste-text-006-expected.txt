@@ -57,8 +57,7 @@ Before copy:
 | "\n"
 | <div>
 |   class="editing"
-|   <#selection-focus>
-|   "Which taken at the flood leads on to fortune."
+|   "<#selection-focus>Which taken at the flood leads on to fortune."
 | "\n"
 | <div>
 |   class="editing"

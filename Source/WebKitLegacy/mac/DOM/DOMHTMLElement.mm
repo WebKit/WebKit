@@ -30,6 +30,7 @@
 #import "DOMNodeInternal.h"
 #import <WebCore/Element.h>
 #import "ExceptionHandlers.h"
+#import <WebCore/ElementInlines.h>
 #import <WebCore/HTMLCollection.h>
 #import <WebCore/HTMLElement.h>
 #import <WebCore/HTMLNames.h>

@@ -44,6 +44,7 @@
 #include "WKString.h"
 #include "WKWebsiteDataStoreRef.h"
 #include "WebContextInjectedBundleClient.h"
+#include "WebFrameProxy.h"
 #include "WebPageProxy.h"
 #include "WebProcessPool.h"
 #include <WebCore/GamepadProvider.h>
@@ -391,9 +392,8 @@ bool WKContextGetUsesSingleWebProcess(WKContextRef contextRef)
     return WebKit::toImpl(contextRef)->configuration().usesSingleWebProcess();
 }
 
-void WKContextSetCustomWebContentServiceBundleIdentifier(WKContextRef contextRef, WKStringRef name)
+void WKContextSetCustomWebContentServiceBundleIdentifier(WKContextRef, WKStringRef)
 {
-    WebKit::toImpl(contextRef)->setCustomWebContentServiceBundleIdentifier(WebKit::toImpl(name)->string());
 }
 
 void WKContextSetDiskCacheSpeculativeValidationEnabled(WKContextRef, bool)

@@ -57,8 +57,8 @@ private:
     bool layerTreeStateIsFrozen() const override { return m_layerTreeStateIsFrozen; }
 
     void updatePreferences(const WebPreferencesStore&) override;
-    void enablePainting() override;
     void mainFrameContentSizeChanged(const WebCore::IntSize&) override;
+    void sendEnterAcceleratedCompositingModeIfNeeded() override;
 
 #if USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)
     void deviceOrPageScaleFactorChanged() override;
@@ -66,9 +66,11 @@ private:
 #endif
 
     bool supportsAsyncScrolling() const override;
+    void registerScrollingTree() override;
+    void unregisterScrollingTree() override;
 
     WebCore::GraphicsLayerFactory* graphicsLayerFactory() override;
-    void setRootCompositingLayer(WebCore::GraphicsLayer*) override;
+    void setRootCompositingLayer(WebCore::Frame&, WebCore::GraphicsLayer*) override;
     void triggerRenderingUpdate() override;
 
 #if USE(COORDINATED_GRAPHICS) || USE(GRAPHICS_LAYER_TEXTURE_MAPPER)
@@ -77,7 +79,7 @@ private:
     
     RefPtr<WebCore::DisplayRefreshMonitor> createDisplayRefreshMonitor(WebCore::PlatformDisplayID) override;
 
-    void activityStateDidChange(OptionSet<WebCore::ActivityState::Flag>, ActivityStateChangeID, CompletionHandler<void()>&&) override;
+    void activityStateDidChange(OptionSet<WebCore::ActivityState>, ActivityStateChangeID, CompletionHandler<void()>&&) override;
     void attachViewOverlayGraphicsLayer(WebCore::GraphicsLayer*) override;
 
     // IPC message handlers.
@@ -108,9 +110,6 @@ private:
     void display(UpdateInfo&);
 
     uint64_t m_backingStoreStateID { 0 };
-
-    // Whether painting is enabled. If painting is disabled, any calls to setNeedsDisplay and scroll are ignored.
-    bool m_isPaintingEnabled { false };
 
     // Whether we're currently processing an UpdateBackingStoreState message.
     bool m_inUpdateBackingStoreState { false };
@@ -154,6 +153,7 @@ private:
     bool m_alwaysUseCompositing { false };
     bool m_supportsAsyncScrolling { true };
     bool m_forceRepaintAfterBackingStoreStateUpdate { false };
+    bool m_shouldSendEnterAcceleratedCompositingMode { false };
 
     RunLoop::Timer m_displayTimer;
 

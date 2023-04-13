@@ -124,6 +124,10 @@ ALWAYS_INLINE RefPtr<MetadataTable> UnlinkedMetadataTable::link()
         m_isLinked = true;
         m_rawBuffer = buffer = reinterpret_cast<uint8_t*>(MetadataTableMalloc::realloc(m_rawBuffer, sizeof(LinkingData) + totalSize));
     } else {
+#if ENABLE(METADATA_STATISTICS)
+        MetadataStatistics::numberOfCopiesFromLinking++;
+        MetadataStatistics::linkingCopyMemory += sizeof(LinkingData) + totalSize;
+#endif
         buffer = reinterpret_cast<uint8_t*>(MetadataTableMalloc::malloc(sizeof(LinkingData) + totalSize));
         memcpy(buffer, m_rawBuffer, sizeof(LinkingData) + offsetTableSize);
     }

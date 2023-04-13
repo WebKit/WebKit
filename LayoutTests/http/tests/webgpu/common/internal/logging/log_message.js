@@ -32,8 +32,8 @@ export class LogMessageWithStack extends Error {
       }
     }
     return m;
-  }}
-
+  }
+}
 
 /**
  * Returns a string, nicely indented, for debug logs.

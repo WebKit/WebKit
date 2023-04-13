@@ -101,7 +101,7 @@ JSObject* ProgramExecutable::initializeGlobalProperties(VM& vm, JSGlobalObject* 
         // Check for intersection of "var" and "let"/"const"/"class"
         for (auto& entry : lexicalDeclarations) {
             if (variableDeclarations.contains(entry.key))
-                return createSyntaxError(globalObject, makeString("Can't create duplicate variable: '", String(entry.key.get()), "'"));
+                return createSyntaxError(globalObject, makeString("Can't create duplicate variable: '"_s, StringView(entry.key.get()), '\''));
         }
 
         // Check if any new "let"/"const"/"class" will shadow any pre-existing global property names (with configurable = false), or "var"/"let"/"const" variables.
@@ -112,7 +112,7 @@ JSObject* ProgramExecutable::initializeGlobalProperties(VM& vm, JSGlobalObject* 
             RETURN_IF_EXCEPTION(throwScope, nullptr);
             switch (status) {
             case GlobalPropertyLookUpStatus::NonConfigurable:
-                return createSyntaxError(globalObject, makeString("Can't create duplicate variable that shadows a global property: '", String(entry.key.get()), "'"));
+                return createSyntaxError(globalObject, makeString("Can't create duplicate variable that shadows a global property: '"_s, StringView(entry.key.get()), '\''));
             case GlobalPropertyLookUpStatus::Configurable:
                 // Lexical bindings can shadow global properties if the given property's attribute is configurable.
                 // https://tc39.github.io/ecma262/#sec-globaldeclarationinstantiation step 5-c, `hasRestrictedGlobal` becomes false
@@ -134,7 +134,7 @@ JSObject* ProgramExecutable::initializeGlobalProperties(VM& vm, JSGlobalObject* 
                     if (globalLexicalEnvironment->isConstVariable(entry.key.get()))
                         continue;
                 }
-                return createSyntaxError(globalObject, makeString("Can't create duplicate variable: '", String(entry.key.get()), "'"));
+                return createSyntaxError(globalObject, makeString("Can't create duplicate variable: '"_s, StringView(entry.key.get()), '\''));
             }
         }
 
@@ -145,7 +145,7 @@ JSObject* ProgramExecutable::initializeGlobalProperties(VM& vm, JSGlobalObject* 
                 bool hasProperty = globalLexicalEnvironment->hasProperty(globalObject, entry.key.get());
                 RETURN_IF_EXCEPTION(throwScope, nullptr);
                 if (hasProperty)
-                    return createSyntaxError(globalObject, makeString("Can't create duplicate variable: '", String(entry.key.get()), "'"));
+                    return createSyntaxError(globalObject, makeString("Can't create duplicate variable: '"_s, StringView(entry.key.get()), '\''));
             }
         }
     }

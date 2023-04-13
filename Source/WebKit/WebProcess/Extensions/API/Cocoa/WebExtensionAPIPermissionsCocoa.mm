@@ -30,6 +30,8 @@
 #import "config.h"
 #import "WebExtensionAPIPermissions.h"
 
+#import "Logging.h"
+#import "MessageSenderInlines.h"
 #import "WebExtension.h"
 #import "WebExtensionContextMessages.h"
 #import "WebProcess.h"
@@ -54,7 +56,7 @@ void WebExtensionAPIPermissions::getAll(Ref<WebExtensionCallbackHandler>&& callb
     }, extensionContext().identifier().toUInt64());
 }
 
-void WebExtensionAPIPermissions::contains(NSDictionary *details, Ref<WebExtensionCallbackHandler>&& callback, NSString **)
+void WebExtensionAPIPermissions::contains(NSDictionary *details, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
     RELEASE_LOG(Extensions, "permissions.contains()");
 
@@ -62,11 +64,8 @@ void WebExtensionAPIPermissions::contains(NSDictionary *details, Ref<WebExtensio
     WebExtension::MatchPatternSet matchPatterns;
     parseDetailsDictionary(details, permissions, origins);
 
-    NSString *errorMessage;
-    if (!validatePermissionsDetails(permissions, origins, matchPatterns, @"contains()", &errorMessage)) {
-        callback->reportError(errorMessage);
+    if (!validatePermissionsDetails(permissions, origins, matchPatterns, @"permissions.contains()", outExceptionString))
         return;
-    }
 
     WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::PermissionsContains(permissions, origins), [protectedThis = Ref { *this }, callback = WTFMove(callback)](bool containsPermissions) {
         callback->call(containsPermissions ? @YES : @NO);
@@ -83,14 +82,21 @@ void WebExtensionAPIPermissions::request(NSDictionary *details, Ref<WebExtension
     NSString *errorMessage;
     WebExtension::MatchPatternSet matchPatterns;
 
-    if (!validatePermissionsDetails(permissions, origins, matchPatterns, @"request()", &errorMessage)) {
+    if (!validatePermissionsDetails(permissions, origins, matchPatterns, @"permissions.request()", &errorMessage)) {
+        // Chrome reports this error as callback error and not an exception, so do the same.
         callback->reportError(errorMessage);
         return;
     }
 
-    // FIXME: <https://webkit.org/b/250135> Check to see if the request is being made from a user gesture.
+    if (!WebCore::UserGestureIndicator::processingUserGesture()) {
+        // Chrome reports this error as callback error and not an exception, so do the same.
+        callback->reportError(@"permissions.request() must be called during a user gesture.");
+        return;
+    }
 
-    if (!verifyRequestedPermissions(permissions, matchPatterns, @"request()", &errorMessage)) {
+    if (!verifyRequestedPermissions(permissions, matchPatterns, @"permissions.request()", &errorMessage)) {
+        // Chrome reports these errors as callback errors and not exceptions, so do the same. Instead of round tripping
+        // to the UI process, we can answer this here and report the error right away.
         callback->reportError(errorMessage);
         return;
     }
@@ -106,6 +112,20 @@ void WebExtensionAPIPermissions::remove(NSDictionary *details, Ref<WebExtensionC
 
     HashSet<String> permissions, origins;
     parseDetailsDictionary(details, permissions, origins);
+
+    NSString *errorMessage;
+    WebExtension::MatchPatternSet matchPatterns;
+    if (!validatePermissionsDetails(permissions, origins, matchPatterns, @"permissions.remove()", &errorMessage)) {
+        // Chrome reports this error as callback error and not an exception, so do the same.
+        callback->reportError(errorMessage);
+        return;
+    }
+
+    if (!verifyRequestedPermissions(permissions, matchPatterns, @"permissions.remove()", &errorMessage)) {
+        // Chrome reports this error as callback error and not an exception, so do the same.
+        callback->reportError(errorMessage);
+        return;
+    }
 
     WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::PermissionsRemove(permissions, origins), [protectedThis = Ref { *this }, callback = WTFMove(callback)](bool success) {
         callback->call(success ? @YES : @NO);
@@ -123,32 +143,46 @@ void WebExtensionAPIPermissions::parseDetailsDictionary(NSDictionary *details, H
 
 bool WebExtensionAPIPermissions::verifyRequestedPermissions(HashSet<String>& permissions, HashSet<Ref<WebExtensionMatchPattern>>& matchPatterns, NSString *callingAPIName, NSString **outExceptionString)
 {
-    WebExtension extension = WebExtension(extensionContext().manifest());
-    HashSet<String> allowedPermissions = extension.requestedPermissions();
+    auto extension = WebExtension::create(extensionContext().manifest(), @{ });
+    HashSet<String> allowedPermissions = extension->requestedPermissions();
+    WebExtension::MatchPatternSet allowedHostPermissions = extension->allRequestedMatchPatterns();
 
-    if ([callingAPIName isEqualToString:@"remove()"]) {
-        if (bool requestingToRemoveFunctionalPermissions = permissions.size() && permissions.isSubset(allowedPermissions)) {
+    if ([callingAPIName isEqualToString:@"permissions.remove()"]) {
+        if (bool requestingToRemoveFunctionalPermissions = permissions.size() && permissions.intersectionWith(allowedPermissions).size()) {
             *outExceptionString = @"Required permissions cannot be removed.";
             return false;
         }
+
+        for (auto& requestedPattern : matchPatterns) {
+            for (auto& allowedPattern : allowedHostPermissions) {
+                if (allowedPattern->matchesPattern(requestedPattern, { WebExtensionMatchPattern::Options::IgnorePaths })) {
+                    *outExceptionString = @"Required permissions cannot be removed.";
+                    return false;
+                }
+            }
+        }
     }
 
-    allowedPermissions.add(extension.optionalPermissions().begin(), extension.optionalPermissions().end());
+    allowedPermissions.add(extension->optionalPermissions().begin(), extension->optionalPermissions().end());
+    allowedHostPermissions.add(extension->optionalPermissionMatchPatterns().begin(), extension->optionalPermissionMatchPatterns().end());
 
-    bool requestingPermissionsNotDefinedInManifest = permissions.size() && !permissions.isSubset(allowedPermissions);
+    bool requestingPermissionsNotDeclaredInManifest = (permissions.size() && !permissions.isSubset(allowedPermissions)) || (matchPatterns.size() && !allowedHostPermissions.size());
+    if (requestingPermissionsNotDeclaredInManifest) {
+        *outExceptionString = [callingAPIName isEqualToString:@"permissions.remove()"] ? @"Only permissions specified in the manifest may be removed." : @"Only permissions specified in the manifest may be requested.";
+        return false;
+    }
 
-    WebExtension::MatchPatternSet allowedPatterns = extension.requestedPermissionMatchPatterns();
     for (auto& requestedPattern : matchPatterns) {
-        bool requestingAllowedOrigin = false;
-        for (auto& allowedPattern : allowedPatterns) {
-            if (requestedPattern->matchesPattern(allowedPattern, { WebExtensionMatchPattern::Options::IgnorePaths })) {
-                requestingAllowedOrigin = true;
+        bool matchFound = false;
+        for (auto& allowedPattern : allowedHostPermissions) {
+            if (allowedPattern->matchesPattern(requestedPattern, { WebExtensionMatchPattern::Options::IgnorePaths })) {
+                matchFound = true;
                 break;
             }
         }
 
-        if (!requestingAllowedOrigin || requestingPermissionsNotDefinedInManifest) {
-            *outExceptionString = [callingAPIName isEqualToString:@"remove()"] ? @"Only permissions specified in the manifest may be removed" : @"Only permissions specified in the manifest may be requested.";
+        if (!matchFound) {
+            *outExceptionString = [callingAPIName isEqualToString:@"permissions.remove()"] ? @"Only permissions specified in the manifest may be removed." : @"Only permissions specified in the manifest may be requested.";
             return false;
         }
     }
@@ -182,7 +216,7 @@ bool WebExtensionAPIPermissions::validatePermissionsDetails(HashSet<String>& per
 WebExtensionAPIEvent& WebExtensionAPIPermissions::onAdded()
 {
     if (!m_onAdded)
-        m_onAdded = WebExtensionAPIEvent::create(forMainWorld(), runtime(), extensionContext());
+        m_onAdded = WebExtensionAPIEvent::create(forMainWorld(), runtime(), extensionContext(), WebExtensionEventListenerType::PermissionsOnAdded);
 
     return *m_onAdded;
 }
@@ -190,7 +224,7 @@ WebExtensionAPIEvent& WebExtensionAPIPermissions::onAdded()
 WebExtensionAPIEvent& WebExtensionAPIPermissions::onRemoved()
 {
     if (!m_onRemoved)
-        m_onRemoved = WebExtensionAPIEvent::create(forMainWorld(), runtime(), extensionContext());
+        m_onRemoved = WebExtensionAPIEvent::create(forMainWorld(), runtime(), extensionContext(), WebExtensionEventListenerType::PermissionsOnRemoved);
 
     return *m_onRemoved;
 }

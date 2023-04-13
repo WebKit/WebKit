@@ -30,11 +30,10 @@
 #include "Cursor.h"
 #include "Document.h"
 #include "Element.h"
-#include "FrameView.h"
 #include "FrameWin.h"
 #include "GraphicsContext.h"
 #include "IntRect.h"
-
+#include "LocalFrameView.h"
 #include <winsock2.h>
 #include <windows.h>
 
@@ -64,10 +63,8 @@ void Widget::setCursor(const Cursor& cursor)
         return;
     }
 
-    FrameView* view = root();
-    if (!view)
-        return;
-    view->hostWindow()->setCursor(cursor);
+    if (auto* view = root())
+        view->hostWindow()->setCursor(cursor);
 }
 
 void Widget::paint(GraphicsContext&, const IntRect&, SecurityOriginPaintPolicy, EventRegionContext*)

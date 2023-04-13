@@ -21,7 +21,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #pragma once
@@ -111,7 +111,7 @@ private:
 
 #if ENABLE(TELEPHONE_NUMBER_DETECTION) && PLATFORM(IOS_FAMILY)
     void insertPhoneNumberLink(const String&);
-    void linkifyPhoneNumbers(const String&, WhitespaceMode);
+    void linkifyPhoneNumbers(const String&);
 #endif
 
     void processToken(AtomHTMLToken&&);
@@ -141,6 +141,7 @@ private:
 
     void processAnyOtherEndTagForInBody(AtomHTMLToken&&);
 
+    inline bool consumeAndInsertWhitespace(ExternalCharacterTokenBuffer&);
     void processCharacterBuffer(ExternalCharacterTokenBuffer&);
     inline void processCharacterBufferForInBody(ExternalCharacterTokenBuffer&);
 
@@ -165,7 +166,7 @@ private:
 
     bool shouldProcessTokenInForeignContent(const AtomHTMLToken&);
     void processTokenInForeignContent(AtomHTMLToken&&);
-    
+
     HTMLStackItem& adjustedCurrentStackItem();
 
     void callTheAdoptionAgency(AtomHTMLToken&);

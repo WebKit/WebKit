@@ -64,7 +64,7 @@ MockData = {
             db.insert('test_runs', {id: 801, config: 301, build: 901, mean_cache: 100}),
         ]);
     },
-    addMockData: function (db, statusList, needsNotification = true, urlList = null, commitSetList = null, repetitionType = 'alternating', mayNeedMoreRequests = false)
+    addMockData: function (db, statusList, needsNotification = true, urlList = null, commitSetList = null, repetitionType = 'alternating', mayNeedMoreRequests = false, hidden = false)
     {
         if (!statusList)
             statusList = ['pending', 'pending', 'pending', 'pending'];
@@ -84,7 +84,8 @@ MockData = {
                 start_run: 801, start_run_time: '2015-10-27T12:05:27.1Z',
                 end_run: 801, end_run_time: '2015-10-27T12:05:27.1Z'}),
             db.insert('analysis_test_groups', {id: 600, task: 500, name: 'some test group', initial_repetition_count: 2,
-                needs_notification: needsNotification, repetition_type: repetitionType, may_need_more_requests: mayNeedMoreRequests}),
+                needs_notification: needsNotification, repetition_type: repetitionType,
+                may_need_more_requests: mayNeedMoreRequests, hidden: hidden}),
             db.insert('build_requests', {id: 700, status: statusList[0], url: urlList[0], triggerable: 1000, repository_group: 2001, platform: 65, test: 200, group: 600, order: 0, commit_set: commitSetList[0]}),
             db.insert('build_requests', {id: 701, status: statusList[1], url: urlList[1], triggerable: 1000, repository_group: 2001, platform: 65, test: 200, group: 600, order: 1, commit_set: commitSetList[1]}),
             db.insert('build_requests', {id: 702, status: statusList[2], url: urlList[2], triggerable: 1000, repository_group: 2001, platform: 65, test: 200, group: 600, order: 2, commit_set: commitSetList[2]}),

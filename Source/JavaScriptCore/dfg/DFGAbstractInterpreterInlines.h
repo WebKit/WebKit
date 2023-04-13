@@ -35,6 +35,7 @@
 #include "DFGAbstractInterpreterClobberState.h"
 #include "DOMJITGetterSetter.h"
 #include "DOMJITSignature.h"
+#include "FunctionPrototype.h"
 #include "GetByStatus.h"
 #include "GetterSetter.h"
 #include "HashMapImplInlines.h"
@@ -213,7 +214,8 @@ inline ToThisResult isToThisAnIdentity(ECMAMode ecmaMode, AbstractValue& valueFo
         }
     }
 
-    if ((ecmaMode.isStrict() || (valueForNode.m_type && !(valueForNode.m_type & ~SpecObject))) && valueForNode.m_structure.isFinite()) {
+    bool onlyObjects = valueForNode.m_type && !(valueForNode.m_type & ~SpecObject);
+    if ((ecmaMode.isStrict() || onlyObjects) && valueForNode.m_structure.isFinite()) {
         bool allStructuresAreJSScope = !valueForNode.m_structure.isClear();
         bool overridesToThis = false;
         valueForNode.m_structure.forEach([&](RegisteredStructure structure) {
@@ -230,9 +232,13 @@ inline ToThisResult isToThisAnIdentity(ECMAMode ecmaMode, AbstractValue& valueFo
             // If all the structures are JSScope's ones, we know the details of JSScope::toThis() operation.
             allStructuresAreJSScope &= structure->classInfoForCells()->isSubClassOf(JSScope::info());
         });
+
+        // This is correct for strict mode even if this can have non objects, since the right semantics is Identity.
         if (!overridesToThis)
             return ToThisResult::Identity;
-        if (allStructuresAreJSScope) {
+
+        // But this folding is available only if input is always an object.
+        if (onlyObjects && allStructuresAreJSScope) {
             if (ecmaMode.isStrict())
                 return ToThisResult::Undefined;
             return ToThisResult::GlobalThis;
@@ -379,6 +385,13 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case IdentityWithProfile:
     case Identity: {
         setForNode(node, forNode(node->child1()));
+        if (forNode(node).value())
+            m_state.setShouldTryConstantFolding(true);
+        break;
+    }
+
+    case ExtractFromTuple: {
+        setForNode(node, m_state.forTupleNode(node->child1(), node->extractOffset()));
         if (forNode(node).value())
             m_state.setShouldTryConstantFolding(true);
         break;
@@ -1291,7 +1304,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         switch (node->child1().useKind()) {
         case Int32Use:
             if (std::optional<double> number = child.toNumberFromPrimitive()) {
-                JSValue result = jsNumber(fabs(*number));
+                JSValue result = jsNumber(std::abs(*number));
                 if (result.isInt32()) {
                     setConstant(node, result);
                     break;
@@ -1301,7 +1314,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             break;
         case DoubleRepUse:
             if (std::optional<double> number = child.toNumberFromPrimitive()) {
-                setConstant(node, jsDoubleNumber(fabs(*number)));
+                setConstant(node, jsDoubleNumber(std::abs(*number)));
                 break;
             }
             setNonCellTypeForNode(node, typeOfDoubleAbs(forNode(node->child1()).m_type));
@@ -2943,6 +2956,32 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
     }
 
+    case FunctionBind: {
+        if (m_graph.m_plan.isUnlinked()) {
+            clobberWorld();
+            setTypeForNode(node, SpecFunction);
+            break;
+        }
+
+        JSGlobalObject* globalObject = m_graph.globalObjectFor(node->origin.semantic);
+        Edge target = m_graph.child(node, 0);
+        AbstractValue& targetValue = forNode(target);
+        auto& structureSet = targetValue.m_structure;
+        if (!(targetValue.m_type & ~SpecFunction) && structureSet.isFinite() && structureSet.size() == 1) {
+            RegisteredStructure structure = structureSet.onlyStructure();
+            if (JSBoundFunction::canSkipNameAndLengthMaterialization(globalObject, structure.get())) {
+                m_state.setShouldTryConstantFolding(true);
+                didFoldClobberWorld();
+                setForNode(node, globalObject->boundFunctionStructure());
+                break;
+            }
+        }
+
+        clobberWorld();
+        setTypeForNode(node, SpecFunction);
+        break;
+    }
+
     case NumberToStringWithRadix: {
         JSValue radixValue = forNode(node->child2()).m_value;
         if (radixValue && radixValue.isInt32()) {
@@ -3344,10 +3383,6 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         setForNode(node, m_codeBlock->globalObjectFor(node->origin.semantic)->clonedArgumentsStructure());
         break;
 
-    case CreateArgumentsButterfly:
-        setForNode(node, m_vm.immutableButterflyStructures[arrayIndexFromIndexingType(CopyOnWriteArrayWithContiguous) - NumberOfIndexingShapes].get());
-        break;
-
     case NewGeneratorFunction:
         setForNode(node, 
             m_codeBlock->globalObjectFor(node->origin.semantic)->generatorFunctionStructure());
@@ -3362,6 +3397,11 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         setForNode(node, 
             m_codeBlock->globalObjectFor(node->origin.semantic)->asyncFunctionStructure());
         break;
+
+    case NewBoundFunction: {
+        setForNode(node, m_codeBlock->globalObjectFor(node->origin.semantic)->boundFunctionStructure());
+        break;
+    }
 
     case NewFunction: {
         JSGlobalObject* globalObject = m_codeBlock->globalObjectFor(node->origin.semantic);
@@ -3485,9 +3525,22 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case PutClosureVar:
         break;
 
-    case GetInternalField:
+    case GetInternalField: {
+        AbstractValue& child = forNode(node->child1());
+        if (child.m_type && !(child.m_type & ~SpecProxyObject)) {
+            if (node->internalFieldIndex() == static_cast<unsigned>(ProxyObject::Field::Target)) {
+                setTypeForNode(node, SpecObject);
+                break;
+            }
+            if (node->internalFieldIndex() == static_cast<unsigned>(ProxyObject::Field::Handler)) {
+                setTypeForNode(node, SpecObject | SpecOther);
+                break;
+            }
+        }
+
         makeBytecodeTopForNode(node);
         break;
+    }
 
     case PutInternalField:
         break;
@@ -3548,6 +3601,9 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                         break;
 
                     if (attemptToFold(m_vm.propertyNames->unicode.impl(), globalObject->regExpProtoUnicodeGetter()))
+                        break;
+
+                    if (attemptToFold(m_vm.propertyNames->unicodeSets.impl(), globalObject->regExpProtoUnicodeSetsGetter()))
                         break;
 
                     if (attemptToFold(m_vm.propertyNames->replaceSymbol.impl(), globalObject->regExpProtoSymbolReplaceFunction()))
@@ -4475,11 +4531,13 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
 
     case EnumeratorNextUpdateIndexAndMode: {
         ArrayMode arrayMode = node->arrayMode();
-        if (node->enumeratorMetadata() == JSPropertyNameEnumerator::OwnStructureMode && m_graph.varArgChild(node, 0).useKind() == CellUse) {
-            // Do nothing.
-        } else if (node->enumeratorMetadata() != JSPropertyNameEnumerator::IndexedMode)
+        if (node->enumeratorMetadata() == JSPropertyNameEnumerator::OwnStructureMode && m_graph.varArgChild(node, 0).useKind() == CellUse)
+            setTupleConstant(node, 1, jsNumber(static_cast<uint8_t>(JSPropertyNameEnumerator::OwnStructureMode)));
+        else if (node->enumeratorMetadata() != JSPropertyNameEnumerator::IndexedMode) {
+            m_state.setNonCellTypeForTupleNode(node, 1, SpecInt32Only);
             clobberWorld();
-        else {
+        } else {
+            setTupleConstant(node, 1, jsNumber(static_cast<uint8_t>(JSPropertyNameEnumerator::IndexedMode)));
             switch (arrayMode.type()) {
             case Array::Int32:
             case Array::Double:
@@ -4495,25 +4553,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             }
             }
         }
-        setNonCellTypeForNode(node, SpecBytecodeNumber);
-        break;
-    }
-
-    case EnumeratorNextExtractMode: {
-        if (node->child1()->enumeratorMetadata() == JSPropertyNameEnumerator::IndexedMode) {
-            setConstant(node, jsNumber(static_cast<uint8_t>(JSPropertyNameEnumerator::IndexedMode)));
-            break;
-        }
-
-        if (node->child1()->enumeratorMetadata() == JSPropertyNameEnumerator::OwnStructureMode && m_graph.varArgChild(node->child1().node(), 0).useKind() == CellUse) {
-            setConstant(node, jsNumber(static_cast<uint8_t>(JSPropertyNameEnumerator::OwnStructureMode)));
-            break;
-        }
-
-        FALLTHROUGH;
-    }
-    case EnumeratorNextExtractIndex: {
-        setNonCellTypeForNode(node, SpecInt32Only);
+        m_state.setNonCellTypeForTupleNode(node, 0, SpecInt32Only);
         break;
     }
 
@@ -4668,6 +4708,10 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             setNonCellTypeForNode(node, SpecInt32Only);
             break;
         }
+        case Wasm::TypeKind::I64: {
+            setTypeForNode(node, SpecBigInt);
+            break;
+        }
         case Wasm::TypeKind::Ref:
         case Wasm::TypeKind::RefNull:
         case Wasm::TypeKind::Funcref:
@@ -4680,7 +4724,9 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             setNonCellTypeForNode(node, SpecBytecodeDouble);
             break;
         }
+        case Wasm::TypeKind::V128:
         default: {
+            RELEASE_ASSERT_NOT_REACHED();
             break;
         }
         }

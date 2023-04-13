@@ -95,7 +95,7 @@ function test() {
     }
     floatTime += preciseTime() - start
 
-    print("Vector runtime with float as baseline: ", simdTime / floatTime, "times as long: SIMD took ", Math.round(simdTime*1000)/1000, " vs ", Math.round(floatTime*1000)/1000)
+    // print("Vector runtime with float as baseline: ", simdTime / floatTime, "times as long: SIMD took ", Math.round(simdTime*1000)/1000, " vs ", Math.round(floatTime*1000)/1000)
 
 }
 if (typeof WebAssembly === "object")

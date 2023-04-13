@@ -92,8 +92,8 @@ public:
         return !(*this == other);
     }
 
-    static ProcessQualified generateThreadSafe() { return { T::generateThreadSafe(), Process::identifier() }; }
     static ProcessQualified generate() { return { T::generate(), Process::identifier() }; }
+
     String toString() const { return makeString(m_processIdentifier.toUInt64(), '-', m_object.toUInt64()); }
 
     template<typename Encoder> void encode(Encoder& encoder) const { encoder << m_object << m_processIdentifier; }

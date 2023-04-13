@@ -112,7 +112,7 @@ template<typename T>
 class ObjectIdentifierWriteReference {
 public:
     using Reference = ObjectIdentifierReference<T>;
-    static ObjectIdentifierWriteReference<T> generateForAdd() { return { { T::generateThreadSafe(), 0 }, 0 }; }
+    static ObjectIdentifierWriteReference<T> generateForAdd() { return { { T::generate(), 0 }, 0 }; }
 
     ObjectIdentifierWriteReference(Reference reference, uint64_t pendingReads)
         : m_reference(reference)

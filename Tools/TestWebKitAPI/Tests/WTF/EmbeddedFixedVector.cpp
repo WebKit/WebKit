@@ -26,6 +26,7 @@
 #include "config.h"
 
 #include "MoveOnly.h"
+#include <array>
 #include <wtf/EmbeddedFixedVector.h>
 
 namespace TestWebKitAPI {

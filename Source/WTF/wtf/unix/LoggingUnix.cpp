@@ -34,6 +34,10 @@ String logLevelString()
 {
     char* logEnv = getenv("WEBKIT_DEBUG");
 
+    // Disable all log channels if WEBKIT_DEBUG is unset.
+    if (!logEnv || !*logEnv)
+        return makeString("-all"_s);
+
     // We set up the logs anyway because some of our logging, such as Soup's is available in release builds.
 #if defined(NDEBUG) && RELEASE_LOG_DISABLED
     WTFLogAlways("WEBKIT_DEBUG is not empty, but this is a release build. Notice that many log messages will only appear in a debug build.");

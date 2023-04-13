@@ -85,6 +85,8 @@ _TYPES_WITH_OPEN_FIELDS = {
     "Timeline.TimelineEvent": [],
     "CSS.CSSProperty": ["priority", "parsedOk", "status"],
     "DOM.HighlightConfig": [],
+    "DOM.GridOverlayConfig": [],
+    "DOM.FlexOverlayConfig": [],
     "DOM.RGBAColor": [],
     "DOMStorage.StorageId": [],
     "Debugger.BreakpointAction": [],

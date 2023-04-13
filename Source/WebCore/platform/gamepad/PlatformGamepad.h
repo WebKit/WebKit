@@ -32,13 +32,16 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
 #include <wtf/MonotonicTime.h>
+#include <wtf/WeakHashMap.h>
+#include <wtf/WeakHashSet.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 struct GamepadEffectParameters;
 
-class PlatformGamepad {
+class PlatformGamepad : public CanMakeWeakPtr<PlatformGamepad> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~PlatformGamepad() = default;

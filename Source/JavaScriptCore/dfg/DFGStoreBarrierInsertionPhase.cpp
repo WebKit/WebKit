@@ -385,11 +385,11 @@ private:
             case CreateDirectArguments:
             case CreateScopedArguments:
             case CreateClonedArguments:
-            case CreateArgumentsButterfly:
             case NewFunction:
             case NewGeneratorFunction:
             case NewAsyncGeneratorFunction:
             case NewAsyncFunction:
+            case NewBoundFunction:
             case AllocatePropertyStorage:
             case ReallocatePropertyStorage:
                 // Nodes that allocate get to set their epoch because for those nodes we know

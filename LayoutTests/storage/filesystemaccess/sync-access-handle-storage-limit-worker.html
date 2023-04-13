@@ -1,0 +1,17 @@
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<script>
+// FileSystemSyncAccessHandle requires to hold at least 1 MB space.
+const quota = 1024 * 1024;
+if (window.testRunner) {
+    testRunner.setQuota(quota);
+    testRunner.setAllowStorageQuotaIncrease(false);
+}
+const worker = startWorker('resources/sync-access-handle-storage-limit.js');
+worker.postMessage(quota);
+</script>
+</body>
+</html>

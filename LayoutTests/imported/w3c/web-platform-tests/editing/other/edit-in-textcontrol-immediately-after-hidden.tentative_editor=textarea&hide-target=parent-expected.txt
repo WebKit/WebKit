@@ -1,0 +1,8 @@
+
+PASS Wait for load event
+PASS execCommand("insertText", false, "typed value") in <textarea>
+PASS execCommand("delete") in <textarea>
+PASS <textarea> is hidden by "keydown" event listener
+PASS <textarea> is hidden by "keypress" event listener
+PASS <textarea> is hidden by "beforeinput" event listener
+

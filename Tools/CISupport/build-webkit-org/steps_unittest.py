@@ -27,6 +27,7 @@ import shutil
 import tempfile
 
 from buildbot.process.results import Results, SUCCESS, FAILURE, WARNINGS, SKIPPED, EXCEPTION, RETRY
+from buildbot.test.fake.fakebuild import FakeBuild
 from buildbot.test.fake.remotecommand import Expect, ExpectRemoteRef, ExpectShell
 from buildbot.test.util.misc import TestReactorMixin
 from buildbot.test.util.steps import BuildStepMixin
@@ -926,6 +927,64 @@ class TestRunWebKitTests(BuildStepMixinAdditions, unittest.TestCase):
         self.expectOutcome(result=EXCEPTION, state_string='layout-tests (exception)')
         return self.runStep()
 
+    def test_gtk_parameters(self):
+        self.configureStep()
+        self.setProperty('fullPlatform', 'gtk')
+        self.setProperty('platform', 'gtk')
+        self.setProperty('configuration', 'release')
+        self.setProperty('buildername', 'GTK-Linux-64-bit-Release-Tests')
+        self.setProperty('buildnumber', '103')
+        self.setProperty('workername', 'gtk103')
+        self.expectRemoteCommands(
+            ExpectShell(
+                workdir='wkdir',
+                timeout=1200,
+                logEnviron=False,
+                command=['python3', 'Tools/Scripts/run-webkit-tests', '--no-build', '--no-show-results',
+                         '--no-new-test-results', '--clobber-old-results',
+                         '--builder-name', 'GTK-Linux-64-bit-Release-Tests',
+                         '--build-number', '103', '--buildbot-worker', 'gtk103',
+                         '--buildbot-master', CURRENT_HOSTNAME,
+                         '--report', RESULTS_WEBKIT_URL,
+                         '--exit-after-n-crashes-or-timeouts', '50',
+                         '--exit-after-n-failures', '500',
+                         '--release', '--gtk', '--results-directory', 'layout-test-results',
+                         '--debug-rwt-logging', '--enable-core-dumps-nolimit'],
+                env={'RESULTS_SERVER_API_KEY': 'test-api-key'}
+            ) + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='layout-tests')
+        return self.runStep()
+
+    def test_wpe_parameters(self):
+        self.configureStep()
+        self.setProperty('fullPlatform', 'wpe')
+        self.setProperty('platform', 'wpe')
+        self.setProperty('configuration', 'release')
+        self.setProperty('buildername', 'WPE-Linux-64-bit-Release-Tests')
+        self.setProperty('buildnumber', '103')
+        self.setProperty('workername', 'wpe103')
+        self.expectRemoteCommands(
+            ExpectShell(
+                workdir='wkdir',
+                timeout=1200,
+                logEnviron=False,
+                command=['python3', 'Tools/Scripts/run-webkit-tests', '--no-build', '--no-show-results',
+                         '--no-new-test-results', '--clobber-old-results',
+                         '--builder-name', 'WPE-Linux-64-bit-Release-Tests',
+                         '--build-number', '103', '--buildbot-worker', 'wpe103',
+                         '--buildbot-master', CURRENT_HOSTNAME,
+                         '--report', RESULTS_WEBKIT_URL,
+                         '--exit-after-n-crashes-or-timeouts', '50',
+                         '--exit-after-n-failures', '500',
+                         '--release', '--wpe', '--results-directory', 'layout-test-results',
+                         '--debug-rwt-logging', '--enable-core-dumps-nolimit'],
+                env={'RESULTS_SERVER_API_KEY': 'test-api-key'}
+            ) + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='layout-tests')
+        return self.runStep()
+
 
 class TestRunWebKit1Tests(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
@@ -1056,9 +1115,9 @@ class TestSetPermissions(BuildStepMixinAdditions, unittest.TestCase):
 
     def test_success(self):
         self.setupStep(SetPermissions())
-        self.setProperty('result_directory', 'public_html/results/Apple-BigSur-Release-WK2-Tests/r277034 (2346)')
+        self.setProperty('result_directory', 'public_html/results/Apple-Monterey-Release-WK2-Tests/r277034 (2346)')
         self.expectLocalCommands(
-            ExpectMasterShellCommand(command=['chmod', 'a+rx', 'public_html/results/Apple-BigSur-Release-WK2-Tests/r277034 (2346)'])
+            ExpectMasterShellCommand(command=['chmod', 'a+rx', 'public_html/results/Apple-Monterey-Release-WK2-Tests/r277034 (2346)'])
             + 0,
         )
         self.expectOutcome(result=SUCCESS, state_string='Ran')
@@ -1140,6 +1199,7 @@ ProductVersion:	12.0.1
 BuildVersion:	21A558'''),
             ExpectShell(command=['system_profiler', 'SPSoftwareDataType', 'SPHardwareDataType'], workdir='wkdir', timeout=60, logEnviron=False) + 0
             + ExpectShell.log('stdio', stdout='Configuration version: Software: System Software Overview: System Version: macOS 11.4 (20F71) Kernel Version: Darwin 20.5.0 Boot Volume: Macintosh HD Boot Mode: Normal Computer Name: bot1020 User Name: WebKit Build Worker (buildbot) Secure Virtual Memory: Enabled System Integrity Protection: Enabled Time since boot: 27 seconds Hardware: Hardware Overview: Model Name: Mac mini Model Identifier: Macmini8,1 Processor Name: 6-Core Intel Core i7 Processor Speed: 3.2 GHz Number of Processors: 1 Total Number of Cores: 6 L2 Cache (per Core): 256 KB L3 Cache: 12 MB Hyper-Threading Technology: Enabled Memory: 32 GB System Firmware Version: 1554.120.19.0.0 (iBridge: 18.16.14663.0.0,0) Serial Number (system): C07DXXXXXXXX Hardware UUID: F724DE6E-706A-5A54-8D16-000000000000 Provisioning UDID: E724DE6E-006A-5A54-8D16-000000000000 Activation Lock Status: Disabled Xcode 12.5 Build version 12E262'),
+            ExpectShell(command=['/bin/sh', '-c', 'echo TimezoneVers: $(cat /usr/share/zoneinfo/+VERSION)'], workdir='wkdir', timeout=60, logEnviron=False) + 0,
             ExpectShell(command=['xcodebuild', '-sdk', '-version'], workdir='wkdir', timeout=60, logEnviron=False)
             + ExpectShell.log('stdio', stdout='''MacOSX12.0.sdk - macOS 12.0 (macosx12.0)
 SDKVersion: 12.0
@@ -1181,6 +1241,7 @@ ProductVersion:	11.6
 BuildVersion:	20G165'''),
             ExpectShell(command=['system_profiler', 'SPSoftwareDataType', 'SPHardwareDataType'], workdir='wkdir', timeout=60, logEnviron=False) + 0
             + ExpectShell.log('stdio', stdout='Sample system information'),
+            ExpectShell(command=['/bin/sh', '-c', 'echo TimezoneVers: $(cat /usr/share/zoneinfo/+VERSION)'], workdir='wkdir', timeout=60, logEnviron=False) + 0,
             ExpectShell(command=['xcodebuild', '-sdk', '-version'], workdir='wkdir', timeout=60, logEnviron=False)
             + ExpectShell.log('stdio', stdout='''iPhoneSimulator15.0.sdk - Simulator - iOS 15.0 (iphonesimulator15.0)
 SDKVersion: 15.0
@@ -1214,6 +1275,7 @@ ProductVersion:	11.6
 BuildVersion:	20G165'''),
             ExpectShell(command=['system_profiler', 'SPSoftwareDataType', 'SPHardwareDataType'], workdir='wkdir', timeout=60, logEnviron=False) + 0
             + ExpectShell.log('stdio', stdout='Sample system information'),
+            ExpectShell(command=['/bin/sh', '-c', 'echo TimezoneVers: $(cat /usr/share/zoneinfo/+VERSION)'], workdir='wkdir', timeout=60, logEnviron=False) + 0,
             ExpectShell(command=['xcodebuild', '-sdk', '-version'], workdir='wkdir', timeout=60, logEnviron=False) + 0
             + ExpectShell.log('stdio', stdout='''Xcode 13.0\nBuild version 13A233'''),
         )
@@ -1286,6 +1348,7 @@ BuildVersion:	20G165'''),
 OSError: [Errno 2] No such file or directory'''),
             ExpectShell(command=['system_profiler', 'SPSoftwareDataType', 'SPHardwareDataType'], workdir='wkdir', timeout=60, logEnviron=False) + 0
             + ExpectShell.log('stdio', stdout='Sample system information'),
+            ExpectShell(command=['/bin/sh', '-c', 'echo TimezoneVers: $(cat /usr/share/zoneinfo/+VERSION)'], workdir='wkdir', timeout=60, logEnviron=False) + 0,
             ExpectShell(command=['xcodebuild', '-sdk', '-version'], workdir='wkdir', timeout=60, logEnviron=False)
             + ExpectShell.log('stdio', stdout='''Upon execvpe xcodebuild ['xcodebuild', '-sdk', '-version'] in environment id 7696545612416
 :Traceback (most recent call last):
@@ -1341,4 +1404,116 @@ class TestInstallBuiltProduct(BuildStepMixinAdditions, unittest.TestCase):
             + 2,
         )
         self.expectOutcome(result=FAILURE, state_string='Installed Built Product (failure)')
+        return self.runStep()
+
+
+class TestGenerateUploadBundleSteps(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        def fakeaddStepsAfterCurrentStep(self, step_factories):
+            self.addedStepsAfterCurrentStep = step_factories
+
+        FakeBuild.addedStepsAfterCurrentStep = []
+        FakeBuild.addStepsAfterCurrentStep = fakeaddStepsAfterCurrentStep
+        self.longMessage = True
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def setUpPropertiesForTest(self):
+        self.setProperty('fullPlatform', 'gtk')
+        self.setProperty('configuration', 'release')
+        self.setProperty('buildername', 'GTK-Linux-64-bit-Release-Build')
+        self.setProperty('archive_revision', '261281@main')
+
+    def test_success_generate_minibrowser_bundle(self):
+        self.setupStep(GenerateMiniBrowserBundle())
+        self.setUpPropertiesForTest()
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        command=['Tools/Scripts/generate-bundle', '--builder-name', 'GTK-Linux-64-bit-Release-Build', '--bundle=MiniBrowser', '--platform=gtk', '--release', '--revision=261281@main'],
+                        logEnviron=True,
+                        timeout=1200,
+                        )
+            + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='generated minibrowser bundle')
+        rc = self.runStep()
+        self.assertTrue(UploadMiniBrowserBundleViaSftp() in self.build.addedStepsAfterCurrentStep)
+        return rc
+
+    def test_failure_generate_minibrowser_bundle(self):
+        self.setupStep(GenerateMiniBrowserBundle())
+        self.setUpPropertiesForTest()
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        command=['Tools/Scripts/generate-bundle', '--builder-name', 'GTK-Linux-64-bit-Release-Build', '--bundle=MiniBrowser', '--platform=gtk', '--release', '--revision=261281@main'],
+                        logEnviron=True,
+                        timeout=1200,
+                        )
+            + 2,
+        )
+        self.expectOutcome(result=FAILURE, state_string='generated minibrowser bundle (failure)')
+        rc = self.runStep()
+        self.assertTrue(UploadMiniBrowserBundleViaSftp() not in self.build.addedStepsAfterCurrentStep)
+        return rc
+
+    def test_success_generate_jsc_bundle(self):
+        self.setupStep(GenerateJSCBundle())
+        self.setUpPropertiesForTest()
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        command=['Tools/Scripts/generate-bundle', '--builder-name', 'GTK-Linux-64-bit-Release-Build', '--bundle=jsc', '--syslibs=bundle-all', '--platform=gtk', '--release', '--revision=261281@main'],
+                        logEnviron=True,
+                        timeout=1200,
+                        )
+            + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='generated jsc bundle')
+        rc = self.runStep()
+        self.assertTrue(UploadJSCBundleViaSftp() in self.build.addedStepsAfterCurrentStep)
+        return rc
+
+    def test_failure_generate_jsc_bundle(self):
+        self.setupStep(GenerateJSCBundle())
+        self.setUpPropertiesForTest()
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        command=['Tools/Scripts/generate-bundle', '--builder-name', 'GTK-Linux-64-bit-Release-Build', '--bundle=jsc', '--syslibs=bundle-all', '--platform=gtk', '--release', '--revision=261281@main'],
+                        logEnviron=True,
+                        timeout=1200,
+                        )
+            + 2,
+        )
+        self.expectOutcome(result=FAILURE, state_string='generated jsc bundle (failure)')
+        rc = self.runStep()
+        self.assertTrue(UploadJSCBundleViaSftp() not in self.build.addedStepsAfterCurrentStep)
+        return rc
+
+    def test_parameters_upload_minibrowser_bundle_sftp(self):
+        self.setupStep(UploadMiniBrowserBundleViaSftp())
+        self.setUpPropertiesForTest()
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        command=['python3', 'Tools/CISupport/Shared/transfer-archive-via-sftp', '--remote-config-file', '../../remote-minibrowser-bundle-upload-config.json', '--remote-file', 'MiniBrowser_gtk_261281@main.zip', 'WebKitBuild/MiniBrowser_gtk_release.zip'],
+                        logEnviron=True,
+                        timeout=1200,
+                        )
+            + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='uploaded minibrowser bundle via sftp')
+        return self.runStep()
+
+    def test_parameters_upload_jsc_bundle_sftp(self):
+        self.setupStep(UploadJSCBundleViaSftp())
+        self.setUpPropertiesForTest()
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        command=['python3', 'Tools/CISupport/Shared/transfer-archive-via-sftp', '--remote-config-file', '../../remote-jsc-bundle-upload-config.json', '--remote-file', '261281@main.zip', 'WebKitBuild/jsc_gtk_release.zip'],
+                        logEnviron=True,
+                        timeout=1200,
+                        )
+            + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='uploaded jsc bundle via sftp')
         return self.runStep()

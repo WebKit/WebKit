@@ -45,7 +45,7 @@ void OriginLock::lock() WTF_IGNORES_THREAD_SAFETY_ANALYSIS
     m_mutex.lock();
 
 #if USE(FILE_LOCK)
-    m_lockHandle = FileSystem::openAndLockFile(m_lockFileName, FileSystem::FileOpenMode::Write);
+    m_lockHandle = FileSystem::openAndLockFile(m_lockFileName, FileSystem::FileOpenMode::Truncate);
     if (m_lockHandle == FileSystem::invalidPlatformFileHandle) {
         // The only way we can get here is if the directory containing the lock
         // has been deleted or we were given a path to a non-existant directory.

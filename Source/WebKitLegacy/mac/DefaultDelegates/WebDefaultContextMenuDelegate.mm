@@ -46,8 +46,8 @@
 #import <Foundation/NSURLConnection.h>
 #import <Foundation/NSURLRequest.h>
 #import <WebCore/Editor.h>
-#import <WebCore/Frame.h>
 #import <WebCore/FrameLoader.h>
+#import <WebCore/LocalFrame.h>
 #import <WebKitLegacy/DOM.h>
 #import <WebKitLegacy/DOMPrivate.h>
 #import <pal/system/mac/DefaultSearchProvider.h>

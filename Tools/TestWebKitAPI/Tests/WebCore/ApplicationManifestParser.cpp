@@ -47,6 +47,29 @@ static inline std::ostream& operator<<(std::ostream& os, const ApplicationManife
         return os << "ApplicationManifest::Display::Fullscreen";
     }
 }
+
+static inline std::ostream& operator<<(std::ostream& os, const ScreenOrientationLockType& orientation)
+{
+    switch (orientation) {
+    case WebCore::ScreenOrientationLockType::Any:
+        return os << "WebCore::ScreenOrientationLockType::Any";
+    case WebCore::ScreenOrientationLockType::Landscape:
+        return os << "WebCore::ScreenOrientationLockType::Landscape";
+    case WebCore::ScreenOrientationLockType::LandscapePrimary:
+        return os << "WebCore::ScreenOrientationLockType::LandscapePrimary";
+    case WebCore::ScreenOrientationLockType::LandscapeSecondary:
+        return os << "WebCore::ScreenOrientationLockType::LandscapeSecondary";
+    case WebCore::ScreenOrientationLockType::Natural:
+        return os << "WebCore::ScreenOrientationLockType::Natural";
+    case WebCore::ScreenOrientationLockType::Portrait:
+        return os << "WebCore::ScreenOrientationLockType::Portrait";
+    case WebCore::ScreenOrientationLockType::PortraitPrimary:
+        return os << "WebCore::ScreenOrientationLockType::PortraitPrimary";
+    case WebCore::ScreenOrientationLockType::PortraitSecondary:
+        return os << "WebCore::ScreenOrientationLockType::PortraitSecondary";
+    }
+}
+
 } // namespace WebCore
 
 class ApplicationManifestParserTest : public testing::Test {
@@ -106,6 +129,13 @@ public:
         EXPECT_EQ(expectedValue, value);
     }
 
+    void testOrientation(const String& rawJSON, std::optional<WebCore::ScreenOrientationLockType> expectedValue)
+    {
+        auto manifest = parseTopLevelProperty("orientation"_s, rawJSON);
+        auto value = manifest.orientation;
+        EXPECT_EQ(expectedValue, value);
+    }
+
     void testName(const String& rawJSON, const String& expectedValue)
     {
         auto manifest = parseTopLevelProperty("name"_s, rawJSON);
@@ -138,6 +168,13 @@ public:
     void testScope(const String& rawJSON, const String& expectedValue)
     {
         testScope(rawJSON, String(), expectedValue);
+    }
+
+    void testBackgroundColor(const String& rawJSON, const Color& expectedValue)
+    {
+        auto manifest = parseTopLevelProperty("background_color"_s, rawJSON);
+        auto value = manifest.backgroundColor;
+        EXPECT_EQ(expectedValue, value);
     }
 
     void testThemeColor(const String& rawJSON, const Color& expectedValue)
@@ -305,6 +342,27 @@ TEST_F(ApplicationManifestParserTest, Display)
     testDisplay("\"\t\nMINIMAL-UI \""_s, ApplicationManifest::Display::MinimalUI);
 }
 
+TEST_F(ApplicationManifestParserTest, Orientation)
+{
+    testOrientation(""_s, std::nullopt);
+    testOrientation("123"_s, std::nullopt);
+    testOrientation("null"_s, std::nullopt);
+    testOrientation("true"_s, std::nullopt);
+    testOrientation("{ }"_s, std::nullopt);
+    testOrientation("[ ]"_s, std::nullopt);
+    testOrientation("\"\""_s, std::nullopt);
+    testOrientation("\"garbage string\""_s, std::nullopt);
+
+    testOrientation("\"any\""_s, WebCore::ScreenOrientationLockType::Any);
+    testOrientation("\"natural\""_s, WebCore::ScreenOrientationLockType::Natural);
+    testOrientation("\"landscape\""_s, WebCore::ScreenOrientationLockType::Landscape);
+    testOrientation("\"landscape-primary\""_s, WebCore::ScreenOrientationLockType::LandscapePrimary);
+    testOrientation("\"landscape-secondary\""_s, WebCore::ScreenOrientationLockType::LandscapeSecondary);
+    testOrientation("\"portrait\""_s, WebCore::ScreenOrientationLockType::Portrait);
+    testOrientation("\"portrait-primary\""_s, WebCore::ScreenOrientationLockType::PortraitPrimary);
+    testOrientation("\"portrait-secondary\""_s, WebCore::ScreenOrientationLockType::PortraitSecondary);
+}
+
 TEST_F(ApplicationManifestParserTest, Name)
 {
     testName("123"_s, String());
@@ -386,6 +444,26 @@ TEST_F(ApplicationManifestParserTest, Scope)
     testScope("\"https://example.com/other\""_s, "https://example.com/other/start-url"_s, "https://example.com/other"_s);
 }
 
+TEST_F(ApplicationManifestParserTest, BackgroundColor)
+{
+    testBackgroundColor("123"_s, Color());
+    testBackgroundColor("null"_s, Color());
+    testBackgroundColor("true"_s, Color());
+    testBackgroundColor("{ }"_s, Color());
+    testBackgroundColor("[ ]"_s, Color());
+    testBackgroundColor("\"\""_s, Color());
+    testBackgroundColor("\"garbage string\""_s, Color());
+
+    testBackgroundColor("\"red\""_s, Color::red);
+    testBackgroundColor("\"#f00\""_s, Color::red);
+    testBackgroundColor("\"#ff0000\""_s, Color::red);
+    testBackgroundColor("\"#ff0000ff\""_s, Color::red);
+    testBackgroundColor("\"rgb(255, 0, 0)\""_s, Color::red);
+    testBackgroundColor("\"rgba(255, 0, 0, 1)\""_s, Color::red);
+    testBackgroundColor("\"hsl(0, 100%, 50%)\""_s, Color::red);
+    testBackgroundColor("\"hsla(0, 100%, 50%, 1)\""_s, Color::red);
+}
+
 TEST_F(ApplicationManifestParserTest, ThemeColor)
 {
     testThemeColor("123"_s, Color());
@@ -440,7 +518,6 @@ TEST_F(ApplicationManifestParserTest, Icons)
     OptionSet<ApplicationManifest::Icon::Purpose> purposeMonochromeAny { ApplicationManifest::Icon::Purpose::Monochrome, ApplicationManifest::Icon::Purpose::Any };
 
     testIconsPurposes("\"monochrome any\""_s, purposeMonochromeAny);
-
 }
 
 #endif

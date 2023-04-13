@@ -43,7 +43,7 @@ struct ClientOrigin {
     ClientOrigin isolatedCopy() && { return { WTFMove(topOrigin).isolatedCopy(), WTFMove(clientOrigin).isolatedCopy() }; }
     bool isRelated(const SecurityOriginData& other) const { return topOrigin == other || clientOrigin == other; }
 
-    RegistrableDomain clientRegistrableDomain() const { return RegistrableDomain::uncheckedCreateFromHost(clientOrigin.host); }
+    RegistrableDomain clientRegistrableDomain() const { return RegistrableDomain::uncheckedCreateFromHost(clientOrigin.host()); }
 
     SecurityOriginData topOrigin;
     SecurityOriginData clientOrigin;

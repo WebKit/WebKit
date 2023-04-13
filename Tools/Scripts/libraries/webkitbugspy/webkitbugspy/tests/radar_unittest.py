@@ -31,7 +31,7 @@ class TestRadar(unittest.TestCase):
     def test_encoding(self):
         self.assertEqual(
             radar.Tracker.Encoder().default(radar.Tracker(project='WebKit')),
-            dict(type='radar', projects=['WebKit']),
+            dict(hide_title=True, type='radar', projects=['WebKit']),
         )
 
     def test_decoding(self):
@@ -373,7 +373,32 @@ What version of 'WebKit Text' should the bug be associated with?:
                 redact={'version:Other': True},
             ).issue(1).redacted, radar.Tracker.Redaction(True, "matches 'version:Other'"))
 
+    def test_redaction_exception(self):
+        with wkmocks.Environment(RADAR_USERNAME='tcontributor'), mocks.Radar(issues=mocks.ISSUES, projects=mocks.PROJECTS):
+            self.assertEqual(radar.Tracker(
+                project='WebKit',
+                redact={'.*': True},
+                redact_exemption={'component:Text': True},
+            ).issue(1).redacted, radar.Tracker.Redaction(
+                exemption=True, reason="matches 'component:Text'",
+            ))
+            self.assertEqual(radar.Tracker(
+                project='WebKit',
+                redact={'.*': True},
+                redact_exemption={'component:Scrolling': True},
+            ).issue(1).redacted, radar.Tracker.Redaction(True, 'is a Radar'))
+
     def test_milestone(self):
         with mocks.Radar(issues=mocks.ISSUES):
             tracker = radar.Tracker()
             self.assertEqual(tracker.issue(1).milestone, 'October')
+
+    def test_keywords(self):
+        with mocks.Radar(issues=mocks.ISSUES):
+            tracker = radar.Tracker()
+            self.assertEqual(tracker.issue(1).keywords, ['Keyword A'])
+
+    def test_classification(self):
+        with mocks.Radar(issues=mocks.ISSUES):
+            tracker = radar.Tracker()
+            self.assertEqual(tracker.issue(1).classification, 'Other Bug')

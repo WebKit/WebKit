@@ -22,24 +22,51 @@
 
 headers: "ArgumentCodersCocoa.h"
 
+#if ENABLE(CONTENT_FILTERING)
+class WebCore::ContentFilterUnblockHandler {
+    String unblockURLHost()
+    URL unreachableURL()
+#if HAVE(PARENTAL_CONTROLS_WITH_UNBLOCK_HANDLER)
+    Vector<uint8_t> webFilterEvaluatorData()
+#endif
+#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
+    bool unblockedAfterRequest()
+#endif
+}
+#endif
+
 header: <WebCore/DictionaryPopupInfo.h>
-[CustomHeader=True] struct WebCore::DictionaryPopupInfoCocoa {
+[CustomHeader] struct WebCore::DictionaryPopupInfoCocoa {
     RetainPtr<NSDictionary> options;
-    RetainPtr<NSAttributedString> attributedString;
+    WebCore::AttributedString attributedString;
 };
 
 header: <WebCore/ResourceRequest.h>
-[CustomHeader=True] struct WebCore::ResourceRequestPlatformData {
-    RetainPtr<NSURLRequest> m_urlRequest;
+[CustomHeader] struct WebCore::ResourceRequestPlatformData {
+    [SecureCodingAllowed=[NSMutableURLRequest.class, NSURLRequest.class]] RetainPtr<NSURLRequest> m_urlRequest;
     std::optional<bool> m_isAppInitiated;
     std::optional<WebCore::ResourceRequestRequester> m_requester
 };
 
-struct WebCore::AttributedString {
-    RetainPtr<NSAttributedString> string;
-    RetainPtr<NSDictionary> documentAttributes;
-};
+[Nested] struct WebCore::AttributedString::AttributeValue {
+#if PLATFORM(MAC)
+    std::variant<double, String, URL, Ref<WebCore::Font>, Vector<String>, Vector<double>, RetainPtr<NSParagraphStyle>, RetainPtr<NSTextAttachment>, RetainPtr<NSShadow>, RetainPtr<NSDate>, RetainPtr<NSColor>> value;
 #endif
+#if PLATFORM(IOS_FAMILY)
+    std::variant<double, String, URL, Ref<WebCore::Font>, Vector<String>, Vector<double>, RetainPtr<NSParagraphStyle>, RetainPtr<NSTextAttachment>, RetainPtr<NSShadow>, RetainPtr<NSDate>, RetainPtr<UIColor>> value;
+#endif
+}
+
+[Nested] struct WebCore::AttributedString::Range {
+    size_t location
+    size_t length
+};
+
+struct WebCore::AttributedString {
+    String string;
+    [Validator='WebCore::AttributedString::rangesAreSafe(*string, *attributes)'] Vector<std::pair<WebCore::AttributedString::Range, HashMap<String, WebCore::AttributedString::AttributeValue>>> attributes;
+    std::optional<HashMap<String, WebCore::AttributedString::AttributeValue>> documentAttributes;
+};
 
 #if ENABLE(MEDIA_RECORDER)
 struct WebCore::MediaRecorderPrivateOptions {
@@ -49,3 +76,7 @@ struct WebCore::MediaRecorderPrivateOptions {
     std::optional<unsigned> bitsPerSecond;
 };
 #endif // ENABLE(MEDIA_RECORDER)
+
+[Nested] class WebCore::ProtectionSpace::PlatformData {
+    RetainPtr<NSURLProtectionSpace> nsSpace;
+};

@@ -31,6 +31,7 @@
 namespace WebCore {
 
 class Node;
+class LayoutUnit;
 class VisiblePosition;
 class SimplifiedBackwardsTextIterator;
 class TextIterator;
@@ -55,8 +56,8 @@ WEBCORE_EXPORT VisiblePosition nextSentencePosition(const VisiblePosition&);
 // lines
 WEBCORE_EXPORT VisiblePosition startOfLine(const VisiblePosition&);
 WEBCORE_EXPORT VisiblePosition endOfLine(const VisiblePosition&);
-WEBCORE_EXPORT VisiblePosition previousLinePosition(const VisiblePosition&, int lineDirectionPoint, EditableType = ContentIsEditable);
-WEBCORE_EXPORT VisiblePosition nextLinePosition(const VisiblePosition&, int lineDirectionPoint, EditableType = ContentIsEditable);
+WEBCORE_EXPORT VisiblePosition previousLinePosition(const VisiblePosition&, LayoutUnit lineDirectionPoint, EditableType = ContentIsEditable);
+WEBCORE_EXPORT VisiblePosition nextLinePosition(const VisiblePosition&, LayoutUnit lineDirectionPoint, EditableType = ContentIsEditable);
 WEBCORE_EXPORT bool inSameLine(const VisiblePosition&, const VisiblePosition&);
 WEBCORE_EXPORT bool isStartOfLine(const VisiblePosition&);
 WEBCORE_EXPORT bool isEndOfLine(const VisiblePosition&);
@@ -70,8 +71,8 @@ VisiblePosition rightBoundaryOfLine(const VisiblePosition&, TextDirection, bool*
 WEBCORE_EXPORT VisiblePosition startOfParagraph(const VisiblePosition&, EditingBoundaryCrossingRule = CannotCrossEditingBoundary);
 WEBCORE_EXPORT VisiblePosition endOfParagraph(const VisiblePosition&, EditingBoundaryCrossingRule = CannotCrossEditingBoundary);
 VisiblePosition startOfNextParagraph(const VisiblePosition&);
-WEBCORE_EXPORT VisiblePosition previousParagraphPosition(const VisiblePosition&, int x);
-WEBCORE_EXPORT VisiblePosition nextParagraphPosition(const VisiblePosition&, int x);
+WEBCORE_EXPORT VisiblePosition previousParagraphPosition(const VisiblePosition&, LayoutUnit x);
+WEBCORE_EXPORT VisiblePosition nextParagraphPosition(const VisiblePosition&, LayoutUnit x);
 WEBCORE_EXPORT bool isStartOfParagraph(const VisiblePosition&, EditingBoundaryCrossingRule = CannotCrossEditingBoundary);
 WEBCORE_EXPORT bool isEndOfParagraph(const VisiblePosition&, EditingBoundaryCrossingRule = CannotCrossEditingBoundary);
 bool inSameParagraph(const VisiblePosition&, const VisiblePosition&, EditingBoundaryCrossingRule = CannotCrossEditingBoundary);

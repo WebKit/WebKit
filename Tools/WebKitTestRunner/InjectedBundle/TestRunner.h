@@ -113,6 +113,7 @@ public:
     void setCacheModel(int);
     void setAsynchronousSpellCheckingEnabled(bool);
     void setAllowsAnySSLCertificate(bool);
+
     void setShouldSwapToEphemeralSessionOnNextNavigation(bool);
     void setShouldSwapToDefaultSessionOnNextNavigation(bool);
     void setCustomUserAgent(JSStringRef);
@@ -160,6 +161,7 @@ public:
     bool hasDOMCache(JSStringRef origin);
     uint64_t domCacheSize(JSStringRef origin);
     void setAllowStorageQuotaIncrease(bool);
+    void setQuota(uint64_t);
 
     // Failed load condition testing
     void forceImmediateCompletion();
@@ -295,6 +297,17 @@ public:
     static void removeAllWebNotificationPermissions();
     static void simulateWebNotificationClick(JSValueRef notification);
     static void simulateWebNotificationClickForServiceWorkerNotifications();
+
+    JSRetainPtr<JSStringRef> getBackgroundFetchIdentifier();
+    void abortBackgroundFetch(JSStringRef);
+    void pauseBackgroundFetch(JSStringRef);
+    void resumeBackgroundFetch(JSStringRef);
+    void simulateClickBackgroundFetch(JSStringRef);
+    void setBackgroundFetchPermission(bool);
+    JSRetainPtr<JSStringRef> lastAddedBackgroundFetchIdentifier() const;
+    JSRetainPtr<JSStringRef> lastRemovedBackgroundFetchIdentifier() const;
+    JSRetainPtr<JSStringRef> lastUpdatedBackgroundFetchIdentifier() const;
+    JSRetainPtr<JSStringRef> backgroundFetchState(JSStringRef);
 
     // Geolocation.
     void setGeolocationPermission(bool);

@@ -1,3 +1,4 @@
+
 /*
  * Copyright (C) 2012 Igalia S.L.
  *
@@ -40,9 +41,13 @@ public:
         None
     };
 
-    static void testHandlerMessageReceivedCallback(WebKitUserContentManager* userContentManager, WebKitJavascriptResult* javascriptResult, PolicyClientTest* test)
+#if ENABLE(2022_GLIB_API)
+    static void testHandlerMessageReceivedCallback(WebKitUserContentManager* userContentManager, JSCValue* result, PolicyClientTest* test)
+#else
+    static void testHandlerMessageReceivedCallback(WebKitUserContentManager* userContentManager, WebKitJavascriptResult* result, PolicyClientTest* test)
+#endif
     {
-        GUniquePtr<char> valueString(WebViewTest::javascriptResultToCString(javascriptResult));
+        GUniquePtr<char> valueString(WebViewTest::javascriptResultToCString(result));
         if (g_str_equal(valueString.get(), "autoplayed"))
             test->m_autoplayed = true;
         else if (g_str_equal(valueString.get(), "did-not-play"))
@@ -109,7 +114,11 @@ public:
         : LoadTrackingTest()
     {
         g_signal_connect(m_webView, "decide-policy", G_CALLBACK(decidePolicyCallback), this);
+#if !ENABLE(2022_GLIB_API)
         webkit_user_content_manager_register_script_message_handler(m_userContentManager.get(), "testHandler");
+#else
+        webkit_user_content_manager_register_script_message_handler(m_userContentManager.get(), "testHandler", nullptr);
+#endif
         g_signal_connect(m_userContentManager.get(), "script-message-received::testHandler", G_CALLBACK(testHandlerMessageReceivedCallback), this);
     }
 
@@ -163,7 +172,7 @@ static void testNavigationPolicy(PolicyClientTest* test, gconstpointer)
     g_assert_cmpint(webkit_navigation_action_get_mouse_button(navigationAction), ==, 0);
     g_assert_cmpint(webkit_navigation_action_get_modifiers(navigationAction), ==, 0);
     g_assert_false(webkit_navigation_action_is_redirect(navigationAction));
-    g_assert_null(webkit_navigation_policy_decision_get_frame_name(decision));
+    g_assert_null(webkit_navigation_action_get_frame_name(navigationAction));
     WebKitURIRequest* request = webkit_navigation_action_get_request(navigationAction);
     g_assert_cmpstr(webkit_uri_request_get_uri(request), ==, "http://webkitgtk.org/");
 
@@ -182,7 +191,7 @@ static void testNavigationPolicy(PolicyClientTest* test, gconstpointer)
     decision = WEBKIT_NAVIGATION_POLICY_DECISION(test->m_previousPolicyDecision.get());
     navigationAction = webkit_navigation_policy_decision_get_navigation_action(decision);
     g_assert_true(webkit_navigation_action_is_redirect(navigationAction));
-    g_assert_null(webkit_navigation_policy_decision_get_frame_name(decision));
+    g_assert_null(webkit_navigation_action_get_frame_name(navigationAction));
     request = webkit_navigation_action_get_request(navigationAction);
     g_assert_cmpstr(webkit_uri_request_get_uri(request), ==, kServer->getURIForPath("/").data());
 
@@ -280,7 +289,8 @@ static void testNewWindowPolicy(PolicyClientTest* test, gconstpointer)
     g_assert_true(data.triedToOpenWindow);
 
     WebKitNavigationPolicyDecision* decision = WEBKIT_NAVIGATION_POLICY_DECISION(test->m_previousPolicyDecision.get());
-    g_assert_cmpstr(webkit_navigation_policy_decision_get_frame_name(decision), ==, "_blank");
+    WebKitNavigationAction* navigationAction = webkit_navigation_policy_decision_get_navigation_action(decision);
+    g_assert_cmpstr(webkit_navigation_action_get_frame_name(navigationAction), ==, "_blank");
 
     // Using a short timeout is a bit ugly here, but it's hard to get around because if we block
     // the new window signal we cannot halt the main loop in the create callback. If we

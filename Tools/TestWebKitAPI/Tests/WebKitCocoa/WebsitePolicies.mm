@@ -28,8 +28,10 @@
 #import "DeprecatedGlobalValues.h"
 #import "PlatformUtilities.h"
 #import "TestNavigationDelegate.h"
+#import "TestProtocol.h"
 #import "TestUIDelegate.h"
 #import "TestWKWebView.h"
+#import "WKWebViewConfigurationExtras.h"
 #import <WebKit/WKContentRuleListStorePrivate.h>
 #import <WebKit/WKMutableDictionary.h>
 #import <WebKit/WKNavigationDelegatePrivate.h>
@@ -832,8 +834,8 @@ TEST(WebpagePreferences, WebsitePoliciesAutoplayQuirks)
 
 TEST(WebpagePreferences, WebsitePoliciesPerDocumentAutoplayBehaviorQuirks)
 {
-    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    auto* configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration]);
 
     auto delegate = adoptNS([[AutoplayPoliciesDelegate alloc] init]);
     [webView setNavigationDelegate:delegate.get()];
@@ -888,9 +890,19 @@ TEST(WebpagePreferences, WebsitePoliciesPerDocumentAutoplayBehaviorQuirks)
     [webView mouseUpAtPoint:playButtonClickPoint];
     [webView waitForMessage:@"did-play-video1"];
 
-    // Now video2 should not be allowed to autoplay without a user gesture.
+    // Now video2 should be allowed to autoplay without a user gesture because of transient activation.
     [webView _evaluateJavaScriptWithoutUserGesture:@"playVideo('video2')" completionHandler:nil];
-    [webView waitForMessage:@"did-not-play-video2"];
+    [webView waitForMessage:@"did-play-video2"];
+
+    // Consume the transient activation and video 3 should not be able to play.
+    __block bool ranJS = false;
+    [webView _evaluateJavaScriptWithoutUserGesture:@"window.internals.consumeTransientActivation()" completionHandler:^(id, NSError*) {
+        ranJS = true;
+    }];
+    TestWebKitAPI::Util::run(&ranJS);
+
+    [webView _evaluateJavaScriptWithoutUserGesture:@"playVideo('video3')" completionHandler:nil];
+    [webView waitForMessage:@"did-not-play-video3"];
 }
 #endif
 
@@ -1720,6 +1732,94 @@ TEST(WebpagePreferences, UserExplicitlyPrefersColorSchemeDark)
 
     [webView loadTestPageNamed:@"color-scheme"];
     [webView waitForMessage:@"dark-detected"];
+}
+
+TEST(WebpagePreferences, UserExplicitlyPrefersColorSchemeDarkForContentThatDoesNotSupportDarkMode)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView synchronouslyLoadTestPageNamed:@"color-scheme"];
+
+    NSString *backgroundColorWithoutPreference = [webView stringByEvaluatingJavaScript:@"getComputedStyle(document.body).backgroundColor"];
+
+    configuration.get().defaultWebpagePreferences._colorSchemePreference = _WKWebsiteColorSchemePreferenceDark;
+    webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView synchronouslyLoadTestPageNamed:@"color-scheme"];
+
+    NSString *backgroundColorWithPreference = [webView stringByEvaluatingJavaScript:@"getComputedStyle(document.body).backgroundColor"];
+
+    EXPECT_WK_STREQ(backgroundColorWithoutPreference, backgroundColorWithPreference);
+}
+
+TEST(WebpagePreferences, ContentRuleListEnablement)
+{
+    [TestProtocol registerWithScheme:@"https"];
+
+    NSString *identifierToDisable = @"org.TestWebKitAPI.Disabled";
+    NSString *identifierToEnable = @"org.TestWebKitAPI.Enabled";
+
+    auto directory = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:@"ContentRuleLists"] isDirectory:YES];
+    auto store = [WKContentRuleListStore storeWithURL:directory];
+
+    auto compileRuleList = [&](NSString *identifier, NSString *source) -> RetainPtr<WKContentRuleList> {
+        __block RetainPtr<WKContentRuleList> result;
+        __block bool done = false;
+        [store compileContentRuleListForIdentifier:identifier encodedContentRuleList:source completionHandler:^(WKContentRuleList *rules, NSError *error) {
+            EXPECT_NULL(error);
+            result = rules;
+            done = true;
+        }];
+        TestWebKitAPI::Util::run(&done);
+        return result;
+    };
+
+    constexpr auto contentRulesToDisable = "[{"
+        "\"trigger\": { \"url-filter\": \"^https://bundle-file/400x400-green.png$\" },"
+        "\"action\": { \"type\": \"block\" }"
+        "}]";
+
+    constexpr auto contentRulesToEnable = "[{"
+        "\"trigger\": { \"url-filter\": \"^https://bundle-file/sunset-in-cupertino-200px.png$\" },"
+        "\"action\": { \"type\": \"block\" }"
+        "}]";
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [[configuration defaultWebpagePreferences] _setContentRuleListsEnabled:YES exceptions:[NSSet setWithObject:identifierToDisable]];
+
+    auto rulesToDisable = compileRuleList(identifierToDisable, @(contentRulesToDisable));
+    [[configuration userContentController] addContentRuleList:rulesToDisable.get()];
+
+    auto rulesToEnable = compileRuleList(identifierToEnable, @(contentRulesToEnable));
+    [[configuration userContentController] addContentRuleList:rulesToEnable.get()];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
+    RetainPtr request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"https://bundle-file/load-image.html"]];
+    [webView synchronouslyLoadRequest:request.get()];
+
+    auto canLoadImage = [webView](NSString *url) {
+        __block BOOL result = false;
+        __block bool done = false;
+        [webView callAsyncJavaScript:@"return canLoadImage(url);" arguments:@{ @"url" : url } inFrame:nil inContentWorld:WKContentWorld.pageWorld completionHandler:^(NSNumber *loaded, NSError *error) {
+            EXPECT_NOT_NULL(loaded);
+            EXPECT_NULL(error);
+            result = loaded.boolValue;
+            done = true;
+        }];
+        TestWebKitAPI::Util::run(&done);
+        return result;
+    };
+
+    EXPECT_TRUE(canLoadImage(@"./400x400-green.png"));
+    EXPECT_FALSE(canLoadImage(@"./sunset-in-cupertino-200px.png"));
+    EXPECT_TRUE(canLoadImage(@"./sunset-in-cupertino-100px.tiff"));
+
+    auto newPreferences = adoptNS([WKWebpagePreferences new]);
+    [newPreferences _setContentRuleListsEnabled:NO exceptions:[NSSet setWithObject:identifierToEnable]];
+    [webView synchronouslyLoadRequest:request.get() preferences:newPreferences.get()];
+
+    EXPECT_TRUE(canLoadImage(@"./400x400-green.png"));
+    EXPECT_FALSE(canLoadImage(@"./sunset-in-cupertino-200px.png"));
+    EXPECT_TRUE(canLoadImage(@"./sunset-in-cupertino-100px.tiff"));
 }
 
 TEST(WebpagePreferences, ToggleNetworkConnectionIntegrity)

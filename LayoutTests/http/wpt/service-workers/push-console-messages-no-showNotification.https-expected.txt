@@ -1,0 +1,6 @@
+Received ServiceWorker Console Message: doTest: {"type":"PUSHEVENT","message":"NO-SHOWNOTIFICATION"}
+Received ServiceWorker Console Message: doPush: NO-SHOWNOTIFICATION
+Received ServiceWorker Console Message: Push event ended without showing any notification may trigger removal of the push subscription.
+
+PASS push without showNotification call
+

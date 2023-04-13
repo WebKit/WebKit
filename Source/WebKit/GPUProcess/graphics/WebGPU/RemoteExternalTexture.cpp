@@ -46,6 +46,11 @@ RemoteExternalTexture::RemoteExternalTexture(PAL::WebGPU::ExternalTexture& exter
 
 RemoteExternalTexture::~RemoteExternalTexture() = default;
 
+void RemoteExternalTexture::destruct()
+{
+    m_objectHeap.removeObject(m_identifier);
+}
+
 void RemoteExternalTexture::stopListeningForIPC()
 {
     m_streamConnection->stopReceivingMessages(Messages::RemoteExternalTexture::messageReceiverName(), m_identifier.toUInt64());

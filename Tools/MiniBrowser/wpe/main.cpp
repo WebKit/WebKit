@@ -172,8 +172,12 @@ static WebKitWebView* createWebView(WebKitWebView* webView, WebKitNavigationActi
             delete static_cast<WPEToolingBackends::ViewBackend*>(data);
         }, backend.release());
 
-    auto* newWebView = webkit_web_view_new_with_related_view(viewBackend, webView);
-    webkit_web_view_set_settings(newWebView, webkit_web_view_get_settings(webView));
+    auto* newWebView = WEBKIT_WEB_VIEW(g_object_new(WEBKIT_TYPE_WEB_VIEW,
+        "backend", viewBackend,
+        "related-view", webView,
+        "settings", webkit_web_view_get_settings(webView),
+        "user-content-manager", webkit_web_view_get_user_content_manager(webView),
+        nullptr));
 
     g_signal_connect(newWebView, "create", G_CALLBACK(createWebView), nullptr);
     g_signal_connect(newWebView, "close", G_CALLBACK(webViewClose), nullptr);

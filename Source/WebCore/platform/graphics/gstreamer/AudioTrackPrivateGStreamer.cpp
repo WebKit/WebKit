@@ -29,8 +29,10 @@
 
 #include "AudioTrackPrivateGStreamer.h"
 
+#include "GStreamerCommon.h"
 #include "MediaPlayerPrivateGStreamer.h"
 #include <gst/pbutils/pbutils.h>
+#include <wtf/Scope.h>
 
 namespace WebCore {
 
@@ -94,6 +96,20 @@ void AudioTrackPrivateGStreamer::updateConfigurationFromCaps()
         return;
 
     auto configuration = this->configuration();
+    auto scopeExit = makeScopeExit([&] {
+        setConfiguration(WTFMove(configuration));
+    });
+
+    if (areEncryptedCaps(caps.get())) {
+        int sampleRate, numberOfChannels;
+        const auto* structure = gst_caps_get_structure(caps.get(), 0);
+        if (gst_structure_get_int(structure, "rate", &sampleRate))
+            configuration.sampleRate = sampleRate;
+        if (gst_structure_get_int(structure, "channels", &numberOfChannels))
+            configuration.numberOfChannels = numberOfChannels;
+        return;
+    }
+
     GstAudioInfo info;
     if (gst_audio_info_from_caps(&info, caps.get())) {
         configuration.sampleRate = GST_AUDIO_INFO_RATE(&info);
@@ -104,8 +120,6 @@ void AudioTrackPrivateGStreamer::updateConfigurationFromCaps()
     GUniquePtr<char> codec(gst_codec_utils_caps_get_mime_codec(caps.get()));
     configuration.codec = String::fromLatin1(codec.get());
 #endif
-
-    setConfiguration(WTFMove(configuration));
 }
 
 AudioTrackPrivate::Kind AudioTrackPrivateGStreamer::kind() const

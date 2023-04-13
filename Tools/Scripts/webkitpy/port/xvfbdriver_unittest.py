@@ -79,7 +79,7 @@ class XvfbDriverTest(unittest.TestCase):
     def test_xvfb_start_and_ready(self):
         driver = self.make_driver()
         expected_display = ':1'
-        expected_logs = ("MOCK popen: ['Xvfb', '-displayfd', '4', '-nolisten', 'tcp', '+extension', 'GLX', '-ac', '-screen', '0', '1024x768x24'], env=%s\n" % driver._port_server_environment)
+        expected_logs = ("MOCK popen: ['Xvfb', '-displayfd', '4', '-nolisten', 'tcp', '-ac', '-screen', '0', '1024x768x24'], env=%s\n" % driver._port_server_environment)
         expected_logs += ('The Xvfb display server "%s" is ready and replying as expected.\n' % expected_display)
         self.assertDriverStartSuccessful(driver, expected_logs=expected_logs, expected_display=expected_display)
         self.cleanup_driver(driver)
@@ -87,7 +87,7 @@ class XvfbDriverTest(unittest.TestCase):
     def test_xvfb_start_arbitrary_worker_number(self):
         driver = self.make_driver(worker_number=17)
         expected_display = ':1'
-        expected_logs = ("MOCK popen: ['Xvfb', '-displayfd', '4', '-nolisten', 'tcp', '+extension', 'GLX', '-ac', '-screen', '0', '1024x768x24'], env=%s\n" % driver._port_server_environment)
+        expected_logs = ("MOCK popen: ['Xvfb', '-displayfd', '4', '-nolisten', 'tcp', '-ac', '-screen', '0', '1024x768x24'], env=%s\n" % driver._port_server_environment)
         expected_logs += ('The Xvfb display server "%s" is ready and replying as expected.\n' % expected_display)
         self.assertDriverStartSuccessful(driver, expected_logs=expected_logs, expected_display=":1", pixel_tests=True)
         self.cleanup_driver(driver)

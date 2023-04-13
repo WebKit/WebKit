@@ -174,11 +174,8 @@ ExceptionOr<void> FontFace::setFamily(ScriptExecutionContext& context, const Str
 {
     if (family.isEmpty())
         return Exception { SyntaxError };
-
     // FIXME: Don't use a list here. https://bugs.webkit.org/show_bug.cgi?id=196381
-    auto list = CSSValueList::createCommaSeparated();
-    list->append(context.cssValuePool().createFontFamilyValue(AtomString { family }));
-    m_backing->setFamilies(list);
+    m_backing->setFamilies(CSSValueList::createCommaSeparated(context.cssValuePool().createFontFamilyValue(AtomString { family })));
     return { };
 }
 

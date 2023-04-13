@@ -59,5 +59,5 @@ from_chars_result from_chars_advanced(const char *first, const char *last,
                                       T &value, parse_options options)  noexcept;
 
 }
-#include <wtf/fast_float/parse_number.h>
+#include "parse_number.h"
 #endif // FASTFLOAT_FAST_FLOAT_H

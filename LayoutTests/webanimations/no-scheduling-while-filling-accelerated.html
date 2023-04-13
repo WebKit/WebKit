@@ -14,30 +14,19 @@
 <body>
 <script src="../resources/testharness.js"></script>
 <script src="../resources/testharnessreport.js"></script>
+<script src="resources/rendering-frames.js"></script>
 <div id="target"></div>
 <script>
 
-function waitNFrames(numberOfFrames, continuation)
-{
-    let elapsedFrames = 0;
-    (function rAFCallback() {
-        if (elapsedFrames++ >= numberOfFrames)
-            continuation();
-        else
-            requestAnimationFrame(rAFCallback);
-    })();
-}
-
-async_test(t => {
+promise_test(async () => {
     const keyframes = { transform: ["translateX(50px)", "translateX(100px)"] };
     const timing = { duration: 50, fill: "forwards" };
-    document.getElementById("target").animate(keyframes, timing).addEventListener("finish", event => {
-        const numberOfTimelineInvalidationsWhenFinished = internals.numberOfAnimationTimelineInvalidations();
-        waitNFrames(3, () => {
-            assert_equals(internals.numberOfAnimationTimelineInvalidations(), numberOfTimelineInvalidationsWhenFinished + 1);
-            t.done();
-        });
-    });
+
+    await document.getElementById("target").animate(keyframes, timing).finished;
+
+    const numberOfTimelineInvalidationsWhenFinished = internals.numberOfAnimationTimelineInvalidations();
+    await renderingFrames(3);
+    assert_equals(internals.numberOfAnimationTimelineInvalidations(), numberOfTimelineInvalidationsWhenFinished + 1);
 }, "There should not be more than one update made to the timeline after a forward-filling accelerated animation completes.");
 
 </script>

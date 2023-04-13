@@ -32,6 +32,7 @@
 #include "config.h"
 #include <wtf/SHA1.h>
 
+#include <cstddef>
 #include <wtf/Assertions.h>
 #include <wtf/text/CString.h>
 

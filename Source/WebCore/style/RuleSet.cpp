@@ -91,7 +91,7 @@ static bool isHostSelectorMatchingInShadowTree(const CSSSelector& startSelector)
 static bool shouldHaveBucketForAttributeName(const CSSSelector& attributeSelector)
 {
     // Don't make buckets for lazy attributes since we don't want to synchronize.
-    if (attributeSelector.attributeCanonicalLocalName() == HTMLNames::styleAttr->localName())
+    if (attributeSelector.attribute().localNameLowercase() == HTMLNames::styleAttr->localName())
         return false;
     if (SVGElement::animatableAttributeForName(attributeSelector.attribute().localName()) != nullQName())
         return false;
@@ -279,7 +279,7 @@ void RuleSet::addRule(RuleData&& ruleData, CascadeLayerIdentifier cascadeLayerId
 
     if (attributeSelector) {
         addToRuleSet(attributeSelector->attribute().localName(), m_attributeLocalNameRules, ruleData);
-        addToRuleSet(attributeSelector->attributeCanonicalLocalName(), m_attributeCanonicalLocalNameRules, ruleData);
+        addToRuleSet(attributeSelector->attribute().localNameLowercase(), m_attributeLowercaseLocalNameRules, ruleData);
         return;
     }
 
@@ -324,7 +324,7 @@ void RuleSet::traverseRuleDatas(Function&& function)
     traverseMap(m_idRules);
     traverseMap(m_classRules);
     traverseMap(m_attributeLocalNameRules);
-    traverseMap(m_attributeCanonicalLocalNameRules);
+    traverseMap(m_attributeLowercaseLocalNameRules);
     traverseMap(m_tagLocalNameRules);
     traverseMap(m_tagLowercaseLocalNameRules);
     traverseMap(m_shadowPseudoElementRules);
@@ -418,7 +418,7 @@ void RuleSet::shrinkToFit()
     shrinkMapVectorsToFit(m_idRules);
     shrinkMapVectorsToFit(m_classRules);
     shrinkMapVectorsToFit(m_attributeLocalNameRules);
-    shrinkMapVectorsToFit(m_attributeCanonicalLocalNameRules);
+    shrinkMapVectorsToFit(m_attributeLowercaseLocalNameRules);
     shrinkMapVectorsToFit(m_tagLocalNameRules);
     shrinkMapVectorsToFit(m_tagLowercaseLocalNameRules);
     shrinkMapVectorsToFit(m_shadowPseudoElementRules);

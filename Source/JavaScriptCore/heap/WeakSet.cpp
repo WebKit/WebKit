@@ -123,7 +123,4 @@ void WeakSet::removeAllocator(WeakBlock* block)
     WeakBlock::destroy(*heap(), block);
 }
 
-template void WeakSet::visit(AbstractSlotVisitor&);
-template void WeakSet::visit(SlotVisitor&);
-
 } // namespace JSC

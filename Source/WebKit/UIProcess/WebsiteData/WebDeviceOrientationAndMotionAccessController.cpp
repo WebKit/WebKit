@@ -30,6 +30,7 @@
 
 #include "APIUIClient.h"
 #include "FrameInfoData.h"
+#include "PageLoadState.h"
 #include "WebPageProxy.h"
 
 namespace WebKit {

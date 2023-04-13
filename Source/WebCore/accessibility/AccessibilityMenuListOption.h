@@ -64,4 +64,6 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_ACCESSIBILITY(AccessibilityMenuListOption, isMenuListOption())
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::AccessibilityMenuListOption) \
+    static bool isType(const WebCore::AccessibilityObject& object) { return object.isMenuListOption(); } \
+SPECIALIZE_TYPE_TRAITS_END()

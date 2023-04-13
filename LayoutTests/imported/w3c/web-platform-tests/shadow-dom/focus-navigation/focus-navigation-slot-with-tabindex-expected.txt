@@ -1,5 +1,5 @@
 
-FAIL Slots tabindex should be considred in focus navigation. promise_test: Unhandled rejection with value: object "Error: Unknown source type "key"."
+PASS Slots tabindex should be considred in focus navigation.
 document tree: [i0 -> [x-foo]]
 x-foo's shadow tree: [j1 -> [s1] -> [s2] -> j2 ->[x-bar]]
 x-bar's shadow tree: [[s3] -> k1]

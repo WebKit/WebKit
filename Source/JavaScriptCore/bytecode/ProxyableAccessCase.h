@@ -35,6 +35,7 @@ class ProxyableAccessCase : public AccessCase {
 public:
     using Base = AccessCase;
     friend class AccessCase;
+    friend class InlineCacheCompiler;
 
     static Ref<AccessCase> create(VM&, JSCell*, AccessType, CacheableIdentifier, PropertyOffset, Structure*, const ObjectPropertyConditionSet& = ObjectPropertyConditionSet(),
         bool viaProxy = false, WatchpointSet* additionalSet = nullptr, RefPtr<PolyProtoAccessChain>&& = nullptr);

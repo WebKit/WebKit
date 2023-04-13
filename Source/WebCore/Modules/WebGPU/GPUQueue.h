@@ -60,11 +60,11 @@ public:
     using OnSubmittedWorkDonePromise = DOMPromiseDeferred<IDLNull>;
     void onSubmittedWorkDone(OnSubmittedWorkDonePromise&&);
 
-    void writeBuffer(
+    ExceptionOr<void> writeBuffer(
         const GPUBuffer&,
         GPUSize64 bufferOffset,
         BufferSource&& data,
-        GPUSize64 dataOffset,
+        std::optional<GPUSize64> dataOffset,
         std::optional<GPUSize64>);
 
     void writeTexture(

@@ -79,6 +79,7 @@
 #include <wtf/NumberOfCores.h>
 #include <wtf/StdList.h>
 #include <wtf/Threading.h>
+#include <wtf/WTFProcess.h>
 #include <wtf/text/StringCommon.h>
 
 // We don't have a NO_RETURN_DUE_TO_EXIT, nor should we. That's ridiculous.
@@ -88,7 +89,7 @@ inline void usage()
 {
     dataLog("Usage: testb3 [<filter>]\n");
     if (hiddenTruthBecauseNoReturnIsStupid())
-        exit(1);
+        exitProcess(1);
 }
 
 #if ENABLE(B3_JIT) && !CPU(ARM)
@@ -959,6 +960,8 @@ void testCallSimplePure(int, int);
 void testCallFunctionWithHellaArguments();
 void testCallFunctionWithHellaArguments2();
 void testCallFunctionWithHellaArguments3();
+void testCallPairResult(int, int);
+void testCallPairResultRare(int, int);
 void testReturnDouble(double value);
 void testReturnFloat(float value);
 void testMulNegArgArg(int, int);
@@ -1213,5 +1216,9 @@ void testVectorXorAndAllOnesToVectorOrXor();
 void testVectorXorOrAllOnesConstantToVectorAndXor(v128_t);
 void testVectorXorAndAllOnesConstantToVectorOrXor(v128_t);
 void testVectorAndConstantConstant(v128_t, v128_t);
+void testVectorFmulByElementFloat();
+void testVectorFmulByElementDouble();
+void testVectorExtractLane0Float();
+void testVectorExtractLane0Double();
 
 #endif // ENABLE(B3_JIT)

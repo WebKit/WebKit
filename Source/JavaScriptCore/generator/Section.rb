@@ -67,6 +67,36 @@ class Section
           end
           result
       }
+  end
+
+  def validate
+      first_non_checkpoint = nil
+      first_non_metadata = nil
+      last_simd = nil
+      # validate that opcodes are ordered as
+      # [opcodes_with_checkpoint] ++ [opcodes_with_metadata] ++ [non_simd_opcodes] ++ [simd_opcodes]
+      @opcodes.each do |opcode|
+        if opcode.checkpoints.nil?
+              first_non_checkpoint ||= opcode
+          elsif first_non_checkpoint
+              assert("invalid order of bytecodes in section '#{name}': found opcode '#{opcode.name}' with checkpoints after '#{first_non_checkpoint.name}', which doesn't contain checkpoints") { false }
+          end
+
+          if opcode.metadata.empty?
+              first_non_metadata ||= opcode
+          elsif first_non_metadata
+              assert("invalid order of bytecodes in section '#{name}': found opcode '#{opcode.name}' with metadata after '#{first_non_metadata.name}', which doesn't contain metadata") { false }
+          end
+
+          if opcode.name.downcase.include?("simd")
+              last_simd = opcode
+          elsif last_simd
+              assert("invalid order of bytecodes in section '#{name}': found non-simd opcode '#{opcode.name}' after '#{last_simd.name}'") { false }
+          end
+      end
+  end
+
+  def create_ids!
       @opcodes.each(&:create_id!)
   end
 

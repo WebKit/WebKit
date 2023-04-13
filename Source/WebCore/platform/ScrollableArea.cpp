@@ -32,6 +32,8 @@
 #include "config.h"
 #include "ScrollableArea.h"
 
+#include "Chrome.h"
+#include "ChromeClient.h"
 #include "FloatPoint.h"
 #include "GraphicsContext.h"
 #include "GraphicsLayer.h"
@@ -80,6 +82,11 @@ ScrollbarsController& ScrollableArea::scrollbarsController() const
     }
 
     return *m_scrollbarsController.get();
+}
+
+void ScrollableArea::setScrollbarsController(std::unique_ptr<ScrollbarsController>&& scrollbarsController)
+{
+    m_scrollbarsController = WTFMove(scrollbarsController);
 }
 
 void ScrollableArea::setScrollOrigin(const IntPoint& origin)
@@ -775,26 +782,26 @@ LayoutPoint ScrollableArea::constrainScrollPositionForOverhang(const LayoutPoint
     return constrainScrollPositionForOverhang(visibleContentRect(), totalContentsSize(), scrollPosition, scrollOrigin(), headerHeight(), footerHeight());
 }
 
-void ScrollableArea::computeScrollbarValueAndOverhang(float currentPosition, float totalSize, float visibleSize, float& doubleValue, float& overhangAmount)
+void ScrollableArea::computeScrollbarValueAndOverhang(float currentPosition, float totalSize, float visibleSize, float& scrollbarValue, float& overhangAmount)
 {
-    doubleValue = 0;
+    scrollbarValue = 0;
     overhangAmount = 0;
     float maximum = totalSize - visibleSize;
 
     if (currentPosition < 0) {
         // Scrolled past the top.
-        doubleValue = 0;
+        scrollbarValue = 0;
         overhangAmount = -currentPosition;
     } else if (visibleSize + currentPosition > totalSize) {
         // Scrolled past the bottom.
-        doubleValue = 1;
+        scrollbarValue = 1;
         overhangAmount = currentPosition + visibleSize - totalSize;
     } else {
         // Within the bounds of the scrollable area.
         if (maximum > 0)
-            doubleValue = currentPosition / maximum;
+            scrollbarValue = currentPosition / maximum;
         else
-            doubleValue = 0;
+            scrollbarValue = 0;
     }
 }
 

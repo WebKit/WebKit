@@ -56,15 +56,12 @@
 #include "CSSPropertyNames.h"
 #include "CommonVM.h"
 #include "CookieJar.h"
-#include "DOMWindow.h"
 #include "DocumentLoader.h"
 #include "DocumentType.h"
-#include "ElementChildIterator.h"
+#include "ElementChildIteratorInlines.h"
 #include "FocusController.h"
-#include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameTree.h"
-#include "FrameView.h"
 #include "HTMLBodyElement.h"
 #include "HTMLCollection.h"
 #include "HTMLDocumentParser.h"
@@ -74,6 +71,9 @@
 #include "HTMLHtmlElement.h"
 #include "HTMLIFrameElement.h"
 #include "HTMLNames.h"
+#include "LocalDOMWindow.h"
+#include "LocalFrame.h"
+#include "LocalFrameView.h"
 #include "Quirks.h"
 #include "ScriptController.h"
 #include "StyleResolver.h"
@@ -87,14 +87,14 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLDocument);
 
 using namespace HTMLNames;
 
-Ref<HTMLDocument> HTMLDocument::createSynthesizedDocument(Frame& frame, const URL& url)
+Ref<HTMLDocument> HTMLDocument::createSynthesizedDocument(LocalFrame& frame, const URL& url)
 {
     auto document = adoptRef(*new HTMLDocument(&frame, frame.settings(), url, { }, { DocumentClass::HTML }, Synthesized));
     document->addToContextsMap();
     return document;
 }
 
-HTMLDocument::HTMLDocument(Frame* frame, const Settings& settings, const URL& url, ScriptExecutionContextIdentifier documentIdentifier, DocumentClasses documentClasses, unsigned constructionFlags)
+HTMLDocument::HTMLDocument(LocalFrame* frame, const Settings& settings, const URL& url, ScriptExecutionContextIdentifier documentIdentifier, DocumentClasses documentClasses, unsigned constructionFlags)
     : Document(frame, settings, url, documentClasses | DocumentClasses(DocumentClass::HTML), constructionFlags, documentIdentifier)
 {
     clearXMLVersion();
@@ -105,14 +105,14 @@ HTMLDocument::~HTMLDocument() = default;
 int HTMLDocument::width()
 {
     updateLayoutIgnorePendingStylesheets();
-    RefPtr<FrameView> frameView = view();
+    RefPtr frameView = view();
     return frameView ? frameView->contentsWidth() : 0;
 }
 
 int HTMLDocument::height()
 {
     updateLayoutIgnorePendingStylesheets();
-    RefPtr<FrameView> frameView = view();
+    RefPtr frameView = view();
     return frameView ? frameView->contentsHeight() : 0;
 }
 

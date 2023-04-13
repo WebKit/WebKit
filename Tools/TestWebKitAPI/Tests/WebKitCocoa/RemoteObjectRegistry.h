@@ -52,7 +52,7 @@
 - (void)takeLong:(long)value completionHandler:(void (^)(long value))completionHandler;
 - (void)takeDictionary:(NSDictionary *)value completionHandler:(void (^)(NSDictionary *value))completionHandler;
 - (void)doNotCallCompletionHandler:(void (^)())completionHandler;
-- (void)sendRequest:(NSURLRequest *)request response:(NSURLResponse *)response challenge:(NSURLAuthenticationChallenge *)challenge error:(NSError *)error completionHandler:(void (^)(NSURLRequest *, NSURLResponse *, NSURLAuthenticationChallenge *, NSError *))completionHandler;
+- (void)sendRequest:(NSURLRequest *)request response:(NSURLResponse *)response challenge:(NSURLAuthenticationChallenge *)challenge error:(NSError *)error nsNull:(id)nsNull uuid:(id)uuid completionHandler:(void (^)(NSURLRequest *, NSURLResponse *, NSURLAuthenticationChallenge *, NSError *, id, id))completionHandler;
 - (void)callUIProcessMethodWithReplyBlock;
 - (void)sendError:(NSError *)error completionHandler:(void (^)(NSError *))completionHandler;
 - (void)sendAwakener:(TestAwakener *)awakener completionHandler:(void (^)(TestAwakener *))completionHandler;

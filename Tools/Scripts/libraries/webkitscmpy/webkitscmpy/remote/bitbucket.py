@@ -48,6 +48,7 @@ class BitBucket(Scm):
                     data['author']['user']['displayName'],
                     data['author']['user'].get('emailAddress', None),
                 ), head=data['fromRef']['displayId'],
+                hash=data['fromRef'].get('latestCommit', None),
                 base=data['toRef']['displayId'],
                 opened=True if data.get('open') else (False if data.get('closed') else None),
                 generator=self,
@@ -120,6 +121,15 @@ class BitBucket(Scm):
             description = PullRequest.create_body(body, commits, linkify=False)
             if description and len(description) > self.BODY_CHAR_LIMIT:
                 raise ValueError('Body length too long. Limit is: {}'.format(self.BODY_CHAR_LIMIT))
+            fromRef = dict(
+                id='refs/heads/{}'.format(head),
+                repository=dict(
+                    slug=self.repository.name,
+                    project=dict(key=self.repository.project),
+                ),
+            )
+            if commits:
+                fromRef['latestCommit'] = commits[0].hash,
             response = requests.post(
                 'https://{domain}/rest/api/1.0/projects/{project}/repos/{name}/pull-requests'.format(
                     domain=self.repository.domain,
@@ -128,13 +138,8 @@ class BitBucket(Scm):
                 ), json=dict(
                     title=title,
                     description=PullRequest.create_body(body, commits, linkify=False),
-                    fromRef=dict(
-                        id='refs/heads/{}'.format(head),
-                        repository=dict(
-                            slug=self.repository.name,
-                            project=dict(key=self.repository.project),
-                        ),
-                    ), toRef=dict(
+                    fromRef=fromRef,
+                    toRef=dict(
                         id='refs/heads/{}'.format(base or self.repository.default_branch),
                         repository=dict(
                             slug=self.repository.name,
@@ -308,7 +313,7 @@ class BitBucket(Scm):
     def is_webserver(cls, url):
         return True if cls.URL_RE.match(url) else False
 
-    def __init__(self, url, dev_branches=None, prod_branches=None, contributors=None, id=None):
+    def __init__(self, url, dev_branches=None, prod_branches=None, contributors=None, id=None, classifier=None):
         match = self.URL_RE.match(url)
         if not match:
             raise self.Exception("'{}' is not a valid BitBucket project".format(url))
@@ -321,6 +326,7 @@ class BitBucket(Scm):
             dev_branches=dev_branches, prod_branches=prod_branches,
             contributors=contributors,
             id=id or self.name.lower(),
+            classifier=classifier,
         )
 
         self.pull_requests = self.PRGenerator(self)
@@ -579,12 +585,14 @@ class BitBucket(Scm):
     def files_changed(self, argument=None):
         if not argument:
             return self.modified()
-        commit = self.find(argument, include_log=False, include_identifier=False)
-        if not commit:
-            raise ValueError("'{}' is not an argument recognized by git".format(argument))
+        if not Commit.HASH_RE.match(argument):
+            commit = self.find(argument, include_log=False, include_identifier=False)
+            if not commit:
+                raise ValueError("'{}' is not an argument recognized by git".format(argument))
+            argument = commit.hash
 
         return [
             change.get('path', {}).get('toString')
-            for change in self.request('commits/{}/changes'.format(commit.hash))
+            for change in self.request('commits/{}/changes'.format(argument))
             if change.get('path', {}).get('toString')
         ]

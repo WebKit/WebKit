@@ -42,9 +42,8 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(MathMLTokenElement);
 using namespace MathMLNames;
 
 MathMLTokenElement::MathMLTokenElement(const QualifiedName& tagName, Document& document)
-    : MathMLPresentationElement(tagName, document)
+    : MathMLPresentationElement(tagName, document, CreateMathMLTokenElement)
 {
-    setHasCustomStyleResolveCallbacks();
 }
 
 Ref<MathMLTokenElement> MathMLTokenElement::create(const QualifiedName& tagName, Document& document)

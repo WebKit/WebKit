@@ -106,7 +106,7 @@ ComplexTextController::ComplexTextRun::ComplexTextRun(CTRunRef ctRun, const Font
             stream << " empty";
         else {
             for (unsigned i = 0; i < m_glyphCount; ++i)
-                stream << " " << m_glyphs[i];
+                stream << " " << m_glyphOrigins[i];
         }
         stream << "\n";
         stream << "Offsets:";
@@ -178,6 +178,7 @@ void ComplexTextController::collectComplexTextRunsForCharacters(const UChar* cp,
 
     LOG_WITH_STREAM(TextShaping,
         stream << "Complex shaping " << length << " code units with info " << String(adoptCF(CFCopyDescription(stringAttributes.get())).get()) << ".\n";
+        stream << "Font attributes: " << String(adoptCF(CFCopyDescription(adoptCF(CTFontDescriptorCopyAttributes(adoptCF(CTFontCopyFontDescriptor(font->platformData().ctFont())).get())).get())).get()) << "\n";
         stream << "Code Units:";
         for (unsigned i = 0; i < length; ++i)
             stream << " " << cp[i];

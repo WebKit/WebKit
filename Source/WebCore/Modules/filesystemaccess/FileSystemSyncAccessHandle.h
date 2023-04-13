@@ -46,7 +46,7 @@ public:
         std::optional<unsigned long long> at;
     };
 
-    static Ref<FileSystemSyncAccessHandle> create(ScriptExecutionContext&, FileSystemFileHandle&, FileSystemSyncAccessHandleIdentifier, FileHandle&&);
+    static Ref<FileSystemSyncAccessHandle> create(ScriptExecutionContext&, FileSystemFileHandle&, FileSystemSyncAccessHandleIdentifier, FileHandle&&, uint64_t capacity);
     ~FileSystemSyncAccessHandle();
 
     ExceptionOr<void> truncate(unsigned long long size);
@@ -58,10 +58,11 @@ public:
     void invalidate();
 
 private:
-    FileSystemSyncAccessHandle(ScriptExecutionContext&, FileSystemFileHandle&, FileSystemSyncAccessHandleIdentifier, FileHandle&&);
+    FileSystemSyncAccessHandle(ScriptExecutionContext&, FileSystemFileHandle&, FileSystemSyncAccessHandleIdentifier, FileHandle&&, uint64_t capacity);
     using CloseCallback = CompletionHandler<void(ExceptionOr<void>&&)>;
     enum class ShouldNotifyBackend : bool { No, Yes };
     void closeInternal(ShouldNotifyBackend);
+    bool requestSpaceForWrite(uint64_t writeOffset, uint64_t writeLength);
 
     // ActiveDOMObject
     const char* activeDOMObjectName() const final;
@@ -71,6 +72,7 @@ private:
     FileSystemSyncAccessHandleIdentifier m_identifier;
     FileHandle m_file;
     bool m_isClosed { false };
+    uint64_t m_capacity;
 };
 
 } // namespace WebCore

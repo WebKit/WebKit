@@ -193,22 +193,22 @@ angle::Result RenderStateCache::getRasterizerState(const gl::Context *context,
     rasterDesc.FillMode              = D3D11_FILL_SOLID;
     rasterDesc.CullMode              = cullMode;
     rasterDesc.FrontCounterClockwise = (rasterState.frontFace == GL_CCW) ? FALSE : TRUE;
-    rasterDesc.DepthBiasClamp = 0.0f;  // MSDN documentation of DepthBiasClamp implies a value of
-                                       // zero will preform no clamping, must be tested though.
-    rasterDesc.DepthClipEnable       = TRUE;
+    rasterDesc.DepthClipEnable       = !rasterState.depthClamp;
     rasterDesc.ScissorEnable         = scissorEnabled ? TRUE : FALSE;
     rasterDesc.MultisampleEnable     = rasterState.multiSample;
     rasterDesc.AntialiasedLineEnable = FALSE;
 
     if (rasterState.polygonOffsetFill)
     {
-        rasterDesc.SlopeScaledDepthBias = rasterState.polygonOffsetFactor;
         rasterDesc.DepthBias            = (INT)rasterState.polygonOffsetUnits;
+        rasterDesc.DepthBiasClamp       = rasterState.polygonOffsetClamp;
+        rasterDesc.SlopeScaledDepthBias = rasterState.polygonOffsetFactor;
     }
     else
     {
-        rasterDesc.SlopeScaledDepthBias = 0.0f;
         rasterDesc.DepthBias            = 0;
+        rasterDesc.DepthBiasClamp       = 0.0f;
+        rasterDesc.SlopeScaledDepthBias = 0.0f;
     }
 
     d3d11::RasterizerState dx11RasterizerState;
@@ -287,15 +287,10 @@ angle::Result RenderStateCache::getSamplerState(const gl::Context *context,
     samplerDesc.MaxAnisotropy =
         gl_d3d11::ConvertMaxAnisotropy(samplerState.getMaxAnisotropy(), featureLevel);
     samplerDesc.ComparisonFunc = gl_d3d11::ConvertComparison(samplerState.getCompareFunc());
-    angle::ColorF borderColor;
-    if (samplerState.getBorderColor().type == angle::ColorGeneric::Type::Float)
-    {
-        borderColor = samplerState.getBorderColor().colorF;
-    }
-    samplerDesc.BorderColor[0] = borderColor.red;
-    samplerDesc.BorderColor[1] = borderColor.green;
-    samplerDesc.BorderColor[2] = borderColor.blue;
-    samplerDesc.BorderColor[3] = borderColor.alpha;
+    samplerDesc.BorderColor[0] = samplerState.getBorderColor().colorF.red;
+    samplerDesc.BorderColor[1] = samplerState.getBorderColor().colorF.green;
+    samplerDesc.BorderColor[2] = samplerState.getBorderColor().colorF.blue;
+    samplerDesc.BorderColor[3] = samplerState.getBorderColor().colorF.alpha;
     samplerDesc.MinLOD         = samplerState.getMinLod();
     samplerDesc.MaxLOD         = samplerState.getMaxLod();
 

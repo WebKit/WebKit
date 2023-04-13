@@ -30,21 +30,18 @@
 #include "CaretAnimator.h"
 #include "CharacterData.h"
 #include "ColorBlending.h"
-#include "DOMWindow.h"
 #include "DeleteSelectionCommand.h"
 #include "DocumentInlines.h"
 #include "Editing.h"
 #include "Editor.h"
 #include "EditorClient.h"
 #include "Element.h"
-#include "ElementIterator.h"
+#include "ElementAncestorIteratorInlines.h"
 #include "Event.h"
 #include "EventNames.h"
 #include "FloatQuad.h"
 #include "FocusController.h"
-#include "Frame.h"
 #include "FrameTree.h"
-#include "FrameView.h"
 #include "GraphicsContext.h"
 #include "HTMLBodyElement.h"
 #include "HTMLFormElement.h"
@@ -57,7 +54,11 @@
 #include "ImageOverlay.h"
 #include "InlineRunAndOffset.h"
 #include "LegacyInlineTextBox.h"
+#include "LocalDOMWindow.h"
+#include "LocalFrame.h"
+#include "LocalFrameView.h"
 #include "Logging.h"
+#include "MutableStyleProperties.h"
 #include "Page.h"
 #include "PseudoClassChangeInvalidation.h"
 #include "Range.h"
@@ -76,6 +77,7 @@
 #include "SpatialNavigation.h"
 #include "StyleProperties.h"
 #include "StyleTreeResolver.h"
+#include "TypedElementDescendantIteratorInlines.h"
 #include "TypingCommand.h"
 #include "VisibleUnits.h"
 #include <stdio.h>
@@ -94,11 +96,6 @@
 namespace WebCore {
 
 using namespace HTMLNames;
-
-static inline LayoutUnit NoXPosForVerticalArrowNavigation()
-{
-    return LayoutUnit::min();
-}
 
 CaretBase::CaretBase(CaretVisibility visibility)
     : m_caretRectNeedsUpdate(true)
@@ -166,23 +163,23 @@ static inline bool isPageActive(Document* document)
 #if USE(APPLE_INTERNAL_SDK)
 #import <WebKitAdditions/FrameSelectionAdditions.cpp>
 #else
-#if ENABLE(TEXT_CARET)
-static void fillCaretRect(const Node&, GraphicsContext& context, const FloatRect& caret, const Color&color, const CaretAnimator::PresentationProperties&)
-{
-    context.fillRect(caret, color);
-}
-#endif
 
 static UniqueRef<CaretAnimator> createCaretAnimator(FrameSelection* frameSelection)
 {
     return makeUniqueRef<SimpleCaretAnimator>(*frameSelection);
+}
+#endif // USE(APPLE_INTERNAL_SDK)
+
+#if !defined(FRAME_SELECTION_ADDITIONS_CREATE_CARET_ANIMATOR_WITH_TYPE_DEFINED) && PLATFORM(MAC)
+static UniqueRef<CaretAnimator> createCaretAnimator(FrameSelection* frameSelection, CaretAnimatorType)
+{
+    return createCaretAnimator(frameSelection);
 }
 #endif
 
 FrameSelection::FrameSelection(Document* document)
     : m_document(document)
     , m_granularity(TextGranularity::CharacterGranularity)
-    , m_appearanceUpdateTimer(*this, &FrameSelection::appearanceUpdateTimerFired)
     , m_caretAnimator(createCaretAnimator(this))
     , m_caretInsidePositionFixed(false)
     , m_absCaretBoundsDirty(true)
@@ -366,7 +363,7 @@ bool FrameSelection::setSelectionWithoutUpdatingAppearance(const VisibleSelectio
     // <http://bugs.webkit.org/show_bug.cgi?id=23464>: Infinite recursion at FrameSelection::setSelection
     // if document->frame() == m_document->frame() we can get into an infinite loop
     if (Document* newSelectionDocument = newSelection.base().document()) {
-        if (RefPtr<Frame> newSelectionFrame = newSelectionDocument->frame()) {
+        if (RefPtr newSelectionFrame = newSelectionDocument->frame()) {
             if (m_document && newSelectionFrame != m_document->frame() && newSelectionDocument != m_document) {
                 newSelectionDocument->selection().setSelection(newSelection, options, AXTextStateChangeIntent(), align, granularity);
                 // It's possible that during the above set selection, this FrameSelection has been modified by
@@ -477,10 +474,8 @@ void FrameSelection::setSelection(const VisibleSelection& selection, OptionSet<S
     if (frameView && frameView->layoutContext().isLayoutPending())
         return;
 
-    if (!(options & IsUserTriggered)) {
-        scheduleAppearanceUpdateAfterStyleChange();
+    if (!(options & IsUserTriggered))
         return;
-    }
 
     updateAndRevealSelection(intent, options.contains(SmoothScroll) ? ScrollBehavior::Smooth : ScrollBehavior::Instant, options.contains(RevealSelectionBounds) ? RevealExtentOption::DoNotRevealExtent : RevealExtentOption::RevealExtent, options.contains(ForceCenterScroll) ? ForceCenterScrollOption::ForceCenterScroll : ForceCenterScrollOption::DoNotForceCenterScroll);
 
@@ -1687,7 +1682,6 @@ void FrameSelection::willBeRemovedFromFrame()
     setSelectionWithoutUpdatingAppearance(VisibleSelection(), defaultSetSelectionOptions(), AlignCursorOnScrollIfNeeded, TextGranularity::CharacterGranularity);
     m_previousCaretNode = nullptr;
     m_typingStyle = nullptr;
-    m_appearanceUpdateTimer.stop();
 }
 
 void FrameSelection::setStart(const VisiblePosition& position, EUserTriggered trigger)
@@ -1770,10 +1764,10 @@ IntRect FrameSelection::absoluteCaretBounds(bool* insideFixed)
     return m_absCaretBounds;
 }
 
-static void repaintCaretForLocalRect(Node* node, const LayoutRect& rect)
+static void repaintCaretForLocalRect(Node* node, const LayoutRect& rect, CaretAnimator* caretAnimator)
 {
     if (auto* caretPainter = rendererForCaretPainting(node))
-        caretPainter->repaintRectangle(rect);
+        caretPainter->repaintRectangle(caretAnimator ? caretAnimator->repaintCaretRectForLocalRect(rect) : rect);
 }
 
 bool FrameSelection::recomputeCaretRect()
@@ -1784,7 +1778,7 @@ bool FrameSelection::recomputeCaretRect()
     if (!m_document)
         return false;
 
-    FrameView* v = m_document->view();
+    auto* v = m_document->view();
     if (!v)
         return false;
 
@@ -1825,9 +1819,9 @@ bool FrameSelection::recomputeCaretRect()
         bool previousOrNewCaretNodeIsContentEditable = m_selection.isContentEditable() || (m_previousCaretNode && m_previousCaretNode->isContentEditable());
         if (shouldRepaintCaret(view, previousOrNewCaretNodeIsContentEditable)) {
             if (m_previousCaretNode)
-                repaintCaretForLocalRect(m_previousCaretNode.get(), oldRect);
+                repaintCaretForLocalRect(m_previousCaretNode.get(), oldRect, m_caretAnimator.ptr());
             m_previousCaretNode = caretNode;
-            repaintCaretForLocalRect(caretNode.get(), newRect);
+            repaintCaretForLocalRect(caretNode.get(), newRect, m_caretAnimator.ptr());
         }
     }
 #endif
@@ -1847,10 +1841,10 @@ void FrameSelection::invalidateCaretRect()
     if (!isCaret())
         return;
 
-    CaretBase::invalidateCaretRect(m_selection.start().deprecatedNode(), recomputeCaretRect());
+    CaretBase::invalidateCaretRect(m_selection.start().deprecatedNode(), recomputeCaretRect(), m_caretAnimator.ptr());
 }
 
-void CaretBase::invalidateCaretRect(Node* node, bool caretRectChanged)
+void CaretBase::invalidateCaretRect(Node* node, bool caretRectChanged, CaretAnimator* caretAnimator)
 {
     // EDIT FIXME: This is an unfortunate hack.
     // Basically, we can't trust this layout position since we 
@@ -1870,14 +1864,14 @@ void CaretBase::invalidateCaretRect(Node* node, bool caretRectChanged)
 
     if (RenderView* view = node->document().renderView()) {
         if (shouldRepaintCaret(view, isEditableNode(*node)))
-            repaintCaretForLocalRect(node, localCaretRectWithoutUpdate());
+            repaintCaretForLocalRect(node, localCaretRectWithoutUpdate(), caretAnimator);
     }
 }
 
 void FrameSelection::paintCaret(GraphicsContext& context, const LayoutPoint& paintOffset, const LayoutRect& clipRect)
 {
     if (m_selection.isCaret() && m_selection.start().deprecatedNode())
-        CaretBase::paintCaret(*m_selection.start().deprecatedNode(), context, paintOffset, clipRect, m_caretAnimator->presentationProperties());
+        CaretBase::paintCaret(*m_selection.start().deprecatedNode(), context, paintOffset, clipRect, m_caretAnimator.ptr());
 }
 
 Color CaretBase::computeCaretColor(const RenderStyle& elementStyle, const Node* node)
@@ -1903,9 +1897,10 @@ Color CaretBase::computeCaretColor(const RenderStyle& elementStyle, const Node* 
 #endif
 }
 
-void CaretBase::paintCaret(const Node& node, GraphicsContext& context, const LayoutPoint& paintOffset, const LayoutRect& clipRect, const CaretAnimator::PresentationProperties& caretPresentationProperties) const
+void CaretBase::paintCaret(const Node& node, GraphicsContext& context, const LayoutPoint& paintOffset, const LayoutRect& clipRect, CaretAnimator* caretAnimator) const
 {
 #if ENABLE(TEXT_CARET)
+    auto caretPresentationProperties = caretAnimator ? caretAnimator->presentationProperties() : CaretAnimator::PresentationProperties();
     if (m_caretVisibility == Hidden || caretPresentationProperties.blinkState == CaretAnimator::PresentationProperties::BlinkState::Off)
         return;
 
@@ -1923,13 +1918,20 @@ void CaretBase::paintCaret(const Node& node, GraphicsContext& context, const Lay
         caretColor = CaretBase::computeCaretColor(element->renderer()->style(), &node);
 
     auto pixelSnappedCaretRect = snapRectToDevicePixels(caret, node.document().deviceScaleFactor());
+#if !defined(FRAME_SELECTION_ADDITIONS_CREATE_CARET_ANIMATOR_WITH_TYPE_DEFINED) && USE(APPLE_INTERNAL_SDK)
     fillCaretRect(node, context, pixelSnappedCaretRect, caretColor, caretPresentationProperties);
+#else
+    if (caretAnimator)
+        caretAnimator->paint(node, context, pixelSnappedCaretRect, caretColor, paintOffset);
+    else
+        context.fillRect(pixelSnappedCaretRect, caretColor);
+#endif
 #else
     UNUSED_PARAM(node);
     UNUSED_PARAM(context);
     UNUSED_PARAM(paintOffset);
     UNUSED_PARAM(clipRect);
-    UNUSED_PARAM(caretPresentationProperties);
+    UNUSED_PARAM(caretAnimator);
 #endif
 }
 
@@ -1947,6 +1949,14 @@ void FrameSelection::caretAnimationDidUpdate(CaretAnimator&)
 {
     invalidateCaretRect();
 }
+
+#if PLATFORM(MAC)
+void FrameSelection::caretAnimatorInvalidated(CaretAnimatorType caretType)
+{
+    m_caretAnimator = createCaretAnimator(this, caretType);
+    caretAnimationDidUpdate(m_caretAnimator);
+}
+#endif
 
 Document* FrameSelection::document()
 {
@@ -2344,11 +2354,11 @@ void FrameSelection::setFocusedElementIfNeeded()
         CheckedRef(m_document->page()->focusController())->setFocusedElement(nullptr, *m_document->frame());
 }
 
-void DragCaretController::paintDragCaret(Frame* frame, GraphicsContext& p, const LayoutPoint& paintOffset, const LayoutRect& clipRect) const
+void DragCaretController::paintDragCaret(LocalFrame* frame, GraphicsContext& p, const LayoutPoint& paintOffset, const LayoutRect& clipRect) const
 {
 #if ENABLE(TEXT_CARET)
     if (m_position.deepEquivalent().deprecatedNode() && m_position.deepEquivalent().deprecatedNode()->document().frame() == frame)
-        paintCaret(*m_position.deepEquivalent().deprecatedNode(), p, paintOffset, clipRect, { });
+        paintCaret(*m_position.deepEquivalent().deprecatedNode(), p, paintOffset, clipRect);
 #else
     UNUSED_PARAM(frame);
     UNUSED_PARAM(p);
@@ -2505,7 +2515,7 @@ void FrameSelection::revealSelection(SelectionRevealMode revealMode, const Scrol
     // FIXME: This code only handles scrolling the startContainer's layer, but
     // the selection rect could intersect more than just that.
     // See <rdar://problem/4799899>.
-    FrameView::scrollRectToVisible(rect, *start.deprecatedNode()->renderer(), insideFixed, { revealMode, alignment, alignment, ShouldAllowCrossOriginScrolling::Yes, scrollBehavior });
+    LocalFrameView::scrollRectToVisible(rect, *start.deprecatedNode()->renderer(), insideFixed, { revealMode, alignment, alignment, ShouldAllowCrossOriginScrolling::Yes, scrollBehavior });
     updateAppearance();
 
 #if PLATFORM(IOS_FAMILY)
@@ -2556,24 +2566,7 @@ void FrameSelection::setShouldShowBlockCursor(bool shouldShowBlockCursor)
     updateAppearance();
 }
 
-void FrameSelection::updateAppearanceAfterLayout()
-{
-    m_appearanceUpdateTimer.stop();
-    updateAppearanceAfterLayoutOrStyleChange();
-}
-
-void FrameSelection::scheduleAppearanceUpdateAfterStyleChange()
-{
-    m_appearanceUpdateTimer.startOneShot(0_s);
-}
-
-void FrameSelection::appearanceUpdateTimerFired()
-{
-    Ref<Document> protector(*m_document);
-    updateAppearanceAfterLayoutOrStyleChange();
-}
-
-void FrameSelection::updateAppearanceAfterLayoutOrStyleChange()
+void FrameSelection::updateAppearanceAfterUpdatingRendering()
 {
     if (auto* client = m_document->editor().client())
         client->updateEditorStateAfterLayoutIfEditabilityChanged();
@@ -2658,7 +2651,7 @@ UChar FrameSelection::characterInRelationToCaretSelection(int amount) const
 {
     auto position = m_selection.visibleStart();
     if (amount < 0) {
-        int count = abs(amount);
+        int count = std::abs(amount);
         for (int i = 0; i < count; i++)
             position = position.previous();
         return position.characterBefore();
@@ -2843,7 +2836,7 @@ std::optional<SimpleRange> FrameSelection::rangeByAlteringCurrentSelection(EAlte
     FrameSelection frameSelection;
     frameSelection.setSelection(m_selection);
     SelectionDirection direction = amount > 0 ? SelectionDirection::Forward : SelectionDirection::Backward;
-    for (int i = 0; i < abs(amount); i++)
+    for (int i = 0; i < std::abs(amount); i++)
         frameSelection.modify(alteration, direction, TextGranularity::CharacterGranularity);
     return frameSelection.selection().toNormalizedRange();
 }

@@ -56,16 +56,16 @@ static void dumpMetalCodeIfNeeded(StringBuilder& stringBuilder)
     }
 }
 
-RenderMetalCode generateMetalCode(AST::ShaderModule& module)
+String generateMetalCode(CallGraph& callGraph)
 {
     StringBuilder stringBuilder;
     stringBuilder.append(metalCodePrologue());
 
-    auto metalFunctionEntryPoints = Metal::emitMetalFunctions(stringBuilder, module);
+    Metal::emitMetalFunctions(stringBuilder, callGraph);
 
     dumpMetalCodeIfNeeded(stringBuilder);
 
-    return { WTFMove(stringBuilder), WTFMove(metalFunctionEntryPoints.mangledVertexEntryPointName), WTFMove(metalFunctionEntryPoints.mangledFragmentEntryPointName) };
+    return stringBuilder.toString();
 }
 
 } // namespace Metal

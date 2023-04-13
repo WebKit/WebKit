@@ -7,9 +7,9 @@ PASS Border color responsive to currentColor changes again
 PASS Outline color responsive to currentColor changes
 PASS Stroke color responsive to currentColor changes
 PASS Text decoration color responsive to currentColor changes
-FAIL Color responsive to parent currentColor changes assert_equals: expected "rgb(34, 51, 34)" but got "rgb(0, 51, 51)"
-FAIL Color responsive to repeated parent currentColor changes assert_equals: expected "rgb(102, 17, 51)" but got "rgb(0, 17, 153)"
+PASS Color responsive to parent currentColor changes
+PASS Color responsive to repeated parent currentColor changes
 PASS Color animations do not expose visited status
 PASS Color animations do not expose parent visited status
-FAIL Color animations respond to inherited changes assert_equals: expected "rgb(70, 120, 120)" but got "rgb(120, 70, 120)"
+PASS Color animations respond to inherited changes
 

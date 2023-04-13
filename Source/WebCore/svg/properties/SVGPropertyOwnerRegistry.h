@@ -34,6 +34,7 @@
 namespace WebCore {
 
 class SVGAttributeAnimator;
+class SVGConditionalProcessingAttributes;
 
 struct SVGAttributeHashTranslator {
     static unsigned hash(const QualifiedName& key)
@@ -59,10 +60,10 @@ public:
     {
     }
 
-    template<const LazyNeverDestroyed<const QualifiedName>& attributeName, Ref<SVGStringList> OwnerType::*property>
-    static void registerProperty()
+    template<const LazyNeverDestroyed<const QualifiedName>& attributeName, Ref<SVGStringList> SVGConditionalProcessingAttributes::*property>
+    static void registerConditionalProcessingAttributeProperty()
     {
-        registerProperty(attributeName, SVGStringListAccessor<OwnerType>::template singleton<property>());
+        registerProperty(attributeName, SVGConditionalProcessingAttributeAccessor<OwnerType>::template singleton<property>());
     }
 
     template<const LazyNeverDestroyed<const QualifiedName>& attributeName, Ref<SVGTransformList> OwnerType::*property>

@@ -49,6 +49,8 @@ class PaneSelector extends ComponentBase {
 
             if (currentMetric) {
                 for (var platform of Platform.sortByName(Platform.all())) {
+                    if (platform.isHidden())
+                        continue;
                     if (platform.hasMetric(currentMetric))
                         this._platformItems.push(this._createListItem(platform, platform.label()));
                 }
@@ -105,6 +107,7 @@ class PaneSelector extends ComponentBase {
             .map(function (metric) { return self._createListItem(metric, metric.label()); });
 
         var testItems = tests
+            .filter(test => !test.isHidden())
             .map(function (test) {
                 var data = test;
                 var label = test.label();

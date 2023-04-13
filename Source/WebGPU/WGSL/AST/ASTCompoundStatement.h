@@ -31,16 +31,18 @@ namespace WGSL::AST {
 
 class CompoundStatement final : public Statement {
     WTF_MAKE_FAST_ALLOCATED;
-
 public:
+
+    using Ref = UniqueRef<CompoundStatement>;
+
     CompoundStatement(SourceSpan span, Statement::List&& statements)
         : Statement(span)
         , m_statements(WTFMove(statements))
-    {
-    }
+    { }
 
-    Kind kind() const override;
+    NodeKind kind() const override;
     Statement::List& statements() { return m_statements; }
+    const Statement::List& statements() const { return m_statements; }
 
 private:
     Statement::List m_statements;

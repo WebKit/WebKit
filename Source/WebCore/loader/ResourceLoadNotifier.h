@@ -38,7 +38,7 @@ namespace WebCore {
 class AuthenticationChallenge;
 class CachedResource;
 class DocumentLoader;
-class Frame;
+class LocalFrame;
 class NetworkLoadMetrics;
 class ResourceError;
 class ResourceLoader;
@@ -49,7 +49,7 @@ class SharedBuffer;
 class ResourceLoadNotifier {
     WTF_MAKE_NONCOPYABLE(ResourceLoadNotifier);
 public:
-    explicit ResourceLoadNotifier(Frame&);
+    explicit ResourceLoadNotifier(LocalFrame&);
 
     void didReceiveAuthenticationChallenge(ResourceLoader*, const AuthenticationChallenge&);
     void didReceiveAuthenticationChallenge(ResourceLoaderIdentifier, DocumentLoader*, const AuthenticationChallenge&);
@@ -75,7 +75,7 @@ public:
     }
 
 private:
-    Frame& m_frame;
+    LocalFrame& m_frame;
     std::optional<ResourceLoaderIdentifier> m_initialRequestIdentifier;
 };
 

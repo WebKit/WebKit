@@ -78,7 +78,7 @@ RefPtr<CSSValue> CSSKeywordValue::toCSSValue() const
 {
     auto keyword = cssValueKeywordID(m_value);
     if (keyword == CSSValueInvalid)
-        return CSSPrimitiveValue::create(m_value, CSSUnitType::CustomIdent);
+        return CSSPrimitiveValue::createCustomIdent(m_value);
     return CSSPrimitiveValue::create(keyword);
 }
 

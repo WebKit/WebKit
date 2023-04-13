@@ -31,11 +31,16 @@
 #include "FrameInfoData.h"
 #include "HandleMessage.h"
 #include "LoadParameters.h"
+#include "LoadedWebArchive.h"
+#include "MessageSenderInlines.h"
+#include "NetworkProcessMessages.h"
 #include "WebFrameProxy.h"
 #include "WebFrameProxyMessages.h"
 #include "WebPageMessages.h"
+#include "WebPageProxy.h"
 #include "WebPageProxyMessages.h"
 #include "WebProcessMessages.h"
+#include "WebProcessProxy.h"
 
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/ShouldTreatAsContinuingLoad.h>
@@ -48,6 +53,7 @@ ProvisionalFrameProxy::ProvisionalFrameProxy(WebFrameProxy& frame, Ref<WebProces
     , m_visitedLinkStore(frame.page()->visitedLinkStore())
     , m_pageID(frame.page()->webPageID()) // FIXME: Generate a new one? This can conflict. And we probably want something like ProvisionalPageProxy to respond to messages anyways.
     , m_webPageID(frame.page()->identifier())
+    , m_layerHostingContextIdentifier(WebCore::LayerHostingContextIdentifier::generate())
 {
     m_process->markProcessAsRecentlyUsed();
     m_process->addProvisionalFrameProxy(*this);
@@ -62,18 +68,30 @@ ProvisionalFrameProxy::ProvisionalFrameProxy(WebFrameProxy& frame, Ref<WebProces
     ASSERT(drawingArea);
 
     auto parameters = page.creationParameters(m_process, *drawingArea);
+    parameters.subframeProcessFrameTreeInitializationParameters = { {
+        frame.frameID(),
+        *page.frameTreeCreationParameters(),
+        m_layerHostingContextIdentifier
+    } };
     parameters.isProcessSwap = true; // FIXME: This should be a parameter to creationParameters rather than doctoring up the parameters afterwards.
-    parameters.mainFrameIdentifier = frame.frameID();
+    parameters.topContentInset = 0;
     m_process->send(Messages::WebProcess::CreateWebPage(m_pageID, parameters), 0);
     m_process->addVisitedLinkStoreUser(page.visitedLinkStore(), page.identifier());
+
+    drawingArea->attachToProvisionalFrameProcess(m_process);
 
     LoadParameters loadParameters;
     loadParameters.request = request;
     loadParameters.shouldTreatAsContinuingLoad = WebCore::ShouldTreatAsContinuingLoad::YesAfterNavigationPolicyDecision;
+    loadParameters.frameIdentifier = frame.frameID();
     // FIXME: Add more parameters as appropriate.
 
-    // FIXME: Do we need a LoadRequestWaitingForProcessLaunch version?
-    m_process->send(Messages::WebPage::LoadRequest(loadParameters), m_pageID);
+    // FIXME: This gives too much cookie access. This should be removed after putting the entire frame tree in all web processes.
+    auto giveAllCookieAccess = LoadedWebArchive::Yes;
+    page.websiteDataStore().networkProcess().sendWithAsyncReply(Messages::NetworkProcess::AddAllowedFirstPartyForCookies(m_process->coreProcessIdentifier(), WebCore::RegistrableDomain(request.url()), giveAllCookieAccess), [process = m_process, loadParameters = WTFMove(loadParameters), pageID = m_pageID] () mutable {
+        // FIXME: Do we need a LoadRequestWaitingForProcessLaunch version?
+        process->send(Messages::WebPage::LoadRequest(loadParameters), pageID);
+    });
 }
 
 ProvisionalFrameProxy::~ProvisionalFrameProxy()
@@ -91,6 +109,12 @@ ProvisionalFrameProxy::~ProvisionalFrameProxy()
 void ProvisionalFrameProxy::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
     ASSERT(decoder.messageReceiverName() == Messages::WebPageProxy::messageReceiverName());
+
+#if HAVE(VISIBILITY_PROPAGATION_VIEW)
+    // FIXME: This needs to be handled correctly in a way that doesn't cause assertions or crashes..
+    if (decoder.messageName() == Messages::WebPageProxy::DidCreateContextInWebProcessForVisibilityPropagation::name())
+        return;
+#endif
 
     if (decoder.messageName() == Messages::WebPageProxy::DecidePolicyForResponse::name()) {
         IPC::handleMessage<Messages::WebPageProxy::DecidePolicyForResponse>(connection, decoder, this, &ProvisionalFrameProxy::decidePolicyForResponse);

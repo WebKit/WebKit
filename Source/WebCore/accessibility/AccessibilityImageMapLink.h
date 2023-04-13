@@ -56,7 +56,7 @@ public:
     bool isLink() const override { return true; }
     bool isLinked() const override { return true; }
     String title() const override;
-    String accessibilityDescription() const override;
+    String description() const override;
     AccessibilityObject* parentObject() const override;
     
     String stringValueForMSAA() const override;
@@ -71,7 +71,7 @@ private:
     Path elementPath() const override;
     RenderElement* imageMapLinkRenderer() const;
     void accessibilityText(Vector<AccessibilityText>&) const override;
-    bool isImageMapLink() const override { return true; }
+    bool isImageMapLink() const final { return true; }
     bool supportsPath() const override { return true; }
 
     RefPtr<HTMLAreaElement> m_areaElement;
@@ -80,4 +80,7 @@ private:
     
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_ACCESSIBILITY(AccessibilityImageMapLink, isImageMapLink())
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::AccessibilityImageMapLink) \
+    static bool isType(const WebCore::AXCoreObject& object) { return object.isAccessibilityObject() && downcast<WebCore::AccessibilityObject>(object).isImageMapLink(); } \
+    static bool isType(const WebCore::AccessibilityObject& object) { return object.isImageMapLink(); } \
+SPECIALIZE_TYPE_TRAITS_END()

@@ -21,7 +21,6 @@
 #include "WebKitWebsiteDataManager.h"
 
 #include "WebKitCookieManagerPrivate.h"
-#include "WebKitFaviconDatabasePrivate.h"
 #include "WebKitInitialize.h"
 #include "WebKitMemoryPressureSettings.h"
 #include "WebKitMemoryPressureSettingsPrivate.h"
@@ -37,6 +36,10 @@
 #include <wtf/FileSystem.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/WTFGType.h>
+
+#if PLATFORM(GTK) && ENABLE(2022_GLIB_API)
+#include "WebKitFaviconDatabasePrivate.h"
+#endif
 
 using namespace WebKit;
 
@@ -95,7 +98,7 @@ struct _WebKitWebsiteDataManagerPrivate {
     CString baseDataDirectory;
     CString baseCacheDirectory;
 
-#if ENABLE(2022_GLIB_API)
+#if PLATFORM(GTK) && ENABLE(2022_GLIB_API)
     GRefPtr<WebKitFaviconDatabase> faviconDatabase;
 #endif
 
@@ -117,7 +120,7 @@ struct _WebKitWebsiteDataManagerPrivate {
 #endif
 };
 
-WEBKIT_DEFINE_FINAL_TYPE_IN_2022_API(WebKitWebsiteDataManager, webkit_website_data_manager, G_TYPE_OBJECT)
+WEBKIT_DEFINE_FINAL_TYPE(WebKitWebsiteDataManager, webkit_website_data_manager, G_TYPE_OBJECT, GObject)
 
 static void webkitWebsiteDataManagerGetProperty(GObject* object, guint propID, GValue* value, GParamSpec* paramSpec)
 {
@@ -1034,7 +1037,7 @@ void webkit_website_data_manager_set_network_proxy_settings(WebKitWebsiteDataMan
 }
 #endif
 
-#if ENABLE(2022_GLIB_API)
+#if PLATFORM(GTK) && ENABLE(2022_GLIB_API)
 static String webkitWebsiteDataManagerGetFaviconDatabasePath(WebKitWebsiteDataManager* manager)
 {
     if (webkit_website_data_manager_is_ephemeral(manager))
@@ -1051,8 +1054,8 @@ static String webkitWebsiteDataManagerGetFaviconDatabasePath(WebKitWebsiteDataMa
  * @manager: a #WebKitWebsiteDataManager
  * @enabled: value to set
  *
- * Set whether website icons are enabled. Website icons are enabled by default.
- * When website icons are disabled, the #WebKitFaviconDatabase of @manager is closed
+ * Set whether website icons are enabled. Website icons are disabled by default.
+ * When website icons are disabled, the #WebKitFaviconDatabase of @manager is closed and
  * its reference removed, so webkit_website_data_manager_get_favicon_database() will
  * return %NULL. If website icons are enabled again, a new #WebKitFaviconDatabase will
  * be created.

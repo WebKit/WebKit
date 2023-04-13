@@ -72,7 +72,9 @@ template<typename JSClass> inline JSDOMConstructorNotCallable<JSClass>* JSDOMCon
 
 template<typename JSClass> inline JSC::Structure* JSDOMConstructorNotCallable<JSClass>::createStructure(JSC::VM& vm, JSC::JSGlobalObject& globalObject, JSC::JSValue prototype)
 {
-    return JSC::Structure::create(vm, &globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), info());
+    auto* structure = JSC::Structure::create(vm, &globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), info());
+    structure->setMayBePrototype(true);
+    return structure;
 }
 
 template<typename JSClass> inline void JSDOMConstructorNotCallable<JSClass>::finishCreation(JSC::VM& vm, JSDOMGlobalObject& globalObject)

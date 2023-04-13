@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,10 +25,10 @@
 
 #include "config.h"
 
-#if ENABLE(WEBGL) && ENABLE(WEBGL2)
+#if ENABLE(WEBGL)
 
 #include "JSWebGL2RenderingContext.h"
-#include "WebCoreOpaqueRoot.h"
+#include "WebCoreOpaqueRootInlines.h"
 #include <JavaScriptCore/HeapInlines.h>
 
 namespace WebCore {

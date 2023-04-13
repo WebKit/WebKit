@@ -52,7 +52,7 @@ class UserStyleSheet;
 }
 
 namespace WebCore {
-struct SecurityOriginData;
+class SecurityOriginData;
 }
 
 namespace WebKit {

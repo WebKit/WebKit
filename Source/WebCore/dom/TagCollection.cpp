@@ -24,7 +24,8 @@
 #include "config.h"
 #include "TagCollection.h"
 
-#include "NodeRareData.h"
+#include "CachedHTMLCollectionInlines.h"
+#include "NodeRareDataInlines.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {

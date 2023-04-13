@@ -34,6 +34,7 @@
 #import <WebCore/FloatRect.h>
 #import <WebCore/GeometryUtilities.h>
 #import <WebCore/Timer.h>
+#import <WebCore/WebCoreObjCExtras.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/MachSendRight.h>
 #import <wtf/WeakObjCPtr.h>
@@ -70,6 +71,14 @@ static const Seconds PostAnimationDelay { 100_ms };
     _shouldRestartWhenTimerFires = false;
 
     return self;
+}
+
+- (void)dealloc
+{
+    if (WebCoreObjCScheduleDeallocateOnMainThread(WKVideoLayerRemote.class, self))
+        return;
+
+    [super dealloc];
 }
 
 - (WebKit::MediaPlayerPrivateRemote*)mediaPlayerPrivateRemote
@@ -177,7 +186,8 @@ static const Seconds PostAnimationDelay { 100_ms };
         return;
     }
 
-    if (CGRectEqualToRect(self.videoLayerFrame, self.bounds) && CGAffineTransformIsIdentity(self.affineTransform))
+    auto* videoSublayer = [sublayers objectAtIndex:0];
+    if (!CGRectIsEmpty(self.videoLayerFrame) && CGRectEqualToRect(self.videoLayerFrame, videoSublayer.bounds) && CGAffineTransformIsIdentity(self.affineTransform))
         return;
 
     [CATransaction begin];
@@ -191,7 +201,6 @@ static const Seconds PostAnimationDelay { 100_ms };
         }
     }
 
-    auto* videoSublayer = [sublayers objectAtIndex:0];
     [videoSublayer setAffineTransform:CGAffineTransformIdentity];
     [videoSublayer setFrame:self.bounds];
 

@@ -816,6 +816,20 @@ public:
         }
     }
 
+    void rotateRight32(RegisterID src, TrustedImm32 shift_amount, RegisterID dest)
+    {
+        move32IfNeeded(src, dest);
+        rotateRight32(shift_amount, dest);
+    }
+
+    void rotateRight32(RegisterID src, RegisterID shift_amount, RegisterID dest)
+    {
+        ASSERT(shift_amount != dest);
+
+        move32IfNeeded(src, dest);
+        rotateRight32(shift_amount, dest);
+    }
+
     void rotateLeft32(TrustedImm32 imm, RegisterID dest)
     {
         m_assembler.roll_i8r(imm.m_value, dest);
@@ -833,6 +847,20 @@ public:
             m_assembler.roll_CLr(dest == X86Registers::ecx ? src : dest);
             swap(src, X86Registers::ecx);
         }
+    }
+
+    void rotateLeft32(RegisterID src, TrustedImm32 shift_amount, RegisterID dest)
+    {
+        move32IfNeeded(src, dest);
+        rotateLeft32(shift_amount, dest);
+    }
+
+    void rotateLeft32(RegisterID src, RegisterID shift_amount, RegisterID dest)
+    {
+        ASSERT(shift_amount != dest);
+
+        move32IfNeeded(src, dest);
+        rotateLeft32(shift_amount, dest);
     }
 
     void sub32(RegisterID src, RegisterID dest)
@@ -2532,20 +2560,7 @@ public:
             m_assembler.xchgq_rr(reg1, reg2);
     }
 
-    void swap(FPRegisterID reg1, FPRegisterID reg2)
-    {
-        if (reg1 == reg2)
-            return;
-
-        // FIXME: This is kinda a hack since we don't use xmm7 as a temp.
-        ASSERT(reg1 != FPRegisterID::xmm7);
-        ASSERT(reg2 != FPRegisterID::xmm7);
-        moveDouble(reg1, FPRegisterID::xmm7);
-        moveDouble(reg2, reg1);
-        moveDouble(FPRegisterID::xmm7, reg2);
-    }
-
-    void signExtend32ToPtr(TrustedImm32 imm, RegisterID dest)
+    void signExtend32To64(TrustedImm32 imm, RegisterID dest)
     {
         if (!imm.m_value)
             m_assembler.xorq_rr(dest, dest);
@@ -2553,9 +2568,19 @@ public:
             m_assembler.mov_i32r(imm.m_value, dest);
     }
 
-    void signExtend32ToPtr(RegisterID src, RegisterID dest)
+    void signExtend32To64(RegisterID src, RegisterID dest)
     {
         m_assembler.movsxd_rr(src, dest);
+    }
+
+    void signExtend32ToPtr(RegisterID src, RegisterID dest)
+    {
+        signExtend32To64(src, dest);
+    }
+
+    void signExtend32ToPtr(TrustedImm32 imm, RegisterID dest)
+    {
+        signExtend32To64(imm, dest);
     }
 
     void zeroExtend32ToWord(RegisterID src, RegisterID dest)
@@ -2635,7 +2660,7 @@ public:
             m_assembler.xchgl_rr(reg1, reg2);
     }
 
-    void swap(FPRegisterID reg1, FPRegisterID reg2)
+    void swapDouble(FPRegisterID reg1, FPRegisterID reg2)
     {
         if (reg1 == reg2)
             return;

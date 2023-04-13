@@ -29,6 +29,7 @@
 #include "DrawingAreaProxy.h"
 #include "Logging.h"
 #include "WebBackForwardCache.h"
+#include "WebFrameProxy.h"
 #include "WebPageMessages.h"
 #include "WebPageProxy.h"
 #include "WebPageProxyMessages.h"

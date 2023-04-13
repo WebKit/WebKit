@@ -9,7 +9,18 @@ includes: [deepEqual.js]
 features: [Temporal, Intl.DateTimeFormat-formatRange]
 ---*/
 
-const formatter = new Intl.DateTimeFormat("en", { timeZone: "Pacific/Apia" });
+// Tolerate implementation variance by expecting consistency without being prescriptive.
+// TODO: can we change tests to be less reliant on CLDR formats while still testing that
+// Temporal and Intl are behaving as expected?
+const usDayPeriodSpace =
+  new Intl.DateTimeFormat('en-US', { timeStyle: 'short' })
+    .formatToParts(0)
+    .find((part, i, parts) => part.type === 'literal' && parts[i + 1].type === 'dayPeriod')?.value || '';
+const usDateRangeSeparator = new Intl.DateTimeFormat('en-US', { dateStyle: 'short' })
+  .formatRangeToParts(1 * 86400 * 1000, 366 * 86400 * 1000)
+  .find((part) => part.type === 'literal' && part.source === 'shared').value;
+
+const formatter = new Intl.DateTimeFormat('en-US', { timeZone: 'Pacific/Apia' });
 
 const date1 = new Temporal.PlainDate(2021, 8, 4);
 const date2 = new Temporal.PlainDate(2021, 8, 5);
@@ -20,7 +31,7 @@ assert.deepEqual(dateResult, [
   { type: "day", value: "4", source: "startRange" },
   { type: "literal", value: "/", source: "startRange" },
   { type: "year", value: "2021", source: "startRange" },
-  { type: "literal", value: " – ", source: "shared" },
+  { type: "literal", value: usDateRangeSeparator, source: "shared" },
   { type: "month", value: "8", source: "endRange" },
   { type: "literal", value: "/", source: "endRange" },
   { type: "day", value: "5", source: "endRange" },
@@ -43,15 +54,15 @@ assert.deepEqual(datetimeResult, [
   { type: "minute", value: "30", source: "startRange" },
   { type: "literal", value: ":", source: "startRange" },
   { type: "second", value: "45", source: "startRange" },
-  { type: "literal", value: " ", source: "startRange" },
+  { type: "literal", value: usDayPeriodSpace, source: "startRange" },
   { type: "dayPeriod", value: "AM", source: "startRange" },
-  { type: "literal", value: " – ", source: "shared" },
+  { type: "literal", value: usDateRangeSeparator, source: "shared" },
   { type: "hour", value: "11", source: "endRange" },
   { type: "literal", value: ":", source: "endRange" },
   { type: "minute", value: "30", source: "endRange" },
   { type: "literal", value: ":", source: "endRange" },
   { type: "second", value: "45", source: "endRange" },
-  { type: "literal", value: " ", source: "endRange" },
+  { type: "literal", value: usDayPeriodSpace, source: "endRange" },
   { type: "dayPeriod", value: "PM", source: "endRange" },
 ], "plain datetimes");
 
@@ -62,7 +73,7 @@ assert.deepEqual(monthDayResult, [
   { type: "month", value: "8", source: "startRange" },
   { type: "literal", value: "/", source: "startRange" },
   { type: "day", value: "4", source: "startRange" },
-  { type: "literal", value: " – ", source: "shared" },
+  { type: "literal", value: usDateRangeSeparator, source: "shared" },
   { type: "month", value: "8", source: "endRange" },
   { type: "literal", value: "/", source: "endRange" },
   { type: "day", value: "5", source: "endRange" },
@@ -77,15 +88,15 @@ assert.deepEqual(timeResult, [
   { type: "minute", value: "30", source: "startRange" },
   { type: "literal", value: ":", source: "startRange" },
   { type: "second", value: "45", source: "startRange" },
-  { type: "literal", value: " ", source: "startRange" },
+  { type: "literal", value: usDayPeriodSpace, source: "startRange" },
   { type: "dayPeriod", value: "AM", source: "startRange" },
-  { type: "literal", value: " – ", source: "shared" },
+  { type: "literal", value: usDateRangeSeparator, source: "shared" },
   { type: "hour", value: "11", source: "endRange" },
   { type: "literal", value: ":", source: "endRange" },
   { type: "minute", value: "30", source: "endRange" },
   { type: "literal", value: ":", source: "endRange" },
   { type: "second", value: "45", source: "endRange" },
-  { type: "literal", value: " ", source: "endRange" },
+  { type: "literal", value: usDayPeriodSpace, source: "endRange" },
   { type: "dayPeriod", value: "PM", source: "endRange" },
 ], "plain times");
 
@@ -96,7 +107,7 @@ assert.deepEqual(monthResult, [
   { type: "month", value: "8", source: "startRange" },
   { type: "literal", value: "/", source: "startRange" },
   { type: "year", value: "2021", source: "startRange" },
-  { type: "literal", value: " – ", source: "shared" },
+  { type: "literal", value: usDateRangeSeparator, source: "shared" },
   { type: "month", value: "9", source: "endRange" },
   { type: "literal", value: "/", source: "endRange" },
   { type: "year", value: "2021", source: "endRange" },

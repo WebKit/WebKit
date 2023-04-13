@@ -1,0 +1,16 @@
+<body>
+    <p>Test CanvasRenderingContext2D.drawImage() can draw an SVGImageElement.</p>
+    <canvas id="canvas"></canvas>
+    <div style="position: absolute; top: -999999px">
+        <img id="source" src="resources/background.png" />
+    </div>
+    <script>
+        const image = document.getElementById("source");
+        image.addEventListener("load", (e) => {
+            const canvas = document.getElementById("canvas");
+            const ctx = canvas.getContext("2d");
+            ctx.imageSmoothingEnabled = false;
+            ctx.drawImage(image, 0, 0, image.width, image.height, 0, 0, canvas.width, canvas.height)
+        });
+    </script>
+</body>

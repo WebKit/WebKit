@@ -35,16 +35,14 @@
 #include "NetworkLoadMetrics.h"
 #include "ResourceError.h"
 #include "SharedBuffer.h"
-#include "SynchronousLoaderClient.h"
 #include <wtf/CrossThreadCopier.h>
 #include <wtf/Language.h>
 #include <wtf/MainThread.h>
 
 namespace WebCore {
 
-CurlRequest::CurlRequest(const ResourceRequest&request, CurlRequestClient* client, ShouldSuspend shouldSuspend, EnableMultipart enableMultipart, CaptureNetworkLoadMetrics captureExtraMetrics, RefPtr<SynchronousLoaderMessageQueue>&& messageQueue)
+CurlRequest::CurlRequest(const ResourceRequest&request, CurlRequestClient* client, ShouldSuspend shouldSuspend, EnableMultipart enableMultipart, CaptureNetworkLoadMetrics captureExtraMetrics)
     : m_client(client)
-    , m_messageQueue(WTFMove(messageQueue))
     , m_request(request.isolatedCopy())
     , m_enableMultipart(enableMultipart == EnableMultipart::Yes)
     , m_startState(shouldSuspend == ShouldSuspend::Yes ? StartState::StartSuspended : StartState::WaitingForStart)
@@ -61,7 +59,6 @@ void CurlRequest::invalidateClient()
     ASSERT(isMainThread());
 
     m_client = nullptr;
-    m_messageQueue = nullptr;
 }
 
 void CurlRequest::setAuthenticationScheme(ProtectionSpace::AuthenticationScheme scheme)
@@ -216,10 +213,7 @@ void CurlRequest::callClient(Function<void(CurlRequest&, CurlRequestClient&)>&& 
 
 void CurlRequest::runOnMainThread(Function<void()>&& task)
 {
-    if (m_messageQueue)
-        m_messageQueue->append(makeUnique<Function<void()>>(WTFMove(task)));
-    else
-        ensureOnMainThread(WTFMove(task));
+    ensureOnMainThread(WTFMove(task));
 }
 
 void CurlRequest::runOnWorkerThreadIfRequired(Function<void()>&& task)
@@ -579,13 +573,7 @@ void CurlRequest::setupPOST()
     if (!elementSize)
         return;
 
-    // Do not stream for simple POST data
-    if (elementSize == 1) {
-        const auto* postData = m_formDataStream.getPostData();
-        if (postData && postData->size())
-            m_curlHandle->setPostFields(postData->data(), postData->size());
-    } else
-        setupSendData(false);
+    setupSendData(false);
 }
 
 void CurlRequest::setupSendData(bool forPutMethod)

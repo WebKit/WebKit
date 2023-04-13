@@ -18,6 +18,13 @@
 
     window.addEventListener('load', async event => {
         try {
+            // NOTE: A bug in ffmpeg causes a 1ms mismatch between the Opus
+            // packet duration of the first WebM block, and the start time of
+            // the subsequent block. Until all ports agree on whether to use
+            // the packet duration or the block timestamps, this tolerance
+            // value allows this to continue passing normally.
+            const OpusBufferedTolerance = 0.001;
+
             findMediaElement();
             loader = new MediaSourceLoader('content/test-opus-manifest.json');
             await loaderPromise(loader);
@@ -32,21 +39,21 @@
             await waitFor(sourceBuffer, 'update');
 
             consoleWrite('Divide the first media segment in two.');
-            run('partial1 = loader.mediaSegment(0).slice(0, 14006)');
-            run('partial2 = loader.mediaSegment(0).slice(14006)');
+            run('partial1 = loader.mediaSegment(0).slice(0, loader.mediaSegmentSize(0)/2)');
+            run('partial2 = loader.mediaSegment(0).slice(loader.mediaSegmentSize(0)/2)');
 
             consoleWrite('Append a partial media segment.')
             run('sourceBuffer.appendBuffer(partial1)');
             await waitFor(sourceBuffer, 'update');
             testExpected('sourceBuffer.buffered.length', '1');
-            testExpected('sourceBuffer.buffered.end(0)', '3.621', '==');
+            testExpectedEqualWithTolerance('sourceBuffer.buffered.end(0)', '3.96', OpusBufferedTolerance);
 
             consoleWrite('Complete the partial media segment.')
             run('sourceBuffer.appendBuffer(partial2)');
             await waitFor(sourceBuffer, 'update');
 
             testExpected('sourceBuffer.buffered.length', '1');
-            testExpected('sourceBuffer.buffered.end(0)', '10.001', '==');
+            testExpectedEqualWithTolerance('sourceBuffer.buffered.end(0)', '4.98', OpusBufferedTolerance);
 
             consoleWrite('Clean sourcebuffer of all content.');
             run('sourceBuffer.remove(0, 100)');
@@ -56,13 +63,14 @@
             run('sourceBuffer.appendBuffer(loader.mediaSegment(1))');
             await waitFor(sourceBuffer, 'update');
             testExpected('sourceBuffer.buffered.length', '1');
-            testExpected('sourceBuffer.buffered.end(0)', '90.001', '==');
+            testExpectedEqualWithTolerance('sourceBuffer.buffered.start(0)', '4.98', OpusBufferedTolerance);
+            testExpectedEqualWithTolerance('sourceBuffer.buffered.end(0)', '9.98', OpusBufferedTolerance);
 
             run('sourceBuffer.appendBuffer(loader.mediaSegment(0))');
             await waitFor(sourceBuffer, 'update');
-            testExpected('sourceBuffer.buffered.length', '2');
-            testExpected('sourceBuffer.buffered.end(0)', '10.001', '==');
-            testExpected('sourceBuffer.buffered.end(1)', '90.001', '==');
+            testExpected('sourceBuffer.buffered.length', '1');
+            testExpected('sourceBuffer.buffered.start(0)', '0', '==');
+            testExpectedEqualWithTolerance('sourceBuffer.buffered.end(0)', '9.98', OpusBufferedTolerance);
 
             endTest();
         } catch (e) {

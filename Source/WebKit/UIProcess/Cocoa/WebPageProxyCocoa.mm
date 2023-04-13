@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,6 +35,7 @@
 #import "DataDetectionResult.h"
 #import "InsertTextOptions.h"
 #import "LoadParameters.h"
+#import "MessageSenderInlines.h"
 #import "ModalContainerControlClassifier.h"
 #import "NetworkConnectionIntegrityHelpers.h"
 #import "PageClient.h"
@@ -49,8 +50,10 @@
 #import "WKErrorInternal.h"
 #import "WKWebView.h"
 #import "WebContextMenuProxy.h"
+#import "WebFrameProxy.h"
 #import "WebPage.h"
 #import "WebPageMessages.h"
+#import "WebPageProxyInternals.h"
 #import "WebPasteboardProxy.h"
 #import "WebProcessMessages.h"
 #import "WebProcessProxy.h"
@@ -103,7 +106,7 @@ SOFT_LINK_PRIVATE_FRAMEWORK(WebContentAnalysis);
 SOFT_LINK_CLASS(WebContentAnalysis, WebFilterEvaluator);
 #endif
 
-#if HAVE(SC_CONTENT_SHARING_SESSION)
+#if HAVE(SCREEN_CAPTURE_KIT)
 #import <WebCore/ScreenCaptureKitSharingSessionManager.h>
 #endif
 
@@ -118,7 +121,7 @@ SOFT_LINK_CLASS_OPTIONAL(AppleMediaServicesUI, AMSUIEngagementTask)
 #define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, process().connection())
 #define MESSAGE_CHECK_COMPLETION(assertion, completion) MESSAGE_CHECK_COMPLETION_BASE(assertion, process().connection(), completion)
 
-#define WEBPAGEPROXY_RELEASE_LOG(channel, fmt, ...) RELEASE_LOG(channel, "%p - [pageProxyID=%llu, webPageID=%llu, PID=%i] WebPageProxy::" fmt, this, m_identifier.toUInt64(), m_webPageID.toUInt64(), m_process->processIdentifier(), ##__VA_ARGS__)
+#define WEBPAGEPROXY_RELEASE_LOG(channel, fmt, ...) RELEASE_LOG(channel, "%p - [pageProxyID=%llu, webPageID=%llu, PID=%i] WebPageProxy::" fmt, this, identifier().toUInt64(), webPageID().toUInt64(), m_process->processIdentifier(), ##__VA_ARGS__)
 
 namespace WebKit {
 using namespace WebCore;
@@ -138,17 +141,17 @@ void WebPageProxy::didCommitLayerTree(const WebKit::RemoteLayerTreeTransaction& 
     sampledPageTopColorChanged(layerTreeTransaction.sampledPageTopColor());
 
     if (!m_hasUpdatedRenderingAfterDidCommitLoad) {
-        if (layerTreeTransaction.transactionID() >= m_firstLayerTreeTransactionIdAfterDidCommitLoad) {
+        if (layerTreeTransaction.transactionID() >= internals().firstLayerTreeTransactionIdAfterDidCommitLoad) {
             m_hasUpdatedRenderingAfterDidCommitLoad = true;
             stopMakingViewBlankDueToLackOfRenderingUpdateIfNecessary();
-            m_lastVisibleContentRectUpdate = VisibleContentRectUpdateInfo();
+            internals().lastVisibleContentRectUpdate = { };
         }
     }
 
     pageClient().didCommitLayerTree(layerTreeTransaction);
 
     // FIXME: Remove this special mechanism and fold it into the transaction's layout milestones.
-    if (m_observedLayoutMilestones.contains(WebCore::ReachedSessionRestorationRenderTreeSizeThreshold) && !m_hitRenderTreeSizeThreshold
+    if (internals().observedLayoutMilestones.contains(WebCore::ReachedSessionRestorationRenderTreeSizeThreshold) && !m_hitRenderTreeSizeThreshold
         && exceedsRenderTreeSizeSizeThreshold(m_sessionRestorationRenderTreeSize, layerTreeTransaction.renderTreeSize())) {
         m_hitRenderTreeSizeThreshold = true;
         didReachLayoutMilestone(WebCore::ReachedSessionRestorationRenderTreeSizeThreshold);
@@ -178,14 +181,14 @@ void WebPageProxy::saveRecentSearches(const String& name, const Vector<WebCore::
 {
     MESSAGE_CHECK(!name.isNull());
 
-    WebCore::saveRecentSearches(name, searchItems);
+    m_websiteDataStore->saveRecentSearches(name, searchItems);
 }
 
 void WebPageProxy::loadRecentSearches(const String& name, CompletionHandler<void(Vector<WebCore::RecentSearch>&&)>&& completionHandler)
 {
     MESSAGE_CHECK_COMPLETION(!name.isNull(), completionHandler({ }));
 
-    completionHandler(WebCore::loadRecentSearches(name));
+    m_websiteDataStore->loadRecentSearches(name, WTFMove(completionHandler));
 }
 
 void WebPageProxy::grantAccessToCurrentPasteboardData(const String& pasteboardName)
@@ -295,27 +298,7 @@ void WebPageProxy::startDrag(const DragItem& dragItem, const ShareableBitmapHand
     pageClient().startDrag(dragItem, dragImageHandle);
 }
 
-// FIXME: Move these functions to WebPageProxyIOS.mm.
-#if PLATFORM(IOS_FAMILY)
-
-void WebPageProxy::setPromisedDataForImage(const String&, const SharedMemory::Handle&, const String&, const String&, const String&, const String&, const String&, const SharedMemory::Handle&, const String&)
-{
-    notImplemented();
-}
-
-void WebPageProxy::setDragCaretRect(const IntRect& dragCaretRect)
-{
-    if (m_currentDragCaretRect == dragCaretRect)
-        return;
-
-    auto previousRect = m_currentDragCaretRect;
-    m_currentDragCaretRect = dragCaretRect;
-    pageClient().didChangeDragCaretRect(previousRect, dragCaretRect);
-}
-
-#endif // PLATFORM(IOS_FAMILY)
-
-#endif // ENABLE(DRAG_SUPPORT)
+#endif
 
 #if ENABLE(ATTACHMENT_ELEMENT)
 
@@ -348,11 +331,13 @@ void WebPageProxy::platformCloneAttachment(Ref<API::Attachment>&& fromAttachment
 static RefPtr<WebKit::ShareableBitmap> convertPlatformImageToBitmap(CocoaImage *image, const WebCore::FloatSize& fittingSize)
 {
     FloatSize originalThumbnailSize([image size]);
+    if (originalThumbnailSize.isEmpty())
+        return nullptr;
+
     auto resultRect = roundedIntRect(largestRectWithAspectRatioInsideRect(originalThumbnailSize.aspectRatio(), { { }, fittingSize }));
     resultRect.setLocation({ });
 
-    WebKit::ShareableBitmapConfiguration bitmapConfiguration;
-    auto bitmap = WebKit::ShareableBitmap::create(resultRect.size(), bitmapConfiguration);
+    auto bitmap = WebKit::ShareableBitmap::create({ resultRect.size() });
     if (!bitmap)
         return nullptr;
 
@@ -361,11 +346,7 @@ static RefPtr<WebKit::ShareableBitmap> convertPlatformImageToBitmap(CocoaImage *
         return nullptr;
 
     LocalCurrentGraphicsContext savedContext(*graphicsContext);
-#if PLATFORM(IOS_FAMILY)
     [image drawInRect:resultRect];
-#elif USE(APPKIT)
-    [image drawInRect:resultRect fromRect:NSZeroRect operation:NSCompositingOperationSourceOver fraction:1 respectFlipped:YES hints:nil];
-#endif
 
     return bitmap;
 }
@@ -383,7 +364,7 @@ RefPtr<WebKit::ShareableBitmap> WebPageProxy::iconForAttachment(const String& fi
 }
 
 #endif // ENABLE(ATTACHMENT_ELEMENT)
-    
+
 void WebPageProxy::performDictionaryLookupAtLocation(const WebCore::FloatPoint& point)
 {
     if (!hasRunningProcess())
@@ -463,80 +444,82 @@ ResourceError WebPageProxy::errorForUnpermittedAppBoundDomainNavigation(const UR
 {
     return { WKErrorDomain, WKErrorNavigationAppBoundDomain, url, localizedDescriptionForErrorCode(WKErrorNavigationAppBoundDomain) };
 }
-    
+
 #if ENABLE(APPLE_PAY)
 
-IPC::Connection* WebPageProxy::paymentCoordinatorConnection(const WebPaymentCoordinatorProxy&)
+IPC::Connection* WebPageProxy::Internals::paymentCoordinatorConnection(const WebPaymentCoordinatorProxy&)
 {
-    return messageSenderConnection();
+    return page.messageSenderConnection();
 }
 
-const String& WebPageProxy::paymentCoordinatorBoundInterfaceIdentifier(const WebPaymentCoordinatorProxy&)
+const String& WebPageProxy::Internals::paymentCoordinatorBoundInterfaceIdentifier(const WebPaymentCoordinatorProxy&)
 {
-    return websiteDataStore().configuration().boundInterfaceIdentifier();
+    return page.websiteDataStore().configuration().boundInterfaceIdentifier();
 }
 
-const String& WebPageProxy::paymentCoordinatorSourceApplicationBundleIdentifier(const WebPaymentCoordinatorProxy&)
+const String& WebPageProxy::Internals::paymentCoordinatorSourceApplicationBundleIdentifier(const WebPaymentCoordinatorProxy&)
 {
-    return websiteDataStore().configuration().sourceApplicationBundleIdentifier();
+    return page.websiteDataStore().configuration().sourceApplicationBundleIdentifier();
 }
 
-const String& WebPageProxy::paymentCoordinatorSourceApplicationSecondaryIdentifier(const WebPaymentCoordinatorProxy&)
+const String& WebPageProxy::Internals::paymentCoordinatorSourceApplicationSecondaryIdentifier(const WebPaymentCoordinatorProxy&)
 {
-    return websiteDataStore().configuration().sourceApplicationSecondaryIdentifier();
+    return page.websiteDataStore().configuration().sourceApplicationSecondaryIdentifier();
 }
 
-void WebPageProxy::paymentCoordinatorAddMessageReceiver(WebPaymentCoordinatorProxy&, IPC::ReceiverName receiverName, IPC::MessageReceiver& messageReceiver)
+void WebPageProxy::Internals::paymentCoordinatorAddMessageReceiver(WebPaymentCoordinatorProxy&, IPC::ReceiverName receiverName, IPC::MessageReceiver& messageReceiver)
 {
-    process().addMessageReceiver(receiverName, m_webPageID, messageReceiver);
+    page.process().addMessageReceiver(receiverName, webPageID, messageReceiver);
 }
 
-void WebPageProxy::paymentCoordinatorRemoveMessageReceiver(WebPaymentCoordinatorProxy&, IPC::ReceiverName receiverName)
+void WebPageProxy::Internals::paymentCoordinatorRemoveMessageReceiver(WebPaymentCoordinatorProxy&, IPC::ReceiverName receiverName)
 {
-    process().removeMessageReceiver(receiverName, m_webPageID);
+    page.process().removeMessageReceiver(receiverName, webPageID);
 }
 
 #endif
 
 #if ENABLE(SPEECH_SYNTHESIS)
-void WebPageProxy::didStartSpeaking(WebCore::PlatformSpeechSynthesisUtterance&)
+
+void WebPageProxy::Internals::didStartSpeaking(WebCore::PlatformSpeechSynthesisUtterance&)
 {
     if (speechSynthesisData().speakingStartedCompletionHandler)
         speechSynthesisData().speakingStartedCompletionHandler();
 }
 
-void WebPageProxy::didFinishSpeaking(WebCore::PlatformSpeechSynthesisUtterance&)
+void WebPageProxy::Internals::didFinishSpeaking(WebCore::PlatformSpeechSynthesisUtterance&)
 {
     if (speechSynthesisData().speakingFinishedCompletionHandler)
         speechSynthesisData().speakingFinishedCompletionHandler();
 }
 
-void WebPageProxy::didPauseSpeaking(WebCore::PlatformSpeechSynthesisUtterance&)
+void WebPageProxy::Internals::didPauseSpeaking(WebCore::PlatformSpeechSynthesisUtterance&)
 {
     if (speechSynthesisData().speakingPausedCompletionHandler)
         speechSynthesisData().speakingPausedCompletionHandler();
 }
 
-void WebPageProxy::didResumeSpeaking(WebCore::PlatformSpeechSynthesisUtterance&)
+void WebPageProxy::Internals::didResumeSpeaking(WebCore::PlatformSpeechSynthesisUtterance&)
 {
     if (speechSynthesisData().speakingResumedCompletionHandler)
         speechSynthesisData().speakingResumedCompletionHandler();
 }
 
-void WebPageProxy::speakingErrorOccurred(WebCore::PlatformSpeechSynthesisUtterance&)
+void WebPageProxy::Internals::speakingErrorOccurred(WebCore::PlatformSpeechSynthesisUtterance&)
 {
-    send(Messages::WebPage::SpeakingErrorOccurred());
+    page.send(Messages::WebPage::SpeakingErrorOccurred());
 }
 
-void WebPageProxy::boundaryEventOccurred(WebCore::PlatformSpeechSynthesisUtterance&, WebCore::SpeechBoundary speechBoundary, unsigned charIndex, unsigned charLength)
+void WebPageProxy::Internals::boundaryEventOccurred(WebCore::PlatformSpeechSynthesisUtterance&, WebCore::SpeechBoundary speechBoundary, unsigned charIndex, unsigned charLength)
 {
-    send(Messages::WebPage::BoundaryEventOccurred(speechBoundary == WebCore::SpeechBoundary::SpeechWordBoundary, charIndex, charLength));
+    page.send(Messages::WebPage::BoundaryEventOccurred(speechBoundary == WebCore::SpeechBoundary::SpeechWordBoundary, charIndex, charLength));
 }
 
-void WebPageProxy::voicesDidChange()
+void WebPageProxy::Internals::voicesDidChange()
 {
-    send(Messages::WebPage::VoicesDidChange());
+    page.send(Messages::WebPage::VoicesDidChange());
 }
+
 #endif // ENABLE(SPEECH_SYNTHESIS)
 
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
@@ -584,13 +567,13 @@ void WebPageProxy::removeMediaUsageManagerSession(WebCore::MediaSessionIdentifie
 
 void WebPageProxy::didChangePlaybackRate(PlaybackSessionContextIdentifier identifier)
 {
-    if (m_currentFullscreenVideoSessionIdentifier == identifier)
+    if (internals().currentFullscreenVideoSessionIdentifier == identifier)
         updateFullscreenVideoTextRecognition();
 }
 
 void WebPageProxy::didChangeCurrentTime(PlaybackSessionContextIdentifier identifier)
 {
-    if (m_currentFullscreenVideoSessionIdentifier == identifier)
+    if (internals().currentFullscreenVideoSessionIdentifier == identifier)
         updateFullscreenVideoTextRecognition();
 }
 
@@ -599,31 +582,31 @@ void WebPageProxy::updateFullscreenVideoTextRecognition()
     if (!pageClient().isTextRecognitionInFullscreenVideoEnabled())
         return;
 
-    if (m_currentFullscreenVideoSessionIdentifier && m_playbackSessionManager && m_playbackSessionManager->isPaused(*m_currentFullscreenVideoSessionIdentifier)) {
-        m_fullscreenVideoTextRecognitionTimer.startOneShot(250_ms);
+    if (internals().currentFullscreenVideoSessionIdentifier && m_playbackSessionManager && m_playbackSessionManager->isPaused(*internals().currentFullscreenVideoSessionIdentifier)) {
+        internals().fullscreenVideoTextRecognitionTimer.startOneShot(250_ms);
         return;
     }
 
-    m_fullscreenVideoTextRecognitionTimer.stop();
+    internals().fullscreenVideoTextRecognitionTimer.stop();
 
-    if (!m_currentFullscreenVideoSessionIdentifier)
+    if (!internals().currentFullscreenVideoSessionIdentifier)
         return;
 
 #if PLATFORM(IOS_FAMILY)
-    if (RetainPtr controller = m_videoFullscreenManager->playerViewController(*m_currentFullscreenVideoSessionIdentifier))
+    if (RetainPtr controller = m_videoFullscreenManager->playerViewController(*internals().currentFullscreenVideoSessionIdentifier))
         pageClient().cancelTextRecognitionForFullscreenVideo(controller.get());
 #endif
 }
 
 void WebPageProxy::fullscreenVideoTextRecognitionTimerFired()
 {
-    if (!m_currentFullscreenVideoSessionIdentifier || !m_videoFullscreenManager)
+    if (!internals().currentFullscreenVideoSessionIdentifier || !m_videoFullscreenManager)
         return;
 
-    auto identifier = *m_currentFullscreenVideoSessionIdentifier;
+    auto identifier = *internals().currentFullscreenVideoSessionIdentifier;
     m_videoFullscreenManager->requestBitmapImageForCurrentTime(identifier, [identifier, weakThis = WeakPtr { *this }](auto& imageHandle) {
         RefPtr protectedThis = weakThis.get();
-        if (!protectedThis || protectedThis->m_currentFullscreenVideoSessionIdentifier != identifier)
+        if (!protectedThis || protectedThis->internals().currentFullscreenVideoSessionIdentifier != identifier)
             return;
 
         auto fullscreenManager = protectedThis->m_videoFullscreenManager;
@@ -676,12 +659,7 @@ bool WebPageProxy::updateIconForDirectory(NSFileWrapper *fileWrapper, const Stri
     if (!image)
         return false;
 
-    auto flippedIcon = [NSImage imageWithSize:iconSize flipped:YES drawingHandler:^BOOL(NSRect destinationRect) {
-        [image drawInRect:destinationRect fromRect:NSMakeRect(0, 0, [image size].width, [image size].height) operation:NSCompositingOperationSourceOver fraction:1.0f];
-        return YES;
-    }];
-
-    auto convertedImage = convertPlatformImageToBitmap(flippedIcon, iconSize);
+    auto convertedImage = convertPlatformImageToBitmap(image, iconSize);
     if (!convertedImage)
         return false;
 
@@ -975,12 +953,17 @@ void WebPageProxy::replaceSelectionWithPasteboardData(const Vector<String>& type
     send(Messages::WebPage::ReplaceSelectionWithPasteboardData(types, data));
 }
 
+RetainPtr<WKWebView> WebPageProxy::cocoaView()
+{
+    return internals().cocoaView.get();
+}
+
 void WebPageProxy::setCocoaView(WKWebView *view)
 {
-    m_cocoaView = view;
+    internals().cocoaView = view;
 #if PLATFORM(IOS_FAMILY)
     if (m_screenOrientationManager)
-        m_screenOrientationManager->setWindow(view.window);
+        m_screenOrientationManager->setWindow(cocoaView().get().window);
 #endif
 }
 
@@ -998,7 +981,18 @@ bool WebPageProxy::useGPUProcessForDOMRenderingEnabled() const
     if (id useGPUProcessForDOMRendering = [[NSUserDefaults standardUserDefaults] objectForKey:@"WebKit2GPUProcessForDOMRendering"])
         return [useGPUProcessForDOMRendering boolValue];
 
-    return preferences().useGPUProcessForDOMRenderingEnabled();
+    if (preferences().useGPUProcessForDOMRenderingEnabled())
+        return true;
+
+    HashSet<RefPtr<const WebPageProxy>> visitedPages;
+    visitedPages.add(this);
+    for (auto* page = m_configuration->relatedPage(); page && !visitedPages.contains(page); page = page->configuration().relatedPage()) {
+        if (page->preferences().useGPUProcessForDOMRenderingEnabled())
+            return true;
+        visitedPages.add(page);
+    }
+
+    return false;
 }
 
 } // namespace WebKit

@@ -29,8 +29,24 @@ g.test('type_and_sampling')
       .combine('stage', ['vertex', 'fragment'])
       .combine('io', ['in', 'out'])
       .combine('use_struct', [true, false])
-      .combine('type', ['', 'flat', 'perspective', 'linear'])
-      .combine('sampling', ['', 'center', 'centroid', 'sample'])
+      .combine('type', [
+        '',
+        'flat',
+        'perspective',
+        'linear',
+        'center', // Invalid as first param
+        'centroid', // Invalid as first param
+        'sample', // Invalid as first param
+      ])
+      .combine('sampling', [
+        '',
+        'center',
+        'centroid',
+        'sample',
+        'flat', // Invalid as second param
+        'perspective', // Invalid as second param
+        'linear', // Invalid as second param
+      ])
       .beginSubcases()
   )
   .fn(t => {
@@ -42,9 +58,12 @@ g.test('type_and_sampling')
     if (t.params.type !== '' || t.params.sampling !== '') {
       interpolate = '@interpolate(';
       if (t.params.type !== '') {
-        interpolate += `${t.params.type}, `;
+        interpolate += `${t.params.type}`;
       }
-      interpolate += `${t.params.sampling})`;
+      if (t.params.sampling !== '') {
+        interpolate += `, ${t.params.sampling}`;
+      }
+      interpolate += `)`;
     }
     const code = generateShader({
       attribute: '@location(0)' + interpolate,
@@ -82,7 +101,6 @@ g.test('require_location')
       io: t.params.stage === 'fragment' ? 'in' : 'out',
       use_struct: t.params.use_struct,
     });
-
     t.expectCompileResult(t.params.attribute === '@location(0)', code);
   });
 
@@ -110,4 +128,18 @@ g.test('integral_types')
     });
 
     t.expectCompileResult(t.params.attribute === '@interpolate(flat)', code);
+  });
+
+g.test('duplicate')
+  .desc(`Test that the interpolate attribute can only be applied once.`)
+  .params(u => u.combine('attr', ['', '@interpolate(flat)']))
+  .fn(t => {
+    const code = generateShader({
+      attribute: `@location(0) @interpolate(flat) ${t.params.attr}`,
+      type: 'vec4<f32>',
+      stage: 'fragment',
+      io: 'in',
+      use_struct: false,
+    });
+    t.expectCompileResult(t.params.attr === '', code);
   });

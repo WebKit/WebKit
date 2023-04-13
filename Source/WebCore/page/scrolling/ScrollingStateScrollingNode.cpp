@@ -48,6 +48,7 @@ ScrollingStateScrollingNode::ScrollingStateScrollingNode(const ScrollingStateScr
     , m_scrollOrigin(stateNode.scrollOrigin())
     , m_snapOffsetsInfo(stateNode.m_snapOffsetsInfo)
 #if PLATFORM(MAC)
+    , m_scrollbarHoverState(stateNode.scrollbarHoverState())
     , m_verticalScrollerImp(stateNode.verticalScrollerImp())
     , m_horizontalScrollerImp(stateNode.horizontalScrollerImp())
 #endif
@@ -58,6 +59,7 @@ ScrollingStateScrollingNode::ScrollingStateScrollingNode(const ScrollingStateScr
     , m_synchronousScrollingReasons(stateNode.synchronousScrollingReasons())
 #endif
     , m_isMonitoringWheelEvents(stateNode.isMonitoringWheelEvents())
+    , m_mouseIsOverContentArea(stateNode.mouseIsOverContentArea())
 {
     scrollingStateTree().scrollingNodeAdded();
 
@@ -207,10 +209,15 @@ void ScrollingStateScrollingNode::setKeyboardScrollData(const RequestedKeyboardS
     setPropertyChanged(Property::KeyboardScrollData);
 }
 
-void ScrollingStateScrollingNode::setRequestedScrollData(const RequestedScrollData& scrollData)
+void ScrollingStateScrollingNode::setRequestedScrollData(RequestedScrollData&& scrollData, CanMergeScrollData canMergeScrollData)
 {
     // Scroll position requests are imperative, not stateful, so we can't early return here.
-    m_requestedScrollData = scrollData;
+    if (hasChangedProperty(Property::RequestedScrollPosition) && canMergeScrollData == CanMergeScrollData::Yes) {
+        m_requestedScrollData.merge(WTFMove(scrollData));
+        return;
+    }
+
+    m_requestedScrollData = WTFMove(scrollData);
     setPropertyChanged(Property::RequestedScrollPosition);
 }
 
@@ -269,6 +276,29 @@ void ScrollingStateScrollingNode::setScrollerImpsFromScrollbars(Scrollbar*, Scro
 {
 }
 #endif
+
+void ScrollingStateScrollingNode::setMouseIsOverContentArea(bool flag)
+{
+    if (flag == m_mouseIsOverContentArea)
+        return;
+
+    m_mouseIsOverContentArea = flag;
+    setPropertyChanged(Property::ContentAreaHoverState);
+}
+
+void ScrollingStateScrollingNode::setMouseMovedInContentArea()
+{
+    setPropertyChanged(Property::MouseActivityState);
+}
+    
+void ScrollingStateScrollingNode::setScrollbarHoverState(ScrollbarHoverState hoverState)
+{
+    if (hoverState == m_scrollbarHoverState)
+        return;
+
+    m_scrollbarHoverState = hoverState;
+    setPropertyChanged(Property::ScrollbarHoverState);
+}
 
 void ScrollingStateScrollingNode::dumpProperties(TextStream& ts, OptionSet<ScrollingStateTreeAsTextBehavior> behavior) const
 {

@@ -23,11 +23,19 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+ [
+    Conditional=WEB_AUTHN,
+] dictionary AuthenticationExtensionsLargeBlobInputs {
+    DOMString support;
+    boolean read;
+    BufferSource write;
+};
+
 [
     Conditional=WEB_AUTHN,
 ] dictionary AuthenticationExtensionsClientInputs {
     USVString appid;
     // For Google to turn off the legacy AppID support.
-    boolean googleLegacyAppidSupport = true;
     boolean credProps;
+    AuthenticationExtensionsLargeBlobInputs largeBlob;
 };

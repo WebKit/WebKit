@@ -1,7 +1,1 @@
-
-FAIL :worker: assert_unreached:
-  - EXCEPTION: should be no error from worker but was: TypeError: null is not an object (evaluating 'getGPU().requestAdapter')
-    assert@http://127.0.0.1:8000/webgpu/common/util/util.js:34:20
-    @http://127.0.0.1:8000/webgpu/webgpu/web_platform/worker/worker.spec.js:35:11
- Reached unreachable code
-
+(Populate me when we're ready to investigate this test)

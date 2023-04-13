@@ -1,6 +1,7 @@
 /*
- * Copyright (C) 2006-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2019 Adobe. All rights reserved.
+ * Copyright (C) 2014 Google. All rights reserved.
  * Copyright (C) 2020 Igalia S.L.
  *
  * Portions are Copyright (C) 1998 Netscape Communications Corporation.
@@ -66,6 +67,7 @@
 #include "RenderView.h"
 #include "ScrollAnimator.h"
 #include "ScrollbarTheme.h"
+#include "ScrollbarsController.h"
 #include "ScrollingCoordinator.h"
 #include "ShadowRoot.h"
 #include <wtf/SetForScope.h>
@@ -386,7 +388,7 @@ void RenderLayerScrollableArea::scrollTo(const ScrollPosition& position)
         DebugPageOverlays::didLayout(renderer.frame());
     }
 
-    Frame& frame = renderer.frame();
+    LocalFrame& frame = renderer.frame();
     auto* repaintContainer = renderer.containerForRepaint().renderer;
     // The caret rect needs to be invalidated after scrolling
     frame.selection().setCaretRectNeedsUpdate();
@@ -874,6 +876,10 @@ Ref<Scrollbar> RenderLayerScrollableArea::createScrollbar(ScrollbarOrientation o
         widget = RenderScrollbar::createCustomScrollbar(*this, orientation, element);
     else {
         widget = Scrollbar::createNativeScrollbar(*this, orientation, ScrollbarControlSize::Regular);
+        
+        if (auto scrollbarController = m_layer.page().chrome().client().createScrollbarsController(m_layer.page(), *this))
+            setScrollbarsController(WTFMove(scrollbarController));
+        
         didAddScrollbar(widget.get(), orientation);
         if (m_layer.page().isMonitoringWheelEvents())
             scrollAnimator().setWheelEventTestMonitor(m_layer.page().wheelEventTestMonitor());
@@ -1271,12 +1277,12 @@ void RenderLayerScrollableArea::updateScrollbarSteps()
 
     // Set up the  page step/line step.
     if (m_hBar) {
-        int pageStep = Scrollbar::pageStep(roundToInt(paddedLayerBounds.width()));
-        m_hBar->setSteps(Scrollbar::pixelsPerLineStep(), pageStep);
+        int width = roundToInt(paddedLayerBounds.width());
+        m_hBar->setSteps(Scrollbar::pixelsPerLineStep(width), Scrollbar::pageStep(width));
     }
     if (m_vBar) {
-        int pageStep = Scrollbar::pageStep(roundToInt(paddedLayerBounds.height()));
-        m_vBar->setSteps(Scrollbar::pixelsPerLineStep(), pageStep);
+        int height = roundToInt(paddedLayerBounds.height());
+        m_vBar->setSteps(Scrollbar::pixelsPerLineStep(height), Scrollbar::pageStep(height));
     }
 }
 
@@ -1670,14 +1676,14 @@ bool RenderLayerScrollableArea::scrollingMayRevealBackground() const
 bool RenderLayerScrollableArea::isVisibleToHitTesting() const
 {
     auto& renderer = m_layer.renderer();
-    FrameView& frameView = renderer.view().frameView();
+    LocalFrameView& frameView = renderer.view().frameView();
     return renderer.visibleToHitTesting() && frameView.isVisibleToHitTesting();
 }
 
 void RenderLayerScrollableArea::updateScrollableAreaSet(bool hasOverflow)
 {
     auto& renderer = m_layer.renderer();
-    FrameView& frameView = renderer.view().frameView();
+    LocalFrameView& frameView = renderer.view().frameView();
 
     bool isVisibleToHitTest = renderer.visibleToHitTesting();
     if (HTMLFrameOwnerElement* owner = frameView.frame().ownerElement())
@@ -1714,7 +1720,7 @@ void RenderLayerScrollableArea::updateScrollableAreaSet(bool hasOverflow)
 void RenderLayerScrollableArea::registerScrollableAreaForAnimatedScroll()
 {
     auto& renderer = m_layer.renderer();
-    FrameView& frameView = renderer.view().frameView();
+    LocalFrameView& frameView = renderer.view().frameView();
     if (!m_registeredScrollableArea) {
         frameView.addScrollableAreaForAnimatedScroll(this);
         m_isRegisteredForAnimatedScroll = true;
@@ -1751,6 +1757,9 @@ void RenderLayerScrollableArea::clearScrollCorner()
 
 void RenderLayerScrollableArea::updateResizerStyle()
 {
+    if (!m_resizer && !m_layer.canResize())
+        return;
+
     auto& renderer = m_layer.renderer();
     RenderElement* actualRenderer = rendererForScrollbar(renderer);
     auto resizer = renderer.hasNonVisibleOverflow() ? actualRenderer->getUncachedPseudoStyle({ PseudoId::Resizer }, &actualRenderer->style()) : nullptr;
@@ -1826,9 +1835,9 @@ void RenderLayerScrollableArea::panScrollFromPoint(const IntPoint& sourcePoint)
 
     IntSize delta = lastKnownMousePosition - sourcePoint;
 
-    if (abs(delta.width()) <= ScrollView::noPanScrollRadius) // at the center we let the space for the icon
+    if (std::abs(delta.width()) <= ScrollView::noPanScrollRadius) // at the center we let the space for the icon
         delta.setWidth(0);
-    if (abs(delta.height()) <= ScrollView::noPanScrollRadius)
+    if (std::abs(delta.height()) <= ScrollView::noPanScrollRadius)
         delta.setHeight(0);
 
     scrollByRecursively(adjustedScrollDelta(delta));
@@ -1956,7 +1965,7 @@ void RenderLayerScrollableArea::animatedScrollDidEnd()
 {
     if (m_isRegisteredForAnimatedScroll) {
         auto& renderer = m_layer.renderer();
-        FrameView& frameView = renderer.view().frameView();
+        LocalFrameView& frameView = renderer.view().frameView();
         m_isRegisteredForAnimatedScroll = false;
         frameView.removeScrollableAreaForAnimatedScroll(this);
     }

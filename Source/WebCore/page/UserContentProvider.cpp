@@ -30,9 +30,9 @@
 #include "ChromeClient.h"
 #include "Document.h"
 #include "DocumentLoader.h"
-#include "Frame.h"
 #include "FrameDestructionObserverInlines.h"
 #include "FrameLoader.h"
+#include "LocalFrame.h"
 #include "Page.h"
 
 #if ENABLE(CONTENT_EXTENSIONS)
@@ -93,19 +93,48 @@ void UserContentProvider::invalidateInjectedStyleSheetCacheInAllFramesInAllPages
 }
 
 #if ENABLE(CONTENT_EXTENSIONS)
-static bool contentRuleListsEnabled(const DocumentLoader& documentLoader)
+static DocumentLoader* mainDocumentLoader(DocumentLoader& loader)
 {
-    if (auto frame = documentLoader.frame()) {
+    if (auto frame = loader.frame()) {
         if (frame->isMainFrame())
-            return documentLoader.userContentExtensionsEnabled();
-        if (auto mainDocumentLoader = frame->mainFrame().loader().documentLoader())
-            return mainDocumentLoader->userContentExtensionsEnabled();
-    }
+            return &loader;
 
-    return true;
+        auto* localFrame = dynamicDowncast<LocalFrame>(frame->mainFrame());
+        if (localFrame)
+            return localFrame->loader().documentLoader();
+    }
+    return nullptr;
 }
 
-static void sanitizeLookalikeCharactersIfNeeded(ContentRuleListResults& results, const Page& page, const URL& url, const DocumentLoader& initiatingDocumentLoader)
+static ContentExtensions::ContentExtensionsBackend::RuleListFilter ruleListFilter(DocumentLoader& documentLoader)
+{
+    RefPtr mainLoader = mainDocumentLoader(documentLoader);
+    if (!mainLoader) {
+        return [](const String&) {
+            return ContentExtensions::ContentExtensionsBackend::ShouldSkipRuleList::No;
+        };
+    }
+
+    auto& exceptions = mainLoader->contentExtensionEnablement().second;
+    switch (mainLoader->contentExtensionEnablement().first) {
+    case ContentExtensionDefaultEnablement::Disabled:
+        return [&](auto& identifier) {
+            return exceptions.contains(identifier)
+                ? ContentExtensions::ContentExtensionsBackend::ShouldSkipRuleList::No
+                : ContentExtensions::ContentExtensionsBackend::ShouldSkipRuleList::Yes;
+        };
+    case ContentExtensionDefaultEnablement::Enabled:
+        return [&](auto& identifier) {
+            return exceptions.contains(identifier)
+                ? ContentExtensions::ContentExtensionsBackend::ShouldSkipRuleList::Yes
+                : ContentExtensions::ContentExtensionsBackend::ShouldSkipRuleList::No;
+        };
+    }
+    ASSERT_NOT_REACHED();
+    return { };
+}
+
+static void sanitizeLookalikeCharactersIfNeeded(ContentRuleListResults& results, Page& page, const URL& url, const DocumentLoader& initiatingDocumentLoader)
 {
     if (RefPtr frame = initiatingDocumentLoader.frame(); !frame || !frame->isMainFrame())
         return;
@@ -116,9 +145,7 @@ static void sanitizeLookalikeCharactersIfNeeded(ContentRuleListResults& results,
 
 ContentRuleListResults UserContentProvider::processContentRuleListsForLoad(Page& page, const URL& url, OptionSet<ContentExtensions::ResourceType> resourceType, DocumentLoader& initiatingDocumentLoader, const URL& redirectFrom)
 {
-    ContentRuleListResults results;
-    if (contentRuleListsEnabled(initiatingDocumentLoader))
-        results = userContentExtensionBackend().processContentRuleListsForLoad(page, url, resourceType, initiatingDocumentLoader, redirectFrom);
+    auto results = userContentExtensionBackend().processContentRuleListsForLoad(page, url, resourceType, initiatingDocumentLoader, redirectFrom, ruleListFilter(initiatingDocumentLoader));
 
     if (resourceType.contains(ContentExtensions::ResourceType::Document))
         sanitizeLookalikeCharactersIfNeeded(results, page, url, initiatingDocumentLoader);

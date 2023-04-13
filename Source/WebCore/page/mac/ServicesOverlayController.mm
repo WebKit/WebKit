@@ -35,13 +35,13 @@
 #import "EventHandler.h"
 #import "FloatQuad.h"
 #import "FocusController.h"
-#import "Frame.h"
 #import "FrameSelection.h"
-#import "FrameView.h"
 #import "GapRects.h"
 #import "GraphicsContext.h"
 #import "GraphicsLayer.h"
 #import "GraphicsLayerCA.h"
+#import "LocalFrame.h"
+#import "LocalFrameView.h"
 #import "Logging.h"
 #import "Page.h"
 #import "PageOverlayController.h"
@@ -337,7 +337,7 @@ void ServicesOverlayController::removeAllPotentialHighlightsOfType(DataDetectorH
 void ServicesOverlayController::buildPhoneNumberHighlights()
 {
     Vector<SimpleRange> phoneNumberRanges;
-    for (AbstractFrame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
+    for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
         auto* localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
@@ -354,7 +354,7 @@ void ServicesOverlayController::buildPhoneNumberHighlights()
 
     HashSet<RefPtr<DataDetectorHighlight>> newPotentialHighlights;
 
-    FrameView& mainFrameView = *mainFrame().view();
+    auto& mainFrameView = *mainFrame().view();
 
     for (auto& range : phoneNumberRanges) {
         // FIXME: This makes a big rect if the range extends from the end of one line to the start of the next. Handle that case better?
@@ -397,7 +397,7 @@ void ServicesOverlayController::buildSelectionHighlight()
     HashSet<RefPtr<DataDetectorHighlight>> newPotentialHighlights;
 
     if (auto selectionRange = m_page.selection().firstRange()) {
-        FrameView* mainFrameView = mainFrame().view();
+        auto* mainFrameView = mainFrame().view();
         if (!mainFrameView)
             return;
 
@@ -621,7 +621,7 @@ bool ServicesOverlayController::mouseEvent(PageOverlay&, const PlatformMouseEven
     return false;
 }
 
-void ServicesOverlayController::didScrollFrame(PageOverlay&, Frame& frame)
+void ServicesOverlayController::didScrollFrame(PageOverlay&, LocalFrame& frame)
 {
     if (frame.isMainFrame())
         return;
@@ -636,7 +636,7 @@ void ServicesOverlayController::didScrollFrame(PageOverlay&, Frame& frame)
 
 void ServicesOverlayController::handleClick(const IntPoint& clickPoint, DataDetectorHighlight& highlight)
 {
-    FrameView* frameView = mainFrame().view();
+    auto* frameView = mainFrame().view();
     if (!frameView)
         return;
 
@@ -652,9 +652,11 @@ void ServicesOverlayController::handleClick(const IntPoint& clickPoint, DataDete
         m_page.chrome().client().handleTelephoneNumberClick(plainText(highlight.range()), windowPoint, frameView->contentsToWindow(CheckedRef(m_page.focusController())->focusedOrMainFrame().editor().firstRectForRange(highlight.range())));
 }
 
-Frame& ServicesOverlayController::mainFrame() const
+LocalFrame& ServicesOverlayController::mainFrame() const
 {
-    return m_page.mainFrame();
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page.mainFrame()); 
+    ASSERT(localMainFrame);
+    return *localMainFrame;
 }
 
 } // namespace WebKit

@@ -210,6 +210,9 @@ public:
 
     bool isLockdownModeExplicitlySet() const;
     bool lockdownModeEnabled() const;
+    
+    void setAllowTestOnlyIPC(bool enabled) { m_allowTestOnlyIPC = enabled; }
+    bool allowTestOnlyIPC() const { return m_allowTestOnlyIPC; }
 
     void setContentSecurityPolicyModeForExtension(WebCore::ContentSecurityPolicyModeForExtension mode) { m_contentSecurityPolicyModeForExtension = mode; }
     WebCore::ContentSecurityPolicyModeForExtension contentSecurityPolicyModeForExtension() const { return m_contentSecurityPolicyModeForExtension; }
@@ -240,6 +243,7 @@ private:
     bool m_waitsForPaintAfterViewDidMoveToWindow { true };
     bool m_drawsBackground { true };
     bool m_controlledByAutomation { false };
+    bool m_allowTestOnlyIPC { false };
     std::optional<double> m_cpuLimit;
 
     WTF::String m_overrideContentSecurityPolicy;

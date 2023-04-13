@@ -67,7 +67,13 @@ static WKArrayRef createCompositionHighlightData(JSContextRef context, JSValueRe
         auto dictionary = adoptWK(WKMutableDictionaryCreate());
         setValue(dictionary, "from", static_cast<uint64_t>(numericProperty(context, object, "from")));
         setValue(dictionary, "length", static_cast<uint64_t>(numericProperty(context, object, "length")));
-        setValue(dictionary, "color", toWK(stringProperty(context, object, "color")));
+
+        if (!JSValueIsUndefined(context, property(context, object, "color")))
+            setValue(dictionary, "color", toWK(stringProperty(context, object, "color")));
+
+        if (!JSValueIsUndefined(context, property(context, object, "foregroundColor")))
+            setValue(dictionary, "foregroundColor", toWK(stringProperty(context, object, "foregroundColor")));
+
         WKArrayAppendItem(result, dictionary.get());
     }
     return result;

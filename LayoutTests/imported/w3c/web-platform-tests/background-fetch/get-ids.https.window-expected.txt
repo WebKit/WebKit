@@ -1,0 +1,4 @@
+
+PASS BackgroundFetchManager.getIds() does not require an activated worker
+PASS The BackgroundFetchManager exposes active fetches
+

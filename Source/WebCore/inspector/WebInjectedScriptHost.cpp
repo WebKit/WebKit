@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebInjectedScriptHost.h"
 
+#include "CachedHTMLCollectionInlines.h"
 #include "DOMException.h"
 #include "JSDOMException.h"
 #include "JSEventListener.h"
@@ -184,7 +185,7 @@ static JSObject* objectForEventTargetListeners(VM& vm, JSGlobalObject* exec, Eve
                 continue;
 
             auto& jsListener = downcast<JSEventListener>(eventListener->callback());
-            if (&jsListener.isolatedWorld() != &currentWorld(*exec))
+            if (jsListener.isolatedWorld() != &currentWorld(*exec))
                 continue;
 
             auto* jsFunction = jsListener.ensureJSFunction(*scriptExecutionContext);

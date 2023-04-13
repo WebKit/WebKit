@@ -25,6 +25,8 @@
 
 #pragma once
 
+#ifdef __cplusplus
+
 #include <WebKit/WKType.h>
 #include <algorithm>
 #include <wtf/HashTraits.h>
@@ -277,3 +279,5 @@ template<typename P> struct HashTraits<WKRetainPtr<P>> : SimpleClassHashTraits<W
 };
 
 } // namespace WTF
+
+#endif

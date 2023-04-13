@@ -31,6 +31,7 @@
 #include "MediaStreamTrackPrivate.h"
 #include "SharedBuffer.h"
 #include "Timer.h"
+#include <wtf/MediaTime.h>
 #include <wtf/MonotonicTime.h>
 
 namespace WebCore {

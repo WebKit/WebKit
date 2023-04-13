@@ -58,9 +58,11 @@ This test ensures ARIA visible elements (e.g. those with both `hidden` and `aria
 
 <input hidden="" aria-hidden="false" id="date-input" type="date">
     AXRole: AXTextField
+    computedRoleString: textbox
 
 <input hidden="" aria-hidden="false" id="color-input" type="color">
     AXRole: AXTextField
+    computedRoleString: textbox
 
 <input hidden="" aria-hidden="false" id="range-input" type="range">
     AXRole: AXSlider
@@ -92,6 +94,7 @@ This test ensures ARIA visible elements (e.g. those with both `hidden` and `aria
 
 <code hidden="" aria-hidden="false" id="code"></code>
     AXRole: AXSection
+    computedRoleString: code
 
 <dt hidden="" aria-hidden="false" id="dt"></dt>
     AXRole: AXDescriptionTerm
@@ -127,6 +130,7 @@ This test ensures ARIA visible elements (e.g. those with both `hidden` and `aria
 
 <div hidden="" aria-hidden="false" id="div"></div>
     AXRole: AXSection
+    computedRoleString: generic
 
 <form hidden="" aria-hidden="false" id="form"></form>
     AXRole: AXForm

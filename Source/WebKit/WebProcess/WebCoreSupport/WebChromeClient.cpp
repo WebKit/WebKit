@@ -35,6 +35,7 @@
 #include "HangDetectionDisabler.h"
 #include "ImageBufferShareableBitmapBackend.h"
 #include "InjectedBundleNodeHandle.h"
+#include "MessageSenderInlines.h"
 #include "NavigationActionData.h"
 #include "NetworkConnectionToWebProcessMessages.h"
 #include "NetworkProcessConnection.h"
@@ -78,9 +79,7 @@
 #include <WebCore/ElementInlines.h>
 #include <WebCore/FileChooser.h>
 #include <WebCore/FileIconLoader.h>
-#include <WebCore/Frame.h>
 #include <WebCore/FrameLoader.h>
-#include <WebCore/FrameView.h>
 #include <WebCore/FullscreenManager.h>
 #include <WebCore/HTMLInputElement.h>
 #include <WebCore/HTMLNames.h>
@@ -88,6 +87,8 @@
 #include <WebCore/HTMLPlugInImageElement.h>
 #include <WebCore/Icon.h>
 #include <WebCore/ImageBuffer.h>
+#include <WebCore/LocalFrame.h>
+#include <WebCore/LocalFrameView.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/RegistrableDomain.h>
 #include <WebCore/ScriptController.h>
@@ -129,12 +130,20 @@
 #include <WebCore/GraphicsContextGL.h>
 #endif
 
+#if ENABLE(WEBXR) && !USE(OPENXR)
+#include "PlatformXRSystemProxy.h"
+#endif
+
 #if PLATFORM(MAC)
 #include "TiledCoreAnimationScrollingCoordinator.h"
 #endif
 
 #if PLATFORM(COCOA)
 #include "WebIconUtilities.h"
+#endif
+
+#if PLATFORM(MAC)
+#include "RemoteScrollbarsController.h"
 #endif
 
 namespace WebKit {
@@ -145,6 +154,8 @@ WebChromeClient::WebChromeClient(WebPage& page)
     : m_page(page)
 {
 }
+
+WebChromeClient::~WebChromeClient() = default;
 
 void WebChromeClient::didInsertMenuElement(HTMLMenuElement& element)
 {
@@ -166,13 +177,8 @@ void WebChromeClient::didRemoveMenuItemElement(HTMLMenuItemElement& element)
     m_page.didRemoveMenuItemElement(element);
 }
 
-inline WebChromeClient::~WebChromeClient()
-{
-}
-
 void WebChromeClient::chromeDestroyed()
 {
-    delete this;
 }
 
 void WebChromeClient::setWindowRect(const FloatRect& windowFrame)
@@ -180,7 +186,7 @@ void WebChromeClient::setWindowRect(const FloatRect& windowFrame)
     m_page.sendSetWindowFrame(windowFrame);
 }
 
-FloatRect WebChromeClient::windowRect()
+FloatRect WebChromeClient::windowRect() const
 {
 #if PLATFORM(IOS_FAMILY)
     return FloatRect();
@@ -196,7 +202,7 @@ FloatRect WebChromeClient::windowRect()
 #endif
 }
 
-FloatRect WebChromeClient::pageRect()
+FloatRect WebChromeClient::pageRect() const
 {
     return FloatRect(FloatPoint(), m_page.size());
 }
@@ -245,7 +251,7 @@ void WebChromeClient::assistiveTechnologyMakeFirstResponder()
 
 #endif    
 
-bool WebChromeClient::canTakeFocus(FocusDirection)
+bool WebChromeClient::canTakeFocus(FocusDirection) const
 {
     notImplemented();
     return true;
@@ -267,7 +273,7 @@ void WebChromeClient::focusedElementChanged(Element* element)
     m_page.injectedBundleFormClient().didFocusTextField(&m_page, *inputElement, webFrame);
 }
 
-void WebChromeClient::focusedFrameChanged(Frame* frame)
+void WebChromeClient::focusedFrameChanged(LocalFrame* frame)
 {
     WebFrame* webFrame = frame ? WebFrame::fromCoreFrame(*frame) : nullptr;
 
@@ -291,7 +297,7 @@ OptionSet<WebEventModifier> modifiersForNavigationAction(const NavigationAction&
     return modifiers;
 }
 
-Page* WebChromeClient::createWindow(Frame& frame, const WindowFeatures& windowFeatures, const NavigationAction& navigationAction)
+Page* WebChromeClient::createWindow(LocalFrame& frame, const WindowFeatures& windowFeatures, const NavigationAction& navigationAction)
 {
 #if ENABLE(FULLSCREEN_API)
     if (frame.document() && frame.document()->fullscreenManager().currentFullscreenElement())
@@ -308,6 +314,7 @@ Page* WebChromeClient::createWindow(Frame& frame, const WindowFeatures& windowFe
         mouseButton(navigationAction),
         syntheticClickType(navigationAction),
         webProcess.userGestureTokenIdentifier(navigationAction.userGestureToken()),
+        navigationAction.userGestureToken() ? navigationAction.userGestureToken()->authorizationToken() : std::nullopt,
         m_page.canHandleRequest(navigationAction.resourceRequest()),
         navigationAction.shouldOpenExternalURLsPolicy(),
         navigationAction.downloadAttribute(),
@@ -361,7 +368,7 @@ void WebChromeClient::show()
     m_page.show();
 }
 
-bool WebChromeClient::canRunModal()
+bool WebChromeClient::canRunModal() const
 {
     return m_page.canRunModal();
 }
@@ -381,7 +388,7 @@ void WebChromeClient::setToolbarsVisible(bool toolbarsAreVisible)
     m_page.send(Messages::WebPageProxy::SetToolbarsAreVisible(toolbarsAreVisible));
 }
 
-bool WebChromeClient::toolbarsVisible()
+bool WebChromeClient::toolbarsVisible() const
 {
     API::InjectedBundle::PageUIClient::UIElementVisibility toolbarsVisibility = m_page.injectedBundleUIClient().toolbarsAreVisible(&m_page);
     if (toolbarsVisibility != API::InjectedBundle::PageUIClient::UIElementVisibility::Unknown)
@@ -397,7 +404,7 @@ void WebChromeClient::setStatusbarVisible(bool statusBarIsVisible)
     m_page.send(Messages::WebPageProxy::SetStatusBarIsVisible(statusBarIsVisible));
 }
 
-bool WebChromeClient::statusbarVisible()
+bool WebChromeClient::statusbarVisible() const
 {
     API::InjectedBundle::PageUIClient::UIElementVisibility statusbarVisibility = m_page.injectedBundleUIClient().statusBarIsVisible(&m_page);
     if (statusbarVisibility != API::InjectedBundle::PageUIClient::UIElementVisibility::Unknown)
@@ -413,7 +420,7 @@ void WebChromeClient::setScrollbarsVisible(bool)
     notImplemented();
 }
 
-bool WebChromeClient::scrollbarsVisible()
+bool WebChromeClient::scrollbarsVisible() const
 {
     notImplemented();
     return true;
@@ -424,7 +431,7 @@ void WebChromeClient::setMenubarVisible(bool menuBarVisible)
     m_page.send(Messages::WebPageProxy::SetMenuBarIsVisible(menuBarVisible));
 }
 
-bool WebChromeClient::menubarVisible()
+bool WebChromeClient::menubarVisible() const
 {
     API::InjectedBundle::PageUIClient::UIElementVisibility menubarVisibility = m_page.injectedBundleUIClient().menuBarIsVisible(&m_page);
     if (menubarVisibility != API::InjectedBundle::PageUIClient::UIElementVisibility::Unknown)
@@ -456,7 +463,7 @@ bool WebChromeClient::canRunBeforeUnloadConfirmPanel()
     return m_page.canRunBeforeUnloadConfirmPanel();
 }
 
-bool WebChromeClient::runBeforeUnloadConfirmPanel(const String& message, Frame& frame)
+bool WebChromeClient::runBeforeUnloadConfirmPanel(const String& message, LocalFrame& frame)
 {
     WebFrame* webFrame = WebFrame::fromCoreFrame(frame);
 
@@ -485,7 +492,7 @@ void WebChromeClient::closeWindow()
     m_page.sendClose();
 }
 
-static bool shouldSuppressJavaScriptDialogs(Frame& frame)
+static bool shouldSuppressJavaScriptDialogs(LocalFrame& frame)
 {
     if (frame.loader().opener() && frame.loader().stateMachine().isDisplayingInitialEmptyDocument() && frame.loader().provisionalDocumentLoader())
         return true;
@@ -493,7 +500,7 @@ static bool shouldSuppressJavaScriptDialogs(Frame& frame)
     return false;
 }
 
-void WebChromeClient::runJavaScriptAlert(Frame& frame, const String& alertText)
+void WebChromeClient::runJavaScriptAlert(LocalFrame& frame, const String& alertText)
 {
     if (shouldSuppressJavaScriptDialogs(frame))
         return;
@@ -511,7 +518,7 @@ void WebChromeClient::runJavaScriptAlert(Frame& frame, const String& alertText)
     m_page.sendSyncWithDelayedReply(Messages::WebPageProxy::RunJavaScriptAlert(webFrame->frameID(), webFrame->info(), alertText), IPC::SendSyncOption::MaintainOrderingWithAsyncMessages);
 }
 
-bool WebChromeClient::runJavaScriptConfirm(Frame& frame, const String& message)
+bool WebChromeClient::runJavaScriptConfirm(LocalFrame& frame, const String& message)
 {
     if (shouldSuppressJavaScriptDialogs(frame))
         return false;
@@ -531,7 +538,7 @@ bool WebChromeClient::runJavaScriptConfirm(Frame& frame, const String& message)
     return result;
 }
 
-bool WebChromeClient::runJavaScriptPrompt(Frame& frame, const String& message, const String& defaultValue, String& result)
+bool WebChromeClient::runJavaScriptPrompt(LocalFrame& frame, const String& message, const String& defaultValue, String& result)
 {
     if (shouldSuppressJavaScriptDialogs(frame))
         return false;
@@ -609,7 +616,11 @@ void WebChromeClient::invalidateRootView(const IntRect&)
 
 void WebChromeClient::invalidateContentsAndRootView(const IntRect& rect)
 {
-    if (Document* document = m_page.corePage()->mainFrame().document()) {
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page.corePage()->mainFrame());
+    if (!localMainFrame)
+        return;
+
+    if (Document* document = localMainFrame->document()) {
         if (document->printing())
             return;
     }
@@ -619,14 +630,18 @@ void WebChromeClient::invalidateContentsAndRootView(const IntRect& rect)
 
 void WebChromeClient::invalidateContentsForSlowScroll(const IntRect& rect)
 {
-    if (Document* document = m_page.corePage()->mainFrame().document()) {
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page.corePage()->mainFrame());
+    if (!localMainFrame)
+        return;
+
+    if (Document* document = localMainFrame->document()) {
         if (document->printing())
             return;
     }
 
     m_page.pageDidScroll();
 #if USE(COORDINATED_GRAPHICS)
-    FrameView* frameView = m_page.mainFrame()->view();
+    auto* frameView = m_page.mainFrameView();
     if (frameView && frameView->delegatesScrolling()) {
         m_page.drawingArea()->scroll(rect, IntSize());
         return;
@@ -677,9 +692,9 @@ void WebChromeClient::intrinsicContentsSizeChanged(const IntSize& size) const
     m_page.scheduleIntrinsicContentSizeUpdate(size);
 }
 
-void WebChromeClient::contentsSizeChanged(Frame& frame, const IntSize& size) const
+void WebChromeClient::contentsSizeChanged(LocalFrame& frame, const IntSize& size) const
 {
-    FrameView* frameView = frame.view();
+    auto* frameView = frame.view();
 
     if (&frame.page()->mainFrame() != &frame)
         return;
@@ -752,7 +767,7 @@ void WebChromeClient::mouseDidMoveOverElement(const HitTestResult& hitTestResult
 
 static constexpr unsigned maxTitleLength = 1000; // Closest power of 10 above the W3C recommendation for Title length.
 
-void WebChromeClient::print(Frame& frame, const StringWithDirection& title)
+void WebChromeClient::print(LocalFrame& frame, const StringWithDirection& title)
 {
     WebFrame* webFrame = WebFrame::fromCoreFrame(frame);
     ASSERT(webFrame);
@@ -827,7 +842,7 @@ std::unique_ptr<DateTimeChooser> WebChromeClient::createDateTimeChooser(DateTime
 
 #endif
 
-void WebChromeClient::runOpenPanel(Frame& frame, FileChooser& fileChooser)
+void WebChromeClient::runOpenPanel(LocalFrame& frame, FileChooser& fileChooser)
 {
     if (m_page.activeOpenPanelResultListener())
         return;
@@ -873,7 +888,7 @@ RefPtr<Icon> WebChromeClient::createIconForFiles(const Vector<String>& filenames
 
 #endif
 
-void WebChromeClient::didAssociateFormControls(const Vector<RefPtr<Element>>& elements, WebCore::Frame& frame)
+void WebChromeClient::didAssociateFormControls(const Vector<RefPtr<Element>>& elements, WebCore::LocalFrame& frame)
 {
     WebFrame* webFrame = WebFrame::fromCoreFrame(frame);
     ASSERT(webFrame);
@@ -949,7 +964,11 @@ RefPtr<GraphicsContextGL> WebChromeClient::createGraphicsContextGL(const Graphic
 {
 #if ENABLE(GPU_PROCESS)
     if (WebProcess::singleton().shouldUseRemoteRenderingForWebGL())
-        return RemoteGraphicsContextGLProxy::create(WebProcess::singleton().ensureGPUProcessConnection().connection(), attributes, m_page.ensureRemoteRenderingBackendProxy(), WebProcess::singleton().ensureGPUProcessConnection().videoFrameObjectHeapProxy());
+        return RemoteGraphicsContextGLProxy::create(WebProcess::singleton().ensureGPUProcessConnection().connection(), attributes, m_page.ensureRemoteRenderingBackendProxy()
+#if ENABLE(VIDEO)
+            , WebProcess::singleton().ensureGPUProcessConnection().videoFrameObjectHeapProxy()
+#endif
+        );
 #endif
     return WebCore::createWebProcessGraphicsContextGL(attributes);
 }
@@ -968,12 +987,12 @@ RefPtr<PAL::WebGPU::GPU> WebChromeClient::createGPUForWebGPU() const
 #endif
 }
 
-void WebChromeClient::attachRootGraphicsLayer(Frame&, GraphicsLayer* layer)
+void WebChromeClient::attachRootGraphicsLayer(LocalFrame& frame, GraphicsLayer* layer)
 {
     if (layer)
-        m_page.enterAcceleratedCompositingMode(layer);
+        m_page.enterAcceleratedCompositingMode(frame, layer);
     else
-        m_page.exitAcceleratedCompositingMode();
+        m_page.exitAcceleratedCompositingMode(frame);
 }
 
 void WebChromeClient::attachViewOverlayGraphicsLayer(GraphicsLayer* graphicsLayer)
@@ -1020,7 +1039,7 @@ bool WebChromeClient::layerTreeStateIsFrozen() const
 
 #if ENABLE(ASYNC_SCROLLING)
 
-RefPtr<ScrollingCoordinator> WebChromeClient::createScrollingCoordinator(Page& page) const
+RefPtr<WebCore::ScrollingCoordinator> WebChromeClient::createScrollingCoordinator(Page& page) const
 {
     ASSERT_UNUSED(page, m_page.corePage() == &page);
 #if PLATFORM(COCOA)
@@ -1037,6 +1056,21 @@ RefPtr<ScrollingCoordinator> WebChromeClient::createScrollingCoordinator(Page& p
 }
 
 #endif
+
+#if PLATFORM(MAC)
+std::unique_ptr<ScrollbarsController> WebChromeClient::createScrollbarsController(Page& page, ScrollableArea& area) const
+{
+    ASSERT_UNUSED(page, m_page.corePage() == &page);
+    switch (m_page.drawingArea()->type()) {
+    case DrawingAreaType::RemoteLayerTree:
+        return makeUnique<RemoteScrollbarsController>(area, page.scrollingCoordinator());
+    default:
+        return nullptr;
+    }
+    return nullptr;
+}
+#endif
+
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
 
@@ -1268,7 +1302,7 @@ void WebChromeClient::didAddFooterLayer(GraphicsLayer& footerParent)
 #endif
 }
 
-bool WebChromeClient::shouldUseTiledBackingForFrameView(const FrameView& frameView) const
+bool WebChromeClient::shouldUseTiledBackingForFrameView(const LocalFrameView& frameView) const
 {
     return m_page.drawingArea()->shouldUseTiledBackingForFrameView(frameView);
 }
@@ -1415,7 +1449,7 @@ void WebChromeClient::removePlaybackTargetPickerClient(PlaybackTargetClientConte
 
 void WebChromeClient::showPlaybackTargetPicker(PlaybackTargetClientContextIdentifier contextId, const IntPoint& position, bool isVideo)
 {
-    FrameView* frameView = m_page.mainFrame()->view();
+    auto* frameView = m_page.mainFrameView();
     FloatRect rect(frameView->contentsToRootView(frameView->windowToContents(position)), FloatSize());
     m_page.send(Messages::WebPageProxy::ShowPlaybackTargetPicker(contextId, rect, isVideo));
 }
@@ -1452,14 +1486,14 @@ void WebChromeClient::didInvalidateDocumentMarkerRects()
 }
 
 #if ENABLE(TRACKING_PREVENTION)
-void WebChromeClient::hasStorageAccess(RegistrableDomain&& subFrameDomain, RegistrableDomain&& topFrameDomain, Frame& frame, CompletionHandler<void(bool)>&& completionHandler)
+void WebChromeClient::hasStorageAccess(RegistrableDomain&& subFrameDomain, RegistrableDomain&& topFrameDomain, LocalFrame& frame, CompletionHandler<void(bool)>&& completionHandler)
 {
     auto* webFrame = WebFrame::fromCoreFrame(frame);
     ASSERT(webFrame);
     m_page.hasStorageAccess(WTFMove(subFrameDomain), WTFMove(topFrameDomain), *webFrame, WTFMove(completionHandler));
 }
 
-void WebChromeClient::requestStorageAccess(RegistrableDomain&& subFrameDomain, RegistrableDomain&& topFrameDomain, Frame& frame, StorageAccessScope scope, CompletionHandler<void(RequestStorageAccessResult)>&& completionHandler)
+void WebChromeClient::requestStorageAccess(RegistrableDomain&& subFrameDomain, RegistrableDomain&& topFrameDomain, LocalFrame& frame, StorageAccessScope scope, CompletionHandler<void(RequestStorageAccessResult)>&& completionHandler)
 {
     auto* webFrame = WebFrame::fromCoreFrame(frame);
     ASSERT(webFrame);
@@ -1473,7 +1507,7 @@ bool WebChromeClient::hasPageLevelStorageAccess(const WebCore::RegistrableDomain
 #endif
 
 #if ENABLE(DEVICE_ORIENTATION)
-void WebChromeClient::shouldAllowDeviceOrientationAndMotionAccess(Frame& frame, bool mayPrompt, CompletionHandler<void(DeviceOrientationOrMotionPermissionState)>&& callback)
+void WebChromeClient::shouldAllowDeviceOrientationAndMotionAccess(LocalFrame& frame, bool mayPrompt, CompletionHandler<void(DeviceOrientationOrMotionPermissionState)>&& callback)
 {
     auto* webFrame = WebFrame::fromCoreFrame(frame);
     ASSERT(webFrame);
@@ -1482,7 +1516,7 @@ void WebChromeClient::shouldAllowDeviceOrientationAndMotionAccess(Frame& frame, 
 #endif
 
 #if ENABLE(ORIENTATION_EVENTS) && !PLATFORM(IOS_FAMILY)
-int WebChromeClient::deviceOrientation() const
+IntDegrees WebChromeClient::deviceOrientation() const
 {
     notImplemented();
     return 0;
@@ -1535,6 +1569,11 @@ void WebChromeClient::requestTextRecognition(Element& element, TextRecognitionOp
 URL WebChromeClient::sanitizeLookalikeCharacters(const URL& url, LookalikeCharacterSanitizationTrigger trigger) const
 {
     return m_page.sanitizeLookalikeCharacters(url, trigger);
+}
+
+URL WebChromeClient::allowedLookalikeCharacters(const URL& url) const
+{
+    return m_page.allowedLookalikeCharacters(url);
 }
 
 #if ENABLE(TEXT_AUTOSIZING)
@@ -1604,5 +1643,15 @@ const AtomString& WebChromeClient::searchStringForModalContainerObserver() const
     return nullAtom();
 }
 #endif
+
+bool WebChromeClient::isUsingUISideCompositing() const
+{
+#if PLATFORM(COCOA)
+    return m_page.drawingArea()->type() == DrawingAreaType::RemoteLayerTree;
+#else
+    return false;
+#endif
+}
+
 
 } // namespace WebKit

@@ -34,6 +34,7 @@
 
 #include "JSWebExtensionAPINamespace.h"
 #include "JSWebExtensionWrapper.h"
+#include "MessageSenderInlines.h"
 #include "WebExtensionAPINamespace.h"
 #include "WebExtensionContextProxy.h"
 #include "WebExtensionControllerMessages.h"

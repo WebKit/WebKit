@@ -25,47 +25,36 @@ const kOpInfo = {
   'write-buffer': {
     contexts: ['queue'],
   },
-
   'b2t-copy': {
     contexts: ['command-encoder'],
   },
-
   'b2b-copy': {
     contexts: ['command-encoder'],
   },
-
   't2b-copy': {
     contexts: ['command-encoder'],
   },
-
   storage: {
     contexts: ['compute-pass-encoder', 'render-pass-encoder', 'render-bundle-encoder'],
   },
-
   'storage-read': {
     contexts: ['compute-pass-encoder', 'render-pass-encoder', 'render-bundle-encoder'],
   },
-
   'input-vertex': {
     contexts: ['render-pass-encoder', 'render-bundle-encoder'],
   },
-
   'input-index': {
     contexts: ['render-pass-encoder', 'render-bundle-encoder'],
   },
-
   'input-indirect': {
     contexts: ['render-pass-encoder', 'render-bundle-encoder'],
   },
-
   'input-indirect-index': {
     contexts: ['render-pass-encoder', 'render-bundle-encoder'],
   },
-
   'input-indirect-dispatch': {
     contexts: ['compute-pass-encoder'],
   },
-
   'constant-uniform': {
     contexts: ['render-pass-encoder', 'render-bundle-encoder'],
   },
@@ -128,7 +117,7 @@ export function checkOpsValidForContext(ops, context) {
 }
 
 const kDummyVertexShader = `
-@stage(vertex) fn vert_main() -> @builtin(position) vec4<f32> {
+@vertex fn vert_main() -> @builtin(position) vec4<f32> {
   return vec4<f32>(0.5, 0.5, 0.0, 1.0);
 }
 `;
@@ -216,7 +205,7 @@ export class BufferSyncTest extends GPUTest {
     }
 
     const dstBuffer = this.trackForCleanup(
-      await this.device.createBuffer({
+      this.device.createBuffer({
         size: Uint32Array.BYTES_PER_ELEMENT,
         usage:
           GPUBufferUsage.COPY_SRC |
@@ -316,17 +305,17 @@ export class BufferSyncTest extends GPUTest {
       };
 
       @group(0) @binding(0) var<storage, read_write> data : Data;
-      @stage(compute) @workgroup_size(1) fn main() {
+      @compute @workgroup_size(1) fn main() {
         data.a = ${value}u;
       }
     `;
 
     return this.device.createComputePipeline({
+      layout: 'auto',
       compute: {
         module: this.device.createShaderModule({
           code: wgslCompute,
         }),
-
         entryPoint: 'main',
       },
     });
@@ -334,23 +323,20 @@ export class BufferSyncTest extends GPUTest {
 
   createTrivialRenderPipeline(wgslShaders) {
     return this.device.createRenderPipeline({
+      layout: 'auto',
       vertex: {
         module: this.device.createShaderModule({
           code: wgslShaders.vertex,
         }),
-
         entryPoint: 'vert_main',
       },
-
       fragment: {
         module: this.device.createShaderModule({
           code: wgslShaders.fragment,
         }),
-
         entryPoint: 'frag_main',
         targets: [{ format: 'rgba8unorm' }],
       },
-
       primitive: { topology: 'point-list' },
     });
   }
@@ -365,7 +351,7 @@ export class BufferSyncTest extends GPUTest {
       };
 
       @group(0) @binding(0) var<storage, read_write> data : Data;
-      @stage(fragment) fn frag_main() -> @location(0) vec4<f32> {
+      @fragment fn frag_main() -> @location(0) vec4<f32> {
         data.a = ${value}u;
         return vec4<f32>();  // result does't matter
       }
@@ -411,7 +397,7 @@ export class BufferSyncTest extends GPUTest {
     const bindGroup = this.createBindGroup(pipeline, buffer);
     pass.setPipeline(pipeline);
     pass.setBindGroup(0, bindGroup);
-    pass.dispatch(1);
+    pass.dispatchWorkgroups(1);
   }
 
   // Write buffer via BufferToBuffer copy.
@@ -490,17 +476,17 @@ export class BufferSyncTest extends GPUTest {
       @group(0) @binding(0) var<storage, read> srcData : Data;
       @group(0) @binding(1) var<storage, read_write> dstData : Data;
 
-      @stage(compute) @workgroup_size(1) fn main() {
+      @compute @workgroup_size(1) fn main() {
         dstData.a = srcData.a;
       }
     `;
 
     return this.device.createComputePipeline({
+      layout: 'auto',
       compute: {
         module: this.device.createShaderModule({
           code: wgslCompute,
         }),
-
         entryPoint: 'main',
       },
     });
@@ -524,8 +510,8 @@ export class BufferSyncTest extends GPUTest {
         @builtin(position) position : vec4<f32>,
         @location(0) @interpolate(flat) data : u32,
       };
-      
-      @stage(vertex) fn vert_main(@location(0) input: u32) -> VertexOutput {
+
+      @vertex fn vert_main(@location(0) input: u32) -> VertexOutput {
         var output : VertexOutput;
         output.position = vec4<f32>(0.5, 0.5, 0.0, 1.0);
         output.data = input;
@@ -536,10 +522,10 @@ export class BufferSyncTest extends GPUTest {
       struct Data {
         a : u32
       };
-      
+
       @group(0) @binding(0) var<storage, read_write> data : Data;
-      
-      @stage(fragment) fn frag_main(@location(0) @interpolate(flat) input : u32) -> @location(0) vec4<f32> {
+
+      @fragment fn frag_main(@location(0) @interpolate(flat) input : u32) -> @location(0) vec4<f32> {
         data.a = input;
         return vec4<f32>();  // result does't matter
       }
@@ -547,11 +533,11 @@ export class BufferSyncTest extends GPUTest {
     };
 
     return this.device.createRenderPipeline({
+      layout: 'auto',
       vertex: {
         module: this.device.createShaderModule({
           code: wgslShaders.vertex,
         }),
-
         entryPoint: 'vert_main',
         buffers: [
           {
@@ -566,16 +552,13 @@ export class BufferSyncTest extends GPUTest {
           },
         ],
       },
-
       fragment: {
         module: this.device.createShaderModule({
           code: wgslShaders.fragment,
         }),
-
         entryPoint: 'frag_main',
         targets: [{ format: 'rgba8unorm' }],
       },
-
       primitive: { topology: 'point-list' },
     });
   }
@@ -588,11 +571,11 @@ export class BufferSyncTest extends GPUTest {
       struct Data {
         a : u32
       };
-      
+
       @group(0) @binding(0) var<uniform> constant: Data;
       @group(0) @binding(1) var<storage, read_write> data : Data;
-      
-      @stage(fragment) fn frag_main() -> @location(0) vec4<f32> {
+
+      @fragment fn frag_main() -> @location(0) vec4<f32> {
         data.a = constant.a;
         return vec4<f32>();  // result does't matter
       }
@@ -614,7 +597,7 @@ export class BufferSyncTest extends GPUTest {
         @group(0) @binding(0) var<storage, read> srcData : Data;
         @group(0) @binding(1) var<storage, read_write> dstData : Data;
 
-        @stage(fragment) fn frag_main() -> @location(0) vec4<f32> {
+        @fragment fn frag_main() -> @location(0) vec4<f32> {
           dstData.a = srcData.a;
           return vec4<f32>();  // result does't matter
         }
@@ -622,23 +605,20 @@ export class BufferSyncTest extends GPUTest {
     };
 
     return this.device.createRenderPipeline({
+      layout: 'auto',
       vertex: {
         module: this.device.createShaderModule({
           code: wgslShaders.vertex,
         }),
-
         entryPoint: 'vert_main',
       },
-
       fragment: {
         module: this.device.createShaderModule({
           code: wgslShaders.fragment,
         }),
-
         entryPoint: 'frag_main',
         targets: [{ format: 'rgba8unorm' }],
       },
-
       primitive: { topology: 'point-list' },
     });
   }
@@ -649,16 +629,16 @@ export class BufferSyncTest extends GPUTest {
     const bindGroup = this.createBindGroupSrcDstBuffer(pipeline, srcBuffer, dstBuffer);
     pass.setPipeline(pipeline);
     pass.setBindGroup(0, bindGroup);
-    pass.dispatch(1);
+    pass.dispatchWorkgroups(1);
   }
 
-  // Write buffer via dispatchIndirect call in compute pass.
+  // Write buffer via dispatchWorkgroupsIndirect call in compute pass.
   encodeReadAsIndirectBufferInComputePass(pass, srcBuffer, dstBuffer, value) {
     const pipeline = this.createStorageWriteComputePipeline(value);
     const bindGroup = this.createBindGroup(pipeline, dstBuffer);
     pass.setPipeline(pipeline);
     pass.setBindGroup(0, bindGroup);
-    pass.dispatchIndirect(srcBuffer, 0);
+    pass.dispatchWorkgroupsIndirect(srcBuffer, 0);
   }
 
   // Read as vertex input and write buffer via draw call in render pass. Use bundle if needed.

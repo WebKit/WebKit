@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -59,15 +59,6 @@
 #include "WebCoreThreadRun.h"
 #endif
 
-#if PLATFORM(WIN)
-#include <pal/spi/win/CoreTextSPIWin.h>
-#endif
-
-#if COMPILER(MSVC)
-// See https://msdn.microsoft.com/en-us/library/35bhkfb6.aspx
-#pragma warning(disable: 4273)
-#endif
-
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
 
 #include <CoreText/CoreText.h>
@@ -75,28 +66,8 @@
 
 #include "MediaAccessibilitySoftLink.h"
 
-#if PLATFORM(WIN)
-
-#ifdef DEBUG_ALL
-#define SOFT_LINK_AVF_FRAMEWORK(Lib) SOFT_LINK_DEBUG_LIBRARY(Lib)
-#else
-#define SOFT_LINK_AVF_FRAMEWORK(Lib) SOFT_LINK_LIBRARY(Lib)
-#endif
-
-#define SOFT_LINK_AVF(Lib, Name, Type) SOFT_LINK_DLL_IMPORT(Lib, Name, Type)
-#define SOFT_LINK_AVF_POINTER(Lib, Name, Type) SOFT_LINK_VARIABLE_DLL_IMPORT_OPTIONAL(Lib, Name, Type)
-#define SOFT_LINK_AVF_FRAMEWORK_IMPORT(Lib, Fun, ReturnType, Arguments, Signature) SOFT_LINK_DLL_IMPORT(Lib, Fun, ReturnType, __cdecl, Arguments, Signature)
-#define SOFT_LINK_AVF_FRAMEWORK_IMPORT_OPTIONAL(Lib, Fun, ReturnType, Arguments) SOFT_LINK_DLL_IMPORT_OPTIONAL(Lib, Fun, ReturnType, __cdecl, Arguments)
-
-SOFT_LINK_AVF_FRAMEWORK(CoreMedia)
-SOFT_LINK_AVF_FRAMEWORK_IMPORT_OPTIONAL(CoreMedia, MTEnableCaption2015Behavior, Boolean, ())
-
-#else // PLATFORM(WIN)
-
 SOFT_LINK_FRAMEWORK_OPTIONAL(MediaToolbox)
 SOFT_LINK_OPTIONAL(MediaToolbox, MTEnableCaption2015Behavior, Boolean, (), ())
-
-#endif // !PLATFORM(WIN)
 
 #endif // HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
 
@@ -124,11 +95,7 @@ static std::optional<Vector<String>>& cachedPreferredLanguages()
 
 static void userCaptionPreferencesChangedNotificationCallback(CFNotificationCenterRef, void* observer, CFStringRef, const void*, CFDictionaryRef)
 {
-#if PLATFORM(COCOA)
     RefPtr userPreferences = CaptionUserPreferencesMediaAF::extractCaptionUserPreferencesMediaAF(observer);
-#elif PLATFORM(WIN)
-    auto* userPreferences = static_cast<CaptionUserPreferencesMediaAF*>(observer);
-#endif
     if (userPreferences) {
 #if !PLATFORM(IOS_FAMILY)
         userPreferences->captionPreferencesChanged();
@@ -157,10 +124,8 @@ CaptionUserPreferencesMediaAF::CaptionUserPreferencesMediaAF(PageGroup& group)
     if (!initialized) {
         initialized = true;
 
-#if !PLATFORM(WIN)
         if (!MediaToolboxLibrary())
             return;
-#endif
 
         MTEnableCaption2015BehaviorPtrType function = MTEnableCaption2015BehaviorPtr();
         if (!function || !function())
@@ -178,12 +143,7 @@ CaptionUserPreferencesMediaAF::CaptionUserPreferencesMediaAF(PageGroup& group)
 CaptionUserPreferencesMediaAF::~CaptionUserPreferencesMediaAF()
 {
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
-#if PLATFORM(COCOA)
-    auto* observer = m_weakObserver.get();
-#elif PLATFORM(WIN)
-    auto* observer = this;
-#endif
-    if (observer) {
+    if (auto* observer = m_weakObserver.get()) {
         auto center = CFNotificationCenterGetLocalCenter();
         if (kMAXCaptionAppearanceSettingsChangedNotification)
             CFNotificationCenterRemoveObserver(center, observer, kMAXCaptionAppearanceSettingsChangedNotification, 0);
@@ -318,15 +278,10 @@ void CaptionUserPreferencesMediaAF::setInterestedInCaptionPreferenceChanges()
     m_listeningForPreferenceChanges = true;
     m_registeringForNotification = true;
 
-#if PLATFORM(COCOA)
     if (!m_weakObserver)
         m_weakObserver = createWeakObserver(this);
     auto* observer = m_weakObserver.get();
     auto suspensionBehavior = static_cast<CFNotificationSuspensionBehavior>(CFNotificationSuspensionBehaviorCoalesce | _CFNotificationObserverIsObjC);
-#elif PLATFORM(WIN)
-    auto* observer = this;
-    auto suspensionBehavior = CFNotificationSuspensionBehaviorCoalesce;
-#endif
     auto center = CFNotificationCenterGetLocalCenter();
     if (kMAXCaptionAppearanceSettingsChangedNotification)
         CFNotificationCenterAddObserver(center, observer, userCaptionPreferencesChangedNotificationCallback, kMAXCaptionAppearanceSettingsChangedNotification, 0, suspensionBehavior);

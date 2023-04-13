@@ -49,7 +49,7 @@ const FloatPoint FloatLine::pointAtRelativeDistance(float relativeDistance) cons
 
 const FloatLine FloatLine::extendedToBounds(const FloatRect& bounds) const
 {
-    if (fabs(m_start.x() - m_end.x()) <= fabs(m_start.y() - m_end.y())) {
+    if (std::abs(m_start.x() - m_end.x()) <= std::abs(m_start.y() - m_end.y())) {
         // The line is roughly vertical, so construct points at the top and bottom of the bounds.
         FloatPoint top = { (((bounds.y() - m_start.y()) * (m_end.x() - m_start.x())) / (m_end.y() - m_start.y())) + m_start.x(), bounds.y() };
         FloatPoint bottom = { (((bounds.y() + bounds.height() - m_start.y()) * (m_end.x() - m_start.x())) / (m_end.y() - m_start.y())) + m_start.x(), bounds.y() + bounds.height() };

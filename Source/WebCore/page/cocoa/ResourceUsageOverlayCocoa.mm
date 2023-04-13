@@ -30,7 +30,7 @@
 
 #import "ColorSpaceCG.h"
 #import "CommonVM.h"
-#import "JSDOMWindow.h"
+#import "JSLocalDOMWindow.h"
 #import "PlatformCALayer.h"
 #import "ResourceUsageThread.h"
 #import <CoreGraphics/CGContext.h>

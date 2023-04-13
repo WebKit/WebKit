@@ -35,9 +35,9 @@ class ScriptExecutionContext;
 class Event;
 class EventTarget;
 
-class EventListener : public RefCounted<EventListener>, public CanMakeWeakPtr<EventListener> {
+class EventListener : public CanMakeWeakPtr<EventListener>, public RefCounted<EventListener> {
 public:
-    enum Type {
+    enum Type : uint8_t {
         JSEventListenerType,
         ImageEventListenerType,
         ObjCEventListenerType,

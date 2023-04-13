@@ -27,6 +27,7 @@
 #include "WebIDBConnectionToServer.h"
 
 #include "DataReference.h"
+#include "MessageSenderInlines.h"
 #include "NetworkConnectionToWebProcessMessages.h"
 #include "NetworkProcessConnection.h"
 #include "NetworkStorageManagerMessages.h"

@@ -48,9 +48,12 @@ ScrollingTreeScrollingNode::ScrollingTreeScrollingNode(ScrollingTree& scrollingT
 
 ScrollingTreeScrollingNode::~ScrollingTreeScrollingNode() = default;
 
-void ScrollingTreeScrollingNode::commitStateBeforeChildren(const ScrollingStateNode& stateNode)
+bool ScrollingTreeScrollingNode::commitStateBeforeChildren(const ScrollingStateNode& stateNode)
 {
-    const ScrollingStateScrollingNode& state = downcast<ScrollingStateScrollingNode>(stateNode);
+    if (!is<ScrollingStateScrollingNode>(stateNode))
+        return false;
+
+    const auto& state = downcast<ScrollingStateScrollingNode>(stateNode);
 
     if (state.hasChangedProperty(ScrollingStateNode::Property::ScrollableAreaSize))
         m_scrollableAreaSize = state.scrollableAreaSize();
@@ -98,22 +101,28 @@ void ScrollingTreeScrollingNode::commitStateBeforeChildren(const ScrollingStateN
 
     if (state.hasChangedProperty(ScrollingStateNode::Property::ScrolledContentsLayer))
         m_scrolledContentsLayer = state.scrolledContentsLayer();
+
+    return true;
 }
 
-void ScrollingTreeScrollingNode::commitStateAfterChildren(const ScrollingStateNode& stateNode)
+bool ScrollingTreeScrollingNode::commitStateAfterChildren(const ScrollingStateNode& stateNode)
 {
-    const ScrollingStateScrollingNode& scrollingStateNode = downcast<ScrollingStateScrollingNode>(stateNode);
+    if (!is<ScrollingStateScrollingNode>(stateNode))
+        return false;
+
+    const auto& scrollingStateNode = downcast<ScrollingStateScrollingNode>(stateNode);
     if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::RequestedScrollPosition))
         handleScrollPositionRequest(scrollingStateNode.requestedScrollData());
 
     if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::KeyboardScrollData))
-        handleKeyboardScrollRequest(scrollingStateNode.keyboardScrollData());
+        requestKeyboardScroll(scrollingStateNode.keyboardScrollData());
 
     // This synthetic bit is added back in ScrollingTree::propagateSynchronousScrollingReasons().
 #if ENABLE(SCROLLING_THREAD)
     m_synchronousScrollingReasons.remove(SynchronousScrollingReason::DescendantScrollersHaveSynchronousScrolling);
 #endif
     m_isFirstCommit = false;
+    return true;
 }
 
 void ScrollingTreeScrollingNode::didCompleteCommitForNode()
@@ -283,6 +292,11 @@ void ScrollingTreeScrollingNode::handleKeyboardScrollRequest(const RequestedKeyb
 {
     if (m_delegate)
         m_delegate->handleKeyboardScrollRequest(scrollData);
+}
+
+void ScrollingTreeScrollingNode::requestKeyboardScroll(const RequestedKeyboardScrollData& scrollData)
+{
+    scrollingTree().scrollingTreeNodeRequestsKeyboardScroll(scrollingNodeID(), scrollData);
 }
 
 void ScrollingTreeScrollingNode::handleScrollPositionRequest(const RequestedScrollData& requestedScrollData)

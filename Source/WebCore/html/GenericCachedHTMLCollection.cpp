@@ -26,6 +26,7 @@
 #include "config.h"
 #include "GenericCachedHTMLCollection.h"
 
+#include "CachedHTMLCollectionInlines.h"
 #include "HTMLFieldSetElement.h"
 #include "HTMLNames.h"
 #include "HTMLObjectElement.h"
@@ -41,6 +42,13 @@ using GenericChildrenOnlyCachedHTMLCollection = GenericCachedHTMLCollection<Coll
 
 WTF_MAKE_ISO_ALLOCATED_IMPL_TEMPLATE(GenericDescendantsCachedHTMLCollection);
 WTF_MAKE_ISO_ALLOCATED_IMPL_TEMPLATE(GenericChildrenOnlyCachedHTMLCollection);
+
+template <CollectionTraversalType traversalType>
+GenericCachedHTMLCollection<traversalType>::GenericCachedHTMLCollection(ContainerNode& base, CollectionType collectionType)
+    : CachedHTMLCollection<GenericCachedHTMLCollection<traversalType>, traversalType>(base, collectionType)
+{ }
+template GenericCachedHTMLCollection<CollectionTraversalType::Descendants>::GenericCachedHTMLCollection(ContainerNode&, CollectionType);
+template GenericCachedHTMLCollection<CollectionTraversalType::ChildrenOnly>::GenericCachedHTMLCollection(ContainerNode&, CollectionType);
 
 template <CollectionTraversalType traversalType>
 bool GenericCachedHTMLCollection<traversalType>::elementMatches(Element& element) const
@@ -66,10 +74,10 @@ bool GenericCachedHTMLCollection<traversalType>::elementMatches(Element& element
         return is<HTMLOptionElement>(element);
     case MapAreas:
         return element.hasTagName(areaTag);
-    case DocApplets:
-        return is<HTMLObjectElement>(element) && downcast<HTMLObjectElement>(element).containsJavaApplet();
     case DocEmbeds:
         return element.hasTagName(embedTag);
+    case DocEmpty:
+        return false;
     case DocLinks:
         return (element.hasTagName(aTag) || element.hasTagName(areaTag)) && element.hasAttributeWithoutSynchronization(hrefAttr);
     case DocAnchors:

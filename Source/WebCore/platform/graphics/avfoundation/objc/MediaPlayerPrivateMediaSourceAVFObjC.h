@@ -29,6 +29,7 @@
 
 #include "MediaPlayerPrivate.h"
 #include "SourceBufferPrivateClient.h"
+#include "VideoFrameMetadata.h"
 #include <CoreMedia/CMTime.h>
 #include <wtf/Deque.h>
 #include <wtf/Function.h>
@@ -41,7 +42,6 @@ OBJC_CLASS AVAsset;
 OBJC_CLASS AVSampleBufferAudioRenderer;
 OBJC_CLASS AVSampleBufferDisplayLayer;
 OBJC_CLASS AVSampleBufferRenderSynchronizer;
-OBJC_CLASS AVStreamSession;
 
 typedef struct OpaqueCMTimebase* CMTimebaseRef;
 typedef struct __CVBuffer *CVPixelBufferRef;
@@ -110,6 +110,7 @@ public:
     void characteristicsChanged();
 
     MediaTime currentMediaTime() const override;
+    bool currentMediaTimeMayProgress() const override;
     AVSampleBufferDisplayLayer* sampleBufferDisplayLayer() const { return m_sampleBufferDisplayLayer.get(); }
     WebCoreDecompressionSession* decompressionSession() const { return m_decompressionSession.get(); }
 
@@ -122,10 +123,6 @@ public:
     void syncTextTrackBounds() override;
     
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
-#if HAVE(AVSTREAMSESSION)
-    bool hasStreamSession() { return m_streamSession; }
-    AVStreamSession *streamSession();
-#endif
     void setCDMSession(LegacyCDMSession*) override;
     CDMSessionMediaSourceAVFObjC* cdmSession() const;
 #endif
@@ -219,10 +216,9 @@ private:
 
     void setPreservesPitch(bool) override;
 
-    std::unique_ptr<PlatformTimeRanges> seekable() const override;
     MediaTime maxMediaTimeSeekable() const override;
     MediaTime minMediaTimeSeekable() const override;
-    std::unique_ptr<PlatformTimeRanges> buffered() const override;
+    const PlatformTimeRanges& buffered() const override;
 
     bool didLoadingProgress() const override;
 
@@ -336,7 +332,6 @@ private:
     RetainPtr<id> m_timeJumpedObserver;
     RetainPtr<id> m_durationObserver;
     RetainPtr<id> m_performTaskObserver;
-    RetainPtr<AVStreamSession> m_streamSession;
     RetainPtr<CVPixelBufferRef> m_lastPixelBuffer;
     RefPtr<NativeImage> m_lastImage;
     std::unique_ptr<PixelBufferConformerCV> m_rgbConformer;
@@ -349,6 +344,7 @@ private:
     MediaPlayer::NetworkState m_networkState;
     MediaPlayer::ReadyState m_readyState;
     bool m_readyStateIsWaitingForAvailableFrame { false };
+    MediaTime m_mediaTimeDuration { MediaTime::invalidTime() };
     MediaTime m_lastSeekTime;
     FloatSize m_naturalSize;
     double m_rate;

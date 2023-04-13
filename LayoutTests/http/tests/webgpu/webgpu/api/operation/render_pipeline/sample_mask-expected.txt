@@ -1,5 +1,1 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: Error: Query `webgpu:api,operation,render_pipeline,sample_mask:*` does not match any cases
-
-Harness Error (FAIL), message = Unhandled rejection: Query `webgpu:api,operation,render_pipeline,sample_mask:*` does not match any cases
-
-
+(Populate me when we're ready to investigate this test)

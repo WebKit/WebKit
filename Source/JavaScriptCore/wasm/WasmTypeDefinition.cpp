@@ -28,8 +28,11 @@
 
 #if ENABLE(WEBASSEMBLY)
 
+#include "JSWebAssemblyArray.h"
+#include "JSWebAssemblyStruct.h"
 #include "WasmFormat.h"
 #include "WasmTypeDefinitionInlines.h"
+#include "WebAssemblyFunctionBase.h"
 #include <wtf/CommaPrinter.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/StringPrintStream.h>
@@ -108,12 +111,13 @@ StructType::StructType(FieldType* payload, StructFieldCount fieldCount, const Fi
     , m_hasRecursiveReference(false)
 {
     bool hasRecursiveReference = false;
-    unsigned currentFieldOffset = 0;
+    // Account for the internal header in m_payload.m_storage.data
+    unsigned currentFieldOffset = FixedVector<uint8_t>::Storage::offsetOfData();
     for (unsigned fieldIndex = 0; fieldIndex < m_fieldCount; ++fieldIndex) {
         const auto& fieldType = fieldTypes[fieldIndex];
         hasRecursiveReference |= isRefWithRecursiveReference(fieldType.type);
         getField(fieldIndex) = fieldType;
-        *getFieldOffset(fieldIndex) = currentFieldOffset;
+        *offsetOfField(fieldIndex) = currentFieldOffset;
         currentFieldOffset += typeSizeInBytes(field(fieldIndex).type);
     }
 
@@ -524,13 +528,13 @@ bool TypeDefinition::hasRecursiveReference() const
     return hasRecGroupSupertype || TypeInformation::get(as<Subtype>()->underlyingType()).hasRecursiveReference();
 }
 
-RefPtr<RTT> RTT::tryCreateRTT(DisplayCount displaySize)
+RefPtr<RTT> RTT::tryCreateRTT(RTTKind kind, DisplayCount displaySize)
 {
     auto result = tryFastMalloc(allocatedRTTSize(displaySize));
     void* memory = nullptr;
     if (!result.getValue(memory))
         return nullptr;
-    return new (NotNull, memory) RTT(displaySize);
+    return new (NotNull, memory) RTT(kind, displaySize);
 }
 
 bool RTT::isSubRTT(const RTT& parent) const
@@ -565,6 +569,15 @@ const TypeDefinition& TypeInformation::signatureForLLIntBuiltin(LLIntBuiltin bui
     case LLIntBuiltin::DataDrop:
     case LLIntBuiltin::ElemDrop:
         return *singleton().m_Void_I32;
+    case LLIntBuiltin::RefTest:
+        return *singleton().m_I32_RefI32I32;
+    case LLIntBuiltin::RefCast:
+        return *singleton().m_Ref_RefI32I32;
+    case LLIntBuiltin::ArrayNewData:
+    case LLIntBuiltin::ArrayNewElem:
+        return *singleton().m_Ref_I32I32I32I32;
+    case LLIntBuiltin::ExternInternalize:
+        return *singleton().m_Anyref_Externref;
     }
     RELEASE_ASSERT_NOT_REACHED();
     return *singleton().m_I64_Void;
@@ -846,6 +859,13 @@ TypeInformation::TypeInformation()
     m_Void_I32I32I32I32 = m_typeSet.template add<FunctionParameterTypes>(FunctionParameterTypes { { }, { Wasm::Types::I32, Wasm::Types::I32, Wasm::Types::I32, Wasm::Types::I32 } }).iterator->key;
     m_Void_I32I32I32I32I32 = m_typeSet.template add<FunctionParameterTypes>(FunctionParameterTypes { { }, { Wasm::Types::I32, Wasm::Types::I32, Wasm::Types::I32, Wasm::Types::I32, Wasm::Types::I32 } }).iterator->key;
     m_I32_I32 = m_typeSet.template add<FunctionParameterTypes>(FunctionParameterTypes { { Wasm::Types::I32 }, { Wasm::Types::I32 } }).iterator->key;
+    if (!Options::useWebAssemblyGC())
+        return;
+    m_I32_RefI32I32 = m_typeSet.template add<FunctionParameterTypes>(FunctionParameterTypes { { Wasm::Types::I32 }, { anyrefType(), Wasm::Types::I32, Wasm::Types::I32 } }).iterator->key;
+    m_Ref_RefI32I32 = m_typeSet.template add<FunctionParameterTypes>(FunctionParameterTypes { { anyrefType() }, { anyrefType(), Wasm::Types::I32, Wasm::Types::I32 } }).iterator->key;
+    m_I32_RefI32I32 = m_typeSet.template add<FunctionParameterTypes>(FunctionParameterTypes { { Wasm::Types::I32 }, { Wasm::Type { Wasm::TypeKind::Ref, static_cast<TypeIndex>(Wasm::TypeKind::Externref) }, Wasm::Types::I32, Wasm::Types::I32 } }).iterator->key;
+    m_Ref_I32I32I32I32 = m_typeSet.template add<FunctionParameterTypes>(FunctionParameterTypes { { arrayrefType() }, { Wasm::Types::I32, Wasm::Types::I32, Wasm::Types::I32, Wasm::Types::I32 } }).iterator->key;
+    m_Anyref_Externref = m_typeSet.template add<FunctionParameterTypes>(FunctionParameterTypes { { anyrefType() }, { externrefType() } }).iterator->key;
 }
 
 RefPtr<TypeDefinition> TypeInformation::typeDefinitionForFunction(const Vector<Type, 1>& results, const Vector<Type>& args)
@@ -945,12 +965,20 @@ RefPtr<RTT> TypeInformation::canonicalRTTForType(TypeIndex type)
     const TypeDefinition& signature = TypeInformation::get(type).unroll();
     RefPtr<RTT> protector = nullptr;
 
+    RTTKind kind;
+    if (signature.expand().is<FunctionSignature>())
+        kind = RTTKind::Function;
+    else if (signature.expand().is<ArrayType>())
+        kind = RTTKind::Array;
+    else
+        kind = RTTKind::Struct;
+
     if (signature.is<Subtype>()) {
         auto superRTT = TypeInformation::tryGetCanonicalRTT(signature.as<Subtype>()->superType());
         ASSERT(superRTT.has_value());
         DisplayCount displaySize = superRTT.value()->displaySize() + 1;
 
-        protector = RTT::tryCreateRTT(displaySize);
+        protector = RTT::tryCreateRTT(kind, displaySize);
         RELEASE_ASSERT(protector);
 
         protector->setDisplayEntry(0, superRTT.value());
@@ -960,12 +988,12 @@ RefPtr<RTT> TypeInformation::canonicalRTTForType(TypeIndex type)
         return protector;
     }
 
-    protector = RTT::tryCreateRTT(0);
+    protector = RTT::tryCreateRTT(kind, 0);
     RELEASE_ASSERT(protector);
     return protector;
 }
 
-std::optional<const RTT*> TypeInformation::tryGetCanonicalRTT(TypeIndex type)
+std::optional<RefPtr<const RTT>> TypeInformation::tryGetCanonicalRTT(TypeIndex type)
 {
     TypeInformation& info = singleton();
     Locker locker { info.m_lock };
@@ -973,7 +1001,77 @@ std::optional<const RTT*> TypeInformation::tryGetCanonicalRTT(TypeIndex type)
     const auto iterator = info.m_rttMap.find(type);
     if (iterator == info.m_rttMap.end())
         return std::nullopt;
-    return std::optional<const RTT*>(iterator->value.get());
+    return std::optional<RefPtr<const RTT>>(iterator->value.get());
+}
+
+RefPtr<const RTT> TypeInformation::getCanonicalRTT(TypeIndex type)
+{
+    if (Options::useWebAssemblyGC()) {
+        const auto result = TypeInformation::tryGetCanonicalRTT(type);
+        ASSERT(result.has_value());
+        return result.value();
+    }
+
+    return { };
+}
+
+bool TypeInformation::castReference(JSValue refValue, bool allowNull, TypeIndex typeIndex)
+{
+    if (refValue.isNull())
+        return allowNull;
+
+    if (typeIndexIsType(typeIndex)) {
+        switch (static_cast<TypeKind>(typeIndex)) {
+        case TypeKind::Funcref:
+        case TypeKind::Externref:
+        case TypeKind::Anyref:
+            // Casts to these types cannot fail as they are the top types of their respective hierarchies, and static type-checking does not allow cross-hierarchy casts.
+            return true;
+        case TypeKind::Eqref:
+            return (refValue.isInt32() && refValue.asInt32() <= maxI31ref && refValue.asInt32() >= minI31ref) || jsDynamicCast<JSWebAssemblyArray*>(refValue) || jsDynamicCast<JSWebAssemblyStruct*>(refValue);
+        case TypeKind::Nullref:
+            return false;
+        case TypeKind::I31ref:
+            return refValue.isInt32() && refValue.asInt32() <= maxI31ref && refValue.asInt32() >= minI31ref;
+        case TypeKind::Arrayref:
+            return jsDynamicCast<JSWebAssemblyArray*>(refValue);
+        case TypeKind::Structref:
+            return jsDynamicCast<JSWebAssemblyStruct*>(refValue);
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+    } else {
+        const TypeDefinition& signature = TypeInformation::get(typeIndex);
+        auto signatureRTT = TypeInformation::getCanonicalRTT(typeIndex);
+        if (signature.expand().is<FunctionSignature>()) {
+            WebAssemblyFunctionBase* funcRef = jsDynamicCast<WebAssemblyFunctionBase*>(refValue);
+            // Static type-checking should ensure this jsDynamicCast always succeeds.
+            ASSERT(funcRef);
+            auto funcRTT = funcRef->rtt();
+            if (funcRTT.get() == signatureRTT.get())
+                return true;
+            return funcRTT->isSubRTT(*signatureRTT);
+        }
+        if (signature.expand().is<ArrayType>()) {
+            JSWebAssemblyArray* arrayRef = jsDynamicCast<JSWebAssemblyArray*>(refValue);
+            if (!arrayRef)
+                return false;
+            auto arrayRTT = arrayRef->rtt();
+            if (arrayRTT.get() == signatureRTT.get())
+                return true;
+            return arrayRTT->isSubRTT(*signatureRTT);
+        }
+        ASSERT(signature.expand().is<StructType>());
+        JSWebAssemblyStruct* structRef = jsDynamicCast<JSWebAssemblyStruct*>(refValue);
+        if (!structRef)
+            return false;
+        auto structRTT = structRef->rtt();
+        if (structRTT.get() == signatureRTT.get())
+            return true;
+        return structRTT->isSubRTT(*signatureRTT);
+    }
+
+    return false;
 }
 
 void TypeInformation::tryCleanup()

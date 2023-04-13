@@ -22,9 +22,9 @@
 #include "WindowProxy.h"
 
 #include "CommonVM.h"
-#include "Frame.h"
 #include "GCController.h"
 #include "JSWindowProxy.h"
+#include "LocalFrame.h"
 #include "Page.h"
 #include "PageConsoleClient.h"
 #include "PageGroup.h"
@@ -52,7 +52,7 @@ static void collectGarbageAfterWindowProxyDestruction()
         GCController::singleton().garbageCollectSoon();
 }
 
-WindowProxy::WindowProxy(AbstractFrame& frame)
+WindowProxy::WindowProxy(Frame& frame)
     : m_frame(frame)
     , m_jsWindowProxies(makeUniqueRef<ProxyMap>())
 {
@@ -64,7 +64,7 @@ WindowProxy::~WindowProxy()
     ASSERT(m_jsWindowProxies->isEmpty());
 }
 
-AbstractFrame* WindowProxy::frame() const
+Frame* WindowProxy::frame() const
 {
     return m_frame.get();
 }
@@ -126,12 +126,12 @@ JSWindowProxy& WindowProxy::createJSWindowProxyWithInitializedScript(DOMWrapperW
 
     JSLockHolder lock(world.vm());
     auto& windowProxy = createJSWindowProxy(world);
-    if (is<Frame>(*m_frame))
-        downcast<Frame>(*m_frame).script().initScriptForWindowProxy(windowProxy);
+    if (is<LocalFrame>(*m_frame))
+        downcast<LocalFrame>(*m_frame).script().initScriptForWindowProxy(windowProxy);
     return windowProxy;
 }
 
-void WindowProxy::clearJSWindowProxiesNotMatchingDOMWindow(AbstractDOMWindow* newDOMWindow, bool goingIntoBackForwardCache)
+void WindowProxy::clearJSWindowProxiesNotMatchingDOMWindow(DOMWindow* newDOMWindow, bool goingIntoBackForwardCache)
 {
     if (m_jsWindowProxies->isEmpty())
         return;
@@ -155,7 +155,7 @@ void WindowProxy::clearJSWindowProxiesNotMatchingDOMWindow(AbstractDOMWindow* ne
         collectGarbageAfterWindowProxyDestruction();
 }
 
-void WindowProxy::setDOMWindow(AbstractDOMWindow* newDOMWindow)
+void WindowProxy::setDOMWindow(DOMWindow* newDOMWindow)
 {
     ASSERT(newDOMWindow);
 
@@ -174,14 +174,14 @@ void WindowProxy::setDOMWindow(AbstractDOMWindow* newDOMWindow)
 
         ScriptController* scriptController = nullptr;
         Page* page = nullptr;
-        if (is<Frame>(*m_frame)) {
-            auto& frame = downcast<Frame>(*m_frame);
+        if (is<LocalFrame>(*m_frame)) {
+            auto& frame = downcast<LocalFrame>(*m_frame);
             scriptController = &frame.script();
             page = frame.page();
         }
 
         // ScriptController's m_cacheableBindingRootObject persists between page navigations
-        // so needs to know about the new JSDOMWindow.
+        // so needs to know about the new JSLocalDOMWindow.
         if (auto* cacheableBindingRootObject = scriptController ? scriptController->existingCacheableBindingRootObject() : nullptr)
             cacheableBindingRootObject->updateGlobalObject(windowProxy->window());
 
@@ -199,7 +199,7 @@ void WindowProxy::attachDebugger(JSC::Debugger* debugger)
         windowProxy->attachDebugger(debugger);
 }
 
-AbstractDOMWindow* WindowProxy::window() const
+DOMWindow* WindowProxy::window() const
 {
     return m_frame ? m_frame->window() : nullptr;
 }

@@ -21,13 +21,13 @@
 #include "config.h"
 #include "EventPath.h"
 
-#include "DOMWindow.h"
 #include "ElementRareData.h"
 #include "Event.h"
 #include "EventContext.h"
 #include "EventNames.h"
 #include "FullscreenManager.h"
 #include "HTMLSlotElement.h"
+#include "LocalDOMWindow.h"
 #include "MouseEvent.h"
 #include "Node.h"
 #include "PseudoElement.h"
@@ -267,6 +267,11 @@ EventPath::EventPath(const Vector<EventTarget*>& targets)
         ASSERT(!is<Node>(target));
         return EventContext { EventContext::Type::Normal, nullptr, target, *targets.begin(), 0 };
     });
+}
+
+EventPath::EventPath(EventTarget& target)
+{
+    m_path = { EventContext { EventContext::Type::Normal, nullptr, &target, &target, 0 } };
 }
 
 static Node* moveOutOfAllShadowRoots(Node& startingNode)

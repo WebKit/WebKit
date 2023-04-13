@@ -28,7 +28,9 @@
 #import "AppDelegate.h"
 #import "SettingsController.h"
 
-@interface BrowserWindowController () <NSSharingServicePickerDelegate, NSSharingServiceDelegate>
+@interface BrowserWindowController () <NSSharingServicePickerDelegate, NSSharingServiceDelegate> {
+    NSTimer *_mainThreadStallTimer;
+}
 @end
 
 @implementation BrowserWindowController
@@ -264,6 +266,26 @@
     self.editable = !self.isEditable;
 }
 
+- (IBAction)toggleMainThreadStalls:(id)sender
+{
+    if (_mainThreadStallTimer) {
+        [_mainThreadStallTimer invalidate];
+        _mainThreadStallTimer = nil;
+        return;
+    }
+
+    const NSTimeInterval stallTimerRepeatInterval = 0.2;
+    _mainThreadStallTimer = [NSTimer scheduledTimerWithTimeInterval:stallTimerRepeatInterval repeats:YES block:^(NSTimer * _Nonnull timer) {
+        const NSTimeInterval stallDuration = 0.2;
+        usleep(stallDuration * USEC_PER_SEC);
+    }];
+}
+
+- (BOOL)mainThreadStallsEnabled
+{
+    return !!_mainThreadStallTimer;
+}
+
 #pragma mark -
 #pragma mark NSSharingServicePickerDelegate
 
@@ -302,8 +324,11 @@ static CGRect coreGraphicsScreenRectForAppKitScreenRect(NSRect rect)
     NSRect contentFrame = [self.window convertRectToScreen:self.mainContentView.bounds];
 
     CGRect frame = coreGraphicsScreenRectForAppKitScreenRect(contentFrame);
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     CGImageRef imageRef = CGWindowListCreateImage(frame, kCGWindowListOptionIncludingWindow, (CGWindowID)[self.window windowNumber], kCGWindowImageBoundsIgnoreFraming);
-    
+#pragma clang diagnostic pop
+
     if (!imageRef)
         return nil;
     

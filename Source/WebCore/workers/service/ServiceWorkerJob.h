@@ -45,7 +45,7 @@ namespace WebCore {
 class DeferredPromise;
 class Exception;
 class ScriptExecutionContext;
-enum class ServiceWorkerJobType;
+enum class ServiceWorkerJobType : uint8_t;
 struct ServiceWorkerRegistrationData;
 
 class ServiceWorkerJob : public WorkerScriptLoaderClient {

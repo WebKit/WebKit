@@ -103,7 +103,7 @@ Ref<CSSPrimitiveValue> CSSValuePool::createFontFamilyValue(const AtomString& fam
         m_fontFamilyValueCache.remove(m_fontFamilyValueCache.random());
 
     return m_fontFamilyValueCache.ensure(familyName, [&familyName] {
-        return CSSPrimitiveValue::create(familyName, CSSUnitType::CSS_FONT_FAMILY);
+        return CSSPrimitiveValue::createFontFamily(familyName);
     }).iterator->value;
 }
 

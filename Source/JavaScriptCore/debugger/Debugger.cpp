@@ -29,7 +29,7 @@
 #include "JSCInlines.h"
 #include "MarkedSpaceInlines.h"
 #include "Microtask.h"
-#include "VMEntryScope.h"
+#include "VMEntryScopeInlines.h"
 #include "VMTrapsInlines.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>

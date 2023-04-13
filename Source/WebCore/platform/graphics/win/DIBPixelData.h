@@ -29,11 +29,7 @@
 #include "IntSize.h"
 #include <windows.h>
 
-#if USE(CG)
-#include <CoreFoundation/CFBase.h>
-#else
 typedef unsigned char UInt8;
-#endif
 
 namespace WebCore {
 

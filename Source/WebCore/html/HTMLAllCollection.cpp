@@ -26,8 +26,9 @@
 #include "config.h"
 #include "HTMLAllCollection.h"
 
+#include "CachedHTMLCollectionInlines.h"
 #include "Element.h"
-#include "NodeRareData.h"
+#include "NodeRareDataInlines.h"
 #include <JavaScriptCore/Identifier.h>
 #include <variant>
 #include <wtf/IsoMallocInlines.h>
@@ -69,6 +70,13 @@ std::optional<std::variant<RefPtr<HTMLCollection>, RefPtr<Element>>> HTMLAllColl
         return std::variant<RefPtr<HTMLCollection>, RefPtr<Element>> { RefPtr<Element> { WTFMove(namedItems[0]) } };
 
     return std::variant<RefPtr<HTMLCollection>, RefPtr<Element>> { RefPtr<HTMLCollection> { downcast<Document>(ownerNode()).allFilteredByName(name) } };
+}
+
+HTMLAllNamedSubCollection::HTMLAllNamedSubCollection(Document& document, CollectionType type, const AtomString& name)
+    : CachedHTMLCollection(document, type)
+    , m_name(name)
+{
+    ASSERT(type == DocumentAllNamedItems);
 }
 
 HTMLAllNamedSubCollection::~HTMLAllNamedSubCollection()

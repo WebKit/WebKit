@@ -52,12 +52,9 @@ Preprocessor::~Preprocessor()
 
 bool Preprocessor::init(size_t count, const char *const string[], const int length[])
 {
-    static const int kDefaultGLSLVersion = 100;
-
     // Add standard pre-defined macros.
     predefineMacro("__LINE__", 0);
     predefineMacro("__FILE__", 0);
-    predefineMacro("__VERSION__", kDefaultGLSLVersion);
     predefineMacro("GL_ES", 1);
 
     return mImpl->tokenizer.init(count, string, length);

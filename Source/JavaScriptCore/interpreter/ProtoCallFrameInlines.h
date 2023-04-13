@@ -30,7 +30,7 @@
 
 namespace JSC {
 
-inline void ProtoCallFrame::init(CodeBlock* codeBlock, JSGlobalObject* globalObject, JSObject* callee, JSValue thisValue, int argCountIncludingThis, JSValue* otherArgs)
+inline void ProtoCallFrame::init(CodeBlock* codeBlock, JSGlobalObject* globalObject, JSObject* callee, JSValue thisValue, int argCountIncludingThis, EncodedJSValue* otherArgs)
 {
     this->args = otherArgs;
     this->setCodeBlock(codeBlock);

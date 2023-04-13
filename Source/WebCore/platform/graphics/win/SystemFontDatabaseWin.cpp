@@ -80,7 +80,7 @@ auto SystemFontDatabase::platformSystemFontShorthandInfo(FontShorthand fontShort
             return { WebKitFontFamilyNames::standardFamily, 16, normalWeightValue() };
     }
     }
-    float size = shouldUseDefaultControlFontPixelSize ? defaultControlFontPixelSize : abs(logFont.lfHeight);
+    float size = shouldUseDefaultControlFontPixelSize ? defaultControlFontPixelSize : std::abs(logFont.lfHeight);
     auto weight = logFont.lfWeight >= 700 ? boldWeightValue() : normalWeightValue();
     return { logFont.lfFaceName, size, weight };
 }

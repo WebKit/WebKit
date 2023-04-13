@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
  * Copyright (C) Research In Motion Limited 2011. All rights reserved.
- * Copyright (C) 2016-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -83,6 +83,17 @@ RefPtr<ImageBuffer> ImageBuffer::create(const FloatSize& size, RenderingPurpose 
         imageBuffer = create<UnacceleratedImageBufferBackend>(size, resolutionScale, colorSpace, pixelFormat, purpose, creationContext);
 
     return imageBuffer;
+}
+
+template<typename BackendType, typename ImageBufferType, typename... Arguments>
+RefPtr<ImageBufferType> ImageBuffer::create(const FloatSize& size, const GraphicsContext& context, RenderingPurpose purpose, Arguments&&... arguments)
+{
+    auto parameters = ImageBufferBackend::Parameters { size, 1, context.colorSpace(), PixelFormat::BGRA8, purpose };
+    auto backend = BackendType::create(parameters, { nullptr });
+    if (!backend)
+        return nullptr;
+    auto backendInfo = populateBackendInfo<BackendType>(parameters);
+    return create<ImageBufferType>(parameters, backendInfo, WTFMove(backend), std::forward<Arguments>(arguments)...);
 }
 
 ImageBuffer::ImageBuffer(const ImageBufferBackend::Parameters& parameters, const ImageBufferBackend::Info& backendInfo, std::unique_ptr<ImageBufferBackend>&& backend, RenderingResourceIdentifier renderingResourceIdentifier)
@@ -239,12 +250,21 @@ GraphicsContext& ImageBuffer::context() const
     return m_backend->context();
 }
 
-void ImageBuffer::flushContext()
+void ImageBuffer::flushDrawingContext()
 {
-    if (auto* backend = ensureBackendCreated()) {
-        flushDrawingContext();
+    // FIXME: this will be removed and flushDrawingContext will be renamed as flushContext().
+    // The direct backend context flush is not part of ImageBuffer abstraction semantics,
+    // rather implementation detail of the ImageBufferBackends that need separate management
+    // of their context lifetime for purposes of drawing from the image buffer.
+    if (auto* backend = ensureBackendCreated())
         backend->flushContext();
-    }
+}
+
+bool ImageBuffer::flushDrawingContextAsync()
+{
+    // This function is only really useful for the Remote subclass, where the prefersPreparationForDisplay() == true.
+    flushDrawingContext();
+    return true;
 }
 
 std::unique_ptr<ImageBufferBackend> ImageBuffer::takeBackend()
@@ -261,28 +281,22 @@ IntSize ImageBuffer::backendSize() const
 
 RefPtr<NativeImage> ImageBuffer::copyNativeImage(BackingStoreCopy copyBehavior) const
 {
-    if (auto* backend = ensureBackendCreated()) {
-        const_cast<ImageBuffer&>(*this).flushDrawingContext();
+    if (auto* backend = ensureBackendCreated())
         return backend->copyNativeImage(copyBehavior);
-    }
     return nullptr;
 }
 
-RefPtr<NativeImage> ImageBuffer::copyNativeImageForDrawing(BackingStoreCopy copyBehavior) const
+RefPtr<NativeImage> ImageBuffer::copyNativeImageForDrawing(GraphicsContext& destination) const
 {
-    if (auto* backend = ensureBackendCreated()) {
-        const_cast<ImageBuffer&>(*this).flushDrawingContext();
-        return backend->copyNativeImageForDrawing(copyBehavior);
-    }
+    if (auto* backend = ensureBackendCreated())
+        return backend->copyNativeImageForDrawing(destination);
     return nullptr;
 }
 
 RefPtr<NativeImage> ImageBuffer::sinkIntoNativeImage()
 {
-    if (auto* backend = ensureBackendCreated()) {
-        flushDrawingContext();
+    if (auto* backend = ensureBackendCreated())
         return backend->sinkIntoNativeImage();
-    }
     return nullptr;
 }
 
@@ -307,8 +321,6 @@ RefPtr<Image> ImageBuffer::filteredImage(Filter& filter)
     auto* backend = ensureBackendCreated();
     if (!backend)
         return nullptr;
-
-    const_cast<ImageBuffer&>(*this).flushDrawingContext();
 
     FilterResults results;
     auto result = filter.apply(this, { { }, logicalSize() }, results);
@@ -404,9 +416,15 @@ void ImageBuffer::draw(GraphicsContext& destContext, const FloatRect& destRect, 
     srcRectScaled.scale(resolutionScale());
 
     if (auto* backend = ensureBackendCreated()) {
-        if (auto image = copyNativeImageForDrawing(&destContext == &context() ? CopyBackingStore : DontCopyBackingStore))
-            destContext.drawNativeImage(*image, backendSize(), destRect, srcRectScaled, options);
-        backend->finalizeDrawIntoContext(destContext);
+        if (&destContext == &context()) {
+            if (auto image = copyNativeImage(CopyBackingStore))
+                destContext.drawNativeImageInternal(*image, backendSize(), destRect, srcRectScaled, options);
+        } else {
+            if (auto image = copyNativeImageForDrawing(destContext)) {
+                destContext.drawNativeImageInternal(*image, backendSize(), destRect, srcRectScaled, options);
+                backend->finalizeDrawIntoContext(destContext);
+            }
+        }
     }
 }
 
@@ -430,7 +448,7 @@ void ImageBuffer::drawConsuming(GraphicsContext& destContext, const FloatRect& d
     if (auto* backend = ensureBackendCreated()) {
         auto backendSize = backend->backendSize();
         if (auto image = sinkIntoNativeImage())
-            destContext.drawNativeImage(*image, backendSize, destRect, adjustedSrcRect, options);
+            destContext.drawNativeImageInternal(*image, backendSize, destRect, adjustedSrcRect, options);
     }
 }
 
@@ -439,26 +457,15 @@ void ImageBuffer::drawConsuming(RefPtr<ImageBuffer> imageBuffer, GraphicsContext
     imageBuffer->drawConsuming(context, destRect, srcRect, options);
 }
 
-void ImageBuffer::clipToMask(GraphicsContext& destContext, const FloatRect& destRect)
-{
-    if (auto* backend = ensureBackendCreated()) {
-        flushContext();
-        backend->clipToMask(destContext, destRect);
-    }
-}
-
 void ImageBuffer::convertToLuminanceMask()
 {
-    if (auto* backend = ensureBackendCreated()) {
-        flushContext();
+    if (auto* backend = ensureBackendCreated())
         backend->convertToLuminanceMask();
-    }
 }
 
 void ImageBuffer::transformToColorSpace(const DestinationColorSpace& newColorSpace)
 {
     if (auto* backend = ensureBackendCreated()) {
-        flushDrawingContext();
         backend->transformToColorSpace(newColorSpace);
         m_parameters.colorSpace = newColorSpace;
     }
@@ -492,26 +499,15 @@ Vector<uint8_t> ImageBuffer::toData(Ref<ImageBuffer> source, const String& mimeT
 
 RefPtr<PixelBuffer> ImageBuffer::getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect& srcRect, const ImageBufferAllocator& allocator) const
 {
-    if (auto* backend = ensureBackendCreated()) {
-        const_cast<ImageBuffer&>(*this).flushContext();
+    if (auto* backend = ensureBackendCreated())
         return backend->getPixelBuffer(outputFormat, srcRect, allocator);
-    }
     return nullptr;
 }
 
 void ImageBuffer::putPixelBuffer(const PixelBuffer& pixelBuffer, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat)
 {
-    if (auto* backend = ensureBackendCreated()) {
-        flushContext();
-        backend->putPixelBuffer(pixelBuffer, srcRect, destPoint, destFormat);
-    }
-}
-
-PlatformLayer* ImageBuffer::platformLayer() const
-{
     if (auto* backend = ensureBackendCreated())
-        return backend->platformLayer();
-    return nullptr;
+        backend->putPixelBuffer(pixelBuffer, srcRect, destPoint, destFormat);
 }
 
 bool ImageBuffer::copyToPlatformTexture(GraphicsContextGL& context, GCGLenum target, PlatformGLObject destinationTexture, GCGLenum internalformat, bool premultiplyAlpha, bool flipY) const
@@ -562,17 +558,24 @@ void ImageBuffer::setVolatilityState(VolatilityState volatilityState)
         backend->setVolatilityState(volatilityState);
 }
 
-void ImageBuffer::clearContents()
-{
-    if (auto* backend = ensureBackendCreated())
-        backend->clearContents();
-}
-
 std::unique_ptr<ThreadSafeImageBufferFlusher> ImageBuffer::createFlusher()
 {
     if (auto* backend = ensureBackendCreated())
         return backend->createFlusher();
     return nullptr;
+}
+
+String ImageBuffer::debugDescription() const
+{
+    TextStream stream;
+    stream << "ImageBuffer " << this << " " << renderingResourceIdentifier() << " " << logicalSize() << " " << resolutionScale() << "x " << renderingMode();
+    return stream.release();
+}
+
+TextStream& operator<<(TextStream& ts, const ImageBuffer& imageBuffer)
+{
+    ts << imageBuffer.debugDescription();
+    return ts;
 }
 
 } // namespace WebCore

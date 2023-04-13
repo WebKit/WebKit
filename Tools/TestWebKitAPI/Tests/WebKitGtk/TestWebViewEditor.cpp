@@ -90,6 +90,15 @@ public:
         return m_text.get();
     }
 
+    void writeText(const char* text)
+    {
+#if USE(GTK4)
+        gdk_clipboard_set_text(m_clipboard, text);
+#else
+        gtk_clipboard_set_text(m_clipboard, text, -1);
+#endif
+    }
+
 private:
     GMainLoop* m_mainLoop { nullptr };
 #if USE(GTK4)
@@ -105,6 +114,14 @@ class EditorTest: public WebViewTest {
 public:
     MAKE_GLIB_TEST_FIXTURE(EditorTest);
 
+    enum class ClipboardPermissionRequestResponse {
+        Allow,
+        Deny,
+        AllowAsync,
+        DenyAsync,
+        Unhandled
+    };
+
     EditorTest()
         : m_clipboard(m_mainLoop)
     {
@@ -112,11 +129,48 @@ public:
         m_clipboard.clear();
         loadURI("about:blank");
         waitUntilLoadFinished();
+
+        g_signal_connect(m_webView, "permission-request", G_CALLBACK(+[](WebKitWebView*, WebKitPermissionRequest* request, gpointer userData) {
+            if (!WEBKIT_IS_CLIPBOARD_PERMISSION_REQUEST(request))
+                return FALSE;
+
+            auto& test = *static_cast<EditorTest*>(userData);
+            return test.clipboardPermissionRequested(request);
+        }), this);
     }
 
     ~EditorTest()
     {
         m_clipboard.clear();
+        g_signal_handlers_disconnect_by_data(m_webView, this);
+    }
+
+    gboolean clipboardPermissionRequested(WebKitPermissionRequest* request)
+    {
+        switch (m_permissionRequestResponse) {
+        case ClipboardPermissionRequestResponse::Allow:
+            webkit_permission_request_allow(request);
+            return TRUE;
+        case ClipboardPermissionRequestResponse::Deny:
+            webkit_permission_request_deny(request);
+            return TRUE;
+        case ClipboardPermissionRequestResponse::AllowAsync:
+            g_idle_add_full(G_PRIORITY_DEFAULT_IDLE, [](gpointer userData) -> gboolean {
+                webkit_permission_request_allow(WEBKIT_PERMISSION_REQUEST(userData));
+                return FALSE;
+            }, g_object_ref(request), reinterpret_cast<GDestroyNotify>(g_object_unref));
+            return TRUE;
+        case ClipboardPermissionRequestResponse::DenyAsync:
+            g_idle_add_full(G_PRIORITY_DEFAULT_IDLE, [](gpointer userData) -> gboolean {
+                webkit_permission_request_deny(WEBKIT_PERMISSION_REQUEST(userData));
+                return FALSE;
+            }, g_object_ref(request), reinterpret_cast<GDestroyNotify>(g_object_unref));
+            return TRUE;
+        case ClipboardPermissionRequestResponse::Unhandled:
+            break;
+        }
+
+        return FALSE;
     }
 
     static gboolean webViewDrawCallback(GMainLoop* mainLoop)
@@ -220,6 +274,7 @@ public:
     Clipboard m_clipboard;
     bool m_canExecuteEditingCommand { false };
     WebKitEditorState* m_editorState { nullptr };
+    ClipboardPermissionRequestResponse m_permissionRequestResponse { ClipboardPermissionRequestResponse::Deny };
 };
 
 static const char* selectedSpanHTMLFormat =
@@ -508,10 +563,10 @@ static void testWebViewEditorInsertImage(EditorTest* test, gconstpointer)
     GUniquePtr<char> imageURI(g_filename_to_uri(imagePath.get(), nullptr, nullptr));
     webkit_web_view_execute_editing_command_with_argument(test->m_webView, WEBKIT_EDITING_COMMAND_INSERT_IMAGE, imageURI.get());
     GUniqueOutPtr<GError> error;
-    WebKitJavascriptResult* javascriptResult = test->runJavaScriptAndWaitUntilFinished("document.getElementsByTagName('IMG')[0].src", &error.outPtr());
-    g_assert_nonnull(javascriptResult);
+    JSCValue* value = test->runJavaScriptAndWaitUntilFinished("document.getElementsByTagName('IMG')[0].src", &error.outPtr());
+    g_assert_nonnull(value);
     g_assert_no_error(error.get());
-    GUniquePtr<char> resultString(WebViewTest::javascriptResultToCString(javascriptResult));
+    GUniquePtr<char> resultString(WebViewTest::javascriptResultToCString(value));
     g_assert_cmpstr(resultString.get(), ==, imageURI.get());
 }
 
@@ -525,30 +580,68 @@ static void testWebViewEditorCreateLink(EditorTest* test, gconstpointer)
     static const char* webkitGTKURL = "http://www.webkitgtk.org/";
     webkit_web_view_execute_editing_command_with_argument(test->m_webView, WEBKIT_EDITING_COMMAND_CREATE_LINK, webkitGTKURL);
     GUniqueOutPtr<GError> error;
-    WebKitJavascriptResult* javascriptResult = test->runJavaScriptAndWaitUntilFinished("document.getElementsByTagName('A')[0].href;", &error.outPtr());
-    g_assert_nonnull(javascriptResult);
+    JSCValue* value = test->runJavaScriptAndWaitUntilFinished("document.getElementsByTagName('A')[0].href;", &error.outPtr());
+    g_assert_nonnull(value);
     g_assert_no_error(error.get());
-    GUniquePtr<char> resultString(WebViewTest::javascriptResultToCString(javascriptResult));
+    GUniquePtr<char> resultString(WebViewTest::javascriptResultToCString(value));
     g_assert_cmpstr(resultString.get(), ==, webkitGTKURL);
-    javascriptResult = test->runJavaScriptAndWaitUntilFinished("document.getElementsByTagName('A')[0].innerText;", &error.outPtr());
-    g_assert_nonnull(javascriptResult);
+    value = test->runJavaScriptAndWaitUntilFinished("document.getElementsByTagName('A')[0].innerText;", &error.outPtr());
+    g_assert_nonnull(value);
     g_assert_no_error(error.get());
-    resultString.reset(WebViewTest::javascriptResultToCString(javascriptResult));
+    resultString.reset(WebViewTest::javascriptResultToCString(value));
     g_assert_cmpstr(resultString.get(), ==, "webkitgtk.org");
 
     // When there isn't text selected, the URL is used as link text.
     webkit_web_view_execute_editing_command(test->m_webView, "MoveToEndOfLine");
     webkit_web_view_execute_editing_command_with_argument(test->m_webView, WEBKIT_EDITING_COMMAND_CREATE_LINK, webkitGTKURL);
-    javascriptResult = test->runJavaScriptAndWaitUntilFinished("document.getElementsByTagName('A')[1].href;", &error.outPtr());
-    g_assert_nonnull(javascriptResult);
+    value = test->runJavaScriptAndWaitUntilFinished("document.getElementsByTagName('A')[1].href;", &error.outPtr());
+    g_assert_nonnull(value);
     g_assert_no_error(error.get());
-    resultString.reset(WebViewTest::javascriptResultToCString(javascriptResult));
+    resultString.reset(WebViewTest::javascriptResultToCString(value));
     g_assert_cmpstr(resultString.get(), ==, webkitGTKURL);
-    javascriptResult = test->runJavaScriptAndWaitUntilFinished("document.getElementsByTagName('A')[1].innerText;", &error.outPtr());
-    g_assert_nonnull(javascriptResult);
+    value = test->runJavaScriptAndWaitUntilFinished("document.getElementsByTagName('A')[1].innerText;", &error.outPtr());
+    g_assert_nonnull(value);
     g_assert_no_error(error.get());
-    resultString.reset(WebViewTest::javascriptResultToCString(javascriptResult));
+    resultString.reset(WebViewTest::javascriptResultToCString(value));
     g_assert_cmpstr(resultString.get(), ==, webkitGTKURL);
+}
+
+static void testWebViewClipboardPermissionRequest(EditorTest* test, gconstpointer)
+{
+    test->m_clipboard.writeText("system clipboard contents");
+    test->loadHtml("<html><body></body></html>", "file://");
+    test->waitUntilLoadFinished();
+
+    test->m_permissionRequestResponse = EditorTest::ClipboardPermissionRequestResponse::Deny;
+    GUniqueOutPtr<GError> error;
+    JSCValue* value = test->runAsyncJavaScriptFunctionInWorldAndWaitUntilFinished("return navigator.clipboard.readText();", nullptr, nullptr, &error.outPtr());
+    g_assert_null(value);
+    g_assert_error(error.get(), WEBKIT_JAVASCRIPT_ERROR, WEBKIT_JAVASCRIPT_ERROR_SCRIPT_FAILED);
+    g_assert_true(g_str_has_prefix(error->message, "NotAllowedError:"));
+
+    test->m_permissionRequestResponse = EditorTest::ClipboardPermissionRequestResponse::Allow;
+    value = test->runAsyncJavaScriptFunctionInWorldAndWaitUntilFinished("return navigator.clipboard.readText();", nullptr, nullptr, &error.outPtr());
+    g_assert_true(JSC_IS_VALUE(value));
+    GUniquePtr<char> valueString(WebViewTest::javascriptResultToCString(value));
+    g_assert_cmpstr(valueString.get(), ==, "system clipboard contents");
+
+    test->m_permissionRequestResponse = EditorTest::ClipboardPermissionRequestResponse::DenyAsync;
+    value = test->runAsyncJavaScriptFunctionInWorldAndWaitUntilFinished("return navigator.clipboard.readText();", nullptr, nullptr, &error.outPtr());
+    g_assert_null(value);
+    g_assert_error(error.get(), WEBKIT_JAVASCRIPT_ERROR, WEBKIT_JAVASCRIPT_ERROR_SCRIPT_FAILED);
+    g_assert_true(g_str_has_prefix(error->message, "NotAllowedError:"));
+
+    test->m_permissionRequestResponse = EditorTest::ClipboardPermissionRequestResponse::AllowAsync;
+    value = test->runAsyncJavaScriptFunctionInWorldAndWaitUntilFinished("return navigator.clipboard.readText();", nullptr, nullptr, &error.outPtr());
+    g_assert_true(JSC_IS_VALUE(value));
+    valueString.reset(WebViewTest::javascriptResultToCString(value));
+    g_assert_cmpstr(valueString.get(), ==, "system clipboard contents");
+
+    test->m_permissionRequestResponse = EditorTest::ClipboardPermissionRequestResponse::Unhandled;
+    value = test->runAsyncJavaScriptFunctionInWorldAndWaitUntilFinished("return navigator.clipboard.readText();", nullptr, nullptr, &error.outPtr());
+    g_assert_null(value);
+    g_assert_error(error.get(), WEBKIT_JAVASCRIPT_ERROR, WEBKIT_JAVASCRIPT_ERROR_SCRIPT_FAILED);
+    g_assert_true(g_str_has_prefix(error->message, "NotAllowedError:"));
 }
 
 void beforeAll()
@@ -561,6 +654,7 @@ void beforeAll()
     EditorTest::add("WebKitWebView", "editor-state/typing-attributes", testWebViewEditorEditorStateTypingAttributes);
     EditorTest::add("WebKitWebView", "insert/image", testWebViewEditorInsertImage);
     EditorTest::add("WebKitWebView", "insert/link", testWebViewEditorCreateLink);
+    EditorTest::add("WebKitWebView", "clipboard/permission-request", testWebViewClipboardPermissionRequest);
 }
 
 void afterAll()

@@ -251,7 +251,7 @@ class TestFreshnessPage extends PageWithHeading {
         let tableContent = [element('tr', element('td', {colspan: 2}, buildSummary))];
 
         if (chartURL) {
-            const linkDescription = `${metric.test().name()} on ${platform.name()}`;
+            const linkDescription = `${metric.test().name()} on ${platform.label()}`;
             tableContent.push(element('tr', [
                 element('td', 'Chart'),
                 element('td', {colspan: 2}, link(linkDescription, linkDescription, chartURL, true, tabIndex))
@@ -416,11 +416,12 @@ class TestFreshnessPage extends PageWithHeading {
     {
         return `
             .page-with-heading {
-                display: flex;
-                justify-content: center;
+                display: grid;
+                grid-template-columns: 1fr [content] min-content 1fr;
             }
             #test-health {
                 font-size: 1rem;
+                grid-column: content;
             }
             #test-health thead {
                 display: block;
@@ -431,7 +432,7 @@ class TestFreshnessPage extends PageWithHeading {
                 vertical-align: bottom;
             }
             #test-health .row-head {
-                min-width: 18.5rem;
+                min-width: 24rem;
             }
             #test-health th {
                 text-align: left;

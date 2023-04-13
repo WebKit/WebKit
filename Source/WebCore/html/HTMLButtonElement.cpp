@@ -61,6 +61,11 @@ Ref<HTMLButtonElement> HTMLButtonElement::create(const QualifiedName& tagName, D
     return adoptRef(*new HTMLButtonElement(tagName, document, form));
 }
 
+Ref<HTMLButtonElement> HTMLButtonElement::create(Document& document)
+{
+    return adoptRef(*new HTMLButtonElement(buttonTag, document, nullptr));
+}
+
 void HTMLButtonElement::setType(const AtomString& type)
 {
     setAttributeWithoutSynchronization(typeAttr, type);
@@ -106,13 +111,13 @@ bool HTMLButtonElement::hasPresentationalHintsForAttribute(const QualifiedName& 
     return HTMLFormControlElement::hasPresentationalHintsForAttribute(name);
 }
 
-void HTMLButtonElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void HTMLButtonElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     if (name == typeAttr) {
         Type oldType = m_type;
-        if (equalLettersIgnoringASCIICase(value, "reset"_s))
+        if (equalLettersIgnoringASCIICase(newValue, "reset"_s))
             m_type = RESET;
-        else if (equalLettersIgnoringASCIICase(value, "button"_s))
+        else if (equalLettersIgnoringASCIICase(newValue, "button"_s))
             m_type = BUTTON;
         else
             m_type = SUBMIT;
@@ -122,7 +127,7 @@ void HTMLButtonElement::parseAttribute(const QualifiedName& name, const AtomStri
                 form()->resetDefaultButton();
         }
     } else
-        HTMLFormControlElement::parseAttribute(name, value);
+        HTMLFormControlElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }
 
 void HTMLButtonElement::defaultEventHandler(Event& event)
@@ -150,7 +155,8 @@ void HTMLButtonElement::defaultEventHandler(Event& event)
 
             if (m_type == SUBMIT || m_type == RESET)
                 event.setDefaultHandled();
-        }
+        } else
+            handlePopoverTargetAction();
     }
 
     if (is<KeyboardEvent>(event)) {

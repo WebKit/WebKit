@@ -49,6 +49,8 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 @property (nonatomic, readonly) NSString *ID WK_API_AVAILABLE(macos(10.12), ios(10.0));
 @property (nonatomic, readonly) BOOL isAnimatedImage WK_API_AVAILABLE(macos(10.15), ios(13.0));
 #if TARGET_OS_IPHONE
+@property (nonatomic, readonly) BOOL isAnimating;
+@property (nonatomic, readonly) BOOL canShowAnimationControls;
 @property (nonatomic, readonly) NSDictionary *userInfo WK_API_AVAILABLE(ios(11.0));
 @property (nonatomic, readonly, copy) UIImage *image;
 #else

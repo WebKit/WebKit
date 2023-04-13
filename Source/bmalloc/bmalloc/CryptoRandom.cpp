@@ -75,7 +75,7 @@ private:
     ARC4Stream m_stream;
     int m_count;
 };
-DECLARE_STATIC_PER_PROCESS_STORAGE(ARC4RandomNumberGenerator);
+DECLARE_STATIC_PER_PROCESS_STORAGE_WITH_LINKAGE(ARC4RandomNumberGenerator, BNOEXPORT);
 DEFINE_STATIC_PER_PROCESS_STORAGE(ARC4RandomNumberGenerator);
 
 ARC4Stream::ARC4Stream()

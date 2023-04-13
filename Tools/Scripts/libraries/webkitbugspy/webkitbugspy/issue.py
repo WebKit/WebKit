@@ -72,6 +72,8 @@ class Issue(object):
         self._component = None
         self._version = None
         self._milestone = None
+        self._keywords = None
+        self._classification = None
 
         self.tracker.populate(self, None)
 
@@ -189,10 +191,32 @@ class Issue(object):
         return self._milestone or None
 
     @property
+    def keywords(self):
+        if self._keywords is None:
+            self.tracker.populate(self, 'keywords')
+        return self._keywords
+
+    @property
+    def classification(self):
+        if self._classification is None:
+            self.tracker.populate(self, 'classification')
+        return self._classification
+
+    @property
     def redacted(self):
-        match_string = 'title:{};project:{};component:{};version:{}'.format(
-            self.title or '', self.project or '', self.component or '', self.version or '',
-        )
+        match_string = ''
+        for member in ('title', 'project', 'component', 'version', 'classification'):
+            match_string += ';{}:{}'.format(member, getattr(self, member, ''))
+        match_string += ';keywords:{}'.format(','.join(self.keywords or []))
+
+        for key, value in self.tracker._redact_exemption.items():
+            if key.search(match_string) and value:
+                return self.tracker.Redaction(
+                    redacted=False,
+                    exemption=value,
+                    reason="is a {}".format(self.tracker.NAME) if key.pattern == '.*' else "matches '{}'".format(key.pattern),
+                )
+
         for key, value in self.tracker._redact.items():
             if key.search(match_string):
                 return self.tracker.Redaction(

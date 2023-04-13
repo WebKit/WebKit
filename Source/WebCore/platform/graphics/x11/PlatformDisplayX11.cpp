@@ -45,20 +45,7 @@
 #endif
 
 #if USE(EGL)
-#if USE(LIBEPOXY)
 #include <epoxy/egl.h>
-#else
-#include <EGL/egl.h>
-#include <EGL/eglext.h>
-#endif
-#endif
-
-#if USE(GLX)
-#if USE(LIBEPOXY)
-#include <epoxy/glx.h>
-#else
-#include <GL/glx.h>
-#endif
 #endif
 
 namespace WebCore {
@@ -79,26 +66,9 @@ std::unique_ptr<PlatformDisplay> PlatformDisplayX11::create(GdkDisplay* display)
 }
 #endif
 
-static inline void clearSharingGLContextAtExit()
-{
-#if USE(GLX)
-    // In X11 only one PlatformDisplay instance is allowed per process which is the sharedDisplay one.
-    // We install an atexit handler to clear the sharing GL context to ensure it's released before
-    // the constructor is called, because clearing the context in X11 requires to access PlatformDisplay::sharedDisplay()
-    // and calling it from its constructor causes issues in some systems. See https://bugs.webkit.org/show_bug.cgi?id=238494.
-    static std::once_flag onceKey;
-    std::call_once(onceKey, [] {
-        std::atexit([] {
-            PlatformDisplay::sharedDisplay().clearSharingGLContext();
-        });
-    });
-#endif
-}
-
 PlatformDisplayX11::PlatformDisplayX11(Display* display)
     : m_display(display)
 {
-    clearSharingGLContextAtExit();
 }
 
 #if PLATFORM(GTK)
@@ -106,13 +76,12 @@ PlatformDisplayX11::PlatformDisplayX11(GdkDisplay* display)
     : PlatformDisplay(display)
     , m_display(display ? GDK_DISPLAY_XDISPLAY(display) : nullptr)
 {
-    clearSharingGLContextAtExit();
 }
 #endif
 
 PlatformDisplayX11::~PlatformDisplayX11()
 {
-#if USE(EGL) || USE(GLX)
+#if USE(EGL)
     ASSERT(!m_sharingGLContext);
 #endif
 
@@ -136,16 +105,12 @@ void PlatformDisplayX11::sharedDisplayDidClose()
 #if USE(EGL)
 void PlatformDisplayX11::initializeEGLDisplay()
 {
-#if defined(EGL_KHR_platform_x11)
     const char* extensions = eglQueryString(nullptr, EGL_EXTENSIONS);
-    if (GLContext::isExtensionSupported(extensions, "EGL_KHR_platform_base")) {
-        if (auto* getPlatformDisplay = reinterpret_cast<PFNEGLGETPLATFORMDISPLAYEXTPROC>(eglGetProcAddress("eglGetPlatformDisplay")))
-            m_eglDisplay = getPlatformDisplay(EGL_PLATFORM_X11_KHR, m_display, nullptr);
-    } else if (GLContext::isExtensionSupported(extensions, "EGL_EXT_platform_base")) {
-        if (auto* getPlatformDisplay = reinterpret_cast<PFNEGLGETPLATFORMDISPLAYEXTPROC>(eglGetProcAddress("eglGetPlatformDisplayEXT")))
-            m_eglDisplay = getPlatformDisplay(EGL_PLATFORM_X11_KHR, m_display, nullptr);
-    } else
-#endif
+    if (GLContext::isExtensionSupported(extensions, "EGL_KHR_platform_base"))
+        m_eglDisplay = eglGetPlatformDisplay(EGL_PLATFORM_X11_KHR, m_display, nullptr);
+    else if (GLContext::isExtensionSupported(extensions, "EGL_EXT_platform_base"))
+        m_eglDisplay = eglGetPlatformDisplayEXT(EGL_PLATFORM_X11_KHR, m_display, nullptr);
+    else
         m_eglDisplay = eglGetDisplay(m_display);
 
     PlatformDisplay::initializeEGLDisplay();
@@ -183,27 +148,6 @@ bool PlatformDisplayX11::supportsXDamage(std::optional<int>& damageEventBase, st
     damageEventBase = m_damageEventBase;
     damageErrorBase = m_damageErrorBase;
     return m_supportsXDamage.value();
-}
-
-bool PlatformDisplayX11::supportsGLX(std::optional<int>& glxErrorBase) const
-{
-#if USE(GLX)
-    if (!m_supportsGLX) {
-        m_supportsGLX = false;
-        if (m_display) {
-            int eventBase, errorBase;
-            m_supportsGLX = glXQueryExtension(m_display, &errorBase, &eventBase);
-            if (m_supportsGLX.value())
-                m_glxErrorBase = errorBase;
-        }
-    }
-
-    glxErrorBase = m_glxErrorBase;
-    return m_supportsGLX.value();
-#else
-    UNUSED_PARAM(glxErrorBase);
-    return false;
-#endif
 }
 
 void* PlatformDisplayX11::visual() const

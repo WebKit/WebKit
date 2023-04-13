@@ -50,6 +50,7 @@ class InputAttachmentReferenceTraverser : public TIntermTraverser
 
     bool visitDeclaration(Visit visit, TIntermDeclaration *node) override;
     bool visitBinary(Visit visit, TIntermBinary *node) override;
+    void visitSymbol(TIntermSymbol *node) override;
 
   private:
     void setInputAttachmentIndex(unsigned int index);
@@ -183,6 +184,21 @@ bool InputAttachmentReferenceTraverser::visitBinary(Visit visit, TIntermBinary *
     }
 
     return true;
+}
+
+void InputAttachmentReferenceTraverser::visitSymbol(TIntermSymbol *symbol)
+{
+    if (symbol->getName() != "gl_LastFragColorARM")
+    {
+        return;
+    }
+
+    // Record usage of the gl_LastFragColorARM symbol in the AST so we know
+    // how to replace it with ANGLELastFragData.
+    const unsigned int inputAttachmentIdx =
+        std::max(0, symbol->getType().getLayoutQualifier().location);
+    setInputAttachmentIndex(inputAttachmentIdx);
+    mDeclaredSym->emplace(inputAttachmentIdx, symbol);
 }
 
 bool ReplaceVariableTraverser::visitDeclaration(Visit visit, TIntermDeclaration *node)
@@ -598,54 +614,62 @@ bool ReplaceInOutUtils::loadInputAttachmentData()
 
 }  // anonymous namespace
 
-[[nodiscard]] bool ReplaceLastFragData(TCompiler *compiler,
-                                       TIntermBlock *root,
-                                       TSymbolTable *symbolTable,
-                                       std::vector<ShaderVariable> *uniforms)
+[[nodiscard]] bool ReplaceLastFrag(TCompiler *compiler,
+                                   TIntermBlock *root,
+                                   TSymbolTable *symbolTable,
+                                   std::vector<ShaderVariable> *uniforms,
+                                   FramebufferFetchReplaceTarget target)
 {
     // Common variables
     InputAttachmentIdxSet constIndices;
-    std::map<unsigned int, TIntermSymbol *> glLastFragDataUsageMap;
+    std::map<unsigned int, TIntermSymbol *> glLastFragUsageMap;
     unsigned int maxInputAttachmentIndex = 0;
     bool usedNonConstIndex               = false;
 
-    // Get informations for gl_LastFragData
+    // Get informations for gl_LastFragData/gl_LastFragColorARM
     InputAttachmentReferenceTraverser informationTraverser(
-        &glLastFragDataUsageMap, &maxInputAttachmentIndex, &constIndices, &usedNonConstIndex);
+        &glLastFragUsageMap, &maxInputAttachmentIndex, &constIndices, &usedNonConstIndex);
     root->traverse(&informationTraverser);
     if (constIndices.none() && !usedNonConstIndex)
     {
-        // No references of gl_LastFragData
+        // No references of gl_LastFragData/ColorARM
         return true;
     }
 
-    // Declare subpassInput uniform variables
-    ReplaceGlLastFragDataUtils replaceSubpassInputUtils(compiler, symbolTable, root, uniforms,
-                                                        usedNonConstIndex, constIndices,
-                                                        glLastFragDataUsageMap);
+    ReplaceGlLastFragDataUtils replaceSubpassInputUtils(
+        compiler, symbolTable, root, uniforms, usedNonConstIndex, constIndices, glLastFragUsageMap);
     if (!replaceSubpassInputUtils.declareSubpassInputVariables())
     {
         return false;
     }
 
     // Declare the variables which store the result of subpassLoad function
-    const TVariable *glLastFragDataVar = nullptr;
-    if (glLastFragDataUsageMap.size() > 0)
+    const TVariable *glLastFragVar = nullptr;
+    if (glLastFragUsageMap.size() > 0)
     {
-        glLastFragDataVar = &glLastFragDataUsageMap.begin()->second->variable();
+        glLastFragVar = &glLastFragUsageMap.begin()->second->variable();
     }
     else
     {
-        glLastFragDataVar = static_cast<const TVariable *>(
-            symbolTable->findBuiltIn(ImmutableString("gl_LastFragData"), 100));
+        if (target == FramebufferFetchReplaceTarget::LastFragData)
+        {
+            glLastFragVar = static_cast<const TVariable *>(
+                symbolTable->findBuiltIn(ImmutableString("gl_LastFragData"), 100));
+        }
+        else
+        {
+            glLastFragVar = static_cast<const TVariable *>(symbolTable->findBuiltIn(
+                ImmutableString("gl_LastFragColorARM"), compiler->getShaderVersion()));
+        }
     }
-    if (!glLastFragDataVar)
+
+    if (!glLastFragVar)
     {
         return false;
     }
 
     ImmutableString loadVarName("ANGLELastFragData");
-    TType *loadVarType = new TType(glLastFragDataVar->getType());
+    TType *loadVarType = new TType(glLastFragVar->getType());
     loadVarType->setQualifier(EvqGlobal);
 
     TVariable *loadVar =
@@ -660,8 +684,8 @@ bool ReplaceInOutUtils::loadInputAttachmentData()
         return false;
     }
 
-    // 4) Replace gl_LastFragData with ANGLELastFragData
-    ReplaceVariableTraverser replaceTraverser(glLastFragDataVar, new TIntermSymbol(loadVar));
+    // 4) Replace gl_LastFragData/ColorARM with ANGLELastFragData
+    ReplaceVariableTraverser replaceTraverser(glLastFragVar, new TIntermSymbol(loadVar));
     root->traverse(&replaceTraverser);
     if (!replaceTraverser.updateTree(compiler, root))
     {

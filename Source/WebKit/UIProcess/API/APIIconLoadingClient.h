@@ -25,12 +25,13 @@
 
 #pragma once
 
-#include "GenericCallback.h"
 #include <WebCore/LinkIcon.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Function.h>
 
 namespace API {
+
+class Data;
 
 class IconLoadingClient {
     WTF_MAKE_FAST_ALLOCATED;

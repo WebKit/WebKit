@@ -123,6 +123,10 @@ ExceptionOr<ApplePaySessionPaymentRequest> convertAndValidate(Document& document
     result.setShippingContactEditingMode(request.shippingContactEditingMode);
 #endif
 
+#if ENABLE(APPLE_PAY_LATER_MODE)
+    result.setApplePayLaterMode(request.applePayLaterMode);
+#endif
+
     return WTFMove(result);
 }
 

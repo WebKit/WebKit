@@ -28,6 +28,7 @@
 #include "PlatformCALayer.h"
 
 OBJC_CLASS NSObject;
+OBJC_PROTOCOL(MTLSharedEvent);
 
 namespace WebCore {
 
@@ -118,10 +119,8 @@ public:
     CFTypeRef contents() const override;
     void setContents(CFTypeRef) override;
     void clearContents() override;
-#if HAVE(IOSURFACE)
-    void setContents(const WebCore::IOSurface&) override;
-    void setContents(const WTF::MachSendRight&) override;
-#endif
+    void setDelegatedContentsFinishedEvent(const PlatformCALayerInProcessDelegatedContentsFinishedEvent&) override;
+    void setDelegatedContents(const PlatformCALayerInProcessDelegatedContents&) override;
 
     void setContentsRect(const FloatRect&) override;
 
@@ -208,7 +207,7 @@ private:
 
     void commonInit();
 
-    bool isPlatformCALayerCocoa() const override { return true; }
+    Type type() const final { return Type::Cocoa; }
 
     bool requiresCustomAppearanceUpdateOnBoundsChange() const;
 
@@ -230,4 +229,4 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_PLATFORM_CALAYER(WebCore::PlatformCALayerCocoa, isPlatformCALayerCocoa())
+SPECIALIZE_TYPE_TRAITS_PLATFORM_CALAYER(WebCore::PlatformCALayerCocoa, type() == WebCore::PlatformCALayer::Type::Cocoa)

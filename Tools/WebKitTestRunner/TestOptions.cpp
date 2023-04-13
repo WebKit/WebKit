@@ -46,7 +46,7 @@ static constexpr bool mediaSourceEnabledValue = true;
 #endif
 
 #if ENABLE(GPU_PROCESS)
-#if PLATFORM(IOS_FAMILY)
+#if ENABLE(GPU_PROCESS_DOM_RENDERING_BY_DEFAULT)
 static constexpr bool fullGPUProcessEnabledValue = true;
 #else
 static constexpr bool fullGPUProcessEnabledValue = false;
@@ -75,6 +75,7 @@ const TestFeatures& TestOptions::defaults()
             { "AllowTopNavigationToDataURLs", true },
             { "AllowUniversalAccessFromFileURLs", true },
             { "AllowsInlineMediaPlayback", true },
+            { "AppBadgeEnabled", true },
             { "AsyncFrameScrollingEnabled", false },
             { "AsyncOverflowScrollingEnabled", false },
             { "BroadcastChannelOriginPartitioningEnabled", false },
@@ -155,6 +156,7 @@ const TestFeatures& TestOptions::defaults()
         };
         features.boolTestRunnerFeatures = {
             { "allowsLinkPreview", true },
+            { "allowTestOnlyIPC", false },
             { "appHighlightsEnabled", false },
             { "dumpJSConsoleLogInStdErr", false },
             { "editable", false },
@@ -179,6 +181,7 @@ const TestFeatures& TestOptions::defaults()
             { "useEphemeralSession", false },
             { "useFlexibleViewport", false },
             { "useRemoteLayerTree", false },
+            { "noUseRemoteLayerTree", false },
             { "useThreadedScrolling", false },
         };
         features.doubleTestRunnerFeatures = {
@@ -214,6 +217,7 @@ const std::unordered_map<std::string, TestHeaderKeyType>& TestOptions::keyTypeMa
 
         { "allowsLinkPreview", TestHeaderKeyType::BoolTestRunner },
         { "appHighlightsEnabled", TestHeaderKeyType::BoolTestRunner },
+        { "allowTestOnlyIPC", TestHeaderKeyType::BoolTestRunner },
         { "dumpJSConsoleLogInStdErr", TestHeaderKeyType::BoolTestRunner },
         { "editable", TestHeaderKeyType::BoolTestRunner },
         { "enableInAppBrowserPrivacy", TestHeaderKeyType::BoolTestRunner },

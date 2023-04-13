@@ -26,6 +26,7 @@ import os
 import sys
 
 from webkitscmpy.local import Git
+from webkitscmpy import Commit
 
 
 def main(inputfile, identifier_template):
@@ -78,9 +79,14 @@ def main(inputfile, identifier_template):
                 break
         else:
             lines.insert(identifier_index, identifier_template.format(commit))
+            identifier_index = identifier_index - 1
 
-    if lines[identifier_index]:
-        lines.insert(identifier_index, '')
+    while identifier_index >= 0 and lines[identifier_index]:
+        if Commit.TRAILER_RE.match(lines[identifier_index]):
+            identifier_index -= 1
+        else:
+            lines.insert(identifier_index + 1, '')
+            break
 
     # Turn multiple empty lines at the end of a commit into a single one
     index = len(lines) - 1

@@ -106,9 +106,16 @@ void RenderGrid::styleDidChange(StyleDifference diff, const RenderStyle* oldStyl
         }
     }
 
+    auto subgridChanged = subgridDidChange(*oldStyle);
     if (explicitGridDidResize(*oldStyle) || namedGridLinesDefinitionDidChange(*oldStyle) || implicitGridLinesDefinitionDidChange(*oldStyle) || oldStyle->gridAutoFlow() != style().gridAutoFlow()
-        || (style().gridAutoRepeatColumns().size() || style().gridAutoRepeatRows().size()))
-        dirtyGrid();
+        || (style().gridAutoRepeatColumns().size() || style().gridAutoRepeatRows().size()) || subgridChanged)
+        dirtyGrid(subgridChanged);
+}
+
+bool RenderGrid::subgridDidChange(const RenderStyle& oldStyle) const
+{
+    return oldStyle.gridSubgridRows() != style().gridSubgridRows()
+        || oldStyle.gridSubgridColumns() != style().gridSubgridColumns();
 }
 
 bool RenderGrid::explicitGridDidResize(const RenderStyle& oldStyle) const
@@ -259,6 +266,138 @@ void RenderGrid::layoutBlock(bool relayoutChildren, LayoutUnit)
     if (!relayoutChildren && simplifiedLayout())
         return;
 
+    // The layoutBlock was handling the layout of both the grid and masonry implementations.
+    // This caused a huge amount of branching code to handle masonry specific cases. Splitting up the code
+    // to layout will simplify both implementations.
+    if (!isMasonry())
+        layoutGrid(relayoutChildren);
+    else
+        layoutMasonry(relayoutChildren);
+}
+
+void RenderGrid::layoutGrid(bool relayoutChildren)
+{
+    LayoutRepainter repainter(*this, checkForRepaintDuringLayout());
+    {
+        LayoutStateMaintainer statePusher(*this, locationOffset(), isTransformed() || hasReflection() || style().isFlippedBlocksWritingMode());
+
+        preparePaginationBeforeBlockLayout(relayoutChildren);
+        beginUpdateScrollInfoAfterLayoutTransaction();
+
+        LayoutSize previousSize = size();
+
+        // FIXME: We should use RenderBlock::hasDefiniteLogicalHeight() only but it does not work for positioned stuff.
+        // FIXME: Consider caching the hasDefiniteLogicalHeight value throughout the layout.
+        // FIXME: We might need to cache the hasDefiniteLogicalHeight if the call of RenderBlock::hasDefiniteLogicalHeight() causes a relevant performance regression.
+        bool hasDefiniteLogicalHeight = RenderBlock::hasDefiniteLogicalHeight() || hasOverridingLogicalHeight() || computeContentLogicalHeight(MainOrPreferredSize, style().logicalHeight(), std::nullopt);
+
+        auto aspectRatioBlockSizeDependentGridItems = computeAspectRatioDependentAndBaselineItems();
+
+        resetLogicalHeightBeforeLayoutIfNeeded();
+
+        // Fieldsets need to find their legend and position it inside the border of the object.
+        // The legend then gets skipped during normal layout. The same is true for ruby text.
+        // It doesn't get included in the normal layout process but is instead skipped.
+        layoutExcludedChildren(relayoutChildren);
+
+        updateLogicalWidth();
+
+        LayoutUnit availableSpaceForColumns = availableLogicalWidth();
+        placeItemsOnGrid(availableSpaceForColumns);
+
+        m_trackSizingAlgorithm.setAvailableSpace(ForColumns, availableSpaceForColumns);
+        performGridItemsPreLayout(m_trackSizingAlgorithm);
+
+        // 1- First, the track sizing algorithm is used to resolve the sizes of the grid columns. At this point the
+        // logical width is always definite as the above call to updateLogicalWidth() properly resolves intrinsic
+        // sizes. We cannot do the same for heights though because many code paths inside updateLogicalHeight() require
+        // a previous call to setLogicalHeight() to resolve heights properly (like for positioned items for example).
+        computeTrackSizesForDefiniteSize(ForColumns, availableSpaceForColumns);
+
+        // 1.5- Compute Content Distribution offsets for column tracks
+        computeContentPositionAndDistributionOffset(ForColumns, m_trackSizingAlgorithm.freeSpace(ForColumns).value(), nonCollapsedTracks(ForColumns));
+
+        // 2- Next, the track sizing algorithm resolves the sizes of the grid rows,
+        // using the grid column sizes calculated in the previous step.
+        bool shouldRecomputeHeight = false;
+        if (!hasDefiniteLogicalHeight) {
+            computeTrackSizesForIndefiniteSize(m_trackSizingAlgorithm, ForRows);
+            if (shouldApplySizeContainment())
+                shouldRecomputeHeight = true;
+        } else
+            computeTrackSizesForDefiniteSize(ForRows, availableLogicalHeight(ExcludeMarginBorderPadding));
+
+        LayoutUnit trackBasedLogicalHeight = borderAndPaddingLogicalHeight() + scrollbarLogicalHeight();
+        if (auto size = explicitIntrinsicInnerLogicalSize(ForRows))
+            trackBasedLogicalHeight += size.value();
+        else
+            trackBasedLogicalHeight += m_trackSizingAlgorithm.computeTrackBasedSize();
+
+        if (shouldRecomputeHeight)
+            computeTrackSizesForDefiniteSize(ForRows, trackBasedLogicalHeight);
+
+        setLogicalHeight(trackBasedLogicalHeight);
+
+        updateLogicalHeight();
+
+        // Once grid's indefinite height is resolved, we can compute the
+        // available free space for Content Alignment.
+        if (!hasDefiniteLogicalHeight)
+            m_trackSizingAlgorithm.setFreeSpace(ForRows, logicalHeight() - trackBasedLogicalHeight);
+
+        // 2.5- Compute Content Distribution offsets for rows tracks
+        computeContentPositionAndDistributionOffset(ForRows, m_trackSizingAlgorithm.freeSpace(ForRows).value(), nonCollapsedTracks(ForRows));
+
+        if (!aspectRatioBlockSizeDependentGridItems.isEmpty()) {
+            updateGridAreaForAspectRatioItems(aspectRatioBlockSizeDependentGridItems);
+            updateLogicalWidth();
+        }
+
+        // 3- If the min-content contribution of any grid items have changed based on the row
+        // sizes calculated in step 2, steps 1 and 2 are repeated with the new min-content
+        // contribution (once only).
+        repeatTracksSizingIfNeeded(availableSpaceForColumns, contentLogicalHeight());
+
+        // Grid container should have the minimum height of a line if it's editable. That does not affect track sizing though.
+        if (hasLineIfEmpty()) {
+            LayoutUnit minHeightForEmptyLine = borderAndPaddingLogicalHeight()
+                + lineHeight(true, isHorizontalWritingMode() ? HorizontalLine : VerticalLine, PositionOfInteriorLineBoxes)
+                + scrollbarLogicalHeight();
+            setLogicalHeight(std::max(logicalHeight(), minHeightForEmptyLine));
+        }
+
+        layoutGridItems();
+
+        endAndCommitUpdateScrollInfoAfterLayoutTransaction();
+
+        if (size() != previousSize)
+            relayoutChildren = true;
+
+        m_outOfFlowItemColumn.clear();
+        m_outOfFlowItemRow.clear();
+
+        layoutPositionedObjects(relayoutChildren || isDocumentElementRenderer());
+        m_trackSizingAlgorithm.reset();
+
+        computeOverflow(layoutOverflowLogicalBottom(*this));
+    }
+
+    updateLayerTransform();
+
+    // Update our scroll information if we're overflow:auto/scroll/hidden now that we know if
+    // we overflow or not.
+    updateScrollInfoAfterLayout();
+
+    repainter.repaintAfterLayout();
+
+    clearNeedsLayout();
+
+    m_trackSizingAlgorithm.clearBaselineItemsCache();
+    m_baselineItemsCached = false;
+}
+
+void RenderGrid::layoutMasonry(bool relayoutChildren)
+{
     LayoutRepainter repainter(*this, checkForRepaintDuringLayout());
     {
         LayoutStateMaintainer statePusher(*this, locationOffset(), isTransformed() || hasReflection() || style().isFlippedBlocksWritingMode());
@@ -293,9 +432,9 @@ void RenderGrid::layoutBlock(bool relayoutChildren, LayoutUnit)
         m_trackSizingAlgorithm.setAvailableSpace(ForColumns, availableSpaceForColumns);
         performGridItemsPreLayout(m_trackSizingAlgorithm);
 
-        // 1- First, the track sizing algorithm is used to resolve the sizes of the grid columns. At this point the 
-        // logical width is always definite as the above call to updateLogicalWidth() properly resolves intrinsic 
-        // sizes. We cannot do the same for heights though because many code paths inside updateLogicalHeight() require 
+        // 1- First, the track sizing algorithm is used to resolve the sizes of the grid columns. At this point the
+        // logical width is always definite as the above call to updateLogicalWidth() properly resolves intrinsic
+        // sizes. We cannot do the same for heights though because many code paths inside updateLogicalHeight() require
         // a previous call to setLogicalHeight() to resolve heights properly (like for positioned items for example).
         computeTrackSizesForDefiniteSize(ForColumns, availableSpaceForColumns);
 
@@ -330,7 +469,7 @@ void RenderGrid::layoutBlock(bool relayoutChildren, LayoutUnit)
         else {
             if (areMasonryRows())
                 trackBasedLogicalHeight += m_masonryLayout.gridContentSize() + m_masonryLayout.gridGap();
-            else 
+            else
                 trackBasedLogicalHeight += m_trackSizingAlgorithm.computeTrackBasedSize();
         }
         if (shouldRecomputeHeight)
@@ -353,12 +492,6 @@ void RenderGrid::layoutBlock(bool relayoutChildren, LayoutUnit)
             updateLogicalWidth();
         }
 
-
-        // 3- If the min-content contribution of any grid items have changed based on the row
-        // sizes calculated in step 2, steps 1 and 2 are repeated with the new min-content
-        // contribution (once only).
-        repeatTracksSizingIfNeeded(availableSpaceForColumns, contentLogicalHeight());
-
         // Grid container should have the minimum height of a line if it's editable. That does not affect track sizing though.
         if (hasLineIfEmpty()) {
             LayoutUnit minHeightForEmptyLine = borderAndPaddingLogicalHeight()
@@ -367,7 +500,7 @@ void RenderGrid::layoutBlock(bool relayoutChildren, LayoutUnit)
             setLogicalHeight(std::max(logicalHeight(), minHeightForEmptyLine));
         }
 
-        layoutGridItems();
+        layoutMasonryItems();
 
         endAndCommitUpdateScrollInfoAfterLayoutTransaction();
 
@@ -544,9 +677,14 @@ void RenderGrid::computeTrackSizesForIndefiniteSize(GridTrackSizingAlgorithm& al
     ASSERT(algorithm.tracksAreWiderThanMinTrackBreadth());
 }
 
+bool RenderGrid::shouldCheckExplicitIntrinsicInnerLogicalSize(GridTrackSizingDirection direction) const
+{
+    return direction == ForColumns ? shouldApplySizeOrInlineSizeContainment() : shouldApplySizeContainment();
+}
+
 std::optional<LayoutUnit> RenderGrid::explicitIntrinsicInnerLogicalSize(GridTrackSizingDirection direction) const
 {
-    if (!shouldApplySizeContainment())
+    if (!shouldCheckExplicitIntrinsicInnerLogicalSize(direction))
         return std::nullopt;
     if (direction == ForColumns)
         return explicitIntrinsicInnerLogicalWidth();
@@ -665,7 +803,7 @@ std::unique_ptr<OrderedTrackIndexSet> RenderGrid::computeEmptyTracksForAutoRepea
     unsigned firstAutoRepeatTrack = insertionPoint + currentGrid().explicitGridStart(direction);
     unsigned lastAutoRepeatTrack = firstAutoRepeatTrack + currentGrid().autoRepeatTracks(direction);
 
-    if (!currentGrid().hasGridItems() || shouldApplyInlineSizeContainment() || (shouldApplySizeContainment() && !explicitIntrinsicInnerLogicalSize(direction))) {
+    if (!currentGrid().hasGridItems() || (shouldCheckExplicitIntrinsicInnerLogicalSize(direction) && !explicitIntrinsicInnerLogicalSize(direction))) {
         emptyTrackIndexes = makeUnique<OrderedTrackIndexSet>();
         for (unsigned trackIndex = firstAutoRepeatTrack; trackIndex < lastAutoRepeatTrack; ++trackIndex)
             emptyTrackIndexes->add(trackIndex);
@@ -1064,12 +1202,20 @@ GridTrackSizingDirection RenderGrid::autoPlacementMinorAxisDirection() const
     return (autoPlacementMajorAxisDirection() == ForColumns) ? ForRows : ForColumns;
 }
 
-void RenderGrid::dirtyGrid()
+void RenderGrid::dirtyGrid(bool subgridChanged)
 {
     if (currentGrid().needsItemsPlacement())
         return;
 
     currentGrid().setNeedsItemsPlacement(true);
+
+    auto currentChild = this;
+    while (currentChild && (subgridChanged || currentChild->isSubgridRows() || currentChild->isSubgridColumns())) {
+        currentChild = dynamicDowncast<RenderGrid>(currentChild->parent());
+        if (currentChild)
+            currentChild->currentGrid().setNeedsItemsPlacement(true);
+        subgridChanged = false;
+    }
 }
 
 Vector<LayoutUnit> RenderGrid::trackSizesForComputedStyle(GridTrackSizingDirection direction) const
@@ -1157,6 +1303,50 @@ void RenderGrid::updateGridAreaForAspectRatioItems(const Vector<RenderBox*>& aut
 }
 
 void RenderGrid::layoutGridItems()
+{
+    populateGridPositionsForDirection(ForColumns);
+    populateGridPositionsForDirection(ForRows);
+
+    for (RenderBox* child = firstChildBox(); child; child = child->nextSiblingBox()) {
+        if (currentGrid().orderIterator().shouldSkipChild(*child)) {
+            if (child->isOutOfFlowPositioned())
+                prepareChildForPositionedLayout(*child);
+            continue;
+        }
+
+        if (is<RenderGrid>(child) && (downcast<RenderGrid>(child)->isSubgridColumns() || downcast<RenderGrid>(child)->isSubgridRows()))
+            child->setNeedsLayout(MarkOnlyThis);
+
+        // Setting the definite grid area's sizes. It may imply that the
+        // item must perform a layout if its area differs from the one
+        // used during the track sizing algorithm.
+        updateGridAreaLogicalSize(*child, gridAreaBreadthForChildIncludingAlignmentOffsets(*child, ForColumns), gridAreaBreadthForChildIncludingAlignmentOffsets(*child, ForRows));
+
+        LayoutRect oldChildRect = child->frameRect();
+
+        // Stretching logic might force a child layout, so we need to run it before the layoutIfNeeded
+        // call to avoid unnecessary relayouts. This might imply that child margins, needed to correctly
+        // determine the available space before stretching, are not set yet.
+        applyStretchAlignmentToChildIfNeeded(*child);
+        applySubgridStretchAlignmentToChildIfNeeded(*child);
+
+        child->layoutIfNeeded();
+
+        // We need pending layouts to be done in order to compute auto-margins properly.
+        updateAutoMarginsInColumnAxisIfNeeded(*child);
+        updateAutoMarginsInRowAxisIfNeeded(*child);
+
+        setLogicalPositionForChild(*child);
+
+        // If the child moved, we have to repaint it as well as any floating/positioned
+        // descendants. An exception is if we need a layout. In this case, we know we're going to
+        // repaint ourselves (and the child) anyway.
+        if (!selfNeedsLayout() && child->checkForRepaintDuringLayout())
+            child->repaintDuringLayoutIfMoved(oldChildRect);
+    }
+}
+
+void RenderGrid::layoutMasonryItems()
 {
     populateGridPositionsForDirection(ForColumns);
     populateGridPositionsForDirection(ForRows);
@@ -1506,10 +1696,10 @@ void RenderGrid::updateAutoMarginsInColumnAxisIfNeeded(RenderBox& child)
     }
 }
 
-bool RenderGrid::shouldTrimChildMargin(MarginTrimType marginTrimType, const RenderBox& child) const
+bool RenderGrid::isChildEligibleForMarginTrim(MarginTrimType marginTrimType, const RenderBox& child) const
 {
-    if (!style().marginTrim().contains(marginTrimType))
-        return false;
+    ASSERT(style().marginTrim().contains(marginTrimType));
+
     auto isTrimmingBlockDirection = marginTrimType == MarginTrimType::BlockStart || marginTrimType == MarginTrimType::BlockEnd;
     auto itemGridSpan = isTrimmingBlockDirection ? currentGrid().gridItemSpanIgnoringCollapsedTracks(child, ForRows) : currentGrid().gridItemSpanIgnoringCollapsedTracks(child, ForColumns);
     switch (marginTrimType) {

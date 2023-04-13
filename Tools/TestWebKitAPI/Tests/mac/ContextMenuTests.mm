@@ -27,6 +27,7 @@
 
 #if PLATFORM(MAC)
 
+#import "AppKitSPI.h"
 #import "InstanceMethodSwizzler.h"
 #import "PlatformUtilities.h"
 #import "Test.h"
@@ -36,6 +37,7 @@
 #import "Utilities.h"
 #import <WebKit/WKMenuItemIdentifiersPrivate.h>
 #import <WebKit/WKUIDelegatePrivate.h>
+#import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
 #import <WebKit/_WKContextMenuElementInfo.h>
 #import <WebKit/_WKHitTestResult.h>
@@ -148,6 +150,28 @@ static NSMenuItem *itemMatchingFilter(NSMenu *menu, MenuItemFilter filter)
     TestWebKitAPI::Util::run(&selectedItem);
 }
 
+- (_WKContextMenuElementInfo *)rightClickAtPointAndWaitForContextMenu:(NSPoint)clickLocation
+{
+    auto uiDelegate = adoptNS([TestUIDelegate new]);
+
+    __block RetainPtr<_WKContextMenuElementInfo> result;
+    __block bool gotProposedMenu = false;
+    [uiDelegate setGetContextMenuFromProposedMenu:^(NSMenu *, _WKContextMenuElementInfo *elementInfo, id<NSSecureCoding>, void (^completion)(NSMenu *)) {
+        result = elementInfo;
+        gotProposedMenu = true;
+        completion(nil);
+    }];
+
+    EXPECT_NULL(self.UIDelegate);
+    self.UIDelegate = uiDelegate.get();
+    [self rightClickAtPoint:clickLocation];
+    TestWebKitAPI::Util::run(&gotProposedMenu);
+    [self waitForNextPresentationUpdate];
+
+    self.UIDelegate = nil;
+    return result.autorelease();
+}
+
 @end
 
 namespace TestWebKitAPI {
@@ -233,6 +257,14 @@ TEST(ContextMenuTests, SharePopoverDoesNotClearSelection)
     }]);
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+    auto presentingViewSwizzler = InstanceMethodSwizzler {
+        NSMenu.class,
+        @selector(_presentingView),
+        imp_implementationWithBlock([&](NSMenu *) {
+            return webView.get();
+        })
+    };
+
     [webView setForceWindowToBecomeKey:YES];
     [webView synchronouslyLoadHTMLString:@"<body style='font-size: 100px;'>Hello world this is a test</body>"];
     [[webView window] makeFirstResponder:webView.get()];
@@ -294,6 +326,162 @@ TEST(ContextMenuTests, HitTestResultDoesNotContainEmptyURLs)
     [webView mouseDownAtPoint:NSMakePoint(10, 10) simulatePressure:NO withFlags:0 eventType:NSEventTypeRightMouseDown];
     [webView mouseUpAtPoint:NSMakePoint(10, 10) withFlags:0 eventType:NSEventTypeRightMouseUp];
     Util::run(&gotProposedMenu);
+}
+
+#if ENABLE(CONTEXT_MENU_QR_CODE_DETECTION)
+
+static NSString *qrCodeSVGString()
+{
+    return @"<svg xmlns='http://www.w3.org/2000/svg' width='400' height='400' viewBox='0 0 1160 1160'><path fill='#fff' d='M0 0h1160v1160H0z'/><path d='M400 80h40v40h-40zm80 0h40v40h-40zm80 0h40v40h-40z'/><path d='M600 80h40v40h-40zm-200 40h40v40h-40z'/><path d='M440 120h40v40h-40zm80 0h40v40h-40z'/><path d='M560 120h40v40h-40z'/><path d='M600 120h40v40h-40zm120 0h40v40h-40zm-320 40h40v40h-40z'/><path d='M440 160h40v40h-40zm120 0h40v40h-40z'/><path d='M600 160h40v40h-40zm80 0h40v40h-40z'/><path d='M720 160h40v40h-40zm-280 40h40v40h-40z'/><path d='M480 200h40v40h-40z'/><path d='M520 200h40v40h-40zm80 0h40v40h-40z'/><path d='M640 200h40v40h-40z'/><path d='M680 200h40v40h-40z'/><path d='M720 200h40v40h-40zm-320 40h40v40h-40z'/><path d='M440 240h40v40h-40z'/><path d='M480 240h40v40h-40zm120 0h40v40h-40z'/><path d='M640 240h40v40h-40zm80 0h40v40h-40zm-280 40h40v40h-40z'/><path d='M480 280h40v40h-40zm120 0h40v40h-40z'/><path d='M640 280h40v40h-40zm-240 40h40v40h-40zm80 0h40v40h-40zm80 0h40v40h-40z'/><path d='M640 320h40v40h-40zm80 0h40v40h-40zm-240 40h40v40h-40z'/><path d='M520 360h40v40h-40z'/><path d='M560 360h40v40h-40z'/><path d='M600 360h40v40h-40z'/><path d='M640 360h40v40h-40z'/><path d='M680 360h40v40h-40zM80 400h40v40H80zm120 0h40v40h-40z'/><path d='M240 400h40v40h-40z'/><path d='M280 400h40v40h-40z'/><path d='M320 400h40v40h-40z'/><path d='M360 400h40v40h-40z'/><path d='M400 400h40v40h-40zm80 0h40v40h-40z'/><path d='M520 400h40v40h-40z'/><path d='M560 400h40v40h-40zm80 0h40v40h-40zm80 0h40v40h-40z'/><path d='M760 400h40v40h-40zm120 0h40v40h-40zm80 0h40v40h-40z'/><path d='M1000 400h40v40h-40z'/><path d='M1040 400h40v40h-40zM80 440h40v40H80z'/><path d='M120 440h40v40h-40zm80 0h40v40h-40zm200 0h40v40h-40zm80 0h40v40h-40zm80 0h40v40h-40z'/><path d='M600 440h40v40h-40z'/><path d='M640 440h40v40h-40z'/><path d='M680 440h40v40h-40zm80 0h40v40h-40zm80 0h40v40h-40z'/><path d='M880 440h40v40h-40z'/><path d='M920 440h40v40h-40z'/><path d='M960 440h40v40h-40z'/><path d='M1000 440h40v40h-40zm-720 40h40v40h-40z'/><path d='M320 480h40v40h-40z'/><path d='M360 480h40v40h-40zm160 0h40v40h-40zm80 0h40v40h-40zm80 0h40v40h-40zm120 0h40v40h-40z'/><path d='M840 480h40v40h-40zm80 0h40v40h-40zm120 0h40v40h-40zm-840 40h40v40h-40zm200 0h40v40h-40zm240 0h40v40h-40z'/><path d='M680 520h40v40h-40z'/><path d='M720 520h40v40h-40zm120 0h40v40h-40zm80 0h40v40h-40z'/><path d='M960 520h40v40h-40z'/><path d='M1000 520h40v40h-40z'/><path d='M1040 520h40v40h-40zm-920 40h40v40h-40zm80 0h40v40h-40zm120 0h40v40h-40zm200 0h40v40h-40zm160 0h40v40h-40z'/><path d='M720 560h40v40h-40zm80 0h40v40h-40zm240 0h40v40h-40zM80 600h40v40H80z'/><path d='M120 600h40v40h-40zm280 0h40v40h-40z'/><path d='M440 600h40v40h-40zm120 0h40v40h-40z'/><path d='M600 600h40v40h-40zm80 0h40v40h-40z'/><path d='M720 600h40v40h-40z'/><path d='M760 600h40v40h-40zm120 0h40v40h-40zm120 0h40v40h-40zM80 640h40v40H80z'/><path d='M120 640h40v40h-40zm200 0h40v40h-40zm360 0h40v40h-40zm80 0h40v40h-40z'/><path d='M800 640h40v40h-40zm80 0h40v40h-40z'/><path d='M920 640h40v40h-40z'/><path d='M960 640h40v40h-40z'/><path d='M1000 640h40v40h-40z'/><path d='M1040 640h40v40h-40zM80 680h40v40H80zm80 0h40v40h-40z'/><path d='M200 680h40v40h-40zm160 0h40v40h-40zm80 0h40v40h-40zm120 0h40v40h-40zm80 0h40v40h-40zm120 0h40v40h-40zm80 0h40v40h-40zm80 0h40v40h-40z'/><path d='M960 680h40v40h-40zm80 0h40v40h-40zM80 720h40v40H80zm80 0h40v40h-40zm120 0h40v40h-40z'/><path d='M320 720h40v40h-40z'/><path d='M360 720h40v40h-40zm80 0h40v40h-40z'/><path d='M480 720h40v40h-40z'/><path d='M520 720h40v40h-40z'/><path d='M560 720h40v40h-40z'/><path d='M600 720h40v40h-40zm80 0h40v40h-40z'/><path d='M720 720h40v40h-40z'/><path d='M760 720h40v40h-40z'/><path d='M800 720h40v40h-40z'/><path d='M840 720h40v40h-40z'/><path d='M880 720h40v40h-40zm80 0h40v40h-40z'/><path d='M1000 720h40v40h-40zm-600 40h40v40h-40z'/><path d='M440 760h40v40h-40zm80 0h40v40h-40zm200 0h40v40h-40zm160 0h40v40h-40zm80 0h40v40h-40z'/><path d='M1000 760h40v40h-40zm-600 40h40v40h-40zm160 0h40v40h-40zm160 0h40v40h-40zm80 0h40v40h-40zm80 0h40v40h-40z'/><path d='M1040 800h40v40h-40zm-640 40h40v40h-40z'/><path d='M440 840h40v40h-40z'/><path d='M480 840h40v40h-40z'/><path d='M520 840h40v40h-40zm80 0h40v40h-40zm80 0h40v40h-40z'/><path d='M720 840h40v40h-40zm160 0h40v40h-40zm-480 40h40v40h-40z'/><path d='M440 880h40v40h-40zm80 0h40v40h-40zm80 0h40v40h-40zm80 0h40v40h-40z'/><path d='M720 880h40v40h-40z'/><path d='M760 880h40v40h-40z'/><path d='M800 880h40v40h-40z'/><path d='M840 880h40v40h-40z'/><path d='M880 880h40v40h-40zm120 0h40v40h-40z'/><path d='M1040 880h40v40h-40zm-640 40h40v40h-40zm160 0h40v40h-40z'/><path d='M600 920h40v40h-40z'/><path d='M640 920h40v40h-40z'/><path d='M680 920h40v40h-40zm120 0h40v40h-40zm200 0h40v40h-40z'/><path d='M1040 920h40v40h-40zm-600 40h40v40h-40z'/><path d='M480 960h40v40h-40z'/><path d='M520 960h40v40h-40zm80 0h40v40h-40zm160 0h40v40h-40zm120 0h40v40h-40z'/><path d='M920 960h40v40h-40z'/><path d='M960 960h40v40h-40z'/><path d='M1000 960h40v40h-40z'/><path d='M1040 960h40v40h-40zm-520 40h40v40h-40z'/><path d='M560 1000h40v40h-40z'/><path d='M600 1000h40v40h-40zm80 0h40v40h-40zm160 0h40v40h-40z'/><path d='M880 1000h40v40h-40zm80 0h40v40h-40z'/><path d='M1000 1000h40v40h-40z'/><path d='M1040 1000h40v40h-40zm-640 40h40v40h-40z'/><path d='M440 1040h40v40h-40zm80 0h40v40h-40z'/><path d='M560 1040h40v40h-40z'/><path d='M600 1040h40v40h-40zm120 0h40v40h-40z'/><path d='M760 1040h40v40h-40zm160 0h40v40h-40zm120 0h40v40h-40zM318 80H122 80v42 196 42h42 196 42v-42-196-42h-42zm0 238H122V122h196v196zm720-238H842h-42v42 196 42h42 196 42v-42-196-42h-42zm0 238H842V122h196v196zM318 800H122 80v42 196 42h42 196 42v-42-196-42h-42zm0 238H122V842h196v196zM160 160h120v120H160zm720 0h120v120H880zM160 880h120v120H160z'/></svg>";
+}
+
+TEST(ContextMenuTests, ContextMenuElementInfoContainsQRCodePayloadStringDefaultConfiguration)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 600, 600)]);
+    [webView synchronouslyLoadHTMLString:@"<img src='qr-code.png'></img>"];
+
+    _WKContextMenuElementInfo *elementInfo = [webView rightClickAtPointAndWaitForContextMenu:NSMakePoint(300, 300)];
+    EXPECT_NULL(elementInfo.qrCodePayloadString);
+}
+
+TEST(ContextMenuTests, ContextMenuElementInfoContainsQRCodePayloadString)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration _setContextMenuQRCodeDetectionEnabled:YES];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 600, 600) configuration:configuration.get()]);
+    [webView synchronouslyLoadHTMLString:@"<img src='qr-code.png'></img>"];
+
+    _WKContextMenuElementInfo *elementInfo = [webView rightClickAtPointAndWaitForContextMenu:NSMakePoint(150, 150)];
+    EXPECT_NULL(elementInfo.qrCodePayloadString);
+
+    elementInfo = [webView rightClickAtPointAndWaitForContextMenu:NSMakePoint(300, 300)];
+    EXPECT_WK_STREQ(elementInfo.qrCodePayloadString, "https://www.webkit.org");
+}
+
+TEST(ContextMenuTests, ContextMenuElementInfoContainsQRCodePayloadStringInsideLink)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration _setContextMenuQRCodeDetectionEnabled:YES];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 600, 600) configuration:configuration.get()]);
+    [webView synchronouslyLoadHTMLString:@"<a href='https://www.webkit.org'><img src='qr-code.png'></img></a>"];
+
+    _WKContextMenuElementInfo *elementInfo = [webView rightClickAtPointAndWaitForContextMenu:NSMakePoint(300, 300)];
+    EXPECT_NULL(elementInfo.qrCodePayloadString);
+}
+
+TEST(ContextMenuTests, ContextMenuElementInfoContainsQRCodePayloadStringCanvas)
+{
+    auto testMessageHandler = adoptNS([[TestMessageHandler alloc] init]);
+
+    __block bool imageLoaded = false;
+    [testMessageHandler addMessage:@"imageLoaded" withHandler:^{
+        imageLoaded = true;
+    }];
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:testMessageHandler.get() name:@"testHandler"];
+    [configuration _setContextMenuQRCodeDetectionEnabled:YES];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 600, 600) configuration:configuration.get()]);
+    [webView synchronouslyLoadHTMLString:@"<canvas id='canvas' width='400' height='400'></canvas>"];
+
+    NSString *drawImageToCanvasScript = @""
+        "var canvas = document.getElementById('canvas');\n"
+        "var ctx = canvas.getContext('2d');\n"
+        "var img = new Image();\n"
+        "img.onload = function() {\n"
+        "    ctx.drawImage(img, 0, 0);\n"
+        "    window.webkit.messageHandlers.testHandler.postMessage('imageLoaded');\n"
+        "};\n"
+        "img.src = 'qr-code.png';\n";
+
+    [webView stringByEvaluatingJavaScript:drawImageToCanvasScript];
+    Util::run(&imageLoaded);
+
+    _WKContextMenuElementInfo *elementInfo = [webView rightClickAtPointAndWaitForContextMenu:NSMakePoint(150, 150)];
+    EXPECT_NULL(elementInfo.qrCodePayloadString);
+
+    elementInfo = [webView rightClickAtPointAndWaitForContextMenu:NSMakePoint(300, 300)];
+    EXPECT_WK_STREQ(elementInfo.qrCodePayloadString, "https://www.webkit.org");
+}
+
+TEST(ContextMenuTests, ContextMenuElementInfoContainsQRCodePayloadStringSVG)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration _setContextMenuQRCodeDetectionEnabled:YES];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 600, 600) configuration:configuration.get()]);
+    [webView synchronouslyLoadHTMLString:qrCodeSVGString()];
+
+    _WKContextMenuElementInfo *elementInfo = [webView rightClickAtPointAndWaitForContextMenu:NSMakePoint(150, 150)];
+    EXPECT_NULL(elementInfo.qrCodePayloadString);
+
+    elementInfo = [webView rightClickAtPointAndWaitForContextMenu:NSMakePoint(300, 300)];
+    EXPECT_WK_STREQ(elementInfo.qrCodePayloadString, "https://www.webkit.org");
+}
+
+TEST(ContextMenuTests, ContextMenuElementInfoContainsQRCodePayloadStringObscuredSVG)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration _setContextMenuQRCodeDetectionEnabled:YES];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 600, 600) configuration:configuration.get()]);
+    [webView synchronouslyLoadHTMLString:[NSString stringWithFormat:@"%@<div style='width: 400px; height: 100px; background: red; position: absolute; top: 0px; left: 0px;'></div>", qrCodeSVGString()]];
+
+    _WKContextMenuElementInfo *elementInfo = [webView rightClickAtPointAndWaitForContextMenu:NSMakePoint(150, 550)];
+    EXPECT_NULL(elementInfo.qrCodePayloadString);
+
+    elementInfo = [webView rightClickAtPointAndWaitForContextMenu:NSMakePoint(300, 300)];
+    EXPECT_WK_STREQ(elementInfo.qrCodePayloadString, "https://www.webkit.org");
+}
+
+TEST(ContextMenuTests, ContextMenuElementInfoContainsQRCodePayloadStringSVGInsideTransformedElement)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration _setContextMenuQRCodeDetectionEnabled:YES];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 600, 600) configuration:configuration.get()]);
+    [webView synchronouslyLoadHTMLString:[NSString stringWithFormat:@"<div style='transform: translateX(100px);'>%@</div>", qrCodeSVGString()]];
+
+    _WKContextMenuElementInfo *elementInfo = [webView rightClickAtPointAndWaitForContextMenu:NSMakePoint(50, 550)];
+    EXPECT_NULL(elementInfo.qrCodePayloadString);
+
+    elementInfo = [webView rightClickAtPointAndWaitForContextMenu:NSMakePoint(150, 550)];
+    EXPECT_WK_STREQ(elementInfo.qrCodePayloadString, "https://www.webkit.org");
+}
+
+TEST(ContextMenuTests, ContextMenuElementInfoContainsQRCodePayloadStringSVGPageZoom)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration _setContextMenuQRCodeDetectionEnabled:YES];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 600, 600) configuration:configuration.get()]);
+    [webView setPageZoom:1.3];
+    [webView synchronouslyLoadHTMLString:qrCodeSVGString()];
+
+    _WKContextMenuElementInfo *elementInfo = [webView rightClickAtPointAndWaitForContextMenu:NSMakePoint(550, 50)];
+    EXPECT_NULL(elementInfo.qrCodePayloadString);
+
+    elementInfo = [webView rightClickAtPointAndWaitForContextMenu:NSMakePoint(500, 100)];
+    EXPECT_WK_STREQ(elementInfo.qrCodePayloadString, "https://www.webkit.org");
+}
+
+#endif // ENABLE(CONTEXT_MENU_QR_CODE_DETECTION)
+
+TEST(ContextMenuTests, ContextMenuElementInfoHasEntireImage)
+{
+    CGFloat iconWidth = 215;
+    CGFloat iconHeight = 174;
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, iconWidth * 2, iconHeight * 2)]);
+    [webView synchronouslyLoadHTMLString:@"<img src='icon.png'></img>"];
+
+    _WKContextMenuElementInfo *elementInfo = [webView rightClickAtPointAndWaitForContextMenu:NSMakePoint(iconWidth, iconHeight)];
+    EXPECT_TRUE(elementInfo.hasEntireImage);
+
+    elementInfo = [webView rightClickAtPointAndWaitForContextMenu:NSMakePoint(10, 10)];
+    EXPECT_FALSE(elementInfo.hasEntireImage);
 }
 
 } // namespace TestWebKitAPI

@@ -51,6 +51,7 @@ namespace WebKit {
 class WebNotification;
 class WebPageProxy;
 class WebProcessPool;
+class WebsiteDataStore;
 
 class WebNotificationManagerProxy : public API::ObjectImpl<API::Object::Type::NotificationManager>, public WebContextSupplement {
 public:
@@ -65,6 +66,7 @@ public:
     HashMap<String, bool> notificationPermissions();
 
     void show(WebPageProxy*, IPC::Connection&, const WebCore::NotificationData&, RefPtr<WebCore::NotificationResources>&&);
+    void show(const WebsiteDataStore&, IPC::Connection&, const WebCore::NotificationData&, RefPtr<WebCore::NotificationResources>&&);
     void cancel(WebPageProxy*, const UUID& pageNotificationID);
     void clearNotifications(WebPageProxy*);
     void clearNotifications(WebPageProxy*, const Vector<UUID>& pageNotificationIDs);
@@ -89,6 +91,8 @@ private:
     void processPoolDestroyed() override;
     void refWebContextSupplement() override;
     void derefWebContextSupplement() override;
+
+    void showImpl(WebPageProxy*, Ref<WebNotification>&&, RefPtr<WebCore::NotificationResources>&&);
 
     std::unique_ptr<API::NotificationProvider> m_provider;
 

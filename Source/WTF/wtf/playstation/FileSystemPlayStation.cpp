@@ -37,7 +37,7 @@ namespace WTF {
 
 namespace FileSystemImpl {
 
-enum class ShouldFollowSymbolicLinks { No, Yes };
+enum class ShouldFollowSymbolicLinks : bool { No, Yes };
 static std::optional<FileType> fileTypePotentiallyFollowingSymLinks(const String& path, ShouldFollowSymbolicLinks shouldFollowSymbolicLinks)
 {
     CString fsRep = fileSystemRepresentation(path);
@@ -75,6 +75,14 @@ std::optional<uint64_t> volumeFreeSpace(const String& path)
     struct statvfs fileSystemStat;
     if (!statvfs(fileSystemRepresentation(path).data(), &fileSystemStat))
         return fileSystemStat.f_bavail * fileSystemStat.f_frsize;
+    return std::nullopt;
+}
+
+std::optional<uint64_t> volumeCapacity(const String& path)
+{
+    struct statvfs fileSystemStat;
+    if (!statvfs(fileSystemRepresentation(path).data(), &fileSystemStat))
+        return fileSystemStat.f_blocks * fileSystemStat.f_frsize;
     return std::nullopt;
 }
 

@@ -33,6 +33,7 @@
 #include "WKDictionary.h"
 #include "WKRetainPtr.h"
 #include "WebsiteDataStore.h"
+#include <WebCore/DocumentLoader.h>
 
 using namespace WebKit;
 
@@ -48,12 +49,13 @@ WKWebsitePoliciesRef WKWebsitePoliciesCreate()
 
 void WKWebsitePoliciesSetContentBlockersEnabled(WKWebsitePoliciesRef websitePolicies, bool enabled)
 {
-    toImpl(websitePolicies)->setContentBlockersEnabled(enabled);
+    auto defaultEnablement = enabled ? WebCore::ContentExtensionDefaultEnablement::Enabled : WebCore::ContentExtensionDefaultEnablement::Disabled;
+    toImpl(websitePolicies)->setContentExtensionEnablement({ defaultEnablement, { } });
 }
 
 bool WKWebsitePoliciesGetContentBlockersEnabled(WKWebsitePoliciesRef websitePolicies)
 {
-    return toImpl(websitePolicies)->contentBlockersEnabled();
+    return toImpl(websitePolicies)->contentExtensionEnablement().first == WebCore::ContentExtensionDefaultEnablement::Enabled;
 }
 
 WK_EXPORT WKDictionaryRef WKWebsitePoliciesCopyCustomHeaderFields(WKWebsitePoliciesRef)

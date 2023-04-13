@@ -161,7 +161,7 @@ template<> void JSTestLegacyFactoryFunctionLegacyFactoryFunction::initializeProp
 
 static const HashTableValue JSTestLegacyFactoryFunctionPrototypeTableValues[] =
 {
-    { "constructor"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestLegacyFactoryFunctionConstructor, 0 } },
+    { "constructor"_s, static_cast<unsigned>(PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestLegacyFactoryFunctionConstructor, 0 } },
 };
 
 const ClassInfo JSTestLegacyFactoryFunctionPrototype::s_info = { "TestLegacyFactoryFunction"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestLegacyFactoryFunctionPrototype) };
@@ -191,7 +191,9 @@ void JSTestLegacyFactoryFunction::finishCreation(VM& vm)
 
 JSObject* JSTestLegacyFactoryFunction::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    return JSTestLegacyFactoryFunctionPrototype::create(vm, &globalObject, JSTestLegacyFactoryFunctionPrototype::createStructure(vm, &globalObject, globalObject.objectPrototype()));
+    auto* structure = JSTestLegacyFactoryFunctionPrototype::createStructure(vm, &globalObject, globalObject.objectPrototype());
+    structure->setMayBePrototype(true);
+    return JSTestLegacyFactoryFunctionPrototype::create(vm, &globalObject, structure);
 }
 
 JSObject* JSTestLegacyFactoryFunction::prototype(VM& vm, JSDOMGlobalObject& globalObject)
@@ -240,7 +242,7 @@ void JSTestLegacyFactoryFunction::analyzeHeap(JSCell* cell, HeapAnalyzer& analyz
     auto* thisObject = jsCast<JSTestLegacyFactoryFunction*>(cell);
     analyzer.setWrappedObjectForCell(cell, &thisObject->wrapped());
     if (thisObject->scriptExecutionContext())
-        analyzer.setLabelForCell(cell, "url " + thisObject->scriptExecutionContext()->url().string());
+        analyzer.setLabelForCell(cell, "url "_s + thisObject->scriptExecutionContext()->url().string());
     Base::analyzeHeap(cell, analyzer);
 }
 

@@ -40,7 +40,6 @@ struct wpe_fdo_egl_exported_image;
 struct wpe_fdo_shm_exported_buffer;
 
 namespace WebCore {
-class GLContext;
 class IntSize;
 }
 
@@ -58,13 +57,12 @@ public:
 private:
     AcceleratedBackingStoreWayland(WebPageProxy&);
 
-    void tryEnsureGLContext();
+    void ensureGLContext();
     void displayImage(struct wpe_fdo_egl_exported_image*);
 #if WPE_FDO_CHECK_VERSION(1,7,0)
     void displayBuffer(struct wpe_fdo_shm_exported_buffer*);
 #endif
     bool tryEnsureTexture(unsigned&, WebCore::IntSize&);
-    void downloadTexture(unsigned, const WebCore::IntSize&);
 
 #if USE(GTK4)
     void snapshot(GtkSnapshot*) override;
@@ -77,9 +75,7 @@ private:
     int renderHostFileDescriptor() override;
 
     RefPtr<cairo_surface_t> m_surface;
-    bool m_glContextInitialized { false };
     GRefPtr<GdkGLContext> m_gdkGLContext;
-    std::unique_ptr<WebCore::GLContext> m_glContext;
 
     struct wpe_view_backend_exportable_fdo* m_exportable { nullptr };
     uint64_t m_surfaceID { 0 };

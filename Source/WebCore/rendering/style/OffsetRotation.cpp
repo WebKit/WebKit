@@ -32,8 +32,8 @@
 namespace WebCore {
 
 OffsetRotation::OffsetRotation(bool hasAuto, float angle)
-    : m_hasAuto(hasAuto)
-    , m_angle(angle)
+    : m_angle(angle)
+    , m_hasAuto(hasAuto)
 {
 }
 
@@ -60,8 +60,8 @@ OffsetRotation OffsetRotation::blend(const OffsetRotation& to, const BlendingCon
 
 WTF::TextStream& operator<<(WTF::TextStream& ts, const OffsetRotation& rotation)
 {
-    ts.dumpProperty("hasAuto", rotation.hasAuto());
     ts.dumpProperty("angle", rotation.angle());
+    ts.dumpProperty("hasAuto", rotation.hasAuto());
 
     return ts;
 }

@@ -31,7 +31,7 @@ WEBKIT_TOP_LEVEL = Path(__file__).parent.parent.parent.resolve()
 def get_revision_from_most_recent_git_commit():
     with open(os.devnull, 'w') as devnull:
         try:
-            commit_message = subprocess.check_output(("git", "log", "-1", "--pretty=%B", "origin/HEAD"), stderr=devnull)
+            commit_message = subprocess.check_output(("git", "log", "-1", "--pretty=%B", "HEAD"), stderr=devnull)
         except subprocess.CalledProcessError:
             # This may happen with shallow checkouts whose HEAD has been
             # modified; there is no origin reference anymore, and git

@@ -28,9 +28,8 @@
 #include "CSSValueKeywords.h"
 #include "CachedImage.h"
 #include "DOMFormData.h"
-#include "ElementIterator.h"
+#include "ElementChildIteratorInlines.h"
 #include "ElementName.h"
-#include "Frame.h"
 #include "FrameLoader.h"
 #include "HTMLDocument.h"
 #include "HTMLFormElement.h"
@@ -39,6 +38,7 @@
 #include "HTMLNames.h"
 #include "HTMLParamElement.h"
 #include "HTMLParserIdioms.h"
+#include "LocalFrame.h"
 #include "MIMETypeRegistry.h"
 #include "NodeList.h"
 #include "Page.h"
@@ -100,27 +100,27 @@ void HTMLObjectElement::collectPresentationalHintsForAttribute(const QualifiedNa
         HTMLPlugInImageElement::collectPresentationalHintsForAttribute(name, value, style);
 }
 
-void HTMLObjectElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void HTMLObjectElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
+    HTMLPlugInImageElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
+
     bool invalidateRenderer = false;
     bool needsWidgetUpdate = false;
 
     if (name == typeAttr) {
-        m_serviceType = value.string().left(value.find(';')).convertToASCIILowercase();
+        m_serviceType = newValue.string().left(newValue.find(';')).convertToASCIILowercase();
         invalidateRenderer = !hasAttributeWithoutSynchronization(classidAttr);
         needsWidgetUpdate = true;
     } else if (name == dataAttr) {
-        m_url = stripLeadingAndTrailingHTMLSpaces(value);
+        m_url = stripLeadingAndTrailingHTMLSpaces(newValue);
         invalidateRenderer = !hasAttributeWithoutSynchronization(classidAttr);
         needsWidgetUpdate = true;
         updateImageLoaderWithNewURLSoon();
     } else if (name == classidAttr) {
         invalidateRenderer = true;
         needsWidgetUpdate = true;
-    } else {
-        HTMLPlugInImageElement::parseAttribute(name, value);
-        FormListedElement::parseAttribute(name, value);
-    }
+    } else
+        FormListedElement::parseAttribute(name, newValue);
 
     if (needsWidgetUpdate) {
         setNeedsWidgetUpdate(true);
@@ -156,7 +156,7 @@ void HTMLObjectElement::parametersForPlugin(Vector<AtomString>& paramNames, Vect
 {
     HashSet<StringImpl*, ASCIICaseInsensitiveHash> uniqueParamNames;
     String urlParameter;
-    
+
     // Scan the PARAM children and store their name/value pairs.
     // Get the URL and type from the params if we don't already have them.
     for (auto& param : childrenOfType<HTMLParamElement>(*this)) {
@@ -179,7 +179,7 @@ void HTMLObjectElement::parametersForPlugin(Vector<AtomString>& paramNames, Vect
                 serviceType = serviceType.left(pos);
         }
     }
-    
+
     // When OBJECT is used for an applet via Sun's Java plugin, the CODEBASE attribute in the tag
     // points to the Java plugin itself (an ActiveX component) while the actual applet CODEBASE is
     // in a PARAM tag. See <http://java.sun.com/products/plugin/1.2/docs/tags.html>. This means
@@ -190,7 +190,7 @@ void HTMLObjectElement::parametersForPlugin(Vector<AtomString>& paramNames, Vect
         codebase = "codebase"_s;
         uniqueParamNames.add(codebase.impl()); // pretend we found it in a PARAM already
     }
-    
+
     // Turn the attributes of the <object> element into arrays, but don't override <param> values.
     if (hasAttributes()) {
         for (const Attribute& attribute : attributesIterator()) {
@@ -201,9 +201,9 @@ void HTMLObjectElement::parametersForPlugin(Vector<AtomString>& paramNames, Vect
             }
         }
     }
-    
+
     mapDataParamToSrc(paramNames, paramValues);
-    
+
     // HTML5 says that an object resource's URL is specified by the object's data
     // attribute, not by a param element. However, for compatibility, allow the
     // resource's URL to be given by a param named "src", "movie", "code" or "url"
@@ -335,7 +335,7 @@ void HTMLObjectElement::renderFallbackContent()
 {
     if (m_useFallbackContent)
         return;
-    
+
     if (!isConnected())
         return;
 
@@ -369,7 +369,6 @@ static inline bool preventsParentObjectFromExposure(const Element& child)
             // have decided, over the years, to treat as children that do not prevent object
             // names from being exposed.
             if (tag == bgsoundTag
-                || tag == commandTag
                 || tag == detailsTag
                 || tag == figcaptionTag
                 || tag == figureTag
@@ -432,24 +431,6 @@ void HTMLObjectElement::updateExposedState()
                 document.removeDocumentNamedItem(*name.impl(), *this);
         }
     }
-}
-
-bool HTMLObjectElement::containsJavaApplet() const
-{
-    if (MIMETypeRegistry::isJavaAppletMIMEType(attributeWithoutSynchronization(typeAttr)))
-        return true;
-
-    for (auto& child : childrenOfType<Element>(*this)) {
-        if (child.hasTagName(paramTag) && equalLettersIgnoringASCIICase(child.getNameAttribute(), "type"_s)
-            && MIMETypeRegistry::isJavaAppletMIMEType(child.attributeWithoutSynchronization(valueAttr).string()))
-            return true;
-        if (child.hasTagName(objectTag) && downcast<HTMLObjectElement>(child).containsJavaApplet())
-            return true;
-        if (child.hasTagName(appletTag))
-            return true;
-    }
-    
-    return false;
 }
 
 void HTMLObjectElement::addSubresourceAttributeURLs(ListHashSet<URL>& urls) const

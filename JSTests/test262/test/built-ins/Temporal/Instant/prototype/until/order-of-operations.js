@@ -11,16 +11,23 @@ features: [Temporal]
 const expected = [
   "get other.toString",
   "call other.toString",
+  "ownKeys options",
+  "getOwnPropertyDescriptor options.roundingIncrement",
+  "get options.roundingIncrement",
+  "getOwnPropertyDescriptor options.roundingMode",
+  "get options.roundingMode",
+  "getOwnPropertyDescriptor options.largestUnit",
   "get options.largestUnit",
+  "getOwnPropertyDescriptor options.smallestUnit",
+  "get options.smallestUnit",
+  "getOwnPropertyDescriptor options.additional",
+  "get options.additional",
   "get options.largestUnit.toString",
   "call options.largestUnit.toString",
-  "get options.roundingIncrement",
   "get options.roundingIncrement.valueOf",
   "call options.roundingIncrement.valueOf",
-  "get options.roundingMode",
   "get options.roundingMode.toString",
   "call options.roundingMode.toString",
-  "get options.smallestUnit",
   "get options.smallestUnit.toString",
   "call options.smallestUnit.toString",
 ];
@@ -30,10 +37,11 @@ const instance = new Temporal.Instant(0n);
 instance.until(
   TemporalHelpers.toPrimitiveObserver(actual, "2001-09-09T01:46:40Z", "other"),
   TemporalHelpers.propertyBagObserver(actual, {
-    largestUnit: "hours",
     roundingIncrement: 1,
     roundingMode: "halfExpand",
+    largestUnit: "hours",
     smallestUnit: "minutes",
+    additional: true,
   }, "options"),
 );
 assert.compareArray(actual, expected, "order of operations");

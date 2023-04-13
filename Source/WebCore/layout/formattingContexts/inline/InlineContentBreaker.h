@@ -45,7 +45,7 @@ public:
         InlineLayoutUnit logicalWidth { 0 };
         std::optional<InlineLayoutUnit> hyphenWidth { };
     };
-    enum class IsEndOfLine { No, Yes };
+    enum class IsEndOfLine : bool { No, Yes };
     struct Result {
         enum class Action {
             Keep, // Keep content on the current line.

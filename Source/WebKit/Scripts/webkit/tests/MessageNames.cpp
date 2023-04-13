@@ -75,6 +75,7 @@ const MessageDescription messageDescriptions[static_cast<size_t>(MessageName::Co
     { "TestWithSemaphore_SendSemaphore", ReceiverName::TestWithSemaphore, false, false },
     { "TestWithStreamBatched_SendString", ReceiverName::TestWithStreamBatched, true, false },
     { "TestWithStreamBuffer_SendStreamBuffer", ReceiverName::TestWithStreamBuffer, false, false },
+    { "TestWithStream_CallWithIdentifier", ReceiverName::TestWithStream, true, false },
 #if PLATFORM(COCOA)
     { "TestWithStream_SendMachSendRight", ReceiverName::TestWithStream, true, false },
 #endif
@@ -140,6 +141,7 @@ const MessageDescription messageDescriptions[static_cast<size_t>(MessageName::Co
 #endif
     { "TestWithLegacyReceiver_RunJavaScriptAlertReply", ReceiverName::AsyncReply, false, false },
     { "TestWithSemaphore_ReceiveSemaphoreReply", ReceiverName::AsyncReply, false, false },
+    { "TestWithStream_CallWithIdentifierReply", ReceiverName::AsyncReply, false, false },
     { "TestWithStream_SendStringAsyncReply", ReceiverName::AsyncReply, false, false },
 #if ENABLE(TEST_FEATURE)
     { "TestWithSuperclass_TestAsyncMessageReply", ReceiverName::AsyncReply, false, false },

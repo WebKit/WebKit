@@ -1,0 +1,8 @@
+bold1bold2
+
+italic1italic2
+
+
+PASS First <p> element should have only <b> elements
+PASS Second <p> element should have only <i> elements
+

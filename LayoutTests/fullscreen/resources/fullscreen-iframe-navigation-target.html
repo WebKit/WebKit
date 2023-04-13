@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>Successfully navigated, test passes if the iframe does not take the full content area size.</p>
+<script>
+    addEventListener("DOMContentLoaded", () => {
+        if (parent)
+            parent.postMessage("loaded", "*");
+    }, { once: true });
+</script>
+</body>
+</html>

@@ -42,29 +42,33 @@ from twisted.python import failure, log
 from twisted.trial import unittest
 import send_email
 
+from layout_test_failures import LayoutTestFailures
 from steps import (AddReviewerToCommitMessage, AnalyzeAPITestsResults, AnalyzeCompileWebKitResults,
                    AnalyzeJSCTestsResults, AnalyzeLayoutTestsResults, ApplyPatch, ApplyWatchList, ArchiveBuiltProduct, ArchiveTestResults, BugzillaMixin,
                    Canonicalize, CheckOutPullRequest, CheckOutSource, CheckOutSpecificRevision, CheckChangeRelevance, CheckStatusOnEWSQueues, CheckStyle,
                    CleanBuild, CleanUpGitIndexLock, CleanGitRepo, CleanWorkingDirectory, CompileJSC, CommitPatch, CompileJSCWithoutChange,
                    CompileWebKit, CompileWebKitWithoutChange, ConfigureBuild, ConfigureBuild, Contributors,
-                   DeleteStaleBuildFiles, DetermineLandedIdentifier, DownloadBuiltProduct, DownloadBuiltProductFromMaster,
+                   DetermineLandedIdentifier, DownloadBuiltProduct, DownloadBuiltProductFromMaster,
                    EWS_BUILD_HOSTNAME, ExtractBuiltProduct, ExtractTestResults,
                    FetchBranches, FindModifiedLayoutTests, GitHub, GitHubMixin,
-                   InstallBuiltProduct, InstallGtkDependencies, InstallWpeDependencies,
+                   InstallBuiltProduct, InstallGtkDependencies, InstallWpeDependencies, InstallHooks,
                    KillOldProcesses, PrintConfiguration, PushCommitToWebKitRepo, PushPullRequestBranch, ReRunAPITests, ReRunWebKitPerlTests,
                    MapBranchAlias, ReRunWebKitTests, RevertPullRequestChanges, RunAPITests, RunAPITestsWithoutChange, RunBindingsTests, RunBuildWebKitOrgUnitTests,
                    RunBuildbotCheckConfigForBuildWebKit, RunBuildbotCheckConfigForEWS, RunEWSUnitTests, RunResultsdbpyTests,
                    RunJavaScriptCoreTests, RunJSCTestsWithoutChange, RunWebKit1Tests, RunWebKitPerlTests, RunWebKitPyPython2Tests,
                    RunWebKitPyPython3Tests, RunWebKitTests, RunWebKitTestsInStressMode, RunWebKitTestsInStressGuardmallocMode,
-                   RunWebKitTestsWithoutChange, RunWebKitTestsRedTree, RunWebKitTestsRepeatFailuresRedTree, RunWebKitTestsRepeatFailuresWithoutChangeRedTree,
-                   RunWebKitTestsWithoutChangeRedTree, AnalyzeLayoutTestsResultsRedTree, TestWithFailureCount, ShowIdentifier,
-                   Trigger, TransferToS3, TwistedAdditions, UnApplyPatch, UpdatePullRequest, UpdateWorkingDirectory, UploadBuiltProduct,
+                   RunWebKitTestsWithoutChange, RunWebKitTestsRedTree, RunWebKitTestsRepeatFailuresRedTree,
+                   RunWebKitTestsRepeatFailuresWithoutChangeRedTree, RunWebKitTestsWithoutChangeRedTree, AnalyzeLayoutTestsResultsRedTree, TestWithFailureCount,
+                   ShowIdentifier, Trigger, TransferToS3, TwistedAdditions, UnApplyPatch, UpdatePullRequest, UpdateWorkingDirectory, UploadBuiltProduct,
                    UploadTestResults, ValidateCommitMessage, ValidateCommitterAndReviewer, ValidateChange, ValidateRemote, ValidateSquashed)
 
 # Workaround for https://github.com/buildbot/buildbot/issues/4669
 from buildbot.test.fake.fakebuild import FakeBuild
 FakeBuild.addStepsAfterCurrentStep = lambda FakeBuild, step_factories: None
 FakeBuild._builderid = 1
+
+# Prevent unit-tests from talking to live bugzilla server
+BugzillaMixin.fetch_data_from_url_with_authentication_bugzilla = lambda x, y: None
 
 def mock_step(step, logs='', results=SUCCESS, stopped=False, properties=None):
     step.logs = logs
@@ -835,7 +839,7 @@ class TestRunBuildbotCheckConfigForEWS(BuildStepMixinAdditions, unittest.TestCas
             ExpectShell(workdir='build/Tools/CISupport/ews-build',
                         timeout=120,
                         logEnviron=False,
-                        command=['buildbot', 'checkconfig'],
+                        command=['python3', '../buildbot-cmd', 'checkconfig'],
                         env={'LC_CTYPE': 'en_US.UTF-8'}
                         )
             + 0,
@@ -849,7 +853,7 @@ class TestRunBuildbotCheckConfigForEWS(BuildStepMixinAdditions, unittest.TestCas
             ExpectShell(workdir='build/Tools/CISupport/ews-build',
                         timeout=120,
                         logEnviron=False,
-                        command=['buildbot', 'checkconfig'],
+                        command=['python3', '../buildbot-cmd', 'checkconfig'],
                         env={'LC_CTYPE': 'en_US.UTF-8'}
                         )
             + ExpectShell.log('stdio', stdout='Configuration Errors:  builder(s) iOS-14-Debug-Build-EWS have no schedulers to drive them')
@@ -873,7 +877,7 @@ class TestRunBuildbotCheckConfigForBuildWebKit(BuildStepMixinAdditions, unittest
             ExpectShell(workdir='build/Tools/CISupport/build-webkit-org',
                         timeout=120,
                         logEnviron=False,
-                        command=['buildbot', 'checkconfig'],
+                        command=['python3', '../buildbot-cmd', 'checkconfig'],
                         env={'LC_CTYPE': 'en_US.UTF-8'}
                         )
             + 0,
@@ -887,7 +891,7 @@ class TestRunBuildbotCheckConfigForBuildWebKit(BuildStepMixinAdditions, unittest
             ExpectShell(workdir='build/Tools/CISupport/build-webkit-org',
                         timeout=120,
                         logEnviron=False,
-                        command=['buildbot', 'checkconfig'],
+                        command=['python3', '../buildbot-cmd', 'checkconfig'],
                         env={'LC_CTYPE': 'en_US.UTF-8'}
                         )
             + ExpectShell.log('stdio', stdout='Configuration Errors:  builder(s) Apple-iOS-14-Release-Build have no schedulers to drive them')
@@ -911,7 +915,7 @@ class TestRunEWSUnitTests(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(workdir='build/Tools/CISupport',
                         timeout=120,
                         logEnviron=False,
-                        command=['python3', 'runUnittests.py', 'ews-build'],
+                        command=['python3', 'runUnittests.py', 'ews-build', '--autoinstall'],
                         )
             + 0,
         )
@@ -924,7 +928,7 @@ class TestRunEWSUnitTests(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(workdir='build/Tools/CISupport',
                         timeout=120,
                         logEnviron=False,
-                        command=['python3', 'runUnittests.py', 'ews-build'],
+                        command=['python3', 'runUnittests.py', 'ews-build', '--autoinstall'],
                         )
             + ExpectShell.log('stdio', stdout='Unhandled Error. Traceback (most recent call last): Keys in cmd missing from expectation: [logfiles.json]')
             + 2,
@@ -983,7 +987,7 @@ class TestRunBuildWebKitOrgUnitTests(BuildStepMixinAdditions, unittest.TestCase)
             ExpectShell(workdir='build/Tools/CISupport',
                         timeout=120,
                         logEnviron=False,
-                        command=['python3', 'runUnittests.py', 'build-webkit-org'],
+                        command=['python3', 'runUnittests.py', 'build-webkit-org', '--autoinstall'],
                         )
             + 0,
         )
@@ -996,7 +1000,7 @@ class TestRunBuildWebKitOrgUnitTests(BuildStepMixinAdditions, unittest.TestCase)
             ExpectShell(workdir='build/Tools/CISupport',
                         timeout=120,
                         logEnviron=False,
-                        command=['python3', 'runUnittests.py', 'build-webkit-org'],
+                        command=['python3', 'runUnittests.py', 'build-webkit-org', '--autoinstall'],
                         )
             + ExpectShell.log('stdio', stdout='Unhandled Error. Traceback (most recent call last): Keys in cmd missing from expectation: [logfiles.json]')
             + 2,
@@ -1098,9 +1102,9 @@ class TestCleanUpGitIndexLock(BuildStepMixinAdditions, unittest.TestCase):
         self.expectOutcome(result=SUCCESS, state_string='Deleted .git/index.lock')
         return self.runStep()
 
-    def test_success_windows(self):
+    def test_success_ios(self):
         self.setupStep(CleanUpGitIndexLock())
-        self.setProperty('platform', 'win')
+        self.setProperty('platform', 'ios-16')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         timeout=120,
@@ -1231,7 +1235,7 @@ class TestCompileWebKit(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('configuration', 'release')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
-                        timeout=1800,
+                        timeout=1200,
                         logEnviron=False,
                         command=['perl', 'Tools/Scripts/build-webkit', '--release'],
                         )
@@ -1247,7 +1251,7 @@ class TestCompileWebKit(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('configuration', 'release')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
-                        timeout=1800,
+                        timeout=1200,
                         logEnviron=False,
                         command=['perl', 'Tools/Scripts/build-webkit', '--release', '--prefix=/app/webkit/WebKitBuild/release/install', '--gtk'],
                         )
@@ -1263,7 +1267,7 @@ class TestCompileWebKit(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('configuration', 'release')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
-                        timeout=1800,
+                        timeout=1200,
                         logEnviron=False,
                         command=['perl', 'Tools/Scripts/build-webkit', '--release', '--wpe'],
                         )
@@ -1274,11 +1278,11 @@ class TestCompileWebKit(BuildStepMixinAdditions, unittest.TestCase):
 
     def test_failure(self):
         self.setupStep(CompileWebKit())
-        self.setProperty('fullPlatform', 'mac-bigsur')
+        self.setProperty('fullPlatform', 'mac-monterey')
         self.setProperty('configuration', 'debug')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
-                        timeout=3600,  # only Big Sur uses an 3600 timeout
+                        timeout=1200,
                         logEnviron=False,
                         command=['perl', 'Tools/Scripts/build-webkit', '--debug'],
                         )
@@ -1311,7 +1315,7 @@ class TestCompileWebKitWithoutChange(BuildStepMixinAdditions, unittest.TestCase)
         self.setProperty('configuration', 'release')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
-                        timeout=1800,
+                        timeout=1200,
                         logEnviron=False,
                         command=['perl', 'Tools/Scripts/build-webkit', '--release'],
                         )
@@ -1322,11 +1326,11 @@ class TestCompileWebKitWithoutChange(BuildStepMixinAdditions, unittest.TestCase)
 
     def test_failure(self):
         self.setupStep(CompileWebKitWithoutChange())
-        self.setProperty('fullPlatform', 'mac-bigsur')
+        self.setProperty('fullPlatform', 'mac-monterey')
         self.setProperty('configuration', 'debug')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
-                        timeout=3600,  # only Big Sur uses an 3600 timeout
+                        timeout=1200,
                         logEnviron=False,
                         command=['perl', 'Tools/Scripts/build-webkit', '--debug'],
                         )
@@ -1449,7 +1453,7 @@ class TestCompileJSC(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('configuration', 'release')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
-                        timeout=1800,
+                        timeout=1200,
                         logEnviron=False,
                         command=['perl', 'Tools/Scripts/build-jsc', '--release'],
                         )
@@ -1464,7 +1468,7 @@ class TestCompileJSC(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('configuration', 'debug')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
-                        timeout=1800,
+                        timeout=1200,
                         logEnviron=False,
                         command=['perl', 'Tools/Scripts/build-jsc', '--debug'],
                         )
@@ -1489,7 +1493,7 @@ class TestCompileJSCWithoutChange(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('configuration', 'release')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
-                        timeout=1800,
+                        timeout=1200,
                         logEnviron=False,
                         command=['perl', 'Tools/Scripts/build-jsc', '--release'],
                         )
@@ -1504,7 +1508,7 @@ class TestCompileJSCWithoutChange(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('configuration', 'debug')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
-                        timeout=1800,
+                        timeout=1200,
                         logEnviron=False,
                         command=['perl', 'Tools/Scripts/build-jsc', '--debug'],
                         )
@@ -1897,6 +1901,22 @@ ts","version":4,"num_passes":42158,"pixel_tests_enabled":false,"date":"11:28AM o
         self.expectOutcome(result=WARNINGS, state_string='2 flakes')
         return self.runStep()
 
+    def test_success_additional_arguments(self):
+        self.configureStep()
+        self.setProperty('fullPlatform', 'ios-simulator')
+        self.setProperty('configuration', 'release')
+        self.setProperty('additionalArguments', ['--exclude-tests', 'imported/w3c/web-platform-tests'])
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logfiles={'json': self.jsonFileName},
+                        logEnviron=False,
+                        command=['python3', 'Tools/Scripts/run-webkit-tests', '--no-build', '--no-show-results', '--no-new-test-results', '--clobber-old-results', '--release', '--results-directory', 'layout-test-results', '--debug-rwt-logging', '--exit-after-n-failures', '60', '--skip-failing-tests', '--exclude-tests', 'imported/w3c/web-platform-tests'],
+                        )
+            + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Passed layout tests')
+        return self.runStep()
+
     def test_skip_for_revert_patches_on_commit_queue(self):
         self.configureStep()
         self.setProperty('buildername', 'Commit-Queue')
@@ -2225,6 +2245,49 @@ class TestRunWebKitTestsInStressMode(BuildStepMixinAdditions, unittest.TestCase)
         rc = self.runStep()
         self.assertEqual(self.getProperty('build_summary'), 'Found test failures')
         return rc
+
+    def test_success(self):
+        self.configureStep()
+        self.setProperty('fullPlatform', 'ios-simulator')
+        self.setProperty('configuration', 'release')
+        self.setProperty('modified_tests', ['test1', 'test2'])
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logfiles={'json': self.jsonFileName},
+                        logEnviron=False,
+                        command=['python3',
+                                 'Tools/Scripts/run-webkit-tests',
+                                 '--no-build', '--no-show-results', '--no-new-test-results', '--clobber-old-results',
+                                 '--release', '--results-directory', 'layout-test-results', '--debug-rwt-logging',
+                                 '--exit-after-n-failures', '10', '--skip-failing-tests',
+                                 '--iterations', 100, 'test1', 'test2'],
+                        )
+            + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Passed layout tests')
+        return self.runStep()
+
+    def test_success_additional_arguments(self):
+        self.configureStep()
+        self.setProperty('fullPlatform', 'ios-simulator')
+        self.setProperty('configuration', 'release')
+        self.setProperty('modified_tests', ['test1', 'test2'])
+        self.setProperty('additionalArguments', ['--child-processes=6', '--exclude-tests', 'imported/w3c/web-platform-tests'])
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logfiles={'json': self.jsonFileName},
+                        logEnviron=False,
+                        command=['python3',
+                                 'Tools/Scripts/run-webkit-tests',
+                                 '--no-build', '--no-show-results', '--no-new-test-results', '--clobber-old-results',
+                                 '--release', '--results-directory', 'layout-test-results', '--debug-rwt-logging',
+                                 '--exit-after-n-failures', '10', '--skip-failing-tests',
+                                 '--iterations', 100, 'test1', 'test2'],
+                        )
+            + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Passed layout tests')
+        return self.runStep()
 
 
 class TestRunWebKitTestsInStressGuardmallocMode(BuildStepMixinAdditions, unittest.TestCase):
@@ -2783,6 +2846,13 @@ class TestAnalyzeLayoutTestsResults(BuildStepMixinAdditions, unittest.TestCase):
         return self.runStep()
 
 
+class MockLayoutTestFailures(object):
+    def __init__(self, failing_tests, flaky_tests, did_exceed_test_failure_limit):
+        self.failing_tests = failing_tests
+        self.flaky_tests = flaky_tests
+        self.did_exceed_test_failure_limit = did_exceed_test_failure_limit
+
+
 class TestRunWebKitTestsRedTree(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
         self.longMessage = True
@@ -2794,11 +2864,12 @@ class TestRunWebKitTestsRedTree(BuildStepMixinAdditions, unittest.TestCase):
 
     def configureStep(self):
         self.setupStep(RunWebKitTestsRedTree())
+        self.setProperty('platform', 'wpe')
+        self.setProperty('fullPlatform', 'wpe')
+        self.setProperty('configuration', 'release')
 
     def test_success(self):
         self.configureStep()
-        self.setProperty('fullPlatform', 'gtk')
-        self.setProperty('configuration', 'release')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logfiles={'json': self.jsonFileName},
@@ -2806,13 +2877,41 @@ class TestRunWebKitTestsRedTree(BuildStepMixinAdditions, unittest.TestCase):
                         command=['python3',
                                  'Tools/Scripts/run-webkit-tests',
                                  '--no-build', '--no-show-results', '--no-new-test-results', '--clobber-old-results',
-                                 '--release', '--results-directory', 'layout-test-results', '--debug-rwt-logging',
-                                 '--exit-after-n-failures', '500', '--skip-failing-tests']
+                                 '--release', '--wpe', '--results-directory', 'layout-test-results', '--debug-rwt-logging',
+                                 '--exit-after-n-failures', '500', '--skip-failing-tests', '--enable-core-dumps-nolimit']
                         )
             + 0,
         )
         self.expectOutcome(result=SUCCESS, state_string='Passed layout tests')
         return self.runStep()
+
+    def test_set_properties_when_executed_scope_this_class(self):
+        self.configureStep()
+        first_run_failures = ['fast/css/test1.html', 'fast/svg/test2.svg', 'imported/test/test3.html']
+        first_run_flakies = ['fast/css/flaky1.html', 'fast/svg/flaky2.svg', 'imported/test/flaky3.html']
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logfiles={'json': self.jsonFileName},
+                        logEnviron=False,
+                        command=['python3',
+                                 'Tools/Scripts/run-webkit-tests',
+                                 '--no-build', '--no-show-results', '--no-new-test-results', '--clobber-old-results',
+                                 '--release', '--wpe', '--results-directory', 'layout-test-results', '--debug-rwt-logging',
+                                 '--exit-after-n-failures', '500', '--skip-failing-tests', '--enable-core-dumps-nolimit']
+                        )
+            + 2
+        )
+        # Patch LayoutTestFailures.results_from_string() to report the expected values
+        # Check this values end on the properties this class should define
+        mock_test_failures = MockLayoutTestFailures(first_run_failures, first_run_flakies, False)
+        self.patch(LayoutTestFailures, 'results_from_string', lambda f: mock_test_failures)
+        self.expectOutcome(result=FAILURE, state_string='layout-tests (failure)')
+        rc = self.runStep()
+        # Note: first_run properties are considered to belong to RunWebKitTestsRedTree() in this case, so they should be set to mock_test_failures
+        self.assertEqual(first_run_failures, self.getProperty('first_run_failures'))
+        self.assertEqual(first_run_flakies, self.getProperty('first_run_flakies'))
+        self.assertFalse(self.getProperty('first_results_exceed_failure_limit'))
+        return rc
 
 
 class TestRunWebKitTestsRepeatFailuresRedTree(BuildStepMixinAdditions, unittest.TestCase):
@@ -2826,11 +2925,12 @@ class TestRunWebKitTestsRepeatFailuresRedTree(BuildStepMixinAdditions, unittest.
 
     def configureStep(self):
         self.setupStep(RunWebKitTestsRepeatFailuresRedTree())
+        self.setProperty('platform', 'wpe')
+        self.setProperty('fullPlatform', 'wpe')
+        self.setProperty('configuration', 'release')
 
     def test_success(self):
         self.configureStep()
-        self.setProperty('fullPlatform', 'gtk')
-        self.setProperty('configuration', 'release')
         first_run_failures = ['fast/css/test1.html', 'imported/test/test2.html', 'fast/svg/test3.svg']
         first_run_flakies = ['fast/css/flaky1.html', 'imported/test/flaky2.html', 'fast/svg/flaky3.svg']
         self.setProperty('first_run_failures', first_run_failures)
@@ -2843,7 +2943,7 @@ class TestRunWebKitTestsRepeatFailuresRedTree(BuildStepMixinAdditions, unittest.
                         command=['python3',
                                  'Tools/Scripts/run-webkit-tests',
                                  '--no-build', '--no-show-results', '--no-new-test-results', '--clobber-old-results',
-                                 '--release', '--results-directory', 'layout-test-results', '--debug-rwt-logging',
+                                 '--release', '--wpe', '--results-directory', 'layout-test-results', '--debug-rwt-logging',
                                  '--skip-failing-tests', '--fully-parallel', '--repeat-each=10'] + sorted(first_run_failures)
                         )
             + 0,
@@ -2851,6 +2951,44 @@ class TestRunWebKitTestsRepeatFailuresRedTree(BuildStepMixinAdditions, unittest.
         self.expectOutcome(result=SUCCESS, state_string='layout-tests')
         return self.runStep()
 
+    def test_set_properties_when_executed_scope_this_class(self):
+        self.configureStep()
+        first_run_failures = ['fast/css/test1.html', 'imported/test/test2.html', 'fast/svg/test3.svg']
+        first_run_flakies = ['fast/css/flaky1.html', 'imported/test/flaky2.html', 'fast/svg/flaky3.svg']
+        # Set good values for properties that only the superclass should set
+        self.setProperty('first_run_failures', first_run_failures)
+        self.setProperty('first_run_flakies', first_run_flakies)
+        self.setProperty('first_results_exceed_failure_limit', False)
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logfiles={'json': self.jsonFileName},
+                        logEnviron=False,
+                        maxTime=18000,
+                        command=['python3',
+                                 'Tools/Scripts/run-webkit-tests',
+                                 '--no-build', '--no-show-results', '--no-new-test-results', '--clobber-old-results',
+                                 '--release', '--wpe', '--results-directory', 'layout-test-results', '--debug-rwt-logging',
+                                 '--skip-failing-tests', '--fully-parallel', '--repeat-each=10'] + sorted(first_run_failures)
+                        )
+            + 2
+        )
+        # Patch LayoutTestFailures.results_from_string() so it always reports fake values.
+        # Check this fake values do not end on the properties that belong to the superclass.
+        fake_failing_tests = ['fake/should/not/happen/failure1.html', 'imported/fake/failure2.html']
+        fake_flaky_tests = ['fake/should/not/happen/flaky1.html', 'imported/fake/flaky2.html']
+        fake_layout_test_failures = MockLayoutTestFailures(fake_failing_tests, fake_flaky_tests, True)
+        self.patch(LayoutTestFailures, 'results_from_string', lambda f: fake_layout_test_failures)
+        self.expectOutcome(result=FAILURE, state_string='layout-tests (failure)')
+        rc = self.runStep()
+        # first_run properties should not be set to fake_layout_test_failures when running RunWebKitTestsRepeatFailuresRedTree()
+        self.assertEqual(first_run_failures, self.getProperty('first_run_failures'))
+        self.assertEqual(first_run_flakies, self.getProperty('first_run_flakies'))
+        self.assertFalse(self.getProperty('first_results_exceed_failure_limit'))
+        # Test also that this fake values are set _only_ for the properties this class should define
+        self.assertEqual(fake_failing_tests, self.getProperty('with_change_repeat_failures_results_nonflaky_failures'))
+        self.assertEqual(fake_flaky_tests, self.getProperty('with_change_repeat_failures_results_flakies'))
+        self.assertTrue(self.getProperty('with_change_repeat_failures_results_exceed_failure_limit'))
+        return rc
 
 class TestRunWebKitTestsRepeatFailuresWithoutChangeRedTree(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
@@ -2863,11 +3001,12 @@ class TestRunWebKitTestsRepeatFailuresWithoutChangeRedTree(BuildStepMixinAdditio
 
     def configureStep(self):
         self.setupStep(RunWebKitTestsRepeatFailuresWithoutChangeRedTree())
+        self.setProperty('platform', 'wpe')
+        self.setProperty('fullPlatform', 'wpe')
+        self.setProperty('configuration', 'release')
 
     def test_success(self):
         self.configureStep()
-        self.setProperty('fullPlatform', 'gtk')
-        self.setProperty('configuration', 'release')
         first_run_failures = ['fast/css/test1.html', 'imported/test/test2.html', 'fast/svg/test3.svg']
         first_run_flakies = ['fast/css/flaky1.html', 'imported/test/flaky2.html', 'fast/svg/flaky3.svg']
         with_change_repeat_failures_results_nonflaky_failures = ['fast/css/test1.html']
@@ -2884,7 +3023,7 @@ class TestRunWebKitTestsRepeatFailuresWithoutChangeRedTree(BuildStepMixinAdditio
                         command=['python3',
                                  'Tools/Scripts/run-webkit-tests',
                                  '--no-build', '--no-show-results', '--no-new-test-results', '--clobber-old-results',
-                                 '--release', '--results-directory', 'layout-test-results', '--debug-rwt-logging',
+                                 '--release', '--wpe', '--results-directory', 'layout-test-results', '--debug-rwt-logging',
                                  '--skip-failing-tests', '--fully-parallel', '--repeat-each=10', '--skipped=always'] + sorted(with_change_repeat_failures_results_nonflaky_failures)
                         )
             + 0,
@@ -2913,7 +3052,7 @@ class TestRunWebKitTestsRepeatFailuresWithoutChangeRedTree(BuildStepMixinAdditio
                         command=['python3',
                                  'Tools/Scripts/run-webkit-tests',
                                  '--no-build', '--no-show-results', '--no-new-test-results', '--clobber-old-results',
-                                 '--release', '--results-directory', 'layout-test-results', '--debug-rwt-logging',
+                                 '--release', '--wpe', '--results-directory', 'layout-test-results', '--debug-rwt-logging',
                                  '--skip-failing-tests', '--fully-parallel', '--repeat-each=10', '--skipped=always'] + sorted(first_run_failures)
                         )
             + 0,
@@ -2921,6 +3060,52 @@ class TestRunWebKitTestsRepeatFailuresWithoutChangeRedTree(BuildStepMixinAdditio
         self.expectOutcome(result=SUCCESS, state_string='layout-tests')
         return self.runStep()
 
+    def test_set_properties_when_executed_scope_this_class(self):
+        self.configureStep()
+        first_run_failures = ['fast/css/test1.html', 'imported/test/test2.html', 'fast/svg/test3.svg']
+        first_run_flakies = ['fast/css/flaky1.html', 'imported/test/flaky2.html', 'fast/svg/flaky3.svg']
+        with_change_repeat_failures_results_nonflaky_failures = ['fast/css/test1.html']
+        with_change_repeat_failures_results_flakies = ['imported/test/test2.html', 'fast/svg/test3.svg']
+        # Set good values for properties that only the superclass should set
+        self.setProperty('first_run_failures', first_run_failures)
+        self.setProperty('first_run_flakies', first_run_flakies)
+        self.setProperty('first_results_exceed_failure_limit', False)
+        self.setProperty('with_change_repeat_failures_results_nonflaky_failures', with_change_repeat_failures_results_nonflaky_failures)
+        self.setProperty('with_change_repeat_failures_results_flakies', with_change_repeat_failures_results_flakies)
+        self.setProperty('with_change_repeat_failures_timedout', False)
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logfiles={'json': self.jsonFileName},
+                        logEnviron=False,
+                        maxTime=10800,
+                        command=['python3',
+                                 'Tools/Scripts/run-webkit-tests',
+                                 '--no-build', '--no-show-results', '--no-new-test-results', '--clobber-old-results',
+                                 '--release', '--wpe', '--results-directory', 'layout-test-results', '--debug-rwt-logging',
+                                 '--skip-failing-tests', '--fully-parallel', '--repeat-each=10', '--skipped=always'] + sorted(with_change_repeat_failures_results_nonflaky_failures)
+                        )
+            + 2
+        )
+        # Patch LayoutTestFailures.results_from_string() so it always reports fake values.
+        # Check this fake values do not end on the properties that belong to the superclass.
+        fake_failing_tests = ['fake/should/not/happen/failure1.html', 'imported/fake/failure2.html']
+        fake_flaky_tests = ['fake/should/not/happen/flaky1.html', 'imported/fake/flaky2.html']
+        fake_layout_test_failures = MockLayoutTestFailures(fake_failing_tests, fake_flaky_tests, True)
+        self.patch(LayoutTestFailures, 'results_from_string', lambda f: fake_layout_test_failures)
+        self.expectOutcome(result=FAILURE, state_string='layout-tests (failure)')
+        rc = self.runStep()
+        # first_run properties should not be set to fake_layout_test_failures when running RunWebKitTestsRepeatFailuresWithoutChangeRedTree()
+        self.assertEqual(first_run_failures, self.getProperty('first_run_failures'))
+        self.assertEqual(first_run_flakies, self.getProperty('first_run_flakies'))
+        self.assertFalse(self.getProperty('first_results_exceed_failure_limit'))
+        self.assertEqual(with_change_repeat_failures_results_nonflaky_failures, self.getProperty('with_change_repeat_failures_results_nonflaky_failures'))
+        self.assertEqual(with_change_repeat_failures_results_flakies, self.getProperty('with_change_repeat_failures_results_flakies'))
+        self.assertFalse(self.getProperty('with_change_repeat_failures_timedout'))
+        # Test also that this fake values are set _only_ for the properties this class should define
+        self.assertEqual(fake_failing_tests, self.getProperty('without_change_repeat_failures_results_nonflaky_failures'))
+        self.assertEqual(fake_flaky_tests, self.getProperty('without_change_repeat_failures_results_flakies'))
+        self.assertTrue(self.getProperty('without_change_repeat_failures_results_exceed_failure_limit'))
+        return rc
 
 class TestAnalyzeLayoutTestsResultsRedTree(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
@@ -3482,12 +3667,13 @@ class TestCheckOutPullRequest(BuildStepMixinAdditions, unittest.TestCase):
     ENV = dict(
         GIT_COMMITTER_NAME='EWS',
         GIT_COMMITTER_EMAIL='ews@webkit.org',
-        GIT_USER=None,
-        GIT_PASSWORD=None,
+        GIT_USER='webkit-commit-queue',
+        GIT_PASSWORD='password',
     )
 
     def setUp(self):
         self.longMessage = True
+        GitHub.credentials = lambda user=None: ('webkit-commit-queue', 'password')
         return self.setUpBuildStep()
 
     def tearDown(self):
@@ -3827,20 +4013,20 @@ class TestCheckChangeRelevance(BuildStepMixinAdditions, unittest.TestCase):
             rc = self.runStep()
         return rc
 
-    def test_relevant_bigsur_builder_patch(self):
+    def test_relevant_monterey_builder_patch(self):
         file_names = ['Source/xyz', 'Tools/abc']
         self.setupStep(CheckChangeRelevance())
-        self.setProperty('buildername', 'macOS-BigSur-Release-Build-EWS')
+        self.setProperty('buildername', 'macOS-Monterey-Release-Build-EWS')
         for file_name in file_names:
             CheckChangeRelevance._get_patch = lambda x: f'Sample patch; file: {file_name}'
             self.expectOutcome(result=SUCCESS, state_string='Patch contains relevant changes')
             rc = self.runStep()
         return rc
 
-    def test_relevant_windows_wk1_patch(self):
+    def test_relevant_wk1_patch(self):
         CheckChangeRelevance._get_patch = lambda x: b'Sample patch; file: Source/WebKitLegacy'
         self.setupStep(CheckChangeRelevance())
-        self.setProperty('buildername', 'Windows-EWS')
+        self.setProperty('buildername', 'macOS-Monterey-Release-WK1-Tests-EWS')
         self.expectOutcome(result=SUCCESS, state_string='Patch contains relevant changes')
         return self.runStep()
 
@@ -3903,7 +4089,7 @@ class TestCheckChangeRelevance(BuildStepMixinAdditions, unittest.TestCase):
         queues = ['Commit-Queue', 'Style-EWS', 'Apply-WatchList-EWS', 'GTK-Build-EWS', 'GTK-WK2-Tests-EWS',
                   'iOS-13-Build-EWS', 'iOS-13-Simulator-Build-EWS', 'iOS-13-Simulator-WK2-Tests-EWS',
                   'macOS-Catalina-Release-Build-EWS', 'macOS-Catalina-Release-WK2-Tests-EWS', 'macOS-Catalina-Debug-Build-EWS',
-                  'WinCairo-EWS', 'WPE-EWS', 'WebKitPerl-Tests-EWS']
+                  'WinCairo-EWS', 'WPE-Build-EWS', 'WebKitPerl-Tests-EWS']
         for queue in queues:
             self.setupStep(CheckChangeRelevance())
             self.setProperty('buildername', queue)
@@ -3913,7 +4099,7 @@ class TestCheckChangeRelevance(BuildStepMixinAdditions, unittest.TestCase):
 
     def test_non_relevant_patch_on_various_queues(self):
         CheckChangeRelevance._get_patch = lambda x: 'Sample patch'
-        queues = ['Bindings-Tests-EWS', 'JSC-Tests-EWS', 'macOS-BigSur-Release-Build-EWS',
+        queues = ['Bindings-Tests-EWS', 'JSC-Tests-EWS', 'macOS-Monterey-Release-Build-EWS',
                   'macOS-Catalina-Debug-WK1-Tests-EWS', 'Services-EWS', 'WebKitPy-Tests-EWS']
         for queue in queues:
             self.setupStep(CheckChangeRelevance())
@@ -3924,7 +4110,7 @@ class TestCheckChangeRelevance(BuildStepMixinAdditions, unittest.TestCase):
 
     def test_non_relevant_pull_request_on_various_queues(self):
         CheckChangeRelevance._get_patch = lambda x: '\n'
-        queues = ['Bindings-Tests-EWS', 'JSC-Tests-EWS', 'macOS-BigSur-Release-Build-EWS',
+        queues = ['Bindings-Tests-EWS', 'JSC-Tests-EWS', 'macOS-Monterey-Release-Build-EWS',
                   'macOS-Catalina-Debug-WK1-Tests-EWS', 'Services-EWS', 'WebKitPy-Tests-EWS']
         for queue in queues:
             self.setupStep(CheckChangeRelevance())
@@ -5014,17 +5200,6 @@ class TestPrintConfiguration(BuildStepMixinAdditions, unittest.TestCase):
         self.expectOutcome(result=SUCCESS, state_string='Printed configuration')
         return self.runStep()
 
-    def test_success_win(self):
-        self.setupStep(PrintConfiguration())
-        self.setProperty('platform', 'win')
-
-        self.expectRemoteCommands(
-            ExpectShell(command=['hostname'], workdir='wkdir', timeout=60, logEnviron=False) + 0,
-            ExpectShell(command=['df', '-hl'], workdir='wkdir', timeout=60, logEnviron=False) + 0,
-        )
-        self.expectOutcome(result=SUCCESS, state_string='Printed configuration')
-        return self.runStep()
-
     def test_failure(self):
         self.setupStep(PrintConfiguration())
         self.setProperty('platform', 'ios-12')
@@ -5045,6 +5220,7 @@ class TestPrintConfiguration(BuildStepMixinAdditions, unittest.TestCase):
     func(fullname, *argrest)
 OSError: [Errno 2] No such file or directory'''),
             ExpectShell(command=['system_profiler', 'SPSoftwareDataType', 'SPHardwareDataType'], workdir='wkdir', timeout=60, logEnviron=False) + 0,
+            ExpectShell(command=['/bin/sh', '-c', 'echo TimezoneVers: $(cat /usr/share/zoneinfo/+VERSION)'], workdir='wkdir', timeout=60, logEnviron=False) + 0,
             ExpectShell(command=['xcodebuild', '-sdk', '-version'], workdir='wkdir', timeout=60, logEnviron=False)
             + ExpectShell.log('stdio', stdout='''Upon execvpe xcodebuild ['xcodebuild', '-sdk', '-version'] in environment id 7696545612416
 :Traceback (most recent call last):
@@ -5536,7 +5712,7 @@ class TestValidateCommitterAndReviewer(BuildStepMixinAdditions, unittest.TestCas
 
     def test_success_pr_validators(self):
         self.setupStep(ValidateCommitterAndReviewer())
-        ValidateCommitterAndReviewer.get_reviewers = lambda x, pull_request, repository_url=None: ['webkit-reviewer', 'geoffreygaren']
+        ValidateCommitterAndReviewer.get_reviewers = lambda x, pull_request, repository_url=None: ['webkit-reviewer', 'webkit-bug-bridge']
         self.setProperty('github.number', '1234')
         self.setProperty('owners', ['webkit-commit-queue'])
         self.setProperty('remote', 'apple')
@@ -5549,7 +5725,7 @@ class TestValidateCommitterAndReviewer(BuildStepMixinAdditions, unittest.TestCas
 
     def test_success_pr_validators_case(self):
         self.setupStep(ValidateCommitterAndReviewer())
-        ValidateCommitterAndReviewer.get_reviewers = lambda x, pull_request, repository_url=None: ['webkit-reviewer', 'jonwbedard']
+        ValidateCommitterAndReviewer.get_reviewers = lambda x, pull_request, repository_url=None: ['webkit-reviewer', 'Webkit-Bug-Bridge']
         self.setProperty('github.number', '1234')
         self.setProperty('owners', ['webkit-commit-queue'])
         self.setProperty('remote', 'apple')
@@ -5558,6 +5734,19 @@ class TestValidateCommitterAndReviewer(BuildStepMixinAdditions, unittest.TestCas
         self.expectOutcome(result=SUCCESS, state_string='Validated commiter and reviewer')
         rc = self.runStep()
         self.assertEqual(self.getProperty('reviewers_full_names'), ['WebKit Reviewer'])
+        return rc
+
+    def test_success_pr_validators_not_reviewer(self):
+        self.setupStep(ValidateCommitterAndReviewer())
+        ValidateCommitterAndReviewer.get_reviewers = lambda x, pull_request, repository_url=None: ['webkit-bug-bridge']
+        self.setProperty('github.number', '1234')
+        self.setProperty('owners', ['webkit-commit-queue'])
+        self.setProperty('remote', 'apple')
+        self.expectHidden(False)
+        self.assertEqual(ValidateCommitterAndReviewer.haltOnFailure, False)
+        self.expectOutcome(result=SUCCESS, state_string='Validated committer, reviewer not found')
+        rc = self.runStep()
+        self.assertEqual(self.getProperty('reviewers_full_names'), None)
         return rc
 
     def test_success_no_pr_validators(self):
@@ -5581,7 +5770,7 @@ class TestValidateCommitterAndReviewer(BuildStepMixinAdditions, unittest.TestCas
         self.setProperty('remote', 'apple')
         self.expectHidden(False)
         self.assertEqual(ValidateCommitterAndReviewer.haltOnFailure, False)
-        self.expectOutcome(result=FAILURE, state_string="Landing changes on 'apple' remote requires validation from @geoffreygaren, @markcgee, @rjepstein, @JonWBedard, @ryanhaddad, @alancoon or @webkit-bug-bridge")
+        self.expectOutcome(result=FAILURE, state_string="Landing changes on 'apple' remote requires validation from @webkit-bug-bridge")
         return self.runStep()
 
 
@@ -5741,25 +5930,8 @@ class TestDetermineLandedIdentifier(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(workdir='wkdir',
                         timeout=300,
                         logEnviron=False,
-                        command=['git', 'log', '-1', '--no-decorate']) +
-                ExpectShell.log('stdio', stdout=''''commit 220797@main (14dbf1155cf56a1dd4d86a847e61af3c3e5d2ca5, r256729)
-Author: Aakash Jain <aakash_jain@apple.com>
-Date:   Mon Feb 17 15:09:42 2020 +0000
-
-    [ews] add SetBuildSummary step for Windows EWS
-    https://bugs.webkit.org/show_bug.cgi?id=207556
-    
-    Reviewed by Jonathan Bedard.
-    
-    * BuildSlaveSupport/ews-build/factories.py:
-    (WindowsFactory.__init__):
-    (GTKBuildAndTestFactory.__init__):
-    * BuildSlaveSupport/ews-build/factories_unittest.py:
-    (TestBuildAndTestsFactory.test_windows_factory): Added unit-test.
-    
-    
-    Canonical link: https://commits.webkit.org/220797@main
-    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@256729 268f45cc-cd09-0410-ab3c-d52691b4dbfc''') +
+                        command=['/bin/sh', '-c', "git log -1 --no-decorate | grep 'Canonical link: https://commits\\.webkit\\.org/'"]) +
+                ExpectShell.log('stdio', stdout='    Canonical link: https://commits.webkit.org/220797@main\n') +
                 0,
             )
             self.expectOutcome(result=SUCCESS, state_string='Identifier: 220797@main')
@@ -5780,22 +5952,8 @@ Date:   Mon Feb 17 15:09:42 2020 +0000
             ExpectShell(workdir='wkdir',
                         timeout=300,
                         logEnviron=False,
-                        command=['git', 'log', '-1', '--no-decorate']) +
-                ExpectShell.log('stdio', stdout=''''commit 5dc27962b4c5bdfd17d17faa785f70abbb0550ed
-Author: Matteo Flores <matteo_flores@apple.com>
-Date:   Fri Apr 22 21:24:12 2022 +0000
-
-    REBASLINE: [ Monterey ] fast/text/khmer-lao-font.html is a constant text failure
-    
-    https://bugs.webkit.org/show_bug.cgi?id=238917
-    
-    Unreviewed test gardening.
-    
-    * platform/mac-bigsur/fast/text/khmer-lao-font-expected.txt: Copied from LayoutTests/platform/mac/fast/text/khmer-lao-font-expected.txt.
-    * platform/mac/fast/text/khmer-lao-font-expected.txt:
-    
-    Canonical link: https://commits.webkit.org/249903@main
-    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@293254 268f45cc-cd09-0410-ab3c-d52691b4dbfc''') +
+                        command=['/bin/sh', '-c', "git log -1 --no-decorate | grep 'Canonical link: https://commits\\.webkit\\.org/'"]) +
+                ExpectShell.log('stdio', stdout='    Canonical link: https://commits.webkit.org/249903@main\n') +
                 0,
             )
             self.expectOutcome(result=SUCCESS, state_string='Identifier: 249903@main')
@@ -5815,9 +5973,9 @@ Date:   Fri Apr 22 21:24:12 2022 +0000
             ExpectShell(workdir='wkdir',
                         timeout=300,
                         logEnviron=False,
-                        command=['git', 'log', '-1', '--no-decorate']) +
+                        command=['/bin/sh', '-c', "git log -1 --no-decorate | grep 'Canonical link: https://commits\\.webkit\\.org/'"]) +
                 ExpectShell.log('stdio', stdout='') +
-                0,
+                1,
             )
             self.expectOutcome(result=SUCCESS, state_string='Identifier: 220797@main')
             with current_hostname(EWS_BUILD_HOSTNAME):
@@ -5836,9 +5994,9 @@ Date:   Fri Apr 22 21:24:12 2022 +0000
             ExpectShell(workdir='wkdir',
                         timeout=300,
                         logEnviron=False,
-                        command=['git', 'log', '-1', '--no-decorate']) +
+                        command=['/bin/sh', '-c', "git log -1 --no-decorate | grep 'Canonical link: https://commits\\.webkit\\.org/'"]) +
                 ExpectShell.log('stdio', stdout='') +
-                0,
+                1,
             )
             self.expectOutcome(result=FAILURE, state_string='Failed to determine identifier')
             with current_hostname(EWS_BUILD_HOSTNAME):
@@ -5857,9 +6015,9 @@ Date:   Fri Apr 22 21:24:12 2022 +0000
             ExpectShell(workdir='wkdir',
                         timeout=300,
                         logEnviron=False,
-                        command=['git', 'log', '-1', '--no-decorate']) +
+                        command=['/bin/sh', '-c', "git log -1 --no-decorate | grep 'Canonical link: https://commits\\.webkit\\.org/'"]) +
                 ExpectShell.log('stdio', stdout='') +
-                0,
+                1,
             )
             self.expectOutcome(result=SUCCESS, state_string='Identifier: 220797@main')
             with current_hostname(EWS_BUILD_HOSTNAME):
@@ -5878,9 +6036,9 @@ Date:   Fri Apr 22 21:24:12 2022 +0000
             ExpectShell(workdir='wkdir',
                         timeout=300,
                         logEnviron=False,
-                        command=['git', 'log', '-1', '--no-decorate']) +
+                        command=['/bin/sh', '-c', "git log -1 --no-decorate | grep 'Canonical link: https://commits\\.webkit\\.org/'"]) +
                 ExpectShell.log('stdio', stdout='') +
-                0,
+                1,
             )
             self.expectOutcome(result=FAILURE, state_string='Failed to determine identifier')
             with current_hostname(EWS_BUILD_HOSTNAME):
@@ -5888,6 +6046,164 @@ Date:   Fri Apr 22 21:24:12 2022 +0000
 
         self.assertEqual(self.getProperty('comment_text'), 'Committed ? (5dc27962b4c5): <https://commits.webkit.org/5dc27962b4c5>\n\nAll reviewed patches have been landed. Closing bug and clearing flags on attachment 1234.')
         self.assertEqual(self.getProperty('build_summary'), 'Committed 5dc27962b4c5')
+
+
+class TestCheckOutSource(BuildStepMixinAdditions, unittest.TestCase):
+    ENV = dict(GIT_USER='webkit-commit-queue', GIT_PASSWORD='password')
+
+    def setUp(self):
+        self.longMessage = True
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def test_success(self):
+        self.setupStep(CheckOutSource())
+        self.setProperty('project', 'WebKit/WebKit')
+        self.expectRemoteCommands(
+            ExpectShell(
+                workdir='wkdir',
+                timeout=7200,
+                logEnviron=False,
+                env=self.ENV,
+                command=['git', '--version'],
+            ) + ExpectShell.log('stdio', stdout='git version 2.32.3 (Apple Git-135)\n') + 0,
+            Expect(
+                'stat', dict(
+                    file='wkdir/.buildbot-patched',
+                    logEnviron=False,
+                ),
+            ) + 0,
+            ExpectShell(
+                workdir='wkdir',
+                timeout=7200,
+                logEnviron=False,
+                env=self.ENV,
+                command=['git', 'clean', '-f', '-f', '-d', '-x'],
+            ) + 0,
+            Expect(
+                'listdir', dict(
+                    dir='wkdir',
+                    timeout=7200,
+                    logEnviron=False,
+                ),
+            ) + 0,
+            ExpectShell(
+                workdir='wkdir',
+                timeout=7200,
+                logEnviron=False,
+                env=self.ENV,
+                command=['git', 'clone', 'https://github.com/WebKit/WebKit.git', '.', '--progress'],
+            ) + 0,
+            ExpectShell(
+                workdir='wkdir',
+                timeout=7200,
+                logEnviron=False,
+                env=self.ENV,
+                command=['git', 'rev-parse', 'HEAD'],
+            ) + ExpectShell.log('stdio', stdout='3b84731a5f6a0a38b6f48a16ab927e5dbcb5c770\n') + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Cleaned and updated working directory')
+        return self.runStep()
+
+    def test_success_security(self):
+        self.setupStep(CheckOutSource())
+        self.setProperty('project', 'apple/WebKit')
+        self.expectRemoteCommands(
+            ExpectShell(
+                workdir='wkdir',
+                timeout=7200,
+                logEnviron=False,
+                env=self.ENV,
+                command=['git', '--version'],
+            ) + ExpectShell.log('stdio', stdout='git version 2.32.3 (Apple Git-135)\n') + 0,
+            Expect(
+                'stat', dict(
+                    file='wkdir/.buildbot-patched',
+                    logEnviron=False,
+                ),
+            ) + 0,
+            ExpectShell(
+                workdir='wkdir',
+                timeout=7200,
+                logEnviron=False,
+                env=self.ENV,
+                command=['git', 'clean', '-f', '-f', '-d', '-x'],
+            ) + 0,
+            Expect(
+                'listdir', dict(
+                    dir='wkdir',
+                    timeout=7200,
+                    logEnviron=False,
+                ),
+            ) + 0,
+            ExpectShell(
+                workdir='wkdir',
+                timeout=7200,
+                logEnviron=False,
+                env=self.ENV,
+                command=['git', 'clone', 'https://github.com/WebKit/WebKit.git', '.', '--progress'],
+            ) + 0,
+            ExpectShell(
+                workdir='wkdir',
+                timeout=7200,
+                logEnviron=False,
+                env=self.ENV,
+                command=['git', 'rev-parse', 'HEAD'],
+            ) + ExpectShell.log('stdio', stdout='3b84731a5f6a0a38b6f48a16ab927e5dbcb5c770\n') + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Cleaned and updated working directory')
+        return self.runStep()
+
+    def test_failure(self):
+        self.setupStep(CheckOutSource())
+        self.setProperty('project', 'WebKit/WebKit')
+        self.expectRemoteCommands(
+            ExpectShell(
+                workdir='wkdir',
+                timeout=7200,
+                logEnviron=False,
+                env=self.ENV,
+                command=['git', '--version'],
+            ) + ExpectShell.log('stdio', stdout='git version 2.32.3 (Apple Git-135)\n') + 0,
+            Expect(
+                'stat', dict(
+                    file='wkdir/.buildbot-patched',
+                    logEnviron=False,
+                ),
+            ) + 0,
+            ExpectShell(
+                workdir='wkdir',
+                timeout=7200,
+                logEnviron=False,
+                env=self.ENV,
+                command=['git', 'clean', '-f', '-f', '-d', '-x'],
+            ) + 0,
+            Expect(
+                'listdir', dict(
+                    dir='wkdir',
+                    timeout=7200,
+                    logEnviron=False,
+                ),
+            ) + 0,
+            ExpectShell(
+                workdir='wkdir',
+                timeout=7200,
+                logEnviron=False,
+                env=self.ENV,
+                command=['git', 'clone', 'https://github.com/WebKit/WebKit.git', '.', '--progress'],
+            ) + 1,
+            Expect(
+                'rmdir', dict(
+                    dir='wkdir',
+                    timeout=7200,
+                    logEnviron=False,
+                ),
+            )
+        )
+        self.expectOutcome(result=FAILURE, state_string='Failed to updated working directory')
+        return self.runStep()
 
 
 class TestShowIdentifier(BuildStepMixinAdditions, unittest.TestCase):
@@ -5989,6 +6305,117 @@ class TestShowIdentifier(BuildStepMixinAdditions, unittest.TestCase):
         return self.runStep()
 
 
+class TestInstallHooks(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def test_no_remote(self):
+        self.setupStep(InstallHooks())
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        timeout=30,
+                        logEnviron=False,
+                        command=['git', 'config', 'include.path', '../metadata/git_config_extension']) +
+            ExpectShell.log('stdio', stdout='Unexpected failure') + 0,
+            ExpectShell(workdir='wkdir',
+                        timeout=30,
+                        logEnviron=False,
+                        command=['python3', 'Tools/Scripts/git-webkit', 'install-hooks', 'pre-push', '--mode', 'no-radar']) +
+            ExpectShell.log('stdio', stdout='Unexpected failure') + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Installed hooks to checkout')
+        return self.runStep()
+
+    def test_unknown_remote(self):
+        self.setupStep(InstallHooks())
+        self.setProperty('github.head.repo.full_name', 'JonWBedard/WebKit-igalia')
+        self.setProperty('project', 'Igalia/WebKit')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        timeout=30,
+                        logEnviron=False,
+                        command=['git', 'config', 'include.path', '../metadata/git_config_extension']) +
+            ExpectShell.log('stdio', stdout='Unexpected failure') + 0,
+            ExpectShell(workdir='wkdir',
+                        timeout=30,
+                        logEnviron=False,
+                        command=['python3', 'Tools/Scripts/git-webkit', 'install-hooks', 'pre-push', '--mode', 'no-radar']) +
+            ExpectShell.log('stdio', stdout='Unexpected failure') + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Installed hooks to checkout')
+        return self.runStep()
+
+    def test_origin_remote(self):
+        self.setupStep(InstallHooks())
+        self.setProperty('github.head.repo.full_name', 'JonWBedard/WebKit')
+        self.setProperty('project', 'WebKit/WebKit')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        timeout=30,
+                        logEnviron=False,
+                        command=['git', 'config', 'include.path', '../metadata/git_config_extension']) +
+            ExpectShell.log('stdio', stdout='Unexpected failure') + 0,
+            ExpectShell(workdir='wkdir',
+                        timeout=30,
+                        logEnviron=False,
+                        command=[
+                            'python3', 'Tools/Scripts/git-webkit',
+                            'install-hooks', 'pre-push', '--mode', 'no-radar',
+                            '--level', 'github.com:JonWBedard/WebKit=0',
+                        ]) + ExpectShell.log('stdio', stdout='Unexpected failure') + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Installed hooks to checkout')
+        return self.runStep()
+
+    def test_apple_remote(self):
+        self.setupStep(InstallHooks())
+        self.setProperty('github.head.repo.full_name', 'JonWBedard/WebKit-apple')
+        self.setProperty('project', 'apple/WebKit')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        timeout=30,
+                        logEnviron=False,
+                        command=['git', 'config', 'include.path', '../metadata/git_config_extension']) +
+            ExpectShell.log('stdio', stdout='Unexpected failure') + 0,
+            ExpectShell(workdir='wkdir',
+                        timeout=30,
+                        logEnviron=False,
+                        command=[
+                            'python3', 'Tools/Scripts/git-webkit',
+                            'install-hooks', 'pre-push', '--mode', 'no-radar',
+                            '--level', 'github.com:JonWBedard/WebKit-apple=2',
+                        ]) + ExpectShell.log('stdio', stdout='Unexpected failure') + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Installed hooks to checkout')
+        return self.runStep()
+
+    def test_failure(self):
+        self.setupStep(InstallHooks())
+        self.setProperty('github.head.repo.full_name', 'JonWBedard/WebKit')
+        self.setProperty('project', 'WebKit/WebKit')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        timeout=30,
+                        logEnviron=False,
+                        command=['git', 'config', 'include.path', '../metadata/git_config_extension']) +
+            ExpectShell.log('stdio', stdout='Unexpected failure') + 0,
+            ExpectShell(workdir='wkdir',
+                        timeout=30,
+                        logEnviron=False,
+                        command=[
+                            'python3', 'Tools/Scripts/git-webkit',
+                            'install-hooks', 'pre-push', '--mode', 'no-radar',
+                            '--level', 'github.com:JonWBedard/WebKit=0',
+                        ]) + ExpectShell.log('stdio', stdout='Unexpected failure') + 2,
+        )
+        self.expectOutcome(result=FAILURE, state_string='Failed to install hooks to checkout')
+        return self.runStep()
+
+
 class TestFetchBranches(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
         self.longMessage = True
@@ -6005,7 +6432,12 @@ class TestFetchBranches(BuildStepMixinAdditions, unittest.TestCase):
                         logEnviron=False,
                         command=['git', 'fetch', 'origin', '--prune']) +
             ExpectShell.log('stdio', stdout='   fb192c1de607..afb17ed1708b  main       -> origin/main\n') +
-            0,
+            0, ExpectShell(
+                workdir='wkdir',
+                timeout=300,
+                logEnviron=False,
+                command=['git', 'config', 'credential.helper', '!echo_credentials() { sleep 1; echo "username=${GIT_USER}"; echo "password=${GIT_PASSWORD}"; }; echo_credentials'],
+            ) + 0,
         )
         self.expectOutcome(result=SUCCESS)
         return self.runStep()
@@ -6061,7 +6493,12 @@ class TestFetchBranches(BuildStepMixinAdditions, unittest.TestCase):
                         logEnviron=False,
                         command=['git', 'fetch',  'origin', '--prune']) +
             ExpectShell.log('stdio', stdout="fatal: unable to access 'https://github.com/WebKit/WebKit/': Could not resolve host: github.com\n") +
-            2,
+            2, ExpectShell(
+                workdir='wkdir',
+                timeout=300,
+                logEnviron=False,
+                command=['git', 'config', 'credential.helper', '!echo_credentials() { sleep 1; echo "username=${GIT_USER}"; echo "password=${GIT_PASSWORD}"; }; echo_credentials'],
+            ) + 0,
         )
         self.expectOutcome(result=FAILURE)
         return self.runStep()
@@ -6310,10 +6747,10 @@ class TestValidateSquashed(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['git', 'log', '--oneline', 'HEAD', '^origin/main', '--max-count=2'],
+                        command=['git', 'log', '--format=format:"%H"', 'HEAD', '^origin/main', '--max-count=51'],
                         )
             + 0
-            + ExpectShell.log('stdio', stdout='e1eb24603493 (HEAD -> eng/pull-request-branch) First line of commit\n'),
+            + ExpectShell.log('stdio', stdout='e1eb24603493\n'),
         )
         self.expectOutcome(result=SUCCESS, state_string='Verified commit is squashed')
         return self.runStep()
@@ -6324,13 +6761,10 @@ class TestValidateSquashed(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['git', 'log', '--oneline', 'HEAD', '^origin/main', '--max-count=2'],
+                        command=['git', 'log', '--format=format:"%H"', 'HEAD', '^origin/main', '--max-count=51'],
                         )
             + 0
-            + ExpectShell.log('stdio', stdout='''e1eb24603493 (HEAD -> eng/pull-request-branch) Commit Series (3)
-08abb9ddcbb5 Commit Series (2)
-45cf3efe4dfb Commit Series (1)
-'''),
+            + ExpectShell.log('stdio', stdout='e1eb24603493\n08abb9ddcbb5\n45cf3efe4dfb\n'),
         )
         self.expectOutcome(result=FAILURE, state_string='Can only land squashed commits')
         rc = self.runStep()
@@ -6346,10 +6780,10 @@ class TestValidateSquashed(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['git', 'log', '--oneline', 'eng/pull-request-branch', '^main', '--max-count=2'],
+                        command=['git', 'log', '--format=format:"%H"', 'eng/pull-request-branch', '^main', '--max-count=51'],
                         )
             + 0
-            + ExpectShell.log('stdio', stdout='e1eb24603493 (HEAD -> eng/pull-request-branch) First line of commit\n'),
+            + ExpectShell.log('stdio', stdout='e1eb24603493\n'),
         )
         self.expectOutcome(result=SUCCESS, state_string='Verified commit is squashed')
         return self.runStep()
@@ -6362,13 +6796,10 @@ class TestValidateSquashed(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['git', 'log', '--oneline', 'eng/pull-request-branch', '^main', '--max-count=2'],
+                        command=['git', 'log', '--format=format:"%H"', 'eng/pull-request-branch', '^main', '--max-count=51'],
                         )
             + 0
-            + ExpectShell.log('stdio', stdout='''e1eb24603493 (HEAD -> eng/pull-request-branch) Commit Series (3)
-08abb9ddcbb5 Commit Series (2)
-45cf3efe4dfb Commit Series (1)
-'''),
+            + ExpectShell.log('stdio', stdout='e1eb24603493\n08abb9ddcbb5\n45cf3efe4dfb\n'),
         )
         self.expectOutcome(result=FAILURE, state_string='Can only land squashed commits')
         rc = self.runStep()
@@ -6384,7 +6815,7 @@ class TestValidateSquashed(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['git', 'log', '--oneline', 'eng/pull-request-branch', '^main', '--max-count=2'],
+                        command=['git', 'log', '--format=format:"%H"', 'eng/pull-request-branch', '^main', '--max-count=51'],
                         )
             + 0
             + ExpectShell.log('stdio', stdout=''),
@@ -6393,6 +6824,46 @@ class TestValidateSquashed(BuildStepMixinAdditions, unittest.TestCase):
         rc = self.runStep()
         self.assertEqual(self.getProperty('comment_text'), 'This change contains multiple commits which are not squashed together, blocking PR #1234. Please squash the commits to land.')
         self.assertEqual(self.getProperty('build_finish_summary'), 'Can only land squashed commits')
+        return rc
+
+    def test_success_multiple_commits_cherry_pick(self):
+        self.setupStep(ValidateSquashed())
+        self.setProperty('github.number', '1234')
+        self.setProperty('github.base.ref', 'main')
+        self.setProperty('github.head.ref', 'eng/pull-request-branch')
+        self.setProperty('classification', ['Cherry-pick'])
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logEnviron=False,
+                        command=['git', 'log', '--format=format:"%H"', 'eng/pull-request-branch', '^main', '--max-count=51'],
+                        )
+            + 0
+            + ExpectShell.log('stdio', stdout='e1eb24603493\n08abb9ddcbb5\n45cf3efe4dfb\n'),
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Commit sequence is entirely cherry-picks')
+        rc = self.runStep()
+        self.assertEqual(self.getProperty('commit_count'), 3)
+        return rc
+
+    def test_failure_too_many_commits_cherry_pick(self):
+        self.setupStep(ValidateSquashed())
+        self.setProperty('github.number', '1234')
+        self.setProperty('github.base.ref', 'main')
+        self.setProperty('github.head.ref', 'eng/pull-request-branch')
+        self.setProperty('classification', ['Cherry-pick'])
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logEnviron=False,
+                        command=['git', 'log', '--format=format:"%H"', 'eng/pull-request-branch', '^main', '--max-count=51'],
+                        )
+            + 0
+            + ExpectShell.log('stdio', stdout='e1eb24603493\n' + 50 * '08abb9ddcbb5\n'),
+        )
+        self.expectOutcome(result=FAILURE, state_string='Too many commits in a pull-request')
+        rc = self.runStep()
+        self.assertEqual(self.getProperty('commit_count'), 51)
+        self.assertEqual(self.getProperty('comment_text'), 'Policy allows for multiple cherry-picks to be landed simultaneously but there is a limit of 50, blocking PR #1234 because it has 51 commits. Please break this change into multiple pull requests.')
+        self.assertEqual(self.getProperty('build_finish_summary'), 'Too many commits in a pull-request')
         return rc
 
 
@@ -6481,6 +6952,17 @@ class TestAddReviewerToCommitMessage(BuildStepMixinAdditions, unittest.TestCase)
         self.setProperty('github.base.ref', 'main')
         self.setProperty('github.head.ref', 'eng/pull-request-branch')
         self.setProperty('reviewers_full_names', [])
+        self.expectOutcome(result=SKIPPED, state_string='finished (skipped)')
+        return self.runStep()
+
+    def test_skip_cherry_pick(self):
+        self.setupStep(AddReviewerToCommitMessage())
+        self.setProperty('github.number', '1234')
+        self.setProperty('github.base.ref', 'main')
+        self.setProperty('github.head.ref', 'eng/pull-request-branch')
+        self.setProperty('reviewers_full_names', ['WebKit Reviewer', 'Other Reviewer'])
+        self.setProperty('owners', ['webkit-commit-queue'])
+        self.setProperty('classification', ['Cherry-pick'])
         self.expectOutcome(result=SKIPPED, state_string='finished (skipped)')
         return self.runStep()
 
@@ -6629,11 +7111,16 @@ class TestValidateCommitMessage(BuildStepMixinAdditions, unittest.TestCase):
 
 
 class TestCanonicalize(BuildStepMixinAdditions, unittest.TestCase):
-    ENV = dict(FILTER_BRANCH_SQUELCH_WARNING='1')
+    ENV = dict(
+        FILTER_BRANCH_SQUELCH_WARNING='1',
+        GIT_USER='webkit-commit-queue',
+        GIT_PASSWORD='password',
+    )
 
     def setUp(self):
         self.longMessage = True
         Contributors.load = mock_load_contributors
+        GitHub.credentials = lambda user=None: ('webkit-commit-queue', 'password')
         return self.setUpBuildStep()
 
     def tearDown(self):
@@ -6745,6 +7232,65 @@ class TestCanonicalize(BuildStepMixinAdditions, unittest.TestCase):
             ) + 0,
         )
         self.expectOutcome(result=SUCCESS, state_string='Canonicalized commit')
+        return self.runStep()
+
+    def test_success_multiple_commits(self):
+        self.setupStep(Canonicalize())
+        self.setProperty('github.number', '1234')
+        self.setProperty('github.base.ref', 'main')
+        self.setProperty('github.head.ref', 'eng/pull-request-branch')
+        self.setProperty('owners', ['webkit-commit-queue'])
+        self.setProperty('remote', 'origin')
+        self.setProperty('commit_count', 4)
+
+        gmtoffset = int(time.localtime().tm_gmtoff * 100 / (60 * 60))
+        fixed_time = int(time.time())
+        date = f'{int(time.time())} {gmtoffset}'
+        time.time = lambda: fixed_time
+
+        self.expectRemoteCommands(
+            ExpectShell(
+                workdir='wkdir',
+                timeout=300,
+                logEnviron=False,
+                env=self.ENV,
+                command=['/bin/sh', '-c', 'rm .git/identifiers.json || true'],
+            ) + 0, ExpectShell(
+                workdir='wkdir',
+                timeout=300,
+                logEnviron=False,
+                env=self.ENV,
+                command=['git', 'pull', 'origin', 'main', '--rebase'],
+            ) + 0, ExpectShell(
+                workdir='wkdir',
+                timeout=300,
+                logEnviron=False,
+                env=self.ENV,
+                command=['git', 'branch', '-f', 'main', 'eng/pull-request-branch'],
+            ) + 0, ExpectShell(
+                workdir='wkdir',
+                timeout=300,
+                logEnviron=False,
+                env=self.ENV,
+                command=['git', 'checkout', 'main'],
+            ) + 0, ExpectShell(
+                workdir='wkdir',
+                timeout=300,
+                logEnviron=False,
+                env=self.ENV,
+                command=['python3', 'Tools/Scripts/git-webkit', 'canonicalize', '-n', '4'],
+            ) + 0, ExpectShell(workdir='wkdir',
+                logEnviron=False,
+                env=self.ENV,
+                timeout=300,
+                command=[
+                    'git', 'filter-branch', '-f',
+                    '--env-filter', "GIT_AUTHOR_DATE='{date}';GIT_COMMITTER_DATE='{date}';GIT_COMMITTER_NAME='WebKit Committer';GIT_COMMITTER_EMAIL='committer@webkit.org'".format(date=date),
+                    'HEAD...HEAD~1',
+                ],
+            ) + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Canonicalized commits')
         return self.runStep()
 
     def test_success_branch(self):
@@ -6984,7 +7530,7 @@ Canonical link: <a href="https://commits.webkit.org/249006@main">https://commits
 ''',
             )
 
-            return True
+            return defer.succeed(True)
 
         UpdatePullRequest.update_pr = update_pr
         self.setupStep(UpdatePullRequest())
@@ -6996,7 +7542,7 @@ Canonical link: <a href="https://commits.webkit.org/249006@main">https://commits
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
                         timeout=300,
-                        command=['git', 'log', '-1', '--no-decorate'])
+                        command=['git', 'log', '--no-decorate', '-1'])
             + 0
             + ExpectShell.log('stdio', stdout='''commit 44a3b7100bd5dba51c57d874d3e89f89081e7886
 Author: Jonathan Bedard <jbedard@apple.com>
@@ -7023,6 +7569,7 @@ Date:   Tue Mar 29 16:04:35 2022 -0700
             self.assertEqual(self.getProperty('is_test_gardening'), False)
             return rc
 
+    @defer.inlineCallbacks
     def test_success_gardening(self):
         def update_pr(x, pr_number, title, description, base=None, head=None, repository_url=None):
             self.assertEqual(pr_number, '1234')
@@ -7046,7 +7593,7 @@ Canonical link: <a href="https://commits.webkit.org/249833@main">https://commits
 ''',
             )
 
-            return True
+            return defer.succeed(True)
 
         UpdatePullRequest.update_pr = update_pr
         self.setupStep(UpdatePullRequest())
@@ -7058,7 +7605,7 @@ Canonical link: <a href="https://commits.webkit.org/249833@main">https://commits
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
                         timeout=300,
-                        command=['git', 'log', '-1', '--no-decorate'])
+                        command=['git', 'log', '--no-decorate', '-1'])
             + 0
             + ExpectShell.log('stdio', stdout='''commit 6a50b47fd71d922f753c06f46917086c839520b
 Author: Karl Rackler <rackler@apple.com>
@@ -7076,14 +7623,15 @@ Date:   Thu Apr 21 00:25:03 2022 +0000
         )
         self.expectOutcome(result=SUCCESS, state_string='Updated pull request')
         with current_hostname(EWS_BUILD_HOSTNAME):
-            rc = self.runStep()
+            rc = yield self.runStep()
             self.assertEqual(self.getProperty('bug_id'), '239577')
             self.assertEqual(self.getProperty('is_test_gardening'), True)
             return rc
 
+    @defer.inlineCallbacks
     def test_failure(self):
         def update_pr(x, pr_number, title, description, base=None, head=None, repository_url=None):
-            return False
+            return defer.succeed(False)
 
         UpdatePullRequest.update_pr = update_pr
         self.setupStep(UpdatePullRequest())
@@ -7095,7 +7643,7 @@ Date:   Thu Apr 21 00:25:03 2022 +0000
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
                         timeout=300,
-                        command=['git', 'log', '-1', '--no-decorate'])
+                        command=['git', 'log', '--no-decorate', '-1'])
             + 0
             + ExpectShell.log('stdio', stdout='''commit 44a3b7100bd5dba51c57d874d3e89f89081e7886
 Author: Jonathan Bedard <jbedard@apple.com>
@@ -7117,48 +7665,169 @@ Date:   Tue Mar 29 16:04:35 2022 -0700
         )
         self.expectOutcome(result=FAILURE, state_string='Failed to update pull request')
         with current_hostname(EWS_BUILD_HOSTNAME):
-            rc = self.runStep()
+            rc = yield self.runStep()
             self.assertEqual(self.getProperty('bug_id'), '238553')
             self.assertEqual(self.getProperty('is_test_gardening'), False)
             return rc
 
+    def test_success_series(self):
 
-class TestDeleteStaleBuildFiles(BuildStepMixinAdditions, unittest.TestCase):
-    def setUp(self):
-        self.longMessage = True
-        return self.setUpBuildStep()
+        def update_pr(x, pr_number, title, description, base=None, head=None, repository_url=None):
+            self.assertEqual(pr_number, '1234')
+            self.assertEqual(title, 'Cherry-pick 252432.1026@safari-7614-branch (2a8469e53b2f). rdar://107367418')
+            self.assertEqual(base, 'main')
+            self.assertEqual(head, 'JonWBedard:eng/pull-request-branch')
 
-    def tearDown(self):
-        return self.tearDownBuildStep()
+            self.assertEqual(
+                description,
+                '''#### 9140b95e718e7342366bbcdc29cb1ba0f9328422
+<pre>
+Cherry-pick 252432.1026@safari-7614-branch (2a8469e53b2f). rdar://107367418
 
-    def test_success(self):
-        self.setupStep(DeleteStaleBuildFiles())
-        self.setProperty('fullPlatform', 'win')
+    Remove inheritance of designMode attribute
+    <a href="https://bugs.webkit.org/show_bug.cgi?id=248615">https://bugs.webkit.org/show_bug.cgi?id=248615</a>
+    rdar://102868995
+
+    Reviewed by Wenson Hsieh and Jonathan Bedard.
+
+    Stop making design mode inherit across frame boundaries.
+
+    This will prevent a form element from being injected into a victim page via drag &amp; drop
+    and the new behavior matches that of Firefox and Chrome.
+
+    * LayoutTests/editing/editability/design-mode-does-not-inherit-across-frames-expected.txt: Added.
+    * LayoutTests/editing/editability/design-mode-does-not-inherit-across-frames.html: Added.
+    * LayoutTests/fast/dom/HTMLElement/iscontenteditable-designmodeon-allinherit-subframe-expected.txt:
+    * LayoutTests/fast/dom/HTMLElement/iscontenteditable-designmodeon-allinherit-subframe.html:
+    * Source/WebCore/dom/Document.cpp:
+    (WebCore::Document::setDesignMode):
+    (WebCore::Document::inDesignMode const): Deleted.
+    * Source/WebCore/dom/Document.h:
+    (WebCore::Document::inDesignMode const):
+
+    Canonical link: <a href="https://commits.webkit.org/252432.1026@safari-7614-branch">https://commits.webkit.org/252432.1026@safari-7614-branch</a>
+
+Canonical link: <a href="https://commits.webkit.org/262299@main">https://commits.webkit.org/262299@main</a>
+</pre>
+----------------------------------------------------------------------
+#### 6ec5319be307db36a27ea61d208cf68ce84abd67
+<pre>
+Cherry-pick 252432.1024@safari-7614-branch (2ea437d75522). rdar://107367090
+
+    Use-after-free in ContactsManager::select
+    <a href="https://bugs.webkit.org/show_bug.cgi?id=250351">https://bugs.webkit.org/show_bug.cgi?id=250351</a>
+    rdar://101241436
+
+    Reviewed by Wenson Hsieh and Jonathan Bedard.
+
+    `ContactsManager` can be destroyed prior to receiving the user&apos;s selection, which
+    is performed asynchronously. Deploy `WeakPtr` to avoid a use-after-free in this
+    scenario.
+
+    A test was unable to be added, as the failure scenario involves opening a new
+    Window, using the new Window object&apos;s `navigator.contacts`, and performing user
+    interaction. Creating a new Window results in the creation of a new web view,
+    however all of our existing UIScriptController hooks only apply to the original
+    (main) web view. Consequently, it is not possible to use our testing
+    infrastructure to dismiss the contact picker and trigger the callback in the
+    failure scenario.
+
+    * Source/WebCore/Modules/contact-picker/ContactsManager.cpp:
+    (WebCore::ContactsManager::select):
+    * Source/WebCore/Modules/contact-picker/ContactsManager.h:
+
+    Canonical link: <a href="https://commits.webkit.org/252432.1024@safari-7614-branch">https://commits.webkit.org/252432.1024@safari-7614-branch</a>
+
+Canonical link: <a href="https://commits.webkit.org/262298@main">https://commits.webkit.org/262298@main</a>
+</pre>
+''',
+            )
+
+            return defer.succeed(True)
+
+        UpdatePullRequest.update_pr = update_pr
+        self.setupStep(UpdatePullRequest())
+        self.setProperty('github.number', '1234')
+        self.setProperty('github.head.user.login', 'JonWBedard')
+        self.setProperty('github.head.ref', 'eng/pull-request-branch')
+        self.setProperty('github.base.ref', 'main')
+        self.setProperty('commit_count', 2)
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
-                        command=['python3', 'Tools/CISupport/delete-stale-build-files', '--platform=win'],
                         logEnviron=False,
-                        timeout=600,
-                        )
-            + 0,
-        )
-        self.expectOutcome(result=SUCCESS, state_string='Deleted stale build files')
-        return self.runStep()
+                        timeout=300,
+                        command=['git', 'log', '--no-decorate', '-2'])
+            + 0
+            + ExpectShell.log('stdio', stdout='''commit 9140b95e718e7342366bbcdc29cb1ba0f9328422
+Author: Jonathan Bedard <jbedard@apple.com>
+Date:   Tue Mar 29 16:04:35 2023 -0700
 
-    def test_failure(self):
-        self.setupStep(DeleteStaleBuildFiles())
-        self.setProperty('fullPlatform', 'win')
-        self.expectRemoteCommands(
-            ExpectShell(workdir='wkdir',
-                        command=['python3', 'Tools/CISupport/delete-stale-build-files', '--platform=win'],
-                        logEnviron=False,
-                        timeout=600,
-                        )
-            + ExpectShell.log('stdio', stdout='Unexpected error.')
-            + 2,
+    Cherry-pick 252432.1026@safari-7614-branch (2a8469e53b2f). rdar://107367418
+
+        Remove inheritance of designMode attribute
+        https://bugs.webkit.org/show_bug.cgi?id=248615
+        rdar://102868995
+
+        Reviewed by Wenson Hsieh and Jonathan Bedard.
+
+        Stop making design mode inherit across frame boundaries.
+
+        This will prevent a form element from being injected into a victim page via drag & drop
+        and the new behavior matches that of Firefox and Chrome.
+
+        * LayoutTests/editing/editability/design-mode-does-not-inherit-across-frames-expected.txt: Added.
+        * LayoutTests/editing/editability/design-mode-does-not-inherit-across-frames.html: Added.
+        * LayoutTests/fast/dom/HTMLElement/iscontenteditable-designmodeon-allinherit-subframe-expected.txt:
+        * LayoutTests/fast/dom/HTMLElement/iscontenteditable-designmodeon-allinherit-subframe.html:
+        * Source/WebCore/dom/Document.cpp:
+        (WebCore::Document::setDesignMode):
+        (WebCore::Document::inDesignMode const): Deleted.
+        * Source/WebCore/dom/Document.h:
+        (WebCore::Document::inDesignMode const):
+
+        Canonical link: https://commits.webkit.org/252432.1026@safari-7614-branch
+
+    Canonical link: https://commits.webkit.org/262299@main
+
+commit 6ec5319be307db36a27ea61d208cf68ce84abd67
+Author: Jonathan Bedard <jbedard@apple.com>
+Date:   Tue Mar 29 16:04:35 2023 -0700
+
+    Cherry-pick 252432.1024@safari-7614-branch (2ea437d75522). rdar://107367090
+
+        Use-after-free in ContactsManager::select
+        https://bugs.webkit.org/show_bug.cgi?id=250351
+        rdar://101241436
+
+        Reviewed by Wenson Hsieh and Jonathan Bedard.
+
+        `ContactsManager` can be destroyed prior to receiving the user's selection, which
+        is performed asynchronously. Deploy `WeakPtr` to avoid a use-after-free in this
+        scenario.
+
+        A test was unable to be added, as the failure scenario involves opening a new
+        Window, using the new Window object's `navigator.contacts`, and performing user
+        interaction. Creating a new Window results in the creation of a new web view,
+        however all of our existing UIScriptController hooks only apply to the original
+        (main) web view. Consequently, it is not possible to use our testing
+        infrastructure to dismiss the contact picker and trigger the callback in the
+        failure scenario.
+
+        * Source/WebCore/Modules/contact-picker/ContactsManager.cpp:
+        (WebCore::ContactsManager::select):
+        * Source/WebCore/Modules/contact-picker/ContactsManager.h:
+
+        Canonical link: https://commits.webkit.org/252432.1024@safari-7614-branch
+
+    Canonical link: https://commits.webkit.org/262298@main
+'''),
         )
-        self.expectOutcome(result=FAILURE, state_string='Deleted stale build files (failure)')
-        return self.runStep()
+        self.expectOutcome(result=SUCCESS, state_string='Updated pull request')
+        with current_hostname(EWS_BUILD_HOSTNAME):
+            rc = self.runStep()
+            self.assertEqual(self.getProperty('bug_id'), '248615')
+            self.assertEqual(self.getProperty('is_test_gardening'), False)
+            return rc
 
 
 if __name__ == '__main__':

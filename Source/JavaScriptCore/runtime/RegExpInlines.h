@@ -87,7 +87,7 @@ ALWAYS_INLINE bool RegExp::hasCodeFor(Yarr::CharSize charSize)
     return false;
 }
 
-ALWAYS_INLINE void RegExp::compileIfNecessary(VM& vm, Yarr::CharSize charSize)
+ALWAYS_INLINE void RegExp::compileIfNecessary(VM& vm, Yarr::CharSize charSize, std::optional<StringView> sampleString)
 {
     if (hasCodeFor(charSize))
         return;
@@ -95,7 +95,7 @@ ALWAYS_INLINE void RegExp::compileIfNecessary(VM& vm, Yarr::CharSize charSize)
     if (m_state == ParseError)
         return;
 
-    compile(&vm, charSize);
+    compile(&vm, charSize, sampleString);
 }
 
 template<typename VectorType, Yarr::MatchFrom matchFrom>
@@ -106,7 +106,7 @@ ALWAYS_INLINE int RegExp::matchInline(JSGlobalObject* nullOrGlobalObject, VM& vm
     m_rtMatchTotalSubjectStringLen += (double)(s.length() - startOffset);
 #endif
 
-    compileIfNecessary(vm, s.is8Bit() ? Yarr::CharSize::Char8 : Yarr::CharSize::Char16);
+    compileIfNecessary(vm, s.is8Bit() ? Yarr::CharSize::Char8 : Yarr::CharSize::Char16, s);
 
     auto throwError = [&] {
         if (matchFrom == Yarr::MatchFrom::CompilerThread)
@@ -123,8 +123,7 @@ ALWAYS_INLINE int RegExp::matchInline(JSGlobalObject* nullOrGlobalObject, VM& vm
     if (m_state == ParseError)
         return throwError();
 
-    int offsetVectorSize = (m_numSubpatterns + 1) * 2;
-    ovector.resize(offsetVectorSize);
+    ovector.resize(offsetVectorSize());
     int* offsetVector = ovector.data();
 
     int result;
@@ -227,7 +226,7 @@ ALWAYS_INLINE bool RegExp::hasMatchOnlyCodeFor(Yarr::CharSize charSize)
     return false;
 }
 
-ALWAYS_INLINE void RegExp::compileIfNecessaryMatchOnly(VM& vm, Yarr::CharSize charSize)
+ALWAYS_INLINE void RegExp::compileIfNecessaryMatchOnly(VM& vm, Yarr::CharSize charSize, std::optional<StringView> sampleString)
 {
     if (hasMatchOnlyCodeFor(charSize))
         return;
@@ -235,7 +234,7 @@ ALWAYS_INLINE void RegExp::compileIfNecessaryMatchOnly(VM& vm, Yarr::CharSize ch
     if (m_state == ParseError)
         return;
 
-    compileMatchOnly(&vm, charSize);
+    compileMatchOnly(&vm, charSize, sampleString);
 }
 
 template<Yarr::MatchFrom matchFrom>
@@ -246,7 +245,7 @@ ALWAYS_INLINE MatchResult RegExp::matchInline(JSGlobalObject* nullOrGlobalObject
     m_rtMatchOnlyTotalSubjectStringLen += (double)(s.length() - startOffset);
 #endif
 
-    compileIfNecessaryMatchOnly(vm, s.is8Bit() ? Yarr::CharSize::Char8 : Yarr::CharSize::Char16);
+    compileIfNecessaryMatchOnly(vm, s.is8Bit() ? Yarr::CharSize::Char8 : Yarr::CharSize::Char16, s);
 
     auto throwError = [&] {
         if (matchFrom == Yarr::MatchFrom::CompilerThread)
@@ -290,11 +289,10 @@ ALWAYS_INLINE MatchResult RegExp::matchInline(JSGlobalObject* nullOrGlobalObject
     }
 #endif
 
-    int offsetVectorSize = (m_numSubpatterns + 1) * 2;
     int* offsetVector;
     int result;
     Vector<int, 32> nonReturnedOvector;
-    nonReturnedOvector.grow(offsetVectorSize);
+    nonReturnedOvector.grow(offsetVectorSize());
     offsetVector = nonReturnedOvector.data();
     {
         constexpr bool usesPatternContextBuffer = false;

@@ -53,7 +53,7 @@ namespace WebKit {
 struct WebsitePoliciesData {
     static void applyToDocumentLoader(WebsitePoliciesData&&, WebCore::DocumentLoader&);
 
-    bool contentBlockersEnabled { true };
+    WebCore::ContentExtensionEnablement contentExtensionEnablement;
     HashMap<WTF::String, Vector<WTF::String>> activeContentRuleListActionPatterns;
     OptionSet<WebsiteAutoplayQuirk> allowedAutoplayQuirks;
     WebsiteAutoplayPolicy autoplayPolicy { WebsiteAutoplayPolicy::Default };
@@ -77,9 +77,6 @@ struct WebsitePoliciesData {
     OptionSet<WebCore::NetworkConnectionIntegrity> networkConnectionIntegrityPolicy;
     bool idempotentModeAutosizingOnlyHonorsPercentages { false };
     bool allowPrivacyProxy { true };
-
-    void encode(IPC::Encoder&) const;
-    static std::optional<WebsitePoliciesData> decode(IPC::Decoder&);
 };
 
 } // namespace WebKit

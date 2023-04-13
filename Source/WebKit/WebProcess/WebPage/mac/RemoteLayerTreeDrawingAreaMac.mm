@@ -28,10 +28,11 @@
 
 #if PLATFORM(MAC)
 
+#import "Logging.h"
 #import "WebPage.h"
 #import "WebPageCreationParameters.h"
-#import <WebCore/FrameView.h>
 #import <WebCore/GraphicsLayer.h>
+#import <WebCore/LocalFrameView.h>
 #import <WebCore/RenderLayerBacking.h>
 
 namespace WebKit {
@@ -63,6 +64,11 @@ std::optional<WebCore::DestinationColorSpace> RemoteLayerTreeDrawingAreaMac::dis
     return m_displayColorSpace;
 }
 
+void RemoteLayerTreeDrawingAreaMac::mainFrameContentSizeChanged(const WebCore::IntSize&)
+{
+    // Do nothing. This is only relevant to DelegatedToNativeScrollView implementations.
+}
+
 void RemoteLayerTreeDrawingAreaMac::applyTransientZoomToPage(double scale, FloatPoint origin)
 {
     auto& frameView = *m_webPage.mainFrameView();
@@ -91,7 +97,6 @@ void RemoteLayerTreeDrawingAreaMac::commitTransientZoom(double scale, WebCore::F
 
     scale *= m_webPage.viewScaleFactor();
     
-    // FIXME: Constrain scale and origin
     applyTransientZoomToPage(scale, origin);
 }
 
@@ -107,6 +112,12 @@ void RemoteLayerTreeDrawingAreaMac::willCommitLayerTree(RemoteLayerTreeTransacti
         return;
 
     transaction.setPageScalingLayerID(renderViewGraphicsLayer->primaryLayerID());
+
+    auto* scrolledContentsLayer = frameView->graphicsLayerForScrolledContents();
+    if (!scrolledContentsLayer)
+        return;
+
+    transaction.setScrolledContentsLayerID(scrolledContentsLayer->primaryLayerID());
 }
 
 } // namespace WebKit

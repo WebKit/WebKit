@@ -1228,7 +1228,7 @@ void testFastTLSLoad()
     BasicBlock* root = proc.addBlock();
 
     PatchpointValue* patchpoint = root->appendNew<PatchpointValue>(proc, pointerType(), Origin());
-    patchpoint->clobber(RegisterSetBuilder::macroClobberedRegisters());
+    patchpoint->clobber(RegisterSetBuilder::macroClobberedGPRs());
     patchpoint->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
             AllowMacroScratchRegisterUsage allowScratch(jit);
@@ -1248,7 +1248,7 @@ void testFastTLSStore()
     BasicBlock* root = proc.addBlock();
 
     PatchpointValue* patchpoint = root->appendNew<PatchpointValue>(proc, Void, Origin());
-    patchpoint->clobber(RegisterSetBuilder::macroClobberedRegisters());
+    patchpoint->clobber(RegisterSetBuilder::macroClobberedGPRs());
     patchpoint->numGPScratchRegisters = 1;
     patchpoint->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
@@ -1401,7 +1401,7 @@ void testShuffleDoesntTrashCalleeSaves()
             continue;
         ++i;
         PatchpointValue* patchpoint = root->appendNew<PatchpointValue>(proc, Int32, Origin());
-        patchpoint->clobber(RegisterSetBuilder::macroClobberedRegisters());
+        patchpoint->clobber(RegisterSetBuilder::macroClobberedGPRs());
         patchpoint->resultConstraints = { ValueRep::reg(reg.gpr()) };
         patchpoint->setGenerator(
             [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
@@ -1421,7 +1421,7 @@ void testShuffleDoesntTrashCalleeSaves()
     Value* arg8 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::toArgumentRegister(7 % GPRInfo::numberOfArgumentRegisters));
 
     PatchpointValue* ptr = root->appendNew<PatchpointValue>(proc, Int64, Origin());
-    ptr->clobber(RegisterSetBuilder::macroClobberedRegisters());
+    ptr->clobber(RegisterSetBuilder::macroClobberedGPRs());
     ptr->resultConstraints = { ValueRep::reg(GPRInfo::regCS0) };
     ptr->appendSomeRegister(arg1);
     ptr->setGenerator(
@@ -1453,7 +1453,7 @@ void testShuffleDoesntTrashCalleeSaves()
         constNumber, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8);
 
     PatchpointValue* voidPatch = unlikely->appendNew<PatchpointValue>(proc, Void, Origin());
-    voidPatch->clobber(RegisterSetBuilder::macroClobberedRegisters());
+    voidPatch->clobber(RegisterSetBuilder::macroClobberedGPRs());
     for (Value* v : patches)
         voidPatch->appendSomeRegister(v);
     voidPatch->appendSomeRegister(arg1);
@@ -1592,7 +1592,7 @@ static void testSimpleTuplePair(unsigned first, int64_t second)
     BasicBlock* root = proc.addBlock();
 
     PatchpointValue* patchpoint = root->appendNew<PatchpointValue>(proc, proc.addTuple({ Int32, Int64 }), Origin());
-    patchpoint->clobber(RegisterSetBuilder::macroClobberedRegisters());
+    patchpoint->clobber(RegisterSetBuilder::macroClobberedGPRs());
     patchpoint->resultConstraints = { ValueRep::SomeRegister, ValueRep::SomeRegister };
     patchpoint->setGenerator([&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
         AllowMacroScratchRegisterUsage allowScratch(jit);
@@ -1613,7 +1613,7 @@ static void testSimpleTuplePairUnused(unsigned first, int64_t second)
     BasicBlock* root = proc.addBlock();
 
     PatchpointValue* patchpoint = root->appendNew<PatchpointValue>(proc, proc.addTuple({ Int32, Int64, Double }), Origin());
-    patchpoint->clobber(RegisterSetBuilder::macroClobberedRegisters());
+    patchpoint->clobber(RegisterSetBuilder::macroClobberedGPRs());
     patchpoint->resultConstraints = { ValueRep::SomeRegister, ValueRep::SomeRegister, ValueRep::SomeRegister };
     patchpoint->setGenerator([&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
         AllowMacroScratchRegisterUsage allowScratch(jit);
@@ -1635,7 +1635,7 @@ static void testSimpleTuplePairStack(unsigned first, int64_t second)
     BasicBlock* root = proc.addBlock();
 
     PatchpointValue* patchpoint = root->appendNew<PatchpointValue>(proc, proc.addTuple({ Int32, Int64 }), Origin());
-    patchpoint->clobber(RegisterSetBuilder::macroClobberedRegisters());
+    patchpoint->clobber(RegisterSetBuilder::macroClobberedGPRs());
     patchpoint->resultConstraints = { ValueRep::SomeRegister, ValueRep::stackArgument(0) };
     patchpoint->setGenerator([&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
         AllowMacroScratchRegisterUsage allowScratch(jit);
@@ -1712,7 +1712,7 @@ static void tailDupedTuplePair(unsigned first, double second)
 
     Value* test = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
     PatchpointValue* patchpoint = root->appendNew<PatchpointValue>(proc, tupleType, Origin());
-    patchpoint->clobber(RegisterSetBuilder::macroClobberedRegisters());
+    patchpoint->clobber(RegisterSetBuilder::macroClobberedGPRs());
     patchpoint->resultConstraints = { ValueRep::SomeRegister, ValueRep::stackArgument(0) };
     patchpoint->setGenerator([&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
         AllowMacroScratchRegisterUsage allowScratch(jit);
@@ -1771,7 +1771,7 @@ static void tuplePairVariableLoop(unsigned first, uint64_t second)
         Value* first = body->appendNew<ExtractValue>(proc, Origin(), Int32, tuple, 0);
         Value* second = body->appendNew<ExtractValue>(proc, Origin(), Int64, tuple, 1);
         PatchpointValue* patchpoint = body->appendNew<PatchpointValue>(proc, tupleType, Origin());
-        patchpoint->clobber(RegisterSetBuilder::macroClobberedRegisters());
+        patchpoint->clobber(RegisterSetBuilder::macroClobberedGPRs());
         patchpoint->append({ first, ValueRep::SomeRegister });
         patchpoint->append({ second, ValueRep::SomeRegister });
         patchpoint->resultConstraints = { ValueRep::SomeEarlyRegister, ValueRep::stackArgument(0) };
@@ -1827,7 +1827,7 @@ static void tupleNestedLoop(int32_t first, double second)
         patchpoint->setGenerator([&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
             jit.move(params[3].gpr(), params[0].gpr());
             jit.move(params[0].gpr(), params[2].gpr());
-            jit.move(params[4].fpr(), params[1].fpr());
+            jit.moveDouble(params[4].fpr(), params[1].fpr());
         });
         root->appendNew<VariableValue>(proc, Set, Origin(), varOuter, patchpoint);
         root->appendNew<VariableValue>(proc, Set, Origin(), tookInner, root->appendIntConstant(proc, Origin(), Int32, 0));
@@ -1840,7 +1840,7 @@ static void tupleNestedLoop(int32_t first, double second)
         Value* second = outerLoop->appendNew<ExtractValue>(proc, Origin(), Double, tuple, 1);
         Value* third = outerLoop->appendNew<VariableValue>(proc, B3::Get, Origin(), tookInner);
         PatchpointValue* patchpoint = outerLoop->appendNew<PatchpointValue>(proc, tupleType, Origin());
-        patchpoint->clobber(RegisterSetBuilder::macroClobberedRegisters());
+        patchpoint->clobber(RegisterSetBuilder::macroClobberedGPRs());
         patchpoint->append({ first, ValueRep::SomeRegisterWithClobber });
         patchpoint->append({ second, ValueRep::SomeRegisterWithClobber });
         patchpoint->append({ third, ValueRep::SomeRegisterWithClobber });
@@ -1849,7 +1849,7 @@ static void tupleNestedLoop(int32_t first, double second)
             AllowMacroScratchRegisterUsage allowScratch(jit);
             jit.move(params[3].gpr(), params[0].gpr());
             jit.moveConditionally32(CCallHelpers::Equal, params[5].gpr(), CCallHelpers::TrustedImm32(0), params[0].gpr(), params[5].gpr(), params[2].gpr());
-            jit.move(params[4].fpr(), params[1].fpr());
+            jit.moveDouble(params[4].fpr(), params[1].fpr());
         });
         outerLoop->appendNew<VariableValue>(proc, Set, Origin(), varOuter, patchpoint);
         outerLoop->appendNew<VariableValue>(proc, Set, Origin(), varInner, patchpoint);
@@ -1862,7 +1862,7 @@ static void tupleNestedLoop(int32_t first, double second)
         Value* first = innerLoop->appendNew<ExtractValue>(proc, Origin(), Int32, tuple, 0);
         Value* second = innerLoop->appendNew<ExtractValue>(proc, Origin(), Double, tuple, 1);
         PatchpointValue* patchpoint = innerLoop->appendNew<PatchpointValue>(proc, tupleType, Origin());
-        patchpoint->clobber(RegisterSetBuilder::macroClobberedRegisters());
+        patchpoint->clobber(RegisterSetBuilder::macroClobberedGPRs());
         patchpoint->append({ first, ValueRep::SomeRegisterWithClobber });
         patchpoint->append({ second, ValueRep::SomeRegisterWithClobber });
         patchpoint->resultConstraints = { ValueRep::SomeRegister, ValueRep::SomeRegister, ValueRep::SomeEarlyRegister };
@@ -1870,7 +1870,7 @@ static void tupleNestedLoop(int32_t first, double second)
             AllowMacroScratchRegisterUsage allowScratch(jit);
             jit.move(params[3].gpr(), params[0].gpr());
             jit.move(CCallHelpers::TrustedImm32(0), params[2].gpr());
-            jit.move(params[4].fpr(), params[1].fpr());
+            jit.moveDouble(params[4].fpr(), params[1].fpr());
         });
         innerLoop->appendNew<VariableValue>(proc, Set, Origin(), varOuter, patchpoint);
         innerLoop->appendNew<VariableValue>(proc, Set, Origin(), varInner, patchpoint);
@@ -2350,6 +2350,184 @@ void testVectorAndConstantConstant(v128_t lhs, v128_t rhs)
             invoke<void>(*code, &vector);
             CHECK(bitEquals(vector, vectorAnd(vectorOr(operand.value, lhs), rhs)));
         }
+    }
+}
+
+void testVectorFmulByElementFloat()
+{
+    for (unsigned i = 0; i < 4; ++i) {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+
+        Value* address0 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+        Value* address1 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+        Value* address2 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR2);
+
+        Value* input0 = root->appendNew<MemoryValue>(proc, Load, V128, Origin(), address0);
+        Value* input1 = root->appendNew<MemoryValue>(proc, Load, V128, Origin(), address1);
+        Value* dup = root->appendNew<SIMDValue>(proc, Origin(), VectorDupElement, B3::V128, SIMDLane::f32x4, SIMDSignMode::None, static_cast<uint8_t>(i), input0);
+        Value* result = root->appendNew<SIMDValue>(proc, Origin(), VectorMul, B3::V128, SIMDLane::f32x4, SIMDSignMode::None, input1, dup);
+
+        root->appendNew<MemoryValue>(proc, Store, Origin(), result, address2);
+        root->appendNewControlValue(proc, Return, Origin());
+
+        auto code = compileProc(proc);
+
+        auto checkFloat = [&](float a, float b) {
+            if (std::isnan(a))
+                CHECK(std::isnan(b));
+            else
+                CHECK(a == b);
+        };
+
+        for (auto& operand0 : floatingPointOperands<float>()) {
+            for (auto& operand1 : floatingPointOperands<float>()) {
+                for (auto& operand2 : floatingPointOperands<float>()) {
+                    for (auto& operand3 : floatingPointOperands<float>()) {
+                        alignas(16) v128_t vector0;
+                        alignas(16) v128_t vector1;
+                        alignas(16) v128_t vector2;
+                        alignas(16) v128_t result;
+
+                        vector0.f32x4[0] = operand0.value;
+                        vector0.f32x4[1] = operand1.value;
+                        vector0.f32x4[2] = operand2.value;
+                        vector0.f32x4[3] = operand3.value;
+
+                        vector1.f32x4[0] = operand3.value;
+                        vector1.f32x4[1] = operand2.value;
+                        vector1.f32x4[2] = operand1.value;
+                        vector1.f32x4[3] = operand0.value;
+
+                        result.f32x4[0] = vector0.f32x4[i] * vector1.f32x4[0];
+                        result.f32x4[1] = vector0.f32x4[i] * vector1.f32x4[1];
+                        result.f32x4[2] = vector0.f32x4[i] * vector1.f32x4[2];
+                        result.f32x4[3] = vector0.f32x4[i] * vector1.f32x4[3];
+
+                        invoke<void>(*code, &vector0, &vector1, &vector2);
+                        checkFloat(result.f32x4[0], vector2.f32x4[0]);
+                        checkFloat(result.f32x4[1], vector2.f32x4[1]);
+                        checkFloat(result.f32x4[2], vector2.f32x4[2]);
+                        checkFloat(result.f32x4[3], vector2.f32x4[3]);
+                    }
+                }
+            }
+        }
+    }
+}
+
+void testVectorFmulByElementDouble()
+{
+    for (unsigned i = 0; i < 2; ++i) {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+
+        Value* address0 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+        Value* address1 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+        Value* address2 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR2);
+
+        Value* input0 = root->appendNew<MemoryValue>(proc, Load, V128, Origin(), address0);
+        Value* input1 = root->appendNew<MemoryValue>(proc, Load, V128, Origin(), address1);
+        Value* dup = root->appendNew<SIMDValue>(proc, Origin(), VectorDupElement, B3::V128, SIMDLane::f64x2, SIMDSignMode::None, static_cast<uint8_t>(i), input0);
+        Value* result = root->appendNew<SIMDValue>(proc, Origin(), VectorMul, B3::V128, SIMDLane::f64x2, SIMDSignMode::None, input1, dup);
+
+        root->appendNew<MemoryValue>(proc, Store, Origin(), result, address2);
+        root->appendNewControlValue(proc, Return, Origin());
+
+        auto code = compileProc(proc);
+
+        auto checkDouble = [&](double a, double b) {
+            if (std::isnan(a))
+                CHECK(std::isnan(b));
+            else
+                CHECK(a == b);
+        };
+
+        for (auto& operand0 : floatingPointOperands<double>()) {
+            for (auto& operand1 : floatingPointOperands<double>()) {
+                for (auto& operand2 : floatingPointOperands<double>()) {
+                    for (auto& operand3 : floatingPointOperands<double>()) {
+                        alignas(16) v128_t vector0;
+                        alignas(16) v128_t vector1;
+                        alignas(16) v128_t vector2;
+                        alignas(16) v128_t result;
+
+                        vector0.f64x2[0] = operand0.value;
+                        vector0.f64x2[1] = operand1.value;
+
+                        vector1.f64x2[0] = operand2.value;
+                        vector1.f64x2[1] = operand3.value;
+
+                        result.f64x2[0] = vector0.f64x2[i] * vector1.f64x2[0];
+                        result.f64x2[1] = vector0.f64x2[i] * vector1.f64x2[1];
+
+                        invoke<void>(*code, &vector0, &vector1, &vector2);
+                        checkDouble(result.f64x2[0], vector2.f64x2[0]);
+                        checkDouble(result.f64x2[1], vector2.f64x2[1]);
+                    }
+                }
+            }
+        }
+    }
+}
+
+void testVectorExtractLane0Float()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+
+    Value* address0 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* input0 = root->appendNew<MemoryValue>(proc, Load, V128, Origin(), address0);
+    root->appendNewControlValue(proc, Return, Origin(), root->appendNew<SIMDValue>(proc, Origin(), VectorExtractLane, B3::Float, SIMDLane::f32x4, SIMDSignMode::None, static_cast<uint8_t>(0), input0));
+
+    auto code = compileProc(proc);
+
+    auto checkFloat = [&](float a, float b) {
+        if (std::isnan(a))
+            CHECK(std::isnan(b));
+        else
+            CHECK(a == b);
+    };
+
+    for (auto& operand0 : floatingPointOperands<float>()) {
+        alignas(16) v128_t vector0;
+
+        vector0.f32x4[0] = operand0.value;
+        vector0.f32x4[1] = 1;
+        vector0.f32x4[2] = 2;
+        vector0.f32x4[3] = 3;
+
+        float result = invoke<float>(*code, &vector0);
+        checkFloat(result, operand0.value);
+    }
+}
+
+void testVectorExtractLane0Double()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+
+    Value* address0 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* input0 = root->appendNew<MemoryValue>(proc, Load, V128, Origin(), address0);
+    root->appendNewControlValue(proc, Return, Origin(), root->appendNew<SIMDValue>(proc, Origin(), VectorExtractLane, B3::Double, SIMDLane::f64x2, SIMDSignMode::None, static_cast<uint8_t>(0), input0));
+
+    auto code = compileProc(proc);
+
+    auto checkDouble = [&](double a, double b) {
+        if (std::isnan(a))
+            CHECK(std::isnan(b));
+        else
+            CHECK(a == b);
+    };
+
+    for (auto& operand0 : floatingPointOperands<double>()) {
+        alignas(16) v128_t vector0;
+
+        vector0.f64x2[0] = operand0.value;
+        vector0.f64x2[1] = 32;
+
+        double result = invoke<double>(*code, &vector0);
+        checkDouble(result, operand0.value);
     }
 }
 

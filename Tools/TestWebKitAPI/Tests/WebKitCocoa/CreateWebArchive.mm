@@ -141,17 +141,6 @@ TEST(WebArchive, CookieAccessAfterLoadData)
     [webView _test_waitForDidFinishNavigation];
 }
 
-#if WK_HAVE_C_SPI
-TEST(WebArchive, CookieAccessAfterLoadWebArchiveData)
-{
-    auto webArchive = webArchiveAccessingCookies();
-    auto webView = adoptNS([WKWebView new]);
-    auto wkData = adoptWK(WKDataCreate(static_cast<const unsigned char*>(webArchive.get().bytes), webArchive.get().length));
-    WKPageLoadWebArchiveData(webView.get()._pageRefForTransitionToWKWebView, wkData.get());
-    [webView _test_waitForDidFinishNavigation];
-}
-#endif // WK_HAVE_C_SPI
-
 TEST(WebArchive, ApplicationXWebarchiveMIMETypeDoesNotLoadHTML)
 {
     HTTPServer server({ { "/"_s, { { { "Content-Type"_s, "application/x-webarchive"_s } }, "Not web archive content, should not load"_s } } });

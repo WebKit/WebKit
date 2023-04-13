@@ -909,6 +909,7 @@ WI.Color.FunctionNames = new Set([
     "hsl",
     "hsla",
     "color",
+    "color-mix",
 ]);
 
 WI.Color.Keywords = {

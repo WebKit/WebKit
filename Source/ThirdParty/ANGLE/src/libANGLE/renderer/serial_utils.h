@@ -119,7 +119,6 @@ class Serial final
 class AtomicQueueSerial final
 {
   public:
-    AtomicQueueSerial() : mValue(kInvalid) { ASSERT(mValue.is_lock_free()); }
     AtomicQueueSerial &operator=(const Serial &other)
     {
         mValue.store(other.mValue, std::memory_order_release);
@@ -128,8 +127,9 @@ class AtomicQueueSerial final
     Serial getSerial() const { return Serial(mValue.load(std::memory_order_consume)); }
 
   private:
-    std::atomic<uint64_t> mValue;
     static constexpr uint64_t kInvalid = 0;
+    std::atomic<uint64_t> mValue       = kInvalid;
+    static_assert(decltype(mValue)::is_always_lock_free, "Must always be lock free");
 };
 
 // Used as default/initial serial
@@ -216,6 +216,7 @@ class AtomicQueueSerialFixedArray final
   private:
     std::array<AtomicQueueSerial, kMaxQueueSerialIndexCount> mSerials;
 };
+std::ostream &operator<<(std::ostream &os, const AtomicQueueSerialFixedArray &serials);
 
 class QueueSerial final
 {
@@ -236,6 +237,30 @@ class QueueSerial final
     {
         return mIndex != other.mIndex || mSerial != other.mSerial;
     }
+    constexpr bool operator<(const QueueSerial &other) const
+    {
+        ASSERT(mIndex != kInvalidQueueSerialIndex);
+        ASSERT(mIndex == other.mIndex);
+        return mSerial < other.mSerial;
+    }
+    constexpr bool operator<=(const QueueSerial &other) const
+    {
+        ASSERT(mIndex != kInvalidQueueSerialIndex);
+        ASSERT(mIndex == other.mIndex);
+        return mSerial <= other.mSerial;
+    }
+    constexpr bool operator>(const QueueSerial &other) const
+    {
+        ASSERT(mIndex != kInvalidQueueSerialIndex);
+        ASSERT(mIndex == other.mIndex);
+        return mSerial > other.mSerial;
+    }
+    constexpr bool operator>=(const QueueSerial &other) const
+    {
+        ASSERT(mIndex != kInvalidQueueSerialIndex);
+        ASSERT(mIndex == other.mIndex);
+        return mSerial >= other.mSerial;
+    }
 
     bool operator>(const AtomicQueueSerialFixedArray &serials) const
     {
@@ -255,6 +280,7 @@ class QueueSerial final
     SerialIndex mIndex;
     Serial mSerial;
 };
+std::ostream &operator<<(std::ostream &os, const QueueSerial &queueSerial);
 
 ANGLE_INLINE void AtomicQueueSerialFixedArray::setQueueSerial(SerialIndex index, Serial serial)
 {
@@ -268,6 +294,29 @@ ANGLE_INLINE void AtomicQueueSerialFixedArray::setQueueSerial(SerialIndex index,
 ANGLE_INLINE void AtomicQueueSerialFixedArray::setQueueSerial(const QueueSerial &queueSerial)
 {
     setQueueSerial(queueSerial.getIndex(), queueSerial.getSerial());
+}
+
+ANGLE_INLINE std::ostream &operator<<(std::ostream &os, const AtomicQueueSerialFixedArray &serials)
+{
+    // Search for last non-zero index (or 0 if all zeros).
+    SerialIndex lastIndex = serials.size() == 0 ? 0 : static_cast<SerialIndex>(serials.size() - 1);
+    while (lastIndex > 0 && serials[lastIndex].getValue() == 0)
+    {
+        lastIndex--;
+    }
+    os << '{';
+    for (SerialIndex i = 0; i < lastIndex; i++)
+    {
+        os << serials[i].getValue() << ',';
+    }
+    os << serials[lastIndex].getValue() << '}';
+    return os;
+}
+
+ANGLE_INLINE std::ostream &operator<<(std::ostream &os, const QueueSerial &queueSerial)
+{
+    os << '{' << queueSerial.getIndex() << ':' << queueSerial.getSerial().getValue() << '}';
+    return os;
 }
 }  // namespace rx
 

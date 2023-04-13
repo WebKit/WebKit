@@ -93,6 +93,11 @@ public:
     void recordUserGesture();
     void setIsProcessingUserGestureForTesting(bool value) { m_isProcessingUserGesture = value; }
 
+    bool didFirePushEventRecently() const;
+
+    WEBCORE_EXPORT void addConsoleMessage(MessageSource, MessageLevel, const String& message, unsigned long requestIdentifier) final;
+    void enableConsoleMessageReporting() { m_consoleMessageReportingEnabled = true; }
+
 private:
     ServiceWorkerGlobalScope(ServiceWorkerContextData&&, ServiceWorkerData&&, const WorkerParameters&, Ref<SecurityOrigin>&&, ServiceWorkerThread&, Ref<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*, std::unique_ptr<NotificationClient>&&);
     void notifyServiceWorkerPageOfCreationIfNecessary();
@@ -117,6 +122,8 @@ private:
     bool m_isProcessingUserGesture { false };
     Timer m_userGestureTimer;
     RefPtr<PushEvent> m_pushEvent;
+    MonotonicTime m_lastPushEventTime;
+    bool m_consoleMessageReportingEnabled { false };
 };
 
 } // namespace WebCore

@@ -57,6 +57,11 @@ PlatformGraphicsContext* BifurcatedGraphicsContext::platformContext() const
     return m_primaryContext.platformContext();
 }
 
+const DestinationColorSpace& BifurcatedGraphicsContext::colorSpace() const
+{
+    return m_primaryContext.colorSpace();
+}
+
 void BifurcatedGraphicsContext::save()
 {
     // FIXME: Consider not using the BifurcatedGraphicsContext's state stack at all,
@@ -239,26 +244,12 @@ void BifurcatedGraphicsContext::strokeEllipse(const FloatRect& ellipse)
 }
 
 #if USE(CG)
-void BifurcatedGraphicsContext::setIsCALayerContext(bool isCALayerContext)
-{
-    m_primaryContext.setIsCALayerContext(isCALayerContext);
-    m_secondaryContext.setIsCALayerContext(isCALayerContext);
-
-    VERIFY_STATE_SYNCHRONIZATION();
-}
 
 bool BifurcatedGraphicsContext::isCALayerContext() const
 {
     return m_primaryContext.isCALayerContext();
 }
 
-void BifurcatedGraphicsContext::setIsAcceleratedContext(bool isAcceleratedContext)
-{
-    m_primaryContext.setIsAcceleratedContext(isAcceleratedContext);
-    m_secondaryContext.setIsAcceleratedContext(isAcceleratedContext);
-
-    VERIFY_STATE_SYNCHRONIZATION();
-}
 #endif
 
 RenderingMode BifurcatedGraphicsContext::renderingMode() const
@@ -294,6 +285,14 @@ void BifurcatedGraphicsContext::clipPath(const Path& path, WindRule windRule)
 {
     m_primaryContext.clipPath(path, windRule);
     m_secondaryContext.clipPath(path, windRule);
+
+    VERIFY_STATE_SYNCHRONIZATION();
+}
+
+void BifurcatedGraphicsContext::clipToImageBuffer(ImageBuffer& imageBuffer, const FloatRect& destRect)
+{
+    m_primaryContext.clipToImageBuffer(imageBuffer, destRect);
+    m_secondaryContext.clipToImageBuffer(imageBuffer, destRect);
 
     VERIFY_STATE_SYNCHRONIZATION();
 }
@@ -335,10 +334,10 @@ void BifurcatedGraphicsContext::setMiterLimit(float miterLimit)
     VERIFY_STATE_SYNCHRONIZATION();
 }
 
-void BifurcatedGraphicsContext::drawNativeImage(NativeImage& nativeImage, const FloatSize& selfSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
+void BifurcatedGraphicsContext::drawNativeImageInternal(NativeImage& nativeImage, const FloatSize& selfSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
 {
-    m_primaryContext.drawNativeImage(nativeImage, selfSize, destRect, srcRect, options);
-    m_secondaryContext.drawNativeImage(nativeImage, selfSize, destRect, srcRect, options);
+    m_primaryContext.drawNativeImageInternal(nativeImage, selfSize, destRect, srcRect, options);
+    m_secondaryContext.drawNativeImageInternal(nativeImage, selfSize, destRect, srcRect, options);
 
     VERIFY_STATE_SYNCHRONIZATION();
 }
@@ -352,6 +351,14 @@ void BifurcatedGraphicsContext::drawSystemImage(SystemImage& systemImage, const 
 {
     m_primaryContext.drawSystemImage(systemImage, destinationRect);
     m_secondaryContext.drawSystemImage(systemImage, destinationRect);
+
+    VERIFY_STATE_SYNCHRONIZATION();
+}
+
+void BifurcatedGraphicsContext::drawControlPart(ControlPart& part, const FloatRoundedRect& borderRect, float deviceScaleFactor, const ControlStyle& style)
+{
+    m_primaryContext.drawControlPart(part, borderRect, deviceScaleFactor, style);
+    m_secondaryContext.drawControlPart(part, borderRect, deviceScaleFactor, style);
 
     VERIFY_STATE_SYNCHRONIZATION();
 }
@@ -576,13 +583,6 @@ void BifurcatedGraphicsContext::verifyStateSynchronization()
         m_hasLoggedAboutDesynchronizedState = true;
     }
 }
-
-#if OS(WINDOWS) && !USE(CAIRO)
-GraphicsContextPlatformPrivate* BifurcatedGraphicsContext::deprecatedPrivateContext() const
-{
-    return m_primaryContext.deprecatedPrivateContext();
-}
-#endif
 
 } // namespace WebCore
 

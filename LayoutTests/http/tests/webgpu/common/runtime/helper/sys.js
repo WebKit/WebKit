@@ -1,6 +1,6 @@
 /**
- * AUTO-GENERATED - DO NOT EDIT. Source: https://github.com/gpuweb/cts
- **/
+* AUTO-GENERATED - DO NOT EDIT. Source: https://github.com/gpuweb/cts
+**/
 function node() {
   const { existsSync } = require('fs');
 
@@ -8,10 +8,19 @@ function node() {
     type: 'node',
     existsSync,
     args: process.argv.slice(2),
-    cwd: process.cwd,
-    exit: process.exit,
+    cwd: () => process.cwd(),
+    exit: (code) => process.exit(code)
   };
 }
+
+
+
+
+
+
+
+
+
 
 function deno() {
   function existsSync(path) {
@@ -28,10 +37,11 @@ function deno() {
     existsSync,
     args: Deno.args,
     cwd: Deno.cwd,
-    exit: Deno.exit,
+    exit: Deno.exit
   };
 }
 
 const sys = typeof globalThis.process !== 'undefined' ? node() : deno();
 
 export default sys;
+//# sourceMappingURL=sys.js.map

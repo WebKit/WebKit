@@ -23,13 +23,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// This file contains code for a launcher executable for WebKit apps. When compiled into foo.exe, it
-// will set PATH so that Apple Application Support DLLs can be found, then will load foo.dll and
-// call its dllLauncherEntryPoint function, which should be declared like so:
-//     extern "C" __declspec(dllexport) int WINAPI dllLauncherEntryPoint(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpstCmdLine, int nCmdShow);
-// If USE_CONSOLE_ENTRY_POINT is defined, this function will be called instead:
-//     extern "C" __declspec(dllexport) int WINAPI dllLauncherEntryPoint(int argc, const char* argv[]);
-
 #include <shlwapi.h>
 #include <string>
 #include <vector>
@@ -52,50 +45,6 @@ static std::wstring copyEnvironmentVariable(const std::wstring& variable)
     return &buffer[0];
 }
 
-#if !defined(WIN_CAIRO)
-static std::wstring getStringValue(HKEY key, const std::wstring& valueName)
-{
-    DWORD type = 0;
-    DWORD bufferSize = 0;
-    if (::RegQueryValueExW(key, valueName.c_str(), 0, &type, 0, &bufferSize) != ERROR_SUCCESS || type != REG_SZ)
-        return std::wstring();
-
-    std::vector<wchar_t> buffer(bufferSize / sizeof(wchar_t));
-    if (::RegQueryValueExW(key, valueName.c_str(), 0, &type, reinterpret_cast<LPBYTE>(&buffer[0]), &bufferSize) != ERROR_SUCCESS)
-        return std::wstring();
-
-    return &buffer[0];
-}
-
-static std::wstring applePathFromRegistry(const std::wstring& key, const std::wstring& value)
-{
-    HKEY applePathKey = 0;
-    if (::RegOpenKeyExW(HKEY_LOCAL_MACHINE, key.c_str(), 0, KEY_READ, &applePathKey) != ERROR_SUCCESS)
-        return std::wstring();
-    std::wstring path = getStringValue(applePathKey, value);
-    ::RegCloseKey(applePathKey);
-    return path;
-}
-
-static std::wstring appleApplicationSupportDirectory()
-{
-    return applePathFromRegistry(L"SOFTWARE\\Apple Inc.\\Apple Application Support", L"InstallDir");
-}
-
-static std::wstring iTunesDirectory()
-{
-    return applePathFromRegistry(L"SOFTWARE\\Apple Computer, Inc.\\iTunes\\", L"InstallDir");
-}
-
-static bool prependPath(const std::wstring& directoryToPrepend)
-{
-    std::wstring pathVariable = L"PATH";
-    std::wstring oldPath = copyEnvironmentVariable(pathVariable);
-    std::wstring newPath = directoryToPrepend + L';' + oldPath;
-    return ::SetEnvironmentVariableW(pathVariable.c_str(), newPath.c_str());
-}
-#endif
-
 static int fatalError(const std::wstring& programName, const std::wstring& message)
 {
     std::wstring caption = programName + L" can't open.";
@@ -116,8 +65,6 @@ static bool directoryExists(const std::wstring& path)
 
 static bool modifyPath(const std::wstring& programName)
 {
-#ifdef WIN_CAIRO
-
     std::wstring pathWinCairo = copyEnvironmentVariable(L"WEBKIT_LIBRARIES");
     if (!directoryExists(pathWinCairo))
         return true;
@@ -131,27 +78,6 @@ static bool modifyPath(const std::wstring& programName)
         return false;
     }
     return true;
-
-#else
-    auto modifyPathWith = [&] (const std::wstring& pathPrefix) {
-        if (!prependPath(pathPrefix)) {
-            fatalError(programName, L"Failed to modify PATH environment variable.");
-            return false;
-        }
-        return true;
-    };
-
-    const std::wstring& applicationSupportPathPrefix = appleApplicationSupportDirectory();
-    if (directoryExists(applicationSupportPathPrefix))
-        return modifyPathWith(applicationSupportPathPrefix);
-
-    const std::wstring& iTunesPathPrefix = iTunesDirectory();
-    if (directoryExists(iTunesPathPrefix))
-        return modifyPathWith(iTunesPathPrefix);
-
-    fatalError(programName, L"Couldn't find path to Apple Application Support (AAS) or iTunes via the registry.  Do you have iTunes installed?");
-    return false;
-#endif
 }
 
 static std::wstring getLastErrorString(HRESULT hr)

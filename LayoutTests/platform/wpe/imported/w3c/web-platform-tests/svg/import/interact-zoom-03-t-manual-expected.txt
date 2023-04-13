@@ -7,7 +7,7 @@ layer at (0,0) size 800x600
       RenderSVGContainer {g} at (50,15) size 655x410 [transform={m=((6.00,0.00)(0.00,6.00)) t=(0.00,0.00)}]
         RenderSVGText {text} at (5,1) size 59x8 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 59x7
-            chunk 1 text run 1 at (5.00,7.00) startOffset 0 endOffset 23 width 59.00: "Test \"disable\" value of"
+            chunk 1 text run 1 at (5.00,7.00) startOffset 0 endOffset 23 width 58.33: "Test \"disable\" value of"
         RenderSVGText {text} at (5,8) size 61x8 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 61x7
             chunk 1 text run 1 at (5.00,14.00) startOffset 0 endOffset 21 width 60.80: "zoomAndPan attribute."

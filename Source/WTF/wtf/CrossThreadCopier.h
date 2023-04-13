@@ -119,8 +119,8 @@ template<> struct CrossThreadCopierBase<false, false, WTF::ASCIILiteral> {
     }
 };
 
-template<typename T> struct CrossThreadCopierBase<false, false, ObjectIdentifier<T>> {
-    typedef ObjectIdentifier<T> Type;
+template<typename T, typename U> struct CrossThreadCopierBase<false, false, ObjectIdentifierGeneric<T, U>> {
+    typedef ObjectIdentifierGeneric<T, U> Type;
     static Type copy(const Type& source)
     {
         return source;
@@ -208,6 +208,20 @@ template<typename T> struct CrossThreadCopierBase<false, false, std::optional<T>
             return std::nullopt;
         return CrossThreadCopier<T>::copy(std::forward<U>(source).value());
     }
+};
+
+// Default specialization for Markable of CrossThreadCopyable class.
+template<typename T, typename U> struct CrossThreadCopierBase<false, false, Markable<T, U>> {
+    template<typename V> static Markable<T, U> copy(V&& source)
+    {
+        if (!source)
+            return std::nullopt;
+        return CrossThreadCopier<T>::copy(std::forward<V>(source).value());
+    }
+};
+
+template<> struct CrossThreadCopierBase<false, false, std::nullptr_t> {
+    static std::nullptr_t copy(std::nullptr_t) { return nullptr; }
 };
 
 // Default specialization for std::variant of CrossThreadCopyable classes.

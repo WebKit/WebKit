@@ -4,11 +4,12 @@ Before the fix, ReplaceSelectionCommand blew away content of the div below after
 The following two results must be visually identical except for the caret.
 
 before:
+| <#selection-caret>
 | "\n"
 | <span>
 |   style="display:block"
 |   <b>
-|     "<#selection-caret>This is a paragraph."
+|     "This is a paragraph."
 | "\n"
 | <span>
 |   style="display:block"

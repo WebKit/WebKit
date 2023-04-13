@@ -84,7 +84,7 @@ private:
     Function<SubspaceParameters(Heap&)> m_subspaceParameters;
 };
 
-#define ISO_SUBSPACE_PARAMETERS(heapCellType, type) ::JSC::IsoSubspacePerVM::SubspaceParameters("Isolated " #type " Space", (heapCellType), sizeof(type))
+#define ISO_SUBSPACE_PARAMETERS(heapCellType, type) ::JSC::IsoSubspacePerVM::SubspaceParameters("IsoSpace " #type, (heapCellType), sizeof(type))
 
 } // namespace JSC
 

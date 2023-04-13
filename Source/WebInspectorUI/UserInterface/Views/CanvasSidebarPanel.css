@@ -35,11 +35,11 @@
     opacity: 0.5;
 }
 
-.sidebar > .panel.navigation.canvas > .content > .tree-outline .item.canvas:matches(.canvas-2d, .bitmaprenderer) .icon {
+.sidebar > .panel.navigation.canvas > .content > .tree-outline .item.canvas:is(.canvas-2d, .bitmaprenderer) .icon {
     content: url(../Images/Canvas2D.svg);
 }
 
-.sidebar > .panel.navigation.canvas > .content > .tree-outline .item.canvas:matches(.webgl, .webgl2, .webgpu, .webmetal) .icon {
+.sidebar > .panel.navigation.canvas > .content > .tree-outline .item.canvas:is(.webgl, .webgl2, .webgpu, .webmetal) .icon {
     content: url(../Images/Canvas3D.svg);
 }
 
@@ -60,7 +60,7 @@
 }
 
 .sidebar > .panel.navigation.canvas:not(.has-recordings) > .filter-bar,
-.sidebar > .panel.navigation.canvas:not(.has-recordings) > .content > :matches(.navigation-bar, .recording-content) {
+.sidebar > .panel.navigation.canvas:not(.has-recordings) > .content > :is(.navigation-bar, .recording-content) {
     display: none;
 }
 

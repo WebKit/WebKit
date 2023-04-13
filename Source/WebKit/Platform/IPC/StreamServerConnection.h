@@ -76,7 +76,7 @@ public:
 
     void open();
     void invalidate();
-    template<typename T, typename U> bool send(T&& message, ObjectIdentifier<U> destinationID);
+    template<typename T> bool send(T&& message, const ObjectIdentifierGenericBase& destinationID);
 
     template<typename T, typename... Arguments>
     void sendSyncReply(Connection::SyncRequestID, Arguments&&...);
@@ -114,8 +114,8 @@ private:
     friend class StreamConnectionWorkQueue;
 };
 
-template<typename T, typename U>
-bool StreamServerConnection::send(T&& message, ObjectIdentifier<U> destinationID)
+template<typename T>
+bool StreamServerConnection::send(T&& message, const ObjectIdentifierGenericBase& destinationID)
 {
     return m_connection->send(WTFMove(message), destinationID);
 }

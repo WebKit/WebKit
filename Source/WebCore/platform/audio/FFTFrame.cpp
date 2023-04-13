@@ -102,8 +102,8 @@ void FFTFrame::interpolateFrequencyComponents(const FFTFrame& frame1, const FFTF
         std::complex<double> c1(realP1[i], imagP1[i]);
         std::complex<double> c2(realP2[i], imagP2[i]);
 
-        double mag1 = abs(c1);
-        double mag2 = abs(c2);
+        double mag1 = std::abs(c1);
+        double mag2 = std::abs(c2);
 
         // Interpolate magnitudes in decibels
         double mag1db = 20.0 * log10(mag1);
@@ -223,7 +223,7 @@ double FFTFrame::extractAverageGroupDelay()
     // Calculate weighted average group delay
     for (int i = 0; i < halfSize; i++) {
         std::complex<double> c(realP[i], imagP[i]);
-        double mag = abs(c);
+        double mag = std::abs(c);
         double phase = arg(c);
 
         double deltaPhase = phase - lastPhase;
@@ -270,7 +270,7 @@ void FFTFrame::addConstantGroupDelay(double sampleFrameDelay)
     // Add constant group delay
     for (int i = 1; i < halfSize; i++) {
         std::complex<double> c(realP[i], imagP[i]);
-        double mag = abs(c);
+        double mag = std::abs(c);
         double phase = arg(c);
 
         phase += i * phaseAdj;

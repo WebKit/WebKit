@@ -66,6 +66,7 @@ class Tracker(GenericTracker):
                 result = dict(
                     type='github',
                     url=obj.url,
+                    hide_title=obj.hide_title,
                 )
                 if obj._res[len(Tracker.RE_TEMPLATES):]:
                     result['res'] = [compiled.pattern for compiled in obj._res[len(Tracker.RE_TEMPLATES):]]
@@ -78,9 +79,10 @@ class Tracker(GenericTracker):
             self, url, users=None, res=None,
             component_color=DEFAULT_COMPONENT_COLOR,
             version_color=DEFAULT_VERSION_COLOR,
-            session=None, redact=None,
+            session=None, redact=None, hide_title=None,
+            redact_exemption=None,
     ):
-        super(Tracker, self).__init__(users=users, redact=redact)
+        super(Tracker, self).__init__(users=users, redact=redact, hide_title=hide_title, redact_exemption=redact_exemption)
 
         self.session = session or requests.Session()
         self.component_color = component_color
@@ -233,6 +235,8 @@ with 'repo' and 'workflow' access and appropriate 'Expiration' for your {host} u
     def populate(self, issue, member=None):
         issue._link = '{}/issues/{}'.format(self.url, issue.id)
         issue._project = self.name
+        issue._keywords = []  # We don't yet have a defined idiom for "keywords" in GitHub Issues
+        issue._classification = ''  # We don't yet have a defined idiom for "classification" in GitHub issues
 
         if member in ('title', 'timestamp', 'creator', 'opened', 'assignee', 'description', 'project', 'component', 'version', 'labels', 'milestone'):
             response = self.request(path='issues/{}'.format(issue.id))

@@ -141,7 +141,7 @@ void JSWebAssemblyModule::clearJSCallICs(VM& vm)
         callLinkInfo.unlink(vm);
 }
 
-void JSWebAssemblyModule::finalizeUnconditionally(VM& vm)
+void JSWebAssemblyModule::finalizeUnconditionally(VM& vm, CollectionScope)
 {
     for (auto& callLinkInfo : m_callLinkInfos)
         callLinkInfo.visitWeak(vm);

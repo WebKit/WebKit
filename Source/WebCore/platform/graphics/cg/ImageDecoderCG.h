@@ -51,6 +51,7 @@ public:
     EncodedDataStatus encodedDataStatus() const final;
     IntSize size() const final { return IntSize(); }
     size_t frameCount() const final;
+    size_t primaryFrameIndex() const final;
     RepetitionCount repetitionCount() const final;
     String uti() const final { return m_uti; }
     String filenameExtension() const final;

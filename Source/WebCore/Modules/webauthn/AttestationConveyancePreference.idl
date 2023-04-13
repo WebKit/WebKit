@@ -28,5 +28,6 @@
 ] enum AttestationConveyancePreference {
     "none",
     "indirect",
-    "direct"
+    "direct",
+    "enterprise"
 };

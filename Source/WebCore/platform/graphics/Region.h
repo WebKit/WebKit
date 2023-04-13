@@ -27,6 +27,7 @@
 #define Region_h
 
 #include "IntRect.h"
+#include <wtf/ArgumentCoder.h>
 #include <wtf/PointerComparison.h>
 #include <wtf/Vector.h>
 
@@ -74,19 +75,10 @@ public:
 #ifndef NDEBUG
     void dump() const;
 #endif
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<Region> decode(Decoder&);
-    // FIXME: Remove legacy decode.
-    template<class Decoder> static WARN_UNUSED_RETURN bool decode(Decoder&, Region&);
-
-private:
+    
     struct Span {
         int y { 0 };
         size_t segmentIndex { 0 };
-
-        template<class Encoder> void encode(Encoder&) const;
-        template<class Decoder> static std::optional<Span> decode(Decoder&);
     };
 
     class Shape {
@@ -120,14 +112,13 @@ private:
         template<typename CompareOperation>
         static bool compareShapes(const Shape& shape1, const Shape& shape2);
 
-        template<class Encoder> void encode(Encoder&) const;
-        template<class Decoder> static std::optional<Shape> decode(Decoder&);
-
 #ifndef NDEBUG
         void dump() const;
 #endif
 
     private:
+        friend struct IPC::ArgumentCoder<WebCore::Region::Shape, void>;
+        WEBCORE_EXPORT Shape(Vector<int, 32>&&, Vector<Span, 16>&&);
         struct UnionOperation;
         struct IntersectOperation;
         struct SubtractOperation;
@@ -147,6 +138,11 @@ private:
 
         friend bool operator==(const Shape&, const Shape&);
     };
+
+private:
+    friend struct IPC::ArgumentCoder<WebCore::Region, void>;
+
+    WEBCORE_EXPORT Region(IntRect&&, std::unique_ptr<Region::Shape>&&);
 
     std::unique_ptr<Shape> copyShape() const { return m_shape ? makeUnique<Shape>(*m_shape) : nullptr; }
     void setShape(Shape&&);
@@ -209,102 +205,6 @@ inline bool operator!=(const Region::Span& a, const Region::Span& b)
 }
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const Region&);
-
-template<class Encoder>
-void Region::Span::encode(Encoder& encoder) const
-{
-    encoder << y << static_cast<uint64_t>(segmentIndex);
-}
-
-template<class Decoder>
-std::optional<Region::Span> Region::Span::decode(Decoder& decoder)
-{
-    std::optional<int> y;
-    decoder >> y;
-    if (!y)
-        return { };
-
-    std::optional<uint64_t> segmentIndex;
-    decoder >> segmentIndex;
-    if (!segmentIndex)
-        return { };
-
-    return { { *y, static_cast<size_t>(*segmentIndex) } };
-}
-
-template<class Encoder>
-void Region::Shape::encode(Encoder& encoder) const
-{
-    encoder << m_segments;
-    encoder << m_spans;
-}
-
-template<class Decoder>
-std::optional<Region::Shape> Region::Shape::decode(Decoder& decoder)
-{
-    std::optional<Vector<int>> segments;
-    decoder >> segments;
-    if (!segments)
-        return std::nullopt;
-
-    std::optional<Vector<Region::Span>> spans;
-    decoder >> spans;
-    if (!spans)
-        return std::nullopt;
-
-    Shape shape;
-    shape.m_segments = WTFMove(*segments);
-    shape.m_spans = WTFMove(*spans);
-
-    return { shape };
-}
-
-template<class Encoder>
-void Region::encode(Encoder& encoder) const
-{
-    encoder << m_bounds;
-    bool hasShape = !!m_shape;
-    encoder << hasShape;
-    if (hasShape)
-        encoder << *m_shape;
-}
-
-template<class Decoder>
-std::optional<Region> Region::decode(Decoder& decoder)
-{
-    std::optional<IntRect> bounds;
-    decoder >> bounds;
-    if (!bounds)
-        return std::nullopt;
-
-    std::optional<bool> hasShape;
-    decoder >> hasShape;
-    if (!hasShape)
-        return std::nullopt;
-
-    Region region = { *bounds };
-
-    if (*hasShape) {
-        std::optional<Shape> shape;
-        decoder >> shape;
-        if (!shape)
-            return std::nullopt;
-        region.m_shape = makeUnique<Shape>(WTFMove(*shape));
-    }
-
-    return { region };
-}
-
-template<class Decoder>
-bool Region::decode(Decoder& decoder, Region& region)
-{
-    std::optional<Region> decodedRegion;
-    decoder >> decodedRegion;
-    if (!decodedRegion)
-        return false;
-    region = WTFMove(*decodedRegion);
-    return true;
-}
 
 } // namespace WebCore
 

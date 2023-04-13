@@ -225,7 +225,7 @@ class Display final : public LabeledObject,
     bool isValidSurface(SurfaceID surfaceID) const;
     bool isValidImage(ImageID imageID) const;
     bool isValidStream(const Stream *stream) const;
-    bool isValidSync(const Sync *sync) const;
+    bool isValidSync(SyncID sync) const;
     bool isValidNativeWindow(EGLNativeWindowType window) const;
 
     Error validateClientBuffer(const Config *configuration,
@@ -343,9 +343,11 @@ class Display final : public LabeledObject,
     const gl::Context *getContext(gl::ContextID contextID) const;
     const egl::Surface *getSurface(egl::SurfaceID surfaceID) const;
     const egl::Image *getImage(egl::ImageID imageID) const;
+    const egl::Sync *getSync(egl::SyncID syncID) const;
     gl::Context *getContext(gl::ContextID contextID);
     egl::Surface *getSurface(egl::SurfaceID surfaceID);
     egl::Image *getImage(egl::ImageID imageID);
+    egl::Sync *getSync(egl::SyncID syncID);
 
   private:
     Display(EGLenum platform, EGLNativeDisplayType displayId, Device *eglDevice);
@@ -424,6 +426,7 @@ class Display final : public LabeledObject,
 
     gl::HandleAllocator mImageHandleAllocator;
     gl::HandleAllocator mSurfaceHandleAllocator;
+    gl::HandleAllocator mSyncHandleAllocator;
 
     angle::FrontendFeatures mFrontendFeatures;
 

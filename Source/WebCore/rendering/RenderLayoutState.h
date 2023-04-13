@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "FrameViewLayoutContext.h"
 #include "LayoutRect.h"
+#include "LocalFrameViewLayoutContext.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/WeakPtr.h>
 
@@ -58,8 +58,8 @@ public:
 #endif
     {
     }
-    RenderLayoutState(const FrameViewLayoutContext::LayoutStateStack&, RenderBox&, const LayoutSize& offset, LayoutUnit pageHeight, bool pageHeightChanged, std::optional<size_t> maximumLineCountForLineClamp, std::optional<size_t> visibleLineCountForLineClamp, std::optional<LeadingTrim>);
-    enum class IsPaginated { No, Yes };
+    RenderLayoutState(const LocalFrameViewLayoutContext::LayoutStateStack&, RenderBox&, const LayoutSize& offset, LayoutUnit pageHeight, bool pageHeightChanged, std::optional<size_t> maximumLineCountForLineClamp, std::optional<size_t> visibleLineCountForLineClamp, std::optional<LeadingTrim>);
+    enum class IsPaginated : bool { No, Yes };
     explicit RenderLayoutState(RenderElement&, IsPaginated = IsPaginated::No);
 
     bool isPaginated() const { return m_isPaginated; }
@@ -114,10 +114,10 @@ public:
 private:
     void computeOffsets(const RenderLayoutState& ancestor, RenderBox&, LayoutSize offset);
     void computeClipRect(const RenderLayoutState& ancestor, RenderBox&);
-    // FIXME: webkit.org/b/179440 these functions should be part of the pagination code/FrameViewLayoutContext.
-    void computePaginationInformation(const FrameViewLayoutContext::LayoutStateStack&, RenderBox&, LayoutUnit pageLogicalHeight, bool pageLogicalHeightChanged);
+    // FIXME: webkit.org/b/179440 these functions should be part of the pagination code/LocalFrameViewLayoutContext.
+    void computePaginationInformation(const LocalFrameViewLayoutContext::LayoutStateStack&, RenderBox&, LayoutUnit pageLogicalHeight, bool pageLogicalHeightChanged);
     void propagateLineGridInfo(const RenderLayoutState& ancestor, RenderBox&);
-    void establishLineGrid(const FrameViewLayoutContext::LayoutStateStack&, RenderBlockFlow&);
+    void establishLineGrid(const LocalFrameViewLayoutContext::LayoutStateStack&, RenderBlockFlow&);
     void computeLineGridPaginationOrigin(const RenderMultiColumnFlow&);
 
     // Do not add anything apart from bitfields. See https://bugs.webkit.org/show_bug.cgi?id=100173
@@ -167,7 +167,7 @@ public:
     ~LayoutStateMaintainer();
 
 private:
-    FrameViewLayoutContext& m_context;
+    LocalFrameViewLayoutContext& m_context;
     bool m_paintOffsetCacheIsDisabled { false };
     bool m_didPushLayoutState { false };
 };
@@ -178,18 +178,18 @@ public:
     ~SubtreeLayoutStateMaintainer();
 
 private:
-    FrameViewLayoutContext* m_context { nullptr };
+    LocalFrameViewLayoutContext* m_context { nullptr };
     bool m_didDisablePaintOffsetCache { false };
 };
 
 class LayoutStateDisabler {
     WTF_MAKE_NONCOPYABLE(LayoutStateDisabler);
 public:
-    LayoutStateDisabler(FrameViewLayoutContext&);
+    LayoutStateDisabler(LocalFrameViewLayoutContext&);
     ~LayoutStateDisabler();
 
 private:
-    FrameViewLayoutContext& m_context;
+    LocalFrameViewLayoutContext& m_context;
 };
 
 class PaginatedLayoutStateMaintainer {
@@ -198,7 +198,7 @@ public:
     ~PaginatedLayoutStateMaintainer();
 
 private:
-    FrameViewLayoutContext& m_context;
+    LocalFrameViewLayoutContext& m_context;
     bool m_pushed { false };
 };
 

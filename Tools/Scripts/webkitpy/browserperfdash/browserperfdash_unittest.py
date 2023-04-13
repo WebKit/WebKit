@@ -43,7 +43,8 @@ class FakeBrowserDriver(BrowserDriver):
     process_search_list = []
     platform = "fake"
 
-    def __init__(self):
+    def __init__(self, browser_args):
+        super(FakeBrowserDriver, self).__init__(browser_args)
         self.process_name = "fake/process"
 
     def prepare_env(self, config):

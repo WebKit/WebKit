@@ -29,6 +29,7 @@
 #include "ContainerNode.h"
 #include "JSNode.h"
 #include "Text.h"
+#include "WebCoreOpaqueRootInlines.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {

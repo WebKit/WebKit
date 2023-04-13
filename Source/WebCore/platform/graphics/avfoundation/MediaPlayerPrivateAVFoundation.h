@@ -194,7 +194,7 @@ protected:
     MediaPlayer::ReadyState readyState() const override { return m_readyState; }
     MediaTime maxMediaTimeSeekable() const override;
     MediaTime minMediaTimeSeekable() const override;
-    std::unique_ptr<PlatformTimeRanges> buffered() const override;
+    const PlatformTimeRanges& buffered() const override;
     bool didLoadingProgress() const override;
     void paint(GraphicsContext&, const FloatRect&) override = 0;
     DestinationColorSpace colorSpace() override = 0;
@@ -249,7 +249,7 @@ protected:
     virtual bool platformPaused() const { return !rate(); }
     virtual void seekToTime(const MediaTime&, const MediaTime& negativeTolerance, const MediaTime& positiveTolerance) = 0;
     unsigned long long totalBytes() const override = 0;
-    virtual std::unique_ptr<PlatformTimeRanges> platformBufferedTimeRanges() const = 0;
+    virtual const PlatformTimeRanges& platformBufferedTimeRanges() const = 0;
     virtual MediaTime platformMaxTimeSeekable() const = 0;
     virtual MediaTime platformMinTimeSeekable() const = 0;
     virtual MediaTime platformMaxTimeLoaded() const = 0;
@@ -338,8 +338,6 @@ private:
 
     mutable Lock m_queuedNotificationsLock;
     Deque<Notification> m_queuedNotifications WTF_GUARDED_BY_LOCK(m_queuedNotificationsLock);
-
-    mutable std::unique_ptr<PlatformTimeRanges> m_cachedLoadedTimeRanges;
 
     MediaPlayer::NetworkState m_networkState;
     MediaPlayer::ReadyState m_readyState;

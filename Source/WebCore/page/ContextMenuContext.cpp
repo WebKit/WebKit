@@ -42,9 +42,7 @@ ContextMenuContext::ContextMenuContext(Type type, const HitTestResult& hitTestRe
     : m_type(type)
     , m_hitTestResult(hitTestResult)
     , m_event(event)
-#if ENABLE(SERVICE_CONTROLS)
-    , m_controlledImage(nullptr)
-#endif
+    , m_hasEntireImage(hitTestResult.hasEntireImage())
 {
 }
 

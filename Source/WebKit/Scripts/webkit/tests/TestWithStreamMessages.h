@@ -117,6 +117,28 @@ private:
     std::tuple<const String&> m_arguments;
 };
 
+class CallWithIdentifier {
+public:
+    using Arguments = std::tuple<>;
+
+    static IPC::MessageName name() { return IPC::MessageName::TestWithStream_CallWithIdentifier; }
+    static constexpr bool isSync = false;
+    static constexpr bool isStreamEncodable = true;
+    static constexpr bool isReplyStreamEncodable = true;
+    static constexpr bool isStreamBatched = false;
+
+    static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithStream_CallWithIdentifierReply; }
+    static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
+    using ReplyArguments = std::tuple<>;
+    const auto& arguments() const
+    {
+        return m_arguments;
+    }
+
+private:
+    std::tuple<> m_arguments;
+};
+
 #if PLATFORM(COCOA)
 class SendMachSendRight {
 public:

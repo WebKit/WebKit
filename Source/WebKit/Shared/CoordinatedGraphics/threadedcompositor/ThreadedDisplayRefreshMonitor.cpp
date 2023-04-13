@@ -37,14 +37,11 @@
 
 namespace WebKit {
 
-constexpr unsigned defaultRefreshRate = 60000;
-
-ThreadedDisplayRefreshMonitor::ThreadedDisplayRefreshMonitor(WebCore::PlatformDisplayID displayID, Client& client)
+ThreadedDisplayRefreshMonitor::ThreadedDisplayRefreshMonitor(WebCore::PlatformDisplayID displayID, Client& client, WebCore::DisplayUpdate displayUpdate)
     : WebCore::DisplayRefreshMonitor(displayID)
     , m_displayRefreshTimer(RunLoop::main(), this, &ThreadedDisplayRefreshMonitor::displayRefreshCallback)
     , m_client(&client)
-    , m_targetRefreshRate(defaultRefreshRate)
-    , m_currentUpdate({ 0, m_targetRefreshRate / 1000 })
+    , m_displayUpdate(displayUpdate)
 {
 #if USE(GLIB_EVENT_LOOP)
     m_displayRefreshTimer.setPriority(RunLoopSourcePriority::DisplayRefreshMonitorTimer);
@@ -73,9 +70,10 @@ bool ThreadedDisplayRefreshMonitor::requestRefreshCallback()
     return true;
 }
 
-bool ThreadedDisplayRefreshMonitor::requiresDisplayRefreshCallback()
+bool ThreadedDisplayRefreshMonitor::requiresDisplayRefreshCallback(const WebCore::DisplayUpdate& displayUpdate)
 {
     Locker locker { lock() };
+    m_displayUpdate = displayUpdate;
     return isScheduled() && isPreviousFrameDone();
 }
 
@@ -95,8 +93,10 @@ void ThreadedDisplayRefreshMonitor::invalidate()
         wasScheduled = isScheduled();
     }
     if (wasScheduled) {
-        displayDidRefresh(m_currentUpdate);
-        m_currentUpdate = m_currentUpdate.nextUpdate();
+        // This is shutting down, so there's no up-to-date DisplayUpdate available.
+        // Instead, the current value is progressed and used for this dispatch.
+        m_displayUpdate = m_displayUpdate.nextUpdate();
+        displayDidRefresh(m_displayUpdate);
     }
     m_client = nullptr;
 }
@@ -105,19 +105,19 @@ void ThreadedDisplayRefreshMonitor::invalidate()
 void ThreadedDisplayRefreshMonitor::displayRefreshCallback()
 {
     bool shouldHandleDisplayRefreshNotification { false };
+    WebCore::DisplayUpdate displayUpdate;
     {
         Locker locker { lock() };
         shouldHandleDisplayRefreshNotification = isScheduled() && isPreviousFrameDone();
+        displayUpdate = m_displayUpdate;
         if (shouldHandleDisplayRefreshNotification) {
             setIsScheduled(false);
             setIsPreviousFrameDone(false);
         }
     }
 
-    if (shouldHandleDisplayRefreshNotification) {
-        displayDidRefresh(m_currentUpdate);
-        m_currentUpdate = m_currentUpdate.nextUpdate();
-    }
+    if (shouldHandleDisplayRefreshNotification)
+        displayDidRefresh(displayUpdate);
 
     // Retrieve the scheduled status for this DisplayRefreshMonitor.
     bool hasBeenRescheduled { false };
@@ -131,16 +131,6 @@ void ThreadedDisplayRefreshMonitor::displayRefreshCallback()
     // the notification handling.
     if (m_client)
         m_client->handleDisplayRefreshMonitorUpdate(hasBeenRescheduled);
-}
-
-void ThreadedDisplayRefreshMonitor::setTargetRefreshRate(unsigned rate)
-{
-    if (!rate)
-        rate = defaultRefreshRate;
-    if (m_targetRefreshRate != rate) {
-        m_targetRefreshRate = rate;
-        m_currentUpdate = { 0, m_targetRefreshRate / 1000 };
-    }
 }
 
 } // namespace WebKit

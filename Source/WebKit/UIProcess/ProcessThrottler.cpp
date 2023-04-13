@@ -36,9 +36,13 @@
 #include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #endif
 
+#define PROCESSTHROTTLER_RELEASE_LOG(msg, ...) RELEASE_LOG(ProcessSuspension, "%p - [PID=%d] ProcessThrottler::" msg, this, m_processIdentifier, ##__VA_ARGS__)
+#define PROCESSTHROTTLER_RELEASE_LOG_WITH_PID(msg, ...) RELEASE_LOG(ProcessSuspension, "%p - [PID=%d] ProcessThrottler::" msg, this, ##__VA_ARGS__)
+
 namespace WebKit {
     
 static const Seconds processSuspensionTimeout { 20_s };
+static const Seconds removeAllAssertionsTimeout { 8_min };
 
 static uint64_t generatePrepareToSuspendRequestID()
 {
@@ -49,6 +53,7 @@ static uint64_t generatePrepareToSuspendRequestID()
 ProcessThrottler::ProcessThrottler(ProcessThrottlerClient& process, bool shouldTakeUIBackgroundAssertion)
     : m_process(process)
     , m_prepareToSuspendTimeoutTimer(RunLoop::main(), this, &ProcessThrottler::prepareToSuspendTimeoutTimerFired)
+    , m_dropSuspendedAssertionTimer(RunLoop::main(), this, &ProcessThrottler::dropSuspendedAssertionTimerFired)
     , m_shouldTakeUIBackgroundAssertion(shouldTakeUIBackgroundAssertion)
 {
 }
@@ -58,45 +63,30 @@ ProcessThrottler::~ProcessThrottler()
     invalidateAllActivities();
 }
 
-bool ProcessThrottler::addActivity(ForegroundActivity& activity)
+bool ProcessThrottler::addActivity(Activity& activity)
 {
     ASSERT(isMainRunLoop());
     if (!m_allowsActivities) {
         if (!activity.isQuietActivity())
-            PROCESSTHROTTLER_RELEASE_LOG("addActivity: not allowed to add foreground activity %s", activity.name().characters());
+            PROCESSTHROTTLER_RELEASE_LOG("addActivity: not allowed to add %s activity %s", activity.isForeground() ? "foreground" : "background", activity.name().characters());
         return false;
     }
 
-    m_foregroundActivities.add(&activity);
+    if (activity.isForeground())
+        m_foregroundActivities.add(&activity);
+    else
+        m_backgroundActivities.add(&activity);
     updateThrottleStateIfNeeded();
     return true;
 }
 
-bool ProcessThrottler::addActivity(BackgroundActivity& activity)
+void ProcessThrottler::removeActivity(Activity& activity)
 {
     ASSERT(isMainRunLoop());
-    if (!m_allowsActivities) {
-        if (!activity.isQuietActivity())
-            PROCESSTHROTTLER_RELEASE_LOG("addActivity: not allowed to add background activity %s", activity.name().characters());
-        return false;
-    }
-
-    m_backgroundActivities.add(&activity);
-    updateThrottleStateIfNeeded();
-    return true;
-}
-
-void ProcessThrottler::removeActivity(ForegroundActivity& activity)
-{
-    ASSERT(isMainRunLoop());
-    m_foregroundActivities.remove(&activity);
-    updateThrottleStateIfNeeded();
-}
-
-void ProcessThrottler::removeActivity(BackgroundActivity& activity)
-{
-    ASSERT(isMainRunLoop());
-    m_backgroundActivities.remove(&activity);
+    if (activity.isForeground())
+        m_foregroundActivities.remove(&activity);
+    else
+        m_backgroundActivities.remove(&activity);
     updateThrottleStateIfNeeded();
 }
 
@@ -110,7 +100,7 @@ void ProcessThrottler::invalidateAllActivities()
         (*m_backgroundActivities.begin())->invalidate();
     PROCESSTHROTTLER_RELEASE_LOG("invalidateAllActivities: END");
 }
-    
+
 ProcessThrottleState ProcessThrottler::expectedThrottleState()
 {
     if (!m_foregroundActivities.isEmpty())
@@ -119,7 +109,7 @@ ProcessThrottleState ProcessThrottler::expectedThrottleState()
         return ProcessThrottleState::Background;
     return ProcessThrottleState::Suspended;
 }
-    
+
 void ProcessThrottler::updateThrottleStateNow()
 {
     setThrottleState(expectedThrottleState());
@@ -138,6 +128,7 @@ String ProcessThrottler::assertionName(ProcessAssertionType type) const
         case ProcessAssertionType::UnboundedNetworking:
         case ProcessAssertionType::MediaPlayback:
         case ProcessAssertionType::FinishTaskInterruptable:
+        case ProcessAssertionType::BoostedJetsam:
             ASSERT_NOT_REACHED(); // These other assertion types are not used by the ProcessThrottler.
             break;
         }
@@ -147,7 +138,7 @@ String ProcessThrottler::assertionName(ProcessAssertionType type) const
     return makeString(m_process.clientName(), " ", typeString, " Assertion");
 }
 
-std::optional<ProcessAssertionType> ProcessThrottler::assertionTypeForState(ProcessThrottleState state)
+ProcessAssertionType ProcessThrottler::assertionTypeForState(ProcessThrottleState state)
 {
     switch (state) {
     case ProcessThrottleState::Foreground:
@@ -155,7 +146,7 @@ std::optional<ProcessAssertionType> ProcessThrottler::assertionTypeForState(Proc
     case ProcessThrottleState::Background:
         return ProcessAssertionType::Background;
     case ProcessThrottleState::Suspended:
-        return m_shouldTakeSuspendedAssertion ? std::optional(ProcessAssertionType::Suspended) : std::nullopt;
+        return ProcessAssertionType::Suspended;
     }
 
     RELEASE_ASSERT_NOT_REACHED();
@@ -164,15 +155,8 @@ std::optional<ProcessAssertionType> ProcessThrottler::assertionTypeForState(Proc
 void ProcessThrottler::setThrottleState(ProcessThrottleState newState)
 {
     m_state = newState;
-    m_process.didChangeThrottleState(newState);
 
-    ProcessAssertionType newType;
-    if (auto assertionType = assertionTypeForState(newState))
-        newType = assertionType.value();
-    else {
-        m_assertion = nullptr;
-        return;
-    }
+    ProcessAssertionType newType = assertionTypeForState(newState);
 
     if (m_assertion && m_assertion->isValid() && m_assertion->type() == newType)
         return;
@@ -182,21 +166,31 @@ void ProcessThrottler::setThrottleState(ProcessThrottleState newState)
     // Keep the previous assertion active until the new assertion is taken asynchronously.
     auto previousAssertion = std::exchange(m_assertion, nullptr);
     if (m_shouldTakeUIBackgroundAssertion) {
-        auto assertion = ProcessAndUIAssertion::create(m_processIdentifier, assertionName(newType), newType, ProcessAssertion::Mode::Async, [previousAssertion = WTFMove(previousAssertion)] { });
+        auto assertion = ProcessAndUIAssertion::create(m_processIdentifier, assertionName(newType), newType, ProcessAssertion::Mode::Async, m_process.environmentIdentifier(), [previousAssertion = WTFMove(previousAssertion)] { });
         assertion->setUIAssertionExpirationHandler([weakThis = WeakPtr { *this }] {
             if (weakThis)
                 weakThis->uiAssertionWillExpireImminently();
         });
         m_assertion = WTFMove(assertion);
     } else
-        m_assertion = ProcessAssertion::create(m_processIdentifier, assertionName(newType), newType, ProcessAssertion::Mode::Async, [previousAssertion = WTFMove(previousAssertion)] { });
+        m_assertion = ProcessAssertion::create(m_processIdentifier, assertionName(newType), newType, ProcessAssertion::Mode::Async, m_process.environmentIdentifier(), [previousAssertion = WTFMove(previousAssertion)] { });
 
     m_assertion->setInvalidationHandler([weakThis = WeakPtr { *this }] {
         if (weakThis)
             weakThis->assertionWasInvalidated();
     });
+
+    if (m_assertion->type() == ProcessAssertionType::Suspended) {
+        if (!m_shouldTakeSuspendedAssertion)
+            m_assertion = nullptr;
+        else
+            m_dropSuspendedAssertionTimer.startOneShot(removeAllAssertionsTimeout);
+    } else
+        m_dropSuspendedAssertionTimer.stop();
+
+    m_process.didChangeThrottleState(newState);
 }
-    
+
 void ProcessThrottler::updateThrottleStateIfNeeded()
 {
     if (!m_processIdentifier)
@@ -234,6 +228,16 @@ void ProcessThrottler::didConnectToProcess(ProcessID pid)
     updateThrottleStateNow();
     RELEASE_ASSERT(m_assertion || (m_state == ProcessThrottleState::Suspended && !m_shouldTakeSuspendedAssertion));
 }
+
+void ProcessThrottler::didDisconnectFromProcess()
+{
+    PROCESSTHROTTLER_RELEASE_LOG_WITH_PID("didDisconnectFromProcess:", m_processIdentifier);
+
+    m_dropSuspendedAssertionTimer.stop();
+    clearPendingRequestToSuspend();
+    m_processIdentifier = 0;
+    m_assertion = nullptr;
+}
     
 void ProcessThrottler::prepareToSuspendTimeoutTimerFired()
 {
@@ -241,7 +245,14 @@ void ProcessThrottler::prepareToSuspendTimeoutTimerFired()
     RELEASE_ASSERT(m_pendingRequestToSuspendID);
     updateThrottleStateNow();
 }
-    
+
+void ProcessThrottler::dropSuspendedAssertionTimerFired()
+{
+    PROCESSTHROTTLER_RELEASE_LOG("dropSuspendedAssertionTimerFired: Removing suspended process assertion");
+    RELEASE_ASSERT(m_assertion && m_assertion->type() == ProcessAssertionType::Suspended);
+    m_assertion = nullptr;
+}
+
 void ProcessThrottler::processReadyToSuspend()
 {
     PROCESSTHROTTLER_RELEASE_LOG("processReadyToSuspend: Updating process assertion to allow suspension");
@@ -292,18 +303,20 @@ void ProcessThrottler::assertionWasInvalidated()
     invalidateAllActivities();
 }
 
-bool ProcessThrottler::isValidBackgroundActivity(const ProcessThrottler::ActivityVariant& activity)
+bool ProcessThrottler::isValidBackgroundActivity(const ActivityVariant& variant)
 {
-    if (!std::holds_alternative<UniqueRef<ProcessThrottler::BackgroundActivity>>(activity))
+    if (!std::holds_alternative<UniqueRef<Activity>>(variant))
         return false;
-    return std::get<UniqueRef<ProcessThrottler::BackgroundActivity>>(activity)->isValid();
+    auto& activity = std::get<UniqueRef<Activity>>(variant).get();
+    return activity.isValid() && !activity.isForeground();
 }
 
-bool ProcessThrottler::isValidForegroundActivity(const ProcessThrottler::ActivityVariant& activity)
+bool ProcessThrottler::isValidForegroundActivity(const ActivityVariant& variant)
 {
-    if (!std::holds_alternative<UniqueRef<ProcessThrottler::ForegroundActivity>>(activity))
+    if (!std::holds_alternative<UniqueRef<Activity>>(variant))
         return false;
-    return std::get<UniqueRef<ProcessThrottler::ForegroundActivity>>(activity)->isValid();
+    auto& activity = std::get<UniqueRef<Activity>>(variant).get();
+    return activity.isValid() && activity.isForeground();
 }
 
 void ProcessThrottler::setAllowsActivities(bool allow)
@@ -320,10 +333,14 @@ void ProcessThrottler::setAllowsActivities(bool allow)
 
 void ProcessThrottler::setShouldTakeSuspendedAssertion(bool shouldTakeSuspendedAssertion)
 {
-    const bool shouldUpdateAssertion = m_shouldTakeSuspendedAssertion != shouldTakeSuspendedAssertion;
     m_shouldTakeSuspendedAssertion = shouldTakeSuspendedAssertion;
-    if (shouldUpdateAssertion && m_state == ProcessThrottleState::Suspended)
-        setThrottleState(ProcessThrottleState::Suspended);
+}
+
+void ProcessThrottler::delaySuspension()
+{
+    PROCESSTHROTTLER_RELEASE_LOG("delaySuspension");
+    if (m_dropSuspendedAssertionTimer.isActive())
+        m_dropSuspendedAssertionTimer.startOneShot(removeAllAssertionsTimeout);
 }
 
 ProcessThrottler::TimedActivity::TimedActivity(Seconds timeout, ProcessThrottler::ActivityVariant&& activity)

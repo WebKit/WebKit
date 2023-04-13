@@ -36,11 +36,11 @@
 #import <WebCore/BackForwardCache.h>
 #import <WebCore/CommonVM.h>
 #import <WebCore/FontCache.h>
-#import <WebCore/Frame.h>
 #import <WebCore/GCController.h>
 #import <WebCore/GlyphPage.h>
 #import <WebCore/GraphicsContextCG.h>
-#import <WebCore/JSDOMWindow.h>
+#import <WebCore/JSLocalDOMWindow.h>
+#import <WebCore/LocalFrame.h>
 #import <WebCore/PageConsoleClient.h>
 #import <WebCore/PrintContext.h>
 #import <WebCore/RenderTreeAsText.h>
@@ -292,7 +292,7 @@ static OptionSet<RenderAsTextFlag> toRenderAsTextFlags(WebRenderTreeAsTextOption
 
 - (int)numberOfPagesWithPageWidth:(float)pageWidthInPixels pageHeight:(float)pageHeightInPixels
 {
-    Frame* coreFrame = _private->coreFrame;
+    auto coreFrame = _private->coreFrame;
     if (!coreFrame)
         return -1;
 
@@ -301,7 +301,7 @@ static OptionSet<RenderAsTextFlag> toRenderAsTextFlags(WebRenderTreeAsTextOption
 
 - (void)printToCGContext:(CGContextRef)cgContext pageWidth:(float)pageWidthInPixels pageHeight:(float)pageHeightInPixels
 {
-    Frame* coreFrame = _private->coreFrame;
+    auto coreFrame = _private->coreFrame;
     if (!coreFrame)
         return;
 

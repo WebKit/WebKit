@@ -27,52 +27,223 @@
 #include "CSSCounterStyle.h"
 
 #include "CSSCounterStyleDescriptors.h"
+#include "CSSCounterStyleRegistry.h"
 #include "CSSCounterStyleRule.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSValuePair.h"
+#include "RenderStyleConstants.h"
+#include <cmath>
+#include <wtf/text/AtomString.h>
+#include <wtf/text/StringBuilder.h>
+#include <wtf/text/TextBreakIterator.h>
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
-String CSSCounterStyle::counterForSystemCyclic(int)
+// https://www.w3.org/TR/css-counter-styles-3/#cyclic-system
+String CSSCounterStyle::counterForSystemCyclic(int value) const
 {
-    // FIXME: implement counter for system rdar://103648354
-    return ""_s;
+    auto amountOfSymbols = symbols().size();
+    if (amountOfSymbols < 1) {
+        ASSERT_NOT_REACHED();
+        return { };
+    }
+
+    // For avoiding subtracting -1 from INT_MAX we will sum-up amountOfSymbols in case the value is not positive.
+    // This works because x % y = (x + y) % y
+    unsigned symbolIndex = static_cast<unsigned>(value > 0 ? value : value + amountOfSymbols);
+    symbolIndex = (symbolIndex - 1) % amountOfSymbols;
+    if (static_cast<unsigned>(symbolIndex) >= amountOfSymbols) {
+        ASSERT_NOT_REACHED();
+        return  { };
+    }
+    return symbols().at(static_cast<unsigned>(symbolIndex)).text;
 }
-String CSSCounterStyle::counterForSystemFixed(int)
+
+// https://www.w3.org/TR/css-counter-styles-3/#fixed-system
+String CSSCounterStyle::counterForSystemFixed(int value) const
 {
-    // FIXME: implement counter for system rdar://103648354
-    return ""_s;
+    if (value < firstSymbolValueForFixedSystem())
+        return { };
+    unsigned valueOffset = value - firstSymbolValueForFixedSystem();
+    if (valueOffset >= symbols().size())
+        return { };
+    return symbols().at(valueOffset).text;
 }
-String CSSCounterStyle::counterForSystemSymbolic(int)
+
+// https://www.w3.org/TR/css-counter-styles-3/#symbolic-system
+String CSSCounterStyle::counterForSystemSymbolic(unsigned value) const
 {
-    // FIXME: implement counter for system rdar://103648354
-    return ""_s;
+    auto amountOfSymbols = symbols().size();
+    if (!amountOfSymbols) {
+        ASSERT_NOT_REACHED();
+        return { };
+    }
+    if (value < 1)
+        return { };
+
+    unsigned symbolIndex = ((value - 1) % amountOfSymbols);
+    unsigned frequency = static_cast<unsigned>(std::ceil(static_cast<float>(value) / amountOfSymbols));
+
+    StringBuilder result;
+    for (unsigned i = 0; i < frequency; ++i)
+        result.append(symbols().at(symbolIndex).text);
+    return result.toString();
 }
-String CSSCounterStyle::counterForSystemAlphabetic(int)
+
+// https://www.w3.org/TR/css-counter-styles-3/#alphabetic-system
+String CSSCounterStyle::counterForSystemAlphabetic(unsigned value) const
 {
-    // FIXME: implement counter for system rdar://103648354
-    return ""_s;
+    auto amountOfSymbols = symbols().size();
+    if (amountOfSymbols < 2) {
+        ASSERT_NOT_REACHED();
+        return { };
+    }
+    if (value < 1)
+        return { };
+
+    Vector<String> reversed;
+    while (value) {
+        value -= 1;
+        reversed.append(symbols().at(value % amountOfSymbols).text);
+        value = std::floor(value / amountOfSymbols);
+    }
+    StringBuilder result;
+    for (auto iter = reversed.rbegin(); iter != reversed.rend(); ++iter)
+        result.append(*iter);
+    return result.toString();
 }
-String CSSCounterStyle::counterForSystemNumeric(int)
+
+// https://www.w3.org/TR/css-counter-styles-3/#numeric-system
+String CSSCounterStyle::counterForSystemNumeric(unsigned value) const
 {
-    // FIXME: implement counter for system rdar://103648354
-    return ""_s;
+    auto amountOfSymbols = symbols().size();
+    if (amountOfSymbols < 2) {
+        ASSERT_NOT_REACHED();
+        return { };
+    }
+    if (!value)
+        return symbols().at(0).text;
+
+    Vector<String> reversed;
+    while (value) {
+        reversed.append(symbols().at(value % amountOfSymbols).text);
+        value = static_cast<unsigned>(std::floor(value / amountOfSymbols));
+    }
+    StringBuilder result;
+    for (auto iter = reversed.rbegin(); iter != reversed.rend(); ++iter)
+        result.append(*iter);
+    return result.toString();
 }
-String CSSCounterStyle::counterForSystemAdditive(int)
+
+// https://www.w3.org/TR/css-counter-styles-3/#additive-system
+String CSSCounterStyle::counterForSystemAdditive(unsigned value) const
 {
-    // FIXME: implement counter for system rdar://103648354
-    return ""_s;
+    auto& additiveSymbols = this->additiveSymbols();
+    if (!value) {
+        for (auto& [symbol, weight] : additiveSymbols) {
+            if (!weight)
+                return symbol.text;
+        }
+        return { };
+    }
+
+    StringBuilder result;
+    auto appendToResult = [&](String symb, unsigned frequency) {
+        for (unsigned i = 0; i < frequency; ++i)
+            result.append(symb);
+    };
+
+    for (auto& [symbol, weight] : additiveSymbols) {
+        if (!weight || weight > value)
+            continue;
+        auto repetitions = static_cast<unsigned>(std::floor(value / weight));
+        appendToResult(symbol.text, repetitions);
+        value -= weight * repetitions;
+        if (!value)
+            return result.toString();
+    }
+    return { };
 }
-String CSSCounterStyle::initialRepresentation(int)
+
+String CSSCounterStyle::initialRepresentation(int value) const
 {
-    // FIXME: implement counter initial representation rdar://103648354
-    return ""_s;
+    unsigned absoluteValue = std::abs(value);
+    switch (system()) {
+    case CSSCounterStyleDescriptors::System::Cyclic:
+        return counterForSystemCyclic(value);
+    case CSSCounterStyleDescriptors::System::Numeric:
+        return counterForSystemNumeric(absoluteValue);
+    case CSSCounterStyleDescriptors::System::Alphabetic:
+        return counterForSystemAlphabetic(absoluteValue);
+    case CSSCounterStyleDescriptors::System::Symbolic:
+        return counterForSystemSymbolic(absoluteValue);
+    case CSSCounterStyleDescriptors::System::Additive:
+        return counterForSystemAdditive(absoluteValue);
+    case CSSCounterStyleDescriptors::System::Fixed:
+        return counterForSystemFixed(value);
+    case CSSCounterStyleDescriptors::System::Extends:
+        // CounterStyle with extends system should have been promoted to another system at this point
+        ASSERT_NOT_REACHED();
+        break;
+    }
+    return { };
 }
+
+String CSSCounterStyle::fallbackText(int value)
+{
+    if (m_isFallingBack || !fallback().get()) {
+        m_isFallingBack = false;
+        return CSSCounterStyleRegistry::decimalCounter()->text(value);
+    }
+    m_isFallingBack = true;
+    auto fallbackText = fallback()->text(value);
+    m_isFallingBack = false;
+    return fallbackText;
+}
+
 String CSSCounterStyle::text(int value)
 {
-// FIXME: implement text representation for CSSCounterStyle rdar://103648354.
-    return String::number(value);
+    if (!isInRange(value))
+        return fallbackText(value);
+
+    auto result = initialRepresentation(value);
+    if (result.isNull())
+        return fallbackText(value);
+    applyPadSymbols(result, value);
+    if (shouldApplyNegativeSymbols(value))
+        applyNegativeSymbols(result);
+
+    return result;
 }
+
+bool CSSCounterStyle::shouldApplyNegativeSymbols(int value) const
+{
+    auto system = this->system();
+    return value < 0 && (system == CSSCounterStyleDescriptors::System::Symbolic || system == CSSCounterStyleDescriptors::System::Numeric || system == CSSCounterStyleDescriptors::System::Alphabetic || system == CSSCounterStyleDescriptors::System::Additive);
+}
+
+void CSSCounterStyle::applyNegativeSymbols(String& text) const
+{
+    text = negative().m_suffix.text.isEmpty() ? makeString(negative().m_prefix.text, text) : makeString(negative().m_prefix.text, text, negative().m_suffix.text);
+}
+
+void CSSCounterStyle::applyPadSymbols(String& text, int value) const
+{
+    // FIXME: should we cap pad minimum length?
+    if (pad().m_padMinimumLength <= 0)
+        return;
+
+    int numberOfSymbolsToAdd = static_cast<int>(pad().m_padMinimumLength - WTF::numGraphemeClusters(text));
+    if (shouldApplyNegativeSymbols(value))
+        numberOfSymbolsToAdd -= static_cast<int>(WTF::numGraphemeClusters(negative().m_prefix.text) + WTF::numGraphemeClusters(negative().m_suffix.text));
+
+    String padText;
+    for (int i = 0; i < numberOfSymbolsToAdd; ++i)
+        padText = makeString(padText, pad().m_padSymbol.text);
+    text = makeString(padText, text);
+}
+
 bool CSSCounterStyle::isInRange(int value) const
 {
     if (isAutoRange()) {
@@ -110,28 +281,6 @@ Ref<CSSCounterStyle> CSSCounterStyle::create(const CSSCounterStyleDescriptors& d
     return adoptRef(*new CSSCounterStyle(descriptors, isPredefinedCounterStyle));
 }
 
-Ref<CSSCounterStyle> CSSCounterStyle::createCounterStyleDecimal()
-{
-    Vector<CSSCounterStyleDescriptors::Symbol> symbols { "0"_s, "1"_s, "2"_s, "3"_s, "4"_s, "5"_s, "6"_s, "7"_s, "8"_s, "9"_s };
-    CSSCounterStyleDescriptors descriptors {
-        .m_name = "decimal"_s,
-        .m_system = CSSCounterStyleDescriptors::System::Numeric,
-        .m_negativeSymbols = { },
-        .m_prefix = { },
-        .m_suffix = { },
-        .m_ranges = { },
-        .m_pad = { },
-        .m_fallbackName = { },
-        .m_symbols = WTFMove(symbols),
-        .m_additiveSymbols = { },
-        .m_speakAs = CSSCounterStyleDescriptors::SpeakAs::Auto,
-        .m_extendsName = { },
-        .m_fixedSystemFirstSymbolValue = 0,
-        .m_explicitlySetDescriptors = { }
-    };
-    return adoptRef(*new CSSCounterStyle(descriptors, true));
-}
-
 void CSSCounterStyle::setFallbackReference(RefPtr<CSSCounterStyle>&& fallback)
 {
     m_fallbackReference = WeakPtr { fallback };
@@ -140,9 +289,10 @@ void CSSCounterStyle::setFallbackReference(RefPtr<CSSCounterStyle>&& fallback)
 // The counter's system value is promoted to the value of the counter we are extending.
 void CSSCounterStyle::extendAndResolve(const CSSCounterStyle& extendedCounterStyle)
 {
-    m_isExtendedUnresolved = false;
+    m_descriptors.m_isExtendedResolved = true;
 
     setSystem(extendedCounterStyle.system());
+    setFirstSymbolValueForFixedSystem(extendedCounterStyle.firstSymbolValueForFixedSystem());
 
     if (!explicitlySetDescriptors().contains(CSSCounterStyleDescriptors::ExplicitlySetDescriptors::Negative))
         setNegative(extendedCounterStyle.negative());
@@ -165,4 +315,4 @@ void CSSCounterStyle::extendAndResolve(const CSSCounterStyle& extendedCounterSty
     if (!explicitlySetDescriptors().contains(CSSCounterStyleDescriptors::ExplicitlySetDescriptors::SpeakAs))
         setSpeakAs(extendedCounterStyle.speakAs());
 }
-}
+} // namespace WebCore

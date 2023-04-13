@@ -482,16 +482,6 @@ void WKPreferencesSetNeedsSiteSpecificQuirks(WKPreferencesRef preferencesRef, bo
     toImpl(preferencesRef)->setNeedsSiteSpecificQuirks(flag);
 }
 
-bool WKPreferencesUseLegacyTextAlignPositionedElementBehavior(WKPreferencesRef preferencesRef)
-{
-    return toImpl(preferencesRef)->useLegacyTextAlignPositionedElementBehavior();
-}
-
-void WKPreferencesSetUseLegacyTextAlignPositionedElementBehavior(WKPreferencesRef preferencesRef, bool flag)
-{
-    toImpl(preferencesRef)->setUseLegacyTextAlignPositionedElementBehavior(flag);
-}
-
 bool WKPreferencesGetNeedsSiteSpecificQuirks(WKPreferencesRef preferencesRef)
 {
     return toImpl(preferencesRef)->needsSiteSpecificQuirks();
@@ -744,6 +734,26 @@ void WKPreferencesSetMainContentUserGestureOverrideEnabled(WKPreferencesRef pref
 bool WKPreferencesGetMainContentUserGestureOverrideEnabled(WKPreferencesRef preferencesRef)
 {
     return toImpl(preferencesRef)->mainContentUserGestureOverrideEnabled();
+}
+
+void WKPreferencesSetManagedMediaSourceLowThreshold(WKPreferencesRef preferencesRef, double threshold)
+{
+    toImpl(preferencesRef)->setManagedMediaSourceLowThreshold(threshold);
+}
+
+double WKPreferencesGetManagedMediaSourceLowThreshold(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->managedMediaSourceLowThreshold();
+}
+
+void WKPreferencesSetManagedMediaSourceHighThreshold(WKPreferencesRef preferencesRef, double threshold)
+{
+    toImpl(preferencesRef)->setManagedMediaSourceHighThreshold(threshold);
+}
+
+double WKPreferencesGetManagedMediaSourceHighThreshold(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->managedMediaSourceHighThreshold();
 }
 
 void WKPreferencesSetMediaPlaybackAllowsInline(WKPreferencesRef preferencesRef, bool flag)
@@ -1577,16 +1587,6 @@ bool WKPreferencesGetPaintTimingEnabled(WKPreferencesRef preferencesRef)
     return toImpl(preferencesRef)->paintTimingEnabled();
 }
 
-void WKPreferencesSetIsNSURLSessionWebSocketEnabled(WKPreferencesRef preferencesRef, bool flag)
-{
-    toImpl(preferencesRef)->setIsNSURLSessionWebSocketEnabled(flag);
-}
-
-bool WKPreferencesGetIsNSURLSessionWebSocketEnabled(WKPreferencesRef preferencesRef)
-{
-    return toImpl(preferencesRef)->isNSURLSessionWebSocketEnabled();
-}
-
 void WKPreferencesSetWebRTCPlatformCodecsInGPUProcessEnabled(WKPreferencesRef preferencesRef, bool flag)
 {
     toImpl(preferencesRef)->setWebRTCPlatformCodecsInGPUProcessEnabled(flag);
@@ -1986,15 +1986,6 @@ bool WKPreferencesGetKeygenElementEnabled(WKPreferencesRef preferencesRef)
     return false;
 }
 
-void WKPreferencesSetWebRTCLegacyAPIEnabled(WKPreferencesRef, bool)
-{
-}
-
-bool WKPreferencesGetWebRTCLegacyAPIEnabled(WKPreferencesRef)
-{
-    return false;
-}
-
 void WKPreferencesSetNewBlockInsideInlineModelEnabled(WKPreferencesRef, bool)
 {
 }
@@ -2028,28 +2019,6 @@ void WKPreferencesSetHixie76WebSocketProtocolEnabled(WKPreferencesRef, bool)
 
 bool WKPreferencesGetHixie76WebSocketProtocolEnabled(WKPreferencesRef)
 {
-    return false;
-}
-
-void WKPreferencesSetApplicationChromeModeEnabled(WKPreferencesRef, bool)
-{
-    // FIXME: Remove once WebKit nightlies don't need to support Safari 8.
-}
-
-bool WKPreferencesGetApplicationChromeModeEnabled(WKPreferencesRef)
-{
-    // FIXME: Remove once WebKit nightlies don't need to support Safari 8.
-    return false;
-}
-
-void WKPreferencesSetInspectorUsesWebKitUserInterface(WKPreferencesRef, bool)
-{
-    // FIXME: Remove once WebKit nightlies don't need to support Safari 6 thru 7.
-}
-
-bool WKPreferencesGetInspectorUsesWebKitUserInterface(WKPreferencesRef)
-{
-    // FIXME: Remove once WebKit nightlies don't need to support Safari 6 thru 7.
     return false;
 }
 

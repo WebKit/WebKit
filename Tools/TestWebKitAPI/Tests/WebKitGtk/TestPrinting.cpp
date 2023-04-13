@@ -227,7 +227,9 @@ public:
 
     GtkWidget* createWebView()
     {
-        GtkWidget* newWebView = webkit_web_view_new_with_related_view(m_webView);
+        GtkWidget* newWebView = GTK_WIDGET(g_object_new(WEBKIT_TYPE_WEB_VIEW,
+            "related-view", m_webView,
+            nullptr));
         g_object_ref_sink(newWebView);
 
         assertObjectIsDeletedWhenTestFinishes(G_OBJECT(newWebView));

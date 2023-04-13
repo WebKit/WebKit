@@ -57,6 +57,7 @@ ISSUES = [
         component='Text',
         version='Other',
         milestone='October',
+        keywords=['Keyword A'],
         comments=[
             Issue.Comment(
                 user=USERS['Felix Filer'],
@@ -79,6 +80,7 @@ ISSUES = [
         component='Scrolling',
         version='Safari 15',
         milestone='October',
+        keywords=['Keyword A'],
         comments=[
             Issue.Comment(
                 user=USERS['Tim Contributor'],
@@ -98,6 +100,7 @@ ISSUES = [
         component='SVG',
         version='WebKit Local Build',
         milestone='October',
+        keywords=['Keyword B'],
         comments=[
             Issue.Comment(
                 user=USERS['Tim Contributor'],

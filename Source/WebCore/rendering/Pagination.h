@@ -29,8 +29,10 @@
 
 namespace WebCore {
 
+enum PaginationMode : uint8_t { Unpaginated, LeftToRightPaginated, RightToLeftPaginated, TopToBottomPaginated, BottomToTopPaginated };
+
 struct Pagination {
-    enum Mode : uint8_t { Unpaginated, LeftToRightPaginated, RightToLeftPaginated, TopToBottomPaginated, BottomToTopPaginated };
+    using Mode = PaginationMode;
 
     bool operator==(const Pagination& other) const
     {

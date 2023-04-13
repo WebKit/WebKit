@@ -48,12 +48,10 @@ JS_EXPORT void JSRemoteInspectorSetParentProcessInformation(JSProcessID, const u
 JS_EXPORT void JSRemoteInspectorSetLogToSystemConsole(bool) JSC_API_AVAILABLE(macos(10.11), ios(9.0));
 
 JS_EXPORT bool JSRemoteInspectorGetInspectionEnabledByDefault(void) JSC_API_AVAILABLE(macos(10.11), ios(9.0));
-JS_EXPORT void JSRemoteInspectorSetInspectionEnabledByDefault(bool) JSC_API_DEPRECATED("Use JSGlobalContextSetInspectable on a single JSGlobalContextRef.", macos(10.11, JSC_MAC_TBA), ios(9.0, JSC_IOS_TBA));
+JS_EXPORT void JSRemoteInspectorSetInspectionEnabledByDefault(bool) JSC_API_DEPRECATED("Use JSGlobalContextSetInspectable on a single JSGlobalContextRef.", macos(10.11, 13.3), ios(9.0, 16.4));
 
-// FIXME: <rdar://104354248> SPI annotated with TBA availability information is not usable in WebCore/WebKit on
-// downlevel builds. These SPI are available starting in JSC_MAC_TBA and JSC_IOS_TBA.
-JS_EXPORT bool JSRemoteInspectorGetInspectionFollowsInternalPolicies(void);
-JS_EXPORT void JSRemoteInspectorSetInspectionFollowsInternalPolicies(bool);
+JS_EXPORT bool JSRemoteInspectorGetInspectionFollowsInternalPolicies(void) JSC_API_AVAILABLE(macos(13.3), ios(16.4));
+JS_EXPORT void JSRemoteInspectorSetInspectionFollowsInternalPolicies(bool) JSC_API_AVAILABLE(macos(13.3), ios(16.4));
 
 #ifdef __cplusplus
 }

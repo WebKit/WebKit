@@ -29,9 +29,9 @@
 #include "DeprecatedGlobalSettings.h"
 #include "DisplayTree.h"
 #include "DisplayTreeBuilder.h"
-#include "Frame.h"
-#include "FrameView.h"
 #include "LayoutElementBox.h"
+#include "LocalFrame.h"
+#include "LocalFrameView.h"
 #include "Page.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -40,7 +40,7 @@ namespace Display {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(View);
 
-View::View(FrameView& frameView)
+View::View(LocalFrameView& frameView)
     : m_frameView(frameView)
     , m_layerController(*this)
 {
@@ -50,7 +50,7 @@ View::~View()
 {
 }
 
-Frame& View::frame() const
+LocalFrame& View::frame() const
 {
     return downcast<LocalFrame>(m_frameView.frame());
 }

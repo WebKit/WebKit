@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,6 +32,7 @@
 #include "RemoteDisplayListRecorderMessages.h"
 #include "RemoteImageBuffer.h"
 #include <WebCore/BitmapImage.h>
+#include <WebCore/FEImage.h>
 #include <WebCore/FilterResults.h>
 
 #if USE(SYSTEM_PREVIEW)
@@ -142,10 +143,23 @@ void RemoteDisplayListRecorder::setState(DisplayList::SetState&& item)
         return true;
     };
 
-    if (!fixPatternTileImage(item.state().fillBrush().pattern()))
+    auto fixBrushGradient = [&](SourceBrush& brush) -> bool {
+        auto gradientIdentifier = brush.gradientIdentifier();
+        if (!gradientIdentifier)
+            return true;
+        auto gradient = resourceCache().cachedGradient({ *gradientIdentifier, m_webProcessIdentifier });
+        if (!gradient) {
+            ASSERT_NOT_REACHED();
+            return false;
+        }
+        brush.setGradient(*gradient, brush.gradientSpaceTransform());
+        return true;
+    };
+
+    if (!fixPatternTileImage(item.state().fillBrush().pattern()) || !fixBrushGradient(item.state().fillBrush()))
         return;
 
-    if (!fixPatternTileImage(item.state().strokeBrush().pattern()))
+    if (!fixPatternTileImage(item.state().strokeBrush().pattern()) || !fixBrushGradient(item.state().strokeBrush()))
         return;
 
     handleItem(WTFMove(item));
@@ -214,7 +228,7 @@ void RemoteDisplayListRecorder::clipPath(const Path& path, WindRule rule)
     handleItem(DisplayList::ClipPath(path, rule));
 }
 
-void RemoteDisplayListRecorder::drawFilteredImageBuffer(std::optional<RenderingResourceIdentifier> sourceImageIdentifier, const FloatRect& sourceImageRect, IPC::FilterReference filterReference)
+void RemoteDisplayListRecorder::drawFilteredImageBuffer(std::optional<RenderingResourceIdentifier> sourceImageIdentifier, const FloatRect& sourceImageRect, Ref<Filter> filter)
 {
     RefPtr<ImageBuffer> sourceImage;
 
@@ -225,8 +239,6 @@ void RemoteDisplayListRecorder::drawFilteredImageBuffer(std::optional<RenderingR
             return;
         }
     }
-
-    auto filter = filterReference.takeFilter();
 
     for (auto& effect : filter->effectsOfType(FilterEffect::Type::FEImage)) {
         auto& feImage = downcast<FEImage>(effect.get());
@@ -479,6 +491,7 @@ void RemoteDisplayListRecorder::transformToColorSpace(const WebCore::Destination
     m_imageBuffer->transformToColorSpace(colorSpace);
 }
 
+#if ENABLE(VIDEO)
 void RemoteDisplayListRecorder::paintFrameForMedia(MediaPlayerIdentifier identifier, const FloatRect& destination)
 {
     m_renderingBackend->performWithMediaPlayerOnMainThread(identifier, [imageBuffer = RefPtr { m_imageBuffer.get() }, destination](MediaPlayer& player) {
@@ -486,6 +499,7 @@ void RemoteDisplayListRecorder::paintFrameForMedia(MediaPlayerIdentifier identif
         imageBuffer->context().paintFrameForMedia(player, destination);
     });
 }
+#endif
 
 #if PLATFORM(COCOA) && ENABLE(VIDEO)
 void RemoteDisplayListRecorder::paintVideoFrame(SharedVideoFrame&& frame, const WebCore::FloatRect& destination, bool shouldDiscardAlpha)
@@ -585,7 +599,7 @@ void RemoteDisplayListRecorder::applyDeviceScaleFactor(float scaleFactor)
 
 void RemoteDisplayListRecorder::flushContext(DisplayListRecorderFlushIdentifier identifier)
 {
-    m_imageBuffer->flushContext();
+    m_imageBuffer->flushDrawingContext();
     m_renderingBackend->didFlush(identifier);
 }
 

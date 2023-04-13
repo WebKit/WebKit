@@ -39,8 +39,10 @@ declare_args() {
 
   # Don't build extra (test, samples etc) for Windows UWP. We don't have
   # infrastructure (e.g. windowing helper functions) in place to run them.
+  # Also don't build them with MSVC, because tests and unused dependencies
+  # often have problems building with it, e.g. for C++20.
   angle_build_all = !build_with_chromium && !angle_is_winuwp &&
-                    angle_has_build && angle_build_tests
+                    !angle_is_msvc && angle_has_build && angle_build_tests
 
   # Enable generating current commit information using git
   angle_enable_commit_id = true
@@ -230,6 +232,10 @@ config("internal_config") {
   if (angle_build_mesa) {
     defines += [ "ANGLE_HAS_MESA" ]
   }
+
+  if (angle_standalone || build_with_chromium) {
+    defines += [ "ANGLE_OUTSIDE_WEBKIT" ]
+  }
 }
 
 config("constructor_and_destructor_warnings") {
@@ -315,24 +321,11 @@ config("build_id_config") {
   ldflags = [ "-Wl,--build-id" ]
 }
 
-_use_copy_compiler_dll = angle_has_build && is_win && target_cpu != "arm64"
+_use_copy_compiler_dll = angle_has_build && is_win
 
-# Windows ARM64 is available since 10.0.16299 so no need to copy
-# d3dcompiler_47.dll because this file is available as inbox.
 if (_use_copy_compiler_dll) {
-  # We also ship an older DLL for compatiblity with Windows 7 machines without
-  # the UCRT. This DLL isn't available in the standard SDK distribution.
-  _old_compiler = "$windows_sdk_path/Redist/D3D/$target_cpu/d3dcompiler_old.dll"
-  _has_old_compiler =
-      exec_script("scripts/file_exists.py", [ _old_compiler ], "value")
-
   copy("copy_compiler_dll") {
     sources = [ "$windows_sdk_path/Redist/D3D/$target_cpu/d3dcompiler_47.dll" ]
-
-    if (_has_old_compiler) {
-      sources += [ _old_compiler ]
-    }
-
     outputs = [ "$root_out_dir/{{source_file_part}}" ]
   }
 }
@@ -731,6 +724,7 @@ template("translator_lib") {
     public_configs += [ ":external_config" ]
 
     deps = [
+      ":angle_common_shader_state",
       ":includes",
       ":preprocessor",
       "$angle_root/src/common/spirv:angle_spirv_headers",
@@ -749,6 +743,7 @@ template("translator_lib") {
     public_deps = [
       ":angle_common",
       ":angle_translator_headers",
+      ":angle_version_info",
     ]
 
     if (is_win) {
@@ -821,8 +816,9 @@ action("angle_commit_id") {
   if (angle_enable_commit_id &&
       exec_script("src/commit_id.py", [ "check" ], "value") == 1) {
     # commit id should depend on angle's HEAD revision
-    inputs = [ ".git/HEAD" ]
-    branch = read_file(".git/HEAD", "string")
+    git_dirs = exec_script("src/commit_id.py", [ "get_git_dirs" ], "list lines")
+    inputs = [ git_dirs[0] + "/HEAD" ]
+    branch = read_file(git_dirs[0] + "/HEAD", "string")
     result = string_split(branch)
     if (result[0] == "ref:") {
       _ref_file = result[1]
@@ -835,7 +831,7 @@ action("angle_commit_id") {
                     _ref_file,
                   ],
                   "")
-      inputs += [ ".git/" + _ref_file ]
+      inputs += [ git_dirs[1] + "/" + _ref_file ]
     }
   }
 
@@ -975,7 +971,6 @@ angle_source_set("libANGLE_headers") {
   }
   public_deps = [
     ":angle_common",
-    ":angle_common_shader_state",
     ":angle_translator_headers",
   ]
   public_configs += [ ":libANGLE_config" ]
@@ -1095,8 +1090,6 @@ angle_source_set("libANGLE_no_vulkan") {
     ":angle_backend_config",
   ]
 
-  # Windows ARM64 is available since 10.0.16299 so no need to copy
-  # d3dcompiler_47.dll because this file is available as inbox.
   if (_use_copy_compiler_dll) {
     data_deps = [ ":copy_compiler_dll" ]
   }

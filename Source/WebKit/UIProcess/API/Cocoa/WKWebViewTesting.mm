@@ -31,6 +31,7 @@
 #import "MediaSessionCoordinatorProxyPrivate.h"
 #import "PlaybackSessionManagerProxy.h"
 #import "PrintInfo.h"
+#import "RemoteLayerTreeDrawingAreaProxy.h"
 #import "RemoteScrollingCoordinatorProxy.h"
 #import "UserMediaProcessManager.h"
 #import "ViewGestureController.h"
@@ -93,9 +94,9 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
     };
 
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
-    if ([layer valueForKey:@"WKInteractionRegion"])
+    if ([layer valueForKey:@"WKInteractionRegionGroupName"])
         ts.dumpProperty("type", "interaction");
-    if ([layer valueForKey:@"WKInteractionRegionOcclusion"])
+    else if ([layer valueForKey:@"WKInteractionRegionType"])
         ts.dumpProperty("type", "occlusion");
 #endif
 
@@ -113,6 +114,12 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
     if (layer.anchorPointZ)
         ts.dumpProperty("layer anchorPointZ", makeString(layer.anchorPointZ));
 
+    if (layer.opacity != 1.0)
+        ts.dumpProperty("layer opacity", makeString(layer.opacity));
+
+    if (layer.cornerRadius != 0.0)
+        ts.dumpProperty("layer cornerRadius", makeString(layer.cornerRadius));
+    
     if (traverse && layer.sublayers.count > 0) {
         TextStream::GroupScope scope(ts);
         ts << "sublayers";
@@ -136,7 +143,7 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
     if (nonce)
         measurement.setEphemeralSourceNonce({ nonce });
 
-    _page->setPrivateClickMeasurement({{ WTFMove(measurement), { }, { }}});
+    _page->setPrivateClickMeasurement(WTFMove(measurement));
 }
 
 - (void)_setPageScale:(CGFloat)scale withOrigin:(CGPoint)origin
@@ -206,6 +213,14 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
 
 - (void)_setScrollingUpdatesDisabledForTesting:(BOOL)disabled
 {
+}
+
+- (unsigned long)_countOfUpdatesWithLayerChanges
+{
+    if (auto* drawingAreaProxy = dynamicDowncast<WebKit::RemoteLayerTreeDrawingAreaProxy>(_page->drawingArea()))
+        return drawingAreaProxy->countOfTransactionsWithNonEmptyLayerChanges();
+
+    return 0;
 }
 
 - (void)_doAfterNextPresentationUpdateWithoutWaitingForAnimatedResizeForTesting:(void (^)(void))updateBlock
@@ -319,7 +334,7 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
 
 - (void)_setIndexOfGetDisplayMediaDeviceSelectedForTesting:(NSNumber *)nsIndex
 {
-#if HAVE(SCREEN_CAPTURE_KIT)
+#if ENABLE(MEDIA_STREAM)
     if (!_page)
         return;
 
@@ -328,6 +343,16 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
         index = nsIndex.unsignedIntValue;
 
     _page->setIndexOfGetDisplayMediaDeviceSelectedForTesting(index);
+#endif
+}
+
+- (void)_setSystemCanPromptForGetDisplayMediaForTesting:(BOOL)canPrompt
+{
+#if ENABLE(MEDIA_STREAM)
+    if (!_page)
+        return;
+
+    _page->setSystemCanPromptForGetDisplayMediaForTesting(!!canPrompt);
 #endif
 }
 
@@ -370,6 +395,13 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
 - (BOOL)_hasSleepDisabler
 {
     return _page && _page->process().hasSleepDisabler();
+}
+
+- (NSString*)_scrollbarStateForScrollingNodeID:(uint64_t)scrollingNodeID isVertical:(bool)isVertical
+{
+    if (_page)
+        return _page->scrollbarStateForScrollingNodeID(scrollingNodeID, isVertical);
+    return @"";
 }
 
 - (WKWebViewAudioRoutingArbitrationStatus)_audioRoutingArbitrationStatus
@@ -445,6 +477,12 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
     _page->dumpPrivateClickMeasurement([completionHandler = makeBlockPtr(completionHandler)](const String& privateClickMeasurement) {
         completionHandler(privateClickMeasurement);
     });
+}
+
+- (BOOL)_shouldBypassGeolocationPromptForTesting
+{
+    // For subclasses to override.
+    return NO;
 }
 
 - (void)_didShowContextMenu

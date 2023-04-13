@@ -66,6 +66,9 @@ public:
 
     void monitorWheelEvents(MonitorWheelEventsOptions*);
     void callAfterScrollingCompletes(JSValueRef functionCallback);
+    
+    void sentWheelPhaseEndOrCancel() { m_sentWheelPhaseEndOrCancel = true; }
+    void sentWheelMomentumPhaseEnd() { m_sentWheelMomentumPhaseEnd = true; }
 
     void keyDown(JSStringRef key, JSValueRef modifierArray, int location);
     void rawKeyDown(JSStringRef key, JSValueRef modifierArray, int location);

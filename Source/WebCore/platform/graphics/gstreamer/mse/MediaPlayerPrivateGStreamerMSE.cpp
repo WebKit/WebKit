@@ -336,9 +336,9 @@ void MediaPlayerPrivateGStreamerMSE::asyncStateChangeDone()
     propagateReadyStateToPlayer();
 }
 
-std::unique_ptr<PlatformTimeRanges> MediaPlayerPrivateGStreamerMSE::buffered() const
+const PlatformTimeRanges& MediaPlayerPrivateGStreamerMSE::buffered() const
 {
-    return m_mediaSource ? m_mediaSource->buffered() : makeUnique<PlatformTimeRanges>();
+    return m_mediaSource ? m_mediaSource->buffered() : PlatformTimeRanges::emptyRanges();
 }
 
 void MediaPlayerPrivateGStreamerMSE::sourceSetup(GstElement* sourceElement)
@@ -368,27 +368,9 @@ void MediaPlayerPrivateGStreamerMSE::updateStates()
 
 bool MediaPlayerPrivateGStreamerMSE::isTimeBuffered(const MediaTime &time) const
 {
-    bool result = m_mediaSource && m_mediaSource->buffered()->contain(time);
+    bool result = m_mediaSource && m_mediaSource->buffered().contain(time);
     GST_DEBUG("Time %s buffered? %s", toString(time).utf8().data(), boolForPrinting(result));
     return result;
-}
-
-void MediaPlayerPrivateGStreamerMSE::blockDurationChanges()
-{
-    ASSERT(isMainThread());
-    m_areDurationChangesBlocked = true;
-    m_shouldReportDurationWhenUnblocking = false;
-}
-
-void MediaPlayerPrivateGStreamerMSE::unblockDurationChanges()
-{
-    ASSERT(isMainThread());
-    if (m_shouldReportDurationWhenUnblocking) {
-        m_player->durationChanged();
-        m_shouldReportDurationWhenUnblocking = false;
-    }
-
-    m_areDurationChangesBlocked = false;
 }
 
 void MediaPlayerPrivateGStreamerMSE::durationChanged()
@@ -402,12 +384,8 @@ void MediaPlayerPrivateGStreamerMSE::durationChanged()
 
     // Avoid emiting durationchanged in the case where the previous duration was 0 because that case is already handled
     // by the HTMLMediaElement.
-    if (m_mediaTimeDuration != previousDuration && m_mediaTimeDuration.isValid() && previousDuration.isValid()) {
-        if (!m_areDurationChangesBlocked)
-            m_player->durationChanged();
-        else
-            m_shouldReportDurationWhenUnblocking = true;
-    }
+    if (m_mediaTimeDuration != previousDuration && m_mediaTimeDuration.isValid() && previousDuration.isValid())
+        m_player->durationChanged();
 }
 
 void MediaPlayerPrivateGStreamerMSE::setInitialVideoSize(const FloatSize& videoSize)
@@ -439,20 +417,11 @@ void MediaPlayerPrivateGStreamerMSE::getSupportedTypes(HashSet<String, ASCIICase
 
 MediaPlayer::SupportsType MediaPlayerPrivateGStreamerMSE::supportsType(const MediaEngineSupportParameters& parameters)
 {
-    static std::optional<VideoDecodingLimits> videoDecodingLimits;
-#ifdef VIDEO_DECODING_LIMIT
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [] {
-        videoDecodingLimits = videoDecoderLimitsDefaults();
-        if (!videoDecodingLimits) {
-            GST_WARNING("Parsing VIDEO_DECODING_LIMIT failed");
-            ASSERT_NOT_REACHED();
-        }
-    });
-#endif
-
     MediaPlayer::SupportsType result = MediaPlayer::SupportsType::IsNotSupported;
     if (!parameters.isMediaSource)
+        return result;
+
+    if (!ensureGStreamerInitialized())
         return result;
 
     auto containerType = parameters.type.containerType();
@@ -476,6 +445,16 @@ MediaPlayer::SupportsType MediaPlayerPrivateGStreamerMSE::supportsType(const Med
     if (!ok)
         height = 0;
 
+    static std::optional<VideoDecodingLimits> videoDecodingLimits;
+#ifdef VIDEO_DECODING_LIMIT
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        videoDecodingLimits = videoDecoderLimitsDefaults();
+        if (!videoDecodingLimits)
+            GST_WARNING("Parsing VIDEO_DECODING_LIMIT failed");
+    });
+#endif
+
     if (videoDecodingLimits && (width > videoDecodingLimits->mediaMaxWidth || height > videoDecodingLimits->mediaMaxHeight))
         return result;
 
@@ -483,6 +462,8 @@ MediaPlayer::SupportsType MediaPlayerPrivateGStreamerMSE::supportsType(const Med
     // Limit frameRate only in case of highest supported resolution.
     if (ok && videoDecodingLimits && width == videoDecodingLimits->mediaMaxWidth && height == videoDecodingLimits->mediaMaxHeight && frameRate > videoDecodingLimits->mediaMaxFrameRate)
         return result;
+
+    registerWebKitGStreamerElements();
 
     GST_DEBUG("Checking mime-type \"%s\"", parameters.type.raw().utf8().data());
     auto& gstRegistryScanner = GStreamerRegistryScannerMSE::singleton();
@@ -501,12 +482,19 @@ MediaTime MediaPlayerPrivateGStreamerMSE::maxMediaTimeSeekable() const
     MediaTime result = durationMediaTime();
     // Infinite duration means live stream.
     if (result.isPositiveInfinite()) {
-        MediaTime maxBufferedTime = buffered()->maximumBufferedTime();
+        MediaTime maxBufferedTime = buffered().maximumBufferedTime();
         // Return the highest end time reported by the buffered attribute.
         result = maxBufferedTime.isValid() ? maxBufferedTime : MediaTime::zeroTime();
     }
 
     return result;
+}
+
+bool MediaPlayerPrivateGStreamerMSE::currentMediaTimeMayProgress() const
+{
+    if (!m_mediaSourcePrivate)
+        return false;
+    return m_mediaSourcePrivate->hasFutureTime(currentMediaTime(), durationMediaTime(), buffered());
 }
 
 } // namespace WebCore.

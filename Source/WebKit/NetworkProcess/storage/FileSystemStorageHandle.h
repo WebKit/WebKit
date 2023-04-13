@@ -26,6 +26,7 @@
 #pragma once
 
 #include "Connection.h"
+#include "FileSystemSyncAccessHandleInfo.h"
 #include <WebCore/FileSystemHandleIdentifier.h>
 #include <WebCore/FileSystemSyncAccessHandleIdentifier.h>
 #include <wtf/WeakPtr.h>
@@ -48,6 +49,7 @@ public:
     WebCore::FileSystemHandleIdentifier identifier() const { return m_identifier; }
     const String& path() const { return m_path; }
     Type type() const { return m_type; }
+    uint64_t allocatedUnusedCapacity();
 
     void close();
     bool isSameEntry(WebCore::FileSystemHandleIdentifier);
@@ -58,22 +60,27 @@ public:
     Expected<Vector<String>, FileSystemStorageError> resolve(WebCore::FileSystemHandleIdentifier);
     Expected<Vector<String>, FileSystemStorageError> getHandleNames();
     Expected<std::pair<WebCore::FileSystemHandleIdentifier, bool>, FileSystemStorageError> getHandle(IPC::Connection::UniqueID, String&& name);
+    void requestNewCapacityForSyncAccessHandle(WebCore::FileSystemSyncAccessHandleIdentifier, uint64_t newCapacity, CompletionHandler<void(std::optional<uint64_t>)>&&);
 
-    using AccessHandleInfo = std::pair<WebCore::FileSystemSyncAccessHandleIdentifier, IPC::SharedFileHandle>;
-    Expected<AccessHandleInfo, FileSystemStorageError> createSyncAccessHandle();
+    Expected<FileSystemSyncAccessHandleInfo, FileSystemStorageError> createSyncAccessHandle();
     std::optional<FileSystemStorageError> closeSyncAccessHandle(WebCore::FileSystemSyncAccessHandleIdentifier);
-    std::optional<WebCore::FileSystemSyncAccessHandleIdentifier> activeSyncAccessHandle() const { return m_activeSyncAccessHandle; }
+    std::optional<WebCore::FileSystemSyncAccessHandleIdentifier> activeSyncAccessHandle();
 
 private:
     FileSystemStorageHandle(FileSystemStorageManager&, Type, String&& path, String&& name);
     Expected<WebCore::FileSystemHandleIdentifier, FileSystemStorageError> requestCreateHandle(IPC::Connection::UniqueID, Type, String&& name, bool createIfNecessary);
+    bool isActiveSyncAccessHandle(WebCore::FileSystemSyncAccessHandleIdentifier);
 
     WebCore::FileSystemHandleIdentifier m_identifier;
     WeakPtr<FileSystemStorageManager> m_manager;
     Type m_type;
     String m_path;
     String m_name;
-    std::optional<WebCore::FileSystemSyncAccessHandleIdentifier> m_activeSyncAccessHandle;
+    struct SyncAccessHandleInfo {
+        WebCore::FileSystemSyncAccessHandleIdentifier identifier;
+        uint64_t capacity { 0 };
+    };
+    std::optional<SyncAccessHandleInfo> m_activeSyncAccessHandle;
 };
 
 } // namespace WebKit

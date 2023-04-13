@@ -42,6 +42,10 @@ OBJC_CLASS AVPlayerViewController;
 OBJC_CLASS UIViewController;
 #endif
 
+namespace WTF {
+class MachSendRight;
+}
+
 namespace WebCore {
 
 class VideoFullscreenModelClient;

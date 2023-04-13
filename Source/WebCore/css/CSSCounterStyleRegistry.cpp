@@ -30,31 +30,44 @@
 #include "CSSCounterStyleRule.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSValuePair.h"
+#include "ListStyleType.h"
 
 namespace WebCore {
 
-void CSSCounterStyleRegistry::resolveReferencesIfNeeded()
-{
-    // FIXME: does this need thread-safety guards?
-    if (!hasUnresolvedReferences)
-        return;
 
-    for (auto& [name, counter] : m_authorCounterStyles) {
+void CSSCounterStyleRegistry::resolveUserAgentReferences()
+{
+    for (auto& [name, counter] : userAgentCounterStyles()) {
+        // decimal counter has no fallback or extended references because it is the last resource for both cases.
+        if (counter->name() == "decimal"_s)
+            continue;
         if (counter->isFallbackUnresolved())
             resolveFallbackReference(*counter);
         if (counter->isExtendsSystem() && counter->isExtendsUnresolved())
             resolveExtendsReference(*counter);
     }
-    hasUnresolvedReferences = false;
+}
+void CSSCounterStyleRegistry::resolveReferencesIfNeeded()
+{
+    if (!m_hasUnresolvedReferences)
+        return;
+
+    for (auto& [name, counter] : m_authorCounterStyles) {
+        if (counter->isFallbackUnresolved())
+            resolveFallbackReference(*counter, &m_authorCounterStyles);
+        if (counter->isExtendsSystem() && counter->isExtendsUnresolved())
+            resolveExtendsReference(*counter, &m_authorCounterStyles);
+    }
+    m_hasUnresolvedReferences = false;
 }
 
-void CSSCounterStyleRegistry::resolveExtendsReference(CSSCounterStyle& counterStyle)
+void CSSCounterStyleRegistry::resolveExtendsReference(CSSCounterStyle& counterStyle, CounterStyleMap* map)
 {
     HashSet<CSSCounterStyle*> countersInChain;
-    resolveExtendsReference(counterStyle, countersInChain);
+    resolveExtendsReference(counterStyle, countersInChain, map);
 }
 
-void CSSCounterStyleRegistry::resolveExtendsReference(CSSCounterStyle& counter, HashSet<CSSCounterStyle*>& countersInChain)
+void CSSCounterStyleRegistry::resolveExtendsReference(CSSCounterStyle& counter, HashSet<CSSCounterStyle*>& countersInChain, CounterStyleMap* map)
 {
     ASSERT(counter.isExtendsSystem() && counter.isExtendsUnresolved());
     if (!(counter.isExtendsSystem() && counter.isExtendsUnresolved()))
@@ -74,83 +87,159 @@ void CSSCounterStyleRegistry::resolveExtendsReference(CSSCounterStyle& counter, 
     }
     countersInChain.add(&counter);
 
-    auto extendedCounter = counterStyle(counter.extendsName());
+    auto extendedCounter = counterStyle(counter.extendsName(), map);
     ASSERT(extendedCounter);
     if (!extendedCounter)
         return;
 
     if (extendedCounter->isExtendsSystem() && extendedCounter->isExtendsUnresolved())
-        resolveExtendsReference(*extendedCounter, countersInChain);
+        resolveExtendsReference(*extendedCounter, countersInChain, map);
 
     // Recursion return for non-circular chain. Calling resolveExtendsReference() for the extendedCounter might have already resolved this counter style if a circle was formed. If it is still unresolved, it should get resolved here.
     if (counter.isExtendsUnresolved())
         counter.extendAndResolve(*extendedCounter);
 }
 
-void CSSCounterStyleRegistry::resolveFallbackReference(CSSCounterStyle& counter)
+void CSSCounterStyleRegistry::resolveFallbackReference(CSSCounterStyle& counter, CounterStyleMap* map)
 {
-    counter.setFallbackReference(counterStyle(counter.fallbackName()));
+    counter.setFallbackReference(counterStyle(counter.fallbackName(), map));
 }
 
 void CSSCounterStyleRegistry::addCounterStyle(const CSSCounterStyleDescriptors& descriptors)
 {
-    hasUnresolvedReferences = true;
+    m_hasUnresolvedReferences = true;
     m_authorCounterStyles.set(descriptors.m_name, CSSCounterStyle::create(descriptors, false));
 }
 
-RefPtr<CSSCounterStyle> CSSCounterStyleRegistry::decimalCounter() const
+void CSSCounterStyleRegistry::addUserAgentCounterStyle(const CSSCounterStyleDescriptors& descriptors)
+{
+    userAgentCounterStyles().set(descriptors.m_name, CSSCounterStyle::create(descriptors, true));
+}
+
+RefPtr<CSSCounterStyle> CSSCounterStyleRegistry::decimalCounter()
 {
     auto& userAgentCounters = userAgentCounterStyles();
     auto iterator = userAgentCounters.find("decimal"_s);
     if (iterator != userAgentCounters.end())
         return iterator->value.get();
-    // user agent counter style should always be populated with a counter named decimal
-    ASSERT_NOT_REACHED();
+    // user agent counter style should always be populated with a counter named decimal if counter-style-at-rule is enabled
     return nullptr;
 }
 
-RefPtr<CSSCounterStyle> CSSCounterStyleRegistry::counterStyle(const AtomString& name)
+// A valid map means that the search begins at the author counter style map, otherwise we skip the search to the UA counter styles.
+RefPtr<CSSCounterStyle> CSSCounterStyleRegistry::counterStyle(const AtomString& name, CounterStyleMap* map)
 {
     if (name.isEmpty())
         return decimalCounter();
 
-    auto getCounter = [&](const CounterStyleMap& map, const AtomString& counterName) {
+    auto getCounter = [&](const AtomString& counterName, const CounterStyleMap& map) {
         auto counterIterator = map.find(counterName);
         return counterIterator != map.end() ? counterIterator->value.get() : nullptr;
     };
 
-    auto authorCounter = getCounter(m_authorCounterStyles, name);
-    if (authorCounter)
-        return authorCounter;
-    auto userAgentCounter = getCounter(userAgentCounterStyles(), name);
-    if (userAgentCounter)
-        return userAgentCounter;
-
-    return decimalCounter();
+    // If there is a map, the search starts from the given map.
+    if (map) {
+        auto counter = getCounter(name, *map);
+        if (counter)
+            return counter;
+    }
+    // If there was no map (called for user-agent references resolution), or the counter was not found in the given map, we search at the user-agent map.
+    auto userAgentCounter = getCounter(name, userAgentCounterStyles());
+    return userAgentCounter ? userAgentCounter : decimalCounter();
 }
 
-RefPtr<CSSCounterStyle> CSSCounterStyleRegistry::resolvedCounterStyle(const AtomString& name)
+RefPtr<CSSCounterStyle> CSSCounterStyleRegistry::resolvedCounterStyle(const ListStyleType& listStyleType)
 {
+    if (listStyleType.type != ListStyleType::Type::CounterStyle)
+        return nullptr;
     resolveReferencesIfNeeded();
-    return counterStyle(name);
+    return counterStyle(listStyleType.identifier, &m_authorCounterStyles);
 }
 
 CounterStyleMap& CSSCounterStyleRegistry::userAgentCounterStyles()
 {
-    // FIXME: counter-style should get pre-defined counters from UA stylesheet rdar://103021161.
-    auto initialStyles = []() {
-        CounterStyleMap map;
-        map.add("decimal"_s, CSSCounterStyle::createCounterStyleDecimal());
-        return map;
-    };
-
-    static NeverDestroyed<CounterStyleMap> counters = initialStyles();
+    static NeverDestroyed<CounterStyleMap> counters;
     return counters;
 }
 
 bool CSSCounterStyleRegistry::operator==(const CSSCounterStyleRegistry& other) const
 {
     return m_authorCounterStyles == other.m_authorCounterStyles;
+}
+
+bool isCounterStyleUnsupportedByUserAgent(CSSValueID valueID)
+{
+    // This list has to be in sync with styles defined in counterStyles.css, once a style is added there, remove it from here.
+    switch (valueID) {
+    // FIXME: transform hard-coded styles into @counter-styles when possible (rdar://106708729).
+    case CSSValueBinary:
+    case CSSValueLowerHexadecimal:
+    case CSSValueOctal:
+    case CSSValueOriya:
+    case CSSValueUrdu:
+    case CSSValueUpperHexadecimal:
+    case CSSValueAfar:
+    case CSSValueEthiopicHalehameAaEt:
+    case CSSValueEthiopicHalehameAaEr:
+    case CSSValueAmharic:
+    case CSSValueEthiopicHalehameAmEt:
+    case CSSValueAmharicAbegede:
+    case CSSValueEthiopicAbegedeAmEt:
+    case CSSValueEthiopic:
+    case CSSValueEthiopicHalehameGez:
+    case CSSValueEthiopicAbegede:
+    case CSSValueEthiopicAbegedeGez:
+    case CSSValueHangulConsonant:
+    case CSSValueHangul:
+    case CSSValueLowerNorwegian:
+    case CSSValueOromo:
+    case CSSValueEthiopicHalehameOmEt:
+    case CSSValueSidama:
+    case CSSValueEthiopicHalehameSidEt:
+    case CSSValueSomali:
+    case CSSValueEthiopicHalehameSoEt:
+    case CSSValueTigre:
+    case CSSValueEthiopicHalehameTig:
+    case CSSValueTigrinyaEr:
+    case CSSValueEthiopicHalehameTiEr:
+    case CSSValueTigrinyaErAbegede:
+    case CSSValueEthiopicAbegedeTiEr:
+    case CSSValueTigrinyaEt:
+    case CSSValueEthiopicHalehameTiEt:
+    case CSSValueTigrinyaEtAbegede:
+    case CSSValueEthiopicAbegedeTiEt:
+    case CSSValueUpperGreek:
+    case CSSValueUpperNorwegian:
+    case CSSValueAsterisks:
+    case CSSValueFootnotes:
+    case CSSValueCjkIdeographic:
+    case CSSValueSimpChineseInformal:
+    case CSSValueSimpChineseFormal:
+    case CSSValueTradChineseInformal:
+    case CSSValueTradChineseFormal:
+    case CSSValueEthiopicNumeric:
+    // FIXME: enable korean styles rdar://106193134.
+    case CSSValueKoreanHangulFormal:
+    case CSSValueKoreanHanjaFormal:
+    case CSSValueKoreanHanjaInformal:
+    case CSSValueNone:
+        return true;
+    default:
+        return false;
+    }
+}
+
+void CSSCounterStyleRegistry::clearAuthorCounterStyles()
+{
+    if (m_authorCounterStyles.isEmpty())
+        return;
+    m_authorCounterStyles.clear();
+    invalidate();
+}
+
+void CSSCounterStyleRegistry::invalidate()
+{
+    m_hasUnresolvedReferences = true;
 }
 
 }

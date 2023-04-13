@@ -145,7 +145,6 @@ class TextureState final : private angle::NonCopyable
     GLenum getUsage() const { return mUsage; }
     bool hasProtectedContent() const { return mHasProtectedContent; }
     GLenum getDepthStencilTextureMode() const { return mDepthStencilTextureMode; }
-    bool isStencilMode() const { return mDepthStencilTextureMode == GL_STENCIL_INDEX; }
 
     bool hasBeenBoundAsImage() const { return mHasBeenBoundAsImage; }
     bool is3DTextureAndHasBeenBoundAs2DImage() const { return mIs3DAndHasBeenBoundAs2DImage; }
@@ -156,6 +155,15 @@ class TextureState final : private angle::NonCopyable
     // Returns the desc of the base level. Only valid for cube-complete/mip-complete textures.
     const ImageDesc &getBaseLevelDesc() const;
     const ImageDesc &getLevelZeroDesc() const;
+
+    // This helper is used by backends that require special setup to read stencil data
+    bool isStencilMode() const
+    {
+        const GLenum format =
+            getImageDesc(getBaseImageTarget(), getEffectiveBaseLevel()).format.info->format;
+        return (format == GL_DEPTH_STENCIL) ? (mDepthStencilTextureMode == GL_STENCIL_INDEX)
+                                            : (format == GL_STENCIL_INDEX);
+    }
 
     // GLES1 emulation: For GL_OES_draw_texture
     void setCrop(const Rectangle &rect);

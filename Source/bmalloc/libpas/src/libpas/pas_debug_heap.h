@@ -38,12 +38,16 @@ PAS_BEGIN_EXTERN_C;
 
 #if PAS_BMALLOC
 
+// FIXME: Find a way to declare bmalloc's symbol visibility without having to
+// import a bmalloc header.
+#include "BExport.h"
+
 /* The implementations are provided by bmalloc. */
-PAS_API extern bool pas_debug_heap_is_enabled(pas_heap_config_kind kind);
-PAS_API extern void* pas_debug_heap_malloc(size_t size);
-PAS_API extern void* pas_debug_heap_memalign(size_t alignment, size_t size);
-PAS_API extern void* pas_debug_heap_realloc(void* ptr, size_t size);
-PAS_API extern void pas_debug_heap_free(void* ptr);
+BEXPORT extern bool pas_debug_heap_is_enabled(pas_heap_config_kind);
+BEXPORT extern void* pas_debug_heap_malloc(size_t);
+BEXPORT extern void* pas_debug_heap_memalign(size_t alignment, size_t);
+BEXPORT extern void* pas_debug_heap_realloc(void* ptr, size_t);
+BEXPORT extern void pas_debug_heap_free(void* ptr);
 
 #else /* PAS_BMALLOC -> so !PAS_BMALLOC */
 

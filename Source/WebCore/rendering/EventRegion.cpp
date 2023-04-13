@@ -26,10 +26,10 @@
 #include "config.h"
 #include "EventRegion.h"
 
-#include "ElementAncestorIterator.h"
 #include "HTMLFormControlElement.h"
 #include "Logging.h"
 #include "Path.h"
+#include "RenderAncestorIterator.h"
 #include "RenderBox.h"
 #include "RenderStyle.h"
 #include "SimpleRange.h"
@@ -119,25 +119,181 @@ bool EventRegionContext::contains(const IntRect& rect) const
 
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
 
+static std::optional<IntRect> guardRectForRegionBounds(const IntRect& regionBounds)
+{
+    constexpr int minimumSize = 20;
+    constexpr int occlusionMargin = 10;
+
+    bool isSmallRect = false;
+    auto occlusionRect = regionBounds;
+
+    if (occlusionRect.width() < minimumSize) {
+        occlusionRect.inflateX(occlusionMargin);
+        isSmallRect = true;
+    }
+
+    if (occlusionRect.height() < minimumSize) {
+        occlusionRect.inflateY(occlusionMargin);
+        isSmallRect = true;
+    }
+
+    if (isSmallRect)
+        return occlusionRect;
+    return std::nullopt;
+}
+
 void EventRegionContext::uniteInteractionRegions(const Region& region, RenderObject& renderer)
 {
-    if (renderer.page().shouldBuildInteractionRegions()) {
-        if (auto interactionRegion = interactionRegionForRenderedRegion(renderer, region)) {
-            auto addResult = m_interactionRegionsByElement.add(interactionRegion->elementIdentifier, *interactionRegion);
-            if (!addResult.isNewEntry)
-                addResult.iterator->value.regionInLayerCoordinates.unite(interactionRegion->regionInLayerCoordinates);
+    if (!renderer.page().shouldBuildInteractionRegions())
+        return;
+
+    if (auto interactionRegion = interactionRegionForRenderedRegion(renderer, region)) {
+        auto bounds = interactionRegion->rectInLayerCoordinates;
+        
+        if (interactionRegion->type == InteractionRegion::Type::Occlusion) {
+            if (m_occlusionRects.contains(bounds))
+                return;
+            m_occlusionRects.add(bounds);
+            
+            m_interactionRegions.append(*interactionRegion);
+            return;
         }
+        
+        
+        if (m_interactionRects.contains(bounds))
+            return;
+        m_interactionRects.add(bounds);
+
+        if (shouldConsolidateInteractionRegion(bounds, renderer))
+            return;
+
+        auto regionIterator = m_discoveredRegionsByElement.find(interactionRegion->elementIdentifier);
+        if (regionIterator != m_discoveredRegionsByElement.end()) {
+            auto discoveredRegion = regionIterator->value;
+            
+            Region tempRegion;
+            tempRegion.unite(interactionRegion->rectInLayerCoordinates);
+            tempRegion.subtract(discoveredRegion);
+            if (tempRegion.isEmpty())
+                return;
+            
+            discoveredRegion.unite(tempRegion);
+            m_discoveredRegionsByElement.set(interactionRegion->elementIdentifier, discoveredRegion);
+            
+            auto occlusionRect = guardRectForRegionBounds(tempRegion.bounds());
+            if (occlusionRect) {
+                m_interactionRegions.append({
+                    InteractionRegion::Type::Occlusion,
+                    interactionRegion->elementIdentifier,
+                    occlusionRect.value()
+                });
+            }
+
+            for (auto rect : tempRegion.rects()) {
+                m_interactionRegions.append({
+                    InteractionRegion::Type::Interaction,
+                    interactionRegion->elementIdentifier,
+                    rect,
+                    interactionRegion->borderRadius,
+                    interactionRegion->maskedCorners
+                });
+            }
+            return;
+        } else
+            m_discoveredRegionsByElement.add(interactionRegion->elementIdentifier, interactionRegion->rectInLayerCoordinates);
+    
+        auto occlusionRect = guardRectForRegionBounds(interactionRegion->rectInLayerCoordinates);
+        if (occlusionRect) {
+            m_interactionRegions.append({
+                InteractionRegion::Type::Occlusion,
+                interactionRegion->elementIdentifier,
+                occlusionRect.value()
+            });
+        }
+        m_interactionRegions.append(*interactionRegion);
     }
+}
+
+bool EventRegionContext::shouldConsolidateInteractionRegion(IntRect bounds, RenderObject& renderer)
+{
+    if (!renderer.style().borderAndBackgroundEqual(RenderStyle::defaultStyle()))
+        return false;
+
+    for (auto& ancestor : ancestorsOfType<RenderElement>(renderer)) {
+        if (!ancestor.element())
+            continue;
+
+        auto elementIdentifier = ancestor.element()->identifier();
+        auto regionIterator = m_discoveredRegionsByElement.find(elementIdentifier);
+        if (regionIterator != m_discoveredRegionsByElement.end()) {
+            auto parentBounds = regionIterator->value.bounds();
+            if (!parentBounds.contains(bounds))
+                return false;
+
+            float marginLeft = bounds.x() - parentBounds.x();
+            float marginRight = parentBounds.maxX() - bounds.maxX();
+            float marginTop = bounds.y() - parentBounds.y();
+            float marginBottom = parentBounds.maxY() - bounds.maxY();
+
+            constexpr auto maxMargin = 50;
+
+            if (marginLeft > maxMargin
+                || marginRight > maxMargin
+                || marginTop > maxMargin
+                || marginBottom > maxMargin)
+                return false;
+
+            return true;
+        }
+
+        // If we find a border / background, stop the search.
+        if (!ancestor.style().borderAndBackgroundEqual(RenderStyle::defaultStyle()))
+            return false;
+    }
+
+    return false;
 }
 
 void EventRegionContext::copyInteractionRegionsToEventRegion()
 {
-    m_eventRegion.uniteInteractionRegions(copyToVector(m_interactionRegionsByElement.values()));
+    m_eventRegion.appendInteractionRegions(m_interactionRegions);
 }
 
 #endif
 
 EventRegion::EventRegion() = default;
+
+EventRegion::EventRegion(Region&& region
+#if ENABLE(TOUCH_ACTION_REGIONS)
+    , Vector<WebCore::Region> touchActionRegions
+#endif
+#if ENABLE(WHEEL_EVENT_REGIONS)
+    , WebCore::Region wheelEventListenerRegion
+    , WebCore::Region nonPassiveWheelEventListenerRegion
+#endif
+#if ENABLE(EDITABLE_REGION)
+    , std::optional<WebCore::Region> editableRegion
+#endif
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+    , Vector<WebCore::InteractionRegion> interactionRegions
+#endif
+    )
+    : m_region(WTFMove(region))
+#if ENABLE(TOUCH_ACTION_REGIONS)
+    , m_touchActionRegions(WTFMove(touchActionRegions))
+#endif
+#if ENABLE(WHEEL_EVENT_REGIONS)
+    , m_wheelEventListenerRegion(WTFMove(wheelEventListenerRegion))
+    , m_nonPassiveWheelEventListenerRegion(WTFMove(nonPassiveWheelEventListenerRegion))
+#endif
+#if ENABLE(EDITABLE_REGION)
+    , m_editableRegion(WTFMove(editableRegion))
+#endif
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+    , m_interactionRegions(WTFMove(interactionRegions))
+#endif
+{
+}
 
 bool EventRegion::operator==(const EventRegion& other) const
 {
@@ -216,10 +372,11 @@ void EventRegion::translate(const IntSize& offset)
 
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
     for (auto& region : m_interactionRegions)
-        region.regionInLayerCoordinates.translate(offset);
+        region.rectInLayerCoordinates.move(offset);
 #endif
 }
 
+#if ENABLE(TOUCH_ACTION_REGIONS)
 static inline unsigned toIndex(TouchAction touchAction)
 {
     switch (touchAction) {
@@ -260,7 +417,6 @@ static inline TouchAction toTouchAction(unsigned index)
     return TouchAction::Auto;
 }
 
-#if ENABLE(TOUCH_ACTION_REGIONS)
 void EventRegion::uniteTouchActions(const Region& touchRegion, OptionSet<TouchAction> touchActions)
 {
     for (auto touchAction : touchActions) {
@@ -362,7 +518,7 @@ bool EventRegion::containsEditableElementsInRect(const IntRect& rect) const
 
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
 
-void EventRegion::uniteInteractionRegions(const Vector<InteractionRegion>& interactionRegions)
+void EventRegion::appendInteractionRegions(const Vector<InteractionRegion>& interactionRegions)
 {
     m_interactionRegions.appendVector(interactionRegions);
 }

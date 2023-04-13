@@ -1,0 +1,7 @@
+
+PASS e.style['block-step-size'] = "auto" should not set the property value
+PASS e.style['block-step-size'] = "-1px" should not set the property value
+PASS e.style['block-step-size'] = "min-content" should not set the property value
+PASS e.style['block-step-size'] = "10%" should not set the property value
+PASS e.style['block-step-size'] = "20" should not set the property value
+

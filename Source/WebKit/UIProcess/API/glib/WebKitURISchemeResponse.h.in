@@ -29,22 +29,12 @@
 G_BEGIN_DECLS
 
 #define WEBKIT_TYPE_URI_SCHEME_RESPONSE            (webkit_uri_scheme_response_get_type())
+#if !ENABLE(2022_GLIB_API)
 #define WEBKIT_URI_SCHEME_RESPONSE(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), WEBKIT_TYPE_URI_SCHEME_RESPONSE, WebKitURISchemeResponse))
 #define WEBKIT_IS_URI_SCHEME_RESPONSE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), WEBKIT_TYPE_URI_SCHEME_RESPONSE))
 #define WEBKIT_URI_SCHEME_RESPONSE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass),  WEBKIT_TYPE_URI_SCHEME_RESPONSE, WebKitURISchemeResponseClass))
 #define WEBKIT_IS_URI_SCHEME_RESPONSE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass),  WEBKIT_TYPE_URI_SCHEME_RESPONSE))
 #define WEBKIT_URI_SCHEME_RESPONSE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj),  WEBKIT_TYPE_URI_SCHEME_RESPONSE, WebKitURISchemeResponseClass))
-
-typedef struct _WebKitURISchemeResponse        WebKitURISchemeResponse;
-typedef struct _WebKitURISchemeResponseClass   WebKitURISchemeResponseClass;
-typedef struct _WebKitURISchemeResponsePrivate WebKitURISchemeResponsePrivate;
-
-struct _WebKitURISchemeResponse {
-    GObject parent;
-
-    /*< private >*/
-    WebKitURISchemeResponsePrivate *priv;
-};
 
 struct _WebKitURISchemeResponseClass {
     GObjectClass parent_class;
@@ -55,9 +45,9 @@ struct _WebKitURISchemeResponseClass {
     void (*_webkit_reserved2) (void);
     void (*_webkit_reserved3) (void);
 };
+#endif
 
-WEBKIT_API GType
-webkit_uri_scheme_response_get_type           (void);
+WEBKIT_DECLARE_FINAL_TYPE (WebKitURISchemeResponse, webkit_uri_scheme_response, WEBKIT, URI_SCHEME_RESPONSE, GObject)
 
 WEBKIT_API WebKitURISchemeResponse *
 webkit_uri_scheme_response_new                (GInputStream            *input_stream,

@@ -30,7 +30,10 @@
 
 #import "RemoteScrollingCoordinatorProxyIOS.h"
 #import "WebPageProxy.h"
+#import "WebPreferences.h"
 #import <QuartzCore/CADisplayLink.h>
+#import <WebCore/LocalFrameView.h>
+#import <WebCore/ScrollView.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 
 @interface WKDisplayLinkHandler : NSObject {

@@ -30,6 +30,7 @@
 
 #include "ThreadableLoader.h"
 #include "ThreadableLoaderClient.h"
+#include "URLKeepingBlobAlive.h"
 #include <wtf/URL.h>
 
 namespace WebCore {
@@ -41,10 +42,10 @@ class FetchRequest;
 class ScriptExecutionContext;
 class FragmentedSharedBuffer;
 
-class FetchLoader final : public ThreadableLoaderClient {
+class WEBCORE_EXPORT FetchLoader final : public ThreadableLoaderClient {
 public:
     FetchLoader(FetchLoaderClient&, FetchBodyConsumer*);
-    WEBCORE_EXPORT ~FetchLoader();
+    ~FetchLoader() = default;
 
     RefPtr<FragmentedSharedBuffer> startStreaming();
 
@@ -67,7 +68,7 @@ private:
     RefPtr<ThreadableLoader> m_loader;
     FetchBodyConsumer* m_consumer;
     bool m_isStarted { false };
-    URL m_urlForReading;
+    URLKeepingBlobAlive m_urlForReading;
 };
 
 } // namespace WebCore

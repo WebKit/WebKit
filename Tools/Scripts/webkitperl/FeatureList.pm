@@ -1,4 +1,5 @@
 # Copyright (C) 2012 Google Inc. All rights reserved.
+# Copyright (C) 2023 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -114,6 +115,7 @@ my (
     $legacyEncryptedMediaSupport,
     $letterpressSupport,
     $macGestureEventsSupport,
+    $managedMediaSourceSupport,
     $mathmlSupport,
     $mediaCaptureSupport,
     $mediaControlsScriptSupport,
@@ -162,7 +164,6 @@ my (
     $textAutosizingSupport,
     $threeDTransformsSupport,
     $touchEventsSupport,
-    $touchSliderSupport,
     $trackingPrevention,
     $unifiedBuildsSupport,
     $userMessageHandlersSupport,
@@ -185,7 +186,6 @@ my (
     $webdriverSupport,
     $webdriverTouchInteractionsSupport,
     $webdriverWheelInteractionsSupport,
-    $webgl2Support,
     $webglSupport,
     $webXRSupport,
     $wirelessPlaybackTargetSupport,
@@ -370,6 +370,9 @@ my @features = (
     { option => "mac-gesture-events", desc => "Toggle Mac gesture events support",
       define => "ENABLE_MAC_GESTURE_EVENTS", value => \$macGestureEventsSupport },
 
+    { option => "managed-media-source", desc => "Toggle Managed Media Source support",
+      define => "ENABLE_MANAGED_MEDIA_SOURCE", value => \$managedMediaSourceSupport },
+
     { option => "mathml", desc => "Toggle MathML support",
       define => "ENABLE_MATHML", value => \$mathmlSupport },
 
@@ -493,9 +496,6 @@ my @features = (
     { option => "touch-events", desc => "Toggle Touch Events support",
       define => "ENABLE_TOUCH_EVENTS", value => \$touchEventsSupport },
 
-    { option => "touch-slider", desc => "Toggle Touch Slider support",
-      define => "ENABLE_TOUCH_SLIDER", value => \$touchSliderSupport },
-
     { option => "tracking-prevention", desc => "Toggle tracking prevention support",
       define => "ENABLE_TRACKING_PREVENTION", value => \$trackingPrevention },
 
@@ -540,9 +540,6 @@ my @features = (
 
     { option => "webgl", desc => "Toggle WebGL support",
       define => "ENABLE_WEBGL", value => \$webglSupport },
-
-    { option => "webgl2", desc => "Toggle WebGL2 support",
-      define => "ENABLE_WEBGL2", value => \$webgl2Support },
 
     { option => "webxr", desc => "Toggle WebXR support",
       define => "ENABLE_WEBXR", value => \$webXRSupport },

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,11 +42,14 @@
 #include <wtf/DataLog.h>
 #include <wtf/Gigacage.h>
 #include <wtf/NumberOfCores.h>
-#include <wtf/OSLogPrintStream.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/TranslatedProcess.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/threads/Signals.h>
+
+#if OS(DARWIN)
+#include <wtf/darwin/OSLogPrintStream.h>
+#endif
 
 #if PLATFORM(COCOA)
 #include <crt_externs.h>
@@ -235,10 +238,6 @@ bool Options::isAvailable(Options::ID id, Options::Availability availability)
     UNUSED_PARAM(id);
 #if !defined(NDEBUG)
     if (id == maxSingleAllocationSizeID)
-        return true;
-#endif
-#if OS(DARWIN)
-    if (id == useSigillCrashAnalyzerID)
         return true;
 #endif
 #if ENABLE(ASSEMBLER) && OS(LINUX)
@@ -456,15 +455,11 @@ static void overrideDefaults()
     Options::mediumHeapRAMFraction() = 0.9;
 #endif
 
-#if ENABLE(SIGILL_CRASH_ANALYZER)
-    Options::useSigillCrashAnalyzer() = true;
-#endif
-
 #if !ENABLE(SIGNAL_BASED_VM_TRAPS)
     Options::usePollingTraps() = true;
 #endif
 
-#if !ENABLE(WEBASSEMBLY_SIGNALING_MEMORY)
+#if !ENABLE(WEBASSEMBLY)
     Options::useWebAssemblyFastMemory() = false;
     Options::useWasmFaultSignalHandler() = false;
 #endif
@@ -492,7 +487,6 @@ static inline void disableAllJITOptions()
     Options::useRegExpJIT() = false;
     Options::useJITCage() = false;
     Options::useConcurrentJIT() = false;
-    Options::useSigillCrashAnalyzer() = false;
 
     Options::useWebAssembly() = false;
 
@@ -579,6 +573,7 @@ void Options::notifyOptionsChanged()
     Options::useConcurrentGC() = false;
     Options::forceUnlinkedDFG() = false;
     Options::useWebAssemblySIMD() = false;
+    Options::useSinglePassBBQJIT() = false;
 #endif
 
     if (!Options::allowDoubleShape())
@@ -674,6 +669,18 @@ void Options::notifyOptionsChanged()
             // If we can't run using it, then we should be conservative.
             Options::forceAllFunctionsToUseSIMD() = true;
         }
+
+        if (Options::useWebAssemblyGC()
+            || Options::useWebAssemblyTypedFunctionReferences()
+            || Options::useWebAssemblyTailCalls()) {
+            // The single-pass BBQ JIT doesn't support these features currently, so we should use a different
+            // BBQ backend if any of them are enabled. We should remove these limitations as support for each
+            // is added.
+            // FIXME: Add WASM GC support to single-pass BBQ JIT. https://bugs.webkit.org/show_bug.cgi?id=253188
+            // FIXME: Add WASM typed function references support to single-pass BBQ JIT. https://bugs.webkit.org/show_bug.cgi?id=253191
+            // FIXME: Add WASM tail calls support to single-pass BBQ JIT. https://bugs.webkit.org/show_bug.cgi?id=253192
+            Options::useSinglePassBBQJIT() = false;
+        }
     }
 
     if (Options::dumpFuzzerAgentPredictions())
@@ -736,7 +743,7 @@ void Options::notifyOptionsChanged()
     if (Options::verboseVerifyGC())
         Options::verifyGC() = true;
 
-#if ASAN_ENABLED && OS(LINUX) && ENABLE(WEBASSEMBLY_SIGNALING_MEMORY)
+#if ASAN_ENABLED && OS(LINUX)
     if (Options::useWasmFaultSignalHandler()) {
         const char* asanOptions = getenv("ASAN_OPTIONS");
         bool okToUseWebAssemblyFastMemory = asanOptions
@@ -750,6 +757,10 @@ void Options::notifyOptionsChanged()
 
     if (!Options::useWasmFaultSignalHandler())
         Options::useWebAssemblyFastMemory() = false;
+
+#if CPU(ADDRESS32)
+    Options::useWebAssemblyFastMemory() = false;
+#endif
 
     // Do range checks where needed and make corrections to the options:
     ASSERT(Options::thresholdForOptimizeAfterLongWarmUp() >= Options::thresholdForOptimizeAfterWarmUp());
@@ -1020,7 +1031,7 @@ bool Options::setAliasedOption(const char* arg, bool verify)
             auto* invertedValueStr = invertBoolOptionValue(equalStr + 1); \
             if (!invertedValueStr)                                      \
                 return false;                                           \
-            unaliasedOption = unaliasedOption + "=" + invertedValueStr; \
+            unaliasedOption = makeString(unaliasedOption, '=', invertedValueStr); \
         }                                                               \
         return setOptionWithoutAlias(unaliasedOption.utf8().data(), verify);    \
     }

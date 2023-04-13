@@ -59,6 +59,8 @@ def generateTests(ctsCheckoutDir):
     commonDestinationPath = pathlib.Path(destinationPath, "common")
     if pathlib.Path(ctsCheckoutDir, "out", "common", "util").is_dir() and not pathlib.Path(destinationPath, "common", "util").is_dir():
         shutil.copytree(pathlib.Path(ctsCheckoutDir, "out", "common"), pathlib.Path(destinationPath, "common"), dirs_exist_ok=True)
+    if pathlib.Path(ctsCheckoutDir, "out", "external").is_dir():
+        shutil.copytree(pathlib.Path(ctsCheckoutDir, "out", "external"), pathlib.Path(destinationPath, "external"), dirs_exist_ok=True)
 
     listing = ""
     with open(pathlib.Path(sourcePath, "webgpu", "listing.js"), "r") as file:
@@ -117,12 +119,16 @@ def checkoutAndBuildInTemporaryDirectory(continuation):
             sys.exit(1)
         print("Checked out git hash " + result.stdout.rstrip() + ".")
         print("Installing CTS dependencies...")
+        result = subprocess.run(["npm", "install"], cwd=checkoutDirectory)
+        if result.returncode != 0:
+            print("Could not install dependencies.")
+            sys.exit(1)
         result = subprocess.run(["npm", "ci"], cwd=checkoutDirectory)
         if result.returncode != 0:
             print("Could not install dependencies.")
             sys.exit(1)
         print("Building test suite...")
-        result = subprocess.run(["npm", "test"], cwd=checkoutDirectory)
+        result = subprocess.run(["npm", "test", "--force"], cwd=checkoutDirectory)
         if result.returncode != 0:
             print("Could not build test suite.")
             sys.exit(1)

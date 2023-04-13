@@ -101,4 +101,9 @@ ResourceError fileDoesNotExistError(const ResourceResponse& response)
 }
 #endif
 
+ResourceError httpsUpgradeRedirectLoopError(const ResourceRequest& request)
+{
+    return ResourceError(API::Error::webKitNetworkErrorDomain(), API::Error::Network::HTTPSUpgradeRedirectLoop, request.url(), WEB_UI_STRING("HTTPS Upgrade redirect loop detected", "WebKitErrorHTTPSUpgradeRedirectLoop description"));
+}
+
 } // namespace WebKit

@@ -1,0 +1,85 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/hide-other-popover-side-effects.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/light-dismiss-event-ordering.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-anchor-change-display-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-anchor-change-display-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-anchor-change-display.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-anchor-display-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-anchor-display-none.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-anchor-display-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-anchor-display.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-anchor-idl-property.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-anchor-multicol-display.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-anchor-nested-display-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-anchor-nested-display-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-anchor-nested-display.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-anchor-nesting.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-anchor-scroll-display-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-anchor-scroll-display-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-anchor-scroll-display.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-and-svg-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-and-svg-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-and-svg.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-appearance-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-appearance-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-appearance.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-attribute-all-elements.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-attribute-basic.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-backdrop-appearance-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-backdrop-appearance-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-backdrop-appearance.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-beforetoggle-opening-event.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-dialog-appearance-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-dialog-appearance-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-dialog-appearance.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-dialog-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-document-open.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-events.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-focus-2.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-focus-child-dialog.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-focus.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-hidden-display-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-hidden-display-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-hidden-display.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-inside-display-none-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-inside-display-none-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-inside-display-none.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-invoking-attribute.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-light-dismiss-on-scroll.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-light-dismiss.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-manual-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-not-keyboard-focusable.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-open-display-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-open-display-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-open-display.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-open-overflow-display-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-open-overflow-display-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-open-overflow-display.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-removal-2.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-removal.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-shadow-dom.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-stacking-context-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-stacking-context-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-stacking-context.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-stacking.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-target-element-disabled.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-top-layer-combinations.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-top-layer-interactions.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-types-with-hints.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-types.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/toggleevent-interface.html

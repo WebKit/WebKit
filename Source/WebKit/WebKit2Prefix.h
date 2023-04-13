@@ -49,21 +49,6 @@
 #endif
 #endif // __OBJC__
 
-#ifdef BUILDING_WITH_CMAKE
-#ifndef JSC_API_AVAILABLE
-#define JSC_API_AVAILABLE(...)
-#endif
-#ifndef JSC_CLASS_AVAILABLE
-#define JSC_CLASS_AVAILABLE(...) JS_EXPORT
-#endif
-#ifndef JSC_API_DEPRECATED
-#define JSC_API_DEPRECATED(...)
-#endif
-#ifndef JSC_API_DEPRECATED_WITH_REPLACEMENT
-#define JSC_API_DEPRECATED_WITH_REPLACEMENT(...)
-#endif
-#endif // BUILDING_WITH_CMAKE
-
 #endif // PLATFORM(COCOA)
 
 /* When C++ exceptions are disabled, the C++ library defines |try| and |catch|
@@ -73,6 +58,12 @@
 
 #ifdef __cplusplus
 #include <algorithm> // needed for exception_defines.h
+#include <chrono>
+#include <functional>
+#include <list>
+#include <memory>
+#include <mutex>
+#include <string>
 #endif
 
 #ifdef __OBJC__
@@ -83,4 +74,8 @@
 #ifdef __cplusplus
 #define new ("if you use new/delete make sure to include config.h at the top of the file"()) 
 #define delete ("if you use new/delete make sure to include config.h at the top of the file"()) 
+#endif
+
+#if USE(OS_LOG)
+#include <os/log.h>
 #endif

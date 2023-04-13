@@ -26,6 +26,7 @@
 #include "config.h"
 #include "JSDOMSetLike.h"
 
+#include "WebCoreJSBuiltinInternals.h"
 #include "WebCoreJSClientData.h"
 #include <JavaScriptCore/CatchScope.h>
 #include <JavaScriptCore/JSSet.h>

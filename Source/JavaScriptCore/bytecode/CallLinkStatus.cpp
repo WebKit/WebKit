@@ -35,9 +35,11 @@
 
 namespace JSC {
 
+#if ENABLE(JIT)
 namespace CallLinkStatusInternal {
 static constexpr bool verbose = false;
 }
+#endif
 
 CallLinkStatus::CallLinkStatus(JSValue value)
     : m_couldTakeSlowPath(false)

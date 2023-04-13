@@ -29,95 +29,83 @@
 #include "NetworkProcessConnection.h"
 #include "NetworkStorageManagerMessages.h"
 #include "WebPage.h"
-#include "WebPageGroupProxy.h"
+#include "WebPageInlines.h"
 #include "WebProcess.h"
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebKit {
 using namespace WebCore;
 
-static HashMap<StorageNamespaceIdentifier, WebStorageNamespaceProvider*>& storageNamespaceProviders()
+static WeakPtr<WebStorageNamespaceProvider>& existingStorageNameSpaceProvider()
 {
-    static NeverDestroyed<HashMap<StorageNamespaceIdentifier, WebStorageNamespaceProvider*>> storageNamespaceProviders;
-
-    return storageNamespaceProviders;
+    static NeverDestroyed<WeakPtr<WebStorageNamespaceProvider>> storageNameSpaceProvider;
+    return storageNameSpaceProvider.get();
 }
 
-Ref<WebStorageNamespaceProvider> WebStorageNamespaceProvider::getOrCreate(WebPageGroupProxy& pageGroup)
+Ref<WebStorageNamespaceProvider> WebStorageNamespaceProvider::getOrCreate()
 {
-    RefPtr<WebStorageNamespaceProvider> storageNamespaceProvider;
-    auto* result = storageNamespaceProviders().ensure(pageGroup.localStorageNamespaceIdentifier(), [&]() {
-        storageNamespaceProvider = adoptRef(*new WebStorageNamespaceProvider(pageGroup.localStorageNamespaceIdentifier()));
-        return storageNamespaceProvider.get();
-    }).iterator->value;
-    return *result;
+    if (auto& provider = existingStorageNameSpaceProvider())
+        return Ref { *provider.get() };
+
+    return adoptRef(*new WebStorageNamespaceProvider());
 }
 
-void WebStorageNamespaceProvider::incrementUseCount(const WebPageGroupProxy& pageGroup, const StorageNamespaceImpl::Identifier identifier)
+void WebStorageNamespaceProvider::incrementUseCount(const StorageNamespaceImpl::Identifier identifier)
 {
-    auto storageNamespaceIt = storageNamespaceProviders().find(pageGroup.localStorageNamespaceIdentifier());
-    ASSERT(storageNamespaceIt != storageNamespaceProviders().end());
-    ASSERT(storageNamespaceIt->value);
-    auto& sessionStorageNamespaces = storageNamespaceIt->value->m_sessionStorageNamespaces.add(identifier, SessionStorageNamespaces { }).iterator->value;
-    ++sessionStorageNamespaces.useCount;
+    if (auto& provider = existingStorageNameSpaceProvider()) {
+        auto& sessionStorageNamespaces = provider->m_sessionStorageNamespaces.add(identifier, SessionStorageNamespaces { }).iterator->value;
+        ++sessionStorageNamespaces.useCount;
+    }
 }
 
-void WebStorageNamespaceProvider::decrementUseCount(const WebPageGroupProxy& pageGroup, const StorageNamespaceImpl::Identifier identifier)
+void WebStorageNamespaceProvider::decrementUseCount(const StorageNamespaceImpl::Identifier identifier)
 {
-    auto namespaceProviderIt = storageNamespaceProviders().find(pageGroup.localStorageNamespaceIdentifier());
-
-    if (namespaceProviderIt == storageNamespaceProviders().end() || !namespaceProviderIt->value)
-        return;
-
-    auto& namespaces = namespaceProviderIt->value->m_sessionStorageNamespaces;
-
-    auto it = namespaces.find(identifier);
-    ASSERT(it != namespaces.end());
-    auto& sessionStorageNamespaces = it->value;
-    ASSERT(sessionStorageNamespaces.useCount);
-    --sessionStorageNamespaces.useCount;
-    if (!sessionStorageNamespaces.useCount)
-        namespaces.remove(identifier);
+    if (auto& provider = existingStorageNameSpaceProvider()) {
+        auto iterator = provider->m_sessionStorageNamespaces.find(identifier);
+        ASSERT(iterator != provider->m_sessionStorageNamespaces.end());
+        auto& sessionStorageNamespaces = iterator->value;
+        ASSERT(sessionStorageNamespaces.useCount);
+        if (!--sessionStorageNamespaces.useCount)
+            provider->m_sessionStorageNamespaces.remove(identifier);
+    }
 }
 
-WebStorageNamespaceProvider::WebStorageNamespaceProvider(StorageNamespaceIdentifier localStorageNamespaceIdentifier)
-    : m_localStorageNamespaceIdentifier(localStorageNamespaceIdentifier)
+WebStorageNamespaceProvider::WebStorageNamespaceProvider()
 {
+    existingStorageNameSpaceProvider() = *this;
 }
 
-WebStorageNamespaceProvider::~WebStorageNamespaceProvider()
-{
-    ASSERT(storageNamespaceProviders().contains(m_localStorageNamespaceIdentifier));
-
-    storageNamespaceProviders().remove(m_localStorageNamespaceIdentifier);
-}
+WebStorageNamespaceProvider::~WebStorageNamespaceProvider() = default;
 
 Ref<WebCore::StorageNamespace> WebStorageNamespaceProvider::createLocalStorageNamespace(unsigned quota, PAL::SessionID sessionID)
 {
     ASSERT_UNUSED(sessionID, sessionID == WebProcess::singleton().sessionID());
-    return StorageNamespaceImpl::createLocalStorageNamespace(m_localStorageNamespaceIdentifier, quota);
+    return StorageNamespaceImpl::createLocalStorageNamespace(quota);
 }
 
 Ref<WebCore::StorageNamespace> WebStorageNamespaceProvider::createTransientLocalStorageNamespace(WebCore::SecurityOrigin& topLevelOrigin, unsigned quota, PAL::SessionID sessionID)
 {
     ASSERT_UNUSED(sessionID, sessionID == WebProcess::singleton().sessionID());
-    return StorageNamespaceImpl::createTransientLocalStorageNamespace(m_localStorageNamespaceIdentifier, topLevelOrigin, quota);
+    return StorageNamespaceImpl::createTransientLocalStorageNamespace(topLevelOrigin, quota);
 }
 
 RefPtr<WebCore::StorageNamespace> WebStorageNamespaceProvider::sessionStorageNamespace(const WebCore::SecurityOrigin& topLevelOrigin, WebCore::Page& page, ShouldCreateNamespace shouldCreate)
 {
     ASSERT(sessionStorageQuota() != WebCore::StorageMap::noQuota);
 
-    auto& webPage = WebPage::fromCorePage(page);
+    RefPtr webPage = WebPage::fromCorePage(page);
+    if (!webPage)
+        return nullptr;
 
     // The identifier of a session storage namespace is the WebPageProxyIdentifier. It is possible we have several WebPage objects in a single process for the same
     // WebPageProxyIdentifier and these need to share the same namespace instance so we know where to route the IPC to.
-    auto namespacesIt = m_sessionStorageNamespaces.find(webPage.sessionStorageNamespaceIdentifier());
+    auto namespacesIt = m_sessionStorageNamespaces.find(webPage->sessionStorageNamespaceIdentifier());
     if (namespacesIt == m_sessionStorageNamespaces.end()) {
         if (shouldCreate == ShouldCreateNamespace::No)
             return nullptr;
-        namespacesIt = m_sessionStorageNamespaces.set(webPage.sessionStorageNamespaceIdentifier(), SessionStorageNamespaces { }).iterator;
+        namespacesIt = m_sessionStorageNamespaces.set(webPage->sessionStorageNamespaceIdentifier(), SessionStorageNamespaces { }).iterator;
     }
 
     auto& sessionStorageNamespacesMap = namespacesIt->value.map;
@@ -125,7 +113,7 @@ RefPtr<WebCore::StorageNamespace> WebStorageNamespaceProvider::sessionStorageNam
     if (it == sessionStorageNamespacesMap.end()) {
         if (shouldCreate == ShouldCreateNamespace::No)
             return nullptr;
-        auto sessionStorageNamespace = StorageNamespaceImpl::createSessionStorageNamespace(webPage.sessionStorageNamespaceIdentifier(), webPage.identifier(), topLevelOrigin, sessionStorageQuota());
+        auto sessionStorageNamespace = StorageNamespaceImpl::createSessionStorageNamespace(webPage->sessionStorageNamespaceIdentifier(), webPage->identifier(), topLevelOrigin, sessionStorageQuota());
         it = sessionStorageNamespacesMap.set(topLevelOrigin.data(), WTFMove(sessionStorageNamespace)).iterator;
     }
     return it->value;
@@ -135,8 +123,8 @@ void WebStorageNamespaceProvider::copySessionStorageNamespace(WebCore::Page& src
 {
     ASSERT(sessionStorageQuota() != WebCore::StorageMap::noQuota);
 
-    const auto& srcWebPage = WebPage::fromCorePage(srcPage);
-    const auto& dstWebPage = WebPage::fromCorePage(dstPage);
+    const auto& srcWebPage = *WebPage::fromCorePage(srcPage);
+    const auto& dstWebPage = *WebPage::fromCorePage(dstPage);
 
     auto srcNamespacesIt = m_sessionStorageNamespaces.find(srcWebPage.sessionStorageNamespaceIdentifier());
     if (srcNamespacesIt == m_sessionStorageNamespaces.end())

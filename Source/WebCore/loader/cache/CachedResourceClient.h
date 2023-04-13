@@ -24,8 +24,8 @@
 
 #pragma once
 
-#include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/WeakHashSet.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -33,7 +33,7 @@ namespace WebCore {
 class CachedResource;
 class NetworkLoadMetrics;
 
-class CachedResourceClient : public CanMakeWeakPtr<CachedResourceClient> {
+class WEBCORE_EXPORT CachedResourceClient : public CanMakeWeakPtr<CachedResourceClient> {
     WTF_MAKE_NONCOPYABLE(CachedResourceClient);
 public:
     enum CachedResourceClientType {
@@ -45,36 +45,26 @@ public:
         RawResourceType
     };
 
-    virtual ~CachedResourceClient()
-    {
-        ASSERT(m_associatedResources.isEmpty());
-    }
+    virtual ~CachedResourceClient();
 
-    virtual void notifyFinished(CachedResource&, const NetworkLoadMetrics&) { }
-    virtual void deprecatedDidReceiveCachedResource(CachedResource&) { }
+    virtual void notifyFinished(CachedResource&, const NetworkLoadMetrics&);
+    virtual void deprecatedDidReceiveCachedResource(CachedResource&);
 
-    static CachedResourceClientType expectedType() { return BaseResourceType; }
-    virtual CachedResourceClientType resourceClientType() const { return expectedType(); }
-    virtual bool shouldMarkAsReferenced() const { return true; }
+    static CachedResourceClientType expectedType();
+    virtual CachedResourceClientType resourceClientType() const;
+    virtual bool shouldMarkAsReferenced() const;
 
 #if ASSERT_ENABLED
-    void addAssociatedResource(CachedResource& resource)
-    {
-        m_associatedResources.add(&resource);
-    }
-
-    void removeAssociatedResource(CachedResource& resource)
-    {
-        m_associatedResources.remove(&resource);
-    }
+    void addAssociatedResource(CachedResource&);
+    void removeAssociatedResource(CachedResource&);
 #endif
 
 protected:
-    CachedResourceClient() = default;
+    CachedResourceClient();
 
 private:
 #if ASSERT_ENABLED
-    HashSet<CachedResource*> m_associatedResources;
+    WeakHashSet<CachedResource> m_associatedResources;
 #endif
 };
 

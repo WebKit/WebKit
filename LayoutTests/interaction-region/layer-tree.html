@@ -22,6 +22,13 @@
     #nested {
         will-change: transform;
     }
+    #faded {
+        width: 200px;
+        height: 200px;
+
+        will-change: opacity;
+        opacity: 0;
+    }
 
 </style>
 <script src="../resources/ui-helper.js"></script>
@@ -34,6 +41,9 @@
     <div id="overlay">
         <a href="#">link</a>
         <div id="nested">layered content</div>
+    </div>
+    <div id="faded">
+        <a href="#">Faded link</a>
     </div>
 </div>
 

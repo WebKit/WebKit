@@ -33,7 +33,7 @@ namespace WebCore {
 // Implementations of the abstract operations defined at
 // https://webidl.spec.whatwg.org/#legacy-platform-object-abstract-ops
 
-enum class LegacyOverrideBuiltIns { No, Yes };
+enum class LegacyOverrideBuiltIns : bool { No, Yes };
 
 // An implementation of the 'named property visibility algorithm'
 // https://webidl.spec.whatwg.org/#dfn-named-property-visibility

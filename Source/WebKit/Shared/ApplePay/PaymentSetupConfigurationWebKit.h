@@ -27,34 +27,26 @@
 
 #if ENABLE(APPLE_PAY)
 
-#include <wtf/Forward.h>
+#include <WebCore/ApplePaySetupConfiguration.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/URL.h>
 
 OBJC_CLASS PKPaymentSetupConfiguration;
-
-namespace IPC {
-class Decoder;
-class Encoder;
-}
-
-namespace WebCore {
-struct ApplePaySetupConfiguration;
-}
 
 namespace WebKit {
 
 class PaymentSetupConfiguration {
 public:
-    PaymentSetupConfiguration() = default;
     PaymentSetupConfiguration(const WebCore::ApplePaySetupConfiguration&, const URL&);
 
-    PKPaymentSetupConfiguration *platformConfiguration() const { return m_configuration.get(); }
+    RetainPtr<PKPaymentSetupConfiguration> platformConfiguration() const;
+
+    const WebCore::ApplePaySetupConfiguration& configuration() const { return m_configuration; }
+    const URL& url() const { return m_url; }
 
 private:
-    friend struct IPC::ArgumentCoder<PaymentSetupConfiguration, void>;
-    explicit PaymentSetupConfiguration(RetainPtr<PKPaymentSetupConfiguration>&&);
-
-    RetainPtr<PKPaymentSetupConfiguration> m_configuration;
+    WebCore::ApplePaySetupConfiguration m_configuration;
+    URL m_url;
 };
 
 } // namespace WebKit

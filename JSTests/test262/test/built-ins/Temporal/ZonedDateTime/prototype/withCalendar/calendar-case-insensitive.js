@@ -9,6 +9,6 @@ features: [Temporal]
 
 const instance = new Temporal.ZonedDateTime(1_000_000_000_000_000_000n, "UTC", { id: "replace-me" });
 
-const arg = "IsO8601";;
+const arg = "iSo8601";
 const result = instance.withCalendar(arg);
 assert.sameValue(result.calendar.id, "iso8601", "Calendar is case-insensitive");

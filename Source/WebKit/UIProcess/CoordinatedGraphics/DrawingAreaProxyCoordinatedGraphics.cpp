@@ -31,6 +31,7 @@
 #include "DrawingAreaMessages.h"
 #include "DrawingAreaProxyMessages.h"
 #include "LayerTreeContext.h"
+#include "MessageSenderInlines.h"
 #include "UpdateInfo.h"
 #include "WebPageProxy.h"
 #include "WebPreferences.h"
@@ -401,7 +402,8 @@ DrawingAreaProxyCoordinatedGraphics::DrawingMonitor::DrawingMonitor(WebPageProxy
 
 DrawingAreaProxyCoordinatedGraphics::DrawingMonitor::~DrawingMonitor()
 {
-    m_callback = nullptr;
+    if (m_callback)
+        m_callback();
     stop();
 }
 
@@ -411,7 +413,7 @@ int DrawingAreaProxyCoordinatedGraphics::DrawingMonitor::webViewDrawCallback(Dra
     return false;
 }
 
-void DrawingAreaProxyCoordinatedGraphics::DrawingMonitor::start(WTF::Function<void(CallbackBase::Error)>&& callback)
+void DrawingAreaProxyCoordinatedGraphics::DrawingMonitor::start(CompletionHandler<void()>&& callback)
 {
     m_startTime = MonotonicTime::now();
     m_callback = WTFMove(callback);
@@ -435,10 +437,8 @@ void DrawingAreaProxyCoordinatedGraphics::DrawingMonitor::stop()
     g_signal_handlers_disconnect_by_func(m_webPage.viewWidget(), reinterpret_cast<gpointer>(webViewDrawCallback), this);
 #endif
     m_startTime = MonotonicTime();
-    if (m_callback) {
-        m_callback(CallbackBase::Error::None);
-        m_callback = nullptr;
-    }
+    if (m_callback)
+        m_callback();
 }
 
 void DrawingAreaProxyCoordinatedGraphics::DrawingMonitor::didDraw()
@@ -452,10 +452,10 @@ void DrawingAreaProxyCoordinatedGraphics::DrawingMonitor::didDraw()
         m_timer.startOneShot(16_ms);
 }
 
-void DrawingAreaProxyCoordinatedGraphics::dispatchAfterEnsuringDrawing(WTF::Function<void(CallbackBase::Error)>&& callbackFunction)
+void DrawingAreaProxyCoordinatedGraphics::dispatchAfterEnsuringDrawing(CompletionHandler<void()>&& callbackFunction)
 {
     if (!m_webPageProxy.hasRunningProcess()) {
-        callbackFunction(CallbackBase::Error::OwnerWasInvalidated);
+        callbackFunction();
         return;
     }
 

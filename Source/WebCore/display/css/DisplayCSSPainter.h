@@ -58,7 +58,7 @@ private:
     static void recursivePaintDescendants(const ContainerBox&, PaintingContext&);
     static void recursivePaintDescendantsForPhase(const ContainerBox&, PaintingContext&, PaintPhase);
 
-    enum class IncludeStackingContextDescendants { Yes, No };
+    enum class IncludeStackingContextDescendants : bool { No, Yes };
     static void paintAtomicallyPaintedBox(const StackingItem&, PaintingContext&, const IntRect& dirtyRect, IncludeStackingContextDescendants = IncludeStackingContextDescendants::No);
 
     static void paintStackingContext(const StackingItem&, PaintingContext&, const IntRect& dirtyRect);

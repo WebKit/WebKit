@@ -28,6 +28,7 @@
 
 #include "AbstractSlotVisitor.h"
 #include "DeferredWorkTimer.h"
+#include "GlobalObjectMethodTable.h"
 #include "JSCInlines.h"
 #include "JSInternalFieldObjectImplInlines.h"
 
@@ -96,7 +97,7 @@ void JSFinalizationRegistry::destroy(JSCell* table)
     static_cast<JSFinalizationRegistry*>(table)->~JSFinalizationRegistry();
 }
 
-void JSFinalizationRegistry::finalizeUnconditionally(VM& vm)
+void JSFinalizationRegistry::finalizeUnconditionally(VM& vm, CollectionScope)
 {
     Locker locker { cellLock() };
 

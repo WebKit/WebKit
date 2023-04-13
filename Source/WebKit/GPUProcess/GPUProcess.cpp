@@ -81,10 +81,6 @@
 #include <WebCore/ScreenCaptureKitCaptureSource.h>
 #endif
 
-#if HAVE(SC_CONTENT_SHARING_SESSION)
-#include <WebCore/ScreenCaptureKitSharingSessionManager.h>
-#endif
-
 namespace WebKit {
 
 // We wouldn't want the GPUProcess to repeatedly exit then relaunch when under memory pressure. In particular, we need to make sure the
@@ -240,8 +236,9 @@ void GPUProcess::initializeGPUProcess(GPUProcessCreationParameters&& parameters)
     SandboxExtension::consumePermanently(parameters.microphoneSandboxExtensionHandle);
 #endif
 #if PLATFORM(IOS_FAMILY)
-    CoreAudioSharedUnit::unit().setStatusBarWasTappedCallback([this](auto completionHandler) {
-        parentProcessConnection()->sendWithAsyncReply(Messages::GPUProcessProxy::StatusBarWasTapped(), [] { }, 0);
+    CoreAudioSharedUnit::unit().setStatusBarWasTappedCallback([weakProcess = WeakPtr { *this }] (auto completionHandler) {
+        if (RefPtr process = weakProcess.get())
+            process->parentProcessConnection()->sendWithAsyncReply(Messages::GPUProcessProxy::StatusBarWasTapped(), [] { }, 0);
         completionHandler();
     });
 #endif
@@ -306,10 +303,15 @@ void GPUProcess::updateGPUProcessPreferences(GPUProcessPreferences&& preferences
     if (updatePreference(m_preferences.sampleBufferContentKeySessionSupportEnabled, preferences.sampleBufferContentKeySessionSupportEnabled))
         MediaSessionManagerCocoa::setSampleBufferContentKeySessionSupportEnabled(*m_preferences.sampleBufferContentKeySessionSupportEnabled);
 #endif
-    
+
 #if ENABLE(ALTERNATE_WEBM_PLAYER)
     if (updatePreference(m_preferences.alternateWebMPlayerEnabled, preferences.alternateWebMPlayerEnabled))
         PlatformMediaSessionManager::setAlternateWebMPlayerEnabled(*m_preferences.alternateWebMPlayerEnabled);
+#endif
+
+#if HAVE(SC_CONTENT_SHARING_PICKER)
+    if (updatePreference(m_preferences.useSCContentSharingPicker, preferences.useSCContentSharingPicker))
+        PlatformMediaSessionManager::setUseSCContentSharingPicker(*m_preferences.useSCContentSharingPicker);
 #endif
 }
 
@@ -357,7 +359,16 @@ void GPUProcess::setMockCaptureDevicesEnabled(bool isEnabled)
     MockRealtimeMediaSourceCenter::setMockRealtimeMediaSourceCenterEnabled(isEnabled);
 }
 
-void GPUProcess::setOrientationForMediaCapture(uint64_t orientation)
+void GPUProcess::setUseSCContentSharingPicker(bool use)
+{
+#if HAVE(SC_CONTENT_SHARING_PICKER)
+    WebCore::PlatformMediaSessionManager::setUseSCContentSharingPicker(use);
+#else
+    UNUSED_PARAM(use);
+#endif
+}
+
+void GPUProcess::setOrientationForMediaCapture(IntDegrees orientation)
 {
     m_orientation = orientation;
     for (auto& connection : m_webProcessConnections.values())
@@ -431,17 +442,12 @@ void GPUProcess::triggerMockMicrophoneConfigurationChange()
 }
 #endif // ENABLE(MEDIA_STREAM)
 
-#if HAVE(SC_CONTENT_SHARING_SESSION)
-void GPUProcess::showWindowPicker(CompletionHandler<void(std::optional<WebCore::CaptureDevice>)>&& completionHandler)
+#if HAVE(SCREEN_CAPTURE_KIT)
+void GPUProcess::promptForGetDisplayMedia(WebCore::DisplayCapturePromptType type, CompletionHandler<void(std::optional<WebCore::CaptureDevice>)>&& completionHandler)
 {
-    WebCore::ScreenCaptureKitSharingSessionManager::singleton().showWindowPicker(WTFMove(completionHandler));
+    WebCore::ScreenCaptureKitSharingSessionManager::singleton().promptForGetDisplayMedia(type, WTFMove(completionHandler));
 }
-
-void GPUProcess::showScreenPicker(CompletionHandler<void(std::optional<WebCore::CaptureDevice>)>&& completionHandler)
-{
-    WebCore::ScreenCaptureKitSharingSessionManager::singleton().showScreenPicker(WTFMove(completionHandler));
-}
-#endif // HAVE(SC_CONTENT_SHARING_SESSION)
+#endif // HAVE(SCREEN_CAPTURE_KIT)
 
 #if PLATFORM(MAC)
 void GPUProcess::displayConfigurationChanged(CGDirectDisplayID displayID, CGDisplayChangeSummaryFlags flags)
@@ -558,6 +564,7 @@ void GPUProcess::processIsStartingToCaptureAudio(GPUConnectionToWebProcess& proc
 }
 #endif
 
+#if ENABLE(VIDEO)
 void GPUProcess::requestBitmapImageForCurrentTime(WebCore::ProcessIdentifier processIdentifier, WebCore::MediaPlayerIdentifier playerIdentifier, CompletionHandler<void(const ShareableBitmapHandle&)>&& completion)
 {
     auto iterator = m_webProcessConnections.find(processIdentifier);
@@ -568,6 +575,7 @@ void GPUProcess::requestBitmapImageForCurrentTime(WebCore::ProcessIdentifier pro
 
     completion(iterator->value->remoteMediaPlayerManagerProxy().bitmapImageForCurrentTime(playerIdentifier));
 }
+#endif
 
 } // namespace WebKit
 

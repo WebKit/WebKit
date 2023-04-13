@@ -29,10 +29,11 @@
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
 #include "Document.h"
-#include "ElementAncestorIterator.h"
+#include "ElementAncestorIteratorInlines.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
 #include "HTMLTableElement.h"
+#include "MutableStyleProperties.h"
 #include "StyleProperties.h"
 #include <wtf/IsoMallocInlines.h>
 

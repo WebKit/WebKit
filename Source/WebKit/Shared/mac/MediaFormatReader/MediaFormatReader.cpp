@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (C) 2020-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -278,6 +278,9 @@ OSStatus MediaFormatReader::copyTrackArray(CFArrayRef* trackArrayCopy)
         assertIsHeld(m_parseTracksLock);
         return m_parseTracksStatus.has_value() || action.aborted();
     });
+
+    if (action.aborted())
+        return kMTPluginFormatReaderError_InternalFailure;
 
     if (*m_parseTracksStatus != noErr)
         return *m_parseTracksStatus;

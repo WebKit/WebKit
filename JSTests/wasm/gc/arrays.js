@@ -87,67 +87,29 @@ function testArrayDeclaration() {
 }
 
 function testArrayJS() {
-  // JS API behavior not specified yet, import/export error for now.
-  assert.throws(
-    () => {
-      let m = instantiate(`
-        (module
-          (type (array i64))
-          (func (export "f") (result (ref null 0))
-            (ref.null 0))
-        )
-      `);
-      m.exports.f();
-    },
-    TypeError,
-    "Unsupported use of struct or array type"
-  )
+  // Wasm-allocated arrays can flow to JS and back.
+  {
+    let m = instantiate(`
+      (module
+        (type (array i64))
+        (func (export "f") (result (ref null 0))
+          (ref.null 0))
+      )
+    `);
+    assert.eq(m.exports.f(), null);
+  }
 
-  assert.throws(
-    () => {
-      let m = instantiate(`
-        (module
-          (type (array externref))
-          (func (export "f") (param (ref null 0)))
-        )
-      `);
-      m.exports.f(null);
-    },
-    TypeError,
-    "Unsupported use of struct or array type"
-  )
+  {
+    let m = instantiate(`
+      (module
+        (type (array i64))
+        (func (export "f") (param (ref null 0)))
+      )
+    `);
+    m.exports.f(null);
+  }
 
-  assert.throws(
-    () => {
-      let m = instantiate(`
-        (module
-          (type (array f32))
-          (import "m" "f" (func (param (ref null 0))))
-          (func (export "g") (call 0 (ref.null 0)))
-        )
-      `, { m: { f: (x) => { return; } } });
-      m.exports.g();
-    },
-    TypeError,
-    "Unsupported use of struct or array type"
-  )
-
-  assert.throws(
-    () => {
-      let m = instantiate(`
-        (module
-          (type (array i32))
-          (import "m" "f" (func (result (ref null 0))))
-          (func (export "g") (call 0) drop)
-        )
-      `, { m: { f: (x) => { return null; } } });
-      m.exports.g();
-    },
-    TypeError,
-    "Unsupported use of struct or array type"
-  )
-
-  // JS API behavior not specified yet, setting global errors for now.
+  // JS API behavior not implemented yet, setting global errors for now.
   assert.throws(
     () => {
       let m = instantiate(`
@@ -587,6 +549,109 @@ function testArrayLen() {
   }
 }
 
+function testArrayTable() {
+  {
+    let m = instantiate(`
+      (module
+        (type (array i32))
+        (table 10 (ref null 0))
+        (func (export "set") (param i32) (result)
+          (table.set (local.get 0) (array.new_canon 0 (i32.const 42) (i32.const 5))))
+        (func (export "get") (param i32 i32) (result i32)
+          (array.get 0 (table.get (local.get 0)) (local.get 1))
+          )
+      )
+    `);
+    m.exports.set(5);
+    assert.eq(m.exports.get(5, 1), 42);
+    assert.throws(() => m.exports.get(2, 2), WebAssembly.RuntimeError, "array.get to a null");
+  }
+
+  // Test arrayref table storing arrays of different types.
+  {
+    let m = instantiate(`
+      (module
+        (type (array i32))
+        (type (array f32))
+        (table 10 (ref null array))
+        (func (export "set") (param i32 i32) (result)
+          (table.set (local.get 0) (array.new_canon 0 (i32.const 42) (i32.const 5)))
+          (table.set (local.get 1) (array.new_canon 1 (f32.const 42.2) (i32.const 7))))
+        (func (export "len") (param i32) (result i32)
+          (array.len (table.get (local.get 0))))
+      )
+    `);
+    m.exports.set(5, 6);
+    assert.eq(m.exports.len(5), 5);
+    assert.eq(m.exports.len(6), 7);
+    assert.throws(() => m.exports.len(9), WebAssembly.RuntimeError, "array.len to a null");
+  }
+
+  // Invalid array.get, needs a downcast.
+  assert.throws(
+    () => compile(`
+      (module
+        (type (array i32))
+        (table 10 (ref null array))
+        (func (param i32 i32) (result i32)
+          (array.get 0 (table.get (local.get 0)) (local.get 1)))
+      )
+    `),
+    WebAssembly.CompileError,
+    "WebAssembly.Module doesn't validate: array.get arrayref to type RefNull expected arrayref, in function at index 0 (evaluating 'new WebAssembly.Module(binary)')"
+  );
+
+  // Invalid non-defaultable table type.
+  assert.throws(
+    () => compile(`
+      (module
+        (type (array i32))
+        (table 0 (ref 0)))
+    `),
+    WebAssembly.CompileError,
+    "WebAssembly.Module doesn't parse at byte 27: Table's type must be defaultable (evaluating 'new WebAssembly.Module(binary)')"
+  );
+
+  // Test JS API.
+  {
+    const m = instantiate(`
+      (module
+        (type (array i32))
+        (table (export "t") 10 (ref null 0))
+        (start 0)
+        (func
+          (table.fill (i32.const 0) (array.new_canon 0 (i32.const 42) (i32.const 5)) (i32.const 10)))
+        (func (export "makeArray") (result (ref 0)) (array.new_canon_default 0 (i32.const 5))))
+    `);
+    const m2 = instantiate(`
+      (module
+        (type (struct))
+        (func (export "makeStruct") (result (ref 0)) (struct.new_canon 0)))
+    `);
+    assert.eq(m.exports.t.get(0) !== null, true);
+    assert.throws(
+      () => m.exports.t.set(0, "foo"),
+      TypeError,
+      "WebAssembly.Table.prototype.set failed to cast the second argument to the table's element type"
+    );
+    assert.throws(
+      () => m.exports.t.set(0, 3),
+      TypeError,
+      "WebAssembly.Table.prototype.set failed to cast the second argument to the table's element type"
+    );
+    assert.throws(
+      () => m.exports.t.set(0, m2.exports.makeStruct()),
+      TypeError,
+      "WebAssembly.Table.prototype.set failed to cast the second argument to the table's element type"
+    );
+    const arr = m.exports.makeArray();
+    m.exports.t.set(0, arr);
+    assert.eq(m.exports.t.get(0), arr);
+    m.exports.t.set(0, null);
+    assert.eq(m.exports.t.get(0), null);
+  }
+}
+
 testArrayDeclaration();
 testArrayJS();
 testArrayNew();
@@ -594,3 +659,4 @@ testArrayNewDefault();
 testArrayGet();
 testArraySet();
 testArrayLen();
+testArrayTable();

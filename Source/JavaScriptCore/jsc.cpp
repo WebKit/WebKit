@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2004-2022 Apple Inc. All rights reserved.
+ *  Copyright (C) 2004-2023 Apple Inc. All rights reserved.
  *  Copyright (C) 2006 Bjoern Graf (bjoern.graf@gmail.com)
  *
  *  This library is free software; you can redistribute it and/or
@@ -38,6 +38,7 @@
 #include "Disassembler.h"
 #include "Exception.h"
 #include "ExceptionHelpers.h"
+#include "GlobalObjectMethodTable.h"
 #include "HeapSnapshotBuilder.h"
 #include "InitializeThreading.h"
 #include "Interpreter.h"
@@ -96,6 +97,7 @@
 #include <wtf/Span.h>
 #include <wtf/StringPrintStream.h>
 #include <wtf/URL.h>
+#include <wtf/WTFProcess.h>
 #include <wtf/WallTime.h>
 #include <wtf/text/Base64.h>
 #include <wtf/text/StringBuilder.h>
@@ -193,7 +195,7 @@ NO_RETURN_WITH_VALUE static void jscExit(int status)
         }
     }
 #endif // ENABLE(DFG_JIT)
-    exit(status);
+    exitProcess(status);
 }
 
 static unsigned asyncTestPasses { 0 };
@@ -917,7 +919,7 @@ JSInternalPromise* GlobalObject::moduleLoaderImportModule(JSGlobalObject* global
     RETURN_IF_EXCEPTION(scope, promise->rejectWithCaughtException(globalObject, scope));
 
     if (!referrer.isLocalFile())
-        RELEASE_AND_RETURN(scope, rejectWithError(createError(globalObject, makeString("Could not resolve the referrer's path '", referrer.string(), "', while trying to resolve module '", specifier, "'."))));
+        RELEASE_AND_RETURN(scope, rejectWithError(createError(globalObject, makeString("Could not resolve the referrer's path '"_s, referrer.string(), "', while trying to resolve module '"_s, specifier, "'."_s))));
 
     auto assertions = JSC::retrieveAssertionsFromDynamicImportOptions(globalObject, parameters, { vm.propertyNames->type.impl() });
     RETURN_IF_EXCEPTION(scope, promise->rejectWithCaughtException(globalObject, scope));
@@ -956,13 +958,13 @@ Identifier GlobalObject::moduleLoaderResolve(JSGlobalObject* globalObject, JSMod
         }
 
         if (!directoryURL.isLocalFile()) {
-            throwException(globalObject, scope, createError(globalObject, makeString("Could not resolve the referrer's path: ", directoryURL.string())));
+            throwException(globalObject, scope, createError(globalObject, makeString("Could not resolve the referrer's path: "_s, directoryURL.string())));
             return { };
         }
 
         auto resolvedURL = specifierIsAbsolute ? URL::fileURLWithFileSystemPath(specifier) : URL(directoryURL, specifier);
         if (!resolvedURL.isValid()) {
-            throwException(globalObject, scope, createError(globalObject, makeString("Resolved module url is not valid: ", resolvedURL.string())));
+            throwException(globalObject, scope, createError(globalObject, makeString("Resolved module url is not valid: "_s, resolvedURL.string())));
             return { };
         }
         ASSERT(resolvedURL.isLocalFile());
@@ -1115,7 +1117,7 @@ public:
         });
 
         String filename = cachePath();
-        auto fd = FileSystem::openAndLockFile(filename, FileSystem::FileOpenMode::Write, {FileSystem::FileLockMode::Exclusive, FileSystem::FileLockMode::Nonblocking});
+        auto fd = FileSystem::openAndLockFile(filename, FileSystem::FileOpenMode::ReadWrite, { FileSystem::FileLockMode::Exclusive, FileSystem::FileLockMode::Nonblocking });
         if (!FileSystem::isHandleValid(fd))
             return;
 
@@ -1217,6 +1219,9 @@ static bool fetchModuleFromLocalFileSystem(const URL& fileURL, Vector& buffer)
 #if OS(WINDOWS)
     // https://msdn.microsoft.com/en-us/library/windows/desktop/aa365247.aspx#maxpath
     // Use long UNC to pass the long path name to the Windows APIs.
+    // These also appear to turn off handling forward slashes as
+    // directory separators as it disables all string parsing on names.
+    fileName = makeStringByReplacingAll(fileName, '/', '\\');
     auto pathName = makeString("\\\\?\\", fileName).wideCharacters();
     struct _stat status { };
     if (_wstat(pathName.data(), &status))
@@ -1274,7 +1279,7 @@ JSInternalPromise* GlobalObject::moduleLoaderFetch(JSGlobalObject* globalObject,
 
     Vector<uint8_t> buffer;
     if (!fetchModuleFromLocalFileSystem(moduleURL, buffer))
-        RELEASE_AND_RETURN(scope, rejectWithError(createError(globalObject, makeString("Could not open file '", moduleKey, "'."))));
+        RELEASE_AND_RETURN(scope, rejectWithError(createError(globalObject, makeString("Could not open file '"_s, moduleKey, "'."_s))));
 
 #if ENABLE(WEBASSEMBLY)
     // FileSystem does not have mime-type header. The JSC shell recognizes WebAssembly's magic header.
@@ -1493,7 +1498,7 @@ public:
 
     IterationStatus operator()(StackVisitor& visitor) const
     {
-        m_trace.append(makeString("    ", visitor->index(), "   ", visitor->toString(), '\n'));
+        m_trace.append(makeString("    "_s, visitor->index(), "   "_s, visitor->toString(), '\n'));
         return IterationStatus::Continue;
     }
 
@@ -1718,7 +1723,7 @@ static URL computeFilePath(VM& vm, JSGlobalObject* globalObject, CallFrame* call
     if (callerRelative) {
         path = URL(callFrame->callerSourceOrigin(vm).url(), fileName);
         if (!path.isLocalFile()) {
-            throwException(globalObject, scope, createURIError(globalObject, makeString("caller relative URL path is not a local file: ", path.string())));
+            throwException(globalObject, scope, createURIError(globalObject, makeString("caller relative URL path is not a local file: "_s, path.string())));
             return URL();
         }
     } else
@@ -1816,19 +1821,19 @@ JSC_DEFINE_HOST_FUNCTION(functionWriteFile, (JSGlobalObject* globalObject, CallF
         if (arrayBuffer->impl()->isDetached())
             data = emptyString();
         else
-            data = Span { static_cast<const uint8_t*>(arrayBuffer->impl()->data()), arrayBuffer->impl()->byteLength() };
+            data = makeSpan(static_cast<const uint8_t*>(arrayBuffer->impl()->data()), arrayBuffer->impl()->byteLength());
     } else if (dataValue.inherits<JSArrayBufferView>()) {
         auto* view = jsCast<JSArrayBufferView*>(dataValue);
         if (view->isDetached())
             data = emptyString();
         else
-            data = Span { static_cast<const uint8_t*>(view->vector()), view->byteLength() };
+            data = makeSpan(static_cast<const uint8_t*>(view->vector()), view->byteLength());
     } else {
         data = dataValue.toWTFString(globalObject);
         RETURN_IF_EXCEPTION(scope, { });
     }
 
-    auto handle = FileSystem::openFile(fileName, FileSystem::FileOpenMode::Write);
+    auto handle = FileSystem::openFile(fileName, FileSystem::FileOpenMode::Truncate);
     if (!FileSystem::isHandleValid(handle))
         return throwVMError(globalObject, scope, "Could not open file."_s);
 
@@ -2313,7 +2318,7 @@ JSC_DEFINE_HOST_FUNCTION(functionDollarAgentStart, (JSGlobalObject* globalObject
                         result = evaluationException->value();
                     checkException(globalObject, true, evaluationException, result, commandLine, success);
                     if (!success)
-                        exit(1);
+                        exitProcess(EXIT_FAILURE);
                 });
         })->detach();
     
@@ -3072,6 +3077,8 @@ JSC_DEFINE_HOST_FUNCTION(functionDropAllLocks, (JSGlobalObject* globalObject, Ca
 #define EXCEPT(x)
 #endif
 
+static BinarySemaphore waitToExit;
+
 int jscmain(int argc, char** argv);
 
 #if OS(DARWIN) || OS(LINUX)
@@ -3136,7 +3143,7 @@ static void startTimeoutTimer(Seconds duration)
                 Seconds hardTimeout { hardTimeoutInDouble };
                 sleep(hardTimeout);
                 dataLogLn("HARD TIMEOUT after ", hardTimeout);
-                exit(EXIT_FAILURE);
+                exitProcess(EXIT_FAILURE);
             }
         }
     });
@@ -3185,6 +3192,12 @@ int main(int argc, char** argv)
     fegetenv( &env );
     env.__fpscr &= ~0x01000000u;
     fesetenv( &env );
+
+    // Let the kernel kill us when OOM
+    {
+        int retval = proc_setpcontrol(PC_KILL);
+        ASSERT_UNUSED(retval, !retval);
+    }
 #endif
 
 #if OS(WINDOWS)
@@ -3219,19 +3232,6 @@ int main(int argc, char** argv)
     WTF::initialize();
 #if PLATFORM(COCOA)
     WTF::disableForwardingVPrintfStdErrToOSLog();
-#endif
-
-#if OS(UNIX)
-    BinarySemaphore waitToExit;
-
-    if (getenv("JS_SHELL_WAIT_FOR_SIGUSR2_TO_EXIT")) {
-        addSignalHandler(Signal::Usr, SignalHandler([&] (Signal, SigInfo&, PlatformRegisters&) {
-            dataLogLn("Signal handler hit, we can exit now.");
-            waitToExit.signal();
-            return SignalAction::Handled;
-        }));
-        activateSignalHandlersFor(Signal::Usr);
-    }
 #endif
 
     // We can't use destructors in the following code because it uses Windows
@@ -3320,6 +3320,7 @@ static void dumpException(GlobalObject* globalObject, JSValue exception)
             printf("%s\n", stackString.utf8().data());
     }
 
+    fflush(stdout);
 #undef CHECK_EXCEPTION
 }
 
@@ -3435,7 +3436,7 @@ static void runWithOptions(GlobalObject* globalObject, CommandLine& options, boo
         } else {
             size_t commandLineLength = strlen(scripts[i].argument);
             scriptBuffer.resize(commandLineLength);
-            std::copy(scripts[i].argument, scripts[i].argument + commandLineLength, scriptBuffer.begin());
+            std::copy_n(scripts[i].argument, commandLineLength, scriptBuffer.begin());
             fileName = "[Command Line]"_s;
         }
 
@@ -3672,9 +3673,11 @@ void CommandLine::parseArguments(int argc, char** argv)
         }
         if (!strcmp(arg, "-s")) {
 #if OS(UNIX)
+            initializeSignalHandling();
+
             SignalAction (*exit)(Signal, SigInfo&, PlatformRegisters&) = [] (Signal, SigInfo&, PlatformRegisters&) {
                 dataLogLn("Signal handler hit. Exiting with status 0");
-                _exit(0);
+                terminateProcess(EXIT_SUCCESS);
                 return SignalAction::ForceDefault;
             };
 
@@ -3954,6 +3957,24 @@ int jscmain(int argc, char** argv)
     // Note that the options parsing can affect VM creation, and thus
     // comes first.
     mainCommandLine.construct(argc, argv);
+
+#if OS(WINDOWS)
+    // Needed for complex.yaml tests.
+    if (char* tz = getenv("TZ"))
+        setTimeZoneOverride(StringView::fromLatin1(tz));
+#endif
+
+#if OS(UNIX)
+    if (getenv("JS_SHELL_WAIT_FOR_SIGUSR2_TO_EXIT")) {
+        initializeSignalHandling();
+        addSignalHandler(Signal::Usr, SignalHandler([&] (Signal, SigInfo&, PlatformRegisters&) {
+            dataLogLn("Signal handler hit, we can exit now.");
+            waitToExit.signal();
+            return SignalAction::Handled;
+        }));
+        activateSignalHandlersFor(Signal::Usr);
+    }
+#endif
 
     {
         Options::AllowUnfinalizedAccessScope scope;

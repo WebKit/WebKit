@@ -1,0 +1,15 @@
+
+PASS all preloads must be fetched by the preload scanner
+PASS link-header-fetch-priority
+PASS link-header-fetch-priority 1
+PASS link-header-fetch-priority 2
+PASS link-header-fetch-priority 3
+PASS link-header-fetch-priority 4
+PASS link-header-fetch-priority 5
+PASS link-header-fetch-priority 6
+PASS link-header-fetch-priority 7
+PASS link-header-fetch-priority 8
+PASS link-header-fetch-priority 9
+PASS link-header-fetch-priority 10
+PASS link-header-fetch-priority 11
+

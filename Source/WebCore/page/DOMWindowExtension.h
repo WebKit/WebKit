@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "DOMWindow.h"
+#include "LocalDOMWindow.h"
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/WeakPtr.h>
@@ -33,11 +33,11 @@
 namespace WebCore {
 
 class DOMWrapperWorld;
-class Frame;
+class LocalFrame;
 
-class DOMWindowExtension final : public RefCounted<DOMWindowExtension>, public DOMWindow::Observer {
+class DOMWindowExtension final : public RefCounted<DOMWindowExtension>, public LocalDOMWindow::Observer {
 public:
-    static Ref<DOMWindowExtension> create(DOMWindow* window, DOMWrapperWorld& world)
+    static Ref<DOMWindowExtension> create(LocalDOMWindow* window, DOMWrapperWorld& world)
     {
         return adoptRef(*new DOMWindowExtension(window, world));
     }
@@ -50,15 +50,15 @@ public:
     void willDestroyGlobalObjectInFrame() final;
     void willDetachGlobalObjectFromFrame() final;
 
-    WEBCORE_EXPORT Frame* frame() const;
+    WEBCORE_EXPORT LocalFrame* frame() const;
     DOMWrapperWorld& world() const { return m_world; }
 
 private:
-    WEBCORE_EXPORT DOMWindowExtension(DOMWindow*, DOMWrapperWorld&);
+    WEBCORE_EXPORT DOMWindowExtension(LocalDOMWindow*, DOMWrapperWorld&);
 
-    WeakPtr<DOMWindow, WeakPtrImplWithEventTargetData> m_window;
+    WeakPtr<LocalDOMWindow, WeakPtrImplWithEventTargetData> m_window;
     Ref<DOMWrapperWorld> m_world;
-    RefPtr<Frame> m_disconnectedFrame;
+    RefPtr<LocalFrame> m_disconnectedFrame;
     bool m_wasDetached;
 };
 

@@ -57,6 +57,7 @@ New Tokens
 
         EGL_PLATFORM_ANGLE_DEVICE_ID_HIGH_ANGLE          0x34D6
         EGL_PLATFORM_ANGLE_DEVICE_ID_LOW_ANGLE           0x34D7
+        EGL_PLATFORM_ANGLE_DISPLAY_KEY_ANGLE             0x34DC
 
 Additions to the EGL Specification
 
@@ -77,11 +78,21 @@ New Behavior
     If the ID specified doesn't match any devices on the system, the device
     is selected as described in the EGL_ANGLE_display_power_preference extension.
 
+    To select a distinct display on a graphics device that may already have
+    an existing display in ANGLE's cache, use EGL_PLATFORM_ANGLE_DISPLAY_KEY_ANGLE
+    to add a key to the cache entry for this display. The same cached display can
+    be re-requested by specifying the same cache value. If this parameter is not
+    included, the default value used will be 0.
+
 Issues
 
     None
 
 Revision History
+
+    Version 3, 2023-02-15
+      - Add EGL_PLATFORM_ANGLE_DISPLAY_KEY_ANGLE to allow selection of
+        multiple EGLDisplays from the same graphics device.
 
     Version 2, 2022-04-09 (Kimmo Kinnunen)
       - Describe interaction with EGL_ANGLE_display_power_preference,

@@ -224,6 +224,8 @@ class OutputHLSL : public TIntermTraverser
     int mNumRenderTargets;
     int mMaxDualSourceDrawBuffers;
 
+    TLayoutDepth mDepthLayout;
+
     int mUniqueIndex;  // For creating unique names
 
     CallDAG mCallDag;

@@ -478,7 +478,7 @@ void Context::pointSizex(GLfixed size)
 
 void Context::polygonOffsetx(GLfixed factor, GLfixed units)
 {
-    mState.setPolygonOffsetParams(ConvertFixedToFloat(factor), ConvertFixedToFloat(units));
+    mState.setPolygonOffsetParams(ConvertFixedToFloat(factor), ConvertFixedToFloat(units), 0.0f);
 }
 
 void Context::popMatrix()

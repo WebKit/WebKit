@@ -114,10 +114,10 @@ static NSString* visibleDomain(const String& host)
 
 NSString *applicationVisibleNameFromOrigin(const WebCore::SecurityOriginData& origin)
 {
-    if (origin.protocol != "http"_s && origin.protocol != "https"_s)
+    if (origin.protocol() != "http"_s && origin.protocol() != "https"_s)
         return nil;
 
-    return visibleDomain(origin.host);
+    return visibleDomain(origin.host());
 }
 
 NSString *applicationVisibleName()
@@ -148,7 +148,7 @@ static NSString *alertMessageText(MediaPermissionReason reason, const WebCore::S
     case MediaPermissionReason::Geolocation:
         return [NSString stringWithFormat:WEB_UI_NSSTRING(@"Allow “%@” to use your current location?", @"Message for geolocation prompt"), visibleOrigin];
     case MediaPermissionReason::SpeechRecognition:
-        return [NSString stringWithFormat:WEB_UI_NSSTRING(@"Allow “%@” to capture your audio and use it for speech recognition?", @"Message for spechrecognition prompt"), visibleDomain(origin.host)];
+        return [NSString stringWithFormat:WEB_UI_NSSTRING(@"Allow “%@” to capture your audio and use it for speech recognition?", @"Message for spechrecognition prompt"), visibleDomain(origin.host())];
     }
 }
 

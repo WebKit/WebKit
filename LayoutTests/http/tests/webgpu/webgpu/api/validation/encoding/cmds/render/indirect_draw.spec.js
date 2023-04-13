@@ -56,20 +56,18 @@ g.test('indirect_buffer,device_mismatch')
     'Tests draw(Indexed)Indirect cannot be called with an indirect buffer created from another device'
   )
   .paramsSubcasesOnly(kIndirectDrawTestParams.combine('mismatched', [true, false]))
-  .fn(async t => {
+  .beforeAllSubcases(t => {
+    t.selectMismatchedDeviceOrSkipTestCase(undefined);
+  })
+  .fn(t => {
     const { encoderType, indexed, mismatched } = t.params;
 
-    if (mismatched) {
-      await t.selectMismatchedDeviceOrSkipTestCase(undefined);
-    }
+    const sourceDevice = mismatched ? t.mismatchedDevice : t.device;
 
-    const device = mismatched ? t.mismatchedDevice : t.device;
-
-    const indirectBuffer = device.createBuffer({
+    const indirectBuffer = sourceDevice.createBuffer({
       size: 256,
       usage: GPUBufferUsage.INDIRECT,
     });
-
     t.trackForCleanup(indirectBuffer);
 
     const { encoder, validateFinish } = t.createEncoder(encoderType);

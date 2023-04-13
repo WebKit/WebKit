@@ -35,5 +35,7 @@ typedef struct pas_enumerator pas_enumerator;
 
 PAS_API bool pas_enumerate_unaccounted_pages_as_meta(pas_enumerator* enumerator);
 
+PAS_END_EXTERN_C;
+
 #endif /* PAS_ENUMERATE_UNACCOUNTED_PAGES_AS_META_H */
 

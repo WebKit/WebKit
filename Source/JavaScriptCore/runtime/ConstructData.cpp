@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2022 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008-2023 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -56,7 +56,7 @@ JSObject* construct(JSGlobalObject* globalObject, JSValue constructorObject, con
 {
     VM& vm = globalObject->vm();
     ASSERT(constructData.type == CallData::Type::JS || constructData.type == CallData::Type::Native);
-    return vm.interpreter.executeConstruct(globalObject, asObject(constructorObject), constructData, args, newTarget);
+    return vm.interpreter.executeConstruct(asObject(constructorObject), constructData, args, newTarget);
 }
 
 JSObject* profiledConstruct(JSGlobalObject* globalObject, ProfilingReason reason, JSValue constructorObject, const CallData& constructData, const ArgList& args, JSValue newTarget)

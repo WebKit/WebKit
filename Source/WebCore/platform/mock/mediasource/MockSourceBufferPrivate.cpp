@@ -133,12 +133,12 @@ MockSourceBufferPrivate::MockSourceBufferPrivate(MockMediaSourcePrivate* parent)
 
 MockSourceBufferPrivate::~MockSourceBufferPrivate() = default;
 
-void MockSourceBufferPrivate::append(Vector<uint8_t>&& data)
+void MockSourceBufferPrivate::appendInternal(Ref<SharedBuffer>&& data)
 {
-    m_inputBuffer.appendVector(data);
-    SourceBufferPrivateClient::AppendResult result = SourceBufferPrivateClient::AppendResult::AppendSucceeded;
+    m_inputBuffer.appendVector(data->extractData());
+    bool parsingSucceeded = true;
 
-    while (m_inputBuffer.size() && result == SourceBufferPrivateClient::AppendResult::AppendSucceeded) {
+    while (m_inputBuffer.size() && parsingSucceeded) {
         auto buffer = ArrayBuffer::create(m_inputBuffer.data(), m_inputBuffer.size());
         uint64_t boxLength = MockBox::peekLength(buffer.ptr());
         if (boxLength > buffer->byteLength())
@@ -152,17 +152,11 @@ void MockSourceBufferPrivate::append(Vector<uint8_t>&& data)
             MockSampleBox sampleBox = MockSampleBox(buffer.ptr());
             didReceiveSample(sampleBox);
         } else
-            result = SourceBufferPrivateClient::AppendResult::ParsingFailed;
-
+            parsingSucceeded = false;
         m_inputBuffer.remove(0, boxLength);
     }
 
-    // Resolve the changes in TrackBuffers' buffered ranges
-    // into the SourceBuffer's buffered ranges
-    updateBufferedFromTrackBuffers(m_mediaSource->isEnded());
-
-    if (m_client)
-        m_client->sourceBufferPrivateAppendComplete(result);
+    SourceBufferPrivate::appendCompleted(parsingSucceeded, m_mediaSource->isEnded());
 }
 
 void MockSourceBufferPrivate::didReceiveInitializationSegment(const MockInitializationBox& initBox)
@@ -193,7 +187,10 @@ void MockSourceBufferPrivate::didReceiveInitializationSegment(const MockInitiali
         }
     }
 
-    SourceBufferPrivate::didReceiveInitializationSegment(WTFMove(segment), [](SourceBufferPrivateClient::ReceiveResult) { });
+    SourceBufferPrivate::didReceiveInitializationSegment(
+        WTFMove(segment),
+        [] (auto&) { return true; },
+        [] (auto) { });
 }
 
 void MockSourceBufferPrivate::didReceiveSample(const MockSampleBox& sampleBox)
@@ -204,11 +201,7 @@ void MockSourceBufferPrivate::didReceiveSample(const MockSampleBox& sampleBox)
     SourceBufferPrivate::didReceiveSample(MockMediaSample::create(sampleBox));
 }
 
-void MockSourceBufferPrivate::abort()
-{
-}
-
-void MockSourceBufferPrivate::resetParserState()
+void MockSourceBufferPrivate::resetParserStateInternal()
 {
 }
 

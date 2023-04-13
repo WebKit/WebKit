@@ -9,6 +9,9 @@ class BrowserDriver(object):
 
     ___metaclass___ = ABCMeta
 
+    def __init__(self, browser_args):
+        self.browser_args = browser_args
+
     @abstractmethod
     def prepare_env(self, config):
         pass

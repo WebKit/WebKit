@@ -62,8 +62,11 @@ static const char *hardwareAccelerationPolicyToString(WebKitHardwareAcceleration
         return "always";
     case WEBKIT_HARDWARE_ACCELERATION_POLICY_NEVER:
         return "never";
+#if !GTK_CHECK_VERSION(3, 98, 0)
     case WEBKIT_HARDWARE_ACCELERATION_POLICY_ON_DEMAND:
         return "ondemand";
+#endif
+
     }
 
     g_assert_not_reached();
@@ -76,10 +79,12 @@ static int stringToHardwareAccelerationPolicy(const char *policy)
         return WEBKIT_HARDWARE_ACCELERATION_POLICY_ALWAYS;
     if (!g_ascii_strcasecmp(policy, "never"))
         return WEBKIT_HARDWARE_ACCELERATION_POLICY_NEVER;
+#if !GTK_CHECK_VERSION(3, 98, 0)
     if (!g_ascii_strcasecmp(policy, "ondemand"))
         return WEBKIT_HARDWARE_ACCELERATION_POLICY_ON_DEMAND;
+#endif
 
-    g_warning("Invalid value %s for hardware-acceleration-policy setting valid values are always, never and ondemand", policy);
+    g_warning("Invalid value %s for hardware-acceleration-policy setting", policy);
     return -1;
 }
 

@@ -27,27 +27,16 @@
 
 namespace WebCore {
 
-enum class NetworkConnectionIntegrity : uint8_t {
+enum class NetworkConnectionIntegrity : uint16_t {
     Enabled = 1 << 0,
     HTTPSFirst = 1 << 1,
     HTTPSOnly = 1 << 2,
     HTTPSOnlyExplicitlyBypassedForDomain = 1 << 3,
     FailClosed = 1 << 4,
+    WebSearchContent = 1 << 5,
+    EnhancedTelemetry = 1 << 6,
+    RequestValidation = 1 << 7,
+    SanitizeLookalikeCharacters = 1 << 8,
 };
 
 }
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::NetworkConnectionIntegrity> {
-    using values = EnumValues<
-        WebCore::NetworkConnectionIntegrity,
-        WebCore::NetworkConnectionIntegrity::Enabled,
-        WebCore::NetworkConnectionIntegrity::HTTPSFirst,
-        WebCore::NetworkConnectionIntegrity::HTTPSOnly,
-        WebCore::NetworkConnectionIntegrity::HTTPSOnlyExplicitlyBypassedForDomain,
-        WebCore::NetworkConnectionIntegrity::FailClosed
-    >;
-};
-
-} // namespace WTF

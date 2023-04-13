@@ -62,6 +62,9 @@
 
 
 
+
+
+
 /**
  * The interface used for formatting strings with color metadata.
  *
@@ -77,6 +80,7 @@ try {
   Colors = require('ansi-colors');
 } catch {
   const passthrough = (s) => s;
+  passthrough.enabled = false;
   passthrough.reset = passthrough;
   passthrough.bold = passthrough;
   passthrough.dim = passthrough;

@@ -68,16 +68,18 @@ public:
         std::optional<PointInContextRoot> left;
         std::optional<PointInContextRoot> right;
     };
-    enum class MayBeAboveLastFloat : uint8_t { Yes, No };
+    enum class MayBeAboveLastFloat : bool { No, Yes };
     Constraints constraints(LayoutUnit candidateTop, LayoutUnit candidateBottom, MayBeAboveLastFloat) const;
 
     FloatingState::FloatItem toFloatItem(const Box& floatBox) const;
 
+    bool isLogicalLeftPositioned(const Box& floatBox) const;
+
 private:
     std::optional<LayoutUnit> bottom(Clear) const;
 
-    bool isFloaingCandidateLogicallyLeftPositioned(const Box&) const;
-    Clear logicalClear(const Box&) const;
+    bool isFloatingCandidateLeftPositionedInFloatingState(const Box&) const;
+    Clear clearInFloatingState(const Box&) const;
 
     const LayoutState& layoutState() const { return m_floatingState.layoutState(); }
     const FormattingContext& formattingContext() const { return m_formattingContext; }

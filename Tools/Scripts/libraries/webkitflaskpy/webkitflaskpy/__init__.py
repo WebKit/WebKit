@@ -43,17 +43,28 @@ except ImportError:
         "Please install webkitcorepy with `pip install webkitcorepy --extra-index-url <package index URL>`"
     )
 
-version = Version(0, 3, 0)
+version = Version(0, 5, 0)
 
 AutoInstall.register(Package('click', Version(7, 1, 2)))
 AutoInstall.register(Package('flask', Version(1, 1, 2)))
+AutoInstall.register(Package('hiredis', Version(1, 1, 0)))
 AutoInstall.register(Package('itsdangerous', Version(1, 1, 0)))
 AutoInstall.register(Package('jinja2', Version(2, 11, 3)))
+AutoInstall.register(Package('lupa', Version(1, 13)))
 AutoInstall.register(Package('markupsafe', Version(1, 1, 1)))
+AutoInstall.register(Package('redis', Version(3, 5, 3)))
+AutoInstall.register(Package('sortedcontainers', Version(2, 4, 0)))
 AutoInstall.register(Package('werkzeug', Version(1, 0, 1)))
+
+if sys.version_info > (3, 0):
+    AutoInstall.register(Package('fakeredis', Version(1, 5, 2)))
+else:
+    AutoInstall.register(Package('fakeredis', Version(1, 1, 1)))
 
 from webkitflaskpy.authed_blueprint import AuthedBlueprint  # noqa: E402
 from webkitflaskpy.response import Response
 from webkitflaskpy.mock_app import mock_app
+from webkitflaskpy.database import Database
+from webkitflaskpy.ipc_manager import IPCManager
 
 name = 'webkitflaskpy'

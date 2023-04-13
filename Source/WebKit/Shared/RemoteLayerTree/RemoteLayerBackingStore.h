@@ -28,6 +28,7 @@
 #include "ImageBufferBackendHandle.h"
 #include <WebCore/FloatRect.h>
 #include <WebCore/ImageBuffer.h>
+#include <WebCore/PlatformCALayer.h>
 #include <WebCore/Region.h>
 #include <wtf/MachSendRight.h>
 #include <wtf/MonotonicTime.h>
@@ -39,17 +40,28 @@ namespace WebCore {
 class NativeImage;
 class ThreadSafeImageBufferFlusher;
 typedef Vector<WebCore::FloatRect, 5> RepaintRectList;
+struct PlatformCALayerDelegatedContents;
+struct PlatformCALayerDelegatedContentsFinishedEvent;
 }
 
 namespace WebKit {
 
 class PlatformCALayerRemote;
 class RemoteLayerBackingStoreCollection;
+class RemoteLayerTreeNode;
 enum class SwapBuffersDisplayRequirement : uint8_t;
 
 #if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
 using UseCGDisplayListImageCache = WebCore::ImageBufferCreationContext::UseCGDisplayListImageCache;
 #endif
+
+enum class BackingStoreNeedsDisplayReason : uint8_t {
+    None,
+    NoFrontBuffer,
+    FrontBufferIsVolatile,
+    FrontBufferHasNoSharingHandle,
+    HasDirtyRegion,
+};
 
 class RemoteLayerBackingStore {
     WTF_MAKE_NONCOPYABLE(RemoteLayerBackingStore);
@@ -79,9 +91,6 @@ public:
         IncludeDisplayList includeDisplayList { IncludeDisplayList::No };
         UseCGDisplayListImageCache useCGDisplayListImageCache { UseCGDisplayListImageCache::No };
 #endif
-        
-        void encode(IPC::Encoder&) const;
-        static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, Parameters&);
 
         bool operator==(const Parameters& other) const
         {
@@ -104,7 +113,8 @@ public:
     void setNeedsDisplay(const WebCore::IntRect);
     void setNeedsDisplay();
 
-    void setContents(WTF::MachSendRight&& surfaceHandle);
+    void setDelegatedContentsFinishedEvent(const WebCore::PlatformCALayerDelegatedContentsFinishedEvent&);
+    void setDelegatedContents(const WebCore::PlatformCALayerDelegatedContents&);
 
     // Returns true if we need to encode the buffer.
     bool layerWillBeDisplayed();
@@ -125,17 +135,18 @@ public:
 
     PlatformCALayerRemote* layer() const { return m_layer; }
 
-    enum class LayerContentsType { IOSurface, CAMachPort };
-    void applyBackingStoreToLayer(CALayer *, LayerContentsType, bool replayCGDisplayListsIntoBackingStore);
-
     void encode(IPC::Encoder&) const;
-    static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, RemoteLayerBackingStore&);
 
     void enumerateRectsBeingDrawn(WebCore::GraphicsContext&, void (^)(WebCore::FloatRect));
 
     bool hasFrontBuffer() const
     {
         return m_contentsBufferHandle || !!m_frontBuffer.imageBuffer;
+    }
+
+    bool hasNoBuffers() const
+    {
+        return !m_frontBuffer.imageBuffer && !m_backBuffer.imageBuffer && !m_secondaryBackBuffer.imageBuffer && !m_contentsBufferHandle;
     }
 
     // Just for RemoteBackingStoreCollection.
@@ -163,8 +174,6 @@ public:
 
     void clearBackingStore();
 
-    static RetainPtr<id> layerContentsBufferFromBackendHandle(ImageBufferBackendHandle&&, LayerContentsType);
-
 private:
     RemoteLayerBackingStoreCollection* backingStoreCollection() const;
 
@@ -179,6 +188,7 @@ private:
         }
 
         void discard();
+        void encode(IPC::Encoder&) const;
     };
 
     bool setBufferVolatile(Buffer&);
@@ -194,20 +204,16 @@ private:
 
     WebCore::Region m_dirtyRegion;
 
-    // Used in the WebContent Process.
     Buffer m_frontBuffer;
     Buffer m_backBuffer;
     Buffer m_secondaryBackBuffer;
 
-    // Used in the UI Process.
-    std::optional<ImageBufferBackendHandle> m_bufferHandle;
     // FIXME: This should be removed and m_bufferHandle should be used to ref the buffer once ShareableBitmapHandle
     // can be encoded multiple times. http://webkit.org/b/234169
     std::optional<MachSendRight> m_contentsBufferHandle;
 
 #if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
     RefPtr<WebCore::ImageBuffer> m_displayListBuffer;
-    std::optional<ImageBufferBackendHandle> m_displayListBufferHandle;
 #endif
 
     Vector<std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher>> m_frontBufferFlushers;
@@ -216,5 +222,51 @@ private:
 
     MonotonicTime m_lastDisplayTime;
 };
+
+// The subset of RemoteLayerBackingStore that gets serialized into the UI
+// process, and gets applied to the CALayer.
+class RemoteLayerBackingStoreProperties {
+    WTF_MAKE_NONCOPYABLE(RemoteLayerBackingStoreProperties);
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    RemoteLayerBackingStoreProperties() = default;
+
+    static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, RemoteLayerBackingStoreProperties&);
+
+    enum class LayerContentsType { IOSurface, CAMachPort, CachedIOSurface };
+    void applyBackingStoreToLayer(CALayer *, LayerContentsType, bool replayCGDisplayListsIntoBackingStore);
+
+    void updateCachedBuffers(RemoteLayerTreeNode&, LayerContentsType);
+
+    const std::optional<ImageBufferBackendHandle>& bufferHandle() const { return m_bufferHandle; };
+
+    std::optional<WebCore::RenderingResourceIdentifier> frontBufferIdentifier() const { return m_frontBufferIdentifier; }
+    std::optional<WebCore::RenderingResourceIdentifier> backBufferIdentifier() const { return m_backBufferIdentifier; }
+    std::optional<WebCore::RenderingResourceIdentifier> secondaryBackBufferIdentifier() const { return m_secondaryBackBufferIdentifier; }
+
+    bool isOpaque() const { return m_isOpaque; }
+
+    static RetainPtr<id> layerContentsBufferFromBackendHandle(ImageBufferBackendHandle&&, LayerContentsType);
+
+private:
+    std::optional<ImageBufferBackendHandle> m_bufferHandle;
+    RetainPtr<id> m_contentsBuffer;
+
+    std::optional<WebCore::RenderingResourceIdentifier> m_frontBufferIdentifier;
+    std::optional<WebCore::RenderingResourceIdentifier> m_backBufferIdentifier;
+    std::optional<WebCore::RenderingResourceIdentifier> m_secondaryBackBufferIdentifier;
+
+#if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
+    std::optional<ImageBufferBackendHandle> m_displayListBufferHandle;
+#endif
+
+    bool m_isOpaque;
+    RemoteLayerBackingStore::Type m_type;
+};
+
+WTF::TextStream& operator<<(WTF::TextStream&, SwapBuffersDisplayRequirement);
+WTF::TextStream& operator<<(WTF::TextStream&, BackingStoreNeedsDisplayReason);
+WTF::TextStream& operator<<(WTF::TextStream&, const RemoteLayerBackingStore&);
+WTF::TextStream& operator<<(WTF::TextStream&, const RemoteLayerBackingStoreProperties&);
 
 } // namespace WebKit

@@ -32,9 +32,9 @@
 #import "CookieStorage.h"
 #import "CredentialStorage.h"
 #import "FormDataStreamMac.h"
-#import "Frame.h"
 #import "FrameLoader.h"
 #import "HTTPHeaderNames.h"
+#import "LocalFrame.h"
 #import "Logging.h"
 #import "MIMETypeRegistry.h"
 #import "NetworkStorageSession.h"
@@ -103,8 +103,6 @@ static bool synchronousWillSendRequestEnabled()
 
 #endif
 
-#if PLATFORM(COCOA)
-
 NSURLRequest *ResourceHandle::applySniffingPoliciesIfNeeded(NSURLRequest *request, bool shouldContentSniff, ContentEncodingSniffingPolicy contentEncodingSniffingPolicy)
 {
 #if !USE(CFNETWORK_CONTENT_ENCODING_SNIFFING_OVERRIDE)
@@ -130,8 +128,6 @@ NSURLRequest *ResourceHandle::applySniffingPoliciesIfNeeded(NSURLRequest *reques
 
     return mutableRequest.autorelease();
 }
-
-#endif
 
 #if !PLATFORM(IOS_FAMILY)
 void ResourceHandle::createNSURLConnection(id delegate, bool shouldUseCredentialStorage, bool shouldContentSniff, ContentEncodingSniffingPolicy contentEncodingSniffingPolicy, SchedulingBehavior schedulingBehavior)

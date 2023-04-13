@@ -43,6 +43,7 @@ public:
     using Init = SecurityPolicyViolationEventInit;
 
     WEBCORE_EXPORT static Ref<CSPViolationReportBody> create(Init&&);
+    WEBCORE_EXPORT static Ref<CSPViolationReportBody> create(String&& documentURL, String&& referrer, String&& blockedURL, String&& effectiveDirective, String&& originalPolicy, String&& sourceFile, String&& sample, SecurityPolicyViolationEventDisposition, unsigned short statusCode, unsigned long lineNumber, unsigned long columnNumber);
 
     const String& type() const final;
     const String& documentURL() const { return m_documentURL; }
@@ -59,11 +60,9 @@ public:
     
     WEBCORE_EXPORT Ref<FormData> createReportFormDataForViolation(bool usesReportTo, bool isReportOnly) const;
 
-    template<typename Encoder> void encode(Encoder&) const;
-    template<typename Decoder> static std::optional<RefPtr<WebCore::CSPViolationReportBody>> decode(Decoder&);
-
 private:
     CSPViolationReportBody(Init&&);
+    CSPViolationReportBody(String&& documentURL, String&& referrer, String&& blockedURL, String&& effectiveDirective, String&& originalPolicy, String&& sourceFile, String&& sample, SecurityPolicyViolationEventDisposition, unsigned short statusCode, unsigned long lineNumber, unsigned long columnNumber);
 
     const String m_documentURL;
     const String m_referrer;
@@ -77,36 +76,6 @@ private:
     const unsigned long m_lineNumber;
     const unsigned long m_columnNumber;
 };
-
-template<typename Encoder>
-void CSPViolationReportBody::encode(Encoder& encoder) const
-{
-    Init init;
-    init.documentURI = documentURL();
-    init.referrer = referrer();
-    init.blockedURI = blockedURL();
-    init.violatedDirective = effectiveDirective();
-    init.effectiveDirective = effectiveDirective();
-    init.originalPolicy = originalPolicy();
-    init.sourceFile = sourceFile();
-    init.sample = sample();
-    init.disposition = disposition();
-    init.statusCode = statusCode();
-    init.lineNumber = lineNumber();
-    init.columnNumber = columnNumber();
-    
-    encoder << init;
-}
-
-template<typename Decoder>
-std::optional<RefPtr<CSPViolationReportBody>> CSPViolationReportBody::decode(Decoder& decoder)
-{
-    Init init;
-    if (!Init::decode(decoder, init))
-        return std::nullopt;
-
-    return CSPViolationReportBody::create(WTFMove(init));
-}
 
 } // namespace WebCore
 

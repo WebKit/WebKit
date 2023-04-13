@@ -32,7 +32,7 @@ namespace WebCore {
 
 class GStreamerMediaDescription : public MediaDescription {
 public:
-    static Ref<GStreamerMediaDescription> create(GstCaps* caps)
+    static Ref<GStreamerMediaDescription> create(const GRefPtr<GstCaps>& caps)
     {
         return adoptRef(*new GStreamerMediaDescription(caps));
     }
@@ -45,7 +45,7 @@ public:
     bool isText() const override;
 
 private:
-    GStreamerMediaDescription(GstCaps* caps)
+    GStreamerMediaDescription(const GRefPtr<GstCaps>& caps)
         : MediaDescription()
         , m_caps(caps)
     {

@@ -53,7 +53,7 @@ messages -> TestWithLegacyReceiver LegacyReceiver {
 
     TemplateTest(HashMap<String, std::pair<String, uint64_t>> a)
 
-    SetVideoLayerID(WebCore::GraphicsLayer::PlatformLayerID videoLayerID)
+    SetVideoLayerID(WebCore::PlatformLayerIdentifier videoLayerID)
 
 #if PLATFORM(MAC)
     DidCreateWebProcessConnection(MachSendRight connectionIdentifier, OptionSet<WebKit::SelectionFlags> flags)

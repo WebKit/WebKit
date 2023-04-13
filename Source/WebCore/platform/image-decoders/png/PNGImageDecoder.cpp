@@ -118,13 +118,13 @@ class PNGImageReader {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     PNGImageReader(PNGImageDecoder* decoder)
-        : m_readOffset(0)
+        : m_png(png_create_read_struct(PNG_LIBPNG_VER_STRING, 0, decodingFailed, decodingWarning))
+        , m_info(png_create_info_struct(m_png))
+        , m_readOffset(0)
         , m_currentBufferSize(0)
         , m_decodingSizeOnly(false)
         , m_hasAlpha(false)
     {
-        m_png = png_create_read_struct(PNG_LIBPNG_VER_STRING, 0, decodingFailed, decodingWarning);
-        m_info = png_create_info_struct(m_png);
         png_set_progressive_read_fn(m_png, decoder, headerAvailable, rowAvailable, pngComplete);
 #if ENABLE(APNG)
         png_byte apngChunks[]= {"acTL\0fcTL\0fdAT\0"};

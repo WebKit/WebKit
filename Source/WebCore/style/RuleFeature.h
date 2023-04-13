@@ -101,7 +101,7 @@ struct RuleFeatureSet {
 
     HashSet<AtomString> idsInRules;
     HashSet<AtomString> idsMatchingAncestorsInRules;
-    HashSet<AtomString> attributeCanonicalLocalNamesInRules;
+    HashSet<AtomString> attributeLowercaseLocalNamesInRules;
     HashSet<AtomString> attributeLocalNamesInRules;
     HashSet<AtomString> contentAttributeNamesInRules;
     Vector<RuleAndSelector> siblingRules;

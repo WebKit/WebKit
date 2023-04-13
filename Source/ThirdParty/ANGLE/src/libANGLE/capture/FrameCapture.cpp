@@ -251,10 +251,6 @@ std::ostream &operator<<(std::ostream &os, const FmtCapturePrefix &fmt)
     {
         os << "_shared";
     }
-    else if (fmt.contextId != kNoContextId)
-    {
-        os << "_context" << fmt.contextId;
-    }
 
     return os;
 }
@@ -305,15 +301,11 @@ struct FmtReplayFunction
 
 std::ostream &operator<<(std::ostream &os, const FmtReplayFunction &fmt)
 {
-    os << "ReplayContext";
+    os << "Replay";
 
     if (fmt.contextId == kSharedContextId)
     {
         os << "Shared";
-    }
-    else
-    {
-        os << fmt.contextId;
     }
 
     os << "Frame" << fmt.frameIndex;
@@ -536,12 +528,22 @@ void WriteInlineData<GLchar>(const std::vector<uint8_t> &vec, std::ostream &out)
 // Note we need to emit extra escapes to ensure quotes and other special characters are preserved.
 struct FmtMultiLineString
 {
-    FmtMultiLineString(const std::string &str)
-        : strings(angle::SplitString(str,
-                                     "\n",
-                                     WhitespaceHandling::KEEP_WHITESPACE,
-                                     SplitResult::SPLIT_WANT_ALL))
-    {}
+    FmtMultiLineString(const std::string &str) : strings()
+    {
+        std::string str2;
+
+        // Strip any carriage returns before splitting, for consistency
+        if (str.find("\r") != std::string::npos)
+        {
+            // str is const, so have to make a copy of it first
+            str2 = str;
+            ReplaceAllSubstrings(&str2, "\r", "");
+        }
+
+        strings =
+            angle::SplitString(str2.empty() ? str : str2, "\n", WhitespaceHandling::KEEP_WHITESPACE,
+                               SplitResult::SPLIT_WANT_ALL);
+    }
 
     std::vector<std::string> strings;
 };
@@ -976,7 +978,7 @@ void WriteInitReplayCall(bool compression,
         out << "    // max" << name << " = " << maxIDs[resourceID] << "\n";
     }
 
-    out << "    InitializeReplay3(\"" << binaryDataFileName << "\", " << maxClientArraySize << ", "
+    out << "    InitializeReplay4(\"" << binaryDataFileName << "\", " << maxClientArraySize << ", "
         << readBufferSize << ", " << resourceIDBufferSize << ", " << contextID;
 
     for (ResourceIDType resourceID : AllEnums<ResourceIDType>())
@@ -2244,6 +2246,7 @@ bool IsSharedObjectResource(ResourceIDType type)
         case ResourceIDType::Context:
         case ResourceIDType::Image:
         case ResourceIDType::Surface:
+        case ResourceIDType::egl_Sync:
             // Return false for all EGL object types.
             return false;
 
@@ -2921,6 +2924,7 @@ void CaptureVertexArrayState(std::vector<CallCapture> *setupCalls,
         if (!skipInvalidAttrib &&
             (attrib.format != defaultAttrib.format || attrib.pointer != defaultAttrib.pointer ||
              binding.getStride() != defaultBinding.getStride() ||
+             attrib.bindingIndex != defaultAttrib.bindingIndex ||
              binding.getBuffer().get() != nullptr))
         {
             // Each attribute can pull from a separate buffer, so check the binding
@@ -3260,6 +3264,18 @@ void CaptureCustomCreateEGLImage(const char *name,
     EGLImage returnVal   = params.getReturnValue().value.EGLImageVal;
     egl::ImageID imageID = egl::PackParam<egl::ImageID>(returnVal);
     params.addValueParam("image", ParamType::TGLuint, imageID.value);
+    call.customFunctionName = name;
+    callsOut.emplace_back(std::move(call));
+}
+
+void CaptureCustomCreateEGLSync(const char *name,
+                                CallCapture &call,
+                                std::vector<CallCapture> &callsOut)
+{
+    ParamBuffer &&params = std::move(call.params);
+    EGLSync returnVal    = params.getReturnValue().value.EGLSyncVal;
+    egl::SyncID syncID   = egl::PackParam<egl::SyncID>(returnVal);
+    params.addValueParam("sync", ParamType::TGLuint, syncID.value);
     call.customFunctionName = name;
     callsOut.emplace_back(std::move(call));
 }
@@ -4926,10 +4942,25 @@ void CaptureMidExecutionSetup(const gl::Context *context,
     }
 
     if (currentRasterState.polygonOffsetFactor != defaultRasterState.polygonOffsetFactor ||
-        currentRasterState.polygonOffsetUnits != defaultRasterState.polygonOffsetUnits)
+        currentRasterState.polygonOffsetUnits != defaultRasterState.polygonOffsetUnits ||
+        currentRasterState.polygonOffsetClamp != defaultRasterState.polygonOffsetClamp)
     {
-        cap(CapturePolygonOffset(replayState, true, currentRasterState.polygonOffsetFactor,
-                                 currentRasterState.polygonOffsetUnits));
+        if (currentRasterState.polygonOffsetClamp == 0.0f)
+        {
+            cap(CapturePolygonOffset(replayState, true, currentRasterState.polygonOffsetFactor,
+                                     currentRasterState.polygonOffsetUnits));
+        }
+        else
+        {
+            cap(CapturePolygonOffsetClampEXT(
+                replayState, true, currentRasterState.polygonOffsetFactor,
+                currentRasterState.polygonOffsetUnits, currentRasterState.polygonOffsetClamp));
+        }
+    }
+
+    if (currentRasterState.depthClamp != defaultRasterState.depthClamp)
+    {
+        capCap(GL_DEPTH_CLAMP_EXT, currentRasterState.depthClamp);
     }
 
     // pointDrawMode/multiSample are only used in the D3D back-end right now.
@@ -5074,27 +5105,27 @@ void CaptureMidExecutionSetup(const gl::Context *context,
         currentBlendState.sourceBlendAlpha != defaultBlendState.sourceBlendAlpha ||
         currentBlendState.destBlendAlpha != defaultBlendState.destBlendAlpha)
     {
-        if (currentBlendState.sourceBlendRGB == currentBlendState.sourceBlendAlpha &&
-            currentBlendState.destBlendRGB == currentBlendState.destBlendAlpha)
-        {
-            // Color and alpha are equal
-            cap(CaptureBlendFunc(replayState, true, currentBlendState.sourceBlendRGB,
-                                 currentBlendState.destBlendRGB));
-        }
-        else
-        {
-            // Color and alpha are separate
-            cap(CaptureBlendFuncSeparate(
-                replayState, true, currentBlendState.sourceBlendRGB, currentBlendState.destBlendRGB,
-                currentBlendState.sourceBlendAlpha, currentBlendState.destBlendAlpha));
-        }
+        // BlendFunc could be used instead of BlendFuncSeparate in some cases but there's no
+        // advantage and it makes Reset more difficult as both functions affect the same state.
+        cap(CaptureBlendFuncSeparate(
+            replayState, true, currentBlendState.sourceBlendRGB, currentBlendState.destBlendRGB,
+            currentBlendState.sourceBlendAlpha, currentBlendState.destBlendAlpha));
+        Capture(&resetCalls[angle::EntryPoint::GLBlendFuncSeparate],
+                CaptureBlendFuncSeparate(replayState, true, currentBlendState.sourceBlendRGB,
+                                         currentBlendState.destBlendRGB,
+                                         currentBlendState.sourceBlendAlpha,
+                                         currentBlendState.destBlendAlpha));
     }
 
     if (currentBlendState.blendEquationRGB != defaultBlendState.blendEquationRGB ||
         currentBlendState.blendEquationAlpha != defaultBlendState.blendEquationAlpha)
     {
+        // Similarly to BlendFunc, using BlendEquation in some cases complicates Reset.
         cap(CaptureBlendEquationSeparate(replayState, true, currentBlendState.blendEquationRGB,
                                          currentBlendState.blendEquationAlpha));
+        Capture(&resetCalls[angle::EntryPoint::GLBlendEquationSeparate],
+                CaptureBlendEquationSeparate(replayState, true, currentBlendState.blendEquationRGB,
+                                             currentBlendState.blendEquationAlpha));
     }
 
     if (currentBlendState.colorMaskRed != defaultBlendState.colorMaskRed ||
@@ -5107,6 +5138,12 @@ void CaptureMidExecutionSetup(const gl::Context *context,
                              gl::ConvertToGLBoolean(currentBlendState.colorMaskGreen),
                              gl::ConvertToGLBoolean(currentBlendState.colorMaskBlue),
                              gl::ConvertToGLBoolean(currentBlendState.colorMaskAlpha)));
+        Capture(&resetCalls[angle::EntryPoint::GLColorMask],
+                CaptureColorMask(replayState, true,
+                                 gl::ConvertToGLBoolean(currentBlendState.colorMaskRed),
+                                 gl::ConvertToGLBoolean(currentBlendState.colorMaskGreen),
+                                 gl::ConvertToGLBoolean(currentBlendState.colorMaskBlue),
+                                 gl::ConvertToGLBoolean(currentBlendState.colorMaskAlpha)));
     }
 
     const gl::ColorF &currentBlendColor = apiState.getBlendColor();
@@ -5114,6 +5151,9 @@ void CaptureMidExecutionSetup(const gl::Context *context,
     {
         cap(CaptureBlendColor(replayState, true, currentBlendColor.red, currentBlendColor.green,
                               currentBlendColor.blue, currentBlendColor.alpha));
+        Capture(&resetCalls[angle::EntryPoint::GLBlendColor],
+                CaptureBlendColor(replayState, true, currentBlendColor.red, currentBlendColor.green,
+                                  currentBlendColor.blue, currentBlendColor.alpha));
     }
 
     // Pixel storage states.
@@ -5210,6 +5250,13 @@ void CaptureMidExecutionSetup(const gl::Context *context,
     if (apiState.getNearPlane() != 0.0f || apiState.getFarPlane() != 1.0f)
     {
         cap(CaptureDepthRangef(replayState, true, apiState.getNearPlane(), apiState.getFarPlane()));
+    }
+
+    if (apiState.getClipOrigin() != gl::ClipOrigin::LowerLeft ||
+        apiState.getClipDepthMode() != gl::ClipDepthMode::NegativeOneToOne)
+    {
+        cap(CaptureClipControlEXT(replayState, true, apiState.getClipOrigin(),
+                                  apiState.getClipDepthMode()));
     }
 
     if (apiState.isScissorTestEnabled())
@@ -6592,6 +6639,16 @@ void FrameCaptureShared::maybeOverrideEntryPoint(const gl::Context *context,
             CaptureCustomCreateEGLImage("CreateEGLImageKHR", inCall, outCalls);
             break;
         }
+        case EntryPoint::EGLCreateSync:
+        {
+            CaptureCustomCreateEGLSync("CreateEGLSync", inCall, outCalls);
+            break;
+        }
+        case EntryPoint::EGLCreateSyncKHR:
+        {
+            CaptureCustomCreateEGLSync("CreateEGLSyncKHR", inCall, outCalls);
+            break;
+        }
         case EntryPoint::EGLCreatePbufferSurface:
         {
             CaptureCustomCreatePbufferSurface(inCall, outCalls);
@@ -7258,6 +7315,45 @@ void FrameCaptureShared::maybeCapturePreCallUpdates(
             break;
         }
 
+        case EntryPoint::GLBlendFunc:
+        case EntryPoint::GLBlendFuncSeparate:
+        {
+            if (isCaptureActive())
+            {
+                context->getFrameCapture()->getStateResetHelper().setEntryPointDirty(
+                    EntryPoint::GLBlendFuncSeparate);
+            }
+            break;
+        }
+        case EntryPoint::GLBlendEquation:
+        case EntryPoint::GLBlendEquationSeparate:
+        {
+            if (isCaptureActive())
+            {
+                context->getFrameCapture()->getStateResetHelper().setEntryPointDirty(
+                    EntryPoint::GLBlendEquationSeparate);
+            }
+            break;
+        }
+        case EntryPoint::GLColorMask:
+        {
+            if (isCaptureActive())
+            {
+                context->getFrameCapture()->getStateResetHelper().setEntryPointDirty(
+                    EntryPoint::GLColorMask);
+            }
+            break;
+        }
+        case EntryPoint::GLBlendColor:
+        {
+            if (isCaptureActive())
+            {
+                context->getFrameCapture()->getStateResetHelper().setEntryPointDirty(
+                    EntryPoint::GLBlendColor);
+            }
+            break;
+        }
+
         case EntryPoint::GLEGLImageTargetTexture2DOES:
         {
             gl::TextureType target =
@@ -7416,7 +7512,11 @@ void FrameCaptureShared::updateResourceCountsFromCallCapture(const CallCapture &
             updateResourceCountsFromParamCapture(call.params.getReturnValue(),
                                                  ResourceIDType::Sync);
             break;
-
+        case EntryPoint::EGLCreateSync:
+        case EntryPoint::EGLCreateSyncKHR:
+            updateResourceCountsFromParamCapture(call.params.getReturnValue(),
+                                                 ResourceIDType::egl_Sync);
+            break;
         default:
             break;
     }
@@ -7487,8 +7587,21 @@ void FrameCaptureShared::captureCall(gl::Context *context, CallCapture &&inCall,
     }
     else
     {
-        INFO() << "FrameCapture: Not capturing invalid call to "
-               << GetEntryPointName(inCall.entryPoint);
+        const int maxInvalidCallLogs = 3;
+        size_t &callCount = isCaptureActive() ? mInvalidCallCountsActive[inCall.entryPoint]
+                                              : mInvalidCallCountsInactive[inCall.entryPoint];
+        callCount++;
+        if (callCount <= maxInvalidCallLogs)
+        {
+            std::ostringstream msg;
+            msg << "FrameCapture (capture " << (isCaptureActive() ? "active" : "inactive")
+                << "): Not capturing invalid call to " << GetEntryPointName(inCall.entryPoint);
+            if (callCount == maxInvalidCallLogs)
+            {
+                msg << " (will no longer repeat for this entry point)";
+            }
+            INFO() << msg.str();
+        }
     }
 }
 
@@ -7880,12 +7993,23 @@ void FrameCaptureShared::runMidExecutionCapture(gl::Context *mainContext)
                                      &mResourceTracker, mainContextReplayState,
                                      mValidateSerializedState);
             scanSetupCalls(frameCapture->getSetupCalls());
+
+            std::stringstream protoStream;
+            std::stringstream headerStream;
+            std::stringstream bodyStream;
+
+            protoStream << "void "
+                        << FmtSetupFunction(kNoPartId, mainContext->id(), FuncUsage::Prototype);
+            std::string proto = protoStream.str();
+
+            WriteCppReplayFunctionWithParts(mainContext->id(), ReplayFunc::Setup, mReplayWriter, 1,
+                                            &mBinaryData, frameCapture->getSetupCalls(),
+                                            headerStream, bodyStream, &mResourceIDBufferSize);
+
+            mReplayWriter.addPrivateFunction(proto, headerStream, bodyStream);
         }
         else
         {
-            // Track that this context was created as shared context before MEC started
-            mActiveSecondaryContexts.insert(shareContext->id().value);
-
             const gl::State &shareContextState = shareContext->getState();
             gl::State auxContextReplayState(
                 nullptr, nullptr, nullptr, nullptr, nullptr, shareContextState.getClientType(),
@@ -7913,6 +8037,8 @@ void FrameCaptureShared::runMidExecutionCapture(gl::Context *mainContext)
                 frameCapture->getSetupCalls(), &mBinaryData, mSerializeStateEnabled, *this,
                 &mResourceIDBufferSize);
         }
+        // Track that this context was created before MEC started
+        mActiveContexts.insert(shareContext->id().value);
     }
 
     egl::Error error = mainContext->makeCurrent(display, draw, read);
@@ -7947,8 +8073,6 @@ void FrameCaptureShared::onEndFrame(gl::Context *context)
         }
     }
 
-    // Assume that the context performing the swap is the "main" context.
-    ASSERT(mWindowSurfaceContextID.value == 0 || mWindowSurfaceContextID == context->id());
     mWindowSurfaceContextID = context->id();
 
     // On Android, we can trigger a capture during the run
@@ -8091,6 +8215,8 @@ StateResetHelper::~StateResetHelper() = default;
 void StateResetHelper::setDefaultResetCalls(const gl::Context *context,
                                             angle::EntryPoint entryPoint)
 {
+    static const gl::BlendState kDefaultBlendState;
+
     // Populate default reset calls for entrypoints to support looping to beginning
     switch (entryPoint)
     {
@@ -8112,6 +8238,49 @@ void StateResetHelper::setDefaultResetCalls(const gl::Context *context,
                 Capture(&mResetCalls[angle::EntryPoint::GLBindVertexArray],
                         vertexArrayFuncs.bindVertexArray(context->getState(), true, {0}));
             }
+            break;
+        }
+        case angle::EntryPoint::GLBlendFunc:
+        {
+            UNREACHABLE();  // GLBlendFuncSeparate is always used instead
+            break;
+        }
+        case angle::EntryPoint::GLBlendFuncSeparate:
+        {
+            Capture(&mResetCalls[angle::EntryPoint::GLBlendFuncSeparate],
+                    CaptureBlendFuncSeparate(
+                        context->getState(), true, kDefaultBlendState.sourceBlendRGB,
+                        kDefaultBlendState.destBlendRGB, kDefaultBlendState.sourceBlendAlpha,
+                        kDefaultBlendState.destBlendAlpha));
+            break;
+        }
+        case angle::EntryPoint::GLBlendEquation:
+        {
+            UNREACHABLE();  // GLBlendEquationSeparate is always used instead
+            break;
+        }
+        case angle::EntryPoint::GLBlendEquationSeparate:
+        {
+            Capture(&mResetCalls[angle::EntryPoint::GLBlendEquationSeparate],
+                    CaptureBlendEquationSeparate(context->getState(), true,
+                                                 kDefaultBlendState.blendEquationRGB,
+                                                 kDefaultBlendState.blendEquationAlpha));
+            break;
+        }
+        case angle::EntryPoint::GLColorMask:
+        {
+            Capture(&mResetCalls[angle::EntryPoint::GLColorMask],
+                    CaptureColorMask(context->getState(), true,
+                                     gl::ConvertToGLBoolean(kDefaultBlendState.colorMaskRed),
+                                     gl::ConvertToGLBoolean(kDefaultBlendState.colorMaskGreen),
+                                     gl::ConvertToGLBoolean(kDefaultBlendState.colorMaskBlue),
+                                     gl::ConvertToGLBoolean(kDefaultBlendState.colorMaskAlpha)));
+            break;
+        }
+        case angle::EntryPoint::GLBlendColor:
+        {
+            Capture(&mResetCalls[angle::EntryPoint::GLBlendColor],
+                    CaptureBlendColor(context->getState(), true, 0, 0, 0, 0));
             break;
         }
         default:
@@ -8483,7 +8652,7 @@ void FrameCaptureShared::writeCppReplayIndexFiles(const gl::Context *context,
                    << ";\n";
         }
         source << "        default:\n";
-        source << "            return nullptr;\n";
+        source << "            return NULL;\n";
         source << "    }\n";
         source << "}\n";
 
@@ -8525,22 +8694,6 @@ void FrameCaptureShared::writeMainContextCppReplay(const gl::Context *context,
     if (frameIndex == 1)
     {
         {
-            std::stringstream protoStream;
-            std::stringstream headerStream;
-            std::stringstream bodyStream;
-
-            protoStream << "void "
-                        << FmtSetupFunction(kNoPartId, context->id(), FuncUsage::Prototype);
-            std::string proto = protoStream.str();
-
-            WriteCppReplayFunctionWithParts(context->id(), ReplayFunc::Setup, mReplayWriter,
-                                            frameIndex, &mBinaryData, setupCalls, headerStream,
-                                            bodyStream, &mResourceIDBufferSize);
-
-            mReplayWriter.addPrivateFunction(proto, headerStream, bodyStream);
-        }
-
-        {
             std::string proto = "void SetupReplay(void)";
 
             std::stringstream out;
@@ -8554,21 +8707,25 @@ void FrameCaptureShared::writeMainContextCppReplay(const gl::Context *context,
             {
                 out << "    " << FmtSetupFunction(kNoPartId, kSharedContextId, FuncUsage::Call)
                     << ";\n";
+                // Make sure that the current context is mapped correctly
+                out << "    SetCurrentContextID(" << context->id() << ");\n";
             }
-
-            // Setup the presentation (this) context first.
-            out << "    " << FmtSetupFunction(kNoPartId, context->id(), FuncUsage::Call) << ";\n";
-            out << "\n";
 
             // Setup each of the auxiliary contexts.
             egl::ShareGroup *shareGroup            = context->getShareGroup();
             const egl::ContextSet &shareContextSet = shareGroup->getContexts();
             for (gl::Context *shareContext : shareContextSet)
             {
-                // Skip the presentation context, since that context was created by the test
-                // framework.
                 if (shareContext->id() == context->id())
                 {
+                    if (usesMidExecutionCapture())
+                    {
+                        // Setup the presentation (this) context first.
+                        out << "    " << FmtSetupFunction(kNoPartId, context->id(), FuncUsage::Call)
+                            << ";\n";
+                        out << "\n";
+                    }
+
                     continue;
                 }
 
@@ -8579,8 +8736,7 @@ void FrameCaptureShared::writeMainContextCppReplay(const gl::Context *context,
                 {
                     // Only call SetupReplayContext for secondary contexts that were current before
                     // MEC started
-                    if (mActiveSecondaryContexts.find(shareContext->id().value) !=
-                        mActiveSecondaryContexts.end())
+                    if (mActiveContexts.find(shareContext->id().value) != mActiveContexts.end())
                     {
                         // TODO(http://anglebug.com/5878): Support capture/replay of
                         // eglCreateContext() so this block can be moved into SetupReplayContextXX()
@@ -8599,8 +8755,8 @@ void FrameCaptureShared::writeMainContextCppReplay(const gl::Context *context,
             if (shareContextSet.size() > 1)
             {
                 out << "\n";
-                out << "    eglMakeCurrent(nullptr, nullptr, nullptr, gContextMap2["
-                    << context->id() << "]);\n";
+                out << "    eglMakeCurrent(NULL, NULL, NULL, gContextMap2[" << context->id()
+                    << "]);\n";
             }
 
             out << "}\n";
@@ -8708,7 +8864,7 @@ void FrameCaptureShared::writeMainContextCppReplay(const gl::Context *context,
                 if (anyResourceReset && contextID != context->id())
                 {
                     contextChanged = true;
-                    bodyStream << "    eglMakeCurrent(nullptr, nullptr, nullptr, gContextMap2["
+                    bodyStream << "    eglMakeCurrent(NULL, NULL, NULL, gContextMap2["
                                << contextID.value << "]);\n\n";
                 }
 
@@ -8727,7 +8883,7 @@ void FrameCaptureShared::writeMainContextCppReplay(const gl::Context *context,
         // Bind the main context again if we bound any additional contexts
         if (contextChanged)
         {
-            resetBodyStream << "    eglMakeCurrent(nullptr, nullptr, nullptr, gContextMap2["
+            resetBodyStream << "    eglMakeCurrent(NULL, NULL, NULL, gContextMap2["
                             << context->id().value << "]);\n";
         }
 
@@ -9015,9 +9171,6 @@ void ReplayWriter::setFilenamePattern(const std::string &pattern)
     if (mFilenamePattern != pattern)
     {
         mFilenamePattern = pattern;
-
-        // Reset the frame counter if the filename pattern changes.
-        mFrameIndex = 1;
     }
 }
 

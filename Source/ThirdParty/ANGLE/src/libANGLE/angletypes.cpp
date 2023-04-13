@@ -48,15 +48,17 @@ RasterizerState::RasterizerState()
 {
     memset(this, 0, sizeof(RasterizerState));
 
-    rasterizerDiscard   = false;
     cullFace            = false;
     cullMode            = CullFaceMode::Back;
     frontFace           = GL_CCW;
     polygonOffsetFill   = false;
     polygonOffsetFactor = 0.0f;
     polygonOffsetUnits  = 0.0f;
+    polygonOffsetClamp  = 0.0f;
+    depthClamp          = false;
     pointDrawMode       = false;
     multiSample         = false;
+    rasterizerDiscard   = false;
     dither              = true;
 }
 

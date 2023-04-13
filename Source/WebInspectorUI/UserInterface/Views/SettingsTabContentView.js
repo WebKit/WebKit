@@ -289,7 +289,10 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
         }
 
         if (InspectorBackend.hasCommand("DOM.setInspectModeEnabled", "showRulers")) {
-            elementsSettingsView.addSetting(WI.UIString("Element Selection:"), WI.settings.showRulersDuringElementSelection, WI.UIString("Show page rulers and node border lines"));
+            let elementSelectionGroup = elementsSettingsView.addGroup(WI.UIString("Element Selection:"));
+            elementSelectionGroup.addSetting(WI.settings.showRulersDuringElementSelection, WI.UIString("Show page rulers and node border lines"));
+            elementSelectionGroup.addSetting(WI.settings.showFlexOverlayDuringElementSelection, WI.UIString("Show grid overlay"));
+            elementSelectionGroup.addSetting(WI.settings.showGridOverlayDuringElementSelection, WI.UIString("Show flexbox overlay"));
 
             elementsSettingsView.addSeparator();
         }
@@ -414,6 +417,11 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
             experimentalSettingsView.addSeparator();
         }
 
+        let sourcesGroup = experimentalSettingsView.addGroup(WI.UIString("Sources:"));
+        sourcesGroup.addSetting(WI.settings.experimentalLimitSourceCodeHighlighting, WI.UIString("Limit syntax highlighting on long lines of code"));
+
+        experimentalSettingsView.addSeparator();
+
         let diagnosticsGroup = experimentalSettingsView.addGroup(WI.UIString("Diagnostics:", "Diagnostics: @ Experimental Settings", "Category label for experimental settings related to Web Inspector diagnostics."));
         diagnosticsGroup.addSetting(WI.settings.experimentalAllowInspectingInspector, WI.UIString("Allow Inspecting Web Inspector", "Allow Inspecting Web Inspector @ Experimental Settings", "Label for setting that allows the user to inspect the Web Inspector user interface."));
         experimentalSettingsView.addSeparator();
@@ -441,6 +449,8 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
 
         if (hasNetworkEmulatedCondition)
             listenForChange(WI.settings.experimentalEnableNetworkEmulatedCondition);
+
+        listenForChange(WI.settings.experimentalLimitSourceCodeHighlighting);
 
         this._createReferenceLink(experimentalSettingsView);
 

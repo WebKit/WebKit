@@ -37,7 +37,7 @@ header: "SessionState.h"
     std::optional<WallTime> expectedFileModificationTime;
 };
 
-[CustomHeader, LegacyPopulateFrom=EmptyConstructor] class WebKit::FrameState {
+[CustomHeader, LegacyPopulateFromEmptyConstructor] class WebKit::FrameState {
     String urlString;
     String originalURLString;
     String referrer;

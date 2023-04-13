@@ -23,7 +23,6 @@
 #include "APISerializedScriptValue.h"
 #include "InjectUserScriptImmediately.h"
 #include "WebKitInitialize.h"
-#include "WebKitJavascriptResultPrivate.h"
 #include "WebKitUserContentManagerPrivate.h"
 #include "WebKitUserContentPrivate.h"
 #include "WebKitWebContextPrivate.h"
@@ -31,6 +30,10 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/WTFGType.h>
+
+#if !ENABLE(2022_GLIB_API)
+#include "WebKitJavascriptResultPrivate.h"
+#endif
 
 #if PLATFORM(WPE)
 #include "WPEView.h"
@@ -68,7 +71,7 @@ struct _WebKitUserContentManagerPrivate {
  * Since: 2.6
  */
 
-WEBKIT_DEFINE_FINAL_TYPE_IN_2022_API(WebKitUserContentManager, webkit_user_content_manager, G_TYPE_OBJECT)
+WEBKIT_DEFINE_FINAL_TYPE(WebKitUserContentManager, webkit_user_content_manager, G_TYPE_OBJECT, GObject)
 
 enum {
     SCRIPT_MESSAGE_RECEIVED,
@@ -88,7 +91,7 @@ static void webkit_user_content_manager_class_init(WebKitUserContentManagerClass
     /**
      * WebKitUserContentManager::script-message-received:
      * @manager: the #WebKitUserContentManager
-     * @js_result: the #WebKitJavascriptResult holding the value received from the JavaScript world.
+     * @value: the value received from the JavaScript world.
      *
      * This signal is emitted when JavaScript in a web view calls
      * <code>window.webkit.messageHandlers.<name>.postMessage()</code>, after registering
@@ -103,14 +106,22 @@ static void webkit_user_content_manager_class_init(WebKitUserContentManagerClass
             G_TYPE_FROM_CLASS(gObjectClass),
             static_cast<GSignalFlags>(G_SIGNAL_RUN_LAST | G_SIGNAL_DETAILED),
             0, nullptr, nullptr,
+#if ENABLE(2022_GLIB_API)
+            g_cclosure_marshal_VOID__OBJECT,
+#else
             g_cclosure_marshal_VOID__BOXED,
+#endif
             G_TYPE_NONE, 1,
+#if ENABLE(2022_GLIB_API)
+            JSC_TYPE_VALUE);
+#else
             WEBKIT_TYPE_JAVASCRIPT_RESULT);
+#endif
 
     /**
      * WebKitUserContentManager::script-message-with-reply-received:
      * @manager: the #WebKitUserContentManager
-     * @js_result: the #WebKitJavascriptResult holding the value received from the JavaScript world.
+     * @value: the value received from the JavaScript world.
      * @reply: the #WebKitScriptMessageReply to send the reply to the script message.
      *
      * This signal is emitted when JavaScript in a web view calls
@@ -137,9 +148,9 @@ static void webkit_user_content_manager_class_init(WebKitUserContentManagerClass
             G_TYPE_FROM_CLASS(gObjectClass),
             static_cast<GSignalFlags>(G_SIGNAL_RUN_LAST | G_SIGNAL_DETAILED),
             0, g_signal_accumulator_true_handled, nullptr,
-            g_cclosure_marshal_generic,
+            nullptr,
             G_TYPE_BOOLEAN, 2,
-            WEBKIT_TYPE_JAVASCRIPT_RESULT,
+            JSC_TYPE_VALUE,
             WEBKIT_TYPE_SCRIPT_MESSAGE_REPLY);
 }
 
@@ -398,9 +409,14 @@ public:
 
     void didPostMessage(WebPageProxy&, FrameInfoData&&, API::ContentWorld&, WebCore::SerializedScriptValue& serializedScriptValue) override
     {
+#if ENABLE(2022_GLIB_API)
+        GRefPtr<JSCValue> value = API::SerializedScriptValue::deserialize(serializedScriptValue);
+        g_signal_emit(m_manager, signals[SCRIPT_MESSAGE_RECEIVED], m_handlerName, value.get());
+#else
         WebKitJavascriptResult* jsResult = webkitJavascriptResultCreate(serializedScriptValue);
         g_signal_emit(m_manager, signals[SCRIPT_MESSAGE_RECEIVED], m_handlerName, jsResult);
         webkit_javascript_result_unref(jsResult);
+#endif
     }
 
     bool supportsAsyncReply() override
@@ -410,11 +426,10 @@ public:
 
     void didPostMessageWithAsyncReply(WebPageProxy&, FrameInfoData&&, API::ContentWorld&, WebCore::SerializedScriptValue& serializedScriptValue, WTF::Function<void(API::SerializedScriptValue*, const String&)>&& completionHandler) override
     {
-        WebKitJavascriptResult* jsResult = webkitJavascriptResultCreate(serializedScriptValue);
         WebKitScriptMessageReply* message = webKitScriptMessageReplyCreate(WTFMove(completionHandler));
+        GRefPtr<JSCValue> value = API::SerializedScriptValue::deserialize(serializedScriptValue);
         gboolean returnValue;
-        g_signal_emit(m_manager, signals[SCRIPT_MESSAGE_WITH_REPLY_RECEIVED], m_handlerName, jsResult, message, &returnValue);
-        webkit_javascript_result_unref(jsResult);
+        g_signal_emit(m_manager, signals[SCRIPT_MESSAGE_WITH_REPLY_RECEIVED], m_handlerName, value.get(), message, &returnValue);
         webkit_script_message_reply_unref(message);
     }
 
@@ -426,37 +441,7 @@ private:
     bool m_supportsAsyncReply;
 };
 
-/**
- * webkit_user_content_manager_register_script_message_handler:
- * @manager: A #WebKitUserContentManager
- * @name: Name of the script message channel
- *
- * Registers a new user script message handler.
- *
- * After it is registered,
- * scripts can use `window.webkit.messageHandlers.<name>.postMessage(value)`
- * to send messages. Those messages are received by connecting handlers
- * to the #WebKitUserContentManager::script-message-received signal. The
- * handler name is used as the detail of the signal. To avoid race
- * conditions between registering the handler name, and starting to
- * receive the signals, it is recommended to connect to the signal
- * *before* registering the handler name:
- *
- * ```c
- * WebKitWebView *view = webkit_web_view_new ();
- * WebKitUserContentManager *manager = webkit_web_view_get_user_content_manager ();
- * g_signal_connect (manager, "script-message-received::foobar",
- *                   G_CALLBACK (handle_script_message), NULL);
- * webkit_user_content_manager_register_script_message_handler (manager, "foobar");
- * ```
- *
- * Registering a script message handler will fail if the requested
- * name has been already registered before.
- *
- * Returns: %TRUE if message handler was registered successfully, or %FALSE otherwise.
- *
- * Since: 2.8
- */
+#if !ENABLE(2022_GLIB_API)
 gboolean webkit_user_content_manager_register_script_message_handler(WebKitUserContentManager* manager, const char* name)
 {
     g_return_val_if_fail(WEBKIT_IS_USER_CONTENT_MANAGER(manager), FALSE);
@@ -467,28 +452,31 @@ gboolean webkit_user_content_manager_register_script_message_handler(WebKitUserC
     return manager->priv->userContentController->addUserScriptMessageHandler(handler.get());
 }
 
-/**
- * webkit_user_content_manager_unregister_script_message_handler:
- * @manager: A #WebKitUserContentManager
- * @name: Name of the script message channel
- *
- * Unregisters a previously registered message handler.
- *
- * Note that this does *not* disconnect handlers for the
- * #WebKitUserContentManager::script-message-received signal;
- * they will be kept connected, but the signal will not be emitted
- * unless the handler name is registered again.
- *
- * See also webkit_user_content_manager_register_script_message_handler().
- *
- * Since: 2.8
- */
 void webkit_user_content_manager_unregister_script_message_handler(WebKitUserContentManager* manager, const char* name)
 {
     g_return_if_fail(WEBKIT_IS_USER_CONTENT_MANAGER(manager));
     g_return_if_fail(name);
     manager->priv->userContentController->removeUserMessageHandlerForName(String::fromUTF8(name), API::ContentWorld::pageContentWorld());
 }
+#else
+gboolean webkit_user_content_manager_register_script_message_handler(WebKitUserContentManager* manager, const char* name, const char* worldName)
+{
+    g_return_val_if_fail(WEBKIT_IS_USER_CONTENT_MANAGER(manager), FALSE);
+    g_return_val_if_fail(name, FALSE);
+
+    Ref<WebScriptMessageHandler> handler =
+        WebScriptMessageHandler::create(makeUnique<ScriptMessageClientGtk>(manager, name, false), AtomString::fromUTF8(name), worldName ? webkitContentWorld(worldName) : API::ContentWorld::pageContentWorld());
+    return manager->priv->userContentController->addUserScriptMessageHandler(handler.get());
+}
+
+void webkit_user_content_manager_unregister_script_message_handler(WebKitUserContentManager* manager, const char* name, const char* worldName)
+{
+    g_return_if_fail(WEBKIT_IS_USER_CONTENT_MANAGER(manager));
+    g_return_if_fail(name);
+
+    manager->priv->userContentController->removeUserMessageHandlerForName(String::fromUTF8(name), worldName ? webkitContentWorld(worldName) : API::ContentWorld::pageContentWorld());
+}
+#endif
 
 /**
  * webkit_user_content_manager_register_script_message_handler_with_reply:
@@ -510,8 +498,7 @@ void webkit_user_content_manager_unregister_script_message_handler(WebKitUserCon
  * name has been already registered before.
  *
  * The registered handler can be unregistered by using
- * #webkit_user_content_manager_unregister_script_message_handler() and
- * #webkit_user_content_manager_unregister_script_message_handler_in_world().
+ * webkit_user_content_manager_unregister_script_message_handler().
  *
  * Returns: %TRUE if message handler was registered successfully, or %FALSE otherwise.
  *
@@ -526,24 +513,7 @@ gboolean webkit_user_content_manager_register_script_message_handler_with_reply(
     return manager->priv->userContentController->addUserScriptMessageHandler(handler.get());
 }
 
-/**
- * webkit_user_content_manager_register_script_message_handler_in_world:
- * @manager: A #WebKitUserContentManager
- * @name: Name of the script message channel
- * @world_name: the name of a #WebKitScriptWorld
- *
- * Registers a new user script message handler in script world.
- *
- * Registers a new user script message handler in script world with name @world_name.
- * See webkit_user_content_manager_register_script_message_handler() for full description.
- *
- * Registering a script message handler will fail if the requested
- * name has been already registered before.
- *
- * Returns: %TRUE if message handler was registered successfully, or %FALSE otherwise.
- *
- * Since: 2.22
- */
+#if !ENABLE(2022_GLIB_API)
 gboolean webkit_user_content_manager_register_script_message_handler_in_world(WebKitUserContentManager* manager, const char* name, const char* worldName)
 {
     g_return_val_if_fail(WEBKIT_IS_USER_CONTENT_MANAGER(manager), FALSE);
@@ -555,23 +525,6 @@ gboolean webkit_user_content_manager_register_script_message_handler_in_world(We
     return manager->priv->userContentController->addUserScriptMessageHandler(handler.get());
 }
 
-/**
- * webkit_user_content_manager_unregister_script_message_handler_in_world:
- * @manager: A #WebKitUserContentManager
- * @name: Name of the script message channel
- * @world_name: the name of a #WebKitScriptWorld
- *
- * Unregisters a previously registered message handler in script world with name @world_name.
- *
- * Note that this does *not* disconnect handlers for the
- * #WebKitUserContentManager::script-message-received signal;
- * they will be kept connected, but the signal will not be emitted
- * unless the handler name is registered again.
- *
- * See also webkit_user_content_manager_register_script_message_handler_in_world().
- *
- * Since: 2.22
- */
 void webkit_user_content_manager_unregister_script_message_handler_in_world(WebKitUserContentManager* manager, const char* name, const char* worldName)
 {
     g_return_if_fail(WEBKIT_IS_USER_CONTENT_MANAGER(manager));
@@ -580,6 +533,7 @@ void webkit_user_content_manager_unregister_script_message_handler_in_world(WebK
 
     manager->priv->userContentController->removeUserMessageHandlerForName(String::fromUTF8(name), webkitContentWorld(worldName));
 }
+#endif
 
 /**
  * webkit_user_content_manager_add_filter:

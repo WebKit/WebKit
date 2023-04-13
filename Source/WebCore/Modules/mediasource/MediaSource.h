@@ -40,6 +40,7 @@
 #include "URLRegistry.h"
 #include <wtf/LoggerHelper.h>
 #include <wtf/RefCounted.h>
+#include <wtf/UniqueRef.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -50,7 +51,7 @@ class SourceBufferList;
 class SourceBufferPrivate;
 class TimeRanges;
 
-class MediaSource final
+class MediaSource
     : public RefCounted<MediaSource>
     , public MediaSourcePrivateClient
     , public ActiveDOMObject
@@ -75,21 +76,16 @@ public:
     bool isClosed() const;
     bool isEnded() const;
     void sourceBufferDidChangeActiveState(SourceBuffer&, bool);
-    void sourceBufferDidChangeBufferedDirty(SourceBuffer&, bool);
 
     enum class EndOfStreamError { Network, Decode };
     void streamEndedWithError(std::optional<EndOfStreamError>);
 
     MediaTime duration() const final;
-    std::unique_ptr<PlatformTimeRanges> buffered() const final;
+    const PlatformTimeRanges& buffered() const final;
 
     bool attachToElement(HTMLMediaElement&);
     void detachFromElement(HTMLMediaElement&);
-#if USE(GSTREAMER)
-    void monitorSourceBuffers() final;
-#else
-    void monitorSourceBuffers();
-#endif
+    void monitorSourceBuffers() override;
     bool isSeeking() const { return m_pendingSeekTime.isValid(); }
     Ref<TimeRanges> seekable();
     ExceptionOr<void> setLiveSeekableRange(double start, double end);
@@ -113,6 +109,8 @@ public:
 
     ScriptExecutionContext* scriptExecutionContext() const final;
 
+    void sourceBufferBufferedChanged();
+
     using RefCounted::ref;
     using RefCounted::deref;
 
@@ -129,9 +127,21 @@ public:
 
     void failedToCreateRenderer(RendererType) final;
 
-private:
+    virtual bool isManaged() const { return false; }
+    void memoryPressure();
+
+protected:
     explicit MediaSource(ScriptExecutionContext&);
 
+    bool hasBufferedTime(const MediaTime&);
+    bool hasCurrentTime();
+    bool hasFutureTime();
+
+    void scheduleEvent(const AtomString& eventName);
+    void notifyElementUpdateMediaState() const;
+
+    RefPtr<MediaSourcePrivate> m_private;
+private:
     // ActiveDOMObject.
     void stop() final;
     const char* activeDOMObjectName() const final;
@@ -153,25 +163,18 @@ private:
     Vector<PlatformTimeRanges> activeRanges() const;
 
     ExceptionOr<Ref<SourceBufferPrivate>> createSourceBufferPrivate(const ContentType&);
-    void scheduleEvent(const AtomString& eventName);
-
-    bool hasBufferedTime(const MediaTime&);
-    bool hasCurrentTime();
-    bool hasFutureTime();
 
     void regenerateActiveSourceBuffers();
-    void updateBufferedIfNeeded();
-    void notifyElementUpdateMediaState() const;
+    void updateBufferedIfNeeded(bool forced = false);
 
     void completeSeek();
 
     static URLRegistry* s_registry;
 
-    RefPtr<MediaSourcePrivate> m_private;
     RefPtr<SourceBufferList> m_sourceBuffers;
     RefPtr<SourceBufferList> m_activeSourceBuffers;
-    std::unique_ptr<PlatformTimeRanges> m_buffered;
-    std::unique_ptr<PlatformTimeRanges> m_liveSeekable;
+    PlatformTimeRanges m_buffered;
+    PlatformTimeRanges m_liveSeekable;
     WeakPtr<HTMLMediaElement, WeakPtrImplWithEventTargetData> m_mediaElement;
     MediaTime m_duration;
     MediaTime m_pendingSeekTime;

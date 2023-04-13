@@ -30,7 +30,7 @@
 
 #include "AXIsolatedObject.h"
 #include "AXLogger.h"
-#include "FrameView.h"
+#include "LocalFrameView.h"
 #include "Page.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/SetForScope.h>
@@ -44,7 +44,8 @@ HashMap<PageIdentifier, Ref<AXIsolatedTree>>& AXIsolatedTree::treePageCache()
 }
 
 AXIsolatedTree::AXIsolatedTree(AXObjectCache* axObjectCache)
-    : m_axObjectCache(axObjectCache)
+    : AXTreeStore(axObjectCache->treeID())
+    , m_axObjectCache(axObjectCache)
     , m_usedOnAXThread(axObjectCache->usedOnAXThread())
 {
     AXTRACE("AXIsolatedTree::AXIsolatedTree"_s);
@@ -91,7 +92,7 @@ Ref<AXIsolatedTree> AXIsolatedTree::create(AXObjectCache* axObjectCache)
 
     // Now that the tree is ready to take client requests, add it to the tree
     // maps so that it can be found.
-    AXTreeStore::add(tree->treeID(), tree.copyRef());
+    AXTreeStore::add(tree->treeID(), tree.ptr());
     auto pageID = axObjectCache->pageID();
     Locker locker { s_storeLock };
     ASSERT(!treePageCache().contains(*pageID));
@@ -119,7 +120,7 @@ RefPtr<AXIsolatedTree> AXIsolatedTree::treeForPageID(PageIdentifier pageID)
     return nullptr;
 }
 
-RefPtr<AXIsolatedObject> AXIsolatedTree::nodeForID(const AXID& axID) const
+RefPtr<AXIsolatedObject> AXIsolatedTree::objectForID(const AXID axID) const
 {
     // In isolated tree mode 2, only access m_readerThreadNodeMap on the AX thread.
     ASSERT(m_usedOnAXThread ? !isMainThread() : isMainThread());
@@ -137,7 +138,7 @@ Vector<RefPtr<AXCoreObject>> AXIsolatedTree::objectsForIDs(const Vector<AXID>& a
     Vector<RefPtr<AXCoreObject>> result;
     result.reserveInitialCapacity(axIDs.size());
     for (auto& axID : axIDs) {
-        auto object = nodeForID(axID);
+        RefPtr object = objectForID(axID);
         if (object) {
             result.uncheckedAppend(object);
             continue;
@@ -626,8 +627,8 @@ RefPtr<AXIsolatedObject> AXIsolatedTree::focusedNode()
     applyPendingChanges();
     AXLOG(makeString("focusedNodeID ", m_focusedNodeID.loggingString()));
     AXLOG("focused node:");
-    AXLOG(nodeForID(m_focusedNodeID));
-    return nodeForID(m_focusedNodeID);
+    AXLOG(objectForID(m_focusedNodeID));
+    return objectForID(m_focusedNodeID);
 }
 
 RefPtr<AXIsolatedObject> AXIsolatedTree::rootNode()
@@ -772,15 +773,7 @@ void AXIsolatedTree::applyPendingChanges()
         // We don't need to bother clearing out any other non-cycle-causing member variables as they
         // will be cleaned up automatically when the tree is destroyed.
 
-#ifndef NDEBUG
         ASSERT(AXTreeStore::contains(treeID()));
-        if (auto tree = AXTreeStore::treeForID(treeID())) {
-            // At this point, there should only be two references left to this tree -- one in the map,
-            // and the `protectedThis` above.
-            ASSERT(tree->refCount() == 2, "Unexpected refcount before attempting to destroy isolated tree: %d", tree->refCount());
-        }
-#endif
-
         AXTreeStore::remove(treeID());
         return;
     }
@@ -800,7 +793,7 @@ void AXIsolatedTree::applyPendingChanges()
     while (m_pendingSubtreeRemovals.size()) {
         auto axID = m_pendingSubtreeRemovals.takeLast();
         AXLOG(makeString("removing subtree axID ", axID.loggingString()));
-        if (RefPtr object = nodeForID(axID)) {
+        if (RefPtr object = objectForID(axID)) {
             // There's no need to call the more comprehensive AXCoreObject::detach here since
             // we're deleting the entire subtree of this object and thus don't need to `detachRemoteParts`.
             object->detachWrapper(AccessibilityDetachmentType::ElementDestroyed);
@@ -851,13 +844,13 @@ void AXIsolatedTree::applyPendingChanges()
 
     for (auto& update : m_pendingChildrenUpdates) {
         AXLOG(makeString("updating children for axID ", update.first.loggingString()));
-        if (auto object = nodeForID(update.first))
+        if (RefPtr object = objectForID(update.first))
             object->m_childrenIDs = WTFMove(update.second);
     }
     m_pendingChildrenUpdates.clear();
 
     for (auto& change : m_pendingPropertyChanges) {
-        if (auto object = nodeForID(change.axID)) {
+        if (RefPtr object = objectForID(change.axID)) {
             for (auto& property : change.properties)
                 object->setProperty(property.key, WTFMove(property.value));
         }

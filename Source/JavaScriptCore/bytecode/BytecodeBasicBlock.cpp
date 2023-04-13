@@ -28,6 +28,7 @@
 
 #include "CodeBlock.h"
 #include "PreciseJumpTargets.h"
+#include "StrongInlines.h"
 #include "UnlinkedCodeBlockGenerator.h"
 
 namespace JSC {

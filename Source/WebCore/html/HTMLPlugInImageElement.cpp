@@ -29,7 +29,6 @@
 #include "ElementInlines.h"
 #include "EventLoop.h"
 #include "EventNames.h"
-#include "Frame.h"
 #include "FrameLoaderClient.h"
 #include "GCReachableRef.h"
 #include "HTMLImageLoader.h"
@@ -38,6 +37,7 @@
 #include "JSDOMConvertStrings.h"
 #include "JSShadowRoot.h"
 #include "LegacySchemeRegistry.h"
+#include "LocalFrame.h"
 #include "LocalizedStrings.h"
 #include "Logging.h"
 #include "MouseEvent.h"
@@ -52,7 +52,7 @@
 #include "ShadowRoot.h"
 #include "StyleTreeResolver.h"
 #include "SubframeLoader.h"
-#include "TypedElementDescendantIterator.h"
+#include "TypedElementDescendantIteratorInlines.h"
 #include "UserGestureIndicator.h"
 #include <JavaScriptCore/CatchScope.h>
 #include <JavaScriptCore/JSGlobalObjectInlines.h>

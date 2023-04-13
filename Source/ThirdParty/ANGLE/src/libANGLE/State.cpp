@@ -431,7 +431,8 @@ State::State(const State *shareContextState,
       mBoundingBoxMaxZ(1.0f),
       mBoundingBoxMaxW(1.0f),
       mShadingRatePreserveAspectRatio(false),
-      mShadingRate(ShadingRate::Undefined)
+      mShadingRate(ShadingRate::Undefined),
+      mFetchPerSample(false)
 {}
 
 State::~State() {}
@@ -483,8 +484,8 @@ void State::initialize(Context *context)
     mNearZ           = 0.0f;
     mFarZ            = 1.0f;
 
-    mClipControlOrigin = GL_LOWER_LEFT_EXT;
-    mClipControlDepth  = GL_NEGATIVE_ONE_TO_ONE_EXT;
+    mClipOrigin    = ClipOrigin::LowerLeft;
+    mClipDepthMode = ClipDepthMode::NegativeOneToOne;
 
     mActiveSampler = 0;
 
@@ -869,6 +870,16 @@ void State::setFrontFace(GLenum front)
     }
 }
 
+void State::setDepthClamp(bool enabled)
+{
+    if (mRasterizer.depthClamp != enabled)
+    {
+        mRasterizer.depthClamp = enabled;
+        mDirtyBits.set(DIRTY_BIT_EXTENDED);
+        mExtendedDirtyBits.set(EXTENDED_DIRTY_BIT_DEPTH_CLAMP_ENABLED);
+    }
+}
+
 void State::setDepthTest(bool enabled)
 {
     if (mDepthStencil.depthTest != enabled)
@@ -897,19 +908,19 @@ void State::setDepthRange(float zNear, float zFar)
     }
 }
 
-void State::setClipControl(GLenum origin, GLenum depth)
+void State::setClipControl(ClipOrigin origin, ClipDepthMode depth)
 {
     bool updated = false;
-    if (mClipControlOrigin != origin)
+    if (mClipOrigin != origin)
     {
-        mClipControlOrigin = origin;
-        updated            = true;
+        mClipOrigin = origin;
+        updated     = true;
     }
 
-    if (mClipControlDepth != depth)
+    if (mClipDepthMode != depth)
     {
-        mClipControlDepth = depth;
-        updated           = true;
+        mClipDepthMode = depth;
+        updated        = true;
     }
 
     if (updated)
@@ -1135,11 +1146,12 @@ void State::setPolygonOffsetFill(bool enabled)
     }
 }
 
-void State::setPolygonOffsetParams(GLfloat factor, GLfloat units)
+void State::setPolygonOffsetParams(GLfloat factor, GLfloat units, GLfloat clamp)
 {
     // An application can pass NaN values here, so handle this gracefully
     mRasterizer.polygonOffsetFactor = factor != factor ? 0.0f : factor;
     mRasterizer.polygonOffsetUnits  = units != units ? 0.0f : units;
+    mRasterizer.polygonOffsetClamp  = clamp != clamp ? 0.0f : clamp;
     mDirtyBits.set(DIRTY_BIT_POLYGON_OFFSET);
 }
 
@@ -1295,6 +1307,9 @@ void State::setEnableFeature(GLenum feature, bool enabled)
         case GL_POLYGON_OFFSET_FILL:
             setPolygonOffsetFill(enabled);
             return;
+        case GL_DEPTH_CLAMP_EXT:
+            setDepthClamp(enabled);
+            return;
         case GL_SAMPLE_ALPHA_TO_COVERAGE:
             setSampleAlphaToCoverage(enabled);
             return;
@@ -1368,6 +1383,9 @@ void State::setEnableFeature(GLenum feature, bool enabled)
             break;
         case GL_SHADING_RATE_PRESERVE_ASPECT_RATIO_QCOM:
             mShadingRatePreserveAspectRatio = enabled;
+            return;
+        case GL_FETCH_PER_SAMPLE_ARM:
+            mFetchPerSample = enabled;
             return;
     }
 
@@ -1460,6 +1478,8 @@ bool State::getEnableFeature(GLenum feature) const
             return isCullFaceEnabled();
         case GL_POLYGON_OFFSET_FILL:
             return isPolygonOffsetFillEnabled();
+        case GL_DEPTH_CLAMP_EXT:
+            return isDepthClampEnabled();
         case GL_SAMPLE_ALPHA_TO_COVERAGE:
             return isSampleAlphaToCoverageEnabled();
         case GL_SAMPLE_COVERAGE:
@@ -1523,6 +1543,8 @@ bool State::getEnableFeature(GLenum feature) const
             break;
         case GL_SHADING_RATE_PRESERVE_ASPECT_RATIO_QCOM:
             return mShadingRatePreserveAspectRatio;
+        case GL_FETCH_PER_SAMPLE_ARM:
+            return mFetchPerSample;
     }
 
     ASSERT(mClientVersion.major == 1);
@@ -2451,6 +2473,9 @@ void State::getBooleanv(GLenum pname, GLboolean *params) const
         case GL_POLYGON_OFFSET_FILL:
             *params = mRasterizer.polygonOffsetFill;
             break;
+        case GL_DEPTH_CLAMP_EXT:
+            *params = mRasterizer.depthClamp;
+            break;
         case GL_SAMPLE_ALPHA_TO_COVERAGE:
             *params = mSampleAlphaToCoverage;
             break;
@@ -2531,16 +2556,6 @@ void State::getBooleanv(GLenum pname, GLboolean *params) const
         case GL_PRIMITIVE_RESTART_FOR_PATCHES_SUPPORTED:
             *params = isPrimitiveRestartEnabled() && getExtensions().tessellationShaderEXT;
             break;
-        // 2.2.2 Data Conversions For State Query Commands, in GLES 3.2 spec.
-        // If a command returning boolean data is called, such as GetBooleanv, a floating-point or
-        // integer value converts to FALSE if and only if it is zero. Otherwise it converts to TRUE.
-        // GL_EXT_clip_control
-        case GL_CLIP_ORIGIN_EXT:
-            *params = GL_TRUE;
-            break;
-        case GL_CLIP_DEPTH_MODE_EXT:
-            *params = GL_TRUE;
-            break;
         case GL_ROBUST_FRAGMENT_SHADER_OUTPUT_ANGLE:
             *params = mExtensions.robustFragmentShaderOutputANGLE ? GL_TRUE : GL_FALSE;
             break;
@@ -2559,6 +2574,14 @@ void State::getBooleanv(GLenum pname, GLboolean *params) const
                 // GL_CLIP_PLANE0 instead.
                 *params = mClipDistancesEnabled.test(pname - GL_CLIP_DISTANCE0_EXT);
             }
+            break;
+        // GL_ARM_shader_framebuffer_fetch
+        case GL_FETCH_PER_SAMPLE_ARM:
+            *params = mFetchPerSample;
+            break;
+        // GL_ARM_shader_framebuffer_fetch
+        case GL_FRAGMENT_SHADER_FRAMEBUFFER_FETCH_MRT_ARM:
+            *params = mCaps.fragmentShaderFramebufferFetchMRT;
             break;
         default:
             UNREACHABLE();
@@ -2588,6 +2611,9 @@ void State::getFloatv(GLenum pname, GLfloat *params) const
             break;
         case GL_POLYGON_OFFSET_UNITS:
             *params = mRasterizer.polygonOffsetUnits;
+            break;
+        case GL_POLYGON_OFFSET_CLAMP_EXT:
+            *params = mRasterizer.polygonOffsetClamp;
             break;
         case GL_DEPTH_RANGE:
             params[0] = mNearZ;
@@ -2676,14 +2702,13 @@ void State::getFloatv(GLenum pname, GLfloat *params) const
         case GL_MIN_SAMPLE_SHADING_VALUE:
             *params = mMinSampleShading;
             break;
-        // 2.2.2 Data Conversions For State Query Commands, in GLES 3.2 spec.
-        // If a command returning floating-point data is called, such as GetFloatv, ... An integer
-        // value is coerced to floating-point.
-        case GL_CLIP_ORIGIN_EXT:
-            *params = static_cast<float>(mClipControlOrigin);
+        // GL_ARM_shader_framebuffer_fetch
+        case GL_FETCH_PER_SAMPLE_ARM:
+            *params = mFetchPerSample ? 1.0f : 0.0f;
             break;
-        case GL_CLIP_DEPTH_MODE_EXT:
-            *params = static_cast<float>(mClipControlDepth);
+        // GL_ARM_shader_framebuffer_fetch
+        case GL_FRAGMENT_SHADER_FRAMEBUFFER_FETCH_MRT_ARM:
+            *params = mCaps.fragmentShaderFramebufferFetchMRT ? 1.0f : 0.0f;
             break;
         default:
             UNREACHABLE();
@@ -3153,10 +3178,10 @@ angle::Result State::getIntegerv(const Context *context, GLenum pname, GLint *pa
 
         // GL_EXT_clip_control
         case GL_CLIP_ORIGIN_EXT:
-            *params = mClipControlOrigin;
+            *params = ToGLenum(mClipOrigin);
             break;
         case GL_CLIP_DEPTH_MODE_EXT:
-            *params = mClipControlDepth;
+            *params = ToGLenum(mClipDepthMode);
             break;
 
         // GL_QCOM_shading_rate
@@ -3167,6 +3192,16 @@ angle::Result State::getIntegerv(const Context *context, GLenum pname, GLint *pa
         // GL_ANGLE_shader_pixel_local_storage
         case GL_PIXEL_LOCAL_STORAGE_ACTIVE_PLANES_ANGLE:
             *params = mPixelLocalStorageActivePlanes;
+            break;
+
+        // GL_ARM_shader_framebuffer_fetch
+        case GL_FETCH_PER_SAMPLE_ARM:
+            *params = mFetchPerSample ? 1 : 0;
+            break;
+
+        // GL_ARM_shader_framebuffer_fetch
+        case GL_FRAGMENT_SHADER_FRAMEBUFFER_FETCH_MRT_ARM:
+            *params = mCaps.fragmentShaderFramebufferFetchMRT ? 1 : 0;
             break;
 
         default:
@@ -3828,13 +3863,6 @@ AttributesMask State::getAndResetDirtyCurrentValues() const
 {
     AttributesMask retVal = mDirtyCurrentValues;
     mDirtyCurrentValues.reset();
-    return retVal;
-}
-
-State::ExtendedDirtyBits State::getAndResetExtendedDirtyBits() const
-{
-    ExtendedDirtyBits retVal = mExtendedDirtyBits;
-    mExtendedDirtyBits.reset();
     return retVal;
 }
 

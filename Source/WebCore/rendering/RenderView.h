@@ -21,7 +21,7 @@
 
 #pragma once
 
-#include "FrameView.h"
+#include "LocalFrameView.h"
 #include "Region.h"
 #include "RenderBlockFlow.h"
 #include "RenderWidget.h"
@@ -72,7 +72,7 @@ public:
 
     float zoomFactor() const;
 
-    FrameView& frameView() const { return m_frameView; }
+    LocalFrameView& frameView() const { return m_frameView; }
 
     Layout::InitialContainingBlock& initialContainingBlock() { return m_initialContainingBlock.get(); }
     const Layout::InitialContainingBlock& initialContainingBlock() const { return m_initialContainingBlock.get(); }
@@ -183,7 +183,9 @@ public:
     void unregisterForVisibleInViewportCallback(RenderElement&);
 
     void resumePausedImageAnimationsIfNeeded(const IntRect& visibleRect);
+#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
     void updatePlayStateForAllAnimations(const IntRect& visibleRect);
+#endif
     void addRendererWithPausedImageAnimations(RenderElement&, CachedImage&);
     void removeRendererWithPausedImageAnimations(RenderElement&);
     void removeRendererWithPausedImageAnimations(RenderElement&, CachedImage&);
@@ -232,7 +234,7 @@ private:
 
     Node* nodeForHitTest() const override;
 
-    FrameView& m_frameView;
+    LocalFrameView& m_frameView;
 
     // Include this RenderView.
     uint64_t m_rendererCount { 1 };

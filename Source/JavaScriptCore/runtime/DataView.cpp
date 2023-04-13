@@ -28,7 +28,7 @@
 
 #include "HeapInlines.h"
 #include "JSDataView.h"
-#include "JSGlobalObject.h"
+#include "JSGlobalObjectInlines.h"
 
 namespace JSC {
 

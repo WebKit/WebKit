@@ -84,7 +84,48 @@ class SliderBase extends LayoutNode
 
     set value(value)
     {
-        if (this.isActive)
+        // Interrupt any current animation to snap to the new value.
+        if (this._animatedValue)
+            delete this._animatedValue;
+
+        this._setValueInternal(value);
+    }
+
+    setValueAnimated(value)
+    {
+        if (this.isActive || this._value == value)
+            return;
+
+        this._valueAnimation = {
+            start: this.value,
+            end: value,
+            startTime: window.performance.now()
+        };
+
+        const duration = 150;
+
+        const animate = currentTime => {
+            if (!this._valueAnimation)
+                return;
+
+            const elapsedTime = currentTime - this._valueAnimation.startTime;
+            const progress = Math.min(elapsedTime / duration, 1);
+            const animatedValue = this._valueAnimation.start + (this._valueAnimation.end - this._valueAnimation.start) * progress;
+
+            this._setValueInternal(animatedValue);
+
+            if (progress == 1)
+                delete this._valueAnimation;
+            else
+                requestAnimationFrame(animate);
+        };
+
+        requestAnimationFrame(animate);
+    }
+
+    _setValueInternal(value)
+    {
+        if (this.isActive || this._value == value)
             return;
 
         this._value = value;
@@ -162,6 +203,9 @@ class SliderBase extends LayoutNode
 
     _handlePointerdownEvent(event)
     {
+        // Interrupt any value animation.
+        delete this._valueAnimation;
+
         this._pointerupTarget = this._interactionEndTarget();
         this._pointerupTarget.addEventListener("pointerup", this, { capture: true });
         if (this._allowsRelativeScrubbing)

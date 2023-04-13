@@ -1301,21 +1301,20 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::pathDescription() const
         case NSMoveToBezierPathElement:
             [result appendString:@"\tMove to point\n"];
             break;
-            
         case NSLineToBezierPathElement:
             [result appendString:@"\tLine to\n"];
             break;
-            
         case NSCurveToBezierPathElement:
             [result appendString:@"\tCurve to\n"];
             break;
-            
         case NSClosePathBezierPathElement:
             [result appendString:@"\tClose\n"];
             break;
+        default:
+            break;
         }
     }
-    
+
     return [result createJSStringRef];
     END_AX_OBJC_EXCEPTIONS
 
@@ -1760,11 +1759,25 @@ AccessibilityTextMarker AccessibilityUIElement::textMarkerForIndex(int textIndex
     return nullptr;
 }
 
+bool AccessibilityUIElement::isTextMarkerNull(AccessibilityTextMarker* textMarker)
+{
+    if (!textMarker)
+        return true;
+
+    BEGIN_AX_OBJC_EXCEPTIONS
+    return [[m_element accessibilityAttributeValue:@"AXTextMarkerIsNull" forParameter:textMarker->platformTextMarker()] boolValue];
+    END_AX_OBJC_EXCEPTIONS
+
+    return true;
+}
+
 bool AccessibilityUIElement::isTextMarkerValid(AccessibilityTextMarker* textMarker)
 {
+    if (!textMarker)
+        return false;
+
     BEGIN_AX_OBJC_EXCEPTIONS
-    NSNumber* validNumber = [m_element accessibilityAttributeValue:@"AXTextMarkerIsValid" forParameter:textMarker->platformTextMarker()];
-    return [validNumber boolValue];
+    return [[m_element accessibilityAttributeValue:@"AXTextMarkerIsValid" forParameter:textMarker->platformTextMarker()] boolValue];
     END_AX_OBJC_EXCEPTIONS
 
     return false;

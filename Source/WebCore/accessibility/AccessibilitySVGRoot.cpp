@@ -35,7 +35,7 @@
 #include "SVGDescElement.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGTitleElement.h"
-#include "TypedElementDescendantIterator.h"
+#include "TypedElementDescendantIteratorInlines.h"
 
 namespace WebCore {
 

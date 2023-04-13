@@ -110,6 +110,8 @@ public:
     unsigned length() const { return m_impl ? m_impl->length() : 0; }
     const LChar* characters8() const { return m_impl ? m_impl->characters8() : nullptr; }
     const UChar* characters16() const { return m_impl ? m_impl->characters16() : nullptr; }
+    Span<const LChar> span8() const { return { characters8(), length() }; }
+    Span<const UChar> span16() const { return { characters16(), length() }; }
 
     // Return characters8() or characters16() depending on CharacterType.
     template<typename CharacterType> const CharacterType* characters() const;
@@ -142,13 +144,14 @@ public:
 
     WTF_EXPORT_PRIVATE static String numberToStringFixedPrecision(float, unsigned precision = 6, TrailingZerosTruncatingPolicy = TruncateTrailingZeros);
     WTF_EXPORT_PRIVATE static String numberToStringFixedPrecision(double, unsigned precision = 6, TrailingZerosTruncatingPolicy = TruncateTrailingZeros);
-    WTF_EXPORT_PRIVATE static String numberToStringFixedWidth(float, unsigned decimalPlaces);
     WTF_EXPORT_PRIVATE static String numberToStringFixedWidth(double, unsigned decimalPlaces);
 
     AtomString toExistingAtomString() const;
 
     // Find a single character or string, also with match function & latin1 forms.
     size_t find(UChar character, unsigned start = 0) const { return m_impl ? m_impl->find(character, start) : notFound; }
+    size_t find(LChar character, unsigned start = 0) const { return m_impl ? m_impl->find(character, start) : notFound; }
+    size_t find(char character, unsigned start = 0) const { return m_impl ? m_impl->find(character, start) : notFound; }
 
     size_t find(StringView) const;
     size_t find(StringView, unsigned start) const;
@@ -443,7 +446,7 @@ inline String::String(StaticStringImpl* string)
 }
 
 inline String::String(ASCIILiteral characters)
-    : m_impl(characters.isNull() ? nullptr : RefPtr<StringImpl> { StringImpl::create(characters) })
+    : m_impl(characters.isNull() ? nullptr : RefPtr { StringImpl::create(characters) })
 {
 }
 
@@ -531,7 +534,7 @@ inline Expected<std::invoke_result_t<Func, Span<const char>>, UTF8ConversionErro
 {
     if (!m_impl) {
         constexpr const char* emptyString = "";
-        return function(Span { emptyString, emptyString });
+        return function(makeSpan(emptyString, emptyString));
     }
     return m_impl->tryGetUTF8(function, mode);
 }

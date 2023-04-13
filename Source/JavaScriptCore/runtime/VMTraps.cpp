@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,7 +36,7 @@
 #include "LLIntPCRanges.h"
 #include "MachineContext.h"
 #include "MacroAssemblerCodeRef.h"
-#include "VMEntryScope.h"
+#include "VMEntryScopeInlines.h"
 #include "VMTrapsInlines.h"
 #include "Watchdog.h"
 #include <wtf/ProcessID.h>
@@ -401,11 +401,11 @@ void VMTraps::handleTraps(VMTraps::BitField mask)
             ASSERT(vm.watchdog());
             if (LIKELY(!vm.watchdog()->isActive() || !vm.watchdog()->shouldTerminate(vm.entryScope->globalObject())))
                 continue;
-            vm.setTerminationInProgress(true);
+            vm.setHasTerminationRequest();
             FALLTHROUGH;
 
         case NeedTermination:
-            ASSERT(vm.terminationInProgress());
+            ASSERT(vm.hasTerminationRequest());
             scope.release();
             if (!isDeferringTermination())
                 vm.throwTerminationException();
@@ -441,7 +441,7 @@ void VMTraps::deferTerminationSlow(DeferAction)
 
     VM& vm = this->vm();
     if (vm.hasPendingTerminationException()) {
-        ASSERT(vm.terminationInProgress());
+        ASSERT(vm.hasTerminationRequest());
         vm.clearException();
         m_suspendedTerminationException = true;
     }
@@ -452,7 +452,7 @@ void VMTraps::undoDeferTerminationSlow(DeferAction deferAction)
     ASSERT(m_deferTerminationCount == 0);
 
     VM& vm = this->vm();
-    ASSERT(vm.terminationInProgress());
+    ASSERT(vm.hasTerminationRequest());
     if (m_suspendedTerminationException || (deferAction == DeferAction::DeferUntilEndOfScope)) {
         vm.throwTerminationException();
         m_suspendedTerminationException = false;

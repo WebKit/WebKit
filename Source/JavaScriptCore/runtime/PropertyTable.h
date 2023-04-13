@@ -321,13 +321,15 @@ template<typename Index, typename Entry>
 PropertyTable::FindResult PropertyTable::findImpl(const Index* indexVector, const Entry* table, const KeyType& key)
 {
     unsigned hash = IdentifierRepHash::hash(key);
+    unsigned indexMask = m_indexMask;
+    unsigned probeCount = 0;
+    unsigned index = hash & indexMask;
 
 #if DUMP_PROPERTYMAP_STATS
     ++propertyTableStats->numFinds;
 #endif
 
     while (true) {
-        unsigned index = hash & m_indexMask;
         unsigned entryIndex = indexVector[index];
         if (entryIndex == EmptyEntryIndex)
             return FindResult { entryIndex, index, invalidOffset, 0 };
@@ -346,7 +348,8 @@ PropertyTable::FindResult PropertyTable::findImpl(const Index* indexVector, cons
         dataLog("Collided with ", entry.key(), "(", IdentifierRepHash::hash(entry.key()), ")\n");
 #endif
 
-        hash++;
+        ++probeCount;
+        index = (index + probeCount) & indexMask;
     }
 }
 
@@ -532,13 +535,26 @@ inline void PropertyTable::reinsert(Index* indexVector, Entry* table, const Valu
     // Used to insert a value known not to be in the table, and where
     // we know capacity to be available.
     ASSERT(canInsert(entry));
-    FindResult result = findImpl(indexVector, table, entry.key());
-    ASSERT(result.offset == invalidOffset);
-    ASSERT(result.entryIndex == EmptyEntryIndex);
+
+    unsigned hash = IdentifierRepHash::hash(entry.key());
+    unsigned indexMask = m_indexMask;
+    unsigned probeCount = 0;
+    unsigned index = hash & indexMask;
+
+    // Reinsert must not conflict with the keys since all entries are existing ones.
+    // Plus, there is no deleted entries too. We should just check emptyness, that's it.
+    while (true) {
+        unsigned entryIndex = indexVector[index];
+        if (entryIndex == EmptyEntryIndex)
+            break;
+        ASSERT(table[entryIndex - 1].key() != entry.key());
+        ++probeCount;
+        index = (index + probeCount) & indexMask;
+    }
 
     ASSERT(!isCompact() || usedCount() < UINT8_MAX);
     unsigned entryIndex = usedCount() + 1;
-    indexVector[result.index] = entryIndex;
+    indexVector[index] = entryIndex;
     table[entryIndex - 1] = entry;
 
     ++m_keyCount;

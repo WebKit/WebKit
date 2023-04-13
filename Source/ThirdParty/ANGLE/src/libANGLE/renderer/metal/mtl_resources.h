@@ -56,7 +56,6 @@ class Resource : angle::NonCopyable
     bool hasPendingWorks(Context *context) const;
 
     void setUsedByCommandBufferWithQueueSerial(uint64_t serial, bool writing);
-    void setWrittenToByRenderEncoder(uint64_t serial);
 
     uint64_t getCommandBufferQueueSerial() const { return mUsageRef->cmdBufferQueueSerial; }
 
@@ -71,15 +70,6 @@ class Resource : angle::NonCopyable
 
     bool isCPUReadMemDirty() const { return mUsageRef->cpuReadMemDirty; }
     void resetCPUReadMemDirty() { mUsageRef->cpuReadMemDirty = false; }
-
-    bool getLastWritingRenderEncoderSerial() const
-    {
-        return mUsageRef->lastWritingRenderEncoderSerial;
-    }
-    void setLastWritingRenderEncoderSerial(uint64_t serial) const
-    {
-        mUsageRef->lastWritingRenderEncoderSerial = serial;
-    }
 
     virtual size_t estimatedByteSize() const = 0;
     virtual id getID() const                 = 0;
@@ -108,9 +98,6 @@ class Resource : angle::NonCopyable
 
         // This flag is useful for BufferMtl to know whether it should update the shadow copy
         bool cpuReadMemDirty = false;
-
-        // The id of the last render encoder to write to this resource
-        uint64_t lastWritingRenderEncoderSerial = 0;
     };
 
     // One resource object might just be a view of another resource. For example, a texture 2d
@@ -229,7 +216,7 @@ class Texture final : public Resource,
     // case texture doesn't need format view usage flag.
     TextureRef createViewWithCompatibleFormat(MTLPixelFormat format);
     // Create a swizzled view
-    TextureRef createSwizzleView(const TextureSwizzleChannels &swizzle);
+    TextureRef createSwizzleView(MTLPixelFormat format, const TextureSwizzleChannels &swizzle);
 
     MTLTextureType textureType() const;
     MTLPixelFormat pixelFormat() const;
@@ -339,7 +326,7 @@ class Texture final : public Resource,
     // Create a texture view
     Texture(Texture *original, MTLPixelFormat format);
     Texture(Texture *original, MTLTextureType type, NSRange mipmapLevelRange, NSRange slices);
-    Texture(Texture *original, const TextureSwizzleChannels &swizzle);
+    Texture(Texture *original, MTLPixelFormat format, const TextureSwizzleChannels &swizzle);
 
     // Creates a view for a shader image binding.
     Texture(Texture *original,
@@ -365,9 +352,7 @@ class Texture final : public Resource,
     size_t mEstimatedByteSize = 0;
 };
 
-class Buffer final : public Resource,
-                     public WrappedObject<id<MTLBuffer>>,
-                     public std::enable_shared_from_this<Buffer>
+class Buffer final : public Resource, public WrappedObject<id<MTLBuffer>>
 {
   public:
     static angle::Result MakeBuffer(ContextMtl *context,

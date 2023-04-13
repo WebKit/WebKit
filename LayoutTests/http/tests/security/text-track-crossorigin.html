@@ -29,13 +29,21 @@
 
                 log('<br>');
                 switch(counter) {
-                case 2:
-                    log('Loading <b>with</b> Access-Control-Allow-Origin and Access-Control-Allow-Credentials headers, setting video.crossorigin to "use-credentials"');
-                    url = "http://localhost:8000/security/resources/captions-with-access-control-headers.py?origin=1&credentials=1";
-                    videoElement.setAttribute('crossorigin', 'use-credentials');
+                case 0:
+                    log('Loading <b>without</b> Access-Control-Allow-Origin header, setting video.crossorigin to "anonymous"');
+                    url = "http://localhost:8000/security/resources/captions-with-access-control-headers.py?count=" + counter;
+                    videoElement.setAttribute('crossorigin', 'anonymous');
                     trackElement.removeAttribute('src');
                     trackElement.setAttribute('src', url);
-                    shouldLoad = true;
+                    shouldLoad = false;
+                    ++counter;
+                    break;
+
+                case 2:
+                    log('Loading <b>with</b> Access-Control-Allow-Origin and Access-Control-Allow-Credentials headers, setting video.crossorigin to "use-credentials"');
+                    url = "http://localhost:8000/security/resources/captions-with-access-control-headers.py?origin=1;credentials=1";
+                    trackElement.setAttribute('crossorigin', 'use-credentials');
+                    trackElement.setAttribute('src', url);
                     ++counter;
                     break;
 
@@ -43,7 +51,6 @@
                     log("END OF TEST");
                     if (window.testRunner)
                         testRunner.notifyDone();
-
                 defaut:
                     if (window.testRunner)
                         testRunner.notifyDone();
@@ -62,25 +69,13 @@
 
                 log('<br>');
                 switch(counter) {
-                case 0:
-                    log('Loading <b>without</b> Access-Control-Allow-Origin header, setting video.crossorigin to "anonymous"');
-                    url = "http://localhost:8000/security/resources/captions-with-access-control-headers.py?count=" + counter;
-                    videoElement.setAttribute('crossorigin', 'anonymous');
-                    trackElement.removeAttribute('src');
-                    trackElement.setAttribute('src', url);
-                    shouldLoad = false;
-                    ++counter;
-                    break;
-
                 case 1:
                     log('Loading <b>with</b> Access-Control-Allow-Origin header, leaving video.crossorigin as "anonymous"');
                     url = "http://localhost:8000/security/resources/captions-with-access-control-headers.py?origin=1";
-                    trackElement.removeAttribute('src');
                     trackElement.setAttribute('src', url);
                     shouldLoad = true;
                     ++counter;
                     break;
-
                 defaut:
                     if (window.testRunner)
                         testRunner.notifyDone();
@@ -94,7 +89,6 @@
                 log('Loading <b>without</b> Access-Control-Allow-Origin header, no "crossorigin" attribute on &lt;video&gt;');
                 var url = "http://localhost:8000/security/resources/captions-with-access-control-headers.py"
                 trackElement.setAttribute('src', url);
-                shouldLoad = false;
             }
 
         </script>

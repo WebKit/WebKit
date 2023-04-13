@@ -42,44 +42,7 @@ struct AppHighlight {
     std::optional<String> text;
     CreateNewGroupForHighlight isNewGroup;
     HighlightRequestOriginatedInApp requestOriginatedInApp;
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<AppHighlight> decode(Decoder&);
 };
-
-
-template<class Encoder>
-void AppHighlight::encode(Encoder& encoder) const
-{
-    encoder << highlight;
-    encoder << text;
-    encoder << isNewGroup;
-    encoder << requestOriginatedInApp;
-}
-
-template<class Decoder>
-std::optional<AppHighlight> AppHighlight::decode(Decoder& decoder)
-{
-    std::optional<Ref<WebCore::FragmentedSharedBuffer>> highlight;
-    decoder >> highlight;
-    if (!highlight)
-        return std::nullopt;
-
-    std::optional<std::optional<String>> text;
-    decoder >> text;
-    if (!text)
-        return std::nullopt;
-
-    CreateNewGroupForHighlight isNewGroup;
-    if (!decoder.decode(isNewGroup))
-        return std::nullopt;
-
-    HighlightRequestOriginatedInApp requestOriginatedInApp;
-    if (!decoder.decode(requestOriginatedInApp))
-        return std::nullopt;
-
-    return { { WTFMove(*highlight), WTFMove(*text), isNewGroup, requestOriginatedInApp } };
-}
 
 }
 

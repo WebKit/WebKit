@@ -1,0 +1,14 @@
+
+
+PASS all scripts must be fetched by the preload scanner
+PASS script-initial-load
+PASS script-initial-load 1
+PASS script-initial-load 2
+PASS script-initial-load 3
+PASS script-initial-load 4
+PASS script-initial-load 5
+PASS script-initial-load 6
+PASS script-initial-load 7
+PASS script-initial-load 8
+PASS script-initial-load 9
+

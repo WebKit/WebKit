@@ -7,7 +7,11 @@ import { Fixture } from '../../../../common/framework/fixture.js';
 import { makeTestGroup } from '../../../../common/framework/test_group.js';
 import { attemptGarbageCollection } from '../../../../common/util/collect_garbage.js';
 import { getGPU } from '../../../../common/util/navigator_gpu.js';
-import { assert, raceWithRejectOnTimeout } from '../../../../common/util/util.js';
+import {
+  assert,
+  assertNotSettledWithinTime,
+  raceWithRejectOnTimeout,
+} from '../../../../common/util/util.js';
 
 class DeviceLostTests extends Fixture {
   // Default timeout for waiting for device lost is 2 seconds.
@@ -45,7 +49,7 @@ g.test('not_lost_on_gc')
       const lost = (await adapter.requestDevice()).lost;
       return { lost };
     })();
-    t.shouldReject('Error', t.getDeviceLostWithTimeout(lost), 'device was unexpectedly lost');
+    await assertNotSettledWithinTime(lost, t.kDeviceLostTimeoutMS, 'device was unexpectedly lost');
 
     await attemptGarbageCollection();
   });

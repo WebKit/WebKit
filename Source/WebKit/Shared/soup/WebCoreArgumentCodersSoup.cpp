@@ -34,6 +34,7 @@
 #include <WebCore/Credential.h>
 #include <WebCore/DictionaryPopupInfo.h>
 #include <WebCore/Font.h>
+#include <WebCore/FontCustomPlatformData.h>
 #include <WebCore/ResourceError.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>
@@ -137,17 +138,6 @@ bool ArgumentCoder<SoupNetworkProxySettings>::decode(Decoder& decoder, SoupNetwo
     return !settings.isEmpty();
 }
 
-void ArgumentCoder<ProtectionSpace>::encodePlatformData(Encoder&, const ProtectionSpace&)
-{
-    ASSERT_NOT_REACHED();
-}
-
-bool ArgumentCoder<ProtectionSpace>::decodePlatformData(Decoder&, ProtectionSpace&)
-{
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
 void ArgumentCoder<Credential>::encodePlatformData(Encoder& encoder, const Credential& credential)
 {
     GRefPtr<GTlsCertificate> certificate = credential.certificate();
@@ -179,6 +169,28 @@ std::optional<FontPlatformData> ArgumentCoder<Font>::decodePlatformData(Decoder&
 {
     ASSERT_NOT_REACHED();
     return std::nullopt;
+}
+
+void ArgumentCoder<WebCore::FontCustomPlatformData>::encodePlatformData(Encoder& encoder, const WebCore::FontCustomPlatformData& customPlatformData)
+{
+    ASSERT_NOT_REACHED();
+}
+
+std::optional<Ref<WebCore::FontCustomPlatformData>> ArgumentCoder<WebCore::FontCustomPlatformData>::decodePlatformData(Decoder& decoder)
+{
+    ASSERT_NOT_REACHED();
+    return std::nullopt;
+}
+
+void ArgumentCoder<WebCore::FontPlatformData::Attributes>::encodePlatformData(Encoder& encoder, const WebCore::FontPlatformData::Attributes& data)
+{
+    ASSERT_NOT_REACHED();
+}
+
+bool ArgumentCoder<WebCore::FontPlatformData::Attributes>::decodePlatformData(Decoder& decoder, WebCore::FontPlatformData::Attributes& data)
+{
+    ASSERT_NOT_REACHED();
+    return false;
 }
 
 #if ENABLE(VIDEO)

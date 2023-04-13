@@ -32,6 +32,7 @@
 #include "SandboxExtension.h"
 #include "ShareableBitmap.h"
 #include "WebPageProxyIdentifier.h"
+#include <WebCore/IntDegrees.h>
 #include <WebCore/LibWebRTCEnumTraits.h>
 #include <WebCore/MediaPlayerIdentifier.h>
 #include <WebCore/Timer.h>
@@ -49,12 +50,16 @@
 #include "WCSharedSceneContextHolder.h"
 #endif
 
+#if HAVE(SCREEN_CAPTURE_KIT)
+#include <WebCore/DisplayCapturePromptType.h>
+#endif
+
 namespace WebCore {
 class CaptureDevice;
 class NowPlayingManager;
 struct MockMediaDevice;
 struct ScreenProperties;
-struct SecurityOriginData;
+class SecurityOriginData;
 }
 
 namespace WebKit {
@@ -120,7 +125,9 @@ public:
     void processIsStartingToCaptureAudio(GPUConnectionToWebProcess&);
 #endif
 
+#if ENABLE(VIDEO)
     void requestBitmapImageForCurrentTime(WebCore::ProcessIdentifier, WebCore::MediaPlayerIdentifier, CompletionHandler<void(const ShareableBitmapHandle&)>&&);
+#endif
 
 private:
     void lowMemoryHandler(Critical, Synchronous);
@@ -149,7 +156,8 @@ private:
 
 #if ENABLE(MEDIA_STREAM)
     void setMockCaptureDevicesEnabled(bool);
-    void setOrientationForMediaCapture(uint64_t orientation);
+    void setUseSCContentSharingPicker(bool);
+    void setOrientationForMediaCapture(WebCore::IntDegrees);
     void updateCaptureAccess(bool allowAudioCapture, bool allowVideoCapture, bool allowDisplayCapture, WebCore::ProcessIdentifier, CompletionHandler<void()>&&);
     void updateCaptureOrigin(const WebCore::SecurityOriginData&, WebCore::ProcessIdentifier);
     void updateSandboxAccess(const Vector<SandboxExtension::Handle>&);
@@ -161,9 +169,8 @@ private:
     void setMockCaptureDevicesInterrupted(bool isCameraInterrupted, bool isMicrophoneInterrupted);
     void triggerMockMicrophoneConfigurationChange();
 #endif
-#if HAVE(SC_CONTENT_SHARING_SESSION)
-    void showWindowPicker(CompletionHandler<void(std::optional<WebCore::CaptureDevice>)>&&);
-    void showScreenPicker(CompletionHandler<void(std::optional<WebCore::CaptureDevice>)>&&);
+#if HAVE(SCREEN_CAPTURE_KIT)
+    void promptForGetDisplayMedia(WebCore::DisplayCapturePromptType, CompletionHandler<void(std::optional<WebCore::CaptureDevice>)>&&);
 #endif
 #if PLATFORM(MAC)
     void displayConfigurationChanged(CGDirectDisplayID, CGDisplayChangeSummaryFlags);
@@ -203,7 +210,7 @@ private:
 #if ENABLE(MEDIA_STREAM) && PLATFORM(COCOA)
     RefPtr<WorkQueue> m_videoMediaStreamTrackRendererQueue;
 #endif
-    uint64_t m_orientation { 0 };
+    WebCore::IntDegrees m_orientation { 0 };
 #endif
 #if USE(LIBWEBRTC) && PLATFORM(COCOA)
     RefPtr<WorkQueue> m_libWebRTCCodecsQueue;

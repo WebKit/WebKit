@@ -88,7 +88,6 @@ public:
     RefPtr<InjectedBundleNodeHandle> htmlTableCellElementCellAbove();
 
     RefPtr<WebFrame> documentFrame();
-    RefPtr<WebFrame> htmlFrameElementContentFrame();
     RefPtr<WebFrame> htmlIFrameElementContentFrame();
 
 private:

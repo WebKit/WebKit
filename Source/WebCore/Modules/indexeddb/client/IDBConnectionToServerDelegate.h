@@ -43,7 +43,7 @@ struct ClientOrigin;
 struct IDBGetAllRecordsData;
 struct IDBGetRecordData;
 struct IDBIterateCursorData;
-struct SecurityOriginData;
+class SecurityOriginData;
 
 namespace IndexedDB {
 enum class ObjectStoreOverwriteMode : uint8_t;

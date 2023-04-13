@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2019 Google Inc. All rights reserved.
  * Copyright (C) 2022 Metrological Group B.V.
  * Copyright (C) 2022 Igalia S.L.
@@ -36,7 +36,7 @@
 #include "PixelBuffer.h"
 #include "PlatformLayerDisplayDelegate.h"
 
-#if USE(GSTREAMER) && ENABLE(MEDIA_STREAM)
+#if USE(GSTREAMER) && (ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS))
 #include "VideoFrameGStreamer.h"
 #endif
 
@@ -72,7 +72,7 @@ bool GraphicsContextGLFallback::copyTextureFromMedia(MediaPlayer&, PlatformGLObj
 }
 #endif
 
-#if ENABLE(MEDIA_STREAM)
+#if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
 RefPtr<VideoFrame> GraphicsContextGLFallback::paintCompositedResultsToVideoFrame()
 {
 #if USE(GSTREAMER)
@@ -85,9 +85,7 @@ RefPtr<VideoFrame> GraphicsContextGLFallback::paintCompositedResultsToVideoFrame
 
 bool GraphicsContextGLFallback::platformInitializeContext()
 {
-#if ENABLE(WEBGL2)
     m_isForWebGL2 = contextAttributes().webGLVersion == GraphicsContextGLWebGLVersion::WebGL2;
-#endif
 
     Vector<EGLint> displayAttributes {
         EGL_PLATFORM_ANGLE_TYPE_ANGLE, EGL_PLATFORM_ANGLE_TYPE_OPENGLES_ANGLE,

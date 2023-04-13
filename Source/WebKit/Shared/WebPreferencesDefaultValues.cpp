@@ -38,6 +38,10 @@
 #import <wtf/cocoa/Entitlements.h>
 #endif
 
+#if USE(LIBWEBRTC)
+#include <WebCore/LibWebRTCProvider.h>
+#endif
+
 namespace WebKit {
 
 #if PLATFORM(IOS_FAMILY)
@@ -169,6 +173,20 @@ bool defaultManageCaptureStatusBarInGPUProcessEnabled()
 
 #endif // ENABLE(MEDIA_STREAM)
 
+#if ENABLE(MANAGED_MEDIA_SOURCE) && ENABLE(MEDIA_SOURCE)
+bool defaultManagedMediaSourceEnabled()
+{
+#if PLATFORM(IOS_FAMILY)
+    // Enable everywhere that MediaSource is enabled
+    return defaultMediaSourceEnabled();
+#elif PLATFORM(MAC)
+    return true;
+#else
+    return false;
+#endif
+}
+#endif
+
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
 bool defaultMediaSessionCoordinatorEnabled()
 {
@@ -184,13 +202,18 @@ bool defaultMediaSessionCoordinatorEnabled()
 }
 #endif
 
-bool defaultShouldTakeSuspendedAssertions()
+bool defaultRunningBoardThrottlingEnabled()
 {
-#if PLATFORM(IOS_FAMILY)
+    return false;
+}
+
+bool defaultShouldDropSuspendedAssertionAfterDelay()
+{
+#if PLATFORM(COCOA)
     static bool newSDK = linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::FullySuspendsBackgroundContent);
-    return !newSDK;
+    return newSDK;
 #else
-    return true;
+    return false;
 #endif
 }
 
@@ -214,5 +237,35 @@ bool defaultGamepadVibrationActuatorEnabled()
 #endif
 }
 #endif
+
+bool defaultShouldEnableScreenOrientationAPI()
+{
+#if PLATFORM(MAC)
+    return true;
+#elif PLATFORM(IOS_FAMILY)
+    static bool shouldEnableScreenOrientationAPI = linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::ScreenOrientationAPIEnabled);
+    return shouldEnableScreenOrientationAPI;
+#else
+    return false;
+#endif
+}
+
+#if USE(LIBWEBRTC)
+bool defaultPeerConnectionEnabledAvailable()
+{
+    // This helper function avoid an expensive header include in WebPreferences.h
+    return WebCore::WebRTCProvider::webRTCAvailable();
+}
+#endif
+
+bool defaultPopoverAttributeEnabled()
+{
+#if PLATFORM(COCOA)
+    static bool newSDK = linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::PopoverAttributeEnabled);
+    return newSDK;
+#else
+    return false;
+#endif
+}
 
 } // namespace WebKit

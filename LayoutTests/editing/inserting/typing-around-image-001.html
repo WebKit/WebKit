@@ -8,17 +8,16 @@
     font-size: 24px; 
 }
 </style>
-<script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
+<script src="../editing.js"></script>
+<script src="../../resources/dump-as-markup.js"></script>
 
 <script>
 
 function moveNSpacesAndType(n) {
-    for (i = 0; i < n; i++) {
+    for (i = 0; i < n; i++)
         moveSelectionForwardByCharacterCommand();
-    }
-    for (i = 0; i < 3; i++) {
+    for (i = 0; i < 3; i++)
         typeCharacterCommand();
-    }
 }
 
 function editingTest() {
@@ -27,6 +26,7 @@ function editingTest() {
     moveNSpacesAndType(1);
     moveNSpacesAndType(1);
     moveNSpacesAndType(1);
+    Markup.dump(root);
 }
 
 </script>

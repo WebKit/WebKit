@@ -28,6 +28,7 @@
 
 #include "DataReference.h"
 #include "LibWebRTCNetwork.h"
+#include "Logging.h"
 #include "NetworkConnectionToWebProcessMessages.h"
 #include "RTCDataChannelRemoteManager.h"
 #include "StorageAreaMap.h"
@@ -63,8 +64,6 @@
 #include "WebSharedWorkerObjectConnectionMessages.h"
 #include "WebSocketChannel.h"
 #include "WebSocketChannelMessages.h"
-#include "WebSocketStream.h"
-#include "WebSocketStreamMessages.h"
 #include <WebCore/CachedResource.h>
 #include <WebCore/HTTPCookieAcceptPolicy.h>
 #include <WebCore/InspectorInstrumentationWebKit.h>
@@ -98,7 +97,7 @@ NetworkProcessConnection::~NetworkProcessConnection()
 void NetworkProcessConnection::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
     if (decoder.messageReceiverName() == Messages::WebResourceLoader::messageReceiverName()) {
-        if (auto* webResourceLoader = WebProcess::singleton().webLoaderStrategy().webResourceLoaderForIdentifier(makeObjectIdentifier<WebCore::ResourceLoader>(decoder.destinationID())))
+        if (auto* webResourceLoader = WebProcess::singleton().webLoaderStrategy().webResourceLoaderForIdentifier(AtomicObjectIdentifier<WebCore::ResourceLoader>(decoder.destinationID())))
             webResourceLoader->didReceiveWebResourceLoaderMessage(connection, decoder);
         return;
     }
@@ -106,22 +105,17 @@ void NetworkProcessConnection::didReceiveMessage(IPC::Connection& connection, IP
         WebProcess::singleton().broadcastChannelRegistry().didReceiveMessage(connection, decoder);
         return;
     }
-    if (decoder.messageReceiverName() == Messages::WebSocketStream::messageReceiverName()) {
-        if (auto* stream = WebSocketStream::streamWithIdentifier(makeObjectIdentifier<WebSocketIdentifierType>(decoder.destinationID())))
-            stream->didReceiveMessage(connection, decoder);
-        return;
-    }
     if (decoder.messageReceiverName() == Messages::WebSocketChannel::messageReceiverName()) {
         WebProcess::singleton().webSocketChannelManager().didReceiveMessage(connection, decoder);
         return;
     }
     if (decoder.messageReceiverName() == Messages::WebPage::messageReceiverName()) {
-        if (auto* webPage = WebProcess::singleton().webPage(makeObjectIdentifier<PageIdentifierType>(decoder.destinationID())))
+        if (auto* webPage = WebProcess::singleton().webPage(ObjectIdentifier<PageIdentifierType>(decoder.destinationID())))
             webPage->didReceiveWebPageMessage(connection, decoder);
         return;
     }
     if (decoder.messageReceiverName() == Messages::StorageAreaMap::messageReceiverName()) {
-        if (auto storageAreaMap = WebProcess::singleton().storageAreaMap(makeObjectIdentifier<StorageAreaMapIdentifierType>(decoder.destinationID())))
+        if (auto storageAreaMap = WebProcess::singleton().storageAreaMap(ObjectIdentifier<StorageAreaMapIdentifierType>(decoder.destinationID())))
             storageAreaMap->didReceiveMessage(connection, decoder);
         return;
     }
@@ -142,7 +136,7 @@ void NetworkProcessConnection::didReceiveMessage(IPC::Connection& connection, IP
     if (decoder.messageReceiverName() == Messages::WebRTCResolver::messageReceiverName()) {
         auto& network = WebProcess::singleton().libWebRTCNetwork();
         if (network.isActive())
-            network.resolver(makeObjectIdentifier<LibWebRTCResolverIdentifierType>(decoder.destinationID())).didReceiveMessage(connection, decoder);
+            network.resolver(AtomicObjectIdentifier<LibWebRTCResolverIdentifierType>(decoder.destinationID())).didReceiveMessage(connection, decoder);
         else
             RELEASE_LOG_ERROR(WebRTC, "Received WebRTCResolver message while libWebRTCNetwork is not active");
         return;
@@ -190,7 +184,7 @@ void NetworkProcessConnection::didReceiveMessage(IPC::Connection& connection, IP
 
 #if ENABLE(APPLE_PAY_REMOTE_UI)
     if (decoder.messageReceiverName() == Messages::WebPaymentCoordinator::messageReceiverName()) {
-        if (auto webPage = WebProcess::singleton().webPage(makeObjectIdentifier<PageIdentifierType>(decoder.destinationID())))
+        if (auto webPage = WebProcess::singleton().webPage(ObjectIdentifier<PageIdentifierType>(decoder.destinationID())))
             webPage->paymentCoordinator()->didReceiveMessage(connection, decoder);
         return;
     }
@@ -212,7 +206,7 @@ bool NetworkProcessConnection::didReceiveSyncMessage(IPC::Connection& connection
 
 #if ENABLE(APPLE_PAY_REMOTE_UI)
     if (decoder.messageReceiverName() == Messages::WebPaymentCoordinator::messageReceiverName()) {
-        if (auto webPage = WebProcess::singleton().webPage(makeObjectIdentifier<PageIdentifierType>(decoder.destinationID())))
+        if (auto webPage = WebProcess::singleton().webPage(ObjectIdentifier<PageIdentifierType>(decoder.destinationID())))
             return webPage->paymentCoordinator()->didReceiveSyncMessage(connection, decoder, replyEncoder);
         return false;
     }
@@ -268,7 +262,11 @@ bool NetworkProcessConnection::cookiesEnabled() const
 
 void NetworkProcessConnection::cookieAcceptPolicyChanged(HTTPCookieAcceptPolicy newPolicy)
 {
+    if (m_cookieAcceptPolicy == newPolicy)
+        return;
+
     m_cookieAcceptPolicy = newPolicy;
+    WebProcess::singleton().cookieJar().clearCache();
 }
 
 #if HAVE(COOKIE_CHANGE_LISTENER_API)
@@ -338,7 +336,8 @@ void NetworkProcessConnection::broadcastConsoleMessage(MessageSource source, Mes
     FAST_RETURN_IF_NO_FRONTENDS(void());
 
     Page::forEachPage([&] (Page& page) {
-        WebPage::fromCorePage(page).mainWebFrame().addConsoleMessage(source, level, message);
+        if (auto* webPage = WebPage::fromCorePage(page))
+            webPage->mainWebFrame().addConsoleMessage(source, level, message);
     });
 }
 

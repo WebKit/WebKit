@@ -1,6 +1,6 @@
 
 FAIL img 1 assert_equals:
-<img src="data:image/svg+xml,&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; /&gt;" style="height: 200px; background: green;" data-expected-height="150">
+<img src="data:image/svg+xml,<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; />" style="height: 200px; background: green;" data-expected-height="150">
 height expected 150 but got 0
 Specified size suggestion = 200px
 Content size suggestion = 150px [1]

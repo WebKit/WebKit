@@ -33,7 +33,6 @@
 #import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
 #import <WebCore/ApplicationManifest.h>
-#import <WebKit/WKApplicationManifestPrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/_WKApplicationManifest.h>
@@ -75,22 +74,8 @@ TEST(ApplicationManifest, Basic)
     Util::run(&done);
 
     done = false;
-    [webView.get() getApplicationManifestWithCompletionHandler:^(WKApplicationManifest *manifest) {
-        EXPECT_NULL(manifest);
-        done = true;
-    }];
-    Util::run(&done);
-
-    done = false;
     [webView synchronouslyLoadHTMLString:@"<link rel=\"manifest\" href=\"invalidurl://path\">"];
     [webView _getApplicationManifestWithCompletionHandler:^(_WKApplicationManifest *manifest) {
-        EXPECT_NULL(manifest);
-        done = true;
-    }];
-    Util::run(&done);
-
-    done = false;
-    [webView.get() getApplicationManifestWithCompletionHandler:^(WKApplicationManifest *manifest) {
         EXPECT_NULL(manifest);
         done = true;
     }];
@@ -101,13 +86,6 @@ TEST(ApplicationManifest, Basic)
     [webView synchronouslyLoadHTMLString:[NSString stringWithFormat:@"<link rel=\"manifest\" href=\"data:application/manifest+json;charset=utf-8;base64,%@\">", [[NSJSONSerialization dataWithJSONObject:manifestObject options:0 error:nil] base64EncodedStringWithOptions:0]]];
     [webView _getApplicationManifestWithCompletionHandler:^(_WKApplicationManifest *manifest) {
         EXPECT_TRUE([manifest.name isEqualToString:@"Test"]);
-        done = true;
-    }];
-    Util::run(&done);
-
-    done = false;
-    [webView.get() getApplicationManifestWithCompletionHandler:^(WKApplicationManifest *manifest) {
-        EXPECT_TRUE([manifest._name isEqualToString:@"Test"]);
         done = true;
     }];
     Util::run(&done);
@@ -134,22 +112,6 @@ TEST(ApplicationManifest, Basic)
         auto sRGBColorSpace = adoptCF(CGColorSpaceCreateWithName(kCGColorSpaceSRGB));
         auto redColor = adoptCF(CGColorCreate(sRGBColorSpace.get(), redColorComponents));
         EXPECT_TRUE(CGColorEqualToColor(manifest.themeColor.CGColor, redColor.get()));
-
-        done = true;
-    }];
-    Util::run(&done);
-
-    done = false;
-    [webView.get() getApplicationManifestWithCompletionHandler:^(WKApplicationManifest *manifest) {
-        EXPECT_TRUE([manifest._name isEqualToString:@"A Web Application"]);
-        EXPECT_TRUE([manifest._shortName isEqualToString:@"WebApp"]);
-        EXPECT_TRUE([manifest._applicationDescription isEqualToString:@"Hello."]);
-        EXPECT_TRUE([manifest._startURL isEqual:[NSURL URLWithString:@"http://example.com/app/start"]]);
-        EXPECT_TRUE([manifest._scope isEqual:[NSURL URLWithString:@"http://example.com/app"]]);
-
-        auto sRGBColorSpace = adoptCF(CGColorSpaceCreateWithName(kCGColorSpaceSRGB));
-        auto redColor = adoptCF(CGColorCreate(sRGBColorSpace.get(), redColorComponents));
-        EXPECT_TRUE(CGColorEqualToColor(manifest._themeColor.CGColor, redColor.get()));
 
         done = true;
     }];
@@ -211,16 +173,6 @@ TEST(ApplicationManifest, AlwaysFetch)
         done = true;
     }];
     Util::run(&done);
-
-    done = false;
-    [webView getApplicationManifestWithCompletionHandler:^(WKApplicationManifest *manifest) {
-        auto sRGBColorSpace = adoptCF(CGColorSpaceCreateWithName(kCGColorSpaceSRGB));
-        auto redColor = adoptCF(CGColorCreate(sRGBColorSpace.get(), redColorComponents));
-        EXPECT_TRUE(CGColorEqualToColor(manifest._themeColor.CGColor, redColor.get()));
-
-        done = true;
-    }];
-    Util::run(&done);
 }
 
 TEST(ApplicationManifest, OnlyFirstManifest)
@@ -247,16 +199,6 @@ TEST(ApplicationManifest, OnlyFirstManifest)
         done = true;
     }];
     Util::run(&done);
-
-    done = false;
-    [webView getApplicationManifestWithCompletionHandler:^(WKApplicationManifest *manifest) {
-        auto sRGBColorSpace = adoptCF(CGColorSpaceCreateWithName(kCGColorSpaceSRGB));
-        auto redColor = adoptCF(CGColorCreate(sRGBColorSpace.get(), redColorComponents));
-        EXPECT_TRUE(CGColorEqualToColor(manifest._themeColor.CGColor, redColor.get()));
-
-        done = true;
-    }];
-    Util::run(&done);
 }
 
 TEST(ApplicationManifest, NoManifest)
@@ -269,14 +211,6 @@ TEST(ApplicationManifest, NoManifest)
 
     __block bool done = false;
     [webView _getApplicationManifestWithCompletionHandler:^(_WKApplicationManifest *manifest) {
-        EXPECT_NULL(manifest);
-
-        done = true;
-    }];
-    Util::run(&done);
-
-    done = false;
-    [webView getApplicationManifestWithCompletionHandler:^(WKApplicationManifest *manifest) {
         EXPECT_NULL(manifest);
 
         done = true;
@@ -308,16 +242,6 @@ TEST(ApplicationManifest, MediaAttriute)
         done = true;
     }];
     Util::run(&done);
-
-    done = false;
-    [webView getApplicationManifestWithCompletionHandler:^(WKApplicationManifest *manifest) {
-        auto sRGBColorSpace = adoptCF(CGColorSpaceCreateWithName(kCGColorSpaceSRGB));
-        auto redColor = adoptCF(CGColorCreate(sRGBColorSpace.get(), redColorComponents));
-        EXPECT_TRUE(CGColorEqualToColor(manifest._themeColor.CGColor, redColor.get()));
-
-        done = true;
-    }];
-    Util::run(&done);
 }
 
 TEST(ApplicationManifest, DoesNotExist)
@@ -330,14 +254,6 @@ TEST(ApplicationManifest, DoesNotExist)
 
     __block bool done = false;
     [webView _getApplicationManifestWithCompletionHandler:^(_WKApplicationManifest *manifest) {
-        EXPECT_NULL(manifest);
-
-        done = true;
-    }];
-    Util::run(&done);
-
-    done = false;
-    [webView getApplicationManifestWithCompletionHandler:^(WKApplicationManifest *manifest) {
         EXPECT_NULL(manifest);
 
         done = true;
@@ -356,14 +272,6 @@ TEST(ApplicationManifest, Blocked)
 
     __block bool done = false;
     [webView _getApplicationManifestWithCompletionHandler:^(_WKApplicationManifest *manifest) {
-        EXPECT_NULL(manifest);
-
-        done = true;
-    }];
-    Util::run(&done);
-
-    done = false;
-    [webView getApplicationManifestWithCompletionHandler:^(WKApplicationManifest *manifest) {
         EXPECT_NULL(manifest);
 
         done = true;
@@ -417,56 +325,6 @@ TEST(ApplicationManifest, Icons)
 
         size_t iconIndex = 0;
         for (_WKApplicationManifestIcon *icon in manifest.icons) {
-            NSDictionary *expectedIcon = expectedIcons[iconIndex];
-            NSString *expectedURLString = [expectedIcon objectForKey:@"src"];
-            EXPECT_TRUE([icon.src isEqual:[NSURL URLWithString:expectedURLString]]);
-            EXPECT_TRUE([icon.type isEqual:[expectedIcon objectForKey:@"type"]]);
-
-            switch (iconIndex) {
-            case 0:
-                EXPECT_EQ(icon.sizes.count, 1ul);
-                EXPECT_TRUE([icon.sizes[0] isEqual:[expectedIcon objectForKey:@"sizes"]]);
-                EXPECT_EQ(icon.purposes.count, 1ul);
-                EXPECT_EQ(icon.purposes[0].unsignedLongValue, 1ul);
-                break;
-
-            case 1:
-                EXPECT_EQ(icon.sizes.count, 1ul);
-                EXPECT_TRUE([icon.sizes[0] isEqual:[expectedIcon objectForKey:@"sizes"]]);
-                EXPECT_EQ(icon.purposes.count, 2ul);
-                EXPECT_EQ(icon.purposes[0].unsignedLongValue, 2ul);
-                EXPECT_EQ(icon.purposes[1].unsignedLongValue, 4ul);
-                break;
-
-            case 2:
-                EXPECT_EQ(icon.sizes.count, 2ul);
-                EXPECT_TRUE([icon.sizes[0] isEqual:@"96x96"]);
-                EXPECT_TRUE([icon.sizes[1] isEqual:@"128x128"]);
-                EXPECT_EQ(icon.purposes.count, 1ul);
-                EXPECT_EQ(icon.purposes[0].unsignedLongValue, 2ul);
-                break;
-            }
-
-            ++iconIndex;
-        }
-        done = true;
-    }];
-    Util::run(&done);
-
-    done = false;
-    [webView getApplicationManifestWithCompletionHandler:^(WKApplicationManifest *manifest) {
-        EXPECT_TRUE([manifest._name isEqualToString:@"A Web Application"]);
-        EXPECT_TRUE([manifest._shortName isEqualToString:@"WebApp"]);
-        EXPECT_TRUE([manifest._applicationDescription isEqualToString:@"Hello."]);
-        EXPECT_TRUE([manifest._startURL isEqual:[NSURL URLWithString:@"http://example.com/app/start"]]);
-        EXPECT_TRUE([manifest._scope isEqual:[NSURL URLWithString:@"http://example.com/app"]]);
-
-        auto sRGBColorSpace = adoptCF(CGColorSpaceCreateWithName(kCGColorSpaceSRGB));
-        auto redColor = adoptCF(CGColorCreate(sRGBColorSpace.get(), redColorComponents));
-        EXPECT_TRUE(CGColorEqualToColor(manifest._themeColor.CGColor, redColor.get()));
-
-        size_t iconIndex = 0;
-        for (_WKApplicationManifestIcon *icon in manifest._icons) {
             NSDictionary *expectedIcon = expectedIcons[iconIndex];
             NSString *expectedURLString = [expectedIcon objectForKey:@"src"];
             EXPECT_TRUE([icon.src isEqual:[NSURL URLWithString:expectedURLString]]);

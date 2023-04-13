@@ -37,6 +37,7 @@
 #include "LayoutRect.h"
 #include "LengthBox.h"
 #include "LoadSchedulingMode.h"
+#include "LocalFrame.h"
 #include "MediaProducer.h"
 #include "MediaSessionGroupIdentifier.h"
 #include "Pagination.h"
@@ -124,7 +125,6 @@ class EditorClient;
 class Element;
 class FocusController;
 class FormData;
-class Frame;
 class HTMLElement;
 class HTMLMediaElement;
 class HistoryItem;
@@ -236,12 +236,14 @@ enum class RenderingUpdateStep : uint32_t {
     VideoFrameCallbacks             = 1 << 15,
     PrepareCanvasesForDisplay       = 1 << 16,
     CaretAnimation                  = 1 << 17,
+    FocusFixup                      = 1 << 18,
 };
 
-enum LookalikeCharacterSanitizationTrigger : uint8_t {
+enum class LookalikeCharacterSanitizationTrigger : uint8_t {
     Unspecified,
     Navigation,
     Copy,
+    Paste,
 };
 
 constexpr OptionSet<RenderingUpdateStep> updateRenderingSteps = {
@@ -293,6 +295,8 @@ public:
     WEBCORE_EXPORT OptionSet<DisabledAdaptations> disabledAdaptations() const;
     WEBCORE_EXPORT ViewportArguments viewportArguments() const;
 
+    WEBCORE_EXPORT void reloadExecutionContextsForOrigin(const ClientOrigin&, std::optional<FrameIdentifier> triggeringFrame) const;
+
     const std::optional<ViewportArguments>& overrideViewportArguments() const { return m_overrideViewportArguments; }
     WEBCORE_EXPORT void setOverrideViewportArguments(const std::optional<ViewportArguments>&);
 
@@ -337,29 +341,34 @@ public:
     void setCurrentKeyboardScrollingAnimator(KeyboardScrollingAnimator*);
     KeyboardScrollingAnimator* currentKeyboardScrollingAnimator() const { return m_currentKeyboardScrollingAnimator.get(); }
 
+    bool isLoadingInHeadlessMode() const;
 
 #if ENABLE(REMOTE_INSPECTOR)
     WEBCORE_EXPORT bool inspectable() const;
     WEBCORE_EXPORT void setInspectable(bool);
     WEBCORE_EXPORT String remoteInspectionNameOverride() const;
     WEBCORE_EXPORT void setRemoteInspectionNameOverride(const String&);
-    void remoteInspectorInformationDidChange() const;
+    void remoteInspectorInformationDidChange();
 #endif
 
-    Chrome& chrome() const { return *m_chrome; }
-    DragCaretController& dragCaretController() const { return *m_dragCaretController; }
+    Chrome& chrome() { return m_chrome.get(); }
+    const Chrome& chrome() const { return m_chrome.get(); }
+    DragCaretController& dragCaretController() { return m_dragCaretController.get(); }
+    const DragCaretController& dragCaretController() const { return m_dragCaretController.get(); }
 #if ENABLE(DRAG_SUPPORT)
-    DragController& dragController() const { return *m_dragController; }
+    DragController& dragController() { return m_dragController.get(); }
+    const DragController& dragController() const { return m_dragController.get(); }
 #endif
     FocusController& focusController() const { return *m_focusController; }
 #if ENABLE(CONTEXT_MENUS)
-    ContextMenuController& contextMenuController() const { return *m_contextMenuController; }
+    ContextMenuController& contextMenuController() { return m_contextMenuController.get(); }
+    const ContextMenuController& contextMenuController() const { return m_contextMenuController.get(); }
 #endif
-    UserInputBridge& userInputBridge() const { return *m_userInputBridge; }
-    InspectorController& inspectorController() const { return *m_inspectorController; }
-    PointerCaptureController& pointerCaptureController() const { return *m_pointerCaptureController; }
+    UserInputBridge& userInputBridge() { return m_userInputBridge.get(); }
+    InspectorController& inspectorController() { return m_inspectorController.get(); }
+    PointerCaptureController& pointerCaptureController() { return m_pointerCaptureController.get(); }
 #if ENABLE(POINTER_LOCK)
-    PointerLockController& pointerLockController() const { return *m_pointerLockController; }
+    PointerLockController& pointerLockController() { return m_pointerLockController.get(); }
 #endif
     WebRTCProvider& webRTCProvider() { return m_webRTCProvider.get(); }
     RTCController& rtcController() { return m_rtcController; }
@@ -387,10 +396,11 @@ public:
     WEBCORE_EXPORT void settingsDidChange();
 
     Settings& settings() const { return *m_settings; }
-    ProgressTracker& progress() const { return *m_progress; }
-    void progressEstimateChanged(Frame&) const;
-    void progressFinished(Frame&) const;
-    BackForwardController& backForward() const { return *m_backForwardController; }
+    ProgressTracker& progress() { return m_progress.get(); }
+    const ProgressTracker& progress() const { return m_progress.get(); }
+    void progressEstimateChanged(LocalFrame&) const;
+    void progressFinished(LocalFrame&) const;
+    BackForwardController& backForward() { return m_backForwardController.get(); }
 
     Seconds domTimerAlignmentInterval() const { return m_domTimerAlignmentInterval; }
 
@@ -577,7 +587,7 @@ public:
 
 #if ENABLE(WHEEL_EVENT_LATCHING)
     ScrollLatchingController& scrollLatchingController();
-    ScrollLatchingController* scrollLatchingControllerIfExists();
+    ScrollLatchingController* scrollLatchingControllerIfExists() { return m_scrollLatchingController.get(); }
 #endif // ENABLE(WHEEL_EVENT_LATCHING)
 
 #if ENABLE(APPLE_PAY)
@@ -617,8 +627,8 @@ public:
 #endif
 
     // Notifications when the Page starts and stops being presented via a native window.
-    WEBCORE_EXPORT void setActivityState(OptionSet<ActivityState::Flag>);
-    OptionSet<ActivityState::Flag> activityState() const { return m_activityState; }
+    WEBCORE_EXPORT void setActivityState(OptionSet<ActivityState>);
+    OptionSet<ActivityState> activityState() const { return m_activityState; }
 
     bool isWindowActive() const;
     bool isVisibleAndActive() const;
@@ -645,6 +655,7 @@ public:
     WEBCORE_EXPORT void isolatedUpdateRendering();
     // Called when the rendering update steps are complete, but before painting.
     WEBCORE_EXPORT void finalizeRenderingUpdate(OptionSet<FinalizeRenderingUpdateFlags>);
+    WEBCORE_EXPORT void finalizeRenderingUpdateForRootFrame(LocalFrame&, OptionSet<FinalizeRenderingUpdateFlags>);
 
     // Called before and after the "display" steps of the rendering update: painting, and when we push
     // layers to the platform compositor.
@@ -667,6 +678,7 @@ public:
     bool scriptedAnimationsSuspended() const { return m_scriptedAnimationsSuspended; }
 
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
+    void updatePlayStateForAllAnimations();
     WEBCORE_EXPORT void setImageAnimationEnabled(bool);
     void addIndividuallyPlayingAnimationElement(HTMLImageElement&);
     void removeIndividuallyPlayingAnimationElement(HTMLImageElement&);
@@ -698,9 +710,11 @@ public:
 
     WEBCORE_EXPORT void setCORSDisablingPatterns(Vector<UserContentURLPattern>&&);
     const Vector<UserContentURLPattern>& corsDisablingPatterns() const { return m_corsDisablingPatterns; }
+    WEBCORE_EXPORT void addCORSDisablingPatternForTesting(UserContentURLPattern&&);
 
     WEBCORE_EXPORT void setMemoryCacheClientCallsEnabled(bool);
     bool areMemoryCacheClientCallsEnabled() const { return m_areMemoryCacheClientCallsEnabled; }
+    void setHasPendingMemoryCacheLoadNotifications(bool hasPendingMemoryCacheLoadNotifications) { m_hasPendingMemoryCacheLoadNotifications = hasPendingMemoryCacheLoadNotifications; }
 
     // Don't allow more than a certain number of frames in a page.
     // This seems like a reasonable upper bound, and otherwise mutually
@@ -716,7 +730,6 @@ public:
 
     WEBCORE_EXPORT VisibilityState visibilityState() const;
     WEBCORE_EXPORT void resumeAnimatingImages();
-    void updatePlayStateForAllAnimations();
 
     void didFinishLoadingImageForElement(HTMLImageElement&);
 
@@ -764,10 +777,12 @@ public:
     void sawMediaEngine(const String& engineName);
     void resetSeenMediaEngines();
 
-    PageConsoleClient& console() { return *m_consoleClient; }
+    PageConsoleClient& console() { return m_consoleClient.get(); }
+    const PageConsoleClient& console() const { return m_consoleClient.get(); }
 
 #if ENABLE(REMOTE_INSPECTOR)
-    PageDebuggable& inspectorDebuggable() const { return *m_inspectorDebuggable.get(); }
+    PageDebuggable& inspectorDebuggable() { return m_inspectorDebuggable.get(); }
+    const PageDebuggable& inspectorDebuggable() const { return m_inspectorDebuggable.get(); }
 #endif
 
     void hiddenPageCSSAnimationSuspensionStateChanged();
@@ -807,6 +822,8 @@ public:
 
     VisitedLinkStore& visitedLinkStore();
     WEBCORE_EXPORT void setVisitedLinkStore(Ref<VisitedLinkStore>&&);
+
+    std::optional<uint64_t> noiseInjectionHashSaltForDomain(const RegistrableDomain&);
 
     WEBCORE_EXPORT PAL::SessionID sessionID() const;
     WEBCORE_EXPORT void setSessionID(PAL::SessionID);
@@ -908,6 +925,8 @@ public:
     bool isUtilityPage() const { return m_isUtilityPage; }
 
     WEBCORE_EXPORT bool allowsLoadFromURL(const URL&, MainFrameMainResource) const;
+    WEBCORE_EXPORT bool hasLocalDataForURL(const URL&);
+
     ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking() const { return m_shouldRelaxThirdPartyCookieBlocking; }
 
     bool isLowPowerModeEnabled() const { return m_throttlingReasons.contains(ThrottlingReason::LowPowerMode); }
@@ -945,8 +964,8 @@ public:
 
     WEBCORE_EXPORT void forEachDocument(const Function<void(Document&)>&) const;
     void forEachMediaElement(const Function<void(HTMLMediaElement&)>&);
-    static void forEachDocumentFromMainFrame(const Frame&, const Function<void(Document&)>&);
-    void forEachFrame(const Function<void(Frame&)>&);
+    static void forEachDocumentFromMainFrame(const LocalFrame&, const Function<void(Document&)>&);
+    void forEachFrame(const Function<void(LocalFrame&)>&);
 
     bool shouldDisableCorsForRequestTo(const URL&) const;
     const HashSet<String>& maskedURLSchemes() const { return m_maskedURLSchemes; }
@@ -966,6 +985,7 @@ public:
 
     URL sanitizeLookalikeCharacters(const URL&, LookalikeCharacterSanitizationTrigger) const;
     String sanitizeLookalikeCharacters(const String&, LookalikeCharacterSanitizationTrigger) const;
+    URL allowedLookalikeCharacters(const URL&) const;
 
     LoadSchedulingMode loadSchedulingMode() const { return m_loadSchedulingMode; }
     void setLoadSchedulingMode(LoadSchedulingMode);
@@ -1011,6 +1031,9 @@ public:
 
     void willBeginScrolling();
     void didFinishScrolling();
+
+    const WeakHashSet<LocalFrame>& rootFrames() const { return m_rootFrames; }
+    void addRootFrame(LocalFrame& frame) { m_rootFrames.add(frame); }
 
 private:
     struct Navigation {
@@ -1064,28 +1087,29 @@ private:
     void updateElementsWithTextRecognitionResults();
 #endif
 
-    const std::unique_ptr<Chrome> m_chrome;
-    const std::unique_ptr<DragCaretController> m_dragCaretController;
+    UniqueRef<Chrome> m_chrome;
+    UniqueRef<DragCaretController> m_dragCaretController;
 
 #if ENABLE(DRAG_SUPPORT)
-    const std::unique_ptr<DragController> m_dragController;
+    UniqueRef<DragController> m_dragController;
 #endif
-    const std::unique_ptr<FocusController> m_focusController;
+    std::unique_ptr<FocusController> m_focusController;
 #if ENABLE(CONTEXT_MENUS)
-    const std::unique_ptr<ContextMenuController> m_contextMenuController;
+    UniqueRef<ContextMenuController> m_contextMenuController;
 #endif
-    const std::unique_ptr<UserInputBridge> m_userInputBridge;
-    const std::unique_ptr<InspectorController> m_inspectorController;
-    const std::unique_ptr<PointerCaptureController> m_pointerCaptureController;
+    UniqueRef<UserInputBridge> m_userInputBridge;
+    UniqueRef<InspectorController> m_inspectorController;
+    UniqueRef<PointerCaptureController> m_pointerCaptureController;
 #if ENABLE(POINTER_LOCK)
-    const std::unique_ptr<PointerLockController> m_pointerLockController;
+    UniqueRef<PointerLockController> m_pointerLockController;
 #endif
     RefPtr<ScrollingCoordinator> m_scrollingCoordinator;
 
     const RefPtr<Settings> m_settings;
-    const std::unique_ptr<ProgressTracker> m_progress;
+    UniqueRef<ProgressTracker> m_progress;
 
-    const std::unique_ptr<BackForwardController> m_backForwardController;
+    UniqueRef<BackForwardController> m_backForwardController;
+    WeakHashSet<LocalFrame> m_rootFrames;
     Ref<Frame> m_mainFrame;
 
     RefPtr<PluginData> m_pluginData;
@@ -1125,6 +1149,7 @@ private:
 
     bool m_inLowQualityInterpolationMode { false };
     bool m_areMemoryCacheClientCallsEnabled { true };
+    bool m_hasPendingMemoryCacheLoadNotifications { false };
     float m_mediaVolume { 1 };
     MediaProducerMutedStateFlags m_mutedState;
 
@@ -1164,7 +1189,7 @@ private:
     String m_userStyleSheetPath;
     mutable String m_userStyleSheet;
     mutable bool m_didLoadUserStyleSheet { false };
-    mutable std::optional<WallTime> m_userStyleSheetModificationTime;
+    mutable Markable<WallTime> m_userStyleSheetModificationTime;
 
     String m_captionUserPreferencesStyleSheet;
 
@@ -1186,7 +1211,7 @@ private:
 
     bool m_isEditable { false };
     bool m_isPrerender { false };
-    OptionSet<ActivityState::Flag> m_activityState;
+    OptionSet<ActivityState> m_activityState;
 
     OptionSet<LayoutMilestone> m_requestedLayoutMilestones;
 
@@ -1206,10 +1231,10 @@ private:
     std::unique_ptr<AlternativeTextClient> m_alternativeTextClient;
 
     bool m_scriptedAnimationsSuspended { false };
-    const std::unique_ptr<PageConsoleClient> m_consoleClient;
+    UniqueRef<PageConsoleClient> m_consoleClient;
 
 #if ENABLE(REMOTE_INSPECTOR)
-    const std::unique_ptr<PageDebuggable> m_inspectorDebuggable;
+    UniqueRef<PageDebuggable> m_inspectorDebuggable;
 #endif
 
     RefPtr<IDBClient::IDBConnectionToServer> m_idbConnectionToServer;
@@ -1376,6 +1401,8 @@ private:
     ContentSecurityPolicyModeForExtension m_contentSecurityPolicyModeForExtension { ContentSecurityPolicyModeForExtension::None };
 
     Ref<BadgeClient> m_badgeClient;
+
+    HashMap<RegistrableDomain, uint64_t> m_noiseInjectionHashSalts;
 };
 
 inline PageGroup& Page::group()
@@ -1383,6 +1410,16 @@ inline PageGroup& Page::group()
     if (!m_group)
         initGroup();
     return *m_group;
+}
+
+inline Page* Frame::page() const
+{
+    return m_page.get();
+}
+
+inline Page* Document::page() const
+{
+    return m_frame ? m_frame->page() : nullptr;
 }
 
 WTF::TextStream& operator<<(WTF::TextStream&, RenderingUpdateStep);

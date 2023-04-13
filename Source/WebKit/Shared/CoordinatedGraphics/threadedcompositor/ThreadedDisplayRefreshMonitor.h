@@ -42,22 +42,20 @@ public:
         virtual void handleDisplayRefreshMonitorUpdate(bool) = 0;
     };
 
-    static Ref<ThreadedDisplayRefreshMonitor> create(WebCore::PlatformDisplayID displayID, Client& client)
+    static Ref<ThreadedDisplayRefreshMonitor> create(WebCore::PlatformDisplayID displayID, Client& client, WebCore::DisplayUpdate displayUpdate)
     {
-        return adoptRef(*new ThreadedDisplayRefreshMonitor(displayID, client));
+        return adoptRef(*new ThreadedDisplayRefreshMonitor(displayID, client, displayUpdate));
     }
     virtual ~ThreadedDisplayRefreshMonitor() = default;
 
     bool requestRefreshCallback() override;
 
-    bool requiresDisplayRefreshCallback();
+    bool requiresDisplayRefreshCallback(const WebCore::DisplayUpdate&);
     void dispatchDisplayRefreshCallback();
     void invalidate();
 
-    void setTargetRefreshRate(unsigned);
-
 private:
-    ThreadedDisplayRefreshMonitor(WebCore::PlatformDisplayID, Client&);
+    ThreadedDisplayRefreshMonitor(WebCore::PlatformDisplayID, Client&, WebCore::DisplayUpdate);
 
     bool startNotificationMechanism() final { return true; }
     void stopNotificationMechanism() final { }
@@ -65,8 +63,7 @@ private:
     void displayRefreshCallback();
     RunLoop::Timer m_displayRefreshTimer;
     Client* m_client;
-    unsigned m_targetRefreshRate;
-    WebCore::DisplayUpdate m_currentUpdate;
+    WebCore::DisplayUpdate m_displayUpdate;
 };
 
 } // namespace WebKit

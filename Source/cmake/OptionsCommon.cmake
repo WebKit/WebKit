@@ -18,9 +18,20 @@ if (WTF_CPU_ARM)
     #error \"Thumb2 instruction set isn't available\"
     #endif
     int main() {}
-   ")
+    ")
 
+    if (COMPILER_IS_CLANG AND NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Darwin"))
+        set(CLANG_EXTRA_ARM_ARGS " -mthumb")
+    endif ()
+
+    set(CMAKE_REQUIRED_FLAGS "${CLANG_EXTRA_ARM_ARGS}")
     CHECK_CXX_SOURCE_COMPILES("${ARM_THUMB2_TEST_SOURCE}" ARM_THUMB2_DETECTED)
+    unset(CMAKE_REQUIRED_FLAGS)
+
+    if (ARM_THUMB2_DETECTED AND NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Darwin"))
+        string(APPEND CMAKE_C_FLAGS " ${CLANG_EXTRA_ARM_ARGS}")
+        string(APPEND CMAKE_CXX_FLAGS " ${CLANG_EXTRA_ARM_ARGS}")
+    endif ()
 endif ()
 
 # Use ld.lld when building with LTO, or for debug builds, if available.
@@ -154,7 +165,7 @@ if (USE_THIN_ARCHIVES)
 endif ()
 
 set(ENABLE_DEBUG_FISSION_DEFAULT OFF)
-if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+if (ENABLE_DEVELOPER_MODE AND (CMAKE_BUILD_TYPE STREQUAL "Debug" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo") AND NOT CMAKE_GENERATOR MATCHES "Visual Studio")
     check_cxx_compiler_flag(-gsplit-dwarf CXX_COMPILER_SUPPORTS_GSPLIT_DWARF)
     if (CXX_COMPILER_SUPPORTS_GSPLIT_DWARF AND LD_SUPPORTS_SPLIT_DEBUG)
         set(ENABLE_DEBUG_FISSION_DEFAULT ON)
@@ -258,4 +269,8 @@ endif ()
 
 if (STD_REMOVE_CVREF_IS_AVAILABLE)
     SET_AND_EXPOSE_TO_BUILD(HAVE_STD_REMOVE_CVREF TRUE)
+endif ()
+
+if (STD_SPAN_IS_AVAILABLE)
+    SET_AND_EXPOSE_TO_BUILD(HAVE_STD_SPAN TRUE)
 endif ()

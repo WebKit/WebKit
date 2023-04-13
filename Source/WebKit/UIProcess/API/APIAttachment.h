@@ -28,7 +28,6 @@
 #if ENABLE(ATTACHMENT_ELEMENT)
 
 #include "APIObject.h"
-#include "GenericCallback.h"
 #include "WKBase.h"
 #include <wtf/Function.h>
 #include <wtf/Lock.h>
@@ -36,6 +35,7 @@
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
+OBJC_CLASS NSData;
 OBJC_CLASS NSFileWrapper;
 OBJC_CLASS NSString;
 

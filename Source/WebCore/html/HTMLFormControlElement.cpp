@@ -27,15 +27,18 @@
 
 #include "Autofill.h"
 #include "ControlStates.h"
+#include "ElementInlines.h"
 #include "Event.h"
 #include "EventHandler.h"
 #include "EventNames.h"
 #include "FormAssociatedElement.h"
-#include "Frame.h"
-#include "FrameView.h"
+#include "HTMLButtonElement.h"
 #include "HTMLFormElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLParserIdioms.h"
+#include "LocalFrame.h"
+#include "LocalFrameView.h"
+#include "PopoverData.h"
 #include "PseudoClassChangeInvalidation.h"
 #include "Quirks.h"
 #include "RenderBox.h"
@@ -56,13 +59,12 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLFormControlElement);
 using namespace HTMLNames;
 
 HTMLFormControlElement::HTMLFormControlElement(const QualifiedName& tagName, Document& document, HTMLFormElement* form)
-    : HTMLElement(tagName, document)
+    : HTMLElement(tagName, document, CreateHTMLFormControlElement)
     , ValidatedFormListedElement(form)
     , m_isRequired(false)
     , m_valueMatchesRenderer(false)
     , m_wasChangedSinceLastFormControlChangeEvent(false)
 {
-    setHasCustomStyleResolveCallbacks();
 }
 
 HTMLFormControlElement::~HTMLFormControlElement()
@@ -139,20 +141,23 @@ void HTMLFormControlElement::removedFromAncestor(RemovalType removalType, Contai
 {
     HTMLElement::removedFromAncestor(removalType, oldParentOfRemovedTree);
     ValidatedFormListedElement::removedFromAncestor(removalType, oldParentOfRemovedTree);
+    checkAndPossiblyClosePopoverStack();
 }
 
-void HTMLFormControlElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void HTMLFormControlElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     if (name == requiredAttr) {
-        bool newRequired = !value.isNull();
+        bool newRequired = !newValue.isNull();
         if (m_isRequired != newRequired) {
             Style::PseudoClassChangeInvalidation requiredInvalidation(*this, { { CSSSelector::PseudoClassRequired, newRequired }, { CSSSelector::PseudoClassOptional, !newRequired } });
             m_isRequired = newRequired;
             requiredStateChanged();
         }
-    } else {
-        HTMLElement::parseAttribute(name, value);
-        ValidatedFormListedElement::parseAttribute(name, value);
+    } else if (name == popovertargetAttr)
+        checkAndPossiblyClosePopoverStack();
+    else {
+        HTMLElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
+        ValidatedFormListedElement::parseAttribute(name, newValue);
     }
 }
 
@@ -168,6 +173,7 @@ void HTMLFormControlElement::disabledStateChanged()
     ValidatedFormListedElement::disabledStateChanged();
     if (renderer() && renderer()->style().hasEffectiveAppearance())
         renderer()->theme().stateChanged(*renderer(), ControlStates::States::Enabled);
+    checkAndPossiblyClosePopoverStack();
 }
 
 void HTMLFormControlElement::readOnlyStateChanged()
@@ -320,10 +326,95 @@ String HTMLFormControlElement::resultForDialogSubmit() const
     return attributeWithoutSynchronization(HTMLNames::valueAttr);
 }
 
+static const AtomString& toggleAtom()
+{
+    static MainThreadNeverDestroyed<const AtomString> identifier("toggle"_s);
+    return identifier;
+}
+
+static const AtomString& showAtom()
+{
+    static MainThreadNeverDestroyed<const AtomString> identifier("show"_s);
+    return identifier;
+}
+
+static const AtomString& hideAtom()
+{
+    static MainThreadNeverDestroyed<const AtomString> identifier("hide"_s);
+    return identifier;
+}
+
+// https://html.spec.whatwg.org/#popover-target-element
+HTMLElement* HTMLFormControlElement::popoverTargetElement() const
+{
+    auto canInvokePopovers = [](const HTMLFormControlElement& element) -> bool {
+        if (auto* inputElement = dynamicDowncast<HTMLInputElement>(element))
+            return inputElement->isTextButton() || inputElement->isImageButton();
+        return is<HTMLButtonElement>(element);
+    };
+
+    if (!canInvokePopovers(*this))
+        return nullptr;
+
+    if (isDisabledFormControl())
+        return nullptr;
+
+    if (form() && isSubmitButton())
+        return nullptr;
+
+    auto* element = dynamicDowncast<HTMLElement>(getElementAttribute(popovertargetAttr));
+    if (element && element->popoverState() != PopoverState::None)
+        return element;
+    return nullptr;
+}
+
+const AtomString& HTMLFormControlElement::popoverTargetAction() const
+{
+    auto value = attributeWithoutSynchronization(HTMLNames::popovertargetactionAttr);
+
+    if (equalIgnoringASCIICase(value, showAtom()))
+        return showAtom();
+    if (equalIgnoringASCIICase(value, hideAtom()))
+        return hideAtom();
+
+    return toggleAtom();
+}
+
+void HTMLFormControlElement::setPopoverTargetAction(const AtomString& value)
+{
+    setAttributeWithoutSynchronization(HTMLNames::popovertargetactionAttr, value);
+}
+
+// https://html.spec.whatwg.org/#popover-target-attribute-activation-behavior
+void HTMLFormControlElement::handlePopoverTargetAction() const
+{
+    RefPtr target = popoverTargetElement();
+    if (!target)
+        return;
+
+    ASSERT(target->popoverData());
+
+    auto action = popoverTargetAction();
+    bool canHide = action == hideAtom() || action == toggleAtom();
+    bool canShow = action == showAtom() || action == toggleAtom();
+    if (canHide && target->popoverData()->visibilityState() == PopoverVisibilityState::Showing)
+        target->hidePopover();
+    else if (canShow && target->popoverData()->visibilityState() == PopoverVisibilityState::Hidden) {
+        target->popoverData()->setInvoker(this);
+        target->showPopover();
+    }
+}
+
 // FIXME: We should remove the quirk once <rdar://problem/47334655> is fixed.
 bool HTMLFormControlElement::needsMouseFocusableQuirk() const
 {
     return document().quirks().needsFormControlToBeMouseFocusable();
+}
+
+void HTMLFormControlElement::didChangeForm()
+{
+    ValidatedFormListedElement::didChangeForm();
+    checkAndPossiblyClosePopoverStack();
 }
 
 } // namespace Webcore

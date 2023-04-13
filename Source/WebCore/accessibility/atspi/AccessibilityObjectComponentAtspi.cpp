@@ -26,7 +26,7 @@
 #include "AccessibilityObject.h"
 #include "AccessibilityObjectInterface.h"
 #include "Document.h"
-#include "FrameView.h"
+#include "LocalFrameView.h"
 #include "RenderLayer.h"
 
 namespace WebCore {
@@ -62,7 +62,7 @@ GDBusInterfaceVTable AccessibilityObjectAtspi::s_componentFunctions = {
             auto rect = atspiObject->elementRect(Atspi::CoordinateType::ParentCoordinates);
             g_dbus_method_invocation_return_value(invocation, g_variant_new("(ii)", rect.width(), rect.height()));
         } else if (!g_strcmp0(methodName, "GetLayer"))
-            g_dbus_method_invocation_return_value(invocation, g_variant_new("(u)", Atspi::ComponentLayer::WidgetLayer));
+            g_dbus_method_invocation_return_value(invocation, g_variant_new("(u)", static_cast<uint32_t>(Atspi::ComponentLayer::WidgetLayer)));
         else if (!g_strcmp0(methodName, "GetMDIZOrder"))
             g_dbus_method_invocation_return_value(invocation, g_variant_new("(n)", 0));
         else if (!g_strcmp0(methodName, "GrabFocus"))
@@ -72,7 +72,7 @@ GDBusInterfaceVTable AccessibilityObjectAtspi::s_componentFunctions = {
         else if (!g_strcmp0(methodName, "ScrollTo")) {
             uint32_t scrollType;
             g_variant_get(parameters, "(u)", &scrollType);
-            atspiObject->scrollToMakeVisible(scrollType);
+            atspiObject->scrollToMakeVisible(static_cast<Atspi::ScrollType>(scrollType));
             g_dbus_method_invocation_return_value(invocation, g_variant_new("(b)", TRUE));
         } else if (!g_strcmp0(methodName, "ScrollToPoint")) {
             int x, y;
@@ -160,7 +160,7 @@ float AccessibilityObjectAtspi::opacity() const
     return 1;
 }
 
-void AccessibilityObjectAtspi::scrollToMakeVisible(uint32_t scrollType) const
+void AccessibilityObjectAtspi::scrollToMakeVisible(Atspi::ScrollType scrollType) const
 {
     auto* liveObject = dynamicDowncast<AccessibilityObject>(m_coreObject);
     if (!liveObject)

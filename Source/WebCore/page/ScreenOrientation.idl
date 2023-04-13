@@ -28,8 +28,8 @@
     EnabledBySetting=ScreenOrientationAPIEnabled,
     Exposed=Window
 ] interface ScreenOrientation : EventTarget {
-    Promise<undefined> lock(OrientationLockType orientation);
-    undefined unlock();
+    [EnabledBySetting=ScreenOrientationLockingAPIEnabled] Promise<undefined> lock(OrientationLockType orientation);
+    [EnabledBySetting=ScreenOrientationLockingAPIEnabled] undefined unlock();
     readonly attribute OrientationType type;
     readonly attribute unsigned short angle;
     attribute EventHandler onchange;

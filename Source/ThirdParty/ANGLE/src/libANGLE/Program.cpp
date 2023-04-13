@@ -611,18 +611,22 @@ bool IsActiveInterfaceBlock(const sh::InterfaceBlock &interfaceBlock)
 
 void WriteBlockMemberInfo(BinaryOutputStream *stream, const sh::BlockMemberInfo &var)
 {
+    stream->writeInt<GLenum>(var.type);
     stream->writeInt(var.arrayStride);
     stream->writeBool(var.isRowMajorMatrix);
     stream->writeInt(var.matrixStride);
+    stream->writeInt(var.arraySize);
     stream->writeInt(var.offset);
     stream->writeInt(var.topLevelArrayStride);
 }
 
 void LoadBlockMemberInfo(BinaryInputStream *stream, sh::BlockMemberInfo *var)
 {
+    var->type                = stream->readInt<GLenum>();
     var->arrayStride         = stream->readInt<int>();
     var->isRowMajorMatrix    = stream->readBool();
     var->matrixStride        = stream->readInt<int>();
+    var->arraySize           = stream->readInt<int>();
     var->offset              = stream->readInt<int>();
     var->topLevelArrayStride = stream->readInt<int>();
 }
@@ -1078,6 +1082,12 @@ void Program::bindFragmentOutputIndex(GLuint index, const char *name)
 
 angle::Result Program::link(const Context *context)
 {
+    const angle::FrontendFeatures &frontendFeatures = context->getFrontendFeatures();
+    if (frontendFeatures.dumpShaderSource.enabled)
+    {
+        dumpProgramInfo();
+    }
+
     angle::Result result = linkImpl(context);
 
     // Avoid having two ProgramExecutables if the link failed and the Program had successfully
@@ -1454,11 +1464,6 @@ angle::Result Program::loadBinary(const Context *context,
     ASSERT(!mLinkingState);
     unlink();
     InfoLog &infoLog = mState.mExecutable->getInfoLog();
-
-    if (!angle::GetANGLEHasBinaryLoading())
-    {
-        return angle::Result::Incomplete;
-    }
 
     ASSERT(binaryFormat == GL_PROGRAM_BINARY_ANGLE);
     if (binaryFormat != GL_PROGRAM_BINARY_ANGLE)
@@ -3708,4 +3713,34 @@ void Program::postResolveLink(const gl::Context *context)
         mState.mBaseInstanceLocation = getUniformLocation("gl_BaseInstance").value;
     }
 }
+
+void Program::dumpProgramInfo() const
+{
+    std::stringstream dumpStream;
+    for (ShaderType shaderType : angle::AllEnums<ShaderType>())
+    {
+        gl::Shader *shader = mState.mAttachedShaders[shaderType];
+        if (shader)
+        {
+            dumpStream << shader->getType() << ": "
+                       << GetShaderDumpFileName(shader->getSourceHash()) << std::endl;
+        }
+    }
+
+    std::string dump = dumpStream.str();
+    size_t dumpHash  = std::hash<std::string>{}(dump);
+
+    std::stringstream pathStream;
+    std::string shaderDumpDir = GetShaderDumpFileDirectory();
+    if (!shaderDumpDir.empty())
+    {
+        pathStream << shaderDumpDir << "/";
+    }
+    pathStream << dumpHash << ".program";
+    std::string path = pathStream.str();
+
+    writeFile(path.c_str(), dump.c_str(), dump.length());
+    INFO() << "Dumped program: " << path;
+}
+
 }  // namespace gl

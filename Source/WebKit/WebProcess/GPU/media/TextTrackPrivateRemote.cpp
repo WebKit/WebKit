@@ -27,7 +27,7 @@
 #include "config.h"
 #include "TextTrackPrivateRemote.h"
 
-#if ENABLE(GPU_PROCESS)
+#if ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
 
 #include "DataReference.h"
 #include "GPUProcessConnection.h"
@@ -168,4 +168,4 @@ void TextTrackPrivateRemote::removeDataCue(MediaTime&& start, MediaTime&& end, S
 
 } // namespace WebKit
 
-#endif // ENABLE(GPU_PROCESS)
+#endif // ENABLE(GPU_PROCESS) && ENABLE(VIDEO)

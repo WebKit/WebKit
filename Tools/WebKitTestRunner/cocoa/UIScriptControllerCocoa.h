@@ -78,6 +78,8 @@ private:
     void dismissContactPickerWithContacts(JSValueRef) override;
 
     void completeTaskAsynchronouslyAfterActivityStateUpdate(unsigned callbackID);
+
+    unsigned long countOfUpdatesWithLayerChanges() const override;
 };
 
 } // namespace WTR

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +30,7 @@
 #include "MediaStreamTrackPrivate.h"
 #include "RealtimeMediaSource.h"
 #include "WebAudioSourceProviderCocoa.h"
+#include <wtf/MediaTime.h>
 
 namespace WebCore {
 
@@ -57,7 +58,7 @@ private:
     void trackEnabledChanged(MediaStreamTrackPrivate&) final;
 
     // RealtimeMediaSource::AudioSampleObserver
-    void audioSamplesAvailable(const MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t) final;
+    void audioSamplesAvailable(const WTF::MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t) final;
 
     WeakPtr<MediaStreamTrackPrivate> m_captureSource;
     Ref<RealtimeMediaSource> m_source;

@@ -14,6 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/headers/header-setcookie.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/headers/header-values-normalize.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/headers/header-values.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/headers/headers-basic.any.js

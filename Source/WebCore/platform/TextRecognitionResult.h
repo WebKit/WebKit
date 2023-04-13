@@ -56,16 +56,18 @@ struct TextRecognitionWordData {
 };
 
 struct TextRecognitionLineData {
-    TextRecognitionLineData(FloatQuad&& quad, Vector<TextRecognitionWordData>&& theChildren, bool newline)
+    TextRecognitionLineData(FloatQuad&& quad, Vector<TextRecognitionWordData>&& theChildren, bool newline, bool isVertical)
         : normalizedQuad(WTFMove(quad))
         , children(WTFMove(theChildren))
         , hasTrailingNewline(newline)
+        , isVertical(isVertical)
     {
     }
 
     FloatQuad normalizedQuad;
     Vector<TextRecognitionWordData> children;
     bool hasTrailingNewline { true };
+    bool isVertical { false };
 };
 
 #if ENABLE(DATA_DETECTION)

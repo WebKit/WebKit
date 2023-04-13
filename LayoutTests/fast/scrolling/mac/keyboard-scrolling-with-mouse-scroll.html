@@ -1,46 +1,81 @@
-<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true EventHandlerDrivenSmoothKeyboardScrollingEnabled=true ] -->
-
+<!DOCTYPE html> <!-- webkit-test-runner [ ScrollAnimatorEnabled=true ] -->
 <html>
+    <head>
+    <style>
+        body {
+            height: 10000px;
+            background-image: repeating-linear-gradient(white, silver 200px);
+        }
 
-<head>
+        .fixed {
+            position: fixed;
+            top: 0;
+        }
+    </style>
+    <script src="../../../resources/js-test-pre.js"></script>
     <script src="../../../resources/ui-helper.js"></script>
-    <script src="../../../resources/js-test.js"></script>
-    <meta name="viewport" content="initial-scale=1.5, user-scalable=no">
     <script>
-        if (window.testRunner) {
-            testRunner.dumpAsText();
-            testRunner.waitUntilDone();
-        }
-        
-        async function runTest()
+        var jsTestIsAsync = true;
+
+        async function scrollTest()
         {
+            await UIHelper.renderingUpdate();
+
             await UIHelper.startMonitoringWheelEvents();
-            if (!window.testRunner || !testRunner.runUIScript)
-                return;
+            eventSender.mouseMoveTo(100, 100);
 
-            await UIHelper.rawKeyDown("downArrow");
-            
-            setTimeout(async () => {
-                await UIHelper.rawKeyUp("downArrow");
-                const startingPosition = window.scrollY;
+            // normal scroll
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -10, "began", "none");
+            await UIHelper.renderingUpdate();
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -10, "changed", "none");
+            await UIHelper.renderingUpdate();
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -10, "changed", "none");
+            await UIHelper.renderingUpdate();
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -10, "changed", "none");
+            await UIHelper.renderingUpdate();
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "ended", "none");
+            await UIHelper.renderingUpdate();
 
-                await UIHelper.mouseWheelScrollAt(0, 0, 0, 0, 0, 0);
+            // momentum scroll
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -10, "none", "begin");
+            await UIHelper.renderingUpdate();
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -10, "none", "continue");
+            await UIHelper.renderingUpdate();
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -10, "none", "continue");
+            await UIHelper.renderingUpdate();
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -10, "none", "continue");
+            await UIHelper.renderingUpdate();
 
-                const position = window.scrollY;
-                if (Math.abs(startingPosition - position) < 20)
-                    debug("Successful.");
-                else
-                    debug("Unsuccessful. window.scrollY after wheel event == " + position + "; window.scrollY before wheel event == " + startingPosition);
+            startY = window.scrollY;
 
-                testRunner.notifyDone();
-            }, 100);
+            await UIHelper.rawKeyDown("upArrow");
+            await UIHelper.renderingUpdate();
+
+            await UIHelper.delayFor(100);
+
+            await UIHelper.rawKeyUp("upArrow");
+            await UIHelper.renderingUpdate();
+
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -10, "none", "continue");
+            await UIHelper.renderingUpdate();
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -10, "none", "continue");
+            await UIHelper.renderingUpdate();
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -10, "none", "continue");
+            await UIHelper.renderingUpdate();
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "none", "end");
+            await UIHelper.renderingUpdate();
+
+            endY = window.scrollY;
+            shouldBeTrue('endY >= startY');
+
+            finishJSTest();
         }
+
+        window.addEventListener('load', scrollTest, false);
     </script>
-</head>
-
-<body onload="runTest()">
-    <div style="height: 5000px;">
-    </div>
-</body>
-
+    </head>
+    <body>
+    <div class="fixed">fixed</div>
+    <script src="../../../resources/js-test-post.js"></script>
+    </body>
 </html>

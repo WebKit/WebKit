@@ -7,25 +7,25 @@ description: monthday.toLocaleString()
 features: [Temporal]
 ---*/
 
-var calendar = new Intl.DateTimeFormat("en").resolvedOptions().calendar;
+var calendar = new Intl.DateTimeFormat("en-US").resolvedOptions().calendar;
 var monthday = Temporal.PlainMonthDay.from({
   monthCode: "M11",
   day: 18,
   calendar
 });
-assert.sameValue(`${ monthday.toLocaleString("en", { timeZone: "America/New_York" }) }`, "11/18")
-assert.sameValue(`${ monthday.toLocaleString("de", {
+assert.sameValue(`${ monthday.toLocaleString("en-US", { timeZone: "America/New_York" }) }`, "11/18");
+assert.sameValue(`${ monthday.toLocaleString("de-AT", {
   timeZone: "Europe/Vienna",
   calendar
-}) }`, "18.11.")
+}) }`, "18.11.");
 
 // should ignore units not in the data type
-assert.sameValue(monthday.toLocaleString("en", { timeZoneName: "long" }), "11/18");
-assert.sameValue(monthday.toLocaleString("en", { year: "numeric" }), "11/18");
-assert.sameValue(monthday.toLocaleString("en", { hour: "numeric" }), "11/18");
-assert.sameValue(monthday.toLocaleString("en", { minute: "numeric" }), "11/18");
-assert.sameValue(monthday.toLocaleString("en", { second: "numeric" }), "11/18");
-assert.sameValue(monthday.toLocaleString("en", { weekday: "long" }), "11/18");
+assert.sameValue(monthday.toLocaleString("en-US", { timeZoneName: "long" }), "11/18");
+assert.sameValue(monthday.toLocaleString("en-US", { year: "numeric" }), "11/18");
+assert.sameValue(monthday.toLocaleString("en-US", { hour: "numeric" }), "11/18");
+assert.sameValue(monthday.toLocaleString("en-US", { minute: "numeric" }), "11/18");
+assert.sameValue(monthday.toLocaleString("en-US", { second: "numeric" }), "11/18");
+assert.sameValue(monthday.toLocaleString("en-US", { weekday: "long" }), "11/18");
 
 // works when the object's calendar is the same as the locale's calendar
 var md = Temporal.PlainMonthDay.from({

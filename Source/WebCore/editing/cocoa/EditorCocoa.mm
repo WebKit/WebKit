@@ -39,7 +39,6 @@
 #import "ElementInlines.h"
 #import "FontAttributes.h"
 #import "FontCascade.h"
-#import "Frame.h"
 #import "FrameLoader.h"
 #import "FrameSelection.h"
 #import "HTMLAttachmentElement.h"
@@ -49,6 +48,7 @@
 #import "ImageOverlay.h"
 #import "LegacyNSPasteboardTypes.h"
 #import "LegacyWebArchive.h"
+#import "LocalFrame.h"
 #import "Page.h"
 #import "PagePasteboardContext.h"
 #import "Pasteboard.h"
@@ -151,7 +151,7 @@ static RetainPtr<NSAttributedString> selectionAsAttributedString(const Document&
     if (ImageOverlay::isInsideOverlay(selection))
         return selectionInImageOverlayAsAttributedString(selection);
     auto range = selection.firstRange();
-    return range ? attributedString(*range).string : adoptNS([[NSAttributedString alloc] init]);
+    return range ? attributedString(*range).nsAttributedString() : adoptNS([[NSAttributedString alloc] init]);
 }
 
 void Editor::writeSelectionToPasteboard(Pasteboard& pasteboard)

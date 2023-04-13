@@ -114,6 +114,7 @@ private:
     void end();
 
     void setLabel(String&&);
+    void destruct();
 
     Ref<PAL::WebGPU::RenderPassEncoder> m_backing;
     WebGPU::ObjectHeap& m_objectHeap;

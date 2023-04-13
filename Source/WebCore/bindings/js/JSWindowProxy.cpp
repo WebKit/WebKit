@@ -29,12 +29,12 @@
 #include "config.h"
 #include "JSWindowProxy.h"
 
-#include "AbstractFrame.h"
 #include "CommonVM.h"
+#include "Frame.h"
 #include "GCController.h"
-#include "JSDOMWindow.h"
 #include "JSDOMWindowProperties.h"
 #include "JSEventTarget.h"
+#include "JSLocalDOMWindow.h"
 #include "JSRemoteDOMWindow.h"
 #include "ScriptController.h"
 #include "WebCoreJSClientData.h"
@@ -58,14 +58,14 @@ inline JSWindowProxy::JSWindowProxy(VM& vm, Structure& structure, DOMWrapperWorl
 {
 }
 
-void JSWindowProxy::finishCreation(VM& vm, AbstractDOMWindow& window)
+void JSWindowProxy::finishCreation(VM& vm, DOMWindow& window)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
     setWindow(window);
 }
 
-JSWindowProxy& JSWindowProxy::create(VM& vm, AbstractDOMWindow& window, DOMWrapperWorld& world)
+JSWindowProxy& JSWindowProxy::create(VM& vm, DOMWindow& window, DOMWrapperWorld& world)
 {
     auto& structure = *Structure::create(vm, 0, jsNull(), TypeInfo(PureForwardingProxyType, StructureFlags), info());
     auto& proxy = *new (NotNull, allocateCell<JSWindowProxy>(vm)) JSWindowProxy(vm, structure, world);
@@ -80,26 +80,26 @@ void JSWindowProxy::destroy(JSCell* cell)
 
 void JSWindowProxy::setWindow(VM& vm, JSDOMGlobalObject& window)
 {
-    ASSERT(window.classInfo() == JSDOMWindow::info() || window.classInfo() == JSRemoteDOMWindow::info());
+    ASSERT(window.classInfo() == JSLocalDOMWindow::info() || window.classInfo() == JSRemoteDOMWindow::info());
     setTarget(vm, &window);
     structure()->setGlobalObject(vm, &window);
     GCController::singleton().garbageCollectSoon();
 }
 
-void JSWindowProxy::setWindow(AbstractDOMWindow& domWindow)
+void JSWindowProxy::setWindow(DOMWindow& domWindow)
 {
-    // Replacing JSDOMWindow via telling JSWindowProxy to use the same DOMWindow it already uses makes no sense,
+    // Replacing JSLocalDOMWindow via telling JSWindowProxy to use the same LocalDOMWindow it already uses makes no sense,
     // so we'd better never try to.
     ASSERT(!window() || &domWindow != &wrapped());
 
     bool isRemoteDOMWindow = is<RemoteDOMWindow>(domWindow);
 
     VM& vm = commonVM();
-    auto& prototypeStructure = isRemoteDOMWindow ? *JSRemoteDOMWindowPrototype::createStructure(vm, nullptr, jsNull()) : *JSDOMWindowPrototype::createStructure(vm, nullptr, jsNull());
+    auto& prototypeStructure = isRemoteDOMWindow ? *JSRemoteDOMWindowPrototype::createStructure(vm, nullptr, jsNull()) : *JSLocalDOMWindowPrototype::createStructure(vm, nullptr, jsNull());
 
     // Explicitly protect the prototype so it isn't collected when we allocate the global object.
     // (Once the global object is fully constructed, it will mark its own prototype.)
-    JSNonFinalObject* prototype = isRemoteDOMWindow ? static_cast<JSNonFinalObject*>(JSRemoteDOMWindowPrototype::create(vm, nullptr, &prototypeStructure)) : static_cast<JSNonFinalObject*>(JSDOMWindowPrototype::create(vm, nullptr, &prototypeStructure));
+    JSNonFinalObject* prototype = isRemoteDOMWindow ? static_cast<JSNonFinalObject*>(JSRemoteDOMWindowPrototype::create(vm, nullptr, &prototypeStructure)) : static_cast<JSNonFinalObject*>(JSLocalDOMWindowPrototype::create(vm, nullptr, &prototypeStructure));
     JSC::EnsureStillAliveScope protectedPrototype(prototype);
 
     JSDOMGlobalObject* window = nullptr;
@@ -107,9 +107,9 @@ void JSWindowProxy::setWindow(AbstractDOMWindow& domWindow)
         auto& windowStructure = *JSRemoteDOMWindow::createStructure(vm, nullptr, prototype);
         window = JSRemoteDOMWindow::create(vm, &windowStructure, downcast<RemoteDOMWindow>(domWindow), this);
     } else {
-        auto& localWindow = downcast<DOMWindow>(domWindow);
-        auto& windowStructure = *JSDOMWindow::createStructure(vm, nullptr, prototype);
-        window = JSDOMWindow::create(vm, &windowStructure, localWindow, this);
+        auto& localWindow = downcast<LocalDOMWindow>(domWindow);
+        auto& windowStructure = *JSLocalDOMWindow::createStructure(vm, nullptr, prototype);
+        window = JSLocalDOMWindow::create(vm, &windowStructure, localWindow, this);
         bool linkedWithNewSDK = true;
 #if PLATFORM(COCOA)
         linkedWithNewSDK = linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::DOMWindowReuseRestriction);
@@ -122,7 +122,7 @@ void JSWindowProxy::setWindow(AbstractDOMWindow& domWindow)
 
     auto& propertiesStructure = *JSDOMWindowProperties::createStructure(vm, window, JSEventTarget::prototype(vm, *window));
     auto& properties = *JSDOMWindowProperties::create(&propertiesStructure, *window);
-    properties.didBecomePrototype();
+    properties.didBecomePrototype(vm);
     prototype->structure()->setPrototypeWithoutTransition(vm, &properties);
 
     setWindow(vm, *window);
@@ -148,7 +148,7 @@ void JSWindowProxy::attachDebugger(JSC::Debugger* debugger)
         currentDebugger->detach(globalObject, JSC::Debugger::TerminatingDebuggingSession);
 }
 
-AbstractDOMWindow& JSWindowProxy::wrapped() const
+DOMWindow& JSWindowProxy::wrapped() const
 {
     auto* window = this->window();
     if (auto* jsWindow = jsDynamicCast<JSRemoteDOMWindowBase*>(window))

@@ -1,16 +1,27 @@
 <style>
+@font-face {
+  font-family: "Gulf";
+  src: url("resources/Gulf-regular.ttf");
+}
 div {
-  font-family: Monospace;
+  font-family: Gulf;
   font-size: 40px;
   margin: 50px;
 }
 span {
   text-decoration: underline;
+  text-decoration-thickness: 2px;
   text-underline-position: under;
-  text-underline-offset: -10px;
-  border: 20px solid transparent;
-  padding: 30px;
+}
+.horizontal {
+  text-underline-offset: -2px;
+  border-bottom: 2px solid red;
+}
+.vertical {
+  writing-mode: vertical-lr;
+  text-underline-offset: 6px;
+  border-left: 2px solid red;
 }
 </style>
-<div><span>XXX</span></div>
-<div style="writing-mode: vertical-lr"><span>XXX</span></div>
+<div><span class="horizontal">XXX</span></div>
+<div><span class="vertical">XXX</span></div>

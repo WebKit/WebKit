@@ -27,8 +27,8 @@
 
 #if ENABLE(INPUT_TYPE_COLOR)
 
+#include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
 
 namespace WebCore {
 class Color;
@@ -38,16 +38,18 @@ namespace WebKit {
 
 class WebPageProxy;
 
+class WebColorPickerClient {
+protected:
+    virtual ~WebColorPickerClient() = default;
+
+public:
+    virtual void didChooseColor(const WebCore::Color&) = 0;
+    virtual void didEndColorPicker() = 0;
+};
+
 class WebColorPicker : public RefCounted<WebColorPicker> {
 public:
-    class Client {
-    protected:
-        virtual ~Client() { }
-
-    public:
-        virtual void didChooseColor(const WebCore::Color&) = 0;
-        virtual void didEndColorPicker() = 0;
-    };
+    using Client = WebColorPickerClient;
 
     static Ref<WebColorPicker> create(Client* client)
     {

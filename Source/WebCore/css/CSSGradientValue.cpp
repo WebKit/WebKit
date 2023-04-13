@@ -36,6 +36,15 @@
 
 namespace WebCore {
 
+static bool styleImageIsCacheable(const CSSGradientColorStopList& stops)
+{
+    for (auto& stop : stops) {
+        if (stop.color && Style::BuilderState::isColorFromPrimitiveValueDerivedFromElement(*stop.color))
+            return false;
+    }
+    return true;
+}
+
 static inline std::optional<StyleColor> computeStyleColor(const RefPtr<CSSPrimitiveValue>& color, Style::BuilderState& state)
 {
     if (!color)
@@ -56,72 +65,121 @@ static decltype(auto) computeStops(const CSSGradientColorStopList& stops, Style:
 
 RefPtr<StyleImage> CSSLinearGradientValue::createStyleImage(Style::BuilderState& state) const
 {
-    return StyleGradientImage::create(
+    if (m_cachedStyleImage)
+        return m_cachedStyleImage;
+
+    auto styleImage = StyleGradientImage::create(
         // FIXME: The parameters to LinearData should convert down to a non-CSS specific type here (e.g. Length, double, etc.).
         StyleGradientImage::LinearData { m_data, m_repeating },
         m_colorInterpolationMethod,
         computeStops(m_stops, state)
     );
+    if (styleImageIsCacheable(m_stops))
+        m_cachedStyleImage = styleImage.ptr();
+
+    return styleImage;
 }
 
 RefPtr<StyleImage> CSSPrefixedLinearGradientValue::createStyleImage(Style::BuilderState& state) const
 {
-    return StyleGradientImage::create(
+    if (m_cachedStyleImage)
+        return m_cachedStyleImage;
+
+    auto styleImage = StyleGradientImage::create(
         // FIXME: The parameters to LinearData should convert down to a non-CSS specific type here (e.g. Length, double, etc.).
         StyleGradientImage::PrefixedLinearData { m_data, m_repeating },
         m_colorInterpolationMethod,
         computeStops(m_stops, state)
     );
+    if (styleImageIsCacheable(m_stops))
+        m_cachedStyleImage = styleImage.ptr();
+
+    return styleImage;
 }
 
 RefPtr<StyleImage> CSSDeprecatedLinearGradientValue::createStyleImage(Style::BuilderState& state) const
 {
-    return StyleGradientImage::create(
+    if (m_cachedStyleImage)
+        return m_cachedStyleImage;
+
+    auto styleImage = StyleGradientImage::create(
         // FIXME: The parameters to LinearData should convert down to a non-CSS specific type here (e.g. Length, double, etc.).
         StyleGradientImage::DeprecatedLinearData { m_data },
         m_colorInterpolationMethod,
         computeStops(m_stops, state)
     );
+    if (styleImageIsCacheable(m_stops))
+        m_cachedStyleImage = styleImage.ptr();
+
+    return styleImage;
 }
 
 RefPtr<StyleImage> CSSRadialGradientValue::createStyleImage(Style::BuilderState& state) const
 {
-    return StyleGradientImage::create(
+    if (m_cachedStyleImage)
+        return m_cachedStyleImage;
+
+    auto styleImage = StyleGradientImage::create(
         // FIXME: The parameters to RadialData should convert down to a non-CSS specific type here (e.g. Length, double, etc.).
         StyleGradientImage::RadialData { m_data, m_repeating },
         m_colorInterpolationMethod,
         computeStops(m_stops, state)
     );
+    if (styleImageIsCacheable(m_stops))
+        m_cachedStyleImage = styleImage.ptr();
+
+    return styleImage;
 }
 
 RefPtr<StyleImage> CSSPrefixedRadialGradientValue::createStyleImage(Style::BuilderState& state) const
 {
-    return StyleGradientImage::create(
+    if (m_cachedStyleImage)
+        return m_cachedStyleImage;
+
+    auto styleImage = StyleGradientImage::create(
         // FIXME: The parameters to RadialData should convert down to a non-CSS specific type here (e.g. Length, double, etc.).
         StyleGradientImage::PrefixedRadialData { m_data, m_repeating },
         m_colorInterpolationMethod,
         computeStops(m_stops, state)
     );
+    if (styleImageIsCacheable(m_stops))
+        m_cachedStyleImage = styleImage.ptr();
+
+    return styleImage;
 }
 
 RefPtr<StyleImage> CSSDeprecatedRadialGradientValue::createStyleImage(Style::BuilderState& state) const
 {
-    return StyleGradientImage::create(
+    if (m_cachedStyleImage)
+        return m_cachedStyleImage;
+
+    auto styleImage = StyleGradientImage::create(
         // FIXME: The parameters to RadialData should convert down to a non-CSS specific type here (e.g. Length, double, etc.).
         StyleGradientImage::DeprecatedRadialData { m_data },
         m_colorInterpolationMethod,
         computeStops(m_stops, state)
     );
+    if (styleImageIsCacheable(m_stops))
+        m_cachedStyleImage = styleImage.ptr();
+
+    return styleImage;
 }
 
 RefPtr<StyleImage> CSSConicGradientValue::createStyleImage(Style::BuilderState& state) const
 {
-    return StyleGradientImage::create(
+    if (m_cachedStyleImage)
+        return m_cachedStyleImage;
+
+    auto styleImage = StyleGradientImage::create(
         // FIXME: The parameters to ConicData should convert down to a non-CSS specific type here (e.g. Length, double, etc.).
         StyleGradientImage::ConicData { m_data, m_repeating },
         m_colorInterpolationMethod,
         computeStops(m_stops, state)
     );
+    if (styleImageIsCacheable(m_stops))
+        m_cachedStyleImage = styleImage.ptr();
+
+    return styleImage;
 }
 
 static void appendHueInterpolationMethod(StringBuilder& builder, HueInterpolationMethod hueInterpolationMethod)
@@ -443,6 +501,19 @@ static ASCIILiteral cssText(CSSRadialGradientValue::ExtentKeyword extent)
     RELEASE_ASSERT_NOT_REACHED();
 }
 
+static bool isCenterPosition(const CSSValue& value)
+{
+    if (isValueID(value, CSSValueCenter))
+        return true;
+    auto* number = dynamicDowncast<CSSPrimitiveValue>(value);
+    return number && number->doubleValue(CSSUnitType::CSS_PERCENTAGE) == 50;
+}
+
+static bool isCenterPosition(const CSSGradientPosition& position)
+{
+    return isCenterPosition(position.first) && isCenterPosition(position.second);
+}
+
 String CSSRadialGradientValue::customCSSText() const
 {
     StringBuilder result;
@@ -452,7 +523,7 @@ String CSSRadialGradientValue::customCSSText() const
     bool wroteSomething = false;
 
     auto appendPosition = [&](const CSSGradientPosition& position) {
-        if (!position.first->isCenterPosition() || !position.second->isCenterPosition()) {
+        if (!isCenterPosition(position)) {
             if (wroteSomething)
                 result.append(' ');
             result.append("at ");
@@ -751,13 +822,11 @@ String CSSConicGradientValue::customCSSText() const
         wroteSomething = true;
     }
 
-    if (m_data.position) {
-        if (!m_data.position->first->isCenterPosition() || !m_data.position->second->isCenterPosition()) {
-            if (wroteSomething)
-                result.append(' ');
-            result.append("at ", m_data.position->first->cssText(), ' ', m_data.position->second->cssText());
-            wroteSomething = true;
-        }
+    if (m_data.position && !isCenterPosition(*m_data.position)) {
+        if (wroteSomething)
+            result.append(' ');
+        result.append("at ", m_data.position->first->cssText(), ' ', m_data.position->second->cssText());
+        wroteSomething = true;
     }
 
     if (appendColorInterpolationMethod(result, m_colorInterpolationMethod, wroteSomething))

@@ -90,7 +90,6 @@ private:
     private:
         const Vector<CaptureDevice>& captureDevices() final { return MockRealtimeMediaSourceCenter::displayDevices(); }
         std::optional<CaptureDevice> captureDeviceWithPersistentID(CaptureDevice::DeviceType type, const String& id) final { return MockRealtimeMediaSourceCenter::captureDeviceWithPersistentID(type, id); }
-        void windowDevices(Vector<DisplayCaptureManager::WindowCaptureDevice>&) final;
     };
 
     MockAudioCaptureDeviceManager m_audioCaptureDeviceManager;

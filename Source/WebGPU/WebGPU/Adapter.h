@@ -59,7 +59,6 @@ public:
     void getProperties(WGPUAdapterProperties&);
     bool hasFeature(WGPUFeatureName);
     void requestDevice(const WGPUDeviceDescriptor&, CompletionHandler<void(WGPURequestDeviceStatus, Ref<Device>&&, String&&)>&& callback);
-    void requestInvalidDevice(CompletionHandler<void(Ref<Device>&&)>&&);
 
     bool isValid() const { return m_device; }
     void makeInvalid() { m_device = nil; }

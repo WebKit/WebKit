@@ -26,6 +26,7 @@
 #include "config.h"
 #include "JSDOMGuardedObject.h"
 
+#include "JSDOMGlobalObjectInlines.h"
 
 namespace WebCore {
 using namespace JSC;

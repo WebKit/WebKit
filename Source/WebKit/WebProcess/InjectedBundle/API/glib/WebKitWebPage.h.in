@@ -40,6 +40,7 @@
 G_BEGIN_DECLS
 
 #define WEBKIT_TYPE_WEB_PAGE            (webkit_web_page_get_type())
+#if !ENABLE(2022_GLIB_API)
 #define WEBKIT_WEB_PAGE(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), WEBKIT_TYPE_WEB_PAGE, WebKitWebPage))
 #define WEBKIT_IS_WEB_PAGE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), WEBKIT_TYPE_WEB_PAGE))
 #define WEBKIT_WEB_PAGE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass),  WEBKIT_TYPE_WEB_PAGE, WebKitWebPageClass))
@@ -49,6 +50,13 @@ G_BEGIN_DECLS
 typedef struct _WebKitWebPage        WebKitWebPage;
 typedef struct _WebKitWebPageClass   WebKitWebPageClass;
 typedef struct _WebKitWebPagePrivate WebKitWebPagePrivate;
+
+struct _WebKitWebPageClass {
+    GObjectClass parent_class;
+};
+#endif
+
+WEBKIT_DECLARE_FINAL_TYPE (WebKitWebPage, webkit_web_page, WEBKIT, WEB_PAGE, GObject)
 
 /* Forward declarations */
 typedef struct _WebKitWebEditor      WebKitWebEditor;
@@ -73,20 +81,6 @@ typedef enum {
     WEBKIT_FORM_SUBMISSION_WILL_COMPLETE,
 } WebKitFormSubmissionStep;
 #endif
-
-struct _WebKitWebPage {
-    GObject parent;
-
-    /*< private >*/
-    WebKitWebPagePrivate *priv;
-};
-
-struct _WebKitWebPageClass {
-    GObjectClass parent_class;
-};
-
-WEBKIT_API GType
-webkit_web_page_get_type                    (void);
 
 #if !ENABLE(2022_GLIB_API)
 WEBKIT_DEPRECATED WebKitDOMDocument *

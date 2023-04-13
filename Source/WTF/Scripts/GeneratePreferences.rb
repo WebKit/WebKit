@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 #
-# Copyright (c) 2017, 2020 Apple Inc. All rights reserved.
+# Copyright (c) 2017-2023 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -47,7 +47,7 @@ end
 
 optparse.parse!
 
-options[:preferenceFiles] = ARGV.slice!(0...)
+options[:preferenceFiles] = ARGV.shift(ARGV.size)
 if options[:preferenceFiles].empty?
   puts optparse
   exit 1
@@ -81,6 +81,7 @@ class Preference
   attr_accessor :type
   attr_accessor :refinedType
   attr_accessor :status
+  attr_accessor :category
   attr_accessor :defaultsOverridable
   attr_accessor :humanReadableName
   attr_accessor :humanReadableDescription
@@ -96,6 +97,7 @@ class Preference
     @type = opts["type"]
     @refinedType = opts["refinedType"]
     @status = opts["status"]
+    @category = opts["category"] || "none"
     @defaultsOverridable = opts["defaultsOverridable"] || false
     @humanReadableName = (opts["humanReadableName"] || "")
     if not humanReadableName.start_with? "WebKitAdditions"
@@ -148,8 +150,24 @@ class Preference
     "WebFeatureStatus" + @status.capitalize
   end
 
+  def webFeatureCategory
+    if %w{ css dom html }.include?(@category)
+      "WebFeatureCategory" + @category.upcase
+    else
+      "WebFeatureCategory" + @category.capitalize
+    end
+  end
+
   def apiStatus
     "API::FeatureStatus::" + @status.capitalize
+  end
+
+  def apiCategory
+      if %w{ css dom html }.include?(@category)
+        "API::FeatureCategory::" + @category.upcase
+      else
+        "API::FeatureCategory::" + @category.capitalize
+      end
   end
 
   # WebKitLegacy specific helpers.
@@ -213,7 +231,7 @@ class Preference
   
   # Features which should be enabled while running tests
   def testable?
-    %w{ testable preview stable }.include? @status
+    %w{ testable preview stable mature }.include? @status
   end
 end
 
@@ -239,7 +257,10 @@ class Preferences
   end
 
   # Corresponds to WebFeatureStatus enum cases. "developer" and up require human-readable names.
-  STATUSES = %w{ embedder unstable internal developer testable preview stable shipping }
+  STATUSES = %w{ embedder unstable internal developer testable preview stable mature }
+
+  # Corresponds to WebFeatureCategory enum cases.
+  CATEGORIES = %w{ animation css dom html javascript media networking privacy security }
 
   def initializeParsedPreferences(parsedPreferences)
     result = []
@@ -264,6 +285,16 @@ class Preferences
           next if failed
         elsif webcoreSettingOnly and @frontend != "WebCore"
           next
+        end
+
+        if %w{ developer testable preview stable }.include?(status)
+            reject.call "Preference #{name} has no category, which is required." if !options["category"]
+            next if failed
+            category = options["category"]
+            if !CATEGORIES.include?(category)
+              reject.call "Preference #{name}\'s category \"#{category}\" is not one of the known categories: #{CATEGORIES}"
+              next
+            end
         end
 
         if options["defaultValue"].include?(@frontend)

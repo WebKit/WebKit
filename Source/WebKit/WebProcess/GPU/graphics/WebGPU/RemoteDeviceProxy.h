@@ -74,14 +74,18 @@ private:
     {
         return root().streamClientConnection().sendSync(WTFMove(message), backing(), defaultSendTimeout);
     }
+    template<typename T, typename C>
+    WARN_UNUSED_RETURN IPC::StreamClientConnection::AsyncReplyID sendWithAsyncReply(T&& message, C&& completionHandler)
+    {
+        return root().streamClientConnection().sendWithAsyncReply(WTFMove(message), completionHandler, backing(), defaultSendTimeout);
+    }
 
-    PAL::WebGPU::Queue& queue() final;
+    Ref<PAL::WebGPU::Queue> queue() final;
 
     void destroy() final;
 
     Ref<PAL::WebGPU::Buffer> createBuffer(const PAL::WebGPU::BufferDescriptor&) final;
     Ref<PAL::WebGPU::Texture> createTexture(const PAL::WebGPU::TextureDescriptor&) final;
-    Ref<PAL::WebGPU::Texture> createSurfaceTexture(const PAL::WebGPU::TextureDescriptor&, const PAL::WebGPU::PresentationContext&) final;
     Ref<PAL::WebGPU::Sampler> createSampler(const PAL::WebGPU::SamplerDescriptor&) final;
     Ref<PAL::WebGPU::ExternalTexture> importExternalTexture(const PAL::WebGPU::ExternalTextureDescriptor&) final;
 
@@ -92,8 +96,8 @@ private:
     Ref<PAL::WebGPU::ShaderModule> createShaderModule(const PAL::WebGPU::ShaderModuleDescriptor&) final;
     Ref<PAL::WebGPU::ComputePipeline> createComputePipeline(const PAL::WebGPU::ComputePipelineDescriptor&) final;
     Ref<PAL::WebGPU::RenderPipeline> createRenderPipeline(const PAL::WebGPU::RenderPipelineDescriptor&) final;
-    void createComputePipelineAsync(const PAL::WebGPU::ComputePipelineDescriptor&, CompletionHandler<void(Ref<PAL::WebGPU::ComputePipeline>&&)>&&) final;
-    void createRenderPipelineAsync(const PAL::WebGPU::RenderPipelineDescriptor&, CompletionHandler<void(Ref<PAL::WebGPU::RenderPipeline>&&)>&&) final;
+    void createComputePipelineAsync(const PAL::WebGPU::ComputePipelineDescriptor&, CompletionHandler<void(RefPtr<PAL::WebGPU::ComputePipeline>&&)>&&) final;
+    void createRenderPipelineAsync(const PAL::WebGPU::RenderPipelineDescriptor&, CompletionHandler<void(RefPtr<PAL::WebGPU::RenderPipeline>&&)>&&) final;
 
     Ref<PAL::WebGPU::CommandEncoder> createCommandEncoder(const std::optional<PAL::WebGPU::CommandEncoderDescriptor>&) final;
     Ref<PAL::WebGPU::RenderBundleEncoder> createRenderBundleEncoder(const PAL::WebGPU::RenderBundleEncoderDescriptor&) final;

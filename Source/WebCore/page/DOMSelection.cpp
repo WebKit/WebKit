@@ -32,15 +32,17 @@
 
 #include "Document.h"
 #include "Editing.h"
-#include "Frame.h"
 #include "FrameSelection.h"
+#include "LocalFrame.h"
 #include "Range.h"
 #include "Settings.h"
+#include "ShadowRoot.h"
+#include "StaticRange.h"
 #include "TextIterator.h"
 
 namespace WebCore {
 
-static RefPtr<Node> selectionShadowAncestor(Frame& frame)
+static RefPtr<Node> selectionShadowAncestor(LocalFrame& frame)
 {
     ASSERT(!frame.settings().liveRangeSelectionEnabled());
     auto* node = frame.selection().selection().base().anchorNode();
@@ -49,19 +51,19 @@ static RefPtr<Node> selectionShadowAncestor(Frame& frame)
     return node->document().ancestorNodeInThisScope(node);
 }
 
-DOMSelection::DOMSelection(DOMWindow& window)
-    : DOMWindowProperty(&window)
+DOMSelection::DOMSelection(LocalDOMWindow& window)
+    : LocalDOMWindowProperty(&window)
 {
 }
 
-Ref<DOMSelection> DOMSelection::create(DOMWindow& window)
+Ref<DOMSelection> DOMSelection::create(LocalDOMWindow& window)
 {
     return adoptRef(*new DOMSelection(window));
 }
 
-RefPtr<Frame> DOMSelection::frame() const
+RefPtr<LocalFrame> DOMSelection::frame() const
 {
-    return DOMWindowProperty::frame();
+    return LocalDOMWindowProperty::frame();
 }
 
 std::optional<SimpleRange> DOMSelection::range() const
@@ -185,6 +187,17 @@ String DOMSelection::type() const
     return "Range"_s;
 }
 
+String DOMSelection::direction() const
+{
+    auto frame = this->frame();
+    if (!frame)
+        return noneAtom();
+    auto& selection = frame->selection().selection();
+    if (!selection.isDirectional() || selection.isNone())
+        return noneAtom();
+    return selection.isBaseFirst() ? "forward"_s : "backward"_s;
+}
+
 unsigned DOMSelection::rangeCount() const
 {
     RefPtr frame = this->frame();
@@ -207,7 +220,8 @@ ExceptionOr<void> DOMSelection::collapse(Node* node, unsigned offset)
         }
         if (auto result = Range::checkNodeOffsetPair(*node, offset); result.hasException())
             return result.releaseException();
-        if (!frame->document()->contains(*node))
+        if (!(frame->settings().selectionAPIForShadowDOMEnabled() && node->isConnected() && frame->document() == &node->document())
+            && &node->rootNode() != frame->document())
             return { };
     } else {
         if (!isValidForPosition(node))
@@ -270,8 +284,13 @@ ExceptionOr<void> DOMSelection::setBaseAndExtent(Node* baseNode, unsigned baseOf
         if (auto result = Range::checkNodeOffsetPair(*extentNode, extentOffset); result.hasException())
             return result.releaseException();
         auto& document = *frame->document();
-        if (!document.contains(*baseNode) || !document.contains(*extentNode))
-            return { };
+        if (frame->settings().selectionAPIForShadowDOMEnabled()) {
+            if (!document.containsIncludingShadowDOM(baseNode) || !document.containsIncludingShadowDOM(extentNode))
+                return { };
+        } else {
+            if (!document.contains(*baseNode) || !document.contains(*extentNode))
+                return { };
+        }
     } else {
         if (!isValidForPosition(baseNode) || !isValidForPosition(extentNode))
             return { };
@@ -340,12 +359,13 @@ ExceptionOr<void> DOMSelection::extend(Node& node, unsigned offset)
     auto frame = this->frame();
     if (!frame)
         return { };
-    
-    if (rangeCount() < 1)
+
+    if (rangeCount() < 1 && !(frame->settings().liveRangeSelectionEnabled() && frame->selection().isCaretOrRange()))
         return Exception { InvalidStateError, "extend() requires a Range to be added to the Selection"_s };
 
     if (frame->settings().liveRangeSelectionEnabled()) {
-        if (!frame->document()->contains(node))
+        if (!(frame->settings().selectionAPIForShadowDOMEnabled() && node.isConnected() && frame->document() == &node.document())
+            && &node.rootNode() != frame->document())
             return { };
         if (auto result = Range::checkNodeOffsetPair(node, offset); result.hasException())
             return result.releaseException();
@@ -414,6 +434,41 @@ ExceptionOr<void> DOMSelection::removeRange(Range& liveRange)
         return Exception { NotFoundError };
     removeAllRanges();
     return { };
+}
+
+Vector<Ref<StaticRange>> DOMSelection::getComposedRanges(FixedVector<std::reference_wrapper<ShadowRoot>>&& shadowRoots)
+{
+    auto frame = this->frame();
+    if (!frame)
+        return { };
+    auto range = frame->selection().selection().range();
+    if (!range)
+        return { };
+
+    HashSet<Ref<ShadowRoot>> shadowRootSet;
+    shadowRootSet.reserveInitialCapacity(shadowRoots.size());
+    for (auto& root : shadowRoots)
+        shadowRootSet.add(root.get());
+
+    Ref<Node> startNode = range->startContainer();
+    unsigned startOffset = range->startOffset();
+    while (startNode->isInShadowTree() && !shadowRootSet.contains(startNode->containingShadowRoot())) {
+        RefPtr host = startNode->shadowHost();
+        ASSERT(host && host->parentNode());
+        startNode = *host->parentNode();
+        startOffset = host->computeNodeIndex();
+    }
+
+    Ref<Node> endNode = range->endContainer();
+    unsigned endOffset = range->endOffset();
+    while (endNode->isInShadowTree() && !shadowRootSet.contains(endNode->containingShadowRoot())) {
+        RefPtr host = endNode->shadowHost();
+        ASSERT(host && host->parentNode());
+        endNode = *host->parentNode();
+        endOffset = host->computeNodeIndex() + 1;
+    }
+
+    return { StaticRange::create(SimpleRange { BoundaryPoint { WTFMove(startNode), startOffset }, BoundaryPoint { WTFMove(endNode), endOffset } }) };
 }
 
 void DOMSelection::deleteFromDocument()

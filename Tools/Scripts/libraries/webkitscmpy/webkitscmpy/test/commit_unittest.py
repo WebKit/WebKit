@@ -1,4 +1,4 @@
-# Copyright (C) 2020-2022 Apple Inc. All rights reserved.
+# Copyright (C) 2020-2023 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -376,6 +376,45 @@ PRINTED
                 Tracker.from_string('https://bugs.example.com/show_bug.cgi?id=1'),
                 Tracker.from_string('<rdar://problem/2>'),
                 Tracker.from_string('<rdar://problem/1>'),
+            ], commit.issues)
+
+    def test_parse_trailers(self):
+        contributor = Contributor.from_scm_log('Author: jbedard@apple.com <jbedard@apple.com>')
+        commit = Commit(
+            revision=1,
+            hash='c3bd784f8b88bd03f64467ddd3304ed8be28acbe',
+            identifier='1@main',
+            timestamp=1000,
+            author=Contributor.Encoder().default(contributor),
+            message='Commit title\n\n'
+                    'Reviewed by NOBODY (OOPS!)\n\n'
+                    'trailer-tag: information\n'
+                    'other-tag: stuff\n',
+        )
+
+        self.assertEqual(commit.trailers, ['trailer-tag: information', 'other-tag: stuff'])
+
+    def test_parse_issue_in_trailers(self):
+        contributor = Contributor.from_scm_log('Author: jbedard@apple.com <jbedard@apple.com>')
+        commit = Commit(
+            revision=1,
+            hash='c3bd784f8b88bd03f64467ddd3304ed8be28acbe',
+            identifier='1@main',
+            timestamp=1000,
+            author=Contributor.Encoder().default(contributor),
+            message='Commit title\n'
+                    'https://bugs.example.com/show_bug.cgi?id=1\n\n'
+                    'Reviewed by NOBODY (OOPS!)\n\n'
+                    'trailer-tag: with https://bugs.example.com/show_bug.cgi?id=2\n',
+        )
+
+        with bmocks.Bugzilla(
+            self.BUGZILLA.split('://')[-1],
+            projects=bmocks.PROJECTS, issues=bmocks.ISSUES,
+        ), patch('webkitbugspy.Tracker._trackers', [bugzilla.Tracker(self.BUGZILLA)]):
+            self.assertEqual([
+                Tracker.from_string('https://bugs.example.com/show_bug.cgi?id=2'),
+                Tracker.from_string('https://bugs.example.com/show_bug.cgi?id=1'),
             ], commit.issues)
 
 

@@ -185,4 +185,30 @@ bool CSSSelectorList::hasInvalidSelector() const
     return forEachSelector(functor, this);
 }
 
+bool CSSSelectorList::hasExplicitNestingParent() const
+{
+    auto functor = [](auto* selector) {
+        return selector->hasExplicitNestingParent();
+    };
+
+    return forEachSelector(functor, this);
+}
+
+bool CSSSelectorList::hasOnlyNestingSelector() const
+{
+    if (componentCount() != 1)
+        return false;
+
+    auto singleSelector = first();
+
+    if (!singleSelector)
+        return false;
+    
+    // Selector should be a single selector
+    if (singleSelector->tagHistory())
+        return false;
+
+    return singleSelector->match() == CSSSelector::Match::PseudoClass && singleSelector->pseudoClassType() == CSSSelector::PseudoClassType::PseudoClassNestingParent;
+}
+
 } // namespace WebCore

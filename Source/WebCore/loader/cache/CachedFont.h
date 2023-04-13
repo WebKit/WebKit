@@ -54,7 +54,7 @@ public:
     bool stillNeedsLoad() const override { return !m_loadInitiated; }
 
     virtual bool ensureCustomFontData();
-    static std::unique_ptr<FontCustomPlatformData> createCustomFontData(SharedBuffer&, const String& itemInCollection, bool& wrapping);
+    static RefPtr<FontCustomPlatformData> createCustomFontData(SharedBuffer&, const String& itemInCollection, bool& wrapping);
     static FontPlatformData platformDataFromCustomData(FontCustomPlatformData&, const FontDescription&, bool bold, bool italic, const FontCreationContext&);
 
     virtual RefPtr<Font> createFont(const FontDescription&, bool syntheticBold, bool syntheticItalic, const FontCreationContext&);
@@ -84,7 +84,7 @@ private:
     bool m_loadInitiated;
     bool m_hasCreatedFontDataWrappingResource;
 
-    std::unique_ptr<FontCustomPlatformData> m_fontCustomPlatformData;
+    RefPtr<FontCustomPlatformData> m_fontCustomPlatformData;
 
     friend class MemoryCache;
 };

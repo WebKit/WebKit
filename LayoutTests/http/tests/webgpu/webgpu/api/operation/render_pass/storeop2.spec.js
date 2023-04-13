@@ -19,7 +19,7 @@ TODO: needs review and rename
     { storeOp: 'store', _expected: 1 }, //
     { storeOp: 'discard', _expected: 0 },
   ])
-  .fn(async t => {
+  .fn(t => {
     const renderTexture = t.device.createTexture({
       size: { width: 1, height: 1, depthOrArrayLayers: 1 },
       format: 'r8unorm',
@@ -28,10 +28,11 @@ TODO: needs review and rename
 
     // create render pipeline
     const renderPipeline = t.device.createRenderPipeline({
+      layout: 'auto',
       vertex: {
         module: t.device.createShaderModule({
           code: `
-            @stage(vertex) fn main(
+            @vertex fn main(
               @builtin(vertex_index) VertexIndex : u32
               ) -> @builtin(position) vec4<f32> {
               var pos : array<vec2<f32>, 3> = array<vec2<f32>, 3>(
@@ -42,23 +43,19 @@ TODO: needs review and rename
             }
             `,
         }),
-
         entryPoint: 'main',
       },
-
       fragment: {
         module: t.device.createShaderModule({
           code: `
-            @stage(fragment) fn main() -> @location(0) vec4<f32> {
+            @fragment fn main() -> @location(0) vec4<f32> {
               return vec4<f32>(1.0, 0.0, 0.0, 1.0);
             }
             `,
         }),
-
         entryPoint: 'main',
         targets: [{ format: 'r8unorm' }],
       },
-
       primitive: { topology: 'triangle-list' },
     });
 
@@ -74,7 +71,6 @@ TODO: needs review and rename
         },
       ],
     });
-
     pass.setPipeline(renderPipeline);
     pass.draw(3);
     pass.end();

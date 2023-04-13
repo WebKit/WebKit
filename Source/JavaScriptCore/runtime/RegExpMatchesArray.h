@@ -196,7 +196,6 @@ ALWAYS_INLINE JSArray* createRegExpMatchesArray(
         if (createIndices) {
             for (unsigned i = 0; i <= numSubpatterns; ++i) {
                 int start = subpatternResults[2 * i];
-                JSValue value;
                 if (start >= 0)
                     indicesArray->initializeIndexWithoutBarrier(indicesArrayScope, i, createIndexArray(deferralContext, start, subpatternResults[2 * i + 1]));
                 else
@@ -211,11 +210,19 @@ ALWAYS_INLINE JSArray* createRegExpMatchesArray(
     // allocations.
     if (hasNamedCaptures) {
         for (unsigned i = 1; i <= numSubpatterns; ++i) {
-            String groupName = regExp->getCaptureGroupName(i);
+            String groupName = regExp->getCaptureGroupNameForSubpatternId(i);
             if (!groupName.isEmpty()) {
-                groups->putDirect(vm, Identifier::fromString(vm, groupName), array->getIndexQuickly(i));
-                if (createIndices)
-                    indicesGroups->putDirect(vm, Identifier::fromString(vm, groupName), indicesArray->getIndexQuickly(i));
+                auto captureIndex = regExp->subpatternIdForGroupName(groupName, subpatternResults);
+
+                JSValue value;
+                if (captureIndex > 0)
+                    value = array->getIndexQuickly(captureIndex);
+                else
+                    value = jsUndefined();
+                groups->putDirect(vm, Identifier::fromString(vm, groupName), value);
+
+                if (createIndices && captureIndex > 0)
+                    indicesGroups->putDirect(vm, Identifier::fromString(vm, groupName), indicesArray->getIndexQuickly(captureIndex));
             }
         }
     }

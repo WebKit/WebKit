@@ -1,0 +1,19 @@
+Description
+
+This test if movementX/Y can provide the change in position of the pointer, as if movementX/Y = eNow.screenX/Y-ePrevious.screenX/Y
+
+Manual Test Steps:
+
+Click to start Test1.
+Move the mouse within the window, slow and fast, like a scribble.
+Click again to end test.
+inside window: logging...
+X	Y
+screen_init:	400	300
+screen_last:	390	310
+screen_delta:	-10	10
+movement_sum:	NaN	NaN
+movement:	undefined	undefined
+
+FAIL Test that movementX/Y = eNow.screenX/Y-ePrevious.screenX/Y. assert_equals: movementX = screen_delta expected (number) -10 but got (undefined) undefined
+

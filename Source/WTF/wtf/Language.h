@@ -35,7 +35,7 @@
 
 namespace WTF {
 
-enum class ShouldMinimizeLanguages { No, Yes };
+enum class ShouldMinimizeLanguages : bool { No, Yes };
 
 WTF_EXPORT_PRIVATE String defaultLanguage(ShouldMinimizeLanguages = ShouldMinimizeLanguages::Yes); // Thread-safe.
 WTF_EXPORT_PRIVATE Vector<String> userPreferredLanguages(ShouldMinimizeLanguages = ShouldMinimizeLanguages::Yes); // Thread-safe, returns BCP 47 language tags.

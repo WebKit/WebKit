@@ -70,7 +70,7 @@ struct GrammarDetail {
 };
 
 struct TextCheckingResult {
-    TextCheckingType type;
+    OptionSet<TextCheckingType> type;
     CharacterRange range;
     Vector<GrammarDetail> details;
     String replacement;
@@ -117,22 +117,3 @@ public:
 };
 
 } // namespace WebCore
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::TextCheckingType> {
-    using values = EnumValues<
-    WebCore::TextCheckingType,
-    WebCore::TextCheckingType::None,
-    WebCore::TextCheckingType::Spelling,
-    WebCore::TextCheckingType::Grammar,
-    WebCore::TextCheckingType::Link,
-    WebCore::TextCheckingType::Quote,
-    WebCore::TextCheckingType::Dash,
-    WebCore::TextCheckingType::Replacement,
-    WebCore::TextCheckingType::Correction,
-    WebCore::TextCheckingType::ShowCorrectionPanel
-    >;
-};
-
-}

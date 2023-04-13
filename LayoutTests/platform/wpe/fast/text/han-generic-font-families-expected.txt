@@ -4,8 +4,8 @@ layer at (0,0) size 800x382
   RenderBlock {HTML} at (0,0) size 800x382
     RenderBody {BODY} at (8,8) size 784x366
       RenderBlock (anonymous) at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 574x17
-          text run at (0,0) width 574: "This test is designed to test WebKit's mappings for the generic font families for Han scripts."
+        RenderText {#text} at (0,0) size 573x17
+          text run at (0,0) width 573: "This test is designed to test WebKit's mappings for the generic font families for Han scripts."
       RenderBlock {DIV} at (0,18) size 784x116
         RenderText {#text} at (0,1) size 756x114
           text run at (0,1) width 756: "\x{6B64}\x{6BB5}\x{4E2D}\x{6587}\x{7B80}\x{4F53}\x{6587}\x{672C}\x{7528}\x{4E8E}\x{6D4F}\x{89C8}\x{5668}\x{5E03}\x{5C40}\x{6D4B}"

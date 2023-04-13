@@ -26,8 +26,11 @@
 #include "Document.h"
 #include "ElementIterator.h"
 #include "HTMLDocumentParser.h"
+#include "HTMLDocumentParserFastPath.h"
 #include "Page.h"
+#include "TypedElementDescendantIteratorInlines.h"
 #include "XMLDocumentParser.h"
+#include "markup.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -82,10 +85,18 @@ Ref<Node> DocumentFragment::cloneNodeInternal(Document& targetDocument, CloningO
     return clone;
 }
 
-void DocumentFragment::parseHTML(const String& source, Element* contextElement, OptionSet<ParserContentPolicy> parserContentPolicy)
+void DocumentFragment::parseHTML(const String& source, Element& contextElement, OptionSet<ParserContentPolicy> parserContentPolicy)
 {
-    ASSERT(contextElement);
-    HTMLDocumentParser::parseDocumentFragment(source, *this, *contextElement, parserContentPolicy);
+    if (tryFastParsingHTMLFragment(source, document(), *this, contextElement, parserContentPolicy)) {
+#if ASSERT_ENABLED
+        // As a sanity check for the fast-path, create another fragment using the full parser and compare the results.
+        auto referenceFragment = DocumentFragment::create(document());
+        HTMLDocumentParser::parseDocumentFragment(source, referenceFragment, contextElement, parserContentPolicy);
+        ASSERT(serializeFragment(*this, SerializedNodes::SubtreesOfChildren) == serializeFragment(referenceFragment, SerializedNodes::SubtreesOfChildren));
+#endif
+        return;
+    }
+    HTMLDocumentParser::parseDocumentFragment(source, *this, contextElement, parserContentPolicy);
 }
 
 bool DocumentFragment::parseXML(const String& source, Element* contextElement, OptionSet<ParserContentPolicy> parserContentPolicy)

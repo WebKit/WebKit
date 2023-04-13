@@ -62,7 +62,7 @@ public:
 
     LayerRepresentation(GraphicsLayer* graphicsLayer)
         : m_graphicsLayer(graphicsLayer)
-        , m_layerID(graphicsLayer ? graphicsLayer->primaryLayerID() : GraphicsLayer::PlatformLayerID { })
+        , m_layerID(graphicsLayer ? graphicsLayer->primaryLayerID() : PlatformLayerIdentifier { })
         , m_representation(GraphicsLayerRepresentation)
     { }
 
@@ -73,7 +73,7 @@ public:
         retainPlatformLayer(m_typelessPlatformLayer);
     }
 
-    LayerRepresentation(GraphicsLayer::PlatformLayerID layerID)
+    LayerRepresentation(PlatformLayerIdentifier layerID)
         : m_layerID(layerID)
         , m_representation(PlatformLayerIDRepresentation)
     {
@@ -106,18 +106,18 @@ public:
         return makePlatformLayerTyped(m_typelessPlatformLayer);
     }
     
-    GraphicsLayer::PlatformLayerID layerID() const
+    PlatformLayerIdentifier layerID() const
     {
         return m_layerID;
     }
 
-    std::optional<GraphicsLayer::PlatformLayerID> layerIDForEncoding() const
+    std::optional<PlatformLayerIdentifier> layerIDForEncoding() const
     {
         ASSERT(m_representation != PlatformLayerRepresentation);
-        return m_layerID ? std::optional<GraphicsLayer::PlatformLayerID>(m_layerID) : std::nullopt;
+        return m_layerID ? std::optional<PlatformLayerIdentifier>(m_layerID) : std::nullopt;
     }
 
-    explicit operator GraphicsLayer::PlatformLayerID() const
+    explicit operator PlatformLayerIdentifier() const
     {
         ASSERT(m_representation != PlatformLayerRepresentation);
         return m_layerID;
@@ -199,7 +199,7 @@ private:
 
     RefPtr<GraphicsLayer> m_graphicsLayer;
     void* m_typelessPlatformLayer { nullptr };
-    GraphicsLayer::PlatformLayerID m_layerID;
+    PlatformLayerIdentifier m_layerID;
     Type m_representation { EmptyRepresentation };
 };
 
@@ -225,36 +225,40 @@ enum class ScrollingStateNodeProperty : uint64_t {
     HorizontalScrollbarLayer                    = 1LLU << 16,
     VerticalScrollbarLayer                      = 1LLU << 17,
     PainterForScrollbar                         = 1LLU << 18,
+    ContentAreaHoverState                       = 1LLU << 19,
+    MouseActivityState                          = 1LLU << 20,
+    ScrollbarHoverState                         = 1LLU << 21,
     // ScrollingStateFrameScrollingNode
-    FrameScaleFactor                            = 1LLU << 19,
-    EventTrackingRegion                         = 1LLU << 20,
-    RootContentsLayer                           = 1LLU << 21,
-    CounterScrollingLayer                       = 1LLU << 22,
-    InsetClipLayer                              = 1LLU << 23,
-    ContentShadowLayer                          = 1LLU << 24,
-    HeaderHeight                                = 1LLU << 25,
-    FooterHeight                                = 1LLU << 26,
-    HeaderLayer                                 = 1LLU << 27,
-    FooterLayer                                 = 1LLU << 28,
-    BehaviorForFixedElements                    = 1LLU << 29,
-    TopContentInset                             = 1LLU << 30,
-    FixedElementsLayoutRelativeToFrame          = 1LLU << 31,
-    VisualViewportIsSmallerThanLayoutViewport   = 1LLU << 32,
-    AsyncFrameOrOverflowScrollingEnabled        = 1LLU << 33,
-    WheelEventGesturesBecomeNonBlocking         = 1LLU << 34,
-    ScrollingPerformanceTestingEnabled          = 1LLU << 35,
-    LayoutViewport                              = 1LLU << 36,
-    MinLayoutViewportOrigin                     = 1LLU << 37,
-    MaxLayoutViewportOrigin                     = 1LLU << 38,
-    OverrideVisualViewportSize                  = 1LLU << 39,
+    FrameScaleFactor                            = 1LLU << 22,
+    EventTrackingRegion                         = 1LLU << 23,
+    RootContentsLayer                           = 1LLU << 24,
+    CounterScrollingLayer                       = 1LLU << 25,
+    InsetClipLayer                              = 1LLU << 26,
+    ContentShadowLayer                          = 1LLU << 27,
+    HeaderHeight                                = 1LLU << 28,
+    FooterHeight                                = 1LLU << 29,
+    HeaderLayer                                 = 1LLU << 30,
+    FooterLayer                                 = 1LLU << 31,
+    BehaviorForFixedElements                    = 1LLU << 32,
+    TopContentInset                             = 1LLU << 33,
+    FixedElementsLayoutRelativeToFrame          = 1LLU << 34,
+    VisualViewportIsSmallerThanLayoutViewport   = 1LLU << 35,
+    AsyncFrameOrOverflowScrollingEnabled        = 1LLU << 36,
+    WheelEventGesturesBecomeNonBlocking         = 1LLU << 37,
+    ScrollingPerformanceTestingEnabled          = 1LLU << 38,
+    LayoutViewport                              = 1LLU << 39,
+    MinLayoutViewportOrigin                     = 1LLU << 40,
+    MaxLayoutViewportOrigin                     = 1LLU << 41,
+    OverrideVisualViewportSize                  = 1LLU << 42,
+    OverlayScrollbarsEnabled                    = 1LLU << 43,
     // ScrollingStatePositionedNode
-    RelatedOverflowScrollingNodes               = 1LLU << 40,
-    LayoutConstraintData                        = 1LLU << 41,
+    RelatedOverflowScrollingNodes               = 1LLU << 44,
+    LayoutConstraintData                        = 1LLU << 45,
     // ScrollingStateFixedNode, ScrollingStateStickyNode
-    ViewportConstraints                         = 1LLU << 42,
+    ViewportConstraints                         = 1LLU << 46,
     // ScrollingStateOverflowScrollProxyNode
-    OverflowScrollingNode                       = 1LLU << 43,
-    KeyboardScrollData                          = 1LLU << 44,
+    OverflowScrollingNode                       = 1LLU << 47,
+    KeyboardScrollData                          = 1LLU << 48,
 };
 
 class ScrollingStateNode : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<ScrollingStateNode> {
@@ -293,6 +297,11 @@ public:
 
     const LayerRepresentation& layer() const { return m_layer; }
     WEBCORE_EXPORT void setLayer(const LayerRepresentation&);
+
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+    const LayerRepresentation& interactionRegionsLayer() const { return m_interactionRegionsLayer; }
+    WEBCORE_EXPORT void setInteractionRegionsLayer(const LayerRepresentation&);
+#endif
 
     ScrollingStateTree& scrollingStateTree() const { return m_scrollingStateTree; }
 
@@ -340,6 +349,9 @@ private:
     std::unique_ptr<Vector<RefPtr<ScrollingStateNode>>> m_children;
 
     LayerRepresentation m_layer;
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+    LayerRepresentation m_interactionRegionsLayer;
+#endif
 };
 
 inline ScrollingNodeID ScrollingStateNode::parentNodeID() const

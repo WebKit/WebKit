@@ -51,7 +51,7 @@ static bool validateCreateSampler(Device& device, const WGPUSamplerDescriptor& d
     if (descriptor.maxAnisotropy > 1) {
         if (descriptor.magFilter != WGPUFilterMode_Linear
             || descriptor.minFilter != WGPUFilterMode_Linear
-            || descriptor.mipmapFilter != WGPUFilterMode_Linear)
+            || descriptor.mipmapFilter != WGPUMipmapFilterMode_Linear)
             return false;
     }
 
@@ -86,14 +86,14 @@ static MTLSamplerMinMagFilter minMagFilter(WGPUFilterMode filterMode)
     }
 }
 
-static MTLSamplerMipFilter mipFilter(WGPUFilterMode filterMode)
+static MTLSamplerMipFilter mipFilter(WGPUMipmapFilterMode filterMode)
 {
     switch (filterMode) {
-    case WGPUFilterMode_Nearest:
+    case WGPUMipmapFilterMode_Nearest:
         return MTLSamplerMipFilterNearest;
-    case WGPUFilterMode_Linear:
+    case WGPUMipmapFilterMode_Linear:
         return MTLSamplerMipFilterLinear;
-    case WGPUFilterMode_Force32:
+    case WGPUMipmapFilterMode_Force32:
         ASSERT_NOT_REACHED();
         return MTLSamplerMipFilterNearest;
     }

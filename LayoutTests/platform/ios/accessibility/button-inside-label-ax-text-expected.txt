@@ -1,0 +1,22 @@
+This test ensures that buttons within a label that has a for='' don't use the label's text over their own.
+
+
+StaticText
+	AXLabel: Enter the characters in the image below.
+
+Button
+	AXLabel: Switch to audio
+
+Button
+	AXLabel: Try another
+
+TextField
+	AXLabel: Enter the characters in the image below. Switch to audio Try another
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+Enter the characters in the image below.
+
+Switch to audio  Try another

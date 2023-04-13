@@ -40,6 +40,11 @@ public:
         : m_image(image)
     {
     }
+    ~SVGImageChromeClient()
+    {
+        // Verify that page teardown destroyed the Chrome
+        ASSERT(!m_image);
+    }
     
     bool isSVGImageChromeClient() const final { return true; }
     SVGImage* image() const { return m_image; }

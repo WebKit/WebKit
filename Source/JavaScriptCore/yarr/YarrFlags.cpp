@@ -52,6 +52,10 @@ std::optional<OptionSet<Flags>> parseFlags(StringView string)
         }
     }
 
+    // Can only specify one of 'u' and 'v' flags.
+    if (flags.contains(Flags::Unicode) && flags.contains(Flags::UnicodeSets))
+        return std::nullopt;
+
     return std::make_optional(flags);
 }
 

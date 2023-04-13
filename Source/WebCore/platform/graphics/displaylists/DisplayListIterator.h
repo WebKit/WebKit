@@ -32,7 +32,7 @@ namespace DisplayList {
 
 class DisplayList::Iterator {
 public:
-    enum class ImmediatelyMoveToEnd { No, Yes };
+    enum class ImmediatelyMoveToEnd : bool { No, Yes };
     Iterator(const DisplayList& displayList, ImmediatelyMoveToEnd immediatelyMoveToEnd = ImmediatelyMoveToEnd::No)
         : m_displayList(displayList)
     {

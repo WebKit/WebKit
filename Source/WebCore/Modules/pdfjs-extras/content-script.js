@@ -52,13 +52,15 @@ const PDFJSContentScript = {
     },
 
     open(data) {
-        PDFViewerApplication.open(data);
+        PDFViewerApplication.open({ data });
     },
 
     init() {
-        this.overrideSettings();
-        PDFViewerApplication.eventBus.on("pagesinit", () => {
-            this.autoResize();
+        PDFViewerApplication.initializedPromise.then(() => {
+            this.overrideSettings();
+            PDFViewerApplication.eventBus.on("pagesinit", () => {
+                this.autoResize();
+            });
         });
 
         window.addEventListener("message", (event) => {

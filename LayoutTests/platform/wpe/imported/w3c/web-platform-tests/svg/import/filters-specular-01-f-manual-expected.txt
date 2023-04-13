@@ -44,10 +44,10 @@ layer at (0,0) size 800x600
         RenderSVGResourceFilter {filter} [id="lightingColorC"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
           [feSpecularLighting surfaceScale="10.00" specualConstant="1.00" specularExponent="1.00"]
             [SourceGraphic]
-      RenderSVGContainer {g} at (150,47) size 620x87 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,20.00)}]
-        RenderSVGText {text} at (90,8) size 372x21 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 372x21
-            chunk 1 text run 1 at (90.00,25.00) startOffset 0 endOffset 46 width 371.40: "Various values for surfaceScale: 1, 10 and -10"
+      RenderSVGContainer {g} at (150,47) size 617x87 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,20.00)}]
+        RenderSVGText {text} at (90,8) size 371x21 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 371x21
+            chunk 1 text run 1 at (90.00,25.00) startOffset 0 endOffset 46 width 370.06: "Various values for surfaceScale: 1, 10 and -10"
         RenderSVGContainer {g} at (150,83) size 467x51
           RenderSVGRect {rect} at (150,83) size 84x51 [fill={[type=SOLID] [color=#000000]}] [x=90.00] [y=30.00] [width=50.00] [height=30.00]
           RenderSVGRect {rect} at (341,83) size 84x51 [fill={[type=SOLID] [color=#000000]}] [x=205.00] [y=30.00] [width=50.00] [height=30.00]
@@ -58,10 +58,10 @@ layer at (0,0) size 800x600
           [filter="surfaceScaleB"] RenderSVGResourceFilter {filter} at (205,30) size 50x30
         RenderSVGImage {image} at (533,83) size 84x51
           [filter="surfaceScaleC"] RenderSVGResourceFilter {filter} at (320,30) size 50x30
-      RenderSVGContainer {g} at (150,164) size 650x86 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,90.00)}]
-        RenderSVGText {text} at (90,8) size 391x21 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 391x21
-            chunk 1 text run 1 at (90.00,25.00) startOffset 0 endOffset 48 width 390.60: "Various values for specularConstants: 0, 1 and 2"
+      RenderSVGContainer {g} at (150,164) size 649x86 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,90.00)}]
+        RenderSVGText {text} at (90,8) size 390x21 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 390x21
+            chunk 1 text run 1 at (90.00,25.00) startOffset 0 endOffset 48 width 389.26: "Various values for specularConstants: 0, 1 and 2"
         RenderSVGContainer {g} at (150,200) size 467x50
           RenderSVGRect {rect} at (150,200) size 84x50 [fill={[type=SOLID] [color=#000000]}] [x=90.00] [y=30.00] [width=50.00] [height=30.00]
           RenderSVGRect {rect} at (341,200) size 84x50 [fill={[type=SOLID] [color=#000000]}] [x=205.00] [y=30.00] [width=50.00] [height=30.00]
@@ -73,9 +73,9 @@ layer at (0,0) size 800x600
         RenderSVGImage {image} at (533,200) size 84x50
           [filter="specularConstantC"] RenderSVGResourceFilter {filter} at (320,30) size 50x30
       RenderSVGContainer {g} at (150,281) size 650x86 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,160.00)}]
-        RenderSVGText {text} at (90,8) size 395x21 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 395x21
-            chunk 1 text run 1 at (90.00,25.00) startOffset 0 endOffset 48 width 394.80: "Various values for specularExponents: 1, 2 and 4"
+        RenderSVGText {text} at (90,8) size 394x21 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 394x21
+            chunk 1 text run 1 at (90.00,25.00) startOffset 0 endOffset 48 width 393.46: "Various values for specularExponents: 1, 2 and 4"
         RenderSVGContainer {g} at (150,316) size 467x51
           RenderSVGRect {rect} at (150,316) size 84x51 [fill={[type=SOLID] [color=#000000]}] [x=90.00] [y=30.00] [width=50.00] [height=30.00]
           RenderSVGRect {rect} at (341,316) size 84x51 [fill={[type=SOLID] [color=#000000]}] [x=205.00] [y=30.00] [width=50.00] [height=30.00]
@@ -87,9 +87,9 @@ layer at (0,0) size 800x600
         RenderSVGImage {image} at (533,316) size 84x51
           [filter="specularExponentC"] RenderSVGResourceFilter {filter} at (320,30) size 50x30
       RenderSVGContainer {g} at (150,397) size 650x87 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,230.00)}]
-        RenderSVGText {text} at (90,8) size 425x21 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 425x21
-            chunk 1 text run 1 at (90.00,25.00) startOffset 0 endOffset 55 width 424.20: "Various values for lighting color: red, yellow and blue"
+        RenderSVGText {text} at (90,8) size 423x21 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 423x21
+            chunk 1 text run 1 at (90.00,25.00) startOffset 0 endOffset 55 width 422.86: "Various values for lighting color: red, yellow and blue"
         RenderSVGContainer {g} at (150,433) size 467x51
           RenderSVGRect {rect} at (150,433) size 84x51 [fill={[type=SOLID] [color=#000000]}] [x=90.00] [y=30.00] [width=50.00] [height=30.00]
           RenderSVGRect {rect} at (341,433) size 84x51 [fill={[type=SOLID] [color=#000000]}] [x=205.00] [y=30.00] [width=50.00] [height=30.00]

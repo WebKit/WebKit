@@ -1,0 +1,16 @@
+CONSOLE MESSAGE: The resource https://localhost:9443/common/square.png?1 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it wasn't preloaded for nothing.
+CONSOLE MESSAGE: The resource https://localhost:9443/common/square.png?2 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it wasn't preloaded for nothing.
+CONSOLE MESSAGE: The resource https://localhost:9443/common/square.png?3 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it wasn't preloaded for nothing.
+CONSOLE MESSAGE: The resource https://localhost:9443/common/square.png?4 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it wasn't preloaded for nothing.
+
+PASS Changing a preload href should trigger a fetch
+FAIL Changing a preload "as" from a previously non-matching destination should trigger a fetch assert_array_equals: expected property 1 to be "load" but got "timeout" (expected array ["load", "load"] got ["load", "timeout"])
+PASS Changing a preload "type" (non-matching->matching) should trigger a fetch
+PASS Removing a preload non-matching "type" should trigger a fetch
+FAIL Removing a preload matching "type" should not trigger a fetch assert_array_equals: expected property 1 to be "timeout" but got "load" (expected array ["load", "timeout"] got ["load", "load"])
+PASS Changing a preload media attribute (non matching->matching) should trigger a fetch
+PASS Changing a preload media attribute (non matching->non matching) should not trigger a fetch
+FAIL Changing a preload media attribute (matching->matching) should not trigger a new fetch assert_array_equals: expected property 1 to be "timeout" but got "load" (expected array ["load", "timeout"] got ["load", "load"])
+FAIL Removing a matching preload media attribute should not trigger a new fetch assert_array_equals: expected property 1 to be "timeout" but got "load" (expected array ["load", "timeout"] got ["load", "load"])
+PASS Removing a non-matching preload media attribute should trigger a new fetch
+

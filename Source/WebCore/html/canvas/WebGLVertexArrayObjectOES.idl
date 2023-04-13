@@ -26,6 +26,8 @@
 [
     LegacyNoInterfaceObject,
     Conditional=WEBGL,
-    GenerateIsReachable=Impl
+    EnabledBySetting=WebGLEnabled,
+    GenerateIsReachable=Impl,
+    Exposed=(Window,Worker)
 ] interface WebGLVertexArrayObjectOES {
 };

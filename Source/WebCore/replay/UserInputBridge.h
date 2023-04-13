@@ -35,8 +35,8 @@
 
 namespace WebCore {
 
-class Frame;
 class FrameLoadRequest;
+class LocalFrame;
 class Page;
 class PlatformKeyboardEvent;
 class PlatformMouseEvent;
@@ -59,7 +59,7 @@ public:
 
     // User input APIs.
 #if ENABLE(CONTEXT_MENU_EVENT)
-    WEBCORE_EXPORT bool handleContextMenuEvent(const PlatformMouseEvent&, Frame&, InputSource = InputSource::User);
+    WEBCORE_EXPORT bool handleContextMenuEvent(const PlatformMouseEvent&, LocalFrame&, InputSource = InputSource::User);
 #endif
     WEBCORE_EXPORT bool handleMousePressEvent(const PlatformMouseEvent&, InputSource = InputSource::User);
     WEBCORE_EXPORT bool handleMouseReleaseEvent(const PlatformMouseEvent&, InputSource = InputSource::User);
@@ -76,8 +76,8 @@ public:
 
     // Navigation APIs.
     WEBCORE_EXPORT void loadRequest(FrameLoadRequest&&, InputSource = InputSource::User);
-    WEBCORE_EXPORT void reloadFrame(Frame&, OptionSet<ReloadOption>, InputSource = InputSource::User);
-    WEBCORE_EXPORT void stopLoadingFrame(Frame&, InputSource = InputSource::User);
+    WEBCORE_EXPORT void reloadFrame(LocalFrame&, OptionSet<ReloadOption>, InputSource = InputSource::User);
+    WEBCORE_EXPORT void stopLoadingFrame(LocalFrame&, InputSource = InputSource::User);
     WEBCORE_EXPORT bool tryClosePage(InputSource = InputSource::User);
 
 private:

@@ -48,9 +48,9 @@ layer at (0,0) size 800x600
               chunk 1 text run 1 at (20.00,395.00) startOffset 0 endOffset 28 width 501.72: "type=\"hueRotate\" values=\"90\""
           RenderSVGRect {rect} at (0,412) size 800x43 [fill={[type=LINEAR-GRADIENT] [id="MyGradient"]}] [x=20.00] [y=420.00] [width=760.00] [height=40.00]
             [filter="LuminanceToAlpha"] RenderSVGResourceFilter {filter} at (-18,418) size 836x44
-          RenderSVGText {text} at (20,459) size 440x45 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 440x45
-              chunk 1 text run 1 at (20.00,495.00) startOffset 0 endOffset 23 width 439.66: "type=\"luminanceToAlpha\""
+          RenderSVGText {text} at (20,459) size 437x45 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 437x45
+              chunk 1 text run 1 at (20.00,495.00) startOffset 0 endOffset 23 width 436.84: "type=\"luminanceToAlpha\""
     RenderSVGContainer {g} at (16,518) size 380x60
       RenderSVGText {text} at (10,311) size 228x36 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 228x36

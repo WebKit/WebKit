@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,11 +29,14 @@
 #include "ImageBufferBackendHandleSharing.h"
 #include "PlatformCAAnimationRemote.h"
 #include "PlatformCALayerRemote.h"
+#include "PlatformCALayerRemoteHost.h"
 #include "RemoteLayerTreeContext.h"
 #include "RemoteLayerTreeDrawingAreaProxyMessages.h"
 #include <WebCore/GraphicsLayerContentsDisplayDelegate.h>
+#include <WebCore/HTMLVideoElement.h>
 #include <WebCore/Model.h>
 #include <WebCore/PlatformScreen.h>
+#include <WebCore/RemoteFrame.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -78,6 +81,18 @@ Ref<PlatformCALayer> GraphicsLayerCARemote::createPlatformCALayer(Ref<WebCore::M
 }
 #endif
 
+Ref<PlatformCALayer> GraphicsLayerCARemote::createPlatformCALayerHost(WebCore::LayerHostingContextIdentifier identifier, PlatformCALayerClient* owner)
+{
+    return PlatformCALayerRemoteHost::create(identifier, owner, *m_context);
+}
+
+#if HAVE(AVKIT)
+Ref<PlatformCALayer> GraphicsLayerCARemote::createPlatformVideoLayer(WebCore::HTMLVideoElement& videoElement, PlatformCALayerClient* owner)
+{
+    return PlatformCALayerRemote::create(videoElement, owner, *m_context);
+}
+#endif
+
 Ref<PlatformCAAnimation> GraphicsLayerCARemote::createPlatformCAAnimation(PlatformCAAnimation::AnimationType type, const String& keyPath)
 {
     return PlatformCAAnimationRemote::create(type, keyPath);
@@ -93,9 +108,14 @@ void GraphicsLayerCARemote::moveToContext(RemoteLayerTreeContext& context)
     context.graphicsLayerDidEnterContext(*this);
 }
 
+Color GraphicsLayerCARemote::pageTiledBackingBorderColor() const
+{
+    return SRGBA<uint8_t> { 28, 74, 120, 128 }; // remote tile cache layer: navy blue
+}
+
 class GraphicsLayerCARemoteAsyncContentsDisplayDelegate : public GraphicsLayerAsyncContentsDisplayDelegate {
 public:
-    GraphicsLayerCARemoteAsyncContentsDisplayDelegate(IPC::Connection& connection, DrawingAreaIdentifier identifier, WebCore::GraphicsLayer::PlatformLayerID layerID)
+    GraphicsLayerCARemoteAsyncContentsDisplayDelegate(IPC::Connection& connection, DrawingAreaIdentifier identifier, WebCore::PlatformLayerIdentifier layerID)
         : m_connection(connection)
         , m_drawingArea(identifier)
         , m_layerID(layerID)
@@ -124,7 +144,7 @@ public:
 private:
     Ref<IPC::Connection> m_connection;
     DrawingAreaIdentifier m_drawingArea;
-    WebCore::GraphicsLayer::PlatformLayerID m_layerID;
+    WebCore::PlatformLayerIdentifier m_layerID;
 };
 
 RefPtr<WebCore::GraphicsLayerAsyncContentsDisplayDelegate> GraphicsLayerCARemote::createAsyncContentsDisplayDelegate()
@@ -135,5 +155,11 @@ RefPtr<WebCore::GraphicsLayerAsyncContentsDisplayDelegate> GraphicsLayerCARemote
     return adoptRef(new GraphicsLayerCARemoteAsyncContentsDisplayDelegate(*WebProcess::singleton().parentProcessConnection(), m_context->drawingAreaIdentifier(), primaryLayerID()));
 }
 
+GraphicsLayer::LayerMode GraphicsLayerCARemote::layerMode() const
+{
+    if (m_context->layerHostingMode() == LayerHostingMode::InProcess)
+        return GraphicsLayer::LayerMode::PlatformLayer;
+    return GraphicsLayer::LayerMode::LayerHostingContextId;
+}
 
 } // namespace WebKit

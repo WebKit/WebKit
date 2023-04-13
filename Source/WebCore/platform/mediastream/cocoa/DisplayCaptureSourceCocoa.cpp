@@ -38,6 +38,7 @@
 #include "RealtimeMediaSourceSettings.h"
 #include "RealtimeVideoUtilities.h"
 #include "Timer.h"
+#include "VideoFrame.h"
 #include <IOSurface/IOSurfaceRef.h>
 #include <pal/avfoundation/MediaTimeAVFoundation.h>
 #include <pal/spi/cf/CoreAudioSPI.h>
@@ -205,7 +206,6 @@ Seconds DisplayCaptureSourceCocoa::elapsedTime()
 void DisplayCaptureSourceCocoa::updateFrameSize()
 {
     auto intrinsicSize = this->intrinsicSize();
-
     auto frameSize = size();
     if (!frameSize.height())
         frameSize.setHeight(intrinsicSize.height());
@@ -308,11 +308,13 @@ void DisplayCaptureSourceCocoa::emitFrame()
 void DisplayCaptureSourceCocoa::capturerConfigurationChanged()
 {
     m_currentSettings = { };
+    m_capabilities = { };
     auto capturerIntrinsicSize = m_capturer->intrinsicSize();
-    if (this->intrinsicSize() != capturerIntrinsicSize) {
-        m_capabilities = { };
+    if (this->intrinsicSize() != capturerIntrinsicSize)
         setIntrinsicSize(capturerIntrinsicSize);
-    }
+    forEachObserver([](auto& observer) {
+        observer.sourceConfigurationChanged();
+    });
 }
 
 void DisplayCaptureSourceCocoa::setLogger(const Logger& logger, const void* identifier)

@@ -3,12 +3,12 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-    RenderSVGContainer {g} at (16,30) size 610x354
-      RenderSVGText {text} at (10,18) size 366x15 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 366x15
-          chunk 1 text run 1 at (10.00,30.00) startOffset 0 endOffset 61 width 365.40: "Test that getSubStringLength() handles out-of-range arguments"
+    RenderSVGContainer {g} at (16,30) size 608x354
+      RenderSVGText {text} at (10,18) size 364x15 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 364x15
+          chunk 1 text run 1 at (10.00,30.00) startOffset 0 endOffset 61 width 363.94: "Test that getSubStringLength() handles out-of-range arguments"
       RenderSVGText {text} at (50,41) size 12x12 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 13x11
+        RenderSVGInlineText {#text} at (0,0) size 12x11
           chunk 1 text run 1 at (50.00,50.00) startOffset 0 endOffset 5 width 12.00: "ababa"
       RenderSVGRect {rect} at (16,66) size 51x51 [fill={[type=SOLID] [color=#008000]}] [x=10.00] [y=40.00] [width=30.00] [height=30.00]
       RenderSVGText {text} at (50,43) size 102x21 contains 1 chunk(s)

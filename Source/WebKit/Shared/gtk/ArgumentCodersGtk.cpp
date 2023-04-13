@@ -41,7 +41,7 @@ using namespace WebKit;
 
 static void encodeImage(Encoder& encoder, Image& image)
 {
-    RefPtr<ShareableBitmap> bitmap = ShareableBitmap::create(IntSize(image.size()), { });
+    RefPtr<ShareableBitmap> bitmap = ShareableBitmap::create({ IntSize(image.size()) });
     bitmap->createGraphicsContext()->drawImage(image, IntPoint());
     encoder << bitmap->createHandle();
 }

@@ -83,44 +83,6 @@ bool ArgumentCoder<ResourceError>::decodePlatformData(Decoder& decoder, Resource
     return true;
 }
 
-void ArgumentCoder<ProtectionSpace>::encodePlatformData(Encoder& encoder, const ProtectionSpace& space)
-{
-    encoder << space.host() << space.port() << space.realm();
-    encoder << space.authenticationScheme();
-    encoder << space.serverType();
-    encoder << space.certificateInfo();
-}
-
-bool ArgumentCoder<ProtectionSpace>::decodePlatformData(Decoder& decoder, ProtectionSpace& space)
-{
-    String host;
-    if (!decoder.decode(host))
-        return false;
-
-    int port;
-    if (!decoder.decode(port))
-        return false;
-
-    String realm;
-    if (!decoder.decode(realm))
-        return false;
-
-    ProtectionSpace::AuthenticationScheme authenticationScheme;
-    if (!decoder.decode(authenticationScheme))
-        return false;
-
-    ProtectionSpace::ServerType serverType;
-    if (!decoder.decode(serverType))
-        return false;
-
-    CertificateInfo certificateInfo;
-    if (!decoder.decode(certificateInfo))
-        return false;
-
-    space = ProtectionSpace(host, port, serverType, realm, authenticationScheme, certificateInfo);
-    return true;
-}
-
 void ArgumentCoder<Credential>::encodePlatformData(Encoder&, const Credential&)
 {
     ASSERT_NOT_REACHED();

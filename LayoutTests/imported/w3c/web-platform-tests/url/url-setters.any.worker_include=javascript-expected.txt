@@ -1,0 +1,9 @@
+
+PASS Loading data…
+PASS URL: Setting <javascript:alert(1)>.protocol = 'defuse'
+PASS URL: Setting <javascript:alert(1)>.username = 'wario'
+PASS URL: Setting <javascript://x/>.username = 'wario'
+PASS URL: Setting <javascript://x/>.password = 'bowser'
+PASS URL: Setting <javascript://x/>.port = '12'
+PASS URL: Setting <javascript:alert(1)>.hash = 'castle'
+

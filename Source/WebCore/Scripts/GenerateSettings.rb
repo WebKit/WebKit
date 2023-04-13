@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 #
-# Copyright (c) 2017-2020 Apple Inc. All rights reserved.
+# Copyright (c) 2017-2023 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -44,7 +44,7 @@ end
 
 optparse.parse!
 
-options[:settingsFiles] = ARGV.slice!(0...)
+options[:settingsFiles] = ARGV.shift(ARGV.size)
 if options[:settingsFiles].empty?
   puts optparse
   exit 1
@@ -81,6 +81,7 @@ class Setting
   attr_accessor :options
   attr_accessor :type
   attr_accessor :status
+  attr_accessor :category
   attr_accessor :defaultValues
   attr_accessor :excludeFromInternalSettings
   attr_accessor :condition
@@ -179,7 +180,7 @@ class Setting
     # settings that are on by default. Assuming embedder gets split into two
     # categories (off-by-default and on-by-default), only the latter should be
     # considered stable.
-    !@status or %w{ embedder internal stable shipping }.include? @status
+    !@status or %w{ embedder internal stable mature }.include? @status
   end
 end
 

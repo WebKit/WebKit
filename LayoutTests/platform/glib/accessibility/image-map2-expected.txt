@@ -17,7 +17,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: tag:div
+AXPlatformAttributes: computed-role:generic, tag:div
 ------------
 AXRole: AXLink
 AXParent: AXWebArea

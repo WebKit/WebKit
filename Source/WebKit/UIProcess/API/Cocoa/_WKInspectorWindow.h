@@ -35,7 +35,7 @@ WK_CLASS_AVAILABLE(macos(10.15))
 @interface _WKInspectorWindow : NSWindow
 
 @property (nonatomic, readonly, getter=isForRemoteTarget) BOOL forRemoteTarget;
-@property (nonatomic, nullable, readonly, weak) WKWebView *inspectedWebView WK_API_AVAILABLE(macos(WK_MAC_TBA));
+@property (nonatomic, nullable, readonly, weak) WKWebView *inspectedWebView WK_API_AVAILABLE(macos(13.3));
 
 @end
 

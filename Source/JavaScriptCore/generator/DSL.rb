@@ -42,7 +42,12 @@ module DSL
 
     def self.end_section(name)
         assert("current section's name is `#{@current_section.name}`, but end_section was called with `#{name}`") { @current_section.name == name }
-        @current_section.sort!
+        if @current_section.config[:preserve_order]
+            @current_section.validate
+        else
+            @current_section.sort!
+        end
+        @current_section.create_ids!
         @sections << @current_section
         if @current_section.is_wasm?
           assert("Cannot have 2 wasm sections") { @wasm_section.nil? }

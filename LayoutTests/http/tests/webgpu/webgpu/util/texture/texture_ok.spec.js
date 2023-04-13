@@ -45,7 +45,6 @@ g.test('float32')
       size,
       usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.COPY_SRC,
     });
-
     t.trackForCleanup(texture);
     t.device.queue.writeTexture({ texture }, new Float32Array([data, data, data, data]), {}, size);
 
@@ -83,7 +82,6 @@ g.test('norm')
       size,
       usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.COPY_SRC,
     });
-
     t.trackForCleanup(texture);
     t.device.queue.writeTexture({ texture }, new Int8Array(data), {}, size);
 
@@ -132,7 +130,6 @@ g.test('snorm_min')
       size,
       usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.COPY_SRC,
     });
-
     t.trackForCleanup(texture);
     t.device.queue.writeTexture({ texture }, new Int8Array(data), {}, size);
 

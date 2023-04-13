@@ -68,9 +68,6 @@ WEBCORE_EXPORT std::optional<Vector<uint8_t>> convertToU2fSignCommand(const Vect
 
 WEBCORE_EXPORT Vector<uint8_t> constructBogusU2fRegistrationCommand();
 
-// Returns "https://www.gstatic.com/securitykey/origins.json" as an AppID when googleLegacyAppidSupport is true.
-WEBCORE_EXPORT String processGoogleLegacyAppIdSupportExtension(const std::optional<WebCore::AuthenticationExtensionsClientInputs>&);
-
 } // namespace fido
 
 #endif // ENABLE(WEB_AUTHN)

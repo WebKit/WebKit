@@ -28,7 +28,7 @@ angle::Result Resource::waitForIdle(ContextVk *contextVk,
 
     RendererVk *renderer = contextVk->getRenderer();
     // Make sure the driver is done with the resource.
-    if (renderer->hasUnfinishedUse(mUse))
+    if (!renderer->hasResourceUseFinished(mUse))
     {
         if (debugMessage)
         {
@@ -37,9 +37,25 @@ angle::Result Resource::waitForIdle(ContextVk *contextVk,
         ANGLE_TRY(renderer->finishResourceUse(contextVk, mUse));
     }
 
-    ASSERT(!renderer->hasUnfinishedUse(mUse));
+    ASSERT(renderer->hasResourceUseFinished(mUse));
 
     return angle::Result::Continue;
+}
+
+std::ostream &operator<<(std::ostream &os, const ResourceUse &use)
+{
+    const Serials &serials = use.getSerials();
+    os << '{';
+    for (size_t i = 0; i < serials.size(); i++)
+    {
+        os << serials[i].getValue();
+        if (i < serials.size() - 1)
+        {
+            os << ",";
+        }
+    }
+    os << '}';
+    return os;
 }
 
 // SharedGarbage implementation.
@@ -65,22 +81,29 @@ SharedGarbage &SharedGarbage::operator=(SharedGarbage &&rhs)
 
 bool SharedGarbage::destroyIfComplete(RendererVk *renderer)
 {
-    if (renderer->hasUnfinishedUse(mLifetime))
+    if (renderer->hasResourceUseFinished(mLifetime))
     {
-        return false;
+        for (GarbageObject &object : mGarbage)
+        {
+            object.destroy(renderer);
+        }
+        return true;
     }
-
-    for (GarbageObject &object : mGarbage)
-    {
-        object.destroy(renderer);
-    }
-
-    return true;
+    return false;
 }
 
-bool SharedGarbage::hasUnsubmittedUse(RendererVk *renderer) const
+bool SharedGarbage::hasResourceUseSubmitted(RendererVk *renderer) const
 {
-    return renderer->hasUnsubmittedUse(mLifetime);
+    return renderer->hasResourceUseSubmitted(mLifetime);
 }
+
+// ReleasableResource implementation.
+template <class T>
+void ReleasableResource<T>::release(RendererVk *renderer)
+{
+    renderer->collectGarbage(mUse, &mObject);
+}
+
+template class ReleasableResource<Semaphore>;
 }  // namespace vk
 }  // namespace rx

@@ -192,7 +192,7 @@ private:
     void trimMainAxisMarginEnd(const FlexItem&);
     void trimCrossAxisMarginStart(const FlexItem&);
     void trimCrossAxisMarginEnd(const FlexItem&);
-    bool shouldTrimChildMargin(MarginTrimType, const RenderBox&) const final;
+    bool isChildEligibleForMarginTrim(MarginTrimType, const RenderBox&) const final;
     bool hasAutoMarginsInCrossAxis(const RenderBox& child) const;
     bool updateAutoMarginsInCrossAxis(RenderBox& child, LayoutUnit availableAlignmentSpace);
     void repositionLogicalHeightDependentFlexItems(Vector<LineContext>&, LayoutUnit gapBetweenLines);

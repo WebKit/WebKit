@@ -1,56 +1,51 @@
-<!DOCTYPE HTML>
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-    <title>List; presentation heuristics</title>
-    <meta charset="utf-8"> 
-    <style type="text/css">
-    html, body {
-        font-size: 100%;
-    } 
-    h1 {
-        font-size: 1em;
-    }
-    .inline, .inline li {
-        display: inline;
-    }
-    .nomarkers {
-        list-style: none;
-    }
-    .imagemarkers {
-        list-style-image: url(data:image/gif;base64,R0lGODlhEAARAJECAOHh4UpKSgAAAAAAACH5BAEAAAIALAAAAAAQABEAAAIllB8Zx63b4otSUWcvyuz5D4biSD7AiZroWSXa5r7CJNOvra1RAQA7);
-    }
-    .imagemarkersbefore li::before {
-        content: url(data:image/gif;base64,R0lGODlhEAARAJECAOHh4UpKSgAAAAAAACH5BAEAAAIALAAAAAAQABEAAAIllB8Zx63b4otSUWcvyuz5D4biSD7AiZroWSXa5r7CJNOvra1RAQA7) " ";
-    }
-    .bulletmarkersbefore li::before {
-        content: "• ";
-    }
-    .countermarkersbefore {
-        counter-reset: number;
-        list-style-type: none;
-    }
-    .countermarkersbefore li::before {
-        counter-increment: number;
-        content: counters(number,".") ". ";
-    }
-    .backgroundmarkers li {
-        padding-left: 30px;
-        background: transparent url(data:image/gif;base64,R0lGODlhEAARAJECAOHh4UpKSgAAAAAAACH5BAEAAAIALAAAAAAQABEAAAIllB8Zx63b4otSUWcvyuz5D4biSD7AiZroWSXa5r7CJNOvra1RAQA7) left center no-repeat;
-    }
-    .backgroundmarkersbefore li::before {
-        display: inline-block;
-        content: " ";
-        width: 17px;
-        height: 17px;
-        background: transparent url(data:image/gif;base64,R0lGODlhEAARAJECAOHh4UpKSgAAAAAAACH5BAEAAAIALAAAAAAQABEAAAIllB8Zx63b4otSUWcvyuz5D4biSD7AiZroWSXa5r7CJNOvra1RAQA7) left center no-repeat;
-    }
+<title>List; presentation heuristics</title>
+<meta charset="utf-8">
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+<style type="text/css">
+.inline, .inline li {
+    display: inline;
+}
+.nomarkers {
+    list-style: none;
+}
+.imagemarkers {
+    list-style-image: url(data:image/gif;base64,R0lGODlhEAARAJECAOHh4UpKSgAAAAAAACH5BAEAAAIALAAAAAAQABEAAAIllB8Zx63b4otSUWcvyuz5D4biSD7AiZroWSXa5r7CJNOvra1RAQA7);
+}
+.imagemarkersbefore li::before {
+    content: url(data:image/gif;base64,R0lGODlhEAARAJECAOHh4UpKSgAAAAAAACH5BAEAAAIALAAAAAAQABEAAAIllB8Zx63b4otSUWcvyuz5D4biSD7AiZroWSXa5r7CJNOvra1RAQA7) " ";
+}
+.bulletmarkersbefore li::before {
+    content: "• ";
+}
+.countermarkersbefore {
+    counter-reset: number;
+    list-style-type: none;
+}
+.countermarkersbefore li::before {
+    counter-increment: number;
+    content: counters(number,".") ". ";
+}
+.backgroundmarkers li {
+    padding-left: 30px;
+    background: transparent url(data:image/gif;base64,R0lGODlhEAARAJECAOHh4UpKSgAAAAAAACH5BAEAAAIALAAAAAAQABEAAAIllB8Zx63b4otSUWcvyuz5D4biSD7AiZroWSXa5r7CJNOvra1RAQA7) left center no-repeat;
+}
+.backgroundmarkersbefore li::before {
+    display: inline-block;
+    content: " ";
+    width: 17px;
+    height: 17px;
+    background: transparent url(data:image/gif;base64,R0lGODlhEAARAJECAOHh4UpKSgAAAAAAACH5BAEAAAIALAAAAAAQABEAAAIllB8Zx63b4otSUWcvyuz5D4biSD7AiZroWSXa5r7CJNOvra1RAQA7) left center no-repeat;
+}
 </style>
 </head>
+</head>
 <body onload="runTest();">
-<script src="../resources/js-test-pre.js"></script>
 
 <div id="examples">
-
     <!-- @data-role is the expectation -->
 
     <h1>list because of explicit role, despite style and lack of list markers</h1>
@@ -163,59 +158,45 @@
         <li>bar</li>
         <li>baz</li>
     </ul>
-
-
 </div>
 
-<div id="console"></div>
 <script>
+var output = "This tests that heurisitics for determining meaningful lists versus presentational lists result in the same computed role, regardless of platform.\n\n";
+
 function runTest() {
-  if (window.testRunner && window.accessibilityController) {
-    description("This tests that heurisitics for determining meaningful lists versus presentational lists result in the same computed role, regardless of platform.")
+    window.jsTestIsAsync = true;
+    if (!window.accessibilityController)
+        return;
+
     var examples = document.querySelectorAll(".ex");
-    var el, contentAttrRoleString, axElement, computedAriaRole, output, expectedRole, expectation, result, note;
-    for (var i = 0, c = examples.length; i < c; i++) {
-        el = examples[i];
-        el.id = "ex" + i
+    setTimeout(async function() {
+        for (var i = 0, c = examples.length; i < c; i++) {
+            const element = examples[i];
+            element.id = `ex${i}`;
 
-        axElement = accessibilityController.accessibleElementById(el.id);
-        if (!axElement)
-            continue;
+            const computedAriaRole = (await waitForElementById(element.id)).computedRoleString;
 
-        computedAriaRole = axElement.computedRoleString;
+            let expectedRole = "";
+            if (element.hasAttribute("data-role"))
+                expectedRole = element.getAttribute("data-role");
 
-        contentAttrRoleString = el.getAttribute("role");
-        note = el.getAttribute("data-note")
-        output = el.tagName.toLowerCase() + (contentAttrRoleString ? ("[role=\""+contentAttrRoleString+"\"]") : "") + (note ? note : "");
-        output += " -> ";
-        output += computedAriaRole;
-        output += ". ";
-
-        expectedRole = "";
-        if (el.hasAttribute("data-role")) {
-            expectedRole = el.getAttribute("data-role");
+            const note = element.getAttribute("data-note");
+            const contentAttrRoleString = element.getAttribute("role");
+            const result = `${element.tagName.toLowerCase()}${contentAttrRoleString ? `[role="${contentAttrRoleString}"]` : ""}${note ? `${note}` : ""} -> ${computedAriaRole}.`;
+            if (computedAriaRole === expectedRole)
+                output += `PASS: ${result}\n`;
+            else
+                output += `FAIL: Got ${result}, expected ${expectedRole}\n`;
         }
 
-        expectation = expectedRole;
-        matchedResults = (computedAriaRole == expectedRole)
+        // Once tests are complete, hide all the example markup.
+        document.getElementById("examples").style.display = "none";
 
-        result = document.getElementById('console');
-        if (matchedResults) {
-            result.innerText += "PASS: " + output + "\n";
-        } else {
-            result.innerText += "FAIL: " + output + "Expected: " + expectation + ".\n";
-        }
-    }
-
-    // Once tests are complete, hide all the example markup.
-    examples = document.querySelectorAll(".ex, #examples");
-    for (var i = 0, c = examples.length; i < c; i++)
-        examples[i].style.display = "none";
-  }
+        debug(output);
+        finishJSTest();
+    }, 0);
 }
 </script>
-<script src="../resources/js-test-post.js"></script>
 </body>
 </html>
-
 

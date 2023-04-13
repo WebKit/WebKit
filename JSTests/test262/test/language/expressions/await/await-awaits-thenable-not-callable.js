@@ -8,6 +8,7 @@ description: >
   Await can await any thenable. If the thenable's then is not callable,
   await evaluates to the thenable
 flags: [async]
+includes: [asyncHelpers.js]
 ---*/
 
 async function foo() {
@@ -16,5 +17,5 @@ async function foo() {
   assert.sameValue(res, thenable);
 }
 
-foo().then($DONE, $DONE);
+asyncTest(foo);
 

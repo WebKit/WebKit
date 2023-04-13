@@ -49,7 +49,7 @@ private:
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
     const AtomString& formControlType() const final;
     bool computeWillValidate() const final { return false; }
-    void parseAttribute(const QualifiedName&, const AtomString&) final;
+    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
     void disabledStateChanged() final;
     void childrenChanged(const ChildChange&) final;
     void didMoveToNewDocument(Document& oldDocument, Document& newDocument) final;

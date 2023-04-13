@@ -1,0 +1,6 @@
+
+PASS Same origin font preload with crossorigin attribute
+FAIL Same origin font preload without crossorigin attribute assert_equals: /fonts/CanvasTest.ttf?without_crossorigin expected 2 but got 1
+PASS Cross origin font preload with crossorigin attribute
+FAIL Cross origin font preload without crossorigin attribute assert_equals: http://127.0.0.1:8800/fonts/CanvasTest.ttf?without_crossorigin&pipe=header(Access-Control-Allow-Origin,*) expected 2 but got 1
+

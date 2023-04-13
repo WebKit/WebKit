@@ -27,8 +27,12 @@ import os
 import re
 from pathlib import Path
 
-import ply.lex as lex
-import ply.yacc as yacc
+try:
+    import ply.lex as lex
+    import ply.yacc as yacc
+except ImportError:
+    import sys
+    sys.exit('Please run `pip3 install ply`');
 
 
 # --- Parse Tree

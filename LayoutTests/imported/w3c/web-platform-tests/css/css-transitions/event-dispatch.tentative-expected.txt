@@ -25,4 +25,5 @@ PASS Call Animation.cancel after restarting transition immediately
 PASS Set timeline and play transition after clear the timeline
 PASS Set null target effect after canceling the transition
 PASS Cancel the transition after clearing the target effect
+PASS Cancel the transition after it finishes
 

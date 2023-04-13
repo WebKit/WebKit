@@ -26,15 +26,15 @@
 #include "FormListedElement.h"
 
 #include "EditorClient.h"
-#include "ElementAncestorIterator.h"
+#include "ElementAncestorIteratorInlines.h"
 #include "ElementInlines.h"
 #include "FormController.h"
-#include "Frame.h"
 #include "HTMLFormControlElement.h"
 #include "HTMLFormElement.h"
 #include "HTMLNames.h"
 #include "HTMLObjectElement.h"
 #include "IdTargetObserver.h"
+#include "LocalFrame.h"
 
 namespace WebCore {
 
@@ -89,27 +89,24 @@ void FormListedElement::elementRemovedFromAncestor(Element& element, Node::Remov
     }
 }
 
-HTMLFormElement* FormListedElement::findAssociatedForm(const HTMLElement* element, HTMLFormElement* currentAssociatedForm)
+static RefPtr<HTMLFormElement> findAssociatedForm(const HTMLElement& element, HTMLFormElement* currentAssociatedForm)
 {
-    const AtomString& formId(element->attributeWithoutSynchronization(formAttr));
-    if (!formId.isNull() && element->isConnected()) {
-        // The HTML5 spec says that the element should be associated with
-        // the first element in the document to have an ID that equal to
-        // the value of form attribute, so we put the result of
-        // treeScope().getElementById() over the given element.
-        RefPtr<Element> newFormCandidate = element->treeScope().getElementById(formId);
-        if (!is<HTMLFormElement>(newFormCandidate))
-            return nullptr;
-        if (&element->traverseToRootNode() == &element->treeScope().rootNode()) {
-            ASSERT(&element->traverseToRootNode() == &newFormCandidate->traverseToRootNode());
-            return downcast<HTMLFormElement>(newFormCandidate.get());
+    if (element.isConnected()) {
+        if (auto& formId = element.attributeWithoutSynchronization(formAttr); !formId.isNull()) {
+            // The HTML5 spec says that the element should be associated with
+            // the first element in the document to have an ID that equal to
+            // the value of form attribute, so we put the result of
+            // treeScope().getElementById() over the given element.
+            RefPtr newFormCandidate = dynamicDowncast<HTMLFormElement>(element.treeScope().getElementById(formId));
+            if (!newFormCandidate)
+                return nullptr;
+            if (&element.traverseToRootNode() == &element.treeScope().rootNode()) {
+                ASSERT(&element.traverseToRootNode() == &newFormCandidate->traverseToRootNode());
+                return newFormCandidate;
+            }
         }
     }
-
-    if (!currentAssociatedForm)
-        return HTMLFormElement::findClosestFormAncestor(*element);
-
-    return currentAssociatedForm;
+    return currentAssociatedForm ? currentAssociatedForm : HTMLFormElement::findClosestFormAncestor(element);
 }
 
 void FormListedElement::formOwnerRemovedFromTree(const Node& formRoot)
@@ -133,12 +130,12 @@ void FormListedElement::formOwnerRemovedFromTree(const Node& formRoot)
         setForm(nullptr);
 }
 
-void FormListedElement::setFormInternal(HTMLFormElement* newForm)
+void FormListedElement::setFormInternal(RefPtr<HTMLFormElement>&& newForm)
 {
     willChangeForm();
     if (auto* oldForm = form())
         oldForm->unregisterFormListedElement(*this);
-    FormAssociatedElement::setFormInternal(newForm);
+    FormAssociatedElement::setFormInternal(newForm.copyRef());
     if (newForm)
         newForm->registerFormListedElement(*this);
     didChangeForm();
@@ -166,7 +163,7 @@ void FormListedElement::resetFormOwner()
 {
     RefPtr<HTMLFormElement> originalForm = form();
     HTMLElement& element = asHTMLElement();
-    setForm(findAssociatedForm(&element, originalForm.get()));
+    setForm(findAssociatedForm(element, originalForm.get()));
     auto* newForm = form();
     if (newForm && newForm != originalForm && newForm->isConnected())
         element.document().didAssociateFormControl(element);
@@ -299,4 +296,4 @@ void FormAttributeTargetObserver::idTargetChanged()
     m_element.formAttributeTargetChanged();
 }
 
-} // namespace Webcore
+} // namespace WebCore

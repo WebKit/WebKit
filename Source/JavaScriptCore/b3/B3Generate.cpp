@@ -69,7 +69,7 @@ void generateToAir(Procedure& procedure)
 {
     CompilerTimingScope timingScope("Total B3", "generateToAir");
     
-    if (shouldDumpIR(procedure, B3Mode) && !shouldDumpIRAtEachPhase(B3Mode)) {
+    if ((shouldDumpIR(procedure, B3Mode) || Options::dumpGraphAfterParsing()) && !shouldDumpIRAtEachPhase(B3Mode)) {
         dataLog(tierName, "Initial B3:\n");
         dataLog(procedure);
     }

@@ -50,6 +50,7 @@ from webkitpy.style.checker import CheckerDispatcher
 from webkitpy.style.checker import ProcessorBase
 from webkitpy.style.checker import StyleProcessor
 from webkitpy.style.checker import StyleProcessorConfiguration
+from webkitpy.style.checkers.basexcconfig import BaseXcconfigChecker
 from webkitpy.style.checkers.changelog import ChangeLogChecker
 from webkitpy.style.checkers.cpp import CppChecker
 from webkitpy.style.checkers.js import JSChecker
@@ -407,6 +408,10 @@ class CheckerDispatcherDispatchTest(unittest.TestCase):
                              "got_class": got_class,
                              "expected_class": expected_class})
 
+    def assert_checker_basexcconfig(self, file_path):
+        """Assert that the dispatched checker is a BaseXcconfigChecker."""
+        self.assert_checker(file_path, BaseXcconfigChecker)
+
     def assert_checker_changelog(self, file_path):
         """Assert that the dispatched checker is a ChangeLogChecker."""
         self.assert_checker(file_path, ChangeLogChecker)
@@ -434,6 +439,25 @@ class CheckerDispatcherDispatchTest(unittest.TestCase):
     def assert_checker_xml(self, file_path):
         """Assert that the dispatched checker is a XMLChecker."""
         self.assert_checker(file_path, XMLChecker)
+
+    def test_basexcconfig_paths(self):
+        """Test paths that should be checked as Base.xcconfig files."""
+        paths = [
+            'Base.xcconfig',
+            os.path.join('Source', 'WebCore', 'Configurations', 'Base.xcconfig'),
+            'General.xcconfig',
+            os.path.join('Source', 'ThirdParty', 'gtest', 'xcode', 'Config', 'General.xcconfig'),
+        ]
+
+        for path in paths:
+            self.assert_checker_basexcconfig(path)
+
+        # Check checker attributes on a typical input.
+        file_path = paths[0]
+        self.assert_checker_basexcconfig(file_path)
+        checker = self.dispatch(file_path)
+        self.assertEqual(checker._file_path, file_path)
+        self.assertEqual(checker._handle_style_error, self.mock_handle_style_error)
 
     def test_changelog_paths(self):
         """Test paths that should be checked as ChangeLog."""

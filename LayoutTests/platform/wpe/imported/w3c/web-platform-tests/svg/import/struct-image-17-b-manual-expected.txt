@@ -3,10 +3,10 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-    RenderSVGContainer {g} at (16,15) size 759x235
-      RenderSVGText {text} at (10,9) size 455x19 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 455x19
-          chunk 1 text run 1 at (10.00,24.00) startOffset 0 endOffset 60 width 454.80: "Test that SVG images in <image> are not scripted or animated"
+    RenderSVGContainer {g} at (16,15) size 756x235
+      RenderSVGText {text} at (10,9) size 454x19 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 454x19
+          chunk 1 text run 1 at (10.00,24.00) startOffset 0 endOffset 60 width 453.00: "Test that SVG images in <image> are not scripted or animated"
       RenderSVGImage {image} at (16,83) size 168x167
     RenderSVGContainer {g} at (16,518) size 380x60
       RenderSVGText {text} at (10,311) size 228x36 contains 1 chunk(s)

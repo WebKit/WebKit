@@ -29,15 +29,14 @@
 #include "FloatRect.h"
 #include "Font.h"
 #include "FontSelector.h"
-#include "Frame.h"
-#include "FrameView.h"
 #include "GDIUtilities.h"
-#include "GraphicsContext.h"
-#include "GraphicsContextWin.h"
+#include "GraphicsContextCairo.h"
 #include "HTMLNames.h"
 #include "HWndDC.h"
 #include "HostWindow.h"
 #include "LengthFunctions.h"
+#include "LocalFrame.h"
+#include "LocalFrameView.h"
 #include "NotImplemented.h"
 #include "Page.h"
 #include "PlatformMouseEvent.h"
@@ -129,7 +128,7 @@ LPCWSTR PopupMenuWin::popupClassName()
     return kPopupWindowClassName;
 }
 
-void PopupMenuWin::show(const IntRect& r, FrameView* view, int index)
+void PopupMenuWin::show(const IntRect& r, LocalFrameView* view, int index)
 {
     if (view && view->frame().page())
         m_scaleFactor = view->frame().page()->deviceScaleFactor();
@@ -279,7 +278,7 @@ void PopupMenuWin::hide()
 // The screen that the popup is placed on should be whichever one the popup menu button lies on.
 // We fake an hwnd (here we use the popup's hwnd) on top of the button which we can then use to determine the screen.
 // We can then proceed with our final position/size calculations.
-void PopupMenuWin::calculatePositionAndSize(const IntRect& r, FrameView* v)
+void PopupMenuWin::calculatePositionAndSize(const IntRect& r, LocalFrameView* v)
 {
     // First get the screen coordinates of the popup menu client.
     HWND hostWindow = v->hostWindow()->platformPageClient();
@@ -537,7 +536,7 @@ void PopupMenuWin::incrementWheelDelta(int delta)
 void PopupMenuWin::reduceWheelDelta(int delta)
 {
     ASSERT(delta >= 0);
-    ASSERT(delta <= abs(m_wheelDelta));
+    ASSERT(delta <= std::abs(m_wheelDelta));
 
     if (m_wheelDelta > 0)
         m_wheelDelta -= delta;
@@ -610,7 +609,7 @@ void PopupMenuWin::paint(const IntRect& damageRect, HDC hdc)
         ::SelectObject(m_DC.get(), m_bmp.get());
     }
 
-    GraphicsContextWin context(m_DC.get());
+    GraphicsContextCairo context(m_DC.get());
 
     // listRect is the damageRect translated into the coordinates of the entire menu list (which is listSize * m_itemHeight pixels tall)
     IntRect listRect = damageRect;
@@ -1053,14 +1052,14 @@ LRESULT PopupMenuWin::wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
                 break;
 
             int i = 0;
-            for (incrementWheelDelta(GET_WHEEL_DELTA_WPARAM(wParam)); abs(wheelDelta()) >= WHEEL_DELTA; reduceWheelDelta(WHEEL_DELTA)) {
+            for (incrementWheelDelta(GET_WHEEL_DELTA_WPARAM(wParam)); std::abs(wheelDelta()) >= WHEEL_DELTA; reduceWheelDelta(WHEEL_DELTA)) {
                 if (wheelDelta() > 0)
                     ++i;
                 else
                     --i;
             }
 
-            ScrollableArea::scroll(i > 0 ? ScrollUp : ScrollDown, ScrollGranularity::Line, abs(i));
+            ScrollableArea::scroll(i > 0 ? ScrollUp : ScrollDown, ScrollGranularity::Line, std::abs(i));
             break;
         }
 

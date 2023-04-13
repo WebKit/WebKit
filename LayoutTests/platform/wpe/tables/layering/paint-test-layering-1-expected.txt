@@ -10,22 +10,22 @@ layer at (0,0) size 800x600
         RenderInline {SPAN} at (0,0) size 23x17 [color=#FF0000]
           RenderText {#text} at (183,18) size 23x17
             text run at (183,18) width 23: "red"
-        RenderText {#text} at (206,18) size 381x17
-          text run at (206,18) width 381: " cell starts at row 1 and column 3 and spans three rows. The "
-        RenderInline {SPAN} at (0,0) size 29x17 [color=#0000FF]
-          RenderText {#text} at (587,18) size 29x17
-            text run at (587,18) width 29: "blue"
-        RenderText {#text} at (616,18) size 765x35
-          text run at (616,18) width 149: " cell starts at row 2, and"
+        RenderText {#text} at (205,18) size 382x17
+          text run at (205,18) width 382: " cell starts at row 1 and column 3 and spans three rows. The "
+        RenderInline {SPAN} at (0,0) size 30x17 [color=#0000FF]
+          RenderText {#text} at (586,18) size 30x17
+            text run at (586,18) width 30: "blue"
+        RenderText {#text} at (615,18) size 765x35
+          text run at (615,18) width 150: " cell starts at row 2, and"
           text run at (0,36) width 341: "column 2, and spans two columns and two rows. The "
         RenderInline {SPAN} at (0,0) size 38x17 [color=#008000]
           RenderText {#text} at (341,36) size 38x17
             text run at (341,36) width 38: "green"
-        RenderText {#text} at (379,36) size 196x17
-          text run at (379,36) width 196: " cell spans 4 columns of row 3."
+        RenderText {#text} at (378,36) size 197x17
+          text run at (378,36) width 197: " cell spans 4 columns of row 3."
       RenderBlock {P} at (0,70) size 784x36
-        RenderText {#text} at (0,0) size 764x35
-          text run at (0,0) width 764: "If the test succeeds then you should see no text inside the table. If you see the text 'FAIL' inside the table, then the test has"
+        RenderText {#text} at (0,0) size 763x35
+          text run at (0,0) width 763: "If the test succeeds then you should see no text inside the table. If you see the text 'FAIL' inside the table, then the test has"
           text run at (0,18) width 39: "failed."
       RenderTable {TABLE} at (0,122) size 102x76 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 100x74
@@ -46,8 +46,8 @@ layer at (0,0) size 800x600
                 text run at (2,2) width 16: "    "
             RenderTableCell {TD} at (24,50) size 74x22 [bgcolor=#0000FF] [border: (1px inset #808080)] [r=1 c=1 rs=2 cs=2]
               RenderBlock {DIV} at (2,2) size 70x18 [color=#008000]
-                RenderText {#text} at (14,0) size 56x17
-                  text run at (14,0) width 56: "   FAIL  "
+                RenderText {#text} at (15,0) size 55x17
+                  text run at (15,0) width 55: "   FAIL  "
           RenderTableRow {TR} at (0,50) size 100x22
             RenderTableCell {TD} at (2,50) size 96x22 [bgcolor=#008000] [border: (1px inset #808080)] [r=2 c=0 rs=1 cs=3]
               RenderBlock {DIV} at (2,2) size 92x18

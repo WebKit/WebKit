@@ -52,7 +52,8 @@ RemoteMediaSourceProxy::RemoteMediaSourceProxy(GPUConnectionToWebProcess& connec
 
 RemoteMediaSourceProxy::~RemoteMediaSourceProxy()
 {
-    ASSERT(m_connectionToWebProcess);
+    if (!m_connectionToWebProcess)
+        return;
 
     m_connectionToWebProcess->messageReceiverMap().removeMessageReceiver(Messages::RemoteMediaSourceProxy::messageReceiverName(), m_identifier.toUInt64());
 }
@@ -68,9 +69,9 @@ MediaTime RemoteMediaSourceProxy::duration() const
     return m_duration;
 }
 
-std::unique_ptr<PlatformTimeRanges> RemoteMediaSourceProxy::buffered() const
+const PlatformTimeRanges& RemoteMediaSourceProxy::buffered() const
 {
-    return makeUnique<PlatformTimeRanges>(m_buffered);
+    return m_buffered;
 }
 
 void RemoteMediaSourceProxy::seekToTime(const MediaTime& time)
@@ -81,12 +82,10 @@ void RemoteMediaSourceProxy::seekToTime(const MediaTime& time)
     m_connectionToWebProcess->connection().send(Messages::MediaSourcePrivateRemote::SeekToTime(time), m_identifier);
 }
 
-#if USE(GSTREAMER)
 void RemoteMediaSourceProxy::monitorSourceBuffers()
 {
     notImplemented();
 }
-#endif
 
 #if !RELEASE_LOG_DISABLED
 void RemoteMediaSourceProxy::setLogIdentifier(const void*)
@@ -129,10 +128,25 @@ void RemoteMediaSourceProxy::durationChanged(const MediaTime& duration)
         m_private->durationChanged(duration);
 }
 
-void RemoteMediaSourceProxy::bufferedChanged(const WebCore::PlatformTimeRanges& buffered)
+void RemoteMediaSourceProxy::bufferedChanged(WebCore::PlatformTimeRanges&& buffered)
 {
-    m_buffered = buffered;
+    m_buffered = WTFMove(buffered);
+    if (m_private)
+        m_private->bufferedChanged(m_buffered);
 }
+
+void RemoteMediaSourceProxy::markEndOfStream(WebCore::MediaSourcePrivate::EndOfStreamStatus status )
+{
+    if (m_private)
+        m_private->markEndOfStream(status);
+}
+
+void RemoteMediaSourceProxy::unmarkEndOfStream()
+{
+    if (m_private)
+        m_private->unmarkEndOfStream();
+}
+
 
 void RemoteMediaSourceProxy::setReadyState(WebCore::MediaPlayerEnums::ReadyState readyState)
 {
@@ -162,6 +176,14 @@ void RemoteMediaSourceProxy::setTimeFudgeFactor(const MediaTime& fudgeFactor)
 {
     if (m_private)
         m_private->setTimeFudgeFactor(fudgeFactor);
+}
+
+void RemoteMediaSourceProxy::shutdown()
+{
+    if (!m_connectionToWebProcess)
+        return;
+
+    m_connectionToWebProcess->connection().sendWithAsyncReply(Messages::MediaSourcePrivateRemote::MediaSourcePrivateShuttingDown(), [self = RefPtr { this }] { }, m_identifier);
 }
 
 } // namespace WebKit

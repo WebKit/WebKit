@@ -26,11 +26,12 @@
 #include "config.h"
 #include "WebValidationMessageClient.h"
 
+#include "MessageSenderInlines.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
 #include <WebCore/Element.h>
-#include <WebCore/Frame.h>
+#include <WebCore/LocalFrame.h>
 
 namespace WebKit {
 using namespace WebCore;

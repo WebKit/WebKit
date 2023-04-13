@@ -46,11 +46,10 @@
 #include "Editing.h"
 #include "Editor.h"
 #include "EditorClient.h"
-#include "ElementIterator.h"
+#include "ElementChildIteratorInlines.h"
 #include "ElementRareData.h"
 #include "EmptyClients.h"
 #include "File.h"
-#include "Frame.h"
 #include "FrameLoader.h"
 #include "HTMLAttachmentElement.h"
 #include "HTMLBRElement.h"
@@ -64,6 +63,7 @@
 #include "HTMLTableElement.h"
 #include "HTMLTextAreaElement.h"
 #include "HTMLTextFormControlElement.h"
+#include "LocalFrame.h"
 #include "MarkupAccumulator.h"
 #include "MutableStyleProperties.h"
 #include "NodeList.h"
@@ -77,8 +77,10 @@
 #include "SocketProvider.h"
 #include "TextIterator.h"
 #include "TextManipulationController.h"
+#include "TypedElementDescendantIteratorInlines.h"
 #include "VisibleSelection.h"
 #include "VisibleUnits.h"
+#include <JavaScriptCore/JSCJSValueInlines.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/URL.h>
 #include <wtf/URLParser.h>
@@ -192,8 +194,12 @@ std::unique_ptr<Page> createPageForSanitizingWebContent()
     page->settings().setPluginsEnabled(false);
     page->settings().setAcceleratedCompositingEnabled(false);
 
-    Frame& frame = page->mainFrame();
-    frame.setView(FrameView::create(frame, IntSize { 800, 600 }));
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(page->mainFrame());
+    if (!localMainFrame)
+        return page; 
+
+    LocalFrame& frame = *localMainFrame;
+    frame.setView(LocalFrameView::create(frame, IntSize { 800, 600 }));
     frame.init();
 
     FrameLoader& loader = frame.loader();
@@ -204,7 +210,7 @@ std::unique_ptr<Page> createPageForSanitizingWebContent()
     writer.begin();
     writer.insertDataSynchronously(markup);
     writer.end();
-    RELEASE_ASSERT(page->mainFrame().document()->body());
+    RELEASE_ASSERT(frame.document()->body());
 
     return page;
 }
@@ -212,7 +218,11 @@ std::unique_ptr<Page> createPageForSanitizingWebContent()
 String sanitizeMarkup(const String& rawHTML, MSOListQuirks msoListQuirks, std::optional<Function<void(DocumentFragment&)>> fragmentSanitizer)
 {
     auto page = createPageForSanitizingWebContent();
-    Document* stagingDocument = page->mainFrame().document();
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(page->mainFrame());
+    if (!localMainFrame)
+        return String();
+
+    Document* stagingDocument = localMainFrame->document();
     ASSERT(stagingDocument);
 
     auto fragment = createFragmentFromMarkup(*stagingDocument, rawHTML, emptyString(), { });
@@ -892,8 +902,7 @@ static bool propertyMissingOrEqualToNone(const StyleProperties* style, CSSProper
 {
     if (!style)
         return false;
-    auto value = style->getPropertyCSSValue(propertyID);
-    return !value || (is<CSSPrimitiveValue>(*value) && downcast<CSSPrimitiveValue>(*value).valueID() == CSSValueNone);
+    return style->propertyAsValueID(propertyID).value_or(CSSValueNone) == CSSValueNone;
 }
 
 static bool needInterchangeNewlineAfter(const VisiblePosition& v)
@@ -1166,7 +1175,7 @@ Ref<DocumentFragment> createFragmentFromMarkup(Document& document, const String&
     auto fakeBody = HTMLBodyElement::create(document);
     auto fragment = DocumentFragment::create(document);
 
-    fragment->parseHTML(markup, fakeBody.ptr(), parserContentPolicy);
+    fragment->parseHTML(markup, fakeBody, parserContentPolicy);
     restoreAttachmentElementsInFragment(fragment);
     if (!baseURL.isEmpty() && baseURL != aboutBlankURL() && baseURL != document.baseURL())
         completeURLs(fragment.ptr(), baseURL);
@@ -1345,7 +1354,7 @@ static ALWAYS_INLINE ExceptionOr<Ref<DocumentFragment>> createFragmentForMarkup(
     auto fragment = mode == DocumentFragmentMode::New ? DocumentFragment::create(document.get()) : document->documentFragmentForInnerOuterHTML();
     ASSERT(!fragment->hasChildNodes());
     if (document->isHTMLDocument()) {
-        fragment->parseHTML(markup, &contextElement, parserContentPolicy);
+        fragment->parseHTML(markup, contextElement, parserContentPolicy);
         return fragment;
     }
 
@@ -1370,7 +1379,7 @@ RefPtr<DocumentFragment> createFragmentForTransformToFragment(Document& outputDo
         // Unfortunately, that's an implementation detail of the parser.
         // We achieve that effect here by passing in a fake body element as context for the fragment.
         auto fakeBody = HTMLBodyElement::create(outputDoc);
-        fragment->parseHTML(WTFMove(sourceString), fakeBody.ptr(), { ParserContentPolicy::AllowScriptingContent, ParserContentPolicy::AllowPluginContent, ParserContentPolicy::DoNotMarkAlreadyStarted });
+        fragment->parseHTML(WTFMove(sourceString), fakeBody, { ParserContentPolicy::AllowScriptingContent, ParserContentPolicy::AllowPluginContent, ParserContentPolicy::DoNotMarkAlreadyStarted });
     } else if (sourceMIMEType == textPlainContentTypeAtom())
         fragment->parserAppendChild(Text::create(outputDoc, WTFMove(sourceString)));
     else {

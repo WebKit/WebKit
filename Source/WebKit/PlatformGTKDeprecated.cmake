@@ -7,12 +7,13 @@ add_definitions(-DWEBKIT_DOM_USE_UNSTABLE_API)
 file(MAKE_DIRECTORY ${WebKitGTK_DERIVED_SOURCES_DIR}/webkit2)
 
 list(APPEND WebKitGTK_HEADER_TEMPLATES
+    ${WEBKIT_DIR}/UIProcess/API/glib/WebKitJavascriptResult.h.in
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitMimeInfo.h.in
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitPlugin.h.in
     ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitPrintCustomWidget.h.in
 )
 
-list(APPEND WebKitWebExtension_HEADER_TEMPLATES
+list(APPEND WebKitWebProcessExtension_HEADER_TEMPLATES
     ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/glib/WebKitConsoleMessage.h.in
 )
 
@@ -140,10 +141,10 @@ set(WebKitDOM_SOURCES_FOR_INTROSPECTION
 list(APPEND WebKitGTK_FAKE_API_HEADERS
     ${WebKitGTK_DERIVED_SOURCES_DIR}/webkit2/webkit2.h
     ${WebKitGTK_DERIVED_SOURCES_DIR}/webkit2/webkit-web-extension.h
-    ${WebKitGTK_FRAMEWORK_HEADERS_DIR}/webkitgtk-webextension/webkitdom
+    ${WebKitGTK_FRAMEWORK_HEADERS_DIR}/webkitgtk-web-process-extension/webkitdom
 )
 
-list(APPEND WebKit_INCLUDE_DIRECTORIES
+list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/WebProcess/InjectedBundle/API/glib/DOM"
     "${WEBKIT_DIR}/WebProcess/InjectedBundle/API/gtk/DOM"
 )
@@ -168,13 +169,13 @@ add_custom_command(
 
 add_custom_command(
     OUTPUT ${WebKitGTK_DERIVED_SOURCES_DIR}/webkit2/webkit-web-extension.h
-    DEPENDS ${WebKitGTK_DERIVED_SOURCES_DIR}/webkit/webkit-web-extension.h
-    COMMAND ${CMAKE_COMMAND} -E copy ${WebKitGTK_DERIVED_SOURCES_DIR}/webkit/webkit-web-extension.h ${WebKitGTK_DERIVED_SOURCES_DIR}/webkit2/
+    DEPENDS ${WebKitGTK_DERIVED_SOURCES_DIR}/webkit/webkit-web-process-extension.h
+    COMMAND ${CMAKE_COMMAND} -E copy ${WebKitGTK_DERIVED_SOURCES_DIR}/webkit/webkit-web-process-extension.h ${WebKitGTK_DERIVED_SOURCES_DIR}/webkit2/webkit-web-extension.h
     VERBATIM
 )
 
 add_custom_command(
-    OUTPUT ${WebKitGTK_FRAMEWORK_HEADERS_DIR}/webkitgtk-webextension/webkitdom
+    OUTPUT ${WebKitGTK_FRAMEWORK_HEADERS_DIR}/webkitgtk-web-process-extension/webkitdom
     DEPENDS ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/gtk/DOM
-    COMMAND ln -n -s -f ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/gtk/DOM ${WebKitGTK_FRAMEWORK_HEADERS_DIR}/webkitgtk-webextension/webkitdom
+    COMMAND ln -n -s -f ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/gtk/DOM ${WebKitGTK_FRAMEWORK_HEADERS_DIR}/webkitgtk-web-process-extension/webkitdom
 )

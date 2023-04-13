@@ -14,7 +14,6 @@ export function makeBufferWithContents(device, dataArray, usage) {
     size: align(dataArray.byteLength, 4),
     usage,
   });
-
   memcpy({ src: dataArray }, { dst: buffer.getMappedRange() });
   buffer.unmap();
   return buffer;

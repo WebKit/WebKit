@@ -27,6 +27,7 @@
 
 namespace WebCore {
 
+class ApplePayButtonPart;
 class ButtonPart;
 class ColorWellPart;
 class ImageControlsButtonPart;
@@ -38,6 +39,7 @@ class PlatformControl;
 class ProgressBarPart;
 class SearchFieldCancelButtonPart;
 class SearchFieldPart;
+class SearchFieldResultsPart;
 class SliderThumbPart;
 class SliderTrackPart;
 class TextAreaPart;
@@ -52,6 +54,9 @@ public:
     WEBCORE_EXPORT static std::unique_ptr<ControlFactory> createControlFactory();
     static ControlFactory& sharedControlFactory();
 
+#if ENABLE(APPLE_PAY)
+    virtual std::unique_ptr<PlatformControl> createPlatformApplePayButton(ApplePayButtonPart&) = 0;
+#endif
     virtual std::unique_ptr<PlatformControl> createPlatformButton(ButtonPart&) = 0;
 #if ENABLE(INPUT_TYPE_COLOR)
     virtual std::unique_ptr<PlatformControl> createPlatformColorWell(ColorWellPart&) = 0;
@@ -66,6 +71,7 @@ public:
     virtual std::unique_ptr<PlatformControl> createPlatformProgressBar(ProgressBarPart&) = 0;
     virtual std::unique_ptr<PlatformControl> createPlatformSearchField(SearchFieldPart&) = 0;
     virtual std::unique_ptr<PlatformControl> createPlatformSearchFieldCancelButton(SearchFieldCancelButtonPart&) = 0;
+    virtual std::unique_ptr<PlatformControl> createPlatformSearchFieldResults(SearchFieldResultsPart&) = 0;
     virtual std::unique_ptr<PlatformControl> createPlatformSliderThumb(SliderThumbPart&) = 0;
     virtual std::unique_ptr<PlatformControl> createPlatformSliderTrack(SliderTrackPart&) = 0;
     virtual std::unique_ptr<PlatformControl> createPlatformTextArea(TextAreaPart&) = 0;

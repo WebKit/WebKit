@@ -33,6 +33,7 @@ namespace WebCore {
 enum class GPUErrorFilter : uint8_t {
     OutOfMemory,
     Validation,
+    Internal,
 };
 
 inline PAL::WebGPU::ErrorFilter convertToBacking(GPUErrorFilter errorFilter)
@@ -42,6 +43,8 @@ inline PAL::WebGPU::ErrorFilter convertToBacking(GPUErrorFilter errorFilter)
         return PAL::WebGPU::ErrorFilter::OutOfMemory;
     case GPUErrorFilter::Validation:
         return PAL::WebGPU::ErrorFilter::Validation;
+    case GPUErrorFilter::Internal:
+        return PAL::WebGPU::ErrorFilter::Internal;
     }
     RELEASE_ASSERT_NOT_REACHED();
 }

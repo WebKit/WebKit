@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2020 Igalia S.L. All rights reserved.
+ * Copyright (C) 2023 Apple, Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -45,9 +46,7 @@ class IntSize;
 class WebGLFramebuffer;
 class WebGLRenderingContext;
 class WebGLRenderingContextBase;
-#if ENABLE(WEBGL2)
 class WebGL2RenderingContext;
-#endif
 class WebXROpaqueFramebuffer;
 class WebXRSession;
 class WebXRView;
@@ -59,10 +58,8 @@ class WebXRWebGLLayer : public WebXRLayer, private CanvasObserver {
 public:
 
     using WebXRRenderingContext = std::variant<
-        RefPtr<WebGLRenderingContext>
-#if ENABLE(WEBGL2)
-        , RefPtr<WebGL2RenderingContext>
-#endif
+        RefPtr<WebGLRenderingContext>,
+        RefPtr<WebGL2RenderingContext>
     >;
 
     static ExceptionOr<Ref<WebXRWebGLLayer>> create(Ref<WebXRSession>&&, WebXRRenderingContext&&, const XRWebGLLayerInit&);

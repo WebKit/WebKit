@@ -30,6 +30,7 @@
 #include "TreeScopeOrderedMap.h"
 #include <memory>
 #include <wtf/Forward.h>
+#include <wtf/UniqueRef.h>
 #include <wtf/Vector.h>
 #include <wtf/text/AtomString.h>
 
@@ -116,12 +117,13 @@ public:
 
     ContainerNode& rootNode() const { return m_rootNode; }
 
-    IdTargetObserverRegistry& idTargetObserverRegistry() const { return *m_idTargetObserverRegistry.get(); }
+    IdTargetObserverRegistry& idTargetObserverRegistry() { return m_idTargetObserverRegistry.get(); }
+    const IdTargetObserverRegistry& idTargetObserverRegistry() const { return m_idTargetObserverRegistry.get(); }
 
     RadioButtonGroups& radioButtonGroups();
 
     JSC::JSValue adoptedStyleSheetWrapper(JSDOMGlobalObject&);
-    const Vector<RefPtr<CSSStyleSheet>>& adoptedStyleSheets() const;
+    Span<const RefPtr<CSSStyleSheet>> adoptedStyleSheets() const;
     ExceptionOr<void> setAdoptedStyleSheets(Vector<RefPtr<CSSStyleSheet>>&&);
 
 protected:
@@ -138,6 +140,7 @@ protected:
     RefPtr<Node> nodeFromPoint(const LayoutPoint& clientPoint, LayoutPoint* localPoint);
 
 private:
+    CSSStyleSheetObservableArray& ensureAdoptedStyleSheets();
 
     ContainerNode& m_rootNode;
     std::reference_wrapper<Document> m_documentScope;
@@ -149,10 +152,10 @@ private:
     std::unique_ptr<TreeScopeOrderedMap> m_imagesByUsemap;
     std::unique_ptr<TreeScopeOrderedMap> m_labelsByForAttribute;
 
-    std::unique_ptr<IdTargetObserverRegistry> m_idTargetObserverRegistry;
+    UniqueRef<IdTargetObserverRegistry> m_idTargetObserverRegistry;
     
     std::unique_ptr<RadioButtonGroups> m_radioButtonGroups;
-    Ref<CSSStyleSheetObservableArray> m_adoptedStyleSheets;
+    RefPtr<CSSStyleSheetObservableArray> m_adoptedStyleSheets;
 };
 
 inline bool TreeScope::hasElementWithId(const AtomStringImpl& id) const

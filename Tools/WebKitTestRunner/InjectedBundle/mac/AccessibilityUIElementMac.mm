@@ -2164,6 +2164,19 @@ int AccessibilityUIElement::indexForTextMarker(AccessibilityTextMarker* marker)
     return -1;
 }
 
+bool AccessibilityUIElement::isTextMarkerNull(AccessibilityTextMarker* textMarker)
+{
+    if (!textMarker)
+        return true;
+
+    BEGIN_AX_OBJC_EXCEPTIONS
+    auto value = attributeValueForParameter(@"AXTextMarkerIsNull", textMarker->platformTextMarker());
+    return [value boolValue];
+    END_AX_OBJC_EXCEPTIONS
+
+    return false;
+}
+
 bool AccessibilityUIElement::isTextMarkerValid(AccessibilityTextMarker* textMarker)
 {
     if (!textMarker)
@@ -2393,17 +2406,16 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::pathDescription() const
         case NSMoveToBezierPathElement:
             [result appendString:@"\tMove to point\n"];
             break;
-
         case NSLineToBezierPathElement:
             [result appendString:@"\tLine to\n"];
             break;
-
         case NSCurveToBezierPathElement:
             [result appendString:@"\tCurve to\n"];
             break;
-
         case NSClosePathBezierPathElement:
             [result appendString:@"\tClose\n"];
+            break;
+        default:
             break;
         }
     }

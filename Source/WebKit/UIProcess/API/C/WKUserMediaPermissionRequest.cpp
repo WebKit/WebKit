@@ -94,3 +94,9 @@ WKArrayRef WKUserMediaPermissionRequestAudioDeviceUIDs(WKUserMediaPermissionRequ
 #endif
     return array;
 }
+
+bool WKUserMediaPermissionRequestRequiresDisplayCapture(WKUserMediaPermissionRequestRef userMediaPermissionRequestRef)
+{
+    return toImpl(userMediaPermissionRequestRef)->requiresDisplayCapture();
+}
+

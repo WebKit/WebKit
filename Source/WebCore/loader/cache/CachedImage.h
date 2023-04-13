@@ -30,6 +30,7 @@
 #include "LayoutSize.h"
 #include "SVGImageCache.h"
 #include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
 
 namespace WebCore {
 
@@ -142,16 +143,16 @@ private:
     class CachedImageObserver final : public RefCounted<CachedImageObserver>, public ImageObserver {
     public:
         static Ref<CachedImageObserver> create(CachedImage& image) { return adoptRef(*new CachedImageObserver(image)); }
-        HashSet<CachedImage*>& cachedImages() { return m_cachedImages; }
-        const HashSet<CachedImage*>& cachedImages() const { return m_cachedImages; }
+        WeakHashSet<CachedImage>& cachedImages() { return m_cachedImages; }
+        const WeakHashSet<CachedImage>& cachedImages() const { return m_cachedImages; }
 
     private:
         explicit CachedImageObserver(CachedImage&);
 
         // ImageObserver API
-        URL sourceUrl() const override { return !m_cachedImages.isEmpty() ? (*m_cachedImages.begin())->url() : URL(); }
-        String mimeType() const override { return !m_cachedImages.isEmpty() ? (*m_cachedImages.begin())->mimeType() : emptyString(); }
-        long long expectedContentLength() const override { return !m_cachedImages.isEmpty() ? (*m_cachedImages.begin())->expectedContentLength() : 0; }
+        URL sourceUrl() const override { return !m_cachedImages.isEmptyIgnoringNullReferences() ? (*m_cachedImages.begin()).url() : URL(); }
+        String mimeType() const override { return !m_cachedImages.isEmptyIgnoringNullReferences() ? (*m_cachedImages.begin()).mimeType() : emptyString(); }
+        long long expectedContentLength() const override { return !m_cachedImages.isEmptyIgnoringNullReferences() ? (*m_cachedImages.begin()).expectedContentLength() : 0; }
 
         void encodedDataStatusChanged(const Image&, EncodedDataStatus) final;
         void decodedSizeChanged(const Image&, long long delta) final;
@@ -163,9 +164,9 @@ private:
         void scheduleRenderingUpdate(const Image&) final;
 
         bool allowsAnimation(const Image&) const final;
-        bool layerBasedSVGEngineEnabled() const final { return !m_cachedImages.isEmpty() ? (*m_cachedImages.begin())->m_layerBasedSVGEngineEnabled : false; }
+        bool layerBasedSVGEngineEnabled() const final { return !m_cachedImages.isEmptyIgnoringNullReferences() ? (*m_cachedImages.begin()).m_layerBasedSVGEngineEnabled : false; }
 
-        HashSet<CachedImage*> m_cachedImages;
+        WeakHashSet<CachedImage> m_cachedImages;
     };
 
     void encodedDataStatusChanged(const Image&, EncodedDataStatus);
@@ -189,7 +190,7 @@ private:
     using ContainerContextRequests = HashMap<const CachedImageClient*, ContainerContext>;
     ContainerContextRequests m_pendingContainerContextRequests;
 
-    HashSet<CachedImageClient*> m_clientsWaitingForAsyncDecoding;
+    WeakHashSet<CachedImageClient> m_clientsWaitingForAsyncDecoding;
 
     RefPtr<CachedImageObserver> m_imageObserver;
     RefPtr<Image> m_image;

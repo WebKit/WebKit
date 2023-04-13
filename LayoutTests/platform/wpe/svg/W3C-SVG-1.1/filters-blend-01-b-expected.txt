@@ -55,8 +55,8 @@ layer at (0,0) size 800x600
         RenderSVGText {text} at (5,62) size 20x9 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 20x8
             chunk 1 text run 1 at (5.00,69.00) startOffset 0 endOffset 6 width 19.40: "Screen"
-        RenderSVGText {text} at (5,75) size 22x9 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 22x8
+        RenderSVGText {text} at (5,75) size 21x9 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 21x8
             chunk 1 text run 1 at (5.00,82.00) startOffset 0 endOffset 6 width 21.00: "Darken"
         RenderSVGText {text} at (5,88) size 23x9 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 23x8

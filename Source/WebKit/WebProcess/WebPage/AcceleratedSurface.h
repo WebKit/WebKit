@@ -50,6 +50,8 @@ public:
     virtual bool shouldPaintMirrored() const { return false; }
 
     virtual void initialize() { }
+    virtual void didCreateGLContext() { }
+    virtual void willDestroyGLContext() { }
     virtual void finalize() { }
     virtual void willRenderFrame() { }
     virtual void didRenderFrame() { }

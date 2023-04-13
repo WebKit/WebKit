@@ -1,4 +1,4 @@
-# Copyright (C) 2021, 2022 Apple Inc. All rights reserved.
+# Copyright (C) 2021-2023 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -52,6 +52,18 @@ class Branch(Command):
                  'if a local one does not exist.',
             action=arguments.NoAction,
         )
+
+        if sys.version_info > (3, 0):
+            has_radar = bool(radar.Tracker.radarclient())
+        else:
+            has_radar = bool(radar.Tracker().radarclient())
+        if has_radar:
+            parser.add_argument(
+                '--cc-radar', '--no-cc-radar',
+                dest='cc_radar', default=None,
+                action=arguments.NoAction,
+                help='Explicitly CC (or do not CC) radar.',
+            )
 
     @classmethod
     def normalize_branch_name(cls, name, repository=None):
@@ -116,13 +128,13 @@ class Branch(Command):
                 prompt = '{}nter name of new branch (or issue URL): '.format('{}, e'.format(why) if why else 'E')
             args.issue = Terminal.input(prompt, alert_after=2 * Terminal.RING_INTERVAL)
 
-        if string_utils.decode(args.issue).isnumeric() and Tracker.instance() and not redact:
+        if string_utils.decode(args.issue).isnumeric() and Tracker.instance() and not redact and not Tracker.instance().hide_title:
             issue = Tracker.instance().issue(int(args.issue))
             if issue and issue.title and not issue.redacted:
                 args.issue = cls.to_branch_name(issue.title)
         else:
             issue = Tracker.from_string(args.issue)
-            if issue and issue.title and not redact and not issue.redacted:
+            if issue and issue.title and not redact and not issue.redacted and not issue.tracker.hide_title:
                 args.issue = cls.to_branch_name(issue.title)
             elif issue:
                 args.issue = str(issue.id)
@@ -139,7 +151,7 @@ class Branch(Command):
                     sys.stderr.write('Failed to create new issue\n')
                     return 1
                 print("Created '{}'".format(issue))
-                if issue and issue.title and not redact and not issue.redacted:
+                if issue and issue.title and not redact and not issue.redacted and not issue.tracker.hide_title:
                     args.issue = cls.to_branch_name(issue.title)
                 elif issue:
                     args.issue = str(issue.id)
@@ -156,7 +168,8 @@ class Branch(Command):
             for reference in issue.references
         ])
 
-        if needs_radar:
+        radar_cc_default = repository.config().get('webkitscmpy.cc-radar', 'true') == 'true'
+        if needs_radar and (args.cc_radar or (radar_cc_default and args.cc_radar is not False)):
             rdar = None
             if not getattr(args, 'defaults', None):
                 sys.stdout.write('Existing radar to CC (leave empty to create new radar)')
@@ -167,8 +180,9 @@ class Branch(Command):
                 rdar = Tracker.from_string(input)
             issue.cc_radar(block=True, radar=rdar)
 
-        if issue and not isinstance(issue.tracker, radar.Tracker):
+        if issue and not issue.tracker.hide_title:
             args._title = issue.title
+        if issue:
             args._bug_urls = Commit.bug_urls(issue)
 
         args.issue = cls.normalize_branch_name(args.issue)

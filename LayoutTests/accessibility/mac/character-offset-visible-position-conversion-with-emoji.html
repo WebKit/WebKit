@@ -1,43 +1,38 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
-    <head><meta charset="UTF-8"></head>
-    <script src="../../resources/js-test-pre.js"></script>
-    <body id="body" tabindex="0">
-        <div tabindex="0" id="text" contenteditable=true>
-        Hi 😎
-        </div>
+<head>
+<meta charset="UTF-8">
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
 
-        <p id="description"></p>
-        <div id="console"></div>
+<div tabindex="0" id="text" contenteditable=true>
+Hi 😎 world
+</div>
 
-        <script>
+<script>
+let output = "This tests that CharacterOffset and VisiblePosition convert correctly when there are composed characters.\n\n";
 
-            description("This tests that CharacterOffset and VisiblePosition convert correctly when there are composed characters.");
+if (window.accessibilityController) {
+    document.getElementById("text").focus();
+    var text = accessibilityController.accessibleElementById("text");
 
-            var index = 0;
-            if (window.accessibilityController) {
-                accessibilityController.enableEnhancedAccessibility(true);
-                var webArea = accessibilityController.rootElement.childAtIndex(0);
-                webArea.setBoolAttributeValue("AXCaretBrowsingEnabled", true);
+    // Send 4 rightArrows to move the insertion point from the beginning of the text to passed the emoji.
+    eventSender.keyDown("rightArrow");
+    eventSender.keyDown("rightArrow");
+    eventSender.keyDown("rightArrow");
+    eventSender.keyDown("rightArrow");
 
-                document.getElementById("text").focus();
-                var text = accessibilityController.accessibleElementById("text");
+    let selectionRange = text.selectedTextMarkerRange();
+    let elementRange = text.textMarkerRangeForElement(text);
+    var startMarker = text.startTextMarkerForTextMarkerRange(elementRange);
+    var endMarker = text.endTextMarkerForTextMarkerRange(selectionRange);
+    // The range from the beginning of the element to the insertion point must be 'Hi 😎'.
+    output += expect("text.stringForTextMarkerRange(text.textMarkerRangeForMarkers(startMarker, endMarker))", "'Hi 😎'");
 
-                eventSender.keyDown("rightArrow");
-                eventSender.keyDown("rightArrow");
-                eventSender.keyDown("rightArrow");
-                eventSender.keyDown("rightArrow");
-                var textMarkerRange = text.selectedTextMarkerRange();
-                var elementRange = text.textMarkerRangeForElement(text);
-                var startMarker = text.startTextMarkerForTextMarkerRange(elementRange);
-                var endMarker = text.endTextMarkerForTextMarkerRange(textMarkerRange);
-                debug(text.stringForTextMarkerRange(text.textMarkerRangeForMarkers(endMarker, startMarker)));
-            }
-
-            </script>
-
-        <script src="../../resources/js-test-post.js"></script>
-
-    </body>
+    debug(output);
+}
+</script>
+</body>
 </html>
-

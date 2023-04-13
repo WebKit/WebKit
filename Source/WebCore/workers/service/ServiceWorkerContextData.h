@@ -32,6 +32,7 @@
 #include "ScriptBuffer.h"
 #include "ScriptExecutionContextIdentifier.h"
 #include "ServiceWorkerIdentifier.h"
+#include "ServiceWorkerImportedScript.h"
 #include "ServiceWorkerJobDataIdentifier.h"
 #include "ServiceWorkerRegistrationData.h"
 #include "WorkerType.h"
@@ -45,44 +46,6 @@ namespace WebCore {
 enum class LastNavigationWasAppInitiated : bool;
 
 struct ServiceWorkerContextData {
-    struct ImportedScript {
-        ScriptBuffer script;
-        URL responseURL;
-        String mimeType;
-
-        template<class Encoder> void encode(Encoder& encoder) const
-        {
-            encoder << script << responseURL << mimeType;
-        }
-
-        template<class Decoder> static std::optional<ImportedScript> decode(Decoder& decoder)
-        {
-            std::optional<ScriptBuffer> script;
-            decoder >> script;
-            if (!script)
-                return std::nullopt;
-
-            std::optional<URL> responseURL;
-            decoder >> responseURL;
-            if (!responseURL)
-                return std::nullopt;
-
-            std::optional<String> mimeType;
-            decoder >> mimeType;
-            if (!mimeType)
-                return std::nullopt;
-
-            return {{
-                WTFMove(*script),
-                WTFMove(*responseURL),
-                WTFMove(*mimeType)
-            }};
-        }
-
-        ImportedScript isolatedCopy() const & { return { script.isolatedCopy(), responseURL.isolatedCopy(), mimeType.isolatedCopy() }; }
-        ImportedScript isolatedCopy() && { return { WTFMove(script).isolatedCopy(), WTFMove(responseURL).isolatedCopy(), WTFMove(mimeType).isolatedCopy() }; }
-    };
-
     std::optional<ServiceWorkerJobDataIdentifier> jobDataIdentifier;
     ServiceWorkerRegistrationData registration;
     ServiceWorkerIdentifier serviceWorkerIdentifier;
@@ -95,112 +58,15 @@ struct ServiceWorkerContextData {
     WorkerType workerType;
     bool loadedFromDisk;
     std::optional<LastNavigationWasAppInitiated> lastNavigationWasAppInitiated;
-    MemoryCompactRobinHoodHashMap<URL, ImportedScript> scriptResourceMap;
+    MemoryCompactRobinHoodHashMap<URL, ServiceWorkerImportedScript> scriptResourceMap;
     std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier;
     NavigationPreloadState navigationPreloadState;
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<ServiceWorkerContextData> decode(Decoder&);
+    
+    using ImportedScript = ServiceWorkerImportedScript;
 
     WEBCORE_EXPORT ServiceWorkerContextData isolatedCopy() const &;
     WEBCORE_EXPORT ServiceWorkerContextData isolatedCopy() &&;
 };
-
-template<class Encoder>
-void ServiceWorkerContextData::encode(Encoder& encoder) const
-{
-    encoder << jobDataIdentifier << registration << serviceWorkerIdentifier << script << contentSecurityPolicy << crossOriginEmbedderPolicy << referrerPolicy
-        << scriptURL << workerType << loadedFromDisk << lastNavigationWasAppInitiated << scriptResourceMap << certificateInfo << serviceWorkerPageIdentifier << navigationPreloadState;
-}
-
-template<class Decoder>
-std::optional<ServiceWorkerContextData> ServiceWorkerContextData::decode(Decoder& decoder)
-{
-    std::optional<std::optional<ServiceWorkerJobDataIdentifier>> jobDataIdentifier;
-    decoder >> jobDataIdentifier;
-    if (!jobDataIdentifier)
-        return std::nullopt;
-
-    std::optional<ServiceWorkerRegistrationData> registration;
-    decoder >> registration;
-    if (!registration)
-        return std::nullopt;
-
-    auto serviceWorkerIdentifier = ServiceWorkerIdentifier::decode(decoder);
-    if (!serviceWorkerIdentifier)
-        return std::nullopt;
-
-    std::optional<ScriptBuffer> script;
-    decoder >> script;
-    if (!script)
-        return std::nullopt;
-
-    ContentSecurityPolicyResponseHeaders contentSecurityPolicy;
-    if (!decoder.decode(contentSecurityPolicy))
-        return std::nullopt;
-
-    std::optional<CrossOriginEmbedderPolicy> crossOriginEmbedderPolicy;
-    decoder >> crossOriginEmbedderPolicy;
-    if (!crossOriginEmbedderPolicy)
-        return std::nullopt;
-
-    String referrerPolicy;
-    if (!decoder.decode(referrerPolicy))
-        return std::nullopt;
-
-    URL scriptURL;
-    if (!decoder.decode(scriptURL))
-        return std::nullopt;
-
-    WorkerType workerType;
-    if (!decoder.decode(workerType))
-        return std::nullopt;
-
-    bool loadedFromDisk;
-    if (!decoder.decode(loadedFromDisk))
-        return std::nullopt;
-
-    std::optional<LastNavigationWasAppInitiated> lastNavigationWasAppInitiated;
-    if (!decoder.decode(lastNavigationWasAppInitiated))
-        return std::nullopt;
-
-    MemoryCompactRobinHoodHashMap<URL, ImportedScript> scriptResourceMap;
-    if (!decoder.decode(scriptResourceMap))
-        return std::nullopt;
-
-    std::optional<CertificateInfo> certificateInfo;
-    decoder >> certificateInfo;
-    if (!certificateInfo)
-        return std::nullopt;
-
-    std::optional<std::optional<ScriptExecutionContextIdentifier>> serviceWorkerPageIdentifier;
-    decoder >> serviceWorkerPageIdentifier;
-    if (!serviceWorkerPageIdentifier)
-        return std::nullopt;
-
-    std::optional<NavigationPreloadState> navigationPreloadState;
-    decoder >> navigationPreloadState;
-    if (!navigationPreloadState)
-        return std::nullopt;
-
-    return {{
-        WTFMove(*jobDataIdentifier),
-        WTFMove(*registration),
-        WTFMove(*serviceWorkerIdentifier),
-        WTFMove(*script),
-        WTFMove(*certificateInfo),
-        WTFMove(contentSecurityPolicy),
-        WTFMove(*crossOriginEmbedderPolicy),
-        WTFMove(referrerPolicy),
-        WTFMove(scriptURL),
-        workerType,
-        loadedFromDisk,
-        WTFMove(lastNavigationWasAppInitiated),
-        WTFMove(scriptResourceMap),
-        WTFMove(*serviceWorkerPageIdentifier),
-        WTFMove(*navigationPreloadState)
-    }};
-}
 
 } // namespace WebCore
 

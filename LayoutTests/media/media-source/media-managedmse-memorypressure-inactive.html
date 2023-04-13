@@ -1,0 +1,77 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ ManagedMediaSourceEnabled=true MediaSourceEnabled=true ] -->
+<html>
+<head>
+    <title>managedmediasource-memoryPressure-inactive</title>
+    <script src="../../media/media-source/media-source-loader.js"></script>
+    <script src="../../media/video-test.js"></script>
+    <script>
+    var loader;
+    var source;
+    var sourceBuffer;
+    var gotBufferedChange = false;
+    var bufferedStart;
+
+    function loaderPromise(loader) {
+        return new Promise((resolve, reject) => {
+            loader.onload = resolve;
+            loader.onerror = reject;
+        });
+    }
+
+    async function loadData() {
+        for (let i = 1; i < 10; i++) {
+                consoleWrite('Append a media segment.')
+                run('sourceBuffer.appendBuffer(loader.mediaSegment(0))');
+                await waitFor(sourceBuffer, 'update');
+                run('sourceBuffer.timestampOffset = sourceBuffer.buffered.end(sourceBuffer.buffered.length - 1)');
+            }
+        run('source.endOfStream()');
+        return waitFor(source, 'sourceended');
+    }
+
+    window.addEventListener('load', async event => {
+        try {
+            findMediaElement();
+
+            let manifests = [ 'content/test-opus-manifest.json', 'content/test-vorbis-manifest.json', 'content/test-48khz-manifest.json', 'content/test-xhe-aac-manifest.json' ];
+            for (const manifest of manifests) {
+                loader = new MediaSourceLoader(manifest);
+                await loaderPromise(loader);
+                if (ManagedMediaSource.isTypeSupported(loader.type()))
+                    break;
+            }
+
+            source = new ManagedMediaSource();
+            run('video.src = URL.createObjectURL(source)');
+            await waitFor(source, 'sourceopen');
+            waitFor(video, 'error').then(failTest);
+
+            run('sourceBuffer = source.addSourceBuffer(loader.type())');
+
+            run('sourceBuffer.appendBuffer(loader.initSegment())');
+            await waitFor(sourceBuffer, 'update');
+
+            await loadData();
+
+            for (let i = 0; i < video.audioTracks.length; i++) {
+                video.audioTracks[i].enabled = false;
+                await waitFor(video.audioTracks, 'change');
+            }
+
+            testExpected('sourceBuffer.buffered.length', 1);
+            run('internals.beginSimulatedMemoryPressure()');
+            await waitFor(sourceBuffer, 'bufferedchange');
+            testExpected('sourceBuffer.buffered.length', 0);
+            run('internals.endSimulatedMemoryPressure()');
+
+            endTest();
+        } catch (e) {
+            failTest(`Caught exception: "${e}"`);
+        }
+    });
+    </script>
+</head>
+<body>
+    <video controls></video>
+</body>
+</html>

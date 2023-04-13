@@ -10,13 +10,13 @@
  * are met:
  *
  * 1.  Redistributions of source code must retain the above copyright
- *     notice, this list of conditions and the following disclaimer. 
+ *     notice, this list of conditions and the following disclaimer.
  * 2.  Redistributions in binary form must reproduce the above copyright
  *     notice, this list of conditions and the following disclaimer in the
- *     documentation and/or other materials provided with the distribution. 
+ *     documentation and/or other materials provided with the distribution.
  * 3.  Neither the name of Apple Inc. ("Apple") nor the names of
  *     its contributors may be used to endorse or promote products derived
- *     from this software without specific prior written permission. 
+ *     from this software without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -38,9 +38,12 @@
 #include "HTTPHeaderNames.h"
 #include "ParsedContentType.h"
 #include "RFC7230.h"
+#include "ResourceResponse.h"
+#include "SecurityOrigin.h"
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/DateMath.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/OptionSet.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringToIntegerConversion.h>
 #include <wtf/unicode/CharacterNames.h>
@@ -153,7 +156,7 @@ bool isValidAcceptHeaderValue(const String& value)
         if (RFC7230::isDelimiter(c))
             return false;
     }
-    
+
     return true;
 }
 
@@ -344,7 +347,7 @@ StringView filenameFromHTTPContentDisposition(StringView value)
 
         if (key.isEmpty() || key != "filename"_s)
             continue;
-        
+
         auto value = keyValuePair.substring(valueStartPos + 1).stripWhiteSpace();
 
         // Remove quotes if there are any
@@ -580,20 +583,59 @@ XFrameOptionsDisposition parseXFrameOptionsHeader(StringView header)
     return result;
 }
 
-bool parseRange(StringView range, long long& rangeOffset, long long& rangeEnd, long long& rangeSuffixLength)
+OptionSet<ClearSiteDataValue> parseClearSiteDataHeader(const ResourceResponse& response)
 {
-    // The format of "Range" header is defined in RFC 2616 Section 14.35.1.
-    // http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.35.1
-    // We don't support multiple range requests.
+    OptionSet<ClearSiteDataValue> result;
 
-    rangeOffset = rangeEnd = rangeSuffixLength = -1;
+    auto headerValue = response.httpHeaderField(HTTPHeaderName::ClearSiteData);
+    if (headerValue.isEmpty())
+        return result;
 
-    // The "bytes" unit identifier should be present.
-    static const unsigned bytesLength = 6;
-    if (!startsWithLettersIgnoringASCIICase(range, "bytes="_s))
+    if (!WebCore::shouldTreatAsPotentiallyTrustworthy(response.url()))
+        return result;
+
+    for (auto value : StringView(headerValue).split(',')) {
+        auto trimmedValue = value.stripLeadingAndTrailingMatchedCharacters(isHTTPSpace);
+        if (trimmedValue == "\"cache\""_s)
+            result.add(ClearSiteDataValue::Cache);
+        else if (trimmedValue == "\"cookies\""_s)
+            result.add(ClearSiteDataValue::Cookies);
+        else if (trimmedValue == "\"executionContexts\""_s)
+            result.add(ClearSiteDataValue::ExecutionContexts);
+        else if (trimmedValue == "\"storage\""_s)
+            result.add(ClearSiteDataValue::Storage);
+        else if (trimmedValue == "\"*\""_s)
+            result.add({ ClearSiteDataValue::Cache, ClearSiteDataValue::Cookies, ClearSiteDataValue::ExecutionContexts, ClearSiteDataValue::Storage });
+    }
+    return result;
+}
+
+static bool isTabOrSpace(UChar value)
+{
+    return value == '\t' || value == ' ';
+}
+
+// Implements <https://fetch.spec.whatwg.org/#simple-range-header-value>.
+// FIXME: this whole function could be more efficient by walking through the range value once.
+bool parseRange(StringView range, RangeAllowWhitespace allowWhitespace, long long& rangeStart, long long& rangeEnd)
+{
+    rangeStart = rangeEnd = -1;
+
+    // Only 0x20 and 0x09 matter as newlines are already gone by the time we parse a header value.
+    if (allowWhitespace == RangeAllowWhitespace::No && range.find(isTabOrSpace) != notFound)
         return false;
 
-    StringView byteRange = range.substring(bytesLength);
+    // The "bytes" unit identifier should be present.
+    static const unsigned bytesLength = 5;
+    if (!startsWithLettersIgnoringASCIICase(range, "bytes"_s))
+        return false;
+
+    auto byteRange = stripLeadingAndTrailingHTTPSpaces(range.substring(bytesLength));
+
+    if (!byteRange.startsWith('='))
+        return false;
+
+    byteRange = byteRange.substring(1);
 
     // The '-' character needs to be present.
     int index = byteRange.find('-');
@@ -604,8 +646,10 @@ bool parseRange(StringView range, long long& rangeOffset, long long& rangeEnd, l
     // Example:
     //     -500
     if (!index) {
-        if (auto value = parseInteger<long long>(byteRange.substring(index + 1)))
-            rangeSuffixLength = *value;
+        auto value = parseInteger<long long>(byteRange.substring(index + 1));
+        if (!value)
+            return false;
+        rangeEnd = *value;
         return true;
     }
 
@@ -617,7 +661,7 @@ bool parseRange(StringView range, long long& rangeOffset, long long& rangeEnd, l
     if (!firstBytePos)
         return false;
 
-    auto lastBytePosStr = stripLeadingAndTrailingHTTPSpaces(byteRange.substring(index + 1));
+    auto lastBytePosStr = byteRange.substring(index + 1);
     long long lastBytePos = -1;
     if (!lastBytePosStr.isEmpty()) {
         auto value = parseInteger<long long>(lastBytePosStr);
@@ -629,7 +673,7 @@ bool parseRange(StringView range, long long& rangeOffset, long long& rangeEnd, l
     if (*firstBytePos < 0 || !(lastBytePos == -1 || lastBytePos >= *firstBytePos))
         return false;
 
-    rangeOffset = *firstBytePos;
+    rangeStart = *firstBytePos;
     rangeEnd = lastBytePos;
     return true;
 }
@@ -882,41 +926,6 @@ bool isCrossOriginSafeHeader(const String& name, const HTTPHeaderSet& accessCont
     return accessControlExposeHeaderSet.contains(name);
 }
 
-static bool isSimpleRangeHeaderValue(const String& value)
-{
-    if (!value.startsWith("bytes="_s))
-        return false;
-
-    unsigned start = 0;
-    unsigned end = 0;
-    bool hasHyphen = false;
-
-    for (size_t cptr = 6; cptr < value.length(); ++cptr) {
-        auto character = value[cptr];
-        if (character >= '0' && character <= '9') {
-            if (productOverflows<unsigned>(hasHyphen ? end : start, 10))
-                return false;
-            auto newDecimal = (hasHyphen ? end : start) * 10;
-            auto sum = Checked<unsigned, RecordOverflow>(newDecimal) + Checked<unsigned, RecordOverflow>(character - '0');
-            if (sum.hasOverflowed())
-                return false;
-
-            if (hasHyphen)
-                end = sum.value();
-            else
-                start = sum.value();
-            continue;
-        }
-        if (character == '-' && !hasHyphen) {
-            hasHyphen = true;
-            continue;
-        }
-        return false;
-    }
-
-    return hasHyphen && (!end || start < end);
-}
-
 // Implements https://fetch.spec.whatwg.org/#cors-safelisted-request-header
 bool isCrossOriginSafeRequestHeader(HTTPHeaderName name, const String& value)
 {
@@ -946,11 +955,14 @@ bool isCrossOriginSafeRequestHeader(HTTPHeaderName name, const String& value)
         break;
     }
     case HTTPHeaderName::Range:
-        if (!isSimpleRangeHeaderValue(value))
+        long long start;
+        long long end;
+        if (!parseRange(value, RangeAllowWhitespace::No, start, end))
+            return false;
+        if (start == -1)
             return false;
         break;
     default:
-        // FIXME: Should we also make safe other headers (DPR, Downlink, Save-Data...)? That would require validating their values.
         return false;
     }
     return true;

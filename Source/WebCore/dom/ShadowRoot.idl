@@ -25,6 +25,7 @@
 
 [
     JSGenerateToJSObject,
+    JSGenerateToNativeObject,
     Exposed=Window
 ] interface ShadowRoot : DocumentFragment {
     readonly attribute ShadowRootMode mode;

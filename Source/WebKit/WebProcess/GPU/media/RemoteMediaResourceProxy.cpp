@@ -26,7 +26,7 @@
 #include "config.h"
 #include "RemoteMediaResourceProxy.h"
 
-#if ENABLE(GPU_PROCESS)
+#if ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
 
 #include "DataReference.h"
 #include "RemoteMediaResourceManagerMessages.h"
@@ -98,4 +98,4 @@ void RemoteMediaResourceProxy::loadFinished(WebCore::PlatformMediaResource&, con
 
 }
 
-#endif
+#endif // ENABLE(GPU_PROCESS) && ENABLE(VIDEO)

@@ -36,8 +36,8 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(IDBDatabaseInfo);
 IDBDatabaseInfo::IDBDatabaseInfo(const String& name, uint64_t version, uint64_t maxIndexID, uint64_t maxObjectStoreID, HashMap<uint64_t, IDBObjectStoreInfo>&& objectStoreMap)
     : m_name(name)
     , m_version(version)
-    , m_maxObjectStoreID(maxObjectStoreID)
     , m_maxIndexID(maxIndexID)
+    , m_maxObjectStoreID(maxObjectStoreID)
     , m_objectStoreMap(WTFMove(objectStoreMap))
 {
 }
@@ -45,8 +45,8 @@ IDBDatabaseInfo::IDBDatabaseInfo(const String& name, uint64_t version, uint64_t 
 IDBDatabaseInfo::IDBDatabaseInfo(const IDBDatabaseInfo& other, IsolatedCopyTag)
     : m_name(other.m_name.isolatedCopy())
     , m_version(other.m_version)
-    , m_maxObjectStoreID(other.m_maxObjectStoreID)
     , m_maxIndexID(other.m_maxIndexID)
+    , m_maxObjectStoreID(other.m_maxObjectStoreID)
 {
     for (const auto& entry : other.m_objectStoreMap)
         m_objectStoreMap.set(entry.key, entry.value.isolatedCopy());

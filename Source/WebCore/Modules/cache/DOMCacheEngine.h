@@ -80,6 +80,43 @@ struct Record {
     uint64_t responseBodySize;
 };
 
+struct CrossThreadRecord {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    CrossThreadRecord(const CrossThreadRecord&) = delete;
+    CrossThreadRecord& operator=(const CrossThreadRecord&) = delete;
+    CrossThreadRecord() = default;
+    CrossThreadRecord(CrossThreadRecord&&) = default;
+    CrossThreadRecord& operator=(CrossThreadRecord&&) = default;
+    CrossThreadRecord(uint64_t identifier, uint64_t updateResponseCounter, FetchHeaders::Guard requestHeadersGuard, ResourceRequest&& request, FetchOptions options, String&& referrer, FetchHeaders::Guard responseHeadersGuard, ResourceResponse::CrossThreadData&& response, ResponseBody&& responseBody, uint64_t responseBodySize)
+        : identifier(identifier)
+        , updateResponseCounter(updateResponseCounter)
+        , requestHeadersGuard(requestHeadersGuard)
+        , request(WTFMove(request))
+        , options(options)
+        , referrer(WTFMove(referrer))
+        , responseHeadersGuard(responseHeadersGuard)
+        , response(WTFMove(response))
+        , responseBody(WTFMove(responseBody))
+        , responseBodySize(responseBodySize)
+    {
+    }
+    CrossThreadRecord isolatedCopy() &&;
+
+    uint64_t identifier;
+    uint64_t updateResponseCounter;
+    FetchHeaders::Guard requestHeadersGuard;
+    ResourceRequest request;
+    FetchOptions options;
+    String referrer;
+    FetchHeaders::Guard responseHeadersGuard;
+    ResourceResponse::CrossThreadData response;
+    ResponseBody responseBody;
+    uint64_t responseBodySize;
+};
+
+WEBCORE_EXPORT CrossThreadRecord toCrossThreadRecord(Record&&);
+WEBCORE_EXPORT Record fromCrossThreadRecord(CrossThreadRecord&&);
+
 struct CacheInfo {
     DOMCacheIdentifier identifier;
     String name;
@@ -117,6 +154,9 @@ using CacheInfosCallback = CompletionHandler<void(CacheInfosOrError&&)>;
 
 using RecordsOrError = Expected<Vector<Record>, Error>;
 using RecordsCallback = CompletionHandler<void(RecordsOrError&&)>;
+
+using CrossThreadRecordsOrError = Expected<Vector<CrossThreadRecord>, Error>;
+using CrossThreadRecordsCallback = CompletionHandler<void(CrossThreadRecordsOrError&&)>;
 
 using CompletionCallback = CompletionHandler<void(std::optional<Error>&&)>;
 

@@ -1,3 +1,0 @@
-Test for bug 15248: Can not enter accented characters using alt-numeric keypad.
-
-2

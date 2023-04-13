@@ -37,10 +37,10 @@ messages -> GPUProcess LegacyReceiver {
 
 #if ENABLE(MEDIA_STREAM)
     SetMockCaptureDevicesEnabled(bool isEnabled)
-    SetOrientationForMediaCapture(uint64_t orientation);
+    SetOrientationForMediaCapture(WebCore::IntDegrees orientation);
     UpdateSandboxAccess(Vector<WebKit::SandboxExtension::Handle> extensions);
     UpdateCaptureAccess(bool allowAudioCapture, bool allowVideoCapture, bool allowDisplayCapture, WebCore::ProcessIdentifier processID) -> ()
-    UpdateCaptureOrigin(struct WebCore::SecurityOriginData originData, WebCore::ProcessIdentifier processID)
+    UpdateCaptureOrigin(WebCore::SecurityOriginData originData, WebCore::ProcessIdentifier processID)
     AddMockMediaDevice(struct WebCore::MockMediaDevice device)
     ClearMockMediaDevices()
     RemoveMockMediaDevice(String persistentId)
@@ -49,6 +49,9 @@ messages -> GPUProcess LegacyReceiver {
     SetMockCaptureDevicesInterrupted(bool isCameraInterrupted, bool isMicrophoneInterrupted)
     TriggerMockMicrophoneConfigurationChange()
 #endif
+#if HAVE(SC_CONTENT_SHARING_PICKER)
+    SetUseSCContentSharingPicker(bool use)
+#endif
 #if PLATFORM(MAC)
     DisplayConfigurationChanged(CGDirectDisplayID displayID, CGDisplayChangeSummaryFlags flags)
     SetScreenProperties(struct WebCore::ScreenProperties screenProperties)
@@ -56,12 +59,13 @@ messages -> GPUProcess LegacyReceiver {
 
 #endif
 
-#if HAVE(SC_CONTENT_SHARING_SESSION)
-    ShowWindowPicker() -> (std::optional<WebCore::CaptureDevice> device)
-    ShowScreenPicker() -> (std::optional<WebCore::CaptureDevice> device)
+#if HAVE(SCREEN_CAPTURE_KIT)
+    PromptForGetDisplayMedia(enum:uint8_t WebCore::DisplayCapturePromptType type) -> (std::optional<WebCore::CaptureDevice> device)
 #endif
 
+#if ENABLE(VIDEO)
     RequestBitmapImageForCurrentTime(WebCore::ProcessIdentifier processIdentifier, WebCore::MediaPlayerIdentifier playerIdentifier) -> (WebKit::ShareableBitmapHandle handle)
+#endif
 
 #if ENABLE(CFPREFS_DIRECT_MODE)
     NotifyPreferencesChanged(String domain, String key, std::optional<String> encodedValue)

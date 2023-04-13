@@ -33,8 +33,8 @@
 
 namespace WebCore {
 
-class Frame;
 class HistoryItem;
+class LocalFrame;
 class SerializedScriptValue;
 
 enum class ShouldTreatAsContinuingLoad : uint8_t;
@@ -47,7 +47,7 @@ class FrameLoader::HistoryController {
 public:
     enum HistoryUpdateType { UpdateAll, UpdateAllExceptBackForwardList };
 
-    explicit HistoryController(Frame&);
+    explicit HistoryController(LocalFrame&);
     ~HistoryController();
 
     WEBCORE_EXPORT void saveScrollPositionAndViewStateToItem(HistoryItem*);
@@ -95,7 +95,7 @@ private:
 
     void initializeItem(HistoryItem&);
     Ref<HistoryItem> createItem();
-    Ref<HistoryItem> createItemTree(Frame& targetFrame, bool clipAtTarget);
+    Ref<HistoryItem> createItemTree(LocalFrame& targetFrame, bool clipAtTarget);
 
     void recursiveSetProvisionalItem(HistoryItem&, HistoryItem*);
     void recursiveGoToItem(HistoryItem&, HistoryItem*, FrameLoadType, ShouldTreatAsContinuingLoad);
@@ -108,7 +108,7 @@ private:
     void updateBackForwardListClippedAtTarget(bool doClip);
     void updateCurrentItem();
 
-    Frame& m_frame;
+    LocalFrame& m_frame;
 
     RefPtr<HistoryItem> m_currentItem;
     RefPtr<HistoryItem> m_previousItem;

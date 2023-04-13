@@ -31,6 +31,7 @@
 #include "FrameDestructionObserverInlines.h"
 #include "GCReachableRef.h"
 #include "LayoutRect.h"
+#include "Page.h"
 #include <wtf/Deque.h>
 #include <wtf/WeakPtr.h>
 
@@ -47,9 +48,8 @@ public:
 
     Document& document() { return m_document; }
     const Document& document() const { return m_document; }
-    Document& topDocument() const { return m_document.topDocument(); }
     Page* page() const { return m_document.page(); }
-    Frame* frame() const { return m_document.frame(); }
+    LocalFrame* frame() const { return m_document.frame(); }
     Element* documentElement() const { return m_document.documentElement(); }
     bool isSimpleFullscreenDocument() const;
     Document::BackForwardCacheState backForwardCacheState() const { return m_document.backForwardCacheState(); }
@@ -81,7 +81,7 @@ public:
     enum class ExitMode : bool { Resize, NoResize };
     void finishExitFullscreen(Document&, ExitMode);
 
-    void exitRemovedFullscreenElementIfNeeded(Element&);
+    void exitRemovedFullscreenElement(Element&);
 
     WEBCORE_EXPORT bool isAnimatingFullscreen() const;
     WEBCORE_EXPORT void setAnimatingFullscreen(bool);
@@ -108,7 +108,10 @@ private:
     WTFLogChannel& logChannel() const;
 #endif
 
+    Document& topDocument() { return m_topDocument ? *m_topDocument : document().topDocument(); }
+
     Document& m_document;
+    WeakPtr<Document, WeakPtrImplWithEventTargetData> m_topDocument;
 
     RefPtr<Element> fullscreenOrPendingElement() const { return m_fullscreenElement ? m_fullscreenElement : m_pendingFullscreenElement; }
 

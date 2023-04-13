@@ -196,6 +196,12 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::currentStateValue() const
     return nullptr;
 }
 
+JSRetainPtr<JSStringRef> AccessibilityUIElement::sortDirection() const
+{
+    notImplemented();
+    return nullptr;
+}
+
 JSRetainPtr<JSStringRef> AccessibilityUIElement::stringDescriptionOfAttributeValue(JSStringRef)
 {
     notImplemented();

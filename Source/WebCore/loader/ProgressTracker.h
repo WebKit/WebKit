@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-class Frame;
+class LocalFrame;
 class ResourceResponse;
 class ProgressTrackerClient;
 struct ProgressItem;
@@ -52,8 +52,8 @@ public:
 
     WEBCORE_EXPORT double estimatedProgress() const;
 
-    void progressStarted(Frame&);
-    void progressCompleted(Frame&);
+    void progressStarted(LocalFrame&);
+    void progressCompleted(LocalFrame&);
 
     void incrementProgress(ResourceLoaderIdentifier, const ResourceResponse&);
     void incrementProgress(ResourceLoaderIdentifier, unsigned bytesReceived);
@@ -67,13 +67,13 @@ public:
 private:
     void reset();
     void finalProgressComplete();
-    void progressEstimateChanged(Frame&);
+    void progressEstimateChanged(LocalFrame&);
 
     void progressHeartbeatTimerFired();
 
     Page& m_page;
     UniqueRef<ProgressTrackerClient> m_client;
-    RefPtr<Frame> m_originatingProgressFrame;
+    RefPtr<LocalFrame> m_originatingProgressFrame;
     HashMap<ResourceLoaderIdentifier, std::unique_ptr<ProgressItem>> m_progressItems;
     Timer m_progressHeartbeatTimer;
 

@@ -37,17 +37,20 @@
     (allow system-mac-syscall (mac-syscall-number 1)))
 
 (with-filter (mac-policy-name "Quarantine")
-    (allow system-mac-syscall (mac-syscall-number 80 82)))
+    (allow system-mac-syscall (mac-syscall-number 80 82 83)))
 
 (allow system-fcntl
     (fcntl-command
+        F_ADDFILESIGS_RETURN
         F_BARRIERFSYNC
+        F_CHECK_LV
         F_DUPFD_CLOEXEC
         F_GETCONFINED
         F_GETFL
         F_GETFD
         F_GETPATH
         F_GETPROTECTIONCLASS
+        F_NOCACHE
         F_OFD_GETLK
         F_OFD_SETLK
         F_OFD_SETLKWTIMEOUT
@@ -55,11 +58,16 @@
         F_RDADVISE
         F_SETCONFINED
         F_SETFL
-        F_SETFD))
+        F_SETFD
+        F_SETLKW
+        F_SETPROTECTIONCLASS
+        F_SINGLE_WRITER))
 
 (allow process-codesigning-entitlements-der-blob-get)
 (allow process-codesigning-identity-get (target self))
 (allow process-codesigning-status-get)
+
+(allow process-info-codesignature)
 
 (allow socket-ioctl)
 
@@ -117,11 +125,34 @@
 (allow system-necp-client-action)
 (allow necp-client-open)
 
-(allow iokit-open-service (iokit-registry-entry-class "IOPMrootDomain"))
+(allow iokit-open-service (iokit-registry-entry-class
+    "AppleAPFSContainer"
+    "IOPMrootDomain"))
 
 (allow file-link
     (extension-class "com.apple.app-sandbox.read-write")
     (extension "com.apple.app-sandbox.read-write"))
+
+(allow file-link (subpath "/private/var/folders"))
+
+(allow file-clone (with telemetry))
+(allow file-clone
+    (home-subpath "/Library/Caches")
+    (home-subpath "/Library/Containers"))
+(allow file-clone (subpath
+    "/private/var/folders") )
+
+(allow darwin-notification-post
+    (notification-name
+        "com.apple.WebKit.mediaStreamingActivity"
+        "com.apple.accessibility.AirPodsSpatialAudioLockToDeviceChanged"
+        "com.apple.accessibility.cache.app.ax"
+        "com.apple.accessibility.cache.ax"
+        "com.apple.accessibility.darken.system.colors"
+        "com.apple.accessibility.increase.button.legibility"
+        "com.apple.accessibility.reduce.motion.status"
+        "com.apple.accessibility.text.legibility.status"
+        "com.apple.accessibility.wob.status"))
 #endif // USE(SANDBOX_VERSION_3)
 
 #if PLATFORM(MAC)
@@ -694,7 +725,38 @@
 (when (and (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES") (defined? 'mach-kernel-endpoint))
     (allow mach-kernel-endpoint
         (apply-message-filter
-            (allow mach-message-send))))
+            (allow mach-message-send (with report) (with telemetry))
+            (allow mach-message-send (kernel-mig-routine
+                _mach_make_memory_entry
+                host_get_io_master
+                host_info
+                host_request_notification
+                io_connect_method
+                io_iterator_is_valid
+                io_iterator_next
+                io_object_conforms_to
+                io_registry_entry_create_iterator
+                io_registry_entry_from_path
+                io_registry_entry_get_parent_iterator
+                io_registry_entry_get_property_bin_buf
+                io_server_version
+                io_service_add_interest_notification_64
+                io_service_get_matching_service_bin
+                io_service_open_extended
+                mach_exception_raise
+                mach_port_get_refs
+                mach_port_request_notification
+                mach_port_set_attributes
+                mach_vm_copy
+                mach_vm_map_external
+                mach_vm_remap_external
+                semaphore_create
+                task_get_special_port_from_user
+                task_info_from_user
+                task_policy_set
+                task_restartable_ranges_synchronize
+                thread_resume
+                thread_suspend)))))
 
 (when (and (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES") (defined? 'syscall-mach))
     (deny syscall-mach)

@@ -59,7 +59,7 @@
     height: 16px;
 }
 
-.hierarchical-path-component > :matches(.icon, .selector-arrows) {
+.hierarchical-path-component > :is(.icon, .selector-arrows) {
     margin-top: 2px;
     margin-bottom: 2px;
     margin-inline: 4px 3px;

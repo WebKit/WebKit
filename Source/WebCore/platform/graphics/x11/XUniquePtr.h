@@ -23,17 +23,12 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef XUniquePtr_h
-#define XUniquePtr_h
+#pragma once
 
 #if PLATFORM(X11)
 
 #include "PlatformDisplayX11.h"
 #include <X11/Xutil.h>
-
-#if USE(GLX)
-typedef struct __GLXcontextRec* GLXContext;
-#endif
 
 namespace WebCore {
 
@@ -64,16 +59,6 @@ template<> struct XPtrDeleter<_XGC> {
 // Give a name to this to avoid having to use the internal struct name.
 using XUniqueGC = XUniquePtr<_XGC>;
 
-#if USE(GLX)
-template<> struct XPtrDeleter<__GLXcontextRec> {
-    void operator() (__GLXcontextRec*) const;
-};
-// Give a name to this to avoid having to use the internal struct name.
-using XUniqueGLXContext = XUniquePtr<__GLXcontextRec>;
-#endif
-
 } // namespace WebCore
 
 #endif // PLATFORM(X11)
-
-#endif // XUniquePtr_h

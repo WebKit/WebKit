@@ -33,7 +33,6 @@ namespace JSC {
 
 class JSStringJoiner {
 public:
-    JSStringJoiner(JSGlobalObject*, LChar separator, size_t stringCount);
     JSStringJoiner(JSGlobalObject*, StringView separator, size_t stringCount);
     ~JSStringJoiner();
 
@@ -49,8 +48,8 @@ private:
     void append(StringViewWithUnderlyingString&&);
     void append8Bit(const String&);
     unsigned joinedLength(JSGlobalObject*) const;
+    JSValue joinSlow(JSGlobalObject*);
 
-    LChar m_singleCharacterSeparator;
     StringView m_separator;
     Vector<StringViewWithUnderlyingString> m_strings;
     CheckedUint32 m_accumulatedStringsLength;
@@ -67,14 +66,11 @@ inline JSStringJoiner::JSStringJoiner(JSGlobalObject* globalObject, StringView s
         throwOutOfMemoryError(globalObject, scope);
 }
 
-inline JSStringJoiner::JSStringJoiner(JSGlobalObject* globalObject, LChar separator, size_t stringCount)
-    : m_singleCharacterSeparator(separator)
-    , m_separator { &m_singleCharacterSeparator, 1 }
+inline JSValue JSStringJoiner::join(JSGlobalObject* globalObject)
 {
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-    if (UNLIKELY(!m_strings.tryReserveCapacity(stringCount)))
-        throwOutOfMemoryError(globalObject, scope);
+    if (m_strings.size() == 1)
+        return jsString(globalObject->vm(), m_strings[0].toString());
+    return joinSlow(globalObject);
 }
 
 ALWAYS_INLINE void JSStringJoiner::append(StringViewWithUnderlyingString&& string)

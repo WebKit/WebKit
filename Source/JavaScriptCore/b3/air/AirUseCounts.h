@@ -56,12 +56,10 @@ public:
         }
 
         unsigned gpArraySize = AbsoluteTmpMapper<GP>::absoluteIndex(code.numTmps(GP));
-        m_gpNumWarmUsesAndDefs = FixedVector<float>(gpArraySize);
-        m_gpNumWarmUsesAndDefs.fill(0);
+        m_gpNumWarmUsesAndDefs = FixedVector<float>(gpArraySize, 0);
         m_gpConstDefs.ensureSize(gpArraySize);
         unsigned fpArraySize = AbsoluteTmpMapper<FP>::absoluteIndex(code.numTmps(FP));
-        m_fpNumWarmUsesAndDefs = FixedVector<float>(fpArraySize);
-        m_fpNumWarmUsesAndDefs.fill(0);
+        m_fpNumWarmUsesAndDefs = FixedVector<float>(fpArraySize, 0);
         m_fpConstDefs.ensureSize(fpArraySize);
 
         for (BasicBlock* block : code) {

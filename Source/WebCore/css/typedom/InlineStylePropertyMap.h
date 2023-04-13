@@ -26,8 +26,11 @@
 #pragma once
 
 #include "StylePropertyMap.h"
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
+
+class WeakPtrImplWithEventTargetData;
 
 class InlineStylePropertyMap final : public StylePropertyMap {
 public:
@@ -44,12 +47,11 @@ public:
     bool setCustomProperty(Document&, const AtomString& property, Ref<CSSVariableReferenceValue>&&) final;
     void removeCustomProperty(const AtomString& property) final;
     void clear() final;
-    void clearElement() final;
 
 private:
     explicit InlineStylePropertyMap(StyledElement&);
 
-    StyledElement* m_element;
+    WeakPtr<StyledElement, WeakPtrImplWithEventTargetData> m_element;
 };
 
 } // namespace WebCore

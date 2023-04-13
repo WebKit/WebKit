@@ -106,7 +106,7 @@ Value* ConstDoubleValue::doubleToFloatConstant(Procedure& proc) const
 
 Value* ConstDoubleValue::absConstant(Procedure& proc) const
 {
-    return proc.add<ConstDoubleValue>(origin(), fabs(m_value));
+    return proc.add<ConstDoubleValue>(origin(), std::abs(m_value));
 }
 
 Value* ConstDoubleValue::ceilConstant(Procedure& proc) const

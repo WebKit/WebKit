@@ -6,13 +6,13 @@ AbortSignal
 ApplePaySession conditional=APPLE_PAY
 AudioNode conditional=WEB_AUDIO
 AudioTrackList conditional=VIDEO
+BackgroundFetchRegistration conditional=SERVICE_WORKER
 BaseAudioContext conditional=WEB_AUDIO
 BroadcastChannel
 Clipboard
 DedicatedWorkerGlobalScope
 DOMApplicationCache
 DOMAudioSession conditional=DOM_AUDIO_SESSION
-DOMWindow
 EventSource
 FileReader
 FontFaceSet
@@ -21,6 +21,9 @@ IDBDatabase
 IDBOpenDBRequest
 IDBRequest
 IDBTransaction
+LocalDOMWindow
+ManagedMediaSource conditional=MANAGED_MEDIA_SOURCE
+ManagedSourceBuffer conditional=MANAGED_MEDIA_SOURCE
 MediaController conditional=VIDEO
 MediaDevices conditional=MEDIA_STREAM
 MediaKeySession conditional=ENCRYPTED_MEDIA

@@ -19,11 +19,12 @@
 
 #pragma once
 
-#include "DOMWindow.h"
 #include "DOMWrapperWorld.h"
 #include "EventListener.h"
 #include "EventNames.h"
 #include "HTMLElement.h"
+#include "LocalDOMWindow.h"
+#include "WebCoreJSClientData.h"
 #include <JavaScriptCore/StrongInlines.h>
 #include <JavaScriptCore/Weak.h>
 #include <JavaScriptCore/WeakInlines.h>
@@ -34,7 +35,7 @@
 
 namespace WebCore {
 
-class JSEventListener : public EventListener {
+class JSEventListener : public EventListener, public JSVMClientData::Client {
 public:
     WEBCORE_EXPORT static Ref<JSEventListener> create(JSC::JSObject& listener, JSC::JSObject& wrapper, bool isAttribute, DOMWrapperWorld&);
 
@@ -48,8 +49,7 @@ public:
     bool wasCreatedFromMarkup() const { return m_wasCreatedFromMarkup; }
 
     JSC::JSObject* ensureJSFunction(ScriptExecutionContext&) const;
-    DOMWrapperWorld& isolatedWorld() const { return m_isolatedWorld; }
-
+    DOMWrapperWorld* isolatedWorld() const { return m_isolatedWorld.get(); }
 
     JSC::JSObject* jsFunction() const final { return m_jsFunction.get(); }
     JSC::JSObject* wrapper() const final { return m_wrapper.get(); }
@@ -73,6 +73,9 @@ private:
     void visitJSFunction(JSC::SlotVisitor&) final;
     virtual String code() const { return String(); }
 
+    // JSVMClientData::Client
+    void willDestroyVM() final;
+
 protected:
     enum class CreatedFromMarkup : bool { No, Yes };
 
@@ -88,7 +91,7 @@ private:
     mutable JSC::Weak<JSC::JSObject> m_jsFunction;
     mutable JSC::Weak<JSC::JSObject> m_wrapper;
 
-    Ref<DOMWrapperWorld> m_isolatedWorld;
+    RefPtr<DOMWrapperWorld> m_isolatedWorld;
 };
 
 // For "onxxx" attributes that automatically set up JavaScript event listeners.
@@ -101,7 +104,7 @@ inline void setEventHandlerAttribute(EventTarget& eventTarget, const AtomString&
 }
 
 // Like the functions above, but for attributes that forward event handlers to the window object rather than setting them on the target.
-inline JSC::JSValue windowEventHandlerAttribute(DOMWindow& window, const AtomString& eventType, DOMWrapperWorld& isolatedWorld)
+inline JSC::JSValue windowEventHandlerAttribute(LocalDOMWindow& window, const AtomString& eventType, DOMWrapperWorld& isolatedWorld)
 {
     return eventHandlerAttribute(window, eventType, isolatedWorld);
 }
@@ -114,7 +117,7 @@ inline JSC::JSValue windowEventHandlerAttribute(HTMLElement& element, const Atom
 }
 
 template<typename JSMaybeErrorEventListener>
-inline void setWindowEventHandlerAttribute(DOMWindow& window, const AtomString& eventType, JSC::JSValue listener, JSC::JSObject& jsEventTarget)
+inline void setWindowEventHandlerAttribute(LocalDOMWindow& window, const AtomString& eventType, JSC::JSValue listener, JSC::JSObject& jsEventTarget)
 {
     window.setAttributeEventListener<JSMaybeErrorEventListener>(eventType, listener, *jsEventTarget.globalObject());
 }
@@ -130,6 +133,9 @@ inline JSC::JSObject* JSEventListener::ensureJSFunction(ScriptExecutionContext& 
 {
     // initializeJSFunction can trigger code that deletes this event listener
     // before we're done. It should always return null in this case.
+    if (UNLIKELY(!m_isolatedWorld))
+        return nullptr;
+
     JSC::VM& vm = m_isolatedWorld->vm();
     Ref protect = const_cast<JSEventListener&>(*this);
     JSC::EnsureStillAliveScope protectedWrapper(m_wrapper.get());

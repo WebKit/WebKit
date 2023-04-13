@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,16 +23,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebCore/GraphicsLayer.h>
+#import <WebCore/PlatformLayerIdentifier.h>
 
 namespace WebKit {
 class RemoteLayerTreeHost;
 }
 
 @interface WKAnimationDelegate : NSObject {
-    WebCore::GraphicsLayer::PlatformLayerID _layerID;
+    WebCore::PlatformLayerIdentifier _layerID;
     WebKit::RemoteLayerTreeHost* _layerTreeHost;
 }
-- (instancetype)initWithLayerID:(WebCore::GraphicsLayer::PlatformLayerID)layerID layerTreeHost:(WebKit::RemoteLayerTreeHost*)layerTreeHost;
+- (instancetype)initWithLayerID:(WebCore::PlatformLayerIdentifier)layerID layerTreeHost:(WebKit::RemoteLayerTreeHost*)layerTreeHost;
 - (void)invalidate;
 @end

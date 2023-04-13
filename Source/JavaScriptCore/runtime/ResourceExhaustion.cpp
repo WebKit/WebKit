@@ -28,6 +28,7 @@
 
 #include "Options.h"
 #include <wtf/Assertions.h>
+#include <wtf/WTFProcess.h>
 
 namespace JSC {
 
@@ -35,7 +36,7 @@ NO_RETURN_DUE_TO_CRASH void handleResourceExhaustion(const char* file, int line,
 {
     WTFReportAssertionFailureWithMessage(file, line, function, assertion, "%s: %s", exitCodeAsString, failureMessage);
     if (Options::exitOnResourceExhaustion())
-        exit(exitCode);
+        exitProcess(exitCode);
     CRASH();
 }
 

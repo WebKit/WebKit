@@ -1,0 +1,50 @@
+
+FAIL position: absolute; children in maction assert_approx_equals: expected 300 +/- 1 but got -8
+PASS position: absolute; children in menclose
+PASS position: absolute; children in merror
+PASS position: absolute; children in mfrac
+PASS position: absolute; children in mi
+PASS position: absolute; children in mmultiscripts
+PASS position: absolute; children in mn
+PASS position: absolute; children in mo
+PASS position: absolute; children in mover
+PASS position: absolute; children in mpadded
+PASS position: absolute; children in mphantom
+PASS position: absolute; children in mroot
+PASS position: absolute; children in mrow
+PASS position: absolute; children in ms
+PASS position: absolute; children in msqrt
+PASS position: absolute; children in mstyle
+PASS position: absolute; children in msub
+PASS position: absolute; children in msubsup
+PASS position: absolute; children in msup
+PASS position: absolute; children in mtable
+PASS position: absolute; children in mtext
+PASS position: absolute; children in munder
+PASS position: absolute; children in munderover
+FAIL position: absolute; children in semantics assert_approx_equals: expected 300 +/- 1 but got -8
+FAIL position: fixed; children in maction assert_approx_equals: expected 300 +/- 1 but got 0
+PASS position: fixed; children in menclose
+PASS position: fixed; children in merror
+PASS position: fixed; children in mfrac
+FAIL position: fixed; children in mi assert_approx_equals: expected 100 +/- 1 but got 0
+PASS position: fixed; children in mmultiscripts
+FAIL position: fixed; children in mn assert_approx_equals: expected 100 +/- 1 but got 0
+FAIL position: fixed; children in mo assert_approx_equals: expected 100 +/- 1 but got 4.4375
+PASS position: fixed; children in mover
+PASS position: fixed; children in mpadded
+PASS position: fixed; children in mphantom
+PASS position: fixed; children in mroot
+PASS position: fixed; children in mrow
+FAIL position: fixed; children in ms assert_approx_equals: expected 100 +/- 1 but got 0
+PASS position: fixed; children in msqrt
+PASS position: fixed; children in mstyle
+PASS position: fixed; children in msub
+PASS position: fixed; children in msubsup
+PASS position: fixed; children in msup
+PASS position: fixed; children in mtable
+FAIL position: fixed; children in mtext assert_approx_equals: expected 100 +/- 1 but got 0
+PASS position: fixed; children in munder
+PASS position: fixed; children in munderover
+FAIL position: fixed; children in semantics assert_approx_equals: expected 300 +/- 1 but got 0
+

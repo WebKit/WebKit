@@ -27,9 +27,7 @@ async function helloTriangle() {
     const uniformBindGroupLayout = device.createBindGroupLayout({ entries: [{binding: 0, visibility: GPUShaderStage.VERTEX, buffer: {}}] });
     const pipelineLayoutDesc = { bindGroupLayouts: [uniformBindGroupLayout] };
     const layout = device.createPipelineLayout(pipelineLayoutDesc);
-/*
-    FIXME: Add support for binary expressions to match the metal code
-*/
+
     const wgslSource = `
                      struct Vertex {
                          @builtin(position) Position: vec4<f32>,
@@ -45,7 +43,7 @@ async function helloTriangle() {
                          );
                          var vertex_out : Vertex;
                          vertex_out.Position = vec4<f32>(pos[VertexIndex], 0.0, 1.0);
-                         vertex_out.color = vec4<f32>(pos[VertexIndex], 0.0, 1.0);
+                         vertex_out.color = vec4<f32>(pos[VertexIndex] + vec2<f32>(0.5, 0.5), 0.0, 1.0);
                          return vertex_out;
                      }
 

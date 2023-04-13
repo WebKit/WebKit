@@ -7,7 +7,7 @@
 <p id="description"></p>
 <div id="console"></div>
 <script>
-description("Test the parsing of the -webkit-image-set function.");
+description("Test the parsing of the image-set and -webkit-image-set functions.");
 
 function jsWrapperClass(node)
 {
@@ -25,127 +25,67 @@ function shouldBeType(expression, className)
 }
 
 // These have to be global for the test helpers to see them.
-var imageSetRule, subRule;
+var imageSetRule, serializedRule
 
-function testImageSetRule(description, property, rule, expectedLength, expectedTexts, propName = "-webkit-image-set")
+function testImageSetRule(description, property, rule, expectedSerialization)
 {
-    debug("");
-    debug(description + " : " + rule);
+    ["image-set", "-webkit-image-set"].forEach((valueName) => {
+        debug("");
+        debug(`${description}: ${valueName}(${rule})`);
 
-    var div = document.createElement("div");
-    div.setAttribute("style", property + ": " + propName + "(" + rule + ")");
-    document.body.appendChild(div);
+        var div = document.createElement("div");
+        div.setAttribute("style", property + ": " + valueName + "(" + rule + ")");
+        document.body.appendChild(div);
 
-    imageSetRule = div.style.getPropertyCSSValue(property);
-    shouldBeType("imageSetRule", "CSSValueList");
+        imageSetRule = div.style.getPropertyCSSValue(property);
+        shouldBeType("imageSetRule", "CSSValueList");
 
-    if (imageSetRule) {
-        if (jsWrapperClass(imageSetRule[0]) == "CSSValueList") {
-            // The content property returns a CSSValueList anyway, so to get to the 
-            // imageSet CSS value list, we have to look at the first entry in the 
-            // content value list.
-            imageSetRule = imageSetRule[0];
-        }
-    }
+        serializedRule = div.style.getPropertyValue(property);
+        expectTrue(serializedRule == `image-set(${expectedSerialization})`, "Image Set rule serializes as expected.");
 
-    shouldBe("imageSetRule.length", function() { return expectedLength; });
-
-    if (imageSetRule) {
-        for (var i = 0; i < expectedLength; i++) {
-            string = imageSetRule[i];
-            if (i % 2 == 0) {
-                subRule = string.cssText.split('#')[1].replace('"', "");
-                subRule = subRule.split(')')[0];
-                shouldBe("subRule", "'" + expectedTexts[i] + "'");
-            } else {
-                subRule = string;
-                shouldBe("subRule.cssText", "'" + expectedTexts[i] + "'");
-            }
-        }
-    }
-
-    document.body.removeChild(div);
+        document.body.removeChild(div);
+    });
 }
-
-testImageSetRule("Single value for background-image",
-                "background-image",
-                "url('#a') 1x", 2,
-                ["a", "1x"]);
-
-testImageSetRule("Multiple values for background-image",
-                "background-image",
-                "url('#a') 1x, url('#b') 2x", 4,
-                ["a", "1x", "b", "2x"]);
-
-testImageSetRule("Single value for background-image without url() function",
-                "background-image",
-                "'#a' 1x", 2,
-                ["a", "1x"], "image-set");
-
-testImageSetRule("Multiple values for background-image without url() function",
-                "background-image",
-                "'#a' 1x, '#b' 2x", 4,
-                ["a", "1x", "b", "2x"], "image-set");
-
-testImageSetRule("Mix values with and without url() function",
-                "background-image",
-                "'#a' 1x, url('#b') 2x", 4,
-                ["a", "1x", "b", "2x"], "image-set");
-
-testImageSetRule("Multiple values for background-image, out of order",
-                "background-image",
-                "url('#c') 3x, url('#b') 2x, url('#a') 1x", 6,
-                ["c", "3x", "b", "2x", "a", "1x"]);
-
-testImageSetRule("Single value for content",
-                "content",
-                "url('#a') 1x", 2,
-                ["a", "1x"]);
-
-testImageSetRule("Multiple values for content",
-                "content",
-                "url('#a') 1x, url('#b') 2x", 4,
-                ["a", "1x", "b", "2x"]);
-
-testImageSetRule("Single value for border-image-source",
-                "border-image-source",
-                "url('#a') 1x", 2,
-                ["a", "1x"]);
-
-testImageSetRule("Multiple values for border-image-source",
-                "border-image-source",
-                "url('#a') 1x, url('#b') 2x", 4,
-                ["a", "1x", "b", "2x"]);
 
 testImageSetRule("Single value for -webkit-mask-box-image-source",
                 "-webkit-mask-box-image-source",
-                "url('#a') 1x", 2,
-                ["a", "1x"]);
+                "url('#a')",
+                "url(\"#a\") 1x");
 
 testImageSetRule("Multiple values for -webkit-mask-box-image-source",
                 "-webkit-mask-box-image-source",
-                "url('#a') 1x, url('#b') 2x", 4,
-                ["a", "1x", "b", "2x"]);
+                "url('#a'), url('#b') 2x",
+                "url(\"#a\") 1x, url(\"#b\") 2x");
 
-testImageSetRule("Single value with dppx",
-                "background-image",
-                "url('#a') 1dppx", 2,
-                ["a", "1dppx"]);
+testImageSetRule("Single value for -webkit-mask-box-image-source with gradient.",
+                "-webkit-mask-box-image-source",
+                "linear-gradient(green, white)",
+                "linear-gradient(green, white) 1x");
 
-testImageSetRule("Single value with dpi",
-                "background-image",
-                "url('#a') 192dpi", 2,
-                ["a", "192dpi"]);
+testImageSetRule("Multiple values for -webkit-mask-box-image-source with gradients",
+                "-webkit-mask-box-image-source",
+                "linear-gradient(green, white) 1x, radial-gradient(blue, white) 2x",
+                "linear-gradient(green, white) 1x, radial-gradient(blue, white) 2x");
 
-testImageSetRule("Single value with dpcm",
-                "background-image",
-                "url('#a') 102dpcm", 2,
-                ["a", "102dpcm"]);
+testImageSetRule("Combined gradient and URL for -webkit-mask-box-image-source",
+                "-webkit-mask-box-image-source",
+                "url(\"#a\"), linear-gradient(green, white) 2x",
+                "url(\"#a\") 1x, linear-gradient(green, white) 2x");
 
-testImageSetRule("Multiple values with dpi, dppx and x",
-                "background-image",
-                "url('#a') 1x, url('#b') 2dppx, url('#c') 250dpi", 6,
-                ["a", "1x", "b", "2dppx", "c", "250dpi"]);
+testImageSetRule("Single -webkit-cross-fade for -webkit-mask-box-image-source",
+                "-webkit-mask-box-image-source",
+                "-webkit-cross-fade(url(\"#a\"), url(\"#b\"), 70%)",
+                "-webkit-cross-fade(url(\"#a\"), url(\"#b\"), 0.7) 1x");
+
+testImageSetRule("Combined gradient and cross-fade for -webkit-mask-box-image-source",
+                "-webkit-mask-box-image-source",
+                "-webkit-cross-fade(url(\"#a\"), url(\"#b\"), 70%), linear-gradient(green, white) 2x",
+                "-webkit-cross-fade(url(\"#a\"), url(\"#b\"), 0.7) 1x, linear-gradient(green, white) 2x");
+
+testImageSetRule("Single value for -webkit-mask-box-image-source with gradient and dpi",
+                "-webkit-mask-box-image-source",
+                "linear-gradient(green, white) 192dpi",
+                "linear-gradient(green, white) 192dpi");
 
 successfullyParsed = true;
 </script>

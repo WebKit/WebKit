@@ -89,7 +89,7 @@ uint32_t GetDeviceVendorId(id<MTLDevice> metalDevice);
 AutoObjCPtr<id<MTLLibrary>> CreateShaderLibrary(
     const mtl::ContextDevice &metalDevice,
     const std::string &source,
-    NSDictionary<NSString *, NSObject *> *substitutionDictionary,
+    const std::map<std::string, std::string> &substitutionDictionary,
     bool enableFastMath,
     AutoObjCPtr<NSError *> *error);
 
@@ -101,7 +101,7 @@ AutoObjCPtr<id<MTLLibrary>> CreateShaderLibrary(
     const mtl::ContextDevice &metalDevice,
     const char *source,
     size_t sourceLen,
-    NSDictionary<NSString *, NSObject *> *substitutionDictionary,
+    const std::map<std::string, std::string> &substitutionDictionary,
     bool enableFastMath,
     AutoObjCPtr<NSError *> *error);
 
@@ -139,7 +139,7 @@ MTLBlendOperation GetBlendOp(GLenum op);
 MTLCompareFunction GetCompareFunc(GLenum func);
 MTLStencilOperation GetStencilOp(GLenum op);
 
-MTLWinding GetFontfaceWinding(GLenum frontFaceMode, bool invert);
+MTLWinding GetFrontfaceWinding(GLenum frontFaceMode, bool invert);
 
 PrimitiveTopologyClass GetPrimitiveTopologyClass(gl::PrimitiveMode mode);
 MTLPrimitiveType GetPrimitiveType(gl::PrimitiveMode mode);

@@ -27,7 +27,12 @@
 
 #include "Color.h"
 #include "FontShadow.h"
+#include <wtf/ArgumentCoder.h>
 #include <wtf/Forward.h>
+
+namespace IPC {
+template<typename T, typename> struct ArgumentCoder;
+}
 
 namespace WebCore {
 

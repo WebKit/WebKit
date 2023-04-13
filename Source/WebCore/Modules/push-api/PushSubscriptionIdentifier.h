@@ -39,7 +39,7 @@ using PushSubscriptionIdentifier = ObjectIdentifier<PushSubscriptionIdentifierTy
 struct PushSubscriptionSetIdentifier {
     String bundleIdentifier;
     String pushPartition;
-    std::optional<UUID> dataStoreIdentifier;
+    Markable<UUID> dataStoreIdentifier;
 
     bool operator==(const PushSubscriptionSetIdentifier&) const;
     void add(Hasher&, const PushSubscriptionSetIdentifier&);

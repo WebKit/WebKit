@@ -15,7 +15,7 @@ PASS HTML Document request respects setRequestHeader("")
 PASS HTML Document request has correct default Content-Type of "text/html;charset=UTF-8"
 PASS HTML Document request keeps setRequestHeader() Content-Type, with charset adjusted to UTF-8
 PASS Blob request respects setRequestHeader("") to be specified
-FAIL Blob request with unset type sends no Content-Type without setRequestHeader() call assert_equals: expected "" but got "Content-Type: \n"
+PASS Blob request with unset type sends no Content-Type without setRequestHeader() call
 PASS Blob request with unset type keeps setRequestHeader() Content-Type and charset
 PASS Blob request with set type respects setRequestHeader("") to be specified
 PASS Blob request with set type uses that it for Content-Type unless setRequestHeader()
@@ -30,9 +30,6 @@ PASS FormData request respects setRequestHeader("")
 PASS FormData request has correct default Content-Type of "multipart/form-data; boundary=_"
 PASS FormData request keeps setRequestHeader() Content-Type and charset
 PASS URLSearchParams respects setRequestHeader("")
-FAIL URLSearchParams request has correct default Content-Type of "application/x-www-form-urlencoded;charset=UTF-8" assert_equals: expected "Content-Type: application/x-www-form-urlencoded;charset=UTF-8\n" but got "Content-Type: text/plain;charset=UTF-8\n"
+PASS URLSearchParams request has correct default Content-Type of "application/x-www-form-urlencoded;charset=UTF-8"
 PASS URLSearchParams request keeps setRequestHeader() Content-Type, with charset adjusted to UTF-8
-PASS ReadableStream request respects setRequestHeader("")
-FAIL ReadableStream request with under type sends no Content-Type without setRequestHeader() call assert_equals: expected "" but got "Content-Type: text/plain;charset=UTF-8\n"
-FAIL ReadableStream request keeps setRequestHeader() Content-Type and charset assert_equals: expected "Content-Type: application/xml;charset=ASCII\n" but got "Content-Type: application/xml;charset=UTF-8\n"
 

@@ -2721,6 +2721,11 @@ void DispatchTableGL::initProcsSharedExtensions(const std::set<std::string> &ext
         ASSIGN("glMultiDrawElementsEXT", multiDrawElements);
     }
 
+    if (extensions.count("GL_EXT_polygon_offset_clamp") != 0)
+    {
+        ASSIGN("glPolygonOffsetClampEXT", polygonOffsetClampEXT);
+    }
+
     if (extensions.count("GL_EXT_semaphore") != 0)
     {
         ASSIGN("glDeleteSemaphoresEXT", deleteSemaphoresEXT);
@@ -5530,6 +5535,11 @@ void DispatchTableGL::initProcsSharedExtensionsNULL(const std::set<std::string> 
     {
         multiDrawArrays   = &glMultiDrawArraysNULL;
         multiDrawElements = &glMultiDrawElementsNULL;
+    }
+
+    if (extensions.count("GL_EXT_polygon_offset_clamp") != 0)
+    {
+        polygonOffsetClampEXT = &glPolygonOffsetClampEXTNULL;
     }
 
     if (extensions.count("GL_EXT_semaphore") != 0)

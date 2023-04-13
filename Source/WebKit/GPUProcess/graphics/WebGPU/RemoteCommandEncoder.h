@@ -125,6 +125,7 @@ private:
     void finish(const WebGPU::CommandBufferDescriptor&, WebGPUIdentifier);
 
     void setLabel(String&&);
+    void destruct();
 
     Ref<PAL::WebGPU::CommandEncoder> m_backing;
     WebGPU::ObjectHeap& m_objectHeap;

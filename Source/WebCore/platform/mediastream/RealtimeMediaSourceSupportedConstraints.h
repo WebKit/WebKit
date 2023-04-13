@@ -51,11 +51,32 @@ enum class MediaConstraintType : uint8_t {
     GroupId,
     DisplaySurface,
     LogicalSurface,
+    FocusDistance,
+    Zoom,
 };
 
 class RealtimeMediaSourceSupportedConstraints {
 public:
     RealtimeMediaSourceSupportedConstraints()
+    {
+    }
+    
+    RealtimeMediaSourceSupportedConstraints(bool supportsWidth, bool supportsHeight, bool supportsAspectRatio, bool supportsFrameRate, bool supportsFacingMode, bool supportsVolume, bool supportsSampleRate, bool supportsSampleSize, bool supportsEchoCancellation, bool supportsDeviceId, bool supportsGroupId, bool supportsDisplaySurface, bool supportsLogicalSurface, bool supportsFocusDistance, bool supportsZoom)
+        : m_supportsWidth(supportsWidth)
+        , m_supportsHeight(supportsHeight)
+        , m_supportsAspectRatio(supportsAspectRatio)
+        , m_supportsFrameRate(supportsFrameRate)
+        , m_supportsFacingMode(supportsFacingMode)
+        , m_supportsVolume(supportsVolume)
+        , m_supportsSampleRate(supportsSampleRate)
+        , m_supportsSampleSize(supportsSampleSize)
+        , m_supportsEchoCancellation(supportsEchoCancellation)
+        , m_supportsDeviceId(supportsDeviceId)
+        , m_supportsGroupId(supportsGroupId)
+        , m_supportsDisplaySurface(supportsDisplaySurface)
+        , m_supportsLogicalSurface(supportsLogicalSurface)
+        , m_supportsFocusDistance(supportsFocusDistance)
+        , m_supportsZoom(supportsZoom)
     {
     }
 
@@ -100,8 +121,11 @@ public:
 
     bool supportsConstraint(MediaConstraintType) const;
 
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static WARN_UNUSED_RETURN bool decode(Decoder&, RealtimeMediaSourceSupportedConstraints&);
+    bool supportsFocusDistance() const { return m_supportsFocusDistance; }
+    void setSupportsFocusDistance(bool value) { m_supportsFocusDistance = value; }
+
+    bool supportsZoom() const { return m_supportsZoom; }
+    void setSupportsZoom(bool value) { m_supportsZoom = value; }
 
 private:
     bool m_supportsWidth { false };
@@ -117,68 +141,10 @@ private:
     bool m_supportsGroupId { false };
     bool m_supportsDisplaySurface { false };
     bool m_supportsLogicalSurface { false };
+    bool m_supportsFocusDistance { false };
+    bool m_supportsZoom { false };
 };
-
-template<class Encoder>
-void RealtimeMediaSourceSupportedConstraints::encode(Encoder& encoder) const
-{
-    encoder << m_supportsWidth
-        << m_supportsHeight
-        << m_supportsAspectRatio
-        << m_supportsFrameRate
-        << m_supportsFacingMode
-        << m_supportsVolume
-        << m_supportsSampleRate
-        << m_supportsSampleSize
-        << m_supportsEchoCancellation
-        << m_supportsDeviceId
-        << m_supportsGroupId
-        << m_supportsDisplaySurface
-        << m_supportsLogicalSurface;
-}
-
-template<class Decoder>
-bool RealtimeMediaSourceSupportedConstraints::decode(Decoder& decoder, RealtimeMediaSourceSupportedConstraints& constraints)
-{
-    return decoder.decode(constraints.m_supportsWidth)
-        && decoder.decode(constraints.m_supportsHeight)
-        && decoder.decode(constraints.m_supportsAspectRatio)
-        && decoder.decode(constraints.m_supportsFrameRate)
-        && decoder.decode(constraints.m_supportsFacingMode)
-        && decoder.decode(constraints.m_supportsVolume)
-        && decoder.decode(constraints.m_supportsSampleRate)
-        && decoder.decode(constraints.m_supportsSampleSize)
-        && decoder.decode(constraints.m_supportsEchoCancellation)
-        && decoder.decode(constraints.m_supportsDeviceId)
-        && decoder.decode(constraints.m_supportsGroupId)
-        && decoder.decode(constraints.m_supportsDisplaySurface)
-        && decoder.decode(constraints.m_supportsLogicalSurface);
-}
 
 } // namespace WebCore
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::MediaConstraintType> {
-    using values = EnumValues<
-        WebCore::MediaConstraintType,
-        WebCore::MediaConstraintType::Unknown,
-        WebCore::MediaConstraintType::Width,
-        WebCore::MediaConstraintType::Height,
-        WebCore::MediaConstraintType::AspectRatio,
-        WebCore::MediaConstraintType::FrameRate,
-        WebCore::MediaConstraintType::FacingMode,
-        WebCore::MediaConstraintType::Volume,
-        WebCore::MediaConstraintType::SampleRate,
-        WebCore::MediaConstraintType::SampleSize,
-        WebCore::MediaConstraintType::EchoCancellation,
-        WebCore::MediaConstraintType::DeviceId,
-        WebCore::MediaConstraintType::GroupId,
-        WebCore::MediaConstraintType::DisplaySurface,
-        WebCore::MediaConstraintType::LogicalSurface
-    >;
-};
-
-} // namespace WTF
 
 #endif // ENABLE(MEDIA_STREAM)

@@ -1845,7 +1845,7 @@ private:
             m_formatter.oneByteOp(OP_GROUP2_Ev1, op, dst);
         else {
             m_formatter.oneByteOp(OP_GROUP2_EvIb, op, dst);
-            m_formatter.immediate8(imm);
+            m_formatter.immediate8(imm & 31);
         }
     }
 
@@ -1926,7 +1926,7 @@ private:
             m_formatter.oneByteOp64(OP_GROUP2_Ev1, op, dst);
         else {
             m_formatter.oneByteOp64(OP_GROUP2_EvIb, op, dst);
-            m_formatter.immediate8(imm);
+            m_formatter.immediate8(imm & 63);
         }
     }
 public:
@@ -3359,6 +3359,11 @@ public:
         m_formatter.twoByteOp8(OP2_MOVSX_GvEb, dst, src);
     }
 
+    void movsbq_rr(RegisterID src, RegisterID dst)
+    {
+        m_formatter.twoByteOp64(OP2_MOVSX_GvEb, dst, src);
+    }
+
     void movzwl_rr(RegisterID src, RegisterID dst)
     {
         m_formatter.twoByteOp8(OP2_MOVZX_GvEw, dst, src);
@@ -3367,6 +3372,11 @@ public:
     void movswl_rr(RegisterID src, RegisterID dst)
     {
         m_formatter.twoByteOp8(OP2_MOVSX_GvEw, dst, src);
+    }
+
+    void movswq_rr(RegisterID src, RegisterID dst)
+    {
+        m_formatter.twoByteOp64(OP2_MOVSX_GvEw, dst, src);
     }
 
     void cmovl_rr(Condition cond, RegisterID src, RegisterID dst)

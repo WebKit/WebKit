@@ -30,16 +30,20 @@
 
 #include "DrawingAreaProxyMessages.h"
 #include "GraphicsLayerWC.h"
+#include "MessageSenderInlines.h"
 #include "PlatformImageBufferShareableBackend.h"
 #include "RemoteRenderingBackendProxy.h"
 #include "RemoteWCLayerTreeHostProxy.h"
 #include "UpdateInfo.h"
 #include "WebFrame.h"
+#include "WebPage.h"
 #include "WebPageCreationParameters.h"
+#include "WebPageInlines.h"
 #include "WebProcess.h"
-#include <WebCore/Frame.h>
-#include <WebCore/FrameView.h>
 #include <WebCore/ImageBuffer.h>
+#include <WebCore/LocalFrame.h>
+#include <WebCore/LocalFrameView.h>
+#include <WebCore/Page.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -48,8 +52,8 @@ DrawingAreaWC::DrawingAreaWC(WebPage& webPage, const WebPageCreationParameters& 
     : DrawingArea(DrawingAreaType::WC, parameters.drawingAreaIdentifier, webPage)
     , m_remoteWCLayerTreeHostProxy(makeUnique<RemoteWCLayerTreeHostProxy>(webPage, parameters.usesOffscreenRendering))
     , m_layerFactory(*this)
-    , m_rootLayer(GraphicsLayer::create(graphicsLayerFactory(), this->m_rootLayerClient))
     , m_updateRenderingTimer(*this, &DrawingAreaWC::updateRendering)
+    , m_rootLayer(GraphicsLayer::create(graphicsLayerFactory(), this->m_rootLayerClient))
     , m_commitQueue(WorkQueue::create("DrawingAreaWC CommitQueue"_s))
 {
     m_rootLayer->setName(MAKE_STATIC_STRING_IMPL("drawing area root"));
@@ -79,7 +83,7 @@ void DrawingAreaWC::updateRootLayers()
     triggerRenderingUpdate();
 }
 
-void DrawingAreaWC::setRootCompositingLayer(GraphicsLayer* rootLayer)
+void DrawingAreaWC::setRootCompositingLayer(WebCore::Frame&, GraphicsLayer* rootLayer)
 {
     m_contentLayer = rootLayer;
     if (rootLayer)
@@ -99,7 +103,7 @@ void DrawingAreaWC::updatePreferences(const WebPreferencesStore&)
     settings.setAcceleratedCompositingForFixedPositionEnabled(settings.acceleratedCompositingEnabled());
 }
 
-bool DrawingAreaWC::shouldUseTiledBackingForFrameView(const WebCore::FrameView& frameView) const
+bool DrawingAreaWC::shouldUseTiledBackingForFrameView(const WebCore::LocalFrameView& frameView) const
 {
     auto* localFrame = dynamicDowncast<WebCore::LocalFrame>(frameView.frame());
     return localFrame && localFrame->isMainFrame();

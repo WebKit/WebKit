@@ -37,7 +37,7 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/WTFString.h>
 
-#if (HAVE(AVCONTENTKEYSESSION) || HAVE(AVSTREAMSESSION)) && ENABLE(MEDIA_SOURCE)
+#if HAVE(AVCONTENTKEYSESSION) && ENABLE(MEDIA_SOURCE)
 #include "CDMPrivateMediaSourceAVFObjC.h"
 #endif
 
@@ -54,7 +54,7 @@ static void platformRegisterFactories(Vector<LegacyCDMFactory>& factories)
     factories.append({ [](LegacyCDM* cdm) { return makeUnique<LegacyCDMPrivateClearKey>(cdm); }, LegacyCDMPrivateClearKey::supportsKeySystem, LegacyCDMPrivateClearKey::supportsKeySystemAndMimeType });
     // FIXME: initialize specific UA CDMs. http://webkit.org/b/109318, http://webkit.org/b/109320
     factories.append({ [](LegacyCDM* cdm) { return makeUnique<CDMPrivateMediaPlayer>(cdm); }, CDMPrivateMediaPlayer::supportsKeySystem, CDMPrivateMediaPlayer::supportsKeySystemAndMimeType });
-#if (HAVE(AVCONTENTKEYSESSION) || HAVE(AVSTREAMSESSION)) && ENABLE(MEDIA_SOURCE)
+#if HAVE(AVCONTENTKEYSESSION) && ENABLE(MEDIA_SOURCE)
     factories.append({ [](LegacyCDM* cdm) { return makeUnique<CDMPrivateMediaSourceAVFObjC>(cdm); }, CDMPrivateMediaSourceAVFObjC::supportsKeySystem, CDMPrivateMediaSourceAVFObjC::supportsKeySystemAndMimeType });
 #endif
 }

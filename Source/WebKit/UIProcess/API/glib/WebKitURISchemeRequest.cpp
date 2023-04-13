@@ -73,7 +73,7 @@ struct _WebKitURISchemeRequestPrivate {
     GUniquePtr<SoupMessageHeaders> headers;
 };
 
-WEBKIT_DEFINE_TYPE(WebKitURISchemeRequest, webkit_uri_scheme_request, G_TYPE_OBJECT)
+WEBKIT_DEFINE_FINAL_TYPE(WebKitURISchemeRequest, webkit_uri_scheme_request, G_TYPE_OBJECT, GObject)
 
 static void webkit_uri_scheme_request_class_init(WebKitURISchemeRequestClass*)
 {
@@ -202,6 +202,23 @@ SoupMessageHeaders* webkit_uri_scheme_request_get_http_headers(WebKitURISchemeRe
     }
 
     return request->priv->headers.get();
+}
+
+/**
+ * webkit_uri_scheme_request_get_http_body:
+ * @request: a #WebKitURISchemeRequest
+ *
+ * Get the request body.
+ *
+ * Returns: (transfer full): (nullable): the body of the @request.
+ *
+ * Since: 2.40
+ */
+GInputStream* webkit_uri_scheme_request_get_http_body(WebKitURISchemeRequest* request)
+{
+    g_return_val_if_fail(WEBKIT_IS_URI_SCHEME_REQUEST(request), nullptr);
+
+    return request->priv->task->request().createBodyStream().leakRef();
 }
 
 static void webkitURISchemeRequestReadCallback(GInputStream* inputStream, GAsyncResult* result, WebKitURISchemeRequest* schemeRequest)

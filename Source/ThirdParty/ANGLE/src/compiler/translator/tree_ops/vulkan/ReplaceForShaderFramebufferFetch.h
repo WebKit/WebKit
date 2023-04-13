@@ -20,13 +20,21 @@ class TIntermBlock;
 class TSymbolTable;
 struct ShaderVariable;
 
+enum class FramebufferFetchReplaceTarget
+{
+    LastFragData,
+    LastFragColor,
+};
+
 // Declare the global variable, "ANGLELastFragData", and at the begining of the main function,
-// assign a subpassLoad value to it. Then replace every gl_LastFragData to "ANGLELastFragData". This
-// is to solve the problem GLSL for Vulkan can't process gl_LastFragData variable.
-[[nodiscard]] bool ReplaceLastFragData(TCompiler *compiler,
-                                       TIntermBlock *root,
-                                       TSymbolTable *symbolTable,
-                                       std::vector<ShaderVariable> *uniforms);
+// assign a subpassLoad value to it. Then replace every gl_LastFragData/Color to
+// "ANGLELastFragData". This is to solve the problem GLSL for Vulkan can't process
+// gl_LastFragData/Color variable.
+[[nodiscard]] bool ReplaceLastFrag(TCompiler *compiler,
+                                   TIntermBlock *root,
+                                   TSymbolTable *symbolTable,
+                                   std::vector<ShaderVariable> *uniforms,
+                                   FramebufferFetchReplaceTarget target);
 
 // Similar to "ANGLELastFragData", but the difference is the variable for loading a framebuffer
 // data. The variable decorated with a inout qualifier will be replaced to the variable decorated

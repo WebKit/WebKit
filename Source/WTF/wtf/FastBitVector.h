@@ -481,6 +481,12 @@ public:
     {
         grow(numBits);
     }
+
+    FastBitVector(size_t numBits, bool value)
+    {
+        grow(numBits);
+        fill(value);
+    }
     
     FastBitVector(const FastBitVector&) = default;
     FastBitVector& operator=(const FastBitVector&) = default;

@@ -1,4 +1,4 @@
-//@ skip if $architecture == "arm"
+//@ skip if $addressBits <= 32 or $memoryLimited
 function shouldBe(actual, expected) {
     if (actual !== expected)
         throw new Error('bad value: ' + actual);

@@ -1,0 +1,27 @@
+<style>
+div {
+  font-size: 10px;
+  font-family: Monospace;
+}
+#column_container_count {
+  column-count: 2;
+}
+#column_container_width {
+  column-width: 100px;
+}
+</style>
+<!-- PASS if content shows up in 3 columns. -->
+<div id=column_container_count>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Dolor sit amet consectetur adipiscing elit ut aliquam purus sit. Sem nulla pharetra diam sit amet nisl suscipit adipiscing. Risus at ultrices mi tempus imperdiet nulla malesuada. Etiam tempor orci eu lobortis elementum nibh tellus. Consequat ac felis donec et odio pellentesque diam volutpat. Nunc mi ipsum faucibus vitae. Congue eu consequat ac felis. Viverra aliquet eget sit amet. Id velit ut tortor pretium viverra suspendisse potenti. Tempor orci dapibus ultrices in iaculis nunc sed augue lacus. Rhoncus est pellentesque elit ullamcorper dignissim. Convallis aenean et tortor at risus viverra. Ultrices gravida dictum fusce ut placerat orci nulla. Interdum consectetur libero id faucibus nisl tincidunt. Est pellentesque elit ullamcorper dignissim cras tincidunt lobortis. Nam at lectus urna duis convallis convallis tellus. Volutpat ac tincidunt vitae semper quis. Sit amet mauris commodo quis imperdiet massa tincidunt nunc pulvinar. Dolor purus non enim praesent elementum facilisis.</div>
+<!-- PASS if content shows up in 300px wide columns. -->
+<div id=column_container_width>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Dolor sit amet consectetur adipiscing elit ut aliquam purus sit. Sem nulla pharetra diam sit amet nisl suscipit adipiscing. Risus at ultrices mi tempus imperdiet nulla malesuada. Etiam tempor orci eu lobortis elementum nibh tellus. Consequat ac felis donec et odio pellentesque diam volutpat. Nunc mi ipsum faucibus vitae. Congue eu consequat ac felis. Viverra aliquet eget sit amet. Id velit ut tortor pretium viverra suspendisse potenti. Tempor orci dapibus ultrices in iaculis nunc sed augue lacus. Rhoncus est pellentesque elit ullamcorper dignissim. Convallis aenean et tortor at risus viverra. Ultrices gravida dictum fusce ut placerat orci nulla. Interdum consectetur libero id faucibus nisl tincidunt. Est pellentesque elit ullamcorper dignissim cras tincidunt lobortis. Nam at lectus urna duis convallis convallis tellus. Volutpat ac tincidunt vitae semper quis. Sit amet mauris commodo quis imperdiet massa tincidunt nunc pulvinar. Dolor purus non enim praesent elementum facilisis.</div>
+<script>
+document.body.offsetHeight;
+if (window.testRunner)
+  testRunner.waitUntilDone();
+setTimeout(function() {
+  column_container_count.style.columnCount = "3";
+  column_container_width.style.columnWidth = "300px";
+  if (window.testRunner)
+    testRunner.notifyDone();
+}, 0);
+</script>

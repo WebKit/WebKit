@@ -33,6 +33,11 @@
 
 namespace WebKit {
 
+RefPtr<WebCore::VideoFrame> RemoteVideoFrameObjectHeap::get(RemoteVideoFrameReadReference&& read)
+{
+    return m_heap.retire(WTFMove(read), 0_s);
+}
+
 void RemoteVideoFrameObjectHeap::createPixelConformerIfNeeded()
 {
     if (!m_pixelBufferConformer)

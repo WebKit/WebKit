@@ -1,0 +1,39 @@
+
+PASS the event is an instance of ToggleEvent
+PASS the event inherts from Event
+PASS Missing type argument
+PASS type argument is string
+PASS type argument is null
+PASS event type set to undefined
+PASS oldState has default value of empty string
+PASS oldState is readonly
+PASS newState has default value of empty string
+PASS newState is readonly
+PASS ToggleEventInit argument is null
+PASS ToggleEventInit argument is undefined
+PASS ToggleEventInit argument is empty dictionary
+PASS oldState set to 'sample'
+PASS oldState set to undefined
+PASS oldState set to null
+PASS oldState set to false
+PASS oldState set to true
+PASS oldState set to a number
+PASS oldState set to []
+PASS oldState set to [1, 2, 3]
+PASS oldState set to an object
+PASS oldState set to an object with a valueOf function
+PASS ToggleEventInit properties set value
+PASS ToggleEventInit properties set value 2
+PASS ToggleEventInit properties set value 3
+PASS ToggleEventInit properties set value 4
+PASS newState set to 'sample'
+PASS newState set to undefined
+PASS newState set to null
+PASS newState set to false
+PASS newState set to true
+PASS newState set to a number
+PASS newState set to []
+PASS newState set to [1, 2, 3]
+PASS newState set to an object
+PASS newState set to an object with a valueOf function
+

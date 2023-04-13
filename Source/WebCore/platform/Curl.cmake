@@ -9,8 +9,6 @@ list(APPEND WebCore_SOURCES
     platform/network/curl/CookieStorageCurl.cpp
     platform/network/curl/CookieUtil.cpp
     platform/network/curl/CredentialStorageCurl.cpp
-    platform/network/curl/CurlCacheEntry.cpp
-    platform/network/curl/CurlCacheManager.cpp
     platform/network/curl/CurlContext.cpp
     platform/network/curl/CurlDownload.cpp
     platform/network/curl/CurlFormDataStream.cpp
@@ -18,7 +16,6 @@ list(APPEND WebCore_SOURCES
     platform/network/curl/CurlProxySettings.cpp
     platform/network/curl/CurlRequest.cpp
     platform/network/curl/CurlRequestScheduler.cpp
-    platform/network/curl/CurlResourceHandleDelegate.cpp
     platform/network/curl/CurlSSLHandle.cpp
     platform/network/curl/CurlSSLVerifier.cpp
     platform/network/curl/CurlStream.cpp
@@ -32,7 +29,6 @@ list(APPEND WebCore_SOURCES
     platform/network/curl/ResourceHandleCurl.cpp
     platform/network/curl/ResourceRequestCurl.cpp
     platform/network/curl/ResourceResponseCurl.cpp
-    platform/network/curl/SocketStreamHandleImplCurl.cpp
     platform/network/curl/SynchronousLoaderClientCurl.cpp
 )
 
@@ -41,8 +37,6 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/network/curl/CertificateInfo.h
     platform/network/curl/CookieJarDB.h
     platform/network/curl/CookieUtil.h
-    platform/network/curl/CurlCacheEntry.h
-    platform/network/curl/CurlCacheManager.h
     platform/network/curl/CurlContext.h
     platform/network/curl/CurlDownload.h
     platform/network/curl/CurlFormDataStream.h
@@ -53,7 +47,6 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/network/curl/CurlRequestClient.h
     platform/network/curl/CurlRequestScheduler.h
     platform/network/curl/CurlRequestSchedulerClient.h
-    platform/network/curl/CurlResourceHandleDelegate.h
     platform/network/curl/CurlResponse.h
     platform/network/curl/CurlSSLHandle.h
     platform/network/curl/CurlSSLVerifier.h
@@ -66,7 +59,6 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/network/curl/ResourceError.h
     platform/network/curl/ResourceRequest.h
     platform/network/curl/ResourceResponse.h
-    platform/network/curl/SocketStreamHandleImpl.h
 )
 
 list(APPEND WebCore_LIBRARIES

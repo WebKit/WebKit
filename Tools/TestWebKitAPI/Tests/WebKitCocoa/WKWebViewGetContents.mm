@@ -203,3 +203,47 @@ TEST(WKWebView, AttributedStringAccessibilityLabel)
 
     TestWebKitAPI::Util::run(&finished);
 }
+
+TEST(WKWebView, AttributedStringAttributeTypes)
+{
+    NSString *html = @"<html>"
+    "<head>"
+    "    <meta name='CreationTime' content='2023-12-01T12:23:34Z'/>"
+    "    <meta name='Keywords' content='a b c'/>"
+    "</head>"
+    "<body>"
+    "    <p style='text-shadow: 0 1px black'>text shadow paragraph</p>"
+    "    <p style='display: inline; unicode-bidi: bidi-override'>bidi paragraph</p>"
+    "</body>"
+    "</html>";
+
+    auto webView = adoptNS([TestWKWebView new]);
+    [webView synchronouslyLoadHTMLString:html];
+
+    __block bool finished { false };
+
+    [webView _getContentsAsAttributedStringWithCompletionHandler:^(NSAttributedString *attributedString, NSDictionary<NSAttributedStringDocumentAttributeKey, id> *documentAttributes, NSError *error) {
+        bool foundNSDate = [documentAttributes[@"NSCreationTimeDocumentAttribute"] isKindOfClass:NSDate.class];
+        EXPECT_TRUE(foundNSDate);
+        bool foundNSArrayOfNSStrings = [documentAttributes[@"NSKeywordsDocumentAttribute"] isEqualToArray:@[@"a", @"b", @"c"]];
+        EXPECT_TRUE(foundNSArrayOfNSStrings);
+
+        __block bool foundNSShadow { false };
+        __block bool foundNSParagraphStyle { false };
+        __block bool foundNSArrayOfNSNumbers { false };
+        [attributedString enumerateAttributesInRange:NSMakeRange(0, [attributedString length]) options:0 usingBlock: ^(NSDictionary<NSAttributedStringKey, id> *attributes, NSRange range, BOOL *) {
+            if ([attributes[@"NSShadow"] isKindOfClass:NSShadow.class])
+                foundNSShadow = true;
+            if ([attributes[@"NSParagraphStyle"] isKindOfClass:NSParagraphStyle.class])
+                foundNSParagraphStyle = true;
+            if ([attributes[@"NSWritingDirection"] isKindOfClass:NSArray.class])
+                foundNSArrayOfNSNumbers = [attributes[@"NSWritingDirection"][0] doubleValue] == 2;
+        }];
+        EXPECT_TRUE(foundNSShadow);
+        EXPECT_TRUE(foundNSParagraphStyle);
+        EXPECT_TRUE(foundNSArrayOfNSNumbers);
+        finished = true;
+    }];
+
+    TestWebKitAPI::Util::run(&finished);
+}

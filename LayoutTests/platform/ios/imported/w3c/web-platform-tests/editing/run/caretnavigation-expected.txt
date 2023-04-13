@@ -1,0 +1,9 @@
+line 1
+
+line 2
+
+line 2
+
+FAIL Move with ArrowLeft to BR following a div assert_equals: expected 3 but got 0
+FAIL Move with ArrowLeft to BR following an img assert_equals: expected 3 but got 0
+

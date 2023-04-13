@@ -56,12 +56,15 @@ void genericUnwind(VM& vm, CallFrame* callFrame)
     RELEASE_ASSERT(exception);
     CatchInfo handler = vm.interpreter.unwind(vm, callFrame, exception); // This may update callFrame.
 
-    void* catchRoutine;
+    void* catchRoutine = nullptr;
+    void* dispatchAndCatchRoutine = nullptr;
     JSOrWasmInstruction catchPCForInterpreter = { static_cast<JSInstruction*>(nullptr) };
     if (handler.m_valid) {
         catchPCForInterpreter = handler.m_catchPCForInterpreter;
 #if ENABLE(JIT)
         catchRoutine = handler.m_nativeCode.taggedPtr();
+        if (handler.m_nativeCodeForDispatchAndCatch)
+            dispatchAndCatchRoutine = handler.m_nativeCodeForDispatchAndCatch.taggedPtr();
 #else
 #if ENABLE(WEBASSEMBLY)
 #error WASM requires the JIT, so this section assumes we are in JS
@@ -82,6 +85,7 @@ void genericUnwind(VM& vm, CallFrame* callFrame)
     assertIsTaggedWith<ExceptionHandlerPtrTag>(catchRoutine);
     vm.callFrameForCatch = callFrame;
     vm.targetMachinePCForThrow = catchRoutine;
+    vm.targetMachinePCAfterCatch = dispatchAndCatchRoutine;
     vm.targetInterpreterPCForThrow = catchPCForInterpreter;
     
     RELEASE_ASSERT(catchRoutine);

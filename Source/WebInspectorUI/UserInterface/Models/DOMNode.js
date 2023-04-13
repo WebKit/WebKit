@@ -170,6 +170,11 @@ WI.DOMNode = class DOMNode extends WI.Object
 
     // Static
 
+    static get defaultLayoutOverlayColor()
+    {
+        return new WI.Color(WI.Color.Format.HSL, WI.DOMNode._defaultLayoutOverlayConfiguration.colors[0]);
+    }
+
     static resetDefaultLayoutOverlayConfiguration()
     {
         let configuration = WI.DOMNode._defaultLayoutOverlayConfiguration;
@@ -628,7 +633,10 @@ WI.DOMNode = class DOMNode extends WI.Object
         }
 
         let target = WI.assumingMainTarget();
-        target.DOMAgent.highlightNode(WI.DOMManager.buildHighlightConfig(mode), this.id);
+        target.DOMAgent.highlightNode.invoke({
+            nodeId: this.id,
+            ...WI.DOMManager.buildHighlightConfigs(mode),
+        });
     }
 
     showLayoutOverlay({color} = {})
@@ -648,12 +656,21 @@ WI.DOMNode = class DOMNode extends WI.Object
 
         switch (this.layoutContextType) {
         case WI.DOMNode.LayoutFlag.Grid:
-            agentCommandArguments.gridColor = color.toProtocol();
-            agentCommandArguments.showLineNames = WI.settings.gridOverlayShowLineNames.value;
-            agentCommandArguments.showLineNumbers = WI.settings.gridOverlayShowLineNumbers.value;
-            agentCommandArguments.showExtendedGridLines = WI.settings.gridOverlayShowExtendedGridLines.value;
-            agentCommandArguments.showTrackSizes = WI.settings.gridOverlayShowTrackSizes.value;
-            agentCommandArguments.showAreaNames = WI.settings.gridOverlayShowAreaNames.value;
+            agentCommandArguments.gridOverlayConfig = {
+                gridColor: color.toProtocol(),
+                showLineNames: WI.settings.gridOverlayShowLineNames.value,
+                showLineNumbers: WI.settings.gridOverlayShowLineNumbers.value,
+                showExtendedGridLines: WI.settings.gridOverlayShowExtendedGridLines.value,
+                showTrackSizes: WI.settings.gridOverlayShowTrackSizes.value,
+                showAreaNames: WI.settings.gridOverlayShowAreaNames.value,
+            };
+
+            // COMPATIBILITY (macOS 13.3, iOS 16.4): DOM.GridOverlayConfig did not exist yet.
+            if (!target.hasCommand("DOM.showGridOverlay", "gridOverlayConfig")) {
+                for (let [key, value] in Object.entries(agentCommandArguments.gridOverlayConfig))
+                    agentCommandArguments[key] = value;
+            }
+
             agentCommandFunction = target.DOMAgent.showGridOverlay;
 
             if (!this._layoutOverlayShowing) {
@@ -666,8 +683,17 @@ WI.DOMNode = class DOMNode extends WI.Object
             break;
 
         case WI.DOMNode.LayoutFlag.Flex:
-            agentCommandArguments.flexColor = color.toProtocol();
-            agentCommandArguments.showOrderNumbers = WI.settings.flexOverlayShowOrderNumbers.value;
+            agentCommandArguments.flexOverlayConfig = {
+                flexColor: color.toProtocol(),
+                showOrderNumbers: WI.settings.flexOverlayShowOrderNumbers.value,
+            };
+
+            // COMPATIBILITY (macOS 13.3, iOS 16.4): DOM.FlexOverlayConfig did not exist yet.
+            if (!target.hasCommand("DOM.showFlexOverlay", "flexOverlayConfig")) {
+                for (let [key, value] in Object.entries(agentCommandArguments.flexOverlayConfig))
+                    agentCommandArguments[key] = value;
+            }
+
             agentCommandFunction = target.DOMAgent.showFlexOverlay;
 
             if (!this._layoutOverlayShowing)

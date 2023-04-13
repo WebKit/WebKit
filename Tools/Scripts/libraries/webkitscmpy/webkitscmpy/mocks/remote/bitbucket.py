@@ -266,6 +266,7 @@ class BitBucket(mocks.Requests):
             json['participants'] = [json['author']]
             json['id'] = 1 + max([0] + [pr.get('id', 0) for pr in self.pull_requests])
             json['fromRef']['displayId'] = '/'.join(json['fromRef']['id'].split('/')[-2:])
+            json['fromRef']['latestCommit'] = json['fromRef']['latestCommit']
             json['toRef']['displayId'] = '/'.join(json['toRef']['id'].split('/')[-2:])
             json['state'] = 'OPEN'
             json['activities'] = []
@@ -304,6 +305,7 @@ class BitBucket(mocks.Requests):
             if method == 'PUT':
                 self.pull_requests[existing].update(json)
                 self.pull_requests[existing]['fromRef']['displayId'] = '/'.join(json['fromRef']['id'].split('/')[-2:])
+                self.pull_requests[existing]['fromRef']['latestCommit'] = json['fromRef']['latestCommit']
                 self.pull_requests[existing]['toRef']['displayId'] = '/'.join(json['toRef']['id'].split('/')[-2:])
             if len(split_url) < 11:
                 return mocks.Response.fromJson({key: value for key, value in self.pull_requests[existing].items() if key != 'activities'})

@@ -124,19 +124,7 @@ sub runLeaks($$)
         $target = $memgraphPath;
     }
 
-    # To get a result we can parse, we need to pass --list to all versions of the leaks tool
-    # that recognize it, but there is no certain way to tell in advance (the version of the
-    # tool is not always tied to OS version, and --help doesn't document the option in some
-    # of the tool versions where it's supported and needed).
-    my @leaksOutput = `/usr/bin/leaks \"$target\" --list`;
-
-    # FIXME: Remove the fallback once macOS Mojave is the oldest supported version.
-    my $leaksExitCode = $? >> 8;
-    if ($leaksExitCode > 1) {
-        @leaksOutput = `/usr/bin/leaks \"$target\"`;
-    }
-
-    return \@leaksOutput;
+    return `/usr/bin/leaks \"$target\" --list`;
 }
 
 # Returns a list of hash references with the keys { address, size, type, callStack, leaksOutput }

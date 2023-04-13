@@ -59,5 +59,6 @@ STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(SetConstructor, InternalFunction);
 JSC_DECLARE_HOST_FUNCTION(setPrivateFuncSetBucketHead);
 JSC_DECLARE_HOST_FUNCTION(setPrivateFuncSetBucketNext);
 JSC_DECLARE_HOST_FUNCTION(setPrivateFuncSetBucketKey);
+JSC_DECLARE_HOST_FUNCTION(setPrivateFuncClone);
 
 } // namespace JSC

@@ -1,13 +1,14 @@
-<!DOCTYPE html>
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
 <html>
 <head>
+    <script src="../../../resources/ui-helper.js"></script>
     <script>
         if (window.eventSender) {
             testRunner.dumpAsText();
             testRunner.waitUntilDone();
         }
 
-        function onLoad()
+        async function runTest()
         {
             var divTarget = document.getElementById('target');
             var divTargetBounds = divTarget.getBoundingClientRect();
@@ -16,27 +17,23 @@
                 // Removing the div during event firing causes crash.
                 if (divTarget.parentNode)
                     divTarget.parentNode.removeChild(divTarget);
-                window.setTimeout(function() {
-                    if (window.testRunner)
-                        testRunner.notifyDone();
-                }, 0);
             });
 
             if (!window.eventSender)
                 return;
 
-            eventSender.mouseMoveTo(divTargetBounds.left + 10, divTargetBounds.top + 10);
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'began', 'none');
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'changed', 'none');
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'changed', 'none');
-            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'ended', 'none');
+            await UIHelper.mouseWheelScrollAt(divTargetBounds.left + 10, divTargetBounds.top + 10, 0, -1, 0, -1);
+            if (window.testRunner)
+                testRunner.notifyDone();
         }
+        
+        window.addEventListener('load', runTest, false);
     </script>
 </head>
-<body onload="onLoad();">
+<body>
     <p>This test should not crash.<p>
     <div id="parent" style="height: 2000px; width: 2000px;">
-        <div id="holder" class="scrollable_region"">
+        <div id="holder" class="scrollable_region">
             <div id="target" style='overflow-y: auto; overflow-x: hidden; max-height: 350px;'>
                 <div style='height:1000px'>Wheel Here.</div>
             </div>

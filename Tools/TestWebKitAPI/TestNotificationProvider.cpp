@@ -133,6 +133,8 @@ void TestNotificationProvider::showWebNotification(WKPageRef page, WKNotificatio
 
     WKRetain(notificationManager);
     m_pendingNotification = std::make_pair(notificationManager, identifier);
+
+    m_lastNotificationDataStoreIdentifier = adoptWK(WKNotificationCopyDataStoreIdentifier(notification));
 }
 
 void TestNotificationProvider::closeWebNotification(WKNotificationRef notification)

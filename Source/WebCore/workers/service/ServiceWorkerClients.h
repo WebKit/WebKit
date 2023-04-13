@@ -56,7 +56,7 @@ public:
     void claim(ScriptExecutionContext&, Ref<DeferredPromise>&&);
 
     enum PromiseIdentifierType { };
-    using PromiseIdentifier = ObjectIdentifier<PromiseIdentifierType>;
+    using PromiseIdentifier = AtomicObjectIdentifier<PromiseIdentifierType>;
 
     PromiseIdentifier addPendingPromise(Ref<DeferredPromise>&&);
     RefPtr<DeferredPromise> takePendingPromise(PromiseIdentifier);

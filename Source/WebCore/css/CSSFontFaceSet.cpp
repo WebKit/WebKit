@@ -127,9 +127,8 @@ void CSSFontFaceSet::ensureLocalFontFacesForFamilyRegistered(const AtomString& f
         auto face = CSSFontFace::create(*m_owningFontSelector, nullptr, nullptr, true);
         
         // FIXME: Don't use a list here. https://bugs.webkit.org/show_bug.cgi?id=196381
-        Ref<CSSValueList> familyList = CSSValueList::createCommaSeparated();
-        familyList->append(m_owningFontSelector->scriptExecutionContext()->cssValuePool().createFontFamilyValue(familyName));
-        face->setFamilies(familyList.get());
+        auto& pool = m_owningFontSelector->scriptExecutionContext()->cssValuePool();
+        face->setFamilies(CSSValueList::createCommaSeparated(pool.createFontFamilyValue(familyName)).get());
         face->setFontSelectionCapabilities(item);
         face->adoptSource(makeUnique<CSSFontFaceSource>(face.get(), familyName));
         ASSERT(!face->computeFailureState());
@@ -175,7 +174,7 @@ void CSSFontFaceSet::addToFacesLookupTable(CSSFontFace& face)
     }
 
     for (auto& item : *families) {
-        auto familyName = AtomString { CSSFontFaceSet::familyNameFromPrimitive(downcast<CSSPrimitiveValue>(item.get())) };
+        auto familyName = AtomString { CSSFontFaceSet::familyNameFromPrimitive(downcast<CSSPrimitiveValue>(item)) };
         if (familyName.isEmpty())
             continue;
 
@@ -223,7 +222,7 @@ void CSSFontFaceSet::add(CSSFontFace& face)
 void CSSFontFaceSet::removeFromFacesLookupTable(const CSSFontFace& face, const CSSValueList& familiesToSearchFor)
 {
     for (auto& item : familiesToSearchFor) {
-        String familyName = CSSFontFaceSet::familyNameFromPrimitive(downcast<CSSPrimitiveValue>(item.get()));
+        String familyName = CSSFontFaceSet::familyNameFromPrimitive(downcast<CSSPrimitiveValue>(item));
         if (familyName.isEmpty())
             continue;
 

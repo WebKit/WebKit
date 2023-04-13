@@ -81,6 +81,10 @@
 #define DYLD_IOS_VERSION_16_0 0x00100000
 #endif
 
+#ifndef DYLD_IOS_VERSION_16_4
+#define DYLD_IOS_VERSION_16_4 0x00100400
+#endif
+
 #ifndef DYLD_MACOSX_VERSION_10_13
 #define DYLD_MACOSX_VERSION_10_13 0x000A0D00
 #endif
@@ -121,6 +125,10 @@
 #define DYLD_MACOSX_VERSION_13_0 0x000d0000
 #endif
 
+#ifndef DYLD_MACOSX_VERSION_13_3
+#define DYLD_MACOSX_VERSION_13_3 0x000d0300
+#endif
+
 #else
 
 typedef uint32_t dyld_platform_t;
@@ -150,6 +158,7 @@ typedef struct {
 #define DYLD_IOS_VERSION_15_0 0x000f0000
 #define DYLD_IOS_VERSION_15_4 0x000f0400
 #define DYLD_IOS_VERSION_16_0 0x00100000
+#define DYLD_IOS_VERSION_16_4 0x00100400
 
 #define DYLD_MACOSX_VERSION_10_10 0x000A0A00
 #define DYLD_MACOSX_VERSION_10_11 0x000A0B00
@@ -166,6 +175,7 @@ typedef struct {
 #define DYLD_MACOSX_VERSION_12_00 0x000c0000
 #define DYLD_MACOSX_VERSION_12_3 0x000c0300
 #define DYLD_MACOSX_VERSION_13_0 0x000d0000
+#define DYLD_MACOSX_VERSION_13_3 0x000d0300
 
 #endif
 
@@ -237,6 +247,14 @@ WTF_EXTERN_C_BEGIN
 
 #ifndef dyld_spring_2022_os_versions
 #define dyld_spring_2022_os_versions ({ (dyld_build_version_t) { 0, 0 }; })
+#endif
+
+#ifndef dyld_fall_2022_os_versions
+#define dyld_fall_2022_os_versions ({ (dyld_build_version_t) { 0, 0 }; })
+#endif
+
+#ifndef dyld_spring_2023_os_versions
+#define dyld_spring_2023_os_versions ({ (dyld_build_version_t) { 0, 0 }; })
 #endif
 
 uint32_t dyld_get_program_sdk_version();

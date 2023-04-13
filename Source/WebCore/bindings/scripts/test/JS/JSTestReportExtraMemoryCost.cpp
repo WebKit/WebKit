@@ -104,7 +104,7 @@ template<> void JSTestReportExtraMemoryCostDOMConstructor::initializeProperties(
 
 static const HashTableValue JSTestReportExtraMemoryCostPrototypeTableValues[] =
 {
-    { "constructor"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestReportExtraMemoryCostConstructor, 0 } },
+    { "constructor"_s, static_cast<unsigned>(PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestReportExtraMemoryCostConstructor, 0 } },
 };
 
 const ClassInfo JSTestReportExtraMemoryCostPrototype::s_info = { "TestReportExtraMemoryCost"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestReportExtraMemoryCostPrototype) };
@@ -135,7 +135,9 @@ void JSTestReportExtraMemoryCost::finishCreation(VM& vm)
 
 JSObject* JSTestReportExtraMemoryCost::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    return JSTestReportExtraMemoryCostPrototype::create(vm, &globalObject, JSTestReportExtraMemoryCostPrototype::createStructure(vm, &globalObject, globalObject.objectPrototype()));
+    auto* structure = JSTestReportExtraMemoryCostPrototype::createStructure(vm, &globalObject, globalObject.objectPrototype());
+    structure->setMayBePrototype(true);
+    return JSTestReportExtraMemoryCostPrototype::create(vm, &globalObject, structure);
 }
 
 JSObject* JSTestReportExtraMemoryCost::prototype(VM& vm, JSDOMGlobalObject& globalObject)
@@ -196,7 +198,7 @@ void JSTestReportExtraMemoryCost::analyzeHeap(JSCell* cell, HeapAnalyzer& analyz
     auto* thisObject = jsCast<JSTestReportExtraMemoryCost*>(cell);
     analyzer.setWrappedObjectForCell(cell, &thisObject->wrapped());
     if (thisObject->scriptExecutionContext())
-        analyzer.setLabelForCell(cell, "url " + thisObject->scriptExecutionContext()->url().string());
+        analyzer.setLabelForCell(cell, "url "_s + thisObject->scriptExecutionContext()->url().string());
     Base::analyzeHeap(cell, analyzer);
 }
 

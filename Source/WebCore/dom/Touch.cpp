@@ -29,33 +29,33 @@
 
 #include "Touch.h"
 
-#include "DOMWindow.h"
-#include "Frame.h"
-#include "FrameView.h"
+#include "LocalDOMWindow.h"
+#include "LocalFrame.h"
+#include "LocalFrameView.h"
 
 namespace WebCore {
 
-static int contentsX(Frame* frame)
+static int contentsX(LocalFrame* frame)
 {
     if (!frame)
         return 0;
-    FrameView* frameView = frame->view();
+    auto* frameView = frame->view();
     if (!frameView)
         return 0;
     return frameView->scrollX() / frame->pageZoomFactor() / frame->frameScaleFactor();
 }
 
-static int contentsY(Frame* frame)
+static int contentsY(LocalFrame* frame)
 {
     if (!frame)
         return 0;
-    FrameView* frameView = frame->view();
+    auto* frameView = frame->view();
     if (!frameView)
         return 0;
     return frameView->scrollY() / frame->pageZoomFactor() / frame->frameScaleFactor();
 }
 
-static LayoutPoint scaledLocation(Frame* frame, int pageX, int pageY)
+static LayoutPoint scaledLocation(LocalFrame* frame, int pageX, int pageY)
 {
     if (!frame)
         return { pageX, pageY };
@@ -63,7 +63,7 @@ static LayoutPoint scaledLocation(Frame* frame, int pageX, int pageY)
     return { pageX * scaleFactor, pageY * scaleFactor };
 }
 
-Touch::Touch(Frame* frame, EventTarget* target, unsigned identifier, int screenX, int screenY, int pageX, int pageY, int radiusX, int radiusY, float rotationAngle, float force)
+Touch::Touch(LocalFrame* frame, EventTarget* target, unsigned identifier, int screenX, int screenY, int pageX, int pageY, int radiusX, int radiusY, float rotationAngle, float force)
     : m_target(target)
     , m_identifier(identifier)
     , m_clientX(pageX - contentsX(frame))

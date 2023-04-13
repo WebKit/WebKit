@@ -1,0 +1,31 @@
+# This is a list of every header WebKitLegacy "re-exports" from WebCore, to
+# correspond with reexported symbols. It is read by 
+# the "Migrate WebCore Headers" script phase, which postprocesses these headers
+# and writes them into the appropriate headers directory.
+
+# In WebKit, some headers have different visibilities per-platform, which is
+# not supported in Xcode and is why this script is necessary. In WebKitLegacy,
+# all migrated headers go to the $(PRIVATE_HEADERS_FOLDER_PATH), but this
+# script is kept for consistency.
+
+# The script matches each line of input to the corresponding line in
+# MigratedHeaders-output.xcfilelist, so the order of file names must match.
+
+$(WEBCORE_PRIVATE_HEADERS_DIR)/AbstractPasteboard.h
+$(WEBCORE_PRIVATE_HEADERS_DIR)/KeyEventCodesIOS.h
+$(WEBCORE_PRIVATE_HEADERS_DIR)/WAKAppKitStubs.h
+$(WEBCORE_PRIVATE_HEADERS_DIR)/WAKResponder.h
+$(WEBCORE_PRIVATE_HEADERS_DIR)/WAKView.h
+$(WEBCORE_PRIVATE_HEADERS_DIR)/WAKWindow.h
+$(WEBCORE_PRIVATE_HEADERS_DIR)/WebCoreThread.h
+$(WEBCORE_PRIVATE_HEADERS_DIR)/WebCoreThreadMessage.h
+$(WEBCORE_PRIVATE_HEADERS_DIR)/WebCoreThreadRun.h
+$(WEBCORE_PRIVATE_HEADERS_DIR)/WebEvent.h
+$(WEBCORE_PRIVATE_HEADERS_DIR)/WebEventRegion.h
+$(WEBCORE_PRIVATE_HEADERS_DIR)/WebItemProviderPasteboard.h
+$(WEBCORE_PRIVATE_HEADERS_DIR)/WebKitAvailability.h
+$(WEBCORE_PRIVATE_HEADERS_DIR)/WebScriptObject.h
+$(WEBCORE_PRIVATE_HEADERS_DIR)/WKContentObservation.h
+$(WEBCORE_PRIVATE_HEADERS_DIR)/WKGraphics.h
+$(WEBCORE_PRIVATE_HEADERS_DIR)/WKTypes.h
+

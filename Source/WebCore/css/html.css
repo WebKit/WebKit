@@ -2,7 +2,7 @@
  * The default style sheet used to render HTML.
  *
  * Copyright (C) 2000 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2003-2011, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2023 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -400,7 +400,7 @@ button {
 }
 
 /* Every time a new control is supported in vertical writing mode, it should be removed from here and added in the horizontalFormControls.css rule */
-select, button, meter, progress, input:is([type="button"], [type="submit"], [type="reset"], [type="file"]) {
+select, button, input:is([type="button"], [type="submit"], [type="reset"], [type="file"]) {
     writing-mode: horizontal-tb !important;
 }
 
@@ -792,6 +792,10 @@ input::placeholder {
     word-wrap: normal;
     overflow: hidden;
     line-height: initial !important;
+}
+
+input:disabled, textarea:disabled {
+    color: color-mix(in hsl, CanvasText 66%, Canvas);
 }
 
 input:is([type="hidden"], [type="image"], [type="file"]) {
@@ -1188,8 +1192,8 @@ meter {
     appearance: auto;
     box-sizing: border-box;
     display: inline-block;
-    height: 1em;
-    width: 5em;
+    block-size: 1em;
+    inline-size: 5em;
     vertical-align: -0.2em;
 }
 
@@ -1199,8 +1203,8 @@ progress {
     appearance: auto;
     box-sizing: border-box;
     display: inline-block;
-    height: 1em;
-    width: 10em;
+    block-size: 1em;
+    inline-size: 10em;
     vertical-align: -0.2em;
 }
 
@@ -1219,8 +1223,8 @@ progress::-webkit-progress-bar {
 
 progress::-webkit-progress-value {
     background-color: green;
-    height: 100%;
-    width: 50%; /* should be removed later */
+    block-size: 100%;
+    inline-size: 50%; /* should be removed later */
     box-sizing: border-box;
 }
 
@@ -1316,6 +1320,10 @@ a:any-link:active {
     color: -webkit-activelink;
 }
 
+area:any-link {
+    cursor: pointer;
+}
+
 /* HTML5 ruby elements */
 
 ruby, rt {
@@ -1363,7 +1371,7 @@ summary::-webkit-details-marker {
     display: inline-block;
     width: 0.66em;
     height: 0.66em;
-    margin-right: 0.4em;
+    margin-inline-end: 0.4em;
 }
 
 bdi, output {

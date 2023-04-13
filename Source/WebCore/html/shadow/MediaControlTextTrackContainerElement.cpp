@@ -33,15 +33,15 @@
 #if ENABLE(VIDEO)
 
 #include "DOMTokenList.h"
-#include "ElementChildIterator.h"
+#include "ElementChildIteratorInlines.h"
 #include "EventHandler.h"
 #include "EventLoop.h"
 #include "EventNames.h"
-#include "Frame.h"
 #include "FullscreenManager.h"
 #include "GraphicsContext.h"
 #include "HTMLVideoElement.h"
 #include "ImageBuffer.h"
+#include "LocalFrame.h"
 #include "LocalizedStrings.h"
 #include "Logging.h"
 #include "PODInterval.h"
@@ -298,7 +298,7 @@ void MediaControlTextTrackContainerElement::updateTextTrackRepresentationIfNeede
     if (!m_textTrackRepresentation) {
         ALWAYS_LOG(LOGIDENTIFIER);
 
-        m_textTrackRepresentation = TextTrackRepresentation::create(*this);
+        m_textTrackRepresentation = TextTrackRepresentation::create(*this, *m_mediaElement);
         if (document().page())
             m_textTrackRepresentation->setContentScale(document().page()->deviceScaleFactor());
         m_mediaElement->setTextTrackRepresentation(m_textTrackRepresentation.get());
@@ -402,7 +402,7 @@ RefPtr<Image> MediaControlTextTrackContainerElement::createTextTrackRepresentati
     if (!hasChildNodes())
         return nullptr;
 
-    RefPtr<Frame> frame = document().frame();
+    RefPtr frame = document().frame();
     if (!frame)
         return nullptr;
 

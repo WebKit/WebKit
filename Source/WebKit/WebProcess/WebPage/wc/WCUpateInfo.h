@@ -94,11 +94,11 @@ enum class WCLayerChange : uint32_t {
 };
 
 struct WCLayerUpateInfo {
-    WebCore::GraphicsLayer::PlatformLayerID id;
+    WebCore::PlatformLayerIdentifier id;
     OptionSet<WCLayerChange> changes;
-    Vector<WebCore::GraphicsLayer::PlatformLayerID> children;
-    std::optional<WebCore::GraphicsLayer::PlatformLayerID> maskLayer;
-    std::optional<WebCore::GraphicsLayer::PlatformLayerID> replicaLayer;
+    Vector<WebCore::PlatformLayerIdentifier> children;
+    std::optional<WebCore::PlatformLayerIdentifier> maskLayer;
+    std::optional<WebCore::PlatformLayerIdentifier> replicaLayer;
     WebCore::FloatPoint position;
     WebCore::FloatPoint3D anchorPoint;
     WebCore::FloatSize size;
@@ -291,9 +291,9 @@ struct WCLayerUpateInfo {
 };
 
 struct WCUpateInfo {
-    WebCore::GraphicsLayer::PlatformLayerID rootLayer;
-    Vector<WebCore::GraphicsLayer::PlatformLayerID> addedLayers;
-    Vector<WebCore::GraphicsLayer::PlatformLayerID> removedLayers;
+    WebCore::PlatformLayerIdentifier rootLayer;
+    Vector<WebCore::PlatformLayerIdentifier> addedLayers;
+    Vector<WebCore::PlatformLayerIdentifier> removedLayers;
     Vector<WCLayerUpateInfo> changedLayers;
 
     template<class Encoder>

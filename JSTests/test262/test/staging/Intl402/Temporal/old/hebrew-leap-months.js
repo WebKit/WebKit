@@ -58,22 +58,3 @@ for (var i = 1; i <= 12; i++) {
     calendar: "hebrew"
   }));
 }
-
-// Leap month in non-leap year (reject): Adar I 5780
-assert.throws(RangeError, () => Temporal.PlainDate.from({
-  year: 5780,
-  monthCode: "M05L",
-  day: 1,
-  calendar: "hebrew"
-}, { overflow: "reject" }));
-
-// Leap month in non-leap year (constrain): 15 Adar I 5780 => 30 Av 5780
-var date = Temporal.PlainDate.from({
-  year: 5780,
-  monthCode: "M05L",
-  day: 15,
-  calendar: "hebrew"
-});
-assert.sameValue(date.month, 5);
-assert.sameValue(date.monthCode, "M05");
-assert.sameValue(date.day, 30);

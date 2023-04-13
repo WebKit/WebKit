@@ -23,39 +23,26 @@
 
 #include "../../../../Configurations/Version.xcconfig"
 
-EXCLUDED_SOURCE_FILE_NAMES = $(EXCLUDED_SOURCE_FILE_NAMES_$(WK_COCOA_TOUCH)) $(EXCLUDED_SOURCE_FILE_NAMES_$(WK_WHICH_BUILD_SYSTEM));
-// The legacy build system does not install headers.
-EXCLUDED_SOURCE_FILE_NAMES_legacy = *.h;
-EXCLUDED_SOURCE_FILE_NAMES_cocoatouch = *.defs *.xib *.pdf *.tiff OutlookQuirksUserScript.js PopupMenuMac.* SearchPopupMenuMac.* WebClipView.* WebDashboardRegion.* WebDynamicScrollBarsView.* WebEventRegion.h WebIconDatabase.* WebInspectorClient.* WebJavaScriptTextInputPanel.* WebNSEventExtras.* WebNSPasteboardExtras.* WebNSWindowExtras.* WebPanelAuthenticationHandler.* WebPluginsPrivate.* WebStringTruncator.* WebTextCompletionController.*;
+EXCLUDED_SOURCE_FILE_NAMES = $(EXCLUDED_SOURCE_FILE_NAMES_$(WK_COCOA_TOUCH));
+EXCLUDED_SOURCE_FILE_NAMES_cocoatouch = *.defs *.xib *.pdf *.tiff PopupMenuMac.* SearchPopupMenuMac.* WebClipView.* WebDynamicScrollBarsView.* WebEventRegion.h WebIconDatabase.* WebInspectorClient.* WebJavaScriptTextInputPanel.* WebNSEventExtras.* WebNSPasteboardExtras.* WebNSWindowExtras.* WebPanelAuthenticationHandler.* WebPluginsPrivate.* WebStringTruncator.* WebTextCompletionController.*;
 EXCLUDED_SOURCE_FILE_NAMES_ = *IOS.mm AbstractPasteboard.h DOMHTMLTextAreaElementPrivate.h DOMUIKitExtensions.h KeyEventCodesIOS.h LaBanquePostaleQuirks.js WAKAppKitStubs.h WAKResponder.h WAKView.h WAKWindow.h WebCaretChangeListener.h WebCoreThread.h WebCoreThreadMessage.h WebCoreThreadRun.h WebEvent.h WebEventRegion.h WebFixedPositionContent.h WebFrameIOS.h WebFrameIPhone.h WebGeolocationCoreLocationProvider.h WebGeolocationPrivate.h WebGeolocationProviderIOS.h WebItemProviderPasteboard.h WebMIMETypeRegistry.h WebNSStringExtrasIOS.h WebNSStringExtrasIPhone.h WebPDFViewIOS.h WebPDFViewIPhone.h WebPDFViewPlaceholder.h WebSelectionRect.h WebUIKitDelegate.h WebUIKitSupport.h WebVisiblePosition.h WKContentObservation.h WKGraphics.h WKTypes.h;
 
-INCLUDED_SOURCE_FILE_NAMES = $(INCLUDED_MIGRATED_HEADERS_$(WK_WHICH_BUILD_SYSTEM));
-INCLUDED_MIGRATED_HEADERS_not_legacy = $(INCLUDED_MIGRATED_HEADERS_$(USE_INTERNAL_SDK)_$(WK_COCOA_TOUCH)) $(INCLUDED_MIGRATED_HEADERS_$(ENABLE_IOS_TOUCH_EVENTS));
+INCLUDED_SOURCE_FILE_NAMES = $(INCLUDED_MIGRATED_HEADERS_$(USE_INTERNAL_SDK)_$(WK_COCOA_TOUCH)) $(INCLUDED_MIGRATED_HEADERS_$(ENABLE_IOS_TOUCH_EVENTS));
 // WebEventRegion.h is migrated when building for an iOS family target with an internal SDK...
 INCLUDED_MIGRATED_HEADERS_YES_cocoatouch = WebEventRegion.h;
 // ...or when --ios-touch-events was passed to build-webkit manually.
 INCLUDED_MIGRATED_HEADERS_ENABLE_IOS_TOUCH_EVENTS = WebEventRegion.h;
 
 EXPORTED_SYMBOLS_FILE = $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKitLegacy/WebKitLegacy.generated.exp;
-// The "Generate Export Files" build phase needs this setting to rerun when any migrated header changes:
-USE_RECURSIVE_SCRIPT_INPUTS_IN_SCRIPT_PHASES = YES;
 
 FRAMEWORK_SEARCH_PATHS[sdk=embedded*] = $(BUILT_PRODUCTS_DIR) $(WK_PRIVATE_FRAMEWORK_STUBS_DIR);
 FRAMEWORK_SEARCH_PATHS[sdk=macosx*] = $(WK_QUOTED_OVERRIDE_FRAMEWORKS_DIR) "$(PRODUCTION_PUBLIC_FRAMEWORKS_DIR)/WebKit.framework/Versions/A/Frameworks";
 
 SYSTEM_FRAMEWORK_SEARCH_PATHS = $(inherited) $(SDKROOT)$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks $(SDKROOT)$(SYSTEM_LIBRARY_DIR)/Frameworks;
 
-LIBCPP_ASSERTIONS_CFLAGS = $(LIBCPP_ASSERTIONS_CFLAGS_$(WK_PLATFORM_NAME));
-LIBCPP_ASSERTIONS_CFLAGS_iphoneos = $(LIBCPP_ASSERTIONS_CFLAGS$(WK_IOS_17));
-LIBCPP_ASSERTIONS_CFLAGS_iphonesimulator = $(LIBCPP_ASSERTIONS_CFLAGS$(WK_IOS_17));
-LIBCPP_ASSERTIONS_CFLAGS_IOS_SINCE_17 = -D_LIBCPP_ENABLE_ASSERTIONS=1;
-LIBCPP_ASSERTIONS_CFLAGS_macosx = $(LIBCPP_ASSERTIONS_CFLAGS$(WK_MACOS_1400));
-LIBCPP_ASSERTIONS_CFLAGS_MACOS_SINCE_1400 = -D_LIBCPP_ENABLE_ASSERTIONS=1;
-
-OTHER_CFLAGS = $(inherited) $(OTHER_CFLAGS_COCOA_TOUCH) $(WK_CFLAGS_BUILD_FOR_TESTING_$(WK_BUILD_FOR_TESTING)) $(LIBCPP_ASSERTIONS_CFLAGS);
+OTHER_CFLAGS = $(inherited) $(OTHER_CFLAGS_COCOA_TOUCH) $(WK_CFLAGS_BUILD_FOR_TESTING_$(WK_BUILD_FOR_TESTING));
 OTHER_CFLAGS_COCOA_TOUCH = $(OTHER_CFLAGS_COCOA_TOUCH_$(WK_IS_COCOA_TOUCH));
 OTHER_CFLAGS_COCOA_TOUCH_NO = -iframework $(SDKROOT)$(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Frameworks;
-OTHER_CPLUSPLUSFLAGS = $(inherited) $(OTHER_CFLAGS_COCOA_TOUCH);
 
 WK_CFLAGS_BUILD_FOR_TESTING_YES = -DENABLE_BUILD_FOR_TESTING;
 
@@ -63,8 +50,7 @@ DEBUG_DEFINES[config=Debug] = $(inherited) ENABLE_WEBKIT_UNSET_DYLD_FRAMEWORK_PA
 DEBUG_DEFINES[config=Release] = $(inherited) ENABLE_WEBKIT_UNSET_DYLD_FRAMEWORK_PATH;
 
 GCC_PREFIX_HEADER = mac/WebKitPrefix.h;
-GCC_PREPROCESSOR_DEFINITIONS = $(DEBUG_DEFINES) $(GCC_PREPROCESSOR_DEFINITIONS_$(ENABLE_PDFJS)) BUILDING_WEBKIT FRAMEWORK_NAME=WebKitLegacy $(inherited);
-GCC_PREPROCESSOR_DEFINITIONS_ENABLE_PDFJS = ENABLE_PDFJS=1;
+GCC_PREPROCESSOR_DEFINITIONS = $(DEBUG_DEFINES) $(ENABLE_PDFJS) BUILDING_WEBKIT FRAMEWORK_NAME=WebKitLegacy $(inherited);
 
 HEADER_SEARCH_PATHS = "$(WEBCORE_PRIVATE_HEADERS_DIR)/ForwardingHeaders" "$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKitLegacy" "$(BUILT_PRODUCTS_DIR)$(WK_LIBRARY_HEADERS_FOLDER_PATH)" $(WEBGPU_HEADER_SEARCH_PATHS) $(WEBKITADDITIONS_HEADER_SEARCH_PATHS) $(LIBWEBRTC_HEADER_SEARCH_PATHS) $(HEADER_SEARCH_PATHS) $(SRCROOT);
 SYSTEM_HEADER_SEARCH_PATHS = $(SDK_DIR)$(WK_ALTERNATE_WEBKIT_SDK_PATH)$(WK_LIBRARY_HEADERS_FOLDER_PATH) $(inherited);
@@ -76,7 +62,7 @@ DYLIB_INSTALL_NAME_BASE = $(NORMAL_UMBRELLA_FRAMEWORKS_DIR);
 
 INSTALLHDRS_COPY_PHASE = YES;
 INSTALLHDRS_SCRIPT_PHASE = YES;
-APPLY_RULES_IN_COPY_HEADERS = $(WK_USE_NEW_BUILD_SYSTEM);
+APPLY_RULES_IN_COPY_HEADERS = YES;
 
 ALTERNATE_ROOT_PATH[sdk=iphone*] = $(SYSTEM_LIBRARY_DIR)/PrivateFrameworks;
 ALTERNATE_ROOT_PATH[sdk=macosx*] = $(ALTERNATE_ROOT_PATH_$(WK_USE_ALTERNATE_FRAMEWORKS_DIR));
@@ -113,7 +99,7 @@ WK_WEBINSPECTORUI_LDFLAGS = $(WK_WEBINSPECTORUI_LDFLAGS_$(WK_PLATFORM_NAME));
 WK_WEBINSPECTORUI_LDFLAGS_macosx = -weak_framework WebInspectorUI;
 
 WK_ERROR_WHEN_LINKING_WITH_STATIC_INITIALIZERS = -Xlinker -no_inits;
-WK_NO_STATIC_INITIALIZERS = $(WK_NO_STATIC_INITIALIZERS_$(CONFIGURATION)_$(ENABLE_ANY_SANITIZER)_$(ENABLE_LLVM_PROFILE_GENERATION));
+WK_NO_STATIC_INITIALIZERS = $(WK_NO_STATIC_INITIALIZERS_$(CONFIGURATION)_$(WK_ANY_SANITIZER_ENABLED)_$(ENABLE_LLVM_PROFILE_GENERATION));
 WK_NO_STATIC_INITIALIZERS_Release__ = $(WK_ERROR_WHEN_LINKING_WITH_STATIC_INITIALIZERS);
 WK_NO_STATIC_INITIALIZERS_Release_NO_ = $(WK_ERROR_WHEN_LINKING_WITH_STATIC_INITIALIZERS);
 WK_NO_STATIC_INITIALIZERS_Production__ = $(WK_ERROR_WHEN_LINKING_WITH_STATIC_INITIALIZERS);
@@ -122,14 +108,27 @@ WK_NO_STATIC_INITIALIZERS_Production_NO_ = $(WK_ERROR_WHEN_LINKING_WITH_STATIC_I
 OTHER_LDFLAGS = $(inherited) -lobjc -lsqlite3 -framework CFNetwork -framework CoreFoundation -framework CoreGraphics -framework CoreText -framework Foundation -framework ImageIO -framework IOKit $(WK_APPKIT_LDFLAGS) $(WK_CARBON_LDFLAGS) $(WK_GRAPHICS_SERVICES_LDFLAGS) $(WK_MOBILE_CORE_SERVICES_LDFLAGS) $(WK_MOBILE_GESTALT_LDFLAGS) $(WK_SECURITY_INTERFACE_LDFLAGS) $(WK_WEBINSPECTORUI_LDFLAGS) $(SOURCE_VERSION_LDFLAGS) $(WK_NO_STATIC_INITIALIZERS);
 
 SECTORDER_FLAGS = $(SECTORDER_FLAGS_$(CONFIGURATION));
-SECTORDER_FLAGS_Production[sdk=iphoneos*] = -Wl,-order_file,$(SDKROOT)/AppleInternal/OrderFiles/WebKitLegacy.order;
+SECTORDER_FLAGS_Production[sdk=iphoneos*] = -Wl,-order_file,WebKitLegacy.order;
 SECTORDER_FLAGS_Production[sdk=macosx*] = -Wl,-order_file,mac/WebKit.order;
 
 SUPPORTS_TEXT_BASED_API[sdk=iphone*] = YES;
 SUPPORTS_TEXT_BASED_API[sdk=appletv*] = NO;
 SUPPORTS_TEXT_BASED_API[sdk=watch*] = NO;
-OTHER_TAPI_FLAGS[sdk=iphone*] = -x objective-c++ -std=c++2a -fno-rtti $(WK_CFLAGS_BUILD_FOR_TESTING_$(WK_BUILD_FOR_TESTING)) -DRELEASE_WITHOUT_OPTIMIZATIONS -exclude-private-header $(BUILT_PRODUCTS_DIR)/$(PRIVATE_HEADERS_FOLDER_PATH)/NSURLDownloadSPI.h -extra-private-header $(SOURCE_ROOT)/mac/TestingFunctions.h;
+TAPI_USE_SRCROOT = $(TAPI_USE_SRCROOT$(WK_XCODE_15));
+TAPI_USE_SRCROOT_XCODE_SINCE_15 = YES;
 TAPI_VERIFY_MODE[sdk=iphone*] = Pedantic;
+
+// FIXME: Replace -extra-*-header and -exclude-*-header flags with build setting equivalents once rdar://99885053 is completed in all needed toolchains.
+OTHER_TAPI_FLAGS[sdk=iphone*] = -x objective-c++ -std=c++2a -fno-rtti $(WK_CFLAGS_BUILD_FOR_TESTING_$(WK_BUILD_FOR_TESTING)) -DRELEASE_WITHOUT_OPTIMIZATIONS -exclude-private-header $(BUILT_PRODUCTS_DIR)/$(PRIVATE_HEADERS_FOLDER_PATH)/NSURLDownloadSPI.h -extra-private-header $(SOURCE_ROOT)/mac/TestingFunctions.h $(OTHER_TAPI_FLAGS_SRCROOT_$(TAPI_USE_SRCROOT));
+// Include WebKitPrefix.h to work around rdar://104248994.
+OTHER_TAPI_FLAGS_SRCROOT_YES = -Xparser -include -Xparser mac/WebKitPrefix.h $(OTHER_TAPI_FLAGS_102197642_WORKAROUND);
+
+// This unfortunate mess of arguments mirrors the EXCLUDED_ and INCLUDED_SOURCE_FILE_NAMES logic above for migrated headers. It needs to be kept in sync to avoid TAPI errors.
+// FIXME: Convert to a filelist generated by migrate-headers.py once rdar://102197642 is completed.
+OTHER_TAPI_FLAGS_102197642_WORKAROUND = $(OTHER_TAPI_FLAGS_102197642_WORKAROUND_$(WK_COCOA_TOUCH)) -extra-private-header $(TARGET_BUILD_DIR)/$(PRIVATE_HEADERS_FOLDER_PATH)/WebKitAvailability.h -extra-private-header $(TARGET_BUILD_DIR)/$(PRIVATE_HEADERS_FOLDER_PATH)/WebScriptObject.h;
+OTHER_TAPI_FLAGS_102197642_WORKAROUND_cocoatouch = $(OTHER_TAPI_FLAGS_102197642_WORKAROUND_cocoatouch_$(USE_INTERNAL_SDK)) $(OTHER_TAPI_FLAGS_102197642_WORKAROUND_$(ENABLE_IOS_TOUCH_EVENTS)) -extra-private-header $(TARGET_BUILD_DIR)/$(PRIVATE_HEADERS_FOLDER_PATH)/AbstractPasteboard.h -extra-private-header $(TARGET_BUILD_DIR)/$(PRIVATE_HEADERS_FOLDER_PATH)/KeyEventCodesIOS.h -extra-private-header $(TARGET_BUILD_DIR)/$(PRIVATE_HEADERS_FOLDER_PATH)/WAKAppKitStubs.h -extra-private-header $(TARGET_BUILD_DIR)/$(PRIVATE_HEADERS_FOLDER_PATH)/WAKResponder.h -extra-private-header $(TARGET_BUILD_DIR)/$(PRIVATE_HEADERS_FOLDER_PATH)/WAKView.h -extra-private-header $(TARGET_BUILD_DIR)/$(PRIVATE_HEADERS_FOLDER_PATH)/WAKWindow.h -extra-private-header $(TARGET_BUILD_DIR)/$(PRIVATE_HEADERS_FOLDER_PATH)/WebCoreThread.h -extra-private-header $(TARGET_BUILD_DIR)/$(PRIVATE_HEADERS_FOLDER_PATH)/WebCoreThreadMessage.h -extra-private-header $(TARGET_BUILD_DIR)/$(PRIVATE_HEADERS_FOLDER_PATH)/WebCoreThreadRun.h -extra-private-header $(TARGET_BUILD_DIR)/$(PRIVATE_HEADERS_FOLDER_PATH)/WebEvent.h -extra-private-header $(TARGET_BUILD_DIR)/$(PRIVATE_HEADERS_FOLDER_PATH)/WebItemProviderPasteboard.h -extra-private-header $(TARGET_BUILD_DIR)/$(PRIVATE_HEADERS_FOLDER_PATH)/WKContentObservation.h -extra-private-header $(TARGET_BUILD_DIR)/$(PRIVATE_HEADERS_FOLDER_PATH)/WKGraphics.h -extra-private-header $(TARGET_BUILD_DIR)/$(PRIVATE_HEADERS_FOLDER_PATH)/WKTypes.h;
+OTHER_TAPI_FLAGS_102197642_WORKAROUND_cocoatouch_YES = $(OTHER_TAPI_FLAGS_102197642_WORKAROUND_ENABLE_IOS_TOUCH_EVENTS);
+OTHER_TAPI_FLAGS_102197642_WORKAROUND_ENABLE_IOS_TOUCH_EVENTS = -extra-private-header $(TARGET_BUILD_DIR)/$(PRIVATE_HEADERS_FOLDER_PATH)/WebEventRegion.h;
 
 DEFINES_MODULE = $(DEFINES_MODULE_COCOA_TOUCH_$(WK_IS_COCOA_TOUCH));
 DEFINES_MODULE_COCOA_TOUCH_YES = YES;

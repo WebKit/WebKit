@@ -27,6 +27,7 @@
 #include "RemoteFrame.h"
 
 #include "Document.h"
+#include "FrameDestructionObserverInlines.h"
 #include "HTMLFrameOwnerElement.h"
 #include "RemoteDOMWindow.h"
 #include "RemoteFrameClient.h"
@@ -34,16 +35,33 @@
 
 namespace WebCore {
 
-RemoteFrame::RemoteFrame(Page& page, FrameIdentifier frameID, HTMLFrameOwnerElement* ownerElement, UniqueRef<RemoteFrameClient>&& client)
-    : AbstractFrame(page, frameID, ownerElement)
+Ref<RemoteFrame> RemoteFrame::createMainFrame(Page& page, UniqueRef<RemoteFrameClient>&& client, FrameIdentifier identifier, ProcessIdentifier remoteProcessIdentifier)
+{
+    return adoptRef(*new RemoteFrame(page, WTFMove(client), identifier, nullptr, nullptr, std::nullopt, remoteProcessIdentifier));
+}
+
+Ref<RemoteFrame> RemoteFrame::createSubframe(Page& page, UniqueRef<RemoteFrameClient>&& client, FrameIdentifier identifier, Frame& parent, ProcessIdentifier remoteProcessIdentifier)
+{
+    return adoptRef(*new RemoteFrame(page, WTFMove(client), identifier, nullptr, &parent, std::nullopt, remoteProcessIdentifier));
+}
+
+Ref<RemoteFrame> RemoteFrame::createSubframeWithContentsInAnotherProcess(Page& page, UniqueRef<RemoteFrameClient>&& client, FrameIdentifier identifier, HTMLFrameOwnerElement& ownerElement, LayerHostingContextIdentifier layerHostingContextIdentifier, ProcessIdentifier remoteProcessIdentifier)
+{
+    return adoptRef(*new RemoteFrame(page, WTFMove(client), identifier, &ownerElement, ownerElement.document().frame(), layerHostingContextIdentifier, remoteProcessIdentifier));
+}
+
+RemoteFrame::RemoteFrame(Page& page, UniqueRef<RemoteFrameClient>&& client, FrameIdentifier frameID, HTMLFrameOwnerElement* ownerElement, Frame* parent, Markable<LayerHostingContextIdentifier> layerHostingContextIdentifier, ProcessIdentifier remoteProcessIdentifier)
+    : Frame(page, frameID, FrameType::Remote, ownerElement, parent)
     , m_window(RemoteDOMWindow::create(*this, GlobalWindowIdentifier { Process::identifier(), WindowIdentifier::generate() }))
     , m_client(WTFMove(client))
+    , m_layerHostingContextIdentifier(layerHostingContextIdentifier)
+    , m_remoteProcessIdentifier(remoteProcessIdentifier)
 {
 }
 
 RemoteFrame::~RemoteFrame() = default;
 
-AbstractDOMWindow* RemoteFrame::virtualWindow() const
+DOMWindow* RemoteFrame::virtualWindow() const
 {
     return &window();
 }
@@ -55,16 +73,18 @@ RemoteDOMWindow& RemoteFrame::window() const
 
 void RemoteFrame::didFinishLoadInAnotherProcess()
 {
-    auto* ownerElement = this->ownerElement();
-    if (!ownerElement)
-        return;
+    m_preventsParentFromBeingComplete = false;
 
-    // FIXME: Do something so that this would not have caused the load event to fire before a state change
-    // but now does cause the load event to fire.
-    ownerElement->document().checkCompleted();
+    if (auto* ownerElement = this->ownerElement())
+        ownerElement->document().checkCompleted();
 }
 
-AbstractFrameView* RemoteFrame::virtualView() const
+bool RemoteFrame::preventsParentFromBeingComplete() const
+{
+    return m_preventsParentFromBeingComplete;
+}
+
+FrameView* RemoteFrame::virtualView() const
 {
     return m_view.get();
 }
@@ -72,6 +92,11 @@ AbstractFrameView* RemoteFrame::virtualView() const
 void RemoteFrame::setView(RefPtr<RemoteFrameView>&& view)
 {
     m_view = WTFMove(view);
+}
+
+void RemoteFrame::frameDetached()
+{
+    m_client->frameDetached();
 }
 
 } // namespace WebCore

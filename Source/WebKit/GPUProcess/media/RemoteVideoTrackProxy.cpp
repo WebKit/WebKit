@@ -27,7 +27,7 @@
 #include "config.h"
 #include "RemoteVideoTrackProxy.h"
 
-#if ENABLE(GPU_PROCESS)
+#if ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
 
 #include "Connection.h"
 #include "GPUConnectionToWebProcess.h"
@@ -108,4 +108,4 @@ void RemoteVideoTrackProxy::languageChanged(const AtomString&)
 
 } // namespace WebKit
 
-#endif // ENABLE(GPU_PROCESS)
+#endif // ENABLE(GPU_PROCESS) && ENABLE(VIDEO)

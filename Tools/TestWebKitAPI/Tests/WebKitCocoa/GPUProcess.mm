@@ -25,6 +25,7 @@
 
 #import "config.h"
 
+#import "EnableUISideCompositingScope.h"
 #import "PlatformUtilities.h"
 #import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
@@ -37,8 +38,11 @@
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <notify.h>
+#import <objc/runtime.h>
 #import <wtf/Function.h>
 #import <wtf/RetainPtr.h>
+
+namespace TestWebKitAPI {
 
 #if PLATFORM(MAC)
 typedef NSImage *PlatformImage;
@@ -219,6 +223,9 @@ TEST(GPUProcess, WebProcessTerminationAfterTooManyGPUProcessCrashes)
 
 TEST(GPUProcess, OnlyLaunchesGPUProcessWhenNecessary)
 {
+    if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"WebKit2GPUProcessForDOMRendering"] boolValue])
+        return;
+
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], true, WKStringCreateWithUTF8CString("UseGPUProcessForMediaEnabled"));
     WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], true, WKStringCreateWithUTF8CString("CaptureVideoInGPUProcessEnabled"));
@@ -233,8 +240,46 @@ TEST(GPUProcess, OnlyLaunchesGPUProcessWhenNecessary)
     EXPECT_EQ([configuration.get().processPool _gpuProcessIdentifier], 0);
 }
 
+TEST(GPUProcess, GPUProcessForDOMRenderingCarriesOverFromRelatedPage)
+{
+    if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"WebKit2GPUProcessForDOMRendering"] boolValue])
+        return;
+
+    EnableUISideCompositingScope enableUISideCompositing;
+
+    RetainPtr<WKWebViewConfiguration> configuration;
+    RetainPtr<TestWKWebView> originalWebView;
+    {
+        configuration = adoptNS([WKWebViewConfiguration new]);
+        WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], true, WKStringCreateWithUTF8CString("UseGPUProcessForDOMRenderingEnabled"));
+
+        originalWebView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400) configuration:configuration.get()]);
+        [originalWebView synchronouslyLoadTestPageNamed:@"simple"];
+    }
+
+    RetainPtr<TestWKWebView> newWebView;
+    {
+        auto newPreferences = adoptNS([[configuration preferences] copy]);
+        WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)newPreferences.get(), false, WKStringCreateWithUTF8CString("UseGPUProcessForDOMRenderingEnabled"));
+        [configuration setPreferences:newPreferences.get()];
+        [configuration _setRelatedWebView:originalWebView.get()];
+
+        newWebView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400) configuration:configuration.get()]);
+        [newWebView synchronouslyLoadTestPageNamed:@"simple"];
+    }
+
+    [originalWebView stringByEvaluatingJavaScript:@"document.body.style.backgroundColor = 'red';"];
+    [originalWebView waitForNextPresentationUpdate];
+
+    [newWebView stringByEvaluatingJavaScript:@"document.body.style.backgroundColor = 'green';"];
+    [newWebView waitForNextPresentationUpdate];
+}
+
 TEST(GPUProcess, OnlyLaunchesGPUProcessWhenNecessarySVG)
 {
+    if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"WebKit2GPUProcessForDOMRendering"] boolValue])
+        return;
+
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], true, WKStringCreateWithUTF8CString("UseGPUProcessForMediaEnabled"));
     WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], true, WKStringCreateWithUTF8CString("CaptureVideoInGPUProcessEnabled"));
@@ -251,6 +296,9 @@ TEST(GPUProcess, OnlyLaunchesGPUProcessWhenNecessarySVG)
 
 TEST(GPUProcess, OnlyLaunchesGPUProcessWhenNecessaryMediaFeatureDetection)
 {
+    if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"WebKit2GPUProcessForDOMRendering"] boolValue])
+        return;
+
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], true, WKStringCreateWithUTF8CString("UseGPUProcessForMediaEnabled"));
     WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], true, WKStringCreateWithUTF8CString("CaptureVideoInGPUProcessEnabled"));
@@ -355,10 +403,10 @@ TEST(GPUProcess, CrashWhilePlayingVideo)
         do {
             TestWebKitAPI::Util::runFor(0.1_s);
             currentTime = [[webView objectByEvaluatingJavaScript:@"document.getElementsByTagName('video')[0].currentTime"] doubleValue];
-            if (fabs(currentTime - initialTime) > 0.01)
+            if (std::abs(currentTime - initialTime) > 0.01)
                 break;
         } while (timeout++ < 100);
-        return fabs(currentTime - initialTime) > 0.01;
+        return std::abs(currentTime - initialTime) > 0.01;
     };
     EXPECT_TRUE(ensureIsPlaying());
 
@@ -589,6 +637,9 @@ TEST(GPUProcess, CanvasBasicCrashHandling)
 
 static void runMemoryPressureExitTest(Function<void(WKWebView *)>&& loadTestPageSynchronously, Function<void(WKWebViewConfiguration *)>&& updateConfiguration = [](WKWebViewConfiguration *) { })
 {
+    if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"WebKit2GPUProcessForDOMRendering"] boolValue])
+        return;
+
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], true, WKStringCreateWithUTF8CString("UseGPUProcessForMediaEnabled"));
     WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], true, WKStringCreateWithUTF8CString("CaptureVideoInGPUProcessEnabled"));
@@ -758,6 +809,9 @@ TEST(GPUProcess, ExitsUnderMemoryPressureWebAudioCase)
 
 TEST(GPUProcess, ExitsUnderMemoryPressureWebAudioNonRenderingAudioContext)
 {
+    if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"WebKit2GPUProcessForDOMRendering"] boolValue])
+        return;
+
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], true, WKStringCreateWithUTF8CString("UseGPUProcessForMediaEnabled"));
     WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], true, WKStringCreateWithUTF8CString("CaptureVideoInGPUProcessEnabled"));
@@ -842,3 +896,5 @@ TEST(GPUProcess, ValidateWebAudioMediaProcessingAssertion)
 
     EXPECT_TRUE([configuration.get().processPool _hasAudibleMediaActivity]);
 }
+
+} // namespace TestWebKitAPI

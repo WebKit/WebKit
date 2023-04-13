@@ -25,6 +25,7 @@
 #import "config.h"
 #import "AXTextMarker.h"
 
+#import <Foundation/NSRange.h>
 #if PLATFORM(MAC)
 #import "WebAccessibilityObjectWrapperMac.h"
 #import <pal/spi/mac/HIServicesSPI.h>
@@ -52,6 +53,9 @@ AXTextMarker::AXTextMarker(PlatformTextMarkerData platformData)
 #else // PLATFORM(IOS_FAMILY)
     [platformData getBytes:&m_data length:sizeof(m_data)];
 #endif
+
+    if (isMainThread() && !m_data.node)
+        setNode();
 }
 
 RetainPtr<PlatformTextMarkerData> AXTextMarker::platformData() const
@@ -86,5 +90,18 @@ RetainPtr<AXTextMarkerRangeRef> AXTextMarkerRange::platformData() const
     ));
 }
 #endif // PLATFORM(MAC)
+
+std::optional<NSRange> AXTextMarkerRange::nsRange() const
+{
+    if (m_start.m_data.objectID != m_end.m_data.objectID
+        || m_start.m_data.treeID != m_end.m_data.treeID)
+        return std::nullopt;
+
+    if (m_start.m_data.characterOffset > m_end.m_data.characterOffset) {
+        ASSERT_NOT_REACHED();
+        return std::nullopt;
+    }
+    return NSMakeRange(m_start.m_data.characterOffset, m_end.m_data.characterOffset - m_start.m_data.characterOffset);
+}
 
 } // namespace WebCore

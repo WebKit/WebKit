@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-#if !PLATFORM(MAC)
+#if !PLATFORM(COCOA)
 std::unique_ptr<ControlFactory> ControlFactory::createControlFactory()
 {
     RELEASE_ASSERT_NOT_REACHED();

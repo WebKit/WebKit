@@ -55,10 +55,10 @@ class RootObject;
 namespace WebCore {
 
 class CachedScriptFetcher;
-class Frame;
 class HTMLDocument;
 class HTMLPlugInElement;
 class LoadableModuleScript;
+class LocalFrame;
 class ModuleFetchParameters;
 class ScriptSourceCode;
 class SecurityOrigin;
@@ -83,15 +83,15 @@ class ScriptController : public CanMakeWeakPtr<ScriptController> {
     using RootObjectMap = HashMap<void*, Ref<JSC::Bindings::RootObject>>;
 
 public:
-    explicit ScriptController(Frame&);
+    explicit ScriptController(LocalFrame&);
     ~ScriptController();
 
     enum class WorldType { User, Internal };
     WEBCORE_EXPORT static Ref<DOMWrapperWorld> createWorld(const String& name, WorldType = WorldType::Internal);
 
-    JSDOMWindow* globalObject(DOMWrapperWorld& world)
+    JSLocalDOMWindow* globalObject(DOMWrapperWorld& world)
     {
-        return JSC::jsCast<JSDOMWindow*>(jsWindowProxy(world).window());
+        return JSC::jsCast<JSLocalDOMWindow*>(jsWindowProxy(world).window());
     }
 
     static void getAllWorlds(Vector<Ref<DOMWrapperWorld>>&);
@@ -129,7 +129,7 @@ public:
     void setEvalEnabled(bool, const String& errorMessage = String());
     void setWebAssemblyEnabled(bool, const String& errorMessage = String());
 
-    static bool canAccessFromCurrentOrigin(Frame*, Document& accessingDocument);
+    static bool canAccessFromCurrentOrigin(LocalFrame*, Document& accessingDocument);
     WEBCORE_EXPORT bool canExecuteScripts(ReasonForCallingCanExecuteScripts);
 
     void setPaused(bool b) { m_paused = b; }
@@ -186,7 +186,7 @@ private:
     WEBCORE_EXPORT WindowProxy& windowProxy();
     WEBCORE_EXPORT JSWindowProxy& jsWindowProxy(DOMWrapperWorld&);
 
-    Frame& m_frame;
+    LocalFrame& m_frame;
     const URL* m_sourceURL { nullptr };
 
     bool m_paused;

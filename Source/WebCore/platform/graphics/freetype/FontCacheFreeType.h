@@ -41,6 +41,6 @@ typedef HashMap<FontTag, float, FourCharacterTagHash, FourCharacterTagHashTraits
 
 VariationDefaultsMap defaultVariationValues(FT_Face, ShouldLocalizeAxisNames);
 
-String buildVariationSettings(FT_Face, const FontDescription&);
+String buildVariationSettings(FT_Face, const FontDescription&, const FontCreationContext&);
 #endif
 };

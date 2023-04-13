@@ -27,6 +27,7 @@
 #include "config.h"
 #include "CachedSVGFont.h"
 
+#include "ElementChildIteratorInlines.h"
 #include "FontCreationContext.h"
 #include "FontDescription.h"
 #include "FontPlatformData.h"
@@ -39,7 +40,7 @@
 #include "Settings.h"
 #include "SharedBuffer.h"
 #include "TextResourceDecoder.h"
-#include "TypedElementDescendantIterator.h"
+#include "TypedElementDescendantIteratorInlines.h"
 
 namespace WebCore {
 

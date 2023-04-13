@@ -35,6 +35,38 @@
 
 namespace WebCore {
 
+RefPtr<NativeImage> NativeImage::create(Ref<PixelBuffer>&& pixelBuffer, bool premultipliedAlpha)
+{
+    ASSERT(!pixelBuffer->size().isEmpty());
+
+    // Convert RGBA to BGRA. BGRA is CAIRO_FORMAT_ARGB32 on little-endian architectures.
+    size_t totalBytes = pixelBuffer->sizeInBytes();
+    uint8_t* pixels = pixelBuffer->bytes();
+    for (size_t i = 0; i < totalBytes; i += 4)
+        std::swap(pixels[i], pixels[i + 2]);
+
+    if (!premultipliedAlpha) {
+        for (size_t i = 0; i < totalBytes; i += 4) {
+            pixels[i + 0] = std::min(255, pixels[i + 0] * pixels[i + 3] / 255);
+            pixels[i + 1] = std::min(255, pixels[i + 1] * pixels[i + 3] / 255);
+            pixels[i + 2] = std::min(255, pixels[i + 2] * pixels[i + 3] / 255);
+        }
+    }
+
+    auto imageSize = pixelBuffer->size();
+    RefPtr<cairo_surface_t> imageSurface = adoptRef(cairo_image_surface_create_for_data(
+        pixelBuffer->bytes(), CAIRO_FORMAT_ARGB32, imageSize.width(), imageSize.height(), imageSize.width() * 4));
+
+    return adoptRef(*new NativeImage(WTFMove(imageSurface), RenderingResourceIdentifier::generate(), WTFMove(pixelBuffer)));
+}
+
+NativeImage::NativeImage(PlatformImagePtr&& platformImage, RenderingResourceIdentifier renderingResourceIdentifier, Ref<PixelBuffer>&& pixelBuffer)
+    : RenderingResource(renderingResourceIdentifier)
+    , m_platformImage(WTFMove(platformImage))
+    , m_pixelBuffer(WTFMove(pixelBuffer))
+{
+}
+
 IntSize NativeImage::size() const
 {
     return cairoSurfaceSize(m_platformImage.get());
@@ -61,6 +93,11 @@ DestinationColorSpace NativeImage::colorSpace() const
 {
     notImplemented();
     return DestinationColorSpace::SRGB();
+}
+
+void NativeImage::draw(GraphicsContext& context, const FloatSize& imageSize, const FloatRect& destinationRect, const FloatRect& sourceRect, const ImagePaintingOptions& options)
+{
+    context.drawNativeImageInternal(*this, imageSize, destinationRect, sourceRect, options);
 }
 
 void NativeImage::clearSubimages()

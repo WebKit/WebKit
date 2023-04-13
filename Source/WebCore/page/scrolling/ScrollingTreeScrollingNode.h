@@ -59,15 +59,14 @@ class WEBCORE_EXPORT ScrollingTreeScrollingNode : public ScrollingTreeNode {
 public:
     virtual ~ScrollingTreeScrollingNode();
 
-    void handleKeyboardScrollRequest(const RequestedKeyboardScrollData&);
-
-    void commitStateBeforeChildren(const ScrollingStateNode&) override;
-    void commitStateAfterChildren(const ScrollingStateNode&) override;
+    bool commitStateBeforeChildren(const ScrollingStateNode&) override;
+    bool commitStateAfterChildren(const ScrollingStateNode&) override;
     void didCompleteCommitForNode() final;
 
     virtual bool canHandleWheelEvent(const PlatformWheelEvent&, EventTargeting) const;
     virtual WheelEventHandlingResult handleWheelEvent(const PlatformWheelEvent&, EventTargeting = EventTargeting::Propagate);
-
+    virtual void handleWheelEventPhase(const PlatformWheelEventPhase) { }
+    
     FloatPoint currentScrollPosition() const { return m_currentScrollPosition; }
     FloatPoint currentScrollOffset() const { return ScrollableArea::scrollOffsetFromPosition(m_currentScrollPosition, toFloatSize(m_scrollOrigin)); }
     FloatPoint lastCommittedScrollPosition() const { return m_lastCommittedScrollPosition; }
@@ -83,6 +82,9 @@ public:
     bool isScrollSnapInProgress() const;
     void setScrollSnapInProgress(bool);
 
+    virtual bool startAnimatedScrollToPosition(FloatPoint);
+    virtual void stopAnimatedScroll();
+
     virtual void serviceScrollAnimation(MonotonicTime);
 
     // These are imperative; they adjust the scrolling layers.
@@ -90,6 +92,9 @@ public:
     void scrollBy(const FloatSize&, ScrollClamping = ScrollClamping::Clamped);
 
     void handleScrollPositionRequest(const RequestedScrollData&);
+
+    void handleKeyboardScrollRequest(const RequestedKeyboardScrollData&);
+    void requestKeyboardScroll(const RequestedKeyboardScrollData&);
 
     void wasScrolledByDelegatedScrolling(const FloatPoint& position, std::optional<FloatRect> overrideLayoutViewport = { }, ScrollingLayerPositionAction = ScrollingLayerPositionAction::Sync);
     
@@ -125,6 +130,8 @@ public:
     
     OverscrollBehavior horizontalOverscrollBehavior() const { return m_scrollableAreaParameters.horizontalOverscrollBehavior; }
     OverscrollBehavior verticalOverscrollBehavior() const { return m_scrollableAreaParameters.verticalOverscrollBehavior; }
+    
+    virtual String scrollbarStateForOrientation(ScrollbarOrientation) const { return ""_s; }
 
 protected:
     ScrollingTreeScrollingNode(ScrollingTree&, ScrollingNodeType, ScrollingNodeID);
@@ -137,9 +144,6 @@ protected:
     virtual void willDoProgrammaticScroll(const FloatPoint&) { }
     
     FloatPoint adjustedScrollPosition(const FloatPoint&, ScrollClamping = ScrollClamping::Clamped) const;
-    
-    virtual bool startAnimatedScrollToPosition(FloatPoint);
-    virtual void stopAnimatedScroll();
 
     void willStartAnimatedScroll();
     void didStopAnimatedScroll();

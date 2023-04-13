@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,7 @@
 #if PLATFORM(MAC) && ENABLE(UI_SIDE_COMPOSITING)
 
 #import "RemoteLayerTreeDrawingAreaProxy.h"
+#import "RemoteLayerTreeEventDispatcher.h"
 #import "WebPageProxy.h"
 #import <WebCore/ScrollingStateFrameScrollingNode.h>
 #import <WebCore/ScrollingStateOverflowScrollProxyNode.h>
@@ -46,35 +47,57 @@ using namespace WebCore;
 
 RemoteScrollingCoordinatorProxyMac::RemoteScrollingCoordinatorProxyMac(WebPageProxy& webPageProxy)
     : RemoteScrollingCoordinatorProxy(webPageProxy)
-    , m_recentWheelEventDeltaFilter(WheelEventDeltaFilter::create())
+#if ENABLE(SCROLLING_THREAD)
+    , m_wheelEventDispatcher(RemoteLayerTreeEventDispatcher::create(*this, webPageProxy.webPageID()))
+#endif
 {
+    m_wheelEventDispatcher->setScrollingTree(scrollingTree());
 }
 
-PlatformWheelEvent RemoteScrollingCoordinatorProxyMac::filteredWheelEvent(const WebCore::PlatformWheelEvent& wheelEvent)
+RemoteScrollingCoordinatorProxyMac::~RemoteScrollingCoordinatorProxyMac()
 {
-    m_recentWheelEventDeltaFilter->updateFromEvent(wheelEvent);
-
-    auto filteredEvent = wheelEvent;
-    if (WheelEventDeltaFilter::shouldApplyFilteringForEvent(wheelEvent))
-        filteredEvent = m_recentWheelEventDeltaFilter->eventCopyWithFilteredDeltas(wheelEvent);
-    else if (WheelEventDeltaFilter::shouldIncludeVelocityForEvent(wheelEvent))
-        filteredEvent = m_recentWheelEventDeltaFilter->eventCopyWithVelocity(wheelEvent);
-
-    return filteredEvent;
+#if ENABLE(SCROLLING_THREAD)
+    m_wheelEventDispatcher->invalidate();
+#endif
 }
 
-void RemoteScrollingCoordinatorProxyMac::didReceiveWheelEvent(bool /* wasHandled */)
+void RemoteScrollingCoordinatorProxyMac::cacheWheelEventScrollingAccelerationCurve(const NativeWebWheelEvent& nativeWheelEvent)
 {
-    scrollingTree()->applyLayerPositions();
+#if ENABLE(SCROLLING_THREAD)
+    m_wheelEventDispatcher->cacheWheelEventScrollingAccelerationCurve(nativeWheelEvent);
+#else
+    UNUSED_PARAM(nativeWheelEvent);
+#endif
 }
 
-void RemoteScrollingCoordinatorProxyMac::displayDidRefresh(PlatformDisplayID displayID)
+void RemoteScrollingCoordinatorProxyMac::handleWheelEvent(const WebWheelEvent& wheelEvent, RectEdges<bool> rubberBandableEdges)
 {
-    RemoteScrollingCoordinatorProxy::displayDidRefresh(displayID);
-    scrollingTree()->applyLayerPositions();
+#if ENABLE(SCROLLING_THREAD)
+    m_wheelEventDispatcher->handleWheelEvent(wheelEvent, rubberBandableEdges);
+#else
+    UNUSED_PARAM(wheelEvent);
+    UNUSED_PARAM(rubberBandableEdges);
+#endif
 }
 
-bool RemoteScrollingCoordinatorProxyMac::scrollingTreeNodeRequestsScroll(WebCore::ScrollingNodeID, const WebCore::RequestedScrollData&)
+void RemoteScrollingCoordinatorProxyMac::wheelEventHandlingCompleted(const PlatformWheelEvent& wheelEvent, ScrollingNodeID scrollingNodeID, std::optional<WheelScrollGestureState> gestureState)
+{
+#if ENABLE(SCROLLING_THREAD)
+    m_wheelEventDispatcher->wheelEventHandlingCompleted(wheelEvent, scrollingNodeID, gestureState);
+#else
+    UNUSED_PARAM(wheelEvent);
+    UNUSED_PARAM(scrollingNodeID);
+    UNUSED_PARAM(gestureState);
+#endif
+}
+
+bool RemoteScrollingCoordinatorProxyMac::scrollingTreeNodeRequestsScroll(ScrollingNodeID, const RequestedScrollData&)
+{
+    // Unlike iOS, we handle scrolling requests for the main frame in the same way we handle them for subscrollers.
+    return false;
+}
+
+bool RemoteScrollingCoordinatorProxyMac::scrollingTreeNodeRequestsKeyboardScroll(ScrollingNodeID, const RequestedKeyboardScrollData&)
 {
     // Unlike iOS, we handle scrolling requests for the main frame in the same way we handle them for subscrollers.
     return false;
@@ -82,16 +105,32 @@ bool RemoteScrollingCoordinatorProxyMac::scrollingTreeNodeRequestsScroll(WebCore
 
 void RemoteScrollingCoordinatorProxyMac::hasNodeWithAnimatedScrollChanged(bool hasAnimatedScrolls)
 {
+#if ENABLE(SCROLLING_THREAD)
+    m_wheelEventDispatcher->hasNodeWithAnimatedScrollChanged(hasAnimatedScrolls);
+#else
     auto* drawingArea = dynamicDowncast<RemoteLayerTreeDrawingAreaProxy>(webPageProxy().drawingArea());
     if (!drawingArea)
         return;
 
     drawingArea->setDisplayLinkWantsFullSpeedUpdates(hasAnimatedScrolls);
+#endif
+}
+
+void RemoteScrollingCoordinatorProxyMac::scrollingTreeNodeWillStartScroll(ScrollingNodeID nodeID)
+{
+    m_uiState.addNodeWithActiveUserScroll(nodeID);
+    sendUIStateChangedIfNecessary();
+}
+
+void RemoteScrollingCoordinatorProxyMac::scrollingTreeNodeDidEndScroll(ScrollingNodeID nodeID)
+{
+    m_uiState.removeNodeWithActiveUserScroll(nodeID);
+    sendUIStateChangedIfNecessary();
 }
 
 void RemoteScrollingCoordinatorProxyMac::connectStateNodeLayers(ScrollingStateTree& stateTree, const RemoteLayerTreeHost& layerTreeHost)
 {
-    using PlatformLayerID = GraphicsLayer::PlatformLayerID;
+    using PlatformLayerID = PlatformLayerIdentifier;
 
     for (auto& currNode : stateTree.nodeMap().values()) {
         if (currNode->hasChangedProperty(ScrollingStateNode::Property::Layer))
@@ -161,6 +200,36 @@ void RemoteScrollingCoordinatorProxyMac::connectStateNodeLayers(ScrollingStateTr
 
 void RemoteScrollingCoordinatorProxyMac::establishLayerTreeScrollingRelations(const RemoteLayerTreeHost&)
 {
+}
+
+void RemoteScrollingCoordinatorProxyMac::displayDidRefresh(PlatformDisplayID displayID)
+{
+#if ENABLE(SCROLLING_THREAD)
+    m_wheelEventDispatcher->mainThreadDisplayDidRefresh(displayID);
+#endif
+}
+
+void RemoteScrollingCoordinatorProxyMac::windowScreenDidChange(PlatformDisplayID displayID, std::optional<FramesPerSecond> nominalFramesPerSecond)
+{
+#if ENABLE(SCROLLING_THREAD)
+    m_wheelEventDispatcher->windowScreenDidChange(displayID, nominalFramesPerSecond);
+#endif
+}
+
+void RemoteScrollingCoordinatorProxyMac::willCommitLayerAndScrollingTrees()
+{
+    scrollingTree()->lockLayersForHitTesting();
+}
+
+void RemoteScrollingCoordinatorProxyMac::didCommitLayerAndScrollingTrees()
+{
+    scrollingTree()->unlockLayersForHitTesting();
+}
+
+void RemoteScrollingCoordinatorProxyMac::applyScrollingTreeLayerPositionsAfterCommit()
+{
+    RemoteScrollingCoordinatorProxy::applyScrollingTreeLayerPositionsAfterCommit();
+    m_wheelEventDispatcher->renderingUpdateComplete();
 }
 
 } // namespace WebKit

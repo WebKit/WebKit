@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2008, 2013-2015 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006-2023 Apple Inc.  All rights reserved.
  * Copyright (C) 2009, 2011 Brent Fulgham.  All rights reserved.
  * Copyright (C) 2009, 2010, 2011 Appcelerator, Inc. All rights reserved.
  * Copyright (C) 2013 Alex Christensen. All rights reserved.
@@ -270,14 +270,6 @@ CommandLineOptions parseCommandLine()
             options.usesLayeredWebView = true;
         else if (!wcsicmp(argv[i], L"--desktop"))
             options.useFullDesktop = true;
-#if ENABLE(WEBKIT_LEGACY)
-        else if (!wcsicmp(argv[i], L"--wk1") || !wcsicmp(argv[i], L"--legacy"))
-            options.windowType = BrowserWindowType::WebKitLegacy;
-#endif
-#if ENABLE(WEBKIT)
-        else if (!wcsicmp(argv[i], L"--wk2") || !wcsicmp(argv[i], L"--webkit"))
-            options.windowType = BrowserWindowType::WebKit;
-#endif
         else if (!options.requestedURL)
             options.requestedURL = argv[i];
     }

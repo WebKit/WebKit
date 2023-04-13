@@ -1,6 +1,6 @@
 /*
  * Copyright (C) Research In Motion Limited 2011. All rights reserved.
- * Copyright (C) 2021-2022 Apple Inc.  All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc.  All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -49,9 +49,6 @@ public:
 
     static IntOutsets calculateOutsets(const FloatSize& offset, const FloatSize& stdDeviation);
 
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<Ref<FEDropShadow>> decode(Decoder&);
-
 private:
     FEDropShadow(float stdX, float stdY, float dx, float dy, const Color& shadowColor, float shadowOpacity);
 
@@ -71,53 +68,6 @@ private:
     Color m_shadowColor;
     float m_shadowOpacity;
 };
-
-template<class Encoder>
-void FEDropShadow::encode(Encoder& encoder) const
-{
-    encoder << m_stdX;
-    encoder << m_stdY;
-    encoder << m_dx;
-    encoder << m_dy;
-    encoder << m_shadowColor;
-    encoder << m_shadowOpacity;
-}
-
-template<class Decoder>
-std::optional<Ref<FEDropShadow>> FEDropShadow::decode(Decoder& decoder)
-{
-    std::optional<float> stdX;
-    decoder >> stdX;
-    if (!stdX)
-        return std::nullopt;
-
-    std::optional<float> stdY;
-    decoder >> stdY;
-    if (!stdY)
-        return std::nullopt;
-
-    std::optional<float> dx;
-    decoder >> dx;
-    if (!dx)
-        return std::nullopt;
-
-    std::optional<float> dy;
-    decoder >> dy;
-    if (!dy)
-        return std::nullopt;
-
-    std::optional<Color> shadowColor;
-    decoder >> shadowColor;
-    if (!shadowColor)
-        return std::nullopt;
-
-    std::optional<float> shadowOpacity;
-    decoder >> shadowOpacity;
-    if (!shadowOpacity)
-        return std::nullopt;
-
-    return FEDropShadow::create(*stdX, *stdY, *dx, *dy, *shadowColor, *shadowOpacity);
-}
 
 } // namespace WebCore
 

@@ -1,0 +1,56 @@
+Tests that aria-label and aria-valuenow update correctly for date inputs.
+
+
+Checking ARIA Labels for sub-fields
+PASS: platformValueForW3CName(axDateFieldWrapper.childAtIndex(0)) === "month"
+PASS: platformValueForW3CName(axDateFieldWrapper.childAtIndex(1)) === "day"
+PASS: platformValueForW3CName(axDateFieldWrapper.childAtIndex(2)) === "year"
+
+Focusing date element and pressing up arrow to increment the first field.
+PASS: axDateFieldWrapper.childAtIndex(0).intValue === 3
+PASS: axDateFieldWrapper.childAtIndex(0).valueDescription === "AXValueDescription: 3"
+
+Simulating down arrow press to decrement the first field. (x2)
+PASS: axDateFieldWrapper.childAtIndex(0).intValue === 1
+PASS: axDateFieldWrapper.childAtIndex(0).valueDescription === "AXValueDescription: 1"
+
+Simulating tab key to move to the next field in the date input.
+PASS: axDateFieldWrapper.childAtIndex(1).intValue === 2
+PASS: axDateFieldWrapper.childAtIndex(1).valueDescription === "AXValueDescription: 2"
+
+Simulating typing "10" in the second input field.
+PASS: axDateFieldWrapper.childAtIndex(1).intValue === 10
+PASS: axDateFieldWrapper.childAtIndex(1).valueDescription === "AXValueDescription: 10"
+
+Simulating down arrow press to decrement the second field value.
+PASS: axDateFieldWrapper.childAtIndex(1).intValue === 9
+PASS: axDateFieldWrapper.childAtIndex(1).valueDescription === "AXValueDescription: 9"
+
+Simulating up arrow press to increment the second field value. (x2)
+PASS: axDateFieldWrapper.childAtIndex(1).intValue === 11
+PASS: axDateFieldWrapper.childAtIndex(1).valueDescription === "AXValueDescription: 11"
+
+Simulating tab key to move to the next field in the date input.
+PASS: axDateFieldWrapper.childAtIndex(2).intValue === 2022
+PASS: axDateFieldWrapper.childAtIndex(2).valueDescription === "AXValueDescription: 2022"
+
+Simulating down arrow press to decrement the third field value. (x10)
+PASS: axDateFieldWrapper.childAtIndex(2).intValue === 2012
+PASS: axDateFieldWrapper.childAtIndex(2).valueDescription === "AXValueDescription: 2012"
+
+Simulating up arrow press to increment the third field value.
+PASS: axDateFieldWrapper.childAtIndex(2).intValue === 2013
+PASS: axDateFieldWrapper.childAtIndex(2).valueDescription === "AXValueDescription: 2013"
+
+Manually setting the date input's value via JavaScript.
+PASS: axDateFieldWrapper.childAtIndex(0).intValue === 12
+PASS: axDateFieldWrapper.childAtIndex(0).valueDescription === "AXValueDescription: 12"
+PASS: axDateFieldWrapper.childAtIndex(1).intValue === 30
+PASS: axDateFieldWrapper.childAtIndex(1).valueDescription === "AXValueDescription: 30"
+PASS: axDateFieldWrapper.childAtIndex(2).intValue === 2023
+PASS: axDateFieldWrapper.childAtIndex(2).valueDescription === "AXValueDescription: 2023"
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

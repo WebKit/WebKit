@@ -20,8 +20,8 @@ layer at (0,0) size 800x600
           RenderSVGGradientStop {stop} [offset=0.66] [color=#FF0000]
           RenderSVGGradientStop {stop} [offset=1.00] [color=#FFFF00]
       RenderSVGText {text} at (42,10) size 366x25 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 366x25
-          chunk 1 (middle anchor) text run 1 at (42.00,30.00) startOffset 0 endOffset 43 width 366.00: "Basic test of color-interpolation property."
+        RenderSVGInlineText {#text} at (0,0) size 365x25
+          chunk 1 (middle anchor) text run 1 at (42.94,30.00) startOffset 0 endOffset 43 width 364.11: "Basic test of color-interpolation property."
       RenderSVGContainer {g} at (60,110) size 693x91 [transform={m=((1.00,0.00)(0.00,1.00)) t=(40.00,80.00)}]
         RenderSVGRect {rect} at (65,132) size 503x69 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=LINEAR-GRADIENT] [id="gradientDefault"]}] [x=0.00] [y=0.00] [width=300.00] [height=40.00]
         RenderSVGEllipse {circle} at (60,110) size 13x13 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFFFF]}] [cx=0.00] [cy=-10.00] [r=3.00]

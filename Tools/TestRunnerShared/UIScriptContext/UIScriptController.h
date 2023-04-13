@@ -134,6 +134,7 @@ public:
     // Compositing
 
     virtual JSObjectRef propertiesOfLayerWithID(uint64_t) const { notImplemented(); return nullptr; }
+    virtual unsigned long countOfUpdatesWithLayerChanges() const { notImplemented(); return 0; }
 
     // Scrolling
 
@@ -153,6 +154,8 @@ public:
     virtual JSRetainPtr<JSStringRef> scrollingTreeAsText() const { notImplemented(); return nullptr; }
     virtual JSRetainPtr<JSStringRef> uiViewTreeAsText() const { notImplemented(); return nullptr; }
     virtual JSRetainPtr<JSStringRef> caLayerTreeAsText() const { notImplemented(); return nullptr; }
+    
+    virtual JSRetainPtr<JSStringRef> scrollbarStateForScrollingNodeID(unsigned long long, bool) const { notImplemented(); return nullptr; }
 
     // Touches
 
@@ -176,6 +179,11 @@ public:
     virtual void toggleCapsLock(JSValueRef) { notImplemented(); }
     virtual void setContinuousSpellCheckingEnabled(bool) { notImplemented(); }
     virtual void setSpellCheckerResults(JSValueRef) { notImplemented(); }
+    virtual unsigned keyboardWillHideCount() const
+    {
+        notImplemented();
+        return 0;
+    }
     virtual bool keyboardIsAutomaticallyShifted() const
     {
         notImplemented();

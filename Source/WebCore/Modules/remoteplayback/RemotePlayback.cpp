@@ -38,6 +38,7 @@
 #include "MediaElementSession.h"
 #include "MediaPlaybackTarget.h"
 #include "RemotePlaybackAvailabilityCallback.h"
+#include "WebCoreOpaqueRootInlines.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {

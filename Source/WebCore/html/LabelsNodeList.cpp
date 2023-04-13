@@ -27,6 +27,7 @@
 #include "CommonAtomStrings.h"
 #include "HTMLLabelElement.h"
 #include "HTMLNames.h"
+#include "LiveNodeListInlines.h"
 #include "NodeRareData.h"
 #include <wtf/IsoMallocInlines.h>
 

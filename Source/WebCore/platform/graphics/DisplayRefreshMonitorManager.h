@@ -51,13 +51,13 @@ public:
 
     void clientPreferredFramesPerSecondChanged(DisplayRefreshMonitorClient&);
 
-    WEBCORE_EXPORT void displayWasUpdated(PlatformDisplayID, const DisplayUpdate&);
+    WEBCORE_EXPORT void displayDidRefresh(PlatformDisplayID, const DisplayUpdate&);
 
 private:
     DisplayRefreshMonitorManager() = default;
     virtual ~DisplayRefreshMonitorManager();
 
-    void displayDidRefresh(DisplayRefreshMonitor&);
+    void displayMonitorDisplayDidRefresh(DisplayRefreshMonitor&);
 
     size_t findMonitorForDisplayID(PlatformDisplayID) const;
     DisplayRefreshMonitor* monitorForDisplayID(PlatformDisplayID) const;

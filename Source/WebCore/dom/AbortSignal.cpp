@@ -78,8 +78,8 @@ Ref<AbortSignal> AbortSignal::timeout(ScriptExecutionContext& context, uint64_t 
 
 AbortSignal::AbortSignal(ScriptExecutionContext* context, Aborted aborted, JSC::JSValue reason)
     : ContextDestructionObserver(context)
-    , m_aborted(aborted == Aborted::Yes)
     , m_reason(reason)
+    , m_aborted(aborted == Aborted::Yes)
 {
     ASSERT(reason);
 }

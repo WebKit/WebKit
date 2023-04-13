@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2021 Apple Inc.  All rights reserved.
+ * Copyright (C) 2020-2023 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -74,75 +74,77 @@ size_t ImageBufferIOSurfaceBackend::calculateExternalMemoryCost(const Parameters
     return calculateMemoryCost(parameters);
 }
 
-RetainPtr<CGColorSpaceRef> ImageBufferIOSurfaceBackend::contextColorSpace(const GraphicsContext& context)
-{
-    CGContextRef cgContext = context.platformContext();
-
-    if (CGContextGetType(cgContext) == kCGContextTypeIOSurface)
-        return CGIOSurfaceContextGetColorSpace(cgContext);
-    
-    return ImageBufferCGBackend::contextColorSpace(context);
-}
-
 std::unique_ptr<ImageBufferIOSurfaceBackend> ImageBufferIOSurfaceBackend::create(const Parameters& parameters, const ImageBufferCreationContext& creationContext)
 {
     IntSize backendSize = calculateSafeBackendSize(parameters);
     if (backendSize.isEmpty())
         return nullptr;
 
-    auto surface = IOSurface::create(creationContext.surfacePool, backendSize, parameters.colorSpace, IOSurface::formatForPixelFormat(parameters.pixelFormat));
+    auto surface = IOSurface::create(creationContext.surfacePool, backendSize, parameters.colorSpace, IOSurface::Name::ImageBuffer, IOSurface::formatForPixelFormat(parameters.pixelFormat));
     if (!surface)
         return nullptr;
 
-    RetainPtr<CGContextRef> cgContext = surface->ensurePlatformContext(creationContext.graphicsClient ? creationContext.graphicsClient->displayID() : 0);
+    auto displayID = creationContext.graphicsClient ? creationContext.graphicsClient->displayID() : 0;
+    RetainPtr<CGContextRef> cgContext = surface->createPlatformContext(displayID);
     if (!cgContext)
         return nullptr;
 
     CGContextClearRect(cgContext.get(), FloatRect(FloatPoint::zero(), backendSize));
+    CGContextFlush(cgContext.get());
 
-    return makeUnique<ImageBufferIOSurfaceBackend>(parameters, WTFMove(surface), creationContext.surfacePool);
+    return makeUnique<ImageBufferIOSurfaceBackend>(parameters, WTFMove(surface), WTFMove(cgContext), displayID, creationContext.surfacePool);
 }
 
-std::unique_ptr<ImageBufferIOSurfaceBackend> ImageBufferIOSurfaceBackend::create(const Parameters& parameters, const GraphicsContext& context)
-{
-    if (auto cgColorSpace = context.hasPlatformContext() ? contextColorSpace(context) : nullptr) {
-        auto overrideParameters = parameters;
-        overrideParameters.colorSpace = DestinationColorSpace { cgColorSpace };
-
-        return ImageBufferIOSurfaceBackend::create(overrideParameters, nullptr);
-    }
-
-    return ImageBufferIOSurfaceBackend::create(parameters, nullptr);
-}
-
-ImageBufferIOSurfaceBackend::ImageBufferIOSurfaceBackend(const Parameters& parameters, std::unique_ptr<IOSurface>&& surface, IOSurfacePool* ioSurfacePool)
+ImageBufferIOSurfaceBackend::ImageBufferIOSurfaceBackend(const Parameters& parameters, std::unique_ptr<IOSurface> surface, RetainPtr<CGContextRef> platformContext, PlatformDisplayID displayID, IOSurfacePool* ioSurfacePool)
     : ImageBufferCGBackend(parameters)
     , m_surface(WTFMove(surface))
+    , m_platformContext(WTFMove(platformContext))
+    , m_displayID(displayID)
     , m_ioSurfacePool(ioSurfacePool)
 {
     ASSERT(m_surface);
-    applyBaseTransformToContext();
+    ASSERT(!m_surface->isVolatile());
 }
 
 ImageBufferIOSurfaceBackend::~ImageBufferIOSurfaceBackend()
 {
     ensureNativeImagesHaveCopiedBackingStore();
+    releaseGraphicsContext();
     IOSurface::moveToPool(WTFMove(m_surface), m_ioSurfacePool.get());
 }
 
-GraphicsContext& ImageBufferIOSurfaceBackend::context() const
+
+GraphicsContext& ImageBufferIOSurfaceBackend::context()
 {
-    GraphicsContext& context = m_surface->ensureGraphicsContext();
-    if (m_needsSetupContext) {
-        m_needsSetupContext = false;
-        applyBaseTransformToContext();
+    if (!m_context) {
+        m_context = makeUnique<GraphicsContextCG>(ensurePlatformContext());
+        applyBaseTransform(*m_context);
     }
-    return context;
+    return *m_context;
 }
 
 void ImageBufferIOSurfaceBackend::flushContext()
 {
-    CGContextFlush(context().platformContext());
+    flushContextDraws();
+}
+
+bool ImageBufferIOSurfaceBackend::flushContextDraws()
+{
+    if (!m_context)
+        return false;
+    if (!m_context->consumeHasDrawn())
+        return false;
+    CGContextFlush(ensurePlatformContext());
+    return true;
+}
+
+CGContextRef ImageBufferIOSurfaceBackend::ensurePlatformContext()
+{
+    if (!m_platformContext) {
+        m_platformContext = m_surface->createPlatformContext(m_displayID);
+        RELEASE_ASSERT(m_platformContext);
+    }
+    return m_platformContext.get();
 }
 
 IntSize ImageBufferIOSurfaceBackend::backendSize() const
@@ -160,61 +162,57 @@ void ImageBufferIOSurfaceBackend::transferToNewContext(const ImageBufferCreation
     m_ioSurfacePool = creationContext.surfacePool;
 }
 
-void ImageBufferIOSurfaceBackend::invalidateCachedNativeImage() const
+void ImageBufferIOSurfaceBackend::invalidateCachedNativeImage()
 {
     // Force QuartzCore to invalidate its cached CGImageRef for this IOSurface.
     // This is necessary in cases where we know (a priori) that the IOSurface has been
     // modified, but QuartzCore may have a cached CGImageRef that does not reflect the
     // current state of the IOSurface.
     // See https://webkit.org/b/157966 and https://webkit.org/b/228682 for more context.
-    context().fillRect({ });
-    m_mayHaveOutstandingBackingStoreReferences = false;
+    CGContextFillRect(ensurePlatformContext(), CGRect { });
 }
 
-void ImageBufferIOSurfaceBackend::invalidateCachedNativeImageIfNeeded() const
+RefPtr<NativeImage> ImageBufferIOSurfaceBackend::copyNativeImage(BackingStoreCopy)
 {
-    if (m_mayHaveOutstandingBackingStoreReferences)
-        invalidateCachedNativeImage();
+    return NativeImage::create(createImage());
 }
 
-RefPtr<NativeImage> ImageBufferIOSurfaceBackend::copyNativeImage(BackingStoreCopy) const
+RefPtr<NativeImage> ImageBufferIOSurfaceBackend::copyNativeImageForDrawing(GraphicsContext& destination)
 {
-    m_mayHaveOutstandingBackingStoreReferences = true;
-    return NativeImage::create(m_surface->createImage());
-}
-
-RefPtr<NativeImage> ImageBufferIOSurfaceBackend::copyNativeImageForDrawing(BackingStoreCopy) const
-{
-    return NativeImage::create(m_surface->createImage());
+    if (destination.hasPlatformContext() && CGContextGetType(destination.platformContext()) == kCGContextTypeBitmap) {
+        // The destination backend is not deferred, so we can return a reference.
+        // The destination backend needs to read the actual pixels. Returning non-refence will
+        // copy the pixels and but still cache the image to the context. This means we must
+        // return the reference or cleanup later if we return the non-reference.
+        return NativeImage::create(createImageReference());
+    }
+    // Other backends are deferred (iosurface, display list) or potentially deferred. Must copy for drawing.
+    return ImageBufferIOSurfaceBackend::copyNativeImage(CopyBackingStore);
 }
 
 RefPtr<NativeImage> ImageBufferIOSurfaceBackend::sinkIntoNativeImage()
 {
-    return NativeImage::create(IOSurface::sinkIntoImage(WTFMove(m_surface)));
+    ensurePlatformContext();
+    return NativeImage::create(IOSurface::sinkIntoImage(WTFMove(m_surface), WTFMove(m_platformContext)));
 }
 
-void ImageBufferIOSurfaceBackend::finalizeDrawIntoContext(GraphicsContext& destinationContext)
+RefPtr<PixelBuffer> ImageBufferIOSurfaceBackend::getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect& srcRect, const ImageBufferAllocator& allocator)
 {
-    if (destinationContext.needsCachedNativeImageInvalidationWorkaround(ImageBufferIOSurfaceBackend::renderingMode))
-        invalidateCachedNativeImage();
-}
-
-RefPtr<PixelBuffer> ImageBufferIOSurfaceBackend::getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect& srcRect, const ImageBufferAllocator& allocator) const
-{
+    const_cast<ImageBufferIOSurfaceBackend*>(this)->prepareForExternalRead();
     IOSurface::Locker lock(*m_surface);
     return ImageBufferBackend::getPixelBuffer(outputFormat, srcRect, lock.surfaceBaseAddress(), allocator);
 }
 
 void ImageBufferIOSurfaceBackend::putPixelBuffer(const PixelBuffer& pixelBuffer, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat)
 {
-    invalidateCachedNativeImageIfNeeded();
+    prepareForExternalWrite();
     IOSurface::Locker lock(*m_surface, IOSurface::Locker::AccessMode::ReadWrite);
     ImageBufferBackend::putPixelBuffer(pixelBuffer, srcRect, destPoint, destFormat, lock.surfaceBaseAddress());
 }
 
 IOSurface* ImageBufferIOSurfaceBackend::surface()
 {
-    flushContext();
+    prepareForExternalWrite(); // This is conservative. At the time of writing this is not used.
     return m_surface.get();
 }
 
@@ -225,14 +223,19 @@ bool ImageBufferIOSurfaceBackend::isInUse() const
 
 void ImageBufferIOSurfaceBackend::releaseGraphicsContext()
 {
-    m_needsSetupContext = true;
-    return m_surface->releaseGraphicsContext();
+    m_context = nullptr;
+    m_platformContext = nullptr;
 }
 
 bool ImageBufferIOSurfaceBackend::setVolatile()
 {
     if (m_surface->isInUse())
         return false;
+
+    if (m_volatilityState == VolatilityState::Volatile) {
+        ASSERT(m_surface->isVolatile());
+        return true;
+    }
 
     setVolatilityState(VolatilityState::Volatile);
     m_surface->setVolatile(true);
@@ -241,8 +244,12 @@ bool ImageBufferIOSurfaceBackend::setVolatile()
 
 SetNonVolatileResult ImageBufferIOSurfaceBackend::setNonVolatile()
 {
-    setVolatilityState(VolatilityState::NonVolatile);
-    return m_surface->setVolatile(false);
+    if (m_volatilityState == VolatilityState::Volatile) {
+        setVolatilityState(VolatilityState::NonVolatile);
+        return m_surface->setVolatile(false);
+    }
+    ASSERT(!m_surface->isVolatile());
+    return SetNonVolatileResult::Valid;
 }
 
 VolatilityState ImageBufferIOSurfaceBackend::volatilityState() const
@@ -257,10 +264,65 @@ void ImageBufferIOSurfaceBackend::setVolatilityState(VolatilityState volatilityS
 
 void ImageBufferIOSurfaceBackend::ensureNativeImagesHaveCopiedBackingStore()
 {
+    // FIXME: This will be removed. This was needed when putImageData was not properly accounting
+    // for outstanding reads.
     if (!m_mayHaveOutstandingBackingStoreReferences)
         return;
-    invalidateCachedNativeImage();
-    flushContext();
+    prepareForExternalWrite();
+}
+
+void ImageBufferIOSurfaceBackend::prepareForExternalRead()
+{
+    // Ensure that there are no pending draws to this surface. This is ensured by flushing the context
+    // through which the draws may have come.
+    flushContextDraws();
+}
+
+void ImageBufferIOSurfaceBackend::prepareForExternalWrite()
+{
+    bool needFlush = false;
+    // Ensure that there are no future draws from the surface that would use the surface context image cache.
+    if (m_mayHaveOutstandingBackingStoreReferences) {
+        invalidateCachedNativeImage();
+        m_mayHaveOutstandingBackingStoreReferences = false;
+        needFlush = true;
+    }
+
+    // Ensure that there are no pending draws to this surface. This is ensured by flushing the context
+    // through which the draws may have come.
+    // Ensure that there are no pending draws from this surface. This is ensured by drawing the invalidation marker before
+    // flushing the the context. The invalidation marker forces the draws from this surface to complete before
+    // the invalidation marker completes.
+    if (flushContextDraws())
+        needFlush = false;
+    if (needFlush)
+        CGContextFlush(ensurePlatformContext());
+}
+
+RetainPtr<CGImageRef> ImageBufferIOSurfaceBackend::createImage()
+{
+    // CGIOSurfaceContextCreateImage flushes, so clear the flush need.
+    if (m_context)
+        m_context->consumeHasDrawn();
+    // Consumers may hold on to the image, so mark external writes needing the invalidation marker.
+    m_mayHaveOutstandingBackingStoreReferences = true;
+    return m_surface->createImage(ensurePlatformContext());
+}
+
+RetainPtr<CGImageRef> ImageBufferIOSurfaceBackend::createImageReference()
+{
+    // CGIOSurfaceContextCreateImageReference flushes, so clear the flush need.
+    if (m_context)
+        m_context->consumeHasDrawn();
+    // The reference is used only in synchronized manner, so after the use ends, we can update
+    // externally without invalidation marker. Thus we do not set m_mayHaveOutstandingBackingStoreReferences.
+    auto image = adoptCF(CGIOSurfaceContextCreateImageReference(ensurePlatformContext()));
+    // CG has internal caches for some operations related to software bitmap draw.
+    // One of these caches are per-image color matching cache. Since these will not get any hits
+    // from an image that is recreated every time, mark the image transient to skip these caches.
+    // This also skips WebKit GraphicsContext subimage cache.
+    CGImageSetCachingFlags(image.get(), kCGImageCachingTransient);
+    return image;
 }
 
 } // namespace WebCore

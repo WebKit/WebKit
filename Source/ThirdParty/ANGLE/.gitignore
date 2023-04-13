@@ -53,6 +53,7 @@
 /third_party/jdk/extras/java_8
 /third_party/jinja2
 /third_party/jsoncpp
+/third_party/kotlin_stdlib
 /third_party/libdrm
 /third_party/libjpeg_turbo
 /third_party/libpng/src

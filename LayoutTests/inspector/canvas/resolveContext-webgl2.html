@@ -3,9 +3,6 @@
 <head>
 <script src="../../http/tests/inspector/resources/inspector-test.js"></script>
 <script>
-if (window.internals)
-    window.internals.settings.setWebGL2Enabled(true);
-
 function load() {
     window.contextWebGL2 = document.body.appendChild(document.createElement("canvas")).getContext("webgl2");
 

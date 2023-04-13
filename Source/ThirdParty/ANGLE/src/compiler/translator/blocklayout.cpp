@@ -16,6 +16,14 @@
 namespace sh
 {
 
+bool operator==(const BlockMemberInfo &lhs, const BlockMemberInfo &rhs)
+{
+    return lhs.type == rhs.type && lhs.offset == rhs.offset && lhs.arrayStride == rhs.arrayStride &&
+           lhs.matrixStride == rhs.matrixStride && lhs.arraySize == rhs.arraySize &&
+           lhs.isRowMajorMatrix == rhs.isRowMajorMatrix &&
+           lhs.topLevelArrayStride == rhs.topLevelArrayStride;
+}
+
 namespace
 {
 class BlockLayoutMapVisitor : public BlockEncoderVisitor
@@ -175,6 +183,7 @@ class BaseAlignmentVisitor : public ShaderVariableVisitor
   private:
     size_t mCurrentAlignment = 0;
 };
+
 }  // anonymous namespace
 
 // BlockLayoutEncoder implementation.
@@ -189,10 +198,10 @@ BlockMemberInfo BlockLayoutEncoder::encodeType(GLenum type,
 
     getBlockLayoutInfo(type, arraySizes, isRowMajorMatrix, &arrayStride, &matrixStride);
 
-    const BlockMemberInfo memberInfo(static_cast<int>(mCurrentOffset * kBytesPerComponent),
+    const BlockMemberInfo memberInfo(type, static_cast<int>(mCurrentOffset * kBytesPerComponent),
                                      static_cast<int>(arrayStride * kBytesPerComponent),
                                      static_cast<int>(matrixStride * kBytesPerComponent),
-                                     isRowMajorMatrix);
+                                     gl::ArraySizeProduct(arraySizes), isRowMajorMatrix);
 
     advanceOffset(type, arraySizes, isRowMajorMatrix, arrayStride, matrixStride);
 
@@ -208,9 +217,10 @@ BlockMemberInfo BlockLayoutEncoder::encodeArrayOfPreEncodedStructs(
 
     // The size of struct is expected to be already aligned appropriately.
     const size_t arrayStride = size * innerArraySizeProduct;
-
-    const BlockMemberInfo memberInfo(static_cast<int>(mCurrentOffset * kBytesPerComponent),
-                                     static_cast<int>(arrayStride), -1, false);
+    GLenum type              = GL_INVALID_ENUM;
+    const BlockMemberInfo memberInfo(type, static_cast<int>(mCurrentOffset * kBytesPerComponent),
+                                     static_cast<int>(arrayStride), -1,
+                                     gl::ArraySizeProduct(arraySizes), false);
 
     angle::base::CheckedNumeric<size_t> checkedOffset(arrayStride);
     checkedOffset *= outermostArraySize;
@@ -255,6 +265,10 @@ size_t BlockLayoutEncoder::GetBlockRegisterElement(const BlockMemberInfo &info)
 
 void BlockLayoutEncoder::align(size_t baseAlignment)
 {
+    if (baseAlignment == 0)
+    {
+        return;
+    }
     angle::base::CheckedNumeric<size_t> checkedOffset(mCurrentOffset);
     checkedOffset += baseAlignment;
     checkedOffset -= 1;
@@ -262,6 +276,7 @@ void BlockLayoutEncoder::align(size_t baseAlignment)
     checkedAlignmentOffset %= baseAlignment;
     checkedOffset -= checkedAlignmentOffset.ValueOrDefault(std::numeric_limits<size_t>::max());
     mCurrentOffset = checkedOffset.ValueOrDefault(std::numeric_limits<size_t>::max());
+    assert(mCurrentOffset >= 0);
 }
 
 // StubBlockEncoder implementation.
@@ -663,4 +678,5 @@ void TraverseShaderVariable(const ShaderVariable &variable,
         visitor->visitVariable(variable, isRowMajor);
     }
 }
+
 }  // namespace sh

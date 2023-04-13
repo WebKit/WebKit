@@ -4,8 +4,8 @@ layer at (0,0) size 800x546
   RenderBlock {HTML} at (0,0) size 800x546
     RenderBody {BODY} at (8,16) size 784x522
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 715x17
-          text run at (0,0) width 715: "Test that setting currentTime is frame-accurate. The three videos below should be showing frames 12, 13, and 14."
+        RenderText {#text} at (0,0) size 714x17
+          text run at (0,0) width 714: "Test that setting currentTime is frame-accurate. The three videos below should be showing frames 12, 13, and 14."
       RenderBlock (anonymous) at (0,34) size 784x488
         RenderText {#text} at (320,226) size 4x17
           text run at (320,226) width 4: " "

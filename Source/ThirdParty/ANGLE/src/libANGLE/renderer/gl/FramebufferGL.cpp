@@ -1388,6 +1388,12 @@ void FramebufferGL::syncClearState(const gl::Context *context, GLbitfield mask)
     StateManagerGL *stateManager      = GetStateManagerGL(context);
     const angle::FeaturesGL &features = GetFeaturesGL(context);
 
+    // Clip origin must not affect scissor box but some drivers flip it for clear ops.
+    if (context->getState().isScissorTestEnabled())
+    {
+        stateManager->setClipControl(ClipOrigin::LowerLeft, ClipDepthMode::NegativeOneToOne);
+    }
+
     if (features.doesSRGBClearsOnLinearFramebufferAttachments.enabled &&
         (mask & GL_COLOR_BUFFER_BIT) != 0 && !isDefault())
     {
@@ -1415,6 +1421,12 @@ void FramebufferGL::syncClearBufferState(const gl::Context *context,
 {
     StateManagerGL *stateManager      = GetStateManagerGL(context);
     const angle::FeaturesGL &features = GetFeaturesGL(context);
+
+    // Clip origin must not affect scissor box but some drivers flip it for clear ops.
+    if (context->getState().isScissorTestEnabled())
+    {
+        stateManager->setClipControl(ClipOrigin::LowerLeft, ClipDepthMode::NegativeOneToOne);
+    }
 
     if (features.doesSRGBClearsOnLinearFramebufferAttachments.enabled && buffer == GL_COLOR &&
         !isDefault())

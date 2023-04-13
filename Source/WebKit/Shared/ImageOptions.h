@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ImageOptions_h
-#define ImageOptions_h
+#pragma once
 
 namespace WebKit {
 
@@ -48,7 +47,8 @@ enum {
     SnapshotOptionsFullContentRect = 1 << 11,
     SnapshotOptionsTransparentBackground = 1 << 12
 };
-typedef uint32_t SnapshotOptions;
+// FIXME: This should be enum class SnapshotOptions : uint16_t.
+using SnapshotOptions = uint32_t;
 
 inline ImageOptions snapshotOptionsToImageOptions(SnapshotOptions snapshotOptions)
 {
@@ -61,5 +61,3 @@ inline ImageOptions snapshotOptionsToImageOptions(SnapshotOptions snapshotOption
 }
 
 } // namespace WebKit
-
-#endif // ImageOptions_h

@@ -67,16 +67,7 @@ class BuiltinsInternalsWrapperImplementationGenerator(BuiltinsGenerator):
                 ("WebCore", "WebCoreJSClientData.h"),
             ),
             (["WebCore"],
-                ("JavaScriptCore", "heap/HeapInlines.h"),
-            ),
-            (["WebCore"],
-                ("JavaScriptCore", "heap/SlotVisitorInlines.h"),
-            ),
-            (["WebCore"],
-                ("JavaScriptCore", "runtime/JSCJSValueInlines.h"),
-            ),
-            (["WebCore"],
-                ("JavaScriptCore", "runtime/StructureInlines.h"),
+                ("JavaScriptCore", "runtime/JSObjectInlines.h"),
             ),
         ]
         return '\n'.join(self.generate_includes_from_entries(header_includes))

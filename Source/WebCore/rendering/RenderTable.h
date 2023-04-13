@@ -324,7 +324,7 @@ private:
 
     void recalcCollapsedBorders();
     void recalcSections() const;
-    enum class BottomCaptionLayoutPhase { Yes, No };
+    enum class BottomCaptionLayoutPhase : bool { No, Yes };
     void layoutCaptions(BottomCaptionLayoutPhase = BottomCaptionLayoutPhase::No);
     void layoutCaption(RenderTableCaption&);
 

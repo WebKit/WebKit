@@ -46,46 +46,15 @@ GamepadData::GamepadData(unsigned index, const String& id, const String& mapping
 {
 }
 
-void GamepadData::encode(IPC::Encoder& encoder) const
+GamepadData::GamepadData(unsigned index, String&& id, String&& mapping, Vector<double>&& axisValues, Vector<double>&& buttonValues, MonotonicTime lastUpdateTime, WebCore::GamepadHapticEffectTypeSet&& supportedEffectTypes)
+    : m_index(index)
+    , m_id(WTFMove(id))
+    , m_mapping(WTFMove(mapping))
+    , m_axisValues(WTFMove(axisValues))
+    , m_buttonValues(WTFMove(buttonValues))
+    , m_lastUpdateTime(lastUpdateTime)
+    , m_supportedEffectTypes(WTFMove(supportedEffectTypes))
 {
-    encoder << m_isNull;
-    if (m_isNull)
-        return;
-
-    encoder << m_index << m_id << m_mapping << m_axisValues << m_buttonValues << m_lastUpdateTime << m_supportedEffectTypes;
-}
-
-std::optional<GamepadData> GamepadData::decode(IPC::Decoder& decoder)
-{
-    GamepadData data;
-    if (!decoder.decode(data.m_isNull))
-        return std::nullopt;
-
-    if (data.m_isNull)
-        return data;
-
-    if (!decoder.decode(data.m_index))
-        return std::nullopt;
-
-    if (!decoder.decode(data.m_id))
-        return std::nullopt;
-
-    if (!decoder.decode(data.m_mapping))
-        return std::nullopt;
-
-    if (!decoder.decode(data.m_axisValues))
-        return std::nullopt;
-
-    if (!decoder.decode(data.m_buttonValues))
-        return std::nullopt;
-
-    if (!decoder.decode(data.m_lastUpdateTime))
-        return std::nullopt;
-
-    if (!decoder.decode(data.m_supportedEffectTypes))
-        return std::nullopt;
-
-    return data;
 }
 
 #if !LOG_DISABLED

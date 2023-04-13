@@ -33,24 +33,10 @@
 #include "Timer.h"
 #include <wtf/MonotonicTime.h>
 
-#if USE(CFURLCONNECTION)
-#include "ResourceHandleCFURLConnectionDelegate.h"
-#include <pal/spi/win/CFNetworkSPIWin.h>
-#endif
-
-#if USE(CURL)
-#include "CurlRequest.h"
-#include "SynchronousLoaderClient.h"
-#include <wtf/MessageQueue.h>
-#include <wtf/MonotonicTime.h>
-#endif
-
 #if PLATFORM(COCOA)
 OBJC_CLASS NSURLAuthenticationChallenge;
 OBJC_CLASS NSURLConnection;
-#endif
 
-#if PLATFORM(COCOA) || USE(CFURLCONNECTION)
 typedef const struct __CFURLStorageSession* CFURLStorageSessionRef;
 #endif
 
@@ -71,14 +57,11 @@ public:
         , m_firstRequest(request)
         , m_lastHTTPMethod(request.httpMethod())
         , m_partition(request.cachePartition())
-        , m_defersLoading(defersLoading)
-        , m_shouldContentSniff(shouldContentSniff)
-        , m_contentEncodingSniffingPolicy(contentEncodingSniffingPolicy)
-#if USE(CFURLCONNECTION)
-        , m_currentRequest(request)
-#endif
         , m_failureTimer(*loader, &ResourceHandle::failureTimerFired)
         , m_sourceOrigin(WTFMove(sourceOrigin))
+        , m_contentEncodingSniffingPolicy(contentEncodingSniffingPolicy)
+        , m_defersLoading(defersLoading)
+        , m_shouldContentSniff(shouldContentSniff)
         , m_isMainFrameNavigation(isMainFrameNavigation)
     {
         const URL& url = m_firstRequest.url();
@@ -103,53 +86,38 @@ public:
     
     Credential m_initialCredential;
     
-    int status { 0 };
-
-    bool m_defersLoading;
-    bool m_shouldContentSniff;
-    ContentEncodingSniffingPolicy m_contentEncodingSniffingPolicy;
-#if USE(CFURLCONNECTION)
-    RetainPtr<CFURLConnectionRef> m_connection;
-    ResourceRequest m_currentRequest;
-    RefPtr<ResourceHandleCFURLConnectionDelegate> m_connectionDelegate;
-#endif
 #if PLATFORM(COCOA)
     RetainPtr<NSURLConnection> m_connection;
     RetainPtr<id> m_delegate;
-#endif
-#if PLATFORM(COCOA)
-    bool m_startWhenScheduled { false };
-#endif
-#if PLATFORM(COCOA) || USE(CFURLCONNECTION)
     RetainPtr<CFURLStorageSessionRef> m_storageSession;
-#endif
-#if USE(CURL)
-    std::unique_ptr<CurlResourceHandleDelegate> m_delegate;
-    
-    bool m_cancelled { false };
-    unsigned m_authFailureCount { 0 };
-    bool m_addedCacheValidationHeaders { false };
-    RefPtr<CurlRequest> m_curlRequest;
-    RefPtr<SynchronousLoaderMessageQueue> m_messageQueue;
-#endif
-    Box<NetworkLoadMetrics> m_networkLoadMetrics;
-    MonotonicTime m_startTime;
-    uint16_t m_redirectCount { 0 };
-    bool m_failsTAOCheck { false };
-    bool m_hasCrossOriginRedirect { false };
-    bool m_isCrossOrigin { false };
 
-#if PLATFORM(COCOA)
     // We need to keep a reference to the original challenge to be able to cancel it.
     // It is almost identical to m_currentWebChallenge.nsURLAuthenticationChallenge(), but has a different sender.
     NSURLAuthenticationChallenge *m_currentMacChallenge { nil };
 #endif
+    Box<NetworkLoadMetrics> m_networkLoadMetrics;
+    MonotonicTime m_startTime;
 
     AuthenticationChallenge m_currentWebChallenge;
-    ResourceHandle::FailureType m_scheduledFailureType { ResourceHandle::NoFailure };
     Timer m_failureTimer;
     RefPtr<SecurityOrigin> m_sourceOrigin;
+
+    int status { 0 };
+
+    uint16_t m_redirectCount { 0 };
+
+    ResourceHandle::FailureType m_scheduledFailureType { ResourceHandle::NoFailure };
+    ContentEncodingSniffingPolicy m_contentEncodingSniffingPolicy;
+
+    bool m_defersLoading;
+    bool m_shouldContentSniff;
+    bool m_failsTAOCheck { false };
+    bool m_hasCrossOriginRedirect { false };
+    bool m_isCrossOrigin { false };
     bool m_isMainFrameNavigation { false };
+#if PLATFORM(COCOA)
+    bool m_startWhenScheduled { false };
+#endif
 };
 
 } // namespace WebCore

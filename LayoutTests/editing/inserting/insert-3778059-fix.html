@@ -8,14 +8,15 @@
     font-size: 24px; 
 }
 </style>
-<script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
-
+<script src="../editing.js"></script>
+<script src="../../resources/dump-as-markup.js"></script>
 <script>
 
 function editingTest() {
     for (i = 0; i < 5; i++)
         moveSelectionForwardByCharacterCommand();
     typeCharacterCommand();
+    Markup.dump(root);
 }
 
 </script>

@@ -1,12 +1,12 @@
 {
   "scripts/egl_angle_ext.xml":
-    "9fbe802e21374f4c0bff6f7a68bb928c",
+    "bee532d3939bddbb2bb823645e2a5ab9",
   "scripts/generate_loader.py":
     "93c78a8d11323fa311fed5118fbcf083",
   "scripts/gl_angle_ext.xml":
-    "e42890bf014f4d4b7ebc07112bbb9764",
+    "796894fd74d141b88000669104a663ea",
   "scripts/registry_xml.py":
-    "3d4835d0da60f1d8b76a8ab14f791e31",
+    "8dc1bcf2e8324094c19c41613897b212",
   "src/libEGL/egl_loader_autogen.cpp":
     "8a743c210f7dbe7e306849203dff7889",
   "src/libEGL/egl_loader_autogen.h":
@@ -26,17 +26,17 @@
   "util/capture/trace_egl_loader_autogen.h":
     "b16a510534ee9ee49152fca12b97bd9a",
   "util/capture/trace_gles_loader_autogen.cpp":
-    "427d499d74fc82d2e352bf3ed7d2765a",
+    "84d1e3209568b054d535ef606cd7f1b1",
   "util/capture/trace_gles_loader_autogen.h":
-    "032981687c086ecee08a6d1480f14bf0",
+    "1ab2170486f56c8a0b989b23d9ff95ab",
   "util/egl_loader_autogen.cpp":
     "f98a6cfc104fc468efc90ae3789ddba5",
   "util/egl_loader_autogen.h":
     "84247f7f49720e169703fbeffc267023",
   "util/gles_loader_autogen.cpp":
-    "e1bf21c81f3f09a6288ae4ba7b985b46",
+    "92c84905065185a17350f45f14701b44",
   "util/gles_loader_autogen.h":
-    "bca27e4c2a89197f0464fe1d4640a0ce",
+    "7950f1ae7c39337c843d4f4a1237a4eb",
   "util/windows/wgl_loader_autogen.cpp":
     "373b062587eab8a163121255f54597dc",
   "util/windows/wgl_loader_autogen.h":

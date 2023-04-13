@@ -29,9 +29,7 @@
 #include "ContentfulPaintChecker.h"
 #include "Document.h"
 #include "Element.h"
-#include "Frame.h"
 #include "FrameSnapshotting.h"
-#include "FrameView.h"
 #include "HTMLCanvasElement.h"
 #include "HTMLIFrameElement.h"
 #include "HitTestRequest.h"
@@ -40,6 +38,8 @@
 #include "IntPoint.h"
 #include "IntRect.h"
 #include "IntSize.h"
+#include "LocalFrame.h"
+#include "LocalFrameView.h"
 #include "Logging.h"
 #include "Node.h"
 #include "Page.h"
@@ -169,11 +169,15 @@ std::optional<Color> PageColorSampler::sampleTop(Page& page)
         return Color();
     }
 
-    RefPtr mainDocument = page.mainFrame().document();
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(page.mainFrame());
+    if (!localMainFrame)
+        return std::nullopt;
+
+    RefPtr mainDocument = localMainFrame->document();
     if (!mainDocument)
         return std::nullopt;
 
-    RefPtr frameView = page.mainFrame().view();
+    RefPtr frameView = localMainFrame->view();
     if (!frameView)
         return std::nullopt;
 
@@ -267,11 +271,11 @@ std::optional<Color> PageColorSampler::sampleTop(Page& page)
     }
 
     if (!nonMatchingColorIndex)
-        return averageColor(Span { samples }.subspan<1, numSamples - 1>());
+        return averageColor(makeSpan(samples).subspan<1, numSamples - 1>());
     else if (nonMatchingColorIndex == numSamples - 1)
-        return averageColor(Span { samples }.subspan<0, numSamples - 1>());
+        return averageColor(makeSpan(samples).subspan<0, numSamples - 1>());
     else
-        return averageColor(Span { samples });
+        return averageColor(makeSpan(samples));
 }
 
 } // namespace WebCore

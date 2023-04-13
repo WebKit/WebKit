@@ -6,7 +6,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 PASS pc.signalingState is "stable"
 PASS pc.setLocalDescription(sessionDescription).then(finishIfSucceeded, requestFailed1); did not throw exception.
 PASS setLocalDescription failed.
-FAIL errorReason.name should be InvalidSessionDescriptionError. Was InvalidStateError.
+FAIL errorReason.name should be InvalidSessionDescriptionError. Was OperationError.
 FAIL pc.localDescription should throw an exception. Was null.
 FAIL pc.remoteDescription should throw an exception. Was null.
 PASS pc.signalingState is "stable"

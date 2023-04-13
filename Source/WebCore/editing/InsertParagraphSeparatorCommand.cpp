@@ -30,6 +30,7 @@
 #include "Editing.h"
 #include "EditingStyle.h"
 #include "ElementInlines.h"
+#include "ElementName.h"
 #include "HTMLBRElement.h"
 #include "HTMLFormElement.h"
 #include "HTMLNames.h"
@@ -146,6 +147,83 @@ Ref<Element> InsertParagraphSeparatorCommand::cloneHierarchyUnderNewBlock(const 
     return parent.releaseNonNull();
 }
 
+static bool isPhrasingContent(const Node* node)
+{
+    if (!node || !is<Element>(*node))
+        return false;
+
+    switch (downcast<Element>(*node).tagQName().elementName()) {
+    case ElementNames::HTML::a:
+    case ElementNames::HTML::abbr:
+    case ElementNames::HTML::area:
+    case ElementNames::HTML::audio:
+    case ElementNames::HTML::b:
+    case ElementNames::HTML::bdi:
+    case ElementNames::HTML::bdo:
+    case ElementNames::HTML::br:
+    case ElementNames::HTML::button:
+    case ElementNames::HTML::canvas:
+    case ElementNames::HTML::cite:
+    case ElementNames::HTML::code:
+    case ElementNames::HTML::data:
+    case ElementNames::HTML::datalist:
+    case ElementNames::HTML::del:
+    case ElementNames::HTML::dfn:
+    case ElementNames::HTML::em:
+    case ElementNames::HTML::embed:
+    case ElementNames::HTML::i:
+    case ElementNames::HTML::iframe:
+    case ElementNames::HTML::img:
+    case ElementNames::HTML::input:
+    case ElementNames::HTML::ins:
+    case ElementNames::HTML::kbd:
+    case ElementNames::HTML::label:
+    case ElementNames::HTML::link:
+    case ElementNames::HTML::map:
+    case ElementNames::HTML::mark:
+    case ElementNames::MathML::math:
+    case ElementNames::HTML::meta:
+    case ElementNames::HTML::meter:
+    case ElementNames::HTML::noscript:
+    case ElementNames::HTML::object:
+    case ElementNames::HTML::output:
+    case ElementNames::HTML::picture:
+    case ElementNames::HTML::progress:
+    case ElementNames::HTML::q:
+    case ElementNames::HTML::ruby:
+    case ElementNames::HTML::s:
+    case ElementNames::HTML::samp:
+    case ElementNames::HTML::script:
+    case ElementNames::HTML::select:
+    case ElementNames::HTML::slot:
+    case ElementNames::HTML::small_:
+    case ElementNames::HTML::span:
+    case ElementNames::HTML::strong:
+    case ElementNames::HTML::sub:
+    case ElementNames::HTML::sup:
+    case ElementNames::SVG::svg:
+    case ElementNames::HTML::template_:
+    case ElementNames::HTML::textarea:
+    case ElementNames::HTML::time:
+    case ElementNames::HTML::u:
+    case ElementNames::HTML::var:
+    case ElementNames::HTML::video:
+    case ElementNames::HTML::wbr:
+        return true;
+    default:
+        break;
+    }
+    return false;
+}
+
+static bool isEditableRootPhrasingContent(Position position)
+{
+    auto* editableRoot = highestEditableRoot(position);
+    if (!editableRoot)
+        return false;
+    return enclosingNodeOfType(firstPositionInOrBeforeNode(editableRoot), isPhrasingContent);
+}
+
 void InsertParagraphSeparatorCommand::doApply()
 {
     if (endingSelection().isNoneOrOrphaned())
@@ -167,6 +245,7 @@ void InsertParagraphSeparatorCommand::doApply()
     Position canonicalPos = VisiblePosition(insertionPosition).deepEquivalent();
     if (!startBlock
         || !startBlock->nonShadowBoundaryParentNode()
+        || isEditableRootPhrasingContent(insertionPosition)
         || isRenderedTable(startBlock.get())
         || isTableCell(startBlock.get())
         || is<HTMLFormElement>(*startBlock)

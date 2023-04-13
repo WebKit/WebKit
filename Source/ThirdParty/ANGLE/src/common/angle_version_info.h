@@ -14,7 +14,6 @@ int GetANGLERevision();
 const char *GetANGLEVersionString();
 const char *GetANGLECommitHash();
 int GetANGLECommitHashSize();
-bool GetANGLEHasBinaryLoading();
 const char *GetANGLEShaderProgramVersion();
 int GetANGLEShaderProgramVersionHashSize();
 int GetANGLESHVersion();

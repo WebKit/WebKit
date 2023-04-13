@@ -28,15 +28,25 @@
 G_BEGIN_DECLS
 
 #define WEBKIT_TYPE_EDITOR_STATE            (webkit_editor_state_get_type())
+#if !ENABLE(2022_GLIB_API)
 #define WEBKIT_EDITOR_STATE(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), WEBKIT_TYPE_EDITOR_STATE, WebKitEditorState))
 #define WEBKIT_IS_EDITOR_STATE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), WEBKIT_TYPE_EDITOR_STATE))
 #define WEBKIT_EDITOR_STATE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass),  WEBKIT_TYPE_EDITOR_STATE, WebKitEditorStateClass))
 #define WEBKIT_IS_EDITOR_STATE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass),  WEBKIT_TYPE_EDITOR_STATE))
 #define WEBKIT_EDITOR_STATE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj),  WEBKIT_TYPE_EDITOR_STATE, WebKitEditorStateClass))
 
-typedef struct _WebKitEditorState        WebKitEditorState;
-typedef struct _WebKitEditorStateClass   WebKitEditorStateClass;
-typedef struct _WebKitEditorStatePrivate WebKitEditorStatePrivate;
+struct _WebKitEditorStateClass {
+    GObjectClass parent_class;
+
+    /*< private >*/
+    void (*_webkit_reserved0) (void);
+    void (*_webkit_reserved1) (void);
+    void (*_webkit_reserved2) (void);
+    void (*_webkit_reserved3) (void);
+};
+#endif
+
+WEBKIT_DECLARE_FINAL_TYPE (WebKitEditorState, webkit_editor_state, WEBKIT, EDITOR_STATE, GObject)
 
 /**
  * WebKitEditorTypingAttributes:
@@ -58,26 +68,6 @@ typedef enum
     WEBKIT_EDITOR_TYPING_ATTRIBUTE_UNDERLINE      = 1 << 4,
     WEBKIT_EDITOR_TYPING_ATTRIBUTE_STRIKETHROUGH  = 1 << 5
 } WebKitEditorTypingAttributes;
-
-struct _WebKitEditorState {
-    GObject parent;
-
-    /*< private >*/
-    WebKitEditorStatePrivate *priv;
-};
-
-struct _WebKitEditorStateClass {
-    GObjectClass parent_class;
-
-    /*< private >*/
-    void (*_webkit_reserved0) (void);
-    void (*_webkit_reserved1) (void);
-    void (*_webkit_reserved2) (void);
-    void (*_webkit_reserved3) (void);
-};
-
-WEBKIT_API GType
-webkit_editor_state_get_type              (void);
 
 WEBKIT_API guint
 webkit_editor_state_get_typing_attributes (WebKitEditorState *editor_state);

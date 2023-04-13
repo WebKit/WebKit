@@ -45,7 +45,7 @@ namespace WebCore {
 // Base class for GraphicsContextGL contexts that use ANGLE.
 class WEBCORE_EXPORT GraphicsContextGLANGLE : public GraphicsContextGL {
 public:
-    virtual ~GraphicsContextGLANGLE();
+    ~GraphicsContextGLANGLE();
 
     GCGLDisplay platformDisplay() const;
     GCGLConfig platformConfig() const;
@@ -63,15 +63,6 @@ public:
     };
     static bool releaseThreadResources(ReleaseThreadResourceBehavior);
 
-    // Get an attribute location without checking the name -> mangledname mapping.
-    int getAttribLocationDirect(PlatformGLObject program, const String& name);
-
-    // Compile a shader without going through ANGLE.
-    void compileShaderDirect(PlatformGLObject);
-
-    // Equivalent to ::glTexImage2D(). Allows pixels==0 with no allocation.
-    void texImage2DDirect(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type, const void* pixels);
-
     // GraphicsContextGL overrides.
     bool isGLES2Compliant() const final;
     void activeTexture(GCGLenum texture) final;
@@ -87,8 +78,8 @@ public:
     void blendFunc(GCGLenum sfactor, GCGLenum dfactor) final;
     void blendFuncSeparate(GCGLenum srcRGB, GCGLenum dstRGB, GCGLenum srcAlpha, GCGLenum dstAlpha) final;
     void bufferData(GCGLenum target, GCGLsizeiptr, GCGLenum usage) final;
-    void bufferData(GCGLenum target, GCGLSpan<const GCGLvoid> data, GCGLenum usage) final;
-    void bufferSubData(GCGLenum target, GCGLintptr offset, GCGLSpan<const GCGLvoid> data) final;
+    void bufferData(GCGLenum target, Span<const uint8_t> data, GCGLenum usage) final;
+    void bufferSubData(GCGLenum target, GCGLintptr offset, Span<const uint8_t> data) final;
     GCGLenum checkFramebufferStatus(GCGLenum target) final;
     void clear(GCGLbitfield mask) final;
     void clearColor(GCGLclampf red, GCGLclampf green, GCGLclampf blue, GCGLclampf alpha) final;
@@ -121,13 +112,13 @@ public:
     bool getActiveUniformImpl(PlatformGLObject program, GCGLuint index, GraphicsContextGLActiveInfo&);
     void getAttachedShaders(PlatformGLObject program, GCGLsizei maxCount, GCGLsizei* count, PlatformGLObject* shaders);
     GCGLint getAttribLocation(PlatformGLObject, const String& name) final;
-    void getBooleanv(GCGLenum pname, GCGLSpan<GCGLboolean> value) final;
+    void getBooleanv(GCGLenum pname, Span<GCGLboolean> value) final;
     GCGLint getBufferParameteri(GCGLenum target, GCGLenum pname) final;
-    GCGLenum getError() final;
-    void getFloatv(GCGLenum pname, GCGLSpan<GCGLfloat> value) final;
+    GCGLErrorCodeSet getErrors() final;
+    void getFloatv(GCGLenum pname, Span<GCGLfloat> value) final;
     GCGLint getFramebufferAttachmentParameteri(GCGLenum target, GCGLenum attachment, GCGLenum pname) final;
-    void getIntegerv(GCGLenum pname, GCGLSpan<GCGLint> value) final;
-    void getIntegeri_v(GCGLenum pname, GCGLuint index, GCGLSpan<GCGLint, 4> value) final; // NOLINT
+    void getIntegerv(GCGLenum pname, Span<GCGLint> value) final;
+    void getIntegeri_v(GCGLenum pname, GCGLuint index, Span<GCGLint, 4> value) final; // NOLINT
     GCGLint64 getInteger64(GCGLenum pname) final;
     GCGLint64 getInteger64i(GCGLenum pname, GCGLuint index) final;
     GCGLint getProgrami(PlatformGLObject program, GCGLenum pname) final;
@@ -136,14 +127,14 @@ public:
     GCGLint getRenderbufferParameteri(GCGLenum target, GCGLenum pname) final;
     GCGLint getShaderi(PlatformGLObject, GCGLenum pname) final;
     String getShaderInfoLog(PlatformGLObject) final;
-    void getShaderPrecisionFormat(GCGLenum shaderType, GCGLenum precisionType, GCGLSpan<GCGLint, 2> range, GCGLint* precision) final;
+    void getShaderPrecisionFormat(GCGLenum shaderType, GCGLenum precisionType, Span<GCGLint, 2> range, GCGLint* precision) final;
     String getShaderSource(PlatformGLObject) final;
     String getString(GCGLenum name) final;
     GCGLfloat getTexParameterf(GCGLenum target, GCGLenum pname) final;
     GCGLint getTexParameteri(GCGLenum target, GCGLenum pname) final;
-    void getUniformfv(PlatformGLObject program, GCGLint location, GCGLSpan<GCGLfloat> value) final;
-    void getUniformiv(PlatformGLObject program, GCGLint location, GCGLSpan<GCGLint> value) final;
-    void getUniformuiv(PlatformGLObject program, GCGLint location, GCGLSpan<GCGLuint> value) final;
+    void getUniformfv(PlatformGLObject program, GCGLint location, Span<GCGLfloat> value) final;
+    void getUniformiv(PlatformGLObject program, GCGLint location, Span<GCGLint> value) final;
+    void getUniformuiv(PlatformGLObject program, GCGLint location, Span<GCGLuint> value) final;
     GCGLint getUniformLocation(PlatformGLObject, const String& name) final;
     GCGLsizeiptr getVertexAttribOffset(GCGLuint index, GCGLenum pname) final;
     void hint(GCGLenum target, GCGLenum mode) final;
@@ -158,7 +149,7 @@ public:
     void linkProgram(PlatformGLObject) final;
     void pixelStorei(GCGLenum pname, GCGLint param) final;
     void polygonOffset(GCGLfloat factor, GCGLfloat units) final;
-    void readnPixels(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, GCGLSpan<GCGLvoid> data) final;
+    void readnPixels(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, Span<uint8_t> data) final;
     void readnPixels(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, GCGLintptr offset) final;
     void renderbufferStorage(GCGLenum target, GCGLenum internalformat, GCGLsizei width, GCGLsizei height) final;
     void sampleCoverage(GCGLclampf value, GCGLboolean invert) final;
@@ -170,45 +161,45 @@ public:
     void stencilMaskSeparate(GCGLenum face, GCGLuint mask) final;
     void stencilOp(GCGLenum fail, GCGLenum zfail, GCGLenum zpass) final;
     void stencilOpSeparate(GCGLenum face, GCGLenum fail, GCGLenum zfail, GCGLenum zpass) final;
-    void texImage2D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type, GCGLSpan<const GCGLvoid> pixels) final;
+    void texImage2D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type, Span<const uint8_t> pixels) final;
     void texImage2D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type, GCGLintptr offset) final;
-    void texSubImage2D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, GCGLSpan<const GCGLvoid> pixels) final;
+    void texSubImage2D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, Span<const uint8_t> pixels) final;
     void texSubImage2D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, GCGLintptr offset) final;
-    void compressedTexImage2D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLsizei imageSize, GCGLSpan<const GCGLvoid> data) final;
+    void compressedTexImage2D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLsizei imageSize, Span<const uint8_t> data) final;
     void compressedTexImage2D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLsizei imageSize, GCGLintptr offset) final;
-    void compressedTexSubImage2D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLsizei imageSize, GCGLSpan<const GCGLvoid> data) final;
+    void compressedTexSubImage2D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLsizei imageSize, Span<const uint8_t> data) final;
     void compressedTexSubImage2D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLsizei imageSize, GCGLintptr offset) final;
     void texParameterf(GCGLenum target, GCGLenum pname, GCGLfloat param) final;
     void texParameteri(GCGLenum target, GCGLenum pname, GCGLint param) final;
     void uniform1f(GCGLint location, GCGLfloat x) final;
-    void uniform1fv(GCGLint location, GCGLSpan<const GCGLfloat> v) final;
+    void uniform1fv(GCGLint location, Span<const GCGLfloat> v) final;
     void uniform1i(GCGLint location, GCGLint x) final;
-    void uniform1iv(GCGLint location, GCGLSpan<const GCGLint> v) final;
+    void uniform1iv(GCGLint location, Span<const GCGLint> v) final;
     void uniform2f(GCGLint location, GCGLfloat x, GCGLfloat y) final;
-    void uniform2fv(GCGLint location, GCGLSpan<const GCGLfloat> v) final;
+    void uniform2fv(GCGLint location, Span<const GCGLfloat> v) final;
     void uniform2i(GCGLint location, GCGLint x, GCGLint y) final;
-    void uniform2iv(GCGLint location, GCGLSpan<const GCGLint> v) final;
+    void uniform2iv(GCGLint location, Span<const GCGLint> v) final;
     void uniform3f(GCGLint location, GCGLfloat x, GCGLfloat y, GCGLfloat z) final;
-    void uniform3fv(GCGLint location, GCGLSpan<const GCGLfloat> v) final;
+    void uniform3fv(GCGLint location, Span<const GCGLfloat> v) final;
     void uniform3i(GCGLint location, GCGLint x, GCGLint y, GCGLint z) final;
-    void uniform3iv(GCGLint location, GCGLSpan<const GCGLint> v) final;
+    void uniform3iv(GCGLint location, Span<const GCGLint> v) final;
     void uniform4f(GCGLint location, GCGLfloat x, GCGLfloat y, GCGLfloat z, GCGLfloat w) final;
-    void uniform4fv(GCGLint location, GCGLSpan<const GCGLfloat> v) final;
+    void uniform4fv(GCGLint location, Span<const GCGLfloat> v) final;
     void uniform4i(GCGLint location, GCGLint x, GCGLint y, GCGLint z, GCGLint w) final;
-    void uniform4iv(GCGLint location, GCGLSpan<const GCGLint> v) final;
-    void uniformMatrix2fv(GCGLint location, GCGLboolean transpose, GCGLSpan<const GCGLfloat> value) final;
-    void uniformMatrix3fv(GCGLint location, GCGLboolean transpose, GCGLSpan<const GCGLfloat> value) final;
-    void uniformMatrix4fv(GCGLint location, GCGLboolean transpose, GCGLSpan<const GCGLfloat> value) final;
+    void uniform4iv(GCGLint location, Span<const GCGLint> v) final;
+    void uniformMatrix2fv(GCGLint location, GCGLboolean transpose, Span<const GCGLfloat> value) final;
+    void uniformMatrix3fv(GCGLint location, GCGLboolean transpose, Span<const GCGLfloat> value) final;
+    void uniformMatrix4fv(GCGLint location, GCGLboolean transpose, Span<const GCGLfloat> value) final;
     void useProgram(PlatformGLObject) final;
     void validateProgram(PlatformGLObject) final;
     void vertexAttrib1f(GCGLuint index, GCGLfloat x) final;
-    void vertexAttrib1fv(GCGLuint index, GCGLSpan<const GCGLfloat, 1> values) final;
+    void vertexAttrib1fv(GCGLuint index, Span<const GCGLfloat, 1> values) final;
     void vertexAttrib2f(GCGLuint index, GCGLfloat x, GCGLfloat y) final;
-    void vertexAttrib2fv(GCGLuint index, GCGLSpan<const GCGLfloat, 2> values) final;
+    void vertexAttrib2fv(GCGLuint index, Span<const GCGLfloat, 2> values) final;
     void vertexAttrib3f(GCGLuint index, GCGLfloat x, GCGLfloat y, GCGLfloat z) final;
-    void vertexAttrib3fv(GCGLuint index, GCGLSpan<const GCGLfloat, 3> values) final;
+    void vertexAttrib3fv(GCGLuint index, Span<const GCGLfloat, 3> values) final;
     void vertexAttrib4f(GCGLuint index, GCGLfloat x, GCGLfloat y, GCGLfloat z, GCGLfloat w) final;
-    void vertexAttrib4fv(GCGLuint index, GCGLSpan<const GCGLfloat, 4> values) final;
+    void vertexAttrib4fv(GCGLuint index, Span<const GCGLfloat, 4> values) final;
     void vertexAttribPointer(GCGLuint index, GCGLint size, GCGLenum type, GCGLboolean normalized, GCGLsizei stride, GCGLintptr offset) final;
     void viewport(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height) final;
     void reshape(int width, int height) final;
@@ -220,57 +211,57 @@ public:
     GCGLboolean isVertexArray(PlatformGLObject) final;
     void bindVertexArray(PlatformGLObject) final;
     void copyBufferSubData(GCGLenum readTarget, GCGLenum writeTarget, GCGLintptr readOffset, GCGLintptr writeOffset, GCGLsizeiptr) final;
-    void getBufferSubData(GCGLenum target, GCGLintptr offset, GCGLSpan<GCGLvoid> data) final;
+    void getBufferSubData(GCGLenum target, GCGLintptr offset, Span<uint8_t> data) final;
     void blitFramebuffer(GCGLint srcX0, GCGLint srcY0, GCGLint srcX1, GCGLint srcY1, GCGLint dstX0, GCGLint dstY0, GCGLint dstX1, GCGLint dstY1, GCGLbitfield mask, GCGLenum filter) final;
     void framebufferTextureLayer(GCGLenum target, GCGLenum attachment, PlatformGLObject texture, GCGLint level, GCGLint layer) final;
-    void invalidateFramebuffer(GCGLenum target, GCGLSpan<const GCGLenum> attachments) final;
-    void invalidateSubFramebuffer(GCGLenum target, GCGLSpan<const GCGLenum> attachments, GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height) final;
+    void invalidateFramebuffer(GCGLenum target, Span<const GCGLenum> attachments) final;
+    void invalidateSubFramebuffer(GCGLenum target, Span<const GCGLenum> attachments, GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height) final;
     void readBuffer(GCGLenum src) final;
-    void getInternalformativ(GCGLenum target, GCGLenum internalformat, GCGLenum pname, GCGLSpan<GCGLint> data) final;
+    void getInternalformativ(GCGLenum target, GCGLenum internalformat, GCGLenum pname, Span<GCGLint> data) final;
     void renderbufferStorageMultisample(GCGLenum target, GCGLsizei samples, GCGLenum internalformat, GCGLsizei width, GCGLsizei height) final;
     void texStorage2D(GCGLenum target, GCGLsizei levels, GCGLenum internalformat, GCGLsizei width, GCGLsizei height) final;
     void texStorage3D(GCGLenum target, GCGLsizei levels, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLsizei depth) final;
-    void texImage3D(GCGLenum target, GCGLint level, GCGLint internalformat, GCGLsizei width, GCGLsizei height, GCGLsizei depth, GCGLint border, GCGLenum format, GCGLenum type, GCGLSpan<const GCGLvoid> pixels) final;
+    void texImage3D(GCGLenum target, GCGLint level, GCGLint internalformat, GCGLsizei width, GCGLsizei height, GCGLsizei depth, GCGLint border, GCGLenum format, GCGLenum type, Span<const uint8_t> pixels) final;
     void texImage3D(GCGLenum target, GCGLint level, GCGLint internalformat, GCGLsizei width, GCGLsizei height, GCGLsizei depth, GCGLint border, GCGLenum format, GCGLenum type, GCGLintptr offset) final;
-    void texSubImage3D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLint zoffset, GCGLsizei width, GCGLsizei height, GCGLsizei depth, GCGLenum format, GCGLenum type, GCGLSpan<const GCGLvoid> pixels) final;
+    void texSubImage3D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLint zoffset, GCGLsizei width, GCGLsizei height, GCGLsizei depth, GCGLenum format, GCGLenum type, Span<const uint8_t> pixels) final;
     void texSubImage3D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLint zoffset, GCGLsizei width, GCGLsizei height, GCGLsizei depth, GCGLenum format, GCGLenum type, GCGLintptr offset) final;
     void copyTexSubImage3D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLint zoffset, GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height) final;
-    void compressedTexImage3D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLsizei depth, GCGLint border, GCGLsizei imageSize, GCGLSpan<const GCGLvoid> data) final;
+    void compressedTexImage3D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLsizei depth, GCGLint border, GCGLsizei imageSize, Span<const uint8_t> data) final;
     void compressedTexImage3D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLsizei depth, GCGLint border, GCGLsizei imageSize, GCGLintptr offset) final;
-    void compressedTexSubImage3D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLint zoffset, GCGLsizei width, GCGLsizei height, GCGLsizei depth, GCGLenum format, GCGLsizei imageSize, GCGLSpan<const GCGLvoid> data) final;
+    void compressedTexSubImage3D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLint zoffset, GCGLsizei width, GCGLsizei height, GCGLsizei depth, GCGLenum format, GCGLsizei imageSize, Span<const uint8_t> data) final;
     void compressedTexSubImage3D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLint zoffset, GCGLsizei width, GCGLsizei height, GCGLsizei depth, GCGLenum format, GCGLsizei imageSize, GCGLintptr offset) final;
     GCGLint getFragDataLocation(PlatformGLObject program, const String& name) final;
     void uniform1ui(GCGLint location, GCGLuint v0) final;
     void uniform2ui(GCGLint location, GCGLuint v0, GCGLuint v1) final;
     void uniform3ui(GCGLint location, GCGLuint v0, GCGLuint v1, GCGLuint v2) final;
     void uniform4ui(GCGLint location, GCGLuint v0, GCGLuint v1, GCGLuint v2, GCGLuint v3) final;
-    void uniform1uiv(GCGLint location, GCGLSpan<const GCGLuint>) final;
-    void uniform2uiv(GCGLint location, GCGLSpan<const GCGLuint>) final;
-    void uniform3uiv(GCGLint location, GCGLSpan<const GCGLuint>) final;
-    void uniform4uiv(GCGLint location, GCGLSpan<const GCGLuint>) final;
-    void uniformMatrix2x3fv(GCGLint location, GCGLboolean transpose, GCGLSpan<const GCGLfloat> data) final;
-    void uniformMatrix3x2fv(GCGLint location, GCGLboolean transpose, GCGLSpan<const GCGLfloat> data) final;
-    void uniformMatrix2x4fv(GCGLint location, GCGLboolean transpose, GCGLSpan<const GCGLfloat> data) final;
-    void uniformMatrix4x2fv(GCGLint location, GCGLboolean transpose, GCGLSpan<const GCGLfloat> data) final;
-    void uniformMatrix3x4fv(GCGLint location, GCGLboolean transpose, GCGLSpan<const GCGLfloat> data) final;
-    void uniformMatrix4x3fv(GCGLint location, GCGLboolean transpose, GCGLSpan<const GCGLfloat> data) final;
+    void uniform1uiv(GCGLint location, Span<const GCGLuint>) final;
+    void uniform2uiv(GCGLint location, Span<const GCGLuint>) final;
+    void uniform3uiv(GCGLint location, Span<const GCGLuint>) final;
+    void uniform4uiv(GCGLint location, Span<const GCGLuint>) final;
+    void uniformMatrix2x3fv(GCGLint location, GCGLboolean transpose, Span<const GCGLfloat> data) final;
+    void uniformMatrix3x2fv(GCGLint location, GCGLboolean transpose, Span<const GCGLfloat> data) final;
+    void uniformMatrix2x4fv(GCGLint location, GCGLboolean transpose, Span<const GCGLfloat> data) final;
+    void uniformMatrix4x2fv(GCGLint location, GCGLboolean transpose, Span<const GCGLfloat> data) final;
+    void uniformMatrix3x4fv(GCGLint location, GCGLboolean transpose, Span<const GCGLfloat> data) final;
+    void uniformMatrix4x3fv(GCGLint location, GCGLboolean transpose, Span<const GCGLfloat> data) final;
     void vertexAttribI4i(GCGLuint index, GCGLint x, GCGLint y, GCGLint z, GCGLint w) final;
-    void vertexAttribI4iv(GCGLuint index, GCGLSpan<const GCGLint, 4> values) final;
+    void vertexAttribI4iv(GCGLuint index, Span<const GCGLint, 4> values) final;
     void vertexAttribI4ui(GCGLuint index, GCGLuint x, GCGLuint y, GCGLuint z, GCGLuint w) final;
-    void vertexAttribI4uiv(GCGLuint index, GCGLSpan<const GCGLuint, 4> values) final;
+    void vertexAttribI4uiv(GCGLuint index, Span<const GCGLuint, 4> values) final;
     void vertexAttribIPointer(GCGLuint index, GCGLint size, GCGLenum type, GCGLsizei stride, GCGLintptr offset) final;
     void drawRangeElements(GCGLenum mode, GCGLuint start, GCGLuint end, GCGLsizei count, GCGLenum type, GCGLintptr offset) final;
-    void drawBuffers(GCGLSpan<const GCGLenum> bufs) final;
-    void clearBufferiv(GCGLenum buffer, GCGLint drawbuffer, GCGLSpan<const GCGLint> values) final;
-    void clearBufferuiv(GCGLenum buffer, GCGLint drawbuffer, GCGLSpan<const GCGLuint> values) final;
-    void clearBufferfv(GCGLenum buffer, GCGLint drawbuffer, GCGLSpan<const GCGLfloat> values) final;
+    void drawBuffers(Span<const GCGLenum> bufs) final;
+    void clearBufferiv(GCGLenum buffer, GCGLint drawbuffer, Span<const GCGLint> values) final;
+    void clearBufferuiv(GCGLenum buffer, GCGLint drawbuffer, Span<const GCGLuint> values) final;
+    void clearBufferfv(GCGLenum buffer, GCGLint drawbuffer, Span<const GCGLfloat> values) final;
     void clearBufferfi(GCGLenum buffer, GCGLint drawbuffer, GCGLfloat depth, GCGLint stencil) final;
     PlatformGLObject createQuery() final;
     void deleteQuery(PlatformGLObject query) final;
     GCGLboolean isQuery(PlatformGLObject query) final;
     void beginQuery(GCGLenum target, PlatformGLObject query) final;
     void endQuery(GCGLenum target) final;
-    PlatformGLObject getQuery(GCGLenum target, GCGLenum pname) final;
+    GCGLint getQuery(GCGLenum target, GCGLenum pname) final;
     GCGLuint getQueryObjectui(PlatformGLObject query, GCGLenum pname) final;
     PlatformGLObject createSampler() final;
     void deleteSampler(PlatformGLObject sampler) final;
@@ -303,7 +294,7 @@ public:
     GCGLuint getUniformBlockIndex(PlatformGLObject program, const String& uniformBlockName) final;
     String getActiveUniformBlockName(PlatformGLObject program, GCGLuint uniformBlockIndex) final;
     void uniformBlockBinding(PlatformGLObject program, GCGLuint uniformBlockIndex, GCGLuint uniformBlockBinding) final;
-    void getActiveUniformBlockiv(GCGLuint program, GCGLuint uniformBlockIndex, GCGLenum pname, GCGLSpan<GCGLint> params) final;
+    void getActiveUniformBlockiv(GCGLuint program, GCGLuint uniformBlockIndex, GCGLenum pname, Span<GCGLint> params) final;
     void multiDrawArraysANGLE(GCGLenum mode, GCGLSpanTuple<const GCGLint, const GCGLsizei> firstsAndCounts) final;
     void multiDrawArraysInstancedANGLE(GCGLenum mode, GCGLSpanTuple<const GCGLint, const GCGLsizei, const GCGLsizei> firstsCountsAndInstanceCounts) final;
     void multiDrawElementsANGLE(GCGLenum mode, GCGLSpanTuple<const GCGLsizei, const GCGLsizei> countsAndOffsets, GCGLenum type) final;
@@ -311,8 +302,18 @@ public:
     bool supportsExtension(const String&) override;
     void ensureExtensionEnabled(const String&) override;
     bool isExtensionEnabled(const String&) override;
-    void drawBuffersEXT(GCGLSpan<const GCGLenum>) override;
+    void drawBuffersEXT(Span<const GCGLenum>) override;
     String getTranslatedShaderSourceANGLE(PlatformGLObject) override;
+    PlatformGLObject createQueryEXT() final;
+    void deleteQueryEXT(PlatformGLObject query) final;
+    GCGLboolean isQueryEXT(PlatformGLObject query) final;
+    void beginQueryEXT(GCGLenum target, PlatformGLObject query) final;
+    void endQueryEXT(GCGLenum target) final;
+    void queryCounterEXT(PlatformGLObject query, GCGLenum target) final;
+    GCGLint getQueryiEXT(GCGLenum target, GCGLenum pname) final;
+    GCGLint getQueryObjectiEXT(PlatformGLObject query, GCGLenum pname) final;
+    GCGLuint64 getQueryObjectui64EXT(PlatformGLObject query, GCGLenum pname) final;
+    GCGLint64 getInteger64EXT(GCGLenum pname) final;
     void enableiOES(GCGLenum target, GCGLuint index) final;
     void disableiOES(GCGLenum target, GCGLuint index) final;
     void blendEquationiOES(GCGLuint buf, GCGLenum mode) final;
@@ -325,6 +326,7 @@ public:
     void multiDrawArraysInstancedBaseInstanceANGLE(GCGLenum mode, GCGLSpanTuple<const GCGLint, const GCGLsizei, const GCGLsizei, const GCGLuint> firstsCountsInstanceCountsAndBaseInstances) final;
     void multiDrawElementsInstancedBaseVertexBaseInstanceANGLE(GCGLenum mode, GCGLSpanTuple<const GCGLsizei, const GCGLsizei, const GCGLsizei, const GCGLint, const GCGLuint> countsOffsetsInstanceCountsBaseVerticesAndBaseInstances, GCGLenum type) final;
     void provokingVertexANGLE(GCGLenum provokeMode) final;
+    void polygonOffsetClampEXT(GCGLfloat factor, GCGLfloat units, GCGLfloat clamp) final;
 
     PlatformGLObject createBuffer() final;
     PlatformGLObject createFramebuffer() final;
@@ -338,19 +340,25 @@ public:
     void deleteRenderbuffer(PlatformGLObject) final;
     void deleteShader(PlatformGLObject) final;
     void deleteTexture(PlatformGLObject) final;
-    void synthesizeGLError(GCGLenum error) final;
-    bool moveErrorsToSyntheticErrorList() final;
     void simulateEventForTesting(SimulatedEventForTesting) override;
-    void paintRenderingResultsToCanvas(ImageBuffer&) final;
-    RefPtr<PixelBuffer> paintRenderingResultsToPixelBuffer() final;
-    void paintCompositedResultsToCanvas(ImageBuffer&) final;
+    void paintRenderingResultsToCanvas(ImageBuffer&) override;
+    RefPtr<PixelBuffer> paintRenderingResultsToPixelBuffer() override;
+    void paintCompositedResultsToCanvas(ImageBuffer&) override;
 
     RefPtr<PixelBuffer> readRenderingResultsForPainting();
     RefPtr<PixelBuffer> readCompositedResultsForPainting();
+
+    virtual void withDrawingBufferAsNativeImage(std::function<void(NativeImage&)>);
+    virtual void withDisplayBufferAsNativeImage(std::function<void(NativeImage&)>);
+
     // Returns true on success.
-    bool readnPixelsWithStatus(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, GCGLSpan<GCGLvoid> data);
+    bool readnPixelsWithStatus(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, Span<uint8_t> data);
+
+    void addError(GCGLErrorCode);
 protected:
     GraphicsContextGLANGLE(GraphicsContextGLAttributes);
+
+    bool updateErrors();
 
     // Called once by all the public entry points that eventually call OpenGL.
     bool makeContextCurrent() WARN_UNUSED_RETURN;
@@ -371,7 +379,7 @@ protected:
     void validateDepthStencil(ASCIILiteral packedDepthStencilExtension);
     void validateAttributes();
 
-    bool readnPixelsImpl(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, GCGLsizei bufSize, GCGLsizei* length, GCGLsizei* columns, GCGLsizei* rows, GCGLvoid* data, bool readingToPixelBufferObject);
+    bool readnPixelsImpl(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, GCGLsizei bufSize, GCGLsizei* length, GCGLsizei* columns, GCGLsizei* rows, uint8_t* data, bool readingToPixelBufferObject);
 
     // Did the most recent drawing operation leave the GPU in an acceptable state?
     void checkGPUStatus();
@@ -392,7 +400,6 @@ protected:
     // Returns false if context should be lost due to timeout.
     bool waitAndUpdateOldestFrame() WARN_UNUSED_RETURN;
 
-    // Platform specific behavior for releaseResources();
     static void platformReleaseThreadResources();
 
     virtual void invalidateKnownTextureContent(GCGLuint);
@@ -419,10 +426,8 @@ protected:
     GCGLuint m_preserveDrawingBufferFBO { 0 };
     // Queried at display startup.
     GCGLint m_drawingBufferTextureTarget { -1 };
-    // Errors raised by synthesizeGLError().
-    ListHashSet<GCGLenum> m_syntheticErrors;
+    GCGLErrorCodeSet m_errors;
     bool m_isForWebGL2 { false };
-    unsigned m_statusCheckCount { 0 };
     bool m_failNextStatusCheck { false };
     bool m_useFenceSyncForDisplayRateLimit = false;
     static constexpr size_t maxPendingFrames = 3;
@@ -445,6 +450,16 @@ protected:
 #endif
 };
 
+
+inline GCGLDisplay GraphicsContextGLANGLE::platformDisplay() const 
+{
+    return m_displayObj; 
+}
+
+inline GCGLConfig GraphicsContextGLANGLE::platformConfig() const
+{
+    return m_configObj;
+}
 }
 
 #endif

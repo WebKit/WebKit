@@ -86,22 +86,12 @@ VisibleSelection VisibleSelection::selectionFromContentsOfNode(Node* node)
     return VisibleSelection(VisiblePosition { firstPositionInNode(node) }, VisiblePosition { lastPositionInNode(node) });
 }
 
-Position VisibleSelection::anchor() const
-{
-    return m_anchor;
-}
-
-Position VisibleSelection::focus() const
-{
-    return m_focus;
-}
-
-Position VisibleSelection::uncanonicalizedStart() const
+const Position& VisibleSelection::uncanonicalizedStart() const
 {
     return m_anchorIsFirst ? m_anchor : m_focus;
 }
 
-Position VisibleSelection::uncanonicalizedEnd() const
+const Position& VisibleSelection::uncanonicalizedEnd() const
 {
     return m_anchorIsFirst ? m_focus : m_anchor;
 }
@@ -152,17 +142,20 @@ bool VisibleSelection::isOrphan() const
 
 RefPtr<Document> VisibleSelection::document() const
 {
-    RefPtr baseDocument { m_base.document() };
-    if (!baseDocument)
+    RefPtr document { m_base.document() };
+    if (!document) {
+        document = m_anchor.document();
+        if (!document || !document->settings().liveRangeSelectionEnabled())
+            return nullptr;
+    }
+
+    if (m_extent.document() != document.get() || m_start.document() != document.get() || m_end.document() != document.get())
         return nullptr;
 
-    if (m_extent.document() != baseDocument.get() || m_start.document() != baseDocument.get() || m_end.document() != baseDocument.get())
+    if (document->settings().liveRangeSelectionEnabled() && (m_anchor.document() != document.get() || m_focus.document() != document.get()))
         return nullptr;
 
-    if (baseDocument->settings().liveRangeSelectionEnabled() && (m_anchor.document() != baseDocument.get() || m_focus.document() != baseDocument.get()))
-        return nullptr;
-
-    return baseDocument;
+    return document;
 }
 
 std::optional<SimpleRange> VisibleSelection::firstRange() const

@@ -6,7 +6,8 @@ API validation test for compute pass
 Does **not** test usage scopes (resource_usages/) or programmable pass stuff (programmable_pass).
 `;
 import { makeTestGroup } from '../../../../../common/framework/test_group.js';
-import { kLimitInfo } from '../../../../capability_info.js';
+import { kBufferUsages, kLimitInfo } from '../../../../capability_info.js';
+import { GPUConst } from '../../../../constants.js';
 import { kResourceStates } from '../../../../gpu_test.js';
 import { ValidationTest } from '../../validation_test.js';
 
@@ -31,7 +32,7 @@ class F extends ValidationTest {
 
     this.device.pushErrorScope('validation');
     const buffer = this.device.createBuffer(descriptor);
-    this.device.popErrorScope();
+    void this.device.popErrorScope();
 
     if (state === 'valid') {
       this.queue.writeBuffer(buffer, 0, data);
@@ -66,21 +67,19 @@ setPipeline should generate an error iff using an 'invalid' pipeline.
 g.test('pipeline,device_mismatch')
   .desc('Tests setPipeline cannot be called with a compute pipeline created from another device')
   .paramsSubcasesOnly(u => u.combine('mismatched', [true, false]))
-  .fn(async t => {
+  .beforeAllSubcases(t => {
+    t.selectMismatchedDeviceOrSkipTestCase(undefined);
+  })
+  .fn(t => {
     const { mismatched } = t.params;
+    const sourceDevice = mismatched ? t.mismatchedDevice : t.device;
 
-    if (mismatched) {
-      await t.selectMismatchedDeviceOrSkipTestCase(undefined);
-    }
-
-    const device = mismatched ? t.mismatchedDevice : t.device;
-
-    const pipeline = device.createComputePipeline({
+    const pipeline = sourceDevice.createComputePipeline({
+      layout: 'auto',
       compute: {
-        module: device.createShaderModule({
-          code: '@stage(compute) @workgroup_size(1) fn main() {}',
+        module: sourceDevice.createShaderModule({
+          code: '@compute @workgroup_size(1) fn main() {}',
         }),
-
         entryPoint: 'main',
       },
     });
@@ -123,9 +122,12 @@ g.test('dispatch_sizes')
     encoder.setPipeline(pipeline);
     if (dispatchType === 'direct') {
       const [x, y, z] = workSizes;
-      encoder.dispatch(x, y, z);
+      encoder.dispatchWorkgroups(x, y, z);
     } else if (dispatchType === 'indirect') {
-      encoder.dispatchIndirect(t.createIndirectBuffer('valid', new Uint32Array(workSizes)), 0);
+      encoder.dispatchWorkgroupsIndirect(
+        t.createIndirectBuffer('valid', new Uint32Array(workSizes)),
+        0
+      );
     }
 
     const shouldError =
@@ -139,8 +141,8 @@ const kBufferData = new Uint32Array(6).fill(1);
 g.test('indirect_dispatch_buffer_state')
   .desc(
     `
-Test dispatchIndirect validation by submitting various dispatches with a no-op pipeline and an
-indirectBuffer with 6 elements.
+Test dispatchWorkgroupsIndirect validation by submitting various dispatches with a no-op pipeline
+and an indirectBuffer with 6 elements.
 - indirectBuffer: {'valid', 'invalid', 'destroyed'}
 - indirectOffset:
   - valid, within the buffer: {beginning, middle, end} of the buffer
@@ -169,7 +171,7 @@ indirectBuffer with 6 elements.
 
     const { encoder, validateFinishAndSubmit } = t.createEncoder('compute pass');
     encoder.setPipeline(pipeline);
-    encoder.dispatchIndirect(buffer, offset);
+    encoder.dispatchWorkgroupsIndirect(buffer, offset);
 
     const finishShouldError =
       state === 'invalid' ||
@@ -180,29 +182,70 @@ indirectBuffer with 6 elements.
 
 g.test('indirect_dispatch_buffer,device_mismatch')
   .desc(
-    'Tests dispatchIndirect cannot be called with an indirect buffer created from another device'
+    `Tests dispatchWorkgroupsIndirect cannot be called with an indirect buffer created from another device`
   )
   .paramsSubcasesOnly(u => u.combine('mismatched', [true, false]))
-  .fn(async t => {
+  .beforeAllSubcases(t => {
+    t.selectMismatchedDeviceOrSkipTestCase(undefined);
+  })
+  .fn(t => {
     const { mismatched } = t.params;
-
-    if (mismatched) {
-      await t.selectMismatchedDeviceOrSkipTestCase(undefined);
-    }
 
     const pipeline = t.createNoOpComputePipeline();
 
-    const device = mismatched ? t.mismatchedDevice : t.device;
+    const sourceDevice = mismatched ? t.mismatchedDevice : t.device;
 
-    const buffer = device.createBuffer({
+    const buffer = sourceDevice.createBuffer({
       size: 16,
       usage: GPUBufferUsage.INDIRECT,
     });
-
     t.trackForCleanup(buffer);
 
     const { encoder, validateFinish } = t.createEncoder('compute pass');
     encoder.setPipeline(pipeline);
-    encoder.dispatchIndirect(buffer, 0);
+    encoder.dispatchWorkgroupsIndirect(buffer, 0);
     validateFinish(!mismatched);
+  });
+
+g.test('indirect_dispatch_buffer,usage')
+  .desc(
+    `
+    Tests dispatchWorkgroupsIndirect generates a validation error if the buffer usage does not
+    contain INDIRECT usage.
+  `
+  )
+  .paramsSubcasesOnly(u =>
+    u
+      // If bufferUsage0 and bufferUsage1 are the same, the usage being test is a single usage.
+      // Otherwise, it's a combined usage.
+      .combine('bufferUsage0', kBufferUsages)
+      .combine('bufferUsage1', kBufferUsages)
+      .unless(
+        ({ bufferUsage0, bufferUsage1 }) =>
+          ((bufferUsage0 | bufferUsage1) &
+            (GPUConst.BufferUsage.MAP_READ | GPUConst.BufferUsage.MAP_WRITE)) !==
+          0
+      )
+  )
+  .fn(t => {
+    const { bufferUsage0, bufferUsage1 } = t.params;
+
+    const bufferUsage = bufferUsage0 | bufferUsage1;
+
+    const layout = t.device.createPipelineLayout({ bindGroupLayouts: [] });
+    const pipeline = t.createNoOpComputePipeline(layout);
+
+    const buffer = t.device.createBuffer({
+      size: 16,
+      usage: bufferUsage,
+    });
+    t.trackForCleanup(buffer);
+
+    const success = (GPUBufferUsage.INDIRECT & bufferUsage) !== 0;
+
+    const { encoder, validateFinish } = t.createEncoder('compute pass');
+    encoder.setPipeline(pipeline);
+
+    encoder.dispatchWorkgroupsIndirect(buffer, 0);
+    validateFinish(success);
   });

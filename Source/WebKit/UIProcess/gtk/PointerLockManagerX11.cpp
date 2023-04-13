@@ -31,6 +31,7 @@
 #include "WebPageProxy.h"
 #include <X11/Xlib.h>
 #include <gtk/gtk.h>
+#include <wtf/glib/GRefPtr.h>
 
 #if USE(GTK4)
 #include <gdk/x11/gdkx.h>

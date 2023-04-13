@@ -121,7 +121,7 @@ ExceptionOr<Node*> DOMPatchSupport::patchNode(Node& node, const String& markup)
     // FIXME: This code should use one of createFragment* in markup.h
     auto fragment = DocumentFragment::create(m_document);
     if (m_document.isHTMLDocument())
-        fragment->parseHTML(markup, node.parentElement() ? node.parentElement() : m_document.documentElement());
+        fragment->parseHTML(markup, node.parentElement() ? *node.parentElement() : *m_document.documentElement());
     else
         fragment->parseXML(markup, node.parentElement() ? node.parentElement() : m_document.documentElement());
 

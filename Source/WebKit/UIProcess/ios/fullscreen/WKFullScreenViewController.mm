@@ -36,6 +36,7 @@
 #import "WKWebViewIOS.h"
 #import "WebFullScreenManagerProxy.h"
 #import "WebPageProxy.h"
+#import "WebPreferences.h"
 #import <WebCore/LocalizedStrings.h>
 #import <pal/spi/cocoa/AVKitSPI.h>
 #import <wtf/RetainPtr.h>
@@ -152,7 +153,7 @@ private:
     CGFloat _nonZeroStatusBarHeight;
     std::optional<UIInterfaceOrientationMask> _supportedOrientations;
 #if HAVE(UIKIT_WEBKIT_INTERNALS)
-    BOOL m_shouldHideMediaControls;
+    BOOL m_shouldHideCancelAndPIPButtons;
 #endif
 }
 
@@ -177,7 +178,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     _playbackClient.setParent(self);
     _valid = YES;
 #if HAVE(UIKIT_WEBKIT_INTERNALS)
-    m_shouldHideMediaControls = NO;
+    m_shouldHideCancelAndPIPButtons = NO;
 #endif
 
     return self;
@@ -321,8 +322,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         isPiPEnabled = page->preferences().pictureInPictureAPIEnabled() && page->preferences().allowsPictureInPictureMediaPlayback();
     bool isPiPSupported = playbackSessionModel && playbackSessionModel->isPictureInPictureSupported();
 #if HAVE(UIKIT_WEBKIT_INTERNALS)
-    [_cancelButton setHidden:m_shouldHideMediaControls];
-    isPiPEnabled = !m_shouldHideMediaControls && isPiPEnabled;
+    [_cancelButton setHidden:m_shouldHideCancelAndPIPButtons];
+    isPiPEnabled = !m_shouldHideCancelAndPIPButtons && isPiPEnabled;
 #endif
     [_pipButton setHidden:!isPiPEnabled || !isPiPSupported];
 }
@@ -336,12 +337,12 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 #if HAVE(UIKIT_WEBKIT_INTERNALS)
-- (void)hideMediaControls:(BOOL)hidden
+- (void)hideCancelAndPIPButtons:(BOOL)hidden
 {
-    if (m_shouldHideMediaControls == hidden)
+    if (m_shouldHideCancelAndPIPButtons == hidden)
         return;
 
-    m_shouldHideMediaControls = hidden;
+    m_shouldHideCancelAndPIPButtons = hidden;
     [self videoControlsManagerDidChange];
 }
 #endif // HAVE(UIKIT_WEBKIT_INTERNALS)
@@ -437,8 +438,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (alternateFullScreenControlDesignEnabled) {
         buttonSize = CGSizeMake(38.0, 38.0);
         doneImage = [UIImage systemImageNamed:@"arrow.down.right.and.arrow.up.left"];
-        startPiPImage = [UIImage systemImageNamed:@"pip.enter"];
-        stopPiPImage = [UIImage systemImageNamed:@"pip.exit"];
+        startPiPImage = nil;
+        stopPiPImage = nil;
     } else {
         buttonSize = CGSizeMake(60.0, 47.0);
         NSBundle *bundle = [NSBundle bundleForClass:self.class];
@@ -467,35 +468,30 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     [_cancelButton sizeToFit];
     [_cancelButton addTarget:self action:@selector(_cancelAction:) forControlEvents:UIControlEventTouchUpInside];
 
-    _pipButton = [_WKExtrinsicButton buttonWithType:UIButtonTypeSystem];
-    [_pipButton setTranslatesAutoresizingMaskIntoConstraints:NO];
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    [_pipButton setAdjustsImageWhenHighlighted:NO];
-    ALLOW_DEPRECATED_DECLARATIONS_END
-    [_pipButton setExtrinsicContentSize:buttonSize];
-    
-    [_pipButton setImage:[startPiPImage imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
-    [_pipButton setImage:[stopPiPImage imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateSelected];
-    [_pipButton setTintColor:[UIColor whiteColor]];
-    [_pipButton sizeToFit];
-    [_pipButton addTarget:self action:@selector(_togglePiPAction:) forControlEvents:UIControlEventTouchUpInside];
-
     if (alternateFullScreenControlDesignEnabled) {
         UIButtonConfiguration *cancelButtonConfiguration = [UIButtonConfiguration filledButtonConfiguration];
         // FIXME: this color specification should not be necessary.
         cancelButtonConfiguration.baseBackgroundColor = [UIColor colorWithWhite:1.0 alpha:0.15];
         [_cancelButton setConfiguration:cancelButtonConfiguration];
         
-        UIButtonConfiguration *pipButtonConfiguration = [UIButtonConfiguration filledButtonConfiguration];
-        // FIXME: this color specification should not be necessary.
-        pipButtonConfiguration.baseBackgroundColor = [UIColor colorWithWhite:1.0 alpha:0.15];
-        [_pipButton setConfiguration:pipButtonConfiguration];
-        
         _stackView = adoptNS([[UIStackView alloc] init]);
         [_stackView addArrangedSubview:_cancelButton.get()];
         [_stackView addArrangedSubview:_pipButton.get()];
         [_stackView setSpacing:24.0];
     } else {
+        _pipButton = [_WKExtrinsicButton buttonWithType:UIButtonTypeSystem];
+        [_pipButton setTranslatesAutoresizingMaskIntoConstraints:NO];
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+        [_pipButton setAdjustsImageWhenHighlighted:NO];
+        ALLOW_DEPRECATED_DECLARATIONS_END
+        [_pipButton setExtrinsicContentSize:buttonSize];
+        
+        [_pipButton setImage:[startPiPImage imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
+        [_pipButton setImage:[stopPiPImage imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateSelected];
+        [_pipButton setTintColor:[UIColor whiteColor]];
+        [_pipButton sizeToFit];
+        [_pipButton addTarget:self action:@selector(_togglePiPAction:) forControlEvents:UIControlEventTouchUpInside];
+        
         RetainPtr<WKFullscreenStackView> stackView = adoptNS([[WKFullscreenStackView alloc] init]);
         [stackView addArrangedSubview:_cancelButton.get() applyingMaterialStyle:AVBackgroundViewMaterialStyleSecondary tintEffectStyle:AVBackgroundViewTintEffectStyleSecondary];
         [stackView addArrangedSubview:_pipButton.get() applyingMaterialStyle:AVBackgroundViewMaterialStylePrimary tintEffectStyle:AVBackgroundViewTintEffectStyleSecondary];

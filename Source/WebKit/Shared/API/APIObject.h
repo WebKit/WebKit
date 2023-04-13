@@ -34,6 +34,7 @@
 #include "WKFoundation.h"
 #ifdef __OBJC__
 #include "WKObject.h"
+#include <wtf/RetainPtr.h>
 #endif
 #endif
 
@@ -247,6 +248,9 @@ public:
     static API::Object* unwrap(void*);
 
 #if PLATFORM(COCOA) && defined(__OBJC__)
+    RetainPtr<NSObject<NSSecureCoding>> toNSObject();
+    static RefPtr<API::Object> fromNSObject(NSObject<NSSecureCoding> *);
+
     static API::Object& fromWKObjectExtraSpace(id <WKObject>);
 #endif
 

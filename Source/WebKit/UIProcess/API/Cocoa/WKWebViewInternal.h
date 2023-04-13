@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,7 +43,9 @@
 #import "WKContentViewInteraction.h"
 #import "WKFullScreenWindowControllerIOS.h"
 #import <WebCore/FloatRect.h>
+#import <WebCore/IntDegrees.h>
 #import <WebCore/LengthBox.h>
+#import <WebCore/PlatformLayerIdentifier.h>
 #import <WebCore/ViewportArguments.h>
 #endif
 
@@ -161,7 +163,8 @@ struct PerWebProcessState {
     BOOL viewportMetaTagCameFromImageDocument { NO };
 
     std::optional<WebCore::FloatSize> lastSentViewLayoutSize;
-    std::optional<int32_t> lastSentDeviceOrientation;
+    std::optional<WebCore::IntDegrees> lastSentDeviceOrientation;
+    std::optional<WebCore::IntDegrees> lastSentOrientationForMediaCapture;
     std::optional<CGFloat> lastSentMinimumEffectiveDeviceWidth;
 
     std::optional<CGRect> frozenVisibleContentRect;
@@ -172,8 +175,8 @@ struct PerWebProcessState {
 
     std::optional<WebKit::TransactionID> firstTransactionIDAfterPageRestore;
 
-    WebCore::GraphicsLayer::PlatformLayerID pendingFindLayerID;
-    WebCore::GraphicsLayer::PlatformLayerID committedFindLayerID;
+    WebCore::PlatformLayerIdentifier pendingFindLayerID;
+    WebCore::PlatformLayerIdentifier committedFindLayerID;
 
     std::optional<LiveResizeParameters> liveResizeParameters;
 };
@@ -260,7 +263,7 @@ struct PerWebProcessState {
     WebKit::DynamicViewportSizeUpdateID _currentDynamicViewportSizeUpdateID;
     CATransform3D _resizeAnimationTransformAdjustments;
     CGFloat _animatedResizeOldMinimumEffectiveDeviceWidth;
-    int32_t _animatedResizeOldOrientation;
+    WebCore::IntDegrees _animatedResizeOldOrientation;
     UIEdgeInsets _animatedResizeOldObscuredInsets;
     RetainPtr<UIView> _resizeAnimationView;
     CGFloat _lastAdjustmentForScroller;

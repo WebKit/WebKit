@@ -77,7 +77,7 @@ function loadComplete() {
 /**
 * 
 	Invoke lookupNamespaceURI on a new Attribute node with with a namespace URI
-	and prefix and verify if the namespaceURI returned is null.
+	and prefix and verify if the namespaceURI returned is correct.
 
 * @author IBM
 * @author Neil Delima
@@ -101,7 +101,7 @@ function nodelookupnamespaceuri16() {
       attr = doc.createAttributeNS("http://www.w3.org/XML/1998/namespace","xml:lang");
       attNode = elem.setAttributeNodeNS(attr);
       namespaceURI = attr.lookupNamespaceURI("xml");
-      assertNull("nodelookupnamespaceuri16",namespaceURI);
+      assertEquals("nodelookupnamespaceuri16","http://www.w3.org/XML/1998/namespace",namespaceURI);
     
 }
 

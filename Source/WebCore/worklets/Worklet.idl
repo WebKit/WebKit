@@ -26,7 +26,6 @@
 [
     ActiveDOMObject,
     Exposed=Window,
-    Global=Worklet,
     SkipVTableValidation
 ] interface Worklet {
     Promise<undefined> addModule(USVString moduleURL, optional WorkletOptions options);

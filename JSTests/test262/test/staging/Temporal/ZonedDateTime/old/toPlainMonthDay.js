@@ -23,6 +23,7 @@ var fakeGregorian = {
   monthCode(date) { return date.withCalendar("iso8601").monthCode; },
   day(date) { return date.withCalendar("iso8601").day; },
   toString() { return "gregory"; },
+  fields(fieldNames) { return fieldNames; },
 };
 var zdt = Temporal.Instant.from("2019-10-29T09:46:38.271986102Z").toZonedDateTime({
   timeZone: tz,

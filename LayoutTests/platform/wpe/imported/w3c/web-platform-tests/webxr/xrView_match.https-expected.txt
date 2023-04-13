@@ -1,4 +1,0 @@
-
-PASS XRFrame contains the expected views - webgl
-PASS XRFrame contains the expected views - webgl2
-

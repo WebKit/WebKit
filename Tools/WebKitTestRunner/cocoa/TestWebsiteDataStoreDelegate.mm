@@ -36,17 +36,29 @@
 - (instancetype)init
 {
     _shouldAllowRaisingQuota = false;
+    _shouldAllowBackgroundFetchPermission = false;
+    _quota = 40 * KB;
     return self;
 }
 
-- (void)requestStorageSpace:(NSURL *)mainFrameURL frameOrigin:(NSURL *)frameURL quota:(NSUInteger)quota currentSize:(NSUInteger)currentSize spaceRequired:(NSUInteger)spaceRequired decisionHandler:(void (^)(unsigned long long))decisionHandler
+- (void)requestStorageSpace:(NSURL *)mainFrameURL frameOrigin:(NSURL *)frameURL quota:(NSUInteger)currentQuota currentSize:(NSUInteger)currentSize spaceRequired:(NSUInteger)spaceRequired decisionHandler:(void (^)(unsigned long long))decisionHandler
 {
-    decisionHandler(_shouldAllowRaisingQuota ? quota + currentSize + spaceRequired : quota);
+    auto totalSpaceRequired = currentSize + spaceRequired;
+    if (_shouldAllowRaisingQuota || totalSpaceRequired <= _quota)
+        return decisionHandler(totalSpaceRequired);
+    
+    // Deny request by not changing quota.
+    decisionHandler(currentQuota);
 }
 
 - (void)setAllowRaisingQuota:(BOOL)shouldAllowRaisingQuota
 {
     _shouldAllowRaisingQuota = shouldAllowRaisingQuota;
+}
+
+- (void)setQuota:(NSUInteger)quota
+{
+    _quota = quota;
 }
 
 - (void)didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition disposition, NSURLCredential * _Nullable credential))completionHandler
@@ -71,11 +83,51 @@
 {
     auto* newView = WTR::TestController::singleton().createOtherPlatformWebView(nullptr, nullptr, nullptr, nullptr);
     WKWebView *webView = newView->platformView();
-
+    
     ASSERT(webView.configuration.websiteDataStore == dataStore);
-
+    
     [webView loadRequest:[NSURLRequest requestWithURL:url]];
     completionHandler(webView);
+}
+
+- (void)setBackgroundFetchPermission:(BOOL)shouldAllowBackgroundFetchPermission
+{
+    _shouldAllowBackgroundFetchPermission = shouldAllowBackgroundFetchPermission;
+}
+
+- (void)websiteDataStore:(WKWebsiteDataStore *)dataStore reportServiceWorkerConsoleMessage:(NSString *)message
+{
+    WTR::TestController::singleton().receivedServiceWorkerConsoleMessage(message);
+}
+
+- (void)requestBackgroundFetchPermission:(NSURL *)mainFrameURL frameOrigin:(NSURL *)frameURL  decisionHandler:(void (^)(bool isGranted))decisionHandler
+{
+    decisionHandler(_shouldAllowBackgroundFetchPermission);
+}
+
+- (void)notifyBackgroundFetchChange:(NSString *)backgroundFetchIdentifier change:(WKBackgroundFetchChange)change
+{
+    if (change == WKBackgroundFetchChangeAddition) {
+        _lastAddedBackgroundFetchIdentifier = backgroundFetchIdentifier;
+        return;
+    }
+    if (change == WKBackgroundFetchChangeRemoval) {
+        _lastRemovedBackgroundFetchIdentifier = backgroundFetchIdentifier;
+        return;
+    }
+    _lastUpdatedBackgroundFetchIdentifier = backgroundFetchIdentifier;
+}
+
+- (NSString*)lastAddedBackgroundFetchIdentifier {
+    return _lastAddedBackgroundFetchIdentifier.get();
+}
+
+- (NSString*)lastRemovedBackgroundFetchIdentifier {
+    return _lastRemovedBackgroundFetchIdentifier.get();
+}
+
+- (NSString*)lastUpdatedBackgroundFetchIdentifier {
+    return _lastUpdatedBackgroundFetchIdentifier.get();
 }
 
 @end

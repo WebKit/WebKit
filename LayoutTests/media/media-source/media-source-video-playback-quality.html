@@ -51,6 +51,8 @@
             makeASample(0, 0, 1, 1, 1, SAMPLE_FLAG.SYNC),
             makeASample(1, 1, 1, 1, 1, SAMPLE_FLAG.CORRUPTED),
             makeASample(2, 2, 1, 1, 1, SAMPLE_FLAG.DROPPED),
+            makeASample(2, 2, 1, 1, 1, SAMPLE_FLAG.SYNC),
+            makeASample(3, 3, 1, 1, 1, SAMPLE_FLAG.NONE),
             makeASample(4, 4, 1, 1, 1, SAMPLE_FLAG.DELAYED),
             makeASample(5, 5, 1, 1, 1, SAMPLE_FLAG.DELAYED),
             makeASample(6, 6, 1, 1, 1, SAMPLE_FLAG.DELAYED),
@@ -60,10 +62,18 @@
         run('sourceBuffer.appendBuffer(samples)');
     }
 
-    function samplesAdded()
+    async function samplesAdded()
+    {
+        run('source.endOfStream()');
+        run('video.play()');
+        await waitFor(video, 'ended');
+        setTimeout(videoEnded, 50); // VideoPlaybackQuality is refreshed every 0.25s, wait a bit.
+    }
+
+    function videoEnded()
     {
         run('quality = video.getVideoPlaybackQuality()');
-        testExpected('quality.totalVideoFrames', 8);
+        testExpected('quality.totalVideoFrames', 9);
         testExpected('quality.corruptedVideoFrames', 1);
         testExpected('quality.droppedVideoFrames', 2);
         testExpected('quality.totalFrameDelay', 3);

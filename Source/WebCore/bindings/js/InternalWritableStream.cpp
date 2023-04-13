@@ -29,6 +29,7 @@
 #include "Exception.h"
 #include "WebCoreJSClientData.h"
 #include <JavaScriptCore/JSArrayBufferViewInlines.h>
+#include <JavaScriptCore/JSObjectInlines.h>
 
 namespace WebCore {
 

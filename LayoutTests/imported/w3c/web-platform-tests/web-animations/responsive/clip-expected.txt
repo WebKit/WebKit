@@ -1,4 +1,4 @@
 
-FAIL clip responsive to inherited clip changes assert_equals: expected "rect(10px, 20px, 330px, 340px)" but got "rect(10px, 20px, 30px, 40px)"
-FAIL clip responsive to inherited clip changes from auto assert_equals: expected "rect(310px, 320px, 30px, auto)" but got "auto"
+PASS clip responsive to inherited clip changes
+PASS clip responsive to inherited clip changes from auto
 

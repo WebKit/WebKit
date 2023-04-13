@@ -36,12 +36,12 @@
 #include "DragData.h"
 #include "Editor.h"
 #include "FileList.h"
-#include "Frame.h"
 #include "FrameDestructionObserverInlines.h"
 #include "FrameLoader.h"
 #include "HTMLImageElement.h"
 #include "HTMLParserIdioms.h"
 #include "Image.h"
+#include "LocalFrame.h"
 #include "Page.h"
 #include "PagePasteboardContext.h"
 #include "Pasteboard.h"
@@ -153,17 +153,21 @@ void DataTransfer::clearData(const String& type)
         m_itemList->didClearStringData(normalizedType);
 }
 
-static String readURLsFromPasteboardAsString(Pasteboard& pasteboard, Function<bool(const String&)>&& shouldIncludeURL)
+static String readURLsFromPasteboardAsString(Page* page, Pasteboard& pasteboard, Function<bool(const String&)>&& shouldIncludeURL)
 {
     StringBuilder urlList;
-    for (const auto& urlString : pasteboard.readAllStrings("text/uri-list"_s)) {
-        if (!shouldIncludeURL(urlString))
-            continue;
-        if (!urlList.isEmpty())
-            urlList.append(newlineCharacter);
-        urlList.append(urlString);
+    auto urlStrings = pasteboard.readAllStrings("text/uri-list"_s);
+    if (page) {
+        urlStrings = urlStrings.map([&](auto& string) {
+            return page->sanitizeLookalikeCharacters(string, LookalikeCharacterSanitizationTrigger::Paste);
+        });
     }
-    return urlList.toString();
+
+    urlStrings.removeAllMatching([&](auto& string) {
+        return !shouldIncludeURL(string);
+    });
+
+    return makeStringByJoining(urlStrings, "\n"_s);
 }
 
 String DataTransfer::getDataForItem(Document& document, const String& type) const
@@ -174,7 +178,7 @@ String DataTransfer::getDataForItem(Document& document, const String& type) cons
     auto lowercaseType = stripLeadingAndTrailingHTMLSpaces(type).convertToASCIILowercase();
     if (shouldSuppressGetAndSetDataToAvoidExposingFilePaths()) {
         if (lowercaseType == "text/uri-list"_s) {
-            return readURLsFromPasteboardAsString(*m_pasteboard, [] (auto& urlString) {
+            return readURLsFromPasteboardAsString(document.page(), *m_pasteboard, [] (auto& urlString) {
                 return Pasteboard::canExposeURLToDOMWhenPasteboardContainsFiles(urlString);
             });
         }
@@ -217,12 +221,16 @@ String DataTransfer::readStringFromPasteboard(Document& document, const String& 
     }
 
     if (!is<StaticPasteboard>(*m_pasteboard) && lowercaseType == "text/uri-list"_s) {
-        return readURLsFromPasteboardAsString(*m_pasteboard, [] (auto&) {
+        return readURLsFromPasteboardAsString(document.page(), *m_pasteboard, [] (auto&) {
             return true;
         });
     }
 
-    return m_pasteboard->readString(lowercaseType);
+    auto string = m_pasteboard->readString(lowercaseType);
+    if (auto* page = document.page())
+        return page->sanitizeLookalikeCharacters(string, LookalikeCharacterSanitizationTrigger::Paste);
+
+    return string;
 }
 
 String DataTransfer::getData(Document& document, const String& type) const
@@ -578,10 +586,10 @@ DragImageRef DataTransfer::createDragImage(IntPoint& location) const
     location = m_dragLocation;
 
     if (m_dragImage)
-        return createDragImageFromImage(m_dragImage->image(), ImageOrientation::None);
+        return createDragImageFromImage(m_dragImage->image(), ImageOrientation::Orientation::None);
 
     if (m_dragImageElement) {
-        if (Frame* frame = m_dragImageElement->document().frame())
+        if (auto* frame = m_dragImageElement->document().frame())
             return createDragImageForNode(*frame, *m_dragImageElement);
     }
 

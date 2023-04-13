@@ -250,7 +250,7 @@ void ComplexTextController::collectComplexTextRunsForCharacters(const UChar* cp,
         origins.reserveCapacity(glyphs.size());
 
         for (unsigned k = 0; k < glyphs.size(); k++) {
-            const float cLogicalScale = font->platformData().useGDI() ? 1 : 32;
+            const float cLogicalScale = cWindowsFontScaleFactor;
             float advance = advances[k] / cLogicalScale;
             float offsetX = offsets[k].du / cLogicalScale;
             float offsetY = offsets[k].dv / cLogicalScale;

@@ -21,6 +21,8 @@
 #include "config.h"
 #include "HTMLOptionsCollection.h"
 
+#include "CachedHTMLCollectionInlines.h"
+#include "HTMLOptionsCollectionInlines.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -57,9 +59,29 @@ void HTMLOptionsCollection::setSelectedIndex(int index)
     selectElement().setSelectedIndex(index);
 }
 
+unsigned HTMLOptionsCollection::length() const
+{
+    return Base::length();
+}
+
 ExceptionOr<void> HTMLOptionsCollection::setLength(unsigned length)
 {
     return selectElement().setLength(length);
+}
+
+HTMLOptionElement* HTMLOptionsCollection::item(unsigned offset) const
+{
+    return downcast<HTMLOptionElement>(Base::item(offset));
+}
+
+HTMLOptionElement* HTMLOptionsCollection::namedItem(const AtomString& name) const
+{
+    return downcast<HTMLOptionElement>(Base::namedItem(name));
+}
+
+ExceptionOr<void> HTMLOptionsCollection::setItem(unsigned index, HTMLOptionElement* optionElement)
+{
+    return selectElement().setItem(index, optionElement);
 }
 
 } //namespace

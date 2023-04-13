@@ -25,7 +25,7 @@
 #include "config.h"
 #include "HTMLFieldSetElement.h"
 
-#include "ElementIterator.h"
+#include "ElementChildIteratorInlines.h"
 #include "GenericCachedHTMLCollection.h"
 #include "HTMLFormControlsCollection.h"
 #include "HTMLLegendElement.h"
@@ -35,6 +35,7 @@
 #include "PseudoClassChangeInvalidation.h"
 #include "RenderElement.h"
 #include "ScriptDisallowedScope.h"
+#include "TypedElementDescendantIteratorInlines.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/StdLibExtras.h>
 
@@ -82,11 +83,13 @@ static void updateFromControlElementsAncestorDisabledStateUnder(HTMLElement& sta
     }
 }
 
-void HTMLFieldSetElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void HTMLFieldSetElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
-    HTMLFormControlElement::parseAttribute(name, value);
+    bool oldHasDisabledAttribute = hasDisabledAttribute();
 
-    if (name == disabledAttr) {
+    HTMLFormControlElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
+
+    if (hasDisabledAttribute() != oldHasDisabledAttribute) {
         if (hasDisabledAttribute())
             document().addDisabledFieldsetElement();
         else

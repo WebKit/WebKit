@@ -33,17 +33,11 @@ class UpdateDescriptorSetsBuilder;
 //
 // The set/binding assignment is done as following:
 //
-// - Set 0 contains the ANGLE driver uniforms at binding 0.  Note that driver uniforms are updated
-//   only under rare circumstances, such as viewport or depth range change.  However, there is only
-//   one binding in this set.  This set is placed before Set 1 containing transform feedback
-//   buffers, so that switching between xfb and non-xfb programs doesn't require rebinding this set.
-//   Otherwise, as the layout of Set 1 changes (due to addition and removal of xfb buffers), and all
-//   subsequent sets need to be rebound (due to Vulkan pipeline layout validation rules), we would
-//   have needed to invalidateGraphicsDriverUniforms().
-// - Set 1 contains uniform blocks created to encompass default uniforms.  1 binding is used per
+// - Set 0 contains uniform blocks created to encompass default uniforms.  1 binding is used per
 //   pipeline stage.  Additionally, transform feedback buffers are bound from binding 2 and up.
-// - Set 2 contains all textures (including texture buffers).
-// - Set 3 contains all other shader resources, such as uniform and storage blocks, atomic counter
+//   For internal shaders, set 0 is used for all the needed resources.
+// - Set 1 contains all textures (including texture buffers).
+// - Set 2 contains all other shader resources, such as uniform and storage blocks, atomic counter
 //   buffers, images and image buffers.
 
 enum class DescriptorSetIndex : uint32_t
@@ -61,7 +55,6 @@ namespace vk
 {
 class BufferHelper;
 class DynamicDescriptorPool;
-class ImageHelper;
 class SamplerHelper;
 enum class ImageLayout;
 class PipelineCacheAccess;
@@ -91,19 +84,21 @@ using RefCountedSamplerYcbcrConversion = RefCounted<SamplerYcbcrConversion>;
 // Enable struct padding warnings for the code below since it is used in caches.
 ANGLE_ENABLE_STRUCT_PADDING_WARNINGS
 
-enum ResourceAccess
+enum class ResourceAccess
 {
-    Unused,
-    ReadOnly,
-    Write,
+    Unused    = 0x0,
+    ReadOnly  = 0x1,
+    WriteOnly = 0x2,
+    ReadWrite = ReadOnly | WriteOnly,
 };
 
 inline void UpdateAccess(ResourceAccess *oldAccess, ResourceAccess newAccess)
 {
-    if (newAccess > *oldAccess)
-    {
-        *oldAccess = newAccess;
-    }
+    *oldAccess = static_cast<ResourceAccess>(ToUnderlying(newAccess) | ToUnderlying(*oldAccess));
+}
+inline bool HasResourceWriteAccess(ResourceAccess access)
+{
+    return (ToUnderlying(access) & ToUnderlying(ResourceAccess::WriteOnly)) != 0;
 }
 
 enum class RenderPassLoadOp
@@ -727,6 +722,8 @@ class GraphicsPipelineDesc final
                            angle::FormatID format,
                            bool compressed,
                            GLuint relativeOffset);
+    void setVertexShaderComponentTypes(gl::AttributesMask activeAttribLocations,
+                                       gl::ComponentTypeMask componentTypeMask);
     void updateVertexShaderComponentTypes(GraphicsPipelineTransitionBits *transition,
                                           gl::AttributesMask activeAttribLocations,
                                           gl::ComponentTypeMask componentTypeMask);
@@ -1516,9 +1513,10 @@ struct DescriptorInfoDesc
     uint32_t imageViewSerialOrOffset;
     uint32_t imageLayoutOrRange;  // Packed VkImageLayout
     uint32_t imageSubresourceRange;
+    uint32_t binding;  // TODO(anglebug.com/7974): Could be made implicit?
 };
 
-static_assert(sizeof(DescriptorInfoDesc) == 16, "Size mismatch");
+static_assert(sizeof(DescriptorInfoDesc) == 20, "Size mismatch");
 
 // Generic description of a descriptor set. Used as a key when indexing descriptor set caches. The
 // key storage is an angle:FixedVector. Beyond a certain fixed size we'll end up using heap memory
@@ -1759,7 +1757,9 @@ class DescriptorSetDescBuilder final
 };
 
 // Specialized update for textures.
-void UpdatePreCacheActiveTextures(const std::vector<gl::SamplerBinding> &samplerBindings,
+void UpdatePreCacheActiveTextures(const gl::ProgramExecutable &executable,
+                                  const ProgramExecutableVk &executableVk,
+                                  const std::vector<gl::SamplerBinding> &samplerBindings,
                                   const gl::ActiveTextureMask &activeTextures,
                                   const gl::ActiveTextureArray<TextureVk *> &textures,
                                   const gl::SamplerBindingVector &samplers,
@@ -2557,12 +2557,8 @@ class DescriptorSetCache final : angle::NonCopyable
     angle::HashMap<vk::DescriptorSetDesc, std::unique_ptr<dsCacheEntry>> mPayload;
 };
 
-// Only 1 driver uniform binding is used.
-constexpr uint32_t kReservedDriverUniformBindingCount = 1;
-// There is 1 default uniform binding used per stage.  Currently, a maximum of three stages are
-// supported.
+// There is 1 default uniform binding used per stage.
 constexpr uint32_t kReservedPerStageDefaultUniformBindingCount = 1;
-constexpr uint32_t kReservedDefaultUniformBindingCount         = 3;
 }  // namespace rx
 
 #endif  // LIBANGLE_RENDERER_VULKAN_VK_CACHE_UTILS_H_

@@ -26,7 +26,7 @@
 #import "config.h"
 #import "RemoteObjectRegistry.h"
 
-#import "MessageSender.h"
+#import "MessageSenderInlines.h"
 #import "RemoteObjectInvocation.h"
 #import "RemoteObjectRegistryMessages.h"
 #import "UserData.h"

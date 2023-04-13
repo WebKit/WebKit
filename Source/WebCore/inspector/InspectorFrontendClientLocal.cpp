@@ -37,13 +37,13 @@
 #include "Document.h"
 #include "ExceptionDetails.h"
 #include "FloatRect.h"
-#include "Frame.h"
 #include "FrameLoadRequest.h"
 #include "FrameLoader.h"
-#include "FrameView.h"
 #include "InspectorController.h"
 #include "InspectorFrontendHost.h"
 #include "InspectorPageAgent.h"
+#include "LocalFrame.h"
+#include "LocalFrameView.h"
 #include "Logging.h"
 #include "Page.h"
 #include "ScriptController.h"
@@ -55,6 +55,7 @@
 #include <JavaScriptCore/FrameTracers.h>
 #include <JavaScriptCore/InspectorBackendDispatchers.h>
 #include <wtf/Deque.h>
+#include <wtf/RunLoop.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringToIntegerConversion.h>
 
@@ -231,8 +232,9 @@ bool InspectorFrontendClientLocal::canAttachWindow()
         return true;
 
     // Don't allow the attach if the window would be too small to accommodate the minimum inspector size.
-    unsigned inspectedPageHeight = m_inspectedPageController->inspectedPage().mainFrame().view()->visibleHeight();
-    unsigned inspectedPageWidth = m_inspectedPageController->inspectedPage().mainFrame().view()->visibleWidth();
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_inspectedPageController->inspectedPage().mainFrame());
+    unsigned inspectedPageHeight = localMainFrame ? localMainFrame->view()->visibleHeight() : 0;
+    unsigned inspectedPageWidth = localMainFrame ? localMainFrame->view()->visibleWidth() : 0;
     unsigned maximumAttachedHeight = inspectedPageHeight * maximumAttachedHeightRatio;
     return minimumAttachedHeight <= maximumAttachedHeight && minimumAttachedWidth <= inspectedPageWidth;
 }
@@ -244,7 +246,11 @@ void InspectorFrontendClientLocal::setDockingUnavailable(bool unavailable)
 
 void InspectorFrontendClientLocal::changeAttachedWindowHeight(unsigned height)
 {
-    unsigned totalHeight = m_frontendPage->mainFrame().view()->visibleHeight() + m_inspectedPageController->inspectedPage().mainFrame().view()->visibleHeight();
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_frontendPage->mainFrame());
+    if (!localMainFrame)
+        return;
+    auto* otherMainFrame = dynamicDowncast<LocalFrame>(m_inspectedPageController->inspectedPage().mainFrame());
+    unsigned totalHeight = localMainFrame->view()->visibleHeight() + (otherMainFrame ? otherMainFrame->view()->visibleHeight() : 0);
     unsigned attachedHeight = constrainedAttachedWindowHeight(height, totalHeight);
     m_settings->setProperty(inspectorAttachedHeightSetting, String::number(attachedHeight));
     setAttachedWindowHeight(attachedHeight);
@@ -252,7 +258,11 @@ void InspectorFrontendClientLocal::changeAttachedWindowHeight(unsigned height)
 
 void InspectorFrontendClientLocal::changeAttachedWindowWidth(unsigned width)
 {
-    unsigned totalWidth = m_frontendPage->mainFrame().view()->visibleWidth() + m_inspectedPageController->inspectedPage().mainFrame().view()->visibleWidth();
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_frontendPage->mainFrame());
+    if (!localMainFrame)
+        return;
+    auto* otherMainFrame = dynamicDowncast<LocalFrame>(m_inspectedPageController->inspectedPage().mainFrame());
+    unsigned totalWidth = localMainFrame->view()->visibleWidth() + (otherMainFrame ? localMainFrame->view()->visibleWidth() : 0);
     unsigned attachedWidth = constrainedAttachedWindowWidth(width, totalWidth);
     setAttachedWindowWidth(attachedWidth);
 }
@@ -264,7 +274,10 @@ void InspectorFrontendClientLocal::changeSheetRect(const FloatRect& rect)
 
 void InspectorFrontendClientLocal::openURLExternally(const String& url)
 {
-    Frame& mainFrame = m_inspectedPageController->inspectedPage().mainFrame();
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_inspectedPageController->inspectedPage().mainFrame());
+    if (!localMainFrame)
+        return;
+    LocalFrame& mainFrame = *localMainFrame;
 
     UserGestureIndicator indicator { ProcessingUserGesture, mainFrame.document() };
 
@@ -317,7 +330,8 @@ void InspectorFrontendClientLocal::setAttachedWindow(DockSide dockSide)
 
 void InspectorFrontendClientLocal::restoreAttachedWindowHeight()
 {
-    unsigned inspectedPageHeight = m_inspectedPageController->inspectedPage().mainFrame().view()->visibleHeight();
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_inspectedPageController->inspectedPage().mainFrame());
+    unsigned inspectedPageHeight = localMainFrame ? localMainFrame->view()->visibleHeight() : 0;
     String value = m_settings->getProperty(inspectorAttachedHeightSetting);
     unsigned preferredHeight = value.isEmpty() ? defaultAttachedHeight : parseIntegerAllowingTrailingJunk<unsigned>(value).value_or(0);
 
@@ -386,7 +400,7 @@ void InspectorFrontendClientLocal::showResources()
     m_frontendAPIDispatcher->dispatchCommandWithResultAsync("showResources"_s);
 }
 
-void InspectorFrontendClientLocal::showMainResourceForFrame(Frame* frame)
+void InspectorFrontendClientLocal::showMainResourceForFrame(LocalFrame* frame)
 {
     String frameId = m_inspectedPageController->ensurePageAgent().frameId(frame);
     m_frontendAPIDispatcher->dispatchCommandWithResultAsync("showMainResourceForFrame"_s, { JSON::Value::create(frameId) });

@@ -4,13 +4,13 @@ layer at (0,0) size 800x102
   RenderBlock {HTML} at (0,0) size 800x102
     RenderBody {BODY} at (8,16) size 784x78
       RenderBlock {P} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 216x19
-          text run at (0,0) width 216: "The following two lines should look "
-        RenderInline {EM} at (0,0) size 93x19
-          RenderText {#text} at (216,0) size 93x19
-            text run at (216,0) width 93: "approximately"
-        RenderText {#text} at (309,0) size 60x19
-          text run at (309,0) width 60: " the same:"
+        RenderText {#text} at (0,0) size 233x19
+          text run at (0,0) width 233: "The following two lines should look "
+        RenderInline {EM} at (0,0) size 91x19
+          RenderText {#text} at (233,0) size 91x19
+            text run at (233,0) width 91: "approximately"
+        RenderText {#text} at (324,0) size 63x19
+          text run at (324,0) width 63: " the same:"
       RenderBlock {DIV} at (0,36) size 784x20
         RenderInline {SPAN} at (0,0) size 9x19
           RenderInline (generated) at (0,0) size 9x19

@@ -1,3 +1,3 @@
 
-PASS @counter-style image symbols are not exposed
+FAIL @counter-style image symbols are not exposed assert_equals: Should've been able to parse @counter-style. expected 1 but got 0
 

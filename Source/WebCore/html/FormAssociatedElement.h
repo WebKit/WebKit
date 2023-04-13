@@ -20,7 +20,6 @@
 
 #pragma once
 
-#include "ElementInlines.h"
 #include "HTMLFormElement.h"
 
 namespace WebCore {
@@ -40,7 +39,7 @@ public:
 
     HTMLFormElement* form() const { return m_form.get(); }
 
-    virtual void setForm(HTMLFormElement*);
+    void setForm(RefPtr<HTMLFormElement>&&);
     virtual void elementInsertedIntoAncestor(Element&, Node::InsertionType);
     virtual void elementRemovedFromAncestor(Element&, Node::RemovalType);
 
@@ -50,7 +49,7 @@ protected:
     explicit FormAssociatedElement(HTMLFormElement*);
 
     virtual void resetFormOwner() = 0;
-    virtual void setFormInternal(HTMLFormElement*);
+    virtual void setFormInternal(RefPtr<HTMLFormElement>&&);
 
 private:
     virtual void refFormAssociatedElement() const = 0;
@@ -60,45 +59,10 @@ private:
     WeakPtr<HTMLFormElement, WeakPtrImplWithEventTargetData> m_formSetByParser;
 };
 
-inline FormAssociatedElement::FormAssociatedElement(HTMLFormElement* form)
-    : m_formSetByParser(form)
+inline void FormAssociatedElement::setForm(RefPtr<HTMLFormElement>&& newForm)
 {
-}
-
-inline void FormAssociatedElement::setForm(HTMLFormElement* newForm)
-{
-    if (m_form != newForm)
-        setFormInternal(newForm);
-}
-
-inline void FormAssociatedElement::setFormInternal(HTMLFormElement* newForm)
-{
-    ASSERT(m_form != newForm);
-    m_form = newForm;
-}
-
-inline void FormAssociatedElement::elementInsertedIntoAncestor(Element& element, Node::InsertionType)
-{
-    ASSERT(&asHTMLElement() == &element);
-    if (m_formSetByParser) {
-        // The form could have been removed by a script during parsing.
-        if (m_formSetByParser->isConnected())
-            setForm(m_formSetByParser.get());
-        m_formSetByParser = nullptr;
-    }
-
-    if (m_form && element.rootElement() != m_form->rootElement())
-        setForm(nullptr);
-}
-
-inline void FormAssociatedElement::elementRemovedFromAncestor(Element& element, Node::RemovalType)
-{
-    ASSERT(&asHTMLElement() == &element);
-    // Do not rely on rootNode() because m_form's IsInTreeScope can be outdated.
-    if (m_form && &element.traverseToRootNode() != &m_form->traverseToRootNode()) {
-        setForm(nullptr);
-        resetFormOwner();
-    }
+    if (m_form.get() != newForm)
+        setFormInternal(WTFMove(newForm));
 }
 
 } // namespace WebCore

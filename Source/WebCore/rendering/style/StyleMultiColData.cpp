@@ -26,6 +26,8 @@
 
 namespace WebCore {
 
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleMultiColData);
+
 StyleMultiColData::StyleMultiColData()
     : count(RenderStyle::initialColumnCount())
     , autoWidth(true)

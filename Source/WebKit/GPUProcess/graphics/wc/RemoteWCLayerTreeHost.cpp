@@ -38,6 +38,20 @@
 
 namespace WebKit {
 
+static IPC::StreamConnectionWorkQueue& remoteGraphicsStreamWorkQueue()
+{
+#if ENABLE(WEBGL)
+    return remoteGraphicsContextGLStreamWorkQueue();
+#else
+    static LazyNeverDestroyed<IPC::StreamConnectionWorkQueue> instance;
+    static std::once_flag onceKey;
+    std::call_once(onceKey, [&] {
+        instance.construct("RemoteWCLayerTreeHost work queue"); // LazyNeverDestroyed owns the initial ref.
+    });
+    return instance.get();
+#endif
+}
+
 std::unique_ptr<RemoteWCLayerTreeHost> RemoteWCLayerTreeHost::create(GPUConnectionToWebProcess& connectionToWebProcess, WebKit::WCLayerTreeHostIdentifier identifier, uint64_t nativeWindow, bool usesOffscreenRendering)
 {
     return makeUnique<RemoteWCLayerTreeHost>(connectionToWebProcess, identifier, nativeWindow, usesOffscreenRendering);
@@ -51,7 +65,8 @@ RemoteWCLayerTreeHost::RemoteWCLayerTreeHost(GPUConnectionToWebProcess& connecti
 {
     m_connectionToWebProcess->messageReceiverMap().addMessageReceiver(Messages::RemoteWCLayerTreeHost::messageReceiverName(), m_identifier.toUInt64(), *this);
     m_scene = makeUnique<WCScene>(m_webProcessIdentifier, usesOffscreenRendering);
-    remoteGraphicsContextGLStreamWorkQueue().dispatch([scene = m_scene.get(), sceneContextHolder = m_sharedSceneContextHolder.get(), nativeWindow] {
+
+    remoteGraphicsStreamWorkQueue().dispatch([scene = m_scene.get(), sceneContextHolder = m_sharedSceneContextHolder.get(), nativeWindow] {
         if (!sceneContextHolder->context)
             sceneContextHolder->context.emplace(nativeWindow);
         scene->initialize(*sceneContextHolder->context);
@@ -63,7 +78,8 @@ RemoteWCLayerTreeHost::~RemoteWCLayerTreeHost()
     ASSERT(m_connectionToWebProcess);
     m_connectionToWebProcess->messageReceiverMap().removeMessageReceiver(Messages::RemoteWCLayerTreeHost::messageReceiverName(), m_identifier.toUInt64());
     auto sceneContextHolder = m_connectionToWebProcess->gpuProcess().sharedSceneContext().removeHolder(m_sharedSceneContextHolder.releaseNonNull());
-    remoteGraphicsContextGLStreamWorkQueue().dispatch([sceneContextHolder = WTFMove(sceneContextHolder), scene = WTFMove(m_scene)]() mutable {
+
+    remoteGraphicsStreamWorkQueue().dispatch([sceneContextHolder = WTFMove(sceneContextHolder), scene = WTFMove(m_scene)]() mutable {
         // Destroy scene on the StreamWorkQueue thread.
         scene = nullptr;
         // sceneContextHolder can be destroyed on the StreamWorkQueue thread because it hasOneRef.
@@ -82,7 +98,7 @@ uint64_t RemoteWCLayerTreeHost::messageSenderDestinationID() const
 
 void RemoteWCLayerTreeHost::update(WCUpateInfo&& update, CompletionHandler<void(std::optional<WebKit::UpdateInfo>)>&& completionHandler)
 {
-    remoteGraphicsContextGLStreamWorkQueue().dispatch([this, weakThis = WeakPtr(*this), scene = m_scene.get(), update = WTFMove(update), completionHandler = WTFMove(completionHandler)]() mutable {
+    remoteGraphicsStreamWorkQueue().dispatch([this, weakThis = WeakPtr(*this), scene = m_scene.get(), update = WTFMove(update), completionHandler = WTFMove(completionHandler)]() mutable {
         auto updateInfo = scene->update(WTFMove(update));
         RunLoop::main().dispatch([this, weakThis = WTFMove(weakThis), updateInfo = WTFMove(updateInfo), completionHandler = WTFMove(completionHandler)]() mutable {
             if (!weakThis)

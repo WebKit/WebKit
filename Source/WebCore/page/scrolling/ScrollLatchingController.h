@@ -40,7 +40,7 @@ class TextStream;
 namespace WebCore {
 
 class Element;
-class Frame;
+class LocalFrame;
 class PlatformWheelEvent;
 class ScrollableArea;
 
@@ -56,15 +56,15 @@ public:
     FloatSize cumulativeEventDelta() const { return m_cumulativeEventDelta; }
 
     // Frame containing latched scroller (may be the frame or some sub-scroller).
-    Frame* latchedFrame() const;
+    LocalFrame* latchedFrame() const;
 
     // Returns true if no frame is latched, or latching is in the given frame (in which case latchedScroller will be non-null).
-    bool latchingAllowsScrollingInFrame(const Frame&, WeakPtr<ScrollableArea>& latchedScroller) const;
+    bool latchingAllowsScrollingInFrame(const LocalFrame&, WeakPtr<ScrollableArea>& latchedScroller) const;
 
-    void updateAndFetchLatchingStateForFrame(Frame&, const PlatformWheelEvent&, RefPtr<Element>& latchedElement, WeakPtr<ScrollableArea>&, bool& isOverWidget);
+    void updateAndFetchLatchingStateForFrame(LocalFrame&, const PlatformWheelEvent&, RefPtr<Element>& latchedElement, WeakPtr<ScrollableArea>&, bool& isOverWidget);
 
     void removeLatchingStateForTarget(const Element&);
-    void removeLatchingStateForFrame(const Frame&);
+    void removeLatchingStateForFrame(const LocalFrame&);
 
     void dump(WTF::TextStream&) const;
 
@@ -72,18 +72,18 @@ private:
     struct FrameState {
         WeakPtr<Element, WeakPtrImplWithEventTargetData> wheelEventElement;
         WeakPtr<ScrollableArea> scrollableArea;
-        Frame* frame { nullptr };
+        LocalFrame* frame { nullptr };
         bool isOverWidget { false };
     };
 
     void clearOrScheduleClearIfNeeded(const PlatformWheelEvent&);
     void clearTimerFired();
 
-    bool hasStateForFrame(const Frame&) const;
-    FrameState* stateForFrame(const Frame&);
-    const FrameState* stateForFrame(const Frame&) const;
+    bool hasStateForFrame(const LocalFrame&) const;
+    FrameState* stateForFrame(const LocalFrame&);
+    const FrameState* stateForFrame(const LocalFrame&) const;
 
-    bool shouldLatchToScrollableArea(const Frame&, ScrollableArea*, FloatSize) const;
+    bool shouldLatchToScrollableArea(const LocalFrame&, ScrollableArea*, FloatSize) const;
 
     FloatSize m_cumulativeEventDelta;
     Vector<FrameState> m_frameStateStack;

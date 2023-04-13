@@ -25,7 +25,9 @@ DeprecatedGlobalValues.mm
 EditingTestHarness.mm
 WKWebViewConfigurationExtras.mm
 
+cocoa/CGImagePixelReader.cpp
 cocoa/DaemonTestUtilities.mm
+cocoa/EnableUISideCompositingScope.mm
 cocoa/ImageAnalysisTestingUtilities.mm
 cocoa/NSItemProviderAdditions.mm
 cocoa/PlatformUtilitiesCocoa.mm
@@ -37,6 +39,7 @@ cocoa/TestNavigationDelegate.mm
 cocoa/TestProtocol.mm
 cocoa/TestUIDelegate.mm
 cocoa/TestWKWebView.mm
+cocoa/TestWebExtensionsDelegate.mm
 cocoa/UserMediaCaptureUIDelegate.mm
 
 Tests/WebKitCocoa/AVFoundationPreference.mm
@@ -286,6 +289,7 @@ Tests/WebKitCocoa/WKWebExtension.mm
 Tests/WebKitCocoa/WKWebExtensionAPIEvent.mm
 Tests/WebKitCocoa/WKWebExtensionAPIExtension.mm
 Tests/WebKitCocoa/WKWebExtensionAPINamespace.mm
+Tests/WebKitCocoa/WKWebExtensionAPIPermissions.mm
 Tests/WebKitCocoa/WKWebExtensionAPIRuntime.mm
 Tests/WebKitCocoa/WKWebExtensionAPIWebNavigation.mm
 Tests/WebKitCocoa/WKWebExtensionContext.mm

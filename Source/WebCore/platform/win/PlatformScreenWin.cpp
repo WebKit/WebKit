@@ -29,16 +29,12 @@
 
 #include "DestinationColorSpace.h"
 #include "FloatRect.h"
-#include "Frame.h"
-#include "FrameView.h"
 #include "HostWindow.h"
 #include "IntRect.h"
+#include "LocalFrame.h"
+#include "LocalFrameView.h"
 #include "NotImplemented.h"
 #include <windows.h>
-
-#if USE(CG)
-#include "GraphicsContextCG.h"
-#endif
 
 namespace WebCore {
 

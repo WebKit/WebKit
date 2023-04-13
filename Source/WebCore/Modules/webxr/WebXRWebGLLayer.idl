@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2020 Igalia S.L. All rights reserved.
+ * Copyright (C) 2023 Apple, Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,11 +24,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if defined(ENABLE_WEBGL2) && ENABLE_WEBGL2
 typedef (WebGLRenderingContext or WebGL2RenderingContext) WebXRWebGLRenderingContext;
-#else
-typedef (WebGLRenderingContext) WebXRWebGLRenderingContext;
-#endif
 
 // https://immersive-web.github.io/webxr/#xrwebgllayer
 [

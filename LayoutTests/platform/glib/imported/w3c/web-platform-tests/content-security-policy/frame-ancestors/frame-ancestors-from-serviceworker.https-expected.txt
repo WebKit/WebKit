@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: Refused to load https://web-platform.test:9443/content-security-policy/frame-ancestors/support/service-worker/frame-ancestors-none.html because it does not appear in the frame-ancestors directive of the Content Security Policy.
 
 
 PASS A 'frame-ancestors' CSP directive set from a serviceworker response with a value 'none' should block rendering.

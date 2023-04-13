@@ -20,18 +20,23 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
 #include "PlatformTimeRanges.h"
 
 #include <math.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/PrintStream.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
-    
+
+PlatformTimeRanges::PlatformTimeRanges()
+{
+}
+
 PlatformTimeRanges::PlatformTimeRanges(const MediaTime& start, const MediaTime& end)
 {
     add(start, end);
@@ -40,6 +45,16 @@ PlatformTimeRanges::PlatformTimeRanges(const MediaTime& start, const MediaTime& 
 PlatformTimeRanges::PlatformTimeRanges(Vector<Range>&& ranges)
     : m_ranges { WTFMove(ranges) }
 {
+}
+
+const PlatformTimeRanges& PlatformTimeRanges::emptyRanges()
+{
+    static LazyNeverDestroyed<PlatformTimeRanges> emptyRanges;
+    static std::once_flag onceKey;
+    std::call_once(onceKey, [&] {
+        emptyRanges.construct();
+    });
+    return emptyRanges.get();
 }
 
 void PlatformTimeRanges::invert()
@@ -95,12 +110,12 @@ MediaTime PlatformTimeRanges::start(unsigned index) const
 }
 
 MediaTime PlatformTimeRanges::start(unsigned index, bool& valid) const
-{ 
+{
     if (index >= length()) {
         valid = false;
         return MediaTime::zeroTime();
     }
-    
+
     valid = true;
     return m_ranges[index].start;
 }
@@ -112,7 +127,7 @@ MediaTime PlatformTimeRanges::end(unsigned index) const
 }
 
 MediaTime PlatformTimeRanges::end(unsigned index, bool& valid) const
-{ 
+{
     if (index >= length()) {
         valid = false;
         return MediaTime::zeroTime();
@@ -296,6 +311,16 @@ String PlatformTimeRanges::toString() const
         result.append("[", start(i).toString(), "..", end(i).toString(), "] ");
 
     return result.toString();
+}
+
+bool PlatformTimeRanges::operator==(const PlatformTimeRanges& other) const
+{
+    return m_ranges == other.m_ranges;
+}
+
+bool PlatformTimeRanges::operator!=(const PlatformTimeRanges& other) const
+{
+    return !operator==(other);
 }
 
 }

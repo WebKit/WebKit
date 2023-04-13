@@ -1,1 +1,1 @@
-<x:y xmlns:x="ns1" NS1:z="val" xmlns:NS1="ns2" NS2:w="val" xmlns:NS2="ns3"/>
+<x:y xmlns:x="ns1" xmlns:ns2="ns2" ns2:z="val" xmlns:ns3="ns3" ns3:w="val"/>

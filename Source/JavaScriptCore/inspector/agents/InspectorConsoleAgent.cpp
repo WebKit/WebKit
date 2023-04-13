@@ -31,6 +31,7 @@
 #include "InspectorHeapAgent.h"
 #include "ScriptArguments.h"
 #include "ScriptCallStackFactory.h"
+#include <wtf/SetForScope.h>
 #include <wtf/text/StringConcatenateNumbers.h>
 
 namespace Inspector {
@@ -71,7 +72,7 @@ Protocol::ErrorStringOr<void> InspectorConsoleAgent::enable()
     m_enabled = true;
 
     if (m_expiredConsoleMessageCount) {
-        ConsoleMessage expiredMessage(MessageSource::Other, MessageType::Log, MessageLevel::Warning, makeString(m_expiredConsoleMessageCount, " console messages are not shown."));
+        ConsoleMessage expiredMessage(MessageSource::Other, MessageType::Log, MessageLevel::Warning, makeString(m_expiredConsoleMessageCount, " console messages are not shown."_s));
         expiredMessage.addToFrontend(*m_frontendDispatcher, m_injectedScriptManager, false);
     }
 
@@ -96,14 +97,7 @@ Protocol::ErrorStringOr<void> InspectorConsoleAgent::disable()
 
 Protocol::ErrorStringOr<void> InspectorConsoleAgent::clearMessages()
 {
-    m_consoleMessages.clear();
-    m_expiredConsoleMessageCount = 0;
-
-    m_injectedScriptManager.releaseObjectGroup("console"_s);
-
-    if (m_enabled)
-        m_frontendDispatcher->messagesCleared();
-
+    clearMessages(Inspector::Protocol::Console::ClearReason::ConsoleAPI);
     return { };
 }
 
@@ -112,12 +106,23 @@ bool InspectorConsoleAgent::developerExtrasEnabled() const
     return m_injectedScriptManager.inspectorEnvironment().developerExtrasEnabled();
 }
 
-void InspectorConsoleAgent::reset()
+void InspectorConsoleAgent::mainFrameNavigated()
 {
-    clearMessages();
+    clearMessages(Inspector::Protocol::Console::ClearReason::MainFrameNavigation);
 
     m_times.clear();
     m_counts.clear();
+}
+
+void InspectorConsoleAgent::clearMessages(Inspector::Protocol::Console::ClearReason reason)
+{
+    m_consoleMessages.clear();
+    m_expiredConsoleMessageCount = 0;
+
+    m_injectedScriptManager.releaseObjectGroup("console"_s);
+
+    if (m_enabled)
+        m_frontendDispatcher->messagesCleared(reason);
 }
 
 void InspectorConsoleAgent::addMessageToConsole(std::unique_ptr<ConsoleMessage> message)
@@ -138,7 +143,7 @@ void InspectorConsoleAgent::startTiming(JSC::JSGlobalObject* globalObject, const
 
     if (!result.isNewEntry) {
         // FIXME: Send an enum to the frontend for localization?
-        auto warning = makeString("Timer \"", ScriptArguments::truncateStringForConsoleMessage(label), "\" already exists");
+        auto warning = makeString("Timer \""_s, ScriptArguments::truncateStringForConsoleMessage(label), "\" already exists"_s);
         addMessageToConsole(makeUnique<ConsoleMessage>(MessageSource::ConsoleAPI, MessageType::Timing, MessageLevel::Warning, warning, createScriptCallStackForConsole(globalObject, 1)));
     }
 }
@@ -154,14 +159,14 @@ void InspectorConsoleAgent::logTiming(JSC::JSGlobalObject* globalObject, const S
     auto it = m_times.find(label);
     if (it == m_times.end()) {
         // FIXME: Send an enum to the frontend for localization?
-        auto warning = makeString("Timer \"", ScriptArguments::truncateStringForConsoleMessage(label), "\" does not exist");
+        auto warning = makeString("Timer \""_s, ScriptArguments::truncateStringForConsoleMessage(label), "\" does not exist"_s);
         addMessageToConsole(makeUnique<ConsoleMessage>(MessageSource::ConsoleAPI, MessageType::Timing, MessageLevel::Warning, warning, WTFMove(callStack)));
         return;
     }
 
     MonotonicTime startTime = it->value;
     Seconds elapsed = MonotonicTime::now() - startTime;
-    auto message = makeString(ScriptArguments::truncateStringForConsoleMessage(label), ": ", FormattedNumber::fixedWidth(elapsed.milliseconds(), 3), "ms");
+    auto message = makeString(ScriptArguments::truncateStringForConsoleMessage(label), ": "_s, FormattedNumber::fixedWidth(elapsed.milliseconds(), 3), "ms"_s);
     addMessageToConsole(makeUnique<ConsoleMessage>(MessageSource::ConsoleAPI, MessageType::Timing, MessageLevel::Debug, message, WTFMove(arguments), WTFMove(callStack)));
 }
 
@@ -176,14 +181,14 @@ void InspectorConsoleAgent::stopTiming(JSC::JSGlobalObject* globalObject, const 
     auto it = m_times.find(label);
     if (it == m_times.end()) {
         // FIXME: Send an enum to the frontend for localization?
-        auto warning = makeString("Timer \"", ScriptArguments::truncateStringForConsoleMessage(label), "\" does not exist");
+        auto warning = makeString("Timer \""_s, ScriptArguments::truncateStringForConsoleMessage(label), "\" does not exist"_s);
         addMessageToConsole(makeUnique<ConsoleMessage>(MessageSource::ConsoleAPI, MessageType::Timing, MessageLevel::Warning, warning, WTFMove(callStack)));
         return;
     }
 
     MonotonicTime startTime = it->value;
     Seconds elapsed = MonotonicTime::now() - startTime;
-    auto message = makeString(ScriptArguments::truncateStringForConsoleMessage(label), ": ", FormattedNumber::fixedWidth(elapsed.milliseconds(), 3), "ms");
+    auto message = makeString(ScriptArguments::truncateStringForConsoleMessage(label), ": "_s, FormattedNumber::fixedWidth(elapsed.milliseconds(), 3), "ms"_s);
     addMessageToConsole(makeUnique<ConsoleMessage>(MessageSource::ConsoleAPI, MessageType::Timing, MessageLevel::Debug, message, WTFMove(callStack)));
 
     m_times.remove(it);
@@ -210,7 +215,7 @@ void InspectorConsoleAgent::count(JSC::JSGlobalObject* globalObject, const Strin
 
     // FIXME: Web Inspector should have a better UI for counters, but for now we just log an updated counter value.
 
-    auto message = makeString(ScriptArguments::truncateStringForConsoleMessage(label), ": ", result.iterator->value);
+    auto message = makeString(ScriptArguments::truncateStringForConsoleMessage(label), ": "_s, result.iterator->value);
     addMessageToConsole(makeUnique<ConsoleMessage>(MessageSource::ConsoleAPI, MessageType::Log, MessageLevel::Debug, message, createScriptCallStackForConsole(globalObject, 1)));
 }
 
@@ -219,7 +224,7 @@ void InspectorConsoleAgent::countReset(JSC::JSGlobalObject* globalObject, const 
     auto it = m_counts.find(label);
     if (it == m_counts.end()) {
         // FIXME: Send an enum to the frontend for localization?
-        auto warning = makeString("Counter \"", ScriptArguments::truncateStringForConsoleMessage(label), "\" does not exist");
+        auto warning = makeString("Counter \""_s, ScriptArguments::truncateStringForConsoleMessage(label), "\" does not exist"_s);
         addMessageToConsole(makeUnique<ConsoleMessage>(MessageSource::ConsoleAPI, MessageType::Log, MessageLevel::Warning, warning, createScriptCallStackForConsole(globalObject, 1)));
         return;
     }
@@ -249,8 +254,12 @@ void InspectorConsoleAgent::addConsoleMessage(std::unique_ptr<ConsoleMessage> co
     } else {
         ConsoleMessage* newMessage = consoleMessage.get();
         m_consoleMessages.append(WTFMove(consoleMessage));
-        if (m_enabled)
-            newMessage->addToFrontend(*m_frontendDispatcher, m_injectedScriptManager, true);
+        if (m_enabled) {
+            auto generatePreview = !m_isAddingMessageToFrontend;
+            SetForScope isAddingMessageToFrontend(m_isAddingMessageToFrontend, true);
+
+            newMessage->addToFrontend(*m_frontendDispatcher, m_injectedScriptManager, generatePreview);
+        }
 
         if (m_consoleMessages.size() >= maximumConsoleMessages) {
             m_expiredConsoleMessageCount += expireConsoleMessagesStep;

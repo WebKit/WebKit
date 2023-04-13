@@ -35,16 +35,15 @@
 #include "Range.h"
 #include "ScrollAlignment.h"
 #include "ScrollBehavior.h"
-#include "Timer.h"
 #include "VisibleSelection.h"
 #include <wtf/Noncopyable.h>
 
 namespace WebCore {
 
 class CharacterData;
-class Frame;
 class GraphicsContext;
 class HTMLFormElement;
+class LocalFrame;
 class MutableStyleProperties;
 class RenderBlock;
 class RenderObject;
@@ -64,11 +63,11 @@ protected:
     enum CaretVisibility { Visible, Hidden };
     explicit CaretBase(CaretVisibility = Hidden);
 
-    void invalidateCaretRect(Node*, bool caretRectChanged = false);
+    void invalidateCaretRect(Node*, bool caretRectChanged = false, CaretAnimator* = nullptr);
     void clearCaretRect();
     bool updateCaretRect(Document&, const VisiblePosition& caretPosition);
     bool shouldRepaintCaret(const RenderView*, bool isContentEditable) const;
-    void paintCaret(const Node&, GraphicsContext&, const LayoutPoint&, const LayoutRect& clipRect, const CaretAnimator::PresentationProperties&) const;
+    void paintCaret(const Node&, GraphicsContext&, const LayoutPoint&, const LayoutRect& clipRect, CaretAnimator* = nullptr) const;
 
     const LayoutRect& localCaretRectWithoutUpdate() const { return m_caretLocalRect; }
 
@@ -92,7 +91,7 @@ public:
     DragCaretController();
 
     RenderBlock* caretRenderer() const;
-    void paintDragCaret(Frame*, GraphicsContext&, const LayoutPoint&, const LayoutRect& clipRect) const;
+    void paintDragCaret(LocalFrame*, GraphicsContext&, const LayoutPoint&, const LayoutRect& clipRect) const;
 
     bool isContentEditable() const { return m_position.rootEditableElement(); }
     WEBCORE_EXPORT bool isContentRichlyEditable() const;
@@ -156,7 +155,7 @@ public:
     WEBCORE_EXPORT void clear();
     void willBeRemovedFromFrame();
 
-    void updateAppearanceAfterLayout();
+    void updateAppearanceAfterUpdatingRendering();
     void scheduleAppearanceUpdateAfterStyleChange();
 
     enum class RevealSelectionAfterUpdate : bool { NotForced, Forced };
@@ -246,7 +245,7 @@ public:
     void setTypingStyle(RefPtr<EditingStyle>&& style) { m_typingStyle = WTFMove(style); }
     void clearTypingStyle();
 
-    enum class ClipToVisibleContent : uint8_t { No, Yes };
+    enum class ClipToVisibleContent : bool { No, Yes };
     WEBCORE_EXPORT FloatRect selectionBounds(ClipToVisibleContent = ClipToVisibleContent::Yes);
 
     enum class TextRectangleHeight { TextHeight, SelectionHeight };
@@ -271,7 +270,9 @@ public:
     CaretAnimator& caretAnimator() { return m_caretAnimator.get(); }
 
     const CaretAnimator& caretAnimator() const { return m_caretAnimator.get(); }
-
+#if PLATFORM(MAC)
+    WEBCORE_EXPORT void caretAnimatorInvalidated(CaretAnimatorType);
+#endif
 private:
     void updateSelectionAppearanceNow();
     void updateAndRevealSelection(const AXTextStateChangeIntent&, ScrollBehavior = ScrollBehavior::Instant, RevealExtentOption = RevealExtentOption::RevealExtent, ForceCenterScrollOption = ForceCenterScrollOption::DoNotForceCenterScroll);
@@ -310,9 +311,6 @@ private:
     void setFocusedElementIfNeeded();
     void focusedOrActiveStateChanged();
 
-    void updateAppearanceAfterLayoutOrStyleChange();
-    void appearanceUpdateTimerFired();
-
     enum class ShouldUpdateAppearance : bool { No, Yes };
     WEBCORE_EXPORT void setCaretVisibility(CaretVisibility, ShouldUpdateAppearance);
 
@@ -330,6 +328,7 @@ private:
 #endif
 
     void updateAssociatedLiveRange();
+    LayoutRect localCaretRect() const final { return localCaretRectWithoutUpdate(); }
 
     WeakPtr<Document, WeakPtrImplWithEventTargetData> m_document;
     RefPtr<Range> m_associatedLiveRange;
@@ -341,7 +340,6 @@ private:
     RefPtr<Node> m_previousCaretNode; // The last node which painted the caret. Retained for clearing the old caret when it moves.
 
     RefPtr<EditingStyle> m_typingStyle;
-    Timer m_appearanceUpdateTimer;
     // The painted bounds of the caret in absolute coordinates
     IntRect m_absCaretBounds;
 

@@ -3,10 +3,10 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-    RenderSVGContainer {g} at (16,22) size 478x245
-      RenderSVGText {text} at (10,13) size 287x21 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 287x21
-          chunk 1 text run 1 at (10.00,30.00) startOffset 0 endOffset 36 width 286.20: "Test that <style type=\"\"> is honored"
+    RenderSVGContainer {g} at (16,22) size 475x245
+      RenderSVGText {text} at (10,13) size 285x21 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 285x21
+          chunk 1 text run 1 at (10.00,30.00) startOffset 0 endOffset 36 width 284.20: "Test that <style type=\"\"> is honored"
       RenderSVGRect {rect} at (16,83) size 84x84 [fill={[type=SOLID] [color=#008000]}] [x=10.00] [y=50.00] [width=50.00] [height=50.00]
       RenderSVGRect {rect} at (16,183) size 84x84 [fill={[type=SOLID] [color=#008000]}] [x=10.00] [y=110.00] [width=50.00] [height=50.00]
       RenderSVGText {text} at (70,61) size 157x21 contains 1 chunk(s)

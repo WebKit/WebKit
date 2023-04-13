@@ -67,6 +67,7 @@ public:
 
 private:
     bool canPaint(const PaintInfo&, const Settings&, StyleAppearance) const final;
+    bool canCreateControlPartForRenderer(const RenderObject&) const final;
 
     LengthBox popupInternalPaddingBox(const RenderStyle&, const Settings&) const override;
 

@@ -38,8 +38,6 @@ function init()
     debug("Checks that update-draws of bufferSubData are respected");
     debug("");
 
-    if (window.internals)
-        internals.settings.setWebGL2Enabled(true);
     gl = initWebGL("example", "vshader", "fshader", [ "vPosition", "index" ],
                    [ 1, 1, 1, 1 ], 1, null, true);
 

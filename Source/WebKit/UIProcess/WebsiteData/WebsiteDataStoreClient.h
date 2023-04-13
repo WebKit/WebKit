@@ -28,11 +28,12 @@
 #include "AuthenticationChallengeDisposition.h"
 #include "AuthenticationChallengeProxy.h"
 #include "AuthenticationDecisionListener.h"
+#include "BackgroundFetchChange.h"
 #include <wtf/CompletionHandler.h>
 
 namespace WebCore {
 struct NotificationData;
-struct SecurityOriginData;
+class SecurityOriginData;
 }
 
 namespace WebKit {
@@ -58,6 +59,9 @@ public:
     {
         completionHandler(nullptr);
     }
+    virtual void reportServiceWorkerConsoleMessage(const URL&, const WebCore::SecurityOriginData&, MessageSource, MessageLevel, const String&, unsigned long)
+    {
+    }
 
     virtual bool showNotification(const WebCore::NotificationData&)
     {
@@ -70,6 +74,15 @@ public:
     }
 
     virtual void workerUpdatedAppBadge(const WebCore::SecurityOriginData&, std::optional<uint64_t>)
+    {
+    }
+    
+    virtual void requestBackgroundFetchPermission(const WebCore::SecurityOriginData& topOrigin, const WebCore::SecurityOriginData& frameOrigin, CompletionHandler<void(bool)>&& completionHandler)
+    {
+        completionHandler(false);
+    }
+
+    virtual void notifyBackgroundFetchChange(const String&, BackgroundFetchChange)
     {
     }
 };

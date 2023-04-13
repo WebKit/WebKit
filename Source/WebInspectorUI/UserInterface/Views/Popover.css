@@ -34,8 +34,14 @@
     --popover-background-color: var(--panel-background-color);
     --popover-border-color: hsla(0, 0%, 0%, 0.25);
     --popover-shadow-color: hsla(0, 0%, 0%, 0.5);
+}
 
-    background-image: -webkit-canvas(popover);
+.popover > .background-canvas {
+    position: absolute;
+    inset: 0;
+    z-index : -1;
+    width: 100%;
+    height: 100%;
 }
 
 .popover.arrow-up {

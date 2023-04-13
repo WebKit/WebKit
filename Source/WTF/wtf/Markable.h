@@ -36,6 +36,7 @@
 
 #include <optional>
 #include <type_traits>
+#include <wtf/Hasher.h>
 #include <wtf/StdLibExtras.h>
 
 namespace WTF {
@@ -81,7 +82,7 @@ struct IntegralMarkableTraits {
 // similar to WTF::HashTable, which uses two values of T as an empty value and a deleted value.
 // This class is intended to be used as a member of a class to compact the size of the class.
 // Otherwise, you should use Optional.
-template<typename T, typename Traits = typename T::MarkableTraits>
+template<typename T, typename Traits>
 class Markable {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -153,6 +154,11 @@ public:
 private:
     T m_value;
 };
+
+template <typename T, typename Traits> inline void add(Hasher& hasher, const Markable<T, Traits>& value)
+{
+    add(hasher, value.asOptional());
+}
 
 template <typename T, typename Traits> constexpr bool operator==(const Markable<T, Traits>& x, const Markable<T, Traits>& y)
 {

@@ -39,9 +39,6 @@ function createProgram(gl, vertexShader, fragmentShader) {
 
 description("Make sure that compiling GLSL ES 3 shaders works as expected.");
 
-if (window.internals)
-    internals.settings.setWebGL2Enabled(true);
-
 var vertexShaderSource = `#version 300 es
 layout(location = 0) in vec2 pos;
 

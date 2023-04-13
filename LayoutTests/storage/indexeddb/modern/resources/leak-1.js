@@ -1,80 +1,70 @@
 description("This tests that certain IDB object relationships don't cause leaks.");
 
-indexedDBTest(prepareDatabase);
+evalAndLog('dbname = "leak-1"');
+database = null;
 
-function log(message)
-{
-    debug(message);
+function prepareDatabase() {
+    let openRequest = indexedDB.open(dbname);
+    openRequest.onupgradeneeded = (event) => {
+        debug("Initial upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
+        database = openRequest.result;
+        versionChangeTransactionObserver = internals.observeGC(openRequest.transaction);
+        openRequestObserver = internals.observeGC(openRequest);
+        databaseObserver = internals.observeGC(database);
+        objectStoreObserver = internals.observeGC(database.createObjectStore("foo"));
+    }
+    return new Promise((resolve, reject) => {
+        openRequest.onsuccess = resolve;
+        openRequest.onerror = reject;
+    });
 }
 
-var testGenerator;
-function next()
-{
-    testGenerator.next();
+function performDatabaseOperation() {
+    let transaction = database.transaction("foo");
+    let promise = new Promise((resolve, reject) => {
+        transaction.oncomplete = resolve;
+        transaction.onerror = reject;
+    });
+    let request = transaction.objectStore("foo").get("foo");
+    transactionObserver = internals.observeGC(transaction);
+    requestObserver = internals.observeGC(request);
+    database = null;
+    return promise;
 }
 
-function asyncNext()
+function testSucceeded()
 {
-    setTimeout("testGenerator.next();", 0);
+    return transactionObserver.wasCollected 
+        && requestObserver.wasCollected 
+        && versionChangeTransactionObserver.wasCollected 
+        && databaseObserver.wasCollected
+        && openRequestObserver.wasCollected
+        && objectStoreObserver.wasCollected;
 }
 
-var db;
-var versionChangeObserver;
-var dbObserver;
-var openRequestObserver;
-var objectStoreObserver;
-
-function prepareDatabase(event)
-{
-    debug("Initial upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
-
-    versionChangeObserver = internals.observeGC(event.target.transaction);
-    dbObserver = internals.observeGC(event.target.result);
-    openRequestObserver = internals.observeGC(event.target);
-
-    db = event.target.result;
-    objectStoreObserver = internals.observeGC(db.createObjectStore("foo"));
-
-    event.target.onsuccess = function() {
-        testGenerator = testSteps();
-        testGenerator.next();
-    };
+function sleep(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-function* testSteps()
+async function test()
 {
-    log("Issuing a simple request to the object store");
-    
-    tx = db.transaction("foo");
-    tx.oncomplete = next;
-    req = tx.objectStore("foo").get("foo");
-    req.onsuccess = next;
-    
-    yield; // For the request success.
-    yield; // For the transaction's completion.
-    
-    log("Observing GC on the transaction and request. ");
-    
-    txObserver = internals.observeGC(tx);
-    reqObserver = internals.observeGC(req);
-    
-    tx = null;
-    req = null;
-    db = null;
-    
-    // Make sure we are no longer handling any IDB events.
-    asyncNext();
-    yield;
-    
-    gc();
-    
-    shouldBeTrue("txObserver.wasCollected");
-    shouldBeTrue("reqObserver.wasCollected");
-    shouldBeTrue("versionChangeObserver.wasCollected");
-    shouldBeTrue("dbObserver.wasCollected");
+    await prepareDatabase();
+    await performDatabaseOperation();
+
+    var gcCountDown = 10;
+    while (gcCountDown-- && !testSucceeded()) {
+        gc();
+        await sleep(100);
+    }
+
+    shouldBeTrue("transactionObserver.wasCollected");
+    shouldBeTrue("requestObserver.wasCollected");
+    shouldBeTrue("versionChangeTransactionObserver.wasCollected");
+    shouldBeTrue("databaseObserver.wasCollected");
     shouldBeTrue("openRequestObserver.wasCollected");
     shouldBeTrue("objectStoreObserver.wasCollected");
 
     finishJSTest();
- }
- 
+}
+
+test();

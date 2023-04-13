@@ -77,7 +77,7 @@
     height: -webkit-fill-available;
 }
 
-.content-view.recording :matches(img, canvas) {
+.content-view.recording :is(img, canvas) {
     position: absolute;
     max-width: 100%;
     max-height: 100%;

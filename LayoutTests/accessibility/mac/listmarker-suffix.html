@@ -1,11 +1,8 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
-<script>
-if (window.testRunner)
-   testRunner.dumpAsText();
-</script>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
 </head>
 <body>
 
@@ -17,29 +14,21 @@ if (window.testRunner)
 <li id="listitem2">item 2</li>
 </ol>
 
-
-<p id="description"></p>
-<div id="console"></div>
-
 <script>
+let output = "This test makes sure the right suffix is returned when fetching text marker strings for list items.\n\n";
 
-    description("This test makes sure the right suffix is returned when fetching text marker strings for list items.");
+if (window.accessibilityController) {
+    var list1 = accessibilityController.accessibleElementById("listitem1");
+    var textRange = list1.textMarkerRangeForElement(list1);
+    var bulletString = String.fromCharCode(0x2022);
+    output += expect("list1.stringForTextMarkerRange(textRange)", "`${bulletString} item 1`");
 
-    if (window.accessibilityController) {
-        var list1 = accessibilityController.accessibleElementById("listitem1");
-        var textRange = list1.textMarkerRangeForElement(list1);
-        var bulletString = String.fromCharCode(0x2022);
-        shouldBe("list1.stringForTextMarkerRange(textRange)", "bulletString + ' item 1'");
+    var list2 = accessibilityController.accessibleElementById("listitem2");
+    textRange = list2.textMarkerRangeForElement(list2);
+    output += expect("list2.stringForTextMarkerRange(textRange)", "'1. item 2'");
 
-        var list2 = accessibilityController.accessibleElementById("listitem2");
-        var textRange = list2.textMarkerRangeForElement(list2);
-        shouldBe("list2.stringForTextMarkerRange(textRange)", "'1. item 2'");
-    }
-
+    debug(output);
+}
 </script>
-
-<script src="../../resources/js-test-post.js"></script>
-
 </body>
 </html>
-

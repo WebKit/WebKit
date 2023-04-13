@@ -1,18 +1,19 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007-2023 Apple Inc.  All rights reserved.
+ * Copyright (C) 2015 Google Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
  *
  * 1.  Redistributions of source code must retain the above copyright
- *     notice, this list of conditions and the following disclaimer. 
+ *     notice, this list of conditions and the following disclaimer.
  * 2.  Redistributions in binary form must reproduce the above copyright
  *     notice, this list of conditions and the following disclaimer in the
- *     documentation and/or other materials provided with the distribution. 
+ *     documentation and/or other materials provided with the distribution.
  * 3.  Neither the name of Apple Inc. ("Apple") nor the names of
  *     its contributors may be used to endorse or promote products derived
- *     from this software without specific prior written permission. 
+ *     from this software without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -29,7 +30,7 @@
 
 #pragma once
 
-#include "DOMWindowProperty.h"
+#include "LocalDOMWindowProperty.h"
 #include "ScriptWrappable.h"
 #include <wtf/RefCounted.h>
 #include <wtf/Ref.h>
@@ -38,25 +39,24 @@ namespace WebCore {
 
 class ScreenOrientation;
 
-class Screen final : public ScriptWrappable, public RefCounted<Screen>, public DOMWindowProperty {
+class Screen final : public ScriptWrappable, public RefCounted<Screen>, public LocalDOMWindowProperty {
     WTF_MAKE_ISO_ALLOCATED(Screen);
 public:
-    static Ref<Screen> create(DOMWindow& window) { return adoptRef(*new Screen(window)); }
+    static Ref<Screen> create(LocalDOMWindow& window) { return adoptRef(*new Screen(window)); }
     ~Screen();
 
-    unsigned height() const;
-    unsigned width() const;
+    int height() const;
+    int width() const;
     unsigned colorDepth() const;
-    unsigned pixelDepth() const;
     int availLeft() const;
     int availTop() const;
-    unsigned availHeight() const;
-    unsigned availWidth() const;
+    int availHeight() const;
+    int availWidth() const;
 
     ScreenOrientation& orientation();
 
 private:
-    explicit Screen(DOMWindow&);
+    explicit Screen(LocalDOMWindow&);
 
     RefPtr<ScreenOrientation> m_screenOrientation;
 };

@@ -1,41 +1,41 @@
 setMinimumEffectiveWidth(640.00)
-window size: [768, 1004]
-square size: [77, 100]
+window size: [810, 1060]
+square size: [81, 106]
 zoom scale: 1.00
 
 setMinimumEffectiveWidth(768.00)
-window size: [768, 1004]
-square size: [77, 100]
+window size: [810, 1060]
+square size: [81, 106]
 zoom scale: 1.00
 
 setMinimumEffectiveWidth(834.00)
-window size: [834, 1090]
+window size: [834, 1091]
 square size: [83, 109]
-zoom scale: 0.92
+zoom scale: 0.97
 
 setMinimumEffectiveWidth(980.00)
-window size: [980, 1281]
+window size: [980, 1282]
 square size: [98, 128]
-zoom scale: 0.78
+zoom scale: 0.83
 
 setMinimumEffectiveWidth(1024.00)
-window size: [1024, 1339]
+window size: [1024, 1340]
 square size: [102, 134]
-zoom scale: 0.75
+zoom scale: 0.79
 
 setMinimumEffectiveWidth(1112.00)
-window size: [1112, 1454]
-square size: [111, 145]
-zoom scale: 0.69
+window size: [1112, 1455]
+square size: [111, 146]
+zoom scale: 0.73
 
 setMinimumEffectiveWidth(1280.00)
-window size: [1280, 1673]
-square size: [128, 167]
-zoom scale: 0.60
+window size: [1280, 1675]
+square size: [128, 168]
+zoom scale: 0.63
 
 setMinimumEffectiveWidth(1336.00)
-window size: [1336, 1747]
+window size: [1336, 1748]
 square size: [134, 175]
-zoom scale: 0.57
+zoom scale: 0.61
 
 

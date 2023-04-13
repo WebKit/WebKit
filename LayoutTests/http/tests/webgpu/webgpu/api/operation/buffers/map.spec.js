@@ -183,7 +183,6 @@ map-read and check the read-back result.`
       size,
       usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ,
     });
-
     const init = buffer.getMappedRange(...range);
 
     assert(init.byteLength === rangeSize);
@@ -263,7 +262,6 @@ g.test('mapAsync,read,typedArrayAccess')
       size,
       usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ,
     });
-
     const init = buffer.getMappedRange(...range);
 
     // Copy the expected values into the mapped range.
@@ -296,7 +294,7 @@ then expectContents (which does copyBufferToBuffer + map-read) to ensure the con
       .beginSubcases()
       .combineWithParams(kSubcases)
   )
-  .fn(async t => {
+  .fn(t => {
     const { size, range, mappable } = t.params;
     const [, rangeSize] = reifyMapRange(size, range);
 
@@ -305,7 +303,6 @@ then expectContents (which does copyBufferToBuffer + map-read) to ensure the con
       size,
       usage: GPUBufferUsage.COPY_SRC | (mappable ? GPUBufferUsage.MAP_WRITE : 0),
     });
-
     const arrayBuffer = buffer.getMappedRange(...range);
     t.checkMapWrite(buffer, range[0] ?? 0, arrayBuffer, rangeSize);
   });
@@ -356,4 +353,139 @@ still present in the mapped buffer.`
     await buffer.mapAsync(GPUMapMode.WRITE, ...mapRegion);
     const actual = new Uint8Array(buffer.getMappedRange(...range));
     t.expectOK(checkElementsEqual(actual, new Uint8Array(expected.buffer)));
+  });
+
+g.test('mappedAtCreation,mapState')
+  .desc('Test that exposed map state of buffer created with mappedAtCreation has expected values.')
+  .params(u =>
+    u
+      .combine('validationError', [false, true])
+      .combine('afterUnmap', [false, true])
+      .combine('afterDestroy', [false, true])
+  )
+  .fn(t => {
+    const { validationError, afterUnmap, afterDestroy } = t.params;
+    const size = 8;
+    const range = [0, 8];
+
+    let buffer;
+    t.expectValidationError(() => {
+      buffer = t.device.createBuffer({
+        mappedAtCreation: true,
+        size,
+        usage: validationError ? 0 : GPUBufferUsage.COPY_SRC | GPUBufferUsage.MAP_WRITE,
+      });
+    }, validationError);
+
+    // mapState must be "mapped" regardless of validation error
+    t.expect(buffer.mapState === 'mapped');
+
+    // getMappedRange must not change the map state
+    buffer.getMappedRange(...range);
+    t.expect(buffer.mapState === 'mapped');
+
+    if (afterUnmap) {
+      buffer.unmap();
+      t.expect(buffer.mapState === 'unmapped');
+    }
+
+    if (afterDestroy) {
+      buffer.destroy();
+      t.expect(buffer.mapState === 'unmapped');
+    }
+  });
+
+g.test('mapAsync,mapState')
+  .desc('Test that exposed map state of buffer mapped with mapAsync has expected values.')
+  .params(u =>
+    u
+      .combine('bufferCreationValidationError', [false, true])
+      .combine('mapAsyncValidationError', [false, true])
+      .combine('beforeUnmap', [false, true])
+      .combine('beforeDestroy', [false, true])
+      .combine('afterUnmap', [false, true])
+      .combine('afterDestroy', [false, true])
+  )
+  .fn(async t => {
+    const {
+      bufferCreationValidationError,
+      mapAsyncValidationError,
+      beforeUnmap,
+      beforeDestroy,
+      afterUnmap,
+      afterDestroy,
+    } = t.params;
+    const size = 8;
+    const range = [0, 8];
+
+    let buffer;
+    t.expectValidationError(() => {
+      buffer = t.device.createBuffer({
+        mappedAtCreation: false,
+        size,
+        usage: bufferCreationValidationError
+          ? 0
+          : GPUBufferUsage.COPY_SRC | GPUBufferUsage.MAP_WRITE,
+      });
+    }, bufferCreationValidationError);
+
+    t.expect(buffer.mapState === 'unmapped');
+
+    {
+      let promise;
+      t.expectValidationError(() => {
+        promise = buffer.mapAsync(mapAsyncValidationError ? 0 : GPUMapMode.WRITE);
+      }, bufferCreationValidationError || mapAsyncValidationError);
+      t.expect(buffer.mapState === 'pending');
+
+      try {
+        if (beforeUnmap) {
+          buffer.unmap();
+          t.expect(buffer.mapState === 'unmapped');
+        }
+        if (beforeDestroy) {
+          buffer.destroy();
+          t.expect(buffer.mapState === 'unmapped');
+        }
+
+        await promise;
+        t.expect(buffer.mapState === 'mapped');
+
+        // getMappedRange must not change the map state
+        buffer.getMappedRange(...range);
+        t.expect(buffer.mapState === 'mapped');
+      } catch {
+        // unmapped before resolve, destroyed before resolve, or mapAsync validation error
+        // will end up with rejection and 'unmapped'
+        t.expect(buffer.mapState === 'unmapped');
+      }
+    }
+
+    // If buffer is already mapped test mapAsync on already mapped buffer
+    if (buffer.mapState === 'mapped') {
+      // mapAsync on already mapped buffer must be rejected with a validation error
+      // and the map state must keep 'mapped'
+      let promise;
+      t.expectValidationError(() => {
+        promise = buffer.mapAsync(GPUMapMode.WRITE);
+      }, true);
+      t.expect(buffer.mapState === 'mapped');
+
+      try {
+        await promise;
+        t.fail('mapAsync on already mapped buffer must not succeed.');
+      } catch {
+        t.expect(buffer.mapState === 'mapped');
+      }
+    }
+
+    if (afterUnmap) {
+      buffer.unmap();
+      t.expect(buffer.mapState === 'unmapped');
+    }
+
+    if (afterDestroy) {
+      buffer.destroy();
+      t.expect(buffer.mapState === 'unmapped');
+    }
   });

@@ -16,15 +16,19 @@
     let output = "This tests that an ARIA table can use aria-owns for its cells.\n";
 
     if (window.accessibilityController) {
-        var row1 = accessibilityController.accessibleElementById("row1");
-        var table = accessibilityController.accessibleElementById("table")
-        var cell1 = table.cellForColumnAndRow(0, 0);
-        output += expect("row1.childAtIndex(0).isEqual(table.cellForColumnAndRow(0, 0))", "true");
-        output += expect("row1.childAtIndex(0).isEqual(accessibilityController.accessibleElementById('row1-cell-1'))", "true");
-        output += expect("cell1.parentElement().isEqual(row1)", "true");
-        output += expect("row1.parentElement().isEqual(table)", "true");
-
-        debug(output);
+        window.jsTestIsAsync = true
+        var row1, table, cell1;
+        setTimeout(function() { 
+            row1 = accessibilityController.accessibleElementById("row1");
+            table = accessibilityController.accessibleElementById("table")
+            cell1 = table.cellForColumnAndRow(0, 0);
+            output += expect("row1.childAtIndex(0).isEqual(table.cellForColumnAndRow(0, 0))", "true");
+            output += expect("row1.childAtIndex(0).isEqual(accessibilityController.accessibleElementById('row1-cell-1'))", "true");
+            output += expect("cell1.parentElement().isEqual(row1)", "true");
+            output += expect("row1.parentElement().isEqual(table)", "true");
+            debug(output);
+            finishJSTest();
+        }, 0);
     }
 </script>
 </body>

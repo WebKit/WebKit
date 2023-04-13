@@ -13,6 +13,7 @@
 #include "common/CircularBuffer.h"
 #include "common/vulkan/vk_headers.h"
 #include "libANGLE/renderer/SurfaceImpl.h"
+#include "libANGLE/renderer/vulkan/CommandProcessor.h"
 #include "libANGLE/renderer/vulkan/RenderTargetVk.h"
 #include "libANGLE/renderer/vulkan/vk_helpers.h"
 
@@ -49,6 +50,9 @@ class OffscreenSurfaceVk : public SurfaceVk
 
     egl::Error initialize(const egl::Display *display) override;
     void destroy(const egl::Display *display) override;
+
+    egl::Error unMakeCurrent(const gl::Context *context) override;
+    const vk::ImageHelper *getColorImage() const { return &mColorAttachment.image; }
 
     egl::Error swap(const gl::Context *context) override;
     egl::Error postSubBuffer(const gl::Context *context,
@@ -181,13 +185,13 @@ struct SwapchainImage : angle::NonCopyable
     SwapchainImage(SwapchainImage &&other);
     ~SwapchainImage();
 
-    vk::ImageHelper image;
+    std::unique_ptr<vk::ImageHelper> image;
     vk::ImageViewHelper imageViews;
     vk::Framebuffer framebuffer;
     vk::Framebuffer fetchFramebuffer;
     vk::Framebuffer framebufferResolveMS;
 
-    uint64_t mFrameNumber = 0;
+    uint64_t frameNumber = 0;
 };
 }  // namespace impl
 
@@ -212,6 +216,9 @@ class WindowSurfaceVk : public SurfaceVk
     void destroy(const egl::Display *display) override;
 
     egl::Error initialize(const egl::Display *display) override;
+
+    egl::Error unMakeCurrent(const gl::Context *context) override;
+
     angle::Result getAttachmentRenderTarget(const gl::Context *context,
                                             GLenum binding,
                                             const gl::ImageIndex &imageIndex,
@@ -267,8 +274,6 @@ class WindowSurfaceVk : public SurfaceVk
                                         const vk::RenderPass &compatibleRenderPass,
                                         const SwapchainResolveMode swapchainResolveMode,
                                         vk::MaybeImagelessFramebuffer *framebufferOut);
-
-    const vk::Semaphore *getAndResetAcquireImageSemaphore();
 
     VkSurfaceTransformFlagBitsKHR getPreTransform() const
     {
@@ -353,6 +358,7 @@ class WindowSurfaceVk : public SurfaceVk
     // This method is called when a swapchain image is presented.  It schedules
     // acquireNextSwapchainImage() to be called later.
     void deferAcquireNextImage();
+    void flushAcquireImageSemaphore(const gl::Context *context);
 
     angle::Result computePresentOutOfDate(vk::Context *context,
                                           VkResult result,
@@ -383,6 +389,7 @@ class WindowSurfaceVk : public SurfaceVk
     std::vector<vk::PresentMode> mPresentModes;
 
     VkSwapchainKHR mSwapchain;
+    vk::SwapchainStatus mSwapchainStatus;
     // Cached information used to recreate swapchains.
     vk::PresentMode mSwapchainPresentMode;         // Current swapchain mode
     vk::PresentMode mDesiredSwapchainPresentMode;  // Desired mode set through setSwapInterval()
@@ -390,6 +397,12 @@ class WindowSurfaceVk : public SurfaceVk
     VkSurfaceTransformFlagBitsKHR mPreTransform;
     VkSurfaceTransformFlagBitsKHR mEmulatedPreTransform;
     VkCompositeAlphaFlagBitsKHR mCompositeAlpha;
+
+    // Present modes that are compatible with the current mode.  If mDesiredSwapchainPresentMode is
+    // in this list, mode switch can happen without the need to recreate the swapchain.  Fast
+    // vector's size is 6, as there are currently only 6 possible present modes.
+    static constexpr uint32_t kMaxCompatiblePresentModes = 6;
+    angle::FixedVector<VkPresentModeKHR, kMaxCompatiblePresentModes> mCompatiblePresentModes;
 
     // A circular buffer that stores the serial of the submission fence of the context on every
     // swap. The CPU is throttled by waiting for the 2nd previous serial to finish.  This should

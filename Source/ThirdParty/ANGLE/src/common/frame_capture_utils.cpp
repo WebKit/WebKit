@@ -124,7 +124,7 @@ const char *ParamBuffer::getNextParamName()
 {
     static const char *kParamNames[] = {"p0",  "p1",  "p2",  "p3",  "p4",  "p5",  "p6",  "p7",
                                         "p8",  "p9",  "p10", "p11", "p12", "p13", "p14", "p15",
-                                        "p16", "p17", "p18", "p19", "p20", "p21"};
+                                        "p16", "p17", "p18", "p19", "p20", "p21", "p22"};
     ASSERT(mParamCaptures.size() < ArraySize(kParamNames));
     return kParamNames[mParamCaptures.size()];
 }
@@ -544,11 +544,11 @@ void WriteParamValueReplay<ParamType::TEGLClientBuffer>(std::ostream &os,
 }
 
 template <>
-void WriteParamValueReplay<ParamType::Tegl_SyncPointer>(std::ostream &os,
-                                                        const CallCapture &call,
-                                                        egl::Sync *value)
+void WriteParamValueReplay<ParamType::Tegl_SyncID>(std::ostream &os,
+                                                   const CallCapture &call,
+                                                   egl::SyncID value)
 {
-    os << "EGL_NO_SYNC_KHR";
+    os << "gEGLSyncMap[" << value.value << "]";
 }
 
 template <>

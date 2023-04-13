@@ -147,7 +147,6 @@ bool TextTrackLoader::load(const URL& url, HTMLTrackElement& element)
 
     ResourceLoaderOptions options = CachedResourceLoader::defaultCachedResourceOptions();
     options.contentSecurityPolicyImposition = element.isInUserAgentShadowTree() ? ContentSecurityPolicyImposition::SkipPolicyCheck : ContentSecurityPolicyImposition::DoPolicyCheck;
-    options.sameOriginDataURLFlag = SameOriginDataURLFlag::Set;
 
     // FIXME: Do we really need to call completeURL here?
     ResourceRequest resourceRequest(m_document.completeURL(url.string()));
@@ -155,7 +154,7 @@ bool TextTrackLoader::load(const URL& url, HTMLTrackElement& element)
     if (auto mediaElement = element.mediaElement())
         resourceRequest.setInspectorInitiatorNodeIdentifier(InspectorInstrumentation::identifierForNode(*mediaElement));
 
-    auto cueRequest = createPotentialAccessControlRequest(WTFMove(resourceRequest), WTFMove(options), m_document, element.mediaElementCrossOriginAttribute(), SameOriginFlag::Yes);
+    auto cueRequest = createPotentialAccessControlRequest(WTFMove(resourceRequest), WTFMove(options), m_document, element.mediaElementCrossOriginAttribute());
     m_resource = m_document.cachedResourceLoader().requestTextTrack(WTFMove(cueRequest)).value_or(nullptr);
     if (!m_resource)
         return false;

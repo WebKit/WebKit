@@ -34,13 +34,13 @@
 #import "DOMNodeInternal.h"
 #import "DOMPrivate.h"
 #import <WebCore/DocumentFragment.h>
-#import <WebCore/FrameView.h>
-#import <WebCore/HTMLCollection.h>
+#import <WebCore/HTMLCollectionInlines.h>
 #import <WebCore/HTMLDocument.h>
 #import <WebCore/HTMLInputElement.h>
 #import <WebCore/HTMLParserIdioms.h>
 #import <WebCore/HTMLSelectElement.h>
 #import <WebCore/HTMLTextAreaElement.h>
+#import <WebCore/LocalFrameView.h>
 #import <WebCore/Range.h>
 #import <WebCore/RenderTextControl.h>
 #import <WebCore/Settings.h>

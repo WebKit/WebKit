@@ -32,6 +32,7 @@
 #import "DOMNodeInternal.h"
 #import "DOMNodeListInternal.h"
 #import "ExceptionHandlers.h"
+#import <WebCore/ElementInlines.h>
 #import <WebCore/HTMLCollection.h>
 #import <WebCore/HTMLElement.h>
 #import <WebCore/HTMLFormElement.h>
@@ -91,7 +92,7 @@
 - (void)setMultiple:(BOOL)newMultiple
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setMultiple(newMultiple);
+    IMPL->setBooleanAttribute(WebCore::HTMLNames::multipleAttr, newMultiple);
 }
 
 - (NSString *)name

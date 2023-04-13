@@ -205,11 +205,23 @@ void main()
         ASSERT_EQ(getWindowWidth(), getWindowHeight());
 
         // Create a non-mipped texture cube. Set the negative-Y face to be blue.
+        // The other sides of the cube map have been set to white.
         glGenTextures(1, &mTextureCube);
         glBindTexture(GL_TEXTURE_CUBE_MAP, mTextureCube);
         TexImageCubeMapFaces(0, GL_RGB, getWindowWidth(), GL_RGB, GL_UNSIGNED_BYTE, nullptr);
+
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, GL_RGB, getWindowWidth(), getWindowWidth(),
+                     0, GL_RGB, GL_UNSIGNED_BYTE, mLevelZeroWhiteInitData.data());
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, GL_RGB, getWindowWidth(), getWindowWidth(),
+                     0, GL_RGB, GL_UNSIGNED_BYTE, mLevelZeroWhiteInitData.data());
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Y, 0, GL_RGB, getWindowWidth(), getWindowWidth(),
+                     0, GL_RGB, GL_UNSIGNED_BYTE, mLevelZeroWhiteInitData.data());
         glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, GL_RGB, getWindowWidth(), getWindowWidth(),
                      0, GL_RGB, GL_UNSIGNED_BYTE, mLevelZeroBlueInitData.data());
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Z, 0, GL_RGB, getWindowWidth(), getWindowWidth(),
+                     0, GL_RGB, GL_UNSIGNED_BYTE, mLevelZeroWhiteInitData.data());
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, GL_RGB, getWindowWidth(), getWindowWidth(),
+                     0, GL_RGB, GL_UNSIGNED_BYTE, mLevelZeroWhiteInitData.data());
 
         // Complete the texture cube without mipmaps to start with.
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST);

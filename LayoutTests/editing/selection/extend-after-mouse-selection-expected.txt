@@ -3,10 +3,10 @@ Selecting from start to end with mac editing behavior:
 | "\n    "
 | <span>
 |   id="test"
-|   "a "
+|   "a <#selection-anchor>"
 |   <span>
 |     id="start"
-|     "<#selection-anchor>bc"
+|     "bc"
 |   " "
 |   <br>
 |   "d "
@@ -41,10 +41,10 @@ Extending selection forward by one character with mac editing behavior:
 | "\n    "
 | <span>
 |   id="test"
-|   "a "
+|   "a <#selection-focus>"
 |   <span>
 |     id="start"
-|     "<#selection-focus>bc"
+|     "bc"
 |   " "
 |   <br>
 |   "d "
@@ -60,10 +60,10 @@ Extending selection forward by line boundary with mac editing behavior:
 | "\n    "
 | <span>
 |   id="test"
-|   "a "
+|   "a <#selection-focus>"
 |   <span>
 |     id="start"
-|     "<#selection-focus>bc"
+|     "bc"
 |   " "
 |   <br>
 |   "d "
@@ -98,10 +98,10 @@ Selecting from start to end with windows editing behavior:
 | "\n    "
 | <span>
 |   id="test"
-|   "a "
+|   "a <#selection-anchor>"
 |   <span>
 |     id="start"
-|     "<#selection-anchor>bc"
+|     "bc"
 |   " "
 |   <br>
 |   "d "
@@ -117,10 +117,10 @@ Extending selection backward by one character with windows editing behavior:
 | "\n    "
 | <span>
 |   id="test"
-|   "a "
+|   "a <#selection-anchor>"
 |   <span>
 |     id="start"
-|     "<#selection-anchor>bc"
+|     "bc"
 |   " "
 |   <br>
 |   "d "
@@ -136,10 +136,10 @@ Extending selection forward by one character with windows editing behavior:
 | "\n    "
 | <span>
 |   id="test"
-|   "a "
+|   "a <#selection-anchor>"
 |   <span>
 |     id="start"
-|     "<#selection-anchor>bc"
+|     "bc"
 |   " "
 |   <br>
 |   "d "
@@ -155,10 +155,10 @@ Extending selection forward by line boundary with windows editing behavior:
 | "\n    "
 | <span>
 |   id="test"
-|   "a "
+|   "a <#selection-anchor>"
 |   <span>
 |     id="start"
-|     "<#selection-anchor>bc"
+|     "bc"
 |   " "
 |   <br>
 |   "d "
@@ -174,14 +174,13 @@ Extending selection backward by line boundary with windows editing behavior:
 | "\n    "
 | <span>
 |   id="test"
-|   "a "
+|   "a <#selection-anchor>"
 |   <span>
 |     id="start"
-|     "<#selection-anchor>bc"
+|     "bc"
 |   " "
 |   <br>
-|   <#selection-focus>
-|   "d "
+|   "<#selection-focus>d "
 |   <span>
 |     id="end"
 |     "ef"
@@ -194,10 +193,10 @@ Selecting from start to end with unix editing behavior:
 | "\n    "
 | <span>
 |   id="test"
-|   "a "
+|   "a <#selection-anchor>"
 |   <span>
 |     id="start"
-|     "<#selection-anchor>bc"
+|     "bc"
 |   " "
 |   <br>
 |   "d "
@@ -213,10 +212,10 @@ Extending selection backward by one character with unix editing behavior:
 | "\n    "
 | <span>
 |   id="test"
-|   "a "
+|   "a <#selection-anchor>"
 |   <span>
 |     id="start"
-|     "<#selection-anchor>bc"
+|     "bc"
 |   " "
 |   <br>
 |   "d "
@@ -232,10 +231,10 @@ Extending selection forward by one character with unix editing behavior:
 | "\n    "
 | <span>
 |   id="test"
-|   "a "
+|   "a <#selection-anchor>"
 |   <span>
 |     id="start"
-|     "<#selection-anchor>bc"
+|     "bc"
 |   " "
 |   <br>
 |   "d "
@@ -251,10 +250,10 @@ Extending selection forward by line boundary with unix editing behavior:
 | "\n    "
 | <span>
 |   id="test"
-|   "a "
+|   "a <#selection-anchor>"
 |   <span>
 |     id="start"
-|     "<#selection-anchor>bc"
+|     "bc"
 |   " "
 |   <br>
 |   "d "
@@ -270,14 +269,13 @@ Extending selection backward by line boundary with unix editing behavior:
 | "\n    "
 | <span>
 |   id="test"
-|   "a "
+|   "a <#selection-anchor>"
 |   <span>
 |     id="start"
-|     "<#selection-anchor>bc"
+|     "bc"
 |   " "
 |   <br>
-|   <#selection-focus>
-|   "d "
+|   "<#selection-focus>d "
 |   <span>
 |     id="end"
 |     "ef"

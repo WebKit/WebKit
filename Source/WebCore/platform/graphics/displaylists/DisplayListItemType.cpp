@@ -287,6 +287,7 @@ bool isInlineItem(ItemType type)
     case ItemType::ClipOutToPath:
     case ItemType::ClipPath:
     case ItemType::DrawControlPart:
+    case ItemType::DrawDotsForDocumentMarker:
     case ItemType::DrawFocusRingPath:
     case ItemType::DrawFocusRingRects:
     case ItemType::DrawGlyphs:
@@ -315,7 +316,6 @@ bool isInlineItem(ItemType type)
     case ItemType::ClipOut:
     case ItemType::ClipToImageBuffer:
     case ItemType::ConcatenateCTM:
-    case ItemType::DrawDotsForDocumentMarker:
     case ItemType::DrawEllipse:
     case ItemType::DrawFilteredImageBuffer:
     case ItemType::DrawDecomposedGlyphs:

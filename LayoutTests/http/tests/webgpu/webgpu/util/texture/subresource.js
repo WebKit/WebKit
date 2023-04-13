@@ -22,7 +22,6 @@ export class SubresourceRange {
       begin: subresources.mipRange.begin,
       end: endOfRange(subresources.mipRange),
     };
-
     this.layerRange = {
       begin: subresources.layerRange.begin,
       end: endOfRange(subresources.layerRange),
@@ -30,7 +29,7 @@ export class SubresourceRange {
   }
 
   /**
-   * Iterates over the "rectangle" of { mip level, array layer } pairs represented by the range.
+   * Iterates over the "rectangle" of `{ level, layer }` pairs represented by the range.
    */
   *each() {
     for (let level = this.mipRange.begin; level < this.mipRange.end; ++level) {

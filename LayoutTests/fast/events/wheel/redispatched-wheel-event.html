@@ -36,6 +36,7 @@
             shouldBe('windowScrollEventCount', '0');
             shouldBe('overflowScrollEventCount', '0');
 
+            await UIHelper.ensurePresentationUpdate();
             await UIHelper.mouseWheelScrollAt(100, 100);
 
             shouldBe('windowScrollEventCount', '0');

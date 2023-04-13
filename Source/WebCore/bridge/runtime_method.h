@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef RUNTIME_FUNCTION_H_
-#define RUNTIME_FUNCTION_H_
+#pragma once
 
 #include "BridgeJSC.h"
 #include <JavaScriptCore/InternalFunction.h>
@@ -80,5 +79,3 @@ private:
 };
 
 } // namespace JSC
-
-#endif

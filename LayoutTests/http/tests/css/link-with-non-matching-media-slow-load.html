@@ -1,0 +1,18 @@
+<style>
+#pass { display:none; width:200px; height:200px; background-color: green; position: absolute; }
+#fail { display:inline; width:200px; height:200px; background-color: red; position: absolute; }
+</style>
+<body>
+<link rel="stylesheet" href="http://127.0.0.1:8000/local/slow-css-pass.cgi" media="not all" onload="this.media='all'">
+<div id=pass></div>
+<div id=fail></div>
+<script>
+function test() {
+    document.body.offsetLeft;
+
+    if (window.internals)
+        pass.textContent = internals.isVisuallyNonEmpty ? "PASS: Non-matching slow stylesheet didn't delay visually non-empty." : "FAIL: Non-matching slow media delayed visually non-empty.";
+}
+
+setTimeout(test);
+</script>

@@ -111,6 +111,14 @@ void RemoteInspectionTarget::unpauseForInitializedInspector()
     RemoteInspector::singleton().setupCompleted(targetIdentifier());
 }
 
+void RemoteInspectionTarget::setPresentingApplicationPID(std::optional<ProcessID>&& pid)
+{
+    m_presentingApplicationPID = pid;
+#if PLATFORM(COCOA)
+    RemoteInspector::singleton().setUsePerTargetPresentingApplicationPIDs(true);
+#endif
+}
+
 } // namespace Inspector
 
 #endif // ENABLE(REMOTE_INSPECTOR)

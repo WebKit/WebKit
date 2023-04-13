@@ -48,6 +48,7 @@ namespace
     PROC(SetCullMode)                                \
     PROC(SetDepthStencilState)                       \
     PROC(SetDepthBias)                               \
+    PROC(SetDepthClipMode)                           \
     PROC(SetStencilRefVals)                          \
     PROC(SetViewport)                                \
     PROC(SetScissorRect)                             \
@@ -132,6 +133,13 @@ inline void SetDepthBiasCmd(id<MTLRenderCommandEncoder> encoder, IntermediateCom
     float slopeScale = stream->fetch<float>();
     float clamp      = stream->fetch<float>();
     [encoder setDepthBias:depthBias slopeScale:slopeScale clamp:clamp];
+}
+
+inline void SetDepthClipModeCmd(id<MTLRenderCommandEncoder> encoder,
+                                IntermediateCommandStream *stream)
+{
+    MTLDepthClipMode depthClipMode = stream->fetch<MTLDepthClipMode>();
+    [encoder setDepthClipMode:depthClipMode];
 }
 
 inline void SetStencilRefValsCmd(id<MTLRenderCommandEncoder> encoder,
@@ -558,14 +566,20 @@ AutoObjCPtr<id<MTLCommandBuffer>> CommandQueue::makeMetalCommandBuffer(uint64_t 
 
         std::lock_guard<std::mutex> lg(mLock);
 
-        uint64_t serial = mQueueSerialCounter++;
+        uint64_t serial           = mQueueSerialCounter++;
+        uint64_t timeElapsedEntry = mActiveTimeElapsedId;
 
         mMetalCmdBuffers.push_back({metalCmdBuffer, serial});
 
         ANGLE_MTL_LOG("Created MTLCommandBuffer %llu:%p", serial, metalCmdBuffer.get());
 
+        if (timeElapsedEntry)
+        {
+            addCommandBufferToTimeElapsedEntry(lg, timeElapsedEntry);
+        }
+
         [metalCmdBuffer addCompletedHandler:^(id<MTLCommandBuffer> buf) {
-          onCommandBufferCompleted(buf, serial);
+          onCommandBufferCompleted(buf, serial, timeElapsedEntry);
         }];
 
         ASSERT(metalCmdBuffer);
@@ -587,11 +601,19 @@ void CommandQueue::onCommandBufferCommitted(id<MTLCommandBuffer> buf, uint64_t s
         std::memory_order_relaxed);
 }
 
-void CommandQueue::onCommandBufferCompleted(id<MTLCommandBuffer> buf, uint64_t serial)
+void CommandQueue::onCommandBufferCompleted(id<MTLCommandBuffer> buf,
+                                            uint64_t serial,
+                                            uint64_t timeElapsedEntry)
 {
     std::lock_guard<std::mutex> lg(mLock);
 
     ANGLE_MTL_LOG("Completed MTLCommandBuffer %llu:%p", serial, buf);
+
+    if (timeElapsedEntry != 0)
+    {
+        // Record this command buffer's elapsed time.
+        recordCommandBufferTimeElapsed(lg, timeElapsedEntry, [buf GPUEndTime] - [buf GPUStartTime]);
+    }
 
     if (mCompletedBufferSerial >= serial)
     {
@@ -614,9 +636,106 @@ void CommandQueue::onCommandBufferCompleted(id<MTLCommandBuffer> buf, uint64_t s
         std::memory_order_relaxed);
 }
 
-uint64_t CommandQueue::getNextRenderEncoderSerial()
+uint64_t CommandQueue::allocateTimeElapsedEntry()
 {
-    return ++mRenderEncoderCounter;
+    std::lock_guard<std::mutex> lg(mLock);
+
+    uint64_t id = mTimeElapsedNextId++;
+    if (mTimeElapsedNextId == 0)
+    {
+        mTimeElapsedNextId = 1;
+    }
+    TimeElapsedEntry entry;
+    entry.id = id;
+    mTimeElapsedEntries.insert({id, entry});
+    return id;
+}
+
+bool CommandQueue::deleteTimeElapsedEntry(uint64_t id)
+{
+    std::lock_guard<std::mutex> lg(mLock);
+
+    auto result = mTimeElapsedEntries.find(id);
+    if (result == mTimeElapsedEntries.end())
+    {
+        return false;
+    }
+    mTimeElapsedEntries.erase(result);
+    return true;
+}
+
+void CommandQueue::setActiveTimeElapsedEntry(uint64_t id)
+{
+    std::lock_guard<std::mutex> lg(mLock);
+
+    // If multithreading support is added to the Metal backend and
+    // involves accessing the same CommandQueue from multiple threads,
+    // the time elapsed query implementation will need to be rethought.
+    mActiveTimeElapsedId = id;
+}
+
+bool CommandQueue::isTimeElapsedEntryComplete(uint64_t id)
+{
+    std::lock_guard<std::mutex> lg(mLock);
+
+    auto result = mTimeElapsedEntries.find(id);
+    if (result == mTimeElapsedEntries.end())
+    {
+        return false;
+    }
+
+    TimeElapsedEntry &entry = result->second;
+    ASSERT(entry.pending_command_buffers >= 0);
+    if (entry.pending_command_buffers > 0)
+    {
+        return false;
+    }
+
+    return true;
+}
+
+double CommandQueue::getTimeElapsedEntryInSeconds(uint64_t id)
+{
+    std::lock_guard<std::mutex> lg(mLock);
+
+    auto result = mTimeElapsedEntries.find(id);
+    if (result == mTimeElapsedEntries.end())
+    {
+        return 0.0;
+    }
+
+    return result->second.elapsed_seconds;
+}
+
+// Private.
+void CommandQueue::addCommandBufferToTimeElapsedEntry(std::lock_guard<std::mutex> &lg, uint64_t id)
+{
+    // This must be called under the cover of mLock.
+    auto result = mTimeElapsedEntries.find(id);
+    if (result == mTimeElapsedEntries.end())
+    {
+        return;
+    }
+
+    TimeElapsedEntry &entry = result->second;
+    ++entry.pending_command_buffers;
+}
+
+void CommandQueue::recordCommandBufferTimeElapsed(std::lock_guard<std::mutex> &lg,
+                                                  uint64_t id,
+                                                  double seconds)
+{
+    // This must be called under the cover of mLock.
+    auto result = mTimeElapsedEntries.find(id);
+    if (result == mTimeElapsedEntries.end())
+    {
+        return;
+    }
+
+    TimeElapsedEntry &entry = result->second;
+    ASSERT(entry.pending_command_buffers > 0);
+    --entry.pending_command_buffers;
+    entry.elapsed_seconds += seconds;
 }
 
 // CommandBuffer implementation
@@ -1117,6 +1236,8 @@ void RenderCommandEncoderStates::reset()
     depthStencilState = nil;
     depthBias = depthSlopeScale = depthClamp = 0;
 
+    depthClipMode = MTLDepthClipModeClip;
+
     stencilFrontRef = stencilBackRef = 0;
 
     viewport.reset();
@@ -1136,9 +1257,7 @@ void RenderCommandEncoderStates::reset()
 // RenderCommandEncoder implemtation
 RenderCommandEncoder::RenderCommandEncoder(CommandBuffer *cmdBuffer,
                                            const OcclusionQueryPool &queryPool)
-    : CommandEncoder(cmdBuffer, RENDER),
-      mOcclusionQueryPool(queryPool),
-      mSerial(cmdBuffer->cmdQueue().getNextRenderEncoderSerial())
+    : CommandEncoder(cmdBuffer, RENDER), mOcclusionQueryPool(queryPool)
 {
     ANGLE_MTL_OBJC_SCOPE
     {
@@ -1558,6 +1677,18 @@ RenderCommandEncoder &RenderCommandEncoder::setDepthBias(float depthBias,
 
     return *this;
 }
+RenderCommandEncoder &RenderCommandEncoder::setDepthClipMode(MTLDepthClipMode depthClipMode)
+{
+    if (mStateCache.depthClipMode == depthClipMode)
+    {
+        return *this;
+    }
+    mStateCache.depthClipMode = depthClipMode;
+
+    mCommands.push(CmdType::SetDepthClipMode).push(depthClipMode);
+
+    return *this;
+}
 RenderCommandEncoder &RenderCommandEncoder::setStencilRefVals(uint32_t frontRef, uint32_t backRef)
 {
     // Metal has some bugs when reference values are larger than 0xff
@@ -1660,7 +1791,6 @@ RenderCommandEncoder &RenderCommandEncoder::setBufferForWrite(gl::ShaderType sha
         return *this;
     }
 
-    buffer->setLastWritingRenderEncoderSerial(mSerial);
     cmdBuffer().setWriteDependency(buffer);
 
     id<MTLBuffer> mtlBuffer = (buffer ? buffer->get() : nil);
@@ -2310,14 +2440,10 @@ BlitCommandEncoder &BlitCommandEncoder::synchronizeResource(Buffer *buffer)
     }
 
 #if TARGET_OS_OSX || TARGET_OS_MACCATALYST
-    if (buffer->get().storageMode == MTLStorageModeManaged)
-    {
-        // Only MacOS has separated storage for resource on CPU and GPU and needs explicit
-        // synchronization
-        cmdBuffer().setReadDependency(buffer);
-
-        [get() synchronizeResource:buffer->get()];
-    }
+    // Only MacOS has separated storage for resource on CPU and GPU and needs explicit
+    // synchronization
+    cmdBuffer().setReadDependency(buffer);
+    [get() synchronizeResource:buffer->get()];
 #endif
     return *this;
 }

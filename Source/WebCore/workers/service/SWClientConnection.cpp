@@ -28,6 +28,8 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "BackgroundFetchInformation.h"
+#include "BackgroundFetchRegistration.h"
 #include "Document.h"
 #include "ExceptionData.h"
 #include "MessageEvent.h"
@@ -35,12 +37,16 @@
 #include "ServiceWorkerContainer.h"
 #include "ServiceWorkerGlobalScope.h"
 #include "ServiceWorkerJobData.h"
+#include "ServiceWorkerProvider.h"
 #include "ServiceWorkerRegistration.h"
+#include "ServiceWorkerRegistrationBackgroundFetchAPI.h"
 #include "SharedWorkerContextManager.h"
 #include "SharedWorkerThread.h"
 #include "SharedWorkerThreadProxy.h"
 #include "Worker.h"
 #include "WorkerFetchResult.h"
+#include "WorkerGlobalScope.h"
+#include "WorkerSWClientConnection.h"
 #include <wtf/CrossThreadCopier.h>
 
 namespace WebCore {
@@ -54,6 +60,14 @@ static bool dispatchToContextThreadIfNecessary(const ServiceWorkerOrClientIdenti
     }, [&](ServiceWorkerIdentifier identifier) {
         return SWContextManager::singleton().postTaskToServiceWorker(identifier, WTFMove(task));
     });
+}
+
+Ref<SWClientConnection> SWClientConnection::fromScriptExecutionContext(ScriptExecutionContext& context)
+{
+    if (is<WorkerGlobalScope>(context))
+        return static_cast<SWClientConnection&>(downcast<WorkerGlobalScope>(context).swClientConnection());
+
+    return ServiceWorkerProvider::singleton().serviceWorkerConnection();
 }
 
 SWClientConnection::SWClientConnection() = default;
@@ -129,7 +143,6 @@ void SWClientConnection::postMessageToServiceWorkerClient(ScriptExecutionContext
         postMessageToContainer(*destinationDocument, WTFMove(message), WTFMove(sourceData), WTFMove(sourceOrigin));
         return;
     }
-
     ScriptExecutionContext::postTaskTo(destinationContextIdentifier, [message = WTFMove(message), sourceData = WTFMove(sourceData).isolatedCopy(), sourceOrigin = WTFMove(sourceOrigin).isolatedCopy()](auto& context) mutable {
         postMessageToContainer(context, WTFMove(message), WTFMove(sourceData), WTFMove(sourceOrigin));
     });
@@ -231,6 +244,18 @@ void SWClientConnection::setRegistrationUpdateViaCache(ServiceWorkerRegistration
                 if (auto* registration = container->registration(identifier))
                     registration->setUpdateViaCache(updateViaCache);
             }
+        };
+    });
+}
+
+void SWClientConnection::updateBackgroundFetchRegistration(const BackgroundFetchInformation& information)
+{
+    for (auto* document : Document::allDocuments())
+        BackgroundFetchRegistration::updateIfExisting(*document, information);
+
+    forAllWorkers([&information] {
+        return [information = crossThreadCopy(information)] (auto& context) {
+            BackgroundFetchRegistration::updateIfExisting(context, information);
         };
     });
 }

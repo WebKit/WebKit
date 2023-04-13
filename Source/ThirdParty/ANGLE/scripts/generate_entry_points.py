@@ -75,6 +75,7 @@ PLS_ALLOW_LIST = {
     "EnableClientState",
     "EnableVertexAttribArray",
     "EndPixelLocalStorageANGLE",
+    "FramebufferPixelLocalStorageInterruptANGLE",
     "FrontFace",
     "MapBufferRange",
     "PixelLocalStorageBarrierANGLE",
@@ -1322,8 +1323,8 @@ EGL_PACKED_TYPES = {
     "EGLImageKHR": "ImageID",
     "EGLStreamKHR": "egl::Stream *",
     "EGLSurface": "SurfaceID",
-    "EGLSync": "egl::Sync *",
-    "EGLSyncKHR": "egl::Sync *",
+    "EGLSync": "egl::SyncID",
+    "EGLSyncKHR": "egl::SyncID",
 }
 
 CAPTURE_BLOCKLIST = ['eglGetProcAddress']
@@ -1697,7 +1698,8 @@ def get_capture_param_type_name(param_type):
     param_type = param_type.replace("&", "")
     param_type = param_type.replace("const", "")
     param_type = param_type.replace("struct", "")
-    param_type = param_type.replace("egl::", "egl_" if pointer_count else "")
+    param_type = param_type.replace("egl::",
+                                    "egl_" if pointer_count or param_type == 'egl::SyncID' else "")
     param_type = param_type.replace("gl::", "")
     param_type = param_type.strip()
 
@@ -2266,6 +2268,8 @@ def add_namespace(param_type):
         return param_type.replace('gl_', 'gl::')
     elif param_type.startswith('egl_'):
         return param_type.replace('egl_', 'egl::')
+    elif param_type.startswith('wl_'):
+        return param_type
     elif param_type in egl_namespace:
         return "egl::" + param_type
     else:
@@ -2501,6 +2505,8 @@ def format_replay_params(api, command_name, param_text_list, packed_enums, resou
                     param_access = 'gUniformLocations[gCurrentProgram][%s]' % param_access
                 elif packed_type == 'egl::Image':
                     param_access = 'gEGLImageMap2[captures[%d].value.GLuintVal]' % i
+                elif packed_type == 'egl::Sync':
+                    param_access = 'gEGLSyncMap[captures[%d].value.egl_SyncIDVal]' % i
         param_access_strs.append(param_access)
     return ', '.join(param_access_strs)
 
@@ -2931,10 +2937,6 @@ def main():
 
         header_includes = TEMPLATE_HEADER_INCLUDES.format(
             major=major_if_not_one, minor=minor_if_not_zero)
-
-        # We include the platform.h header since it undefines the conflicting MemoryBarrier macro.
-        if major_version == 3 and minor_version == 1:
-            header_includes += "\n#include \"common/platform.h\"\n"
 
         version_annotation = "%s%s" % (major_version, minor_if_not_zero)
         source_includes = TEMPLATE_SOURCES_INCLUDES.format(

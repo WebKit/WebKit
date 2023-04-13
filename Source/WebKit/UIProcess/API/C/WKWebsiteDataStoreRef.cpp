@@ -166,11 +166,6 @@ void WKWebsiteDataStoreSetAllowsAnySSLCertificateForWebSocketTesting(WKWebsiteDa
     WebKit::toImpl(dataStore)->setAllowsAnySSLCertificateForWebSocket(allows);
 }
 
-void WKWebsiteDataStoreClearCachedCredentials(WKWebsiteDataStoreRef dataStoreRef)
-{
-    WebKit::toImpl(dataStoreRef)->clearCachedCredentials();
-}
-
 void WKWebsiteDataStoreSetResourceLoadStatisticsDebugModeWithCompletionHandler(WKWebsiteDataStoreRef dataStoreRef, bool enable, void* context, WKWebsiteDataStoreStatisticsDebugModeFunction completionHandler)
 {
 #if ENABLE(TRACKING_PREVENTION)
@@ -894,6 +889,7 @@ void WKWebsiteDataStoreClearStorage(WKWebsiteDataStoreRef dataStoreRef, void* co
         WebKit::WebsiteDataType::IndexedDBDatabases,
         WebKit::WebsiteDataType::FileSystem,
         WebKit::WebsiteDataType::DOMCache,
+        WebKit::WebsiteDataType::Credentials,
 #if ENABLE(SERVICE_WORKER)
         WebKit::WebsiteDataType::ServiceWorkerRegistrations
 #endif

@@ -5,14 +5,16 @@ After copy:
 | <div>
 |   class="editing"
 |   id="test"
-|   "\n<#selection-anchor>foo\n"
+|   <#selection-anchor>
+|   "\nfoo\n"
 |   <div>
 |     style="color: rgb(255, 0, 0);"
 |     "\n"
 |     <div>
-|       "bar<#selection-focus>"
+|       "bar"
 |     "\n"
 |   "\n"
+|   <#selection-focus>
 | "\n"
 
 After paste:

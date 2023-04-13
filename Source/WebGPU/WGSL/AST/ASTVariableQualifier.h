@@ -43,18 +43,19 @@ enum class AccessMode : uint8_t {
     ReadWrite
 };
 
+// FIXME: Perhaps this class is not needed if we have spanned identifier?
 class VariableQualifier final : public Node {
     WTF_MAKE_FAST_ALLOCATED;
-
 public:
+    using Ptr = std::unique_ptr<VariableQualifier>;
+
     VariableQualifier(SourceSpan span, StorageClass storageClass, AccessMode accessMode)
         : Node(span)
         , m_storageClass(storageClass)
         , m_accessMode(accessMode)
-    {
-    }
+    { }
 
-    Kind kind() const override;
+    NodeKind kind() const override;
     StorageClass storageClass() const { return m_storageClass; }
     AccessMode accessMode() const { return m_accessMode; }
 

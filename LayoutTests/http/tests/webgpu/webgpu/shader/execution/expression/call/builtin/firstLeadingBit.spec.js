@@ -1,42 +1,36 @@
 /**
  * AUTO-GENERATED - DO NOT EDIT. Source: https://github.com/gpuweb/cts
  **/ export const description = `
-Execution Tests for the 'firstLeadingBit' builtin function
+Execution tests for the 'firstLeadingBit' builtin function
+
+T is u32 or vecN<u32>
+@const fn firstLeadingBit(e: T ) -> T
+For scalar T, the result is: T(-1) if e is zero.
+Otherwise the position of the most significant 1 bit in e.
+Component-wise when T is a vector.
+
+T is i32 or vecN<i32>
+@const fn firstLeadingBit(e: T ) -> T
+For scalar T, the result is: -1 if e is 0 or -1.
+Otherwise the position of the most significant bit in e that is different from e’s sign bit.
+Component-wise when T is a vector.
 `;
 import { makeTestGroup } from '../../../../../../common/framework/test_group.js';
 import { GPUTest } from '../../../../../gpu_test.js';
 import { i32, i32Bits, TypeI32, u32, TypeU32, u32Bits } from '../../../../../util/conversion.js';
-import { run } from '../../expression.js';
+import { allInputSources, run } from '../../expression.js';
 
 import { builtin } from './builtin.js';
 
 export const g = makeTestGroup(GPUTest);
 
 g.test('u32')
-  .uniqueId('xxxxxxxxxxxxxxxx')
-  .specURL('https://www.w3.org/TR/2021/WD-WGSL-20210929/#integer-builtin-functions')
-  .desc(
-    `
-firstLeadingBit:
-T is u32 or vecN<u32> firstLeadingBit(e: T) -> T
-
-For scalar T, the result is:
-* T(-1) if e is zero.
-* Otherwise the position of the most significant 1 bit in e.
-Component-wise when T is a vector.
-
-Please read the following guidelines before contributing:
-https://github.com/gpuweb/cts/blob/main/docs/plan_autogen.md
-`
-  )
-  .params(u =>
-    u
-      .combine('storageClass', ['uniform', 'storage_r', 'storage_rw'])
-      .combine('vectorize', [undefined, 2, 3, 4])
-  )
+  .specURL('https://www.w3.org/TR/WGSL/#integer-builtin-functions')
+  .desc(`u32 tests`)
+  .params(u => u.combine('inputSource', allInputSources).combine('vectorize', [undefined, 2, 3, 4]))
   .fn(async t => {
     const cfg = t.params;
-    run(t, builtin('firstLeadingBit'), [TypeU32], TypeU32, cfg, [
+    await run(t, builtin('firstLeadingBit'), [TypeU32], TypeU32, cfg, [
       // Zero
       { input: u32Bits(0b00000000000000000000000000000000), expected: u32(-1) },
 
@@ -144,33 +138,12 @@ https://github.com/gpuweb/cts/blob/main/docs/plan_autogen.md
   });
 
 g.test('i32')
-  .uniqueId('xxxxxxxxxxxxxxxx')
-  .specURL('https://www.w3.org/TR/2021/WD-WGSL-20210929/#integer-builtin-functions')
-  .desc(
-    `
-firstLeadingBit:
-T is i32 or vecN<i32> firstLeadingBit(e: T) -> T
-
-For scalar T, the result is:
-* -1 if e is 0 or -1.
-* Otherwise the position of the most significant bit in e that is different from e's sign bit.
-
-Note: Since signed integers use twos-complement representation, the sign bit appears in the most significant bit position.
-
-Component-wise when T is a vector.
-
-Please read the following guidelines before contributing:
-https://github.com/gpuweb/cts/blob/main/docs/plan_autogen.md
-`
-  )
-  .params(u =>
-    u
-      .combine('storageClass', ['uniform', 'storage_r', 'storage_rw'])
-      .combine('vectorize', [undefined, 2, 3, 4])
-  )
+  .specURL('https://www.w3.org/TR/WGSL/#integer-builtin-functions')
+  .desc(`i32 tests`)
+  .params(u => u.combine('inputSource', allInputSources).combine('vectorize', [undefined, 2, 3, 4]))
   .fn(async t => {
     const cfg = t.params;
-    run(t, builtin('firstLeadingBit'), [TypeI32], TypeI32, cfg, [
+    await run(t, builtin('firstLeadingBit'), [TypeI32], TypeI32, cfg, [
       // Zero
       { input: i32Bits(0b00000000000000000000000000000000), expected: i32(-1) },
 

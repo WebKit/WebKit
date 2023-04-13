@@ -27,6 +27,7 @@
 
 #include <WebCore/Color.h>
 #include <WebCore/IntPoint.h>
+#include <WebCore/SecurityOriginData.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/text/WTFString.h>
@@ -83,6 +84,9 @@ public:
     void setDeviceScaleFactor(float deviceScaleFactor) { m_deviceScaleFactor = deviceScaleFactor; }
     float deviceScaleFactor() const { return m_deviceScaleFactor; }
 
+    void setOrigin(WebCore::SecurityOriginData&& origin) { m_origin = WTFMove(origin); }
+    const WebCore::SecurityOriginData& origin() const { return m_origin; }
+
 #if HAVE(IOSURFACE)
     WebCore::IOSurface* surface() const { return m_surface.get(); }
 
@@ -128,6 +132,7 @@ private:
     float m_deviceScaleFactor;
     WebCore::Color m_backgroundColor;
     WebCore::IntPoint m_viewScrollPosition; // Scroll position at snapshot time. Integral to make comparison reliable.
+    WebCore::SecurityOriginData m_origin;
 };
 
 class ViewSnapshotStore {
@@ -142,6 +147,7 @@ public:
     void recordSnapshot(WebPageProxy&, WebBackForwardListItem&);
 
     void discardSnapshotImages();
+    void discardSnapshotImagesForOrigin(const WebCore::SecurityOriginData&);
 
     void setDisableSnapshotVolatilityForTesting(bool disable) { m_disableSnapshotVolatility = disable; }
     bool disableSnapshotVolatilityForTesting() const { return m_disableSnapshotVolatility; }

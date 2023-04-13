@@ -32,7 +32,9 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
+#include "CocoaHelpers.h"
 #include "WebExtensionAPINamespace.h"
+#include "WebExtensionAPIPermissions.h"
 #include "WebExtensionAPIWebNavigation.h"
 #include <WebCore/ProcessQualified.h>
 #include <wtf/ObjectIdentifier.h>
@@ -40,6 +42,22 @@
 namespace WebKit {
 
 using namespace WebCore;
+
+// MARK: Permissions support
+
+void WebExtensionContextProxy::dispatchPermissionsEvent(const WebKit::WebExtensionEventListenerType& type, HashSet<String> permissions, HashSet<String> origins)
+{
+    NSArray<NSString *> *permissionDetails = toAPIArray(permissions);
+    NSArray<NSString *> *originDetails = toAPIArray(origins);
+
+    enumerateNamespaceObjects([&](auto& namespaceObject) {
+        auto& permissionsObject = namespaceObject.permissions();
+        if (type == WebExtensionEventListenerType::PermissionsOnAdded)
+            permissionsObject.onAdded().invokeListenersWithArgument(@{ @"permissions": permissionDetails, @"origins": originDetails });
+        else
+            permissionsObject.onRemoved().invokeListenersWithArgument(@{ @"permissions": permissionDetails, @"origins": originDetails });
+    });
+}
 
 // MARK: webNavigation support
 

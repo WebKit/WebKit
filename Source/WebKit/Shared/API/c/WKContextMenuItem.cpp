@@ -260,5 +260,7 @@ STATIC_ASSERT_EQUALS(82, kWKContextMenuItemTagMediaMute, ContextMenuItemTagMedia
 STATIC_ASSERT_EQUALS(83, kWKContextMenuItemTagDictationAlternative, ContextMenuItemTagDictationAlternative);
 STATIC_ASSERT_EQUALS(84, kWKContextMenuItemTagPlayAllAnimations, ContextMenuItemTagPlayAllAnimations);
 STATIC_ASSERT_EQUALS(85, kWKContextMenuItemTagPauseAllAnimations, ContextMenuItemTagPauseAllAnimations);
+STATIC_ASSERT_EQUALS(86, kWKContextMenuItemTagPlayAnimation, ContextMenuItemTagPlayAnimation);
+STATIC_ASSERT_EQUALS(87, kWKContextMenuItemTagPauseAnimation, ContextMenuItemTagPauseAnimation);
 
 #endif // PLATFORM(COCOA)

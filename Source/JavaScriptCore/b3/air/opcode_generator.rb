@@ -952,7 +952,7 @@ writeH("OpcodeGenerated") {
                         outp.puts "OPGEN_RETURN(false);"
                     end
                 when "Index"
-                    outp.puts "if (!Arg::isValidIndexForm(args[#{index}].scale(), args[#{index}].offset(), #{arg.widthCode}))"
+                    outp.puts "if (!Arg::isValidIndexForm(this->kind.opcode, args[#{index}].scale(), args[#{index}].offset(), #{arg.widthCode}))"
                     outp.puts "OPGEN_RETURN(false);"
                 when "PreIndex"
                     outp.puts "if (!Arg::isValidIncrementIndexForm(args[#{index}].offset()))"

@@ -59,8 +59,8 @@ export class TestQueryMultiFile {
 
   toStringHelper() {
     return [this.suite, [...this.filePathParts, kWildcard].join(kPathSeparator)];
-  }}
-
+  }
+}
 
 /**
  * A multi-test test query, like `s:f:*` or `s:f:a,b,*`.
@@ -89,8 +89,8 @@ export class TestQueryMultiTest extends TestQueryMultiFile {
     this.filePathParts.join(kPathSeparator),
     [...this.testPathParts, kWildcard].join(kPathSeparator)];
 
-  }}
-
+  }
+}
 
 /**
  * A multi-case test query, like `s:f:t:*` or `s:f:t:a,b,*`.
@@ -121,8 +121,8 @@ export class TestQueryMultiCase extends TestQueryMultiTest {
     this.testPathParts.join(kPathSeparator),
     stringifyPublicParams(this.params, true)];
 
-  }}
-
+  }
+}
 
 /**
  * A multi-case test query, like `s:f:t:` or `s:f:t:a=1,b=1`.
@@ -144,8 +144,8 @@ export class TestQuerySingleCase extends TestQueryMultiCase {
     this.testPathParts.join(kPathSeparator),
     stringifyPublicParams(this.params)];
 
-  }}
-
+  }
+}
 
 /**
  * Parse raw expectations input into TestQueryWithExpectation[], filtering so that only
@@ -231,8 +231,8 @@ Expectation should be of the form path/to/cts.https.html?worker=0&q=suite:test_p
 
     expectations.push({
       query: expectationQuery,
-      expectation: entry.expectation });
-
+      expectation: entry.expectation
+    });
   }
   return expectations;
 }

@@ -32,13 +32,14 @@
 // ICU defines TRUE and FALSE macros, breaking libjpeg v9 headers
 #undef TRUE
 #undef FALSE
-extern "C" {
-#include "jpeglib.h"
-}
 
 #if USE(LCMS)
 #include "LCMSUniquePtr.h"
 #endif
+
+extern "C" {
+#include <jpeglib.h>
+}
 
 namespace WebCore {
 

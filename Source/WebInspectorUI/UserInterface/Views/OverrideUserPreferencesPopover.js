@@ -23,27 +23,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.OverrideUserPreferencesPopover = class OverrideUserPreferencesPopover extends WI.Popover
+WI.OverrideUserPreferencesPopover = class OverrideUserPreferencesPopover extends WI.SettingsPopover
 {
     constructor(delegate)
     {
         super(delegate);
 
-        this._targetElement = null;
         this._defaultValueOptionElementsMap = new Map;
-        this.windowResizeHandler = this._presentOverTargetElement.bind(this);
     }
 
     // Public
 
     show(targetElement)
     {
-        this._targetElement = targetElement;
-        this.content = this._createContentElement();
+        super.show(targetElement);
 
         WI.cssManager.addEventListener(WI.CSSManager.Event.DefaultUserPreferencesDidChange, this._defaultUserPreferencesDidChange, this);
-
-        this._presentOverTargetElement();
     }
 
     dismiss()
@@ -55,59 +50,9 @@ WI.OverrideUserPreferencesPopover = class OverrideUserPreferencesPopover extends
         super.dismiss();
     }
 
-    // Private
+    // Protected
 
-    _presentOverTargetElement()
-    {
-        if (!this._targetElement)
-            return;
-
-        let targetFrame = WI.Rect.rectFromClientRect(this._targetElement.getBoundingClientRect());
-        const preferredEdges = [WI.RectEdge.MAX_Y, WI.RectEdge.MAX_X];
-
-        this.present(targetFrame.pad(2), preferredEdges);
-    }
-
-    _createSelectElement({contentElement, id, label, preferenceName, preferenceValues, defaultValue})
-    {
-        if (!preferenceName || !preferenceValues.length)
-            return;
-
-        let labelElement = contentElement.appendChild(document.createElement("label"));
-        labelElement.textContent = label;
-        labelElement.setAttribute("for", id);
-
-        let selectElement = contentElement.appendChild(document.createElement("select"));
-        selectElement.setAttribute("name", preferenceName);
-        selectElement.setAttribute("id", id);
-
-        let systemValue = WI.cssManager.defaultUserPreferences.get(preferenceName);
-
-        for (let value of [defaultValue, ...preferenceValues]) {
-            let optionElement = selectElement.appendChild(document.createElement("option"));
-            optionElement.value = value;
-            optionElement.textContent = this._userPreferenceValueLabel(value, systemValue);
-
-            let selectedValue = WI.cssManager.overridenUserPreferences.get(preferenceName) || defaultValue;
-            if (value === selectedValue)
-                optionElement.setAttribute("selected", true);
-
-            if (value === defaultValue) {
-                optionElement.after(document.createElement("hr"));
-                this._defaultValueOptionElementsMap.set(preferenceName, optionElement);
-            }
-        }
-
-        selectElement.addEventListener("change", (event) => {
-            let value = event.target.value;
-            if (value !== defaultValue)
-                WI.cssManager.overrideUserPreference(preferenceName, value);
-            else
-                WI.cssManager.overrideUserPreference(preferenceName); // Pass no value to remove the override and restore the system default.
-        });
-    }
-
-    _createContentElement()
+    createContentElement()
     {
         let contentElement = document.createElement("div");
         contentElement.classList.add("user-preferences-content");
@@ -169,6 +114,47 @@ WI.OverrideUserPreferencesPopover = class OverrideUserPreferencesPopover extends
             });
 
         return contentElement;
+    }
+
+    // Private
+
+    _createSelectElement({contentElement, id, label, preferenceName, preferenceValues, defaultValue})
+    {
+        if (!preferenceName || !preferenceValues.length)
+            return;
+
+        let labelElement = contentElement.appendChild(document.createElement("label"));
+        labelElement.textContent = label;
+        labelElement.setAttribute("for", id);
+
+        let selectElement = contentElement.appendChild(document.createElement("select"));
+        selectElement.setAttribute("name", preferenceName);
+        selectElement.setAttribute("id", id);
+
+        let systemValue = WI.cssManager.defaultUserPreferences.get(preferenceName);
+
+        for (let value of [defaultValue, ...preferenceValues]) {
+            let optionElement = selectElement.appendChild(document.createElement("option"));
+            optionElement.value = value;
+            optionElement.textContent = this._userPreferenceValueLabel(value, systemValue);
+
+            let selectedValue = WI.cssManager.overriddenUserPreferences.get(preferenceName) || defaultValue;
+            if (value === selectedValue)
+                optionElement.setAttribute("selected", true);
+
+            if (value === defaultValue) {
+                optionElement.after(document.createElement("hr"));
+                this._defaultValueOptionElementsMap.set(preferenceName, optionElement);
+            }
+        }
+
+        selectElement.addEventListener("change", (event) => {
+            let value = event.target.value;
+            if (value !== defaultValue)
+                WI.cssManager.overrideUserPreference(preferenceName, value);
+            else
+                WI.cssManager.overrideUserPreference(preferenceName); // Pass no value to remove the override and restore the system default.
+        });
     }
 
     _userPreferenceValueLabel(preferenceValue, systemValue)

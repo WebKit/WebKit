@@ -8,18 +8,23 @@ features: [Temporal]
 ---*/
 
 const badResults = [
-  [undefined, RangeError],
-  [null, RangeError],
-  [false, RangeError],
+  [undefined, TypeError],
+  [null, TypeError],
+  [false, TypeError],
   [Infinity, RangeError],
   [-Infinity, RangeError],
   [NaN, RangeError],
   [-7, RangeError],
   [-0.1, RangeError],
-  ["string", RangeError],
+  ["string", TypeError],
   [Symbol("foo"), TypeError],
   [7n, TypeError],
-  [{}, RangeError],
+  [{}, TypeError],
+  [true, TypeError],
+  [7.1, RangeError],
+  ["7", TypeError],
+  ["7.5", TypeError],
+  [{valueOf() { return 7; }}, TypeError],
 ];
 
 badResults.forEach(([result, error]) => {
@@ -29,23 +34,5 @@ badResults.forEach(([result, error]) => {
     }
   }("iso8601");
   const instance = new Temporal.PlainDate(1981, 12, 15, calendar);
-  assert.throws(error, () => instance.day, `${typeof result} not converted to positive integer`);
-});
-
-const convertedResults = [
-  [true, 1],
-  [7.1, 7],
-  ["7", 7],
-  ["7.5", 7],
-  [{valueOf() { return 7; }}, 7],
-];
-
-convertedResults.forEach(([result, convertedResult]) => {
-  const calendar = new class extends Temporal.Calendar {
-    day() {
-      return result;
-    }
-  }("iso8601");
-  const instance = new Temporal.PlainDate(1981, 12, 15, calendar);
-  assert.sameValue(instance.day, convertedResult, `${typeof result} converted to positive integer ${convertedResult}`);
+  assert.throws(error, () => instance.day, `${typeof result} ${String(result)} not converted to positive integer`);
 });

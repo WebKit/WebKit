@@ -39,8 +39,9 @@ Another line of text.<br/>
         let lineRectsAndText = text.lineRectsAndText;
 
         lineRectsAndText.split("|").forEach((line) => {
-            let text = line.match(/text = \".*\";/);
-            debug(text[0]);
+            // Extract the text and replace any possible pid since each changes from run to run.
+            let text = line.match(/text = \".*\";/)[0].replace(/pid=\d+/, "pid=zzz");
+            debug(text);
 
             // Cannot log rect coordinates because it would vary from device to device.
             // Thus, get the rects width and height and make sure they are > 0.

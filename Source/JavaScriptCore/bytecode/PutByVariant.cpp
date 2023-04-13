@@ -84,6 +84,15 @@ PutByVariant PutByVariant::setter(CacheableIdentifier identifier, const Structur
     return result;
 }
 
+PutByVariant PutByVariant::proxy(CacheableIdentifier identifier, const StructureSet& structure, std::unique_ptr<CallLinkStatus> callLinkStatus)
+{
+    PutByVariant result(WTFMove(identifier));
+    result.m_kind = Proxy;
+    result.m_oldStructure = structure;
+    result.m_callLinkStatus = WTFMove(callLinkStatus);
+    return result;
+}
+
 Structure* PutByVariant::oldStructureForTransition() const
 {
     RELEASE_ASSERT(kind() == Transition);
@@ -121,6 +130,7 @@ bool PutByVariant::writesStructures() const
     switch (kind()) {
     case Transition:
     case Setter:
+    case Proxy:
         return true;
     default:
         return false;
@@ -133,6 +143,7 @@ bool PutByVariant::reallocatesStorage() const
     case Transition:
         return oldStructureForTransition()->outOfLineCapacity() != newStructure()->outOfLineCapacity();
     case Setter:
+    case Proxy:
         return true;
     default:
         return false;
@@ -141,7 +152,7 @@ bool PutByVariant::reallocatesStorage() const
 
 bool PutByVariant::makesCalls() const
 {
-    return kind() == Setter;
+    return kind() == Setter || kind() == Proxy;
 }
 
 bool PutByVariant::attemptToMerge(const PutByVariant& other)
@@ -235,7 +246,24 @@ bool PutByVariant::attemptToMerge(const PutByVariant& other)
         
         m_oldStructure.merge(other.m_oldStructure);
         return true;
-    } }
+    }
+
+    case Proxy: {
+        if (other.m_kind != Proxy)
+            return false;
+
+        if (m_callLinkStatus || other.m_callLinkStatus) {
+            if (!(m_callLinkStatus && other.m_callLinkStatus))
+                return false;
+        }
+
+        if (m_callLinkStatus)
+            m_callLinkStatus->merge(*other.m_callLinkStatus);
+
+        m_oldStructure.merge(other.m_oldStructure);
+        return true;
+    }
+    }
     
     RELEASE_ASSERT_NOT_REACHED();
     return false;
@@ -327,6 +355,13 @@ void PutByVariant::dumpInContext(PrintStream& out, DumpContext* context) const
             "Setter: ", inContext(structure(), context), ", [",
             inContext(m_conditionSet, context), "]");
         out.print(", offset = ", m_offset);
+        out.print(", call = ", *m_callLinkStatus);
+        out.print(">");
+        return;
+
+    case Proxy:
+        out.print(
+            "Proxy: ", inContext(structure(), context));
         out.print(", call = ", *m_callLinkStatus);
         out.print(">");
         return;

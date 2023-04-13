@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -50,7 +50,7 @@ SOFT_LINK_CLASS(AssetViewer, ASVInlinePreview);
     RetainPtr<WKModelInteractionGestureRecognizer> _modelInteractionGestureRecognizer;
     String _filePath;
     CGRect _lastBounds;
-    WebCore::GraphicsLayer::PlatformLayerID _layerID;
+    WebCore::PlatformLayerIdentifier _layerID;
     WeakPtr<WebKit::WebPageProxy> _page;
 }
 
@@ -69,7 +69,7 @@ SOFT_LINK_CLASS(AssetViewer, ASVInlinePreview);
     return nil;
 }
 
-- (instancetype)initWithModel:(WebCore::Model&)model layerID:(WebCore::GraphicsLayer::PlatformLayerID)layerID page:(WebKit::WebPageProxy&)page
+- (instancetype)initWithModel:(WebCore::Model&)model layerID:(WebCore::PlatformLayerIdentifier)layerID page:(WebKit::WebPageProxy&)page
 {
     _lastBounds = CGRectZero;
     self = [super initWithFrame:_lastBounds];
@@ -104,7 +104,7 @@ SOFT_LINK_CLASS(AssetViewer, ASVInlinePreview);
 
     String fileName = makeString(UUID::createVersion4(), ".usdz"_s);
     auto filePath = FileSystem::pathByAppendingComponent(pathToDirectory, fileName);
-    auto file = FileSystem::openFile(filePath, FileSystem::FileOpenMode::Write);
+    auto file = FileSystem::openFile(filePath, FileSystem::FileOpenMode::Truncate);
     if (file <= 0)
         return NO;
 

@@ -28,7 +28,7 @@
 
 #pragma once
 
-#ifdef __OBJC__
+#if defined(__OBJC__) && !defined(__clang_tapi__)
 #error Please use @autoreleasepool instead of AutodrainedPool.
 #endif
 

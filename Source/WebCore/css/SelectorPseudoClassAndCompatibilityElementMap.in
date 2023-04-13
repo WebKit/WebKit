@@ -56,6 +56,7 @@ nth-last-of-type
 nth-of-type
 only-child
 only-of-type
+popover-open
 optional
 out-of-range
 placeholder-shown

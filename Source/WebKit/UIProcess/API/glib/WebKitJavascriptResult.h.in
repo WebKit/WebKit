@@ -22,6 +22,8 @@
 #ifndef WebKitJavascriptResult_h
 #define WebKitJavascriptResult_h
 
+#if !ENABLE(2022_GLIB_API)
+
 #include <jsc/jsc.h>
 #include <glib-object.h>
 #include <@API_INCLUDE_PREFIX@/WebKitDefines.h>
@@ -46,7 +48,7 @@ webkit_javascript_result_ref                (WebKitJavascriptResult *js_result);
 WEBKIT_API void
 webkit_javascript_result_unref              (WebKitJavascriptResult *js_result);
 
-#if PLATFORM(GTK) && !USE(GTK4)
+#if PLATFORM(GTK)
 WEBKIT_DEPRECATED JSGlobalContextRef
 webkit_javascript_result_get_global_context (WebKitJavascriptResult *js_result);
 
@@ -56,6 +58,8 @@ webkit_javascript_result_get_value          (WebKitJavascriptResult *js_result);
 
 WEBKIT_API JSCValue *
 webkit_javascript_result_get_js_value       (WebKitJavascriptResult *js_result);
+
+#endif
 
 G_END_DECLS
 

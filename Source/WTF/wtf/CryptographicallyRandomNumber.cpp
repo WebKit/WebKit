@@ -59,7 +59,7 @@ public:
     void randomValues(void* buffer, size_t length);
 
 private:
-    inline void addRandomData(unsigned char *data, int length);
+    inline void addRandomData(const unsigned char *data, int length);
     void stir() WTF_REQUIRES_LOCK(m_lock);
     void stirIfNeeded() WTF_REQUIRES_LOCK(m_lock);
     inline uint8_t getByte();
@@ -83,7 +83,7 @@ ARC4RandomNumberGenerator::ARC4RandomNumberGenerator()
 {
 }
 
-void ARC4RandomNumberGenerator::addRandomData(unsigned char* data, int length)
+void ARC4RandomNumberGenerator::addRandomData(const unsigned char* data, int length)
 {
     m_stream.i--;
     for (int n = 0; n < 256; n++) {

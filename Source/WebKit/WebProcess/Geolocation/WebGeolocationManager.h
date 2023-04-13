@@ -31,6 +31,7 @@
 #include <WebCore/RegistrableDomain.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/WeakHashMap.h>
 #include <wtf/WeakHashSet.h>
 
 namespace WebCore {
@@ -75,7 +76,7 @@ private:
 
     WebProcess& m_process;
     HashMap<WebCore::RegistrableDomain, PageSets> m_pageSets;
-    HashMap<WebPage*, WebCore::RegistrableDomain> m_pageToRegistrableDomain;
+    WeakHashMap<WebPage, WebCore::RegistrableDomain> m_pageToRegistrableDomain;
 };
 
 } // namespace WebKit

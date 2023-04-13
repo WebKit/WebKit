@@ -32,22 +32,12 @@
 G_BEGIN_DECLS
 
 #define WEBKIT_TYPE_FILE_CHOOSER_REQUEST            (webkit_file_chooser_request_get_type())
+#if !ENABLE(2022_GLIB_API)
 #define WEBKIT_FILE_CHOOSER_REQUEST(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), WEBKIT_TYPE_FILE_CHOOSER_REQUEST, WebKitFileChooserRequest))
 #define WEBKIT_FILE_CHOOSER_REQUEST_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass),  WEBKIT_TYPE_FILE_CHOOSER_REQUEST, WebKitFileChooserRequestClass))
 #define WEBKIT_IS_FILE_CHOOSER_REQUEST(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), WEBKIT_TYPE_FILE_CHOOSER_REQUEST))
 #define WEBKIT_IS_FILE_CHOOSER_REQUEST_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass),  WEBKIT_TYPE_FILE_CHOOSER_REQUEST))
 #define WEBKIT_FILE_CHOOSER_REQUEST_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj),  WEBKIT_TYPE_FILE_CHOOSER_REQUEST, WebKitFileChooserRequestClass))
-
-typedef struct _WebKitFileChooserRequest        WebKitFileChooserRequest;
-typedef struct _WebKitFileChooserRequestClass   WebKitFileChooserRequestClass;
-typedef struct _WebKitFileChooserRequestPrivate WebKitFileChooserRequestPrivate;
-
-struct _WebKitFileChooserRequest {
-    GObject parent;
-
-    /*< private >*/
-    WebKitFileChooserRequestPrivate *priv;
-};
 
 struct _WebKitFileChooserRequestClass {
     GObjectClass parent_class;
@@ -58,9 +48,9 @@ struct _WebKitFileChooserRequestClass {
     void (*_webkit_reserved2) (void);
     void (*_webkit_reserved3) (void);
 };
+#endif
 
-WEBKIT_API GType
-webkit_file_chooser_request_get_type                  (void);
+WEBKIT_DECLARE_FINAL_TYPE (WebKitFileChooserRequest, webkit_file_chooser_request, WEBKIT, FILE_CHOOSER_REQUEST, GObject)
 
 WEBKIT_API const gchar * const *
 webkit_file_chooser_request_get_mime_types        (WebKitFileChooserRequest *request);

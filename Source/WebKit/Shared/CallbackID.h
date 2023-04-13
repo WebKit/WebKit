@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <wtf/ArgumentCoder.h>
 #include <wtf/HashTraits.h>
 #include <wtf/RunLoop.h>
 
@@ -75,23 +76,8 @@ public:
         return CallbackID(uniqueCallbackID++);
     }
 
-    template<class Encoder> void encode(Encoder& encoder) const
-    {
-        RELEASE_ASSERT(isValid());
-        encoder << m_id;
-    }
-
-    template<class Decoder> static std::optional<CallbackID> decode(Decoder& decoder)
-    {
-        std::optional<uint64_t> identifier;
-        decoder >> identifier;
-        if (!identifier)
-            return std::nullopt;
-        RELEASE_ASSERT(isValidCallbackID(*identifier));
-        return fromInteger(*identifier);
-    }
-
 private:
+    friend struct IPC::ArgumentCoder<CallbackID, void>;
     ALWAYS_INLINE explicit CallbackID(uint64_t newID)
         : m_id(newID)
     {

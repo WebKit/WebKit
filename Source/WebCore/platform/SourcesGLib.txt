@@ -33,6 +33,7 @@ platform/glib/LowPowerModeNotifierGLib.cpp
 platform/glib/RemoteCommandListenerGLib.cpp
 platform/glib/SharedBufferGlib.cpp
 platform/glib/UserAgentGLib.cpp
+platform/glib/UserAgentQuirks.cpp
 
 platform/network/glib/DNSResolveQueueGLib.cpp
 platform/network/glib/NetworkStateNotifierGLib.cpp

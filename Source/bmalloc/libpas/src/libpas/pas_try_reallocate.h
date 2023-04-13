@@ -331,13 +331,15 @@ pas_try_reallocate(void* old_ptr,
         pas_heap_lock_lock();
         
         entry = pas_large_map_find(begin);
-        
+
         if (pas_large_map_entry_is_empty(entry)) {
-            pas_reallocation_did_fail(
-                "Source object not allocated",
-                NULL, heap, old_ptr, 0, new_size);
+            // Check for PGM case
+            if (config.pgm_enabled && pas_probabilistic_guard_malloc_check_exists(begin))
+                entry = pas_probabilistic_guard_malloc_return_as_large_map_entry(begin);
+            else
+                pas_reallocation_did_fail("Source object not allocated", NULL, heap, old_ptr, 0, new_size);
         }
-        
+
         PAS_ASSERT(entry.begin == begin);
         PAS_ASSERT(entry.end > begin);
         PAS_ASSERT(entry.heap);

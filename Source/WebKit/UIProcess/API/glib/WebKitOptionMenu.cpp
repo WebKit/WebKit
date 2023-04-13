@@ -24,6 +24,11 @@
 #include "WebKitOptionMenuPrivate.h"
 #include <wtf/glib/WTFGType.h>
 
+#if PLATFORM(GTK)
+#include <WebCore/GRefPtrGtk.h>
+#include <WebCore/GUniquePtrGtk.h>
+#endif
+
 using namespace WebKit;
 
 /**
@@ -58,7 +63,7 @@ enum {
 
 static guint signals[LAST_SIGNAL] = { 0, };
 
-WEBKIT_DEFINE_FINAL_TYPE_IN_2022_API(WebKitOptionMenu, webkit_option_menu, G_TYPE_OBJECT)
+WEBKIT_DEFINE_FINAL_TYPE(WebKitOptionMenu, webkit_option_menu, G_TYPE_OBJECT, GObject)
 
 static void webkit_option_menu_class_init(WebKitOptionMenuClass* optionMenuClass)
 {

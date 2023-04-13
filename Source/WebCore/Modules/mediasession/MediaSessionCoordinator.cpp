@@ -436,7 +436,7 @@ bool MediaSessionCoordinator::currentPositionApproximatelyEqualTo(double time) c
     if (!currentPosition)
         return false;
 
-    auto delta = Seconds(abs(*currentPosition - time));
+    auto delta = Seconds(std::abs(*currentPosition - time));
     return delta <= CommandTimeTolerance;
 }
 

@@ -65,6 +65,11 @@ ResourceTiming::ResourceTiming(const URL& url, const String& initiatorType, cons
 {
 }
 
+void ResourceTiming::updateExposure(const SecurityOrigin& origin)
+{
+    m_isSameOriginRequest = m_isSameOriginRequest && origin.canRequest(m_url);
+}
+
 Vector<Ref<PerformanceServerTiming>> ResourceTiming::populateServerTiming() const
 {
     // To increase privacy, this additional check was proposed at https://github.com/w3c/resource-timing/issues/342 .

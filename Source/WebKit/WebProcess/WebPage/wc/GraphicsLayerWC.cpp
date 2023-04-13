@@ -99,7 +99,7 @@ public:
     void setTopContentInset(float) final { }
     void setVelocity(const VelocityData&) final { }
     void setTileSizeUpdateDelayDisabledForTesting(bool) final { };
-    void setScrollability(Scrollability) final { }
+    void setScrollability(OptionSet<Scrollability>) final { }
     void prepopulateRect(const FloatRect&) final { }
     void setIsInWindow(bool) final { }
     bool isInWindow() const final { return m_isInWindow; }
@@ -155,7 +155,7 @@ GraphicsLayerWC::~GraphicsLayerWC()
         m_observer->graphicsLayerRemoved(*this);
 }
 
-GraphicsLayer::PlatformLayerID GraphicsLayerWC::primaryLayerID() const
+PlatformLayerIdentifier GraphicsLayerWC::primaryLayerID() const
 {
     return m_layerID;
 }
@@ -586,8 +586,10 @@ void GraphicsLayerWC::flushCompositingStateForThisLayerOnly()
     }
     if (update.changes & WCLayerChange::PlatformLayer) {
         update.hasPlatformLayer = m_platformLayer;
+#if ENABLE(WEBGL)
         if (m_platformLayer)
             update.contentBufferIdentifiers = static_cast<WCPlatformLayerGCGL*>(m_platformLayer)->takeContentBufferIdentifiers();
+#endif
     }
     m_observer->commitLayerUpateInfo(WTFMove(update));
 }

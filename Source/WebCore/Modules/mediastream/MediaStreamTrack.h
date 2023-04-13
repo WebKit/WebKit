@@ -35,6 +35,7 @@
 #include "LongRange.h"
 #include "MediaProducer.h"
 #include "MediaStreamTrackPrivate.h"
+#include "MediaTrackCapabilities.h"
 #include "MediaTrackConstraints.h"
 #include "PlatformMediaSession.h"
 #include <wtf/LoggerHelper.h>
@@ -117,23 +118,11 @@ public:
         std::optional<bool> logicalSurface;
         String deviceId;
         String groupId;
+        std::optional<double> zoom;
     };
     TrackSettings getSettings() const;
 
-    struct TrackCapabilities {
-        std::optional<LongRange> width;
-        std::optional<LongRange> height;
-        std::optional<DoubleRange> aspectRatio;
-        std::optional<DoubleRange> frameRate;
-        std::optional<Vector<String>> facingMode;
-        std::optional<DoubleRange> volume;
-        std::optional<LongRange> sampleRate;
-        std::optional<LongRange> sampleSize;
-        std::optional<Vector<bool>> echoCancellation;
-        String deviceId;
-        String groupId;
-        String displaySurface;
-    };
+    using TrackCapabilities = MediaTrackCapabilities;
     TrackCapabilities getCapabilities() const;
 
     const MediaTrackConstraints& getConstraints() const { return m_constraints; }

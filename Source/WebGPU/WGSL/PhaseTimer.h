@@ -34,9 +34,7 @@
 
 namespace WGSL {
 
-namespace AST {
 class ShaderModule;
-}
 
 static constexpr bool dumpASTBeforeEachPass = false;
 static constexpr bool dumpASTAfterParsing = false;
@@ -45,28 +43,28 @@ static constexpr bool alwaysDumpPassFailures = false;
 static constexpr bool dumpPassFailure = dumpASTBeforeEachPass || dumpASTAfterParsing || dumpASTAtEnd || alwaysDumpPassFailures;
 static constexpr bool dumpPhaseTimes = false;
 
-static inline bool dumpASTIfNeeded(bool shouldDump, AST::ShaderModule& program, const char* message)
+static inline bool dumpASTIfNeeded(bool shouldDump, ShaderModule& program, const char* message)
 {
     if (UNLIKELY(shouldDump)) {
         dataLogLn(message);
-        dumpAST(program);
+        AST::dumpAST(program);
         return true;
     }
 
     return false;
 }
 
-static inline bool dumpASTAfterParsingIfNeeded(AST::ShaderModule& program)
+static inline bool dumpASTAfterParsingIfNeeded(ShaderModule& program)
 {
     return dumpASTIfNeeded(dumpASTAfterParsing, program, "AST after parsing");
 }
 
-static inline bool dumpASTBetweenEachPassIfNeeded(AST::ShaderModule& program, const char* message)
+static inline bool dumpASTBetweenEachPassIfNeeded(ShaderModule& program, const char* message)
 {
     return dumpASTIfNeeded(dumpASTBeforeEachPass, program, message);
 }
 
-static inline bool dumpASTAtEndIfNeeded(AST::ShaderModule& program)
+static inline bool dumpASTAtEndIfNeeded(ShaderModule& program)
 {
     return dumpASTIfNeeded(dumpASTAtEnd, program, "AST at end");
 }

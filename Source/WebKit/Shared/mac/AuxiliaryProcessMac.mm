@@ -54,6 +54,7 @@
 #import <wtf/Scope.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/SystemTracing.h>
+#import <wtf/WTFProcess.h>
 #import <wtf/WallTime.h>
 #import <wtf/cocoa/Entitlements.h>
 #import <wtf/spi/darwin/SandboxSPI.h>
@@ -269,13 +270,13 @@ static String sandboxDataVaultParentDirectory()
     size_t length = confstr(_CS_DARWIN_USER_CACHE_DIR, temp, sizeof(temp));
     if (!length) {
         WTFLogAlways("%s: Could not retrieve user temporary directory path: %s\n", getprogname(), safeStrerror(errno).data());
-        exit(EX_NOPERM);
+        exitProcess(EX_NOPERM);
     }
     RELEASE_ASSERT(length <= sizeof(temp));
     char resolvedPath[PATH_MAX];
     if (!realpath(temp, resolvedPath)) {
         WTFLogAlways("%s: Could not canonicalize user temporary directory path: %s\n", getprogname(), safeStrerror(errno).data());
-        exit(EX_NOPERM);
+        exitProcess(EX_NOPERM);
     }
     return String::fromUTF8(resolvedPath);
 }
@@ -392,7 +393,7 @@ static bool ensureSandboxCacheDirectory(const SandboxInfo& info)
 
 static bool writeSandboxDataToCacheFile(const SandboxInfo& info, const Vector<char>& cacheFile)
 {
-    FileHandle file { info.filePath, FileSystem::FileOpenMode::Write, FileSystem::FileLockMode::Exclusive };
+    FileHandle file { info.filePath, FileSystem::FileOpenMode::Truncate, FileSystem::FileLockMode::Exclusive };
     return file.write(cacheFile.data(), cacheFile.size()) == safeCast<int>(cacheFile.size());
 }
 
@@ -677,7 +678,7 @@ static void populateSandboxInitializationParameters(SandboxInitializationParamet
     auto osVersion = parseOSVersion(osSystemMarketingVersion);
     if (osVersion.isNull()) {
         WTFLogAlways("%s: Couldn't find OS Version\n", getprogname());
-        exit(EX_NOPERM);
+        exitProcess(EX_NOPERM);
     }
     sandboxParameters.addParameter("_OS_VERSION", osVersion.utf8().data());
 
@@ -686,7 +687,7 @@ static void populateSandboxInitializationParameters(SandboxInitializationParamet
     char temporaryDirectory[PATH_MAX];
     if (!confstr(_CS_DARWIN_USER_TEMP_DIR, temporaryDirectory, sizeof(temporaryDirectory))) {
         WTFLogAlways("%s: couldn't retrieve private temporary directory path: %d\n", getprogname(), errno);
-        exit(EX_NOPERM);
+        exitProcess(EX_NOPERM);
     }
     setenv("TMPDIR", temporaryDirectory, 1);
 
@@ -754,7 +755,7 @@ void AuxiliaryProcess::initializeSandbox(const AuxiliaryProcessInitializationPar
         OSStatus error = enableSandboxStyleFileQuarantine();
         if (error) {
             WTFLogAlways("%s: Couldn't enable sandbox style file quarantine: %ld\n", getprogname(), static_cast<long>(error));
-            exit(EX_NOPERM);
+            exitProcess(EX_NOPERM);
         }
     }
 }
@@ -793,7 +794,7 @@ void AuxiliaryProcess::stopNSRunLoop()
 {
     ASSERT([NSRunLoop mainRunLoop]);
     [[NSRunLoop mainRunLoop] performBlock:^{
-        exit(0);
+        exitProcess(0);
     }];
 }
 #endif

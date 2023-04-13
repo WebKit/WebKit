@@ -43,8 +43,8 @@ layer at (0,0) size 785x986
                   RenderTableRow {tr} at (0,2) size 998x96
                     RenderTableCell {td} at (2,2) size 994x96 [r=0 c=0 rs=1 cs=2]
                       RenderBlock {h1} at (8,29) size 978x38
-                        RenderText {#text} at (354,0) size 270x36
-                          text run at (354,0) width 270: "render-groups-01-b"
+                        RenderText {#text} at (355,0) size 268x36
+                          text run at (355,0) width 268: "render-groups-01-b"
                   RenderTableRow {tr} at (0,99) size 998x35
                     RenderTableCell {td} at (2,99) size 496x35 [r=1 c=0 rs=1 cs=1]
                       RenderText {#text} at (210,8) size 76x17
@@ -73,9 +73,9 @@ layer at (0,0) size 785x986
                                 RenderSVGPath {line} at (436,18) size 28x297 [stroke={[type=SOLID] [color=#FFFFFF] [stroke width=15.00]}] [fill={[type=SOLID] [color=#000000]}] [x1=250.00] [y1=10.00] [x2=250.00] [y2=175.00]
                                 RenderSVGRect {rect} at (35,17) size 416x281 [stroke={[type=SOLID] [color=#000000]}] [x=20.00] [y=10.00] [width=230.00] [height=155.00]
                                 RenderSVGContainer {g} at (54,10) size 382x269 [opacity=0.50]
-                                  RenderSVGText {text} at (30,5) size 133x121 contains 1 chunk(s)
-                                    RenderSVGInlineText {#text} at (0,0) size 133x121
-                                      chunk 1 text run 1 at (30.00,90.00) startOffset 0 endOffset 3 width 132.22: "SVG"
+                                  RenderSVGText {text} at (30,5) size 138x121 contains 1 chunk(s)
+                                    RenderSVGInlineText {#text} at (0,0) size 138x121
+                                      chunk 1 text run 1 at (30.00,90.00) startOffset 0 endOffset 3 width 137.02: "SVG"
                                   RenderSVGRect {rect} at (126,99) size 234x126 [fill={[type=SOLID] [color=#820032]}] [x=70.00] [y=55.00] [width=130.00] [height=70.00]
                                   RenderSVGImage {image} at (291,135) size 145x144
                             RenderSVGText {text} at (10,304) size 264x45 contains 1 chunk(s)
@@ -88,9 +88,9 @@ layer at (0,0) size 785x986
                       RenderText {#text} at (0,0) size 0x0
       RenderBlock {div} at (0,655) size 769x265
         RenderBlock {p} at (0,0) size 769x36
-          RenderText {#text} at (0,0) size 761x35
-            text run at (0,0) width 581: "Verifies implicit rendering order (paragraph 3.3) and grouping mechanism (paragraphs 3.4). "
-            text run at (581,0) width 180: "It also validates basic Shape,"
+          RenderText {#text} at (0,0) size 760x35
+            text run at (0,0) width 580: "Verifies implicit rendering order (paragraph 3.3) and grouping mechanism (paragraphs 3.4). "
+            text run at (579,0) width 181: "It also validates basic Shape,"
             text run at (0,18) width 161: "Image and text rendering."
         RenderBlock {p} at (0,52) size 769x108
           RenderText {#text} at (0,0) size 764x107
@@ -101,24 +101,24 @@ layer at (0,0) size 785x986
             text run at (145,18) width 465: "should be on top of the rectangle and the rectangle on top of the text. The "
             text run at (610,18) width 154: "test validates that groups"
             text run at (0,36) width 311: "are conceptually rendered offscreen before being "
-            text run at (311,36) width 449: "rendered on the canvas. This is done by grouping the same overlapping"
+            text run at (310,36) width 450: "rendered on the canvas. This is done by grouping the same overlapping"
             text run at (0,54) width 75: "objects and "
-            text run at (75,54) width 530: "rendering the group at half opacity. The background pattern (vertical stripes) should "
-            text run at (605,54) width 158: "show throw all the group"
+            text run at (75,54) width 529: "rendering the group at half opacity. The background pattern (vertical stripes) should "
+            text run at (603,54) width 159: "show throw all the group"
             text run at (0,72) width 416: "elements. However, none of the \"SVG\" should show through the "
-            text run at (416,72) width 304: "rectangle and none of the rectangle should show"
+            text run at (415,72) width 305: "rectangle and none of the rectangle should show"
             text run at (0,90) width 118: "through the image."
         RenderBlock {p} at (0,176) size 769x54
-          RenderText {#text} at (0,0) size 768x53
+          RenderText {#text} at (0,0) size 767x53
             text run at (0,0) width 490: "Prerequisites: the test assumes proper handling of the fill stroke, stroke-width, "
-            text run at (490,0) width 255: "opacity, font-size rendering properties. It"
+            text run at (490,0) width 254: "opacity, font-size rendering properties. It"
             text run at (0,18) width 292: "uses the rect, line, text and image elements, as "
-            text run at (292,18) width 476: "well as all the elements required for the test template. To ensure that the text"
+            text run at (292,18) width 475: "well as all the elements required for the test template. To ensure that the text"
             text run at (0,36) width 53: "string is "
             text run at (53,36) width 623: "overlapped by the other elements and to avoid a dependency on system fonts, an SVG font is used."
         RenderBlock {p} at (0,246) size 769x18
-          RenderText {#text} at (0,0) size 394x17
-            text run at (0,0) width 394: "The rendered image should match the reference image exactly."
+          RenderText {#text} at (0,0) size 393x17
+            text run at (0,0) width 393: "The rendered image should match the reference image exactly."
       RenderBlock {div} at (0,935) size 769x19
         RenderBlock {p} at (0,0) size 769x18
           RenderInline {a} at (0,0) size 154x17 [color=#0000EE]

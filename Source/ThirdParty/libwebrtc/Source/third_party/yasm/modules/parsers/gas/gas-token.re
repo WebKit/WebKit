@@ -360,7 +360,7 @@ scan:
             /* build local label name */
             lvalp->str.contents = yasm_xmalloc(30);
             lvalp->str.len =
-                sprintf(lvalp->str.contents, "L%c\001%lu", s->tok[0],
+                snprintf(lvalp->str.contents, 30, "L%c\001%lu", s->tok[0],
                         parser_gas->local[s->tok[0]-'0']);
             RETURN(LABEL);
         }
@@ -370,7 +370,7 @@ scan:
             /* build local label name */
             lvalp->str.contents = yasm_xmalloc(30);
             lvalp->str.len =
-                sprintf(lvalp->str.contents, "L%c\001%lu", s->tok[0],
+                snprintf(lvalp->str.contents, 30, "L%c\001%lu", s->tok[0],
                         parser_gas->local[s->tok[0]-'0']+1);
             RETURN(ID);
         }
@@ -380,7 +380,7 @@ scan:
             /* build local label name */
             lvalp->str.contents = yasm_xmalloc(30);
             lvalp->str.len =
-                sprintf(lvalp->str.contents, "L%c\001%lu", s->tok[0],
+                snprintf(lvalp->str.contents, 30, "L%c\001%lu", s->tok[0],
                         parser_gas->local[s->tok[0]-'0']);
             RETURN(ID);
         }

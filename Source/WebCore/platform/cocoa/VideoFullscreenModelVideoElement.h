@@ -74,6 +74,8 @@ public:
     FloatSize videoDimensions() const override { return m_videoDimensions; }
     bool hasVideo() const override { return m_hasVideo; }
 
+    WEBCORE_EXPORT void setVideoInlineSizeFenced(const FloatSize&, const WTF::MachSendRight&);
+
     WEBCORE_EXPORT void requestRouteSharingPolicyAndContextUID(CompletionHandler<void(RouteSharingPolicy, String)>&&) override;
 
 protected:

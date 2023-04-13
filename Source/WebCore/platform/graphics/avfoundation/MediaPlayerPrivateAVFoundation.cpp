@@ -411,12 +411,9 @@ void MediaPlayerPrivateAVFoundation::setDelayCharacteristicsChangedNotification(
         characteristicsChanged();
 }
 
-std::unique_ptr<PlatformTimeRanges> MediaPlayerPrivateAVFoundation::buffered() const
+const PlatformTimeRanges& MediaPlayerPrivateAVFoundation::buffered() const
 {
-    if (!m_cachedLoadedTimeRanges)
-        m_cachedLoadedTimeRanges = platformBufferedTimeRanges();
-
-    return makeUnique<PlatformTimeRanges>(*m_cachedLoadedTimeRanges);
+    return PlatformTimeRanges::emptyRanges();
 }
 
 MediaTime MediaPlayerPrivateAVFoundation::maxMediaTimeSeekable() const
@@ -640,7 +637,6 @@ void MediaPlayerPrivateAVFoundation::rateChanged()
 
 void MediaPlayerPrivateAVFoundation::loadedTimeRangesChanged()
 {
-    m_cachedLoadedTimeRanges = nullptr;
     m_cachedMaxTimeLoaded = MediaTime::zeroTime();
     invalidateCachedDuration();
     m_player->bufferedTimeRangesChanged();
@@ -785,11 +781,7 @@ void MediaPlayerPrivateAVFoundation::scheduleMainThreadNotification(Notification
         // so always go through the queue because notifications happen on different threads.
         m_queuedNotifications.append(WTFMove(notification));
 
-#if OS(WINDOWS)
-        bool delayDispatch = true;
-#else
         bool delayDispatch = m_delayCallbacks || !isMainThread();
-#endif
         if (delayDispatch && !m_mainThreadCallPending) {
             m_mainThreadCallPending = true;
 

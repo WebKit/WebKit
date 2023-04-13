@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-class Frame;
+class LocalFrame;
 class Page;
 class PageGroup;
 
@@ -56,7 +56,7 @@ private:
     void runEventLoopWhilePausedInternal();
 
     void setJavaScriptPaused(const PageGroup&, bool paused);
-    void setJavaScriptPaused(Frame&, bool paused);
+    void setJavaScriptPaused(LocalFrame&, bool paused);
 
     bool platformShouldContinueRunningEventLoopWhilePaused();
 

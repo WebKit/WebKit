@@ -276,7 +276,7 @@ yasm_error_set_va(yasm_error_class eclass, const char *format, va_list va)
     yasm_eclass = eclass;
     yasm_estr = yasm_xmalloc(MSG_MAXSIZE+1);
 #ifdef HAVE_VSNPRINTF
-    vsnprintf(yasm_estr, MSG_MAXSIZE, yasm_gettext_hook(format), va);
+    vsnprintf(yasm_estr, MSG_MAXSIZE+1, yasm_gettext_hook(format), va);
 #else
     vsprintf(yasm_estr, yasm_gettext_hook(format), va);
 #endif
@@ -301,7 +301,7 @@ yasm_error_set_xref_va(unsigned long xrefline, const char *format, va_list va)
 
     yasm_exrefstr = yasm_xmalloc(MSG_MAXSIZE+1);
 #ifdef HAVE_VSNPRINTF
-    vsnprintf(yasm_exrefstr, MSG_MAXSIZE, yasm_gettext_hook(format), va);
+    vsnprintf(yasm_exrefstr, MSG_MAXSIZE+1, yasm_gettext_hook(format), va);
 #else
     vsprintf(yasm_exrefstr, yasm_gettext_hook(format), va);
 #endif
@@ -364,7 +364,7 @@ yasm_warn_set_va(yasm_warn_class wclass, const char *format, va_list va)
     w->wclass = wclass;
     w->wstr = yasm_xmalloc(MSG_MAXSIZE+1);
 #ifdef HAVE_VSNPRINTF
-    vsnprintf(w->wstr, MSG_MAXSIZE, yasm_gettext_hook(format), va);
+    vsnprintf(w->wstr, MSG_MAXSIZE+1, yasm_gettext_hook(format), va);
 #else
     vsprintf(w->wstr, yasm_gettext_hook(format), va);
 #endif

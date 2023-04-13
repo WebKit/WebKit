@@ -27,6 +27,10 @@
 #include <glib/gi18n-lib.h>
 #include <wtf/glib/WTFGType.h>
 
+#if !ENABLE(2022_GLIB_API)
+typedef WebKitPermissionRequestIface WebKitPermissionRequestInterface;
+#endif
+
 using namespace WebKit;
 
 /**
@@ -45,7 +49,7 @@ using namespace WebKit;
  * Since: 2.24
  */
 
-static void webkit_permission_request_interface_init(WebKitPermissionRequestIface*);
+static void webkit_permission_request_interface_init(WebKitPermissionRequestInterface*);
 
 struct _WebKitDeviceInfoPermissionRequestPrivate {
     RefPtr<UserMediaPermissionCheckProxy> request;
@@ -53,8 +57,8 @@ struct _WebKitDeviceInfoPermissionRequestPrivate {
     bool madeDecision;
 };
 
-WEBKIT_DEFINE_FINAL_TYPE_WITH_CODE_IN_2022_API(
-    WebKitDeviceInfoPermissionRequest, webkit_device_info_permission_request, G_TYPE_OBJECT,
+WEBKIT_DEFINE_FINAL_TYPE_WITH_CODE(
+    WebKitDeviceInfoPermissionRequest, webkit_device_info_permission_request, G_TYPE_OBJECT, GObject,
     G_IMPLEMENT_INTERFACE(WEBKIT_TYPE_PERMISSION_REQUEST, webkit_permission_request_interface_init))
 
 static void webkitDeviceInfoPermissionRequestAllow(WebKitPermissionRequest* request)
@@ -95,7 +99,7 @@ static void webkitDeviceInfoPermissionRequestDeny(WebKitPermissionRequest* reque
     priv->request->setUserMediaAccessInfo(false);
 }
 
-static void webkit_permission_request_interface_init(WebKitPermissionRequestIface* iface)
+static void webkit_permission_request_interface_init(WebKitPermissionRequestInterface* iface)
 {
     iface->allow = webkitDeviceInfoPermissionRequestAllow;
     iface->deny = webkitDeviceInfoPermissionRequestDeny;

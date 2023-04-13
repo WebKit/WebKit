@@ -157,6 +157,49 @@ HAR Page Test.
         "time": "<filtered>",
         "request": {
           "method": "GET",
+          "url": "http://127.0.0.1:8000/cookies/resources/cookie-utilities.js",
+          "httpVersion": "<filtered>",
+          "cookies": [],
+          "headers": "<filtered>",
+          "queryString": [],
+          "headersSize": "<filtered>",
+          "bodySize": "<filtered>"
+        },
+        "response": {
+          "status": 200,
+          "statusText": "OK",
+          "httpVersion": "<filtered>",
+          "cookies": [],
+          "headers": "<filtered>",
+          "content": {
+            "size": "<filtered>",
+            "compression": 0,
+            "mimeType": "application/x-javascript",
+            "text": "<filtered>"
+          },
+          "redirectURL": "",
+          "headersSize": "<filtered>",
+          "bodySize": "<filtered>"
+        },
+        "cache": {},
+        "timings": {
+          "blocked": "<filtered>",
+          "dns": "<filtered>",
+          "connect": "<filtered>",
+          "ssl": -1,
+          "send": "<filtered>",
+          "wait": "<filtered>",
+          "receive": "<filtered>"
+        },
+        "_serverPort": 8000,
+        "_priority": "high"
+      },
+      {
+        "pageref": "page_0",
+        "startedDateTime": "<filtered>",
+        "time": "<filtered>",
+        "request": {
+          "method": "GET",
           "url": "http://127.0.0.1:8000/cookies/resources/setCookies.cgi",
           "httpVersion": "<filtered>",
           "cookies": [],
@@ -347,7 +390,7 @@ HAR Page Test.
           "headers": "<filtered>",
           "content": {
             "size": "<filtered>",
-            "compression": -5,
+            "compression": 0,
             "mimeType": "text/plain"
           },
           "redirectURL": "",

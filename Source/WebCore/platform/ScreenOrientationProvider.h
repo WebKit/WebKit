@@ -64,7 +64,7 @@ public:
 private:
     explicit ScreenOrientationProvider();
 
-    ScreenOrientationType platformCurrentOrientation();
+    std::optional<ScreenOrientationType> platformCurrentOrientation();
     void platformStartListeningForChanges();
     void platformStopListeningForChanges();
 

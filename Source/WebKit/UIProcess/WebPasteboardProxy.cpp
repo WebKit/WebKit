@@ -89,7 +89,6 @@ void WebPasteboardProxy::writeCustomData(IPC::Connection&, const Vector<WebCore:
 {
     completionHandler(0);
 }
-#endif
 
 void WebPasteboardProxy::allPasteboardItemInfo(IPC::Connection&, const String&, int64_t, std::optional<WebCore::PageIdentifier>, CompletionHandler<void(std::optional<Vector<WebCore::PasteboardItemInfo>>&&)>&& completionHandler)
 {
@@ -115,6 +114,7 @@ void WebPasteboardProxy::readBufferFromPasteboard(IPC::Connection&, std::optiona
 {
     completionHandler({ });
 }
+#endif
 
 #if !USE(LIBWPE)
 

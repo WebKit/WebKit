@@ -40,16 +40,11 @@ public:
 private:
     virtual ~DisplayCaptureManagerCocoa() = default;
 
-    void updateDisplayCaptureDevices();
-    void updateWindowCaptureDevices();
-
     const Vector<CaptureDevice>& captureDevices() final;
 
     std::optional<CaptureDevice> captureDeviceWithPersistentID(CaptureDevice::DeviceType, const String&) final;
     std::optional<CaptureDevice> screenCaptureDeviceWithPersistentID(const String&);
     std::optional<CaptureDevice> windowCaptureDeviceWithPersistentID(const String&);
-
-    void windowDevices(Vector<WindowCaptureDevice>&) final;
 
     Vector<CaptureDevice> m_devices;
 };

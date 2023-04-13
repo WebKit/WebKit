@@ -29,10 +29,10 @@
 #if ENABLE(SERVICE_WORKER)
 
 #include "Document.h"
-#include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "LegacySchemeRegistry.h"
+#include "LocalFrame.h"
 #include "Page.h"
 #include "SWClientConnection.h"
 

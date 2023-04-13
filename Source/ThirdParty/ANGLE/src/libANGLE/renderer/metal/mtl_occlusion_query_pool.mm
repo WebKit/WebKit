@@ -180,5 +180,5 @@ void OcclusionQueryPool::resolveVisibilityResults(ContextMtl *contextMtl)
     mAllocatedQueries.clear();
 }
 
-}
-}
+}  // namespace mtl
+}  // namespace rx

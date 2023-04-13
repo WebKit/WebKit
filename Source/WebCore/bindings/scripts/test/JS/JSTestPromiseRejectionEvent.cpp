@@ -215,9 +215,9 @@ template<> void JSTestPromiseRejectionEventDOMConstructor::initializeProperties(
 
 static const HashTableValue JSTestPromiseRejectionEventPrototypeTableValues[] =
 {
-    { "constructor"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestPromiseRejectionEventConstructor, 0 } },
-    { "promise"_s, static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestPromiseRejectionEvent_promise, 0 } },
-    { "reason"_s, static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestPromiseRejectionEvent_reason, 0 } },
+    { "constructor"_s, static_cast<unsigned>(PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestPromiseRejectionEventConstructor, 0 } },
+    { "promise"_s, JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestPromiseRejectionEvent_promise, 0 } },
+    { "reason"_s, JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestPromiseRejectionEvent_reason, 0 } },
 };
 
 const ClassInfo JSTestPromiseRejectionEventPrototype::s_info = { "TestPromiseRejectionEvent"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestPromiseRejectionEventPrototype) };
@@ -247,7 +247,9 @@ void JSTestPromiseRejectionEvent::finishCreation(VM& vm)
 
 JSObject* JSTestPromiseRejectionEvent::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    return JSTestPromiseRejectionEventPrototype::create(vm, &globalObject, JSTestPromiseRejectionEventPrototype::createStructure(vm, &globalObject, JSEvent::prototype(vm, globalObject)));
+    auto* structure = JSTestPromiseRejectionEventPrototype::createStructure(vm, &globalObject, JSEvent::prototype(vm, globalObject));
+    structure->setMayBePrototype(true);
+    return JSTestPromiseRejectionEventPrototype::create(vm, &globalObject, structure);
 }
 
 JSObject* JSTestPromiseRejectionEvent::prototype(VM& vm, JSDOMGlobalObject& globalObject)
@@ -311,7 +313,7 @@ void JSTestPromiseRejectionEvent::analyzeHeap(JSCell* cell, HeapAnalyzer& analyz
     auto* thisObject = jsCast<JSTestPromiseRejectionEvent*>(cell);
     analyzer.setWrappedObjectForCell(cell, &thisObject->wrapped());
     if (thisObject->scriptExecutionContext())
-        analyzer.setLabelForCell(cell, "url " + thisObject->scriptExecutionContext()->url().string());
+        analyzer.setLabelForCell(cell, "url "_s + thisObject->scriptExecutionContext()->url().string());
     Base::analyzeHeap(cell, analyzer);
 }
 

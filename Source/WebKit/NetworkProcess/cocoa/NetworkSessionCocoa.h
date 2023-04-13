@@ -34,6 +34,7 @@ OBJC_CLASS NSOperationQueue;
 OBJC_CLASS WKNetworkSessionDelegate;
 OBJC_CLASS WKNetworkSessionWebSocketDelegate;
 OBJC_CLASS _NSHSTSStorage;
+OBJC_CLASS NSURLCredentialStorage;
 
 #include "DownloadID.h"
 #include "NetworkDataTaskCocoa.h"
@@ -47,7 +48,7 @@ OBJC_CLASS _NSHSTSStorage;
 #include <wtf/Seconds.h>
 
 namespace WebCore {
-enum class NetworkConnectionIntegrity : uint8_t;
+enum class NetworkConnectionIntegrity : uint16_t;
 }
 
 namespace WebKit {
@@ -140,14 +141,24 @@ public:
     bool preventsSystemHTTPProxyAuthentication() const { return m_preventsSystemHTTPProxyAuthentication; }
     
     _NSHSTSStorage *hstsStorage() const;
+    NSURLCredentialStorage *nsCredentialStorage() const;
 
     void removeNetworkWebsiteData(std::optional<WallTime>, std::optional<HashSet<WebCore::RegistrableDomain>>&&, CompletionHandler<void()>&&) override;
 
     void removeDataTask(DataTaskIdentifier);
 
+#if HAVE(NW_PROXY_CONFIG)
+    nw_proxy_config_t proxyConfig() const { return m_nwProxyConfig.get(); }
+    void clearProxyConfigData() final;
+    void setProxyConfigData(const IPC::DataReference& proxyConfigData, const IPC::DataReference& proxyIdentifierData) final;
+#endif
+
 private:
     void invalidateAndCancel() override;
-    void clearCredentials() override;
+    HashSet<WebCore::SecurityOriginData> originsWithCredentials() final;
+    void removeCredentialsForOrigins(const Vector<WebCore::SecurityOriginData>&) final;
+    void clearCredentials(WallTime) final;
+
     bool shouldLogCookieInformation() const override { return m_shouldLogCookieInformation; }
     SessionWrapper& isolatedSession(WebPageProxyIdentifier, WebCore::StoredCredentialsPolicy, const WebCore::RegistrableDomain&, NavigatingToAppBoundDomain);
 
@@ -173,6 +184,8 @@ private:
     void removeWebPageNetworkParameters(WebPageProxyIdentifier) final;
     size_t countNonDefaultSessionSets() const final;
 
+    void forEachSessionWrapper(Function<void(SessionWrapper&)>&&);
+
     Ref<SessionSet> m_defaultSessionSet;
     HashMap<WebPageProxyIdentifier, Ref<SessionSet>> m_perPageSessionSets;
     HashMap<WebPageNetworkParameters, WeakPtr<SessionSet>> m_perParametersSessionSets;
@@ -186,6 +199,9 @@ private:
     String m_sourceApplicationBundleIdentifier;
     String m_sourceApplicationSecondaryIdentifier;
     RetainPtr<CFDictionaryRef> m_proxyConfiguration;
+#if HAVE(NW_PROXY_CONFIG)
+    RetainPtr<nw_proxy_config_t> m_nwProxyConfig;
+#endif
     RetainPtr<DMFWebsitePolicyMonitor> m_deviceManagementPolicyMonitor;
     bool m_deviceManagementRestrictionsEnabled { false };
     bool m_allLoadsBlockedByDeviceManagementRestrictionsForTesting { false };

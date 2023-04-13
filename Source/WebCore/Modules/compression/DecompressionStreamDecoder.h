@@ -94,15 +94,7 @@ private:
     explicit DecompressionStreamDecoder(unsigned char format) 
         : m_format(static_cast<Formats::CompressionFormat>(format))
     {
-
-    std::memset(&m_zstream, 0, sizeof(m_zstream));
-
-#if PLATFORM(COCOA)
-    std::memset(&m_stream, 0, sizeof(m_stream));
-
-    if (m_format == Formats::CompressionFormat::Deflate)
-        m_usingAppleCompressionFramework = true;
-#endif
+        std::memset(&m_zstream, 0, sizeof(m_zstream));
     }
 };
 } // namespace WebCore

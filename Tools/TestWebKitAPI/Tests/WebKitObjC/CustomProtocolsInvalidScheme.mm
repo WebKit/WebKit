@@ -30,18 +30,25 @@
 #import "PlatformUtilities.h"
 #import "PlatformWebView.h"
 #import "TestBrowsingContextLoadDelegate.h"
+#import <WebKit/WKWebViewPrivate.h>
 #import <wtf/RetainPtr.h>
 
 static bool testFinished = false;
 
-@interface LoadInvalidSchemeDelegate : NSObject <WKBrowsingContextLoadDelegate>
+@interface LoadInvalidSchemeDelegate : NSObject <WKNavigationDelegate>
 @end
 
 @implementation LoadInvalidSchemeDelegate
 
-- (void)browsingContextController:(WKBrowsingContextController *)sender didFailProvisionalLoadWithError:(NSError *)error
+- (void)webView:(WKWebView *)webView didFailProvisionalNavigation:(WKNavigation *)navigation withError:(NSError *)error
 {
     testFinished = true;
+}
+
+// This selector is needed so the URL "ht'tp://www.webkit.org" isn't given to LSAppLink
+- (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationActionPolicy))decisionHandler
+{
+    decisionHandler(WKNavigationActionPolicyAllow);
 }
 
 @end
@@ -58,11 +65,15 @@ TEST(WebKit2CustomProtocolsTest, LoadInvalidScheme)
 {
     [WKBrowsingContextController registerSchemeForCustomProtocol:@"custom"];
     WKRetainPtr<WKContextRef> context = adoptWK(Util::createContextForInjectedBundleTest("CustomProtocolInvalidSchemeTest"));
-    PlatformWebView webView(context.get());
+
+    auto configuration = adoptNS([WKWebViewConfiguration new]);
+    configuration.get().processPool = (WKProcessPool *)context.get();
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
 
     auto loadDelegate = adoptNS([[LoadInvalidSchemeDelegate alloc] init]);
-    webView.platformView().browsingContextController.loadDelegate = loadDelegate.get();
-    [webView.platformView().browsingContextController loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"ht'tp://www.webkit.org"]]];
+    webView.get().navigationDelegate = loadDelegate.get();
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"ht'tp://www.webkit.org"]]];
     
     Util::run(&testFinished);
 }

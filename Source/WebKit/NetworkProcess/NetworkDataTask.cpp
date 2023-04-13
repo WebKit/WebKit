@@ -123,6 +123,12 @@ void NetworkDataTask::scheduleFailure(FailureType type)
     });
 }
 
+void NetworkDataTask::didReceiveInformationalResponse(ResourceResponse&& headers)
+{
+    if (m_client)
+        m_client->didReceiveInformationalResponse(WTFMove(headers));
+}
+
 void NetworkDataTask::didReceiveResponse(ResourceResponse&& response, NegotiatedLegacyTLS negotiatedLegacyTLS, PrivateRelayed privateRelayed, ResponseCompletionHandler&& completionHandler)
 {
     if (response.isHTTP09()) {

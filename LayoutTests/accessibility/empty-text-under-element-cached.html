@@ -1,0 +1,75 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body id="body" role="group">
+
+<iframe id="iframe" width=400 height=400></iframe>
+
+<script>
+var output = "This test ensures that a pending style recalculation does not cause an empty string value to be cached.\n\n";
+
+function traverseBodyContent() {
+    const body = accessibilityController.accessibleElementById("body");
+    let searchResult = null;
+    while (true) {
+        searchResult = body.uiElementForSearchPredicate(searchResult, true, "AXAnyTypeSearchKey", "", false);
+        if (!searchResult)
+            break;
+
+        const role = searchResult.role;
+        output += `\n${role}`;
+        if (role.includes("StaticText")) {
+            let textContent = accessibilityController.platformName === "ios" ? searchResult.description : searchResult.stringValue;
+            output += `\n${textContent}`;
+        }
+        output += "\n";
+    }
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var contentDoc = document.getElementById("iframe").contentDocument;
+    contentDoc.body.innerHTML = "<h1 tabindex='0'>content</h1><h2 tabindex='0'>Foo</h2>";
+    // Trigger a style recalculation by changing focus with the tab key.
+    eventSender.keyDown("\t");
+    // Immediately try to retrieve the focused element, triggering accessibility tree updates.
+    var axDiv = accessibilityController.focusedElement;
+
+    // Traverse the entire contents of the webpage. The important part is that the static text AX object underneath
+    // the header elements have non-empty string values.
+    traverseBodyContent();
+
+    setTimeout(async () => {
+        // There are a few layouts that happen when the page first loads. Use this sleep to wait them out.
+        // If we don't sleep here, the dynamic content below will be included in AX tree updates resulting from these
+        // layouts and not through our expected dynamic tree update codepaths, meaning we aren't really testing the right thing.
+        await sleep(100);
+
+        output += "\nCreating a list and appending it to the iframe document body.\n";
+        const ul = contentDoc.createElement("ul");
+        ul.id = "ul";
+        const li = contentDoc.createElement("li");
+        li.innerText = "List item one";
+
+        // Trigger another style recalculation.
+        eventSender.keyDown("\t");
+
+        ul.appendChild(li);
+        contentDoc.body.append(ul);
+        await waitFor(() => accessibilityController.accessibleElementById("ul"));
+
+        // The list item text should not be empty.
+        traverseBodyContent();
+
+        debug(output);
+        finishJSTest();
+    });
+}
+</script>
+</body>
+</html>
+

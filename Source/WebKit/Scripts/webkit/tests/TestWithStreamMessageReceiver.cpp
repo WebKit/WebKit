@@ -49,6 +49,8 @@ void TestWithStream::didReceiveStreamMessage(IPC::StreamServerConnection& connec
         return IPC::handleMessage<Messages::TestWithStream::SendString>(connection.connection(), decoder, this, &TestWithStream::sendString);
     if (decoder.messageName() == Messages::TestWithStream::SendStringAsync::name())
         return IPC::handleMessageAsync<Messages::TestWithStream::SendStringAsync>(connection.connection(), decoder, this, &TestWithStream::sendStringAsync);
+    if (decoder.messageName() == Messages::TestWithStream::CallWithIdentifier::name())
+        return IPC::handleMessageAsyncWithReplyID<Messages::TestWithStream::CallWithIdentifier>(connection.connection(), decoder, this, &TestWithStream::callWithIdentifier);
 #if PLATFORM(COCOA)
     if (decoder.messageName() == Messages::TestWithStream::SendMachSendRight::name())
         return IPC::handleMessage<Messages::TestWithStream::SendMachSendRight>(connection.connection(), decoder, this, &TestWithStream::sendMachSendRight);
@@ -95,6 +97,14 @@ template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::Tes
 template<> std::optional<JSC::JSValue> jsValueForDecodedMessageReply<MessageName::TestWithStream_SendStringSync>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
 {
     return jsValueForDecodedArguments<Messages::TestWithStream::SendStringSync::ReplyArguments>(globalObject, decoder);
+}
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithStream_CallWithIdentifier>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+{
+    return jsValueForDecodedArguments<Messages::TestWithStream::CallWithIdentifier::Arguments>(globalObject, decoder);
+}
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessageReply<MessageName::TestWithStream_CallWithIdentifier>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+{
+    return jsValueForDecodedArguments<Messages::TestWithStream::CallWithIdentifier::ReplyArguments>(globalObject, decoder);
 }
 #if PLATFORM(COCOA)
 template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithStream_SendMachSendRight>(JSC::JSGlobalObject* globalObject, Decoder& decoder)

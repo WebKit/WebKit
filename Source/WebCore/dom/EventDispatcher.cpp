@@ -30,12 +30,13 @@
 #include "EventContext.h"
 #include "EventNames.h"
 #include "EventPath.h"
-#include "Frame.h"
+#include "FrameDestructionObserverInlines.h"
 #include "FrameLoader.h"
-#include "FrameView.h"
 #include "HTMLInputElement.h"
 #include "InputEvent.h"
 #include "KeyboardEvent.h"
+#include "LocalFrame.h"
+#include "LocalFrameView.h"
 #include "Logging.h"
 #include "MouseEvent.h"
 #include "ScopedEventQueue.h"
@@ -121,7 +122,11 @@ static bool shouldSuppressEventDispatchInDOM(Node& node, Event& event)
     if (!frame)
         return false;
 
-    if (!frame->mainFrame().loader().shouldSuppressTextInputFromEditing())
+    auto* localFrame = dynamicDowncast<LocalFrame>(frame->mainFrame());
+    if (!localFrame)
+        return false;
+
+    if (!localFrame->loader().shouldSuppressTextInputFromEditing())
         return false;
 
     if (is<TextEvent>(event)) {
@@ -154,7 +159,7 @@ void EventDispatcher::dispatchEvent(Node& node, Event& event)
 
     EventPath eventPath { node, event };
 
-    std::optional<bool> shouldClearTargetsAfterDispatch;
+    bool shouldClearTargetsAfterDispatch = false;
     for (size_t i = eventPath.size(); i > 0; --i) {
         const EventContext& eventContext = eventPath.contextAt(i - 1);
         // FIXME: We should also set shouldClearTargetsAfterDispatch to true if an EventTarget object in eventContext's touch target list
@@ -175,17 +180,13 @@ void EventDispatcher::dispatchEvent(Node& node, Event& event)
 
     InputElementClickState clickHandlingState;
 
-    bool isActivationEvent = event.type() == eventNames().clickEvent;
     RefPtr inputForLegacyPreActivationBehavior = dynamicDowncast<HTMLInputElement>(node);
-    if (!inputForLegacyPreActivationBehavior && isActivationEvent && event.bubbles())
+    if (!inputForLegacyPreActivationBehavior && event.bubbles() && event.type() == eventNames().clickEvent)
         inputForLegacyPreActivationBehavior = findInputElementInEventPath(eventPath);
     if (inputForLegacyPreActivationBehavior)
         inputForLegacyPreActivationBehavior->willDispatchEvent(event, clickHandlingState);
 
-    if (shouldSuppressEventDispatchInDOM(node, event))
-        event.stopPropagation();
-
-    if (!event.propagationStopped() && !eventPath.isEmpty()) {
+    if (!event.propagationStopped() && !eventPath.isEmpty() && !shouldSuppressEventDispatchInDOM(node, event)) {
         event.setEventPath(eventPath);
         dispatchEventInDOM(event, eventPath);
     }
@@ -207,7 +208,7 @@ void EventDispatcher::dispatchEvent(Node& node, Event& event)
         event.setTarget(WTFMove(finalTarget));
     }
 
-    if (shouldClearTargetsAfterDispatch.value_or(false)) {
+    if (shouldClearTargetsAfterDispatch) {
         event.setTarget(nullptr);
         event.setRelatedTarget(nullptr);
         // FIXME: We should also clear the event's touch target list.

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,11 +36,7 @@
 #if USE(CORE_TEXT)
 #include <CoreGraphics/CoreGraphics.h>
 #include <CoreText/CoreText.h>
-#if PLATFORM(WIN)
-#include <pal/spi/win/CoreTextSPIWin.h>
-#else
 #include <pal/spi/cf/CoreTextSPI.h>
-#endif
 #include <pal/spi/cg/CoreGraphicsSPI.h>
 #endif
 
@@ -60,7 +56,7 @@ public:
 
     void drawGlyphs(const Font&, const GlyphBufferGlyph*, const GlyphBufferAdvance*, unsigned numGlyphs, const FloatPoint& anchorPoint, FontSmoothingMode);
 
-#if USE(CORE_TEXT) && !PLATFORM(WIN)
+#if USE(CORE_TEXT)
     void drawNativeText(CTFontRef, CGFloat fontSize, CTLineRef, CGRect lineRect);
 
     void recordBeginLayer(CGRenderingStateRef, CGGStateRef, CGRect);
@@ -70,7 +66,7 @@ public:
 #endif
 
 private:
-#if USE(CORE_TEXT) && !PLATFORM(WIN)
+#if USE(CORE_TEXT)
     UniqueRef<GraphicsContext> createInternalContext();
 #endif
 
@@ -94,7 +90,7 @@ private:
     };
     void updateShadow(const DropShadow&, ShadowsIgnoreTransforms);
 
-#if USE(CORE_TEXT) && !PLATFORM(WIN)
+#if USE(CORE_TEXT)
     void updateFillColor(CGColorRef);
     void updateStrokeColor(CGColorRef);
     void updateShadow(CGStyleRef);
@@ -102,7 +98,7 @@ private:
 
     GraphicsContext& m_owner;
 
-#if USE(CORE_TEXT) && !PLATFORM(WIN)
+#if USE(CORE_TEXT)
     UniqueRef<GraphicsContext> m_internalContext;
 #endif
 
@@ -122,7 +118,7 @@ private:
     };
     State m_originalState;
 
-#if USE(CORE_TEXT) && !PLATFORM(WIN)
+#if USE(CORE_TEXT)
     RetainPtr<CGColorRef> m_initialFillColor;
     RetainPtr<CGColorRef> m_initialStrokeColor;
 #endif

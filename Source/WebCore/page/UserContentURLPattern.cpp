@@ -33,8 +33,8 @@
 namespace WebCore {
 
 UserContentURLPattern::UserContentURLPattern(StringView scheme, StringView host, StringView path)
+    : m_scheme(scheme.toString())
 {
-    m_scheme = scheme.toString();
     if (m_scheme.isEmpty()) {
         m_error = Error::MissingScheme;
         return;
@@ -151,7 +151,7 @@ UserContentURLPattern::Error UserContentURLPattern::parse(StringView pattern)
 
 String UserContentURLPattern::originalHost() const
 {
-    if (m_matchSubdomains && m_host.isEmpty())
+    if (matchAllHosts())
         return "*"_s;
 
     if (m_matchSubdomains)

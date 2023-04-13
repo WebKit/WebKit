@@ -32,7 +32,6 @@
 #include "JSCallbackFunction.h"
 #include "JSClassRef.h"
 #include "JSFunction.h"
-#include "JSGlobalObject.h"
 #include "JSLock.h"
 #include "JSObjectRef.h"
 #include "JSString.h"
@@ -459,6 +458,7 @@ CallData JSCallbackObject<Parent>::getConstructData(JSCell* cell)
         if (jsClass->callAsConstructor) {
             constructData.type = CallData::Type::Native;
             constructData.native.function = getConstructFunction();
+            constructData.native.isBoundFunction = false;
             break;
         }
     }
@@ -534,6 +534,7 @@ CallData JSCallbackObject<Parent>::getCallData(JSCell* cell)
         if (jsClass->callAsFunction) {
             callData.type = CallData::Type::Native;
             callData.native.function = getCallFunction();
+            callData.native.isBoundFunction = false;
             break;
         }
     }

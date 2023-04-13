@@ -35,14 +35,6 @@
 #import <WebKitLegacy/WAKView.h>
 #endif
 
-#if !defined(ENABLE_DASHBOARD_SUPPORT)
-#if TARGET_OS_IPHONE
-#define ENABLE_DASHBOARD_SUPPORT 0
-#else
-#define ENABLE_DASHBOARD_SUPPORT 1
-#endif
-#endif
-
 #if !defined(ENABLE_REMOTE_INSPECTOR)
 // FIXME: Should we just remove this ENABLE flag everywhere?
 #define ENABLE_REMOTE_INSPECTOR 1
@@ -116,17 +108,6 @@ extern NSString *WebQuickLookUTIKey;
 #endif
 
 extern NSString * const WebViewWillCloseNotification;
-
-#if ENABLE_DASHBOARD_SUPPORT
-// FIXME: Remove this once it is verified no one is dependent on it.
-typedef enum {
-    WebDashboardBehaviorAlwaysSendMouseEventsToAllWindows,
-    WebDashboardBehaviorAlwaysSendActiveNullEventsToPlugIns,
-    WebDashboardBehaviorAlwaysAcceptsFirstMouse,
-    WebDashboardBehaviorAllowWheelScrolling,
-    WebDashboardBehaviorUseBackwardCompatibilityMode
-} WebDashboardBehavior;
-#endif
 
 typedef enum {
     WebInjectAtDocumentStart,
@@ -549,15 +530,6 @@ Could be worth adding to the API.
 
 #if !TARGET_OS_IPHONE
 - (NSCachedURLResponse *)_cachedResponseForURL:(NSURL *)URL;
-#endif
-
-#if ENABLE_DASHBOARD_SUPPORT
-// FIXME: Remove these once we have verified no one is calling them
-- (void)_addScrollerDashboardRegions:(NSMutableDictionary *)regions;
-- (NSDictionary *)_dashboardRegions;
-
-- (void)_setDashboardBehavior:(WebDashboardBehavior)behavior to:(BOOL)flag;
-- (BOOL)_dashboardBehavior:(WebDashboardBehavior)behavior;
 #endif
 
 #if !TARGET_OS_IPHONE

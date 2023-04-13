@@ -1,0 +1,12 @@
+abc
+
+
+PASS Wait for load...
+PASS command: "readonly", param: "true"
+PASS execCommand("readonly", false, "true")
+PASS queryCommandState("readonly")
+PASS queryCommandEnabled("readonly")
+PASS queryCommandIndeterm("readonly")
+PASS queryCommandValue("readonly")
+PASS queryCommandSupported("readonly")
+

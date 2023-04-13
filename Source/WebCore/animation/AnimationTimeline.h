@@ -40,11 +40,11 @@ class AnimationTimeline : public RefCounted<AnimationTimeline>, public CanMakeWe
 public:
     virtual ~AnimationTimeline();
 
-    virtual bool isDocumentTimeline() const { return false; }
+    // DocumentTimeline is currently the only subclass of AnimationTimeline.
+    constexpr static bool isDocumentTimeline() { return true; }
 
     const AnimationCollection& relevantAnimations() const { return m_animations; }
 
-    void forgetAnimation(WebAnimation*);
     virtual void animationTimingDidChange(WebAnimation&);
     virtual void removeAnimation(WebAnimation&);
 
@@ -52,9 +52,8 @@ public:
     virtual std::optional<Seconds> currentTime() { return m_currentTime; }
 
 protected:
-    explicit AnimationTimeline();
+    AnimationTimeline();
 
-    Vector<WeakPtr<WebAnimation, WeakPtrImplWithEventTargetData>> m_allAnimations;
     AnimationCollection m_animations;
 
 private:

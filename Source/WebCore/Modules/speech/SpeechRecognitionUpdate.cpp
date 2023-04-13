@@ -26,6 +26,8 @@
 #include "config.h"
 #include "SpeechRecognitionUpdate.h"
 
+#include <wtf/NeverDestroyed.h>
+
 namespace WebCore {
 
 String convertEnumerationToString(SpeechRecognitionUpdateType enumerationValue)

@@ -64,6 +64,14 @@ MediaSourceLoader.prototype = {
         return this._manifest ? this._manifest.duration : 0
     },
 
+    initSegmentSize: function()
+    {
+        if (!this._manifest || !this._manifest.init || !this._mediaData)
+            return null;
+        var init = this._manifest.init;
+        return init.size;
+    },
+
     initSegment: function()
     {
         if (!this._manifest || !this._manifest.init || !this._mediaData)
@@ -85,6 +93,22 @@ MediaSourceLoader.prototype = {
             return null;
         var media = this._manifest.media[segmentNumber];
         return this._mediaData.slice(media.offset, media.offset + media.size);
+    },
+
+    mediaSegmentSize: function(segmentNumber)
+    {
+        if (!this._manifest || !this._manifest.media || !this._mediaData || segmentNumber >= this._manifest.media.length)
+            return 0;
+        var media = this._manifest.media[segmentNumber];
+        return media.size;
+    },
+
+    mediaSegmentEndTime: function(segmentNumber)
+    {
+        if (!this._manifest || !this._manifest.media || !this._mediaData || segmentNumber >= this._manifest.media.length)
+            return 0;
+        var media = this._manifest.media[segmentNumber];
+        return media.timestamp + media.duration;
     },
 
     concatenateMediaSegments: function(segmentDataList)

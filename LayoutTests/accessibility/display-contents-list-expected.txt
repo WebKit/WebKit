@@ -1,0 +1,14 @@
+This test ensures we properly expose lists and list items with display:contents.
+
+PASS: accessibilityController.accessibleElementById('list').role.includes('List') === true
+Adding display:contents and visibility:hidden to #list.
+PASS: #list is ignored.
+Making #list visibility:visible.
+PASS: accessibilityController.accessibleElementById('list').role.includes('List') === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+One
+ Two
+

@@ -29,7 +29,6 @@
 #include "CPU.h"
 #include "Error.h"
 #include "ExceptionHelpers.h"
-#include "JSGlobalObject.h"
 #include "JSObject.h"
 #include "MathCommon.h"
 #include <wtf/CagedUniquePtr.h>
@@ -84,6 +83,16 @@ public:
     static size_t offsetOfLength()
     {
         return OBJECT_OFFSETOF(JSBigInt, m_length);
+    }
+
+    static size_t offsetOfSign()
+    {
+        return OBJECT_OFFSETOF(JSBigInt, m_sign);
+    }
+
+    inline static size_t offsetOfData()
+    {
+        return OBJECT_OFFSETOF(JSBigInt, m_data);
     }
 
     DECLARE_EXPORT_INFO;
@@ -609,17 +618,12 @@ private:
 
     JS_EXPORT_PRIVATE static uint64_t toBigUInt64Heap(JSBigInt*);
 
-    inline static size_t offsetOfData()
-    {
-        return OBJECT_OFFSETOF(JSBigInt, m_data);
-    }
-
     inline Digit* dataStorage() { return m_data.get(m_length); }
     inline Digit* dataStorageUnsafe() { return m_data.getUnsafe(); }
 
     const unsigned m_length;
     unsigned m_hash { 0 };
-    bool m_sign { false };
+    uint8_t m_sign { false };
     CagedBarrierPtr<Gigacage::Primitive, Digit, tagCagedPtr> m_data;
 };
 

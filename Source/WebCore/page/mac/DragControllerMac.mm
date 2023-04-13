@@ -38,9 +38,9 @@
 #import "EditorClient.h"
 #import "Element.h"
 #import "File.h"
-#import "Frame.h"
-#import "FrameView.h"
 #import "HTMLAttachmentElement.h"
+#import "LocalFrame.h"
+#import "LocalFrameView.h"
 #import "Page.h"
 #import "Pasteboard.h"
 #import "PasteboardStrategy.h"
@@ -100,8 +100,10 @@ void DragController::cleanupAfterSystemDrag()
     // call it anyway to be on the safe side.
     // We don't want to do this for WebKit2, since the client call to start the drag
     // is asynchronous.
-    if (m_page.mainFrame().view()->platformWidget())
-        dragEnded();
+    if (auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page.mainFrame())) {
+        if (localMainFrame->view()->platformWidget())
+            dragEnded();
+    }
 #endif
 }
 

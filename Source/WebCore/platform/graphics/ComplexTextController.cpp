@@ -359,6 +359,9 @@ void ComplexTextController::collectComplexTextRuns()
     if (!advanceByCombiningCharacterSequence(graphemeClusterIterator, currentIndex, baseCharacter, markCount))
         return;
 
+    // We don't perform font fallback on the capitalized characters when small caps is synthesized.
+    // We may want to change this code to do so in the future; if we do, then the logic in initiateFontLoadingByAccessingGlyphDataIfApplicable()
+    // would need to be updated accordingly too.
     nextFont = m_font.fontForCombiningCharacterSequence(baseOfString, currentIndex);
 
     bool isSmallCaps = false;
@@ -700,6 +703,15 @@ void ComplexTextController::adjustGlyphsAndAdvances()
             else if (FontCascade::treatAsZeroWidthSpace(ch) && !treatAsSpace) {
                 advance.setWidth(0);
                 glyph = font.spaceGlyph();
+            }
+
+            // https://www.w3.org/TR/css-text-3/#white-space-processing
+            // "Control characters (Unicode category Cc)—other than tabs (U+0009), line feeds (U+000A), carriage returns (U+000D) and sequences that form a segment break—must be rendered as a visible glyph"
+            // Also, we're omitting Null (U+0000) from this set because Chrome and Firefox do so and it's needed for compat. See https://github.com/w3c/csswg-drafts/pull/6983.
+            if (ch != newlineCharacter && ch != carriageReturn && ch != noBreakSpace && ch != tabCharacter && ch != nullCharacter && isControlCharacter(ch)) {
+                // Let's assume that .notdef is visible.
+                glyph = 0;
+                advance.setWidth(font.widthForGlyph(glyph));
             }
 
             if (!i) {

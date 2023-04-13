@@ -27,6 +27,7 @@
 
 #if USE(APPKIT)
 
+#include "Color.h"
 #include "SystemImage.h"
 #include <optional>
 #include <wtf/Forward.h>

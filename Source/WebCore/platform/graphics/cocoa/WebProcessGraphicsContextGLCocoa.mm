@@ -30,6 +30,7 @@
 #import "GraphicsContextGLCocoa.h" // NOLINT
 #import "GraphicsLayerContentsDisplayDelegate.h"
 #import "PlatformCALayer.h"
+#import "PlatformCALayerDelegatedContents.h"
 #import "ProcessIdentity.h"
 
 #if PLATFORM(MAC)
@@ -56,7 +57,7 @@ public:
     void display(PlatformCALayer& layer) final
     {
         if (m_displayBuffer)
-            layer.setContents(*m_displayBuffer);
+            layer.setDelegatedContents({ *m_displayBuffer, { } });
         else
             layer.clearContents();
     }

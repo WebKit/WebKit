@@ -596,7 +596,6 @@ inline constexpr bool observesOverflow<AssertNoOverflow>() { return ASSERT_ENABL
 template <typename U, typename V, typename R> static inline bool safeAdd(U lhs, V rhs, R& result)
 {
     return ArithmeticOperations<U, V, R>::add(lhs, rhs, result);
-    return true;
 }
 
 template <class OverflowHandler, typename U, typename V, typename R, typename = std::enable_if_t<!std::is_scalar<OverflowHandler>::value>>

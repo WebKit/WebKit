@@ -42,14 +42,6 @@ namespace WebKit {
 
 using namespace WebCore;
 
-void ServiceWorkerSoftUpdateLoader::start(NetworkSession* session, ServiceWorkerJobData&& jobData, bool shouldRefreshCache, ResourceRequest&& request, Handler&& completionHandler)
-{
-    if (!session)
-        return completionHandler(workerFetchError(ResourceError { ResourceError::Type::Cancellation }));
-    auto loader = std::unique_ptr<ServiceWorkerSoftUpdateLoader>(new ServiceWorkerSoftUpdateLoader(*session, WTFMove(jobData), shouldRefreshCache, WTFMove(request), WTFMove(completionHandler)));
-    session->addSoftUpdateLoader(WTFMove(loader));
-}
-
 ServiceWorkerSoftUpdateLoader::ServiceWorkerSoftUpdateLoader(NetworkSession& session, ServiceWorkerJobData&& jobData, bool shouldRefreshCache, ResourceRequest&& request, Handler&& completionHandler)
     : m_completionHandler(WTFMove(completionHandler))
     , m_jobData(WTFMove(jobData))

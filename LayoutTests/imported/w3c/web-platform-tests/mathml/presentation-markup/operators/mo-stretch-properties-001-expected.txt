@@ -1,0 +1,7 @@
+
+FAIL Stretchy vertical line assert_approx_equals: Infix <mo> element expected 25 +/- 1 but got 150
+|
+|
+|
+|
+

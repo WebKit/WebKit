@@ -237,6 +237,21 @@ static const char* streamTypeToString(TrackPrivateBaseGStreamer::TrackType type)
 }
 #endif // GST_DISABLE_GST_DEBUG
 
+static gboolean webKitMediaSrcQuery(GstElement* element, GstQuery* query)
+{
+    gboolean result = GST_ELEMENT_CLASS(parent_class)->query(element, query);
+
+    if (GST_QUERY_TYPE(query) != GST_QUERY_SCHEDULING)
+        return result;
+
+    GstSchedulingFlags flags;
+    int minSize, maxSize, align;
+
+    gst_query_parse_scheduling(query, &flags, &minSize, &maxSize, &align);
+    gst_query_set_scheduling(query, static_cast<GstSchedulingFlags>(flags | GST_SCHEDULING_FLAG_BANDWIDTH_LIMITED), minSize, maxSize, align);
+    return TRUE;
+}
+
 static void webkit_media_src_class_init(WebKitMediaSrcClass* klass)
 {
     GObjectClass* oklass = G_OBJECT_CLASS(klass);
@@ -249,8 +264,14 @@ static void webkit_media_src_class_init(WebKitMediaSrcClass* klass)
 
     gst_element_class_set_static_metadata(eklass, "WebKit MediaSource source element", "Source/Network", "Feeds samples coming from WebKit MediaSource object", "Igalia <aboya@igalia.com>");
 
-    eklass->change_state = webKitMediaSrcChangeState;
-    eklass->send_event = webKitMediaSrcSendEvent;
+    eklass->change_state = GST_DEBUG_FUNCPTR(webKitMediaSrcChangeState);
+    eklass->send_event = GST_DEBUG_FUNCPTR(webKitMediaSrcSendEvent);
+
+    // In GStreamer 1.20 and older urisourcebin mishandles source elements with dynamic pads. This
+    // is not an issue in 1.22.
+    if (webkitGstCheckVersion(1, 22, 0))
+        eklass->query = GST_DEBUG_FUNCPTR(webKitMediaSrcQuery);
+
     g_object_class_install_property(oklass,
         PROP_N_AUDIO,
         g_param_spec_int("n-audio", nullptr, nullptr,
@@ -298,17 +319,17 @@ void webKitMediaSrcEmitStreams(WebKitMediaSrc* source, const Vector<RefPtr<Media
     gst_element_post_message(GST_ELEMENT(source), gst_message_new_stream_collection(GST_OBJECT(source), source->priv->collection.get()));
 
     for (const RefPtr<Stream>& stream: source->priv->streams.values()) {
-        // Workaround: gst_element_add_pad() should already call gst_pad_set_active() if the element is PAUSED or
-        // PLAYING. Unfortunately, as of GStreamer 1.18.2 it does so with the element lock taken, causing a deadlock
-        // in gst_pad_start_task(), who tries to post a `stream-status` message in the element, which also requires
-        // the element lock. Activating the pad beforehand avoids that codepath.
-        // https://gitlab.freedesktop.org/gstreamer/gstreamer/-/merge_requests/210
-        // FIXME: Remove this workaround when the bug gets fixed and versions without the bug are no longer in use.
-        GstState state;
-        gst_element_get_state(GST_ELEMENT(source), &state, nullptr, 0);
-        if (state > GST_STATE_READY)
-            gst_pad_set_active(GST_PAD(stream->pad.get()), true);
-
+        if (!webkitGstCheckVersion(1, 20, 6)) {
+            // Workaround: gst_element_add_pad() should already call gst_pad_set_active() if the element is PAUSED or
+            // PLAYING. Unfortunately, as of GStreamer 1.18.2 it does so with the element lock taken, causing a deadlock
+            // in gst_pad_start_task(), who tries to post a `stream-status` message in the element, which also requires
+            // the element lock. Activating the pad beforehand avoids that codepath.
+            // https://gitlab.freedesktop.org/gstreamer/gstreamer/-/merge_requests/210
+            GstState state;
+            gst_element_get_state(GST_ELEMENT(source), &state, nullptr, 0);
+            if (state > GST_STATE_READY)
+                gst_pad_set_active(GST_PAD(stream->pad.get()), true);
+        }
         GST_DEBUG_OBJECT(source, "Adding pad '%s' for stream with name '%s'", GST_OBJECT_NAME(stream->pad.get()), stream->track->trackId().string().utf8().data());
         gst_element_add_pad(GST_ELEMENT(source), GST_PAD(stream->pad.get()));
     }

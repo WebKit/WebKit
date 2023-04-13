@@ -6,13 +6,14 @@ Before:
 |   <tbody>
 |     <tr>
 |       id="element"
-|       <td>
-|         "<#selection-anchor>fsdf"
+|       <#selection-anchor>
 |       <td>
 |         "fsdf"
+|       <td>
+|         "fsdf"
+|       <#selection-focus>
 |     <tr>
 |       <td>
-|         <#selection-focus>
 |         "gghfg"
 |       <td>
 |         "fsfg"

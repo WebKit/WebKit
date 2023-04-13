@@ -1,3 +1,0 @@
-
-PASS XMLHttpRequest: send() - "Basic" authenticated CORS requests with user name and password passed to open() (asserts failure)
-

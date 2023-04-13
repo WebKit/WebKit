@@ -38,15 +38,15 @@ public:
     // Style data for Content-Distribution properties: align-content, justify-content.
     // <content-distribution> || [ <overflow-position>? && <content-position> ]
     StyleContentAlignmentData(ContentPosition position, ContentDistribution distribution, OverflowAlignment overflow = OverflowAlignment::Default)
-        : m_position(static_cast<unsigned>(position))
-        , m_distribution(static_cast<unsigned>(distribution))
-        , m_overflow(static_cast<unsigned>(overflow))
+        : m_position(static_cast<uint16_t>(position))
+        , m_distribution(static_cast<uint16_t>(distribution))
+        , m_overflow(static_cast<uint16_t>(overflow))
     {
     }
 
-    void setPosition(ContentPosition position) { m_position = static_cast<unsigned>(position); }
-    void setDistribution(ContentDistribution distribution) { m_distribution = static_cast<unsigned>(distribution); }
-    void setOverflow(OverflowAlignment overflow) { m_overflow = static_cast<unsigned>(overflow); }
+    void setPosition(ContentPosition position) { m_position = static_cast<uint16_t>(position); }
+    void setDistribution(ContentDistribution distribution) { m_distribution = static_cast<uint16_t>(distribution); }
+    void setOverflow(OverflowAlignment overflow) { m_overflow = static_cast<uint16_t>(overflow); }
 
     ContentPosition position() const { return static_cast<ContentPosition>(m_position); }
     ContentDistribution distribution() const { return static_cast<ContentDistribution>(m_distribution); }
@@ -63,9 +63,9 @@ public:
     }
 
 private:
-    unsigned m_position : 4; // ContentPosition
-    unsigned m_distribution : 3; // ContentDistribution
-    unsigned m_overflow : 2; // OverflowAlignment
+    uint16_t m_position : 4; // ContentPosition
+    uint16_t m_distribution : 3; // ContentDistribution
+    uint16_t m_overflow : 2; // OverflowAlignment
 };
 
 WTF::TextStream& operator<<(WTF::TextStream&, const StyleContentAlignmentData&);

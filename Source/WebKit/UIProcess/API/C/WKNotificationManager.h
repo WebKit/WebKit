@@ -26,8 +26,8 @@
 #ifndef WKNotificationManager_h
 #define WKNotificationManager_h
 
-#include "WKNotificationProvider.h"
 #include <WebKit/WKBase.h>
+#include <WebKit/WKNotificationProvider.h>
 
 #ifdef __cplusplus
 extern "C" {

@@ -52,7 +52,6 @@ class ProvokingVertexHelper : public mtl::ProvokingVertexCacheSpecializeShaderFa
     mtl::ComputeCommandEncoder *getComputeCommandEncoder();
 
   private:
-    id<MTLLibrary> mProvokingVertexLibrary;
     mtl::BufferPool mIndexBuffers;
     mtl::ProvokingVertexComputePipelineCache mPipelineCache;
     mtl::ProvokingVertexComputePipelineDesc mCachedDesc;

@@ -6,7 +6,7 @@
 #include <cstring>
 #include <iterator>
 
-#include <wtf/fast_float/float_common.h>
+#include "float_common.h"
 
 namespace fast_float {
 

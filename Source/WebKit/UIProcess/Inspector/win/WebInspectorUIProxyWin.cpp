@@ -32,6 +32,7 @@
 #include "APIPageConfiguration.h"
 #include "InspectorResourceURLSchemeHandler.h"
 #include "PageClientImpl.h"
+#include "WKAPICast.h"
 #include "WebFramePolicyListenerProxy.h"
 #include "WebPageGroup.h"
 #include "WebPageProxy.h"
@@ -46,10 +47,7 @@
 #include <WebCore/WebCoreInstanceHandle.h>
 #include <WebCore/WindowMessageBroadcaster.h>
 #include <WebKit/WKPage.h>
-
-#if USE(CF)
-#include <wtf/cf/CFURLExtras.h>
-#endif
+#include <wtf/FileSystem.h>
 
 namespace WebKit {
 
@@ -74,6 +72,63 @@ static InspectedWindowInfo getInspectedWindowInfo(HWND inspectedWindow, HWND par
     RECT parentRect;
     ::GetClientRect(parentWindow, &parentRect);
     return { rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, parentRect.right - parentRect.left, parentRect.bottom - parentRect.top };
+}
+
+static String systemErrorMessage(DWORD errorCode)
+{
+    if (!errorCode)
+        return emptyString();
+
+    wchar_t* messageBuffer = nullptr;
+    size_t size = FormatMessageW(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+        nullptr, errorCode, MAKELANGID(LANG_NEUTRAL, SUBLANG_NEUTRAL), reinterpret_cast<LPWSTR>(&messageBuffer), 0, nullptr);
+    String message(messageBuffer, size);
+    LocalFree(messageBuffer);
+
+    return message;
+}
+
+void WebInspectorUIProxy::showSavePanelForSingleFile(HWND parentWindow, Vector<WebCore::InspectorFrontendClient::SaveData>&& saveDatas)
+{
+    // Remove custom URI schemes such as "web-inspector://" and also remove the leading "/".
+    URL url { saveDatas[0].url };
+    auto filePath = url.path().substring(1).toString().wideCharacters();
+    filePath.grow(MAX_PATH);
+
+    OPENFILENAME ofn { };
+    ofn.lStructSize = sizeof(OPENFILENAME);
+    ofn.hwndOwner = parentWindow;
+    ofn.lpstrFile = filePath.data();
+    ofn.nMaxFile = MAX_PATH;
+    ofn.Flags = OFN_PATHMUSTEXIST | OFN_OVERWRITEPROMPT;
+
+    if (GetSaveFileName(&ofn)) {
+        auto fd = FileSystem::openFile(filePath.data(), FileSystem::FileOpenMode::ReadWrite);
+        if (!FileSystem::isHandleValid(fd))
+            return;
+
+        auto content = saveDatas[0].content.utf8();
+        auto contentSize = content.length();
+        auto bytesWritten = FileSystem::writeToFile(fd, content.data(), contentSize);
+        if (bytesWritten == -1 || bytesWritten != contentSize) {
+            auto message = systemErrorMessage(GetLastError());
+            if (message.isEmpty())
+                message = makeString("Error: writeToFile returns ", bytesWritten, ", contentLength = ", content.length());
+            MessageBox(parentWindow, message.wideCharacters().data(), L"Export HAR", MB_OK | MB_ICONEXCLAMATION);
+        }
+        FileSystem::closeFile(fd);
+    } else {
+        auto errorCode = CommDlgExtendedError();
+        if (errorCode) {
+            String message;
+            // FNERR_INVALIDFILENAME is treated specially because this is a common error.
+            if (errorCode == FNERR_INVALIDFILENAME)
+                message = "Error: A file name is invalid."_s;
+            else
+                message = makeString("Error: ", errorCode);
+            MessageBox(parentWindow, message.wideCharacters().data(), L"Export HAR", MB_OK | MB_ICONEXCLAMATION);
+        }
+    }
 }
 
 void WebInspectorUIProxy::windowReceivedMessage(HWND hwnd, UINT msg, WPARAM, LPARAM lParam)
@@ -404,9 +459,12 @@ void WebInspectorUIProxy::platformShowCertificate(const WebCore::CertificateInfo
     notImplemented();
 }
 
-void WebInspectorUIProxy::platformSave(Vector<WebCore::InspectorFrontendClient::SaveData>&&, bool /* forceSaveAs */)
+void WebInspectorUIProxy::platformSave(Vector<WebCore::InspectorFrontendClient::SaveData>&& saveDatas, bool /* forceSaveAs */)
 {
-    notImplemented();
+    // Currently, file saving is only possible with SaveMode::SingleFile.
+    // This is determined in WebInspectorUI::canSave().
+    ASSERT(saveDatas.size() == 1);
+    WebInspectorUIProxy::showSavePanelForSingleFile(m_inspectedViewWindow, WTFMove(saveDatas));
 }
 
 void WebInspectorUIProxy::platformLoad(const String&, CompletionHandler<void(const String&)>&& completionHandler)

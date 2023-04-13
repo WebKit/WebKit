@@ -75,6 +75,8 @@ public:
     void clientWaitSyncWithFlush(void* sync, uint64_t timeout);
 #endif
 
+    void waitUntilWorkScheduled();
+
     // GraphicsContextGLANGLE overrides.
     RefPtr<GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate() override;
 #if ENABLE(VIDEO)
@@ -83,12 +85,15 @@ public:
 #if ENABLE(VIDEO)
     GraphicsContextGLCV* asCV() final;
 #endif
-#if ENABLE(MEDIA_STREAM)
+#if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
     RefPtr<VideoFrame> paintCompositedResultsToVideoFrame() final;
 #endif
     void setContextVisibility(bool) final;
     void setDrawingBufferColorSpace(const DestinationColorSpace&) final;
     void prepareForDisplay() override;
+
+    void withDrawingBufferAsNativeImage(std::function<void(NativeImage&)>) override;
+    void withDisplayBufferAsNativeImage(std::function<void(NativeImage&)>) override;
 
 #if PLATFORM(MAC)
     void updateContextOnDisplayReconfiguration();

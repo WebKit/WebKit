@@ -217,8 +217,12 @@ void ServiceWorkerContainer::willSettleRegistrationPromise(bool success)
     Page* page = is<Document>(context) ? downcast<Document>(*context).page() : nullptr;
     if (!page || !page->isServiceWorkerPage())
         return;
+    
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(page->mainFrame());
+    if (!localMainFrame)
+        return;
 
-    page->mainFrame().loader().client().didFinishServiceWorkerPageRegistration(success);
+    localMainFrame->loader().client().didFinishServiceWorkerPageRegistration(success);
 }
 
 void ServiceWorkerContainer::unregisterRegistration(ServiceWorkerRegistrationIdentifier registrationIdentifier, DOMPromiseDeferred<IDLBoolean>&& promise)
@@ -348,7 +352,14 @@ void ServiceWorkerContainer::getRegistrations(Ref<DeferredPromise>&& promise)
 
 void ServiceWorkerContainer::startMessages()
 {
+    auto* context = this->context();
+    if (!context) {
+        CONTAINER_RELEASE_LOG_ERROR("Container without ScriptExecutionContext is attempting to start post message delivery");
+        return;
+    }
+
     m_shouldDeferMessageEvents = false;
+
     for (auto&& messageEvent : std::exchange(m_deferredMessageEvents, Vector<MessageEvent::MessageEventWithStrongData> { })) {
         queueTaskKeepingObjectAlive(*this, TaskSource::DOMManipulation, [this, messageEvent = WTFMove(messageEvent)] {
             dispatchEvent(messageEvent.event);

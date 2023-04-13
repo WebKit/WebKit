@@ -1,0 +1,65 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<meta name="viewport" content="width=500">
+<head>
+<script src="../../../../resources/ui-helper.js"></script>
+<script src="../../../../resources/js-test.js"></script>
+<style>
+html, body {
+    margin: 0;
+    height: 10000px;
+}
+
+#console {
+    position: fixed;
+}
+</style>
+</head>
+<body>
+<div id="console"></div>
+<script>
+jsTestIsAsync = true;
+description("This test verifies that a pan gesture that immediately follows a tap still results in the web view being scrolled.");
+
+let handledClick;
+document.body.addEventListener("click", () => handledClick = true);
+
+async function attemptTest() {
+    scrollTo(0, 0);
+    handledClick = false;
+
+    await UIHelper.ensurePresentationUpdate();
+    await UIHelper.sendEventStream(new UIHelper.EventStreamBuilder()
+        .begin(100, 100)
+        .wait(0.1)
+        .end()
+        .takeResult());
+
+    await UIHelper.sendEventStream(new UIHelper.EventStreamBuilder()
+        .begin(250, 800)
+        .move(250, 50, 0.25)
+        .end()
+        .takeResult());
+
+    await UIHelper.ensureStablePresentationUpdate();
+    return handledClick && pageYOffset > 0;
+}
+
+addEventListener("load", async () => {
+    if (!window.testRunner)
+        return;
+
+    const maximumNumberOfAttempts = 10;
+    for (let i = 0; i < maximumNumberOfAttempts; ++i) {
+        if (await attemptTest()) {
+            testPassed("Observed scrolling after a tap");
+            finishJSTest();
+            return;
+        }
+    }
+    testFailed(`Failed ${maximumNumberOfAttempts} attempts to scroll after tapping`);
+    finishJSTest();
+});
+</script>
+</body>
+</html>

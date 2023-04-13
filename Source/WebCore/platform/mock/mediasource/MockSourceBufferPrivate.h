@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #pragma once
@@ -46,13 +46,14 @@ public:
 
     void clearMediaSource() { m_mediaSource = nullptr; }
 
+    bool isActive() const final;
+
 private:
     explicit MockSourceBufferPrivate(MockMediaSourcePrivate*);
 
     // SourceBufferPrivate overrides
-    void append(Vector<uint8_t>&&) final;
-    void abort() final;
-    void resetParserState() final;
+    void appendInternal(Ref<SharedBuffer>&&) final;
+    void resetParserStateInternal() final;
     void removedFromMediaSource() final;
     MediaPlayer::ReadyState readyState() const final;
     void setReadyState(MediaPlayer::ReadyState) final;
@@ -68,7 +69,6 @@ private:
     void enqueueSample(Ref<MediaSample>&&, const AtomString&) final;
     bool isReadyForMoreSamples(const AtomString&) final { return !m_maxQueueDepth || m_enqueuedSamples.size() < m_maxQueueDepth.value(); }
     void setActive(bool) final;
-    bool isActive() const final;
 
     void enqueuedSamplesForTrackID(const AtomString&, CompletionHandler<void(Vector<String>&&)>&&) final;
     MediaTime minimumUpcomingPresentationTimeForTrackID(const AtomString&) final;

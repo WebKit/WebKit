@@ -84,7 +84,8 @@ function doGCSet() {
 function doGCTest() {
     for (let i=0; i<1000; ++i) {
         assert.eq($1.exports.get_tbl().test, -1)
-        fullGC()
+        if (i % 100 == 0)
+            fullGC()
     }
 }
 
@@ -104,7 +105,8 @@ function doBarrierTest() {
 
     for (let j=0; j<1000; ++j) {
         assert.eq($1.exports.get_tbl().test, -count)
-        edenGC()
+        if (j % 100 == 0)
+            edenGC()
     }
 }
 

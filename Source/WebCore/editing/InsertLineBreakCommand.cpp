@@ -28,12 +28,12 @@
 
 #include "Document.h"
 #include "Editing.h"
-#include "Frame.h"
 #include "FrameSelection.h"
 #include "HTMLBRElement.h"
 #include "HTMLHRElement.h"
 #include "HTMLNames.h"
 #include "HTMLTableElement.h"
+#include "LocalFrame.h"
 #include "RenderElement.h"
 #include "RenderText.h"
 #include "Text.h"

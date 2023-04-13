@@ -15,6 +15,8 @@
 
 #include "GLSLANG/ShaderLang.h"
 #include "common/angle_version_info.h"
+#include "common/string_utils.h"
+#include "common/system_utils.h"
 #include "common/utilities.h"
 #include "libANGLE/Caps.h"
 #include "libANGLE/Compiler.h"
@@ -34,6 +36,29 @@ namespace gl
 namespace
 {
 constexpr uint32_t kShaderCacheIdentifier = 0x12345678;
+
+// Environment variable (and associated Android property) for the path to read and write shader
+// dumps
+constexpr char kShaderDumpPathVarName[]       = "ANGLE_SHADER_DUMP_PATH";
+constexpr char kEShaderDumpPathPropertyName[] = "debug.angle.shader_dump_path";
+
+size_t ComputeShaderHash(const std::string &mergedSource)
+{
+    return std::hash<std::string>{}(mergedSource);
+}
+
+std::string GetShaderDumpFilePath(size_t shaderHash)
+{
+    std::stringstream path;
+    std::string shaderDumpDir = GetShaderDumpFileDirectory();
+    if (!shaderDumpDir.empty())
+    {
+        path << shaderDumpDir << "/";
+    }
+    path << shaderHash << ".essl";
+
+    return path.str();
+}
 }  // anonymous namespace
 
 const char *GetShaderTypeString(ShaderType type)
@@ -64,6 +89,28 @@ const char *GetShaderTypeString(ShaderType type)
     }
 }
 
+std::string GetShaderDumpFileDirectory()
+{
+    // Check the environment variable for the path to save and read shader dump files.
+    std::string environmentVariableDumpDir =
+        angle::GetAndSetEnvironmentVarOrUnCachedAndroidProperty(kShaderDumpPathVarName,
+                                                                kEShaderDumpPathPropertyName);
+    if (!environmentVariableDumpDir.empty() && environmentVariableDumpDir.compare("0") != 0)
+    {
+        return environmentVariableDumpDir;
+    }
+
+    // Fall back to the temp dir. If that doesn't exist, use the current working directory.
+    return angle::GetTempDirectory().valueOr("");
+}
+
+std::string GetShaderDumpFileName(size_t shaderHash)
+{
+    std::stringstream name;
+    name << shaderHash << ".essl";
+    return name.str();
+}
+
 class [[nodiscard]] ScopedExit final : angle::NonCopyable
 {
   public:
@@ -80,9 +127,7 @@ struct Shader::CompilingState
     ShCompilerInstance shCompilerInstance;
 };
 
-ShaderState::ShaderState(ShaderType shaderType)
-    : mLabel(), mCompiledShaderState(shaderType), mCompileStatus(CompileStatus::NOT_COMPILED)
-{}
+ShaderState::ShaderState(ShaderType shaderType) : mCompiledShaderState(shaderType) {}
 
 ShaderState::~ShaderState() {}
 
@@ -140,7 +185,10 @@ ShaderProgramID Shader::getHandle() const
     return mHandle;
 }
 
-void Shader::setSource(GLsizei count, const char *const *string, const GLint *length)
+void Shader::setSource(const Context *context,
+                       GLsizei count,
+                       const char *const *string,
+                       const GLint *length)
 {
     std::ostringstream stream;
 
@@ -156,7 +204,39 @@ void Shader::setSource(GLsizei count, const char *const *string, const GLint *le
         }
     }
 
-    mState.mSource = stream.str();
+    std::string source = stream.str();
+
+    // Compute the hash based on the original source before any substitutions
+    size_t sourceHash = ComputeShaderHash(source);
+
+    const angle::FrontendFeatures &frontendFeatures = context->getFrontendFeatures();
+
+    bool substitutedShader = false;
+    if (frontendFeatures.enableShaderSubstitution.enabled)
+    {
+        std::string subsitutionShaderPath = GetShaderDumpFilePath(sourceHash);
+
+        std::string substituteShader;
+        if (angle::ReadFileToString(subsitutionShaderPath, &substituteShader))
+        {
+            source            = std::move(substituteShader);
+            substitutedShader = true;
+            INFO() << "Shader substitute found, loading from " << subsitutionShaderPath;
+        }
+    }
+
+    // Only dump shaders that have not been previously substituted. It would write the same data
+    // back to the file.
+    if (frontendFeatures.dumpShaderSource.enabled && !substitutedShader)
+    {
+        std::string dumpFile = GetShaderDumpFilePath(sourceHash);
+
+        writeFile(dumpFile.c_str(), source.c_str(), source.length());
+        INFO() << "Dumped shader source: " << dumpFile;
+    }
+
+    mState.mSource     = std::move(source);
+    mState.mSourceHash = sourceHash;
 }
 
 int Shader::getInfoLogLength(const Context *context)
@@ -267,6 +347,11 @@ const sh::BinaryBlob &Shader::getCompiledBinary(const Context *context)
     return mState.getCompiledBinary();
 }
 
+size_t Shader::getSourceHash() const
+{
+    return mState.mSourceHash;
+}
+
 void Shader::getTranslatedSourceWithDebugInfo(const Context *context,
                                               GLsizei bufSize,
                                               GLsizei *length,
@@ -361,7 +446,8 @@ void Shader::compile(const Context *context)
     ASSERT(compilerHandle);
 
     // Find a shader in Blob Cache
-    setShaderKey(context, options, compilerInstance);
+    setShaderKey(context, options, compilerInstance.getShaderOutputType(),
+                 compilerInstance.getBuiltInResources());
     ASSERT(!mShaderHash.empty());
     MemoryShaderCache *shaderCache = context->getMemoryShaderCache();
     if (shaderCache)
@@ -739,24 +825,81 @@ angle::Result Shader::serialize(const Context *context, angle::MemoryBuffer *bin
     return angle::Result::Continue;
 }
 
-angle::Result Shader::deserialize(const Context *context, BinaryInputStream &stream)
+angle::Result Shader::deserialize(BinaryInputStream &stream)
 {
-    if (stream.readInt<uint32_t>() != kShaderCacheIdentifier)
+    mState.mCompiledShaderState.deserialize(stream);
+
+    if (stream.error())
     {
+        // Error while deserializing binary stream
         return angle::Result::Stop;
     }
-    mState.mCompiledShaderState.deserialize(stream);
 
     return angle::Result::Continue;
 }
 
 angle::Result Shader::loadBinary(const Context *context, const void *binary, GLsizei length)
 {
-    BinaryInputStream stream(binary, length);
-    ANGLE_TRY(deserialize(context, stream));
+    return loadBinaryImpl(context, binary, length, false);
+}
 
-    // Only successfully-compiled shaders are serialized. If deserialization is successful,
-    // we can assume the CompileStatus.
+angle::Result Shader::loadShaderBinary(const Context *context, const void *binary, GLsizei length)
+{
+    return loadBinaryImpl(context, binary, length, true);
+}
+
+angle::Result Shader::loadBinaryImpl(const Context *context,
+                                     const void *binary,
+                                     GLsizei length,
+                                     bool generatedWithOfflineCompiler)
+{
+    BinaryInputStream stream(binary, length);
+
+    // Shader binaries generated with offline compiler have additional fields
+    if (generatedWithOfflineCompiler)
+    {
+        // Load binary from a glShaderBinary call.
+        // Validation layer should have already verified that the shader program version and shader
+        // type match
+        std::vector<uint8_t> commitString(angle::GetANGLEShaderProgramVersionHashSize(), 0);
+        stream.readBytes(commitString.data(), commitString.size());
+        ASSERT(memcmp(commitString.data(), angle::GetANGLEShaderProgramVersion(),
+                      commitString.size()) == 0);
+
+        gl::ShaderType shaderType;
+        stream.readEnum(&shaderType);
+        ASSERT(mType == shaderType);
+
+        // Get fields needed to generate the key for memory caches.
+        ShShaderOutput outputType;
+        stream.readEnum<ShShaderOutput>(&outputType);
+
+        // Get the shader's source string.
+        mState.mSource = stream.readString();
+
+        // In the absence of element-by-element serialize/deserialize functions, read
+        // ShCompileOptions and ShBuiltInResources as raw binary blobs.
+        ShCompileOptions compileOptions;
+        stream.readBytes(reinterpret_cast<uint8_t *>(&compileOptions), sizeof(ShCompileOptions));
+
+        ShBuiltInResources resources;
+        stream.readBytes(reinterpret_cast<uint8_t *>(&resources), sizeof(ShBuiltInResources));
+
+        setShaderKey(context, compileOptions, outputType, resources);
+    }
+    else
+    {
+        // Load binary from shader cache.
+        if (stream.readInt<uint32_t>() != kShaderCacheIdentifier)
+        {
+            return angle::Result::Stop;
+        }
+    }
+
+    ANGLE_TRY(deserialize(stream));
+
+    // Only successfully-compiled shaders are serialized. If deserialization is successful, we can
+    // assume the CompileStatus.
     mState.mCompileStatus = CompileStatus::COMPILED;
 
     return angle::Result::Continue;
@@ -764,7 +907,8 @@ angle::Result Shader::loadBinary(const Context *context, const void *binary, GLs
 
 void Shader::setShaderKey(const Context *context,
                           const ShCompileOptions &compileOptions,
-                          const ShCompilerInstance &compilerInstance)
+                          const ShShaderOutput &outputType,
+                          const ShBuiltInResources &resources)
 {
     // Compute shader key.
     BinaryOutputStream hashStream;
@@ -773,17 +917,16 @@ void Shader::setShaderKey(const Context *context,
     hashStream.writeEnum(mType);
     hashStream.writeString(mState.getSource());
 
-    // Include the commit hash
+    // Include the shader program version hash.
     hashStream.writeString(angle::GetANGLEShaderProgramVersion());
 
     hashStream.writeEnum(Compiler::SelectShaderSpec(context->getState()));
-    hashStream.writeEnum(compilerInstance.getShaderOutputType());
+    hashStream.writeEnum(outputType);
     hashStream.writeBytes(reinterpret_cast<const uint8_t *>(&compileOptions),
                           sizeof(compileOptions));
 
     // Include the ShBuiltInResources, which represent the extensions and constants used by the
     // shader.
-    const ShBuiltInResources resources = compilerInstance.getBuiltInResources();
     hashStream.writeBytes(reinterpret_cast<const uint8_t *>(&resources), sizeof(resources));
 
     // Call the secure SHA hashing function.

@@ -26,7 +26,7 @@
 #include "config.h"
 #include "RemoteMediaResourceLoader.h"
 
-#if ENABLE(GPU_PROCESS)
+#if ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
 
 #include "RemoteMediaPlayerProxy.h"
 #include <WebCore/ResourceError.h>
@@ -62,4 +62,4 @@ void RemoteMediaResourceLoader::sendH2Ping(const URL& url, CompletionHandler<voi
 
 } // namespace WebKit
 
-#endif
+#endif // ENABLE(GPU_PROCESS) && ENABLE(VIDEO)

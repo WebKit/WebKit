@@ -1,0 +1,8 @@
+
+PASS @counter-style 'fallback: bar' is valid
+PASS @counter-style 'fallback: "bar"' is invalid
+PASS @counter-style 'fallback: none' is invalid
+PASS @counter-style 'fallback: initial' is invalid
+PASS @counter-style 'fallback: inherit' is invalid
+PASS @counter-style 'fallback: unset' is invalid
+

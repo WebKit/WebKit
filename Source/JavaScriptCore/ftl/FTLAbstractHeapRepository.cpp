@@ -39,6 +39,7 @@
 #include "GetterSetter.h"
 #include "JSPropertyNameEnumerator.h"
 #include "JSWebAssemblyInstance.h"
+#include "JSWrapperObject.h"
 #include "RegExpObject.h"
 #include "ScopedArguments.h"
 #include "ShadowChicken.h"

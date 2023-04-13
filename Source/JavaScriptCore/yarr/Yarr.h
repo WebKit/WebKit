@@ -34,7 +34,7 @@ namespace JSC { namespace Yarr {
 
 #define YarrStackSpaceForBackTrackInfoPatternCharacter 2 // Only for !fixed quantifiers.
 #define YarrStackSpaceForBackTrackInfoCharacterClass 2 // Only for !fixed quantifiers.
-#define YarrStackSpaceForBackTrackInfoBackReference 2
+#define YarrStackSpaceForBackTrackInfoBackReference 3
 #define YarrStackSpaceForBackTrackInfoAlternative 1 // One per alternative.
 #define YarrStackSpaceForBackTrackInfoParentheticalAssertion 1
 #define YarrStackSpaceForBackTrackInfoParenthesesOnce 2
@@ -71,7 +71,7 @@ enum class BuiltInCharacterClassID : unsigned {
     SpaceClassID,
     WordClassID,
     DotClassID,
-    BaseUnicodePropertyID
+    BaseUnicodePropertyID,
 };
 
 struct BytecodePattern;

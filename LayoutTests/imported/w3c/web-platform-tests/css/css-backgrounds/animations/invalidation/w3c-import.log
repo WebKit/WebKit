@@ -15,10 +15,14 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/animations/invalidation/background-color-animation-with-zero-alpha-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/animations/invalidation/background-color-animation-with-zero-alpha-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/animations/invalidation/background-color-animation-with-zero-alpha.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/animations/invalidation/background-color-transition-obscured-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/animations/invalidation/background-color-transition-obscured-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/animations/invalidation/background-color-transition-obscured.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/animations/invalidation/background-color-transition-with-delay-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/animations/invalidation/background-color-transition-with-delay-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/animations/invalidation/background-color-transition-with-delay.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/animations/invalidation/background-color-transition-with-initially-transparent-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/animations/invalidation/background-color-transition-with-initially-transparent-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/animations/invalidation/background-color-transition-with-initially-transparent.html

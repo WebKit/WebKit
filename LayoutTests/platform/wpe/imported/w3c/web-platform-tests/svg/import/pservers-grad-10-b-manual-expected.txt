@@ -4,9 +4,9 @@ layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
     RenderSVGContainer {g} at (16,19) size 768x444
-      RenderSVGText {text} at (10,11) size 210x18 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 210x17
-          chunk 1 text run 1 at (10.00,25.00) startOffset 0 endOffset 30 width 209.40: "Testing spreadMethod attribute"
+      RenderSVGText {text} at (10,11) size 208x18 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 208x17
+          chunk 1 text run 1 at (10.00,25.00) startOffset 0 endOffset 30 width 207.74: "Testing spreadMethod attribute"
       RenderSVGResourceLinearGradient {linearGradient} [id="Grad1"] [gradientUnits=objectBoundingBox] [start=(0.40,0)] [end=(0.60,0)]
         RenderSVGGradientStop {stop} [offset=0.00] [color=#0000FF]
         RenderSVGGradientStop {stop} [offset=1.00] [color=#00FF00]

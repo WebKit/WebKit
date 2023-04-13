@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,8 +33,11 @@
 #include "JSEXTBlendMinMax.h"
 #include "JSEXTColorBufferFloat.h"
 #include "JSEXTColorBufferHalfFloat.h"
+#include "JSEXTDisjointTimerQuery.h"
+#include "JSEXTDisjointTimerQueryWebGL2.h"
 #include "JSEXTFloatBlend.h"
 #include "JSEXTFragDepth.h"
+#include "JSEXTPolygonOffsetClamp.h"
 #include "JSEXTShaderTextureLOD.h"
 #include "JSEXTTextureCompressionBPTC.h"
 #include "JSEXTTextureCompressionRGTC.h"
@@ -71,9 +74,11 @@
 #include "JSWebGLMultiDrawInstancedBaseVertexBaseInstance.h"
 #include "JSWebGLProgram.h"
 #include "JSWebGLProvokingVertex.h"
+#include "JSWebGLQuery.h"
 #include "JSWebGLRenderbuffer.h"
 #include "JSWebGLSampler.h"
 #include "JSWebGLTexture.h"
+#include "JSWebGLTimerQueryEXT.h"
 #include "JSWebGLTransformFeedback.h"
 #include "JSWebGLVertexArrayObject.h"
 #include "JSWebGLVertexArrayObjectOES.h"
@@ -95,6 +100,8 @@ JSValue convertToJSValue(JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject&
         }, [] (unsigned value) -> JSValue {
             return jsNumber(value);
         }, [] (long long value) -> JSValue {
+            return jsNumber(value);
+        }, [] (unsigned long long value) -> JSValue {
             return jsNumber(value);
         }, [] (float value) -> JSValue {
             return jsNumber(purifyNaN(value));
@@ -145,11 +152,15 @@ JSValue convertToJSValue(JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject&
         [&] (const RefPtr<WebGLTexture>& texture) {
             return toJS(&lexicalGlobalObject, &globalObject, texture.get());
         },
+        [&] (const RefPtr<WebGLTimerQueryEXT>& query) {
+            return toJS(&lexicalGlobalObject, &globalObject, query.get());
+        },
         [&] (const RefPtr<WebGLVertexArrayObjectOES>& array) {
             return toJS(&lexicalGlobalObject, &globalObject, array.get());
-        }
-#if ENABLE(WEBGL2)
-        ,
+        },
+        [&] (const RefPtr<WebGLQuery>& query) {
+            return toJS(&lexicalGlobalObject, &globalObject, query.get());
+        },
         [&] (const RefPtr<WebGLSampler>& sampler) {
             return toJS(&lexicalGlobalObject, &globalObject, sampler.get());
         },
@@ -159,7 +170,6 @@ JSValue convertToJSValue(JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject&
         [&] (const RefPtr<WebGLVertexArrayObject>& array) {
             return toJS(&lexicalGlobalObject, &globalObject, array.get());
         }
-#endif
     );
 }
 
@@ -174,8 +184,11 @@ JSValue convertToJSValue(JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject&
         TO_JS(EXTBlendMinMax)
         TO_JS(EXTColorBufferFloat)
         TO_JS(EXTColorBufferHalfFloat)
+        TO_JS(EXTDisjointTimerQuery)
+        TO_JS(EXTDisjointTimerQueryWebGL2)
         TO_JS(EXTFloatBlend)
         TO_JS(EXTFragDepth)
+        TO_JS(EXTPolygonOffsetClamp)
         TO_JS(EXTShaderTextureLOD)
         TO_JS(EXTTextureCompressionBPTC)
         TO_JS(EXTTextureCompressionRGTC)

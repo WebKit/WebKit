@@ -111,6 +111,8 @@ Ref<PageConfiguration> PageConfiguration::copy() const
 #if HAVE(TOUCH_BAR)
     copy->m_requiresUserActionForEditingControlsManager = this->m_requiresUserActionForEditingControlsManager;
 #endif
+    
+    copy->m_allowTestOnlyIPC = this->m_allowTestOnlyIPC;
 
     copy->m_contentSecurityPolicyModeForExtension = this->m_contentSecurityPolicyModeForExtension;
 

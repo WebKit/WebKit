@@ -36,9 +36,9 @@ layer at (0,0) size 800x600
           RenderSVGRect {rect} at (16,16) size 18x18 [fill={[type=SOLID] [color=#808080]}] [x=10.00] [y=10.00] [width=10.00] [height=10.00]
       RenderSVGRect {rect} at (30,113) size 357x357 [stroke={[type=SOLID] [color=#000000] [stroke width=4.00]}] [fill={[type=PATTERN] [id="pattern"]}] [x=20.00] [y=70.00] [width=210.00] [height=210.00]
       RenderSVGRect {rect} at (413,113) size 357x357 [stroke={[type=SOLID] [color=#000000] [stroke width=4.00]}] [fill={[type=PATTERN] [id="pattern"]}] [x=250.00] [y=70.00] [width=210.00] [height=210.00]
-      RenderSVGText {text} at (105,19) size 270x21 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 269x21
-          chunk 1 (middle anchor) text run 1 at (105.90,36.00) startOffset 0 endOffset 34 width 268.20: "Test clip unions and intersections"
+      RenderSVGText {text} at (106,19) size 268x21 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 267x21
+          chunk 1 (middle anchor) text run 1 at (106.90,36.00) startOffset 0 endOffset 34 width 266.20: "Test clip unions and intersections"
       RenderSVGContainer {g} at (49,132) size 701x318 [transform={m=((1.00,0.00)(0.00,1.00)) t=(20.00,70.00)}]
         RenderSVGContainer {g} at (49,132) size 236x236
           RenderSVGContainer {use} at (50,133) size 167x167
@@ -70,8 +70,8 @@ layer at (0,0) size 800x600
             [clipPath="clipOnClip1"] RenderSVGResourceClipper {clipPath} at (10,10) size 190x190
           RenderSVGContainer {use} at (499,199) size 169x169
             RenderSVGEllipse {circle} at (499,199) size 169x169 [stroke={[type=SOLID] [color=#000000]}] [cx=100.00] [cy=100.00] [r=50.00]
-    RenderSVGContainer {g} at (16,518) size 409x60
-      RenderSVGText {text} at (10,311) size 245x36 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 245x36
-          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 17 width 244.80: "$Revision: 1.11 $"
+    RenderSVGContainer {g} at (16,518) size 405x60
+      RenderSVGText {text} at (10,311) size 243x36 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 243x36
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 17 width 242.44: "$Revision: 1.11 $"
     RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

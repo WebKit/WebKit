@@ -624,7 +624,7 @@ angle::Result GLES1Renderer::compileShader(Context *context,
     Shader *shaderObject = getShader(shader);
     ANGLE_CHECK(context, shaderObject, "Missing shader object", GL_INVALID_OPERATION);
 
-    shaderObject->setSource(1, &src, nullptr);
+    shaderObject->setSource(context, 1, &src, nullptr);
     shaderObject->compile(context);
 
     *shaderOut = shader;

@@ -3,9 +3,9 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (5,5) size 790x590
     RenderSVGContainer {g} at (70,7) size 712x511
-      RenderSVGText {text} at (8,0) size 67x10 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 67x9
-          chunk 1 text run 1 at (8.00,8.00) startOffset 0 endOffset 18 width 66.60: "Test a motion path"
+      RenderSVGText {text} at (8,0) size 66x10 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 66x9
+          chunk 1 text run 1 at (8.00,8.00) startOffset 0 endOffset 18 width 65.71: "Test a motion path"
       RenderSVGText {text} at (9,10) size 65x10 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 65x9
           chunk 1 text run 1 at (9.00,18.00) startOffset 0 endOffset 22 width 64.50: "'from'/'to' attribute."

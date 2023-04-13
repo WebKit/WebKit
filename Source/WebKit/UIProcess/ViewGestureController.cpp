@@ -28,11 +28,14 @@
 
 #include "APINavigation.h"
 #include "Logging.h"
+#include "MessageSenderInlines.h"
+#include "PageLoadState.h"
 #include "ViewGestureControllerMessages.h"
 #include "WebBackForwardList.h"
 #include "WebFullScreenManagerProxy.h"
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
+#include <WebCore/UserInterfaceLayoutDirection.h>
 #include <wtf/MathExtras.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringBuilder.h>

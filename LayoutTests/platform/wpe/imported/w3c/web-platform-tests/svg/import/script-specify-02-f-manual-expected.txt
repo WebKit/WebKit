@@ -3,10 +3,10 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-    RenderSVGContainer {g} at (55,6) size 690x286
-      RenderSVGText {text} at (33,3) size 414x21 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 414x21
-          chunk 1 (middle anchor) text run 1 at (33.30,20.00) startOffset 0 endOffset 51 width 413.40: "Test unknown type attribute value on script element"
+    RenderSVGContainer {g} at (57,6) size 686x286
+      RenderSVGText {text} at (34,3) size 412x21 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 412x21
+          chunk 1 (middle anchor) text run 1 at (34.30,20.00) startOffset 0 endOffset 51 width 411.40: "Test unknown type attribute value on script element"
       RenderSVGContainer {g} at (135,247) size 530x45 [transform={m=((1.00,0.00)(0.00,1.00)) t=(240.00,170.00)}]
         RenderSVGText {text} at (-131,-22) size 262x28 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 262x27

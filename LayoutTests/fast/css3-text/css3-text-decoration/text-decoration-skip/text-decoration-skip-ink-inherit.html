@@ -7,13 +7,13 @@
 This test makes sure that text-decoration-skip: ink is inherited and that it can be overridden.
 </p>
 <p>
-<span style="-webkit-text-decoration-skip: ink; text-decoration: underline;">Outer ypqg span <span>Inner ypgq span</span></span>
+<span style="-webkit-text-decoration-skip: ink;">Outer ypqg span <span style="text-decoration: underline;">Inner ypgq span</span></span>
 </p>
 <p>
-<span style="-webkit-text-decoration-skip: ink; text-decoration: underline;">Outer ypqg span <span style="-webkit-text-decoration-skip: none;">Inner ypgq span</span></span>
+<span style="-webkit-text-decoration-skip: ink;">Outer ypqg span <span style="text-decoration: underline; -webkit-text-decoration-skip: none;">Inner ypgq span</span></span>
 </p>
 <p>
-<span style="-webkit-text-decoration-skip: ink; text-decoration: underline;">Outer ypqg span <span style="-webkit-text-decoration-skip: inherit;">Inner ypgq span</span></span>
+<span style="-webkit-text-decoration-skip: ink;">Outer ypqg span <span style="text-decoration: underline; -webkit-text-decoration-skip: inherit;">Inner ypgq span</span></span>
 </p>
 </body>
 </html>

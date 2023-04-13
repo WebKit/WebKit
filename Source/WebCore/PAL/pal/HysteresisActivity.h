@@ -32,10 +32,7 @@ namespace PAL {
 
 static const Seconds defaultHysteresisDuration { 5_s };
 
-enum class HysteresisState {
-    Started,
-    Stopped
-};
+enum class HysteresisState : bool { Started, Stopped };
 
 class HysteresisActivity {
     WTF_MAKE_FAST_ALLOCATED;

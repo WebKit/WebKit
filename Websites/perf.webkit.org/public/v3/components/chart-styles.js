@@ -9,7 +9,7 @@ class ChartStyles {
 
         var lastModified = platform.lastModified(metric);
         if (!lastModified)
-            return {platform: platform, metric: metric, error: `No results on ${platform.name()}`};
+            return {platform: platform, metric: metric, error: `No results on ${platform.label()}`};
 
         return {
             platform: platform,

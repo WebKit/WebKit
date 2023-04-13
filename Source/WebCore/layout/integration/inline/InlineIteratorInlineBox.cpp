@@ -134,7 +134,7 @@ InlineBoxIterator inlineBoxFor(const LayoutIntegration::InlineContent& content, 
 
 InlineBoxIterator inlineBoxFor(const LayoutIntegration::InlineContent& content, size_t boxIndex)
 {
-    ASSERT(content.boxes[boxIndex].isInlineBox());
+    ASSERT(content.displayContent().boxes[boxIndex].isInlineBox());
     return { BoxModernPath { content, boxIndex } };
 }
 

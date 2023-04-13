@@ -42,6 +42,7 @@ class BuilderState;
 
 class CSSImageValue final : public CSSValue {
 public:
+    static Ref<CSSImageValue> create();
     static Ref<CSSImageValue> create(ResolvedURL, LoadedFromOpaqueSource, AtomString = { });
     static Ref<CSSImageValue> create(URL, LoadedFromOpaqueSource, AtomString = { });
     ~CSSImageValue();
@@ -68,6 +69,7 @@ public:
     RefPtr<StyleImage> createStyleImage(Style::BuilderState&) const;
 
 private:
+    CSSImageValue();
     CSSImageValue(ResolvedURL&&, LoadedFromOpaqueSource, AtomString&&);
 
     ResolvedURL m_location;
@@ -75,6 +77,7 @@ private:
     AtomString m_initiatorType;
     LoadedFromOpaqueSource m_loadedFromOpaqueSource { LoadedFromOpaqueSource::No };
     RefPtr<CSSImageValue> m_unresolvedValue;
+    bool m_isInvalid { false };
 };
 
 } // namespace WebCore

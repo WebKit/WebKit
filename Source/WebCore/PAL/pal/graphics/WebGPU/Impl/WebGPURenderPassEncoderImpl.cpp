@@ -167,7 +167,7 @@ void RenderPassEncoderImpl::executeBundles(Vector<std::reference_wrapper<RenderB
 
 void RenderPassEncoderImpl::end()
 {
-    wgpuRenderPassEncoderEndPass(m_backing);
+    wgpuRenderPassEncoderEnd(m_backing);
 }
 
 void RenderPassEncoderImpl::setLabelInternal(const String& label)

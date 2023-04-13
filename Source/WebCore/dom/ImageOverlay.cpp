@@ -31,7 +31,8 @@
 #include "DOMTokenList.h"
 #include "DOMURL.h"
 #include "Document.h"
-#include "ElementChildIterator.h"
+#include "ElementAncestorIteratorInlines.h"
+#include "ElementChildIteratorInlines.h"
 #include "ElementRareData.h"
 #include "EventHandler.h"
 #include "EventLoop.h"
@@ -583,10 +584,13 @@ void updateWithTextRecognitionResult(HTMLElement& element, const TextRecognition
             ));
 
             textContainer->setInlineStyleProperty(CSSPropertyWebkitUserSelect, applyUserSelectAll ? CSSValueAll : CSSValueNone);
+
+            if (line.isVertical)
+                textContainer->setInlineStyleProperty(CSSPropertyWritingMode, CSSValueVerticalRl);
         }
 
         if (document->isImageDocument())
-            lineContainer->setInlineStyleProperty(CSSPropertyCursor, CSSValueText);
+            lineContainer->setInlineStyleProperty(CSSPropertyCursor, line.isVertical ? CSSValueVerticalText : CSSValueText);
     }
 
 #if ENABLE(DATA_DETECTION)

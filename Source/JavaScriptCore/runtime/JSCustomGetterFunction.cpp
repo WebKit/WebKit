@@ -67,7 +67,7 @@ JSCustomGetterFunction* JSCustomGetterFunction::create(VM& vm, JSGlobalObject* g
     JSCustomGetterFunction* function = new (NotNull, allocateCell<JSCustomGetterFunction>(vm)) JSCustomGetterFunction(vm, executable, globalObject, structure, propertyName, getter, domAttribute);
 
     // Can't do this during initialization because getHostFunction might do a GC allocation.
-    auto name = makeString("get ", propertyName.publicName());
+    auto name = makeString("get "_s, propertyName.publicName());
     function->finishCreation(vm, executable, 0, name);
     return function;
 }

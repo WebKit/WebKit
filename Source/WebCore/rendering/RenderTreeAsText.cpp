@@ -30,9 +30,7 @@
 #include "ColorSerialization.h"
 #include "Document.h"
 #include "ElementInlines.h"
-#include "Frame.h"
 #include "FrameSelection.h"
-#include "FrameView.h"
 #include "HTMLElement.h"
 #include "HTMLNames.h"
 #include "HTMLSpanElement.h"
@@ -41,6 +39,8 @@
 #include "LegacyRenderSVGImage.h"
 #include "LegacyRenderSVGRoot.h"
 #include "LegacyRenderSVGShape.h"
+#include "LocalFrame.h"
+#include "LocalFrameView.h"
 #include "Logging.h"
 #include "PrintContext.h"
 #include "PseudoElement.h"
@@ -70,6 +70,7 @@
 #include "RenderView.h"
 #include "RenderWidget.h"
 #include "SVGRenderTreeAsText.h"
+#include "ScriptDisallowedScope.h"
 #include "ShadowRoot.h"
 #include "StylePropertiesInlines.h"
 #include <wtf/HexNumber.h>
@@ -638,12 +639,10 @@ void write(TextStream& ts, const RenderObject& o, OptionSet<RenderAsTextFlag> be
 
     if (is<RenderWidget>(o)) {
         Widget* widget = downcast<RenderWidget>(o).widget();
-        if (is<FrameView>(widget)) {
-            FrameView& view = downcast<FrameView>(*widget);
+        if (is<LocalFrameView>(widget)) {
+            LocalFrameView& view = downcast<LocalFrameView>(*widget);
             auto* localFrame = dynamicDowncast<LocalFrame>(view.frame());
             if (RenderView* root = localFrame ? localFrame->contentRenderer() : nullptr) {
-                if (!(behavior.contains(RenderAsTextFlag::DontUpdateLayout)))
-                    view.layoutContext().layout();
                 if (RenderLayer* layer = root->layer())
                     writeLayers(ts, *layer, *layer, layer->rect(), behavior);
             }
@@ -651,7 +650,7 @@ void write(TextStream& ts, const RenderObject& o, OptionSet<RenderAsTextFlag> be
     }
 
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
-    if  (is<RenderSVGModelObject>(o) || is<RenderSVGRoot>(o))
+    if (is<RenderSVGModelObject>(o) || is<RenderSVGRoot>(o))
         writeResources(ts, o, behavior);
 #endif
 }
@@ -880,7 +879,7 @@ static void writeSelection(TextStream& ts, const RenderBox& renderer)
     if (!renderer.isRenderView())
         return;
 
-    Frame* frame = renderer.document().frame();
+    auto* frame = renderer.document().frame();
     if (!frame)
         return;
 
@@ -914,6 +913,7 @@ static String externalRepresentation(RenderBox& renderer, OptionSet<RenderAsText
 
     LOG(Layout, "externalRepresentation: dumping layer tree");
 
+    ScriptDisallowedScope scriptDisallowedScope;
     RenderLayer& layer = *renderer.layer();
     writeLayers(ts, layer, layer, layer.rect(), behavior);
     writeSelection(ts, renderer);
@@ -924,7 +924,7 @@ static void updateLayoutIgnoringPendingStylesheetsIncludingSubframes(Document& d
 {
     document.updateLayoutIgnorePendingStylesheets();
     auto* frame = document.frame();
-    for (AbstractFrame* subframe = frame; subframe; subframe = subframe->tree().traverseNext(frame)) {
+    for (Frame* subframe = frame; subframe; subframe = subframe->tree().traverseNext(frame)) {
         auto* localFrame = dynamicDowncast<LocalFrame>(subframe);
         if (!localFrame)
             continue;
@@ -933,7 +933,7 @@ static void updateLayoutIgnoringPendingStylesheetsIncludingSubframes(Document& d
     }
 }
 
-String externalRepresentation(Frame* frame, OptionSet<RenderAsTextFlag> behavior)
+String externalRepresentation(LocalFrame* frame, OptionSet<RenderAsTextFlag> behavior)
 {
     ASSERT(frame);
     ASSERT(frame->document());

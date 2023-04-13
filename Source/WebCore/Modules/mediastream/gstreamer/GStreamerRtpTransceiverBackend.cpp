@@ -25,7 +25,6 @@
 #include "GStreamerRtpReceiverBackend.h"
 #include "GStreamerRtpSenderBackend.h"
 #include "GStreamerWebRTCUtils.h"
-#include "NotImplemented.h"
 #include "RTCRtpCodecCapability.h"
 #include <wtf/glib/GUniquePtr.h>
 
@@ -74,7 +73,12 @@ std::optional<RTCRtpTransceiverDirection> GStreamerRtpTransceiverBackend::curren
 
 void GStreamerRtpTransceiverBackend::setDirection(RTCRtpTransceiverDirection direction)
 {
-    g_object_set(m_rtcTransceiver.get(), "direction", fromRTCRtpTransceiverDirection(direction), nullptr);
+    auto gstDirection = fromRTCRtpTransceiverDirection(direction);
+#ifndef GST_DISABLE_GST_DEBUG
+    GUniquePtr<char> directionString(g_enum_to_string(GST_TYPE_WEBRTC_RTP_TRANSCEIVER_DIRECTION, gstDirection));
+    GST_DEBUG_OBJECT(m_rtcTransceiver.get(), "Setting direction to %s", directionString.get());
+#endif
+    g_object_set(m_rtcTransceiver.get(), "direction", gstDirection, nullptr);
 }
 
 String GStreamerRtpTransceiverBackend::mid()
@@ -86,14 +90,14 @@ String GStreamerRtpTransceiverBackend::mid()
 
 void GStreamerRtpTransceiverBackend::stop()
 {
-    // FIXME: webrtcbin transceivers can't be stopped yet.
-    notImplemented();
+    // Ideally we should also stop webrtcbin transceivers but it's not supported yet.
+    m_isStopped = true;
 }
 
 bool GStreamerRtpTransceiverBackend::stopped() const
 {
-    // FIXME: webrtcbin transceivers can't be stopped yet.
-    return false;
+    // Ideally this should be queried on webrtcbin, but its transceivers can't be stopped yet.
+    return m_isStopped;
 }
 
 static inline WARN_UNUSED_RETURN ExceptionOr<GstCaps*> toRtpCodecCapability(const RTCRtpCodecCapability& codec, int payloadType)

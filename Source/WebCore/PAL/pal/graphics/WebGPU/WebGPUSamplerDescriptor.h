@@ -40,7 +40,7 @@ struct SamplerDescriptor : public ObjectDescriptorBase {
     AddressMode addressModeW { AddressMode::ClampToEdge };
     FilterMode magFilter { FilterMode::Nearest };
     FilterMode minFilter { FilterMode::Nearest };
-    FilterMode mipmapFilter { FilterMode::Nearest };
+    MipmapFilterMode mipmapFilter { MipmapFilterMode::Nearest };
     float lodMinClamp { 0 };
     float lodMaxClamp { 32 };
     std::optional<CompareFunction> compare;

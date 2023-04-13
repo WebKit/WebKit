@@ -37,13 +37,13 @@
 #import "Chrome.h"
 #import "ChromeClient.h"
 #import "FontCascade.h"
-#import "Frame.h"
 #import "FrameSelection.h"
 #import "HitTestResult.h"
 #import "HTMLFrameOwnerElement.h"
 #import "HTMLInputElement.h"
 #import "HTMLNames.h"
 #import "IntRect.h"
+#import "LocalFrame.h"
 #import "LocalizedStrings.h"
 #import "Page.h"
 #import "Range.h"
@@ -60,10 +60,6 @@
 #import "VisibleUnits.h"
 #import <CoreText/CoreText.h>
 #import <wtf/cocoa/VectorCocoa.h>
-
-enum {
-    NSAttachmentCharacter = 0xfffc    /* To denote attachments. */
-};
 
 @interface NSObject (AccessibilityPrivate)
 - (void)_accessibilityUnregister;
@@ -136,6 +132,7 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
 + (WebAccessibilityTextMarker *)textMarkerWithCharacterOffset:(CharacterOffset&)characterOffset cache:(AXObjectCache*)cache;
 + (WebAccessibilityTextMarker *)startOrEndTextMarkerForRange:(const std::optional<SimpleRange>&)range isStart:(BOOL)isStart cache:(AXObjectCache*)cache;
 
+- (TextMarkerData)textMarkerData;
 @end
 
 @implementation WebAccessibilityTextMarker
@@ -183,7 +180,7 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
 {
     if (!cache || characterOffset.isNull())
         return nil;
-
+    
     auto textMarkerData = cache->textMarkerDataForCharacterOffset(characterOffset);
     if (!textMarkerData.objectID && !textMarkerData.ignored)
         return nil;
@@ -194,7 +191,7 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
 {
     if (!cache || !range)
         return nil;
-
+    
     auto textMarkerData = cache->startOrEndTextMarkerDataForRange(*range, isStart);
     if (!textMarkerData.objectID)
         return nil;
@@ -231,6 +228,11 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
 - (NSString *)description
 {
     return [NSString stringWithFormat:@"[AXTextMarker %p] = node: %p offset: %d", self, _textMarkerData.node, _textMarkerData.offset];
+}
+
+- (TextMarkerData)textMarkerData
+{
+    return _textMarkerData;
 }
 
 @end
@@ -602,9 +604,6 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
 - (BOOL)_accessibilityIsLandmarkRole:(AccessibilityRole)role
 {
     switch (role) {
-    case AccessibilityRole::Document:
-    case AccessibilityRole::DocumentArticle:
-    case AccessibilityRole::DocumentNote:
     case AccessibilityRole::LandmarkBanner:
     case AccessibilityRole::LandmarkComplementary:
     case AccessibilityRole::LandmarkContentInfo:
@@ -659,13 +658,11 @@ static AccessibilityObjectWrapper *ancestorWithRole(const AXCoreObject& descenda
 {
     if (![self _prepareAccessibilityCall])
         return nil;
-    return ancestorWithRole(*self.axBackingObject, { AccessibilityRole::Document,
-        AccessibilityRole::DocumentArticle,
-        AccessibilityRole::DocumentNote,
+    return ancestorWithRole(*self.axBackingObject, {
         AccessibilityRole::LandmarkBanner,
         AccessibilityRole::LandmarkComplementary,
         AccessibilityRole::LandmarkContentInfo,
-        AccessibilityRole::LandmarkDocRegion,
+        AccessibilityRole::LandmarkDocRegion, // Maps to "region"
         AccessibilityRole::LandmarkMain,
         AccessibilityRole::LandmarkNavigation,
         AccessibilityRole::LandmarkRegion,
@@ -812,7 +809,7 @@ static AccessibilityObjectWrapper *ancestorWithRole(const AXCoreObject& descenda
     auto* backingObject = self.axBackingObject;
     if (backingObject->isFocused())
         traits |= ([self _axHasTextCursorTrait] | [self _axTextOperationsAvailableTrait]);
-    if (backingObject->isPasswordField())
+    if (backingObject->isSecureField())
         traits |= [self _axSecureTextFieldTrait];
 
     switch (backingObject->roleValue()) {
@@ -1016,6 +1013,7 @@ static AccessibilityObjectWrapper *ancestorWithRole(const AXCoreObject& descenda
     case AccessibilityRole::Canvas:
     case AccessibilityRole::Caption:
     case AccessibilityRole::Cell:
+    case AccessibilityRole::Code:
     case AccessibilityRole::Column:
     case AccessibilityRole::ColumnHeader:
     case AccessibilityRole::Definition:
@@ -1025,7 +1023,6 @@ static AccessibilityObjectWrapper *ancestorWithRole(const AXCoreObject& descenda
     case AccessibilityRole::DescriptionListDetail:
     case AccessibilityRole::Details:
     case AccessibilityRole::Directory:
-    case AccessibilityRole::Div:
     case AccessibilityRole::Document:
     case AccessibilityRole::DocumentArticle:
     case AccessibilityRole::DocumentNote:
@@ -1036,6 +1033,7 @@ static AccessibilityObjectWrapper *ancestorWithRole(const AXCoreObject& descenda
     case AccessibilityRole::Footer:
     case AccessibilityRole::Footnote:
     case AccessibilityRole::Form:
+    case AccessibilityRole::Generic:
     case AccessibilityRole::GraphicsDocument:
     case AccessibilityRole::GraphicsObject:
     case AccessibilityRole::GraphicsSymbol:
@@ -1174,7 +1172,7 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     if (![self _prepareAccessibilityCall])
         return NO;
     
-    if (!self.axBackingObject->isPasswordField())
+    if (!self.axBackingObject->isSecureField())
         return NO;
     
     return self.axBackingObject->valueAutofillButtonType() == AutoFillButtonType::StrongPassword;
@@ -1561,10 +1559,10 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     }
 
     // rdar://8131388 WebKit should expose the same info as UIKit for its password fields.
-    if (backingObject->isPasswordField() && ![self _accessibilityIsStrongPasswordField]) {
-        int passwordLength = backingObject->accessibilityPasswordFieldLength();
+    if (backingObject->isSecureField() && ![self _accessibilityIsStrongPasswordField]) {
+        int secureTextLength = backingObject->accessibilitySecureFieldLength();
         NSMutableString* string = [NSMutableString string];
-        for (int k = 0; k < passwordLength; ++k)
+        for (int k = 0; k < secureTextLength; ++k)
             [string appendString:@"•"];
         return string;
     }
@@ -1783,8 +1781,8 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     ASSERT(self.axBackingObject->isScrollView());
 
     // Verify this is the top document. If not, we might need to go through the platform widget.
-    FrameView* frameView = self.axBackingObject->documentFrameView();
-    Document* document = self.axBackingObject->document();
+    auto* frameView = self.axBackingObject->documentFrameView();
+    auto* document = self.axBackingObject->document();
     if (document && frameView && document != &document->topDocument())
         return frameView->platformWidget();
     
@@ -1939,7 +1937,7 @@ static NSArray *accessibleElementsForObjects(const AXCoreObject::AccessibilityCh
 
 - (NSArray *)accessibilityErrorMessageElements
 {
-    if (![self _prepareAccessibilityCall])
+    if (![self _prepareAccessibilityCall] || self.axBackingObject->invalidStatus() == "false"_s)
         return nil;
     return accessibleElementsForObjects(self.axBackingObject->errorMessageObjects());
 }
@@ -1979,7 +1977,7 @@ static NSArray *accessibleElementsForObjects(const AXCoreObject::AccessibilityCh
     if (![self _prepareAccessibilityCall])
         return nil;
 
-    if (self.axBackingObject->node() && self.axBackingObject->node()->hasTagName(codeTag))
+    if (self.axBackingObject->isCode())
         return UIAccessibilityTextualContextSourceCode;
     
     return nil;
@@ -2018,7 +2016,7 @@ static RenderObject* rendererForView(WAKView* view)
         return nil;
     
     WAKView<WebCoreFrameView>* frameView = (WAKView<WebCoreFrameView>*)view;
-    Frame* frame = [frameView _web_frame];
+    auto frame = [frameView _web_frame];
     if (!frame)
         return nil;
     
@@ -2210,13 +2208,13 @@ static RenderObject* rendererForView(WAKView* view)
     if ([markers count] != 2)
         return nil;
 
-    WebAccessibilityTextMarker* startMarker = [markers objectAtIndex:0];
-    WebAccessibilityTextMarker* endMarker = [markers objectAtIndex:1];
+    WebAccessibilityTextMarker *startMarker = [markers objectAtIndex:0];
+    WebAccessibilityTextMarker *endMarker = [markers objectAtIndex:1];
     if (![startMarker isKindOfClass:[WebAccessibilityTextMarker class]] || ![endMarker isKindOfClass:[WebAccessibilityTextMarker class]])
         return nil;
 
     auto range = makeSimpleRange([startMarker visiblePosition], [endMarker visiblePosition]);
-    return range ? [self contentForSimpleRange:*range attributed:attributed] : nil;
+    return range ? self.axBackingObject->contentForRange(*range).autorelease() : nil;
 }
 
 
@@ -2245,7 +2243,7 @@ static RenderObject* rendererForView(WAKView* view)
 {
     if (![self _prepareAccessibilityCall])
         return nil;
-    return [self textMarkersForRange:self.axBackingObject->elementRange()];
+    return [self textMarkersForRange:self.axBackingObject->simpleRange()];
 }
 
 // A method to get the normalized text cursor range of an element. Used in DumpRenderTree.
@@ -2327,57 +2325,6 @@ static RenderObject* rendererForView(WAKView* view)
     return [WebAccessibilityTextMarker textMarkerWithCharacterOffset:characterOffset cache:cache];
 }
 
-- (id)_stringFromStartMarker:(WebAccessibilityTextMarker*)startMarker toEndMarker:(WebAccessibilityTextMarker*)endMarker attributed:(BOOL)attributed
-{
-    if (!startMarker || !endMarker)
-        return nil;
-    
-    NSArray* array = [self arrayOfTextForTextMarkers:@[startMarker, endMarker] attributed:attributed];
-    Class returnClass = attributed ? [NSMutableAttributedString class] : [NSMutableString class];
-    auto returnValue = adoptNS([(NSString *)[returnClass alloc] init]);
-    
-    const unichar attachmentChar = NSAttachmentCharacter;
-    NSInteger count = [array count];
-    for (NSInteger k = 0; k < count; ++k) {
-        auto object = retainPtr([array objectAtIndex:k]);
-
-        if (attributed && [object isKindOfClass:[WebAccessibilityObjectWrapper class]])
-            object = adoptNS([[NSMutableAttributedString alloc] initWithString:[NSString stringWithCharacters:&attachmentChar length:1] attributes:@{ UIAccessibilityTokenAttachment : object.get() }]);
-        
-        if (![object isKindOfClass:returnClass])
-            continue;
-        
-        if (attributed)
-            [(NSMutableAttributedString *)returnValue.get() appendAttributedString:object.get()];
-        else
-            [(NSMutableString *)returnValue.get() appendString:object.get()];
-    }
-    return returnValue.autorelease();
-}
-
-- (id)_stringForRange:(NSRange)range attributed:(BOOL)attributed
-{
-    if (![self _prepareAccessibilityCall])
-        return nil;
-    
-    WebAccessibilityTextMarker* startMarker = [self textMarkerForPosition:range.location];
-    WebAccessibilityTextMarker* endMarker = [self textMarkerForPosition:NSMaxRange(range)];
-    
-    // Clients don't always know the exact range, rather than force them to compute it,
-    // allow clients to overshoot and use the max text marker range.
-    if (!startMarker || !endMarker) {
-        NSArray *markers = [self textMarkerRange];
-        if ([markers count] != 2)
-            return nil;
-        if (!startMarker)
-            startMarker = [markers objectAtIndex:0];
-        if (!endMarker)
-            endMarker = [markers objectAtIndex:1];
-    }
-    
-    return [self _stringFromStartMarker:startMarker toEndMarker:endMarker attributed:attributed];
-}
-
 // A convenience method for getting the text of a NSRange.
 - (NSString *)stringForRange:(NSRange)range
 {
@@ -2391,7 +2338,28 @@ static RenderObject* rendererForView(WAKView* view)
 
 - (NSAttributedString *)attributedStringForRange:(NSRange)range
 {
-    return [self _stringForRange:range attributed:YES];
+    if (![self _prepareAccessibilityCall])
+        return nil;
+    RefPtr<AccessibilityObject> object = self.axBackingObject;
+    if (!object)
+        return nil;
+
+    WebAccessibilityTextMarker* startMarker = [self textMarkerForPosition:range.location];
+    WebAccessibilityTextMarker* endMarker = [self textMarkerForPosition:NSMaxRange(range)];
+
+    // Clients don't always know the exact range, rather than force them to compute it,
+    // allow clients to overshoot and use the max text marker range.
+    if (!startMarker || !endMarker) {
+        NSArray *markers = [self textMarkerRange];
+        if ([markers count] != 2)
+            return nil;
+        if (!startMarker)
+            startMarker = [markers objectAtIndex:0];
+        if (!endMarker)
+            endMarker = [markers objectAtIndex:1];
+    }
+
+    return object->attributedStringForTextMarkerRange({ startMarker.textMarkerData, endMarker.textMarkerData }).autorelease();
 }
 
 - (NSAttributedString *)attributedStringForElement
@@ -2403,7 +2371,7 @@ static RenderObject* rendererForView(WAKView* view)
     if ([markers count] != 2)
         return nil;
     
-    return [self _stringFromStartMarker:markers.firstObject toEndMarker:markers.lastObject attributed:YES];
+    return self.axBackingObject->attributedStringForTextMarkerRange({ [markers.firstObject textMarkerData], [markers.lastObject textMarkerData] }).autorelease();
 }
 
 - (NSRange)_accessibilitySelectedTextRange
@@ -2439,27 +2407,6 @@ static RenderObject* rendererForView(WAKView* view)
         return NO;
 
     return self.axBackingObject->insertText(text);
-}
-
-// A convenience method for getting the accessibility objects of a NSRange. Currently used only by DRT.
-- (NSArray *)elementsForRange:(NSRange)range
-{
-    if (![self _prepareAccessibilityCall])
-        return nil;
-    
-    WebAccessibilityTextMarker* startMarker = [self textMarkerForPosition:range.location];
-    WebAccessibilityTextMarker* endMarker = [self textMarkerForPosition:NSMaxRange(range)];
-    if (!startMarker || !endMarker)
-        return nil;
-    
-    NSArray* array = [self arrayOfTextForTextMarkers:@[startMarker, endMarker] attributed:NO];
-    NSMutableArray* elements = [NSMutableArray array];
-    for (id element in array) {
-        if (![element isKindOfClass:[AccessibilityObjectWrapper class]])
-            continue;
-        [elements addObject:element];
-    }
-    return elements;
 }
 
 - (NSString *)selectionRangeString
@@ -2713,13 +2660,9 @@ static RenderObject* rendererForView(WAKView* view)
 {
     if (![self _prepareAccessibilityCall])
         return 0;
-    
-    auto range = [self rangeForTextMarkers:textMarkers];
-    if (!range)
-        return 0;
 
-    int length = AXObjectCache::lengthForRange(SimpleRange { *range });
-    return length < 0 ? 0 : length;
+    auto range = [self rangeForTextMarkers:textMarkers];
+    return range ? AXObjectCache::lengthForRange(*range) : 0;
 }
 
 - (WebAccessibilityTextMarker *)startOrEndTextMarkerForTextMarkers:(NSArray *)textMarkers isStart:(BOOL)isStart

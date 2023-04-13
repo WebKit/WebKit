@@ -103,7 +103,7 @@ void HTMLTrackElement::removedFromAncestor(RemovalType removalType, ContainerNod
         downcast<HTMLMediaElement>(oldParentOfRemovedTree).didRemoveTextTrack(*this);
 }
 
-void HTMLTrackElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void HTMLTrackElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     if (name == srcAttr) {
         scheduleLoad();
@@ -111,13 +111,13 @@ void HTMLTrackElement::parseAttribute(const QualifiedName& name, const AtomStrin
     // 4.8.10.12.3 Sourcing out-of-band text tracks
     // As the kind, label, and srclang attributes are set, changed, or removed, the text track must update accordingly...
     } else if (name == kindAttr)
-        track().setKindKeywordIgnoringASCIICase(value.string());
+        track().setKindKeywordIgnoringASCIICase(newValue.string());
     else if (name == labelAttr)
-        track().setLabel(value);
+        track().setLabel(newValue);
     else if (name == srclangAttr)
-        track().setLanguage(value);
+        track().setLanguage(newValue);
 
-    HTMLElement::parseAttribute(name, value);
+    HTMLElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }
 
 const AtomString& HTMLTrackElement::kind()

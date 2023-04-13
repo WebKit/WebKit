@@ -29,11 +29,7 @@
 #include "AuthenticationClient.h"
 #include <wtf/RefPtr.h>
 
-#if USE(CFURLCONNECTION)
-typedef struct _CFURLAuthChallenge* CFURLAuthChallengeRef;
-#else
 OBJC_CLASS NSURLAuthenticationChallenge;
-#endif
 
 namespace WebCore {
 
@@ -42,16 +38,10 @@ public:
     AuthenticationChallenge() {}
     WEBCORE_EXPORT AuthenticationChallenge(const ProtectionSpace&, const Credential& proposedCredential, unsigned previousFailureCount, const ResourceResponse&, const ResourceError&);
 
-#if USE(CFURLCONNECTION)
-    AuthenticationChallenge(CFURLAuthChallengeRef, AuthenticationClient*);
-
-    CFURLAuthChallengeRef cfURLAuthChallengeRef() const { return m_cfChallenge.get(); }
-#else
     WEBCORE_EXPORT AuthenticationChallenge(NSURLAuthenticationChallenge *);
 
     id sender() const { return m_sender.get(); }
     NSURLAuthenticationChallenge *nsURLAuthenticationChallenge() const { return m_nsChallenge.get(); }
-#endif
 
     WEBCORE_EXPORT void setAuthenticationClient(AuthenticationClient*); // Changes sender to one that invokes client methods.
     WEBCORE_EXPORT AuthenticationClient* authenticationClient() const;
@@ -61,13 +51,8 @@ private:
     static bool platformCompare(const AuthenticationChallenge& a, const AuthenticationChallenge& b);
 
     // Platform challenge may be null. If it's non-null, it's always up to date with other fields.
-#if USE(CFURLCONNECTION)
-    RefPtr<AuthenticationClient> m_authenticationClient;
-    RetainPtr<CFURLAuthChallengeRef> m_cfChallenge;
-#else
     RetainPtr<id> m_sender;
     RetainPtr<NSURLAuthenticationChallenge> m_nsChallenge;
-#endif
 };
 
 }

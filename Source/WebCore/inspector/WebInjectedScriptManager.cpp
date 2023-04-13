@@ -27,8 +27,8 @@
 #include "WebInjectedScriptManager.h"
 
 #include "CommandLineAPIModule.h"
-#include "DOMWindow.h"
 #include "JSExecState.h"
+#include "LocalDOMWindow.h"
 
 namespace WebCore {
 
@@ -69,7 +69,7 @@ void WebInjectedScriptManager::didCreateInjectedScript(const Inspector::Injected
     CommandLineAPIModule::injectIfNeeded(this, injectedScript);
 }
 
-void WebInjectedScriptManager::discardInjectedScriptsFor(DOMWindow& window)
+void WebInjectedScriptManager::discardInjectedScriptsFor(LocalDOMWindow& window)
 {
     if (m_scriptStateToId.isEmpty())
         return;

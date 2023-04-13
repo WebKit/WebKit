@@ -34,7 +34,6 @@ import fnmatch
 import optparse
 import re
 
-from webkitpy.port import builders
 from webkitpy.port import config
 from webkitpy.common.system import executive
 from webkitpy.common.system import filesystem
@@ -65,9 +64,6 @@ def platform_options(use_globs=False):
         optparse.make_option('--wincairo', action='store_const', dest='platform',
             const=('wincairo'),
             help=('Alias for --platform=wincairo')),
-        optparse.make_option('--ftw', action='store_const', dest='platform',
-            const=('ftw'),
-            help=('Alias for --platform=ftw')),
         optparse.make_option('--maccatalyst', action='store_const', dest='platform',
             const=('maccatalyst'),
             help=('Alias for --platform=maccatalyst')),
@@ -117,9 +113,7 @@ class PortFactory(object):
         'mac.MacCatalystPort',
         'mac.MacPort',
         'test.TestPort',
-        'win.FTWPort',
         'win.WinCairoPort',
-        'win.WinPort',
         'wpe.WPEPort',
     )
 
@@ -133,7 +127,7 @@ class PortFactory(object):
         elif platform.is_mac():
             return 'mac'
         elif platform.is_win():
-            return 'win'
+            return 'wincairo'
         raise NotImplementedError('unknown platform: %s' % platform)
 
     def get(self, port_name=None, options=None, **kwargs):
@@ -167,9 +161,17 @@ class PortFactory(object):
 
         If platform is not specified, we will glob-match all ports"""
         platform = platform or '*'
-        return fnmatch.filter(builders.all_port_names(), platform)
-
-    def get_from_builder_name(self, builder_name):
-        port_name = builders.port_name_for_builder_name(builder_name)
-        assert port_name, "unrecognized builder name '%s'" % builder_name
-        return self.get(port_name, _builder_options(builder_name))
+        all_port_names = [
+            'gtk',
+            'ios-simulator-16',
+            'ios-simulator-16-wk2',
+            'mac-bigsur-wk1',
+            'mac-bigsur-wk2',
+            'mac-monterey-wk1',
+            'mac-monterey-wk2',
+            'mac-ventura-wk1',
+            'mac-ventura-wk2',
+            'wincairo-win10',
+            'wpe'
+        ]
+        return fnmatch.filter(all_port_names, platform)

@@ -27,10 +27,10 @@
 #include "StorageEventDispatcher.h"
 
 #include "Document.h"
-#include "DOMWindow.h"
 #include "EventNames.h"
-#include "Frame.h"
 #include "InspectorInstrumentation.h"
+#include "LocalDOMWindow.h"
+#include "LocalFrame.h"
 #include "Page.h"
 #include "PageGroup.h"
 #include "SecurityOrigin.h"
@@ -43,8 +43,8 @@ namespace WebCore {
 template<StorageType storageType>
 static void dispatchStorageEvents(const String& key, const String& oldValue, const String& newValue, const SecurityOrigin& securityOrigin, const String& url, const Function<bool(Storage&)>& isSourceStorage, const Function<bool(Page&)>& isRelevantPage)
 {
-    Vector<Ref<DOMWindow>> windows;
-    DOMWindow::forEachWindowInterestedInStorageEvents([&](auto& window) {
+    Vector<Ref<LocalDOMWindow>> windows;
+    LocalDOMWindow::forEachWindowInterestedInStorageEvents([&](auto& window) {
         auto storage = isLocalStorage(storageType) ? window.optionalLocalStorage() : window.optionalSessionStorage();
         if (!storage)
             return;
@@ -74,9 +74,17 @@ void StorageEventDispatcher::dispatchSessionStorageEvents(const String& key, con
     });
 }
 
-void StorageEventDispatcher::dispatchLocalStorageEvents(const String& key, const String& oldValue, const String& newValue, PageGroup& pageGroup, const SecurityOrigin& securityOrigin, const String& url, const Function<bool(Storage&)>& isSourceStorage)
+void StorageEventDispatcher::dispatchLocalStorageEvents(const String& key, const String& oldValue, const String& newValue, PageGroup* pageGroup, const SecurityOrigin& securityOrigin, const String& url, const Function<bool(Storage&)>& isSourceStorage)
 {
-    auto& pagesInGroup = pageGroup.pages();
+    if (!pageGroup) {
+        Page::forEachPage([&](Page& page) {
+            InspectorInstrumentation::didDispatchDOMStorageEvent(page, key, oldValue, newValue, StorageType::Local, securityOrigin);
+        });
+        dispatchStorageEvents<StorageType::Local>(key, oldValue, newValue, securityOrigin, url, isSourceStorage, [](auto&) { return true; });
+        return;
+    }
+
+    auto& pagesInGroup = pageGroup->pages();
     for (auto& page : pagesInGroup)
         InspectorInstrumentation::didDispatchDOMStorageEvent(page, key, oldValue, newValue, StorageType::Local, securityOrigin);
     dispatchStorageEvents<StorageType::Local>(key, oldValue, newValue, securityOrigin, url, isSourceStorage, [&](auto& page) {

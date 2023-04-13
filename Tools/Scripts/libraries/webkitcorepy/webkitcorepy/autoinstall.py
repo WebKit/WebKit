@@ -261,7 +261,11 @@ class Package(object):
             return False
         if not manifest.get('version'):
             return False
-        return not self.version or Version(*manifest.get('version').split('.')) in self.version
+        if self.version and Version(*manifest.get('version').split('.')) not in self.version:
+            return False
+        if not all(pkg.is_cached() for dep in self.implicit_deps for pkg in AutoInstall.packages[dep]):
+            return False
+        return True
 
     def install(self):
         AutoInstall.register(self)
@@ -298,7 +302,14 @@ class Package(object):
             for candidate in os.listdir(temp_location):
                 candidate = os.path.join(temp_location, candidate)
                 if not os.path.exists(os.path.join(candidate, 'setup.py')):
-                    continue
+                    # If a package has a setup.cfg, we can just lay down a dummy setup.py and let setuptools handle the rest
+                    if os.path.exists(os.path.join(candidate, 'setup.cfg')):
+                        with open(os.path.join(candidate, 'setup.py'), 'w') as setup_py:
+                            setup_py.write('from setuptools import setup\n')
+                            setup_py.write('if __name__ == "__main__":\n')
+                            setup_py.write('    setup()\n')
+                    else:
+                        continue
 
                 AutoInstall.log('Installing {}...'.format(archive))
 

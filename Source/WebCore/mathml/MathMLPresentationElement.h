@@ -39,8 +39,9 @@ public:
     static Ref<MathMLPresentationElement> create(const QualifiedName& tagName, Document&);
 
 protected:
-    MathMLPresentationElement(const QualifiedName& tagName, Document&);
-    void parseAttribute(const QualifiedName&, const AtomString&) override;
+    constexpr static auto CreateMathMLPresentationElement = CreateMathMLElement;
+    MathMLPresentationElement(const QualifiedName& tagName, Document&, ConstructionType = CreateMathMLPresentationElement);
+    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
 
     static bool isPhrasingContent(const Node&);
     static bool isFlowContent(const Node&);

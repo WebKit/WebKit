@@ -30,6 +30,7 @@
 #import <WebKit/WKRetainPtr.h>
 #import <WebKit/WKPage.h>
 #import <WebKit/WKPreferencesPrivate.h>
+#import <WebKit/WKWebViewPrivate.h>
 #import <wtf/RetainPtr.h>
 
 namespace TestWebKitAPI {
@@ -79,6 +80,12 @@ TEST(WebKit, FirstResponderScrollingPosition)
 
     ASSERT_TRUE([webView.platformView() respondsToSelector:@selector(scrollLineDown:)]);
     [webView.platformView() scrollLineDown:nil];
+
+    __block bool done = false;
+    [webView.platformView() _doAfterNextPresentationUpdate:^{
+        done = true;
+    }];
+    Util::run(&done);
 
     EXPECT_JS_EQ(webView.page(), "window.scrollY", "40");
 

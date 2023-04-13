@@ -33,6 +33,7 @@
 #include "SVGSMILElement.h"
 #include "SVGSVGElement.h"
 #include "ScopedEventQueue.h"
+#include "TypedElementDescendantIteratorInlines.h"
 
 namespace WebCore {
 

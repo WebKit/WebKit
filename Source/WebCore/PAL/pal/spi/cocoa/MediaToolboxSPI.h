@@ -42,6 +42,7 @@
 enum {
     kMTPluginFormatReaderError_AllocationFailure = -16501,
     kMTPluginFormatReaderError_ParsingFailure = -16503,
+    kMTPluginFormatReaderError_InternalFailure = -16504,
     kMTPluginSampleCursorError_NoSamples = -16507,
     kMTPluginSampleCursorError_LocationNotAvailable = -16508,
     kMTPluginByteSourceError_EndOfStream = -16511,

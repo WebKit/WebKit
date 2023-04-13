@@ -30,9 +30,9 @@
 #include "AudioContext.h"
 #include "AudioContextOptions.h"
 #include "AudioTimestamp.h"
-#include "DOMWindow.h"
 #include "DocumentInlines.h"
 #include "JSDOMPromiseDeferred.h"
+#include "LocalDOMWindow.h"
 #include "Logging.h"
 #include "PageInlines.h"
 #include "Performance.h"
@@ -348,10 +348,12 @@ bool AudioContext::willPausePlayback()
 
 MediaProducerMediaStateFlags AudioContext::mediaState() const
 {
-    if (!isStopped() && destination().isPlayingAudio())
-        return MediaProducerMediaState::IsPlayingAudio;
+    return isAudible() ? MediaProducerMediaState::IsPlayingAudio : MediaProducer::IsNotPlaying;
+}
 
-    return MediaProducer::IsNotPlaying;
+bool AudioContext::isAudible() const
+{
+    return !isStopped() && destination().isPlayingAudio();
 }
 
 void AudioContext::mayResumePlayback(bool shouldResume)

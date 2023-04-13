@@ -39,11 +39,17 @@ def doc_root(port_obj):
 
 
 def wpt_config_json(port_obj):
-    config_wk_filepath = port_obj._filesystem.join(port_obj.layout_tests_dir(), doc_root(port_obj), "config.json")
-    if not port_obj.host.filesystem.isfile(config_wk_filepath):
+    fs = port_obj.host.filesystem
+    config_wk_filepath = fs.join(port_obj.layout_tests_dir(), "imported", "w3c", "resources", "config.json")
+    if not fs.isfile(config_wk_filepath):
         return
-    json_data = port_obj._filesystem.read_text_file(config_wk_filepath)
-    return json.loads(json_data)
+    config = json.loads(fs.read_text_file(config_wk_filepath))
+    if port_obj.supports_localhost_aliases and not port_obj.get_option('disable_wpt_hostname_aliases'):
+        config['server_host'] = '127.0.0.1'
+        config['browser_host'] = 'web-platform.test'
+        config['alternate_hosts'] = {'alt': 'not-web-platform.test'}
+    config['ssl']['openssl']['base_path'] = fs.join(port_obj.results_directory(), "_wpt_certs")
+    return config
 
 
 def base_http_url(port_obj, localhost_only=False):
@@ -68,15 +74,28 @@ def base_https_url(port_obj, localhost_only=False):
     return "https://" + host + ":" + str(ports["https"][0]) + "/"
 
 
+def base_h2_url(port_obj, localhost_only=False):
+    config = wpt_config_json(port_obj)
+    if not config:
+        # This should only be hit by webkitpy unit tests
+        _log.debug("No WPT config file found")
+        return "https://localhost:9000/"
+    ports = config["ports"]
+    host = config["browser_host"] if not localhost_only else "localhost"
+    return "https://" + host + ":" + str(ports["h2"][0]) + "/"
+
+
 def base_url_list(port_obj):
     config = wpt_config_json(port_obj)
     host = config["browser_host"]
     plain_port = str(config["ports"]["http"][0])
     tls_port = str(config["ports"]["https"][0])
+    h2_port = str(config["ports"]["h2"][0])
 
     urls = [
         "http://{}:{}/".format(host, plain_port),
         "https://{}:{}/".format(host, tls_port),
+        "https://{}:{}/".format(host, h2_port),
     ]
     # Some ports support aliases but this list is to be presented to users
     # so we include localhost which always will work in host browsers.
@@ -84,6 +103,7 @@ def base_url_list(port_obj):
         urls += [
             "http://localhost:{}/".format(plain_port),
             "https://localhost:{}/".format(tls_port),
+            "https://localhost:{}/".format(h2_port),
         ]
 
     return urls
@@ -152,15 +172,8 @@ class WebPlatformTestServer(http_server_base.HttpServerBase):
         self._wsout = self._filesystem.open_text_file_for_writing(self._output_log_path)
 
         _log.debug('Copying WebKit web platform server config.json')
-        config_wk_filename = self._filesystem.join(self._layout_root, "imported", "w3c", "resources", "config.json")
-        if self._filesystem.isfile(config_wk_filename):
-            config = json.loads(self._filesystem.read_text_file(config_wk_filename))
-            if self._port_obj.supports_localhost_aliases and not self._port_obj.get_option('disable_wpt_hostname_aliases'):
-                _log.debug('Using aliases to web-platform.test')
-                config['browser_host'] = 'web-platform.test'
-                config['alternate_hosts'] = {'alt': 'not-web-platform.test'}
-
-            config['ssl']['openssl']['base_path'] = self._filesystem.join(self._output_dir, "_wpt_certs")
+        config = wpt_config_json(self._port_obj)
+        if config:
             self._filesystem.write_text_file(self._config_filename, json.dumps(config))
 
     def _spawn_process(self):

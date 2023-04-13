@@ -18,19 +18,17 @@
 
     if (window.accessibilityController) {
         window.jsTestIsAsync = true;
+        var item;
+        setTimeout(function() {
+            item = accessibilityController.accessibleElementById("item1");
+            testOutput += expect("item.ariaFlowToElementAtIndex(0).role", "'AXRole: AXButton'");
+            testOutput += expect("item.ariaFlowToElementAtIndex(0).title", "'AXTitle: BUTTON'");
+            testOutput += expect("item.ariaFlowToElementAtIndex(1).role", "'AXRole: AXRadioButton'");
+            testOutput += expect("item.ariaFlowToElementAtIndex(1).title", "'AXTitle: RADIO BUTTON'");
 
-        var item = accessibilityController.accessibleElementById("item1");
-        testOutput += expect("item.ariaFlowToElementAtIndex(0).role", "'AXRole: AXButton'");
-        testOutput += expect("item.ariaFlowToElementAtIndex(0).title", "'AXTitle: BUTTON'");
-        testOutput += expect("item.ariaFlowToElementAtIndex(1).role", "'AXRole: AXRadioButton'");
-        testOutput += expect("item.ariaFlowToElementAtIndex(1).title", "'AXTitle: RADIO BUTTON'");
+            testOutput += "\nRemoving id 'extra' from #item1's aria-flowto.\n";
 
-        testOutput += "\nRemoving id 'extra' from #item1's aria-flowto.\n";
-
-        document.getElementById("item1").setAttribute("aria-flowto", "extra2");
-        setTimeout(async function() {
-            // We should only have one aria-flowto element now, so wait for the second to go away.
-            await waitFor(() => !item.ariaFlowToElementAtIndex(1));
+            document.getElementById("item1").setAttribute("aria-flowto", "extra2");
 
             testOutput += expect("item.ariaFlowToElementAtIndex(0).role", "'AXRole: AXRadioButton'");
             testOutput += expect("item.ariaFlowToElementAtIndex(0).title", "'AXTitle: RADIO BUTTON'");

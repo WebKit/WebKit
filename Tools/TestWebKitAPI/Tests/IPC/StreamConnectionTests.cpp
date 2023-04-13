@@ -62,7 +62,7 @@ struct MockStreamTestMessageWithAsyncReply1 {
     static constexpr bool isSync = false;
     static constexpr bool isStreamEncodable = true;
     static constexpr bool isStreamBatched = false;
-    static constexpr IPC::MessageName name()  { return IPC::MessageName::RemoteRenderingBackend_ReleaseResource; }
+    static constexpr IPC::MessageName name()  { return IPC::MessageName::RemoteRenderingBackend_ReleaseRenderingResource; }
     // Just using WebPage_GetBytecodeProfileReply as something that is async message name.
     // If WebPage_GetBytecodeProfileReply is removed, just use another one.
     static constexpr IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::WebPage_GetBytecodeProfileReply; }
@@ -214,6 +214,7 @@ TEST_F(StreamConnectionTest, OpenConnections)
 {
     auto cleanup = localReferenceBarrier();
     auto [clientConnection, serverConnectionHandle] = IPC::StreamClientConnection::create(defaultBufferSizeLog2);
+    ASSERT_TRUE(clientConnection);
     auto serverConnection = IPC::StreamServerConnection::create(WTFMove(serverConnectionHandle), serverQueue());
     MockMessageReceiver mockClientReceiver;
     clientConnection->open(mockClientReceiver);
@@ -230,6 +231,7 @@ TEST_F(StreamConnectionTest, InvalidateUnopened)
 {
     auto cleanup = localReferenceBarrier();
     auto [clientConnection, serverConnectionHandle] = IPC::StreamClientConnection::create(defaultBufferSizeLog2);
+    ASSERT_TRUE(clientConnection);
     auto serverConnection = IPC::StreamServerConnection::create(WTFMove(serverConnectionHandle), serverQueue());
     serverQueue().dispatch([this, serverConnection] {
         assertIsCurrent(serverQueue());
@@ -249,6 +251,7 @@ public:
     {
         setupBase();
         auto [clientConnection, serverConnectionHandle] = IPC::StreamClientConnection::create(bufferSizeLog2());
+        ASSERT(clientConnection);
         auto serverConnection = IPC::StreamServerConnection::create(WTFMove(serverConnectionHandle), serverQueue());
         m_clientConnection = WTFMove(clientConnection);
         m_clientConnection->setSemaphores(copyViaEncoder(serverQueue().wakeUpSemaphore()).value(), copyViaEncoder(serverConnection->clientWaitSemaphore()).value());
@@ -288,7 +291,7 @@ public:
 protected:
     static TestObjectIdentifier defaultDestinationID()
     {
-        return makeObjectIdentifier<TestObjectIdentifierTag>(77);
+        return ObjectIdentifier<TestObjectIdentifierTag>(77);
     }
 
     MockMessageReceiver m_mockClientReceiver;
@@ -308,7 +311,7 @@ TEST_P(StreamMessageTest, Send)
     serverQueue().dispatch([&] {
         assertIsCurrent(serverQueue());
         for (uint64_t i = 100u; i < 160u; ++i) {
-            auto success = m_serverConnection->send(MockTestMessage1 { }, makeObjectIdentifier<TestObjectIdentifierTag>(i));
+            auto success = m_serverConnection->send(MockTestMessage1 { }, ObjectIdentifier<TestObjectIdentifierTag>(i));
             EXPECT_TRUE(success);
         }
     });
@@ -326,7 +329,7 @@ TEST_P(StreamMessageTest, Send)
 
 TEST_P(StreamMessageTest, SendWithSwitchingDestinationIDs)
 {
-    auto other = makeObjectIdentifier<TestObjectIdentifierTag>(0x1234567891234);
+    auto other = ObjectIdentifier<TestObjectIdentifierTag>(0x1234567891234);
     {
         serverQueue().dispatch([&] {
             assertIsCurrent(serverQueue());
@@ -389,8 +392,8 @@ TEST_P(StreamMessageTest, SendAsyncReplyCancel)
     }
     auto cleanup = localReferenceBarrier();
 
-    std::atomic<bool> waiting;
-    BinarySemaphore workQueueWait;
+    static std::atomic<bool> waiting;
+    static BinarySemaphore workQueueWait;
     serverQueue().dispatch([&] {
         waiting = true;
         workQueueWait.wait();

@@ -33,10 +33,11 @@
 #include "CrossOriginEmbedderPolicy.h"
 #include "FetchOptions.h"
 #include "HTTPHeaderMap.h"
+#include "ImageResource.h"
 #include "NavigationPreloadState.h"
-#include "RegistrationDatabase.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
+#include "SWRegistrationDatabase.h"
 #include <wtf/persistence/PersistentCoders.h>
 
 #if PLATFORM(COCOA)
@@ -174,6 +175,41 @@ std::optional<WebCore::ImportedScriptAttributes> Coder<WebCore::ImportedScriptAt
     return { {
         WTFMove(*responseURL),
         WTFMove(*mimeType)
+    } };
+}
+
+void Coder<WebCore::ImageResource>::encode(Encoder& encoder, const WebCore::ImageResource& instance)
+{
+    encoder << instance.src << instance.sizes << instance.type << instance.label;
+}
+
+std::optional<WebCore::ImageResource> Coder<WebCore::ImageResource>::decode(Decoder& decoder)
+{
+    std::optional<String> src;
+    decoder >> src;
+    if (!src)
+        return std::nullopt;
+
+    std::optional<String> sizes;
+    decoder >> sizes;
+    if (!sizes)
+        return std::nullopt;
+
+    std::optional<String> type;
+    decoder >> type;
+    if (!type)
+        return std::nullopt;
+
+    std::optional<String> label;
+    decoder >> label;
+    if (!label)
+        return std::nullopt;
+
+    return { {
+        WTFMove(*src),
+        WTFMove(*sizes),
+        WTFMove(*type),
+        WTFMove(*label)
     } };
 }
 #endif
@@ -632,9 +668,9 @@ std::optional<WebCore::ClientOrigin> Coder<WebCore::ClientOrigin>::decode(Decode
 
 void Coder<WebCore::SecurityOriginData>::encode(Encoder& encoder, const WebCore::SecurityOriginData& instance)
 {
-    encoder << instance.protocol;
-    encoder << instance.host;
-    encoder << instance.port;
+    encoder << instance.protocol();
+    encoder << instance.host();
+    encoder << instance.port();
 }
 
 std::optional<WebCore::SecurityOriginData> Coder<WebCore::SecurityOriginData>::decode(Decoder& decoder)

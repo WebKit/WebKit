@@ -73,6 +73,11 @@
     return wrapper(_response->credentialID());
 }
 
+- (NSString *)accessGroup
+{
+    return _response->accessGroup();
+}
+
 #endif // ENABLE(WEB_AUTHN)
 
 - (void)setLAContext:(LAContext *)context

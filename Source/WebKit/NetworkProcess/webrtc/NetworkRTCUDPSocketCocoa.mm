@@ -90,6 +90,7 @@ private:
     Lock m_nwConnectionsLock;
     bool m_isClosed WTF_GUARDED_BY_LOCK(m_nwConnectionsLock) { false };
     HashMap<rtc::SocketAddress, std::pair<RetainPtr<nw_connection_t>, RefPtr<ConnectionStateTracker>>> m_nwConnections WTF_GUARDED_BY_LOCK(m_nwConnectionsLock);
+    std::optional<uint32_t> m_trafficClass;
 };
 
 static dispatch_queue_t udpSocketQueue()
@@ -240,6 +241,8 @@ NetworkRTCUDPSocketCocoaConnections::NetworkRTCUDPSocketCocoaConnections(WebCore
 
         auto connectionStateTracker = ConnectionStateTracker::create();
         protectedThis->setupNWConnection(nwConnection, connectionStateTracker.get(), remoteAddress);
+        if (protectedThis->m_trafficClass)
+            nw_connection_reset_traffic_class(nwConnection, *protectedThis->m_trafficClass);
 
         protectedThis->m_nwConnections.set(remoteAddress, std::make_pair(nwConnection, WTFMove(connectionStateTracker)));
     }).get());
@@ -280,9 +283,22 @@ void NetworkRTCUDPSocketCocoaConnections::close()
     m_nwListener = nullptr;
 }
 
-void NetworkRTCUDPSocketCocoaConnections::setOption(int, int)
+void NetworkRTCUDPSocketCocoaConnections::setOption(int option, int value)
 {
-    // FIXME: Validate this is not needed.
+    if (option != rtc::Socket::OPT_DSCP)
+        return;
+
+    auto trafficClass = trafficClassFromDSCP(static_cast<rtc::DiffServCodePoint>(value));
+    if (!trafficClass) {
+        RELEASE_LOG_ERROR(WebRTC, "NetworkRTCUDPSocketCocoaConnections has an unexpected DSCP value %d", value);
+        return;
+    }
+
+    m_trafficClass = trafficClass;
+
+    Locker locker { m_nwConnectionsLock };
+    for (auto& nwConnection : m_nwConnections.values())
+        nw_connection_reset_traffic_class(nwConnection.first.get(), *m_trafficClass);
 }
 
 static inline void processUDPData(RetainPtr<nw_connection_t>&& nwConnection, Ref<NetworkRTCUDPSocketCocoaConnections::ConnectionStateTracker> connectionStateTracker, int errorCode, Function<void(const uint8_t*, size_t)>&& processData)
@@ -326,6 +342,9 @@ std::pair<RetainPtr<nw_connection_t>, Ref<NetworkRTCUDPSocketCocoaConnections::C
         nw_parameters_set_local_endpoint(parameters.get(), localEndpoint.get());
     }
     configureParameters(parameters.get(), remoteAddress.family() == AF_INET ? nw_ip_version_4 : nw_ip_version_6);
+
+    if (m_trafficClass)
+        nw_parameters_set_traffic_class(parameters.get(), *m_trafficClass);
 
     auto remoteHostAddress = remoteAddress.ipaddr().ToString();
     if (remoteAddress.ipaddr().IsNil())

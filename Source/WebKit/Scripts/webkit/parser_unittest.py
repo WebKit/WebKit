@@ -184,7 +184,7 @@ _expected_model_base = {
         {
             'name': 'SetVideoLayerID',
             'parameters': (
-                ('WebCore::GraphicsLayer::PlatformLayerID', 'videoLayerID'),
+                ('WebCore::PlatformLayerIdentifier', 'videoLayerID'),
             ),
             'conditions': (None),
         },

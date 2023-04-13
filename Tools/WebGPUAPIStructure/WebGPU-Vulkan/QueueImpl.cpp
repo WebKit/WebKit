@@ -62,6 +62,8 @@ namespace WebGPU {
     vk::UniqueRenderPass QueueImpl::createSpecificRenderPass(const std::vector<vk::ImageView>& imageViews, const std::vector<vk::Format>& formats) {
         std::vector<vk::AttachmentDescription> attachmentDescriptions;
         std::vector<vk::AttachmentReference> attachmentReferences;
+        attachmentDescriptions.reserve(imageViews.size());
+        attachmentReferences.reserve(imageViews.size());
         for (std::size_t i = 0; i < imageViews.size(); ++i) {
             auto attachmentDescription = vk::AttachmentDescription()
                 .setFormat(formats[i])
@@ -119,8 +121,11 @@ namespace WebGPU {
             imageViews.emplace_back(*deviceImageViews[activeSwapchainIndex]);
             clearValues.emplace_back(vk::ClearColorValue(std::array<float, 4>({ 0.0f, 0.0f, 0.0f, 1.0f })));
             formats.push_back(swapchainFormat);
-        }
-        else {
+        } else {
+            destinationTextures.reserve(*textures.size());
+            imageViews.reserve(*textures.size());
+            clearValues.reserve(*textures.size());
+            formats.reserve(*textures.size());
             for (auto& textureWrapper : *textures) {
                 Texture& texture = textureWrapper;
                 auto downcast = dynamic_cast<TextureImpl*>(&texture);

@@ -86,6 +86,7 @@ public:
     std::optional<ServiceWorkerData> serviceWorkerData;
 #endif
     ScriptExecutionContextIdentifier clientIdentifier;
+    std::optional<uint64_t> noiseInjectionHashSalt;
 
     WorkerParameters isolatedCopy() const;
 };

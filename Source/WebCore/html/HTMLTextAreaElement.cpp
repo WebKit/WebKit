@@ -32,14 +32,14 @@
 #include "DOMFormData.h"
 #include "Document.h"
 #include "Editor.h"
-#include "ElementChildIterator.h"
+#include "ElementChildIteratorInlines.h"
 #include "Event.h"
 #include "EventNames.h"
 #include "FormController.h"
-#include "Frame.h"
 #include "FrameSelection.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
+#include "LocalFrame.h"
 #include "LocalizedStrings.h"
 #include "RenderTextControlMultiLine.h"
 #include "ShadowRoot.h"
@@ -57,32 +57,15 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLTextAreaElement);
 
 using namespace HTMLNames;
 
-// On submission, LF characters are converted into CRLF.
-// This function returns number of characters considering this.
-static unsigned computeLengthForSubmission(StringView text, unsigned numberOfLineBreaks)
-{
-    return numGraphemeClusters(text) + numberOfLineBreaks;
-}
-
-static unsigned numberOfLineBreaks(StringView text)
+static inline unsigned computeLengthForAPIValue(StringView text)
 {
     unsigned length = text.length();
-    unsigned count = 0;
-    for (unsigned i = 0; i < length; i++) {
-        if (text[i] == '\n')
-            count++;
+    unsigned crlfCount = 0;
+    for (unsigned i = 0; i < length; ++i) {
+        if (text[i] == '\r' && i + 1 < length && text[i + 1] == '\n')
+            crlfCount++;
     }
-    return count;
-}
-
-static unsigned computeLengthForSubmission(StringView text)
-{
-    return numGraphemeClusters(text) + numberOfLineBreaks(text);
-}
-
-static unsigned upperBoundForLengthForSubmission(StringView text, unsigned numberOfLineBreaks)
-{
-    return text.length() + numberOfLineBreaks;
+    return text.length() - crlfCount;
 }
 
 HTMLTextAreaElement::HTMLTextAreaElement(Document& document, HTMLFormElement* form)
@@ -160,17 +143,18 @@ void HTMLTextAreaElement::collectPresentationalHintsForAttribute(const Qualified
         HTMLTextFormControlElement::collectPresentationalHintsForAttribute(name, value, style);
 }
 
-void HTMLTextAreaElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void HTMLTextAreaElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
+    HTMLTextFormControlElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
     if (name == rowsAttr) {
-        unsigned rows = limitToOnlyHTMLNonNegativeNumbersGreaterThanZero(value, defaultRows);
+        unsigned rows = limitToOnlyHTMLNonNegativeNumbersGreaterThanZero(newValue, defaultRows);
         if (m_rows != rows) {
             m_rows = rows;
             if (renderer())
                 renderer()->setNeedsLayoutAndPrefWidthsRecalc();
         }
     } else if (name == colsAttr) {
-        unsigned cols = limitToOnlyHTMLNonNegativeNumbersGreaterThanZero(value, defaultCols);
+        unsigned cols = limitToOnlyHTMLNonNegativeNumbersGreaterThanZero(newValue, defaultCols);
         if (m_cols != cols) {
             m_cols = cols;
             if (renderer())
@@ -180,9 +164,9 @@ void HTMLTextAreaElement::parseAttribute(const QualifiedName& name, const AtomSt
         // The virtual/physical values were a Netscape extension of HTML 3.0, now deprecated.
         // The soft/hard /off values are a recommendation for HTML 4 extension by IE and NS 4.
         WrapMethod wrap;
-        if (equalLettersIgnoringASCIICase(value, "physical"_s) || equalLettersIgnoringASCIICase(value, "hard"_s) || equalLettersIgnoringASCIICase(value, "on"_s))
+        if (equalLettersIgnoringASCIICase(newValue, "physical"_s) || equalLettersIgnoringASCIICase(newValue, "hard"_s) || equalLettersIgnoringASCIICase(newValue, "on"_s))
             wrap = HardWrap;
-        else if (equalLettersIgnoringASCIICase(value, "off"_s))
+        else if (equalLettersIgnoringASCIICase(newValue, "off"_s))
             wrap = NoWrap;
         else
             wrap = SoftWrap;
@@ -192,13 +176,12 @@ void HTMLTextAreaElement::parseAttribute(const QualifiedName& name, const AtomSt
                 renderer()->setNeedsLayoutAndPrefWidthsRecalc();
         }
     } else if (name == maxlengthAttr) {
-        internalSetMaxLength(parseHTMLNonNegativeInteger(value).value_or(-1));
+        internalSetMaxLength(parseHTMLNonNegativeInteger(newValue).value_or(-1));
         updateValidity();
     } else if (name == minlengthAttr) {
-        internalSetMinLength(parseHTMLNonNegativeInteger(value).value_or(-1));
+        internalSetMinLength(parseHTMLNonNegativeInteger(newValue).value_or(-1));
         updateValidity();
-    } else
-        HTMLTextFormControlElement::parseAttribute(name, value);
+    }
 }
 
 RenderPtr<RenderElement> HTMLTextAreaElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
@@ -274,24 +257,41 @@ void HTMLTextAreaElement::handleBeforeTextInsertedEvent(BeforeTextInsertedEvent&
     unsigned unsignedMaxLength = static_cast<unsigned>(signedMaxLength);
 
     const String& currentValue = innerTextValue();
-    unsigned numberOfLineBreaksInCurrentValue = numberOfLineBreaks(currentValue);
-    if (upperBoundForLengthForSubmission(currentValue, numberOfLineBreaksInCurrentValue)
-        + upperBoundForLengthForSubmission(event.text(), numberOfLineBreaks(event.text())) < unsignedMaxLength)
+    unsigned currentLength = computeLengthForAPIValue(currentValue);
+    if (currentLength + computeLengthForAPIValue(event.text()) < unsignedMaxLength)
         return;
 
-    unsigned currentLength = computeLengthForSubmission(currentValue, numberOfLineBreaksInCurrentValue);
     // selectionLength represents the selection length of this text field to be
     // removed by this insertion.
     // If the text field has no focus, we don't need to take account of the
     // selection length. The selection is the source of text drag-and-drop in
     // that case, and nothing in the text field will be removed.
     auto selectionRange = focused() ? document().frame()->selection().selection().toNormalizedRange() : std::nullopt;
-    unsigned selectionLength = selectionRange ? computeLengthForSubmission(plainText(*selectionRange)) : 0;
+    unsigned selectionLength = selectionRange ? computeLengthForAPIValue(plainText(*selectionRange)) : 0;
     ASSERT(currentLength >= selectionLength);
     unsigned baseLength = currentLength - selectionLength;
     unsigned appendableLength = unsignedMaxLength > baseLength ? unsignedMaxLength - baseLength : 0;
-    auto text = event.text();
-    event.setText(text.left(numCodeUnitsInGraphemeClusters(text, appendableLength)));
+    event.setText(sanitizeUserInputValue(event.text(), appendableLength));
+}
+
+String HTMLTextAreaElement::sanitizeUserInputValue(const String& proposedValue, unsigned maxLength)
+{
+    unsigned submissionLength = 0;
+    unsigned i = 0;
+    for (; i < proposedValue.length(); ++i) {
+        if (proposedValue[i] == '\r' && i + 1 < proposedValue.length() && proposedValue[i + 1] == '\n')
+            continue;
+        ++submissionLength;
+        if (submissionLength == maxLength) {
+            ++i;
+            break;
+        }
+        if (submissionLength > maxLength)
+            break;
+    }
+    if (i > 0 && U16_IS_LEAD(proposedValue[i - 1]))
+        --i;
+    return proposedValue.left(i);
 }
 
 RefPtr<TextControlInnerTextElement> HTMLTextAreaElement::innerTextElement() const
@@ -404,10 +404,10 @@ String HTMLTextAreaElement::validationMessage() const
         return validationMessageValueMissingText();
 
     if (tooShort())
-        return validationMessageTooShortText(computeLengthForSubmission(value()), minLength());
+        return validationMessageTooShortText(value().length(), minLength());
 
     if (tooLong())
-        return validationMessageTooLongText(computeLengthForSubmission(value()), maxLength());
+        return validationMessageTooLongText(value().length(), maxLength());
 
     return String();
 }
@@ -456,15 +456,8 @@ bool HTMLTextAreaElement::tooShort(StringView value, NeedsToCheckDirtyFlag check
         value = this->value();
 
     // The empty string is excluded from tooShort validation.
-    if (value.isEmpty())
-        return false;
-
-    // FIXME: The HTML specification says that the "number of characters" is measured using code-unit length and,
-    // in the case of textarea elements, with all line breaks normalized to a single character (as opposed to CRLF pairs).
-    unsigned unsignedMin = static_cast<unsigned>(min);
-    unsigned numberOfLineBreaksInValue = numberOfLineBreaks(value);
-    return upperBoundForLengthForSubmission(value, numberOfLineBreaksInValue) < unsignedMin
-        && computeLengthForSubmission(value, numberOfLineBreaksInValue) < unsignedMin;
+    unsigned length = value.isNull() ? this->value().length() : computeLengthForAPIValue(value);
+    return length > 0 && length < static_cast<unsigned>(min);
 }
 
 bool HTMLTextAreaElement::tooLong(StringView value, NeedsToCheckDirtyFlag check) const
@@ -478,15 +471,8 @@ bool HTMLTextAreaElement::tooLong(StringView value, NeedsToCheckDirtyFlag check)
     if (max < 0)
         return false;
 
-    if (value.isNull())
-        value = this->value();
-
-    // FIXME: The HTML specification says that the "number of characters" is measured using code-unit length and,
-    // in the case of textarea elements, with all line breaks normalized to a single character (as opposed to CRLF pairs).
-    unsigned unsignedMax = max;
-    unsigned numberOfLineBreaksInValue = numberOfLineBreaks(value);
-    return upperBoundForLengthForSubmission(value, numberOfLineBreaksInValue) > unsignedMax
-        && computeLengthForSubmission(value, numberOfLineBreaksInValue) > unsignedMax;
+    unsigned length = value.isNull() ? this->value().length() : computeLengthForAPIValue(value);
+    return length > static_cast<unsigned>(max);
 }
 
 bool HTMLTextAreaElement::accessKeyAction(bool)

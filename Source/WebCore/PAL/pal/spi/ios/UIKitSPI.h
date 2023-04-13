@@ -130,6 +130,7 @@ typedef enum {
 + (UIColor *)systemFillColor;
 + (UIColor *)secondarySystemFillColor;
 + (UIColor *)tertiarySystemFillColor;
++ (UIColor *)quaternarySystemFillColor;
 
 + (UIColor *)systemGroupedBackgroundColor;
 + (UIColor *)secondarySystemGroupedBackgroundColor;

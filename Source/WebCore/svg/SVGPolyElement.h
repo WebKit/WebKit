@@ -42,7 +42,7 @@ protected:
 private:
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGPolyElement, SVGGeometryElement>;
 
-    void parseAttribute(const QualifiedName&, const AtomString&) override; 
+    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
     void svgAttributeChanged(const QualifiedName&) override;
 
     bool isValid() const override { return SVGTests::isValid(); }

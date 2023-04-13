@@ -32,14 +32,14 @@
 #include "PerformanceNavigation.h"
 
 #include "DocumentLoader.h"
-#include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameLoaderTypes.h"
+#include "LocalFrame.h"
 
 namespace WebCore {
 
-PerformanceNavigation::PerformanceNavigation(DOMWindow* window)
-    : DOMWindowProperty(window)
+PerformanceNavigation::PerformanceNavigation(LocalDOMWindow* window)
+    : LocalDOMWindowProperty(window)
 {
 }
 

@@ -63,7 +63,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JITSlowPathCall::generateThunk(VM& vm, Slo
 #if OS(WINDOWS) && CPU(X86_64)
     // On Windows, return values larger than 8 bytes are retuened via an implicit pointer passed as
     // the first argument, and remaining arguments are shifted to the right. Make space for this.
-    static_assert(sizeof(SlowPathReturnType) == 16, "Assumed by generated call site below");
+    static_assert(sizeof(UGPRPair) == 16, "Assumed by generated call site below");
     jit.subPtr(MacroAssembler::TrustedImm32(16), MacroAssembler::stackPointerRegister);
     jit.move(MacroAssembler::stackPointerRegister, GPRInfo::argumentGPR0);
     constexpr GPRReg callFrameArgGPR = GPRInfo::argumentGPR1;

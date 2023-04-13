@@ -945,6 +945,17 @@ void NetworkDataTaskSoup::continueHTTPRedirection()
 
     m_networkLoadMetrics.hasCrossOriginRedirect = m_networkLoadMetrics.hasCrossOriginRedirect || !SecurityOrigin::create(m_currentRequest.url())->canRequest(request.url());
 
+    if (m_response.httpStatusCode() == 307 || m_response.httpStatusCode() == 308) {
+        ASSERT(m_lastHTTPMethod == request.httpMethod());
+        auto body = m_firstRequest.httpBody();
+        if (body && !body->isEmpty() && !equalLettersIgnoringASCIICase(m_lastHTTPMethod, "get"_s))
+            request.setHTTPBody(WTFMove(body));
+
+        String originalContentType = m_firstRequest.httpContentType();
+        if (!originalContentType.isEmpty())
+            request.setHTTPHeaderField(WebCore::HTTPHeaderName::ContentType, originalContentType);
+    }
+
     // Clear the user agent to ensure a new one is computed.
     auto userAgent = request.httpUserAgent();
     request.clearHTTPUserAgent();
@@ -1609,8 +1620,14 @@ bool NetworkDataTaskSoup::shouldAllowHSTSProtocolUpgrade() const
 
 void NetworkDataTaskSoup::protocolUpgradedViaHSTS(SoupMessage* soupMessage)
 {
-    m_response = ResourceResponse::syntheticRedirectResponse(m_currentRequest.url(), soupURIToURL(soup_message_get_uri(soupMessage)));
-    continueHTTPRedirection();
+    if (!m_response.isNull() && !m_response.httpHeaderField(HTTPHeaderName::Location).isEmpty()) {
+        // We handle HSTS upgrades as a redirection to let Web and UI processes know about the URL change, but in
+        // case of redirection, the new request is originated in the network process, so we can just update the URL.
+        m_currentRequest.setURL(soupURIToURL(soup_message_get_uri(m_soupMessage.get())));
+    } else {
+        m_response = ResourceResponse::syntheticRedirectResponse(m_currentRequest.url(), soupURIToURL(soup_message_get_uri(soupMessage)));
+        continueHTTPRedirection();
+    }
 }
 
 #if USE(SOUP2)

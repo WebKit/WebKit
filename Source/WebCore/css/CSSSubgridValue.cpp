@@ -30,7 +30,8 @@
 
 #include "config.h"
 #include "CSSSubgridValue.h"
-#include <wtf/text/WTFString.h>
+
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
@@ -38,12 +39,20 @@ String CSSSubgridValue::customCSSText() const
 {
     if (!length())
         return "subgrid"_s;
-    return "subgrid " + CSSValueList::customCSSText();
+    StringBuilder result;
+    result.append("subgrid "_s);
+    serializeItems(result);
+    return result.toString();
 }
 
-CSSSubgridValue::CSSSubgridValue()
-    : CSSValueList(SubgridClass, SpaceSeparator)
+CSSSubgridValue::CSSSubgridValue(CSSValueListBuilder builder)
+    : CSSValueContainingVector(SubgridClass, SpaceSeparator, WTFMove(builder))
 {
+}
+
+Ref<CSSSubgridValue> CSSSubgridValue::create(CSSValueListBuilder builder)
+{
+    return adoptRef(*new CSSSubgridValue(WTFMove(builder)));
 }
 
 }

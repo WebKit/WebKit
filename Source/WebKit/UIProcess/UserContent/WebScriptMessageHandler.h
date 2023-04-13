@@ -33,7 +33,7 @@
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
-struct SecurityOriginData;
+class SecurityOriginData;
 class SerializedScriptValue;
 }
 

@@ -134,20 +134,20 @@ private:
     int64_t m_handle { 0 };
 };
 
-SandboxExtension::Handle::Handle()
+SandboxExtensionHandle::SandboxExtensionHandle()
 {
 }
 
-SandboxExtension::Handle::Handle(Handle&&) = default;
-SandboxExtension::Handle& SandboxExtension::Handle::operator=(Handle&&) = default;
+SandboxExtensionHandle::SandboxExtensionHandle(SandboxExtensionHandle&&) = default;
+SandboxExtensionHandle& SandboxExtensionHandle::operator=(SandboxExtensionHandle&&) = default;
 
-SandboxExtension::Handle::~Handle()
+SandboxExtensionHandle::~SandboxExtensionHandle()
 {
     if (m_sandboxExtension)
         m_sandboxExtension->invalidate();
 }
 
-void SandboxExtension::Handle::encode(IPC::Encoder& encoder) const
+void SandboxExtensionHandle::encode(IPC::Encoder& encoder) const
 {
     if (!m_sandboxExtension) {
         encoder << IPC::DataReference();
@@ -164,7 +164,7 @@ void SandboxExtension::Handle::encode(IPC::Encoder& encoder) const
     m_sandboxExtension = 0;
 }
 
-auto SandboxExtension::Handle::decode(IPC::Decoder& decoder) -> std::optional<Handle>
+auto SandboxExtensionHandle::decode(IPC::Decoder& decoder) -> std::optional<SandboxExtensionHandle>
 {
     IPC::DataReference dataReference;
     if (!decoder.decode(dataReference))
@@ -173,7 +173,7 @@ auto SandboxExtension::Handle::decode(IPC::Decoder& decoder) -> std::optional<Ha
     if (dataReference.empty())
         return {{ }};
 
-    Handle handle;
+    SandboxExtensionHandle handle;
     handle.m_sandboxExtension = makeUnique<SandboxExtensionImpl>(reinterpret_cast<const char*>(dataReference.data()), dataReference.size());
     return WTFMove(handle);
 }
@@ -280,11 +280,8 @@ auto SandboxExtension::createHandleForTemporaryFile(StringView prefix, Type type
     // Shrink the vector.   
     path.shrink(strlen(path.data()));
 
-    // FIXME: Change to a runtime assertion that the path ends with a slash once <rdar://problem/23579077> is
-    // fixed in all iOS Simulator versions that we use.
-    if (path.last() != '/')
-        path.append('/');
-    
+    ASSERT(path.last() == '/');
+
     // Append the file name.
     auto prefixAsUTF8 = prefix.utf8();
     path.append(prefixAsUTF8.data(), prefixAsUTF8.length());
@@ -342,9 +339,8 @@ auto SandboxExtension::createHandleForMachLookup(ASCIILiteral service, std::opti
 auto SandboxExtension::createHandlesForMachLookup(Span<const ASCIILiteral> services, std::optional<audit_token_t> auditToken, MachBootstrapOptions machBootstrapOptions, OptionSet<Flags> flags) -> Vector<Handle>
 {
     auto handles = createHandlesForResources(services, [auditToken, flags] (ASCIILiteral service) -> std::optional<Handle> {
-        auto handle = createHandleForMachLookup(service, auditToken, flags);
-        ASSERT(handle);
-        return handle;
+        // Note that createHandleForMachLookup() may return null if the process has just crashed.
+        return createHandleForMachLookup(service, auditToken, flags);
     });
 
 #if HAVE(MACH_BOOTSTRAP_EXTENSION)
@@ -357,7 +353,7 @@ auto SandboxExtension::createHandlesForMachLookup(Span<const ASCIILiteral> servi
 
 auto SandboxExtension::createHandlesForMachLookup(std::initializer_list<const ASCIILiteral> services, std::optional<audit_token_t> auditToken, MachBootstrapOptions machBootstrapOptions, OptionSet<Flags> flags) -> Vector<Handle>
 {
-    return createHandlesForMachLookup(Span { services.begin(), services.size() }, auditToken, machBootstrapOptions, flags);
+    return createHandlesForMachLookup(makeSpan(services.begin(), services.size()), auditToken, machBootstrapOptions, flags);
 }
 
 auto SandboxExtension::createHandleForReadByAuditToken(StringView path, audit_token_t auditToken) -> std::optional<Handle>

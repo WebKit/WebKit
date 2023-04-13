@@ -151,7 +151,7 @@ struct VSOutputs {
   @builtin(position) position : vec4<f32>,
 };
 
-@stage(vertex) fn vsMain(input : Inputs) -> VSOutputs {
+@vertex fn vsMain(input : Inputs) -> VSOutputs {
   doTest(input);
 
   // Place that point at pixel (vertexIndex, instanceIndex) in a framebuffer of size
@@ -166,7 +166,7 @@ struct VSOutputs {
   return output;
 }
 
-@stage(fragment) fn fsMain(@location(0) @interpolate(flat) result : i32)
+@fragment fn fsMain(@location(0) @interpolate(flat) result : i32)
   -> @location(0) i32 {
   return result;
 }
@@ -189,16 +189,15 @@ struct VSOutputs {
     }
 
     return this.device.createRenderPipeline({
+      layout: 'auto',
       vertex: {
         module,
         entryPoint: 'vsMain',
         buffers: bufferLayouts,
       },
-
       primitive: {
         topology: 'point-list',
       },
-
       fragment: {
         module,
         entryPoint: 'fsMain',
@@ -399,7 +398,7 @@ struct VSOutputs {
           testComponentCount: data.length,
           expectedData: new Float32Array(data.map(v => normalizedIntegerAsFloat(v, bitSize, false)))
             .buffer,
-          vertexData: vertexData,
+          vertexData,
           floatTolerance: 0.1 * normalizedIntegerAsFloat(1, bitSize, false),
         };
       }
@@ -716,7 +715,6 @@ g.test('buffers_with_varying_step_mode')
         },
       ],
     }));
-
     t.runTest(state);
   });
 
@@ -890,7 +888,6 @@ g.test('vertex_buffer_used_multiple_times_interleaved')
         vbOffset: additionalVBOffset + i * alignedFormatByteSize,
         attributes: [],
       });
-
       testData.push({
         ...baseData[0],
         slot: i,
@@ -1035,7 +1032,6 @@ g.test('discontiguous_location_and_attribs')
           { format: 'uint8x2', offset: 0, shaderLocation: 8 },
         ],
       },
-
       {
         slot: 1,
         arrayStride: 16,

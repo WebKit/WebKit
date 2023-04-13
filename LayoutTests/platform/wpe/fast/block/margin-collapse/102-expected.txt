@@ -1,12 +1,16 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x427
-  RenderBlock {HTML} at (0,0) size 800x427
-    RenderBody {BODY} at (8,8) size 784x411
-      RenderBlock {DIV} at (0,0) size 400x411
-        RenderBlock {DIV} at (0,0) size 400x36
-          RenderText {#text} at (0,0) size 364x35
-            text run at (0,0) width 364: "There should be no vertical space between the two blocks"
-            text run at (0,18) width 43: "below."
-        RenderBlock (floating) {DIV} at (0,36) size 100x100 [bgcolor=#008000]
-        RenderImage {IMG} at (0,136) size 395x275 [bgcolor=#FFFF00]
+layer at (0,0) size 800x169
+  RenderBlock {html} at (0,0) size 800x169
+    RenderBody {body} at (8,16) size 784x137
+      RenderBlock {parsererror} at (16,0) size 752x137 [bgcolor=#FFDDDD] [border: (2px solid #CC7777)]
+        RenderBlock {h3} at (18,20) size 716x23
+          RenderText {#text} at (0,0) size 324x21
+            text run at (0,0) width 324: "This page contains the following errors:"
+        RenderBlock {div} at (18,61) size 716x15
+          RenderText {#text} at (0,0) size 504x14
+            text run at (0,0) width 504: "error on line 1 at column 49: Space required after the Public Identifier"
+            text run at (503,0) width 1: " "
+        RenderBlock {h3} at (18,94) size 716x23
+          RenderText {#text} at (0,0) size 427x21
+            text run at (0,0) width 427: "Below is a rendering of the page up to the first error."

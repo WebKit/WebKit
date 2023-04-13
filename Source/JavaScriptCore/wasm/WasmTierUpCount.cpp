@@ -45,6 +45,11 @@ OSREntryData& TierUpCount::addOSREntryData(uint32_t functionIndex, uint32_t loop
     return *m_osrEntryData.last().get();
 }
 
+OSREntryData& TierUpCount::osrEntryData(uint32_t loopIndex)
+{
+    return *m_osrEntryData[loopIndex];
+}
+
 } } // namespace JSC::Wasm
 
 #endif // ENABLE(WEBASSEMBLY_B3JIT)

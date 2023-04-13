@@ -38,27 +38,22 @@ namespace WebCore {
 
 class CSSGridTemplateAreasValue final : public CSSValue {
 public:
-    static Ref<CSSGridTemplateAreasValue> create(const NamedGridAreaMap& gridAreaMap, size_t rowCount, size_t columnCount)
-    {
-        return adoptRef(*new CSSGridTemplateAreasValue(gridAreaMap, rowCount, columnCount));
-    }
-
-    ~CSSGridTemplateAreasValue() = default;
+    static Ref<CSSGridTemplateAreasValue> create(NamedGridAreaMap, size_t rowCount, size_t columnCount);
 
     String customCSSText() const;
 
-    const NamedGridAreaMap& gridAreaMap() const { return m_gridAreaMap; }
+    const NamedGridAreaMap& gridAreaMap() const { return m_map; }
     size_t rowCount() const { return m_rowCount; }
     size_t columnCount() const { return m_columnCount; }
 
     bool equals(const CSSGridTemplateAreasValue&) const;
 
-    String stringForRow(size_t row);
+    String stringForRow(size_t row) const;
 
 private:
-    CSSGridTemplateAreasValue(const NamedGridAreaMap&, size_t rowCount, size_t columnCount);
+    CSSGridTemplateAreasValue(NamedGridAreaMap, size_t rowCount, size_t columnCount);
 
-    NamedGridAreaMap m_gridAreaMap;
+    NamedGridAreaMap m_map;
     size_t m_rowCount;
     size_t m_columnCount;
 };

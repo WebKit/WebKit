@@ -222,13 +222,7 @@ static NSString *replyBlockSignature(Protocol *protocol, SEL selector, NSUIntege
 
     auto decoder = adoptNS([[WKRemoteObjectDecoder alloc] initWithInterface:interface.get() rootObjectDictionary:encodedInvocation replyToSelector:nullptr]);
 
-    NSInvocation *invocation = nil;
-
-    @try {
-        invocation = [decoder decodeObjectOfClass:[NSInvocation class] forKey:invocationKey];
-    } @catch (NSException *exception) {
-        NSLog(@"Exception caught during decoding of message: %@", exception);
-    }
+    NSInvocation *invocation = [decoder decodeObjectOfClass:[NSInvocation class] forKey:invocationKey];
 
     NSMethodSignature *methodSignature = invocation.methodSignature;
     auto* replyInfo = remoteObjectInvocation.replyInfo();
@@ -340,14 +334,7 @@ static NSString *replyBlockSignature(Protocol *protocol, SEL selector, NSUIntege
 
     auto decoder = adoptNS([[WKRemoteObjectDecoder alloc] initWithInterface:pendingReply.interface.get() rootObjectDictionary:static_cast<API::Dictionary*>(encodedInvocation) replyToSelector:pendingReply.selector]);
 
-    NSInvocation *replyInvocation = nil;
-
-    @try {
-        replyInvocation = [decoder decodeObjectOfClass:[NSInvocation class] forKey:invocationKey];
-    } @catch (NSException *exception) {
-        NSLog(@"Exception caught during decoding of reply: %@", exception);
-        return;
-    }
+    NSInvocation *replyInvocation = [decoder decodeObjectOfClass:[NSInvocation class] forKey:invocationKey];
 
     [replyInvocation setTarget:pendingReply.block.get()];
     [replyInvocation invoke];

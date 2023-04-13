@@ -19,7 +19,7 @@ PASS test12: no observation is fired after the change of writing mode when box's
 PASS test13: an observation is fired after the change of writing mode when box's specified size comes from physical size properties.
 PASS test14: observe the same target but using a different box should override the previous one
 PASS test15: an observation is fired with box dimensions 0 when element's display property is set to inline
-FAIL test16: observations fire once with 0x0 size for non-replaced inline elements assert_unreached: Timed out waiting for notification. (1000ms) Reached unreachable code
+PASS test16: observations fire once with 0x0 size for non-replaced inline elements
 PASS test17: Box sizing snd Resize Observer notifications
 FAIL test18: an observation is fired when device-pixel-content-box is being observed assert_unreached: Caught a throw, possible syntax error Reached unreachable code
 

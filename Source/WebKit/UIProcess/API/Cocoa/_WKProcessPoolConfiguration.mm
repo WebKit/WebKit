@@ -69,27 +69,11 @@
 
 - (NSSet<Class> *)customClassesForParameterCoder
 {
-    auto classes = _processPoolConfiguration->customClassesForParameterCoder();
-    if (classes.isEmpty())
-        return [NSSet set];
-
-    auto result = adoptNS([[NSMutableSet alloc] initWithCapacity:classes.size()]);
-    for (const auto& value : classes)
-        [result addObject: objc_lookUpClass(value.utf8().data())];
-
-    return result.autorelease();
+    return [NSSet set];
 }
 
 - (void)setCustomClassesForParameterCoder:(NSSet<Class> *)classesForCoder
 {
-    Vector<WTF::String> classes;
-    classes.reserveInitialCapacity(classesForCoder.count);
-    for (id classObj : classesForCoder) {
-        if (auto* string = NSStringFromClass(classObj))
-            classes.uncheckedAppend(string);
-    }
-
-    _processPoolConfiguration->setCustomClassesForParameterCoder(WTFMove(classes));
 }
 
 - (NSUInteger)maximumProcessCount
@@ -376,12 +360,11 @@
 
 - (NSString *)customWebContentServiceBundleIdentifier
 {
-    return _processPoolConfiguration->customWebContentServiceBundleIdentifier();
+    return nil;
 }
 
 - (void)setCustomWebContentServiceBundleIdentifier:(NSString *)customWebContentServiceBundleIdentifier
 {
-    _processPoolConfiguration->setCustomWebContentServiceBundleIdentifier(customWebContentServiceBundleIdentifier);
 }
 
 - (BOOL)configureJSCForTesting

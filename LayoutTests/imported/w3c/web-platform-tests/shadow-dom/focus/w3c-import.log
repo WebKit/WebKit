@@ -20,6 +20,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus/click-focus-delegatesFocus-click.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus/click-focus-delegatesFocus-tabindex-varies.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus/click-focus-delegatesFocus-tabindex-zero.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus/delegatesFocus-tabindex-change.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus/focus-autofocus.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus/focus-click-on-shadow-host.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus/focus-method-delegatesFocus-nested-browsing-context.html

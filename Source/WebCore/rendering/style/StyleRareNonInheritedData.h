@@ -68,8 +68,6 @@ class StyleTransformData;
 
 struct LengthSize;
 
-constexpr int appearanceBitWidth = 7;
-
 // Page size type.
 // StyleRareNonInheritedData::pageSize is meaningful only when
 // StyleRareNonInheritedData::pageSizeType is PAGE_SIZE_RESOLVED.
@@ -96,29 +94,15 @@ public:
 
     LengthPoint perspectiveOrigin() const { return { perspectiveOriginX, perspectiveOriginY }; }
 
-    bool contentDataEquivalent(const StyleRareNonInheritedData&) const;
-
-    bool hasFilters() const;
-
 #if ENABLE(FILTERS_LEVEL_2)
     bool hasBackdropFilters() const;
 #endif
 
-    bool hasOpacity() const { return opacity < 1; }
-
     OptionSet<Containment> effectiveContainment() const;
-
-    float opacity;
-
-    double aspectRatioWidth;
-    double aspectRatioHeight;
 
     std::optional<Length> containIntrinsicWidth;
     std::optional<Length> containIntrinsicHeight;
 
-    OptionSet<Containment> contain;
-
-    float perspective;
     Length perspectiveOriginX;
     Length perspectiveOriginY;
 
@@ -126,12 +110,7 @@ public:
     
     IntSize initialLetter;
 
-    DataRef<StyleDeprecatedFlexibleBoxData> deprecatedFlexibleBox; // Flexible box properties
-    DataRef<StyleFlexibleBoxData> flexibleBox;
     DataRef<StyleMarqueeData> marquee; // Marquee properties
-    DataRef<StyleMultiColData> multiCol; //  CSS3 multicol properties
-    DataRef<StyleTransformData> transform; // Transform properties (rotate, scale, skew, etc.)
-    DataRef<StyleFilterData> filter; // Filter operations (url, sepia, blur, etc.)
 
 #if ENABLE(FILTERS_LEVEL_2)
     DataRef<StyleFilterData> backdropFilter; // Filter operations (url, sepia, blur, etc.)
@@ -140,57 +119,29 @@ public:
     DataRef<StyleGridData> grid;
     DataRef<StyleGridItemData> gridItem;
 
+    LengthBox clip;
     LengthBox scrollMargin { 0, 0, 0, 0 };
     LengthBox scrollPadding { Length(LengthType::Auto), Length(LengthType::Auto), Length(LengthType::Auto), Length(LengthType::Auto) };
-    ScrollSnapType scrollSnapType;
-    ScrollSnapAlign scrollSnapAlign;
-    ScrollSnapStop scrollSnapStop { ScrollSnapStop::Normal };
 
-    unsigned overscrollBehaviorX : 2; // OverscrollBehavior
-    unsigned overscrollBehaviorY : 2; // OverscrollBehavior
-
-    std::unique_ptr<ContentData> content;
     std::unique_ptr<CounterDirectiveMap> counterDirectives;
-    String altText;
-
-    std::unique_ptr<ShadowData> boxShadow; // For box-shadow decorations.
 
     RefPtr<WillChangeData> willChange; // Null indicates 'auto'.
     
     RefPtr<StyleReflection> boxReflect;
 
-    RefPtr<AnimationList> animations;
-    RefPtr<AnimationList> transitions;
-
-    DataRef<FillLayer> mask;
     NinePieceImage maskBoxImage;
 
     LengthSize pageSize;
-    LengthPoint objectPosition;
 
     RefPtr<ShapeValue> shapeOutside;
     Length shapeMargin;
     float shapeImageThreshold;
 
-    int order;
+    float perspective;
 
     RefPtr<PathOperation> clipPath;
 
     StyleColor textDecorationColor;
-    StyleColor visitedLinkTextDecorationColor;
-    StyleColor visitedLinkBackgroundColor;
-    StyleColor visitedLinkOutlineColor;
-    StyleColor visitedLinkBorderLeftColor;
-    StyleColor visitedLinkBorderRightColor;
-    StyleColor visitedLinkBorderTopColor;
-    StyleColor visitedLinkBorderBottomColor;
-
-    StyleContentAlignmentData alignContent;
-    StyleSelfAlignmentData alignItems;
-    StyleSelfAlignmentData alignSelf;
-    StyleContentAlignmentData justifyContent;
-    StyleSelfAlignmentData justifyItems;
-    StyleSelfAlignmentData justifySelf;
 
     DataRef<StyleCustomPropertyData> customProperties;
     HashSet<AtomString> customPaintWatchedProperties;
@@ -200,27 +151,45 @@ public:
     RefPtr<TranslateTransformOperation> translate;
     RefPtr<PathOperation> offsetPath;
 
-    OptionSet<TouchAction> touchActions;
+    Vector<AtomString> containerNames;
 
+    GapLength columnGap;
+    GapLength rowGap;
+
+    Length offsetDistance;
+    LengthPoint offsetPosition;
+    LengthPoint offsetAnchor;
+    OffsetRotation offsetRotate;
+
+    TextDecorationThickness textDecorationThickness;
+
+    OptionSet<TouchAction> touchActions;
     OptionSet<MarginTrimType> marginTrim;
+    OptionSet<Containment> contain;
+
+    ScrollSnapType scrollSnapType;
+    ScrollSnapAlign scrollSnapAlign;
+    ScrollSnapStop scrollSnapStop { ScrollSnapStop::Normal };
+
+    float zoom;
+
+    std::optional<Length> blockStepSize;
+    unsigned blockStepInsert : 1; // BlockStepInsert
+
+    unsigned overscrollBehaviorX : 2; // OverscrollBehavior
+    unsigned overscrollBehaviorY : 2; // OverscrollBehavior
 
     unsigned pageSizeType : 2; // PageSizeType
     unsigned transformStyle3D : 2; // TransformStyle3D
     unsigned transformStyleForcedToFlat : 1; // The used value for transform-style is forced to flat by a grouping property.
     unsigned backfaceVisibility : 1; // BackfaceVisibility
 
-    unsigned userDrag : 2; // UserDrag
-    unsigned textOverflow : 1; // Whether or not lines that spill out should be truncated with "..."
     unsigned useSmoothScrolling : 1; // ScrollBehavior
-    unsigned appearance : appearanceBitWidth; // EAppearance
-    unsigned effectiveAppearance : appearanceBitWidth; // EAppearance
 
     unsigned textDecorationStyle : 3; // TextDecorationStyle
-    TextDecorationThickness textDecorationThickness;
 
     unsigned textGroupAlign : 3; // TextGroupAlign
 
-    unsigned aspectRatioType : 2; // AspectRatioType
     unsigned contentVisibility : 2; // ContentVisibility
 
 #if ENABLE(CSS_COMPOSITING)
@@ -233,18 +202,11 @@ public:
     unsigned applePayButtonType : 4;
 #endif
 
-    unsigned objectFit : 3; // ObjectFit
-    
     unsigned breakBefore : 4; // BreakBetween
     unsigned breakAfter : 4;
     unsigned breakInside : 3; // BreakInside
-    unsigned resize : 3; // Resize
 
     unsigned inputSecurity : 1; // InputSecurity
-
-    unsigned hasAttrContent : 1;
-
-    unsigned isNotFinal : 1;
 
     unsigned containIntrinsicWidthType : 2; // ContainIntrinsicSizeType
     unsigned containIntrinsicHeightType : 2; // ContainIntrinsicSizeType
@@ -255,15 +217,7 @@ public:
 
     unsigned overflowAnchor : 1; // Scroll Anchoring- OverflowAnchor
 
-    Vector<AtomString> containerNames;
-
-    GapLength columnGap;
-    GapLength rowGap;
-
-    Length offsetDistance;
-    LengthPoint offsetPosition;
-    LengthPoint offsetAnchor;
-    OffsetRotation offsetRotate;
+    bool hasClip : 1;
 
 private:
     StyleRareNonInheritedData();

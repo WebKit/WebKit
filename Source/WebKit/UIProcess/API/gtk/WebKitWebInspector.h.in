@@ -29,22 +29,12 @@
 G_BEGIN_DECLS
 
 #define WEBKIT_TYPE_WEB_INSPECTOR            (webkit_web_inspector_get_type())
+#if !ENABLE(2022_GLIB_API)
 #define WEBKIT_WEB_INSPECTOR(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), WEBKIT_TYPE_WEB_INSPECTOR, WebKitWebInspector))
 #define WEBKIT_IS_WEB_INSPECTOR(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), WEBKIT_TYPE_WEB_INSPECTOR))
 #define WEBKIT_WEB_INSPECTOR_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass),  WEBKIT_TYPE_WEB_INSPECTOR, WebKitWebInspectorClass))
 #define WEBKIT_IS_WEB_INSPECTOR_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass),  WEBKIT_TYPE_WEB_INSPECTOR))
 #define WEBKIT_WEB_INSPECTOR_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj),  WEBKIT_TYPE_WEB_INSPECTOR, WebKitWebInspectorClass))
-
-typedef struct _WebKitWebInspector        WebKitWebInspector;
-typedef struct _WebKitWebInspectorClass   WebKitWebInspectorClass;
-typedef struct _WebKitWebInspectorPrivate WebKitWebInspectorPrivate;
-
-struct _WebKitWebInspector {
-    GObject parent;
-
-    /*< private >*/
-    WebKitWebInspectorPrivate *priv;
-};
 
 struct _WebKitWebInspectorClass {
     GObjectClass parent_class;
@@ -55,9 +45,9 @@ struct _WebKitWebInspectorClass {
     void (*_webkit_reserved2) (void);
     void (*_webkit_reserved3) (void);
 };
+#endif
 
-WEBKIT_API GType
-webkit_web_inspector_get_type            (void);
+WEBKIT_DECLARE_FINAL_TYPE (WebKitWebInspector, webkit_web_inspector, WEBKIT, WEB_INSPECTOR, GObject)
 
 WEBKIT_API WebKitWebViewBase *
 webkit_web_inspector_get_web_view        (WebKitWebInspector *inspector);

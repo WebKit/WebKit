@@ -39,8 +39,6 @@ struct PlatformVideoColorSpace {
     std::optional<PlatformVideoTransferCharacteristics> transfer;
     std::optional<PlatformVideoMatrixCoefficients> matrix;
     std::optional<bool> fullRange;
-    template <class Encoder> void encode(Encoder&) const;
-    template <class Decoder> static WARN_UNUSED_RETURN bool decode(Decoder&, PlatformVideoColorSpace&);
 };
 
 inline bool operator==(const PlatformVideoColorSpace& a, const PlatformVideoColorSpace& b)
@@ -54,29 +52,6 @@ inline bool operator==(const PlatformVideoColorSpace& a, const PlatformVideoColo
 inline bool operator!=(const PlatformVideoColorSpace& a, const PlatformVideoColorSpace& b)
 {
     return !(a == b);
-}
-
-template <class Encoder>
-void PlatformVideoColorSpace::encode(Encoder& encoder) const
-{
-    encoder << primaries;
-    encoder << transfer;
-    encoder << matrix;
-    encoder << fullRange;
-}
-
-template <class Decoder>
-bool PlatformVideoColorSpace::decode(Decoder& decoder, PlatformVideoColorSpace& colorSpace)
-{
-    if (!decoder.decode(colorSpace.primaries))
-        return false;
-    if (!decoder.decode(colorSpace.transfer))
-        return false;
-    if (!decoder.decode(colorSpace.matrix))
-        return false;
-    if (!decoder.decode(colorSpace.fullRange))
-        return false;
-    return true;
 }
 
 }

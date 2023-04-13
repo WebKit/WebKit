@@ -136,7 +136,7 @@ PeriodicWave::PeriodicWave(float sampleRate)
 void PeriodicWave::waveDataForFundamentalFrequency(float fundamentalFrequency, float* &lowerWaveData, float* &higherWaveData, float& tableInterpolationFactor)
 {
     // Negative frequencies are allowed, in which case we alias to the positive frequency.
-    fundamentalFrequency = fabsf(fundamentalFrequency);
+    fundamentalFrequency = std::abs(fundamentalFrequency);
 
     // Calculate the pitch range.
     float ratio = fundamentalFrequency > 0 ? fundamentalFrequency / m_lowestFundamentalFrequency : 0.5;

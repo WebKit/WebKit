@@ -3,10 +3,10 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-    RenderSVGContainer {g} at (0,0) size 537x222
-      RenderSVGText {text} at (10,13) size 313x21 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 313x21
-          chunk 1 text run 1 at (10.00,30.00) startOffset 0 endOffset 36 width 312.00: "Testing that SVGLoad does not bubble"
+    RenderSVGContainer {g} at (0,0) size 534x222
+      RenderSVGText {text} at (10,13) size 311x21 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 311x21
+          chunk 1 text run 1 at (10.00,30.00) startOffset 0 endOffset 36 width 310.00: "Testing that SVGLoad does not bubble"
       RenderSVGRect {rect} at (16,83) size 84x84 [fill={[type=SOLID] [color=#008000]}] [x=10.00] [y=50.00] [width=50.00] [height=50.00]
       RenderSVGRect {rect} at (350,83) size 84x84 [fill={[type=SOLID] [color=#008000]}] [x=210.00] [y=50.00] [width=50.00] [height=50.00]
       RenderSVGContainer {g} at (16,195) size 493x27

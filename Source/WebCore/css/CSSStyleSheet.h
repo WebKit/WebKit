@@ -42,14 +42,16 @@ class CSSParser;
 class CSSRule;
 class CSSStyleSheet;
 class CachedCSSStyleSheet;
+class ContainerNode;
 class DeferredPromise;
 class Document;
 class Element;
 class WeakPtrImplWithEventTargetData;
-class ShadowRoot;
+class StyleRule;
+class StyleRuleBase;
 class StyleRuleKeyframes;
+class StyleRuleWithNesting;
 class StyleSheetContents;
-class TreeScope;
 
 namespace Style {
 class Scope;
@@ -104,11 +106,8 @@ public:
 
     void clearOwnerRule() { m_ownerRule = nullptr; }
 
-    enum class IsTreeScopeBeingDestroyed : bool { No, Yes };
-    void removeAdoptingTreeScope(Document&, IsTreeScopeBeingDestroyed);
-    void removeAdoptingTreeScope(ShadowRoot&, IsTreeScopeBeingDestroyed);
-    void addAdoptingTreeScope(Document&);
-    void addAdoptingTreeScope(ShadowRoot&);
+    void removeAdoptingTreeScope(ContainerNode&);
+    void addAdoptingTreeScope(ContainerNode&);
 
     Document* ownerDocument() const;
     CSSStyleSheet& rootStyleSheet();
@@ -121,6 +120,7 @@ public:
 
     bool hadRulesMutation() const { return m_mutatedRules; }
     void clearHadRulesMutation() { m_mutatedRules = false; }
+    RefPtr<StyleRuleWithNesting> prepareChildStyleRuleForNesting(StyleRule&&);
 
     enum RuleMutationType { OtherMutation, RuleInsertion, KeyframesRuleMutation, RuleReplace };
     enum WhetherContentsWereClonedForMutation { ContentsWereNotClonedForMutation = 0, ContentsWereClonedForMutation };
@@ -180,8 +180,7 @@ private:
     MQ::MediaQueryList m_mediaQueries;
     WeakPtr<Style::Scope> m_styleScope;
     WeakPtr<Document, WeakPtrImplWithEventTargetData> m_constructorDocument;
-    WeakHashSet<ShadowRoot, WeakPtrImplWithEventTargetData> m_adoptingShadowRoots;
-    WeakHashSet<Document, WeakPtrImplWithEventTargetData> m_adoptingDocuments;
+    WeakHashSet<ContainerNode, WeakPtrImplWithEventTargetData> m_adoptingTreeScopes;
 
     WeakPtr<Node, WeakPtrImplWithEventTargetData> m_ownerNode;
     WeakPtr<CSSImportRule> m_ownerRule;

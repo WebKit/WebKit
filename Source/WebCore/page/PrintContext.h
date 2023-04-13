@@ -31,17 +31,17 @@ namespace WebCore {
 
 class Document;
 class Element;
-class Frame;
 class FloatRect;
 class FloatSize;
 class GraphicsContext;
 class IntRect;
+class LocalFrame;
 class Node;
 
 class PrintContext : public FrameDestructionObserver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    WEBCORE_EXPORT explicit PrintContext(Frame*);
+    WEBCORE_EXPORT explicit PrintContext(LocalFrame*);
     WEBCORE_EXPORT ~PrintContext();
 
     // Break up a page into rects without relayout.
@@ -76,14 +76,14 @@ public:
 
     // Used by layout tests.
     WEBCORE_EXPORT static int pageNumberForElement(Element*, const FloatSize& pageSizeInPixels); // Returns -1 if page isn't found.
-    WEBCORE_EXPORT static String pageProperty(Frame*, const char* propertyName, int pageNumber);
-    WEBCORE_EXPORT static bool isPageBoxVisible(Frame*, int pageNumber);
-    WEBCORE_EXPORT static String pageSizeAndMarginsInPixels(Frame*, int pageNumber, int width, int height, int marginTop, int marginRight, int marginBottom, int marginLeft);
-    WEBCORE_EXPORT static int numberOfPages(Frame&, const FloatSize& pageSizeInPixels);
+    WEBCORE_EXPORT static String pageProperty(LocalFrame*, const char* propertyName, int pageNumber);
+    WEBCORE_EXPORT static bool isPageBoxVisible(LocalFrame*, int pageNumber);
+    WEBCORE_EXPORT static String pageSizeAndMarginsInPixels(LocalFrame*, int pageNumber, int width, int height, int marginTop, int marginRight, int marginBottom, int marginLeft);
+    WEBCORE_EXPORT static int numberOfPages(LocalFrame&, const FloatSize& pageSizeInPixels);
     // Draw all pages into a graphics context with lines which mean page boundaries.
     // The height of the graphics context should be
     // (pageSizeInPixels.height() + 1) * number-of-pages - 1
-    WEBCORE_EXPORT static void spoolAllPagesWithBoundaries(Frame&, GraphicsContext&, const FloatSize& pageSizeInPixels);
+    WEBCORE_EXPORT static void spoolAllPagesWithBoundaries(LocalFrame&, GraphicsContext&, const FloatSize& pageSizeInPixels);
     
     // By imaging to a width a little wider than the available pixels,
     // thin pages will be scaled down a little, matching the way they
@@ -103,7 +103,7 @@ protected:
 
 private:
     void computePageRectsWithPageSizeInternal(const FloatSize& pageSizeInPixels, bool allowHorizontalTiling);
-    bool beginAndComputePageRectsWithPageSize(Frame&, const FloatSize& pageSizeInPixels);
+    bool beginAndComputePageRectsWithPageSize(LocalFrame&, const FloatSize& pageSizeInPixels);
     void collectLinkedDestinations(Document&);
     void outputLinkedDestinations(GraphicsContext&, Document&, const IntRect& pageRect);
 

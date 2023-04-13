@@ -1,16 +1,20 @@
 
 PASS @keyframes works with @property
 PASS @keyframes picks up the latest @property in the document
-FAIL Ongoing animation picks up redeclared custom property assert_equals: expected "rgb(150, 150, 150)" but got "0px"
+PASS Ongoing animation picks up redeclared custom property
 PASS Ongoing animation matches new keyframes against the current registration
-FAIL Ongoing animation picks up redeclared intial value assert_equals: expected "250px" but got "200px"
-FAIL Ongoing animation picks up redeclared inherits flag assert_equals: expected "250px" but got "200px"
-FAIL Ongoing animation picks up redeclared meaning of 'unset' assert_equals: expected "250px" but got "200px"
+PASS Ongoing animation picks up redeclared intial value
+PASS Ongoing animation picks up redeclared inherits flag
+PASS Ongoing animation picks up redeclared meaning of 'unset'
 PASS Transitioning from initial value
 PASS Transitioning from specified value
-FAIL Transition triggered by initial value change assert_equals: expected "150px" but got "200px"
+PASS Transition triggered by initial value change
 PASS No transition when changing types
 PASS No transition when removing @property rule
 PASS Unregistered properties referencing animated properties update correctly.
 PASS Registered properties referencing animated properties update correctly.
+PASS CSS animation setting "inherit" for a custom property on a keyframe is responsive to changing that custom property on the parent.
+PASS JS-originated animation setting "inherit" for a custom property on a keyframe is responsive to changing that custom property on the parent.
+PASS CSS animation setting "currentColor" for a custom property on a keyframe is responsive to changing "color" on the parent.
+PASS JS-originated animation setting "currentColor" for a custom property on a keyframe is responsive to changing "color" on the parent.
 

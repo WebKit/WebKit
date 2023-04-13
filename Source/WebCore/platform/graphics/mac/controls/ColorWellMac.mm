@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2022-2023 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,8 +30,7 @@
 
 #import "ColorWellPart.h"
 #import "ControlFactoryMac.h"
-#import "LocalCurrentGraphicsContext.h"
-#import <wtf/BlockObjCExceptions.h>
+#import "LocalDefaultSystemAppearance.h"
 
 namespace WebCore {
 
@@ -48,28 +47,9 @@ void ColorWellMac::updateCellStates(const FloatRect& rect, const ControlStyle& s
 
 void ColorWellMac::draw(GraphicsContext& context, const FloatRoundedRect& borderRect, float deviceScaleFactor, const ControlStyle& style)
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS
-
     LocalDefaultSystemAppearance localAppearance(style.states.contains(ControlStyle::State::DarkAppearance), style.accentColor);
 
-    GraphicsContextStateSaver stateSaver(context);
-    LocalCurrentGraphicsContext localContext(context);
-
-    auto *view = m_controlFactory.drawingView(borderRect.rect(), style);
-    auto *window = [view window];
-    auto *previousDefaultButtonCell = [window defaultButtonCell];
-
-    // The ColorWell can't be the window default button cell.
-    if ([previousDefaultButtonCell isEqual:m_buttonCell.get()])
-        [window setDefaultButtonCell:nil];
-
-    drawCell(context, borderRect.rect(), deviceScaleFactor, style, m_buttonCell.get(), view, true);
-
-    // Restore the window default button cell.
-    if (![previousDefaultButtonCell isEqual:m_buttonCell.get()])
-        [window setDefaultButtonCell:previousDefaultButtonCell];
-
-    END_BLOCK_OBJC_EXCEPTIONS
+    drawCell(context, borderRect.rect(), deviceScaleFactor, style, m_buttonCell.get(), true);
 }
 
 } // namespace WebCore

@@ -194,6 +194,8 @@ public:
 
     bool isAllSet() const { return m_count == mapSize; }
 
+    void dump(PrintStream&) const;
+
 private:
     Map m_map { };
     BoyerMooreFastCandidates m_charactersFastPath;
@@ -201,7 +203,7 @@ private:
 };
 
 #if CPU(ARM64E)
-extern "C" SlowPathReturnType vmEntryToYarrJIT(const void* input, UCPURegister start, UCPURegister length, int* output, MatchingContextHolder* matchingContext, const void* codePtr);
+extern "C" UGPRPair vmEntryToYarrJIT(const void* input, UCPURegister start, UCPURegister length, int* output, MatchingContextHolder* matchingContext, const void* codePtr);
 extern "C" void vmEntryToYarrJITAfter(void);
 #endif
 
@@ -275,10 +277,10 @@ class YarrCodeBlock : public YarrBoyerMooreData {
     WTF_MAKE_NONCOPYABLE(YarrCodeBlock);
 
 public:
-    using YarrJITCode8 = SlowPathReturnType (*)(const LChar* input, UCPURegister start, UCPURegister length, int* output, MatchingContextHolder*) YARR_CALL;
-    using YarrJITCode16 = SlowPathReturnType (*)(const UChar* input, UCPURegister start, UCPURegister length, int* output, MatchingContextHolder*) YARR_CALL;
-    using YarrJITCodeMatchOnly8 = SlowPathReturnType (*)(const LChar* input, UCPURegister start, UCPURegister length, void*, MatchingContextHolder*) YARR_CALL;
-    using YarrJITCodeMatchOnly16 = SlowPathReturnType (*)(const UChar* input, UCPURegister start, UCPURegister length, void*, MatchingContextHolder*) YARR_CALL;
+    using YarrJITCode8 = UGPRPair (*)(const LChar* input, UCPURegister start, UCPURegister length, int* output, MatchingContextHolder*) YARR_CALL;
+    using YarrJITCode16 = UGPRPair (*)(const UChar* input, UCPURegister start, UCPURegister length, int* output, MatchingContextHolder*) YARR_CALL;
+    using YarrJITCodeMatchOnly8 = UGPRPair (*)(const LChar* input, UCPURegister start, UCPURegister length, void*, MatchingContextHolder*) YARR_CALL;
+    using YarrJITCodeMatchOnly16 = UGPRPair (*)(const UChar* input, UCPURegister start, UCPURegister length, void*, MatchingContextHolder*) YARR_CALL;
 
     YarrCodeBlock() = default;
 
@@ -435,7 +437,7 @@ enum class JITCompileMode : uint8_t {
     IncludeSubpatterns,
     InlineTest
 };
-void jitCompile(YarrPattern&, StringView patternString, CharSize, VM*, YarrCodeBlock& jitObject, JITCompileMode);
+void jitCompile(YarrPattern&, StringView patternString, CharSize, std::optional<StringView> sampleString, VM*, YarrCodeBlock& jitObject, JITCompileMode);
 
 #if ENABLE(YARR_JIT_REGEXP_TEST_INLINE)
 

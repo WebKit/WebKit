@@ -4,6 +4,7 @@ LookupNamespaceURI and IsDefaultNamespace
 PASS DocumentFragment should have null namespace, prefix null
 PASS DocumentFragment should have null namespace, prefix ""
 PASS DocumentFragment should have null namespace, prefix "foo"
+PASS DocumentFragment should have null namespace, prefix "xml"
 PASS DocumentFragment should have null namespace, prefix "xmlns"
 PASS DocumentFragment is in default namespace, prefix null
 PASS DocumentFragment is in default namespace, prefix ""
@@ -12,6 +13,7 @@ PASS DocumentFragment is in default namespace, prefix "xmlns"
 PASS DocumentType should have null namespace, prefix null
 PASS DocumentType should have null namespace, prefix ""
 PASS DocumentType should have null namespace, prefix "foo"
+PASS DocumentType should have null namespace, prefix "xml"
 PASS DocumentType should have null namespace, prefix "xmlns"
 PASS DocumentType is in default namespace, prefix null
 PASS DocumentType is in default namespace, prefix ""
@@ -20,7 +22,8 @@ PASS DocumentType is in default namespace, prefix "xmlns"
 PASS Element should have null namespace, prefix null
 PASS Element should have null namespace, prefix ""
 PASS Element should not have namespace matching prefix with namespaceURI value
-PASS Element should not have XMLNS namespace
+PASS Element should have XML namespace
+PASS Element should have XMLNS namespace
 PASS Element has namespace URI matching prefix
 PASS Empty namespace is not default, prefix null
 PASS Empty namespace is not default, prefix ""
@@ -28,7 +31,7 @@ PASS fooNamespace is not default
 PASS xmlns namespace is not default
 PASS Element should have baz namespace, prefix null
 PASS Element should have baz namespace, prefix ""
-PASS Element does not has namespace with xlmns prefix
+PASS Element should have namespace with xmlns prefix
 PASS Element has bar namespace
 PASS Empty namespace is not default on fooElem, prefix null
 PASS Empty namespace is not default on fooElem, prefix ""
@@ -46,7 +49,7 @@ PASS For comment, inherited bar namespace is not default
 PASS For comment, inherited baz namespace is default
 PASS Child element should inherit baz namespace
 PASS Child element should have null namespace
-PASS Child element should not have XMLNS namespace
+PASS Child element should have XMLNS namespace
 PASS Child element has namespace URI matching prefix
 PASS Empty namespace is not default for child, prefix null
 PASS Empty namespace is not default for child, prefix ""
@@ -66,5 +69,11 @@ PASS For document, xmlns namespace is not default
 PASS For document, bar namespace is not default
 PASS For document, baz namespace is not default
 PASS For document, xhtml namespace is default
+PASS Document without documentElement has no namespace URI matching "xml"
+PASS Document without documentElement has no namespace URI matching "xmlns"
+PASS Disconnected Attr has no namespace URI matching "xml"
+PASS Disconnected Attr has no namespace URI matching "xmlns"
+PASS Connected Attr has namespace URI matching "xml"
+PASS Connected Attr no namespace URI matching "xmlns"
 PASS Comment does not have bar namespace
 

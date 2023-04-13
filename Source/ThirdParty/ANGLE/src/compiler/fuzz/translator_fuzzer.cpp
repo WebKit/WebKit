@@ -151,6 +151,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
     validOutputs.push_back(SH_GLSL_430_CORE_OUTPUT);
     validOutputs.push_back(SH_GLSL_440_CORE_OUTPUT);
     validOutputs.push_back(SH_GLSL_450_CORE_OUTPUT);
+    validOutputs.push_back(SH_SPIRV_VULKAN_OUTPUT);
     validOutputs.push_back(SH_HLSL_3_0_OUTPUT);
     validOutputs.push_back(SH_HLSL_4_1_OUTPUT);
     validOutputs.push_back(SH_HLSL_4_0_FL9_3_OUTPUT);
@@ -198,6 +199,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
         resources.NV_EGL_stream_consumer_external = 1;
         resources.ARB_texture_rectangle           = 1;
         resources.EXT_blend_func_extended         = 1;
+        resources.EXT_conservative_depth          = 1;
         resources.EXT_draw_buffers                = 1;
         resources.EXT_frag_depth                  = 1;
         resources.EXT_shader_texture_lod          = 1;

@@ -48,6 +48,10 @@
 
 namespace JSC {
 
+namespace AssemblyHelpersInternal {
+constexpr bool dumpVerbose = false;
+}
+
 AssemblyHelpers::Jump AssemblyHelpers::branchIfFastTypedArray(GPRReg baseGPR)
 {
     return branch8(
@@ -679,7 +683,10 @@ void AssemblyHelpers::restoreCalleeSavesFromEntryFrameCalleeSavesBuffer(EntryFra
     RegisterAtOffsetList* allCalleeSaves = RegisterSetBuilder::vmCalleeSaveRegisterOffsets();
     auto dontRestoreRegisters = RegisterSetBuilder::stackRegisters();
     unsigned registerCount = allCalleeSaves->registerCount();
-    JIT_COMMENT(*this, "restoreCalleeSavesFromEntryFrameCalleeSavesBuffer ", *allCalleeSaves, " skip: ", dontRestoreRegisters);
+    if constexpr (AssemblyHelpersInternal::dumpVerbose)
+        JIT_COMMENT(*this, "restoreCalleeSavesFromEntryFrameCalleeSavesBuffer ", *allCalleeSaves, " skip: ", dontRestoreRegisters);
+    else
+        JIT_COMMENT(*this, "restoreCalleeSavesFromEntryFrameCalleeSavesBuffer");
 
     GPRReg scratch = InvalidGPRReg;
     unsigned scratchGPREntryIndex = 0;
@@ -766,7 +773,10 @@ void AssemblyHelpers::restoreCalleeSavesFromVMEntryFrameCalleeSavesBufferImpl(GP
     addPtr(TrustedImm32(EntryFrame::calleeSaveRegistersBufferOffset()), entryFrameGPR);
 
     RegisterAtOffsetList* allCalleeSaves = RegisterSetBuilder::vmCalleeSaveRegisterOffsets();
-    JIT_COMMENT(*this, "restoreCalleeSavesFromVMEntryFrameCalleeSavesBufferImpl ", entryFrameGPR, " callee saves: ", *allCalleeSaves, " skip: ", skipList);
+    if constexpr (AssemblyHelpersInternal::dumpVerbose)
+        JIT_COMMENT(*this, "restoreCalleeSavesFromVMEntryFrameCalleeSavesBufferImpl ", entryFrameGPR, " callee saves: ", *allCalleeSaves, " skip: ", skipList);
+    else
+        JIT_COMMENT(*this, "restoreCalleeSavesFromVMEntryFrameCalleeSavesBufferImpl");
     unsigned registerCount = allCalleeSaves->registerCount();
 
     LoadRegSpooler spooler(*this, entryFrameGPR);
@@ -1249,7 +1259,8 @@ void AssemblyHelpers::cageConditionallyAndUntag(Gigacage::Kind kind, GPRReg stor
 
 void AssemblyHelpers::emitSave(const RegisterAtOffsetList& list)
 {
-    JIT_COMMENT(*this, "emitSave ", list);
+    if constexpr (AssemblyHelpersInternal::dumpVerbose)
+        JIT_COMMENT(*this, "emitSave ", list);
     StoreRegSpooler spooler(*this, framePointerRegister);
 
     size_t registerCount = list.registerCount();
@@ -1269,7 +1280,8 @@ void AssemblyHelpers::emitSave(const RegisterAtOffsetList& list)
 
 void AssemblyHelpers::emitRestore(const RegisterAtOffsetList& list, GPRReg baseGPR)
 {
-    JIT_COMMENT(*this, "emitRestore ", list);
+    if constexpr (AssemblyHelpersInternal::dumpVerbose)
+        JIT_COMMENT(*this, "emitRestore ", list);
     LoadRegSpooler spooler(*this, baseGPR);
 
     size_t registerCount = list.registerCount();
@@ -1291,7 +1303,10 @@ void AssemblyHelpers::emitSaveCalleeSavesFor(const RegisterAtOffsetList* calleeS
 {
     auto dontSaveRegisters = RegisterSetBuilder::stackRegisters();
     unsigned registerCount = calleeSaves->registerCount();
-    JIT_COMMENT(*this, "emitSaveCalleeSavesFor ", *calleeSaves, " dontRestore: ", dontSaveRegisters);
+    if constexpr (AssemblyHelpersInternal::dumpVerbose)
+        JIT_COMMENT(*this, "emitSaveCalleeSavesFor ", *calleeSaves, " dontRestore: ", dontSaveRegisters);
+    else
+        JIT_COMMENT(*this, "emitSaveCalleeSavesFor");
 
     StoreRegSpooler spooler(*this, framePointerRegister);
 
@@ -1318,7 +1333,10 @@ void AssemblyHelpers::emitRestoreCalleeSavesFor(const RegisterAtOffsetList* call
 {
     auto dontRestoreRegisters = RegisterSetBuilder::stackRegisters();
     unsigned registerCount = calleeSaves->registerCount();
-    JIT_COMMENT(*this, "emitRestoreCalleeSavesFor ", *calleeSaves, " dontSave: ", dontRestoreRegisters);
+    if constexpr (AssemblyHelpersInternal::dumpVerbose)
+        JIT_COMMENT(*this, "emitRestoreCalleeSavesFor ", *calleeSaves, " dontSave: ", dontRestoreRegisters);
+    else
+        JIT_COMMENT(*this, "emitRestoreCalleeSavesFor");
     
     LoadRegSpooler spooler(*this, framePointerRegister);
 

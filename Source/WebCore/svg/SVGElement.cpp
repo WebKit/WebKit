@@ -30,7 +30,7 @@
 #include "CSSPropertyParser.h"
 #include "ComputedStyleExtractor.h"
 #include "Document.h"
-#include "ElementChildIterator.h"
+#include "ElementChildIteratorInlines.h"
 #include "ElementName.h"
 #include "Event.h"
 #include "EventNames.h"
@@ -288,10 +288,10 @@ void SVGElement::removedFromAncestor(RemovalType removalType, ContainerNode& old
 
 SVGSVGElement* SVGElement::ownerSVGElement() const
 {
-    ContainerNode* node = parentOrShadowHostNode();
+    auto* node = parentNode();
     while (node) {
-        if (is<SVGSVGElement>(*node))
-            return downcast<SVGSVGElement>(node);
+        if (auto* svg = dynamicDowncast<SVGSVGElement>(*node))
+            return svg;
 
         node = node->parentOrShadowHostNode();
     }
@@ -303,7 +303,7 @@ SVGElement* SVGElement::viewportElement() const
 {
     // This function needs shadow tree support - as RenderSVGContainer uses this function
     // to determine the "overflow" property. <use> on <symbol> wouldn't work otherwhise.
-    ContainerNode* node = parentOrShadowHostNode();
+    auto* node = parentNode();
     while (node) {
         if (is<SVGSVGElement>(*node) || is<SVGImageElement>(*node) || node->hasTagName(SVGNames::symbolTag))
             return downcast<SVGElement>(node);
@@ -313,7 +313,7 @@ SVGElement* SVGElement::viewportElement() const
 
     return nullptr;
 }
- 
+
 const WeakHashSet<SVGElement, WeakPtrImplWithEventTargetData>& SVGElement::instances() const
 {
     if (!m_svgRareData) {
@@ -410,28 +410,6 @@ void SVGElement::setCorrespondingElement(SVGElement* correspondingElement)
         correspondingElement->ensureSVGRareData().addInstance(*this);
 }
 
-void SVGElement::parseAttribute(const QualifiedName& name, const AtomString& value)
-{
-    if (name == HTMLNames::classAttr) {
-        m_className->setBaseValInternal(value);
-        return;
-    }
-
-    if (name == HTMLNames::tabindexAttr) {
-        if (value.isEmpty())
-            setTabIndexExplicitly(std::nullopt);
-        else if (auto optionalTabIndex = parseHTMLInteger(value))
-            setTabIndexExplicitly(optionalTabIndex.value());
-        return;
-    }
-
-    auto& eventName = HTMLElement::eventNameForEventHandlerAttribute(name);
-    if (!eventName.isNull()) {
-        setAttributeEventListener(eventName, name, value);
-        return;
-    }
-}
-
 bool SVGElement::haveLoadedRequiredResources()
 {
     for (auto& child : childrenOfType<SVGElement>(*this)) {
@@ -442,7 +420,7 @@ bool SVGElement::haveLoadedRequiredResources()
 }
 
 bool SVGElement::addEventListener(const AtomString& eventType, Ref<EventListener>&& listener, const AddEventListenerOptions& options)
-{   
+{
     // Add event listener to regular DOM element
     if (!Node::addEventListener(eventType, listener.copyRef(), options))
         return false;
@@ -606,18 +584,29 @@ bool SVGElement::childShouldCreateRenderer(const Node& child) const
     case ElementNames::SVG::tspan:
         return false;
     default:
-        break;        
+        break;
     }
     return svgChild.isValid();
 }
 
-void SVGElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason)
+void SVGElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
-    StyledElement::attributeChanged(name, oldValue, newValue);
+    StyledElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 
     if (name == HTMLNames::idAttr)
         document().accessSVGExtensions().rebuildAllElementReferencesForTarget(*this);
-
+    else if (name == HTMLNames::classAttr) {
+        m_className->setBaseValInternal(newValue);
+    } else if (name == HTMLNames::tabindexAttr) {
+        if (newValue.isEmpty())
+            setTabIndexExplicitly(std::nullopt);
+        else if (auto optionalTabIndex = parseHTMLInteger(newValue))
+            setTabIndexExplicitly(optionalTabIndex.value());
+    } else {
+        auto& eventName = HTMLElement::eventNameForEventHandlerAttribute(name);
+        if (!eventName.isNull())
+            setAttributeEventListener(eventName, name, newValue);
+    }
     // Changes to the style attribute are processed lazily (see Element::getAttribute() and related methods),
     // so we don't want changes to the style attribute to result in extra work here except invalidateInstances().
     if (name == HTMLNames::styleAttr)
@@ -632,7 +621,7 @@ void SVGElement::synchronizeAttribute(const QualifiedName& name)
     if (auto value = propertyRegistry().synchronize(name))
         setSynchronizedLazyAttribute(name, AtomString { *value });
 }
-    
+
 void SVGElement::synchronizeAllAttributes()
 {
     // SVGPropertyRegistry::synchronizeAllAttributes() returns the new values of
@@ -689,7 +678,7 @@ RefPtr<SVGAttributeAnimator> SVGElement::createAnimator(const QualifiedName& att
     // Property animator, e.g. "fill" or "fill-opacity".
     if (auto animator = propertyAnimatorFactory().createAnimator(attributeName, animationMode, calcMode, isAccumulated, isAdditive))
         return animator;
-    
+
     // Animated property animator.
     auto animator = propertyRegistry().createAnimator(attributeName, animationMode, calcMode, isAccumulated, isAdditive);
     if (!animator)
@@ -698,7 +687,7 @@ RefPtr<SVGAttributeAnimator> SVGElement::createAnimator(const QualifiedName& att
         instance->propertyRegistry().appendAnimatedInstance(attributeName, *animator);
     return animator;
 }
-    
+
 void SVGElement::animatorWillBeDeleted(const QualifiedName& attributeName)
 {
     propertyAnimatorFactory().animatorWillBeDeleted(attributeName);
@@ -711,6 +700,7 @@ std::optional<Style::ResolvedStyle> SVGElement::resolveCustomStyle(const Style::
         auto styleElementResolutionContext = resolutionContext;
         // Can't use the state since we are going to another part of the tree.
         styleElementResolutionContext.selectorMatchingState = nullptr;
+        styleElementResolutionContext.isSVGUseTreeRoot = true;
         auto resolvedStyle = styleElement->resolveStyle(styleElementResolutionContext);
         Style::Adjuster::adjustSVGElementStyle(*resolvedStyle.style, *this);
         return resolvedStyle;
@@ -757,10 +747,8 @@ ColorInterpolation SVGElement::colorInterpolation() const
         return renderer->style().svgStyle().colorInterpolationFilters();
 
     // Try to determine the property value from the computed style.
-    if (auto value = ComputedStyleExtractor(const_cast<SVGElement*>(this)).propertyValue(CSSPropertyColorInterpolationFilters, ComputedStyleExtractor::UpdateLayout::No)) {
-        if (is<CSSPrimitiveValue>(value))
-            return downcast<CSSPrimitiveValue>(*value);
-    }
+    if (auto value = ComputedStyleExtractor(const_cast<SVGElement*>(this)).propertyValue(CSSPropertyColorInterpolationFilters, ComputedStyleExtractor::UpdateLayout::No))
+        return fromCSSValue<ColorInterpolation>(*value);
 
     return ColorInterpolation::Auto;
 }
@@ -784,7 +772,6 @@ QualifiedName SVGElement::animatableAttributeForName(const AtomString& localName
             &SVGNames::edgeModeAttr,
             &SVGNames::elevationAttr,
             &SVGNames::exponentAttr,
-            &SVGNames::externalResourcesRequiredAttr,
             &SVGNames::filterUnitsAttr,
             &SVGNames::fxAttr,
             &SVGNames::fyAttr,
@@ -1087,6 +1074,35 @@ void SVGElement::invalidateInstances()
             useElement->invalidateShadowTree();
         instance->setCorrespondingElement(nullptr);
     }
+}
+
+SVGConditionalProcessingAttributes& SVGElement::conditionalProcessingAttributes()
+{
+    return ensureSVGRareData().conditionalProcessingAttributes(*this);
+}
+
+SVGConditionalProcessingAttributes* SVGElement::conditionalProcessingAttributesIfExists() const
+{
+    if (!m_svgRareData)
+        return nullptr;
+    return m_svgRareData->conditionalProcessingAttributesIfExists();
+}
+
+bool SVGElement::hasAssociatedSVGLayoutBox() const
+{
+    if (!renderer())
+        return false;
+
+    // Legacy SVG engine specific condition.
+    if (renderer()->isLegacySVGRoot())
+        return false;
+
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    // LBSE specific condition.
+    if (document().settings().layerBasedSVGEngineEnabled())
+        return false;
+#endif
+    return true;
 }
 
 }

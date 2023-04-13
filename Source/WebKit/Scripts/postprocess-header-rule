@@ -101,44 +101,21 @@ case "${INPUT_FILE_PATH}" in
     [ "${WK_PLATFORM_NAME}" = macosx ]
     UNIFDEF_OPTIONS+=(-DTARGET_OS_IPHONE=$?)
     ;;
-*/WebKitLegacy/*)
-    [ "${USE_INTERNAL_SDK}" != YES ]
-    UNIFDEF_OPTIONS+=(-DUSE_APPLE_INTERNAL_SDK=$?)
-    [ "${WK_PLATFORM_NAME}" = macosx ]
-    UNIFDEF_OPTIONS+=(-DTARGET_OS_IPHONE=$?)
-    [[ "${WK_PLATFORM_NAME}" != *simulator* ]]
-    UNIFDEF_OPTIONS+=(-DTARGET_OS_SIMULATOR=$?)
-
-    for featureDefine in "ENABLE_TOUCH_EVENTS" "ENABLE_IOS_GESTURE_EVENTS"
-    do
-        # We assume a disabled feature is either undefined or has the empty string as its value.
-        eval "isFeatureEnabled=\$$featureDefine"
-        test -z $isFeatureEnabled
-        UNIFDEF_OPTIONS+=(-D$featureDefine=$?)
-    done
-
-    SED_OPTIONS+=(-e "s/\<WebKitLegacy/\<WebKit/")
-    if [[ "${SOURCE_FILE}" != */WebKitAvailability.h ]] && [ ${WK_PLATFORM_NAME} != macosx ]; then
-        SED_OPTIONS+=(-e "s/ *WEBKIT_((CLASS_|ENUM_)?(AVAILABLE|DEPRECATED))_MAC\([^)]+\)//g")
+*/WebKitLegacy.framework/*)
+    if [ "${WK_PLATFORM_NAME}" = macosx ]; then
+        SED_OPTIONS+=(-e "s/\<WebKitLegacy/\<WebKit/")
+    else
+        echo "#import <WebKitLegacy/${INPUT_FILE_NAME}>" > "${SCRIPT_OUTPUT_FILE_0}"
+        exit 0
     fi
     ;;
-*/WebCore/*)
-    [ "${USE_INTERNAL_SDK}" != YES ]
-    UNIFDEF_OPTIONS+=(-DUSE_APPLE_INTERNAL_SDK=$?)
-    [ "${WK_PLATFORM_NAME}" = macosx ]
-    UNIFDEF_OPTIONS+=(-DTARGET_OS_IPHONE=$?)
-    [[ "${WK_PLATFORM_NAME}" != *simulator* ]]
-    UNIFDEF_OPTIONS+=(-DTARGET_OS_SIMULATOR=$?)
-
-    for featureDefine in "ENABLE_TOUCH_EVENTS" "ENABLE_IOS_GESTURE_EVENTS"
-    do
-        # We assume a disabled feature is either undefined or has the empty string as its value.
-        eval "isFeatureEnabled=\$$featureDefine"
-        test -z $isFeatureEnabled
-        UNIFDEF_OPTIONS+=(-D$featureDefine=$?)
-    done
-
-    SED_OPTIONS+=(-e 's/<WebCore\//<WebKit\//' -e "s/(^ *)WEBCORE_EXPORT /\1/")
+*/WebCore.framework/*)
+    if [ "${WK_PLATFORM_NAME}" = macosx ]; then
+        SED_OPTIONS+=(-e 's/<WebCore\//<WebKit\//' -e "s/(^ *)WEBCORE_EXPORT /\1/")
+    else
+        echo "#import <WebKitLegacy/${INPUT_FILE_NAME}>" > "${SCRIPT_OUTPUT_FILE_0}"
+        exit 0
+    fi
 esac
 
 # As a performance optimization, only run replace-webkit-additions-includes.py if we know we need it.

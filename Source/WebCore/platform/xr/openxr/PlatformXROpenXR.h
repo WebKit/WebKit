@@ -21,7 +21,7 @@
 
 #if ENABLE(WEBXR) && USE(OPENXR)
 
-#include "GLContextEGL.h"
+#include "GLContext.h"
 #include "OpenXRLayer.h"
 #include "OpenXRUtils.h"
 #include "PlatformXR.h"
@@ -92,7 +92,7 @@ private:
     XrSession m_session { XR_NULL_HANDLE };
     XrSessionState m_sessionState { XR_SESSION_STATE_UNKNOWN };
     XrGraphicsBindingEGLMNDX m_graphicsBinding;
-    std::unique_ptr<WebCore::GLContextEGL> m_egl;
+    std::unique_ptr<WebCore::GLContext> m_egl;
     RefPtr<WebCore::GraphicsContextGL> m_gl;
     XrFrameState m_frameState;
     Vector<XrView> m_frameViews;

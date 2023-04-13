@@ -79,7 +79,7 @@ class CustomConfigurationTestGroupForm extends TestGroupForm {
     {
         if (!platform || !tests.length)
             return;
-        this.content('group-name').value = `${tests.map((test) => test.name()).join(', ')} on ${platform.name()}`;
+        this.content('group-name').value = `${tests.map((test) => test.name()).join(', ')} on ${platform.label()}`;
     }
 
     static cssTemplate()

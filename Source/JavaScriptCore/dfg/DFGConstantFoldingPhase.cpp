@@ -954,6 +954,25 @@ private:
                 break;
             }
 
+            case FunctionBind: {
+                if (m_graph.m_plan.isUnlinked())
+                    break;
+
+                JSGlobalObject* globalObject = m_graph.globalObjectFor(node->origin.semantic);
+                Edge target = m_graph.child(node, 0);
+                AbstractValue& targetValue = m_state.forNode(target);
+                auto& structureSet = targetValue.m_structure;
+                if (!(targetValue.m_type & ~SpecFunction) && structureSet.isFinite() && structureSet.size() == 1) {
+                    RegisteredStructure structure = structureSet.onlyStructure();
+                    if (JSBoundFunction::canSkipNameAndLengthMaterialization(globalObject, structure.get())) {
+                        node->convertToNewBoundFunction(m_graph.freeze(m_graph.m_vm.getBoundFunction(/* isJSFunction */ true)));
+                        changed = true;
+                        break;
+                    }
+                }
+                break;
+            }
+
             case NumberToStringWithRadix: {
                 JSValue radixValue = m_state.forNode(node->child2()).m_value;
                 if (radixValue && radixValue.isInt32()) {

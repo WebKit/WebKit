@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc.  All rights reserved.
+ * Copyright (C) 2015-2023 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -52,22 +52,3 @@ void FigThreadUnregisterAbortAction(FigThreadAbortActionToken);
 WTF_EXTERN_C_END
 
 #endif // PLATFORM(COCOA)
-
-#if PLATFORM(WIN)
-
-typedef struct OpaqueCMBlockBuffer* CMBlockBufferRef;
-typedef const struct opaqueCMFormatDescription* CMFormatDescriptionRef;
-typedef struct opaqueCMSampleBuffer* CMSampleBufferRef;
-
-#ifndef CMSAMPLEBUFFER_H
-WTF_EXTERN_C_BEGIN
-#pragma pack(push, 4)
-typedef struct {
-    CMTime duration;
-    CMTime presentationTimeStamp;
-    CMTime decodeTimeStamp;
-} CMSampleTimingInfo;
-#pragma pack(pop)
-WTF_EXTERN_C_END
-#endif
-#endif // PLATFORM(WIN)

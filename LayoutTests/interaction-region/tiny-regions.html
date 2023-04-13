@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<style>
+    body { margin: 0; }
+
+    .occlusion {
+        z-index: 1;
+        width: 10px;
+        height: 10px;
+        background-color: blue;
+    }
+    .interaction {
+        width: 10px;
+        height: 10px;
+        background-color: green;
+
+        cursor: pointer;
+    }
+</style>
+<body>
+<div class="interaction"></div>
+<div class="interaction" onclick="click()"></div>
+<div class="occlusion"></div>
+
+
+<pre id="results"></pre>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+window.onload = function () {
+    if (window.internals)
+       results.textContent = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_EVENT_REGION | internals.LAYER_TREE_INCLUDES_ROOT_LAYER_PROPERTIES);
+};
+</script>
+</body>
+</html>

@@ -28,6 +28,7 @@
 #include "HTMLFormElement.h"
 #include "HTMLIFrameElement.h"
 #include "HTMLImageElement.h"
+#include "HTMLNameCollectionInlines.h"
 #include "HTMLNames.h"
 #include "HTMLObjectElement.h"
 #include "NodeRareData.h"
@@ -37,6 +38,9 @@
 namespace WebCore {
 
 using namespace HTMLNames;
+
+template HTMLNameCollection<WindowNameCollection, CollectionTraversalType::Descendants>::~HTMLNameCollection();
+template HTMLNameCollection<DocumentNameCollection, CollectionTraversalType::Descendants>::~HTMLNameCollection();
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(WindowNameCollection);
 WTF_MAKE_ISO_ALLOCATED_IMPL(DocumentNameCollection);

@@ -1,5 +1,5 @@
 
-FAIL Focus controller should treat slots as a focus scope. promise_test: Unhandled rejection with value: object "Error: Unknown source type "key"."
+PASS Focus controller should treat slots as a focus scope.
 document tree: [i0 -> [x-foo]]
 x-foo's shadow tree: [j5 -> [x-bar] -> j6]
 x-bar's shadow tree: [k1 -> k0 -> [s2]]

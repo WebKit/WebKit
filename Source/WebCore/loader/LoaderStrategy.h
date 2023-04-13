@@ -38,9 +38,9 @@ namespace WebCore {
 
 class CachedResource;
 class ContentSecurityPolicy;
-class Frame;
 class FrameLoader;
 class HTTPHeaderMap;
+class LocalFrame;
 class NetscapePlugInStreamLoader;
 class NetscapePlugInStreamLoaderClient;
 struct NetworkTransactionInformation;
@@ -58,10 +58,10 @@ struct FetchOptions;
 
 class WEBCORE_EXPORT LoaderStrategy {
 public:
-    virtual void loadResource(Frame&, CachedResource&, ResourceRequest&&, const ResourceLoaderOptions&, CompletionHandler<void(RefPtr<SubresourceLoader>&&)>&&) = 0;
+    virtual void loadResource(LocalFrame&, CachedResource&, ResourceRequest&&, const ResourceLoaderOptions&, CompletionHandler<void(RefPtr<SubresourceLoader>&&)>&&) = 0;
     virtual void loadResourceSynchronously(FrameLoader&, ResourceLoaderIdentifier, const ResourceRequest&, ClientCredentialPolicy, const FetchOptions&, const HTTPHeaderMap&, ResourceError&, ResourceResponse&, Vector<uint8_t>& data) = 0;
     virtual void pageLoadCompleted(Page&) = 0;
-    virtual void browsingContextRemoved(Frame&) = 0;
+    virtual void browsingContextRemoved(LocalFrame&) = 0;
 
     virtual void remove(ResourceLoader*) = 0;
     virtual void setDefersLoading(ResourceLoader&, bool) = 0;
@@ -76,7 +76,7 @@ public:
 
     virtual bool usePingLoad() const { return true; }
     using PingLoadCompletionHandler = Function<void(const ResourceError&, const ResourceResponse&)>;
-    virtual void startPingLoad(Frame&, ResourceRequest&, const HTTPHeaderMap& originalRequestHeaders, const FetchOptions&, ContentSecurityPolicyImposition, PingLoadCompletionHandler&& = { }) = 0;
+    virtual void startPingLoad(LocalFrame&, ResourceRequest&, const HTTPHeaderMap& originalRequestHeaders, const FetchOptions&, ContentSecurityPolicyImposition, PingLoadCompletionHandler&& = { }) = 0;
 
     using PreconnectCompletionHandler = Function<void(const ResourceError&)>;
     enum class ShouldPreconnectAsFirstParty : bool { No, Yes };

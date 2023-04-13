@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -45,6 +45,8 @@ RemoteLayerTreeTransaction& RemoteLayerTreeTransaction::operator=(RemoteLayerTre
 
 RemoteLayerTreeTransaction::LayerCreationProperties::LayerCreationProperties()
     : type(WebCore::PlatformCALayer::LayerTypeLayer)
+    , playerIdentifier(std::nullopt)
+    , naturalSize(std::nullopt)
     , hostingContextID(0)
     , hostingDeviceScaleFactor(1)
     , preservesFlip(false)
@@ -57,10 +59,16 @@ void RemoteLayerTreeTransaction::LayerCreationProperties::encode(IPC::Encoder& e
     encoder << type;
     
     // PlatformCALayerRemoteCustom
+    encoder << playerIdentifier;
+    encoder << naturalSize;
+    encoder << initialSize;
     encoder << hostingContextID;
     encoder << hostingDeviceScaleFactor;
     encoder << preservesFlip;
-    
+
+    // PlatformCALayerRemoteHost
+    encoder << hostIdentifier;
+
 #if ENABLE(MODEL_ELEMENT)
     // PlatformCALayerRemoteModelHosting
     encoder << !!model;
@@ -79,6 +87,13 @@ auto RemoteLayerTreeTransaction::LayerCreationProperties::decode(IPC::Decoder& d
         return std::nullopt;
     
     // PlatformCALayerRemoteCustom
+    if (!decoder.decode(result.playerIdentifier))
+        return std::nullopt;
+    if (!decoder.decode(result.naturalSize))
+        return std::nullopt;
+    if (!decoder.decode(result.initialSize))
+        return std::nullopt;
+
     if (!decoder.decode(result.hostingContextID))
         return std::nullopt;
 
@@ -87,7 +102,11 @@ auto RemoteLayerTreeTransaction::LayerCreationProperties::decode(IPC::Decoder& d
     
     if (!decoder.decode(result.preservesFlip))
         return std::nullopt;
-    
+
+    // PlatformCALayerRemoteHost
+    if (!decoder.decode(result.hostIdentifier))
+        return std::nullopt;
+
 #if ENABLE(MODEL_ELEMENT)
     // PlatformCALayerRemoteModelHosting
     bool hasModel;
@@ -112,6 +131,10 @@ RemoteLayerTreeTransaction::LayerProperties::LayerProperties(const LayerProperti
     , children(other.children)
     , addedAnimations(other.addedAnimations)
     , keysOfAnimationsToRemove(other.keysOfAnimationsToRemove)
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
+    , effects(other.effects)
+    , baseValues(other.baseValues)
+#endif
     , position(other.position)
     , anchorPoint(other.anchorPoint)
     , bounds(other.bounds)
@@ -179,6 +202,10 @@ void RemoteLayerTreeTransaction::LayerProperties::encode(IPC::Encoder& encoder) 
     if (changedProperties & LayerChange::AnimationsChanged) {
         encoder << addedAnimations;
         encoder << keysOfAnimationsToRemove;
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
+        encoder << effects;
+        encoder << baseValues;
+#endif
     }
 
     if (changedProperties & LayerChange::PositionChanged)
@@ -335,6 +362,13 @@ bool RemoteLayerTreeTransaction::LayerProperties::decode(IPC::Decoder& decoder, 
 
         if (!decoder.decode(result.keysOfAnimationsToRemove))
             return false;
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
+        if (!decoder.decode(result.effects))
+            return false;
+
+        if (!decoder.decode(result.baseValues))
+            return false;
+#endif
     }
 
     if (result.changedProperties & LayerChange::PositionChanged) {
@@ -506,13 +540,13 @@ bool RemoteLayerTreeTransaction::LayerProperties::decode(IPC::Decoder& decoder, 
         if (!decoder.decode(hasFrontBuffer))
             return false;
         if (hasFrontBuffer) {
-            auto backingStore = makeUnique<RemoteLayerBackingStore>(nullptr);
+            auto backingStore = makeUnique<RemoteLayerBackingStoreProperties>();
             if (!decoder.decode(*backingStore))
                 return false;
             
-            result.backingStore = WTFMove(backingStore);
+            result.backingStoreProperties = WTFMove(backingStore);
         } else
-            result.backingStore = nullptr;
+            result.backingStoreProperties = nullptr;
     }
 
     if (result.changedProperties & LayerChange::BackingStoreAttachmentChanged) {
@@ -574,6 +608,7 @@ void RemoteLayerTreeTransaction::encode(IPC::Encoder& encoder) const
 {
     encoder << m_rootLayerID;
     encoder << m_createdLayers;
+    encoder << m_remoteContextHostedIdentifier;
 
     encoder << static_cast<uint64_t>(m_changedLayers.size());
 
@@ -601,6 +636,7 @@ void RemoteLayerTreeTransaction::encode(IPC::Encoder& encoder) const
 
 #if PLATFORM(MAC)
     encoder << m_pageScalingLayerID;
+    encoder << m_scrolledContentsLayerID;
 #endif
 
     encoder << m_pageScaleFactor;
@@ -646,12 +682,15 @@ bool RemoteLayerTreeTransaction::decode(IPC::Decoder& decoder, RemoteLayerTreeTr
     if (!decoder.decode(result.m_createdLayers))
         return false;
 
+    if (!decoder.decode(result.m_remoteContextHostedIdentifier))
+        return false;
+
     uint64_t numChangedLayerProperties;
     if (!decoder.decode(numChangedLayerProperties))
         return false;
 
     for (uint64_t i = 0; i < numChangedLayerProperties; ++i) {
-        WebCore::GraphicsLayer::PlatformLayerID layerID;
+        WebCore::PlatformLayerIdentifier layerID;
         if (!decoder.decode(layerID))
             return false;
 
@@ -710,6 +749,8 @@ bool RemoteLayerTreeTransaction::decode(IPC::Decoder& decoder, RemoteLayerTreeTr
 
 #if PLATFORM(MAC)
     if (!decoder.decode(result.m_pageScalingLayerID))
+        return false;
+    if (!decoder.decode(result.m_scrolledContentsLayerID))
         return false;
 #endif
 
@@ -783,7 +824,7 @@ bool RemoteLayerTreeTransaction::decode(IPC::Decoder& decoder, RemoteLayerTreeTr
     return true;
 }
 
-void RemoteLayerTreeTransaction::setRootLayerID(WebCore::GraphicsLayer::PlatformLayerID rootLayerID)
+void RemoteLayerTreeTransaction::setRootLayerID(WebCore::PlatformLayerIdentifier rootLayerID)
 {
     ASSERT_ARG(rootLayerID, rootLayerID);
 
@@ -800,38 +841,17 @@ void RemoteLayerTreeTransaction::setCreatedLayers(Vector<LayerCreationProperties
     m_createdLayers = WTFMove(createdLayers);
 }
 
-void RemoteLayerTreeTransaction::setDestroyedLayerIDs(Vector<WebCore::GraphicsLayer::PlatformLayerID> destroyedLayerIDs)
+void RemoteLayerTreeTransaction::setDestroyedLayerIDs(Vector<WebCore::PlatformLayerIdentifier> destroyedLayerIDs)
 {
     m_destroyedLayerIDs = WTFMove(destroyedLayerIDs);
 }
 
-void RemoteLayerTreeTransaction::setLayerIDsWithNewlyUnreachableBackingStore(Vector<WebCore::GraphicsLayer::PlatformLayerID> layerIDsWithNewlyUnreachableBackingStore)
+void RemoteLayerTreeTransaction::setLayerIDsWithNewlyUnreachableBackingStore(Vector<WebCore::PlatformLayerIdentifier> layerIDsWithNewlyUnreachableBackingStore)
 {
     m_layerIDsWithNewlyUnreachableBackingStore = WTFMove(layerIDsWithNewlyUnreachableBackingStore);
 }
 
 #if !defined(NDEBUG) || !LOG_DISABLED
-
-static const char* nameForBackingStoreType(RemoteLayerBackingStore::Type type)
-{
-    switch (type) {
-    case RemoteLayerBackingStore::Type::IOSurface:
-        return "IOSurface";
-    case RemoteLayerBackingStore::Type::Bitmap:
-        return "Bitmap";
-    }
-    return nullptr;
-}
-
-static TextStream& operator<<(TextStream& ts, const RemoteLayerBackingStore& backingStore)
-{
-    ts << backingStore.size();
-    ts << " scale=" << backingStore.scale();
-    if (backingStore.isOpaque())
-        ts << " opaque";
-    ts << " " << nameForBackingStoreType(backingStore.type());
-    return ts;
-}
 
 static void dumpChangedLayers(TextStream& ts, const RemoteLayerTreeTransaction::LayerPropertiesMap& changedLayerProperties)
 {
@@ -855,7 +875,7 @@ static void dumpChangedLayers(TextStream& ts, const RemoteLayerTreeTransaction::
             ts.dumpProperty("name", layerProperties.name);
 
         if (layerProperties.changedProperties & LayerChange::ChildrenChanged)
-            ts.dumpProperty<Vector<WebCore::GraphicsLayer::PlatformLayerID>>("children", layerProperties.children);
+            ts.dumpProperty<Vector<WebCore::PlatformLayerIdentifier>>("children", layerProperties.children);
 
         if (layerProperties.changedProperties & LayerChange::PositionChanged)
             ts.dumpProperty("position", layerProperties.position);
@@ -941,8 +961,8 @@ static void dumpChangedLayers(TextStream& ts, const RemoteLayerTreeTransaction::
             ts.dumpProperty("timeOffset", layerProperties.timeOffset);
 
         if (layerProperties.changedProperties & LayerChange::BackingStoreChanged) {
-            if (const RemoteLayerBackingStore* backingStore = layerProperties.backingStore.get())
-                ts.dumpProperty<const RemoteLayerBackingStore&>("backingStore", *backingStore);
+            if (auto* backingStoreProperties = layerProperties.backingStoreProperties.get())
+                ts.dumpProperty("backingStore", *backingStoreProperties);
             else
                 ts.dumpProperty("backingStore", "removed");
         }
@@ -969,6 +989,9 @@ static void dumpChangedLayers(TextStream& ts, const RemoteLayerTreeTransaction::
 
         if (layerProperties.changedProperties & LayerChange::UserInteractionEnabledChanged)
             ts.dumpProperty("userInteractionEnabled", layerProperties.userInteractionEnabled);
+
+        if (layerProperties.changedProperties & LayerChange::EventRegionChanged)
+            ts.dumpProperty("eventRegion", layerProperties.eventRegion);
 
 #if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
         if (layerProperties.changedProperties & LayerChange::SeparatedChanged)
@@ -1013,6 +1036,7 @@ String RemoteLayerTreeTransaction::description() const
 
 #if PLATFORM(MAC)
     ts.dumpProperty("pageScalingLayer", m_pageScalingLayerID);
+    ts.dumpProperty("scrolledContentsLayerID", m_scrolledContentsLayerID);
 #endif
 
     ts.dumpProperty("minimumScaleFactor", m_minimumScaleFactor);
@@ -1054,7 +1078,7 @@ String RemoteLayerTreeTransaction::description() const
     dumpChangedLayers(ts, m_changedLayerProperties);
 
     if (!m_destroyedLayerIDs.isEmpty())
-        ts.dumpProperty<Vector<WebCore::GraphicsLayer::PlatformLayerID>>("destroyed-layers", m_destroyedLayerIDs);
+        ts.dumpProperty<Vector<WebCore::PlatformLayerIdentifier>>("destroyed-layers", m_destroyedLayerIDs);
 
     if (m_editorState) {
         TextStream::GroupScope scope(ts);

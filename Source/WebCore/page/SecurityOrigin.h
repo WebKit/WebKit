@@ -28,19 +28,14 @@
 
 #pragma once
 
-#include "ProcessQualified.h"
 #include "SecurityOriginData.h"
 #include <wtf/ArgumentCoder.h>
 #include <wtf/EnumTraits.h>
 #include <wtf/Hasher.h>
-#include <wtf/Markable.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
-
-enum OpaqueOriginIdentifierType { };
-using OpaqueOriginIdentifier = ProcessQualified<ObjectIdentifier<OpaqueOriginIdentifierType>>;
 
 class SecurityOrigin : public ThreadSafeRefCounted<SecurityOrigin> {
 public:
@@ -55,7 +50,8 @@ public:
 
     WEBCORE_EXPORT static Ref<SecurityOrigin> createFromString(const String&);
     WEBCORE_EXPORT static Ref<SecurityOrigin> create(const String& protocol, const String& host, std::optional<uint16_t> port);
-    WEBCORE_EXPORT static Ref<SecurityOrigin> create(WebCore::SecurityOriginData&&, String&& domain, String&& filePath, Markable<OpaqueOriginIdentifier, OpaqueOriginIdentifier::MarkableTraits>&&, bool universalAccess, bool domainWasSetInDOM, bool canLoadLocalResources, bool enforcesFilePathSeparation, bool needsStorageAccessFromFileURLsQuirk, std::optional<bool> isPotentiallyTrustworthy, bool isLocal);
+    WEBCORE_EXPORT static Ref<SecurityOrigin> create(SecurityOriginData&&);
+    WEBCORE_EXPORT static Ref<SecurityOrigin> create(WebCore::SecurityOriginData&&, String&& domain, String&& filePath, bool universalAccess, bool domainWasSetInDOM, bool canLoadLocalResources, bool enforcesFilePathSeparation, bool needsStorageAccessFromFileURLsQuirk, std::optional<bool> isPotentiallyTrustworthy, bool isLocal);
 
     // QuickLook documents are in non-local origins even when loaded from file: URLs. They need to
     // be allowed to display their own file: URLs in order to perform reloads and same-document
@@ -86,10 +82,10 @@ public:
     void setDomainFromDOM(const String& newDomain);
     bool domainWasSetInDOM() const { return m_domainWasSetInDOM; }
 
-    const String& protocol() const { return m_data.protocol; }
-    const String& host() const { return m_data.host; }
+    const String& protocol() const { return m_data.protocol(); }
+    const String& host() const { return m_data.host(); }
     const String& domain() const { return m_domain; }
-    std::optional<uint16_t> port() const { return m_data.port; }
+    std::optional<uint16_t> port() const { return m_data.port(); }
 
     static bool shouldIgnoreHost(const URL&);
 
@@ -142,7 +138,7 @@ public:
     // Explicitly grant the ability to access very other SecurityOrigin.
     //
     // WARNING: This is an extremely powerful ability. Use with caution!
-    void grantUniversalAccess();
+    WEBCORE_EXPORT void grantUniversalAccess();
     bool hasUniversalAccess() const { return m_universalAccess; }
 
     void grantStorageAccessFromFileURLsQuirk();
@@ -162,7 +158,7 @@ public:
     // There's a subtle difference between an opaque origin and an origin that
     // has the SandboxOrigin flag set. The latter implies the former, and, in
     // addition, the SandboxOrigin flag is inherited by iframes.
-    bool isOpaque() const { return !!m_opaqueOriginIdentifier; }
+    bool isOpaque() const { return m_data.isOpaque(); }
 
     // Marks a file:// origin as being in a domain defined by its path.
     // FIXME 81578: The naming of this is confusing. Files with restricted access to other local files
@@ -218,21 +214,20 @@ public:
 
     const SecurityOriginData& data() const { return m_data; }
 
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static RefPtr<SecurityOrigin> decode(Decoder&);
-
 private:
     friend struct IPC::ArgumentCoder<SecurityOrigin, void>;
     WEBCORE_EXPORT SecurityOrigin();
     explicit SecurityOrigin(const URL&);
     explicit SecurityOrigin(const SecurityOrigin*);
+    explicit SecurityOrigin(SecurityOriginData&&);
+    void initializeShared(const URL&);
 
     // FIXME: Rename this function to something more semantic.
     bool passesFileCheck(const SecurityOrigin&) const;
 
     // This method checks that the scheme for this origin is an HTTP-family
     // scheme, e.g. HTTP and HTTPS.
-    bool isHTTPFamily() const { return m_data.protocol == "http"_s || m_data.protocol == "https"_s; }
+    bool isHTTPFamily() const { return m_data.protocol() == "http"_s || m_data.protocol() == "https"_s; }
     
     enum ShouldAllowFromThirdParty { AlwaysAllowFromThirdParty, MaybeAllowFromThirdParty };
     WEBCORE_EXPORT bool canAccessStorage(const SecurityOrigin*, ShouldAllowFromThirdParty = MaybeAllowFromThirdParty) const;
@@ -240,7 +235,6 @@ private:
     SecurityOriginData m_data;
     String m_domain;
     String m_filePath;
-    Markable<OpaqueOriginIdentifier, OpaqueOriginIdentifier::MarkableTraits> m_opaqueOriginIdentifier;
     bool m_universalAccess { false };
     bool m_domainWasSetInDOM { false };
     bool m_canLoadLocalResources { false };
@@ -258,7 +252,7 @@ bool serializedOriginsMatch(const SecurityOrigin*, const SecurityOrigin*);
 
 inline void add(Hasher& hasher, const SecurityOrigin& origin)
 {
-    add(hasher, origin.protocol(), origin.host(), origin.port());
+    add(hasher, origin.data());
 }
 
 } // namespace WebCore

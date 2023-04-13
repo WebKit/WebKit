@@ -1,0 +1,17 @@
+<!DOCTYPE html><!-- webkit-test-runner [ AttachmentElementEnabled=true AttachmentWideLayoutEnabled=true ] -->
+<html>
+<body>
+<attachment></attachment>
+<script>
+const filename = "../resources/test-file.txt";
+if (window.internals)
+    file = window.internals.createFile(filename);
+
+var attachments = document.getElementsByTagName("attachment");
+for (var i = 0; i < attachments.length; i++) {
+    attachments[i].file = file;
+    attachments[i].title = filename;
+}
+</script>
+</body>
+</html>

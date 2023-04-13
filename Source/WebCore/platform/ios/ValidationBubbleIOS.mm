@@ -187,15 +187,17 @@ ValidationBubble::~ValidationBubble()
 
 void ValidationBubble::show()
 {
-    if ([m_popoverController parentViewController] || [m_popoverController presentingViewController])
+    if ([m_popoverController parentViewController] || [m_popoverController presentingViewController] || m_startingToPresentViewController)
         return;
 
     // Protect the validation bubble so it stays alive until it is effectively presented. UIKit does not deal nicely with
     // dismissing a popover that is being presented.
     RefPtr<ValidationBubble> protectedThis(this);
+    m_startingToPresentViewController = true;
     [m_presentingViewController presentViewController:m_popoverController.get() animated:NO completion:[protectedThis]() {
         // Hide this popover from VoiceOver and instead announce the message.
         [protectedThis->m_popoverController view].accessibilityElementsHidden = YES;
+        protectedThis->m_startingToPresentViewController = false;
     }];
 
     PAL::softLinkUIKitUIAccessibilityPostNotification(PAL::get_UIKit_UIAccessibilityAnnouncementNotification(), m_message);

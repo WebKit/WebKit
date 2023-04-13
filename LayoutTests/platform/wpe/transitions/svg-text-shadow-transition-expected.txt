@@ -10,9 +10,9 @@ layer at (0,0) size 800x156
               chunk 1 text run 1 at (10.00,50.00) startOffset 0 endOffset 15 width 277.00: "Shadow on texts"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (0,104) size 784x36
-        RenderText {#text} at (0,0) size 577x17
-          text run at (0,0) width 577: "PASS - \"text-shadow\" property for \"text\" element at 0s saw something close to: -25,-5,0,15"
-        RenderBR {BR} at (577,0) size 0x17
-        RenderText {#text} at (0,18) size 559x17
-          text run at (0,18) width 559: "PASS - \"text-shadow\" property for \"text\" element at 1s saw something close to: 5,5,0,15"
-        RenderBR {BR} at (559,18) size 0x17
+        RenderText {#text} at (0,0) size 576x17
+          text run at (0,0) width 576: "PASS - \"text-shadow\" property for \"text\" element at 0s saw something close to: -25,-5,0,15"
+        RenderBR {BR} at (575,0) size 1x17
+        RenderText {#text} at (0,18) size 558x17
+          text run at (0,18) width 558: "PASS - \"text-shadow\" property for \"text\" element at 1s saw something close to: 5,5,0,15"
+        RenderBR {BR} at (557,18) size 1x17

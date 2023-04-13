@@ -178,6 +178,15 @@ window.UIHelper = class UIHelper {
         }
     }
 
+    static async waitForConditionAsync(conditionFunc)
+    {
+        var condition = await conditionFunc();
+        while (!condition) {
+            await UIHelper.animationFrame();
+            condition = await conditionFunc();
+        }
+    }
+
     static sendEventStream(eventStream)
     {
         const eventStreamAsString = JSON.stringify(eventStream);
@@ -433,6 +442,13 @@ window.UIHelper = class UIHelper {
     {
         return new Promise((resolve) => {
             testRunner.runUIScript(`uiController.toggleCapsLock(() => uiController.uiScriptComplete());`, resolve);
+        });
+    }
+
+    static keyboardWillHideCount()
+    {
+        return new Promise(resolve => {
+            testRunner.runUIScript(`uiController.keyboardWillHideCount`, result => resolve(parseInt(result)));
         });
     }
 
@@ -851,6 +867,36 @@ window.UIHelper = class UIHelper {
                 resolve(JSON.parse(jsonString));
             });
         });
+    }
+
+    static scrollbarState(scroller, isVertical)
+    {
+        var internalFunctions = scroller ? scroller.ownerDocument.defaultView.internals : internals;
+        if (!this.isWebKit2() || this.isIOSFamily())
+            return Promise.resolve();
+        if (internals.isUsingUISideCompositing()) {
+            return new Promise(resolve => {
+                testRunner.runUIScript(`(function() {
+                    uiController.doAfterNextStablePresentationUpdate(function() {
+                        uiController.uiScriptComplete(uiController.scrollbarStateForScrollingNodeID(${internalFunctions.scrollingNodeIDForNode(scroller)}, ${isVertical}));
+                    });
+                })()`, state => {
+                    resolve(state);
+                });
+            });    
+        } else {
+            return isVertical ? Promise.resolve(internalFunctions.verticalScrollbarState(scroller)) : Promise.resolve(internalFunctions.horizontalScrollbarState(scroller));
+        }
+    }
+
+    static verticalScrollbarState(scroller)
+    {
+        return UIHelper.scrollbarState(scroller, true);
+    }
+
+    static horizontalScrollbarState(scroller)
+    {
+        return UIHelper.scrollbarState(scroller, false);
     }
 
     static getUICaretViewRect()

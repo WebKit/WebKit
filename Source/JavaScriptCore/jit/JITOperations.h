@@ -30,7 +30,7 @@
 #include "JITMathICForwards.h"
 #include "JITOperationValidation.h"
 #include "PrivateFieldPutKind.h"
-#include "SlowPathReturnType.h"
+#include "UGPRPair.h"
 #include <wtf/Platform.h>
 #include <wtf/text/UniquedStringImpl.h>
 
@@ -108,7 +108,7 @@ typedef char* UnusedPtr;
     Re: RegExp*
     Reo: RegExpObject*
     S: size_t
-    Sprt: SlowPathReturnType
+    Sprt: UGPRPair
     Ssi: StructureStubInfo*
     St: Structure*
     Symtab: SymbolTable*
@@ -129,7 +129,7 @@ using J_JITOperation_GJJ = EncodedJSValue(JIT_OPERATION_ATTRIBUTES *)(JSGlobalOb
 using J_JITOperation_GJJMic = EncodedJSValue(JIT_OPERATION_ATTRIBUTES *)(JSGlobalObject*, EncodedJSValue, EncodedJSValue, void*);
 using Z_JITOperation_GJZZ = int32_t(JIT_OPERATION_ATTRIBUTES *)(JSGlobalObject*, EncodedJSValue, int32_t, int32_t);
 using F_JITOperation_GFJZZ = CallFrame*(JIT_OPERATION_ATTRIBUTES *)(JSGlobalObject*, CallFrame*, EncodedJSValue, int32_t, int32_t);
-using Sprt_JITOperation_EGCli = SlowPathReturnType(JIT_OPERATION_ATTRIBUTES *)(CallFrame*, JSGlobalObject*, CallLinkInfo*);
+using Sprt_JITOperation_EGCli = UGPRPair(JIT_OPERATION_ATTRIBUTES *)(CallFrame*, JSGlobalObject*, CallLinkInfo*);
 using V_JITOperation_Cb = void(JIT_OPERATION_ATTRIBUTES *)(CodeBlock*);
 using Z_JITOperation_G = int32_t (JIT_OPERATION_ATTRIBUTES *)(JSGlobalObject*);
 using P_JITOperation_VmStZB = char*(JIT_OPERATION_ATTRIBUTES *)(VM*, Structure*, int32_t, Butterfly*);
@@ -161,7 +161,7 @@ JSC_DECLARE_JIT_OPERATION(operationThrowStackOverflowErrorFromThunk, void, (JSGl
 JSC_DECLARE_JIT_OPERATION(operationThrowIteratorResultIsNotObject, void, (JSGlobalObject*));
 JSC_DECLARE_JIT_OPERATION(operationGetWrappedValueForCaller, EncodedJSValue, (JSRemoteFunction*, EncodedJSValue));
 JSC_DECLARE_JIT_OPERATION(operationGetWrappedValueForTarget, EncodedJSValue, (JSRemoteFunction*, EncodedJSValue));
-JSC_DECLARE_JIT_OPERATION(operationMaterializeRemoteFunctionTargetCode, SlowPathReturnType, (JSRemoteFunction*));
+JSC_DECLARE_JIT_OPERATION(operationMaterializeRemoteFunctionTargetCode, UGPRPair, (JSRemoteFunction*));
 JSC_DECLARE_JIT_OPERATION(operationThrowRemoteFunctionException, EncodedJSValue, (JSRemoteFunction*));
 
 JSC_DECLARE_JIT_OPERATION(operationThrowStackOverflowError, void, (CodeBlock*));
@@ -170,6 +170,7 @@ JSC_DECLARE_JIT_OPERATION(operationTryGetById, EncodedJSValue, (JSGlobalObject*,
 JSC_DECLARE_JIT_OPERATION(operationTryGetByIdGeneric, EncodedJSValue, (JSGlobalObject*, EncodedJSValue, uintptr_t));
 JSC_DECLARE_JIT_OPERATION(operationTryGetByIdOptimize, EncodedJSValue, (JSGlobalObject*, StructureStubInfo*, EncodedJSValue, uintptr_t));
 JSC_DECLARE_JIT_OPERATION(operationGetById, EncodedJSValue, (JSGlobalObject*, StructureStubInfo*, EncodedJSValue, uintptr_t));
+JSC_DECLARE_JIT_OPERATION(operationGetByIdMegamorphic, EncodedJSValue, (JSGlobalObject*, StructureStubInfo*, EncodedJSValue, uintptr_t));
 JSC_DECLARE_JIT_OPERATION(operationGetByIdGeneric, EncodedJSValue, (JSGlobalObject*, EncodedJSValue, uintptr_t));
 JSC_DECLARE_JIT_OPERATION(operationGetByIdOptimize, EncodedJSValue, (JSGlobalObject*, StructureStubInfo*, EncodedJSValue, uintptr_t));
 JSC_DECLARE_JIT_OPERATION(operationGetByIdWithThis, EncodedJSValue, (JSGlobalObject*, StructureStubInfo*, EncodedJSValue, EncodedJSValue, uintptr_t));
@@ -221,9 +222,9 @@ JSC_DECLARE_JIT_OPERATION(operationPutByValSetPrivateFieldGeneric, void, (JSGlob
 
 JSC_DECLARE_JIT_OPERATION(operationCallDirectEvalSloppy, EncodedJSValue, (void*, JSScope*, EncodedJSValue));
 JSC_DECLARE_JIT_OPERATION(operationCallDirectEvalStrict, EncodedJSValue, (void*, JSScope*, EncodedJSValue));
-JSC_DECLARE_JIT_OPERATION(operationLinkCall, SlowPathReturnType, (CallFrame*, JSGlobalObject*, CallLinkInfo*));
-JSC_DECLARE_JIT_OPERATION(operationLinkPolymorphicCall, SlowPathReturnType, (CallFrame*, JSGlobalObject*, CallLinkInfo*));
-JSC_DECLARE_JIT_OPERATION(operationVirtualCall, SlowPathReturnType, (CallFrame*, JSGlobalObject*, CallLinkInfo*));
+JSC_DECLARE_JIT_OPERATION(operationLinkCall, UGPRPair, (CallFrame*, JSGlobalObject*, CallLinkInfo*));
+JSC_DECLARE_JIT_OPERATION(operationLinkPolymorphicCall, UGPRPair, (CallFrame*, JSGlobalObject*, CallLinkInfo*));
+JSC_DECLARE_JIT_OPERATION(operationVirtualCall, UGPRPair, (CallFrame*, JSGlobalObject*, CallLinkInfo*));
 
 JSC_DECLARE_JIT_OPERATION(operationCompareLess, size_t, (JSGlobalObject*, EncodedJSValue, EncodedJSValue));
 JSC_DECLARE_JIT_OPERATION(operationCompareLessEq, size_t, (JSGlobalObject*, EncodedJSValue, EncodedJSValue));
@@ -258,8 +259,8 @@ JSC_DECLARE_JIT_OPERATION(operationHandleTraps, UnusedPtr, (JSGlobalObject*));
 JSC_DECLARE_JIT_OPERATION(operationThrow, void, (JSGlobalObject*, EncodedJSValue));
 JSC_DECLARE_JIT_OPERATION(operationDebug, void, (VM*, int32_t));
 #if ENABLE(DFG_JIT)
-JSC_DECLARE_JIT_OPERATION(operationOptimize, SlowPathReturnType, (VM*, uint32_t));
-JSC_DECLARE_JIT_OPERATION(operationTryOSREnterAtCatchAndValueProfile, SlowPathReturnType, (VM*, uint32_t));
+JSC_DECLARE_JIT_OPERATION(operationOptimize, UGPRPair, (VM*, uint32_t));
+JSC_DECLARE_JIT_OPERATION(operationTryOSREnterAtCatchAndValueProfile, UGPRPair, (VM*, uint32_t));
 #endif
 JSC_DECLARE_JIT_OPERATION(operationPutGetterById, void, (JSGlobalObject*, JSCell*, UniquedStringImpl*, int32_t options, JSCell*));
 JSC_DECLARE_JIT_OPERATION(operationPutSetterById, void, (JSGlobalObject*, JSCell*, UniquedStringImpl*, int32_t options, JSCell*));

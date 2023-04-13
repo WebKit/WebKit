@@ -29,7 +29,7 @@
 #include "CSSStyleSheet.h"
 #include "JSStyleSheetCustom.h"
 #include "MediaList.h"
-#include "WebCoreOpaqueRoot.h"
+#include "WebCoreOpaqueRootInlines.h"
 
 namespace WebCore {
 

@@ -23,12 +23,12 @@
 #include "config.h"
 #include "KeyboardEvent.h"
 
-#include "DOMWindow.h"
 #include "Document.h"
 #include "Editor.h"
 #include "EventHandler.h"
 #include "EventNames.h"
-#include "Frame.h"
+#include "LocalDOMWindow.h"
+#include "LocalFrame.h"
 #include "PlatformKeyboardEvent.h"
 #include "WindowsKeyboardCodes.h"
 #include <wtf/IsoMallocInlines.h>
@@ -111,7 +111,7 @@ inline KeyboardEvent::KeyboardEvent(const PlatformKeyboardEvent& key, RefPtr<Win
     , m_keyIdentifier(AtomString { key.keyIdentifier() })
     , m_location(keyLocationCode(key))
     , m_repeat(key.isAutoRepeat())
-    , m_isComposing(view && is<DOMWindow>(view->window()) && downcast<DOMWindow>(*view->window()).frame() && downcast<DOMWindow>(*view->window()).frame()->editor().hasComposition())
+    , m_isComposing(view && is<LocalDOMWindow>(view->window()) && downcast<LocalDOMWindow>(*view->window()).frame() && downcast<LocalDOMWindow>(*view->window()).frame()->editor().hasComposition())
 #if USE(APPKIT) || PLATFORM(IOS_FAMILY)
     , m_handledByInputMethod(key.handledByInputMethod())
 #endif
@@ -206,8 +206,8 @@ int KeyboardEvent::charCode() const
     // We match Firefox, unless in backward compatibility mode, where we always return the character code.
     bool backwardCompatibilityMode = false;
     auto* window = view() ? view()->window() : nullptr;
-    if (is<DOMWindow>(window) && downcast<DOMWindow>(*window).frame())
-        backwardCompatibilityMode = downcast<DOMWindow>(*window).frame()->eventHandler().needsKeyboardEventDisambiguationQuirks();
+    if (is<LocalDOMWindow>(window) && downcast<LocalDOMWindow>(*window).frame())
+        backwardCompatibilityMode = downcast<LocalDOMWindow>(*window).frame()->eventHandler().needsKeyboardEventDisambiguationQuirks();
 
     if (!m_underlyingPlatformEvent || (type() != eventNames().keypressEvent && !backwardCompatibilityMode))
         return 0;

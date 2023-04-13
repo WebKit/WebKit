@@ -78,7 +78,7 @@ public:
         // For systems using x87 instead of sse, there's no hardware support
         // to flush denormals automatically. Hence, we need to flush
         // denormals to zero manually.
-        return (fabs(f) < FLT_MIN) ? 0.0f : f;
+        return (std::abs(f) < FLT_MIN) ? 0.0f : f;
 #else
         return f;
 #endif
@@ -139,7 +139,7 @@ public:
     // need to flush denormals to zero manually.
     static inline float flushDenormalFloatToZero(float f)
     {
-        return (fabs(f) < FLT_MIN) ? 0.0f : f;
+        return (std::abs(f) < FLT_MIN) ? 0.0f : f;
     }
 };
 

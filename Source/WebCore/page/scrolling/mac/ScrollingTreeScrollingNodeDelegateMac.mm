@@ -42,12 +42,13 @@ namespace WebCore {
 
 ScrollingTreeScrollingNodeDelegateMac::ScrollingTreeScrollingNodeDelegateMac(ScrollingTreeScrollingNode& scrollingNode)
     : ThreadedScrollingTreeScrollingNodeDelegate(scrollingNode)
+    , m_scrollerPair(ScrollerPairMac::create(scrollingNode))
 {
 }
 
 ScrollingTreeScrollingNodeDelegateMac::~ScrollingTreeScrollingNodeDelegateMac()
 {
-    releaseReferencesToScrollerImpsOnTheMainThread();
+    m_scrollerPair->releaseReferencesToScrollerImpsOnTheMainThread();
 }
 
 void ScrollingTreeScrollingNodeDelegateMac::nodeWillBeDestroyed()
@@ -58,10 +59,42 @@ void ScrollingTreeScrollingNodeDelegateMac::nodeWillBeDestroyed()
 void ScrollingTreeScrollingNodeDelegateMac::updateFromStateNode(const ScrollingStateScrollingNode& scrollingStateNode)
 {
     if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::PainterForScrollbar)) {
-        releaseReferencesToScrollerImpsOnTheMainThread();
-        m_verticalScrollerImp = scrollingStateNode.verticalScrollerImp();
-        m_horizontalScrollerImp = scrollingStateNode.horizontalScrollerImp();
+        auto horizontalScrollbar = scrollingStateNode.horizontalScrollerImp();
+        auto verticalScrollbar = scrollingStateNode.verticalScrollerImp();
+        if (horizontalScrollbar || verticalScrollbar) {
+            m_scrollerPair->releaseReferencesToScrollerImpsOnTheMainThread();
+            m_scrollerPair->horizontalScroller().setScrollerImp(horizontalScrollbar);
+            m_scrollerPair->verticalScroller().setScrollerImp(verticalScrollbar);
+        }
     }
+    
+    if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::ScrollbarHoverState))
+        m_scrollerPair->mouseIsInScrollbar(scrollingStateNode.scrollbarHoverState());
+    
+    if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::HorizontalScrollbarLayer) && scrollingNode().horizontalNativeScrollbarVisibility() == NativeScrollbarVisibility::Visible)
+        m_scrollerPair->horizontalScroller().setHostLayer(static_cast<CALayer*>(scrollingStateNode.horizontalScrollbarLayer()));
+    
+    if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::VerticalScrollbarLayer) && scrollingNode().verticalNativeScrollbarVisibility() == NativeScrollbarVisibility::Visible)
+        m_scrollerPair->verticalScroller().setHostLayer(static_cast<CALayer*>(scrollingStateNode.verticalScrollbarLayer()));
+
+    if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::ScrollableAreaParams)) {
+        if (scrollingStateNode.scrollableAreaParameters().horizontalNativeScrollbarVisibility != NativeScrollbarVisibility::Visible)
+            m_scrollerPair->horizontalScroller().setHostLayer(nullptr);
+        if (scrollingStateNode.scrollableAreaParameters().verticalNativeScrollbarVisibility != NativeScrollbarVisibility::Visible)
+            m_scrollerPair->verticalScroller().setHostLayer(nullptr);
+    }
+    
+    if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::ContentAreaHoverState)) {
+        if (scrollingStateNode.mouseIsOverContentArea())
+            m_scrollerPair->mouseEnteredContentArea();
+        else
+            m_scrollerPair->mouseExitedContentArea();
+    }
+    
+    if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::MouseActivityState))
+        m_scrollerPair->mouseMovedInContentArea();
+
+    m_scrollerPair->updateValues();
 
     ThreadedScrollingTreeScrollingNodeDelegate::updateFromStateNode(scrollingStateNode);
 }
@@ -75,10 +108,8 @@ bool ScrollingTreeScrollingNodeDelegateMac::handleWheelEvent(const PlatformWheel
     else if (wheelEvent.momentumPhase() == PlatformWheelEventPhase::Ended || wheelEvent.momentumPhase() == PlatformWheelEventPhase::Cancelled)
         m_inMomentumPhase = false;
     
-    if (wasInMomentumPhase != m_inMomentumPhase) {
-        [m_verticalScrollerImp setUsePresentationValue:m_inMomentumPhase];
-        [m_horizontalScrollerImp setUsePresentationValue:m_inMomentumPhase];
-    }
+    if (wasInMomentumPhase != m_inMomentumPhase)
+        m_scrollerPair->setUsePresentationValues(m_inMomentumPhase);
 
     auto deferrer = ScrollingTreeWheelEventTestMonitorCompletionDeferrer { scrollingTree(), scrollingNode().scrollingNodeID(), WheelEventTestMonitor::HandlingWheelEvent };
 
@@ -267,39 +298,59 @@ void ScrollingTreeScrollingNodeDelegateMac::rubberBandingStateChanged(bool inRub
 
 void ScrollingTreeScrollingNodeDelegateMac::updateScrollbarPainters()
 {
-    if (m_inMomentumPhase && (m_verticalScrollerImp || m_horizontalScrollerImp)) {
+    if (m_inMomentumPhase && m_scrollerPair->hasScrollerImp() && m_scrollerPair->isUsingPresentationValues()) {
         BEGIN_BLOCK_OBJC_EXCEPTIONS
-        auto scrollOffset = scrollingNode().currentScrollOffset();
-
         [CATransaction lock];
 
-        if ([m_verticalScrollerImp shouldUsePresentationValue]) {
-            float presentationValue;
-            float overhangAmount;
-            ScrollableArea::computeScrollbarValueAndOverhang(scrollOffset.y(), totalContentsSize().height(), scrollableAreaSize().height(), presentationValue, overhangAmount);
-            [m_verticalScrollerImp setPresentationValue:presentationValue];
-        }
+        auto horizontalValues = m_scrollerPair->valuesForOrientation(ScrollbarOrientation::Horizontal);
+        m_scrollerPair->setHorizontalScrollbarPresentationValue(horizontalValues.value);
 
-        if ([m_horizontalScrollerImp shouldUsePresentationValue]) {
-            float presentationValue;
-            float overhangAmount;
-            ScrollableArea::computeScrollbarValueAndOverhang(scrollOffset.x(), totalContentsSize().width(), scrollableAreaSize().width(), presentationValue, overhangAmount);
-            [m_horizontalScrollerImp setPresentationValue:presentationValue];
-        }
+        auto verticalValues = m_scrollerPair->valuesForOrientation(ScrollbarOrientation::Vertical);
+        m_scrollerPair->setVerticalScrollbarPresentationValue(verticalValues.value);
 
         [CATransaction unlock];
         END_BLOCK_OBJC_EXCEPTIONS
     }
 }
 
-void ScrollingTreeScrollingNodeDelegateMac::releaseReferencesToScrollerImpsOnTheMainThread()
+void ScrollingTreeScrollingNodeDelegateMac::initScrollbars()
 {
-    if (m_verticalScrollerImp || m_horizontalScrollerImp) {
-        // FIXME: This is a workaround in place for the time being since NSScrollerImps cannot be deallocated
-        // on a non-main thread. rdar://problem/24535055
-        WTF::callOnMainThread([verticalScrollerImp = WTFMove(m_verticalScrollerImp), horizontalScrollerImp = WTFMove(m_horizontalScrollerImp)] {
-        });
-    }
+    m_scrollerPair->init();
+}
+
+void ScrollingTreeScrollingNodeDelegateMac::updateScrollbarLayers()
+{
+    m_scrollerPair->updateValues();
+}
+
+void ScrollingTreeScrollingNodeDelegateMac::handleWheelEventPhase(const PlatformWheelEventPhase wheelEventPhase)
+{
+    m_scrollerPair->handleWheelEventPhase(wheelEventPhase);
+}
+
+bool ScrollingTreeScrollingNodeDelegateMac::handleMouseEventForScrollbars(const PlatformMouseEvent& mouseEvent)
+{
+    return m_scrollerPair->handleMouseEvent(mouseEvent);
+}
+
+void ScrollingTreeScrollingNodeDelegateMac::viewWillStartLiveResize()
+{
+    return m_scrollerPair->viewWillStartLiveResize();
+}
+
+void ScrollingTreeScrollingNodeDelegateMac::viewWillEndLiveResize()
+{
+    return m_scrollerPair->viewWillEndLiveResize();
+}
+
+void ScrollingTreeScrollingNodeDelegateMac::viewSizeDidChange()
+{
+    return m_scrollerPair->contentsSizeChanged();
+}
+
+String ScrollingTreeScrollingNodeDelegateMac::scrollbarStateForOrientation(ScrollbarOrientation orientation) const
+{
+    return m_scrollerPair->scrollbarStateForOrientation(orientation);
 }
 
 } // namespace WebCore

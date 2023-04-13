@@ -167,7 +167,7 @@ input[type=range]::-webkit-slider-runnable-track {
     height: 100%;
 }
 
-body.docked:matches(.right, .left) #navigation-sidebar.collapsed > .resizer {
+body.docked:is(.right, .left) #navigation-sidebar.collapsed > .resizer {
     pointer-events: none;
 }
 
@@ -460,7 +460,7 @@ body[dir=rtl] [dir=ltr] .go-to-arrow {
     }
 }
 
-:matches(img, canvas).show-grid {
+:is(img, canvas).show-grid {
     background-color: var(--checkerboard-light-square);
     background-image: linear-gradient(315deg, transparent 75%, var(--checkerboard-dark-square) 75%),
                       linear-gradient(45deg, transparent 75%, var(--checkerboard-dark-square) 75%),
@@ -519,64 +519,9 @@ body[dir=rtl] [dir=ltr] .go-to-arrow {
     50% { opacity: 0.6; }
 }
 
-.tab-bar > .navigation-bar :matches(.console-warnings, .console-errors):not(.disabled).pulsing {
+.tab-bar > .navigation-bar :is(.console-warnings, .console-errors):not(.disabled).pulsing {
     animation-name: tab-bar-console-item-pulse;
     animation-duration: 0.75s;
-}
-
-.device-settings-content {
-    position: relative;
-    padding: 0 4px;
-}
-
-.device-settings-content > table {
-    border-collapse: separate;
-    border-spacing: 4px 8px;
-}
-
-.device-settings-content > table > tr > td:first-child {
-    text-align: end;
-    vertical-align: top;
-}
-
-.device-settings-content .container {
-    display: flex;
-}
-
-.device-settings-content .container > * + * {
-    margin-inline-start: 8px;
-}
-
-.device-settings-content .column {
-    display: flex;
-    flex-direction: column;
-}
-
-.device-settings-content .user-agent select {
-    display: block;
-    margin: -2px 0 0;
-}
-
-.device-settings-content .user-agent input {
-    display: block;
-    width: 100%;
-    margin: 6px 0 0;
-}
-
-.device-settings-content label + label {
-    margin-top: 4px;
-}
-
-
-.device-settings-content label > input {
-    margin: 0;
-    margin-inline: 0.5px 4px;
-}
-
-.device-settings-content > .reference-page-link-container {
-    position: absolute;
-    bottom: 0.5em;
-    inset-inline-end: 0.5em;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -617,7 +562,7 @@ body[dir=rtl] [dir=ltr] .go-to-arrow {
         color: inherit;
     }
 
-    :matches(img, canvas).show-grid {
+    :is(img, canvas).show-grid {
         --checkerboard-dark-square: hsl(0, 0%, 5%);
     }
 }

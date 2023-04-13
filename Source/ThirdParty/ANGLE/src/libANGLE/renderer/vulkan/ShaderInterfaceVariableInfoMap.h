@@ -88,9 +88,7 @@ class ShaderInterfaceVariableInfoMap final : angle::NonCopyable
     bool hasAtomicCounterInfo(gl::ShaderType shaderType) const;
     const ShaderInterfaceVariableInfo &getAtomicCounterInfo(gl::ShaderType shaderType) const;
     const ShaderInterfaceVariableInfo &getFramebufferFetchInfo(gl::ShaderType shaderType) const;
-#if ANGLE_ENABLE_METAL_SPIRV
     bool hasTransformFeedbackInfo(gl::ShaderType shaderType, uint32_t bufferIndex) const;
-#endif
     const ShaderInterfaceVariableInfo &getTransformFeedbackInfo(gl::ShaderType shaderType,
                                                                 uint32_t bufferIndex) const;
 

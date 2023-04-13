@@ -40,14 +40,17 @@ InlineContent::InlineContent(const LineLayout& lineLayout)
 
 bool InlineContent::hasContent() const
 {
-    ASSERT(boxes.isEmpty() || boxes[0].isRootInlineBox());
-    return boxes.size() > 1;
+    ASSERT(m_displayContent.boxes.isEmpty() || m_displayContent.boxes[0].isRootInlineBox());
+    return m_displayContent.boxes.size() > 1;
 }
 
 IteratorRange<const InlineDisplay::Box*> InlineContent::boxesForRect(const LayoutRect& rect) const
 {
-    if (boxes.isEmpty())
+    if (m_displayContent.boxes.isEmpty())
         return { nullptr, nullptr };
+
+    auto& lines = m_displayContent.lines;
+    auto& boxes = m_displayContent.boxes;
 
     if (lines.first().inkOverflow().maxY() > rect.y() && lines.last().inkOverflow().y() < rect.maxY())
         return { &boxes.first(), &boxes.last() + 1 };
@@ -84,7 +87,7 @@ IteratorRange<const InlineDisplay::Box*> InlineContent::boxesForRect(const Layou
 
 InlineContent::~InlineContent()
 {
-    for (auto& box : boxes)
+    for (auto& box : m_displayContent.boxes)
         TextPainter::removeGlyphDisplayList(box);
 }
 
@@ -100,20 +103,21 @@ const RenderBlockFlow& InlineContent::formattingContextRoot() const
 
 size_t InlineContent::indexForBox(const InlineDisplay::Box& box) const
 {
-    auto index = static_cast<size_t>(&box - boxes.begin());
-    RELEASE_ASSERT(index < boxes.size());
+    auto index = static_cast<size_t>(&box - m_displayContent.boxes.begin());
+    RELEASE_ASSERT(index < m_displayContent.boxes.size());
     return index;
 }
 
 const InlineDisplay::Box* InlineContent::firstBoxForLayoutBox(const Layout::Box& layoutBox) const
 {
     auto index = firstBoxIndexForLayoutBox(layoutBox);
-    return index ? &boxes[*index] : nullptr;
+    return index ? &m_displayContent.boxes[*index] : nullptr;
 }
 
 std::optional<size_t> InlineContent::firstBoxIndexForLayoutBox(const Layout::Box& layoutBox) const
 {
     constexpr auto cacheThreshold = 16;
+    auto& boxes = m_displayContent.boxes;
 
     if (boxes.size() < cacheThreshold) {
         for (size_t i = 0; i < boxes.size(); ++i) {
@@ -144,6 +148,7 @@ std::optional<size_t> InlineContent::firstBoxIndexForLayoutBox(const Layout::Box
 const Vector<size_t>& InlineContent::nonRootInlineBoxIndexesForLayoutBox(const Layout::Box& layoutBox) const
 {
     ASSERT(layoutBox.isElementBox());
+    auto& boxes = m_displayContent.boxes;
 
     if (!m_inlineBoxIndexCache) {
         m_inlineBoxIndexCache = makeUnique<InlineBoxIndexCache>();
@@ -176,8 +181,8 @@ void InlineContent::releaseCaches()
 
 void InlineContent::shrinkToFit()
 {
-    boxes.shrinkToFit();
-    lines.shrinkToFit();
+    m_displayContent.boxes.shrinkToFit();
+    m_displayContent.lines.shrinkToFit();
 }
 
 }

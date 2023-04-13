@@ -94,7 +94,7 @@ public:
 
     float maxTimeSeekable() const final;
 
-    std::unique_ptr<PlatformTimeRanges> buffered() const final;
+    const PlatformTimeRanges& buffered() const final;
 
     bool didLoadingProgress() const final;
 
@@ -116,7 +116,6 @@ protected:
     friend HRESULT beginGetEvent(WeakPtr<MediaPlayerPrivateMediaFoundation>, COMPtr<IMFMediaSession>);
 
 private:
-    float maxTimeLoaded() const { return m_maxTimeLoaded; }
 
     WeakPtr<MediaPlayerPrivateMediaFoundation> m_weakThis;
     MediaPlayer* m_player;
@@ -129,7 +128,7 @@ private:
     bool m_hasAudio;
     bool m_hasVideo;
     float m_volume;
-    mutable float m_maxTimeLoaded { 0 };
+    mutable PlatformTimeRanges m_buffered;
     MediaPlayer::NetworkState m_networkState;
     MediaPlayer::ReadyState m_readyState;
 
@@ -294,7 +293,7 @@ private:
         D3DDISPLAYMODE m_displayMode;
 
         Lock m_lock;
-        
+
         COMPtr<IDirect3D9Ex> m_direct3D9;
         COMPtr<IDirect3DDevice9Ex> m_device;
         COMPtr<IDirect3DDeviceManager9> m_deviceManager;

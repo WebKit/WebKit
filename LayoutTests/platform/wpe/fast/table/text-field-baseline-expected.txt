@@ -9,29 +9,29 @@ layer at (0,0) size 800x561
       RenderBlock {div} at (18,61) size 732x15
         RenderText {#text} at (0,0) size 581x14
           text run at (0,0) width 581: "error on line 63 at column 111: Opening and ending tag mismatch: br line 63 and div"
-          text run at (581,0) width 0: " "
+          text run at (580,0) width 1: " "
       RenderBlock {h3} at (18,94) size 732x23
-        RenderText {#text} at (0,0) size 429x21
-          text run at (0,0) width 429: "Below is a rendering of the page up to the first error."
+        RenderText {#text} at (0,0) size 427x21
+          text run at (0,0) width 427: "Below is a rendering of the page up to the first error."
     RenderBody {body} at (8,168) size 784x377
       RenderBlock {p} at (0,0) size 784x376
         RenderBlock (anonymous) at (0,0) size 784x36
           RenderText {#text} at (0,0) size 172x17
             text run at (0,0) width 172: "This is a regression test for "
-          RenderInline {i} at (0,0) size 738x35
+          RenderInline {i} at (0,0) size 737x35
             RenderInline {a} at (0,0) size 348x17 [color=#0000EE]
               RenderText {#text} at (172,0) size 348x17
                 text run at (172,0) width 348: "http://bugzilla.opendarwin.org/show_bug.cgi?id=9122"
-            RenderText {#text} at (520,0) size 738x35
-              text run at (520,0) width 4: " "
-              text run at (524,0) width 214: "REGRESSION: Incorrect vertical"
+            RenderText {#text} at (519,0) size 737x35
+              text run at (519,0) width 5: " "
+              text run at (523,0) width 214: "REGRESSION: Incorrect vertical"
               text run at (0,18) width 304: "position for text fields in a \"display: table\" block"
           RenderText {#text} at (304,18) size 4x17
             text run at (304,18) width 4: "."
         RenderBlock {p} at (0,52) size 784x36
-          RenderText {#text} at (0,0) size 745x35
-            text run at (0,0) width 745: "Type something in the text field. Resize the window. The text field should not jump down. Delete what you typed and"
-            text run at (0,18) width 320: "resize the window. The text field should not move."
+          RenderText {#text} at (0,0) size 783x35
+            text run at (0,0) width 783: "Type something in the text field. Resize the window. The text field should not jump down. Delete what you typed and resize"
+            text run at (0,18) width 279: "the window. The text field should not move."
         RenderBlock {form} at (0,104) size 784x272
           RenderTable {dl} at (0,0) size 198x24
             RenderTableSection (anonymous) at (0,0) size 198x24

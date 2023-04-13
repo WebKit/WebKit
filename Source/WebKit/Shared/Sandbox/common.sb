@@ -36,23 +36,24 @@
 (deny system-privilege (privilege-id PRIV_GLOBAL_PROC_INFO) (with no-report))
 
 #if USE(SANDBOX_VERSION_3)
+#if PLATFORM(MACCATALYST) || HAVE(UIKIT_WEBKIT_INTERNALS)
 (allow file-link (with telemetry) (with report))
 (allow system-fcntl (with telemetry) (with report))
 (allow file-map-executable (with telemetry) (with report))
 (allow iokit-open-service (with telemetry) (with report))
 (allow system-mac-syscall (with telemetry) (with report))
-
 (allow darwin-notification-post (with telemetry) (with report))
 (allow file-clone (with telemetry) (with report))
 (allow fs-quota* (with telemetry) (with report))
 (allow fs-snapshot-mount (with telemetry) (with report))
-(allow mach-bootstrap)
 (allow mach-cross-domain-lookup (with telemetry) (with report))
-(allow mach-kernel-endpoint)
 (allow process-info-codesignature (with telemetry) (with report))
-(allow system-memorystatus-control)
+#endif
+(allow mach-bootstrap)
+(allow mach-kernel-endpoint)
 (allow file-test-existence)
 (allow syscall-mach)
+(allow system-memorystatus-control)
 #endif // USE(SANDBOX_VERSION_3)
 
 ;; Sandbox extensions

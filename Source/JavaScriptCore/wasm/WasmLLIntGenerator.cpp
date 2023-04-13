@@ -256,8 +256,10 @@ public:
         return push(NoConsistencyCheck);
     }
 
-    void didPopValueFromStack() { --m_stackSize; }
+    void didPopValueFromStack(ExpressionType, String) { --m_stackSize; }
     void notifyFunctionUsesSIMD() { ASSERT(Options::useWebAssemblySIMD()); m_usesSIMD = true; }
+
+    PartialResult WARN_UNUSED_RETURN addDrop(ExpressionType);
 
     PartialResult WARN_UNUSED_RETURN addArguments(const TypeDefinition&);
     PartialResult WARN_UNUSED_RETURN addLocal(Type, uint32_t);
@@ -268,6 +270,7 @@ public:
     PartialResult WARN_UNUSED_RETURN addRefIsNull(ExpressionType value, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addRefFunc(uint32_t index, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addRefAsNonNull(ExpressionType, ExpressionType&);
+    PartialResult WARN_UNUSED_RETURN addRefEq(ExpressionType, ExpressionType, ExpressionType&);
 
     // Tables
     PartialResult WARN_UNUSED_RETURN addTableGet(unsigned, ExpressionType index, ExpressionType& result);
@@ -315,13 +318,20 @@ public:
     PartialResult WARN_UNUSED_RETURN addI31GetU(ExpressionType ref, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addArrayNew(uint32_t index, ExpressionType size, ExpressionType value, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addArrayNewDefault(uint32_t index, ExpressionType size, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addArrayNewFixed(uint32_t index, Vector<ExpressionType>& args, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addArrayGet(ExtGCOpType arrayGetKind, uint32_t typeIndex, ExpressionType arrayref, ExpressionType index, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addArrayNewData(uint32_t typeIndex, uint32_t dataIndex, ExpressionType size, ExpressionType offset, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addArrayNewElem(uint32_t typeIndex, uint32_t elemSegmentIndex, ExpressionType size, ExpressionType offset, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addArraySet(uint32_t typeIndex, ExpressionType arrayref, ExpressionType index, ExpressionType value);
     PartialResult WARN_UNUSED_RETURN addArrayLen(ExpressionType arrayref, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addStructNew(uint32_t index, Vector<ExpressionType>& args, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addStructNewDefault(uint32_t index, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addStructGet(ExpressionType structReference, const StructType&, uint32_t fieldIndex, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addStructSet(ExpressionType structReference, const StructType&, uint32_t fieldIndex, ExpressionType value);
+    PartialResult WARN_UNUSED_RETURN addRefTest(ExpressionType reference, bool allowNull, int32_t heapType, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addRefCast(ExpressionType reference, bool allowNull, int32_t heapType, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addExternInternalize(ExpressionType reference, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addExternExternalize(ExpressionType reference, ExpressionType& result);
 
     // Basic operators
 #define X(name, opcode, short, idx, ...) \
@@ -366,6 +376,8 @@ public:
     PartialResult WARN_UNUSED_RETURN addUnreachable();
     PartialResult WARN_UNUSED_RETURN addCrash();
 
+    ALWAYS_INLINE void willParseOpcode() { }
+    ALWAYS_INLINE void didParseOpcode() { }
     void didFinishParsingLocals();
 
     void setParser(FunctionParser<LLIntGenerator>* parser) { m_parser = parser; };
@@ -550,13 +562,14 @@ private:
     HashMap<Label*, Vector<SwitchEntry>> m_switches;
     ExpressionType m_jsNullConstant;
     ExpressionType m_zeroConstant;
-    ResultList m_unitializedLocals;
+    ResultList m_uninitializedLocals;
     HashMap<EncodedJSValue, VirtualRegister, WTF::IntHash<EncodedJSValue>, ConstantMapHashTraits> m_constantMap;
     Vector<VirtualRegister, 2> m_results;
     Checked<unsigned> m_stackSize { 0 };
     Checked<unsigned> m_maxStackSize { 0 };
     Checked<unsigned> m_tryDepth { 0 };
     bool m_usesExceptions { false };
+    bool m_usesAtomics { false };
     bool m_usesSIMD { false };
 };
 
@@ -707,6 +720,9 @@ auto LLIntGenerator::callInformationForCaller(const FunctionSignature& signature
         case TypeKind::Structref:
         case TypeKind::Array:
         case TypeKind::Arrayref:
+        case TypeKind::Eqref:
+        case TypeKind::Anyref:
+        case TypeKind::Nullref:
         case TypeKind::I31ref:
         case TypeKind::Rec:
         case TypeKind::Sub:
@@ -744,6 +760,9 @@ auto LLIntGenerator::callInformationForCaller(const FunctionSignature& signature
         case TypeKind::Structref:
         case TypeKind::Array:
         case TypeKind::Arrayref:
+        case TypeKind::Eqref:
+        case TypeKind::Anyref:
+        case TypeKind::Nullref:
         case TypeKind::I31ref:
         case TypeKind::Rec:
         case TypeKind::Sub:
@@ -811,6 +830,9 @@ auto LLIntGenerator::callInformationForCallee(const FunctionSignature& signature
         case TypeKind::Structref:
         case TypeKind::Array:
         case TypeKind::Arrayref:
+        case TypeKind::Eqref:
+        case TypeKind::Anyref:
+        case TypeKind::Nullref:
         case TypeKind::I31ref:
         case TypeKind::Rec:
         case TypeKind::Sub:
@@ -819,6 +841,11 @@ auto LLIntGenerator::callInformationForCallee(const FunctionSignature& signature
     }
 
     return m_results;
+}
+
+auto LLIntGenerator::addDrop(ExpressionType) -> PartialResult
+{
+    return { };
 }
 
 auto LLIntGenerator::addArguments(const TypeDefinition& signature) -> PartialResult
@@ -869,6 +896,9 @@ auto LLIntGenerator::addArguments(const TypeDefinition& signature) -> PartialRes
         case TypeKind::Structref:
         case TypeKind::Array:
         case TypeKind::Arrayref:
+        case TypeKind::Eqref:
+        case TypeKind::Anyref:
+        case TypeKind::Nullref:
         case TypeKind::I31ref:
         case TypeKind::Rec:
         case TypeKind::Sub:
@@ -886,23 +916,27 @@ auto LLIntGenerator::addLocal(Type type, uint32_t count) -> PartialResult
     checkConsistency();
 
     m_codeBlock->m_numVars += count;
-    if (isFuncref(type) || isExternref(type)) {
+    // All ref-typed locals (funcref, externref, GC types) have to be
+    // initialized to the JS null value (not 0)
+    if (isRefType(type)) {
         while (count--)
-            m_unitializedLocals.append(push(NoConsistencyCheck));
+            m_uninitializedLocals.append(push(NoConsistencyCheck));
     } else
         m_stackSize += count;
+    if (m_maxStackSize < m_stackSize)
+        m_maxStackSize = m_stackSize;
     return { };
 }
 
 void LLIntGenerator::didFinishParsingLocals()
 {
-    if (m_unitializedLocals.isEmpty())
+    if (m_uninitializedLocals.isEmpty())
         return;
 
     auto null = jsNullConstant();
-    for (auto local : m_unitializedLocals)
+    for (auto local : m_uninitializedLocals)
         WasmMov::emit(this, local, null);
-    m_unitializedLocals.clear();
+    m_uninitializedLocals.clear();
 }
 
 auto LLIntGenerator::addConstantWithoutPush(Type type, int64_t value) -> ExpressionType
@@ -1239,6 +1273,11 @@ auto LLIntGenerator::addReturn(const ControlType& data, Stack& returnValues) -> 
         return { };
     }
 
+    // We should materialize locals when return more than one values, since 
+    // it might clobber arguments before use them (see examples in wasm-tuple-return.js).
+    if (returnValues.size() > 1)
+        materializeConstantsAndLocals(returnValues);
+
     // no need to drop keep here, since we have to move anyway
     unifyValuesWithBlock(callInformationForCallee(*data.m_signature->as<FunctionSignature>()), returnValues);
     WasmRet::emit(this);
@@ -1353,7 +1392,11 @@ auto LLIntGenerator::endTopLevel(BlockSignature signature, const Stack& expressi
 {
     RELEASE_ASSERT(expressionStack.size() == signature->as<FunctionSignature>()->returnCount());
     if (m_usesSIMD)
-        m_info.addSIMDFunction(m_functionIndex);
+        m_info.markUsesSIMD(m_functionIndex);
+    if (m_usesExceptions)
+        m_info.markUsesExceptions(m_functionIndex);
+    if (m_usesAtomics)
+        m_info.markUsesAtomics(m_functionIndex);
     m_info.doneSeeingFunction(m_functionIndex);
 
     if (!signature->as<FunctionSignature>()->returnCount()) {
@@ -1461,6 +1504,11 @@ auto LLIntGenerator::addRefAsNonNull(ExpressionType reference, ExpressionType& r
     WasmRefAsNonNull::emit(this, result, reference);
 
     return { };
+}
+
+auto LLIntGenerator::addRefEq(ExpressionType ref0, ExpressionType ref1, ExpressionType& result) -> PartialResult
+{
+    return addI64Eq(ref0, ref1, result);
 }
 
 auto LLIntGenerator::addTableGet(unsigned tableIndex, ExpressionType index, ExpressionType& result) -> PartialResult
@@ -1678,6 +1726,7 @@ auto LLIntGenerator::store(StoreOpType op, ExpressionType pointer, ExpressionTyp
 
 auto LLIntGenerator::atomicLoad(ExtAtomicOpType op, Type, ExpressionType pointer, ExpressionType& result, uint32_t offset) -> PartialResult
 {
+    m_usesAtomics = true;
     result = push();
     switch (op) {
     case ExtAtomicOpType::I32AtomicLoad8U:
@@ -1704,6 +1753,7 @@ auto LLIntGenerator::atomicLoad(ExtAtomicOpType op, Type, ExpressionType pointer
 
 auto LLIntGenerator::atomicStore(ExtAtomicOpType op, Type, ExpressionType pointer, ExpressionType value, uint32_t offset) -> PartialResult
 {
+    m_usesAtomics = true;
     auto result = push();
     switch (op) {
     case ExtAtomicOpType::I32AtomicStore8U:
@@ -1725,12 +1775,13 @@ auto LLIntGenerator::atomicStore(ExtAtomicOpType op, Type, ExpressionType pointe
         RELEASE_ASSERT_NOT_REACHED();
     }
 
-    didPopValueFromStack(); // Ignore the result.
+    didPopValueFromStack(result, "LLINT ATOMIC IGNORE"_s); // Ignore the result.
     return { };
 }
 
 auto LLIntGenerator::atomicBinaryRMW(ExtAtomicOpType op, Type, ExpressionType pointer, ExpressionType value, ExpressionType& result, uint32_t offset) -> PartialResult
 {
+    m_usesAtomics = true;
     result = push();
     switch (op) {
     case ExtAtomicOpType::I32AtomicRmw8AddU:
@@ -1833,6 +1884,7 @@ auto LLIntGenerator::atomicBinaryRMW(ExtAtomicOpType op, Type, ExpressionType po
 
 auto LLIntGenerator::atomicCompareExchange(ExtAtomicOpType op, Type, ExpressionType pointer, ExpressionType expected, ExpressionType value, ExpressionType& result, uint32_t offset) -> PartialResult
 {
+    m_usesAtomics = true;
     result = push();
     switch (op) {
     case ExtAtomicOpType::I32AtomicRmw8CmpxchgU:
@@ -1860,6 +1912,7 @@ auto LLIntGenerator::atomicCompareExchange(ExtAtomicOpType op, Type, ExpressionT
 
 auto LLIntGenerator::atomicWait(ExtAtomicOpType op, ExpressionType pointer, ExpressionType value, ExpressionType timeout, ExpressionType& result, uint32_t offset) -> PartialResult
 {
+    m_usesAtomics = true;
     result = push();
     switch (op) {
     case ExtAtomicOpType::MemoryAtomicWait32:
@@ -1877,6 +1930,7 @@ auto LLIntGenerator::atomicWait(ExtAtomicOpType op, ExpressionType pointer, Expr
 
 auto LLIntGenerator::atomicNotify(ExtAtomicOpType op, ExpressionType pointer, ExpressionType count, ExpressionType& result, uint32_t offset) -> PartialResult
 {
+    m_usesAtomics = true;
     result = push();
     RELEASE_ASSERT(op == ExtAtomicOpType::MemoryAtomicNotify);
     WasmMemoryAtomicNotify::emit(this, result, pointer, offset, count);
@@ -1885,6 +1939,7 @@ auto LLIntGenerator::atomicNotify(ExtAtomicOpType op, ExpressionType pointer, Ex
 
 auto LLIntGenerator::atomicFence(ExtAtomicOpType, uint8_t) -> PartialResult
 {
+    m_usesAtomics = true;
     WasmAtomicFence::emit(this);
     return { };
 }
@@ -1951,7 +2006,7 @@ auto LLIntGenerator::addI31GetU(ExpressionType ref, ExpressionType& result) -> P
 auto LLIntGenerator::addArrayNew(uint32_t index, ExpressionType size, ExpressionType value, ExpressionType& result) -> PartialResult
 {
     result = push();
-    WasmArrayNew::emit(this, result, size, value, index, static_cast<bool>(UseDefaultValue::No));
+    WasmArrayNew::emit(this, result, size, value, index, static_cast<uint8_t>(ArrayGetKind::New));
 
     return { };
 }
@@ -1959,8 +2014,56 @@ auto LLIntGenerator::addArrayNew(uint32_t index, ExpressionType size, Expression
 auto LLIntGenerator::addArrayNewDefault(uint32_t index, ExpressionType size, ExpressionType& result) -> PartialResult
 {
     result = push();
-    WasmArrayNew::emit(this, result, size, ExpressionType(), index, static_cast<bool>(UseDefaultValue::Yes));
+    WasmArrayNew::emit(this, result, size, ExpressionType(), index, static_cast<uint8_t>(ArrayGetKind::NewDefault));
 
+    return { };
+}
+
+auto LLIntGenerator::addArrayNewFixed(uint32_t index, Vector<ExpressionType>& args, ExpressionType& result) -> PartialResult
+{
+    // Special-case the 0-arguments case since the logic below only makes sense with at least one argument
+    if (!args.size()) {
+        result = push();
+        WasmArrayNew::emit(this, result, addConstantWithoutPush(Types::I32, args.size()), ExpressionType(), index, static_cast<uint8_t>(ArrayGetKind::NewFixed));
+        return { };
+    }
+
+    // Allocate stack slots for the arguments
+    m_stackSize += args.size();
+
+    // See the `addStructNew` operation for rationale
+    walkExpressionStack(args, [&](VirtualRegister& arg, VirtualRegister slot) {
+        if (arg == slot)
+            return;
+        WasmMov::emit(this, slot, arg);
+        arg = slot;
+    });
+
+    // Arguments are passed in reverse order (the last arg will be at the highest virtual register index, which
+    // will have the lowest address.)
+    // The implementation of array_new_fixed has to iterate over its arguments in reverse order.
+    result = args[0];
+    WasmArrayNew::emit(this, result, addConstantWithoutPush(Types::I32, args.size()), args.last(), index, static_cast<uint8_t>(ArrayGetKind::NewFixed));
+
+    // "Pop" arguments off stack, leaving the return value
+    m_stackSize -= args.size() - 1;
+
+    return { };
+}
+
+auto LLIntGenerator::addArrayNewData(uint32_t typeIndex, uint32_t dataIndex, ExpressionType size, ExpressionType offset, ExpressionType& result) -> PartialResult
+{
+    ResultList results;
+    addCallBuiltin(LLIntBuiltin::ArrayNewData, { addConstantWithoutPush(Types::I32, typeIndex), addConstantWithoutPush(Types::I32, dataIndex), size, offset }, results);
+    result = results.at(0);
+    return { };
+}
+
+auto LLIntGenerator::addArrayNewElem(uint32_t typeIndex, uint32_t elemSegmentIndex, ExpressionType size, ExpressionType offset, ExpressionType& result) -> PartialResult
+{
+    ResultList results;
+    addCallBuiltin(LLIntBuiltin::ArrayNewElem, { addConstantWithoutPush(Types::I32, typeIndex), addConstantWithoutPush(Types::I32, elemSegmentIndex), size, offset }, results);
+    result = results.at(0);
     return { };
 }
 
@@ -1989,21 +2092,35 @@ auto LLIntGenerator::addArrayLen(ExpressionType arrayref, ExpressionType& result
 
 auto LLIntGenerator::addStructNew(uint32_t index, Vector<ExpressionType>& args, ExpressionType& result) -> PartialResult
 {
-    result = push();
-
-    // We have to materialize the arguments here since it might include constants or
-    // delayed moves, but the wasm_struct_new opcode expects all the arguments to be contiguous
-    // in the stack.
-    for (unsigned i = args.size(); i > 0; --i) {
-        auto& arg = args[i - 1];
-        ExpressionType argLoc = push();
-        WasmMov::emit(this, argLoc, arg);
-        arg = argLoc;
+    // Special-case the 0-arguments case since the logic below only makes sense with at least one argument
+    if (!args.size()) {
+        result = push();
+        WasmStructNew::emit(this, result, index, static_cast<bool>(UseDefaultValue::No), VirtualRegister());
+        return { };
     }
 
-    WasmStructNew::emit(this, result, index, static_cast<bool>(UseDefaultValue::No), args.isEmpty() ? VirtualRegister() : args[0]);
+    // Allocate stack slots for walkExpressionStack() to use
+    m_stackSize += args.size();
 
-    m_stackSize -= args.size();
+    // The logic here is similar to addThrow(); see comments there.
+    // It's important to use walkExpressionStack() here and not call push() explicitly,
+    // because the stack consistency checking that push() does will fail if there's
+    // more than one struct field. The parser pops the arguments off the stack before
+    // calling into this method, and by pushing arguments, we get out of sync
+    // with the parser's expression stack.
+    walkExpressionStack(args, [&](VirtualRegister& arg, VirtualRegister slot) {
+        if (arg == slot)
+            return;
+        WasmMov::emit(this, slot, arg);
+        arg = slot;
+    });
+
+    result = args[0];
+    WasmStructNew::emit(this, result, index, static_cast<bool>(UseDefaultValue::No), args.last());
+
+    // "Pop" arguments off, minus one slot for the return value
+    m_stackSize -= args.size() - 1;
+
     return { };
 }
 
@@ -2027,6 +2144,40 @@ auto LLIntGenerator::addStructSet(ExpressionType structReference, const StructTy
 {
     WasmStructSet::emit(this, structReference, fieldIndex, value);
 
+    return { };
+}
+
+auto LLIntGenerator::addRefTest(ExpressionType reference, bool allowNull, int32_t heapType, ExpressionType& result) -> PartialResult
+{
+    ResultList results;
+    addCallBuiltin(LLIntBuiltin::RefTest, { reference, addConstantWithoutPush(Types::I32, static_cast<uint32_t>(allowNull)), addConstantWithoutPush(Types::I32, heapType) }, results);
+    ASSERT(results.size() == 1);
+    result = results.at(0);
+    return { };
+}
+
+auto LLIntGenerator::addRefCast(ExpressionType reference, bool allowNull, int32_t heapType, ExpressionType& result) -> PartialResult
+{
+    ResultList results;
+    addCallBuiltin(LLIntBuiltin::RefCast, { reference, addConstantWithoutPush(Types::I32, static_cast<uint32_t>(allowNull)), addConstantWithoutPush(Types::I32, heapType) }, results);
+    ASSERT(results.size() == 1);
+    result = results.at(0);
+    return { };
+}
+
+auto LLIntGenerator::addExternInternalize(ExpressionType reference, ExpressionType& result) -> PartialResult
+{
+    ResultList results;
+    addCallBuiltin(LLIntBuiltin::ExternInternalize, { reference }, results);
+    ASSERT(results.size() == 1);
+    result = results.at(0);
+    return { };
+}
+
+auto LLIntGenerator::addExternExternalize(ExpressionType reference, ExpressionType& result) -> PartialResult
+{
+    result = push();
+    WasmExternExternalize::emit(this, result, reference);
     return { };
 }
 

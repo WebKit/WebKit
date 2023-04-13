@@ -20,6 +20,7 @@
 #include "config.h"
 #include "UserMediaPermissionRequestProxy.h"
 
+#include "APIUIClient.h"
 #include "MediaPermissionUtilities.h"
 #include "UserMediaPermissionRequestManagerProxy.h"
 #include <WebCore/CaptureDeviceManager.h>
@@ -150,8 +151,8 @@ String convertEnumerationToString(UserMediaPermissionRequestProxy::UserMediaAcce
 void UserMediaPermissionRequestProxy::promptForGetDisplayMedia(UserMediaDisplayCapturePromptType promptType)
 {
 #if ENABLE(MEDIA_STREAM) && PLATFORM(COCOA)
-    ASSERT(m_manager && canPromptForGetDisplayMedia() && promptType != UserMediaDisplayCapturePromptType::UserChoose);
-    if (!m_manager || !canPromptForGetDisplayMedia() || promptType != UserMediaDisplayCapturePromptType::UserChoose) {
+    ASSERT(m_manager && canRequestDisplayCapturePermission() && promptType == UserMediaDisplayCapturePromptType::UserChoose);
+    if (!m_manager || !canRequestDisplayCapturePermission() || promptType != UserMediaDisplayCapturePromptType::UserChoose) {
         deny(UserMediaAccessDenialReason::PermissionDenied);
         return;
     }
@@ -190,21 +191,16 @@ void UserMediaPermissionRequestProxy::promptForGetUserMedia()
 void UserMediaPermissionRequestProxy::doDefaultAction()
 {
 #if ENABLE(MEDIA_STREAM) && PLATFORM(COCOA)
-    if (requiresDisplayCapture()) {
-        if (!canPromptForGetDisplayMedia()) {
-            deny(UserMediaAccessDenialReason::PermissionDenied);
-            return;
-        }
-
-        promptForGetDisplayMedia();
-    } else
+    if (requiresDisplayCapture())
+        promptForGetDisplayMedia(UserMediaDisplayCapturePromptType::UserChoose);
+    else
         promptForGetUserMedia();
 #else
     deny();
 #endif
 }
 
-bool UserMediaPermissionRequestProxy::canPromptForGetDisplayMedia()
+bool UserMediaPermissionRequestProxy::canRequestDisplayCapturePermission()
 {
 #if ENABLE(MEDIA_STREAM) && PLATFORM(IOS)
     return true;

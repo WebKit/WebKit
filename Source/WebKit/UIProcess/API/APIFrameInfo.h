@@ -27,15 +27,15 @@
 
 #include "APIObject.h"
 #include "FrameInfoData.h"
-#include "WebPageProxy.h"
 #include <WebCore/ResourceRequest.h>
 
 namespace WebCore {
-struct SecurityOriginData;
+class SecurityOriginData;
 }
 
 namespace WebKit {
 class WebFrameProxy;
+class WebPageProxy;
 struct FrameInfoData;
 }
 

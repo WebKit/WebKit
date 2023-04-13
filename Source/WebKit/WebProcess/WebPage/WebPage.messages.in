@@ -1,4 +1,4 @@
-# Copyright (C) 2010-2022 Apple Inc. All rights reserved.
+# Copyright (C) 2010-2023 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -22,7 +22,7 @@
 
 messages -> WebPage LegacyReceiver {
     SetInitialFocus(bool forward, bool isKeyboardEventValid, WebKit::WebKeyboardEvent event) -> ()
-    SetActivityState(OptionSet<WebCore::ActivityState::Flag> activityState, WebKit::ActivityStateChangeID activityStateChangeID) -> ()
+    SetActivityState(OptionSet<WebCore::ActivityState> activityState, WebKit::ActivityStateChangeID activityStateChangeID) -> ()
     SetLayerHostingMode(enum:uint8_t WebKit::LayerHostingMode layerHostingMode)
 
     SetBackgroundColor(std::optional<WebCore::Color> color)
@@ -56,9 +56,9 @@ messages -> WebPage LegacyReceiver {
 
 #if PLATFORM(IOS_FAMILY)
     SetViewportConfigurationViewLayoutSize(WebCore::FloatSize size, double scaleFactor, double minimumEffectiveDeviceWidth)
-    SetDeviceOrientation(int32_t deviceOrientation)
+    SetDeviceOrientation(WebCore::IntDegrees deviceOrientation)
     SetOverrideViewportArguments(std::optional<WebCore::ViewportArguments> arguments)
-    DynamicViewportSizeUpdate(WebCore::FloatSize viewLayoutSize, WebCore::FloatSize minimumUnobscuredSize, WebCore::FloatSize maximumUnobscuredSize, WebCore::FloatRect targetExposedContentRect, WebCore::FloatRect targetUnobscuredRect, WebCore::FloatRect targetUnobscuredRectInScrollViewCoordinates, WebCore::RectEdges<float> targetUnobscuredSafeAreaInsets, double scale, int32_t deviceOrientation, double minimumEffectiveDeviceWidth, uint64_t dynamicViewportSizeUpdateID)
+    DynamicViewportSizeUpdate(struct WebKit::DynamicViewportSizeUpdate target)
     
     SetScreenIsBeingCaptured(bool captured)
 
@@ -96,8 +96,8 @@ messages -> WebPage LegacyReceiver {
     ReplaceDictatedText(String oldText, String newText)
     ReplaceSelectedText(String oldText, String newText)
     RequestAutocorrectionData(String textForAutocorrection) -> (struct WebKit::WebAutocorrectionData data)
-    ApplyAutocorrection(String correction, String originalText) -> (String string)
-    SyncApplyAutocorrection(String correction, String originalText) -> (bool autocorrectionApplied) Synchronous
+    ApplyAutocorrection(String correction, String originalText, bool isCandidate) -> (String string)
+    SyncApplyAutocorrection(String correction, String originalText, bool isCandidate) -> (bool autocorrectionApplied) Synchronous
     HandleAutocorrectionContextRequest()
     RequestEvasionRectsAboveSelection() -> (Vector<WebCore::FloatRect> rects)
     RequestPositionInformation(struct WebKit::InteractionInformationRequest request)
@@ -340,7 +340,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     DidEndTextSearchOperation();
 
     RequestRectForFoundTextRange(struct WebKit::WebFoundTextRange range) -> (WebCore::FloatRect rect)
-    AddLayerForFindOverlay() -> (WebCore::GraphicsLayer::PlatformLayerID findLayerID)
+    AddLayerForFindOverlay() -> (WebCore::PlatformLayerIdentifier findLayerID)
     RemoveLayerForFindOverlay() -> ()
     
     AddMIMETypeWithCustomContentProvider(String mimeType)
@@ -449,8 +449,9 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 #if PLATFORM(IOS_FAMILY)
     ComputePagesForPrintingiOS(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo) -> (size_t pageCount) Synchronous
     DrawToPDFiOS(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo, size_t pageCount) -> (RefPtr<WebCore::SharedBuffer> data)
+    DrawToImage(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo, size_t pageCount) -> (WebKit::ShareableBitmapHandle data)
 #endif
-    DrawToPDF(WebCore::FrameIdentifier frameID, std::optional<WebCore::FloatRect> rect) -> (RefPtr<WebCore::SharedBuffer> data)
+    DrawToPDF(WebCore::FrameIdentifier frameID, std::optional<WebCore::FloatRect> rect, bool allowTransparentBackground) -> (RefPtr<WebCore::SharedBuffer> data)
 #endif
 #if PLATFORM(GTK)
     DrawPagesForPrinting(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo) -> (std::optional<WebKit::SharedMemory::Handle> data, WebCore::ResourceError error)
@@ -505,6 +506,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 #if PLATFORM(MAC)
     AttributedSubstringForCharacterRangeAsync(struct WebKit::EditingRange range) -> (struct WebCore::AttributedString string, struct WebKit::EditingRange range)
     RequestAcceptsFirstMouse(int eventNumber, WebKit::WebMouseEvent event) AllowedWhenWaitingForSyncReplyDuringUnboundedIPC
+    SetCaretAnimatorType(enum:uint8_t WebCore::CaretAnimatorType caretType)
 #endif
 
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
@@ -529,7 +531,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     WillStartUserTriggeredZooming();
 #endif
 
-    SetScrollPinningBehavior(uint32_t pinning)
+    SetScrollPinningBehavior(enum:uint8_t WebCore::ScrollPinningBehavior pinning)
     SetScrollbarOverlayStyle(std::optional<uint32_t> scrollbarStyle)
 
     GetBytecodeProfile() -> (String string)
@@ -553,8 +555,8 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 
     SemanticContextDidChange(bool useFormSemanticContext)
 
-    SetHeaderBannerHeightForTesting(int height)
-    SetFooterBannerHeightForTesting(int height)
+    SetHeaderBannerHeight(int height)
+    SetFooterBannerHeight(int height)
 
     DidEndMagnificationGesture()
 #endif
@@ -593,7 +595,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     SetUseIconLoadingClient(bool useIconLoadingClient)
 
 #if ENABLE(GAMEPAD)
-    GamepadActivity(Vector<WebKit::GamepadData> gamepadDatas, enum:bool WebCore::EventMakesGamepadsVisible eventVisibility)
+    GamepadActivity(Vector<std::optional<WebKit::GamepadData>> gamepadDatas, enum:bool WebCore::EventMakesGamepadsVisible eventVisibility)
 #endif
 
     RegisterURLSchemeHandler(WebKit::WebURLSchemeHandlerIdentifier handlerIdentifier, String scheme)
@@ -621,7 +623,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 
     SetDefersLoading(bool defersLoading)
 
-#if ENABLE(UI_PROCESS_PDF_HUD)
+#if ENABLE(PDFKIT_PLUGIN)
     ZoomPDFIn(WebKit::PDFPluginIdentifier identifier)
     ZoomPDFOut(WebKit::PDFPluginIdentifier identifier)
     SavePDF(WebKit::PDFPluginIdentifier identifier) -> (String filename, URL url, IPC::DataReference data)
@@ -650,11 +652,11 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 #endif
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
-    SendMessageToWebExtension(struct WebKit::UserMessage userMessage)
-    SendMessageToWebExtensionWithReply(struct WebKit::UserMessage userMessage) -> (struct WebKit::UserMessage replyMessage)
+    SendMessageToWebProcessExtension(struct WebKit::UserMessage userMessage)
+    SendMessageToWebProcessExtensionWithReply(struct WebKit::UserMessage userMessage) -> (struct WebKit::UserMessage replyMessage)
 #endif
 
-    StartTextManipulations(Vector<WebCore::TextManipulationController::ExclusionRule> exclusionRules) -> ()
+    StartTextManipulations(Vector<WebCore::TextManipulationController::ExclusionRule> exclusionRules, bool includeSubframes) -> ()
     CompleteTextManipulation(Vector<WebCore::TextManipulationItem> items) -> (bool allFailed, Vector<WebCore::TextManipulationController::ManipulationFailure> failures)
 
     SetOverriddenMediaType(String mediaType)
@@ -674,8 +676,10 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     SetAppHighlightsVisibility(enum:bool WebCore::HighlightVisibility highlightVisibility)
 #endif
 
-    HandleWheelEvent(WebKit::WebWheelEvent event, OptionSet<WebCore::WheelEventProcessingSteps> processingSteps)
+    HandleWheelEvent(WebKit::WebWheelEvent event, OptionSet<WebCore::WheelEventProcessingSteps> processingSteps, std::optional<bool> willStartSwipe) -> (uint64_t scrollingNodeID, std::optional<WebCore::WheelScrollGestureState> gestureState)
+#if PLATFORM(IOS_FAMILY)
     DispatchWheelEventWithoutScrolling(WebKit::WebWheelEvent event) -> (bool handled)
+#endif
 
     LastNavigationWasAppInitiated() -> (bool wasAppBound)
 
@@ -693,8 +697,8 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     NavigateServiceWorkerClient(WebCore::ScriptExecutionContextIdentifier documentIdentifier, URL url) -> (bool result)
 
 #if ENABLE(ARKIT_INLINE_PREVIEW_IOS)
-    ModelInlinePreviewDidLoad(WebCore::GraphicsLayer::PlatformLayerID layerID)
-    ModelInlinePreviewDidFailToLoad(WebCore::GraphicsLayer::PlatformLayerID layerID, WebCore::ResourceError error)
+    ModelInlinePreviewDidLoad(WebCore::PlatformLayerIdentifier layerID)
+    ModelInlinePreviewDidFailToLoad(WebCore::PlatformLayerIdentifier layerID, WebCore::ResourceError error)
 #endif
 
 #if HAVE(UIKIT_RESIZABLE_WINDOWS)
@@ -708,11 +712,14 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     GenerateTestReport(String message, String group);
 
 #if ENABLE(NETWORK_CONNECTION_INTEGRITY)
-    SetLookalikeCharacterStrings(Vector<String> strings);
+    SetLookalikeCharacterStrings(Vector<WebCore::LookalikeCharactersSanitizationData> strings);
+    SetAllowedLookalikeCharacterStrings(Vector<WebCore::LookalikeCharactersSanitizationData> allowedStrings);
 #endif
 
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
     PauseAllAnimations() -> ()
     PlayAllAnimations() -> ()
 #endif
+
+    UpdateFrameSize(WebCore::FrameIdentifier frame, WebCore::IntSize newSize)
 }

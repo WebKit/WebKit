@@ -28,11 +28,11 @@
 #include "CachedImageClient.h"
 #include "Element.h"
 #include "FloatQuad.h"
-#include "Frame.h"
 #include "FrameDestructionObserverInlines.h"
 #include "HTMLNames.h"
 #include "InspectorInstrumentationPublic.h"
 #include "LayoutRect.h"
+#include "LocalFrame.h"
 #include "Page.h"
 #include "RenderObjectEnums.h"
 #include "RenderStyle.h"
@@ -297,7 +297,8 @@ public:
         InsideInFragmentedFlow = 1,
     };
 
-    void setFragmentedFlowStateIncludingDescendants(FragmentedFlowState, const RenderElement* fragmentedFlowRoot);
+    enum class SkipDescendentFragmentedFlow { No, Yes };
+    void setFragmentedFlowStateIncludingDescendants(FragmentedFlowState, const RenderElement* fragmentedFlowRoot, SkipDescendentFragmentedFlow = SkipDescendentFragmentedFlow::Yes);
 
     FragmentedFlowState fragmentedFlowState() const { return m_bitfields.fragmentedFlowState(); }
     void setFragmentedFlowState(FragmentedFlowState state) { m_bitfields.setFragmentedFlowState(state); }
@@ -506,7 +507,7 @@ public:
     Node* generatingNode() const { return isPseudoElement() ? generatingPseudoHostElement() : node(); }
 
     Document& document() const { ASSERT(m_node); return m_node->document(); }
-    Frame& frame() const;
+    LocalFrame& frame() const;
     Page& page() const;
     Settings& settings() const { return page().settings(); }
 
@@ -783,7 +784,7 @@ public:
     LayoutRect absoluteOutlineBounds() const { return outlineBoundsForRepaint(nullptr); }
 
     // FIXME: Renderers should not need to be notified about internal reparenting (webkit.org/b/224143).
-    enum class IsInternalMove { No, Yes };
+    enum class IsInternalMove : bool { No, Yes };
     virtual void insertedIntoTree(IsInternalMove = IsInternalMove::No);
     virtual void willBeRemovedFromTree(IsInternalMove = IsInternalMove::No);
 
@@ -826,8 +827,8 @@ protected:
 
     bool isSetNeedsLayoutForbidden() const;
 
-    enum class ClipRepaintToLayer : uint8_t { No, Yes };
-    enum class ForceRepaint : uint8_t { No, Yes };
+    enum class ClipRepaintToLayer : bool { No, Yes };
+    enum class ForceRepaint : bool { No, Yes };
     void issueRepaint(std::optional<LayoutRect> partialRepaintRect = std::nullopt, ClipRepaintToLayer = ClipRepaintToLayer::No, ForceRepaint = ForceRepaint::No) const;
 
 private:
@@ -1002,6 +1003,7 @@ private:
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
         ADD_BOOLEAN_BITFIELD(hasSVGTransform, HasSVGTransform);
 #endif
+        ADD_ENUM_BITFIELD(trimmedMargins, TrimmedMargins, unsigned, 4);
 
         // From RenderElement
         std::unique_ptr<ReferencedSVGResources> referencedSVGResources;
@@ -1033,7 +1035,7 @@ private:
 #endif
 };
 
-inline Frame& RenderObject::frame() const
+inline LocalFrame& RenderObject::frame() const
 {
     return *document().frame();
 }

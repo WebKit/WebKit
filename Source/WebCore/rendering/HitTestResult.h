@@ -29,9 +29,10 @@
 namespace WebCore {
 
 class Element;
-class Frame;
+class HTMLImageElement;
 class HTMLMediaElement;
 class Image;
+class LocalFrame;
 class Node;
 class Scrollbar;
 
@@ -81,7 +82,7 @@ public:
     // The hit-tested point in the coordinates of the innerNode frame, the frame containing innerNode.
     const LayoutPoint& pointInInnerNodeFrame() const { return m_pointInInnerNodeFrame; }
     IntPoint roundedPointInInnerNodeFrame() const { return roundedIntPoint(pointInInnerNodeFrame()); }
-    WEBCORE_EXPORT Frame* innerNodeFrame() const;
+    WEBCORE_EXPORT LocalFrame* innerNodeFrame() const;
 
     // The hit-tested point in the coordinates of the inner node.
     const LayoutPoint& localPoint() const { return m_localPoint; }
@@ -91,7 +92,7 @@ public:
 
     const HitTestLocation& hitTestLocation() const { return m_hitTestLocation; }
 
-    WEBCORE_EXPORT Frame* targetFrame() const;
+    WEBCORE_EXPORT LocalFrame* targetFrame() const;
     WEBCORE_EXPORT bool isSelected() const;
     WEBCORE_EXPORT String selectedText() const;
     WEBCORE_EXPORT String spellingToolTip(TextDirection&) const;
@@ -102,6 +103,7 @@ public:
     WEBCORE_EXPORT String titleDisplayString() const;
     WEBCORE_EXPORT Image* image() const;
     WEBCORE_EXPORT IntRect imageRect() const;
+    bool hasEntireImage() const;
     WEBCORE_EXPORT URL absoluteImageURL() const;
     WEBCORE_EXPORT URL absolutePDFURL() const;
     WEBCORE_EXPORT URL absoluteMediaURL() const;
@@ -129,6 +131,12 @@ public:
     bool mediaIsInEnhancedFullscreen() const;
     void toggleEnhancedFullscreenForVideo() const;
 
+#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
+    void pauseAnimation() const;
+    void playAnimation() const;
+    bool isAnimating() const;
+#endif
+
     WEBCORE_EXPORT bool isDownloadableMedia() const;
     WEBCORE_EXPORT bool isOverTextInsideFormControlElement() const;
 
@@ -152,6 +160,11 @@ private:
     template<typename RectType> HitTestProgress addNodeToListBasedTestResultCommon(Node*, const HitTestRequest&, const HitTestLocation&, const RectType&);
 
     RefPtr<Node> nodeForImageData() const;
+
+#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
+    void setAllowsAnimation(bool /* allowAnimation */) const;
+    HTMLImageElement* imageElement() const;
+#endif
 
 #if ENABLE(VIDEO)
     HTMLMediaElement* mediaElement() const;

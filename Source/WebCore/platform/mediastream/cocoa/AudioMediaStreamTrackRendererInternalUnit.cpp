@@ -31,20 +31,15 @@
 #include "AudioSampleDataSource.h"
 #include "AudioSession.h"
 #include "CAAudioStreamDescription.h"
+#include "CoreAudioCaptureDevice.h"
+#include "CoreAudioCaptureDeviceManager.h"
 #include "Logging.h"
-
 #include <Accelerate/Accelerate.h>
+#include <pal/cf/AudioToolboxSoftLink.h>
+#include <pal/cf/CoreMediaSoftLink.h>
 #include <pal/spi/cocoa/AudioToolboxSPI.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/Lock.h>
-
-#if PLATFORM(COCOA)
-#include "CoreAudioCaptureDevice.h"
-#include "CoreAudioCaptureDeviceManager.h"
-#endif
-
-#include <pal/cf/AudioToolboxSoftLink.h>
-#include <pal/cf/CoreMediaSoftLink.h>
 
 namespace WebCore {
 

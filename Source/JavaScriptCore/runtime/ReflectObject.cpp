@@ -33,7 +33,6 @@ namespace JSC {
 
 static JSC_DECLARE_HOST_FUNCTION(reflectObjectConstruct);
 static JSC_DECLARE_HOST_FUNCTION(reflectObjectDefineProperty);
-static JSC_DECLARE_HOST_FUNCTION(reflectObjectGet);
 static JSC_DECLARE_HOST_FUNCTION(reflectObjectGetOwnPropertyDescriptor);
 static JSC_DECLARE_HOST_FUNCTION(reflectObjectGetPrototypeOf);
 static JSC_DECLARE_HOST_FUNCTION(reflectObjectIsExtensible);
@@ -58,7 +57,7 @@ const ClassInfo ReflectObject::s_info = { "Reflect"_s, &Base::s_info, &reflectOb
     construct                reflectObjectConstruct                DontEnum|Function 2
     defineProperty           reflectObjectDefineProperty           DontEnum|Function 3
     deleteProperty           JSBuiltin                             DontEnum|Function 2
-    get                      reflectObjectGet                      DontEnum|Function 2
+    get                      JSBuiltin                             DontEnum|Function 2
     getOwnPropertyDescriptor reflectObjectGetOwnPropertyDescriptor DontEnum|Function 2
     getPrototypeOf           reflectObjectGetPrototypeOf           DontEnum|Function 1 ReflectGetPrototypeOfIntrinsic
     has                      JSBuiltin                             DontEnum|Function 2
@@ -147,27 +146,6 @@ JSC_DEFINE_HOST_FUNCTION(reflectObjectDefineProperty, (JSGlobalObject* globalObj
     bool shouldThrow = false;
     JSObject* targetObject = asObject(target);
     RELEASE_AND_RETURN(scope, JSValue::encode(jsBoolean(targetObject->methodTable()->defineOwnProperty(targetObject, globalObject, propertyName, descriptor, shouldThrow))));
-}
-
-// https://tc39.github.io/ecma262/#sec-reflect.get
-JSC_DEFINE_HOST_FUNCTION(reflectObjectGet, (JSGlobalObject* globalObject, CallFrame* callFrame))
-{
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    JSValue target = callFrame->argument(0);
-    if (!target.isObject())
-        return JSValue::encode(throwTypeError(globalObject, scope, "Reflect.get requires the first argument be an object"_s));
-
-    const Identifier propertyName = callFrame->argument(1).toPropertyKey(globalObject);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
-
-    JSValue receiver = target;
-    if (callFrame->argumentCount() >= 3)
-        receiver = callFrame->argument(2);
-
-    PropertySlot slot(receiver, PropertySlot::InternalMethodType::Get);
-    RELEASE_AND_RETURN(scope, JSValue::encode(target.get(globalObject, propertyName, slot)));
 }
 
 // https://tc39.github.io/ecma262/#sec-reflect.getownpropertydescriptor

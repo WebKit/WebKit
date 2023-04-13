@@ -47,6 +47,14 @@
 #endif
 #endif
 
+#if HAVE(PASSKIT_DEFERRED_PAYMENTS)
+#if HAVE(PASSKIT_MODULARIZATION) && USE(APPLE_INTERNAL_SDK)
+#import <PassKitCore/PKDeferredPaymentRequest.h>
+#else
+#import <PassKit/PKDeferredPaymentRequest.h>
+#endif
+#endif
+
 #if HAVE(PASSKIT_AUTOMATIC_RELOAD_SUMMARY_ITEM)
 #if HAVE(PASSKIT_MODULARIZATION) && USE(APPLE_INTERNAL_SDK)
 #import <PassKitCore/PKAutomaticReloadPaymentSummaryItem.h>
@@ -292,6 +300,21 @@ typedef NS_ENUM(NSInteger, PKPaymentSetupFeatureType) {
 @end
 #endif
 
+#if HAVE(PASSKIT_APPLE_PAY_LATER_MODE)
+
+typedef NS_ENUM(NSUInteger, PKApplePayLaterMode) {
+    PKApplePayLaterModeEnabled,
+    PKApplePayLaterModeDisabledMerchantIneligible,
+    PKApplePayLaterModeDisabledItemIneligible,
+    PKApplePayLaterModeDisabledRecurringTransaction,
+};
+
+@interface PKPaymentRequest ()
+@property (nonatomic, assign) PKApplePayLaterMode applePayLaterMode;
+@end
+
+#endif
+
 NS_ASSUME_NONNULL_END
 
 #endif // USE(APPLE_INTERNAL_SDK)
@@ -327,6 +350,12 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 typedef void(^PKCanMakePaymentsCompletion)(BOOL isValid, NSError *);
+
+#if HAVE(PASSKIT_DEFERRED_PAYMENTS)
+@interface PKDeferredPaymentRequest (Staging_104652810)
+@property (nonatomic, strong, nullable) NSTimeZone *freeCancellationDateTimeZone;
+@end
+#endif
 
 NS_ASSUME_NONNULL_END
 

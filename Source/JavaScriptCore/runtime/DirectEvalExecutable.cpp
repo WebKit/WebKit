@@ -29,6 +29,7 @@
 #include "CodeCache.h"
 #include "Debugger.h"
 #include "Error.h"
+#include "GlobalObjectMethodTable.h"
 #include "JSCJSValueInlines.h"
 #include "ParserError.h"
 

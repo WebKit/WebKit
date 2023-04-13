@@ -50,6 +50,7 @@ class LLIntOffsetsExtractor;
 namespace WTF {
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(Vector);
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(VectorBuffer);
 
 template <bool needsDestruction, typename T>
 struct VectorDestructor;
@@ -393,7 +394,7 @@ protected:
     unsigned m_size; // Only used by the Vector subclass, but placed here to avoid padding the struct.
 };
 
-template<typename T, size_t inlineCapacity, typename Malloc = VectorMalloc> class VectorBuffer;
+template<typename T, size_t inlineCapacity, typename Malloc = VectorBufferMalloc> class VectorBuffer;
 
 template<typename T, typename Malloc>
 class VectorBuffer<T, 0, Malloc> : private VectorBufferBase<T, Malloc> {
@@ -404,7 +405,7 @@ public:
     {
     }
 
-    VectorBuffer(size_t capacity, size_t size = 0)
+    explicit VectorBuffer(size_t capacity, size_t size = 0)
     {
         m_size = size;
         // Calling malloc(0) might take a lock and may actually do an
@@ -480,7 +481,7 @@ public:
     {
     }
 
-    VectorBuffer(size_t capacity, size_t size = 0)
+    explicit VectorBuffer(size_t capacity, size_t size = 0)
         : Base(inlineBuffer(), inlineCapacity, size)
     {
         if (capacity > inlineCapacity)
@@ -662,7 +663,7 @@ struct UnsafeVectorOverflow {
 // Template default values are in Forward.h.
 template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>
 class Vector : private VectorBuffer<T, inlineCapacity, Malloc> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Vector);
 private:
     typedef VectorBuffer<T, inlineCapacity, Malloc> Base;
     typedef VectorTypeOperations<T> TypeOperations;
@@ -996,7 +997,7 @@ Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>& Vector<T, inlin
 
     asanBufferSizeWillChangeTo(other.size());
 
-    std::copy(other.begin(), other.begin() + size(), begin());
+    std::copy_n(other.begin(), size(), begin());
     TypeOperations::uninitializedCopy(other.begin() + size(), other.end(), end());
     m_size = other.size();
 
@@ -1024,7 +1025,7 @@ Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>& Vector<T, inlin
     
     asanBufferSizeWillChangeTo(other.size());
 
-    std::copy(other.begin(), other.begin() + size(), begin());
+    std::copy_n(other.begin(), size(), begin());
     TypeOperations::uninitializedCopy(other.begin() + size(), other.end(), end());
     m_size = other.size();
 

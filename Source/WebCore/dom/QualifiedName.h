@@ -66,6 +66,7 @@ public:
         const AtomString m_prefix;
         const AtomString m_localName;
         const AtomString m_namespaceURI;
+        AtomString m_localNameLower;
         mutable AtomString m_localNameUpper;
 
 #if ENABLE(JIT)
@@ -96,7 +97,8 @@ public:
     const AtomString& prefix() const { return m_impl->m_prefix; }
     const AtomString& localName() const { return m_impl->m_localName; }
     const AtomString& namespaceURI() const { return m_impl->m_namespaceURI; }
-    const AtomString& localNameUpper() const;
+    const AtomString& localNameLowercase() const { return m_impl->m_localNameLower; }
+    const AtomString& localNameUppercase() const;
 
     ElementName elementName() const { return m_impl->m_elementName; }
     Namespace nodeNamespace() const { return m_impl->m_namespace; }

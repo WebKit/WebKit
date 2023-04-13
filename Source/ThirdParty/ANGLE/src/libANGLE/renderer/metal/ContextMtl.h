@@ -17,7 +17,6 @@
 #include "libANGLE/Context.h"
 #include "libANGLE/renderer/ContextImpl.h"
 #include "libANGLE/renderer/metal/ProvokingVertexHelper.h"
-#include "libANGLE/renderer/metal/mtl_buffer_manager.h"
 #include "libANGLE/renderer/metal/mtl_buffer_pool.h"
 #include "libANGLE/renderer/metal/mtl_command_buffer.h"
 #include "libANGLE/renderer/metal/mtl_context_device.h"
@@ -193,6 +192,8 @@ class ContextMtl : public ContextImpl, public mtl::Context
     angle::Result syncState(const gl::Context *context,
                             const gl::State::DirtyBits &dirtyBits,
                             const gl::State::DirtyBits &bitMask,
+                            const gl::State::ExtendedDirtyBits &extendedDirtyBits,
+                            const gl::State::ExtendedDirtyBits &extendedBitMask,
                             gl::Command command) override;
 
     // Disjoint timer queries
@@ -370,7 +371,6 @@ class ContextMtl : public ContextImpl, public mtl::Context
     // Will end current command encoder and start new blit command encoder. Unless a blit comamnd
     // encoder is already started.
     mtl::BlitCommandEncoder *getBlitCommandEncoder();
-
     // Will end current command encoder and start new compute command encoder. Unless a compute
     // command encoder is already started.
     mtl::ComputeCommandEncoder *getComputeCommandEncoder();
@@ -383,8 +383,6 @@ class ContextMtl : public ContextImpl, public mtl::Context
     // Get the provoking vertex command encoder.
     mtl::ComputeCommandEncoder *getIndexPreprocessingCommandEncoder();
 
-    bool isCurrentRenderEncoderSerial(uint64_t serial);
-
     const mtl::ContextDevice &getMetalDevice() const { return mContextDevice; }
 
     angle::Result copy2DTextureSlice0Level0ToWorkTexture(const mtl::TextureRef &srcTexture);
@@ -394,7 +392,6 @@ class ContextMtl : public ContextImpl, public mtl::Context
                                                     const mtl::MipmapNativeLevel &mipNativeLevel,
                                                     uint32_t layerIndex);
     const mtl::BufferRef &getWorkBuffer() const { return mWorkBuffer; }
-    mtl::BufferManager &getBufferManager() { return mBufferManager; }
 
     angle::ImageLoadContext getImageLoadContext() const;
 
@@ -487,7 +484,8 @@ class ContextMtl : public ContextImpl, public mtl::Context
                                    GLint baseVertex,
                                    GLuint baseInstance);
     void flushCommandBufferIfNeeded();
-    void updateExtendedState(const gl::State &glState);
+    void updateExtendedState(const gl::State &glState,
+                             const gl::State::ExtendedDirtyBits &extendedDirtyBits);
 
     void updateViewport(FramebufferMtl *framebufferMtl,
                         const gl::Rectangle &viewport,
@@ -531,6 +529,7 @@ class ContextMtl : public ContextImpl, public mtl::Context
         DIRTY_BIT_DRIVER_UNIFORMS,
         DIRTY_BIT_DEPTH_STENCIL_DESC,
         DIRTY_BIT_DEPTH_BIAS,
+        DIRTY_BIT_DEPTH_CLIP_MODE,
         DIRTY_BIT_STENCIL_REF,
         DIRTY_BIT_BLEND_COLOR,
         DIRTY_BIT_VIEWPORT,
@@ -609,8 +608,6 @@ class ContextMtl : public ContextImpl, public mtl::Context
     MTLWinding mWinding;
     MTLCullMode mCullMode;
     bool mCullAllPolygons = false;
-
-    mtl::BufferManager mBufferManager;
 
     // Lineloop and TriFan index buffer
     mtl::BufferPool mLineLoopIndexBuffer;

@@ -70,15 +70,15 @@ public:
         default:
             return ParseResult::UnknownValue;
         }
-        m_result->append(CSSPropertyParserHelpers::consumeIdent(range).releaseNonNull());
+        m_result.append(CSSPropertyParserHelpers::consumeIdent(range).releaseNonNull());
         return ParseResult::ConsumedValue;
     }
 
     RefPtr<CSSValue> finalizeValue()
     {
-        if (!m_result->length())
+        if (m_result.isEmpty())
             return CSSPrimitiveValue::create(CSSValueNormal);
-        return WTFMove(m_result);
+        return CSSValueList::createSpaceSeparated(WTFMove(m_result));
     }
 
 private:
@@ -86,7 +86,7 @@ private:
     bool m_sawDiscretionaryLigaturesValue = false;
     bool m_sawHistoricalLigaturesValue = false;
     bool m_sawContextualLigaturesValue = false;
-    RefPtr<CSSValueList> m_result = CSSValueList::createSpaceSeparated();
+    CSSValueListBuilder m_result;
 };
 
 } // namespace WebCore

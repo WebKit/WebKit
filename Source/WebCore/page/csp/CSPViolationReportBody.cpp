@@ -54,9 +54,30 @@ CSPViolationReportBody::CSPViolationReportBody(Init&& init)
 {
 }
 
+CSPViolationReportBody::CSPViolationReportBody(String&& documentURL, String&& referrer, String&& blockedURL, String&& effectiveDirective, String&& originalPolicy, String&& sourceFile, String&& sample, SecurityPolicyViolationEventDisposition disposition, unsigned short statusCode, unsigned long lineNumber, unsigned long columnNumber)
+    : ReportBody(ViolationReportType::ContentSecurityPolicy)
+    , m_documentURL(WTFMove(documentURL))
+    , m_referrer(WTFMove(referrer))
+    , m_blockedURL(WTFMove(blockedURL))
+    , m_effectiveDirective(WTFMove(effectiveDirective))
+    , m_originalPolicy(WTFMove(originalPolicy))
+    , m_sourceFile(WTFMove(sourceFile))
+    , m_sample(WTFMove(sample))
+    , m_disposition(disposition)
+    , m_statusCode(statusCode)
+    , m_lineNumber(lineNumber)
+    , m_columnNumber(columnNumber)
+{
+}
+
 Ref<CSPViolationReportBody> CSPViolationReportBody::create(Init&& init)
 {
     return adoptRef(*new CSPViolationReportBody(WTFMove(init)));
+}
+
+Ref<CSPViolationReportBody> CSPViolationReportBody::create(String&& documentURL, String&& referrer, String&& blockedURL, String&& effectiveDirective, String&& originalPolicy, String&& sourceFile, String&& sample, SecurityPolicyViolationEventDisposition disposition, unsigned short statusCode, unsigned long lineNumber, unsigned long columnNumber)
+{
+    return adoptRef(*new CSPViolationReportBody(WTFMove(documentURL), WTFMove(referrer), WTFMove(blockedURL), WTFMove(effectiveDirective), WTFMove(originalPolicy), WTFMove(sourceFile), WTFMove(sample), disposition, statusCode, lineNumber, columnNumber));
 }
 
 const String& CSPViolationReportBody::type() const

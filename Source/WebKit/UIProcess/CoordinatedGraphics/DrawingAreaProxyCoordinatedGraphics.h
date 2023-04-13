@@ -91,7 +91,7 @@ private:
     void discardBackingStore();
 #endif
 
-    void dispatchAfterEnsuringDrawing(WTF::Function<void(CallbackBase::Error)>&&) override;
+    void dispatchAfterEnsuringDrawing(CompletionHandler<void()>&&) final;
     void attachToProvisionalFrameProcess(WebProcessProxy&) final { ASSERT_NOT_REACHED(); }
 
     class DrawingMonitor {
@@ -100,7 +100,7 @@ private:
         DrawingMonitor(WebPageProxy&);
         ~DrawingMonitor();
 
-        void start(WTF::Function<void(CallbackBase::Error)>&&);
+        void start(CompletionHandler<void()>&&);
 
     private:
         static int webViewDrawCallback(DrawingMonitor*);
@@ -109,7 +109,7 @@ private:
         void didDraw();
 
         MonotonicTime m_startTime;
-        WTF::Function<void(CallbackBase::Error)> m_callback;
+        CompletionHandler<void()> m_callback;
         RunLoop::Timer m_timer;
 #if PLATFORM(GTK)
         WebPageProxy& m_webPage;

@@ -898,7 +898,7 @@ RetainPtr<WKWebView> webViewWithDownloadMonitorSpeedMultiplier(size_t multiplier
     return webView;
 }
 
-enum class AppReturnsToForeground { No, Yes };
+enum class AppReturnsToForeground : bool { No, Yes };
     
 void downloadAtRate(double desiredKbps, unsigned speedMultiplier, AppReturnsToForeground returnToForeground = AppReturnsToForeground::No)
 {

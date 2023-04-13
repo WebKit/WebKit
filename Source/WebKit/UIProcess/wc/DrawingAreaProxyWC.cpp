@@ -32,6 +32,7 @@
 #if USE(GRAPHICS_LAYER_WC)
 
 #include "DrawingAreaMessages.h"
+#include "MessageSenderInlines.h"
 #include "UpdateInfo.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebPageProxy.h"
@@ -61,9 +62,9 @@ void DrawingAreaProxyWC::sizeDidChange()
     m_webPageProxy.send(Messages::DrawingArea::UpdateGeometry(m_currentBackingStoreStateID, m_size), m_identifier);
 }
 
-void DrawingAreaProxyWC::dispatchAfterEnsuringDrawing(WTF::Function<void(CallbackBase::Error)>&& completionHandler)
+void DrawingAreaProxyWC::dispatchAfterEnsuringDrawing(CompletionHandler<void()>&& completionHandler)
 {
-    completionHandler(CallbackBase::Error::None);
+    completionHandler();
 }
 
 void DrawingAreaProxyWC::update(uint64_t backingStoreStateID, const UpdateInfo& updateInfo)

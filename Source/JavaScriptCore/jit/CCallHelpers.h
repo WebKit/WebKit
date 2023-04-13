@@ -154,7 +154,12 @@ private:
                     RegType source = pair.first;
                     RegType dest = pair.second;
                     if (freeDestinations.contains(dest, IgnoreVectors)) {
-                        move(source, dest);
+                        // This means that this setup function cannot handle SIMD vectors as a part of parameters.
+                        // Now, this is guaranteed that we ensure FP parameter is always `double`.
+                        if constexpr (std::is_same_v<RegType, FPRReg>)
+                            moveDouble(source, dest);
+                        else
+                            move(source, dest);
                         pairs.remove(i);
                         madeMove = true;
                         break;
@@ -172,7 +177,10 @@ private:
 
             RegType source = pairs[0].first;
             RegType dest = pairs[0].second;
-            swap(source, dest);
+            if constexpr (std::is_same_v<RegType, FPRReg>)
+                swapDouble(source, dest);
+            else
+                swap(source, dest);
             pairs.remove(0);
 
             RegType newSource = source;
@@ -359,9 +367,11 @@ private:
 
         currentGPRArgument += extraGPRArgs;
         currentFPRArgument -= numCrossSources;
+#if !(OS(WINDOWS) && CPU(X86_64))
         IGNORE_WARNINGS_BEGIN("type-limits")
         ASSERT(currentGPRArgument >= GPRInfo::numberOfArgumentRegisters || currentFPRArgument >= FPRInfo::numberOfArgumentRegisters);
         IGNORE_WARNINGS_END
+#endif
 
         unsigned pokeOffset = POKE_ARGUMENT_OFFSET + extraPoke;
         pokeOffset += std::max(currentGPRArgument, numberOfGPArgumentRegisters) - numberOfGPArgumentRegisters;
@@ -405,7 +415,7 @@ private:
         using InfoType = InfoTypeForReg<RegType>;
         unsigned numArgRegisters = InfoType::numberOfArgumentRegisters;
 #if OS(WINDOWS) && CPU(X86_64)
-        unsigned currentArgCount = argSourceRegs.argCount(arg) + (std::is_same<RESULT_TYPE, SlowPathReturnType>::value ? 1 : 0);
+        unsigned currentArgCount = argSourceRegs.argCount(arg) + (std::is_same<RESULT_TYPE, UGPRPair>::value ? 1 : 0);
 #else
         unsigned currentArgCount = argSourceRegs.argCount(arg);
 #endif
@@ -415,14 +425,18 @@ private:
             return;
         }
 
+#if OS(WINDOWS) && CPU(X86_64)
+        pokeForArgument(arg, numGPRArgs + (std::is_same<RESULT_TYPE, UGPRPair>::value ? 1 : 0), numFPRArgs, numCrossSources, extraGPRArgs, nonArgGPRs, extraPoke);
+#else
         pokeForArgument(arg, numGPRArgs, numFPRArgs, numCrossSources, extraGPRArgs, nonArgGPRs, extraPoke);
+#endif
         setupArgumentsImpl<OperationType>(argSourceRegs.addStackArg(arg), args...);
     }
 
     template<typename OperationType, unsigned numGPRArgs, unsigned numGPRSources, unsigned numFPRArgs, unsigned numFPRSources, unsigned numCrossSources, unsigned extraGPRArgs, unsigned nonArgGPRs, unsigned extraPoke, typename... Args>
     ALWAYS_INLINE void setupArgumentsImpl(ArgCollection<numGPRArgs, numGPRSources, numFPRArgs, numFPRSources, numCrossSources, extraGPRArgs, nonArgGPRs, extraPoke> argSourceRegs, FPRReg arg, Args... args)
     {
-        static_assert(std::is_same<CURRENT_ARGUMENT_TYPE, double>::value, "We should only be passing FPRRegs to a double");
+        static_assert(std::is_same_v<CURRENT_ARGUMENT_TYPE, double>, "We should only be passing FPRRegs to a double. We use moveDouble / loadDouble / storeDouble exclusively");
         marshallArgumentRegister<OperationType>(argSourceRegs, arg, args...);
     }
 
@@ -450,7 +464,7 @@ private:
     template<typename OperationType, unsigned numGPRArgs, unsigned numGPRSources, unsigned numFPRArgs, unsigned numFPRSources, unsigned numCrossSources, unsigned extraGPRArgs, unsigned nonArgGPRs, unsigned extraPoke, typename... Args>
     void setupArgumentsImpl(ArgCollection<numGPRArgs, numGPRSources, numFPRArgs, numFPRSources, numCrossSources, extraGPRArgs, nonArgGPRs, extraPoke> argSourceRegs, FPRReg arg, Args... args)
     {
-        static_assert(std::is_same<CURRENT_ARGUMENT_TYPE, double>::value, "We should only be passing FPRRegs to a double");
+        static_assert(std::is_same_v<CURRENT_ARGUMENT_TYPE, double>, "We should only be passing FPRRegs to a double. We use moveDouble / loadDouble / storeDouble exclusively");
 
         // MIPS and ARM (hardfp, which we require) pass FP arguments in FP registers.
 #if CPU(MIPS)
@@ -604,7 +618,7 @@ private:
         static_assert(!std::is_floating_point<CURRENT_ARGUMENT_TYPE>::value, "We don't support immediate floats/doubles in setupArguments");
         auto numArgRegisters = GPRInfo::numberOfArgumentRegisters;
 #if OS(WINDOWS) && CPU(X86_64)
-        auto currentArgCount = numGPRArgs + numFPRArgs + (std::is_same<RESULT_TYPE, SlowPathReturnType>::value ? 1 : 0);
+        auto currentArgCount = numGPRArgs + numFPRArgs + (std::is_same<RESULT_TYPE, UGPRPair>::value ? 1 : 0);
 #else
         auto currentArgCount = numGPRArgs + extraGPRArgs;
 #endif
@@ -614,7 +628,11 @@ private:
             return;
         }
 
+#if OS(WINDOWS) && CPU(X86_64)
+        pokeForArgument(arg, numGPRArgs + (std::is_same<RESULT_TYPE, UGPRPair>::value ? 1 : 0), numFPRArgs, numCrossSources, extraGPRArgs, nonArgGPRs, extraPoke);
+#else
         pokeForArgument(arg, numGPRArgs, numFPRArgs, numCrossSources, extraGPRArgs, nonArgGPRs, extraPoke);
+#endif
         setupArgumentsImpl<OperationType>(argSourceRegs.addGPRArg(), args...);
     }
 
@@ -664,7 +682,7 @@ private:
         static_assert(!std::is_floating_point<CURRENT_ARGUMENT_TYPE>::value, "We don't support immediate floats/doubles in setupArguments");
         auto numArgRegisters = GPRInfo::numberOfArgumentRegisters;
 #if OS(WINDOWS) && CPU(X86_64)
-        auto currentArgCount = numGPRArgs + numFPRArgs + (std::is_same<RESULT_TYPE, SlowPathReturnType>::value ? 1 : 0);
+        auto currentArgCount = numGPRArgs + numFPRArgs + (std::is_same<RESULT_TYPE, UGPRPair>::value ? 1 : 0);
 #else
         auto currentArgCount = numGPRArgs + extraGPRArgs;
 #endif
@@ -674,12 +692,14 @@ private:
             return;
         }
 
+
+#if OS(WINDOWS) && CPU(X86_64)
+        pokeForArgument(arg, numGPRArgs + (std::is_same<RESULT_TYPE, UGPRPair>::value ? 1 : 0), numFPRArgs, numCrossSources, extraGPRArgs, nonArgGPRs, extraPoke);
+#else
         pokeForArgument(arg, numGPRArgs, numFPRArgs, numCrossSources, extraGPRArgs, nonArgGPRs, extraPoke);
+#endif
         setupArgumentsImpl<OperationType>(argSourceRegs.addGPRArg(), args...);
     }
-
-#undef CURRENT_ARGUMENT_TYPE
-#undef RESULT_TYPE
 
     template<typename OperationType, unsigned gprIndex>
     constexpr void finalizeGPRArguments(std::index_sequence<>)
@@ -747,6 +767,13 @@ private:
         static_assert(!numCrossSources, "shouldn't be used on this architecture.");
 #endif
         setupStubArgs<numFPRSources, FPRReg>(clampArrayToSize<numFPRSources, FPRReg>(argSourceRegs.fprDestinations), clampArrayToSize<numFPRSources, FPRReg>(argSourceRegs.fprSources));
+
+#if OS(WINDOWS) && CPU(X86_64)
+        if constexpr (std::is_same<RESULT_TYPE, UGPRPair>::value) {
+            unsigned pokeOffset = calculatePokeOffset(numGPRArgs + /* implicit first parameter */ 1, numFPRArgs, numCrossSources, extraGPRArgs, nonArgGPRs, extraPoke);
+            addPtr(TrustedImm32(pokeOffset * sizeof(CPURegister)), stackPointerRegister, GPRInfo::argumentGPR0);
+        }
+#endif
     }
 
     template<typename OperationType, unsigned numGPRArgs, unsigned numGPRSources, unsigned numFPRArgs, unsigned numFPRSources, unsigned numCrossSources, unsigned extraGPRArgs, unsigned nonArgGPRs, unsigned extraPoke, typename... Args>
@@ -769,6 +796,9 @@ private:
 
         finalizeGPRArguments<OperationType, 0>(std::make_index_sequence<FunctionTraits<OperationType>::arity>());
     }
+
+#undef CURRENT_ARGUMENT_TYPE
+#undef RESULT_TYPE
 
 public:
 

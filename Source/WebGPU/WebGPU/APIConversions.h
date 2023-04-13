@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Apple Inc. All rights reserved.
+ * Copyright (c) 2022-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -184,6 +184,15 @@ template <typename T>
 inline T* releaseToAPI(Ref<T>&& pointer)
 {
     return &pointer.leakRef();
+}
+
+template <typename T>
+inline T* releaseToAPI(RefPtr<T>&& pointer)
+{
+    // FIXME: We shouldn't need this, because invalid objects should be created instead of returning nullptr.
+    if (pointer)
+        return pointer.leakRef();
+    return nullptr;
 }
 
 } // namespace WebGPU

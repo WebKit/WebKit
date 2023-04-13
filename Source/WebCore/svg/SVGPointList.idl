@@ -31,7 +31,7 @@
 
     undefined clear();
     SVGPoint initialize(SVGPoint newItem);
-    getter SVGPoint getItem(unsigned long index);
+    [RaisesException] getter SVGPoint getItem(unsigned long index);
     SVGPoint insertItemBefore(SVGPoint newItem, unsigned long index);
     SVGPoint replaceItem(SVGPoint newItem, unsigned long index);
     SVGPoint removeItem(unsigned long index);

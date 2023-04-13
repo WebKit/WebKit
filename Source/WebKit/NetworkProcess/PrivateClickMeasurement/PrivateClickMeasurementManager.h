@@ -71,6 +71,7 @@ public:
 private:
     PCM::Store& store();
     const PCM::Store& store() const;
+    void initializeStore() const;
     void startTimer(Seconds);
     void getTokenPublicKey(PrivateClickMeasurement&&, WebCore::PCM::AttributionReportEndpoint, PrivateClickMeasurement::PcmDataCarried, Function<void(PrivateClickMeasurement&& attribution, const String& publicKeyBase64URL)>&&);
     void getTokenPublicKey(AttributionTriggerData&&, WebCore::PCM::AttributionReportEndpoint, PrivateClickMeasurement::PcmDataCarried, Function<void(AttributionTriggerData&&, const String& publicKeyBase64URL)>&&);

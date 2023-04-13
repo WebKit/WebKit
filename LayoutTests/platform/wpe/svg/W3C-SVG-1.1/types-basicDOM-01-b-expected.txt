@@ -4,13 +4,13 @@ layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
     RenderSVGContainer {g} at (10,8) size 365x295
       RenderSVGContainer {g} at (10,8) size 365x295
-        RenderSVGContainer {g} at (17,8) size 358x157 [transform={m=((1.00,0.00)(0.00,1.00)) t=(70.00,-60.00)}]
-          RenderSVGText {text} at (30,131) size 345x24 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 345x23
-              chunk 1 text run 1 at (30.00,150.00) startOffset 0 endOffset 37 width 345.00: "Rotated Text for testing SVGLocatable"
-          RenderSVGText {text} at (100,111) size 309x24 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 309x23
-              chunk 1 text run 1 at (100.00,130.00) startOffset 0 endOffset 35 width 308.57: "Some other text with id 'otherText'"
+        RenderSVGContainer {g} at (17,8) size 358x156 [transform={m=((1.00,0.00)(0.00,1.00)) t=(70.00,-60.00)}]
+          RenderSVGText {text} at (30,131) size 343x24 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 343x23
+              chunk 1 text run 1 at (30.00,150.00) startOffset 0 endOffset 37 width 342.78: "Rotated Text for testing SVGLocatable"
+          RenderSVGText {text} at (100,111) size 307x24 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 307x23
+              chunk 1 text run 1 at (100.00,130.00) startOffset 0 endOffset 35 width 306.35: "Some other text with id 'otherText'"
           RenderSVGViewportContainer {svg} at (275,45) size 100x100
             RenderSVGEllipse {circle} at (275,45) size 100x100 [fill={[type=SOLID] [color=#FF0000]}] [cx=0.00] [cy=0.00] [r=50.00]
         RenderSVGText {text} at (10,189) size 280x14 contains 1 chunk(s)
@@ -19,18 +19,18 @@ layer at (0,0) size 480x360
         RenderSVGText {text} at (10,209) size 241x14 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 241x14
             chunk 1 text run 1 at (10.00,220.00) startOffset 0 endOffset 44 width 241.00: ".getCTM(): 0.42,0.42,-0.42,0.42,70.00,-60.00"
-        RenderSVGText {text} at (10,229) size 311x14 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 311x14
-            chunk 1 text run 1 at (10.00,240.00) startOffset 0 endOffset 56 width 311.00: ".getTransformToElement(): 0.42,0.42,-0.42,0.42,0.00,0.00"
+        RenderSVGText {text} at (10,229) size 310x14 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 310x14
+            chunk 1 text run 1 at (10.00,240.00) startOffset 0 endOffset 56 width 309.22: ".getTransformToElement(): 0.42,0.42,-0.42,0.42,0.00,0.00"
         RenderSVGText {text} at (10,249) size 339x14 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 339x14
             chunk 1 text run 1 at (10.00,260.00) startOffset 0 endOffset 64 width 339.00: ".getBBox() for 'redCircle': .x=-50,.y=-50,.width=100,.height=100"
         RenderSVGText {text} at (10,269) size 253x14 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 253x14
-            chunk 1 text run 1 at (10.00,280.00) startOffset 0 endOffset 46 width 253.00: ".farthestViewportElement of redCircle=svg-root"
+            chunk 1 text run 1 at (10.00,280.00) startOffset 0 endOffset 46 width 252.78: ".farthestViewportElement of redCircle=svg-root"
         RenderSVGText {text} at (10,289) size 272x14 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 272x14
-            chunk 1 text run 1 at (10.00,300.00) startOffset 0 endOffset 46 width 272.00: ".nearestViewportElement of redCircle=nestedSVG"
+            chunk 1 text run 1 at (10.00,300.00) startOffset 0 endOffset 46 width 271.78: ".nearestViewportElement of redCircle=nestedSVG"
     RenderSVGText {text} at (10,304) size 264x45 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 264x45
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 264.00: "$Revision: 1.1 $"

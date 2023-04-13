@@ -28,7 +28,6 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 # FIXME: Is this the right way to do this?
-from webkitpy.tool.steps.addsvnmimetypeforpng import AddSvnMimetypeForPng
 from webkitpy.tool.steps.addradar import AddRadar
 from webkitpy.tool.steps.applypatch import ApplyPatch
 from webkitpy.tool.steps.applypatchwithlocalcommit import ApplyPatchWithLocalCommit

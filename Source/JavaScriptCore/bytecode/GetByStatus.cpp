@@ -32,13 +32,16 @@
 #include "ComplexGetStatus.h"
 #include "GetterSetterAccessCase.h"
 #include "ICStatusUtils.h"
+#include "InlineCacheCompiler.h"
 #include "IntrinsicGetterAccessCase.h"
 #include "ModuleNamespaceAccessCase.h"
-#include "PolymorphicAccess.h"
+#include "ProxyObjectAccessCase.h"
 #include "StructureStubInfo.h"
 #include <wtf/ListDump.h>
 
 namespace JSC {
+
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(GetByStatus);
 
 bool GetByStatus::appendVariant(const GetByVariant& variant)
 {
@@ -180,6 +183,7 @@ GetByStatus::GetByStatus(StubInfoSummary summary, StructureStubInfo* stubInfo)
     case StubInfoSummary::MakesCalls:
         RELEASE_ASSERT_NOT_REACHED();
         return;
+    case StubInfoSummary::Megamorphic:
     case StubInfoSummary::TakesSlowPath:
         ASSERT(stubInfo);
         m_state = stubInfo->tookSlowPath ? ObservedTakesSlowPath : LikelyTakesSlowPath;
@@ -195,6 +199,12 @@ GetByStatus::GetByStatus(StubInfoSummary summary, StructureStubInfo* stubInfo)
 GetByStatus::GetByStatus(const ModuleNamespaceAccessCase& accessCase)
     : m_moduleNamespaceData(Box<ModuleNamespaceData>::create(ModuleNamespaceData { accessCase.moduleNamespaceObject(), accessCase.moduleEnvironment(), accessCase.scopeOffset(), accessCase.identifier() }))
     , m_state(ModuleNamespace)
+    , m_wasSeenInJIT(true)
+{
+}
+
+GetByStatus::GetByStatus(const ProxyObjectAccessCase&)
+    : m_state(ProxyObject)
     , m_wasSeenInJIT(true)
 {
 }
@@ -242,6 +252,15 @@ GetByStatus GetByStatus::computeForStubInfoWithoutExitSiteFeedback(
             switch (access.type()) {
             case AccessCase::ModuleNamespaceLoad:
                 return GetByStatus(access.as<ModuleNamespaceAccessCase>());
+            case AccessCase::ProxyObjectLoad: {
+                auto& accessCase = access.as<ProxyObjectAccessCase>();
+                auto status = GetByStatus(accessCase);
+                auto callLinkStatus = makeUnique<CallLinkStatus>();
+                if (CallLinkInfo* callLinkInfo = accessCase.callLinkInfo())
+                    *callLinkStatus = CallLinkStatus::computeFor(locker, profiledBlock, *callLinkInfo, callExitSiteData);
+                status.appendVariant(GetByVariant(accessCase.identifier(), { }, invalidOffset, { }, WTFMove(callLinkStatus)));
+                return status;
+            }
             default:
                 break;
             }
@@ -461,6 +480,7 @@ bool GetByStatus::makesCalls() const
                 return true;
         }
         return false;
+    case ProxyObject:
     case MakesCalls:
     case ObservedSlowPathAndMakesCalls:
         return true;
@@ -496,6 +516,7 @@ void GetByStatus::merge(const GetByStatus& other)
         
     case Simple:
     case Custom:
+    case ProxyObject:
         if (m_state != other.m_state)
             return mergeSlow();
         
@@ -599,6 +620,9 @@ void GetByStatus::dump(PrintStream& out) const
         break;
     case ModuleNamespace:
         out.print("ModuleNamespace");
+        break;
+    case ProxyObject:
+        out.print("ProxyObject");
         break;
     case LikelyTakesSlowPath:
         out.print("LikelyTakesSlowPath");

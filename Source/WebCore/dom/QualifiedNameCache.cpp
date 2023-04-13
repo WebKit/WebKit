@@ -49,31 +49,41 @@ struct QNameComponentsTranslator {
     }
 };
 
+static void updateImplWithNamespaceAndElementName(QualifiedName::QualifiedNameImpl& impl, Namespace nodeNamespace, ElementName elementName)
+{
+    impl.m_namespace = nodeNamespace;
+    impl.m_elementName = elementName;
+    bool needsLowercasing = nodeNamespace != Namespace::HTML || elementName == ElementName::Unknown;
+    impl.m_localNameLower = needsLowercasing ? impl.m_localName.convertToASCIILowercase() : impl.m_localName;
+}
+
 Ref<QualifiedName::QualifiedNameImpl> QualifiedNameCache::getOrCreate(const QualifiedNameComponents& components)
 {
     auto addResult = m_cache.add<QNameComponentsTranslator>(components);
+    auto& impl = **addResult.iterator;
 
     if (addResult.isNewEntry) {
         auto nodeNamespace = findNamespace(components.m_namespaceURI);
-        (*addResult.iterator)->m_namespace = nodeNamespace;
-        (*addResult.iterator)->m_elementName = findElementName(nodeNamespace, components.m_localName);
-        return adoptRef(**addResult.iterator);
+        auto elementName = findElementName(nodeNamespace, components.m_localName);
+
+        updateImplWithNamespaceAndElementName(impl, nodeNamespace, elementName);
+        return adoptRef(impl);
     }
 
-    return Ref { **addResult.iterator };
+    return Ref { impl };
 }
 
 Ref<QualifiedName::QualifiedNameImpl> QualifiedNameCache::getOrCreate(const QualifiedNameComponents& components, Namespace nodeNamespace, ElementName elementName)
 {
     auto addResult = m_cache.add<QNameComponentsTranslator>(components);
+    auto& impl = **addResult.iterator;
 
     if (addResult.isNewEntry) {
-        (*addResult.iterator)->m_namespace = nodeNamespace;
-        (*addResult.iterator)->m_elementName = elementName;
-        return adoptRef(**addResult.iterator);
+        updateImplWithNamespaceAndElementName(impl, nodeNamespace, elementName);
+        return adoptRef(impl);
     }
 
-    return Ref { **addResult.iterator };
+    return Ref { impl };
 }
 
 void QualifiedNameCache::remove(QualifiedName::QualifiedNameImpl& impl)

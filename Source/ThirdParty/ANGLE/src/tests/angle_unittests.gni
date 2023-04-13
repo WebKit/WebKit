@@ -10,6 +10,7 @@ angle_unittests_sources = [
   "../common/BinaryStream_unittest.cpp",
   "../common/CircularBuffer_unittest.cpp",
   "../common/FastVector_unittest.cpp",
+  "../common/FixedQueue_unittest.cpp",
   "../common/FixedVector_unittest.cpp",
   "../common/Optional_unittest.cpp",
   "../common/PoolAlloc_unittest.cpp",

@@ -1,0 +1,16 @@
+<!-- webkit-test-runner [ NotificationEventEnabled=true ] -->
+<html>
+<head>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="push-console-messages.js"></script>
+</head>
+<body>
+<script>
+promise_test(test => {
+    const scope = "/WebKit/service-workers/push-console-messages.https.html-async";
+    return doTest(test, scope, "SHOWNOTIFICATION-ASYNC");
+}, "push with async showNotification call");
+</script>
+</body>
+</html>

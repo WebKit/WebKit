@@ -24,12 +24,7 @@ messages -> DrawingAreaProxy NotRefCounted {
     EnterAcceleratedCompositingMode(uint64_t backingStoreStateID, WebKit::LayerTreeContext context)
     UpdateAcceleratedCompositingMode(uint64_t backingStoreStateID, WebKit::LayerTreeContext context)
     DidFirstLayerFlush(uint64_t backingStoreStateID, WebKit::LayerTreeContext context)
-    DispatchPresentationCallbacksAfterFlushingLayers(Vector<WebKit::CallbackID> callbackIDs);
-
-#if PLATFORM(COCOA)
-    // Used by TiledCoreAnimationDrawingAreaProxy.
-    DidUpdateGeometry()
-#endif
+    DispatchPresentationCallbacksAfterFlushingLayers(Vector<IPC::AsyncReplyID> callbackIDs);
 
 #if USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)
     Update(uint64_t stateID, WebKit::UpdateInfo updateInfo)

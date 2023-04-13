@@ -133,7 +133,7 @@ template<> struct CGColorSpaceMapping<ColorSpace::OKLCH> { };
 template<> struct CGColorSpaceMapping<ColorSpace::XYZ_D65> { };
 
 
-std::optional<ColorSpace> colorSpaceForCGColorSpace(CGColorSpaceRef);
+WEBCORE_EXPORT std::optional<ColorSpace> colorSpaceForCGColorSpace(CGColorSpaceRef);
 
 
 template<ColorSpace, typename = void> inline constexpr bool HasCGColorSpaceMapping = false;
@@ -153,7 +153,7 @@ template<ColorSpace space> CGColorSpaceRef cachedNullableCGColorSpace()
     return CGColorSpaceMappingOrNullGetter<space>::colorSpace();
 }
 
-static inline CGColorSpaceRef cachedNullableCGColorSpace(ColorSpace colorSpace)
+inline CGColorSpaceRef cachedNullableCGColorSpace(ColorSpace colorSpace)
 {
     switch (colorSpace) {
     case ColorSpace::A98RGB:

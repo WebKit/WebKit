@@ -1,0 +1,18 @@
+
+Harness Error (TIMEOUT), message = null
+
+PASS Background Fetch requires an activated Service Worker
+PASS Argument verification is done for BackgroundFetchManager.fetch()
+PASS IDs must be unique among active Background Fetch registrations
+PASS Empty URL is OK.
+TIMEOUT Requests with PUT method require CORS Preflight and succeed. Test timed out
+NOTRUN Requests with text/json content type require CORS Preflight and succeed.
+NOTRUN Using Background Fetch to successfully fetch a single resource
+NOTRUN Registration object gets updated values when a background fetch completes.
+NOTRUN Background Fetch that exceeds the quota throws a QuotaExceededError
+NOTRUN Fetches can have requests with duplicate URLs
+NOTRUN recordsAvailable is false after onbackgroundfetchsuccess finishes execution.
+NOTRUN Using Background Fetch to fetch a non-existent resource should fail.
+NOTRUN Fetches with mixed content should fail.
+NOTRUN Responses failing CORS checks are not leaked
+

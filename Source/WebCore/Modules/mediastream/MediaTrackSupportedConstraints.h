@@ -47,6 +47,7 @@ struct MediaTrackSupportedConstraints {
     bool deviceId;
     bool groupId;
     bool displaySurface;
+    bool zoom;
 };
 
 } // namespace WebCore

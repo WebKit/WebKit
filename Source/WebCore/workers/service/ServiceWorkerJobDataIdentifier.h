@@ -39,36 +39,11 @@ struct ServiceWorkerJobDataIdentifier {
     {
         return connectionIdentifier.loggingString() + "-" + jobIdentifier.loggingString();
     }
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<ServiceWorkerJobDataIdentifier> decode(Decoder&);
 };
 
 inline bool operator==(const ServiceWorkerJobDataIdentifier& a, const ServiceWorkerJobDataIdentifier& b)
 {
     return a.connectionIdentifier == b.connectionIdentifier && a.jobIdentifier == b.jobIdentifier;
-}
-
-template<class Encoder>
-void ServiceWorkerJobDataIdentifier::encode(Encoder& encoder) const
-{
-    encoder << connectionIdentifier << jobIdentifier;
-}
-
-template<class Decoder>
-std::optional<ServiceWorkerJobDataIdentifier> ServiceWorkerJobDataIdentifier::decode(Decoder& decoder)
-{
-    std::optional<SWServerConnectionIdentifier> connectionIdentifier;
-    decoder >> connectionIdentifier;
-    if (!connectionIdentifier)
-        return std::nullopt;
-
-    std::optional<ServiceWorkerJobIdentifier> jobIdentifier;
-    decoder >> jobIdentifier;
-    if (!jobIdentifier)
-        return std::nullopt;
-
-    return { { WTFMove(*connectionIdentifier), WTFMove(*jobIdentifier) } };
 }
 
 } // namespace WebCore

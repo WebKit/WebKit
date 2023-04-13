@@ -35,7 +35,7 @@ WI.RecordingState = class RecordingState
 
     static fromContext(type, context, options = {})
     {
-        if (type !== WI.Recording.Type.Canvas2D)
+        if (!WI.Recording.is2D(type))
             return null;
 
         let matrix = context.getTransform();
@@ -76,7 +76,7 @@ WI.RecordingState = class RecordingState
 
     static async swizzleInitialState(recording, initialState)
     {
-        if (recording.type === WI.Recording.Type.Canvas2D) {
+        if (WI.Recording.is2D(recording.type)) {
             let swizzledState = {};
 
             for (let [name, value] of Object.entries(initialState)) {

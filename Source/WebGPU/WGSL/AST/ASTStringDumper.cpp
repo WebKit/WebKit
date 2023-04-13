@@ -27,6 +27,7 @@
 #include "ASTStringDumper.h"
 
 #include "AST.h"
+#include "WGSLShaderModule.h"
 #include <wtf/DataLog.h>
 #include <wtf/EnumTraits.h>
 #include <wtf/SetForScope.h>
@@ -35,9 +36,9 @@ namespace WGSL::AST {
 
 struct Indent {
     Indent(StringDumper& dumper)
-        : m_scope(dumper.m_indent, dumper.m_indent + "    ")
+        : scope(dumper.m_indent, dumper.m_indent + "    ")
     { }
-    SetForScope<String> m_scope;
+    SetForScope<String> scope;
 };
 
 static Indent bumpIndent(StringDumper& dumper)
@@ -71,14 +72,14 @@ void StringDumper::visit(ShaderModule& shaderModule)
     if (!shaderModule.directives().isEmpty())
         m_out.print("\n\n");
 
-    for (auto& structure : shaderModule.structs())
+    for (auto& structure : shaderModule.structures())
         visit(structure);
-    if (!shaderModule.structs().isEmpty())
+    if (!shaderModule.structures().isEmpty())
         m_out.printf("\n\n");
 
-    for (auto& variable : shaderModule.globalVars())
+    for (auto& variable : shaderModule.variables())
         visit(variable);
-    if (!shaderModule.globalVars().isEmpty())
+    if (!shaderModule.variables().isEmpty())
         m_out.printf("\n\n");
 
     for (auto& function : shaderModule.functions())
@@ -87,7 +88,7 @@ void StringDumper::visit(ShaderModule& shaderModule)
         m_out.printf("\n\n");
 }
 
-void StringDumper::visit(GlobalDirective& directive)
+void StringDumper::visit(Directive& directive)
 {
     m_out.print(m_indent, "enable ", directive.name(), ";");
 }
@@ -128,8 +129,13 @@ void StringDumper::visit(StageAttribute& stage)
     }
 }
 
+void StringDumper::visit(WorkgroupSizeAttribute& workgroupSize)
+{
+    m_out.print("@workgroup_size(", workgroupSize.size(), ")");
+}
+
 // Declaration
-void StringDumper::visit(FunctionDecl& function)
+void StringDumper::visit(Function& function)
 {
     m_out.print(m_indent);
     if (!function.attributes().isEmpty()) {
@@ -156,7 +162,7 @@ void StringDumper::visit(FunctionDecl& function)
     visit(function.body());
 }
 
-void StringDumper::visit(StructDecl& structure)
+void StringDumper::visit(Structure& structure)
 {
     m_out.print(m_indent);
     if (!structure.attributes().isEmpty()) {
@@ -175,7 +181,7 @@ void StringDumper::visit(StructDecl& structure)
     m_out.print("}\n");
 }
 
-void StringDumper::visit(VariableDecl& variable)
+void StringDumper::visit(Variable& variable)
 {
     if (!variable.attributes().isEmpty()) {
         visitVector(variable.attributes(), " ");
@@ -185,9 +191,9 @@ void StringDumper::visit(VariableDecl& variable)
     if (variable.maybeQualifier())
         visit(*variable.maybeQualifier());
     m_out.print(" ", variable.name());
-    if (variable.maybeTypeDecl()) {
+    if (variable.maybeTypeName()) {
         m_out.print(": ");
-        visit(*variable.maybeTypeDecl());
+        visit(*variable.maybeTypeName());
     }
     if (variable.maybeInitializer()) {
         m_out.print(" = ");
@@ -202,12 +208,12 @@ void StringDumper::visit(AbstractFloatLiteral& literal)
     m_out.print(literal.value());
 }
 
-void StringDumper::visit(AbstractIntLiteral& literal)
+void StringDumper::visit(AbstractIntegerLiteral& literal)
 {
     m_out.print(literal.value());
 }
 
-void StringDumper::visit(ArrayAccess& arrayAccess)
+void StringDumper::visit(IndexAccessExpression& arrayAccess)
 {
     visit(arrayAccess.base());
     m_out.print("[");
@@ -220,7 +226,7 @@ void StringDumper::visit(BoolLiteral& literal)
     m_out.print(literal.value() ? "true": "false");
 }
 
-void StringDumper::visit(CallableExpression& expression)
+void StringDumper::visit(CallExpression& expression)
 {
     visit(expression.target());
     m_out.print("(");
@@ -241,40 +247,36 @@ void StringDumper::visit(IdentifierExpression& identifier)
     m_out.print(identifier.identifier());
 }
 
-void StringDumper::visit(Int32Literal& literal)
+void StringDumper::visit(Signed32Literal& literal)
 {
     m_out.print(literal.value(), "i");
 }
 
-void StringDumper::visit(StructureAccess& structureAccess)
+void StringDumper::visit(FieldAccessExpression& fieldAccess)
 {
-    visit(structureAccess.base());
-    m_out.print(".", structureAccess.fieldName());
+    visit(fieldAccess.base());
+    m_out.print(".", fieldAccess.fieldName());
 }
 
-void StringDumper::visit(Uint32Literal& literal)
+void StringDumper::visit(Unsigned32Literal& literal)
 {
     m_out.print(literal.value(), "u");
 }
 
 void StringDumper::visit(UnaryExpression& expression)
 {
-    constexpr ASCIILiteral unaryOperator[] = { "-"_s };
-    auto op = WTF::enumToUnderlyingType(expression.operation());
-    m_out.print(unaryOperator[op]);
+    m_out.print(expression.operation());
     visit(expression.expression());
 }
 
 void StringDumper::visit(BinaryExpression& expression)
 {
-    constexpr ASCIILiteral binaryOperator[] = { "+"_s, "*"_s };
-    auto op = WTF::enumToUnderlyingType(expression.operation());
-    visit(expression.lhs());
-    m_out.print(" ", binaryOperator[op], " ");
-    visit(expression.rhs());
+    visit(expression.leftExpression());
+    m_out.print(" ", expression.operation(), " ");
+    visit(expression.rightExpression());
 }
 
-void StringDumper::visit(PointerDereference& pointerDereference)
+void StringDumper::visit(PointerDereferenceExpression& pointerDereference)
 {
     m_out.print("(*");
     visit(pointerDereference.target());
@@ -285,10 +287,7 @@ void StringDumper::visit(PointerDereference& pointerDereference)
 void StringDumper::visit(AssignmentStatement& statement)
 {
     m_out.print(m_indent);
-    if (statement.maybeLhs())
-        visit(*statement.maybeLhs());
-    else
-        m_out.print("_");
+    visit(statement.lhs());
     m_out.print(" = ");
     visit(statement.rhs());
     m_out.print(";");
@@ -308,6 +307,22 @@ void StringDumper::visit(CompoundStatement& block)
     m_out.print("}\n");
 }
 
+void StringDumper::visit(IfStatement& statement)
+{
+    m_out.print(m_indent, "if ");
+    visit(statement.test());
+    m_out.print("\n");
+    visit(statement.trueBody());
+    if (statement.maybeFalseBody()) {
+        m_out.print(m_indent, "else");
+        if (is<IfStatement>(*statement.maybeFalseBody()))
+            m_out.print(" ");
+        else
+            m_out.print("\n");
+        visit(*statement.maybeFalseBody());
+    }
+}
+
 void StringDumper::visit(ReturnStatement& statement)
 {
     m_out.print(m_indent, "return");
@@ -321,11 +336,11 @@ void StringDumper::visit(ReturnStatement& statement)
 void StringDumper::visit(VariableStatement& statement)
 {
     m_out.print(m_indent);
-    visit(statement.declaration());
+    visit(statement.variable());
 }
 
 // Types
-void StringDumper::visit(ArrayType& type)
+void StringDumper::visit(ArrayTypeName& type)
 {
     m_out.print("array");
     if (type.maybeElementType()) {
@@ -339,39 +354,19 @@ void StringDumper::visit(ArrayType& type)
     }
 }
 
-void StringDumper::visit(NamedType& type)
+void StringDumper::visit(NamedTypeName& type)
 {
     m_out.print(type.name());
 }
 
-void StringDumper::visit(ParameterizedType& type)
+void StringDumper::visit(ParameterizedTypeName& type)
 {
-    constexpr ASCIILiteral base[] = {
-        "Vec2"_s,
-        "Vec3"_s,
-        "Vec4"_s,
-        "Mat2x2"_s,
-        "Mat2x3"_s,
-        "Mat2x4"_s,
-        "Mat3x2"_s,
-        "Mat3x3"_s,
-        "Mat3x4"_s,
-        "Mat4x2"_s,
-        "Mat4x3"_s,
-        "Mat4x4"_s
-    };
-    auto b = WTF::enumToUnderlyingType(type.base());
-    m_out.print(base[b], "<");
+    m_out.print(ParameterizedTypeName::baseToString(type.base()), "<");
     visit(type.elementType());
     m_out.print(">");
 }
 
-void StringDumper::visit(StructType& type)
-{
-    m_out.print(type.structDecl().name());
-}
-
-void StringDumper::visit(ReferenceType& type)
+void StringDumper::visit(ReferenceTypeName& type)
 {
     visit(type.type());
     m_out.print("&");
@@ -385,10 +380,10 @@ void StringDumper::visit(Parameter& parameter)
         m_out.print(" ");
     }
     m_out.print(parameter.name(), ": ");
-    visit(parameter.type());
+    visit(parameter.typeName());
 }
 
-void StringDumper::visit(StructMember& member)
+void StringDumper::visit(StructureMember& member)
 {
     m_out.print(m_indent);
     if (!member.attributes().isEmpty()) {
@@ -406,14 +401,6 @@ void StringDumper::visit(VariableQualifier& qualifier)
     auto sc = WTF::enumToUnderlyingType(qualifier.storageClass());
     auto am = WTF::enumToUnderlyingType(qualifier.accessMode());
     m_out.print("<", storageClass[sc], ",", accessMode[am], ">");
-}
-
-template<typename T>
-void dumpNode(PrintStream& out, T& node)
-{
-    StringDumper dumper;
-    dumper.visit(node);
-    out.print(dumper.toString());
 }
 
 void dumpAST(ShaderModule& shaderModule)

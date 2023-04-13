@@ -59,6 +59,8 @@ FontCustomPlatformData::FontCustomPlatformData(FT_Face freeTypeFace, FragmentedS
         reinterpret_cast<cairo_destroy_func_t>(reinterpret_cast<void(*)(void)>(FT_Done_Face)));
 }
 
+FontCustomPlatformData::~FontCustomPlatformData() = default;
+
 static RefPtr<FcPattern> defaultFontconfigOptions()
 {
     // Get some generic default settings from fontconfig for web fonts. Strategy
@@ -94,7 +96,7 @@ FontPlatformData FontCustomPlatformData::fontPlatformData(const FontDescription&
     }
 
 #if ENABLE(VARIATION_FONTS)
-    auto variants = buildVariationSettings(freeTypeFace, description);
+    auto variants = buildVariationSettings(freeTypeFace, description, fontCreationContext);
     if (!variants.isEmpty()) {
         FcPatternAddString(pattern.get(), FC_FONT_VARIATIONS, reinterpret_cast<const FcChar8*>(variants.utf8().data()));
     }
@@ -136,7 +138,7 @@ static bool initializeFreeTypeLibrary(FT_Library& library)
     return true;
 }
 
-std::unique_ptr<FontCustomPlatformData> createFontCustomPlatformData(SharedBuffer& buffer, const String&)
+RefPtr<FontCustomPlatformData> createFontCustomPlatformData(SharedBuffer& buffer, const String&)
 {
     static FT_Library library;
     if (!library && !initializeFreeTypeLibrary(library)) {
@@ -147,7 +149,7 @@ std::unique_ptr<FontCustomPlatformData> createFontCustomPlatformData(SharedBuffe
     FT_Face freeTypeFace;
     if (FT_New_Memory_Face(library, reinterpret_cast<const FT_Byte*>(buffer.data()), buffer.size(), 0, &freeTypeFace))
         return nullptr;
-    return makeUnique<FontCustomPlatformData>(freeTypeFace, buffer);
+    return adoptRef(new FontCustomPlatformData(freeTypeFace, buffer));
 }
 
 bool FontCustomPlatformData::supportsFormat(const String& format)

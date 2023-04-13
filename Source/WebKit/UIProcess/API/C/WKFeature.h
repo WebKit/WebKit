@@ -31,7 +31,7 @@
 extern "C" {
 #endif
 
-WK_EXPORT WKTypeID WKFeatureGetTypeID();
+WK_EXPORT WKTypeID WKFeatureGetTypeID(void);
 
 WK_EXPORT WKStringRef WKFeatureCopyName(WKFeatureRef);
 WK_EXPORT WKStringRef WKFeatureCopyKey(WKFeatureRef);

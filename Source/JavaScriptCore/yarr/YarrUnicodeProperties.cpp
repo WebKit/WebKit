@@ -28,6 +28,7 @@
 
 #include "Yarr.h"
 #include "YarrPattern.h"
+#include <string_view>
 #include <wtf/text/WTFString.h>
 
 namespace JSC { namespace Yarr {
@@ -88,14 +89,16 @@ std::optional<BuiltInCharacterClassID> unicodeMatchPropertyValue(WTF::String uni
     return std::optional<BuiltInCharacterClassID>(static_cast<BuiltInCharacterClassID>(static_cast<int>(BuiltInCharacterClassID::BaseUnicodePropertyID) + propertyIndex));
 }
 
-std::optional<BuiltInCharacterClassID> unicodeMatchProperty(WTF::String unicodePropertyValue)
+std::optional<BuiltInCharacterClassID> unicodeMatchProperty(WTF::String unicodePropertyValue, CompileMode compileMode)
 {
     int propertyIndex = -1;
 
     propertyIndex = binaryPropertyHashTable.entry(unicodePropertyValue);
     if (propertyIndex == -1)
         propertyIndex = generalCategoryHashTable.entry(unicodePropertyValue);
-    
+    if (propertyIndex == -1 && compileMode == CompileMode::UnicodeSets)
+        propertyIndex = sequencePropertyHashTable.entry(unicodePropertyValue);
+
     if (propertyIndex == -1)
         return std::nullopt;
 
@@ -106,7 +109,14 @@ std::unique_ptr<CharacterClass> createUnicodeCharacterClassFor(BuiltInCharacterC
 {
     unsigned unicodePropertyIndex = static_cast<unsigned>(unicodeClassID) - static_cast<unsigned>(BuiltInCharacterClassID::BaseUnicodePropertyID);
 
-    return createFunctions[unicodePropertyIndex]();
+    return createCharacterClassFunctions[unicodePropertyIndex]();
+}
+
+bool characterClassMayContainStrings(BuiltInCharacterClassID unicodeClassID)
+{
+    unsigned unicodePropertyIndex = static_cast<unsigned>(unicodeClassID) - static_cast<unsigned>(BuiltInCharacterClassID::BaseUnicodePropertyID);
+
+    return unicodeCharacterClassMayContainStrings(unicodePropertyIndex);
 }
 
 } } // namespace JSC::Yarr

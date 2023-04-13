@@ -29,7 +29,6 @@
 #include "GlyphBuffer.h"
 #include "GlyphMetricsMap.h"
 #include "GlyphPage.h"
-#include "OpenTypeMathData.h"
 #include "RenderingResourceIdentifier.h"
 #include <wtf/BitVector.h>
 #include <wtf/Hasher.h>
@@ -39,6 +38,10 @@
 #include <CoreFoundation/CoreFoundation.h>
 #include <pal/cf/OTSVGTable.h>
 #include <wtf/RetainPtr.h>
+#endif
+
+#if ENABLE(MATHML)
+#include "OpenTypeMathData.h"
 #endif
 
 #if ENABLE(OPENTYPE_VERTICAL)
@@ -88,7 +91,9 @@ public:
     static const Font* systemFallback() { return reinterpret_cast<const Font*>(-1); }
 
     const FontPlatformData& platformData() const { return m_platformData; }
+#if ENABLE(MATHML)
     const OpenTypeMathData* mathData() const;
+#endif
 #if ENABLE(OPENTYPE_VERTICAL)
     const OpenTypeVerticalData* verticalData() const { return m_verticalData.get(); }
 #endif
@@ -104,7 +109,7 @@ public:
 
     const Font* variantFont(const FontDescription& description, FontVariant variant) const
     {
-#if PLATFORM(COCOA)
+#if USE(FONT_VARIANT_VIA_FEATURES)
         ASSERT(variant != SmallCapsVariant);
 #endif
         switch (variant) {
@@ -129,7 +134,7 @@ public:
     const Font& invisibleFont() const;
 
     bool hasVerticalGlyphs() const { return m_hasVerticalGlyphs; }
-    bool isTextOrientationFallback() const { return m_isTextOrientationFallback; }
+    bool isTextOrientationFallback() const { return m_attributes.isTextOrientationFallback == OrientationFallback::Yes; }
 
     const FontMetrics& fontMetrics() const { return m_fontMetrics; }
     float sizePerUnit() const { return platformData().size() / (fontMetrics().unitsPerEm() ? fontMetrics().unitsPerEm() : 1); }
@@ -149,7 +154,7 @@ public:
     };
     float widthForGlyph(Glyph, SyntheticBoldInclusion = SyntheticBoldInclusion::Incorporate) const;
 
-    const Path& pathForGlyph(Glyph) const; // Don't store the result of this! The hash map is free to rehash at any point, leaving this reference dangling.
+    Path pathForGlyph(Glyph) const;
 
     float spaceWidth(SyntheticBoldInclusion SyntheticBoldInclusion = SyntheticBoldInclusion::Incorporate) const
     {
@@ -174,9 +179,9 @@ public:
     void determinePitch();
     Pitch pitch() const { return m_treatAsFixedPitch ? FixedPitch : VariablePitch; }
 
-    Origin origin() const { return m_origin; }
-    bool isInterstitial() const { return m_isInterstitial; }
-    Visibility visibility() const { return m_visibility; }
+    Origin origin() const { return m_attributes.origin; }
+    bool isInterstitial() const { return m_attributes.isInterstitial == Interstitial::Yes; }
+    Visibility visibility() const { return m_attributes.visibility; }
     bool allowsAntialiasing() const { return m_allowsAntialiasing; }
 
 #if !LOG_DISABLED
@@ -204,15 +209,23 @@ public:
     bool hasAnyComplexColorFormatGlyphs(const GlyphBufferGlyph*, unsigned count) const;
 
 #if PLATFORM(WIN)
-    SCRIPT_FONTPROPERTIES* scriptFontProperties() const;
     SCRIPT_CACHE* scriptCache() const { return &m_scriptCache; }
-    WEBCORE_EXPORT static void setShouldApplyMacAscentHack(bool);
-    static bool shouldApplyMacAscentHack();
-    static float ascentConsideringMacAscentHack(const WCHAR*, float ascent, float descent);
 #endif
 
     void setIsUsedInSystemFallbackFontCache() { m_isUsedInSystemFallbackFontCache = true; }
     bool isUsedInSystemFallbackFontCache() const { return m_isUsedInSystemFallbackFontCache; }
+
+    class Attributes {
+    public:
+        WEBCORE_EXPORT RenderingResourceIdentifier ensureRenderingResourceIdentifier() const;
+
+        mutable std::optional<RenderingResourceIdentifier> renderingResourceIdentifier;
+        Font::Origin origin : 1;
+        Font::Interstitial isInterstitial : 1;
+        Font::Visibility visibility : 1;
+        Font::OrientationFallback isTextOrientationFallback : 1;
+    };
+    const Attributes& attributes() const { return m_attributes; }
 
 private:
     WEBCORE_EXPORT Font(const FontPlatformData&, Origin, Interstitial, Visibility, OrientationFallback, std::optional<RenderingResourceIdentifier>);
@@ -230,13 +243,6 @@ private:
 
     struct DerivedFonts;
     DerivedFonts& ensureDerivedFontData() const;
-
-#if PLATFORM(WIN)
-    void initGDIFont();
-    void platformCommonDestroy();
-    FloatRect boundsForGDIGlyph(Glyph) const;
-    float widthForGDIGlyph(Glyph) const;
-#endif
 
     FloatRect platformBoundsForGlyph(Glyph) const;
     float platformWidthForGlyph(Glyph) const;
@@ -282,17 +288,20 @@ private:
 
     mutable RefPtr<GlyphPage> m_glyphPageZero;
     mutable HashMap<unsigned, RefPtr<GlyphPage>> m_glyphPages;
-    mutable std::unique_ptr<GlyphMetricsMap<FloatRect>> m_glyphToBoundsMap;
     mutable GlyphMetricsMap<float> m_glyphToWidthMap;
-    mutable GlyphMetricsMap<std::optional<Path>> m_glyphPathMap;
+    mutable std::unique_ptr<GlyphMetricsMap<FloatRect>> m_glyphToBoundsMap;
+    // FIXME: Find a more efficient way to represent std::optional<Path>.
+    mutable std::unique_ptr<GlyphMetricsMap<std::optional<Path>>> m_glyphPathMap;
     mutable BitVector m_codePointSupport;
 
+#if ENABLE(MATHML)
     mutable RefPtr<OpenTypeMathData> m_mathData;
+#endif
 #if ENABLE(OPENTYPE_VERTICAL)
     RefPtr<OpenTypeVerticalData> m_verticalData;
 #endif
 
-    mutable std::optional<RenderingResourceIdentifier> m_renderingResourceIdentifier;
+    Attributes m_attributes;
 
     struct DerivedFonts {
         WTF_MAKE_STRUCT_FAST_ALLOCATED;
@@ -310,7 +319,10 @@ private:
     mutable std::unique_ptr<DerivedFonts> m_derivedFontData;
 
 #if PLATFORM(COCOA)
-    enum class SupportsFeature {
+    mutable std::optional<PAL::OTSVGTable> m_otSVGTable;
+    mutable std::optional<ComplexColorFormatGlyphs> m_glyphsWithComplexColorFormat; // SVG and sbix
+
+    enum class SupportsFeature : uint8_t {
         No,
         Yes,
         Unknown
@@ -319,29 +331,19 @@ private:
     mutable SupportsFeature m_supportsAllSmallCaps { SupportsFeature::Unknown };
     mutable SupportsFeature m_supportsPetiteCaps { SupportsFeature::Unknown };
     mutable SupportsFeature m_supportsAllPetiteCaps { SupportsFeature::Unknown };
-    mutable std::optional<PAL::OTSVGTable> m_otSVGTable;
-    mutable std::optional<ComplexColorFormatGlyphs> m_glyphsWithComplexColorFormat; // SVG and sbix
 #endif
 
 #if PLATFORM(WIN)
-    mutable SCRIPT_CACHE m_scriptCache;
-    mutable SCRIPT_FONTPROPERTIES* m_scriptFontProperties;
+    mutable SCRIPT_CACHE m_scriptCache { 0 };
 #endif
 
     Glyph m_spaceGlyph { 0 };
     Glyph m_zeroWidthSpaceGlyph { 0 };
 
-    Origin m_origin; // Whether or not we are custom font loaded via @font-face
-    Visibility m_visibility; // @font-face's internal timer can cause us to show fonts even when a font is being downloaded.
-
     float m_spaceWidth { 0 };
-
     float m_syntheticBoldOffset { 0 };
 
     unsigned m_treatAsFixedPitch : 1;
-    unsigned m_isInterstitial : 1; // Whether or not this custom font is the last resort placeholder for a loading font
-
-    unsigned m_isTextOrientationFallback : 1;
     unsigned m_isBrokenIdeographFallback : 1;
     unsigned m_hasVerticalGlyphs : 1;
 

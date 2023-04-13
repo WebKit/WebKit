@@ -35,7 +35,7 @@ namespace Style {
 class Builder {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    Builder(RenderStyle&, BuilderContext&&, const MatchResult&, CascadeLevel, PropertyCascade::IncludedProperties = PropertyCascade::IncludedProperties::All, const HashSet<AnimatableProperty>* = nullptr);
+    Builder(RenderStyle&, BuilderContext&&, const MatchResult&, CascadeLevel, PropertyCascade::IncludedProperties = PropertyCascade::IncludedProperties::All, const HashSet<AnimatableProperty>* animatedProperties = nullptr);
     ~Builder();
 
     void applyAllProperties();
@@ -47,6 +47,8 @@ public:
     void applyCustomProperty(const AtomString& name);
 
     BuilderState& state() { return m_state; }
+
+    const HashSet<AnimatableProperty> overriddenAnimatedProperties() const { return m_cascade.overriddenAnimatedProperties(); }
 
 private:
     void applyProperties(int firstProperty, int lastProperty);

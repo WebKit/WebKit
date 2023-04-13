@@ -103,13 +103,16 @@ class FramebufferVk : public FramebufferImpl
     gl::Rectangle getNonRotatedCompleteRenderArea() const;
     gl::Rectangle getRotatedCompleteRenderArea(ContextVk *contextVk) const;
     gl::Rectangle getRotatedScissoredRenderArea(ContextVk *contextVk) const;
+    // Returns render area with deferred clears in consideration. When deferred clear is used
+    // in the render pass, the render area must cover the whole framebuffer.
+    gl::Rectangle getRenderArea(ContextVk *contextVk) const;
 
     const gl::DrawBufferMask &getEmulatedAlphaAttachmentMask() const;
     RenderTargetVk *getColorDrawRenderTarget(size_t colorIndex) const;
     RenderTargetVk *getColorReadRenderTarget() const;
 
     angle::Result startNewRenderPass(ContextVk *contextVk,
-                                     const gl::Rectangle &scissoredRenderArea,
+                                     const gl::Rectangle &renderArea,
                                      vk::RenderPassCommandBuffer **commandBufferOut,
                                      bool *renderPassDescChangedOut);
 
@@ -155,7 +158,7 @@ class FramebufferVk : public FramebufferImpl
 
     const QueueSerial &getLastRenderPassQueueSerial() const { return mLastRenderPassQueueSerial; }
 
-    bool attachmentHasAHB() const { return mIsAHBColorAttachments.any(); }
+    bool hasAnyExternalAttachments() const { return mIsExternalColorAttachments.any(); }
 
     bool hasFrontBufferUsage() const
     {
@@ -307,7 +310,10 @@ class FramebufferVk : public FramebufferImpl
     bool mReadOnlyDepthFeedbackLoopMode;
     bool mReadOnlyStencilFeedbackLoopMode;
 
-    gl::DrawBufferMask mIsAHBColorAttachments;
+    // Whether any of the color attachments are an external image such as dmabuf, AHB etc.  In such
+    // cases, some optimizations are disabled such as deferred clears because the results need to be
+    // made externally available.
+    gl::DrawBufferMask mIsExternalColorAttachments;
     gl::DrawBufferMask mAttachmentHasFrontBufferUsage;
 
     bool mIsCurrentFramebufferCached;

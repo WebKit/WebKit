@@ -11,11 +11,17 @@ input:focus { background: green; }
 <script>
 if (window.testRunner) {
     testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 requestAnimationFrame(()=>{
-    if (getComputedStyle(test, null).getPropertyValue('background-color') == "rgb(0, 128, 0)")
+    const actualValue = getComputedStyle(test, null).getPropertyValue('background-color');
+    if (actualValue == "rgb(0, 128, 0)")
         result.innerHTML = "PASS";
+    else
+        result.innerHTML = 'FAIL - ' + actualValue;
+    if (window.testRunner)
+        testRunner.notifyDone();
 });
 
 </script>

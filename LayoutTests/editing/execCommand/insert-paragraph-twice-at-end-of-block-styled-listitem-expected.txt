@@ -13,7 +13,8 @@ Initial:
 |   "\n            "
 |   <li>
 |     id="target"
-|     "List item two.<#selection-caret>"
+|     "List item two."
+|     <#selection-caret>
 |   "\n        "
 | "\n        "
 | <p>

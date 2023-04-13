@@ -1,4 +1,4 @@
 
-FAIL column-rule-color responds to currentColor changes assert_equals: expected "rgb(0, 30, 30)" but got "rgb(30, 30, 0)"
-FAIL column-rule-color responds to inherited changes assert_equals: expected "rgb(0, 40, 40)" but got "rgb(40, 0, 40)"
+PASS column-rule-color responds to currentColor changes
+PASS column-rule-color responds to inherited changes
 

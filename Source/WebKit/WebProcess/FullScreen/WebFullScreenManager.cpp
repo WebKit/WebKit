@@ -36,20 +36,21 @@
 #include <WebCore/AddEventListenerOptions.h>
 #include <WebCore/Color.h>
 #include <WebCore/EventNames.h>
-#include <WebCore/Frame.h>
-#include <WebCore/FrameView.h>
 #include <WebCore/FullscreenManager.h>
 #include <WebCore/HTMLVideoElement.h>
 #include <WebCore/JSDOMPromiseDeferred.h>
+#include <WebCore/LocalFrame.h>
+#include <WebCore/LocalFrameView.h>
 #include <WebCore/Quirks.h>
 #include <WebCore/RenderLayerBacking.h>
 #include <WebCore/RenderView.h>
 #include <WebCore/Settings.h>
-#include <WebCore/TypedElementDescendantIterator.h>
+#include <WebCore/TypedElementDescendantIteratorInlines.h>
 #include <WebCore/UserGestureIndicator.h>
 
 #if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
 #include "PlaybackSessionManager.h"
+#include "VideoFullscreenManager.h"
 #endif
 
 namespace WebKit {
@@ -88,10 +89,19 @@ WebFullScreenManager::WebFullScreenManager(WebPage* page)
     
 WebFullScreenManager::~WebFullScreenManager()
 {
-    clearElement();
+    invalidate();
 }
 
-WebCore::Element* WebFullScreenManager::element() 
+void WebFullScreenManager::invalidate()
+{
+    clearElement();
+#if ENABLE(VIDEO)
+    setMainVideoElement(nullptr);
+    m_mainVideoElementTextRecognitionTimer.stop();
+#endif
+}
+
+WebCore::Element* WebFullScreenManager::element()
 { 
     return m_element.get(); 
 }
@@ -185,23 +195,26 @@ void WebFullScreenManager::enterFullScreenForElement(WebCore::Element* element)
 
     setElement(*element);
 
-    bool isVideoElementWithControls = false;
+    bool isVideoElement = false;
 #if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
-    if (auto* videoElement = dynamicDowncast<HTMLVideoElement>(element))
-        isVideoElementWithControls = videoElement->controls();
+    isVideoElement = is<HTMLVideoElement>(element);
+
+    if (m_page->videoFullscreenManager().videoElementInPictureInPicture() && m_element->document().quirks().blocksEnteringStandardFullscreenFromPictureInPictureQuirk())
+        return;
 
     if (auto* currentPlaybackControlsElement = m_page->playbackSessionManager().currentPlaybackControlsElement())
         currentPlaybackControlsElement->prepareForVideoFullscreenStandby();
 #endif
 
     m_initialFrame = screenRectOfContents(m_element.get());
+
+    FloatSize videoDimensions;
 #if ENABLE(VIDEO)
     updateMainVideoElement();
-    auto videoDimensions = m_mainVideoElement ? FloatSize(m_mainVideoElement->videoWidth(), m_mainVideoElement->videoHeight()) : FloatSize(m_initialFrame.width(), m_initialFrame.height());
-#else
-    FloatSize videoDimensions;
+    if (m_mainVideoElement)
+        videoDimensions = FloatSize(m_mainVideoElement->videoWidth(), m_mainVideoElement->videoHeight());
 #endif
-    m_page->injectedBundleFullScreenClient().enterFullScreenForElement(m_page.get(), element, m_element->document().quirks().blocksReturnToFullscreenFromPictureInPictureQuirk(), isVideoElementWithControls, videoDimensions);
+    m_page->injectedBundleFullScreenClient().enterFullScreenForElement(m_page.get(), element, m_element->document().quirks().blocksReturnToFullscreenFromPictureInPictureQuirk(), isVideoElement, videoDimensions);
 }
 
 void WebFullScreenManager::exitFullScreenForElement(WebCore::Element* element)
@@ -366,21 +379,23 @@ void WebFullScreenManager::close()
     m_closing = true;
     LOG(Fullscreen, "WebFullScreenManager %p close()", this);
     m_page->injectedBundleFullScreenClient().closeFullScreen(m_page.get());
-#if ENABLE(VIDEO)
-    setMainVideoElement(nullptr);
-#endif
-    clearElement();
+    invalidate();
     m_closing = false;
 }
 
 void WebFullScreenManager::saveScrollPosition()
 {
-    m_scrollPosition = m_page->corePage()->mainFrame().view()->scrollPosition();
+    if (auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->corePage()->mainFrame()))
+        m_scrollPosition = localMainFrame->view()->scrollPosition();
 }
 
 void WebFullScreenManager::restoreScrollPosition()
 {
-    m_page->corePage()->mainFrame().view()->setScrollPosition(m_scrollPosition);
+    if (auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->corePage()->mainFrame())) {
+        // Make sure overflow: hidden is unapplied from the root element before restoring.
+        localMainFrame->view()->forceLayout();
+        localMainFrame->view()->setScrollPosition(m_scrollPosition);
+    }
 }
 
 void WebFullScreenManager::setFullscreenInsets(const WebCore::FloatBoxExtent& insets)

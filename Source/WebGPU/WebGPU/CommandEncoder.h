@@ -29,6 +29,7 @@
 #import <wtf/FastMalloc.h>
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
+#import <wtf/Vector.h>
 
 struct WGPUCommandEncoderImpl {
 };
@@ -84,6 +85,7 @@ private:
     bool validateClearBuffer(const Buffer&, uint64_t offset, uint64_t size);
     bool validateFinish() const;
     bool validatePopDebugGroup() const;
+    bool validateComputePassDescriptor(const WGPUComputePassDescriptor&) const;
     bool validateRenderPassDescriptor(const WGPURenderPassDescriptor&) const;
 
     void makeInvalid() { m_commandBuffer = nil; }
@@ -94,6 +96,11 @@ private:
     id<MTLCommandBuffer> m_commandBuffer { nil };
     id<MTLBlitCommandEncoder> m_blitCommandEncoder { nil };
 
+    struct PendingTimestampWrites {
+        Ref<QuerySet> querySet;
+        uint32_t queryIndex;
+    };
+    Vector<PendingTimestampWrites> m_pendingTimestampWrites;
     uint64_t m_debugGroupStackSize { 0 };
 
     const Ref<Device> m_device;

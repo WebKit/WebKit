@@ -179,11 +179,10 @@ struct BlendDesc
     uint8_t rgbBlendOperation : 3;
 
     // Use uint8_t instead of MTLBlendFactor to compact space
-    // NOTE(hqle): enum MTLBlendFactorSource1Color and above are unused.
-    uint8_t destinationAlphaBlendFactor : 4;
-    uint8_t destinationRGBBlendFactor : 4;
-    uint8_t sourceAlphaBlendFactor : 4;
-    uint8_t sourceRGBBlendFactor : 4;
+    uint8_t destinationAlphaBlendFactor : 5;
+    uint8_t destinationRGBBlendFactor : 5;
+    uint8_t sourceAlphaBlendFactor : 5;
+    uint8_t sourceRGBBlendFactor : 5;
 
     bool blendingEnabled : 1;
 };

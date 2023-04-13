@@ -55,6 +55,8 @@ public:
     const std::optional<WebHitTestResultData>& webHitTestResultData() const { return m_webHitTestResultData; }
     const String& selectedText() const { return m_selectedText; }
 
+    bool hasEntireImage() const { return m_hasEntireImage; }
+
 #if ENABLE(SERVICE_CONTROLS)
     ContextMenuContextData(const WebCore::IntPoint& menuLocation, const Vector<uint8_t>& selectionData, const Vector<String>& selectedTelephoneNumbers, bool isEditable)
         : m_type(Type::ServicesMenu)
@@ -89,6 +91,14 @@ public:
     String controlledImageMIMEType() const { return m_controlledImageMIMEType; }
 #endif // ENABLE(SERVICE_CONTROLS)
 
+#if ENABLE(CONTEXT_MENU_QR_CODE_DETECTION)
+    ShareableBitmap* potentialQRCodeNodeSnapshotImage() const { return m_potentialQRCodeNodeSnapshotImage.get(); }
+    ShareableBitmap* potentialQRCodeViewportSnapshotImage() const { return m_potentialQRCodeViewportSnapshotImage.get(); }
+
+    const String& qrCodePayloadString() const { return m_qrCodePayloadString; }
+    void setQRCodePayloadString(const String& string) { m_qrCodePayloadString = string; }
+#endif
+
     void encode(IPC::Encoder&) const;
     static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, ContextMenuContextData&);
 
@@ -100,9 +110,10 @@ private:
 
     std::optional<WebHitTestResultData> m_webHitTestResultData;
     String m_selectedText;
+    bool m_hasEntireImage;
 
 #if ENABLE(SERVICE_CONTROLS)
-    void setImage(WebCore::Image*);
+    void setImage(WebCore::Image&);
     
     RefPtr<ShareableBitmap> m_controlledImage;
     Vector<uint8_t> m_controlledSelectionData;
@@ -112,6 +123,16 @@ private:
     String m_controlledImageAttachmentID;
     std::optional<WebCore::ElementContext> m_controlledImageElementContext;
     String m_controlledImageMIMEType;
+#endif
+
+#if ENABLE(CONTEXT_MENU_QR_CODE_DETECTION)
+    void setPotentialQRCodeNodeSnapshotImage(WebCore::Image&);
+    void setPotentialQRCodeViewportSnapshotImage(WebCore::Image&);
+
+    RefPtr<ShareableBitmap> m_potentialQRCodeNodeSnapshotImage;
+    RefPtr<ShareableBitmap> m_potentialQRCodeViewportSnapshotImage;
+
+    String m_qrCodePayloadString;
 #endif
 };
 

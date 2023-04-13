@@ -100,6 +100,12 @@ class QueryMtl : public QueryImpl
     void resetVisibilityResult(ContextMtl *contextMtl);
     void onTransformFeedbackEnd(const gl::Context *context);
 
+    // If the timestamp query is still active upon context switch,
+    // must set/unset the active timestamp query entry on the command
+    // queue.
+    void onContextMakeCurrent(const gl::Context *context);
+    void onContextUnMakeCurrent(const gl::Context *context);
+
   private:
     template <typename T>
     angle::Result waitAndGetResult(const gl::Context *context, T *params);
@@ -108,7 +114,9 @@ class QueryMtl : public QueryImpl
     VisibilityBufferOffsetsMtl mVisibilityBufferOffsets;
     mtl::BufferRef mVisibilityResultBuffer;
 
-    size_t mTransformFeedbackPrimitivesDrawn;
+    size_t mTransformFeedbackPrimitivesDrawn = 0;
+
+    uint64_t mTimeElapsedEntry = 0;
 };
 
 }  // namespace rx

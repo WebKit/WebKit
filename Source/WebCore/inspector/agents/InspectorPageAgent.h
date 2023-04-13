@@ -45,9 +45,9 @@ namespace WebCore {
 
 class DOMWrapperWorld;
 class DocumentLoader;
-class Frame;
 class InspectorClient;
 class InspectorOverlay;
+class LocalFrame;
 class Page;
 class RenderObject;
 class FragmentedSharedBuffer;
@@ -78,16 +78,16 @@ public:
     };
 
     static bool sharedBufferContent(RefPtr<FragmentedSharedBuffer>&&, const String& textEncodingName, bool withBase64Encode, String* result);
-    static Vector<CachedResource*> cachedResourcesForFrame(Frame*);
-    static void resourceContent(Inspector::Protocol::ErrorString&, Frame*, const URL&, String* result, bool* base64Encoded);
+    static Vector<CachedResource*> cachedResourcesForFrame(LocalFrame*);
+    static void resourceContent(Inspector::Protocol::ErrorString&, LocalFrame*, const URL&, String* result, bool* base64Encoded);
     static String sourceMapURLForResource(CachedResource*);
-    static CachedResource* cachedResource(const Frame*, const URL&);
+    static CachedResource* cachedResource(const LocalFrame*, const URL&);
     static Inspector::Protocol::Page::ResourceType resourceTypeJSON(ResourceType);
     static ResourceType inspectorResourceType(CachedResource::Type);
     static ResourceType inspectorResourceType(const CachedResource&);
     static Inspector::Protocol::Page::ResourceType cachedResourceTypeJSON(const CachedResource&);
-    static Frame* findFrameWithSecurityOrigin(Page&, const String& originRawString);
-    static DocumentLoader* assertDocumentLoader(Inspector::Protocol::ErrorString&, Frame*);
+    static LocalFrame* findFrameWithSecurityOrigin(Page&, const String& originRawString);
+    static DocumentLoader* assertDocumentLoader(Inspector::Protocol::ErrorString&, LocalFrame*);
 
     // InspectorAgentBase
     void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*);
@@ -126,13 +126,13 @@ public:
     // InspectorInstrumentation
     void domContentEventFired();
     void loadEventFired();
-    void frameNavigated(Frame&);
-    void frameDetached(Frame&);
+    void frameNavigated(LocalFrame&);
+    void frameDetached(LocalFrame&);
     void loaderDetachedFromFrame(DocumentLoader&);
-    void frameStartedLoading(Frame&);
-    void frameStoppedLoading(Frame&);
-    void frameScheduledNavigation(Frame&, Seconds delay);
-    void frameClearedScheduledNavigation(Frame&);
+    void frameStartedLoading(LocalFrame&);
+    void frameStoppedLoading(LocalFrame&);
+    void frameScheduledNavigation(LocalFrame&, Seconds delay);
+    void frameClearedScheduledNavigation(LocalFrame&);
     void accessibilitySettingsDidChange();
     void defaultUserPreferencesDidChange();
 #if ENABLE(DARK_MODE_CSS) || HAVE(OS_DARK_MODE_SUPPORT)
@@ -140,29 +140,29 @@ public:
 #endif
     void applyUserAgentOverride(String&);
     void applyEmulatedMedia(AtomString&);
-    void didClearWindowObjectInWorld(Frame&, DOMWrapperWorld&);
+    void didClearWindowObjectInWorld(LocalFrame&, DOMWrapperWorld&);
     void didPaint(RenderObject&, const LayoutRect&);
     void didLayout();
     void didScroll();
     void didRecalculateStyle();
 
-    Frame* frameForId(const Inspector::Protocol::Network::FrameId&);
-    WEBCORE_EXPORT String frameId(Frame*);
+    LocalFrame* frameForId(const Inspector::Protocol::Network::FrameId&);
+    WEBCORE_EXPORT String frameId(LocalFrame*);
     String loaderId(DocumentLoader*);
-    Frame* assertFrame(Inspector::Protocol::ErrorString&, const Inspector::Protocol::Network::FrameId&);
+    LocalFrame* assertFrame(Inspector::Protocol::ErrorString&, const Inspector::Protocol::Network::FrameId&);
 
 private:
     double timestamp();
 
-    static bool mainResourceContent(Frame*, bool withBase64Encode, String* result);
+    static bool mainResourceContent(LocalFrame*, bool withBase64Encode, String* result);
     static bool dataContent(const uint8_t* data, unsigned size, const String& textEncodingName, bool withBase64Encode, String* result);
 
     void overridePrefersReducedMotion(std::optional<Inspector::Protocol::Page::UserPreferenceValue>&&);
     void overridePrefersContrast(std::optional<Inspector::Protocol::Page::UserPreferenceValue>&&);
     void overridePrefersColorScheme(std::optional<Inspector::Protocol::Page::UserPreferenceValue>&&);
 
-    Ref<Inspector::Protocol::Page::Frame> buildObjectForFrame(Frame*);
-    Ref<Inspector::Protocol::Page::FrameResourceTree> buildObjectForFrameTree(Frame*);
+    Ref<Inspector::Protocol::Page::Frame> buildObjectForFrame(LocalFrame*);
+    Ref<Inspector::Protocol::Page::FrameResourceTree> buildObjectForFrameTree(LocalFrame*);
 
     std::unique_ptr<Inspector::PageFrontendDispatcher> m_frontendDispatcher;
     RefPtr<Inspector::PageBackendDispatcher> m_backendDispatcher;
@@ -172,8 +172,8 @@ private:
     InspectorOverlay* m_overlay { nullptr };
 
     // FIXME: Make a WeakHashMap and use it for m_frameToIdentifier and m_loaderToIdentifier.
-    HashMap<Frame*, String> m_frameToIdentifier;
-    MemoryCompactRobinHoodHashMap<String, WeakPtr<Frame>> m_identifierToFrame;
+    HashMap<LocalFrame*, String> m_frameToIdentifier;
+    MemoryCompactRobinHoodHashMap<String, WeakPtr<LocalFrame>> m_identifierToFrame;
     HashMap<DocumentLoader*, String> m_loaderToIdentifier;
     String m_userAgentOverride;
     AtomString m_emulatedMedia;

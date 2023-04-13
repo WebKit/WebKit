@@ -8,8 +8,8 @@ function foo()
 {
 }
 
-for (var i = 0; i < 5000; ++i) {
-    foo = foo.bind(1);
+for (var i = 0; i < 6000; ++i) {
+    foo = foo.bind(undefined, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11);
     Object.defineProperty(foo, "name", { value: "bar", writable: true, enumerable: true, writable: true });
 }
 

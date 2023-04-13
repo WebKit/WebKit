@@ -30,6 +30,7 @@
 
 #include "GamepadData.h"
 #include "Logging.h"
+#include "MessageSenderInlines.h"
 #include "WebGamepad.h"
 #include "WebProcess.h"
 #include "WebProcessPoolMessages.h"
@@ -60,17 +61,17 @@ WebGamepadProvider::~WebGamepadProvider()
 {
 }
 
-void WebGamepadProvider::setInitialGamepads(const Vector<GamepadData>& gamepadDatas)
+void WebGamepadProvider::setInitialGamepads(const Vector<std::optional<GamepadData>>& gamepadDatas)
 {
     WP_MESSAGE_CHECK((m_gamepads.isEmpty()), m_gamepads.size());
 
     m_gamepads.resize(gamepadDatas.size());
     m_rawGamepads.resize(gamepadDatas.size());
     for (size_t i = 0; i < gamepadDatas.size(); ++i) {
-        if (gamepadDatas[i].isNull())
-            continue;
+        if (!gamepadDatas[i])
+            return;
 
-        m_gamepads[i] = makeUnique<WebGamepad>(gamepadDatas[i]);
+        m_gamepads[i] = makeUnique<WebGamepad>(*gamepadDatas[i]);
         m_rawGamepads[i] = m_gamepads[i].get();
     }
 }
@@ -106,15 +107,15 @@ void WebGamepadProvider::gamepadDisconnected(unsigned index)
         client->platformGamepadDisconnected(*disconnectedGamepad);
 }
 
-void WebGamepadProvider::gamepadActivity(const Vector<GamepadData>& gamepadDatas, EventMakesGamepadsVisible eventVisibility)
+void WebGamepadProvider::gamepadActivity(const Vector<std::optional<GamepadData>>& gamepadDatas, EventMakesGamepadsVisible eventVisibility)
 {
     LOG(Gamepad, "WebGamepadProvider::gamepadActivity - %zu gamepad datas with %zu local web gamepads\n", gamepadDatas.size(), m_gamepads.size());
 
     ASSERT(m_gamepads.size() == gamepadDatas.size());
 
     for (size_t i = 0; i < m_gamepads.size(); ++i) {
-        if (m_gamepads[i])
-            m_gamepads[i]->updateValues(gamepadDatas[i]);
+        if (m_gamepads[i] && gamepadDatas[i])
+            m_gamepads[i]->updateValues(*gamepadDatas[i]);
     }
 
     for (auto* client : m_clients)
@@ -148,7 +149,7 @@ void WebGamepadProvider::stopMonitoringGamepads(GamepadProviderClient& client)
     });
 }
 
-const Vector<PlatformGamepad*>& WebGamepadProvider::platformGamepads()
+const Vector<WeakPtr<PlatformGamepad>>& WebGamepadProvider::platformGamepads()
 {
     return m_rawGamepads;
 }

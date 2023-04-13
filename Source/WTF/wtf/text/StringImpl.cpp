@@ -129,26 +129,25 @@ StringImpl::~StringImpl()
             symbolRegistry->remove(*symbol.asRegisteredSymbolImpl());
     }
 
-    BufferOwnership ownership = bufferOwnership();
-
-    if (ownership == BufferInternal)
-        return;
-    if (ownership == BufferOwned) {
+    switch (bufferOwnership()) {
+    case BufferInternal:
+        break;
+    case BufferOwned:
         // We use m_data8, but since it is a union with m_data16 this works either way.
         ASSERT(m_data8);
         StringImplMalloc::free(const_cast<LChar*>(m_data8));
-        return;
-    }
-    if (ownership == BufferExternal) {
+        break;
+    case BufferExternal: {
         auto* external = static_cast<ExternalStringImpl*>(this);
         external->freeExternalBuffer(const_cast<LChar*>(m_data8), sizeInBytes());
         external->m_free.~ExternalStringImplFreeFunction();
-        return;
+        break;
     }
-
-    ASSERT(ownership == BufferSubstring);
-    ASSERT(substringBuffer());
-    substringBuffer()->deref();
+    case BufferSubstring:
+        ASSERT(substringBuffer());
+        substringBuffer()->deref();
+        break;
+    }
 }
 
 void StringImpl::destroy(StringImpl* stringImpl)
@@ -1417,9 +1416,11 @@ template<typename CharacterType> inline bool equalInternal(const StringImpl* a, 
 
     if (a->length() != length)
         return false;
+    if (!length)
+        return true;
     if (a->is8Bit())
-        return equal(a->characters8(), b, length);
-    return equal(a->characters16(), b, length);
+        return *a->characters8() == *b && equal(a->characters8() + 1, b + 1, length - 1);
+    return *a->characters16() == *b && equal(a->characters16() + 1, b + 1, length - 1);
 }
 
 bool equal(const StringImpl* a, const LChar* b, unsigned length)
@@ -1437,7 +1438,7 @@ bool equal(const StringImpl* a, const LChar* b)
     if (!a)
         return !b;
     if (!b)
-        return !a;
+        return false;
 
     unsigned length = a->length();
 
@@ -1572,7 +1573,7 @@ Expected<size_t, UTF8ConversionError> StringImpl::utf8ForCharactersIntoBuffer(co
             // Conversion fails when there is an unpaired surrogate.
             // Put replacement character (U+FFFD) instead of the unpaired surrogate.
             if (result != ConversionResult::Success) {
-                ASSERT((0xD800 <= *characters && *characters <= 0xDFFF));
+                ASSERT(U16_IS_SURROGATE(*characters));
                 // There should be room left, since one UChar hasn't been converted.
                 ASSERT((buffer + 3) <= bufferEnd);
                 putUTF8Triple(buffer, replacementCharacter);
@@ -1592,7 +1593,7 @@ Expected<size_t, UTF8ConversionError> StringImpl::utf8ForCharactersIntoBuffer(co
             if (strict)
                 return makeUnexpected(UTF8ConversionError::SourceExhausted);
             ASSERT(characters + 1 == charactersEnd);
-            ASSERT((0xD800 <= *characters && *characters <= 0xDFFF));
+            ASSERT(U16_IS_SURROGATE(*characters));
             putUTF8Triple(buffer, *characters);
                 break;
         case ConversionResult::TargetExhausted:

@@ -1658,7 +1658,7 @@ private:
     
     NEVER_INLINE void updateErrorWithNameAndMessage(const char* beforeMessage, const String& name, const char* afterMessage)
     {
-        m_errorMessage = makeString(beforeMessage, " '", name, "' ", afterMessage);
+        m_errorMessage = makeString(beforeMessage, " '"_s, name, "' "_s, afterMessage);
     }
     
     NEVER_INLINE void updateErrorMessage(const char* msg)
@@ -1779,7 +1779,7 @@ private:
     enum class BlockType : uint8_t { Normal, CatchBlock, StaticBlock };
     template <class TreeBuilder> TreeStatement parseBlockStatement(TreeBuilder&, BlockType = BlockType::Normal);
 
-    enum class IsOnlyChildOfStatement { Yes, No };
+    enum class IsOnlyChildOfStatement : bool { No, Yes };
     template <class TreeBuilder> TreeExpression parseExpression(TreeBuilder&, IsOnlyChildOfStatement = IsOnlyChildOfStatement::No);
 
     template <class TreeBuilder> TreeExpression parseAssignmentExpression(TreeBuilder&, ExpressionErrorClassifier&);

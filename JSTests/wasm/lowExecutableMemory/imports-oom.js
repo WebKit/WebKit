@@ -1,6 +1,6 @@
 // FIXME: Consider making jump islands work with Options::jitMemoryReservationSize
 // https://bugs.webkit.org/show_bug.cgi?id=209037
-//@ skip if $architecture == "arm64"
+//@ skip
 
 import * as assert from '../assert.js'
 import Builder from '../Builder.js'

@@ -83,7 +83,7 @@ private:
 
     void clearStream();
     void getSizeForNext();
-    void dispatchDidReceiveResponse(Error = Error::NoError);
+    void dispatchDidReceiveResponse();
     void seek();
     void consumeData(const uint8_t* data, int bytesRead);
     void read();
@@ -104,9 +104,9 @@ private:
     Vector<uint8_t> m_buffer;
     Vector<long long> m_itemLengthList;
     State m_state { State::Suspended };
-    long long m_rangeOffset { kPositionNotSpecified };
+    bool m_isRangeRequest { false };
+    long long m_rangeStart { kPositionNotSpecified };
     long long m_rangeEnd { kPositionNotSpecified };
-    long long m_rangeSuffixLength { kPositionNotSpecified };
     long long m_totalSize { 0 };
     long long m_downloadBytesWritten { 0 };
     long long m_totalRemainingSize { 0 };

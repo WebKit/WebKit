@@ -54,6 +54,7 @@ enum class LinkTimeConstant : int32_t;
     macro(getStringIteratorInternalField) \
     macro(getMapIteratorInternalField) \
     macro(getSetIteratorInternalField) \
+    macro(getProxyInternalField) \
     macro(idWithProfile) \
     macro(isObject) \
     macro(isCallable) \
@@ -82,6 +83,8 @@ enum class LinkTimeConstant : int32_t;
     macro(putByIdDirect) \
     macro(putByIdDirectPrivate) \
     macro(putByValDirect) \
+    macro(putByValWithThisSloppy) \
+    macro(putByValWithThisStrict) \
     macro(putPromiseInternalField) \
     macro(putGeneratorInternalField) \
     macro(putAsyncGeneratorInternalField) \
@@ -89,6 +92,8 @@ enum class LinkTimeConstant : int32_t;
     macro(putStringIteratorInternalField) \
     macro(putMapIteratorInternalField) \
     macro(putSetIteratorInternalField) \
+    macro(superSamplerBegin) \
+    macro(superSamplerEnd) \
     macro(toNumber) \
     macro(toString) \
     macro(toPropertyKey) \
@@ -97,7 +102,6 @@ enum class LinkTimeConstant : int32_t;
     macro(newArrayWithSpecies) \
     macro(newPromise) \
     macro(createPromise) \
-    macro(createArgumentsButterfly) \
 
 #define JSC_COMMON_BYTECODE_INTRINSIC_CONSTANTS_EACH_NAME(macro) \
     JSC_COMMON_BYTECODE_INTRINSIC_CONSTANTS_SIMPLE_EACH_NAME(macro) \
@@ -128,6 +132,8 @@ enum class LinkTimeConstant : int32_t;
     macro(promiseFlagsIsFirstResolvingFunctionCalled) \
     macro(promiseFieldFlags) \
     macro(promiseFieldReactionsOrResult) \
+    macro(proxyFieldTarget) \
+    macro(proxyFieldHandler) \
     macro(generatorFieldState) \
     macro(generatorFieldNext) \
     macro(generatorFieldThis) \

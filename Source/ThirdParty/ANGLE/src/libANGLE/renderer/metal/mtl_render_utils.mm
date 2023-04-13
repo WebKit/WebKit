@@ -712,7 +712,8 @@ void DispatchCompute(ContextMtl *contextMtl,
                      id<MTLComputePipelineState> pipelineState,
                      size_t numThreads)
 {
-    NSUInteger w = std::min<NSUInteger>(pipelineState.threadExecutionWidth, numThreads);
+    ASSERT(numThreads != 0);
+    NSUInteger w = std::clamp<NSUInteger>(numThreads, 1u, pipelineState.threadExecutionWidth);
     MTLSize threadsPerThreadgroup = MTLSizeMake(w, 1, 1);
 
     if (contextMtl->getDisplay()->getFeatures().hasNonUniformDispatch.enabled)
@@ -2094,7 +2095,8 @@ angle::Result IndexGeneratorUtils::generateTriFanBufferFromElementsArray(
              contextMtl->getRenderCommandEncoder()))
         {
             IndexGenerationParams cpuPathParams = params;
-            cpuPathParams.indices = elementBufferMtl->getBufferDataReadOnly(contextMtl) + srcOffset;
+            cpuPathParams.indices =
+                elementBufferMtl->getClientShadowCopyData(contextMtl) + srcOffset;
             return generateTriFanBufferFromElementsArrayCPU(contextMtl, cpuPathParams,
                                                             indicesGenerated);
         }
@@ -2222,7 +2224,8 @@ angle::Result IndexGeneratorUtils::generateLineLoopBufferFromElementsArray(
              contextMtl->getRenderCommandEncoder()))
         {
             IndexGenerationParams cpuPathParams = params;
-            cpuPathParams.indices = elementBufferMtl->getBufferDataReadOnly(contextMtl) + srcOffset;
+            cpuPathParams.indices =
+                elementBufferMtl->getClientShadowCopyData(contextMtl) + srcOffset;
             return generateLineLoopBufferFromElementsArrayCPU(contextMtl, cpuPathParams,
                                                               indicesGenerated);
         }

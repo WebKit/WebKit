@@ -1,0 +1,2 @@
+Pass if this line is properly repainted.
+PASS

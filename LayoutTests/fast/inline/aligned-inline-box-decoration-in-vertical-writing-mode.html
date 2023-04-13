@@ -1,0 +1,14 @@
+<style>
+div {
+  writing-mode: vertical-lr;
+  font-size: 50px;
+  font-family: Ahem;
+}
+span {
+  background-color: green;
+  color: blue;
+}
+</style>
+<!-- PASS if content and background positions match -->
+<div><span>some<span style="vertical-align: 100px">text</span></span>
+<div><span style="unicode-bidi: isolate">some<span style="vertical-align: 100px">text</span></span>

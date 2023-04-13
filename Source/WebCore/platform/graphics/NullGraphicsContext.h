@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,14 +29,16 @@
 
 namespace WebCore {
 
+enum class NullGraphicsContextPaintInvalidationReasons : uint8_t {
+    None,
+    InvalidatingControlTints,
+    InvalidatingImagesWithAsyncDecodes,
+    DetectingContentfulPaint
+};
+
 class NullGraphicsContext : public GraphicsContext {
 public:
-    enum class PaintInvalidationReasons : uint8_t {
-        None,
-        InvalidatingControlTints,
-        InvalidatingImagesWithAsyncDecodes,
-        DetectingContentfulPaint
-    };
+    using PaintInvalidationReasons = NullGraphicsContextPaintInvalidationReasons;
 
     NullGraphicsContext() = default;
 
@@ -47,7 +49,6 @@ public:
 
 private:
 #if USE(CG)
-    void setIsCALayerContext(bool) final { }
     bool isCALayerContext() const final { return false; }
 #endif
 
@@ -59,11 +60,7 @@ private:
 
     void didUpdateState(GraphicsContextState&) final { }
 
-#if USE(CG)
-    void setIsAcceleratedContext(bool) final { }
-#endif
-
-    void drawNativeImage(NativeImage&, const FloatSize&, const FloatRect&, const FloatRect&, const ImagePaintingOptions&) final { }
+    void drawNativeImageInternal(NativeImage&, const FloatSize&, const FloatRect&, const FloatRect&, const ImagePaintingOptions&) final { }
 
     void drawSystemImage(SystemImage&, const FloatRect&) final { };
 
@@ -87,7 +84,7 @@ private:
     void fillRoundedRectImpl(const FloatRoundedRect&, const Color&) final { }
     void strokeRect(const FloatRect&, float) final { }
     void clipPath(const Path&, WindRule = WindRule::EvenOdd) final { }
-    void drawLinesForText(const FloatPoint&, float, const DashArray&, bool, bool = false, StrokeStyle = SolidStroke) final { }
+    void drawLinesForText(const FloatPoint&, float, const DashArray&, bool, bool = false, StrokeStyle = StrokeStyle::SolidStroke) final { }
     void setLineCap(LineCap) final { }
     void setLineDash(const DashArray&, float) final { }
     void setLineJoin(LineJoin) final { }
@@ -117,7 +114,7 @@ private:
 
     void drawDotsForDocumentMarker(const FloatRect&, DocumentMarkerLineStyle) final { }
 
-    ImageDrawResult drawImage(Image&, const FloatRect&, const FloatRect&, const ImagePaintingOptions& = { ImageOrientation::FromImage }) final { return ImageDrawResult::DidNothing; }
+    ImageDrawResult drawImage(Image&, const FloatRect&, const FloatRect&, const ImagePaintingOptions& = { ImageOrientation::Orientation::FromImage }) final { return ImageDrawResult::DidNothing; }
 
     ImageDrawResult drawTiledImage(Image&, const FloatRect&, const FloatPoint&, const FloatSize&, const FloatSize&, const ImagePaintingOptions& = { }) final { return ImageDrawResult::DidNothing; }
     ImageDrawResult drawTiledImage(Image&, const FloatRect&, const FloatRect&, const FloatSize&, Image::TileRule, Image::TileRule, const ImagePaintingOptions& = { }) final { return ImageDrawResult::DidNothing; }
@@ -126,7 +123,6 @@ private:
     void drawFocusRing(const Vector<FloatRect>&, float, float, const Color&) final { }
 
     void drawImageBuffer(ImageBuffer&, const FloatRect&, const FloatRect&, const ImagePaintingOptions& = { }) final { }
-    void drawConsumingImageBuffer(RefPtr<ImageBuffer>, const FloatRect&, const FloatRect&, const ImagePaintingOptions& = { }) final;
 
     void clipRoundedRect(const FloatRoundedRect&) final { }
     void clipOutRoundedRect(const FloatRoundedRect&) final { }
@@ -140,10 +136,6 @@ private:
 
 #if ENABLE(VIDEO)
     void paintFrameForMedia(MediaPlayer&, const FloatRect&) final { }
-#endif
-
-#if OS(WINDOWS) && !USE(CAIRO)
-    GraphicsContextPlatformPrivate* deprecatedPrivateContext() const final { return nullptr; }
 #endif
 
 private:

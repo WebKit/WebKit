@@ -46,10 +46,7 @@ class BuilderState;
 
 void maybeUpdateFontForLetterSpacing(BuilderState&, CSSValue&);
 
-enum class ForVisitedLink : bool {
-    No,
-    Yes
-};
+enum class ForVisitedLink : bool { No, Yes };
 
 struct BuilderContext {
     Ref<const Document> document;

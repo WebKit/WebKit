@@ -24,7 +24,7 @@
 
 #include "AffineTransform.h"
 #include "CommonAtomStrings.h"
-#include "ElementIterator.h"
+#include "ElementChildIteratorInlines.h"
 #include "PathTraversalState.h"
 #include "RenderLayerModelObject.h"
 #include "RenderSVGResource.h"
@@ -98,15 +98,14 @@ bool SVGAnimateMotionElement::hasValidAttributeName() const
     return true;
 }
 
-void SVGAnimateMotionElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void SVGAnimateMotionElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
-    if (name == SVGNames::pathAttr) {
-        m_path = buildPathFromString(value);
-        updateAnimationPath();
-        return;
-    }
+    SVGAnimationElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 
-    SVGAnimationElement::parseAttribute(name, value);
+    if (name == SVGNames::pathAttr) {
+        m_path = buildPathFromString(newValue);
+        updateAnimationPath();
+    }
 }
     
 SVGAnimateMotionElement::RotateMode SVGAnimateMotionElement::rotateMode() const
@@ -160,13 +159,7 @@ void SVGAnimateMotionElement::stopAnimation(SVGElement* targetElement)
     applyResultsToTarget();
 }
 
-bool SVGAnimateMotionElement::calculateToAtEndOfDurationValue(const String& toAtEndOfDurationString)
-{
-    m_toPointAtEndOfDuration = valueOrDefault(parsePoint(toAtEndOfDurationString));
-    return true;
-}
-
-bool SVGAnimateMotionElement::calculateFromAndToValues(const String& fromString, const String& toString)
+bool SVGAnimateMotionElement::setFromAndToValues(const String& fromString, const String& toString)
 {
     m_toPointAtEndOfDuration = std::nullopt;
     m_fromPoint = valueOrDefault(parsePoint(fromString));
@@ -174,7 +167,7 @@ bool SVGAnimateMotionElement::calculateFromAndToValues(const String& fromString,
     return true;
 }
     
-bool SVGAnimateMotionElement::calculateFromAndByValues(const String& fromString, const String& byString)
+bool SVGAnimateMotionElement::setFromAndByValues(const String& fromString, const String& byString)
 {
     m_toPointAtEndOfDuration = std::nullopt;
     if (animationMode() == AnimationMode::By && !isAdditive())
@@ -182,6 +175,12 @@ bool SVGAnimateMotionElement::calculateFromAndByValues(const String& fromString,
     m_fromPoint = valueOrDefault(parsePoint(fromString));
     auto byPoint = valueOrDefault(parsePoint(byString));
     m_toPoint = FloatPoint(m_fromPoint.x() + byPoint.x(), m_fromPoint.y() + byPoint.y());
+    return true;
+}
+
+bool SVGAnimateMotionElement::setToAtEndOfDurationValue(const String& toAtEndOfDurationString)
+{
+    m_toPointAtEndOfDuration = valueOrDefault(parsePoint(toAtEndOfDurationString));
     return true;
 }
 

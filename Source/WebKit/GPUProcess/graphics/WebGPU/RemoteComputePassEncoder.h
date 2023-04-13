@@ -87,6 +87,7 @@ private:
     void insertDebugMarker(String&& markerLabel);
 
     void setLabel(String&&);
+    void destruct();
 
     Ref<PAL::WebGPU::ComputePassEncoder> m_backing;
     WebGPU::ObjectHeap& m_objectHeap;

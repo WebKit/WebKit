@@ -37,13 +37,13 @@
 #include "DiagnosticLoggingClient.h"
 #include "DiagnosticLoggingKeys.h"
 #include "DocumentLoader.h"
-#include "Frame.h"
 #include "FrameDestructionObserverInlines.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "HTMLFrameOwnerElement.h"
 #include "InspectorInstrumentation.h"
 #include "LoaderStrategy.h"
+#include "LocalFrame.h"
 #include "Logging.h"
 #include "Page.h"
 #include "PageConsoleClient.h"
@@ -78,7 +78,7 @@ namespace WebCore {
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(ResourceLoader);
 
-ResourceLoader::ResourceLoader(Frame& frame, ResourceLoaderOptions options)
+ResourceLoader::ResourceLoader(LocalFrame& frame, ResourceLoaderOptions options)
     : m_frame { &frame }
     , m_documentLoader { frame.loader().activeDocumentLoader() }
     , m_defersLoading { options.defersLoadingPolicy == DefersLoadingPolicy::AllowDefersLoading && frame.page()->defersLoading() }
@@ -410,6 +410,17 @@ void ResourceLoader::willSendRequestInternal(ResourceRequest&& request, const Re
         return;
     }
 
+    if (frameLoader() && frameLoader()->frame().isMainFrame() && cachedResource() && cachedResource()->type() == CachedResource::Type::MainResource && !redirectResponse.isNull()) {
+        auto requestURL { redirectResponse.url() };
+        auto redirectURL { request.url() };
+        if (frameLoader()->upgradeRequestforHTTPSOnlyIfNeeded(requestURL, request) && request.url() == redirectResponse.url()) {
+            RESOURCELOADER_RELEASE_LOG("willSendRequestInternal: resource load canceled because of entering same-URL redirect loop");
+            cancel(httpsUpgradeRedirectLoopError());
+            completionHandler({ });
+            return;
+        }
+    }
+
     if (m_options.sendLoadCallbacks == SendCallbackPolicy::SendCallbacks) {
         if (createdResourceIdentifier)
             frameLoader()->notifier().assignIdentifierToInitialRequest(m_identifier, documentLoader(), request);
@@ -471,7 +482,7 @@ void ResourceLoader::didSendData(unsigned long long, unsigned long long)
 {
 }
 
-static void logResourceResponseSource(Frame* frame, ResourceResponse::Source source)
+static void logResourceResponseSource(LocalFrame* frame, ResourceResponse::Source source)
 {
     if (!frame || !frame->page())
         return;
@@ -713,6 +724,11 @@ ResourceError ResourceLoader::blockedByContentBlockerError()
 ResourceError ResourceLoader::cannotShowURLError()
 {
     return frameLoader()->client().cannotShowURLError(m_request);
+}
+
+ResourceError ResourceLoader::httpsUpgradeRedirectLoopError()
+{
+    return frameLoader()->client().httpsUpgradeRedirectLoopError(m_request);
 }
 
 void ResourceLoader::willSendRequestAsync(ResourceHandle* handle, ResourceRequest&& request, ResourceResponse&& redirectResponse, CompletionHandler<void(ResourceRequest&&)>&& completionHandler)

@@ -173,6 +173,18 @@ void ScrollingStateNode::setLayer(const LayerRepresentation& layerRepresentation
     setPropertyChanged(Property::Layer);
 }
 
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+void ScrollingStateNode::setInteractionRegionsLayer(const LayerRepresentation& layerRepresentation)
+{
+    if (layerRepresentation == m_interactionRegionsLayer)
+        return;
+
+    m_interactionRegionsLayer = layerRepresentation;
+
+    // Piggybacks on other property changed flags: Property::Layer and Property::ScrollContainerLayer.
+}
+#endif
+
 void ScrollingStateNode::dumpProperties(TextStream& ts, OptionSet<ScrollingStateTreeAsTextBehavior> behavior) const
 {
     if (behavior & ScrollingStateTreeAsTextBehavior::IncludeNodeIDs)

@@ -49,6 +49,21 @@ function deleteProperty(target, propertyKey)
     return delete target[propertyKey];
 }
 
+// https://tc39.es/ecma262/#sec-reflect.get
+function get(target, propertyKey /*, receiver */)
+{
+    "use strict";
+
+    if (!@isObject(target))
+        @throwTypeError("Reflect.get requires the first argument be an object");
+
+    if (@argumentCount() < 3)
+        return target[propertyKey];
+
+    var receiver = @argument(2);
+    return @getByValWithThis(target, receiver, propertyKey);
+}
+
 // https://tc39.github.io/ecma262/#sec-reflect.has
 function has(target, propertyKey)
 {

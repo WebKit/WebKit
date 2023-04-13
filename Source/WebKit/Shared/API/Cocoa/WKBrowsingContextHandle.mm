@@ -74,7 +74,7 @@
 
 - (id)initWithCoder:(NSCoder *)coder
 {
-    return [self _initWithPageProxyID:makeObjectIdentifier<WebKit::WebPageProxyIdentifierType>([coder decodeInt64ForKey:@"pageProxyID"]) andWebPageID:makeObjectIdentifier<WebCore::PageIdentifierType>([coder decodeInt64ForKey:@"webPageID"])];
+    return [self _initWithPageProxyID:ObjectIdentifier<WebKit::WebPageProxyIdentifierType>([coder decodeInt64ForKey:@"pageProxyID"]) andWebPageID:ObjectIdentifier<WebCore::PageIdentifierType>([coder decodeInt64ForKey:@"webPageID"])];
 }
 
 + (BOOL)supportsSecureCoding
@@ -84,7 +84,7 @@
 
 - (id)copyWithZone:(NSZone *)zone
 {
-    return [[WKBrowsingContextHandle allocWithZone:zone] _initWithPageProxyID:_pageProxyID andWebPageID:makeObjectIdentifier<WebCore::PageIdentifierType>(_webPageID)];
+    return [[WKBrowsingContextHandle allocWithZone:zone] _initWithPageProxyID:_pageProxyID andWebPageID:ObjectIdentifier<WebCore::PageIdentifierType>(_webPageID)];
 }
 
 - (NSString *)description

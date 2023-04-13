@@ -35,8 +35,8 @@
 
 namespace WebCore {
 
-class Frame;
 class GraphicsContext;
+class LocalFrame;
 
 struct SimpleRange;
 
@@ -146,7 +146,7 @@ public:
     constexpr static float defaultVerticalMargin { 1 };
 
     WEBCORE_EXPORT static Ref<TextIndicator> create(const TextIndicatorData&);
-    WEBCORE_EXPORT static RefPtr<TextIndicator> createWithSelectionInFrame(Frame&, OptionSet<TextIndicatorOption>, TextIndicatorPresentationTransition, FloatSize margin = FloatSize(defaultHorizontalMargin, defaultVerticalMargin));
+    WEBCORE_EXPORT static RefPtr<TextIndicator> createWithSelectionInFrame(LocalFrame&, OptionSet<TextIndicatorOption>, TextIndicatorPresentationTransition, FloatSize margin = FloatSize(defaultHorizontalMargin, defaultVerticalMargin));
     WEBCORE_EXPORT static RefPtr<TextIndicator> createWithRange(const SimpleRange&, OptionSet<TextIndicatorOption>, TextIndicatorPresentationTransition, FloatSize margin = FloatSize(defaultHorizontalMargin, defaultVerticalMargin));
 
     WEBCORE_EXPORT ~TextIndicator();
@@ -170,36 +170,3 @@ private:
 };
 
 } // namespace WebKit
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::TextIndicatorOption> {
-    using values = EnumValues<
-        WebCore::TextIndicatorOption,
-        WebCore::TextIndicatorOption::RespectTextColor,
-        WebCore::TextIndicatorOption::PaintBackgrounds,
-        WebCore::TextIndicatorOption::PaintAllContent,
-        WebCore::TextIndicatorOption::IncludeSnapshotWithSelectionHighlight,
-        WebCore::TextIndicatorOption::TightlyFitContent,
-        WebCore::TextIndicatorOption::UseBoundingRectAndPaintAllContentForComplexRanges,
-        WebCore::TextIndicatorOption::IncludeMarginIfRangeMatchesSelection,
-        WebCore::TextIndicatorOption::ExpandClipBeyondVisibleRect,
-        WebCore::TextIndicatorOption::DoNotClipToVisibleRect,
-        WebCore::TextIndicatorOption::IncludeSnapshotOfAllVisibleContentWithoutSelection,
-        WebCore::TextIndicatorOption::UseSelectionRectForSizing,
-        WebCore::TextIndicatorOption::ComputeEstimatedBackgroundColor,
-        WebCore::TextIndicatorOption::UseUserSelectAllCommonAncestor
-    >;
-};
-
-template<> struct EnumTraits<WebCore::TextIndicatorPresentationTransition> {
-    using values = EnumValues<
-        WebCore::TextIndicatorPresentationTransition,
-        WebCore::TextIndicatorPresentationTransition::None,
-        WebCore::TextIndicatorPresentationTransition::Bounce,
-        WebCore::TextIndicatorPresentationTransition::BounceAndCrossfade,
-        WebCore::TextIndicatorPresentationTransition::FadeIn
-    >;
-};
-
-} // namespace WTF

@@ -51,7 +51,7 @@ class Element;
 class HTMLElement;
 class JSDOMGlobalObject;
 
-enum class ParserConstructElementWithEmptyStack { No, Yes };
+enum class ParserConstructElementWithEmptyStack : bool { No, Yes };
 
 class JSCustomElementInterface : public RefCounted<JSCustomElementInterface>, public ActiveDOMCallback {
 public:

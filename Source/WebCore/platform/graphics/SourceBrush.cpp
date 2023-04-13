@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc.  All rights reserved.
+ * Copyright (C) 2022-2023 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,10 +38,8 @@ const AffineTransform& SourceBrush::gradientSpaceTransform() const
 {
     if (!m_brush)
         return identity;
-
-    if (auto* gradient = std::get_if<Brush::LogicalGradient>(&m_brush->brush))
-        return gradient->spaceTransform;
-
+    if (auto* logicalGradient = std::get_if<Brush::LogicalGradient>(&m_brush->brush))
+        return logicalGradient->spaceTransform;
     return identity;
 }
 
@@ -49,9 +47,32 @@ Gradient* SourceBrush::gradient() const
 {
     if (!m_brush)
         return nullptr;
-    if (auto* gradient = std::get_if<Brush::LogicalGradient>(&m_brush->brush))
-        return gradient->gradient.ptr();
+    if (auto* logicalGradient = std::get_if<Brush::LogicalGradient>(&m_brush->brush)) {
+        if (auto* gradient = std::get_if<Ref<Gradient>>(&logicalGradient->gradient))
+            return gradient->ptr();
+    }
     return nullptr;
+}
+
+std::optional<RenderingResourceIdentifier> SourceBrush::gradientIdentifier() const
+{
+    if (!m_brush)
+        return std::nullopt;
+
+    auto* gradient = std::get_if<Brush::LogicalGradient>(&m_brush->brush);
+    if (!gradient)
+        return std::nullopt;
+
+    return WTF::switchOn(gradient->gradient,
+        [] (const Ref<Gradient>& gradient) -> std::optional<RenderingResourceIdentifier> {
+            if (!gradient->hasValidRenderingResourceIdentifier())
+                return std::nullopt;
+            return gradient->renderingResourceIdentifier();
+        },
+        [] (RenderingResourceIdentifier renderingResourceIdentifier) -> std::optional<RenderingResourceIdentifier> {
+            return renderingResourceIdentifier;
+        }
+    );
 }
 
 Pattern* SourceBrush::pattern() const
@@ -65,12 +86,12 @@ Pattern* SourceBrush::pattern() const
 
 void SourceBrush::setGradient(Ref<Gradient>&& gradient, const AffineTransform& spaceTransform)
 {
-    m_brush = { Brush::LogicalGradient { WTFMove(gradient), spaceTransform } };
+    m_brush = Brush { Brush::LogicalGradient { { WTFMove(gradient) }, spaceTransform } };
 }
 
 void SourceBrush::setPattern(Ref<Pattern>&& pattern)
 {
-    m_brush = { WTFMove(pattern) };
+    m_brush = Brush { Brush::Variant { std::in_place_type<Ref<Pattern>>, WTFMove(pattern) } };
 }
 
 WTF::TextStream& operator<<(TextStream& ts, const SourceBrush& brush)

@@ -31,9 +31,9 @@ PASS Range 22 [paras[0], 0, paras[0], 0] collapseToEnd()
 PASS Range 23 [paras[0], 0, paras[0], 1] collapseToStart()
 PASS Range 23 [paras[0], 0, paras[0], 1] collapseToEnd()
 PASS Range 26 [paras[0].firstChild, 0, paras[1].firstChild, 0] collapseToStart()
-FAIL Range 26 [paras[0].firstChild, 0, paras[1].firstChild, 0] collapseToEnd() assert_equals: focusNode must equal the original end node expected Element node <p id="c">Qrstuvwx</p> but got Text node "Qrstuvwx"
+PASS Range 26 [paras[0].firstChild, 0, paras[1].firstChild, 0] collapseToEnd()
 PASS Range 27 [paras[0].firstChild, 0, paras[1].firstChild, 8] collapseToStart()
-FAIL Range 27 [paras[0].firstChild, 0, paras[1].firstChild, 8] collapseToEnd() assert_equals: focusNode must equal the original end node expected Element node <p id="c">Qrstuvwx</p> but got Text node "Qrstuvwx"
+PASS Range 27 [paras[0].firstChild, 0, paras[1].firstChild, 8] collapseToEnd()
 PASS Range 28 [paras[0].firstChild, 3, paras[3], 1] collapseToStart()
 PASS Range 28 [paras[0].firstChild, 3, paras[3], 1] collapseToEnd()
 PASS Range 29 [paras[0], 0, paras[0].firstChild, 7] collapseToStart()

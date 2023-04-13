@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-203 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,15 +31,16 @@ namespace WebCore {
 #ifndef NDEBUG
 void CertificateInfo::dump() const
 {
-#if PLATFORM(COCOA)
     if (m_trust) {
-        CFIndex entries = SecTrustGetCertificateCount(trust().get());
 
-        NSLog(@"CertificateInfo SecTrust\n");
-        NSLog(@"  Entries: %ld\n", entries);
 #if HAVE(SEC_TRUST_COPY_CERTIFICATE_CHAIN)
         auto chain = adoptCF(SecTrustCopyCertificateChain(trust().get()));
+        CFIndex entries = CFArrayGetCount(chain.get());
+#else
+        CFIndex entries = SecTrustGetCertificateCount(trust().get());
 #endif
+        NSLog(@"CertificateInfo SecTrust\n");
+        NSLog(@"  Entries: %ld\n", entries);
         for (CFIndex i = 0; i < entries; ++i) {
 #if HAVE(SEC_TRUST_COPY_CERTIFICATE_CHAIN)
             RetainPtr<CFStringRef> summary = adoptCF(SecCertificateCopySubjectSummary(checked_cf_cast<SecCertificateRef>(CFArrayGetValueAtIndex(chain.get(), i))));
@@ -50,20 +51,6 @@ void CertificateInfo::dump() const
         }
         return;
     }
-#elif PLATFORM(WIN)
-    if (m_certificateChain) {
-        CFIndex entries = CFArrayGetCount(m_certificateChain.get());
-
-        NSLog(@"CertificateInfo (Certificate Chain)\n");
-        NSLog(@"  Entries: %ld\n", entries);
-        for (CFIndex i = 0; i < entries; ++i) {
-            RetainPtr<CFStringRef> summary = adoptCF(SecCertificateCopySubjectSummary(checked_cf_cast<SecCertificateRef>(CFArrayGetValueAtIndex(m_certificateChain.get(), i))));
-            NSLog(@"  %@", (__bridge NSString *)summary.get());
-        }
-
-        return;
-    }
-#endif
     NSLog(@"CertificateInfo (Empty)\n");
 }
 #endif

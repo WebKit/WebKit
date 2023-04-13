@@ -49,38 +49,38 @@ Ref<SVGFEDisplacementMapElement> SVGFEDisplacementMapElement::create(const Quali
     return adoptRef(*new SVGFEDisplacementMapElement(tagName, document));
 }
 
-void SVGFEDisplacementMapElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void SVGFEDisplacementMapElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
+    SVGFilterPrimitiveStandardAttributes::attributeChanged(name, oldValue, newValue, attributeModificationReason);
+
     if (name == SVGNames::xChannelSelectorAttr) {
-        auto propertyValue = SVGPropertyTraits<ChannelSelectorType>::fromString(value);
+        auto propertyValue = SVGPropertyTraits<ChannelSelectorType>::fromString(newValue);
         if (propertyValue > 0)
             m_xChannelSelector->setBaseValInternal<ChannelSelectorType>(propertyValue);
         return;
     }
 
     if (name == SVGNames::yChannelSelectorAttr) {
-        auto propertyValue = SVGPropertyTraits<ChannelSelectorType>::fromString(value);
+        auto propertyValue = SVGPropertyTraits<ChannelSelectorType>::fromString(newValue);
         if (propertyValue > 0)
             m_yChannelSelector->setBaseValInternal<ChannelSelectorType>(propertyValue);
         return;
     }
 
     if (name == SVGNames::inAttr) {
-        m_in1->setBaseValInternal(value);
+        m_in1->setBaseValInternal(newValue);
         return;
     }
 
     if (name == SVGNames::in2Attr) {
-        m_in2->setBaseValInternal(value);
+        m_in2->setBaseValInternal(newValue);
         return;
     }
 
     if (name == SVGNames::scaleAttr) {
-        m_scale->setBaseValInternal(value.toFloat());
+        m_scale->setBaseValInternal(newValue.toFloat());
         return;
     }
-
-    SVGFilterPrimitiveStandardAttributes::parseAttribute(name, value);
 }
 
 bool SVGFEDisplacementMapElement::setFilterEffectAttribute(FilterEffect& effect, const QualifiedName& attrName)

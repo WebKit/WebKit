@@ -174,6 +174,7 @@ class EGLSyncMtl final : public EGLSyncImpl
     id<MTLSharedEvent> mSharedEvent;
     Optional<uint64_t> mSignalValue;
     EGLenum mType;
+    EGLenum mCondition;
 };
 
 }  // namespace rx

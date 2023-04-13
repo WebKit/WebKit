@@ -1,5 +1,5 @@
 //@ requireOptions("--useWebAssemblySIMD=1")
-//@ skip if $architecture != "arm64" && $architecture != "x86_64"
+//@ skip if !$isSIMDPlatform
 import { instantiate } from "../wabt-wrapper.js"
 import * as assert from "../assert.js"
 
@@ -19,7 +19,7 @@ let wat = `
 
         (v128.load (i32.const 0))
         (i8x16.extract_lane_u 1)
-        
+
         (return)
     )
 
@@ -27,7 +27,7 @@ let wat = `
         (v128.store (i32.const 0) (v128.const i64x2 0xABCD 0xEFBD))
 
         (i64.load (i32.const 8))
-        
+
         (return)
     )
 )

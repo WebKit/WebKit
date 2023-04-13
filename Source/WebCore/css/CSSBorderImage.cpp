@@ -26,27 +26,23 @@ namespace WebCore {
 
 Ref<CSSValueList> createBorderImageValue(RefPtr<CSSValue>&& image, RefPtr<CSSValue>&& imageSlice, RefPtr<CSSValue>&& borderSlice, RefPtr<CSSValue>&& outset, RefPtr<CSSValue>&& repeat)
 {
-    auto list = CSSValueList::createSpaceSeparated();
+    CSSValueListBuilder list;
     if (image)
-        list.get().append(*image);
-
+        list.append(*image);
     if (borderSlice || outset) {
-        auto listSlash = CSSValueList::createSlashSeparated();
+        CSSValueListBuilder listSlash;
         if (imageSlice)
-            listSlash.get().append(imageSlice.releaseNonNull());
-
+            listSlash.append(imageSlice.releaseNonNull());
         if (borderSlice)
-            listSlash.get().append(borderSlice.releaseNonNull());
-
+            listSlash.append(borderSlice.releaseNonNull());
         if (outset)
-            listSlash.get().append(outset.releaseNonNull());
-
-        list.get().append(WTFMove(listSlash));
+            listSlash.append(outset.releaseNonNull());
+        list.append(CSSValueList::createSlashSeparated(WTFMove(listSlash)));
     } else if (imageSlice)
-        list.get().append(imageSlice.releaseNonNull());
+        list.append(imageSlice.releaseNonNull());
     if (repeat)
-        list.get().append(repeat.releaseNonNull());
-    return list;
+        list.append(repeat.releaseNonNull());
+    return CSSValueList::createSpaceSeparated(WTFMove(list));
 }
 
 } // namespace WebCore

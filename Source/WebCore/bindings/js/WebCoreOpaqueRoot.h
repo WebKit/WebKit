@@ -35,54 +35,33 @@ public:
     template<typename T, typename = typename std::enable_if_t<!std::is_same_v<T, void>>>
     explicit WebCoreOpaqueRoot(T* pointer)
         : m_pointer(static_cast<void*>(pointer))
-        , m_isNode(pointer && std::is_base_of_v<Node, T>)
     {
     }
 
     WebCoreOpaqueRoot(std::nullptr_t) { }
 
-    bool isNode() const { return m_isNode; }
     void* pointer() const { return m_pointer; }
 
 private:
     void* m_pointer { nullptr };
-    bool m_isNode { false };
 };
 
 template<typename Visitor>
-ALWAYS_INLINE void addWebCoreOpaqueRoot(Visitor& visitor, WebCoreOpaqueRoot root)
-{
-    visitor.addOpaqueRoot(root.pointer());
-}
+inline void addWebCoreOpaqueRoot(Visitor&, WebCoreOpaqueRoot);
 
 template<typename Visitor, typename ImplType>
-ALWAYS_INLINE void addWebCoreOpaqueRoot(Visitor& visitor, ImplType* impl)
-{
-    addWebCoreOpaqueRoot(visitor, root(impl));
-}
+inline void addWebCoreOpaqueRoot(Visitor&, ImplType*);
 
 template<typename Visitor, typename ImplType>
-ALWAYS_INLINE void addWebCoreOpaqueRoot(Visitor& visitor, ImplType& impl)
-{
-    addWebCoreOpaqueRoot(visitor, root(&impl));
-}
+inline void addWebCoreOpaqueRoot(Visitor&, ImplType&);
 
 template<typename Visitor>
-ALWAYS_INLINE bool containsWebCoreOpaqueRoot(Visitor& visitor, WebCoreOpaqueRoot root)
-{
-    return visitor.containsOpaqueRoot(root.pointer());
-}
+inline bool containsWebCoreOpaqueRoot(Visitor&, WebCoreOpaqueRoot);
 
 template<typename Visitor, typename ImplType>
-ALWAYS_INLINE bool containsWebCoreOpaqueRoot(Visitor& visitor, ImplType& impl)
-{
-    return containsWebCoreOpaqueRoot(visitor, root(&impl));
-}
+inline bool containsWebCoreOpaqueRoot(Visitor&, ImplType&);
 
 template<typename Visitor, typename ImplType>
-ALWAYS_INLINE bool containsWebCoreOpaqueRoot(Visitor& visitor, ImplType* impl)
-{
-    return containsWebCoreOpaqueRoot(visitor, root(impl));
-}
+inline bool containsWebCoreOpaqueRoot(Visitor&, ImplType*);
 
 } // namespace WebCore

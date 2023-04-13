@@ -43,6 +43,7 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
         this._filterText = null;
         this._shouldFocusSelectorElement = false;
         this._wasEditing = false;
+        this._setSelectorTextPromise = Promise.resolve();
 
         this._isMousePressed = false;
         this._mouseDownIndex = NaN;
@@ -168,6 +169,18 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
 
         if (this._shouldFocusSelectorElement)
             this.startEditingRuleSelector();
+    }
+
+    startEditingFirstGroupingOrRuleSelector()
+    {
+        for (let groupingTextElement of this._groupingElements) {
+            if (groupingTextElement.associatedTextField) {
+                groupingTextElement.associatedTextField.startEditing();
+                return;
+            }
+        }
+
+        this.startEditingRuleSelector();
     }
 
     startEditingRuleSelector()
@@ -708,10 +721,11 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
     {
         let matchesGrouping = false;
         for (let groupingElement of this._groupingElements) {
-            groupingElement.classList.remove(WI.GeneralStyleDetailsSidebarPanel.FilterMatchSectionClassName);
+            groupingElement.parentElement.classList.remove(WI.GeneralStyleDetailsSidebarPanel.FilterMatchSectionClassName);
 
-            if (groupingElement.textContent.includes(this._filterText)) {
-                groupingElement.classList.add(WI.GeneralStyleDetailsSidebarPanel.FilterMatchSectionClassName);
+            // Check the parent element to also include the grouping type in the search.
+            if (groupingElement.parentElement.textContent.includes(this._filterText)) {
+                groupingElement.parentElement.classList.add(WI.GeneralStyleDetailsSidebarPanel.FilterMatchSectionClassName);
                 matchesGrouping = true;
             }
         }
@@ -748,7 +762,7 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
         let selectorText = this._selectorElement.textContent.trim();
         if (selectorText && changed) {
             this.dispatchEventToListeners(WI.SpreadsheetCSSStyleDeclarationSection.Event.SelectorOrGroupingWillChange);
-            this._style.ownerRule.setSelectorText(selectorText).finally(this._renderSelector.bind(this));
+            this._setSelectorTextPromise = this._style.ownerRule.setSelectorText(selectorText).finally(this._renderSelector.bind(this));
         } else
             this._discardSelectorChange();
     }
@@ -756,7 +770,7 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
     _handleSpreadsheetSelectorFieldWillNavigate(direction)
     {
         if (direction === "forward")
-            this._propertiesEditor.startEditingFirstProperty();
+            this._setSelectorTextPromise.then(() => this._propertiesEditor.startEditingFirstProperty());
         else if (direction === "backward") {
             for (let i = this._groupingElements.length - 1; i >= 0; ++i) {
                 let groupingElementTextField = this._groupingElements[i].associatedTextField;
@@ -769,7 +783,7 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
                 const delta = -1;
                 this._delegate.spreadsheetCSSStyleDeclarationSectionStartEditingAdjacentRule(this, delta);
             } else
-                this._propertiesEditor.startEditingLastProperty();
+                this._setSelectorTextPromise.then(() => this._propertiesEditor.startEditingLastProperty());
         }
     }
 

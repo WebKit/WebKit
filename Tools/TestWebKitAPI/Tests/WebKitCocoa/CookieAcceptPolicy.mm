@@ -74,3 +74,129 @@ TEST(WebKit, CookieAcceptPolicy)
     }];
     TestWebKitAPI::Util::run(&setPolicy);
 }
+
+TEST(WKHTTPCookieStore, CookiePolicy)
+{
+    using namespace TestWebKitAPI;
+
+    __block bool done { false };
+    auto configuration = adoptNS([WKWebViewConfiguration new]);
+    auto dataStore = [WKWebsiteDataStore nonPersistentDataStore];
+    auto cookieStore = dataStore.httpCookieStore;
+    configuration.get().websiteDataStore = dataStore;
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
+
+    [cookieStore getCookiePolicy:^(WKCookiePolicy policy) {
+        EXPECT_EQ(policy, WKCookiePolicyAllow);
+        done = true;
+    }];
+    Util::run(&done);
+    done = false;
+
+    [cookieStore setCookiePolicy:WKCookiePolicyDisallow completionHandler:^{
+        done = true;
+    }];
+    Util::run(&done);
+    done = false;
+
+    [cookieStore getCookiePolicy:^(WKCookiePolicy policy) {
+        EXPECT_EQ(policy, WKCookiePolicyDisallow);
+        done = true;
+    }];
+    Util::run(&done);
+    done = false;
+
+    bool requestHadCookie { false };
+    HTTPServer server(HTTPServer::UseCoroutines::Yes, [&] (Connection connection) -> Task { while (true) {
+        auto request = co_await connection.awaitableReceiveHTTPRequest();
+        requestHadCookie = strnstr(request.data(), "Cookie", request.size());
+        co_await connection.awaitableSend(HTTPResponse({ { "Set-Cookie"_s, "testCookie=42"_s } }, "hi"_s).serialize());
+    } });
+
+    [webView loadRequest:server.request()];
+    [webView _test_waitForDidFinishNavigation];
+    EXPECT_WK_STREQ([webView objectByEvaluatingJavaScript:@"document.cookie"], "");
+    EXPECT_WK_STREQ([webView objectByEvaluatingJavaScript:@"document.cookie='a=b';document.cookie"], "");
+    EXPECT_FALSE(requestHadCookie);
+
+    [cookieStore setCookiePolicy:WKCookiePolicyAllow completionHandler:^{
+        done = true;
+    }];
+    Util::run(&done);
+    done = false;
+
+    [webView reload];
+    [webView _test_waitForDidFinishNavigation];
+    EXPECT_WK_STREQ([webView objectByEvaluatingJavaScript:@"document.cookie"], "testCookie=42");
+    EXPECT_WK_STREQ([webView objectByEvaluatingJavaScript:@"document.cookie='a=b';document.cookie"], "a=b; testCookie=42");
+    EXPECT_FALSE(requestHadCookie);
+
+    [webView reload];
+    [webView _test_waitForDidFinishNavigation];
+    EXPECT_TRUE(requestHadCookie);
+}
+
+TEST(WKHTTPCookieStore, CookiePolicyAllowIsOnlyFromMainDocumentDomain)
+{
+    TestWebKitAPI::HTTPServer server([connectionCount = 0] (TestWebKitAPI::Connection connection) mutable {
+        ++connectionCount;
+        connection.receiveHTTPRequest([connectionCount, connection] (Vector<char>&& request) {
+            String reply;
+            if (connectionCount == 1) {
+                const char* body =
+                "<script>"
+                    "fetch('http://www.example.com', { credentials : 'include' }).then(()=>{ alert('fetched'); }).catch((e)=>{ alert(e); })"
+                "</script>";
+                reply = makeString(
+                    "HTTP/1.1 200 OK\r\n"
+                    "Content-Length: ", strlen(body), "\r\n"
+                    "Set-Cookie: a=b\r\n"
+                    "Connection: close\r\n"
+                    "\r\n", body
+                );
+            } else {
+                EXPECT_TRUE(strnstr(request.data(), "GET http://www.example.com/ HTTP/1.1\r\n", request.size()));
+                reply =
+                    "HTTP/1.1 200 OK\r\n"
+                    "Content-Length: 0\r\n"
+                    "Set-Cookie: c=d\r\n"
+                    "Access-Control-Allow-Origin: http://www.webkit.org\r\n"
+                    "Access-Control-Allow-Credentials: true\r\n"
+                    "Connection: close\r\n"
+                    "\r\n"_s;
+            }
+            connection.send(WTFMove(reply));
+        });
+    });
+
+    auto dataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration]);
+    [dataStoreConfiguration setProxyConfiguration:@{
+        (NSString *)kCFStreamPropertyHTTPProxyHost: @"127.0.0.1",
+        (NSString *)kCFStreamPropertyHTTPProxyPort: @(server.port())
+    }];
+    [dataStoreConfiguration setAllowsServerPreconnect:NO];
+    auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:dataStoreConfiguration.get()]);
+    auto cookieStore = dataStore.get().httpCookieStore;
+    [cookieStore setCookiePolicy:WKCookiePolicyAllow completionHandler:^{
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration setWebsiteDataStore:dataStore.get()];
+    // Relax WebKit's third-party cookies blocking policy so the WebKit will use cookie storage's policy
+    // to decide whether third-party cookeis can be stored.
+    [configuration _setShouldRelaxThirdPartyCookieBlocking:true];
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 100, 100) configuration:configuration.get()]);
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://www.webkit.org/"]]];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "fetched");
+
+    [cookieStore getAllCookies:[&](NSArray<NSHTTPCookie *> *cookies) {
+        // Ensure example.com's cookie is not stored.
+        EXPECT_EQ([cookies count], 1u);
+        EXPECT_WK_STREQ([[cookies firstObject] domain], @"www.webkit.org");
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+}

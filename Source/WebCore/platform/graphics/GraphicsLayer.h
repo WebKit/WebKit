@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,8 +33,11 @@
 #include "FloatRoundedRect.h"
 #include "FloatSize.h"
 #include "GraphicsLayerClient.h"
+#include "HTMLMediaElementIdentifier.h"
+#include "LayerHostingContextIdentifier.h"
 #include "Path.h"
 #include "PlatformLayer.h"
+#include "PlatformLayerIdentifier.h"
 #include "ProcessIdentifier.h"
 #include "ProcessQualified.h"
 #include "Region.h"
@@ -51,6 +54,10 @@
 #include "GraphicsTypes.h"
 #endif
 
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
+#include "AcceleratedEffectStack.h"
+#endif
+
 namespace WTF {
 class TextStream;
 }
@@ -62,15 +69,23 @@ class GraphicsContext;
 class GraphicsLayerFactory;
 class GraphicsLayerContentsDisplayDelegate;
 class GraphicsLayerAsyncContentsDisplayDelegate;
+class HTMLVideoElement;
 class Image;
 class Model;
+class Settings;
 class TiledBacking;
 class TimingFunction;
 class TransformationMatrix;
 
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
+struct AcceleratedEffectValues;
+#endif
+
 namespace DisplayList {
 enum class AsTextFlag : uint8_t;
 }
+
+using LayerHostingContextID = uint32_t;
 
 // Base class for animation values (also used for transitions). Here to
 // represent values for properties being animated via the GraphicsLayer,
@@ -260,7 +275,14 @@ public:
         ScrolledContents,
         Shape
     };
+    
+    enum class LayerMode : uint8_t {
+        PlatformLayer,
+        LayerHostingContextId
+    };
 
+    virtual LayerMode layerMode() const { return LayerMode::PlatformLayer; }
+    
     WEBCORE_EXPORT static Ref<GraphicsLayer> create(GraphicsLayerFactory*, GraphicsLayerClient&, Type = Type::Normal);
     
     WEBCORE_EXPORT virtual ~GraphicsLayer();
@@ -277,9 +299,7 @@ public:
 
     virtual void initialize(Type) { }
 
-    enum PlatformLayerIDType { };
-    using PlatformLayerID = ProcessQualified<ObjectIdentifier<PlatformLayerIDType>>;
-    virtual PlatformLayerID primaryLayerID() const { return { }; }
+    virtual PlatformLayerIdentifier primaryLayerID() const { return { }; }
 
     GraphicsLayerClient& client() const { return *m_client; }
 
@@ -499,7 +519,7 @@ public:
     WEBCORE_EXPORT virtual void suspendAnimations(MonotonicTime);
     WEBCORE_EXPORT virtual void resumeAnimations();
 
-    virtual Vector<std::pair<String, double>> acceleratedAnimationsForTesting() const { return { }; }
+    virtual Vector<std::pair<String, double>> acceleratedAnimationsForTesting(const Settings&) const { return { }; }
 
     // Layer contents
     virtual void setContentsToImage(Image*) { }
@@ -515,18 +535,21 @@ public:
         Canvas,
         BackgroundColor,
         Plugin,
-        Model
+        Model,
+        Host,
     };
 
     // Pass an invalid color to remove the contents layer.
     virtual void setContentsToSolidColor(const Color&) { }
     virtual void setContentsToPlatformLayer(PlatformLayer*, ContentsLayerPurpose) { }
+    virtual void setContentsToPlatformLayerHost(LayerHostingContextIdentifier) { }
+    virtual void setContentsToVideoElement(HTMLVideoElement&, ContentsLayerPurpose) { }
     virtual void setContentsDisplayDelegate(RefPtr<GraphicsLayerContentsDisplayDelegate>&&, ContentsLayerPurpose);
     WEBCORE_EXPORT virtual RefPtr<GraphicsLayerAsyncContentsDisplayDelegate> createAsyncContentsDisplayDelegate();
 #if ENABLE(MODEL_ELEMENT)
     enum class ModelInteraction : uint8_t { Enabled, Disabled };
     virtual void setContentsToModel(RefPtr<Model>&&, ModelInteraction) { }
-    virtual PlatformLayerID contentsLayerIDForModel() const { return { }; }
+    virtual PlatformLayerIdentifier contentsLayerIDForModel() const { return { }; }
 #endif
     virtual bool usesContentsLayer() const { return false; }
 
@@ -646,10 +669,18 @@ public:
     virtual bool isGraphicsLayerTextureMapper() const { return false; }
     virtual bool isCoordinatedGraphicsLayer() const { return false; }
 
+    bool shouldPaintUsingCompositeCopy() const { return m_shouldPaintUsingCompositeCopy; }
+    void setShouldPaintUsingCompositeCopy(bool copy) { m_shouldPaintUsingCompositeCopy = copy; }
+
     const std::optional<FloatRect>& animationExtent() const { return m_animationExtent; }
     void setAnimationExtent(std::optional<FloatRect> animationExtent) { m_animationExtent = animationExtent; }
 
     static void traverse(GraphicsLayer&, const Function<void(GraphicsLayer&)>&);
+
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
+    AcceleratedEffectStack* acceleratedEffectStack() const { return m_effectStack.get(); }
+    WEBCORE_EXPORT virtual void setAcceleratedEffectsAndBaseValues(AcceleratedEffects&&, AcceleratedEffectValues&&);
+#endif
 
 protected:
     WEBCORE_EXPORT explicit GraphicsLayer(Type, GraphicsLayerClient&);
@@ -687,6 +718,10 @@ protected:
     virtual void dumpAdditionalProperties(WTF::TextStream&, OptionSet<LayerTreeAsTextOptions>) const { }
 
     WEBCORE_EXPORT virtual void getDebugBorderInfo(Color&, float& width) const;
+
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
+    std::unique_ptr<AcceleratedEffectStack> m_effectStack;
+#endif
 
     GraphicsLayerClient* m_client; // Always non-null.
     String m_name;
@@ -749,6 +784,7 @@ protected:
     bool m_isTrackingDisplayListReplay : 1;
     bool m_userInteractionEnabled : 1;
     bool m_canDetachBackingStore : 1;
+    bool m_shouldPaintUsingCompositeCopy : 1;
 #if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
     bool m_isSeparated : 1;
 #if HAVE(CORE_ANIMATION_SEPARATED_PORTALS)
@@ -783,10 +819,11 @@ protected:
     WindRule m_shapeLayerWindRule { WindRule::NonZero };
     Path m_shapeLayerPath;
 #endif
+    LayerHostingContextID m_layerHostingContextID { 0 };
 };
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const WebCore::GraphicsLayerPaintingPhase);
-WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const Vector<GraphicsLayer::PlatformLayerID>&);
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const Vector<PlatformLayerIdentifier>&);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const GraphicsLayer::CustomAppearance&);
 
 } // namespace WebCore

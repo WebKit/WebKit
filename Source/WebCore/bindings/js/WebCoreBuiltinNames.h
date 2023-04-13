@@ -1,6 +1,6 @@
 /*
  *  Copyright (c) 2015, Canon Inc. All rights reserved.
- *  Copyright (C) 2018-2022 Apple Inc. All rights reserved.
+ *  Copyright (C) 2018-2023 Apple Inc. All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
  *  modification, are permitted provided that the following conditions
@@ -91,6 +91,12 @@ namespace WebCore {
     macro(AuthenticatorAssertionResponse) \
     macro(AuthenticatorAttestationResponse) \
     macro(AuthenticatorResponse) \
+    macro(BackgroundFetchEvent) \
+    macro(BackgroundFetchManager) \
+    macro(BackgroundFetchRecord) \
+    macro(BackgroundFetchRegistration) \
+    macro(BackgroundFetchUpdateUIEvent) \
+    macro(BarcodeDetector) \
     macro(BaseAudioContext) \
     macro(BiquadFilterNode) \
     macro(BlobEvent) \
@@ -170,6 +176,7 @@ namespace WebCore {
     macro(ExtendableMessageEvent) \
     macro(FakeXRDevice) \
     macro(FakeXRInputController) \
+    macro(FaceDetector) \
     macro(FetchEvent) \
     macro(FileSystem) \
     macro(FileSystemDirectoryEntry) \
@@ -199,11 +206,13 @@ namespace WebCore {
     macro(GPUDevice) \
     macro(GPUDeviceLostInfo) \
     macro(GPUExternalTexture) \
+    macro(GPUInternalError) \
     macro(GPUMapMode) \
     macro(GPUOutOfMemoryError) \
     macro(GPUPipelineLayout) \
     macro(GPUQuerySet) \
     macro(GPUQueue) \
+    macro(GPUPipelineError) \
     macro(GPURenderBundle) \
     macro(GPURenderBundleEncoder) \
     macro(GPURenderPassEncoder) \
@@ -247,12 +256,15 @@ namespace WebCore {
     macro(ImageBitmap) \
     macro(ImageBitmapRenderingContext) \
     macro(IdleDeadline) \
+    macro(InputDeviceInfo) \
     macro(InputEvent) \
     macro(IntersectionObserver) \
     macro(IntersectionObserverEntry) \
     macro(KeyframeEffect) \
     macro(Lock) \
     macro(LockManager) \
+    macro(ManagedMediaSource) \
+    macro(ManagedSourceBuffer) \
     macro(MathMLElement) \
     macro(MathMLMathElement) \
     macro(MediaCapabilities) \
@@ -394,10 +406,12 @@ namespace WebCore {
     macro(TestReportBody) \
     macro(TextDecoderStream) \
     macro(TextDecoderStreamDecoder) \
+    macro(TextDetector) \
     macro(TextEncoderStream) \
     macro(TextEncoderStreamEncoder) \
     macro(TextTrackCue) \
     macro(TextTrackCueGeneric) \
+    macro(ToggleEvent) \
     macro(TransformStream) \
     macro(TransformStreamDefaultController) \
     macro(UndoItem) \
@@ -520,10 +534,13 @@ namespace WebCore {
     macro(flushAlgorithm) \
     macro(focus) \
     macro(frames) \
+    macro(getGlobalObject) \
+    macro(getInternalReadableStream) \
     macro(getInternalWritableStream) \
     macro(getMatchedCSSRules) \
     macro(getTracks) \
     macro(getUserMedia) \
+    macro(globalObject) \
     macro(gpu) \
     macro(handleEvent) \
     macro(header) \
@@ -534,6 +551,7 @@ namespace WebCore {
     macro(inFlightWriteRequest) \
     macro(indexedDB) \
     macro(initializeWith) \
+    macro(internalReadable) \
     macro(internalStream) \
     macro(internalWritable) \
     macro(isAbortSignal) \
@@ -549,6 +567,10 @@ namespace WebCore {
     macro(makeThisTypeError) \
     macro(matchingElementInFlatTree) \
     macro(mediaStreamTrackConstraints) \
+    macro(onbackgroundfetchsuccess) \
+    macro(onbackgroundfetchfail) \
+    macro(onbackgroundfetchabort) \
+    macro(onbackgroundfetchclick) \
     macro(onnotificationclick) \
     macro(onnotificationclose) \
     macro(onpush) \

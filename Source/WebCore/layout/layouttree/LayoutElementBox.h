@@ -67,6 +67,7 @@ public:
     bool hasInFlowOrFloatingChild() const { return firstInFlowOrFloatingChild(); }
 
     void appendChild(UniqueRef<Box>);
+    void insertChild(UniqueRef<Box>, Box* beforeChild = nullptr);
     void destroyChildren();
 
     void setBaselineForIntegration(LayoutUnit baseline) { m_baselineForIntegration = baseline; }
@@ -101,8 +102,8 @@ private:
     std::unique_ptr<Box> m_firstChild;
     CheckedPtr<Box> m_lastChild;
 
-    std::optional<LayoutUnit> m_baselineForIntegration;
     std::unique_ptr<ReplacedData> m_replacedData;
+    std::optional<LayoutUnit> m_baselineForIntegration;
 };
 
 }

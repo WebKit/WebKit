@@ -29,6 +29,8 @@
 #if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
 
 #import "DrawingArea.h"
+#import "Logging.h"
+#import "MessageSenderInlines.h"
 #import "WebPage.h"
 #import "WebPageProxyMessages.h"
 #import <WebCore/Model.h>
@@ -109,7 +111,7 @@ void ARKitInlinePreviewModelPlayerMac::createFile(WebCore::Model& modelSource)
     // We need to support .reality files as well, https://bugs.webkit.org/show_bug.cgi?id=227568.
     String fileName = makeString(UUID::createVersion4(), ".usdz"_s);
     auto filePath = FileSystem::pathByAppendingComponent(pathToDirectory, fileName);
-    auto file = FileSystem::openFile(filePath, FileSystem::FileOpenMode::Write);
+    auto file = FileSystem::openFile(filePath, FileSystem::FileOpenMode::Truncate);
     if (file <= 0)
         return;
 

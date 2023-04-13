@@ -7,6 +7,7 @@ esid: pending
 description: >
   Await's operand is a UnaryExpression
 flags: [async]
+includes: [asyncHelpers.js]
 ---*/
 
 async function foo() {
@@ -14,4 +15,4 @@ async function foo() {
   let y = await Promise.resolve(2) * x
   assert.sameValue(y, 4);
 }
-foo().then($DONE, $DONE);
+asyncTest(foo);

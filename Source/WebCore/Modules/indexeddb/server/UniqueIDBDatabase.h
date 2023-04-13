@@ -48,7 +48,6 @@ class IDBGetAllResult;
 struct IDBGetRecordData;
 class IDBRequestData;
 class IDBTransactionInfo;
-class StorageQuotaManager;
 
 enum class IDBGetRecordDataType : bool;
 

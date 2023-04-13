@@ -11,8 +11,8 @@ layer at (0,0) size 800x600
           RenderSVGTSpan {tspan} at (0,0) size 47x29
             RenderSVGInlineText {#text} at (91,21) size 47x28
               chunk 1 text run 1 at (141.20,100.00) startOffset 0 endOffset 3 width 46.80: "a\x{729C}\x{923}"
-          RenderSVGTSpan {tspan} at (0,0) size 20x12
-            RenderSVGInlineText {#text} at (137,35) size 19x12
+          RenderSVGTSpan {tspan} at (0,0) size 19x12
+            RenderSVGInlineText {#text} at (138,35) size 19x12
               chunk 1 text run 1 at (188.00,100.00) startOffset 0 endOffset 3 width 18.60: "a\x{729C}\x{923}"
           RenderSVGInlineText {#text} at (0,0) size 0x0
         RenderSVGPath {line} at (83,115) size 584x3 [stroke={[type=SOLID] [color=#008000]}] [fill={[type=SOLID] [color=#000000]}] [x1=50.00] [y1=70.00] [x2=400.00] [y2=70.00]

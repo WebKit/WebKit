@@ -89,10 +89,14 @@ private:
     }
 };
 
-#define DECLARE_STATIC_PER_PROCESS_STORAGE(Type) \
+#define DECLARE_STATIC_PER_PROCESS_STORAGE(Type) DECLARE_STATIC_PER_PROCESS_STORAGE_WITH_LINKAGE(Type, BEXPORT)
+
+// Use instead of DECLARE_STATIC_PER_PROCESS_STORAGE when the type being
+// instantiated does not have export symbol visibility.
+#define DECLARE_STATIC_PER_PROCESS_STORAGE_WITH_LINKAGE(Type, Linkage) \
 template<> struct StaticPerProcessStorageTraits<Type> { \
     using Memory = typename std::aligned_storage<sizeof(Type), std::alignment_of<Type>::value>::type; \
-    struct BEXPORT Storage { \
+    struct Linkage Storage { \
         static std::atomic<Type*> s_object; \
         static Mutex s_mutex; \
         static Memory s_memory; \

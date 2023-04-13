@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -119,6 +119,13 @@ struct SignalHandlers {
     mach_port_t exceptionPort;
     exception_mask_t addedExceptions;
     bool useMach;
+
+    enum class InitState : uint8_t {
+        Uninitialized = 0,
+        InitializedHandlerThread,
+        AddedHandlers
+    };
+    InitState initState;
 #else
     static constexpr bool useMach = false;
 #endif
@@ -141,9 +148,14 @@ WTF_EXPORT_PRIVATE void activateSignalHandlersFor(Signal);
 #if HAVE(MACH_EXCEPTIONS)
 class Thread;
 void registerThreadForMachExceptionHandling(Thread&);
-void startMachExceptionHandlerThread();
+WTF_EXPORT_PRIVATE void initMachExceptionHandlerThread(bool);
+inline void initializeSignalHandling() { initMachExceptionHandlerThread(true); }
+inline void disableSignalHandling() { initMachExceptionHandlerThread(false); }
 
 void handleSignalsWithMach();
+#else
+inline void initializeSignalHandling() { }
+inline void disableSignalHandling() { }
 #endif // HAVE(MACH_EXCEPTIONS)
 
 } // namespace WTF
@@ -162,4 +174,16 @@ using WTF::SignalHandler;
 using WTF::addSignalHandler;
 using WTF::activateSignalHandlersFor;
 
+#else // not OS(UNIX)
+
+namespace WTF {
+
+inline void initializeSignalHandling() { }
+inline void disableSignalHandling() { }
+
+} // namespace WTF
+
 #endif // OS(UNIX)
+
+using WTF::initializeSignalHandling;
+using WTF::disableSignalHandling;

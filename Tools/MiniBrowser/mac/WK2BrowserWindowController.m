@@ -274,6 +274,8 @@ static BOOL areEssentiallyEqual(double a, double b)
         menuItem.state = _webView._alwaysShowsHorizontalScroller ? NSControlStateValueOn : NSControlStateValueOff;
     else if (action == @selector(toggleAlwaysShowsVerticalScroller:))
         menuItem.state = _webView._alwaysShowsVerticalScroller ? NSControlStateValueOn : NSControlStateValueOff;
+    else if (action == @selector(toggleMainThreadStalls:))
+        menuItem.state = self.mainThreadStallsEnabled ? NSControlStateValueOn : NSControlStateValueOff;
 
     if (action == @selector(setPageScale:))
         [menuItem setState:areEssentiallyEqual([_webView _pageScale], [self pageScaleForMenuItemTag:[menuItem tag]])];
@@ -493,6 +495,7 @@ static BOOL areEssentiallyEqual(double a, double b)
     preferences._animatedImageAsyncDecodingEnabled = settings.animatedImageAsyncDecodingEnabled;
     preferences._colorFilterEnabled = settings.appleColorFilterEnabled;
     preferences._punchOutWhiteBackgroundsInDarkMode = settings.punchOutWhiteBackgroundsInDarkMode;
+    preferences._mockCaptureDevicesEnabled = settings.useMockCaptureDevices;
 
     _webView.configuration.websiteDataStore._resourceLoadStatisticsEnabled = settings.resourceLoadStatisticsEnabled;
 
@@ -529,8 +532,27 @@ static BOOL areEssentiallyEqual(double a, double b)
     
     preferences._visibleDebugOverlayRegions = visibleOverlayRegions;
 
-    [_webView _setHeaderBannerHeight:[settings isSpaceReservedForBanners] ? testHeaderBannerHeight : 0];
-    [_webView _setFooterBannerHeight:[settings isSpaceReservedForBanners] ? testFooterBannerHeight : 0];
+    int headerBannerHeight = [settings isSpaceReservedForBanners] ? testHeaderBannerHeight : 0;
+    if (!headerBannerHeight)
+        [_webView _setHeaderBannerLayer:nil];
+    else {
+        CALayer *headerBannerLayer = [[CALayer alloc] init];
+        [headerBannerLayer setBounds:CGRectMake(0, 0, 0, headerBannerHeight)];
+        [headerBannerLayer setAnchorPoint:CGPointZero];
+        [headerBannerLayer setBackgroundColor:[NSColor colorWithSRGBRed:172. / 255. green:221 / 255. blue:222. / 255. alpha:1].CGColor];
+        [_webView _setHeaderBannerLayer:headerBannerLayer];
+    }
+
+    int footerBannerHeight = [settings isSpaceReservedForBanners] ? testFooterBannerHeight : 0;
+    if (!footerBannerHeight)
+        [_webView _setFooterBannerLayer:nil];
+    else {
+        CALayer *footerBannerLayer = [[CALayer alloc] init];
+        [footerBannerLayer setBounds:CGRectMake(0, 0, 0, footerBannerHeight)];
+        [footerBannerLayer setAnchorPoint:CGPointZero];
+        [footerBannerLayer setBackgroundColor:[NSColor colorWithSRGBRed:116. / 255. green:187. / 255. blue:251. / 255. alpha:1].CGColor];
+        [_webView _setFooterBannerLayer:footerBannerLayer];
+    }
 }
 
 - (void)updateTitle:(NSString *)title
@@ -587,6 +609,8 @@ static BOOL areEssentiallyEqual(double a, double b)
     WK2BrowserWindowController *controller = [[WK2BrowserWindowController alloc] initWithConfiguration:configuration];
     [controller awakeFromNib];
     [controller.window makeKeyAndOrderFront:self];
+    
+    [[[NSApplication sharedApplication] browserAppDelegate] didCreateBrowserWindowController:controller];
 
     return controller->_webView;
 }

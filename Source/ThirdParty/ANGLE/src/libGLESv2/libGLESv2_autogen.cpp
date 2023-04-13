@@ -3814,6 +3814,16 @@ void GL_APIENTRY glPixelLocalStorageBarrierANGLE()
     return GL_PixelLocalStorageBarrierANGLE();
 }
 
+void GL_APIENTRY glFramebufferPixelLocalStorageInterruptANGLE()
+{
+    return GL_FramebufferPixelLocalStorageInterruptANGLE();
+}
+
+void GL_APIENTRY glFramebufferPixelLocalStorageRestoreANGLE()
+{
+    return GL_FramebufferPixelLocalStorageRestoreANGLE();
+}
+
 void GL_APIENTRY glGetFramebufferPixelLocalStorageParameterfvANGLE(GLint plane,
                                                                    GLenum pname,
                                                                    GLfloat *params)
@@ -3827,6 +3837,28 @@ void GL_APIENTRY glGetFramebufferPixelLocalStorageParameterivANGLE(GLint plane,
 {
     return GL_GetFramebufferPixelLocalStorageParameterivANGLE(plane, pname, params);
 }
+
+void GL_APIENTRY glGetFramebufferPixelLocalStorageParameterfvRobustANGLE(GLint plane,
+                                                                         GLenum pname,
+                                                                         GLsizei bufSize,
+                                                                         GLsizei *length,
+                                                                         GLfloat *params)
+{
+    return GL_GetFramebufferPixelLocalStorageParameterfvRobustANGLE(plane, pname, bufSize, length,
+                                                                    params);
+}
+
+void GL_APIENTRY glGetFramebufferPixelLocalStorageParameterivRobustANGLE(GLint plane,
+                                                                         GLenum pname,
+                                                                         GLsizei bufSize,
+                                                                         GLsizei *length,
+                                                                         GLint *params)
+{
+    return GL_GetFramebufferPixelLocalStorageParameterivRobustANGLE(plane, pname, bufSize, length,
+                                                                    params);
+}
+
+// GL_ANGLE_stencil_texturing
 
 // GL_ANGLE_texture_compression_dxt3
 
@@ -3900,6 +3932,8 @@ void GL_APIENTRY glReleaseTexturesANGLE(GLuint numTextures, const GLuint *textur
 // GL_APPLE_clip_distance
 
 // GL_ARB_sync
+
+// GL_ARM_shader_framebuffer_fetch
 
 // GL_CHROMIUM_bind_uniform_location
 void GL_APIENTRY glBindUniformLocationCHROMIUM(GLuint program, GLint location, const GLchar *name)
@@ -4063,6 +4097,8 @@ void GL_APIENTRY glClipControlEXT(GLenum origin, GLenum depth)
 
 // GL_EXT_color_buffer_half_float
 
+// GL_EXT_conservative_depth
+
 // GL_EXT_copy_image
 void GL_APIENTRY glCopyImageSubDataEXT(GLuint srcName,
                                        GLenum srcTarget,
@@ -4112,6 +4148,8 @@ void GL_APIENTRY glPushGroupMarkerEXT(GLsizei length, const GLchar *marker)
 {
     return GL_PushGroupMarkerEXT(length, marker);
 }
+
+// GL_EXT_depth_clamp
 
 // GL_EXT_discard_framebuffer
 void GL_APIENTRY glDiscardFramebufferEXT(GLenum target,
@@ -4511,6 +4549,8 @@ void GL_APIENTRY glPrimitiveBoundingBoxEXT(GLfloat minX,
 // GL_EXT_pvrtc_sRGB
 
 // GL_EXT_read_format_bgra
+
+// GL_EXT_render_snorm
 
 // GL_EXT_robustness
 GLenum GL_APIENTRY glGetGraphicsResetStatusEXT()
@@ -5000,9 +5040,13 @@ void GL_APIENTRY glTexBufferRangeEXT(GLenum target,
 
 // GL_EXT_texture_filter_anisotropic
 
+// GL_EXT_texture_filter_minmax
+
 // GL_EXT_texture_format_BGRA8888
 
 // GL_EXT_texture_format_sRGB_override
+
+// GL_EXT_texture_mirror_clamp_to_edge
 
 // GL_EXT_texture_norm16
 
@@ -5856,6 +5900,8 @@ void GL_APIENTRY glFramebufferTextureMultiviewOVR(GLenum target,
 }
 
 // GL_OVR_multiview2
+
+// GL_QCOM_render_shared_exponent
 
 // GL_QCOM_shading_rate
 void GL_APIENTRY glShadingRateQCOM(GLenum rate)

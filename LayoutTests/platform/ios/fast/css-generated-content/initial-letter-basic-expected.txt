@@ -4,7 +4,7 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,16) size 784x568
       RenderBlock {DIV} at (16,0) size 400x100
-        RenderBlock (floating) at (2,4) size 56x52
+        RenderBlock (floating) at (2,4) size 56x51
           RenderText at (0,-18) size 56x86
             text run at (0,-18) width 56: "A"
         RenderText {#text} at (59,0) size 399x99
@@ -15,7 +15,7 @@ layer at (0,0) size 800x600
           text run at (0,80) width 160: "baseline of the third line."
       RenderBlock {SPAN} at (0,116) size 784x100
         RenderBlock {DIV} at (368,0) size 400x100
-          RenderBlock (floating) at (342,4) size 56x52
+          RenderBlock (floating) at (342,4) size 56x51
             RenderText at (0,-18) size 56x86
               text run at (0,-18) width 56: "A"
           RenderText {#text} at (3,0) size 400x99

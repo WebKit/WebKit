@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #pragma once
@@ -66,9 +66,9 @@ public:
         };
         Vector<TextTrackInformation> textTracks;
     };
-    
+
     enum class ReceiveResult : uint8_t {
-        RecieveSucceeded,
+        Succeeded,
         AppendError,
         ClientDisconnected,
         BufferRemoved,
@@ -76,20 +76,20 @@ public:
     };
     virtual void sourceBufferPrivateDidReceiveInitializationSegment(InitializationSegment&&, CompletionHandler<void(ReceiveResult)>&&) = 0;
     virtual void sourceBufferPrivateStreamEndedWithDecodeError() = 0;
-    virtual void sourceBufferPrivateAppendError(bool decodeError) = 0;
     enum class AppendResult : uint8_t {
-        AppendSucceeded,
+        Succeeded,
         ReadStreamFailed,
         ParsingFailed
     };
     virtual void sourceBufferPrivateAppendComplete(AppendResult) = 0;
-    virtual void sourceBufferPrivateDurationChanged(const MediaTime&) = 0;
+    virtual void sourceBufferPrivateBufferedChanged(const PlatformTimeRanges&, CompletionHandler<void()>&&) = 0;
+    virtual void sourceBufferPrivateDurationChanged(const MediaTime&, CompletionHandler<void()>&&) = 0;
     virtual void sourceBufferPrivateHighestPresentationTimestampChanged(const MediaTime&) = 0;
     virtual void sourceBufferPrivateDidParseSample(double frameDuration) = 0;
     virtual void sourceBufferPrivateDidDropSample() = 0;
-    virtual void sourceBufferPrivateBufferedDirtyChanged(bool) = 0;
     virtual void sourceBufferPrivateDidReceiveRenderingError(int64_t errorCode) = 0;
     virtual void sourceBufferPrivateReportExtraMemoryCost(uint64_t) = 0;
+    virtual bool isAsync() const { return false; }
 };
 
 String convertEnumerationToString(SourceBufferPrivateClient::ReceiveResult);
@@ -112,7 +112,7 @@ struct LogArgument<WebCore::SourceBufferPrivateClient::ReceiveResult> {
 template<> struct EnumTraits<WebCore::SourceBufferPrivateClient::ReceiveResult> {
     using values = EnumValues<
         WebCore::SourceBufferPrivateClient::ReceiveResult,
-        WebCore::SourceBufferPrivateClient::ReceiveResult::RecieveSucceeded,
+        WebCore::SourceBufferPrivateClient::ReceiveResult::Succeeded,
         WebCore::SourceBufferPrivateClient::ReceiveResult::AppendError,
         WebCore::SourceBufferPrivateClient::ReceiveResult::ClientDisconnected,
         WebCore::SourceBufferPrivateClient::ReceiveResult::BufferRemoved,
@@ -123,7 +123,7 @@ template<> struct EnumTraits<WebCore::SourceBufferPrivateClient::ReceiveResult> 
 template<> struct EnumTraits<WebCore::SourceBufferPrivateClient::AppendResult> {
     using values = EnumValues<
         WebCore::SourceBufferPrivateClient::AppendResult,
-        WebCore::SourceBufferPrivateClient::AppendResult::AppendSucceeded,
+        WebCore::SourceBufferPrivateClient::AppendResult::Succeeded,
         WebCore::SourceBufferPrivateClient::AppendResult::ReadStreamFailed,
         WebCore::SourceBufferPrivateClient::AppendResult::ParsingFailed
     >;

@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "WasmAirIRGeneratorBase.h"
+#include "WasmThunks.h"
 #include <cstddef>
 
 #if USE(JSVALUE64) && ENABLE(WEBASSEMBLY_B3JIT)
@@ -98,6 +99,8 @@ public:
     static constexpr bool generatesB3OriginData = true;
     static constexpr bool supportsPinnedStateRegisters = true;
 
+    void finalizeEntrypoints();
+
     void emitMaterializeConstant(Type, uint64_t value, TypedTmp& dest);
     void emitMaterializeConstant(BasicBlock*, Type, uint64_t value, TypedTmp& dest);
 
@@ -129,7 +132,7 @@ public:
     PartialResult WARN_UNUSED_RETURN addI31GetU(ExpressionType ref, ExpressionType& result);
 
     // SIMD
-    void notifyFunctionUsesSIMD() { ASSERT(m_info.isSIMDFunction(m_functionIndex)); }
+    void notifyFunctionUsesSIMD() { ASSERT(m_info.usesSIMD(m_functionIndex)); }
     PartialResult WARN_UNUSED_RETURN addSIMDLoad(ExpressionType pointer, uint32_t offset, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addSIMDStore(ExpressionType value, ExpressionType pointer, uint32_t offset);
     PartialResult WARN_UNUSED_RETURN addSIMDSplat(SIMDLane, ExpressionType scalar, ExpressionType& result);
@@ -578,6 +581,11 @@ public:
     PartialResult WARN_UNUSED_RETURN addI64Eqz(ExpressionType arg0, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addI64Or(ExpressionType arg0, ExpressionType arg1, ExpressionType& result);
 
+    PartialResult WARN_UNUSED_RETURN addI64ExtendSI32(ExpressionType, ExpressionType&);
+    PartialResult WARN_UNUSED_RETURN addI64Extend8S(ExpressionType, ExpressionType&);
+    PartialResult WARN_UNUSED_RETURN addI64Extend16S(ExpressionType, ExpressionType&);
+    PartialResult WARN_UNUSED_RETURN addI64Extend32S(ExpressionType, ExpressionType&);
+
     Tmp emitCatchImpl(CatchKind, ControlType&, unsigned exceptionIndex = 0);
     template <size_t inlineCapacity>
     Box<PatchpointExceptionHandle> preparePatchpointForExceptions(B3::PatchpointValue*, Vector<ConstrainedTmp, inlineCapacity>& args);
@@ -612,6 +620,9 @@ private:
     void emitCheckI64Zero(ExpressionType, Taken&&);
     template<typename Then>
     void emitCheckForNullReference(const ExpressionType& ref, Then&&);
+    void emitBranchForNullReference(const ExpressionType&);
+    Inst makeBranchNotInt32(const ExpressionType&);
+    Inst makeBranchNotCell(const ExpressionType&);
 
     B3::Type toB3ResultType(BlockSignature);
 
@@ -676,12 +687,19 @@ private:
         inst.args.append(tmp.tmp());
     }
 
-    void emitMove(const TypedTmp& src, const TypedTmp& dst)
+    // emitMoveWithoutTypeCheck is like emitMove, but does not assert anything
+    // about the wasm types of `src` and `dst` (in no-assert builds, they are the same)
+    void emitMoveWithoutTypeCheck(const TypedTmp& src, const TypedTmp& dst)
     {
         if (src == dst)
             return;
-        ASSERT(isSubtype(src.type(), dst.type()));
         append(moveOpForValueType(src.type()), src, dst);
+    }
+
+    void emitMove(const TypedTmp& src, const TypedTmp& dst)
+    {
+        ASSERT(isSubtype(src.type(), dst.type()));
+        emitMoveWithoutTypeCheck(src, dst);
     }
 
     void emitMove(const ValueLocation& location, const TypedTmp& dest)
@@ -775,6 +793,27 @@ void AirIRGenerator64::emitCheckForNullReference(const TypedTmp& ref, Taken&& ta
     emitCheck([&] {
         return Inst(Branch64, nullptr, Arg::relCond(MacroAssembler::Equal), ref, tmpForNull);
     }, std::forward<Taken>(taken));
+}
+
+void AirIRGenerator64::emitBranchForNullReference(const TypedTmp& ref)
+{
+    auto tmpForNull = g64();
+    append(Move, Arg::bigImm(JSValue::encode(jsNull())), tmpForNull);
+    append(Branch64, Arg::relCond(MacroAssembler::Equal), ref, tmpForNull);
+}
+
+Inst AirIRGenerator64::makeBranchNotInt32(const TypedTmp& value)
+{
+    auto tmpForTag = g64();
+    append(Move, Arg::bigImm(JSValue::NumberTag), tmpForTag);
+    return Inst(Branch64, nullptr, Arg::relCond(MacroAssembler::Below), value, tmpForTag);
+}
+
+Inst AirIRGenerator64::makeBranchNotCell(const ExpressionType& maybeCell)
+{
+    auto tmpForCellMask = g64();
+    append(Move, Arg::bigImm(JSValue::NotCellMask), tmpForCellMask);
+    return Inst(BranchTest64, nullptr, Arg::resCond(MacroAssembler::NonZero), maybeCell, tmpForCellMask);
 }
 
 B3::Type AirIRGenerator64::toB3ResultType(BlockSignature returnType)
@@ -981,7 +1020,6 @@ inline AirIRGenerator64::ExpressionType AirIRGenerator64::emitCheckAndPreparePoi
     }
 
     case MemoryMode::Signaling: {
-#if ENABLE(WEBASSEMBLY_SIGNALING_MEMORY)
         // We've virtually mapped 4GiB+redzone for this memory. Only the user-allocated pages are addressable, contiguously in range [0, current],
         // and everything above is mapped PROT_NONE. We don't need to perform any explicit bounds check in the 4GiB range because WebAssembly register
         // memory accesses are 32-bit. However WebAssembly register + offset accesses perform the addition in 64-bit which can push an access above
@@ -1011,7 +1049,6 @@ inline AirIRGenerator64::ExpressionType AirIRGenerator64::emitCheckAndPreparePoi
                 this->emitThrowException(jit, ExceptionType::OutOfBoundsMemoryAccess);
             });
         }
-#endif
         break;
     }
     }
@@ -1041,7 +1078,7 @@ inline TypedTmp AirIRGenerator64::emitLoadOp(LoadOpType op, ExpressionType point
     case LoadOpType::I64Load8S: {
         result = g64();
         appendEffectful(Load8SignedExtendTo32, addrArg, result);
-        append(SignExtend32ToPtr, result, result);
+        append(SignExtend32To64, result, result);
         break;
     }
 
@@ -1066,7 +1103,7 @@ inline TypedTmp AirIRGenerator64::emitLoadOp(LoadOpType op, ExpressionType point
     case LoadOpType::I64Load16S: {
         result = g64();
         appendEffectful(Load16SignedExtendTo32, addrArg, result);
-        append(SignExtend32ToPtr, result, result);
+        append(SignExtend32To64, result, result);
         break;
     }
 
@@ -1096,7 +1133,7 @@ inline TypedTmp AirIRGenerator64::emitLoadOp(LoadOpType op, ExpressionType point
     case LoadOpType::I64Load32S: {
         result = g64();
         appendEffectful(Move32, addrArg, result);
-        append(SignExtend32ToPtr, result, result);
+        append(SignExtend32To64, result, result);
         break;
     }
 
@@ -1889,6 +1926,53 @@ auto AirIRGenerator64::addSIMDLoadPad(SIMDLaneOperation op, ExpressionType point
     return { };
 }
 
+void AirIRGenerator64::finalizeEntrypoints()
+{
+    unsigned numEntrypoints = Checked<unsigned>(1) + m_catchEntrypoints.size() + m_loopEntryVariableData.size();
+    m_proc.setNumEntrypoints(numEntrypoints);
+    m_code.setPrologueForEntrypoint(0, Ref<B3::Air::PrologueGenerator>(*m_prologueGenerator));
+    for (unsigned i = 1 + m_catchEntrypoints.size(); i < numEntrypoints; ++i)
+        m_code.setPrologueForEntrypoint(i, Ref<B3::Air::PrologueGenerator>(*m_prologueGenerator));
+
+    if (m_catchEntrypoints.size()) {
+        Ref<B3::Air::PrologueGenerator> catchPrologueGenerator = createSharedTask<B3::Air::PrologueGeneratorFunction>([](CCallHelpers& jit, B3::Air::Code& code) {
+            AllowMacroScratchRegisterUsage allowScratch(jit);
+            jit.addPtr(CCallHelpers::TrustedImm32(-code.frameSize()), GPRInfo::callFrameRegister, CCallHelpers::stackPointerRegister);
+            jit.probe(tagCFunction<JITProbePtrTag>(code.usesSIMD() ? buildEntryBufferForCatchSIMD : buildEntryBufferForCatchNoSIMD), nullptr, code.usesSIMD() ? SavedFPWidth::SaveVectors : SavedFPWidth::DontSaveVectors);
+        });
+
+        for (unsigned i = 0; i < m_catchEntrypoints.size(); ++i)
+            m_code.setPrologueForEntrypoint(1 + i, catchPrologueGenerator.copyRef());
+    }
+
+    BasicBlock::SuccessorList successors;
+    successors.append(m_mainEntrypointStart);
+    successors.appendVector(m_catchEntrypoints);
+
+    ASSERT(!m_loopEntryVariableData.size() || !m_proc.usesSIMD());
+    for (auto& pair : m_loopEntryVariableData) {
+        BasicBlock* loopBody = pair.first;
+        BasicBlock* entry = m_code.addBlock();
+        successors.append(entry);
+        m_currentBlock = entry;
+
+        auto& temps = pair.second;
+        m_osrEntryScratchBufferSize = std::max(m_osrEntryScratchBufferSize, static_cast<unsigned>(temps.size()));
+        Tmp basePtr = Tmp(GPRInfo::argumentGPR0);
+
+        for (size_t i = 0; i < temps.size(); ++i) {
+            size_t offset = static_cast<size_t>(i) * sizeof(uint64_t);
+            self().emitLoad(basePtr, offset, temps[i]);
+        }
+
+        append(Jump);
+        entry->setSuccessors(loopBody);
+    }
+
+    RELEASE_ASSERT(numEntrypoints == successors.size());
+    m_rootBlock->successors() = successors;
+}
+
 Tmp AirIRGenerator64::emitCatchImpl(CatchKind kind, ControlType& data, unsigned exceptionIndex)
 {
     m_currentBlock = m_code.addBlock();
@@ -1920,6 +2004,7 @@ Tmp AirIRGenerator64::emitCatchImpl(CatchKind kind, ControlType& data, unsigned 
         Tmp bufferPtr = Tmp(GPRInfo::argumentGPR0);
         emitLoad(bufferPtr, offset, result);
     };
+    append(Move, Tmp(GPRInfo::argumentGPR1), data.exception());
     forEachLiveValue([&] (TypedTmp tmp) {
         // We set our current ControlEntry's exception below after the patchpoint, it's
         // not in the incoming buffer of live values.
@@ -1928,31 +2013,7 @@ Tmp AirIRGenerator64::emitCatchImpl(CatchKind kind, ControlType& data, unsigned 
             loadFromScratchBuffer(tmp);
     });
 
-    B3::PatchpointValue* patch = addPatchpoint(m_proc.addTuple({ B3::pointerType(), B3::pointerType() }));
-    patch->effects.exitsSideways = true;
-    patch->clobber(RegisterSetBuilder::macroClobberedRegisters());
-    auto clobberLate = RegisterSetBuilder::registersToSaveForJSCall(m_proc.usesSIMD() ? RegisterSetBuilder::allRegisters() : RegisterSetBuilder::allScalarRegisters());
-    clobberLate.add(GPRInfo::argumentGPR0, IgnoreVectors);
-    patch->clobberLate(clobberLate);
-    patch->resultConstraints.append(B3::ValueRep::reg(GPRInfo::returnValueGPR));
-    patch->resultConstraints.append(B3::ValueRep::reg(GPRInfo::returnValueGPR2));
-    patch->setGenerator([=](CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
-        JIT_COMMENT(jit, "Catch entrypoint patchpoint after loading from scratch buffer");
-        AllowMacroScratchRegisterUsage allowScratch(jit);
-        jit.prepareWasmCallOperation(GPRInfo::wasmContextInstancePointer);
-        jit.move(params[2].gpr(), GPRInfo::argumentGPR0);
-        CCallHelpers::Call call = jit.call(OperationPtrTag);
-        jit.addLinkTask([call] (LinkBuffer& linkBuffer) {
-            linkBuffer.link<OperationPtrTag>(call, operationWasmRetrieveAndClearExceptionIfCatchable);
-        });
-    });
-
-    Tmp exception = Tmp(GPRInfo::returnValueGPR);
-    Tmp buffer = Tmp(GPRInfo::returnValueGPR2);
-    emitPatchpoint(m_currentBlock, patch, Vector<Tmp, 8>::from(exception, buffer), Vector<ConstrainedTmp, 1>::from(instanceValue()));
-    append(Move, exception, data.exception());
-
-    return buffer;
+    return Tmp(GPRInfo::argumentGPR2);
 }
 
 auto AirIRGenerator64::addReturn(const ControlData& data, const Stack& returnValues) -> PartialResult
@@ -1977,14 +2038,25 @@ auto AirIRGenerator64::addReturn(const ControlData& data, const Stack& returnVal
         TypedTmp tmp = returnValues[offset + i];
 
         if (rep.isStack()) {
-            append(moveForType(toB3Type(tmp.type())), tmp, Arg::addr(Tmp(GPRInfo::callFrameRegister), rep.offsetFromFP()));
+            Arg arg = Arg::addr(Tmp(GPRInfo::callFrameRegister), rep.offsetFromFP());
+            B3::Air::Opcode opcode = moveForType(toB3Type(tmp.type()));
+            Width width = tmp.type().width();
+            if (arg.isValidForm(opcode, width))
+                append(opcode, tmp, arg);
+            else {
+                auto immTmp = self().gPtr();
+                auto newPtr = self().gPtr();
+                append(Move, Arg::bigImm(arg.offset()), immTmp);
+                append(AddPtr, Tmp(GPRInfo::callFrameRegister), immTmp, newPtr);
+                append(opcode, tmp, Arg::addr(newPtr));
+            }
             continue;
         }
 
         ASSERT(rep.isReg());
         if (data.signature()->as<FunctionSignature>()->returnType(i).isI32())
             append(Move32, tmp, tmp);
-        returnConstraints.append(ConstrainedTmp(tmp, wasmCallInfo.results[i].location));
+        returnConstraints.append(ConstrainedTmp(tmp, rep));
     }
 
     emitPatchpoint(m_currentBlock, patch, ResultList { }, WTFMove(returnConstraints));
@@ -2049,7 +2121,7 @@ auto AirIRGenerator64::emitCallPatchpoint(BasicBlock* block, B3::Type returnType
     auto* patchpoint = addPatchpoint(returnType);
     patchpoint->effects.writesPinned = true;
     patchpoint->effects.readsPinned = true;
-    patchpoint->clobberEarly(RegisterSetBuilder::macroClobberedRegisters());
+    patchpoint->clobberEarly(RegisterSetBuilder::macroClobberedGPRs());
     patchpoint->clobberLate(RegisterSetBuilder::registersToSaveForJSCall(m_proc.usesSIMD() ? RegisterSetBuilder::allRegisters() : RegisterSetBuilder::allScalarRegisters()));
 
     size_t offset = patchArgs.size();
@@ -2142,7 +2214,7 @@ auto AirIRGenerator64::emitTailCallPatchpoint(BasicBlock* block, const Checked<i
     clobbers.merge(RegisterSetBuilder::calleeSaveRegisters());
     clobbers.exclude(RegisterSetBuilder::stackRegisters());
     patchpoint->clobber(clobbers);
-    patchpoint->clobberEarly(RegisterSetBuilder::macroClobberedRegisters());
+    patchpoint->clobberEarly(RegisterSetBuilder::macroClobberedGPRs());
 
     for (unsigned i = 0; i < tmpArgs.size(); ++i) {
         TypedTmp tmp = tmpArgs[i];
@@ -2413,7 +2485,7 @@ auto AirIRGenerator64::addF64ConvertUI64(ExpressionType arg, ExpressionType& res
     patchpoint->effects = B3::Effects::none();
     if (isX86())
         patchpoint->numGPScratchRegisters = 1;
-    patchpoint->clobber(RegisterSetBuilder::macroClobberedRegisters());
+    patchpoint->clobber(RegisterSetBuilder::macroClobberedGPRs());
     patchpoint->setGenerator([=](CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
         AllowMacroScratchRegisterUsage allowScratch(jit);
 #if CPU(X86_64)
@@ -2433,7 +2505,7 @@ auto AirIRGenerator64::addF32ConvertUI64(ExpressionType arg, ExpressionType& res
     patchpoint->effects = B3::Effects::none();
     if (isX86())
         patchpoint->numGPScratchRegisters = 1;
-    patchpoint->clobber(RegisterSetBuilder::macroClobberedRegisters());
+    patchpoint->clobber(RegisterSetBuilder::macroClobberedGPRs());
     patchpoint->setGenerator([=](CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
         AllowMacroScratchRegisterUsage allowScratch(jit);
 #if CPU(X86_64)
@@ -2503,7 +2575,7 @@ auto AirIRGenerator64::addUncheckedFloatingPointTruncation(FloatingPointTruncati
         switch (kind) {
         case FloatingPointTruncationKind::F32ToU64: {
             auto signBitConstant = addConstant(Types::F32, bitwise_cast<uint32_t>(static_cast<float>(std::numeric_limits<uint64_t>::max() - std::numeric_limits<int64_t>::max())));
-            patchpoint->clobber(RegisterSetBuilder::macroClobberedRegisters());
+            patchpoint->clobber(RegisterSetBuilder::macroClobberedGPRs());
             patchpoint->numFPScratchRegisters = 1;
             emitPatchpoint(
                 m_currentBlock, patchpoint,
@@ -2514,7 +2586,7 @@ auto AirIRGenerator64::addUncheckedFloatingPointTruncation(FloatingPointTruncati
         }
         case FloatingPointTruncationKind::F64ToU64: {
             auto signBitConstant = addConstant(Types::F64, bitwise_cast<uint64_t>(static_cast<double>(std::numeric_limits<uint64_t>::max() - std::numeric_limits<int64_t>::max())));
-            patchpoint->clobber(RegisterSetBuilder::macroClobberedRegisters());
+            patchpoint->clobber(RegisterSetBuilder::macroClobberedGPRs());
             patchpoint->numFPScratchRegisters = 1;
             emitPatchpoint(
                 m_currentBlock, patchpoint,
@@ -2562,8 +2634,37 @@ auto AirIRGenerator64::addI64Or(ExpressionType arg0, ExpressionType arg1, Expres
     return { };
 }
 
+auto AirIRGenerator64::addI64ExtendSI32(ExpressionType arg0, ExpressionType& result) -> PartialResult
+{
+    result = g64();
+    append(SignExtend32To64, arg0, result);
+    return { };
+}
+
+auto AirIRGenerator64::addI64Extend8S(ExpressionType arg0, ExpressionType& result) -> PartialResult
+{
+    result = g64();
+    append(SignExtend8To64, arg0, result);
+    return { };
+}
+
+auto AirIRGenerator64::addI64Extend16S(ExpressionType arg0, ExpressionType& result) -> PartialResult
+{
+    result = g64();
+    append(SignExtend16To64, arg0, result);
+    return { };
+}
+
+auto AirIRGenerator64::addI64Extend32S(ExpressionType arg0, ExpressionType& result) -> PartialResult
+{
+    result = g64();
+    append(SignExtend32To64, arg0, result);
+    return { };
+}
+
 Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileAir(CompilationContext& compilationContext, Callee& callee, const FunctionData& function, const TypeDefinition& signature, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, const ModuleInformation& info, MemoryMode mode, uint32_t functionIndex, std::optional<bool> hasExceptionHandlers, TierUpCount* tierUp)
 {
+    Wasm::Thunks::singleton().stub(Wasm::catchInWasmThunkGenerator);
     return parseAndCompileAirImpl<AirIRGenerator64>(compilationContext, callee, function, signature, unlinkedWasmToWasmCalls, info, mode, functionIndex, hasExceptionHandlers, tierUp);
 }
 

@@ -30,16 +30,7 @@
 #include <wtf/RefPtr.h>
 #include <wtf/WindowsExtras.h>
 
-#if USE(CA)
-#include "CACFLayerTreeHostClient.h"
-#endif
-
 namespace WebCore {
-
-#if USE(CA)
-class CACFLayerTreeHost;
-class PlatformCALayer;
-#endif
 
 class FullScreenClient {
 public:
@@ -58,20 +49,11 @@ public:
     
     HWND hwnd() const { return m_hwnd; }
 
-#if USE(CA)
-    PlatformCALayer* rootChildLayer() const { return m_rootChild.get(); }
-    void setRootChildLayer(Ref<PlatformCALayer>&&);
-#endif
-
 private:
     static LRESULT __stdcall staticWndProc(HWND, UINT message, WPARAM, LPARAM);
     LRESULT wndProc(HWND, UINT message, WPARAM, LPARAM);
 
     FullScreenClient* m_client;
-#if USE(CA)
-    RefPtr<CACFLayerTreeHost> m_layerTreeHost;
-    RefPtr<PlatformCALayer> m_rootChild;
-#endif
     HWND m_hwnd;
 };
 

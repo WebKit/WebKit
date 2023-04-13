@@ -9,6 +9,7 @@ info: |
     for await (LeftHandSideExpression of AssignmentExpression) Statement
 features: [optional-chaining]
 flags: [async]
+includes: [asyncHelpers.js]
 ---*/
 const obj = {
   iterable: {
@@ -32,4 +33,4 @@ async function checkAssertions() {
   }
   assert.sameValue(3, count);
 }
-checkAssertions().then($DONE, $DONE);
+asyncTest(checkAssertions);

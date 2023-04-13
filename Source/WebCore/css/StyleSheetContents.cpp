@@ -28,8 +28,8 @@
 #include "CachedCSSStyleSheet.h"
 #include "CommonAtomStrings.h"
 #include "Document.h"
-#include "Frame.h"
 #include "FrameLoader.h"
+#include "LocalFrame.h"
 #include "MediaList.h"
 #include "Node.h"
 #include "Page.h"
@@ -498,6 +498,8 @@ bool StyleSheetContents::traverseSubresources(const Function<bool(const CachedRe
         switch (rule.type()) {
         case StyleRuleType::Style:
             return downcast<StyleRule>(rule).properties().traverseSubresources(handler);
+        case StyleRuleType::StyleWithNesting:
+            return downcast<StyleRuleWithNesting>(rule).properties().traverseSubresources(handler);
         case StyleRuleType::FontFace:
             return downcast<StyleRuleFontFace>(rule).properties().traverseSubresources(handler);
         case StyleRuleType::Import:

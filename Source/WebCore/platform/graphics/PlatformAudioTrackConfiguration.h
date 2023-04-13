@@ -35,9 +35,6 @@ struct PlatformAudioTrackConfiguration : PlatformTrackConfiguration {
     uint32_t sampleRate { 0 };
     uint32_t numberOfChannels { 0 };
     uint64_t bitrate { 0 };
-
-    template <class Encoder> void encode(Encoder&) const;
-    template <class Decoder> static WARN_UNUSED_RETURN bool decode(Decoder&, PlatformAudioTrackConfiguration&);
 };
 
 inline bool operator==(const PlatformAudioTrackConfiguration& a, const PlatformAudioTrackConfiguration& b)
@@ -46,24 +43,6 @@ inline bool operator==(const PlatformAudioTrackConfiguration& a, const PlatformA
         && a.sampleRate == b.sampleRate
         && a.numberOfChannels == b.numberOfChannels
         && a.bitrate == b.bitrate;
-}
-
-template <class Encoder>
-void PlatformAudioTrackConfiguration::encode(Encoder& encoder) const
-{
-    encoder << codec;
-    encoder << sampleRate;
-    encoder << numberOfChannels;
-    encoder << bitrate;
-}
-
-template <class Decoder>
-bool PlatformAudioTrackConfiguration::decode(Decoder& decoder, PlatformAudioTrackConfiguration& configuration)
-{
-    return decoder.decode(configuration.codec)
-        && decoder.decode(configuration.sampleRate)
-        && decoder.decode(configuration.numberOfChannels)
-        && decoder.decode(configuration.bitrate);
 }
 
 }

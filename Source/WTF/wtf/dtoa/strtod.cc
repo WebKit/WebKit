@@ -489,21 +489,17 @@ static float SanitizedDoubletof(double d) {
   // https://clang.llvm.org/docs/UndefinedBehaviorSanitizer.html#available-checks
   // The behavior should be covered by IEEE 754, but some projects use this
   // flag, so work around it.
-  float max_finite = 3.4028234663852885981170418348451692544e+38;
+  constexpr float max_finite = 3.4028234663852885981170418348451692544e+38;
   // The half-way point between the max-finite and infinity value.
   // Since infinity has an even significand everything equal or greater than
   // this value should become infinity.
-  double half_max_finite_infinity =
-      3.40282356779733661637539395458142568448e+38;
+  constexpr double half_max_finite_infinity = 3.40282356779733661637539395458142568448e+38;
   if (d >= max_finite) {
-    if (d >= half_max_finite_infinity) {
+    if (d >= half_max_finite_infinity)
       return Single::Infinity();
-    } else {
-      return max_finite;
-    }
-  } else {
-    return static_cast<float>(d);
+    return max_finite;
   }
+  return static_cast<float>(d);
 }
 
 float Strtof(BufferReference<const char> buffer, int exponent) {

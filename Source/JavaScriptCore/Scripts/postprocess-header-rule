@@ -28,11 +28,6 @@ if [[ -z "${SCRIPT_HEADER_VISIBILITY}" ]]; then
     exit 0
 fi
 
-if [[ "${JSC_FRAMEWORK_HEADER_POSTPROCESSING_DISABLED}" == "YES" ]]; then
-    ditto "${SCRIPT_INPUT_FILE}" "${SCRIPT_OUTPUT_FILE_0}"
-    exit 0
-fi
-
 function process_definitions () {
     local DEFINITIONS_FILE=$1
 
@@ -43,11 +38,18 @@ function process_definitions () {
     source "${DEFINITIONS_FILE}"
 }
 
-function rewrite_headers () {
-    local SOURCE_FILE="${1}"
-    local WORK_FILE="${2}.tmp"
-    local DEST_FILE="${2}"
+DEFINITIONS_PATH=usr/local/include/WebKitAdditions/Scripts/postprocess-framework-headers-definitions
 
+process_definitions "${BUILT_PRODUCTS_DIR}/${DEFINITIONS_PATH}" || process_definitions "${SDKROOT}/${DEFINITIONS_PATH}"
+
+# WebKitAdditions may set WK_FRAMEWORK_HEADER_POSTPROCESSING_DISABLED=YES when
+# postprocessing should be disabled based on the deployment target version
+# (e.g. for a downlevel build).
+if [ "${WK_FRAMEWORK_HEADER_POSTPROCESSING_DISABLED}" == "YES" ]; then
+    JSC_FRAMEWORK_HEADER_POSTPROCESSING_DISABLED=YES;
+fi
+
+if [[ "${JSC_FRAMEWORK_HEADER_POSTPROCESSING_DISABLED}" != "YES" ]]; then
     if [[ "${PLATFORM_NAME}" == "macosx" ]]; then
         [[ -n ${OSX_VERSION} ]] || OSX_VERSION=${MACOSX_DEPLOYMENT_TARGET}
         [[ -n ${OSX_VERSION_NUMBER} ]] || OSX_VERSION_NUMBER=${TARGET_MAC_OS_X_VERSION_MAJOR}
@@ -68,8 +70,7 @@ function rewrite_headers () {
         [[ -n ${IOS_VERSION_NUMBER} ]] || IOS_VERSION_NUMBER=${SDK_VERSION_MAJOR}
     fi
 
-    SED_OPTIONS=(
-    )
+    SED_OPTIONS=()
 
     if [[ -n "$OSX_VERSION" && -n "$IOS_VERSION" ]]; then
         SED_OPTIONS+=(
@@ -91,14 +92,17 @@ function rewrite_headers () {
     fi
 
     SED_OPTIONS+=(${OTHER_SED_OPTIONS[*]})
+fi
 
-    sed -E "${SED_OPTIONS[@]}" "${SOURCE_FILE}" > "${WORK_FILE}" || exit $?
-    cmp -s "${WORK_FILE}" "${DEST_FILE}" && rm -f "${WORK_FILE}" || mv "${WORK_FILE}" "${DEST_FILE}"
-    [[ "${SOURCE_FILE}" -nt "${DEST_FILE}" ]] && touch "${DEST_FILE}" || true
-}
+UNIFDEF_OPTIONS=(-Bt)
 
-DEFINITIONS_PATH=usr/local/include/WebKitAdditions/Scripts/postprocess-framework-headers-definitions
+if [[ "${JSC_FRAMEWORK_HEADER_POSTPROCESSING_DISABLED}" == "YES" ]]; then
+    UNIFDEF_OPTIONS+=(-UJSC_FRAMEWORK_HEADER_POSTPROCESSING_ENABLED)
+else
+    UNIFDEF_OPTIONS+=(-DJSC_FRAMEWORK_HEADER_POSTPROCESSING_ENABLED)
+fi
 
-process_definitions "${BUILT_PRODUCTS_DIR}/${DEFINITIONS_PATH}" || process_definitions "${SDKROOT}/${DEFINITIONS_PATH}"
-
-rewrite_headers "${SCRIPT_INPUT_FILE}" "${SCRIPT_OUTPUT_FILE_0}"
+sed -E "${SED_OPTIONS[@]}" < "${INPUT_FILE_PATH}" |
+    unifdef ${UNIFDEF_OPTIONS[@]} > "${SCRIPT_OUTPUT_FILE_0}"
+exits=(${PIPESTATUS[@]})
+[ ${exits[0]} -eq 0 -a ${exits[1]} -lt 2 ]

@@ -36,9 +36,6 @@ public:
     const String& name() const { return m_name; }
     const String& value() const { return m_value; }
 
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<HTTPHeaderField> decode(Decoder&);
-
 private:
     HTTPHeaderField(String&& name, String&& value)
         : m_name(WTFMove(name))
@@ -47,28 +44,5 @@ private:
     String m_name;
     String m_value;
 };
-
-template<class Encoder>
-void HTTPHeaderField::encode(Encoder& encoder) const
-{
-    encoder << m_name;
-    encoder << m_value;
-}
-
-template<class Decoder>
-std::optional<HTTPHeaderField> HTTPHeaderField::decode(Decoder& decoder)
-{
-    std::optional<String> name;
-    decoder >> name;
-    if (!name)
-        return std::nullopt;
-
-    std::optional<String> value;
-    decoder >> value;
-    if (!value)
-        return std::nullopt;
-
-    return {{ WTFMove(*name), WTFMove(*value) }};
-}
 
 } // namespace WebCore

@@ -34,178 +34,178 @@ NSString *beginSwipeBackEventStream()
 {
     return QUOTE([
         {
-            "relativeTimeMS" : 0,
-            "kCGEventScrollGestureFlagBits" : 1,
             "kCGEventGestureHIDType" : 6,
-            "kCGSEventTypeField" : 29,
             "kCGEventGesturePhase" : 128,
+            "kCGEventScrollGestureFlagBits" : 1,
+            "kCGSEventTypeField" : 29,
+            "relativeTimeMS" : 0,
             "windowLocation" : "{400, 300}"
         },
         {
-            "relativeTimeMS" : 8,
             "kCGEventGestureHIDType" : 61,
-            "kCGSEventTypeField" : 29,
             "kCGEventGestureStartEndSeriesType" : 6,
+            "kCGSEventTypeField" : 29,
+            "relativeTimeMS" : 8,
             "windowLocation" : "{400, 300}"
         },
         {
             "kCGEventGestureHIDType" : 6,
-            "relativeTimeMS" : 8,
-            "windowLocation" : "{400, 300}",
             "kCGEventGesturePhase" : 1,
+            "kCGEventGestureScrollX" : 2,
             "kCGEventScrollGestureFlagBits" : 1,
             "kCGSEventTypeField" : 29,
-            "kCGEventGestureScrollX" : 2
+            "relativeTimeMS" : 8,
+            "windowLocation" : "{400, 300}"
         },
         {
-            "relativeTimeMS" : 8,
-            "windowLocation" : "{400, 300}",
-            "kCGScrollWheelEventScrollPhase" : 1,
             "kCGScrollWheelEventIsContinuous" : 1,
             "kCGScrollWheelEventPointDeltaAxis2" : 1,
-            "kCGSEventTypeField" : 22
+            "kCGScrollWheelEventScrollPhase" : 1,
+            "kCGSEventTypeField" : 22,
+            "relativeTimeMS" : 8,
+            "windowLocation" : "{400, 300}"
         },
         {
             "kCGEventGestureHIDType" : 6,
-            "relativeTimeMS" : 17,
-            "windowLocation" : "{400, 300}",
+            "kCGEventGesturePhase" : 2,
+            "kCGEventGestureScrollX" : 12,
             "kCGEventGestureScrollY" : 1,
-            "kCGEventGesturePhase" : 2,
             "kCGEventScrollGestureFlagBits" : 1,
             "kCGSEventTypeField" : 29,
-            "kCGEventGestureScrollX" : 12
+            "relativeTimeMS" : 17,
+            "windowLocation" : "{400, 300}"
         },
         {
-            "kCGScrollWheelEventPointDeltaAxis1" : 1,
-            "relativeTimeMS" : 17,
-            "kCGScrollWheelEventScrollPhase" : 2,
             "kCGScrollWheelEventIsContinuous" : 1,
+            "kCGScrollWheelEventPointDeltaAxis1" : 1,
             "kCGScrollWheelEventPointDeltaAxis2" : 4,
-            "windowLocation" : "{400, 300}",
-            "kCGSEventTypeField" : 22
+            "kCGScrollWheelEventScrollPhase" : 2,
+            "kCGSEventTypeField" : 22,
+            "relativeTimeMS" : 17,
+            "windowLocation" : "{400, 300}"
         },
         {
             "kCGEventGestureHIDType" : 6,
-            "relativeTimeMS" : 25,
-            "windowLocation" : "{400, 300}",
-            "kCGEventGestureScrollY" : 2,
             "kCGEventGesturePhase" : 2,
+            "kCGEventGestureScrollX" : 23,
+            "kCGEventGestureScrollY" : 2,
             "kCGEventScrollGestureFlagBits" : 1,
             "kCGSEventTypeField" : 29,
-            "kCGEventGestureScrollX" : 23
+            "relativeTimeMS" : 25,
+            "windowLocation" : "{400, 300}"
         },
         {
             "kCGScrollWheelEventDeltaAxis2" : 1,
-            "kCGScrollWheelEventPointDeltaAxis1" : 1,
-            "relativeTimeMS" : 25,
             "kCGScrollWheelEventIsContinuous" : 1,
-            "kCGScrollWheelEventScrollPhase" : 2,
+            "kCGScrollWheelEventPointDeltaAxis1" : 1,
             "kCGScrollWheelEventPointDeltaAxis2" : 11,
-            "windowLocation" : "{400, 300}",
-            "kCGSEventTypeField" : 22
+            "kCGScrollWheelEventScrollPhase" : 2,
+            "kCGSEventTypeField" : 22,
+            "relativeTimeMS" : 25,
+            "windowLocation" : "{400, 300}"
         },
         {
             "kCGEventGestureHIDType" : 6,
-            "relativeTimeMS" : 33,
-            "windowLocation" : "{400, 300}",
+            "kCGEventGesturePhase" : 2,
+            "kCGEventGestureScrollX" : 28,
             "kCGEventGestureScrollY" : 2,
-            "kCGEventGesturePhase" : 2,
             "kCGEventScrollGestureFlagBits" : 1,
             "kCGSEventTypeField" : 29,
-            "kCGEventGestureScrollX" : 28
-        },
-        {
-            "kCGScrollWheelEventDeltaAxis2" : 2,
-            "kCGScrollWheelEventPointDeltaAxis1" : 1,
             "relativeTimeMS" : 33,
-            "kCGScrollWheelEventIsContinuous" : 1,
-            "kCGScrollWheelEventScrollPhase" : 2,
-            "kCGScrollWheelEventPointDeltaAxis2" : 16,
-            "windowLocation" : "{400, 300}",
-            "kCGSEventTypeField" : 22
-        },
-        {
-            "kCGEventGestureHIDType" : 6,
-            "relativeTimeMS" : 41,
-            "windowLocation" : "{400, 300}",
-            "kCGEventGestureScrollY" : 1,
-            "kCGEventGesturePhase" : 2,
-            "kCGEventScrollGestureFlagBits" : 1,
-            "kCGSEventTypeField" : 29,
-            "kCGEventGestureScrollX" : 35
+            "windowLocation" : "{400, 300}"
         },
         {
             "kCGScrollWheelEventDeltaAxis2" : 2,
+            "kCGScrollWheelEventIsContinuous" : 1,
             "kCGScrollWheelEventPointDeltaAxis1" : 1,
+            "kCGScrollWheelEventPointDeltaAxis2" : 16,
+            "kCGScrollWheelEventScrollPhase" : 2,
+            "kCGSEventTypeField" : 22,
+            "relativeTimeMS" : 33,
+            "windowLocation" : "{400, 300}"
+        },
+        {
+            "kCGEventGestureHIDType" : 6,
+            "kCGEventGesturePhase" : 2,
+            "kCGEventGestureScrollX" : 35,
+            "kCGEventGestureScrollY" : 1,
+            "kCGEventScrollGestureFlagBits" : 1,
+            "kCGSEventTypeField" : 29,
             "relativeTimeMS" : 41,
+            "windowLocation" : "{400, 300}"
+        },
+        {
+            "kCGScrollWheelEventDeltaAxis2" : 2,
             "kCGScrollWheelEventIsContinuous" : 1,
-            "kCGScrollWheelEventScrollPhase" : 2,
+            "kCGScrollWheelEventPointDeltaAxis1" : 1,
             "kCGScrollWheelEventPointDeltaAxis2" : 24,
-            "windowLocation" : "{400, 300}",
-            "kCGSEventTypeField" : 22
+            "kCGScrollWheelEventScrollPhase" : 2,
+            "kCGSEventTypeField" : 22,
+            "relativeTimeMS" : 41,
+            "windowLocation" : "{400, 300}"
         },
         {
             "kCGEventGestureHIDType" : 6,
-            "relativeTimeMS" : 49,
-            "windowLocation" : "{400, 300}",
+            "kCGEventGesturePhase" : 2,
+            "kCGEventGestureScrollX" : 45,
             "kCGEventGestureScrollY" : -1,
-            "kCGEventGesturePhase" : 2,
             "kCGEventScrollGestureFlagBits" : 1,
             "kCGSEventTypeField" : 29,
-            "kCGEventGestureScrollX" : 45
-        },
-        {
-            "kCGScrollWheelEventScrollCount" : 1,
-            "kCGScrollWheelEventDeltaAxis2" : 4,
-            "kCGScrollWheelEventPointDeltaAxis1" : -1,
             "relativeTimeMS" : 49,
+            "windowLocation" : "{400, 300}"
+        },
+        {
+            "kCGScrollWheelEventDeltaAxis2" : 4,
             "kCGScrollWheelEventIsContinuous" : 1,
-            "kCGScrollWheelEventScrollPhase" : 2,
-            "kCGScrollWheelEventPointDeltaAxis2" : 37,
-            "windowLocation" : "{400, 300}",
-            "kCGSEventTypeField" : 22
-        },
-        {
-            "kCGEventGestureHIDType" : 6,
-            "relativeTimeMS" : 57,
-            "windowLocation" : "{400, 300}",
-            "kCGEventGestureScrollY" : -3,
-            "kCGEventGesturePhase" : 2,
-            "kCGEventScrollGestureFlagBits" : 1,
-            "kCGSEventTypeField" : 29,
-            "kCGEventGestureScrollX" : 57
-        },
-        {
-            "kCGScrollWheelEventScrollCount" : 1,
-            "kCGScrollWheelEventDeltaAxis2" : 5,
             "kCGScrollWheelEventPointDeltaAxis1" : -1,
-            "relativeTimeMS" : 57,
-            "kCGScrollWheelEventIsContinuous" : 1,
+            "kCGScrollWheelEventPointDeltaAxis2" : 37,
+            "kCGScrollWheelEventScrollCount" : 1,
             "kCGScrollWheelEventScrollPhase" : 2,
-            "kCGScrollWheelEventPointDeltaAxis2" : 54,
-            "windowLocation" : "{400, 300}",
-            "kCGSEventTypeField" : 22
+            "kCGSEventTypeField" : 22,
+            "relativeTimeMS" : 49,
+            "windowLocation" : "{400, 300}"
         },
         {
             "kCGEventGestureHIDType" : 6,
-            "relativeTimeMS" : 65,
-            "windowLocation" : "{400, 300}",
-            "kCGEventGestureScrollY" : -5,
             "kCGEventGesturePhase" : 2,
+            "kCGEventGestureScrollX" : 57,
+            "kCGEventGestureScrollY" : -3,
             "kCGEventScrollGestureFlagBits" : 1,
             "kCGSEventTypeField" : 29,
-            "kCGEventGestureScrollX" : 81
+            "relativeTimeMS" : 57,
+            "windowLocation" : "{400, 300}"
         },
         {
-            "kCGScrollWheelEventScrollCount" : 1,
-            "kCGScrollWheelEventDeltaAxis2" : 9,
-            "kCGScrollWheelEventPointDeltaAxis1" : -2,
-            "relativeTimeMS" : 65,
+            "kCGScrollWheelEventDeltaAxis2" : 5,
             "kCGScrollWheelEventIsContinuous" : 1,
+            "kCGScrollWheelEventPointDeltaAxis1" : -1,
+            "kCGScrollWheelEventPointDeltaAxis2" : 54,
+            "kCGScrollWheelEventScrollCount" : 1,
             "kCGScrollWheelEventScrollPhase" : 2,
+            "kCGSEventTypeField" : 22,
+            "relativeTimeMS" : 57,
+            "windowLocation" : "{400, 300}"
+        },
+        {
+            "kCGEventGestureHIDType" : 6,
+            "kCGEventGesturePhase" : 2,
+            "kCGEventGestureScrollX" : 81,
+            "kCGEventGestureScrollY" : -5,
+            "kCGEventScrollGestureFlagBits" : 1,
+            "kCGSEventTypeField" : 29,
+            "relativeTimeMS" : 65,
+            "windowLocation" : "{400, 300}"
+        },
+        {
+            "kCGScrollWheelEventDeltaAxis2" : 9,
+            "kCGScrollWheelEventIsContinuous" : 1,
+            "kCGScrollWheelEventPointDeltaAxis1" : -2,
             "kCGScrollWheelEventPointDeltaAxis2" : 92,
-            "windowLocation" : "{400, 300}",
-            "kCGSEventTypeField" : 22
+            "kCGScrollWheelEventScrollCount" : 1,
+            "kCGScrollWheelEventScrollPhase" : 2,
+            "kCGSEventTypeField" : 22,
+            "relativeTimeMS" : 65,
+            "windowLocation" : "{400, 300}"
         },
     ]);
 }
@@ -215,153 +215,153 @@ NSString *completeSwipeBackEventStream()
     return QUOTE([
         {
             "kCGEventGestureHIDType" : 6,
-            "relativeTimeMS" : 73,
-            "windowLocation" : "{400, 300}",
-            "kCGEventGestureScrollY" : -3,
             "kCGEventGesturePhase" : 2,
+            "kCGEventGestureScrollX" : 75,
+            "kCGEventGestureScrollY" : -3,
             "kCGEventScrollGestureFlagBits" : 1,
             "kCGSEventTypeField" : 29,
-            "kCGEventGestureScrollX" : 75
+            "relativeTimeMS" : 73,
+            "windowLocation" : "{400, 300}"
         },
         {
-            "kCGScrollWheelEventScrollCount" : 1,
             "kCGScrollWheelEventDeltaAxis2" : 11,
-            "kCGScrollWheelEventPointDeltaAxis1" : -1,
-            "relativeTimeMS" : 73,
             "kCGScrollWheelEventIsContinuous" : 1,
-            "kCGScrollWheelEventScrollPhase" : 2,
+            "kCGScrollWheelEventPointDeltaAxis1" : -1,
             "kCGScrollWheelEventPointDeltaAxis2" : 106,
-            "windowLocation" : "{400, 300}",
-            "kCGSEventTypeField" : 22
+            "kCGScrollWheelEventScrollCount" : 1,
+            "kCGScrollWheelEventScrollPhase" : 2,
+            "kCGSEventTypeField" : 22,
+            "relativeTimeMS" : 73,
+            "windowLocation" : "{400, 300}"
         },
         {
             "kCGEventGestureHIDType" : 6,
-            "relativeTimeMS" : 81,
-            "windowLocation" : "{400, 300}",
+            "kCGEventGesturePhase" : 2,
+            "kCGEventGestureScrollX" : 85,
             "kCGEventGestureScrollY" : -3,
-            "kCGEventGesturePhase" : 2,
             "kCGEventScrollGestureFlagBits" : 1,
             "kCGSEventTypeField" : 29,
-            "kCGEventGestureScrollX" : 85
-        },
-        {
-            "kCGScrollWheelEventScrollCount" : 1,
-            "kCGScrollWheelEventDeltaAxis2" : 13,
-            "kCGScrollWheelEventPointDeltaAxis1" : -1,
             "relativeTimeMS" : 81,
+            "windowLocation" : "{400, 300}"
+        },
+        {
+            "kCGScrollWheelEventDeltaAxis2" : 13,
             "kCGScrollWheelEventIsContinuous" : 1,
-            "kCGScrollWheelEventScrollPhase" : 2,
-            "kCGScrollWheelEventPointDeltaAxis2" : 127,
-            "windowLocation" : "{400, 300}",
-            "kCGSEventTypeField" : 22
-        },
-        {
-            "kCGEventGestureHIDType" : 6,
-            "relativeTimeMS" : 89,
-            "windowLocation" : "{400, 300}",
-            "kCGEventGestureScrollY" : -1,
-            "kCGEventGesturePhase" : 2,
-            "kCGEventScrollGestureFlagBits" : 1,
-            "kCGSEventTypeField" : 29,
-            "kCGEventGestureScrollX" : 91
-        },
-        {
-            "kCGScrollWheelEventScrollCount" : 1,
-            "kCGScrollWheelEventDeltaAxis2" : 14,
             "kCGScrollWheelEventPointDeltaAxis1" : -1,
+            "kCGScrollWheelEventPointDeltaAxis2" : 127,
+            "kCGScrollWheelEventScrollCount" : 1,
+            "kCGScrollWheelEventScrollPhase" : 2,
+            "kCGSEventTypeField" : 22,
+            "relativeTimeMS" : 81,
+            "windowLocation" : "{400, 300}"
+        },
+        {
+            "kCGEventGestureHIDType" : 6,
+            "kCGEventGesturePhase" : 2,
+            "kCGEventGestureScrollX" : 91,
+            "kCGEventGestureScrollY" : -1,
+            "kCGEventScrollGestureFlagBits" : 1,
+            "kCGSEventTypeField" : 29,
             "relativeTimeMS" : 89,
-            "kCGScrollWheelEventIsContinuous" : 1,
-            "kCGScrollWheelEventScrollPhase" : 2,
-            "kCGScrollWheelEventPointDeltaAxis2" : 139,
-            "windowLocation" : "{400, 300}",
-            "kCGSEventTypeField" : 22
+            "windowLocation" : "{400, 300}"
         },
         {
-            "kCGEventGestureHIDType" : 6,
-            "relativeTimeMS" : 97,
-            "windowLocation" : "{400, 300}",
-            "kCGEventGestureScrollY" : 2,
-            "kCGEventGesturePhase" : 2,
-            "kCGEventScrollGestureFlagBits" : 1,
-            "kCGSEventTypeField" : 29,
-            "kCGEventGestureScrollX" : 136
-        },
-        {
-            "kCGScrollWheelEventScrollCount" : 1,
-            "kCGScrollWheelEventDeltaAxis2" : 20,
-            "kCGScrollWheelEventPointDeltaAxis1" : 1,
-            "relativeTimeMS" : 97,
-            "kCGScrollWheelEventIsContinuous" : 1,
-            "kCGScrollWheelEventScrollPhase" : 2,
-            "kCGScrollWheelEventPointDeltaAxis2" : 204,
-            "windowLocation" : "{400, 300}",
-            "kCGSEventTypeField" : 22
-        },
-        {
-            "kCGEventGestureHIDType" : 6,
-            "relativeTimeMS" : 105,
-            "windowLocation" : "{400, 300}",
-            "kCGEventGestureScrollY" : 5,
-            "kCGEventGesturePhase" : 2,
-            "kCGEventScrollGestureFlagBits" : 1,
-            "kCGSEventTypeField" : 29,
-            "kCGEventGestureScrollX" : 92
-        },
-        {
-            "kCGScrollWheelEventScrollCount" : 1,
             "kCGScrollWheelEventDeltaAxis2" : 14,
-            "kCGScrollWheelEventPointDeltaAxis1" : 2,
-            "relativeTimeMS" : 105,
             "kCGScrollWheelEventIsContinuous" : 1,
+            "kCGScrollWheelEventPointDeltaAxis1" : -1,
+            "kCGScrollWheelEventPointDeltaAxis2" : 139,
+            "kCGScrollWheelEventScrollCount" : 1,
             "kCGScrollWheelEventScrollPhase" : 2,
-            "kCGScrollWheelEventPointDeltaAxis2" : 136,
-            "windowLocation" : "{400, 300}",
-            "kCGSEventTypeField" : 22
+            "kCGSEventTypeField" : 22,
+            "relativeTimeMS" : 89,
+            "windowLocation" : "{400, 300}"
         },
         {
             "kCGEventGestureHIDType" : 6,
-            "relativeTimeMS" : 113,
-            "windowLocation" : "{400, 300}",
-            "kCGEventGestureScrollY" : 14,
             "kCGEventGesturePhase" : 2,
+            "kCGEventGestureScrollX" : 136,
+            "kCGEventGestureScrollY" : 2,
             "kCGEventScrollGestureFlagBits" : 1,
             "kCGSEventTypeField" : 29,
-            "kCGEventGestureScrollX" : 133
+            "relativeTimeMS" : 97,
+            "windowLocation" : "{400, 300}"
         },
         {
-            "kCGScrollWheelEventScrollPhase" : 2,
-            "kCGScrollWheelEventPointDeltaAxis2" : 192,
-            "kCGSEventTypeField" : 22,
-            "kCGScrollWheelEventDeltaAxis1" : 1,
+            "kCGScrollWheelEventDeltaAxis2" : 20,
             "kCGScrollWheelEventIsContinuous" : 1,
-            "relativeTimeMS" : 113,
+            "kCGScrollWheelEventPointDeltaAxis1" : 1,
+            "kCGScrollWheelEventPointDeltaAxis2" : 204,
             "kCGScrollWheelEventScrollCount" : 1,
-            "kCGScrollWheelEventDeltaAxis2" : 19,
-            "windowLocation" : "{400, 300}",
-            "kCGScrollWheelEventPointDeltaAxis1" : 7
-        },
-        {
-            "relativeTimeMS" : 121,
-            "kCGEventScrollGestureFlagBits" : 1,
-            "kCGEventGestureHIDType" : 6,
-            "kCGSEventTypeField" : 29,
-            "kCGEventGesturePhase" : 4,
-            "windowLocation" : "{400, 300}"
-        },
-        {
-            "relativeTimeMS" : 121,
-            "kCGEventGestureHIDType" : 62,
-            "kCGSEventTypeField" : 29,
-            "kCGEventGestureStartEndSeriesType" : 6,
-            "windowLocation" : "{400, 300}"
-        },
-        {
-            "kCGScrollWheelEventScrollCount" : 1,
-            "relativeTimeMS" : 139,
-            "windowLocation" : "{400, 300}",
+            "kCGScrollWheelEventScrollPhase" : 2,
             "kCGSEventTypeField" : 22,
+            "relativeTimeMS" : 97,
+            "windowLocation" : "{400, 300}"
+        },
+        {
+            "kCGEventGestureHIDType" : 6,
+            "kCGEventGesturePhase" : 2,
+            "kCGEventGestureScrollX" : 92,
+            "kCGEventGestureScrollY" : 5,
+            "kCGEventScrollGestureFlagBits" : 1,
+            "kCGSEventTypeField" : 29,
+            "relativeTimeMS" : 105,
+            "windowLocation" : "{400, 300}"
+        },
+        {
+            "kCGScrollWheelEventDeltaAxis2" : 14,
+            "kCGScrollWheelEventIsContinuous" : 1,
+            "kCGScrollWheelEventPointDeltaAxis1" : 2,
+            "kCGScrollWheelEventPointDeltaAxis2" : 136,
+            "kCGScrollWheelEventScrollCount" : 1,
+            "kCGScrollWheelEventScrollPhase" : 2,
+            "kCGSEventTypeField" : 22,
+            "relativeTimeMS" : 105,
+            "windowLocation" : "{400, 300}"
+        },
+        {
+            "kCGEventGestureHIDType" : 6,
+            "kCGEventGesturePhase" : 2,
+            "kCGEventGestureScrollX" : 133,
+            "kCGEventGestureScrollY" : 14,
+            "kCGEventScrollGestureFlagBits" : 1,
+            "kCGSEventTypeField" : 29,
+            "relativeTimeMS" : 113,
+            "windowLocation" : "{400, 300}"
+        },
+        {
+            "kCGScrollWheelEventDeltaAxis1" : 1,
+            "kCGScrollWheelEventDeltaAxis2" : 19,
+            "kCGScrollWheelEventIsContinuous" : 1,
+            "kCGScrollWheelEventPointDeltaAxis1" : 7,
+            "kCGScrollWheelEventPointDeltaAxis2" : 192,
+            "kCGScrollWheelEventScrollCount" : 1,
+            "kCGScrollWheelEventScrollPhase" : 2,
+            "kCGSEventTypeField" : 22,
+            "relativeTimeMS" : 113,
+            "windowLocation" : "{400, 300}"
+        },
+        {
+            "kCGEventGestureHIDType" : 6,
+            "kCGEventGesturePhase" : 4,
+            "kCGEventScrollGestureFlagBits" : 1,
+            "kCGSEventTypeField" : 29,
+            "relativeTimeMS" : 121,
+            "windowLocation" : "{400, 300}"
+        },
+        {
+            "kCGEventGestureHIDType" : 62,
+            "kCGEventGestureStartEndSeriesType" : 6,
+            "kCGSEventTypeField" : 29,
+            "relativeTimeMS" : 121,
+            "windowLocation" : "{400, 300}"
+        },
+        {
+            "kCGScrollWheelEventIsContinuous" : 1,
+            "kCGScrollWheelEventScrollCount" : 1,
             "kCGScrollWheelEventScrollPhase" : 4,
-            "kCGScrollWheelEventIsContinuous" : 1
+            "kCGSEventTypeField" : 22,
+            "relativeTimeMS" : 139,
+            "windowLocation" : "{400, 300}"
         }
     ]);
 }

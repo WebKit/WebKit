@@ -1309,6 +1309,9 @@ void main()
         eglDestroyImageKHR(eglWindow->getDisplay(), image2);
     }
 
+    void FramebufferAttachmentDeletedWhileInUseHelper(bool useTextureAttachment,
+                                                      bool deleteSourceTextureLast);
+
     EGLint default3DAttribs[5] = {
         EGL_GL_TEXTURE_ZOFFSET_KHR, static_cast<EGLint>(0), EGL_IMAGE_PRESERVED, EGL_TRUE, EGL_NONE,
     };
@@ -6416,6 +6419,228 @@ TEST_P(ImageTest, MultithreadedAHBImportAndUseAsRenderbuffer)
     RunLockStepThreads(getEGLWindow(), threadFuncs.size(), threadFuncs.data());
 
     ASSERT_NE(currentStep, Step::Abort);
+}
+
+void ImageTest::FramebufferAttachmentDeletedWhileInUseHelper(bool useTextureAttachment,
+                                                             bool deleteSourceTextureLast)
+{
+    ANGLE_SKIP_TEST_IF(!hasOESExt() || !hasBaseExt());
+    ANGLE_SKIP_TEST_IF(useTextureAttachment && !has2DTextureExt());
+    ANGLE_SKIP_TEST_IF(!useTextureAttachment && !hasRenderbufferExt());
+    ANGLE_SKIP_TEST_IF(!platformSupportsMultithreading());
+
+    EGLWindow *window = getEGLWindow();
+    EGLImageKHR image = EGL_NO_IMAGE_KHR;
+
+    std::mutex mutex;
+    std::condition_variable condVar;
+
+    enum class Step
+    {
+        Start,
+        Thread0CreatedImage,
+        Thread1UsedImage,
+        Finish,
+        Abort,
+    };
+    Step currentStep = Step::Start;
+
+    EXPECT_EGL_TRUE(window->makeCurrent(EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT));
+
+    // This thread will use window context
+    std::thread thread0([&]() {
+        ThreadSynchronization<Step> threadSynchronization(&currentStep, &mutex, &condVar);
+
+        window->makeCurrent();
+
+        // Create the Image
+        GLTexture source;
+        createEGLImage2DTextureSource(1, 1, GL_RGBA, GL_UNSIGNED_BYTE, kDefaultAttribs,
+                                      kLinearColor, source, &image);
+
+        // Explicit flush is currently required for Vulkan backend
+        glFlush();
+        ASSERT_GL_NO_ERROR();
+
+        // Wait thread 1 finish using the Image
+        threadSynchronization.nextStep(Step::Thread0CreatedImage);
+        ASSERT_TRUE(threadSynchronization.waitForStep(Step::Thread1UsedImage));
+
+        if (!deleteSourceTextureLast)
+        {
+            // Delete "source" texture first - image buffer will be deleted with the "image"
+            source.reset();
+        }
+
+        // Destroy Image
+        eglDestroyImageKHR(window->getDisplay(), image);
+
+        if (deleteSourceTextureLast)
+        {
+            // Delete "source" texture last - this will delete image buffer
+            source.reset();
+        }
+
+        threadSynchronization.nextStep(Step::Finish);
+
+        EXPECT_EGL_TRUE(window->makeCurrent(EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT));
+    });
+
+    // This thread will use non Shared context
+    auto thread1 = [&](EGLDisplay dpy, EGLSurface surface, EGLContext context) {
+        ThreadSynchronization<Step> threadSynchronization(&currentStep, &mutex, &condVar);
+
+        ASSERT_TRUE(threadSynchronization.waitForStep(Step::Thread0CreatedImage));
+
+        EXPECT_EGL_TRUE(eglMakeCurrent(dpy, surface, surface, context));
+
+        // Create the target and set up a framebuffer to render into the Image
+        GLFramebuffer fbo;
+        GLTexture targetTexture;
+        GLRenderbuffer targetRenderbuffer;
+        glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+        if (useTextureAttachment)
+        {
+            createEGLImageTargetTexture2D(image, targetTexture);
+            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
+                                   targetTexture, 0);
+        }
+        else
+        {
+            createEGLImageTargetRenderbuffer(image, targetRenderbuffer);
+            glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER,
+                                      targetRenderbuffer);
+        }
+        EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+        // Test that framebuffer has source content
+        EXPECT_PIXEL_EQ(0, 0, kLinearColor[0], kLinearColor[1], kLinearColor[2], kLinearColor[3]);
+
+        // Create additional target texture
+        GLTexture targetTexture2;
+        createEGLImageTargetTexture2D(image, targetTexture2);
+
+        // Enable additive blend
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_ONE, GL_ONE);
+
+        // Draw Red quad into the framebuffer
+        ANGLE_GL_PROGRAM(drawRed, essl1_shaders::vs::Simple(), essl1_shaders::fs::Red());
+        drawQuad(drawRed, essl1_shaders::PositionAttrib(), 0.0f);
+        ASSERT_GL_NO_ERROR();
+
+        // Delete "targetTexture2" that may affect RenderPass because it uses same Image
+        targetTexture2.reset();
+
+        // Clear previous draw
+        glClearColor(128 / 255.0f, 128 / 255.0f, 128 / 255.0f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
+
+        // Draw Green quad into the framebuffer
+        ANGLE_GL_PROGRAM(drawGreen, essl1_shaders::vs::Simple(), essl1_shaders::fs::Green());
+        drawQuad(drawGreen, essl1_shaders::PositionAttrib(), 0.0f);
+        ASSERT_GL_NO_ERROR();
+
+        // Test that clear and second draw worked as expected
+        EXPECT_PIXEL_EQ(0, 0, 128, 255, 128, 255);
+
+        // Draw again to open RenderPass after the read pixels
+        drawQuad(drawGreen, essl1_shaders::PositionAttrib(), 0.0f);
+        ASSERT_GL_NO_ERROR();
+
+        // Delete resources
+        fbo.reset();
+        targetTexture.reset();
+        targetRenderbuffer.reset();
+        ASSERT_GL_NO_ERROR();
+
+        // Wait thread 0 destroys the Image and source
+        threadSynchronization.nextStep(Step::Thread1UsedImage);
+        ASSERT_TRUE(threadSynchronization.waitForStep(Step::Finish));
+
+        EXPECT_EGL_TRUE(eglMakeCurrent(dpy, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT));
+    };
+
+    std::array<LockStepThreadFunc, 1> threadFuncs = {
+        std::move(thread1),
+    };
+
+    RunLockStepThreads(getEGLWindow(), threadFuncs.size(), threadFuncs.data());
+    thread0.join();
+
+    window->makeCurrent();
+
+    ASSERT_NE(currentStep, Step::Abort);
+}
+
+// Testing Target 2D Texture deleted while still used in the RenderPass (Image destroyed last).
+TEST_P(ImageTest, TargetTexture2DDeletedWhileInUse)
+{
+    FramebufferAttachmentDeletedWhileInUseHelper(true, false);
+}
+
+// Testing Target 2D Texture deleted while still used in the RenderPass (Source deleted last).
+TEST_P(ImageTest, TargetTexture2DDeletedWhileInUse2)
+{
+    FramebufferAttachmentDeletedWhileInUseHelper(true, true);
+}
+
+// Testing Target Renderbuffer deleted while still used in the RenderPass (Image destroyed last).
+TEST_P(ImageTest, TargetRenderbufferDeletedWhileInUse)
+{
+    FramebufferAttachmentDeletedWhileInUseHelper(false, false);
+}
+
+// Testing Target Renderbuffer deleted while still used in the RenderPass (Source deleted last).
+TEST_P(ImageTest, TargetRenderbufferDeletedWhileInUse2)
+{
+    FramebufferAttachmentDeletedWhileInUseHelper(false, true);
+}
+
+// Test redefining the same GL texture with different EGLImages
+TEST_P(ImageTest, RedefineWithMultipleImages)
+{
+    EGLWindow *window = getEGLWindow();
+
+    ANGLE_SKIP_TEST_IF(!hasOESExt() || !hasBaseExt() || !has2DTextureExt());
+
+    GLubyte originalData[4] = {255, 0, 255, 255};
+    GLubyte updateData[4]   = {0, 255, 0, 255};
+
+    // Create the Images
+    GLTexture source1, source2;
+    EGLImageKHR image1, image2;
+    createEGLImage2DTextureSource(1, 1, GL_RGBA, GL_UNSIGNED_BYTE, kDefaultAttribs, originalData,
+                                  source1, &image1);
+    createEGLImage2DTextureSource(1, 1, GL_RGBA, GL_UNSIGNED_BYTE, kDefaultAttribs, originalData,
+                                  source2, &image2);
+
+    // Create texture & bind to Image
+    GLTexture texture;
+    createEGLImageTargetTexture2D(image1, texture);
+
+    // Upload some data between the redefinition
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, updateData);
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    ASSERT_GL_NO_ERROR();
+
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // Bind the second image to this texture
+    createEGLImageTargetTexture2D(image2, texture);
+
+    // Delete Image
+    eglDestroyImageKHR(window->getDisplay(), image1);
+    eglDestroyImageKHR(window->getDisplay(), image2);
+
+    ASSERT_EGL_SUCCESS();
+
+    ASSERT_GL_NO_ERROR();
 }
 
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(ImageTest);

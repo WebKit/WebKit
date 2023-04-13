@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+description("Tests that a lazy loaded iframe gets a contentWindow / contentDocument as soon as it gets inserted in the document.");
+
+let iframe = document.createElement("iframe");
+iframe.src = "../dom/resources/dummy.html";
+iframe.loading = "lazy";
+
+evalAndLog("document.body.append(iframe)");
+shouldBeEqualToString("iframe.contentDocument.URL", "about:blank");
+shouldBeEqualToString("iframe.contentWindow.location.href", "about:blank");
+</script>
+</body>
+</html>

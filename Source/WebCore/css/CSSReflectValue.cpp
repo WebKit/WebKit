@@ -30,16 +30,29 @@
 
 namespace WebCore {
 
+CSSReflectValue::CSSReflectValue(CSSValueID direction, Ref<CSSPrimitiveValue> offset, RefPtr<CSSValue> mask)
+    : CSSValue(ReflectClass)
+    , m_direction(direction)
+    , m_offset(WTFMove(offset))
+    , m_mask(WTFMove(mask))
+{
+}
+
+Ref<CSSReflectValue> CSSReflectValue::create(CSSValueID direction, Ref<CSSPrimitiveValue> offset, RefPtr<CSSValue> mask)
+{
+    return adoptRef(*new CSSReflectValue(direction, WTFMove(offset), WTFMove(mask)));
+}
+
 String CSSReflectValue::customCSSText() const
 {
     if (m_mask)
-        return m_direction->cssText() + ' ' + m_offset->cssText() + ' ' + m_mask->cssText();
-    return m_direction->cssText() + ' ' + m_offset->cssText();
+        return makeString(nameLiteral(m_direction), ' ', m_offset->cssText(), ' ', m_mask->cssText());
+    return makeString(nameLiteral(m_direction), ' ', m_offset->cssText());
 }
 
 bool CSSReflectValue::equals(const CSSReflectValue& other) const
 {
-    return m_direction.ptr() == other.m_direction.ptr()
+    return m_direction == other.m_direction
         && compareCSSValue(m_offset, other.m_offset)
         && compareCSSValuePtr(m_mask, other.m_mask);
 }

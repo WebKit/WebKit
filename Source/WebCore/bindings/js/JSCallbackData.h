@@ -29,7 +29,6 @@
 #pragma once
 
 #include "JSDOMBinding.h"
-#include "JSDOMGlobalObject.h"
 #include "ScriptExecutionContext.h"
 #include <JavaScriptCore/JSObject.h>
 #include <JavaScriptCore/Strong.h>

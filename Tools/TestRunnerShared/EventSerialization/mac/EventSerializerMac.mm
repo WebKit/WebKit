@@ -168,7 +168,7 @@ bool eventIsOfGestureTypes(CGEventRef event, IOHIDEventType first, Types ... res
     double value = CGEventGetDoubleValueField(rawEvent, field); \
     if (!isnan(value)) { \
         double plainValue = CGEventGetDoubleValueField(rawPlainEvent, field); \
-        if (fabs(value - plainValue) >= FLT_EPSILON) \
+        if (std::abs(value - plainValue) >= FLT_EPSILON) \
             dict.get()[@#field] = @(value); \
     } \
 }();

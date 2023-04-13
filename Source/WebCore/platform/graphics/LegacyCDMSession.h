@@ -62,7 +62,6 @@ enum LegacyCDMSessionType {
     CDMSessionTypeUnknown,
     CDMSessionTypeClearKey,
     CDMSessionTypeAVFoundationObjC,
-    CDMSessionTypeAVStreamSession,
     CDMSessionTypeAVContentKeySession,
     CDMSessionTypeRemote,
 };

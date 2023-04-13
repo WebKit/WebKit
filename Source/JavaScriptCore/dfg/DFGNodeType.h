@@ -90,6 +90,7 @@ namespace JSC { namespace DFG {
     macro(Phi, 0) \
     macro(Flush, NodeMustGenerate) \
     macro(PhantomLocal, NodeMustGenerate) \
+    macro(ExtractFromTuple, 0) \
     \
     /* Hint that this is where bytecode thinks is a good place to OSR. Note that this */\
     /* will exist even in inlined loops. This has no execution semantics but it must */\
@@ -441,6 +442,7 @@ namespace JSC { namespace DFG {
     macro(NumberToStringWithRadix, NodeResultJS | NodeMustGenerate) \
     macro(NumberToStringWithValidRadixConstant, NodeResultJS) \
     macro(FunctionToString, NodeResultJS) \
+    macro(FunctionBind, NodeResultJS | NodeMustGenerate | NodeHasVarArgs) \
     macro(MakeRope, NodeResultJS) \
     macro(InByVal, NodeResultBoolean | NodeMustGenerate) \
     macro(InById, NodeResultBoolean | NodeMustGenerate) \
@@ -466,7 +468,6 @@ namespace JSC { namespace DFG {
     macro(CreateScopedArguments, NodeResultJS) \
     macro(CreateClonedArguments, NodeResultJS) \
     macro(PhantomClonedArguments, NodeResultJS | NodeMustGenerate) \
-    macro(CreateArgumentsButterfly, NodeResultJS) \
     macro(GetFromArguments, NodeResultJS) \
     macro(PutToArguments, NodeMustGenerate) \
     macro(GetArgument, NodeResultJS) \
@@ -475,6 +476,7 @@ namespace JSC { namespace DFG {
     macro(NewGeneratorFunction, NodeResultJS) \
     macro(NewAsyncGeneratorFunction, NodeResultJS) \
     macro(NewAsyncFunction, NodeResultJS) \
+    macro(NewBoundFunction, NodeResultJS | NodeHasVarArgs) \
     \
     /* Block terminals. */\
     macro(Jump, NodeMustGenerate) \
@@ -516,9 +518,7 @@ namespace JSC { namespace DFG {
     macro(HasIndexedProperty, NodeMustGenerate | NodeResultBoolean | NodeHasVarArgs) \
     /* For-in enumeration opcodes */\
     macro(GetPropertyEnumerator, NodeMustGenerate | NodeResultJS) \
-    macro(EnumeratorNextUpdateIndexAndMode, NodeResultJS | NodeHasVarArgs) \
-    macro(EnumeratorNextExtractMode, NodeResultInt32) \
-    macro(EnumeratorNextExtractIndex, NodeResultInt32) \
+    macro(EnumeratorNextUpdateIndexAndMode, NodeHasVarArgs) \
     macro(EnumeratorNextUpdatePropertyName, NodeResultJS) \
     macro(EnumeratorGetByVal, NodeResultJS | NodeHasVarArgs | NodeMustGenerate) \
     macro(EnumeratorInByVal, NodeResultBoolean | NodeHasVarArgs | NodeMustGenerate) \

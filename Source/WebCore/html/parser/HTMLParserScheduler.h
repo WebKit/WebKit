@@ -55,6 +55,7 @@ public:
 
     unsigned processedTokens { 0 };
     unsigned processedTokensOnLastCheck { 0 };
+    unsigned processedTokensOnLastYieldBeforeScript { 0 };
     MonotonicTime startTime { MonotonicTime::now() };
     bool didSeeScript { false };
 };

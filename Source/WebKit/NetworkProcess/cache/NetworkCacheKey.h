@@ -86,11 +86,14 @@ public:
     bool operator==(const Key&) const;
     bool operator!=(const Key& other) const { return !(*this == other); }
 
+    static String partitionToPartitionHashAsString(const String& partition, const Salt&);
+
 private:
     friend struct WTF::Persistence::Coder<Key>;
     static String hashAsString(const HashType&);
     HashType computeHash(const Salt&) const;
     HashType computePartitionHash(const Salt&) const;
+    static HashType partitionToPartitionHash(const String& partition, const Salt&);
 
     String m_partition;
     String m_type;

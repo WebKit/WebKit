@@ -36,7 +36,6 @@
 #include "JSCPtrTag.h"
 #include "LLIntData.h"
 #include "Options.h"
-#include "SigillCrashAnalyzer.h"
 #include "StructureAlignedMemoryAllocator.h"
 #include "SuperSampler.h"
 #include "VMTraps.h"
@@ -102,9 +101,6 @@ void initialize()
 
         JITOperationList::populatePointersInJavaScriptCore();
 
-        if (Options::useSigillCrashAnalyzer())
-            enableSigillCrashAnalyzer();
-
         AssemblyCommentRegistry::initialize();
         LLInt::initialize();
         DisallowGC::initialize();
@@ -123,14 +119,16 @@ void initialize()
         if (VM::isInMiniMode())
             WTF::fastEnableMiniMode();
 
-#if HAVE(MACH_EXCEPTIONS)
-        // JSLock::lock() can call registerThreadForMachExceptionHandling() which crashes if this has not been called first.
-        WTF::startMachExceptionHandlerThread();
-#endif
-        VMTraps::initializeSignals();
-#if ENABLE(WEBASSEMBLY)
-        Wasm::prepareSignalingMemory();
-#endif
+        if (Wasm::isSupported() || !Options::usePollingTraps()) {
+            // JSLock::lock() can call registerThreadForMachExceptionHandling() which crashes if this has not been called first.
+            initializeSignalHandling();
+
+            if (!Options::usePollingTraps())
+                VMTraps::initializeSignals();
+            if (Wasm::isSupported())
+                Wasm::prepareSignalingMemory();
+        } else
+            disableSignalHandling();
 
         WTF::compilerFence();
         RELEASE_ASSERT(!g_jscConfig.initializeHasBeenCalled);

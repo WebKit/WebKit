@@ -80,6 +80,7 @@ Pasteboard::Pasteboard(std::unique_ptr<PasteboardContext>&& context, SelectionDa
 Pasteboard::Pasteboard(std::unique_ptr<PasteboardContext>&& context, const String& name)
     : m_context(WTFMove(context))
     , m_name(name)
+    , m_changeCount(platformStrategies()->pasteboardStrategy()->changeCount(m_name))
 {
 }
 
@@ -316,7 +317,7 @@ void Pasteboard::read(PasteboardWebContentReader& reader, WebContentReadingPolic
     }
 }
 
-void Pasteboard::read(PasteboardFileReader& reader, std::optional<size_t>)
+void Pasteboard::read(PasteboardFileReader& reader, std::optional<size_t> index)
 {
     if (m_selectionData) {
         for (const auto& filePath : m_selectionData->filenames())
@@ -324,9 +325,17 @@ void Pasteboard::read(PasteboardFileReader& reader, std::optional<size_t>)
         return;
     }
 
-    auto filePaths = platformStrategies()->pasteboardStrategy()->readFilePathsFromClipboard(m_name);
-    for (const auto& filePath : filePaths)
-        reader.readFilename(filePath);
+    if (!index) {
+        auto filePaths = platformStrategies()->pasteboardStrategy()->readFilePathsFromClipboard(m_name);
+        for (const auto& filePath : filePaths)
+            reader.readFilename(filePath);
+        return;
+    }
+
+    if (reader.shouldReadBuffer("image/png"_s)) {
+        if (auto buffer = readBuffer(index, "image/png"_s))
+            reader.readBuffer({ }, { }, buffer.releaseNonNull());
+    }
 }
 
 bool Pasteboard::hasData()
@@ -479,11 +488,18 @@ void Pasteboard::writeCustomData(const Vector<PasteboardCustomData>& data)
         return;
     }
 
-    platformStrategies()->pasteboardStrategy()->writeCustomData(data, m_name, context());
+    m_changeCount = platformStrategies()->pasteboardStrategy()->writeCustomData(data, m_name, context());
 }
 
 void Pasteboard::write(const Color&)
 {
 }
 
+int64_t Pasteboard::changeCount() const
+{
+    if (m_selectionData)
+        return 0;
+    return platformStrategies()->pasteboardStrategy()->changeCount(m_name);
 }
+
+} // namespace WebCore

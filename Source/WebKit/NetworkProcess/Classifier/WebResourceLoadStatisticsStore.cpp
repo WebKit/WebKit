@@ -1432,6 +1432,25 @@ void WebResourceLoadStatisticsStore::registrableDomains(CompletionHandler<void(V
     });
 }
 
+void WebResourceLoadStatisticsStore::registrableDomainsWithLastAccessedTime(CompletionHandler<void(std::optional<HashMap<RegistrableDomain, WallTime>>)>&& completionHandler)
+{
+    ASSERT(RunLoop::isMain());
+
+    if (isEphemeral()) {
+        completionHandler(std::nullopt);
+        return;
+    }
+
+    postTask([this, completionHandler = WTFMove(completionHandler)]() mutable {
+        std::optional<HashMap<RegistrableDomain, WallTime>> result;
+        if (m_statisticsStore)
+            result = m_statisticsStore->allDomainsWithLastAccessedTime();
+        postTaskReply([result = crossThreadCopy(WTFMove(result)), completionHandler = WTFMove(completionHandler)]() mutable {
+            completionHandler(WTFMove(result));
+        });
+    });
+}
+
 void WebResourceLoadStatisticsStore::deleteAndRestrictWebsiteDataForRegistrableDomains(OptionSet<WebsiteDataType> dataTypes, RegistrableDomainsToDeleteOrRestrictWebsiteDataFor&& domainsToDeleteAndRestrictWebsiteDataFor, bool shouldNotifyPage, CompletionHandler<void(HashSet<RegistrableDomain>&&)>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());

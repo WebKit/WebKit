@@ -88,6 +88,8 @@ messages -> WebProcessProxy LegacyReceiver {
 #endif
 
     GetNotifications(URL registrationURL, String tag) -> (Vector<WebCore::NotificationData> result)
-    SetAppBadge(std::optional<WebKit::WebPageProxyIdentifier> pageIdentifier, struct WebCore::SecurityOriginData origin, std::optional<uint64_t> badge)
-    SetClientBadge(WebKit::WebPageProxyIdentifier pageIdentifier, struct WebCore::SecurityOriginData origin, std::optional<uint64_t> badge)
+    SetAppBadge(std::optional<WebKit::WebPageProxyIdentifier> pageIdentifier, WebCore::SecurityOriginData origin, std::optional<uint64_t> badge)
+    SetClientBadge(WebKit::WebPageProxyIdentifier pageIdentifier, WebCore::SecurityOriginData origin, std::optional<uint64_t> badge)
+
+    PostMessageToRemote(WebCore::ProcessIdentifier processIdentifier, struct WebCore::FrameIdentifier identifier, std::optional<WebCore::SecurityOriginData> target, struct WebCore::MessageWithMessagePorts message)
 }

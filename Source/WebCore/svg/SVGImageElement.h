@@ -32,6 +32,7 @@ class SVGImageElement final : public SVGGraphicsElement, public SVGURIReference 
 public:
     static Ref<SVGImageElement> create(const QualifiedName&, Document&);
 
+    CachedImage* cachedImage() const;
     bool renderingTaintsOrigin() const;
     const AtomString& imageSourceURL() const final;
 
@@ -52,7 +53,7 @@ private:
     
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGImageElement, SVGGraphicsElement, SVGURIReference>;
 
-    void parseAttribute(const QualifiedName&, const AtomString&) final;
+    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
     void svgAttributeChanged(const QualifiedName&) final;
 
     void didAttachRenderers() final;

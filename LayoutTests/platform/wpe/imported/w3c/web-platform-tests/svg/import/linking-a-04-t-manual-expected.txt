@@ -4,8 +4,8 @@ layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
     RenderSVGContainer {g} at (150,8) size 571x461
-      RenderSVGText {text} at (90,5) size 223x14 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 223x14
+      RenderSVGText {text} at (90,5) size 222x14 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 222x14
           chunk 1 text run 1 at (90.00,16.00) startOffset 0 endOffset 42 width 222.00: "Basic out-bound links and the 'a' element."
       RenderSVGContainer {a} at (274,44) size 245x125
         RenderSVGPath {path} at (274,44) size 245x125 [stroke={[type=SOLID] [color=#0000FF]}] [fill={[type=SOLID] [color=#FFFF00]}] [data="M 165 40 L 265 40 L 265 28 L 310 64 L 265 100 L 265 88 L 165 88 Z"]

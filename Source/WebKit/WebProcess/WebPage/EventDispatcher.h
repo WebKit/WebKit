@@ -25,7 +25,9 @@
 
 #pragma once
 
+#include "DisplayLinkObserverID.h"
 #include "MessageReceiver.h"
+#include "MomentumEventDispatcher.h"
 #include "WebEvent.h"
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/PlatformWheelEvent.h>
@@ -61,10 +63,16 @@ class WebWheelEvent;
 class WebTouchEvent;
 #endif
 
-class EventDispatcher final : private IPC::MessageReceiver {
+class EventDispatcher final :
+#if ENABLE(MOMENTUM_EVENT_DISPATCHER)
+    public MomentumEventDispatcher::Client,
+#endif
+    private IPC::MessageReceiver {
 public:
     EventDispatcher();
     ~EventDispatcher();
+
+    enum class WheelEventOrigin : bool { UIProcess, MomentumEventDispatcher };
 
     WorkQueue& queue() { return m_queue.get(); }
 
@@ -80,10 +88,7 @@ public:
 
     void initializeConnection(IPC::Connection&);
 
-    void notifyScrollingTreesDisplayWasRefreshed(WebCore::PlatformDisplayID);
-
-    enum class WheelEventOrigin : bool { UIProcess, MomentumEventDispatcher };
-    void internalWheelEvent(WebCore::PageIdentifier, const WebWheelEvent&, WebCore::RectEdges<bool> rubberBandableEdges, WheelEventOrigin);
+    void notifyScrollingTreesDisplayDidRefresh(WebCore::PlatformDisplayID);
 
 private:
     // IPC::MessageReceiver overrides.
@@ -106,6 +111,8 @@ private:
     void dispatchWheelEvent(WebCore::PageIdentifier, const WebWheelEvent&, OptionSet<WebCore::WheelEventProcessingSteps>, WheelEventOrigin);
     void dispatchWheelEventViaMainThread(WebCore::PageIdentifier, const WebWheelEvent&, OptionSet<WebCore::WheelEventProcessingSteps>, WheelEventOrigin);
 
+    void internalWheelEvent(WebCore::PageIdentifier, const WebWheelEvent&, WebCore::RectEdges<bool> rubberBandableEdges, WheelEventOrigin);
+
 #if ENABLE(IOS_TOUCH_EVENTS)
     void dispatchTouchEvents();
 #endif
@@ -116,11 +123,22 @@ private:
     static void sendDidReceiveEvent(WebCore::PageIdentifier, WebEventType, bool didHandleEvent);
 
 #if PLATFORM(MAC)
-    void displayWasRefreshed(WebCore::PlatformDisplayID, const WebCore::DisplayUpdate&, bool sendToMainThread);
+    void displayDidRefresh(WebCore::PlatformDisplayID, const WebCore::DisplayUpdate&, bool sendToMainThread);
 #endif
 
 #if ENABLE(SCROLLING_THREAD)
     void displayDidRefreshOnScrollingThread(WebCore::PlatformDisplayID);
+#endif
+
+#if ENABLE(MOMENTUM_EVENT_DISPATCHER)
+    // EventDispatcher::Client
+    void handleSyntheticWheelEvent(WebCore::PageIdentifier, const WebWheelEvent&, WebCore::RectEdges<bool> rubberBandableEdges) override;
+    void startDisplayDidRefreshCallbacks(WebCore::PlatformDisplayID) override;
+    void stopDisplayDidRefreshCallbacks(WebCore::PlatformDisplayID) override;
+
+#if ENABLE(MOMENTUM_EVENT_DISPATCHER_TEMPORARY_LOGGING)
+    void flushMomentumEventLoggingSoon() override;
+#endif
 #endif
 
     void pageScreenDidChange(WebCore::PageIdentifier, WebCore::PlatformDisplayID, std::optional<unsigned> nominalFramesPerSecond);
@@ -139,6 +157,7 @@ private:
 
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER)
     std::unique_ptr<MomentumEventDispatcher> m_momentumEventDispatcher;
+    DisplayLinkObserverID m_observerID;
 #endif
 };
 

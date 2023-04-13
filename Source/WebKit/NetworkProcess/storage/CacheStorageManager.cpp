@@ -105,16 +105,6 @@ static bool writeCachesList(const String& cachesListDirectoryPath, const Vector<
     }
 
     FileSystem::makeAllDirectories(FileSystem::parentPath(cachesListFilePath));
-    auto cachesListHandle = FileSystem::openFile(cachesListFilePath, FileSystem::FileOpenMode::ReadWrite);
-    if (!FileSystem::isHandleValid(cachesListHandle))
-        return false;
-    auto closeFileOnExit = makeScopeExit([&cachesListHandle]() mutable {
-        FileSystem::closeFile(cachesListHandle);
-    });
-
-    if (!FileSystem::truncateFile(cachesListHandle, 0))
-        return false;
-
     WTF::Persistence::Encoder encoder;
     uint64_t count = caches.size();
     if (skippedCachesIndex && *skippedCachesIndex < caches.size())
@@ -126,7 +116,8 @@ static bool writeCachesList(const String& cachesListDirectoryPath, const Vector<
         encoder << caches[index]->name();
         encoder << caches[index]->uniqueName();
     }
-    FileSystem::writeToFile(cachesListHandle, encoder.buffer(), encoder.bufferSize());
+
+    FileSystem::overwriteEntireFile(cachesListFilePath, makeSpan(const_cast<uint8_t*>(encoder.buffer()), encoder.bufferSize()));
     return true;
 }
 
@@ -153,16 +144,31 @@ static bool writeSizeFile(const String& sizeDirectoryPath, uint64_t size)
 
     auto sizeFilePath = FileSystem::pathByAppendingComponent(sizeDirectoryPath, sizeFileName);
     auto value = String::number(size).utf8();
-    return FileSystem::overwriteEntireFile(sizeFilePath, Span { reinterpret_cast<uint8_t*>(const_cast<char*>(value.data())), value.length() }) != -1;
+    return FileSystem::overwriteEntireFile(sizeFilePath, makeSpan(reinterpret_cast<uint8_t*>(const_cast<char*>(value.data())), value.length())) != -1;
 }
 
+static String saltFilePath(const String& saltDirectory)
+{
+    if (saltDirectory.isEmpty())
+        return emptyString();
+
+    return FileSystem::pathByAppendingComponent(saltDirectory, originSaltFileName);
+}
+
+static FileSystem::Salt readOrMakeSalt(const String& saltPath)
+{
+    if (saltPath.isEmpty())
+        return { };
+
+    return valueOrDefault(FileSystem::readOrMakeSalt(saltPath));
+}
+    
 String CacheStorageManager::cacheStorageOriginDirectory(const String& rootDirectory, const WebCore::ClientOrigin& origin)
 {
     if (rootDirectory.isEmpty())
         return emptyString();
 
-    auto saltFilePath = FileSystem::pathByAppendingComponent(rootDirectory, "salt"_s);
-    auto salt = valueOrDefault(FileSystem::readOrMakeSalt(saltFilePath));
+    auto salt = readOrMakeSalt(saltFilePath(rootDirectory));
     NetworkCache::Key key(origin.topOrigin.toString(), origin.clientOrigin.toString(), { }, { }, salt);
     return FileSystem::pathByAppendingComponent(rootDirectory, key.hashAsString());
 }
@@ -172,11 +178,11 @@ void CacheStorageManager::copySaltFileToOriginDirectory(const String& rootDirect
     if (!FileSystem::fileExists(originDirectory))
         return;
 
-    auto targetFilePath = FileSystem::pathByAppendingComponent(originDirectory, "salt"_s);
+    auto targetFilePath = saltFilePath(originDirectory);
     if (FileSystem::fileExists(targetFilePath))
         return;
 
-    auto sourceFilePath = FileSystem::pathByAppendingComponent(rootDirectory, "salt"_s);
+    auto sourceFilePath = saltFilePath(rootDirectory);
     FileSystem::hardLinkOrCopyFile(sourceFilePath, targetFilePath);
 }
 
@@ -232,15 +238,10 @@ void CacheStorageManager::makeDirty()
     m_updateCounter = nextUpdateNumber();
 }
 
-String CacheStorageManager::saltFilePath() const
-{
-    return FileSystem::pathByAppendingComponent(m_path, originSaltFileName);
-}
-
 CacheStorageManager::CacheStorageManager(const String& path, CacheStorageRegistry& registry, const std::optional<WebCore::ClientOrigin>& origin, QuotaCheckFunction&& quotaCheckFunction, Ref<WorkQueue>&& queue)
     : m_updateCounter(nextUpdateNumber())
     , m_path(path)
-    , m_salt(valueOrDefault(FileSystem::readOrMakeSalt(saltFilePath())))
+    , m_salt(readOrMakeSalt(saltFilePath(m_path)))
     , m_registry(registry)
     , m_quotaCheckFunction(WTFMove(quotaCheckFunction))
     , m_queue(WTFMove(queue))
@@ -432,26 +433,26 @@ void CacheStorageManager::dereference(IPC::Connection::UniqueID connection, WebC
 
 void CacheStorageManager::connectionClosed(IPC::Connection::UniqueID connection)
 {
-    HashSet<WebCore::DOMCacheIdentifier> unusedCacheIdentifers;
+    HashSet<WebCore::DOMCacheIdentifier> unusedCacheIdentifiers;
     for (auto& [identifier, refConnections] : m_cacheRefConnections) {
         refConnections.removeAllMatching([&](auto refConnection) {
             return refConnection == connection;
         });
         if (refConnections.isEmpty()) {
             removeUnusedCache(identifier);
-            unusedCacheIdentifers.add(identifier);
+            unusedCacheIdentifiers.add(identifier);
         }
     }
 
-    for (auto& identifier : unusedCacheIdentifers)
+    for (auto& identifier : unusedCacheIdentifiers)
         m_cacheRefConnections.remove(identifier);
 }
 
 void CacheStorageManager::removeUnusedCache(WebCore::DOMCacheIdentifier cacheIdentifier)
 {
-    auto cache = m_removedCaches.take(cacheIdentifier);
-    if (cache) {
+    if (auto cache = m_removedCaches.take(cacheIdentifier)) {
         cache->removeAllRecords();
+        m_registry.unregisterCache(cacheIdentifier);
         return;
     }
 

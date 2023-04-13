@@ -55,7 +55,9 @@ class TileController final : public TiledBacking {
     friend class TileCoverageMap;
     friend class TileGrid;
 public:
-    WEBCORE_EXPORT explicit TileController(PlatformCALayer*);
+    enum class AllowScrollPerformanceLogging { Yes, No };
+    
+    WEBCORE_EXPORT explicit TileController(PlatformCALayer*, AllowScrollPerformanceLogging = AllowScrollPerformanceLogging::Yes);
     WEBCORE_EXPORT ~TileController();
     
     WEBCORE_EXPORT static String tileGridContainerLayerName();
@@ -91,7 +93,7 @@ public:
     void setTileSizeUpdateDelayDisabledForTesting(bool) final;
 
     unsigned blankPixelCount() const;
-    static unsigned blankPixelCountForTiles(const PlatformLayerList&, const FloatRect&, const IntPoint&);
+    WEBCORE_EXPORT static unsigned blankPixelCountForTiles(const PlatformLayerList&, const FloatRect&, const IntPoint&);
 
 #if PLATFORM(IOS_FAMILY)
     unsigned numberOfUnparentedTiles() const;
@@ -158,7 +160,7 @@ private:
     void setTiledScrollingIndicatorPosition(const FloatPoint&) final;
     void setTopContentInset(float) final;
     void setVelocity(const VelocityData&) final;
-    void setScrollability(Scrollability) final;
+    void setScrollability(OptionSet<Scrollability>) final;
     void prepopulateRect(const FloatRect&) final;
     void setIsInWindow(bool) final;
     bool isInWindow() const final { return m_isInWindow; }
@@ -223,7 +225,7 @@ private:
 
     int m_marginSize { kDefaultTileSize };
 
-    Scrollability m_scrollability { HorizontallyScrollable | VerticallyScrollable };
+    OptionSet<Scrollability> m_scrollability { Scrollability::HorizontallyScrollable, Scrollability::VerticallyScrollable };
 
     // m_marginTop and m_marginBottom are the height in pixels of the top and bottom margin tiles. The width
     // of those tiles will be equivalent to the width of the other tiles in the grid. m_marginRight and
@@ -241,6 +243,8 @@ private:
     bool m_tileSizeLocked { false };
     bool m_haveExternalVelocityData { false };
     bool m_isTileSizeUpdateDelayDisabledForTesting { false };
+    
+    AllowScrollPerformanceLogging m_shouldAllowScrollPerformanceLogging { AllowScrollPerformanceLogging::Yes };
 
     Color m_tileDebugBorderColor;
     float m_tileDebugBorderWidth { 0 };

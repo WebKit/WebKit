@@ -29,10 +29,10 @@
 #import "Test.h"
 #import "WebKitAgnosticTest.h"
 #import <Carbon/Carbon.h>
+#import <WebKit/WKPreferencesPrivate.h>
+#import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WebViewPrivate.h>
 #import <WebKit/WebPreferencesPrivate.h>
-#import <WebKit/WKViewPrivate.h>
-#import <WebKit/WKPreferencesPrivate.h>
 #import <wtf/RetainPtr.h>
 
 @interface NSWindowController (WebKitFullScreenAdditions)
@@ -75,18 +75,18 @@ public:
     // WebKitAgnosticTest
     NSURL *url() const override { return [[NSBundle mainBundle] URLForResource:@"FullscreenZoomInitialFrame" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]; }
     void didLoadURL(WebView *webView) override { runTest(webView); }
-    void didLoadURL(WKView *wkView) override { runTest(wkView); }
+    void didLoadURL(WKWebView *wkView) override { runTest(wkView); }
 
     // Setup and teardown the UIDelegate which gets alert() signals from the page.
     void initializeView(WebView *) override;
-    void initializeView(WKView *) override;
+    void initializeView(WKWebView *) override;
     void teardownView(WebView *) override;
-    void teardownView(WKView *) override;
+    void teardownView(WKWebView *) override;
 
     void setPageScale(WebView *, double);
-    void setPageScale(WKView *, double);
+    void setPageScale(WKWebView *, double);
     void sendMouseDownEvent(WebView *, NSEvent *);
-    void sendMouseDownEvent(WKView *, NSEvent *);
+    void sendMouseDownEvent(WKWebView *, NSEvent *);
 
 private:
     RetainPtr<id <WebUIDelegate>> m_delegate;
@@ -109,7 +109,7 @@ void FullscreenZoomInitialFrame::teardownView(WebView *webView)
     m_delegate = nil;
 }
 
-void FullscreenZoomInitialFrame::initializeView(WKView *wkView)
+void FullscreenZoomInitialFrame::initializeView(WKWebView *wkView)
 {
     WKPageUIClientV0 uiClient;
     memset(&uiClient, 0, sizeof(uiClient));
@@ -117,15 +117,15 @@ void FullscreenZoomInitialFrame::initializeView(WKView *wkView)
     uiClient.base.version = 0;
     uiClient.runJavaScriptAlert = runJavaScriptAlert;
 
-    WKPageSetPageUIClient(wkView.pageRef, &uiClient.base);
+    WKPageSetPageUIClient(wkView._pageRefForTransitionToWKWebView, &uiClient.base);
 
     WKRetainPtr<WKStringRef> identifier = adoptWK(WKStringCreateWithUTF8CString("FullscreenZoomInitialFramePreferences"));
     WKRetainPtr<WKPreferencesRef> customPreferences = adoptWK(WKPreferencesCreateWithIdentifier(identifier.get()));
     WKPreferencesSetFullScreenEnabled(customPreferences.get(), true);
-    WKPageGroupSetPreferences(WKPageGetPageGroup(wkView.pageRef), customPreferences.get());
+    WKPageGroupSetPreferences(WKPageGetPageGroup(wkView._pageRefForTransitionToWKWebView), customPreferences.get());
 }
 
-void FullscreenZoomInitialFrame::teardownView(WKView *wkView)
+void FullscreenZoomInitialFrame::teardownView(WKWebView *wkView)
 {
     // We do not need to teardown the WKPageUIClient.
 }
@@ -135,9 +135,9 @@ void FullscreenZoomInitialFrame::setPageScale(WebView *webView, double scale)
     [webView _scaleWebView:scale atOrigin:NSMakePoint(0, 0)];
 }
 
-void FullscreenZoomInitialFrame::setPageScale(WKView *wkView, double scale)
+void FullscreenZoomInitialFrame::setPageScale(WKWebView *wkView, double scale)
 {
-    WKPageSetScaleFactor(wkView.pageRef, scale, WKPointMake(0, 0));
+    WKPageSetScaleFactor(wkView._pageRefForTransitionToWKWebView, scale, WKPointMake(0, 0));
 }
 
 void FullscreenZoomInitialFrame::sendMouseDownEvent(WebView *webView, NSEvent *event)
@@ -145,7 +145,7 @@ void FullscreenZoomInitialFrame::sendMouseDownEvent(WebView *webView, NSEvent *e
     [webView.mainFrame.frameView.documentView mouseDown:event];
 }
 
-void FullscreenZoomInitialFrame::sendMouseDownEvent(WKView *wkView, NSEvent *event)
+void FullscreenZoomInitialFrame::sendMouseDownEvent(WKWebView *wkView, NSEvent *event)
 {
     [wkView mouseDown:event];
 }

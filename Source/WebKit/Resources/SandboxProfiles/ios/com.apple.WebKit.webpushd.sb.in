@@ -93,8 +93,7 @@
 ;; AWD
 (allow mach-lookup
     (global-name
-        "com.apple.analyticsd"
-        "com.apple.awdd"))
+        "com.apple.analyticsd"))
 
 ;; Note this does not allow subpaths of "/"
 (allow file-read* file-test-existence

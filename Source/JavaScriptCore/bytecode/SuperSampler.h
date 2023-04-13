@@ -31,7 +31,7 @@ namespace JSC {
 
 class MacroAssembler;
 
-extern JS_EXPORT_PRIVATE std::atomic<uint32_t> g_superSamplerCount;
+extern "C" JS_EXPORT_PRIVATE std::atomic<uint32_t> g_superSamplerCount;
 
 void initializeSuperSampler();
 

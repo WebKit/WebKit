@@ -28,7 +28,6 @@
 
 #include "DOMException.h"
 #include "DOMStringList.h"
-#include "DOMWindow.h"
 #include "Event.h"
 #include "EventDispatcher.h"
 #include "EventLoop.h"
@@ -47,11 +46,12 @@
 #include "IDBResultData.h"
 #include "IDBValue.h"
 #include "JSDOMWindowBase.h"
+#include "LocalDOMWindow.h"
 #include "Logging.h"
 #include "ScriptExecutionContext.h"
 #include "SerializedScriptValue.h"
 #include "TransactionOperation.h"
-#include "WebCoreOpaqueRoot.h"
+#include "WebCoreOpaqueRootInlines.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/IsoMallocInlines.h>
 
@@ -1004,7 +1004,7 @@ Ref<IDBRequest> IDBTransaction::requestGetRecord(IDBObjectStore& objectStore, co
 {
     LOG(IndexedDB, "IDBTransaction::requestGetRecord");
     ASSERT(isActive());
-    ASSERT(!getRecordData.keyRangeData.isNull);
+    ASSERT(!getRecordData.keyRangeData.isNull());
     ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
 
     IndexedDB::ObjectStoreRecordType type = getRecordData.type == IDBGetRecordDataType::KeyAndValue ? IndexedDB::ObjectStoreRecordType::ValueOnly : IndexedDB::ObjectStoreRecordType::KeyOnly;
@@ -1042,7 +1042,7 @@ Ref<IDBRequest> IDBTransaction::requestIndexRecord(IDBIndex& index, IndexedDB::I
 {
     LOG(IndexedDB, "IDBTransaction::requestGetValue");
     ASSERT(isActive());
-    ASSERT(!range.isNull);
+    ASSERT(!range.isNull());
     ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
 
     auto request = IDBRequest::createIndexGet(*scriptExecutionContext(), index, type, *this);
@@ -1105,7 +1105,7 @@ Ref<IDBRequest> IDBTransaction::requestCount(IDBObjectStore& objectStore, const 
 {
     LOG(IndexedDB, "IDBTransaction::requestCount (IDBObjectStore)");
     ASSERT(isActive());
-    ASSERT(!range.isNull);
+    ASSERT(!range.isNull());
     ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
 
     auto request = IDBRequest::create(*scriptExecutionContext(), objectStore, *this);
@@ -1125,7 +1125,7 @@ Ref<IDBRequest> IDBTransaction::requestCount(IDBIndex& index, const IDBKeyRangeD
 {
     LOG(IndexedDB, "IDBTransaction::requestCount (IDBIndex)");
     ASSERT(isActive());
-    ASSERT(!range.isNull);
+    ASSERT(!range.isNull());
     ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
 
     auto request = IDBRequest::create(*scriptExecutionContext(), index, *this);
@@ -1162,7 +1162,7 @@ Ref<IDBRequest> IDBTransaction::requestDeleteRecord(IDBObjectStore& objectStore,
 {
     LOG(IndexedDB, "IDBTransaction::requestDeleteRecord");
     ASSERT(isActive());
-    ASSERT(!range.isNull);
+    ASSERT(!range.isNull());
     ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
 
     auto request = IDBRequest::create(*scriptExecutionContext(), objectStore, *this);

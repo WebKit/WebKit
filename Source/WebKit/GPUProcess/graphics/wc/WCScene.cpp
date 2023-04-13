@@ -221,14 +221,21 @@ std::optional<UpdateInfo> WCScene::update(WCUpateInfo&& update)
     WebCore::IntSize windowSize = expandedIntSize(rootLayer->size());
     glViewport(0, 0, windowSize.width(), windowSize.height());
 
-    m_textureMapper->beginPainting(m_usesOffscreenRendering ? WebCore::TextureMapper::PaintingMirrored : 0);
+    WebCore::BitmapTexture* surface = nullptr;
+    RefPtr<WebCore::BitmapTexture> texture;
+    if (m_usesOffscreenRendering) {
+        texture = m_textureMapper->acquireTextureFromPool(windowSize);
+        surface = texture.get();
+    }
+
+    m_textureMapper->beginPainting(0, surface);
     rootLayer->paint(*m_textureMapper);
     m_fpsCounter.updateFPSAndDisplay(*m_textureMapper);
     m_textureMapper->endPainting();
 
     std::optional<UpdateInfo> result;
     if (m_usesOffscreenRendering) {
-        auto bitmap = ShareableBitmap::create(windowSize, { });
+        auto bitmap = ShareableBitmap::create({ windowSize });
         glReadPixels(0, 0, windowSize.width(), windowSize.height(), GL_BGRA, GL_UNSIGNED_BYTE, bitmap->data());
         if (auto handle = bitmap->createHandle()) {
             result.emplace();

@@ -1,86 +1,70 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../resources/js-test-pre.js"></script>
 <script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
 </head>
-<body id="body">
+<body>
 
 <div id="examples">
-
-    <a class="ex" href="#" data-expected="">foo</a>
-    <a class="ex" href="#" title="bar" data-expected="bar">foo</a>
-    <a class="ex" href="#" title="bar" aria-help="baz" data-expected="baz">foo</a>
-    <a class="ex" href="#" title="foo" data-expected=""><!-- no contents, so @title used as label, not help --></a>
+    <a class="ex" id="ex1" href="#" data-expected="">foo</a>
+    <a class="ex" id="ex2" href="#" title="bar" data-expected="bar">foo</a>
+    <a class="ex" id="ex3" href="#" title="bar" aria-help="baz" data-expected="baz">foo</a>
+    <a class="ex" id="ex4" href="#" title="foo" data-expected=""><!-- no contents, so @title used as label, not help --></a>
     
-    <h1 class="ex" title="bar" data-expected="bar"><a class="ex" href="#" data-expected="">foo</a></h1>
+    <h1 class="ex" id="ex5" title="bar" data-expected="bar"><a class="ex" id="ex6" href="#" data-expected="">foo</a></h1>
 
-    <button class="ex" data-expected="">foo</button>
-    <button class="ex" title="bar" data-expected="bar">foo</button>
-    <button class="ex" title="bar" aria-help="baz" data-expected="baz">foo</button>
-    <button class="ex" title="foo" data-expected=""><!-- no contents, so @title used as label, not help --></button>
+    <button class="ex" id="ex7" data-expected="">foo</button>
+    <button class="ex" id="ex8" title="bar" data-expected="bar">foo</button>
+    <button class="ex" id="ex9" title="bar" aria-help="baz" data-expected="baz">foo</button>
+    <button class="ex" id="ex10" title="foo" data-expected=""><!-- no contents, so @title used as label, not help --></button>
 
-    <table class="ex" summary="table summary" data-expected="table summary">
-        <caption class="ex" data-expected="">caption</caption>
+    <table class="ex" id="ex11" summary="table summary" data-expected="table summary">
+        <caption class="ex" id="ex12" data-expected="">caption</caption>
         <tr>
             <td>
-                <input class="ex" type="checkbox" data-expected="">
-                <div class="ex" role="text" data-expected="">text</div>
+                <input class="ex" id="ex13" type="checkbox" data-expected="">
+                <div class="ex" id="ex14" role="text" data-expected="">text</div>
             </td>
         </tr>
     </table>
 
-    <main class="ex" aria-help="bar" data-expected="bar">
-        <button class="ex" data-expected="">foo</button>
+    <main class="ex" id="ex15" aria-help="bar" data-expected="bar">
+        <button class="ex" id="ex16" data-expected="">foo</button>
     </main>
 
-    <main class="ex" role="group" title="bar" data-expected="">
-        <div class="ex" role="group" data-expected="">foo</div>
+    <main class="ex" id="ex17" role="group" title="bar" data-expected="">
+        <div class="ex" id="ex18" role="group" data-expected="">foo</div>
     </main>
 
-    <a href="" class="ex" title="bar" data-expected="bar">
-        <div class="ex" data-expected="">foo</div>
+    <a href="" class="ex" id="ex19" title="bar" data-expected="bar">
+        <div class="ex" id="ex20" data-expected="">foo</div>
     </a>
-
 </div>
 
-<p id="description"></p>
-<div id="console"></div>
-
 <script>
+var output = "Tests accessibility help text in a variety of examples.\n\n";
 
-    if (window.testRunner && window.accessibilityController) {
+if (window.accessibilityController) {
+    document.querySelectorAll("#examples .ex").forEach(element => {
+        const ax = accessibilityController.accessibleElementById(element.id);
+        if (!ax)
+            return;
 
-        description("Tests accessibility help text in a variety of examples.");
+        const tag = element.tagName.toLowerCase();
+        const expectation = element.getAttribute("data-expected");
+        const description = platformValueForW3CDescription(ax);
+        if (description === expectation)
+            output += escapeHTML(`PASS: Help text for <${tag}> is ${description}\n`);
+        else
+            output += escapeHTML(`FAIL: Help text for <${tag}> is ${description} but expected ${expectation}\n`);
+    });
 
-        var examples = document.querySelectorAll("#examples .ex");
-        for (var i = 0, c = examples.length; i < c; i++) {
-            var el = examples[i];
-            if (!el)
-                continue;
-            var expectation = el.getAttribute("data-expected");
-            var id = el.id;
-            var tag = el.tagName.toLowerCase();
-            if (!id)
-                el.id = id = "generatedId_" + i;
-            var ax = accessibilityController.accessibleElementById(id);
-            if (!ax)
-                continue;
-            var output = platformValueForW3CDescription(ax);
-            var result = document.getElementById("console");
-            if (expectation === output)
-                result.textContent += "PASS: Help text for <" + tag +"> is \"" + output + "\"\n";
-            else
-                result.textContent += "FAIL: Help text for <" + tag +"> is \"" + output + "\" but expected \"" + expectation + "\"\n";
-        }
-
-        // Once tests are complete, hide all the example markup.
-        document.getElementById("examples").style.display = "none";
-
-    }
-
+    // Once tests are complete, hide all the example markup.
+    document.getElementById("examples").style.display = "none";
+    debug(output);
+}
 </script>
-
-<script src="../resources/js-test-post.js"></script>
 </body>
 </html>
+

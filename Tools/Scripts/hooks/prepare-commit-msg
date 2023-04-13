@@ -12,6 +12,14 @@ CHERRY_PICKING_RE = re.compile(r'^# You are currently cherry-picking commit (?P<
 IDENTIFIER_RE = re.compile(r'(\d+\.)?\d+@\S+')
 PREFER_RADAR = {{ prefer_radar }}
 
+DEFAULT_BRANCH = '{{ default_branch }}'
+SOURCE_REMOTES = {{ source_remotes }}
+TRAILERS_TO_STRIP = {{ trailers_to_strip }}
+
+ENCODING_KWARGS = dict()
+if sys.version_info >= (3, 6):
+    ENCODING_KWARGS = dict(encoding='utf-8')
+
 sys.path.append(SCRIPTS)
 from webkitpy.common.checkout.diff_parser import DiffParser
 from webkitbugspy import radar
@@ -43,7 +51,7 @@ def parseChanges(command, commit_message):
     try:
         for line in subprocess.check_output(
             command,
-            **(dict(encoding='utf-8') if sys.version_info > (3, 0) else dict())
+            **ENCODING_KWARGS
         ).splitlines():
             if line == '~':
                 dirname = None
@@ -90,6 +98,37 @@ Explanation of why this fixes the bug (OOPS!).
         bugs=bugs_string,
         content='\n'.join(commit_message) + os.environ.get('COMMIT_MESSAGE_CONTENT', ''),
     )
+
+
+def source_branches():
+    proc = None
+    try:
+        proc = subprocess.Popen(
+            ['git', 'rev-list', 'HEAD'],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            **ENCODING_KWARGS
+        )
+        outer_line = proc.stdout.readline()
+        while outer_line:
+            branches = set()
+            for inner_line in subprocess.check_output(
+                ['git', 'branch', '--contains', outer_line.strip(), '-a', '--format', '%(refname)'],
+                **ENCODING_KWARGS
+            ).splitlines():
+                if not inner_line.startswith('refs/remotes'):
+                    continue
+                _, _, remote, branch = inner_line.split('/', 3)
+                if remote in SOURCE_REMOTES and branch != 'HEAD':
+                    branches.add(branch)
+            if branches:
+                return sorted(branches)
+            outer_line = proc.stdout.readline()
+    finally:
+        if proc and proc.poll() is None:
+            proc.kill()
+
+    return []
 
 
 def cherry_pick(content):
@@ -144,15 +183,28 @@ def cherry_pick(content):
             elif from_last_line:
                 cherry_picked = '{} ({})'.format(from_last_line.group(0), cherry_picked)
 
-    result = 'Cherry-pick {}. {}\n\n'.format(cherry_picked or '???', bug or '<bug>')
+    is_trunk_bound = DEFAULT_BRANCH in source_branches()
+    in_suffix = False
+    cherry_pick_metadata = '{}. {}'.format(cherry_picked or '???', bug or '<bug>')
+    result = []
+    if not is_trunk_bound:
+        result += ['Cherry-pick {}'.format(cherry_pick_metadata), '']
     for line in content.splitlines():
+        line = line.rstrip()
         if not line:
-            result += '\n'
+            result.append('')
             continue
-        if line[0] != '#':
-            result += 4*' '
-        result += line + '\n'
-    return result
+        if line[0] == '#' and not in_suffix:
+            in_suffix = True
+            if is_trunk_bound:
+                while len(result) and not result[-1] or (result[-1].split(':', 1)[0] in TRAILERS_TO_STRIP):
+                    del result[-1]
+                result += ['', 'Originally-landed-as: {}'.format(cherry_pick_metadata)]
+        if line[0] != '#' and not is_trunk_bound:
+            result.append(4*' ' + line)
+        else:
+            result.append(line)
+    return '\n'.join(result)
 
 
 def main(file_name=None, source=None, sha=None):
@@ -182,8 +234,8 @@ def main(file_name=None, source=None, sha=None):
     with open(file_name, 'w') as commit_message_file:
         if sha:
             commit_message_file.write(subprocess.check_output(
-                ['git', 'log', 'HEAD', '-1', '--pretty=format:%B'],
-                **(dict(encoding='utf-8') if sys.version_info > (3, 5) else dict())
+                ['git', 'log', sha, '-1', '--pretty=format:%B'],
+                **ENCODING_KWARGS
             ))
         else:
             commit_message_file.write(message(source=source, sha=sha))
@@ -199,7 +251,7 @@ def main(file_name=None, source=None, sha=None):
             commit_message_file.write('\n')
         for line in subprocess.check_output(
             ['git', 'status'],
-            **(dict(encoding='utf-8') if sys.version_info > (3, 5) else dict())
+            **ENCODING_KWARGS
         ).splitlines():
             commit_message_file.write('# {}\n'.format(line))
 

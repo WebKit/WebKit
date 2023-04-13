@@ -70,7 +70,11 @@ bool tryToDisassemble(const CodePtr<DisassemblyPtrTag>& codePtr, size_t size, vo
     if (count > 0) {
         for (size_t i = 0; i < count; ++i) {
             auto& instruction = instructions[i];
-            out.printf("%s%#16llx: %s %s\n", prefix, static_cast<unsigned long long>(instruction.address), instruction.mnemonic, instruction.op_str);
+            out.printf("%s%#16llx: %s %s", prefix, static_cast<unsigned long long>(instruction.address), instruction.mnemonic, instruction.op_str);
+            if (auto str = AssemblyCommentRegistry::singleton().comment(reinterpret_cast<void *>(static_cast<uintptr_t>(instruction.address))))
+                out.printf("; %s\n", str->ascii().data());
+            else
+                out.printf("\n");
         }
         cs_free(instructions, count);
     }

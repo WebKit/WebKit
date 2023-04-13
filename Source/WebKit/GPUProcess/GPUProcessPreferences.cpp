@@ -111,6 +111,10 @@ void GPUProcessPreferences::encode(IPC::Encoder& encoder) const
 #if ENABLE(ALTERNATE_WEBM_PLAYER)
     encoder << alternateWebMPlayerEnabled;
 #endif
+    
+#if ENABLE(SC_CONTENT_SHARING_PICKER)
+    encoder << useSCContentSharingPicker;
+#endif
 }
 
 bool GPUProcessPreferences::decode(IPC::Decoder& decoder, GPUProcessPreferences& result)
@@ -150,6 +154,11 @@ bool GPUProcessPreferences::decode(IPC::Decoder& decoder, GPUProcessPreferences&
         return false;
 #endif
     
+#if ENABLE(SC_CONTENT_SHARING_PICKER)
+    if (!decoder.decode(result.useSCContentSharingPicker))
+        return false;
+#endif
+
     return true;
 }
 

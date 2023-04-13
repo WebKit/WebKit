@@ -30,10 +30,13 @@
 #pragma once
 
 #include "CSSParserContext.h"
+#include "CSSParserEnum.h"
 #include "CSSParserSelector.h"
 #include "CSSParserTokenRange.h"
 #include "CSSSelectorList.h"
 #include "StyleSheetContents.h"
+#include <wtf/HashFunctions.h>
+#include <wtf/Hasher.h>
 
 namespace WebCore {
 
@@ -42,21 +45,29 @@ class CSSSelectorList;
 class StyleSheetContents;
 class StyleRule;
 
-struct CSSParserContext;
+struct CSSSelectorParserContext {
+    CSSParserMode mode { CSSParserMode::HTMLStandardMode };
+    bool cssNestingEnabled { false };
+    bool focusVisibleEnabled { false };
+    bool hasPseudoClassEnabled { false };
+
+    bool isHashTableDeletedValue { false };
+
+    CSSSelectorParserContext() = default;
+    CSSSelectorParserContext(const CSSParserContext&);
+    explicit CSSSelectorParserContext(const Document&);
+
+    bool operator==(const CSSSelectorParserContext&) const;
+};
 
 class CSSSelectorParser {
 public:
-    enum class IsNestedContext : bool {
-        Yes,
-        No
-    };
-
-    CSSSelectorParser(const CSSParserContext&, StyleSheetContents*, IsNestedContext = IsNestedContext::No);
+    CSSSelectorParser(const CSSSelectorParserContext&, StyleSheetContents*, CSSParserEnum::IsNestedContext = CSSParserEnum::IsNestedContext::No);
 
     CSSSelectorList consumeComplexSelectorList(CSSParserTokenRange&);
     CSSSelectorList consumeNestedSelectorList(CSSParserTokenRange&);
 
-    static bool supportsComplexSelector(CSSParserTokenRange, const CSSParserContext&);
+    static bool supportsComplexSelector(CSSParserTokenRange, const CSSSelectorParserContext&, CSSParserEnum::IsNestedContext);
     static CSSSelectorList resolveNestingParent(const CSSSelectorList& nestedSelectorList, const CSSSelectorList* parentResolvedSelectorList);
 
 private:
@@ -68,6 +79,7 @@ private:
     CSSSelectorList consumeRelativeSelectorList(CSSParserTokenRange&);
 
     std::unique_ptr<CSSParserSelector> consumeComplexSelector(CSSParserTokenRange&);
+    std::unique_ptr<CSSParserSelector> consumeNestedComplexSelector(CSSParserTokenRange&);
     std::unique_ptr<CSSParserSelector> consumeCompoundSelector(CSSParserTokenRange&);
     std::unique_ptr<CSSParserSelector> consumeRelativeScopeSelector(CSSParserTokenRange&);
     std::unique_ptr<CSSParserSelector> consumeRelativeNestedSelector(CSSParserTokenRange&);
@@ -91,14 +103,14 @@ private:
     const AtomString& defaultNamespace() const;
     const AtomString& determineNamespace(const AtomString& prefix);
     void prependTypeSelectorIfNeeded(const AtomString& namespacePrefix, const AtomString& elementName, CSSParserSelector&);
-    static std::unique_ptr<CSSParserSelector> splitCompoundAtImplicitShadowCrossingCombinator(std::unique_ptr<CSSParserSelector> compoundSelector, const CSSParserContext&);
+    static std::unique_ptr<CSSParserSelector> splitCompoundAtImplicitShadowCrossingCombinator(std::unique_ptr<CSSParserSelector> compoundSelector, const CSSSelectorParserContext&);
     static bool containsUnknownWebKitPseudoElements(const CSSSelector& complexSelector);
 
     class DisallowPseudoElementsScope;
 
-    const CSSParserContext& m_context;
+    const CSSSelectorParserContext m_context;
     const RefPtr<StyleSheetContents> m_styleSheet;
-    IsNestedContext m_isNestedContext { IsNestedContext::No };
+    CSSParserEnum::IsNestedContext m_isNestedContext { CSSParserEnum::IsNestedContext::No };
     bool m_failedParsing { false };
     bool m_disallowPseudoElements { false };
     bool m_disallowHasPseudoClass { false };
@@ -108,7 +120,26 @@ private:
     std::optional<CSSSelector::PseudoElementType> m_precedingPseudoElement;
 };
 
+std::optional<CSSSelectorList> parseCSSSelector(CSSParserTokenRange, const CSSSelectorParserContext&, StyleSheetContents* = nullptr, CSSParserEnum::IsNestedContext = CSSParserEnum::IsNestedContext::No);
 
-std::optional<CSSSelectorList> parseCSSSelector(CSSParserTokenRange, const CSSParserContext&, StyleSheetContents*, CSSSelectorParser::IsNestedContext);
+void add(Hasher&, const CSSSelectorParserContext&);
+
+struct CSSSelectorParserContextHash {
+    static unsigned hash(const CSSSelectorParserContext& context) { return computeHash(context); }
+    static bool equal(const CSSSelectorParserContext& a, const CSSSelectorParserContext& b) { return a == b; }
+    static const bool safeToCompareToEmptyOrDeleted = false;
+};
 
 } // namespace WebCore
+
+namespace WTF {
+
+template<> struct HashTraits<WebCore::CSSSelectorParserContext> : GenericHashTraits<WebCore::CSSSelectorParserContext> {
+    static void constructDeletedValue(WebCore::CSSSelectorParserContext& slot) { slot.isHashTableDeletedValue = true; }
+    static bool isDeletedValue(const WebCore::CSSSelectorParserContext& value) { return value.isHashTableDeletedValue; }
+    static WebCore::CSSSelectorParserContext emptyValue() { return { }; }
+};
+
+template<> struct DefaultHash<WebCore::CSSSelectorParserContext> : WebCore::CSSSelectorParserContextHash { };
+
+} // namespace WTF

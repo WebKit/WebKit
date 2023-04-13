@@ -76,6 +76,12 @@ static bool handleOptionRemoteLayerTree(Options& options, const char*, const cha
     return true;
 }
 
+static bool handleOptionNoRemoteLayerTree(Options& options, const char*, const char*)
+{
+    options.features.boolTestRunnerFeatures.insert_or_assign("noUseRemoteLayerTree", true);
+    return true;
+}
+
 static bool handleOptionShowWindow(Options& options, const char*, const char*)
 {
     options.features.boolTestRunnerFeatures.insert_or_assign("shouldShowWindow", true);
@@ -181,6 +187,7 @@ OptionsHandler::OptionsHandler(Options& o)
     optionList.append(Option("--complex-text", "Force complex tests.", handleOptionComplexText));
     optionList.append(Option("--accelerated-drawing", "Use accelerated drawing.", handleOptionAcceleratedDrawing));
     optionList.append(Option("--remote-layer-tree", "Use remote layer tree.", handleOptionRemoteLayerTree));
+    optionList.append(Option("--no-remote-layer-tree", "Disable remote layer tree.", handleOptionNoRemoteLayerTree));
     optionList.append(Option("--allowed-host", "Allows access to the specified host from tests.", handleOptionAllowedHost, true));
     optionList.append(Option("--localhost-alias", "Adds hostname alias to localhost if the port supports it.", handleOptionLocalhostAlias, true));
     optionList.append(Option("--allow-any-certificate-for-allowed-hosts", "Allows any HTTPS certificate for an allowed host.", handleOptionAllowAnyHTTPSCertificateForAllowedHosts));

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "HTMLBDIElement.h"
 
+#include "Document.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -41,6 +42,7 @@ HTMLBDIElement::HTMLBDIElement(const QualifiedName& name, Document& document)
     : HTMLElement(name, document)
 {
     setSelfOrPrecedingNodesAffectDirAuto(true);
+    document.setIsDirAttributeDirty();
 }
 
 } // namespace WebCore

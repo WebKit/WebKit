@@ -66,11 +66,6 @@ LayoutUnit computeMarginLogicalSizeForChild(const RenderGrid& grid, GridTrackSiz
     return marginStartIsAuto(child, flowAwareDirection) ? marginEnd : marginEndIsAuto(child, flowAwareDirection) ? marginStart : marginStart + marginEnd;
 }
 
-static inline GridTrackSizingDirection directionFromSide(GridPositionSide side)
-{
-    return side == ColumnStartSide || side == ColumnEndSide ? ForColumns : ForRows;
-}
-
 static bool hasRelativeOrIntrinsicSizeForChild(const RenderBox& child, GridTrackSizingDirection direction)
 {
     if (direction == ForColumns)

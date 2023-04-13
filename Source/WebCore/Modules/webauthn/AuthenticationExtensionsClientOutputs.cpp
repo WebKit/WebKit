@@ -53,6 +53,28 @@ std::optional<AuthenticationExtensionsClientOutputs> AuthenticationExtensionsCli
         clientOutputs.credProps = credProps;
     }
 
+    it = decodedMap.find(cbor::CBORValue("largeBlob"));
+    if (it != decodedMap.end() && it->second.isMap()) {
+        const auto& largeBlobMap = it->second.getMap();
+        LargeBlobOutputs largeBlob;
+
+        auto largeBlobIt = largeBlobMap.find(cbor::CBORValue("supported"));
+        if (largeBlobIt != largeBlobMap.end() && largeBlobIt->second.isBool())
+            largeBlob.supported = largeBlobIt->second.getBool();
+
+        largeBlobIt = largeBlobMap.find(cbor::CBORValue("blob"));
+        if (largeBlobIt != largeBlobMap.end() && largeBlobIt->second.isByteString()) {
+            RefPtr<ArrayBuffer> blob = ArrayBuffer::create(largeBlobIt->second.getByteString());
+            largeBlob.blob = WTFMove(blob);
+        }
+
+        largeBlobIt = largeBlobMap.find(cbor::CBORValue("written"));
+        if (largeBlobIt != largeBlobMap.end() && largeBlobIt->second.isBool())
+            largeBlob.written = largeBlobIt->second.getBool();
+
+        clientOutputs.largeBlob = largeBlob;
+    }
+
     return clientOutputs;
 }
 
@@ -65,6 +87,20 @@ Vector<uint8_t> AuthenticationExtensionsClientOutputs::toCBOR() const
         cbor::CBORValue::MapValue credPropsMap;
         credPropsMap[cbor::CBORValue("rk")] = cbor::CBORValue(credProps->rk);
         clientOutputsMap[cbor::CBORValue("credProps")] = cbor::CBORValue(credPropsMap);
+    }
+
+    if (largeBlob) {
+        cbor::CBORValue::MapValue largeBlobMap;
+        if (largeBlob->supported)
+            largeBlobMap[cbor::CBORValue("supported")] = cbor::CBORValue(largeBlob->supported.value());
+
+        if (largeBlob->blob)
+            largeBlobMap[cbor::CBORValue("blob")] = cbor::CBORValue(largeBlob->blob->toVector());
+
+        if (largeBlob->written)
+            largeBlobMap[cbor::CBORValue("written")] = cbor::CBORValue(largeBlob->written.value());
+
+        clientOutputsMap[cbor::CBORValue("largeBlob")] = cbor::CBORValue(largeBlobMap);
     }
 
     auto clientOutputs = cbor::CBORWriter::write(cbor::CBORValue(WTFMove(clientOutputsMap)));

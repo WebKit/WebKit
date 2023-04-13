@@ -28,13 +28,13 @@
 
 namespace WebCore {
 
-class DOMWindow;
 class IDBFactory;
+class LocalDOMWindow;
 class WorkerGlobalScope;
 
 class WindowOrWorkerGlobalScopeIndexedDatabase {
 public:
-    WEBCORE_EXPORT static IDBFactory* indexedDB(DOMWindow&);
+    WEBCORE_EXPORT static IDBFactory* indexedDB(LocalDOMWindow&);
     WEBCORE_EXPORT static IDBFactory* indexedDB(WorkerGlobalScope&);
 };
 

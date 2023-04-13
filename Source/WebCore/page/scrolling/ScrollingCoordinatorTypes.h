@@ -65,7 +65,7 @@ constexpr auto debugScrollingStateTreeAsTextBehaviors = OptionSet<ScrollingState
     ScrollingStateTreeAsTextBehavior::IncludeLayerIDs, ScrollingStateTreeAsTextBehavior::IncludeNodeIDs, ScrollingStateTreeAsTextBehavior::IncludeLayerPositions
 };
 
-enum class ScrollingLayerPositionAction {
+enum class ScrollingLayerPositionAction : uint8_t {
     Set,
     SetApproximate,
     Sync
@@ -122,6 +122,9 @@ struct RequestedScrollData {
     ScrollType scrollType { ScrollType::User };
     ScrollClamping clamping { ScrollClamping::Clamped };
     ScrollIsAnimated animated { ScrollIsAnimated::No };
+    std::optional<std::tuple<FloatPoint, ScrollType, ScrollClamping>> requestedDataBeforeAnimatedScroll { };
+
+    void merge(RequestedScrollData&&);
 
     bool operator==(const RequestedScrollData& other) const
     {
@@ -129,7 +132,8 @@ struct RequestedScrollData {
             && scrollPosition == other.scrollPosition
             && scrollType == other.scrollType
             && clamping == other.clamping
-            && animated == other.animated;
+            && animated == other.animated
+            && requestedDataBeforeAnimatedScroll == other.requestedDataBeforeAnimatedScroll;
     }
 };
 
@@ -177,16 +181,16 @@ struct ScrollUpdate {
 };
 
 enum class WheelEventProcessingSteps : uint8_t {
-    ScrollingThread                             = 1 << 0,
-    MainThreadForScrolling                      = 1 << 1,
-    MainThreadForNonBlockingDOMEventDispatch    = 1 << 2,
-    MainThreadForBlockingDOMEventDispatch       = 1 << 3,
+    AsyncScrolling                      = 1 << 0,
+    SynchronousScrolling                = 1 << 1, // Synchronous with painting and script.
+    NonBlockingDOMEventDispatch         = 1 << 2,
+    BlockingDOMEventDispatch            = 1 << 3,
 };
 
 struct WheelEventHandlingResult {
     OptionSet<WheelEventProcessingSteps> steps;
     bool wasHandled { false };
-    bool needsMainThreadProcessing() const { return steps.containsAny({ WheelEventProcessingSteps::MainThreadForScrolling, WheelEventProcessingSteps::MainThreadForNonBlockingDOMEventDispatch, WheelEventProcessingSteps::MainThreadForBlockingDOMEventDispatch }); }
+    bool needsMainThreadProcessing() const { return steps.containsAny({ WheelEventProcessingSteps::SynchronousScrolling, WheelEventProcessingSteps::NonBlockingDOMEventDispatch, WheelEventProcessingSteps::BlockingDOMEventDispatch }); }
 
     static WheelEventHandlingResult handled(OptionSet<WheelEventProcessingSteps> steps = { })
     {
@@ -207,6 +211,7 @@ WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, ScrollingNodeType);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, ScrollingLayerPositionAction);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, ScrollableAreaParameters);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, ViewportRectStability);
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, WheelEventHandlingResult);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, WheelEventProcessingSteps);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, ScrollUpdateType);
 
@@ -254,16 +259,6 @@ template<> struct EnumTraits<WebCore::KeyboardScrollAction> {
         WebCore::KeyboardScrollAction::StartAnimation,
         WebCore::KeyboardScrollAction::StopWithAnimation,
         WebCore::KeyboardScrollAction::StopImmediately
-    >;
-};
-
-template<> struct EnumTraits<WebCore::WheelEventProcessingSteps> {
-    using values = EnumValues<
-        WebCore::WheelEventProcessingSteps,
-        WebCore::WheelEventProcessingSteps::ScrollingThread,
-        WebCore::WheelEventProcessingSteps::MainThreadForScrolling,
-        WebCore::WheelEventProcessingSteps::MainThreadForNonBlockingDOMEventDispatch,
-        WebCore::WheelEventProcessingSteps::MainThreadForBlockingDOMEventDispatch
     >;
 };
 

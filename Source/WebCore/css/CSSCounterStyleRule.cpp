@@ -32,41 +32,36 @@
 #include "CSSTokenizer.h"
 #include "CSSValuePair.h"
 #include "MutableStyleProperties.h"
-#include "Pair.h"
+#include "StyleProperties.h"
+#include "StylePropertiesInlines.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
-StyleRuleCounterStyle::StyleRuleCounterStyle(const AtomString& name, Ref<StyleProperties>&& properties, CSSCounterStyleDescriptors&& descriptors)
+StyleRuleCounterStyle::StyleRuleCounterStyle(const AtomString& name, CSSCounterStyleDescriptors&& descriptors)
     : StyleRuleBase(StyleRuleType::CounterStyle)
     , m_name(name)
-    , m_properties(WTFMove(properties))
     , m_descriptors(WTFMove(descriptors))
 {
 }
 
-Ref<StyleRuleCounterStyle> StyleRuleCounterStyle::create(const AtomString& name, Ref<StyleProperties>&& properties)
+Ref<StyleRuleCounterStyle> StyleRuleCounterStyle::create(const AtomString& name, CSSCounterStyleDescriptors&& descriptors)
 {
-    auto descriptors = CSSCounterStyleDescriptors::create(name, properties);
-    return adoptRef(*new StyleRuleCounterStyle(name, WTFMove(properties), WTFMove(descriptors)));
+    return adoptRef(*new StyleRuleCounterStyle(name, WTFMove(descriptors)));
 }
 
-CSSCounterStyleDescriptors::System toCounterStyleSystemEnum(RefPtr<CSSValue> system)
+CSSCounterStyleDescriptors::System toCounterStyleSystemEnum(const CSSValue* system)
 {
-    if (!system || !system->isPrimitiveValue())
+    if (!system)
         return CSSCounterStyleDescriptors::System::Symbolic;
 
-    auto& primitiveSystemValue = downcast<CSSPrimitiveValue>(*system);
-    ASSERT(primitiveSystemValue.isValueID() || primitiveSystemValue.isPair());
+    ASSERT(system->isValueID() || system->isPair());
     CSSValueID systemKeyword = CSSValueInvalid;
-    if (primitiveSystemValue.isValueID())
-        systemKeyword = primitiveSystemValue.valueID();
-    else if (auto* pair = primitiveSystemValue.pairValue()) {
+    if (system->isValueID())
+        systemKeyword = system->valueID();
+    else if (system->isPair()) {
         // This value must be `fixed` or `extends`, both of which can or must have an additional component.
-        auto firstValue = pair->first();
-        ASSERT(firstValue && firstValue->isValueID());
-        if (firstValue)
-            systemKeyword = firstValue->valueID();
+        systemKeyword = system->first().valueID();
     }
     switch (systemKeyword) {
     case CSSValueCyclic:
@@ -89,63 +84,7 @@ CSSCounterStyleDescriptors::System toCounterStyleSystemEnum(RefPtr<CSSValue> sys
     }
 }
 
-static bool symbolsValidForSystem(CSSCounterStyleDescriptors::System system, RefPtr<CSSValue> symbols, RefPtr<CSSValue> additiveSymbols)
-{
-    switch (system) {
-    case CSSCounterStyleDescriptors::System::Cyclic:
-    case CSSCounterStyleDescriptors::System::Fixed:
-    case CSSCounterStyleDescriptors::System::Symbolic:
-        return symbols && symbols->isValueList() && downcast<CSSValueList>(*symbols).length();
-    case CSSCounterStyleDescriptors::System::Alphabetic:
-    case CSSCounterStyleDescriptors::System::Numeric:
-        return symbols && symbols->isValueList() && downcast<CSSValueList>(*symbols).length() >= 2u;
-    case CSSCounterStyleDescriptors::System::Additive:
-        return additiveSymbols && additiveSymbols->isValueList() && downcast<CSSValueList>(*additiveSymbols).length();
-    case CSSCounterStyleDescriptors::System::Extends:
-        return !symbols && !additiveSymbols;
-    default:
-        ASSERT_NOT_REACHED();
-        return false;
-    }
-}
-
-bool StyleRuleCounterStyle::newValueInvalidOrEqual(CSSPropertyID propertyID, const RefPtr<CSSValue> newValue) const
-{
-    auto currentValue = m_properties->getPropertyCSSValue(propertyID);
-    if (compareCSSValuePtr(currentValue, newValue))
-        return true;
-
-    RefPtr<CSSValue> symbols;
-    RefPtr<CSSValue> additiveSymbols;
-    switch (propertyID) {
-    case CSSPropertySystem:
-        // If the attribute being set is `system`, and the new value would change the algorithm used, do nothing
-        // and abort these steps.
-        // (It's okay to change an aspect of the algorithm, like the first symbol value of a `fixed` system.)
-        return toCounterStyleSystemEnum(currentValue) != toCounterStyleSystemEnum(newValue);
-    case CSSPropertySymbols:
-        symbols = newValue;
-        additiveSymbols = m_properties->getPropertyCSSValue(CSSPropertyAdditiveSymbols);
-        break;
-    case CSSPropertyAdditiveSymbols:
-        symbols = m_properties->getPropertyCSSValue(CSSPropertySymbols);
-        additiveSymbols = newValue;
-        break;
-    default:
-        return false;
-    }
-    auto system = m_properties->getPropertyCSSValue(CSSPropertySystem);
-    return symbolsValidForSystem(toCounterStyleSystemEnum(system), symbols, additiveSymbols);
-}
-
 StyleRuleCounterStyle::~StyleRuleCounterStyle() = default;
-
-MutableStyleProperties& StyleRuleCounterStyle::mutableProperties()
-{
-    if (!is<MutableStyleProperties>(m_properties))
-        m_properties = m_properties->mutableCopy();
-    return downcast<MutableStyleProperties>(m_properties.get());
-}
 
 Ref<CSSCounterStyleRule> CSSCounterStyleRule::create(StyleRuleCounterStyle& rule, CSSStyleSheet* sheet)
 {
@@ -221,79 +160,115 @@ void CSSCounterStyleRule::reattach(StyleRuleBase& rule)
     m_counterStyleRule = downcast<StyleRuleCounterStyle>(rule);
 }
 
+RefPtr<CSSValue> CSSCounterStyleRule::cssValueFromText(CSSPropertyID propertyID, const String& valueText)
+{
+    auto tokenizer = CSSTokenizer(valueText);
+    auto tokenRange = tokenizer.tokenRange();
+    return CSSPropertyParser::parseCounterStyleDescriptor(propertyID, tokenRange, parserContext());
+}
+
 // https://drafts.csswg.org/css-counter-styles-3/#dom-csscounterstylerule-name
 void CSSCounterStyleRule::setName(const String& text)
 {
     auto tokenizer = CSSTokenizer(text);
     auto tokenRange = tokenizer.tokenRange();
     auto name = CSSPropertyParserHelpers::consumeCounterStyleNameInPrelude(tokenRange);
-    if (name.isNull() || name == m_counterStyleRule->name())
+    if (!name)
         return;
-
     CSSStyleSheet::RuleMutationScope mutationScope(this);
-    m_counterStyleRule->setName(name);
-}
-
-void CSSCounterStyleRule::setterInternal(CSSPropertyID propertyID, const String& valueText)
-{
-    auto tokenizer = CSSTokenizer(valueText);
-    auto tokenRange = tokenizer.tokenRange();
-    auto newValue = CSSPropertyParser::parseCounterStyleDescriptor(propertyID, tokenRange, parserContext());
-    if (m_counterStyleRule->newValueInvalidOrEqual(propertyID, newValue))
-        return;
-
-    CSSStyleSheet::RuleMutationScope mutationScope(this);
-    m_counterStyleRule->mutableProperties().setProperty(propertyID, WTFMove(newValue));
+    mutableDescriptors().setName(WTFMove(name));
 }
 
 void CSSCounterStyleRule::setSystem(const String& text)
 {
-    setterInternal(CSSPropertySystem, text);
+    auto systemValue = cssValueFromText(CSSPropertySystem, text);
+    if (!systemValue)
+        return;
+    auto system = toCounterStyleSystemEnum(systemValue.get());
+    // If the attribute being set is `system`, and the new value would change the algorithm used, do nothing
+    // and abort these steps.
+    // (It's okay to change an aspect of the algorithm, like the first symbol value of a `fixed` system.)
+    // https://www.w3.org/TR/css-counter-styles-3/#the-csscounterstylerule-interface
+    auto systemData = extractSystemDataFromCSSValue(WTFMove(systemValue), system);
+    CSSStyleSheet::RuleMutationScope mutationScope(this);
+    mutableDescriptors().setSystemData(WTFMove(systemData));
 }
 
 void CSSCounterStyleRule::setNegative(const String& text)
 {
-    setterInternal(CSSPropertyNegative, text);
+    auto newValue = cssValueFromText(CSSPropertyNegative, text);
+    if (!newValue)
+        return;
+    CSSStyleSheet::RuleMutationScope mutationScope(this);
+    mutableDescriptors().setNegative(negativeSymbolsFromCSSValue(newValue.releaseNonNull()));
 }
 
 void CSSCounterStyleRule::setPrefix(const String& text)
 {
-    setterInternal(CSSPropertyPrefix, text);
+    auto newValue = cssValueFromText(CSSPropertyPrefix, text);
+    if (!newValue)
+        return;
+    CSSStyleSheet::RuleMutationScope mutationScope(this);
+    mutableDescriptors().setPrefix(symbolFromCSSValue(WTFMove(newValue)));
 }
 
 void CSSCounterStyleRule::setSuffix(const String& text)
 {
-    setterInternal(CSSPropertySuffix, text);
+    auto newValue = cssValueFromText(CSSPropertySuffix, text);
+    if (!newValue)
+        return;
+    CSSStyleSheet::RuleMutationScope mutationScope(this);
+    mutableDescriptors().setSuffix(symbolFromCSSValue(WTFMove(newValue)));
 }
 
 void CSSCounterStyleRule::setRange(const String& text)
 {
-    setterInternal(CSSPropertyRange, text);
+    auto newValue = cssValueFromText(CSSPropertyRange, text);
+    if (!newValue)
+        return;
+    CSSStyleSheet::RuleMutationScope mutationScope(this);
+    mutableDescriptors().setRanges(rangeFromCSSValue(newValue.releaseNonNull()));
 }
 
 void CSSCounterStyleRule::setPad(const String& text)
 {
-    setterInternal(CSSPropertyPad, text);
+    auto newValue = cssValueFromText(CSSPropertyPad, text);
+    if (!newValue)
+        return;
+    CSSStyleSheet::RuleMutationScope mutationScope(this);
+    mutableDescriptors().setPad(padFromCSSValue(newValue.releaseNonNull()));
 }
 
 void CSSCounterStyleRule::setFallback(const String& text)
 {
-    setterInternal(CSSPropertyFallback, text);
+    auto newValue = cssValueFromText(CSSPropertyFallback, text);
+    if (!newValue)
+        return;
+    CSSStyleSheet::RuleMutationScope mutationScope(this);
+    mutableDescriptors().setFallbackName(fallbackNameFromCSSValue(newValue.releaseNonNull()));
 }
 
 void CSSCounterStyleRule::setSymbols(const String& text)
 {
-    setterInternal(CSSPropertySymbols, text);
+    auto newValue = cssValueFromText(CSSPropertySymbols, text);
+    if (!newValue)
+        return;
+    CSSStyleSheet::RuleMutationScope mutationScope(this);
+    mutableDescriptors().setSymbols(symbolsFromCSSValue(newValue.releaseNonNull()));
 }
 
 void CSSCounterStyleRule::setAdditiveSymbols(const String& text)
 {
-    setterInternal(CSSPropertyAdditiveSymbols, text);
+    auto newValue = cssValueFromText(CSSPropertyAdditiveSymbols, text);
+    if (!newValue)
+        return;
+    CSSStyleSheet::RuleMutationScope mutationScope(this);
+    mutableDescriptors().setAdditiveSymbols(additiveSymbolsFromCSSValue(newValue.releaseNonNull()));
 }
 
-void CSSCounterStyleRule::setSpeakAs(const String& text)
+void CSSCounterStyleRule::setSpeakAs(const String&)
 {
-    setterInternal(CSSPropertySpeakAs, text);
+    // FIXME: @counter-style speak-as not supported (rdar://103019111).
 }
 
 } // namespace WebCore

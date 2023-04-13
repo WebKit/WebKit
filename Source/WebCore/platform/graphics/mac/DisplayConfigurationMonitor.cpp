@@ -34,7 +34,7 @@ namespace WebCore {
 
 DisplayConfigurationMonitor::Client::Client()
 {
-    m_identifier = DisplayConfigurationClientIdentifier::generateThreadSafe();
+    m_identifier = DisplayConfigurationClientIdentifier::generate();
 }
 
 DisplayConfigurationMonitor::Client::~Client() = default;

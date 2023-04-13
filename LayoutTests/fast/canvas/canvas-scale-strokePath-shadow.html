@@ -130,7 +130,7 @@ d = ctx.getImageData(398, 210, 1, 1).data;
 shouldBe('d[0]', '255');
 shouldBe('d[1]', '0');
 shouldBe('d[2]', '0');
-shouldBeAround('d[3]', '200', 25);
+shouldBeAround('d[3]', '150', 75);
 
 d = ctx.getImageData(508, 250, 1, 1).data;
 shouldBe('d[0]', '255');
@@ -142,7 +142,7 @@ d = ctx.getImageData(450, 198, 1, 1).data;
 shouldBe('d[0]', '255');
 shouldBe('d[1]', '0');
 shouldBe('d[2]', '0');
-shouldBeAround('d[3]', '199', 25);
+shouldBeAround('d[3]', '150', 75);
 
 // Verify blurry alpha shadow.
 d = ctx.getImageData(505, 450, 1, 1).data;

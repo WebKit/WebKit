@@ -197,7 +197,8 @@ public:
     JS_EXPORT_PRIVATE static RegisterSet allScalarRegisters();
     JS_EXPORT_PRIVATE static RegisterSet stackRegisters();
     JS_EXPORT_PRIVATE static RegisterSet reservedHardwareRegisters();
-    JS_EXPORT_PRIVATE static RegisterSet macroClobberedRegisters();
+    JS_EXPORT_PRIVATE static RegisterSet macroClobberedGPRs();
+    JS_EXPORT_PRIVATE static RegisterSet macroClobberedFPRs();
     JS_EXPORT_PRIVATE static RegisterSet runtimeTagRegisters();
     JS_EXPORT_PRIVATE static RegisterSet specialRegisters(); // The union of stack, reserved hardware, and runtime registers.
     JS_EXPORT_PRIVATE static RegisterSet calleeSaveRegisters();
@@ -209,7 +210,7 @@ public:
     JS_EXPORT_PRIVATE static RegisterSet stubUnavailableRegisters(); // The union of callee saves and special registers.
     JS_EXPORT_PRIVATE static RegisterSet argumentGPRS();
 #if ENABLE(WEBASSEMBLY)
-    JS_EXPORT_PRIVATE static RegisterSet wasmPinnedRegisters(MemoryMode);
+    JS_EXPORT_PRIVATE static RegisterSet wasmPinnedRegisters();
 #endif
     JS_EXPORT_PRIVATE static RegisterSetBuilder registersToSaveForJSCall(RegisterSetBuilder live);
     JS_EXPORT_PRIVATE static RegisterSetBuilder registersToSaveForCCall(RegisterSetBuilder live);

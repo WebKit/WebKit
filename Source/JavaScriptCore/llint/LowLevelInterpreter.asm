@@ -1,4 +1,4 @@
-# Copyright (C) 2011-2022 Apple Inc. All rights reserved.
+# Copyright (C) 2011-2023 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -339,7 +339,8 @@ if X86_64_WIN or C_LOOP_WIN
 else
     const WTFConfig = _g_config + constexpr WTF::startOffsetOfWTFConfig
     const GigacageConfig = _g_config + constexpr Gigacage::startOffsetOfGigacageConfig
-    const JSCConfig = _g_config + constexpr WTF::offsetOfWTFConfigExtension
+    const JSCConfigOffset = constexpr WTF::offsetOfWTFConfigExtension
+    const JSCConfigGateMapOffset = JSCConfigOffset + constexpr JSC::offsetOfJSCConfigGateMap
 end
 
 macro nextInstruction()
@@ -405,6 +406,15 @@ macro dispatchOp(size, opcodeName)
     genericDispatchOpJS(dispatch, size, opcodeName)
 end
 
+macro superSamplerBegin(scratch)
+    leap _g_superSamplerCount, scratch
+    addi 1, [scratch]
+end
+
+macro superSamplerEnd(scratch)
+    leap _g_superSamplerCount, scratch
+    subi 1, [scratch]
+end
 
 macro getu(size, opcodeStruct, fieldName, dst)
     size(getuOperandNarrow, getuOperandWide16JS, getuOperandWide32JS, macro (getu)
@@ -1155,22 +1165,22 @@ macro callTargetFunction(opcodeName, size, opcodeStruct, valueProfileName, dstVi
         cloopCallJSFunction callee
     elsif ARM64E
         macro callNarrow()
-            leap JSCConfig + constexpr JSC::offsetOfJSCConfigGateMap + (constexpr Gate::%opcodeName%) * PtrSize, a7
-            jmp [a7], NativeToJITGatePtrTag # callPtrTag
+            leap _g_config, a7
+            jmp JSCConfigGateMapOffset + (constexpr Gate::%opcodeName%) * PtrSize[a7], NativeToJITGatePtrTag # callPtrTag
             _js_trampoline_%opcodeName%:
             call t5, callPtrTag
         end
 
         macro callWide16()
-            leap JSCConfig + constexpr JSC::offsetOfJSCConfigGateMap + (constexpr Gate::%opcodeName%_wide16) * PtrSize, a7
-            jmp [a7], NativeToJITGatePtrTag # callPtrTag
+            leap _g_config, a7
+            jmp JSCConfigGateMapOffset + (constexpr Gate::%opcodeName%_wide16) * PtrSize[a7], NativeToJITGatePtrTag # callPtrTag
             _js_trampoline_%opcodeName%_wide16:
             call t5, callPtrTag
         end
 
         macro callWide32()
-            leap JSCConfig + constexpr JSC::offsetOfJSCConfigGateMap + (constexpr Gate::%opcodeName%_wide32) * PtrSize, a7
-            jmp [a7], NativeToJITGatePtrTag # callPtrTag
+            leap _g_config, a7
+            jmp JSCConfigGateMapOffset + (constexpr Gate::%opcodeName%_wide32) * PtrSize[a7], NativeToJITGatePtrTag # callPtrTag
             _js_trampoline_%opcodeName%_wide32:
             call t5, callPtrTag
         end
@@ -1293,8 +1303,8 @@ macro invokeForTailCall(opcodeName, size, opcodeStruct, valueProfileName, dstVir
     if ARM64E
         move maybeOldCFR, a2
         move callee, a7
-        leap JSCConfig + constexpr JSC::offsetOfJSCConfigGateMap + (constexpr Gate::tailCall%callPtrTag%) * PtrSize, a1
-        jmp [a1], NativeToJITGatePtrTag # %callPtrTag%
+        leap _g_config, a1
+        jmp JSCConfigGateMapOffset + (constexpr Gate::tailCall%callPtrTag%) * PtrSize[a1], NativeToJITGatePtrTag # %callPtrTag%
     else
         jmp callee, callPtrTag
     end
@@ -1304,8 +1314,8 @@ end
 macro prepareForPolymorphicTailCall(opcodeName, size, opcodeStruct, valueProfileName, dstVirtualRegister, dispatch, callPtrTag)
     if ARM64E
         loadp %opcodeStruct%::Metadata::m_callLinkInfo.u.dataIC.m_monomorphicCallDestination[t5], a7
-        leap JSCConfig + constexpr JSC::offsetOfJSCConfigGateMap + (constexpr Gate::tailCallWithoutUntag%callPtrTag%) * PtrSize, a1
-        jmp [a1], NativeToJITGatePtrTag # %callPtrTag%
+        leap _g_config, a1
+        jmp JSCConfigGateMapOffset + (constexpr Gate::tailCallWithoutUntag%callPtrTag%) * PtrSize[a1], NativeToJITGatePtrTag # %callPtrTag%
     else
         loadp %opcodeStruct%::Metadata::m_callLinkInfo.u.dataIC.m_monomorphicCallDestination[t5], a1
         jmp a1, callPtrTag
@@ -1576,8 +1586,8 @@ macro prologue(osrSlowPath, traceSlowPath)
 
         if ARM64E
             move r0, a0
-            leap JSCConfig + constexpr JSC::offsetOfJSCConfigGateMap + (constexpr Gate::entryOSREntry) * PtrSize, a2
-            jmp [a2], NativeToJITGatePtrTag # JSEntryPtrTag
+            leap _g_config, a2
+            jmp JSCConfigGateMapOffset + (constexpr Gate::entryOSREntry) * PtrSize[a2], NativeToJITGatePtrTag # JSEntryPtrTag
         else
             jmp r0, JSEntryPtrTag
         end
@@ -1688,8 +1698,8 @@ macro doReturn()
     restoreCalleeSavesUsedByLLInt()
     restoreCallerPCAndCFR()
     if ARM64E
-        leap JSCConfig + constexpr JSC::offsetOfJSCConfigGateMap + (constexpr Gate::returnFromLLInt) * PtrSize, a2
-        jmp [a2], NativeToJITGatePtrTag
+        leap _g_config, a2
+        jmp JSCConfigGateMapOffset + (constexpr Gate::returnFromLLInt) * PtrSize[a2], NativeToJITGatePtrTag
     else
         ret
     end
@@ -1838,8 +1848,8 @@ if ARM64E
     emit ".globl _jitCagePtr"
     emit "_jitCagePtr:"
         tagReturnAddress sp
-        leap JSCConfig + constexpr JSC::offsetOfJSCConfigGateMap + (constexpr Gate::jitCagePtr) * PtrSize, t2
-        jmp [t2], NativeToJITGatePtrTag
+        leap _g_config, t2
+        jmp JSCConfigGateMapOffset + (constexpr Gate::jitCagePtr) * PtrSize[t2], NativeToJITGatePtrTag
         global _jitCagePtrGateAfter
         _jitCagePtrGateAfter:
         ret
@@ -1999,8 +2009,13 @@ macro entry(kind, initialize)
         # Include generated bytecode initialization file.
         includeEntriesAtOffset(kind, initialize)
 
-        leap JSCConfig + constexpr JSC::offsetOfJSCConfigInitializeHasBeenCalled, t3
-        bbeq [t3], 0, .notFrozen
+        if X86_64_WIN or C_LOOP_WIN
+            leap JSCConfig + constexpr JSC::offsetOfJSCConfigInitializeHasBeenCalled, t3
+            bbeq [t3], 0, .notFrozen
+        else
+            leap _g_config, t3
+            bbeq JSCConfigOffset + constexpr JSC::offsetOfJSCConfigInitializeHasBeenCalled[t3], 0, .notFrozen
+        end
         crash()
     .notFrozen:
 
@@ -2110,7 +2125,6 @@ macro slowPathOp(opcodeName)
 end
 
 slowPathOp(create_cloned_arguments)
-slowPathOp(create_arguments_butterfly)
 slowPathOp(create_direct_arguments)
 slowPathOp(create_lexical_environment)
 slowPathOp(create_rest)
@@ -2179,8 +2193,6 @@ llintSlowPathOp(put_getter_setter_by_id)
 llintSlowPathOp(put_setter_by_id)
 llintSlowPathOp(put_setter_by_val)
 llintSlowPathOp(set_function_name)
-llintSlowPathOp(super_sampler_begin)
-llintSlowPathOp(super_sampler_end)
 llintSlowPathOp(throw)
 llintSlowPathOp(get_by_id_with_this)
 
@@ -2321,7 +2333,7 @@ llintOp(op_loop_hint, OpLoopHint, macro (unused, unused, dispatch)
 end)
 
 
-llintOp(op_check_traps, OpCheckTraps, macro (unused, unused, dispatch)
+macro checkTraps(dispatch)
     loadp CodeBlock[cfr], t1
     loadp CodeBlock::m_vm[t1], t1
     loadi VM::m_traps+VMTraps::m_trapBits[t1], t0
@@ -2334,6 +2346,10 @@ llintOp(op_check_traps, OpCheckTraps, macro (unused, unused, dispatch)
     jmp .afterHandlingTraps
 .throwHandler:
     jmp _llint_throw_from_slow_path_trampoline
+end
+
+llintOp(op_check_traps, OpCheckTraps, macro (unused, unused, dispatch)
+    checkTraps(dispatch)
 end)
 
 
@@ -2503,6 +2519,16 @@ llintOp(op_debug, OpDebug, macro (unused, unused, dispatch)
 end)
 
 
+llintOp(op_super_sampler_begin, OpSuperSamplerBegin, macro (unused, unused, dispatch)
+    superSamplerBegin(t1)
+    dispatch()
+end)
+
+llintOp(op_super_sampler_end, OpSuperSamplerEnd, macro (unused, unused, dispatch)
+    superSamplerEnd(t1)
+    dispatch()
+end)
+
 op(llint_native_call_trampoline, macro ()
     nativeCallTrampoline(NativeExecutable::m_function)
 end)
@@ -2669,8 +2695,8 @@ op(checkpoint_osr_exit_from_inlined_call_trampoline, macro ()
 
         if ARM64E
             move r1, a0
-            leap JSCConfig + constexpr JSC::offsetOfJSCConfigGateMap + (constexpr Gate::loopOSREntry) * PtrSize, a2
-            jmp [a2], NativeToJITGatePtrTag # JSEntryPtrTag
+            leap _g_config, a2
+            jmp JSCConfigGateMapOffset + (constexpr Gate::loopOSREntry) * PtrSize[a2], NativeToJITGatePtrTag # JSEntryPtrTag
         else
             jmp r1, JSEntryPtrTag
         end
@@ -2693,8 +2719,8 @@ op(checkpoint_osr_exit_trampoline, macro ()
         branchIfException(_llint_throw_from_slow_path_trampoline)
         if ARM64E
             move r1, a0
-            leap JSCConfig + constexpr JSC::offsetOfJSCConfigGateMap + (constexpr Gate::loopOSREntry) * PtrSize, a2
-            jmp [a2], NativeToJITGatePtrTag # JSEntryPtrTag
+            leap _g_config, a2
+            jmp JSCConfigGateMapOffset + (constexpr Gate::loopOSREntry) * PtrSize[a2], NativeToJITGatePtrTag # JSEntryPtrTag
         else
             jmp r1, JSEntryPtrTag
         end
@@ -2793,7 +2819,7 @@ _wasm_trampoline_wasm_tail_call_wide32:
 _wasm_trampoline_wasm_tail_call_indirect_wide32:
     crash()
 
-end
+end # WEBASSEMBLY and not X86_64_WIN
 
 include? LowLevelInterpreterAdditions
 

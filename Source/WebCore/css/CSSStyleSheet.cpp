@@ -48,6 +48,14 @@
 
 namespace WebCore {
 
+static Style::Scope& styleScopeFor(ContainerNode& treeScope)
+{
+    ASSERT(is<Document>(treeScope) || is<ShadowRoot>(treeScope));
+    if (auto* shadowRoot = dynamicDowncast<ShadowRoot>(treeScope))
+        return shadowRoot->styleScope();
+    return downcast<Document>(treeScope).styleScope();
+}
+
 class StyleSheetCSSRuleList final : public CSSRuleList {
 public:
     StyleSheetCSSRuleList(CSSStyleSheet* sheet) : m_styleSheet(sheet) { }
@@ -168,6 +176,20 @@ Node* CSSStyleSheet::ownerNode() const
     return m_ownerNode.get();
 }
 
+RefPtr<StyleRuleWithNesting> CSSStyleSheet::prepareChildStyleRuleForNesting(StyleRule&& styleRule)
+{
+    RuleMutationScope scope(this);
+    auto& rules = m_contents->m_childRules;
+    for (size_t i = 0 ; i < rules.size() ; i++) {
+        if (rules[i] == &styleRule) {
+            auto styleRuleWithNesting = StyleRuleWithNesting::create(WTFMove(styleRule));
+            rules[i] = styleRuleWithNesting.ptr();
+            return styleRuleWithNesting;
+        }        
+    }
+    return { };
+}
+
 CSSStyleSheet::WhetherContentsWereClonedForMutation CSSStyleSheet::willMutateRules()
 {
     // If we are the only client it is safe to mutate.
@@ -239,10 +261,8 @@ void CSSStyleSheet::forEachStyleScope(const Function<void(Style::Scope&)>& apply
         apply(*scope);
         return;
     }
-    for (auto& shadowRoot : m_adoptingShadowRoots)
-        apply(shadowRoot.styleScope());
-    for (auto& document : m_adoptingDocuments)
-        apply(document.styleScope());
+    for (auto& treeScope : m_adoptingTreeScopes)
+        apply(styleScopeFor(treeScope));
 }
 
 void CSSStyleSheet::clearOwnerNode()
@@ -484,30 +504,18 @@ Document* CSSStyleSheet::constructorDocument() const
     return m_constructorDocument.get();
 }
 
-void CSSStyleSheet::addAdoptingTreeScope(Document& document)
+void CSSStyleSheet::addAdoptingTreeScope(ContainerNode& treeScope)
 {
-    m_adoptingDocuments.add(document);
-    document.styleScope().didChangeActiveStyleSheetCandidates();
+    ASSERT(is<Document>(treeScope) || is<ShadowRoot>(treeScope));
+    m_adoptingTreeScopes.add(treeScope);
+    styleScopeFor(treeScope).didChangeActiveStyleSheetCandidates();
 }
 
-void CSSStyleSheet::addAdoptingTreeScope(ShadowRoot& shadowRoot)
+void CSSStyleSheet::removeAdoptingTreeScope(ContainerNode& treeScope)
 {
-    m_adoptingShadowRoots.add(shadowRoot);
-    shadowRoot.styleScope().didChangeActiveStyleSheetCandidates();
-}
-
-void CSSStyleSheet::removeAdoptingTreeScope(Document& document, IsTreeScopeBeingDestroyed isTreeScopeBeingDestroyed)
-{
-    m_adoptingDocuments.remove(document);
-    if (isTreeScopeBeingDestroyed == IsTreeScopeBeingDestroyed::No)
-        document.styleScope().didChangeStyleSheetContents();
-}
-
-void CSSStyleSheet::removeAdoptingTreeScope(ShadowRoot& shadowRoot, IsTreeScopeBeingDestroyed isTreeScopeBeingDestroyed)
-{
-    m_adoptingShadowRoots.remove(shadowRoot);
-    if (isTreeScopeBeingDestroyed == IsTreeScopeBeingDestroyed::No)
-        shadowRoot.styleScope().didChangeStyleSheetContents();
+    ASSERT(is<Document>(treeScope) || is<ShadowRoot>(treeScope));
+    m_adoptingTreeScopes.remove(treeScope);
+    styleScopeFor(treeScope).didChangeStyleSheetContents();
 }
 
 CSSStyleSheet::RuleMutationScope::RuleMutationScope(CSSStyleSheet* sheet, RuleMutationType mutationType, StyleRuleKeyframes* insertedKeyframesRule)

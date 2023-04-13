@@ -34,7 +34,7 @@
 #include <WebKit/WKRetainPtr.h>
 #include <signal.h>
 
-#if USE(PLAYSTATION_WPE_BACKEND)
+#if USE(WPE_BACKEND_PLAYSTATION)
 #include <wpe/playstation.h>
 #elif PLATFORM(PLAYSTATION)
 #include <process-launcher.h>
@@ -143,7 +143,7 @@ TEST(WebKit, FocusedFrameAfterCrash)
     while (!WKPageGetFocusedFrame(webView.page()))
         Util::spinRunLoop(10);
 
-#if USE(PLAYSTATION_WPE_BACKEND)
+#if USE(WPE_BACKEND_PLAYSTATION)
     
 #elif PLATFORM(PLAYSTATION)
     PlayStation::terminateProcess(WKPageGetProcessIdentifier(webView.page()));

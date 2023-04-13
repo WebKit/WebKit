@@ -45,22 +45,22 @@ layer at (0,0) size 800x600
           [feImage image-size="100.00x100.00"]
       RenderSVGContainer {g} at (16,25) size 701x467 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,30.00)}]
         RenderSVGText {text} at (57,-15) size 366x19 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 366x19
-            chunk 1 (middle anchor) text run 1 at (57.00,0.00) startOffset 0 endOffset 47 width 366.00: "Test preserveAspectRatio on an feImage element."
+          RenderSVGInlineText {#text} at (0,0) size 365x19
+            chunk 1 (middle anchor) text run 1 at (57.90,0.00) startOffset 0 endOffset 47 width 364.20: "Test preserveAspectRatio on an feImage element."
         RenderSVGText {text} at (17,21) size 46x11 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 46x11
+          RenderSVGInlineText {#text} at (0,0) size 45x11
             chunk 1 (middle anchor) text run 1 at (17.50,30.00) startOffset 0 endOffset 13 width 45.00: "Raster to fit"
         RenderSVGContainer {g} at (33,116) size 67x68 [transform={m=((1.00,0.00)(0.00,1.00)) t=(20.00,40.00)}]
           RenderSVGRect {rect} at (33,116) size 67x68 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=40.00] [height=40.00]
             [filter="default"] RenderSVGResourceFilter {filter} at (0,0) size 40x40
         RenderSVGText {text} at (14,101) size 43x11 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 42x11
-            chunk 1 (middle anchor) text run 1 at (14.80,110.00) startOffset 0 endOffset 10 width 41.40: "Viewport 1"
+            chunk 1 (middle anchor) text run 1 at (14.88,110.00) startOffset 0 endOffset 10 width 41.24: "Viewport 1"
         RenderSVGContainer {g} at (16,250) size 84x50 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,120.00)}]
           RenderSVGRect {rect} at (16,250) size 84x50 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.50] [y=0.50] [width=49.00] [height=29.00]
         RenderSVGText {text} at (14,171) size 43x11 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 42x11
-            chunk 1 (middle anchor) text run 1 at (14.80,180.00) startOffset 0 endOffset 10 width 41.40: "Viewport 2"
+            chunk 1 (middle anchor) text run 1 at (14.88,180.00) startOffset 0 endOffset 10 width 41.24: "Viewport 2"
         RenderSVGContainer {g} at (33,366) size 51x101 [transform={m=((1.00,0.00)(0.00,1.00)) t=(20.00,190.00)}]
           RenderSVGRect {rect} at (33,366) size 51x101 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.50] [y=0.50] [width=29.00] [height=59.00]
         RenderSVGContainer {g} at (200,86) size 200x181 [transform={m=((1.00,0.00)(0.00,1.00)) t=(120.00,50.00)}]

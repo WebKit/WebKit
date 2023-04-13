@@ -34,13 +34,13 @@
 #include "ColorBlending.h"
 #include "Document.h"
 #include "FloatRect.h"
-#include "Frame.h"
 #include "FrameSelection.h"
-#include "FrameView.h"
 #include "GeometryUtilities.h"
 #include "GraphicsContext.h"
 #include "HostWindow.h"
 #include "ImageBuffer.h"
+#include "LocalFrame.h"
+#include "LocalFrameView.h"
 #include "Page.h"
 #include "RenderAncestorIterator.h"
 #include "RenderObject.h"
@@ -49,7 +49,7 @@
 namespace WebCore {
 
 struct ScopedFramePaintingState {
-    ScopedFramePaintingState(Frame& frame, Node* node)
+    ScopedFramePaintingState(LocalFrame& frame, Node* node)
         : frame(frame)
         , node(node)
         , paintBehavior(frame.view()->paintBehavior())
@@ -65,19 +65,19 @@ struct ScopedFramePaintingState {
         frame.view()->setNodeToDraw(nullptr);
     }
 
-    const Frame& frame;
+    const LocalFrame& frame;
     const Node* node;
     const OptionSet<PaintBehavior> paintBehavior;
     const Color backgroundColor;
 };
 
-RefPtr<ImageBuffer> snapshotFrameRect(Frame& frame, const IntRect& imageRect, SnapshotOptions&& options)
+RefPtr<ImageBuffer> snapshotFrameRect(LocalFrame& frame, const IntRect& imageRect, SnapshotOptions&& options)
 {
     Vector<FloatRect> clipRects;
     return snapshotFrameRectWithClip(frame, imageRect, clipRects, WTFMove(options));
 }
 
-RefPtr<ImageBuffer> snapshotFrameRectWithClip(Frame& frame, const IntRect& imageRect, const Vector<FloatRect>& clipRects, SnapshotOptions&& options)
+RefPtr<ImageBuffer> snapshotFrameRectWithClip(LocalFrame& frame, const IntRect& imageRect, const Vector<FloatRect>& clipRects, SnapshotOptions&& options)
 {
     if (!frame.page())
         return nullptr;
@@ -85,13 +85,13 @@ RefPtr<ImageBuffer> snapshotFrameRectWithClip(Frame& frame, const IntRect& image
     Ref document = *frame.document();
     document->updateLayout();
 
-    FrameView::SelectionInSnapshot shouldIncludeSelection = FrameView::IncludeSelection;
+    LocalFrameView::SelectionInSnapshot shouldIncludeSelection = LocalFrameView::IncludeSelection;
     if (options.flags.contains(SnapshotFlags::ExcludeSelectionHighlighting))
-        shouldIncludeSelection = FrameView::ExcludeSelection;
+        shouldIncludeSelection = LocalFrameView::ExcludeSelection;
 
-    FrameView::CoordinateSpaceForSnapshot coordinateSpace = FrameView::DocumentCoordinates;
+    LocalFrameView::CoordinateSpaceForSnapshot coordinateSpace = LocalFrameView::DocumentCoordinates;
     if (options.flags.contains(SnapshotFlags::InViewCoordinates))
-        coordinateSpace = FrameView::ViewCoordinates;
+        coordinateSpace = LocalFrameView::ViewCoordinates;
 
     ScopedFramePaintingState state(frame, nullptr);
 
@@ -136,7 +136,7 @@ RefPtr<ImageBuffer> snapshotFrameRectWithClip(Frame& frame, const IntRect& image
     return buffer;
 }
 
-RefPtr<ImageBuffer> snapshotSelection(Frame& frame, SnapshotOptions&& options)
+RefPtr<ImageBuffer> snapshotSelection(LocalFrame& frame, SnapshotOptions&& options)
 {
     auto& selection = frame.selection();
 
@@ -153,7 +153,7 @@ RefPtr<ImageBuffer> snapshotSelection(Frame& frame, SnapshotOptions&& options)
     return snapshotFrameRect(frame, enclosingIntRect(selectionBounds), WTFMove(options));
 }
 
-RefPtr<ImageBuffer> snapshotNode(Frame& frame, Node& node, SnapshotOptions&& options)
+RefPtr<ImageBuffer> snapshotNode(LocalFrame& frame, Node& node, SnapshotOptions&& options)
 {
     if (!node.renderer())
         return nullptr;
@@ -172,7 +172,7 @@ static bool styleContainsComplexBackground(const RenderStyle& style)
     return style.hasBlendMode() || style.hasBackgroundImage() || style.hasBackdropFilter();
 }
 
-Color estimatedBackgroundColorForRange(const SimpleRange& range, const Frame& frame)
+Color estimatedBackgroundColorForRange(const SimpleRange& range, const LocalFrame& frame)
 {
     auto estimatedBackgroundColor = frame.view() ? frame.view()->documentBackgroundColor() : Color::transparentBlack;
 

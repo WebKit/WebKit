@@ -3,7 +3,7 @@
  * Copyright (C) 2004, 2005 Rob Buis <buis@kde.org>
  * Copyright (C) 2005 Eric Seidel <eric@webkit.org>
  * Copyright (C) 2014 Adobe Systems Incorporated. All rights reserved.
- * Copyright (C) 2021-2022 Apple Inc.  All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc.  All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -35,9 +35,6 @@ public:
     BlendMode blendMode() const { return m_mode; }
     bool setBlendMode(BlendMode);
 
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<Ref<FEBlend>> decode(Decoder&);
-
 private:
     FEBlend(BlendMode);
 
@@ -49,23 +46,6 @@ private:
 
     BlendMode m_mode;
 };
-
-template<class Encoder>
-void FEBlend::encode(Encoder& encoder) const
-{
-    encoder << m_mode;
-}
-
-template<class Decoder>
-std::optional<Ref<FEBlend>> FEBlend::decode(Decoder& decoder)
-{
-    std::optional<BlendMode> mode;
-    decoder >> mode;
-    if (!mode)
-        return std::nullopt;
-
-    return FEBlend::create(*mode);
-}
 
 } // namespace WebCore
 

@@ -44,8 +44,12 @@ void buildArgumentDefaults(int argc, char** argv, NSMutableDictionary *argumentD
         // These defaults are not propagated manually but are only consulted in the UI process.
         if (strcmp(argv[i], "--remote-layer-tree") == 0)
             argumentDefaults[@"WebKit2UseRemoteLayerTreeDrawingArea"] = @YES;
+        else if (strcmp(argv[i], "--no-remote-layer-tree") == 0)
+            argumentDefaults[@"WebKit2UseRemoteLayerTreeDrawingArea"] = @NO;
         else if (strcmp(argv[i], "--use-gpu-process") == 0)
             argumentDefaults[@"WebKit2GPUProcessForDOMRendering"] = @YES;
+        else if (strcmp(argv[i], "--no-use-gpu-process") == 0)
+            argumentDefaults[@"WebKit2GPUProcessForDOMRendering"] = @NO;
     }
 }
 

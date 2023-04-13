@@ -66,7 +66,7 @@ public:
 
 private:
     std::unique_ptr<WebSocketTask> createWebSocketTask(WebPageProxyIdentifier, NetworkSocketChannel&, const WebCore::ResourceRequest&, const String& protocol, const WebCore::ClientOrigin&, bool, bool, OptionSet<WebCore::NetworkConnectionIntegrity>) final;
-    void clearCredentials() final;
+    void clearCredentials(WallTime) final;
 
     std::unique_ptr<WebCore::SoupNetworkSession> m_networkSession;
     bool m_persistentCredentialStorageEnabled { true };

@@ -47,7 +47,7 @@
 NSString * const NSReadAccessURLDocumentOption = @"ReadAccessURL";
 NSString * const _WKReadAccessFileURLsOption = @"_WKReadAccessFileURLsOption";
 
-constexpr NSRect webViewRect = {{0, 0}, {800, 600}};
+constexpr CGRect webViewRect = { { 0, 0 }, { 800, 600 } };
 constexpr NSTimeInterval defaultTimeoutInterval = 60;
 constexpr NSTimeInterval purgeWebViewCacheDelay = 15;
 constexpr NSUInteger maximumWebViewCacheSize = 3;

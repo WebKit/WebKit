@@ -29,6 +29,7 @@
 #include "DeprecatedGlobalSettings.h"
 #include "HTMLTextFormControlElement.h"
 #include "InlineWalker.h"
+#include "LayoutIntegrationLineLayout.h"
 #include "Logging.h"
 #include "RenderBlockFlow.h"
 #include "RenderChildIterator.h"
@@ -41,17 +42,18 @@
 #include "RenderListItem.h"
 #include "RenderListMarker.h"
 #include "RenderMultiColumnFlow.h"
+#include "RenderSVGBlock.h"
 #include "RenderTable.h"
 #include "RenderTextControl.h"
 #include "RenderVTTCue.h"
 #include "RenderView.h"
 #include "Settings.h"
+#include "TextUtil.h"
 #include <pal/Logging.h>
 #include <wtf/OptionSet.h>
 
-#define ALLOW_FLOATS 1
-#define ALLOW_RTL_FLOATS 1
-#define ALLOW_VERTICAL_FLOATS 1
+#define ALLOW_RUBY 0
+#define ALLOW_RUBY_BASE_AND_TEXT 0
 
 #ifndef NDEBUG
 #define SET_REASON_AND_RETURN_IF_NEEDED(reason, reasons, includeReasons) { \
@@ -88,23 +90,17 @@ namespace LayoutIntegration {
 static void printReason(AvoidanceReason reason, TextStream& stream)
 {
     switch (reason) {
-    case AvoidanceReason::FlowIsInsideANonMultiColumnThread:
-        stream << "flow is inside a non-multicolumn container";
+    case AvoidanceReason::FlowHasMarginTrim:
+        stream << "margin-trim";
         break;
     case AvoidanceReason::ContentIsRuby:
         stream << "ruby";
-        break;
-    case AvoidanceReason::FlowIsPaginated:
-        stream << "paginated";
         break;
     case AvoidanceReason::FlowHasLineClamp:
         stream << "-webkit-line-clamp";
         break;
     case AvoidanceReason::FlowHasNonSupportedChild:
         stream << "unsupported child renderer";
-        break;
-    case AvoidanceReason::FloatIsShapeOutside:
-        stream << "float has shape";
         break;
     case AvoidanceReason::FlowHasUnsupportedWritingMode:
         stream << "unsupported writing mode (vertical-rl/horizontal-bt";
@@ -118,29 +114,17 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
     case AvoidanceReason::FlowTextIsSVGInlineText:
         stream << "SVGInlineText";
         break;
-    case AvoidanceReason::MultiColumnFlowIsNotTopLevel:
-        stream << "non top level column";
-        break;
-    case AvoidanceReason::MultiColumnFlowHasColumnSpanner:
-        stream << "column has spanner";
-        break;
-    case AvoidanceReason::MultiColumnFlowVerticalAlign:
-        stream << "column with vertical-align != baseline";
+    case AvoidanceReason::MultiColumnFlowHasVerticalWritingMode:
+        stream << "column has vertical writing mode";
         break;
     case AvoidanceReason::MultiColumnFlowIsFloating:
         stream << "column with floating objects";
-        break;
-    case AvoidanceReason::FlowDoesNotEstablishInlineFormattingContext:
-        stream << "flow does not establishes inline formatting context";
         break;
     case AvoidanceReason::ChildBoxIsFloatingOrPositioned:
         stream << "child box is floating or positioned";
         break;
     case AvoidanceReason::ContentIsSVG:
         stream << "SVG content";
-        break;
-    case AvoidanceReason::FlowHasInitialLetter:
-        stream << "intial letter";
         break;
     default:
         break;
@@ -260,8 +244,6 @@ static void printModernLineLayoutCoverage(void)
             }
             continue;
         }
-        if (reasons.contains(AvoidanceReason::FlowDoesNotEstablishInlineFormattingContext))
-            continue;
         ++numberOfUnsupportedLeafBlocks;
         unsupportedTextLength += flowLength;
         for (auto reason : reasons) {
@@ -294,8 +276,8 @@ static OptionSet<AvoidanceReason> canUseForStyle(const RenderElement& renderer, 
     OptionSet<AvoidanceReason> reasons;
     if (style.writingMode() == WritingMode::BottomToTop)
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasUnsupportedWritingMode, reasons, includeReasons);
-    if (style.styleType() == PseudoId::FirstLetter && (!style.initialLetter().isEmpty() || style.initialLetterDrop() || style.initialLetterHeight()))
-        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasInitialLetter, reasons, includeReasons);
+    if (!renderer.style().marginTrim().isEmpty())
+        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasMarginTrim, reasons, includeReasons);
     // These are non-standard properties.
     if (style.lineAlign() != LineAlign::None)
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasLineAlignEdges, reasons, includeReasons);
@@ -313,11 +295,16 @@ static OptionSet<AvoidanceReason> canUseForStyle(const RenderElement& renderer, 
     };
     if (auto* ancestor = deprecatedFlexBoxAncestor(); ancestor && !ancestor->style().lineClamp().isNone()) {
         auto isSupportedLineClamp = [&] {
-            for (auto* flexItem = ancestor->firstChild(); flexItem; flexItem = flexItem->nextInFlowSibling()) {
-                if (!is<RenderBlockFlow>(*flexItem))
+            for (auto* child = ancestor->firstChild(); child; child = child->nextInFlowSibling()) {
+                if (!is<RenderBlockFlow>(*child))
                     return false;
                 // No anchor box support either (let's just disable content with links).
-                for (auto* inFlowChild = downcast<RenderBlockFlow>(*flexItem).lastChild(); inFlowChild; inFlowChild = inFlowChild->previousInFlowSibling()) {
+                auto& flexItem = downcast<RenderBlockFlow>(*child);
+                if (flexItem.firstInFlowChild() == flexItem.lastInFlowChild()) {
+                    // Single content does not trigger the anchor box case.
+                    return true;
+                }
+                for (auto* inFlowChild = flexItem.lastInFlowChild(); inFlowChild; inFlowChild = inFlowChild->previousInFlowSibling()) {
                     if (inFlowChild->style().isLink())
                         return false;
                 }
@@ -341,6 +328,11 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderBlockFlow& flow, co
         return reasons;
     }
 
+    if (flow.fragmentedFlowState() != RenderObject::NotInsideFragmentedFlow) {
+        if (child.isFloating() || child.isOutOfFlowPositioned())
+            SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNonSupportedChild, reasons, includeReasons);
+    }
+
     if (is<RenderLineBreak>(child))
         return reasons;
 
@@ -354,27 +346,12 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderBlockFlow& flow, co
     if (renderer.isSVGRootOrLegacySVGRoot())
         SET_REASON_AND_RETURN_IF_NEEDED(ContentIsSVG, reasons, includeReasons);
 
+#if !ALLOW_RUBY
     if (renderer.isRubyRun())
         SET_REASON_AND_RETURN_IF_NEEDED(ContentIsRuby, reasons, includeReasons);
-
+#endif
     if (is<RenderBlockFlow>(renderer) || is<RenderGrid>(renderer) || is<RenderFlexibleBox>(renderer) || is<RenderDeprecatedFlexibleBox>(renderer) || is<RenderReplaced>(renderer) || is<RenderListItem>(renderer) || is<RenderTable>(renderer)) {
         auto isSupportedFloatingOrPositioned = [&] (auto& renderer) {
-#if !ALLOW_FLOATS
-            if (renderer.isFloating())
-                return false;
-#endif
-#if !ALLOW_RTL_FLOATS
-            if (renderer.isFloating() && !renderer.parent()->style().isLeftToRightDirection())
-                return false;
-#endif
-#if !ALLOW_VERTICAL_FLOATS
-            if (renderer.isFloating() && !renderer.parent()->style().isHorizontalWritingMode())
-                return false;
-#endif
-            if (renderer.isFloating() && flow.fragmentedFlowState() != RenderObject::NotInsideFragmentedFlow) {
-                // Floats inside fragmentation need integration support.
-                return false;
-            }
             if (renderer.isOutOfFlowPositioned()) {
                 if (!renderer.parent()->style().isLeftToRightDirection())
                     return false;
@@ -383,8 +360,6 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderBlockFlow& flow, co
             }
             return true;
         };
-        if (style.shapeOutside())
-            SET_REASON_AND_RETURN_IF_NEEDED(FloatIsShapeOutside, reasons, includeReasons)
         if (!isSupportedFloatingOrPositioned(renderer))
             SET_REASON_AND_RETURN_IF_NEEDED(ChildBoxIsFloatingOrPositioned, reasons, includeReasons)
         return reasons;
@@ -396,8 +371,10 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderBlockFlow& flow, co
     if (is<RenderInline>(renderer)) {
         if (renderer.isSVGInline())
             SET_REASON_AND_RETURN_IF_NEEDED(ContentIsSVG, reasons, includeReasons);
+#if !ALLOW_RUBY
         if (renderer.isRubyInline())
             SET_REASON_AND_RETURN_IF_NEEDED(ContentIsRuby, reasons, includeReasons);
+#endif
         auto styleReasons = canUseForStyle(renderer, includeReasons);
         if (styleReasons)
             ADD_REASONS_AND_RETURN_IF_NEEDED(styleReasons, reasons, includeReasons);
@@ -421,43 +398,24 @@ OptionSet<AvoidanceReason> canUseForLineLayoutWithReason(const RenderBlockFlow& 
     // FIXME: For tests that disable SLL and expect to get CLL.
     if (!DeprecatedGlobalSettings::inlineFormattingContextIntegrationEnabled())
         SET_REASON_AND_RETURN_IF_NEEDED(FeatureIsDisabled, reasons, includeReasons);
-    auto establishesInlineFormattingContext = [&] {
-        if (flow.isRenderView()) {
-            // RenderView initiates a block formatting context.
-            return false;
-        }
-        ASSERT(flow.parent());
-        auto* firstInFlowChild = flow.firstInFlowChild();
-        if (!firstInFlowChild) {
-            // Empty block containers do not initiate inline formatting context.
-            return false;
-        }
-        return firstInFlowChild->isInline() || firstInFlowChild->isInlineBlockOrInlineTable();
-    };
-    if (!establishesInlineFormattingContext())
-        SET_REASON_AND_RETURN_IF_NEEDED(FlowDoesNotEstablishInlineFormattingContext, reasons, includeReasons);
+    if (flow.isRenderView())
+        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNonSupportedChild, reasons, includeReasons);
+    if (!flow.firstChild()) {
+        // Non-SVG code does not call into layoutInlineChildren with no children anymore.
+        ASSERT(is<RenderSVGBlock>(flow));
+        SET_REASON_AND_RETURN_IF_NEEDED(ContentIsSVG, reasons, includeReasons);
+    }
     if (flow.fragmentedFlowState() != RenderObject::NotInsideFragmentedFlow) {
-        auto* fragmentedFlow = flow.enclosingFragmentedFlow();
-        if (!is<RenderMultiColumnFlow>(fragmentedFlow))
-            SET_REASON_AND_RETURN_IF_NEEDED(FlowIsInsideANonMultiColumnThread, reasons, includeReasons);
-        auto& columnThread = downcast<RenderMultiColumnFlow>(*fragmentedFlow);
-        if (columnThread.parent() != &flow.view() || !flow.style().isHorizontalWritingMode())
-            SET_REASON_AND_RETURN_IF_NEEDED(MultiColumnFlowIsNotTopLevel, reasons, includeReasons);
-        if (columnThread.hasColumnSpanner())
-            SET_REASON_AND_RETURN_IF_NEEDED(MultiColumnFlowHasColumnSpanner, reasons, includeReasons);
         auto& style = flow.style();
-        if (style.verticalAlign() != VerticalAlign::Baseline)
-            SET_REASON_AND_RETURN_IF_NEEDED(MultiColumnFlowVerticalAlign, reasons, includeReasons);
+        if (!style.isHorizontalWritingMode())
+            SET_REASON_AND_RETURN_IF_NEEDED(MultiColumnFlowHasVerticalWritingMode, reasons, includeReasons);
         if (style.isFloating())
             SET_REASON_AND_RETURN_IF_NEEDED(MultiColumnFlowIsFloating, reasons, includeReasons);
     }
+#if !ALLOW_RUBY || !ALLOW_RUBY_BASE_AND_TEXT
     if (flow.isRubyText() || flow.isRubyBase())
         SET_REASON_AND_RETURN_IF_NEEDED(ContentIsRuby, reasons, includeReasons);
-
-    // Printing does pagination without a flow thread.
-    if (flow.document().paginated())
-        SET_REASON_AND_RETURN_IF_NEEDED(FlowIsPaginated, reasons, includeReasons);
-
+#endif
     for (auto walker = InlineWalker(flow); !walker.atEnd(); walker.advance()) {
         auto& child = *walker.current();
         if (auto childReasons = canUseForChild(flow, child, includeReasons))
@@ -467,15 +425,6 @@ OptionSet<AvoidanceReason> canUseForLineLayoutWithReason(const RenderBlockFlow& 
     if (styleReasons)
         ADD_REASONS_AND_RETURN_IF_NEEDED(styleReasons, reasons, includeReasons);
 
-    if (flow.containsFloats()) {
-        for (auto& floatingObject : *flow.floatingObjectSet()) {
-            ASSERT(floatingObject);
-            // if a float has a shape, we cannot tell if content will need to be shifted until after we lay it out,
-            // since the amount of space is not uniform for the height of the float.
-            if (floatingObject->renderer().shapeOutsideInfo())
-                SET_REASON_AND_RETURN_IF_NEEDED(FloatIsShapeOutside, reasons, includeReasons);
-        }
-    }
     return reasons;
 }
 
@@ -506,6 +455,58 @@ bool canUseForLineLayoutAfterStyleChange(const RenderBlockFlow& blockContainer, 
     }
     ASSERT_NOT_REACHED();
     return canUseForLineLayout(blockContainer);
+}
+
+bool shouldInvalidateLineLayoutPathAfterChangeFor(const RenderBlockFlow& rootBlockContainer, const RenderObject& renderer, const LineLayout& lineLayout, TypeOfChangeForInvalidation typeOfChange)
+{
+    auto isSupportedRenderer = [](auto& renderer) {
+        if (is<RenderText>(renderer))
+            return true;
+        if (is<RenderLineBreak>(renderer)) {
+            // FIXME: Remove after webkit.org/b/254090 is fixed.
+            return !renderer.style().hasOutOfFlowPosition();
+        }
+        return false;
+    };
+    if (!isSupportedRenderer(renderer) || !is<RenderBlockFlow>(renderer.parent()))
+        return true;
+    if (lineLayout.hasOutOfFlowContent())
+        return true;
+    if (lineLayout.contentNeedsVisualReordering() || (is<RenderText>(renderer) && Layout::TextUtil::containsStrongDirectionalityText(downcast<RenderText>(renderer).text()))) {
+        // FIXME: InlineItemsBuilder needs some work to support paragraph level bidi handling.
+        return true;
+    }
+    if (lineLayout.isDamaged()) {
+        // Single mutation only atm.
+        return true;
+    }
+
+    auto rootHasNonSupportedRenderer = [&] {
+        for (auto* sibling = rootBlockContainer.firstChild(); sibling; sibling = sibling->nextSibling()) {
+            if (!isSupportedRenderer(*sibling))
+                return true;
+        }
+        return !canUseForLineLayout(rootBlockContainer);
+    };
+    switch (typeOfChange) {
+    case TypeOfChangeForInvalidation::NodeRemoval:
+        // Last text child?
+        if (!renderer.previousSibling() && !renderer.nextSibling())
+            return true;
+        return rootHasNonSupportedRenderer();
+    case TypeOfChangeForInvalidation::NodeInsertion: {
+        auto contentHasNonSupportedRenderer = rootHasNonSupportedRenderer();
+        if (contentHasNonSupportedRenderer)
+            return true;
+        // Allow text content insert as individual renderers (this is about editing inserting RenderText for each \n)
+        return !renderer.nextSibling() ? false : !is<RenderText>(renderer);
+    }
+    case TypeOfChangeForInvalidation::NodeMutation:
+        return rootHasNonSupportedRenderer();
+    default:
+        ASSERT_NOT_REACHED();
+        return true;
+    }
 }
 
 bool canUseForLineLayoutAfterInlineBoxStyleChange(const RenderInline& renderer, StyleDifference)

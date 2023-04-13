@@ -727,7 +727,7 @@ static void testWebViewSyncRequestOnMaxConns(SyncRequestOnMaxConnsTest* test, gc
 
     for (unsigned i = 0; i < 2; ++i) {
         GUniquePtr<char> xhr(g_strdup_printf("xhr = new XMLHttpRequest; xhr.open('GET', '/sync-request-on-max-conns-xhr%u', false); xhr.send();", i));
-        webkit_web_view_run_javascript(test->m_webView, xhr.get(), nullptr, nullptr, nullptr);
+        webkit_web_view_evaluate_javascript(test->m_webView, xhr.get(), -1, nullptr, nullptr, nullptr, nullptr, nullptr);
     }
 
     // By default sync XHRs have a 10 seconds timeout, we don't want to wait all that so use our own timeout.

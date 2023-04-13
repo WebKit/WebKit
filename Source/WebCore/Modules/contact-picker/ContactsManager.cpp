@@ -32,9 +32,9 @@
 #include "ContactsRequestData.h"
 #include "ContactsSelectOptions.h"
 #include "Document.h"
-#include "Frame.h"
 #include "JSContactInfo.h"
 #include "JSDOMPromiseDeferred.h"
+#include "LocalFrame.h"
 #include "Navigator.h"
 #include "Page.h"
 #include "UserGestureIndicator.h"
@@ -59,7 +59,7 @@ ContactsManager::ContactsManager(Navigator& navigator)
 ContactsManager::~ContactsManager() = default;
 
 
-Frame* ContactsManager::frame() const
+LocalFrame* ContactsManager::frame() const
 {
     return m_navigator ? m_navigator->frame() : nullptr;
 }
@@ -105,8 +105,10 @@ void ContactsManager::select(const Vector<ContactProperty>& properties, const Co
 
     m_contactPickerIsShowing = true;
 
-    frame->page()->chrome().showContactPicker(requestData, [promise = WTFMove(promise), this] (std::optional<Vector<ContactInfo>>&& info) {
-        m_contactPickerIsShowing = false;
+    frame->page()->chrome().showContactPicker(requestData, [promise = WTFMove(promise), weakThis = WeakPtr { *this }] (std::optional<Vector<ContactInfo>>&& info) {
+        if (weakThis)
+            weakThis->m_contactPickerIsShowing = false;
+
         if (info) {
             promise->resolve<IDLSequence<IDLDictionary<ContactInfo>>>(*info);
             return;

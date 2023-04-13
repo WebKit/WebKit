@@ -26,7 +26,7 @@
 #include "config.h"
 #include "JSAbortSignal.h"
 
-#include "WebCoreOpaqueRoot.h"
+#include "WebCoreOpaqueRootInlines.h"
 
 namespace WebCore {
 

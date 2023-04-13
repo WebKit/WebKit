@@ -33,6 +33,7 @@ interface mixin GlobalEventHandlers {
     attribute EventHandler onabort;
     // FIXME: Implement 'onauxclick'.
     // attribute EventHandler onauxclick;
+    attribute EventHandler onbeforetoggle;
     attribute EventHandler onblur;
     attribute EventHandler oncancel;
     attribute EventHandler oncanplay;

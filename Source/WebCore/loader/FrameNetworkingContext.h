@@ -20,7 +20,7 @@
 #pragma once
 
 #include "Document.h"
-#include "Frame.h"
+#include "LocalFrame.h"
 #include "NetworkingContext.h"
 #include "ReferrerPolicy.h"
 
@@ -43,17 +43,17 @@ public:
     }
 
 protected:
-    explicit FrameNetworkingContext(Frame* frame)
+    explicit FrameNetworkingContext(LocalFrame* frame)
         : m_frame(frame)
     {
     }
 
-    Frame* frame() const { return m_frame.get(); }
+    LocalFrame* frame() const { return m_frame.get(); }
 
 private:
     bool isValid() const override { return !!m_frame; }
 
-    WeakPtr<Frame> m_frame;
+    WeakPtr<LocalFrame> m_frame;
 };
 
 }

@@ -209,10 +209,11 @@ bool PropertyCascade::addMatch(const MatchedProperties& matchedProperties, Casca
                 ASSERT(!isValueID(current.value(), CSSValueInherit));
                 continue;
             }
-        } else if (m_includedProperties == IncludedProperties::AfterAnimation) {
+        } else if (m_includedProperties == IncludedProperties::AfterAnimation || m_includedProperties == IncludedProperties::AfterTransition) {
             // We only want to re-apply properties that may depend on animated values, or are overriden by !import.
             if (!shouldApplyAfterAnimation(current))
                 continue;
+            m_animationLayer->overriddenProperties.add(current.id());
         }
 
         auto propertyID = current.id();
@@ -258,7 +259,7 @@ bool PropertyCascade::shouldApplyAfterAnimation(const StyleProperties::PropertyR
     if (isAnimatedProperty) {
         // "Important declarations from all origins take precedence over animations."
         // https://drafts.csswg.org/css-cascade-5/#importance
-        return property.isImportant();
+        return m_includedProperties == IncludedProperties::AfterAnimation && property.isImportant();
     }
 
     // If we are animating custom properties they may affect other properties so we need to re-resolve them.
@@ -266,7 +267,7 @@ bool PropertyCascade::shouldApplyAfterAnimation(const StyleProperties::PropertyR
         // We could check if the we are actually animating the referenced variable. Indirect cases would need to be taken into account.
         if (customProperty && !customProperty->isResolved())
             return true;
-        if (property.value()->isVariableReferenceValue())
+        if (property.value()->hasVariableReferences())
             return true;
     }
 
@@ -369,6 +370,13 @@ void PropertyCascade::sortDeferredPropertyIDs()
     std::sort(begin, end, [&](auto id1, auto id2) {
         return deferredPropertyIndex(id1) < deferredPropertyIndex(id2);
     });
+}
+
+const HashSet<AnimatableProperty> PropertyCascade::overriddenAnimatedProperties() const
+{
+    if (m_animationLayer)
+        return m_animationLayer->overriddenProperties;
+    return { };
 }
 
 }

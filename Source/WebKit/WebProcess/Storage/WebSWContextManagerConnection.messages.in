@@ -33,6 +33,8 @@ messages -> WebSWContextManagerConnection {
     FireActivateEvent(WebCore::ServiceWorkerIdentifier identifier)
     FirePushEvent(WebCore::ServiceWorkerIdentifier identifier, std::optional<IPC::DataReference> data) -> (bool result)
     FireNotificationEvent(WebCore::ServiceWorkerIdentifier identifier, struct WebCore::NotificationData data, enum:bool WebCore::NotificationEventType type) -> (bool result)
+    FireBackgroundFetchEvent(WebCore::ServiceWorkerIdentifier identifier, struct WebCore::BackgroundFetchInformation info) -> (bool result)
+    FireBackgroundFetchClickEvent(WebCore::ServiceWorkerIdentifier identifier, struct WebCore::BackgroundFetchInformation info) -> (bool result)
 
     TerminateWorker(WebCore::ServiceWorkerIdentifier identifier)
 #if ENABLE(SHAREABLE_RESOURCE) && PLATFORM(COCOA)

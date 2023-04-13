@@ -46,7 +46,8 @@ void DocumentFullscreen::exitFullscreen(Document& document, RefPtr<DeferredPromi
 
 void DocumentFullscreen::webkitExitFullscreen(Document& document)
 {
-    document.fullscreenManager().exitFullscreen(nullptr);
+    if (document.fullscreenManager().fullscreenElement())
+        document.fullscreenManager().exitFullscreen(nullptr);
 }
 
 // https://fullscreen.spec.whatwg.org/#dom-document-fullscreenenabled

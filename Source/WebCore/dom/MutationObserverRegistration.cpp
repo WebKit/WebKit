@@ -35,6 +35,7 @@
 #include "Document.h"
 #include "JSNodeCustom.h"
 #include "QualifiedName.h"
+#include "WebCoreOpaqueRootInlines.h"
 
 namespace WebCore {
 

@@ -29,7 +29,7 @@
 
 namespace WebCore {
 
-struct SecurityOriginData;
+class SecurityOriginData;
 
 class DatabaseManagerClient {
 public:

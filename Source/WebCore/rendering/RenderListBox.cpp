@@ -36,15 +36,15 @@
 #include "DocumentInlines.h"
 #include "EventHandler.h"
 #include "FocusController.h"
-#include "Frame.h"
 #include "FrameSelection.h"
-#include "FrameView.h"
 #include "GraphicsContext.h"
 #include "HTMLNames.h"
 #include "HTMLOptionElement.h"
 #include "HTMLOptGroupElement.h"
 #include "HTMLSelectElement.h"
 #include "HitTestResult.h"
+#include "LocalFrame.h"
+#include "LocalFrameView.h"
 #include "NodeRenderStyle.h"
 #include "Page.h"
 #include "PaintInfo.h"
@@ -202,7 +202,7 @@ void RenderListBox::scrollToRevealSelection()
 
 void RenderListBox::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const
 {
-    if (shouldApplySizeContainment()) {
+    if (shouldApplySizeOrInlineSizeContainment()) {
         if (auto width = explicitIntrinsicInnerLogicalWidth())
             maxLogicalWidth = width.value();
         else
@@ -580,7 +580,7 @@ void RenderListBox::panScroll(const IntPoint& panStartMousePosition)
     // If the point is too far from the center we limit the speed
     yDelta = std::max<int>(std::min<int>(yDelta, maxSpeed), -maxSpeed);
     
-    if (abs(yDelta) < iconRadius) // at the center we let the space for the icon
+    if (std::abs(yDelta) < iconRadius) // at the center we let the space for the icon
         return;
 
     if (yDelta > 0)

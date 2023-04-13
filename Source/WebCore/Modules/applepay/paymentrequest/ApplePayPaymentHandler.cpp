@@ -48,7 +48,6 @@
 #include "ApplePayShippingMethodUpdate.h"
 #include "Document.h"
 #include "EventNames.h"
-#include "Frame.h"
 #include "JSApplePayCouponCodeDetails.h"
 #include "JSApplePayError.h"
 #include "JSApplePayPayment.h"
@@ -56,6 +55,7 @@
 #include "JSApplePayRequest.h"
 #include "JSDOMConvert.h"
 #include "LinkIconCollector.h"
+#include "LocalFrame.h"
 #include "MerchantValidationEvent.h"
 #include "Page.h"
 #include "PayerErrorFields.h"
@@ -286,6 +286,10 @@ ExceptionOr<void> ApplePayPaymentHandler::show(Document& document)
 
 #if ENABLE(APPLE_PAY_MULTI_MERCHANT_PAYMENTS)
         request.setMultiTokenContexts(WTFMove(applePayModifier.multiTokenContexts));
+#endif
+
+#if ENABLE(APPLE_PAY_DEFERRED_PAYMENTS)
+        request.setDeferredPaymentRequest(WTFMove(applePayModifier.deferredPaymentRequest));
 #endif
     }
 
@@ -546,6 +550,13 @@ static ExceptionOr<void> validate(const ApplePayModifier& applePayModifier)
     }
 #endif
 
+#if ENABLE(APPLE_PAY_DEFERRED_PAYMENTS)
+    if (const auto& deferredPaymentRequest = applePayModifier.deferredPaymentRequest) {
+        if (auto validity = deferredPaymentRequest->validate(); validity.hasException())
+            return validity.releaseException();
+    }
+#endif
+
     UNUSED_PARAM(applePayModifier);
     return { };
 }
@@ -667,6 +678,10 @@ ExceptionOr<void> ApplePayPaymentHandler::shippingAddressUpdated(Vector<RefPtr<A
 #if ENABLE(APPLE_PAY_MULTI_MERCHANT_PAYMENTS)
         update.newMultiTokenContexts = WTFMove(applePayModifier.multiTokenContexts);
 #endif
+
+#if ENABLE(APPLE_PAY_DEFERRED_PAYMENTS)
+        update.newDeferredPaymentRequest = WTFMove(applePayModifier.deferredPaymentRequest);
+#endif
     }
 
     paymentCoordinator().completeShippingContactSelection(WTFMove(update));
@@ -710,6 +725,10 @@ ExceptionOr<void> ApplePayPaymentHandler::shippingOptionUpdated()
 #if ENABLE(APPLE_PAY_MULTI_MERCHANT_PAYMENTS)
         update.newMultiTokenContexts = WTFMove(applePayModifier.multiTokenContexts);
 #endif
+
+#if ENABLE(APPLE_PAY_DEFERRED_PAYMENTS)
+        update.newDeferredPaymentRequest = WTFMove(applePayModifier.deferredPaymentRequest);
+#endif
     }
 
     paymentCoordinator().completeShippingMethodSelection(WTFMove(update));
@@ -752,6 +771,10 @@ ExceptionOr<void> ApplePayPaymentHandler::paymentMethodUpdated(Vector<RefPtr<App
 
 #if ENABLE(APPLE_PAY_MULTI_MERCHANT_PAYMENTS)
             update.newMultiTokenContexts = WTFMove(applePayModifier.multiTokenContexts);
+#endif
+
+#if ENABLE(APPLE_PAY_DEFERRED_PAYMENTS)
+            update.newDeferredPaymentRequest = WTFMove(applePayModifier.deferredPaymentRequest);
 #endif
         }
 
@@ -798,6 +821,10 @@ ExceptionOr<void> ApplePayPaymentHandler::paymentMethodUpdated(Vector<RefPtr<App
 
 #if ENABLE(APPLE_PAY_MULTI_MERCHANT_PAYMENTS)
         update.newMultiTokenContexts = WTFMove(applePayModifier.multiTokenContexts);
+#endif
+
+#if ENABLE(APPLE_PAY_DEFERRED_PAYMENTS)
+        update.newDeferredPaymentRequest = WTFMove(applePayModifier.deferredPaymentRequest);
 #endif
     }
 

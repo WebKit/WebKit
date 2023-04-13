@@ -36,6 +36,7 @@
 #include "WebView.h"
 #include <WebCore/InspectorFrontendClient.h>
 #include <WebCore/IntRect.h>
+#include <wtf/FileSystem.h>
 
 namespace WebKit {
 
@@ -103,7 +104,6 @@ LRESULT RemoteWebInspectorUIProxy::onClose()
 WebPageProxy* RemoteWebInspectorUIProxy::platformCreateFrontendPageAndWindow()
 {
     RefPtr<WebPreferences> preferences = WebPreferences::create(String(), "WebKit2."_s, "WebKit2."_s);
-    preferences->setAllowFileAccessFromFileURLs(true);
 
 #if ENABLE(DEVELOPER_MODE)
     preferences->setDeveloperExtrasEnabled(true);
@@ -128,12 +128,23 @@ WebPageProxy* RemoteWebInspectorUIProxy::platformCreateFrontendPageAndWindow()
     RECT r;
     ::GetClientRect(m_frontendHandle, &r);
     m_webView = WebView::create(r, pageConfiguration, m_frontendHandle);
-    return m_webView->page();
+
+    auto inspectorPage = m_webView->page();
+    inspectorPage->setURLSchemeHandlerForScheme(InspectorResourceURLSchemeHandler::create(), "inspector-resource"_s);
+
+    return inspectorPage;
+}
+
+void RemoteWebInspectorUIProxy::platformSave(Vector<WebCore::InspectorFrontendClient::SaveData>&& saveDatas, bool /* forceSaveAs */)
+{
+    // Currently, file saving is only possible with SaveMode::SingleFile.
+    // This is determined in RemoteWebInspectorUI::canSave().
+    ASSERT(saveDatas.size() == 1);
+    WebInspectorUIProxy::showSavePanelForSingleFile(m_frontendHandle, WTFMove(saveDatas));
 }
 
 void RemoteWebInspectorUIProxy::platformResetState() { }
 void RemoteWebInspectorUIProxy::platformBringToFront() { }
-void RemoteWebInspectorUIProxy::platformSave(Vector<WebCore::InspectorFrontendClient::SaveData>&&, bool /* forceSaveAs */) { }
 void RemoteWebInspectorUIProxy::platformLoad(const String&, CompletionHandler<void(const String&)>&& completionHandler) { completionHandler(nullString()); }
 void RemoteWebInspectorUIProxy::platformPickColorFromScreen(CompletionHandler<void(const std::optional<WebCore::Color>&)>&& completionHandler) { completionHandler({ }); }
 void RemoteWebInspectorUIProxy::platformSetSheetRect(const WebCore::FloatRect&) { }

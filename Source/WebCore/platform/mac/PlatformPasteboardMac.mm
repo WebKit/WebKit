@@ -448,7 +448,7 @@ static NSPasteboardType modernPasteboardTypeForWebSafeMIMEType(const String& web
     return nil;
 }
 
-enum class ContainsFileURL { No, Yes };
+enum class ContainsFileURL : bool { No, Yes };
 static String webSafeMIMETypeForModernPasteboardType(NSPasteboardType platformType, ContainsFileURL containsFileURL)
 {
     if ([platformType isEqual:NSPasteboardTypeString] && containsFileURL == ContainsFileURL::No)

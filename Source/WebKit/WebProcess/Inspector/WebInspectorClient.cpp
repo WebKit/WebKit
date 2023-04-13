@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2014, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,8 +30,9 @@
 #include "WebInspector.h"
 #include "WebPage.h"
 #include <WebCore/Animation.h>
-#include <WebCore/Frame.h>
+#include <WebCore/GraphicsLayer.h>
 #include <WebCore/InspectorController.h>
+#include <WebCore/LocalFrame.h>
 #include <WebCore/Page.h>
 #include <WebCore/PageOverlayController.h>
 #include <WebCore/Settings.h>
@@ -81,8 +82,6 @@ void WebInspectorClient::inspectedPageDestroyed()
 {
     if (WebInspector* inspector = m_page->inspector(WebPage::LazyCreationPolicy::UseExistingOnly))
         inspector->close();
-
-    delete this;
 }
 
 void WebInspectorClient::frontendCountChanged(unsigned count)
@@ -103,7 +102,7 @@ void WebInspectorClient::bringFrontendToFront()
         m_page->inspector()->bringToFront();
 }
 
-void WebInspectorClient::didResizeMainFrame(Frame*)
+void WebInspectorClient::didResizeMainFrame(LocalFrame*)
 {
     if (m_page->inspector())
         m_page->inspector()->updateDockingAvailability();

@@ -35,9 +35,9 @@ messages -> WebSWServerConnection NotRefCounted {
 
     DidResolveRegistrationPromise(WebCore::ServiceWorkerRegistrationKey key)
 
-    MatchRegistration(struct WebCore::SecurityOriginData topOrigin, URL clientURL) -> (std::optional<WebCore::ServiceWorkerRegistrationData> registration)
-    WhenRegistrationReady(struct WebCore::SecurityOriginData topOrigin, URL clientURL) -> (std::optional<WebCore::ServiceWorkerRegistrationData> registration)
-    GetRegistrations(struct WebCore::SecurityOriginData topOrigin, URL clientURL) -> (Vector<WebCore::ServiceWorkerRegistrationData> registrations)
+    MatchRegistration(WebCore::SecurityOriginData topOrigin, URL clientURL) -> (std::optional<WebCore::ServiceWorkerRegistrationData> registration)
+    WhenRegistrationReady(WebCore::SecurityOriginData topOrigin, URL clientURL) -> (std::optional<WebCore::ServiceWorkerRegistrationData> registration)
+    GetRegistrations(WebCore::SecurityOriginData topOrigin, URL clientURL) -> (Vector<WebCore::ServiceWorkerRegistrationData> registrations)
     RegisterServiceWorkerClient(struct WebCore::ClientOrigin clientOrigin, struct WebCore::ServiceWorkerClientData data, std::optional<WebCore::ServiceWorkerRegistrationIdentifier> controllingServiceWorkerRegistrationIdentifier, String userAgent)
     UnregisterServiceWorkerClient(WebCore::ScriptExecutionContextIdentifier identifier)
 
@@ -56,6 +56,14 @@ messages -> WebSWServerConnection NotRefCounted {
     DisableNavigationPreload(WebCore::ServiceWorkerRegistrationIdentifier identifier) -> (std::optional<WebCore::ExceptionData> result)
     SetNavigationPreloadHeaderValue(WebCore::ServiceWorkerRegistrationIdentifier identifier, String value) -> (std::optional<WebCore::ExceptionData> result)
     GetNavigationPreloadState(WebCore::ServiceWorkerRegistrationIdentifier identifier) -> (Expected<WebCore::NavigationPreloadState, WebCore::ExceptionData> result)
-}
 
+    StartBackgroundFetch(WebCore::ServiceWorkerRegistrationIdentifier registrationIdentifier, String backgroundFetchIdentifier, Vector<WebCore::BackgroundFetchRequest> requests, struct WebCore::BackgroundFetchOptions options) -> (Expected<WebCore::BackgroundFetchInformation, WebCore::ExceptionData> result)
+    BackgroundFetchInformation(WebCore::ServiceWorkerRegistrationIdentifier registrationIdentifier, String backgroundFetchIdentifier) -> (Expected<WebCore::BackgroundFetchInformation, WebCore::ExceptionData> result)
+    BackgroundFetchIdentifiers(WebCore::ServiceWorkerRegistrationIdentifier registrationIdentifier) -> (Vector<String> result)
+
+    AbortBackgroundFetch(WebCore::ServiceWorkerRegistrationIdentifier registrationIdentifier, String backgroundFetchIdentifier) -> (bool result)
+    MatchBackgroundFetch(WebCore::ServiceWorkerRegistrationIdentifier registrationIdentifier, String backgroundFetchIdentifier, struct WebCore::RetrieveRecordsOptions options) -> (Vector<WebCore::BackgroundFetchRecordInformation> results)
+    RetrieveRecordResponse(WebCore::BackgroundFetchRecordIdentifier recordIdentifier) -> (Expected<WebCore::ResourceResponse, WebCore::ExceptionData> result)
+    RetrieveRecordResponseBody(WebCore::BackgroundFetchRecordIdentifier recordIdentifier, WebKit::RetrieveRecordResponseBodyCallbackIdentifier callbackIdentifier)
+}
 #endif // ENABLE(SERVICE_WORKER)

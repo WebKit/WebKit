@@ -33,16 +33,16 @@ layer at (20,20) size 644x433
           RenderIFrame {IFRAME} at (0,0) size 0x0
             layer at (0,0) size 1x1
               RenderView at (0,0) size 0x0
-            layer at (0,0) size 0x1
-              RenderBlock {HTML} at (0,0) size 0x1
-                RenderBody {BODY} at (0,0) size 0x1
+            layer at (0,0) size 0x0
+              RenderBlock {HTML} at (0,0) size 0x0
+                RenderBody {BODY} at (0,0) size 0x0
                   RenderImage {IMG} at (0,0) size 1x1
           RenderIFrame {IFRAME} at (0,0) size 0x0
-            layer at (0,0) size 16x2166
+            layer at (0,0) size 16x2171
               RenderView at (0,0) size 0x0
-            layer at (0,0) size 0x2166
-              RenderBlock {HTML} at (0,0) size 0x2166
-                RenderBody {BODY} at (8,8) size 0x2145
+            layer at (0,0) size 0x2171
+              RenderBlock {HTML} at (0,0) size 0x2171
+                RenderBody {BODY} at (8,13) size 0x2145
                   RenderBlock {PRE} at (0,0) size 0x2145
                     RenderText {#text} at (0,0) size 8x2145
                       text run at (0,0) width 8: "<"
@@ -205,12 +205,12 @@ layer at (20,20) size 644x433
         RenderInline {MAP} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (41,334) size 582x98 [color=#808080]
-        RenderText {#text} at (0,1) size 116x17
-          text run at (0,1) width 116: "To pass the test,"
+        RenderText {#text} at (0,1) size 115x17
+          text run at (0,1) width 115: "To pass the test,"
         RenderBlock (floating) {SPAN} at (562,0) size 20x20 [bgcolor=#FFFFFF]
-        RenderText {#text} at (116,1) size 562x55
-          text run at (116,1) width 446: " a browser must use its default settings, the animation has to be"
-          text run at (0,20) width 561: "smooth, the score has to end on 100/100, and the final page has to look exactly,"
+        RenderText {#text} at (114,1) size 561x55
+          text run at (114,1) width 447: " a browser must use its default settings, the animation has to be"
+          text run at (0,20) width 560: "smooth, the score has to end on 100/100, and the final page has to look exactly,"
           text run at (0,39) width 131: "pixel for pixel, like "
         RenderInline {A} at (0,0) size 168x17 [color=#0000FF]
           RenderText {#text} at (131,39) size 168x17
@@ -235,7 +235,7 @@ layer at (638,18) size 20x20
   RenderBlock (positioned) at (638,18) size 20x20 [color=#FFFFFF] [bgcolor=#FF00FF]
     RenderText at (0,0) size 20x20
       text run at (0,0) width 20: "X"
-layer at (10,10) size 84x45
-  RenderBlock (positioned) {DIV} at (10,10) size 84x45 [color=#00000000]
-    RenderText {#text} at (0,0) size 84x44
-      text run at (0,0) width 84: "FAIL"
+layer at (10,10) size 82x45
+  RenderBlock (positioned) {DIV} at (10,10) size 82x45 [color=#00000000]
+    RenderText {#text} at (0,0) size 82x44
+      text run at (0,0) width 82: "FAIL"

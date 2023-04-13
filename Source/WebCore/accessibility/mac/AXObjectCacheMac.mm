@@ -103,10 +103,6 @@
 #define NSAccessibilityTextChangeElement @"AXTextChangeElement"
 #endif
 
-#ifndef NSAccessibilitySelectedTextMarkerRangeAttribute
-#define NSAccessibilitySelectedTextMarkerRangeAttribute @"AXSelectedTextMarkerRange"
-#endif
-
 #ifndef kAXDraggingSourceDragBeganNotification
 #define kAXDraggingSourceDragBeganNotification CFSTR("AXDraggingSourceDragBegan")
 #endif
@@ -509,7 +505,7 @@ void AXObjectCache::postTextStateChangePlatformNotification(AXCoreObject* object
     }
     if (!selection.isNone()) {
         if (auto textMarkerRange = textMarkerRangeFromVisiblePositions(this, selection.visibleStart(), selection.visibleEnd()))
-            [userInfo setObject:(id)textMarkerRange forKey:NSAccessibilitySelectedTextMarkerRangeAttribute];
+            [userInfo setObject:(id)textMarkerRange forKey:AXSelectedTextMarkerRangeAttribute];
     }
 
     if (id wrapper = object->wrapper()) {
@@ -526,12 +522,13 @@ void AXObjectCache::postTextStateChangePlatformNotification(AXCoreObject* object
     }
 }
 
-static void addTextMarkerFor(NSMutableDictionary* change, AXCoreObject& object, const VisiblePosition& position)
+static void addTextMarkerFor(NSMutableDictionary *change, AXCoreObject& object, const VisiblePosition& position)
 {
     if (position.isNull())
         return;
-    if (id textMarker = [object.wrapper() textMarkerForVisiblePosition:position])
-        [change setObject:textMarker forKey:NSAccessibilityTextChangeValueStartMarker];
+
+    if (RetainPtr marker = textMarkerForVisiblePosition(object.axObjectCache(), position))
+        [change setObject:(__bridge id)marker.get() forKey:NSAccessibilityTextChangeValueStartMarker];
 }
 
 static void addTextMarkerFor(NSMutableDictionary* change, AXCoreObject& object, HTMLTextFormControlElement& textControl)
@@ -661,7 +658,8 @@ bool AXObjectCache::clientSupportsIsolatedTree()
 {
     auto client = _AXGetClientForCurrentRequestUntrusted();
     return client == kAXClientTypeVoiceOver
-        || UNLIKELY(client == kAXClientTypeWebKitTesting);
+        || UNLIKELY(client == kAXClientTypeWebKitTesting
+        || client == kAXClientTypeXCTest);
 }
 
 bool AXObjectCache::isIsolatedTreeEnabled()

@@ -1,0 +1,92 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="div-above-table"></div>
+
+<div id="table-wrapper" role="group">
+    <table id="table" align="center" border="1" cellpadding="5" cellspacing="0">
+        <caption id="caption"> Example #1: Nested Stubs </caption>
+        <tr id="row1">
+            <th class="center" colspan="2" rowspan="2">Ruritanian<br> Population
+            <br>Survey</th>
+
+            <th class="center" rowspan="2">All<br> Ages</th>
+            <th class="center" colspan="2">By Age</th>
+        </tr>
+        <tr id="row2">
+            <th class="center">Greater than or equal to 40</th>
+            <th class="center">Less than 40</th>
+        </tr>
+        <tr id="row3">
+            <th align="left" rowspan="2">All Regions</th>
+            <th>North</th>
+            <td align="right">3333</td>
+            <td align="right">1111</td>
+            <td align="right">2222</td>
+        </tr>
+        <tr id="row4">
+            <th>South</th>
+            <td align="right">3333</td>
+            <td align="right">1111</td>
+            <td align="right">2222</td>
+        </tr>
+        <tr id="row5">
+            <th>Foo</th>
+            <td align="right">3333</td>
+            <td align="right" colspan="2">1111</td>
+            <td align="right">2222</td>
+        </tr>
+    </table>
+</div>
+
+<script>
+window.jsTestIsAsync = true;
+var output = "This test ensures we compute the relative frame of table objects correctly.\n\n";
+
+function traverseTableContent() {
+    const tableWrapper = accessibilityController.accessibleElementById("table-wrapper");
+
+    let searchResult = null;
+    while (true) {
+        searchResult = tableWrapper.uiElementForSearchPredicate(searchResult, true, "AXAnyTypeSearchKey", "", false);
+        if (!searchResult)
+            break;
+
+        const role = searchResult.role;
+        let id = `#${searchResult.domIdentifier}`;
+        if (role.includes("StaticText")) {
+            // StaticText cannot have a DOM id, so "identify" it by its text content instead.
+            id = searchResult.stringValue;
+        }
+        output += `\n{ ${role}${id && id !== "#" ? ` ${id}` : ''} } has AXRelativeFrame: ${searchResult.stringDescriptionOfAttributeValue("AXRelativeFrame")}\n`;
+    }
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    const initialRowOneRelativeFrame = accessibilityController.accessibleElementById("row1").stringDescriptionOfAttributeValue("AXRelativeFrame");
+    traverseTableContent();
+
+    setTimeout(async () => {
+        output += "\nMoving the table down by 3000px and scrolling down 500px.\n"
+
+        document.getElementById("div-above-table").style.marginBottom = "3000px";
+        window.scrollBy(0, 500);
+        await waitFor(() => initialRowOneRelativeFrame !== accessibilityController.accessibleElementById("row1").stringDescriptionOfAttributeValue("AXRelativeFrame"));
+
+        traverseTableContent();
+
+        debug(output);
+        finishJSTest();
+    });
+}
+</script>
+</body>
+</html>
+

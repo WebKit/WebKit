@@ -44,6 +44,7 @@ namespace WebKit {
 
 namespace WebGPU {
 class ObjectHeap;
+struct CanvasConfiguration;
 }
 
 class RemotePresentationContext final : public IPC::StreamMessageReceiver {
@@ -72,14 +73,10 @@ private:
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 
-    void configure(const WebGPU::PresentationConfiguration&);
+    void configure(const WebGPU::CanvasConfiguration&);
     void unconfigure();
 
     void getCurrentTexture(WebGPUIdentifier);
-
-#if PLATFORM(COCOA)
-    void prepareForDisplay(CompletionHandler<void(WTF::MachSendRight&&)>&&);
-#endif
 
     Ref<PAL::WebGPU::PresentationContext> m_backing;
     WebGPU::ObjectHeap& m_objectHeap;

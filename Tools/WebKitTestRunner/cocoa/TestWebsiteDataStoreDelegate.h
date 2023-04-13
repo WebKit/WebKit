@@ -24,13 +24,25 @@
  */
 
 #import <WebKit/_WKWebsiteDataStoreDelegate.h>
+#import <wtf/RetainPtr.h>
 
 @interface TestWebsiteDataStoreDelegate: NSObject <_WKWebsiteDataStoreDelegate> {
 @private
     BOOL _shouldAllowRaisingQuota;
     BOOL _shouldAllowAnySSLCertificate;
+    BOOL _shouldAllowBackgroundFetchPermission;
+    RetainPtr<NSString> _lastAddedBackgroundFetchIdentifier;
+    RetainPtr<NSString> _lastRemovedBackgroundFetchIdentifier;
+    RetainPtr<NSString> _lastUpdatedBackgroundFetchIdentifier;
+
+    NSUInteger _quota;
 }
 - (instancetype)init;
 - (void)setAllowRaisingQuota:(BOOL)shouldAllowRaisingQuota;
+- (void)setQuota:(NSUInteger)quota;
 - (void)setAllowAnySSLCertificate:(BOOL)shouldAllowAnySSLCertificate;
+- (void)setBackgroundFetchPermission:(BOOL)shouldAllowBackgroundFetchPermission;
+- (NSString*)lastAddedBackgroundFetchIdentifier;
+- (NSString*)lastRemovedBackgroundFetchIdentifier;
+- (NSString*)lastUpdatedBackgroundFetchIdentifier;
 @end

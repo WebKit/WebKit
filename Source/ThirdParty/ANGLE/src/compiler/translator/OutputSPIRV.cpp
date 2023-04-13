@@ -450,6 +450,7 @@ spv::StorageClass GetStorageClass(const TType &type, GLenum shaderType)
         case EvqLocalInvocationIndex:
         case EvqViewIDOVR:
         case EvqLayerIn:
+        case EvqLastFragColor:
             return spv::StorageClassInput;
 
         case EvqPosition:
@@ -551,6 +552,20 @@ spirv::IdRef OutputSPIRVTraverser::getSymbolIdAndStorageClass(const TSymbol *sym
             name              = "gl_FragDepth";
             builtInDecoration = spv::BuiltInFragDepth;
             mBuilder.addExecutionMode(spv::ExecutionModeDepthReplacing);
+            switch (type.getLayoutQualifier().depth)
+            {
+                case EdGreater:
+                    mBuilder.addExecutionMode(spv::ExecutionModeDepthGreater);
+                    break;
+                case EdLess:
+                    mBuilder.addExecutionMode(spv::ExecutionModeDepthLess);
+                    break;
+                case EdUnchanged:
+                    mBuilder.addExecutionMode(spv::ExecutionModeDepthUnchanged);
+                    break;
+                default:
+                    break;
+            }
             break;
         case EvqSampleMask:
             name              = "gl_SampleMask";
@@ -671,7 +686,7 @@ spirv::IdRef OutputSPIRVTraverser::getSymbolIdAndStorageClass(const TSymbol *sym
 
     const spirv::IdRef typeId = mBuilder.getTypeData(type, {}).id;
     const spirv::IdRef varId  = mBuilder.declareVariable(
-         typeId, *storageClass, mBuilder.getDecorations(type), nullptr, name);
+        typeId, *storageClass, mBuilder.getDecorations(type), nullptr, name);
 
     mBuilder.addEntryPointInterfaceVariableId(varId);
     spirv::WriteDecorate(mBuilder.getSpirvDecorations(), varId, spv::DecorationBuiltIn,
@@ -1758,7 +1773,7 @@ spirv::IdRef OutputSPIRVTraverser::createConstructorMatrixFromMatrix(
         const bool needsSwizzle           = parameterType.getRows() > type.getRows();
         spirv::LiteralIntegerList swizzle = {spirv::LiteralInteger(0), spirv::LiteralInteger(1),
                                              spirv::LiteralInteger(2), spirv::LiteralInteger(3)};
-        swizzle.resize(type.getRows());
+        swizzle.resize_down(type.getRows());
 
         for (uint8_t columnIndex = 0; columnIndex < type.getCols(); ++columnIndex)
         {
@@ -5867,7 +5882,8 @@ bool OutputSPIRVTraverser::visitDeclaration(Visit visit, TIntermDeclaration *nod
     }
 
     // Skip redeclaration of builtins.  They will correctly declare as built-in on first use.
-    if (mInGlobalScope && (qualifier == EvqClipDistance || qualifier == EvqCullDistance))
+    if (mInGlobalScope &&
+        (qualifier == EvqClipDistance || qualifier == EvqCullDistance || qualifier == EvqFragDepth))
     {
         return false;
     }
@@ -6040,6 +6056,16 @@ bool OutputSPIRVTraverser::visitDeclaration(Visit visit, TIntermDeclaration *nod
         const spv::Decoration decoration =
             type.getQualifier() == EvqUniform ? spv::DecorationBlock : spv::DecorationBufferBlock;
         spirv::WriteDecorate(mBuilder.getSpirvDecorations(), nonArrayTypeId, decoration, {});
+
+        if (type.getQualifier() == EvqBuffer && !memoryQualifier.restrictQualifier &&
+            mCompileOptions.aliasedSSBOUnlessRestrict)
+        {
+            // Temporary workaround for issuetracker.google.com/266235549
+            // If GLSL does not specify the SSBO has restrict memory qualifier, assume the memory
+            // qualifier is aliased
+            spirv::WriteDecorate(mBuilder.getSpirvDecorations(), variableId, spv::DecorationAliased,
+                                 {});
+        }
     }
 
     // Write DescriptorSet, Binding, Location etc decorations if necessary.

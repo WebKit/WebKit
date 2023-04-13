@@ -21,6 +21,7 @@
 #include "WebKitInjectedBundleClient.h"
 
 #include "APIInjectedBundleClient.h"
+#include "APIString.h"
 #include "WebImage.h"
 #include "WebKitPrivate.h"
 #include "WebKitURIRequestPrivate.h"
@@ -43,7 +44,7 @@ public:
 private:
     RefPtr<API::Object> getInjectedBundleInitializationUserData(WebProcessPool&) override
     {
-        GRefPtr<GVariant> data = webkitWebContextInitializeWebExtensions(m_webContext);
+        GRefPtr<GVariant> data = webkitWebContextInitializeWebProcessExtensions(m_webContext);
         GUniquePtr<gchar> dataString(g_variant_print(data.get(), TRUE));
         return API::String::create(String::fromUTF8(dataString.get()));
     }

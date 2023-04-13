@@ -1,0 +1,28 @@
+line1line2
+line1
+line2
+line1line2
+line1line2
+line1line2
+
+FAIL no separator - move down assert_equals: Caret is in line 1 expected Text node "line1line2" but got null
+FAIL no separator - move up assert_equals: Caret is in line 2 expected Text node "line1line2" but got null
+FAIL no separator - move right assert_equals: Caret is in line 1 expected Text node "line1line2" but got null
+FAIL no separator - move left assert_equals: Caret is in line 2 expected Text node "line1line2" but got null
+FAIL <br> separator - move down assert_equals: Caret is in line 1 expected Text node "line1" but got null
+FAIL <br> separator - move up assert_equals: Caret is in line 2 expected Text node "line2" but got null
+FAIL <br> separator - move right assert_equals: Caret is in line 1 expected Text node "line1" but got Text node "line1line2"
+FAIL <br> separator - move left assert_equals: Caret is in line 2 expected Text node "line2" but got Text node "line1line2"
+FAIL <wbr> separator - move down assert_equals: Caret is in line 1 expected Text node "line1" but got Text node "line1line2"
+FAIL <wbr> separator - move up assert_equals: Caret is in line 2 expected Text node "line2" but got Text node "line1line2"
+FAIL <wbr> separator - move right assert_equals: Caret is in line 1 expected Text node "line1" but got Text node "line2"
+FAIL <wbr> separator - move left assert_equals: Caret is in line 2 expected Text node "line2" but got Text node "line2"
+FAIL <span> separator - move down assert_equals: Caret is in line 1 expected Text node "line1" but got Text node "line2"
+FAIL <span> separator - move up assert_equals: Caret is in line 2 expected Text node "line2" but got Text node "line2"
+FAIL <span> separator - move right assert_equals: Caret is in line 1 expected Text node "line1" but got Text node "line2"
+FAIL <span> separator - move left assert_equals: Caret is in line 2 expected Text node "line2" but got Text node "line2"
+FAIL two <span> separators - move down assert_equals: Caret is in line 1 expected Text node "line1" but got Text node "line2"
+FAIL two <span> separators - move up assert_equals: Caret is in line 2 expected Text node "line2" but got Text node "line2"
+FAIL two <span> separators - move right assert_equals: Caret is in line 1 expected Text node "line1" but got Text node "line2"
+FAIL two <span> separators - move left assert_equals: Caret is in line 2 expected Text node "line2" but got Text node "line2"
+

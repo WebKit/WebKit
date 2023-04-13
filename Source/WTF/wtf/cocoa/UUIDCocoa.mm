@@ -35,11 +35,14 @@ UUID::operator NSUUID *() const
     return [[NSUUID alloc] initWithUUIDString:toString()];
 }
 
-// Use string instead of bytes to avoid consideration of endianess (NSUUID stores UUID as array of bytes,
-// and we store UUID as UInt128).
-UUID::UUID(NSUUID * nsUUID)
-    : UUID(*parse(String([nsUUID UUIDString])))
+std::optional<UUID> UUID::fromNSUUID(NSUUID *nsUUID)
 {
+    if (!nsUUID)
+        return std::nullopt;
+
+    // Use string instead of bytes to avoid consideration of endianess (NSUUID stores UUID as array of bytes,
+    // and we store UUID as UInt128).
+    return parse(String([nsUUID UUIDString]));
 }
 
 }

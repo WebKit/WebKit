@@ -111,11 +111,22 @@ def get_channels(format_id):
 
 def get_bits(format_id):
     bits = {}
-    tokens = get_channel_tokens(format_id)
-    if len(tokens) == 0:
-        return None
-    for token in tokens:
-        bits[token[0]] = int(token[1:])
+    if "_RED_" in format_id:
+        # BC4
+        bits["R"] = 16
+    elif "_RG_" in format_id:
+        # BC5
+        bits["R"] = bits["G"] = 16
+    elif "_RGB_" in format_id:
+        # BC1-3, BC6H, PVRTC
+        bits["R"] = bits["G"] = bits["B"] = 16 if "BC6H" in format_id else 8
+    elif "_RGBA_" in format_id or "ASTC_" in format_id:
+        # ASTC, BC7, PVRTC
+        bits["R"] = bits["G"] = bits["B"] = bits["A"] = 8
+    else:
+        tokens = get_channel_tokens(format_id)
+        for token in tokens:
+            bits[token[0]] = int(token[1:])
     return bits
 
 
@@ -190,7 +201,7 @@ def get_internal_format_initializer(internal_format, format_id):
     elif component_type == 'unorm' and bits['R'] == 8:
         return 'Initialize4ComponentData<GLubyte, 0x00, 0x00, 0x00, 0xFF>'
     elif component_type == 'unorm' and bits['R'] == 16:
-        return 'Initialize4ComponentData<GLubyte, 0x0000, 0x0000, 0x0000, 0xFFFF>'
+        return 'Initialize4ComponentData<GLushort, 0x0000, 0x0000, 0x0000, 0xFFFF>'
     elif component_type == 'int' and bits['R'] == 8:
         return 'Initialize4ComponentData<GLbyte, 0x00, 0x00, 0x00, 0x01>'
     elif component_type == 'snorm' and bits['R'] == 8:

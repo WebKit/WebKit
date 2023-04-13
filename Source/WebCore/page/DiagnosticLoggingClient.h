@@ -26,7 +26,6 @@
 #pragma once
 
 #include "DiagnosticLoggingDomain.h"
-#include "DiagnosticLoggingResultType.h"
 #include <variant>
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/FastMalloc.h>
@@ -35,7 +34,15 @@
 
 namespace WebCore {
 
+enum DiagnosticLoggingResultType : uint8_t;
 enum class ShouldSample : bool { No, Yes };
+
+struct DiagnosticLoggingDictionary {
+    using Payload = std::variant<String, uint64_t, int64_t, bool, double>;
+    using Dictionary = HashMap<String, Payload>;
+    Dictionary dictionary;
+    void set(String key, Payload value) { dictionary.set(WTFMove(key), WTFMove(value)); }
+};
 
 class DiagnosticLoggingClient {
     WTF_MAKE_FAST_ALLOCATED;
@@ -45,8 +52,8 @@ public:
     virtual void logDiagnosticMessageWithValue(const String& message, const String& description, double value, unsigned significantFigures, ShouldSample) = 0;
     virtual void logDiagnosticMessageWithEnhancedPrivacy(const String& message, const String& description, ShouldSample) = 0;
 
-    using ValuePayload = std::variant<String, uint64_t, int64_t, bool, double>;
-    using ValueDictionary = HashMap<String, ValuePayload>;
+    using ValuePayload = DiagnosticLoggingDictionary::Payload;
+    using ValueDictionary = DiagnosticLoggingDictionary;
 
     virtual void logDiagnosticMessageWithValueDictionary(const String& message, const String& description, const ValueDictionary&, ShouldSample) = 0;
     virtual void logDiagnosticMessageWithDomain(const String& message, DiagnosticLoggingDomain) = 0;

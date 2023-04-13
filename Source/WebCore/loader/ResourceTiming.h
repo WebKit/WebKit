@@ -55,6 +55,7 @@ public:
     ResourceTiming isolatedCopy() const &;
     ResourceTiming isolatedCopy() &&;
 
+    void updateExposure(const SecurityOrigin&);
     void overrideInitiatorType(const String& type) { m_initiatorType = type; }
     bool isLoadedFromServiceWorker() const { return m_isLoadedFromServiceWorker; }
 

@@ -28,6 +28,7 @@
 #if ENABLE(APPLE_PAY)
 
 #include "ApplePayInstallmentConfigurationWebCore.h"
+#include "ApplePayLaterMode.h"
 #include "ApplePayLineItem.h"
 #include "ApplePaySetupConfiguration.h"
 #include "ApplePayShippingContactEditingMode.h"
@@ -47,8 +48,10 @@ struct ApplePayDetailsUpdateBase;
 struct ApplePayPaymentMethod;
 
 class MockPaymentCoordinator final : public PaymentCoordinatorClient {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit MockPaymentCoordinator(Page&);
+    ~MockPaymentCoordinator();
 
     void setCanMakePayments(bool canMakePayments) { m_canMakePayments = canMakePayments; }
     void setCanMakePaymentsWithActiveCard(bool canMakePaymentsWithActiveCard) { m_canMakePaymentsWithActiveCard = canMakePaymentsWithActiveCard; }
@@ -96,11 +99,19 @@ public:
     const std::optional<Vector<ApplePayPaymentTokenContext>>& multiTokenContexts() const { return m_multiTokenContexts; }
 #endif
 
+#if ENABLE(APPLE_PAY_DEFERRED_PAYMENTS)
+    const std::optional<ApplePayDeferredPaymentRequest>& deferredPaymentRequest() const { return m_deferredPaymentRequest; }
+#endif
+
+#if ENABLE(APPLE_PAY_LATER_MODE)
+    const std::optional<ApplePayLaterMode> applePayLaterMode() const { return m_applePayLaterMode; }
+#endif
+
     void ref() const { }
     void deref() const { }
 
 private:
-    std::optional<String> validatedPaymentNetwork(const String&) final;
+    std::optional<String> validatedPaymentNetwork(const String&) const final;
     bool canMakePayments() final;
     void canMakePaymentsWithActiveCard(const String&, const String&, CompletionHandler<void(bool)>&&) final;
     void openPaymentSetup(const String&, const String&, CompletionHandler<void(bool)>&&) final;
@@ -115,7 +126,6 @@ private:
     void completePaymentSession(ApplePayPaymentAuthorizationResult&&) final;
     void abortPaymentSession() final;
     void cancelPaymentSession() final;
-    void paymentCoordinatorDestroyed() final;
 
     bool isMockPaymentCoordinator() const final { return true; }
 
@@ -158,6 +168,14 @@ private:
 
 #if ENABLE(APPLE_PAY_MULTI_MERCHANT_PAYMENTS)
     std::optional<Vector<ApplePayPaymentTokenContext>> m_multiTokenContexts;
+#endif
+
+#if ENABLE(APPLE_PAY_DEFERRED_PAYMENTS)
+    std::optional<ApplePayDeferredPaymentRequest> m_deferredPaymentRequest;
+#endif
+
+#if ENABLE(APPLE_PAY_LATER_MODE)
+    std::optional<ApplePayLaterMode> m_applePayLaterMode;
 #endif
 };
 

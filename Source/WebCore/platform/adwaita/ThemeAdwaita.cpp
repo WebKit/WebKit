@@ -26,6 +26,8 @@
 #include "config.h"
 #include "ThemeAdwaita.h"
 
+#if USE(THEME_ADWAITA)
+
 #include "Color.h"
 #include "ColorBlending.h"
 #include "ControlStates.h"
@@ -546,3 +548,5 @@ Color ThemeAdwaita::accentColor()
 }
 
 } // namespace WebCore
+
+#endif // USE(THEME_ADWAITA)

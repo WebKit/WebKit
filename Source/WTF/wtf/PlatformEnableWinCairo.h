@@ -32,16 +32,12 @@
 #error "Please #include <wtf/Platform.h> instead of this file directly."
 #endif
 
-#if !PLATFORM(WIN_CAIRO)
-#error "This file should only be included when building the Windows CAIRO port."
+#if !PLATFORM(WIN)
+#error "This file should only be included when building the Windows port."
 #endif
 
 
-/* --------- Windows CAIRO port --------- */
-
-/* PLATFORM(WIN_CAIRO) is a specialization of PLATFORM(WIN). */
-/* PLATFORM(WIN) is always enabled when PLATFORM(WIN_CAIRO) is enabled. */
-
+/* --------- Windows port --------- */
 
 #if !defined(ENABLE_WEB_ARCHIVE)
 #define ENABLE_WEB_ARCHIVE 1

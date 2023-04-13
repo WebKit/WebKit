@@ -53,6 +53,7 @@ private:
     explicit CSSNamedImageValue(String&&);
 
     String m_name;
+    mutable RefPtr<StyleImage> m_cachedStyleImage;
 };
 
 } // namespace WebCore

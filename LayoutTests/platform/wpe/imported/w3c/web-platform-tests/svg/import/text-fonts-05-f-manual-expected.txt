@@ -3,21 +3,21 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-    RenderSVGContainer {g} at (83,129) size 537x47
-      RenderSVGText {text} at (50,77) size 322x29 contains 1 chunk(s)
-        RenderSVGTSpan {tspan} at (0,0) size 102x28
-          RenderSVGInlineText {#text} at (0,0) size 102x28
-            chunk 1 text run 1 at (50.00,100.00) startOffset 0 endOffset 10 width 102.00: "FillerText"
-        RenderSVGInlineText {#text} at (102,0) size 7x28
-          chunk 1 text run 1 at (152.00,100.00) startOffset 0 endOffset 1 width 6.60: " "
-        RenderSVGTSpan {tspan} at (0,0) size 102x28
-          RenderSVGInlineText {#text} at (110,0) size 102x28
-            chunk 1 text run 1 at (160.00,100.00) startOffset 0 endOffset 10 width 102.00: "FillerText"
-        RenderSVGInlineText {#text} at (212,0) size 7x28
-          chunk 1 text run 1 at (262.00,100.00) startOffset 0 endOffset 1 width 6.60: " "
-        RenderSVGTSpan {tspan} at (0,0) size 102x28
-          RenderSVGInlineText {#text} at (220,0) size 102x28
-            chunk 1 text run 1 at (270.00,100.00) startOffset 0 endOffset 10 width 102.00: "FillerText"
+    RenderSVGContainer {g} at (83,129) size 535x47
+      RenderSVGText {text} at (50,77) size 321x29 contains 1 chunk(s)
+        RenderSVGTSpan {tspan} at (0,0) size 101x28
+          RenderSVGInlineText {#text} at (0,0) size 101x28
+            chunk 1 text run 1 at (50.00,100.00) startOffset 0 endOffset 10 width 100.24: "FillerText"
+        RenderSVGInlineText {#text} at (100,0) size 7x28
+          chunk 1 text run 1 at (150.24,100.00) startOffset 0 endOffset 1 width 6.60: " "
+        RenderSVGTSpan {tspan} at (0,0) size 101x28
+          RenderSVGInlineText {#text} at (110,0) size 101x28
+            chunk 1 text run 1 at (160.00,100.00) startOffset 0 endOffset 10 width 100.24: "FillerText"
+        RenderSVGInlineText {#text} at (210,0) size 7x28
+          chunk 1 text run 1 at (260.24,100.00) startOffset 0 endOffset 1 width 6.60: " "
+        RenderSVGTSpan {tspan} at (0,0) size 101x28
+          RenderSVGInlineText {#text} at (220,0) size 101x28
+            chunk 1 text run 1 at (270.00,100.00) startOffset 0 endOffset 10 width 100.24: "FillerText"
         RenderSVGInlineText {#text} at (0,0) size 0x0
     RenderSVGContainer {g} at (16,518) size 380x60
       RenderSVGText {text} at (10,311) size 228x36 contains 1 chunk(s)

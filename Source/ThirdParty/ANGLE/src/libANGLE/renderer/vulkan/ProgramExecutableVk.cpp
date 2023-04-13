@@ -134,6 +134,9 @@ void SetupDefaultPipelineState(const ContextVk *contextVk,
     graphicsPipelineDescOut->setRenderPassSampleCount(1);
     graphicsPipelineDescOut->setRenderPassFramebufferFetchMode(glExecutable.usesFramebufferFetch());
 
+    graphicsPipelineDescOut->setVertexShaderComponentTypes(
+        glExecutable.getNonBuiltinAttribLocationsMask(), glExecutable.getAttributesTypeMask());
+
     const std::vector<sh::ShaderVariable> &outputVariables   = glExecutable.getOutputVariables();
     const std::vector<gl::VariableLocation> &outputLocations = glExecutable.getOutputLocations();
 
@@ -1374,9 +1377,8 @@ angle::Result ProgramExecutableVk::createPipelineLayout(
 
     // Decide if we should use dynamic or fixed descriptor types.
     VkPhysicalDeviceLimits limits = contextVk->getRenderer()->getPhysicalDeviceProperties().limits;
-    uint32_t totalDynamicUniformBufferCount = numActiveUniformBufferDescriptors +
-                                              mNumDefaultUniformDescriptors +
-                                              kReservedDriverUniformBindingCount;
+    uint32_t totalDynamicUniformBufferCount =
+        numActiveUniformBufferDescriptors + mNumDefaultUniformDescriptors;
     if (totalDynamicUniformBufferCount <= limits.maxDescriptorSetUniformBuffersDynamic)
     {
         mUniformBufferDescriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC;

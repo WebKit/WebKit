@@ -38,21 +38,21 @@ namespace WebCore {
 
 class ImageBufferCairoSurfaceBackend : public ImageBufferCairoBackend {
 public:
-    GraphicsContext& context() const override;
+    GraphicsContext& context() override;
 
     IntSize backendSize() const override;
 
-    RefPtr<NativeImage> copyNativeImage(BackingStoreCopy) const override;
+    RefPtr<NativeImage> copyNativeImage(BackingStoreCopy) override;
 
     RefPtr<cairo_surface_t> createCairoSurface() override;
 
-    RefPtr<PixelBuffer> getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect&, const ImageBufferAllocator&) const override;
+    RefPtr<PixelBuffer> getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect&, const ImageBufferAllocator&) override;
     void putPixelBuffer(const PixelBuffer&, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat) override;
 
 protected:
     ImageBufferCairoSurfaceBackend(const Parameters&, RefPtr<cairo_surface_t>&&);
 
-    RefPtr<NativeImage> cairoSurfaceCoerceToImage() const;
+    RefPtr<NativeImage> cairoSurfaceCoerceToImage();
     unsigned bytesPerRow() const override;
 
     RefPtr<cairo_surface_t> m_surface;

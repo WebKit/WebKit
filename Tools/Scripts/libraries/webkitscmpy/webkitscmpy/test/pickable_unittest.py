@@ -1,4 +1,4 @@
-# Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+# Copyright (C) 2022-2023 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -28,7 +28,7 @@ from datetime import datetime
 
 from webkitcorepy import OutputCapture, Terminal, testing
 from webkitcorepy.mocks import Time as MockTime
-from webkitscmpy import local, program, mocks, Commit
+from webkitscmpy import local, program, mocks, Commit, CommitClassifier
 
 
 class TestPickable(testing.PathTestCase):
@@ -132,6 +132,11 @@ class TestPickable(testing.PathTestCase):
             self.assertEqual(0, program.main(
                 args=('pickable', 'safari-xxx-branch'),
                 path=self.path,
+                classifier=CommitClassifier([CommitClassifier.CommitClass(
+                    name='Versioning',
+                    headers=[r"Versioning\.$", r'^Revert "?[Vv]ersioning\.?"?$'],
+                    pickable=False,
+                )]),
             ))
 
         self.assertEqual(
@@ -169,6 +174,11 @@ class TestPickable(testing.PathTestCase):
             self.assertEqual(0, program.main(
                 args=('pickable', 'safari-xxx-branch'),
                 path=self.path,
+                classifier=CommitClassifier([CommitClassifier.CommitClass(
+                    name='Versioning',
+                    headers=[r"Versioning\.$", r'^Revert "?[Vv]ersioning\.?"?$'],
+                    pickable=False,
+                )]),
             ))
 
         self.assertEqual(
@@ -193,6 +203,11 @@ class TestPickable(testing.PathTestCase):
             self.assertEqual(1, program.main(
                 args=('pickable', 'safari-xxx-branch'),
                 path=self.path,
+                classifier=CommitClassifier([CommitClassifier.CommitClass(
+                    name='Versioning',
+                    headers=[r"Versioning\.$", r'^Revert "?[Vv]ersioning\.?"?$'],
+                    pickable=False,
+                )]),
             ))
 
         self.assertEqual(captured.stdout.getvalue(), '')
@@ -217,18 +232,23 @@ class TestPickable(testing.PathTestCase):
             self.assertEqual(0, program.main(
                 args=('pickable', 'safari-xxx-branch', '--exclude', 'Cherry-pick'),
                 path=self.path,
+                classifier=CommitClassifier([
+                    CommitClassifier.CommitClass(
+                        name='Versioning',
+                        headers=[r"Versioning\.$", r'^Revert "?[Vv]ersioning\.?"?$'],
+                        pickable=False,
+                    ), CommitClassifier.CommitClass(
+                        name='Cherry-pick',
+                        headers=[r"^[Cc]herry[- ][Pp]ick"],
+                        pickable=True,
+                    ),
+                ]),
             ))
 
         self.assertEqual(captured.stdout.getvalue(), '4.1@safari-xxx-branch | 6eedcf4492c3 | Versioning.\n')
 
     def test_branch_gardening_exclude(self):
         with OutputCapture() as captured, mocks.local.Git(self.path) as repo, mocks.local.Svn(), MockTime, Terminal.override_atty(sys.stdin, isatty=False):
-            project_config = os.path.join(self.path, 'metadata', local.Git.GIT_CONFIG_EXTENSION)
-            os.mkdir(os.path.dirname(project_config))
-            with open(project_config, 'w') as f:
-                f.write('[webkitscmpy "tests"]\n')
-                f.write('    api-tests = Source\n')
-
             repo.commits['safari-xxx-branch'] = [
                 repo.commits['main'][3],
                 Commit(
@@ -243,6 +263,12 @@ class TestPickable(testing.PathTestCase):
             self.assertEqual(1, program.main(
                 args=('pickable', 'safari-xxx-branch'),
                 path=self.path,
+                classifier=CommitClassifier([CommitClassifier.CommitClass(
+                    name='Gardening',
+                    headers=[r"[GARDENING]"],
+                    paths=['Source'],
+                    pickable=False,
+                )]),
             ))
 
         self.assertEqual(captured.stderr.getvalue(), "No commits in specified range are 'pickable'\n")
@@ -264,9 +290,30 @@ class TestPickable(testing.PathTestCase):
             self.assertEqual(0, program.main(
                 args=('pickable', 'safari-xxx-branch'),
                 path=self.path,
+                classifier=CommitClassifier([CommitClassifier.CommitClass(
+                    name='Gardening',
+                    headers=[r"[GARDENING]"],
+                    paths=['LayoutTests/', 'Tools/TestWebKitAPI'],
+                    pickable=False,
+                )]),
             ))
 
         self.assertEqual(
             captured.stdout.getvalue(),
             '4.1@safari-xxx-branch | 6eedcf4492c3 | [GARDENING] Mark test/abc as failing\n',
+        )
+
+    def test_double(self):
+        with OutputCapture() as captured, mocks.local.Git(self.path) as repo, mocks.local.Svn(), MockTime, Terminal.override_atty(sys.stdin, isatty=False):
+            self.assertEqual(0, program.main(
+                args=('pickable', 'branch-a', 'branch-b'),
+                path=self.path,
+            ))
+
+        self.assertEqual(
+            captured.stdout.getvalue(),
+            '2.2@branch-a | 621652add7fc | 7th commit\n'
+            '2.1@branch-a | a30ce8494bf1 | 3rd commit\n'
+            '2.3@branch-b | 790725a6d79e | 7th commit\n'
+            '2.2@branch-b | 3cd32e352410 | 5th commit\n',
         )

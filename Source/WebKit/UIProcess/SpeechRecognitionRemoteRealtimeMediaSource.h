@@ -29,6 +29,7 @@
 
 #include <WebCore/RealtimeMediaSource.h>
 #include <WebCore/RealtimeMediaSourceIdentifier.h>
+#include <wtf/MediaTime.h>
 
 #if PLATFORM(COCOA)
 #include "SharedCARingBuffer.h"
@@ -56,7 +57,7 @@ public:
     void setStorage(ConsumerSharedCARingBuffer::Handle&&, const WebCore::CAAudioStreamDescription&);
 #endif
 
-    void remoteAudioSamplesAvailable(MediaTime, uint64_t numberOfFrames);
+    void remoteAudioSamplesAvailable(WTF::MediaTime, uint64_t numberOfFrames);
     void remoteCaptureFailed();
     void remoteSourceStopped();
 

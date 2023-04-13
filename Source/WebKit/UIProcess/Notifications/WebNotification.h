@@ -43,9 +43,16 @@ namespace WebKit {
 
 class WebNotification : public API::ObjectImpl<API::Object::Type::Notification>, public Identified<WebNotification> {
 public:
-    static Ref<WebNotification> create(const WebCore::NotificationData& data, WebPageProxyIdentifier pageIdentifier, IPC::Connection& sourceConnection)
+    static Ref<WebNotification> createNonPersistent(const WebCore::NotificationData& data, WebPageProxyIdentifier pageIdentifier, IPC::Connection& sourceConnection)
     {
-        return adoptRef(*new WebNotification(data, pageIdentifier, sourceConnection));
+        ASSERT(!data.isPersistent());
+        return adoptRef(*new WebNotification(data, pageIdentifier, std::nullopt, sourceConnection));
+    }
+
+    static Ref<WebNotification> createPersistent(const WebCore::NotificationData& data, const std::optional<UUID>& dataStoreIdentifier, IPC::Connection& sourceConnection)
+    {
+        ASSERT(data.isPersistent());
+        return adoptRef(*new WebNotification(data, WebPageProxyIdentifier(), dataStoreIdentifier, sourceConnection));
     }
 
     const String& title() const { return m_data.title; }
@@ -55,6 +62,7 @@ public:
     const String& lang() const { return m_data.language; }
     WebCore::NotificationDirection dir() const { return m_data.direction; }
     const UUID& coreNotificationID() const { return m_data.notificationID; }
+    const std::optional<UUID>& dataStoreIdentifier() const { return m_dataStoreIdentifier; }
     PAL::SessionID sessionID() const { return m_data.sourceSession; }
 
     const WebCore::NotificationData& data() const { return m_data; }
@@ -69,11 +77,12 @@ public:
     RefPtr<IPC::Connection> sourceConnection() const { return m_sourceConnection.get(); }
 
 private:
-    WebNotification(const WebCore::NotificationData&, WebPageProxyIdentifier, IPC::Connection&);
+    WebNotification(const WebCore::NotificationData&, WebPageProxyIdentifier, const std::optional<UUID>& dataStoreIdentifier, IPC::Connection&);
 
     WebCore::NotificationData m_data;
     RefPtr<API::SecurityOrigin> m_origin;
     WebPageProxyIdentifier m_pageIdentifier;
+    std::optional<UUID> m_dataStoreIdentifier;
     ThreadSafeWeakPtr<IPC::Connection> m_sourceConnection;
 };
 

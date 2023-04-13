@@ -26,19 +26,20 @@
 
 #include "AbstractRange.h"
 #include "RangeBoundaryPoint.h"
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
 class DOMRect;
 class DOMRectList;
-class DOMWindow;
 class DocumentFragment;
+class LocalDOMWindow;
 class NodeWithIndex;
 class Text;
 
 struct SimpleRange;
 
-class Range final : public AbstractRange {
+class Range final : public AbstractRange, public CanMakeWeakPtr<Range> {
     WTF_MAKE_ISO_ALLOCATED(Range);
 public:
     WEBCORE_EXPORT static Ref<Range> create(Document&);
@@ -107,7 +108,7 @@ public:
     void updateFromSelection(const SimpleRange&);
 
     // For use by garbage collection. Returns nullptr for ranges not assocated with selection.
-    DOMWindow* window() const;
+    LocalDOMWindow* window() const;
 
     static ExceptionOr<Node*> checkNodeOffsetPair(Node&, unsigned offset);
 

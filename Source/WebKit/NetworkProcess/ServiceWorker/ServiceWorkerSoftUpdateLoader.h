@@ -51,13 +51,10 @@ class ServiceWorkerSoftUpdateLoader final : public NetworkLoadClient, public Can
     WTF_MAKE_FAST_ALLOCATED;
 public:
     using Handler = CompletionHandler<void(WebCore::WorkerFetchResult&&)>;
-    static void start(NetworkSession*, WebCore::ServiceWorkerJobData&&, bool shouldRefreshCache, WebCore::ResourceRequest&&, Handler&&);
-
+    ServiceWorkerSoftUpdateLoader(NetworkSession&, WebCore::ServiceWorkerJobData&&, bool shouldRefreshCache, WebCore::ResourceRequest&&, Handler&&);
     ~ServiceWorkerSoftUpdateLoader();
     
 private:
-    ServiceWorkerSoftUpdateLoader(NetworkSession&, WebCore::ServiceWorkerJobData&&, bool shouldRefreshCache, WebCore::ResourceRequest&&, Handler&&);
-
     // NetworkLoadClient.
     void didSendData(uint64_t bytesSent, uint64_t totalBytesToBeSent) final { }
     bool isSynchronous() const final { return false; }

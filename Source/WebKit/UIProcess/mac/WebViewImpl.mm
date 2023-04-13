@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,7 +36,6 @@
 #import "CoreTextHelpers.h"
 #import "FontInfo.h"
 #import "FullscreenClient.h"
-#import "GenericCallback.h"
 #import "InsertTextOptions.h"
 #import "Logging.h"
 #import "NativeWebGestureEvent.h"
@@ -68,15 +67,13 @@
 #import "WKQuickLookPreviewController.h"
 #import "WKRevealItemPresenter.h"
 #import "WKSafeBrowsingWarning.h"
-#import <WebKit/WKShareSheet.h>
 #import "WKTextInputWindowController.h"
 #import "WKViewLayoutStrategy.h"
 #import "WKWebViewInternal.h"
-#import <WebKit/WKWebViewPrivate.h>
-#import <WebKit/WebBackForwardList.h>
 #import "WebBackForwardList.h"
 #import "WebEditCommandProxy.h"
 #import "WebEventFactory.h"
+#import "WebFrameProxy.h"
 #import "WebInspectorUIProxy.h"
 #import "WebPageProxy.h"
 #import "WebProcessPool.h"
@@ -117,6 +114,9 @@
 #import <WebCore/WebCoreFullScreenWindow.h>
 #import <WebCore/WebCoreNSFontManagerExtras.h>
 #import <WebCore/WebPlaybackControlsManager.h>
+#import <WebKit/WKShareSheet.h>
+#import <WebKit/WKWebViewPrivate.h>
+#import <WebKit/WebBackForwardList.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <pal/spi/cocoa/AVKitSPI.h>
 #import <pal/spi/cocoa/NSAccessibilitySPI.h>
@@ -148,17 +148,9 @@
 #include "MediaSessionCoordinatorProxyPrivate.h"
 #endif
 
-#if HAVE(TRANSLATION_UI_SERVICES)
-#import <TranslationUIServices/LTUISourceMeta.h>
-#import <TranslationUIServices/LTUITranslationViewController.h>
-
-SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(TranslationUIServices)
-SOFT_LINK_CLASS_OPTIONAL(TranslationUIServices, LTUISourceMeta)
-SOFT_LINK_CLASS_OPTIONAL(TranslationUIServices, LTUITranslationViewController)
-#endif
-
 #import <pal/cocoa/RevealSoftLink.h>
 #import <pal/cocoa/VisionKitCoreSoftLink.h>
+#import <pal/cocoa/TranslationUIServicesSoftLink.h>
 #import <pal/mac/DataDetectorsSoftLink.h>
 
 #if HAVE(TOUCH_BAR) && ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
@@ -614,13 +606,6 @@ static void* keyValueObservingContext = &keyValueObservingContext;
 - (NSInteger)numberOfItemsInMenu:(NSMenu *)menu
 {
     return 1;
-}
-
-- (NSRect)confinementRectForMenu:(NSMenu *)menu onScreen:(NSScreen *)screen
-{
-    auto confinementRect = WebCore::enclosingIntRect(NSRect { NSEvent.mouseLocation, menu.size });
-    confinementRect.move(0, -confinementRect.height());
-    return confinementRect;
 }
 
 - (void)_web_grantDOMPasteAccess
@@ -1146,6 +1131,13 @@ static NSTrackingAreaOptions trackingAreaOptions()
     return options;
 }
 
+static RetainPtr<NSObject> subscribeToTextInputNotifications(WebViewImpl*);
+
+static bool isInRecoveryOS()
+{
+    return !getuid();
+}
+
 WebViewImpl::WebViewImpl(NSView <WebViewImplDelegate> *view, WKWebView *outerWebView, WebProcessPool& processPool, Ref<API::PageConfiguration>&& configuration)
     : m_view(view)
     , m_pageClient(makeUnique<PageClientImpl>(view, outerWebView))
@@ -1164,8 +1156,24 @@ WebViewImpl::WebViewImpl(NSView <WebViewImplDelegate> *view, WKWebView *outerWeb
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
     [NSApp registerServicesMenuSendTypes:PasteboardTypes::forSelection() returnTypes:PasteboardTypes::forEditing()];
 
-    if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"WebKit2UseRemoteLayerTreeDrawingArea"] boolValue]
-        || m_page->preferences().siteIsolationEnabled())
+#if ENABLE(REMOTE_LAYER_TREE_ON_MAC_BY_DEFAULT)
+    bool useRemoteLayerTree = true;
+#else
+    bool useRemoteLayerTree = false;
+#endif
+    if (id useRemoteLayerTreeBoolean = [[NSUserDefaults standardUserDefaults] objectForKey:@"WebKit2UseRemoteLayerTreeDrawingArea"])
+        useRemoteLayerTree = [useRemoteLayerTreeBoolean boolValue];
+    if (m_page->preferences().siteIsolationEnabled())
+        useRemoteLayerTree = true;
+
+    if (isInRecoveryOS()) {
+        // Temporarily disable UI side compositing in Recovery OS.
+        // FIXME: remove this workaround once a proper fix is in place.
+        WTFLogAlways("Disabling UI side compositing in Recovery OS");
+        useRemoteLayerTree = false;
+    }
+
+    if (useRemoteLayerTree)
         m_drawingAreaType = DrawingAreaType::RemoteLayerTree;
 
     [view addTrackingArea:m_primaryTrackingArea.get()];
@@ -1185,6 +1193,8 @@ WebViewImpl::WebViewImpl(NSView <WebViewImplDelegate> *view, WKWebView *outerWeb
         m_layerHostingView = adoptNS([[WKFlippedView alloc] initWithFrame:[m_view bounds]]);
         [view addSubview:m_layerHostingView.get() positioned:NSWindowBelow relativeTo:nil];
     }
+
+    [m_layerHostingView setClipsToBounds:YES];
 
     // Create a root layer that will back the NSView.
     RetainPtr<CALayer> layer = adoptNS([[CALayer alloc] init]);
@@ -1223,6 +1233,8 @@ WebViewImpl::WebViewImpl(NSView <WebViewImplDelegate> *view, WKWebView *outerWeb
 #if HAVE(NSSCROLLVIEW_SEPARATOR_TRACKING_ADAPTER)
     m_lastScrollViewFrame = scrollViewFrame();
 #endif
+
+    _textInputNotifications = subscribeToTextInputNotifications(this);
 
     WebProcessPool::statistics().wkViewCount++;
 }
@@ -1528,8 +1540,6 @@ void WebViewImpl::viewDidEndLiveResize()
     [m_layoutStrategy didEndLiveResize];
 }
 
-#if ENABLE(UI_PROCESS_PDF_HUD)
-
 void WebViewImpl::createPDFHUD(PDFPluginIdentifier identifier, const WebCore::IntRect& rect)
 {
     removePDFHUD(identifier);
@@ -1564,8 +1574,6 @@ NSSet *WebViewImpl::pdfHUDs()
         [set addObject:hud.get()];
     return set;
 }
-
-#endif // ENABLE(UI_PROCESS_PDF_HUD)
 
 void WebViewImpl::renewGState()
 {
@@ -2015,17 +2023,15 @@ void WebViewImpl::windowDidChangeBackingProperties(CGFloat oldBackingScaleFactor
         return;
 
     m_page->setIntrinsicDeviceScaleFactor(newBackingScaleFactor);
-#if ENABLE(UI_PROCESS_PDF_HUD)
     for (auto& hud : _pdfHUDViews.values())
         [hud setDeviceScaleFactor:newBackingScaleFactor];
-#endif
 }
 
 void WebViewImpl::windowDidChangeScreen()
 {
     NSWindow *window = m_targetWindowForMovePreparation ? m_targetWindowForMovePreparation.get() : [m_view window];
     auto displayID = WebCore::displayID(window.screen);
-    auto framesPerSecond = m_page->process().processPool().nominalFramesPerSecondForDisplay(displayID);
+    auto framesPerSecond = m_page->process().nominalFramesPerSecondForDisplay(displayID);
     m_page->windowScreenDidChange(displayID, framesPerSecond);
 }
 
@@ -2155,7 +2161,7 @@ void WebViewImpl::viewDidMoveToWindow()
     if (window) {
         windowDidChangeScreen();
 
-        OptionSet<WebCore::ActivityState::Flag> activityStateChanges { WebCore::ActivityState::WindowIsActive, WebCore::ActivityState::IsVisible };
+        OptionSet<WebCore::ActivityState> activityStateChanges { WebCore::ActivityState::WindowIsActive, WebCore::ActivityState::IsVisible };
         if (m_shouldDeferViewInWindowChanges)
             m_viewInWindowChangeWasDeferred = true;
         else
@@ -2181,7 +2187,7 @@ void WebViewImpl::viewDidMoveToWindow()
         if (m_immediateActionGestureRecognizer && ![[m_view gestureRecognizers] containsObject:m_immediateActionGestureRecognizer.get()] && !m_ignoresNonWheelEvents && m_allowsLinkPreview)
             [m_view addGestureRecognizer:m_immediateActionGestureRecognizer.get()];
     } else {
-        OptionSet<WebCore::ActivityState::Flag> activityStateChanges { WebCore::ActivityState::WindowIsActive, WebCore::ActivityState::IsVisible };
+        OptionSet<WebCore::ActivityState> activityStateChanges { WebCore::ActivityState::WindowIsActive, WebCore::ActivityState::IsVisible };
         if (m_shouldDeferViewInWindowChanges)
             m_viewInWindowChangeWasDeferred = true;
         else
@@ -2577,6 +2583,8 @@ static const SelectorNameMap& selectorExceptionMap()
         { @selector(pageDownAndModifySelection:), "MovePageDownAndModifySelection"_s },
         { @selector(pageUp:), "MovePageUp"_s },
         { @selector(pageUpAndModifySelection:), "MovePageUpAndModifySelection"_s },
+        { @selector(scrollPageDown:), "ScrollPageForward"_s },
+        { @selector(scrollPageUp:), "ScrollPageBackward"_s },
         { @selector(_pasteAsQuotation:), "PasteAsQuotation"_s },
     };
 
@@ -3141,31 +3149,77 @@ void WebViewImpl::capitalizeWord()
     m_page->capitalizeWord();
 }
 
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/WebViewImplAdditions.mm>
+#else
+static Vector<WebCore::CompositionUnderline> extractInitialUnderlines(NSAttributedString *)
+{
+    return { };
+}
+
+bool WebViewImpl::markedTextInputEnabled() const
+{
+    return false;
+}
+
+void WebViewImpl::showMarkedTextForCandidate(NSTextCheckingResult *, NSRange, NSRange)
+{
+}
+
+void WebViewImpl::showMarkedTextForCandidates(NSArray<NSTextCheckingResult *> *)
+{
+}
+
+NSTextCheckingTypes WebViewImpl::getTextCheckingTypes() const
+{
+    return NSTextCheckingTypeSpelling | NSTextCheckingTypeReplacement | NSTextCheckingTypeCorrection;
+}
+#endif
+
+#ifndef WEB_VIEW_IMPL_ADDITIONS_SUSCRIBE_TO_TEXT_INPUT_NOTIFICATIONS_DEFINED
+static RetainPtr<NSObject> subscribeToTextInputNotifications(WebViewImpl*)
+{
+    return nullptr;
+}
+#endif //  WEB_VIEW_IMPL_ADDITIONS_SUSCRIBE_TO_TEXT_INPUT_NOTIFICATIONS_DEFINED
+
+
 void WebViewImpl::requestCandidatesForSelectionIfNeeded()
 {
     if (!shouldRequestCandidates())
         return;
 
-    const EditorState& editorState = m_page->editorState();
-    if (!editorState.isContentEditable)
+    auto postLayoutData = postLayoutDataForContentEditable();
+    if (!postLayoutData)
         return;
 
-    if (!editorState.hasPostLayoutData())
-        return;
+    m_lastStringForCandidateRequest = postLayoutData->stringForCandidateRequest;
 
-    auto& postLayoutData = *editorState.postLayoutData;
-    m_lastStringForCandidateRequest = postLayoutData.stringForCandidateRequest;
+    NSRange selectedRange = NSMakeRange(postLayoutData->candidateRequestStartPosition, postLayoutData->selectedTextLength);
+    NSTextCheckingTypes checkingTypes = getTextCheckingTypes();
 
-    NSRange selectedRange = NSMakeRange(postLayoutData.candidateRequestStartPosition, postLayoutData.selectedTextLength);
-    NSTextCheckingTypes checkingTypes = NSTextCheckingTypeSpelling | NSTextCheckingTypeReplacement | NSTextCheckingTypeCorrection;
     WeakPtr weakThis { *this };
-    m_lastCandidateRequestSequenceNumber = [[NSSpellChecker sharedSpellChecker] requestCandidatesForSelectedRange:selectedRange inString:postLayoutData.paragraphContextForCandidateRequest types:checkingTypes options:nil inSpellDocumentWithTag:spellCheckerDocumentTag() completionHandler:[weakThis](NSInteger sequenceNumber, NSArray<NSTextCheckingResult *> *candidates) {
+    m_lastCandidateRequestSequenceNumber = [[NSSpellChecker sharedSpellChecker] requestCandidatesForSelectedRange:selectedRange inString:postLayoutData->paragraphContextForCandidateRequest types:checkingTypes options:nil inSpellDocumentWithTag:spellCheckerDocumentTag() completionHandler:[weakThis](NSInteger sequenceNumber, NSArray<NSTextCheckingResult *> *candidates) {
         RunLoop::main().dispatch([weakThis, sequenceNumber, candidates = retainPtr(candidates)] {
             if (!weakThis)
                 return;
             weakThis->handleRequestedCandidates(sequenceNumber, candidates.get());
         });
     }];
+}
+
+std::optional<EditorState::PostLayoutData> WebViewImpl::postLayoutDataForContentEditable()
+{
+    const EditorState& editorState = m_page->editorState();
+    if (!editorState.isContentEditable)
+        return std::nullopt;
+
+    // FIXME: It's pretty lame that we have to depend on the most recent EditorState having post layout data,
+    // and that we just bail if it is missing.
+    if (!editorState.hasPostLayoutData())
+        return std::nullopt;
+
+    return editorState.postLayoutData;
 }
 
 void WebViewImpl::handleRequestedCandidates(NSInteger sequenceNumber, NSArray<NSTextCheckingResult *> *candidates)
@@ -3176,25 +3230,22 @@ void WebViewImpl::handleRequestedCandidates(NSInteger sequenceNumber, NSArray<NS
     if (m_lastCandidateRequestSequenceNumber != sequenceNumber)
         return;
 
-    const EditorState& editorState = m_page->editorState();
-    if (!editorState.isContentEditable)
+    auto postLayoutData = postLayoutDataForContentEditable();
+    if (!postLayoutData)
         return;
 
-    // FIXME: It's pretty lame that we have to depend on the most recent EditorState having post layout data,
-    // and that we just bail if it is missing.
-    if (!editorState.hasPostLayoutData())
-        return;
-
-    auto& postLayoutData = *editorState.postLayoutData;
-    if (m_lastStringForCandidateRequest != postLayoutData.stringForCandidateRequest)
+    if (m_lastStringForCandidateRequest != postLayoutData->stringForCandidateRequest)
         return;
 
 #if HAVE(TOUCH_BAR)
-    NSRange selectedRange = NSMakeRange(postLayoutData.candidateRequestStartPosition, postLayoutData.selectedTextLength);
-    WebCore::IntRect offsetSelectionRect = postLayoutData.selectionBoundingRect;
+    NSRange selectedRange = NSMakeRange(postLayoutData->candidateRequestStartPosition, postLayoutData->selectedTextLength);
+    WebCore::IntRect offsetSelectionRect = postLayoutData->selectionBoundingRect;
     offsetSelectionRect.move(0, offsetSelectionRect.height());
 
-    [candidateListTouchBarItem() setCandidates:candidates forSelectedRange:selectedRange inString:postLayoutData.paragraphContextForCandidateRequest rect:offsetSelectionRect view:m_view.getAutoreleased() completionHandler:nil];
+    [candidateListTouchBarItem() setCandidates:candidates forSelectedRange:selectedRange inString:postLayoutData->paragraphContextForCandidateRequest rect:offsetSelectionRect view:m_view.getAutoreleased() completionHandler:nil];
+
+    if (markedTextInputEnabled())
+        showMarkedTextForCandidates(candidates);
 #else
     UNUSED_PARAM(candidates);
 #endif
@@ -3225,17 +3276,11 @@ static WebCore::TextCheckingResult textCheckingResultFromNSTextCheckingResult(NS
 
 void WebViewImpl::handleAcceptedCandidate(NSTextCheckingResult *acceptedCandidate)
 {
-    const EditorState& editorState = m_page->editorState();
-    if (!editorState.isContentEditable)
+    auto postLayoutData = postLayoutDataForContentEditable();
+    if (!postLayoutData)
         return;
 
-    // FIXME: It's pretty lame that we have to depend on the most recent EditorState having post layout data,
-    // and that we just bail if it is missing.
-    if (!editorState.hasPostLayoutData())
-        return;
-
-    auto& postLayoutData = *editorState.postLayoutData;
-    if (m_lastStringForCandidateRequest != postLayoutData.stringForCandidateRequest)
+    if (m_lastStringForCandidateRequest != postLayoutData->stringForCandidateRequest)
         return;
 
     m_isHandlingAcceptedCandidate = true;
@@ -3315,7 +3360,7 @@ void WebViewImpl::dismissContentRelativeChildWindowsFromViewOnly()
 
     [m_immediateActionController dismissContentRelativeChildWindows];
 
-    m_pageClient->dismissCorrectionPanel(WebCore::ReasonForDismissingAlternativeTextIgnored);
+    m_pageClient->dismissCorrectionPanel(WebCore::ReasonForDismissingAlternativeText::Ignored);
 
 #if HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)
     [std::exchange(m_lastContextMenuTranslationPopover, nil) close];
@@ -3712,6 +3757,36 @@ void WebViewImpl::setAcceleratedCompositingRootLayer(CALayer *rootLayer)
     [CATransaction commit];
 }
 
+void WebViewImpl::setHeaderBannerLayer(CALayer *headerBannerLayer)
+{
+    if (m_headerBannerLayer)
+        [m_headerBannerLayer removeFromSuperlayer];
+
+    m_headerBannerLayer = headerBannerLayer;
+
+    // If WebPage has not been created yet, WebPageCreationParameters.headerBannerHeight
+    // will be used to adjust the page content size.
+    if (page().hasRunningProcess()) {
+        int headerBannerHeight = headerBannerLayer ? headerBannerLayer.frame.size.height : 0;
+        page().setHeaderBannerHeight(headerBannerHeight);
+    }
+}
+
+void WebViewImpl::setFooterBannerLayer(CALayer *footerBannerLayer)
+{
+    if (m_footerBannerLayer)
+        [m_footerBannerLayer removeFromSuperlayer];
+
+    m_footerBannerLayer = footerBannerLayer;
+
+    // If WebPage has not been created yet, WebPageCreationParameters.footerBannerHeight
+    // will be used to adjust the page content size.
+    if (page().hasRunningProcess()) {
+        int footerBannerHeight = footerBannerLayer ? footerBannerLayer.frame.size.height : 0;
+        page().setFooterBannerHeight(footerBannerHeight);
+    }
+}
+
 void WebViewImpl::setThumbnailView(_WKThumbnailView *thumbnailView)
 {
     ASSERT(!m_thumbnailView || !thumbnailView);
@@ -3722,7 +3797,7 @@ void WebViewImpl::setThumbnailView(_WKThumbnailView *thumbnailView)
         updateThumbnailViewLayer();
     else {
         setAcceleratedCompositingRootLayer(m_rootLayer.get());
-        m_page->activityStateDidChange(WebCore::ActivityState::allFlags());
+        m_page->activityStateDidChange(WebCore::allActivityStates());
     }
 }
 
@@ -4108,7 +4183,7 @@ static bool matchesExtensionOrEquivalent(const String& filename, const String& e
         || (equalLettersIgnoringASCIICase(extension, "jpeg"_s) && filename.endsWithIgnoringASCIICase(".jpg"_s));
 }
 
-void WebViewImpl::setFileAndURLTypes(NSString *filename, NSString *extension, NSString *title, NSString *url, NSString *visibleURL, NSPasteboard *pasteboard)
+void WebViewImpl::setFileAndURLTypes(NSString *filename, NSString *extension, NSString* uti, NSString *title, NSString *url, NSString *visibleURL, NSPasteboard *pasteboard)
 {
     if (!matchesExtensionOrEquivalent(filename, extension))
         filename = [[filename stringByAppendingString:@"."] stringByAppendingString:extension];
@@ -4117,18 +4192,19 @@ void WebViewImpl::setFileAndURLTypes(NSString *filename, NSString *extension, NS
     [pasteboard setString:visibleURL forType:PasteboardTypes::WebURLPboardType];
     [pasteboard setString:title forType:PasteboardTypes::WebURLNamePboardType];
     [pasteboard setPropertyList:@[@[visibleURL], @[title]] forType:PasteboardTypes::WebURLsWithTitlesPboardType];
-    [pasteboard setPropertyList:@[extension] forType:WebCore::legacyFilesPromisePasteboardType()];
+    [pasteboard setPropertyList:@[uti] forType:WebCore::legacyFilesPromisePasteboardType()];
     m_promisedFilename = filename;
     m_promisedURL = url;
 }
 
-void WebViewImpl::setPromisedDataForImage(WebCore::Image* image, NSString *filename, NSString *extension, NSString *title, NSString *url, NSString *visibleURL, WebCore::FragmentedSharedBuffer* archiveBuffer, NSString *pasteboardName, NSString *originIdentifier)
+void WebViewImpl::setPromisedDataForImage(WebCore::Image& image, NSString *filename, NSString *extension, NSString *title, NSString *url, NSString *visibleURL, WebCore::FragmentedSharedBuffer* archiveBuffer, NSString *pasteboardName, NSString *originIdentifier)
 {
     NSPasteboard *pasteboard = [NSPasteboard pasteboardWithName:pasteboardName];
     RetainPtr<NSMutableArray> types = adoptNS([[NSMutableArray alloc] initWithObjects:WebCore::legacyFilesPromisePasteboardType(), nil]);
 
-    if (image && !image->uti().isEmpty() && image->data() && !image->data()->isEmpty())
-        [types addObject:image->uti()];
+    auto uti = image.uti();
+    if (!uti.isEmpty() && image.data() && !image.data()->isEmpty())
+        [types addObject:uti];
 
     RetainPtr<NSData> customDataBuffer;
     if (originIdentifier.length) {
@@ -4140,7 +4216,7 @@ void WebViewImpl::setPromisedDataForImage(WebCore::Image* image, NSString *filen
 
     [types addObjectsFromArray:archiveBuffer ? PasteboardTypes::forImagesWithArchive() : PasteboardTypes::forImages()];
     [pasteboard declareTypes:types.get() owner:m_view.getAutoreleased()];
-    setFileAndURLTypes(filename, extension, title, url, visibleURL, pasteboard);
+    setFileAndURLTypes(filename, extension, uti, title, url, visibleURL, pasteboard);
 
     if (archiveBuffer) {
         auto nsData = archiveBuffer->makeContiguous()->createNSData();
@@ -4153,7 +4229,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (customDataBuffer)
         [pasteboard setData:customDataBuffer.get() forType:@(WebCore::PasteboardCustomData::cocoaType().characters())];
 
-    m_promisedImage = image;
+    m_promisedImage = &image;
 }
 
 void WebViewImpl::clearPromisedDragImage()
@@ -4296,8 +4372,9 @@ void WebViewImpl::requestDOMPasteAccess(WebCore::DOMPasteAccessCategory pasteAcc
     auto pasteMenuItem = RetainPtr([m_domPasteMenu insertItemWithTitle:WebCore::contextMenuItemTagPaste() action:@selector(_web_grantDOMPasteAccess) keyEquivalent:emptyString() atIndex:0]);
     [pasteMenuItem setTarget:m_domPasteMenuDelegate.get()];
 
-    RetainPtr event = m_page->createSyntheticEventForContextMenu(NSEvent.mouseLocation);
-    [NSMenu popUpContextMenu:m_domPasteMenu.get() withEvent:event.get() forView:[m_view window].contentView];
+    auto window = [m_view window];
+    RetainPtr event = m_page->createSyntheticEventForContextMenu([window convertPointFromScreen:NSEvent.mouseLocation]);
+    [NSMenu popUpContextMenu:m_domPasteMenu.get() withEvent:event.get() forView:window.contentView];
 }
 
 void WebViewImpl::handleDOMPasteRequestForCategoryWithResult(WebCore::DOMPasteAccessCategory pasteAccessCategory, WebCore::DOMPasteAccessResponse response)
@@ -4334,7 +4411,9 @@ static RetainPtr<CGImageRef> takeWindowSnapshot(CGSWindowID windowID, bool captu
     CGWindowImageOption imageOptions = kCGWindowImageBoundsIgnoreFraming | kCGWindowImageShouldBeOpaque;
     if (captureAtNominalResolution)
         imageOptions |= kCGWindowImageNominalResolution;
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     return adoptCF(CGWindowListCreateImage(CGRectNull, kCGWindowListOptionIncludingWindow, windowID, imageOptions));
+    ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 RefPtr<ViewSnapshot> WebViewImpl::takeViewSnapshot()
@@ -4500,7 +4579,7 @@ void WebViewImpl::scrollWheel(NSEvent *event)
         return;
 
     NativeWebWheelEvent webEvent = NativeWebWheelEvent(event, m_view.getAutoreleased());
-    m_page->handleWheelEvent(webEvent);
+    m_page->handleNativeWheelEvent(webEvent);
 }
 
 void WebViewImpl::swipeWithEvent(NSEvent *event)
@@ -4625,6 +4704,8 @@ NSArray *WebViewImpl::validAttributesForMarkedText()
         NSMarkedClauseSegmentAttributeName,
         NSTextAlternativesAttributeName,
         NSTextInsertionUndoableAttributeName,
+        NSBackgroundColorAttributeName,
+        NSForegroundColorAttributeName,
     ];
     // NSText also supports the following attributes, but it's
     // hard to tell which are really required for text input to
@@ -4634,15 +4715,6 @@ NSArray *WebViewImpl::validAttributesForMarkedText()
     LOG(TextInput, "validAttributesForMarkedText -> (...)");
     return validAttributes.get().get();
 }
-
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/WebViewImplAdditions.mm>
-#else
-static Vector<WebCore::CompositionUnderline> extractInitialUnderlines(NSAttributedString *string)
-{
-    return { };
-}
-#endif
 
 static Vector<WebCore::CompositionUnderline> extractUnderlines(NSAttributedString *string)
 {
@@ -4856,8 +4928,9 @@ void WebViewImpl::attributedSubstringForProposedRange(NSRange proposedRange, voi
 {
     LOG(TextInput, "attributedSubstringFromRange:(%u, %u)", proposedRange.location, proposedRange.length);
     m_page->attributedSubstringForCharacterRangeAsync(proposedRange, [completionHandler = makeBlockPtr(completionHandler)](const WebCore::AttributedString& string, const EditingRange& actualRange) {
-        LOG(TextInput, "    -> attributedSubstringFromRange returned %@", string.string.get());
-        completionHandler(string.string.get(), actualRange);
+        auto attributedString = string.nsAttributedString();
+        LOG(TextInput, "    -> attributedSubstringFromRange returned %@", attributedString.get());
+        completionHandler(attributedString.get(), actualRange);
     });
 }
 
@@ -4928,6 +5001,72 @@ void WebViewImpl::unmarkText()
     m_page->confirmCompositionAsync();
 }
 
+static BOOL shouldUseHighlightsForMarkedText(NSAttributedString *string)
+{
+    __block BOOL result = NO;
+
+    [string enumerateAttributesInRange:NSMakeRange(0, string.length) options:0 usingBlock:^(NSDictionary<NSAttributedStringKey, id> *attributes, NSRange, BOOL *stop) {
+        BOOL hasUnderlineStyle = !![attributes objectForKey:NSUnderlineStyleAttributeName];
+        BOOL hasUnderlineColor = !![attributes objectForKey:NSUnderlineColorAttributeName];
+
+        BOOL hasBackgroundColor = !![attributes objectForKey:NSBackgroundColorAttributeName];
+        BOOL hasForegroundColor = !![attributes objectForKey:NSForegroundColorAttributeName];
+
+        // Marked text may be represented either as an underline or a highlight; this mode is dictated
+        // by the attributes it has, and therefore having both types of attributes is not allowed.
+        ASSERT(!((hasUnderlineStyle || hasUnderlineColor) && (hasBackgroundColor || hasForegroundColor)));
+
+        if (hasUnderlineStyle || hasUnderlineColor) {
+            result = NO;
+            *stop = YES;
+        } else if (hasBackgroundColor || hasForegroundColor) {
+            result = YES;
+            *stop = YES;
+        }
+    }];
+
+    return result;
+}
+
+static Vector<WebCore::CompositionHighlight> compositionHighlights(NSAttributedString *string)
+{
+    if (!string.length)
+        return { };
+
+    Vector<WebCore::CompositionHighlight> highlights;
+    [string enumerateAttributesInRange:NSMakeRange(0, string.length) options:0 usingBlock:[&highlights](NSDictionary<NSAttributedStringKey, id> *attributes, NSRange range, BOOL *) {
+        std::optional<WebCore::Color> backgroundHighlightColor;
+        if (CocoaColor *backgroundColor = attributes[NSBackgroundColorAttributeName])
+            backgroundHighlightColor = WebCore::colorFromCocoaColor(backgroundColor);
+
+        std::optional<WebCore::Color> foregroundHighlightColor;
+        if (CocoaColor *foregroundColor = attributes[NSForegroundColorAttributeName])
+            foregroundHighlightColor = WebCore::colorFromCocoaColor(foregroundColor);
+
+        highlights.append({ static_cast<unsigned>(range.location), static_cast<unsigned>(NSMaxRange(range)), backgroundHighlightColor, foregroundHighlightColor });
+    }];
+
+    std::sort(highlights.begin(), highlights.end(), [](auto& a, auto& b) {
+        if (a.startOffset < b.startOffset)
+            return true;
+        if (a.startOffset > b.startOffset)
+            return false;
+        return a.endOffset < b.endOffset;
+    });
+
+    Vector<WebCore::CompositionHighlight> mergedHighlights;
+    mergedHighlights.reserveInitialCapacity(highlights.size());
+    for (auto& highlight : highlights) {
+        if (mergedHighlights.isEmpty() || mergedHighlights.last().backgroundColor != highlight.backgroundColor || mergedHighlights.last().foregroundColor != highlight.foregroundColor)
+            mergedHighlights.uncheckedAppend(highlight);
+        else
+            mergedHighlights.last().endOffset = highlight.endOffset;
+    }
+
+    mergedHighlights.shrinkToFit();
+    return mergedHighlights;
+}
+
 void WebViewImpl::setMarkedText(id string, NSRange selectedRange, NSRange replacementRange)
 {
     BOOL isAttributedString = [string isKindOfClass:[NSAttributedString class]];
@@ -4936,13 +5075,18 @@ void WebViewImpl::setMarkedText(id string, NSRange selectedRange, NSRange replac
     LOG(TextInput, "setMarkedText:\"%@\" selectedRange:(%u, %u) replacementRange:(%u, %u)", isAttributedString ? [string string] : string, selectedRange.location, selectedRange.length, replacementRange.location, replacementRange.length);
 
     Vector<WebCore::CompositionUnderline> underlines;
+    Vector<WebCore::CompositionHighlight> highlights;
     NSString *text;
 
     if (isAttributedString) {
         // FIXME: We ignore most attributes from the string, so an input method cannot specify e.g. a font or a glyph variation.
         text = [string string];
-        auto initialUnderlines = extractInitialUnderlines(string);
-        underlines = !initialUnderlines.isEmpty() ? initialUnderlines : extractUnderlines(string);
+        if (shouldUseHighlightsForMarkedText(string))
+            highlights = compositionHighlights(string);
+        else {
+            auto initialUnderlines = extractInitialUnderlines(string);
+            underlines = !initialUnderlines.isEmpty() ? initialUnderlines : extractUnderlines(string);
+        }
     } else {
         text = string;
         underlines.append(WebCore::CompositionUnderline(0, [text length], WebCore::CompositionUnderlineColor::TextColor, WebCore::Color::black, false));
@@ -4961,7 +5105,7 @@ void WebViewImpl::setMarkedText(id string, NSRange selectedRange, NSRange replac
         return;
     }
 
-    m_page->setCompositionAsync(text, underlines, { }, selectedRange, replacementRange);
+    m_page->setCompositionAsync(text, WTFMove(underlines), WTFMove(highlights), selectedRange, replacementRange);
 }
 
 // Synchronous NSTextInputClient is still implemented to catch spurious sync calls. Remove when that is no longer needed.
@@ -5225,10 +5369,8 @@ void WebViewImpl::mouseMoved(NSEvent *event)
     if (m_ignoresNonWheelEvents || m_ignoresMouseMoveEvents)
         return;
 
-#if ENABLE(UI_PROCESS_PDF_HUD)
     for (auto& hud : _pdfHUDViews.values())
         [hud mouseMoved:event];
-#endif
 
     // When a view is first responder, it gets mouse moved events even when the mouse is outside its visible rect.
     if (m_view.getAutoreleased() == [m_view window].firstResponder && !NSPointInRect([m_view convertPoint:[event locationInWindow] fromView:nil], [m_view visibleRect]))
@@ -5286,10 +5428,8 @@ void WebViewImpl::mouseDown(NSEvent *event)
     if (m_ignoresNonWheelEvents)
         return;
 
-#if ENABLE(UI_PROCESS_PDF_HUD)
     for (auto& hud : _pdfHUDViews.values())
         [hud mouseDown:event];
-#endif
 
     setLastMouseDownEvent(event);
     setIgnoresMouseDraggedEvents(false);
@@ -5302,10 +5442,8 @@ void WebViewImpl::mouseUp(NSEvent *event)
     if (m_ignoresNonWheelEvents)
         return;
 
-#if ENABLE(UI_PROCESS_PDF_HUD)
     for (auto& hud : _pdfHUDViews.values())
         [hud mouseUp:event];
-#endif
 
     setLastMouseDownEvent(nil);
     mouseUpInternal(event);
@@ -5768,7 +5906,10 @@ void WebViewImpl::forceRequestCandidatesForTesting()
 
 bool WebViewImpl::shouldRequestCandidates() const
 {
-    return !m_page->editorState().isInPasswordField && candidateListTouchBarItem().candidateListVisible;
+    if (m_page->editorState().isInPasswordField)
+        return false;
+
+    return candidateListTouchBarItem().candidateListVisible || markedTextInputEnabled();
 }
 
 void WebViewImpl::setEditableElementIsFocused(bool editableElementIsFocused)
@@ -5819,7 +5960,7 @@ void WebViewImpl::setMediaSessionCoordinatorForTesting(MediaSessionCoordinatorPr
 
 bool WebViewImpl::canHandleContextMenuTranslation() const
 {
-    return TranslationUIServicesLibrary() && [getLTUITranslationViewControllerClass() isAvailable];
+    return PAL::isTranslationUIServicesFrameworkAvailable() && [PAL::getLTUITranslationViewControllerClass() isAvailable];
 }
 
 void WebViewImpl::handleContextMenuTranslation(const WebCore::TranslationContextMenuInfo& info)
@@ -5830,7 +5971,7 @@ void WebViewImpl::handleContextMenuTranslation(const WebCore::TranslationContext
     }
 
     auto view = m_view.get();
-    auto translationViewController = adoptNS([allocLTUITranslationViewControllerInstance() init]);
+    auto translationViewController = adoptNS([PAL::allocLTUITranslationViewControllerInstance() init]);
     [translationViewController setText:adoptNS([[NSAttributedString alloc] initWithString:info.text]).get()];
     if (info.mode == WebCore::TranslationContextMenuMode::Editable) {
         [translationViewController setIsSourceEditable:YES];
@@ -5840,7 +5981,7 @@ void WebViewImpl::handleContextMenuTranslation(const WebCore::TranslationContext
         }];
     }
 
-    auto sourceMetadata = adoptNS([allocLTUISourceMetaInstance() init]);
+    auto sourceMetadata = adoptNS([PAL::allocLTUISourceMetaInstance() init]);
     [sourceMetadata setOrigin:info.source == WebCore::TranslationContextMenuSource::Image ? LTUISourceMetaOriginImage : LTUISourceMetaOriginUnspecified];
     [translationViewController setSourceMeta:sourceMetadata.get()];
 
@@ -6053,7 +6194,7 @@ void WebViewImpl::installImageAnalysisOverlayView(VKCImageAnalysis *analysis)
         m_imageAnalysisOverlayView = adoptNS([PAL::allocVKCImageAnalysisOverlayViewInstance() initWithFrame:[m_view bounds]]);
         m_imageAnalysisOverlayViewDelegate = adoptNS([[WKImageAnalysisOverlayViewDelegate alloc] initWithWebViewImpl:*this]);
         [m_imageAnalysisOverlayView setDelegate:m_imageAnalysisOverlayViewDelegate.get()];
-        setUpAdditionalImageAnalysisBehaviors(m_imageAnalysisOverlayView.get());
+        prepareImageAnalysisForOverlayView(m_imageAnalysisOverlayView.get());
         RELEASE_LOG(ImageAnalysis, "Installing image analysis overlay view at {{ %.0f, %.0f }, { %.0f, %.0f }}",
             m_imageAnalysisInteractionBounds.x(), m_imageAnalysisInteractionBounds.y(), m_imageAnalysisInteractionBounds.width(), m_imageAnalysisInteractionBounds.height());
     }

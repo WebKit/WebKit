@@ -46,8 +46,8 @@ public:
     
     template<typename... Args>
     explicit IndexMap(size_t size, Args&&... args)
+        : m_vector(size, Value(std::forward<Args>(args)...))
     {
-        m_vector.fill(Value(std::forward<Args>(args)...), size);
     }
 
     template<typename... Args>

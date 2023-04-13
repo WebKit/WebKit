@@ -62,11 +62,6 @@ TEST(AVFoundationSoftLink, Classes)
     EXPECT_NE(PAL::getAVFrameRateRangeClass(), nullptr);
 #endif
 
-#if HAVE(AVSTREAMSESSION) && ENABLE(LEGACY_ENCRYPTED_MEDIA)
-    EXPECT_NE(PAL::getAVStreamSessionClass(), nullptr);
-    EXPECT_NE(PAL::getAVStreamDataParserClass(), nullptr);
-#endif
-
 #if PLATFORM(IOS_FAMILY)
     EXPECT_NE(PAL::getAVPersistableContentKeyRequestClass(), nullptr);
     EXPECT_NE(PAL::getAVAudioSessionClass(), nullptr);

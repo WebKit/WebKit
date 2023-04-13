@@ -44,9 +44,6 @@ struct PositionedGlyphs {
     FontSmoothingMode smoothingMode;
 
     FloatRect computeBounds(const Font&) const;
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<PositionedGlyphs> decode(Decoder&);
 };
 
 inline PositionedGlyphs::PositionedGlyphs(Vector<GlyphBufferGlyph>&& glyphs, Vector<GlyphBufferAdvance>&& advances, const FloatPoint& localAnchor, FontSmoothingMode smoothingMode)
@@ -56,43 +53,4 @@ inline PositionedGlyphs::PositionedGlyphs(Vector<GlyphBufferGlyph>&& glyphs, Vec
     , smoothingMode(smoothingMode)
 {
 }
-
-template<class Encoder>
-void PositionedGlyphs::encode(Encoder& encoder) const
-{
-    encoder << glyphs;
-    encoder << advances;
-    encoder << localAnchor;
-    encoder << smoothingMode;
-}
-
-template<class Decoder>
-std::optional<PositionedGlyphs> PositionedGlyphs::decode(Decoder& decoder)
-{
-    std::optional<Vector<GlyphBufferGlyph>> glyphs;
-    decoder >> glyphs;
-    if (!glyphs)
-        return std::nullopt;
-
-    std::optional<Vector<GlyphBufferAdvance>> advances;
-    decoder >> advances;
-    if (!advances)
-        return std::nullopt;
-
-    if (glyphs->size() != advances->size())
-        return std::nullopt;
-
-    std::optional<FloatPoint> localAnchor;
-    decoder >> localAnchor;
-    if (!localAnchor)
-        return std::nullopt;
-
-    std::optional<FontSmoothingMode> smoothingMode;
-    decoder >> smoothingMode;
-    if (!smoothingMode)
-        return std::nullopt;
-
-    return { { WTFMove(*glyphs), WTFMove(*advances), *localAnchor, *smoothingMode } };
-}
-
 } // namespace WebCore

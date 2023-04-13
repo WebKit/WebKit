@@ -29,7 +29,7 @@
 #import <WebKit/WKContextPrivate.h>
 #import <WebKit/WKRetainPtr.h>
 
-@interface WKView ()
+@interface WKWebView ()
 - (void)attributedSubstringForProposedRange:(NSRange)nsRange completionHandler:(void(^)(NSAttributedString *attrString, NSRange actualRange))completionHandlerPtr;
 @end
 

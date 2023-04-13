@@ -1,6 +1,6 @@
 (function (globalObject) {
     // Variable fields (e.g. generated ids) are verified and replaced with predictable
-    // lables. The result can be compared with a predefined expected output.
+    // labels. The result can be compared with a predefined expected output.
     function printComparableSessionDescription(sessionDescription, mdescVariables) {
         debug("=== RTCSessionDescription ===");
         debug("type: " + sessionDescription.type + ", sdp:");
@@ -17,6 +17,8 @@
             "iceufrag": "^a=ice-ufrag:([\\w+/]*).*$",
             "icepwd": "^a=ice-pwd:([\\w+/]*).*$",
             "bundle": "^a=group:BUNDLE .*$",
+            "ssrcgroup": "^a=ssrc-group:([A-Z]+) ([\\d\\s]+).*$",
+            "fingerprint": "^a=fingerprint:sha-256 ([a-zA-Z0-9:]*).*$"
         };
 
         var mdescIndex = -1;
@@ -79,6 +81,12 @@
                     line = line.replace(iceufrag[1], verified("ice-ufrag"));
                 else if (icepwd = match(line, regexp.icepwd))
                     line = line.replace(icepwd[1], verified("ice-password"));
+                else if (fingerprint = match(line, regexp.fingerprint))
+                    line = line.replace(fingerprint[1], verified("fingerprint"));
+                else if (ssrcgroup = match(line, regexp.ssrcgroup)) {
+                    line = line.replace(ssrcgroup[1], verified("semantics"));
+                    line = line.replace(ssrcgroup[2], verified("ssrc-id"));
+                }
             }
 
             if (line)

@@ -23,8 +23,9 @@
 #include "config.h"
 #include "HTMLCollection.h"
 
+#include "CachedHTMLCollectionInlines.h"
 #include "HTMLNames.h"
-#include "NodeRareData.h"
+#include "NodeRareDataInlines.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -37,7 +38,7 @@ inline auto HTMLCollection::rootTypeFromCollectionType(CollectionType type) -> R
 {
     switch (type) {
     case DocImages:
-    case DocApplets:
+    case DocEmpty:
     case DocEmbeds:
     case DocForms:
     case DocLinks:
@@ -87,8 +88,8 @@ static NodeListInvalidationType invalidationTypeExcludingIdAndNameAttributes(Col
     case TRCells:
     case SelectOptions:
     case MapAreas:
+    case DocEmpty:
         return DoNotInvalidateOnAttributeChanges;
-    case DocApplets:
     case SelectedOptions:
     case DataListOptions:
         // FIXME: We can do better some day.
@@ -190,7 +191,7 @@ bool HTMLCollection::isSupportedPropertyName(const AtomString& name)
 {
     updateNamedElementCache();
     ASSERT(m_namedElementCache);
-    
+
     if (m_namedElementCache->findElementsWithId(name))
         return true;
     if (m_namedElementCache->findElementsWithName(name))
@@ -250,6 +251,14 @@ Vector<Ref<Element>> HTMLCollection::namedItems(const AtomString& name) const
     }
 
     return elements;
+}
+
+size_t HTMLCollection::memoryCost() const
+{
+    // memoryCost() may be invoked concurrently from a GC thread, and we need to be careful about what data we access here and how.
+    // Hence, we need to guard m_namedElementCache from being replaced while accessing it.
+    Locker locker { m_namedElementCacheAssignmentLock };
+    return m_namedElementCache ? m_namedElementCache->memoryCost() : 0;
 }
 
 } // namespace WebCore

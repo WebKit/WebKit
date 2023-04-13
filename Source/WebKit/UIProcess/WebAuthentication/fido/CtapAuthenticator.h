@@ -68,7 +68,6 @@ private:
     bool tryRestartPin(const fido::CtapDeviceResponseCode&);
 
     bool tryDowngrade();
-    bool processGoogleLegacyAppIdSupportExtension();
 
     Vector<WebCore::AuthenticatorTransport> transports() const;
 

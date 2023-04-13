@@ -257,7 +257,7 @@ class WebSelectionServiceController;
 #endif
 
 #if !PLATFORM(IOS_FAMILY)
-    // WebKit has both a global plug-in database and a separate, per WebView plug-in database. Dashboard uses the per WebView database.
+    // WebKit has both a global plug-in database and a separate, per WebView plug-in database.
     RetainPtr<WebPluginDatabase> pluginDatabase;
 #endif
     

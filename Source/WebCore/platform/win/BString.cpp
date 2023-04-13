@@ -32,11 +32,6 @@
 #include <wtf/text/StringView.h>
 #include <wtf/text/win/WCharStringExtras.h>
 
-#if USE(CF)
-#include <CoreFoundation/CoreFoundation.h>
-#endif
-
-
 namespace WebCore {
 using namespace JSC;
 
@@ -84,26 +79,6 @@ BString::BString(const AtomString& s)
     else
         m_bstr = SysAllocStringLen(wcharFrom(StringView(s.string()).upconvertedCharacters()), s.length());
 }
-
-#if USE(CF)
-BString::BString(CFStringRef cfstr)
-    : m_bstr(0)
-{
-    if (!cfstr)
-        return;
-
-    const UniChar* uniChars = CFStringGetCharactersPtr(cfstr);
-    if (uniChars) {
-        m_bstr = SysAllocStringLen((LPCWSTR)uniChars, CFStringGetLength(cfstr));
-        return;
-    }
-
-    CFIndex length = CFStringGetLength(cfstr);
-    m_bstr = SysAllocStringLen(0, length);
-    CFStringGetCharacters(cfstr, CFRangeMake(0, length), (UniChar*)m_bstr);
-    m_bstr[length] = 0;
-}
-#endif
 
 BString::~BString()
 {

@@ -36,7 +36,7 @@
 #undef GST_USE_UNSTABLE_API
 #endif
 
-#if USE(WPE_VIDEO_PLANE_DISPLAY_DMABUF)
+#if defined(BUILDING_WebCore) && USE(WPE_VIDEO_PLANE_DISPLAY_DMABUF)
 #include <wpe/extensions/video-plane-display-dmabuf.h>
 #endif
 
@@ -60,7 +60,7 @@ WTF_DEFINE_GPTR_DELETER(GstWebRTCSessionDescription, gst_webrtc_session_descript
 WTF_DEFINE_GPTR_DELETER(GstSDPMessage, gst_sdp_message_free)
 #endif
 
-#if USE(WPE_VIDEO_PLANE_DISPLAY_DMABUF)
+#if defined(BUILDING_WebCore) && USE(WPE_VIDEO_PLANE_DISPLAY_DMABUF)
 WTF_DEFINE_GPTR_DELETER(struct wpe_video_plane_display_dmabuf_source, wpe_video_plane_display_dmabuf_source_destroy)
 #endif
 

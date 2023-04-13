@@ -59,6 +59,7 @@ function merge_platforms($platform_to_merge, $destination_platform) {
 if ($db) {
     if ($action == 'update') {
         if (update_field('platforms', 'platform', 'name')
+            || update_field('platforms', 'platform', 'label')
             || update_field('platforms', 'platform', 'group')
             || update_boolean_field('platforms', 'platform', 'hidden'))
             regenerate_manifest();
@@ -124,6 +125,7 @@ END;
 
     $page = new AdministrativePage($db, 'platforms', 'platform', array(
         'name' => array('editing_mode' => 'string'),
+        'label' => array('editing_mode' => 'string'),
         'hidden' => array('editing_mode' => 'boolean'),
         'platform group' => array('custom' => function ($platform_row) { return platform_group_list($platform_row); }),
         'merge into' => array('custom' => function ($platform_row) { return merge_list($platform_row); }),

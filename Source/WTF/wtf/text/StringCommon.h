@@ -41,6 +41,11 @@ template<typename CharacterType> inline bool isLatin1(CharacterType character)
     return static_cast<UnsignedCharacterType>(character) <= static_cast<UnsignedCharacterType>(0xFF);
 }
 
+template<> ALWAYS_INLINE bool isLatin1(LChar)
+{
+    return true;
+}
+
 using CodeUnitMatchFunction = bool (*)(UChar);
 
 template<typename CharacterTypeA, typename CharacterTypeB> bool equalIgnoringASCIICase(const CharacterTypeA*, const CharacterTypeB*, unsigned length);
@@ -298,17 +303,18 @@ ALWAYS_INLINE bool equal(const UChar* a, const LChar* b, unsigned length) { retu
 template<typename StringClassA, typename StringClassB>
 ALWAYS_INLINE bool equalCommon(const StringClassA& a, const StringClassB& b, unsigned length)
 {
+    if (!length)
+        return true;
+
     if (a.is8Bit()) {
         if (b.is8Bit())
-            return equal(a.characters8(), b.characters8(), length);
-
-        return equal(a.characters8(), b.characters16(), length);
+            return *a.characters8() == *b.characters8() && equal(a.characters8() + 1, b.characters8() + 1, length - 1);
+        return *a.characters8() == *b.characters16() && equal(a.characters8() + 1, b.characters16() + 1, length - 1);
     }
 
     if (b.is8Bit())
-        return equal(a.characters16(), b.characters8(), length);
-
-    return equal(a.characters16(), b.characters16(), length);
+        return *a.characters16() == *b.characters8() && equal(a.characters16() + 1, b.characters8() + 1, length - 1);
+    return *a.characters16() == *b.characters16() && equal(a.characters16() + 1, b.characters16() + 1, length - 1);
 }
 
 template<typename StringClassA, typename StringClassB>

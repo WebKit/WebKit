@@ -10,7 +10,9 @@ set(libangle_common_headers
     "src/common/CircularBuffer.h"
     "src/common/Color.h"
     "src/common/Color.inc"
+    "src/common/CompiledShaderState.h"
     "src/common/FastVector.h"
+    "src/common/FixedQueue.h"
     "src/common/FixedVector.h"
     "src/common/MemoryBuffer.h"
     "src/common/Optional.h"
@@ -91,7 +93,6 @@ set(libangle_common_sources
 set(libangle_common_shader_state_sources
     ${libangle_common_headers}
     "src/common/CompiledShaderState.cpp"
-    "src/common/CompiledShaderState.h"
 )
 
 set(libangle_common_cl_sources

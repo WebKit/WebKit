@@ -35,15 +35,8 @@
 #include "SharedBuffer.h"
 #include <wtf/text/TextStream.h>
 
-#if USE(CG)
-#include "GraphicsContextPlatformPrivateCG.h"
-#endif
-
 namespace WebCore {
 namespace DisplayList {
-
-// Should match RenderTheme::platformFocusRingWidth()
-static const float platformFocusRingWidth = 3;
 
 void Save::apply(GraphicsContext& context) const
 {
@@ -196,7 +189,7 @@ void DrawImageBuffer::apply(GraphicsContext& context, WebCore::ImageBuffer& imag
 
 void DrawNativeImage::apply(GraphicsContext& context, NativeImage& image) const
 {
-    context.drawNativeImage(image, m_imageSize, m_destinationRect, m_srcRect, m_options);
+    context.drawNativeImageInternal(image, m_imageSize, m_destinationRect, m_srcRect, m_options);
 }
 
 void DrawSystemImage::apply(GraphicsContext& context) const
@@ -240,7 +233,7 @@ void DrawLine::apply(GraphicsContext& context) const
     context.drawLine(m_point1, m_point2);
 }
 
-DrawLinesForText::DrawLinesForText(const FloatPoint& blockLocation, const FloatSize& localAnchor, float thickness, const DashArray& widths, bool printing, bool doubleLines, StrokeStyle style)
+DrawLinesForText::DrawLinesForText(const FloatPoint& blockLocation, const FloatSize& localAnchor, const DashArray& widths, float thickness, bool printing, bool doubleLines, StrokeStyle style)
     : m_blockLocation(blockLocation)
     , m_localAnchor(localAnchor)
     , m_widths(widths)
@@ -258,10 +251,7 @@ void DrawLinesForText::apply(GraphicsContext& context) const
 
 void DrawDotsForDocumentMarker::apply(GraphicsContext& context) const
 {
-    context.drawDotsForDocumentMarker(m_rect, {
-        static_cast<DocumentMarkerLineStyle::Mode>(m_styleMode),
-        m_styleShouldUseDarkAppearance,
-    });
+    context.drawDotsForDocumentMarker(m_rect, m_style);
 }
 
 void DrawEllipse::apply(GraphicsContext& context) const
@@ -297,6 +287,12 @@ void FillRectWithColor::apply(GraphicsContext& context) const
 FillRectWithGradient::FillRectWithGradient(const FloatRect& rect, Gradient& gradient)
     : m_rect(rect)
     , m_gradient(gradient)
+{
+}
+
+FillRectWithGradient::FillRectWithGradient(FloatRect&& rect, Ref<Gradient>&& gradient)
+    : m_rect(WTFMove(rect))
+    , m_gradient(WTFMove(gradient))
 {
 }
 
@@ -454,8 +450,6 @@ void ApplyDeviceScaleFactor::apply(GraphicsContext& context) const
 {
     context.applyDeviceScaleFactor(m_scaleFactor);
 }
-
-#if !LOG_DISABLED
 TextStream& operator<<(TextStream& ts, ItemType type)
 {
     switch (type) {
@@ -1077,7 +1071,6 @@ void dumpItemHandle(TextStream& ts, const ItemHandle& item, OptionSet<AsTextFlag
         break;
     }
 }
-#endif
 
 } // namespace DisplayList
 } // namespace WebCore

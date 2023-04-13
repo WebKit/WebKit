@@ -29,7 +29,9 @@
 #include "Logging.h"
 #include "NetworkSession.h"
 #include "PrivateClickMeasurementDebugInfo.h"
+#include "PrivateClickMeasurementEphemeralStore.h"
 #include "PrivateClickMeasurementNetworkLoader.h"
+#include "PrivateClickMeasurementPersistentStore.h"
 #include <JavaScriptCore/ConsoleTypes.h>
 #include <WebCore/FetchOptions.h>
 #include <WebCore/FormData.h>
@@ -746,17 +748,27 @@ void PrivateClickMeasurementManager::markAttributedPrivateClickMeasurementsAsExp
     store().markAttributedPrivateClickMeasurementsAsExpiredForTesting(WTFMove(completionHandler));
 }
 
+void PrivateClickMeasurementManager::initializeStore() const
+{
+    if (m_store)
+        return;
+
+    if (m_client->usesEphemeralDataStore()) {
+        ASSERT(m_storageDirectory.isEmpty());
+        m_store = PCM::EphemeralStore::create();
+    } else
+        m_store = PCM::PersistentStore::create(m_storageDirectory);
+}
+
 PCM::Store& PrivateClickMeasurementManager::store()
 {
-    if (!m_store)
-        m_store = PCM::Store::create(m_storageDirectory);
+    initializeStore();
     return *m_store;
 }
 
 const PCM::Store& PrivateClickMeasurementManager::store() const
 {
-    if (!m_store)
-        m_store = PCM::Store::create(m_storageDirectory);
+    initializeStore();
     return *m_store;
 }
 

@@ -26,7 +26,7 @@
 #include "config.h"
 #include "IdChangeInvalidation.h"
 
-#include "ElementChildIterator.h"
+#include "ElementChildIteratorInlines.h"
 #include "ElementRareData.h"
 #include "StyleInvalidationFunctions.h"
 #include "StyleInvalidator.h"

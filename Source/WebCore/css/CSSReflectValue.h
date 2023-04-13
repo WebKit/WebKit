@@ -26,7 +26,6 @@
 #pragma once
 
 #include "CSSValue.h"
-#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
@@ -34,31 +33,19 @@ class CSSPrimitiveValue;
 
 class CSSReflectValue final : public CSSValue {
 public:
-    static Ref<CSSReflectValue> create(Ref<CSSPrimitiveValue>&& direction, Ref<CSSPrimitiveValue>&& offset, RefPtr<CSSValue>&& mask)
-    {
-        return adoptRef(*new CSSReflectValue(WTFMove(direction), WTFMove(offset), WTFMove(mask)));
-    }
+    static Ref<CSSReflectValue> create(CSSValueID direction, Ref<CSSPrimitiveValue> offset, RefPtr<CSSValue> mask);
 
-    CSSPrimitiveValue& direction() { return m_direction.get(); }
-    CSSPrimitiveValue& offset() { return m_offset.get(); }
-    const CSSPrimitiveValue& direction() const { return m_direction.get(); }
+    CSSValueID direction() const { return m_direction; }
     const CSSPrimitiveValue& offset() const { return m_offset.get(); }
-    CSSValue* mask() const { return m_mask.get(); }
+    const CSSValue* mask() const { return m_mask.get(); }
 
     String customCSSText() const;
-
     bool equals(const CSSReflectValue&) const;
 
 private:
-    CSSReflectValue(Ref<CSSPrimitiveValue>&& direction, Ref<CSSPrimitiveValue>&& offset, RefPtr<CSSValue>&& mask)
-        : CSSValue(ReflectClass)
-        , m_direction(WTFMove(direction))
-        , m_offset(WTFMove(offset))
-        , m_mask(WTFMove(mask))
-    {
-    }
+    CSSReflectValue(CSSValueID direction, Ref<CSSPrimitiveValue> offset, RefPtr<CSSValue> mask);
 
-    Ref<CSSPrimitiveValue> m_direction;
+    CSSValueID m_direction;
     Ref<CSSPrimitiveValue> m_offset;
     RefPtr<CSSValue> m_mask;
 };

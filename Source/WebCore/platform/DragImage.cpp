@@ -26,10 +26,10 @@
 #include "config.h"
 #include "DragImage.h"
 
-#include "Frame.h"
 #include "FrameSnapshotting.h"
-#include "FrameView.h"
 #include "ImageBuffer.h"
+#include "LocalFrame.h"
+#include "LocalFrameView.h"
 #include "NotImplemented.h"
 #include "Position.h"
 #include "RenderElement.h"
@@ -79,7 +79,7 @@ DragImageRef fitDragImageToMaxSize(DragImageRef image, const IntSize& layoutSize
 }
 
 struct ScopedNodeDragEnabler {
-    ScopedNodeDragEnabler(Frame& frame, Node& node)
+    ScopedNodeDragEnabler(LocalFrame& frame, Node& node)
         : element(dynamicDowncast<Element>(node))
     {
         if (element)
@@ -116,7 +116,7 @@ static DragImageRef createDragImageFromSnapshot(RefPtr<ImageBuffer> snapshot, No
     return createDragImageFromImage(image.get(), orientation);
 }
 
-DragImageRef createDragImageForNode(Frame& frame, Node& node)
+DragImageRef createDragImageForNode(LocalFrame& frame, Node& node)
 {
     ScopedNodeDragEnabler enableDrag(frame, node);
     return createDragImageFromSnapshot(snapshotNode(frame, node, { { }, PixelFormat::BGRA8, DestinationColorSpace::SRGB() }), &node);
@@ -124,7 +124,7 @@ DragImageRef createDragImageForNode(Frame& frame, Node& node)
 
 #if !PLATFORM(IOS_FAMILY) || !ENABLE(DRAG_SUPPORT)
 
-DragImageRef createDragImageForSelection(Frame& frame, TextIndicatorData&, bool forceBlackText)
+DragImageRef createDragImageForSelection(LocalFrame& frame, TextIndicatorData&, bool forceBlackText)
 {
     SnapshotOptions options { { }, PixelFormat::BGRA8, DestinationColorSpace::SRGB() };
     if (forceBlackText)
@@ -135,7 +135,7 @@ DragImageRef createDragImageForSelection(Frame& frame, TextIndicatorData&, bool 
 #endif
 
 struct ScopedFrameSelectionState {
-    ScopedFrameSelectionState(Frame& frame)
+    ScopedFrameSelectionState(LocalFrame& frame)
         : frame(frame)
     {
         if (auto* renderView = frame.contentRenderer())
@@ -150,13 +150,13 @@ struct ScopedFrameSelectionState {
         }
     }
 
-    const Frame& frame;
+    const LocalFrame& frame;
     std::optional<RenderRange> selection;
 };
 
 #if !PLATFORM(IOS_FAMILY)
 
-DragImageRef createDragImageForRange(Frame& frame, const SimpleRange& range, bool forceBlackText)
+DragImageRef createDragImageForRange(LocalFrame& frame, const SimpleRange& range, bool forceBlackText)
 {
     frame.document()->updateLayout();
     RenderView* view = frame.contentRenderer();
@@ -199,7 +199,7 @@ DragImageRef createDragImageForRange(Frame& frame, const SimpleRange& range, boo
 
 #endif
 
-DragImageRef createDragImageForImage(Frame& frame, Node& node, IntRect& imageRect, IntRect& elementRect)
+DragImageRef createDragImageForImage(LocalFrame& frame, Node& node, IntRect& imageRect, IntRect& elementRect)
 {
     ScopedNodeDragEnabler enableDrag(frame, node);
 
@@ -256,9 +256,9 @@ DragImage::DragImage(DragImageRef dragImageRef)
 
 DragImage::DragImage(DragImage&& other)
     : m_dragImageRef { std::exchange(other.m_dragImageRef, nullptr) }
+    , m_indicatorData { WTFMove(other.m_indicatorData) }
+    , m_visiblePath { WTFMove(other.m_visiblePath) }
 {
-    m_indicatorData = other.m_indicatorData;
-    m_visiblePath = other.m_visiblePath;
 }
 
 DragImage& DragImage::operator=(DragImage&& other)
@@ -267,8 +267,8 @@ DragImage& DragImage::operator=(DragImage&& other)
         deleteDragImage(m_dragImageRef);
 
     m_dragImageRef = std::exchange(other.m_dragImageRef, nullptr);
-    m_indicatorData = other.m_indicatorData;
-    m_visiblePath = other.m_visiblePath;
+    m_indicatorData = WTFMove(other.m_indicatorData);
+    m_visiblePath = WTFMove(other.m_visiblePath);
 
     return *this;
 }
@@ -316,7 +316,7 @@ DragImageRef createDragImageIconForCachedImageFilename(const String&)
     return nullptr;
 }
 
-DragImageRef createDragImageForLink(Element&, URL&, const String&, TextIndicatorData&, FontRenderingMode, float)
+DragImageRef createDragImageForLink(Element&, URL&, const String&, TextIndicatorData&, float)
 {
     notImplemented();
     return nullptr;

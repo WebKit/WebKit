@@ -26,7 +26,6 @@
 #pragma once
 
 #include "VM.h"
-#include "JSGlobalObject.h"
 #include "ObjectPrototype.h"
 #include "SlotVisitor.h"
 #include "WriteBarrier.h"

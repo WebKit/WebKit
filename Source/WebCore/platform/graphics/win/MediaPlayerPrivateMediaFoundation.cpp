@@ -30,19 +30,15 @@
 #if ENABLE(VIDEO) && USE(MEDIA_FOUNDATION)
 
 #include "CachedResourceLoader.h"
-#include "FrameView.h"
+#include "CairoOperations.h"
 #include "GraphicsContext.h"
 #include "HWndDC.h"
 #include "HostWindow.h"
+#include "LocalFrameView.h"
 #include "NotImplemented.h"
 #include <shlwapi.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
-
-#if USE(CAIRO)
-#include "CairoOperations.h"
-#include <cairo.h>
-#endif
 
 // MFSamplePresenterSampleCounter
 // Data type: UINT32
@@ -328,9 +324,11 @@ float MediaPlayerPrivateMediaFoundation::currentTime() const
     // clockTime is in 100 nanoseconds, we need to convert to seconds.
     float currentTime = clockTime / tenMegahertz;
 
-    if (currentTime > m_maxTimeLoaded)
-        m_maxTimeLoaded = currentTime;
-
+    if (m_buffered.length() && currentTime > m_buffered.maximumBufferedTime().toFloat()) {
+        PlatformTimeRanges ranges;
+        ranges.add(MediaTime::zeroTime(), MediaTime::createWithFloat(currentTime));
+        m_buffered = WTFMove(ranges);
+    }
     return currentTime;
 }
 
@@ -379,12 +377,9 @@ float MediaPlayerPrivateMediaFoundation::maxTimeSeekable() const
     return durationDouble();
 }
 
-std::unique_ptr<PlatformTimeRanges> MediaPlayerPrivateMediaFoundation::buffered() const
-{ 
-    auto ranges = makeUnique<PlatformTimeRanges>();
-    if (maxTimeLoaded() > 0)
-        ranges->add(MediaTime::zeroTime(), MediaTime::createWithDouble(maxTimeLoaded()));
-    return ranges;
+const PlatformTimeRanges& MediaPlayerPrivateMediaFoundation::buffered() const
+{
+    return m_buffered;
 }
 
 bool MediaPlayerPrivateMediaFoundation::didLoadingProgress() const
@@ -2448,7 +2443,7 @@ HRESULT MediaPlayerPrivateMediaFoundation::VideoScheduler::processSample(IMFSamp
 
             // Since sleeping is using the system clock, we need to convert the sleep time
             // from presentation time to system time.
-            nextSleepTime = (LONG)(nextSleepTime / fabsf(m_playbackRate));
+            nextSleepTime = (LONG)(nextSleepTime / std::abs(m_playbackRate));
 
             presentNow = false;
         }
@@ -2799,7 +2794,6 @@ void MediaPlayerPrivateMediaFoundation::Direct3DPresenter::paintCurrentFrame(Web
     if (SUCCEEDED(m_memSurface->LockRect(&lockedRect, nullptr, D3DLOCK_READONLY))) {
         void* data = lockedRect.pBits;
         int pitch = lockedRect.Pitch;
-#if USE(CAIRO)
         D3DFORMAT format = D3DFMT_UNKNOWN;
         D3DSURFACE_DESC desc;
         if (SUCCEEDED(m_memSurface->GetDesc(&desc)))
@@ -2827,9 +2821,6 @@ void MediaPlayerPrivateMediaFoundation::Direct3DPresenter::paintCurrentFrame(Web
             FloatRect srcRect(0, 0, width, height);
             context.drawNativeImage(*image, srcRect.size(), destRect, srcRect);
         }
-#else
-#error "Platform needs to implement drawing of Direct3D surface to graphics context!"
-#endif
         m_memSurface->UnlockRect();
     }
 }

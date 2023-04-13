@@ -7,7 +7,7 @@ layer at (0,0) size 800x600
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 268.20: "$Revision: 1.6 $"
     RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
     RenderSVGText {text} at (217,12) size 46x23 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 46x22
+      RenderSVGInlineText {#text} at (0,0) size 45x22
         chunk 1 (middle anchor) text run 1 at (217.50,30.00) startOffset 0 endOffset 5 width 45.00: "begin"
     RenderSVGContainer {g} at (186,96) size 398x354 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,80.00)}]
       RenderSVGContainer {g} at (186,121) size 114x318 [transform={m=((1.00,0.00)(0.00,1.00)) t=(80.00,5.00)}]
@@ -16,12 +16,12 @@ layer at (0,0) size 800x600
             chunk 1 (end anchor) text run 1 at (-64.20,0.00) startOffset 0 endOffset 11 width 64.20: "unspecified"
         RenderSVGText {text} at (-32,12) size 32x16 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 32x16
-            chunk 1 (end anchor) text run 1 at (-31.80,25.00) startOffset 0 endOffset 6 width 31.80: "offset"
+            chunk 1 (end anchor) text run 1 at (-31.55,25.00) startOffset 0 endOffset 6 width 31.55: "offset"
         RenderSVGText {text} at (-59,37) size 59x16 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 59x16
             chunk 1 (end anchor) text run 1 at (-58.20,50.00) startOffset 0 endOffset 10 width 58.20: "event base"
-        RenderSVGText {text} at (-55,62) size 55x16 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 55x16
+        RenderSVGText {text} at (-54,62) size 54x16 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 54x16
             chunk 1 (end anchor) text run 1 at (-54.00,75.00) startOffset 0 endOffset 9 width 54.00: "sync base"
         RenderSVGText {text} at (-53,87) size 53x16 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 53x16

@@ -30,7 +30,12 @@
 #include <wtf/text/WTFString.h>
 
 #if USE(EGL)
+typedef intptr_t EGLAttrib;
+typedef void *EGLClientBuffer;
+typedef void *EGLContext;
 typedef void *EGLDisplay;
+typedef void *EGLImage;
+typedef unsigned EGLenum;
 #endif
 
 #if PLATFORM(GTK)
@@ -74,11 +79,14 @@ public:
 #if USE(WPE_RENDERER)
         WPE,
 #endif
+#if USE(EGL)
+        Headless,
+#endif
     };
 
     virtual Type type() const = 0;
 
-#if USE(EGL) || USE(GLX)
+#if USE(EGL)
     WEBCORE_EXPORT GLContext* sharingGLContext();
     void clearSharingGLContext();
 #endif
@@ -89,10 +97,14 @@ public:
 
     struct EGLExtensions {
         bool KHR_image_base { false };
+        bool KHR_surfaceless_context { false };
         bool EXT_image_dma_buf_import { false };
         bool EXT_image_dma_buf_import_modifiers { false };
     };
-    const EGLExtensions& eglExtensions() const { return m_eglExtensions; }
+    const EGLExtensions& eglExtensions() const;
+
+    EGLImage createEGLImage(EGLContext, EGLenum target, EGLClientBuffer, const Vector<EGLAttrib>&) const;
+    bool destroyEGLImage(EGLImage) const;
 #endif
 
 #if ENABLE(VIDEO) && USE(GSTREAMER_GL)
@@ -128,7 +140,7 @@ protected:
     EGLDisplay m_eglDisplay;
 #endif
 
-#if USE(EGL) || USE(GLX)
+#if USE(EGL)
     std::unique_ptr<GLContext> m_sharingGLContext;
 #endif
 

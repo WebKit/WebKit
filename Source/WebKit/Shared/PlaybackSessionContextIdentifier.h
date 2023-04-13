@@ -25,11 +25,10 @@
 
 #pragma once
 
-#include <wtf/ObjectIdentifier.h>
+#include <WebCore/HTMLMediaElementIdentifier.h>
 
 namespace WebKit {
 
-enum PlaybackSessionContextIdentifierType { };
-using PlaybackSessionContextIdentifier = ObjectIdentifier<PlaybackSessionContextIdentifierType>;
+using PlaybackSessionContextIdentifier = WebCore::HTMLMediaElementIdentifier;
 
 }

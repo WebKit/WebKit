@@ -39,13 +39,13 @@ namespace WebCore {
 class AccessibilitySVGRoot;
 class AXObjectCache;
 class Element;
-class FrameView;
 class HTMLAreaElement;
 class HTMLElement;
 class HTMLLabelElement;
 class HTMLMapElement;
 class IntPoint;
 class IntSize;
+class LocalFrameView;
 class Node;
 class RenderTextControl;
 class RenderView;
@@ -58,7 +58,6 @@ public:
     
     bool isAttachment() const override;
     bool isSelected() const override;
-    bool isLoaded() const override;
     bool isOffScreen() const override;
     bool isUnvisited() const override;
     bool isVisited() const override;
@@ -70,9 +69,6 @@ public:
     bool hasSameFontColor(const AXCoreObject&) const override;
     bool hasSameStyle(const AXCoreObject&) const override;
     bool hasUnderline() const override;
-
-    bool canSetTextRangeAttributes() const override;
-    bool canSetExpandedAttribute() const override;
 
     void setAccessibleName(const AtomString&) override;
 
@@ -121,8 +117,7 @@ public:
     String stringValue() const override;
     String helpText() const override;
     String textUnderElement(AccessibilityTextUnderElementMode = AccessibilityTextUnderElementMode()) const override;
-    String text() const override;
-    int textLength() const override;
+    unsigned textLength() const override;
     String selectedText() const override;
     String accessKey() const override;
 
@@ -130,7 +125,7 @@ public:
     Widget* widget() const override;
     Widget* widgetForAttachmentView() const override;
     AccessibilityChildrenVector documentLinks() override;
-    FrameView* documentFrameView() const override;
+    LocalFrameView* documentFrameView() const override;
 
     void setSelectedTextRange(const PlainTextRange&) override;
     bool setValue(const String&) override;
@@ -138,10 +133,8 @@ public:
 
     void addChildren() override;
     bool canHaveChildren() const override;
-    bool canHaveSelectedChildren() const override;
     void selectedChildren(AccessibilityChildrenVector&) override;
     void visibleChildren(AccessibilityChildrenVector&) override;
-    void tabChildren(AccessibilityChildrenVector&) override;
     bool shouldFocusActiveDescendant() const override;
     AccessibilityObject* activeDescendant() const override;
 
@@ -152,7 +145,6 @@ public:
     VisiblePositionRange selectedVisiblePositionRange() const override;
     void setSelectedVisiblePositionRange(const VisiblePositionRange&) const override;
     bool isVisiblePositionRangeInDifferentDocument(const VisiblePositionRange&) const;
-    bool hasPopup() const override;
 
     bool supportsDropping() const override;
     bool supportsDragging() const override;
@@ -179,7 +171,7 @@ public:
     String descriptionForMSAA() const override;
     AccessibilityRole roleValueForMSAA() const override;
 
-    String passwordFieldValue() const override;
+    String secureFieldValue() const override;
     void titleElementText(Vector<AccessibilityText>&) const override;
 
 protected:

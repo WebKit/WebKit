@@ -158,7 +158,7 @@ void CommandEncoderImpl::copyBufferToTexture(
             nullptr,
             source.offset,
             source.bytesPerRow.value_or(0),
-            source.rowsPerImage.value_or(0),
+            source.rowsPerImage.value_or(1),
         },
         m_convertToBackingContext->convertToBacking(source.buffer),
     };
@@ -194,7 +194,7 @@ void CommandEncoderImpl::copyTextureToBuffer(
             nullptr,
             destination.offset,
             destination.bytesPerRow.value_or(0),
-            destination.rowsPerImage.value_or(0),
+            destination.rowsPerImage.value_or(1),
         },
         m_convertToBackingContext->convertToBacking(destination.buffer),
     };

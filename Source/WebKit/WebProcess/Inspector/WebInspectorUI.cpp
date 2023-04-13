@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,6 +39,7 @@
 #include <WebCore/InspectorController.h>
 #include <WebCore/InspectorFrontendHost.h>
 #include <WebCore/NotImplemented.h>
+#include <WebCore/Page.h>
 #include <WebCore/Settings.h>
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
@@ -55,9 +56,6 @@ Ref<WebInspectorUI> WebInspectorUI::create(WebPage& page)
 
 void WebInspectorUI::enableFrontendFeatures(WebPage& page)
 {
-#if ENABLE(WEBGL2)
-    page.corePage()->settings().setWebGL2Enabled(true);
-#endif
     page.corePage()->settings().setCSSTypedOMEnabled(true);
 }
 
@@ -80,7 +78,7 @@ void WebInspectorUI::establishConnection(WebPageProxyIdentifier inspectedPageIde
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
     if (!m_extensionController)
-        m_extensionController = makeUnique<WebInspectorUIExtensionController>(*this);
+        m_extensionController = makeUnique<WebInspectorUIExtensionController>(*this, m_page.identifier());
 #endif
 
     m_frontendAPIDispatcher->reset();
@@ -353,7 +351,7 @@ bool WebInspectorUI::supportsWebExtensions()
     return true;
 }
 
-void WebInspectorUI::didShowExtensionTab(const String& extensionID, const String& extensionTabID, WebCore::FrameIdentifier frameID)
+void WebInspectorUI::didShowExtensionTab(const String& extensionID, const String& extensionTabID, const WebCore::FrameIdentifier& frameID)
 {
     if (!m_extensionController)
         return;

@@ -112,7 +112,7 @@ endif ()
 if ("CoreFoundation" IN_LIST Apple_FIND_COMPONENTS)
     _FIND_APPLE_FRAMEWORK(CoreFoundation
         HEADER CoreFoundation/CoreFoundation.h
-        LIBRARY_NAMES CoreFoundation${DEBUG_SUFFIX} CFlite
+        LIBRARY_NAMES CoreFoundation${DEBUG_SUFFIX}
     )
 endif ()
 

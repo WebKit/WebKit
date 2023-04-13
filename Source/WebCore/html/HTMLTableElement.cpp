@@ -29,7 +29,7 @@
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
 #include "CSSValuePool.h"
-#include "ElementChildIterator.h"
+#include "ElementChildIteratorInlines.h"
 #include "GenericCachedHTMLCollection.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
@@ -362,44 +362,43 @@ bool HTMLTableElement::hasPresentationalHintsForAttribute(const QualifiedName& n
     return HTMLElement::hasPresentationalHintsForAttribute(name);
 }
 
-void HTMLTableElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void HTMLTableElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
+    HTMLElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
+
     CellBorders bordersBefore = cellBorders();
     unsigned short oldPadding = m_padding;
 
     if (name == borderAttr)  {
         // FIXME: This attribute is a mess.
-        m_borderAttr = parseBorderWidthAttribute(value);
+        m_borderAttr = parseBorderWidthAttribute(newValue);
     } else if (name == bordercolorAttr) {
-        m_borderColorAttr = !value.isEmpty();
+        m_borderColorAttr = !newValue.isEmpty();
     } else if (name == frameAttr) {
         // FIXME: This attribute is a mess.
         bool borderTop;
         bool borderRight;
         bool borderBottom;
         bool borderLeft;
-        m_frameAttr = getBordersFromFrameAttributeValue(value, borderTop, borderRight, borderBottom, borderLeft);
+        m_frameAttr = getBordersFromFrameAttributeValue(newValue, borderTop, borderRight, borderBottom, borderLeft);
     } else if (name == rulesAttr) {
         m_rulesAttr = UnsetRules;
-        if (equalLettersIgnoringASCIICase(value, "none"_s))
+        if (equalLettersIgnoringASCIICase(newValue, "none"_s))
             m_rulesAttr = NoneRules;
-        else if (equalLettersIgnoringASCIICase(value, "groups"_s))
+        else if (equalLettersIgnoringASCIICase(newValue, "groups"_s))
             m_rulesAttr = GroupsRules;
-        else if (equalLettersIgnoringASCIICase(value, "rows"_s))
+        else if (equalLettersIgnoringASCIICase(newValue, "rows"_s))
             m_rulesAttr = RowsRules;
-        else if (equalLettersIgnoringASCIICase(value, "cols"_s))
+        else if (equalLettersIgnoringASCIICase(newValue, "cols"_s))
             m_rulesAttr = ColsRules;
-        else if (equalLettersIgnoringASCIICase(value, "all"_s))
+        else if (equalLettersIgnoringASCIICase(newValue, "all"_s))
             m_rulesAttr = AllRules;
     } else if (name == cellpaddingAttr) {
-        if (!value.isEmpty())
-            m_padding = std::max(0, parseHTMLInteger(value).value_or(0));
+        if (!newValue.isEmpty())
+            m_padding = std::max(0, parseHTMLInteger(newValue).value_or(0));
         else
             m_padding = 1;
-    } else if (name == colsAttr) {
-        // ###
-    } else
-        HTMLElement::parseAttribute(name, value);
+    }
 
     if (bordersBefore != cellBorders() || oldPadding != m_padding) {
         m_sharedCellStyle = nullptr;

@@ -71,12 +71,12 @@ class OSXBrowserDriver(BrowserDriver):
 
         self._save_screenshot_to_path(diagnose_directory, 'test-failure-screenshot-{}.jpg'.format(int(time.time())))
 
-    @classmethod
-    def _launch_process(cls, build_dir, app_name, url, args, env=None):
+    def _launch_process(self, build_dir, app_name, url, args, env=None):
         if not build_dir:
             build_dir = '/Applications/'
         app_path = os.path.join(build_dir, app_name)
-
+        if self.browser_args:
+            args += self.browser_args
         _log.info('Launching {} with url {}. args:{}'.format(app_path, url, " ".join(args)))
         # FIXME: May need to be modified for a local build such as setting up DYLD libraries
         args = ['open', '-a', app_path] + args

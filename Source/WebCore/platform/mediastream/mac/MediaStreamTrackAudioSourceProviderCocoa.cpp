@@ -78,7 +78,7 @@ void MediaStreamTrackAudioSourceProviderCocoa::trackEnabledChanged(MediaStreamTr
 }
 
 // May get called on a background thread.
-void MediaStreamTrackAudioSourceProviderCocoa::audioSamplesAvailable(const MediaTime&, const PlatformAudioData& data, const AudioStreamDescription& description, size_t frameCount)
+void MediaStreamTrackAudioSourceProviderCocoa::audioSamplesAvailable(const WTF::MediaTime&, const PlatformAudioData& data, const AudioStreamDescription& description, size_t frameCount)
 {
     if (!m_enabled)
         return;

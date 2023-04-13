@@ -31,7 +31,8 @@ if autoinstall_path:
     AutoInstall.set_directory(autoinstall_path)
 
 from flask import Flask, current_app, json as fjson
-from reporelaypy import Checkout, CheckoutRoute, Database, Redirector, HookReceiver
+from reporelaypy import Checkout, CheckoutRoute, Redirector, HookReceiver
+from webkitflaskpy import Database
 
 app = Flask(__name__)
 CORS(app)

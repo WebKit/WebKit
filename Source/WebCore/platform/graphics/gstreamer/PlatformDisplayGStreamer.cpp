@@ -22,12 +22,8 @@
 
 #include "GStreamerCommon.h"
 
-#if USE(GLX)
-#include "GLContextGLX.h"
-#endif
-
 #if USE(EGL)
-#include "GLContextEGL.h"
+#include "GLContext.h"
 #endif
 
 #if PLATFORM(X11)
@@ -44,9 +40,6 @@
 
 #define GST_USE_UNSTABLE_API
 #include <gst/gl/gl.h>
-#if USE(GLX) && GST_GL_HAVE_PLATFORM_GLX
-#include <gst/gl/x11/gstgldisplay_x11.h>
-#endif
 #if USE(EGL) && GST_GL_HAVE_PLATFORM_EGL
 #include <gst/gl/egl/gstgldisplay_egl.h>
 #endif
@@ -57,18 +50,13 @@ GST_DEBUG_CATEGORY_EXTERN(webkit_media_player_debug);
 
 using namespace WebCore;
 
-static GstGLDisplay* createGstGLDisplay(const PlatformDisplay& sharedDisplay, GstGLPlatform glPlatform)
+static GstGLDisplay* createGstGLDisplay(const PlatformDisplay& sharedDisplay)
 {
 #if USE(EGL)
-    if (glPlatform == GST_GL_PLATFORM_EGL)
-        return GST_GL_DISPLAY(gst_gl_display_egl_new_with_egl_display(sharedDisplay.eglDisplay()));
-#endif
-#if USE(GLX)
-    if (is<PlatformDisplayX11>(sharedDisplay) && glPlatform == GST_GL_PLATFORM_GLX)
-        return GST_GL_DISPLAY(gst_gl_display_x11_new_with_display(downcast<PlatformDisplayX11>(sharedDisplay).native()));
-#endif
-
+    return GST_GL_DISPLAY(gst_gl_display_egl_new_with_egl_display(sharedDisplay.eglDisplay()));
+#else
     return nullptr;
+#endif
 }
 
 bool PlatformDisplay::tryEnsureGstGLContext() const
@@ -92,12 +80,11 @@ bool PlatformDisplay::tryEnsureGstGLContext() const
     if (!contextHandle)
         return false;
 
-    GstGLPlatform glPlatform = sharedContext->isEGLContext() ? GST_GL_PLATFORM_EGL : GST_GL_PLATFORM_GLX;
-    m_gstGLDisplay = adoptGRef(createGstGLDisplay(*this, glPlatform));
+    m_gstGLDisplay = adoptGRef(createGstGLDisplay(*this));
     if (!m_gstGLDisplay)
         return false;
 
-    m_gstGLContext = adoptGRef(gst_gl_context_new_wrapped(m_gstGLDisplay.get(), reinterpret_cast<guintptr>(contextHandle), glPlatform, glAPI));
+    m_gstGLContext = adoptGRef(gst_gl_context_new_wrapped(m_gstGLDisplay.get(), reinterpret_cast<guintptr>(contextHandle), GST_GL_PLATFORM_EGL, glAPI));
 
     // Activate and fill the GStreamer wrapped context with the Webkit's shared one.
     auto* previousActiveContext = GLContext::current();

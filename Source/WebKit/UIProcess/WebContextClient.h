@@ -36,11 +36,11 @@ template<> struct ClientTraits<WKContextClientBase> {
 };
 }
 
-
 namespace WebKit {
 
 class WebProcessPool;
-enum class ProcessTerminationReason;
+
+enum class ProcessTerminationReason : uint8_t;
 
 class WebContextClient : public API::Client<WKContextClientBase> {
 public:

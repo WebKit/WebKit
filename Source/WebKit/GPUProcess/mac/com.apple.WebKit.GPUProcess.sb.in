@@ -38,27 +38,43 @@
     (fcntl-command
         F_ADDFILESIGS_RETURN
         F_CHECK_LV
+        F_GETFL
         F_GETPATH
         F_GETSIGSINFO
         F_NOCACHE
-        F_SETFD))
+        F_SETFD
+        F_SETFL
+        F_SETLKW
+        F_SETNOSIGPIPE))
 
 (allow process-codesigning-entitlements-der-blob-get)
 (allow process-codesigning-identity-get (target self))
+
+(allow process-info-codesignature)
 
 (allow iokit-open-service (iokit-user-client-class "IOSurfaceRoot"))
 (allow iokit-open-service (iokit-user-client-class "AppleCLCD2"))
 
 (allow iokit-open-service (iokit-registry-entry-class
+    "AGPM"
     "AppleGFXHDAEngineOutputDP"
+    "AppleHDAEngineInput"
+    "AppleHDAEngineOutput"
+    "AppleIntelMEClientController"
+    "AppleMobileADBE0"
     "AppleUpstreamUserClientDriver"
+    "AppleVideoToolboxParavirtualizationDriver"
     "AudioAUUCDriver"
-    "IOAudioSelectorControl"))
+    "IOAudioSelectorControl"
+    "IOMobileFramebufferShim"))
 
 (allow file-map-executable (subpath
     "/System/Library/Components"
+    "/System/Library/CoreServices"
     "/System/Library/Extensions"
     "/System/Library/Video/Plug-Ins"))
+
+(allow fs-quota-get)
 
 (allow iokit-open-user-client (iokit-user-client-class "AGXDeviceUserClient"))
 (allow iokit-open-service
@@ -705,6 +721,10 @@
 (deny mach-lookup (with no-report)
     (xpc-service-name "com.apple.audio.toolbox.reporting.service"))
 
+;; See <rdar://103181433>
+(allow mach-lookup
+    (global-name "com.apple.audio.AudioSession"))
+
 #if !ENABLE(CFPREFS_DIRECT_MODE)
 (allow mach-lookup
     (global-name "com.apple.cfprefsd.agent"))
@@ -917,9 +937,7 @@
             (subpath "/private/tmp/AudioCapture")
             (subpath "/tmp/AudioCapture"))
         (allow file-read* (subpath "/usr/local/lib"))
-        (allow file-read-data (path "/AppleInternal/Library/Audio/CASuperBowl"))
-    )
-)
+        (allow file-read-data (subpath "/AppleInternal/Library/Audio"))))
 
 (deny mach-lookup (with no-report)
     (global-name "com.apple.cmio.registerassistantservice.system-extensions"))
@@ -962,7 +980,7 @@
 (deny mach-lookup (with no-report)
     (global-name "com.apple.tccd.system"))
 
-#if HAVE(SC_CONTENT_SHARING_SESSION)
+#if HAVE(SCREEN_CAPTURE_KIT)
 (allow mach-lookup
     (require-all
         (extension "com.apple.webkit.extension.mach")
@@ -1000,7 +1018,53 @@
 (when (and (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES") (defined? 'mach-kernel-endpoint))
     (allow mach-kernel-endpoint
         (apply-message-filter
-            (allow mach-message-send))))
+            (allow mach-message-send (with report) (with telemetry))
+            (allow mach-message-send (kernel-mig-routine
+                _mach_make_memory_entry
+                clock_get_time
+                host_get_io_master
+                host_info
+                host_request_notification
+                io_connect_async_method
+                io_connect_method
+                io_connect_method_var_output
+                io_connect_set_notification_port_64
+                io_iterator_is_valid
+                io_iterator_next
+                io_object_conforms_to
+                io_object_get_class
+                io_registry_create_iterator
+                io_registry_entry_create_iterator
+                io_registry_entry_from_path
+                io_registry_entry_get_name
+                io_registry_entry_get_name_in_plane
+                io_registry_entry_get_parent_iterator
+                io_registry_entry_get_properties_bin_buf
+                io_registry_entry_get_property_bin_buf
+                io_registry_entry_get_registry_entry_id
+                io_registry_get_root_entry
+                io_server_version
+                io_service_add_interest_notification_64
+                io_service_add_notification_bin_64
+                io_service_close
+                io_service_get_matching_service_bin
+                io_service_get_matching_services_bin
+                io_service_open_extended
+                mach_port_extract_right
+                mach_port_get_refs
+                mach_port_request_notification
+                mach_port_set_attributes
+                mach_vm_copy
+                mach_vm_map_external
+                semaphore_create
+                semaphore_destroy
+                task_get_special_port_from_user
+                task_info_from_user
+                task_restartable_ranges_synchronize
+                thread_info
+                thread_policy_set
+                thread_resume
+                thread_suspend)))))
 
 (when (and (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES") (defined? 'syscall-mach))
     (deny syscall-mach)
@@ -1060,6 +1124,7 @@
         SYS___pthread_sigmask
         SYS___semwait_signal
         SYS___semwait_signal_nocancel
+        SYS_abort_with_payload
         SYS_access
         SYS_bsdthread_create
         SYS_bsdthread_ctl

@@ -27,7 +27,7 @@
 #include "FormAssociatedCustomElement.h"
 
 #include "CustomElementReactionQueue.h"
-#include "ElementAncestorIterator.h"
+#include "ElementAncestorIteratorInlines.h"
 #include "HTMLFieldSetElement.h"
 #include "HTMLFormElement.h"
 #include "NodeRareData.h"

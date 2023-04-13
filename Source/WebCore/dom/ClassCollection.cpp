@@ -30,7 +30,7 @@
 #include "config.h"
 #include "ClassCollection.h"
 
-#include "NodeRareData.h"
+#include "NodeRareDataInlines.h"
 #include "StyledElement.h"
 #include <wtf/IsoMallocInlines.h>
 

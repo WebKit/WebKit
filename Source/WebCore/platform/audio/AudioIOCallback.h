@@ -40,28 +40,6 @@ struct AudioIOPosition {
     Seconds position;
     // System's monotonic time in seconds corresponding to the contained |position| value.
     MonotonicTime timestamp;
-
-    template<typename Encoder>
-    void encode(Encoder& encoder) const
-    {
-        encoder << position;
-        encoder << timestamp;
-    }
-
-    template<typename Decoder> static std::optional<AudioIOPosition> decode(Decoder& decoder)
-    {
-        std::optional<Seconds> position;
-        decoder >> position;
-        if (!position)
-            return std::nullopt;
-
-        std::optional<MonotonicTime> timestamp;
-        decoder >> timestamp;
-        if (!timestamp)
-            return std::nullopt;
-
-        return AudioIOPosition { *position, *timestamp };
-    }
 };
 
 // Abstract base-class for isochronous audio I/O client.

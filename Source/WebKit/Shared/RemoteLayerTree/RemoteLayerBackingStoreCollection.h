@@ -59,10 +59,8 @@ public:
     bool backingStoreWillBeDisplayed(RemoteLayerBackingStore&);
     void backingStoreBecameUnreachable(RemoteLayerBackingStore&);
 
-    virtual bool backingStoreNeedsDisplay(const RemoteLayerBackingStore&);
-
     virtual void prepareBackingStoresForDisplay(RemoteLayerTreeTransaction&);
-    void paintReachableBackingStoreContents();
+    bool paintReachableBackingStoreContents();
 
     void willFlushLayers();
     void willCommitLayerTree(RemoteLayerTreeTransaction&);

@@ -1,0 +1,37 @@
+abcdef
+ghijkl
+
+PASS delete at <div style="white-space:nowrap">abc[</div><span style="white-space:pre-wrap">]def</span>
+PASS delete at <div style="white-space:nowrap">abc[</div><span class="preWrap">]def</span>
+PASS delete at <div class="nowrap">abc[</div><span style="white-space:pre-wrap">]def</span>
+PASS delete at <div style="white-space:nowrap">abc[</div><span style="white-space:pre-wrap">]def\nghi</span>
+PASS delete at <div style="white-space:nowrap">abc[</div><span class="preWrap">]def\nghi</span>
+PASS delete at <div class="nowrap">abc[</div><span style="white-space:pre-wrap">]def\nghi</span>
+PASS delete at <div style="white-space:nowrap">abc[</div><span style="white-space:pre-wrap">]def<br>ghi</span>
+PASS delete at <div style="white-space:nowrap">abc[</div><span class="preWrap">]def<br>ghi</span>
+PASS delete at <div class="nowrap">abc[</div><span style="white-space:pre-wrap">]def<br>ghi</span>
+PASS delete at <div style="white-space:nowrap">abc[</div><span style="white-space:pre-wrap"><b>]def\nghi</b></span>
+PASS delete at <div style="white-space:nowrap">abc[</div><span class="preWrap"><b>]def\nghi</b></span>
+PASS delete at <div class="nowrap">abc[</div><span style="white-space:pre-wrap"><b>]def\nghi</b></span>
+PASS delete at <div style="white-space:nowrap">abc[</div><span style="white-space:pre-wrap"><b>]def<br>ghi</b></span>
+PASS delete at <div style="white-space:nowrap">abc[</div><span class="preWrap"><b>]def<br>ghi</b></span>
+PASS delete at <div class="nowrap">abc[</div><span style="white-space:pre-wrap"><b>]def<br>ghi</b></span>
+PASS delete at <div style="white-space:nowrap">abc[</div><span style="white-space:pre-wrap"><b>]def</b>\nghi</span>
+PASS delete at <div style="white-space:nowrap">abc[</div><span class="preWrap"><b>]def</b>\nghi</span>
+PASS delete at <div class="nowrap">abc[</div><span style="white-space:pre-wrap"><b>]def</b>\nghi</span>
+PASS delete at <div style="white-space:nowrap">abc[</div><span style="white-space:pre-wrap"><b>]def</b><br>ghi</span>
+PASS delete at <div style="white-space:nowrap">abc[</div><span class="preWrap"><b>]def</b><br>ghi</span>
+PASS delete at <div class="nowrap">abc[</div><span style="white-space:pre-wrap"><b>]def</b><br>ghi</span>
+PASS delete at <div style="white-space:nowrap">abc[</div><span style="white-space:pre-wrap"><b>]def\n</b>ghi</span>
+PASS delete at <div style="white-space:nowrap">abc[</div><span class="preWrap"><b>]def\n</b>ghi</span>
+PASS delete at <div class="nowrap">abc[</div><span style="white-space:pre-wrap"><b>]def\n</b>ghi</span>
+PASS delete at <div style="white-space:nowrap">abc[</div><span style="white-space:pre-wrap"><b>]def<br></b>ghi</span>
+PASS delete at <div style="white-space:nowrap">abc[</div><span class="preWrap"><b>]def<br></b>ghi</span>
+PASS delete at <div class="nowrap">abc[</div><span style="white-space:pre-wrap"><b>]def<br></b>ghi</span>
+PASS delete at <div style="white-space:nowrap">abc[</div><span style="white-space:pre-wrap"><b>]def\nghi</b>jkl</span>
+PASS delete at <div style="white-space:nowrap">abc[</div><span class="preWrap"><b>]def\nghi</b>jkl</span>
+PASS delete at <div class="nowrap">abc[</div><span style="white-space:pre-wrap"><b>]def\nghi</b>jkl</span>
+PASS delete at <div style="white-space:nowrap">abc[</div><span style="white-space:pre-wrap"><b>]def<br>ghi</b>jkl</span>
+PASS delete at <div style="white-space:nowrap">abc[</div><span class="preWrap"><b>]def<br>ghi</b>jkl</span>
+PASS delete at <div class="nowrap">abc[</div><span style="white-space:pre-wrap"><b>]def<br>ghi</b>jkl</span>
+

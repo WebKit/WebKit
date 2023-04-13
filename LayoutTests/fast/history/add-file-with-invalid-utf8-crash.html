@@ -1,0 +1,14 @@
+
+<script>
+function test() {
+    if (window.testRunner)
+        testRunner.dumpAsText();
+    document.body.innerHTML = 'PASS if no crash.'
+}
+</script>
+<html>
+<body onload="test()">
+<object data="A%AA">
+</object>
+</body>
+</html>

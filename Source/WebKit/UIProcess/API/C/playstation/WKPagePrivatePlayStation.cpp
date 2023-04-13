@@ -34,6 +34,7 @@
 #include "WKAPICast.h"
 #include "WebEventFactory.h"
 #include "WebPageProxy.h"
+#include <WebCore/Region.h>
 #include <cairo.h>
 #include <wpe/wpe.h>
 
@@ -74,7 +75,7 @@ void WKPageHandleKeyboardEvent(WKPageRef pageRef, WKKeyboardEvent event)
     NativeWebKeyboardEvent::HandledByInputMethod handledByInputMethod = NativeWebKeyboardEvent::HandledByInputMethod::No;
     std::optional<Vector<WebCore::CompositionUnderline>> preeditUnderlines;
     std::optional<WebKit::EditingRange> preeditSelectionRange;
-    WebKit::toImpl(pageRef)->handleKeyboardEvent(NativeWebKeyboardEvent(&wpeEvent, ""_s, handledByInputMethod, WTFMove(preeditUnderlines), WTFMove(preeditSelectionRange)));
+    WebKit::toImpl(pageRef)->handleKeyboardEvent(NativeWebKeyboardEvent(&wpeEvent, ""_s, false, handledByInputMethod, WTFMove(preeditUnderlines), WTFMove(preeditSelectionRange)));
 }
 
 void WKPageHandleMouseEvent(WKPageRef pageRef, WKMouseEvent event)
@@ -143,7 +144,7 @@ void WKPageHandleWheelEvent(WKPageRef pageRef, WKWheelEvent event)
         1, static_cast<int32_t>(event.delta.width), 0
     };
 
-    WebKit::toImpl(pageRef)->handleWheelEvent(NativeWebWheelEvent(&xEvent, deviceScaleFactor, WebWheelEvent::Phase::PhaseNone, WebWheelEvent::Phase::PhaseNone));
+    WebKit::toImpl(pageRef)->handleNativeWheelEvent(NativeWebWheelEvent(&xEvent, deviceScaleFactor, WebWheelEvent::Phase::PhaseNone, WebWheelEvent::Phase::PhaseNone));
 
     struct wpe_input_axis_event yEvent = {
         wpe_input_axis_event_type_motion,
@@ -151,7 +152,7 @@ void WKPageHandleWheelEvent(WKPageRef pageRef, WKWheelEvent event)
         0, static_cast<int32_t>(event.delta.height), 0
     };
 
-    WebKit::toImpl(pageRef)->handleWheelEvent(NativeWebWheelEvent(&yEvent, deviceScaleFactor, WebWheelEvent::Phase::PhaseNone, WebWheelEvent::Phase::PhaseNone));
+    WebKit::toImpl(pageRef)->handleNativeWheelEvent(NativeWebWheelEvent(&yEvent, deviceScaleFactor, WebWheelEvent::Phase::PhaseNone, WebWheelEvent::Phase::PhaseNone));
 }
 
 void WKPagePaint(WKPageRef pageRef, unsigned char* surfaceData, WKSize wkSurfaceSize, WKRect wkPaintRect)

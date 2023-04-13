@@ -32,6 +32,7 @@
 
 namespace WebCore {
 
+class HTMLMediaElement;
 class Image;
 class IntRect;
 
@@ -46,7 +47,7 @@ public:
 class TextTrackRepresentation {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static std::unique_ptr<TextTrackRepresentation> create(TextTrackRepresentationClient&);
+    static std::unique_ptr<TextTrackRepresentation> create(TextTrackRepresentationClient&, HTMLMediaElement&);
 
     virtual ~TextTrackRepresentation() = default;
 

@@ -35,16 +35,16 @@
 #include "Blob.h"
 #include "CloseEvent.h"
 #include "ContentSecurityPolicy.h"
-#include "DOMWindow.h"
 #include "Document.h"
 #include "Event.h"
 #include "EventListener.h"
 #include "EventNames.h"
-#include "Frame.h"
 #include "FrameDestructionObserverInlines.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "InspectorInstrumentation.h"
+#include "LocalDOMWindow.h"
+#include "LocalFrame.h"
 #include "Logging.h"
 #include "MessageEvent.h"
 #include "MixedContentChecker.h"
@@ -54,7 +54,7 @@
 #include "SecurityOrigin.h"
 #include "SocketProvider.h"
 #include "ThreadableWebSocketChannel.h"
-#include "WebSocketChannel.h"
+#include "WebSocketChannelInspector.h"
 #include "WorkerGlobalScope.h"
 #include "WorkerLoaderProxy.h"
 #include "WorkerThread.h"
@@ -306,7 +306,7 @@ ExceptionOr<void> WebSocket::connect(const String& url, const Vector<String>& pr
 
     if (is<Document>(context)) {
         Document& document = downcast<Document>(context);
-        RefPtr<Frame> frame = document.frame();
+        RefPtr frame = document.frame();
         // FIXME: make the mixed content check equivalent to the non-document mixed content check currently in WorkerThreadableWebSocketChannel::Bridge::connect()
         if (!frame || !MixedContentChecker::canRunInsecureContent(*frame, document.securityOrigin(), m_url)) {
             failAsynchronously();
@@ -353,15 +353,7 @@ ExceptionOr<void> WebSocket::send(const String& message)
         return { };
     }
     // FIXME: WebSocketChannel also has a m_bufferedAmount. Remove that one. This one is the correct one accessed by JS.
-#if HAVE(NSURLSESSION_WEBSOCKET)
-    bool shouldSynchronouslyUpdateBufferedAmount = scriptExecutionContext()->settingsValues().isNSURLSessionWebSocketEnabled;
-#elif PLATFORM(MAC)
-    bool shouldSynchronouslyUpdateBufferedAmount = false;
-#else
-    bool shouldSynchronouslyUpdateBufferedAmount = true;
-#endif
-    if (shouldSynchronouslyUpdateBufferedAmount)
-        m_bufferedAmount = saturateAdd(m_bufferedAmount, utf8.length());
+    m_bufferedAmount = saturateAdd(m_bufferedAmount, utf8.length());
     ASSERT(m_channel);
     m_channel->send(WTFMove(utf8));
     return { };
@@ -378,15 +370,7 @@ ExceptionOr<void> WebSocket::send(ArrayBuffer& binaryData)
         m_bufferedAmountAfterClose = saturateAdd(m_bufferedAmountAfterClose, getFramingOverhead(payloadSize));
         return { };
     }
-#if HAVE(NSURLSESSION_WEBSOCKET)
-    bool shouldSynchronouslyUpdateBufferedAmount = scriptExecutionContext()->settingsValues().isNSURLSessionWebSocketEnabled;
-#elif PLATFORM(MAC)
-    bool shouldSynchronouslyUpdateBufferedAmount = false;
-#else
-    bool shouldSynchronouslyUpdateBufferedAmount = true;
-#endif
-    if (shouldSynchronouslyUpdateBufferedAmount)
-        m_bufferedAmount = saturateAdd(m_bufferedAmount, binaryData.byteLength());
+    m_bufferedAmount = saturateAdd(m_bufferedAmount, binaryData.byteLength());
     ASSERT(m_channel);
     m_channel->send(binaryData, 0, binaryData.byteLength());
     return { };
@@ -404,15 +388,7 @@ ExceptionOr<void> WebSocket::send(ArrayBufferView& arrayBufferView)
         m_bufferedAmountAfterClose = saturateAdd(m_bufferedAmountAfterClose, getFramingOverhead(payloadSize));
         return { };
     }
-#if HAVE(NSURLSESSION_WEBSOCKET)
-    bool shouldSynchronouslyUpdateBufferedAmount = scriptExecutionContext()->settingsValues().isNSURLSessionWebSocketEnabled;
-#elif PLATFORM(MAC)
-    bool shouldSynchronouslyUpdateBufferedAmount = false;
-#else
-    bool shouldSynchronouslyUpdateBufferedAmount = true;
-#endif
-    if (shouldSynchronouslyUpdateBufferedAmount)
-        m_bufferedAmount = saturateAdd(m_bufferedAmount, arrayBufferView.byteLength());
+    m_bufferedAmount = saturateAdd(m_bufferedAmount, arrayBufferView.byteLength());
     ASSERT(m_channel);
     m_channel->send(*arrayBufferView.unsharedBuffer(), arrayBufferView.byteOffset(), arrayBufferView.byteLength());
     return { };
@@ -429,15 +405,7 @@ ExceptionOr<void> WebSocket::send(Blob& binaryData)
         m_bufferedAmountAfterClose = saturateAdd(m_bufferedAmountAfterClose, getFramingOverhead(payloadSize));
         return { };
     }
-#if HAVE(NSURLSESSION_WEBSOCKET)
-    bool shouldSynchronouslyUpdateBufferedAmount = scriptExecutionContext()->settingsValues().isNSURLSessionWebSocketEnabled;
-#elif PLATFORM(MAC)
-    bool shouldSynchronouslyUpdateBufferedAmount = false;
-#else
-    bool shouldSynchronouslyUpdateBufferedAmount = true;
-#endif
-    if (shouldSynchronouslyUpdateBufferedAmount)
-        m_bufferedAmount = saturateAdd(m_bufferedAmount, binaryData.size());
+    m_bufferedAmount = saturateAdd(m_bufferedAmount, binaryData.size());
     ASSERT(m_channel);
     m_channel->send(binaryData);
     return { };
@@ -445,12 +413,12 @@ ExceptionOr<void> WebSocket::send(Blob& binaryData)
 
 ExceptionOr<void> WebSocket::close(std::optional<unsigned short> optionalCode, const String& reason)
 {
-    int code = optionalCode ? optionalCode.value() : static_cast<int>(WebSocketChannel::CloseEventCodeNotSpecified);
-    if (code == WebSocketChannel::CloseEventCodeNotSpecified)
+    int code = optionalCode ? optionalCode.value() : static_cast<int>(ThreadableWebSocketChannel::CloseEventCodeNotSpecified);
+    if (code == ThreadableWebSocketChannel::CloseEventCodeNotSpecified)
         LOG(Network, "WebSocket %p close() without code and reason", this);
     else {
         LOG(Network, "WebSocket %p close() code=%d reason='%s'", this, code, reason.utf8().data());
-        if (!(code == WebSocketChannel::CloseEventCodeNormalClosure || (WebSocketChannel::CloseEventCodeMinimumUserDefined <= code && code <= WebSocketChannel::CloseEventCodeMaximumUserDefined)))
+        if (!(code == ThreadableWebSocketChannel::CloseEventCodeNormalClosure || (ThreadableWebSocketChannel::CloseEventCodeMinimumUserDefined <= code && code <= ThreadableWebSocketChannel::CloseEventCodeMaximumUserDefined)))
             return Exception { InvalidAccessError };
         CString utf8 = reason.utf8(StrictConversionReplacingUnpairedSurrogatesWithFFFD);
         if (utf8.length() > maxReasonSizeInBytes) {
@@ -588,7 +556,7 @@ void WebSocket::didConnect()
         if (m_state == CLOSED)
             return;
         if (m_state != CONNECTING) {
-            didClose(0, ClosingHandshakeIncomplete, WebSocketChannel::CloseEventCodeAbnormalClosure, emptyString());
+            didClose(0, ClosingHandshakeIncomplete, ThreadableWebSocketChannel::CloseEventCodeAbnormalClosure, emptyString());
             return;
         }
         ASSERT(scriptExecutionContext());
@@ -693,7 +661,7 @@ void WebSocket::didClose(unsigned unhandledBufferedAmount, ClosingHandshakeCompl
             }
         }
 
-        bool wasClean = m_state == CLOSING && !unhandledBufferedAmount && closingHandshakeCompletion == ClosingHandshakeComplete && code != WebSocketChannel::CloseEventCodeAbnormalClosure;
+        bool wasClean = m_state == CLOSING && !unhandledBufferedAmount && closingHandshakeCompletion == ClosingHandshakeComplete && code != ThreadableWebSocketChannel::CloseEventCodeAbnormalClosure;
         m_state = CLOSED;
         m_bufferedAmount = unhandledBufferedAmount;
         ASSERT(scriptExecutionContext());

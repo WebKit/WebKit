@@ -597,7 +597,7 @@ void ContentRuleListStore::synchronousRemoveAllContentRuleLists()
 
 void ContentRuleListStore::invalidateContentRuleListVersion(const WTF::String& identifier)
 {
-    auto file = openFile(constructedPath(m_storePath, identifier, false), FileOpenMode::Write);
+    auto file = openFile(constructedPath(m_storePath, identifier, false), FileOpenMode::Truncate);
     if (file == invalidPlatformFileHandle)
         return;
     ContentRuleListMetaData invalidHeader = {0, 0, 0, 0, 0, 0};

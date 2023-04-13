@@ -27,7 +27,7 @@
 #pragma once
 
 #include <memory>
-#include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/StringHash.h>
 
@@ -39,10 +39,11 @@ class ShareableElementData;
 class DocumentSharedObjectPool {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    Ref<ShareableElementData> cachedShareableElementDataWithAttributes(const Vector<Attribute>&);
+    Ref<ShareableElementData> cachedShareableElementDataWithAttributes(Span<const Attribute>);
 
 private:
-    typedef HashMap<unsigned, RefPtr<ShareableElementData>, AlreadyHashed> ShareableElementDataCache;
+    struct ShareableElementDataHash;
+    using ShareableElementDataCache = HashSet<Ref<ShareableElementData>, ShareableElementDataHash>;
     ShareableElementDataCache m_shareableElementDataCache;
 };
 

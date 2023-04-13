@@ -58,7 +58,7 @@ if (ENABLE_WEBCORE)
     find_package(WPEBackendPlayStation)
     if (WPEBackendPlayStation_FOUND)
         # WPE::libwpe is compiled into the PlayStation backend
-        set(WPE_NAMES SceWPE)
+        set(WPE_NAMES SceWPE ${WPE_NAMES})
         find_package(WPE 1.14.0 REQUIRED)
 
         SET_AND_EXPOSE_TO_BUILD(USE_WPE_BACKEND_PLAYSTATION ON)
@@ -78,9 +78,15 @@ if (ENABLE_WEBCORE)
         OPTIONAL_COMPONENTS ${WebKitRequirements_OPTIONAL_COMPONENTS}
     )
 
+    set(Brotli_NAMES SceVshBrotli ${Brotli_NAMES})
+    set(Brotli_DEC_NAMES ${Brotli_NAMES} ${Brotli_DEC_NAMES})
+    set(Cairo_NAMES SceCairoForWebKit ${Cairo_NAMES})
+    set(HarfBuzz_NAMES SceVshHarfbuzz ${HarfBuzz_NAMES})
+    set(HarfBuzz_ICU_NAMES ${HarfBuzz_NAMES} ${HarfBuzz_ICU_NAMES})
     # The OpenGL ES implementation is in the same library as the EGL implementation
     set(OpenGLES2_NAMES ${EGL_NAMES})
 
+    find_package(Brotli OPTIONAL_COMPONENTS dec)
     find_package(CURL 7.77.0 REQUIRED)
     find_package(Cairo REQUIRED)
     find_package(EGL REQUIRED)
@@ -92,6 +98,7 @@ if (ENABLE_WEBCORE)
     find_package(PNG REQUIRED)
 
     list(APPEND PlayStationModule_TARGETS
+        Brotli::dec
         CURL::libcurl
         Cairo::Cairo
         Fontconfig::Fontconfig
@@ -108,6 +115,7 @@ if (ENABLE_WEBCORE)
     endif ()
 
     if (NOT TARGET LibPSL::LibPSL)
+        set(LibPSL_NAMES SceVshPsl ${LibPSL_NAMES})
         find_package(LibPSL 0.20.2 REQUIRED)
         list(APPEND PlayStationModule_TARGETS LibPSL::LibPSL)
     endif ()
@@ -123,8 +131,8 @@ if (ENABLE_WEBCORE)
     endif ()
 
     if (NOT TARGET WebP::libwebp)
-        set(WebP_NAMES SceVshWebP)
-        set(WebP_DEMUX_NAMES ${WebP_NAMES})
+        set(WebP_NAMES SceVshWebP ${WebP_NAMES})
+        set(WebP_DEMUX_NAMES ${WebP_NAMES} ${WebP_DEMUX_NAMES})
         find_package(WebP REQUIRED COMPONENTS demux)
         list(APPEND PlayStationModule_TARGETS WebP::libwebp)
     endif ()
@@ -234,6 +242,7 @@ set(CMAKE_CXX_STANDARD_LIBRARIES
 
 SET_AND_EXPOSE_TO_BUILD(HAVE_PTHREAD_SETNAME_NP ON)
 SET_AND_EXPOSE_TO_BUILD(HAVE_MAP_ALIGNED OFF)
+SET_AND_EXPOSE_TO_BUILD(HAVE_STD_SPAN ${STD_SPAN_IS_AVAILABLE})
 
 # Platform options
 SET_AND_EXPOSE_TO_BUILD(USE_INSPECTOR_SOCKET_SERVER ${ENABLE_REMOTE_INSPECTOR})
@@ -247,7 +256,6 @@ if (ENABLE_WEBCORE)
     SET_AND_EXPOSE_TO_BUILD(USE_LIBWPE ON)
     SET_AND_EXPOSE_TO_BUILD(USE_OPENSSL ON)
     SET_AND_EXPOSE_TO_BUILD(USE_WEBP ON)
-    SET_AND_EXPOSE_TO_BUILD(USE_WPE_RENDERER OFF)
 
     # See if OpenSSL implementation is BoringSSL
     cmake_push_check_state()
@@ -261,6 +269,7 @@ if (ENABLE_WEBCORE)
     SET_AND_EXPOSE_TO_BUILD(USE_OPENGL_ES ON)
     SET_AND_EXPOSE_TO_BUILD(USE_TEXTURE_MAPPER ON)
     SET_AND_EXPOSE_TO_BUILD(USE_TEXTURE_MAPPER_GL ON)
+    SET_AND_EXPOSE_TO_BUILD(USE_WPE_RENDERER ${USE_WPE_BACKEND_PLAYSTATION})
 
     if (ENABLE_GPU_PROCESS)
         SET_AND_EXPOSE_TO_BUILD(USE_GRAPHICS_LAYER_TEXTURE_MAPPER ON)

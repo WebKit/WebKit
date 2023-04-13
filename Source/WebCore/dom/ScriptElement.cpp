@@ -35,7 +35,6 @@
 #include "Event.h"
 #include "EventLoop.h"
 #include "EventNames.h"
-#include "Frame.h"
 #include "FrameLoader.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
@@ -45,6 +44,7 @@
 #include "LoadableClassicScript.h"
 #include "LoadableImportMap.h"
 #include "LoadableModuleScript.h"
+#include "LocalFrame.h"
 #include "MIMETypeRegistry.h"
 #include "ModuleFetchParameters.h"
 #include "PendingScript.h"
@@ -258,7 +258,7 @@ bool ScriptElement::prepareScript(const TextPosition& scriptStartPosition, Legac
     }
     case ScriptType::ImportMap: {
         // If the element’s node document's acquiring import maps is false, then queue a task to fire an event named error at the element, and return.
-        RefPtr<Frame> frame = m_element.document().frame();
+        RefPtr frame { m_element.document().frame() };
         if (!frame || !frame->script().isAcquiringImportMaps()) {
             m_element.document().eventLoop().queueTask(TaskSource::DOMManipulation, [this, element = Ref<Element>(m_element)] {
                 dispatchErrorEvent();
@@ -316,7 +316,7 @@ bool ScriptElement::requestClassicScript(const String& sourceURL)
     ASSERT(m_element.isConnected());
     ASSERT(!m_loadableScript);
     if (!stripLeadingAndTrailingHTMLSpaces(sourceURL).isEmpty()) {
-        auto script = LoadableClassicScript::create(m_element.nonce(), m_element.attributeWithoutSynchronization(HTMLNames::integrityAttr), referrerPolicy(),
+        auto script = LoadableClassicScript::create(m_element.nonce(), m_element.attributeWithoutSynchronization(HTMLNames::integrityAttr), referrerPolicy(), fetchPriorityHint(),
             m_element.attributeWithoutSynchronization(HTMLNames::crossoriginAttr), scriptCharset(), m_element.localName(), m_element.isInUserAgentShadowTree(), hasAsyncAttribute());
 
         auto scriptURL = m_element.document().completeURL(sourceURL);
@@ -366,7 +366,7 @@ bool ScriptElement::requestModuleScript(const TextPosition& scriptStartPosition)
         }
 
         m_isExternalScript = true;
-        auto script = LoadableModuleScript::create(nonce, m_element.attributeWithoutSynchronization(HTMLNames::integrityAttr), referrerPolicy(), crossOriginMode,
+        auto script = LoadableModuleScript::create(nonce, m_element.attributeWithoutSynchronization(HTMLNames::integrityAttr), referrerPolicy(), fetchPriorityHint(), crossOriginMode,
             scriptCharset(), m_element.localName(), m_element.isInUserAgentShadowTree());
         m_loadableScript = WTFMove(script);
         if (auto* frame = m_element.document().frame()) {
@@ -376,7 +376,7 @@ bool ScriptElement::requestModuleScript(const TextPosition& scriptStartPosition)
         return true;
     }
 
-    auto script = LoadableModuleScript::create(nonce, emptyAtom(), referrerPolicy(), crossOriginMode, scriptCharset(), m_element.localName(), m_element.isInUserAgentShadowTree());
+    auto script = LoadableModuleScript::create(nonce, emptyAtom(), referrerPolicy(), fetchPriorityHint(), crossOriginMode, scriptCharset(), m_element.localName(), m_element.isInUserAgentShadowTree());
 
     TextPosition position = m_element.document().isInDocumentWrite() ? TextPosition() : scriptStartPosition;
     ScriptSourceCode sourceCode(scriptContent(), URL(m_element.document().url()), position, JSC::SourceProviderSourceType::Module, script.copyRef());
@@ -395,7 +395,7 @@ bool ScriptElement::requestModuleScript(const TextPosition& scriptStartPosition)
     return true;
 }
 
-bool ScriptElement::requestImportMap(Frame& frame, const String& sourceURL)
+bool ScriptElement::requestImportMap(LocalFrame& frame, const String& sourceURL)
 {
     ASSERT(m_element.isConnected());
     ASSERT(!m_loadableScript);
@@ -464,7 +464,7 @@ void ScriptElement::registerImportMap(const ScriptSourceCode& sourceCode)
     ASSERT(m_alreadyStarted);
     ASSERT(scriptType() == ScriptType::ImportMap);
 
-    RefPtr<Frame> frame = m_element.document().frame();
+    RefPtr frame { m_element.document().frame() };
 
     auto scopedExit = WTF::makeScopeExit([&] {
         if (frame)

@@ -32,6 +32,7 @@
 #include "HTMLNames.h"
 #include "MediaQueryParser.h"
 #include "MediaQueryParserContext.h"
+#include "Page.h"
 #include "ScriptableDocumentParser.h"
 #include "ShadowRoot.h"
 #include "StyleScope.h"
@@ -75,25 +76,25 @@ Ref<HTMLStyleElement> HTMLStyleElement::create(Document& document)
     return adoptRef(*new HTMLStyleElement(styleTag, document, false));
 }
 
-void HTMLStyleElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void HTMLStyleElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     if (name == titleAttr && sheet() && !isInShadowTree())
-        sheet()->setTitle(value);
+        sheet()->setTitle(newValue);
     else if (name == mediaAttr) {
-        m_styleSheetOwner.setMedia(value);
+        m_styleSheetOwner.setMedia(newValue);
         if (sheet()) {
-            sheet()->setMediaQueries(MQ::MediaQueryParser::parse(value, MediaQueryParserContext(document())));
+            sheet()->setMediaQueries(MQ::MediaQueryParser::parse(newValue, MediaQueryParserContext(document())));
             if (auto* scope = m_styleSheetOwner.styleScope())
                 scope->didChangeStyleSheetContents();
         } else
             m_styleSheetOwner.childrenChanged(*this);
     } else if (name == typeAttr) {
-        m_styleSheetOwner.setContentType(value);
+        m_styleSheetOwner.setContentType(newValue);
         m_styleSheetOwner.childrenChanged(*this);
         if (auto* scope = m_styleSheetOwner.styleScope())
             scope->didChangeStyleSheetContents();
     } else
-        HTMLElement::parseAttribute(name, value);
+        HTMLElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }
 
 void HTMLStyleElement::finishParsingChildren()

@@ -65,7 +65,7 @@ private:
     void startTimeout();
     void stopTimeout();
 
-    enum class WasBlockingCookies { No, Yes };
+    enum class WasBlockingCookies : bool { No, Yes };
     void createRequest(WebCore::ResourceRequest&&, WasBlockingCookies);
     void clearRequest();
 

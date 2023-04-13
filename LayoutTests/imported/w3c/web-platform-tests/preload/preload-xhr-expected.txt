@@ -1,0 +1,4 @@
+
+FAIL Make an XHR request immediately after creating link rel=preload. assert_equals: resources/dummy.xml?token=762544fe-6950-48e7-bd5a-253ec0308ee5 expected 1 but got 2
+FAIL Make an XHR request after loading link rel=preload. assert_equals: resources/dummy.xml?token=87d3d7c0-98a7-4715-b671-81cea5569e10 expected 1 but got 2
+

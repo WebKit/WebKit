@@ -88,6 +88,7 @@ public:
         , URL&& mainDocumentURL
         , std::optional<UserContentControllerIdentifier>
 #endif
+        , bool linkPreconnectEarlyHintsEnabled
     );
     
     std::optional<Vector<SandboxExtension::Handle>> sandboxExtensionsIfHttpBody() const;
@@ -135,6 +136,8 @@ public:
     URL mainDocumentURL;
     std::optional<UserContentControllerIdentifier> userContentControllerIdentifier;
 #endif
+
+    bool linkPreconnectEarlyHintsEnabled { false };
 };
 
 } // namespace WebKit

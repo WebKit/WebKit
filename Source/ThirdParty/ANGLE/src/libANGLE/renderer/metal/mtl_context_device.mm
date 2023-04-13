@@ -131,5 +131,5 @@ void ContextDevice::setOwnerWithIdentity(id<MTLResource> resource) const
     mtl::setOwnerWithIdentity(resource, mOwnershipIdentity);
 #endif
 }
-}
-}
+}  // namespace mtl
+}  // namespace rx

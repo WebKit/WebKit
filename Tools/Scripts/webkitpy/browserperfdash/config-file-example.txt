@@ -17,6 +17,30 @@
 # 'bot_password' : The password of this bot on the server.
 # 'post_url'     : The POST URL (typically ${BASE_URI}/dash/bot-report)
 #
+# There is a special section named 'settings' where you can specify a
+# list of plans to be run when the flag '--plans-from-config' is passed,
+# or specify default values for different options.
+# The settings that can be configured in this section are:
+#   plan_list = (Optional) list of plans to run when the flag --plans-from-config is specified
+#   timeout = (Optional) default value that will be used if no parameter "--timeout" is specified
+#   count = (Optional) default value that will be used if no parameter "--count" is specified
+#   platform = (Optional) default value that will be used if no parameter "--platform" is specified
+#   browser = (Optional) default value that will be used if no parameter "--browser" is specified
+#   driver = (Optional) default value that will be used if no parameter "--driver" is specified
+#
+
+#
+# Example of configuration file
+#
+
+## Configuration of plans to run and default settings values
+#[settings]
+#plan_list = ares6 dromaeo-cssquery dromaeo-dom dromaeo-jslib jetstream2 jsbench kraken motionmark octane speedometer stylebench sunspider
+#timeout = 900
+#count = 1
+#platform = linux
+#driver = webdriver
+#browser = cog
 
 ## Configuration for dashboard browserperfdash.igalia.org
 #[browserperfdash.igalia.org]

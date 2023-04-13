@@ -27,6 +27,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "RemoteGPURequestAdapterResponse.h"
 #include "StreamConnectionWorkQueue.h"
 #include "StreamMessageReceiver.h"
 #include "StreamServerConnection.h"
@@ -70,47 +71,7 @@ public:
 
     virtual ~RemoteGPU();
 
-    void stopListeningForIPC(Ref<RemoteGPU>&& refFromConnection);
-
-    struct RequestAdapterResponse {
-        String name;
-        WebGPU::SupportedFeatures features;
-        WebGPU::SupportedLimits limits;
-        bool isFallbackAdapter;
-
-        template<class Encoder> void encode(Encoder& encoder) const
-        {
-            encoder << name;
-            encoder << features;
-            encoder << limits;
-            encoder << isFallbackAdapter;
-        }
-
-        template<class Decoder> static std::optional<RequestAdapterResponse> decode(Decoder& decoder)
-        {
-            std::optional<String> name;
-            decoder >> name;
-            if (!name)
-                return std::nullopt;
-
-            std::optional<WebGPU::SupportedFeatures> features;
-            decoder >> features;
-            if (!features)
-                return std::nullopt;
-
-            std::optional<WebGPU::SupportedLimits> limits;
-            decoder >> limits;
-            if (!limits)
-                return std::nullopt;
-
-            std::optional<bool> isFallbackAdapter;
-            decoder >> isFallbackAdapter;
-            if (!isFallbackAdapter)
-                return std::nullopt;
-
-            return { { WTFMove(*name), WTFMove(*features), WTFMove(*limits), *isFallbackAdapter } };
-        }
-    };
+    void stopListeningForIPC();
 
 private:
     friend class WebGPU::ObjectHeap;
@@ -135,9 +96,11 @@ private:
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 
-    void requestAdapter(const WebGPU::RequestAdapterOptions&, WebGPUIdentifier, CompletionHandler<void(std::optional<RequestAdapterResponse>&&)>&&);
+    void requestAdapter(const WebGPU::RequestAdapterOptions&, WebGPUIdentifier, CompletionHandler<void(std::optional<RemoteGPURequestAdapterResponse>&&)>&&);
 
     void createPresentationContext(const WebGPU::PresentationContextDescriptor&, WebGPUIdentifier);
+
+    void createCompositorIntegration(WebGPUIdentifier);
 
     WeakPtr<GPUConnectionToWebProcess> m_gpuConnectionToWebProcess;
     Ref<IPC::StreamConnectionWorkQueue> m_workQueue;

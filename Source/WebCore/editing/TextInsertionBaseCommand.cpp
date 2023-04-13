@@ -29,8 +29,8 @@
 #include "BeforeTextInsertedEvent.h"
 #include "Document.h"
 #include "Element.h"
-#include "Frame.h"
 #include "FrameSelection.h"
+#include "LocalFrame.h"
 #include "Node.h"
 
 namespace WebCore {
@@ -40,7 +40,7 @@ TextInsertionBaseCommand::TextInsertionBaseCommand(Document& document, EditActio
 {
 }
 
-void TextInsertionBaseCommand::applyTextInsertionCommand(Frame* frame, TextInsertionBaseCommand& command, const VisibleSelection& selectionForInsertion, const VisibleSelection& endingSelection)
+void TextInsertionBaseCommand::applyTextInsertionCommand(LocalFrame* frame, TextInsertionBaseCommand& command, const VisibleSelection& selectionForInsertion, const VisibleSelection& endingSelection)
 {
     bool changeSelection = selectionForInsertion != endingSelection;
     if (changeSelection) {

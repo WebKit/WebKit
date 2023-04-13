@@ -1,5 +1,3 @@
-include(WebKitCommon)
-
 set_property(DIRECTORY . PROPERTY FOLDER "WebInspectorUI")
 
 set(InspectorFiles

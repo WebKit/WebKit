@@ -8,6 +8,7 @@ compositing/layer-creation/clipping-scope [ Pass ]
 editing/find/cocoa [ Pass ]
 editing/undo-manager [ Pass ]
 editing/pasteboard/dom-paste [ Pass ]
+fast/attachment/cocoa [ Pass ]
 fast/attachment/mac [ Pass ]
 fast/events/cursors [ Pass ]
 fast/forms/date/date-editable-components [ Pass ]
@@ -17,12 +18,15 @@ fast/forms/time/time-editable-components [ Pass ]
 fast/forms/select/mac-wk2 [ Pass ]
 fast/sandbox/mac [ Pass ]
 fast/scrolling/mac [ Pass ]
+fast/speechsynthesis/mac [ Pass ]
 fast/visual-viewport/tiled-drawing [ Pass ]
 fast/web-share [ Pass ]
 imported/w3c/web-platform-tests/web-share [ Pass ]
 [ BigSur+ ] media/modern-media-controls/overflow-support [ Pass ]
 http/tests/media/modern-media-controls/overflow-support [ Pass ]
 [ BigSur+ ] media/modern-media-controls/tracks-support [ Pass ]
+remote-layer-tree [ Pass ]
+remote-layer-tree/ios [ Skip ]
 scrollingcoordinator [ Pass ]
 scrollingcoordinator/ios [ Skip ]
 swipe [ Pass ]
@@ -59,9 +63,11 @@ http/tests/paymentrequest/ApplePayModifier-automaticReloadPaymentRequest.https.h
 http/tests/paymentrequest/ApplePayModifier-multiTokenContexts.https.html [ Skip ]
 http/tests/paymentrequest/ApplePayModifier-additionalLineItems.https.html [ Skip ]
 http/tests/paymentrequest/ApplePayModifier-additionalShippingMethods.https.html [ Skip ]
+http/tests/paymentrequest/ApplePayModifier-deferredPaymentRequest.https.html [ Skip ]
 http/tests/paymentrequest/ApplePayModifier-recurringPaymentRequest.https.html [ Skip ]
 http/tests/paymentrequest/ApplePayModifier-total.https.html [ Skip ]
 http/tests/paymentrequest/ApplePayPaymentCompleteDetails-orderDetails.https.html [ Skip ]
+http/tests/paymentrequest/paymentrequest-applePayLaterMode.https.html [ Skip ]
 http/tests/paymentrequest/paymentmethodchange-couponCode.https.html [ Skip ]
 http/tests/paymentrequest/paymentrequest-couponCode.https.html [ Skip ]
 http/tests/paymentrequest/paymentrequest-shippingContactEditingMode.https.html [ Skip ]
@@ -295,6 +301,9 @@ fast/events/input-events-insert-by-drop.html [ Failure ]
 
 webkit.org/b/81833 fast/events/drag-and-drop-link-into-focused-contenteditable.html [ Failure ]
 
+fast/forms/file/file-input-reset-validation.html [ Failure ]
+fast/forms/file/file-input-empty-validation.html [ Failure ]
+
 # Missing functionality of textInputController
 # https://bugs.webkit.org/show_bug.cgi?id=89401
 editing/mac/input/insert-dictated-text.html
@@ -343,15 +352,11 @@ http/wpt/mediarecorder/set-srcObject-MediaStream-Blob.html [ Pass Failure Timeou
 [ Monterey+ ] http/tests/websocket/tests/hybi/send-object-tostring-check.html [ Pass Failure Timeout ]
 
 # rdar://77084155 (REGRESSION: [ Monterey WK2 ] WebGL textures tests are consistently timing out)
-[ Monterey+ ] webgl/1.0.3/conformance/extensions/oes-texture-float-with-video.html [ Skip ]
-[ Monterey+ ] webgl/1.0.3/conformance/extensions/oes-texture-half-float-with-video.html [ Skip ]
 [ Monterey+ ] webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-video-rgb565.html [ Skip ]
 [ Monterey+ ] webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-video-rgba4444.html [ Skip ]
 [ Monterey+ ] webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-video-rgba5551.html [ Skip ]
 [ Monterey+ ] webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-video.html [ Skip ]
 [ Monterey+ ] webgl/1.0.3/conformance/textures/texture-upload-size.html [ Skip ]
-[ Monterey+ ] webgl/2.0.0/conformance/extensions/oes-texture-float-with-video.html [ Skip ]
-[ Monterey+ ] webgl/2.0.0/conformance/extensions/oes-texture-half-float-with-video.html [ Skip ]
 [ Monterey+ ] webgl/2.0.0/conformance/textures/image_bitmap_from_video/tex-2d-rgb-rgb-unsigned_byte.html [ Skip ]
 [ Monterey+ ] webgl/2.0.0/conformance/textures/image_bitmap_from_video/tex-2d-rgb-rgb-unsigned_short_5_6_5.html [ Skip ]
 [ Monterey+ ] webgl/2.0.0/conformance/textures/image_bitmap_from_video/tex-2d-rgba-rgba-unsigned_byte.html [ Skip ]
@@ -574,6 +579,8 @@ webkit.org/b/151326 webarchive/loading/missing-data.html [ Pass Crash ]
 webkit.org/b/151455 [ Release ] http/tests/xmlhttprequest/workers/methods-async.html [ Pass Timeout ]
 
 webkit.org/b/150542 fast/forms/state-restore-per-form.html [ Pass Timeout ]
+
+webkit.org/b/254706 imported/w3c/web-platform-tests/html/dom/idlharness.https.html [ Pass Failure ]
 
 webkit.org/b/151709 [ Release ] http/tests/xmlhttprequest/workers/methods.html [ Pass Timeout ]
 
@@ -1384,8 +1391,6 @@ webkit.org/b/228713 [ BigSur Debug arm64 ] compositing/video/video-object-fit.ht
 
 webkit.org/b/224698 [ BigSur Release arm64 ] inspector/console/console-oom.html [ Pass Crash ]
 
-webkit.org/b/224257 [ Debug ] webgl/2.0.0/conformance/glsl/misc/shader-uniform-packing-restrictions.html [ Slow ]
-
 webkit.org/b/238033 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-050.html [ Pass Failure ]
 
 webkit.org/b/224963 [ BigSur arm64 ] webrtc/captureCanvas-webrtc.html [ Pass Timeout ]
@@ -1522,8 +1527,6 @@ webkit.org/b/229460 [ BigSur Debug ] http/tests/inspector/network/ping-type.html
 webkit.org/b/230056 [ BigSur Debug ] http/tests/inspector/network/resource-request-headers.html [ Pass Failure ]
 webkit.org/b/230056 [ BigSur Debug ] http/tests/inspector/network/har/har-page-aggressive-gc.html [ Pass Failure ]
 
-webkit.org/b/229472 [ BigSur Debug ] webgl/1.0.3/conformance/glsl/constructors/glsl-construct-bvec2.html [ Pass Timeout ]
-
 webkit.org/b/229561 http/tests/navigation/page-cache-video.html [ Pass Failure ]
 
 webkit.org/b/229579 [ BigSur Debug ] http/tests/loading/preload-img-test.html [ Pass Failure ]
@@ -1591,22 +1594,15 @@ webkit.org/b/236328 [ Monterey ] webaudio/decode-audio-data-webm-vorbis.html [ F
 
 webkit.org/b/232497 [ BigSur Debug ] media/media-source/media-source-istypesupported-case-sensitive.html [ Pass Crash ]
 
-
-webkit.org/b/233621 http/tests/webgpu [ Skip ]
-
 fast/text/install-font-style-recalc.html [ Pass ]
 
 webkit.org/b/238880 [ Monterey+ Release ] imported/w3c/web-platform-tests/css/css-text/white-space/pre-wrap-012.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/239095 http/wpt/cache-storage/cache-storage-networkprocess-crash.html [ Pass Crash ]
 
-webkit.org/b/239308 media/media-source/media-source-webm-vorbis-partial.html [ Failure ]
-
 webkit.org/b/239304 http/tests/cache-storage/cache-origins.https.html [ Pass Failure ]
 
 # [ Monterey wk2 debug ] WebGL conformance tests are a flaky time out
-webkit.org/b/239386 [ Debug ] webgl/1.0.3/conformance/context/context-eviction-with-garbage-collection.html [ Pass Timeout ]
-webkit.org/b/239386 [ Debug ] webgl/1.0.3/conformance/context/context-release-with-workers.html [ Pass Timeout ]
 webkit.org/b/239386 [ Debug ] webgl/1.0.3/conformance/textures/copy-tex-image-and-sub-image-2d.html [ Pass Timeout ]
 webkit.org/b/239386 webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-array-buffer-view.html [ Pass Timeout ]
 webkit.org/b/239386 webgl/1.0.3/conformance/textures/texture-size-cube-maps.html [ Pass Timeout ]
@@ -1620,17 +1616,13 @@ webkit.org/b/239386 webgl/1.0.3/conformance/uniforms/uniform-default-values.html
 webkit.org/b/239386 webgl/2.0.0/conformance/canvas/rapid-resizing.html [ Pass Timeout ]
 webkit.org/b/239386 [ Debug ] webgl/2.0.0/conformance/context/context-eviction-with-garbage-collection.html [ Pass Timeout ]
 webkit.org/b/239386 [ Debug ] webgl/2.0.0/conformance/context/context-release-upon-reload.html [ Pass Timeout ]
-webkit.org/b/239386 [ Debug ] webgl/2.0.0/conformance/extensions/webgl-compressed-texture-s3tc-srgb.html [ Pass Timeout ]
-webkit.org/b/239386 [ Debug ] webgl/2.0.0/conformance/extensions/webgl-compressed-texture-s3tc.html [ Pass Timeout ]
 webkit.org/b/239386 [ Debug ] webgl/2.0.0/conformance2/buffers/buffer-copying-contents.html [ Pass Timeout ]
 webkit.org/b/239386 webgl/2.0.0/conformance/textures/image_bitmap_from_canvas/tex-2d-rgba-rgba-unsigned_short_4_4_4_4.html [ Pass Timeout ]
 webkit.org/b/239386 [ Debug ] webgl/2.0.0/conformance/uniforms/uniform-values-per-program.html [ Pass Timeout ]
 webkit.org/b/239386 webgl/2.0.0/conformance/textures/image_bitmap_from_canvas/tex-2d-rgba-rgba-unsigned_short_5_5_5_1.html [ Pass Timeout ]
-webkit.org/b/239386 webgl/2.0.0/conformance/rendering/multisample-corruption.html [ Pass Timeout ]
 
 # [ Monterey wk2 ] WebGL conformance tests are a flaky time out
 webkit.org/b/239388 webgl/1.0.3/conformance/uniforms/out-of-bounds-uniform-array-access.html [ Pass Timeout ]
-webkit.org/b/239388 webgl/2.0.0/conformance/glsl/misc/struct-nesting-of-variable-names.html [ Pass Timeout ]
 webkit.org/b/239388 webgl/2.0.0/conformance/textures/canvas/tex-2d-rgb-rgb-unsigned_byte.html [ Pass Timeout ]
 webkit.org/b/239388 webgl/2.0.0/conformance/textures/canvas/tex-2d-rgb-rgb-unsigned_short_5_6_5.html [ Pass Timeout ]
 webkit.org/b/239388 webgl/2.0.0/conformance/textures/canvas/tex-2d-rgba-rgba-unsigned_byte.html [ Pass Timeout ]
@@ -1667,15 +1659,11 @@ webkit.org/b/239574 [ Monterey Release ] webanimations/frame-rate/animation-fram
 
 webkit.org/b/195635 [ arm64 ] scrollingcoordinator/mac/multiple-fixed.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/239627 [ arm64 ] fast/scrolling/mac/adjust-scroll-snap-during-gesture.html [ Pass Failure ]
-
 webkit.org/b/240123 imported/w3c/web-platform-tests/webrtc/protocol/rtp-clockrate.html [ Pass Failure ]
 
 webkit.org/b/240670 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/image-loading-lazy-move-into-script-disabled-iframe.html [ Pass Crash ]
 
 webkit.org/b/240821 webgl/max-active-contexts-webglcontextlost-prevent-default.html [ Pass Failure Timeout ]
-
-webkit.org/b/240830 [ Monterey ] webgl/2.0.0/conformance/attribs/gl-vertexattribpointer-offsets.html [ Pass Timeout ]
 
 webkit.org/b/240927 [ BigSur Debug ] storage/indexeddb/request-with-null-open-db-request.html [ Pass Crash ]
 
@@ -1685,7 +1673,7 @@ webkit.org/b/241283 fast/animation/request-animation-frame-throttling-detached-i
 
 # NOTIFICATION_EVENT is Ventura+
 [ Ventura+ ] http/tests/workers/service/shownotification-allowed-document.html [ Pass ]
-[ Ventura+ ] http/tests/workers/service/shownotification-allowed.html [ Pass ]
+webkit.org/b/253343 [ Ventura+ ] http/tests/workers/service/shownotification-allowed.html [ Pass Failure ]
 [ Ventura+ ] http/tests/workers/service/shownotification-invalid-data.html [ Pass ]
 [ Ventura+ ] http/wpt/push-api/pushEvent.any.serviceworker.html [ Pass ]
 [ Ventura+ ] imported/w3c/web-platform-tests/notifications/idlharness.https.any.html [ Pass ]
@@ -1693,6 +1681,10 @@ webkit.org/b/241283 fast/animation/request-animation-frame-throttling-detached-i
 [ Ventura+ ] imported/w3c/web-platform-tests/notifications/idlharness.https.any.worker.html [ Pass ]
 [ Ventura+ ] http/tests/workers/service/getnotifications-stop.html [ Pass ]
 [ Ventura+ ] http/tests/workers/service/getnotifications.html [ Pass ]
+[ Ventura+ ] http/wpt/service-workers/push-console-messages-no-showNotification.https.html [ Pass ]
+[ Ventura+ ] http/wpt/service-workers/push-console-messages-showNotification-async.https.html [ Pass ]
+[ Ventura+ ] http/wpt/service-workers/push-console-messages-showNotification-late.https.html [ Pass ]
+[ Ventura+ ] http/wpt/service-workers/push-console-messages-showNotification-sync.https.html [ Pass ]
 
 webkit.org/b/242164 [ Debug ] imported/w3c/web-platform-tests/service-workers/service-worker/navigation-timing.https.html [ Failure ]
 
@@ -1733,6 +1725,10 @@ webkit.org/b/245727 [ Monterey ] imported/w3c/web-platform-tests/notifications/i
 
 webkit.org/b/248734 media/video-inaccurate-duration-ended.html [ Crash ]
 
+webkit.org/b/255235 [ Ventura Release ] imported/w3c/web-platform-tests/css/css-cascade/layer-counter-style-override.html [ Failure ]
+
+webkit.org/b/254778 [ Ventura Debug arm64 ] fast/images/avif-image-decoding.html [ Pass Crash ]
+
 #webkit.org/b/248537 Batch mark expectations for Ventura test failures
 [ Ventura+ ] webrtc/canvas-to-peer-connection-2d.html [ Pass Timeout ]
 [ Ventura+ ] webrtc/canvas-to-peer-connection.html [ Pass Failure Timeout ]
@@ -1742,8 +1738,6 @@ webkit.org/b/248734 media/video-inaccurate-duration-ended.html [ Crash ]
 [ Ventura+ x86_64 ] svg/gradients/spreadMethodAlpha.svg [ ImageOnlyFailure ]
 [ Ventura+ x86_64 ] scrollbars/scrolling-by-page-accounting-oversized-fixed-elements-on-keyboard-spacebar.html [ Pass Failure ]
 [ Ventura+ ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/autoplay-allowed-by-feature-policy-attribute.https.sub.html [ Pass Failure ]
-[ Ventura+ ] imported/w3c/web-platform-tests/mathml/relations/html5-tree/dynamic-childlist-002.html [ Failure ]
-[ BigSur+ ] imported/w3c/web-platform-tests/webstorage/storage_local_window_open.window.html [ Pass Timeout ]
 [ BigSur+ x86_64 ] imported/mozilla/svg/blend-color.svg [ ImageOnlyFailure ]
 [ Monterey+ Debug arm64 ] imported/w3c/web-platform-tests/fetch/api/request/destination/fetch-destination-frame.https.html [ Crash ]
 [ BigSur+ x86_64 ] imported/w3c/web-platform-tests/css/css-grid/alignment/grid-item-aspect-ratio-stretch-2.html [ ImageOnlyFailure ]
@@ -1760,12 +1754,9 @@ webkit.org/b/248734 media/video-inaccurate-duration-ended.html [ Crash ]
 [ BigSur+ x86_64 ] fast/mediastream/getUserMedia-to-canvas-2.html [ Pass Timeout ]
 [ Monterey+ ] fast/borders/border-painting-correctness-dashed.html [ ImageOnlyFailure ]
 [ Monterey+ ] fast/borders/border-painting-correctness-dotted.html [ ImageOnlyFailure ]
-[ BigSur+ ] fast/canvas/webgl/lose-context-on-timeout.html [ Timeout ]
 [ BigSur+ x86_64 ] css3/blending/background-blend-mode-body-image.html [ ImageOnlyFailure ]
 [ BigSur Monterey ] fast/images/animated-heics-draw.html [ Skip ]
 [ Ventura+ ] fast/images/animated-heics-draw.html [ Pass Timeout ]
-[ BigSur Monterey ] fast/images/animated-heics-verify.html [ Skip ]
-[ Ventura+ ] fast/images/animated-heics-verify.html [ Pass Failure ]
 [ Ventura+ ] model-element/model-element-ready.html [ Pass Failure ]
 [ Monterey+ ] model-element/model-element-graphics-layers-opacity.html [ Failure ]
 [ Ventura+ ] http/tests/resourceLoadStatistics/website-data-removal-for-site-without-user-interaction.html [ Failure ]
@@ -1775,7 +1766,6 @@ webkit.org/b/248734 media/video-inaccurate-duration-ended.html [ Crash ]
 [ BigSur+ ] streams/readable-stream-default-controller-error.html [ Pass Crash ]
 [ BigSur+ ] fast/mediastream/mediastreamtrack-video-clone.html [ Pass Failure ]
 [ BigSur+ ] fast/repaint/fixed-move-after-keyboard-scroll.html [ Pass Failure ]
-[ BigSur+ ] fast/scrolling/mac/keyboard-scrolling-with-mouse-scroll.html [ Pass Failure ]
 [ BigSur+ x86_64 ] http/tests/media/hls/track-in-band-hls-metadata-cue-duration.html [ Pass Failure ]
 [ Monterey+ x86_64 ] http/tests/websocket/tests/hybi/handshake-ok-with-legacy-websocket-response-headers.html [ Pass Failure ]
 [ Bigsur+ x86_64 ] http/wpt/mediarecorder/pause-recording.html [ Pass Failure ]
@@ -1796,7 +1786,6 @@ webkit.org/b/248734 media/video-inaccurate-duration-ended.html [ Crash ]
 [ Ventura Debug x86_64 ] editing/caret/color-span-inside-editable-background.html [ Pass ImageOnlyFailure ]
 [ Ventura+ x86_64 ] fast/css/text-overflow-input-focus-placeholder.html [ Pass ImageOnlyFailure ]
 [ BigSur+ x86_64 ] webrtc/captureCanvas-webrtc-software-h264-high.html [ Pass Failure Timeout ]
-[ Ventura+ x86_64 ] webgl/pending/conformance/glsl/misc/swizzle-as-lvalue.html [ Pass Timeout ]
 [ Ventura+ x86_64 Debug ] webgl/2.0.0/conformance2/textures/canvas_sub_rectangle/tex-3d-rg32f-rg-float.html [ Pass Timeout ]
 [ Ventura+ Debug x86_64 ] webgl/2.0.0/conformance/state/gl-object-get-calls.html [ Pass Timeout ]
 [ Monterey+ Debug x86_64 ] webgl/2.0.0/conformance/context/context-release-with-workers.html [ Pass Timeout ]
@@ -1809,5 +1798,36 @@ imported/w3c/web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canva
 imported/w3c/web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.transfer.to.imagebitmap.w.html [ Skip ]
 imported/w3c/web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.transferrable.w.html [ Skip ]
 imported/w3c/web-platform-tests/webcodecs/videoFrame-texImage.any.worker.html [ Skip ]
+webgl/1.0.x/conformance/offscreencanvas/context-creation-worker.html [ Skip ]
+webgl/1.0.x/conformance/offscreencanvas/context-lost-restored-worker.html [ Skip ]
+webgl/1.0.x/conformance/offscreencanvas/context-lost-worker.html [ Skip ]
+webgl/1.0.x/conformance/offscreencanvas/methods-worker.html [ Skip ]
+webgl/1.0.x/conformance/offscreencanvas/offscreencanvas-timer-query.html [ Skip ]
+webgl/1.0.x/conformance/offscreencanvas/offscreencanvas-transfer-image-bitmap.html [ Skip ]
+webgl/2.0.y/conformance/offscreencanvas/context-creation-worker.html [ Skip ]
+webgl/2.0.y/conformance/offscreencanvas/context-lost-restored-worker.html [ Skip ]
+webgl/2.0.y/conformance/offscreencanvas/context-lost-worker.html [ Skip ]
+webgl/2.0.y/conformance/offscreencanvas/methods-worker.html [ Skip ]
+webgl/2.0.y/conformance/offscreencanvas/offscreencanvas-timer-query.html [ Skip ]
+webgl/2.0.y/conformance/offscreencanvas/offscreencanvas-transfer-image-bitmap.html [ Skip ]
+webgl/2.0.y/conformance2/offscreencanvas/context-creation-worker.html [ Skip ]
+webgl/2.0.y/conformance2/offscreencanvas/methods-2-worker.html [ Skip ]
+webgl/2.0.y/conformance2/offscreencanvas/offscreencanvas-query.html [ Skip ]
+webgl/2.0.y/conformance2/offscreencanvas/offscreencanvas-sync.html [ Skip ]
+webgl/2.0.y/conformance2/offscreencanvas/offscreencanvas-timer-query.html [ Skip ]
+webgl/2.0.y/conformance2/offscreencanvas/offscreencanvas-transfer-image-bitmap.html [ Skip ]
 
 webkit.org/b/251187 [ Debug ] imported/w3c/web-platform-tests/fetch/api/redirect/redirect-back-to-original-origin.any.html [ Pass Crash ]
+
+webkit.org/b/254001 http/wpt/service-workers/service-worker-spinning-activate.https.html [ Failure Pass Timeout ]
+
+webkit.org/b/250046 [ Monterey+ ] svg/clip-path/clip-opacity-translate.svg [ ImageOnlyFailure ]
+
+# Early hints require network callbacks that are only present in macOS 12 / iOS 15 or greater.
+[ Monterey+ ] http/wpt/loading/early-hints [ Pass ]
+
+webkit.org/b/253533 imported/w3c/web-platform-tests/fetch/api/basic/status.h2.any.html [ Pass ]
+webkit.org/b/253533 imported/w3c/web-platform-tests/fetch/api/basic/status.h2.any.worker.html [ Pass ]
+webkit.org/b/253533 imported/w3c/web-platform-tests/xhr/status.h2.window.html [ Pass ]
+
+webkit.org/b/254770 http/tests/misc/heic-accept-header.html [ Pass Crash ]

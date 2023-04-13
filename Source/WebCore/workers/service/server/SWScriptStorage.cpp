@@ -96,7 +96,7 @@ ScriptBuffer SWScriptStorage::store(const ServiceWorkerRegistrationKey& registra
     FileSystem::deleteFile(scriptPath);
 
     if (!shouldUseFileMapping(script.buffer()->size())) {
-        auto handle = FileSystem::openFile(scriptPath, FileSystem::FileOpenMode::Write);
+        auto handle = FileSystem::openFile(scriptPath, FileSystem::FileOpenMode::Truncate);
         if (!FileSystem::isHandleValid(handle)) {
             RELEASE_LOG_ERROR(ServiceWorker, "SWScriptStorage::store: Failure to store %s, FileSystem::openFile() failed", scriptPath.utf8().data());
             return { };

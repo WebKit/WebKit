@@ -24,13 +24,13 @@
 #include "MouseEvent.h"
 
 #include "EventNames.h"
-#include "Frame.h"
-#include "FrameView.h"
 #include "HTMLIFrameElement.h"
 #include "JSDOMConvertInterface.h"
 #include "JSDOMConvertNullable.h"
 #include "JSEventTarget.h"
 #include "JSEventTargetCustom.h"
+#include "LocalFrame.h"
+#include "LocalFrameView.h"
 #include "PlatformMouseEvent.h"
 #include "RuntimeApplicationChecks.h"
 #include <JavaScriptCore/CallFrame.h>
@@ -147,9 +147,9 @@ void MouseEvent::initMouseEventQuirk(JSGlobalObject& state, ScriptExecutionConte
     if (MacApplication::isIAdProducer() || CocoaApplication::isIBooks()) {
         // jsEventTargetCast() does not throw and will silently convert bad input to nullptr.
         auto jsRelatedTarget = jsEventTargetCast(state.vm(), relatedTargetValue);
-        if (!jsRelatedTarget && !relatedTargetValue.isUndefinedOrNull())
+        if (jsRelatedTarget.isNull() && !relatedTargetValue.isUndefinedOrNull())
             scriptExecutionContext.addConsoleMessage(MessageSource::JS, MessageLevel::Warning, "Calling initMouseEvent() with a relatedTarget that is not an EventTarget is deprecated."_s);
-        relatedTarget = jsRelatedTarget ? &jsRelatedTarget->wrapped() : nullptr;
+        relatedTarget = jsRelatedTarget.isNull() ? nullptr : &jsRelatedTarget.wrapped();
     } else {
 #else
     UNUSED_PARAM(scriptExecutionContext);

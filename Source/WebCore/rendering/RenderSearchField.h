@@ -44,6 +44,7 @@ public:
     bool popupIsVisible() const { return m_searchPopupIsVisible; }
     void showPopup();
     void hidePopup();
+    WEBCORE_EXPORT Span<const RecentSearch> recentSearches();
 
 private:
     bool isSearchField() const final { return true; }

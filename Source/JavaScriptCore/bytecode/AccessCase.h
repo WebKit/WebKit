@@ -44,7 +44,7 @@ class IntrinsicGetterAccessCase;
 class ModuleNamespaceAccessCase;
 class ProxyableAccessCase;
 
-struct AccessGenerationState;
+class InlineCacheCompiler;
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(AccessCase);
 
@@ -91,6 +91,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(AccessCase);
 
 #define JSC_FOR_EACH_ACCESS_TYPE(macro) \
     macro(Load) \
+    macro(LoadMegamorphic) \
     macro(Transition) \
     macro(Delete) \
     macro(DeleteNonConfigurable) \
@@ -112,7 +113,9 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(AccessCase);
     macro(DirectArgumentsLength) \
     macro(ScopedArgumentsLength) \
     macro(ModuleNamespaceLoad) \
+    macro(ProxyObjectHas) \
     macro(ProxyObjectLoad) \
+    macro(ProxyObjectStore) \
     macro(InstanceOfHit) \
     macro(InstanceOfMiss) \
     macro(InstanceOfGeneric) \
@@ -171,6 +174,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(AccessCase);
 class AccessCase : public ThreadSafeRefCounted<AccessCase> {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(AccessCase);
 public:
+    friend class InlineCacheCompiler;
     enum AccessType : uint8_t {
 #define JSC_DEFINE_ACCESS_TYPE(name) name,
         JSC_FOR_EACH_ACCESS_TYPE(JSC_DEFINE_ACCESS_TYPE)
@@ -285,9 +289,6 @@ public:
     bool requiresInt32PropertyCheck() const;
     bool needsScratchFPR() const;
 
-    static TypedArrayType toTypedArrayType(AccessType);
-    static bool forResizableTypedArray(AccessType);
-
     UniquedStringImpl* uid() const { return m_identifier.uid(); }
     CacheableIdentifier identifier() const { return m_identifier; }
 
@@ -366,16 +367,6 @@ private:
     // Perform any action that must be performed before the end of the epoch in which the case
     // was created. Returns a set of watchpoint sets that will need to be watched.
     Vector<WatchpointSet*, 2> commit(VM&);
-
-    // Fall through on success. Two kinds of failures are supported: fall-through, which means that we
-    // should try a different case; and failure, which means that this was the right case but it needs
-    // help from the slow path.
-    void generateWithGuard(AccessGenerationState&, MacroAssembler::JumpList& fallThrough);
-
-    // Fall through on success, add a jump to the failure list on failure.
-    void generate(AccessGenerationState&);
-
-    void generateImpl(AccessGenerationState&);
 
     bool guardedByStructureCheckSkippingConstantIdentifierCheck() const;
 

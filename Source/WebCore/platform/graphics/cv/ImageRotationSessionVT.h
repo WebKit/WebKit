@@ -47,8 +47,8 @@ public:
         bool isIdentity() const { return !flipX && !flipY && !angle; }
     };
 
-    enum class IsCGImageCompatible { No, Yes };
-    enum class ShouldUseIOSurface { No, Yes };
+    enum class IsCGImageCompatible : bool { No, Yes };
+    enum class ShouldUseIOSurface : bool { No, Yes };
 
     ImageRotationSessionVT(AffineTransform&&, FloatSize, IsCGImageCompatible, ShouldUseIOSurface = ShouldUseIOSurface::Yes);
     ImageRotationSessionVT(const RotationProperties&, FloatSize, IsCGImageCompatible, ShouldUseIOSurface = ShouldUseIOSurface::Yes);

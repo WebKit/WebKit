@@ -27,12 +27,12 @@
 #include "CustomElementReactionQueue.h"
 
 #include "CustomElementRegistry.h"
-#include "DOMWindow.h"
 #include "ElementInlines.h"
 #include "EventLoop.h"
 #include "HTMLFormElement.h"
 #include "JSCustomElementInterface.h"
 #include "JSDOMBinding.h"
+#include "LocalDOMWindow.h"
 #include "WindowEventLoop.h"
 #include <JavaScriptCore/CatchScope.h>
 #include <JavaScriptCore/Heap.h>
@@ -386,6 +386,18 @@ inline void CustomElementQueue::processQueue(JSC::JSGlobalObject* state)
     }
 }
 
+Vector<GCReachableRef<Element>> CustomElementQueue::takeElements()
+{
+    RELEASE_ASSERT(!m_invoking);
+    return std::exchange(m_elements, { });
+}
+
+void CustomElementReactionQueue::enqueueElementsOnAppropriateElementQueue(const Vector<Ref<Element>>& elements)
+{
+    for (auto& element : elements)
+        enqueueElementOnAppropriateElementQueue(element);
+}
+
 // https://html.spec.whatwg.org/multipage/custom-elements.html#enqueue-an-element-on-the-appropriate-element-queue
 void CustomElementReactionQueue::enqueueElementOnAppropriateElementQueue(Element& element)
 {
@@ -413,6 +425,16 @@ void CustomElementReactionStack::processQueue(JSC::JSGlobalObject* state)
     m_queue->processQueue(state);
     delete m_queue;
     m_queue = nullptr;
+}
+
+Vector<GCReachableRef<Element>> CustomElementReactionStack::takeElements()
+{
+    if (!m_queue)
+        return { };
+    Vector<GCReachableRef<Element>> elements = m_queue->takeElements();
+    delete m_queue;
+    m_queue = nullptr;
+    return elements;
 }
 
 void CustomElementReactionQueue::processBackupQueue(CustomElementQueue& backupElementQueue)

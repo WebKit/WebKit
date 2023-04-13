@@ -71,6 +71,7 @@ private:
 
     String formatValue(int) const;
     void setValueAsIntegerByStepping(int);
+    void setARIAValueAttributesWithInteger(int);
 
     const Range m_range;
     const String m_placeholder;

@@ -29,6 +29,7 @@
 
 #include "CBORReader.h"
 #include "CBORWriter.h"
+#include <JavaScriptCore/ArrayBuffer.h>
 #include <optional>
 
 namespace WebCore {
@@ -37,8 +38,16 @@ struct AuthenticationExtensionsClientOutputs {
     struct CredentialPropertiesOutput {
         bool rk;
     };
+
+    struct LargeBlobOutputs {
+        std::optional<bool> supported;
+        RefPtr<ArrayBuffer> blob;
+        std::optional<bool> written;
+    };
+
     std::optional<bool> appid;
     std::optional<CredentialPropertiesOutput> credProps;
+    std::optional<LargeBlobOutputs> largeBlob;
 
     WEBCORE_EXPORT Vector<uint8_t> toCBOR() const;
     WEBCORE_EXPORT static std::optional<AuthenticationExtensionsClientOutputs> fromCBOR(const Vector<uint8_t>&);

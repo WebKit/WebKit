@@ -49,39 +49,18 @@
 
 namespace WebCore {
 
-static PFNEGLCREATEIMAGEKHRPROC createImageKHR()
-{
-    static PFNEGLCREATEIMAGEKHRPROC s_createImageKHR;
-    static std::once_flag s_flag;
-    std::call_once(s_flag,
-        [&] {
-            s_createImageKHR = reinterpret_cast<PFNEGLCREATEIMAGEKHRPROC>(eglGetProcAddress("eglCreateImageKHR"));
-        });
-    return s_createImageKHR;
-}
-
-static PFNEGLDESTROYIMAGEKHRPROC destroyImageKHR()
-{
-    static PFNEGLDESTROYIMAGEKHRPROC s_destroyImageKHR;
-    static std::once_flag s_flag;
-    std::call_once(s_flag,
-        [&] {
-            s_destroyImageKHR = reinterpret_cast<PFNEGLDESTROYIMAGEKHRPROC>(eglGetProcAddress("eglDestroyImageKHR"));
-        });
-    return s_destroyImageKHR;
-}
-
 struct TextureMapperPlatformLayerProxyDMABuf::DMABufLayer::EGLImageData {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
 
     ~EGLImageData()
     {
         if (numImages) {
+            auto& platformDisplay = PlatformDisplay::sharedDisplayForCompositing();
             glDeleteTextures(numImages, texture.data());
 
             for (unsigned i = 0; i < numImages; ++i) {
                 if (image[i] != EGL_NO_IMAGE_KHR)
-                    destroyImageKHR()(PlatformDisplay::sharedDisplayForCompositing().eglDisplay(), image[i]);
+                    platformDisplay.destroyEGLImage(image[i]);
             }
         }
     }
@@ -297,13 +276,12 @@ std::unique_ptr<TextureMapperPlatformLayerProxyDMABuf::DMABufLayer::EGLImageData
     using EGLImageData = TextureMapperPlatformLayerProxyDMABuf::DMABufLayer::EGLImageData;
 
     auto& platformDisplay = PlatformDisplay::sharedDisplayForCompositing();
-    EGLDisplay eglDisplay = platformDisplay.eglDisplay();
 
     EGLImageKHR image[DMABufFormat::c_maxPlanes];
     for (unsigned i = 0; i < object.format.numPlanes; ++i) {
         auto attributes = DMABufEGLUtilities::constructEGLCreateImageAttributes(object, i,
             DMABufEGLUtilities::PlaneModifiersUsage { platformDisplay.eglExtensions().EXT_image_dma_buf_import_modifiers });
-        image[i] = createImageKHR()(eglDisplay, EGL_NO_CONTEXT, EGL_LINUX_DMA_BUF_EXT, nullptr, attributes.data());
+        image[i] = platformDisplay.createEGLImage(EGL_NO_CONTEXT, EGL_LINUX_DMA_BUF_EXT, nullptr, attributes);
     }
 
     auto imageData = makeUnique<EGLImageData>();

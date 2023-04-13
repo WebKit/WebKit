@@ -1,10 +1,1 @@
-
-FAIL :request_default_after_error: assert_unreached:
-  - EXCEPTION: WebGPU device failed to initialize; not retrying
-    assert@http://127.0.0.1:8000/webgpu/common/util/util.js:34:20
-    @http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:28:11
-    asyncFunctionResume@[native code]
-    @[native code]
-    promiseReactionJobWithoutPromise@[native code]
- Reached unreachable code
-
+(Populate me when we're ready to investigate this test)

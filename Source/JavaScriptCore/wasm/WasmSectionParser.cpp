@@ -48,6 +48,7 @@ auto SectionParser::parseType() -> PartialResult
     WASM_PARSER_FAIL_IF(!parseVarUInt32(count), "can't get Type section's count");
     WASM_PARSER_FAIL_IF(count > maxTypes, "Type section's count is too big ", count, " maximum ", maxTypes);
     WASM_PARSER_FAIL_IF(!m_info->typeSignatures.tryReserveCapacity(count), "can't allocate enough memory for Type section's ", count, " entries");
+    WASM_PARSER_FAIL_IF(!m_info->rtts.tryReserveCapacity(count), "can't allocate enough memory for Type section's ", count, " canonical RTT entries");
 
     for (uint32_t i = 0; i < count; ++i) {
         int8_t typeKind;
@@ -113,11 +114,13 @@ auto SectionParser::parseType() -> PartialResult
                     RefPtr<TypeDefinition> group = TypeInformation::typeDefinitionForRecursionGroup(types);
                     RefPtr<TypeDefinition> projection = TypeInformation::typeDefinitionForProjection(group->index(), 0);
                     TypeInformation::registerCanonicalRTTForType(projection->index());
+                    m_info->rtts.uncheckedAppend(TypeInformation::getCanonicalRTT(projection->index()));
                     if (signature->is<Subtype>())
                         WASM_PARSER_FAIL_IF(!checkSubtypeValidity(projection->unroll(), *group), "structural type is not a subtype of the specified supertype");
                     m_info->typeSignatures.uncheckedAppend(projection.releaseNonNull());
                 } else {
                     TypeInformation::registerCanonicalRTTForType(signature->index());
+                    m_info->rtts.uncheckedAppend(TypeInformation::getCanonicalRTT(signature->index()));
                     if (signature->is<Subtype>())
                         WASM_PARSER_FAIL_IF(!checkStructuralSubtype(signature->expand(), TypeInformation::get(signature->as<Subtype>()->superType())), "structural type is not a subtype of the specified supertype");
                     m_info->typeSignatures.uncheckedAppend(signature.releaseNonNull());
@@ -229,7 +232,7 @@ auto SectionParser::parseFunction() -> PartialResult
         size_t start = 0;
         size_t end = 0;
         m_info->internalFunctionTypeIndices.uncheckedAppend(typeIndex);
-        m_info->functions.uncheckedAppend({ start, end, false, false, Vector<uint8_t>() });
+        m_info->functions.uncheckedAppend({ start, end, Vector<uint8_t>() });
     }
 
     // Note that `initializeFunctionTrackers` should only be used after both parseImport and parseFunction
@@ -265,9 +268,15 @@ auto SectionParser::parseTableHelper(bool isImport) -> PartialResult
 {
     WASM_PARSER_FAIL_IF(m_info->tableCount() >= maxTables, "Table count of ", m_info->tableCount(), " is too big, maximum ", maxTables);
 
-    int8_t type;
-    WASM_PARSER_FAIL_IF(!parseInt7(type), "can't parse Table type");
-    WASM_PARSER_FAIL_IF(type != static_cast<int8_t>(TypeKind::Funcref) && type != static_cast<int8_t>(TypeKind::Externref), "Table type should be funcref or anyref, got ", type);
+    Type type;
+    WASM_PARSER_FAIL_IF(!parseValueType(m_info, type), "can't parse Table type");
+    WASM_PARSER_FAIL_IF(!isRefType(type), "Table type should be a ref type, got ", type);
+    if (!Options::useWebAssemblyTypedFunctionReferences())
+        WASM_PARSER_FAIL_IF(type.kind != TypeKind::Funcref && type.kind != TypeKind::Externref, "Table type should be funcref or anyref, got ", type);
+
+    // FIXME: This restriction can be adjusted once initializer expressions are implemented.
+    // https://bugs.webkit.org/show_bug.cgi?id=251123
+    WASM_PARSER_FAIL_IF(!isDefaultableType(type), "Table's type must be defaultable");
 
     uint32_t initial;
     std::optional<uint32_t> maximum;
@@ -279,8 +288,8 @@ auto SectionParser::parseTableHelper(bool isImport) -> PartialResult
 
     ASSERT(!maximum || *maximum >= initial);
 
-    TableElementType tableType = type == static_cast<int8_t>(TypeKind::Funcref) ? TableElementType::Funcref : TableElementType::Externref;
-    m_info->tables.append(TableInformation(initial, maximum, isImport, tableType));
+    TableElementType tableType = isSubtype(type, funcrefType()) ? TableElementType::Funcref : TableElementType::Externref;
+    m_info->tables.append(TableInformation(initial, maximum, isImport, tableType, type));
 
     return { };
 }
@@ -554,15 +563,19 @@ auto SectionParser::parseElement() -> PartialResult
         case 0x05: {
             Type refType;
             WASM_PARSER_FAIL_IF(!parseRefType(m_info, refType), "can't parse reftype in elem section");
+
+            // FIXME: Any ref type should be allowed here;
+            // see https://bugs.webkit.org/show_bug.cgi?id=251874
             WASM_PARSER_FAIL_IF(!isFuncref(refType) && refType.isNullable(), "reftype in element section should be funcref");
+            TableElementType tableElementType = TableElementType::Funcref;
 
             uint32_t indexCount;
             WASM_FAIL_IF_HELPER_FAILS(parseIndexCountForElementSection(indexCount, elementNum));
 
-            Element element(Element::Kind::Passive, TableElementType::Funcref);
+            Element element(Element::Kind::Passive, tableElementType);
             WASM_PARSER_FAIL_IF(!element.functionIndices.tryReserveCapacity(indexCount), "can't allocate memory for ", indexCount, " Element indices");
 
-            WASM_FAIL_IF_HELPER_FAILS(parseElementSegmentVectorOfExpressions(TableElementType::Funcref, element.functionIndices, indexCount, elementNum));
+            WASM_FAIL_IF_HELPER_FAILS(parseElementSegmentVectorOfExpressions(tableElementType, element.functionIndices, indexCount, elementNum));
             m_info->elements.uncheckedAppend(WTFMove(element));
             break;
         }
@@ -716,7 +729,7 @@ auto SectionParser::parseInitExpr(uint8_t& opcode, uint64_t& bitsOrImportNumber,
     case RefFunc: {
         uint32_t index;
         WASM_PARSER_FAIL_IF(!parseVarUInt32(index), "can't get ref.func index");
-        WASM_PARSER_FAIL_IF(index >= m_info->functions.size(), "ref.func index", index, " exceeds the number of functions ", m_info->functions.size());
+        WASM_PARSER_FAIL_IF(index >= m_info->functionIndexSpaceSize(), "ref.func index ", index, " exceeds the number of functions ", m_info->functionIndexSpaceSize());
         m_info->addReferencedFunction(index);
 
         if (Options::useWebAssemblyTypedFunctionReferences()) {
@@ -918,10 +931,12 @@ auto SectionParser::parseRecursionGroup(uint32_t position, RefPtr<TypeDefinition
     // store projections for each recursion group index in the type section.
     if (typeCount > 1) {
         WASM_PARSER_FAIL_IF(!m_info->typeSignatures.tryReserveCapacity(m_info->typeSignatures.capacity() + typeCount - 1), "can't allocate enough memory for recursion group's ", typeCount, " type indices");
+        WASM_PARSER_FAIL_IF(!m_info->rtts.tryReserveCapacity(m_info->rtts.capacity() + typeCount - 1), "can't allocate enough memory for recursion group's ", typeCount, " RTTs");
         for (uint32_t i = 0; i < typeCount; ++i) {
             RefPtr<TypeDefinition> projection = TypeInformation::typeDefinitionForProjection(recursionGroup->index(), i);
             WASM_PARSER_FAIL_IF(!projection, "can't allocate enough memory for recursion group's ", i, "th projection");
             TypeInformation::registerCanonicalRTTForType(projection->index());
+            m_info->rtts.uncheckedAppend(TypeInformation::getCanonicalRTT(projection->index()));
             m_info->typeSignatures.uncheckedAppend(projection.releaseNonNull());
         }
         // Checking subtyping requirements has to be deferred until we construct projections in case recursive references show up in the type.
@@ -933,11 +948,13 @@ auto SectionParser::parseRecursionGroup(uint32_t position, RefPtr<TypeDefinition
     } else {
         if (!firstSignature->hasRecursiveReference()) {
             TypeInformation::registerCanonicalRTTForType(firstSignature->index());
+            m_info->rtts.uncheckedAppend(TypeInformation::getCanonicalRTT(firstSignature->index()));
             m_info->typeSignatures.uncheckedAppend(firstSignature.releaseNonNull());
         } else {
             RefPtr<TypeDefinition> projection = TypeInformation::typeDefinitionForProjection(recursionGroup->index(), 0);
             WASM_PARSER_FAIL_IF(!projection, "can't allocate enough memory for recursion group's 0th projection");
             TypeInformation::registerCanonicalRTTForType(projection->index());
+            m_info->rtts.uncheckedAppend(TypeInformation::getCanonicalRTT(projection->index()));
             if (firstSignature->is<Subtype>())
                 WASM_PARSER_FAIL_IF(!checkSubtypeValidity(projection->unroll(), *recursionGroup), "structural type is not a subtype of the specified supertype");
             m_info->typeSignatures.uncheckedAppend(projection.releaseNonNull());
@@ -1268,6 +1285,8 @@ auto SectionParser::parseException() -> PartialResult
         WASM_PARSER_FAIL_IF(!parseVarUInt32(typeNumber), "can't get ", exceptionNumber, "th Exception's type number");
         WASM_PARSER_FAIL_IF(typeNumber >= m_info->typeCount(), exceptionNumber, "th Exception type number is invalid ", typeNumber);
         TypeIndex typeIndex = TypeInformation::get(m_info->typeSignatures[typeNumber]);
+        auto signature = TypeInformation::getFunctionSignature(typeIndex);
+        WASM_PARSER_FAIL_IF(!signature.returnsVoid(), exceptionNumber, "th Exception type cannot have a non-void return type ", typeNumber);
         m_info->internalExceptionTypeIndices.uncheckedAppend(typeIndex);
     }
 
@@ -1294,8 +1313,11 @@ auto SectionParser::parseCustom() -> PartialResult
     Name branchHintsName = { 'm', 'e', 't', 'a', 'd', 'a', 't', 'a', '.', 'c', 'o', 'd', 'e', '.', 'b', 'r', 'a', 'n', 'c', 'h', '_', 'h', 'i', 'n', 't' };
     if (section.name == nameName) {
         NameSectionParser nameSectionParser(section.payload.begin(), section.payload.size(), m_info);
-        if (auto nameSection = nameSectionParser.parse())
+        auto nameSection = nameSectionParser.parse();
+        if (nameSection)
             m_info->nameSection = WTFMove(*nameSection);
+        else
+            dataLogLnIf(Options::dumpWasmWarnings(), "Could not parse name section: ", nameSection.error());
     } else if (section.name == branchHintsName) {
         BranchHintsSectionParser branchHintsSectionParser(section.payload.begin(), section.payload.size(), m_info);
         branchHintsSectionParser.parse();

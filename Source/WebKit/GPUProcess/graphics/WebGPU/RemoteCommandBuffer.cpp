@@ -46,6 +46,11 @@ RemoteCommandBuffer::RemoteCommandBuffer(PAL::WebGPU::CommandBuffer& commandBuff
 
 RemoteCommandBuffer::~RemoteCommandBuffer() = default;
 
+void RemoteCommandBuffer::destruct()
+{
+    m_objectHeap.removeObject(m_identifier);
+}
+
 void RemoteCommandBuffer::stopListeningForIPC()
 {
     m_streamConnection->stopReceivingMessages(Messages::RemoteCommandBuffer::messageReceiverName(), m_identifier.toUInt64());

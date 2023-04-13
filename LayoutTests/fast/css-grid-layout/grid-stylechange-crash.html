@@ -1,0 +1,17 @@
+<script>
+  function test() {
+    if(window.testRunner)
+      testRunner.dumpAsText()
+    document.body.offsetTop;
+    x.style.gridTemplateRows = 'subgrid';
+  };
+</script>
+<body onload="test()">
+  <div style="display:grid">
+    <div id="x" style="display:grid">
+      PASS if no crash.
+      <div>
+      </div>
+    </div>
+  </div>
+</body>

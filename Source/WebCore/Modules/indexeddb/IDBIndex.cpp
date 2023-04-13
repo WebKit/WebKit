@@ -298,7 +298,7 @@ ExceptionOr<Ref<IDBRequest>> IDBIndex::doGet(ExceptionOr<IDBKeyRangeData> range)
         return range.releaseException();
     auto keyRange = range.releaseReturnValue();
 
-    if (keyRange.isNull)
+    if (keyRange.isNull())
         return Exception { DataError };
 
     return transaction.requestGetValue(*this, keyRange);
@@ -337,7 +337,7 @@ ExceptionOr<Ref<IDBRequest>> IDBIndex::doGetKey(ExceptionOr<IDBKeyRangeData> ran
         return range.releaseException();
     auto keyRange = range.releaseReturnValue();
     
-    if (keyRange.isNull)
+    if (keyRange.isNull())
         return Exception { DataError };
 
     return transaction.requestGetKey(*this, keyRange);

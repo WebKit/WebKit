@@ -143,6 +143,10 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 
 @property (nonatomic) BOOL limitsNavigationsToAppBoundDomains WK_API_AVAILABLE(macos(11.0), ios(14.0));
 
+#if 0 // API_WEBKIT_ADDITIONS_REPLACEMENT
+#import <WebKitAdditions/WKWebViewConfigurationAdditions.h>
+#endif
+
 #if TARGET_OS_IPHONE
 /*! @abstract A Boolean value indicating whether HTML5 videos play inline
  (YES) or use the native full-screen controller (NO).

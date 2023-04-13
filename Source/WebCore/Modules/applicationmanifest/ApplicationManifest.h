@@ -28,6 +28,8 @@
 #if ENABLE(APPLICATION_MANIFEST)
 
 #include "Color.h"
+#include "ScreenOrientationLockType.h"
+#include <optional>
 #include <wtf/EnumTraits.h>
 #include <wtf/URL.h>
 #include <wtf/Vector.h>
@@ -60,8 +62,10 @@ struct ApplicationManifest {
     String description;
     URL scope;
     Display display;
+    std::optional<ScreenOrientationLockType> orientation;
     URL startURL;
     URL id;
+    Color backgroundColor;
     Color themeColor;
     Vector<Icon> icons;
 };

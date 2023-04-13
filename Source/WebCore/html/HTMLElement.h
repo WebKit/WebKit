@@ -23,6 +23,7 @@
 #pragma once
 
 #include "ColorTypes.h"
+#include "Document.h"
 #include "HTMLNames.h"
 #include "InputMode.h"
 #include "StyledElement.h"
@@ -42,8 +43,16 @@ class VisibleSelection;
 struct SimpleRange;
 struct TextRecognitionResult;
 
-enum class PageIsEditable : bool;
 enum class EnterKeyHint : uint8_t;
+enum class PageIsEditable : bool;
+enum class FireEvents : bool { No, Yes };
+enum class FocusPreviousElement : bool { No, Yes };
+enum class PopoverVisibilityState : bool;
+enum class PopoverState : uint8_t {
+    None,
+    Auto,
+    Manual,
+};
 
 #if PLATFORM(IOS_FAMILY)
 enum class SelectionRenderingBehavior : bool;
@@ -138,6 +147,17 @@ public:
 
     WEBCORE_EXPORT ExceptionOr<Ref<ElementInternals>> attachInternals();
 
+    void queuePopoverToggleEventTask(PopoverVisibilityState oldState, PopoverVisibilityState newState);
+    ExceptionOr<void> showPopover();
+    ExceptionOr<void> hidePopover();
+    ExceptionOr<void> hidePopoverInternal(FocusPreviousElement, FireEvents);
+    ExceptionOr<void> togglePopover(std::optional<bool> force);
+
+    PopoverState popoverState() const;
+    const AtomString& popover() const;
+    void setPopover(const AtomString& value) { setAttributeWithoutSynchronization(HTMLNames::popoverAttr, value); };
+    void popoverAttributeChanged(const AtomString& value);
+
 #if PLATFORM(IOS_FAMILY)
     static SelectionRenderingBehavior selectionRenderingBehavior(const Node*);
 #endif
@@ -162,7 +182,7 @@ protected:
     void applyBorderAttributeToStyle(const AtomString&, MutableStyleProperties&);
 
     bool matchesReadWritePseudoClass() const override;
-    void parseAttribute(const QualifiedName&, const AtomString&) override;
+    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
     Node::InsertedIntoAncestorResult insertedIntoAncestor(InsertionType , ContainerNode& parentOfInsertedTree) override;
     void removedFromAncestor(RemovalType, ContainerNode& oldParentOfRemovedTree) override;
     bool hasPresentationalHintsForAttribute(const QualifiedName&) const override;
@@ -171,6 +191,13 @@ protected:
 
     void childrenChanged(const ChildChange&) override;
     void updateEffectiveDirectionalityOfDirAuto();
+
+    void checkAndPossiblyClosePopoverStack()
+    {
+        if (!document().settings().popoverAttributeEnabled() || !document().hasTopLayerElement())
+            return;
+        checkAndPossiblyClosePopoverStackInternal();
+    }
 
     using EventHandlerNameMap = HashMap<AtomStringImpl*, AtomString>;
     static const AtomString& eventNameForEventHandlerAttribute(const QualifiedName& attributeName, const EventHandlerNameMap&);
@@ -195,6 +222,7 @@ private:
     enum class UseCSSPXAsUnitType : bool { No, Yes };
     enum class IsMultiLength : bool { No, Yes };
     void addHTMLLengthToStyle(MutableStyleProperties&, CSSPropertyID, StringView value, AllowPercentage, UseCSSPXAsUnitType, IsMultiLength, AllowZeroValue = AllowZeroValue::Yes);
+    void checkAndPossiblyClosePopoverStackInternal();
 };
 
 inline HTMLElement::HTMLElement(const QualifiedName& tagName, Document& document, ConstructionType type = CreateHTMLElement)

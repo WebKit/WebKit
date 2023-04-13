@@ -28,21 +28,11 @@
 #include "HTTPHeaderMap.h"
 #include "ResourceLoadPriority.h"
 #include "ResourceRequestBase.h"
-
-#if USE(CFURLCONNECTION)
-#include <pal/spi/win/CFNetworkSPIWin.h>
-#elif PLATFORM(COCOA)
 #include <pal/spi/cf/CFNetworkSPI.h>
-#endif
 
 namespace WebCore {
 
 class ResourceRequest;
-
-#if USE(CFURLCONNECTION)
-void getResourceRequest(ResourceRequest&, CFURLRequestRef);
-CFURLRequestRef cfURLRequest(const ResourceRequest&);
-#endif
 
 #if HAVE(CFNETWORK_NSURLSESSION_CONNECTION_CACHE_LIMITS)
 inline ResourceLoadPriority toResourceLoadPriority(CFURLRequestPriority priority)

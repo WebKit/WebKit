@@ -30,6 +30,7 @@
 
 #include "GPUConnectionToWebProcess.h"
 #include "RemoteAdapter.h"
+#include "RemoteCompositorIntegration.h"
 #include "RemoteGPUMessages.h"
 #include "RemoteGPUProxyMessages.h"
 #include "RemotePresentationContext.h"
@@ -38,6 +39,7 @@
 #include "WebGPUObjectHeap.h"
 #include <pal/graphics/WebGPU/WebGPU.h>
 #include <pal/graphics/WebGPU/WebGPUAdapter.h>
+#include <pal/graphics/WebGPU/WebGPUPresentationContext.h>
 #include <pal/graphics/WebGPU/WebGPUPresentationContextDescriptor.h>
 
 #if HAVE(WEBGPU_IMPLEMENTATION)
@@ -62,26 +64,26 @@ RemoteGPU::~RemoteGPU() = default;
 void RemoteGPU::initialize()
 {
     assertIsMainRunLoop();
-    m_streamConnection->open();
     workQueue().dispatch([protectedThis = Ref { *this }]() mutable {
         protectedThis->workQueueInitialize();
     });
-    m_streamConnection->startReceivingMessages(*this, Messages::RemoteGPU::messageReceiverName(), m_identifier.toUInt64());
 }
 
-void RemoteGPU::stopListeningForIPC(Ref<RemoteGPU>&& refFromConnection)
+void RemoteGPU::stopListeningForIPC()
 {
     assertIsMainRunLoop();
-    m_streamConnection->invalidate();
-    m_streamConnection->stopReceivingMessages(Messages::RemoteGPU::messageReceiverName(), m_identifier.toUInt64());
-    workQueue().dispatch([protectedThis = WTFMove(refFromConnection)]() {
-        protectedThis->workQueueUninitialize();
+    workQueue().dispatch([this]() {
+        workQueueUninitialize();
     });
+    workQueue().stopAndWaitForCompletion();
 }
 
 void RemoteGPU::workQueueInitialize()
 {
     assertIsCurrent(workQueue());
+    m_streamConnection->open();
+    m_streamConnection->startReceivingMessages(*this, Messages::RemoteGPU::messageReceiverName(), m_identifier.toUInt64());
+
 #if HAVE(WEBGPU_IMPLEMENTATION)
     // BEWARE: This is a retain cycle.
     // this owns m_backing, but m_backing contains a callback which has a stong reference to this.
@@ -104,12 +106,14 @@ void RemoteGPU::workQueueInitialize()
 void RemoteGPU::workQueueUninitialize()
 {
     assertIsCurrent(workQueue());
+    m_streamConnection->invalidate();
+    m_streamConnection->stopReceivingMessages(Messages::RemoteGPU::messageReceiverName(), m_identifier.toUInt64());
     m_streamConnection = nullptr;
     m_objectHeap->clear();
     m_backing = nullptr;
 }
 
-void RemoteGPU::requestAdapter(const WebGPU::RequestAdapterOptions& options, WebGPUIdentifier identifier, CompletionHandler<void(std::optional<RequestAdapterResponse>&&)>&& callback)
+void RemoteGPU::requestAdapter(const WebGPU::RequestAdapterOptions& options, WebGPUIdentifier identifier, CompletionHandler<void(std::optional<RemoteGPURequestAdapterResponse>&&)>&& callback)
 {
     assertIsCurrent(workQueue());
     ASSERT(m_backing);
@@ -139,6 +143,7 @@ void RemoteGPU::requestAdapter(const WebGPU::RequestAdapterOptions& options, Web
             limits.maxTextureDimension3D(),
             limits.maxTextureArrayLayers(),
             limits.maxBindGroups(),
+            limits.maxBindingsPerBindGroup(),
             limits.maxDynamicUniformBuffersPerPipelineLayout(),
             limits.maxDynamicStorageBuffersPerPipelineLayout(),
             limits.maxSampledTexturesPerShaderStage(),
@@ -151,9 +156,13 @@ void RemoteGPU::requestAdapter(const WebGPU::RequestAdapterOptions& options, Web
             limits.minUniformBufferOffsetAlignment(),
             limits.minStorageBufferOffsetAlignment(),
             limits.maxVertexBuffers(),
+            limits.maxBufferSize(),
             limits.maxVertexAttributes(),
             limits.maxVertexBufferArrayStride(),
             limits.maxInterStageShaderComponents(),
+            limits.maxInterStageShaderVariables(),
+            limits.maxColorAttachments(),
+            limits.maxColorAttachmentBytesPerSample(),
             limits.maxComputeWorkgroupStorageSize(),
             limits.maxComputeInvocationsPerWorkgroup(),
             limits.maxComputeWorkgroupSizeX(),
@@ -177,6 +186,16 @@ void RemoteGPU::createPresentationContext(const WebGPU::PresentationContextDescr
     auto presentationContext = m_backing->createPresentationContext(*convertedDescriptor);
     auto remotePresentationContext = RemotePresentationContext::create(presentationContext, m_objectHeap, *m_streamConnection, identifier);
     m_objectHeap->addObject(identifier, remotePresentationContext);
+}
+
+void RemoteGPU::createCompositorIntegration(WebGPUIdentifier identifier)
+{
+    assertIsCurrent(workQueue());
+    ASSERT(m_backing);
+
+    auto compositorIntegration = m_backing->createCompositorIntegration();
+    auto remoteCompositorIntegration = RemoteCompositorIntegration::create(compositorIntegration, m_objectHeap, *m_streamConnection, identifier);
+    m_objectHeap->addObject(identifier, remoteCompositorIntegration);
 }
 
 } // namespace WebKit

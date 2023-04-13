@@ -31,6 +31,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 @class WKHTTPCookieStore;
 
+typedef NS_ENUM(NSInteger, WKCookiePolicy) {
+    WKCookiePolicyAllow,
+    WKCookiePolicyDisallow,
+} NS_SWIFT_NAME(WKHTTPCookieStore.CookiePolicy) WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
 WK_API_AVAILABLE(macos(10.13), ios(11.0))
 @protocol WKHTTPCookieStoreObserver <NSObject>
 @optional
@@ -72,6 +77,17 @@ WK_CLASS_AVAILABLE(macos(10.13), ios(11.0))
  @param observer The observer to remove.
  */
 - (void)removeObserver:(id<WKHTTPCookieStoreObserver>)observer;
+
+/*! @abstract Set whether cookies are allowed.
+  @param policy A value indicating whether cookies are allowed. The default value is WKCookiePolicyAllow.
+  @param completionHandler A block to invoke once the cookie policy has been set.
+  */
+- (void)setCookiePolicy:(WKCookiePolicy)policy completionHandler:(nullable void (^)(void))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
+/*! @abstract Get whether cookies are allowed.
+ @param completionHandler A block to invoke with the value of whether cookies are allowed.
+ */
+- (void)getCookiePolicy:(void (^)(WKCookiePolicy))completionHandler WK_SWIFT_ASYNC_NAME(getter:cookiePolicy()) WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 @end
 

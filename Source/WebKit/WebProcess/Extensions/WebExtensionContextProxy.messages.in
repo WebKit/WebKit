@@ -26,6 +26,8 @@
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 messages -> WebExtensionContextProxy {
+    // Permissions support
+    DispatchPermissionsEvent(WebKit::WebExtensionEventListenerType type, HashSet<String> permissions, HashSet<String> origins)
 
     // webNavigation support
     DispatchWebNavigationOnBeforeNavigateEvent(WebKit::WebPageProxyIdentifier pageID, WebCore::FrameIdentifier frameID, URL targetURL)

@@ -774,6 +774,9 @@ class DispatchTableGL : angle::NonCopyable
     PFNGLFRAMEBUFFERTEXTURE2DMULTISAMPLEEXTPROC framebufferTexture2DMultisampleEXT = nullptr;
     PFNGLRENDERBUFFERSTORAGEMULTISAMPLEEXTPROC renderbufferStorageMultisampleEXT = nullptr;
 
+    // GL_EXT_polygon_offset_clamp
+    PFNGLPOLYGONOFFSETCLAMPEXTPROC polygonOffsetClampEXT = nullptr;
+
     // GL_EXT_semaphore
     PFNGLDELETESEMAPHORESEXTPROC deleteSemaphoresEXT = nullptr;
     PFNGLGENSEMAPHORESEXTPROC genSemaphoresEXT = nullptr;

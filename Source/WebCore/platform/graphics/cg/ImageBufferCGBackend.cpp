@@ -62,46 +62,22 @@ unsigned ImageBufferCGBackend::calculateBytesPerRow(const IntSize& backendSize)
     return CheckedUint32(backendSize.width()) * 4;
 }
 
-RetainPtr<CGColorSpaceRef> ImageBufferCGBackend::contextColorSpace(const GraphicsContext& context)
-{
-#if PLATFORM(COCOA)
-    CGContextRef cgContext = context.platformContext();
-
-    if (CGContextGetType(cgContext) == kCGContextTypeBitmap)
-        return CGBitmapContextGetColorSpace(cgContext);
-    
-    return adoptCF(CGContextCopyDeviceColorSpace(cgContext));
-#else
-    UNUSED_PARAM(context);
-    return nullptr;
-#endif
-}
-
-void ImageBufferCGBackend::clipToMask(GraphicsContext& destContext, const FloatRect& destRect)
-{
-    auto nativeImage = copyNativeImage(DontCopyBackingStore);
-    if (!nativeImage)
-        return;
-    
-    CGContextRef cgContext = destContext.platformContext();
-
-    // FIXME: This image needs to be grayscale to be used as an alpha mask here.
-    CGContextTranslateCTM(cgContext, destRect.x(), destRect.maxY());
-    CGContextScaleCTM(cgContext, 1, -1);
-    CGContextClipToRect(cgContext, { { }, destRect.size() });
-    CGContextClipToMask(cgContext, { { }, destRect.size() }, nativeImage->platformImage().get());
-    CGContextScaleCTM(cgContext, 1, -1);
-    CGContextTranslateCTM(cgContext, -destRect.x(), -destRect.maxY());
-}
-
 std::unique_ptr<ThreadSafeImageBufferFlusher> ImageBufferCGBackend::createFlusher()
 {
     return makeUnique<ThreadSafeImageBufferFlusherCG>(context().platformContext());
 }
 
+ImageBufferCGBackend::~ImageBufferCGBackend() = default;
+
 bool ImageBufferCGBackend::originAtBottomLeftCorner() const
 {
     return isOriginAtBottomLeftCorner;
+}
+
+void ImageBufferCGBackend::applyBaseTransform(GraphicsContextCG& context) const
+{
+    context.applyDeviceScaleFactor(m_parameters.resolutionScale);
+    context.setCTM(calculateBaseTransform(m_parameters, originAtBottomLeftCorner()));
 }
 
 } // namespace WebCore

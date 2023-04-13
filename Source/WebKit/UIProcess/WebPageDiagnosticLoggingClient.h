@@ -23,13 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebPageDiagnosticLoggingClient_h
-#define WebPageDiagnosticLoggingClient_h
+#pragma once
 
 #include "APIClient.h"
 #include "APIDiagnosticLoggingClient.h"
 #include "WKPage.h"
-#include <WebCore/DiagnosticLoggingResultType.h>
 #include <wtf/Forward.h>
 
 namespace API {
@@ -56,5 +54,3 @@ public:
 };
 
 } // namespace WebKit
-
-#endif // WebPageDiagnosticLoggingClient_h

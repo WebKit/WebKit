@@ -48,15 +48,15 @@
 #include <WebCore/EventHandler.h>
 #include <WebCore/EventNames.h>
 #include <WebCore/FocusController.h>
-#include <WebCore/Frame.h>
 #include <WebCore/FrameLoadRequest.h>
 #include <WebCore/FrameLoader.h>
 #include <WebCore/FrameLoaderClient.h>
-#include <WebCore/FrameView.h>
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/HTMLPlugInElement.h>
 #include <WebCore/HTTPHeaderNames.h>
 #include <WebCore/HostWindow.h>
+#include <WebCore/LocalFrame.h>
+#include <WebCore/LocalFrameView.h>
 #include <WebCore/MIMETypeRegistry.h>
 #include <WebCore/MouseEvent.h>
 #include <WebCore/NetscapePlugInStreamLoader.h>
@@ -128,7 +128,7 @@ void PluginView::Stream::start()
 {
     ASSERT(!m_loader);
 
-    Frame* frame = m_pluginView->frame();
+    auto* frame = m_pluginView->frame();
     ASSERT(frame);
 
     WebProcess::singleton().webLoaderStrategy().schedulePluginStreamLoad(*frame, *this, ResourceRequest {m_request}, [this, protectedThis = Ref { *this }](RefPtr<NetscapePlugInStreamLoader>&& loader) {
@@ -231,7 +231,7 @@ PluginView::~PluginView()
     m_plugin->destroy();
 }
 
-Frame* PluginView::frame() const
+LocalFrame* PluginView::frame() const
 {
     return m_pluginElement->document().frame();
 }
@@ -359,8 +359,8 @@ void PluginView::initializePlugin()
     m_plugin->visibilityDidChange(isVisible());
 #endif
 
-    if (Frame* frame = this->frame()) {
-        if (FrameView* frameView = frame->view())
+    if (auto* frame = this->frame()) {
+        if (auto* frameView = frame->view())
             frameView->setNeedsLayoutAfterViewConfigurationChange();
         if (frame->isMainFrame() && m_plugin->isFullFramePlugin())
             WebFrame::fromCoreFrame(*frame)->page()->send(Messages::WebPageProxy::MainFramePluginHandlesPageScaleGestureDidChange(true));
@@ -382,6 +382,13 @@ PlatformLayer* PluginView::platformLayer() const
 bool PluginView::scroll(ScrollDirection direction, ScrollGranularity granularity)
 {
     return m_isInitialized && m_plugin->scroll(direction, granularity);
+}
+
+ScrollPosition PluginView::scrollPositionForTesting() const
+{
+    if (!m_isInitialized)
+        return { };
+    return m_plugin->scrollPositionForTesting();
 }
 
 Scrollbar* PluginView::horizontalScrollbar()
@@ -660,7 +667,7 @@ IntRect PluginView::clipRectInWindowCoordinates() const
     // Get the frame rect in window coordinates.
     IntRect frameRectInWindowCoordinates = parent()->contentsToWindow(frameRect());
 
-    Frame* frame = this->frame();
+    auto* frame = this->frame();
 
     // Get the window clip rect for the plugin element (in window coordinates).
     IntRect windowClipRect = frame->view()->windowClipRectForFrameOwner(m_pluginElement.ptr(), true);
@@ -759,7 +766,7 @@ bool PluginView::shouldCreateTransientPaintingSnapshot() const
     if (!m_isInitialized)
         return false;
 
-    if (FrameView* frameView = frame()->view()) {
+    if (auto* frameView = frame()->view()) {
         if (frameView->paintBehavior().containsAny({ PaintBehavior::SelectionOnly, PaintBehavior::SelectionAndBackgroundsOnly, PaintBehavior::ForceBlackText })) {
             // This paint behavior is used when drawing the find indicator and there's no need to
             // snapshot plug-ins, because they can never be painted as part of the find indicator.

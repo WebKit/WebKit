@@ -33,22 +33,12 @@
 G_BEGIN_DECLS
 
 #define WEBKIT_TYPE_AUTHENTICATION_REQUEST            (webkit_authentication_request_get_type())
+#if !ENABLE(2022_GLIB_API)
 #define WEBKIT_AUTHENTICATION_REQUEST(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), WEBKIT_TYPE_AUTHENTICATION_REQUEST, WebKitAuthenticationRequest))
 #define WEBKIT_AUTHENTICATION_REQUEST_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass),  WEBKIT_TYPE_AUTHENTICATION_REQUEST, WebKitAuthenticationRequestClass))
 #define WEBKIT_IS_AUTHENTICATION_REQUEST(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), WEBKIT_TYPE_AUTHENTICATION_REQUEST))
 #define WEBKIT_IS_AUTHENTICATION_REQUEST_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass),  WEBKIT_TYPE_AUTHENTICATION_REQUEST))
 #define WEBKIT_AUTHENTICATION_REQUEST_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj),  WEBKIT_TYPE_AUTHENTICATION_REQUEST, WebKitAuthenticationRequestClass))
-
-typedef struct _WebKitAuthenticationRequest        WebKitAuthenticationRequest;
-typedef struct _WebKitAuthenticationRequestClass   WebKitAuthenticationRequestClass;
-typedef struct _WebKitAuthenticationRequestPrivate WebKitAuthenticationRequestPrivate;
-
-struct _WebKitAuthenticationRequest {
-    GObject parent;
-
-    /*< private >*/
-    WebKitAuthenticationRequestPrivate *priv;
-};
 
 struct _WebKitAuthenticationRequestClass {
     GObjectClass parent_class;
@@ -59,6 +49,9 @@ struct _WebKitAuthenticationRequestClass {
     void (*_webkit_reserved2) (void);
     void (*_webkit_reserved3) (void);
 };
+#endif
+
+WEBKIT_DECLARE_FINAL_TYPE (WebKitAuthenticationRequest, webkit_authentication_request, WEBKIT, AUTHENTICATION_REQUEST, GObject)
 
 /**
  * WebKitAuthenticationScheme:
@@ -90,9 +83,6 @@ typedef enum {
     WEBKIT_AUTHENTICATION_SCHEME_UNKNOWN = 100,
 } WebKitAuthenticationScheme;
 
-
-WEBKIT_API GType
-webkit_authentication_request_get_type                (void);
 
 WEBKIT_API gboolean
 webkit_authentication_request_can_save_credentials    (WebKitAuthenticationRequest *request);

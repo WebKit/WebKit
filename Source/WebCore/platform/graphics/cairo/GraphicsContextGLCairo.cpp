@@ -106,38 +106,9 @@ bool GraphicsContextGLImageExtractor::extractImage(bool premultiplyAlpha, bool i
     return true;
 }
 
-void GraphicsContextGL::paintToCanvas(const GraphicsContextGLAttributes& sourceContextAttributes, Ref<PixelBuffer>&& pixelBuffer, const IntSize& canvasSize, GraphicsContext& context)
+RefPtr<NativeImage> GraphicsContextGL::createNativeImageFromPixelBuffer(const GraphicsContextGLAttributes& sourceContextAttributes, Ref<PixelBuffer>&& pixelBuffer)
 {
-    ASSERT(!pixelBuffer->size().isEmpty());
-    if (canvasSize.isEmpty())
-        return;
-
-    // Convert RGBA to BGRA. BGRA is CAIRO_FORMAT_ARGB32 on little-endian architectures.
-    size_t totalBytes = pixelBuffer->sizeInBytes();
-    uint8_t* pixels = pixelBuffer->bytes();
-    for (size_t i = 0; i < totalBytes; i += 4)
-        std::swap(pixels[i], pixels[i + 2]);
-
-    if (!sourceContextAttributes.premultipliedAlpha) {
-        for (size_t i = 0; i < totalBytes; i += 4) {
-            pixels[i + 0] = std::min(255, pixels[i + 0] * pixels[i + 3] / 255);
-            pixels[i + 1] = std::min(255, pixels[i + 1] * pixels[i + 3] / 255);
-            pixels[i + 2] = std::min(255, pixels[i + 2] * pixels[i + 3] / 255);
-        }
-    }
-
-    auto imageSize = pixelBuffer->size();
-
-    RefPtr<cairo_surface_t> imageSurface = adoptRef(cairo_image_surface_create_for_data(
-        pixelBuffer->bytes(), CAIRO_FORMAT_ARGB32, imageSize.width(), imageSize.height(), imageSize.width() * 4));
-
-    auto image = NativeImage::create(WTFMove(imageSurface));
-
-    GraphicsContextStateSaver stateSaver(context);
-    context.scale(FloatSize(1, -1));
-    context.translate(0, -imageSize.height());
-    context.setImageInterpolationQuality(InterpolationQuality::DoNotInterpolate);
-    context.drawNativeImage(*image, imageSize, FloatRect({ }, canvasSize), FloatRect({ }, imageSize), { CompositeOperator::Copy });
+    return NativeImage::create(WTFMove(pixelBuffer), sourceContextAttributes.premultipliedAlpha);
 }
 
 } // namespace WebCore

@@ -26,7 +26,7 @@
 #include "config.h"
 #include "RemoteMediaResourceManager.h"
 
-#if ENABLE(GPU_PROCESS)
+#if ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
 
 #include "Connection.h"
 #include "RemoteMediaResource.h"
@@ -138,4 +138,4 @@ void RemoteMediaResourceManager::loadFinished(RemoteMediaResourceIdentifier iden
 
 } // namespace WebKit
 
-#endif
+#endif // ENABLE(GPU_PROCESS) && ENABLE(VIDEO)

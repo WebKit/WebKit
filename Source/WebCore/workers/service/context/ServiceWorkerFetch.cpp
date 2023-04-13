@@ -34,6 +34,7 @@
 #include "FetchRequest.h"
 #include "FetchResponse.h"
 #include "JSDOMPromise.h"
+#include "JSDOMPromiseDeferred.h"
 #include "MIMETypeRegistry.h"
 #include "ResourceRequest.h"
 #include "ScriptExecutionContextIdentifier.h"

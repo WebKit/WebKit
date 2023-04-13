@@ -217,12 +217,12 @@ void transformFrame(Frame& frame, JSDOMGlobalObject& globalObject, RTCRtpSFrameT
 
 ExceptionOr<void> RTCRtpSFrameTransform::createStreams()
 {
-    auto* globalObject = scriptExecutionContext() ? scriptExecutionContext()->globalObject() : nullptr;
+    auto* globalObject = scriptExecutionContext() ? JSC::jsCast<JSDOMGlobalObject*>(scriptExecutionContext()->globalObject()) : nullptr;
     if (!globalObject)
         return Exception { InvalidStateError };
 
     m_readableStreamSource = SimpleReadableStreamSource::create();
-    auto readable = ReadableStream::create(*globalObject, m_readableStreamSource.copyRef());
+    auto readable = ReadableStream::create(*globalObject, *m_readableStreamSource);
     if (readable.hasException())
         return readable.releaseException();
 

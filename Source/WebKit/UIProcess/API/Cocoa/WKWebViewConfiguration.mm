@@ -155,6 +155,7 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
     BOOL _invisibleAutoplayNotPermitted;
     BOOL _mediaDataLoadsAutomatically;
     BOOL _attachmentElementEnabled;
+    BOOL _attachmentWideLayoutEnabled;
     Class _attachmentFileWrapperClass;
     BOOL _mainContentUserGestureOverrideEnabled;
 
@@ -163,6 +164,7 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
     BOOL _showsURLsInToolTips;
     BOOL _serviceControlsEnabled;
     BOOL _imageControlsEnabled;
+    BOOL _contextMenuQRCodeDetectionEnabled;
 #endif
     BOOL _waitsForPaintAfterViewDidMoveToWindow;
     BOOL _controlledByAutomation;
@@ -183,6 +185,7 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
 #endif
     double _sampledPageTopColorMaxDifference;
     double _sampledPageTopColorMinHeight;
+    BOOL _markedTextInputEnabled;
 
     RetainPtr<NSString> _mediaContentTypesRequiringHardwareSupport;
     RetainPtr<NSArray<NSString *>> _additionalSupportedImageTypes;
@@ -222,6 +225,7 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
     _mainContentUserGestureOverrideEnabled = NO;
     _invisibleAutoplayNotPermitted = NO;
     _attachmentElementEnabled = NO;
+    _attachmentWideLayoutEnabled = NO;
 
 #if PLATFORM(IOS_FAMILY)
     _respectsImageOrientation = YES;
@@ -232,6 +236,7 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
     _showsURLsInToolTips = NO;
     _serviceControlsEnabled = NO;
     _imageControlsEnabled = NO;
+    _contextMenuQRCodeDetectionEnabled = NO;
 #endif
     _waitsForPaintAfterViewDidMoveToWindow = YES;
 
@@ -281,6 +286,8 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
 
     _sampledPageTopColorMaxDifference = DEFAULT_VALUE_FOR_SampledPageTopColorMaxDifference;
     _sampledPageTopColorMinHeight = DEFAULT_VALUE_FOR_SampledPageTopColorMinHeight;
+
+    _markedTextInputEnabled = NO;
 
     return self;
 }
@@ -416,6 +423,7 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
     configuration->_invisibleAutoplayNotPermitted = self->_invisibleAutoplayNotPermitted;
     configuration->_mediaDataLoadsAutomatically = self->_mediaDataLoadsAutomatically;
     configuration->_attachmentElementEnabled = self->_attachmentElementEnabled;
+    configuration->_attachmentWideLayoutEnabled = self->_attachmentWideLayoutEnabled;
     configuration->_attachmentFileWrapperClass = self->_attachmentFileWrapperClass;
     configuration->_mediaTypesRequiringUserActionForPlayback = self->_mediaTypesRequiringUserActionForPlayback;
     configuration->_mainContentUserGestureOverrideEnabled = self->_mainContentUserGestureOverrideEnabled;
@@ -440,6 +448,7 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
     configuration->_showsURLsInToolTips = self->_showsURLsInToolTips;
     configuration->_serviceControlsEnabled = self->_serviceControlsEnabled;
     configuration->_imageControlsEnabled = self->_imageControlsEnabled;
+    configuration->_contextMenuQRCodeDetectionEnabled = self->_contextMenuQRCodeDetectionEnabled;
     configuration->_pageGroup = self._pageGroup;
 #endif
 #if ENABLE(DATA_DETECTION) && PLATFORM(IOS_FAMILY)
@@ -471,6 +480,8 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
 
     configuration->_sampledPageTopColorMaxDifference = self->_sampledPageTopColorMaxDifference;
     configuration->_sampledPageTopColorMinHeight = self->_sampledPageTopColorMinHeight;
+
+    configuration->_markedTextInputEnabled = self->_markedTextInputEnabled;
 
     return configuration;
 }
@@ -639,6 +650,10 @@ static NSString *defaultApplicationNameForUserAgent()
 
     return static_cast<WebKit::WebURLSchemeHandlerCocoa*>(handler.get())->apiHandler();
 }
+
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/WKWebViewConfigurationAdditions.mm>
+#endif
 
 #if PLATFORM(IOS_FAMILY)
 - (BOOL)limitsNavigationsToAppBoundDomains
@@ -968,6 +983,16 @@ static WebKit::AttributionOverrideTesting toAttributionOverrideTesting(_WKAttrib
     _attachmentElementEnabled = attachmentElementEnabled;
 }
 
+- (BOOL)_attachmentWideLayoutEnabled
+{
+    return _attachmentWideLayoutEnabled;
+}
+
+- (void)_setAttachmentWideLayoutEnabled:(BOOL)attachmentWideLayoutEnabled
+{
+    _attachmentWideLayoutEnabled = attachmentWideLayoutEnabled;
+}
+
 - (Class)_attachmentFileWrapperClass
 {
     return _attachmentFileWrapperClass;
@@ -1221,6 +1246,16 @@ static WebKit::AttributionOverrideTesting toAttributionOverrideTesting(_WKAttrib
     _imageControlsEnabled = imageControlsEnabled;
 }
 
+- (BOOL)_contextMenuQRCodeDetectionEnabled
+{
+    return _contextMenuQRCodeDetectionEnabled;
+}
+
+- (void)_setContextMenuQRCodeDetectionEnabled:(BOOL)contextMenuQRCodeDetectionEnabled
+{
+    _contextMenuQRCodeDetectionEnabled = contextMenuQRCodeDetectionEnabled;
+}
+
 - (BOOL)_requiresUserActionForEditingControlsManager
 {
     return _pageConfiguration->requiresUserActionForEditingControlsManager();
@@ -1365,6 +1400,16 @@ static WebKit::AttributionOverrideTesting toAttributionOverrideTesting(_WKAttrib
 #endif
 }
 
+- (BOOL)_allowTestOnlyIPC
+{
+    return _pageConfiguration->allowTestOnlyIPC();
+}
+
+- (void)_setAllowTestOnlyIPC:(BOOL)allowTestOnlyIPC
+{
+    _pageConfiguration->setAllowTestOnlyIPC(allowTestOnlyIPC);
+}
+
 - (BOOL)_shouldRelaxThirdPartyCookieBlocking
 {
     return _pageConfiguration->shouldRelaxThirdPartyCookieBlocking() == WebCore::ShouldRelaxThirdPartyCookieBlocking::Yes;
@@ -1435,6 +1480,16 @@ static WebKit::AttributionOverrideTesting toAttributionOverrideTesting(_WKAttrib
 - (_WKContentSecurityPolicyModeForExtension)_contentSecurityPolicyModeForExtension
 {
     return WebKit::toWKContentSecurityPolicyModeForExtension(_pageConfiguration->contentSecurityPolicyModeForExtension());
+}
+
+- (void)_setMarkedTextInputEnabled:(BOOL)enabled
+{
+    _markedTextInputEnabled = enabled;
+}
+
+- (BOOL)_markedTextInputEnabled
+{
+    return _markedTextInputEnabled;
 }
 
 @end

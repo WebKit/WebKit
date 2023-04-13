@@ -4,8 +4,8 @@ layer at (0,0) size 800x298
   RenderBlock {HTML} at (0,0) size 800x298 [color=#FF0000] [bgcolor=#FFFFFF]
     RenderBody {BODY} at (0,0) size 800x298
       RenderBlock {H2} at (72,0) size 656x72 [color=#000080]
-        RenderText {#text} at (12,46) size 134x27
-          text run at (12,46) width 134: "Hello World!"
+        RenderText {#text} at (12,46) size 128x27
+          text run at (12,46) width 128: "Hello World!"
 layer at (36,72) size 764x226
   RenderBlock (relative positioned) {DIV} at (36,72) size 764x226 [border: (12px solid #00000000)]
     RenderTable {TABLE} at (12,12) size 0x0

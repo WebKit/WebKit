@@ -56,10 +56,10 @@ CSSNumericArray::CSSNumericArray(FixedVector<Ref<CSSNumericValue>>&& values)
 {
 }
 
-ExceptionOr<Ref<CSSNumericValue>> CSSNumericArray::item(size_t index)
+RefPtr<CSSNumericValue> CSSNumericArray::item(size_t index)
 {
     if (index >= m_array.size())
-        return Exception { RangeError, makeString("Index ", index, " exceeds index range for CSSNumericArray.") };
+        return nullptr;
     return m_array[index].copyRef();
 }
 

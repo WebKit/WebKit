@@ -1,0 +1,65 @@
+[
+	{
+		"name": "Versioning",
+		"pickable": false,
+		"headers": [
+			"[Vv]ersioning",
+			"[Bb]ump [Vv]ersion"
+		],
+		"paths": ["Configurations/Version.xcconfig"]
+	},
+	{
+		"name": "Build-fix",
+		"pickable": false,
+		"headers": [
+			"^Apply build[ -]fix",
+			"^Unreviewed build[ -]fix"
+		]
+	},
+	{
+		"name": "Gardening",
+		"pickable": false,
+		"headers": [
+			{"value": "GARDENING", "ratio": 85},
+			{"value": "gardening", "ratio": 85},
+			{"value": "REBASELINE"},
+			{"value": "rebaseline"},
+			{"value": "is a constant failure"},
+			{"value": "is an almost constant failure"},
+			{"value": "are constant failures"},
+			{"value": "tests consistently failing"}
+		],
+		"paths": [
+			"LayoutTests/",
+			"Tools/TestWebKitAPI"
+		]
+	},
+	{
+		"name": "Apply-Patch",
+		"pickable": false,
+		"headers": ["^Apply patch"]
+	},
+	{
+		"name": "Contributor",
+		"pickable": false,
+		"paths": ["metadata/contributors.json"]
+	},
+	{
+		"name": "Cherry-pick",
+		"pickable": true,
+		"headers": ["^[Cc]herry[- ][Pp]ick"],
+		"trailers": [
+			"^[Cc]herry[- ][Pp]ick:",
+			"^[Oo]riginally[- ]landed[- ]as:"
+		]
+	},
+	{
+		"name": "Tools",
+		"pickable": true,
+		"paths": [
+			"Tools",
+			"LayoutTests",
+			"metadata"
+		]
+	}
+]

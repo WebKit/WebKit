@@ -28,7 +28,7 @@
 
 #if PLATFORM(IOS_FAMILY)
 
-#import "Frame.h"
+#import "LocalFrame.h"
 #import "RenderLayer.h"
 #import "ScrollableArea.h"
 #import "ScrollingEffectsController.h"
@@ -109,11 +109,11 @@ bool ScrollAnimatorIOS::handleTouchEvent(const PlatformTouchEvent& touchEvent)
         const int latchAxisMovementThreshold = 10;
         if (!horizontallyScrollable && verticallyScrollable) {
             m_touchScrollAxisLatch = AxisLatchVertical;
-            if (abs(deltaFromStart.height()) >= latchAxisMovementThreshold)
+            if (std::abs(deltaFromStart.height()) >= latchAxisMovementThreshold)
                 m_committedToScrollAxis = true;
         } else if (horizontallyScrollable && !verticallyScrollable) {
             m_touchScrollAxisLatch = AxisLatchHorizontal;
-            if (abs(deltaFromStart.width()) >= latchAxisMovementThreshold)
+            if (std::abs(deltaFromStart.width()) >= latchAxisMovementThreshold)
                 m_committedToScrollAxis = true;
         } else {
             m_committedToScrollAxis = true;
@@ -121,7 +121,7 @@ bool ScrollAnimatorIOS::handleTouchEvent(const PlatformTouchEvent& touchEvent)
             if (m_touchScrollAxisLatch == AxisLatchNotComputed) {
                 const float lockAngleDegrees = 20;
                 if (deltaFromStart.width() && deltaFromStart.height()) {
-                    float dragAngle = atanf(static_cast<float>(abs(deltaFromStart.height())) / abs(deltaFromStart.width()));
+                    float dragAngle = atanf(static_cast<float>(std::abs(deltaFromStart.height())) / std::abs(deltaFromStart.width()));
                     if (dragAngle <= deg2rad(lockAngleDegrees))
                         m_touchScrollAxisLatch = AxisLatchHorizontal;
                     else if (dragAngle >= deg2rad(90 - lockAngleDegrees))
@@ -139,13 +139,13 @@ bool ScrollAnimatorIOS::handleTouchEvent(const PlatformTouchEvent& touchEvent)
     // Horizontal
     if (m_touchScrollAxisLatch != AxisLatchVertical) {
         int delta = touchDelta.width();
-        handled |= m_scrollableAreaForTouchSequence->scroll(delta < 0 ? ScrollLeft : ScrollRight, ScrollGranularity::Pixel, abs(delta));
+        handled |= m_scrollableAreaForTouchSequence->scroll(delta < 0 ? ScrollLeft : ScrollRight, ScrollGranularity::Pixel, std::abs(delta));
     }
     
     // Vertical
     if (m_touchScrollAxisLatch != AxisLatchHorizontal) {
         int delta = touchDelta.height();
-        handled |= m_scrollableAreaForTouchSequence->scroll(delta < 0 ? ScrollUp : ScrollDown, ScrollGranularity::Pixel, abs(delta));
+        handled |= m_scrollableAreaForTouchSequence->scroll(delta < 0 ? ScrollUp : ScrollDown, ScrollGranularity::Pixel, std::abs(delta));
     }
     
     // Return false until we manage to scroll at all, and then keep returning true until the gesture ends.

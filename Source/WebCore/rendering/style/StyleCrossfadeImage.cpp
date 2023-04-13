@@ -86,7 +86,7 @@ Ref<CSSValue> StyleCrossfadeImage::computedStyleValue(const RenderStyle& style) 
 {
     auto fromComputedValue = m_from ? m_from->computedStyleValue(style) : static_reference_cast<CSSValue>(CSSPrimitiveValue::create(CSSValueNone));
     auto toComputedValue = m_to ? m_to->computedStyleValue(style) : static_reference_cast<CSSValue>(CSSPrimitiveValue::create(CSSValueNone));
-    return CSSCrossfadeValue::create(WTFMove(fromComputedValue), WTFMove(toComputedValue), CSSPrimitiveValue::create(m_percentage, CSSUnitType::CSS_NUMBER), m_isPrefixed);
+    return CSSCrossfadeValue::create(WTFMove(fromComputedValue), WTFMove(toComputedValue), CSSPrimitiveValue::create(m_percentage), m_isPrefixed);
 }
 
 bool StyleCrossfadeImage::isPending() const
@@ -184,8 +184,10 @@ void StyleCrossfadeImage::imageChanged(CachedImage*, const IntRect*)
 {
     if (!m_inputImagesAreReady)
         return;
-    for (auto& client : clients().values())
-        client->imageChanged(this);
+    for (auto entry : clients()) {
+        auto& client = entry.key;
+        client.imageChanged(static_cast<WrappedImagePtr>(this));
+    }
 }
 
 } // namespace WebCore

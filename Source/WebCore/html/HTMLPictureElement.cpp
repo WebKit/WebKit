@@ -26,7 +26,7 @@
 #include "config.h"
 #include "HTMLPictureElement.h"
 
-#include "ElementChildIterator.h"
+#include "ElementChildIteratorInlines.h"
 #include "HTMLAnchorElement.h"
 #include "HTMLImageElement.h"
 #include "ImageLoader.h"

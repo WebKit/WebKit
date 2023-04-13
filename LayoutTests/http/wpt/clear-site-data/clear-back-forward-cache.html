@@ -1,0 +1,27 @@
+<!-- webkit-test-runner [ UsesBackForwardCache=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+async_test(function(t) {
+    popup = open("resources/clear-back-forward-cache-popup.html");
+    popup.addEventListener("load", t.step_func(() => {
+        popup.generateSecret();
+        assert_equals(popup.getSecret(), "secret", "Secret before logging out");
+        popup.logout();
+
+        addEventListener("logged-out", t.step_func(() => {
+            addEventListener("secret-page-loaded", t.step_func(() => {
+                assert_equals(popup.getSecret(), "", "Secret after logging out");
+                t.done();
+            })); 
+            popup.history.back();
+        }));
+    }));
+}, '`Clear-Site-Data: cache` should clear the back/forward cache');
+</script>
+</html>

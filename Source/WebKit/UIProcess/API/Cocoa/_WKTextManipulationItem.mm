@@ -47,6 +47,18 @@ NSString * const _WKTextManipulationItemErrorItemKey = @"item";
     return self;
 }
 
+- (instancetype)initWithIdentifier:(NSString *)identifier tokens:(NSArray<_WKTextManipulationToken *> *)tokens isSubframe:(BOOL)isSubframe isCrossSiteSubframe:(BOOL)isCrossSiteSubframe
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _identifier = identifier;
+    _tokens = tokens;
+    _isSubframe = isSubframe;
+    _isCrossSiteSubframe = isCrossSiteSubframe;
+    return self;
+}
+
 - (NSString *)identifier
 {
     return _identifier.get();

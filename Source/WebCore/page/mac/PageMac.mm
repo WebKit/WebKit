@@ -30,10 +30,10 @@
 #import "Page.h"
 
 #import "DocumentLoader.h"
-#import "Frame.h"
 #import "FrameLoader.h"
 #import "FrameTree.h"
 #import "LayoutTreeBuilder.h"
+#import "LocalFrame.h"
 #import "Logging.h"
 #import "RenderObject.h"
 #import "SVGDocument.h"
@@ -73,7 +73,10 @@ void Page::platformInitialize()
             WTFLogAlways("%u live pages:", numPages);
 
             Page::forEachPage([](Page& page) {
-                const auto* mainFrameDocument = page.mainFrame().document();
+                auto* localMainFrame = dynamicDowncast<LocalFrame>(page.mainFrame());
+                if (!localMainFrame)
+                    return;
+                const auto* mainFrameDocument = localMainFrame->document();
                 WTFLogAlways("Page %p with main document %p %s", &page, mainFrameDocument, mainFrameDocument ? mainFrameDocument->url().string().utf8().data() : "");
             });
 
@@ -92,7 +95,7 @@ void Page::addSchedulePair(Ref<SchedulePair>&& pair)
         m_scheduledRunLoopPairs = makeUnique<SchedulePairHashSet>();
     m_scheduledRunLoopPairs->add(pair.ptr());
 
-    for (AbstractFrame* frame = &m_mainFrame.get(); frame; frame = frame->tree().traverseNext()) {
+    for (Frame* frame = &m_mainFrame.get(); frame; frame = frame->tree().traverseNext()) {
         auto* localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
@@ -113,7 +116,7 @@ void Page::removeSchedulePair(Ref<SchedulePair>&& pair)
 
     m_scheduledRunLoopPairs->remove(pair.ptr());
 
-    for (AbstractFrame* frame = &m_mainFrame.get(); frame; frame = frame->tree().traverseNext()) {
+    for (Frame* frame = &m_mainFrame.get(); frame; frame = frame->tree().traverseNext()) {
         auto* localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;

@@ -31,7 +31,9 @@
 #include "CSSStyleSheet.h"
 #include "CSSUnparsedValue.h"
 #include "Document.h"
+#include "MutableStyleProperties.h"
 #include "StyleProperties.h"
+#include "StylePropertiesInlines.h"
 #include "StyleRule.h"
 
 namespace WebCore {

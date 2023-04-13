@@ -44,8 +44,6 @@
 
 namespace WebCore {
 
-constexpr unsigned maxUnscheduledFireCount { 1 };
-
 RefPtr<DisplayRefreshMonitor> DisplayRefreshMonitor::createDefaultDisplayRefreshMonitor(PlatformDisplayID displayID)
 {
 #if PLATFORM(MAC)
@@ -225,7 +223,7 @@ void DisplayRefreshMonitor::displayDidRefresh(const DisplayUpdate& displayUpdate
         setIsPreviousFrameDone(true);
     }
 
-    DisplayRefreshMonitorManager::sharedManager().displayDidRefresh(*this);
+    DisplayRefreshMonitorManager::sharedManager().displayMonitorDisplayDidRefresh(*this);
 }
 
 }

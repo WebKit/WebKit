@@ -225,7 +225,7 @@ void StructureRareData::clearCachedSpecialProperty(CachedSpecialPropertyKey key)
         cache.m_value.clear();
 }
 
-void StructureRareData::finalizeUnconditionally(VM& vm)
+void StructureRareData::finalizeUnconditionally(VM& vm, CollectionScope)
 {
     if (m_specialPropertyCache) {
         auto clearCacheIfInvalidated = [&](CachedSpecialPropertyKey key) {

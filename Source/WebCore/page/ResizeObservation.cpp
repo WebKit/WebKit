@@ -41,6 +41,7 @@ Ref<ResizeObservation> ResizeObservation::create(Element& target, ResizeObserver
 
 ResizeObservation::ResizeObservation(Element& element, ResizeObserverBoxOptions observedBox)
     : m_target { element }
+    , m_lastObservationSizes { LayoutSize(-1, -1), LayoutSize(-1, -1), LayoutSize(-1, -1) }
     , m_observedBox { observedBox }
 {
 }
@@ -52,14 +53,24 @@ void ResizeObservation::updateObservationSize(const BoxSizes& boxSizes)
     m_lastObservationSizes = boxSizes;
 }
 
+void ResizeObservation::resetObservationSize()
+{
+    m_lastObservationSizes = { LayoutSize(-1, -1), LayoutSize(-1, -1), LayoutSize(-1, -1) };
+}
+
 auto ResizeObservation::computeObservedSizes() const -> std::optional<BoxSizes>
 {
-    if (m_target->isSVGElement()) {
-        if (auto svgRect = downcast<SVGElement>(*m_target).getBoundingBox()) {
-            auto size = LayoutSize(svgRect->width(), svgRect->height());
+    if (auto* svg = dynamicDowncast<SVGElement>(target())) {
+        if (svg->hasAssociatedSVGLayoutBox()) {
+            LayoutSize size;
+            if (auto svgRect = svg->getBoundingBox()) {
+                size.setWidth(svgRect->width());
+                size.setHeight(svgRect->height());
+            }
             return { { size, size, size } };
         }
     }
+
     auto* box = m_target->renderBox();
     if (box) {
         if (box->isSkippedContent())

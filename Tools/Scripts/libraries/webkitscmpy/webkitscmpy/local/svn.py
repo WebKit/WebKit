@@ -1,4 +1,4 @@
-# Copyright (C) 2020, 2021 Apple Inc. All rights reserved.
+# Copyright (C) 2020-2023 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -214,13 +214,13 @@ class Svn(Scm):
     def is_checkout(cls, path):
         return run([cls.executable(), 'info'], cwd=path, capture_output=True).returncode == 0
 
-    def __init__(self, path, dev_branches=None, prod_branches=None, contributors=None, id=None, cached=True):
+    def __init__(self, path, dev_branches=None, prod_branches=None, contributors=None, id=None, cached=True, classifier=None,):
         self._root_path = path
         self._root_path = self.info(cached=False).get('Working Copy Root Path')
         if not self.root_path:
             raise OSError('Provided path {} is not a svn repository'.format(path))
 
-        super(Svn, self).__init__(path, dev_branches=dev_branches, prod_branches=prod_branches, contributors=contributors, id=id)
+        super(Svn, self).__init__(path, dev_branches=dev_branches, prod_branches=prod_branches, contributors=contributors, id=id, classifier=classifier,)
         self.cache = self.Cache(self) if cached else None
 
     @decorators.Memoize(cached=False)

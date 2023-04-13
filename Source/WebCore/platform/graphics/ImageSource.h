@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2021 Apple Inc.  All rights reserved.
+ * Copyright (C) 2016-2023 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,7 +30,7 @@
 #include <wtf/Forward.h>
 #include <wtf/RunLoop.h>
 #include <wtf/SynchronizedFixedQueue.h>
-#include <wtf/WeakPtr.h>
+#include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/WorkQueue.h>
 #include <wtf/text/TextStream.h>
 
@@ -41,7 +41,8 @@ class GraphicsContext;
 class ImageDecoder;
 class FragmentedSharedBuffer;
 
-class ImageSource : public ThreadSafeRefCounted<ImageSource>, public CanMakeWeakPtr<ImageSource> {
+class ImageSource final
+    : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<ImageSource> {
     friend class BitmapImage;
 public:
     ~ImageSource();
@@ -88,19 +89,20 @@ public:
     EncodedDataStatus encodedDataStatus();
     bool isSizeAvailable() { return encodedDataStatus() >= EncodedDataStatus::SizeAvailable; }
     WEBCORE_EXPORT size_t frameCount();
+    size_t primaryFrameIndex();
     RepetitionCount repetitionCount();
     String uti();
     String filenameExtension();
     String accessibilityDescription();
     std::optional<IntPoint> hotSpot();
-    std::optional<IntSize> densityCorrectedSize(ImageOrientation = ImageOrientation::FromImage);
+    std::optional<IntSize> densityCorrectedSize(ImageOrientation = ImageOrientation::Orientation::FromImage);
     bool hasDensityCorrectedSize() { return densityCorrectedSize().has_value(); }
 
     ImageOrientation orientation();
 
     // Image metadata which is calculated from the first ImageFrame.
-    WEBCORE_EXPORT IntSize size(ImageOrientation = ImageOrientation::FromImage);
-    IntSize sourceSize(ImageOrientation = ImageOrientation::FromImage);
+    WEBCORE_EXPORT IntSize size(ImageOrientation = ImageOrientation::Orientation::FromImage);
+    IntSize sourceSize(ImageOrientation = ImageOrientation::Orientation::FromImage);
     IntSize sizeRespectingOrientation();
     Color singlePixelSolidColor();
     SubsamplingLevel maximumSubsamplingLevel();
@@ -122,7 +124,7 @@ public:
 
     RefPtr<NativeImage> createFrameImageAtIndex(size_t, SubsamplingLevel = SubsamplingLevel::Default);
     RefPtr<NativeImage> frameImageAtIndex(size_t);
-    RefPtr<NativeImage> frameImageAtIndexCacheIfNeeded(size_t, SubsamplingLevel = SubsamplingLevel::Default);
+    RefPtr<NativeImage> frameImageAtIndexCacheIfNeeded(size_t, SubsamplingLevel = SubsamplingLevel::Default, const DecodingOptions& = { });
 
 private:
     ImageSource(BitmapImage*, AlphaOption = AlphaOption::Premultiplied, GammaAndColorProfileOption = GammaAndColorProfileOption::Applied);
@@ -134,13 +136,14 @@ private:
         EncodedDataStatus           = 1 << 2,
         FileNameExtension           = 1 << 3,
         FrameCount                  = 1 << 4,
-        HotSpot                     = 1 << 5,
-        MaximumSubsamplingLevel     = 1 << 6,
-        Orientation                 = 1 << 7,
-        RepetitionCount             = 1 << 8,
-        SinglePixelSolidColor       = 1 << 9,
-        Size                        = 1 << 10,
-        UTI                         = 1 << 11
+        PrimaryFrameIndex           = 1 << 5,
+        HotSpot                     = 1 << 6,
+        MaximumSubsamplingLevel     = 1 << 7,
+        Orientation                 = 1 << 8,
+        RepetitionCount             = 1 << 9,
+        SinglePixelSolidColor       = 1 << 10,
+        Size                        = 1 << 11,
+        UTI                         = 1 << 12
     };
 
     template<typename T>
@@ -169,7 +172,7 @@ private:
     SynchronizedFixedQueue<ImageFrameRequest, BufferSize>& frameRequestQueue();
 
     const ImageFrame& frameAtIndex(size_t index) { return index < m_frames.size() ? m_frames[index] : ImageFrame::defaultFrame(); }
-    const ImageFrame& frameAtIndexCacheIfNeeded(size_t, ImageFrame::Caching, const std::optional<SubsamplingLevel>& = { });
+    const ImageFrame& frameAtIndexCacheIfNeeded(size_t, ImageFrame::Caching, const std::optional<SubsamplingLevel>& = { }, const DecodingOptions& = { });
 
     void dump(TextStream&);
 
@@ -203,6 +206,7 @@ private:
     // Image metadata.
     EncodedDataStatus m_encodedDataStatus { EncodedDataStatus::Unknown };
     size_t m_frameCount { 0 };
+    size_t m_primaryFrameIndex { 0 };
     RepetitionCount m_repetitionCount { RepetitionCountNone };
     String m_uti;
     String m_filenameExtension;

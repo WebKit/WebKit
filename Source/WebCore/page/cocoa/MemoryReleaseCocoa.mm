@@ -26,13 +26,13 @@
 #import "config.h"
 #import "MemoryRelease.h"
 
+#import "CGSubimageCacheWithTimer.h"
 #import "FontCache.h"
 #import "GCController.h"
 #import "HTMLNameCache.h"
 #import "IOSurfacePool.h"
 #import "LayerPool.h"
 #import "LocaleCocoa.h"
-#import "SubimageCacheWithTimer.h"
 #import <notify.h>
 #import <pal/spi/ios/GraphicsServicesSPI.h>
 
@@ -65,7 +65,7 @@ void platformReleaseMemory(Critical)
     IOSurfacePool::sharedPool().discardAllSurfaces();
 
 #if CACHE_SUBIMAGES
-    SubimageCacheWithTimer::clear();
+    CGSubimageCacheWithTimer::clear();
 #endif
 }
 
@@ -74,7 +74,7 @@ void platformReleaseGraphicsMemory(Critical)
     IOSurfacePool::sharedPool().discardAllSurfaces();
 
 #if CACHE_SUBIMAGES
-    SubimageCacheWithTimer::clear();
+    CGSubimageCacheWithTimer::clear();
 #endif
 }
 

@@ -1187,6 +1187,7 @@ void INTERNAL_GL_APIENTRY glPointParameterivNULL(GLenum pname, const GLint *para
 void INTERNAL_GL_APIENTRY glPointSizeNULL(GLfloat size);
 void INTERNAL_GL_APIENTRY glPolygonModeNULL(GLenum face, GLenum mode);
 void INTERNAL_GL_APIENTRY glPolygonOffsetNULL(GLfloat factor, GLfloat units);
+void INTERNAL_GL_APIENTRY glPolygonOffsetClampEXTNULL(GLfloat factor, GLfloat units, GLfloat clamp);
 void INTERNAL_GL_APIENTRY glPopDebugGroupNULL();
 void INTERNAL_GL_APIENTRY glPopGroupMarkerEXTNULL();
 void INTERNAL_GL_APIENTRY glPrimitiveBoundingBoxNULL(GLfloat minX,

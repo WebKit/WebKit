@@ -1,4 +1,9 @@
 
+PASS Adding a SELECT tree to another tree should not reset selection.
 PASS Removing a SELECT tree from another tree should not reset selection.
-PASS Reset should select the first option element in the list of options that is not disabled to true
+PASS Reset should select the first option element in the list of options that is not disabled to true.
+PASS Removing an OPTION from a SELECT element should reset selection.
+PASS Changing multiple SELECT to single should reset selection.
+
+
 

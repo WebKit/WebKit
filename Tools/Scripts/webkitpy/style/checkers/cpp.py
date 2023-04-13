@@ -2080,7 +2080,7 @@ def check_function_body(filename, file_extension, clean_lines, line_number, clas
         max_index = min(function_line_count, i + 4)
         partial_function_body = ' '.join(function_body_view.trimmed_lines[min_index:max_index])
 
-        if search(r'[^_]ASSERT_NOT_REACHED\(\);\s*(continue|return(\s+[^;]+)?);', partial_function_body) \
+        if search(r'[^_]ASSERT_NOT_REACHED\(\);\s*(continue|return|break(\s+[^;]+)?);', partial_function_body) \
                 or search(r'[^_]ASSERT_NOT_REACHED\(\);(\s*#endif)?(\s*})+\s*$', partial_function_body) \
                 or search(r'[^_]ASSERT_NOT_REACHED\(\);(\s*completionHandler[^;]+;)?(\s*})+\s*$', partial_function_body) \
                 or search(r'[^_]ASSERT_NOT_REACHED\(\);(\s*[^;]+;)?\s*return(\s+[^;]+)?;', partial_function_body) \
@@ -2815,6 +2815,50 @@ def check_ismainthread(filename, clean_lines, line_number, file_state, error):
     error(line_number, 'runtime/ismainthread', 4, "Use 'isMainRunLoop()' instead of 'isMainThread()' in Source/WebKit.")
 
 
+def check_wtf_make_span(clean_lines, line_number, file_state, error):
+    """Looks for use of 'Span' or 'std::span' constructors which should be replaced with 'WTF::makeSpan()'.
+
+    Args:
+      clean_lines: A CleansedLines instance containing the file.
+      line_number: The number of the line to check.
+      file_state: A _FileState instance which maintains information about
+                  the state of things in the file.
+      error: The function to call with any errors found.
+    """
+
+    line = clean_lines.elided[line_number]  # Get rid of comments and strings.
+
+    using_wtf_span_ctor_with_type_inference_search = search(r'\b(Span|std::span)\s*(([A-Za-z_][A-Za-z0-9_]+)\s*)?{\s*([^}]+)\s*}', line)
+    if using_wtf_span_ctor_with_type_inference_search:
+        class_name = using_wtf_span_ctor_with_type_inference_search.group(1)
+        variable = using_wtf_span_ctor_with_type_inference_search.group(3).strip() if using_wtf_span_ctor_with_type_inference_search.group(3) else None
+        args = using_wtf_span_ctor_with_type_inference_search.group(4).strip()
+        if variable:
+            error(line_number, 'runtime/wtf_make_span', 5,
+                  "Use 'auto {variable} = makeSpan({args})' instead of '{class_name} {variable} {{ {args} }}'.".format(
+                      args=args, class_name=class_name, variable=variable))
+        else:
+            error(line_number, 'runtime/wtf_make_span', 5,
+                  "Use 'makeSpan({args})' instead of '{class_name} {{ {args} }}'.".format(
+                      args=args, class_name=class_name))
+
+    using_wtf_span_ctor_with_type_inference_search = search(r'\b(Span|std::span)\s*(([A-Za-z_][A-Za-z0-9_]+)\s*)?\((.+)\s*\)', line)
+    if using_wtf_span_ctor_with_type_inference_search:
+        class_name = using_wtf_span_ctor_with_type_inference_search.group(1)
+        variable = using_wtf_span_ctor_with_type_inference_search.group(3).strip() if using_wtf_span_ctor_with_type_inference_search.group(3) else None
+        args = using_wtf_span_ctor_with_type_inference_search.group(4).strip()
+        if args.count('(') < args.count(')'):
+            args = args[:-1]
+        if variable:
+            error(line_number, 'runtime/wtf_make_span', 5,
+                  "Use 'auto {variable} = makeSpan({args})' instead of '{class_name} {variable}({args})'.".format(
+                      args=args, class_name=class_name, variable=variable))
+        else:
+            error(line_number, 'runtime/wtf_make_span', 5,
+                  "Use 'makeSpan({args})' instead of '{class_name}({args})'.".format(
+                      args=args, class_name=class_name))
+
+
 def check_wtf_make_unique(clean_lines, line_number, file_state, error):
     """Looks for use of 'std::make_unique<>' which should be replaced with 'WTF::makeUnique<>'.
 
@@ -3494,6 +3538,7 @@ def check_style(clean_lines, line_number, file_extension, class_state, file_stat
     check_max_min_macros(clean_lines, line_number, file_state, error)
     check_wtf_checked_size(clean_lines, line_number, file_state, error)
     check_wtf_move(clean_lines, line_number, file_state, error)
+    check_wtf_make_span(clean_lines, line_number, file_state, error)
     check_wtf_make_unique(clean_lines, line_number, file_state, error)
     check_wtf_never_destroyed(clean_lines, line_number, file_state, error)
     check_lock_guard(clean_lines, line_number, file_state, error)
@@ -4019,7 +4064,7 @@ def check_language(filename, clean_lines, line_number, file_extension, include_s
               'http://google-styleguide.googlecode.com/svn/trunk/cppguide.xml#Namespaces'
               ' for more information.')
 
-    # Check for plain bitfields declared without either "singed" or "unsigned".
+    # Check for plain bitfields declared without either "signed" or "unsigned".
     # Most compilers treat such bitfields as signed, but there are still compilers like
     # RVCT 4.0 that use unsigned by default.
     matched = re.match(r'\s*((const|mutable)\s+)?(char|(short(\s+int)?)|int|long(\s+(long|int))?)\s+[a-zA-Z_][a-zA-Z0-9_]*\s*:\s*\d+\s*;', line)
@@ -4034,7 +4079,7 @@ def check_language(filename, clean_lines, line_number, file_extension, include_s
     matched = re.match(r'\s*((const|mutable)\s+)?([a-zA-Z_][a-zA-Z0-9_]*)\s+[a-zA-Z_][a-zA-Z0-9_]*\s*:\s*\d+\s*;', line)
     if matched:
         # Make sure the type is an enum and not an integral type
-        if not match(r'bool|char|(short(\s+int)?)|int|long(\s+(long|int))|(signed|unsigned)(\s+int)?', matched.group(3)):
+        if not match(r'bool|char|(short(\s+int)?)|u?int(8|16|32|64)_t|int|long(\s+(long|int))|(signed|unsigned)(\s+int)?', matched.group(3)):
             error(line_number, 'runtime/enum_bitfields', 5,
                   'Please declare enum bitfields as unsigned integral types.')
 
@@ -4733,6 +4778,7 @@ class CppChecker(object):
         'runtime/unsigned',
         'runtime/virtual',
         'runtime/wtf_checked_size',
+        'runtime/wtf_make_span',
         'runtime/wtf_make_unique',
         'runtime/wtf_move',
         'runtime/wtf_never_destroyed',

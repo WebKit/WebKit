@@ -196,6 +196,8 @@ WGPUErrorFilter ConvertToBackingContext::convertToBacking(ErrorFilter errorFilte
         return WGPUErrorFilter_OutOfMemory;
     case ErrorFilter::Validation:
         return WGPUErrorFilter_Validation;
+    case ErrorFilter::Internal:
+        return WGPUErrorFilter_Internal;
     }
 }
 
@@ -204,8 +206,6 @@ WGPUFeatureName ConvertToBackingContext::convertToBacking(FeatureName featureNam
     switch (featureName) {
     case FeatureName::DepthClipControl:
         return static_cast<WGPUFeatureName>(WGPUFeatureName_DepthClipControl);
-    case FeatureName::Depth24unormStencil8:
-        return WGPUFeatureName_Depth24UnormStencil8;
     case FeatureName::Depth32floatStencil8:
         return WGPUFeatureName_Depth32FloatStencil8;
     case FeatureName::TextureCompressionBc:
@@ -218,6 +218,12 @@ WGPUFeatureName ConvertToBackingContext::convertToBacking(FeatureName featureNam
         return WGPUFeatureName_TimestampQuery;
     case FeatureName::IndirectFirstInstance:
         return static_cast<WGPUFeatureName>(WGPUFeatureName_IndirectFirstInstance);
+    case FeatureName::Bgra8unormStorage:
+        return static_cast<WGPUFeatureName>(WGPUFeatureName_BGRA8UnormStorage);
+    case FeatureName::ShaderF16:
+        return static_cast<WGPUFeatureName>(WGPUFeatureName_ShaderF16);
+    case FeatureName::Rg11b10ufloatRenderable:
+        return static_cast<WGPUFeatureName>(WGPUFeatureName_RG11B10UfloatRenderable);
     }
 }
 
@@ -228,6 +234,16 @@ WGPUFilterMode ConvertToBackingContext::convertToBacking(FilterMode filterMode)
         return WGPUFilterMode_Nearest;
     case FilterMode::Linear:
         return WGPUFilterMode_Linear;
+    }
+}
+
+WGPUMipmapFilterMode ConvertToBackingContext::convertToBacking(MipmapFilterMode filterMode)
+{
+    switch (filterMode) {
+    case MipmapFilterMode::Nearest:
+        return WGPUMipmapFilterMode_Nearest;
+    case MipmapFilterMode::Linear:
+        return WGPUMipmapFilterMode_Linear;
     }
 }
 
@@ -572,8 +588,6 @@ WGPUTextureFormat ConvertToBackingContext::convertToBacking(TextureFormat textur
         return static_cast<WGPUTextureFormat>(WGPUTextureFormat_ASTC12x12Unorm);
     case TextureFormat::Astc12x12UnormSRGB:
         return static_cast<WGPUTextureFormat>(WGPUTextureFormat_ASTC12x12UnormSrgb);
-    case TextureFormat::Depth24unormStencil8:
-        return WGPUTextureFormat_Depth24UnormStencil8;
     case TextureFormat::Depth32floatStencil8:
         return static_cast<WGPUTextureFormat>(WGPUTextureFormat_Depth32FloatStencil8);
     }

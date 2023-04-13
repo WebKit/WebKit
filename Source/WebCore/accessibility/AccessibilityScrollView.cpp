@@ -28,9 +28,9 @@
 
 #include "AXObjectCache.h"
 #include "AccessibilityScrollbar.h"
-#include "Frame.h"
-#include "FrameView.h"
 #include "HTMLFrameOwnerElement.h"
+#include "LocalFrame.h"
+#include "LocalFrameView.h"
 #include "RenderElement.h"
 #include "Widget.h"
 
@@ -40,8 +40,8 @@ AccessibilityScrollView::AccessibilityScrollView(ScrollView* view)
     : m_scrollView(view)
     , m_childrenDirty(false)
 {
-    if (is<FrameView>(view))
-        m_frameOwnerElement = downcast<FrameView>(*view).frame().ownerElement();
+    if (is<LocalFrameView>(view))
+        m_frameOwnerElement = downcast<LocalFrameView>(*view).frame().ownerElement();
 }
 
 AccessibilityScrollView::~AccessibilityScrollView()
@@ -242,17 +242,17 @@ LayoutRect AccessibilityScrollView::elementRect() const
 
 Document* AccessibilityScrollView::document() const
 {
-    if (auto* frameView = dynamicDowncast<FrameView>(m_scrollView.get())) {
+    if (auto* frameView = dynamicDowncast<LocalFrameView>(m_scrollView.get())) {
         if (auto* localFrame = dynamicDowncast<LocalFrame>(frameView->frame()))
             return localFrame->document();
     }
     return AccessibilityObject::document();
 }
 
-FrameView* AccessibilityScrollView::documentFrameView() const
+LocalFrameView* AccessibilityScrollView::documentFrameView() const
 {
-    if (is<FrameView>(m_scrollView))
-        return downcast<FrameView>(m_scrollView.get());
+    if (is<LocalFrameView>(m_scrollView))
+        return downcast<LocalFrameView>(m_scrollView.get());
 
     if (m_frameOwnerElement && m_frameOwnerElement->contentDocument())
         return m_frameOwnerElement->contentDocument()->view();
@@ -267,8 +267,8 @@ AccessibilityObject* AccessibilityScrollView::parentObject() const
         return nullptr;
 
     HTMLFrameOwnerElement* owner = m_frameOwnerElement.get();
-    if (is<FrameView>(m_scrollView))
-        owner = downcast<FrameView>(*m_scrollView).frame().ownerElement();
+    if (is<LocalFrameView>(m_scrollView))
+        owner = downcast<LocalFrameView>(*m_scrollView).frame().ownerElement();
 
     if (owner && owner->renderer())
         return cache->getOrCreate(owner);

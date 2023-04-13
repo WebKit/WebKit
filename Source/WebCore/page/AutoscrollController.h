@@ -32,8 +32,8 @@
 namespace WebCore {
 
 class EventHandler;
-class Frame;
-class FrameView;
+class LocalFrame;
+class LocalFrameView;
 class Node;
 class PlatformMouseEvent;
 class RenderBox;
@@ -73,7 +73,7 @@ private:
     void autoscrollTimerFired();
     void startAutoscrollTimer();
 #if ENABLE(PAN_SCROLLING)
-    void updatePanScrollState(FrameView*, const IntPoint&);
+    void updatePanScrollState(LocalFrameView*, const IntPoint&);
 #endif
 
     Timer m_autoscrollTimer;

@@ -26,6 +26,8 @@
 #pragma once
 
 #include "IntSize.h"
+#include "PixelBuffer.h"
+#include "TaskSource.h"
 #include <wtf/HashSet.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/WeakHashSet.h>
@@ -37,6 +39,7 @@ class CanvasBase;
 class CanvasObserver;
 class CanvasRenderingContext;
 class Element;
+class Event;
 class GraphicsClient;
 class GraphicsContext;
 class GraphicsContextStateSaver;
@@ -120,6 +123,12 @@ public:
     WEBCORE_EXPORT static void setMaxPixelMemoryForTesting(std::optional<size_t>);
     WEBCORE_EXPORT static void setMaxCanvasAreaForTesting(std::optional<size_t>);
 
+    virtual void queueTaskKeepingObjectAlive(TaskSource, Function<void()>&&) = 0;
+    virtual void dispatchEvent(Event&) = 0;
+
+    bool shouldInjectNoiseBeforeReadback() const;
+    bool postProcessPixelBuffer(Ref<PixelBuffer>&&, bool, const HashSet<uint32_t>&) const;
+
 protected:
     explicit CanvasBase(IntSize);
 
@@ -133,7 +142,7 @@ protected:
 
     void resetGraphicsContextState() const;
 
-    void createImageBuffer(bool usesDisplayListDrawing, bool avoidBackendSizeCheckForTesting) const;
+    RefPtr<ImageBuffer> allocateImageBuffer(bool usesDisplayListDrawing, bool avoidBackendSizeCheckForTesting) const;
 
 private:
     virtual void createImageBuffer() const { }

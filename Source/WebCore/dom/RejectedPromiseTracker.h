@@ -28,6 +28,7 @@
 
 #include <JavaScriptCore/JSPromise.h>
 #include <JavaScriptCore/WeakGCMap.h>
+#include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
@@ -59,7 +60,7 @@ private:
     void reportUnhandledRejections(Vector<UnhandledPromise>&&);
     void reportRejectionHandled(Ref<DOMPromise>&&);
 
-    ScriptExecutionContext& m_context;
+    CheckedRef<ScriptExecutionContext> m_context;
     Vector<UnhandledPromise> m_aboutToBeNotifiedRejectedPromises;
     JSC::WeakGCMap<JSC::JSPromise*, JSC::JSPromise> m_outstandingRejectedPromises;
 };

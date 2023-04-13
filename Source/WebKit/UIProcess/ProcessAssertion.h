@@ -51,6 +51,7 @@ enum class ProcessAssertionType {
     Foreground,
     MediaPlayback,
     FinishTaskInterruptable,
+    BoostedJetsam,
 };
 
 ASCIILiteral processAssertionTypeDescription(ProcessAssertionType);
@@ -59,9 +60,9 @@ class ProcessAssertion : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<
     WTF_MAKE_FAST_ALLOCATED;
 public:
     enum class Mode : bool { Sync, Async };
-    static Ref<ProcessAssertion> create(ProcessID pid, const String& reason, ProcessAssertionType type, Mode mode = Mode::Async, CompletionHandler<void()>&& acquisisionHandler = nullptr)
+    static Ref<ProcessAssertion> create(ProcessID pid, const String& reason, ProcessAssertionType type, Mode mode = Mode::Async, const String& environmentIdentifier = emptyString(), CompletionHandler<void()>&& acquisisionHandler = nullptr)
     {
-        auto assertion = adoptRef(*new ProcessAssertion(pid, reason, type));
+        auto assertion = adoptRef(*new ProcessAssertion(pid, reason, type, environmentIdentifier));
         if (mode == Mode::Async)
             assertion->acquireAsync(WTFMove(acquisisionHandler));
         else {
@@ -83,7 +84,7 @@ public:
     bool isValid() const;
 
 protected:
-    ProcessAssertion(ProcessID, const String& reason, ProcessAssertionType);
+    ProcessAssertion(ProcessID, const String& reason, ProcessAssertionType, const String& environmentIdentifier);
 
     void acquireAsync(CompletionHandler<void()>&&);
     void acquireSync();
@@ -108,9 +109,9 @@ private:
 
 class ProcessAndUIAssertion final : public ProcessAssertion {
 public:
-    static Ref<ProcessAndUIAssertion> create(ProcessID pid, const String& reason, ProcessAssertionType type, Mode mode = Mode::Async, CompletionHandler<void()>&& acquisisionHandler = nullptr)
+    static Ref<ProcessAndUIAssertion> create(ProcessID pid, const String& reason, ProcessAssertionType type, Mode mode = Mode::Async, const String& environmentIdentifier = emptyString(), CompletionHandler<void()>&& acquisisionHandler = nullptr)
     {
-        auto assertion = adoptRef(*new ProcessAndUIAssertion(pid, reason, type));
+        auto assertion = adoptRef(*new ProcessAndUIAssertion(pid, reason, type, environmentIdentifier));
         if (mode == Mode::Async)
             assertion->acquireAsync(WTFMove(acquisisionHandler));
         else {
@@ -130,7 +131,7 @@ public:
 #endif
 
 private:
-    ProcessAndUIAssertion(ProcessID, const String& reason, ProcessAssertionType);
+    ProcessAndUIAssertion(ProcessID, const String& reason, ProcessAssertionType, const String& environmentIdentifier);
 
 #if PLATFORM(IOS_FAMILY)
     void processAssertionWasInvalidated() final;

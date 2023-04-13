@@ -34,6 +34,7 @@
 namespace PAL::WebGPU {
 
 class Adapter;
+class CompositorIntegration;
 class PresentationContext;
 struct PresentationContextDescriptor;
 
@@ -44,6 +45,8 @@ public:
     virtual void requestAdapter(const RequestAdapterOptions&, CompletionHandler<void(RefPtr<Adapter>&&)>&&) = 0;
 
     virtual Ref<PresentationContext> createPresentationContext(const PresentationContextDescriptor&) = 0;
+
+    virtual Ref<CompositorIntegration> createCompositorIntegration() = 0;
 
 protected:
     GPU() = default;

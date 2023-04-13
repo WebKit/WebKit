@@ -4,22 +4,22 @@ layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
     RenderSVGContainer {g} at (33,47) size 522x446
       RenderSVGContainer {g} at (33,47) size 522x446
-        RenderSVGText {text} at (20,58) size 190x28 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 190x27
-            chunk 1 text run 1 at (20.00,80.00) startOffset 0 endOffset 17 width 189.00: "A serifed face \x{753B}\x{50CF}"
-        RenderSVGText {text} at (20,138) size 233x28 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 233x27
-            chunk 1 text run 1 at (20.00,160.00) startOffset 0 endOffset 20 width 232.20: "A sans-serif face \x{753B}\x{50CF}"
+        RenderSVGText {text} at (20,58) size 188x28 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 188x27
+            chunk 1 text run 1 at (20.00,80.00) startOffset 0 endOffset 17 width 187.68: "A serifed face \x{753B}\x{50CF}"
+        RenderSVGText {text} at (20,138) size 231x28 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 231x27
+            chunk 1 text run 1 at (20.00,160.00) startOffset 0 endOffset 20 width 230.88: "A sans-serif face \x{753B}\x{50CF}"
         RenderSVGText {text} at (20,220) size 293x28 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 293x28
             chunk 1 text run 1 at (20.00,240.00) startOffset 0 endOffset 19 width 292.80: "A mono (iW) face \x{753B}\x{50CF}"
         RenderSVGContainer {g} at (66,47) size 489x316
-          RenderSVGText {text} at (40,28) size 190x28 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 190x27
-              chunk 1 text run 1 at (40.00,50.00) startOffset 0 endOffset 17 width 189.00: "A serifed face \x{753B}\x{50CF}"
-          RenderSVGText {text} at (40,108) size 233x28 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 233x27
-              chunk 1 text run 1 at (40.00,130.00) startOffset 0 endOffset 20 width 232.20: "A sans-serif face \x{753B}\x{50CF}"
+          RenderSVGText {text} at (40,28) size 188x28 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 188x27
+              chunk 1 text run 1 at (40.00,50.00) startOffset 0 endOffset 17 width 187.68: "A serifed face \x{753B}\x{50CF}"
+          RenderSVGText {text} at (40,108) size 231x28 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 231x27
+              chunk 1 text run 1 at (40.00,130.00) startOffset 0 endOffset 20 width 230.88: "A sans-serif face \x{753B}\x{50CF}"
           RenderSVGText {text} at (40,190) size 293x28 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 293x28
               chunk 1 text run 1 at (40.00,210.00) startOffset 0 endOffset 19 width 292.80: "A mono (iW) face \x{753B}\x{50CF}"

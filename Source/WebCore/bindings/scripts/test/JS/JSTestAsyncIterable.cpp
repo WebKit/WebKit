@@ -115,7 +115,7 @@ template<> void JSTestAsyncIterableDOMConstructor::initializeProperties(VM& vm, 
 
 static const HashTableValue JSTestAsyncIterablePrototypeTableValues[] =
 {
-    { "constructor"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestAsyncIterableConstructor, 0 } },
+    { "constructor"_s, static_cast<unsigned>(PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestAsyncIterableConstructor, 0 } },
     { "entries"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestAsyncIterablePrototypeFunction_entries, 0 } },
     { "keys"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestAsyncIterablePrototypeFunction_keys, 0 } },
     { "values"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestAsyncIterablePrototypeFunction_values, 0 } },
@@ -149,7 +149,9 @@ void JSTestAsyncIterable::finishCreation(VM& vm)
 
 JSObject* JSTestAsyncIterable::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    return JSTestAsyncIterablePrototype::create(vm, &globalObject, JSTestAsyncIterablePrototype::createStructure(vm, &globalObject, globalObject.objectPrototype()));
+    auto* structure = JSTestAsyncIterablePrototype::createStructure(vm, &globalObject, globalObject.objectPrototype());
+    structure->setMayBePrototype(true);
+    return JSTestAsyncIterablePrototype::create(vm, &globalObject, structure);
 }
 
 JSObject* JSTestAsyncIterable::prototype(VM& vm, JSDOMGlobalObject& globalObject)
@@ -282,7 +284,7 @@ void JSTestAsyncIterable::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
     auto* thisObject = jsCast<JSTestAsyncIterable*>(cell);
     analyzer.setWrappedObjectForCell(cell, &thisObject->wrapped());
     if (thisObject->scriptExecutionContext())
-        analyzer.setLabelForCell(cell, "url " + thisObject->scriptExecutionContext()->url().string());
+        analyzer.setLabelForCell(cell, "url "_s + thisObject->scriptExecutionContext()->url().string());
     Base::analyzeHeap(cell, analyzer);
 }
 

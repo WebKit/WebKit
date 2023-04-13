@@ -25,10 +25,12 @@
 #include "config.h"
 #include "AXTextMarker.h"
 
+#include "AXLogger.h"
 #include "AXObjectCache.h"
 #include "AXTreeStore.h"
 #include "HTMLInputElement.h"
 #include "RenderObject.h"
+#include "TextIterator.h"
 
 namespace WebCore {
 
@@ -104,11 +106,32 @@ AXTextMarker::AXTextMarker(const CharacterOffset& characterOffset)
         m_data = cache->textMarkerDataForCharacterOffset(characterOffset);
 }
 
+void AXTextMarker::setNode()
+{
+    ASSERT(isMainThread());
+    ASSERT(!m_data.node);
+
+    WeakPtr cache = std::get<WeakPtr<AXObjectCache>>(axTreeForID(treeID()));
+    if (!cache)
+        return;
+
+    auto* object = cache->objectForID(objectID());
+    if (!object)
+        return;
+
+    WeakPtr node = object->node();
+    if (!node)
+        return;
+
+    m_data.node = node.get();
+    cache->setNodeInUse(node.get());
+}
+
 AXTextMarker::operator VisiblePosition() const
 {
     ASSERT(isMainThread());
 
-    auto* cache = AXTreeStore<AXObjectCache>::treeForID(treeID());
+    WeakPtr cache = AXTreeStore<AXObjectCache>::axObjectCacheForID(treeID());
     return cache ? cache->visiblePositionForTextMarkerData(m_data) : VisiblePosition();
 }
 
@@ -123,32 +146,63 @@ AXTextMarker::operator CharacterOffset() const
     // When we are at a line wrap and the VisiblePosition is upstream, it means the text marker is at the end of the previous line.
     // We use the previous CharacterOffset so that it will match the Range.
     if (m_data.affinity == Affinity::Upstream) {
-        if (auto cache = AXTreeStore<AXObjectCache>::treeForID(m_data.axTreeID()))
+        if (WeakPtr cache = AXTreeStore<AXObjectCache>::axObjectCacheForID(m_data.axTreeID()))
             return cache->previousCharacterOffset(result, false);
     }
     return result;
 }
 
-AXCoreObject* AXTextMarker::object() const
+static Node* nodeAndOffsetForReplacedNode(Node& replacedNode, int& offset, int characterCount)
+{
+    // Use this function to include the replaced node itself in the range we are creating.
+    auto nodeRange = AXObjectCache::rangeForNodeContents(replacedNode);
+    bool isInNode = static_cast<unsigned>(characterCount) <= WebCore::characterCount(nodeRange);
+    offset = replacedNode.computeNodeIndex() + (isInNode ? 0 : 1);
+    return replacedNode.parentNode();
+}
+
+std::optional<BoundaryPoint> AXTextMarker::boundaryPoint() const
+{
+    ASSERT(isMainThread());
+
+    CharacterOffset characterOffset = *this;
+    if (characterOffset.isNull())
+        return std::nullopt;
+
+    int offset = characterOffset.startIndex + characterOffset.offset;
+    WeakPtr node = characterOffset.node;
+    ASSERT(node);
+    if (AccessibilityObject::replacedNodeNeedsCharacter(node.get()) || node->hasTagName(HTMLNames::brTag))
+        node = nodeAndOffsetForReplacedNode(*node, offset, characterOffset.offset);
+    if (!node)
+        return std::nullopt;
+    return { { *node, static_cast<unsigned>(offset) } };
+}
+
+RefPtr<AXCoreObject> AXTextMarker::object() const
 {
     if (isNull())
         return nullptr;
 
-    auto tree = AXTreeStore<AXObjectCache>::treeForID(treeID());
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    if (!isMainThread()) {
+        auto tree = std::get<RefPtr<AXIsolatedTree>>(axTreeForID(treeID()));
+        return tree ? tree->objectForID(objectID()) : nullptr;
+    }
+#endif
+    auto tree = std::get<WeakPtr<AXObjectCache>>(axTreeForID(treeID()));
     return tree ? tree->objectForID(objectID()) : nullptr;
 }
 
 #if ENABLE(TREE_DEBUGGING)
 String AXTextMarker::debugDescription() const
 {
-    if (isNull())
-        return "<null>"_s;
-
     auto separator = ", ";
     return makeString(
         "treeID ", treeID().loggingString()
         , separator, "objectID ", objectID().loggingString()
-        , separator, node()->debugDescription()
+        , separator, isMainThread() ? node()->debugDescription()
+            : makeString("node 0x", hex(reinterpret_cast<uintptr_t>(m_data.node)))
         , separator, "offset ", m_data.offset
         , separator, "AnchorType ", m_data.anchorType
         , separator, "Affinity ", m_data.affinity
@@ -197,9 +251,11 @@ std::optional<SimpleRange> AXTextMarkerRange::simpleRange() const
 {
     ASSERT(isMainThread());
 
-    auto startBoundaryPoint = makeBoundaryPoint(m_start);
-    auto endBoundaryPoint = makeBoundaryPoint(m_end);
-    if (!startBoundaryPoint || !endBoundaryPoint)
+    auto startBoundaryPoint = m_start.boundaryPoint();
+    if (!startBoundaryPoint)
+        return std::nullopt;
+    auto endBoundaryPoint = m_end.boundaryPoint();
+    if (!endBoundaryPoint)
         return std::nullopt;
     return { { *startBoundaryPoint, *endBoundaryPoint } };
 }

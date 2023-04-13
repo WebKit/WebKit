@@ -190,7 +190,7 @@ describe('/api/manifest', function () {
             db.insert('test_metrics', {id: 9, test: 4, name: 'Time'}),
             db.insert('platform_groups', {id: 1, name: 'ios'}),
             db.insert('platform_groups', {id: 2, name: 'mac'}),
-            db.insert('platforms', {id: 23, name: 'iOS 9 iPhone 5s', group: 1}),
+            db.insert('platforms', {id: 23, name: 'iOS 9 iPhone 5s', label: 'iOS 9 iPhone 5s (2013)', group: 1}),
             db.insert('platforms', {id: 46, name: 'Trunk Mavericks', group: 2}),
             db.insert('test_configurations', {id: 101, metric: 5, platform: 46, type: 'current'}),
             db.insert('test_configurations', {id: 102, metric: 6, platform: 46, type: 'current'}),
@@ -203,10 +203,10 @@ describe('/api/manifest', function () {
             return TestServer.remoteAPI().getJSON('/api/manifest');
         }).then((content) => {
             assert.deepStrictEqual(content.tests, {
-                "1": {"name": "SomeTest", "parentId": null, "url": null},
-                "2": {"name": "SomeOtherTest", "parentId": null, "url": null},
-                "3": {"name": "ChildTest", "parentId": "1", "url": null},
-                "4": {"name": "GrandChild", "parentId": "3", "url": null},
+                "1": {"name": "SomeTest", "parentId": null, "url": null, hidden: false},
+                "2": {"name": "SomeOtherTest", "parentId": null, "url": null, hidden: false},
+                "3": {"name": "ChildTest", "parentId": "1", "url": null, hidden: false},
+                "4": {"name": "GrandChild", "parentId": "3", "url": null, hidden: false},
             });
 
             assert.deepStrictEqual(content.metrics, {
@@ -245,6 +245,7 @@ describe('/api/manifest', function () {
             assert(macGroup);
 
             assert.strictEqual(mavericks.name(), 'Trunk Mavericks');
+            assert.strictEqual(mavericks.label(), 'Trunk Mavericks');
             assert(mavericks.hasTest(someTest));
             assert(mavericks.hasTest(someOtherTest));
             assert(mavericks.hasTest(childTest));
@@ -256,6 +257,7 @@ describe('/api/manifest', function () {
             assert.strictEqual(mavericks.group(), macGroup);
 
             assert.strictEqual(ios9iphone5s.name(), 'iOS 9 iPhone 5s');
+            assert.strictEqual(ios9iphone5s.label(), 'iOS 9 iPhone 5s (2013)');
             assert(ios9iphone5s.hasTest(someTest));
             assert(!ios9iphone5s.hasTest(someOtherTest));
             assert(!ios9iphone5s.hasTest(childTest));
@@ -322,6 +324,50 @@ describe('/api/manifest', function () {
             assert.strictEqual(grandChildTest.metrics()[0].label(), 'Time');
             assert.strictEqual(grandChildTest.metrics()[0].fullName(), 'SomeTest \u220B ChildTest \u220B GrandChild : Time');
         });
+    });
+
+    it("should generate manifest with platforms and tests hidden field", async () => {
+        let db = TestServer.database();
+        await Promise.all([
+            db.insert('tests', {id: 1, name: 'SomeTest', hidden: true}),
+            db.insert('tests', {id: 2, name: 'SomeOtherTest'}),
+            db.insert('tests', {id: 3, name: 'ChildTest', parent: 1, hidden: true}),
+            db.insert('tests', {id: 4, name: 'GrandChild', parent: 3, hidden: true}),
+            db.insert('aggregators', {id: 200, name: 'Total'}),
+            db.insert('test_metrics', {id: 5, test: 1, name: 'Time'}),
+            db.insert('test_metrics', {id: 6, test: 2, name: 'Time', aggregator: 200}),
+            db.insert('test_metrics', {id: 7, test: 2, name: 'Malloc', aggregator: 200}),
+            db.insert('test_metrics', {id: 8, test: 3, name: 'Time'}),
+            db.insert('test_metrics', {id: 9, test: 4, name: 'Time'}),
+            db.insert('platform_groups', {id: 1, name: 'ios'}),
+            db.insert('platform_groups', {id: 2, name: 'mac'}),
+            db.insert('platforms', {id: 23, name: 'iOS 9 iPhone 5s', group: 1, hidden: true}),
+            db.insert('platforms', {id: 46, name: 'Trunk Mavericks', group: 2}),
+            db.insert('test_configurations', {id: 101, metric: 5, platform: 46, type: 'current'}),
+            db.insert('test_configurations', {id: 102, metric: 6, platform: 46, type: 'current'}),
+            db.insert('test_configurations', {id: 103, metric: 7, platform: 46, type: 'current'}),
+            db.insert('test_configurations', {id: 104, metric: 8, platform: 46, type: 'current'}),
+            db.insert('test_configurations', {id: 105, metric: 9, platform: 46, type: 'current'}),
+            db.insert('test_configurations', {id: 106, metric: 5, platform: 23, type: 'current'}),
+            db.insert('test_configurations', {id: 107, metric: 5, platform: 23, type: 'baseline'}),
+        ]);
+        const content = await TestServer.remoteAPI().getJSON('/api/manifest');
+        Manifest._didFetchManifest(content);
+        const ios9iphone5s = Platform.findById(23);
+        const mavericks = Platform.findById(46);
+        assert(ios9iphone5s);
+        assert(mavericks);
+        assert(ios9iphone5s.isHidden());
+        assert(!mavericks.isHidden());
+
+        const someTest = Test.findById(1);
+        const someOtherTest = Test.findById(2);
+        const childTest = Test.findById(3);
+        const grandChildTest = Test.findById(4);
+        assert(someTest.isHidden());
+        assert(childTest.isHidden());
+        assert(grandChildTest.isHidden());
+        assert(!someOtherTest.isHidden());
     });
 
     it("should generate manifest with triggerables", () => {

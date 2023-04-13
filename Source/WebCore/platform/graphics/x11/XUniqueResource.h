@@ -23,17 +23,11 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef XUniqueResource_h
-#define XUniqueResource_h
+#pragma once
 
 #if PLATFORM(X11)
 
 #include <utility>
-
-#if USE(GLX)
-typedef unsigned long GLXPbuffer;
-typedef unsigned long GLXPixmap;
-#endif
 
 namespace WebCore {
 
@@ -44,10 +38,6 @@ enum class XResource {
 #endif
     Pixmap,
     Window,
-#if USE(GLX)
-    GLXPbuffer,
-    GLXPixmap,
-#endif
 };
 
 template <XResource T> class XUniqueResource {
@@ -100,13 +90,7 @@ using XUniqueDamage = XUniqueResource<XResource::Damage>;
 #endif
 using XUniquePixmap = XUniqueResource<XResource::Pixmap>;
 using XUniqueWindow = XUniqueResource<XResource::Window>;
-#if USE(GLX)
-using XUniqueGLXPbuffer = XUniqueResource<XResource::GLXPbuffer>;
-using XUniqueGLXPixmap = XUniqueResource<XResource::GLXPixmap>;
-#endif
 
 } // namespace WebCore
 
 #endif // PLATFORM(X11)
-
-#endif // XUniqueResource_h

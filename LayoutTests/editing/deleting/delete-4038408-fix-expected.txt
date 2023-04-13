@@ -30,9 +30,9 @@ EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
 rdar://problems/4038408&4154187&4125087&4125381, This tests deletion from underneath quoted text:
 
 before deletion:
+| <#selection-caret>
 | "\n"
 | <div>
-|   <#selection-caret>
 |   <br>
 |     class="khtml-block-placeholder"
 | "\n"

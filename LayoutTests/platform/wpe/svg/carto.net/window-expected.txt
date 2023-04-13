@@ -115,8 +115,8 @@ layer at (0,0) size 800x600
           RenderSVGRect {rect} at (38,143) size 549x392 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#F0F8FF]}] [x=0.00] [y=0.00] [width=700.00] [height=500.00]
           RenderSVGContainer {g} at (0,0) size 0x0
           RenderSVGRect {rect} at (38,523) size 549x12 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#F0F8FF]}] [x=0.00] [y=487.00] [width=700.00] [height=13.00]
-          RenderSVGText {text} at (3,487) size 129x13 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 129x12
+          RenderSVGText {text} at (3,487) size 128x13 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 128x12
               chunk 1 text run 1 at (3.00,497.00) startOffset 0 endOffset 28 width 128.00: "This is a big movable window"
           RenderSVGContainer {g} at (77,182) size 315x236 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,50.00)}]
             RenderSVGContainer {g} at (77,182) size 315x236
@@ -242,7 +242,7 @@ layer at (0,0) size 800x600
                     chunk 1 text run 1 at (5.00,16.00) startOffset 0 endOffset 24 width 134.40: "This is a minimal window"
                   RenderSVGTSpan {tspan} at (0,0) size 146x13
                     RenderSVGInlineText {#text} at (0,16) size 146x13
-                      chunk 1 text run 1 at (5.00,32.00) startOffset 0 endOffset 29 width 145.92: "without title and status bar."
+                      chunk 1 text run 1 at (5.00,32.00) startOffset 0 endOffset 29 width 145.28: "without title and status bar."
                   RenderSVGTSpan {tspan} at (0,0) size 121x13
                     RenderSVGInlineText {#text} at (0,32) size 121x13
                       chunk 1 text run 1 at (5.00,48.00) startOffset 0 endOffset 23 width 120.32: "it is also not moveable"

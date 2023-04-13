@@ -90,7 +90,10 @@ bool EmailInputType::supportsSelectionAPI() const
 
 String EmailInputType::sanitizeValue(const String& proposedValue) const
 {
-    String noLineBreakValue = proposedValue.removeCharacters(isHTMLLineBreak);
+    // Passing a lambda instead of a function name helps the compiler inline isHTMLLineBreak.
+    String noLineBreakValue = proposedValue.removeCharacters([](auto character) {
+        return isHTMLLineBreak(character);
+    });
     ASSERT(element());
     if (!element()->multiple())
         return stripLeadingAndTrailingHTMLSpaces(noLineBreakValue);

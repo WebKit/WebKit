@@ -2322,7 +2322,7 @@ JSBigInt* JSBigInt::rightTrim(JSGlobalObject* nullOrGlobalObjectForOOM, VM& vm)
     JSBigInt* trimmedBigInt = createWithLength(nullOrGlobalObjectForOOM, vm, newLength);
     if (UNLIKELY(!trimmedBigInt))
         return nullptr;
-    std::copy(dataStorage(), dataStorage() + newLength, trimmedBigInt->dataStorage());
+    std::copy_n(dataStorage(), newLength, trimmedBigInt->dataStorage());
 
     trimmedBigInt->setSign(this->sign());
 

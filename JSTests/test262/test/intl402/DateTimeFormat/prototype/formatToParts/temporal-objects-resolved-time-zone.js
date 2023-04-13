@@ -9,7 +9,15 @@ includes: [deepEqual.js]
 features: [Temporal]
 ---*/
 
-const formatter = new Intl.DateTimeFormat("en", { timeZone: "Pacific/Apia" });
+// Tolerate implementation variance by expecting consistency without being prescriptive.
+// TODO: can we change tests to be less reliant on CLDR formats while still testing that
+// Temporal and Intl are behaving as expected?
+const usDayPeriodSpace =
+  new Intl.DateTimeFormat("en-US", { timeStyle: "short" })
+    .formatToParts(0)
+    .find((part, i, parts) => part.type === "literal" && parts[i + 1].type === "dayPeriod")?.value || "";
+
+const formatter = new Intl.DateTimeFormat("en-US", { timeZone: "Pacific/Apia" });
 
 const date = new Temporal.PlainDate(2021, 8, 4);
 const dateResult = formatter.formatToParts(date);
@@ -35,7 +43,7 @@ assert.deepEqual(datetimeResult1, [
   { type: "minute", value: "30" },
   { type: "literal", value: ":" },
   { type: "second", value: "45" },
-  { type: "literal", value: " " },
+  { type: "literal", value: usDayPeriodSpace },
   { type: "dayPeriod", value: "AM" },
 ], "plain datetime close to beginning of day");
 const datetime2 = new Temporal.PlainDateTime(2021, 8, 4, 23, 30, 45, 123, 456, 789);
@@ -52,7 +60,7 @@ assert.deepEqual(datetimeResult2, [
   { type: "minute", value: "30" },
   { type: "literal", value: ":" },
   { type: "second", value: "45" },
-  { type: "literal", value: " " },
+  { type: "literal", value: usDayPeriodSpace },
   { type: "dayPeriod", value: "PM" },
 ], "plain datetime close to end of day");
 
@@ -72,7 +80,7 @@ assert.deepEqual(timeResult1, [
   { type: "minute", value: "30" },
   { type: "literal", value: ":" },
   { type: "second", value: "45" },
-  { type: "literal", value: " " },
+  { type: "literal", value: usDayPeriodSpace },
   { type: "dayPeriod", value: "AM" },
 ], "plain time close to beginning of day");
 const time2 = new Temporal.PlainTime(23, 30, 45, 123, 456, 789);
@@ -83,7 +91,7 @@ assert.deepEqual(timeResult2, [
   { type: "minute", value: "30" },
   { type: "literal", value: ":" },
   { type: "second", value: "45" },
-  { type: "literal", value: " " },
+  { type: "literal", value: usDayPeriodSpace },
   { type: "dayPeriod", value: "PM" },
 ], "plain time close to end of day");
 

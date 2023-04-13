@@ -53,12 +53,7 @@ public:
     bool elementMatches(Element&) const;
 
 private:
-    HTMLAllNamedSubCollection(Document& document, CollectionType type, const AtomString& name)
-        : CachedHTMLCollection(document, type)
-        , m_name(name)
-    {
-        ASSERT(type == DocumentAllNamedItems);
-    }
+    HTMLAllNamedSubCollection(Document&, CollectionType, const AtomString&);
 
     AtomString m_name;
 };

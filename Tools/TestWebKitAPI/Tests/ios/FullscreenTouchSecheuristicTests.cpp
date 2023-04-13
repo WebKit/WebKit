@@ -101,7 +101,7 @@ TEST(FullscreenTouchSecheuristic, TapOnceVsTapTwice)
         onceScore = once.scoreOfNextTouch(location1, tapDelta + tapDuration);
     }
 
-    ASSERT_LT(abs(twiceScore - onceScore), 0.01);
+    ASSERT_LT(std::abs(twiceScore - onceScore), 0.01);
 }
 
 TEST(FullscreenTouchSecheuristic, WKFullScreenViewControllerParameters)

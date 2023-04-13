@@ -43,7 +43,7 @@ public:
 protected:
     ScrollingTreeOverflowScrollingNodeMac(ScrollingTree&, ScrollingNodeID);
 
-    void commitStateBeforeChildren(const ScrollingStateNode&) override;
+    bool commitStateBeforeChildren(const ScrollingStateNode&) override;
 
     void currentScrollPositionChanged(ScrollType, ScrollingLayerPositionAction) final;
     void willDoProgrammaticScroll(const FloatPoint&) final;

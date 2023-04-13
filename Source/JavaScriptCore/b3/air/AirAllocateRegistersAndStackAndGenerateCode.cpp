@@ -143,19 +143,34 @@ void GenerateAndAllocateRegisters::insertBlocksForFlushAfterTerminalPatchpoints(
     blockInsertionSet.execute();
 }
 
-static ALWAYS_INLINE CCallHelpers::Address callFrameAddr(Air::Opcode opcode, CCallHelpers& jit, intptr_t offsetFromFP)
+static ALWAYS_INLINE Air::Arg callFrameAddr(Air::Opcode opcode, CCallHelpers& jit, intptr_t offsetFromFP, intptr_t frameSize, Width width)
 {
     if (isX86()) {
-        ASSERT(Arg::addr(Air::Tmp(GPRInfo::callFrameRegister), offsetFromFP).isValidForm(Move, Width64));
+        ASSERT(Arg::addr(Air::Tmp(GPRInfo::callFrameRegister), offsetFromFP).isValidForm(opcode, width));
     }
 
     auto addr = Arg::addr(Air::Tmp(GPRInfo::callFrameRegister), offsetFromFP);
-    if (addr.isValidForm(opcode, registerWidth()))
-        return CCallHelpers::Address(GPRInfo::callFrameRegister, offsetFromFP);
+    if (addr.isValidForm(opcode, width))
+        return addr;
+
+    // Try finding a valid offset from the stack pointer register instead.
+    auto offsetFromSP = offsetFromFP + frameSize;
+    addr = Arg::addr(Air::Tmp(MacroAssembler::stackPointerRegister), offsetFromSP);
+    if (addr.isValidForm(opcode, width))
+        return addr;
+    
+    // Try finding a valid indexing of extendedOffsetAddrRegister
+    // into the frame pointer register.
+    // (Have to materialze the offset into extendedOffsetAddrRegister.)
     GPRReg reg = extendedOffsetAddrRegister();
     jit.move(CCallHelpers::TrustedImmPtr(offsetFromFP), reg);
+    auto index = Arg::index(Air::Tmp(GPRInfo::callFrameRegister), Air::Tmp(reg), 1, 0);
+    if (index.isValidForm(opcode, width))
+        return index;
+    
+    // Resort to computing the absolute address in extendedOffsetAddrRegister.
     jit.addPtr(GPRInfo::callFrameRegister, reg);
-    return CCallHelpers::Address(reg);
+    return Arg::addr(Air::Tmp(reg));
 }
 
 ALWAYS_INLINE void GenerateAndAllocateRegisters::release(Tmp tmp, Reg reg)
@@ -175,14 +190,26 @@ ALWAYS_INLINE void GenerateAndAllocateRegisters::flush(Tmp tmp, Reg reg)
     ASSERT(tmp);
     intptr_t offset = m_map[tmp].spillSlot->offsetFromFP();
     JIT_COMMENT(*m_jit, "Flush(", tmp, ", ", reg, ", offset=", offset, ")");
-    if (tmp.isGP())
-        m_jit->storeRegWord(reg.gpr(), callFrameAddr(Air::Move, *m_jit, offset));
-    else if (B3::conservativeRegisterBytes(B3::FP) == sizeof(double) || !m_code.usesSIMD()) {
+    if (tmp.isGP()) {
+        auto dest = callFrameAddr(Air::Move, *m_jit, offset, m_code.frameSize(), registerWidth());
+        if (dest.isAddr())
+            m_jit->storeRegWord(reg.gpr(), dest.asAddress());
+        else
+            m_jit->storeRegWord(reg.gpr(), dest.asBaseIndex());
+    } else if (B3::conservativeRegisterBytes(B3::FP) == sizeof(double) || !m_code.usesSIMD()) {
         ASSERT(m_map[tmp].spillSlot->byteSize() == bytesForWidth(Width64));
-        m_jit->storeDouble(reg.fpr(), callFrameAddr(Air::Move, *m_jit, offset));
+        auto dest = callFrameAddr(Air::MoveDouble, *m_jit, offset, m_code.frameSize(), Width64);
+        if (dest.isAddr())
+            m_jit->storeDouble(reg.fpr(), dest.asAddress());
+        else
+            m_jit->storeDouble(reg.fpr(), dest.asBaseIndex());
     } else {
         ASSERT(m_map[tmp].spillSlot->byteSize() == bytesForWidth(Width128));
-        m_jit->storeVector(reg.fpr(), callFrameAddr(Air::MoveDouble, *m_jit, offset));
+        auto dest = callFrameAddr(Air::MoveVector, *m_jit, offset, m_code.frameSize(), Width128);
+        if (dest.isAddr())
+            m_jit->storeVector(reg.fpr(), dest.asAddress());
+        else
+            m_jit->storeVector(reg.fpr(), dest.asBaseIndex());
     }
 }
 
@@ -211,14 +238,26 @@ ALWAYS_INLINE void GenerateAndAllocateRegisters::alloc(Tmp tmp, Reg reg, Arg::Ro
     if (Arg::isAnyUse(role)) {
         JIT_COMMENT(*m_jit, "Alloc(", tmp, ", ", reg, ", role=", role, ")");
         intptr_t offset = m_map[tmp].spillSlot->offsetFromFP();
-        if (tmp.bank() == GP)
-            m_jit->loadRegWord(callFrameAddr(Air::Move, *m_jit, offset), reg.gpr());
-        else if (B3::conservativeRegisterBytes(B3::FP) == sizeof(double) || !m_code.usesSIMD()) {
+        if (tmp.bank() == GP) {
+            auto src = callFrameAddr(Air::Move, *m_jit, offset, m_code.frameSize(), registerWidth());
+            if (src.isAddr())
+                m_jit->loadRegWord(src.asAddress(), reg.gpr());
+            else
+                m_jit->loadRegWord(src.asBaseIndex(), reg.gpr());
+        } else if (B3::conservativeRegisterBytes(B3::FP) == sizeof(double) || !m_code.usesSIMD()) {
             ASSERT(m_map[tmp].spillSlot->byteSize() == bytesForWidth(Width64));
-            m_jit->loadDouble(callFrameAddr(Air::MoveDouble, *m_jit, offset), reg.fpr());
+            auto src = callFrameAddr(Air::MoveDouble, *m_jit, offset, m_code.frameSize(), Width64);
+            if (src.isAddr())
+                m_jit->loadDouble(src.asAddress(), reg.fpr());
+            else
+                m_jit->loadDouble(src.asBaseIndex(), reg.fpr());
         } else {
             ASSERT(m_map[tmp].spillSlot->byteSize() == bytesForWidth(Width128));
-            m_jit->loadVector(callFrameAddr(Air::MoveDouble, *m_jit, offset), reg.fpr());
+            auto src = callFrameAddr(Air::MoveVector, *m_jit, offset, m_code.frameSize(), Width128);
+            if (src.isAddr())
+                m_jit->loadVector(src.asAddress(), reg.fpr());
+            else
+                m_jit->loadVector(src.asBaseIndex(), reg.fpr());
         }
     }
 }

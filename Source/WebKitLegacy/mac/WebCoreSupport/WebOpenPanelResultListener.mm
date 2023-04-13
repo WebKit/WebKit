@@ -82,7 +82,7 @@ using namespace WebCore;
     if (!_chooser)
         return;
 
-    _chooser->chooseMediaFiles(makeVector<String>(filenames), displayString, Icon::createIconForImage(imageRef).get());
+    _chooser->chooseMediaFiles(makeVector<String>(filenames), displayString, Icon::create(imageRef).get());
     _chooser = nullptr;
 }
 

@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "JSGlobalObject.h"
 #include "Options.h"
+#include <wtf/Nonmovable.h>
 #include <wtf/PrintStream.h>
 
 namespace JSC {

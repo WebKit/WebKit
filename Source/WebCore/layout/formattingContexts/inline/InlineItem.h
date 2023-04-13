@@ -72,27 +72,32 @@ private:
     void setWidth(InlineLayoutUnit);
 
     const Box* m_layoutBox { nullptr };
-    Type m_type { };
-    UBiDiLevel m_bidiLevel { UBIDI_DEFAULT_LTR };
 
 protected:
-    // For InlineTextItem
-    enum class TextItemType  : uint8_t { Undefined, Whitespace, NonWhitespace };
-    TextItemType m_textItemType { TextItemType::Undefined };
-    bool m_hasWidth { false };
-    bool m_hasTrailingSoftHyphen { false };
-    bool m_isWordSeparator { false };
     InlineLayoutUnit m_width { };
     unsigned m_length { 0 };
 
     // For InlineTextItem and InlineSoftLineBreakItem
     unsigned m_startOrPosition { 0 };
+private:
+    UBiDiLevel m_bidiLevel { UBIDI_DEFAULT_LTR };
+
+    Type m_type : 3 { };
+
+protected:
+    // For InlineTextItem
+    enum class TextItemType  : uint8_t { Undefined, Whitespace, NonWhitespace };
+
+    TextItemType m_textItemType : 2 { TextItemType::Undefined };
+    bool m_hasWidth : 1 { false };
+    bool m_hasTrailingSoftHyphen : 1 { false };
+    bool m_isWordSeparator : 1 { false };
 };
 
 inline InlineItem::InlineItem(const Box& layoutBox, Type type, UBiDiLevel bidiLevel)
     : m_layoutBox(&layoutBox)
-    , m_type(type)
     , m_bidiLevel(bidiLevel)
+    , m_type(type)
 {
 }
 

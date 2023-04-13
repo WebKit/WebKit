@@ -196,7 +196,7 @@ layer at (180,90) size 113x13 scrollX 175 scrollWidth 288
       text run at (96,0) width 17: "elit"
 layer at (180,90) size 113x13
   RenderBlock {DIV} at (0,0) size 113x13
-layer at (311,90) size 140x13 scrollX 149 scrollWidth 289
+layer at (311,90) size 140x13 scrollX 148 scrollWidth 288
   RenderBlock {DIV} at (3,3) size 140x13
     RenderText {#text} at (-147,0) size 288x13
       text run at (-147,0) width 32: "Lorem"
@@ -214,7 +214,7 @@ layer at (311,90) size 140x13 scrollX 149 scrollWidth 289
       text run at (67,0) width 54: "adipiscing"
       text run at (120,0) width 4: " "
       text run at (123,0) width 17: "elit"
-layer at (480,90) size 113x13 scrollX 176 scrollWidth 289
+layer at (480,90) size 113x13 scrollX 175 scrollWidth 288
   RenderBlock {DIV} at (0,0) size 113x13
     RenderText {#text} at (-174,0) size 288x13
       text run at (-174,0) width 32: "Lorem"
@@ -232,7 +232,7 @@ layer at (480,90) size 113x13 scrollX 176 scrollWidth 289
       text run at (40,0) width 54: "adipiscing"
       text run at (93,0) width 4: " "
       text run at (96,0) width 17: "elit"
-layer at (611,90) size 140x13 backgroundClip at (611,90) size 139x13 clip at (611,90) size 139x13 scrollX 246 scrollWidth 386
+layer at (611,90) size 140x13 backgroundClip at (611,90) size 139x13 clip at (611,90) size 139x13 scrollX 245 scrollWidth 385
   RenderBlock {DIV} at (0,0) size 140x13
     RenderText {#text} at (-244,0) size 385x13
       text run at (-244,0) width 384: "\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}"
@@ -300,7 +300,7 @@ layer at (180,162) size 113x13 scrollX 175 scrollWidth 288
       text run at (96,0) width 17: "elit"
 layer at (180,162) size 113x13
   RenderBlock {DIV} at (0,0) size 113x13
-layer at (311,162) size 140x13 scrollX 149 scrollWidth 289
+layer at (311,162) size 140x13 scrollX 148 scrollWidth 288
   RenderBlock {DIV} at (3,3) size 140x13
     RenderText {#text} at (-147,0) size 288x13
       text run at (-147,0) width 32: "Lorem"
@@ -318,7 +318,7 @@ layer at (311,162) size 140x13 scrollX 149 scrollWidth 289
       text run at (67,0) width 54: "adipiscing"
       text run at (120,0) width 4: " "
       text run at (123,0) width 17: "elit"
-layer at (480,162) size 113x13 scrollX 176 scrollWidth 289
+layer at (480,162) size 113x13 scrollX 175 scrollWidth 288
   RenderBlock {DIV} at (0,0) size 113x13
     RenderText {#text} at (-174,0) size 288x13
       text run at (-174,0) width 32: "Lorem"
@@ -336,7 +336,7 @@ layer at (480,162) size 113x13 scrollX 176 scrollWidth 289
       text run at (40,0) width 54: "adipiscing"
       text run at (93,0) width 4: " "
       text run at (96,0) width 17: "elit"
-layer at (611,162) size 140x13 backgroundClip at (611,162) size 139x13 clip at (611,162) size 139x13 scrollX 246 scrollWidth 386
+layer at (611,162) size 140x13 backgroundClip at (611,162) size 139x13 clip at (611,162) size 139x13 scrollX 245 scrollWidth 385
   RenderBlock {DIV} at (0,0) size 140x13
     RenderText {#text} at (-244,0) size 385x13
       text run at (-244,0) width 384: "\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}"

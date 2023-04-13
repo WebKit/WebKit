@@ -1,0 +1,8 @@
+foo
+
+
+PASS Waiting for load...
+PASS Disabling style to text, it's applied to the parent block
+PASS Disabling style to text, it's applied to the editing host
+PASS Disabling style to text, it's applied to the body
+

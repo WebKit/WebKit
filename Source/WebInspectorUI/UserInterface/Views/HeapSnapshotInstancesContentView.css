@@ -72,7 +72,7 @@
     color: hsl(0, 0%, 85%);
 }
 
-.heap-snapshot > .data-grid tr:matches(.selected, :hover) td .go-to-arrow {
+.heap-snapshot > .data-grid tr:is(.selected, :hover) td .go-to-arrow {
     float: none;
     display: inline-block;
     vertical-align: top;

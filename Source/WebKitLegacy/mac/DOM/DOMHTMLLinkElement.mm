@@ -31,6 +31,7 @@
 #import "DOMTokenListInternal.h"
 #import <WebCore/DOMTokenList.h>
 #import "ExceptionHandlers.h"
+#import <WebCore/ElementInlines.h>
 #import <WebCore/HTMLLinkElement.h>
 #import <WebCore/HTMLNames.h>
 #import <WebCore/JSExecState.h>

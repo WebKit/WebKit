@@ -32,67 +32,7 @@
 #include <wtf/FileSystem.h>
 #include <wtf/NeverDestroyed.h>
 
-#if USE(CF)
-#include <CoreFoundation/CFBundle.h>
-#include <wtf/RetainPtr.h>
-#include <wtf/URL.h>
-#include <wtf/text/StringBuilder.h>
-#endif
-
 namespace WebCore {
-
-#if USE(CF)
-static RetainPtr<CFBundleRef> createWebKitBundle()
-{
-    if (CFBundleRef existingBundle = CFBundleGetBundleWithIdentifier(CFSTR("com.apple.WebKit")))
-        return existingBundle;
-
-    wchar_t dllPathBuffer[MAX_PATH];
-    DWORD length = ::GetModuleFileNameW(WebCore::instanceHandle(), dllPathBuffer, std::size(dllPathBuffer));
-    ASSERT(length);
-    ASSERT(length < std::size(dllPathBuffer));
-
-    RetainPtr<CFStringRef> dllPath = adoptCF(CFStringCreateWithCharactersNoCopy(0, reinterpret_cast<const UniChar*>(dllPathBuffer), length, kCFAllocatorNull));
-    RetainPtr<CFURLRef> dllURL = adoptCF(CFURLCreateWithFileSystemPath(0, dllPath.get(), kCFURLWindowsPathStyle, false));
-    RetainPtr<CFURLRef> dllDirectoryURL = adoptCF(CFURLCreateCopyDeletingLastPathComponent(0, dllURL.get()));
-    RetainPtr<CFURLRef> resourcesDirectoryURL = adoptCF(CFURLCreateCopyAppendingPathComponent(0, dllDirectoryURL.get(), CFSTR("WebKit.resources"), true));
-
-    return adoptCF(CFBundleCreate(0, resourcesDirectoryURL.get()));
-}
-
-CFBundleRef webKitBundle()
-{
-    static NeverDestroyed<RetainPtr<CFBundleRef>> bundle = createWebKitBundle();
-    ASSERT(bundle.get());
-    return bundle.get().get();
-}
-
-String webKitBundlePath()
-{
-    URL bundleURL = adoptCF(CFBundleCopyBundleURL(webKitBundle())).get();
-    return bundleURL.fileSystemPath();
-}
-
-String webKitBundlePath(StringView path)
-{
-    auto pathString = path.toStringWithoutCopying();
-    auto directory = FileSystem::parentPath(pathString);
-    auto fileName = FileSystem::pathFileName(pathString);
-    auto splitAt = fileName.reverseFind('.');
-
-    return webKitBundlePath(fileName.left(splitAt), fileName.substring(splitAt + 1), directory);
-}
-
-String webKitBundlePath(StringView name, StringView type, StringView directory)
-{
-    auto resourceURL = adoptCF(CFBundleCopyResourceURL(webKitBundle(), name.createCFString().get(), type.createCFString().get(), directory.createCFString().get()));
-    if (!resourceURL)
-        return nullString();
-
-    return adoptCF(CFURLCopyFileSystemPath(resourceURL.get(), kCFURLWindowsPathStyle)).get();
-}
-
-#else
 
 static String dllDirectory()
 {
@@ -131,8 +71,6 @@ String webKitBundlePath(StringView name, StringView type, StringView directory)
 
     return webKitBundlePath(FileSystem::pathByAppendingComponent(directory, fileName));
 }
-
-#endif // USE(CF)
 
 String webKitBundlePath(const Vector<StringView>& components)
 {

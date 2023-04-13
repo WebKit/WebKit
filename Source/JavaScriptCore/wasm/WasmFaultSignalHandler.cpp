@@ -50,8 +50,6 @@ static constexpr bool verbose = false;
 }
 }
 
-#if ENABLE(WEBASSEMBLY_SIGNALING_MEMORY)
-
 static SignalAction trapHandler(Signal signal, SigInfo& sigInfo, PlatformRegisters& context)
 {
     RELEASE_ASSERT(signal == Signal::AccessFault);
@@ -102,11 +100,8 @@ static SignalAction trapHandler(Signal signal, SigInfo& sigInfo, PlatformRegiste
     return SignalAction::NotHandled;
 }
 
-#endif // ENABLE(WEBASSEMBLY_SIGNALING_MEMORY)
-
 void activateSignalingMemory()
 {
-#if ENABLE(WEBASSEMBLY_SIGNALING_MEMORY)
     static std::once_flag once;
     std::call_once(once, [] {
         if (!Wasm::isSupported())
@@ -117,12 +112,10 @@ void activateSignalingMemory()
 
         activateSignalHandlersFor(Signal::AccessFault);
     });
-#endif // ENABLE(WEBASSEMBLY_SIGNALING_MEMORY)
 }
 
 void prepareSignalingMemory()
 {
-#if ENABLE(WEBASSEMBLY_SIGNALING_MEMORY)
     static std::once_flag once;
     std::call_once(once, [] {
         if (!Wasm::isSupported())
@@ -135,7 +128,6 @@ void prepareSignalingMemory()
             return trapHandler(signal, sigInfo, ucontext);
         });
     });
-#endif // ENABLE(WEBASSEMBLY_SIGNALING_MEMORY)
 }
     
 } } // namespace JSC::Wasm

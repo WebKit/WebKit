@@ -69,6 +69,12 @@ void didResignInputElementStrongPasswordAppearance(WKBundlePageRef, WKBundleNode
     [nodeHandle setHTMLInputElementIsAutoFilled:YES];
     [nodeHandle setHTMLInputElementAutoFillButtonEnabledWithButtonType:_WKAutoFillButtonTypeStrongPassword];
     [[[browserContextController mainFrame] jsContextForWorld:[WKWebProcessPlugInScriptWorld normalWorld]] evaluateScript:@"alert('ready to resign!')"];
+
+    WKDOMElement *iframeElement = [document createElement:@"iframe"];
+    [[document body] appendChild:iframeElement];
+    auto *iframeValue = [jsContext evaluateScript:@"document.querySelector('iframe')"];
+    auto *iframeNodeHandle = [WKWebProcessPlugInNodeHandle nodeHandleWithJSValue:iframeValue inContext:jsContext];
+    [iframeNodeHandle htmlIFrameElementContentFrame];
 }
 
 @end

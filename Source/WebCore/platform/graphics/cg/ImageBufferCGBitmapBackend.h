@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc.  All rights reserved.
+ * Copyright (C) 2020-2023 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,25 +44,21 @@ public:
 
     static std::unique_ptr<ImageBufferCGBitmapBackend> create(const Parameters&, const ImageBufferCreationContext&);
 
-    // FIXME: Rename to createUsingColorSpaceOfGraphicsContext() (or something like that).
-    static std::unique_ptr<ImageBufferCGBitmapBackend> create(const Parameters&, const GraphicsContext&);
-
-    GraphicsContext& context() const final;
+    GraphicsContext& context() final;
 
 private:
-    ImageBufferCGBitmapBackend(const Parameters&, void* data, RetainPtr<CGDataProviderRef>&&, std::unique_ptr<GraphicsContext>&&);
+    ImageBufferCGBitmapBackend(const Parameters&, void* data, RetainPtr<CGDataProviderRef>&&, std::unique_ptr<GraphicsContextCG>&&);
 
     IntSize backendSize() const final;
     unsigned bytesPerRow() const final;
 
-    RefPtr<NativeImage> copyNativeImage(BackingStoreCopy = CopyBackingStore) const final;
+    RefPtr<NativeImage> copyNativeImage(BackingStoreCopy = CopyBackingStore) final;
 
-    RefPtr<PixelBuffer> getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect&, const ImageBufferAllocator&) const final;
+    RefPtr<PixelBuffer> getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect&, const ImageBufferAllocator&) final;
     void putPixelBuffer(const PixelBuffer&, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat) final;
 
     void* m_data;
     RetainPtr<CGDataProviderRef> m_dataProvider;
-    std::unique_ptr<GraphicsContext> m_context;
 };
 
 } // namespace WebCore

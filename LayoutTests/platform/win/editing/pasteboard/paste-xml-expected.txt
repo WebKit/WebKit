@@ -1,3 +1,0 @@
-foo barbar baz
-execCopyCommand: <span xmlns="http://www.w3.org/1999/xhtml" id="test">foo bar baz</span>
-execPasteCommand: <span xmlns="http://www.w3.org/1999/xhtml" id="test">foo barbar baz</span>

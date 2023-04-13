@@ -6,7 +6,6 @@ navigator.appVersion is OK
 navigator.clipboard is OK
 navigator.contacts is OK
 navigator.cookieEnabled is OK
-navigator.getStorageUpdates() is OK
 navigator.hardwareConcurrency is OK
 navigator.javaEnabled() is OK
 navigator.language is OK
@@ -27,7 +26,6 @@ navigator.appVersion is OK
 navigator.clipboard is OK
 navigator.contacts is OK
 navigator.cookieEnabled is OK
-navigator.getStorageUpdates() is OK
 navigator.hardwareConcurrency is OK
 navigator.javaEnabled() is OK
 navigator.language is OK

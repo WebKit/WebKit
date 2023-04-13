@@ -33,7 +33,6 @@ export function makeTextureWithContents(device, texelView, desc) {
     subrectOrigin: [0, 0, 0],
     subrectSize: [width, height, depthOrArrayLayers],
   });
-
   stagingBuffer.unmap();
 
   // Create the texture.

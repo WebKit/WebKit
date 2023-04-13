@@ -27,11 +27,57 @@
 
 #import <Foundation/Foundation.h>
 
+#import <WebKit/_WKWebExtensionPermission.h>
+
+@class _WKWebExtensionContext;
+@class _WKWebExtensionMatchPattern;
+@class _WKWebExtensionController;
+@protocol _WKWebExtensionTab;
+
 NS_ASSUME_NONNULL_BEGIN
 
-WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
+WK_API_AVAILABLE(macos(13.3), ios(16.4))
 @protocol _WKWebExtensionControllerDelegate <NSObject>
 @optional
+
+/*!
+ @abstract Called when an extension context requests permissions.
+ @param controller The web extension controller that is managing the extension.
+ @param permissions The set of permissions being requested by the extension.
+ @param tab The tab in which the extension is running, or \c nil if the request are not specific to a tab.
+ @param extensionContext The context in which the web extension is running.
+ @param completionHandler A block to be called with the set of allowed permissions.
+ @discussion This method should be implemented by the app to prompt the user for permission and call the completion block with the
+ set of permissions that were granted. If the completion block is not called within a reasonable amount of time, the request
+ is assumed to have been denied.
+ */
+- (void)webExtensionController:(_WKWebExtensionController *)controller promptForPermissions:(NSSet<_WKWebExtensionPermission> *)permissions inTab:(nullable id <_WKWebExtensionTab>)tab forExtensionContext:(_WKWebExtensionContext *)extensionContext completionHandler:(void (^)(NSSet<_WKWebExtensionPermission> *allowedPermissions))completionHandler NS_SWIFT_NAME(webExtensionController(_:promptForPermissions:in:for:completionHandler:));
+
+/*!
+ @abstract Called when an extension context requests access to a set of URLs.
+ @param controller The web extension controller that is managing the extension.
+ @param urls The set of URLs that the extension is requesting access to.
+ @param tab The tab in which the extension is running, or \c nil if the request is not specific to a tab.
+ @param extensionContext The context in which the web extension is running.
+ @param completionHandler A block to be called with the set of allowed URLs.
+ @discussion This method should be implemented by the app to prompt the user for permission and call the completion block with the
+ set of URLs that were granted access to. If the completion block is not called within a reasonable amount of time, the request
+ is assumed to have been denied.
+ */
+- (void)webExtensionController:(_WKWebExtensionController *)controller promptForPermissionToAccessURLs:(NSSet<NSURL *> *)urls inTab:(nullable id <_WKWebExtensionTab>)tab forExtensionContext:(_WKWebExtensionContext *)extensionContext completionHandler:(void (^)(NSSet<NSURL *> *allowedURLs))completionHandler NS_SWIFT_NAME(webExtensionController(_:promptForPermissionToAccess:in:for:completionHandler:));
+
+/*!
+ @abstract Called when an extension context requests access to a set of match patterns.
+ @param controller The web extension controller that is managing the extension.
+ @param matchPatterns The set of match patterns that the extension is requesting access to.
+ @param tab The tab in which the extension is running, or \c nil if the request is not specific to a tab.
+ @param extensionContext The context in which the web extension is running.
+ @param completionHandler A block to be called with the set of allowed match patterns.
+ @discussion This method should be implemented by the app to prompt the user for permission and call the completion block with the
+ set of match patterns that were granted access to. If the completion block is not called within a reasonable amount of time, the request
+ is assumed to have been denied.
+ */
+- (void)webExtensionController:(_WKWebExtensionController *)controller promptForPermissionMatchPatterns:(NSSet<_WKWebExtensionMatchPattern *> *)matchPatterns inTab:(nullable id <_WKWebExtensionTab>)tab forExtensionContext:(_WKWebExtensionContext *)extensionContext completionHandler:(void (^)(NSSet<_WKWebExtensionMatchPattern *> *allowedMatchPatterns))completionHandler NS_SWIFT_NAME(webExtensionController(_:promptForPermissionMatchPatterns:in:for:completionHandler:));
 
 @end
 

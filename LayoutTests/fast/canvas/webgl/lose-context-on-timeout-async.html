@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html><!-- webkit-test-runner [ UseGPUProcessForWebGLEnabled=true ] -->
 <head>
 <style>
 canvas {
@@ -37,6 +37,7 @@ async function runTest() {
     gl.clear(gl.COLOR_BUFFER_BIT);
     shouldBeFalse("gl.isContextLost()");
     shouldBe("gl.getError()", "gl.NO_ERROR");
+    let webglcontextlost = webGLContextLost(canvas);
     if (window.internals)
         window.internals.simulateEventForWebGLContext("Timeout", gl);
     // We're trying to fill the command buffer with calls after the timeout,
@@ -46,7 +47,7 @@ async function runTest() {
     for (let i = 0; i < callCount; ++i)
         gl.clearColor(1.0, 1.0, 0.0 + i/callCount, 1.0);
     gl.clear(gl.COLOR_BUFFER_BIT);
-    await webGLContextLost(canvas);
+    await webglcontextlost;
     shouldBeTrue("gl.isContextLost()");
     shouldBe("gl.getError()", "gl.CONTEXT_LOST_WEBGL");
     finishTest();

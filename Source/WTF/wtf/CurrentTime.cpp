@@ -43,11 +43,6 @@
 #include <mutex>
 #include <sys/time.h>
 #elif OS(WINDOWS)
-
-// Windows is first since we want to use hires timers, despite USE(CF)
-// being defined.
-// If defined, WIN32_LEAN_AND_MEAN disables timeBeginPeriod/timeEndPeriod.
-#undef WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <math.h>
 #include <stdint.h>
@@ -185,7 +180,7 @@ static inline double currentTime()
     // force a clock re-sync if we've drifted
     double lowResElapsed = lowResTime - syncLowResUTCTime;
     const double maximumAllowedDriftMsec = 15.625 * 2.0; // 2x the typical low-res accuracy
-    if (fabs(highResElapsed - lowResElapsed) > maximumAllowedDriftMsec)
+    if (std::abs(highResElapsed - lowResElapsed) > maximumAllowedDriftMsec)
         syncedTime = false;
 
     // make sure time doesn't run backwards (only correct if difference is < 2 seconds, since DST or clock changes could occur)

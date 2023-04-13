@@ -337,6 +337,9 @@ WI.CodeMirrorTokenTrackingController = class CodeMirrorTokenTrackingController e
     {
         // Get the position in the text and the token at that position.
         var position = this._codeMirror.coordsChar(mouseCoords);
+        if (WI.settings.experimentalLimitSourceCodeHighlighting.value && position.ch > 120)
+            return;
+
         var token = this._codeMirror.getTokenAt(position);
 
         if (!token || !token.type || !token.string) {

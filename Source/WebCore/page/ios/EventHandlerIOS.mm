@@ -36,9 +36,9 @@
 #import "DragState.h"
 #import "EventNames.h"
 #import "FocusController.h"
-#import "Frame.h"
-#import "FrameView.h"
 #import "KeyboardEvent.h"
+#import "LocalFrame.h"
+#import "LocalFrameView.h"
 #import "MouseEventWithHitTestResults.h"
 #import "Page.h"
 #import "Pasteboard.h"
@@ -82,14 +82,14 @@ public:
 
 private:
     RetainPtr<WebEvent> m_savedCurrentEvent;
-#ifndef NDEBUG
+#if ASSERT_ENABLED
     RetainPtr<WebEvent> m_event;
 #endif
 };
 
 inline CurrentEventScope::CurrentEventScope(WebEvent *event)
     : m_savedCurrentEvent(currentEventSlot())
-#ifndef NDEBUG
+#if ASSERT_ENABLED
     , m_event(event)
 #endif
 {
@@ -111,13 +111,13 @@ bool EventHandler::wheelEvent(WebEvent *event)
     CurrentEventScope scope(event);
 
     auto wheelEvent = PlatformEventFactory::createPlatformWheelEvent(event);
-    OptionSet<WheelEventProcessingSteps> processingSteps = { WheelEventProcessingSteps::MainThreadForScrolling, WheelEventProcessingSteps::MainThreadForBlockingDOMEventDispatch };
+    OptionSet<WheelEventProcessingSteps> processingSteps = { WheelEventProcessingSteps::SynchronousScrolling, WheelEventProcessingSteps::BlockingDOMEventDispatch };
 
     if (wheelEvent.isGestureStart())
         m_wheelScrollGestureState = std::nullopt;
     else if (wheelEvent.phase() == PlatformWheelEventPhase::Changed || wheelEvent.momentumPhase() == PlatformWheelEventPhase::Changed) {
         if (m_wheelScrollGestureState && *m_wheelScrollGestureState == WheelScrollGestureState::NonBlocking)
-            processingSteps = { WheelEventProcessingSteps::MainThreadForScrolling, WheelEventProcessingSteps::MainThreadForNonBlockingDOMEventDispatch };
+            processingSteps = { WheelEventProcessingSteps::SynchronousScrolling, WheelEventProcessingSteps::NonBlockingDOMEventDispatch };
     }
 
     bool eventWasHandled = handleWheelEvent(wheelEvent, processingSteps);
@@ -346,7 +346,7 @@ NSView *EventHandler::mouseDownViewIfStillGood()
     if (!mouseDownView) {
         return nil;
     }
-    FrameView* topFrameView = m_frame.view();
+    auto* topFrameView = m_frame.view();
     NSView *topView = topFrameView ? topFrameView->platformWidget() : nil;
     if (!topView || !findViewInSubviews(topView, mouseDownView)) {
         m_mouseDownView = nil;
@@ -378,7 +378,7 @@ bool EventHandler::eventLoopHandleMouseUp(const MouseEventWithHitTestResults&)
     return true;
 }
     
-bool EventHandler::passSubframeEventToSubframe(MouseEventWithHitTestResults& event, Frame& subframe, HitTestResult* hitTestResult)
+bool EventHandler::passSubframeEventToSubframe(MouseEventWithHitTestResults& event, LocalFrame& subframe, HitTestResult* hitTestResult)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
 
@@ -465,7 +465,7 @@ bool EventHandler::passWheelEventToWidget(const PlatformWheelEvent&, Widget& wid
 
 void EventHandler::mouseDown(WebEvent *event)
 {
-    FrameView* v = m_frame.view();
+    auto* v = m_frame.view();
     if (!v || m_sendingEventToSubview)
         return;
 
@@ -485,7 +485,7 @@ void EventHandler::mouseDown(WebEvent *event)
 
 void EventHandler::mouseUp(WebEvent *event)
 {
-    FrameView* v = m_frame.view();
+    auto* v = m_frame.view();
     if (!v || m_sendingEventToSubview)
         return;
 
@@ -531,9 +531,9 @@ void EventHandler::mouseMoved(WebEvent *event)
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-static bool frameHasPlatformWidget(const Frame& frame)
+static bool frameHasPlatformWidget(const LocalFrame& frame)
 {
-    if (FrameView* frameView = frame.view()) {
+    if (auto* frameView = frame.view()) {
         if (frameView->platformWidget())
             return true;
     }
@@ -551,7 +551,7 @@ void EventHandler::dispatchSyntheticMouseMove(const PlatformMouseEvent& platform
     mouseMoved(platformMouseEvent);
 }
 
-bool EventHandler::passMousePressEventToSubframe(MouseEventWithHitTestResults& mouseEventAndResult, Frame& subframe)
+bool EventHandler::passMousePressEventToSubframe(MouseEventWithHitTestResults& mouseEventAndResult, LocalFrame& subframe)
 {
     // WebKit1 code path.
     if (frameHasPlatformWidget(m_frame))
@@ -562,7 +562,7 @@ bool EventHandler::passMousePressEventToSubframe(MouseEventWithHitTestResults& m
     return true;
 }
 
-bool EventHandler::passMouseMoveEventToSubframe(MouseEventWithHitTestResults& mouseEventAndResult, Frame& subframe, HitTestResult* hitTestResult)
+bool EventHandler::passMouseMoveEventToSubframe(MouseEventWithHitTestResults& mouseEventAndResult, LocalFrame& subframe, HitTestResult* hitTestResult)
 {
     // WebKit1 code path.
     if (frameHasPlatformWidget(m_frame))
@@ -572,7 +572,7 @@ bool EventHandler::passMouseMoveEventToSubframe(MouseEventWithHitTestResults& mo
     return true;
 }
 
-bool EventHandler::passMouseReleaseEventToSubframe(MouseEventWithHitTestResults& mouseEventAndResult, Frame& subframe)
+bool EventHandler::passMouseReleaseEventToSubframe(MouseEventWithHitTestResults& mouseEventAndResult, LocalFrame& subframe)
 {
     // WebKit1 code path.
     if (frameHasPlatformWidget(m_frame))
@@ -601,7 +601,7 @@ PlatformMouseEvent EventHandler::currentPlatformMouseEvent() const
     
 void EventHandler::startSelectionAutoscroll(RenderObject* renderer, const FloatPoint& positionInWindow)
 {
-    Ref<Frame> protectedFrame(m_frame);
+    Ref protectedFrame(m_frame);
 
     m_targetAutoscrollPositionInUnscrolledRootViewCoordinates = protectedFrame->view()->contentsToRootView(roundedIntPoint(positionInWindow)) - toIntSize(protectedFrame->view()->documentScrollPositionRelativeToViewOrigin());
 
@@ -677,7 +677,7 @@ static IntPoint adjustAutoscrollDestinationForInsetEdges(IntPoint autoscrollPoin
     
 IntPoint EventHandler::targetPositionInWindowForSelectionAutoscroll() const
 {
-    Ref<Frame> protectedFrame(m_frame);
+    Ref protectedFrame(m_frame);
 
     if (!m_frame.view())
         return { };
@@ -708,7 +708,7 @@ bool EventHandler::eventLoopHandleMouseDragged(const MouseEventWithHitTestResult
 
 bool EventHandler::tryToBeginDragAtPoint(const IntPoint& clientPosition, const IntPoint&)
 {
-    Ref<Frame> protectedFrame(m_frame);
+    Ref protectedFrame(m_frame);
 
     auto* document = m_frame.document();
     if (!document)

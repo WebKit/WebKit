@@ -103,7 +103,7 @@ TEST(DisplayListTests, AppendItems)
             EXPECT_TRUE(handle.is<FillRectWithGradient>());
             auto& item = handle.get<FillRectWithGradient>();
             EXPECT_EQ(item.rect(), FloatRect(1., 1., 10., 10.));
-            EXPECT_EQ(&item.gradient(), gradient.ptr());
+            EXPECT_EQ(item.gradient().ptr(), gradient.ptr());
             break;
         }
         case ItemType::SetInlineFillColor: {

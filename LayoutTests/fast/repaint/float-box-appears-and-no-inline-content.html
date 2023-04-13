@@ -1,0 +1,45 @@
+<style>
+.container {
+  width: 100px;
+  height: 45px;
+  font-size: 10px;
+  background-color: green;
+}
+
+#floater {
+  float: left;
+  width: 50px;
+  height: 45px;
+  background-color: blue;
+  display: none;
+}
+</style>
+<div class=container><div id=floater></div></div>
+<pre id=repaints></pre>
+<script src="../../resources/ui-helper.js"></script>
+<script>
+if (window.testRunner) {
+  testRunner.dumpAsText();
+  testRunner.waitUntilDone();
+}
+async function runTest() {
+  await UIHelper.renderingUpdate();
+
+  if (window.internals)
+    internals.startTrackingRepaints();
+
+  floater.style.display = "block";
+
+  await UIHelper.renderingUpdate();
+
+  if (window.internals) {
+    repaints.innerHTML = window.internals.repaintRectsAsText();
+    internals.stopTrackingRepaints();
+  }
+
+  if (window.testRunner)
+    testRunner.notifyDone();
+}
+
+window.addEventListener('load', runTest);
+</script>

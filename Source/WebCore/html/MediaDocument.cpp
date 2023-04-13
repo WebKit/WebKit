@@ -32,7 +32,6 @@
 #include "ChromeClient.h"
 #include "DocumentLoader.h"
 #include "EventNames.h"
-#include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "HTMLBodyElement.h"
@@ -44,12 +43,13 @@
 #include "HTMLSourceElement.h"
 #include "HTMLVideoElement.h"
 #include "KeyboardEvent.h"
+#include "LocalFrame.h"
 #include "NodeList.h"
 #include "Page.h"
 #include "RawDataDocumentParser.h"
 #include "ScriptController.h"
 #include "ShadowRoot.h"
-#include "TypedElementDescendantIterator.h"
+#include "TypedElementDescendantIteratorInlines.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -121,7 +121,7 @@ void MediaDocumentParser::createDocumentStructure()
     body->appendChild(videoElement);
     document.setHasVisuallyNonEmptyCustomContent();
 
-    RefPtr<Frame> frame = document.frame();
+    RefPtr frame = document.frame();
     if (!frame)
         return;
 
@@ -138,7 +138,7 @@ void MediaDocumentParser::appendBytes(DocumentWriter&, const uint8_t*, size_t)
     finish();
 }
     
-MediaDocument::MediaDocument(Frame* frame, const Settings& settings, const URL& url)
+MediaDocument::MediaDocument(LocalFrame* frame, const Settings& settings, const URL& url)
     : HTMLDocument(frame, settings, url, { }, { DocumentClass::Media })
 {
     setCompatibilityMode(DocumentCompatibilityMode::NoQuirksMode);

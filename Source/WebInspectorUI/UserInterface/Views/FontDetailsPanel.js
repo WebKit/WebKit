@@ -38,6 +38,9 @@ WI.FontDetailsPanel = class FontDetailsPanel extends WI.StyleDetailsPanel
         this._basicPropertyNames = ["font-size", "font-style", "font-weight", "font-stretch"];
 
         this._abortController = new AbortController;
+        this._throttledUpdate = new Throttler(() => { this.update() }, 100);
+        this._debouncedUpdate = new Debouncer(() => { this._skipNextUpdate = false; this.update(); });
+        this._skipNextUpdate = false;
     }
 
     // Public
@@ -46,7 +49,19 @@ WI.FontDetailsPanel = class FontDetailsPanel extends WI.StyleDetailsPanel
     {
         super.refresh(significantChange);
 
-        // FIXME: <webkit.org/b/250128> Web Inspector: Font Panel: Avoid needless refresh of FontStyles
+        if (!this._fontStyles || this._fontStyles.significantChangeSinceLastRefresh) {
+            this._throttledUpdate.force();
+            return;
+        }
+
+        this._throttledUpdate.fire();
+    }
+
+    update()
+    {
+        if (this._skipNextUpdate)
+            return;
+
         this._fontStyles?.refresh();
 
         if (!this._fontStyles || this._fontStyles.significantChangeSinceLastRefresh)
@@ -61,7 +76,13 @@ WI.FontDetailsPanel = class FontDetailsPanel extends WI.StyleDetailsPanel
                 row.value = this._formatPropertyValue(propertyName, fontProperty.value);
 
                 if (propertyName === "font-style")
-                    row.warningMessage = this.nodeStyles.computedPrimaryFont?.synthesizedOblique ? WI.UIString("Font was synthesized to be oblique because no oblique font is available.", "A warning that is shown in the Font Details Sidebar when the font had to be synthesized to support the provided style.") : null;
+                    if (this.nodeStyles.computedPrimaryFont?.synthesizedOblique)
+                        if (fontProperty.value === "italic")
+                            row.warningMessage = WI.UIString("Font was synthesized to be oblique because no italic font is available.", "A warning that is shown in the Font Details Sidebar when the font had to be synthesized to support the provided style.");
+                        else
+                            row.warningMessage = WI.UIString("Font was synthesized to be oblique because no oblique font is available.", "A warning that is shown in the Font Details Sidebar when the font had to be synthesized to support the provided style.");
+                    else
+                        row.warningMessage = null;
 
                 if (propertyName === "font-weight")
                     row.warningMessage = this.nodeStyles.computedPrimaryFont?.synthesizedBold ? WI.UIString("Font was synthesized to be bold because no bold font is available.", "A warning that is shown in the Font Details Sidebar when the font had to be synthesized to support the provided weight.") : null;
@@ -70,7 +91,6 @@ WI.FontDetailsPanel = class FontDetailsPanel extends WI.StyleDetailsPanel
             if (row instanceof WI.FontVariationDetailsSectionRow) {
                 let fontVariationAxis = fontProperty.variations.values().next().value;
                 row.value = fontVariationAxis.value ? fontVariationAxis.value : WI.FontStyles.fontPropertyValueToAxisValue(fontVariationAxis.tag, fontProperty.value);
-                row.warningMessage = (fontVariationAxis.value < fontVariationAxis.minimumValue || fontVariationAxis.value > fontVariationAxis.maximumValue) ? WI.UIString("Axis value outside of supported range: %s – %s", "A warning that is shown in the Font Details Sidebar when the value for a variation axis is outside of the supported range of values").format(this._formatAxisValueAsString(fontVariationAxis.minimumValue), this._formatAxisValueAsString(fontVariationAxis.maximumValue)) : null;
             }
         }
 
@@ -94,7 +114,6 @@ WI.FontDetailsPanel = class FontDetailsPanel extends WI.StyleDetailsPanel
         for (let [tag, fontVariationAxis] of this._fontVariationsMap) {
             let variationRow = this._fontVariationRowsMap.get(tag);
             variationRow.value = fontVariationAxis.value ?? fontVariationAxis.defaultValue;
-            variationRow.warningMessage = (fontVariationAxis.value < fontVariationAxis.minimumValue || fontVariationAxis.value > fontVariationAxis.maximumValue) ? WI.UIString("Axis value outside of supported range: %s – %s", "A warning that is shown in the Font Details Sidebar when the value for a variation axis is outside of the supported range of values").format(this._formatAxisValueAsString(fontVariationAxis.minimumValue), this._formatAxisValueAsString(fontVariationAxis.maximumValue)) : null;
         }
 
         if (!this._fontVariationRowsMap.size) {
@@ -138,7 +157,15 @@ WI.FontDetailsPanel = class FontDetailsPanel extends WI.StyleDetailsPanel
             this._basicPropertyRowsMap.set(propertyName, this._createDetailsSectionRowForProperty(propertyName));
         }
 
-        this._basicPropertiesGroup.rows = [...this._basicPropertyRowsMap.values()];
+        this._basicPropertiesGroup.rows = [...this._basicPropertyRowsMap.values()].sort((rowA, rowB) => {
+            if (rowA instanceof WI.DetailsSectionSimpleRow && rowB instanceof WI.FontVariationDetailsSectionRow)
+                return -1;
+
+            if (rowA instanceof WI.FontVariationDetailsSectionRow && rowB instanceof WI.DetailsSectionSimpleRow)
+                return 1;
+
+            return 0;
+        });
 
         for (let [tag, variationRow] of this._fontVariationRowsMap) {
             variationRow.element.remove();
@@ -521,6 +548,8 @@ WI.FontDetailsPanel = class FontDetailsPanel extends WI.StyleDetailsPanel
 
     _handleFontVariationValueChanged(event)
     {
+        this._skipNextUpdate = true;
+        this._debouncedUpdate.delayForTime(100);
         this._fontStyles.writeFontVariation(event.data.tag, event.data.value);
     }
 };

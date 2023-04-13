@@ -323,6 +323,27 @@
                 "url": "https://drafts.csswg.org/css-grid-3/#tracks-alignment"
             }
         },
+        "block-step-size": {
+            "codegen-properties": {
+                "settings-flag": "cssRhythmicSizingEnabled",
+                "converter": "BlockStepSize",
+                "parser-grammar": "none | <length [0,inf]>"
+            },
+            "specification": {
+                "category": "css-rhythm",
+                "url": "https://drafts.csswg.org/css-rhythm/#block-step-size"
+            }
+        },
+        "block-step-insert": {
+            "values": [
+                "margin",
+                "padding"
+            ],
+            "codegen-properties": {
+                "settings-flag": "cssRhythmicSizingEnabled",
+                "parser-grammar": "<<values>>"
+            }
+        },
         "caret-color": {
             "inherited": true,
             "values": [
@@ -553,13 +574,24 @@
         "font-size-adjust": {
             "inherited": true,
             "values": [
-                "none"
+                "none",
+                "ex-height",
+                "cap-height",
+                "ch-width",
+                "ic-width",
+                "ic-height",
+                "from-font"
             ],
             "codegen-properties": {
+                "converter": "FontSizeAdjust",
                 "custom": "Value",
                 "font-property": true,
                 "high-priority": true,
-                "parser-grammar": "none | <number [0,inf]>"
+                "separator": " ",
+                "parser-function": "consumeFontSizeAdjust",
+                "parser-function-allows-number-or-integer-input": true,
+                "parser-grammar-unused": "none | [ [ ex-height | cap-height | ch-width | ic-width | ic-height ]? [ from-font | <number [0,inf]> ] ]",
+                "parser-grammar-unused-reason": "Needs support for ordered groups and optionals."
             },
             "specification": {
                 "category": "css-fonts",
@@ -1146,6 +1178,44 @@
                 "non-canonical-url": "https://drafts.csswg.org/css-size-adjust/#adjustment-control"
             }
         },
+        "text-spacing-trim": {
+            "inherited": true,
+            "values": [
+                "auto",
+                "space-all"
+            ],
+            "codegen-properties": {
+                "settings-flag": "cssTextSpacingEnabled",
+                "converter": "TextSpacingTrim",
+                "parser-function": "consumeTextSpacingTrim",
+                "parser-grammar-unused": "auto | space-all | trim-all | [ allow-end || space-first ]",
+                "parser-grammar-unused-reason": "Needs support for '||' groups."
+            },
+            "status": "experimental",
+            "specification": {
+                "category": "css-text",
+                "non-canonical-url": "https://www.w3.org/TR/css-text-4/#text-spacing-property"
+            }
+        },
+        "text-autospace": {
+            "inherited": true,
+            "values": [
+                "auto",
+                "no-autospace"
+            ],
+            "codegen-properties": {
+                "settings-flag": "cssTextSpacingEnabled",
+                "converter": "TextAutospace",
+                "parser-function": "consumeTextAutospace",
+                "parser-grammar-unused": "normal | auto | no-autospace | [ [ ideograph-alpha || ideograph-numeric || punctuation ] || [ insert | replace ] ]",
+                "parser-grammar-unused-reason": "Needs support for '||' groups."
+            },
+            "status": "experimental",
+            "specification": {
+                "category": "css-text",
+                "non-canonical-url": "https://www.w3.org/TR/css-text-4/#text-spacing-property"
+            }
+        },
         "writing-mode": {
             "inherited": true,
             "values": [
@@ -1691,7 +1761,7 @@
                 "super"
             ],
             "codegen-properties": {
-                "custom": "Value",
+                "custom": "Inherit|Value",
                 "svg": true,
                 "parser-grammar": "baseline | sub | super | <length-percentage>"
             },
@@ -3789,7 +3859,7 @@
                 },
                 {
                     "getter": "specifiedLineHeight",
-                    "conditional-converter": "LineHeight",
+                    "converter": "LineHeight",
                     "enable-if": "!ENABLE_TEXT_AUTOSIZING",
                     "parser-grammar": "normal | <number [0,inf]> | <length-percentage [0,inf]>",
                     "parser-exported": true
@@ -3939,8 +4009,11 @@
                 "none"
             ],
             "codegen-properties": {
-                "custom": "All",
-                "parser-grammar": "<<values>> | <string>"
+                "converter": "ListStyleType",
+                "parser-function": "consumeListStyleType",
+                "parser-function-requires-context": true,
+                "parser-grammar-unused": "<<values>> | <string> | <custom-ident>",
+                "parser-grammar-unused-reason": "custom-ident should be consumed depending on settings."
             },
             "specification": {
                 "category": "css-lists",
@@ -5934,17 +6007,22 @@
                 "capitalize",
                 "uppercase",
                 "lowercase",
+                "full-size-kana",
+                "full-width",
                 "none"
             ],
             "codegen-properties": {
+                "converter": "TextTransform",
+                "parser-function": "consumeTextTransform",
+                "parser-grammar-unused": "none | [[capitalize | uppercase | lowercase ] || full-width || full-size-kana]",
+                "parser-grammar-unused-reason": "Needs support for '||' groups.",
                 "aliases": [
                     "-epub-text-transform"
-                ],
-                "parser-grammar": "<<values>>"
+                ]
             },
             "specification": {
-                "category": "css-22",
-                "url": "https://www.w3.org/TR/CSS22/text.html#propdef-text-transform"
+                "category": "css3-text",
+                "url": "https://w3c.github.io/csswg-drafts/css-text/#text-transform-property"
             }
         },
         "text-underline": {
@@ -6198,7 +6276,8 @@
                 "collapse"
             ],
             "codegen-properties": {
-                "parser-grammar": "<<values>>"
+                "parser-grammar": "<<values>>",
+                "fast-path-inherited": true
             },
             "specification": {
                 "category": "css-22",
@@ -8415,7 +8494,16 @@
             "values": [
                 "auto",
                 "under",
-                "from-font"
+                "from-font",
+                {
+                    "value": "left",
+                    "settings-flag": "cssTextUnderlinePositionLeftRightEnabled"
+
+                },
+                {
+                    "value": "right",
+                    "settings-flag": "cssTextUnderlinePositionLeftRightEnabled"
+                }
             ],
             "codegen-properties": {
                 "aliases": [
@@ -8424,7 +8512,7 @@
                 "parser-grammar": "<<values>>",
                 "parser-grammar-unused": "auto | [ [ under | from-font ] || [ left | right ] ]",
                 "parser-grammar-unused-reason": "Needs support for '||' groups.",
-                "comment": "Grammar is 'auto | [ [ under | from-font ] || [ left | right ] ]', but we only support 'auto | under | from-font'."
+                "comment": "Grammar is 'auto | [ [ under | from-font ] || [ left | right ] ]', but we only support 'auto | under | from-font | left | right'."
             },
             "specification": {
                 "category": "css-text-decor",
@@ -10077,6 +10165,11 @@
             "shortname": "CSS Properties and Values API",
             "longname": "CSS Properties and Values API",
             "url": "https://drafts.css-houdini.org/css-properties-values-api"
+        },
+        "css-rhythm": {
+            "shortname": "CSS Rhythmic Sizing",
+            "longname": "CSS Rhythmic Sizing",
+            "url": "https://www.w3.org/TR/css-rhythm-1/"
         },
         "css-round-display": {
             "shortname": "CSS Round Display",

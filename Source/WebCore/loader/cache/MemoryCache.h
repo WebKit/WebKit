@@ -31,9 +31,9 @@
 #include <wtf/Function.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
-#include <wtf/ListHashSet.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
+#include <wtf/WeakListHashSet.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 
@@ -98,7 +98,7 @@ public:
     void remove(CachedResource&);
 
     static bool shouldRemoveFragmentIdentifier(const URL&);
-    static URL removeFragmentIdentifierIfNeeded(const URL&);
+    WEBCORE_EXPORT static URL removeFragmentIdentifierIfNeeded(const URL&);
 
     void revalidationSucceeded(CachedResource& revalidatingResource, const ResourceResponse&);
     void revalidationFailed(CachedResource& revalidatingResource);
@@ -149,7 +149,7 @@ public:
     WEBCORE_EXPORT Statistics getStatistics();
     
     void resourceAccessed(CachedResource&);
-    bool inLiveDecodedResourcesList(CachedResource& resource) const { return m_liveDecodedResources.contains(&resource); }
+    bool inLiveDecodedResourcesList(CachedResource&) const;
 
     typedef HashSet<RefPtr<SecurityOrigin>> SecurityOriginSet;
     WEBCORE_EXPORT void removeResourcesWithOrigin(const SecurityOrigin&);
@@ -168,8 +168,8 @@ public:
     WEBCORE_EXPORT void pruneLiveResourcesToSize(unsigned targetSize, bool shouldDestroyDecodedDataForAllLiveResources = false);
 
 private:
-    typedef HashMap<std::pair<URL, String /* partitionName */>, CachedResource*> CachedResourceMap;
-    typedef ListHashSet<CachedResource*> LRUList;
+    using CachedResourceMap = HashMap<std::pair<URL, String /* partitionName */>, CachedResource*>;
+    using LRUList = WeakListHashSet<CachedResource>;
 
     MemoryCache();
     ~MemoryCache(); // Not implemented to make sure nobody accidentally calls delete -- WebCore does not delete singletons.

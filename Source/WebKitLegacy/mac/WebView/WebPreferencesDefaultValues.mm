@@ -116,19 +116,8 @@ bool defaultWindowFocusRestricted()
 
 bool defaultUsePreHTML5ParserQuirks()
 {
-    // AOL Instant Messenger and Microsoft My Day contain markup incompatible
-    // with the new HTML5 parser. If these applications were linked against a
-    // version of WebKit prior to the introduction of the HTML5 parser, enable
-    // parser quirks to maintain compatibility. For details, see
-    // <https://bugs.webkit.org/show_bug.cgi?id=46134> and
-    // <https://bugs.webkit.org/show_bug.cgi?id=46334>.
-    static bool isApplicationNeedingParserQuirks = !WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITH_HTML5_PARSER)
-        && (WebCore::MacApplication::isAOLInstantMessenger() || WebCore::MacApplication::isMicrosoftMyDay());
-
     // Mail.app must continue to display HTML email that contains quirky markup.
-    static bool isAppleMail = WebCore::MacApplication::isAppleMail();
-
-    return isApplicationNeedingParserQuirks || isAppleMail;
+    return WebCore::MacApplication::isAppleMail();
 }
 
 bool defaultNeedsAdobeFrameReloadingQuirk()
@@ -216,6 +205,12 @@ bool defaultShouldConvertInvalidURLsToBlank()
 {
     static bool shouldConvertInvalidURLsToBlank = linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::ConvertsInvalidURLsToBlank);
     return shouldConvertInvalidURLsToBlank;
+}
+
+bool defaultPopoverAttributeEnabled()
+{
+    static bool newSDK = linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::PopoverAttributeEnabled);
+    return newSDK;
 }
 
 #if PLATFORM(MAC)

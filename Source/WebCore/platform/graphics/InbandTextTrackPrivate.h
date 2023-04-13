@@ -77,7 +77,7 @@ public:
 
     CueFormat cueFormat() const { return m_format; }
     
-    virtual bool operator==(const InbandTextTrackPrivate& track) const
+    bool operator==(const InbandTextTrackPrivate& track) const
     {
         return TrackPrivateBase::operator==(track)
             && cueFormat() == track.cueFormat()
@@ -95,6 +95,8 @@ public:
     const char* logClassName() const override { return "InbandTextTrackPrivate"; }
 #endif
 
+    Type type() const final { return Type::Text; };
+
 protected:
     InbandTextTrackPrivate(CueFormat format)
         : m_format(format)
@@ -108,6 +110,10 @@ private:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::InbandTextTrackPrivate)
+static bool isType(const WebCore::TrackPrivateBase& track) { return track.type() == WebCore::TrackPrivateBase::Type::Text; }
+SPECIALIZE_TYPE_TRAITS_END()
 
 namespace WTF {
 

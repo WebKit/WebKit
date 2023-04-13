@@ -65,7 +65,7 @@ class LayerTreeHost
 {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit LayerTreeHost(WebPage&);
+    LayerTreeHost(WebPage&, WebCore::PlatformDisplayID);
     ~LayerTreeHost();
 
     const LayerTreeContext& layerTreeContext() const { return m_layerTreeContext; }
@@ -120,6 +120,8 @@ private:
 
     // ThreadedCompositor::Client
     uint64_t nativeSurfaceHandleForCompositing() override;
+    void didCreateGLContext() override;
+    void willDestroyGLContext() override;
     void didDestroyGLContext() override;
     void resize(const WebCore::IntSize&) override;
     void willRenderFrame() override;

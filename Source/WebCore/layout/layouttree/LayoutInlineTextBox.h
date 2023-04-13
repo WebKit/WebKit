@@ -44,12 +44,21 @@ public:
     bool canUseSimplifiedContentMeasuring() const { return m_canUseSimplifiedContentMeasuring; }
     bool canUseSimpleFontCodePath() const { return m_canUseSimpleFontCodePath; }
 
+    void updateContent(String newContent, bool canUseSimpleFontCodePath, bool canUseSimplifiedContentMeasuring);
+
 private:
     String m_content;
     bool m_isCombined { false };
     bool m_canUseSimplifiedContentMeasuring { false };
     bool m_canUseSimpleFontCodePath { true };
 };
+
+inline void InlineTextBox::updateContent(String newContent, bool canUseSimpleFontCodePath, bool canUseSimplifiedContentMeasuring)
+{
+    m_content = newContent;
+    m_canUseSimpleFontCodePath = canUseSimpleFontCodePath;
+    m_canUseSimplifiedContentMeasuring = canUseSimplifiedContentMeasuring;
+}
 
 }
 }

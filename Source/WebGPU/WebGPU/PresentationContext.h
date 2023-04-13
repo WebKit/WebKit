@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (c) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,6 +41,7 @@ namespace WebGPU {
 
 class Adapter;
 class Device;
+class Texture;
 class TextureView;
 
 class PresentationContext : public WGPUSurfaceImpl, public WGPUSwapChainImpl, public RefCounted<PresentationContext> {
@@ -57,8 +58,10 @@ public:
     WGPUTextureFormat getPreferredFormat(const Adapter&);
 
     virtual void configure(Device&, const WGPUSwapChainDescriptor&);
+    virtual void unconfigure();
 
     virtual void present();
+    virtual Texture* getCurrentTexture(); // FIXME: This should return a Texture&.
     virtual TextureView* getCurrentTextureView(); // FIXME: This should return a TextureView&.
 
     virtual bool isPresentationContextIOSurface() const { return false; }

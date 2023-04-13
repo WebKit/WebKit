@@ -9,7 +9,7 @@
 <script>
 description("Test URLs that have a query string.");
 
-cases = [ 
+cases = [
   // Regular ASCII case in some different encodings.
   ["foo=bar", "foo=bar"],
   // Allow question marks in the query without escaping
@@ -22,8 +22,8 @@ cases = [
   ["%40%41123", "%40%41123"],
   // Chinese input/output
   ["q=\u4F60\u597D", "q=%26%2320320%3B%26%2322909%3B"],
-  // Invalid UTF-8/16 input should be replaced with invalid characters.
-  ["q=\\ud800\\ud800", "q=%26%2355296%3B%26%2355296%3B"],
+  // Invalid UTF-16 input (i.e., lone surrogates) should be replaced with U+FFFD.
+  ["q=\\ud800\\ud800", "q=%26%2365533%3B%26%2365533%3B"],
   // Don't allow < or > because sometimes they are used for XSS if the
   // URL is echoed in content. Firefox does this, IE doesn't.
   ["q=<asdf>", "q=%3Casdf%3E"],

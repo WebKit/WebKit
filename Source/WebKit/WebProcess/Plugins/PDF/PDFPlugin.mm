@@ -32,6 +32,7 @@
 #import "DataReference.h"
 #import "FrameInfoData.h"
 #import "Logging.h"
+#import "MessageSenderInlines.h"
 #import "PDFAnnotationTextWidgetDetails.h"
 #import "PDFContextMenu.h"
 #import "PDFLayerControllerSPI.h"
@@ -71,9 +72,7 @@
 #import <WebCore/EventNames.h>
 #import <WebCore/FocusController.h>
 #import <WebCore/FormState.h>
-#import <WebCore/Frame.h>
 #import <WebCore/FrameLoader.h>
-#import <WebCore/FrameView.h>
 #import <WebCore/GraphicsContextCG.h>
 #import <WebCore/HTMLBodyElement.h>
 #import <WebCore/HTMLElement.h>
@@ -82,6 +81,8 @@
 #import <WebCore/LegacyNSPasteboardTypes.h>
 #import <WebCore/LoaderNSURLExtras.h>
 #import <WebCore/LocalDefaultSystemAppearance.h>
+#import <WebCore/LocalFrame.h>
+#import <WebCore/LocalFrameView.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/MouseEvent.h>
 #import <WebCore/PDFDocumentImage.h>
@@ -444,7 +445,17 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 - (void)updateScrollPosition:(CGPoint)newPosition
 {
-    _pdfPlugin->notifyScrollPositionChanged(WebCore::IntPoint(newPosition));
+    // This can be called from the secondary accessibility thread when VoiceOver is enabled,
+    // so dispatch to the main runloop to allow safe access to main-thread-only timers downstream of
+    // notifyScrollPositionChanged (avoiding a crash). The timer causing the crash at the time of
+    // this change was ScrollbarsControllerMac::m_sendContentAreaScrolledTimer.
+    //
+    // This must be run on the main run loop synchronously. If it were dispatched asynchronously,
+    // updates to the scroll position could happen between the time the request is dispatched and when
+    // it is serviced, meaning we would overwrite the scroll position to a stale value.
+    callOnMainRunLoopAndWait([protectedPlugin = Ref { *_pdfPlugin }, newPosition] {
+        protectedPlugin->notifyScrollPositionChanged(WebCore::IntPoint(newPosition));
+    });
 }
 
 - (void)writeItemsToPasteboard:(NSArray *)items withTypes:(NSArray *)types
@@ -469,16 +480,10 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 - (void)openWithNativeApplication
 {
-#if !ENABLE(UI_PROCESS_PDF_HUD)
-    _pdfPlugin->openWithNativeApplication();
-#endif
 }
 
 - (void)saveToPDF
 {
-#if !ENABLE(UI_PROCESS_PDF_HUD)
-    _pdfPlugin->saveToPDF();
-#endif
 }
 
 - (void)pdfLayerController:(PDFLayerController *)pdfLayerController clickedLinkWithURL:(NSURL *)url
@@ -641,9 +646,9 @@ PDFPlugin::PDFPlugin(HTMLPlugInElement& element)
 {
     auto& document = element.document();
 
-#if ENABLE(UI_PROCESS_PDF_HUD)
-    [m_pdfLayerController setDisplaysPDFHUDController:NO];
-#endif
+    if ([m_pdfLayerController respondsToSelector:@selector(setDisplaysPDFHUDController:)])
+        [m_pdfLayerController setDisplaysPDFHUDController:NO];
+
     m_pdfLayerController.get().delegate = m_pdfLayerControllerDelegate.get();
     m_pdfLayerController.get().parentLayer = m_contentLayer.get();
 
@@ -689,10 +694,8 @@ PDFPlugin::PDFPlugin(HTMLPlugInElement& element)
 
 PDFPlugin::~PDFPlugin()
 {
-#if ENABLE(UI_PROCESS_PDF_HUD)
     if (auto* page = m_frame ? m_frame->page() : nullptr)
         page->removePDFHUD(*this);
-#endif
 }
 
 #if HAVE(INCREMENTAL_PDF_APIS)
@@ -1270,7 +1273,11 @@ void PDFPlugin::cancelAndForgetLoader(NetscapePlugInStreamLoader& loader)
 PluginInfo PDFPlugin::pluginInfo()
 {
     PluginInfo info;
-    info.name = builtInPDFPluginName();
+
+    // Note: HTML specification requires that the WebKit built-in PDF name
+    // is presented in plain English text.
+    // https://html.spec.whatwg.org/multipage/system-state.html#pdf-viewing-support
+    info.name = "WebKit built-in PDF"_s;
     info.desc = pdfDocumentTypeDescription();
     info.file = "internal-pdf-viewer"_s;
     info.isApplicationPlugin = true;
@@ -1347,11 +1354,13 @@ void PDFPlugin::updateScrollbars()
     
     if (m_verticalScrollbarLayer) {
         m_verticalScrollbarLayer.get().frame = verticalScrollbar()->frameRect();
+        [m_verticalScrollbarLayer setContents:nil];
         [m_verticalScrollbarLayer setNeedsDisplay];
     }
     
     if (m_horizontalScrollbarLayer) {
         m_horizontalScrollbarLayer.get().frame = horizontalScrollbar()->frameRect();
+        [m_horizontalScrollbarLayer setContents:nil];
         [m_horizontalScrollbarLayer setNeedsDisplay];
     }
     
@@ -1550,8 +1559,32 @@ static void jsPDFDocFinalize(JSObjectRef object)
     pdfView->deref();
 }
 
+JSClassRef PDFPlugin::jsPDFDocClass()
+{
+    static const JSStaticFunction jsPDFDocStaticFunctions[] = {
+        { "print", jsPDFDocPrint, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { 0, 0, 0 },
+    };
+
+    static const JSClassDefinition jsPDFDocClassDefinition = {
+        0,
+        kJSClassAttributeNone,
+        "Doc",
+        0,
+        0,
+        jsPDFDocStaticFunctions,
+        jsPDFDocInitialize, jsPDFDocFinalize, 0, 0, 0, 0, 0, 0, 0, 0, 0
+    };
+
+    static JSClassRef jsPDFDocClass = JSClassCreate(&jsPDFDocClassDefinition);
+    return jsPDFDocClass;
+}
+
 JSValueRef PDFPlugin::jsPDFDocPrint(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
+    if (!JSValueIsObjectOfClass(ctx, thisObject, jsPDFDocClass()))
+        return JSValueMakeUndefined(ctx);
+
     auto* pdfPlugin = static_cast<PDFPlugin*>(JSObjectGetPrivate(thisObject));
 
     auto* frame = pdfPlugin->m_frame.get();
@@ -1578,24 +1611,7 @@ FloatSize PDFPlugin::pdfDocumentSizeForPrinting() const
 
 JSObjectRef PDFPlugin::makeJSPDFDoc(JSContextRef ctx)
 {
-    static const JSStaticFunction jsPDFDocStaticFunctions[] = {
-        { "print", jsPDFDocPrint, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
-        { 0, 0, 0 },
-    };
-
-    static const JSClassDefinition jsPDFDocClassDefinition = {
-        0,
-        kJSClassAttributeNone,
-        "Doc",
-        0,
-        0,
-        jsPDFDocStaticFunctions,
-        jsPDFDocInitialize, jsPDFDocFinalize, 0, 0, 0, 0, 0, 0, 0, 0, 0
-    };
-
-    static JSClassRef jsPDFDocClass = JSClassCreate(&jsPDFDocClassDefinition);
-
-    return JSObjectMake(ctx, jsPDFDocClass, this);
+    return JSObjectMake(ctx, jsPDFDocClass(), this);
 }
 
 void PDFPlugin::streamDidFinishLoading()
@@ -1832,11 +1848,9 @@ void PDFPlugin::calculateSizes()
     m_firstPageHeight = [m_pdfDocument pageCount] ? static_cast<unsigned>(CGCeiling([[m_pdfDocument pageAtIndex:0] boundsForBox:kPDFDisplayBoxCropBox].size.height)) : 0;
     setPDFDocumentSize(IntSize([m_pdfLayerController contentSizeRespectingZoom]));
 
-#if ENABLE(UI_PROCESS_PDF_HUD)
     if (!m_frame || !m_frame->page())
         return;
     m_frame->page()->updatePDFHUDLocation(*this, frameForHUD());
-#endif
 }
 
 void PDFPlugin::setView(PluginView& view)
@@ -1908,10 +1922,8 @@ void PDFPlugin::paintControlForLayerInContext(CALayer *layer, CGContextRef conte
     LocalDefaultSystemAppearance localAppearance(page->useDarkAppearance());
 #endif
 
-    GraphicsContextCG graphicsContext(context);
+    GraphicsContextCG graphicsContext(context, WebCore::GraphicsContextCG::CGContextFromCALayer);
     GraphicsContextStateSaver stateSaver(graphicsContext);
-
-    graphicsContext.setIsCALayerContext(true);
 
     if (layer == m_scrollCornerLayer) {
         IntRect scrollCornerRect = this->scrollCornerRect();
@@ -1943,7 +1955,7 @@ RefPtr<ShareableBitmap> PDFPlugin::snapshot()
     IntSize backingStoreSize = size();
     backingStoreSize.scale(contentsScaleFactor);
 
-    auto bitmap = ShareableBitmap::create(backingStoreSize, { });
+    auto bitmap = ShareableBitmap::create({ backingStoreSize });
     if (!bitmap)
         return nullptr;
     auto context = bitmap->createGraphicsContext();
@@ -2027,16 +2039,12 @@ IntRect PDFPlugin::boundsOnScreen() const
 
 void PDFPlugin::visibilityDidChange(bool visible)
 {
-#if ENABLE(UI_PROCESS_PDF_HUD)
     if (!m_frame)
         return;
     if (visible)
         m_frame->page()->createPDFHUD(*this, frameForHUD());
     else
         m_frame->page()->removePDFHUD(*this);
-#else
-    UNUSED_PARAM(visible);
-#endif
 }
 
 void PDFPlugin::geometryDidChange(const IntSize& pluginSize, const AffineTransform& pluginToRootViewTransform)
@@ -2476,8 +2484,6 @@ RefPtr<FragmentedSharedBuffer> PDFPlugin::liveResourceData() const
     return SharedBuffer::create(pdfData);
 }
 
-#if ENABLE(UI_PROCESS_PDF_HUD)
-
 void PDFPlugin::zoomIn()
 {
     [m_pdfLayerController zoomIn:nil];
@@ -2505,46 +2511,6 @@ void PDFPlugin::openWithPreview(CompletionHandler<void(const String&, FrameInfoD
         frameInfo = m_frame->info();
     completionHandler(m_suggestedFilename, WTFMove(frameInfo), IPC:: DataReference { static_cast<const uint8_t*>(data.bytes), data.length }, createVersion4UUIDString());
 }
-
-#else // ENABLE(UI_PROCESS_PDF_HUD)
-    
-void PDFPlugin::saveToPDF()
-{
-    // FIXME: We should probably notify the user that they can't save before the document is finished loading.
-    // PDFViewController does an NSBeep(), but that seems insufficient.
-    if (!m_documentFinishedLoading)
-        return;
-
-    NSData *data = liveData();
-    if (!m_frame || !m_frame->page())
-        return;
-    m_frame->page()->savePDFToFileInDownloadsFolder(m_suggestedFilename, m_frame->url(), static_cast<const unsigned char *>([data bytes]), [data length]);
-}
-
-void PDFPlugin::openWithNativeApplication()
-{
-    if (!m_frame || !m_frame->page())
-        return;
-
-    if (m_temporaryPDFUUID.isNull()) {
-        // FIXME: We should probably notify the user that they can't save before the document is finished loading.
-        // PDFViewController does an NSBeep(), but that seems insufficient.
-        if (!m_documentFinishedLoading)
-            return;
-
-        NSData *data = liveData();
-
-        m_temporaryPDFUUID = createVersion4UUIDString();
-        ASSERT(m_temporaryPDFUUID);
-
-        m_frame->page()->savePDFToTemporaryFolderAndOpenWithNativeApplication(m_suggestedFilename, m_frame->info(), static_cast<const unsigned char *>([data bytes]), [data length], m_temporaryPDFUUID);
-        return;
-    }
-
-    m_frame->page()->send(Messages::WebPageProxy::OpenPDFFromTemporaryFolderWithNativeApplication(m_frame->info(), m_temporaryPDFUUID));
-}
-
-#endif // ENABLE(UI_PROCESS_PDF_HUD)
 
 void PDFPlugin::writeItemsToPasteboard(NSString *pasteboardName, NSArray *items, NSArray *types)
 {
@@ -2578,7 +2544,7 @@ void PDFPlugin::showDefinitionForAttributedString(NSAttributedString *string, CG
 {
     DictionaryPopupInfo dictionaryPopupInfo;
     dictionaryPopupInfo.origin = convertFromPDFViewToRootView(IntPoint(point));
-    dictionaryPopupInfo.platformData.attributedString = string;
+    dictionaryPopupInfo.platformData.attributedString = WebCore::AttributedString::fromNSAttributedString(string);
     
     
     NSRect rangeRect;

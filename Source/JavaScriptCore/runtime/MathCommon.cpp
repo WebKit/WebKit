@@ -231,7 +231,7 @@ static double fdlibmPow(double x, double y)
         }
     }
 
-    ax   = fabs(x);
+    ax   = std::abs(x);
     /* special value of x */
     if(lx==0) {
         if(ix==0x7ff00000||ix==0||ix==0x3ff00000){
@@ -413,7 +413,7 @@ JSC_DEFINE_JIT_OPERATION(operationMathPow, double, (double x, double y))
 {
     if (std::isnan(y))
         return PNaN;
-    double absoluteBase = fabs(x);
+    double absoluteBase = std::abs(x);
     if (absoluteBase == 1 && std::isinf(y))
         return PNaN;
 

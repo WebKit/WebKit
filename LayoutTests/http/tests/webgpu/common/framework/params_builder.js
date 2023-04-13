@@ -1,6 +1,8 @@
 /**
- * AUTO-GENERATED - DO NOT EDIT. Source: https://github.com/gpuweb/cts
- **/ import { mergeParams } from '../internal/params_utils.js'; // ================================================================
+* AUTO-GENERATED - DO NOT EDIT. Source: https://github.com/gpuweb/cts
+**/import { mergeParams } from '../internal/params_utils.js';import { stringifyPublicParams } from '../internal/query/stringify_params.js';import { assert, mapLazy } from '../util/util.js';
+
+// ================================================================
 // "Public" ParamsBuilder API / Documentation
 // ================================================================
 
@@ -9,10 +11,99 @@
  * (Also enforces rough interface match between them.)
  */
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /**
  * Base class for `CaseParamsBuilder` and `SubcaseParamsBuilder`.
  */
 export class ParamsBuilderBase {
+
+
   constructor(cases) {
     this.cases = cases;
   }
@@ -20,12 +111,17 @@ export class ParamsBuilderBase {
   /**
    * Hidden from test files. Use `builderIterateCasesWithSubcases` to access this.
    */
+
 }
 
 /**
  * Calls the (normally hidden) `iterateCasesWithSubcases()` method.
  */
 export function builderIterateCasesWithSubcases(builder) {
+
+
+
+
   return builder.iterateCasesWithSubcases();
 }
 
@@ -37,7 +133,9 @@ export function builderIterateCasesWithSubcases(builder) {
  *
  * This means, for example, that the `unit` passed into `TestBuilder.params()` can be reused.
  */
-export class CaseParamsBuilder extends ParamsBuilderBase {
+export class CaseParamsBuilder extends
+ParamsBuilderBase
+{
   *iterateCasesWithSubcases() {
     for (const a of this.cases()) {
       yield [a, undefined];
@@ -48,41 +146,60 @@ export class CaseParamsBuilder extends ParamsBuilderBase {
     return this.cases();
   }
 
-  /** @inheritdoc */
-  expandWithParams(expander) {
+  /** @inheritDoc */
+  expandWithParams(
+  expander)
+  {
     const newGenerator = expanderGenerator(this.cases, expander);
     return new CaseParamsBuilder(() => newGenerator({}));
   }
 
-  /** @inheritdoc */
-  expand(key, expander) {
+  /** @inheritDoc */
+  expand(
+  key,
+  expander)
+  {
     return this.expandWithParams(function* (p) {
       for (const value of expander(p)) {
-        // TypeScript doesn't know here that NewPKey is always a single literal string type.
         yield { [key]: value };
       }
     });
   }
 
-  /** @inheritdoc */
-  combineWithParams(newParams) {
+  /** @inheritDoc */
+  combineWithParams(
+  newParams)
+  {
+    assertNotGenerator(newParams);
+    const seenValues = new Set();
+    for (const params of newParams) {
+      const paramsStr = stringifyPublicParams(params);
+      assert(!seenValues.has(paramsStr), `Duplicate entry in combine[WithParams]: ${paramsStr}`);
+      seenValues.add(paramsStr);
+    }
+
     return this.expandWithParams(() => newParams);
   }
 
-  /** @inheritdoc */
-  combine(key, values) {
-    return this.expand(key, () => values);
+  /** @inheritDoc */
+  combine(
+  key,
+  values)
+  {
+    assertNotGenerator(values);
+    const mapped = mapLazy(values, (v) => ({ [key]: v }));
+    return this.combineWithParams(mapped);
   }
 
-  /** @inheritdoc */
+  /** @inheritDoc */
   filter(pred) {
     const newGenerator = filterGenerator(this.cases, pred);
     return new CaseParamsBuilder(() => newGenerator({}));
   }
 
-  /** @inheritdoc */
+  /** @inheritDoc */
   unless(pred) {
-    return this.filter(x => !pred(x));
+    return this.filter((x) => !pred(x));
   }
 
   /**
@@ -92,11 +209,11 @@ export class CaseParamsBuilder extends ParamsBuilderBase {
    */
   beginSubcases() {
     return new SubcaseParamsBuilder(
-      () => this.cases(),
-      function* () {
-        yield {};
-      }
-    );
+    () => this.cases(),
+    function* () {
+      yield {};
+    });
+
   }
 }
 
@@ -116,7 +233,11 @@ export const kUnitCaseParamsBuilder = new CaseParamsBuilder(function* () {
  * SubcaseParamsBuilder is immutable. Each method call returns a new, immutable object,
  * modifying the list of subcases according to the method called.
  */
-export class SubcaseParamsBuilder extends ParamsBuilderBase {
+export class SubcaseParamsBuilder extends
+ParamsBuilderBase
+{
+
+
   constructor(cases, generator) {
     super(cases);
     this.subcases = generator;
@@ -131,13 +252,18 @@ export class SubcaseParamsBuilder extends ParamsBuilderBase {
     }
   }
 
-  /** @inheritdoc */
-  expandWithParams(expander) {
+  /** @inheritDoc */
+  expandWithParams(
+  expander)
+  {
     return new SubcaseParamsBuilder(this.cases, expanderGenerator(this.subcases, expander));
   }
 
-  /** @inheritdoc */
-  expand(key, expander) {
+  /** @inheritDoc */
+  expand(
+  key,
+  expander)
+  {
     return this.expandWithParams(function* (p) {
       for (const value of expander(p)) {
         // TypeScript doesn't know here that NewPKey is always a single literal string type.
@@ -146,28 +272,38 @@ export class SubcaseParamsBuilder extends ParamsBuilderBase {
     });
   }
 
-  /** @inheritdoc */
-  combineWithParams(newParams) {
+  /** @inheritDoc */
+  combineWithParams(
+  newParams)
+  {
+    assertNotGenerator(newParams);
     return this.expandWithParams(() => newParams);
   }
 
-  /** @inheritdoc */
-  combine(key, values) {
+  /** @inheritDoc */
+  combine(
+  key,
+  values)
+  {
+    assertNotGenerator(values);
     return this.expand(key, () => values);
   }
 
-  /** @inheritdoc */
+  /** @inheritDoc */
   filter(pred) {
     return new SubcaseParamsBuilder(this.cases, filterGenerator(this.subcases, pred));
   }
 
-  /** @inheritdoc */
+  /** @inheritDoc */
   unless(pred) {
-    return this.filter(x => !pred(x));
+    return this.filter((x) => !pred(x));
   }
 }
 
-function expanderGenerator(baseGenerator, expander) {
+function expanderGenerator(
+baseGenerator,
+expander)
+{
   return function* (base) {
     for (const a of baseGenerator(base)) {
       for (const b of expander(mergeParams(base, a))) {
@@ -177,7 +313,10 @@ function expanderGenerator(baseGenerator, expander) {
   };
 }
 
-function filterGenerator(baseGenerator, pred) {
+function filterGenerator(
+baseGenerator,
+pred)
+{
   return function* (base) {
     for (const a of baseGenerator(base)) {
       if (pred(mergeParams(base, a))) {
@@ -186,3 +325,14 @@ function filterGenerator(baseGenerator, pred) {
     }
   };
 }
+
+/** Assert an object is not a Generator (a thing returned from a generator function). */
+function assertNotGenerator(x) {
+  if ('constructor' in x) {
+    assert(
+    x.constructor !== function* () {}().constructor,
+    'Argument must not be a generator, as generators are not reusable');
+
+  }
+}
+//# sourceMappingURL=params_builder.js.map

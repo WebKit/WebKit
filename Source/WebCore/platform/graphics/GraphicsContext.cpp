@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,10 +37,10 @@
 #include "IntRect.h"
 #include "MediaPlayer.h"
 #include "MediaPlayerPrivate.h"
-#include "NullGraphicsContext.h"
 #include "RoundedRect.h"
 #include "SystemImage.h"
 #include "TextBoxIterator.h"
+#include "VideoFrame.h"
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
@@ -106,7 +106,7 @@ void GraphicsContext::drawRaisedEllipse(const FloatRect& rect, const Color& elli
     setStrokeColor(ellipseColor);
     setFillColor(ellipseColor);
 
-    drawEllipse(rect);  
+    drawEllipse(rect);
 
     restore();
 }
@@ -274,6 +274,11 @@ RefPtr<ImageBuffer> GraphicsContext::createAlignedImageBuffer(const FloatRect& r
     return createScaledImageBuffer(rect, scaleFactor(), colorSpace, renderingMode(), renderingMethod);
 }
 
+void GraphicsContext::drawNativeImage(NativeImage& image, const FloatSize& imageSize, const FloatRect& destination, const FloatRect& source, const ImagePaintingOptions& options)
+{
+    image.draw(*this, imageSize, destination, source, options);
+}
+
 void GraphicsContext::drawSystemImage(SystemImage& systemImage, const FloatRect& destinationRect)
 {
     systemImage.draw(*this, destinationRect);
@@ -398,11 +403,6 @@ void GraphicsContext::clipOutRoundedRect(const FloatRoundedRect& rect)
     clipOut(path);
 }
 
-void GraphicsContext::clipToImageBuffer(ImageBuffer& imageBuffer, const FloatRect& destinationRect)
-{
-    imageBuffer.clipToMask(*this, destinationRect);
-}
-
 IntRect GraphicsContext::clipBounds() const
 {
     ASSERT_NOT_REACHED();
@@ -460,7 +460,7 @@ void GraphicsContext::adjustLineToPixelBoundaries(FloatPoint& p1, FloatPoint& p2
     // works out.  For example, with a border width of 3, WebKit will pass us (y1+y2)/2, e.g.,
     // (50+53)/2 = 103/2 = 51 when we want 51.5.  It is always true that an even width gave
     // us a perfect position, but an odd width gave us a position that is off by exactly 0.5.
-    if (penStyle == DottedStroke || penStyle == DashedStroke) {
+    if (penStyle == StrokeStyle::DottedStroke || penStyle == StrokeStyle::DashedStroke) {
         if (p1.x() == p2.x()) {
             p1.setY(p1.y() + strokeWidth);
             p2.setY(p2.y() - strokeWidth);
@@ -488,7 +488,7 @@ FloatSize GraphicsContext::scaleFactor() const
     AffineTransform transform = getCTM(GraphicsContext::DefinitelyIncludeDeviceScale);
     return FloatSize(transform.xScale(), transform.yScale());
 }
-    
+
 FloatSize GraphicsContext::scaleFactorForDrawing(const FloatRect& destRect, const FloatRect& srcRect) const
 {
     AffineTransform transform = getCTM(GraphicsContext::DefinitelyIncludeDeviceScale);
@@ -557,13 +557,13 @@ FloatRect GraphicsContext::computeLineBoundsAndAntialiasingModeForText(const Flo
 float GraphicsContext::dashedLineCornerWidthForStrokeWidth(float strokeWidth) const
 {
     float thickness = strokeThickness();
-    return strokeStyle() == DottedStroke ? thickness : std::min(2.0f * thickness, std::max(thickness, strokeWidth / 3.0f));
+    return strokeStyle() == StrokeStyle::DottedStroke ? thickness : std::min(2.0f * thickness, std::max(thickness, strokeWidth / 3.0f));
 }
 
 float GraphicsContext::dashedLinePatternWidthForStrokeWidth(float strokeWidth) const
 {
     float thickness = strokeThickness();
-    return strokeStyle() == DottedStroke ? thickness : std::min(3.0f * thickness, std::max(thickness, strokeWidth / 3.0f));
+    return strokeStyle() == StrokeStyle::DottedStroke ? thickness : std::min(3.0f * thickness, std::max(thickness, strokeWidth / 3.0f));
 }
 
 float GraphicsContext::dashedLinePatternOffsetForPatternAndStrokeWidth(float patternWidth, float strokeWidth) const
@@ -613,12 +613,8 @@ void GraphicsContext::paintFrameForMedia(MediaPlayer& player, const FloatRect& d
 
 void GraphicsContext::paintVideoFrame(VideoFrame& frame, const FloatRect& destination, bool shouldDiscardAlpha)
 {
-    frame.paintInContext(*this, destination, ImageOrientation::None, shouldDiscardAlpha);
+    frame.paintInContext(*this, destination, ImageOrientation::Orientation::None, shouldDiscardAlpha);
 }
 #endif
 
-void NullGraphicsContext::drawConsumingImageBuffer(RefPtr<ImageBuffer>, const FloatRect&, const FloatRect&, const ImagePaintingOptions&)
-{
-}
-
-}
+} // namespace WebCore

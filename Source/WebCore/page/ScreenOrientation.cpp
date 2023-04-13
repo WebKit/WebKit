@@ -26,7 +26,6 @@
 #include "config.h"
 #include "ScreenOrientation.h"
 
-#include "DOMWindow.h"
 #include "Document.h"
 #include "DocumentInlines.h"
 #include "Element.h"
@@ -35,6 +34,7 @@
 #include "FrameDestructionObserverInlines.h"
 #include "FullscreenManager.h"
 #include "JSDOMPromiseDeferred.h"
+#include "LocalDOMWindow.h"
 #include "Page.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -175,27 +175,38 @@ auto ScreenOrientation::type() const -> Type
 {
     auto* manager = this->manager();
     if (!manager)
-        return Type::PortraitPrimary;
+        return naturalScreenOrientationType();
     return manager->currentOrientation();
 }
 
 uint16_t ScreenOrientation::angle() const
 {
     auto* manager = this->manager();
-    if (!manager)
-        return 0;
+    auto orientation = manager ? manager->currentOrientation() : naturalScreenOrientationType();
 
-    // The angle should depend on the device's natural orientation. We currently
-    // consider Portrait as the natural orientation.
-    switch (manager->currentOrientation()) {
-    case Type::PortraitPrimary:
-        return 0;
-    case Type::PortraitSecondary:
-        return 180;
-    case Type::LandscapePrimary:
-        return 90;
-    case Type::LandscapeSecondary:
-        return 270;
+    // https://w3c.github.io/screen-orientation/#dfn-screen-orientation-values-table
+    if (isPortrait(naturalScreenOrientationType())) {
+        switch (orientation) {
+        case Type::PortraitPrimary:
+            return 0;
+        case Type::PortraitSecondary:
+            return 180;
+        case Type::LandscapePrimary:
+            return 90;
+        case Type::LandscapeSecondary:
+            return 270;
+        }
+    } else {
+        switch (orientation) {
+        case Type::PortraitPrimary:
+            return 90;
+        case Type::PortraitSecondary:
+            return 270;
+        case Type::LandscapePrimary:
+            return 0;
+        case Type::LandscapeSecondary:
+            return 180;
+        }
     }
     ASSERT_NOT_REACHED();
     return 0;

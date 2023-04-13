@@ -994,6 +994,12 @@
             <proto>void <name>glPixelLocalStorageBarrierANGLE</name></proto>
         </command>
         <command>
+            <proto>void <name>glFramebufferPixelLocalStorageInterruptANGLE</name></proto>
+        </command>
+        <command>
+            <proto>void <name>glFramebufferPixelLocalStorageRestoreANGLE</name></proto>
+        </command>
+        <command>
             <proto>void <name>glGetFramebufferPixelLocalStorageParameterfvANGLE</name></proto>
             <param><ptype>GLint</ptype> <name>plane</name></param>
             <param group="PLSQueryFloat"><ptype>GLenum</ptype> <name>pname</name></param>
@@ -1003,6 +1009,22 @@
             <proto>void <name>glGetFramebufferPixelLocalStorageParameterivANGLE</name></proto>
             <param><ptype>GLint</ptype> <name>plane</name></param>
             <param group="PLSQueryInt"><ptype>GLenum</ptype> <name>pname</name></param>
+            <param><ptype>GLint</ptype> *<name>params</name></param>
+        </command>
+        <command>
+            <proto>void <name>glGetFramebufferPixelLocalStorageParameterfvRobustANGLE</name></proto>
+            <param><ptype>GLint</ptype> <name>plane</name></param>
+            <param group="PLSQueryFloat"><ptype>GLenum</ptype> <name>pname</name></param>
+            <param><ptype>GLsizei</ptype> <name>bufSize</name></param>
+            <param><ptype>GLsizei *</ptype> <name>length</name></param>
+            <param><ptype>GLfloat</ptype> *<name>params</name></param>
+        </command>
+        <command>
+            <proto>void <name>glGetFramebufferPixelLocalStorageParameterivRobustANGLE</name></proto>
+            <param><ptype>GLint</ptype> <name>plane</name></param>
+            <param group="PLSQueryInt"><ptype>GLenum</ptype> <name>pname</name></param>
+            <param><ptype>GLsizei</ptype> <name>bufSize</name></param>
+            <param><ptype>GLsizei *</ptype> <name>length</name></param>
             <param><ptype>GLint</ptype> *<name>params</name></param>
         </command>
         <command>
@@ -1174,6 +1196,11 @@
                 <command name="glProvokingVertexANGLE"/>
             </require>
         </extension>
+        <extension name="GL_ANGLE_stencil_texturing" supported='gles2'>
+            <require>
+                <enum name="GL_DEPTH_STENCIL_TEXTURE_MODE_ANGLE"/>
+            </require>
+        </extension>
         <extension name="GL_CHROMIUM_lose_context" supported='gles2'>
             <require>
                 <enum name="GL_GUILTY_CONTEXT_RESET"/>
@@ -1255,7 +1282,6 @@
                 <enum name="GL_LOAD_OP_ZERO_ANGLE"/>
                 <enum name="GL_LOAD_OP_CLEAR_ANGLE"/>
                 <enum name="GL_LOAD_OP_LOAD_ANGLE"/>
-                <enum name="GL_LOAD_OP_DISABLE_ANGLE"/>
                 <enum name="GL_STORE_OP_STORE_ANGLE"/>
                 <enum name="GL_PIXEL_LOCAL_FORMAT_ANGLE"/>
                 <enum name="GL_PIXEL_LOCAL_TEXTURE_NAME_ANGLE"/>
@@ -1272,8 +1298,12 @@
                 <command name="glBeginPixelLocalStorageANGLE"/>
                 <command name="glEndPixelLocalStorageANGLE"/>
                 <command name="glPixelLocalStorageBarrierANGLE"/>
+                <command name="glFramebufferPixelLocalStorageInterruptANGLE"/>
+                <command name="glFramebufferPixelLocalStorageRestoreANGLE"/>
                 <command name="glGetFramebufferPixelLocalStorageParameterfvANGLE"/>
                 <command name="glGetFramebufferPixelLocalStorageParameterivANGLE"/>
+                <command name="glGetFramebufferPixelLocalStorageParameterfvRobustANGLE"/>
+                <command name="glGetFramebufferPixelLocalStorageParameterivRobustANGLE"/>
             </require>
         </extension>
         <extension name="GL_ANGLE_logic_op" supported="gles2">
@@ -1321,6 +1351,10 @@
         <enum value="0x3007" name="GL_CLIP_DISTANCE7_ANGLE" group="EnableCap"/>
     </enums>
 
+    <enums namespace="GL" vendor="ANGLE">
+        <enum value="0x90EA" name="GL_DEPTH_STENCIL_TEXTURE_MODE_ANGLE" group="TextureParameterName"/>
+    </enums>
+
     <enums namespace="GL" start="0x93A7" end="0x93A7" vendor="ANGLE">
         <enum value="0x93A7" name="GL_ROBUST_RESOURCE_INITIALIZATION_ANGLE"/>
     </enums>
@@ -1345,15 +1379,14 @@
         <enum value="0x96E4" name="GL_LOAD_OP_ZERO_ANGLE"/>
         <enum value="0x96E5" name="GL_LOAD_OP_CLEAR_ANGLE"/>
         <enum value="0x96E6" name="GL_LOAD_OP_LOAD_ANGLE"/>
-        <enum value="0x96E7" name="GL_LOAD_OP_DISABLE_ANGLE"/>
-        <enum value="0x96E8" name="GL_STORE_OP_STORE_ANGLE"/>
-        <enum value="0x96E9" name="GL_PIXEL_LOCAL_FORMAT_ANGLE" group="PLSQueryInt"/>
-        <enum value="0x96EA" name="GL_PIXEL_LOCAL_TEXTURE_NAME_ANGLE" group="PLSQueryInt"/>
-        <enum value="0x96EB" name="GL_PIXEL_LOCAL_TEXTURE_LEVEL_ANGLE" group="PLSQueryInt"/>
-        <enum value="0x96EC" name="GL_PIXEL_LOCAL_TEXTURE_LAYER_ANGLE" group="PLSQueryInt"/>
-        <enum value="0x96ED" name="GL_PIXEL_LOCAL_CLEAR_VALUE_FLOAT_ANGLE" group="PLSQueryFloat"/>
-        <enum value="0x96EE" name="GL_PIXEL_LOCAL_CLEAR_VALUE_INT_ANGLE" group="PLSQueryInt"/>
-        <enum value="0x96EF" name="GL_PIXEL_LOCAL_CLEAR_VALUE_UNSIGNED_INT_ANGLE" group="PLSQueryInt"/>
+        <enum value="0x96E7" name="GL_STORE_OP_STORE_ANGLE"/>
+        <enum value="0x96E8" name="GL_PIXEL_LOCAL_FORMAT_ANGLE" group="PLSQueryInt"/>
+        <enum value="0x96E9" name="GL_PIXEL_LOCAL_TEXTURE_NAME_ANGLE" group="PLSQueryInt"/>
+        <enum value="0x96EA" name="GL_PIXEL_LOCAL_TEXTURE_LEVEL_ANGLE" group="PLSQueryInt"/>
+        <enum value="0x96EB" name="GL_PIXEL_LOCAL_TEXTURE_LAYER_ANGLE" group="PLSQueryInt"/>
+        <enum value="0x96EC" name="GL_PIXEL_LOCAL_CLEAR_VALUE_FLOAT_ANGLE" group="PLSQueryFloat"/>
+        <enum value="0x96ED" name="GL_PIXEL_LOCAL_CLEAR_VALUE_INT_ANGLE" group="PLSQueryInt"/>
+        <enum value="0x96EE" name="GL_PIXEL_LOCAL_CLEAR_VALUE_UNSIGNED_INT_ANGLE" group="PLSQueryInt"/>
     </enums>
 
     <enums namespace="GL" group="CreateFlagMask" type="bitmask" vendor="ANGLE">

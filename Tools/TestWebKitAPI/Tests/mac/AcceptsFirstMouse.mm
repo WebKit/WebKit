@@ -43,7 +43,7 @@ public:
     // WebKitAgnosticTest
     virtual NSURL *url() const { return [[NSBundle mainBundle] URLForResource:@"acceptsFirstMouse" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]; }
     virtual void didLoadURL(WebView *webView) { runTest(webView); }
-    virtual void didLoadURL(WKView *wkView) { runTest(wkView); }
+    virtual void didLoadURL(WKWebView *wkView) { runTest(wkView); }
 };
 
 template <typename View>

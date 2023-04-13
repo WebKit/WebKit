@@ -23,7 +23,7 @@
             foundDefaultVoice = true;
     }
 
-    shouldBeTrue("voiceCount > 20");
+    shouldBeTrue(`voiceCount >= ${window.internals.minimumExpectedVoiceCount}`);
     shouldBeTrue("foundEnglishVoice");
     shouldBeTrue("foundDefaultVoice");
 

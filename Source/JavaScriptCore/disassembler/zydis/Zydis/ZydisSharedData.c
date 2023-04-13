@@ -112,6 +112,12 @@ void ZydisGetInstructionDefinition(ZydisInstructionEncoding encoding, ZyanU16 id
 /* ---------------------------------------------------------------------------------------------- */
 
 #ifndef ZYDIS_MINIMAL_MODE
+
+#if defined(ZYAN_GCC)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wtype-limits"
+#endif
+
 ZyanU8 ZydisGetOperandDefinitions(const ZydisInstructionDefinition* definition,
     const ZydisOperandDefinition** operand)
 {
@@ -124,6 +130,11 @@ ZyanU8 ZydisGetOperandDefinitions(const ZydisInstructionDefinition* definition,
     *operand = &OPERAND_DEFINITIONS[definition->operand_reference];
     return definition->operand_count;
 }
+
+#if defined(ZYAN_GCC)
+#pragma GCC diagnostic pop
+#endif
+
 #endif
 
 /* ---------------------------------------------------------------------------------------------- */

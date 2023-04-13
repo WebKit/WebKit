@@ -31,6 +31,7 @@
 #include "Logging.h"
 #include "MessageWithMessagePorts.h"
 #include "ServiceWorkerGlobalScope.h"
+#include <wtf/WTFProcess.h>
 
 namespace WebCore {
 
@@ -138,10 +139,34 @@ void SWContextManager::firePushSubscriptionChangeEvent(ServiceWorkerIdentifier i
 void SWContextManager::fireNotificationEvent(ServiceWorkerIdentifier identifier, NotificationData&& data, NotificationEventType eventType, CompletionHandler<void(bool)>&& callback)
 {
     auto* serviceWorker = serviceWorkerThreadProxy(identifier);
-    if (!serviceWorker)
+    if (!serviceWorker) {
+        callback(false);
         return;
+    }
 
     serviceWorker->fireNotificationEvent(WTFMove(data), eventType, WTFMove(callback));
+}
+
+void SWContextManager::fireBackgroundFetchEvent(ServiceWorkerIdentifier identifier, BackgroundFetchInformation&& info, CompletionHandler<void(bool)>&& callback)
+{
+    auto* serviceWorker = serviceWorkerThreadProxy(identifier);
+    if (!serviceWorker) {
+        callback(false);
+        return;
+    }
+
+    serviceWorker->fireBackgroundFetchEvent(WTFMove(info), WTFMove(callback));
+}
+
+void SWContextManager::fireBackgroundFetchClickEvent(ServiceWorkerIdentifier identifier, BackgroundFetchInformation&& info, CompletionHandler<void(bool)>&& callback)
+{
+    auto* serviceWorker = serviceWorkerThreadProxy(identifier);
+    if (!serviceWorker) {
+        callback(false);
+        return;
+    }
+
+    serviceWorker->fireBackgroundFetchClickEvent(WTFMove(info), WTFMove(callback));
 }
 
 void SWContextManager::terminateWorker(ServiceWorkerIdentifier identifier, Seconds timeout, Function<void()>&& completionHandler)
@@ -209,7 +234,7 @@ void SWContextManager::serviceWorkerFailedToTerminate(ServiceWorkerIdentifier se
     UNUSED_PARAM(serviceWorkerIdentifier);
     RELEASE_LOG_ERROR(ServiceWorker, "Failed to terminate service worker with identifier %s, killing the service worker process", serviceWorkerIdentifier.loggingString().utf8().data());
     ASSERT_NOT_REACHED();
-    _exit(EXIT_FAILURE);
+    terminateProcess(EXIT_FAILURE);
 }
 
 SWContextManager::ServiceWorkerTerminationRequest::ServiceWorkerTerminationRequest(SWContextManager& manager, ServiceWorkerIdentifier serviceWorkerIdentifier, Seconds timeout)

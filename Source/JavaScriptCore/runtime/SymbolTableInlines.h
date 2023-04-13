@@ -30,9 +30,9 @@
 
 namespace JSC {
 
-inline void SymbolTable::finalizeUnconditionally(VM& vm)
+inline void SymbolTable::finalizeUnconditionally(VM& vm, CollectionScope collectionScope)
 {
-    m_singleton.finalizeUnconditionally(vm);
+    m_singleton.finalizeUnconditionally(vm, collectionScope);
 }
 
 } // namespace JSC

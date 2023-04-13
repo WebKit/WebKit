@@ -42,6 +42,7 @@ public:
 
     void createSyncAccessHandle(DOMPromiseDeferred<IDLInterface<FileSystemSyncAccessHandle>>&&);
     void closeSyncAccessHandle(FileSystemSyncAccessHandleIdentifier);
+    std::optional<uint64_t> requestNewCapacityForSyncAccessHandle(FileSystemSyncAccessHandleIdentifier, uint64_t newCapacity);
     void registerSyncAccessHandle(FileSystemSyncAccessHandleIdentifier, FileSystemSyncAccessHandle&);
     void unregisterSyncAccessHandle(FileSystemSyncAccessHandleIdentifier);
 

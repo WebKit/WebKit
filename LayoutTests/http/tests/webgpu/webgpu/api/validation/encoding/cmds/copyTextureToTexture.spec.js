@@ -12,6 +12,8 @@ import {
   kTextureUsages,
   textureDimensionAndFormatCompatible,
   kTextureDimensions,
+  kFeaturesForFormats,
+  filterFormatsByFeature,
 } from '../../../../capability_info.js';
 import { kResourceStates } from '../../../../gpu_test.js';
 import { align, lcm } from '../../../../util/math.js';
@@ -52,7 +54,6 @@ class F extends ValidationTest {
           height: physicalHeightAtLevel,
           depthOrArrayLayers: textureSize.depthOrArrayLayers,
         };
-
       case '3d':
         return {
           width: physicalWidthAtLevel,
@@ -72,7 +73,7 @@ g.test('copy_with_invalid_or_destroyed_texture')
       .combine('srcState', kResourceStates)
       .combine('dstState', kResourceStates)
   )
-  .fn(async t => {
+  .fn(t => {
     const { srcState, dstState } = t.params;
 
     const textureDesc = {
@@ -109,39 +110,36 @@ g.test('texture,device_mismatch')
     { srcMismatched: true, dstMismatched: false },
     { srcMismatched: false, dstMismatched: true },
   ])
-  .fn(async t => {
+  .beforeAllSubcases(t => {
+    t.selectMismatchedDeviceOrSkipTestCase(undefined);
+  })
+  .fn(t => {
     const { srcMismatched, dstMismatched } = t.params;
-    const mismatched = srcMismatched || dstMismatched;
 
-    if (mismatched) {
-      await t.selectMismatchedDeviceOrSkipTestCase(undefined);
-    }
-
-    const device = mismatched ? t.mismatchedDevice : t.device;
     const size = { width: 4, height: 4, depthOrArrayLayers: 1 };
     const format = 'rgba8unorm';
 
-    const srcTexture = device.createTexture({
+    const srcTextureDevice = srcMismatched ? t.mismatchedDevice : t.device;
+    const srcTexture = srcTextureDevice.createTexture({
       size,
       format,
       usage: GPUTextureUsage.COPY_SRC,
     });
-
     t.trackForCleanup(srcTexture);
 
-    const dstTexture = device.createTexture({
+    const dstTextureDevice = dstMismatched ? t.mismatchedDevice : t.device;
+    const dstTexture = dstTextureDevice.createTexture({
       size,
       format,
       usage: GPUTextureUsage.COPY_DST,
     });
-
     t.trackForCleanup(dstTexture);
 
     t.TestCopyTextureToTexture(
       { texture: srcTexture },
       { texture: dstTexture },
       { width: 1, height: 1, depthOrArrayLayers: 1 },
-      mismatched ? 'FinishError' : 'Success'
+      srcMismatched || dstMismatched ? 'FinishError' : 'Success'
     );
   });
 
@@ -170,7 +168,7 @@ Test copyTextureToTexture must specify mipLevels that are in range.
       ])
       .unless(p => p.dimension === '1d' && (p.srcLevelCount !== 1 || p.dstLevelCount !== 1))
   )
-  .fn(async t => {
+  .fn(t => {
     const { srcLevelCount, dstLevelCount, srcCopyLevel, dstCopyLevel, dimension } = t.params;
 
     const srcTexture = t.device.createTexture({
@@ -180,7 +178,6 @@ Test copyTextureToTexture must specify mipLevels that are in range.
       usage: GPUTextureUsage.COPY_SRC,
       mipLevelCount: srcLevelCount,
     });
-
     const dstTexture = t.device.createTexture({
       size: { width: 32, height: 1, depthOrArrayLayers: 1 },
       dimension,
@@ -211,7 +208,7 @@ Test that copyTextureToTexture source/destination need COPY_SRC/COPY_DST usages.
       .combine('srcUsage', kTextureUsages)
       .combine('dstUsage', kTextureUsages)
   )
-  .fn(async t => {
+  .fn(t => {
     const { srcUsage, dstUsage } = t.params;
 
     const srcTexture = t.device.createTexture({
@@ -219,7 +216,6 @@ Test that copyTextureToTexture source/destination need COPY_SRC/COPY_DST usages.
       format: 'rgba8unorm',
       usage: srcUsage,
     });
-
     const dstTexture = t.device.createTexture({
       size: { width: 4, height: 4, depthOrArrayLayers: 1 },
       format: 'rgba8unorm',
@@ -250,20 +246,19 @@ Test that textures in copyTextureToTexture must have the same sample count.
       .combine('srcSampleCount', [1, 4])
       .combine('dstSampleCount', [1, 4])
   )
-  .fn(async t => {
+  .fn(t => {
     const { srcSampleCount, dstSampleCount } = t.params;
 
     const srcTexture = t.device.createTexture({
       size: { width: 4, height: 4, depthOrArrayLayers: 1 },
       format: 'rgba8unorm',
-      usage: GPUTextureUsage.COPY_SRC,
+      usage: GPUTextureUsage.COPY_SRC | GPUTextureUsage.RENDER_ATTACHMENT,
       sampleCount: srcSampleCount,
     });
-
     const dstTexture = t.device.createTexture({
       size: { width: 4, height: 4, depthOrArrayLayers: 1 },
       format: 'rgba8unorm',
-      usage: GPUTextureUsage.COPY_DST,
+      usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.RENDER_ATTACHMENT,
       sampleCount: dstSampleCount,
     });
 
@@ -303,7 +298,7 @@ TODO: Check the source and destination constraints separately.
       .expand('copyWidth', p => [32 - Math.max(p.srcCopyOrigin.x, p.dstCopyOrigin.x), 16])
       .expand('copyHeight', p => [16 - Math.max(p.srcCopyOrigin.y, p.dstCopyOrigin.y), 8])
   )
-  .fn(async t => {
+  .fn(t => {
     const { srcCopyOrigin, dstCopyOrigin, copyWidth, copyHeight } = t.params;
 
     const kWidth = 32;
@@ -314,14 +309,13 @@ TODO: Check the source and destination constraints separately.
     const srcTexture = t.device.createTexture({
       size: { width: kWidth, height: kHeight, depthOrArrayLayers: 1 },
       format: 'rgba8unorm',
-      usage: GPUTextureUsage.COPY_SRC,
+      usage: GPUTextureUsage.COPY_SRC | GPUTextureUsage.RENDER_ATTACHMENT,
       sampleCount: 4,
     });
-
     const dstTexture = t.device.createTexture({
       size: { width: kWidth, height: kHeight, depthOrArrayLayers: 1 },
       format: 'rgba8unorm',
-      usage: GPUTextureUsage.COPY_DST,
+      usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.RENDER_ATTACHMENT,
       sampleCount: 4,
     });
 
@@ -342,16 +336,26 @@ Test the formats of textures in copyTextureToTexture must be copy-compatible.
 - for all destination texture formats
 `
   )
-  .paramsSubcasesOnly(u =>
-    u //
-      .combine('srcFormat', kTextureFormats)
-      .combine('dstFormat', kTextureFormats)
+  .params(u =>
+    u
+      .combine('srcFormatFeature', kFeaturesForFormats)
+      .combine('dstFormatFeature', kFeaturesForFormats)
+      .beginSubcases()
+      .expand('srcFormat', ({ srcFormatFeature }) =>
+        filterFormatsByFeature(srcFormatFeature, kTextureFormats)
+      )
+      .expand('dstFormat', ({ dstFormatFeature }) =>
+        filterFormatsByFeature(dstFormatFeature, kTextureFormats)
+      )
   )
-  .fn(async t => {
+  .beforeAllSubcases(t => {
+    const { srcFormatFeature, dstFormatFeature } = t.params;
+    t.selectDeviceOrSkipTestCase([srcFormatFeature, dstFormatFeature]);
+  })
+  .fn(t => {
     const { srcFormat, dstFormat } = t.params;
     const srcFormatInfo = kTextureFormatInfo[srcFormat];
     const dstFormatInfo = kTextureFormatInfo[dstFormat];
-    await t.selectDeviceOrSkipTestCase([srcFormatInfo.feature, dstFormatInfo.feature]);
 
     const textureSize = {
       width: lcm(srcFormatInfo.blockWidth, dstFormatInfo.blockWidth),
@@ -420,7 +424,11 @@ Note: this is only tested for 2D textures as it is the only dimension compatible
       .combine('srcCopyLevel', [1, 2])
       .combine('dstCopyLevel', [0, 1])
   )
-  .fn(async t => {
+  .beforeAllSubcases(t => {
+    const { format } = t.params;
+    t.selectDeviceOrSkipTestCase(kTextureFormatInfo[format].feature);
+  })
+  .fn(t => {
     const {
       format,
       copyBoxOffsets,
@@ -429,8 +437,6 @@ Note: this is only tested for 2D textures as it is the only dimension compatible
       srcCopyLevel,
       dstCopyLevel,
     } = t.params;
-    await t.selectDeviceOrSkipTestCase(kTextureFormatInfo[format].feature);
-
     const kMipLevelCount = 3;
 
     const srcTexture = t.device.createTexture({
@@ -439,7 +445,6 @@ Note: this is only tested for 2D textures as it is the only dimension compatible
       mipLevelCount: kMipLevelCount,
       usage: GPUTextureUsage.COPY_SRC,
     });
-
     const dstTexture = t.device.createTexture({
       size: { width: dstTextureSize.width, height: dstTextureSize.height, depthOrArrayLayers: 1 },
       format,
@@ -520,7 +525,7 @@ Test that copyTextureToTexture copy boxes must be in range of the subresource.
       .combine('dstCopyLevel', [0, 1, 3])
       .unless(p => p.dimension === '1d' && (p.srcCopyLevel !== 0 || p.dstCopyLevel !== 0))
   )
-  .fn(async t => {
+  .fn(t => {
     const { dimension, copyBoxOffsets, srcCopyLevel, dstCopyLevel } = t.params;
 
     const textureSize = { width: 16, height: 8, depthOrArrayLayers: 3 };
@@ -539,7 +544,6 @@ Test that copyTextureToTexture copy boxes must be in range of the subresource.
       mipLevelCount,
       usage: GPUTextureUsage.COPY_SRC,
     });
-
     const dstTexture = t.device.createTexture({
       size: textureSize,
       format: kFormat,
@@ -648,7 +652,7 @@ TODO: Extend to 1D and 3D textures.`
       .combine('dstCopyOriginZ', [0, 2, 4])
       .combine('copyExtentDepth', [1, 2, 3])
   )
-  .fn(async t => {
+  .fn(t => {
     const { srcCopyOriginZ, dstCopyOriginZ, copyExtentDepth } = t.params;
 
     const kArrayLayerCount = 7;
@@ -686,9 +690,12 @@ Test the validations on the member 'aspect' of GPUImageCopyTexture in CopyTextur
       .combine('sourceAspect', ['all', 'depth-only', 'stencil-only'])
       .combine('destinationAspect', ['all', 'depth-only', 'stencil-only'])
   )
-  .fn(async t => {
+  .beforeAllSubcases(t => {
+    const { format } = t.params;
+    t.selectDeviceOrSkipTestCase(kTextureFormatInfo[format].feature);
+  })
+  .fn(t => {
     const { format, sourceAspect, destinationAspect } = t.params;
-    await t.selectDeviceOrSkipTestCase(kTextureFormatInfo[format].feature);
 
     const kTextureSize = { width: 16, height: 8, depthOrArrayLayers: 1 };
 
@@ -697,7 +704,6 @@ Test the validations on the member 'aspect' of GPUImageCopyTexture in CopyTextur
       format,
       usage: GPUTextureUsage.COPY_SRC,
     });
-
     const dstTexture = t.device.createTexture({
       size: kTextureSize,
       format,
@@ -711,7 +717,6 @@ Test the validations on the member 'aspect' of GPUImageCopyTexture in CopyTextur
       // kUnsizedDepthStencilFormats
       depth24plus: ['all', 'depth-only'],
       'depth24plus-stencil8': ['all'],
-      'depth24unorm-stencil8': ['all'],
       'depth32float-stencil8': ['all'],
 
       // kSizedDepthStencilFormats
@@ -764,9 +769,12 @@ TODO: Express the offsets in "block size" so as to be able to test non-4x4 compr
       .combine('srcCopyLevel', [0, 1, 2])
       .combine('dstCopyLevel', [0, 1, 2])
   )
-  .fn(async t => {
+  .beforeAllSubcases(t => {
+    const { format } = t.params;
+    t.selectDeviceOrSkipTestCase(kTextureFormatInfo[format].feature);
+  })
+  .fn(t => {
     const { format, dimension, copyBoxOffsets, srcCopyLevel, dstCopyLevel } = t.params;
-    await t.selectDeviceOrSkipTestCase(kTextureFormatInfo[format].feature);
     const { blockWidth, blockHeight } = kTextureFormatInfo[format];
 
     const kTextureSize = {
@@ -774,7 +782,6 @@ TODO: Express the offsets in "block size" so as to be able to test non-4x4 compr
       height: 12 * blockHeight,
       depthOrArrayLayers: 3,
     };
-
     const kMipLevelCount = 4;
 
     const srcTexture = t.device.createTexture({
@@ -784,7 +791,6 @@ TODO: Express the offsets in "block size" so as to be able to test non-4x4 compr
       mipLevelCount: kMipLevelCount,
       usage: GPUTextureUsage.COPY_SRC,
     });
-
     const dstTexture = t.device.createTexture({
       size: kTextureSize,
       format,

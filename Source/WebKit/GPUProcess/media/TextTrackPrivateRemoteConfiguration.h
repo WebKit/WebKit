@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(GPU_PROCESS)
+#if ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
 
 #include <WebCore/InbandTextTrackPrivate.h>
 #include <WebCore/TrackPrivateBase.h>
@@ -54,4 +54,4 @@ struct TextTrackPrivateRemoteConfiguration {
 
 } // namespace WebKit
 
-#endif
+#endif // ENABLE(GPU_PROCESS) && ENABLE(VIDEO)

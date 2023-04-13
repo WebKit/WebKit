@@ -359,9 +359,8 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         return;
     }
 
-    case EnumeratorNextExtractMode:
-    case EnumeratorNextExtractIndex: {
-        def(PureValue(node));
+    case ExtractFromTuple: {
+        def(PureValue(node, node->extractOffset()));
         return;
     }
 
@@ -588,7 +587,6 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case CreateDirectArguments:
     case CreateScopedArguments:
     case CreateClonedArguments:
-    case CreateArgumentsButterfly:
         read(Stack);
         read(HeapObjectCount);
         write(HeapObjectCount);
@@ -1245,9 +1243,11 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
 
     case ParseInt:
         // Note: We would have eliminated a ParseInt that has just a single child as an Int32Use inside fixup.
-        if (node->child1().useKind() == StringUse && (!node->child2() || node->child2().useKind() == Int32Use)) {
-            def(PureValue(node));
-            return;
+        if (node->child1().useKind() == StringUse || node->child1().useKind() == DoubleRepUse || node->child1().useKind() == Int32Use) {
+            if (!node->child2() || node->child2().useKind() == Int32Use) {
+                def(PureValue(node));
+                return;
+            }
         }
 
         clobberTop();
@@ -1880,6 +1880,11 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         write(HeapObjectCount);
         return;
 
+    case NewBoundFunction:
+        read(HeapObjectCount);
+        write(HeapObjectCount);
+        return;
+
     case RegExpExec:
     case RegExpTest:
     case RegExpTestInline:
@@ -1982,6 +1987,10 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
 
     case FunctionToString:
         def(PureValue(node));
+        return;
+
+    case FunctionBind:
+        clobberTop(); // Slow path can clobber top.
         return;
         
     case CountExecution:

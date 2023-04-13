@@ -76,6 +76,7 @@ enum class SDKAlignedBehavior {
     NoTypedArrayAPIQuirk,
     NoUnconditionalUniversalSandboxExtension,
     NoWeChatScrollingQuirk,
+    NoUNIQLOLazyIframeLoadingQuirk,
     NullOriginForNonSpecialSchemedURLs,
     ObservesClassProperty,
     PictureInPictureMediaPlayback,
@@ -83,6 +84,7 @@ enum class SDKAlignedBehavior {
     PushStateFilePathRestriction,
     RequiresUserGestureToLoadVideo,
     RestrictsBaseURLSchemes,
+    RunningBoardThrottling,
     ScrollViewContentInsetsAreNotObscuringInsets,
     SendsNativeMouseEvents,
     SessionCleanupByDefault,
@@ -102,6 +104,9 @@ enum class SDKAlignedBehavior {
     WKWebsiteDataStoreInitReturningNil,
     UIBackForwardSkipsHistoryItemsWithoutUserGesture,
     ProgrammaticFocusDuringUserScriptShowsInputViews,
+    UsesGameControllerPhysicalInputProfile,
+    ScreenOrientationAPIEnabled,
+    PopoverAttributeEnabled,
 
     NumberOfBehaviors
 };

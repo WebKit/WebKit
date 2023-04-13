@@ -60,7 +60,9 @@ class GraphicsContext;
 class ImageData;
 class OffscreenCanvas;
 class Path2D;
+class RenderElement;
 class RenderObject;
+class SVGImageElement;
 class TextMetrics;
 class WebCodecsVideoFrame;
 
@@ -70,7 +72,10 @@ namespace DisplayList {
 class DrawingContext;
 }
 
-using CanvasImageSource = std::variant<RefPtr<HTMLImageElement>, RefPtr<HTMLCanvasElement>, RefPtr<ImageBitmap>
+using CanvasImageSource = std::variant<RefPtr<HTMLImageElement>
+    , RefPtr<SVGImageElement>
+    , RefPtr<HTMLCanvasElement>
+    , RefPtr<ImageBitmap>
     , RefPtr<CSSStyleImageValue>
 #if ENABLE(OFFSCREEN_CANVAS)
     , RefPtr<OffscreenCanvas>
@@ -231,6 +236,8 @@ public:
     using Direction = CanvasDirection;
     void setDirection(Direction);
 
+    const HashSet<uint32_t>& suppliedColors() const { return m_suppliedColors; }
+
     class FontProxy final : public FontSelectorClient {
     public:
         FontProxy() = default;
@@ -317,6 +324,8 @@ protected:
 
     bool usesCSSCompatibilityParseMode() const { return m_usesCSSCompatibilityParseMode; }
 
+    void postProcessPixelBuffer() const final;
+
 private:
     void applyLineDash() const;
     void setShadow(const FloatSize& offset, float blur, const Color&);
@@ -333,6 +342,7 @@ private:
     void didDraw(bool entireCanvas, const FloatRect&);
     template<typename RectProvider> void didDraw(bool entireCanvas, RectProvider);
 
+    bool is2dBase() const final { return true; }
     void paintRenderingResultsToCanvas() override;
     bool needsPreparationForDisplay() const final;
     void prepareForDisplay() final;
@@ -350,7 +360,9 @@ private:
     void setStrokeStyle(CanvasStyle);
     void setFillStyle(CanvasStyle);
 
+    ExceptionOr<RefPtr<CanvasPattern>> createPattern(CachedImage&, RenderElement*, bool repeatX, bool repeatY);
     ExceptionOr<RefPtr<CanvasPattern>> createPattern(HTMLImageElement&, bool repeatX, bool repeatY);
+    ExceptionOr<RefPtr<CanvasPattern>> createPattern(SVGImageElement&, bool repeatX, bool repeatY);
     ExceptionOr<RefPtr<CanvasPattern>> createPattern(CanvasBase&, bool repeatX, bool repeatY);
 #if ENABLE(VIDEO)
     ExceptionOr<RefPtr<CanvasPattern>> createPattern(HTMLVideoElement&, bool repeatX, bool repeatY);
@@ -363,8 +375,10 @@ private:
 
     ExceptionOr<void> drawImage(HTMLImageElement&, const FloatRect& srcRect, const FloatRect& dstRect);
     ExceptionOr<void> drawImage(HTMLImageElement&, const FloatRect& srcRect, const FloatRect& dstRect, const CompositeOperator&, const BlendMode&);
+    ExceptionOr<void> drawImage(SVGImageElement&, const FloatRect& srcRect, const FloatRect& dstRect);
+    ExceptionOr<void> drawImage(SVGImageElement&, const FloatRect& srcRect, const FloatRect& dstRect, const CompositeOperator&, const BlendMode&);
     ExceptionOr<void> drawImage(CanvasBase&, const FloatRect& srcRect, const FloatRect& dstRect);
-    ExceptionOr<void> drawImage(Document&, CachedImage*, const RenderObject*, const FloatRect& imageRect, const FloatRect& srcRect, const FloatRect& dstRect, const CompositeOperator&, const BlendMode&, ImageOrientation = ImageOrientation::FromImage);
+    ExceptionOr<void> drawImage(Document&, CachedImage*, const RenderObject*, const FloatRect& imageRect, const FloatRect& srcRect, const FloatRect& dstRect, const CompositeOperator&, const BlendMode&, ImageOrientation = ImageOrientation::Orientation::FromImage);
 #if ENABLE(VIDEO)
     ExceptionOr<void> drawImage(HTMLVideoElement&, const FloatRect& srcRect, const FloatRect& dstRect);
 #endif
@@ -411,8 +425,12 @@ private:
     unsigned m_unrealizedSaveCount { 0 };
     bool m_usesCSSCompatibilityParseMode;
     bool m_usesDisplayListDrawing { false };
+    bool m_wasLastDrawPutImageData { false };
     mutable std::unique_ptr<DisplayList::DrawingContext> m_recordingContext;
+    HashSet<uint32_t> m_suppliedColors;
     CanvasRenderingContext2DSettings m_settings;
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_CANVASRENDERINGCONTEXT(WebCore::CanvasRenderingContext2DBase, is2dBase())

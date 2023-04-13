@@ -5,7 +5,7 @@ layer at (0,0) size 480x360
     RenderSVGContainer {g} at (38,1) size 394x293
       RenderSVGText {text} at (153,1) size 174x19 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 174x18
-          chunk 1 (middle anchor) text run 1 at (153.00,16.00) startOffset 0 endOffset 27 width 174.00: "Filter Effect: feMorphology"
+          chunk 1 (middle anchor) text run 1 at (153.14,16.00) startOffset 0 endOffset 27 width 173.71: "Filter Effect: feMorphology"
       RenderSVGContainer {g} at (38,22) size 394x272 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,-6.00)}]
         RenderSVGHiddenContainer {defs} at (0,0) size 0x0
           RenderSVGResourceFilter {filter} [id="erode1"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]

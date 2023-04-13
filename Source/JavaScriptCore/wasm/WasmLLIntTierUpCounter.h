@@ -30,6 +30,7 @@
 #include "ExecutionCounter.h"
 #include "InstructionStream.h"
 #include "Options.h"
+#include "VirtualRegister.h"
 #include <wtf/HashMap.h>
 
 namespace JSC { namespace Wasm {

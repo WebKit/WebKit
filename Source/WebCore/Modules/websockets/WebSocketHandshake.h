@@ -52,9 +52,9 @@ public:
     WEBCORE_EXPORT WebSocketHandshake(const URL&, const String& protocol, const String& userAgent, const String& clientOrigin, bool allowCookies, bool isAppInitiated);
     WEBCORE_EXPORT ~WebSocketHandshake();
 
-    const URL& url() const;
+    WEBCORE_EXPORT const URL& url() const;
     void setURL(const URL&);
-    URL httpURLForAuthenticationAndCookies() const;
+    WEBCORE_EXPORT URL httpURLForAuthenticationAndCookies() const;
     const String host() const;
 
     const String& clientProtocol() const;
@@ -65,7 +65,7 @@ public:
     String clientLocation() const;
 
     WEBCORE_EXPORT CString clientHandshakeMessage() const;
-    ResourceRequest clientHandshakeRequest(const Function<String(const URL&)>& cookieRequestHeaderFieldValue) const;
+    WEBCORE_EXPORT ResourceRequest clientHandshakeRequest(const Function<String(const URL&)>& cookieRequestHeaderFieldValue) const;
 
     WEBCORE_EXPORT void reset();
 

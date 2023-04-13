@@ -24,7 +24,7 @@ headers: "StreamConnectionEncoder.h"
 
 #if ENABLE(GPU_PROCESS)
 header: "WebGPUOrigin3D.h"
-[AdditionalEncoder=StreamConnectionEncoder, CustomHeader=True] struct WebKit::WebGPU::Origin3DDict {
+[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebKit::WebGPU::Origin3DDict {
     PAL::WebGPU::IntegerCoordinate x
     PAL::WebGPU::IntegerCoordinate y
     PAL::WebGPU::IntegerCoordinate z

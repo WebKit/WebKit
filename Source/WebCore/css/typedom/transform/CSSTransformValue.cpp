@@ -41,6 +41,7 @@
 #include "CSSTransformComponent.h"
 #include "CSSTransformListValue.h"
 #include "CSSTranslate.h"
+#include "CSSValueKeywords.h"
 #include "DOMMatrix.h"
 #include "ExceptionOr.h"
 #include <wtf/Algorithms.h>
@@ -94,17 +95,16 @@ static ExceptionOr<Ref<CSSTransformComponent>> createTransformComponent(CSSFunct
     }
 }
 
-ExceptionOr<Ref<CSSTransformValue>> CSSTransformValue::create(CSSTransformListValue& transformList)
+ExceptionOr<Ref<CSSTransformValue>> CSSTransformValue::create(const CSSTransformListValue& list)
 {
     Vector<RefPtr<CSSTransformComponent>> components;
-    for (auto transformFunction : transformList) {
-        if (!is<CSSFunctionValue>(transformFunction))
+    for (auto& value : list) {
+        if (!is<CSSFunctionValue>(value))
             return Exception { TypeError, "Expected only function values in a transform list."_s };
-        auto& functionValue = downcast<CSSFunctionValue>(transformFunction.get());
-        auto transformComponentOrException = createTransformComponent(functionValue);
-        if (transformComponentOrException.hasException())
-            return transformComponentOrException.releaseException();
-        components.append(transformComponentOrException.releaseReturnValue());
+        auto component = createTransformComponent(downcast<CSSFunctionValue>(const_cast<CSSValue&>(value)));
+        if (component.hasException())
+            return component.releaseException();
+        components.append(component.releaseReturnValue());
     }
     return adoptRef(*new CSSTransformValue(WTFMove(components)));
 }
@@ -117,12 +117,9 @@ ExceptionOr<Ref<CSSTransformValue>> CSSTransformValue::create(Vector<RefPtr<CSST
     return adoptRef(*new CSSTransformValue(WTFMove(transforms)));
 }
 
-ExceptionOr<RefPtr<CSSTransformComponent>> CSSTransformValue::item(size_t index)
+RefPtr<CSSTransformComponent> CSSTransformValue::item(size_t index)
 {
-    if (index >= m_components.size())
-        return Exception { RangeError, makeString("Index ", index, " exceeds the range of CSSTransformValue.") };
-
-    return RefPtr<CSSTransformComponent> { m_components[index] };
+    return index < m_components.size() ? m_components[index] : nullptr;
 }
 
 ExceptionOr<RefPtr<CSSTransformComponent>> CSSTransformValue::setItem(size_t index, Ref<CSSTransformComponent>&& value)
@@ -181,12 +178,12 @@ void CSSTransformValue::serialize(StringBuilder& builder, OptionSet<Serializatio
 
 RefPtr<CSSValue> CSSTransformValue::toCSSValue() const
 {
-    auto cssValueList = CSSTransformListValue::create();
+    CSSValueListBuilder builder;
     for (auto& component : m_components) {
         if (auto cssComponent = component->toCSSValue())
-            cssValueList->append(cssComponent.releaseNonNull());
+            builder.append(cssComponent.releaseNonNull());
     }
-    return cssValueList;
+    return CSSTransformListValue::create(WTFMove(builder));
 }
 
 } // namespace WebCore

@@ -28,7 +28,6 @@
 #include "MediaQueryEvaluator.h"
 #include "RenderStyle.h"
 #include "RuleSet.h"
-#include "StyleBuilderState.h"
 #include "StyleScopeRuleSets.h"
 #include <memory>
 #include <wtf/HashMap.h>
@@ -83,6 +82,7 @@ struct ResolutionContext {
     // This needs to be provided during style resolution when up-to-date document element style is not available via DOM.
     const RenderStyle* documentElementStyle { nullptr };
     SelectorMatchingState* selectorMatchingState { nullptr };
+    bool isSVGUseTreeRoot { false };
 };
 
 class Resolver : public RefCounted<Resolver> {
@@ -95,7 +95,7 @@ public:
 
     ResolvedStyle styleForElement(const Element&, const ResolutionContext&, RuleMatchingBehavior = RuleMatchingBehavior::MatchAllRules);
 
-    void keyframeStylesForAnimation(const Element&, const RenderStyle& elementStyle, const ResolutionContext&, KeyframeList&, bool& containsCSSVariableReferences);
+    void keyframeStylesForAnimation(const Element&, const RenderStyle& elementStyle, const ResolutionContext&, KeyframeList&);
 
     WEBCORE_EXPORT std::optional<ResolvedStyle> styleForPseudoElement(const Element&, const PseudoElementRequest&, const ResolutionContext&);
 
@@ -181,20 +181,6 @@ private:
     bool m_matchAuthorAndUserStyles { true };
     bool m_isSharedBetweenShadowTrees { false };
 };
-
-inline bool Resolver::hasSelectorForAttribute(const Element& element, const AtomString &attributeName) const
-{
-    ASSERT(!attributeName.isEmpty());
-    if (element.isHTMLElement())
-        return m_ruleSets.features().attributeCanonicalLocalNamesInRules.contains(attributeName);
-    return m_ruleSets.features().attributeLocalNamesInRules.contains(attributeName);
-}
-
-inline bool Resolver::hasSelectorForId(const AtomString& idValue) const
-{
-    ASSERT(!idValue.isEmpty());
-    return m_ruleSets.features().idsInRules.contains(idValue);
-}
 
 } // namespace Style
 } // namespace WebCore

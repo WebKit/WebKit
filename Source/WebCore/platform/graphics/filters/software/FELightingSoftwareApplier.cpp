@@ -423,7 +423,7 @@ bool FELightingSoftwareApplier::apply(const Filter& filter, const FilterImageVec
     data.diffuseConstant = m_effect.diffuseConstant();
     data.specularConstant = m_effect.specularConstant();
     data.specularExponent = m_effect.specularExponent();
-    data.lightSource = &m_effect.lightSource();
+    data.lightSource = m_effect.lightSource().ptr();
     data.operatingColorSpace = &m_effect.operatingColorSpace();
 
     data.pixels = destinationPixelBuffer;

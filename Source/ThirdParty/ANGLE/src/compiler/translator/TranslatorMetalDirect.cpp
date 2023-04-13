@@ -35,7 +35,6 @@
 #include "compiler/translator/tree_ops/ConvertUnsupportedConstructorsToFunctionCalls.h"
 #include "compiler/translator/tree_ops/InitializeVariables.h"
 #include "compiler/translator/tree_ops/MonomorphizeUnsupportedFunctions.h"
-#include "compiler/translator/tree_ops/NameNamelessUniformBuffers.h"
 #include "compiler/translator/tree_ops/RemoveAtomicCounterBuiltins.h"
 #include "compiler/translator/tree_ops/RemoveInactiveInterfaceVariables.h"
 #include "compiler/translator/tree_ops/RewriteArrayOfArrayOfOpaqueUniforms.h"
@@ -256,7 +255,7 @@ TIntermSequence *GetMainSequence(TIntermBlock *root)
     sequence.push_back(builtinRef->deepCopy());
     TIntermAggregate *aggregate =
         TIntermAggregate::CreateConstructor(builtin->getType(), &sequence);
-    TIntermBinary *assignment = new TIntermBinary(EOpInitialize, flippedBuiltinRef, aggregate);
+    TIntermBinary *assignment = new TIntermBinary(EOpAssign, flippedBuiltinRef, aggregate);
 
     // Create an assignment to the replaced variable's .xy.
     TIntermSwizzle *correctedXY =
@@ -291,14 +290,20 @@ void DeclareRightBeforeMain(TIntermBlock &root, const TVariable &var)
     root.insertChildNodes(FindMainIndex(&root), {new TIntermDeclaration{&var}});
 }
 
-void AddFragColorDeclaration(TIntermBlock &root, TSymbolTable &symbolTable)
+void AddFragColorDeclaration(TIntermBlock &root, TSymbolTable &symbolTable, const TVariable &var)
 {
-    root.insertChildNodes(FindMainIndex(&root),
-                          TIntermSequence{new TIntermDeclaration{BuiltInVariable::gl_FragColor()}});
+    root.insertChildNodes(FindMainIndex(&root), TIntermSequence{new TIntermDeclaration{&var}});
 }
 
 void AddFragDepthDeclaration(TIntermBlock &root, TSymbolTable &symbolTable)
 {
+    // Check if the variable has been already declared.
+    const TIntermSymbol *fragDepthBuiltIn = new TIntermSymbol(BuiltInVariable::gl_FragDepth());
+    const TIntermSymbol *fragDepthSymbol  = FindSymbolNode(&root, ImmutableString("gl_FragDepth"));
+    if (fragDepthSymbol && fragDepthSymbol->uniqueId() != fragDepthBuiltIn->uniqueId())
+    {
+        return;
+    }
     root.insertChildNodes(FindMainIndex(&root),
                           TIntermSequence{new TIntermDeclaration{BuiltInVariable::gl_FragDepth()}});
 }
@@ -325,19 +330,27 @@ void AddSampleMaskDeclaration(TIntermBlock &root, TSymbolTable &symbolTable)
                           TIntermSequence{new TIntermDeclaration{gl_SampleMask}});
 }
 
-[[nodiscard]] bool AddFragDataDeclaration(TCompiler &compiler, TIntermBlock &root)
+[[nodiscard]] bool AddFragDataDeclaration(TCompiler &compiler,
+                                          TIntermBlock &root,
+                                          bool usesSecondary,
+                                          bool secondary)
 {
     TSymbolTable &symbolTable = compiler.getSymbolTable();
-    const int maxDrawBuffers  = compiler.getResources().MaxDrawBuffers;
-    TType *gl_FragDataType    = new TType(EbtFloat, EbpMedium, EvqFragData, 4, 1);
+    const int maxDrawBuffers  = usesSecondary ? compiler.getResources().MaxDualSourceDrawBuffers
+                                              : compiler.getResources().MaxDrawBuffers;
+    TType *gl_FragDataType =
+        new TType(EbtFloat, EbpMedium, secondary ? EvqSecondaryFragDataEXT : EvqFragData, 4, 1);
     std::vector<const TVariable *> glFragDataSlots;
     TIntermSequence declareGLFragdataSequence;
 
-    // Create gl_FragData_0,1,2,3
+    // Create gl_FragData_i or gl_SecondaryFragDataEXT_i
+    const char *fragData             = "gl_FragData";
+    const char *secondaryFragDataEXT = "gl_SecondaryFragDataEXT";
+    const char *name                 = secondary ? secondaryFragDataEXT : fragData;
     for (int i = 0; i < maxDrawBuffers; i++)
     {
-        ImmutableStringBuilder builder(strlen("gl_FragData_") + 2);
-        builder << "gl_FragData_";
+        ImmutableStringBuilder builder(strlen(name) + 3);
+        builder << name << "_";
         builder.appendDecimal(i);
         const TVariable *glFragData =
             new TVariable(&symbolTable, builder, gl_FragDataType, SymbolType::AngleInternal,
@@ -350,14 +363,14 @@ void AddSampleMaskDeclaration(TIntermBlock &root, TSymbolTable &symbolTable)
     // Create an internal gl_FragData array type, compatible with indexing syntax.
     TType *gl_FragDataTypeArray = new TType(EbtFloat, EbpMedium, EvqGlobal, 4, 1);
     gl_FragDataTypeArray->makeArray(maxDrawBuffers);
-    const TVariable *glFragDataGlobal = new TVariable(&symbolTable, ImmutableString("gl_FragData"),
+    const TVariable *glFragDataGlobal = new TVariable(&symbolTable, ImmutableString(name),
                                                       gl_FragDataTypeArray, SymbolType::BuiltIn);
 
     DeclareGlobalVariable(&root, glFragDataGlobal);
-    const TIntermSymbol *originalGLFragData = FindSymbolNode(&root, ImmutableString("gl_FragData"));
+    const TIntermSymbol *originalGLFragData = FindSymbolNode(&root, ImmutableString(name));
     ASSERT(originalGLFragData);
 
-    // Replace gl_FragData() with our globally defined fragdata
+    // Replace gl_FragData[] or gl_SecondaryFragDataEXT[] with our globally defined variable
     if (!ReplaceVariable(&compiler, &root, &(originalGLFragData->variable()), glFragDataGlobal))
     {
         return false;
@@ -627,7 +640,10 @@ bool TranslatorMetalDirect::transformDepthBeforeCorrection(TIntermBlock *root,
 //     z_metal = 0.5 * (w_gl + z_gl)
 //
 // where z_metal is the depth output of a Metal vertex shader and z_gl is the same for GL.
-bool TranslatorMetalDirect::appendVertexShaderDepthCorrectionToMain(TIntermBlock *root)
+// This operation is skipped when GL_CLIP_DEPTH_MODE_EXT is set to GL_ZERO_TO_ONE_EXT.
+bool TranslatorMetalDirect::appendVertexShaderDepthCorrectionToMain(
+    TIntermBlock *root,
+    const DriverUniformMetal *driverUniforms)
 {
     const TVariable *position  = BuiltInVariable::gl_Position();
     TIntermSymbol *positionRef = new TIntermSymbol(position);
@@ -648,8 +664,13 @@ bool TranslatorMetalDirect::appendVertexShaderDepthCorrectionToMain(TIntermBlock
     TIntermTyped *positionZLHS = positionZ->deepCopy();
     TIntermBinary *assignment  = new TIntermBinary(TOperator::EOpAssign, positionZLHS, halfZPlusW);
 
+    // Apply depth correction if needed
+    TIntermBlock *block = new TIntermBlock;
+    block->appendStatement(assignment);
+    TIntermIfElse *ifCall = new TIntermIfElse(driverUniforms->getTransformDepth(), block, nullptr);
+
     // Append the assignment as a statement at the end of the shader.
-    return RunAtTheEndOfShader(this, root, assignment, &getSymbolTable());
+    return RunAtTheEndOfShader(this, root, ifCall, &getSymbolTable());
 }
 
 static inline MetalShaderType metalShaderTypeFromGLSL(sh::GLenum shaderType)
@@ -866,10 +887,12 @@ bool TranslatorMetalDirect::translateImpl(TInfoSinkBase &sink,
             }
         }
 
-        bool usesFragColor    = false;
-        bool usesFragData     = false;
-        bool usesFragDepth    = false;
-        bool usesFragDepthEXT = false;
+        bool usesFragColor             = false;
+        bool usesFragData              = false;
+        bool usesFragDepth             = false;
+        bool usesFragDepthEXT          = false;
+        bool usesSecondaryFragColorEXT = false;
+        bool usesSecondaryFragDataEXT  = false;
         for (const ShaderVariable &outputVarying : mOutputVariables)
         {
             if (outputVarying.isBuiltIn())
@@ -890,26 +913,34 @@ bool TranslatorMetalDirect::translateImpl(TInfoSinkBase &sink,
                 {
                     usesFragDepthEXT = true;
                 }
+                else if (outputVarying.name == "gl_SecondaryFragColorEXT")
+                {
+                    usesSecondaryFragColorEXT = true;
+                }
+                else if (outputVarying.name == "gl_SecondaryFragDataEXT")
+                {
+                    usesSecondaryFragDataEXT = true;
+                }
             }
         }
 
-        if (usesFragColor && usesFragData)
-        {
-            return false;
-        }
+        // A shader may assign values to either the set of gl_FragColor and gl_SecondaryFragColorEXT
+        // or the set of gl_FragData and gl_SecondaryFragDataEXT, but not both.
+        ASSERT((!usesFragColor && !usesSecondaryFragColorEXT) ||
+               (!usesFragData && !usesSecondaryFragDataEXT));
 
         if (usesFragColor)
         {
-            AddFragColorDeclaration(*root, symbolTable);
+            AddFragColorDeclaration(*root, symbolTable, *BuiltInVariable::gl_FragColor());
         }
-
-        if (usesFragData)
+        else if (usesFragData)
         {
-            if (!AddFragDataDeclaration(*this, *root))
+            if (!AddFragDataDeclaration(*this, *root, usesSecondaryFragDataEXT, false))
             {
                 return false;
             }
         }
+
         if (usesFragDepth)
         {
             AddFragDepthDeclaration(*root, symbolTable);
@@ -917,6 +948,19 @@ bool TranslatorMetalDirect::translateImpl(TInfoSinkBase &sink,
         else if (usesFragDepthEXT)
         {
             AddFragDepthEXTDeclaration(*this, *root, symbolTable);
+        }
+
+        if (usesSecondaryFragColorEXT)
+        {
+            AddFragColorDeclaration(*root, symbolTable,
+                                    *BuiltInVariable::gl_SecondaryFragColorEXT());
+        }
+        else if (usesSecondaryFragDataEXT)
+        {
+            if (!AddFragDataDeclaration(*this, *root, usesSecondaryFragDataEXT, true))
+            {
+                return false;
+            }
         }
 
         if (usesSampleMask())
@@ -1015,7 +1059,7 @@ bool TranslatorMetalDirect::translateImpl(TInfoSinkBase &sink,
             return false;
         }
 
-        if (!appendVertexShaderDepthCorrectionToMain(root))
+        if (!appendVertexShaderDepthCorrectionToMain(root, driverUniforms))
         {
             return false;
         }
@@ -1088,25 +1132,6 @@ bool TranslatorMetalDirect::translateImpl(TInfoSinkBase &sink,
     if (!SeparateCompoundExpressions(*this, symbolEnv, idGen, *root))
     {
         return false;
-    }
-
-    if (compileOptions.rewriteRowMajorMatrices && getShaderVersion() >= 300)
-    {
-        // "Make sure every uniform buffer variable has a name.  The following transformation
-        // relies on this." This pass was removed in e196bc85ac2dda0e9f6664cfc2eca0029e33d2d1,
-        // but currently finding it still necessary for MSL.
-        if (!NameNamelessUniformBuffers(this, root, &getSymbolTable()))
-        {
-            return false;
-        }
-        // Note: RewriteRowMajorMatrices can create temporaries moved above
-        // the statement they are used in. As such it must come after
-        // SeparateCompoundExpressions since it is not aware of short circuits
-        // and side effects.
-        if (!RewriteRowMajorMatrices(this, root, &getSymbolTable()))
-        {
-            return false;
-        }
     }
 
     // Note: ReduceInterfaceBlocks removes row_major matrix layout specifiers

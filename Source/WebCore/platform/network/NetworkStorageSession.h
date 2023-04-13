@@ -39,14 +39,9 @@
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
-#if PLATFORM(COCOA) || USE(CFURLCONNECTION)
-#include <wtf/RetainPtr.h>
-#endif
-
 #if PLATFORM(COCOA)
 #include <pal/spi/cf/CFNetworkSPI.h>
-#elif USE(CFURLCONNECTION)
-#include <pal/spi/win/CFNetworkSPIWin.h>
+#include <wtf/RetainPtr.h>
 #endif
 
 #if USE(SOUP)
@@ -86,7 +81,7 @@ enum class HTTPCookieAcceptPolicy : uint8_t;
 enum class IncludeSecureCookies : bool;
 enum class IncludeHttpOnlyCookies : bool;
 enum class ThirdPartyCookieBlockingMode : uint8_t { All, AllExceptBetweenAppBoundDomains, AllExceptManagedDomains, AllOnSitesWithoutUserInteraction, OnlyAccordingToPerDomainPolicy };
-enum class SameSiteStrictEnforcementEnabled : bool { Yes, No };
+enum class SameSiteStrictEnforcementEnabled : bool { No, Yes };
 enum class FirstPartyWebsiteDataRemovalMode : uint8_t { AllButCookies, None, AllButCookiesLiveOnTestingTimeout, AllButCookiesReproTestingTimeout };
 enum class ApplyTrackingPrevention : bool { No, Yes };
 enum class ScriptWrittenCookiesOnly : bool { No, Yes };
@@ -121,7 +116,7 @@ public:
     WEBCORE_EXPORT ~NetworkStorageSession();
 #endif
 
-#if PLATFORM(COCOA) || USE(CFURLCONNECTION)
+#if PLATFORM(COCOA)
     enum class ShouldDisableCFURLCache : bool { No, Yes };
     WEBCORE_EXPORT static RetainPtr<CFURLStorageSessionRef> createCFStorageSessionForIdentifier(CFStringRef identifier, ShouldDisableCFURLCache = ShouldDisableCFURLCache::No);
     enum class IsInMemoryCookieStore : bool { No, Yes };
@@ -255,7 +250,7 @@ private:
 
     PAL::SessionID m_sessionID;
 
-#if PLATFORM(COCOA) || USE(CFURLCONNECTION)
+#if PLATFORM(COCOA)
     RetainPtr<CFURLStorageSessionRef> m_platformSession;
     RetainPtr<CFHTTPCookieStorageRef> m_platformCookieStorage;
     const bool m_isInMemoryCookieStore { false };
@@ -313,33 +308,8 @@ private:
     static bool m_processMayUseCookieAPI;
 };
 
-#if PLATFORM(COCOA) || USE(CFURLCONNECTION)
+#if PLATFORM(COCOA)
 WEBCORE_EXPORT RetainPtr<CFURLStorageSessionRef> createPrivateStorageSession(CFStringRef identifier, std::optional<HTTPCookieAcceptPolicy> = std::nullopt, NetworkStorageSession::ShouldDisableCFURLCache = NetworkStorageSession::ShouldDisableCFURLCache::No);
 #endif
-
-}
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::ThirdPartyCookieBlockingMode> {
-    using values = EnumValues<
-        WebCore::ThirdPartyCookieBlockingMode,
-        WebCore::ThirdPartyCookieBlockingMode::All,
-        WebCore::ThirdPartyCookieBlockingMode::AllExceptBetweenAppBoundDomains,
-        WebCore::ThirdPartyCookieBlockingMode::AllExceptManagedDomains,
-        WebCore::ThirdPartyCookieBlockingMode::AllOnSitesWithoutUserInteraction,
-        WebCore::ThirdPartyCookieBlockingMode::OnlyAccordingToPerDomainPolicy
-    >;
-};
-
-template<> struct EnumTraits<WebCore::FirstPartyWebsiteDataRemovalMode> {
-    using values = EnumValues<
-        WebCore::FirstPartyWebsiteDataRemovalMode,
-        WebCore::FirstPartyWebsiteDataRemovalMode::AllButCookies,
-        WebCore::FirstPartyWebsiteDataRemovalMode::None,
-        WebCore::FirstPartyWebsiteDataRemovalMode::AllButCookiesLiveOnTestingTimeout,
-        WebCore::FirstPartyWebsiteDataRemovalMode::AllButCookiesReproTestingTimeout
-    >;
-};
 
 }

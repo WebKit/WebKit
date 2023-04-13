@@ -15,15 +15,21 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/direction/direction-006-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/direction/direction-006-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/direction/direction-006.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/direction/direction-007-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/direction/direction-007-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/direction/direction-007.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/direction/direction-008-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/direction/direction-008-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/direction/direction-008.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/direction/direction-010-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/direction/direction-010-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/direction/direction-010.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/direction/direction-overall-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/direction/direction-overall-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/direction/direction-overall.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/direction/direction-token-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/direction/direction-token-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/direction/direction-token.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/direction/direction.html

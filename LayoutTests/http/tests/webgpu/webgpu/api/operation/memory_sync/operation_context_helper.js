@@ -52,11 +52,9 @@ export const kBoundaryInfo = {
   'queue-op': {
     contexts: queueContexts,
   },
-
   'command-buffer': {
     contexts: commandBufferContexts,
   },
-
   pass: {
     contexts: [
       ['compute-pass-encoder', 'compute-pass-encoder'],
@@ -68,11 +66,9 @@ export const kBoundaryInfo = {
       ['render-bundle-encoder', 'render-bundle-encoder'],
     ],
   },
-
   'execute-bundles': {
     contexts: [['render-bundle-encoder', 'render-bundle-encoder']],
   },
-
   'render-bundle': {
     contexts: [
       ['render-bundle-encoder', 'render-pass-encoder'],
@@ -80,11 +76,9 @@ export const kBoundaryInfo = {
       ['render-bundle-encoder', 'render-bundle-encoder'],
     ],
   },
-
   dispatch: {
     contexts: [['compute-pass-encoder', 'compute-pass-encoder']],
   },
-
   draw: {
     contexts: [
       ['render-pass-encoder', 'render-pass-encoder'],
@@ -235,7 +229,6 @@ export class OperationContextHelper {
             this.renderPassEncoder = this.commandEncoder.beginRenderPass({
               colorAttachments: [this.makeDummyAttachment()],
             });
-
             break;
           case 'render-pass-encoder':
           case 'render-bundle-encoder':
@@ -254,13 +247,11 @@ export class OperationContextHelper {
             this.renderPassEncoder = this.commandEncoder.beginRenderPass({
               colorAttachments: [this.makeDummyAttachment()],
             });
-
           // fallthrough
           case 'render-pass-encoder':
             this.renderBundleEncoder = this.device.createRenderBundleEncoder({
               colorFormats: [this.kTextureFormat],
             });
-
             break;
           case 'render-bundle-encoder':
           case 'compute-pass-encoder':

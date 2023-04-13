@@ -25,8 +25,6 @@
 
 #pragma once
 
-#pragma once
-
 #include "ASTExpression.h"
 #include "ASTStatement.h"
 
@@ -34,19 +32,17 @@ namespace WGSL::AST {
 
 class ReturnStatement final : public Statement {
     WTF_MAKE_FAST_ALLOCATED;
-
 public:
-    ReturnStatement(SourceSpan span, std::unique_ptr<Expression>&& expression)
+    ReturnStatement(SourceSpan span, Expression::Ptr&& expression)
         : Statement(span)
         , m_expression(WTFMove(expression))
-    {
-    }
+    { }
 
-    Kind kind() const override;
+    NodeKind kind() const override;
     Expression* maybeExpression() { return m_expression.get(); }
 
 private:
-    std::unique_ptr<Expression> m_expression;
+    Expression::Ptr m_expression;
 };
 
 } // namespace WGSL::AST

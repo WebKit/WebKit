@@ -34,7 +34,6 @@
 #include "CSSPropertyParser.h"
 #include "CSSStyleValueFactory.h"
 #include "CSSUnitValue.h"
-#include "CSSValueList.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/text/StringView.h>
 

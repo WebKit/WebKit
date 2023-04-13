@@ -91,17 +91,17 @@ String CSSCustomPropertyValue::customCSSText() const
         });
     };
 
-    if (m_stringValue.isNull()) {
-        WTF::switchOn(m_value, [&](const std::monostate&) {
-            m_stringValue = emptyString();
+    auto serialize = [&] {
+        return WTF::switchOn(m_value, [&](const std::monostate&) {
+            return emptyString();
         }, [&](const Ref<CSSVariableReferenceValue>& value) {
-            m_stringValue = value->cssText();
+            return value->cssText();
         }, [&](const CSSValueID& value) {
-            m_stringValue = nameString(value);
+            return nameString(value).string();
         }, [&](const Ref<CSSVariableData>& value) {
-            m_stringValue = value->tokenRange().serialize();
+            return value->tokenRange().serialize();
         }, [&](const SyntaxValue& syntaxValue) {
-            m_stringValue = serializeSyntaxValue(syntaxValue);
+            return serializeSyntaxValue(syntaxValue);
         }, [&](const SyntaxValueList& syntaxValueList) {
             StringBuilder builder;
             auto separator = separatorCSSText(syntaxValueList.separator);
@@ -110,30 +110,38 @@ String CSSCustomPropertyValue::customCSSText() const
                     builder.append(separator);
                 builder.append(serializeSyntaxValue(syntaxValue));
             }
-            m_stringValue = builder.toString();
+            return builder.toString();
         });
-    }
-    return m_stringValue;
+    };
+
+    if (m_cachedCSSText.isNull())
+        m_cachedCSSText = serialize();
+
+    return m_cachedCSSText;
 }
 
-Vector<CSSParserToken> CSSCustomPropertyValue::tokens() const
+const Vector<CSSParserToken>& CSSCustomPropertyValue::tokens() const
 {
-    Vector<CSSParserToken> result;
-    WTF::switchOn(m_value, [&](const std::monostate&) {
+    static NeverDestroyed<Vector<CSSParserToken>> emptyTokens;
+
+    return WTF::switchOn(m_value, [&](const std::monostate&) -> const Vector<CSSParserToken>& {
         // Do nothing.
-    }, [&](const Ref<CSSVariableReferenceValue>&) {
+        return emptyTokens;
+    }, [&](const Ref<CSSVariableReferenceValue>&) -> const Vector<CSSParserToken>& {
         ASSERT_NOT_REACHED();
-    }, [&](const CSSValueID&) {
+        return emptyTokens;
+    }, [&](const CSSValueID&) -> const Vector<CSSParserToken>& {
         // Do nothing.
-    }, [&](const Ref<CSSVariableData>& value) {
-        result.appendVector(value->tokens());
-    }, [&](auto&) {
-        CSSTokenizer tokenizer(customCSSText());
-        auto tokenizerRange = tokenizer.tokenRange();
-        while (!tokenizerRange.atEnd())
-            result.append(tokenizerRange.consume());
+        return emptyTokens;
+    }, [&](const Ref<CSSVariableData>& value) -> const Vector<CSSParserToken>& {
+        return value->tokens();
+    }, [&](auto&) -> const Vector<CSSParserToken>& {
+        if (!m_cachedTokens) {
+            CSSTokenizer tokenizer { customCSSText() };
+            m_cachedTokens = CSSVariableData::create(tokenizer.tokenRange());
+        }
+        return m_cachedTokens->tokens();
     });
-    return result;
 }
 
 bool CSSCustomPropertyValue::containsCSSWideKeyword() const
@@ -150,6 +158,14 @@ Ref<const CSSVariableData> CSSCustomPropertyValue::asVariableData() const
     }, [&](auto&) -> Ref<const CSSVariableData> {
         return CSSVariableData::create(tokens());
     });
+}
+
+bool CSSCustomPropertyValue::isCurrentColor() const
+{
+    // FIXME: it's surprising that setting a custom property to "currentcolor"
+    // results in m_value being a CSSVariableReferenceValue rather than a
+    // CSSValueID set to CSSValueCurrentcolor or a StyleValue.
+    return std::holds_alternative<Ref<CSSVariableReferenceValue>>(m_value) && std::get<Ref<CSSVariableReferenceValue>>(m_value)->customCSSText() == "currentcolor"_s;
 }
 
 }

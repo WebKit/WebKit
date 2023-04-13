@@ -21,4 +21,4 @@ layer at (8,304) size 202x202 clip at (9,305) size 200x200 scrollWidth 300
           text run at (1,19) width 173: "height value and the closest"
           text run at (1,37) width 178: "block level containing block"
           text run at (1,55) width 165: "box is 2 containing blocks"
-          text run at (1,73) width 38: "away."
+          text run at (1,73) width 37: "away."

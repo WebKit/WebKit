@@ -149,37 +149,27 @@ void Instance::requestAdapter(const WGPURequestAdapterOptions& options, Completi
     auto sortedDevices = WebGPU::sortedDevices(devices, options.powerPreference);
 
     if (options.nextInChain) {
-        scheduleWork([strongThis = Ref { *this }, callback = WTFMove(callback)]() mutable {
-            callback(WGPURequestAdapterStatus_Error, Adapter::createInvalid(strongThis), "Unknown descriptor type"_s);
-        });
+        callback(WGPURequestAdapterStatus_Error, Adapter::createInvalid(*this), "Unknown descriptor type"_s);
         return;
     }
 
     if (options.forceFallbackAdapter) {
-        scheduleWork([strongThis = Ref { *this }, callback = WTFMove(callback)]() mutable {
-            callback(WGPURequestAdapterStatus_Unavailable, Adapter::createInvalid(strongThis), "No adapters present"_s);
-        });
+        callback(WGPURequestAdapterStatus_Unavailable, Adapter::createInvalid(*this), "No adapters present"_s);
         return;
     }
 
     if (!sortedDevices) {
-        scheduleWork([strongThis = Ref { *this }, callback = WTFMove(callback)]() mutable {
-            callback(WGPURequestAdapterStatus_Error, Adapter::createInvalid(strongThis), "Unknown power preference"_s);
-        });
+        callback(WGPURequestAdapterStatus_Error, Adapter::createInvalid(*this), "Unknown power preference"_s);
         return;
     }
 
     if (!sortedDevices.count) {
-        scheduleWork([strongThis = Ref { *this }, callback = WTFMove(callback)]() mutable {
-            callback(WGPURequestAdapterStatus_Unavailable, Adapter::createInvalid(strongThis), "No adapters present"_s);
-        });
+        callback(WGPURequestAdapterStatus_Unavailable, Adapter::createInvalid(*this), "No adapters present"_s);
         return;
     }
 
     if (!sortedDevices[0]) {
-        scheduleWork([strongThis = Ref { *this }, callback = WTFMove(callback)]() mutable {
-            callback(WGPURequestAdapterStatus_Error, Adapter::createInvalid(strongThis), "Adapter is internally null"_s);
-        });
+        callback(WGPURequestAdapterStatus_Error, Adapter::createInvalid(*this), "Adapter is internally null"_s);
         return;
     }
 
@@ -188,9 +178,7 @@ void Instance::requestAdapter(const WGPURequestAdapterOptions& options, Completi
     auto deviceCapabilities = hardwareCapabilities(device);
 
     if (!deviceCapabilities) {
-        scheduleWork([strongThis = Ref { *this }, callback = WTFMove(callback)]() mutable {
-            callback(WGPURequestAdapterStatus_Error, Adapter::createInvalid(strongThis), "Device does not support WebGPU"_s);
-        });
+        callback(WGPURequestAdapterStatus_Error, Adapter::createInvalid(*this), "Device does not support WebGPU"_s);
         return;
     }
 
@@ -234,6 +222,11 @@ void wgpuInstanceProcessEvents(WGPUInstance instance)
 void wgpuInstanceRequestAdapter(WGPUInstance instance, const WGPURequestAdapterOptions* options, WGPURequestAdapterCallback callback, void* userdata)
 {
     WebGPU::fromAPI(instance).requestAdapter(*options, [callback, userdata](WGPURequestAdapterStatus status, Ref<WebGPU::Adapter>&& adapter, String&& message) {
+        if (status != WGPURequestAdapterStatus_Success) {
+            callback(status, nullptr, message.utf8().data(), userdata);
+            return;
+        }
+
         callback(status, WebGPU::releaseToAPI(WTFMove(adapter)), message.utf8().data(), userdata);
     });
 }
@@ -241,6 +234,11 @@ void wgpuInstanceRequestAdapter(WGPUInstance instance, const WGPURequestAdapterO
 void wgpuInstanceRequestAdapterWithBlock(WGPUInstance instance, WGPURequestAdapterOptions const * options, WGPURequestAdapterBlockCallback callback)
 {
     WebGPU::fromAPI(instance).requestAdapter(*options, [callback = WebGPU::fromAPI(WTFMove(callback))](WGPURequestAdapterStatus status, Ref<WebGPU::Adapter>&& adapter, String&& message) {
+        if (status != WGPURequestAdapterStatus_Success) {
+            callback(status, nullptr, message.utf8().data());
+            return;
+        }
+
         callback(status, WebGPU::releaseToAPI(WTFMove(adapter)), message.utf8().data());
     });
 }

@@ -186,10 +186,10 @@ bool ScrollAnimationKeyboard::animateScroll(MonotonicTime currentTime)
             force = unitVectorForScrollDirection(direction).scaled(parameters.rubberBandForce);
         }
 
-        if (fabs(m_velocity.width()) >= fabs(m_currentKeyboardScroll->maximumVelocity.width()))
+        if (std::abs(m_velocity.width()) >= std::abs(m_currentKeyboardScroll->maximumVelocity.width()))
             force.setWidth(0);
 
-        if (fabs(m_velocity.height()) >= fabs(m_currentKeyboardScroll->maximumVelocity.height()))
+        if (std::abs(m_velocity.height()) >= std::abs(m_currentKeyboardScroll->maximumVelocity.height()))
             force.setHeight(0);
     }
 

@@ -300,7 +300,7 @@ NSArray *WebExtensionMatchPattern::expandedStrings() const
 
 bool WebExtensionMatchPattern::matchesAllHosts() const
 {
-    return isValid() && (m_matchesAllURLs || host() == "*"_s);
+    return isValid() && (m_matchesAllURLs || pattern().matchAllHosts());
 }
 
 bool WebExtensionMatchPattern::isValidScheme(String scheme)
@@ -394,6 +394,37 @@ bool WebExtensionMatchPattern::pathMatches(const WebExtensionMatchPattern& other
         return true;
 
     return false;
+}
+
+HashSet<String> toStrings(const MatchPatternSet& matchPatterns)
+{
+    HashSet<String> stringsToReturn;
+    stringsToReturn.reserveInitialCapacity(matchPatterns.size());
+
+    for (auto& pattern : matchPatterns)
+        stringsToReturn.add(pattern.get().string());
+
+    return stringsToReturn;
+}
+
+MatchPatternSet toPatterns(HashSet<String>& domains)
+{
+    MatchPatternSet matchPatterns;
+    matchPatterns.reserveInitialCapacity(domains.size());
+
+    for (auto& domain : domains)
+        matchPatterns.add(*WebExtensionMatchPattern::getOrCreate(domain));
+
+    return matchPatterns;
+}
+
+NSSet *toAPI(MatchPatternSet& set)
+{
+    NSMutableSet *result = [[NSMutableSet alloc] initWithCapacity:set.size()];
+    for (auto& element : set)
+        [result addObject:element->wrapper()];
+
+    return [result copy];
 }
 
 } // namespace WebKit

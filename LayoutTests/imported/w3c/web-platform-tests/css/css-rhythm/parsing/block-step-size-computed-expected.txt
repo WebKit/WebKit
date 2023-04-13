@@ -1,0 +1,8 @@
+
+PASS Property block-step-size value '0px'
+PASS Property block-step-size value 'none'
+PASS Property block-step-size value '100px'
+PASS Property block-step-size value '2em'
+PASS Property block-step-size value 'calc(10px + 0.5em)'
+PASS Property block-step-size value 'calc(10px - 0.5em)'
+

@@ -260,6 +260,7 @@ public:
     JS_EXPORT_PRIVATE static Ref<ArrayBuffer> create(ArrayBuffer&);
     JS_EXPORT_PRIVATE static Ref<ArrayBuffer> create(const void* source, size_t byteLength);
     JS_EXPORT_PRIVATE static Ref<ArrayBuffer> create(ArrayBufferContents&&);
+    JS_EXPORT_PRIVATE static Ref<ArrayBuffer> create(const Vector<uint8_t>&);
     JS_EXPORT_PRIVATE static Ref<ArrayBuffer> createAdopted(const void* data, size_t byteLength);
     JS_EXPORT_PRIVATE static Ref<ArrayBuffer> createFromBytes(const void* data, size_t byteLength, ArrayBufferDestructorFunction&&);
     JS_EXPORT_PRIVATE static Ref<ArrayBuffer> createShared(Ref<SharedArrayBufferContents>&&);
@@ -319,6 +320,8 @@ public:
 
     Expected<int64_t, GrowFailReason> grow(VM&, size_t newByteLength);
     Expected<int64_t, GrowFailReason> resize(VM&, size_t newByteLength);
+
+    Vector<uint8_t> toVector() const { return { static_cast<const uint8_t*>(data()), byteLength() }; };
 
 private:
     static Ref<ArrayBuffer> create(size_t numElements, unsigned elementByteSize, ArrayBufferContents::InitializationPolicy);

@@ -28,6 +28,7 @@
 
 #if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
 
+#import "MessageSenderInlines.h"
 #import "PlaybackSessionManagerMessages.h"
 #import "PlaybackSessionManagerProxyMessages.h"
 #import "WebPageProxy.h"
@@ -133,16 +134,22 @@ void PlaybackSessionModelContext::setPlaybackRate(double playbackRate)
         m_manager->setPlaybackRate(m_contextId, playbackRate);
 }
 
-void PlaybackSessionModelContext::selectAudioMediaOption(uint64_t optionId)
+void PlaybackSessionModelContext::selectAudioMediaOption(uint64_t index)
 {
+    if (m_audioMediaSelectedIndex == index)
+        return;
+
     if (m_manager)
-        m_manager->selectAudioMediaOption(m_contextId, optionId);
+        m_manager->selectAudioMediaOption(m_contextId, index);
 }
 
-void PlaybackSessionModelContext::selectLegibleMediaOption(uint64_t optionId)
+void PlaybackSessionModelContext::selectLegibleMediaOption(uint64_t index)
 {
+    if (m_legibleMediaSelectedIndex == index)
+        return;
+
     if (m_manager)
-        m_manager->selectLegibleMediaOption(m_contextId, optionId);
+        m_manager->selectLegibleMediaOption(m_contextId, index);
 }
 
 void PlaybackSessionModelContext::togglePictureInPicture()
@@ -159,12 +166,18 @@ void PlaybackSessionModelContext::toggleMuted()
 
 void PlaybackSessionModelContext::setMuted(bool muted)
 {
+    if (muted == m_muted)
+        return;
+
     if (m_manager)
         m_manager->setMuted(m_contextId, muted);
 }
 
 void PlaybackSessionModelContext::setVolume(double volume)
 {
+    if (volume == m_volume)
+        return;
+
     if (m_manager)
         m_manager->setVolume(m_contextId, volume);
 }

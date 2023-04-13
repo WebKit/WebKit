@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (c) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,38 +26,43 @@
 #pragma once
 
 #import "PresentationContext.h"
+#import <wtf/Vector.h>
+#import <wtf/spi/cocoa/IOSurfaceSPI.h>
 
 namespace WebGPU {
 
 class Device;
-class TextureView;
 
 class PresentationContextIOSurface : public PresentationContext {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<PresentationContextIOSurface> create(const WGPUSurfaceDescriptor& descriptor)
-    {
-        return adoptRef(*new PresentationContextIOSurface(descriptor));
-    }
+    static Ref<PresentationContextIOSurface> create(const WGPUSurfaceDescriptor&);
 
     virtual ~PresentationContextIOSurface();
 
     void configure(Device&, const WGPUSwapChainDescriptor&) override;
+    void unconfigure() override;
 
     void present() override;
+    Texture* getCurrentTexture() override; // FIXME: This should return a Texture&.
     TextureView* getCurrentTextureView() override; // FIXME: This should return a TextureView&.
-
-    RetainPtr<IOSurfaceRef> displayBuffer() const { return m_displayBuffer; }
-    RetainPtr<IOSurfaceRef> drawingBuffer() const { return m_drawingBuffer; }
-    RetainPtr<IOSurfaceRef> nextDrawable();
 
     bool isPresentationContextIOSurface() const override { return true; }
 
 private:
     PresentationContextIOSurface(const WGPUSurfaceDescriptor&);
 
-    RetainPtr<IOSurfaceRef> m_displayBuffer;
-    RetainPtr<IOSurfaceRef> m_drawingBuffer;
+    void renderBuffersWereRecreated(NSArray<IOSurface *> *renderBuffers);
+    void onSubmittedWorkScheduled(CompletionHandler<void()>&&);
+
+    NSArray<IOSurface *> *m_ioSurfaces { nil };
+    struct RenderBuffer {
+        Ref<Texture> texture;
+        Ref<TextureView> textureView;
+    };
+    Vector<RenderBuffer> m_renderBuffers;
+    RefPtr<Device> m_device;
+    size_t m_currentIndex { 0 };
 };
 
 } // namespace WebGPU

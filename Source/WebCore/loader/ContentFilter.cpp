@@ -32,10 +32,10 @@
 #include "ContentFilterClient.h"
 #include "ContentFilterUnblockHandler.h"
 #include "DocumentLoader.h"
-#include "Frame.h"
 #include "FrameLoadRequest.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
+#include "LocalFrame.h"
 #include "Logging.h"
 #include "NetworkExtensionContentFilter.h"
 #include "ParentalControlsContentFilter.h"
@@ -317,7 +317,7 @@ URL ContentFilter::url()
 #endif
 }
 
-static const URL& blockedPageURL()
+const URL& ContentFilter::blockedPageURL()
 {
     static NeverDestroyed blockedPageURL = [] () -> URL {
         auto webCoreBundle = CFBundleGetBundleWithIdentifier(CFSTR("com.apple.WebCore"));

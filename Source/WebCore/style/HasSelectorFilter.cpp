@@ -25,10 +25,11 @@
 #include "config.h"
 #include "HasSelectorFilter.h"
 
-#include "ElementIterator.h"
+#include "ElementChildIteratorInlines.h"
 #include "RuleFeature.h"
 #include "SelectorFilter.h"
 #include "StyleRule.h"
+#include "TypedElementDescendantIteratorInlines.h"
 
 namespace WebCore::Style {
 

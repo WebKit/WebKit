@@ -26,6 +26,8 @@
 #include "config.h"
 #include "ScrollbarThemeAdwaita.h"
 
+#if USE(THEME_ADWAITA)
+
 #include "Color.h"
 #include "FloatRoundedRect.h"
 #include "GraphicsContext.h"
@@ -361,3 +363,5 @@ ScrollbarTheme& ScrollbarTheme::nativeTheme()
 #endif
 
 } // namespace WebCore
+
+#endif // USE(THEME_ADWAITA)

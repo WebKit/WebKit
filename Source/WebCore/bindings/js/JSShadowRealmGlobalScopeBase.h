@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "JSDOMGlobalObject.h"
+#include "JSDOMGlobalObjectInlines.h"
 #include "JSDOMWrapper.h"
 
 namespace WebCore {
@@ -48,8 +48,6 @@ public:
     ScriptExecutionContext* scriptExecutionContext() const;
 
 private:
-    static const JSC::GlobalObjectMethodTable s_globalObjectMethodTable;
-
     static bool supportsRichSourceInfo(const JSC::JSGlobalObject*);
     static bool shouldInterruptScript(const JSC::JSGlobalObject*);
     static bool shouldInterruptScriptBeforeTimeout(const JSC::JSGlobalObject*);
@@ -65,6 +63,8 @@ protected:
     DECLARE_VISIT_CHILDREN;
 
 private:
+    static const JSC::GlobalObjectMethodTable* globalObjectMethodTable();
+
     RefPtr<ShadowRealmGlobalScope> m_wrapped;
 };
 

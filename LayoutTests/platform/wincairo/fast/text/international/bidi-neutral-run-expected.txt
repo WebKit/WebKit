@@ -4,8 +4,8 @@ layer at (0,0) size 785x6380
   RenderBlock {HTML} at (0,0) size 785x6380
     RenderBody {BODY} at (8,8) size 769x6356
       RenderBlock {P} at (0,0) size 769x20
-        RenderText {#text} at (0,0) size 285x19
-          text run at (0,0) width 285: "Tests the resolved level of runs of neutral types."
+        RenderText {#text} at (0,0) size 299x19
+          text run at (0,0) width 299: "Tests the resolved level of runs of neutral types."
       RenderBlock {DIV} at (0,36) size 769x3152
         RenderBlock {P} at (0,0) size 769x20
           RenderText {#text} at (0,0) size 43x19

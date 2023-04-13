@@ -136,6 +136,41 @@ VkResult CreateBuffer(VmaAllocator allocator,
     return result;
 }
 
+VkResult AllocateAndBindMemoryForImage(VmaAllocator allocator,
+                                       VkImage *pImage,
+                                       VkMemoryPropertyFlags requiredFlags,
+                                       VkMemoryPropertyFlags preferredFlags,
+                                       VmaAllocation *pAllocationOut,
+                                       uint32_t *pMemoryTypeIndexOut,
+                                       VkDeviceSize *sizeOut)
+{
+    VkResult result;
+    VmaAllocationCreateInfo allocationCreateInfo = {};
+    allocationCreateInfo.requiredFlags           = requiredFlags;
+    allocationCreateInfo.preferredFlags          = preferredFlags;
+    allocationCreateInfo.flags                   = 0;
+    VmaAllocationInfo allocationInfo             = {};
+
+    result = vmaAllocateMemoryForImage(allocator, *pImage, &allocationCreateInfo, pAllocationOut,
+                                       &allocationInfo);
+    if (result == VK_SUCCESS)
+    {
+        // If binding was unsuccessful, we should free the allocation.
+        result = vmaBindImageMemory(allocator, *pAllocationOut, *pImage);
+        if (result != VK_SUCCESS)
+        {
+            vmaFreeMemory(allocator, *pAllocationOut);
+            *pAllocationOut = VK_NULL_HANDLE;
+            return result;
+        }
+
+        *pMemoryTypeIndexOut = allocationInfo.memoryType;
+        *sizeOut             = allocationInfo.size;
+    }
+
+    return result;
+}
+
 VkResult FindMemoryTypeIndexForBufferInfo(VmaAllocator allocator,
                                           const VkBufferCreateInfo *pBufferCreateInfo,
                                           VkMemoryPropertyFlags requiredFlags,

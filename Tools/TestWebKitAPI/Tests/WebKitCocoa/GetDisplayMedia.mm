@@ -36,9 +36,10 @@
 #import <WebKit/WKWebView.h>
 #import <WebKit/WKWebViewConfiguration.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
+#import <WebKit/WKWebViewPrivateForTesting.h>
 
 static bool shouldDeny = false;
-static _WKCaptureDevices requestedDevices = 0;
+static bool systemCanPromptForCapture = false;
 
 @interface GetDisplayMediaMessageHandler : NSObject <WKScriptMessageHandler>
 @end
@@ -53,30 +54,22 @@ static _WKCaptureDevices requestedDevices = 0;
 @end
 
 @interface GetDisplayMediaUIDelegate : NSObject<WKUIDelegate>
-- (void)_webView:(WKWebView *)webView requestUserMediaAuthorizationForDevices:(_WKCaptureDevices)devices url:(NSURL *)url mainFrameURL:(NSURL *)mainFrameURL decisionHandler:(void (^)(BOOL authorized))decisionHandler;
+
+- (void)_webView:(WKWebView *)webView requestDisplayCapturePermissionForOrigin:(WKSecurityOrigin *)securityOrigin initiatedByFrame:(WKFrameInfo *)frame withSystemAudio:(BOOL)withSystemAudio decisionHandler:(void (^)(WKDisplayCapturePermissionDecision decision))decisionHandler;
 - (void)_webView:(WKWebView *)webView checkUserMediaPermissionForURL:(NSURL *)url mainFrameURL:(NSURL *)mainFrameURL frameIdentifier:(NSUInteger)frameIdentifier decisionHandler:(void (^)(NSString *salt, BOOL authorized))decisionHandler;
 @end
 
 @implementation GetDisplayMediaUIDelegate
-- (void)_webView:(WKWebView *)webView requestUserMediaAuthorizationForDevices:(_WKCaptureDevices)devices url:(NSURL *)url mainFrameURL:(NSURL *)mainFrameURL decisionHandler:(void (^)(BOOL authorized))decisionHandler
+- (void)_webView:(WKWebView *)webView requestDisplayCapturePermissionForOrigin:(WKSecurityOrigin *)securityOrigin initiatedByFrame:(WKFrameInfo *)frame withSystemAudio:(BOOL)withSystemAudio decisionHandler:(void (^)(WKDisplayCapturePermissionDecision decision))decisionHandler
 {
     wasPrompted = true;
 
     if (shouldDeny) {
-        decisionHandler(NO);
+        decisionHandler(WKDisplayCapturePermissionDecisionDeny);
         return;
     }
 
-    requestedDevices = devices;
-    BOOL needsMicrophoneAuthorization = !!(requestedDevices & _WKCaptureDeviceMicrophone);
-    BOOL needsCameraAuthorization = !!(requestedDevices & _WKCaptureDeviceCamera);
-    BOOL needsDisplayCaptureAuthorization = !!(requestedDevices & _WKCaptureDeviceDisplay);
-    if (!needsMicrophoneAuthorization && !needsCameraAuthorization && !needsDisplayCaptureAuthorization) {
-        decisionHandler(NO);
-        return;
-    }
-
-    decisionHandler(YES);
+    decisionHandler(WKDisplayCapturePermissionDecisionScreenPrompt);
 }
 
 - (void)_webView:(WKWebView *)webView checkUserMediaPermissionForURL:(NSURL *)url mainFrameURL:(NSURL *)mainFrameURL frameIdentifier:(NSUInteger)frameIdentifier decisionHandler:(void (^)(NSString *salt, BOOL authorized))decisionHandler
@@ -129,8 +122,12 @@ public:
 
     void promptForCapture(NSString* constraints, bool shouldSucceed)
     {
+        auto constraintString = [constraints UTF8String];
+
+        [m_webView _setSystemCanPromptForGetDisplayMediaForTesting:systemCanPromptForCapture];
+
         [m_webView stringByEvaluatingJavaScript:@"stop()"];
-        EXPECT_TRUE(haveStream(false));
+        EXPECT_TRUE(haveStream(false)) << " with contraint " << constraintString;
 
         wasPrompted = false;
         receivedScriptMessage = false;
@@ -139,17 +136,21 @@ public:
         [m_webView stringByEvaluatingJavaScript:script];
 
         TestWebKitAPI::Util::run(&receivedScriptMessage);
+        auto getDisplayMediaResult = [(NSString *)[lastScriptMessage body] UTF8String];
         if (shouldSucceed) {
-            EXPECT_STREQ([(NSString *)[lastScriptMessage body] UTF8String], "allowed");
-            EXPECT_TRUE(haveStream(true));
-            EXPECT_TRUE(wasPrompted);
-        } else {
-            EXPECT_STREQ([(NSString *)[lastScriptMessage body] UTF8String], "denied");
-            EXPECT_TRUE(haveStream(false));
-            if (shouldDeny)
-                EXPECT_TRUE(wasPrompted);
+            EXPECT_STREQ(getDisplayMediaResult, "allowed") << " with contraint " << constraintString;
+            EXPECT_TRUE(haveStream(true)) << " with contraint " << constraintString;
+            if (!systemCanPromptForCapture)
+                EXPECT_TRUE(wasPrompted) << " with contraint " << constraintString;
             else
-                EXPECT_FALSE(wasPrompted);
+                EXPECT_FALSE(wasPrompted) << " with contraint " << constraintString;
+        } else {
+            EXPECT_STREQ(getDisplayMediaResult, "denied") << " with contraint " << constraintString;
+            EXPECT_TRUE(haveStream(false)) << " with contraint " << constraintString;
+            if (shouldDeny && !systemCanPromptForCapture)
+                EXPECT_TRUE(wasPrompted) << " with contraint " << constraintString;
+            else
+                EXPECT_FALSE(wasPrompted) << " with contraint " << constraintString;
         }
     }
 
@@ -182,6 +183,16 @@ TEST_F(GetDisplayMediaTest, PromptOnceAfterDenial)
     shouldDeny = false;
     promptForCapture(@"{ video: true }", true);
 }
+
+TEST_F(GetDisplayMediaTest, SystemCanPrompt)
+{
+    systemCanPromptForCapture = true;
+    promptForCapture(@"{ audio: true, video: true }", true);
+    promptForCapture(@"{ audio: true, video: false }", false);
+    promptForCapture(@"{ audio: false, video: true }", true);
+    promptForCapture(@"{ audio: false, video: false }", false);
+}
+
 
 } // namespace TestWebKitAPI
 

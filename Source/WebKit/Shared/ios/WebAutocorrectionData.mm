@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,38 +24,48 @@
  */
 
 #import "config.h"
-#import "WebAutocorrectionData.h"
 
 #if PLATFORM(IOS_FAMILY)
+#import "WebAutocorrectionData.h"
 
-#import "ArgumentCodersCocoa.h"
-#import "Decoder.h"
-#import "Encoder.h"
-#import "WebCoreArgumentCoders.h"
+#import "UIKitSPI.h"
 #import <UIKit/UIKit.h>
 #import <WebCore/FloatRect.h>
+#import <wtf/RetainPtr.h>
+#import <wtf/Vector.h>
 
 namespace WebKit {
-using namespace WebCore;
 
-void WebAutocorrectionData::encode(IPC::Encoder& encoder) const
+WebAutocorrectionData::WebAutocorrectionData(Vector<WebCore::FloatRect>&& textRects, std::optional<String>&& fontName, double pointSize, double weight)
 {
-    encoder << textRects;
-    IPC::encode(encoder, font.get());
+    this->textRects = WTFMove(textRects);
+    if (fontName.has_value())
+        this->font = [UIFont fontWithName:WTFMove(*fontName) size:pointSize];
+    else
+        this->font = [UIFont systemFontOfSize:pointSize weight:weight];
 }
 
-std::optional<WebAutocorrectionData> WebAutocorrectionData::decode(IPC::Decoder& decoder)
+WebAutocorrectionData::WebAutocorrectionData(const Vector<WebCore::FloatRect>& textRects, const RetainPtr<UIFont>& font)
 {
-    std::optional<Vector<FloatRect>> textRects;
-    decoder >> textRects;
-    if (!textRects)
-        return std::nullopt;
+    this->textRects = textRects;
+    this->font = font;
+}
 
-    RetainPtr<UIFont> font;
-    if (!IPC::decode(decoder, font, @[ UIFont.class ]))
+std::optional<String> WebAutocorrectionData::fontName() const
+{
+    if ([font isSystemFont])
         return std::nullopt;
+    return { { [font fontName] } };
+}
 
-    return {{ *textRects, font }};
+double WebAutocorrectionData::fontPointSize() const
+{
+    return [font pointSize];
+}
+
+double WebAutocorrectionData::fontWeight() const
+{
+    return [[[font fontDescriptor] objectForKey:UIFontWeightTrait] doubleValue];
 }
 
 } // namespace WebKit

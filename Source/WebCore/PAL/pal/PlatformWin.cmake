@@ -1,4 +1,6 @@
 list(APPEND PAL_SOURCES
+    crypto/openssl/CryptoDigestOpenSSL.cpp
+
     system/ClockGeneric.cpp
 
     system/win/SoundWin.cpp
@@ -8,14 +10,6 @@ list(APPEND PAL_SOURCES
     win/LoggingWin.cpp
 )
 
-list(APPEND PAL_INCLUDE_DIRECTORIES
-    "${CMAKE_BINARY_DIR}/../include/private"
+list(APPEND PAL_PRIVATE_LIBRARIES
+    OpenSSL::Crypto
 )
-
-if (${WTF_PLATFORM_WIN_CAIRO})
-    include(PlatformWinCairo.cmake)
-else ()
-    include(PlatformAppleWin.cmake)
-endif ()
-
-set(PAL_OUTPUT_NAME PAL${DEBUG_SUFFIX})

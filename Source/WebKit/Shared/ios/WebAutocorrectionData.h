@@ -29,6 +29,7 @@
 
 #include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 namespace IPC {
 class Decoder;
@@ -44,11 +45,16 @@ OBJC_CLASS UIFont;
 namespace WebKit {
 
 struct WebAutocorrectionData {
+    WebAutocorrectionData() = default;
+    WebAutocorrectionData(Vector<WebCore::FloatRect>&& textRects, std::optional<String>&& fontName, double pointSize, double weight);
+    WebAutocorrectionData(const Vector<WebCore::FloatRect>& textRects, const RetainPtr<UIFont>&);
+
+    std::optional<String> fontName() const;
+    double fontPointSize() const;
+    double fontWeight() const;
+
     Vector<WebCore::FloatRect> textRects;
     RetainPtr<UIFont> font;
-
-    void encode(IPC::Encoder&) const;
-    static std::optional<WebAutocorrectionData> decode(IPC::Decoder&);
 };
 
 } // namespace WebKit

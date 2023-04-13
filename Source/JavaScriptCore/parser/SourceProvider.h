@@ -57,7 +57,7 @@ class UnlinkedFunctionCodeBlock;
     public:
         static const intptr_t nullID = 1;
         
-        JS_EXPORT_PRIVATE SourceProvider(const SourceOrigin&, String&& sourceURL, const TextPosition& startPosition, SourceProviderSourceType);
+        JS_EXPORT_PRIVATE SourceProvider(const SourceOrigin&, String&& sourceURL, String&& preRedirectURL, const TextPosition& startPosition, SourceProviderSourceType);
 
         JS_EXPORT_PRIVATE virtual ~SourceProvider() {};
 
@@ -76,7 +76,9 @@ class UnlinkedFunctionCodeBlock;
         const SourceOrigin& sourceOrigin() const { return m_sourceOrigin; }
 
         // This is NOT the path that should be used for computing relative paths from a script. Use SourceOrigin's URL for that, the values may or may not be the same...
+
         JS_EXPORT_PRIVATE const String& sourceURL() const { return m_sourceURL; }
+        JS_EXPORT_PRIVATE const String& preRedirectURL() const { return m_preRedirectURL; }
         JS_EXPORT_PRIVATE const String& sourceURLDirective() const { return m_sourceURLDirective; }
         JS_EXPORT_PRIVATE const String& sourceMappingURLDirective() const { return m_sourceMappingURLDirective; }
 
@@ -99,6 +101,7 @@ class UnlinkedFunctionCodeBlock;
         SourceProviderSourceType m_sourceType;
         SourceOrigin m_sourceOrigin;
         String m_sourceURL;
+        String m_preRedirectURL;
         String m_sourceURLDirective;
         String m_sourceMappingURLDirective;
         TextPosition m_startPosition;
@@ -125,8 +128,8 @@ class UnlinkedFunctionCodeBlock;
         }
 
     protected:
-        JS_EXPORT_PRIVATE StringSourceProvider(const String& source, const SourceOrigin& sourceOrigin, String&& sourceURL, const TextPosition& startPosition, SourceProviderSourceType sourceType)
-            : SourceProvider(sourceOrigin, WTFMove(sourceURL), startPosition, sourceType)
+       JS_EXPORT_PRIVATE StringSourceProvider(const String& source, const SourceOrigin& sourceOrigin, String&& sourceURL, const TextPosition& startPosition, SourceProviderSourceType sourceType)
+            : SourceProvider(sourceOrigin, WTFMove(sourceURL), String(), startPosition, sourceType)
             , m_source(source.isNull() ? *StringImpl::empty() : *source.impl())
         {
         }
@@ -180,7 +183,7 @@ class UnlinkedFunctionCodeBlock;
         virtual void unlockUnderlyingBuffer() { }
 
     protected:
-        JS_EXPORT_PRIVATE BaseWebAssemblySourceProvider(const SourceOrigin&, String&&);
+        JS_EXPORT_PRIVATE BaseWebAssemblySourceProvider(const SourceOrigin&, String&& sourceURL);
     };
 
     class WebAssemblySourceProvider final : public BaseWebAssemblySourceProvider {

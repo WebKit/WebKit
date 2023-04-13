@@ -1,6 +1,6 @@
 find_package(Libxkbcommon 0.4.0 REQUIRED)
-find_package(Wayland REQUIRED)
-find_package(WaylandProtocols 1.12 REQUIRED)
+find_package(Wayland 1.15 REQUIRED)
+find_package(WaylandProtocols 1.15 REQUIRED)
 find_package(WPEBackend_fdo 1.3.0 REQUIRED)
 
 list(APPEND WPEToolingBackends_PUBLIC_HEADERS
@@ -49,7 +49,7 @@ add_custom_command(
     OUTPUT ${WPEToolingBackends_DERIVED_SOURCES_DIR}/xdg-shell-protocol.c
     MAIN_DEPENDENCY ${WAYLAND_PROTOCOLS_DATADIR}/stable/xdg-shell/xdg-shell.xml
     DEPENDS ${WPEToolingBackends_DERIVED_SOURCES_DIR}/xdg-shell-client-protocol.h
-    COMMAND ${WAYLAND_SCANNER} code ${WAYLAND_PROTOCOLS_DATADIR}/stable/xdg-shell/xdg-shell.xml ${WPEToolingBackends_DERIVED_SOURCES_DIR}/xdg-shell-protocol.c
+    COMMAND ${WAYLAND_SCANNER} private-code ${WAYLAND_PROTOCOLS_DATADIR}/stable/xdg-shell/xdg-shell.xml ${WPEToolingBackends_DERIVED_SOURCES_DIR}/xdg-shell-protocol.c
     VERBATIM)
 
 add_custom_command(
@@ -62,7 +62,7 @@ add_custom_command(
     OUTPUT ${WPEToolingBackends_DERIVED_SOURCES_DIR}/xdg-shell-unstable-v6-protocol.c
     MAIN_DEPENDENCY ${WAYLAND_PROTOCOLS_DATADIR}/unstable/xdg-shell/xdg-shell-unstable-v6.xml
     DEPENDS ${WPEToolingBackends_DERIVED_SOURCES_DIR}/xdg-shell-unstable-v6-client-protocol.h
-    COMMAND ${WAYLAND_SCANNER} code ${WAYLAND_PROTOCOLS_DATADIR}/unstable/xdg-shell/xdg-shell-unstable-v6.xml ${WPEToolingBackends_DERIVED_SOURCES_DIR}/xdg-shell-unstable-v6-protocol.c
+    COMMAND ${WAYLAND_SCANNER} private-code ${WAYLAND_PROTOCOLS_DATADIR}/unstable/xdg-shell/xdg-shell-unstable-v6.xml ${WPEToolingBackends_DERIVED_SOURCES_DIR}/xdg-shell-unstable-v6-protocol.c
     VERBATIM)
 
 add_custom_command(

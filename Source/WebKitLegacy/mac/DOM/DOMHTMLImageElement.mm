@@ -28,6 +28,7 @@
 #import "DOMNodeInternal.h"
 #import "DOMPrivate.h"
 #import "ExceptionHandlers.h"
+#import <WebCore/ElementInlines.h>
 #import <WebCore/HTMLImageElement.h>
 #import <WebCore/HTMLNames.h>
 #import <WebCore/HitTestResult.h>

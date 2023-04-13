@@ -67,7 +67,7 @@ struct PossiblyQuotedIdentifier {
 
         bool hasExplicitNestingParent() const;
         void resolveNestingParentSelectors(const CSSSelectorList& parent);
-        void replaceNestingParentByNotAll();
+        void replaceNestingParentByPseudoClassScope();
 
         // How the attribute value has to match. Default is Exact.
         enum Match {
@@ -191,6 +191,7 @@ struct PossiblyQuotedIdentifier {
             PseudoClassHasAttachment,
 #endif
             PseudoClassModal,
+            PseudoClassPopoverOpen,
             PseudoClassUserInvalid,
             PseudoClassUserValid,
             PseudoClassNestingParent,
@@ -264,7 +265,6 @@ struct PossiblyQuotedIdentifier {
         const AtomString& value() const;
         const AtomString& serializingValue() const;
         const QualifiedName& attribute() const;
-        const AtomString& attributeCanonicalLocalName() const;
         const AtomString& argument() const { return m_hasRareData ? m_data.rareData->argument : nullAtom(); }
         bool attributeValueMatchingIsCaseInsensitive() const;
         const FixedVector<PossiblyQuotedIdentifier>* argumentList() const { return m_hasRareData ? &m_data.rareData->argumentList : nullptr; }
@@ -274,7 +274,7 @@ struct PossiblyQuotedIdentifier {
         void setValue(const AtomString&, bool matchLowerCase = false);
 
         enum AttributeMatchType { CaseSensitive, CaseInsensitive };
-        void setAttribute(const QualifiedName&, bool convertToLowercase, AttributeMatchType);
+        void setAttribute(const QualifiedName&, AttributeMatchType);
         void setNth(int a, int b);
         void setArgument(const AtomString&);
         void setArgumentList(FixedVector<PossiblyQuotedIdentifier>);
@@ -332,7 +332,6 @@ struct PossiblyQuotedIdentifier {
         unsigned m_isFirstInTagHistory : 1 { true };
         unsigned m_isLastInTagHistory : 1 { true };
         unsigned m_hasRareData : 1 { false };
-        unsigned m_hasNameWithCase : 1 { false };
         unsigned m_isForPage : 1 { false };
         unsigned m_tagIsForNamespaceRule : 1 { false };
         unsigned m_caseInsensitiveAttributeValueMatching : 1 { false };
@@ -362,7 +361,6 @@ struct PossiblyQuotedIdentifier {
             int a { 0 }; // Used for :nth-*
             int b { 0 }; // Used for :nth-*
             QualifiedName attribute; // used for attribute selector
-            AtomString attributeCanonicalLocalName;
             AtomString argument; // Used for :contains and :nth-*
             FixedVector<PossiblyQuotedIdentifier> argumentList; // Used for :lang and ::part arguments.
             std::unique_ptr<CSSSelectorList> selectorList; // Used for :is(), :matches(), and :not().
@@ -375,23 +373,10 @@ struct PossiblyQuotedIdentifier {
         };
         void createRareData();
 
-        struct NameWithCase : public RefCounted<NameWithCase> {
-            NameWithCase(const QualifiedName& originalName, const AtomString& lowercaseName)
-                : originalName(originalName)
-                , lowercaseLocalName(lowercaseName)
-            {
-                ASSERT(originalName.localName() != lowercaseName);
-            }
-
-            const QualifiedName originalName;
-            const AtomString lowercaseLocalName;
-        };
-
         union DataUnion {
             AtomStringImpl* value { nullptr };
             QualifiedName::QualifiedNameImpl* tagQName;
             RareData* rareData;
-            NameWithCase* nameWithCase;
         } m_data;
     };
 
@@ -405,13 +390,6 @@ inline const QualifiedName& CSSSelector::attribute() const
     ASSERT(isAttributeSelector());
     ASSERT(m_hasRareData);
     return m_data.rareData->attribute;
-}
-
-inline const AtomString& CSSSelector::attributeCanonicalLocalName() const
-{
-    ASSERT(isAttributeSelector());
-    ASSERT(m_hasRareData);
-    return m_data.rareData->attributeCanonicalLocalName;
 }
 
 inline bool CSSSelector::matchesPseudoElement() const
@@ -519,10 +497,6 @@ inline CSSSelector::~CSSSelector()
         m_data.rareData->deref();
         m_data.rareData = nullptr;
         m_hasRareData = false;
-    } else if (m_hasNameWithCase) {
-        m_data.nameWithCase->deref();
-        m_data.nameWithCase = nullptr;
-        m_hasNameWithCase = false;
     } else if (match() == Tag) {
         m_data.tagQName->deref();
         m_data.tagQName = nullptr;
@@ -535,17 +509,12 @@ inline CSSSelector::~CSSSelector()
 
 inline const QualifiedName& CSSSelector::tagQName() const
 {
-    ASSERT(match() == Tag);
-    if (m_hasNameWithCase)
-        return m_data.nameWithCase->originalName;
     return *reinterpret_cast<const QualifiedName*>(&m_data.tagQName);
 }
 
 inline const AtomString& CSSSelector::tagLowercaseLocalName() const
 {
-    if (m_hasNameWithCase)
-        return m_data.nameWithCase->lowercaseLocalName;
-    return m_data.tagQName->m_localName;
+    return tagQName().localNameLowercase();
 }
 
 inline const AtomString& CSSSelector::value() const

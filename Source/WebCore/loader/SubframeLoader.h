@@ -35,22 +35,23 @@
 namespace WebCore {
 
 class Document;
-class Frame;
 class FrameLoaderClient;
 class HTMLFrameOwnerElement;
 class HTMLMediaElement;
 class HTMLPlugInImageElement;
 class IntSize;
+class LocalFrame;
 class Widget;
 
 // This is a slight misnomer. It handles the higher level logic of loading both subframes and plugins.
 class FrameLoader::SubframeLoader {
     WTF_MAKE_NONCOPYABLE(SubframeLoader); WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit SubframeLoader(Frame&);
+    explicit SubframeLoader(LocalFrame&);
 
     void clear();
 
+    void createFrameIfNecessary(HTMLFrameOwnerElement&, const AtomString& frameName);
     bool requestFrame(HTMLFrameOwnerElement&, const String& url, const AtomString& frameName, LockHistory = LockHistory::Yes, LockBackForwardList = LockBackForwardList::Yes);
     bool requestObject(HTMLPlugInImageElement&, const String& url, const AtomString& frameName,
         const String& serviceType, const Vector<AtomString>& paramNames, const Vector<AtomString>& paramValues);
@@ -61,8 +62,8 @@ public:
 
 private:
     bool requestPlugin(HTMLPlugInImageElement&, const URL&, const String& serviceType, const Vector<AtomString>& paramNames, const Vector<AtomString>& paramValues, bool useFallback);
-    Frame* loadOrRedirectSubframe(HTMLFrameOwnerElement&, const URL&, const AtomString& frameName, LockHistory, LockBackForwardList);
-    RefPtr<Frame> loadSubframe(HTMLFrameOwnerElement&, const URL&, const AtomString& name, const String& referrer);
+    LocalFrame* loadOrRedirectSubframe(HTMLFrameOwnerElement&, const URL&, const AtomString& frameName, LockHistory, LockBackForwardList);
+    RefPtr<LocalFrame> loadSubframe(HTMLFrameOwnerElement&, const URL&, const AtomString& name, const String& referrer);
     bool loadPlugin(HTMLPlugInImageElement&, const URL&, const String& mimeType, const Vector<AtomString>& paramNames, const Vector<AtomString>& paramValues, bool useFallback);
 
     bool shouldUsePlugin(const URL&, const String& mimeType, bool hasFallback, bool& useFallback);
@@ -73,7 +74,7 @@ private:
     bool shouldConvertInvalidURLsToBlank() const;
 
     bool m_containsPlugins { false };
-    Frame& m_frame;
+    LocalFrame& m_frame;
 };
 
 } // namespace WebCore

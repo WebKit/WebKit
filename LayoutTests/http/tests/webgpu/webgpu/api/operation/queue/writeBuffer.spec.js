@@ -124,8 +124,7 @@ Tests that writeBuffer currently handles different offsets and writes. This incl
           useArrayBuffer: false,
           dataOffset: 2,
           dataSize: 2,
-        },
-        // [2, 3]
+        }, // [2, 3]
         {
           bufferOffset: 2 * Uint32Array.BYTES_PER_ELEMENT,
           data: kTestData,
@@ -133,8 +132,7 @@ Tests that writeBuffer currently handles different offsets and writes. This incl
           useArrayBuffer: false,
           dataOffset: 0,
           dataSize: 2,
-        },
-        // [0, 1]
+        }, // [0, 1]
       ], // Expected [2, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]
     },
     {
@@ -164,7 +162,6 @@ Tests that writeBuffer currently handles different offsets and writes. This incl
           dataOffset: 2,
           dataSize: 4 * Uint32Array.BYTES_PER_ELEMENT,
         },
-
         { bufferOffset: 4, data: [0x04030201], arrayType: 'Uint32Array', useArrayBuffer: true },
       ],
       // Expected [0, 0, 1, 0, 1, 2, 3, 4, 0, 0, 3, 0, 0, 0, 4, 0]
@@ -180,8 +177,7 @@ Tests that writeBuffer currently handles different offsets and writes. This incl
     {
       // Zero buffer
       writes: [{ bufferOffset: 0, data: [], arrayType: 'Uint8Array', useArrayBuffer: false }],
-    },
-    // Expected []
+    }, // Expected []
     {
       // Unaligned source
       writes: [
@@ -193,7 +189,6 @@ Tests that writeBuffer currently handles different offsets and writes. This incl
           dataOffset: 1,
         },
       ],
-
       // Expected [0, 1, 2, 3, 4, 5 ,6 ,7, 8, 9, 10, 11, 12, 13, 14, 15]
     },
     {
@@ -205,28 +200,24 @@ Tests that writeBuffer currently handles different offsets and writes. This incl
           arrayType: 'Uint32Array',
           useArrayBuffer: false,
         },
-
         {
           bufferOffset: 0,
           data: [0x04040404, 0x04040404, 0x04040404, 0x04040404],
           arrayType: 'Uint32Array',
           useArrayBuffer: false,
         },
-
         {
           bufferOffset: 0,
           data: [0x03030303, 0x03030303, 0x03030303],
           arrayType: 'Uint32Array',
           useArrayBuffer: false,
         },
-
         {
           bufferOffset: 0,
           data: [0x02020202, 0x02020202],
           arrayType: 'Uint32Array',
           useArrayBuffer: false,
         },
-
         {
           bufferOffset: 0,
           data: [0x01010101],
@@ -234,7 +225,6 @@ Tests that writeBuffer currently handles different offsets and writes. This incl
           useArrayBuffer: false,
         },
       ],
-
       // Expected [1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5]
     },
   ])

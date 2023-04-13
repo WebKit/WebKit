@@ -907,6 +907,32 @@ public:
         generationInfo(node).initConstant(node, node->refCount());
     }
 
+    void strictInt32TupleResultWithoutUsingChildren(GPRReg reg, Node* node, unsigned index, DataFormat format = DataFormatInt32)
+    {
+        ASSERT(index < node->tupleSize());
+        unsigned refCount = m_graph.m_tupleData.at(node->tupleOffset() + index).refCount;
+        if (!refCount)
+            return;
+        ASSERT(refCount == 1);
+        VirtualRegister virtualRegister = m_graph.m_tupleData.at(node->tupleOffset() + index).virtualRegister;
+        GenerationInfo& info = generationInfoFromVirtualRegister(virtualRegister);
+
+        if (format == DataFormatInt32) {
+            jitAssertIsInt32(reg);
+            m_gprs.retain(reg, virtualRegister, SpillOrderInteger);
+            info.initInt32(node, refCount, reg);
+        } else {
+#if USE(JSVALUE64)
+            RELEASE_ASSERT(format == DataFormatJSInt32);
+            jitAssertIsJSInt32(reg);
+            m_gprs.retain(reg, virtualRegister, SpillOrderJS);
+            info.initJSValue(node, refCount, reg, format);
+#elif USE(JSVALUE32_64)
+            RELEASE_ASSERT_NOT_REACHED();
+#endif
+        }
+    }
+
     template<typename OperationType, typename ResultRegType, typename... Args>
     std::enable_if_t<
         FunctionTraits<OperationType>::hasResult,
@@ -981,12 +1007,30 @@ public:
         return Base::appendCall(function);
     }
 
+#if OS(WINDOWS) && CPU(X86_64)
+    JITCompiler::Call appendCallWithUGPRPair(const CodePtr<CFunctionPtrTag> function)
+    {
+        prepareForExternalCall();
+        emitStoreCodeOrigin(m_currentNode->origin.semantic);
+        return Base::appendCallWithUGPRPair(function);
+    }
+#endif
+
     void appendCall(Address address)
     {
         prepareForExternalCall();
         emitStoreCodeOrigin(m_currentNode->origin.semantic);
         Base::appendCall(address);
     }
+
+#if OS(WINDOWS) && CPU(X86_64)
+    JITCompiler::Call appendCallWithUGPRPair(Address address)
+    {
+        prepareForExternalCall();
+        emitStoreCodeOrigin(m_currentNode->origin.semantic);
+        Base::appendCallWithUGPRPair(address);
+    }
+#endif
 
     JITCompiler::Call appendOperationCall(const CodePtr<OperationPtrTag> function)
     {
@@ -1004,7 +1048,11 @@ public:
 
     void appendCallSetResult(Address address, GPRReg result1, GPRReg result2)
     {
+#if OS(WINDOWS) && CPU(X86_64)
+        appendCallWithUGPRPair(address);
+#else
         appendCall(address);
+#endif
         setupResults(result1, result2);
     }
 
@@ -1027,7 +1075,11 @@ public:
 
     JITCompiler::Call appendCallSetResult(const CodePtr<CFunctionPtrTag> function, GPRReg result1, GPRReg result2)
     {
+#if OS(WINDOWS) && CPU(X86_64)
+        JITCompiler::Call call = appendCallWithUGPRPair(function);
+#else
         JITCompiler::Call call = appendCall(function);
+#endif
         setupResults(result1, result2);
         return call;
     }
@@ -1257,6 +1309,7 @@ public:
     
     void compileToStringOrCallStringConstructorOrStringValueOf(Node*);
     void compileFunctionToString(Node*);
+    void compileFunctionBind(Node*);
     void compileNumberToStringWithRadix(Node*);
     void compileNumberToStringWithValidRadixConstant(Node*);
     void compileNumberToStringWithValidRadixConstant(Node*, int32_t radix);
@@ -1321,7 +1374,7 @@ public:
     void compilePutByVal(Node*);
 
     // We use a scopedLambda to placate register allocation validation.
-    enum class CanUseFlush { Yes, No };
+    enum class CanUseFlush : bool { No, Yes };
     void compileGetByVal(Node*, const ScopedLambda<std::tuple<JSValueRegs, DataFormat, CanUseFlush>(DataFormat preferredFormat)>& prefix);
 
     void compileGetCharCodeAt(Node*);
@@ -1448,6 +1501,7 @@ public:
     template <typename ClassType> void compileNewFunctionCommon(GPRReg, RegisteredStructure, GPRReg, GPRReg, GPRReg, JumpList&, size_t, FunctionExecutable*);
     void compileNewFunction(Node*);
     void compileSetFunctionName(Node*);
+    void compileNewBoundFunction(Node*);
     void compileNewRegexp(Node*);
     void compileForwardVarargs(Node*);
     void compileVarargsLength(Node*);
@@ -1459,7 +1513,6 @@ public:
     void compileGetArgument(Node*);
     void compileCreateScopedArguments(Node*);
     void compileCreateClonedArguments(Node*);
-    void compileCreateArgumentsButterfly(Node*);
     void compileCreateRest(Node*);
     void compileSpread(Node*);
     void compileNewArray(Node*);
@@ -1514,9 +1567,8 @@ public:
     void compileThrow(Node*);
     void compileThrowStaticError(Node*);
 
+    void compileExtractFromTuple(Node*);
     void compileEnumeratorNextUpdateIndexAndMode(Node*);
-    void compileEnumeratorNextExtractMode(Node*);
-    void compileEnumeratorNextExtractIndex(Node*);
     void compileEnumeratorNextUpdatePropertyName(Node*);
     void compileEnumeratorGetByVal(Node*);
     template<typename SlowPathFunctionType>
@@ -2236,7 +2288,6 @@ public:
     }
 };
 
-#if USE(JSVALUE32_64)
 class GPRFlushedCallResult2 : public GPRTemporary {
 public:
     GPRFlushedCallResult2(SpeculativeJIT* jit)
@@ -2244,7 +2295,6 @@ public:
     {
     }
 };
-#endif
 
 class FPRResult : public FPRTemporary {
 public:

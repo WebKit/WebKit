@@ -139,7 +139,7 @@ class PullRequest(object):
         body=None, author=None,
         head=None, base=None,
         opened=None, generator=None, metadata=None,
-        url=None, draft=None
+        url=None, draft=None, hash=None,
     ):
         self.number = number
         self.title = title
@@ -148,6 +148,7 @@ class PullRequest(object):
         self.head = head
         self.base = base
         self.draft = draft
+        self.hash = hash
         self._opened = opened
         self._reviewers = None
         self._approvers = None

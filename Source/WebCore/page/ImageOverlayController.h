@@ -39,11 +39,11 @@ namespace WebCore {
 
 class Document;
 class Element;
-class Frame;
 class GraphicsContext;
 class HTMLElement;
 class IntRect;
 class FloatQuad;
+class LocalFrame;
 class Page;
 class RenderElement;
 class WeakPtrImplWithEventTargetData;
@@ -58,8 +58,8 @@ class ImageOverlayController final : private PageOverlay::Client
 public:
     explicit ImageOverlayController(Page&);
 
-    void selectionQuadsDidChange(Frame&, const Vector<FloatQuad>&);
-    void elementUnderMouseDidChange(Frame&, Element*);
+    void selectionQuadsDidChange(LocalFrame&, const Vector<FloatQuad>&);
+    void elementUnderMouseDidChange(LocalFrame&, Element*);
 
 #if ENABLE(DATA_DETECTION)
     WEBCORE_EXPORT bool hasActiveDataDetectorHighlightForTesting() const;
@@ -88,7 +88,7 @@ private:
     DataDetectorHighlight* activeHighlight() const final { return m_activeDataDetectorHighlight.get(); }
 #endif
 
-    void platformUpdateElementUnderMouse(Frame&, Element* elementUnderMouse);
+    void platformUpdateElementUnderMouse(LocalFrame&, Element* elementUnderMouse);
     bool platformHandleMouseEvent(const PlatformMouseEvent&);
 
     WeakPtr<Page> m_page;

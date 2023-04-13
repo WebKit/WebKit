@@ -39,7 +39,6 @@ public:
     WEBCORE_EXPORT static void setUseFormSemanticContext(bool);
     static bool useFormSemanticContext();
     static void setFocusRingClipRect(const FloatRect&);
-    static bool drawCellOrFocusRingWithViewIntoContext(NSCell *, GraphicsContext&, const FloatRect&, NSView *, bool drawButtonCell, bool drawFocusRing, float deviceScaleFactor);
 
 private:
     friend NeverDestroyed<ThemeMac>;

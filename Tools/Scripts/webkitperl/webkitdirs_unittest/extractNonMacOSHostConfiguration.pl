@@ -87,11 +87,6 @@ my @testCases = (
     expectedValue => ["--debug", "ARCHS=x86_64"],
     description => "Debug 64-bit build",
 },
-{
-    argValue => ["--debug", "--ftw"],
-    expectedValue => ["--debug"],
-    description => "Debug with FTW",
-},
 );
 
 plan(tests => 1 * @testCases);

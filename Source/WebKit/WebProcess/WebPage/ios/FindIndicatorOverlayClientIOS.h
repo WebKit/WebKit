@@ -26,8 +26,8 @@
 #ifndef FindIndicatorOverlayClientIOS_h
 #define FindIndicatorOverlayClientIOS_h
 
-#import <WebCore/Frame.h>
 #import <WebCore/GraphicsContext.h>
+#import <WebCore/LocalFrame.h>
 #import <WebCore/PageOverlay.h>
 #import <WebCore/TextIndicator.h>
 
@@ -36,7 +36,7 @@ namespace WebKit {
 class FindIndicatorOverlayClientIOS : public WebCore::PageOverlay::Client {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    FindIndicatorOverlayClientIOS(WebCore::Frame& frame, WebCore::TextIndicator* textIndicator)
+    FindIndicatorOverlayClientIOS(WebCore::LocalFrame& frame, WebCore::TextIndicator* textIndicator)
         : m_frame(frame)
         , m_textIndicator(textIndicator)
     {
@@ -48,7 +48,7 @@ private:
     void drawRect(WebCore::PageOverlay&, WebCore::GraphicsContext&, const WebCore::IntRect& dirtyRect) override;
     bool mouseEvent(WebCore::PageOverlay&, const WebCore::PlatformMouseEvent&) override { return false; }
 
-    WebCore::Frame& m_frame;
+    WebCore::LocalFrame& m_frame;
     RefPtr<WebCore::TextIndicator> m_textIndicator;
 };
 

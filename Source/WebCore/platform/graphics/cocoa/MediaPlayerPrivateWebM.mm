@@ -73,6 +73,10 @@
 - (void)resetUpcomingSampleBufferPresentationTimeExpectations;
 @end
 
+@interface AVSampleBufferDisplayLayer (Staging_100128644)
+@property (assign, nonatomic) BOOL preventsAutomaticBackgroundingDuringVideoPlayback;
+@end
+
 #pragma mark -
 
 namespace WebCore {
@@ -316,22 +320,14 @@ void MediaPlayerPrivateWebM::setMuted(bool muted)
         [renderer setMuted:muted];
 }
 
-std::unique_ptr<PlatformTimeRanges> MediaPlayerPrivateWebM::seekable() const
+const PlatformTimeRanges& MediaPlayerPrivateWebM::buffered() const
 {
-    return makeUnique<PlatformTimeRanges>(minMediaTimeSeekable(), maxMediaTimeSeekable());
-}
-
-std::unique_ptr<PlatformTimeRanges> MediaPlayerPrivateWebM::buffered() const
-{
-    if (!m_buffered)
-        return makeUnique<PlatformTimeRanges>();
-
-    return makeUnique<PlatformTimeRanges>(m_buffered->ranges());
+    return m_buffered;
 }
 
 void MediaPlayerPrivateWebM::setBufferedRanges(PlatformTimeRanges timeRanges)
 {
-    m_buffered->ranges() = WTFMove(timeRanges);
+    m_buffered = WTFMove(timeRanges);
 }
 
 void MediaPlayerPrivateWebM::updateBufferedFromTrackBuffers(bool ended)
@@ -1270,6 +1266,9 @@ void MediaPlayerPrivateWebM::ensureLayer()
     
     if ([m_displayLayer respondsToSelector:@selector(setPreventsDisplaySleepDuringVideoPlayback:)])
         m_displayLayer.get().preventsDisplaySleepDuringVideoPlayback = NO;
+
+    if ([m_displayLayer respondsToSelector:@selector(setPreventsAutomaticBackgroundingDuringVideoPlayback:)])
+        m_displayLayer.get().preventsAutomaticBackgroundingDuringVideoPlayback = NO;
 
     @try {
         [m_synchronizer addRenderer:m_displayLayer.get()];

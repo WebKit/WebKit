@@ -84,6 +84,32 @@ bool defaultRemoveBackgroundEnabled()
 
 #endif // ENABLE(IMAGE_ANALYSIS)
 
+#if HAVE(SC_CONTENT_SHARING_PICKER)
+bool defaultUseSCContentSharingPicker()
+{
+    static bool enabled = false;
+    static std::once_flag flag;
+    std::call_once(flag, [] {
+        enabled = os_feature_enabled(Bilby, Newsroom);
+    });
+    return enabled;
+}
+#endif
+
+#if HAVE(AVCONTENTKEYSPECIFIER)
+bool defaultSampleBufferContentKeySessionSupportEnabled()
+{
+    static bool enabled = false;
+#if ENABLE(SAMPLE_BUFFER_CONTENT_KEY_SESSION_SUPPORT)
+    static std::once_flag flag;
+    std::call_once(flag, [] {
+        enabled = os_feature_enabled(CoreMedia, EnableContentKeyBoss);
+    });
+#endif
+    return enabled;
+}
+#endif
+
 } // namespace WebKit
 
 #endif // PLATFORM(COCOA)

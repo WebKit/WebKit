@@ -57,7 +57,7 @@ class WebInspectorUIExtensionController
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(WebInspectorUIExtensionController);
 public:
-    explicit WebInspectorUIExtensionController(WebCore::InspectorFrontendClient&);
+    WebInspectorUIExtensionController(WebCore::InspectorFrontendClient&, WebCore::PageIdentifier);
     ~WebInspectorUIExtensionController();
 
     // Implemented in generated WebInspectorUIExtensionControllerMessageReceiver.cpp

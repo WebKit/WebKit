@@ -16,3 +16,15 @@
 .rule-e {
     color: darkseagreen;
 }
+.rule-f {
+    color: red;
+
+    @media(min-width: 0px) {
+        &.explicit-nested-rule { 
+            color: blue;
+        }
+
+        color: green;
+    }
+}
+.rule-g { color: red; @media(min-width: 0px) { &.explicit-nested-rule { color: blue; } color: green; } }

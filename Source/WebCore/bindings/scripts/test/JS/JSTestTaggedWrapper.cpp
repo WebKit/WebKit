@@ -104,7 +104,7 @@ template<> void JSTestTaggedWrapperDOMConstructor::initializeProperties(VM& vm, 
 
 static const HashTableValue JSTestTaggedWrapperPrototypeTableValues[] =
 {
-    { "constructor"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestTaggedWrapperConstructor, 0 } },
+    { "constructor"_s, static_cast<unsigned>(PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestTaggedWrapperConstructor, 0 } },
 };
 
 const ClassInfo JSTestTaggedWrapperPrototype::s_info = { "TestTaggedWrapper"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestTaggedWrapperPrototype) };
@@ -134,7 +134,9 @@ void JSTestTaggedWrapper::finishCreation(VM& vm)
 
 JSObject* JSTestTaggedWrapper::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    return JSTestTaggedWrapperPrototype::create(vm, &globalObject, JSTestTaggedWrapperPrototype::createStructure(vm, &globalObject, globalObject.objectPrototype()));
+    auto* structure = JSTestTaggedWrapperPrototype::createStructure(vm, &globalObject, globalObject.objectPrototype());
+    structure->setMayBePrototype(true);
+    return JSTestTaggedWrapperPrototype::create(vm, &globalObject, structure);
 }
 
 JSObject* JSTestTaggedWrapper::prototype(VM& vm, JSDOMGlobalObject& globalObject)
@@ -178,7 +180,7 @@ void JSTestTaggedWrapper::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
     auto* thisObject = jsCast<JSTestTaggedWrapper*>(cell);
     analyzer.setWrappedObjectForCell(cell, &thisObject->wrapped());
     if (thisObject->scriptExecutionContext())
-        analyzer.setLabelForCell(cell, "url " + thisObject->scriptExecutionContext()->url().string());
+        analyzer.setLabelForCell(cell, "url "_s + thisObject->scriptExecutionContext()->url().string());
     Base::analyzeHeap(cell, analyzer);
 }
 

@@ -102,6 +102,20 @@ class ResourceUse final
                mSerials[queuSerial.getIndex()] > queuSerial.getSerial();
     }
 
+    // Returns true if all serials are less than or equal
+    bool operator<=(const AtomicQueueSerialFixedArray &serials) const
+    {
+        ASSERT(mSerials.size() <= serials.size());
+        for (SerialIndex i = 0; i < mSerials.size(); ++i)
+        {
+            if (mSerials[i] > serials[i])
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
     bool usedByCommandBuffer(const QueueSerial &commandBufferQueueSerial) const
     {
         ASSERT(commandBufferQueueSerial.valid());
@@ -132,6 +146,7 @@ class ResourceUse final
     // The most recent time of use in a VkQueue.
     Serials mSerials;
 };
+std::ostream &operator<<(std::ostream &os, const ResourceUse &use);
 
 class SharedGarbage
 {
@@ -143,7 +158,7 @@ class SharedGarbage
     SharedGarbage &operator=(SharedGarbage &&rhs);
 
     bool destroyIfComplete(RendererVk *renderer);
-    bool hasUnsubmittedUse(RendererVk *renderer) const;
+    bool hasResourceUseSubmitted(RendererVk *renderer) const;
 
   private:
     ResourceUse mLifetime;
@@ -239,6 +254,22 @@ class ReadWriteResource : public Resource
 
     // Track write use of the object. Only updated for setWriteQueueSerial().
     ResourceUse mWriteUse;
+};
+
+// Adds "void release(RendererVk *)" method for collecting garbage.
+// Enables RendererScoped<> for classes that support DeviceScoped<>.
+template <class T>
+class ReleasableResource final : public Resource
+{
+  public:
+    // Calls collectGarbage() on the object.
+    void release(RendererVk *renderer);
+
+    const T &get() const { return mObject; }
+    T &get() { return mObject; }
+
+  private:
+    T mObject;
 };
 }  // namespace vk
 }  // namespace rx

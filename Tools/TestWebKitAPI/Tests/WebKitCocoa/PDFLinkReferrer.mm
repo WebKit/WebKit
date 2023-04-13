@@ -75,6 +75,7 @@ TEST(WebKit, PDFLinkReferrer)
     using namespace TestWebKitAPI;
     HTTPServer server([] (Connection connection) {
         connection.receiveHTTPRequest([=](Vector<char>&& requestBytes) {
+            requestBytes.append('\0');
             // Look for a referer header.
             const auto* currentLine = reinterpret_cast<const char*>(requestBytes.data());
             while (currentLine) {

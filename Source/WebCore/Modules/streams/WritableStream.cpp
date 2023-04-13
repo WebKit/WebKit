@@ -26,6 +26,8 @@
 #include "config.h"
 #include "WritableStream.h"
 
+#include "InternalWritableStream.h"
+#include "JSDOMGlobalObject.h"
 #include "JSWritableStream.h"
 #include "JSWritableStreamSink.h"
 
@@ -42,6 +44,23 @@ ExceptionOr<Ref<WritableStream>> WritableStream::create(JSC::JSGlobalObject& glo
         strategyValue = strategy->get();
 
     return create(globalObject, underlyingSinkValue, strategyValue);
+}
+
+WritableStream::~WritableStream() = default;
+
+void WritableStream::lock()
+{
+    m_internalWritableStream->lock();
+}
+
+bool WritableStream::locked() const
+{
+    return m_internalWritableStream->locked();
+}
+
+InternalWritableStream& WritableStream::internalWritableStream()
+{
+    return m_internalWritableStream.get();
 }
 
 ExceptionOr<Ref<WritableStream>> WritableStream::create(JSC::JSGlobalObject& globalObject, JSC::JSValue underlyingSink, JSC::JSValue strategy)

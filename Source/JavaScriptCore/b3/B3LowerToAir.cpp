@@ -29,6 +29,7 @@
 #if ENABLE(B3_JIT)
 
 #include "AirBlockInsertionSet.h"
+#include "AirCCallSpecial.h"
 #include "AirCode.h"
 #include "AirHelpers.h"
 #include "AirInsertionSet.h"
@@ -144,6 +145,7 @@ public:
             }
             case Get:
             case Patchpoint:
+            case B3::CCall:
             case BottomTuple: {
                 if (value->type().isTuple())
                     ensureTupleTmps(value, m_tupleValueToTmps);
@@ -224,6 +226,15 @@ private:
         case Identity:
         case Opaque:
             return true;
+        case VectorExtractLane: {
+            // If VectorExtractLane meets the following conditions,
+            //   1. an operand is f32x4 or f64x2
+            //   2. extracting lane is 0
+            // this is effectively the same to Trunc for V128.
+            SIMDValue* simdValue = value->as<SIMDValue>();
+            auto lane = simdValue->simdLane();
+            return simdValue->immediate() == 0 && (lane == SIMDLane::f32x4 || lane == SIMDLane::f64x2);
+        }
         default:
             return false;
         }
@@ -437,6 +448,7 @@ private:
         switch (tupleValue->opcode()) {
         case Phi:
         case Patchpoint:
+        case B3::CCall:
         case BottomTuple: {
             return m_tupleValueToTmps.find(tupleValue)->value;
         }
@@ -525,7 +537,7 @@ private:
     }
 
     template<typename Int, typename = Value::IsLegalOffset<Int>>
-    std::optional<unsigned> scaleForShl(Value* shl, Int offset, std::optional<Width> width = std::nullopt)
+    std::optional<unsigned> scaleForShl(Air::Opcode opcode, Value* shl, Int offset, std::optional<Width> width = std::nullopt)
     {
         if (shl->opcode() != Shl)
             return std::nullopt;
@@ -542,7 +554,7 @@ private:
         if (!isRepresentableAs<int32_t>(bigScale))
             return std::nullopt;
         unsigned scale = static_cast<int32_t>(bigScale);
-        if (!Arg::isValidIndexForm(scale, offset, width))
+        if (!Arg::isValidIndexForm(opcode, scale, offset, width))
             return std::nullopt;
         return scale;
     }
@@ -571,7 +583,7 @@ private:
             Value* right = address->child(1);
 
             auto tryIndex = [&] (Value* index, Value* base) -> Arg {
-                std::optional<unsigned> scale = scaleForShl(index, offset, width);
+                std::optional<unsigned> scale = scaleForShl(Air::Move, index, offset, width);
                 if (!scale)
                     return Arg();
                 if (m_locked.contains(index->child(0)) || m_locked.contains(base))
@@ -585,7 +597,7 @@ private:
                 return result;
 
             if (m_locked.contains(left) || m_locked.contains(right)
-                || !Arg::isValidIndexForm(1, offset, width))
+                || !Arg::isValidIndexForm(Air::Move, 1, offset, width))
                 return fallback();
             
             return indexArg(tmp(left), right, 1, offset);
@@ -598,7 +610,7 @@ private:
             // amount is greater than 1, then there isn't really anything smart that we could do here.
             // We avoid using baseless indexes because their encoding isn't particularly efficient.
             if (m_locked.contains(left) || !address->child(1)->isInt32(1)
-                || !Arg::isValidIndexForm(1, offset, width))
+                || !Arg::isValidIndexForm(Air::Move, 1, offset, width))
                 return fallback();
 
             return indexArg(tmp(left), left, 1, offset);
@@ -613,7 +625,7 @@ private:
         case WasmAddress: {
             WasmAddressValue* wasmAddress = address->as<WasmAddressValue>();
             Value* pointer = wasmAddress->child(0);
-            if (!Arg::isValidIndexForm(1, offset, width) || m_locked.contains(pointer))
+            if (!Arg::isValidIndexForm(Air::Move, 1, offset, width) || m_locked.contains(pointer))
                 return fallback();
 
             // FIXME: We should support ARM64 LDR 32-bit addressing, which will
@@ -629,9 +641,14 @@ private:
         }
     }
 
+    enum class AddrRequestMode : uint8_t {
+        NoRestriction,
+        PreferSimpleAddr,
+    };
+
     // This gives you the address of the given Load or Store. If it's not a Load or Store, then
     // it returns Arg().
-    Arg addr(Value* memoryValue)
+    Arg addr(Value* memoryValue, AddrRequestMode mode = AddrRequestMode::NoRestriction)
     {
         MemoryValue* value = memoryValue->as<MemoryValue>();
         if (!value)
@@ -642,6 +659,11 @@ private:
 
         Value::OffsetType offset = value->offset();
         Width width = value->accessWidth();
+
+        if (mode == AddrRequestMode::PreferSimpleAddr) {
+            if (!offset)
+                return Arg::simpleAddr(tmp(value->lastChild()));
+        }
 
         Arg result = effectiveAddr(value->lastChild(), offset, width);
         RELEASE_ASSERT(result.isValidForm(Air::Move, width));
@@ -663,7 +685,7 @@ private:
         return trappingInst(value->traps(), std::forward<Args>(args)...);
     }
     
-    ArgPromise loadPromiseAnyOpcode(Value* loadValue)
+    ArgPromise loadPromiseAnyOpcode(Value* loadValue, AddrRequestMode mode = AddrRequestMode::NoRestriction)
     {
         RELEASE_ASSERT(loadValue->as<MemoryValue>());
         if (!canBeInternal(loadValue))
@@ -675,7 +697,7 @@ private:
         // fences. So, any load motion we introduce here would not be observable.
         if (!isX86() && loadValue->as<MemoryValue>()->hasFence())
             return Arg();
-        Arg loadAddr = addr(loadValue);
+        Arg loadAddr = addr(loadValue, mode);
         RELEASE_ASSERT(loadAddr);
         ArgPromise result(loadAddr, loadValue);
         if (loadValue->traps())
@@ -683,16 +705,16 @@ private:
         return result;
     }
 
-    ArgPromise loadPromise(Value* loadValue, B3::Opcode loadOpcode)
+    ArgPromise loadPromise(Value* loadValue, B3::Opcode loadOpcode, AddrRequestMode mode = AddrRequestMode::NoRestriction)
     {
         if (loadValue->opcode() != loadOpcode)
             return Arg();
-        return loadPromiseAnyOpcode(loadValue);
+        return loadPromiseAnyOpcode(loadValue, mode);
     }
 
     ArgPromise loadPromise(Value* loadValue)
     {
-        return loadPromise(loadValue, Load);
+        return loadPromise(loadValue, Load, AddrRequestMode::NoRestriction);
     }
 
     Arg imm(int64_t intValue)
@@ -734,6 +756,18 @@ private:
         return Arg::zeroReg();
     }
 
+    Arg immOrTmpOrZeroReg(Value* value)
+    {
+        if (Arg result = imm(value)) {
+            if (isARM64()) {
+                if (!result.value())
+                    return zeroReg();
+            }
+            return result;
+        }
+        return tmp(value);
+    }
+
     Arg immOrTmp(Value* value)
     {
         if (Arg result = imm(value))
@@ -754,6 +788,51 @@ private:
         const auto& tmps = tmpsForTuple(value);
         for (unsigned i = 0; i < tuple.size(); ++i)
             func(tmps[i], tuple[i], i);
+    }
+
+    template<typename Functor>
+    void forEachImmOrTmpOrZeroReg(Value* value, const Functor& func)
+    {
+        ASSERT(value->type() != Void);
+        if (!value->type().isTuple()) {
+            func(immOrTmpOrZeroReg(value), value->type(), 0);
+            return;
+        }
+
+        const Vector<Type>& tuple = m_procedure.tupleForType(value->type());
+        const auto& tmps = tmpsForTuple(value);
+        for (unsigned i = 0; i < tuple.size(); ++i)
+            func(tmps[i], tuple[i], i);
+    }
+
+    void moveToTmp(Air::Opcode opcode, Air::Arg source, Air::Tmp dest)
+    {
+        switch (opcode) {
+        case Air::Move:
+            break;
+        case Air::MoveFloat:
+            if (source.isZeroReg()) {
+                append(Air::MoveZeroToFloat, dest);
+                return;
+            }
+            break;
+        case Air::MoveDouble:
+            if (source.isZeroReg()) {
+                append(Air::MoveZeroToDouble, dest);
+                return;
+            }
+            break;
+        case Air::MoveVector:
+            if (source.isZeroReg()) {
+                append(Air::MoveZeroToVector, dest);
+                return;
+            }
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            break;
+        }
+        append(opcode, source, dest);
     }
 
     // By convention, we use Oops to mean "I don't know".
@@ -1317,28 +1396,32 @@ private:
             emitSIMDCompare(Air::Arg(), cond);
     }
 
-    template<unsigned numScratch = 0>
     void emitSIMDBinaryOp(Air::Opcode op)
     {
         SIMDValue* value = m_value->as<SIMDValue>();
-        if constexpr (!numScratch)
+        if (isValidForm(op, Arg::SIMDInfo, Arg::Tmp, Arg::Tmp, Arg::Tmp)) {
             append(op, Arg::simdInfo(value->simdInfo()), tmp(value->child(0)), tmp(value->child(1)), tmp(value));
-        else if (numScratch == 1)
+            return;
+        }
+        if (isValidForm(op, Arg::SIMDInfo, Arg::Tmp, Arg::Tmp, Arg::Tmp, Arg::Tmp)) {
             append(op, Arg::simdInfo(value->simdInfo()), tmp(value->child(0)), tmp(value->child(1)), tmp(value), m_code.newTmp(FP));
-        else
-            RELEASE_ASSERT_NOT_REACHED();
+            return;
+        }
+        RELEASE_ASSERT_NOT_REACHED();
     }
 
-    template<unsigned numScratch = 0>
     void emitSIMDMonomorphicBinaryOp(Air::Opcode op)
     {
         SIMDValue* value = m_value->as<SIMDValue>();
-        if constexpr (!numScratch)
+        if (isValidForm(op, Arg::Tmp, Arg::Tmp, Arg::Tmp)) {
             append(op, tmp(value->child(0)), tmp(value->child(1)), tmp(value));
-        else if (numScratch == 1)
+            return;
+        }
+        if (isValidForm(op, Arg::Tmp, Arg::Tmp, Arg::Tmp, Arg::Tmp)) {
             append(op, tmp(value->child(0)), tmp(value->child(1)), tmp(value), m_code.newTmp(FP));
-        else
-            RELEASE_ASSERT_NOT_REACHED();
+            return;
+        }
+        RELEASE_ASSERT_NOT_REACHED();
     }
 
     void emitSIMDUnaryOp(Air::Opcode op)
@@ -1481,16 +1564,18 @@ private:
                 break;
             case ValueRep::SomeRegisterWithClobber: {
                 Tmp dstTmp = m_code.newTmp(value.value()->resultBank());
-                append(relaxedMoveForType(value.value()->type()), immOrTmp(value.value()), dstTmp);
+                moveToTmp(relaxedMoveForType(value.value()->type()), immOrTmpOrZeroReg(value.value()), dstTmp);
                 arg = dstTmp;
                 break;
             }
             case ValueRep::LateRegister:
-            case ValueRep::Register:
+            case ValueRep::Register: {
                 stackmap->earlyClobbered().remove(value.rep().reg());
-                arg = Tmp(value.rep().reg());
-                append(relaxedMoveForType(value.value()->type()), immOrTmp(value.value()), arg);
+                Tmp dstTmp = Tmp(value.rep().reg());
+                moveToTmp(relaxedMoveForType(value.value()->type()), immOrTmpOrZeroReg(value.value()), dstTmp);
+                arg = dstTmp;
                 break;
+            }
             case ValueRep::StackArgument:
                 arg = Arg::callArg(value.rep().offsetFromSP());
                 append(trappingInst(m_value, createStore(moveForType(value.value()->type()), value.value(), arg)));
@@ -2311,7 +2396,7 @@ private:
         }
         
         auto tryShl = [&] (Value* shl, Value* other) -> bool {
-            std::optional<unsigned> scale = scaleForShl(shl, offset);
+            std::optional<unsigned> scale = scaleForShl(leaOpcode, shl, offset);
             if (!scale)
                 return false;
             if (!canBeInternal(shl))
@@ -2451,7 +2536,7 @@ private:
         }
         
         if (isX86()) {
-            append(relaxedMoveForType(atomic->accessType()), immOrTmp(atomic->child(0)), m_eax);
+            moveToTmp(relaxedMoveForType(atomic->accessType()), immOrTmpOrZeroReg(atomic->child(0)), m_eax);
             if (returnsOldValue) {
                 appendTrapping(OPCODE_FOR_WIDTH(AtomicStrongCAS, width), m_eax, newValueTmp, address);
                 append(relaxedMoveForType(atomic->accessType()), m_eax, valueResultTmp);
@@ -3777,7 +3862,11 @@ private:
             SIMDValue* value = m_value->as<SIMDValue>();
             auto lane = value->simdLane();
             auto signMode = value->signMode();
-            append(GET_SIGNED_SIMD_OPCODE(lane, signMode, Air::VectorExtractLane), Arg::imm(value->immediate(0)), tmp(value->child(0)), tmp(value));
+            if (value->immediate() == 0 && (lane == SIMDLane::f32x4 || lane == SIMDLane::f64x2)) {
+                ASSERT(tmp(m_value->child(0)) == tmp(m_value));
+                return;
+            }
+            append(GET_SIGNED_SIMD_OPCODE(lane, signMode, Air::VectorExtractLane), Arg::imm(value->immediate()), tmp(value->child(0)), tmp(value));
             return;
         }
 
@@ -3787,7 +3876,7 @@ private:
             auto replacementScalar = tmp(value->child(1));
             Tmp result = tmp(value);
             append(Air::MoveVector, tmp(value->child(0)), result);
-            append(GET_SIMD_OPCODE(lane, Air::VectorReplaceLane), Arg::imm(value->immediate(0)), replacementScalar, result);
+            append(GET_SIMD_OPCODE(lane, Air::VectorReplaceLane), Arg::imm(value->immediate()), replacementScalar, result);
             return;
         }
 
@@ -3795,46 +3884,100 @@ private:
             ASSERT(isARM64());
             SIMDValue* value = m_value->as<SIMDValue>();
             auto lane = value->simdLane();
-            append(GET_SIMD_OPCODE(lane, Air::VectorDupElement), Arg::imm(value->immediate(0)), tmp(value->child(0)), tmp(value));
+            append(GET_SIMD_OPCODE(lane, Air::VectorDupElement), Arg::imm(value->immediate()), tmp(value->child(0)), tmp(value));
+            return;
+        }
+
+        case B3::VectorMulByElement: {
+            ASSERT(isARM64());
+            SIMDValue* value = m_value->as<SIMDValue>();
+            auto lane = value->simdLane();
+            Air::Opcode op;
+            switch (lane) {
+            case SIMDLane::f32x4:
+                op = VectorMulByElementFloat32;
+                break;
+            case SIMDLane::f64x2:
+                op = VectorMulByElementFloat64;
+                break;
+            default:
+                RELEASE_ASSERT_NOT_REACHED();
+            }
+            append(op, tmp(value->child(0)), tmp(value->child(1)), Arg::imm(value->immediate()), tmp(value));
+            return;
+        }
+
+        case B3::VectorShiftByVector: {
+            ASSERT(isARM64());
+            SIMDValue* value = m_value->as<SIMDValue>();
+            append(value->signMode() == SIMDSignMode::Signed ? VectorSshl : VectorUshl, Arg::simdInfo(value->simdInfo()), tmp(value->child(0)), tmp(value->child(1)), tmp(value));
             return;
         }
 
         case B3::VectorSplat: {
             SIMDValue* value = m_value->as<SIMDValue>();
             SIMDLane lane = value->simdLane();
-            Tmp scalar = tmp(value->child(0));
-            Air::Opcode op;
+
+            auto tryLoadSplat = [&](Air::Opcode fusedOpcode, B3::Opcode loadOpcode, Width width) {
+                auto* loadValue = value->child(0);
+                if (auto* memoryValue = loadValue->as<MemoryValue>(); !memoryValue || memoryValue->accessWidth() != width)
+                    return false;
+
+                ArgPromise addr = loadPromise(loadValue, loadOpcode, AddrRequestMode::PreferSimpleAddr);
+                if (isValidForm(fusedOpcode, addr.kind(), Arg::Tmp)) {
+                    append(addr.inst(fusedOpcode, value, addr.consume(*this), tmp(value)));
+                    return true;
+                }
+                if (isValidForm(fusedOpcode, addr.kind(), Arg::Tmp, Arg::Tmp)) {
+                    append(addr.inst(fusedOpcode, value, addr.consume(*this), tmp(value), m_code.newTmp(FP)));
+                    return true;
+                }
+
+                return false;
+            };
+
             switch (lane) {
-            case SIMDLane::i8x16:
-                op = VectorSplatInt8;
+            case SIMDLane::i8x16: {
+                Air::Opcode fusedOpcode = Air::VectorLoad8Splat;
+                if (tryLoadSplat(fusedOpcode, Load8Z, Width8))
+                    return;
+                if (tryLoadSplat(fusedOpcode, Load8S, Width8))
+                    return;
                 break;
-            case SIMDLane::i16x8:
-                op = VectorSplatInt16;
+            }
+            case SIMDLane::i16x8: {
+                Air::Opcode fusedOpcode = Air::VectorLoad16Splat;
+                if (tryLoadSplat(fusedOpcode, Load16Z, Width16))
+                    return;
+                if (tryLoadSplat(fusedOpcode, Load16S, Width16))
+                    return;
                 break;
+            }
             case SIMDLane::i32x4:
-                op = VectorSplatInt32;
+            case SIMDLane::f32x4: {
+                Air::Opcode fusedOpcode = Air::VectorLoad32Splat;
+                if (tryLoadSplat(fusedOpcode, Load, Width32))
+                    return;
                 break;
+            }
             case SIMDLane::i64x2:
-                op = VectorSplatInt64;
+            case SIMDLane::f64x2: {
+                Air::Opcode fusedOpcode = Air::VectorLoad64Splat;
+                if (tryLoadSplat(fusedOpcode, Load, Width64))
+                    return;
                 break;
-            case SIMDLane::f32x4:
-                op = VectorSplatFloat32;
-                break;
-            case SIMDLane::f64x2:
-                op = VectorSplatFloat64;
-                break;
+            }
             default:
                 RELEASE_ASSERT_NOT_REACHED();
             }
-            if (isValidForm(op, Arg::Tmp, Arg::Tmp)) {
-                append(op, scalar, tmp(value));
-                return;
-            }
-            RELEASE_ASSERT_NOT_REACHED();
+
+            append(GET_SIMD_OPCODE(lane, Air::VectorSplat), tmp(value->child(0)), tmp(value));
+            return;
         }
 
         case B3::VectorShr:
         case B3::VectorShl: {
+            ASSERT(!isARM64()); // In ARM64, they are macro.
             SIMDValue* value = m_value->as<SIMDValue>();
             SIMDLane lane = value->simdLane();
 
@@ -3846,19 +3989,6 @@ private:
             Tmp shiftAmount = m_code.newTmp(B3::GP);
             Tmp shiftVector = m_code.newTmp(B3::FP);
 
-            if constexpr (isARM64()) {
-                append(And32, Arg::bitImm(mask), shift, shiftAmount);
-                if (value->opcode() == VectorShr) {
-                    // ARM64 doesn't have a version of this instruction for right shift. Instead, if the input to
-                    // left shift is negative, it's a right shift by the absolute value of that amount.
-                    append(Neg32, shiftAmount);
-                }
-                append(VectorSplatInt8, shiftAmount, shiftVector);
-                append(value->signMode() == SIMDSignMode::Signed ? VectorSshl : VectorUshl, Arg::simdInfo(value->simdInfo()), v, shiftVector, tmp(value));
-
-                return;
-            }
-            
             if constexpr (isX86()) {
                 append(Move, shift, shiftAmount);
                 append(And32, Arg::imm(mask), shiftAmount);
@@ -3948,13 +4078,8 @@ private:
             emitSIMDBinaryOp(Air::VectorMul);
             return;
         case B3::VectorDotProduct:
-            if (isX86())
-                emitSIMDMonomorphicBinaryOp(Air::VectorDotProduct);
-            else if (isARM64())
-                emitSIMDMonomorphicBinaryOp</* scratch = */ 1>(Air::VectorDotProduct);
-            else
-                RELEASE_ASSERT_NOT_REACHED();
-            return; 
+            emitSIMDMonomorphicBinaryOp(Air::VectorDotProduct);
+            return;
         case B3::VectorDiv:
             emitSIMDBinaryOp(Air::VectorDiv);
             return;
@@ -3965,28 +4090,14 @@ private:
             emitSIMDBinaryOp(Air::VectorMax);
             return;
         case B3::VectorPmin:
-            if (isX86()) {
-                emitSIMDBinaryOp(Air::VectorPmin);
-                return;
-            }
-            if (isARM64()) {
-                emitSIMDBinaryOp</* scratch = */ 1>(Air::VectorPmin);
-                return;
-            }
-            RELEASE_ASSERT_NOT_REACHED();
+            emitSIMDBinaryOp(Air::VectorPmin);
+            return;
         case B3::VectorPmax:
-            if (isX86()) {
-                emitSIMDBinaryOp(Air::VectorPmax);
-                return;
-            }
-            if (isARM64()) {
-                emitSIMDBinaryOp</* scratch = */ 1>(Air::VectorPmax);
-                return;
-            }
-            RELEASE_ASSERT_NOT_REACHED();
+            emitSIMDBinaryOp(Air::VectorPmax);
+            return;
         case B3::VectorNarrow:
-            emitSIMDBinaryOp</* scratch = */ 1>(Air::VectorNarrow);
-            return; 
+            emitSIMDBinaryOp(Air::VectorNarrow);
+            return;
         case B3::VectorAnd:
             emitSIMDBinaryOp(Air::VectorAnd);
             return;
@@ -4087,7 +4198,7 @@ private:
         case B3::VectorDemote:
             emitSIMDUnaryOp(Air::VectorDemote);
             return;
-        case B3::VectorAnyTrue: 
+        case B3::VectorAnyTrue:
             emitSIMDMonomorphicUnaryOp(Air::VectorAnyTrue);
             return;
         case B3::VectorAllTrue:
@@ -4101,10 +4212,9 @@ private:
             return;
         case B3::VectorBitwiseSelect: {
             SIMDValue* value = m_value->as<SIMDValue>();
-            auto resultTmp = m_code.newTmp(FP);
+            auto resultTmp = tmp(value);
             append(MoveVector, tmp(value->child(2)), resultTmp);
             append(Air::VectorBitwiseSelect, tmp(value->child(0)), tmp(value->child(1)), resultTmp);
-            append(MoveVector, resultTmp, tmp(value));
             return;
         }
         case B3::VectorExtaddPairwise:
@@ -4179,16 +4289,23 @@ private:
             return;
         }
 
+        case SExt8To64: {
+            appendUnOp<SignExtend8To64, Air::Oops>(m_value->child(0));
+            return;
+        }
+
+        case SExt16To64: {
+            appendUnOp<SignExtend16To64, Air::Oops>(m_value->child(0));
+            return;
+        }
+
         case ZExt32: {
             appendUnOp<Move32, Air::Oops>(m_value->child(0));
             return;
         }
 
         case SExt32: {
-            // FIXME: We should have support for movsbq/movswq
-            // https://bugs.webkit.org/show_bug.cgi?id=152232
-            
-            appendUnOp<SignExtend32ToPtr, Air::Oops>(m_value->child(0));
+            appendUnOp<SignExtend32To64, Air::Oops>(m_value->child(0));
             return;
         }
 
@@ -4343,7 +4460,7 @@ private:
         case B3::CCall: {
             CCallValue* cCall = m_value->as<CCallValue>();
 
-            Inst inst(m_isRare ? Air::ColdCCall : Air::CCall, cCall);
+            Inst inst(m_isRare ? Air::ColdCCall : Air::CCall, cCall, Arg::special(m_code.cCallSpecial()));
 
             // We have a ton of flexibility regarding the callee argument, but currently, we don't
             // use it yet. It gets weird for reasons:
@@ -4356,8 +4473,11 @@ private:
             // FIXME: https://bugs.webkit.org/show_bug.cgi?id=151052
             inst.args.append(tmp(cCall->child(0)));
 
-            if (cCall->type() != Void)
-                inst.args.append(tmp(cCall));
+            if (cCall->type() != Void) {
+                forEachImmOrTmp(cCall, [&] (Arg arg, Type, unsigned) {
+                    inst.args.append(arg.tmp());
+                });
+            }
 
             for (unsigned i = 1; i < cCall->numChildren(); ++i)
                 inst.args.append(immOrTmp(cCall->child(i)));
@@ -4606,7 +4726,7 @@ private:
             Value* value = m_value->child(0);
             Value* phi = m_value->as<UpsilonValue>()->phi();
             if (value->type().isNumeric()) {
-                append(relaxedMoveForType(value->type()), immOrTmp(value), m_phiToTmp[phi]);
+                moveToTmp(relaxedMoveForType(value->type()), immOrTmpOrZeroReg(value), m_phiToTmp[phi]);
                 return;
             }
 
@@ -4642,8 +4762,8 @@ private:
         case Set: {
             Value* value = m_value->child(0);
             const Vector<Tmp>& variableTmps = m_variableToTmps.get(m_value->as<VariableValue>()->variable());
-            forEachImmOrTmp(value, [&] (Arg immOrTmp, Type type, unsigned index) {
-                append(relaxedMoveForType(type), immOrTmp, variableTmps[index]);
+            forEachImmOrTmpOrZeroReg(value, [&] (Arg immOrTmpOrZeroReg, Type type, unsigned index) {
+                moveToTmp(relaxedMoveForType(type), immOrTmpOrZeroReg, variableTmps[index]);
             });
             return;
         }
@@ -4811,11 +4931,11 @@ private:
                 RELEASE_ASSERT_NOT_REACHED();
                 break;
             case Int32:
-                append(Move, immOrTmp(value), returnValueGPR);
+                moveToTmp(Move, immOrTmpOrZeroReg(value), returnValueGPR);
                 append(Ret32, returnValueGPR);
                 break;
             case Int64:
-                append(Move, immOrTmp(value), returnValueGPR);
+                moveToTmp(Move, immOrTmpOrZeroReg(value), returnValueGPR);
                 append(Ret64, returnValueGPR);
                 break;
             case Float:

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (c) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,10 +34,26 @@
 
 namespace WebGPU {
 
-ComputePassEncoder::ComputePassEncoder(id<MTLComputeCommandEncoder> computeCommandEncoder, Device& device)
+ComputePassEncoder::ComputePassEncoder(id<MTLComputeCommandEncoder> computeCommandEncoder, const WGPUComputePassDescriptor& descriptor, Device& device)
     : m_computeCommandEncoder(computeCommandEncoder)
     , m_device(device)
 {
+    if (m_device->baseCapabilities().counterSamplingAPI == HardwareCapabilities::BaseCapabilities::CounterSamplingAPI::CommandBoundary) {
+        for (uint32_t i = 0; i < descriptor.timestampWriteCount; ++i) {
+            const auto& timestampWrite = descriptor.timestampWrites[i];
+            switch (timestampWrite.location) {
+            case WGPUComputePassTimestampLocation_Beginning:
+                [m_computeCommandEncoder sampleCountersInBuffer:fromAPI(timestampWrite.querySet).counterSampleBuffer() atSampleIndex:timestampWrite.queryIndex withBarrier:NO];
+                break;
+            case WGPUComputePassTimestampLocation_End:
+                m_pendingTimestampWrites.append({ fromAPI(timestampWrite.querySet), timestampWrite.queryIndex });
+                break;
+            case WGPUComputePassTimestampLocation_Force32:
+                ASSERT_NOT_REACHED();
+                break;
+            }
+        }
+    }
 }
 
 ComputePassEncoder::ComputePassEncoder(Device& device)
@@ -45,7 +61,10 @@ ComputePassEncoder::ComputePassEncoder(Device& device)
 {
 }
 
-ComputePassEncoder::~ComputePassEncoder() = default;
+ComputePassEncoder::~ComputePassEncoder()
+{
+    [m_computeCommandEncoder endEncoding];
+}
 
 void ComputePassEncoder::beginPipelineStatisticsQuery(const QuerySet& querySet, uint32_t queryIndex)
 {
@@ -55,19 +74,23 @@ void ComputePassEncoder::beginPipelineStatisticsQuery(const QuerySet& querySet, 
 
 void ComputePassEncoder::dispatch(uint32_t x, uint32_t y, uint32_t z)
 {
-    UNUSED_PARAM(x);
-    UNUSED_PARAM(y);
-    UNUSED_PARAM(z);
+    [m_computeCommandEncoder dispatchThreadgroups:MTLSizeMake(x, y, z) threadsPerThreadgroup:m_threadsPerThreadgroup];
 }
 
 void ComputePassEncoder::dispatchIndirect(const Buffer& indirectBuffer, uint64_t indirectOffset)
 {
-    UNUSED_PARAM(indirectBuffer);
-    UNUSED_PARAM(indirectOffset);
+    // FIXME: ensure higher levels perform validation on indirectOffset before reaching this callsite
+    [m_computeCommandEncoder dispatchThreadgroupsWithIndirectBuffer:indirectBuffer.buffer() indirectBufferOffset:indirectOffset threadsPerThreadgroup:m_threadsPerThreadgroup];
 }
 
 void ComputePassEncoder::endPass()
 {
+    ASSERT(m_pendingTimestampWrites.isEmpty() || m_device->baseCapabilities().counterSamplingAPI == HardwareCapabilities::BaseCapabilities::CounterSamplingAPI::CommandBoundary);
+    for (const auto& pendingTimestampWrite : m_pendingTimestampWrites)
+        [m_computeCommandEncoder sampleCountersInBuffer:pendingTimestampWrite.querySet->counterSampleBuffer() atSampleIndex:pendingTimestampWrite.queryIndex withBarrier:NO];
+    m_pendingTimestampWrites.clear();
+    [m_computeCommandEncoder endEncoding];
+    m_computeCommandEncoder = nil;
 }
 
 void ComputePassEncoder::endPipelineStatisticsQuery()
@@ -121,15 +144,16 @@ void ComputePassEncoder::pushDebugGroup(String&& groupLabel)
 
 void ComputePassEncoder::setBindGroup(uint32_t groupIndex, const BindGroup& group, uint32_t dynamicOffsetCount, const uint32_t* dynamicOffsets)
 {
-    UNUSED_PARAM(groupIndex);
-    UNUSED_PARAM(group);
     UNUSED_PARAM(dynamicOffsetCount);
     UNUSED_PARAM(dynamicOffsets);
+    [m_computeCommandEncoder setBuffer:group.computeArgumentBuffer() offset:0 atIndex:groupIndex];
 }
 
 void ComputePassEncoder::setPipeline(const ComputePipeline& pipeline)
 {
-    UNUSED_PARAM(pipeline);
+    ASSERT(pipeline.computePipelineState());
+    [m_computeCommandEncoder setComputePipelineState:pipeline.computePipelineState()];
+    m_threadsPerThreadgroup = pipeline.threadsPerThreadgroup();
 }
 
 void ComputePassEncoder::setLabel(String&& label)
@@ -151,17 +175,17 @@ void wgpuComputePassEncoderBeginPipelineStatisticsQuery(WGPUComputePassEncoder c
     WebGPU::fromAPI(computePassEncoder).beginPipelineStatisticsQuery(WebGPU::fromAPI(querySet), queryIndex);
 }
 
-void wgpuComputePassEncoderDispatch(WGPUComputePassEncoder computePassEncoder, uint32_t x, uint32_t y, uint32_t z)
+void wgpuComputePassEncoderDispatchWorkgroups(WGPUComputePassEncoder computePassEncoder, uint32_t x, uint32_t y, uint32_t z)
 {
     WebGPU::fromAPI(computePassEncoder).dispatch(x, y, z);
 }
 
-void wgpuComputePassEncoderDispatchIndirect(WGPUComputePassEncoder computePassEncoder, WGPUBuffer indirectBuffer, uint64_t indirectOffset)
+void wgpuComputePassEncoderDispatchWorkgroupsIndirect(WGPUComputePassEncoder computePassEncoder, WGPUBuffer indirectBuffer, uint64_t indirectOffset)
 {
     WebGPU::fromAPI(computePassEncoder).dispatchIndirect(WebGPU::fromAPI(indirectBuffer), indirectOffset);
 }
 
-void wgpuComputePassEncoderEndPass(WGPUComputePassEncoder computePassEncoder)
+void wgpuComputePassEncoderEnd(WGPUComputePassEncoder computePassEncoder)
 {
     WebGPU::fromAPI(computePassEncoder).endPass();
 }

@@ -34,6 +34,7 @@
 #include <wtf/Condition.h>
 #include <wtf/Lock.h>
 #include <wtf/Threading.h>
+#include <wtf/WTFProcess.h>
 #include <wtf/text/StringBuilder.h>
 
 #if HAVE(MACH_EXCEPTIONS)
@@ -203,12 +204,12 @@ int testExecutionTimeLimit()
                 printf("PASS: %s script timed out as expected.\n", tierName);
             else {
                 printf("FAIL: %s script timeout callback was not called.\n", tierName);
-                exit(1);
+                exitProcess(1);
             }
 
             if (!exception) {
                 printf("FAIL: %s TerminationException was not thrown.\n", tierName);
-                exit(1);
+                exitProcess(1);
             }
 
             thread->waitForCompletion();
@@ -228,10 +229,10 @@ int testExecutionTimeLimit()
                     "var startTime = currentCPUTime();"
                     "while (true) {"
                         "for (var i = 0; i < 1000; i++);"
-                        "if (currentCPUTime() - startTime > ", timeAfterWatchdogShouldHaveFired.seconds(), ") break;"
+                        "if (currentCPUTime() - startTime > "_s, timeAfterWatchdogShouldHaveFired.seconds(), ") break;"
                     "}"
                 "}"
-                "foo();"
+                "foo();"_s
             ).utf8();
 
             JSStringRef script = JSStringCreateWithUTF8CString(scriptText.data());
@@ -271,10 +272,10 @@ int testExecutionTimeLimit()
                 "function recurse(i) {"
                     "'use strict';"
                     "if (i % 1000 === 0) {"
-                        "if (currentCPUTime() - startTime >", timeAfterWatchdogShouldHaveFired.seconds(), ") { return; }"
+                        "if (currentCPUTime() - startTime >"_s, timeAfterWatchdogShouldHaveFired.seconds(), ") { return; }"
                     "}"
                 "return recurse(i + 1); }"
-                "recurse(0);"
+                "recurse(0);"_s
             ).utf8();
 
             JSStringRef script = JSStringCreateWithUTF8CString(scriptText.data());
@@ -315,11 +316,11 @@ int testExecutionTimeLimit()
                     "try {"
                         "while (true) {"
                             "for (var i = 0; i < 1000; i++);"
-                                "if (currentCPUTime() - startTime > ", timeAfterWatchdogShouldHaveFired.seconds(), ") break;"
+                                "if (currentCPUTime() - startTime > "_s, timeAfterWatchdogShouldHaveFired.seconds(), ") break;"
                         "}"
                     "} catch(e) { }"
                 "}"
-                "foo();"
+                "foo();"_s
             ).utf8();
 
             JSStringRef script = JSStringCreateWithUTF8CString(scriptText.data());
@@ -361,10 +362,10 @@ int testExecutionTimeLimit()
                     "var startTime = currentCPUTime();"
                     "while (true) {"
                         "for (var i = 0; i < 1000; i++);"
-                            "if (currentCPUTime() - startTime > ", timeAfterWatchdogShouldHaveFired.seconds(), ") break;"
+                            "if (currentCPUTime() - startTime > "_s, timeAfterWatchdogShouldHaveFired.seconds(), ") break;"
                     "}"
                 "}"
-                "foo();"
+                "foo();"_s
             ).utf8();
             
             JSStringRef script = JSStringCreateWithUTF8CString(scriptText.data());
@@ -406,10 +407,10 @@ int testExecutionTimeLimit()
                     "var startTime = currentCPUTime();"
                     "while (true) {"
                         "for (var i = 0; i < 1000; i++);"
-                            "if (currentCPUTime() - startTime > ", timeAfterWatchdogShouldHaveFired.seconds(), ") break;"
+                            "if (currentCPUTime() - startTime > "_s, timeAfterWatchdogShouldHaveFired.seconds(), ") break;"
                     "}"
                 "}"
-                "foo();"
+                "foo();"_s
             ).utf8();
 
             JSStringRef script = JSStringCreateWithUTF8CString(scriptText.data());
@@ -451,10 +452,10 @@ int testExecutionTimeLimit()
                     "var startTime = currentCPUTime();"
                     "while (true) {"
                         "for (var i = 0; i < 1000; i++);"
-                            "if (currentCPUTime() - startTime > ", maxBusyLoopTime.seconds(), ") break;"
+                            "if (currentCPUTime() - startTime > "_s, maxBusyLoopTime.seconds(), ") break;"
                     "}"
                 "}"
-                "foo();"
+                "foo();"_s
             ).utf8();
 
             JSStringRef script = JSStringCreateWithUTF8CString(scriptText.data());

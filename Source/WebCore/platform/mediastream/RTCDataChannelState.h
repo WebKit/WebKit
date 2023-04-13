@@ -27,8 +27,6 @@
 
 #if ENABLE(WEB_RTC)
 
-#include <wtf/EnumTraits.h>
-
 namespace WebCore {
 
 enum class RTCDataChannelState : uint8_t {
@@ -39,20 +37,5 @@ enum class RTCDataChannelState : uint8_t {
 };
 
 }; // namespace WebCore
-
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::RTCDataChannelState> {
-    using values = EnumValues<
-        WebCore::RTCDataChannelState,
-        WebCore::RTCDataChannelState::Connecting,
-        WebCore::RTCDataChannelState::Open,
-        WebCore::RTCDataChannelState::Closing,
-        WebCore::RTCDataChannelState::Closed
-    >;
-};
-
-}
 
 #endif

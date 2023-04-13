@@ -3,6 +3,12 @@
 <head>
 <script src="../../svg/dynamic-updates/resources/SVGTestCase.js"></script>
 <script src="../../resources/js-test-pre.js"></script>
+<style>
+* {
+    font-family: 'Ahem';
+    font-size: 16px;
+}
+</style>
 </head>
 <body>
 <p id="description"></p>
@@ -19,14 +25,17 @@ text.setAttribute("x", "100px");
 text.setAttribute("y", "100px");
 rootSVGElement.appendChild(text);
 
-function test(valueString, expectedValue) {
+function test(valueString, expectedValue, tolerance) {
 	// Reset baseline-shift to baseline.
 	text.setAttribute("baseline-shift", "baseline");
 	shouldBeEqualToString("getComputedStyle(text).baselineShift", "baseline");
 
 	// Run test
 	text.setAttribute("baseline-shift", valueString);
-	shouldBeEqualToString("getComputedStyle(text).baselineShift", expectedValue);
+    if (tolerance)
+        shouldBeCloseTo("parseFloat(getComputedStyle(text).baselineShift)", parseFloat(expectedValue), tolerance);
+    else
+        shouldBeEqualToString("getComputedStyle(text).baselineShift", expectedValue);
 }
 
 debug("");
@@ -83,7 +92,7 @@ test("50em", "800px");
 
 debug("");
 debug("Test if value and 'ex' still works");
-test("50ex", "400px");
+test("50ex", "640px", 0.01);
 
 debug("");
 debug("Trailing and leading whitespaces");

@@ -30,7 +30,7 @@
 namespace WebCore {
 
 class Page;
-struct SecurityOriginData;
+class SecurityOriginData;
 
 class BadgeClient : public RefCounted<BadgeClient> {
 public:

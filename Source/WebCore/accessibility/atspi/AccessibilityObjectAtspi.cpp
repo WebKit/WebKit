@@ -50,7 +50,7 @@ static inline bool roleIsTextType(AccessibilityRole role)
 {
     return role == AccessibilityRole::Paragraph
         || role == AccessibilityRole::Heading
-        || role == AccessibilityRole::Div
+        || role == AccessibilityRole::Generic
         || role == AccessibilityRole::Cell
         || role == AccessibilityRole::Link
         || role == AccessibilityRole::WebCoreLink
@@ -291,7 +291,8 @@ static Atspi::Role atspiRole(AccessibilityRole role)
     case AccessibilityRole::Footnote:
         return Atspi::Role::Footnote;
     case AccessibilityRole::ApplicationTextGroup:
-    case AccessibilityRole::Div:
+    case AccessibilityRole::Code:
+    case AccessibilityRole::Generic:
     case AccessibilityRole::Pre:
     case AccessibilityRole::SVGText:
     case AccessibilityRole::TextGroup:
@@ -875,7 +876,7 @@ HashMap<String, String> AccessibilityObjectAtspi::attributes() const
     if (!m_coreObject)
         return map;
 
-    auto* liveObject = dynamicDowncast<AccessibilityObject>(m_coreObject);
+    RefPtr liveObject = dynamicDowncast<AccessibilityObject>(m_coreObject);
 
     String tagName = m_coreObject->tagName();
     if (!tagName.isEmpty())
@@ -982,7 +983,7 @@ HashMap<String, String> AccessibilityObjectAtspi::attributes() const
         // to be obtainable in the same fashion as an ARIA landmark, fall back on the computedRoleString.
         // We also want to do this for the style-format-group element types so that the type of format
         // group it is doesn't get lost to a generic platform role.
-        if (m_coreObject->ariaRoleAttribute() == AccessibilityRole::Unknown && (m_coreObject->isLandmark() || m_coreObject->isStyleFormatGroup()))
+        if (liveObject && liveObject->ariaRoleAttribute() == AccessibilityRole::Unknown && (liveObject->isLandmark() || liveObject->isStyleFormatGroup()))
             map.set("xml-roles"_s, computedRoleString);
     }
 
@@ -1200,14 +1201,14 @@ void AccessibilityObjectAtspi::loadEvent(const char* event)
 
 std::optional<Atspi::Role> AccessibilityObjectAtspi::effectiveRole() const
 {
-    if (m_coreObject->isPasswordField())
+    if (m_coreObject->isSecureField())
         return Atspi::Role::PasswordText;
 
-    auto* liveObject = dynamicDowncast<AccessibilityObject>(m_coreObject);
+    RefPtr liveObject = dynamicDowncast<AccessibilityObject>(m_coreObject);
 
     switch (m_coreObject->roleValue()) {
     case AccessibilityRole::Form:
-        if (m_coreObject->ariaRoleAttribute() != AccessibilityRole::Unknown)
+        if (liveObject && liveObject->ariaRoleAttribute() != AccessibilityRole::Unknown)
             return Atspi::Role::Landmark;
         break;
     case AccessibilityRole::ListMarker: {
@@ -1343,7 +1344,7 @@ const char* AccessibilityObjectAtspi::effectiveLocalizedRoleName() const
     case Atspi::Role::TableCell:
         return AccessibilityAtspi::localizedRoleName(AccessibilityRole::Cell);
     case Atspi::Role::Section:
-        return AccessibilityAtspi::localizedRoleName(AccessibilityRole::Div);
+        return AccessibilityAtspi::localizedRoleName(AccessibilityRole::Generic);
     case Atspi::Role::MathFraction:
         return _("math fraction");
     case Atspi::Role::MathRoot:
@@ -1423,7 +1424,7 @@ AccessibilityObjectInclusion AccessibilityObject::accessibilityPlatformIncludesO
         return AccessibilityObjectInclusion::IgnoreObject;
 
     // Entries and password fields have extraneous children which we want to ignore.
-    if (parent->isPasswordField() || parent->isTextControl())
+    if (parent->isSecureField() || parent->isTextControl())
         return AccessibilityObjectInclusion::IgnoreObject;
 
     // We expose the slider as a whole but not its value indicator.

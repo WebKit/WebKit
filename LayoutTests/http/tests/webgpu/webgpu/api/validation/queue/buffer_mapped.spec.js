@@ -184,49 +184,41 @@ Test that the order of mapping a buffer relative to when commands are recorded t
       mappedAtCreation: false,
       _shouldError: false,
     },
-
     {
       order: ['record', 'map', 'finish', 'unmap', 'submit'],
       mappedAtCreation: false,
       _shouldError: false,
     },
-
     {
       order: ['record', 'finish', 'map', 'unmap', 'submit'],
       mappedAtCreation: false,
       _shouldError: false,
     },
-
     {
       order: ['map', 'record', 'unmap', 'finish', 'submit'],
       mappedAtCreation: false,
       _shouldError: false,
     },
-
     {
       order: ['map', 'record', 'finish', 'unmap', 'submit'],
       mappedAtCreation: false,
       _shouldError: false,
     },
-
     {
       order: ['map', 'record', 'finish', 'submit', 'unmap'],
       mappedAtCreation: false,
       _shouldError: true,
     },
-
     {
       order: ['record', 'map', 'finish', 'submit', 'unmap'],
       mappedAtCreation: false,
       _shouldError: true,
     },
-
     {
       order: ['record', 'finish', 'map', 'submit', 'unmap'],
       mappedAtCreation: false,
       _shouldError: true,
     },
-
     { order: ['record', 'unmap', 'finish', 'submit'], mappedAtCreation: true, _shouldError: false },
     { order: ['record', 'finish', 'unmap', 'submit'], mappedAtCreation: true, _shouldError: false },
     { order: ['record', 'finish', 'submit', 'unmap'], mappedAtCreation: true, _shouldError: true },
@@ -249,19 +241,19 @@ Test that the order of mapping a buffer relative to when commands are recorded t
     let commandBuffer;
 
     const steps = {
-      record: async () => {
+      record: () => {
         commandEncoder.copyBufferToBuffer(buffer, 0, targetBuffer, 0, 4);
       },
       map: async () => {
         await buffer.mapAsync(GPUMapMode.WRITE);
       },
-      unmap: async () => {
+      unmap: () => {
         buffer.unmap();
       },
-      finish: async () => {
+      finish: () => {
         commandBuffer = commandEncoder.finish();
       },
-      submit: async () => {
+      submit: () => {
         t.expectValidationError(() => {
           t.queue.submit([commandBuffer]);
         }, shouldError);

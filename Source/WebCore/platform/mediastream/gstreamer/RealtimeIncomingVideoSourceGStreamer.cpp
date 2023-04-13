@@ -23,18 +23,22 @@
 #include "RealtimeIncomingVideoSourceGStreamer.h"
 
 #include "GStreamerCommon.h"
+#include "GStreamerWebRTCUtils.h"
 #include "VideoFrameGStreamer.h"
 #include "VideoFrameMetadataGStreamer.h"
-#include <gst/rtp/rtp.h>
 
-GST_DEBUG_CATEGORY_EXTERN(webkit_webrtc_endpoint_debug);
-#define GST_CAT_DEFAULT webkit_webrtc_endpoint_debug
+GST_DEBUG_CATEGORY(webkit_webrtc_incoming_video_debug);
+#define GST_CAT_DEFAULT webkit_webrtc_incoming_video_debug
 
 namespace WebCore {
 
 RealtimeIncomingVideoSourceGStreamer::RealtimeIncomingVideoSourceGStreamer(AtomString&& videoTrackId)
     : RealtimeIncomingSourceGStreamer(CaptureDevice { WTFMove(videoTrackId), CaptureDevice::DeviceType::Camera, emptyString() })
 {
+    static std::once_flag debugRegisteredFlag;
+    std::call_once(debugRegisteredFlag, [] {
+        GST_DEBUG_CATEGORY_INIT(webkit_webrtc_incoming_video_debug, "webkitwebrtcincomingvideo", 0, "WebKit WebRTC incoming video");
+    });
     static Atomic<uint64_t> sourceCounter = 0;
     gst_element_set_name(bin(), makeString("incoming-video-source-", sourceCounter.exchangeAdd(1)).ascii().data());
     GST_DEBUG_OBJECT(bin(), "New incoming video source created");
@@ -51,11 +55,12 @@ RealtimeIncomingVideoSourceGStreamer::RealtimeIncomingVideoSourceGStreamer(AtomS
         videoFrameTimeMetadata->receiveTime = MonotonicTime::now().secondsSinceEpoch();
 
         auto* buffer = GST_BUFFER_CAST(GST_PAD_PROBE_INFO_DATA(info));
-        GstRTPBuffer rtpBuffer GST_RTP_BUFFER_INIT;
-        if (gst_rtp_buffer_map(buffer, GST_MAP_READ, &rtpBuffer)) {
-            videoFrameTimeMetadata->rtpTimestamp = gst_rtp_buffer_get_timestamp(&rtpBuffer);
-            gst_rtp_buffer_unmap(&rtpBuffer);
+        {
+            GstMappedRtpBuffer rtpBuffer(buffer, GST_MAP_READ);
+            if (rtpBuffer)
+                videoFrameTimeMetadata->rtpTimestamp = gst_rtp_buffer_get_timestamp(rtpBuffer.mappedData());
         }
+
         buffer = webkitGstBufferSetVideoFrameTimeMetadata(buffer, WTFMove(videoFrameTimeMetadata));
         GST_PAD_PROBE_INFO_DATA(info) = buffer;
         return GST_PAD_PROBE_OK;

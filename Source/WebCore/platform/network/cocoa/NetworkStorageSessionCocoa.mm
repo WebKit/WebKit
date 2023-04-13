@@ -605,8 +605,8 @@ void NetworkStorageSession::deleteCookiesMatching(const Function<bool(NSHTTPCook
 
 void NetworkStorageSession::deleteCookies(const ClientOrigin& origin, CompletionHandler<void()>&& completionHandler)
 {
-    auto cachePartition = origin.topOrigin == origin.clientOrigin ? emptyString() : ResourceRequest::partitionName(origin.topOrigin.host);
-    deleteCookiesMatching([domain = origin.clientOrigin.host, &cachePartition](NSHTTPCookie* cookie) {
+    auto cachePartition = origin.topOrigin == origin.clientOrigin ? emptyString() : ResourceRequest::partitionName(origin.topOrigin.host());
+    deleteCookiesMatching([domain = origin.clientOrigin.host(), &cachePartition](NSHTTPCookie* cookie) {
         return String(cookie.domain) == domain && equalIgnoringNullity(String(cookie._storagePartition), cachePartition);
     }, WTFMove(completionHandler));
 }

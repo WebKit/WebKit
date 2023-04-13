@@ -28,7 +28,7 @@
 
 #include "DOMPoint.h"
 #include "JSDOMBinding.h"
-#include "WebCoreOpaqueRoot.h"
+#include "WebCoreOpaqueRootInlines.h"
 
 namespace WebCore {
 using namespace JSC;

@@ -34,23 +34,25 @@ namespace API {
 class Feature final : public ObjectImpl<Object::Type::Feature> {
 public:
 
-    static Ref<Feature> create(const WTF::String& name, const WTF::String& key, FeatureStatus, const WTF::String& details, bool defaultValue, bool hidden);
+    static Ref<Feature> create(const WTF::String& name, const WTF::String& key, FeatureStatus, FeatureCategory, const WTF::String& details, bool defaultValue, bool hidden);
     virtual ~Feature() = default;
 
     WTF::String name() const { return m_name; }
     WTF::String key() const { return m_key; }
     FeatureStatus status() const { return m_status; }
+    FeatureCategory category() const { return m_category; }
     WTF::String details() const { return m_details; }
     bool defaultValue() const { return m_defaultValue; }
     bool isHidden() const { return m_hidden; }
     
 private:
-    explicit Feature(const WTF::String& name, const WTF::String& key, FeatureStatus, const WTF::String& details, bool defaultValue, bool hidden);
+    explicit Feature(const WTF::String& name, const WTF::String& key, FeatureStatus, FeatureCategory, const WTF::String& details, bool defaultValue, bool hidden);
 
     WTF::String m_name;
     WTF::String m_key;
-    FeatureStatus m_status;
     WTF::String m_details;
+    FeatureStatus m_status;
+    FeatureCategory m_category;
     bool m_defaultValue;
     bool m_hidden;
 };

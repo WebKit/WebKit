@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -119,7 +119,7 @@ void RangeResponseGenerator::giveResponseToTaskIfBytesInRangeReceived(WebCoreNSU
     if (!taskData)
         return;
 
-    auto giveBytesToTask = [task = retainPtr(task), buffer, bufferSize, taskData = WeakPtr { *taskData }, generator = WeakPtr { *this }] {
+    auto giveBytesToTask = [task = retainPtr(task), buffer, bufferSize, taskData = WeakPtr { *taskData }, weakGenerator = ThreadSafeWeakPtr { *this }] {
         ASSERT(isMainThread());
         if ([task state] != NSURLSessionTaskStateRunning)
             return;
@@ -140,9 +140,9 @@ void RangeResponseGenerator::giveResponseToTaskIfBytesInRangeReceived(WebCoreNSU
         }
         if (byteIndex >= range.end) {
             [task resourceFinished:nullptr metrics:NetworkLoadMetrics { }];
-            callOnMainThread([generator, task] {
-                if (generator)
-                    generator->removeTask(task.get());
+            callOnMainThread([weakGenerator, task] {
+                if (RefPtr strongGenerator = weakGenerator.get())
+                    strongGenerator->removeTask(task.get());
             });
         }
     };
@@ -247,21 +247,23 @@ private:
     void dataReceived(PlatformMediaResource&, const SharedBuffer& buffer) final
     {
         ASSERT(isMainThread());
-        if (!m_generator)
+        RefPtr generator = m_generator.get();
+        if (!generator)
             return;
-        auto* data = m_generator->m_map.get(m_urlString);
+        auto* data = generator->m_map.get(m_urlString);
         if (!data)
             return;
         data->buffer.append(buffer);
-        m_generator->giveResponseToTasksWithFinishedRanges(*data);
+        generator->giveResponseToTasksWithFinishedRanges(*data);
     }
 
     void loadFailed(PlatformMediaResource&, const ResourceError& error) final
     {
         ASSERT(isMainThread());
-        if (!m_generator)
+        RefPtr generator = m_generator.get();
+        if (!generator)
             return;
-        auto data = m_generator->m_map.take(m_urlString);
+        auto data = generator->m_map.take(m_urlString);
         if (!data)
             return;
         for (auto& task : data->taskData.keys())
@@ -271,7 +273,7 @@ private:
     void loadFinished(PlatformMediaResource&, const NetworkLoadMetrics&) final
     {
         ASSERT(isMainThread());
-        RefPtr generator { m_generator.get() };
+        RefPtr generator = m_generator.get();
         if (!generator)
             return;
         auto* data = generator->m_map.get(m_urlString);
@@ -282,7 +284,7 @@ private:
         generator->giveResponseToTasksWithFinishedRanges(*data);
     }
 
-    WeakPtr<RangeResponseGenerator> m_generator;
+    ThreadSafeWeakPtr<RangeResponseGenerator> m_generator;
     const String m_urlString;
 };
 

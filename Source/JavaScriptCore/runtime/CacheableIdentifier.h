@@ -26,16 +26,7 @@
 #pragma once
 
 #include "JSCJSValue.h"
-
-namespace WTF {
-
-class PrintStream;
-class UniquedStringImpl;
-
-} // namespace WTF
-
-using WTF::PrintStream;
-using WTF::UniquedStringImpl;
+#include <wtf/text/SymbolImpl.h>
 
 namespace JSC {
 
@@ -66,8 +57,10 @@ public:
     bool isCell() const { return !isUid(); }
     inline bool isSymbolCell() const;
     inline bool isStringCell() const;
+    inline void ensureIsCell(VM&);
 
     bool isSymbol() const { return m_bits && uid()->isSymbol(); }
+    bool isPrivateName() const { return isSymbol() && static_cast<SymbolImpl&>(*uid()).isPrivate(); }
 
     inline JSCell* cell() const;
     UniquedStringImpl* uid() const;

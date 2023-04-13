@@ -307,7 +307,7 @@ void TreeBuilder::buildInlineDisplayTree(const Layout::LayoutState& layoutState,
             continue;
         }
 
-        if (box.text()) {
+        if (box.isTextOrSoftLineBreak()) {
             auto& lineGeometry = inlineFormattingState.lines().at(box.lineIndex());
             auto textBox = m_boxFactory.displayBoxForTextRun(box, lineGeometry, positioningContext().inFlowContainingBlockContext());
             insert(WTFMove(textBox), insertionPosition);

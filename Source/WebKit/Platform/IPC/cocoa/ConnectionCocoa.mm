@@ -100,7 +100,7 @@ static void clearNoSenderNotifications(mach_port_t port)
 void Connection::platformInvalidate()
 {
     if (!m_isConnected) {
-        if (m_sendPort) {
+        if (MACH_PORT_VALID(m_sendPort)) {
             ASSERT(!m_isServer);
             deallocateSendRightSafely(m_sendPort);
             m_sendPort = MACH_PORT_NULL;
@@ -138,11 +138,11 @@ void Connection::platformInvalidate()
 
 void Connection::cancelSendSource()
 {
+    m_sendPort = MACH_PORT_NULL;
     if (!m_sendSource)
         return;
     dispatch_source_cancel(m_sendSource.get());
     m_sendSource = nullptr;
-    m_sendPort = MACH_PORT_NULL;
 }
 
 void Connection::cancelReceiveSource()
@@ -154,41 +154,30 @@ void Connection::cancelReceiveSource()
 
 void Connection::platformInitialize(Identifier identifier)
 {
-    if (!MACH_PORT_VALID(identifier.port))
-        return;
-
     if (m_isServer) {
+        RELEASE_ASSERT(MACH_PORT_VALID(identifier.port)); // Caller error. MACH_DEAD_NAME does not make sense, as we do not transfer receive rights.
         m_receivePort = identifier.port;
-        m_sendPort = MACH_PORT_NULL;
-
 #if !PLATFORM(WATCHOS)
         mach_port_guard(mach_task_self(), m_receivePort, reinterpret_cast<mach_port_context_t>(this), true);
 #endif
     } else {
-        m_receivePort = MACH_PORT_NULL;
+        RELEASE_ASSERT(identifier.port != MACH_PORT_NULL);
+        // MACH_DEAD_NAME means that the send port got closed while in transit through another connection.
+        // Treat it similar to as if we got a valid port but the port got closed immediately after setting up the
+        // connection.
         m_sendPort = identifier.port;
     }
-
-    m_sendSource = nullptr;
-    m_receiveSource = nullptr;
-
     m_xpcConnection = identifier.xpcConnection;
 }
 
 void Connection::platformOpen()
 {
     if (m_isServer) {
-        ASSERT(m_receivePort);
         ASSERT(!m_sendPort);
-        ASSERT(MACH_PORT_VALID(m_receivePort));
         // Client passed m_receivePort. Call Client::didClose() when there are no senders to that port.
         requestNoSenderNotifications(m_receivePort);
-
     } else {
         ASSERT(!m_receivePort);
-        ASSERT(m_sendPort);
-        ASSERT(MACH_PORT_VALID(m_sendPort));
-
         auto kr = mach_port_allocate(mach_task_self(), MACH_PORT_RIGHT_RECEIVE, &m_receivePort);
         if (kr != KERN_SUCCESS) {
             LOG_ERROR("Could not allocate mach port, error %x: %s", kr, mach_error_string(kr));
@@ -205,17 +194,21 @@ void Connection::platformOpen()
         m_isConnected = true;
 
         // Send the initialize message, which contains a send right for the server to use.
-        auto encoder = makeUniqueRef<Encoder>(MessageName::InitializeConnection, 0);
-
         mach_port_insert_right(mach_task_self(), m_receivePort, m_receivePort, MACH_MSG_TYPE_MAKE_SEND);
-        encoder.get() << MachSendRight::adopt(m_receivePort);
+        auto serverSendRight = MachSendRight::adopt(m_receivePort);
 
-        // Call Client::didClose() when the above send right gets destroyed.
+        // Call Client::didClose() when the serverSendRight gets destroyed.
         requestNoSenderNotifications(m_receivePort);
 
         initializeSendSource();
-
-        sendMessage(WTFMove(encoder), { });
+        if (m_sendPort != MACH_PORT_DEAD) {
+            auto encoder = makeUniqueRef<Encoder>(MessageName::InitializeConnection, 0);
+            encoder.get() << WTFMove(serverSendRight);
+            sendMessage(WTFMove(encoder), { });
+        }
+        // When send port is already dead, the serverSendRight goes out of scope and triggers
+        // MACH_NOTIFY_NO_SENDERS. This way the connectionDidClose logic will be invoked for
+        // dead-on-arrival connections.
     }
 
     // Change the message queue length for the receive port.
@@ -346,16 +339,15 @@ bool Connection::sendOutgoingMessage(UniqueRef<Encoder>&& encoder)
     if (!messageBodyIsOOL)
         memcpy(messageData, encoder->buffer(), encoder->bufferSize());
 
-    ASSERT(m_sendPort);
-    ASSERT(MACH_PORT_VALID(m_sendPort));
-
     return sendMessage(WTFMove(message));
 }
 
 void Connection::initializeSendSource()
 {
     ASSERT(m_isConnected);
-    ASSERT(MACH_PORT_VALID(m_sendPort));
+    if (m_sendPort == MACH_PORT_DEAD)
+        return;
+    RELEASE_ASSERT(m_sendPort != MACH_PORT_NULL);
 
     m_sendSource = adoptOSObject(dispatch_source_create(DISPATCH_SOURCE_TYPE_MACH_SEND, m_sendPort, DISPATCH_MACH_SEND_POSSIBLE, m_connectionQueue->dispatchQueue()));
     dispatch_source_set_registration_handler(m_sendSource.get(), [this, protectedThis = Ref { *this }] {

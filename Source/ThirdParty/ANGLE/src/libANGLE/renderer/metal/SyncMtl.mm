@@ -74,10 +74,15 @@ angle::Result Sync::set(ContextMtl *contextMtl,
     {
         ANGLE_TRY(initialize(contextMtl, sharedEvent, signalValue));
     }
-    ASSERT(condition == GL_SYNC_GPU_COMMANDS_COMPLETE);
+    ASSERT(condition == GL_SYNC_GPU_COMMANDS_COMPLETE ||
+           condition == EGL_SYNC_METAL_SHARED_EVENT_SIGNALED_ANGLE);
     ASSERT(flags == 0);
 
-    contextMtl->queueEventSignal(mMetalSharedEvent, mSignalValue);
+    if (condition == GL_SYNC_GPU_COMMANDS_COMPLETE)
+    {
+        contextMtl->queueEventSignal(mMetalSharedEvent, mSignalValue);
+    }
+
     return angle::Result::Continue;
 }
 
@@ -254,6 +259,14 @@ EGLSyncMtl::EGLSyncMtl(const egl::AttributeMap &attribs) : EGLSyncImpl()
             mtl::makeSignalValue(attribs.get(EGL_SYNC_METAL_SHARED_EVENT_SIGNAL_VALUE_HI_ANGLE, 0),
                                  attribs.get(EGL_SYNC_METAL_SHARED_EVENT_SIGNAL_VALUE_LO_ANGLE, 0));
     }
+
+    // Translate conditions that aren't EGL_SYNC_METAL_SHARED_EVENT_SIGNALED_ANGLE to
+    // GL_SYNC_GPU_COMMANDS_COMPLETE. This is to translate EGL_SYNC_PRIOR_COMMANDS_COMPLETE, from
+    // the EGLSync layer, to the GL equivalent used in mtl::Sync.
+    mCondition =
+        attribs.getAsInt(EGL_SYNC_CONDITION, 0) == EGL_SYNC_METAL_SHARED_EVENT_SIGNALED_ANGLE
+            ? EGL_SYNC_METAL_SHARED_EVENT_SIGNALED_ANGLE
+            : GL_SYNC_GPU_COMMANDS_COMPLETE;
 }
 
 EGLSyncMtl::~EGLSyncMtl() {}
@@ -284,8 +297,7 @@ egl::Error EGLSyncMtl::initialize(const egl::Display *display,
             return egl::Error(EGL_BAD_ALLOC);
     }
 
-    if (IsError(
-            mSync.set(contextMtl, GL_SYNC_GPU_COMMANDS_COMPLETE, 0, mSharedEvent, mSignalValue)))
+    if (IsError(mSync.set(contextMtl, mCondition, 0, mSharedEvent, mSignalValue)))
     {
         return egl::Error(EGL_BAD_ALLOC, "eglCreateSyncKHR failed to create sync object");
     }

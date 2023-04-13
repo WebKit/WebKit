@@ -26,6 +26,7 @@
 #include "HeapCell.h"
 #include "WeakSet.h"
 #include <algorithm>
+#include <type_traits>
 #include <wtf/Atomics.h>
 #include <wtf/Bitmap.h>
 #include <wtf/CountingLock.h>
@@ -73,10 +74,14 @@ public:
 
     // Block size must be at least as large as the system page size.
     static constexpr size_t blockSize = std::max(16 * KB, CeilingOnPageSize);
+    static_assert((WeakBlock::blockSize * 16) == 16 * KB);
 
     static constexpr size_t blockMask = ~(blockSize - 1); // blockSize must be a power of two.
 
     static constexpr size_t atomsPerBlock = blockSize / atomSize;
+
+    using AtomNumberType = std::conditional<atomsPerBlock < UINT16_MAX, uint16_t, uint32_t>::type;
+    static_assert(std::numeric_limits<AtomNumberType>::max() >= atomsPerBlock);
 
     static constexpr size_t maxNumberOfLowerTierCells = 8;
     static_assert(maxNumberOfLowerTierCells <= 256);

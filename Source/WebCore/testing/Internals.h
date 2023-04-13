@@ -69,13 +69,14 @@ class AudioTrack;
 class BaseAudioContext;
 class Blob;
 class CacheStorageConnection;
+class CachedResource;
 class CaptionUserPreferencesTestingModeToken;
 class DOMPointReadOnly;
 class DOMRect;
 class DOMRectList;
 class DOMRectReadOnly;
 class DOMURL;
-class DOMWindow;
+class LocalDOMWindow;
 class Document;
 class Element;
 class EventListener;
@@ -83,7 +84,6 @@ class ExtendableEvent;
 class FetchRequest;
 class FetchResponse;
 class File;
-class Frame;
 class GCObservation;
 class HTMLAnchorElement;
 class HTMLAttachmentElement;
@@ -100,6 +100,7 @@ class InspectorStubFrontend;
 class InternalsMapLike;
 class InternalSettings;
 class InternalsSetLike;
+class LocalFrame;
 class Location;
 class MallocStatistics;
 class MediaStream;
@@ -113,6 +114,7 @@ class MockPaymentCoordinator;
 class NodeList;
 class Page;
 class RTCPeerConnection;
+class ReadableStream;
 class Range;
 class RenderedDocumentMarker;
 class SVGSVGElement;
@@ -216,6 +218,7 @@ public:
     enum class ResourceLoadPriority { ResourceLoadPriorityVeryLow, ResourceLoadPriorityLow, ResourceLoadPriorityMedium, ResourceLoadPriorityHigh, ResourceLoadPriorityVeryHigh };
     void setOverrideResourceLoadPriority(ResourceLoadPriority);
     void setStrictRawResourceValidationPolicyDisabled(bool);
+    std::optional<ResourceLoadPriority> getResourcePriority(const String& url);
 
     using FetchObject = std::variant<RefPtr<FetchRequest>, RefPtr<FetchResponse>>;
     bool isFetchObjectContextStopped(const FetchObject&);
@@ -237,7 +240,7 @@ public:
     unsigned imagePendingDecodePromisesCountForTesting(HTMLImageElement&);
     void setClearDecoderAfterAsyncFrameRequestForTesting(HTMLImageElement&, bool enabled);
     unsigned imageDecodeCount(HTMLImageElement&);
-    unsigned pdfDocumentCachingCount(HTMLImageElement&);
+    unsigned imageCachedSubimageCreateCount(HTMLImageElement&);
     unsigned remoteImagesCountForTesting() const;
     void setLargeImageAsyncDecodingEnabledForTesting(HTMLImageElement&, bool enabled);
     void setForceUpdateImageDataEnabledForTesting(HTMLImageElement&, bool enabled);
@@ -355,6 +358,7 @@ public:
     void setShowAutoFillButton(HTMLInputElement&, AutoFillButtonType);
     AutoFillButtonType autoFillButtonType(const HTMLInputElement&);
     AutoFillButtonType lastAutoFillButtonType(const HTMLInputElement&);
+    Vector<String> recentSearches(const HTMLInputElement&);
     ExceptionOr<void> scrollElementToRect(Element&, int x, int y, int w, int h);
 
     ExceptionOr<String> autofillFieldName(Element&);
@@ -468,6 +472,8 @@ public:
     ExceptionOr<String> layerTreeAsText(Document&, unsigned short flags) const;
     ExceptionOr<uint64_t> layerIDForElement(Element&);
     ExceptionOr<String> repaintRectsAsText() const;
+        
+    ExceptionOr<uint64_t> scrollingNodeIDForNode(Node*);
 
     enum {
         // Values need to be kept in sync with Internals.idl.
@@ -673,6 +679,7 @@ public:
     void enableMockSpeechSynthesizer();
     void enableMockSpeechSynthesizerForMediaElement(HTMLMediaElement&);
     ExceptionOr<void> setSpeechUtteranceDuration(double);
+    unsigned minimumExpectedVoiceCount();
 #endif
 
 #if ENABLE(MEDIA_STREAM)
@@ -806,6 +813,9 @@ public:
     void setPageDefersLoading(bool);
     ExceptionOr<bool> pageDefersLoading();
 
+    void grantUniversalAccess();
+    void disableCORSForURL(const String&);
+
     RefPtr<File> createFile(const String&);
     String createTemporaryFile(const String& name, const String& contents);
 
@@ -836,7 +846,7 @@ public:
     String resourceLoadStatisticsForURL(const DOMURL&);
     void setTrackingPreventionEnabled(bool);
 
-    bool isReadableStreamDisturbed(JSC::JSGlobalObject&, JSC::JSValue);
+    bool isReadableStreamDisturbed(ReadableStream&);
     JSC::JSValue cloneArrayBuffer(JSC::JSGlobalObject&, JSC::JSValue, JSC::JSValue, JSC::JSValue);
 
     String composedTreeAsText(Node&);
@@ -1004,6 +1014,7 @@ public:
         RefPtr<DOMPointReadOnly> bottomLeft;
         Vector<ImageOverlayText> children;
         bool hasTrailingNewline { true };
+        bool isVertical { false };
 
         ~ImageOverlayLine();
     };
@@ -1129,6 +1140,8 @@ public:
     void setUseSystemAppearance(bool);
 
     size_t pluginCount();
+    ExceptionOr<unsigned> pluginScrollPositionX(Element&);
+    ExceptionOr<unsigned> pluginScrollPositionY(Element&);
 
     void notifyResourceLoadObserver();
 
@@ -1249,7 +1262,7 @@ public:
         
     String highlightPseudoElementColor(const AtomString& highlightName, Element&);
 
-    String windowLocationHost(DOMWindow&);
+    String windowLocationHost(LocalDOMWindow&);
 
     String systemColorForCSSValue(const String& cssValue, bool useDarkModeAppearance, bool useElevatedUserInterfaceLevel);
 
@@ -1368,12 +1381,16 @@ public:
     };
     SelectorFilterHashCounts selectorFilterHashCounts(const String& selector);
 
+    bool isVisuallyNonEmpty() const;
+        
+    bool isUsingUISideCompositing() const;
+
 private:
     explicit Internals(Document&);
     Document* contextDocument() const;
-    Frame* frame() const;
+    LocalFrame* frame() const;
 
-    void updatePageActivityState(OptionSet<ActivityState::Flag> statesToChange, bool newValue);
+    void updatePageActivityState(OptionSet<ActivityState> statesToChange, bool newValue);
 
     ExceptionOr<RenderedDocumentMarker*> markerAt(Node&, const String& markerType, unsigned index);
     ExceptionOr<ScrollableArea*> scrollableAreaForNode(Node*) const;
@@ -1387,6 +1404,8 @@ private:
 #endif
 
     static RefPtr<SharedBuffer> pngDataForTesting();
+
+    CachedResource* resourceFromMemoryCache(const String& url);
 
 #if ENABLE(MEDIA_STREAM)
     // RealtimeMediaSource::Observer API

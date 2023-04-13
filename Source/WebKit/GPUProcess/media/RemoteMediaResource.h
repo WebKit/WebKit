@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(GPU_PROCESS)
+#if ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
 
 #include "RemoteMediaResourceIdentifier.h"
 #include <WebCore/PlatformMediaResourceLoader.h>
@@ -72,4 +72,4 @@ private:
 } // namespace WebKit
 
 
-#endif
+#endif // ENABLE(GPU_PROCESS) && ENABLE(VIDEO)

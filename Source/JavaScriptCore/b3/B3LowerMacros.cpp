@@ -528,6 +528,26 @@ private:
                 if (isX86() && m_value->as<SIMDValue>()->simdLane() == SIMDLane::i64x2)
                     invertedComparisonByXor(VectorGreaterThan, m_value->child(0), m_value->child(1));
                 break;
+            case VectorShr:
+            case VectorShl: {
+                if constexpr (!isARM64())
+                    break;
+                SIMDValue* value = m_value->as<SIMDValue>();
+                SIMDLane lane = value->simdLane();
+
+                int32_t mask = (elementByteSize(lane) * CHAR_BIT) - 1;
+                Value* shiftAmount = m_insertionSet.insert<Value>(m_index, BitAnd, m_origin, value->child(1), m_insertionSet.insertIntConstant(m_index, m_origin, Int32, mask));
+                if (value->opcode() == VectorShr) {
+                    // ARM64 doesn't have a version of this instruction for right shift. Instead, if the input to
+                    // left shift is negative, it's a right shift by the absolute value of that amount.
+                    shiftAmount = m_insertionSet.insert<Value>(m_index, Neg, m_origin, shiftAmount);
+                }
+                Value* shiftVector = m_insertionSet.insert<SIMDValue>(m_index, m_origin, VectorSplat, B3::V128, SIMDLane::i8x16, SIMDSignMode::None, shiftAmount);
+                Value* result = m_insertionSet.insert<SIMDValue>(m_index, m_origin, VectorShiftByVector, B3::V128, value->simdInfo(), value->child(0), shiftVector);
+                m_value->replaceWithIdentity(result);
+                m_changed = true;
+                break;
+            }
             default:
                 break;
             }
@@ -697,7 +717,7 @@ private:
                 patchpoint->numGPScratchRegisters = 2;
                 // Technically, we don't have to clobber macro registers on X86_64. This is probably
                 // OK though.
-                patchpoint->clobber(RegisterSetBuilder::macroClobberedRegisters());
+                patchpoint->clobber(RegisterSetBuilder::macroClobberedGPRs());
                 
                 BitVector handledIndices;
                 for (unsigned i = start; i < end; ++i) {

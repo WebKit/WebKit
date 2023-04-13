@@ -27,6 +27,7 @@
 #include "FindController.h"
 
 #include "DrawingArea.h"
+#include "MessageSenderInlines.h"
 #include "PluginView.h"
 #include "ShareableBitmap.h"
 #include "WKPage.h"
@@ -38,19 +39,20 @@
 #include <WebCore/DocumentMarkerController.h>
 #include <WebCore/FloatQuad.h>
 #include <WebCore/FocusController.h>
-#include <WebCore/Frame.h>
 #include <WebCore/FrameSelection.h>
-#include <WebCore/FrameView.h>
 #include <WebCore/GeometryUtilities.h>
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/ImageAnalysisQueue.h>
 #include <WebCore/ImageOverlay.h>
+#include <WebCore/LocalFrame.h>
+#include <WebCore/LocalFrameView.h>
 #include <WebCore/Page.h>
 #include <WebCore/PageOverlayController.h>
 #include <WebCore/PathUtilities.h>
 #include <WebCore/PlatformMouseEvent.h>
 #include <WebCore/PluginDocument.h>
 #include <WebCore/Range.h>
+#include <WebCore/RenderObject.h>
 #include <WebCore/SimpleRange.h>
 
 #if PLATFORM(COCOA)
@@ -121,9 +123,9 @@ uint32_t FindController::replaceMatches(const Vector<uint32_t>& matchIndices, co
     return m_webPage->corePage()->replaceRangesWithText(rangesToReplace, replacementText, selectionOnly);
 }
 
-static Frame* frameWithSelection(Page* page)
+static LocalFrame* frameWithSelection(Page* page)
 {
-    for (AbstractFrame* frame = &page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
+    for (auto* frame = &page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
         auto* localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
@@ -135,7 +137,7 @@ static Frame* frameWithSelection(Page* page)
 
 void FindController::updateFindUIAfterPageScroll(bool found, const String& string, OptionSet<FindOptions> options, unsigned maxMatchCount, DidWrap didWrap, FindUIOriginator originator)
 {
-    Frame* selectedFrame = frameWithSelection(m_webPage->corePage());
+    auto* selectedFrame = frameWithSelection(m_webPage->corePage());
 
 #if ENABLE(PDFKIT_PLUGIN)
     auto* pluginView = mainFramePlugIn();
@@ -258,7 +260,7 @@ void FindController::findString(const String& string, OptionSet<FindOptions> opt
     if (!pluginView)
 #endif
     {
-        if (Frame* selectedFrame = frameWithSelection(m_webPage->corePage())) {
+        if (auto* selectedFrame = frameWithSelection(m_webPage->corePage())) {
             if (selectedFrame->selection().selectionBounds().isEmpty()) {
                 auto result = m_webPage->corePage()->findTextMatches(string, coreOptions, maxMatchCount);
                 m_findMatches = WTFMove(result.ranges);
@@ -351,7 +353,7 @@ void FindController::getImageForFindMatch(uint32_t matchIndex)
 {
     if (matchIndex >= m_findMatches.size())
         return;
-    Frame* frame = m_findMatches[matchIndex].start.document().frame();
+    auto* frame = m_findMatches[matchIndex].start.document().frame();
     if (!frame)
         return;
 
@@ -376,7 +378,7 @@ void FindController::selectFindMatch(uint32_t matchIndex)
 {
     if (matchIndex >= m_findMatches.size())
         return;
-    Frame* frame = m_findMatches[matchIndex].start.document().frame();
+    auto* frame = m_findMatches[matchIndex].start.document().frame();
     if (!frame)
         return;
     frame->selection().setSelection(m_findMatches[matchIndex]);
@@ -388,7 +390,7 @@ void FindController::indicateFindMatch(uint32_t matchIndex)
 
     selectFindMatch(matchIndex);
 
-    Frame* selectedFrame = frameWithSelection(m_webPage->corePage());
+    auto* selectedFrame = frameWithSelection(m_webPage->corePage());
     if (!selectedFrame)
         return;
 
@@ -421,7 +423,7 @@ void FindController::hideFindUI()
 
 #if !PLATFORM(IOS_FAMILY)
 
-bool FindController::updateFindIndicator(Frame& selectedFrame, bool isShowingOverlay, bool shouldAnimate)
+bool FindController::updateFindIndicator(LocalFrame& selectedFrame, bool isShowingOverlay, bool shouldAnimate)
 {
     OptionSet<TextIndicatorOption> textIndicatorOptions { TextIndicatorOption::IncludeMarginIfRangeMatchesSelection };
     if (auto selectedRange = selectedFrame.selection().selection().range(); selectedRange && ImageOverlay::isInsideOverlay(*selectedRange))
@@ -461,7 +463,7 @@ void FindController::willFindString()
 
 void FindController::didFindString()
 {
-    Frame* selectedFrame = frameWithSelection(m_webPage->corePage());
+    auto* selectedFrame = frameWithSelection(m_webPage->corePage());
     if (!selectedFrame)
         return;
 
@@ -498,7 +500,7 @@ void FindController::deviceScaleFactorDidChange()
 {
     ASSERT(isShowingOverlay());
 
-    Frame* selectedFrame = frameWithSelection(m_webPage->corePage());
+    auto* selectedFrame = frameWithSelection(m_webPage->corePage());
     if (!selectedFrame)
         return;
 
@@ -510,7 +512,7 @@ void FindController::redraw()
     if (!m_isShowingFindIndicator)
         return;
 
-    Frame* selectedFrame = frameWithSelection(m_webPage->corePage());
+    auto* selectedFrame = frameWithSelection(m_webPage->corePage());
     if (!selectedFrame)
         return;
 
@@ -520,10 +522,13 @@ void FindController::redraw()
 Vector<FloatRect> FindController::rectsForTextMatchesInRect(IntRect clipRect)
 {
     Vector<FloatRect> rects;
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_webPage->corePage()->mainFrame());
+    if (!localMainFrame)
+        return rects;
 
-    FrameView* mainFrameView = m_webPage->corePage()->mainFrame().view();
+    auto* mainFrameView = localMainFrame->view();
 
-    for (AbstractFrame* frame = &m_webPage->corePage()->mainFrame(); frame; frame = frame->tree().traverseNext()) {
+    for (Frame* frame = localMainFrame; frame; frame = frame->tree().traverseNext()) {
         auto* localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
@@ -598,7 +603,7 @@ void FindController::drawRect(PageOverlay&, GraphicsContext& graphicsContext, co
     if (!m_isShowingFindIndicator)
         return;
 
-    if (Frame* selectedFrame = frameWithSelection(m_webPage->corePage())) {
+    if (auto* selectedFrame = frameWithSelection(m_webPage->corePage())) {
         IntRect findIndicatorRect = selectedFrame->view()->contentsToRootView(enclosingIntRect(selectedFrame->selection().selectionBounds(FrameSelection::ClipToVisibleContent::No)));
 
         if (findIndicatorRect != m_findIndicatorRect) {
@@ -616,7 +621,7 @@ void FindController::didScrollAffectingFindIndicatorPosition()
 {
     if (shouldHideFindIndicatorOnScroll())
         hideFindIndicator();
-    else if (Frame *selectedFrame = frameWithSelection(m_webPage->corePage()))
+    else if (LocalFrame *selectedFrame = frameWithSelection(m_webPage->corePage()))
         updateFindIndicator(*selectedFrame, true, false);
 }
 

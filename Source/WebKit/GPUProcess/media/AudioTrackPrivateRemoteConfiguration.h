@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(GPU_PROCESS)
+#if ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
 
 #include "TrackPrivateRemoteConfiguration.h"
 #include <WebCore/AudioTrackPrivate.h>
@@ -36,26 +36,8 @@ struct AudioTrackPrivateRemoteConfiguration : TrackPrivateRemoteConfiguration {
     bool enabled;
     WebCore::AudioTrackPrivate::Kind kind { WebCore::AudioTrackPrivate::Kind::None };
     WebCore::PlatformAudioTrackConfiguration trackConfiguration;
-
-    template<class Encoder>
-    void encode(Encoder& encoder) const
-    {
-        TrackPrivateRemoteConfiguration::encode(encoder);
-        encoder << enabled;
-        encoder << kind;
-        encoder << trackConfiguration;
-    }
-
-    template <class Decoder>
-    static bool WARN_UNUSED_RETURN decode(Decoder& decoder, AudioTrackPrivateRemoteConfiguration& configuration)
-    {
-        return TrackPrivateRemoteConfiguration::decode(decoder, configuration)
-            && decoder.decode(configuration.enabled)
-            && decoder.decode(configuration.kind)
-            && decoder.decode(configuration.trackConfiguration);
-    }
 };
 
 } // namespace WebKit
 
-#endif
+#endif // ENABLE(GPU_PROCESS) && ENABLE(VIDEO)

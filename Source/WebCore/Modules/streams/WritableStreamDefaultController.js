@@ -28,7 +28,7 @@ function initializeWritableStreamDefaultController()
 {
     "use strict";
 
-    if (arguments.length !== 1 && arguments[0] !== @isWritableStream)
+    if (arguments.length !== 1 || arguments[0] !== @isWritableStream)
         @throwTypeError("WritableStreamDefaultController constructor should not be called directly");
 
     @putByIdDirectPrivate(this, "queue", @newQueue());

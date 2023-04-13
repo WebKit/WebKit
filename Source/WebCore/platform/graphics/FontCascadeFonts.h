@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2010, 2013-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2023 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -133,7 +133,7 @@ inline const Font& FontCascadeFonts::primaryFont(const FontCascadeDescription& d
         auto& primaryRanges = realizeFallbackRangesAt(description, 0);
         m_cachedPrimaryFont = primaryRanges.glyphDataForCharacter(' ', ExternalResourceDownloadPolicy::Allow).font;
         if (!m_cachedPrimaryFont)
-            m_cachedPrimaryFont = &primaryRanges.fontForFirstRange();
+            m_cachedPrimaryFont = primaryRanges.rangeAt(0).font(ExternalResourceDownloadPolicy::Allow);
         else if (m_cachedPrimaryFont->isInterstitial()) {
             for (unsigned index = 1; ; ++index) {
                 auto& localRanges = realizeFallbackRangesAt(description, index);

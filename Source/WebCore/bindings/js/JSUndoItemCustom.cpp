@@ -26,7 +26,7 @@
 #include "config.h"
 #include "JSNodeCustom.h"
 #include "JSUndoItem.h"
-#include "WebCoreOpaqueRoot.h"
+#include "WebCoreOpaqueRootInlines.h"
 #include <JavaScriptCore/JSCJSValueInlines.h>
 
 namespace WebCore {

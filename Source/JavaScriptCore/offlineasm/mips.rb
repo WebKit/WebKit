@@ -700,6 +700,7 @@ class Sequence
             end
         }
 
+        result = riscDropTags(result)
         result = mipsAddPICCode(result)
         result = mipsLowerFarBranchOps(result)
         result = mipsLowerSimpleBranchOps(result)

@@ -21,6 +21,7 @@
 
 #include "MutableStyleProperties.h"
 #include "SVGResourceElementClient.h"
+#include "SVGTests.h"
 #include "StyleResolver.h"
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
@@ -88,6 +89,14 @@ public:
     void setUseOverrideComputedStyle(bool value) { m_useOverrideComputedStyle = value; }
     void setNeedsOverrideComputedStyleUpdate() { m_needsOverrideComputedStyleUpdate = true; }
 
+    SVGConditionalProcessingAttributes* conditionalProcessingAttributesIfExists() const { return m_conditionalProcessingAttributes.get(); }
+    SVGConditionalProcessingAttributes& conditionalProcessingAttributes(SVGElement& contextElement)
+    {
+        if (!m_conditionalProcessingAttributes)
+            m_conditionalProcessingAttributes = makeUnique<SVGConditionalProcessingAttributes>(contextElement);
+        return *m_conditionalProcessingAttributes;
+    }
+
 private:
     WeakHashSet<SVGElement, WeakPtrImplWithEventTargetData> m_referencingElements;
     WeakPtr<SVGElement, WeakPtrImplWithEventTargetData> m_referenceTarget;
@@ -101,6 +110,7 @@ private:
     bool m_needsOverrideComputedStyleUpdate : 1;
     RefPtr<MutableStyleProperties> m_animatedSMILStyleProperties;
     std::unique_ptr<RenderStyle> m_overrideComputedStyle;
+    std::unique_ptr<SVGConditionalProcessingAttributes> m_conditionalProcessingAttributes;
 };
 
 } // namespace WebCore

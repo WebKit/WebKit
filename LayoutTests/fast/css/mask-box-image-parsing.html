@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<div id="target"></div>
+<script>
+    description("Tests the parsing of the -webkit-mask-box-image CSS shorthand.")
+
+    const target = document.getElementById("target")
+
+    shouldBeEqualToString("target.style.webkitMaskBoxImage", "")
+    shouldBeEqualToString("target.style.webkitMaskBoxImageSource", "")
+    shouldBeEqualToString("target.style.webkitMaskBoxImageSlice", "")
+    shouldBeEqualToString("target.style.webkitMaskBoxImageWidth", "")
+    shouldBeEqualToString("target.style.webkitMaskBoxImageOutset", "")
+    shouldBeEqualToString("target.style.webkitMaskBoxImageRepeat", "")
+    shouldBeEqualToString("getComputedStyle(target).webkitMaskBoxImage", "none")
+    shouldBeEqualToString("getComputedStyle(target).webkitMaskBoxImageSource", "none")
+    shouldBeEqualToString("getComputedStyle(target).webkitMaskBoxImageSlice", "0 fill")
+    shouldBeEqualToString("getComputedStyle(target).webkitMaskBoxImageWidth", "auto")
+    shouldBeEqualToString("getComputedStyle(target).webkitMaskBoxImageOutset", "0")
+    shouldBeEqualToString("getComputedStyle(target).webkitMaskBoxImageRepeat", "stretch")
+
+    evalAndLog("\ntarget.style = '-webkit-mask-box-image: initial'")
+    shouldBeEqualToString("target.style.webkitMaskBoxImage", "initial")
+    shouldBeEqualToString("target.style.webkitMaskBoxImageSource", "initial")
+    shouldBeEqualToString("target.style.webkitMaskBoxImageSlice", "initial")
+    shouldBeEqualToString("target.style.webkitMaskBoxImageWidth", "initial")
+    shouldBeEqualToString("target.style.webkitMaskBoxImageOutset", "initial")
+    shouldBeEqualToString("target.style.webkitMaskBoxImageRepeat", "initial")
+    shouldBeEqualToString("getComputedStyle(target).webkitMaskBoxImage", "none")
+    shouldBeEqualToString("getComputedStyle(target).webkitMaskBoxImageSource", "none")
+    shouldBeEqualToString("getComputedStyle(target).webkitMaskBoxImageSlice", "0 fill")
+    shouldBeEqualToString("getComputedStyle(target).webkitMaskBoxImageWidth", "auto")
+    shouldBeEqualToString("getComputedStyle(target).webkitMaskBoxImageOutset", "0")
+    shouldBeEqualToString("getComputedStyle(target).webkitMaskBoxImageRepeat", "stretch")
+
+    evalAndLog("\ntarget.style = '-webkit-mask-box-image: none'")
+    shouldBeEqualToString("target.style.webkitMaskBoxImage", "none")
+    shouldBeEqualToString("target.style.webkitMaskBoxImageSource", "none")
+    shouldBeEqualToString("target.style.webkitMaskBoxImageSlice", "0 fill")
+    shouldBeEqualToString("target.style.webkitMaskBoxImageWidth", "auto")
+    shouldBeEqualToString("target.style.webkitMaskBoxImageOutset", "0")
+    shouldBeEqualToString("target.style.webkitMaskBoxImageRepeat", "stretch")
+    shouldBeEqualToString("getComputedStyle(target).webkitMaskBoxImage", "none")
+    shouldBeEqualToString("getComputedStyle(target).webkitMaskBoxImageSource", "none")
+    shouldBeEqualToString("getComputedStyle(target).webkitMaskBoxImageSlice", "0 fill")
+    shouldBeEqualToString("getComputedStyle(target).webkitMaskBoxImageWidth", "auto")
+    shouldBeEqualToString("getComputedStyle(target).webkitMaskBoxImageOutset", "0")
+    shouldBeEqualToString("getComputedStyle(target).webkitMaskBoxImageRepeat", "stretch")
+
+    evalAndLog("\ntarget.style = '-webkit-mask-box-image: url(\"https://example.test/\")'")
+    shouldBeEqualToString("target.style.webkitMaskBoxImage", "url(\"https://example.test/\")")
+    shouldBeEqualToString("target.style.webkitMaskBoxImageSource", "url(\"https://example.test/\")")
+    shouldBeEqualToString("target.style.webkitMaskBoxImageSlice", "0 fill")
+    shouldBeEqualToString("target.style.webkitMaskBoxImageWidth", "auto")
+    shouldBeEqualToString("target.style.webkitMaskBoxImageOutset", "0")
+    shouldBeEqualToString("target.style.webkitMaskBoxImageRepeat", "stretch")
+    shouldBeEqualToString("getComputedStyle(target).webkitMaskBoxImage", "url(\"https://example.test/\") 0 fill / auto / 0 stretch")
+    shouldBeEqualToString("getComputedStyle(target).webkitMaskBoxImageSource", "url(\"https://example.test/\")")
+    shouldBeEqualToString("getComputedStyle(target).webkitMaskBoxImageSlice", "0 fill")
+    shouldBeEqualToString("getComputedStyle(target).webkitMaskBoxImageWidth", "auto")
+    shouldBeEqualToString("getComputedStyle(target).webkitMaskBoxImageOutset", "0")
+    shouldBeEqualToString("getComputedStyle(target).webkitMaskBoxImageRepeat", "stretch")
+
+    evalAndLog("\ntarget.style = '-webkit-mask-box-image: url(\"https://example.test/\") 0 fill / auto / 0 stretch'")
+    shouldBeEqualToString("target.style.webkitMaskBoxImage", "url(\"https://example.test/\")")
+    shouldBeEqualToString("target.style.webkitMaskBoxImageSource", "url(\"https://example.test/\")")
+    shouldBeEqualToString("target.style.webkitMaskBoxImageSlice", "0 fill")
+    shouldBeEqualToString("target.style.webkitMaskBoxImageWidth", "auto")
+    shouldBeEqualToString("target.style.webkitMaskBoxImageOutset", "0")
+    shouldBeEqualToString("target.style.webkitMaskBoxImageRepeat", "stretch")
+    shouldBeEqualToString("getComputedStyle(target).webkitMaskBoxImage", "url(\"https://example.test/\") 0 fill / auto / 0 stretch")
+    shouldBeEqualToString("getComputedStyle(target).webkitMaskBoxImageSource", "url(\"https://example.test/\")")
+    shouldBeEqualToString("getComputedStyle(target).webkitMaskBoxImageSlice", "0 fill")
+    shouldBeEqualToString("getComputedStyle(target).webkitMaskBoxImageWidth", "auto")
+    shouldBeEqualToString("getComputedStyle(target).webkitMaskBoxImageOutset", "0")
+    shouldBeEqualToString("getComputedStyle(target).webkitMaskBoxImageRepeat", "stretch")
+
+    debug('')
+</script>
+</body>
+</html>

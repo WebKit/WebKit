@@ -116,7 +116,3 @@ assert.throws(RangeError, () => Temporal.PlainDate.from({
   day: 1,
   calendar: "japanese"
 }));
-
-// `with` doesn't crash when constraining dates out of bounds of the current era
-var date = Temporal.PlainDate.from("1989-01-07").withCalendar(Temporal.Calendar.from("japanese")).with({ day: 10 });
-assert.sameValue(`${ date }`, "1989-01-10[u-ca=japanese]");

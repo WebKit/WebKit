@@ -46,17 +46,15 @@ public:
 
     using WebCore::ImageBufferIOSurfaceBackend::ImageBufferIOSurfaceBackend;
 
-    void setOwnershipIdentity(const WebCore::ProcessIdentity&);
-
     ImageBufferBackendHandle createBackendHandle(SharedMemory::Protection = SharedMemory::Protection::ReadWrite) const final;
 
 private:
     // ImageBufferBackendSharing
     ImageBufferBackendSharing* toBackendSharing() final { return this; }
 
-    RefPtr<WebCore::NativeImage> copyNativeImage(WebCore::BackingStoreCopy = WebCore::CopyBackingStore) const final;
+    RefPtr<WebCore::NativeImage> copyNativeImage(WebCore::BackingStoreCopy = WebCore::CopyBackingStore) final;
 
-    mutable WebCore::IOSurfaceSeed m_lastSeedWhenCopyingImage { 0 };
+    WebCore::IOSurfaceSeed m_lastSeedWhenCopyingImage { 0 };
 };
 
 } // namespace WebKit

@@ -113,14 +113,12 @@ const ShaderInterfaceVariableInfo &ShaderInterfaceVariableInfoMap::getVariableBy
     return mData[shaderType][typeAndIndex.variableType][typeAndIndex.index];
 }
 
-#if ANGLE_ENABLE_METAL_SPIRV
 bool ShaderInterfaceVariableInfoMap::hasTransformFeedbackInfo(gl::ShaderType shaderType,
                                                               uint32_t bufferIndex) const
 {
     std::string bufferName = rx::SpvGetXfbBufferName(bufferIndex);
     return hasVariable(shaderType, bufferName);
 }
-#endif
 
 void ShaderInterfaceVariableInfoMap::mapIndexedResourceByName(gl::ShaderType shaderType,
                                                               ShaderVariableType variableType,

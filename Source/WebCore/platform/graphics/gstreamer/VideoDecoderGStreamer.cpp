@@ -197,15 +197,15 @@ void GStreamerInternalVideoDecoder::decode(Span<const uint8_t> frameData, bool i
 
     auto bufferSize = data.size();
     auto bufferData = data.data();
-    auto* buffer = gst_buffer_new_wrapped_full(GST_MEMORY_FLAG_READONLY, bufferData, bufferSize, 0, bufferSize, new Vector<uint8_t>(WTFMove(data)), [](gpointer data) {
+    auto buffer = adoptGRef(gst_buffer_new_wrapped_full(GST_MEMORY_FLAG_READONLY, bufferData, bufferSize, 0, bufferSize, new Vector<uint8_t>(WTFMove(data)), [](gpointer data) {
         delete static_cast<Vector<uint8_t>*>(data);
-    });
+    }));
 
-    GST_BUFFER_DTS(buffer) = GST_BUFFER_PTS(buffer) = timestamp;
+    GST_BUFFER_DTS(buffer.get()) = GST_BUFFER_PTS(buffer.get()) = timestamp;
     if (duration)
-        GST_BUFFER_DURATION(buffer) = *duration;
+        GST_BUFFER_DURATION(buffer.get()) = *duration;
 
-    auto result = m_harness->pushBuffer(buffer);
+    auto result = m_harness->pushBuffer(WTFMove(buffer));
     m_postTaskCallback([protectedThis = Ref { *this }, callback = WTFMove(callback), result]() mutable {
         if (protectedThis->m_isClosed)
             return;

@@ -217,6 +217,17 @@ void AudioWorkletNode::process(size_t framesToProcess)
     for (unsigned i = 0; i < numberOfOutputs(); ++i)
         m_outputs[i] = *output(i)->bus();
 
+    if (noiseInjectionPolicy() == NoiseInjectionPolicy::Minimal) {
+        for (unsigned inputIndex = 0; inputIndex < numberOfInputs(); ++inputIndex) {
+            if (auto& input = m_inputs[inputIndex]) {
+                for (unsigned channelIndex = 0; channelIndex < input->numberOfChannels(); ++channelIndex) {
+                    auto* channel = input->channel(channelIndex);
+                    AudioUtilities::applyNoise(channel->mutableData(), channel->length(), 0.001);
+                }
+            }
+        }
+    }
+
     for (auto& audioParam : m_parameters->map().values()) {
         auto* paramValues = m_paramValuesMap.get(audioParam->name());
         ASSERT(paramValues);

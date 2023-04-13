@@ -32,22 +32,12 @@
 G_BEGIN_DECLS
 
 #define WEBKIT_TYPE_OPTION_MENU            (webkit_option_menu_get_type())
+#if !ENABLE(2022_GLIB_API)
 #define WEBKIT_OPTION_MENU(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), WEBKIT_TYPE_OPTION_MENU, WebKitOptionMenu))
 #define WEBKIT_IS_OPTION_MENU(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), WEBKIT_TYPE_OPTION_MENU))
 #define WEBKIT_OPTION_MENU_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass),  WEBKIT_TYPE_OPTION_MENU, WebKitOptionMenuClass))
 #define WEBKIT_IS_OPTION_MENU_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass),  WEBKIT_TYPE_OPTION_MENU))
 #define WEBKIT_OPTION_MENU_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj),  WEBKIT_TYPE_OPTION_MENU, WebKitOptionMenuClass))
-
-typedef struct _WebKitOptionMenu        WebKitOptionMenu;
-typedef struct _WebKitOptionMenuClass   WebKitOptionMenuClass;
-typedef struct _WebKitOptionMenuPrivate WebKitOptionMenuPrivate;
-
-struct _WebKitOptionMenu {
-    GObject parent;
-
-    /*< private >*/
-    WebKitOptionMenuPrivate *priv;
-};
 
 struct _WebKitOptionMenuClass {
     GObjectClass parent_class;
@@ -58,9 +48,9 @@ struct _WebKitOptionMenuClass {
     void (*_webkit_reserved2) (void);
     void (*_webkit_reserved3) (void);
 };
+#endif
 
-WEBKIT_API GType
-webkit_option_menu_get_type       (void);
+WEBKIT_DECLARE_FINAL_TYPE (WebKitOptionMenu, webkit_option_menu, WEBKIT, OPTION_MENU, GObject)
 
 WEBKIT_API guint
 webkit_option_menu_get_n_items    (WebKitOptionMenu *menu);

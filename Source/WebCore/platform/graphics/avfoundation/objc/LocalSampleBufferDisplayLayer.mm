@@ -32,6 +32,8 @@
 #import "IntSize.h"
 #import "Logging.h"
 #import "MediaUtilities.h"
+#import "VideoFrame.h"
+#import "VideoFrameMetadata.h"
 
 #import <AVFoundation/AVSampleBufferDisplayLayer.h>
 #import <QuartzCore/CALayer.h>
@@ -281,7 +283,7 @@ void LocalSampleBufferDisplayLayer::updateAffineTransform(CGAffineTransform tran
     });
 }
 
-void LocalSampleBufferDisplayLayer::updateBoundsAndPosition(CGRect bounds, VideoFrame::Rotation rotation)
+void LocalSampleBufferDisplayLayer::updateBoundsAndPosition(CGRect bounds, VideoFrame::Rotation rotation, std::optional<WTF::MachSendRight>&&)
 {
     updateRootLayerBoundsAndPosition(bounds, rotation, ShouldUpdateRootLayer::No);
 }

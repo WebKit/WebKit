@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,17 +44,20 @@ RemoteShaderModuleProxy::RemoteShaderModuleProxy(RemoteDeviceProxy& parent, Conv
 
 RemoteShaderModuleProxy::~RemoteShaderModuleProxy()
 {
+    auto sendResult = send(Messages::RemoteShaderModule::Destruct());
+    UNUSED_VARIABLE(sendResult);
 }
 
 void RemoteShaderModuleProxy::compilationInfo(CompletionHandler<void(Ref<PAL::WebGPU::CompilationInfo>&&)>&& callback)
 {
-    auto sendResult = sendSync(Messages::RemoteShaderModule::CompilationInfo());
-    auto [messages] = sendResult.takeReplyOr(Vector<CompilationMessage> { });
-
-    auto backingMessages = messages.map([] (CompilationMessage compilationMessage) {
-        return PAL::WebGPU::CompilationMessage::create(WTFMove(compilationMessage.message), compilationMessage.type, compilationMessage.lineNum, compilationMessage.linePos, compilationMessage.offset, compilationMessage.length);
+    auto sendResult = sendWithAsyncReply(Messages::RemoteShaderModule::CompilationInfo(), [callback = WTFMove(callback)](auto messages) mutable {
+        auto backingMessages = messages.map([](CompilationMessage compilationMessage) {
+            return PAL::WebGPU::CompilationMessage::create(WTFMove(compilationMessage.message), compilationMessage.type, compilationMessage.lineNum, compilationMessage.linePos, compilationMessage.offset, compilationMessage.length);
+        });
+        callback(PAL::WebGPU::CompilationInfo::create(WTFMove(backingMessages)));
     });
-    callback(PAL::WebGPU::CompilationInfo::create(WTFMove(backingMessages)));
+
+    UNUSED_PARAM(sendResult);
 }
 
 void RemoteShaderModuleProxy::setLabelInternal(const String& label)

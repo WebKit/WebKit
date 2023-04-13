@@ -77,6 +77,10 @@ struct DMABufFormat {
         Y42B = DMABufFormatImpl::createFourCC('Y', '4', '2', 'B'),
     };
 
+    enum class Modifier : uint64_t {
+        Invalid = ((1ULL << 56) - 1),
+    };
+
     static constexpr unsigned c_maxPlanes = 4;
 
     template<FourCC> static DMABufFormat create() = delete;

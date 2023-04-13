@@ -27,7 +27,7 @@
 #include "JSSVGViewSpec.h"
 
 #include "JSNode.h"
-#include "WebCoreOpaqueRoot.h"
+#include "WebCoreOpaqueRootInlines.h"
 
 namespace WebCore {
 

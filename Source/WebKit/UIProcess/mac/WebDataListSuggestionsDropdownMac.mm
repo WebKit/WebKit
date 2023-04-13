@@ -32,7 +32,7 @@
 #import "WebPageProxy.h"
 #import <WebCore/IntRect.h>
 #import <WebCore/LocalizedStrings.h>
-#import <pal/spi/cocoa/NSColorSPI.h>
+#import <pal/spi/mac/NSColorSPI.h>
 
 constexpr CGFloat dropdownTopMargin = 3;
 constexpr CGFloat dropdownVerticalPadding = 4;

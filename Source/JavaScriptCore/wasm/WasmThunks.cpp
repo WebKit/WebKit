@@ -77,11 +77,62 @@ MacroAssemblerCodeRef<JITThunkPtrTag> throwStackOverflowFromWasmThunkGenerator(c
     return FINALIZE_WASM_CODE(linkBuffer, JITThunkPtrTag, "Throw stack overflow from Wasm");
 }
 
+#if USE(JSVALUE64)
+MacroAssemblerCodeRef<JITThunkPtrTag> catchInWasmThunkGenerator(const AbstractLocker&)
+{
+    CCallHelpers jit;
+    JIT_COMMENT(jit, "catch runway");
+
+    jit.loadPtr(CCallHelpers::addressFor(CallFrameSlot::callee), GPRInfo::regT0);
+    jit.move(GPRInfo::regT0, GPRInfo::regT3);
+    jit.and64(CCallHelpers::TrustedImm64(JSValue::WasmMask), GPRInfo::regT3);
+    auto isWasmCallee = jit.branch64(CCallHelpers::Equal, GPRInfo::regT3, CCallHelpers::TrustedImm32(JSValue::WasmTag));
+    CCallHelpers::JumpList doneCases;
+    {
+        // FIXME: Handling precise allocations in WasmB3IRGenerator catch entrypoints might be unnecessary
+        // https://bugs.webkit.org/show_bug.cgi?id=231213
+        auto preciseAllocationCase = jit.branchTestPtr(CCallHelpers::NonZero, GPRInfo::regT0, CCallHelpers::TrustedImm32(PreciseAllocation::halfAlignment));
+        jit.andPtr(CCallHelpers::TrustedImmPtr(MarkedBlock::blockMask), GPRInfo::regT0);
+        jit.loadPtr(CCallHelpers::Address(GPRInfo::regT0, MarkedBlock::offsetOfHeader + MarkedBlock::Header::offsetOfVM()), GPRInfo::regT0);
+        doneCases.append(jit.jump());
+
+        preciseAllocationCase.link(&jit);
+        jit.loadPtr(CCallHelpers::Address(GPRInfo::regT0, PreciseAllocation::offsetOfWeakSet() + WeakSet::offsetOfVM() - PreciseAllocation::headerSize()), GPRInfo::regT0);
+        doneCases.append(jit.jump());
+    }
+
+    isWasmCallee.link(&jit);
+    jit.loadPtr(CCallHelpers::addressFor(CallFrameSlot::codeBlock), GPRInfo::regT0);
+    jit.loadPtr(CCallHelpers::Address(GPRInfo::regT0, Instance::offsetOfVM()), GPRInfo::regT0);
+
+    doneCases.link(&jit);
+
+    JIT_COMMENT(jit, "restore callee saves from vm entry buffer");
+    jit.restoreCalleeSavesFromVMEntryFrameCalleeSavesBuffer(GPRInfo::regT0, GPRInfo::regT3);
+    jit.loadPtr(CCallHelpers::Address(GPRInfo::regT0, VM::callFrameForCatchOffset()), GPRInfo::callFrameRegister);
+
+    JIT_COMMENT(jit, "Configure wasm context instance");
+    jit.loadPtr(CCallHelpers::Address(GPRInfo::callFrameRegister, CallFrameSlot::codeBlock * sizeof(Register)), GPRInfo::wasmContextInstancePointer);
+
+    // So, this is calling a function. This means that we clobber all caller-save registers!
+    // Is it safe? Yes. OMG / BBQ(Air) generates stackmap for values with the patchpoint which says "this is function call". Thus, stackmap must hold
+    // StackSlots / Registers which are not these caller-save registers. So, clobbering these registers here does not break the stackmap restoration.
+    jit.prepareWasmCallOperation(GPRInfo::wasmContextInstancePointer);
+    jit.setupArguments<decltype(operationWasmRetrieveAndClearExceptionIfCatchable)>(GPRInfo::wasmContextInstancePointer);
+    jit.callOperation(operationWasmRetrieveAndClearExceptionIfCatchable);
+    static_assert(noOverlap(GPRInfo::nonPreservedNonArgumentGPR0, GPRInfo::returnValueGPR, GPRInfo::returnValueGPR2));
+    jit.farJump(GPRInfo::returnValueGPR2, ExceptionHandlerPtrTag);
+
+    LinkBuffer linkBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::WasmThunk);
+    return FINALIZE_WASM_CODE(linkBuffer, JITThunkPtrTag, "Wasm catch runway");
+}
+#endif
+
 #if ENABLE(WEBASSEMBLY_B3JIT)
 
 MacroAssemblerCodeRef<JITThunkPtrTag> triggerOMGEntryTierUpThunkGeneratorImpl(const AbstractLocker&, bool isSIMDContext)
 {
-    // We expect that the user has already put the function index into GPRInfo::argumentGPR1
+    // We expect that the user has already put the function index into GPRInfo::nonPreservedNonArgumentGPR0
     CCallHelpers jit;
     JIT_COMMENT(jit, "triggerOMGEntryTierUpThunkGenerator");
 
@@ -91,7 +142,9 @@ MacroAssemblerCodeRef<JITThunkPtrTag> triggerOMGEntryTierUpThunkGeneratorImpl(co
     auto registersToSpill = RegisterSetBuilder::registersToSaveForCCall(isSIMDContext ? RegisterSetBuilder::allRegisters() : RegisterSetBuilder::allScalarRegisters()).buildWithLowerBits();
     unsigned numberOfStackBytesUsedForRegisterPreservation = ScratchRegisterAllocator::preserveRegistersToStackForCall(jit, registersToSpill, extraPaddingBytes);
 
+    // We can clobber these argument registers now since we saved them and later we restore them.
     jit.move(GPRInfo::wasmContextInstancePointer, GPRInfo::argumentGPR0);
+    jit.move(GPRInfo::nonPreservedNonArgumentGPR0, GPRInfo::argumentGPR1);
     jit.move(MacroAssembler::TrustedImmPtr(tagCFunction<OperationPtrTag>(operationWasmTriggerTierUpNow)), GPRInfo::argumentGPR2);
     jit.call(GPRInfo::argumentGPR2, OperationPtrTag);
 

@@ -46,7 +46,7 @@ class Document;
 struct PublicKeyCredentialCreationOptions;
 struct PublicKeyCredentialRequestOptions;
 struct CredentialRequestOptions;
-struct SecurityOriginData;
+class SecurityOriginData;
 
 template<typename IDLType> class DOMPromiseDeferred;
 

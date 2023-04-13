@@ -35,6 +35,7 @@
 #include "JSWebAssemblyHelpers.h"
 #include "JSWebAssemblyTable.h"
 #include "StructureInlines.h"
+#include "WasmTypeDefinition.h"
 
 namespace JSC {
 static JSC_DECLARE_CUSTOM_GETTER(webAssemblyTableProtoGetterLength);
@@ -159,9 +160,19 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyTableProtoFuncSet, (JSGlobalObject* globalOb
             else
                 table->set(index, wasmWrapperFunction);
         }
-    } else
-        table->set(index, value);
-    
+    } else {
+        // FIXME: Once non-defaultable table types are allowed, this will need to check for null if a non-null table type is used.
+        if (isExternref(table->table()->wasmType()))
+            table->set(index, value);
+        else {
+            RELEASE_ASSERT(Options::useWebAssemblyGC());
+            JSValue internalValue = Wasm::internalizeExternref(value);
+            if (!Wasm::TypeInformation::castReference(internalValue, true, table->table()->wasmType().index))
+                return throwVMTypeError(globalObject, throwScope, "WebAssembly.Table.prototype.set failed to cast the second argument to the table's element type"_s);
+            table->set(index, internalValue);
+        }
+    }
+
     return JSValue::encode(jsUndefined());
 }
 

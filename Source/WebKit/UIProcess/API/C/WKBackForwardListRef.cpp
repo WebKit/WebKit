@@ -27,8 +27,9 @@
 #include "WKBackForwardListRef.h"
 
 #include "APIArray.h"
-#include "WebBackForwardList.h"
 #include "WKAPICast.h"
+#include "WebBackForwardList.h"
+#include "WebFrameProxy.h"
 
 using namespace WebKit;
 

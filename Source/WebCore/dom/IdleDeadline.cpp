@@ -26,8 +26,8 @@
 #include "config.h"
 #include "IdleDeadline.h"
 
-#include "DOMWindow.h"
 #include "Document.h"
+#include "LocalDOMWindow.h"
 #include "Performance.h"
 #include <wtf/RefPtr.h>
 

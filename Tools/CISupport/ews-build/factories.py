@@ -27,8 +27,8 @@ from buildbot.steps import trigger
 from steps import (AddReviewerToCommitMessage, ApplyPatch, ApplyWatchList, Canonicalize, CommitPatch,
                    CheckOutPullRequest, CheckOutSource, CheckOutSpecificRevision, CheckChangeRelevance,
                    CheckStatusOnEWSQueues, CheckStyle, CleanGitRepo, CompileJSC, CompileWebKit, ConfigureBuild,
-                   DeleteStaleBuildFiles, DownloadBuiltProduct, ExtractBuiltProduct, FetchBranches, FindModifiedLayoutTests,
-                   InstallGtkDependencies, InstallWpeDependencies, KillOldProcesses, PrintConfiguration, PushCommitToWebKitRepo, PushPullRequestBranch,
+                   DownloadBuiltProduct, ExtractBuiltProduct, FetchBranches, FindModifiedLayoutTests,
+                   InstallGtkDependencies, InstallHooks, InstallWpeDependencies, KillOldProcesses, PrintConfiguration, PushCommitToWebKitRepo, PushPullRequestBranch,
                    MapBranchAlias, RunAPITests, RunBindingsTests, RunBuildWebKitOrgUnitTests, RunBuildbotCheckConfigForBuildWebKit, RunBuildbotCheckConfigForEWS,
                    RunEWSUnitTests, RunResultsdbpyTests, RunJavaScriptCoreTests, RunWebKit1Tests, RunWebKitPerlTests, RunWebKitPyPython2Tests,
                    RunWebKitPyPython3Tests, RunWebKitTests, RunWebKitTestsRedTree, RunWebKitTestsInStressMode, RunWebKitTestsInStressGuardmallocMode,
@@ -49,8 +49,6 @@ class Factory(factory.BuildFactory):
             self.addStep(FindModifiedLayoutTests())
         self.addStep(ValidateChange())
         self.addStep(PrintConfiguration())
-        if platform == 'win':
-            self.addStep(DeleteStaleBuildFiles())
         self.addStep(CleanGitRepo())
         self.addStep(CheckOutSource())
         self.addStep(FetchBranches())
@@ -126,6 +124,8 @@ class BuildFactory(Factory):
         self.addStep(KillOldProcesses())
         if platform == 'gtk':
             self.addStep(InstallGtkDependencies())
+        elif platform == 'wpe':
+            self.addStep(InstallWpeDependencies())
         self.addStep(ValidateChange(addURLs=False))
         self.addStep(CompileWebKit(skipUpload=self.skipUpload))
         if platform == 'gtk':
@@ -145,6 +145,8 @@ class TestFactory(Factory):
         Factory.__init__(self, platform=platform, configuration=configuration, architectures=architectures, buildOnly=False, triggered_by=triggered_by, additionalArguments=additionalArguments, checkRelevance=checkRelevance)
         if platform == 'gtk':
             self.addStep(InstallGtkDependencies())
+        elif platform == 'wpe':
+            self.addStep(InstallWpeDependencies())
         self.getProduct()
         if self.willTriggerCrashLogSubmission:
             self.addStep(WaitForCrashCollection())
@@ -250,17 +252,6 @@ class macOSWK2Factory(TestFactory):
     willTriggerCrashLogSubmission = True
 
 
-class WindowsFactory(Factory):
-    def __init__(self, platform, configuration=None, architectures=None, triggers=None, additionalArguments=None, **kwargs):
-        Factory.__init__(self, platform=platform, configuration=configuration, architectures=architectures, buildOnly=False, triggers=triggers, additionalArguments=additionalArguments, checkRelevance=True)
-        self.addStep(KillOldProcesses())
-        self.addStep(ValidateChange(verifyBugClosed=False, addURLs=False))
-        self.addStep(CompileWebKit(skipUpload=True))
-        self.addStep(ValidateChange(verifyBugClosed=False, addURLs=False))
-        self.addStep(RunWebKit1Tests())
-        self.addStep(SetBuildSummary())
-
-
 class WinCairoFactory(Factory):
     def __init__(self, platform, configuration=None, architectures=None, triggers=None, additionalArguments=None, **kwargs):
         Factory.__init__(self, platform=platform, configuration=configuration, architectures=architectures, buildOnly=True, triggers=triggers, additionalArguments=additionalArguments)
@@ -277,13 +268,12 @@ class GTKTestsFactory(TestFactory):
     LayoutTestClass = RunWebKitTestsRedTree
 
 
-class WPEFactory(Factory):
-    def __init__(self, platform, configuration=None, architectures=None, triggers=None, additionalArguments=None, **kwargs):
-        Factory.__init__(self, platform=platform, configuration=configuration, architectures=architectures, buildOnly=True, triggers=triggers, additionalArguments=additionalArguments)
-        self.addStep(KillOldProcesses())
-        self.addStep(InstallWpeDependencies())
-        self.addStep(ValidateChange(verifyBugClosed=False, addURLs=False))
-        self.addStep(CompileWebKit(skipUpload=True))
+class WPEBuildFactory(BuildFactory):
+    pass
+
+
+class WPETestsFactory(TestFactory):
+    LayoutTestClass = RunWebKitTestsRedTree
 
 
 class ServicesFactory(Factory):
@@ -309,6 +299,7 @@ class CommitQueueFactory(factory.BuildFactory):
         self.addStep(FetchBranches())
         self.addStep(UpdateWorkingDirectory())
         self.addStep(ShowIdentifier())
+        self.addStep(InstallHooks())
         self.addStep(CommitPatch())
 
         self.addStep(ValidateSquashed())
@@ -342,6 +333,7 @@ class MergeQueueFactoryBase(factory.BuildFactory):
         self.addStep(MapBranchAlias())
         self.addStep(UpdateWorkingDirectory())
         self.addStep(ShowIdentifier())
+        self.addStep(InstallHooks())
         self.addStep(CheckOutPullRequest())
         self.addStep(ValidateRemote())
         self.addStep(ValidateSquashed())
@@ -373,8 +365,8 @@ class UnsafeMergeQueueFactory(MergeQueueFactoryBase):
     def __init__(self, platform, **kwargs):
         super(UnsafeMergeQueueFactory, self).__init__(platform, **kwargs)
 
-        self.addStep(ValidateChange(verifyMergeQueue=True, verifyNoDraftForMergeQueue=True, enableSkipEWSLabel=False))
         self.addStep(Canonicalize())
+        self.addStep(ValidateChange(verifyMergeQueue=True, verifyNoDraftForMergeQueue=True, enableSkipEWSLabel=False))
         self.addStep(PushPullRequestBranch())
         self.addStep(UpdatePullRequest())
         self.addStep(PushCommitToWebKitRepo())

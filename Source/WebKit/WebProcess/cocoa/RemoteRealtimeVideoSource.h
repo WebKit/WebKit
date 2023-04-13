@@ -31,9 +31,9 @@
 #include "RemoteRealtimeMediaSourceProxy.h"
 #include <WebCore/CaptureDevice.h>
 #include <WebCore/RealtimeMediaSourceIdentifier.h>
-#include <WebCore/VideoFrame.h>
 
 namespace WebCore {
+class VideoFrame;
 struct MediaConstraints;
 }
 

@@ -27,7 +27,7 @@
 
 namespace WebCore {
 
-class Frame;
+class LocalFrame;
 
 class ProgressTrackerClient {
     WTF_MAKE_FAST_ALLOCATED;
@@ -37,9 +37,9 @@ public:
     virtual void willChangeEstimatedProgress() { }
     virtual void didChangeEstimatedProgress() { }
 
-    virtual void progressStarted(Frame& originatingProgressFrame) = 0;
-    virtual void progressEstimateChanged(Frame& originatingProgressFrame) = 0;
-    virtual void progressFinished(Frame& originatingProgressFrame) = 0;
+    virtual void progressStarted(LocalFrame& originatingProgressFrame) = 0;
+    virtual void progressEstimateChanged(LocalFrame& originatingProgressFrame) = 0;
+    virtual void progressFinished(LocalFrame& originatingProgressFrame) = 0;
 };
 
 } // namespace WebCore

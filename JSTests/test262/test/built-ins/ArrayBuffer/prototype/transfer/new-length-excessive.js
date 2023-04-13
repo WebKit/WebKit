@@ -17,7 +17,7 @@ info: |
   6. Else, let newByteLength be ? ToIntegerOrInfinity(newLength).
   7. Let new be ? Construct(%ArrayBuffer%, « 𝔽(newByteLength) »).
   [...]
-features: [resizable-arraybuffer]
+features: [resizable-arraybuffer, arraybuffer-transfer]
 ---*/
 
 var ab = new ArrayBuffer(0);

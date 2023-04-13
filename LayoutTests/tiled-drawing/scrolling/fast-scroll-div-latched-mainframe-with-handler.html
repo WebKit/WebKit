@@ -88,6 +88,7 @@
             {
                 type : "wheel",
                 deltaY : -10,
+                viewX : startPosX + 1, // defeat coalescing
                 phase : "changed"
             },
             {
@@ -111,6 +112,7 @@
         ];
 
         await UIHelper.mouseWheelSequence({ events: events });
+        await UIHelper.renderingUpdate();
         checkForScroll();
         // We should finish via the scroll event; this will fire in the case of failure when the page doesn't scroll.
     }

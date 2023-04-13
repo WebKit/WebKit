@@ -47,7 +47,7 @@ struct _JSCVirtualMachinePrivate {
     HashMap<JSGlobalContextRef, JSCContext*> contextCache;
 };
 
-WEBKIT_DEFINE_TYPE(JSCVirtualMachine, jsc_virtual_machine, G_TYPE_OBJECT)
+WEBKIT_DEFINE_FINAL_TYPE(JSCVirtualMachine, jsc_virtual_machine, G_TYPE_OBJECT, GObject)
 
 static Lock wrapperCacheMutex;
 

@@ -31,8 +31,8 @@
 #include "DeprecatedGlobalSettings.h"
 #include "Document.h"
 #include "FontCache.h"
-#include "Frame.h"
-#include "FrameView.h"
+#include "LocalFrame.h"
+#include "LocalFrameView.h"
 #include "LocaleToScriptMapping.h"
 #include "Page.h"
 #include "PageGroup.h"
@@ -54,7 +54,6 @@ InternalSettings::Backup::Backup(Settings& settings)
     , m_storageBlockingPolicy(settings.storageBlockingPolicy())
     , m_userInterfaceDirectionPolicy(settings.userInterfaceDirectionPolicy())
     , m_systemLayoutDirection(settings.systemLayoutDirection())
-    , m_pdfImageCachingPolicy(settings.pdfImageCachingPolicy())
     , m_forcedColorsAreInvertedAccessibilityValue(settings.forcedColorsAreInvertedAccessibilityValue())
     , m_forcedDisplayIsMonochromeAccessibilityValue(settings.forcedDisplayIsMonochromeAccessibilityValue())
     , m_forcedPrefersContrastAccessibilityValue(settings.forcedPrefersContrastAccessibilityValue())
@@ -108,7 +107,6 @@ void InternalSettings::Backup::restoreTo(Settings& settings)
     settings.setStorageBlockingPolicy(m_storageBlockingPolicy);
     settings.setUserInterfaceDirectionPolicy(m_userInterfaceDirectionPolicy);
     settings.setSystemLayoutDirection(m_systemLayoutDirection);
-    settings.setPdfImageCachingPolicy(m_pdfImageCachingPolicy);
     settings.setForcedColorsAreInvertedAccessibilityValue(m_forcedColorsAreInvertedAccessibilityValue);
     settings.setForcedDisplayIsMonochromeAccessibilityValue(m_forcedDisplayIsMonochromeAccessibilityValue);
     settings.setForcedPrefersContrastAccessibilityValue(m_forcedPrefersContrastAccessibilityValue);
@@ -178,7 +176,8 @@ Ref<InternalSettings> InternalSettings::create(Page* page)
 void InternalSettings::resetToConsistentState()
 {
     m_page->setPageScaleFactor(1, { 0, 0 });
-    m_page->mainFrame().setPageAndTextZoomFactors(1, 1);
+    if (auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame()))
+        localMainFrame->setPageAndTextZoomFactors(1, 1);
     m_page->setCanStartMedia(true);
     m_page->effectiveAppearanceDidChange(false, false);
 
@@ -307,14 +306,6 @@ ExceptionOr<void> InternalSettings::setStorageBlockingPolicy(StorageBlockingPoli
     if (!m_page)
         return Exception { InvalidAccessError };
     settings().setStorageBlockingPolicy(policy);
-    return { };
-}
-
-ExceptionOr<void> InternalSettings::setPDFImageCachingPolicy(PDFImageCachingPolicy policy)
-{
-    if (!m_page)
-        return Exception { InvalidAccessError };
-    settings().setPdfImageCachingPolicy(policy);
     return { };
 }
 
@@ -535,10 +526,11 @@ ExceptionOr<void> InternalSettings::setUseElevatedUserInterfaceLevel(bool useEle
 
 ExceptionOr<void> InternalSettings::setAllowUnclampedScrollPosition(bool allowUnclamped)
 {
-    if (!m_page || !m_page->mainFrame().view())
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
+    if (!m_page || !localMainFrame || !localMainFrame->view())
         return Exception { InvalidAccessError };
 
-    m_page->mainFrame().view()->setAllowsUnclampedScrollPositionForTesting(allowUnclamped);
+    localMainFrame->view()->setAllowsUnclampedScrollPositionForTesting(allowUnclamped);
     return { };
 }
 

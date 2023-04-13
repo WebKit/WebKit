@@ -1,0 +1,7 @@
+
+Test that "invisible autoplay not allowed restriction" is reverted when a video element goet from muted to unmuted and has some live audio tracks.
+
+
+PASS Unmuting a video that was hidden-then-muted should restart playing it
+PASS Muting a hidden video should pause and unmuting the hidden video should restart playing it
+

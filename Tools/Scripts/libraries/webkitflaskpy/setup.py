@@ -30,7 +30,7 @@ def readme():
 
 setup(
     name='webkitflaskpy',
-    version='0.3.0',
+    version='0.5.0',
     description="Library supporting the WebKit Team's flask based web services.",
     long_description=readme(),
     classifiers=[
@@ -53,9 +53,11 @@ setup(
         'webkitflaskpy',
     ],
     install_requires=[
+        'fakeredis',
         'Flask',
         'Flask-Cors',
         'gunicorn',
+        'redis',
         'webkitcorepy',
     ],
     include_package_data=True,

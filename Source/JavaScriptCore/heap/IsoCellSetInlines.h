@@ -124,12 +124,8 @@ Ref<SharedTask<void(Visitor&)>> IsoCellSet::forEachMarkedCellInParallel(const Fu
                     });
             }
 
-            {
-                Locker locker { m_lock };
-                if (!m_needToVisitPreciseAllocations)
-                    return;
-                m_needToVisitPreciseAllocations = false;
-            }
+            if (m_doneVisitingPreciseAllocations.test_and_set(std::memory_order_relaxed))
+                return;
 
             CellAttributes attributes = m_set.m_subspace.attributes();
             m_set.m_subspace.forEachPreciseAllocation(
@@ -143,8 +139,7 @@ Ref<SharedTask<void(Visitor&)>> IsoCellSet::forEachMarkedCellInParallel(const Fu
         IsoCellSet& m_set;
         Ref<SharedTask<MarkedBlock::Handle*()>> m_blockSource;
         Func m_func;
-        Lock m_lock;
-        bool m_needToVisitPreciseAllocations { true };
+        std::atomic_flag m_doneVisitingPreciseAllocations { };
     };
     
     return adoptRef(*new Task(*this, func));

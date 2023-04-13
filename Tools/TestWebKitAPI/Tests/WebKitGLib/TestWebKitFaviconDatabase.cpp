@@ -1,4 +1,3 @@
-
 /*
  * Copyright (C) 2012, 2017 Igalia S.L.
  *
@@ -42,15 +41,22 @@ public:
         : m_database(webkit_web_context_get_favicon_database(m_webContext.get()))
 #endif
     {
+#if ENABLE(2022_GLIB_API)
+        // In 2022 API when favicons are disabled, the database is nullptr.
+        g_assert_null(m_database.get());
+#else
         g_assert_true(WEBKIT_IS_FAVICON_DATABASE(m_database.get()));
         assertObjectIsDeletedWhenTestFinishes(G_OBJECT(m_database.get()));
         g_signal_connect(m_database.get(), "favicon-changed", G_CALLBACK(faviconChangedCallback), this);
+#endif
     }
 
     ~FaviconDatabaseTest()
     {
+#if !USE(GTK4)
         if (m_favicon)
             cairo_surface_destroy(m_favicon);
+#endif
 
         g_signal_handlers_disconnect_matched(m_database.get(), G_SIGNAL_MATCH_DATA, 0, 0, 0, 0, this);
 #if ENABLE(2022_GLIB_API)
@@ -67,14 +73,25 @@ public:
 #endif
     }
 
-#if !ENABLE(2022_GLIB_API)
     void open(const char* directory)
     {
+#if ENABLE(2022_GLIB_API)
+        g_assert_null(m_database.get());
+        auto* manager = webkit_network_session_get_website_data_manager(m_networkSession.get());
+        g_assert_false(webkit_website_data_manager_get_favicons_enabled(manager));
+        webkit_website_data_manager_set_favicons_enabled(manager, TRUE);
+        m_database = webkit_website_data_manager_get_favicon_database(manager);
+        g_assert_true(WEBKIT_IS_FAVICON_DATABASE(m_database.get()));
+        assertObjectIsDeletedWhenTestFinishes(G_OBJECT(m_database.get()));
+        g_signal_connect(m_database.get(), "favicon-changed", G_CALLBACK(faviconChangedCallback), this);
+#else
         GUniquePtr<char> databaseDirectory(g_build_filename(dataDirectory(), directory, nullptr));
         webkit_web_context_set_favicon_database_directory(m_webContext.get(), databaseDirectory.get());
         g_assert_cmpstr(databaseDirectory.get(), ==, webkit_web_context_get_favicon_database_directory(m_webContext.get()));
+#endif
     }
-#else
+
+#if ENABLE(2022_GLIB_API)
     void close()
     {
         auto* manager = webkit_network_session_get_website_data_manager(m_networkSession.get());
@@ -96,7 +113,11 @@ public:
     {
         g_assert_true(test->m_webView == webView);
         test->m_faviconNotificationReceived = true;
+#if USE(GTK4)
+        test->m_favicon = webkit_web_view_get_favicon(webView);
+#else
         test->m_favicon = cairo_surface_reference(webkit_web_view_get_favicon(webView));
+#endif
         if (test->m_loadFinished)
             test->quitMainLoop();
     }
@@ -115,7 +136,11 @@ public:
     static void getFaviconCallback(GObject* sourceObject, GAsyncResult* result, void* data)
     {
         FaviconDatabaseTest* test = static_cast<FaviconDatabaseTest*>(data);
+#if USE(GTK4)
+        test->m_favicon = adoptGRef(webkit_favicon_database_get_favicon_finish(test->m_database.get(), result, &test->m_error.outPtr()));
+#else
         test->m_favicon = webkit_favicon_database_get_favicon_finish(test->m_database.get(), result, &test->m_error.outPtr());
+#endif
         test->quitMainLoop();
     }
 
@@ -129,10 +154,11 @@ public:
 
     void waitUntilLoadFinishedAndFaviconChanged()
     {
-        if (m_favicon) {
+#if !USE(GTK4)
+        if (m_favicon)
             cairo_surface_destroy(m_favicon);
-            m_favicon = nullptr;
-        }
+#endif
+        m_favicon = nullptr;
         m_faviconNotificationReceived = false;
         m_loadFinished = false;
         unsigned long faviconChangedID = g_signal_connect(m_webView, "notify::favicon", G_CALLBACK(viewFaviconChangedCallback), this);
@@ -144,10 +170,11 @@ public:
 
     void getFaviconForPageURIAndWaitUntilReady(const char* pageURI)
     {
-        if (m_favicon) {
+#if !USE(GTK4)
+        if (m_favicon)
             cairo_surface_destroy(m_favicon);
-            m_favicon = nullptr;
-        }
+#endif
+        m_favicon = nullptr;
 
         webkit_favicon_database_get_favicon(m_database.get(), pageURI, 0, getFaviconCallback, this);
         g_main_loop_run(m_mainLoop);
@@ -163,7 +190,11 @@ public:
     }
 
     GRefPtr<WebKitFaviconDatabase> m_database;
+#if USE(GTK4)
+    GRefPtr<GdkTexture> m_favicon;
+#else
     cairo_surface_t* m_favicon { nullptr };
+#endif
     CString m_faviconURI;
     GUniqueOutPtr<GError> m_error;
     bool m_faviconNotificationReceived { false };
@@ -210,14 +241,14 @@ static void serverCallback(SoupServer*, SoupServerMessage* message, const char* 
 
 static void testFaviconDatabaseInitialization(FaviconDatabaseTest* test, gconstpointer)
 {
-    // In 2022 API favicons are enabled by default.
+    // In 2022 API favicon database is nullptr until favicons are enabled.
 #if !ENABLE(2022_GLIB_API)
     test->getFaviconForPageURIAndWaitUntilReady(kServer->getURIForPath("/foo").data());
     g_assert_null(test->m_favicon);
     g_assert_error(test->m_error.get(), WEBKIT_FAVICON_DATABASE_ERROR, WEBKIT_FAVICON_DATABASE_ERROR_NOT_INITIALIZED);
+#endif
 
     test->open("testFaviconDatabaseInitialization");
-#endif
 
 #if ENABLE(2022_GLIB_API)
     GUniquePtr<char> databaseFile(g_build_filename(Test::dataDirectory(), "icondatabase", "WebpageIcons.db", nullptr));
@@ -236,9 +267,7 @@ static void testFaviconDatabaseInitialization(FaviconDatabaseTest* test, gconstp
 
 static void testFaviconDatabaseGetFavicon(FaviconDatabaseTest* test, gconstpointer)
 {
-#if !ENABLE(2022_GLIB_API)
     test->open("testFaviconDatabaseGetFavicon");
-#endif
 
     test->loadURI(kServer->getURIForPath("/foo").data());
     test->waitUntilLoadFinishedAndFaviconChanged();
@@ -246,11 +275,17 @@ static void testFaviconDatabaseGetFavicon(FaviconDatabaseTest* test, gconstpoint
 
     test->getFaviconForPageURIAndWaitUntilReady(kServer->getURIForPath("/foo").data());
     g_assert_nonnull(test->m_favicon);
+#if USE(GTK4)
+    g_assert_cmpint(gdk_texture_get_width(test->m_favicon.get()), ==, 16);
+    g_assert_cmpint(gdk_texture_get_height(test->m_favicon.get()), ==, 16);
+#else
     g_assert_cmpint(cairo_image_surface_get_width(test->m_favicon), ==, 16);
     g_assert_cmpint(cairo_image_surface_get_height(test->m_favicon), ==, 16);
+#endif
     g_assert_cmpstr(test->m_faviconURI.data(), ==, faviconURI.data());
     g_assert_no_error(test->m_error.get());
 
+#if !USE(GTK4)
     // Check that another page with the same favicon returns the same icon.
     cairo_surface_t* favicon = cairo_surface_reference(test->m_favicon);
     test->loadURI(kServer->getURIForPath("/bar").data());
@@ -264,6 +299,7 @@ static void testFaviconDatabaseGetFavicon(FaviconDatabaseTest* test, gconstpoint
     g_assert_cmpstr(test->m_faviconURI.data(), ==, faviconURI.data());
     g_assert_no_error(test->m_error.get());
     cairo_surface_destroy(favicon);
+#endif
 
     faviconURI = kServer->getURIForPath("/favicon.ico");
     test->loadURI(kServer->getURIForPath("/nofavicon").data());
@@ -292,7 +328,14 @@ static void ephemeralViewFaviconChanged(WebKitWebView* webView, GParamSpec*, Web
 
 static void testFaviconDatabaseEphemeral(FaviconDatabaseTest* test, gconstpointer)
 {
-#if !ENABLE(2022_GLIB_API)
+    // If the session is ephemeral, the database is not created.
+#if ENABLE(2022_GLIB_API)
+    GRefPtr<WebKitNetworkSession> ephemeralSession = adoptGRef(webkit_network_session_new_ephemeral());
+    auto* manager = webkit_network_session_get_website_data_manager(ephemeralSession.get());
+    webkit_website_data_manager_set_favicons_enabled(manager, TRUE);
+    GUniquePtr<char> databaseFile(g_build_filename(Test::dataDirectory(), "icondatabase", "WebpageIcons.db", nullptr));
+    g_assert_false(g_file_test(databaseFile.get(), G_FILE_TEST_EXISTS));
+#else
     // If the context is ephemeral, the database is not created.
     GRefPtr<WebKitWebContext> ephemeralContext = adoptGRef(webkit_web_context_new_ephemeral());
     GUniquePtr<char> databaseDirectory(g_build_filename(Test::dataDirectory(), "testFaviconDatabaseEphemeral", nullptr));
@@ -301,19 +344,16 @@ static void testFaviconDatabaseEphemeral(FaviconDatabaseTest* test, gconstpointe
     GUniquePtr<char> databaseFile(g_build_filename(databaseDirectory.get(), "WebpageIcons.db", nullptr));
     g_assert_false(g_file_test(databaseFile.get(), G_FILE_TEST_EXISTS));
     ephemeralContext = nullptr;
+#endif
 
     test->open("testFaviconDatabaseEphemeral");
     g_assert_true(g_file_test(databaseFile.get(), G_FILE_TEST_EXISTS));
-#endif
 
     test->loadURI(kServer->getURIForPath("/foo").data());
     test->waitUntilLoadFinishedAndFaviconChanged();
     g_assert_nonnull(webkit_favicon_database_get_favicon_uri(test->m_database.get(), kServer->getURIForPath("/foo").data()));
 
     // An ephemeral web view doesn't write to the database.
-#if ENABLE(2022_GLIB_API)
-    GRefPtr<WebKitNetworkSession> ephemeralSession = adoptGRef(webkit_network_session_new_ephemeral());
-#endif
     auto webView = Test::adoptView(g_object_new(WEBKIT_TYPE_WEB_VIEW,
         "web-context", test->m_webContext.get(),
 #if ENABLE(2022_GLIB_API)
@@ -351,9 +391,8 @@ static void testFaviconDatabaseEphemeral(FaviconDatabaseTest* test, gconstpointe
 
 void testFaviconDatabaseClear(FaviconDatabaseTest* test, gconstpointer)
 {
-#if !ENABLE(2022_GLIB_API)
     test->open("testFaviconDatabaseClear");
-#endif
+
     test->loadURI(kServer->getURIForPath("/foo").data());
     test->waitUntilLoadFinishedAndFaviconChanged();
     test->getFaviconForPageURIAndWaitUntilReady(kServer->getURIForPath("/foo").data());

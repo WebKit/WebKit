@@ -42,7 +42,6 @@
 #include "PlatformLayer.h"
 #include "RealtimeMediaSourceCapabilities.h"
 #include "RealtimeMediaSourceFactory.h"
-#include "VideoFrame.h"
 #include "VideoFrameTimeMetadata.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/Lock.h>
@@ -72,6 +71,7 @@ class MediaStreamPrivate;
 class OrientationNotifier;
 class PlatformAudioData;
 class RealtimeMediaSourceSettings;
+class VideoFrame;
 
 struct CaptureSourceOrError;
 
@@ -109,7 +109,7 @@ public:
         virtual ~AudioSampleObserver() = default;
 
         // May be called on a background thread.
-        virtual void audioSamplesAvailable(const MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t /*numberOfFrames*/) = 0;
+        virtual void audioSamplesAvailable(const WTF::MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t /*numberOfFrames*/) = 0;
     };
     class VideoFrameObserver {
     public:
@@ -155,7 +155,7 @@ public:
 
     const AtomString& name() const { return m_name; }
 
-    unsigned fitnessScore() const { return m_fitnessScore; }
+    double fitnessScore() const { return m_fitnessScore; }
 
     WEBCORE_EXPORT void addObserver(Observer&);
     WEBCORE_EXPORT void removeObserver(Observer&);
@@ -178,8 +178,11 @@ public:
     double aspectRatio() const { return m_aspectRatio; }
     void setAspectRatio(double);
 
-    RealtimeMediaSourceSettings::VideoFacingMode facingMode() const { return m_facingMode; }
-    void setFacingMode(RealtimeMediaSourceSettings::VideoFacingMode);
+    double zoom() const { return m_zoom; }
+    void setZoom(double);
+
+    VideoFacingMode facingMode() const { return m_facingMode; }
+    void setFacingMode(VideoFacingMode);
 
     double volume() const { return m_volume; }
     void setVolume(double);
@@ -243,7 +246,7 @@ public:
     const CaptureDevice& captureDevice() const { return m_device; }
     bool isEphemeral() const { return m_device.isEphemeral(); }
 
-    virtual double facingModeFitnessDistanceAdjustment() const { return 0; }
+    virtual double facingModeFitnessScoreAdjustment() const { return 0; }
 
 protected:
     RealtimeMediaSource(const CaptureDevice&, MediaDeviceHashSalts&& hashSalts = { }, PageIdentifier = { });
@@ -257,10 +260,10 @@ protected:
     double fitnessDistance(const MediaConstraint&);
     void applyConstraint(const MediaConstraint&);
     void applyConstraints(const FlattenedConstraint&);
-    bool supportsSizeAndFrameRate(std::optional<IntConstraint> width, std::optional<IntConstraint> height, std::optional<DoubleConstraint>, String&, double& fitnessDistance);
+    bool supportsSizeFrameRateAndZoom(std::optional<IntConstraint> width, std::optional<IntConstraint> height, std::optional<DoubleConstraint>, std::optional<DoubleConstraint>, String&, double& fitnessDistance);
 
-    virtual bool supportsSizeAndFrameRate(std::optional<int> width, std::optional<int> height, std::optional<double>);
-    virtual void setSizeAndFrameRate(std::optional<int> width, std::optional<int> height, std::optional<double>);
+    virtual bool supportsSizeFrameRateAndZoom(std::optional<int> width, std::optional<int> height, std::optional<double>, std::optional<double>);
+    virtual void setSizeFrameRateAndZoom(std::optional<int> width, std::optional<int> height, std::optional<double>, std::optional<double>);
 
     void notifyMutedObservers();
     void notifyMutedChange(bool muted);
@@ -271,7 +274,7 @@ protected:
     void initializeEchoCancellation(bool echoCancellation) { m_echoCancellation = echoCancellation; }
 
     void videoFrameAvailable(VideoFrame&, VideoFrameTimeMetadata);
-    void audioSamplesAvailable(const MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t);
+    void audioSamplesAvailable(const WTF::MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t);
 
     void forEachObserver(const Function<void(Observer&)>&);
     void forEachVideoFrameObserver(const Function<void(VideoFrameObserver&)>&);
@@ -325,11 +328,12 @@ private:
     IntSize m_intrinsicSize;
     double m_frameRate { 30 };
     double m_aspectRatio { 0 };
+    double m_zoom { 1 };
     double m_volume { 1 };
     double m_sampleRate { 0 };
     double m_sampleSize { 0 };
     double m_fitnessScore { 0 };
-    RealtimeMediaSourceSettings::VideoFacingMode m_facingMode { RealtimeMediaSourceSettings::User};
+    VideoFacingMode m_facingMode { VideoFacingMode::User };
 
     bool m_muted { false };
     bool m_pendingSettingsDidChangeNotification { false };

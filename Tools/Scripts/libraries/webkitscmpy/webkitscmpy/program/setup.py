@@ -1,4 +1,4 @@
-# Copyright (C) 2021, 2022 Apple Inc. All rights reserved.
+# Copyright (C) 2021-2023 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -27,8 +27,8 @@ import sys
 import time
 
 from .command import Command
+from .install_hooks import InstallHooks
 from requests.auth import HTTPBasicAuth
-from webkitbugspy import radar
 from webkitcorepy import arguments, run, Editor, OutputCapture, Terminal
 from webkitscmpy import log, local, remote
 
@@ -102,10 +102,11 @@ class Setup(Command):
                 return result
 
         if repository.owner == username or args.defaults or Terminal.choose(
-            "Create a private fork of '{}' belonging to '{}'".format(forked_name, username),
-            default='Yes',
+            "Create a private fork of '{}/{}' named '{}' belonging to '{}'".format(
+                repository.owner, repository.name, forked_name, username
+            ), default='Yes',
         ) == 'No':
-            log.info("Continuing without forking '{}'".format(forked_name))
+            log.info("Continuing without forking '{}/{}'".format(repository.owner, repository.name))
             return 1
 
         data = dict(
@@ -121,7 +122,9 @@ class Setup(Command):
             repository.name,
         ), json=data, auth=auth, headers=dict(Accept=repository.ACCEPT_HEADER))
         if response.status_code // 100 != 2:
-            sys.stderr.write("Failed to create a fork of '{}' belonging to '{}'\n".format(forked_name, username))
+            sys.stderr.write("Failed to create a fork of '{}/{}' named '{}' belonging to '{}'\n".format(
+                repository.owner, repository.name, forked_name, username,
+            ))
             sys.stderr.write("URL: {}\nServer replied with status code {}:\n{}\n".format(response.url, response.status_code, response.text))
             return 1
 
@@ -133,7 +136,9 @@ class Setup(Command):
                 set_name,
             ), json=dict(name=forked_name), auth=auth, headers=dict(Accept=repository.ACCEPT_HEADER))
             if response.status_code // 100 != 2:
-                sys.stderr.write("Fork created with name '{}' belonging to '{}'\n Failed to change name to {}\n".format(set_name, username, forked_name))
+                sys.stderr.write("Fork of '{}/{}' created with name '{}' belonging to '{}'\n Failed to change name to {}\n".format(
+                    repository.owner, repository.name, set_name, username, forked_name,
+                ))
                 sys.stderr.write("URL: {}\nServer replied with status code {}:\n{}\n".format(response.url, response.status_code, response.text))
                 return 1
 
@@ -329,27 +334,18 @@ class Setup(Command):
                 sys.stderr.write("Failed to set '{}' as the default history management approach\n".format(pr_history))
                 result += 1
 
-        if hooks:
-            for hook in os.listdir(hooks):
-                source_path = os.path.join(hooks, hook)
-                if not os.path.isfile(source_path):
-                    continue
-                log.info('Configuring and copying hook {} for this repository'.format(source_path))
-                with open(source_path, 'r') as f:
-                    from jinja2 import Template
-                    contents = Template(f.read()).render(
-                        location=source_path,
-                        python=os.path.basename(sys.executable),
-                        prefer_radar=bool(radar.Tracker.radarclient()),
-                    )
+        # Only configure GitHub if the URL is a GitHub URL
+        rmt = repository.remote()
+        available_remotes = []
+        if isinstance(rmt, remote.GitHub):
+            forking = True
+            username, _ = rmt.credentials(required=True, validate=True, save_in_keyring=True)
+        else:
+            forking = False
+            username = getpass.getuser()
 
-                target = os.path.join(repository.common_directory, 'hooks', hook)
-                if not os.path.exists(os.path.dirname(target)):
-                    os.makedirs(os.path.dirname(target))
-                with open(target, 'w') as f:
-                    f.write(contents)
-                    f.write('\n')
-                os.chmod(target, 0o775)
+        if hooks:
+            result += InstallHooks.main(args, repository, hooks=hooks, **kwargs)
 
         if args.all or not local_config.get('core.editor'):
             log.info('Setting git editor for {}...'.format(repository.root_path))
@@ -416,26 +412,16 @@ class Setup(Command):
         if additional_setup:
             result += additional_setup(args, repository)
 
-        # Only configure GitHub if the URL is a GitHub URL
-        rmt = repository.remote()
-        available_remotes = []
-        if isinstance(rmt, remote.GitHub):
-            forking = True
-            username, _ = rmt.credentials(required=True, validate=True, save_in_keyring=True)
-        else:
-            forking = False
-            username = getpass.getuser()
-
         # Check and configure alternate remotes
         project_remotes = {}
         for config_arg, url in repository.config().items():
-            if not config_arg.startswith('webkitscmpy.remotes'):
+            if not config_arg.startswith('webkitscmpy.remotes') or not config_arg.endswith('url'):
                 continue
 
             for match in [repository.SSH_REMOTE.match(url), repository.HTTP_REMOTE.match(url)]:
                 if not match:
                     continue
-                project_remotes[config_arg.split('.')[-1]] = [
+                project_remotes[config_arg.split('.')[-2]] = [
                     'https://{}/{}.git'.format(match.group('host'), match.group('path')),
                     'http://{}/{}.git'.format(match.group('host'), match.group('path')),
                     'git@{}:{}.git'.format(match.group('host'), match.group('path')),

@@ -31,7 +31,7 @@
 
 namespace JSC {
 
-static const double mantissaOverflowLowerBound = 9007199254740992.0;
+static constexpr double mantissaOverflowLowerBound = 9007199254740992.0;
 
 ALWAYS_INLINE static int parseDigit(unsigned short c, int radix)
 {
@@ -104,6 +104,29 @@ ALWAYS_INLINE static bool isStrWhiteSpace(UChar c)
 {
     // https://tc39.github.io/ecma262/#sec-tonumber-applied-to-the-string-type
     return Lexer<UChar>::isWhiteSpace(c) || Lexer<UChar>::isLineTerminator(c);
+}
+
+inline static std::optional<double> parseIntDouble(double n)
+{
+    // Optimized handling for numbers:
+    // If the argument is 0 or a number in range 10^-6 <= n < maxSafeInteger, then parseInt
+    // results in a truncation to integer. In the case of -0, this is converted to 0.
+    //
+    // This is also a truncation for values in the range maxSafeInteger <= n < 10^21,
+    // however these values cannot be trivially truncated to int since 10^21 exceeds
+    // even the int64_t range. Negative numbers are a little trickier, the case for
+    // values in the range -10^21 < n <= -1 are similar to those for integer, but
+    // values in the range -1 < n <= -10^-6 need to truncate to -0, not 0.
+    constexpr double tenToTheMinus6 = 0.000001;
+    if (!n)
+        return 0;
+    static_assert(maxSafeInteger() < 1e+21);
+    static_assert(maxSafeInteger() < mantissaOverflowLowerBound);
+    if (std::abs(n) <= maxSafeInteger()) {
+        if (n >= tenToTheMinus6 || n <= -1.0)
+            return std::trunc(n);
+    }
+    return std::nullopt;
 }
 
 // ES5.1 15.1.2.2

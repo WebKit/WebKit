@@ -35,6 +35,7 @@
 #include <string>
 #include <windows.h>
 #include <wtf/RunLoop.h>
+#include <wtf/WTFProcess.h>
 
 
 #define INJECTED_BUNDLE_DLL_NAME "TestRunnerInjectedBundle.dll"
@@ -163,7 +164,7 @@ void TestController::platformRunUntil(bool& condition, WTF::Seconds timeout)
     bool neverSetCondition = false;
     result = runRunLoopUntil(neverSetCondition, 0, maximumWaitForWebProcessToCrash);
     ASSERT_UNUSED(result, result == TimedOut);
-    exit(1);
+    exitProcess(1);
 }
 
 void TestController::platformDidCommitLoadForFrame(WKPageRef, WKFrameRef)

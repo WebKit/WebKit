@@ -22,6 +22,7 @@
 
 import calendar
 import re
+import subprocess
 import sys
 import time
 import webkitcorepy
@@ -84,7 +85,11 @@ class Tracker(GenericTracker):
         @decorators.hybridmethod
         def default(context, obj):
             if isinstance(obj, Tracker):
-                return dict(type='radar', projects=obj._projects)
+                return dict(
+                    type='radar',
+                    projects=obj._projects,
+                    hide_title=obj.hide_title,
+                )
             if isinstance(context, type):
                 raise TypeError('Cannot invoke parent class when classmethod')
             return super(Tracker.Encoder, context).default(obj)
@@ -98,8 +103,9 @@ class Tracker(GenericTracker):
         except ImportError:
             return None
 
-    def __init__(self, users=None, authentication=None, project=None, projects=None, redact=None):
-        super(Tracker, self).__init__(users=users, redact=redact)
+    def __init__(self, users=None, authentication=None, project=None, projects=None, redact=None, hide_title=None, redact_exemption=None):
+        hide_title = True if hide_title is None else hide_title
+        super(Tracker, self).__init__(users=users, redact=redact, redact_exemption=redact_exemption, hide_title=hide_title)
         self._projects = [project] if project else (projects or [])
 
         self.library = self.radarclient()
@@ -140,17 +146,20 @@ class Tracker(GenericTracker):
             return user
         if not name or not username or not email:
             found = None
-            if isinstance(username, int):
-                found = self.library.AppleDirectoryQuery.user_entry_for_dsid(int(username))
-            elif username:
-                found = self.library.AppleDirectoryQuery.user_entry_for_attribute_value('uid', '{}@APPLECONNECT.APPLE.COM'.format(username))
-            elif email:
-                found = self.library.AppleDirectoryQuery.user_entry_for_attribute_value('mail', email)
-            elif name:
-                found = self.library.AppleDirectoryQuery.user_entry_for_attribute_value('cn', name)
+            try:
+                if isinstance(username, int):
+                    found = self.library.AppleDirectoryQuery.user_entry_for_dsid(int(username))
+                elif username:
+                    found = self.library.AppleDirectoryQuery.user_entry_for_attribute_value('uid', '{}@APPLECONNECT.APPLE.COM'.format(username))
+                elif email:
+                    found = self.library.AppleDirectoryQuery.user_entry_for_attribute_value('mail', email)
+                elif name:
+                    found = self.library.AppleDirectoryQuery.user_entry_for_attribute_value('cn', name)
+            except subprocess.CalledProcessError:
+                pass
             if not found:
                 return self.users.create(
-                    name=name,
+                    name=name or username,
                     username=None,
                     emails=[email],
                 )
@@ -201,6 +210,12 @@ class Tracker(GenericTracker):
             email=radar.originator.email,
         )
         issue._milestone = radar.milestone.name if radar.milestone else ''
+
+        if member == 'keywords':
+            issue._keywords = [kw.name for kw in (radar.keywords() or [])]
+
+        if member == 'classification':
+            issue._classification = radar.classification
 
         if member == 'watchers':
             issue._watchers = []

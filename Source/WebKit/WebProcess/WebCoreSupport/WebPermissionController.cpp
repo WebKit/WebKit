@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebPermissionController.h"
 
+#include "MessageSenderInlines.h"
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
 #include "WebPermissionControllerMessages.h"
@@ -62,7 +63,7 @@ void WebPermissionController::query(WebCore::ClientOrigin&& origin, WebCore::Per
     std::optional<WebPageProxyIdentifier> proxyIdentifier;
     if (source == WebCore::PermissionQuerySource::Window || source == WebCore::PermissionQuerySource::DedicatedWorker) {
         ASSERT(page);
-        proxyIdentifier = WebPage::fromCorePage(*page).webPageProxyIdentifier();
+        proxyIdentifier = WebPage::fromCorePage(*page)->webPageProxyIdentifier();
     }
 
     WebProcess::singleton().sendWithAsyncReply(Messages::WebPermissionControllerProxy::Query(origin, descriptor, proxyIdentifier, source), WTFMove(completionHandler));

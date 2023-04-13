@@ -50,7 +50,11 @@ bool CSSCanvasValue::equals(const CSSCanvasValue& other) const
 
 RefPtr<StyleImage> CSSCanvasValue::createStyleImage(Style::BuilderState&) const
 {
-    return StyleCanvasImage::create(m_name);
+    if (m_cachedStyleImage)
+        return m_cachedStyleImage;
+
+    m_cachedStyleImage = StyleCanvasImage::create(m_name);
+    return m_cachedStyleImage;
 }
 
 } // namespace WebCore

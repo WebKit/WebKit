@@ -812,6 +812,15 @@ void EventSenderProxy::sendWheelEvent(EventTimestamp timestamp, double windowX, 
     CGEventSetIntegerValueField(cgScrollEvent.get(), kCGScrollWheelEventScrollPhase, cgScrollPhaseFromPhase(phase));
     CGEventSetIntegerValueField(cgScrollEvent.get(), kCGScrollWheelEventMomentumPhase, cgMomentumPhaseFromPhase(momentumPhase));
 
+    const char* markerMessage = nullptr;
+    if (phase == WheelEventPhase::Ended || phase == WheelEventPhase::Cancelled)
+        markerMessage = "SentWheelPhaseEndOrCancel";
+    else if (momentumPhase == WheelEventPhase::Ended)
+        markerMessage = "SentWheelMomentumPhaseEnd";
+
+    if (markerMessage)
+        WKPagePostMessageToInjectedBundle(m_testController->mainWebView()->page(), toWK("WheelEventMarker").get(), toWK(markerMessage).get());
+
     NSEvent* event = [NSEvent eventWithCGEvent:cgScrollEvent.get()];
     // Our event should have the correct settings:
     if (NSView *targetView = [m_testController->mainWebView()->platformView() hitTest:[event locationInWindow]]) {

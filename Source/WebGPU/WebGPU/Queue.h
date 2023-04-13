@@ -58,11 +58,13 @@ public:
 
     ~Queue();
 
-    void onSubmittedWorkDone(uint64_t signalValue, CompletionHandler<void(WGPUQueueWorkDoneStatus)>&& callback);
+    void onSubmittedWorkDone(CompletionHandler<void(WGPUQueueWorkDoneStatus)>&& callback);
     void submit(Vector<std::reference_wrapper<const CommandBuffer>>&& commands);
     void writeBuffer(const Buffer&, uint64_t bufferOffset, const void* data, size_t);
     void writeTexture(const WGPUImageCopyTexture& destination, const void* data, size_t dataSize, const WGPUTextureDataLayout&, const WGPUExtent3D& writeSize);
     void setLabel(String&&);
+
+    void onSubmittedWorkScheduled(CompletionHandler<void()>&&);
 
     bool isValid() const { return m_commandQueue; }
     void makeInvalid() { m_commandQueue = nil; }
@@ -82,7 +84,8 @@ private:
     void finalizeBlitCommandEncoder();
 
     void commitMTLCommandBuffer(id<MTLCommandBuffer>);
-    bool isIdle() const { return m_submittedCommandBufferCount == m_completedCommandBufferCount; }
+    bool isIdle() const;
+    bool isSchedulingIdle() const { return m_submittedCommandBufferCount == m_scheduledCommandBufferCount; }
 
     // This can be called on a background thread.
     void scheduleWork(Instance::WorkItem&&);
@@ -94,8 +97,11 @@ private:
 
     uint64_t m_submittedCommandBufferCount { 0 };
     uint64_t m_completedCommandBufferCount { 0 };
+    uint64_t m_scheduledCommandBufferCount { 0 };
+    using OnSubmittedWorkScheduledCallbacks = Vector<WTF::Function<void()>>;
+    HashMap<uint64_t, OnSubmittedWorkScheduledCallbacks, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> m_onSubmittedWorkScheduledCallbacks;
     using OnSubmittedWorkDoneCallbacks = Vector<WTF::Function<void(WGPUQueueWorkDoneStatus)>>;
-    HashMap<uint64_t, OnSubmittedWorkDoneCallbacks> m_onSubmittedWorkDoneCallbacks;
+    HashMap<uint64_t, OnSubmittedWorkDoneCallbacks, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> m_onSubmittedWorkDoneCallbacks;
 };
 
 } // namespace WebGPU

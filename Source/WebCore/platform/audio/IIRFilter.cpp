@@ -52,11 +52,11 @@ static std::complex<double> evaluatePolynomial(const double* coefficients, std::
 }
 
 IIRFilter::IIRFilter(const Vector<double>& feedforward, const Vector<double>& feedback)
-    : m_feedforward(feedforward)
+    : m_xBuffer(bufferLength, 0)
+    , m_yBuffer(bufferLength, 0)
+    , m_feedforward(feedforward)
     , m_feedback(feedback)
 {
-    m_xBuffer.fill(0, bufferLength);
-    m_yBuffer.fill(0, bufferLength);
 }
 
 void IIRFilter::reset()
@@ -151,7 +151,7 @@ void IIRFilter::getFrequencyResponse(unsigned length, const float* frequency, fl
             auto numerator = evaluatePolynomial(m_feedforward.data(), zRecip, m_feedforward.size() - 1);
             auto denominator = evaluatePolynomial(m_feedback.data(), zRecip, m_feedback.size() - 1);
             auto response = numerator / denominator;
-            magResponse[k] = static_cast<float>(abs(response));
+            magResponse[k] = static_cast<float>(std::abs(response));
             phaseResponse[k] = static_cast<float>(atan2(imag(response), real(response)));
         }
     }

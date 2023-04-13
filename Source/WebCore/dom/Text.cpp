@@ -162,22 +162,23 @@ Ref<Node> Text::cloneNodeInternal(Document& targetDocument, CloningOperation)
     return create(targetDocument, String { data() });
 }
 
-static bool isSVGShadowText(Text* text)
+static bool isSVGShadowText(const Text& text)
 {
-    Node* parentNode = text->parentNode();
+    auto* parentNode = text.parentNode();
     ASSERT(parentNode);
     return is<ShadowRoot>(*parentNode) && downcast<ShadowRoot>(*parentNode).host()->hasTagName(SVGNames::trefTag);
 }
 
-static bool isSVGText(Text* text)
+static bool isSVGText(const Text& text)
 {
-    Node* parentOrShadowHostNode = text->parentOrShadowHostNode();
-    return parentOrShadowHostNode->isSVGElement() && !parentOrShadowHostNode->hasTagName(SVGNames::foreignObjectTag);
+    auto* parentNode = text.parentNode();
+    ASSERT(parentNode);
+    return is<SVGElement>(*parentNode) && !downcast<SVGElement>(*parentNode).hasTagName(SVGNames::foreignObjectTag);
 }
 
 RenderPtr<RenderText> Text::createTextRenderer(const RenderStyle& style)
 {
-    if (isSVGText(this) || isSVGShadowText(this))
+    if (isSVGText(*this) || isSVGShadowText(*this))
         return createRenderer<RenderSVGInlineText>(*this, data());
 
     if (style.hasTextCombine())

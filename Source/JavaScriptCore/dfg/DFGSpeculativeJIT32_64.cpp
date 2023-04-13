@@ -2161,6 +2161,11 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
+    case ExtractFromTuple: {
+        compileExtractFromTuple(node);
+        break;
+    }
+
     case Inc:
     case Dec:
         compileIncOrDec(node);
@@ -3092,7 +3097,7 @@ void SpeculativeJIT::compile(Node* node)
     case FunctionToString:
         compileFunctionToString(node);
         break;
-        
+
     case NewStringObject: {
         compileNewStringObject(node);
         break;
@@ -3877,11 +3882,6 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
-    case CreateArgumentsButterfly: {
-        compileCreateArgumentsButterfly(node);
-        break;
-    }
-
     case CreateRest: {
         compileCreateRest(node);
         break;
@@ -4043,16 +4043,6 @@ void SpeculativeJIT::compile(Node* node)
 
     case EnumeratorNextUpdateIndexAndMode: {
         compileEnumeratorNextUpdateIndexAndMode(node);
-        break;
-    }
-
-    case EnumeratorNextExtractMode: {
-        compileEnumeratorNextExtractMode(node);
-        break;
-    }
-
-    case EnumeratorNextExtractIndex: {
-        compileEnumeratorNextExtractIndex(node);
         break;
     }
 
@@ -4274,6 +4264,8 @@ void SpeculativeJIT::compile(Node* node)
     case DateGetTime:
     case StringCodePointAt:
     case CallWasm:
+    case FunctionBind:
+    case NewBoundFunction:
         DFG_CRASH(m_graph, node, "unexpected node in DFG backend");
         break;
     }

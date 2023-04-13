@@ -27,10 +27,10 @@
 #include "config.h"
 #include "WebProcess.h"
 
-#include "WebKitExtensionManager.h"
-#include "WebKitWebExtensionPrivate.h"
+#include "WebKitWebProcessExtensionPrivate.h"
 #include "WebPage.h"
 #include "WebProcessCreationParameters.h"
+#include "WebProcessExtensionManager.h"
 
 #if ENABLE(REMOTE_INSPECTOR)
 #include <JavaScriptCore/RemoteInspector.h>
@@ -46,6 +46,10 @@
 #if USE(WPE_RENDERER)
 #include <WebCore/PlatformDisplayLibWPE.h>
 #include <wpe/wpe.h>
+#endif
+
+#if PLATFORM(GTK) && USE(EGL)
+#include <WebCore/PlatformDisplayHeadless.h>
 #endif
 
 #if PLATFORM(GTK) && !USE(GTK4)
@@ -68,6 +72,8 @@
 #include "GtkSettingsManagerProxy.h"
 #include <gtk/gtk.h>
 #endif
+
+#include <WebCore/CairoUtilities.h>
 
 namespace WebKit {
 
@@ -117,14 +123,19 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
     }
 #endif
 
+#if PLATFORM(GTK) && USE(EGL)
+    if (parameters.useDMABufSurfaceForCompositing)
+        m_displayForCompositing = WebCore::PlatformDisplayHeadless::create();
+#endif
+
 #if PLATFORM(WAYLAND)
-    if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::Wayland && !parameters.isServiceWorkerProcess) {
+    if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::Wayland && !parameters.isServiceWorkerProcess && !parameters.useDMABufSurfaceForCompositing) {
         auto hostClientFileDescriptor = parameters.hostClientFileDescriptor.release();
         if (hostClientFileDescriptor != -1) {
             wpe_loader_init(parameters.implementationLibraryName.data());
-            m_wpeDisplay = WebCore::PlatformDisplayLibWPE::create();
-            if (!m_wpeDisplay->initialize(hostClientFileDescriptor))
-                m_wpeDisplay = nullptr;
+            m_displayForCompositing = WebCore::PlatformDisplayLibWPE::create();
+            if (!downcast<WebCore::PlatformDisplayLibWPE>(*m_displayForCompositing).initialize(hostClientFileDescriptor))
+                m_displayForCompositing = nullptr;
         }
     }
 #endif
@@ -155,10 +166,12 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
     AccessibilityAtspi::singleton().connect(parameters.accessibilityBusAddress);
 #endif
 
+    if (parameters.disableFontHintingForTesting)
+        disableCairoFontHintingForTesting();
+
 #if PLATFORM(GTK)
     GtkSettingsManagerProxy::singleton().applySettings(WTFMove(parameters.gtkSettings));
 #endif
-
 }
 
 void WebProcess::platformSetWebsiteDataStoreParameters(WebProcessDataStoreParameters&&)
@@ -169,10 +182,10 @@ void WebProcess::platformTerminate()
 {
 }
 
-void WebProcess::sendMessageToWebExtension(UserMessage&& message)
+void WebProcess::sendMessageToWebProcessExtension(UserMessage&& message)
 {
-    if (auto* extension = WebKitExtensionManager::singleton().extension())
-        webkitWebExtensionDidReceiveUserMessage(extension, WTFMove(message));
+    if (auto* extension = WebProcessExtensionManager::singleton().extension())
+        webkitWebProcessExtensionDidReceiveUserMessage(extension, WTFMove(message));
 }
 
 #if PLATFORM(GTK) && !USE(GTK4)

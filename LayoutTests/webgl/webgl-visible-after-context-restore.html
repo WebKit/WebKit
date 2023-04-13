@@ -1,0 +1,24 @@
+<body style="margin:0">
+<canvas style="display:block;" id="canvas"></canvas>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+canvas.addEventListener('webglcontextlost', e => {
+    e.preventDefault();
+    setTimeout((e) => {
+        ext.restoreContext();
+    }, 100);
+});
+canvas.addEventListener('webglcontextrestored', e => {
+    gl.clearColor(0, 1, 0, 1);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    if (window.testRunner)
+        testRunner.notifyDone();
+});
+let gl = canvas.getContext("webgl");
+let ext = gl.getExtension("WEBGL_lose_context");
+window.requestAnimationFrame(() => {
+    ext.loseContext();
+});
+</script>
+</body>

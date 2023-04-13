@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -411,6 +411,7 @@ CodePtr<ExceptionHandlerPtrTag> prepareCatchOSREntry(VM& vm, CallFrame* callFram
 
     // The active length of catchOSREntryBuffer will be zeroed by ClearCatchLocals node.
     dfgCommon->catchOSREntryBuffer->setActiveLength(sizeof(JSValue) * index);
+    vm.requestEntryScopeService(VM::EntryScopeService::ClearScratchBuffers);
 
     // At this point, we're committed to triggering an OSR entry immediately after we return. Hence, it is safe to modify stack here.
     callFrame->setCodeBlock(optimizedCodeBlock);

@@ -68,7 +68,7 @@ static const Document* blobOwner(const SecurityOrigin& blobOrigin)
 
 URL BlobURL::getOriginURL(const URL& url)
 {
-    ASSERT(url.protocolIs(kBlobProtocol));
+    ASSERT_UNUSED(kBlobProtocol, url.protocolIs(kBlobProtocol));
 
     if (auto blobOrigin = ThreadableBlobRegistry::getCachedOrigin(url)) {
         if (auto* document = blobOwner(*blobOrigin))
@@ -79,7 +79,7 @@ URL BlobURL::getOriginURL(const URL& url)
 
 bool BlobURL::isSecureBlobURL(const URL& url)
 {
-    ASSERT(url.protocolIs(kBlobProtocol));
+    ASSERT_UNUSED(kBlobProtocol, url.protocolIs(kBlobProtocol));
 
     // As per https://github.com/w3c/webappsec-mixed-content/issues/41, Blob URL is secure if the document that created it is secure.
     if (auto origin = ThreadableBlobRegistry::getCachedOrigin(url)) {

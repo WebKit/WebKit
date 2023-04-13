@@ -1,0 +1,21 @@
+abcd
+
+PASS insertLineBreak in <span contenteditable style="display:inline-block;white-space:pre">{}</span> (defaultParagraphSeparator=div)
+PASS insertLineBreak in <span contenteditable style="display:inline-block;white-space:pre">{}</span> followed by a <br> (defaultParagraphSeparator=div)
+PASS insertLineBreak in <span contenteditable style="display:inline-block;white-space:pre">{}</span> followed by text (defaultParagraphSeparator=div)
+PASS insertLineBreak in <span contenteditable style="display:inline-block;white-space:pre">{}<br></span> (defaultParagraphSeparator=div)
+PASS insertLineBreak in <span contenteditable style="display:inline-block;white-space:pre">[]abcd</span> (defaultParagraphSeparator=div)
+PASS insertLineBreak in <span contenteditable style="display:inline-block;white-space:pre">ab[]cd</span> (defaultParagraphSeparator=div)
+PASS insertLineBreak in <span contenteditable style="display:inline-block;white-space:pre">abcd[]</span> (defaultParagraphSeparator=div)
+PASS insertLineBreak in <span contenteditable style="display:inline-block;white-space:pre">abcd[]</span> followed by a <br> element (defaultParagraphSeparator=div)
+PASS insertLineBreak in <span contenteditable style="display:inline-block;white-space:pre">abcd[]</span> followed by text (defaultParagraphSeparator=div)
+PASS insertLineBreak in <span contenteditable style="display:inline-block;white-space:pre">{}</span> (defaultParagraphSeparator=p)
+PASS insertLineBreak in <span contenteditable style="display:inline-block;white-space:pre">{}</span> followed by a <br> (defaultParagraphSeparator=p)
+PASS insertLineBreak in <span contenteditable style="display:inline-block;white-space:pre">{}</span> followed by text (defaultParagraphSeparator=p)
+PASS insertLineBreak in <span contenteditable style="display:inline-block;white-space:pre">{}<br></span> (defaultParagraphSeparator=p)
+PASS insertLineBreak in <span contenteditable style="display:inline-block;white-space:pre">[]abcd</span> (defaultParagraphSeparator=p)
+PASS insertLineBreak in <span contenteditable style="display:inline-block;white-space:pre">ab[]cd</span> (defaultParagraphSeparator=p)
+PASS insertLineBreak in <span contenteditable style="display:inline-block;white-space:pre">abcd[]</span> (defaultParagraphSeparator=p)
+PASS insertLineBreak in <span contenteditable style="display:inline-block;white-space:pre">abcd[]</span> followed by a <br> element (defaultParagraphSeparator=p)
+PASS insertLineBreak in <span contenteditable style="display:inline-block;white-space:pre">abcd[]</span> followed by text (defaultParagraphSeparator=p)
+

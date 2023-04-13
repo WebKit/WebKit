@@ -26,7 +26,6 @@
 #pragma once
 
 #include "IntSize.h"
-#include "VideoFrame.h"
 #include <wtf/RetainPtr.h>
 
 typedef struct CGImage *CGImageRef;
@@ -36,7 +35,14 @@ typedef struct __CVPixelBufferPool *CVPixelBufferPoolRef;
 typedef struct __IOSurface *IOSurfaceRef;
 typedef struct opaqueCMSampleBuffer *CMSampleBufferRef;
 
+namespace WTF {
+class MediaTime;
+}
+
 namespace WebCore {
+
+class VideoFrame;
+enum class VideoFrameRotation : uint16_t;
 
 class ImageTransferSessionVT {
 public:
@@ -46,11 +52,14 @@ public:
     }
 
     RefPtr<VideoFrame> convertVideoFrame(VideoFrame&, const IntSize&);
-    RefPtr<VideoFrame> createVideoFrame(CGImageRef, const MediaTime&, const IntSize&, VideoFrame::Rotation = VideoFrame::Rotation::None, bool mirrored = false);
-    RefPtr<VideoFrame> createVideoFrame(CMSampleBufferRef, const MediaTime&, const IntSize&, VideoFrame::Rotation = VideoFrame::Rotation::None, bool mirrored = false);
+    RefPtr<VideoFrame> createVideoFrame(CGImageRef, const WTF::MediaTime&, const IntSize&);
+    RefPtr<VideoFrame> createVideoFrame(CMSampleBufferRef, const WTF::MediaTime&, const IntSize&);
+    RefPtr<VideoFrame> createVideoFrame(CGImageRef, const WTF::MediaTime&, const IntSize&, VideoFrameRotation, bool mirrored = false);
+    RefPtr<VideoFrame> createVideoFrame(CMSampleBufferRef, const WTF::MediaTime&, const IntSize&, VideoFrameRotation, bool mirrored = false);
 
 #if !PLATFORM(MACCATALYST)
-    WEBCORE_EXPORT RefPtr<VideoFrame> createVideoFrame(IOSurfaceRef, const MediaTime&, const IntSize&, VideoFrame::Rotation = VideoFrame::Rotation::None, bool mirrored = false);
+    WEBCORE_EXPORT RefPtr<VideoFrame> createVideoFrame(IOSurfaceRef, const WTF::MediaTime&, const IntSize&);
+    WEBCORE_EXPORT RefPtr<VideoFrame> createVideoFrame(IOSurfaceRef, const WTF::MediaTime&, const IntSize&, VideoFrameRotation, bool mirrored = false);
 #endif
 
     uint32_t pixelFormat() const { return m_pixelFormat; }
@@ -60,12 +69,12 @@ private:
     WEBCORE_EXPORT ImageTransferSessionVT(uint32_t pixelFormat, bool shouldUseIOSurface);
 
 #if !PLATFORM(MACCATALYST)
-    RetainPtr<CMSampleBufferRef> createCMSampleBuffer(IOSurfaceRef, const MediaTime&, const IntSize&);
+    RetainPtr<CMSampleBufferRef> createCMSampleBuffer(IOSurfaceRef, const WTF::MediaTime&, const IntSize&);
 #endif
 
-    RetainPtr<CMSampleBufferRef> convertCMSampleBuffer(CMSampleBufferRef, const IntSize&, const MediaTime* = nullptr);
-    RetainPtr<CMSampleBufferRef> createCMSampleBuffer(CVPixelBufferRef, const MediaTime&, const IntSize&);
-    RetainPtr<CMSampleBufferRef> createCMSampleBuffer(CGImageRef, const MediaTime&, const IntSize&);
+    RetainPtr<CMSampleBufferRef> convertCMSampleBuffer(CMSampleBufferRef, const IntSize&, const WTF::MediaTime* = nullptr);
+    RetainPtr<CMSampleBufferRef> createCMSampleBuffer(CVPixelBufferRef, const WTF::MediaTime&, const IntSize&);
+    RetainPtr<CMSampleBufferRef> createCMSampleBuffer(CGImageRef, const WTF::MediaTime&, const IntSize&);
 
     RetainPtr<CVPixelBufferRef> convertPixelBuffer(CVPixelBufferRef, const IntSize&);
     RetainPtr<CVPixelBufferRef> createPixelBuffer(CMSampleBufferRef, const IntSize&);

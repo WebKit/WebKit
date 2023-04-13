@@ -36,11 +36,11 @@ layer at (0,0) size 800x120
         RenderInline {TT} at (0,0) size 88x15
           RenderText {#text} at (174,21) size 88x15
             text run at (174,21) width 88: "eventSender"
-        RenderText {#text} at (262,18) size 442x17
-          text run at (262,18) width 442: " to select the text. You should see some of the above text selected and "
-        RenderInline {TT} at (0,0) size 80x15
-          RenderText {#text} at (704,21) size 80x15
-            text run at (704,21) width 80: "test_shell"
+        RenderText {#text} at (262,18) size 441x17
+          text run at (262,18) width 441: " to select the text. You should see some of the above text selected and "
+        RenderInline {TT} at (0,0) size 81x15
+          RenderText {#text} at (702,21) size 81x15
+            text run at (702,21) width 81: "test_shell"
         RenderText {#text} at (0,36) size 252x17
           text run at (0,36) width 252: "shouldn't trigger any assertions or crash."
 caret: position 0 of child 0 {#text} of child 0 {B} of child 1 {NOBR} of child 1 {P} of body

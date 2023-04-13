@@ -34,6 +34,7 @@
         return nil;
 
     self.rect = CGRectNull;
+    self.allowTransparentBackground = NO;
     return self;
 }
 
@@ -42,6 +43,7 @@
     WKPDFConfiguration *pdfConfiguration = [(WKPDFConfiguration *)[[self class] allocWithZone:zone] init];
 
     pdfConfiguration.rect = self.rect;
+    pdfConfiguration.allowTransparentBackground = self.allowTransparentBackground;
 
     return pdfConfiguration;
 }

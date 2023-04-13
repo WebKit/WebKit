@@ -87,6 +87,18 @@ static NSString *overrideBundleIdentifier(id, SEL)
     [self _test_waitForDidFinishNavigation];
 }
 
+- (void)synchronouslyLoadRequest:(NSURLRequest *)request preferences:(WKWebpagePreferences *)preferences
+{
+    [self loadRequest:request];
+    [self _test_waitForDidFinishNavigationWithPreferences:preferences];
+}
+
+- (void)synchronouslyLoadRequestIgnoringSSLErrors:(NSURLRequest *)request
+{
+    [self loadRequest:request];
+    [self _test_waitForDidFinishNavigationWhileIgnoringSSLErrors];
+}
+
 - (void)synchronouslyLoadHTMLString:(NSString *)html baseURL:(NSURL *)url
 {
     [self loadHTMLString:html baseURL:url];
@@ -861,6 +873,12 @@ static WKContentView *recursiveFindWKContentView(UIView *view)
 - (void)sendClickAtPoint:(NSPoint)pointInWindow
 {
     [self sendClicksAtPoint:pointInWindow numberOfClicks:1];
+}
+
+- (void)rightClickAtPoint:(NSPoint)pointInWindow
+{
+    [self mouseDownAtPoint:pointInWindow simulatePressure:NO withFlags:0 eventType:NSEventTypeRightMouseDown];
+    [self mouseUpAtPoint:pointInWindow withFlags:0 eventType:NSEventTypeRightMouseUp];
 }
 
 - (BOOL)acceptsFirstMouseAtPoint:(NSPoint)pointInWindow

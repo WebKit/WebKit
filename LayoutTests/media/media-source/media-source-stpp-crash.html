@@ -23,6 +23,7 @@
 
         waitForEventOn(sourceBuffer, 'updatestart');
         waitForEventOn(sourceBuffer, 'update');
+        waitForEventOn(sourceBuffer, 'error');
         waitForEventOn(sourceBuffer, 'updateend', updateEnd);
 
         var request = new XMLHttpRequest();
@@ -34,7 +35,7 @@
         run('sourceBuffer.appendBuffer(initSegment)');
         testExpected('sourceBuffer.updating', true);
     }
-    
+
     function updateEnd() {
         testExpected('sourceBuffer.updating', false);
         endTest();

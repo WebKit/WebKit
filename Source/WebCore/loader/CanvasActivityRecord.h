@@ -35,25 +35,5 @@ struct CanvasActivityRecord {
     
     WEBCORE_EXPORT bool recordWrittenOrMeasuredText(const String&);
     void mergeWith(const CanvasActivityRecord&);
-    
-    template <class Encoder> void encode(Encoder&) const;
-    template <class Decoder> static WARN_UNUSED_RETURN bool decode(Decoder&, CanvasActivityRecord&);
 };
-    
-template <class Encoder>
-void CanvasActivityRecord::encode(Encoder& encoder) const
-{
-    encoder << textWritten;
-    encoder << wasDataRead;
-}
-
-template <class Decoder>
-bool CanvasActivityRecord::decode(Decoder& decoder, CanvasActivityRecord& canvasActivityRecord)
-{
-    if (!decoder.decode(canvasActivityRecord.textWritten))
-        return false;
-    if (!decoder.decode(canvasActivityRecord.wasDataRead))
-        return false;
-    return true;
-}
 } // namespace WebCore

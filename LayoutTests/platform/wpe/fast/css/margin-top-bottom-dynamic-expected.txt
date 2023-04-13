@@ -39,9 +39,9 @@ layer at (0,0) size 800x600
           RenderBlock (anonymous) at (8,4) size 105x18
             RenderText at (0,0) size 105x17
               text run at (0,0) width 105: "Negative margin"
-        RenderText {#text} at (121,22) size 4x17
-          text run at (121,22) width 4: " "
-        RenderButton {INPUT} at (125,18) size 114x27 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+        RenderText {#text} at (120,22) size 5x17
+          text run at (120,22) width 5: " "
+        RenderButton {INPUT} at (124,18) size 115x27 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
           RenderBlock (anonymous) at (8,4) size 98x18
             RenderText at (0,0) size 98x17
               text run at (0,0) width 98: "Positive margin"
@@ -62,9 +62,9 @@ layer at (0,0) size 800x600
           RenderBlock (anonymous) at (8,4) size 105x18
             RenderText at (0,0) size 105x17
               text run at (0,0) width 105: "Negative margin"
-        RenderText {#text} at (121,22) size 4x17
-          text run at (121,22) width 4: " "
-        RenderButton {INPUT} at (125,18) size 114x27 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+        RenderText {#text} at (120,22) size 5x17
+          text run at (120,22) width 5: " "
+        RenderButton {INPUT} at (124,18) size 115x27 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
           RenderBlock (anonymous) at (8,4) size 98x18
             RenderText at (0,0) size 98x17
               text run at (0,0) width 98: "Positive margin"

@@ -53,7 +53,7 @@ r.setEnd(span2.firstChild, 2);
 s.removeAllRanges();
 s.addRange(r);
 
-shouldBe('s.containsNode(span2.firstChild, false)', true);
+shouldBe('s.containsNode(span2.firstChild, false)', false);
 shouldBe('s.containsNode(span2.firstChild, true)', true);
 shouldBe('s.containsNode(span2, false)', false);
 shouldBe('s.containsNode(span2, true)', true);

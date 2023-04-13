@@ -54,16 +54,21 @@ public:
     public:
         // FIXME: This c'tor is only used by the render tree integation codepath.
         enum class Position { Left, Right };
-        FloatItem(Position, BoxGeometry absoluteBoxGeometry);
+        FloatItem(Position, BoxGeometry absoluteBoxGeometry, const Shape*);
         FloatItem(const Box&, Position, BoxGeometry absoluteBoxGeometry);
+
+        ~FloatItem();
 
         bool isLeftPositioned() const { return m_position == Position::Left; }
         bool isRightPositioned() const { return m_position == Position::Right; }
         bool isInFormattingContextOf(const ElementBox& formattingContextRoot) const;
 
         Rect rectWithMargin() const { return BoxGeometry::marginBoxRect(m_absoluteBoxGeometry); }
+        Rect borderBoxRect() const { return BoxGeometry::borderBoxRect(m_absoluteBoxGeometry); }
         BoxGeometry::HorizontalMargin horizontalMargin() const { return m_absoluteBoxGeometry.horizontalMargin(); }
         PositionInContextRoot bottom() const { return { rectWithMargin().bottom() }; }
+
+        const Shape* shape() const { return m_shape.get(); }
 
 #if ASSERT_ENABLED
         const Box* floatBox() const { return m_layoutBox.get(); }
@@ -72,6 +77,7 @@ public:
         CheckedPtr<const Box> m_layoutBox;
         Position m_position;
         BoxGeometry m_absoluteBoxGeometry;
+        RefPtr<const Shape> m_shape;
     };
     using FloatList = Vector<FloatItem>;
     const FloatList& floats() const { return m_floats; }
@@ -88,6 +94,8 @@ public:
     // FIXME: This should always be floatingState's root().style().isLeftToRightDirection() if we used the actual containing block of the intrusive
     // floats to initiate the floating state in the integration codepath (i.e. when the float comes from the parent BFC).
     void setIsLeftToRightDirection(bool isLeftToRightDirection) { m_isLeftToRightDirection = isLeftToRightDirection; }
+
+    void shrinkToFit();
 
 private:
     friend class FloatingContext;

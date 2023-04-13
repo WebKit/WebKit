@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script>
+      var video;
+      var source;
+      var sourceBuffer;
+      var request;
+
+      function isMP4Supported()
+      {
+        return MediaSource.isTypeSupported('video/mp4;codecs="avc1.4D4001,mp4a.40.2"');
+      }
+      function isWebMVP9Supported()
+      {
+        return MediaSource.isTypeSupported('video/webm;codecs="vp9,opus"');
+      }
+      function isWebMOpusSupported()
+      {
+        return MediaSource.isTypeSupported('video/webm;codecs="opus"');
+      }
+      function loadVideo()
+      {
+          video = document.getElementById('test-video');
+          request = new XMLHttpRequest();
+          request.responseType = 'arraybuffer';
+          request.open('GET', isMP4Supported() ? 'test-mse.mp4' : isWebMVP9Supported() ? 'test-mse.webm' : 'test-mse-audio.webm', true);
+          request.addEventListener('load', load);
+          request.send();
+      }
+
+      function load(event)
+      {
+          source = new ManagedMediaSource();
+          source.addEventListener('sourceopen', sourceopen);
+          video.src = URL.createObjectURL(source);
+      }
+
+      function sourceopen(event)
+      {
+          sourceBuffer = source.addSourceBuffer(isMP4Supported() ? 'video/mp4;codecs="avc1.4D4001,mp4a.40.2"' : isWebMVP9Supported() ? 'video/webm;codecs="vp9,opus"' : 'video/webm;codecs="opus"');
+      }
+
+      function startStreaming(event)
+      {
+          sourceBuffer.addEventListener('updateend', updateend);
+          sourceBuffer.appendBuffer(request.response);
+      }
+
+      function updateend(event)
+      {
+          // enstreaming event will be fired.
+          source.endOfStream();
+      }
+</script>
+</head>
+<body>
+    <p>
+        <video id="test-video" controls></video>
+    </p>
+    <p>
+        <button onclick="loadVideo()">load video</button>
+        <button onclick="startStreaming()">Stream video</button>
+    </p>
+</body>
+</html>

@@ -62,7 +62,7 @@ public:
     bool avoidsFloats() const override { return true; }
     bool canDropAnonymousBlockChild() const override { return false; }
 
-    void dirtyGrid();
+    void dirtyGrid(bool subgridChanged = false);
     Vector<LayoutUnit> trackSizesForComputedStyle(GridTrackSizingDirection) const;
 
     const Vector<LayoutUnit>& columnPositions() const { return m_columnPositions; }
@@ -82,6 +82,13 @@ public:
     StyleSelfAlignmentData selfAlignmentForChild(GridAxis, const RenderBox&, const RenderStyle* = nullptr) const;
 
     StyleContentAlignmentData contentAlignment(GridTrackSizingDirection) const;
+
+    // These functions handle the actual implementation of layoutBlock based on if
+    // the grid is a standard grid or a masonry one. While masonry is an extension of grid,
+    // keeping the logic in the same function was leading to a messy amount of if statements being added to handle
+    // specific masonry cases.
+    void layoutGrid(bool);
+    void layoutMasonry(bool);
 
     // Computes the span relative to this RenderGrid, even if the RenderBox is a child
     // of a descendant subgrid.
@@ -137,10 +144,12 @@ private:
     bool selfAlignmentChangedToStretch(GridAxis, const RenderStyle& oldStyle, const RenderStyle& newStyle, const RenderBox&) const;
     bool selfAlignmentChangedFromStretch(GridAxis, const RenderStyle& oldStyle, const RenderStyle& newStyle, const RenderBox&) const;
 
+    bool subgridDidChange(const RenderStyle& oldStyle) const;
     bool explicitGridDidResize(const RenderStyle&) const;
     bool namedGridLinesDefinitionDidChange(const RenderStyle&) const;
     bool implicitGridLinesDefinitionDidChange(const RenderStyle&) const;
 
+    bool shouldCheckExplicitIntrinsicInnerLogicalSize(GridTrackSizingDirection) const;
     std::optional<LayoutUnit> explicitIntrinsicInnerLogicalSize(GridTrackSizingDirection) const;
     unsigned computeAutoRepeatTracksCount(GridTrackSizingDirection, std::optional<LayoutUnit> availableSize) const;
 
@@ -179,7 +188,10 @@ private:
     void repeatTracksSizingIfNeeded(LayoutUnit availableSpaceForColumns, LayoutUnit availableSpaceForRows);
 
     void updateGridAreaForAspectRatioItems(const Vector<RenderBox*>&);
+
     void layoutGridItems();
+    void layoutMasonryItems();
+
     void populateGridPositionsForDirection(GridTrackSizingDirection);
 
     LayoutUnit gridAreaBreadthForOutOfFlowChild(const RenderBox&, GridTrackSizingDirection);
@@ -214,7 +226,7 @@ private:
     void resetAutoMarginsAndLogicalTopInColumnAxis(RenderBox& child);
     void updateAutoMarginsInColumnAxisIfNeeded(RenderBox&);
     void updateAutoMarginsInRowAxisIfNeeded(RenderBox&);
-    bool shouldTrimChildMargin(MarginTrimType, const RenderBox&) const final;
+    bool isChildEligibleForMarginTrim(MarginTrimType, const RenderBox&) const final;
 
     LayoutUnit baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const final;
     std::optional<LayoutUnit> firstLineBaseline() const final;

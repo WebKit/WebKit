@@ -2,8 +2,8 @@
 Initial state:
 | "line 1"
 | <br>
-| <#selection-caret>
 | <br>
+| <#selection-caret>
 
 After pasting line 2 (table A):
 | "line 1"

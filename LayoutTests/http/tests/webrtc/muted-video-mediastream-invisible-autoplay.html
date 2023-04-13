@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+    <head>
+    </head>
+        <script src="/resources/testharness.js"></script>
+        <script src="/resources/testharnessreport.js"></script>
+        <script>
+    if (window.internals)
+        internals.settings.setInvisibleAutoplayNotPermitted(true);
+
+        </script>
+    <body>
+        <video autoplay width=320px height=240px id=myVideo1 controls playsInline></video>
+        <video autoplay width=320px height=240px id=myVideo2 controls playsInline></video>
+        <p>Test that "invisible autoplay not allowed restriction" is reverted when a video element goet from muted to unmuted and has some live audio tracks.</p>
+        <script>
+promise_test(async () => {
+     myVideo1.srcObject = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
+     await new Promise(resolve => myVideo1.onplay = resolve);
+     assert_false(myVideo1.paused, "test1");
+ 
+     myVideo1.muted = true;
+     await new Promise(resolve => setTimeout(resolve, 50));
+     assert_false(myVideo1.paused, "test2");
+    
+     myVideo1.style.visibility = "hidden";
+     await new Promise(resolve => myVideo1.onpause = resolve);
+     assert_true(myVideo1.paused, "test3");
+ 
+     await new Promise(resolve => setTimeout(resolve, 50));
+     myVideo1.muted = false;
+     await new Promise(resolve => myVideo1.onplay = resolve);
+     assert_false(myVideo1.paused, "test4");
+}, "Unmuting a video that was hidden-then-muted should restart playing it");
+
+promise_test(async () => {
+    myVideo2.srcObject = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
+    await new Promise(resolve => myVideo2.onplay = resolve);
+    assert_false(myVideo2.paused, "test1");
+
+    myVideo2.style.visibility = "hidden";
+    await new Promise(resolve => setTimeout(resolve, 50));
+    assert_false(myVideo2.paused, "test3");
+
+    myVideo2.muted = true;
+    await new Promise(resolve => myVideo2.onpause = resolve);
+    assert_true(myVideo2.paused, "test2");
+   
+    await new Promise(resolve => setTimeout(resolve, 50));
+    myVideo2.muted = false;
+    await new Promise(resolve => myVideo2.onplay = resolve);
+    assert_false(myVideo2.paused, "test4");
+}, "Muting a hidden video should pause and unmuting the hidden video should restart playing it");
+
+        </script>
+    </body>
+</html>

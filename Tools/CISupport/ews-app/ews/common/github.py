@@ -1,4 +1,4 @@
-# Copyright (C) 2022 Apple Inc. All rights reserved.
+# Copyright (C) 2022-2023 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -200,15 +200,15 @@ class GitHubEWS(GitHub):
     ICON_EMPTY_SPACE = u'\U00002003'
     STATUS_BUBBLE_START = u'<!--EWS-Status-Bubble-Start-->'
     STATUS_BUBBLE_END = u'<!--EWS-Status-Bubble-End-->'
-    STATUS_BUBBLE_ROWS = [['style', 'ios', 'mac', 'wpe', 'win'],  # FIXME: generate this list dynamically to have merge queue show up on top
-                          ['bindings', 'ios-sim', 'mac-AS-debug', 'gtk', 'wincairo'],
-                          ['webkitperl', 'ios-wk2', 'api-mac', 'gtk-wk2', ''],
-                          ['webkitpy', 'api-ios', 'mac-wk1', 'api-gtk', ''],
-                          ['jsc', 'tv', 'mac-wk2', 'jsc-armv7', ''],
-                          ['jsc-arm64', 'tv-sim', 'mac-AS-debug-wk2', 'jsc-armv7-tests', ''],
-                          ['services', 'watch', 'mac-wk2-stress', 'jsc-mips', ''],
-                          ['merge', 'watch-sim', '', 'jsc-mips-tests', ''],
-                          ['unsafe-merge', '', '', '', '']]
+    STATUS_BUBBLE_ROWS = [['style', 'ios', 'mac', 'wpe', 'wincairo'],  # FIXME: generate this list dynamically to have merge queue show up on top
+                          ['bindings', 'ios-sim', 'mac-AS-debug', 'wpe-wk2', ''],
+                          ['webkitperl', 'ios-wk2', 'api-mac', 'gtk', ''],
+                          ['webkitpy', 'ios-wk2-wpt', 'mac-wk1', 'gtk-wk2', ''],
+                          ['jsc', 'api-ios', 'mac-wk2', 'api-gtk', ''],
+                          ['jsc-arm64', 'tv', 'mac-AS-debug-wk2', 'jsc-armv7', ''],
+                          ['services', 'tv-sim', 'mac-wk2-stress', 'jsc-armv7-tests', ''],
+                          ['merge', 'watch', '', 'jsc-mips', ''],
+                          ['unsafe-merge', 'watch-sim', '', 'jsc-mips-tests', '']]
 
     @classmethod
     def generate_updated_pr_description(self, description, ews_comment):
@@ -372,10 +372,7 @@ class GitHubEWS(GitHub):
 
     def _steps_messages(self, build):
         # FIXME: figure out if it is possible to have multi-line hover-over messages in GitHub UI.
-        return '; '.join([step.state_string for step in build.step_set.all().order_by('uid') if self._should_display_step(step)])
-
-    def _should_display_step(self, step):
-        return not [step_to_hide for step_to_hide in StatusBubble.STEPS_TO_HIDE if re.search(step_to_hide, step.state_string)]
+        return '; '.join([step.state_string for step in build.step_set.all().order_by('uid')])
 
     def _does_build_contains_any_failed_step(self, build):
         for step in build.step_set.all():

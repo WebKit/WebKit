@@ -125,6 +125,24 @@ function test()
     });
 
     addTestCase({
+        name: "Runtime.getProperties.Private.Instance",
+        expression: `new PrivateMembersTestClassChild`.replaceAll(/\s+/g, ' '),
+        ownProperties: true,
+    });
+
+    addTestCase({
+        name: "Runtime.getProperties.Private.Constructor",
+        expression: `PrivateMembersTestClassChild`.replaceAll(/\s+/g, ' '),
+        ownProperties: true,
+    });
+
+    addTestCase({
+        name: "Runtime.getProperties.Private.Prototype",
+        expression: `PrivateMembersTestClassChild.prototype`.replaceAll(/\s+/g, ' '),
+        ownProperties: true,
+    });
+
+    addTestCase({
         name: "Runtime.getProperties.Promise.Resolved",
         expression: `Promise.resolve(123)`,
         ownProperties: true,

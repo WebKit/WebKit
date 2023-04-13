@@ -25,10 +25,12 @@
 
 #pragma once
 
+#include "WebGPUCompositorIntegration.h"
+
 namespace PAL::WebGPU {
 
 struct PresentationContextDescriptor {
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=250955 Add integration with the compositor here.
+    CompositorIntegration& compositorIntegration;
 };
 
 } // namespace PAL::WebGPU

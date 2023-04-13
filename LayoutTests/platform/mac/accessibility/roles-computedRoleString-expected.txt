@@ -7,6 +7,7 @@ PASS a[href] -> link.
 PASS article -> article.
 PASS aside -> complementary.
 PASS button -> button.
+PASS code -> code.
 PASS del -> deletion.
 PASS dfn -> definition.
 PASS dl -> .
@@ -23,25 +24,25 @@ PASS hr -> separator.
 PASS img[alt='X'] -> image.
 PASS input[type='button'] -> button.
 PASS input[type='checkbox'] -> checkbox.
-PASS input[type='date'] -> .
-PASS input[type='datetime'] -> .
-PASS input[type='datetime-local'] -> .
-PASS input[type='email'] -> .
+PASS input[type='date'] -> textbox.
+PASS input[type='datetime'] -> textbox.
+PASS input[type='datetime-local'] -> textbox.
+PASS input[type='email'] -> textbox.
 PASS input[type='file'] -> button.
 PASS input[type='image'] -> button.
-PASS input[type='month'] -> .
-PASS input[type='number'] -> .
-PASS input[type='password'] -> .
+PASS input[type='month'] -> textbox.
+PASS input[type='number'] -> textbox.
+PASS input[type='password'] -> textbox.
 PASS input[type='radio'] -> radio.
 PASS input[type='range'] -> slider.
 PASS input[type='reset'] -> button.
 PASS input[type='search'] -> searchbox.
 PASS input[type='submit'] -> button.
-PASS input[type='tel'] -> .
-PASS input[type='text'] -> .
-PASS input[type='time'] -> .
-PASS input[type='url'] -> .
-PASS input[type='week'] -> .
+PASS input[type='tel'] -> textbox.
+PASS input[type='text'] -> textbox.
+PASS input[type='time'] -> textbox.
+PASS input[type='url'] -> textbox.
+PASS input[type='week'] -> textbox.
 PASS ins -> insertion.
 PASS mark -> mark.
 PASS math -> math.
@@ -83,18 +84,18 @@ PASS time -> time.
 PASS ul -> list.
 PASS li -> listitem.
 PASS var -> .
-PASS div[role="command"] -> .
-PASS div[role="composite"] -> .
-PASS div[role="input"] -> .
-PASS div[role="landmark"] -> .
-PASS div[role="range"] -> .
-PASS div[role="roletype"] -> .
-PASS div[role="section"] -> .
-PASS div[role="sectionhead"] -> .
-PASS div[role="select"] -> .
-PASS div[role="structure"] -> .
-PASS div[role="widget"] -> .
-PASS div[role="window"] -> .
+PASS div[role="command"] -> generic.
+PASS div[role="composite"] -> generic.
+PASS div[role="input"] -> generic.
+PASS div[role="landmark"] -> generic.
+PASS div[role="range"] -> generic.
+PASS div[role="roletype"] -> generic.
+PASS div[role="section"] -> generic.
+PASS div[role="sectionhead"] -> generic.
+PASS div[role="select"] -> generic.
+PASS div[role="structure"] -> generic.
+PASS div[role="widget"] -> generic.
+PASS div[role="window"] -> generic.
 PASS div[role="alert"] -> alert.
 PASS div[role="alertdialog"] -> alertdialog.
 PASS div[role="application"] -> application.
@@ -104,6 +105,7 @@ PASS div[role="blockquote"] -> blockquote.
 PASS div[role="button"] -> button.
 PASS div[role="caption"] -> caption.
 PASS div[role="checkbox"] -> checkbox.
+PASS div[role="code"] -> code.
 PASS div[role="combobox"] -> combobox.
 PASS div[role="complementary"] -> complementary.
 PASS div[role="contentinfo"] -> contentinfo.
@@ -151,7 +153,7 @@ PASS div[role="paragraph"] -> paragraph.
 PASS div[role="progressbar"] -> progressbar.
 PASS div[role="radiogroup"] -> radiogroup.
 PASS div[role="radio"] -> radio.
-PASS div[role="region"]:not([aria-label]:not([aria-labelledby]) -> .
+PASS div[role="region"]:not([aria-label]:not([aria-labelledby]) -> generic.
 PASS div[role="region"][aria-label] -> region.
 PASS div[role="region"][aria-labelledby] -> region.
 PASS div[role="scrollbar"] -> scrollbar.
@@ -165,7 +167,7 @@ PASS div[role="superscript"] -> superscript.
 PASS div[role="tablist"] -> tablist.
 PASS div[role="tab"] -> tab.
 PASS div[role="tabpanel"] -> tabpanel.
-PASS div[role="textbox"] -> .
+PASS div[role="textbox"] -> textbox.
 PASS div[role="term"] -> term.
 PASS div[role="time"] -> time.
 PASS div[role="timer"] -> timer.
@@ -179,13 +181,14 @@ PASS div[role="row"] -> row.
 PASS div[role="rowheader"] -> rowheader.
 PASS div[role="columnheader"] -> columnheader.
 PASS div[role="gridcell"] -> gridcell.
+PASS div[role="generic"] -> generic.
 PASS div[role="button foo"] -> button.
 PASS div[role="foo button bar"] -> button.
 PASS div[role="foo  button  bar"] -> button.
-PASS div[role="foo	button	bar"] -> .
+PASS div[role="foo	button	bar"] -> generic.
 PASS div[role="foo
 button
-bar"] -> .
+bar"] -> generic.
 PASS img[role="foo"] -> image.
 PASS img[role="foo bar"] -> image.
 PASS img[role="foo  bar"] -> image.

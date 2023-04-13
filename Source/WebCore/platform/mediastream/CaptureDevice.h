@@ -32,7 +32,7 @@ namespace WebCore {
 
 class CaptureDevice {
 public:
-    enum class DeviceType { Unknown, Microphone, Speaker, Camera, Screen, Window, SystemAudio };
+    enum class DeviceType : uint8_t { Unknown, Microphone, Speaker, Camera, Screen, Window, SystemAudio };
 
     CaptureDevice(const String& persistentId, DeviceType type, const String& label, const String& groupId = emptyString(), bool isEnabled = false, bool isDefault = false, bool isMock = false, bool isEphemeral = false)
         : m_persistentId(persistentId)
@@ -82,72 +82,6 @@ public:
     explicit operator bool() const { return m_type != DeviceType::Unknown; }
 
     CaptureDevice isolatedCopy() &&;
-
-#if ENABLE(MEDIA_STREAM)
-    template<class Encoder>
-    void encode(Encoder& encoder) const
-    {
-        encoder << m_persistentId;
-        encoder << m_label;
-        encoder << m_groupId;
-        encoder << m_enabled;
-        encoder << m_default;
-        encoder << m_type;
-        encoder << m_isMockDevice;
-        encoder << m_isEphemeral;
-    }
-
-    template <class Decoder>
-    static std::optional<CaptureDevice> decode(Decoder& decoder)
-    {
-        std::optional<String> persistentId;
-        decoder >> persistentId;
-        if (!persistentId)
-            return std::nullopt;
-
-        std::optional<String> label;
-        decoder >> label;
-        if (!label)
-            return std::nullopt;
-
-        std::optional<String> groupId;
-        decoder >> groupId;
-        if (!groupId)
-            return std::nullopt;
-
-        std::optional<bool> enabled;
-        decoder >> enabled;
-        if (!enabled)
-            return std::nullopt;
-
-        std::optional<bool> isDefault;
-        decoder >> isDefault;
-        if (!isDefault)
-            return std::nullopt;
-
-        std::optional<CaptureDevice::DeviceType> type;
-        decoder >> type;
-        if (!type)
-            return std::nullopt;
-
-        std::optional<bool> isMockDevice;
-        decoder >> isMockDevice;
-        if (!isMockDevice)
-            return std::nullopt;
-
-        std::optional<bool> isEphemeral;
-        decoder >> isEphemeral;
-        if (!isEphemeral)
-            return std::nullopt;
-
-        std::optional<CaptureDevice> device = {{ WTFMove(*persistentId), WTFMove(*type), WTFMove(*label), WTFMove(*groupId) }};
-        device->setEnabled(*enabled);
-        device->setIsDefault(*isDefault);
-        device->setIsMockDevice(*isMockDevice);
-        device->setIsEphemeral(*isEphemeral);
-        return device;
-    }
-#endif
 
 protected:
     String m_persistentId;

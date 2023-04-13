@@ -40,10 +40,6 @@ var expected = [
 
 var then = Promise.prototype.then;
 Promise.prototype.then = function(resolve, reject) {
-  assert.sameValue(isConstructor(reject), false, 'isConstructor(reject) must return false');
-  assert.throws(TypeError, () => {
-    new reject();
-  }, '`new reject()` throws TypeError');
 
   assert.sameValue(
     resolve.length,
@@ -57,6 +53,13 @@ Promise.prototype.then = function(resolve, reject) {
   );
   if (calls === 0) {
     assert.throws(MyError, resolve, '`resolve()` throws `MyError`');
+    assert.sameValue(arguments.length, 1, '`then` invoked with one argument');
+  } else {
+    assert.sameValue(isConstructor(reject), false, 'isConstructor(reject) must return false');
+    assert.throws(TypeError, () => {
+      new reject();
+    }, '`new reject()` throws TypeError');
+    assert.sameValue(arguments.length, 2, '`then` invoked with two arguments');
   }
 
   calls += 1;

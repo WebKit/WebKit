@@ -108,10 +108,10 @@ void WebBroadcastChannelRegistry::postMessageLocally(const WebCore::PartitionedS
         return;
 
     auto channelIdentifiersForName = channelsForOriginIterator->value;
-    for (auto& channelIdentier : channelIdentifiersForName) {
-        if (channelIdentier == sourceInProcess)
+    for (auto& channelIdentifier : channelIdentifiersForName) {
+        if (channelIdentifier == sourceInProcess)
             continue;
-        WebCore::BroadcastChannel::dispatchMessageTo(channelIdentier, message.copyRef(), [callbackAggregator] { });
+        WebCore::BroadcastChannel::dispatchMessageTo(channelIdentifier, message.copyRef(), [callbackAggregator] { });
     }
 }
 

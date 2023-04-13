@@ -85,16 +85,6 @@ static String processAppIdExtension(const SecurityOrigin& facetId, const String&
     return appId;
 }
 
-// The default behaviour for google.com is to always turn on the legacy AppID support.
-static bool processGoogleLegacyAppIdSupportExtension(const std::optional<AuthenticationExtensionsClientInputs>& extensions, const String& rpId)
-{
-    if (rpId != "google.com"_s)
-        return false;
-    if (!extensions)
-        return true;
-    return extensions->googleLegacyAppidSupport;
-}
-
 } // namespace AuthenticatorCoordinatorInternal
 
 AuthenticatorCoordinator::AuthenticatorCoordinator(std::unique_ptr<AuthenticatorCoordinatorClient>&& client)
@@ -160,9 +150,20 @@ void AuthenticatorCoordinator::create(const Document& document, const PublicKeyC
     }
 
     // Step 12-13.
-    // Only Google Legacy AppID Support Extension is supported.
     ASSERT(options.rp.id);
-    options.extensions = AuthenticationExtensionsClientInputs { String(), processGoogleLegacyAppIdSupportExtension(options.extensions, *options.rp.id), options.extensions && options.extensions->credProps };
+
+    AuthenticationExtensionsClientInputs extensionInputs = {
+        String(),
+        false,
+        std::nullopt
+    };
+
+    if (auto extensions = options.extensions) {
+        extensionInputs.credProps = extensions->credProps;
+        extensionInputs.largeBlob = extensions->largeBlob;
+    }
+
+    options.extensions = extensionInputs;
 
     // Step 14-16.
     auto clientDataJson = buildClientDataJson(ClientDataType::Create, options.challenge, callerOrigin, scope);
@@ -247,6 +248,14 @@ void AuthenticatorCoordinator::discoverFromExternalSource(const Document& docume
     if (!m_client) {
         promise.reject(Exception { UnknownError, "Unknown internal error."_s });
         return;
+    }
+
+    if (requestOptions.signal) {
+        requestOptions.signal->addAlgorithm([weakThis = WeakPtr { *this }](JSC::JSValue) {
+            if (!weakThis)
+                return;
+            weakThis->m_client->cancel();
+        });
     }
 
     auto callback = [weakThis = WeakPtr { *this }, clientDataJson = WTFMove(clientDataJson), promise = WTFMove(promise), abortSignal = WTFMove(requestOptions.signal)] (AuthenticatorResponseData&& data, AuthenticatorAttachment attachment, ExceptionData&& exception) mutable {

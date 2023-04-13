@@ -28,11 +28,11 @@
 
 #include "ApplicationCacheHost.h"
 #include "DocumentLoader.h"
-#include "Frame.h"
 #include "FrameLoader.h"
 #include "InspectorPageAgent.h"
 #include "InstrumentingAgents.h"
 #include "LoaderStrategy.h"
+#include "LocalFrame.h"
 #include "Page.h"
 #include "PlatformStrategies.h"
 
@@ -82,7 +82,7 @@ Protocol::ErrorStringOr<void> InspectorApplicationCacheAgent::disable()
     return { };
 }
 
-void InspectorApplicationCacheAgent::updateApplicationCacheStatus(Frame* frame)
+void InspectorApplicationCacheAgent::updateApplicationCacheStatus(LocalFrame* frame)
 {
     auto* pageAgent = m_instrumentingAgents.enabledPageAgent();
     if (!pageAgent)
@@ -114,7 +114,7 @@ Expected<Ref<JSON::ArrayOf<Protocol::ApplicationCache::FrameWithManifest>>, Prot
         return makeUnexpected("Page domain must be enabled"_s);
 
     auto result = JSON::ArrayOf<Protocol::ApplicationCache::FrameWithManifest>::create();
-    m_inspectedPage.forEachFrame([&](Frame& frame) {
+    m_inspectedPage.forEachFrame([&](LocalFrame& frame) {
         auto* documentLoader = frame.loader().documentLoader();
         if (!documentLoader)
             return;

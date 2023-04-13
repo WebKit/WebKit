@@ -42,7 +42,7 @@ class Event;
 class EventLoopTaskGroup;
 class EventTarget;
 
-enum class ReasonForSuspension {
+enum class ReasonForSuspension : uint8_t {
     JavaScriptDebuggerPaused,
     WillDeferLoading,
     BackForwardCache,

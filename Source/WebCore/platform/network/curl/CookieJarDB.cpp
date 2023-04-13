@@ -235,7 +235,7 @@ void CookieJarDB::flagDatabaseCorruption()
     if (isOnMemory())
         return;
 
-    auto handle = FileSystem::openFile(getCorruptionMarkerPath(), FileSystem::FileOpenMode::Write);
+    auto handle = FileSystem::openFile(getCorruptionMarkerPath(), FileSystem::FileOpenMode::Truncate);
     if (FileSystem::isHandleValid(handle))
         FileSystem::closeFile(handle);
 }

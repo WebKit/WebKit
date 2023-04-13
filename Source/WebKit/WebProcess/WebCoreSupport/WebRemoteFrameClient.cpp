@@ -25,6 +25,11 @@
 
 #include "config.h"
 #include "WebRemoteFrameClient.h"
+#include "WebProcess.h"
+#include "WebProcessProxyMessages.h"
+
+#include <WebCore/FrameTree.h>
+#include <WebCore/RemoteFrame.h>
 
 namespace WebKit {
 
@@ -35,5 +40,30 @@ WebRemoteFrameClient::WebRemoteFrameClient(Ref<WebFrame>&& frame, ScopeExit<Func
 }
 
 WebRemoteFrameClient::~WebRemoteFrameClient() = default;
+
+void WebRemoteFrameClient::frameDetached()
+{
+    RefPtr coreFrame = m_frame->coreRemoteFrame();
+    if (!coreFrame) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    if (RefPtr parent = coreFrame->tree().parent()) {
+        coreFrame->tree().detachFromParent();
+        parent->tree().removeChild(*coreFrame);
+    }
+    m_frame->invalidate();
+}
+
+void WebRemoteFrameClient::sizeDidChange(WebCore::IntSize size)
+{
+    m_frame->updateRemoteFrameSize(size);
+}
+
+void WebRemoteFrameClient::postMessageToRemote(WebCore::ProcessIdentifier processIdentifier, WebCore::FrameIdentifier identifier, std::optional<WebCore::SecurityOriginData> target, const WebCore::MessageWithMessagePorts& message)
+{
+    WebProcess::singleton().send(Messages::WebProcessProxy::PostMessageToRemote(processIdentifier, identifier, target, message), 0);
+}
 
 }

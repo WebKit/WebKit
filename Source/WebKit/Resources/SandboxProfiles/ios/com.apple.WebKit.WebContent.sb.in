@@ -23,11 +23,18 @@
 
 #include "Shared/Sandbox/iOS/common.sb"
 
+(define (lockdown-mode)
+    (require-not (require-entitlement "com.apple.private.verified-jit")))
+
 #if USE(SANDBOX_VERSION_3)
 (allow dynamic-code-generation)
+(with-filter (lockdown-mode)
+    (deny dynamic-code-generation))
 
 (with-filter (mac-policy-name "Sandbox")
-    (allow system-mac-syscall (mac-syscall-number 65 67)))
+    (allow system-mac-syscall (mac-syscall-number 5 65)))
+
+(allow process-info-codesignature)
 #endif
 
 ;;;
@@ -167,6 +174,11 @@
             (extension "com.apple.webkit.extension.iokit")
             (iokit-user-client-class "AGXDeviceUserClient"))) ;; Used by WebGL
 
+    (allow iokit-open-user-client
+        (require-all
+            (extension "com.apple.webkit.extension.iokit")
+            (iokit-user-client-class "AppleParavirtDeviceUserClient")))
+
     ;; <rdar://problem/47268166>
     (allow mach-lookup
         (require-all
@@ -294,8 +306,10 @@
         (global-name "com.apple.frontboard.systemappservices")                 ; -[UIViewServiceInterface _createProcessAssertion] -> SBSProcessIDForDisplayIdentifier()
     )
 
-    (allow mach-lookup
-        (global-name "com.apple.CARenderServer"))
+#if !ENABLE(CARENDERSERVER_BLOCKING_IN_WEBCONTENT)
+    (with-filter (require-not (state-flag "EnableExperimentalSandbox"))
+        (allow mach-lookup (with report) (with telemetry-backtrace) (global-name "com.apple.CARenderServer")))
+#endif
 
     ; UIKit-required IOKit nodes.
     (deny iokit-open-user-client (with telemetry)
@@ -452,10 +466,10 @@
         (extension-class "com.apple.app-sandbox.read-write" "com.apple.app-sandbox.read")
         (extension "com.apple.fileprovider.read-write")))
 
-(allow mach-lookup
-    (global-name "com.apple.logd")
-    (global-name "com.apple.logd.events")
-)
+(with-filter (require-not (state-flag "DisableLogging"))
+    (allow mach-lookup (global-name
+        "com.apple.logd"
+        "com.apple.logd.events")))
 
 (deny mach-lookup (with no-report)
     (global-name "com.apple.distributed_notifications@1v3"))
@@ -864,12 +878,12 @@
     (require-all
         (require-not (extension "com.apple.webkit.extension.iokit"))
         (iokit-connection "IOGPU")))
-#endif
 
 (deny iokit-open-user-client
     (require-all
         (require-not (extension "com.apple.webkit.extension.iokit"))
         (iokit-user-client-class "IOSurfaceAcceleratorClient")))
+#endif
 
 (deny iokit-open-user-client (with no-report)
     (iokit-user-client-class "AppleJPEGDriverUserClient"))
@@ -1002,6 +1016,7 @@
         SYS_dup
         SYS_exit
         SYS_fcntl
+        SYS_fcntl_nocancel
         SYS_fstat64
         SYS_fstatat64
         SYS_fstatfs64
@@ -1018,6 +1033,8 @@
         SYS_getuid
         SYS_ioctl ;; needed by tcgetattr (TIOCGETA - debugging
         SYS_issetugid
+        SYS_kdebug_trace64
+        SYS_kdebug_typefilter
         SYS_kevent_id
         SYS_kevent_qos
         SYS_lseek
@@ -1056,7 +1073,6 @@
     SYS_abort_with_payload ;; <rdar://problem/50967271>
     SYS_change_fdguard_np
     SYS_faccessat ;; <rdar://problem/56998930>
-    SYS_fcntl_nocancel
     SYS_fgetattrlist ;; <rdar://problem/50266257>
     SYS_fileport_makefd
     SYS_flock
@@ -1068,8 +1084,6 @@
     SYS_guarded_open_dprotected_np ; <rdar://problem/48166729>
     SYS_guarded_open_np
     SYS_guarded_pwrite_np
-    SYS_kdebug_trace64
-    SYS_kdebug_typefilter
     SYS_kqueue ;; <rdar://problem/49609201>
     SYS_kqueue_workloop_ctl ;; <rdar://problem/50999499>
     SYS_listxattr
@@ -1087,32 +1101,35 @@
 
 (define (syscall-unix-rarely-in-use)
     (syscall-number
+        SYS_getxattr
+        SYS_openat_nocancel
+        SYS_sigprocmask
+        SYS_unlink
+        SYS_writev))
+
+(define (syscall-unix-rarely-in-use-blocked-in-lockdown-mode)
+    (syscall-number
         SYS___pthread_sigmask
         SYS___semwait_signal
         SYS_fgetxattr
         SYS_fsync
         SYS_getattrlistbulk ;; xpc_realpath and directory enumeration
         SYS_getgid
-        SYS_getxattr
         SYS_iopolicysys
         SYS_mkdirat
         SYS_open_dprotected_np
-        SYS_openat_nocancel
         SYS_pread_nocancel
         SYS_psynch_rw_wrlock
         SYS_rmdir
         SYS_sendto
         SYS_setrlimit
         SYS_sigaltstack
-        SYS_sigprocmask
 #if PLATFORM(WATCHOS)
         SYS_sigreturn
 #endif
         SYS_thread_selfusage
         SYS_umask
-        SYS_unlink
-        SYS_write
-        SYS_writev))
+        SYS_write))
 
 (define (syscall-unix-rarely-in-use-need-backtrace)
     (syscall-number
@@ -1136,7 +1153,8 @@
 #endif
 
 (allow syscall-unix
-    (syscall-unix-rarely-in-use))
+    (syscall-unix-rarely-in-use)
+    (syscall-unix-rarely-in-use-blocked-in-lockdown-mode))
 
 (allow syscall-unix (with report)
     (syscall-unix-rarely-in-use-need-backtrace))
@@ -1153,16 +1171,13 @@
 
 (with-filter (system-attribute apple-internal)
     (allow syscall-unix (syscall-number SYS_kdebug_trace_string))) ;; Needed for performance sampling, see <rdar://problem/48829655>.
-
-(define (lockdown-mode)
-    (require-not (require-entitlement "com.apple.private.verified-jit")))
     
 (with-filter (lockdown-mode)
-    (allow syscall-unix (with report) (with telemetry) (with message "Lockdown mode")
+    (deny syscall-unix (with telemetry) (with message "Lockdown mode")
         (syscall-unix-in-use-after-launch-blocked-in-lockdown-mode))
-    (allow syscall-unix (with report) (with telemetry) (with message "Lockdown mode")
-        (syscall-unix-rarely-in-use))
-    (allow syscall-unix (with report) (with telemetry) (with message "Lockdown mode")
+    (deny syscall-unix (with telemetry) (with message "Lockdown mode")
+        (syscall-unix-rarely-in-use-blocked-in-lockdown-mode))
+    (deny syscall-unix (with telemetry) (with message "Lockdown mode")
         (syscall-unix-rarely-in-use-need-backtrace)))
 
 (deny file-ioctl (with telemetry))
@@ -1308,6 +1323,7 @@
         MSC_mk_timer_arm
         MSC_mk_timer_cancel
         MSC_mk_timer_create
+        MSC_mk_timer_destroy
         MSC_semaphore_signal_trap
         MSC_semaphore_timedwait_trap
         MSC_swtch_pri
@@ -1320,7 +1336,6 @@
         MSC__kernelrpc_mach_port_get_attributes_trap
         MSC_mach_msg_trap
         MSC_mach_voucher_extract_attr_recipe_trap
-        MSC_mk_timer_destroy
         MSC_pid_for_task
         MSC_semaphore_wait_trap
         MSC_thread_self_trap))
@@ -1349,7 +1364,7 @@
 #endif
 
 (with-filter (lockdown-mode)
-    (allow syscall-mach (with report) (with telemetry) (with message "Lockdown mode")
+    (deny syscall-mach (with telemetry) (with message "Lockdown mode")
         (syscall-mach-blocked-in-lockdown-mode)))
 
 (define (kernel-mig-routine-in-use-watchos)
@@ -1384,6 +1399,7 @@
         mach_port_set_attributes
         mach_vm_copy
         mach_vm_map_external
+        mach_vm_remap_external
         semaphore_create
         semaphore_destroy
         task_create_identity_token
@@ -1392,7 +1408,6 @@
         task_restartable_ranges_synchronize
         thread_get_state_to_user
         thread_resume
-        thread_set_exception_ports
         thread_suspend))
 
 (define (kernel-mig-routine-blocked-in-lockdown-mode)
@@ -1400,10 +1415,13 @@
         io_iterator_next
         io_registry_entry_get_property_bytes
         io_registry_entry_get_registry_entry_id
-        io_service_get_matching_services_bin
-        mach_vm_remap_external))
+        io_service_get_matching_services_bin))
 
 (define (kernel-mig-routine-rarely-used-need-backtrace)
+    (kernel-mig-routine
+        io_service_open_extended))
+
+(define (kernel-mig-routine-rarely-used-need-backtrace-blocked-in-lockdown-mode)
     (kernel-mig-routine
         clock_get_time
         io_connect_add_client
@@ -1412,7 +1430,6 @@
         io_connect_method
         io_connect_set_notification_port_64
         io_service_close
-        io_service_open_extended
         mach_exception_raise
         mach_vm_region
         mach_vm_region_recurse
@@ -1429,7 +1446,8 @@
     (apply-message-filter
         (deny mach-message-send (with telemetry))
         (allow mach-message-send (with telemetry-backtrace)
-            (kernel-mig-routine-rarely-used-need-backtrace))
+            (kernel-mig-routine-rarely-used-need-backtrace)
+            (kernel-mig-routine-rarely-used-need-backtrace-blocked-in-lockdown-mode))
 
         (allow mach-message-send (with telemetry)
             (kernel-mig-routine-rarely-used))
@@ -1455,12 +1473,15 @@
                 (kernel-mig-routine-only-in-use-during-launch)))
 #endif
 
+        (with-filter (require-not (lockdown-mode))
+            (allow mach-message-send (kernel-mig-routine thread_set_exception_ports)))
+
         (with-filter (lockdown-mode)
-            (allow mach-message-send (with report) (with telemetry) (with message "Lockdown mode")
+            (deny mach-message-send (with telemetry) (with message "Lockdown mode")
                 (kernel-mig-routine-blocked-in-lockdown-mode))
-            (allow mach-message-send (with report) (with telemetry) (with message "Lockdown mode")
-                (kernel-mig-routine-rarely-used-need-backtrace))
-            (allow mach-message-send (with report) (with telemetry) (with message "Lockdown mode")
+            (deny mach-message-send (with telemetry) (with message "Lockdown mode")
+                (kernel-mig-routine-rarely-used-need-backtrace-blocked-in-lockdown-mode))
+            (deny mach-message-send (with telemetry) (with message "Lockdown mode")
                 (kernel-mig-routine-rarely-used)))
 
         (when (defined? 'mach_port_is_connection_for_service)
@@ -1485,6 +1506,10 @@
         "com.apple.accessibility.wob.status"
         "com.apple.automation.stringlookupinfoenabled"
         "com.apple.webinspectord.availability_check"))
+
+(with-filter (state-flag "WebContentProcessLaunched")
+    (deny mach-task-special-port-get (with telemetry))
+    (deny mach-task-special-port-set (with telemetry)))
 
 #if ENABLE(SYSTEM_CONTENT_PATH_SANDBOX_RULES)
 #include <WebKitAdditions/SystemContentSandbox-ios.defs>

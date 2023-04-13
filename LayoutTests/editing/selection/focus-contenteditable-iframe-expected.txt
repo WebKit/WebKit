@@ -3,4 +3,6 @@ This tests focusing the body element in a contentEditable iframe. The whole body
 |   <head>
 |   <body>
 |     contenteditable="true"
-|     "<#selection-anchor>asdf<#selection-focus>"
+|     <#selection-anchor>
+|     "asdf"
+|     <#selection-focus>

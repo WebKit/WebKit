@@ -32,6 +32,7 @@
 #include "LayoutBoxGeometry.h"
 #include "LayoutContainingBlockChainIterator.h"
 #include "LayoutElementBox.h"
+#include "Shape.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -215,7 +216,7 @@ LayoutPoint FloatingContext::positionForFloat(const Box& layoutBox, const Horizo
         auto& boxGeometry = formattingContext().geometryForBox(layoutBox);
         auto alignWithContainingBlock = [&]() -> Position {
             // If there is no floating to align with, push the box to the left/right edge of its containing block's content box.
-            if (isFloaingCandidateLogicallyLeftPositioned(layoutBox))
+            if (isFloatingCandidateLeftPositionedInFloatingState(layoutBox))
                 return { horizontalConstraints.logicalLeft + boxGeometry.marginStart() };
             return { horizontalConstraints.logicalRight() - boxGeometry.marginEnd() - boxGeometry.borderBoxWidth() };
         };
@@ -233,7 +234,7 @@ LayoutPoint FloatingContext::positionForFloat(const Box& layoutBox, const Horizo
     if (layoutBox.hasFloatClear()) {
         // The vertical position candidate needs to clear the existing floats in this context.
         auto floatBottom = [&]() -> std::optional<LayoutUnit> {
-            switch (logicalClear(layoutBox)) {
+            switch (clearInFloatingState(layoutBox)) {
             case Clear::Left:
                 return leftBottom();
             case Clear::Right:
@@ -256,7 +257,7 @@ LayoutPoint FloatingContext::positionForFloat(const Box& layoutBox, const Horizo
     }
     absoluteTopLeft.setY(verticalPositionCandidate);
     auto margins = Edges { { boxGeometry.marginStart(), boxGeometry.marginEnd() }, { boxGeometry.marginBefore(), boxGeometry.marginAfter() } };
-    auto isLeftAligned = layoutBox.isFloatingPositioned() ? isFloaingCandidateLogicallyLeftPositioned(layoutBox) : layoutBox.style().isLeftToRightDirection();
+    auto isLeftAligned = layoutBox.isFloatingPositioned() ? isFloatingCandidateLeftPositionedInFloatingState(layoutBox) : layoutBox.style().isLeftToRightDirection();
     auto floatBox = FloatAvoider { absoluteTopLeft, boxGeometry.borderBoxWidth(), margins, absoluteCoordinates.containingBlockContentBox, layoutBox.isFloatingPositioned(), isLeftAligned };
     findAvailablePosition(floatBox, m_floatingState.floats());
     // Convert box coordinates from formatting root back to containing block.
@@ -277,7 +278,7 @@ LayoutPoint FloatingContext::positionForNonFloatingFloatAvoider(const Box& layou
     auto absoluteCoordinates = this->absoluteCoordinates(layoutBox);
     auto& boxGeometry = formattingContext().geometryForBox(layoutBox);
     auto margins = Edges { { boxGeometry.marginStart(), boxGeometry.marginEnd() }, { boxGeometry.marginBefore(), boxGeometry.marginAfter() } };
-    auto isLeftAligned = layoutBox.isFloatingPositioned() ? isFloaingCandidateLogicallyLeftPositioned(layoutBox) : layoutBox.style().isLeftToRightDirection();
+    auto isLeftAligned = layoutBox.isFloatingPositioned() ? isFloatingCandidateLeftPositionedInFloatingState(layoutBox) : layoutBox.style().isLeftToRightDirection();
     auto floatAvoider = FloatAvoider { absoluteCoordinates.topLeft, boxGeometry.borderBoxWidth(), margins, absoluteCoordinates.containingBlockContentBox, layoutBox.isFloatingPositioned(), isLeftAligned };
     findPositionForFormattingContextRoot(floatAvoider);
     auto containingBlockTopLeft = absoluteCoordinates.containingBlockTopLeft;
@@ -335,7 +336,7 @@ std::optional<FloatingContext::PositionWithClearance> FloatingContext::verticalP
         return PositionWithClearance { logicalTopRelativeToFloatingStateRoot - containingBlockRootRelativeTop, clearance };
     };
 
-    auto clear = logicalClear(layoutBox);
+    auto clear = clearInFloatingState(layoutBox);
     if (clear == Clear::Left)
         return bottom(leftBottom());
 
@@ -388,13 +389,48 @@ FloatingContext::Constraints FloatingContext::constraints(LayoutUnit candidateTo
         adjustingDelta = { adjustedCandidatePosition.x, adjustedCandidateTop - candidateTop };
     }
     auto adjustedCandidateBottom = adjustedCandidateTop + (candidateBottom - candidateTop);
-    auto isCandidateEmpty = adjustedCandidateTop == adjustedCandidateBottom;
+    auto candidateHeight = adjustedCandidateBottom - adjustedCandidateTop;
+
     auto contains = [&] (auto& floatBoxRect) {
         if (floatBoxRect.isEmpty())
             return false;
-        if (isCandidateEmpty)
+        if (!candidateHeight)
             return floatBoxRect.top() <= adjustedCandidateTop && floatBoxRect.bottom() > adjustedCandidateTop;
         return floatBoxRect.top() < adjustedCandidateBottom && floatBoxRect.bottom() > adjustedCandidateTop;
+    };
+
+    auto computeFloatEdgeAndBottom = [&](auto& floatItem) -> std::optional<std::pair<LayoutUnit, LayoutUnit>> {
+        auto marginRect = floatItem.rectWithMargin();
+        if (!contains(marginRect))
+            return { };
+
+        if (auto* shape = floatItem.shape()) {
+            // Shapes are relative to the border box.
+            auto borderRect = floatItem.borderBoxRect();
+            auto positionInShape = adjustedCandidateTop - borderRect.top();
+
+            if (!shape->lineOverlapsShapeMarginBounds(positionInShape, candidateHeight))
+                return { };
+
+            auto segment = shape->getExcludedInterval(positionInShape, candidateHeight);
+            if (!segment.isValid)
+                return { };
+
+            // Bottom is used to decide the next line top if nothing fits. With shape we'll just sample one pixel down.
+            // FIXME: This is potentially slow.
+            auto bottom = adjustedCandidateTop + 1_lu;
+
+            if (floatItem.isLeftPositioned()) {
+                auto shapeRight = borderRect.left() + LayoutUnit { segment.logicalRight };
+                // Shape can't extend beyond the margin box.
+                return std::pair { std::min(shapeRight, marginRect.right()), bottom };
+            }
+            auto shapeLeft = borderRect.left() + LayoutUnit { segment.logicalLeft };
+            return std::pair { std::max(shapeLeft, marginRect.left()), bottom };
+        }
+
+        auto edge = floatItem.isLeftPositioned() ? marginRect.right() : marginRect.left();
+        return std::pair { edge, marginRect.bottom() };
     };
 
     auto constraints = Constraints { };
@@ -402,13 +438,17 @@ FloatingContext::Constraints FloatingContext::constraints(LayoutUnit candidateTo
         for (auto& floatItem : makeReversedRange(floatingState.floats())) {
             if ((constraints.left && floatItem.isLeftPositioned()) || (constraints.right && !floatItem.isLeftPositioned()))
                 continue;
-            auto floatBoxRect = floatItem.rectWithMargin();
-            if (!contains(floatBoxRect))
+
+            auto edgeAndBottom = computeFloatEdgeAndBottom(floatItem);
+            if (!edgeAndBottom)
                 continue;
+
+            auto [edge, bottom] = *edgeAndBottom;
+
             if (floatItem.isLeftPositioned())
-                constraints.left = PointInContextRoot { floatBoxRect.right(), floatBoxRect.bottom() };
+                constraints.left = PointInContextRoot { edge, bottom };
             else
-                constraints.right = PointInContextRoot { floatBoxRect.left(), floatBoxRect.bottom() };
+                constraints.right = PointInContextRoot { edge, bottom };
 
             if ((constraints.left && constraints.right)
                 || (constraints.left && !floatingState.hasRightPositioned())
@@ -417,13 +457,19 @@ FloatingContext::Constraints FloatingContext::constraints(LayoutUnit candidateTo
         }
     } else {
         for (auto& floatItem : makeReversedRange(floatingState.floats())) {
-            auto floatBoxRect = floatItem.rectWithMargin();
-            if (!contains(floatBoxRect))
+            auto edgeAndBottom = computeFloatEdgeAndBottom(floatItem);
+            if (!edgeAndBottom)
                 continue;
-            if (floatItem.isLeftPositioned() && (!constraints.left || constraints.left->x < floatBoxRect.right()))
-                constraints.left = PointInContextRoot { floatBoxRect.right(), floatBoxRect.bottom() };
-            else if (floatItem.isRightPositioned() && (!constraints.right || constraints.right->x > floatBoxRect.left()))
-                constraints.right = PointInContextRoot { floatBoxRect.left(), floatBoxRect.bottom() };
+
+            auto [edge, bottom] = *edgeAndBottom;
+
+            if (floatItem.isLeftPositioned()) {
+                if (!constraints.left || constraints.left->x < edge)
+                    constraints.left = PointInContextRoot { edge, bottom };
+            } else {
+                if (!constraints.right || constraints.right->x > edge)
+                    constraints.right = PointInContextRoot { edge, bottom };
+            }
             // FIXME: Bail out when floats are way above.
         }
     }
@@ -456,7 +502,7 @@ FloatingState::FloatItem FloatingContext::toFloatItem(const Box& floatBox) const
 {
     auto absoluteBoxGeometry = BoxGeometry(formattingContext().geometryForBox(floatBox));
     absoluteBoxGeometry.setLogicalTopLeft(mapTopLeftToFloatingStateRoot(floatBox));
-    return { floatBox, isFloaingCandidateLogicallyLeftPositioned(floatBox) ? FloatingState::FloatItem::Position::Left : FloatingState::FloatItem::Position::Right, absoluteBoxGeometry };
+    return { floatBox, isFloatingCandidateLeftPositionedInFloatingState(floatBox) ? FloatingState::FloatItem::Position::Left : FloatingState::FloatItem::Position::Right, absoluteBoxGeometry };
 }
 
 void FloatingContext::findPositionForFormattingContextRoot(FloatAvoider& floatAvoider) const
@@ -539,30 +585,44 @@ Point FloatingContext::mapPointFromFormattingContextRootToFloatingStateRoot(Poin
     return mappedPosition;
 }
 
-bool FloatingContext::isFloaingCandidateLogicallyLeftPositioned(const Box& floatBox) const
+bool FloatingContext::isLogicalLeftPositioned(const Box& floatBox) const
 {
+    ASSERT(floatBox.isFloatingPositioned());
+    // Note that this returns true relative to the root of this FloatingContext and not to the FloatingState
+    // FloatingState's root may be an ancestor block container with mismatching inline direction.
+    auto floatingBoxIsInLeftToRightDirection = root().style().isLeftToRightDirection();
+    auto floatingValue = floatBox.style().floating();
+    return floatingValue == Float::InlineStart
+        || (floatingBoxIsInLeftToRightDirection && floatingValue == Float::Left)
+        || (!floatingBoxIsInLeftToRightDirection && floatingValue == Float::Right);
+}
+
+bool FloatingContext::isFloatingCandidateLeftPositionedInFloatingState(const Box& floatBox) const
+{
+    ASSERT(floatBox.isFloatingPositioned());
     // A floating candidate is logically left positioned when:
     // - "float: left" in left-to-right floating state
     // - "float: inline-start" inline left-to-right floating state
     // If the floating state is right-to-left (meaning that the FloatingState is constructed by a BFC root with "direction: rtl")
     // visaully left positioned floats are logically right (Note that FloatingContext's direction may not be the same as the FloatingState's direction
     // when dealing with inherited FloatingStates across nested IFCs).
-    ASSERT(floatBox.isFloatingPositioned());
-    auto floatingBoxIsInLeftToRightDirection = root().style().isLeftToRightDirection();
+    auto floatingContextIsLeftToRight = root().style().isLeftToRightDirection();
+    auto floatingStateIsLeftToRight = m_floatingState.isLeftToRightDirection();
+    if (floatingContextIsLeftToRight == floatingStateIsLeftToRight)
+        return isLogicalLeftPositioned(floatBox);
+
     auto floatingValue = floatBox.style().floating();
     if (floatingValue == Float::InlineStart)
-        floatingValue = floatingBoxIsInLeftToRightDirection ? Float::Left : Float::Right;
+        floatingValue = floatingContextIsLeftToRight ? Float::Left : Float::Right;
     else if (floatingValue == Float::InlineEnd)
-        floatingValue = floatingBoxIsInLeftToRightDirection ? Float::Right : Float::Left;
-
-    auto floatsAreInLeftToRightDirection = m_floatingState.isLeftToRightDirection();
-    return (floatsAreInLeftToRightDirection && floatingValue == Float::Left)
-        || (!floatsAreInLeftToRightDirection && floatingValue == Float::Right);
+        floatingValue = floatingContextIsLeftToRight ? Float::Right : Float::Left;
+    return (floatingStateIsLeftToRight && floatingValue == Float::Left)
+        || (!floatingStateIsLeftToRight && floatingValue == Float::Right);
 }
 
-Clear FloatingContext::logicalClear(const Box& clearBox) const
+Clear FloatingContext::clearInFloatingState(const Box& clearBox) const
 {
-    // See isFloaingCandidateLogicallyLeftPositioned for details.
+    // See isFloatingCandidateLeftPositionedInFloatingState for details.
     ASSERT(clearBox.hasFloatClear());
     auto clearBoxIsInLeftToRightDirection = root().style().isLeftToRightDirection();
     auto clearValue = clearBox.style().clear();

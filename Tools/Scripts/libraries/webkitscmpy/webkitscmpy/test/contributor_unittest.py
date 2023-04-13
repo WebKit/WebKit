@@ -1,4 +1,4 @@
-# Copyright (C) 2020, 2021 Apple Inc. All rights reserved.
+# Copyright (C) 2020-2023 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -33,6 +33,18 @@ class TestContributor(unittest.TestCase):
 
         self.assertEqual(contributor.name, 'Jonathan Bedard')
         self.assertEqual(contributor.emails, ['jbedard@apple.com'])
+
+    def test_double_git_log(self):
+        contributor = Contributor.from_scm_log('Author: Jonathan Bedard <jbedard@apple.com, jbedard@webkit.org>')
+
+        self.assertEqual(contributor.name, 'Jonathan Bedard')
+        self.assertEqual(contributor.emails, ['jbedard@apple.com', 'jbedard@webkit.org'])
+
+    def test_triple_git_log(self):
+        contributor = Contributor.from_scm_log('Author: Jonathan Bedard <jbedard@apple.com, jbedard@webkit.org, admin@webkit.org>')
+
+        self.assertEqual(contributor.name, 'Jonathan Bedard')
+        self.assertEqual(contributor.emails, ['jbedard@apple.com', 'jbedard@webkit.org', 'admin@webkit.org'])
 
     def test_git_svn_log(self):
         contributor = Contributor.from_scm_log('Author: Jonathan Bedard <jbedard@apple.com@268f45cc-cd09-0410-ab3c-d52691b4dbfc>')

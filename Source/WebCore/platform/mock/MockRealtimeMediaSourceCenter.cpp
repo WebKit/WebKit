@@ -67,11 +67,11 @@ static inline Vector<MockMediaDevice> defaultDevices()
         MockMediaDevice { "239c24b2-2b15-11e3-8224-0800200c9a66"_s, "Mock video device 1"_s, false,
             MockCameraProperties {
                 30,
-                RealtimeMediaSourceSettings::VideoFacingMode::User, {
-                    { { 2560, 1440 }, { { 10, 10 }, { 7.5, 7.5 }, { 5, 5 } } },
-                    { { 1280, 720 }, { { 30, 30}, { 27.5, 27.5}, { 25, 25}, { 22.5, 22.5}, { 20, 20}, { 17.5, 17.5}, { 15, 15}, { 12.5, 12.5}, { 10, 10}, { 7.5, 7.5}, { 5, 5} } },
-                    { { 640, 480 },  { { 30, 30}, { 27.5, 27.5}, { 25, 25}, { 22.5, 22.5}, { 20, 20}, { 17.5, 17.5}, { 15, 15}, { 12.5, 12.5}, { 10, 10}, { 7.5, 7.5}, { 5, 5} } },
-                    { { 112, 112 },  { { 30, 30}, { 27.5, 27.5}, { 25, 25}, { 22.5, 22.5}, { 20, 20}, { 17.5, 17.5}, { 15, 15}, { 12.5, 12.5}, { 10, 10}, { 7.5, 7.5}, { 5, 5} } },
+                VideoFacingMode::User, {
+                    { { 2560, 1440 }, { { 10, 10 }, { 7.5, 7.5 }, { 5, 5 } }, 1, 1 },
+                    { { 1280, 720 }, { { 30, 30}, { 27.5, 27.5}, { 25, 25}, { 22.5, 22.5}, { 20, 20}, { 17.5, 17.5}, { 15, 15}, { 12.5, 12.5}, { 10, 10}, { 7.5, 7.5}, { 5, 5} }, 1, 1 },
+                    { { 640, 480 },  { { 30, 30}, { 27.5, 27.5}, { 25, 25}, { 22.5, 22.5}, { 20, 20}, { 17.5, 17.5}, { 15, 15}, { 12.5, 12.5}, { 10, 10}, { 7.5, 7.5}, { 5, 5} }, 1, 1 },
+                    { { 112, 112 },  { { 30, 30}, { 27.5, 27.5}, { 25, 25}, { 22.5, 22.5}, { 20, 20}, { 17.5, 17.5}, { 15, 15}, { 12.5, 12.5}, { 10, 10}, { 7.5, 7.5}, { 5, 5} }, 1, 1 },
                 },
                 Color::black,
             } },
@@ -79,15 +79,15 @@ static inline Vector<MockMediaDevice> defaultDevices()
         MockMediaDevice { "239c24b3-2b15-11e3-8224-0800200c9a66"_s, "Mock video device 2"_s, false,
             MockCameraProperties {
                 15,
-                RealtimeMediaSourceSettings::VideoFacingMode::Environment, {
-                    { { 3840, 2160 }, { { 2, 30 } } },
-                    { { 1920, 1080 }, { { 2, 30 } } },
-                    { { 1280, 720 },  { { 3, 120 } } },
-                    { { 960, 540 },   { { 3, 60 } } },
-                    { { 640, 480 },   { { 2, 30 } } },
-                    { { 352, 288 },   { { 2, 30 } } },
-                    { { 320, 240 },   { { 2, 30 } } },
-                    { { 160, 120 },   { { 2, 30 } } },
+                VideoFacingMode::Environment, {
+                    { { 3840, 2160 }, { { 2, 30 } }, 1, 4 },
+                    { { 1920, 1080 }, { { 2, 30 } }, 1, 4 },
+                    { { 1280, 720 },  { { 3, 120 } }, 1, 4 },
+                    { { 960, 540 },   { { 3, 60 } }, 1, 4 },
+                    { { 640, 480 },   { { 2, 30 } }, 1, 4 },
+                    { { 352, 288 },   { { 2, 30 } }, 1, 4 },
+                    { { 320, 240 },   { { 2, 30 } }, 1, 4 },
+                    { { 160, 120 },   { { 2, 30 } }, 1, 4 },
                 },
                 Color::darkGray,
             } },
@@ -124,7 +124,7 @@ private:
     bool start() final;
     void stop() final  { m_source->stop(); }
     DisplayCaptureSourceCocoa::DisplayFrameType generateFrame() final;
-    RealtimeMediaSourceSettings::DisplaySurfaceType surfaceType() const final { return RealtimeMediaSourceSettings::DisplaySurfaceType::Monitor; }
+    DisplaySurfaceType surfaceType() const final { return DisplaySurfaceType::Monitor; }
     void commitConfiguration(const RealtimeMediaSourceSettings&) final;
     CaptureDevice::DeviceType deviceType() const final { return CaptureDevice::DeviceType::Screen; }
     IntSize intrinsicSize() const final;
@@ -189,8 +189,7 @@ public:
 #if PLATFORM(MAC)
             return DisplayCaptureSourceCocoa::create(UniqueRef<DisplayCaptureSourceCocoa::Capturer>(makeUniqueRef<MockDisplayCapturer>(device, pageIdentifier)), device, WTFMove(hashSalts), constraints, pageIdentifier);
 #elif USE(GSTREAMER)
-            UNUSED_PARAM(pageIdentifier);
-            return MockDisplayCaptureSourceGStreamer::create(device, WTFMove(hashSalts), constraints);
+            return MockDisplayCaptureSourceGStreamer::create(device, WTFMove(hashSalts), constraints, pageIdentifier);
 #else
             return MockRealtimeVideoSource::create(String { device.persistentId() }, AtomString { device.label() }, WTFMove(hashSalts), constraints, pageIdentifier);
 #endif
@@ -487,17 +486,6 @@ DisplayCaptureFactory& MockRealtimeMediaSourceCenter::displayCaptureFactory()
 {
     static NeverDestroyed<MockRealtimeDisplaySourceFactory> factory;
     return factory.get();
-}
-
-void MockRealtimeMediaSourceCenter::MockDisplayCaptureDeviceManager::windowDevices(Vector<DisplayCaptureManager::WindowCaptureDevice>& windowDevices)
-{
-    auto devices = MockRealtimeMediaSourceCenter::displayDevices();
-    for (auto device : devices) {
-        if (!device.enabled() || device.type() != CaptureDevice::DeviceType::Window)
-            continue;
-
-        windowDevices.append({ WTFMove(device), "Mock Application"_s });
-    }
 }
 
 } // namespace WebCore

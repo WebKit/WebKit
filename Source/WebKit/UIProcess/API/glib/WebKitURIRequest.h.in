@@ -29,22 +29,12 @@
 G_BEGIN_DECLS
 
 #define WEBKIT_TYPE_URI_REQUEST            (webkit_uri_request_get_type())
+#if !ENABLE(2022_GLIB_API)
 #define WEBKIT_URI_REQUEST(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), WEBKIT_TYPE_URI_REQUEST, WebKitURIRequest))
 #define WEBKIT_IS_URI_REQUEST(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), WEBKIT_TYPE_URI_REQUEST))
 #define WEBKIT_URI_REQUEST_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass),  WEBKIT_TYPE_URI_REQUEST, WebKitURIRequestClass))
 #define WEBKIT_IS_URI_REQUEST_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass),  WEBKIT_TYPE_URI_REQUEST))
 #define WEBKIT_URI_REQUEST_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj),  WEBKIT_TYPE_URI_REQUEST, WebKitURIRequestClass))
-
-typedef struct _WebKitURIRequest WebKitURIRequest;
-typedef struct _WebKitURIRequestClass WebKitURIRequestClass;
-typedef struct _WebKitURIRequestPrivate WebKitURIRequestPrivate;
-
-struct _WebKitURIRequest {
-    GObject parent;
-
-    /*< private >*/
-    WebKitURIRequestPrivate *priv;
-};
 
 struct _WebKitURIRequestClass {
     GObjectClass parent_class;
@@ -55,9 +45,9 @@ struct _WebKitURIRequestClass {
     void (*_webkit_reserved2) (void);
     void (*_webkit_reserved3) (void);
 };
+#endif
 
-WEBKIT_API GType
-webkit_uri_request_get_type         (void);
+WEBKIT_DECLARE_FINAL_TYPE (WebKitURIRequest, webkit_uri_request, WEBKIT, URI_REQUEST, GObject)
 
 WEBKIT_API WebKitURIRequest *
 webkit_uri_request_new              (const gchar      *uri);

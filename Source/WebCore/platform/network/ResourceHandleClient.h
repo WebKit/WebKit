@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,11 +29,7 @@
 #include <wtf/Forward.h>
 #include <wtf/Ref.h>
 
-#if USE(CFURLCONNECTION)
-#include <pal/spi/win/CFNetworkSPIWin.h>
-#endif
-
-#if PLATFORM(IOS_FAMILY) || USE(CFURLCONNECTION)
+#if PLATFORM(IOS_FAMILY)
 #include <wtf/RetainPtr.h>
 #endif
 
@@ -84,9 +80,7 @@ public:
     WEBCORE_EXPORT virtual void canAuthenticateAgainstProtectionSpaceAsync(ResourceHandle*, const ProtectionSpace&, CompletionHandler<void(bool)>&&) = 0;
 #endif
 
-#if USE(CFURLCONNECTION)
-    virtual void willCacheResponseAsync(ResourceHandle*, CFCachedURLResponseRef response, CompletionHandler<void(CFCachedURLResponseRef)>&& completionHandler) { completionHandler(response); }
-#elif PLATFORM(COCOA)
+#if PLATFORM(COCOA)
     virtual void willCacheResponseAsync(ResourceHandle*, NSCachedURLResponse *response, CompletionHandler<void(NSCachedURLResponse *)>&& completionHandler) { completionHandler(response); }
 #endif
 
@@ -94,12 +88,8 @@ public:
     virtual void didReceiveAuthenticationChallenge(ResourceHandle*, const AuthenticationChallenge&) { }
     virtual void receivedCancellation(ResourceHandle*, const AuthenticationChallenge&) { }
 
-#if PLATFORM(IOS_FAMILY) || USE(CFURLCONNECTION)
+#if PLATFORM(IOS_FAMILY)
     virtual RetainPtr<CFDictionaryRef> connectionProperties(ResourceHandle*) { return nullptr; }
-#endif
-
-#if PLATFORM(WIN) && USE(CFURLCONNECTION)
-    virtual bool shouldCacheResponse(ResourceHandle*, CFCachedURLResponseRef) { return true; }
 #endif
 };
 

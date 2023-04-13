@@ -80,9 +80,10 @@ public:
 
     virtual FetchOptions::Destination destination() const = 0;
     ReferrerPolicy referrerPolicy() const final { return m_referrerPolicy; }
+    std::optional<uint64_t> noiseInjectionHashSalt() const final { return m_noiseInjectionHashSalt; }
 
 protected:
-    WorkerOrWorkletGlobalScope(WorkerThreadType, PAL::SessionID, Ref<JSC::VM>&&, ReferrerPolicy, WorkerOrWorkletThread*, ScriptExecutionContextIdentifier = { });
+    WorkerOrWorkletGlobalScope(WorkerThreadType, PAL::SessionID, Ref<JSC::VM>&&, ReferrerPolicy, WorkerOrWorkletThread*, std::optional<uint64_t>,  ScriptExecutionContextIdentifier = { });
 
     // ScriptExecutionContext.
     bool isJSExecutionForbidden() const final;
@@ -114,6 +115,7 @@ private:
     PAL::SessionID m_sessionID;
     ReferrerPolicy m_referrerPolicy;
     bool m_isClosing { false };
+    std::optional<uint64_t> m_noiseInjectionHashSalt;
 };
 
 } // namespace WebCore

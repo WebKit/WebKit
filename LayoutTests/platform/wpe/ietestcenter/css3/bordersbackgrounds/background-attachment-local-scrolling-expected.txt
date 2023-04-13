@@ -1,39 +1,14 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x368
-  RenderBlock {HTML} at (0,0) size 800x368
-    RenderBody {BODY} at (8,16) size 784x344
-      RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 755x35
-          text run at (0,0) width 755: "Test passes if the images of all the cats scroll when the box is scrolled. (Presence of cats behind the double border is UA"
-          text run at (0,18) width 74: "dependent)."
-      RenderBlock {DIV} at (0,344) size 784x0
-layer at (8,68) size 292x292 clip at (58,118) size 177x177 scrollY 111 scrollHeight 288
-  RenderBlock {DIV} at (0,52) size 292x292 [border: (50px double #000000)]
-    RenderText {#text} at (50,50) size 173x287
-      text run at (50,50) width 140: "Filler Text Filler Text "
-      text run at (190,50) width 33: "Filler"
-      text run at (50,68) width 169: "Text Filler Text Filler Text"
-      text run at (50,86) width 173: "Filler Text Filler Text Filler"
-      text run at (50,104) width 33: "Text "
-      text run at (83,104) width 136: "Filler Text Filler Text"
-      text run at (50,122) width 70: "Filler Text "
-      text run at (120,122) width 103: "Filler Text Filler"
-      text run at (50,140) width 103: "Text Filler Text "
-      text run at (153,140) width 66: "Filler Text"
-      text run at (50,158) width 140: "Filler Text Filler Text "
-      text run at (190,158) width 33: "Filler"
-      text run at (50,176) width 169: "Text Filler Text Filler Text"
-      text run at (50,194) width 173: "Filler Text Filler Text Filler"
-      text run at (50,212) width 33: "Text "
-      text run at (83,212) width 136: "Filler Text Filler Text"
-      text run at (50,230) width 70: "Filler Text "
-      text run at (120,230) width 103: "Filler Text Filler"
-      text run at (50,248) width 103: "Text Filler Text "
-      text run at (153,248) width 66: "Filler Text"
-      text run at (50,266) width 140: "Filler Text Filler Text "
-      text run at (190,266) width 33: "Filler"
-      text run at (50,284) width 169: "Text Filler Text Filler Text"
-      text run at (50,302) width 173: "Filler Text Filler Text Filler"
-      text run at (50,320) width 33: "Text "
-      text run at (83,320) width 136: "Filler Text Filler Text"
+layer at (0,0) size 800x169
+  RenderBlock {html} at (0,0) size 800x169
+    RenderBlock {parsererror} at (16,16) size 768x137 [bgcolor=#FFDDDD] [border: (2px solid #CC7777)]
+      RenderBlock {h3} at (18,20) size 732x23
+        RenderText {#text} at (0,0) size 324x21
+          text run at (0,0) width 324: "This page contains the following errors:"
+      RenderBlock {div} at (18,61) size 732x15
+        RenderText {#text} at (0,0) size 315x14
+          text run at (0,0) width 315: "error on line 31 at column 16: Encoding error"
+      RenderBlock {h3} at (18,94) size 732x23
+        RenderText {#text} at (0,0) size 427x21
+          text run at (0,0) width 427: "Below is a rendering of the page up to the first error."

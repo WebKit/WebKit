@@ -37,6 +37,7 @@
 #include "CSSPropertyParser.h"
 #include "Document.h"
 #include "HighlightRegister.h"
+#include "MutableStyleProperties.h"
 #include "StyleProperties.h"
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>

@@ -52,9 +52,6 @@ TEST(WebKit, EnumerateDevices)
     auto context = adoptWK(WKContextCreateWithConfiguration(nullptr));
 
     WKRetainPtr<WKPageGroupRef> pageGroup = adoptWK(WKPageGroupCreateWithIdentifier(Util::toWK("EnumerateDevices").get()));
-    WKPreferencesRef preferences = WKPageGroupGetPreferences(pageGroup.get());
-    WKPreferencesSetMediaDevicesEnabled(preferences, true);
-    WKPreferencesSetMediaCaptureRequiresSecureConnection(preferences, false);
 
     WKPageUIClientV6 uiClient;
     memset(&uiClient, 0, sizeof(uiClient));
@@ -63,6 +60,11 @@ TEST(WebKit, EnumerateDevices)
 
     PlatformWebView webView(context.get(), pageGroup.get());
     WKPageSetPageUIClient(webView.page(), &uiClient.base);
+
+    auto configuration = adoptWK(WKPageCopyPageConfiguration(webView.page()));
+    auto* preferences = WKPageConfigurationGetPreferences(configuration.get());
+    WKPreferencesSetMediaDevicesEnabled(preferences, true);
+    WKPreferencesSetMediaCaptureRequiresSecureConnection(preferences, false);
 
     auto url = adoptWK(Util::createURLForResource("enumerateMediaDevices", "html"));
 

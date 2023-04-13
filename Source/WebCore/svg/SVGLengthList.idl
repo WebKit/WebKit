@@ -33,7 +33,7 @@
 
     undefined clear();
     SVGLength initialize(SVGLength newItem);
-    getter SVGLength getItem(unsigned long index);
+    [RaisesException] getter SVGLength getItem(unsigned long index);
     SVGLength insertItemBefore(SVGLength newItem, unsigned long index);
     SVGLength replaceItem(SVGLength newItem, unsigned long index);
     SVGLength removeItem(unsigned long index);

@@ -34,19 +34,35 @@ layer at (0,0) size 800x600
 layer at (27,45) size 153x18 scrollX 20 scrollWidth 173
   RenderBlock {DIV} at (0,0) size 153x18
     RenderText {#text} at (-19,0) size 173x17
-      text run at (-19,0) width 27 RTL: " \x{5D5}\x{5D6}\x{5D4}\x{5D5}"
+      text run at (-19,0) width 23 RTL: "\x{5D5}\x{5D6}\x{5D4}\x{5D5}"
+      text run at (3,0) width 5 RTL: " "
       text run at (7,0) width 27: "she"
-      text run at (33,0) width 56 RTL: " \x{5D5}\x{5D4}\x{5D9}\x{5D0} \x{5D6}\x{5D4} "
+      text run at (33,0) width 5 RTL: " "
+      text run at (37,0) width 16 RTL: "\x{5D6}\x{5D4}"
+      text run at (52,0) width 5 RTL: " "
+      text run at (56,0) width 29 RTL: "\x{5D5}\x{5D4}\x{5D9}\x{5D0}"
+      text run at (84,0) width 5 RTL: " "
       text run at (88,0) width 19: "he"
-      text run at (106,0) width 47 RTL: "\x{5D4}\x{5D5}\x{5D0} \x{5D6}\x{5D4} "
+      text run at (106,0) width 5 RTL: " "
+      text run at (110,0) width 15 RTL: "\x{5D6}\x{5D4}"
+      text run at (125,0) width 4 RTL: " "
+      text run at (129,0) width 24 RTL: "\x{5D4}\x{5D5}\x{5D0}"
 layer at (27,69) size 275x18
   RenderBlock {DIV} at (0,0) size 275x18
     RenderText {#text} at (102,0) size 173x17
-      text run at (102,0) width 28 RTL: " \x{5D5}\x{5D6}\x{5D4}\x{5D5}"
+      text run at (102,0) width 24 RTL: "\x{5D5}\x{5D6}\x{5D4}\x{5D5}"
+      text run at (125,0) width 5 RTL: " "
       text run at (129,0) width 27: "she"
-      text run at (155,0) width 56 RTL: " \x{5D5}\x{5D4}\x{5D9}\x{5D0} \x{5D6}\x{5D4} "
+      text run at (155,0) width 5 RTL: " "
+      text run at (159,0) width 16 RTL: "\x{5D6}\x{5D4}"
+      text run at (174,0) width 5 RTL: " "
+      text run at (178,0) width 29 RTL: "\x{5D5}\x{5D4}\x{5D9}\x{5D0}"
+      text run at (206,0) width 5 RTL: " "
       text run at (210,0) width 19: "he"
-      text run at (228,0) width 47 RTL: "\x{5D4}\x{5D5}\x{5D0} \x{5D6}\x{5D4} "
+      text run at (228,0) width 5 RTL: " "
+      text run at (232,0) width 15 RTL: "\x{5D6}\x{5D4}"
+      text run at (247,0) width 4 RTL: " "
+      text run at (251,0) width 24 RTL: "\x{5D4}\x{5D5}\x{5D0}"
 layer at (27,93) size 153x18
   RenderBlock {DIV} at (0,0) size 153x18
 layer at (180,46) size 16x16

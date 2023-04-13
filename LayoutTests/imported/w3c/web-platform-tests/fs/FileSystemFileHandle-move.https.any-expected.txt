@@ -23,4 +23,5 @@ FAIL move(dir) while the destination file has an open writable fails promise_tes
 FAIL move(dir) can overwrite an existing file promise_test: Unhandled rejection with value: object "TypeError: handle.createWritable is not a function. (In 'handle.createWritable()', 'handle.createWritable' is undefined)"
 FAIL move(dir, name) while the destination file has an open writable fails promise_test: Unhandled rejection with value: object "TypeError: handle.createWritable is not a function. (In 'handle.createWritable()', 'handle.createWritable' is undefined)"
 FAIL move(dir, name) can overwrite an existing file promise_test: Unhandled rejection with value: object "TypeError: handle.createWritable is not a function. (In 'handle.createWritable()', 'handle.createWritable' is undefined)"
+FAIL FileSystemFileHandles are references, not paths promise_test: Unhandled rejection with value: object "TypeError: handle.createWritable is not a function. (In 'handle.createWritable()', 'handle.createWritable' is undefined)"
 

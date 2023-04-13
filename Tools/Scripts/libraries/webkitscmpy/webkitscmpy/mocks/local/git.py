@@ -1,4 +1,4 @@
-# Copyright (C) 2020-2022 Apple Inc. All rights reserved.
+# Copyright (C) 2020-2023 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@ import time
 
 from datetime import datetime
 from mock import patch
+from collections import OrderedDict
 
 from webkitcorepy import decorators, mocks, string_utils, OutputCapture, StringIO
 from webkitscmpy import local, Commit, Contributor
@@ -54,7 +55,7 @@ class Git(mocks.Subprocess):
     ):
         self.path = path
         self.default_branch = default_branch
-        self.remote = remote or 'git@example.org:/mock/{}'.format(os.path.basename(path))
+        self.remote = remote or 'git@example.org:mock/{}'.format(os.path.basename(path))
         self.detached = detached or False
 
         self.tags = tags or {}
@@ -253,12 +254,18 @@ nothing to commit, working tree clean
                     returncode=0,
                 ),
             ), mocks.Subprocess.Route(
+                self.executable, 'branch', '-a', '--merged', '--format=.+', '.+',
+                cwd=self.path,
+                generator=lambda *args, **kwargs: self.branch_merged_to(args[5]),
+            ), mocks.Subprocess.Route(
                 self.executable, 'branch', '-a',
                 cwd=self.path,
                 generator=lambda *args, **kwargs: mocks.ProcessCompletion(
                     returncode=0,
                     stdout='\n'.join(sorted(['* ' + self.branch] + list(({default_branch} | set(self.commits.keys())) - {self.branch}))) +
-                           '\nremotes/origin/HEAD -> origin/{}\n'.format(default_branch) + '\n'.join(['  remotes/{}'.format(name) for name in self.remotes.keys()]) + '\n',
+                           '\nremotes/origin/HEAD -> origin/{}\n'.format(default_branch) + \
+                           '\n'.join(['  remotes/{}'.format(name) for name in self.remotes.keys() if default_branch in name]) + '\n' + \
+                           '\n'.join(['  remotes/{}'.format(name) for name in self.remotes.keys() if default_branch not in name]) + '\n',
                 ),
             ), mocks.Subprocess.Route(
                 self.executable, 'tag',
@@ -471,6 +478,14 @@ nothing to commit, working tree clean
                     mocks.ProcessCompletion(
                         returncode=0,
                         stdout='\n'.join(['{}={}'.format(key, value) for key, value in self.config().items()])
+                    ),
+            ), mocks.Subprocess.Route(
+                self.executable, 'config', '--get-regexp', re.compile(r'.+'),
+                cwd=self.path,
+                generator=lambda *args, **kwargs:
+                    mocks.ProcessCompletion(
+                        returncode=0,
+                        stdout='\n'.join(['{} {}'.format(key, value) for key, value in self.config().items() if key.startswith(args[3])])
                     ),
             ), mocks.Subprocess.Route(
                 self.executable, 'config', '-l', '--file', re.compile(r'.+'),
@@ -733,6 +748,7 @@ nothing to commit, working tree clean
                     return all_commits[head_index - difference]
                 return None
 
+        something = str(something).replace('refs/remotes/', '')
         something = str(something).replace('remotes/', '')
         if '..' in something:
             a, b = something.split('..')
@@ -912,11 +928,11 @@ nothing to commit, working tree clean
     @decorators.hybridmethod
     def config(context, path=None):
         if isinstance(context, type):
-            return {
+            return OrderedDict({
                 'user.name': 'Tim Apple',
                 'user.email': 'tapple@webkit.org',
                 'sendemail.transferencoding': 'base64',
-            }
+            })
 
         top = None
         result = Git.config()
@@ -1321,4 +1337,22 @@ nothing to commit, working tree clean
         return mocks.ProcessCompletion(
             returncode=0,
             stdout='{}\n'.format(base.hash),
+        )
+
+    def branch_merged_to(self, ref):
+        obj = self.find(ref)
+        if not obj:
+            return mocks.ProcessCompletion(
+                returncode=128,
+                stderr='fatal: Not a valid object name {}\n'.format(ref),
+            )
+
+        out = ''
+        for branch, commits in self.commits.items():
+            if commits and commits[-1].hash == obj.hash:
+                out += ' refs/heads/{}\n'.format(branch)
+
+        return mocks.ProcessCompletion(
+            returncode=0,
+            stdout=out or '\n',
         )

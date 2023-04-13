@@ -55,9 +55,9 @@ ImageBufferBackend::ImageBufferBackend(const Parameters& parameters)
 
 ImageBufferBackend::~ImageBufferBackend() = default;
 
-RefPtr<NativeImage> ImageBufferBackend::copyNativeImageForDrawing(BackingStoreCopy copyBehavior) const
+RefPtr<NativeImage> ImageBufferBackend::copyNativeImageForDrawing(GraphicsContext&)
 {
-    return copyNativeImage(copyBehavior);
+    return copyNativeImage(DontCopyBackingStore);
 }
 
 RefPtr<NativeImage> ImageBufferBackend::sinkIntoNativeImage()
@@ -88,7 +88,7 @@ void ImageBufferBackend::convertToLuminanceMask()
     putPixelBuffer(*pixelBuffer, logicalRect(), IntPoint::zero(), AlphaPremultiplication::Premultiplied);
 }
 
-RefPtr<PixelBuffer> ImageBufferBackend::getPixelBuffer(const PixelBufferFormat& destinationFormat, const IntRect& sourceRect, void* data, const ImageBufferAllocator& allocator) const
+RefPtr<PixelBuffer> ImageBufferBackend::getPixelBuffer(const PixelBufferFormat& destinationFormat, const IntRect& sourceRect, void* data, const ImageBufferAllocator& allocator)
 {
     ASSERT(PixelBuffer::supportedPixelFormat(destinationFormat.pixelFormat));
 
@@ -172,13 +172,6 @@ AffineTransform ImageBufferBackend::calculateBaseTransform(const Parameters& par
     baseTransform.scale(parameters.resolutionScale);
 
     return baseTransform;
-}
-
-void ImageBufferBackend::applyBaseTransformToContext() const
-{
-    auto& context = this->context();
-    context.applyDeviceScaleFactor(m_parameters.resolutionScale);
-    context.setCTM(calculateBaseTransform(m_parameters, originAtBottomLeftCorner()));
 }
 
 } // namespace WebCore

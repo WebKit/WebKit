@@ -16,6 +16,7 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/FileAPI/support/Blob.js
 /LayoutTests/imported/w3c/web-platform-tests/FileAPI/support/document-domain-setter.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/FileAPI/support/empty-document.html
 /LayoutTests/imported/w3c/web-platform-tests/FileAPI/support/historical-serviceworker.js
 /LayoutTests/imported/w3c/web-platform-tests/FileAPI/support/incumbent.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/FileAPI/support/send-file-form-helper.js

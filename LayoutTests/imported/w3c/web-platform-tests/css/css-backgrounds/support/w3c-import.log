@@ -25,9 +25,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/1x1-red.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/1x1-white.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/40px-wide-20px-tall-green-rect.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/500x500-red-with-green-center.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/500x500-white-red-green-irreg-polygon.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/50x50-green.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/60x60-gg-rr.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/60x60-green.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/9-colored-areas.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/9grid40-30-20-10-green.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/9grid40-30-20-10-red-old.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/9grid40-30-20-10-red.png
@@ -45,10 +48,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/blue-diamond.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/blue96x96.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/blue_color.png
-/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/border-image-round-result.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/border-image.jpg
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/border.png
-/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/borderresult.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/c-red.css
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/cat.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/css3.png
@@ -67,9 +68,13 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/orange-intrinsic-none.svg
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/orange_color.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/outline-5px-10px-15px-20px-green.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/pattern-gr-rr-200x200.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/pattern-grg-rgr-grg.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/pattern-grg-rrg-rgg.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/pattern-rg-rr-200x200.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/pattern-rgr-grg-rgr.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/pattern-rr-gr-200x200.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/pattern-rr-rg-200x200.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/pattern-tr.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/red-diamond.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/red.png

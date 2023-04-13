@@ -22,6 +22,7 @@
 
 #include "APIString.h"
 #include "InjectedBundle.h"
+#include "MessageSenderInlines.h"
 #include "WebContextMenuItem.h"
 #include "WebKitContextMenuPrivate.h"
 #include "WebKitFramePrivate.h"
@@ -40,11 +41,11 @@
 #include <WebCore/ContextMenuContext.h>
 #include <WebCore/Document.h>
 #include <WebCore/DocumentLoader.h>
-#include <WebCore/Frame.h>
 #include <WebCore/FrameDestructionObserver.h>
 #include <WebCore/FrameLoader.h>
-#include <WebCore/FrameView.h>
 #include <WebCore/HTMLFormElement.h>
+#include <WebCore/LocalFrame.h>
+#include <WebCore/LocalFrameView.h>
 #include <glib/gi18n-lib.h>
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
@@ -52,7 +53,7 @@
 #include <wtf/text/CString.h>
 
 #if !ENABLE(2022_GLIB_API)
-#include "WebKitConsoleMessage.h"
+#include "WebKitConsoleMessagePrivate.h"
 #include "WebKitDOMDocumentPrivate.h"
 #include "WebKitDOMElementPrivate.h"
 #include "WebKitDOMNodePrivate.h"
@@ -101,7 +102,7 @@ struct _WebKitWebPagePrivate {
 
 static guint signals[LAST_SIGNAL] = { 0, };
 
-WEBKIT_DEFINE_TYPE(WebKitWebPage, webkit_web_page, G_TYPE_OBJECT)
+WEBKIT_DEFINE_FINAL_TYPE(WebKitWebPage, webkit_web_page, G_TYPE_OBJECT, GObject)
 
 static void webFrameDestroyed(WebFrame*);
 
@@ -134,15 +135,24 @@ static WebFrameMap& webFrameMap()
     return map;
 }
 
-static WebKitFrame* webkitFrameGetOrCreate(WebFrame* webFrame)
+static WebKitFrame* webkitFrameGet(WebFrame* webFrame)
 {
     auto wrapperPtr = webFrameMap().get(webFrame);
     if (wrapperPtr)
         return wrapperPtr->webkitFrame();
 
+    return nullptr;
+}
+
+static WebKitFrame* webkitFrameGetOrCreate(WebFrame* webFrame)
+{
+    if (auto* webKitFrame = webkitFrameGet(webFrame))
+        return webKitFrame;
+
     std::unique_ptr<WebKitFrameWrapper> wrapper = makeUnique<WebKitFrameWrapper>(*webFrame);
-    wrapperPtr = wrapper.get();
+    auto wrapperPtr = wrapper.get();
     webFrameMap().set(webFrame, WTFMove(wrapper));
+
     return wrapperPtr->webkitFrame();
 }
 
@@ -179,30 +189,62 @@ private:
 
     void didStartProvisionalLoadForFrame(WebPage&, WebFrame& frame, RefPtr<API::Object>&) override
     {
-        if (!frame.isMainFrame())
+        auto* webKitFrame = webkitFrameGet(&frame);
+        if (!webKitFrame && !frame.isMainFrame())
             return;
-        webkitWebPageSetURI(m_webPage, getDocumentLoaderURL(frame.coreFrame()->loader().provisionalDocumentLoader()));
+
+        const auto uri = getDocumentLoaderURL(frame.coreFrame()->loader().provisionalDocumentLoader());
+
+        if (webKitFrame)
+            webkitFrameSetURI(webKitFrame, uri);
+
+        if (frame.isMainFrame())
+            webkitWebPageSetURI(m_webPage, uri);
     }
 
     void didReceiveServerRedirectForProvisionalLoadForFrame(WebPage&, WebFrame& frame, RefPtr<API::Object>&) override
     {
-        if (!frame.isMainFrame())
+        auto* webKitFrame = webkitFrameGet(&frame);
+        if (!webKitFrame && !frame.isMainFrame())
             return;
-        webkitWebPageSetURI(m_webPage, getDocumentLoaderURL(frame.coreFrame()->loader().provisionalDocumentLoader()));
+
+        const auto uri = getDocumentLoaderURL(frame.coreFrame()->loader().provisionalDocumentLoader());
+
+        if (webKitFrame)
+            webkitFrameSetURI(webKitFrame, uri);
+
+        if (frame.isMainFrame())
+            webkitWebPageSetURI(m_webPage, uri);
     }
 
     void didSameDocumentNavigationForFrame(WebPage&, WebFrame& frame, SameDocumentNavigationType, RefPtr<API::Object>&) override
     {
-        if (!frame.isMainFrame())
+        auto* webKitFrame = webkitFrameGet(&frame);
+        if (!webKitFrame && !frame.isMainFrame())
             return;
-        webkitWebPageSetURI(m_webPage, frame.coreFrame()->document()->url().string().utf8());
+
+        const auto uri = frame.coreFrame()->document()->url().string().utf8();
+
+        if (webKitFrame)
+            webkitFrameSetURI(webKitFrame, uri);
+
+        if (frame.isMainFrame())
+            webkitWebPageSetURI(m_webPage, uri);
     }
 
     void didCommitLoadForFrame(WebPage&, WebFrame& frame, RefPtr<API::Object>&) override
     {
-        if (!frame.isMainFrame())
+        auto* webKitFrame = webkitFrameGet(&frame);
+        if (!webKitFrame && !frame.isMainFrame())
             return;
-        webkitWebPageSetURI(m_webPage, getDocumentLoaderURL(frame.coreFrame()->loader().documentLoader()));
+
+        const auto uri = getDocumentLoaderURL(frame.coreFrame()->loader().documentLoader());
+
+        if (webKitFrame)
+            webkitFrameSetURI(webKitFrame, uri);
+
+        if (frame.isMainFrame())
+            webkitWebPageSetURI(m_webPage, uri);
     }
 
     void didFinishDocumentLoadForFrame(WebPage&, WebFrame& frame, RefPtr<API::Object>&) override
@@ -235,6 +277,13 @@ private:
     WebKitWebPage* m_webPage;
 };
 
+#if !ENABLE(2022_GLIB_API)
+static void webkitWebPageDidSendConsoleMessage(WebKitWebPage* webPage, MessageSource source, MessageLevel level, const String& message, unsigned lineNumber, const String& sourceID)
+{
+    WebKitConsoleMessage consoleMessage(source, level, message, lineNumber, sourceID);
+    g_signal_emit(webPage, signals[CONSOLE_MESSAGE_SENT], 0, &consoleMessage);
+}
+#endif
 
 class PageResourceLoadClient final : public API::InjectedBundle::ResourceLoadClient {
 public:
@@ -259,8 +308,47 @@ private:
         webkitURIRequestGetResourceRequest(request.get(), resourceRequest);
     }
 
+#if !ENABLE(2022_GLIB_API)
+    void didReceiveResponseForResource(WebPage& page, WebFrame&, WebCore::ResourceLoaderIdentifier identifier, const ResourceResponse& response) override
+    {
+        // Post on the console as well to be consistent with the inspector.
+        if (response.httpStatusCode() >= 400) {
+            String errorMessage = makeString("Failed to load resource: the server responded with a status of ", response.httpStatusCode(), " (", response.httpStatusText(), ')');
+            webkitWebPageDidSendConsoleMessage(m_webPage, MessageSource::Network, MessageLevel::Error, errorMessage, 0, response.url().string());
+        }
+    }
+
+    void didFailLoadForResource(WebPage& page, WebFrame&, WebCore::ResourceLoaderIdentifier identifier, const ResourceError& error) override
+    {
+        // Post on the console as well to be consistent with the inspector.
+        if (!error.isCancellation()) {
+            auto errorDescription = error.localizedDescription();
+            auto errorMessage = makeString("Failed to load resource", errorDescription.isEmpty() ? "" : ": ", errorDescription);
+            webkitWebPageDidSendConsoleMessage(m_webPage, MessageSource::Network, MessageLevel::Error, errorMessage, 0, error.failingURL().string());
+        }
+    }
+#endif
+
     WebKitWebPage* m_webPage;
 };
+
+#if !ENABLE(2022_GLIB_API)
+class PageUIClient final : public API::InjectedBundle::PageUIClient {
+public:
+    explicit PageUIClient(WebKitWebPage* webPage)
+        : m_webPage(webPage)
+    {
+    }
+
+private:
+    void willAddMessageToConsole(WebPage*, MessageSource source, MessageLevel level, const String& message, unsigned lineNumber, unsigned /*columnNumber*/, const String& sourceID) override
+    {
+        webkitWebPageDidSendConsoleMessage(m_webPage, source, level, message, lineNumber, sourceID);
+    }
+
+    WebKitWebPage* m_webPage;
+};
+#endif
 
 class PageContextMenuClient final : public API::InjectedBundle::PageContextMenuClient {
 public:
@@ -521,8 +609,6 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
      * a security error or other errors, warnings, debug or log messages.
      * The @console_message contains information of the message.
      *
-     * This signal is now deprecated and it's never emitted.
-     *
      * Since: 2.12
      *
      * Deprecated: 2.40
@@ -706,6 +792,9 @@ WebKitWebPage* webkitWebPageCreate(WebPage* webPage)
     webPage->setInjectedBundlePageLoaderClient(makeUnique<PageLoaderClient>(page));
     webPage->setInjectedBundleContextMenuClient(makeUnique<PageContextMenuClient>(page));
     webPage->setInjectedBundleFormClient(makeUnique<PageFormClient>(page));
+#if !ENABLE(2022_GLIB_API)
+    webPage->setInjectedBundleUIClient(makeUnique<PageUIClient>(page));
+#endif
 
     return page;
 }
@@ -734,7 +823,7 @@ WebKitDOMDocument* webkit_web_page_get_dom_document(WebKitWebPage* webPage)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_PAGE(webPage), nullptr);
 
-    if (auto* coreFrame = webPage->priv->webPage->mainFrame())
+    if (auto* coreFrame = dynamicDowncast<WebCore::LocalFrame>(webPage->priv->webPage->mainFrame()))
         return kit(coreFrame->document());
 
     return nullptr;

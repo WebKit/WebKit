@@ -40,6 +40,8 @@
  *         </div>
  */
 
+@namespace "http://www.w3.org/1999/xhtml";
+
 embed::-webkit-snapshotted-plugin-content,
 object::-webkit-snapshotted-plugin-content
 {

@@ -38,10 +38,7 @@ public:
     StreamServerConnectionBuffer& operator=(StreamServerConnectionBuffer&&) = default;
     std::optional<Span<uint8_t>> tryAcquire();
     Span<uint8_t> acquireAll();
-    enum class WakeUpClient : bool {
-        No,
-        Yes
-    };
+    enum class WakeUpClient : bool { No, Yes };
     WakeUpClient release(size_t readSize);
     WakeUpClient releaseAll();
 

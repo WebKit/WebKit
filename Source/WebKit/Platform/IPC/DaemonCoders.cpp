@@ -415,9 +415,9 @@ std::optional<WebCore::ExceptionData> Coder<WebCore::ExceptionData, void>::decod
 
 void Coder<WebCore::SecurityOriginData, void>::encode(Encoder& encoder, const WebCore::SecurityOriginData& instance)
 {
-    encoder << instance.protocol;
-    encoder << instance.host;
-    encoder << instance.port;
+    encoder << instance.protocol();
+    encoder << instance.host();
+    encoder << instance.port();
 }
 
 std::optional<WebCore::SecurityOriginData> Coder<WebCore::SecurityOriginData, void>::decode(Decoder& decoder)

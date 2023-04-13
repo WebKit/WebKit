@@ -27,13 +27,13 @@
 #include "HTMLLabelElement.h"
 
 #include "Document.h"
-#include "ElementIterator.h"
 #include "Event.h"
 #include "EventNames.h"
 #include "FormListedElement.h"
 #include "HTMLFormControlElement.h"
 #include "HTMLNames.h"
 #include "SelectionRestorationMode.h"
+#include "TypedElementDescendantIteratorInlines.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/SetForScope.h>
 
@@ -63,6 +63,11 @@ inline HTMLLabelElement::HTMLLabelElement(const QualifiedName& tagName, Document
 Ref<HTMLLabelElement> HTMLLabelElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(*new HTMLLabelElement(tagName, document));
+}
+
+Ref<HTMLLabelElement> HTMLLabelElement::create(Document& document)
+{
+    return adoptRef(*new HTMLLabelElement(labelTag, document));
 }
 
 RefPtr<HTMLElement> HTMLLabelElement::control() const

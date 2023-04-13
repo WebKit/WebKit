@@ -24,8 +24,7 @@ import json
 import re
 
 from flask import abort, current_app, json as fjson, redirect, Flask, Response
-from reporelaypy import Database
-from webkitflaskpy import AuthedBlueprint
+from webkitflaskpy import AuthedBlueprint, Database
 from webkitscmpy import Commit, remote
 from webkitcorepy import run
 

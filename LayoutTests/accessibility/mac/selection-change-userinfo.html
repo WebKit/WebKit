@@ -201,38 +201,46 @@
 
         function focusTextBox() {
             return new Promise(function(resolve, reject) {
-                setTimeout(() => {
-                    textbox.focus();
-                    resolve();
-                }, 0);
+                requestAnimationFrame(function() {
+                    setTimeout(() => {
+                        textbox.focus();
+                        resolve();
+                    }, 0);
+                });
             });
         }
 
         function moveSelection(direction, granularity) {
             return new Promise(function(resolve, reject) {
-                setTimeout(function() {
-                    s.modify("move", direction, granularity);
-                    resolve();
-                }, 0);
+                requestAnimationFrame(function() {
+                    setTimeout(function() {
+                        s.modify("move", direction, granularity);
+                        resolve();
+                    }, 0);
+                });
             });
         }
 
         function extendSelection(granularity) {
             return new Promise(function(resolve, reject) {
-                setTimeout(function() {
-                    s.modify("extend", "forward", granularity);
-                    resolve();
-                }, 0);
+                requestAnimationFrame(function() {
+                    setTimeout(function() {
+                        s.modify("extend", "forward", granularity);
+                        resolve();
+                    }, 0);
+                })
             });
         }
 
         function resetPosition() {
             return new Promise(function(resolve, reject) {
-                setTimeout(function() {
-                    s = window.getSelection();
-                    s.setPosition(textbox, 0);
-                    resolve();
-                }, 0);
+                requestAnimationFrame(function() {
+                    setTimeout(function() {
+                        s = window.getSelection();
+                        s.setPosition(textbox, 0);
+                        resolve();
+                    }, 0);
+                })
             });
         }
 

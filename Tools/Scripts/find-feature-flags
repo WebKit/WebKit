@@ -41,7 +41,7 @@ _CHOICES = [
     "platform",
     "perl",
     "cmake",
-    "code",
+    "all-code",
     "native-code",
     "cmake-code",
     "idl-code",

@@ -30,6 +30,7 @@
 
 #include "ApplePayPaymentSetupFeaturesWebKit.h"
 #include "DataReference.h"
+#include "MessageSenderInlines.h"
 #include "PaymentSetupConfigurationWebKit.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebPage.h"
@@ -41,7 +42,7 @@
 #include <WebCore/ApplePayPaymentMethodUpdate.h>
 #include <WebCore/ApplePayShippingContactUpdate.h>
 #include <WebCore/ApplePayShippingMethodUpdate.h>
-#include <WebCore/Frame.h>
+#include <WebCore/LocalFrame.h>
 #include <WebCore/PaymentCoordinator.h>
 #include <wtf/URL.h>
 
@@ -65,7 +66,7 @@ void WebPaymentCoordinator::networkProcessConnectionClosed()
 #endif
 }
 
-std::optional<String> WebPaymentCoordinator::validatedPaymentNetwork(const String& paymentNetwork)
+std::optional<String> WebPaymentCoordinator::validatedPaymentNetwork(const String& paymentNetwork) const
 {
     if (!m_availablePaymentNetworks)
         m_availablePaymentNetworks = platformAvailablePaymentNetworks();
@@ -154,11 +155,6 @@ void WebPaymentCoordinator::abortPaymentSession()
 void WebPaymentCoordinator::cancelPaymentSession()
 {
     send(Messages::WebPaymentCoordinatorProxy::CancelPaymentSession());
-}
-
-void WebPaymentCoordinator::paymentCoordinatorDestroyed()
-{
-    delete this;
 }
 
 IPC::Connection* WebPaymentCoordinator::messageSenderConnection() const

@@ -38,34 +38,6 @@ struct WebAutocorrectionContext {
     String selectedText;
     String contextAfter;
     EditingRange markedTextRange;
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<WebAutocorrectionContext> decode(Decoder&);
 };
-
-template<class Encoder> void WebAutocorrectionContext::encode(Encoder& encoder) const
-{
-    encoder << contextBefore;
-    encoder << markedText;
-    encoder << selectedText;
-    encoder << contextAfter;
-    encoder << markedTextRange;
-}
-
-template<class Decoder> std::optional<WebAutocorrectionContext> WebAutocorrectionContext::decode(Decoder& decoder)
-{
-    WebAutocorrectionContext correction;
-    if (!decoder.decode(correction.contextBefore))
-        return std::nullopt;
-    if (!decoder.decode(correction.markedText))
-        return std::nullopt;
-    if (!decoder.decode(correction.selectedText))
-        return std::nullopt;
-    if (!decoder.decode(correction.contextAfter))
-        return std::nullopt;
-    if (!decoder.decode(correction.markedTextRange))
-        return std::nullopt;
-    return correction;
-}
 
 } // namespace WebKit

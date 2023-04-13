@@ -28,6 +28,7 @@
 
 #if PLATFORM(IOS_FAMILY)
 
+#import "MessageSenderInlines.h"
 #import "SmartMagnificationControllerMessages.h"
 #import "UserInterfaceIdiom.h"
 #import "ViewGestureGeometryCollectorMessages.h"

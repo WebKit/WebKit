@@ -5,9 +5,6 @@
 <script src="../../http/tests/inspector/resources/inspector-test.js"></script>
 <script src="resources/create-context-utilities.js"></script>
 <script>
-if (window.internals)
-    window.internals.settings.setWebGL2Enabled(true);
-
 function test() {
     let suite = InspectorTest.CreateContextUtilities.initializeTestSuite("Canvas.CreateContextWebGL2");
 

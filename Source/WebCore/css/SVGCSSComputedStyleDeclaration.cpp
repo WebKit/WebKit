@@ -29,10 +29,11 @@
 #include "Document.h"
 #include "Element.h"
 #include "RenderStyle.h"
+#include <wtf/URL.h>
 
 namespace WebCore {
 
-static RefPtr<CSSPrimitiveValue> glyphOrientationToCSSPrimitiveValue(GlyphOrientation orientation)
+static RefPtr<CSSPrimitiveValue> createCSSValue(GlyphOrientation orientation)
 {
     switch (orientation) {
     case GlyphOrientation::Degrees0:
@@ -50,39 +51,48 @@ static RefPtr<CSSPrimitiveValue> glyphOrientationToCSSPrimitiveValue(GlyphOrient
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-static Ref<CSSValue> strokeDashArrayToCSSValueList(const Vector<SVGLengthValue>& dashes)
+static Ref<CSSValue> createCSSValue(const Vector<SVGLengthValue>& dashes)
 {
     if (dashes.isEmpty())
         return CSSPrimitiveValue::create(CSSValueNone);
 
-    auto list = CSSValueList::createCommaSeparated();
+    CSSValueListBuilder list;
     for (auto& length : dashes) {
         auto primitiveValue = length.toCSSPrimitiveValue();
         // Computed lengths should always be in 'px' unit.
         if (primitiveValue->isLength() && primitiveValue->primitiveType() != CSSUnitType::CSS_PX)
-            list->append(CSSPrimitiveValue::create(primitiveValue->doubleValue(CSSUnitType::CSS_PX), CSSUnitType::CSS_PX));
+            list.append(CSSPrimitiveValue::create(primitiveValue->doubleValue(CSSUnitType::CSS_PX), CSSUnitType::CSS_PX));
         else
-            list->append(WTFMove(primitiveValue));
+            list.append(WTFMove(primitiveValue));
     }
-
-    return list;
+    return CSSValueList::createCommaSeparated(WTFMove(list));
 }
 
 Ref<CSSValue> ComputedStyleExtractor::adjustSVGPaint(SVGPaintType paintType, const String& url, Ref<CSSPrimitiveValue> color) const
 {
     if (paintType >= SVGPaintType::URINone) {
-        auto values = CSSValueList::createSpaceSeparated();
-        values->append(CSSPrimitiveValue::create(url, CSSUnitType::CSS_URI));
+        CSSValueListBuilder values;
+        values.append(CSSPrimitiveValue::createURI(url));
         if (paintType == SVGPaintType::URINone)
-            values->append(CSSPrimitiveValue::create(CSSValueNone));
+            values.append(CSSPrimitiveValue::create(CSSValueNone));
         else if (paintType == SVGPaintType::URICurrentColor || paintType == SVGPaintType::URIRGBColor)
-            values->append(color);
-        return values;
+            values.append(color);
+        return CSSValueList::createSpaceSeparated(WTFMove(values));
     }
     if (paintType == SVGPaintType::None)
         return CSSPrimitiveValue::create(CSSValueNone);
     
     return color;
+}
+
+static RefPtr<CSSValue> svgMarkerValue(const String& marker, const Element* element)
+{
+    if (marker.isEmpty())
+        return CSSPrimitiveValue::create(CSSValueNone);
+    if (URL(marker).isValid() || !element)
+        return CSSPrimitiveValue::createURI(marker);
+    auto resolvedURL = URL(element->document().baseURL(), marker);
+    return CSSPrimitiveValue::createURI(resolvedURL.string());
 }
 
 RefPtr<CSSValue> ComputedStyleExtractor::svgPropertyValue(CSSPropertyID propertyID)
@@ -103,29 +113,29 @@ RefPtr<CSSValue> ComputedStyleExtractor::svgPropertyValue(CSSPropertyID property
 
     switch (propertyID) {
     case CSSPropertyClipRule:
-        return CSSPrimitiveValue::create(svgStyle.clipRule());
+        return CSSPrimitiveValue::create(toCSSValueID(svgStyle.clipRule()));
     case CSSPropertyFloodOpacity:
-        return CSSPrimitiveValue::create(svgStyle.floodOpacity(), CSSUnitType::CSS_NUMBER);
+        return CSSPrimitiveValue::create(svgStyle.floodOpacity());
     case CSSPropertyStopOpacity:
-        return CSSPrimitiveValue::create(svgStyle.stopOpacity(), CSSUnitType::CSS_NUMBER);
+        return CSSPrimitiveValue::create(svgStyle.stopOpacity());
     case CSSPropertyColorInterpolation:
-        return CSSPrimitiveValue::create(svgStyle.colorInterpolation());
+        return CSSPrimitiveValue::create(toCSSValueID(svgStyle.colorInterpolation()));
     case CSSPropertyColorInterpolationFilters:
-        return CSSPrimitiveValue::create(svgStyle.colorInterpolationFilters());
+        return CSSPrimitiveValue::create(toCSSValueID(svgStyle.colorInterpolationFilters()));
     case CSSPropertyFillOpacity:
-        return CSSPrimitiveValue::create(svgStyle.fillOpacity(), CSSUnitType::CSS_NUMBER);
+        return CSSPrimitiveValue::create(svgStyle.fillOpacity());
     case CSSPropertyFillRule:
-        return CSSPrimitiveValue::create(svgStyle.fillRule());
+        return CSSPrimitiveValue::create(toCSSValueID(svgStyle.fillRule()));
     case CSSPropertyShapeRendering:
-        return CSSPrimitiveValue::create(svgStyle.shapeRendering());
+        return CSSPrimitiveValue::create(toCSSValueID(svgStyle.shapeRendering()));
     case CSSPropertyStrokeOpacity:
-        return CSSPrimitiveValue::create(svgStyle.strokeOpacity(), CSSUnitType::CSS_NUMBER);
+        return CSSPrimitiveValue::create(svgStyle.strokeOpacity());
     case CSSPropertyAlignmentBaseline:
-        return CSSPrimitiveValue::create(svgStyle.alignmentBaseline());
+        return CSSPrimitiveValue::create(toCSSValueID(svgStyle.alignmentBaseline()));
     case CSSPropertyDominantBaseline:
-        return CSSPrimitiveValue::create(svgStyle.dominantBaseline());
+        return CSSPrimitiveValue::create(toCSSValueID(svgStyle.dominantBaseline()));
     case CSSPropertyTextAnchor:
-        return CSSPrimitiveValue::create(svgStyle.textAnchor());
+        return CSSPrimitiveValue::create(toCSSValueID(svgStyle.textAnchor()));
     case CSSPropertyFloodColor:
         return createColor(svgStyle.floodColor());
     case CSSPropertyLightingColor:
@@ -137,21 +147,15 @@ RefPtr<CSSValue> ComputedStyleExtractor::svgPropertyValue(CSSPropertyID property
     case CSSPropertyKerning:
         return svgStyle.kerning().toCSSPrimitiveValue();
     case CSSPropertyMarkerEnd:
-        if (!svgStyle.markerEndResource().isEmpty())
-            return CSSPrimitiveValue::create(makeString('#', svgStyle.markerEndResource()), CSSUnitType::CSS_URI);
-        return CSSPrimitiveValue::create(CSSValueNone);
+        return svgMarkerValue(svgStyle.markerEndResource(), m_element.get());
     case CSSPropertyMarkerMid:
-        if (!svgStyle.markerMidResource().isEmpty())
-            return CSSPrimitiveValue::create(makeString('#', svgStyle.markerMidResource()), CSSUnitType::CSS_URI);
-        return CSSPrimitiveValue::create(CSSValueNone);
+        return svgMarkerValue(svgStyle.markerMidResource(), m_element.get());
     case CSSPropertyMarkerStart:
-        if (!svgStyle.markerStartResource().isEmpty())
-            return CSSPrimitiveValue::create(makeString('#', svgStyle.markerStartResource()), CSSUnitType::CSS_URI);
-        return CSSPrimitiveValue::create(CSSValueNone);
+        return svgMarkerValue(svgStyle.markerStartResource(), m_element.get());
     case CSSPropertyStroke:
         return adjustSVGPaint(svgStyle.strokePaintType(), svgStyle.strokePaintUri(), createColor(svgStyle.strokePaintColor()));
     case CSSPropertyStrokeDasharray:
-        return strokeDashArrayToCSSValueList(svgStyle.strokeDashArray());
+        return createCSSValue(svgStyle.strokeDashArray());
     case CSSPropertyBaselineShift: {
         switch (svgStyle.baselineShift()) {
         case BaselineShift::Baseline:
@@ -171,11 +175,11 @@ RefPtr<CSSValue> ComputedStyleExtractor::svgPropertyValue(CSSPropertyID property
         return nullptr;
     }
     case CSSPropertyBufferedRendering:
-        return CSSPrimitiveValue::create(svgStyle.bufferedRendering());
+        return CSSPrimitiveValue::create(toCSSValueID(svgStyle.bufferedRendering()));
     case CSSPropertyGlyphOrientationHorizontal:
-        return glyphOrientationToCSSPrimitiveValue(svgStyle.glyphOrientationHorizontal());
+        return createCSSValue(svgStyle.glyphOrientationHorizontal());
     case CSSPropertyGlyphOrientationVertical: {
-        if (RefPtr<CSSPrimitiveValue> value = glyphOrientationToCSSPrimitiveValue(svgStyle.glyphOrientationVertical()))
+        if (RefPtr<CSSPrimitiveValue> value = createCSSValue(svgStyle.glyphOrientationVertical()))
             return value;
 
         if (svgStyle.glyphOrientationVertical() == GlyphOrientation::Auto)
@@ -184,9 +188,9 @@ RefPtr<CSSValue> ComputedStyleExtractor::svgPropertyValue(CSSPropertyID property
         return nullptr;
     }
     case CSSPropertyVectorEffect:
-        return CSSPrimitiveValue::create(svgStyle.vectorEffect());
+        return CSSPrimitiveValue::create(toCSSValueID(svgStyle.vectorEffect()));
     case CSSPropertyMaskType:
-        return CSSPrimitiveValue::create(svgStyle.maskType());
+        return CSSPrimitiveValue::create(toCSSValueID(svgStyle.maskType()));
     case CSSPropertyMarker:
         // this property is not yet implemented in the engine
         break;

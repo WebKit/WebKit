@@ -46,14 +46,14 @@ public:
         return AtomString(operator String());
     }
 
-    bool is8Bit()
+    bool is8Bit() const
     {
         StringTypeAdapter<StringType1> adapter1(m_string1);
         StringTypeAdapter<StringType2> adapter2(m_string2);
         return adapter1.is8Bit() && adapter2.is8Bit();
     }
 
-    void writeTo(LChar* destination)
+    void writeTo(LChar* destination) const
     {
         ASSERT(is8Bit());
         StringTypeAdapter<StringType1> adapter1(m_string1);
@@ -62,7 +62,7 @@ public:
         adapter2.writeTo(destination + adapter1.length());
     }
 
-    void writeTo(UChar* destination)
+    void writeTo(UChar* destination) const
     {
         StringTypeAdapter<StringType1> adapter1(m_string1);
         StringTypeAdapter<StringType2> adapter2(m_string2);
@@ -70,7 +70,7 @@ public:
         adapter2.writeTo(destination + adapter1.length());
     }
 
-    unsigned length()
+    unsigned length() const
     {
         StringTypeAdapter<StringType1> adapter1(m_string1);
         StringTypeAdapter<StringType2> adapter2(m_string2);
@@ -85,7 +85,7 @@ private:
 template<typename StringType1, typename StringType2>
 class StringTypeAdapter<StringAppend<StringType1, StringType2>> {
 public:
-    StringTypeAdapter(StringAppend<StringType1, StringType2>& buffer)
+    StringTypeAdapter(const StringAppend<StringType1, StringType2>& buffer)
         : m_buffer { buffer }
     {
     }
@@ -95,7 +95,7 @@ public:
     template<typename CharacterType> void writeTo(CharacterType* destination) const { m_buffer.writeTo(destination); }
 
 private:
-    StringAppend<StringType1, StringType2>& m_buffer;
+    const StringAppend<StringType1, StringType2>& m_buffer;
 };
 
 inline StringAppend<const char*, String> operator+(const char* string1, const String& string2)

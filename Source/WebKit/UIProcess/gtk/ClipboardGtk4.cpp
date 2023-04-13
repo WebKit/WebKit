@@ -47,6 +47,15 @@ Clipboard::Clipboard(Type type)
                 WebPasteboardProxy::singleton().setPrimarySelectionOwner(nullptr);
         }), nullptr);
     }
+    g_signal_connect(m_clipboard, "changed", G_CALLBACK(+[](GdkClipboard*, gpointer userData) {
+        auto& clipboard = *static_cast<Clipboard*>(userData);
+        clipboard.m_changeCount++;
+    }), this);
+}
+
+Clipboard::~Clipboard()
+{
+    g_signal_handlers_disconnect_by_data(m_clipboard, this);
 }
 
 Clipboard::Type Clipboard::type() const
@@ -157,7 +166,30 @@ void Clipboard::readBuffer(const char* format, CompletionHandler<void(Ref<WebCor
     }, new ReadBufferAsyncData(WTFMove(completionHandler)));
 }
 
-void Clipboard::write(WebCore::SelectionData&& selectionData)
+struct ReadURLAsyncData {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+
+    explicit ReadURLAsyncData(CompletionHandler<void(String&& url, String&& title)>&& handler)
+        : completionHandler(WTFMove(handler))
+    {
+    }
+
+    CompletionHandler<void(String&& url, String&& title)> completionHandler;
+};
+
+void Clipboard::readURL(CompletionHandler<void(String&& url, String&& title)>&& completionHandler)
+{
+    gdk_clipboard_read_value_async(m_clipboard, GDK_TYPE_FILE_LIST, G_PRIORITY_DEFAULT, nullptr, [](GObject* clipboard, GAsyncResult* result, gpointer userData) {
+        std::unique_ptr<ReadURLAsyncData> data(static_cast<ReadURLAsyncData*>(userData));
+        const GValue* value = gdk_clipboard_read_value_finish(GDK_CLIPBOARD(clipboard), result, nullptr);
+        auto* list = static_cast<GSList*>(g_value_get_boxed(value));
+        auto* file = list && list->data ? G_FILE(list->data) : nullptr;
+        GUniquePtr<char> uri(g_file_get_uri(file));
+        data->completionHandler(uri ? String::fromUTF8(uri.get()) : String(), { });
+    }, new ReadURLAsyncData(WTFMove(completionHandler)));
+}
+
+void Clipboard::write(WebCore::SelectionData&& selectionData, CompletionHandler<void(int64_t)>&& completionHandler)
 {
     Vector<GdkContentProvider*> providers;
     if (selectionData.hasMarkup()) {
@@ -173,7 +205,7 @@ void Clipboard::write(WebCore::SelectionData&& selectionData)
     }
 
     if (selectionData.hasImage()) {
-        GRefPtr<GdkPixbuf> pixbuf = adoptGRef(selectionData.image()->getGdkPixbuf());
+        auto pixbuf = selectionData.image()->gdkPixbuf();
         providers.append(gdk_content_provider_new_typed(GDK_TYPE_PIXBUF, pixbuf.get()));
     }
 
@@ -190,13 +222,20 @@ void Clipboard::write(WebCore::SelectionData&& selectionData)
         providers.append(gdk_content_provider_new_for_bytes(WebCore::PasteboardCustomData::gtkType().characters(), bytes.get()));
     }
 
+    for (const auto& it : selectionData.buffers()) {
+        GRefPtr<GBytes> bytes = it.value->createGBytes();
+        providers.append(gdk_content_provider_new_for_bytes(it.key.utf8().data(), bytes.get()));
+    }
+
     if (providers.isEmpty()) {
         clear();
+        completionHandler(m_changeCount);
         return;
     }
 
     GRefPtr<GdkContentProvider> provider = adoptGRef(gdk_content_provider_new_union(providers.data(), providers.size()));
     gdk_clipboard_set_content(m_clipboard, provider.get());
+    completionHandler(m_changeCount);
 }
 
 void Clipboard::clear()

@@ -868,6 +868,11 @@
         "FramebufferTexture2DMultisampleEXT"
     ],
 
+    "GL_EXT_polygon_offset_clamp":
+    [
+        "PolygonOffsetClampEXT"
+    ],
+
     "GL_EXT_shader_framebuffer_fetch_non_coherent":
     [
         "FramebufferFetchBarrierEXT"

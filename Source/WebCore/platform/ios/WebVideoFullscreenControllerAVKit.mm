@@ -28,8 +28,8 @@
 
 #if PLATFORM(IOS_FAMILY)
 
-#import "FrameView.h"
 #import "HTMLVideoElement.h"
+#import "LocalFrameView.h"
 #import "Logging.h"
 #import "MediaSelectionOption.h"
 #import "PlaybackSessionInterfaceAVKit.h"
@@ -126,6 +126,7 @@ private:
     void requestUpdateInlineRect() final;
     void requestVideoContentLayer() final;
     void returnVideoContentLayer() final;
+    void returnVideoView() final { }
     void didSetupFullscreen() final;
     void failedToEnterFullscreen() final { }
     void didEnterFullscreen(const FloatSize&) final { }

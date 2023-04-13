@@ -1,4 +1,4 @@
-# Copyright (C) 2014 Apple Inc. All rights reserved.
+# Copyright (C) 2014-2023 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -23,6 +23,6 @@
 messages -> RemoteLayerTreeDrawingAreaProxy : DrawingAreaProxy NotRefCounted {
     void SetPreferredFramesPerSecond(unsigned preferredFramesPerSecond)
     void WillCommitLayerTree(WebKit::TransactionID transactionID)
-    void CommitLayerTree(WebKit::RemoteLayerTreeTransaction layerTreeTransaction, WebKit::RemoteScrollingCoordinatorTransaction scrollingTreeTransaction)
-    void AsyncSetLayerContents(WebCore::GraphicsLayer::PlatformLayerID layer, WebKit::ImageBufferBackendHandle handle)
+    void CommitLayerTree(Vector<std::pair<WebKit::RemoteLayerTreeTransaction, WebKit::RemoteScrollingCoordinatorTransaction>> transactions)
+    void AsyncSetLayerContents(WebCore::PlatformLayerIdentifier layer, WebKit::ImageBufferBackendHandle handle)
 }

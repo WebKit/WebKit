@@ -52,7 +52,8 @@ TEST(PageGroup, DefaultUserContentController)
     PlatformWebView webView(pageConfiguration.get());
     auto copiedPageConfiguration = adoptWK(WKPageCopyPageConfiguration(webView.page()));
 
-    ASSERT_EQ(pageGroupUserContentController.get(), WKPageConfigurationGetUserContentController(copiedPageConfiguration.get()));
+    // This tests setting the UserContentController through the WKPageGroup, which was only supported in WKView, not WKWebView.
+    ASSERT_NE(pageGroupUserContentController.get(), WKPageConfigurationGetUserContentController(copiedPageConfiguration.get()));
 }
 
 TEST(PageGroup, CustomUserContentController)

@@ -28,10 +28,10 @@
 
 #include "AnimationEventBase.h"
 #include "CSSTransition.h"
-#include "DOMWindow.h"
 #include "Document.h"
 #include "DocumentTimeline.h"
 #include "EventLoop.h"
+#include "LocalDOMWindow.h"
 #include "Logging.h"
 #include "Page.h"
 #include "Settings.h"
@@ -44,7 +44,6 @@ namespace WebCore {
 
 DocumentTimelinesController::DocumentTimelinesController(Document& document)
     : m_document(document)
-    , m_frameRateAligner()
 {
     if (auto* page = document.page()) {
         if (page->settings().hiddenPageCSSAnimationSuspensionEnabled() && !page->isVisible())
@@ -94,8 +93,6 @@ void DocumentTimelinesController::updateAnimationsAndSendEvents(ReducedResolutio
     }
 
     LOG_WITH_STREAM(Animations, stream << "DocumentTimelinesController::updateAnimationsAndSendEvents for time " << timestamp);
-
-    ASSERT(!m_timelines.hasNullReferences());
 
     // We need to copy m_timelines before iterating over its members since the steps in this procedure may mutate m_timelines.
     auto protectedTimelines = copyToVectorOf<Ref<DocumentTimeline>>(m_timelines);
@@ -252,11 +249,6 @@ void DocumentTimelinesController::resumeAnimations()
 
     for (auto& timeline : m_timelines)
         timeline.resumeAnimations();
-}
-
-bool DocumentTimelinesController::animationsAreSuspended() const
-{
-    return m_isSuspended;
 }
 
 ReducedResolutionSeconds DocumentTimelinesController::liveCurrentTime() const

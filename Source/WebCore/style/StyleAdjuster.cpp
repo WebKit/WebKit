@@ -32,11 +32,9 @@
 
 #include "CSSFontSelector.h"
 #include "DOMTokenList.h"
-#include "DOMWindow.h"
 #include "ElementInlines.h"
 #include "ElementName.h"
 #include "EventNames.h"
-#include "FrameView.h"
 #include "HTMLBodyElement.h"
 #include "HTMLDialogElement.h"
 #include "HTMLDivElement.h"
@@ -47,6 +45,8 @@
 #include "HTMLTableElement.h"
 #include "HTMLTextAreaElement.h"
 #include "HTMLVideoElement.h"
+#include "LocalDOMWindow.h"
+#include "LocalFrameView.h"
 #include "MathMLElement.h"
 #include "ModalContainerObserver.h"
 #include "Page.h"
@@ -219,13 +219,15 @@ static OptionSet<TouchAction> computeEffectiveTouchActions(const RenderStyle& st
     return sharedTouchActions;
 }
 
-void Adjuster::adjustEventListenerRegionTypesForRootStyle(RenderStyle& rootStyle, const Document& document)
+bool Adjuster::adjustEventListenerRegionTypesForRootStyle(RenderStyle& rootStyle, const Document& document)
 {
     auto regionTypes = computeEventListenerRegionTypes(document, rootStyle, document, { });
     if (auto* window = document.domWindow())
         regionTypes.add(computeEventListenerRegionTypes(document, rootStyle, *window, { }));
 
+    bool changed = regionTypes != rootStyle.eventListenerRegionTypes();
     rootStyle.setEventListenerRegionTypes(regionTypes);
+    return changed;
 }
 
 OptionSet<EventListenerRegionType> Adjuster::computeEventListenerRegionTypes(const Document& document, const RenderStyle& style, const EventTarget& eventTarget, OptionSet<EventListenerRegionType> parentTypes)
@@ -853,7 +855,7 @@ void Adjuster::propagateToDocumentElementAndInitialContainingBlock(Update& updat
         }
         documentElementUpdate->style->setWritingMode(writingMode);
         documentElementUpdate->style->setDirection(direction);
-        documentElementUpdate->change = determineChange(*documentElementStyle, *documentElementUpdate->style);
+        documentElementUpdate->change = std::max(documentElementUpdate->change, Change::Inherited);
     }
 }
 

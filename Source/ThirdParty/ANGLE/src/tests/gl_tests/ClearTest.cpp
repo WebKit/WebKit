@@ -2863,6 +2863,26 @@ TEST_P(ClearTest, DISABLED_ClearReachesWindow)
     angle::Sleep(2000);
 }
 
+// Tests that masked clear after a no-op framebuffer binding change with an open render pass works.
+TEST_P(ClearTest, DrawThenChangeFBOBindingAndBackThenMaskedClear)
+{
+    ANGLE_GL_PROGRAM(blueProgram, essl1_shaders::vs::Simple(), essl1_shaders::fs::Blue());
+
+    // Draw blue.
+    drawQuad(blueProgram, essl1_shaders::PositionAttrib(), 0.5f);
+
+    // Change framebuffer and back
+    glBindFramebuffer(GL_FRAMEBUFFER, mFBOs[0]);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    // Masked clear
+    glColorMask(1, 0, 0, 1);
+    glClearColor(1.0f, 0.5f, 0.5f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::magenta);
+}
+
 // Test that clearing slices of a 3D texture and reading them back works.
 TEST_P(ClearTestES3, ClearAndReadPixels3DTexture)
 {

@@ -76,6 +76,9 @@ class AirplaySupport extends MediaControllerSupport
 
     _shouldBeEnabled()
     {
+        if (!this.mediaController.layoutTraits?.supportsAirPlay())
+            return false;
+
         if (!this.mediaController.hasPlayed)
             return false;
 

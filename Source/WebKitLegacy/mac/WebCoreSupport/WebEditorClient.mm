@@ -61,13 +61,13 @@
 #import <WebCore/Editor.h>
 #import <WebCore/Event.h>
 #import <WebCore/FloatQuad.h>
-#import <WebCore/Frame.h>
-#import <WebCore/FrameView.h>
 #import <WebCore/HTMLInputElement.h>
 #import <WebCore/HTMLNames.h>
 #import <WebCore/HTMLTextAreaElement.h>
 #import <WebCore/KeyboardEvent.h>
 #import <WebCore/LegacyWebArchive.h>
+#import <WebCore/LocalFrame.h>
+#import <WebCore/LocalFrameView.h>
 #import <WebCore/MutableStyleProperties.h>
 #import <WebCore/Page.h>
 #import <WebCore/PlatformKeyboardEvent.h>
@@ -343,7 +343,7 @@ void WebEditorClient::respondToChangedContents()
 #endif
 }
 
-void WebEditorClient::respondToChangedSelection(Frame* frame)
+void WebEditorClient::respondToChangedSelection(LocalFrame* frame)
 {
     if (frame->editor().isGettingDictionaryPopupInfo())
         return;
@@ -356,10 +356,6 @@ void WebEditorClient::respondToChangedSelection(Frame* frame)
     }
 
 #if !PLATFORM(IOS_FAMILY)
-    // FIXME: This quirk is needed due to <rdar://problem/5009625> - We can phase it out once Aperture can adopt the new behavior on their end
-    if (!WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITHOUT_APERTURE_QUIRK) && [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.apple.Aperture"])
-        return;
-
     [[NSNotificationCenter defaultCenter] postNotificationName:WebViewDidChangeSelectionNotification object:m_webView];
 #else
     // Selection can be changed while deallocating down the WebView / Frame / Editor.  Do not post in that case because it's already too late
@@ -374,7 +370,7 @@ void WebEditorClient::respondToChangedSelection(Frame* frame)
 #endif
 }
 
-void WebEditorClient::discardedComposition(Frame*)
+void WebEditorClient::discardedComposition(LocalFrame*)
 {
     // The effects of this function are currently achieved via -[WebHTMLView _updateSelectionForInputManager].
 }
@@ -595,7 +591,7 @@ void WebEditorClient::updateEditorStateAfterLayoutIfEditabilityChanged()
     if (m_lastEditorStateWasContentEditable == EditorStateIsContentEditable::Unset)
         return;
 
-    Frame* frame = core([m_webView _selectedOrMainFrame]);
+    auto* frame = core([m_webView _selectedOrMainFrame]);
     if (!frame)
         return;
 
@@ -638,12 +634,12 @@ void WebEditorClient::clearUndoRedoOperations()
     }    
 }
 
-bool WebEditorClient::canCopyCut(Frame*, bool defaultValue) const
+bool WebEditorClient::canCopyCut(LocalFrame*, bool defaultValue) const
 {
     return defaultValue;
 }
 
-bool WebEditorClient::canPaste(Frame*, bool defaultValue) const
+bool WebEditorClient::canPaste(LocalFrame*, bool defaultValue) const
 {
     return defaultValue;
 }
@@ -1131,7 +1127,7 @@ void WebEditorClient::handleRequestedCandidates(NSInteger sequenceNumber, NSArra
     if (m_lastCandidateRequestSequenceNumber != sequenceNumber)
         return;
 
-    Frame* frame = core([m_webView _selectedOrMainFrame]);
+    auto* frame = core([m_webView _selectedOrMainFrame]);
     if (!frame)
         return;
 
@@ -1158,7 +1154,7 @@ void WebEditorClient::handleRequestedCandidates(NSInteger sequenceNumber, NSArra
 
 void WebEditorClient::handleAcceptedCandidateWithSoftSpaces(TextCheckingResult acceptedCandidate)
 {
-    Frame* frame = core([m_webView _selectedOrMainFrame]);
+    auto* frame = core([m_webView _selectedOrMainFrame]);
     if (!frame)
         return;
 

@@ -11,6 +11,5 @@ SUCCESS: Selected test is 'float*' as expected
 |   "first <#selection-anchor>float*"
 | <div>
 |   style="float: left"
-|   <#selection-focus>
-|   "second float"
+|   "<#selection-focus>second float"
 

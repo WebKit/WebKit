@@ -39,6 +39,7 @@
 #include "JSDOMPromiseDeferred.h"
 #include "ReadableStreamSource.h"
 #include <JavaScriptCore/ArrayBufferView.h>
+#include <pal/text/TextCodecUTF8.h>
 
 namespace WebCore {
 
@@ -173,7 +174,7 @@ void FetchBody::consume(FetchBodyOwner& owner, Ref<DeferredPromise>&& promise)
         return;
     }
 
-    m_consumer.resolve(WTFMove(promise), owner.contentType(), m_readableStream.get());
+    m_consumer.resolve(WTFMove(promise), owner.contentType(), &owner, m_readableStream.get());
 }
 
 void FetchBody::consumeAsStream(FetchBodyOwner& owner, FetchBodySource& source)
@@ -184,10 +185,10 @@ void FetchBody::consumeAsStream(FetchBodyOwner& owner, FetchBodySource& source)
     else if (isArrayBufferView())
         closeStream = source.enqueue(ArrayBuffer::tryCreate(arrayBufferViewBody().baseAddress(), arrayBufferViewBody().byteLength()));
     else if (isText()) {
-        auto data = PAL::UTF8Encoding().encode(textBody(), PAL::UnencodableHandling::Entities);
+        auto data = PAL::TextCodecUTF8::encodeUTF8(textBody());
         closeStream = source.enqueue(ArrayBuffer::tryCreate(data.data(), data.size()));
     } else if (isURLSearchParams()) {
-        auto data = PAL::UTF8Encoding().encode(urlSearchParamsBody().toString(), PAL::UnencodableHandling::Entities);
+        auto data = PAL::TextCodecUTF8::encodeUTF8(urlSearchParamsBody().toString());
         closeStream = source.enqueue(ArrayBuffer::tryCreate(data.data(), data.size()));
     } else if (isBlob())
         owner.loadBlob(blobBody(), nullptr);
@@ -216,7 +217,7 @@ void FetchBody::consumeArrayBufferView(FetchBodyOwner& owner, Ref<DeferredPromis
 
 void FetchBody::consumeText(FetchBodyOwner& owner, Ref<DeferredPromise>&& promise, const String& text)
 {
-    auto data = PAL::UTF8Encoding().encode(text, PAL::UnencodableHandling::Entities);
+    auto data = PAL::TextCodecUTF8::encodeUTF8(text);
     m_consumer.resolveWithData(WTFMove(promise), owner.contentType(), data.data(), data.size());
     m_data = nullptr;
 }
@@ -247,9 +248,9 @@ void FetchBody::loadingSucceeded(const String& contentType)
 RefPtr<FormData> FetchBody::bodyAsFormData() const
 {
     if (isText())
-        return FormData::create(PAL::UTF8Encoding().encode(textBody(), PAL::UnencodableHandling::Entities));
+        return FormData::create(PAL::TextCodecUTF8::encodeUTF8(textBody()));
     if (isURLSearchParams())
-        return FormData::create(PAL::UTF8Encoding().encode(urlSearchParamsBody().toString(), PAL::UnencodableHandling::Entities));
+        return FormData::create(PAL::TextCodecUTF8::encodeUTF8(urlSearchParamsBody().toString()));
     if (isBlob()) {
         auto body = FormData::create();
         body->appendBlob(blobBody().url());
@@ -287,9 +288,9 @@ FetchBody::TakenData FetchBody::take()
         return formDataBody();
 
     if (isText())
-        return SharedBuffer::create(PAL::UTF8Encoding().encode(textBody(), PAL::UnencodableHandling::Entities));
+        return SharedBuffer::create(PAL::TextCodecUTF8::encodeUTF8(textBody()));
     if (isURLSearchParams())
-        return SharedBuffer::create(PAL::UTF8Encoding().encode(urlSearchParamsBody().toString(), PAL::UnencodableHandling::Entities));
+        return SharedBuffer::create(PAL::TextCodecUTF8::encodeUTF8(urlSearchParamsBody().toString()));
 
     if (isArrayBuffer())
         return SharedBuffer::create(static_cast<const char*>(arrayBufferBody().data()), arrayBufferBody().byteLength());
@@ -316,10 +317,12 @@ FetchBody FetchBody::clone()
     else if (isURLSearchParams())
         clone.m_data = urlSearchParamsBody();
     else if (m_readableStream) {
-        auto clones = m_readableStream->tee();
-        if (clones) {
-            m_readableStream = WTFMove(clones->first);
-            clone.m_readableStream = WTFMove(clones->second);
+        auto clones = m_readableStream->tee(true);
+        ASSERT(!clones.hasException());
+        if (!clones.hasException()) {
+            auto pair = clones.releaseReturnValue();
+            m_readableStream = WTFMove(pair[0]);
+            clone.m_readableStream = WTFMove(pair[1]);
         }
     }
     return clone;

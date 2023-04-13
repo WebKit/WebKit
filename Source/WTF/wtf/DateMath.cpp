@@ -933,7 +933,7 @@ double parseDateFromNullTerminatedCharacters(const char* dateString, bool& isLoc
                 return std::numeric_limits<double>::quiet_NaN();
 
             int sgn = (o < 0) ? -1 : 1;
-            o = abs(o);
+            o = std::abs(o);
             if (*dateString != ':') {
                 if (o >= 24)
                     offset = ((o / 100) * 60 + (o % 100)) * sgn;
@@ -1028,7 +1028,7 @@ String makeRFC2822DateString(unsigned dayOfWeek, unsigned day, unsigned month, u
     stringBuilder.append(' ');
 
     stringBuilder.append(utcOffset > 0 ? '+' : '-');
-    int absoluteUTCOffset = abs(utcOffset);
+    int absoluteUTCOffset = std::abs(utcOffset);
     appendTwoDigitNumber(stringBuilder, absoluteUTCOffset / 60);
     appendTwoDigitNumber(stringBuilder, absoluteUTCOffset % 60);
 

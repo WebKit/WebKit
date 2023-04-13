@@ -6,7 +6,7 @@ layer at (0,0) size 800x548
       RenderBlock {P} at (3,3) size 680x64
         RenderText {#text} at (0,7) size 680x49
           text run at (0,7) width 513: "These links are in an element with display table-row, and the li elements "
-          text run at (513,7) width 167: "have display: table-cell."
+          text run at (512,7) width 168: "have display: table-cell."
           text run at (0,39) width 115: "They disappear:"
       RenderTable at (3,67) size 264x18
         RenderTableSection (anonymous) at (0,0) size 264x18

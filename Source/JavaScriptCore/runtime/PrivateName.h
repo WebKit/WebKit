@@ -32,11 +32,6 @@ namespace JSC {
 
 class PrivateName {
 public:
-    PrivateName()
-        : m_uid(SymbolImpl::createNullSymbol())
-    {
-    }
-
     explicit PrivateName(SymbolImpl& uid)
         : m_uid(uid)
     {

@@ -27,6 +27,7 @@
 		2DC37343198B62D300EC33E9 /* SettingsController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DC37342198B62D300EC33E9 /* SettingsController.m */; };
 		51E244FA11EFCE07008228D1 /* MBToolbarItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 51E244F911EFCE07008228D1 /* MBToolbarItem.m */; };
 		5C9332AF24C1349C0036DECE /* SecurityInterface.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C9332AE24C1349C0036DECE /* SecurityInterface.framework */; };
+		72945D0229B7F204006ACF75 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 72945D0129B7F204006ACF75 /* QuartzCore.framework */; };
 		7CA379421AC381C10079DC37 /* ExtensionManagerWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7CA379401AC381C10079DC37 /* ExtensionManagerWindowController.m */; };
 		7CA379431AC381C10079DC37 /* ExtensionManagerWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7CA379411AC381C10079DC37 /* ExtensionManagerWindowController.xib */; };
 		BC329487116A92E2008635D0 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = BC329486116A92E2008635D0 /* main.m */; };
@@ -64,6 +65,7 @@
 		51E244F811EFCE07008228D1 /* MBToolbarItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MBToolbarItem.h; sourceTree = "<group>"; };
 		51E244F911EFCE07008228D1 /* MBToolbarItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MBToolbarItem.m; sourceTree = "<group>"; };
 		5C9332AE24C1349C0036DECE /* SecurityInterface.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SecurityInterface.framework; path = System/Library/Frameworks/SecurityInterface.framework; sourceTree = SDKROOT; };
+		72945D0129B7F204006ACF75 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		7CA3793F1AC381C10079DC37 /* ExtensionManagerWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ExtensionManagerWindowController.h; path = mac/ExtensionManagerWindowController.h; sourceTree = "<group>"; };
 		7CA379401AC381C10079DC37 /* ExtensionManagerWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ExtensionManagerWindowController.m; path = mac/ExtensionManagerWindowController.m; sourceTree = "<group>"; };
 		7CA379411AC381C10079DC37 /* ExtensionManagerWindowController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = ExtensionManagerWindowController.xib; path = mac/ExtensionManagerWindowController.xib; sourceTree = "<group>"; };
@@ -84,6 +86,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				72945D0229B7F204006ACF75 /* QuartzCore.framework in Frameworks */,
 				5C9332AF24C1349C0036DECE /* SecurityInterface.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -161,6 +164,7 @@
 			children = (
 				1058C7A2FEA54F0111CA2CBB /* Other Frameworks */,
 				1AFFEF761860EE6800DA465E /* Cocoa.framework */,
+				72945D0129B7F204006ACF75 /* QuartzCore.framework */,
 				5C9332AE24C1349C0036DECE /* SecurityInterface.framework */,
 				DD403C5328500F6400D899FC /* WebKit.framework */,
 			);

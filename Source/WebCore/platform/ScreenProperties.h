@@ -54,9 +54,6 @@ struct ScreenData {
 #if PLATFORM(MAC) || PLATFORM(IOS_FAMILY)
     float scaleFactor { 1 };
 #endif
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<ScreenData> decode(Decoder&);
 };
 
 using ScreenDataMap = HashMap<PlatformDisplayID, ScreenData>;
@@ -64,9 +61,6 @@ using ScreenDataMap = HashMap<PlatformDisplayID, ScreenData>;
 struct ScreenProperties {
     PlatformDisplayID primaryDisplayID { 0 };
     ScreenDataMap screenDataMap;
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<ScreenProperties> decode(Decoder&);
 };
 
 } // namespace WebCore

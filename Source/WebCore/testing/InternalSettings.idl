@@ -27,7 +27,6 @@
 enum EditingBehaviorType { "mac", "windows", "unix", "ios" };
 enum FontLoadTimingOverride { "None", "Block", "Swap", "Failure" };
 enum ForcedAccessibilityValue { "system", "on", "off" };
-enum PDFImageCachingPolicy { "Enabled", "BelowMemoryLimit", "Disabled", "ClipBoundsOnly" };
 enum StorageBlockingPolicy { "AllowAll", "BlockThirdParty", "BlockAll" };
 enum SystemLayoutDirection { "LTR", "RTL" };
 enum TrackKind { "Subtitles", "Captions", "TextDescriptions" };
@@ -53,7 +52,6 @@ enum UserInterfaceDirectionPolicy { "Content", "System" };
     undefined setMinimumTimerInterval(unrestricted double intervalInSeconds);
     undefined setEditingBehavior(EditingBehaviorType behavior);
     undefined setStorageBlockingPolicy(StorageBlockingPolicy policy);
-    undefined setPDFImageCachingPolicy(PDFImageCachingPolicy policy);
     undefined setUserInterfaceDirectionPolicy(UserInterfaceDirectionPolicy policy);
     undefined setSystemLayoutDirection(SystemLayoutDirection direction);
     attribute ForcedAccessibilityValue forcedColorsAreInvertedAccessibilityValue;

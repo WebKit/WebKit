@@ -27,22 +27,12 @@
 G_BEGIN_DECLS
 
 #define WEBKIT_TYPE_WEBSITE_POLICIES            (webkit_website_policies_get_type())
+#if !ENABLE(2022_GLIB_API)
 #define WEBKIT_WEBSITE_POLICIES(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), WEBKIT_TYPE_WEBSITE_POLICIES, WebKitWebsitePolicies))
 #define WEBKIT_IS_WEBSITE_POLICIES(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), WEBKIT_TYPE_WEBSITE_POLICIES))
 #define WEBKIT_WEBSITE_POLICIES_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass),  WEBKIT_TYPE_WEBSITE_POLICIES, WebKitWebsitePoliciesClass))
 #define WEBKIT_IS_WEBSITE_POLICIES_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass),  WEBKIT_TYPE_WEBSITE_POLICIES))
 #define WEBKIT_WEBSITE_POLICIES_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj),  WEBKIT_TYPE_WEBSITE_POLICIES, WebKitWebsitePoliciesClass))
-
-typedef struct _WebKitWebsitePolicies        WebKitWebsitePolicies;
-typedef struct _WebKitWebsitePoliciesClass   WebKitWebsitePoliciesClass;
-typedef struct _WebKitWebsitePoliciesPrivate WebKitWebsitePoliciesPrivate;
-
-struct _WebKitWebsitePolicies {
-    GObject parent;
-
-    /*< private >*/
-    WebKitWebsitePoliciesPrivate *priv;
-};
 
 struct _WebKitWebsitePoliciesClass {
     GObjectClass parent_class;
@@ -53,6 +43,9 @@ struct _WebKitWebsitePoliciesClass {
     void (*_webkit_reserved2) (void);
     void (*_webkit_reserved3) (void);
 };
+#endif
+
+WEBKIT_DECLARE_FINAL_TYPE (WebKitWebsitePolicies, webkit_website_policies, WEBKIT, WEBSITE_POLICIES, GObject)
 
 /**
  * WebKitAutoplayPolicy:
@@ -70,9 +63,6 @@ typedef enum {
     WEBKIT_AUTOPLAY_ALLOW_WITHOUT_SOUND,
     WEBKIT_AUTOPLAY_DENY
 } WebKitAutoplayPolicy;
-
-WEBKIT_API GType
-webkit_website_policies_get_type                              (void);
 
 WEBKIT_API WebKitWebsitePolicies *
 webkit_website_policies_new                                   (void);

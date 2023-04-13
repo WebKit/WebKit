@@ -32,7 +32,6 @@
 
 namespace WebCore {
 
-#if PLATFORM(COCOA)
 bool certificatesMatch(SecTrustRef trust1, SecTrustRef trust2)
 {
     if (!trust1 || !trust2)
@@ -41,10 +40,13 @@ bool certificatesMatch(SecTrustRef trust1, SecTrustRef trust2)
 #if HAVE(SEC_TRUST_COPY_CERTIFICATE_CHAIN)
     auto chain1 = adoptCF(SecTrustCopyCertificateChain(trust1));
     auto chain2 = adoptCF(SecTrustCopyCertificateChain(trust2));
-#endif
-
+    CFIndex count1 = CFArrayGetCount(chain1.get());
+    CFIndex count2 = CFArrayGetCount(chain2.get());
+#else
     CFIndex count1 = SecTrustGetCertificateCount(trust1);
     CFIndex count2 = SecTrustGetCertificateCount(trust2);
+#endif
+
     if (count1 != count2)
         return false;
 
@@ -85,11 +87,9 @@ RetainPtr<CFArrayRef> CertificateInfo::certificateChainFromSecTrust(SecTrustRef 
     return certificateChain;
 #endif
 }
-#endif
 
 bool CertificateInfo::containsNonRootSHA1SignedCertificate() const
 {
-#if PLATFORM(COCOA)
     if (m_trust) {
 #if HAVE(SEC_TRUST_COPY_CERTIFICATE_CHAIN)
         auto chain = adoptCF(SecTrustCopyCertificateChain(trust().get()));
@@ -107,14 +107,13 @@ bool CertificateInfo::containsNonRootSHA1SignedCertificate() const
 
         return false;
     }
-#endif
+
     return false;
 }
 
 std::optional<CertificateSummary> CertificateInfo::summary() const
 {
     CertificateSummary summaryInfo;
-#if PLATFORM(COCOA)
     auto chain = certificateChainFromSecTrust(m_trust.get());
     if (!chain || !CFArrayGetCount(chain.get()))
         return std::nullopt;
@@ -165,7 +164,6 @@ std::optional<CertificateSummary> CertificateInfo::summary() const
         }
     }
 #endif // PLATFORM(MAC)
-#endif // PLATFORM(COCOA)
     return summaryInfo;
 }
 

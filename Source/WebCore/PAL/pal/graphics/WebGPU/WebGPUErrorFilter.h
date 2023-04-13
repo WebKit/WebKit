@@ -33,6 +33,7 @@ namespace PAL::WebGPU {
 enum class ErrorFilter : uint8_t {
     OutOfMemory,
     Validation,
+    Internal
 };
 
 } // namespace PAL::WebGPU
@@ -43,7 +44,8 @@ template<> struct EnumTraits<PAL::WebGPU::ErrorFilter> {
     using values = EnumValues<
         PAL::WebGPU::ErrorFilter,
         PAL::WebGPU::ErrorFilter::OutOfMemory,
-        PAL::WebGPU::ErrorFilter::Validation
+        PAL::WebGPU::ErrorFilter::Validation,
+        PAL::WebGPU::ErrorFilter::Internal
     >;
 };
 

@@ -81,6 +81,7 @@ struct CSSParserContext {
     bool colorMixEnabled { false };
     bool constantPropertiesEnabled { false };
     bool counterStyleAtRuleImageSymbolsEnabled { false };
+    bool counterStyleAtRuleEnabled { false };
     bool cssColor4 { false };
     bool relativeColorSyntaxEnabled { false };
     bool springTimingFunctionEnabled { false };
@@ -98,6 +99,7 @@ struct CSSParserContext {
     bool masonryEnabled { false };
     bool cssNestingEnabled { false };
     bool cssPaintingAPIEnabled { false };
+    bool cssTextUnderlinePositionLeftRightEnabled { false };
 
     // Settings, those affecting properties.
     CSSPropertySettings propertySettings;

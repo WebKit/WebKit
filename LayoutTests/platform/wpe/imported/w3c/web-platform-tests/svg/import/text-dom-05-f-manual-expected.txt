@@ -3,10 +3,10 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-    RenderSVGContainer {g} at (16,30) size 691x487
-      RenderSVGText {text} at (10,18) size 415x15 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 415x15
-          chunk 1 text run 1 at (10.00,30.00) startOffset 0 endOffset 65 width 414.00: "Test that SVGTextContentElement methods work on UTF-16 code units"
+    RenderSVGContainer {g} at (16,30) size 686x487
+      RenderSVGText {text} at (10,18) size 412x15 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 412x15
+          chunk 1 text run 1 at (10.00,30.00) startOffset 0 endOffset 65 width 411.07: "Test that SVGTextContentElement methods work on UTF-16 code units"
       RenderSVGText {text} at (10,50) size 130x13 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 130x13
           chunk 1 text run 1 at (10.00,60.00) startOffset 0 endOffset 27 width 129.60: "Methods that rely on layout"

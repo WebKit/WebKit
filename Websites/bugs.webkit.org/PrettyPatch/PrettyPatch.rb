@@ -32,6 +32,7 @@ public
 
         $last_prettify_file_count = fileDiffs.length
         str << fileDiffs.collect{ |diff| diff.to_html }.join
+        str << '<script src="code-review.js?version=48"></script>'
         str << "</body></html>"
     end
 
@@ -616,7 +617,6 @@ div:focus {
 </style>
 <script src="jquery/jquery-3.6.1.min.js"></script> 
 <script src="js/status-bubble.js"></script>
-<script src="code-review.js?version=48"></script>
 </head>
 EOF
 

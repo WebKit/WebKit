@@ -28,7 +28,7 @@
 namespace WebCore {
 
 class DOMCacheStorage;
-class DOMWindow;
+class LocalDOMWindow;
 class ScriptExecutionContext;
 class WorkerGlobalScope;
 
@@ -36,7 +36,7 @@ template<typename> class ExceptionOr;
 
 class WindowOrWorkerGlobalScopeCaches {
 public:
-    static ExceptionOr<DOMCacheStorage*> caches(ScriptExecutionContext&, DOMWindow&);
+    static ExceptionOr<DOMCacheStorage*> caches(ScriptExecutionContext&, LocalDOMWindow&);
     static DOMCacheStorage* caches(ScriptExecutionContext&, WorkerGlobalScope&);
 };
 

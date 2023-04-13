@@ -70,11 +70,9 @@ public:
 
     JS_EXPORT_PRIVATE ~Memory();
 
-#if ENABLE(WEBASSEMBLY_SIGNALING_MEMORY)
     static size_t fastMappedRedzoneBytes() { return BufferMemoryHandle::fastMappedRedzoneBytes(); }
     static size_t fastMappedBytes() { return BufferMemoryHandle::fastMappedBytes(); } // Includes redzone.
-#else
-#endif
+
     static bool addressIsInGrowableOrFastMemory(void*);
 
     void* basePointer() const { return m_handle->memory(); }

@@ -42,11 +42,14 @@
     readonly attribute unsigned long rangeCount;
 
     readonly attribute DOMString type;
+    [EnabledBySetting=SelectionAPIForShadowDOMEnabled] readonly attribute DOMString direction;
 
     Range getRangeAt(unsigned long index);
     undefined addRange(Range range);
     [EnabledBySetting=LiveRangeSelectionEnabled] undefined removeRange(Range range);
     undefined removeAllRanges();
+
+    [EnabledBySetting=SelectionAPIForShadowDOMEnabled] sequence<StaticRange> getComposedRanges(ShadowRoot... shadowRoots);
 
     undefined empty();
 

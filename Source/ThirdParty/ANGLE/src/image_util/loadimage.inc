@@ -111,6 +111,58 @@ inline void Load32FTo16F(const ImageLoadContext &context, size_t width, size_t h
     }
 }
 
+template <typename type,
+          size_t inputComponentCount,
+          size_t outputComponentCount,
+          bool normalized>
+inline void LoadToFloat(const ImageLoadContext &context, size_t width, size_t height, size_t depth,
+                         const uint8_t *input, size_t inputRowPitch, size_t inputDepthPitch,
+                         uint8_t *output, size_t outputRowPitch, size_t outputDepthPitch) {
+    typedef std::numeric_limits<type> NL;
+
+    for (size_t z = 0; z < depth; z++)
+    {
+        for (size_t y = 0; y < height; y++)
+        {
+            const type *source_line = priv::OffsetDataPointer<type>(input, y, z, inputRowPitch, inputDepthPitch);
+            float *dest_line = priv::OffsetDataPointer<float>(output, y, z, outputRowPitch, outputDepthPitch);
+
+            for (size_t x = 0; x < width; x++)
+            {
+                const type *source_pixel = source_line + x * inputComponentCount;
+                float *dest_pixel = dest_line + x * outputComponentCount;
+
+                for (size_t i = 0; i < inputComponentCount; i++)
+                {
+                    float result = 0;
+                    if (normalized)
+                    {
+                        if (NL::is_signed)
+                        {
+                            result = static_cast<float>(source_pixel[i]) / static_cast<float>(NL::max());
+                            result = result >= -1.0f ? result : -1.0f;
+                        }
+                        else
+                        {
+                            result = static_cast<float>(source_pixel[i]) / static_cast<float>(NL::max());
+                        }
+                    }
+                    else
+                    {
+                        result = static_cast<float>(source_pixel[i]);
+                    }
+                    dest_pixel[i] = result;
+                }
+
+                for (size_t j = inputComponentCount; j < outputComponentCount; j++)
+                {
+                    dest_pixel[j] = j == 3 ? 1.0f : 0.0f;
+                }
+            }
+        }
+    }
+}
+
 template <size_t blockWidth, size_t blockHeight, size_t blockDepth, size_t blockSize>
 inline void LoadCompressedToNative(const ImageLoadContext &context, size_t width, size_t height,
                                    size_t depth, const uint8_t *input, size_t inputRowPitch,

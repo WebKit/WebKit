@@ -31,6 +31,7 @@
 #import "APIUIClient.h"
 #import "DrawingAreaProxy.h"
 #import "GPUProcessProxy.h"
+#import "MessageSenderInlines.h"
 #import "PlaybackSessionManagerProxy.h"
 #import "VideoFullscreenManagerMessages.h"
 #import "VideoFullscreenManagerProxyMessages.h"
@@ -39,6 +40,8 @@
 #import <QuartzCore/CoreAnimation.h>
 #import <WebCore/MediaPlayerEnums.h>
 #import <WebCore/TimeRanges.h>
+#import <WebCore/WebAVPlayerLayer.h>
+#import <WebCore/WebAVPlayerLayerView.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/MachSendRight.h>
 #import <wtf/WeakObjCPtr.h>
@@ -78,6 +81,9 @@
     return (CALayerHost *)[self layer];
 }
 
+- (BOOL)clipsToBounds {
+    return NO;
+}
 @end
 
 #if PLATFORM(IOS_FAMILY)
@@ -121,8 +127,6 @@
 @end
 
 #endif
-
-#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, m_page->process().connection())
 
 namespace WebKit {
 using namespace WebCore;
@@ -247,6 +251,12 @@ void VideoFullscreenModelContext::returnVideoContentLayer()
 {
     if (m_manager)
         m_manager->returnVideoContentLayer(m_contextId);
+}
+
+void VideoFullscreenModelContext::returnVideoView()
+{
+    if (m_manager)
+        m_manager->returnVideoView(m_contextId);
 }
 
 void VideoFullscreenModelContext::didSetupFullscreen()
@@ -548,14 +558,94 @@ void VideoFullscreenManagerProxy::hasVideoInPictureInPictureDidChange(bool value
     m_pipChangeObservers.forEach([value] (auto& observer) { observer(value); });
 }
 
+PlatformLayerContainer VideoFullscreenManagerProxy::createLayerWithID(PlaybackSessionContextIdentifier contextId, WebKit::LayerHostingContextID videoLayerID, const WebCore::FloatSize& initialSize, const WebCore::FloatSize& nativeSize, float hostingDeviceScaleFactor)
+{
+    auto& [model, interface] = ensureModelAndInterface(contextId);
+    addClientForContext(contextId);
+
+    RetainPtr<WKLayerHostView> view = createLayerHostViewWithID(contextId, videoLayerID, initialSize, hostingDeviceScaleFactor);
+
+    if (!model->playerLayer()) {
+        auto playerLayer = adoptNS([[WebAVPlayerLayer alloc] init]);
+        
+        [playerLayer setVideoDimensions:nativeSize];
+        [playerLayer setFullscreenInterface:interface.get()];
+        
+        [playerLayer setVideoSublayer:[view layer]];
+        [playerLayer addSublayer:[view layer]];
+        model->setPlayerLayer(playerLayer.get());
+        [playerLayer setFrame:CGRectMake(0, 0, initialSize.width(), initialSize.height())];
+        [playerLayer setNeedsLayout];
+        [playerLayer layoutIfNeeded];
+    }
+
+    return model->playerLayer();
+}
+
+RetainPtr<WKLayerHostView> VideoFullscreenManagerProxy::createLayerHostViewWithID(PlaybackSessionContextIdentifier contextId, WebKit::LayerHostingContextID videoLayerID, const WebCore::FloatSize& initialSize, float hostingDeviceScaleFactor)
+{
+    auto& [model, interface] = ensureModelAndInterface(contextId);
+
+    RetainPtr<WKLayerHostView> view = static_cast<WKLayerHostView*>(model->layerHostView());
+    if (!view) {
+        view = adoptNS([[WKLayerHostView alloc] init]);
+#if PLATFORM(MAC)
+        [view setWantsLayer:YES];
+#endif
+        model->setLayerHostView(view);
+
+        [view layer].masksToBounds = NO;
+        [view layer].name = @"WKLayerHostView layer";
+    }
+    [view layer].frame = CGRectMake(0, 0, initialSize.width(), initialSize.height());
+    [view setContextID:videoLayerID];
+
+    interface->setupCaptionsLayer([view layer], initialSize);
+
+    return view;
+}
+
+#if PLATFORM(IOS_FAMILY)
+RetainPtr<WebAVPlayerLayerView> VideoFullscreenManagerProxy::createViewWithID(PlaybackSessionContextIdentifier contextId, WebKit::LayerHostingContextID videoLayerID, const WebCore::FloatSize& initialSize, const WebCore::FloatSize& nativeSize, float hostingDeviceScaleFactor)
+{
+    auto& [model, interface] = ensureModelAndInterface(contextId);
+    addClientForContext(contextId);
+
+    RetainPtr<WKLayerHostView> view = createLayerHostViewWithID(contextId, videoLayerID, initialSize, hostingDeviceScaleFactor);
+
+    if (!model->playerView()) {
+        auto playerView = adoptNS([allocWebAVPlayerLayerViewInstance() init]);
+
+        auto *playerLayer = (WebAVPlayerLayer *)[playerView layer];
+
+        [playerLayer setVideoDimensions:nativeSize];
+        [playerLayer setFullscreenInterface:interface.get()];
+
+        [playerLayer setVideoSublayer:[view layer]];
+        [playerLayer addSublayer:[view layer]];
+        model->setPlayerLayer(playerLayer);
+        model->setPlayerView(WTFMove(playerView));
+
+        [playerView setFrame:CGRectMake(0, 0, initialSize.width(), initialSize.height())];
+        [playerView setNeedsLayout];
+        [playerView layoutIfNeeded];
+    }
+
+    return model->playerView();
+}
+#endif
+
+void VideoFullscreenManagerProxy::willRemoveLayerForID(PlaybackSessionContextIdentifier contextId)
+{
+    removeClientForContext(contextId);
+}
+
 #pragma mark Messages from VideoFullscreenManager
 
 void VideoFullscreenManagerProxy::setupFullscreenWithID(PlaybackSessionContextIdentifier contextId, WebKit::LayerHostingContextID videoLayerID, const WebCore::FloatRect& initialRect, const WebCore::FloatSize& videoDimensions, float hostingDeviceScaleFactor, HTMLMediaElementEnums::VideoFullscreenMode videoFullscreenMode, bool allowsPictureInPicture, bool standby, bool blocksReturnToFullscreenFromPictureInPicture)
 {
-    MESSAGE_CHECK(videoLayerID);
-
     auto& [model, interface] = ensureModelAndInterface(contextId);
-    ensureClientForContext(contextId);
+    addClientForContext(contextId);
 
     if (m_mockVideoPresentationModeEnabled) {
         if (!videoDimensions.isEmpty())
@@ -568,20 +658,7 @@ void VideoFullscreenManagerProxy::setupFullscreenWithID(PlaybackSessionContextId
         return;
     }
 
-    RetainPtr<WKLayerHostView> view = static_cast<WKLayerHostView*>(model->layerHostView());
-    if (!view) {
-        view = adoptNS([[WKLayerHostView alloc] init]);
-#if PLATFORM(MAC)
-        [view setWantsLayer:YES];
-#endif
-        model->setLayerHostView(view);
-    }
-    [view setContextID:videoLayerID];
-    if (hostingDeviceScaleFactor != 1) {
-        // Invert the scale transform added in the WebProcess to fix <rdar://problem/18316542>.
-        float inverseScale = 1 / hostingDeviceScaleFactor;
-        [[view layer] setSublayerTransform:CATransform3DMakeScale(inverseScale, inverseScale, 1)];
-    }
+    RetainPtr<WKLayerHostView> view = createLayerHostViewWithID(contextId, videoLayerID, initialRect.size(), hostingDeviceScaleFactor);
 
 #if PLATFORM(IOS_FAMILY)
     auto* rootNode = downcast<RemoteLayerTreeDrawingAreaProxy>(*m_page->drawingArea()).remoteLayerTreeHost().rootNode();
@@ -616,9 +693,7 @@ void VideoFullscreenManagerProxy::setHasVideo(PlaybackSessionContextIdentifier c
 
 void VideoFullscreenManagerProxy::setVideoDimensions(PlaybackSessionContextIdentifier contextId, const FloatSize& videoDimensions)
 {
-    auto* interface = findInterface(contextId);
-    if (!interface)
-        return;
+    auto& [model, interface] = ensureModelAndInterface(contextId);
 
     if (m_mockVideoPresentationModeEnabled) {
         if (videoDimensions.isEmpty())
@@ -627,6 +702,9 @@ void VideoFullscreenManagerProxy::setVideoDimensions(PlaybackSessionContextIdent
         m_mockPictureInPictureWindowSize.setHeight(DefaultMockPictureInPictureWindowWidth / videoDimensions.aspectRatio());
         return;
     }
+
+    if (auto* layer = model->playerLayer())
+        [layer setVideoDimensions:videoDimensions];
 
     interface->videoDimensionsChanged(videoDimensions);
 }
@@ -781,6 +859,26 @@ void VideoFullscreenManagerProxy::preparedToExitFullscreen(PlaybackSessionContex
     ensureInterface(contextId).preparedToExitFullscreen();
 }
 
+void VideoFullscreenManagerProxy::textTrackRepresentationUpdate(PlaybackSessionContextIdentifier contextId, const ShareableBitmapHandle& textTrack)
+{
+    auto bitmap = ShareableBitmap::create(textTrack);
+    if (!bitmap)
+        return;
+    
+    auto platformImage = bitmap->createPlatformImage();
+    ensureInterface(contextId).setTrackRepresentationImage(platformImage);
+}
+
+void VideoFullscreenManagerProxy::textTrackRepresentationSetContentsScale(PlaybackSessionContextIdentifier contextId, float scale)
+{
+    ensureInterface(contextId).setTrackRepresentationContentsScale(scale);
+}
+
+void VideoFullscreenManagerProxy::textTrackRepresentationSetHidden(PlaybackSessionContextIdentifier contextId, bool hidden)
+{
+    ensureInterface(contextId).setTrackRepresentationHidden(hidden);
+}
+
 #pragma mark Messages to VideoFullscreenManager
 
 void VideoFullscreenManagerProxy::callCloseCompletionHandlers()
@@ -820,6 +918,23 @@ void VideoFullscreenManagerProxy::requestVideoContentLayer(PlaybackSessionContex
 void VideoFullscreenManagerProxy::returnVideoContentLayer(PlaybackSessionContextIdentifier contextId)
 {
     m_page->send(Messages::VideoFullscreenManager::ReturnVideoContentLayer(contextId));
+}
+
+void VideoFullscreenManagerProxy::returnVideoView(PlaybackSessionContextIdentifier contextId)
+{
+#if PLATFORM(IOS_FAMILY)
+    auto& model = ensureModel(contextId);
+    auto *playerView = model.playerView();
+    auto *videoView = model.layerHostView();
+    if (playerView && videoView) {
+        auto *playerLayer = (WebAVPlayerLayer *)[model.playerView() layer];
+        [playerLayer addSublayer:[videoView layer]];
+        [playerView setNeedsLayout];
+        [playerView layoutIfNeeded];
+    }
+#else
+    UNUSED_PARAM(contextId);
+#endif
 }
 
 void VideoFullscreenManagerProxy::didSetupFullscreen(PlaybackSessionContextIdentifier contextId)
@@ -874,9 +989,19 @@ void VideoFullscreenManagerProxy::didCleanupFullscreen(PlaybackSessionContextIde
 {
     auto& [model, interface] = ensureModelAndInterface(contextId);
 
-    [CATransaction flush];
     [model->layerHostView() removeFromSuperview];
-    model->setLayerHostView(nullptr);
+    interface->removeCaptionsLayer();
+    if (auto playerLayer = model->playerLayer()) {
+        // Return the video layer to the player layer
+        auto videoView = model->layerHostView();
+        [playerLayer addSublayer:[videoView layer]];
+        [playerLayer layoutSublayers];
+    } else {
+        [CATransaction flush];
+        [model->layerHostView() removeFromSuperview];
+        model->setLayerHostView(nullptr);
+    }
+
     m_page->send(Messages::VideoFullscreenManager::DidCleanupFullscreen(contextId));
 
     interface->setMode(HTMLMediaElementEnums::VideoFullscreenModeNone, false);
@@ -885,6 +1010,8 @@ void VideoFullscreenManagerProxy::didCleanupFullscreen(PlaybackSessionContextIde
 
 void VideoFullscreenManagerProxy::setVideoLayerFrame(PlaybackSessionContextIdentifier contextId, WebCore::FloatRect frame)
 {
+    auto& [model, interface] = ensureModelAndInterface(contextId);
+    interface->setCaptionsFrame(CGRectMake(0, 0, frame.width(), frame.height()));
 #if PLATFORM(IOS_FAMILY)
     auto fenceSendRight = MachSendRight::adopt([UIWindow _synchronizeDrawingAcrossProcesses]);
 #else
@@ -924,7 +1051,5 @@ AVPlayerViewController *VideoFullscreenManagerProxy::playerViewController(Playba
 #endif // PLATFORM(IOS_FAMILY)
 
 } // namespace WebKit
-
-#undef MESSAGE_CHECK
 
 #endif // ENABLE(VIDEO_PRESENTATION_MODE)

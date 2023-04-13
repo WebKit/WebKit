@@ -37,12 +37,16 @@ namespace WTF {
 enum class EnableWeakPtrThreadingAssertions : bool { No, Yes };
 template<typename, typename> class WeakPtrFactory;
 
-template<typename, typename, EnableWeakPtrThreadingAssertions> class WeakHashSet;
+template<typename, typename, typename = DefaultWeakPtrImpl> class WeakHashMap;
+template<typename, typename = DefaultWeakPtrImpl, EnableWeakPtrThreadingAssertions = EnableWeakPtrThreadingAssertions::Yes> class WeakHashSet;
+template <typename, typename = DefaultWeakPtrImpl, EnableWeakPtrThreadingAssertions = EnableWeakPtrThreadingAssertions::Yes> class WeakListHashSet;
+
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(WeakPtrImplBase);
 
 template<typename Derived>
 class WeakPtrImplBase : public ThreadSafeRefCounted<Derived> {
     WTF_MAKE_NONCOPYABLE(WeakPtrImplBase);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(WeakPtrImplBase);
 public:
     ~WeakPtrImplBase() = default;
 
@@ -334,6 +338,18 @@ inline bool is(const WeakPtr<ArgType, WeakPtrImpl>& source)
     return is<ExpectedType>(source.get());
 }
 
+template<typename Target, typename Source, typename WeakPtrImpl>
+inline Target* downcast(WeakPtr<Source, WeakPtrImpl>& source)
+{
+    return downcase<Target>(source.get());
+}
+
+template<typename Target, typename Source, typename WeakPtrImpl>
+inline Target* downcast(const WeakPtr<Source, WeakPtrImpl>& source)
+{
+    return downcast<Target>(source.get());
+}
+
 template<typename T, typename U, typename WeakPtrImpl> inline bool operator==(const WeakPtr<T, WeakPtrImpl>& a, const WeakPtr<U, WeakPtrImpl>& b)
 {
     return a.get() == b.get();
@@ -380,6 +396,9 @@ WeakPtr(const RefPtr<T>& value, EnableWeakPtrThreadingAssertions = EnableWeakPtr
 
 using WTF::CanMakeWeakPtr;
 using WTF::EnableWeakPtrThreadingAssertions;
+using WTF::WeakHashMap;
+using WTF::WeakHashSet;
+using WTF::WeakListHashSet;
 using WTF::WeakPtr;
 using WTF::WeakPtrFactory;
 using WTF::WeakPtrFactoryInitialization;

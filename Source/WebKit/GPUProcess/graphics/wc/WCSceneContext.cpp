@@ -35,7 +35,7 @@ namespace WebKit {
 
 WCSceneContext::WCSceneContext(uint64_t nativeWindow)
 {
-    m_glContext = WebCore::GLContext::createContextForWindow(reinterpret_cast<GLNativeWindowType>(nativeWindow));
+    m_glContext = WebCore::GLContext::create(reinterpret_cast<GLNativeWindowType>(nativeWindow), WebCore::PlatformDisplay::sharedDisplay());
 }
 
 WCSceneContext::~WCSceneContext() = default;

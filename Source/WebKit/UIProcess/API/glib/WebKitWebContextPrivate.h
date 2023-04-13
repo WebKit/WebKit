@@ -31,10 +31,6 @@
 #include "WebProcessPool.h"
 #include <WebCore/ResourceRequest.h>
 
-#if ENABLE(2022_GLIB_API)
-#include "WebKitNetworkSession.h"
-#endif
-
 WebKit::WebProcessPool& webkitWebContextGetProcessPool(WebKitWebContext*);
 #if !ENABLE(2022_GLIB_API)
 void webkitWebContextDownloadStarted(WebKitWebContext*, WebKitDownload*);
@@ -42,11 +38,8 @@ void webkitWebContextDownloadStarted(WebKitWebContext*, WebKitDownload*);
 void webkitWebContextCreatePageForWebView(WebKitWebContext*, WebKitWebView*, WebKitUserContentManager*, WebKitWebView*, WebKitWebsitePolicies*);
 void webkitWebContextWebViewDestroyed(WebKitWebContext*, WebKitWebView*);
 WebKitWebView* webkitWebContextGetWebViewForPage(WebKitWebContext*, WebKit::WebPageProxy*);
-GVariant* webkitWebContextInitializeWebExtensions(WebKitWebContext*);
+GVariant* webkitWebContextInitializeWebProcessExtensions(WebKitWebContext*);
 void webkitWebContextInitializeNotificationPermissions(WebKitWebContext*);
 #if ENABLE(REMOTE_INSPECTOR)
 void webkitWebContextWillCloseAutomationSession(WebKitWebContext*);
-#if ENABLE(2022_GLIB_API)
-WebKitNetworkSession* webkitWebContextGetNetworkSessionForAutomation(WebKitWebContext*);
-#endif
 #endif

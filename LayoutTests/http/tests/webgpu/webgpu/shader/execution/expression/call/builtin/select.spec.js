@@ -1,6 +1,16 @@
 /**
  * AUTO-GENERATED - DO NOT EDIT. Source: https://github.com/gpuweb/cts
- **/ export const description = `WGSL execution test. Section: Logical built-in functions Function: select`;
+ **/ export const description = `
+Execution tests for the 'select' builtin function
+
+T is scalar, abstract numeric type, or vector
+@const fn select(f: T, t: T, cond: bool) -> T
+Returns t when cond is true, and f otherwise.
+
+T is scalar or abstract numeric type
+@const fn select(f: vecN<T>, t: vecN<T>, cond: vecN<bool>) -> vecN<T>
+Component-wise selection. Result component i is evaluated as select(f[i],t[i],cond[i]).
+`;
 import { makeTestGroup } from '../../../../../../common/framework/test_group.js';
 import { GPUTest } from '../../../../../gpu_test.js';
 import {
@@ -19,7 +29,7 @@ import {
   vec3,
   vec4,
 } from '../../../../../util/conversion.js';
-import { run } from '../../expression.js';
+import { run, allInputSources } from '../../expression.js';
 
 import { builtin } from './builtin.js';
 
@@ -34,38 +44,26 @@ const dataType = {
     type: TypeBool,
     constructor: makeBool,
   },
-
   f: {
     type: TypeF32,
     constructor: f32,
   },
-
   i: {
     type: TypeI32,
     constructor: i32,
   },
-
   u: {
     type: TypeU32,
     constructor: u32,
   },
 };
 
-g.test('bool')
-  .uniqueId('50b1f627c11098a1')
-  .specURL('https://www.w3.org/TR/2021/WD-WGSL-20210929/#logical-builtin-functions')
-  .desc(
-    `
-scalar select:
-T is a scalar or a vector select(f:T,t:T,cond: bool): T Returns t when cond is true, and f otherwise. (OpSelect)
-
-Please read the following guidelines before contributing:
-https://github.com/gpuweb/cts/blob/main/docs/plan_autogen.md
-`
-  )
+g.test('scalar')
+  .specURL('https://www.w3.org/TR/WGSL/#logical-builtin-functions')
+  .desc(`scalar tests`)
   .params(u =>
     u
-      .combine('storageClass', ['uniform', 'storage_r', 'storage_rw'])
+      .combine('inputSource', allInputSources)
       .combine('component', ['b', 'f', 'i', 'u'])
       .combine('overload', ['scalar', 'vec2', 'vec3', 'vec4'])
   )
@@ -96,7 +94,6 @@ https://github.com/gpuweb/cts/blob/main/docs/plan_autogen.md
           { input: [c[0], c[1], True], expected: c[1] },
         ],
       },
-
       vec2: {
         type: TypeVec(2, componentType),
         cases: [
@@ -104,7 +101,6 @@ https://github.com/gpuweb/cts/blob/main/docs/plan_autogen.md
           { input: [v2a, v2b, True], expected: v2b },
         ],
       },
-
       vec3: {
         type: TypeVec(3, componentType),
         cases: [
@@ -112,7 +108,6 @@ https://github.com/gpuweb/cts/blob/main/docs/plan_autogen.md
           { input: [v3a, v3b, True], expected: v3b },
         ],
       },
-
       vec4: {
         type: TypeVec(4, componentType),
         cases: [
@@ -121,10 +116,9 @@ https://github.com/gpuweb/cts/blob/main/docs/plan_autogen.md
         ],
       },
     };
-
     const overload = overloads[t.params.overload];
 
-    run(
+    await run(
       t,
       builtin('select'),
       [overload.type, overload.type, TypeBool],
@@ -135,20 +129,11 @@ https://github.com/gpuweb/cts/blob/main/docs/plan_autogen.md
   });
 
 g.test('vector')
-  .uniqueId('8b7bb7f58ee1e479')
-  .specURL('https://www.w3.org/TR/2021/WD-WGSL-20210929/#logical-builtin-functions')
-  .desc(
-    `
-vector select:
-T is a scalar select(f: vecN<T>,t: vecN<T>,cond: vecN<bool>) Component-wise selection. Result component i is evaluated as select(f[i],t[i],cond[i]). (OpSelect)
-
-Please read the following guidelines before contributing:
-https://github.com/gpuweb/cts/blob/main/docs/plan_autogen.md
-`
-  )
+  .specURL('https://www.w3.org/TR/WGSL/#logical-builtin-functions')
+  .desc(`vector tests`)
   .params(u =>
     u
-      .combine('storageClass', ['uniform', 'storage_r', 'storage_rw'])
+      .combine('inputSource', allInputSources)
       .combine('component', ['b', 'f', 'i', 'u'])
       .combine('overload', ['vec2', 'vec3', 'vec4'])
   )
@@ -181,7 +166,6 @@ https://github.com/gpuweb/cts/blob/main/docs/plan_autogen.md
             { input: [a, b, vec2(T, T)], expected: vec2(b.x, b.y) },
           ],
         };
-
         break;
       }
       case 'vec3': {
@@ -201,7 +185,6 @@ https://github.com/gpuweb/cts/blob/main/docs/plan_autogen.md
             { input: [a, b, vec3(T, T, T)], expected: vec3(b.x, b.y, b.z) },
           ],
         };
-
         break;
       }
       case 'vec4': {
@@ -229,12 +212,11 @@ https://github.com/gpuweb/cts/blob/main/docs/plan_autogen.md
             { input: [a, b, vec4(T, T, T, T)], expected: vec4(b.x, b.y, b.z, b.w) },
           ],
         };
-
         break;
       }
     }
 
-    run(
+    await run(
       t,
       builtin('select'),
       [tests.dataType, tests.dataType, tests.boolType],

@@ -2,11 +2,18 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-esid: sec-Intl.DateTimeFormat.prototype.resolvedOptions
+esid: sec-intl-datetimeformat-constructor
 description: >
-  Tests that Intl.DateTimeFormat.prototype.resolvedOptions calls
+  Tests that the Intl.DateTimeFormat constructor calls
   OrdinaryHasInstance instead of the instanceof operator which includes a
   Symbol.hasInstance lookup and call among other things.
+info: >
+  ChainDateTimeFormat ( dateTimeFormat, newTarget, this )
+  1.  If newTarget is undefined and ? OrdinaryHasInstance(%DateTimeFormat%, this) is true, then
+      a.  Perform ? DefinePropertyOrThrow(this, %Intl%.[[FallbackSymbol]], PropertyDescriptor{
+          [[Value]]: dateTimeFormat, [[Writable]]: false, [[Enumerable]]: false,
+          [[Configurable]]: false }).
+      b.  Return this.
 ---*/
 
 Object.defineProperty(Intl.DateTimeFormat, Symbol.hasInstance, {

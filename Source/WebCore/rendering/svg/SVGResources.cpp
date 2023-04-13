@@ -265,23 +265,16 @@ bool SVGResources::buildCachedResources(const RenderElement& renderer, const Ren
     }
 
     if (markerTags().contains(tagName) && svgStyle.hasMarkers()) {
-        AtomString markerStartId(svgStyle.markerStartResource());
-        if (setMarkerStart(getRenderSVGResourceById<RenderSVGResourceMarker>(document, markerStartId)))
-            foundResources = true;
-        else
-            registerPendingResource(extensions, markerStartId, element);
-
-        AtomString markerMidId(svgStyle.markerMidResource());
-        if (setMarkerMid(getRenderSVGResourceById<RenderSVGResourceMarker>(document, markerMidId)))
-            foundResources = true;
-        else
-            registerPendingResource(extensions, markerMidId, element);
-
-        AtomString markerEndId(svgStyle.markerEndResource());
-        if (setMarkerEnd(getRenderSVGResourceById<RenderSVGResourceMarker>(document, markerEndId)))
-            foundResources = true;
-        else
-            registerPendingResource(extensions, markerEndId, element);
+        auto buildCachedMarkerResource = [&](const String& markerResource, bool (SVGResources::*setMarker)(RenderSVGResourceMarker*)) {
+            auto markerId = SVGURIReference::fragmentIdentifierFromIRIString(markerResource, document);
+            if ((this->*setMarker)(getRenderSVGResourceById<RenderSVGResourceMarker>(document, markerId)))
+                foundResources = true;
+            else
+                registerPendingResource(extensions, markerId, element);
+        };
+        buildCachedMarkerResource(svgStyle.markerStartResource(), &SVGResources::setMarkerStart);
+        buildCachedMarkerResource(svgStyle.markerMidResource(), &SVGResources::setMarkerMid);
+        buildCachedMarkerResource(svgStyle.markerEndResource(), &SVGResources::setMarkerEnd);
     }
 
     if (fillAndStrokeTags().contains(tagName)) {

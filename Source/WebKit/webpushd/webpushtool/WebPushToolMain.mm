@@ -29,6 +29,7 @@
 #import <Foundation/Foundation.h>
 #import <optional>
 #import <wtf/MainThread.h>
+#import <wtf/WTFProcess.h>
 
 using WebKit::WebPushD::PushMessageForTesting;
 
@@ -56,7 +57,7 @@ static void printUsageAndTerminate(NSString *message)
     fprintf(stderr, "    Inject a test push message to the target app, push partition, and registration URL\n");
     fprintf(stderr, "\n");
 
-    exit(-1);
+    exitProcess(-1);
 }
 
 static std::unique_ptr<PushMessageForTesting> pushMessageFromArguments(NSEnumerator<NSString *> *enumerator)

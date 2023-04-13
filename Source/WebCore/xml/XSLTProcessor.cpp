@@ -29,9 +29,9 @@
 #include "CachedResourceLoader.h"
 #include "ContentSecurityPolicy.h"
 #include "DocumentFragment.h"
-#include "Frame.h"
 #include "FrameLoader.h"
-#include "FrameView.h"
+#include "LocalFrame.h"
+#include "LocalFrameView.h"
 #include "SecurityOrigin.h"
 #include "SecurityOriginPolicy.h"
 #include "Text.h"
@@ -64,7 +64,7 @@ XSLTProcessor::~XSLTProcessor()
 }
 
 Ref<Document> XSLTProcessor::createDocumentFromSource(const String& sourceString,
-    const String& sourceEncoding, const String& sourceMIMEType, Node* sourceNode, Frame* frame)
+    const String& sourceEncoding, const String& sourceMIMEType, Node* sourceNode, LocalFrame* frame)
 {
     Ref<Document> ownerDocument(sourceNode->document());
     bool sourceIsDocument = (sourceNode == &ownerDocument.get());
@@ -80,7 +80,7 @@ Ref<Document> XSLTProcessor::createDocumentFromSource(const String& sourceString
     // Before parsing, we need to save & detach the old document and get the new document
     // in place. We have to do this only if we're rendering the result document.
     if (frame) {
-        if (FrameView* view = frame->view())
+        if (auto* view = frame->view())
             view->clear();
 
         if (Document* oldDocument = frame->document()) {

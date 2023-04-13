@@ -36,6 +36,8 @@
 #import "MediaSessionManagerCocoa.h"
 #import "MediaStreamPrivate.h"
 #import "PixelBufferConformerCV.h"
+#import "VideoFrame.h"
+#import "VideoFrameMetadata.h"
 #import "VideoLayerManagerObjC.h"
 #import "VideoTrackPrivateMediaStream.h"
 #import <CoreGraphics/CGAffineTransform.h>
@@ -135,6 +137,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::setNativeImageCreator(NativeImageCrea
 
 MediaPlayerPrivateMediaStreamAVFObjC::MediaPlayerPrivateMediaStreamAVFObjC(MediaPlayer* player)
     : m_player(player)
+    , m_videoRotation { VideoFrameRotation::None }
     , m_logger(player->mediaPlayerLogger())
     , m_logIdentifier(player->mediaPlayerLogIdentifier())
     , m_videoLayerManager(makeUnique<VideoLayerManagerObjC>(m_logger, m_logIdentifier))
@@ -976,14 +979,14 @@ void MediaPlayerPrivateMediaStreamAVFObjC::updateTracks()
     updateTracksOfKind(m_videoTrackMap, TrackKind::Video, currentTracks, &VideoTrackPrivateMediaStream::create, WTFMove(setVideoTrackState));
 }
 
-std::unique_ptr<PlatformTimeRanges> MediaPlayerPrivateMediaStreamAVFObjC::seekable() const
+const PlatformTimeRanges& MediaPlayerPrivateMediaStreamAVFObjC::seekable() const
 {
-    return makeUnique<PlatformTimeRanges>();
+    return PlatformTimeRanges::emptyRanges();
 }
 
-std::unique_ptr<PlatformTimeRanges> MediaPlayerPrivateMediaStreamAVFObjC::buffered() const
+const PlatformTimeRanges& MediaPlayerPrivateMediaStreamAVFObjC::buffered() const
 {
-    return makeUnique<PlatformTimeRanges>();
+    return PlatformTimeRanges::emptyRanges();
 }
 
 void MediaPlayerPrivateMediaStreamAVFObjC::paint(GraphicsContext& context, const FloatRect& rect)
@@ -1153,6 +1156,20 @@ std::optional<VideoFrameMetadata> MediaPlayerPrivateMediaStreamAVFObjC::videoFra
     metadata.rtpTimestamp = m_sampleMetadata.rtpTimestamp;
 
     return metadata;
+}
+
+LayerHostingContextID MediaPlayerPrivateMediaStreamAVFObjC::hostingContextID() const
+{
+    return m_sampleBufferDisplayLayer ? m_sampleBufferDisplayLayer->hostingContextID() : 0;
+}
+
+void MediaPlayerPrivateMediaStreamAVFObjC::setVideoInlineSizeFenced(const FloatSize& size, const WTF::MachSendRight& fence)
+{
+    if (!m_sampleBufferDisplayLayer)
+        return;
+    CGRect bounds = m_sampleBufferDisplayLayer->rootLayer().bounds;
+    bounds.size = size;
+    m_sampleBufferDisplayLayer->updateBoundsAndPosition(bounds, m_videoRotation, fence);
 }
 
 }

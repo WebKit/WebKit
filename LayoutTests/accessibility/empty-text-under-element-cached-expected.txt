@@ -1,0 +1,46 @@
+This test ensures that a pending style recalculation does not cause an empty string value to be cached.
+
+
+AXRole: AXScrollArea
+
+AXRole: AXWebArea
+
+AXRole: AXHeading
+
+AXRole: AXStaticText
+AXValue: content
+
+AXRole: AXHeading
+
+AXRole: AXStaticText
+AXValue: Foo
+
+Creating a list and appending it to the iframe document body.
+
+AXRole: AXScrollArea
+
+AXRole: AXWebArea
+
+AXRole: AXHeading
+
+AXRole: AXStaticText
+AXValue: content
+
+AXRole: AXHeading
+
+AXRole: AXStaticText
+AXValue: Foo
+
+AXRole: AXList
+
+AXRole: AXGroup
+
+AXRole: AXListMarker
+
+AXRole: AXStaticText
+AXValue: List item one
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

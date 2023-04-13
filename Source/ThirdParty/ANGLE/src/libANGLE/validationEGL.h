@@ -61,7 +61,7 @@ bool ValidateConfig(const ValidationContext *val, const Display *display, const 
 bool ValidateContext(const ValidationContext *val, const Display *display, gl::ContextID contextID);
 bool ValidateImage(const ValidationContext *val, const Display *display, ImageID imageID);
 bool ValidateDevice(const ValidationContext *val, const Device *device);
-bool ValidateSync(const ValidationContext *val, const Display *display, const Sync *sync);
+bool ValidateSync(const ValidationContext *val, const Display *display, SyncID sync);
 
 // Return the requested object only if it is valid (otherwise nullptr)
 const Thread *GetThreadIfValid(const Thread *thread);
@@ -71,7 +71,7 @@ const Image *GetImageIfValid(const Display *display, ImageID imageID);
 const Stream *GetStreamIfValid(const Display *display, const Stream *stream);
 const gl::Context *GetContextIfValid(const Display *display, gl::ContextID contextID);
 const Device *GetDeviceIfValid(const Device *device);
-const Sync *GetSyncIfValid(const Display *display, const Sync *sync);
+const Sync *GetSyncIfValid(const Display *display, SyncID sync);
 const LabeledObject *GetLabeledObjectIfValid(Thread *thread,
                                              const Display *display,
                                              ObjectType objectType,

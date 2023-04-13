@@ -30,7 +30,7 @@
 #include "BarProp.h"
 
 #include "Chrome.h"
-#include "Frame.h"
+#include "LocalFrame.h"
 #include "Page.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -38,8 +38,8 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(BarProp);
 
-BarProp::BarProp(DOMWindow& window, Type type)
-    : DOMWindowProperty(&window)
+BarProp::BarProp(LocalDOMWindow& window, Type type)
+    : LocalDOMWindowProperty(&window)
     , m_type(type)
 {
 }

@@ -43,7 +43,7 @@ public:
 
     WEBCORE_TESTSUPPORT_EXPORT void startMonitoringGamepads(GamepadProviderClient&) final;
     WEBCORE_TESTSUPPORT_EXPORT void stopMonitoringGamepads(GamepadProviderClient&) final;
-    const Vector<PlatformGamepad*>& platformGamepads() final { return m_connectedGamepadVector; }
+    const Vector<WeakPtr<PlatformGamepad>>& platformGamepads() final { return m_connectedGamepadVector; }
     bool isMockGamepadProvider() const final { return true; }
     void playEffect(unsigned, const String&, GamepadHapticEffectType, const GamepadEffectParameters&, CompletionHandler<void(bool)>&&) final;
     void stopEffects(unsigned, const String&, CompletionHandler<void()>&&) final;
@@ -60,10 +60,8 @@ private:
 
     void gamepadInputActivity();
 
-    Vector<PlatformGamepad*> m_connectedGamepadVector;
-    // FIXME: Use HashMap<WeakPtr<GamepadProviderClient>, HashSet<WeakPtr<PlatformGamepad>>>
-    // after deriving GamepadProviderClient and PlatformGamepad from CanMakeWeakPtr
-    HashMap<GamepadProviderClient*, HashSet<PlatformGamepad*>>  m_invisibleGamepadsForClient;
+    Vector<WeakPtr<PlatformGamepad>> m_connectedGamepadVector;
+    WeakHashMap<GamepadProviderClient, WeakHashSet<PlatformGamepad>>  m_invisibleGamepadsForClient;
     Vector<std::unique_ptr<MockGamepad>> m_mockGamepadVector;
 
     bool m_shouldScheduleActivityCallback { true };

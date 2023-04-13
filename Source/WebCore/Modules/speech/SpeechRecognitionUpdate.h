@@ -29,11 +29,12 @@
 #include "SpeechRecognitionError.h"
 #include "SpeechRecognitionResultData.h"
 #include <variant>
+#include <wtf/ArgumentCoder.h>
 #include <wtf/EnumTraits.h>
 
 namespace WebCore {
 
-enum class SpeechRecognitionUpdateType {
+enum class SpeechRecognitionUpdateType : uint8_t {
     Start,
     AudioStart,
     SoundStart,
@@ -60,10 +61,8 @@ public:
     WEBCORE_EXPORT SpeechRecognitionError error() const;
     WEBCORE_EXPORT Vector<SpeechRecognitionResultData> result() const;
 
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<SpeechRecognitionUpdate> decode(Decoder&);
-
 private:
+    friend struct IPC::ArgumentCoder<SpeechRecognitionUpdate, void>;
     using Content = std::variant<std::monostate, SpeechRecognitionError, Vector<SpeechRecognitionResultData>>;
     WEBCORE_EXPORT SpeechRecognitionUpdate(SpeechRecognitionConnectionClientIdentifier, SpeechRecognitionUpdateType, Content);
 
@@ -72,53 +71,10 @@ private:
     Content m_content;
 };
 
-template<class Encoder>
-void SpeechRecognitionUpdate::encode(Encoder& encoder) const
-{
-    encoder << m_clientIdentifier << m_type << m_content;
-}
-
-template<class Decoder>
-std::optional<SpeechRecognitionUpdate> SpeechRecognitionUpdate::decode(Decoder& decoder)
-{
-    std::optional<SpeechRecognitionConnectionClientIdentifier> clientIdentifier;
-    decoder >> clientIdentifier;
-    if (!clientIdentifier)
-        return std::nullopt;
-
-    std::optional<SpeechRecognitionUpdateType> type;
-    decoder >> type;
-    if (!type)
-        return std::nullopt;
-
-    std::optional<Content> content;
-    decoder >> content;
-    if (!content)
-        return std::nullopt;
-
-    return SpeechRecognitionUpdate { WTFMove(*clientIdentifier), WTFMove(*type), WTFMove(*content) };
-}
 
 } // namespace WebCore
 
 namespace WTF {
-
-template<> struct EnumTraits<WebCore::SpeechRecognitionUpdateType> {
-    using values = EnumValues<
-        WebCore::SpeechRecognitionUpdateType,
-        WebCore::SpeechRecognitionUpdateType::Start,
-        WebCore::SpeechRecognitionUpdateType::AudioStart,
-        WebCore::SpeechRecognitionUpdateType::SoundStart,
-        WebCore::SpeechRecognitionUpdateType::SpeechStart,
-        WebCore::SpeechRecognitionUpdateType::SpeechEnd,
-        WebCore::SpeechRecognitionUpdateType::SoundEnd,
-        WebCore::SpeechRecognitionUpdateType::AudioEnd,
-        WebCore::SpeechRecognitionUpdateType::Result,
-        WebCore::SpeechRecognitionUpdateType::NoMatch,
-        WebCore::SpeechRecognitionUpdateType::Error,
-        WebCore::SpeechRecognitionUpdateType::End
-    >;
-};
 
 template<typename> struct LogArgument;
 

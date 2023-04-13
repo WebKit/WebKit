@@ -56,10 +56,13 @@ class Node;
 
 namespace WebKit {
 
+using LayerHostingContextID = uint32_t;
+
 class LayerHostingContext;
 class WebPage;
 class PlaybackSessionInterfaceContext;
 class PlaybackSessionManager;
+class ShareableBitmapHandle;
 class VideoFullscreenManager;
 
 class VideoFullscreenInterfaceContext
@@ -93,6 +96,9 @@ public:
     bool isFullscreen() const { return m_isFullscreen; }
     void setIsFullscreen(bool flag) { m_isFullscreen = flag; }
 
+    RetainPtr<CALayer> rootLayer() const { return m_rootLayer; }
+    void setRootLayer(RetainPtr<CALayer>);
+
 private:
     // VideoFullscreenModelClient
     void hasVideoChanged(bool) override;
@@ -109,6 +115,7 @@ private:
     WebCore::HTMLMediaElementEnums::VideoFullscreenMode m_fullscreenMode { WebCore::HTMLMediaElementEnums::VideoFullscreenModeNone };
     bool m_fullscreenStandby { false };
     bool m_isFullscreen { false };
+    RetainPtr<CALayer> m_rootLayer;
 };
 
 class VideoFullscreenManager : public RefCounted<VideoFullscreenManager>, private IPC::MessageReceiver {
@@ -122,6 +129,9 @@ public:
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
+    void setupRemoteLayerHosting(WebCore::HTMLVideoElement&);
+    void willRemoveLayerForID(PlaybackSessionContextIdentifier);
+
     // Interface to WebChromeClient
     bool canEnterVideoFullscreen(WebCore::HTMLMediaElementEnums::VideoFullscreenMode) const;
     bool supportsVideoFullscreen(WebCore::HTMLMediaElementEnums::VideoFullscreenMode) const;
@@ -130,14 +140,20 @@ public:
     void exitVideoFullscreenForVideoElement(WebCore::HTMLVideoElement&, WTF::CompletionHandler<void(bool)>&& = [](bool) { });
     void exitVideoFullscreenToModeWithoutAnimation(WebCore::HTMLVideoElement&, WebCore::HTMLMediaElementEnums::VideoFullscreenMode);
 
+    void updateTextTrackRepresentationForVideoElement(WebCore::HTMLVideoElement&, const ShareableBitmapHandle&);
+    void setTextTrackRepresentationContentScaleForVideoElement(WebCore::HTMLVideoElement&, float scale);
+    void setTextTrackRepresentationIsHiddenForVideoElement(WebCore::HTMLVideoElement&, bool hidden);
+
+    bool videoElementInPictureInPicture() const { return !!m_videoElementInPictureInPicture; }
+
 protected:
     friend class VideoFullscreenInterfaceContext;
 
     explicit VideoFullscreenManager(WebPage&, PlaybackSessionManager&);
 
     typedef std::tuple<RefPtr<WebCore::VideoFullscreenModelVideoElement>, RefPtr<VideoFullscreenInterfaceContext>> ModelInterfaceTuple;
-    ModelInterfaceTuple createModelAndInterface(PlaybackSessionContextIdentifier);
-    ModelInterfaceTuple& ensureModelAndInterface(PlaybackSessionContextIdentifier);
+    ModelInterfaceTuple createModelAndInterface(PlaybackSessionContextIdentifier, bool createLayerHostingContext);
+    ModelInterfaceTuple& ensureModelAndInterface(PlaybackSessionContextIdentifier, bool createLayerHostingContext = true);
     WebCore::VideoFullscreenModelVideoElement& ensureModel(PlaybackSessionContextIdentifier);
     VideoFullscreenInterfaceContext& ensureInterface(PlaybackSessionContextIdentifier);
     void removeContext(PlaybackSessionContextIdentifier);
@@ -178,6 +194,7 @@ protected:
     HashMap<PlaybackSessionContextIdentifier, int> m_clientCounts;
     WeakPtr<WebCore::HTMLVideoElement, WebCore::WeakPtrImplWithEventTargetData> m_videoElementInPictureInPicture;
     bool m_currentlyInFullscreen { false };
+    WTF::Function<void(LayerHostingContextID, const WebCore::FloatSize&)> m_setupFullscreenHandler;
 };
 
 } // namespace WebKit

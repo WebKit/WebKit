@@ -31,6 +31,7 @@
 #import "ContentFiltering.h"
 #import "PlatformUtilities.h"
 #import "TestProtocol.h"
+#import "TestWKWebView.h"
 #import "WKWebViewConfigurationExtras.h"
 #import <WebCore/MockContentFilterSettings.h>
 #import <WebKit/WKErrorRef.h>
@@ -38,6 +39,7 @@
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKWebView.h>
 #import <WebKit/WKWebViewPrivate.h>
+#import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/_WKDownloadDelegate.h>
 #import <WebKit/_WKRemoteObjectInterface.h>
 #import <WebKit/_WKRemoteObjectRegistry.h>
@@ -287,6 +289,11 @@ TEST(ContentFiltering, BlockDownloadNever)
     }];
 }
 
+- (void)webViewWebContentProcessDidTerminate:(WKWebView *)webView
+{
+    EXPECT_FALSE(true);
+}
+
 @end
 
 static void loadAlternateTest(Decision decision, DecisionPoint decisionPoint)
@@ -332,6 +339,16 @@ TEST(ContentFiltering, LoadAlternateAfterFinishedAddingDataWK2)
     loadAlternateTest(Decision::Block, DecisionPoint::AfterFinishedAddingData);
 }
 
+TEST(ContentFiltering, CookieAccessFromReplacementData)
+{
+    auto networkProcessStarter = adoptNS([WKWebView new]);
+    [networkProcessStarter synchronouslyLoadHTMLString:@"hi"];
+    auto pidBefore = networkProcessStarter.get().configuration.websiteDataStore._networkProcessIdentifier;
+    loadAlternateTest(Decision::Block, DecisionPoint::AfterWillSendRequest);
+    auto pidAfter = networkProcessStarter.get().configuration.websiteDataStore._networkProcessIdentifier;
+    EXPECT_EQ(pidBefore, pidAfter);
+    TestWebKitAPI::Util::runFor(Seconds(0.1));
+}
 
 @interface LazilyLoadPlatformFrameworksController : NSObject <WKNavigationDelegate>
 @property (nonatomic, readonly) WKWebView *webView;

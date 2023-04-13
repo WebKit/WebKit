@@ -25,6 +25,7 @@
         "GL_ANGLE_texture_compression_dxt3",
         "GL_ANGLE_texture_compression_dxt5",
         "GL_ANGLE_yuv_internal_format",
+        "GL_ARM_shader_framebuffer_fetch",
         "GL_CHROMIUM_bind_generates_resource",
         "GL_CHROMIUM_bind_uniform_location",
         "GL_CHROMIUM_color_buffer_float_rgb",

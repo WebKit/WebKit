@@ -74,7 +74,7 @@ private:
 
     private:
         // API::ContextMenuClient
-        void menuFromProposedMenu(WebPageProxy&, NSMenu *, const WebHitTestResultData&, API::Object*, CompletionHandler<void(RetainPtr<NSMenu>&&)>&&) override;
+        void menuFromProposedMenu(WebPageProxy&, NSMenu *, const ContextMenuContextData&, API::Object*, CompletionHandler<void(RetainPtr<NSMenu>&&)>&&) override;
 
         WeakPtr<UIDelegate> m_uiDelegate;
     };
@@ -178,7 +178,6 @@ private:
         void runWebAuthenticationPanel(WebPageProxy&, API::WebAuthenticationPanel&, WebFrameProxy&, FrameInfoData&&, CompletionHandler<void(WebAuthenticationPanelResult)>&&) final;
         void requestWebAuthenticationNoGesture(API::SecurityOrigin&, CompletionHandler<void(bool)>&&) final;
 #endif
-        void decidePolicyForSpeechRecognitionPermissionRequest(WebPageProxy&, API::SecurityOrigin&, CompletionHandler<void(bool)>&&) final;
         void queryPermission(const String&, API::SecurityOrigin&, CompletionHandler<void(std::optional<WebCore::PermissionState>)>&&) final;
         void didEnableInspectorBrowserDomain(WebPageProxy&) final;
         void didDisableInspectorBrowserDomain(WebPageProxy&) final;

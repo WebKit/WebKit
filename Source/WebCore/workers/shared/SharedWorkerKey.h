@@ -33,41 +33,11 @@ struct SharedWorkerKey {
     ClientOrigin origin;
     URL url;
     String name;
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<SharedWorkerKey> decode(Decoder&);
 };
 
 inline void add(Hasher& hasher, const SharedWorkerKey& key)
 {
     add(hasher, key.origin, key.url, key.name);
-}
-
-template<class Encoder>
-void SharedWorkerKey::encode(Encoder& encoder) const
-{
-    encoder << origin << url << name;
-}
-
-template<class Decoder>
-std::optional<SharedWorkerKey> SharedWorkerKey::decode(Decoder& decoder)
-{
-    std::optional<ClientOrigin> origin;
-    decoder >> origin;
-    if (!origin)
-        return std::nullopt;
-
-    std::optional<URL> url;
-    decoder >> url;
-    if (!url)
-        return std::nullopt;
-
-    std::optional<String> name;
-    decoder >> name;
-    if (!name)
-        return std::nullopt;
-
-    return { { WTFMove(*origin), WTFMove(*url), WTFMove(*name) } };
 }
 
 inline bool operator==(const SharedWorkerKey& a, const SharedWorkerKey& b)

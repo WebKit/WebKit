@@ -10,10 +10,11 @@ EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
 
 Markup before:
+| <#selection-caret>
 | "\n"
 | <b>
 |   <i>
-|     "<#selection-caret>hello bold and italic"
+|     "hello bold and italic"
 | <div>
 |   <i>
 |     "hello italic"

@@ -107,7 +107,7 @@ if ($vm.icuVersion() >= 61) {
     // Get display names of script in Traditional Chinese
     scriptNames = new Intl.DisplayNames(['zh-Hant'], {type: 'script'});
     shouldBe(scriptNames.of('Latn'), "拉丁文");
-    shouldBe(scriptNames.of('Arab'), "阿拉伯文");
+    shouldBe(scriptNames.of('Arab'), $vm.icuVersion() >= 72 ? "阿拉伯字母" : "阿拉伯文");
     shouldBe(scriptNames.of('Kana'), "片假名");
 
     if ($vm.icuVersion() >= 64) {

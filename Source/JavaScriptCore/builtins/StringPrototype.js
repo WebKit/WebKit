@@ -234,6 +234,10 @@ function hasObservableSideEffectsForStringReplace(regexp, replacer)
     if (regexpUnicode !== @regExpProtoUnicodeGetter)
         return true;
 
+    var regexpUnicodeSets = @tryGetById(regexp, "unicodeSets");
+    if (regexpUnicodeSets !== @regExpProtoUnicodeSetsGetter)
+        return true;
+
     return typeof regexp.lastIndex !== "number";
 }
 

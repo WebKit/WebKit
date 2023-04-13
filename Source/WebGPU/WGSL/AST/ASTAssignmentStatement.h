@@ -28,29 +28,24 @@
 #include "ASTExpression.h"
 #include "ASTStatement.h"
 
-#include <wtf/UniqueRef.h>
-
 namespace WGSL::AST {
 
 class AssignmentStatement final : public Statement {
     WTF_MAKE_FAST_ALLOCATED;
-
 public:
-    AssignmentStatement(SourceSpan span, std::unique_ptr<Expression>&& lhs, UniqueRef<Expression>&& rhs)
+    AssignmentStatement(SourceSpan span, Expression::Ref&& lhs, Expression::Ref&& rhs)
         : Statement(span)
         , m_lhs(WTFMove(lhs))
         , m_rhs(WTFMove(rhs))
-    {
-    }
+    { }
 
-    Kind kind() const override;
-    Expression* maybeLhs() { return m_lhs.get(); }
-    Expression& rhs() { return m_rhs; }
+    NodeKind kind() const override;
+    Expression& lhs() { return m_lhs.get(); }
+    Expression& rhs() { return m_rhs.get(); }
 
 private:
-    // LHS can be null in the case it is '_', but RHS is never null
-    std::unique_ptr<Expression> m_lhs;
-    UniqueRef<Expression> m_rhs;
+    Expression::Ref m_lhs;
+    Expression::Ref m_rhs;
 };
 
 } // namespace WGSL::AST

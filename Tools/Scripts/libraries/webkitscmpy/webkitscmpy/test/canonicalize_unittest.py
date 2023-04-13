@@ -320,3 +320,43 @@ class TestCanonicalize(testing.PathTestCase):
             'Rewrite d8bce26fa65c6fc8f39c17927abb77f69fab82fc (3/3) (--- seconds passed, remaining --- predicted)\n'
             '3 commits successfully canonicalized!\n',
         )
+
+    def test_alternate_trailer(self):
+        with OutputCapture() as captured, mocks.local.Git(self.path) as mock, mocks.local.Svn(), MockTime:
+            contirbutors = Contributor.Mapping()
+            contirbutors.create('Jonathan Bedard', 'jbedard@apple.com')
+
+            mock.commits[mock.default_branch].append(Commit(
+                hash='766609276fe201e7ce2c69994e113d979d2148ac',
+                branch=mock.default_branch,
+                author=Contributor('jbedard@apple.com', emails=['jbedard@apple.com']),
+                identifier=mock.commits[mock.default_branch][-1].identifier + 1,
+                timestamp=1601668000,
+                message='New commit\n\ntrailer: some metadata\n',
+            ))
+
+            self.assertEqual(0, program.main(
+                args=('canonicalize', '-vv'),
+                path=self.path,
+                contributors=contirbutors,
+            ))
+
+            commit = local.Git(self.path).commit(branch=mock.default_branch)
+            self.assertEqual(commit.author, contirbutors['jbedard@apple.com'])
+            self.assertEqual(
+                commit.message,
+                'New commit\n\n'
+                'trailer: some metadata\n'
+                'Identifier: 6@main',
+            )
+
+        self.assertEqual(
+            captured.stdout.getvalue(),
+            'Rewrite 766609276fe201e7ce2c69994e113d979d2148ac (1/1) (--- seconds passed, remaining --- predicted)\n'
+            'Overwriting 766609276fe201e7ce2c69994e113d979d2148ac\n'
+            '    GIT_AUTHOR_NAME=Jonathan Bedard\n'
+            '    GIT_AUTHOR_EMAIL=jbedard@apple.com\n'
+            '    GIT_COMMITTER_NAME=Jonathan Bedard\n'
+            '    GIT_COMMITTER_EMAIL=jbedard@apple.com\n'
+            '1 commit successfully canonicalized!\n',
+        )

@@ -1,4 +1,0 @@
-
-
-FAIL Do not navigate to 404 for anchor with download assert_unreached: Navigated instead of downloading Reached unreachable code
-

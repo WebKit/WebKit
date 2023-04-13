@@ -155,20 +155,9 @@ ID3D11Resource *GetViewResource(ID3D11View *view)
 
 int GetWrapBits(GLenum wrap)
 {
-    switch (wrap)
-    {
-        case GL_CLAMP_TO_EDGE:
-            return 0x0;
-        case GL_REPEAT:
-            return 0x1;
-        case GL_MIRRORED_REPEAT:
-            return 0x2;
-        case GL_CLAMP_TO_BORDER:
-            return 0x3;
-        default:
-            UNREACHABLE();
-            return 0;
-    }
+    const int wrapBits = gl_d3d11::ConvertTextureWrap(wrap);
+    ASSERT(wrapBits >= 1 && wrapBits <= 5);
+    return wrapBits;
 }
 
 Optional<size_t> FindFirstNonInstanced(
@@ -356,7 +345,6 @@ bool ShaderConstants11::updateSamplerMetadata(SamplerMetadata *data,
     gl::TextureTarget target = (texture.getType() == gl::TextureType::CubeMap)
                                    ? gl::kCubeMapTextureTargetMin
                                    : gl::NonCubeTextureTypeToTarget(texture.getType());
-    GLenum sizedFormat       = texture.getFormat(target, baseLevel).info->sizedInternalFormat;
     if (data->baseLevel != static_cast<int>(baseLevel))
     {
         data->baseLevel = static_cast<int>(baseLevel);
@@ -366,81 +354,52 @@ bool ShaderConstants11::updateSamplerMetadata(SamplerMetadata *data,
     // Some metadata is needed only for integer textures. We avoid updating the constant buffer
     // unnecessarily by changing the data only in case the texture is an integer texture and
     // the values have changed.
-    bool needIntegerTextureMetadata = false;
-    // internalFormatBits == 0 means a 32-bit texture in the case of integer textures.
-    int internalFormatBits = 0;
-    switch (sizedFormat)
+    const gl::InternalFormat &info = *texture.getFormat(target, baseLevel).info;
+    if (!info.isInt() && !texture.getState().isStencilMode())
     {
-        case GL_RGBA32I:
-        case GL_RGBA32UI:
-        case GL_RGB32I:
-        case GL_RGB32UI:
-        case GL_RG32I:
-        case GL_RG32UI:
-        case GL_R32I:
-        case GL_R32UI:
-            needIntegerTextureMetadata = true;
-            break;
-        case GL_RGBA16I:
-        case GL_RGBA16UI:
-        case GL_RGB16I:
-        case GL_RGB16UI:
-        case GL_RG16I:
-        case GL_RG16UI:
-        case GL_R16I:
-        case GL_R16UI:
-            needIntegerTextureMetadata = true;
-            internalFormatBits         = 16;
-            break;
-        case GL_RGBA8I:
-        case GL_RGBA8UI:
-        case GL_RGB8I:
-        case GL_RGB8UI:
-        case GL_RG8I:
-        case GL_RG8UI:
-        case GL_R8I:
-        case GL_R8UI:
-            needIntegerTextureMetadata = true;
-            internalFormatBits         = 8;
-            break;
-        case GL_RGB10_A2UI:
-            needIntegerTextureMetadata = true;
-            internalFormatBits         = 10;
-            break;
-        default:
-            break;
+        return dirty;
     }
-    if (needIntegerTextureMetadata)
-    {
-        if (data->internalFormatBits != internalFormatBits)
-        {
-            data->internalFormatBits = internalFormatBits;
-            dirty                    = true;
-        }
-        // Pack the wrap values into one integer so we can fit all the metadata in two 4-integer
-        // vectors.
-        GLenum wrapS  = samplerState.getWrapS();
-        GLenum wrapT  = samplerState.getWrapT();
-        GLenum wrapR  = samplerState.getWrapR();
-        int wrapModes = GetWrapBits(wrapS) | (GetWrapBits(wrapT) << 2) | (GetWrapBits(wrapR) << 4);
-        if (data->wrapModes != wrapModes)
-        {
-            data->wrapModes = wrapModes;
-            dirty           = true;
-        }
 
-        const angle::ColorGeneric &borderColor(samplerState.getBorderColor());
-        constexpr int kBlack[4]          = {};
-        const void *const intBorderColor = (borderColor.type == angle::ColorGeneric::Type::Float)
-                                               ? kBlack
-                                               : borderColor.colorI.data();
-        ASSERT(static_cast<const void *>(borderColor.colorI.data()) ==
-               static_cast<const void *>(borderColor.colorUI.data()));
-        if (memcmp(data->intBorderColor, intBorderColor, sizeof(data->intBorderColor)) != 0)
-        {
-            memcpy(data->intBorderColor, intBorderColor, sizeof(data->intBorderColor));
-            dirty = true;
-        }
+    // Pack the wrap values into one integer so we can fit all the metadata in two 4-integer
+    // vectors.
+    const GLenum wrapS = samplerState.getWrapS();
+    const GLenum wrapT = samplerState.getWrapT();
+    const GLenum wrapR = samplerState.getWrapR();
+    const int wrapModes =
+        GetWrapBits(wrapS) | (GetWrapBits(wrapT) << 3) | (GetWrapBits(wrapR) << 6);
+    if (data->wrapModes != wrapModes)
+    {
+        data->wrapModes = wrapModes;
+        dirty           = true;
+    }
+
+    // Skip checking and syncing integer border color if it is not used
+    if (wrapS != GL_CLAMP_TO_BORDER && wrapT != GL_CLAMP_TO_BORDER && wrapR != GL_CLAMP_TO_BORDER)
+    {
+        return dirty;
+    }
+
+    // Use the sampler state border color only if it is integer, initialize to zeros otherwise
+    angle::ColorGeneric borderColor;
+    ASSERT(borderColor.colorI.red == 0 && borderColor.colorI.green == 0 &&
+           borderColor.colorI.blue == 0 && borderColor.colorI.alpha == 0);
+    if (samplerState.getBorderColor().type != angle::ColorGeneric::Type::Float)
+    {
+        borderColor = samplerState.getBorderColor();
+    }
+
+    // Adjust the border color value to the texture format
+    borderColor = AdjustBorderColor<false>(
+        borderColor,
+        angle::Format::Get(angle::Format::InternalFormatToID(info.sizedInternalFormat)),
+        texture.getState().isStencilMode());
+
+    ASSERT(static_cast<const void *>(borderColor.colorI.data()) ==
+           static_cast<const void *>(borderColor.colorUI.data()));
+    if (memcmp(data->intBorderColor, borderColor.colorI.data(), sizeof(data->intBorderColor)) != 0)
+    {
+        memcpy(data->intBorderColor, borderColor.colorI.data(), sizeof(data->intBorderColor));
+        dirty = true;
     }
 
     return dirty;
@@ -748,15 +707,17 @@ StateManager11::StateManager11(Renderer11 *renderer)
     mCurDepthStencilState.stencilBackPassDepthPass = GL_KEEP;
     mCurDepthStencilState.stencilBackWritemask     = static_cast<GLuint>(-1);
 
-    mCurRasterState.rasterizerDiscard   = false;
     mCurRasterState.cullFace            = false;
     mCurRasterState.cullMode            = gl::CullFaceMode::Back;
     mCurRasterState.frontFace           = GL_CCW;
     mCurRasterState.polygonOffsetFill   = false;
     mCurRasterState.polygonOffsetFactor = 0.0f;
     mCurRasterState.polygonOffsetUnits  = 0.0f;
+    mCurRasterState.polygonOffsetClamp  = 0.0f;
+    mCurRasterState.depthClamp          = false;
     mCurRasterState.pointDrawMode       = false;
     mCurRasterState.multiSample         = false;
+    mCurRasterState.rasterizerDiscard   = false;
     mCurRasterState.dither              = false;
 
     // Start with all internal dirty bits set except the SRV and UAV bits.
@@ -881,7 +842,7 @@ void StateManager11::checkPresentPath(const gl::Context *context)
     const auto *framebuffer          = context->getState().getDrawFramebuffer();
     const auto *firstColorAttachment = framebuffer->getFirstColorAttachment();
     const bool clipSpaceOriginUpperLeft =
-        context->getState().getClipSpaceOrigin() == gl::ClipSpaceOrigin::UpperLeft;
+        context->getState().getClipOrigin() == gl::ClipOrigin::UpperLeft;
     const bool presentPathFastActive =
         UsePresentPathFast(mRenderer, firstColorAttachment) || clipSpaceOriginUpperLeft;
 
@@ -966,6 +927,7 @@ angle::Result StateManager11::updateStateForCompute(const gl::Context *context,
 
 void StateManager11::syncState(const gl::Context *context,
                                const gl::State::DirtyBits &dirtyBits,
+                               const gl::State::ExtendedDirtyBits &extendedDirtyBits,
                                gl::Command command)
 {
     if (!dirtyBits.any())
@@ -1109,7 +1071,8 @@ void StateManager11::syncState(const gl::Context *context,
             {
                 const gl::RasterizerState &rasterState = state.getRasterizerState();
                 if (rasterState.polygonOffsetFactor != mCurRasterState.polygonOffsetFactor ||
-                    rasterState.polygonOffsetUnits != mCurRasterState.polygonOffsetUnits)
+                    rasterState.polygonOffsetUnits != mCurRasterState.polygonOffsetUnits ||
+                    rasterState.polygonOffsetClamp != mCurRasterState.polygonOffsetClamp)
                 {
                     mInternalDirtyBits.set(DIRTY_BIT_RASTERIZER_STATE);
                 }
@@ -1232,9 +1195,6 @@ void StateManager11::syncState(const gl::Context *context,
                 break;
             case gl::State::DIRTY_BIT_EXTENDED:
             {
-                gl::State::ExtendedDirtyBits extendedDirtyBits =
-                    state.getAndResetExtendedDirtyBits();
-
                 for (size_t extendedDirtyBit : extendedDirtyBits)
                 {
                     switch (extendedDirtyBit)
@@ -1247,6 +1207,12 @@ void StateManager11::syncState(const gl::Context *context,
                                     state.getEnabledClipDistances().bits()))
                             {
                                 mInternalDirtyBits.set(DIRTY_BIT_DRIVER_UNIFORMS);
+                            }
+                            break;
+                        case gl::State::EXTENDED_DIRTY_BIT_DEPTH_CLAMP_ENABLED:
+                            if (state.getRasterizerState().depthClamp != mCurRasterState.depthClamp)
+                            {
+                                mInternalDirtyBits.set(DIRTY_BIT_RASTERIZER_STATE);
                             }
                             break;
                     }
@@ -1432,7 +1398,7 @@ void StateManager11::syncScissorRectangle(const gl::Context *context)
     int scissorX = scissor.x + mCurScissorOffset.x;
     int scissorY = scissor.y + mCurScissorOffset.y;
 
-    if (mCurPresentPathFastEnabled)
+    if (mCurPresentPathFastEnabled && glState.getClipOrigin() == gl::ClipOrigin::LowerLeft)
     {
         scissorY = mCurPresentPathFastColorBufferHeight - scissor.height - scissor.y;
     }
@@ -1477,9 +1443,9 @@ void StateManager11::syncViewport(const gl::Context *context)
         dxMinViewportBoundsY = 0;
     }
 
-    bool clipSpaceOriginLowerLeft = glState.getClipSpaceOrigin() == gl::ClipSpaceOrigin::LowerLeft;
+    bool clipSpaceOriginLowerLeft = glState.getClipOrigin() == gl::ClipOrigin::LowerLeft;
     mShaderConstants.onClipControlChange(clipSpaceOriginLowerLeft,
-                                         glState.isClipControlDepthZeroToOne());
+                                         glState.isClipDepthModeZeroToOne());
 
     const auto &viewport = glState.getViewport();
 
@@ -2692,11 +2658,35 @@ angle::Result StateManager11::setSamplerState(const gl::Context *context,
 
     ASSERT(index < mRenderer->getNativeCaps().maxShaderTextureImageUnits[type]);
 
-    if (mForceSetShaderSamplerStates[type][index] ||
+    // When border color is used, its value may need to be readjusted based on the texture format.
+    const bool usesBorderColor = samplerState.usesBorderColor();
+
+    if (mForceSetShaderSamplerStates[type][index] || usesBorderColor ||
         memcmp(&samplerState, &mCurShaderSamplerStates[type][index], sizeof(gl::SamplerState)) != 0)
     {
+        // When clamp-to-border mode is used and a floating-point border color is set, the color
+        // value must be adjusted based on the texture format. Reset it to zero in all other cases
+        // to reduce the number of cached sampler entries. Address modes for integer texture
+        // formats are emulated in shaders and do not rely on this state.
+        angle::ColorGeneric borderColor;
+        if (usesBorderColor)
+        {
+            if (samplerState.getBorderColor().type == angle::ColorGeneric::Type::Float)
+            {
+                borderColor = samplerState.getBorderColor();
+            }
+            const uint32_t baseLevel       = texture->getTextureState().getEffectiveBaseLevel();
+            const gl::TextureTarget target = TextureTypeToTarget(texture->getType(), 0);
+            const angle::Format &format    = angle::Format::Get(angle::Format::InternalFormatToID(
+                texture->getFormat(target, baseLevel).info->sizedInternalFormat));
+
+            borderColor = AdjustBorderColor<false>(borderColor, format, false);
+        }
+        gl::SamplerState adjustedSamplerState(samplerState);
+        adjustedSamplerState.setBorderColor(borderColor.colorF);
+
         ID3D11SamplerState *dxSamplerState = nullptr;
-        ANGLE_TRY(mRenderer->getSamplerState(context, samplerState, &dxSamplerState));
+        ANGLE_TRY(mRenderer->getSamplerState(context, adjustedSamplerState, &dxSamplerState));
 
         ASSERT(dxSamplerState != nullptr);
 

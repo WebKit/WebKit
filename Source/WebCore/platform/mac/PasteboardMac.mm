@@ -815,6 +815,8 @@ void Pasteboard::setDragImage(DragImage image, const IntPoint& location)
 
     // Dashboard wants to be able to set the drag image during dragging, but Cocoa does not allow this.
     // Instead we must drop down to the CoreGraphics API.
+
+    // FIXME: Do we still need this now Dashboard is gone?
     setDragImageImpl(image.get().get(), location);
 
     // Hack: We must post an event to wake up the NSDragManager, which is sitting in a nextEvent call

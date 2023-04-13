@@ -737,3 +737,22 @@ def riscLowerTest(list)
     }
     return newList
 end
+
+def riscDropTags(list)
+    list.collect {
+        |node|
+        ret = node
+        if node.is_a?(Instruction)
+            case node.opcode
+            when "jmp", "call"
+                if node.operands.size > 1
+                    # Delete the extra pointer tagging arguments, otherwise
+                    # riscLowerMalformedImmediatesRecurse will pointlessly load
+                    # them in a register.
+                    ret = Instruction.new(node.codeOrigin, node.opcode, [node.operands[0]])
+                end
+            end
+        end
+        ret
+    }
+end

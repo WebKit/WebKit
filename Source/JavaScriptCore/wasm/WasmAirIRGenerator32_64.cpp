@@ -160,6 +160,8 @@ public:
 
     bool useSignalingMemory() const { return false; }
 
+    void finalizeEntrypoints();
+
 private:
     TypedTmp gNewWord(Type t) { return TypedTmp({ newTmp(B3::GP), { } }, t); }
     TypedTmp gNewPair(Type t) { return TypedTmp({ newTmp(B3::GP), newTmp(B3::GP) }, t); }
@@ -196,6 +198,9 @@ private:
     void emitCheckI64Zero(ExpressionType value, Taken&&);
     template<typename Taken>
     void emitCheckForNullReference(const ExpressionType& ref, Taken&&);
+    void emitBranchForNullReference(const ExpressionType&);
+    Inst makeBranchNotInt32(const ExpressionType&);
+    Inst makeBranchNotCell(const ExpressionType&);
 
     void appendCCallArg(B3::Air::Inst&, const TypedTmp&);
 
@@ -203,6 +208,10 @@ private:
     static B3::Air::Opcode moveOpForValueType(Type);
     void emitLoad(Tmp base, intptr_t offset, const TypedTmp& result);
     void emitStore(const TypedTmp& value, Tmp base, intptr_t offset);
+
+    // emitMoveWithoutTypeCheck is like emitMove, but does not assert anything
+    // about the wasm types of `src` and `dst` (in no-assert builds, they are the same)
+    void emitMoveWithoutTypeCheck(const TypedTmp& src, const TypedTmp& dst);
     void emitMove(const TypedTmp& src, const TypedTmp& dst);
     void emitMove(const ValueLocation&, const TypedTmp& dst);
     void emitMove(const ArgumentLocation&, const TypedTmp& dst);
@@ -406,6 +415,27 @@ void AirIRGenerator32::emitCheckForNullReference(const ExpressionType& ref, Take
     }, std::forward<Taken>(taken));
 }
 
+void AirIRGenerator32::emitBranchForNullReference(const ExpressionType& ref)
+{
+    auto tmpForNullTag = g32();
+    append(Move, Arg::bigImm(JSValue::NullTag), tmpForNullTag);
+    append(Branch32, Arg::relCond(MacroAssembler::Equal), ref.hi(), tmpForNullTag);
+}
+
+Inst AirIRGenerator32::makeBranchNotInt32(const ExpressionType& value)
+{
+    auto tmpForInt32Tag = g32();
+    append(Move, Arg::bigImm(JSValue::Int32Tag), tmpForInt32Tag);
+    return Inst(Branch32, nullptr, Arg::relCond(MacroAssembler::NotEqual), value.hi(), tmpForInt32Tag);
+}
+
+Inst AirIRGenerator32::makeBranchNotCell(const ExpressionType& maybeCell)
+{
+    auto tmpForCellTag = g32();
+    append(Move, Arg::bigImm(JSValue::CellTag), tmpForCellTag);
+    return Inst(Branch32, nullptr, Arg::relCond(MacroAssembler::NotEqual), maybeCell.hi(), tmpForCellTag);
+}
+
 B3::Type AirIRGenerator32::toB3ResultType(BlockSignature returnType)
 {
     auto signature = returnType->as<FunctionSignature>();
@@ -469,16 +499,21 @@ void AirIRGenerator32::emitStore(const TypedTmp& value, Tmp base, intptr_t offse
         append(moveOpForValueType(value.type()), value, Arg::addr(base, offset));
 }
 
-void AirIRGenerator32::emitMove(const TypedTmp& src, const TypedTmp& dst)
+void AirIRGenerator32::emitMoveWithoutTypeCheck(const TypedTmp& src, const TypedTmp& dst)
 {
     if (src == dst)
         return;
-    ASSERT(isSubtype(src.type(), dst.type()));
     if (src.isGPPair()) {
         append(Move, src.lo(), dst.lo());
         append(Move, src.hi(), dst.hi());
     } else
         append(moveOpForValueType(src.type()), src, dst);
+}
+
+void AirIRGenerator32::emitMove(const TypedTmp& src, const TypedTmp& dst)
+{
+    ASSERT(isSubtype(src.type(), dst.type()));
+    emitMoveWithoutTypeCheck(src, dst);
 }
 
 void AirIRGenerator32::emitMove(const ValueLocation& location, const TypedTmp& dst)
@@ -889,6 +924,110 @@ Box<PatchpointExceptionHandle> AirIRGenerator32::preparePatchpointForExceptions(
     return Box<PatchpointExceptionHandle>::create(m_hasExceptionHandlers, m_callSiteIndex, numLiveValues);
 }
 
+template<SavedFPWidth savedFPWidth>
+static inline void buildEntryBufferForCatch32(Probe::Context& context)
+{
+    unsigned valueSize = (savedFPWidth == SavedFPWidth::SaveVectors) ? 2 : 1;
+    CallFrame* callFrame = context.fp<CallFrame*>();
+    CallSiteIndex callSiteIndex = callFrame->callSiteIndex();
+    OptimizingJITCallee* callee = bitwise_cast<OptimizingJITCallee*>(callFrame->callee().asWasmCallee());
+    const StackMap& stackmap = callee->stackmap(callSiteIndex);
+    VM* vm = context.gpr<VM*>(GPRInfo::regT0);
+    uint64_t* buffer = vm->wasmContext.scratchBufferForSize(stackmap.size() * valueSize * 8);
+    loadValuesIntoBuffer(context, stackmap, buffer, savedFPWidth);
+
+    context.gpr(GPRInfo::argumentGPR0) = bitwise_cast<uintptr_t>(buffer);
+}
+
+static inline void buildEntryBufferForCatchSIMD32(Probe::Context& context) { buildEntryBufferForCatch32<SavedFPWidth::SaveVectors>(context); }
+static inline void buildEntryBufferForCatchNoSIMD32(Probe::Context& context) { buildEntryBufferForCatch32<SavedFPWidth::DontSaveVectors>(context); }
+
+static inline void emitCatchPrologueShared(B3::Air::Code& code, CCallHelpers& jit)
+{
+    JIT_COMMENT(jit, "shared catch prologue");
+    jit.loadPtr(CCallHelpers::tagFor(CallFrameSlot::callee), GPRInfo::regT0);
+    auto isWasmCallee = jit.branch32(CCallHelpers::Equal, GPRInfo::regT0, CCallHelpers::TrustedImm32(JSValue::WasmTag));
+    jit.loadPtr(CCallHelpers::addressFor(CallFrameSlot::callee), GPRInfo::regT0);
+    CCallHelpers::JumpList doneCases;
+    {
+        // FIXME: Handling precise allocations in WasmB3IRGenerator catch entrypoints might be unnecessary
+        // https://bugs.webkit.org/show_bug.cgi?id=231213
+        auto preciseAllocationCase = jit.branchTestPtr(CCallHelpers::NonZero, GPRInfo::regT0, CCallHelpers::TrustedImm32(PreciseAllocation::halfAlignment));
+        jit.andPtr(CCallHelpers::TrustedImmPtr(MarkedBlock::blockMask), GPRInfo::regT0);
+        jit.loadPtr(CCallHelpers::Address(GPRInfo::regT0, MarkedBlock::offsetOfHeader + MarkedBlock::Header::offsetOfVM()), GPRInfo::regT0);
+        doneCases.append(jit.jump());
+
+        preciseAllocationCase.link(&jit);
+        jit.loadPtr(CCallHelpers::Address(GPRInfo::regT0, PreciseAllocation::offsetOfWeakSet() + WeakSet::offsetOfVM() - PreciseAllocation::headerSize()), GPRInfo::regT0);
+        doneCases.append(jit.jump());
+    }
+
+    isWasmCallee.link(&jit);
+    jit.loadPtr(CCallHelpers::addressFor(CallFrameSlot::codeBlock), GPRInfo::regT0);
+    jit.loadPtr(CCallHelpers::Address(GPRInfo::regT0, Instance::offsetOfVM()), GPRInfo::regT0);
+
+    doneCases.link(&jit);
+
+    JIT_COMMENT(jit, "restore callee saves from vm entry buffer");
+    jit.restoreCalleeSavesFromVMEntryFrameCalleeSavesBuffer(GPRInfo::regT0, GPRInfo::regT3);
+
+    jit.loadPtr(CCallHelpers::Address(GPRInfo::regT0, VM::callFrameForCatchOffset()), GPRInfo::callFrameRegister);
+    jit.storePtr(CCallHelpers::TrustedImmPtr(nullptr), CCallHelpers::Address(GPRInfo::regT0, VM::callFrameForCatchOffset()));
+
+    JIT_COMMENT(jit, "Configure wasm context instance");
+    jit.loadPtr(CCallHelpers::Address(GPRInfo::callFrameRegister, CallFrameSlot::codeBlock * sizeof(Register)), GPRInfo::wasmContextInstancePointer);
+    jit.probe(tagCFunction<JITProbePtrTag>(code.usesSIMD() ? buildEntryBufferForCatchSIMD32 : buildEntryBufferForCatchNoSIMD32), nullptr,
+        code.usesSIMD() ? SavedFPWidth::SaveVectors : SavedFPWidth::DontSaveVectors);
+
+    jit.addPtr(CCallHelpers::TrustedImm32(-code.frameSize()), GPRInfo::callFrameRegister, CCallHelpers::stackPointerRegister);
+}
+
+void AirIRGenerator32::finalizeEntrypoints()
+{
+    unsigned numEntrypoints = Checked<unsigned>(1) + m_catchEntrypoints.size() + m_loopEntryVariableData.size();
+    m_proc.setNumEntrypoints(numEntrypoints);
+    m_code.setPrologueForEntrypoint(0, Ref<B3::Air::PrologueGenerator>(*m_prologueGenerator));
+    for (unsigned i = 1 + m_catchEntrypoints.size(); i < numEntrypoints; ++i)
+        m_code.setPrologueForEntrypoint(i, Ref<B3::Air::PrologueGenerator>(*m_prologueGenerator));
+
+    if (m_catchEntrypoints.size()) {
+        Ref<B3::Air::PrologueGenerator> catchPrologueGenerator = createSharedTask<B3::Air::PrologueGeneratorFunction>([](CCallHelpers& jit, B3::Air::Code& code) {
+            AllowMacroScratchRegisterUsage allowScratch(jit);
+            emitCatchPrologueShared(code, jit);
+        });
+
+        for (unsigned i = 0; i < m_catchEntrypoints.size(); ++i)
+            m_code.setPrologueForEntrypoint(1 + i, catchPrologueGenerator.copyRef());
+    }
+
+    BasicBlock::SuccessorList successors;
+    successors.append(m_mainEntrypointStart);
+    successors.appendVector(m_catchEntrypoints);
+
+    ASSERT(!m_loopEntryVariableData.size() || !m_proc.usesSIMD());
+    for (auto& pair : m_loopEntryVariableData) {
+        BasicBlock* loopBody = pair.first;
+        BasicBlock* entry = m_code.addBlock();
+        successors.append(entry);
+        m_currentBlock = entry;
+
+        auto& temps = pair.second;
+        m_osrEntryScratchBufferSize = std::max(m_osrEntryScratchBufferSize, static_cast<unsigned>(temps.size()));
+        Tmp basePtr = Tmp(GPRInfo::argumentGPR0);
+
+        for (size_t i = 0; i < temps.size(); ++i) {
+            size_t offset = static_cast<size_t>(i) * sizeof(uint64_t);
+            self().emitLoad(basePtr, offset, temps[i]);
+        }
+
+        append(Jump);
+        entry->setSuccessors(loopBody);
+    }
+
+    RELEASE_ASSERT(numEntrypoints == successors.size());
+    m_rootBlock->successors() = successors;
+}
+
 Tmp AirIRGenerator32::emitCatchImpl(CatchKind kind, ControlType& data, unsigned exceptionIndex)
 {
     m_currentBlock = m_code.addBlock();
@@ -933,7 +1072,7 @@ Tmp AirIRGenerator32::emitCatchImpl(CatchKind kind, ControlType& data, unsigned 
     Vector<B3::Type> resultTypes { B3::pointerType(), B3::Int32, B3::Int32 };
     B3::PatchpointValue* patch = addPatchpoint(m_proc.addTuple(WTFMove(resultTypes)));
     patch->effects.exitsSideways = true;
-    patch->clobber(RegisterSetBuilder::macroClobberedRegisters());
+    patch->clobber(RegisterSetBuilder::macroClobberedGPRs());
     auto clobberLate = RegisterSetBuilder::registersToSaveForCCall(RegisterSetBuilder::allScalarRegisters());
     clobberLate.add(GPRInfo::argumentGPR0, IgnoreVectors);
     clobberLate.add(GPRInfo::argumentGPR1, IgnoreVectors);
@@ -951,7 +1090,7 @@ Tmp AirIRGenerator32::emitCatchImpl(CatchKind kind, ControlType& data, unsigned 
         jit.prepareWasmCallOperation(GPRInfo::wasmContextInstancePointer);
         CCallHelpers::Call call = jit.call(OperationPtrTag);
         jit.addLinkTask([call] (LinkBuffer& linkBuffer) {
-            linkBuffer.link<OperationPtrTag>(call, operationWasmRetrieveAndClearExceptionIfCatchable);
+            linkBuffer.link<OperationPtrTag>(call, operationWasmRetrieveAndClearExceptionIfCatchable32);
         });
         jit.load32(CCallHelpers::Address(MacroAssembler::stackPointerRegister, TagOffset), params[2].gpr());
         jit.loadPtr(CCallHelpers::Address(MacroAssembler::stackPointerRegister, PayloadOffset), params[1].gpr());
@@ -1190,7 +1329,7 @@ auto AirIRGenerator32::emitCallPatchpoint(BasicBlock*block, B3::Type returnType,
     auto* patchpoint = addPatchpoint(returnType);
     patchpoint->effects.writesPinned = true;
     patchpoint->effects.readsPinned = true;
-    patchpoint->clobberEarly(RegisterSetBuilder::macroClobberedRegisters());
+    patchpoint->clobberEarly(RegisterSetBuilder::macroClobberedGPRs());
     patchpoint->clobberLate(RegisterSetBuilder::registersToSaveForJSCall(RegisterSetBuilder::allScalarRegisters()));
 
     ASSERT(wasmCalleeInfo.params.size() == tmpArgs.size());
@@ -1993,7 +2132,7 @@ auto AirIRGenerator32::addF32ConvertUI32(ExpressionType arg, ExpressionType& res
     result = f32();
     auto* patchpoint = addPatchpoint(B3::Float);
     patchpoint->effects = B3::Effects::none();
-    patchpoint->clobber(RegisterSetBuilder::macroClobberedRegisters());
+    patchpoint->clobber(RegisterSetBuilder::macroClobberedGPRs());
     patchpoint->setGenerator([=](CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
         AllowMacroScratchRegisterUsage allowScratch(jit);
         jit.convertUInt32ToFloat(params[1].gpr(), params[0].fpr());
@@ -2007,7 +2146,7 @@ auto AirIRGenerator32::addF64ConvertUI32(ExpressionType arg, ExpressionType& res
     result = f64();
     auto* patchpoint = addPatchpoint(B3::Float);
     patchpoint->effects = B3::Effects::none();
-    patchpoint->clobber(RegisterSetBuilder::macroClobberedRegisters());
+    patchpoint->clobber(RegisterSetBuilder::macroClobberedGPRs());
     patchpoint->setGenerator([=](CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
         AllowMacroScratchRegisterUsage allowScratch(jit);
         jit.convertUInt32ToDouble(params[1].gpr(), params[0].fpr());

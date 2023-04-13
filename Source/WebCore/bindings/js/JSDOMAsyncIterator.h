@@ -91,7 +91,9 @@ public:
 
     static Prototype* createPrototype(JSC::VM& vm, JSC::JSGlobalObject& globalObject)
     {
-        return Prototype::create(vm, &globalObject, Prototype::createStructure(vm, &globalObject, globalObject.asyncIteratorPrototype()));
+        auto* structure = Prototype::createStructure(vm, &globalObject, globalObject.asyncIteratorPrototype());
+        structure->setMayBePrototype(true);
+        return Prototype::create(vm, &globalObject, structure);
     }
 
     static void createStructure(JSC::VM&, JSC::JSGlobalObject*, JSC::JSValue); // Make use of createStructure for this compile-error.
@@ -288,7 +290,7 @@ JSBoundFunction* JSDOMAsyncIteratorBase<JSWrapper, IteratorTraits>::createOnSett
 {
     JSC::VM& vm = globalObject->vm();
     auto onSettled = JSC::JSFunction::create(vm, globalObject, 0, String(), onPromiseSettled, ImplementationVisibility::Public);
-    return JSC::JSBoundFunction::create(vm, globalObject, onSettled, this, nullptr, 1, nullptr);
+    return JSC::JSBoundFunction::create(vm, globalObject, onSettled, this, { }, 1, jsEmptyString(vm));
 }
 
 template<typename JSWrapper, typename IteratorTraits>
@@ -320,7 +322,7 @@ JSBoundFunction* JSDOMAsyncIteratorBase<JSWrapper, IteratorTraits>::createOnFulf
 {
     JSC::VM& vm = globalObject->vm();
     auto onFulFilled = JSC::JSFunction::create(vm, globalObject, 0, String(), onPromiseFulFilled, ImplementationVisibility::Public);
-    return JSC::JSBoundFunction::create(vm, globalObject, onFulFilled, this, nullptr, 1, nullptr);
+    return JSC::JSBoundFunction::create(vm, globalObject, onFulFilled, this, { }, 1, jsEmptyString(vm));
 }
 
 template<typename JSWrapper, typename IteratorTraits>
@@ -351,7 +353,7 @@ JSBoundFunction* JSDOMAsyncIteratorBase<JSWrapper, IteratorTraits>::createOnReje
 {
     JSC::VM& vm = globalObject->vm();
     auto onRejected = JSC::JSFunction::create(vm, globalObject, 0, String(), onPromiseRejected, ImplementationVisibility::Public);
-    return JSC::JSBoundFunction::create(vm, globalObject, onRejected, this, nullptr, 1, nullptr);
+    return JSC::JSBoundFunction::create(vm, globalObject, onRejected, this, { }, 1, jsEmptyString(vm));
 }
 
 template<typename JSWrapper, typename IteratorTraits>

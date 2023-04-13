@@ -33,24 +33,7 @@ namespace WebCore {
 struct MediaDeviceHashSalts {
     String persistentDeviceSalt;
     String ephemeralDeviceSalt;
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static WARN_UNUSED_RETURN bool decode(Decoder&, MediaDeviceHashSalts&);
 };
-
-template<class Encoder>
-void MediaDeviceHashSalts::encode(Encoder& encoder) const
-{
-    encoder << persistentDeviceSalt
-    << ephemeralDeviceSalt;
-}
-
-template<class Decoder>
-bool MediaDeviceHashSalts::decode(Decoder& decoder, MediaDeviceHashSalts& settings)
-{
-    return decoder.decode(settings.persistentDeviceSalt)
-    && decoder.decode(settings.ephemeralDeviceSalt);
-}
 
 } // namespace WebCore
 

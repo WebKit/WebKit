@@ -73,6 +73,7 @@ private:
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 
     void setLabel(String&&);
+    void destruct();
 
     Ref<PAL::WebGPU::BindGroup> m_backing;
     WebGPU::ObjectHeap& m_objectHeap;

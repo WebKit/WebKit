@@ -4,21 +4,28 @@
 <body>
 <script type="text/javascript">
 
+window.jsTestIsAsync = true;
+
 description("Testing the top right controls bar isn't visible when the mute button is disabled.");
 
-const mediaControls = new MacOSInlineMediaControls({ width: 250, height: 250 });
+const mediaControls = new MacOSInlineMediaControls({ width: 300, height: 250 });
 
-debug("Mute button is enabled");
-shouldBe("mediaControls.muteButton.parent.parent", "mediaControls.topRightControlsBar");
-shouldBe("mediaControls.topRightControlsBar.parent", "mediaControls");
+(async function () {
+    debug("Mute button is enabled");
 
-debug("")
-debug("Mute button is disabled");
-mediaControls.muteButton.enabled = false;
-shouldBe("mediaControls.muteButton.parent.parent", "mediaControls.bottomControlsBar");
-shouldBeNull("mediaControls.topRightControlsBar.parent");
+    await new Promise(resolve => shouldBecomeEqual("mediaControls.muteButton.parent.parent", "mediaControls.topRightControlsBar", resolve));
+    shouldBe("mediaControls.topRightControlsBar.parent", "mediaControls");
 
-debug("");
+    debug("")
+    debug("Mute button is disabled");
+    mediaControls.muteButton.enabled = false;
+    shouldBe("mediaControls.muteButton.parent.parent", "mediaControls.bottomControlsBar");
+    shouldBeNull("mediaControls.topRightControlsBar.parent");
+
+    debug("");
+
+    finishJSTest();
+})();
 
 </script>
 <script src="../../../resources/js-test-post.js"></script>

@@ -12,13 +12,11 @@ layer at (0,0) size 800x452
           RenderText {#text} at (0,48) size 89x45
             text run at (0,48) width 89: "a \x{BE2} o"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {hr} at (0,110) size 784x2 [border: (1px inset #000000)]
       RenderBlock {p} at (0,128) size 784x56
         RenderInline {span} at (0,0) size 91x52
           RenderText {#text} at (0,2) size 91x52
             text run at (0,2) width 91: "a \x{BE2} o"
         RenderBR {br} at (91,30) size 0x17
-      RenderBlock {hr} at (0,200) size 784x2 [border: (1px inset #000000)]
       RenderBlock {p} at (0,218) size 784x112
         RenderInline {span} at (0,0) size 91x52
           RenderText {#text} at (0,2) size 91x52
@@ -28,9 +26,14 @@ layer at (0,0) size 800x452
           RenderText {#text} at (0,58) size 91x52
             text run at (0,58) width 91: "a \x{BE2} o"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {hr} at (0,346) size 784x2 [border: (1px inset #000000)]
       RenderBlock {p} at (0,364) size 784x56
         RenderInline {span} at (0,0) size 112x52
           RenderText {#text} at (0,2) size 112x52
             text run at (0,2) width 112: "a \x{BE2} o"
         RenderBR {br} at (112,30) size 0x17
+layer at (8,126) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {hr} at (0,110) size 784x2 [border: (1px inset #000000)]
+layer at (8,216) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {hr} at (0,200) size 784x2 [border: (1px inset #000000)]
+layer at (8,362) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {hr} at (0,346) size 784x2 [border: (1px inset #000000)]

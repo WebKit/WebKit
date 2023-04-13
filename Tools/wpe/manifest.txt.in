@@ -62,6 +62,8 @@ exclude Source/ThirdParty
 directory Source/ThirdParty/ANGLE
 directory Source/ThirdParty/gtest
 directory Source/ThirdParty/pdfjs
+# We need to include ThirdParty/pdfjs/web/locale/ca/viewer.properties manually, because ca directories are excluded as port specific.
+file Source/ThirdParty/pdfjs/web/locale/ca/viewer.properties
 directory Source/ThirdParty/xdgmime
 
 exclude Source/WebKit/Resources

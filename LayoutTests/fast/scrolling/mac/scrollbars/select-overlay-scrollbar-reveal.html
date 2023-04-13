@@ -35,12 +35,13 @@
             const y = selectBounds.top + 10;
 
             debug('Initial state');
-            debug(internals.verticalScrollbarState(select));
+            var scrollbarState = await UIHelper.verticalScrollbarState(select);
+            debug(scrollbarState);
 
             debug('MayBegin should show the scrollbar');
             await UIHelper.mouseWheelMayBeginAt(x, y);
-            await UIHelper.waitForCondition(() => {
-                let state = internals.verticalScrollbarState(select);
+            await UIHelper.waitForConditionAsync(async () => {
+                let state = await UIHelper.verticalScrollbarState(select);
                 let visible = state.indexOf('visible_thumb') != -1;
                 if (visible)
                     testPassed('Scrollbar state: ' + state);
@@ -50,8 +51,8 @@
             debug('Cancelled should hide the scrollbar');
             await UIHelper.mouseWheelCancelAt(x, y);
 
-            await UIHelper.waitForCondition(() => {
-                let state = internals.verticalScrollbarState(select);
+            await UIHelper.waitForConditionAsync(async () => {
+                let state = await UIHelper.verticalScrollbarState(select);
                 let hidden = state.indexOf('visible_thumb') == -1;
                 if (hidden)
                     testPassed('Scrollbar state: ' + state);

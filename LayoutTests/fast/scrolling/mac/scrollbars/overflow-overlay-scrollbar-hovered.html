@@ -40,12 +40,13 @@
             const y = scrollerBounds.top + 10;
 
             debug('Initial state');
-            debug(internals.verticalScrollbarState(scroller));
+            var scrollbarState = await UIHelper.verticalScrollbarState(scroller);
+            debug(scrollbarState);
 
             debug('Hovering vertical scrollbar should show expanded scrollbar');
             await UIHelper.mouseWheelScrollAt(x, y);
-            await UIHelper.waitForCondition(() => {
-                let state = internals.verticalScrollbarState(scroller);
+            await UIHelper.waitForConditionAsync(async () => {
+                let state = await UIHelper.verticalScrollbarState(scroller);
                 let enabled = state.indexOf('enabled') != -1;
                 let expanded = state.indexOf('expanded') != -1;
                 if (enabled && expanded)
@@ -56,8 +57,8 @@
             debug('Unhovering vertical scrollbar should hide it');
             await UIHelper.moveMouseAndWaitForFrame(x - 10, y);
             await UIHelper.moveMouseAndWaitForFrame(x - 20, y);
-            await UIHelper.waitForCondition(() => {
-                let state = internals.verticalScrollbarState(scroller);
+            await UIHelper.waitForConditionAsync(async () => {
+                let state = await UIHelper.verticalScrollbarState(scroller);
                 let thumbHidden = state.indexOf('visible_thumb') == -1;
                 let trackHidden = state.indexOf('visible_track') == -1;
                 if (thumbHidden && trackHidden)

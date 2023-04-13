@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,6 +40,7 @@ public:
 TEST(Signals, SignalsWorkOnExit)
 {
     static bool handlerRan = false;
+    initializeSignalHandling();
     addSignalHandler(Signal::Usr, [] (Signal signal, SigInfo&, PlatformRegisters&) -> SignalAction {
         RELEASE_ASSERT(signal == Signal::Usr);
 

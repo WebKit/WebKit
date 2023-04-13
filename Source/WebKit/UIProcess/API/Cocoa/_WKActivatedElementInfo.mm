@@ -47,6 +47,8 @@
     RetainPtr<CocoaImage> _cocoaImage;
 #if PLATFORM(IOS_FAMILY)
     RetainPtr<NSDictionary> _userInfo;
+    BOOL _isAnimating;
+    BOOL _canShowAnimationControls;
 #endif
     BOOL _animatedImage;
     BOOL _isImage;
@@ -83,6 +85,8 @@
     _image = information.image;
     _ID = information.idAttribute;
     _animatedImage = information.isAnimatedImage;
+    _isAnimating = information.isAnimating;
+    _canShowAnimationControls = information.canShowAnimationControls;
     _isImage = information.isImage;
     _isUsingAlternateURLForImage = isUsingAlternateURLForImage;
     _userInfo = userInfo;
@@ -158,6 +162,16 @@
 }
 
 #if PLATFORM(IOS_FAMILY)
+- (BOOL)isAnimating
+{
+    return _isAnimating;
+}
+
+- (BOOL)canShowAnimationControls
+{
+    return _canShowAnimationControls;
+}
+
 - (NSDictionary *)userInfo
 {
     return _userInfo.get();

@@ -46,17 +46,29 @@ public:
     virtual void serviceScrollAnimation(MonotonicTime) = 0;
 
     virtual void updateFromStateNode(const ScrollingStateScrollingNode&) { }
+    
+    virtual void handleWheelEventPhase(const PlatformWheelEventPhase) { }
+    virtual bool handleMouseEventForScrollbars(const PlatformMouseEvent&) { return false; }
+    
+    virtual void viewWillStartLiveResize() { }
+    virtual void viewWillEndLiveResize() { }
+    virtual void viewSizeDidChange() { }
+    
+    virtual void updateScrollbarLayers() { }
+    virtual void initScrollbars() { }
 
     virtual void handleKeyboardScrollRequest(const RequestedKeyboardScrollData&) { }
 
     virtual FloatPoint adjustedScrollPosition(const FloatPoint& scrollPosition) const { return scrollPosition; }
+    virtual String scrollbarStateForOrientation(ScrollbarOrientation) const { return ""_s; }
 
 protected:
     WEBCORE_EXPORT ScrollingTree& scrollingTree() const;
+
     WEBCORE_EXPORT FloatPoint lastCommittedScrollPosition() const;
-    WEBCORE_EXPORT const FloatSize& totalContentsSize();
-    WEBCORE_EXPORT const FloatSize& reachableContentsSize();
-    WEBCORE_EXPORT const IntPoint& scrollOrigin() const;
+    WEBCORE_EXPORT FloatSize totalContentsSize();
+    WEBCORE_EXPORT FloatSize reachableContentsSize();
+    WEBCORE_EXPORT IntPoint scrollOrigin() const;
 
     FloatPoint currentScrollPosition() const { return m_scrollingNode.currentScrollPosition(); }
     FloatPoint minimumScrollPosition() const { return m_scrollingNode.minimumScrollPosition(); }

@@ -15,14 +15,14 @@
         const slice = blob.slice(0, blob.size);
         const url = URL.createObjectURL(slice);
         const response = await fetch(url);
-        assert_equals(response.headers.get('content-type'), 'text/original-blob-content-type;')
-    }, 'sliced-from content type used when none specified in blob.slice')
+        assert_equals(response.headers.get('content-type'), '')
+    }, 'blob.slice default content type used')
 
     promise_test(async () => {
         const slice = blob.slice(0, blob.size, "");
         const url = URL.createObjectURL(slice);
         const response = await fetch(url);
-        assert_equals(response.headers.get('content-type'), 'text/original-blob-content-type;')
-    }, 'sliced-from content type used when empty string content type specified in blob.slice')
+        assert_equals(response.headers.get('content-type'), '')
+    }, 'blob.slice content type used even when empty string')
 
 </script>

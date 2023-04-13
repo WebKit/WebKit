@@ -5,7 +5,7 @@ if (this.importScripts) {
 
 description("This test checks basic funtionalities of FileSystemDirectoryHandle.");
 
-var rootHandle, dirHandle, fileHandle, isSameEntry, handleNames, createError;
+var rootHandle, dirHandle, fileHandle, isSameEntry, handleNames, getError, createError;
 
 function getDirectory() 
 {
@@ -25,9 +25,20 @@ function createDirectoryHandle(fromHandle)
         dirHandle = handle;
         shouldBeEqualToString("dirHandle.name", "dir");
         shouldBeEqualToString("dirHandle.kind", "directory");
-        checkIfSameEntry(rootHandle, dirHandle);
+        getFileHandleOnDirectory(fromHandle);
     }).catch((error) => {
         finishTest(error);
+    });
+}
+
+function getFileHandleOnDirectory(fromHandle)
+{
+    fromHandle.getFileHandle("dir", { "create" : true }).then(() => {
+        finishTest('Unexpected success from getting file handle on a directory');
+    }).catch((error) => {
+        getError = error;
+        shouldBeEqualToString("getError.toString()", "TypeMismatchError: File type is incompatible with handle type");
+        checkIfSameEntry(fromHandle, dirHandle);
     });
 }
 

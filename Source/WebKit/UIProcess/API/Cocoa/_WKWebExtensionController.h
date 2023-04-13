@@ -40,7 +40,7 @@ NS_ASSUME_NONNULL_BEGIN
  @discussion You can have one or more extension controller instances, allowing different parts of the app to use different sets of extensions.
  A controller is associated with @link WKWebView @/link via the `webExtensionController` property on @link WKWebViewConfiguration @/link.
  */
-WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
+WK_CLASS_AVAILABLE(macos(13.3), ios(16.4))
 @interface _WKWebExtensionController : NSObject
 
 /*!

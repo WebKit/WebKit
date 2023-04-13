@@ -26,7 +26,8 @@
 // https://gpuweb.github.io/gpuweb/#ref-for-gpudevice⑤⓪
 
 // https://bugs.webkit.org/show_bug.cgi?id=232548 This shouldn't need to be here.
-typedef (GPUOutOfMemoryError or GPUValidationError) GPUError;
+// FIXME:  https://bugs.webkit.org/show_bug.cgi?id=253744 - GPUError should be its own type
+typedef (GPUOutOfMemoryError or GPUValidationError or GPUInternalError) GPUError;
 
 partial interface GPUDevice {
     undefined pushErrorScope(GPUErrorFilter filter);

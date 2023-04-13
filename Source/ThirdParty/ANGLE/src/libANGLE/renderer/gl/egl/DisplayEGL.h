@@ -177,6 +177,8 @@ class DisplayEGL : public DisplayGL
     EGLSurface mMockPbuffer = EGL_NO_SURFACE;
 
     // Supported DRM formats
+    bool mSupportsDmaBufImportModifiers = false;
+    bool mNoOpDmaBufImportModifiers     = false;
     std::vector<EGLint> mDrmFormats;
     bool mDrmFormatsInitialized = false;
 };

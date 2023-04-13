@@ -226,7 +226,7 @@ layer at (8,8) size 784x854
             text run at (541,120) width 198: "good for people wanting to get"
             text run at (526,140) width 125: "more familiar with "
             text run at (650,140) width 82: "Mozilla, and"
-            text run at (526,160) width 193: "there's a strong community. A"
+            text run at (526,160) width 192: "there's a strong community. A"
             text run at (526,180) width 182: "particularly good way to get"
             text run at (526,200) width 61: "involved "
             text run at (586,200) width 81: "is to join the"

@@ -27,6 +27,7 @@
 
 #include "APIObject.h"
 #include "InputMethodFilter.h"
+#include "KeyAutoRepeatHandler.h"
 #include "PageClientImpl.h"
 #include "WebPageProxy.h"
 #include <WebCore/ActivityState.h>
@@ -94,7 +95,7 @@ public:
 
     const WebCore::IntSize& size() const { return m_size; }
 
-    OptionSet<WebCore::ActivityState::Flag> viewState() const { return m_viewStateFlags; }
+    OptionSet<WebCore::ActivityState> viewState() const { return m_viewStateFlags; }
 
     void close();
 
@@ -107,7 +108,9 @@ public:
     WebKitWebViewAccessible* accessible() const;
 #endif
 
+#if ENABLE(TOUCH_EVENTS)
     WebKit::TouchGestureController& touchGestureController() const { return *m_touchGestureController; }
+#endif
 #if ENABLE(GAMEPAD)
     static WebKit::WebPageProxy* platformWebPageProxyForGamepadInput();
 #endif
@@ -116,16 +119,18 @@ private:
     View(struct wpe_view_backend*, const API::PageConfiguration&);
 
     void setSize(const WebCore::IntSize&);
-    void setViewState(OptionSet<WebCore::ActivityState::Flag>);
+    void setViewState(OptionSet<WebCore::ActivityState>);
     void handleKeyboardEvent(struct wpe_input_keyboard_event*);
 
     std::unique_ptr<API::ViewClient> m_client;
 
+#if ENABLE(TOUCH_EVENTS)
     std::unique_ptr<WebKit::TouchGestureController> m_touchGestureController;
+#endif
     std::unique_ptr<WebKit::PageClientImpl> m_pageClient;
     RefPtr<WebKit::WebPageProxy> m_pageProxy;
     WebCore::IntSize m_size;
-    OptionSet<WebCore::ActivityState::Flag> m_viewStateFlags;
+    OptionSet<WebCore::ActivityState> m_viewStateFlags;
 
     struct wpe_view_backend* m_backend;
 
@@ -141,6 +146,7 @@ private:
     bool m_verticalScrollActive { false };
 
     WebKit::InputMethodFilter m_inputMethodFilter;
+    WebKit::KeyAutoRepeatHandler m_keyAutoRepeatHandler;
 };
 
 } // namespace WKWPE

@@ -33,4 +33,4 @@ show_class_hierarchy = true
 base_url = "https://github.com/WebKit/WebKit/tree/main"
 
 [extra]
-urlmap_file = "urlmap.js"
+urlmap_file = "wpe@WPE_API_MAJOR_VERSION@-urlmap.js"

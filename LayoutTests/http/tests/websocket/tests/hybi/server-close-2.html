@@ -1,0 +1,26 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ dumpJSConsoleLogInStdErr=true ] -->
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+description("WebSocket: Test server-initiated close.");
+
+jsTestIsAsync = true;
+
+const ws = new WebSocket("ws://127.0.0.1:8880/websocket/tests/hybi/server-close-2");
+var closeEvent;
+
+ws.onopen = () => {
+    debug("Connected");
+};
+
+ws.onmessage = (messageEvent) => {
+    debug("Received: " + messageEvent.data);
+};
+
+ws.onclose = (event) => {
+    debug("Closed");
+    closeEvent = event;
+    shouldBeFalse("closeEvent.wasClean");
+    shouldBe("closeEvent.code", "1006");
+    finishJSTest();
+};
+</script>

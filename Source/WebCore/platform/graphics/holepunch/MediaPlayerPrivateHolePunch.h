@@ -79,11 +79,11 @@ public:
     MediaPlayer::NetworkState networkState() const final { return m_networkState; };
     MediaPlayer::ReadyState readyState() const final { return MediaPlayer::ReadyState::HaveMetadata; };
 
-    std::unique_ptr<PlatformTimeRanges> buffered() const final { return makeUnique<PlatformTimeRanges>(); };
+    const PlatformTimeRanges& buffered() const final { return PlatformTimeRanges::emptyRanges(); };
 
     bool didLoadingProgress() const final { return false; };
 
-    void setSize(const IntSize& size) final { m_size = size; };
+    void setPresentationSize(const IntSize& size) final { m_size = size; };
 
     void paint(GraphicsContext&, const FloatRect&) final { };
 

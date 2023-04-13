@@ -27,13 +27,13 @@
 #include "ChangeListTypeCommand.h"
 
 #include "Editing.h"
-#include "ElementAncestorIterator.h"
-#include "Frame.h"
+#include "ElementAncestorIteratorInlines.h"
 #include "FrameDestructionObserverInlines.h"
 #include "FrameSelection.h"
 #include "HTMLElement.h"
 #include "HTMLOListElement.h"
 #include "HTMLUListElement.h"
+#include "LocalFrame.h"
 #include <wtf/RefPtr.h>
 
 namespace WebCore {

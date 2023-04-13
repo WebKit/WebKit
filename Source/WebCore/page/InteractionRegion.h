@@ -26,7 +26,7 @@
 #pragma once
 
 #include "ElementIdentifier.h"
-#include "FloatRect.h"
+#include "IntRect.h"
 #include "Region.h"
 
 namespace IPC {
@@ -46,68 +46,33 @@ class RenderObject;
 
 struct InteractionRegion {
     enum class Type : bool { Interaction, Occlusion };
+    enum class CornerMask : uint8_t {
+        MinXMinYCorner = 1 << 0,
+        MaxXMinYCorner = 1 << 1,
+        MinXMaxYCorner = 1 << 2,
+        MaxXMaxYCorner = 1 << 3
+    };
 
-    ElementIdentifier elementIdentifier;
-    Region regionInLayerCoordinates;
-    float borderRadius { 0 };
     Type type;
+    ElementIdentifier elementIdentifier;
+    IntRect rectInLayerCoordinates;
+    float borderRadius { 0 };
+    OptionSet<CornerMask> maskedCorners { };
 
     WEBCORE_EXPORT ~InteractionRegion();
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<InteractionRegion> decode(Decoder&);
 };
 
 inline bool operator==(const InteractionRegion& a, const InteractionRegion& b)
 {
-    return a.elementIdentifier == b.elementIdentifier
-        && a.regionInLayerCoordinates == b.regionInLayerCoordinates
+    return a.type == b.type
+        && a.elementIdentifier == b.elementIdentifier
+        && a.rectInLayerCoordinates == b.rectInLayerCoordinates
         && a.borderRadius == b.borderRadius
-        && a.type == b.type;
+        && a.maskedCorners == b.maskedCorners;
 }
 
 WEBCORE_EXPORT std::optional<InteractionRegion> interactionRegionForRenderedRegion(RenderObject&, const Region&);
 
 WTF::TextStream& operator<<(WTF::TextStream&, const InteractionRegion&);
-
-template<class Encoder>
-void InteractionRegion::encode(Encoder& encoder) const
-{
-    encoder << elementIdentifier;
-    encoder << regionInLayerCoordinates;
-    encoder << borderRadius;
-    encoder << type;
-}
-
-template<class Decoder>
-std::optional<InteractionRegion> InteractionRegion::decode(Decoder& decoder)
-{
-    std::optional<ElementIdentifier> elementIdentifier;
-    decoder >> elementIdentifier;
-    if (!elementIdentifier)
-        return std::nullopt;
-
-    std::optional<Region> regionInLayerCoordinates;
-    decoder >> regionInLayerCoordinates;
-    if (!regionInLayerCoordinates)
-        return std::nullopt;
-    
-    std::optional<float> borderRadius;
-    decoder >> borderRadius;
-    if (!borderRadius)
-        return std::nullopt;
-
-    std::optional<Type> type;
-    decoder >> type;
-    if (!type)
-        return std::nullopt;
-
-    return { {
-        WTFMove(*elementIdentifier),
-        WTFMove(*regionInLayerCoordinates),
-        WTFMove(*borderRadius),
-        WTFMove(*type)
-    } };
-}
 
 }

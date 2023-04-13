@@ -3244,6 +3244,16 @@ bool GetQueryParameterInfo(const State &glState,
             *numParams = 1;
             return true;
         }
+        case GL_DEPTH_CLAMP_EXT:
+        {
+            if (!extensions.depthClampEXT)
+            {
+                return false;
+            }
+            *type      = GL_BOOL;
+            *numParams = 1;
+            return true;
+        }
         case GL_COLOR_LOGIC_OP:
         {
             if (!extensions.logicOpANGLE)
@@ -3270,6 +3280,14 @@ bool GetQueryParameterInfo(const State &glState,
             *numParams = 1;
             return true;
         }
+        case GL_POLYGON_OFFSET_CLAMP_EXT:
+            if (!extensions.polygonOffsetClampEXT)
+            {
+                return false;
+            }
+            *type      = GL_FLOAT;
+            *numParams = 1;
+            return true;
         case GL_ALIASED_LINE_WIDTH_RANGE:
         case GL_ALIASED_POINT_SIZE_RANGE:
         case GL_DEPTH_RANGE:
@@ -3644,6 +3662,14 @@ bool GetQueryParameterInfo(const State &glState,
     if (extensions.provokingVertexANGLE && pname == GL_PROVOKING_VERTEX_ANGLE)
     {
         *type      = GL_INT;
+        *numParams = 1;
+        return true;
+    }
+
+    if (extensions.shaderFramebufferFetchARM &&
+        (pname == GL_FETCH_PER_SAMPLE_ARM || pname == GL_FRAGMENT_SHADER_FRAMEBUFFER_FETCH_MRT_ARM))
+    {
+        *type      = GL_BOOL;
         *numParams = 1;
         return true;
     }
@@ -4506,19 +4532,20 @@ egl::Error SetSurfaceAttrib(Surface *surface, EGLint attribute, EGLint value)
     return NoError();
 }
 
-Error GetSyncAttrib(Display *display, Sync *sync, EGLint attribute, EGLint *value)
+Error GetSyncAttrib(Display *display, SyncID sync, EGLint attribute, EGLint *value)
 {
+    const egl::Sync *syncObj = display->getSync(sync);
     switch (attribute)
     {
         case EGL_SYNC_TYPE_KHR:
-            *value = sync->getType();
+            *value = syncObj->getType();
             return NoError();
 
         case EGL_SYNC_STATUS_KHR:
-            return sync->getStatus(display, value);
+            return syncObj->getStatus(display, value);
 
         case EGL_SYNC_CONDITION_KHR:
-            *value = sync->getCondition();
+            *value = syncObj->getCondition();
             return NoError();
 
         default:

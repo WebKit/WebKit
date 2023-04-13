@@ -1,0 +1,587 @@
+      a
+
+PASS execCommand("delete", false, ""): "a&nbsp;[]" (length of whiteSpace sequence: 1)
+PASS execCommand("delete", false, ""): "a&nbsp;[]&nbsp;" (length of whiteSpace sequence: 2)
+PASS execCommand("delete", false, ""): "a&nbsp;&nbsp;[]" (length of whiteSpace sequence: 2)
+PASS execCommand("delete", false, ""): "a []&nbsp;" (length of whiteSpace sequence: 2)
+PASS execCommand("delete", false, ""): "a &nbsp;[]" (length of whiteSpace sequence: 2)
+FAIL execCommand("delete", false, ""): "a&nbsp;[]&nbsp;&nbsp;" (length of whiteSpace sequence: 3) assert_equals: Modified text is wrong expected "a&nbsp;&nbsp;" but got "a &nbsp;"
+FAIL execCommand("delete", false, ""): "a&nbsp;&nbsp;[]&nbsp;" (length of whiteSpace sequence: 3) assert_equals: Modified text is wrong expected "a&nbsp;&nbsp;" but got "a &nbsp;"
+FAIL execCommand("delete", false, ""): "a&nbsp;&nbsp;&nbsp;[]" (length of whiteSpace sequence: 3) assert_equals: Modified text is wrong expected "a&nbsp;&nbsp;" but got "a &nbsp;"
+FAIL execCommand("delete", false, ""): "a&nbsp;[] &nbsp;" (length of whiteSpace sequence: 3) assert_equals: Modified text is wrong expected "a&nbsp;&nbsp;" but got "a &nbsp;"
+FAIL execCommand("delete", false, ""): "a&nbsp; []&nbsp;" (length of whiteSpace sequence: 3) assert_equals: Modified text is wrong expected "a&nbsp;&nbsp;" but got "a &nbsp;"
+FAIL execCommand("delete", false, ""): "a&nbsp; &nbsp;[]" (length of whiteSpace sequence: 3) assert_equals: Modified text is wrong expected "a&nbsp;&nbsp;" but got "a &nbsp;"
+FAIL execCommand("delete", false, ""): "a []&nbsp;&nbsp;" (length of whiteSpace sequence: 3) assert_equals: Modified text is wrong expected "a&nbsp;&nbsp;" but got "a &nbsp;"
+FAIL execCommand("delete", false, ""): "a &nbsp;[]&nbsp;" (length of whiteSpace sequence: 3) assert_equals: Modified text is wrong expected "a&nbsp;&nbsp;" but got "a &nbsp;"
+FAIL execCommand("delete", false, ""): "a &nbsp;&nbsp;[]" (length of whiteSpace sequence: 3) assert_equals: Modified text is wrong expected "a&nbsp;&nbsp;" but got "a &nbsp;"
+FAIL execCommand("delete", false, ""): "a&nbsp;[]&nbsp;&nbsp;&nbsp;" (length of whiteSpace sequence: 4) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;" but got "a &nbsp;&nbsp;"
+FAIL execCommand("delete", false, ""): "a&nbsp;&nbsp;[]&nbsp;&nbsp;" (length of whiteSpace sequence: 4) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;" but got "a &nbsp;&nbsp;"
+FAIL execCommand("delete", false, ""): "a&nbsp;&nbsp;&nbsp;[]&nbsp;" (length of whiteSpace sequence: 4) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;" but got "a &nbsp;&nbsp;"
+FAIL execCommand("delete", false, ""): "a&nbsp;&nbsp;&nbsp;&nbsp;[]" (length of whiteSpace sequence: 4) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;" but got "a &nbsp;&nbsp;"
+FAIL execCommand("delete", false, ""): "a&nbsp;[]&nbsp; &nbsp;" (length of whiteSpace sequence: 4) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;" but got "a &nbsp;&nbsp;"
+FAIL execCommand("delete", false, ""): "a&nbsp;&nbsp;[] &nbsp;" (length of whiteSpace sequence: 4) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;" but got "a &nbsp;&nbsp;"
+FAIL execCommand("delete", false, ""): "a&nbsp;&nbsp; []&nbsp;" (length of whiteSpace sequence: 4) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;" but got "a &nbsp;&nbsp;"
+FAIL execCommand("delete", false, ""): "a&nbsp;&nbsp; &nbsp;[]" (length of whiteSpace sequence: 4) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;" but got "a &nbsp;&nbsp;"
+FAIL execCommand("delete", false, ""): "a&nbsp;[] &nbsp;&nbsp;" (length of whiteSpace sequence: 4) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;" but got "a &nbsp;&nbsp;"
+FAIL execCommand("delete", false, ""): "a&nbsp; []&nbsp;&nbsp;" (length of whiteSpace sequence: 4) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;" but got "a &nbsp;&nbsp;"
+FAIL execCommand("delete", false, ""): "a&nbsp; &nbsp;[]&nbsp;" (length of whiteSpace sequence: 4) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;" but got "a &nbsp;&nbsp;"
+FAIL execCommand("delete", false, ""): "a&nbsp; &nbsp;&nbsp;[]" (length of whiteSpace sequence: 4) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;" but got "a &nbsp;&nbsp;"
+FAIL execCommand("delete", false, ""): "a []&nbsp; &nbsp;" (length of whiteSpace sequence: 4) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;" but got "a &nbsp;&nbsp;"
+FAIL execCommand("delete", false, ""): "a &nbsp;[] &nbsp;" (length of whiteSpace sequence: 4) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;" but got "a &nbsp;&nbsp;"
+FAIL execCommand("delete", false, ""): "a &nbsp; []&nbsp;" (length of whiteSpace sequence: 4) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;" but got "a &nbsp;&nbsp;"
+FAIL execCommand("delete", false, ""): "a &nbsp; &nbsp;[]" (length of whiteSpace sequence: 4) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;" but got "a &nbsp;&nbsp;"
+FAIL execCommand("delete", false, ""): "a&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;" (length of whiteSpace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;&nbsp;" but got "a &nbsp; &nbsp;"
+FAIL execCommand("delete", false, ""): "a&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;" (length of whiteSpace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;&nbsp;" but got "a &nbsp; &nbsp;"
+FAIL execCommand("delete", false, ""): "a&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;" (length of whiteSpace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;&nbsp;" but got "a &nbsp; &nbsp;"
+FAIL execCommand("delete", false, ""): "a&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;" (length of whiteSpace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;&nbsp;" but got "a &nbsp; &nbsp;"
+FAIL execCommand("delete", false, ""): "a&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]" (length of whiteSpace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;&nbsp;" but got "a &nbsp; &nbsp;"
+FAIL execCommand("delete", false, ""): "a&nbsp;[] &nbsp; &nbsp;" (length of whiteSpace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;&nbsp;" but got "a &nbsp; &nbsp;"
+FAIL execCommand("delete", false, ""): "a&nbsp; []&nbsp; &nbsp;" (length of whiteSpace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;&nbsp;" but got "a &nbsp; &nbsp;"
+FAIL execCommand("delete", false, ""): "a&nbsp; &nbsp;[] &nbsp;" (length of whiteSpace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;&nbsp;" but got "a &nbsp; &nbsp;"
+FAIL execCommand("delete", false, ""): "a&nbsp; &nbsp; []&nbsp;" (length of whiteSpace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;&nbsp;" but got "a &nbsp; &nbsp;"
+FAIL execCommand("delete", false, ""): "a&nbsp; &nbsp; &nbsp;[]" (length of whiteSpace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;&nbsp;" but got "a &nbsp; &nbsp;"
+FAIL execCommand("delete", false, ""): "a&nbsp;[]&nbsp;&nbsp; &nbsp;" (length of whiteSpace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;&nbsp;" but got "a &nbsp; &nbsp;"
+FAIL execCommand("delete", false, ""): "a&nbsp;&nbsp;[]&nbsp; &nbsp;" (length of whiteSpace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;&nbsp;" but got "a &nbsp; &nbsp;"
+FAIL execCommand("delete", false, ""): "a&nbsp;&nbsp;&nbsp;[] &nbsp;" (length of whiteSpace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;&nbsp;" but got "a &nbsp; &nbsp;"
+FAIL execCommand("delete", false, ""): "a&nbsp;&nbsp;&nbsp; []&nbsp;" (length of whiteSpace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;&nbsp;" but got "a &nbsp; &nbsp;"
+FAIL execCommand("delete", false, ""): "a&nbsp;&nbsp;&nbsp; &nbsp;[]" (length of whiteSpace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;&nbsp;" but got "a &nbsp; &nbsp;"
+FAIL execCommand("delete", false, ""): "a&nbsp;[]&nbsp; &nbsp;&nbsp;" (length of whiteSpace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;&nbsp;" but got "a &nbsp; &nbsp;"
+FAIL execCommand("delete", false, ""): "a&nbsp;&nbsp;[] &nbsp;&nbsp;" (length of whiteSpace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;&nbsp;" but got "a &nbsp; &nbsp;"
+FAIL execCommand("delete", false, ""): "a&nbsp;&nbsp; []&nbsp;&nbsp;" (length of whiteSpace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;&nbsp;" but got "a &nbsp; &nbsp;"
+FAIL execCommand("delete", false, ""): "a&nbsp;&nbsp; &nbsp;[]&nbsp;" (length of whiteSpace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;&nbsp;" but got "a &nbsp; &nbsp;"
+FAIL execCommand("delete", false, ""): "a&nbsp;&nbsp; &nbsp;&nbsp;[]" (length of whiteSpace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;&nbsp;" but got "a &nbsp; &nbsp;"
+FAIL execCommand("delete", false, ""): "a&nbsp;[] &nbsp;&nbsp;&nbsp;" (length of whiteSpace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;&nbsp;" but got "a &nbsp; &nbsp;"
+FAIL execCommand("delete", false, ""): "a&nbsp; []&nbsp;&nbsp;&nbsp;" (length of whiteSpace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;&nbsp;" but got "a &nbsp; &nbsp;"
+FAIL execCommand("delete", false, ""): "a&nbsp; &nbsp;[]&nbsp;&nbsp;" (length of whiteSpace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;&nbsp;" but got "a &nbsp; &nbsp;"
+FAIL execCommand("delete", false, ""): "a&nbsp; &nbsp;&nbsp;[]&nbsp;" (length of whiteSpace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;&nbsp;" but got "a &nbsp; &nbsp;"
+FAIL execCommand("delete", false, ""): "a&nbsp; &nbsp;&nbsp;&nbsp;[]" (length of whiteSpace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;&nbsp;" but got "a &nbsp; &nbsp;"
+FAIL execCommand("delete", false, ""): "a&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" (length of whiteSpace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;"
+FAIL execCommand("delete", false, ""): "a&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" (length of whiteSpace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;"
+FAIL execCommand("delete", false, ""): "a&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" (length of whiteSpace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;"
+FAIL execCommand("delete", false, ""): "a&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" (length of whiteSpace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;"
+FAIL execCommand("delete", false, ""): "a&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" (length of whiteSpace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;"
+FAIL execCommand("delete", false, ""): "a&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;" (length of whiteSpace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;"
+FAIL execCommand("delete", false, ""): "a&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;" (length of whiteSpace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;"
+FAIL execCommand("delete", false, ""): "a&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;" (length of whiteSpace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;"
+FAIL execCommand("delete", false, ""): "a&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;" (length of whiteSpace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;"
+FAIL execCommand("delete", false, ""): "a&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]" (length of whiteSpace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;"
+FAIL execCommand("delete", false, ""): "a&nbsp;[] &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;" (length of whiteSpace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;"
+FAIL execCommand("delete", false, ""): "a&nbsp; []&nbsp; &nbsp; &nbsp; &nbsp;&nbsp;" (length of whiteSpace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;"
+FAIL execCommand("delete", false, ""): "a&nbsp; &nbsp;[] &nbsp; &nbsp; &nbsp;&nbsp;" (length of whiteSpace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;"
+FAIL execCommand("delete", false, ""): "a&nbsp; &nbsp; []&nbsp; &nbsp; &nbsp;&nbsp;" (length of whiteSpace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;"
+FAIL execCommand("delete", false, ""): "a&nbsp; &nbsp; &nbsp;[] &nbsp; &nbsp;&nbsp;" (length of whiteSpace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;"
+FAIL execCommand("delete", false, ""): "a&nbsp; &nbsp; &nbsp; []&nbsp; &nbsp;&nbsp;" (length of whiteSpace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;"
+FAIL execCommand("delete", false, ""): "a&nbsp; &nbsp; &nbsp; &nbsp;[] &nbsp;&nbsp;" (length of whiteSpace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;"
+FAIL execCommand("delete", false, ""): "a&nbsp; &nbsp; &nbsp; &nbsp; []&nbsp;&nbsp;" (length of whiteSpace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;"
+FAIL execCommand("delete", false, ""): "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;[]&nbsp;" (length of whiteSpace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;"
+FAIL execCommand("delete", false, ""): "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;[]" (length of whiteSpace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;"
+FAIL execCommand("delete", false, ""): "a []&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;" (length of whiteSpace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;"
+FAIL execCommand("delete", false, ""): "a &nbsp;[] &nbsp; &nbsp; &nbsp; &nbsp;" (length of whiteSpace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;"
+FAIL execCommand("delete", false, ""): "a &nbsp; []&nbsp; &nbsp; &nbsp; &nbsp;" (length of whiteSpace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;"
+FAIL execCommand("delete", false, ""): "a &nbsp; &nbsp;[] &nbsp; &nbsp; &nbsp;" (length of whiteSpace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;"
+FAIL execCommand("delete", false, ""): "a &nbsp; &nbsp; []&nbsp; &nbsp; &nbsp;" (length of whiteSpace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;"
+FAIL execCommand("delete", false, ""): "a &nbsp; &nbsp; &nbsp;[] &nbsp; &nbsp;" (length of whiteSpace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;"
+FAIL execCommand("delete", false, ""): "a &nbsp; &nbsp; &nbsp; []&nbsp; &nbsp;" (length of whiteSpace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;"
+FAIL execCommand("delete", false, ""): "a &nbsp; &nbsp; &nbsp; &nbsp;[] &nbsp;" (length of whiteSpace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;"
+FAIL execCommand("delete", false, ""): "a &nbsp; &nbsp; &nbsp; &nbsp; []&nbsp;" (length of whiteSpace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;"
+FAIL execCommand("delete", false, ""): "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;[]" (length of whiteSpace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;"
+FAIL execCommand("delete", false, ""): "a&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" (length of whiteSpace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;"
+FAIL execCommand("delete", false, ""): "a&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" (length of whiteSpace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;"
+FAIL execCommand("delete", false, ""): "a&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" (length of whiteSpace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;"
+FAIL execCommand("delete", false, ""): "a&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" (length of whiteSpace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;"
+FAIL execCommand("delete", false, ""): "a&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" (length of whiteSpace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;"
+FAIL execCommand("delete", false, ""): "a&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" (length of whiteSpace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;"
+FAIL execCommand("delete", false, ""): "a&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;" (length of whiteSpace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;"
+FAIL execCommand("delete", false, ""): "a&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;" (length of whiteSpace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;"
+FAIL execCommand("delete", false, ""): "a&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;" (length of whiteSpace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;"
+FAIL execCommand("delete", false, ""): "a&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;" (length of whiteSpace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;"
+FAIL execCommand("delete", false, ""): "a&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]" (length of whiteSpace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;"
+FAIL execCommand("delete", false, ""): "a&nbsp;[] &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;" (length of whiteSpace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;"
+FAIL execCommand("delete", false, ""): "a&nbsp; []&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;" (length of whiteSpace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;"
+FAIL execCommand("delete", false, ""): "a&nbsp; &nbsp;[] &nbsp; &nbsp; &nbsp; &nbsp;" (length of whiteSpace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;"
+FAIL execCommand("delete", false, ""): "a&nbsp; &nbsp; []&nbsp; &nbsp; &nbsp; &nbsp;" (length of whiteSpace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;"
+FAIL execCommand("delete", false, ""): "a&nbsp; &nbsp; &nbsp;[] &nbsp; &nbsp; &nbsp;" (length of whiteSpace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;"
+FAIL execCommand("delete", false, ""): "a&nbsp; &nbsp; &nbsp; []&nbsp; &nbsp; &nbsp;" (length of whiteSpace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;"
+FAIL execCommand("delete", false, ""): "a&nbsp; &nbsp; &nbsp; &nbsp;[] &nbsp; &nbsp;" (length of whiteSpace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;"
+FAIL execCommand("delete", false, ""): "a&nbsp; &nbsp; &nbsp; &nbsp; []&nbsp; &nbsp;" (length of whiteSpace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;"
+FAIL execCommand("delete", false, ""): "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;[] &nbsp;" (length of whiteSpace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;"
+FAIL execCommand("delete", false, ""): "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; []&nbsp;" (length of whiteSpace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;"
+FAIL execCommand("delete", false, ""): "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;[]" (length of whiteSpace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;"
+PASS execCommand("delete", false, ""): "a&nbsp;[]b" (length of whiteSpace sequence: 1)
+PASS execCommand("delete", false, ""): "a []b" (length of whiteSpace sequence: 1)
+PASS execCommand("delete", false, ""): "a&nbsp;[]&nbsp;b" (length of whiteSpace sequence: 2)
+PASS execCommand("delete", false, ""): "a&nbsp;&nbsp;[]b" (length of whiteSpace sequence: 2)
+PASS execCommand("delete", false, ""): "a&nbsp;[] b" (length of whiteSpace sequence: 2)
+PASS execCommand("delete", false, ""): "a&nbsp; []b" (length of whiteSpace sequence: 2)
+PASS execCommand("delete", false, ""): "a []&nbsp;b" (length of whiteSpace sequence: 2)
+PASS execCommand("delete", false, ""): "a &nbsp;[]b" (length of whiteSpace sequence: 2)
+FAIL execCommand("delete", false, ""): "a&nbsp;[]&nbsp;&nbsp;b" (length of whiteSpace sequence: 3) assert_equals: Modified text is wrong expected "a&nbsp; b" but got "a &nbsp;b"
+FAIL execCommand("delete", false, ""): "a&nbsp;&nbsp;[]&nbsp;b" (length of whiteSpace sequence: 3) assert_equals: Modified text is wrong expected "a&nbsp; b" but got "a &nbsp;b"
+FAIL execCommand("delete", false, ""): "a&nbsp;&nbsp;&nbsp;[]b" (length of whiteSpace sequence: 3) assert_equals: Modified text is wrong expected "a&nbsp; b" but got "a &nbsp;b"
+FAIL execCommand("delete", false, ""): "a&nbsp;[] &nbsp;b" (length of whiteSpace sequence: 3) assert_equals: Modified text is wrong expected "a&nbsp; b" but got "a &nbsp;b"
+FAIL execCommand("delete", false, ""): "a&nbsp; []&nbsp;b" (length of whiteSpace sequence: 3) assert_equals: Modified text is wrong expected "a&nbsp; b" but got "a &nbsp;b"
+FAIL execCommand("delete", false, ""): "a&nbsp; &nbsp;[]b" (length of whiteSpace sequence: 3) assert_equals: Modified text is wrong expected "a&nbsp; b" but got "a &nbsp;b"
+FAIL execCommand("delete", false, ""): "a []&nbsp; b" (length of whiteSpace sequence: 3) assert_equals: Modified text is wrong expected "a&nbsp; b" but got "a &nbsp;b"
+FAIL execCommand("delete", false, ""): "a &nbsp;[] b" (length of whiteSpace sequence: 3) assert_equals: Modified text is wrong expected "a&nbsp; b" but got "a &nbsp;b"
+FAIL execCommand("delete", false, ""): "a &nbsp; []b" (length of whiteSpace sequence: 3) assert_equals: Modified text is wrong expected "a&nbsp; b" but got "a &nbsp;b"
+FAIL execCommand("delete", false, ""): "a []&nbsp;&nbsp;b" (length of whiteSpace sequence: 3) assert_equals: Modified text is wrong expected "a&nbsp; b" but got "a &nbsp;b"
+FAIL execCommand("delete", false, ""): "a &nbsp;[]&nbsp;b" (length of whiteSpace sequence: 3) assert_equals: Modified text is wrong expected "a&nbsp; b" but got "a &nbsp;b"
+FAIL execCommand("delete", false, ""): "a &nbsp;&nbsp;[]b" (length of whiteSpace sequence: 3) assert_equals: Modified text is wrong expected "a&nbsp; b" but got "a &nbsp;b"
+FAIL execCommand("delete", false, ""): "a&nbsp;[]&nbsp;&nbsp;&nbsp;b" (length of whiteSpace sequence: 4) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;b" but got "a &nbsp; b"
+FAIL execCommand("delete", false, ""): "a&nbsp;&nbsp;[]&nbsp;&nbsp;b" (length of whiteSpace sequence: 4) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;b" but got "a &nbsp; b"
+FAIL execCommand("delete", false, ""): "a&nbsp;&nbsp;&nbsp;[]&nbsp;b" (length of whiteSpace sequence: 4) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;b" but got "a &nbsp; b"
+FAIL execCommand("delete", false, ""): "a&nbsp;&nbsp;&nbsp;&nbsp;[]b" (length of whiteSpace sequence: 4) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;b" but got "a &nbsp; b"
+FAIL execCommand("delete", false, ""): "a&nbsp;[] &nbsp; b" (length of whiteSpace sequence: 4) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;b" but got "a &nbsp; b"
+FAIL execCommand("delete", false, ""): "a&nbsp; []&nbsp; b" (length of whiteSpace sequence: 4) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;b" but got "a &nbsp; b"
+FAIL execCommand("delete", false, ""): "a&nbsp; &nbsp;[] b" (length of whiteSpace sequence: 4) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;b" but got "a &nbsp; b"
+FAIL execCommand("delete", false, ""): "a&nbsp; &nbsp; []b" (length of whiteSpace sequence: 4) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;b" but got "a &nbsp; b"
+FAIL execCommand("delete", false, ""): "a []&nbsp; &nbsp;b" (length of whiteSpace sequence: 4) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;b" but got "a &nbsp; b"
+FAIL execCommand("delete", false, ""): "a &nbsp;[] &nbsp;b" (length of whiteSpace sequence: 4) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;b" but got "a &nbsp; b"
+FAIL execCommand("delete", false, ""): "a &nbsp; []&nbsp;b" (length of whiteSpace sequence: 4) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;b" but got "a &nbsp; b"
+FAIL execCommand("delete", false, ""): "a &nbsp; &nbsp;[]b" (length of whiteSpace sequence: 4) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;b" but got "a &nbsp; b"
+FAIL execCommand("delete", false, ""): "a&nbsp;[]&nbsp; &nbsp;b" (length of whiteSpace sequence: 4) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;b" but got "a &nbsp; b"
+FAIL execCommand("delete", false, ""): "a&nbsp;&nbsp;[] &nbsp;b" (length of whiteSpace sequence: 4) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;b" but got "a &nbsp; b"
+FAIL execCommand("delete", false, ""): "a&nbsp;&nbsp; []&nbsp;b" (length of whiteSpace sequence: 4) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;b" but got "a &nbsp; b"
+FAIL execCommand("delete", false, ""): "a&nbsp;&nbsp; &nbsp;[]b" (length of whiteSpace sequence: 4) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;b" but got "a &nbsp; b"
+FAIL execCommand("delete", false, ""): "a&nbsp;[] &nbsp;&nbsp;b" (length of whiteSpace sequence: 4) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;b" but got "a &nbsp; b"
+FAIL execCommand("delete", false, ""): "a&nbsp; []&nbsp;&nbsp;b" (length of whiteSpace sequence: 4) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;b" but got "a &nbsp; b"
+FAIL execCommand("delete", false, ""): "a&nbsp; &nbsp;[]&nbsp;b" (length of whiteSpace sequence: 4) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;b" but got "a &nbsp; b"
+FAIL execCommand("delete", false, ""): "a&nbsp; &nbsp;&nbsp;[]b" (length of whiteSpace sequence: 4) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;b" but got "a &nbsp; b"
+FAIL execCommand("delete", false, ""): "a&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;b" (length of whiteSpace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; b" but got "a &nbsp; &nbsp;b"
+FAIL execCommand("delete", false, ""): "a&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;b" (length of whiteSpace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; b" but got "a &nbsp; &nbsp;b"
+FAIL execCommand("delete", false, ""): "a&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;b" (length of whiteSpace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; b" but got "a &nbsp; &nbsp;b"
+FAIL execCommand("delete", false, ""): "a&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;b" (length of whiteSpace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; b" but got "a &nbsp; &nbsp;b"
+FAIL execCommand("delete", false, ""): "a&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]b" (length of whiteSpace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; b" but got "a &nbsp; &nbsp;b"
+FAIL execCommand("delete", false, ""): "a&nbsp;[] &nbsp; &nbsp;b" (length of whiteSpace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; b" but got "a &nbsp; &nbsp;b"
+FAIL execCommand("delete", false, ""): "a&nbsp; []&nbsp; &nbsp;b" (length of whiteSpace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; b" but got "a &nbsp; &nbsp;b"
+FAIL execCommand("delete", false, ""): "a&nbsp; &nbsp;[] &nbsp;b" (length of whiteSpace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; b" but got "a &nbsp; &nbsp;b"
+FAIL execCommand("delete", false, ""): "a&nbsp; &nbsp; []&nbsp;b" (length of whiteSpace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; b" but got "a &nbsp; &nbsp;b"
+FAIL execCommand("delete", false, ""): "a&nbsp; &nbsp; &nbsp;[]b" (length of whiteSpace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; b" but got "a &nbsp; &nbsp;b"
+FAIL execCommand("delete", false, ""): "a []&nbsp; &nbsp; b" (length of whiteSpace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; b" but got "a &nbsp; &nbsp;b"
+FAIL execCommand("delete", false, ""): "a &nbsp;[] &nbsp; b" (length of whiteSpace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; b" but got "a &nbsp; &nbsp;b"
+FAIL execCommand("delete", false, ""): "a &nbsp; []&nbsp; b" (length of whiteSpace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; b" but got "a &nbsp; &nbsp;b"
+FAIL execCommand("delete", false, ""): "a &nbsp; &nbsp;[] b" (length of whiteSpace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; b" but got "a &nbsp; &nbsp;b"
+FAIL execCommand("delete", false, ""): "a &nbsp; &nbsp; []b" (length of whiteSpace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; b" but got "a &nbsp; &nbsp;b"
+FAIL execCommand("delete", false, ""): "a&nbsp;[]&nbsp;&nbsp;&nbsp; b" (length of whiteSpace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; b" but got "a &nbsp; &nbsp;b"
+FAIL execCommand("delete", false, ""): "a&nbsp;&nbsp;[]&nbsp;&nbsp; b" (length of whiteSpace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; b" but got "a &nbsp; &nbsp;b"
+FAIL execCommand("delete", false, ""): "a&nbsp;&nbsp;&nbsp;[]&nbsp; b" (length of whiteSpace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; b" but got "a &nbsp; &nbsp;b"
+FAIL execCommand("delete", false, ""): "a&nbsp;&nbsp;&nbsp;&nbsp;[] b" (length of whiteSpace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; b" but got "a &nbsp; &nbsp;b"
+FAIL execCommand("delete", false, ""): "a&nbsp;&nbsp;&nbsp;&nbsp; []b" (length of whiteSpace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; b" but got "a &nbsp; &nbsp;b"
+FAIL execCommand("delete", false, ""): "a&nbsp;[]&nbsp;&nbsp; &nbsp;b" (length of whiteSpace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; b" but got "a &nbsp; &nbsp;b"
+FAIL execCommand("delete", false, ""): "a&nbsp;&nbsp;[]&nbsp; &nbsp;b" (length of whiteSpace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; b" but got "a &nbsp; &nbsp;b"
+FAIL execCommand("delete", false, ""): "a&nbsp;&nbsp;&nbsp;[] &nbsp;b" (length of whiteSpace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; b" but got "a &nbsp; &nbsp;b"
+FAIL execCommand("delete", false, ""): "a&nbsp;&nbsp;&nbsp; []&nbsp;b" (length of whiteSpace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; b" but got "a &nbsp; &nbsp;b"
+FAIL execCommand("delete", false, ""): "a&nbsp;&nbsp;&nbsp; &nbsp;[]b" (length of whiteSpace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; b" but got "a &nbsp; &nbsp;b"
+FAIL execCommand("delete", false, ""): "a&nbsp;[]&nbsp; &nbsp;&nbsp;b" (length of whiteSpace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; b" but got "a &nbsp; &nbsp;b"
+FAIL execCommand("delete", false, ""): "a&nbsp;&nbsp;[] &nbsp;&nbsp;b" (length of whiteSpace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; b" but got "a &nbsp; &nbsp;b"
+FAIL execCommand("delete", false, ""): "a&nbsp;&nbsp; []&nbsp;&nbsp;b" (length of whiteSpace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; b" but got "a &nbsp; &nbsp;b"
+FAIL execCommand("delete", false, ""): "a&nbsp;&nbsp; &nbsp;[]&nbsp;b" (length of whiteSpace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; b" but got "a &nbsp; &nbsp;b"
+FAIL execCommand("delete", false, ""): "a&nbsp;&nbsp; &nbsp;&nbsp;[]b" (length of whiteSpace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; b" but got "a &nbsp; &nbsp;b"
+FAIL execCommand("delete", false, ""): "a&nbsp;[] &nbsp;&nbsp;&nbsp;b" (length of whiteSpace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; b" but got "a &nbsp; &nbsp;b"
+FAIL execCommand("delete", false, ""): "a&nbsp; []&nbsp;&nbsp;&nbsp;b" (length of whiteSpace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; b" but got "a &nbsp; &nbsp;b"
+FAIL execCommand("delete", false, ""): "a&nbsp; &nbsp;[]&nbsp;&nbsp;b" (length of whiteSpace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; b" but got "a &nbsp; &nbsp;b"
+FAIL execCommand("delete", false, ""): "a&nbsp; &nbsp;&nbsp;[]&nbsp;b" (length of whiteSpace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; b" but got "a &nbsp; &nbsp;b"
+FAIL execCommand("delete", false, ""): "a&nbsp; &nbsp;&nbsp;&nbsp;[]b" (length of whiteSpace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; b" but got "a &nbsp; &nbsp;b"
+FAIL execCommand("delete", false, ""): "a []&nbsp;&nbsp;&nbsp;&nbsp;b" (length of whiteSpace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; b" but got "a &nbsp; &nbsp;b"
+FAIL execCommand("delete", false, ""): "a &nbsp;[]&nbsp;&nbsp;&nbsp;b" (length of whiteSpace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; b" but got "a &nbsp; &nbsp;b"
+FAIL execCommand("delete", false, ""): "a &nbsp;&nbsp;[]&nbsp;&nbsp;b" (length of whiteSpace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; b" but got "a &nbsp; &nbsp;b"
+FAIL execCommand("delete", false, ""): "a &nbsp;&nbsp;&nbsp;[]&nbsp;b" (length of whiteSpace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; b" but got "a &nbsp; &nbsp;b"
+FAIL execCommand("delete", false, ""): "a &nbsp;&nbsp;&nbsp;&nbsp;[]b" (length of whiteSpace sequence: 5) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; b" but got "a &nbsp; &nbsp;b"
+FAIL execCommand("delete", false, ""): "a&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b" (length of whiteSpace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; b"
+FAIL execCommand("delete", false, ""): "a&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b" (length of whiteSpace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; b"
+FAIL execCommand("delete", false, ""): "a&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b" (length of whiteSpace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; b"
+FAIL execCommand("delete", false, ""): "a&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b" (length of whiteSpace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; b"
+FAIL execCommand("delete", false, ""): "a&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b" (length of whiteSpace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; b"
+FAIL execCommand("delete", false, ""): "a&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;b" (length of whiteSpace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; b"
+FAIL execCommand("delete", false, ""): "a&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;b" (length of whiteSpace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; b"
+FAIL execCommand("delete", false, ""): "a&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;b" (length of whiteSpace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; b"
+FAIL execCommand("delete", false, ""): "a&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;b" (length of whiteSpace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; b"
+FAIL execCommand("delete", false, ""): "a&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]b" (length of whiteSpace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; b"
+FAIL execCommand("delete", false, ""): "a&nbsp;[] &nbsp; &nbsp; &nbsp; &nbsp; b" (length of whiteSpace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; b"
+FAIL execCommand("delete", false, ""): "a&nbsp; []&nbsp; &nbsp; &nbsp; &nbsp; b" (length of whiteSpace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; b"
+FAIL execCommand("delete", false, ""): "a&nbsp; &nbsp;[] &nbsp; &nbsp; &nbsp; b" (length of whiteSpace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; b"
+FAIL execCommand("delete", false, ""): "a&nbsp; &nbsp; []&nbsp; &nbsp; &nbsp; b" (length of whiteSpace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; b"
+FAIL execCommand("delete", false, ""): "a&nbsp; &nbsp; &nbsp;[] &nbsp; &nbsp; b" (length of whiteSpace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; b"
+FAIL execCommand("delete", false, ""): "a&nbsp; &nbsp; &nbsp; []&nbsp; &nbsp; b" (length of whiteSpace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; b"
+FAIL execCommand("delete", false, ""): "a&nbsp; &nbsp; &nbsp; &nbsp;[] &nbsp; b" (length of whiteSpace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; b"
+FAIL execCommand("delete", false, ""): "a&nbsp; &nbsp; &nbsp; &nbsp; []&nbsp; b" (length of whiteSpace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; b"
+FAIL execCommand("delete", false, ""): "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;[] b" (length of whiteSpace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; b"
+FAIL execCommand("delete", false, ""): "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; []b" (length of whiteSpace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; b"
+FAIL execCommand("delete", false, ""): "a []&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b" (length of whiteSpace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; b"
+FAIL execCommand("delete", false, ""): "a &nbsp;[] &nbsp; &nbsp; &nbsp; &nbsp;b" (length of whiteSpace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; b"
+FAIL execCommand("delete", false, ""): "a &nbsp; []&nbsp; &nbsp; &nbsp; &nbsp;b" (length of whiteSpace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; b"
+FAIL execCommand("delete", false, ""): "a &nbsp; &nbsp;[] &nbsp; &nbsp; &nbsp;b" (length of whiteSpace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; b"
+FAIL execCommand("delete", false, ""): "a &nbsp; &nbsp; []&nbsp; &nbsp; &nbsp;b" (length of whiteSpace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; b"
+FAIL execCommand("delete", false, ""): "a &nbsp; &nbsp; &nbsp;[] &nbsp; &nbsp;b" (length of whiteSpace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; b"
+FAIL execCommand("delete", false, ""): "a &nbsp; &nbsp; &nbsp; []&nbsp; &nbsp;b" (length of whiteSpace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; b"
+FAIL execCommand("delete", false, ""): "a &nbsp; &nbsp; &nbsp; &nbsp;[] &nbsp;b" (length of whiteSpace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; b"
+FAIL execCommand("delete", false, ""): "a &nbsp; &nbsp; &nbsp; &nbsp; []&nbsp;b" (length of whiteSpace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; b"
+FAIL execCommand("delete", false, ""): "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;[]b" (length of whiteSpace sequence: 10) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; b"
+FAIL execCommand("delete", false, ""): "a&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b" (length of whiteSpace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b"
+FAIL execCommand("delete", false, ""): "a&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b" (length of whiteSpace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b"
+FAIL execCommand("delete", false, ""): "a&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b" (length of whiteSpace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b"
+FAIL execCommand("delete", false, ""): "a&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b" (length of whiteSpace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b"
+FAIL execCommand("delete", false, ""): "a&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b" (length of whiteSpace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b"
+FAIL execCommand("delete", false, ""): "a&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b" (length of whiteSpace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b"
+FAIL execCommand("delete", false, ""): "a&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;b" (length of whiteSpace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b"
+FAIL execCommand("delete", false, ""): "a&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;b" (length of whiteSpace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b"
+FAIL execCommand("delete", false, ""): "a&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;b" (length of whiteSpace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b"
+FAIL execCommand("delete", false, ""): "a&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;b" (length of whiteSpace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b"
+FAIL execCommand("delete", false, ""): "a&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]b" (length of whiteSpace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b"
+FAIL execCommand("delete", false, ""): "a&nbsp;[] &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b" (length of whiteSpace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b"
+FAIL execCommand("delete", false, ""): "a&nbsp; []&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b" (length of whiteSpace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b"
+FAIL execCommand("delete", false, ""): "a&nbsp; &nbsp;[] &nbsp; &nbsp; &nbsp; &nbsp;b" (length of whiteSpace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b"
+FAIL execCommand("delete", false, ""): "a&nbsp; &nbsp; []&nbsp; &nbsp; &nbsp; &nbsp;b" (length of whiteSpace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b"
+FAIL execCommand("delete", false, ""): "a&nbsp; &nbsp; &nbsp;[] &nbsp; &nbsp; &nbsp;b" (length of whiteSpace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b"
+FAIL execCommand("delete", false, ""): "a&nbsp; &nbsp; &nbsp; []&nbsp; &nbsp; &nbsp;b" (length of whiteSpace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b"
+FAIL execCommand("delete", false, ""): "a&nbsp; &nbsp; &nbsp; &nbsp;[] &nbsp; &nbsp;b" (length of whiteSpace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b"
+FAIL execCommand("delete", false, ""): "a&nbsp; &nbsp; &nbsp; &nbsp; []&nbsp; &nbsp;b" (length of whiteSpace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b"
+FAIL execCommand("delete", false, ""): "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;[] &nbsp;b" (length of whiteSpace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b"
+FAIL execCommand("delete", false, ""): "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; []&nbsp;b" (length of whiteSpace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b"
+FAIL execCommand("delete", false, ""): "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;[]b" (length of whiteSpace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b"
+FAIL execCommand("delete", false, ""): "a []&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; b" (length of whiteSpace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b"
+FAIL execCommand("delete", false, ""): "a &nbsp;[] &nbsp; &nbsp; &nbsp; &nbsp; b" (length of whiteSpace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b"
+FAIL execCommand("delete", false, ""): "a &nbsp; []&nbsp; &nbsp; &nbsp; &nbsp; b" (length of whiteSpace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b"
+FAIL execCommand("delete", false, ""): "a &nbsp; &nbsp;[] &nbsp; &nbsp; &nbsp; b" (length of whiteSpace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b"
+FAIL execCommand("delete", false, ""): "a &nbsp; &nbsp; []&nbsp; &nbsp; &nbsp; b" (length of whiteSpace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b"
+FAIL execCommand("delete", false, ""): "a &nbsp; &nbsp; &nbsp;[] &nbsp; &nbsp; b" (length of whiteSpace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b"
+FAIL execCommand("delete", false, ""): "a &nbsp; &nbsp; &nbsp; []&nbsp; &nbsp; b" (length of whiteSpace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b"
+FAIL execCommand("delete", false, ""): "a &nbsp; &nbsp; &nbsp; &nbsp;[] &nbsp; b" (length of whiteSpace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b"
+FAIL execCommand("delete", false, ""): "a &nbsp; &nbsp; &nbsp; &nbsp; []&nbsp; b" (length of whiteSpace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b"
+FAIL execCommand("delete", false, ""): "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;[] b" (length of whiteSpace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b"
+FAIL execCommand("delete", false, ""): "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; []b" (length of whiteSpace sequence: 11) assert_equals: Modified text is wrong expected "a&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; b" but got "a &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b"
+PASS execCommand("delete", false, ""): "&nbsp;[]b" (length of whiteSpace sequence: 1)
+PASS execCommand("delete", false, ""): "&nbsp;[]&nbsp;b" (length of whiteSpace sequence: 2)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp;[]b" (length of whiteSpace sequence: 2)
+PASS execCommand("delete", false, ""): "&nbsp;[] b" (length of whiteSpace sequence: 2)
+PASS execCommand("delete", false, ""): "&nbsp; []b" (length of whiteSpace sequence: 2)
+PASS execCommand("delete", false, ""): "&nbsp;[]&nbsp;&nbsp;b" (length of whiteSpace sequence: 3)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp;[]&nbsp;b" (length of whiteSpace sequence: 3)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp;&nbsp;[]b" (length of whiteSpace sequence: 3)
+PASS execCommand("delete", false, ""): "&nbsp;[] &nbsp;b" (length of whiteSpace sequence: 3)
+PASS execCommand("delete", false, ""): "&nbsp; []&nbsp;b" (length of whiteSpace sequence: 3)
+PASS execCommand("delete", false, ""): "&nbsp; &nbsp;[]b" (length of whiteSpace sequence: 3)
+PASS execCommand("delete", false, ""): "&nbsp;[]&nbsp; b" (length of whiteSpace sequence: 3)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp;[] b" (length of whiteSpace sequence: 3)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp; []b" (length of whiteSpace sequence: 3)
+PASS execCommand("delete", false, ""): "&nbsp;[]&nbsp;&nbsp;&nbsp;b" (length of whiteSpace sequence: 4)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp;[]&nbsp;&nbsp;b" (length of whiteSpace sequence: 4)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp;&nbsp;[]&nbsp;b" (length of whiteSpace sequence: 4)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp;&nbsp;&nbsp;[]b" (length of whiteSpace sequence: 4)
+PASS execCommand("delete", false, ""): "&nbsp;[] &nbsp; b" (length of whiteSpace sequence: 4)
+PASS execCommand("delete", false, ""): "&nbsp; []&nbsp; b" (length of whiteSpace sequence: 4)
+PASS execCommand("delete", false, ""): "&nbsp; &nbsp;[] b" (length of whiteSpace sequence: 4)
+PASS execCommand("delete", false, ""): "&nbsp; &nbsp; []b" (length of whiteSpace sequence: 4)
+PASS execCommand("delete", false, ""): "&nbsp;[]&nbsp;&nbsp; b" (length of whiteSpace sequence: 4)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp;[]&nbsp; b" (length of whiteSpace sequence: 4)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp;&nbsp;[] b" (length of whiteSpace sequence: 4)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp;&nbsp; []b" (length of whiteSpace sequence: 4)
+PASS execCommand("delete", false, ""): "&nbsp;[]&nbsp; &nbsp;b" (length of whiteSpace sequence: 4)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp;[] &nbsp;b" (length of whiteSpace sequence: 4)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp; []&nbsp;b" (length of whiteSpace sequence: 4)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp; &nbsp;[]b" (length of whiteSpace sequence: 4)
+PASS execCommand("delete", false, ""): "&nbsp;[] &nbsp;&nbsp;b" (length of whiteSpace sequence: 4)
+PASS execCommand("delete", false, ""): "&nbsp; []&nbsp;&nbsp;b" (length of whiteSpace sequence: 4)
+PASS execCommand("delete", false, ""): "&nbsp; &nbsp;[]&nbsp;b" (length of whiteSpace sequence: 4)
+PASS execCommand("delete", false, ""): "&nbsp; &nbsp;&nbsp;[]b" (length of whiteSpace sequence: 4)
+PASS execCommand("delete", false, ""): "&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;b" (length of whiteSpace sequence: 5)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;b" (length of whiteSpace sequence: 5)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;b" (length of whiteSpace sequence: 5)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;b" (length of whiteSpace sequence: 5)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]b" (length of whiteSpace sequence: 5)
+PASS execCommand("delete", false, ""): "&nbsp;[] &nbsp; &nbsp;b" (length of whiteSpace sequence: 5)
+PASS execCommand("delete", false, ""): "&nbsp; []&nbsp; &nbsp;b" (length of whiteSpace sequence: 5)
+PASS execCommand("delete", false, ""): "&nbsp; &nbsp;[] &nbsp;b" (length of whiteSpace sequence: 5)
+PASS execCommand("delete", false, ""): "&nbsp; &nbsp; []&nbsp;b" (length of whiteSpace sequence: 5)
+PASS execCommand("delete", false, ""): "&nbsp; &nbsp; &nbsp;[]b" (length of whiteSpace sequence: 5)
+PASS execCommand("delete", false, ""): "&nbsp;[]&nbsp;&nbsp; &nbsp;b" (length of whiteSpace sequence: 5)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp;[]&nbsp; &nbsp;b" (length of whiteSpace sequence: 5)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp;&nbsp;[] &nbsp;b" (length of whiteSpace sequence: 5)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp;&nbsp; []&nbsp;b" (length of whiteSpace sequence: 5)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp;&nbsp; &nbsp;[]b" (length of whiteSpace sequence: 5)
+PASS execCommand("delete", false, ""): "&nbsp;[]&nbsp; &nbsp;&nbsp;b" (length of whiteSpace sequence: 5)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp;[] &nbsp;&nbsp;b" (length of whiteSpace sequence: 5)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp; []&nbsp;&nbsp;b" (length of whiteSpace sequence: 5)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp; &nbsp;[]&nbsp;b" (length of whiteSpace sequence: 5)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp; &nbsp;&nbsp;[]b" (length of whiteSpace sequence: 5)
+PASS execCommand("delete", false, ""): "&nbsp;[] &nbsp;&nbsp;&nbsp;b" (length of whiteSpace sequence: 5)
+PASS execCommand("delete", false, ""): "&nbsp; []&nbsp;&nbsp;&nbsp;b" (length of whiteSpace sequence: 5)
+PASS execCommand("delete", false, ""): "&nbsp; &nbsp;[]&nbsp;&nbsp;b" (length of whiteSpace sequence: 5)
+PASS execCommand("delete", false, ""): "&nbsp; &nbsp;&nbsp;[]&nbsp;b" (length of whiteSpace sequence: 5)
+PASS execCommand("delete", false, ""): "&nbsp; &nbsp;&nbsp;&nbsp;[]b" (length of whiteSpace sequence: 5)
+PASS execCommand("delete", false, ""): "&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b" (length of whiteSpace sequence: 10)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b" (length of whiteSpace sequence: 10)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b" (length of whiteSpace sequence: 10)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b" (length of whiteSpace sequence: 10)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b" (length of whiteSpace sequence: 10)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;b" (length of whiteSpace sequence: 10)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;b" (length of whiteSpace sequence: 10)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;b" (length of whiteSpace sequence: 10)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;b" (length of whiteSpace sequence: 10)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]b" (length of whiteSpace sequence: 10)
+PASS execCommand("delete", false, ""): "&nbsp;[] &nbsp; &nbsp; &nbsp; &nbsp; b" (length of whiteSpace sequence: 10)
+PASS execCommand("delete", false, ""): "&nbsp; []&nbsp; &nbsp; &nbsp; &nbsp; b" (length of whiteSpace sequence: 10)
+PASS execCommand("delete", false, ""): "&nbsp; &nbsp;[] &nbsp; &nbsp; &nbsp; b" (length of whiteSpace sequence: 10)
+PASS execCommand("delete", false, ""): "&nbsp; &nbsp; []&nbsp; &nbsp; &nbsp; b" (length of whiteSpace sequence: 10)
+PASS execCommand("delete", false, ""): "&nbsp; &nbsp; &nbsp;[] &nbsp; &nbsp; b" (length of whiteSpace sequence: 10)
+PASS execCommand("delete", false, ""): "&nbsp; &nbsp; &nbsp; []&nbsp; &nbsp; b" (length of whiteSpace sequence: 10)
+PASS execCommand("delete", false, ""): "&nbsp; &nbsp; &nbsp; &nbsp;[] &nbsp; b" (length of whiteSpace sequence: 10)
+PASS execCommand("delete", false, ""): "&nbsp; &nbsp; &nbsp; &nbsp; []&nbsp; b" (length of whiteSpace sequence: 10)
+PASS execCommand("delete", false, ""): "&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;[] b" (length of whiteSpace sequence: 10)
+PASS execCommand("delete", false, ""): "&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; []b" (length of whiteSpace sequence: 10)
+PASS execCommand("delete", false, ""): "&nbsp;[]&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b" (length of whiteSpace sequence: 10)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp;[] &nbsp; &nbsp; &nbsp; &nbsp;b" (length of whiteSpace sequence: 10)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp; []&nbsp; &nbsp; &nbsp; &nbsp;b" (length of whiteSpace sequence: 10)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp; &nbsp;[] &nbsp; &nbsp; &nbsp;b" (length of whiteSpace sequence: 10)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp; &nbsp; []&nbsp; &nbsp; &nbsp;b" (length of whiteSpace sequence: 10)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp; &nbsp; &nbsp;[] &nbsp; &nbsp;b" (length of whiteSpace sequence: 10)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp; &nbsp; &nbsp; []&nbsp; &nbsp;b" (length of whiteSpace sequence: 10)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp; &nbsp; &nbsp; &nbsp;[] &nbsp;b" (length of whiteSpace sequence: 10)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp; &nbsp; &nbsp; &nbsp; []&nbsp;b" (length of whiteSpace sequence: 10)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;[]b" (length of whiteSpace sequence: 10)
+PASS execCommand("delete", false, ""): "&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b" (length of whiteSpace sequence: 11)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b" (length of whiteSpace sequence: 11)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b" (length of whiteSpace sequence: 11)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b" (length of whiteSpace sequence: 11)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b" (length of whiteSpace sequence: 11)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b" (length of whiteSpace sequence: 11)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;b" (length of whiteSpace sequence: 11)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;b" (length of whiteSpace sequence: 11)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;b" (length of whiteSpace sequence: 11)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;b" (length of whiteSpace sequence: 11)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]b" (length of whiteSpace sequence: 11)
+PASS execCommand("delete", false, ""): "&nbsp;[] &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b" (length of whiteSpace sequence: 11)
+PASS execCommand("delete", false, ""): "&nbsp; []&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;b" (length of whiteSpace sequence: 11)
+PASS execCommand("delete", false, ""): "&nbsp; &nbsp;[] &nbsp; &nbsp; &nbsp; &nbsp;b" (length of whiteSpace sequence: 11)
+PASS execCommand("delete", false, ""): "&nbsp; &nbsp; []&nbsp; &nbsp; &nbsp; &nbsp;b" (length of whiteSpace sequence: 11)
+PASS execCommand("delete", false, ""): "&nbsp; &nbsp; &nbsp;[] &nbsp; &nbsp; &nbsp;b" (length of whiteSpace sequence: 11)
+PASS execCommand("delete", false, ""): "&nbsp; &nbsp; &nbsp; []&nbsp; &nbsp; &nbsp;b" (length of whiteSpace sequence: 11)
+PASS execCommand("delete", false, ""): "&nbsp; &nbsp; &nbsp; &nbsp;[] &nbsp; &nbsp;b" (length of whiteSpace sequence: 11)
+PASS execCommand("delete", false, ""): "&nbsp; &nbsp; &nbsp; &nbsp; []&nbsp; &nbsp;b" (length of whiteSpace sequence: 11)
+PASS execCommand("delete", false, ""): "&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;[] &nbsp;b" (length of whiteSpace sequence: 11)
+PASS execCommand("delete", false, ""): "&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; []&nbsp;b" (length of whiteSpace sequence: 11)
+PASS execCommand("delete", false, ""): "&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;[]b" (length of whiteSpace sequence: 11)
+PASS execCommand("delete", false, ""): "&nbsp;[]&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; b" (length of whiteSpace sequence: 11)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp;[] &nbsp; &nbsp; &nbsp; &nbsp; b" (length of whiteSpace sequence: 11)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp; []&nbsp; &nbsp; &nbsp; &nbsp; b" (length of whiteSpace sequence: 11)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp; &nbsp;[] &nbsp; &nbsp; &nbsp; b" (length of whiteSpace sequence: 11)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp; &nbsp; []&nbsp; &nbsp; &nbsp; b" (length of whiteSpace sequence: 11)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp; &nbsp; &nbsp;[] &nbsp; &nbsp; b" (length of whiteSpace sequence: 11)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp; &nbsp; &nbsp; []&nbsp; &nbsp; b" (length of whiteSpace sequence: 11)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp; &nbsp; &nbsp; &nbsp;[] &nbsp; b" (length of whiteSpace sequence: 11)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp; &nbsp; &nbsp; &nbsp; []&nbsp; b" (length of whiteSpace sequence: 11)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;[] b" (length of whiteSpace sequence: 11)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; []b" (length of whiteSpace sequence: 11)
+PASS execCommand("delete", false, ""): "&nbsp;[]" (length of whiteSpace sequence: 1)
+PASS execCommand("delete", false, ""): "&nbsp;[]&nbsp;" (length of whiteSpace sequence: 2)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp;[]" (length of whiteSpace sequence: 2)
+PASS execCommand("delete", false, ""): "&nbsp;[]&nbsp;&nbsp;" (length of whiteSpace sequence: 3)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp;[]&nbsp;" (length of whiteSpace sequence: 3)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp;&nbsp;[]" (length of whiteSpace sequence: 3)
+PASS execCommand("delete", false, ""): "&nbsp;[] &nbsp;" (length of whiteSpace sequence: 3)
+PASS execCommand("delete", false, ""): "&nbsp; []&nbsp;" (length of whiteSpace sequence: 3)
+PASS execCommand("delete", false, ""): "&nbsp; &nbsp;[]" (length of whiteSpace sequence: 3)
+PASS execCommand("delete", false, ""): "&nbsp;[]&nbsp;&nbsp;&nbsp;" (length of whiteSpace sequence: 4)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp;[]&nbsp;&nbsp;" (length of whiteSpace sequence: 4)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp;&nbsp;[]&nbsp;" (length of whiteSpace sequence: 4)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp;&nbsp;&nbsp;[]" (length of whiteSpace sequence: 4)
+PASS execCommand("delete", false, ""): "&nbsp;[]&nbsp; &nbsp;" (length of whiteSpace sequence: 4)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp;[] &nbsp;" (length of whiteSpace sequence: 4)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp; []&nbsp;" (length of whiteSpace sequence: 4)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp; &nbsp;[]" (length of whiteSpace sequence: 4)
+PASS execCommand("delete", false, ""): "&nbsp;[] &nbsp;&nbsp;" (length of whiteSpace sequence: 4)
+PASS execCommand("delete", false, ""): "&nbsp; []&nbsp;&nbsp;" (length of whiteSpace sequence: 4)
+PASS execCommand("delete", false, ""): "&nbsp; &nbsp;[]&nbsp;" (length of whiteSpace sequence: 4)
+PASS execCommand("delete", false, ""): "&nbsp; &nbsp;&nbsp;[]" (length of whiteSpace sequence: 4)
+PASS execCommand("delete", false, ""): "&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;" (length of whiteSpace sequence: 5)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;" (length of whiteSpace sequence: 5)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;" (length of whiteSpace sequence: 5)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;" (length of whiteSpace sequence: 5)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]" (length of whiteSpace sequence: 5)
+PASS execCommand("delete", false, ""): "&nbsp;[] &nbsp; &nbsp;" (length of whiteSpace sequence: 5)
+PASS execCommand("delete", false, ""): "&nbsp; []&nbsp; &nbsp;" (length of whiteSpace sequence: 5)
+PASS execCommand("delete", false, ""): "&nbsp; &nbsp;[] &nbsp;" (length of whiteSpace sequence: 5)
+PASS execCommand("delete", false, ""): "&nbsp; &nbsp; []&nbsp;" (length of whiteSpace sequence: 5)
+PASS execCommand("delete", false, ""): "&nbsp; &nbsp; &nbsp;[]" (length of whiteSpace sequence: 5)
+PASS execCommand("delete", false, ""): "&nbsp;[]&nbsp;&nbsp; &nbsp;" (length of whiteSpace sequence: 5)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp;[]&nbsp; &nbsp;" (length of whiteSpace sequence: 5)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp;&nbsp;[] &nbsp;" (length of whiteSpace sequence: 5)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp;&nbsp; []&nbsp;" (length of whiteSpace sequence: 5)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp;&nbsp; &nbsp;[]" (length of whiteSpace sequence: 5)
+PASS execCommand("delete", false, ""): "&nbsp;[]&nbsp; &nbsp;&nbsp;" (length of whiteSpace sequence: 5)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp;[] &nbsp;&nbsp;" (length of whiteSpace sequence: 5)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp; []&nbsp;&nbsp;" (length of whiteSpace sequence: 5)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp; &nbsp;[]&nbsp;" (length of whiteSpace sequence: 5)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp; &nbsp;&nbsp;[]" (length of whiteSpace sequence: 5)
+PASS execCommand("delete", false, ""): "&nbsp;[] &nbsp;&nbsp;&nbsp;" (length of whiteSpace sequence: 5)
+PASS execCommand("delete", false, ""): "&nbsp; []&nbsp;&nbsp;&nbsp;" (length of whiteSpace sequence: 5)
+PASS execCommand("delete", false, ""): "&nbsp; &nbsp;[]&nbsp;&nbsp;" (length of whiteSpace sequence: 5)
+PASS execCommand("delete", false, ""): "&nbsp; &nbsp;&nbsp;[]&nbsp;" (length of whiteSpace sequence: 5)
+PASS execCommand("delete", false, ""): "&nbsp; &nbsp;&nbsp;&nbsp;[]" (length of whiteSpace sequence: 5)
+PASS execCommand("delete", false, ""): "&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" (length of whiteSpace sequence: 10)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" (length of whiteSpace sequence: 10)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" (length of whiteSpace sequence: 10)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" (length of whiteSpace sequence: 10)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" (length of whiteSpace sequence: 10)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;" (length of whiteSpace sequence: 10)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;" (length of whiteSpace sequence: 10)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;" (length of whiteSpace sequence: 10)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;" (length of whiteSpace sequence: 10)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]" (length of whiteSpace sequence: 10)
+PASS execCommand("delete", false, ""): "&nbsp;[] &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;" (length of whiteSpace sequence: 10)
+PASS execCommand("delete", false, ""): "&nbsp; []&nbsp; &nbsp; &nbsp; &nbsp;&nbsp;" (length of whiteSpace sequence: 10)
+PASS execCommand("delete", false, ""): "&nbsp; &nbsp;[] &nbsp; &nbsp; &nbsp;&nbsp;" (length of whiteSpace sequence: 10)
+PASS execCommand("delete", false, ""): "&nbsp; &nbsp; []&nbsp; &nbsp; &nbsp;&nbsp;" (length of whiteSpace sequence: 10)
+PASS execCommand("delete", false, ""): "&nbsp; &nbsp; &nbsp;[] &nbsp; &nbsp;&nbsp;" (length of whiteSpace sequence: 10)
+PASS execCommand("delete", false, ""): "&nbsp; &nbsp; &nbsp; []&nbsp; &nbsp;&nbsp;" (length of whiteSpace sequence: 10)
+PASS execCommand("delete", false, ""): "&nbsp; &nbsp; &nbsp; &nbsp;[] &nbsp;&nbsp;" (length of whiteSpace sequence: 10)
+PASS execCommand("delete", false, ""): "&nbsp; &nbsp; &nbsp; &nbsp; []&nbsp;&nbsp;" (length of whiteSpace sequence: 10)
+PASS execCommand("delete", false, ""): "&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;[]&nbsp;" (length of whiteSpace sequence: 10)
+PASS execCommand("delete", false, ""): "&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;[]" (length of whiteSpace sequence: 10)
+PASS execCommand("delete", false, ""): "&nbsp;[]&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;" (length of whiteSpace sequence: 10)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp;[] &nbsp; &nbsp; &nbsp; &nbsp;" (length of whiteSpace sequence: 10)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp; []&nbsp; &nbsp; &nbsp; &nbsp;" (length of whiteSpace sequence: 10)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp; &nbsp;[] &nbsp; &nbsp; &nbsp;" (length of whiteSpace sequence: 10)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp; &nbsp; []&nbsp; &nbsp; &nbsp;" (length of whiteSpace sequence: 10)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp; &nbsp; &nbsp;[] &nbsp; &nbsp;" (length of whiteSpace sequence: 10)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp; &nbsp; &nbsp; []&nbsp; &nbsp;" (length of whiteSpace sequence: 10)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp; &nbsp; &nbsp; &nbsp;[] &nbsp;" (length of whiteSpace sequence: 10)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp; &nbsp; &nbsp; &nbsp; []&nbsp;" (length of whiteSpace sequence: 10)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;[]" (length of whiteSpace sequence: 10)
+PASS execCommand("delete", false, ""): "&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" (length of whiteSpace sequence: 11)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" (length of whiteSpace sequence: 11)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" (length of whiteSpace sequence: 11)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" (length of whiteSpace sequence: 11)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" (length of whiteSpace sequence: 11)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" (length of whiteSpace sequence: 11)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;" (length of whiteSpace sequence: 11)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;" (length of whiteSpace sequence: 11)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;" (length of whiteSpace sequence: 11)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;" (length of whiteSpace sequence: 11)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]" (length of whiteSpace sequence: 11)
+PASS execCommand("delete", false, ""): "&nbsp;[] &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;" (length of whiteSpace sequence: 11)
+PASS execCommand("delete", false, ""): "&nbsp; []&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;" (length of whiteSpace sequence: 11)
+PASS execCommand("delete", false, ""): "&nbsp; &nbsp;[] &nbsp; &nbsp; &nbsp; &nbsp;" (length of whiteSpace sequence: 11)
+PASS execCommand("delete", false, ""): "&nbsp; &nbsp; []&nbsp; &nbsp; &nbsp; &nbsp;" (length of whiteSpace sequence: 11)
+PASS execCommand("delete", false, ""): "&nbsp; &nbsp; &nbsp;[] &nbsp; &nbsp; &nbsp;" (length of whiteSpace sequence: 11)
+PASS execCommand("delete", false, ""): "&nbsp; &nbsp; &nbsp; []&nbsp; &nbsp; &nbsp;" (length of whiteSpace sequence: 11)
+PASS execCommand("delete", false, ""): "&nbsp; &nbsp; &nbsp; &nbsp;[] &nbsp; &nbsp;" (length of whiteSpace sequence: 11)
+PASS execCommand("delete", false, ""): "&nbsp; &nbsp; &nbsp; &nbsp; []&nbsp; &nbsp;" (length of whiteSpace sequence: 11)
+PASS execCommand("delete", false, ""): "&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;[] &nbsp;" (length of whiteSpace sequence: 11)
+PASS execCommand("delete", false, ""): "&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; []&nbsp;" (length of whiteSpace sequence: 11)
+PASS execCommand("delete", false, ""): "&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;[]" (length of whiteSpace sequence: 11)
+PASS execCommand("delete", false, ""): "&nbsp;[]&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;" (length of whiteSpace sequence: 11)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp;[] &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;" (length of whiteSpace sequence: 11)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp; []&nbsp; &nbsp; &nbsp; &nbsp;&nbsp;" (length of whiteSpace sequence: 11)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp; &nbsp;[] &nbsp; &nbsp; &nbsp;&nbsp;" (length of whiteSpace sequence: 11)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp; &nbsp; []&nbsp; &nbsp; &nbsp;&nbsp;" (length of whiteSpace sequence: 11)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp; &nbsp; &nbsp;[] &nbsp; &nbsp;&nbsp;" (length of whiteSpace sequence: 11)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp; &nbsp; &nbsp; []&nbsp; &nbsp;&nbsp;" (length of whiteSpace sequence: 11)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp; &nbsp; &nbsp; &nbsp;[] &nbsp;&nbsp;" (length of whiteSpace sequence: 11)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp; &nbsp; &nbsp; &nbsp; []&nbsp;&nbsp;" (length of whiteSpace sequence: 11)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;[]&nbsp;" (length of whiteSpace sequence: 11)
+PASS execCommand("delete", false, ""): "&nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;[]" (length of whiteSpace sequence: 11)
+PASS execCommand("delete", false, ""): "a&nbsp; &nbsp;|[]&nbsp; &nbsp;b"
+PASS execCommand("delete", false, ""): "a&nbsp; &nbsp;[]|&nbsp; &nbsp;b"
+PASS execCommand("delete", false, ""): "a&nbsp; &nbsp;|[] &nbsp; b"
+PASS execCommand("delete", false, ""): "a&nbsp; &nbsp;[]| &nbsp; b"
+PASS execCommand("delete", false, ""): "a &nbsp; |[]&nbsp; &nbsp;b"
+PASS execCommand("delete", false, ""): "a &nbsp; []|&nbsp; &nbsp;b"
+PASS execCommand("delete", false, ""): "a&nbsp; &nbsp;|&nbsp;[] &nbsp;b"
+PASS execCommand("delete", false, ""): "a&nbsp; &nbsp;| []&nbsp; b"
+PASS execCommand("delete", false, ""): "a &nbsp; |&nbsp;[] &nbsp;b"
+PASS execCommand("delete", false, ""): "a &nbsp; | []&nbsp; b"
+PASS execCommand("delete", false, ""): "a&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;[]&nbsp;&nbsp;b"
+PASS execCommand("delete", false, ""): "a&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;[]&nbsp;&nbsp;&nbsp;b"
+PASS execCommand("delete", false, ""): "a&nbsp;&nbsp;&nbsp;&nbsp;|[]&nbsp;&nbsp;&nbsp;&nbsp;b"
+FAIL execCommand("delete", false, ""): "a&nbsp;b[]&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;c" assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;" but got "a &nbsp;&nbsp;"
+FAIL execCommand("delete", false, ""): "a&nbsp;&nbsp;b[]&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;c" assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;&nbsp;" but got "a &nbsp; &nbsp;"
+PASS execCommand("delete", false, ""): "a&nbsp;&nbsp;&nbsp;b[]|&nbsp;&nbsp;&nbsp;&nbsp;c"
+PASS execCommand("delete", false, ""): "a&nbsp;&nbsp;&nbsp;b|[]&nbsp;&nbsp;&nbsp;&nbsp;c"
+PASS execCommand("delete", false, ""): "a&nbsp;&nbsp;&nbsp;b[]|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c"
+PASS execCommand("delete", false, ""): "a&nbsp;&nbsp;&nbsp;b|[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c"
+PASS execCommand("delete", false, ""): "a&nbsp;&nbsp;&nbsp;|b[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c"
+PASS execCommand("delete", false, ""): "a&nbsp;&nbsp;&nbsp;[]|b&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c"
+PASS execCommand("delete", false, ""): "a&nbsp;&nbsp;&nbsp;|&nbsp;b[]&nbsp;&nbsp;&nbsp;&nbsp;c"
+PASS execCommand("delete", false, ""): "a&nbsp;&nbsp;&nbsp;|&nbsp;|[]&nbsp;&nbsp;&nbsp;&nbsp;c"
+PASS execCommand("delete", false, ""): "a&nbsp;&nbsp;&nbsp;| |[]&nbsp;&nbsp;&nbsp;&nbsp;c"
+PASS execCommand("delete", false, ""): "a&nbsp;&nbsp;&nbsp;| []|&nbsp;&nbsp;&nbsp;&nbsp;c"
+PASS execCommand("delete", false, ""): "a&nbsp;&nbsp;&nbsp;&nbsp;[]| |&nbsp;&nbsp;&nbsp;c"
+FAIL execCommand("delete", false, ""): "a&nbsp;&nbsp;&nbsp;[]&nbsp;| |&nbsp;&nbsp;&nbsp;c" assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;" but got "a &nbsp;&nbsp;"
+FAIL execCommand("delete", false, ""): "a&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;|&nbsp;|&nbsp;&nbsp;&nbsp;c" assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;&nbsp;" but got "a &nbsp; &nbsp;"
+FAIL execCommand("delete", false, ""): "a&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;| |&nbsp;&nbsp;&nbsp;c" assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;&nbsp;" but got "a &nbsp; &nbsp;"
+PASS execCommand("delete", false, ""): "a&nbsp;&nbsp;&nbsp;&nbsp;||&nbsp;[]&nbsp;&nbsp;&nbsp;c"
+PASS execCommand("delete", false, ""): "a&nbsp;&nbsp;&nbsp;&nbsp;||[]&nbsp;&nbsp;&nbsp;&nbsp;c"
+PASS execCommand("delete", false, ""): "a&nbsp;&nbsp;&nbsp;&nbsp;|[]|&nbsp;&nbsp;&nbsp;&nbsp;c"
+PASS execCommand("delete", false, ""): "a&nbsp;&nbsp;&nbsp;&nbsp;[]||&nbsp;&nbsp;&nbsp;&nbsp;c"
+FAIL execCommand("delete", false, ""): "a&nbsp;&nbsp;&nbsp;[]&nbsp;||&nbsp;&nbsp;&nbsp;&nbsp;c" assert_equals: Modified text is wrong expected "a&nbsp; &nbsp;" but got "a &nbsp;&nbsp;"
+PASS execCommand("delete", false, ""): "<span>abc <span>&nbsp;[]def</span></span>"
+PASS execCommand("delete", false, ""): "<span>abc <span>[]&nbsp;def</span></span>"
+PASS execCommand("delete", false, ""): "<span>abc []<span>&nbsp;def</span></span>"
+PASS execCommand("delete", false, ""): "<span>abc&nbsp;<span>&nbsp;[]def</span></span>"
+PASS execCommand("delete", false, ""): "<span>abc&nbsp;<span>[]&nbsp;def</span></span>"
+PASS execCommand("delete", false, ""): "<span>abc&nbsp;[]<span>&nbsp;def</span></span>"
+PASS execCommand("delete", false, ""): "<span>abc&nbsp; <span>&nbsp;[]def</span></span>"
+PASS execCommand("delete", false, ""): "<span>abc&nbsp; <span>[]&nbsp;def</span></span>"
+PASS execCommand("delete", false, ""): "<span>abc&nbsp; []<span>&nbsp;def</span></span>"
+PASS execCommand("delete", false, ""): "<span>abc &nbsp;<span>&nbsp;[]def</span></span>"
+PASS execCommand("delete", false, ""): "<span>abc &nbsp;<span>[]&nbsp;def</span></span>"
+PASS execCommand("delete", false, ""): "<span>abc &nbsp;[]<span>&nbsp;def</span></span>"
+PASS execCommand("delete", false, ""): "<span>abc </span><span>&nbsp;[]def</span>"
+PASS execCommand("delete", false, ""): "<span>abc </span><span>[]&nbsp;def</span>"
+PASS execCommand("delete", false, ""): "<span>abc []</span><span>&nbsp;def</span>"
+PASS execCommand("delete", false, ""): "<span>abc&nbsp;</span><span>&nbsp;[]def</span>"
+PASS execCommand("delete", false, ""): "<span>abc&nbsp;</span><span>[]&nbsp;def</span>"
+PASS execCommand("delete", false, ""): "<span>abc&nbsp;[]</span><span>&nbsp;def</span>"
+PASS execCommand("delete", false, ""): "<span>abc&nbsp; </span><span>&nbsp;[]def</span>"
+PASS execCommand("delete", false, ""): "<span>abc&nbsp; </span><span>[]&nbsp;def</span>"
+PASS execCommand("delete", false, ""): "<span>abc&nbsp; []</span><span>&nbsp;def</span>"
+PASS execCommand("delete", false, ""): "<span>abc &nbsp;</span><span>&nbsp;[]def</span>"
+PASS execCommand("delete", false, ""): "<span>abc &nbsp;</span><span>[]&nbsp;def</span>"
+PASS execCommand("delete", false, ""): "<span>abc &nbsp;[]</span><span>&nbsp;def</span>"
+PASS execCommand("delete", false, ""): "<span>abc&nbsp;</span><span>&nbsp; []def</span>"
+PASS execCommand("delete", false, ""): "<span>abc&nbsp;</span><span>&nbsp; &nbsp;[]def</span>"
+PASS execCommand("delete", false, ""): "<span>abc&nbsp;</span><span>&nbsp; []&nbsp;def</span>"
+PASS execCommand("delete", false, ""): "<span>abc&nbsp;</span><span>&nbsp;[] &nbsp;def</span>"
+PASS execCommand("delete", false, ""): "<span>abc&nbsp;</span><span> &nbsp; []def</span>"
+PASS execCommand("delete", false, ""): "<span>abc&nbsp;</span><span> &nbsp;[] def</span>"
+PASS execCommand("delete", false, ""): "<span>abc&nbsp;</span><span> []&nbsp; def</span>"
+PASS execCommand("delete", false, ""): "<span>abc&nbsp;</span><span>[] &nbsp; def</span>"
+PASS execCommand("delete", false, ""): "<span>abc&nbsp;[]</span><span> &nbsp; def</span>"
+PASS execCommand("delete", false, ""): "<span>abc &nbsp;[]</span><span> &nbsp; def</span>"
+PASS execCommand("delete", false, ""): "<span>abc&nbsp;&nbsp;[]</span><span> &nbsp; def</span>"
+PASS execCommand("delete", false, ""): "<span>abc&nbsp;&nbsp;[]</span><span>&nbsp; &nbsp;def</span>"
+PASS execCommand("delete", false, ""): "<span><span>abc </span>&nbsp;[]def</span>"
+PASS execCommand("delete", false, ""): "<span><span>abc </span>[]&nbsp;def</span>"
+PASS execCommand("delete", false, ""): "<span><span>abc []</span>&nbsp;def</span>"
+PASS execCommand("delete", false, ""): "<span><span>abc&nbsp;</span>&nbsp;[]def</span>"
+PASS execCommand("delete", false, ""): "<span><span>abc&nbsp;</span>[]&nbsp;def</span>"
+PASS execCommand("delete", false, ""): "<span><span>abc&nbsp;[]</span>&nbsp;def</span>"
+PASS execCommand("delete", false, ""): "<span><span>abc&nbsp; </span>&nbsp;[]def</span>"
+PASS execCommand("delete", false, ""): "<span><span>abc&nbsp; </span>[]&nbsp;def</span>"
+PASS execCommand("delete", false, ""): "<span><span>abc&nbsp; []</span>&nbsp;def</span>"
+PASS execCommand("delete", false, ""): "<span><span>abc &nbsp;</span>&nbsp;[]def</span>"
+PASS execCommand("delete", false, ""): "<span><span>abc &nbsp;</span>[]&nbsp;def</span>"
+PASS execCommand("delete", false, ""): "<span><span>abc &nbsp;[]</span>&nbsp;def</span>"
+PASS execCommand("delete", false, ""): "<span><span>abc &nbsp;</span></span><span>&nbsp;[]def</span>"
+PASS execCommand("delete", false, ""): "<span><span>abc &nbsp;</span></span><span>[]&nbsp;def</span>"
+PASS execCommand("delete", false, ""): "<span><span>abc &nbsp;[]</span></span><span>&nbsp;def</span>"
+PASS execCommand("delete", false, ""): "a<span style=white-space:pre;>b[]   </span>c"
+PASS execCommand("delete", false, ""): "a<span style=white-space:pre;>b []  </span>c"
+PASS execCommand("delete", false, ""): "a<span style=white-space:pre;>b  [] </span>c"
+PASS execCommand("delete", false, ""): "a<span style=white-space:pre;>b   []</span>c"
+PASS execCommand("delete", false, ""): "a<span style=white-space:pre;>b  [] </span>"
+PASS execCommand("delete", false, ""): "a<span style=white-space:pre;> </span>[]b"
+PASS execCommand("delete", false, ""): "a&nbsp;&nbsp;&nbsp;<span style=white-space:pre;>[]   </span>"
+PASS execCommand("delete", false, ""): "a&nbsp;&nbsp;&nbsp;[]<span style=white-space:pre;>   </span>"
+FAIL execCommand("delete", false, ""): "a&nbsp;&nbsp;[]&nbsp;<span style=white-space:pre;>   </span>" assert_equals: expected "a&nbsp;&nbsp;<span style=\"white-space:pre;\">   </span>" but got "a &nbsp;<span style=\"white-space:pre;\">   </span>"
+FAIL execCommand("delete", false, ""): "a&nbsp;[]&nbsp;&nbsp;<span style=white-space:pre;>b  </span>" assert_equals: expected "a&nbsp;&nbsp;<span style=\"white-space:pre;\">b  </span>" but got "a &nbsp;<span style=\"white-space:pre;\">b  </span>"
+PASS execCommand("delete", false, ""): "a&nbsp;&nbsp;&nbsp;&nbsp;<span style=white-space:pre;>[]   </span>"
+PASS execCommand("delete", false, ""): "a&nbsp;&nbsp;&nbsp;&nbsp;[]<span style=white-space:pre;>   </span>"
+FAIL execCommand("delete", false, ""): "a&nbsp;&nbsp;&nbsp;[]&nbsp;<span style=white-space:pre;>   </span>" assert_equals: expected "a&nbsp; &nbsp;<span style=\"white-space:pre;\">   </span>" but got "a &nbsp;&nbsp;<span style=\"white-space:pre;\">   </span>"
+FAIL execCommand("delete", false, ""): "a&nbsp;&nbsp;[]&nbsp;<span style=white-space:pre;>b  </span>" assert_equals: expected "a&nbsp;&nbsp;<span style=\"white-space:pre;\">b  </span>" but got "a &nbsp;<span style=\"white-space:pre;\">b  </span>"
+PASS execCommand("delete", false, ""): "<span style=white-space:pre;>  [] </span>&nbsp;&nbsp;&nbsp;a"
+PASS execCommand("delete", false, ""): "<span style=white-space:pre;>   []</span>&nbsp;&nbsp;&nbsp;a"
+PASS execCommand("delete", false, ""): "<span style=white-space:pre;>   </span>[]&nbsp;&nbsp;&nbsp;a"
+PASS execCommand("delete", false, ""): "<span style=white-space:pre;>   </span>&nbsp;[]&nbsp;&nbsp;&nbsp;a"
+

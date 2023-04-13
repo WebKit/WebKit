@@ -106,10 +106,11 @@ WPEQtViewBackend::WPEQtViewBackend(const QSizeF& size, EGLDisplay display, EGLCo
     m_program = glFunctions->glCreateProgram();
     glFunctions->glAttachShader(m_program, vertexShader);
     glFunctions->glAttachShader(m_program, fragmentShader);
-    glFunctions->glLinkProgram(m_program);
 
     glFunctions->glBindAttribLocation(m_program, 0, "pos");
     glFunctions->glBindAttribLocation(m_program, 1, "texture");
+
+    glFunctions->glLinkProgram(m_program);
     m_textureUniform = glFunctions->glGetUniformLocation(m_program, "u_texture");
 
     static struct wpe_view_backend_exportable_fdo_egl_client exportableClient = {

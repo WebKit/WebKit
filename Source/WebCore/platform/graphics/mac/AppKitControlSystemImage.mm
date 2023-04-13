@@ -40,9 +40,7 @@ AppKitControlSystemImage::AppKitControlSystemImage(AppKitControlSystemImageType 
     : SystemImage(SystemImageType::AppKitControl)
     , m_controlType(controlType)
 {
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    NSAppearance *appearance = [NSAppearance currentAppearance];
-    ALLOW_DEPRECATED_DECLARATIONS_END
+    NSAppearance *appearance = [NSAppearance currentDrawingAppearance];
     m_tintColor = colorFromCocoaColor(appearance.tintColor);
     m_useDarkAppearance = [appearance.name isEqualToString:NSAppearanceNameDarkAqua];
 }

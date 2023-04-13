@@ -8,6 +8,14 @@ features: [Intl.DateTimeFormat-datetimestyle]
 locale: [en-US]
 ---*/
 
+// Tolerate implementation variance by expecting consistency without being prescriptive.
+// TODO: can we change tests to be less reliant on CLDR formats while still testing that
+// Temporal and Intl are behaving as expected?
+const usDayPeriodSpace =
+  new Intl.DateTimeFormat("en-US", { timeStyle: "short" })
+    .formatToParts(0)
+    .find((part, i, parts) => part.type === "literal" && parts[i + 1].type === "dayPeriod")?.value || "";
+
 const date = new Date("1886-05-01T14:12:47Z");
 const dateOptions = [
   ["full", "Saturday, May 1, 1886"],
@@ -17,10 +25,10 @@ const dateOptions = [
 ];
 
 const timeOptions = [
-  ["full", "2:12:47\u{202F}PM Coordinated Universal Time", "14:12:47 Coordinated Universal Time"],
-  ["long", "2:12:47\u{202F}PM UTC", "14:12:47 UTC"],
-  ["medium", "2:12:47\u{202F}PM", "14:12:47"],
-  ["short", "2:12\u{202F}PM", "14:12"],
+  ["full", `2:12:47${usDayPeriodSpace}PM Coordinated Universal Time`, "14:12:47 Coordinated Universal Time"],
+  ["long", `2:12:47${usDayPeriodSpace}PM UTC`, "14:12:47 UTC"],
+  ["medium", `2:12:47${usDayPeriodSpace}PM`, "14:12:47"],
+  ["short", `2:12${usDayPeriodSpace}PM`, "14:12"],
 ];
 
 const options12 = [

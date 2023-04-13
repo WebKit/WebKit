@@ -1,7 +1,7 @@
 /*
  * <%= @warning %>
  *
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,7 +43,7 @@ using namespace WebKit;
 <%- if @pref.condition -%>
 #if <%= @pref.condition %>
 <%- end -%>
-        adoptNS([[WebFeature alloc] initWithKey:@"<%= @pref.name %>" preferenceKey:@"<%= @pref.preferenceKey %>" name:@<%= @pref.humanReadableName %> status:<%= @pref.webFeatureStatus %> details:@<%= @pref.humanReadableDescription %> defaultValue:DEFAULT_VALUE_FOR_<%= @pref.name %> hidden:<%= @pref.hidden %>]).get(),
+        adoptNS([[WebFeature alloc] initWithKey:@"<%= @pref.name %>" preferenceKey:@"<%= @pref.preferenceKey %>" name:@<%= @pref.humanReadableName %> status:<%= @pref.webFeatureStatus %> category:<%= @pref.webFeatureCategory %> details:@<%= @pref.humanReadableDescription %> defaultValue:DEFAULT_VALUE_FOR_<%= @pref.name %> hidden:<%= @pref.hidden %>]).get(),
 <%- if @pref.condition -%>
 #endif
 <%- end -%>

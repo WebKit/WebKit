@@ -76,3 +76,33 @@ TEST(NSAttributedStringWebKitAdditions, DirectoriesNotCreated)
     EXPECT_TRUE(cookieDirectoryExists());
 }
 #endif
+
+TEST(NSAttributedStringWebKitAdditions, FontDataURL)
+{
+    NSURL *fontURL = [[NSBundle mainBundle] URLForResource:@"Ahem" withExtension:@"ttf" subdirectory:@"TestWebKitAPI.resources"];
+    NSData *fontData = [NSData dataWithContentsOfURL:fontURL];
+    NSString *fontBase64 = [fontData base64EncodedStringWithOptions:0];
+
+    NSString *html = [NSString stringWithFormat:@""
+        "<html>"
+        "<head>"
+        "<style>"
+        "@font-face { font-family: exampleFont; src: url(data:font/opentype;base64,%@); }"
+        "div { font-family: exampleFont; }"
+        "</style>"
+        "</head>"
+        "<body><div>hello!</div></body>"
+        "</html>", fontBase64];
+
+    __block bool done = false;
+    [NSAttributedString loadFromHTMLWithString:html options:@{ } completionHandler:^(NSAttributedString *attributedString, NSDictionary<NSAttributedStringDocumentAttributeKey, id> *attributes, NSError *error) {
+        __block bool foundFont { false };
+        [attributedString enumerateAttributesInRange:NSMakeRange(0, attributedString.length) options:0 usingBlock:^(NSDictionary *attributes, NSRange attributeRange, BOOL *stop) {
+            if (attributes[NSFontAttributeName])
+                foundFont = true;
+        }];
+        EXPECT_TRUE(foundFont);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+}

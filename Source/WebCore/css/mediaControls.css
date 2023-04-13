@@ -24,6 +24,8 @@
 
 #if defined(ENABLE_VIDEO) && ENABLE_VIDEO && !(defined(ENABLE_MODERN_MEDIA_CONTROLS) && ENABLE_MODERN_MEDIA_CONTROLS)
 
+@namespace "http://www.w3.org/1999/xhtml";
+
 /* media controls */
 
 audio {

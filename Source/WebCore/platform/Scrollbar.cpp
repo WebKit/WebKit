@@ -27,8 +27,9 @@
 #include "Scrollbar.h"
 
 #include "DeprecatedGlobalSettings.h"
-#include "FrameView.h"
+#include "DisplayView.h"
 #include "GraphicsContext.h"
+#include "LocalFrameView.h"
 #include "PlatformMouseEvent.h"
 #include "ScrollAnimator.h"
 #include "ScrollView.h"
@@ -48,6 +49,24 @@ namespace WebCore {
 Ref<Scrollbar> Scrollbar::createNativeScrollbar(ScrollableArea& scrollableArea, ScrollbarOrientation orientation, ScrollbarControlSize size)
 {
     return adoptRef(*new Scrollbar(scrollableArea, orientation, size));
+}
+
+static bool s_shouldUseFixedPixelsPerLineStepForTesting;
+
+void Scrollbar::setShouldUseFixedPixelsPerLineStepForTesting(bool useFixedPixelsPerLineStep)
+{
+    s_shouldUseFixedPixelsPerLineStepForTesting = useFixedPixelsPerLineStep;
+}
+
+int Scrollbar::pixelsPerLineStep(int viewWidthOrHeight)
+{
+#if PLATFORM(GTK)
+    if (!s_shouldUseFixedPixelsPerLineStepForTesting && viewWidthOrHeight > 0)
+        return std::pow(viewWidthOrHeight, 2. / 3.);
+#else
+    UNUSED_PARAM(viewWidthOrHeight);
+#endif
+    return pixelsPerLineStep();
 }
 
 int Scrollbar::maxOverlapBetweenPages()
@@ -486,6 +505,13 @@ NativeScrollbarVisibility Scrollbar::nativeScrollbarVisibility(const Scrollbar* 
     if (DeprecatedGlobalSettings::mockScrollbarsEnabled() || (scrollbar && scrollbar->isCustomScrollbar()))
         return NativeScrollbarVisibility::ReplacedByCustomScrollbar;
     return NativeScrollbarVisibility::Visible;
+}
+
+float Scrollbar::deviceScaleFactor() const
+{
+    if (RefPtr root = this->root())
+        return root->displayView().deviceScaleFactor();
+    return 1;
 }
 
 } // namespace WebCore

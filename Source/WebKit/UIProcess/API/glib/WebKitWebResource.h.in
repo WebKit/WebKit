@@ -30,22 +30,12 @@
 G_BEGIN_DECLS
 
 #define WEBKIT_TYPE_WEB_RESOURCE            (webkit_web_resource_get_type())
+#if !ENABLE(2022_GLIB_API)
 #define WEBKIT_WEB_RESOURCE(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), WEBKIT_TYPE_WEB_RESOURCE, WebKitWebResource))
 #define WEBKIT_IS_WEB_RESOURCE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), WEBKIT_TYPE_WEB_RESOURCE))
 #define WEBKIT_WEB_RESOURCE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass),  WEBKIT_TYPE_WEB_RESOURCE, WebKitWebResourceClass))
 #define WEBKIT_IS_WEB_RESOURCE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass),  WEBKIT_TYPE_WEB_RESOURCE))
 #define WEBKIT_WEB_RESOURCE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj),  WEBKIT_TYPE_WEB_RESOURCE, WebKitWebResourceClass))
-
-typedef struct _WebKitWebResource        WebKitWebResource;
-typedef struct _WebKitWebResourceClass   WebKitWebResourceClass;
-typedef struct _WebKitWebResourcePrivate WebKitWebResourcePrivate;
-
-struct _WebKitWebResource {
-    GObject parent;
-
-    /*< private >*/
-    WebKitWebResourcePrivate *priv;
-};
 
 struct _WebKitWebResourceClass {
     GObjectClass parent_class;
@@ -56,9 +46,9 @@ struct _WebKitWebResourceClass {
     void (*_webkit_reserved2) (void);
     void (*_webkit_reserved3) (void);
 };
+#endif
 
-WEBKIT_API GType
-webkit_web_resource_get_type        (void);
+WEBKIT_DECLARE_FINAL_TYPE (WebKitWebResource, webkit_web_resource, WEBKIT, WEB_RESOURCE, GObject)
 
 WEBKIT_API const gchar *
 webkit_web_resource_get_uri         (WebKitWebResource  *resource);

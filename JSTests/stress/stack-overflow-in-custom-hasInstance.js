@@ -4,7 +4,7 @@ function f() {}
 
 var fn = f;
 for (var i = 0; i < 100000; ++i) {
-    fn = fn.bind();
+    fn = fn.bind(undefined, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
 
     // Ensure we don't fallback to @@hasInstance from %FunctionPrototype%.
     Object.defineProperty(fn, Symbol.hasInstance, {

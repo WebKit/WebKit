@@ -30,7 +30,7 @@ if (ENABLE_COG)
         set(WPE_COG_REPO "https://github.com/Igalia/cog.git")
     endif ()
     if ("${WPE_COG_TAG}" STREQUAL "")
-        set(WPE_COG_TAG "8f82f7e4287ee69a8375ca7e894f0981a32d7ac8")
+        set(WPE_COG_TAG "48347f3a36e6dba75bcfd4f9443730861adec5b0")
     endif ()
     # TODO Use GIT_REMOTE_UPDATE_STRATEGY with 3.18 to allow switching between
     # conflicting branches without having to delete the repo
@@ -60,7 +60,7 @@ if (ENABLE_COG)
             meson setup <BINARY_DIR> <SOURCE_DIR>
             --buildtype ${COG_MESON_BUILDTYPE}
             --pkg-config-path ${WPE_COG_PKG_CONFIG_PATH}
-            -Dsoup2=${COG_MESON_SOUP2}
+            -Dwpe_api=${WPE_API_VERSION}
             -Dplatforms=${WPE_COG_PLATFORMS}
         BUILD_COMMAND
             meson compile -C <BINARY_DIR>

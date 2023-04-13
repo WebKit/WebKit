@@ -26,8 +26,8 @@
 	</array>
 	<key>com.apple.security.temporary-exception.sbpl</key>
 	<array>
-		<string>(allow mach-issue-extension (require-all (extension-class "com.apple.webkit.extension.mach")))</string>
-		<string>(allow iokit-issue-extension (require-all (extension-class "com.apple.webkit.extension.iokit")))</string>
+		<string>(allow mach-issue-extension (require-all (extension-class &quot;com.apple.webkit.extension.mach&quot;)))</string>
+		<string>(allow iokit-issue-extension (require-all (extension-class &quot;com.apple.webkit.extension.iokit&quot;)))</string>
 	</array>
 	<key>com.apple.security.temporary-exception.shared-preference.read-only</key>
 	<array>

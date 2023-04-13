@@ -49,58 +49,123 @@
 		339B7B1B27D800090072BF9A /* Parser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 339B7B1A27D800090072BF9A /* Parser.cpp */; };
 		339B7B1E27D816270072BF9A /* CompilationMessage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 33EA186727BC1B1400A1DD52 /* CompilationMessage.cpp */; };
 		33EA185E27BC194F00A1DD52 /* ASTNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 33EA185D27BC194F00A1DD52 /* ASTNode.h */; };
-		33EA186027BC198100A1DD52 /* ASTGlobalDirective.h in Headers */ = {isa = PBXBuildFile; fileRef = 33EA185F27BC198100A1DD52 /* ASTGlobalDirective.h */; };
-		33EA186227BC19C100A1DD52 /* ASTDecl.h in Headers */ = {isa = PBXBuildFile; fileRef = 33EA186127BC19C100A1DD52 /* ASTDecl.h */; };
-		33EA186427BC1A1D00A1DD52 /* ASTVariableDecl.h in Headers */ = {isa = PBXBuildFile; fileRef = 33EA186327BC1A1D00A1DD52 /* ASTVariableDecl.h */; };
+		33EA186027BC198100A1DD52 /* ASTDirective.h in Headers */ = {isa = PBXBuildFile; fileRef = 33EA185F27BC198100A1DD52 /* ASTDirective.h */; };
+		33EA186427BC1A1D00A1DD52 /* ASTVariable.h in Headers */ = {isa = PBXBuildFile; fileRef = 33EA186327BC1A1D00A1DD52 /* ASTVariable.h */; };
 		33EA186627BC1AD500A1DD52 /* CompilationMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = 33EA186527BC1AD500A1DD52 /* CompilationMessage.h */; };
 		33EA186A27BC1BE600A1DD52 /* ASTAttribute.h in Headers */ = {isa = PBXBuildFile; fileRef = 33EA186927BC1BE600A1DD52 /* ASTAttribute.h */; };
 		33EA186C27BC1CBC00A1DD52 /* ASTExpression.h in Headers */ = {isa = PBXBuildFile; fileRef = 33EA186B27BC1CBC00A1DD52 /* ASTExpression.h */; };
-		33EA186E27BC1D4C00A1DD52 /* ASTTypeDecl.h in Headers */ = {isa = PBXBuildFile; fileRef = 33EA186D27BC1D4C00A1DD52 /* ASTTypeDecl.h */; };
-		33EA187027BC1E8A00A1DD52 /* ASTShaderModule.h in Headers */ = {isa = PBXBuildFile; fileRef = 33EA186F27BC1E8A00A1DD52 /* ASTShaderModule.h */; };
+		33EA186E27BC1D4C00A1DD52 /* ASTTypeName.h in Headers */ = {isa = PBXBuildFile; fileRef = 33EA186D27BC1D4C00A1DD52 /* ASTTypeName.h */; };
 		33EA187227BC1FE100A1DD52 /* ASTVariableQualifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 33EA187127BC1FE100A1DD52 /* ASTVariableQualifier.h */; };
-		33EA187427BC204900A1DD52 /* ASTStructureDecl.h in Headers */ = {isa = PBXBuildFile; fileRef = 33EA187327BC204900A1DD52 /* ASTStructureDecl.h */; };
-		33EA187627BC216B00A1DD52 /* ASTFunctionDecl.h in Headers */ = {isa = PBXBuildFile; fileRef = 33EA187527BC216B00A1DD52 /* ASTFunctionDecl.h */; };
+		33EA187427BC204900A1DD52 /* ASTStructure.h in Headers */ = {isa = PBXBuildFile; fileRef = 33EA187327BC204900A1DD52 /* ASTStructure.h */; };
+		33EA187627BC216B00A1DD52 /* ASTFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = 33EA187527BC216B00A1DD52 /* ASTFunction.h */; };
 		33EA187927BC22AA00A1DD52 /* ASTStatement.h in Headers */ = {isa = PBXBuildFile; fileRef = 33EA187827BC22AA00A1DD52 /* ASTStatement.h */; };
 		33EA187B27BC230E00A1DD52 /* ASTCompoundStatement.h in Headers */ = {isa = PBXBuildFile; fileRef = 33EA187A27BC230E00A1DD52 /* ASTCompoundStatement.h */; };
 		33EA187E27BC249000A1DD52 /* ASTReturnStatement.h in Headers */ = {isa = PBXBuildFile; fileRef = 33EA187D27BC249000A1DD52 /* ASTReturnStatement.h */; };
 		33EA188027BC24E200A1DD52 /* ASTAssignmentStatement.h in Headers */ = {isa = PBXBuildFile; fileRef = 33EA187F27BC24E200A1DD52 /* ASTAssignmentStatement.h */; };
 		33EA188227BC25D000A1DD52 /* ASTIdentifierExpression.h in Headers */ = {isa = PBXBuildFile; fileRef = 33EA188127BC25D000A1DD52 /* ASTIdentifierExpression.h */; };
-		33EA188427BC268600A1DD52 /* ASTStructureAccess.h in Headers */ = {isa = PBXBuildFile; fileRef = 33EA188327BC268600A1DD52 /* ASTStructureAccess.h */; };
-		33EA188627BC26DF00A1DD52 /* ASTCallableExpression.h in Headers */ = {isa = PBXBuildFile; fileRef = 33EA188527BC26DF00A1DD52 /* ASTCallableExpression.h */; };
-		33EA188827BC361E00A1DD52 /* ASTLiteralExpressions.h in Headers */ = {isa = PBXBuildFile; fileRef = 33EA188727BC361E00A1DD52 /* ASTLiteralExpressions.h */; };
+		33EA188427BC268600A1DD52 /* ASTFieldAccessExpression.h in Headers */ = {isa = PBXBuildFile; fileRef = 33EA188327BC268600A1DD52 /* ASTFieldAccessExpression.h */; };
+		33EA188627BC26DF00A1DD52 /* ASTCallExpression.h in Headers */ = {isa = PBXBuildFile; fileRef = 33EA188527BC26DF00A1DD52 /* ASTCallExpression.h */; };
+		3A12AEAA28FCE94C00C1B975 /* ASTBuiltinAttribute.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A12AE9028FCE94A00C1B975 /* ASTBuiltinAttribute.h */; };
+		3A12AEAC28FCE94C00C1B975 /* ASTLocationAttribute.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A12AE9228FCE94A00C1B975 /* ASTLocationAttribute.h */; };
+		3A12AEAD28FCE94C00C1B975 /* ASTPhonyStatement.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A12AE9328FCE94A00C1B975 /* ASTPhonyStatement.h */; };
+		3A12AEAF28FCE94C00C1B975 /* ASTIfStatement.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A12AE9528FCE94B00C1B975 /* ASTIfStatement.h */; };
+		3A12AEB028FCE94C00C1B975 /* ASTForStatement.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A12AE9628FCE94B00C1B975 /* ASTForStatement.h */; };
+		3A12AEB128FCE94C00C1B975 /* ASTGroupAttribute.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A12AE9728FCE94B00C1B975 /* ASTGroupAttribute.h */; };
+		3A12AEB228FCE94C00C1B975 /* ASTWorkgroupSizeAttribute.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A12AE9828FCE94B00C1B975 /* ASTWorkgroupSizeAttribute.h */; };
+		3A12AEB328FCE94C00C1B975 /* ASTStageAttribute.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A12AE9928FCE94B00C1B975 /* ASTStageAttribute.h */; };
+		3A12AEB428FCE94C00C1B975 /* ASTLoopStatement.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A12AE9A28FCE94B00C1B975 /* ASTLoopStatement.h */; };
+		3A12AEB528FCE94C00C1B975 /* ASTIdAttribute.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A12AE9B28FCE94B00C1B975 /* ASTIdAttribute.h */; };
+		3A12AEB628FCE94C00C1B975 /* ASTInvariantAttribute.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A12AE9C28FCE94B00C1B975 /* ASTInvariantAttribute.h */; };
+		3A12AEB728FCE94C00C1B975 /* AST.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A12AE9D28FCE94B00C1B975 /* AST.h */; };
+		3A12AEB828FCE94C00C1B975 /* ASTConstAttribute.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A12AE9E28FCE94B00C1B975 /* ASTConstAttribute.h */; };
+		3A12AEB928FCE94C00C1B975 /* ASTBreakStatement.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A12AE9F28FCE94B00C1B975 /* ASTBreakStatement.h */; };
+		3A12AEBA28FCE94C00C1B975 /* ASTIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A12AEA028FCE94B00C1B975 /* ASTIdentifier.h */; };
+		3A12AEBB28FCE94C00C1B975 /* ASTSizeAttribute.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A12AEA128FCE94B00C1B975 /* ASTSizeAttribute.h */; };
+		3A12AEBC28FCE94C00C1B975 /* ASTContinueStatement.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A12AEA228FCE94C00C1B975 /* ASTContinueStatement.h */; };
+		3A12AEBD28FCE94C00C1B975 /* ASTCompoundAssignmentStatement.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A12AEA328FCE94C00C1B975 /* ASTCompoundAssignmentStatement.h */; };
+		3A12AEBE28FCE94C00C1B975 /* ASTDecrementIncrementStatement.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A12AEA428FCE94C00C1B975 /* ASTDecrementIncrementStatement.h */; };
+		3A12AEBF28FCE94C00C1B975 /* ASTAlignAttribute.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A12AEA528FCE94C00C1B975 /* ASTAlignAttribute.h */; };
+		3A12AEC028FCE94C00C1B975 /* ASTParameter.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A12AEA628FCE94C00C1B975 /* ASTParameter.h */; };
+		3A12AEC128FCE94C00C1B975 /* ASTBindingAttribute.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A12AEA728FCE94C00C1B975 /* ASTBindingAttribute.h */; };
+		3A12AEC228FCE94C00C1B975 /* ASTDiscardStatement.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A12AEA828FCE94C00C1B975 /* ASTDiscardStatement.h */; };
+		3A12AEC328FCE94C00C1B975 /* ASTInterpolateAttribute.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A12AEA928FCE94C00C1B975 /* ASTInterpolateAttribute.h */; };
+		3A12AEC728FCEEC400C1B975 /* ASTStructureMember.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A12AEC428FCEEC400C1B975 /* ASTStructureMember.h */; };
+		3A12AEC828FCEEC400C1B975 /* ASTWhileStatement.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A12AEC528FCEEC400C1B975 /* ASTWhileStatement.h */; };
+		3A12AEC928FCEEC400C1B975 /* ASTStaticAssertStatement.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A12AEC628FCEEC400C1B975 /* ASTStaticAssertStatement.h */; };
+		3A12AECC28FCFA9800C1B975 /* ASTUnsigned32Literal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A12AECA28FCFA9800C1B975 /* ASTUnsigned32Literal.h */; };
+		3A12AECD28FCFA9800C1B975 /* ASTBitcastExpression.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A12AECB28FCFA9800C1B975 /* ASTBitcastExpression.h */; };
+		3A12AED428FCFC5600C1B975 /* ASTSigned32Literal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A12AECE28FCFC5500C1B975 /* ASTSigned32Literal.h */; };
+		3A12AED528FCFC5600C1B975 /* ASTAbstractIntegerLiteral.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A12AECF28FCFC5500C1B975 /* ASTAbstractIntegerLiteral.h */; };
+		3A12AED628FCFC5600C1B975 /* ASTBoolLiteral.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A12AED028FCFC5500C1B975 /* ASTBoolLiteral.h */; };
+		3A12AED728FCFC5600C1B975 /* ASTAbstractFloatLiteral.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A12AED128FCFC5500C1B975 /* ASTAbstractFloatLiteral.h */; };
+		3A12AED828FCFC5600C1B975 /* ASTFloat32Literal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A12AED228FCFC5500C1B975 /* ASTFloat32Literal.h */; };
 		3A1337E728FBD56400F29B73 /* ASTVisitor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A1337E528FBD56300F29B73 /* ASTVisitor.cpp */; };
 		3A1337E828FBD56400F29B73 /* ASTVisitor.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A1337E628FBD56400F29B73 /* ASTVisitor.h */; };
 		3A1337EA28FBD56E00F29B73 /* ASTForward.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A1337E928FBD56E00F29B73 /* ASTForward.h */; };
-		3A2479DD290629CE0012B3E6 /* ASTGroupAttribute.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A2479D8290629CD0012B3E6 /* ASTGroupAttribute.h */; };
-		3A2479DE290629CE0012B3E6 /* ASTLocationAttribute.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A2479D9290629CE0012B3E6 /* ASTLocationAttribute.h */; };
-		3A2479DF290629CE0012B3E6 /* ASTStageAttribute.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A2479DA290629CE0012B3E6 /* ASTStageAttribute.h */; };
-		3A2479E0290629CE0012B3E6 /* ASTBindingAttribute.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A2479DB290629CE0012B3E6 /* ASTBindingAttribute.h */; };
-		3A2479E1290629CE0012B3E6 /* ASTBuiltinAttribute.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A2479DC290629CE0012B3E6 /* ASTBuiltinAttribute.h */; };
-		3A7E164C28C57BB8003F49C9 /* ASTArrayAccess.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A7E164B28C57BB7003F49C9 /* ASTArrayAccess.h */; };
+		3A1A1F0228FD35E800C5934A /* ASTSwitchStatement.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A1A1EFE28FD35E800C5934A /* ASTSwitchStatement.h */; };
+		3A7E164C28C57BB8003F49C9 /* ASTIndexAccessExpression.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A7E164B28C57BB7003F49C9 /* ASTIndexAccessExpression.h */; };
+		3A9D02A0298390A000888A75 /* ASTPointerDereference.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A9D029F298390A000888A75 /* ASTPointerDereference.h */; };
+		3A9D02A4298390CF00888A75 /* ASTStringDumper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A9D02A1298390CF00888A75 /* ASTStringDumper.cpp */; };
+		3A9D02A6298390CF00888A75 /* ASTStringDumper.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A9D02A3298390CF00888A75 /* ASTStringDumper.h */; };
 		3AAE4EB428C56E9A00DA484B /* ASTUnaryExpression.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AAE4EB328C56E9A00DA484B /* ASTUnaryExpression.h */; };
-		3ACCE80628FE1872004A0914 /* AST.h in Headers */ = {isa = PBXBuildFile; fileRef = 3ACCE80528FE1872004A0914 /* AST.h */; };
-		3ADB94442900F7D700CFFDC2 /* ASTStringDumper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3ADB94422900F7D600CFFDC2 /* ASTStringDumper.cpp */; };
-		3ADB94452900F7D700CFFDC2 /* ASTStringDumper.h in Headers */ = {isa = PBXBuildFile; fileRef = 3ADB94432900F7D600CFFDC2 /* ASTStringDumper.h */; };
+		3AD0D2332988D3C10080D728 /* ASTDeclaration.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AD0D2302988D3C10080D728 /* ASTDeclaration.h */; };
+		3AD0D2342988D3C10080D728 /* ASTIdentityExpression.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AD0D2312988D3C10080D728 /* ASTIdentityExpression.h */; };
+		3AD0D2372988D3F90080D728 /* API.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AD0D2362988D3F90080D728 /* API.h */; };
+		3AD0D23B2988ED8F0080D728 /* ASTUnaryExpression.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AD0D23A2988ED8F0080D728 /* ASTUnaryExpression.cpp */; };
+		3AD0D23E2988F3AB0080D728 /* ASTBinaryExpression.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AD0D23C2988F3AA0080D728 /* ASTBinaryExpression.cpp */; };
+		3AD0D23F2988F3AB0080D728 /* ASTBinaryExpression.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AD0D23D2988F3AA0080D728 /* ASTBinaryExpression.h */; };
 		3AE27DB528C1BA480043A8E0 /* ASTVariableStatement.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AE27DB428C1BA480043A8E0 /* ASTVariableStatement.h */; };
 		664C92FD286A66090008D143 /* IOSurface.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 664C92FC286A66090008D143 /* IOSurface.framework */; };
 		66DC575528627E0B0014CABD /* ParserPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 66DC575428627E0B0014CABD /* ParserPrivate.h */; };
+		97296766299C09BC001C8BD4 /* TypeDeclarations.rb in Sources */ = {isa = PBXBuildFile; fileRef = 97296765299C09B0001C8BD4 /* TypeDeclarations.rb */; };
+		973F784729C8A78200166C66 /* Pipeline.h in Headers */ = {isa = PBXBuildFile; fileRef = 973F784529C8A78200166C66 /* Pipeline.h */; };
+		973F784829C8A78200166C66 /* Pipeline.mm in Sources */ = {isa = PBXBuildFile; fileRef = 973F784629C8A78200166C66 /* Pipeline.mm */; };
+		9776BE732992A236002D6D93 /* Overload.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9776BE712992A236002D6D93 /* Overload.cpp */; };
+		9776BE742992A236002D6D93 /* Overload.h in Headers */ = {isa = PBXBuildFile; fileRef = 9776BE722992A236002D6D93 /* Overload.h */; };
+		9776BE7629957E12002D6D93 /* WGSLShaderModule.h in Headers */ = {isa = PBXBuildFile; fileRef = 9776BE7529957E12002D6D93 /* WGSLShaderModule.h */; };
 		9789C31A297EA105009E9006 /* CallGraph.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9789C318297EA105009E9006 /* CallGraph.cpp */; };
-		9789C31B297EA105009E9006 /* CallGraph.h in Headers */ = {isa = PBXBuildFile; fileRef = 9789C319297EA105009E9006 /* CallGraph.h */; };
-		9789C32229802690009E9006 /* ASTBinaryExpression.h in Headers */ = {isa = PBXBuildFile; fileRef = 9789C32029802690009E9006 /* ASTBinaryExpression.h */; };
-		9789C32329802690009E9006 /* ASTPointerDereference.h in Headers */ = {isa = PBXBuildFile; fileRef = 9789C32129802690009E9006 /* ASTPointerDereference.h */; };
+		978A9125298A4E8400B37E5E /* MangleNames.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 978A9123298A4E8400B37E5E /* MangleNames.cpp */; };
+		978A9126298A4E8400B37E5E /* MangleNames.h in Headers */ = {isa = PBXBuildFile; fileRef = 978A9124298A4E8400B37E5E /* MangleNames.h */; };
+		978A912A298AB60200B37E5E /* ContextProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 978A9129298AB60200B37E5E /* ContextProvider.h */; };
+		978A912C298AB8EE00B37E5E /* ContextProviderInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 978A912B298AB8EE00B37E5E /* ContextProviderInlines.h */; };
+		978A912F298AD3DA00B37E5E /* TypeCheck.h in Headers */ = {isa = PBXBuildFile; fileRef = 978A912D298AD3DA00B37E5E /* TypeCheck.h */; };
+		978A9130298AD3DA00B37E5E /* TypeCheck.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 978A912E298AD3DA00B37E5E /* TypeCheck.cpp */; };
+		978A9133298BBFD300B37E5E /* Types.h in Headers */ = {isa = PBXBuildFile; fileRef = 978A9131298BBFD300B37E5E /* Types.h */; };
+		978A9134298BBFD300B37E5E /* Types.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 978A9132298BBFD300B37E5E /* Types.cpp */; };
+		978A9137298D40F100B37E5E /* TypeStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 978A9135298D40F100B37E5E /* TypeStore.h */; };
+		978A9138298D40F100B37E5E /* TypeStore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 978A9136298D40F100B37E5E /* TypeStore.cpp */; };
 		979240B6297018290050EA2C /* MetalCodeGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = 979240B2297018290050EA2C /* MetalCodeGenerator.h */; };
 		979240B7297018290050EA2C /* MetalFunctionWriter.h in Headers */ = {isa = PBXBuildFile; fileRef = 979240B3297018290050EA2C /* MetalFunctionWriter.h */; };
 		979240B8297018290050EA2C /* MetalCodeGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 979240B4297018290050EA2C /* MetalCodeGenerator.cpp */; };
 		979240B9297018290050EA2C /* MetalFunctionWriter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 979240B5297018290050EA2C /* MetalFunctionWriter.cpp */; };
 		979240C029753B2A0050EA2C /* PhaseTimer.h in Headers */ = {isa = PBXBuildFile; fileRef = 979240BC29753B2A0050EA2C /* PhaseTimer.h */; };
-		979240C4297558F10050EA2C /* ResolveTypeReferences.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 979240C2297558F10050EA2C /* ResolveTypeReferences.cpp */; };
-		979240C5297558F10050EA2C /* ResolveTypeReferences.h in Headers */ = {isa = PBXBuildFile; fileRef = 979240C3297558F10050EA2C /* ResolveTypeReferences.h */; };
 		979240C829769AC00050EA2C /* EntryPointRewriter.h in Headers */ = {isa = PBXBuildFile; fileRef = 979240C629769AC00050EA2C /* EntryPointRewriter.h */; };
 		979240C929769AC00050EA2C /* EntryPointRewriter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 979240C729769AC00050EA2C /* EntryPointRewriter.cpp */; };
+		97BCD6AE29D7422B00A82577 /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1CBAB0912718CCA0006080BB /* JavaScriptCore.framework */; };
 		97F547B8298055D90011D79A /* GlobalVariableRewriter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97F547B6298055D90011D79A /* GlobalVariableRewriter.cpp */; };
 		97F547B9298055D90011D79A /* GlobalVariableRewriter.h in Headers */ = {isa = PBXBuildFile; fileRef = 97F547B7298055D90011D79A /* GlobalVariableRewriter.h */; };
+		97FA1A8E29C086230052D650 /* wgslc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97FA1A8729C085A60052D650 /* wgslc.cpp */; };
+		97FA1AA729C0DA890052D650 /* libwgsl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1CEBD7F22716B2CC00A5254D /* libwgsl.a */; };
 		DD05A35C27BF09C60096EFAB /* libWTF.a in Product Dependencies */ = {isa = PBXBuildFile; fileRef = 1CEBD8292716CAE700A5254D /* libWTF.a */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXBuildRule section */
+		9729675F299BF1BE001C8BD4 /* PBXBuildRule */ = {
+			isa = PBXBuildRule;
+			compilerSpec = com.apple.compilers.proxy.script;
+			filePatterns = "*.rb";
+			fileType = pattern.proxy;
+			inputFiles = (
+				"$(SRCROOT)/WGSL/generator/main.rb",
+			);
+			isEditable = 1;
+			outputFiles = (
+				"$(BUILT_PRODUCTS_DIR)/DerivedSources/WGSL/TypeDeclarations.h",
+			);
+			runOncePerArchitecture = 0;
+			script = "/usr/bin/env ruby \"${SCRIPT_INPUT_FILE_0}\" \"${INPUT_FILE_PATH}\" \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+		};
+/* End PBXBuildRule section */
 
 /* Begin PBXContainerItemProxy section */
 		1CEBD8272716CACC00A5254D /* PBXContainerItemProxy */ = {
@@ -113,6 +178,15 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		97FA1A7D29C085740052D650 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
 		DD05A35B27BF09B60096EFAB /* Product Dependencies */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -128,96 +202,10 @@
 
 /* Begin PBXFileReference section */
 		0D4D2E80294A89CF0000A1AB /* BindableResource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BindableResource.h; sourceTree = "<group>"; };
-		1C023D4A274495B9001DB734 /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = JavaScriptCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1C0F41EC280940650005886D /* HardwareCapabilities.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = HardwareCapabilities.mm; sourceTree = "<group>"; };
 		1C0F41ED280940650005886D /* HardwareCapabilities.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HardwareCapabilities.h; sourceTree = "<group>"; };
 		1C2CEDED271E8A7300EDC16F /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = System/Library/Frameworks/Metal.framework; sourceTree = SDKROOT; };
 		1C33755D27FA23B8002F1644 /* IsValidToUseWith.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IsValidToUseWith.h; sourceTree = "<group>"; };
-		1C5319CD27BDDD6E00CD127E /* MTLTypes.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MTLTypes.hpp; sourceTree = "<group>"; };
-		1C5319CE27BDDD6E00CD127E /* MTLResourceStateCommandEncoder.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MTLResourceStateCommandEncoder.hpp; sourceTree = "<group>"; };
-		1C5319CF27BDDD6E00CD127E /* MTLIndirectCommandEncoder.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MTLIndirectCommandEncoder.hpp; sourceTree = "<group>"; };
-		1C5319D027BDDD6E00CD127E /* MTLComputePipeline.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MTLComputePipeline.hpp; sourceTree = "<group>"; };
-		1C5319D127BDDD6E00CD127E /* MTLFunctionHandle.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MTLFunctionHandle.hpp; sourceTree = "<group>"; };
-		1C5319D227BDDD6E00CD127E /* MTLDrawable.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MTLDrawable.hpp; sourceTree = "<group>"; };
-		1C5319D327BDDD6E00CD127E /* MTLDynamicLibrary.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MTLDynamicLibrary.hpp; sourceTree = "<group>"; };
-		1C5319D427BDDD6E00CD127E /* MTLComputePass.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MTLComputePass.hpp; sourceTree = "<group>"; };
-		1C5319D527BDDD6E00CD127E /* MTLFunctionConstantValues.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MTLFunctionConstantValues.hpp; sourceTree = "<group>"; };
-		1C5319D627BDDD6E00CD127E /* MTLPipeline.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MTLPipeline.hpp; sourceTree = "<group>"; };
-		1C5319D727BDDD6E00CD127E /* MTLRenderCommandEncoder.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MTLRenderCommandEncoder.hpp; sourceTree = "<group>"; };
-		1C5319D827BDDD6E00CD127E /* MTLBlitCommandEncoder.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MTLBlitCommandEncoder.hpp; sourceTree = "<group>"; };
-		1C5319D927BDDD6E00CD127E /* MTLCaptureManager.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MTLCaptureManager.hpp; sourceTree = "<group>"; };
-		1C5319DA27BDDD6E00CD127E /* MTLCommandEncoder.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MTLCommandEncoder.hpp; sourceTree = "<group>"; };
-		1C5319DB27BDDD6E00CD127E /* Metal.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Metal.hpp; sourceTree = "<group>"; };
-		1C5319DC27BDDD6E00CD127E /* MTLStageInputOutputDescriptor.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MTLStageInputOutputDescriptor.hpp; sourceTree = "<group>"; };
-		1C5319DD27BDDD6E00CD127E /* MTLAccelerationStructureTypes.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MTLAccelerationStructureTypes.hpp; sourceTree = "<group>"; };
-		1C5319DE27BDDD6E00CD127E /* MTLParallelRenderCommandEncoder.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MTLParallelRenderCommandEncoder.hpp; sourceTree = "<group>"; };
-		1C5319DF27BDDD6E00CD127E /* MTLRasterizationRate.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MTLRasterizationRate.hpp; sourceTree = "<group>"; };
-		1C5319E027BDDD6E00CD127E /* MTLLinkedFunctions.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MTLLinkedFunctions.hpp; sourceTree = "<group>"; };
-		1C5319E127BDDD6E00CD127E /* MTLTexture.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MTLTexture.hpp; sourceTree = "<group>"; };
-		1C5319E227BDDD6E00CD127E /* MTLSampler.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MTLSampler.hpp; sourceTree = "<group>"; };
-		1C5319E327BDDD6E00CD127E /* MTLDepthStencil.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MTLDepthStencil.hpp; sourceTree = "<group>"; };
-		1C5319E427BDDD6E00CD127E /* MTLArgumentEncoder.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MTLArgumentEncoder.hpp; sourceTree = "<group>"; };
-		1C5319E527BDDD6E00CD127E /* MTLIntersectionFunctionTable.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MTLIntersectionFunctionTable.hpp; sourceTree = "<group>"; };
-		1C5319E627BDDD6E00CD127E /* MTLVisibleFunctionTable.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MTLVisibleFunctionTable.hpp; sourceTree = "<group>"; };
-		1C5319E727BDDD6E00CD127E /* MTLPrivate.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MTLPrivate.hpp; sourceTree = "<group>"; };
-		1C5319E827BDDD6E00CD127E /* MTLResource.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MTLResource.hpp; sourceTree = "<group>"; };
-		1C5319E927BDDD6E00CD127E /* MTLAccelerationStructure.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MTLAccelerationStructure.hpp; sourceTree = "<group>"; };
-		1C5319EA27BDDD6E00CD127E /* MTLDevice.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MTLDevice.hpp; sourceTree = "<group>"; };
-		1C5319EB27BDDD6E00CD127E /* MTLArgument.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MTLArgument.hpp; sourceTree = "<group>"; };
-		1C5319EC27BDDD6E00CD127E /* MTLFunctionLog.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MTLFunctionLog.hpp; sourceTree = "<group>"; };
-		1C5319ED27BDDD6E00CD127E /* MTLBuffer.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MTLBuffer.hpp; sourceTree = "<group>"; };
-		1C5319EE27BDDD6E00CD127E /* MTLRenderPass.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MTLRenderPass.hpp; sourceTree = "<group>"; };
-		1C5319EF27BDDD6E00CD127E /* MTLHeap.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MTLHeap.hpp; sourceTree = "<group>"; };
-		1C5319F027BDDD6E00CD127E /* MTLVertexDescriptor.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MTLVertexDescriptor.hpp; sourceTree = "<group>"; };
-		1C5319F127BDDD6E00CD127E /* MTLFunctionStitching.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MTLFunctionStitching.hpp; sourceTree = "<group>"; };
-		1C5319F227BDDD6E00CD127E /* MTLLibrary.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MTLLibrary.hpp; sourceTree = "<group>"; };
-		1C5319F327BDDD6E00CD127E /* MTLPixelFormat.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MTLPixelFormat.hpp; sourceTree = "<group>"; };
-		1C5319F427BDDD6E00CD127E /* MTLFence.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MTLFence.hpp; sourceTree = "<group>"; };
-		1C5319F527BDDD6E00CD127E /* MTLIndirectCommandBuffer.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MTLIndirectCommandBuffer.hpp; sourceTree = "<group>"; };
-		1C5319F627BDDD6E00CD127E /* MTLRenderPipeline.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MTLRenderPipeline.hpp; sourceTree = "<group>"; };
-		1C5319F727BDDD6E00CD127E /* MTLCommandQueue.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MTLCommandQueue.hpp; sourceTree = "<group>"; };
-		1C5319F827BDDD6E00CD127E /* MTLFunctionDescriptor.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MTLFunctionDescriptor.hpp; sourceTree = "<group>"; };
-		1C5319F927BDDD6E00CD127E /* MTLAccelerationStructureCommandEncoder.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MTLAccelerationStructureCommandEncoder.hpp; sourceTree = "<group>"; };
-		1C5319FA27BDDD6E00CD127E /* MTLBlitPass.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MTLBlitPass.hpp; sourceTree = "<group>"; };
-		1C5319FB27BDDD6E00CD127E /* MTLEvent.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MTLEvent.hpp; sourceTree = "<group>"; };
-		1C5319FC27BDDD6E00CD127E /* MTLBinaryArchive.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MTLBinaryArchive.hpp; sourceTree = "<group>"; };
-		1C5319FD27BDDD6E00CD127E /* MTLCaptureScope.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MTLCaptureScope.hpp; sourceTree = "<group>"; };
-		1C5319FE27BDDD6E00CD127E /* MTLComputeCommandEncoder.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MTLComputeCommandEncoder.hpp; sourceTree = "<group>"; };
-		1C5319FF27BDDD6E00CD127E /* MTLHeaderBridge.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MTLHeaderBridge.hpp; sourceTree = "<group>"; };
-		1C531A0027BDDD6E00CD127E /* MTLCounters.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MTLCounters.hpp; sourceTree = "<group>"; };
-		1C531A0127BDDD6E00CD127E /* MTLDefines.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MTLDefines.hpp; sourceTree = "<group>"; };
-		1C531A0227BDDD6E00CD127E /* MTLResourceStatePass.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MTLResourceStatePass.hpp; sourceTree = "<group>"; };
-		1C531A0327BDDD6E00CD127E /* MTLCommandBuffer.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MTLCommandBuffer.hpp; sourceTree = "<group>"; };
-		1C531A0527BDDD6E00CD127E /* NSString.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = NSString.hpp; sourceTree = "<group>"; };
-		1C531A0627BDDD6E00CD127E /* NSDictionary.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = NSDictionary.hpp; sourceTree = "<group>"; };
-		1C531A0727BDDD6E00CD127E /* NSLock.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = NSLock.hpp; sourceTree = "<group>"; };
-		1C531A0827BDDD6E00CD127E /* NSProcessInfo.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = NSProcessInfo.hpp; sourceTree = "<group>"; };
-		1C531A0927BDDD6E00CD127E /* NSError.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = NSError.hpp; sourceTree = "<group>"; };
-		1C531A0A27BDDD6E00CD127E /* NSObjCRuntime.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = NSObjCRuntime.hpp; sourceTree = "<group>"; };
-		1C531A0B27BDDD6E00CD127E /* NSObject.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = NSObject.hpp; sourceTree = "<group>"; };
-		1C531A0C27BDDD6E00CD127E /* NSNotification.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = NSNotification.hpp; sourceTree = "<group>"; };
-		1C531A0D27BDDD6E00CD127E /* NSPrivate.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = NSPrivate.hpp; sourceTree = "<group>"; };
-		1C531A0E27BDDD6E00CD127E /* NSURL.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = NSURL.hpp; sourceTree = "<group>"; };
-		1C531A0F27BDDD6E00CD127E /* NSAutoreleasePool.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = NSAutoreleasePool.hpp; sourceTree = "<group>"; };
-		1C531A1027BDDD6E00CD127E /* NSRange.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = NSRange.hpp; sourceTree = "<group>"; };
-		1C531A1127BDDD6E00CD127E /* NSTypes.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = NSTypes.hpp; sourceTree = "<group>"; };
-		1C531A1227BDDD6E00CD127E /* NSData.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = NSData.hpp; sourceTree = "<group>"; };
-		1C531A1327BDDD6E00CD127E /* NSNumber.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = NSNumber.hpp; sourceTree = "<group>"; };
-		1C531A1427BDDD6E00CD127E /* Foundation.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Foundation.hpp; sourceTree = "<group>"; };
-		1C531A1527BDDD6E00CD127E /* NSDate.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = NSDate.hpp; sourceTree = "<group>"; };
-		1C531A1627BDDD6E00CD127E /* NSDefines.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = NSDefines.hpp; sourceTree = "<group>"; };
-		1C531A1727BDDD6E00CD127E /* NSBundle.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = NSBundle.hpp; sourceTree = "<group>"; };
-		1C531A1827BDDD6E00CD127E /* NSEnumerator.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = NSEnumerator.hpp; sourceTree = "<group>"; };
-		1C531A1927BDDD6E00CD127E /* NSArray.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = NSArray.hpp; sourceTree = "<group>"; };
-		1C531A1A27BDDD6E00CD127E /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
-		1C531A1C27BDDD6E00CD127E /* QuartzCore.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = QuartzCore.hpp; sourceTree = "<group>"; };
-		1C531A1D27BDDD6E00CD127E /* CAPrivate.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = CAPrivate.hpp; sourceTree = "<group>"; };
-		1C531A1E27BDDD6E00CD127E /* CAMetalDrawable.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = CAMetalDrawable.hpp; sourceTree = "<group>"; };
-		1C531A1F27BDDD6E00CD127E /* CADefines.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = CADefines.hpp; sourceTree = "<group>"; };
-		1C531A2027BDDD6E00CD127E /* LICENSE.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE.txt; sourceTree = "<group>"; };
-		1C531A2227BDDD6E00CD127E /* MakeSingleHeader.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = MakeSingleHeader.py; sourceTree = "<group>"; };
-		1C531A2427BDDF5500CD127E /* Metal.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Metal.cpp; sourceTree = "<group>"; };
-		1C531A2A27BDE06700CD127E /* Metal.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Metal.hpp; sourceTree = "<group>"; };
 		1C582FF727E04131009B40F0 /* CommandsMixin.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CommandsMixin.mm; sourceTree = "<group>"; };
 		1C582FF827E04131009B40F0 /* CommandsMixin.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CommandsMixin.h; sourceTree = "<group>"; };
 		1C58301727E16823009B40F0 /* APIConversions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = APIConversions.h; sourceTree = "<group>"; };
@@ -265,12 +253,6 @@
 		1C5ACAEA273A560D0095F8D5 /* TextureView.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = TextureView.mm; sourceTree = "<group>"; };
 		1C9F7CDD29762F51006B5BE9 /* PresentationContext.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PresentationContext.mm; sourceTree = "<group>"; };
 		1C9F7CDE29762F51006B5BE9 /* PresentationContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PresentationContext.h; sourceTree = "<group>"; };
-		1CAB8D382866D9FD00347F21 /* MTLIOCommandQueue.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MTLIOCommandQueue.hpp; sourceTree = "<group>"; };
-		1CAB8D392866D9FD00347F21 /* MTLIOCompressor.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MTLIOCompressor.hpp; sourceTree = "<group>"; };
-		1CAB8D3A2866D9FD00347F21 /* MTLIOCommandBuffer.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MTLIOCommandBuffer.hpp; sourceTree = "<group>"; };
-		1CAB8D3B2866DA0E00347F21 /* NSSharedPtr.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = NSSharedPtr.hpp; sourceTree = "<group>"; };
-		1CAB8D3C2866DA0E00347F21 /* NSSet.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = NSSet.hpp; sourceTree = "<group>"; };
-		1CAB8D3D2866DA2D00347F21 /* CAMetalLayer.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = CAMetalLayer.hpp; sourceTree = "<group>"; };
 		1CBAB0912718CCA0006080BB /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = JavaScriptCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1CBD2E922977DAC900BBF52C /* PresentationContextCoreAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PresentationContextCoreAnimation.h; sourceTree = "<group>"; };
 		1CBD2E932977DAC900BBF52C /* PresentationContextCoreAnimation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PresentationContextCoreAnimation.mm; sourceTree = "<group>"; };
@@ -303,57 +285,106 @@
 		339B7B1727D7FFA40072BF9A /* Parser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Parser.h; sourceTree = "<group>"; };
 		339B7B1A27D800090072BF9A /* Parser.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Parser.cpp; sourceTree = "<group>"; };
 		33EA185D27BC194F00A1DD52 /* ASTNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ASTNode.h; path = WGSL/AST/ASTNode.h; sourceTree = SOURCE_ROOT; };
-		33EA185F27BC198100A1DD52 /* ASTGlobalDirective.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ASTGlobalDirective.h; sourceTree = "<group>"; };
-		33EA186127BC19C100A1DD52 /* ASTDecl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ASTDecl.h; sourceTree = "<group>"; };
-		33EA186327BC1A1D00A1DD52 /* ASTVariableDecl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ASTVariableDecl.h; sourceTree = "<group>"; };
+		33EA185F27BC198100A1DD52 /* ASTDirective.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ASTDirective.h; sourceTree = "<group>"; };
+		33EA186327BC1A1D00A1DD52 /* ASTVariable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ASTVariable.h; sourceTree = "<group>"; };
 		33EA186527BC1AD500A1DD52 /* CompilationMessage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CompilationMessage.h; sourceTree = "<group>"; };
 		33EA186727BC1B1400A1DD52 /* CompilationMessage.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CompilationMessage.cpp; sourceTree = "<group>"; };
 		33EA186927BC1BE600A1DD52 /* ASTAttribute.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ASTAttribute.h; sourceTree = "<group>"; };
 		33EA186B27BC1CBC00A1DD52 /* ASTExpression.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ASTExpression.h; sourceTree = "<group>"; };
-		33EA186D27BC1D4C00A1DD52 /* ASTTypeDecl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ASTTypeDecl.h; sourceTree = "<group>"; };
-		33EA186F27BC1E8A00A1DD52 /* ASTShaderModule.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ASTShaderModule.h; sourceTree = "<group>"; };
+		33EA186D27BC1D4C00A1DD52 /* ASTTypeName.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ASTTypeName.h; sourceTree = "<group>"; };
 		33EA187127BC1FE100A1DD52 /* ASTVariableQualifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ASTVariableQualifier.h; sourceTree = "<group>"; };
-		33EA187327BC204900A1DD52 /* ASTStructureDecl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ASTStructureDecl.h; sourceTree = "<group>"; };
-		33EA187527BC216B00A1DD52 /* ASTFunctionDecl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ASTFunctionDecl.h; sourceTree = "<group>"; };
+		33EA187327BC204900A1DD52 /* ASTStructure.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ASTStructure.h; sourceTree = "<group>"; };
+		33EA187527BC216B00A1DD52 /* ASTFunction.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ASTFunction.h; sourceTree = "<group>"; };
 		33EA187827BC22AA00A1DD52 /* ASTStatement.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ASTStatement.h; sourceTree = "<group>"; };
 		33EA187A27BC230E00A1DD52 /* ASTCompoundStatement.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ASTCompoundStatement.h; sourceTree = "<group>"; };
 		33EA187D27BC249000A1DD52 /* ASTReturnStatement.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ASTReturnStatement.h; sourceTree = "<group>"; };
 		33EA187F27BC24E200A1DD52 /* ASTAssignmentStatement.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ASTAssignmentStatement.h; sourceTree = "<group>"; };
 		33EA188127BC25D000A1DD52 /* ASTIdentifierExpression.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ASTIdentifierExpression.h; sourceTree = "<group>"; };
-		33EA188327BC268600A1DD52 /* ASTStructureAccess.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ASTStructureAccess.h; sourceTree = "<group>"; };
-		33EA188527BC26DF00A1DD52 /* ASTCallableExpression.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ASTCallableExpression.h; sourceTree = "<group>"; };
-		33EA188727BC361E00A1DD52 /* ASTLiteralExpressions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ASTLiteralExpressions.h; sourceTree = "<group>"; };
+		33EA188327BC268600A1DD52 /* ASTFieldAccessExpression.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ASTFieldAccessExpression.h; sourceTree = "<group>"; };
+		33EA188527BC26DF00A1DD52 /* ASTCallExpression.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ASTCallExpression.h; sourceTree = "<group>"; };
+		3A12AE9028FCE94A00C1B975 /* ASTBuiltinAttribute.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTBuiltinAttribute.h; sourceTree = "<group>"; };
+		3A12AE9228FCE94A00C1B975 /* ASTLocationAttribute.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTLocationAttribute.h; sourceTree = "<group>"; };
+		3A12AE9328FCE94A00C1B975 /* ASTPhonyStatement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTPhonyStatement.h; sourceTree = "<group>"; };
+		3A12AE9528FCE94B00C1B975 /* ASTIfStatement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTIfStatement.h; sourceTree = "<group>"; };
+		3A12AE9628FCE94B00C1B975 /* ASTForStatement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTForStatement.h; sourceTree = "<group>"; };
+		3A12AE9728FCE94B00C1B975 /* ASTGroupAttribute.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTGroupAttribute.h; sourceTree = "<group>"; };
+		3A12AE9828FCE94B00C1B975 /* ASTWorkgroupSizeAttribute.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTWorkgroupSizeAttribute.h; sourceTree = "<group>"; };
+		3A12AE9928FCE94B00C1B975 /* ASTStageAttribute.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTStageAttribute.h; sourceTree = "<group>"; };
+		3A12AE9A28FCE94B00C1B975 /* ASTLoopStatement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTLoopStatement.h; sourceTree = "<group>"; };
+		3A12AE9B28FCE94B00C1B975 /* ASTIdAttribute.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTIdAttribute.h; sourceTree = "<group>"; };
+		3A12AE9C28FCE94B00C1B975 /* ASTInvariantAttribute.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTInvariantAttribute.h; sourceTree = "<group>"; };
+		3A12AE9D28FCE94B00C1B975 /* AST.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AST.h; sourceTree = "<group>"; };
+		3A12AE9E28FCE94B00C1B975 /* ASTConstAttribute.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTConstAttribute.h; sourceTree = "<group>"; };
+		3A12AE9F28FCE94B00C1B975 /* ASTBreakStatement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTBreakStatement.h; sourceTree = "<group>"; };
+		3A12AEA028FCE94B00C1B975 /* ASTIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTIdentifier.h; sourceTree = "<group>"; };
+		3A12AEA128FCE94B00C1B975 /* ASTSizeAttribute.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTSizeAttribute.h; sourceTree = "<group>"; };
+		3A12AEA228FCE94C00C1B975 /* ASTContinueStatement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTContinueStatement.h; sourceTree = "<group>"; };
+		3A12AEA328FCE94C00C1B975 /* ASTCompoundAssignmentStatement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTCompoundAssignmentStatement.h; sourceTree = "<group>"; };
+		3A12AEA428FCE94C00C1B975 /* ASTDecrementIncrementStatement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTDecrementIncrementStatement.h; sourceTree = "<group>"; };
+		3A12AEA528FCE94C00C1B975 /* ASTAlignAttribute.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTAlignAttribute.h; sourceTree = "<group>"; };
+		3A12AEA628FCE94C00C1B975 /* ASTParameter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTParameter.h; sourceTree = "<group>"; };
+		3A12AEA728FCE94C00C1B975 /* ASTBindingAttribute.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTBindingAttribute.h; sourceTree = "<group>"; };
+		3A12AEA828FCE94C00C1B975 /* ASTDiscardStatement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTDiscardStatement.h; sourceTree = "<group>"; };
+		3A12AEA928FCE94C00C1B975 /* ASTInterpolateAttribute.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTInterpolateAttribute.h; sourceTree = "<group>"; };
+		3A12AEC428FCEEC400C1B975 /* ASTStructureMember.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTStructureMember.h; sourceTree = "<group>"; };
+		3A12AEC528FCEEC400C1B975 /* ASTWhileStatement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTWhileStatement.h; sourceTree = "<group>"; };
+		3A12AEC628FCEEC400C1B975 /* ASTStaticAssertStatement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTStaticAssertStatement.h; sourceTree = "<group>"; };
+		3A12AECA28FCFA9800C1B975 /* ASTUnsigned32Literal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTUnsigned32Literal.h; sourceTree = "<group>"; };
+		3A12AECB28FCFA9800C1B975 /* ASTBitcastExpression.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTBitcastExpression.h; sourceTree = "<group>"; };
+		3A12AECE28FCFC5500C1B975 /* ASTSigned32Literal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTSigned32Literal.h; sourceTree = "<group>"; };
+		3A12AECF28FCFC5500C1B975 /* ASTAbstractIntegerLiteral.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTAbstractIntegerLiteral.h; sourceTree = "<group>"; };
+		3A12AED028FCFC5500C1B975 /* ASTBoolLiteral.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTBoolLiteral.h; sourceTree = "<group>"; };
+		3A12AED128FCFC5500C1B975 /* ASTAbstractFloatLiteral.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTAbstractFloatLiteral.h; sourceTree = "<group>"; };
+		3A12AED228FCFC5500C1B975 /* ASTFloat32Literal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTFloat32Literal.h; sourceTree = "<group>"; };
 		3A1337E528FBD56300F29B73 /* ASTVisitor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ASTVisitor.cpp; sourceTree = "<group>"; };
 		3A1337E628FBD56400F29B73 /* ASTVisitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTVisitor.h; sourceTree = "<group>"; };
 		3A1337E928FBD56E00F29B73 /* ASTForward.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTForward.h; sourceTree = "<group>"; };
-		3A2479D8290629CD0012B3E6 /* ASTGroupAttribute.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTGroupAttribute.h; sourceTree = "<group>"; };
-		3A2479D9290629CE0012B3E6 /* ASTLocationAttribute.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTLocationAttribute.h; sourceTree = "<group>"; };
-		3A2479DA290629CE0012B3E6 /* ASTStageAttribute.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTStageAttribute.h; sourceTree = "<group>"; };
-		3A2479DB290629CE0012B3E6 /* ASTBindingAttribute.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTBindingAttribute.h; sourceTree = "<group>"; };
-		3A2479DC290629CE0012B3E6 /* ASTBuiltinAttribute.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTBuiltinAttribute.h; sourceTree = "<group>"; };
-		3A7E164B28C57BB7003F49C9 /* ASTArrayAccess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTArrayAccess.h; sourceTree = "<group>"; };
+		3A1A1EFE28FD35E800C5934A /* ASTSwitchStatement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTSwitchStatement.h; sourceTree = "<group>"; };
+		3A7E164B28C57BB7003F49C9 /* ASTIndexAccessExpression.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTIndexAccessExpression.h; sourceTree = "<group>"; };
+		3A9D029F298390A000888A75 /* ASTPointerDereference.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTPointerDereference.h; sourceTree = "<group>"; };
+		3A9D02A1298390CF00888A75 /* ASTStringDumper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ASTStringDumper.cpp; sourceTree = "<group>"; };
+		3A9D02A3298390CF00888A75 /* ASTStringDumper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTStringDumper.h; sourceTree = "<group>"; };
 		3AAE4EB328C56E9A00DA484B /* ASTUnaryExpression.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTUnaryExpression.h; sourceTree = "<group>"; };
-		3ACCE80528FE1872004A0914 /* AST.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AST.h; sourceTree = "<group>"; };
-		3ADB94422900F7D600CFFDC2 /* ASTStringDumper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ASTStringDumper.cpp; sourceTree = "<group>"; };
-		3ADB94432900F7D600CFFDC2 /* ASTStringDumper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTStringDumper.h; sourceTree = "<group>"; };
+		3AD0D2302988D3C10080D728 /* ASTDeclaration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTDeclaration.h; sourceTree = "<group>"; };
+		3AD0D2312988D3C10080D728 /* ASTIdentityExpression.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTIdentityExpression.h; sourceTree = "<group>"; };
+		3AD0D2362988D3F90080D728 /* API.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = API.h; sourceTree = "<group>"; };
+		3AD0D23A2988ED8F0080D728 /* ASTUnaryExpression.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ASTUnaryExpression.cpp; sourceTree = "<group>"; };
+		3AD0D23C2988F3AA0080D728 /* ASTBinaryExpression.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ASTBinaryExpression.cpp; sourceTree = "<group>"; };
+		3AD0D23D2988F3AA0080D728 /* ASTBinaryExpression.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTBinaryExpression.h; sourceTree = "<group>"; };
 		3AE27DB428C1BA480043A8E0 /* ASTVariableStatement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTVariableStatement.h; sourceTree = "<group>"; };
 		664C92FC286A66090008D143 /* IOSurface.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOSurface.framework; path = System/Library/Frameworks/IOSurface.framework; sourceTree = SDKROOT; };
 		66DC575428627E0B0014CABD /* ParserPrivate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ParserPrivate.h; sourceTree = "<group>"; };
+		97296764299BFB72001C8BD4 /* main.rb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.ruby; path = main.rb; sourceTree = "<group>"; };
+		97296765299C09B0001C8BD4 /* TypeDeclarations.rb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.ruby; path = TypeDeclarations.rb; sourceTree = "<group>"; };
+		973F784529C8A78200166C66 /* Pipeline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Pipeline.h; sourceTree = "<group>"; };
+		973F784629C8A78200166C66 /* Pipeline.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Pipeline.mm; sourceTree = "<group>"; };
+		9776BE712992A236002D6D93 /* Overload.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Overload.cpp; sourceTree = "<group>"; };
+		9776BE722992A236002D6D93 /* Overload.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Overload.h; sourceTree = "<group>"; };
+		9776BE7529957E12002D6D93 /* WGSLShaderModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WGSLShaderModule.h; sourceTree = "<group>"; };
 		9789C318297EA105009E9006 /* CallGraph.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CallGraph.cpp; sourceTree = "<group>"; };
 		9789C319297EA105009E9006 /* CallGraph.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CallGraph.h; sourceTree = "<group>"; };
-		9789C32029802690009E9006 /* ASTBinaryExpression.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTBinaryExpression.h; sourceTree = "<group>"; };
-		9789C32129802690009E9006 /* ASTPointerDereference.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTPointerDereference.h; sourceTree = "<group>"; };
+		978A9123298A4E8400B37E5E /* MangleNames.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MangleNames.cpp; sourceTree = "<group>"; };
+		978A9124298A4E8400B37E5E /* MangleNames.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MangleNames.h; sourceTree = "<group>"; };
+		978A9129298AB60200B37E5E /* ContextProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContextProvider.h; sourceTree = "<group>"; };
+		978A912B298AB8EE00B37E5E /* ContextProviderInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContextProviderInlines.h; sourceTree = "<group>"; };
+		978A912D298AD3DA00B37E5E /* TypeCheck.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TypeCheck.h; sourceTree = "<group>"; };
+		978A912E298AD3DA00B37E5E /* TypeCheck.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TypeCheck.cpp; sourceTree = "<group>"; };
+		978A9131298BBFD300B37E5E /* Types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Types.h; sourceTree = "<group>"; };
+		978A9132298BBFD300B37E5E /* Types.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Types.cpp; sourceTree = "<group>"; };
+		978A9135298D40F100B37E5E /* TypeStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TypeStore.h; sourceTree = "<group>"; };
+		978A9136298D40F100B37E5E /* TypeStore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TypeStore.cpp; sourceTree = "<group>"; };
 		979240B2297018290050EA2C /* MetalCodeGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MetalCodeGenerator.h; sourceTree = "<group>"; };
 		979240B3297018290050EA2C /* MetalFunctionWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MetalFunctionWriter.h; sourceTree = "<group>"; };
 		979240B4297018290050EA2C /* MetalCodeGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MetalCodeGenerator.cpp; sourceTree = "<group>"; };
 		979240B5297018290050EA2C /* MetalFunctionWriter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MetalFunctionWriter.cpp; sourceTree = "<group>"; };
 		979240BC29753B2A0050EA2C /* PhaseTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhaseTimer.h; sourceTree = "<group>"; };
-		979240C2297558F10050EA2C /* ResolveTypeReferences.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResolveTypeReferences.cpp; sourceTree = "<group>"; };
-		979240C3297558F10050EA2C /* ResolveTypeReferences.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResolveTypeReferences.h; sourceTree = "<group>"; };
 		979240C629769AC00050EA2C /* EntryPointRewriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EntryPointRewriter.h; sourceTree = "<group>"; };
 		979240C729769AC00050EA2C /* EntryPointRewriter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EntryPointRewriter.cpp; sourceTree = "<group>"; };
 		97F547B6298055D90011D79A /* GlobalVariableRewriter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GlobalVariableRewriter.cpp; sourceTree = "<group>"; };
 		97F547B7298055D90011D79A /* GlobalVariableRewriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GlobalVariableRewriter.h; sourceTree = "<group>"; };
+		97FA1A7F29C085740052D650 /* wgslc */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = wgslc; sourceTree = BUILT_PRODUCTS_DIR; };
+		97FA1A8729C085A60052D650 /* wgslc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = wgslc.cpp; path = WGSL/wgslc.cpp; sourceTree = SOURCE_ROOT; };
+		97FA1AA229C0BB700052D650 /* wgslc.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = wgslc.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -375,162 +406,18 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		97FA1A7C29C085740052D650 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				97BCD6AE29D7422B00A82577 /* JavaScriptCore.framework in Frameworks */,
+				97FA1AA729C0DA890052D650 /* libwgsl.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		1C5319CB27BDDD6E00CD127E /* metal-cpp */ = {
-			isa = PBXGroup;
-			children = (
-				1C531A0427BDDD6E00CD127E /* Foundation */,
-				1C5319CC27BDDD6E00CD127E /* Metal */,
-				1C531A1B27BDDD6E00CD127E /* QuartzCore */,
-				1C531A2127BDDD6E00CD127E /* SingleHeader */,
-				1C531A2027BDDD6E00CD127E /* LICENSE.txt */,
-				1C531A1A27BDDD6E00CD127E /* README.md */,
-			);
-			path = "metal-cpp";
-			sourceTree = "<group>";
-		};
-		1C5319CC27BDDD6E00CD127E /* Metal */ = {
-			isa = PBXGroup;
-			children = (
-				1C5319DB27BDDD6E00CD127E /* Metal.hpp */,
-				1C5319E927BDDD6E00CD127E /* MTLAccelerationStructure.hpp */,
-				1C5319F927BDDD6E00CD127E /* MTLAccelerationStructureCommandEncoder.hpp */,
-				1C5319DD27BDDD6E00CD127E /* MTLAccelerationStructureTypes.hpp */,
-				1C5319EB27BDDD6E00CD127E /* MTLArgument.hpp */,
-				1C5319E427BDDD6E00CD127E /* MTLArgumentEncoder.hpp */,
-				1C5319FC27BDDD6E00CD127E /* MTLBinaryArchive.hpp */,
-				1C5319D827BDDD6E00CD127E /* MTLBlitCommandEncoder.hpp */,
-				1C5319FA27BDDD6E00CD127E /* MTLBlitPass.hpp */,
-				1C5319ED27BDDD6E00CD127E /* MTLBuffer.hpp */,
-				1C5319D927BDDD6E00CD127E /* MTLCaptureManager.hpp */,
-				1C5319FD27BDDD6E00CD127E /* MTLCaptureScope.hpp */,
-				1C531A0327BDDD6E00CD127E /* MTLCommandBuffer.hpp */,
-				1C5319DA27BDDD6E00CD127E /* MTLCommandEncoder.hpp */,
-				1C5319F727BDDD6E00CD127E /* MTLCommandQueue.hpp */,
-				1C5319FE27BDDD6E00CD127E /* MTLComputeCommandEncoder.hpp */,
-				1C5319D427BDDD6E00CD127E /* MTLComputePass.hpp */,
-				1C5319D027BDDD6E00CD127E /* MTLComputePipeline.hpp */,
-				1C531A0027BDDD6E00CD127E /* MTLCounters.hpp */,
-				1C531A0127BDDD6E00CD127E /* MTLDefines.hpp */,
-				1C5319E327BDDD6E00CD127E /* MTLDepthStencil.hpp */,
-				1C5319EA27BDDD6E00CD127E /* MTLDevice.hpp */,
-				1C5319D227BDDD6E00CD127E /* MTLDrawable.hpp */,
-				1C5319D327BDDD6E00CD127E /* MTLDynamicLibrary.hpp */,
-				1C5319FB27BDDD6E00CD127E /* MTLEvent.hpp */,
-				1C5319F427BDDD6E00CD127E /* MTLFence.hpp */,
-				1C5319D527BDDD6E00CD127E /* MTLFunctionConstantValues.hpp */,
-				1C5319F827BDDD6E00CD127E /* MTLFunctionDescriptor.hpp */,
-				1C5319D127BDDD6E00CD127E /* MTLFunctionHandle.hpp */,
-				1C5319EC27BDDD6E00CD127E /* MTLFunctionLog.hpp */,
-				1C5319F127BDDD6E00CD127E /* MTLFunctionStitching.hpp */,
-				1C5319FF27BDDD6E00CD127E /* MTLHeaderBridge.hpp */,
-				1C5319EF27BDDD6E00CD127E /* MTLHeap.hpp */,
-				1C5319F527BDDD6E00CD127E /* MTLIndirectCommandBuffer.hpp */,
-				1C5319CF27BDDD6E00CD127E /* MTLIndirectCommandEncoder.hpp */,
-				1C5319E527BDDD6E00CD127E /* MTLIntersectionFunctionTable.hpp */,
-				1CAB8D3A2866D9FD00347F21 /* MTLIOCommandBuffer.hpp */,
-				1CAB8D382866D9FD00347F21 /* MTLIOCommandQueue.hpp */,
-				1CAB8D392866D9FD00347F21 /* MTLIOCompressor.hpp */,
-				1C5319F227BDDD6E00CD127E /* MTLLibrary.hpp */,
-				1C5319E027BDDD6E00CD127E /* MTLLinkedFunctions.hpp */,
-				1C5319DE27BDDD6E00CD127E /* MTLParallelRenderCommandEncoder.hpp */,
-				1C5319D627BDDD6E00CD127E /* MTLPipeline.hpp */,
-				1C5319F327BDDD6E00CD127E /* MTLPixelFormat.hpp */,
-				1C5319E727BDDD6E00CD127E /* MTLPrivate.hpp */,
-				1C5319DF27BDDD6E00CD127E /* MTLRasterizationRate.hpp */,
-				1C5319D727BDDD6E00CD127E /* MTLRenderCommandEncoder.hpp */,
-				1C5319EE27BDDD6E00CD127E /* MTLRenderPass.hpp */,
-				1C5319F627BDDD6E00CD127E /* MTLRenderPipeline.hpp */,
-				1C5319E827BDDD6E00CD127E /* MTLResource.hpp */,
-				1C5319CE27BDDD6E00CD127E /* MTLResourceStateCommandEncoder.hpp */,
-				1C531A0227BDDD6E00CD127E /* MTLResourceStatePass.hpp */,
-				1C5319E227BDDD6E00CD127E /* MTLSampler.hpp */,
-				1C5319DC27BDDD6E00CD127E /* MTLStageInputOutputDescriptor.hpp */,
-				1C5319E127BDDD6E00CD127E /* MTLTexture.hpp */,
-				1C5319CD27BDDD6E00CD127E /* MTLTypes.hpp */,
-				1C5319F027BDDD6E00CD127E /* MTLVertexDescriptor.hpp */,
-				1C5319E627BDDD6E00CD127E /* MTLVisibleFunctionTable.hpp */,
-			);
-			path = Metal;
-			sourceTree = "<group>";
-		};
-		1C531A0427BDDD6E00CD127E /* Foundation */ = {
-			isa = PBXGroup;
-			children = (
-				1C531A1427BDDD6E00CD127E /* Foundation.hpp */,
-				1C531A1927BDDD6E00CD127E /* NSArray.hpp */,
-				1C531A0F27BDDD6E00CD127E /* NSAutoreleasePool.hpp */,
-				1C531A1727BDDD6E00CD127E /* NSBundle.hpp */,
-				1C531A1227BDDD6E00CD127E /* NSData.hpp */,
-				1C531A1527BDDD6E00CD127E /* NSDate.hpp */,
-				1C531A1627BDDD6E00CD127E /* NSDefines.hpp */,
-				1C531A0627BDDD6E00CD127E /* NSDictionary.hpp */,
-				1C531A1827BDDD6E00CD127E /* NSEnumerator.hpp */,
-				1C531A0927BDDD6E00CD127E /* NSError.hpp */,
-				1C531A0727BDDD6E00CD127E /* NSLock.hpp */,
-				1C531A0C27BDDD6E00CD127E /* NSNotification.hpp */,
-				1C531A1327BDDD6E00CD127E /* NSNumber.hpp */,
-				1C531A0A27BDDD6E00CD127E /* NSObjCRuntime.hpp */,
-				1C531A0B27BDDD6E00CD127E /* NSObject.hpp */,
-				1C531A0D27BDDD6E00CD127E /* NSPrivate.hpp */,
-				1C531A0827BDDD6E00CD127E /* NSProcessInfo.hpp */,
-				1C531A1027BDDD6E00CD127E /* NSRange.hpp */,
-				1CAB8D3C2866DA0E00347F21 /* NSSet.hpp */,
-				1CAB8D3B2866DA0E00347F21 /* NSSharedPtr.hpp */,
-				1C531A0527BDDD6E00CD127E /* NSString.hpp */,
-				1C531A1127BDDD6E00CD127E /* NSTypes.hpp */,
-				1C531A0E27BDDD6E00CD127E /* NSURL.hpp */,
-			);
-			path = Foundation;
-			sourceTree = "<group>";
-		};
-		1C531A1B27BDDD6E00CD127E /* QuartzCore */ = {
-			isa = PBXGroup;
-			children = (
-				1C531A1F27BDDD6E00CD127E /* CADefines.hpp */,
-				1C531A1E27BDDD6E00CD127E /* CAMetalDrawable.hpp */,
-				1CAB8D3D2866DA2D00347F21 /* CAMetalLayer.hpp */,
-				1C531A1D27BDDD6E00CD127E /* CAPrivate.hpp */,
-				1C531A1C27BDDD6E00CD127E /* QuartzCore.hpp */,
-			);
-			path = QuartzCore;
-			sourceTree = "<group>";
-		};
-		1C531A2127BDDD6E00CD127E /* SingleHeader */ = {
-			isa = PBXGroup;
-			children = (
-				1C531A2227BDDD6E00CD127E /* MakeSingleHeader.py */,
-			);
-			path = SingleHeader;
-			sourceTree = "<group>";
-		};
-		1C531A2627BDDFE100CD127E /* DerivedSources */ = {
-			isa = PBXGroup;
-			children = (
-				1C531A2827BDE03300CD127E /* metal-cpp */,
-			);
-			name = DerivedSources;
-			path = DerivedSources/WebGPU;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		1C531A2827BDE03300CD127E /* metal-cpp */ = {
-			isa = PBXGroup;
-			children = (
-				1C531A2927BDE04900CD127E /* Metal */,
-			);
-			path = "metal-cpp";
-			sourceTree = "<group>";
-		};
-		1C531A2927BDE04900CD127E /* Metal */ = {
-			isa = PBXGroup;
-			children = (
-				1C531A2A27BDE06700CD127E /* Metal.hpp */,
-			);
-			path = Metal;
-			sourceTree = "<group>";
-		};
 		1CEBD7D92716AFBA00A5254D = {
 			isa = PBXGroup;
 			children = (
@@ -546,6 +433,7 @@
 		1CEBD7E42716AFBA00A5254D /* Products */ = {
 			isa = PBXGroup;
 			children = (
+				97FA1A7F29C085740052D650 /* wgslc */,
 				1CEBD7F22716B2CC00A5254D /* libwgsl.a */,
 				1CEBD7E32716AFBA00A5254D /* WebGPU.framework */,
 			);
@@ -555,8 +443,6 @@
 		1CEBD7E52716AFBA00A5254D /* WebGPU */ = {
 			isa = PBXGroup;
 			children = (
-				1C531A2627BDDFE100CD127E /* DerivedSources */,
-				1C5319CB27BDDD6E00CD127E /* metal-cpp */,
 				1C5ACAB2273A426D0095F8D5 /* Adapter.h */,
 				1C5ACAA9273A426D0095F8D5 /* Adapter.mm */,
 				1C58301727E16823009B40F0 /* APIConversions.h */,
@@ -586,7 +472,8 @@
 				1C5ACAA0273A426D0095F8D5 /* Instance.h */,
 				1C5ACA92273A41C20095F8D5 /* Instance.mm */,
 				1C33755D27FA23B8002F1644 /* IsValidToUseWith.h */,
-				1C531A2427BDDF5500CD127E /* Metal.cpp */,
+				973F784529C8A78200166C66 /* Pipeline.h */,
+				973F784629C8A78200166C66 /* Pipeline.mm */,
 				1C5ACADA273A4E710095F8D5 /* PipelineLayout.h */,
 				1C5ACAE4273A55DD0095F8D5 /* PipelineLayout.mm */,
 				1C9F7CDE29762F51006B5BE9 /* PresentationContext.h */,
@@ -626,29 +513,44 @@
 			isa = PBXGroup;
 			children = (
 				33EA185C27BC193D00A1DD52 /* AST */,
+				97296763299BFB72001C8BD4 /* generator */,
 				979240B1297018290050EA2C /* Metal */,
+				3AD0D2362988D3F90080D728 /* API.h */,
 				9789C318297EA105009E9006 /* CallGraph.cpp */,
 				9789C319297EA105009E9006 /* CallGraph.h */,
 				33EA186727BC1B1400A1DD52 /* CompilationMessage.cpp */,
 				33EA186527BC1AD500A1DD52 /* CompilationMessage.h */,
 				1CEBD8042716BFAB00A5254D /* config.h */,
+				978A9129298AB60200B37E5E /* ContextProvider.h */,
+				978A912B298AB8EE00B37E5E /* ContextProviderInlines.h */,
 				979240C729769AC00050EA2C /* EntryPointRewriter.cpp */,
 				979240C629769AC00050EA2C /* EntryPointRewriter.h */,
 				97F547B6298055D90011D79A /* GlobalVariableRewriter.cpp */,
 				97F547B7298055D90011D79A /* GlobalVariableRewriter.h */,
 				338BB2D527B6B68700E066AB /* Lexer.cpp */,
 				338BB2D327B6B66C00E066AB /* Lexer.h */,
+				978A9123298A4E8400B37E5E /* MangleNames.cpp */,
+				978A9124298A4E8400B37E5E /* MangleNames.h */,
+				9776BE712992A236002D6D93 /* Overload.cpp */,
+				9776BE722992A236002D6D93 /* Overload.h */,
 				339B7B1A27D800090072BF9A /* Parser.cpp */,
 				339B7B1727D7FFA40072BF9A /* Parser.h */,
 				66DC575428627E0B0014CABD /* ParserPrivate.h */,
 				979240BC29753B2A0050EA2C /* PhaseTimer.h */,
-				979240C2297558F10050EA2C /* ResolveTypeReferences.cpp */,
-				979240C3297558F10050EA2C /* ResolveTypeReferences.h */,
 				338BB2D127B6B63F00E066AB /* SourceSpan.h */,
 				338BB2CF27B6B61B00E066AB /* Token.cpp */,
 				338BB2CD27B6B60200E066AB /* Token.h */,
+				978A912E298AD3DA00B37E5E /* TypeCheck.cpp */,
+				978A912D298AD3DA00B37E5E /* TypeCheck.h */,
+				97296765299C09B0001C8BD4 /* TypeDeclarations.rb */,
+				978A9132298BBFD300B37E5E /* Types.cpp */,
+				978A9131298BBFD300B37E5E /* Types.h */,
+				978A9136298D40F100B37E5E /* TypeStore.cpp */,
+				978A9135298D40F100B37E5E /* TypeStore.h */,
 				1CEBD8022716BF8200A5254D /* WGSL.cpp */,
 				1CEBD7F72716B34400A5254D /* WGSL.h */,
+				97FA1A8729C085A60052D650 /* wgslc.cpp */,
+				9776BE7529957E12002D6D93 /* WGSLShaderModule.h */,
 			);
 			path = WGSL;
 			sourceTree = "<group>";
@@ -660,6 +562,7 @@
 				1CEBD7FB2716B5B400A5254D /* DebugRelease.xcconfig */,
 				1CEBD7FC2716B64400A5254D /* WebGPU.xcconfig */,
 				1CEBD7FD2716B64F00A5254D /* WGSL.xcconfig */,
+				97FA1AA229C0BB700052D650 /* wgslc.xcconfig */,
 			);
 			path = Configurations;
 			sourceTree = "<group>";
@@ -670,7 +573,6 @@
 				1CEBD82B2716CAFB00A5254D /* CoreFoundation.framework */,
 				1CEBD82D2716CB1600A5254D /* Foundation.framework */,
 				664C92FC286A66090008D143 /* IOSurface.framework */,
-				1C023D4A274495B9001DB734 /* JavaScriptCore.framework */,
 				1CBAB0912718CCA0006080BB /* JavaScriptCore.framework */,
 				1CEBD8302716CB3800A5254D /* libicucore.tbd */,
 				1CEBD8292716CAE700A5254D /* libWTF.a */,
@@ -682,43 +584,81 @@
 		33EA185C27BC193D00A1DD52 /* AST */ = {
 			isa = PBXGroup;
 			children = (
-				3ACCE80528FE1872004A0914 /* AST.h */,
-				3A7E164B28C57BB7003F49C9 /* ASTArrayAccess.h */,
+				3A12AE9D28FCE94B00C1B975 /* AST.h */,
+				3A12AED128FCFC5500C1B975 /* ASTAbstractFloatLiteral.h */,
+				3A12AECF28FCFC5500C1B975 /* ASTAbstractIntegerLiteral.h */,
+				3A12AEA528FCE94C00C1B975 /* ASTAlignAttribute.h */,
 				33EA187F27BC24E200A1DD52 /* ASTAssignmentStatement.h */,
 				33EA186927BC1BE600A1DD52 /* ASTAttribute.h */,
-				9789C32029802690009E9006 /* ASTBinaryExpression.h */,
-				3A2479DB290629CE0012B3E6 /* ASTBindingAttribute.h */,
-				3A2479DC290629CE0012B3E6 /* ASTBuiltinAttribute.h */,
-				33EA188527BC26DF00A1DD52 /* ASTCallableExpression.h */,
+				3AD0D23C2988F3AA0080D728 /* ASTBinaryExpression.cpp */,
+				3AD0D23D2988F3AA0080D728 /* ASTBinaryExpression.h */,
+				3A12AEA728FCE94C00C1B975 /* ASTBindingAttribute.h */,
+				3A12AECB28FCFA9800C1B975 /* ASTBitcastExpression.h */,
+				3A12AED028FCFC5500C1B975 /* ASTBoolLiteral.h */,
+				3A12AE9F28FCE94B00C1B975 /* ASTBreakStatement.h */,
+				3A12AE9028FCE94A00C1B975 /* ASTBuiltinAttribute.h */,
+				33EA188527BC26DF00A1DD52 /* ASTCallExpression.h */,
+				3A12AEA328FCE94C00C1B975 /* ASTCompoundAssignmentStatement.h */,
 				33EA187A27BC230E00A1DD52 /* ASTCompoundStatement.h */,
-				33EA186127BC19C100A1DD52 /* ASTDecl.h */,
+				3A12AE9E28FCE94B00C1B975 /* ASTConstAttribute.h */,
+				3A12AEA228FCE94C00C1B975 /* ASTContinueStatement.h */,
+				3AD0D2302988D3C10080D728 /* ASTDeclaration.h */,
+				3A12AEA428FCE94C00C1B975 /* ASTDecrementIncrementStatement.h */,
+				33EA185F27BC198100A1DD52 /* ASTDirective.h */,
+				3A12AEA828FCE94C00C1B975 /* ASTDiscardStatement.h */,
 				33EA186B27BC1CBC00A1DD52 /* ASTExpression.h */,
+				33EA188327BC268600A1DD52 /* ASTFieldAccessExpression.h */,
+				3A12AED228FCFC5500C1B975 /* ASTFloat32Literal.h */,
+				3A12AE9628FCE94B00C1B975 /* ASTForStatement.h */,
 				3A1337E928FBD56E00F29B73 /* ASTForward.h */,
-				33EA187527BC216B00A1DD52 /* ASTFunctionDecl.h */,
-				33EA185F27BC198100A1DD52 /* ASTGlobalDirective.h */,
-				3A2479D8290629CD0012B3E6 /* ASTGroupAttribute.h */,
+				33EA187527BC216B00A1DD52 /* ASTFunction.h */,
+				3A12AE9728FCE94B00C1B975 /* ASTGroupAttribute.h */,
+				3A12AE9B28FCE94B00C1B975 /* ASTIdAttribute.h */,
+				3A12AEA028FCE94B00C1B975 /* ASTIdentifier.h */,
 				33EA188127BC25D000A1DD52 /* ASTIdentifierExpression.h */,
-				33EA188727BC361E00A1DD52 /* ASTLiteralExpressions.h */,
-				3A2479D9290629CE0012B3E6 /* ASTLocationAttribute.h */,
+				3AD0D2312988D3C10080D728 /* ASTIdentityExpression.h */,
+				3A12AE9528FCE94B00C1B975 /* ASTIfStatement.h */,
+				3A7E164B28C57BB7003F49C9 /* ASTIndexAccessExpression.h */,
+				3A12AEA928FCE94C00C1B975 /* ASTInterpolateAttribute.h */,
+				3A12AE9C28FCE94B00C1B975 /* ASTInvariantAttribute.h */,
+				3A12AE9228FCE94A00C1B975 /* ASTLocationAttribute.h */,
+				3A12AE9A28FCE94B00C1B975 /* ASTLoopStatement.h */,
 				33EA185D27BC194F00A1DD52 /* ASTNode.h */,
-				9789C32129802690009E9006 /* ASTPointerDereference.h */,
+				3A12AEA628FCE94C00C1B975 /* ASTParameter.h */,
+				3A12AE9328FCE94A00C1B975 /* ASTPhonyStatement.h */,
+				3A9D029F298390A000888A75 /* ASTPointerDereference.h */,
 				33EA187D27BC249000A1DD52 /* ASTReturnStatement.h */,
-				33EA186F27BC1E8A00A1DD52 /* ASTShaderModule.h */,
-				3A2479DA290629CE0012B3E6 /* ASTStageAttribute.h */,
+				3A12AECE28FCFC5500C1B975 /* ASTSigned32Literal.h */,
+				3A12AEA128FCE94B00C1B975 /* ASTSizeAttribute.h */,
+				3A12AE9928FCE94B00C1B975 /* ASTStageAttribute.h */,
 				33EA187827BC22AA00A1DD52 /* ASTStatement.h */,
-				3ADB94422900F7D600CFFDC2 /* ASTStringDumper.cpp */,
-				3ADB94432900F7D600CFFDC2 /* ASTStringDumper.h */,
-				33EA188327BC268600A1DD52 /* ASTStructureAccess.h */,
-				33EA187327BC204900A1DD52 /* ASTStructureDecl.h */,
-				33EA186D27BC1D4C00A1DD52 /* ASTTypeDecl.h */,
+				3A12AEC628FCEEC400C1B975 /* ASTStaticAssertStatement.h */,
+				3A9D02A1298390CF00888A75 /* ASTStringDumper.cpp */,
+				3A9D02A3298390CF00888A75 /* ASTStringDumper.h */,
+				33EA187327BC204900A1DD52 /* ASTStructure.h */,
+				3A12AEC428FCEEC400C1B975 /* ASTStructureMember.h */,
+				3A1A1EFE28FD35E800C5934A /* ASTSwitchStatement.h */,
+				33EA186D27BC1D4C00A1DD52 /* ASTTypeName.h */,
+				3AD0D23A2988ED8F0080D728 /* ASTUnaryExpression.cpp */,
 				3AAE4EB328C56E9A00DA484B /* ASTUnaryExpression.h */,
-				33EA186327BC1A1D00A1DD52 /* ASTVariableDecl.h */,
+				3A12AECA28FCFA9800C1B975 /* ASTUnsigned32Literal.h */,
+				33EA186327BC1A1D00A1DD52 /* ASTVariable.h */,
 				33EA187127BC1FE100A1DD52 /* ASTVariableQualifier.h */,
 				3AE27DB428C1BA480043A8E0 /* ASTVariableStatement.h */,
 				3A1337E528FBD56300F29B73 /* ASTVisitor.cpp */,
 				3A1337E628FBD56400F29B73 /* ASTVisitor.h */,
+				3A12AEC528FCEEC400C1B975 /* ASTWhileStatement.h */,
+				3A12AE9828FCE94B00C1B975 /* ASTWorkgroupSizeAttribute.h */,
 			);
 			path = AST;
+			sourceTree = "<group>";
+		};
+		97296763299BFB72001C8BD4 /* generator */ = {
+			isa = PBXGroup;
+			children = (
+				97296764299BFB72001C8BD4 /* main.rb */,
+			);
+			path = generator;
 			sourceTree = "<group>";
 		};
 		979240B1297018290050EA2C /* Metal */ = {
@@ -740,6 +680,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				1CEBD7E72716AFBA00A5254D /* WebGPU.h in Headers */,
+				973F784729C8A78200166C66 /* Pipeline.h in Headers */,
 				1C5ACAD3273A4C860095F8D5 /* WebGPUExt.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -748,53 +689,88 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3ACCE80628FE1872004A0914 /* AST.h in Headers */,
-				3A7E164C28C57BB8003F49C9 /* ASTArrayAccess.h in Headers */,
+				3AD0D2372988D3F90080D728 /* API.h in Headers */,
+				3A12AEB728FCE94C00C1B975 /* AST.h in Headers */,
+				3A12AED728FCFC5600C1B975 /* ASTAbstractFloatLiteral.h in Headers */,
+				3A12AED528FCFC5600C1B975 /* ASTAbstractIntegerLiteral.h in Headers */,
+				3A12AEBF28FCE94C00C1B975 /* ASTAlignAttribute.h in Headers */,
 				33EA188027BC24E200A1DD52 /* ASTAssignmentStatement.h in Headers */,
 				33EA186A27BC1BE600A1DD52 /* ASTAttribute.h in Headers */,
-				9789C32229802690009E9006 /* ASTBinaryExpression.h in Headers */,
-				3A2479E0290629CE0012B3E6 /* ASTBindingAttribute.h in Headers */,
-				3A2479E1290629CE0012B3E6 /* ASTBuiltinAttribute.h in Headers */,
-				33EA188627BC26DF00A1DD52 /* ASTCallableExpression.h in Headers */,
+				3AD0D23F2988F3AB0080D728 /* ASTBinaryExpression.h in Headers */,
+				3A12AEC128FCE94C00C1B975 /* ASTBindingAttribute.h in Headers */,
+				3A12AECD28FCFA9800C1B975 /* ASTBitcastExpression.h in Headers */,
+				3A12AED628FCFC5600C1B975 /* ASTBoolLiteral.h in Headers */,
+				3A12AEB928FCE94C00C1B975 /* ASTBreakStatement.h in Headers */,
+				3A12AEAA28FCE94C00C1B975 /* ASTBuiltinAttribute.h in Headers */,
+				33EA188627BC26DF00A1DD52 /* ASTCallExpression.h in Headers */,
+				3A12AEBD28FCE94C00C1B975 /* ASTCompoundAssignmentStatement.h in Headers */,
 				33EA187B27BC230E00A1DD52 /* ASTCompoundStatement.h in Headers */,
-				33EA186227BC19C100A1DD52 /* ASTDecl.h in Headers */,
+				3A12AEB828FCE94C00C1B975 /* ASTConstAttribute.h in Headers */,
+				3A12AEBC28FCE94C00C1B975 /* ASTContinueStatement.h in Headers */,
+				3AD0D2332988D3C10080D728 /* ASTDeclaration.h in Headers */,
+				3A12AEBE28FCE94C00C1B975 /* ASTDecrementIncrementStatement.h in Headers */,
+				33EA186027BC198100A1DD52 /* ASTDirective.h in Headers */,
+				3A12AEC228FCE94C00C1B975 /* ASTDiscardStatement.h in Headers */,
 				33EA186C27BC1CBC00A1DD52 /* ASTExpression.h in Headers */,
+				33EA188427BC268600A1DD52 /* ASTFieldAccessExpression.h in Headers */,
+				3A12AED828FCFC5600C1B975 /* ASTFloat32Literal.h in Headers */,
+				3A12AEB028FCE94C00C1B975 /* ASTForStatement.h in Headers */,
 				3A1337EA28FBD56E00F29B73 /* ASTForward.h in Headers */,
-				33EA187627BC216B00A1DD52 /* ASTFunctionDecl.h in Headers */,
-				33EA186027BC198100A1DD52 /* ASTGlobalDirective.h in Headers */,
-				3A2479DD290629CE0012B3E6 /* ASTGroupAttribute.h in Headers */,
+				33EA187627BC216B00A1DD52 /* ASTFunction.h in Headers */,
+				3A12AEB128FCE94C00C1B975 /* ASTGroupAttribute.h in Headers */,
+				3A12AEB528FCE94C00C1B975 /* ASTIdAttribute.h in Headers */,
+				3A12AEBA28FCE94C00C1B975 /* ASTIdentifier.h in Headers */,
 				33EA188227BC25D000A1DD52 /* ASTIdentifierExpression.h in Headers */,
-				33EA188827BC361E00A1DD52 /* ASTLiteralExpressions.h in Headers */,
-				3A2479DE290629CE0012B3E6 /* ASTLocationAttribute.h in Headers */,
+				3AD0D2342988D3C10080D728 /* ASTIdentityExpression.h in Headers */,
+				3A12AEAF28FCE94C00C1B975 /* ASTIfStatement.h in Headers */,
+				3A7E164C28C57BB8003F49C9 /* ASTIndexAccessExpression.h in Headers */,
+				3A12AEC328FCE94C00C1B975 /* ASTInterpolateAttribute.h in Headers */,
+				3A12AEB628FCE94C00C1B975 /* ASTInvariantAttribute.h in Headers */,
+				3A12AEAC28FCE94C00C1B975 /* ASTLocationAttribute.h in Headers */,
+				3A12AEB428FCE94C00C1B975 /* ASTLoopStatement.h in Headers */,
 				33EA185E27BC194F00A1DD52 /* ASTNode.h in Headers */,
-				9789C32329802690009E9006 /* ASTPointerDereference.h in Headers */,
+				3A12AEC028FCE94C00C1B975 /* ASTParameter.h in Headers */,
+				3A12AEAD28FCE94C00C1B975 /* ASTPhonyStatement.h in Headers */,
+				3A9D02A0298390A000888A75 /* ASTPointerDereference.h in Headers */,
 				33EA187E27BC249000A1DD52 /* ASTReturnStatement.h in Headers */,
-				33EA187027BC1E8A00A1DD52 /* ASTShaderModule.h in Headers */,
-				3A2479DF290629CE0012B3E6 /* ASTStageAttribute.h in Headers */,
+				3A12AED428FCFC5600C1B975 /* ASTSigned32Literal.h in Headers */,
+				3A12AEBB28FCE94C00C1B975 /* ASTSizeAttribute.h in Headers */,
+				3A12AEB328FCE94C00C1B975 /* ASTStageAttribute.h in Headers */,
 				33EA187927BC22AA00A1DD52 /* ASTStatement.h in Headers */,
-				3ADB94452900F7D700CFFDC2 /* ASTStringDumper.h in Headers */,
-				33EA188427BC268600A1DD52 /* ASTStructureAccess.h in Headers */,
-				33EA187427BC204900A1DD52 /* ASTStructureDecl.h in Headers */,
-				33EA186E27BC1D4C00A1DD52 /* ASTTypeDecl.h in Headers */,
+				3A12AEC928FCEEC400C1B975 /* ASTStaticAssertStatement.h in Headers */,
+				3A9D02A6298390CF00888A75 /* ASTStringDumper.h in Headers */,
+				33EA187427BC204900A1DD52 /* ASTStructure.h in Headers */,
+				3A12AEC728FCEEC400C1B975 /* ASTStructureMember.h in Headers */,
+				3A1A1F0228FD35E800C5934A /* ASTSwitchStatement.h in Headers */,
+				33EA186E27BC1D4C00A1DD52 /* ASTTypeName.h in Headers */,
 				3AAE4EB428C56E9A00DA484B /* ASTUnaryExpression.h in Headers */,
-				33EA186427BC1A1D00A1DD52 /* ASTVariableDecl.h in Headers */,
+				3A12AECC28FCFA9800C1B975 /* ASTUnsigned32Literal.h in Headers */,
+				33EA186427BC1A1D00A1DD52 /* ASTVariable.h in Headers */,
 				33EA187227BC1FE100A1DD52 /* ASTVariableQualifier.h in Headers */,
 				3AE27DB528C1BA480043A8E0 /* ASTVariableStatement.h in Headers */,
 				3A1337E828FBD56400F29B73 /* ASTVisitor.h in Headers */,
-				9789C31B297EA105009E9006 /* CallGraph.h in Headers */,
+				3A12AEC828FCEEC400C1B975 /* ASTWhileStatement.h in Headers */,
+				3A12AEB228FCE94C00C1B975 /* ASTWorkgroupSizeAttribute.h in Headers */,
 				33EA186627BC1AD500A1DD52 /* CompilationMessage.h in Headers */,
+				978A912A298AB60200B37E5E /* ContextProvider.h in Headers */,
+				978A912C298AB8EE00B37E5E /* ContextProviderInlines.h in Headers */,
 				979240C829769AC00050EA2C /* EntryPointRewriter.h in Headers */,
 				97F547B9298055D90011D79A /* GlobalVariableRewriter.h in Headers */,
 				338BB2D427B6B66C00E066AB /* Lexer.h in Headers */,
+				978A9126298A4E8400B37E5E /* MangleNames.h in Headers */,
 				979240B6297018290050EA2C /* MetalCodeGenerator.h in Headers */,
 				979240B7297018290050EA2C /* MetalFunctionWriter.h in Headers */,
+				9776BE742992A236002D6D93 /* Overload.h in Headers */,
 				339B7B1827D7FFA40072BF9A /* Parser.h in Headers */,
 				66DC575528627E0B0014CABD /* ParserPrivate.h in Headers */,
 				979240C029753B2A0050EA2C /* PhaseTimer.h in Headers */,
-				979240C5297558F10050EA2C /* ResolveTypeReferences.h in Headers */,
 				338BB2D227B6B63F00E066AB /* SourceSpan.h in Headers */,
 				338BB2CE27B6B60200E066AB /* Token.h in Headers */,
+				978A912F298AD3DA00B37E5E /* TypeCheck.h in Headers */,
+				978A9133298BBFD300B37E5E /* Types.h in Headers */,
+				978A9137298D40F100B37E5E /* TypeStore.h in Headers */,
 				1CEBD7F82716B34400A5254D /* WGSL.h in Headers */,
+				9776BE7629957E12002D6D93 /* WGSLShaderModule.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -805,7 +781,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 1CEBD7EA2716AFBA00A5254D /* Build configuration list for PBXNativeTarget "WebGPU" */;
 			buildPhases = (
-				1C531A2327BDDDB500CD127E /* Make Single Metal-cpp Header */,
 				1CEBD7DE2716AFBA00A5254D /* Headers */,
 				1CEBD7DF2716AFBA00A5254D /* Sources */,
 				1CEBD7E02716AFBA00A5254D /* Frameworks */,
@@ -832,6 +807,7 @@
 				1CEBD7F02716B2CC00A5254D /* Frameworks */,
 			);
 			buildRules = (
+				9729675F299BF1BE001C8BD4 /* PBXBuildRule */,
 			);
 			dependencies = (
 			);
@@ -839,6 +815,23 @@
 			productName = WGSL;
 			productReference = 1CEBD7F22716B2CC00A5254D /* libwgsl.a */;
 			productType = "com.apple.product-type.library.static";
+		};
+		97FA1A7E29C085740052D650 /* wgslc */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 97FA1A8629C085740052D650 /* Build configuration list for PBXNativeTarget "wgslc" */;
+			buildPhases = (
+				97FA1A7B29C085740052D650 /* Sources */,
+				97FA1A7C29C085740052D650 /* Frameworks */,
+				97FA1A7D29C085740052D650 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = wgslc;
+			productName = wgslc;
+			productReference = 97FA1A7F29C085740052D650 /* wgslc */;
+			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */
 
@@ -854,6 +847,9 @@
 					};
 					1CEBD7F12716B2CC00A5254D = {
 						CreatedOnToolsVersion = 13.3;
+					};
+					97FA1A7E29C085740052D650 = {
+						CreatedOnToolsVersion = 14.3;
 					};
 				};
 			};
@@ -872,6 +868,7 @@
 			targets = (
 				1CEBD7E22716AFBA00A5254D /* WebGPU */,
 				1CEBD7F12716B2CC00A5254D /* WGSL */,
+				97FA1A7E29C085740052D650 /* wgslc */,
 			);
 		};
 /* End PBXProject section */
@@ -887,26 +884,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		1C531A2327BDDDB500CD127E /* Make Single Metal-cpp Header */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"$(SRCROOT)/WebGPU/metal-cpp",
-			);
-			name = "Make Single Metal-cpp Header";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(BUILT_PRODUCTS_DIR)/DerivedSources/WebGPU/metal-cpp/Metal/Metal.hpp",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "cd ${SCRIPT_INPUT_FILE_0}\npython3 ./SingleHeader/MakeSingleHeader.py -o ${SCRIPT_OUTPUT_FILE_0} Foundation/Foundation.hpp QuartzCore/QuartzCore.hpp Metal/Metal.hpp\n";
-		};
 		6577FFC8276ACA060011AEC8 /* Create Symlink to Alt Root Path */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 8;
@@ -944,6 +921,7 @@
 				1C5ACAC1273A426D0095F8D5 /* Device.mm in Sources */,
 				1C0F41EE280940650005886D /* HardwareCapabilities.mm in Sources */,
 				1C5ACA94273A41C20095F8D5 /* Instance.mm in Sources */,
+				973F784829C8A78200166C66 /* Pipeline.mm in Sources */,
 				1C5ACAE5273A55DD0095F8D5 /* PipelineLayout.mm in Sources */,
 				1C9F7CDF29762F51006B5BE9 /* PresentationContext.mm in Sources */,
 				1CBD2E972977DAC900BBF52C /* PresentationContextCoreAnimation.mm in Sources */,
@@ -965,19 +943,34 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3ADB94442900F7D700CFFDC2 /* ASTStringDumper.cpp in Sources */,
+				3AD0D23E2988F3AB0080D728 /* ASTBinaryExpression.cpp in Sources */,
+				3A9D02A4298390CF00888A75 /* ASTStringDumper.cpp in Sources */,
+				3AD0D23B2988ED8F0080D728 /* ASTUnaryExpression.cpp in Sources */,
 				3A1337E728FBD56400F29B73 /* ASTVisitor.cpp in Sources */,
 				9789C31A297EA105009E9006 /* CallGraph.cpp in Sources */,
 				339B7B1E27D816270072BF9A /* CompilationMessage.cpp in Sources */,
 				979240C929769AC00050EA2C /* EntryPointRewriter.cpp in Sources */,
 				97F547B8298055D90011D79A /* GlobalVariableRewriter.cpp in Sources */,
 				338BB2D627B6B68700E066AB /* Lexer.cpp in Sources */,
+				978A9125298A4E8400B37E5E /* MangleNames.cpp in Sources */,
 				979240B8297018290050EA2C /* MetalCodeGenerator.cpp in Sources */,
 				979240B9297018290050EA2C /* MetalFunctionWriter.cpp in Sources */,
+				9776BE732992A236002D6D93 /* Overload.cpp in Sources */,
 				339B7B1B27D800090072BF9A /* Parser.cpp in Sources */,
-				979240C4297558F10050EA2C /* ResolveTypeReferences.cpp in Sources */,
 				338BB2D027B6B61B00E066AB /* Token.cpp in Sources */,
+				978A9130298AD3DA00B37E5E /* TypeCheck.cpp in Sources */,
+				97296766299C09BC001C8BD4 /* TypeDeclarations.rb in Sources */,
+				978A9134298BBFD300B37E5E /* Types.cpp in Sources */,
+				978A9138298D40F100B37E5E /* TypeStore.cpp in Sources */,
 				1CEBD8032716BF8200A5254D /* WGSL.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		97FA1A7B29C085740052D650 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				97FA1A8E29C086230052D650 /* wgslc.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1055,6 +1048,27 @@
 			};
 			name = Production;
 		};
+		97FA1A8329C085740052D650 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 97FA1AA229C0BB700052D650 /* wgslc.xcconfig */;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		97FA1A8429C085740052D650 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 97FA1AA229C0BB700052D650 /* wgslc.xcconfig */;
+			buildSettings = {
+			};
+			name = Release;
+		};
+		97FA1A8529C085740052D650 /* Production */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 97FA1AA229C0BB700052D650 /* wgslc.xcconfig */;
+			buildSettings = {
+			};
+			name = Production;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -1084,6 +1098,16 @@
 				1CEBD7F42716B2CC00A5254D /* Debug */,
 				1CEBD7F52716B2CC00A5254D /* Release */,
 				1CEBD8002716B6BE00A5254D /* Production */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Production;
+		};
+		97FA1A8629C085740052D650 /* Build configuration list for PBXNativeTarget "wgslc" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				97FA1A8329C085740052D650 /* Debug */,
+				97FA1A8429C085740052D650 /* Release */,
+				97FA1A8529C085740052D650 /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;

@@ -35,6 +35,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/request/request-init-002.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/request/request-init-003.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/request/request-init-contenttype.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/request/request-init-priority.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/request/request-init-stream.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/request/request-keepalive-quota.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/request/request-keepalive.any.js

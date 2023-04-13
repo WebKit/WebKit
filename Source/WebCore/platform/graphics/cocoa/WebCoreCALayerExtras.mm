@@ -30,6 +30,10 @@
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 
+#if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
+#import <WebKitAdditions/CGDisplayListImageBufferAdditions.h>
+#endif
+
 @implementation CALayer (WebCoreCALayerExtras)
 
 - (void)web_disableAllActions
@@ -117,6 +121,23 @@
     }
 
     return CGRectIntersectsRect(self.mask.bounds, rectInMask);
+}
+
+- (void)_web_clearContents
+{
+    self.contents = nil;
+    self.contentsOpaque = NO;
+
+#if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
+    if ([self valueForKeyPath:WKCGDisplayListContentsKey]) {
+        // FIXME: Remove this workaround (and the -setNeedsDisplay call) once rdar://105807616 is fixed.
+        auto emptyCommandsContext = adoptCF(WKCGCommandsContextCreate(CGSizeZero, nil));
+        auto emptyCommandsData = adoptCF(RECGCommandsContextCopyEncodedData(emptyCommandsContext.get()));
+        [self setValue:(id)emptyCommandsData.get() forKeyPath:WKCGDisplayListContentsKey];
+        [self setValue:nil forKeyPath:WKCGDisplayListPortsKey];
+        [self setNeedsDisplay];
+    }
+#endif
 }
 
 @end

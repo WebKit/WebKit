@@ -1,7 +1,7 @@
 /**
- * Copyright (C) 2006, 2007, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2023 Apple Inc. All rights reserved.
  *           (C) 2008 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/) 
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2010-2014 Google Inc. All rights reserved.
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
  *
  * This library is free software; you can redistribute it and/or
@@ -27,12 +27,12 @@
 #include "CSSFontSelector.h"
 #include "CSSValueKeywords.h"
 #include "Font.h"
-#include "Frame.h"
 #include "FrameSelection.h"
-#include "FrameView.h"
 #include "HTMLNames.h"
 #include "HitTestResult.h"
 #include "InlineIteratorLineBox.h"
+#include "LocalFrame.h"
+#include "LocalFrameView.h"
 #include "LocalizedStrings.h"
 #include "RenderLayer.h"
 #include "RenderLayerScrollableArea.h"
@@ -366,15 +366,21 @@ void RenderTextControlSingleLine::autoscroll(const IntPoint& position)
 
 int RenderTextControlSingleLine::scrollWidth() const
 {
-    if (auto innerTextElement = this->innerTextElement(); innerTextElement && innerTextElement->renderer())
-        return innerTextElement->renderer()->scrollWidth();
+    if (auto* innerTextRenderer = innerTextElement() ? innerTextElement()->renderer() : nullptr) {
+        // Adjust scrollWidth to inculde input element horizontal paddings and decoration width.
+        auto adjustment = clientWidth() - innerTextRenderer->clientWidth();
+        return innerTextRenderer->scrollWidth() + adjustment;
+    }
     return RenderBlockFlow::scrollWidth();
 }
 
 int RenderTextControlSingleLine::scrollHeight() const
 {
-    if (auto innerTextElement = this->innerTextElement(); innerTextElement && innerTextElement->renderer())
-        return innerTextElement->renderer()->scrollHeight();
+    if (auto* innerTextRenderer = innerTextElement() ? innerTextElement()->renderer() : nullptr) {
+        // Adjust scrollHeight to inculde input element vertical paddings and decoration height.
+        auto adjustment = clientHeight() - innerTextRenderer->clientHeight();
+        return innerTextRenderer->scrollHeight() + adjustment;
+    }
     return RenderBlockFlow::scrollHeight();
 }
 

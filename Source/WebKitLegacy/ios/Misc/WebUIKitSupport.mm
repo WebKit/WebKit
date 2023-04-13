@@ -81,11 +81,6 @@ void WebKitInitialize(void)
     WebCore::initializeHTTPConnectionSettingsOnStartup();
 }
 
-void WebKitSetIsClassic(BOOL flag)
-{
-    // FIXME: Remove this once it stops being called.
-}
-
 float WebKitGetMinimumZoomFontSize(void)
 {
     return DEFAULT_VALUE_FOR_MinimumZoomFontSize;

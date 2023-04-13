@@ -1,6 +1,4 @@
-| "text before "
-| <#selection-anchor>
+| "text before <#selection-anchor>"
 | <attachment>
 |   id="attachment"
-| <#selection-focus>
-| " text after"
+| "<#selection-focus> text after"

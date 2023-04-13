@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -56,7 +56,7 @@ ARKitInlinePreviewModelPlayerIOS::~ARKitInlinePreviewModelPlayerIOS()
     instances().remove(this);
 }
 
-ARKitInlinePreviewModelPlayerIOS* ARKitInlinePreviewModelPlayerIOS::modelPlayerForPageAndLayerID(WebPage& page, GraphicsLayer::PlatformLayerID layerID)
+ARKitInlinePreviewModelPlayerIOS* ARKitInlinePreviewModelPlayerIOS::modelPlayerForPageAndLayerID(WebPage& page, PlatformLayerIdentifier layerID)
 {
     for (auto* modelPlayer : instances()) {
         if (!modelPlayer || !modelPlayer->client())
@@ -74,13 +74,13 @@ ARKitInlinePreviewModelPlayerIOS* ARKitInlinePreviewModelPlayerIOS::modelPlayerF
     return nullptr;
 }
 
-void ARKitInlinePreviewModelPlayerIOS::pageLoadedModelInlinePreview(WebPage& page, GraphicsLayer::PlatformLayerID layerID)
+void ARKitInlinePreviewModelPlayerIOS::pageLoadedModelInlinePreview(WebPage& page, PlatformLayerIdentifier layerID)
 {
     if (auto* modelPlayer = modelPlayerForPageAndLayerID(page, layerID))
         modelPlayer->client()->didFinishLoading(*modelPlayer);
 }
 
-void ARKitInlinePreviewModelPlayerIOS::pageFailedToLoadModelInlinePreview(WebPage& page, WebCore::GraphicsLayer::PlatformLayerID layerID, const WebCore::ResourceError& error)
+void ARKitInlinePreviewModelPlayerIOS::pageFailedToLoadModelInlinePreview(WebPage& page, PlatformLayerIdentifier layerID, const WebCore::ResourceError& error)
 {
     if (auto* modelPlayer = modelPlayerForPageAndLayerID(page, layerID))
         modelPlayer->client()->didFailLoading(*modelPlayer, error);

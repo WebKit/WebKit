@@ -46,6 +46,19 @@ public:
         , accuracy(accuracy)
     {
     }
+    
+    GeolocationPositionData(double timestamp, double latitude, double longitude, double accuracy, std::optional<double> altitude, std::optional<double> altitudeAccuracy, std::optional<double> heading, std::optional<double> speed, std::optional<double> floorLevel)
+        : timestamp(timestamp)
+        , latitude(latitude)
+        , longitude(longitude)
+        , accuracy(accuracy)
+        , altitude(altitude)
+        , altitudeAccuracy(altitudeAccuracy)
+        , heading(heading)
+        , speed(speed)
+        , floorLevel(floorLevel)
+    {
+    }
 
 #if PLATFORM(COCOA)
     WEBCORE_EXPORT explicit GeolocationPositionData(CLLocation*);
@@ -64,49 +77,7 @@ public:
     std::optional<double> floorLevel;
 
     bool isValid() const;
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static WARN_UNUSED_RETURN bool decode(Decoder&, GeolocationPositionData&);
 };
-
-template<class Encoder>
-void GeolocationPositionData::encode(Encoder& encoder) const
-{
-    encoder << timestamp;
-    encoder << latitude;
-    encoder << longitude;
-    encoder << accuracy;
-    encoder << altitude;
-    encoder << altitudeAccuracy;
-    encoder << heading;
-    encoder << speed;
-    encoder << floorLevel;
-}
-
-template<class Decoder>
-bool GeolocationPositionData::decode(Decoder& decoder, GeolocationPositionData& position)
-{
-    if (!decoder.decode(position.timestamp))
-        return false;
-    if (!decoder.decode(position.latitude))
-        return false;
-    if (!decoder.decode(position.longitude))
-        return false;
-    if (!decoder.decode(position.accuracy))
-        return false;
-    if (!decoder.decode(position.altitude))
-        return false;
-    if (!decoder.decode(position.altitudeAccuracy))
-        return false;
-    if (!decoder.decode(position.heading))
-        return false;
-    if (!decoder.decode(position.speed))
-        return false;
-    if (!decoder.decode(position.floorLevel))
-        return false;
-
-    return true;
-}
 
 inline bool GeolocationPositionData::isValid() const
 {

@@ -40,6 +40,12 @@ typedef struct _WebKitWebExtension        WebKitWebExtension;
 typedef struct _WebKitWebExtensionClass   WebKitWebExtensionClass;
 typedef struct _WebKitWebExtensionPrivate WebKitWebExtensionPrivate;
 
+struct _WebKitWebExtensionClass {
+    GObjectClass parent_class;
+};
+
+WEBKIT_DECLARE_FINAL_TYPE (WebKitWebExtension, webkit_web_extension, WEBKIT, WEB_EXTENSION, GObject)
+
 /**
  * WebKitWebExtensionInitializeFunction:
  * @extension: a #WebKitWebExtension
@@ -63,19 +69,6 @@ typedef void (* WebKitWebExtensionInitializeFunction) (WebKitWebExtension *exten
  */
 typedef void (* WebKitWebExtensionInitializeWithUserDataFunction) (WebKitWebExtension *extension,
                                                                    const GVariant     *user_data);
-
-struct _WebKitWebExtension {
-    GObject parent;
-
-    WebKitWebExtensionPrivate *priv;
-};
-
-struct _WebKitWebExtensionClass {
-    GObjectClass parent_class;
-};
-
-WEBKIT_API GType
-webkit_web_extension_get_type                       (void);
 
 WEBKIT_API WebKitWebPage *
 webkit_web_extension_get_page                       (WebKitWebExtension *extension,

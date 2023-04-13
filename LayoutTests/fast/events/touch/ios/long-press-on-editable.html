@@ -27,7 +27,7 @@
             var target = document.getElementById('target');
             if (testRunner.runUIScript) {
                 testRunner.runUIScript(getPressScript(), function(result) {
-                    var selectionText = document.getSelection().toString();
+                    var selectionText = textarea.value.substring(textarea.selectionStart, textarea.selectionEnd);
                     if (selectionText == "PressMe")
                         output += 'PASS: Selected: ' + selectionText;
                     else
@@ -52,7 +52,7 @@
 </head>
 <body>
 <div id="target">
-	<textarea>PressMe</textarea>
+	<textarea id="textarea">PressMe</textarea>
     This test requires UIScriptController to run.
 </div>
 </body>

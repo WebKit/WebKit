@@ -203,6 +203,20 @@ WI.Popover = class Popover extends WI.Object
 
     // Private
 
+    static _getCanvasContext(width, height)
+    {
+        let context = WI.Popover._canvasContext?.deref();
+        if (!context) {
+            context = document.createElement("canvas").getContext("2d");
+            context.canvas.className = "background-canvas";
+            WI.Popover._canvasContext = new WeakRef(context);
+        }
+
+        context.canvas.width = width;
+        context.canvas.height = height;
+        return context;
+    }
+
     _update(shouldAnimate)
     {
         if (shouldAnimate)
@@ -425,7 +439,9 @@ WI.Popover = class Popover extends WI.Object
         bounds = bounds.inset(WI.Popover.ShadowEdgeInsets);
         let computedStyle = window.getComputedStyle(this._element, null);
 
-        let context = document.getCSSCanvasContext("2d", "popover", scaledWidth, scaledHeight);
+        let context = WI.Popover._getCanvasContext(scaledWidth, scaledHeight);
+        this._element.appendChild(context.canvas);
+
         context.clearRect(0, 0, scaledWidth, scaledHeight);
 
         function isolate(callback) {

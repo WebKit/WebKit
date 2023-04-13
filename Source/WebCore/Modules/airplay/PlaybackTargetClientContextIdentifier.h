@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-enum PlaybackTargetClientContextIdentifierType { };
+struct PlaybackTargetClientContextIdentifierType;
 using PlaybackTargetClientContextIdentifier = ObjectIdentifier<PlaybackTargetClientContextIdentifierType>;
 
 }

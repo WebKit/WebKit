@@ -20,6 +20,7 @@
 #include "config.h"
 #include "JSHTMLCollection.h"
 
+#include "HTMLCollectionInlines.h"
 #include "JSDOMBinding.h"
 #include "JSHTMLAllCollection.h"
 #include "JSHTMLFormControlsCollection.h"

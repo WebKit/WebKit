@@ -616,10 +616,16 @@ EXPORTS
     glFramebufferPixelLocalClearValuefvANGLE
     glFramebufferPixelLocalClearValueivANGLE
     glFramebufferPixelLocalClearValueuivANGLE
+    glFramebufferPixelLocalStorageInterruptANGLE
+    glFramebufferPixelLocalStorageRestoreANGLE
     glFramebufferTexturePixelLocalStorageANGLE
     glGetFramebufferPixelLocalStorageParameterfvANGLE
+    glGetFramebufferPixelLocalStorageParameterfvRobustANGLE
     glGetFramebufferPixelLocalStorageParameterivANGLE
+    glGetFramebufferPixelLocalStorageParameterivRobustANGLE
     glPixelLocalStorageBarrierANGLE
+
+    ; GL_ANGLE_stencil_texturing
 
     ; GL_ANGLE_texture_compression_dxt3
 
@@ -646,6 +652,8 @@ EXPORTS
     ; GL_APPLE_clip_distance
 
     ; GL_ARB_sync
+
+    ; GL_ARM_shader_framebuffer_fetch
 
     ; GL_CHROMIUM_bind_uniform_location
     glBindUniformLocationCHROMIUM
@@ -696,6 +704,8 @@ EXPORTS
 
     ; GL_EXT_color_buffer_half_float
 
+    ; GL_EXT_conservative_depth
+
     ; GL_EXT_copy_image
     glCopyImageSubDataEXT
 
@@ -707,6 +717,8 @@ EXPORTS
     glInsertEventMarkerEXT
     glPopGroupMarkerEXT
     glPushGroupMarkerEXT
+
+    ; GL_EXT_depth_clamp
 
     ; GL_EXT_discard_framebuffer
     glDiscardFramebufferEXT
@@ -804,6 +816,8 @@ EXPORTS
     ; GL_EXT_pvrtc_sRGB
 
     ; GL_EXT_read_format_bgra
+
+    ; GL_EXT_render_snorm
 
     ; GL_EXT_robustness
     glGetGraphicsResetStatusEXT
@@ -917,9 +931,13 @@ EXPORTS
 
     ; GL_EXT_texture_filter_anisotropic
 
+    ; GL_EXT_texture_filter_minmax
+
     ; GL_EXT_texture_format_BGRA8888
 
     ; GL_EXT_texture_format_sRGB_override
+
+    ; GL_EXT_texture_mirror_clamp_to_edge
 
     ; GL_EXT_texture_norm16
 
@@ -1182,6 +1200,8 @@ EXPORTS
     glFramebufferTextureMultiviewOVR
 
     ; GL_OVR_multiview2
+
+    ; GL_QCOM_render_shared_exponent
 
     ; GL_QCOM_shading_rate
     glShadingRateQCOM

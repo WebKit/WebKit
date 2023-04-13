@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <script src=../../../media-resources/video-test.js></script>
+        <script src=../../../media-resources/media-file.js></script>
+
+        <script>
+            let cuechangeCount = 0;
+
+            async function start()
+            {
+                failTestIn(10000);
+
+                findMediaElement();
+
+                waitForAndFail(video, 'error')
+                run('video.src = "http://127.0.0.1:8000/media/resources/hls/dynamic-ext-date-range.py"');
+
+                await waitFor(video.textTracks, 'addtrack')
+                run('track = video.textTracks[0]');
+                run('track.mode = "hidden"');
+
+                await waitFor(video, 'playing');
+
+                await waitFor(track, 'cuechange');
+                while (track.cues.length < 14)
+                    await sleepFor(.1);
+
+                consoleWrite('');
+                testExpected(`track.cues[0].startTime`, 0, '==');
+                for (let i = 1; i < track.cues.length; i++)
+                    testExpected(`track.cues[${i}].startTime`, 0, '!=');
+
+                video.pause();
+                consoleWrite('');
+                endTest();
+            }
+        </script>
+    </head>
+    <body onload='start()'>
+        <video controls muted autoplay></video>
+        <p>Test that #EXT-X-DATERANGE metadata cues have valid start time.</p>
+    </body>
+</html>

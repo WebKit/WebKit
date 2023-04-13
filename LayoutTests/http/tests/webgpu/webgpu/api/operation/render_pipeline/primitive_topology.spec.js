@@ -114,13 +114,11 @@ function getLineTestLocations(expectedColor) {
       location: Point2D.getMidpoint(VertexLocations[0], VertexLocations[1]),
       color: expectedColor,
     },
-
     {
       // Line {v3, v4}
       location: Point2D.getMidpoint(VertexLocations[2], VertexLocations[3]),
       color: expectedColor,
     },
-
     {
       // Line {v5, v6}
       location: Point2D.getMidpoint(VertexLocations[4], VertexLocations[5]),
@@ -137,7 +135,6 @@ function getPrimitiveRestartLineTestLocations(expectedColor) {
       location: Point2D.getMidpoint(VertexLocations[0], VertexLocations[1]),
       color: expectedColor,
     },
-
     {
       // Line {v5, v6}
       location: Point2D.getMidpoint(VertexLocations[4], VertexLocations[5]),
@@ -154,7 +151,6 @@ function getLineStripTestLocations(expectedColor) {
       location: Point2D.getMidpoint(VertexLocations[1], VertexLocations[2]),
       color: expectedColor,
     },
-
     {
       // Line {v4, v5}
       location: Point2D.getMidpoint(VertexLocations[3], VertexLocations[4]),
@@ -171,7 +167,6 @@ function getTriangleListTestLocations(expectedColor) {
       location: Point2D.getCentroid(VertexLocations[0], VertexLocations[1], VertexLocations[2]),
       color: expectedColor,
     },
-
     {
       // Triangle {v4, v5, v6}
       location: Point2D.getCentroid(VertexLocations[3], VertexLocations[4], VertexLocations[5]),
@@ -188,7 +183,6 @@ function getTriangleStripTestLocations(expectedColor) {
       location: Point2D.getCentroid(VertexLocations[1], VertexLocations[2], VertexLocations[3]),
       color: expectedColor,
     },
-
     {
       // Triangle {v3, v4, v5}
       location: Point2D.getCentroid(VertexLocations[2], VertexLocations[3], VertexLocations[4]),
@@ -323,16 +317,16 @@ class PrimitiveTopologyTest extends GPUTest {
     // Output color is solid green.
     renderPass.setPipeline(
       this.device.createRenderPipeline({
+        layout: 'auto',
         vertex: {
           module: this.device.createShaderModule({
             code: `
-              @stage(vertex) fn main(
+              @vertex fn main(
                 @location(0) pos : vec4<f32>
                 ) -> @builtin(position) vec4<f32> {
                 return pos;
               }`,
           }),
-
           entryPoint: 'main',
           buffers: [
             {
@@ -347,19 +341,16 @@ class PrimitiveTopologyTest extends GPUTest {
             },
           ],
         },
-
         fragment: {
           module: this.device.createShaderModule({
             code: `
-              @stage(fragment) fn main() -> @location(0) vec4<f32> {
+              @fragment fn main() -> @location(0) vec4<f32> {
                 return vec4<f32>(0.0, 1.0, 0.0, 1.0);
               }`,
           }),
-
           entryPoint: 'main',
           targets: [{ format: kColorFormat }],
         },
-
         primitive: {
           topology,
           stripIndexFormat,

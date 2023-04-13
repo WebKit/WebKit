@@ -49,17 +49,16 @@
 
 namespace JSC { namespace B3 {
 
+namespace B3ValueInternal {
+constexpr bool alwaysDumpConstructionSite = false;
+}
+
 #if ASSERT_ENABLED
 String Value::generateCompilerConstructionSite()
 {
-    if (!Options::dumpDisassembly() && !Options::dumpBBQDisassembly()
-        && !Options::dumpOMGDisassembly() && !Options::dumpFTLDisassembly()
-        && !Options::dumpDFGDisassembly())
-        return emptyString();
-
     StringPrintStream s;
-    static constexpr int framesToShow = 3;
-    static constexpr int framesToSkip = 7;
+    static constexpr int framesToShow = 15;
+    static constexpr int framesToSkip = 0;
     void* samples[framesToShow + framesToSkip];
     int frames = framesToShow + framesToSkip;
 
@@ -69,14 +68,37 @@ String Value::generateCompilerConstructionSite()
     StackTraceSymbolResolver stackTrace({ samples + framesToSkip, static_cast<size_t>(frames) });
 
     s.print("[");
-    bool firstPrinted = false;
+    int printed = 0;
     stackTrace.forEach([&] (unsigned, void*, const char* cName) {
+        if (printed > 10)
+            return;
         auto name = String::fromUTF8(cName);
-        if (firstPrinted)
-            s.print("|");
-        if (name.contains("enerator"_s)) {
+        if (name.contains("JSC::Wasm::B3IRGenerator::emit"_s)
+            || name.contains("JSC::Wasm::B3IRGenerator::add"_s)
+            || name.contains("JSC::Wasm::B3IRGenerator::create"_s)
+            || name.contains("JSC::Wasm::B3IRGenerator::end"_s)
+            || name.contains("JSC::Wasm::B3IRGenerator::set"_s)
+            || name.contains("JSC::Wasm::B3IRGenerator::get"_s)
+            || name.contains("JSC::Wasm::B3IRGenerator::insert"_s)
+            || name.contains("JSC::Wasm::B3IRGenerator::constant("_s)
+            || name.contains("JSC::Wasm::B3IRGenerator::fixup"_s)
+            || name.contains("JSC::Wasm::B3IRGenerator::load"_s)
+            || name.contains("JSC::Wasm::B3IRGenerator::store"_s)
+            || name.contains("JSC::Wasm::B3IRGenerator::atomic"_s)
+            || name.contains("JSC::Wasm::B3IRGenerator::trunc"_s)
+            || name.contains("JSC::Wasm::B3IRGenerator::sanitize"_s)
+            || name.contains("JSC::Wasm::B3IRGenerator::restore"_s)
+            || name.contains("JSC::Wasm::B3IRGenerator::connect"_s)
+            || name.contains("JSC::Wasm::B3IRGenerator::prepare"_s)) {
+            if (name.contains(">::add"_s)
+                || name.contains(">::translate"_s)
+                || name.contains(">::inlineEnsure"_s)
+                || name.contains(">::KeyValuePairTraits"_s))
+                return;
+            if (printed)
+                s.print("|");
             s.print(name.left(name.find('(')));
-            firstPrinted = true;
+            ++printed;
         }
     });
     s.print("]");
@@ -249,6 +271,13 @@ void Value::deepDump(const Procedure* proc, PrintStream& out) const
 
     if (m_origin)
         out.print(comma, OriginDump(proc, m_origin));
+
+#if ASSERT_ENABLED
+    if constexpr (B3ValueInternal::alwaysDumpConstructionSite) {
+        if (!m_compilerConstructionSite.isEmpty())
+            out.print(comma, compilerConstructionSite());
+    }
+#endif
 
     out.print(")");
 }
@@ -624,6 +653,8 @@ Effects Value::effects() const
     case BitwiseCast:
     case SExt8:
     case SExt16:
+    case SExt8To64:
+    case SExt16To64:
     case SExt32:
     case ZExt32:
     case Trunc:
@@ -703,6 +734,8 @@ Effects Value::effects() const
     case VectorExtaddPairwise:
     case VectorMulSat:
     case VectorSwizzle:
+    case VectorMulByElement:
+    case VectorShiftByVector:
         break;
     case Div:
     case UDiv:
@@ -824,6 +857,8 @@ ValueKey Value::key() const
     case Sqrt:
     case SExt8:
     case SExt16:
+    case SExt8To64:
+    case SExt16To64:
     case SExt32:
     case ZExt32:
     case Clz:
@@ -889,6 +924,77 @@ ValueKey Value::key() const
         return ValueKey(
             SlotBase, type(),
             static_cast<int64_t>(as<SlotBaseValue>()->slot()->index()));
+    case VectorNot:
+    case VectorSplat:
+    case VectorAbs:
+    case VectorNeg:
+    case VectorPopcnt:
+    case VectorCeil:
+    case VectorFloor:
+    case VectorTrunc:
+    case VectorTruncSat:
+    case VectorConvert:
+    case VectorConvertLow:
+    case VectorNearest:
+    case VectorSqrt:
+    case VectorExtendLow:
+    case VectorExtendHigh:
+    case VectorPromote:
+    case VectorDemote:
+    case VectorBitmask:
+    case VectorAnyTrue:
+    case VectorAllTrue:
+    case VectorExtaddPairwise:
+        numChildrenForKind(kind(), 1);
+        return ValueKey(kind(), type(), as<SIMDValue>()->simdInfo(), child(0));
+    case VectorExtractLane:
+    case VectorDupElement:
+        numChildrenForKind(kind(), 1);
+        return ValueKey(kind(), type(), as<SIMDValue>()->simdInfo(), child(0), as<SIMDValue>()->immediate());
+    case VectorEqual:
+    case VectorNotEqual:
+    case VectorLessThan:
+    case VectorLessThanOrEqual:
+    case VectorBelow:
+    case VectorBelowOrEqual:
+    case VectorGreaterThan:
+    case VectorGreaterThanOrEqual:
+    case VectorAbove:
+    case VectorAboveOrEqual:
+    case VectorAdd:
+    case VectorSub:
+    case VectorAddSat:
+    case VectorSubSat:
+    case VectorMul:
+    case VectorDotProduct:
+    case VectorDiv:
+    case VectorMin:
+    case VectorMax:
+    case VectorPmin:
+    case VectorPmax:
+    case VectorNarrow:
+    case VectorAnd:
+    case VectorAndnot:
+    case VectorOr:
+    case VectorXor:
+    case VectorShl:
+    case VectorShr:
+    case VectorMulSat:
+    case VectorAvgRound:
+    case VectorShiftByVector:
+        numChildrenForKind(kind(), 2);
+        return ValueKey(kind(), type(), as<SIMDValue>()->simdInfo(), child(0), child(1));
+    case VectorReplaceLane:
+    case VectorMulByElement:
+        numChildrenForKind(kind(), 2);
+        return ValueKey(kind(), type(), as<SIMDValue>()->simdInfo(), child(0), child(1), as<SIMDValue>()->immediate());
+    case VectorBitwiseSelect:
+        numChildrenForKind(kind(), 3);
+        return ValueKey(kind(), type(), as<SIMDValue>()->simdInfo(), child(0), child(1), child(2));
+    case VectorSwizzle:
+        if (numChildren() == 2)
+            return ValueKey(kind(), type(), as<SIMDValue>()->simdInfo(), child(0), child(1), nullptr);
+        return ValueKey(kind(), type(), as<SIMDValue>()->simdInfo(), child(0), child(1), child(2));
     default:
         return ValueKey();
     }
@@ -985,6 +1091,8 @@ Type Value::typeFor(Kind kind, Value* firstChild, Value* secondChild)
         return Int32;
     case Trunc:
         return firstChild->type() == Int64 ? Int32 : Float;
+    case SExt8To64:
+    case SExt16To64:
     case SExt32:
     case ZExt32:
         return Int64;

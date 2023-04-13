@@ -50,7 +50,11 @@ bool CSSNamedImageValue::equals(const CSSNamedImageValue& other) const
 
 RefPtr<StyleImage> CSSNamedImageValue::createStyleImage(Style::BuilderState&) const
 {
-    return StyleNamedImage::create(m_name);
+    if (m_cachedStyleImage)
+        return m_cachedStyleImage;
+
+    m_cachedStyleImage = StyleNamedImage::create(m_name);
+    return m_cachedStyleImage;
 }
 
 } // namespace WebCore

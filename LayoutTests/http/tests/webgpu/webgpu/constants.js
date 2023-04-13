@@ -15,7 +15,6 @@ const BufferUsage = {
   INDIRECT: 0x0100,
   QUERY_RESOLVE: 0x0200,
 };
-
 checkType(BufferUsage);
 
 const TextureUsage = {
@@ -27,7 +26,6 @@ const TextureUsage = {
   STORAGE: 0x08,
   RENDER_ATTACHMENT: 0x10,
 };
-
 checkType(TextureUsage);
 
 const ColorWrite = {
@@ -37,7 +35,6 @@ const ColorWrite = {
   ALPHA: 0x8,
   ALL: 0xf,
 };
-
 checkType(ColorWrite);
 
 const ShaderStage = {
@@ -45,14 +42,12 @@ const ShaderStage = {
   FRAGMENT: 0x2,
   COMPUTE: 0x4,
 };
-
 checkType(ShaderStage);
 
 const MapMode = {
   READ: 0x1,
   WRITE: 0x2,
 };
-
 checkType(MapMode);
 
 export const GPUConst = {

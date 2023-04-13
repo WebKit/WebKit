@@ -21,6 +21,7 @@
 
 #if ENABLE(WEB_RTC) && USE(GSTREAMER_WEBRTC)
 
+#include "GStreamerCommon.h"
 #include "GUniquePtrGStreamer.h"
 #include "MediaEndpointConfiguration.h"
 #include "PeerConnectionBackend.h"
@@ -36,9 +37,13 @@
 #include "RTCSdpType.h"
 #include "RTCSignalingState.h"
 
+#include <gst/rtp/rtp.h>
+
 #define GST_USE_UNSTABLE_API
 #include <gst/webrtc/webrtc.h>
 #undef GST_USE_UNSTABLE_API
+
+#include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
 
@@ -263,10 +268,36 @@ std::optional<Ref<RTCCertificate>> generateCertificate(Ref<SecurityOrigin>&&, co
 
 bool sdpMediaHasAttributeKey(const GstSDPMedia*, const char* key);
 
-WARN_UNUSED_RETURN GRefPtr<GstCaps> capsFromRtpCapabilities(const RTCRtpCapabilities&, Function<void(GstStructure*)> supplementCapsCallback);
+class UniqueSSRCGenerator : public ThreadSafeRefCounted<UniqueSSRCGenerator> {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    static Ref<UniqueSSRCGenerator> create() { return adoptRef(*new UniqueSSRCGenerator()); }
+
+    uint32_t generateSSRC();
+
+private:
+    Lock m_lock;
+    Vector<uint32_t> m_knownIds WTF_GUARDED_BY_LOCK(m_lock);
+};
+
+WARN_UNUSED_RETURN GRefPtr<GstCaps> capsFromRtpCapabilities(RefPtr<UniqueSSRCGenerator>,  const RTCRtpCapabilities&, Function<void(GstStructure*)> supplementCapsCallback);
 
 GstWebRTCRTPTransceiverDirection getDirectionFromSDPMedia(const GstSDPMedia*);
 WARN_UNUSED_RETURN GRefPtr<GstCaps> capsFromSDPMedia(const GstSDPMedia*);
 
+inline gboolean mapRtpBuffer(GstBuffer* buffer, GstRTPBuffer* rtpBuffer, GstMapFlags flags)
+{
+    *rtpBuffer = GST_RTP_BUFFER_INIT;
+    return gst_rtp_buffer_map(buffer, flags, rtpBuffer);
 }
-#endif
+
+inline void unmapRtpBuffer(GstBuffer*, GstRTPBuffer* rtpBuffer)
+{
+    gst_rtp_buffer_unmap(rtpBuffer);
+}
+
+using GstMappedRtpBuffer = GstBufferMapper<GstRTPBuffer, mapRtpBuffer, unmapRtpBuffer>;
+
+} // namespace WebCore
+
+#endif // ENABLE(WEB_RTC) && USE(GSTREAMER_WEBRTC)

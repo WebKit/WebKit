@@ -39,18 +39,19 @@ using namespace WebCore;
 
 static const cairo_format_t cairoFormat = CAIRO_FORMAT_ARGB32;
 
-void ShareableBitmap::validateConfiguration(ShareableBitmapConfiguration&)
+std::optional<DestinationColorSpace> ShareableBitmapConfiguration::validateColorSpace(std::optional<DestinationColorSpace> colorSpace)
 {
+    return colorSpace;
 }
 
-CheckedUint32 ShareableBitmap::calculateBytesPerRow(WebCore::IntSize size, const ShareableBitmapConfiguration&)
-{
-    return cairo_format_stride_for_width(cairoFormat, size.width());
-}
-
-CheckedUint32 ShareableBitmap::calculateBytesPerPixel(const ShareableBitmapConfiguration&)
+CheckedUint32 ShareableBitmapConfiguration::calculateBytesPerPixel(const DestinationColorSpace&)
 {
     return 4;
+}
+
+CheckedUint32 ShareableBitmapConfiguration::calculateBytesPerRow(const IntSize& size, const DestinationColorSpace&)
+{
+    return cairo_format_stride_for_width(cairoFormat, size.width());
 }
 
 static inline RefPtr<cairo_surface_t> createSurfaceFromData(void* data, const WebCore::IntSize& size)
@@ -72,7 +73,7 @@ void ShareableBitmap::paint(GraphicsContext& context, const IntPoint& dstPoint, 
 
 void ShareableBitmap::paint(GraphicsContext& context, float scaleFactor, const IntPoint& dstPoint, const IntRect& srcRect)
 {
-    RefPtr<cairo_surface_t> surface = createSurfaceFromData(data(), m_size);
+    RefPtr<cairo_surface_t> surface = createSurfaceFromData(data(), size());
     cairo_surface_set_device_scale(surface.get(), scaleFactor, scaleFactor);
     FloatRect destRect(dstPoint, srcRect.size());
 
@@ -83,12 +84,12 @@ void ShareableBitmap::paint(GraphicsContext& context, float scaleFactor, const I
 
 RefPtr<cairo_surface_t> ShareableBitmap::createPersistentCairoSurface()
 {
-    return createSurfaceFromData(data(), m_size);
+    return createSurfaceFromData(data(), size());
 }
 
 RefPtr<cairo_surface_t> ShareableBitmap::createCairoSurface()
 {
-    RefPtr<cairo_surface_t> image = createSurfaceFromData(data(), m_size);
+    RefPtr<cairo_surface_t> image = createSurfaceFromData(data(), size());
 
     ref(); // Balanced by deref in releaseSurfaceData.
     static cairo_user_data_key_t dataKey;

@@ -36,10 +36,7 @@ class CryptoKeyAES;
 
 class CryptoAlgorithmAES_CBC final : public CryptoAlgorithm {
 public:
-    enum class Padding : uint8_t {
-        Yes,
-        No
-    };
+    enum class Padding : bool { No, Yes };
 
     static constexpr ASCIILiteral s_name = "AES-CBC"_s;
     static constexpr CryptoAlgorithmIdentifier s_identifier = CryptoAlgorithmIdentifier::AES_CBC;

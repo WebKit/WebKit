@@ -28,8 +28,8 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "DOMWindow.h"
 #include "Document.h"
+#include "LocalDOMWindow.h"
 #include "RealtimeMediaSourceCenter.h"
 #include "UserMediaRequest.h"
 

@@ -4,8 +4,8 @@ layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
     RenderSVGContainer {g} at (11,6) size 681x403
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-      RenderSVGText {text} at (28,3) size 388x40 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 388x39
+      RenderSVGText {text} at (28,3) size 387x40 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 387x39
           chunk 1 text run 1 at (28.00,35.00) startOffset 0 endOffset 25 width 387.00: "SVG font element accuracy"
       RenderSVGRect {rect} at (275,133) size 367x276 [fill={[type=SOLID] [color=#000000]}] [x=165.00] [y=80.00] [width=220.00] [height=165.00]
       RenderSVGText {text} at (7,113) size 131x21 contains 1 chunk(s)

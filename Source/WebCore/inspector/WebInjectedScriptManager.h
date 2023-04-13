@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-class DOMWindow;
+class LocalDOMWindow;
 
 class WebInjectedScriptManager final : public Inspector::InjectedScriptManager {
     WTF_MAKE_NONCOPYABLE(WebInjectedScriptManager);
@@ -46,7 +46,7 @@ public:
     void disconnect() override;
     void discardInjectedScripts() override;
 
-    void discardInjectedScriptsFor(DOMWindow&);
+    void discardInjectedScriptsFor(LocalDOMWindow&);
 
 private:
     void didCreateInjectedScript(const Inspector::InjectedScript&) override;

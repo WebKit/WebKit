@@ -1,0 +1,4 @@
+Swipe target
+startSlowSwipeGesture
+completeSwipeGesture
+

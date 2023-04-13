@@ -28,6 +28,7 @@
 #if ENABLE(WEB_AUTHN)
 
 #include "LocalConnection.h"
+#include <WebCore/AuthenticatorAssertionResponse.h>
 #include <WebCore/MockWebAuthenticationConfiguration.h>
 
 namespace WebKit {

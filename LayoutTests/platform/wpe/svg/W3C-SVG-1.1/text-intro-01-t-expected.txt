@@ -3,13 +3,13 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-    RenderSVGContainer {g} at (8,5) size 618x478
-      RenderSVGText {text} at (5,3) size 371x46 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 371x45
-          chunk 1 text run 1 at (5.00,40.00) startOffset 0 endOffset 24 width 370.20: "Test left-to-right text."
+    RenderSVGContainer {g} at (8,5) size 610x478
+      RenderSVGText {text} at (5,3) size 366x46 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 366x45
+          chunk 1 text run 1 at (5.00,40.00) startOffset 0 endOffset 24 width 365.74: "Test left-to-right text."
       RenderSVGContainer {g} at (16,95) size 408x271
-        RenderSVGText {text} at (10,57) size 232x23 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 232x23
+        RenderSVGText {text} at (10,57) size 231x23 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 231x23
             chunk 1 text run 1 at (10.00,75.00) startOffset 0 endOffset 33 width 231.00: "Polish: Mog\x{119} je\x{15B}\x{107} szk\x{142}o, i mi ..."
         RenderSVGText {text} at (10,92) size 245x23 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 245x23

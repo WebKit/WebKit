@@ -28,6 +28,7 @@
 #if PLATFORM(MAC)
 
 #include "DrawingAreaInfo.h"
+#include "EditorState.h"
 #include "ImageAnalysisUtilities.h"
 #include "PDFPluginIdentifier.h"
 #include "ShareableBitmap.h"
@@ -84,9 +85,7 @@ OBJC_CLASS WKTextTouchBarItemController;
 OBJC_CLASS WebPlaybackControlsManager;
 #endif // HAVE(TOUCH_BAR)
 
-#if ENABLE(UI_PROCESS_PDF_HUD)
 OBJC_CLASS WKPDFHUDView;
-#endif
 
 OBJC_CLASS VKCImageAnalysis;
 OBJC_CLASS VKCImageAnalysisOverlayView;
@@ -212,13 +211,11 @@ public:
     void viewWillStartLiveResize();
     void viewDidEndLiveResize();
 
-#if ENABLE(UI_PROCESS_PDF_HUD)
     void createPDFHUD(PDFPluginIdentifier, const WebCore::IntRect&);
     void updatePDFHUDLocation(PDFPluginIdentifier, const WebCore::IntRect&);
     void removePDFHUD(PDFPluginIdentifier);
     void removeAllPDFHUDs();
     NSSet *pdfHUDs();
-#endif
 
     void renewGState();
     void setFrameSize(CGSize);
@@ -472,6 +469,11 @@ public:
     void setThumbnailView(_WKThumbnailView *);
     _WKThumbnailView *thumbnailView() const { return m_thumbnailView; }
 
+    void setHeaderBannerLayer(CALayer *);
+    CALayer *headerBannerLayer() const { return m_headerBannerLayer.get(); }
+    void setFooterBannerLayer(CALayer *);
+    CALayer *footerBannerLayer() const { return m_footerBannerLayer.get(); }
+
     void setInspectorAttachmentView(NSView *);
     NSView *inspectorAttachmentView();
     
@@ -506,8 +508,8 @@ public:
     void startWindowDrag();
 
     void startDrag(const WebCore::DragItem&, const ShareableBitmapHandle& image);
-    void setFileAndURLTypes(NSString *filename, NSString *extension, NSString *title, NSString *url, NSString *visibleURL, NSPasteboard *);
-    void setPromisedDataForImage(WebCore::Image*, NSString *filename, NSString *extension, NSString *title, NSString *url, NSString *visibleURL, WebCore::FragmentedSharedBuffer* archiveBuffer, NSString *pasteboardName, NSString *pasteboardOrigin);
+    void setFileAndURLTypes(NSString *filename, NSString *extension, NSString *uti, NSString *title, NSString *url, NSString *visibleURL, NSPasteboard *);
+    void setPromisedDataForImage(WebCore::Image&, NSString *filename, NSString *extension, NSString *title, NSString *url, NSString *visibleURL, WebCore::FragmentedSharedBuffer* archiveBuffer, NSString *pasteboardName, NSString *pasteboardOrigin);
     void pasteboardChangedOwner(NSPasteboard *);
     void provideDataForPasteboard(NSPasteboard *, NSString *type);
     NSArray *namesOfPromisedFilesDroppedAtDestination(NSURL *dropDestination);
@@ -569,6 +571,7 @@ public:
     void keyUp(NSEvent *);
     void keyDown(NSEvent *);
     void flagsChanged(NSEvent *);
+    bool markedTextInputEnabled() const;
 
     // Override this so that AppKit will send us arrow keys as key down events so we can
     // support them via the key bindings mechanism.
@@ -759,6 +762,10 @@ private:
     bool mightBeginScrollWhileInactive();
 
     void handleRequestedCandidates(NSInteger sequenceNumber, NSArray<NSTextCheckingResult *> *candidates);
+    void showMarkedTextForCandidates(NSArray<NSTextCheckingResult *> *);
+    void showMarkedTextForCandidate(NSTextCheckingResult *, NSRange, NSRange);
+    NSTextCheckingTypes getTextCheckingTypes() const;
+
     void flushPendingMouseEventCallbacks();
 
     void viewWillMoveToWindowImpl(NSWindow *);
@@ -773,6 +780,8 @@ private:
     CocoaImageAnalyzer *ensureImageAnalyzer();
     int32_t processImageAnalyzerRequest(CocoaImageAnalyzerRequest *, CompletionHandler<void(CocoaImageAnalysis *, NSError *)>&&);
 #endif
+
+    std::optional<EditorState::PostLayoutData> postLayoutDataForContentEditable();
 
     WeakObjCPtr<NSView<WebViewImplDelegate>> m_view;
     std::unique_ptr<PageClient> m_pageClient;
@@ -813,9 +822,7 @@ private:
     RetainPtr<WKFullScreenWindowController> m_fullScreenWindowController;
 #endif
 
-#if ENABLE(UI_PROCESS_PDF_HUD)
     HashMap<WebKit::PDFPluginIdentifier, RetainPtr<WKPDFHUDView>> _pdfHUDViews;
-#endif
 
     RetainPtr<WKShareSheet> _shareSheet;
 
@@ -857,6 +864,9 @@ private:
 
     RetainPtr<CALayer> m_rootLayer;
     RetainPtr<NSView> m_layerHostingView;
+
+    RetainPtr<CALayer> m_headerBannerLayer;
+    RetainPtr<CALayer> m_footerBannerLayer;
 
     _WKThumbnailView *m_thumbnailView { nullptr };
 
@@ -931,6 +941,8 @@ private:
 #if HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)
     WeakObjCPtr<NSPopover> m_lastContextMenuTranslationPopover;
 #endif
+
+    RetainPtr<NSObject> _textInputNotifications;
 };
     
 } // namespace WebKit

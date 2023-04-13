@@ -37,9 +37,7 @@ namespace WebCore {
 LocalDefaultSystemAppearance::LocalDefaultSystemAppearance(bool useDarkAppearance, const Color& tintColor)
 {
 #if HAVE(OS_DARK_MODE_SUPPORT)
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    m_savedSystemAppearance = [NSAppearance currentAppearance];
-    ALLOW_DEPRECATED_DECLARATIONS_END
+    m_savedSystemAppearance = [NSAppearance currentDrawingAppearance];
     m_usingDarkAppearance = useDarkAppearance;
 
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN

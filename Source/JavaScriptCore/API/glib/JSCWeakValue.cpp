@@ -61,7 +61,7 @@ struct _JSCWeakValuePrivate {
 
 static guint signals[LAST_SIGNAL] = { 0, };
 
-WEBKIT_DEFINE_TYPE(JSCWeakValue, jsc_weak_value, G_TYPE_OBJECT)
+WEBKIT_DEFINE_FINAL_TYPE(JSCWeakValue, jsc_weak_value, G_TYPE_OBJECT, GObject)
 
 static void jscWeakValueClear(JSCWeakValue* weakValue)
 {

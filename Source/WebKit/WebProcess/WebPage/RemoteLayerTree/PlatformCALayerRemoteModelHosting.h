@@ -41,6 +41,8 @@ public:
 private:
     PlatformCALayerRemoteModelHosting(Ref<WebCore::Model>, WebCore::PlatformCALayerClient* owner, RemoteLayerTreeContext&);
 
+    Type type() const final { return Type::RemoteModel; }
+
     Ref<WebCore::PlatformCALayer> clone(WebCore::PlatformCALayerClient* owner) const override;
     
     void populateCreationProperties(RemoteLayerTreeTransaction::LayerCreationProperties&, const RemoteLayerTreeContext&, WebCore::PlatformCALayer::LayerType) override;
@@ -52,6 +54,6 @@ private:
 
 } // namespace WebKit
 
-SPECIALIZE_TYPE_TRAITS_PLATFORM_CALAYER(WebKit::PlatformCALayerRemoteModelHosting, isPlatformCALayerRemote())
+SPECIALIZE_TYPE_TRAITS_PLATFORM_CALAYER(WebKit::PlatformCALayerRemoteModelHosting, type() == WebCore::PlatformCALayer::Type::RemoteModel)
 
 #endif // ENABLE(MODEL_ELEMENT)

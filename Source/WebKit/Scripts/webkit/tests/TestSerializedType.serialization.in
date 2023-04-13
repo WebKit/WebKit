@@ -4,7 +4,7 @@ headers: "HeaderWithoutCondition"
 
 #if ENABLE(TEST_FEATURE)
 headers: "StructHeader.h" "FirstMemberType.h" "SecondMemberType.h"
-[AdditionalEncoder=OtherEncoder, CustomHeader=True] struct Namespace::Subnamespace::StructName {
+[AdditionalEncoder=OtherEncoder, CustomHeader] struct Namespace::Subnamespace::StructName {
     FirstMemberType firstMemberName
     #if ENABLE(SECOND_MEMBER)
     SecondMemberType secondMemberName;
@@ -16,22 +16,22 @@ headers: "StructHeader.h" "FirstMemberType.h" "SecondMemberType.h"
 [Nested] class Namespace::OtherClass {
     [ReturnEarlyIfTrue] bool isNull
     int a
-    bool b
+    [BitField] bool b
     [SecureCodingAllowed=[NSArray.class, PAL::getDDScannerResultClass()]] RetainPtr<NSArray> dataDetectorResults;
 }
 
-[Return=Ref] class Namespace::ReturnRefClass {
+[RefCounted] class Namespace::ReturnRefClass {
     double functionCall().member1
     double functionCall().member2
     std::unique_ptr<int> uniqueMember
 }
 
-[LegacyPopulateFrom=EmptyConstructor] struct Namespace::EmptyConstructorStruct {
+[LegacyPopulateFromEmptyConstructor, CustomMemberLayout] struct Namespace::EmptyConstructorStruct {
     int m_int;
     double m_double;
 }
 
-[LegacyPopulateFrom=EmptyConstructor] class Namespace::EmptyConstructorNullable {
+[LegacyPopulateFromEmptyConstructor] class Namespace::EmptyConstructorNullable {
     [ReturnEarlyIfTrue] bool m_isNull;
 #if CONDITION_AROUND_M_TYPE_AND_M_VALUE
     MemberType m_type;
@@ -103,10 +103,55 @@ struct NullableSoftLinkedMember {
 }
 
 [RefCounted] class WebCore::TimingFunction subclasses {
-  WebCore::LinearTimingFunction,
-  WebCore::CubicBezierTimingFunction,
-  WebCore::StepsTimingFunction,
-  WebCore::SpringTimingFunction
+    WebCore::LinearTimingFunction,
+    WebCore::CubicBezierTimingFunction,
+    WebCore::StepsTimingFunction,
+    WebCore::SpringTimingFunction
+}
+
+[OptionSet] enum class OptionSetEnumFirstCondition : uint32_t {
+#if ENABLE(OPTION_SET_FIRST_VALUE)
+    OptionSetFirstValue,
+#endif
+    OptionSetSecondValue,
+    OptionSetThirdValue,
+}
+
+[OptionSet] enum class OptionSetEnumLastCondition : uint32_t {
+    OptionSetFirstValue,
+    OptionSetSecondValue,
+#if ENABLE(OPTION_SET_THIRD_VALUE)
+    OptionSetThirdValue,
+#endif
+}
+
+[OptionSet] enum class OptionSetEnumAllCondition : uint32_t {
+#if ENABLE(OPTION_SET_FIRST_VALUE)
+    OptionSetFirstValue,
+#endif
+#if ENABLE(OPTION_SET_SECOND_VALUE)
+    OptionSetSecondValue,
+#endif
+#if ENABLE(OPTION_SET_THIRD_VALUE)
+    OptionSetThirdValue,
+#endif
 }
 
 using WebCore::SharedStringHash = uint32_t
+
+#if ENABLE(TEST_FEATURE)
+headers: "CommonHeader.h"
+[CustomHeader] class Namespace::ConditionalCommonClass {
+    int value;
+}
+#endif
+
+headers: "CommonHeader.h"
+[CustomHeader] class Namesapce::CommonClass {
+    int value;
+}
+
+headers: "CommonHeader.h"
+[CustomHeader] class Namesapce::AnotherCommonClass {
+    int value;
+}

@@ -26,6 +26,7 @@
 
 #include "AudioArray.h"
 #include "AudioBus.h"
+#include "NoiseInjectionPolicy.h"
 #include <JavaScriptCore/Forward.h>
 #include <memory>
 #include <wtf/Forward.h>
@@ -39,7 +40,7 @@ class RealtimeAnalyser {
     WTF_MAKE_NONCOPYABLE(RealtimeAnalyser);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    RealtimeAnalyser();
+    explicit RealtimeAnalyser(NoiseInjectionPolicy);
     virtual ~RealtimeAnalyser();
 
     size_t fftSize() const { return m_fftSize; }
@@ -99,6 +100,7 @@ private:
 
     // We should only do the FFT analysis once per render quantum.
     bool m_shouldDoFFTAnalysis { true };
+    NoiseInjectionPolicy m_noiseInjectionPolicy { NoiseInjectionPolicy::None };
 };
 
 } // namespace WebCore

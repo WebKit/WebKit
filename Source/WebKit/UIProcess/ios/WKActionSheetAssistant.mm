@@ -62,6 +62,11 @@ SOFT_LINK_FRAMEWORK(SafariServices)
 SOFT_LINK_CLASS(SafariServices, SSReadingList)
 #endif
 
+#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
+SOFT_LINK_LIBRARY_OPTIONAL(libAccessibility)
+SOFT_LINK_OPTIONAL(libAccessibility, _AXSReduceMotionAutoplayAnimatedImagesEnabled, Boolean, (), ());
+#endif
+
 #import "TCCSoftLink.h"
 
 OBJC_CLASS DDAction;
@@ -596,6 +601,20 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         [defaultActions addObject:[_WKElementAction _elementActionWithType:_WKElementActionTypeRevealImage info:elementInfo assistant:self]];
 #endif
 
+#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
+    if (elementInfo.isAnimatedImage) {
+        auto* autoplayAnimatedImagesFunction = _AXSReduceMotionAutoplayAnimatedImagesEnabledPtr();
+        // Only show these controls if autoplay of animated images has been disabled.
+        if (autoplayAnimatedImagesFunction && !autoplayAnimatedImagesFunction() && elementInfo.canShowAnimationControls) {
+            if (elementInfo.isAnimating)
+                [defaultActions addObject:[_WKElementAction _elementActionWithType:_WKElementActionPauseAnimation info:elementInfo assistant:self]];
+            else
+                [defaultActions addObject:[_WKElementAction _elementActionWithType:_WKElementActionPlayAnimation info:elementInfo assistant:self]];
+
+        }
+    }
+#endif // ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
+
     return defaultActions;
 }
 
@@ -1056,6 +1075,14 @@ static NSMutableArray<UIMenuElement *> *menuElementsFromDefaultActions(RetainPtr
         [delegate actionSheetAssistant:self copySubject:element.image sourceMIMEType:element.imageMIMEType];
 #endif
         break;
+#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
+    case _WKElementActionPlayAnimation:
+        [delegate actionSheetAssistant:self performAction:WebKit::SheetAction::PlayAnimation];
+        break;
+    case _WKElementActionPauseAnimation:
+        [delegate actionSheetAssistant:self performAction:WebKit::SheetAction::PauseAnimation];
+        break;
+#endif // ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
     default:
         ASSERT_NOT_REACHED();
         break;

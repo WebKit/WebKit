@@ -26,12 +26,12 @@
 #include "config.h"
 #include "FeaturePolicy.h"
 
-#include "DOMWindow.h"
 #include "Document.h"
 #include "ElementInlines.h"
 #include "HTMLIFrameElement.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
+#include "LocalDOMWindow.h"
 #include "SecurityOrigin.h"
 
 namespace WebCore {

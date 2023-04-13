@@ -51,6 +51,8 @@ public:
     void clearHasClearance(const Box& layoutBox) { m_clearanceSet.remove(layoutBox); }
     bool hasClearance(const Box& layoutBox) const { return m_clearanceSet.contains(layoutBox); }
 
+    void shrinkToFit();
+
 private:
     FloatingState m_floatingState;
     HashMap<CheckedRef<const Box>, UsedVerticalMargin> m_usedVerticalMargins;

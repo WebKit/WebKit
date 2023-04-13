@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #pragma once
@@ -87,7 +87,6 @@ public:
 
 class SourceBufferPrivateAVFObjC final
     : public SourceBufferPrivate
-    , public CanMakeWeakPtr<SourceBufferPrivateAVFObjC>
 {
 public:
     static Ref<SourceBufferPrivateAVFObjC> create(MediaSourcePrivateAVFObjC*, Ref<SourceBufferParser>&&);
@@ -136,7 +135,7 @@ public:
     void setDecompressionSession(WebCoreDecompressionSession*);
 
     void bufferWasConsumed();
-    
+
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     SharedBuffer* initData() { return m_initData.get(); }
 #endif
@@ -157,11 +156,12 @@ private:
     void didParseInitializationData(InitializationSegment&&);
     void didEncounterErrorDuringParsing(int32_t);
     void didProvideMediaDataForTrackId(Ref<MediaSampleAVFObjC>&&, uint64_t trackId, const String& mediaType);
+    bool isMediaSampleAllowed(const MediaSample&) const final;
 
     // SourceBufferPrivate overrides
-    void append(Ref<SharedBuffer>&&) final;
+    void appendInternal(Ref<SharedBuffer>&&) final;
     void abort() final;
-    void resetParserState() final;
+    void resetParserStateInternal() final;
     void removedFromMediaSource() final;
     MediaPlayer::ReadyState readyState() const final;
     void setReadyState(MediaPlayer::ReadyState) final;
@@ -180,6 +180,7 @@ private:
     MediaTime currentMediaTime() const final;
     MediaTime duration() const final;
 
+    void processPendingTrackChangeTasks();
     void enqueueSample(Ref<MediaSampleAVFObjC>&&, uint64_t trackID);
     void didBecomeReadyForMoreSamples(uint64_t trackID);
     void appendCompleted();
@@ -200,17 +201,14 @@ private:
     void keyStatusesChanged();
 #endif
 
+    void setTrackChangeCallbacks(const Vector<Ref<TrackPrivateBase>>& tracks, bool initialized);
+
     HashMap<AtomString, RefPtr<VideoTrackPrivate>> m_videoTracks;
     HashMap<AtomString, RefPtr<AudioTrackPrivate>> m_audioTracks;
     Vector<SourceBufferPrivateAVFObjCErrorClient*> m_errorClients;
 
-    WeakPtrFactory<SourceBufferPrivateAVFObjC> m_appendWeakFactory;
-
     Ref<SourceBufferParser> m_parser;
-    bool m_processingInitializationSegment { false };
-    bool m_hasPendingAppendCompletedCallback { false };
-    Vector<Function<void()>> m_pendingTrackChangeCallbacks;
-    Vector<std::pair<uint64_t, Ref<MediaSampleAVFObjC>>> m_mediaSamples;
+    Vector<Function<void()>> m_pendingTrackChangeTasks;
     Deque<std::pair<uint64_t, Ref<MediaSampleAVFObjC>>> m_blockedSamples;
 
     RetainPtr<AVSampleBufferDisplayLayer> m_displayLayer;

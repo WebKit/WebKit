@@ -47,6 +47,25 @@ MediaDeviceInfo::MediaDeviceInfo(const String& label, const String& deviceId, co
 {
 }
 
+MediaDeviceInfo::Kind toMediaDeviceInfoKind(CaptureDevice::DeviceType type)
+{
+    switch (type) {
+    case CaptureDevice::DeviceType::Microphone:
+        return MediaDeviceInfo::Kind::Audioinput;
+    case CaptureDevice::DeviceType::Speaker:
+        return MediaDeviceInfo::Kind::Audiooutput;
+    case CaptureDevice::DeviceType::Camera:
+    case CaptureDevice::DeviceType::Screen:
+    case CaptureDevice::DeviceType::Window:
+        return MediaDeviceInfo::Kind::Videoinput;
+    case CaptureDevice::DeviceType::SystemAudio:
+    case CaptureDevice::DeviceType::Unknown:
+        break;
+    }
+    ASSERT_NOT_REACHED();
+    return MediaDeviceInfo::Kind::Audioinput;
+}
+
 } // namespace WebCore
 
 #endif

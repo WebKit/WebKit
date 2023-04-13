@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(WEBGL2)
+#if ENABLE(WEBGL)
 
 #include "WebGLVertexArrayObjectBase.h"
 
@@ -48,4 +48,4 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(WEBGL2)
+#endif // ENABLE(WEBGL)

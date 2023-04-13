@@ -25,6 +25,8 @@
 
 #pragma once
 
+#ifdef __cplusplus
+
 namespace WebKit::WebPushD {
 
 // If an origin processes more than this many silent pushes, then it will be unsubscribed from push.
@@ -107,3 +109,5 @@ inline bool daemonMessageTypeSendsReply(DaemonMessageType messageType)
 }
 
 } // namespace WebKit::WebPushD
+
+#endif

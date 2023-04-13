@@ -25,8 +25,8 @@
         {
             let scroller = document.querySelector('.scroller');
             await UIHelper.mouseWheelMayBeginAt(100, 100);
-            await UIHelper.waitForCondition(() => {
-                let state = internals.horizontalScrollbarState(scroller);
+            await UIHelper.waitForConditionAsync(async () => {
+                let state = await UIHelper.horizontalScrollbarState(scroller);
                 console.log(state);
                 return state.indexOf('visible_thumb') != -1;
             });

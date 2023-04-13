@@ -33,7 +33,7 @@
 #include "JSTrackCustom.h"
 #include "JSVTTCue.h"
 #include "TextTrack.h"
-#include "WebCoreOpaqueRoot.h"
+#include "WebCoreOpaqueRootInlines.h"
 
 
 namespace WebCore {

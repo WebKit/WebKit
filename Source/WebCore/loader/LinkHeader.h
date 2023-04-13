@@ -46,6 +46,7 @@ public:
     const String& imageSizes() const { return m_imageSizes; }
     const String& nonce() const { return m_nonce; }
     const String& referrerPolicy() const { return m_referrerPolicy; }
+    const String& fetchPriorityHint() const { return m_fetchPriorityHint; }
     bool valid() const { return m_isValid; }
     bool isViewportDependent() const { return !media().isEmpty() || !imageSrcSet().isEmpty() || !imageSizes().isEmpty(); }
 
@@ -65,6 +66,7 @@ public:
         LinkParameterImageSizes,
         LinkParameterNonce,
         LinkParameterReferrerPolicy,
+        LinkParameterFetchPriority,
     };
 
 private:
@@ -80,12 +82,13 @@ private:
     String m_imageSizes;
     String m_nonce;
     String m_referrerPolicy;
+    String m_fetchPriorityHint;
     bool m_isValid { true };
 };
 
 class LinkHeaderSet {
 public:
-    LinkHeaderSet(const String& header);
+    WEBCORE_EXPORT LinkHeaderSet(const String& header);
 
     Vector<LinkHeader>::const_iterator begin() const { return m_headerSet.begin(); }
     Vector<LinkHeader>::const_iterator end() const { return m_headerSet.end(); }

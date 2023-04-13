@@ -28,6 +28,7 @@
 #include "DecodingOptions.h"
 #include "GraphicsTypes.h"
 #include "ImageOrientation.h"
+#include <wtf/ArgumentCoder.h>
 
 namespace WebCore {
 
@@ -63,10 +64,8 @@ struct ImagePaintingOptions {
     ImageOrientation orientation() const { return m_orientation; }
     InterpolationQuality interpolationQuality() const { return m_interpolationQuality; }
 
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<ImagePaintingOptions> decode(Decoder&);
-
 private:
+    friend struct IPC::ArgumentCoder<ImagePaintingOptions, void>;
     template <typename First, typename... Rest>
     void setOption(First first, Rest... rest)
     {
@@ -84,49 +83,8 @@ private:
     CompositeOperator m_compositeOperator { CompositeOperator::SourceOver };
     BlendMode m_blendMode { BlendMode::Normal };
     DecodingMode m_decodingMode { DecodingMode::Synchronous };
-    ImageOrientation m_orientation { ImageOrientation::None };
+    ImageOrientation m_orientation { ImageOrientation::Orientation::None };
     InterpolationQuality m_interpolationQuality { InterpolationQuality::Default };
 };
-
-template<class Encoder>
-void ImagePaintingOptions::encode(Encoder& encoder) const
-{
-    encoder << m_compositeOperator;
-    encoder << m_blendMode;
-    encoder << m_decodingMode;
-    encoder << ImageOrientation::Orientation(m_orientation);
-    encoder << m_interpolationQuality;
-}
-
-template<class Decoder>
-std::optional<ImagePaintingOptions> ImagePaintingOptions::decode(Decoder& decoder)
-{
-    std::optional<CompositeOperator> compositeOperator;
-    decoder >> compositeOperator;
-    if (!compositeOperator)
-        return std::nullopt;
-
-    std::optional<BlendMode> blendMode;
-    decoder >> blendMode;
-    if (!blendMode)
-        return std::nullopt;
-
-    std::optional<DecodingMode> decodingMode;
-    decoder >> decodingMode;
-    if (!decodingMode)
-        return std::nullopt;
-
-    std::optional<ImageOrientation::Orientation> orientation;
-    decoder >> orientation;
-    if (!orientation)
-        return std::nullopt;
-
-    std::optional<InterpolationQuality> interpolationQuality;
-    decoder >> interpolationQuality;
-    if (!interpolationQuality)
-        return std::nullopt;
-
-    return ImagePaintingOptions { *compositeOperator, *blendMode, *decodingMode, *orientation, *interpolationQuality };
-}
 
 }

@@ -25,12 +25,9 @@
 
 #pragma once
 
-#include "IndexingType.h"
-#include "JSTypeInfo.h"
 #include "PrototypeKey.h"
 #include "WeakGCMap.h"
 #include <wtf/Lock.h>
-#include <wtf/TriState.h>
 
 namespace JSC {
 
@@ -38,7 +35,10 @@ class FunctionExecutable;
 class JSGlobalObject;
 class JSObject;
 class Structure;
+class TypeInfo;
 class VM;
+
+typedef uint8_t IndexingType;
 
 // Tracks the canonical structure an object should be allocated with when inheriting from a given prototype.
 class StructureCache {
@@ -64,8 +64,7 @@ public:
 private:
     Structure* createEmptyStructure(JSGlobalObject*, JSObject* prototype, const TypeInfo&, const ClassInfo*, IndexingType, unsigned inlineCapacity, bool makePolyProtoStructure, FunctionExecutable*);
 
-    using StructureMap = WeakGCMap<PrototypeKey, Structure>;
-    StructureMap m_structures;
+    WeakGCMap<PrototypeKey, Structure> m_structures;
     Lock m_lock;
 };
 

@@ -119,7 +119,7 @@ JSC_DEFINE_HOST_FUNCTION(evalInRealm, (JSGlobalObject* globalObject, CallFrame* 
     }
     RETURN_IF_EXCEPTION(scope, { });
 
-    JSValue result = vm.interpreter.executeEval(eval, realmGlobalObject, realmGlobalObject->globalThis(), realmGlobalObject->globalScope());
+    JSValue result = vm.interpreter.executeEval(eval, realmGlobalObject->globalThis(), realmGlobalObject->globalScope());
     if (UNLIKELY(scope.exception())) {
         NakedPtr<Exception> exception = scope.exception();
         JSValue error = exception->value();

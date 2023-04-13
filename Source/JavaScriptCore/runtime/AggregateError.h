@@ -26,11 +26,6 @@
 #pragma once
 
 #include "ErrorInstance.h"
-#include "JSCJSValue.h"
-#include "JSCell.h"
-#include "JSGlobalObject.h"
-#include "Structure.h"
-#include "VM.h"
 
 namespace JSC {
 

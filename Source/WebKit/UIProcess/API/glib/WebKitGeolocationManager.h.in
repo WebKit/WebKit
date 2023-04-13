@@ -28,25 +28,12 @@
 G_BEGIN_DECLS
 
 #define WEBKIT_TYPE_GEOLOCATION_MANAGER            (webkit_geolocation_manager_get_type())
+#if !ENABLE(2022_GLIB_API)
 #define WEBKIT_GEOLOCATION_MANAGER(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), WEBKIT_TYPE_GEOLOCATION_MANAGER, WebKitGeolocationManager))
 #define WEBKIT_IS_GEOLOCATION_MANAGER(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), WEBKIT_TYPE_GEOLOCATION_MANAGER))
 #define WEBKIT_GEOLOCATION_MANAGER_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass),  WEBKIT_TYPE_GEOLOCATION_MANAGER, WebKitGeolocationManagerClass))
 #define WEBKIT_IS_GEOLOCATION_MANAGER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass),  WEBKIT_TYPE_GEOLOCATION_MANAGER))
 #define WEBKIT_GEOLOCATION_MANAGER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj),  WEBKIT_TYPE_GEOLOCATION_MANAGER, WebKitGeolocationManagerClass))
-
-#define WEBKIT_TYPE_GEOLOCATION_POSITION           (webkit_geolocation_position_get_type())
-
-typedef struct _WebKitGeolocationManager        WebKitGeolocationManager;
-typedef struct _WebKitGeolocationManagerClass   WebKitGeolocationManagerClass;
-typedef struct _WebKitGeolocationManagerPrivate WebKitGeolocationManagerPrivate;
-typedef struct _WebKitGeolocationPosition       WebKitGeolocationPosition;
-
-struct _WebKitGeolocationManager {
-    GObject parent;
-
-    /*< private >*/
-    WebKitGeolocationManagerPrivate *priv;
-};
 
 struct _WebKitGeolocationManagerClass {
     GObjectClass parent_class;
@@ -57,9 +44,13 @@ struct _WebKitGeolocationManagerClass {
     void (*_webkit_reserved2) (void);
     void (*_webkit_reserved3) (void);
 };
+#endif
 
-WEBKIT_API GType
-webkit_geolocation_manager_get_type                 (void);
+WEBKIT_DECLARE_FINAL_TYPE (WebKitGeolocationManager, webkit_geolocation_manager, WEBKIT, GEOLOCATION_MANAGER, GObject)
+
+#define WEBKIT_TYPE_GEOLOCATION_POSITION           (webkit_geolocation_position_get_type())
+
+typedef struct _WebKitGeolocationPosition WebKitGeolocationPosition;
 
 WEBKIT_API void
 webkit_geolocation_manager_update_position           (WebKitGeolocationManager  *manager,

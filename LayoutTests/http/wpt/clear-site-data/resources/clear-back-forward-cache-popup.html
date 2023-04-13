@@ -1,0 +1,33 @@
+<!-- webkit-test-runner [ UsesBackForwardCache=true ] -->
+<!DOCTYPE html>
+<html>
+<body>
+<a id="logoutLink" href="logout.html">Log out</a>
+<div id="secretDiv"></div>
+<script>
+function generateSecret()
+{
+    document.getElementById("secretDiv").innerText = "secret";
+}
+
+function getSecret()
+{
+    return document.getElementById("secretDiv").innerText;
+}
+
+function logout()
+{
+    document.getElementById("logoutLink").click();
+}
+
+onload = () => {
+    opener.dispatchEvent(new Event("secret-page-loaded"));
+}
+
+onpageshow = (e) => {
+    if (e.persisted)
+        opener.dispatchEvent(new Event("secret-page-loaded"));
+}
+</script>
+</body>
+</html>

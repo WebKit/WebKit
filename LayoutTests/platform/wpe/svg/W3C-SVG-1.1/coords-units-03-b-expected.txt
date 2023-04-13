@@ -51,7 +51,7 @@ layer at (0,0) size 800x600
           RenderSVGInlineText {#text} at (0,0) size 21x15
             chunk 1 text run 1 at (20.00,118.00) startOffset 0 endOffset 4 width 20.40: "1 in"
         RenderSVGText {text} at (230,108) size 57x15 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 58x15
+          RenderSVGInlineText {#text} at (0,0) size 57x15
             chunk 1 text run 1 at (230.00,120.00) startOffset 0 endOffset 11 width 57.00: "Inches (in)"
         RenderSVGRect {rect} at (33,300) size 161x2 [fill={[type=SOLID] [color=#000000]}] [x=20.00] [y=120.00] [width=96.00] [height=1.00]
         RenderSVGText {text} at (20,126) size 78x15 contains 1 chunk(s)

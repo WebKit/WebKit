@@ -24,17 +24,17 @@
 
 namespace WebCore {
 
-    class Frame;
-    class Page;
+class LocalFrame;
+class Page;
 
-    class PageGroupLoadDeferrer {
-        WTF_MAKE_NONCOPYABLE(PageGroupLoadDeferrer);
-    public:
-        PageGroupLoadDeferrer(Page&, bool deferSelf);
-        ~PageGroupLoadDeferrer();
+class PageGroupLoadDeferrer {
+    WTF_MAKE_NONCOPYABLE(PageGroupLoadDeferrer);
+public:
+    PageGroupLoadDeferrer(Page&, bool deferSelf);
+    ~PageGroupLoadDeferrer();
 
-    private:
-        Vector<RefPtr<Frame>, 16> m_deferredFrames;
-    };
+private:
+    Vector<RefPtr<LocalFrame>, 16> m_deferredFrames;
+};
 
 } // namespace WebCore

@@ -28,8 +28,8 @@ namespace WebCore {
 enum class CanWrap : bool { No, Yes };
 enum class DidWrap : bool { No, Yes };
 
-class AbstractFrame;
 class Frame;
+class LocalFrame;
 class TreeScope;
 
 class FrameTree {
@@ -37,7 +37,7 @@ class FrameTree {
 public:
     static constexpr unsigned invalidCount = static_cast<unsigned>(-1);
 
-    FrameTree(AbstractFrame& thisFrame, AbstractFrame* parentFrame);
+    FrameTree(Frame& thisFrame, Frame* parentFrame);
 
     ~FrameTree();
 
@@ -45,66 +45,68 @@ public:
     const AtomString& uniqueName() const { return m_uniqueName; }
     WEBCORE_EXPORT void setName(const AtomString&);
     WEBCORE_EXPORT void clearName();
-    WEBCORE_EXPORT AbstractFrame* parent() const;
+    WEBCORE_EXPORT Frame* parent() const;
 
-    AbstractFrame* nextSibling() const { return m_nextSibling.get(); }
-    AbstractFrame* previousSibling() const { return m_previousSibling.get(); }
-    AbstractFrame* firstChild() const { return m_firstChild.get(); }
-    AbstractFrame* lastChild() const { return m_lastChild.get(); }
+    Frame* nextSibling() const { return m_nextSibling.get(); }
+    Frame* previousSibling() const { return m_previousSibling.get(); }
+    Frame* firstChild() const { return m_firstChild.get(); }
+    Frame* lastChild() const { return m_lastChild.get(); }
 
-    AbstractFrame* firstRenderedChild() const;
-    AbstractFrame* nextRenderedSibling() const;
+    Frame* firstRenderedChild() const;
+    Frame* nextRenderedSibling() const;
 
-    WEBCORE_EXPORT bool isDescendantOf(const AbstractFrame* ancestor) const;
+    WEBCORE_EXPORT bool isDescendantOf(const Frame* ancestor) const;
     
-    WEBCORE_EXPORT AbstractFrame* traverseNext(const AbstractFrame* stayWithin = nullptr) const;
+    WEBCORE_EXPORT Frame* traverseNext(const Frame* stayWithin = nullptr) const;
+    Frame* traverseNextSkippingChildren(const Frame* stayWithin = nullptr) const;
     // Rendered means being the main frame or having an ownerRenderer. It may not have been parented in the Widget tree yet (see WidgetHierarchyUpdatesSuspensionScope).
-    WEBCORE_EXPORT AbstractFrame* traverseNextRendered(const AbstractFrame* stayWithin = nullptr) const;
-    WEBCORE_EXPORT AbstractFrame* traverseNext(CanWrap, DidWrap* = nullptr) const;
-    WEBCORE_EXPORT AbstractFrame* traversePrevious(CanWrap, DidWrap* = nullptr) const;
+    WEBCORE_EXPORT Frame* traverseNextRendered(const Frame* stayWithin = nullptr) const;
+    WEBCORE_EXPORT Frame* traverseNext(CanWrap, DidWrap* = nullptr) const;
+    WEBCORE_EXPORT Frame* traversePrevious(CanWrap, DidWrap* = nullptr) const;
 
-    AbstractFrame* traverseNextInPostOrder(CanWrap) const;
+    Frame* traverseNextInPostOrder(CanWrap) const;
 
-    WEBCORE_EXPORT void appendChild(AbstractFrame&);
+    WEBCORE_EXPORT void appendChild(Frame&);
     void detachFromParent() { m_parent = nullptr; }
-    WEBCORE_EXPORT void removeChild(AbstractFrame&);
+    WEBCORE_EXPORT void removeChild(Frame&);
 
-    AbstractFrame* child(unsigned index) const;
-    AbstractFrame* child(const AtomString& name) const;
-    WEBCORE_EXPORT AbstractFrame* find(const AtomString& name, AbstractFrame& activeFrame) const;
+    Frame* child(unsigned index) const;
+    Frame* child(const AtomString& name) const;
+    WEBCORE_EXPORT Frame* find(const AtomString& name, Frame& activeFrame) const;
     WEBCORE_EXPORT unsigned childCount() const;
     unsigned descendantCount() const;
-    WEBCORE_EXPORT AbstractFrame& top() const;
+    WEBCORE_EXPORT Frame& top() const;
     unsigned depth() const;
 
-    WEBCORE_EXPORT AbstractFrame* scopedChild(unsigned index) const;
-    WEBCORE_EXPORT AbstractFrame* scopedChild(const AtomString& name) const;
+    WEBCORE_EXPORT Frame* scopedChild(unsigned index) const;
+    WEBCORE_EXPORT Frame* scopedChild(const AtomString& name) const;
     unsigned scopedChildCount() const;
 
     void resetFrameIdentifiers() { m_frameIDGenerator = 0; }
 
 private:
-    AbstractFrame* deepFirstChild() const;
-    AbstractFrame* deepLastChild() const;
+    Frame* deepFirstChild() const;
+    Frame* deepLastChild() const;
+    Frame* nextAncestorSibling(const Frame* stayWithin) const;
 
     bool scopedBy(TreeScope*) const;
-    AbstractFrame* scopedChild(unsigned index, TreeScope*) const;
-    AbstractFrame* scopedChild(const AtomString& name, TreeScope*) const;
+    Frame* scopedChild(unsigned index, TreeScope*) const;
+    Frame* scopedChild(const AtomString& name, TreeScope*) const;
     unsigned scopedChildCount(TreeScope*) const;
 
     AtomString uniqueChildName(const AtomString& requestedName) const;
     AtomString generateUniqueName() const;
 
-    AbstractFrame& m_thisFrame;
+    Frame& m_thisFrame;
 
-    WeakPtr<AbstractFrame> m_parent;
+    WeakPtr<Frame> m_parent;
     AtomString m_name; // The actual frame name (may be empty).
     AtomString m_uniqueName;
 
-    RefPtr<AbstractFrame> m_nextSibling;
-    WeakPtr<AbstractFrame> m_previousSibling;
-    RefPtr<AbstractFrame> m_firstChild;
-    WeakPtr<AbstractFrame> m_lastChild;
+    RefPtr<Frame> m_nextSibling;
+    WeakPtr<Frame> m_previousSibling;
+    RefPtr<Frame> m_firstChild;
+    WeakPtr<Frame> m_lastChild;
     mutable unsigned m_scopedChildCount { invalidCount };
     mutable uint64_t m_frameIDGenerator { 0 };
 };
@@ -121,5 +123,5 @@ bool isTopTargetFrameName(StringView);
 
 #if ENABLE(TREE_DEBUGGING)
 // Outside the WebCore namespace for ease of invocation from the debugger.
-WEBCORE_EXPORT void showFrameTree(const WebCore::AbstractFrame*);
+WEBCORE_EXPORT void showFrameTree(const WebCore::Frame*);
 #endif

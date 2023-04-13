@@ -29,6 +29,7 @@
 #include "ExceptionCode.h"
 #include "ExceptionOr.h"
 #include "JSDOMPromise.h"
+#include "JSDOMPromiseDeferred.h"
 #include "JSWebLockManagerSnapshot.h"
 #include "NavigatorBase.h"
 #include "Page.h"
@@ -218,7 +219,7 @@ void WebLockManager::request(const String& name, Options&& options, Ref<WebLockG
         return;
     }
 
-    WebLockIdentifier lockIdentifier = WebLockIdentifier::generateThreadSafe();
+    WebLockIdentifier lockIdentifier = WebLockIdentifier::generate();
     m_releasePromises.add(lockIdentifier, WTFMove(releasePromise));
 
     if (options.signal) {

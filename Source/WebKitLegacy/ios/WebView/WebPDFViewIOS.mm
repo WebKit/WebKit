@@ -36,10 +36,10 @@
 #import <JavaScriptCore/JSContextRef.h>
 #import <JavaScriptCore/OpaqueJSString.h>
 #import <WebCore/Color.h>
-#import <WebCore/Frame.h>
 #import <WebCore/FrameLoader.h>
 #import <WebCore/FrameLoaderClient.h>
 #import <WebCore/GraphicsContext.h>
+#import <WebCore/LocalFrame.h>
 #import <WebCore/StringWithDirection.h>
 #import <WebCore/WKGraphics.h>
 #import <WebKitLegacy/WebFrame.h>

@@ -8,6 +8,14 @@
     ],
     "features": [
         {
+            "name": "append_aliased_memory_decorations_to_ssbo",
+            "category": "Workarounds",
+            "description": [
+                "Append aliased memory decoration to ssbo in SpirV if the ssbo in GLSL is not declared with restrict memory qualifier"
+            ],
+            "issue": "b/266235549"
+        },
+        {
             "name": "bresenham_line_rasterization",
             "category": "Features",
             "description": [
@@ -37,11 +45,19 @@
             "issue": "http://anglebug.com/2970"
         },
         {
-            "name": "depth_clamping",
-            "category": "Workarounds",
+            "name": "supports_depth_clip_enable",
+            "category": "Features",
             "description": [
-                "The depth value is not clamped to [0,1] for floating point depth buffers."
+                "VkDevice supports the VK_EXT_depth_clip_enable extension."
             ],
+            "issue": "http://anglebug.com/3970"
+        },
+        {
+             "name": "depth_clamping",
+             "category": "Workarounds",
+             "description": [
+                 "The depth value is not clamped to [0,1] for floating point depth buffers."
+             ],
             "issue": "http://anglebug.com/3970"
         },
         {
@@ -51,6 +67,13 @@
                 "Enable uploading the previously defined mutable mipmap texture."
             ],
             "issue": "https://anglebug.com/7308"
+        },
+        {
+            "name": "use_vma_for_image_suballocation",
+            "category": "Features",
+            "description": [
+                "Utilize VMA for image memory suballocation."
+            ]
         },
         {
             "name": "supports_memory_budget",
@@ -405,6 +428,14 @@
                 "Use CommandQueue worker thread to dispatch work to GPU."
             ],
             "issue": "http://anglebug.com/4324"
+        },
+        {
+            "name": "slow_async_command_queue_for_testing",
+            "category": "Workarounds",
+            "description": [
+                "Artificially slow down async command queue for threading testing"
+            ],
+            "issue": "https://anglebug.com/6574"
         },
         {
             "name": "supports_shader_float16",
@@ -856,6 +887,15 @@
             "issue": "https://bugs.fuchsia.dev/p/fuchsia/issues/detail?id=107106"
         },
         {
+            "name": "force_static_primitive_restart_state",
+            "category": "Workarounds",
+            "description": [
+                "Force static state for VK_DYNAMIC_STATE_PRIMITIVE_RESTART_ENABLE due to ",
+                "driver bugs"
+            ],
+            "issue": "https://issuetracker.google.com/275210062"
+        },
+        {
             "name": "supports_extended_dynamic_state",
             "category": "Features",
             "description": [
@@ -1091,7 +1131,7 @@
                 "VkDevice supports the VK_EXT_pipeline_protected_access extension"
             ],
             "issue": "https://anglebug.com/7714"
-	},
+        },
         {
             "name": "supports_mixed_read_write_depth_stencil_layouts",
             "category": "Features",
@@ -1099,7 +1139,7 @@
                 "VkDevice supports the mixed read and write depth/stencil layouts introduced by VK_KHR_maintenance2"
             ],
             "issue": "https://anglebug.com/7899"
-	},
+        },
         {
             "name": "supports_swapchain_maintenance1",
             "category": "Features",
@@ -1107,18 +1147,55 @@
                 "VkDevice supports the VK_EXT_surface_maintenance1 and VK_EXT_swapchain_maintenance1 extensions"
             ],
             "issue": "https://anglebug.com/7847"
-	},
-	{
+        },
+        {
+            "name": "supports_get_memory_requirements2",
+            "category": "Features",
+            "description": [
+                "VkDevice supports the VK_KHR_get_memory_requirements2 extension"
+            ],
+            "issue": "https://anglebug.com/4830"
+        },
+        {
+            "name": "supports_bind_memory2",
+            "category": "Features",
+            "description": [
+                "VkDevice supports the VK_KHR_bind_memory2 extension"
+            ],
+            "issue": "https://anglebug.com/4966"
+        },
+        {
+            "name": "supports_sampler_mirror_clamp_to_edge",
+            "category": "Features",
+            "description": [
+                "VkDevice supports the VK_KHR_sampler_mirror_clamp_to_edge extension"
+            ]
+        },
+        {
             "name": "prefer_submit_on_any_samples_passed_query_end",
             "category": "Workarounds",
             "description":["Submit commands to driver when last GL_ANY_SAMPLES_PASSED query is made for performance improvements."],
             "issue": "https://issuetracker.google.com/250706693"
         },
-	{
+        {
             "name": "force_wait_for_submission_to_complete_for_query_result",
             "category": "Workarounds",
             "description":["Force wait for submission to complete before calling getQueryResult(wait)."],
             "issue": "https://issuetracker.google.com/253522366"
+        },
+        {
+            "name": "async_command_buffer_reset",
+            "category": "Features",
+            "description":["Reset command buffer in async thread."],
+            "issue": "https://issuetracker.google.com/255411748"
+        },
+        {
+            "name": "use_reset_command_buffer_bit_for_secondary_pools",
+            "category": "Workarounds",
+            "description": [
+                "Use VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT for initializing ",
+                "SecondaryCommandPools when using VulkanSecondaryCommandBuffer. "
+            ]
         }
     ]
 }

@@ -35,7 +35,7 @@ namespace WebCore {
 class LocalCurrentGraphicsContext {
     WTF_MAKE_NONCOPYABLE(LocalCurrentGraphicsContext);
 public:
-    WEBCORE_EXPORT LocalCurrentGraphicsContext(GraphicsContext&);
+    WEBCORE_EXPORT LocalCurrentGraphicsContext(GraphicsContext&, bool isFlipped = true);
     WEBCORE_EXPORT ~LocalCurrentGraphicsContext();
     CGContextRef cgContext() { return m_savedGraphicsContext.platformContext(); }
 private:

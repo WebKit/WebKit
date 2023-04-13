@@ -28,25 +28,10 @@
 #include "stdafx.h"
 #include "MainWindow.h"
 
-enum class BrowserWindowType {
-    WebKit,
-    WebKitLegacy
-};
-
 struct CommandLineOptions {
     bool usesLayeredWebView { };
     bool useFullDesktop { };
-    BrowserWindowType windowType;
     _bstr_t requestedURL;
-
-    CommandLineOptions()
-#if ENABLE(WEBKIT)
-        : windowType(BrowserWindowType::WebKit)
-#else
-        : windowType(BrowserWindowType::WebKitLegacy)
-#endif
-    {
-    }
 };
 
 struct Credential {

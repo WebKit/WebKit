@@ -31,6 +31,7 @@
 #import "DrawingArea.h"
 #import "InteractionInformationAtPosition.h"
 #import "InteractionInformationRequest.h"
+#import "MessageSenderInlines.h"
 #import "UIKitSPI.h"
 #import "WebCoreArgumentCoders.h"
 #import "WebFrame.h"
@@ -52,9 +53,10 @@ using namespace WebCore;
 
 void WebChromeClient::didPreventDefaultForEvent()
 {
-    if (!m_page.mainFrame())
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page.mainFrame());
+    if (!localMainFrame)
         return;
-    ContentChangeObserver::didPreventDefaultForEvent(*m_page.mainFrame());
+    ContentChangeObserver::didPreventDefaultForEvent(*localMainFrame);
 }
 
 #endif
@@ -64,17 +66,17 @@ void WebChromeClient::didReceiveMobileDocType(bool isMobileDoctype)
     m_page.didReceiveMobileDocType(isMobileDoctype);
 }
 
-void WebChromeClient::setNeedsScrollNotifications(WebCore::Frame&, bool)
+void WebChromeClient::setNeedsScrollNotifications(WebCore::LocalFrame&, bool)
 {
     notImplemented();
 }
 
-void WebChromeClient::didFinishContentChangeObserving(WebCore::Frame&, WKContentChange observedContentChange)
+void WebChromeClient::didFinishContentChangeObserving(WebCore::LocalFrame&, WKContentChange observedContentChange)
 {
     m_page.didFinishContentChangeObserving(observedContentChange);
 }
 
-void WebChromeClient::notifyRevealedSelectionByScrollingFrame(WebCore::Frame&)
+void WebChromeClient::notifyRevealedSelectionByScrollingFrame(WebCore::LocalFrame&)
 {
     m_page.didScrollSelection();
 }
@@ -144,7 +146,7 @@ Seconds WebChromeClient::eventThrottlingDelay()
 }
 
 #if ENABLE(ORIENTATION_EVENTS)
-int WebChromeClient::deviceOrientation() const
+IntDegrees WebChromeClient::deviceOrientation() const
 {
     return m_page.deviceOrientation();
 }

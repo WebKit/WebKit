@@ -1,4 +1,4 @@
-# Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+# Copyright (C) 2021-2023 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -39,6 +39,7 @@ class TestGitHub(unittest.TestCase):
             )), dict(
                 type='github',
                 url='https://github.example.com/WebKit/WebKit',
+                hide_title=False,
                 res=['\\Aexample.com/b/(?P<id>\\d+)\\Z']
             ),
         )
@@ -397,6 +398,21 @@ class TestGitHub(unittest.TestCase):
                 github.Tracker.Redaction(True, "matches 'version:Other'"),
             )
 
+    def test_redaction_exception(self):
+        with mocks.GitHub(self.URL.split('://')[1], issues=mocks.ISSUES, projects=mocks.PROJECTS):
+            self.assertEqual(github.Tracker(
+                self.URL,
+                redact={'.*': True},
+                redact_exemption={'component:Text': True},
+            ).issue(1).redacted, github.Tracker.Redaction(
+                exemption=True, reason="matches 'component:Text'",
+            ))
+            self.assertEqual(github.Tracker(
+                self.URL,
+                redact={'.*': True},
+                redact_exemption={'component:Scrolling': True},
+            ).issue(1).redacted, github.Tracker.Redaction(True, 'is a GitHub Issue'))
+
     def test_parse_error(self):
         error_json = {'message': 'Validation Failed', 'errors': [{'resource': 'Issue', 'code': 'custom', 'field': 'body', 'message': 'body is too long (maximum is 65536 characters)'}], 'documentation_url': 'https://docs.github.com/rest/reference/pulls#create-a-pull-request'}
         with mocks.GitHub(self.URL.split('://')[1], issues=mocks.ISSUES):
@@ -414,3 +430,8 @@ Documentation URL: https://docs.github.com/rest/reference/pulls#create-a-pull-re
         with mocks.GitHub(self.URL.split('://')[1], issues=mocks.ISSUES):
             tracker = github.Tracker(self.URL)
             self.assertEqual(tracker.issue(1).milestone, 'October')
+
+    def test_classification(self):
+        with mocks.GitHub(self.URL.split('://')[1], issues=mocks.ISSUES):
+            tracker = github.Tracker(self.URL)
+            self.assertEqual(tracker.issue(1).classification, '')

@@ -27,6 +27,7 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "BackgroundFetchFailureReason.h"
 #include "ExceptionData.h"
 #include "NotificationEventType.h"
 #include "PageIdentifier.h"
@@ -40,6 +41,7 @@
 
 namespace WebCore {
 
+struct BackgroundFetchInformation;
 struct NotificationData;
 class SWServer;
 struct ServiceWorkerClientData;
@@ -69,6 +71,8 @@ public:
     virtual void matchAllCompleted(uint64_t requestIdentifier, const Vector<ServiceWorkerClientData>&) = 0;
     virtual void firePushEvent(ServiceWorkerIdentifier, const std::optional<Vector<uint8_t>>&, CompletionHandler<void(bool)>&&) = 0;
     virtual void fireNotificationEvent(ServiceWorkerIdentifier, const NotificationData&, NotificationEventType, CompletionHandler<void(bool)>&&) = 0;
+    virtual void fireBackgroundFetchEvent(ServiceWorkerIdentifier, const BackgroundFetchInformation&, CompletionHandler<void(bool)>&&) = 0;
+    virtual void fireBackgroundFetchClickEvent(ServiceWorkerIdentifier, const BackgroundFetchInformation&, CompletionHandler<void(bool)>&&) = 0;
     virtual ProcessIdentifier webProcessIdentifier() const = 0;
 
     // Messages back from the SW host process

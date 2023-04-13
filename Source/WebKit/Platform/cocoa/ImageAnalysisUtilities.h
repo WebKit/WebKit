@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(IMAGE_ANALYSIS)
+#if ENABLE(IMAGE_ANALYSIS) || HAVE(VISION)
 
 #import <pal/spi/cocoa/VisionKitCoreSPI.h>
 #import <wtf/CompletionHandler.h>
@@ -37,7 +37,7 @@ OBJC_CLASS NSData;
 using CocoaImageAnalysis = VKCImageAnalysis;
 using CocoaImageAnalyzer = VKCImageAnalyzer;
 using CocoaImageAnalyzerRequest = VKCImageAnalyzerRequest;
-#else
+#elif ENABLE(IMAGE_ANALYSIS)
 using CocoaImageAnalysis = VKImageAnalysis;
 using CocoaImageAnalyzer = VKImageAnalyzer;
 using CocoaImageAnalyzerRequest = VKImageAnalyzerRequest;
@@ -48,6 +48,8 @@ struct TextRecognitionResult;
 }
 
 namespace WebKit {
+
+#if ENABLE(IMAGE_ANALYSIS)
 
 bool isLiveTextAvailableAndEnabled();
 bool languageIdentifierSupportsLiveText(NSString *);
@@ -61,6 +63,23 @@ RetainPtr<CocoaImageAnalyzerRequest> createImageAnalyzerRequest(CGImageRef, VKAn
 void requestVisualTranslation(CocoaImageAnalyzer *, NSURL *, const String& source, const String& target, CGImageRef, CompletionHandler<void(WebCore::TextRecognitionResult&&)>&&);
 void requestBackgroundRemoval(CGImageRef, CompletionHandler<void(CGImageRef)>&&);
 
+constexpr VKAnalysisTypes analysisTypesForElementFullscreenVideo()
+{
+    return VKAnalysisTypeText
+#if ENABLE(IMAGE_ANALYSIS_FOR_MACHINE_READABLE_CODES)
+        | VKAnalysisTypeMachineReadableCode
+#endif
+#if HAVE(VK_IMAGE_ANALYSIS_TYPE_IMAGE_SEGMENTATION)
+        | VKAnalysisTypeImageSegmentation
+#endif
+        | VKAnalysisTypeAppClip;
+}
+
+constexpr VKAnalysisTypes analysisTypesForFullscreenVideo()
+{
+    return analysisTypesForElementFullscreenVideo() | VKAnalysisTypeVisualSearch;
+}
+
 std::pair<RetainPtr<NSData>, RetainPtr<CFStringRef>> imageDataForRemoveBackground(CGImageRef, const String& sourceMIMEType);
 
 #if PLATFORM(IOS_FAMILY)
@@ -68,9 +87,15 @@ using PlatformImageAnalysisObject = VKCImageAnalysisInteraction;
 #else
 using PlatformImageAnalysisObject = VKCImageAnalysisOverlayView;
 #endif
-void setUpAdditionalImageAnalysisBehaviors(PlatformImageAnalysisObject *);
+void prepareImageAnalysisForOverlayView(PlatformImageAnalysisObject *);
 #endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+
+#endif // ENABLE(IMAGE_ANALYSIS)
+
+#if HAVE(VISION)
+void requestPayloadForQRCode(CGImageRef, CompletionHandler<void(NSString *)>&&);
+#endif
 
 }
 
-#endif // ENABLE(IMAGE_ANALYSIS)
+#endif // ENABLE(IMAGE_ANALYSIS) || HAVE(VISION)

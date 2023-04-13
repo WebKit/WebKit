@@ -52,8 +52,13 @@ struct InlineCallFrame {
         // For these, the stackOffset incorporates the argument count plus the true return PC
         // slot.
         GetterCall,
-        SetterCall
+        SetterCall,
+        ProxyObjectLoadCall,
+        ProxyObjectStoreCall,
+        BoundFunctionCall,
+        BoundFunctionTailCall,
     };
+    static constexpr unsigned bitWidthOfKind = 4;
 
     static CallMode callModeFor(Kind kind)
     {
@@ -62,9 +67,13 @@ struct InlineCallFrame {
         case CallVarargs:
         case GetterCall:
         case SetterCall:
+        case ProxyObjectLoadCall:
+        case ProxyObjectStoreCall:
+        case BoundFunctionCall:
             return CallMode::Regular;
         case TailCall:
         case TailCallVarargs:
+        case BoundFunctionTailCall:
             return CallMode::Tail;
         case Construct:
         case ConstructVarargs:
@@ -108,6 +117,10 @@ struct InlineCallFrame {
         case TailCallVarargs:
         case GetterCall:
         case SetterCall:
+        case ProxyObjectLoadCall:
+        case ProxyObjectStoreCall:
+        case BoundFunctionCall:
+        case BoundFunctionTailCall:
             return CodeForCall;
         case Construct:
         case ConstructVarargs:
@@ -133,6 +146,7 @@ struct InlineCallFrame {
         switch (kind) {
         case TailCall:
         case TailCallVarargs:
+        case BoundFunctionTailCall:
             return true;
         default:
             return false;
@@ -179,11 +193,11 @@ struct InlineCallFrame {
     WriteBarrier<CodeBlock> baselineCodeBlock;
     CodeOrigin directCaller;
 
-    unsigned argumentCountIncludingThis : 22; // Do not include fixups.
-    unsigned tmpOffset : 10;
-    signed stackOffset : 28;
-    unsigned kind : 3; // real type is Kind
-    bool isClosureCall : 1; // If false then we know that callee/scope are constants and the DFG won't treat them as variables, i.e. they have to be recovered manually.
+    unsigned argumentCountIncludingThis : 22 { 0 }; // Do not include fixups.
+    unsigned tmpOffset : 10 { 0 };
+    signed stackOffset : 28 { 0 };
+    unsigned kind : bitWidthOfKind { Call }; // real type is Kind
+    bool isClosureCall : 1 { false }; // If false then we know that callee/scope are constants and the DFG won't treat them as variables, i.e. they have to be recovered manually.
     VirtualRegister argumentCountRegister; // Only set when we inline a varargs call.
 
     ValueRecovery calleeRecovery;
@@ -191,14 +205,7 @@ struct InlineCallFrame {
     // There is really no good notion of a "default" set of values for
     // InlineCallFrame's fields. This constructor is here just to reduce confusion if
     // we forgot to initialize explicitly.
-    InlineCallFrame()
-        : argumentCountIncludingThis(0)
-        , tmpOffset(0)
-        , stackOffset(0)
-        , kind(Call)
-        , isClosureCall(false)
-    {
-    }
+    InlineCallFrame() = default;
     
     bool isVarargs() const
     {

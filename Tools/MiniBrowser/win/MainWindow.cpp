@@ -28,19 +28,8 @@
 
 #include "Common.h"
 #include "MiniBrowserLibResource.h"
-#include <sstream>
-
-#if USE(CF)
-#include <CoreFoundation/CoreFoundation.h>
-#endif
-
-#if ENABLE(WEBKIT)
 #include "WebKitBrowserWindow.h"
-#endif
-
-#if ENABLE(WEBKIT_LEGACY)
-#include "WebKitLegacyBrowserWindow.h"
-#endif
+#include <sstream>
 
 namespace WebCore {
 float deviceScaleFactorForWindow(HWND);
@@ -217,13 +206,6 @@ bool MainWindow::init(BrowserWindowFactory factory, HINSTANCE hInstance, bool us
     if (!m_hMainWnd)
         return false;
 
-#if !ENABLE(WEBKIT)
-    EnableMenuItem(GetMenu(m_hMainWnd), IDM_NEW_WEBKIT_WINDOW, MF_GRAYED);
-#endif
-#if !ENABLE(WEBKIT_LEGACY)
-    EnableMenuItem(GetMenu(m_hMainWnd), IDM_NEW_WEBKITLEGACY_WINDOW, MF_GRAYED);
-#endif
-
     createToolbar(hInstance);
     if (!m_hToolbarWnd)
         return false;
@@ -319,22 +301,12 @@ LRESULT CALLBACK MainWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
         case IDC_URL_BAR:
             thisWindow->onURLBarEnter();
             break;
-#if ENABLE(WEBKIT)
         case IDM_NEW_WEBKIT_WINDOW: {
             auto& newWindow = MainWindow::create().leakRef();
             newWindow.init(WebKitBrowserWindow::create, hInst);
             ShowWindow(newWindow.hwnd(), SW_SHOW);
             break;
         }
-#endif
-#if ENABLE(WEBKIT_LEGACY)
-        case IDM_NEW_WEBKITLEGACY_WINDOW: {
-            auto& newWindow = MainWindow::create().leakRef();
-            newWindow.init(WebKitLegacyBrowserWindow::create, hInst);
-            ShowWindow(newWindow.hwnd(), SW_SHOW);
-            break;
-        }
-#endif
         case IDM_CLOSE_WINDOW:
             PostMessage(hWnd, WM_CLOSE, 0, 0);
             break;
@@ -410,9 +382,6 @@ LRESULT CALLBACK MainWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
         thisWindow->deref();
         if (s_numInstances > 1)
             return 0;
-#if USE(CF)
-        CFRunLoopStop(CFRunLoopGetMain());
-#endif
         PostQuitMessage(0);
         break;
     case WM_SIZE:

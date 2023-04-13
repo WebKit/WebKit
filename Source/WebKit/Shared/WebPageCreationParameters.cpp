@@ -88,7 +88,8 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
 #if PLATFORM(MAC)
     encoder << colorSpace;
     encoder << useSystemAppearance;
-    encoder << useFormSemanticContext;
+    encoder << headerBannerHeight;
+    encoder << footerBannerHeight;
 #endif
 
 #if ENABLE(META_VIEWPORT)
@@ -199,10 +200,11 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
 #endif
 
     encoder << contentSecurityPolicyModeForExtension;
-    encoder << mainFrameIdentifier;
+    encoder << subframeProcessFrameTreeInitializationParameters;
 
 #if ENABLE(NETWORK_CONNECTION_INTEGRITY)
     encoder << lookalikeCharacterStrings;
+    encoder << allowedLookalikeCharacterStrings;
 #endif
 
 #if HAVE(MACH_BOOTSTRAP_EXTENSION)
@@ -362,6 +364,10 @@ std::optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::
     if (!decoder.decode(parameters.useSystemAppearance))
         return std::nullopt;
     if (!decoder.decode(parameters.useFormSemanticContext))
+        return std::nullopt;
+    if (!decoder.decode(parameters.headerBannerHeight))
+        return std::nullopt;
+    if (!decoder.decode(parameters.footerBannerHeight))
         return std::nullopt;
 #endif
 
@@ -640,15 +646,21 @@ std::optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::
     if (!decoder.decode(parameters.contentSecurityPolicyModeForExtension))
         return std::nullopt;
 
-    if (!decoder.decode(parameters.mainFrameIdentifier))
+    if (!decoder.decode(parameters.subframeProcessFrameTreeInitializationParameters))
         return std::nullopt;
 
 #if ENABLE(NETWORK_CONNECTION_INTEGRITY)
-    std::optional<Vector<String>> lookalikeCharacterStrings;
+    std::optional<Vector<WebCore::LookalikeCharactersSanitizationData>> lookalikeCharacterStrings;
     decoder >> lookalikeCharacterStrings;
     if (!lookalikeCharacterStrings)
         return std::nullopt;
     parameters.lookalikeCharacterStrings = WTFMove(*lookalikeCharacterStrings);
+
+    std::optional<Vector<WebCore::LookalikeCharactersSanitizationData>> allowedLookalikeCharacterStrings;
+    decoder >> allowedLookalikeCharacterStrings;
+    if (!allowedLookalikeCharacterStrings)
+        return std::nullopt;
+    parameters.allowedLookalikeCharacterStrings = WTFMove(*allowedLookalikeCharacterStrings);
 #endif
 
 #if HAVE(MACH_BOOTSTRAP_EXTENSION)
@@ -660,6 +672,34 @@ std::optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::
 #endif
 
     return { WTFMove(parameters) };
+}
+
+void WebPageCreationParameters::SubframeProcessFrameTreeInitializationParameters::encode(IPC::Encoder& encoder) const
+{
+    encoder << localFrameIdentifier;
+    encoder << treeCreationParameters;
+    encoder << layerHostingContextIdentifier;
+}
+
+auto WebPageCreationParameters::SubframeProcessFrameTreeInitializationParameters::decode(IPC::Decoder& decoder) -> std::optional<SubframeProcessFrameTreeInitializationParameters>
+{
+    auto localFrameIdentifier = decoder.decode<WebCore::FrameIdentifier>();
+    if (!localFrameIdentifier)
+        return std::nullopt;
+
+    auto treeCreationParameters = decoder.decode<FrameTreeCreationParameters>();
+    if (!treeCreationParameters)
+        return std::nullopt;
+
+    auto layerHostingContextIdentifier = decoder.decode<WebCore::LayerHostingContextIdentifier>();
+    if (!layerHostingContextIdentifier)
+        return std::nullopt;
+
+    return { {
+        WTFMove(*localFrameIdentifier),
+        WTFMove(*treeCreationParameters),
+        WTFMove(*layerHostingContextIdentifier)
+    } };
 }
 
 } // namespace WebKit

@@ -1,9 +1,0 @@
-layer at (0,0) size 800x600
-  RenderView at (0,0) size 800x600
-layer at (0,0) size 800x600
-  RenderBlock {HTML} at (0,0) size 800x600
-    RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 186x92 [border: (3px solid #0000FF)]
-        RenderText {#text} at (3,5) size 180x83
-          text run at (3,5) width 180: "\x{D834}\x{DD10}\x{D834}\x{DD10}\x{D834}\x{DD10}\x{D834}\x{DD10}\x{D834}\x{DD10}\x{D834}\x{DD10}\x{D834}\x{DD10}\x{D834}\x{DD10}\x{D834}\x{DD10}"
-          text run at (3,48) width 20: "\x{D834}\x{DD10}"

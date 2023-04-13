@@ -26,6 +26,8 @@
 #include "config.h"
 #include "WasmIndexOrName.h"
 
+#include <wtf/text/StringConcatenateNumbers.h>
+
 namespace JSC { namespace Wasm {
 
 IndexOrName::IndexOrName(Index index, std::pair<const Name*, RefPtr<NameSection>>&& name)
@@ -56,8 +58,8 @@ String makeString(const IndexOrName& ion)
         return "wasm-stub"_s;
     const String moduleName = ion.nameSection()->moduleName.size() ? String(ion.nameSection()->moduleName.data(), ion.nameSection()->moduleName.size()) : String(ion.nameSection()->moduleHash.data(), ion.nameSection()->moduleHash.size());
     if (ion.isIndex())
-        return makeString(moduleName, ".wasm-function[", String::number(ion.index()), ']');
-    return makeString(moduleName, ".wasm-function[", String(ion.name()->data(), ion.name()->size()), ']');
+        return makeString(moduleName, ".wasm-function["_s, ion.index(), ']');
+    return makeString(moduleName, ".wasm-function["_s, StringView(ion.name()->data(), ion.name()->size()), ']');
 }
 
 } } // namespace JSC::Wasm

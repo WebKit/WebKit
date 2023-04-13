@@ -28,6 +28,7 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "ClientOrigin.h"
 #include "RegistrableDomain.h"
 #include "SecurityOrigin.h"
 #include <wtf/URLHash.h>
@@ -85,16 +86,16 @@ bool ServiceWorkerRegistrationKey::relatesToOrigin(const SecurityOriginData& sec
 
 RegistrableDomain ServiceWorkerRegistrationKey::firstPartyForCookies() const
 {
-    return RegistrableDomain::uncheckedCreateFromHost(m_topOrigin.host);
+    return RegistrableDomain::uncheckedCreateFromHost(m_topOrigin.host());
 }
 
 static const char separatorCharacter = '_';
 
 String ServiceWorkerRegistrationKey::toDatabaseKey() const
 {
-    if (m_topOrigin.port)
-        return makeString(m_topOrigin.protocol, separatorCharacter, m_topOrigin.host, separatorCharacter, String::number(m_topOrigin.port.value()), separatorCharacter, m_scope.string());
-    return makeString(m_topOrigin.protocol, separatorCharacter, m_topOrigin.host, separatorCharacter, separatorCharacter, m_scope.string());
+    if (m_topOrigin.port())
+        return makeString(m_topOrigin.protocol(), separatorCharacter, m_topOrigin.host(), separatorCharacter, String::number(m_topOrigin.port().value()), separatorCharacter, m_scope.string());
+    return makeString(m_topOrigin.protocol(), separatorCharacter, m_topOrigin.host(), separatorCharacter, separatorCharacter, m_scope.string());
 }
 
 std::optional<ServiceWorkerRegistrationKey> ServiceWorkerRegistrationKey::fromDatabaseKey(const String& key)
@@ -133,6 +134,11 @@ std::optional<ServiceWorkerRegistrationKey> ServiceWorkerRegistrationKey::fromDa
 
     SecurityOriginData topOrigin { scheme.toString(), host.toString(), shortPort };
     return ServiceWorkerRegistrationKey { WTFMove(topOrigin), WTFMove(scope) };
+}
+
+ClientOrigin ServiceWorkerRegistrationKey::clientOrigin() const
+{
+    return ClientOrigin { m_topOrigin, SecurityOriginData::fromURL(m_scope) };
 }
 
 #if !LOG_DISABLED

@@ -1,0 +1,91 @@
+CONSOLE MESSAGE: Origin http://localhost:8800 is not allowed by Access-Control-Allow-Origin. Status code: 200
+CONSOLE MESSAGE: Origin http://localhost:8800 is not allowed by Access-Control-Allow-Origin. Status code: 200
+CONSOLE MESSAGE: Origin http://localhost:8800 is not allowed by Access-Control-Allow-Origin. Status code: 200
+CONSOLE MESSAGE: Cannot load stylesheet http://localhost:8800/subresource-integrity/style.css?fc19159b-2e7a-4cf1-890f-065bacee442e. Failed integrity metadata check. Content length: 37, Expected content length: -1, Expected metadata: sha256-deadbeefQ15RYHFvsYdWumweeFAw0hJDTFt9seErghA=
+CONSOLE MESSAGE: Cannot load stylesheet http://localhost:8800/subresource-integrity/style.css?abacbcfa-642c-49d1-818f-bd827ee2d66a. Failed integrity metadata check. Content length: 37, Expected content length: -1, Expected metadata: sha256-deadbeefQ15RYHFvsYdWumweeFAw0hJDTFt9seErghA=
+CONSOLE MESSAGE: Cannot load stylesheet http://localhost:8800/subresource-integrity/style.css?a3b7d9c2-deca-40a7-b4fd-a80b0419bd49. Failed integrity metadata check. Content length: 37, Expected content length: -1, Expected metadata: sha256-sha256-deadbeefdeadbeefdeadbeefdeadbeefdeadbeefdead
+CONSOLE MESSAGE: Cannot load image http://127.0.0.1:8800/subresource-integrity/image.png?f8db01e4-563d-4ba6-8e0c-25ee6081669d due to access control checks.
+CONSOLE MESSAGE: Cannot load image http://127.0.0.1:8800/subresource-integrity/image.png?f8db01e4-563d-4ba6-8e0c-25ee6081669d due to access control checks.
+CONSOLE MESSAGE: Cross-origin script load denied by Cross-Origin Resource Sharing policy.
+CONSOLE MESSAGE: Cannot load script http://localhost:8800/subresource-integrity/script.js?0901b943-bf02-4237-a87a-f0714391bcce. Failed integrity metadata check. Content length: 22, Expected content length: -1, Expected metadata: sha256-deadbeefQ15RYHFvsYdWumweeFAw0hJDTFt9seErghA=
+CONSOLE MESSAGE: Cannot load script http://localhost:8800/subresource-integrity/script.js?3d34bad2-370f-455f-89d8-4a13f20ca7b0. Failed integrity metadata check. Content length: 22, Expected content length: -1, Expected metadata: sha256-deadbeefQ15RYHFvsYdWumweeFAw0hJDTFt9seErghA=
+CONSOLE MESSAGE: Cannot load script http://localhost:8800/subresource-integrity/script.js?59782209-8edd-4371-9c8c-519e71e93a94. Failed integrity metadata check. Content length: 22, Expected content length: -1, Expected metadata: sha256-sha256-deadbeefdeadbeefdeadbeefdeadbeefdeadbeefdead
+
+PASS Same-origin script with correct sha256 hash.
+PASS Same-origin script with correct sha384 hash.
+PASS Same-origin script with correct sha512 hash.
+PASS Same-origin script with empty integrity.
+FAIL Same-origin script with incorrect hash. assert_unreached: Invalid preload load succeeded. Reached unreachable code
+PASS Same-origin script with multiple sha256 hashes, including correct.
+PASS Same-origin script with multiple sha256 hashes, including unknown algorithm.
+PASS Same-origin script with sha256 mismatch, sha512 match
+FAIL Same-origin script with sha256 match, sha512 mismatch assert_unreached: Invalid preload load succeeded. Reached unreachable code
+PASS <crossorigin='anonymous'> script with correct hash, ACAO: *
+FAIL <crossorigin='anonymous'> script with incorrect hash, ACAO: * assert_unreached: Invalid preload load succeeded. Reached unreachable code
+PASS <crossorigin='use-credentials'> script with correct hash, CORS-eligible
+FAIL <crossorigin='use-credentials'> script with incorrect hash CORS-eligible assert_unreached: Invalid preload load succeeded. Reached unreachable code
+FAIL <crossorigin='anonymous'> script with CORS-ineligible resource assert_equals: http://127.0.0.1:8800/subresource-integrity/script.js?f173178c-d840-4282-beac-800e24ec0da5 expected 1 but got 0
+FAIL Cross-origin script, not CORS request, with correct hash assert_unreached: Invalid preload load succeeded. Reached unreachable code
+FAIL Cross-origin script, not CORS request, with hash mismatch assert_unreached: Invalid preload load succeeded. Reached unreachable code
+PASS Cross-origin script, empty integrity
+PASS Same-origin script with correct hash, options.
+PASS Same-origin script with unknown algorithm only.
+PASS Same-origin script with matching digest re-uses preload with matching digest.
+PASS Same-origin script with matching digest re-uses preload with matching digest and options.
+FAIL Same-origin script with non-matching digest does not re-use preload with matching digest. assert_equals: /subresource-integrity/script.js?0901b943-bf02-4237-a87a-f0714391bcce expected 2 but got 1
+FAIL Same-origin script with matching digest does not re-use preload with non-matching digest. assert_unreached: Invalid preload load succeeded. Reached unreachable code
+FAIL Same-origin script with non-matching digest does not re-use preload with non-matching digest. assert_unreached: Invalid preload load succeeded. Reached unreachable code
+FAIL Same-origin script with matching digest does not reuse preload without digest. assert_equals: /subresource-integrity/script.js?5a252266-755c-43bd-b7b7-ce7a31075373 expected 2 but got 1
+FAIL Same-origin script with matching digest does not reuse preload with matching but stronger digest. assert_equals: /subresource-integrity/script.js?bed78d92-f30b-49c5-80d2-86988be45052 expected 2 but got 1
+FAIL Same-origin script with wrong digest does not reuse preload with correct and stronger digest. assert_equals: /subresource-integrity/script.js?3d34bad2-370f-455f-89d8-4a13f20ca7b0 expected 2 but got 1
+FAIL Same-origin script with matching digest does not reuse preload with matching but weaker digest. assert_equals: /subresource-integrity/script.js?5045566f-fc64-4db3-99c9-1ebdb737c9f3 expected 2 but got 1
+FAIL Same-origin script with non-matching digest reuses preload with no digest but fails. assert_equals: /subresource-integrity/script.js?59782209-8edd-4371-9c8c-519e71e93a94 expected 2 but got 1
+PASS Same-origin style with correct sha256 hash.
+PASS Same-origin style with correct sha384 hash.
+PASS Same-origin style with correct sha512 hash.
+PASS Same-origin style with empty integrity.
+FAIL Same-origin style with incorrect hash. assert_unreached: Invalid preload load succeeded. Reached unreachable code
+PASS Same-origin style with multiple sha256 hashes, including correct.
+PASS Same-origin style with multiple sha256 hashes, including unknown algorithm.
+PASS Same-origin style with sha256 mismatch, sha512 match
+FAIL Same-origin style with sha256 match, sha512 mismatch assert_unreached: Invalid preload load succeeded. Reached unreachable code
+PASS <crossorigin='anonymous'> style with correct hash, ACAO: *
+FAIL <crossorigin='anonymous'> style with incorrect hash, ACAO: * assert_unreached: Invalid preload load succeeded. Reached unreachable code
+PASS <crossorigin='use-credentials'> style with correct hash, CORS-eligible
+FAIL <crossorigin='use-credentials'> style with incorrect hash CORS-eligible assert_unreached: Invalid preload load succeeded. Reached unreachable code
+FAIL <crossorigin='anonymous'> style with CORS-ineligible resource assert_equals: http://127.0.0.1:8800/subresource-integrity/style.css?03208316-647c-4225-b1dc-42a842c0cd41 expected 1 but got 0
+FAIL Cross-origin style, not CORS request, with correct hash assert_unreached: Invalid preload load succeeded. Reached unreachable code
+FAIL Cross-origin style, not CORS request, with hash mismatch assert_unreached: Invalid preload load succeeded. Reached unreachable code
+PASS Cross-origin style, empty integrity
+PASS Same-origin style with correct hash, options.
+PASS Same-origin style with unknown algorithm only.
+PASS Same-origin style with matching digest re-uses preload with matching digest.
+PASS Same-origin style with matching digest re-uses preload with matching digest and options.
+FAIL Same-origin style with non-matching digest does not re-use preload with matching digest. assert_equals: /subresource-integrity/style.css?fc19159b-2e7a-4cf1-890f-065bacee442e expected 2 but got 1
+FAIL Same-origin style with matching digest does not re-use preload with non-matching digest. assert_unreached: Invalid preload load succeeded. Reached unreachable code
+FAIL Same-origin style with non-matching digest does not re-use preload with non-matching digest. assert_unreached: Invalid preload load succeeded. Reached unreachable code
+FAIL Same-origin style with matching digest does not reuse preload without digest. assert_equals: /subresource-integrity/style.css?dd9d71f1-61e4-411f-a554-aedfc7c74557 expected 2 but got 1
+FAIL Same-origin style with matching digest does not reuse preload with matching but stronger digest. assert_equals: /subresource-integrity/style.css?0a15e519-0dd3-4987-939b-b208003f5538 expected 2 but got 1
+FAIL Same-origin style with wrong digest does not reuse preload with correct and stronger digest. assert_equals: /subresource-integrity/style.css?abacbcfa-642c-49d1-818f-bd827ee2d66a expected 2 but got 1
+FAIL Same-origin style with matching digest does not reuse preload with matching but weaker digest. assert_equals: /subresource-integrity/style.css?1465a567-9708-4f77-ab7c-215ce3e42247 expected 2 but got 1
+FAIL Same-origin style with non-matching digest reuses preload with no digest but fails. assert_equals: /subresource-integrity/style.css?a3b7d9c2-deca-40a7-b4fd-a80b0419bd49 expected 2 but got 1
+PASS Same-origin image with correct sha256 hash.
+PASS Same-origin image with correct sha384 hash.
+PASS Same-origin image with correct sha512 hash.
+PASS Same-origin image with empty integrity.
+FAIL Same-origin image with incorrect hash. assert_unreached: Invalid preload load succeeded. Reached unreachable code
+PASS Same-origin image with multiple sha256 hashes, including correct.
+PASS Same-origin image with multiple sha256 hashes, including unknown algorithm.
+PASS Same-origin image with sha256 mismatch, sha512 match
+FAIL Same-origin image with sha256 match, sha512 mismatch assert_unreached: Invalid preload load succeeded. Reached unreachable code
+PASS <crossorigin='anonymous'> image with correct hash, ACAO: *
+FAIL <crossorigin='anonymous'> image with incorrect hash, ACAO: * assert_unreached: Invalid preload load succeeded. Reached unreachable code
+PASS <crossorigin='use-credentials'> image with correct hash, CORS-eligible
+FAIL <crossorigin='use-credentials'> image with incorrect hash CORS-eligible assert_unreached: Invalid preload load succeeded. Reached unreachable code
+FAIL <crossorigin='anonymous'> image with CORS-ineligible resource assert_equals: http://127.0.0.1:8800/subresource-integrity/image.png?f8db01e4-563d-4ba6-8e0c-25ee6081669d expected 1 but got 0
+FAIL Cross-origin image, not CORS request, with correct hash assert_unreached: Invalid preload load succeeded. Reached unreachable code
+FAIL Cross-origin image, not CORS request, with hash mismatch assert_unreached: Invalid preload load succeeded. Reached unreachable code
+PASS Cross-origin image, empty integrity
+PASS Same-origin image with correct hash, options.
+PASS Same-origin image with unknown algorithm only.
+

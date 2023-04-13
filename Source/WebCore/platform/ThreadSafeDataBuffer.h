@@ -37,8 +37,8 @@ class ThreadSafeDataBufferImpl : public ThreadSafeRefCounted<ThreadSafeDataBuffe
 friend class ThreadSafeDataBuffer;
 private:
     ThreadSafeDataBufferImpl(Vector<uint8_t>&& data)
+        : m_data(WTFMove(data))
     {
-        m_data = WTFMove(data);
     }
 
     ThreadSafeDataBufferImpl(const Vector<uint8_t>& data)
@@ -72,9 +72,9 @@ public:
         return ThreadSafeDataBuffer(data, length);
     }
 
-    ThreadSafeDataBuffer()
-    {
-    }
+    ThreadSafeDataBuffer() = default;
+
+    ThreadSafeDataBuffer isolatedCopy() const { return *this; }
     
     const Vector<uint8_t>* data() const
     {
@@ -99,18 +99,18 @@ public:
 
 private:
     explicit ThreadSafeDataBuffer(Vector<uint8_t>&& data)
+        : m_impl(adoptRef(new ThreadSafeDataBufferImpl(WTFMove(data))))
     {
-        m_impl = adoptRef(new ThreadSafeDataBufferImpl(WTFMove(data)));
     }
 
     explicit ThreadSafeDataBuffer(const Vector<uint8_t>& data)
+        : m_impl(adoptRef(new ThreadSafeDataBufferImpl(data)))
     {
-        m_impl = adoptRef(new ThreadSafeDataBufferImpl(data));
     }
 
     explicit ThreadSafeDataBuffer(const void* data, unsigned length)
+        : m_impl(adoptRef(new ThreadSafeDataBufferImpl(data, length)))
     {
-        m_impl = adoptRef(new ThreadSafeDataBufferImpl(data, length));
     }
 
     RefPtr<ThreadSafeDataBufferImpl> m_impl;

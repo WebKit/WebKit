@@ -38,7 +38,7 @@ unsigned SymbolImpl::nextHashForSymbol()
 {
     static unsigned s_nextHashForSymbol = 0;
     s_nextHashForSymbol += 1 << s_flagCount;
-    s_nextHashForSymbol |= 1 << 31;
+    s_nextHashForSymbol |= 1u << 31;
     return s_nextHashForSymbol;
 }
 
@@ -63,11 +63,6 @@ Ref<PrivateSymbolImpl> PrivateSymbolImpl::create(StringImpl& rep)
     if (rep.is8Bit())
         return adoptRef(*new PrivateSymbolImpl(rep.m_data8, rep.length(), *ownerRep));
     return adoptRef(*new PrivateSymbolImpl(rep.m_data16, rep.length(), *ownerRep));
-}
-
-Ref<PrivateSymbolImpl> PrivateSymbolImpl::createNullSymbol()
-{
-    return adoptRef(*new PrivateSymbolImpl);
 }
 
 Ref<RegisteredSymbolImpl> RegisteredSymbolImpl::create(StringImpl& rep, SymbolRegistry& symbolRegistry)

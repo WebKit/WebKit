@@ -300,117 +300,116 @@ static String toEthiopicNumeric(int value)
     return { buffer, length };
 }
 
-static ListStyleType effectiveListMarkerType(ListStyleType type, int value)
+static ListStyleType::Type effectiveListMarkerType(ListStyleType::Type type, int value)
 {
     // Note, the following switch statement has been explicitly grouped by list-style-type ordinal range.
     switch (type) {
-    // FIXME: handle counter-style: rdar://102988393.
-    case ListStyleType::CustomCounterStyle:
-    case ListStyleType::ArabicIndic:
-    case ListStyleType::Bengali:
-    case ListStyleType::Binary:
-    case ListStyleType::Cambodian:
-    case ListStyleType::Circle:
-    case ListStyleType::DecimalLeadingZero:
-    case ListStyleType::Decimal:
-    case ListStyleType::Devanagari:
-    case ListStyleType::Disc:
-    case ListStyleType::DisclosureClosed:
-    case ListStyleType::DisclosureOpen:
-    case ListStyleType::Gujarati:
-    case ListStyleType::Gurmukhi:
-    case ListStyleType::Kannada:
-    case ListStyleType::Khmer:
-    case ListStyleType::Lao:
-    case ListStyleType::LowerHexadecimal:
-    case ListStyleType::Malayalam:
-    case ListStyleType::Mongolian:
-    case ListStyleType::Myanmar:
-    case ListStyleType::None:
-    case ListStyleType::Octal:
-    case ListStyleType::Oriya:
-    case ListStyleType::Persian:
-    case ListStyleType::Square:
-    case ListStyleType::Tamil:
-    case ListStyleType::Telugu:
-    case ListStyleType::Thai:
-    case ListStyleType::Tibetan:
-    case ListStyleType::UpperHexadecimal:
-    case ListStyleType::Urdu:
+    case ListStyleType::Type::CounterStyle:
+    case ListStyleType::Type::ArabicIndic:
+    case ListStyleType::Type::Bengali:
+    case ListStyleType::Type::Binary:
+    case ListStyleType::Type::Cambodian:
+    case ListStyleType::Type::Circle:
+    case ListStyleType::Type::DecimalLeadingZero:
+    case ListStyleType::Type::Decimal:
+    case ListStyleType::Type::Devanagari:
+    case ListStyleType::Type::Disc:
+    case ListStyleType::Type::DisclosureClosed:
+    case ListStyleType::Type::DisclosureOpen:
+    case ListStyleType::Type::Gujarati:
+    case ListStyleType::Type::Gurmukhi:
+    case ListStyleType::Type::Kannada:
+    case ListStyleType::Type::Khmer:
+    case ListStyleType::Type::Lao:
+    case ListStyleType::Type::LowerHexadecimal:
+    case ListStyleType::Type::Malayalam:
+    case ListStyleType::Type::Mongolian:
+    case ListStyleType::Type::Myanmar:
+    case ListStyleType::Type::None:
+    case ListStyleType::Type::Octal:
+    case ListStyleType::Type::Oriya:
+    case ListStyleType::Type::Persian:
+    case ListStyleType::Type::Square:
+    case ListStyleType::Type::Tamil:
+    case ListStyleType::Type::Telugu:
+    case ListStyleType::Type::Thai:
+    case ListStyleType::Type::Tibetan:
+    case ListStyleType::Type::UpperHexadecimal:
+    case ListStyleType::Type::Urdu:
         return type; // Can represent all ordinals.
-    case ListStyleType::Afar:
-    case ListStyleType::Amharic:
-    case ListStyleType::AmharicAbegede:
-    case ListStyleType::Asterisks:
-    case ListStyleType::CJKEarthlyBranch:
-    case ListStyleType::CJKHeavenlyStem:
-    case ListStyleType::Ethiopic:
-    case ListStyleType::EthiopicAbegede:
-    case ListStyleType::EthiopicAbegedeAmEt:
-    case ListStyleType::EthiopicAbegedeGez:
-    case ListStyleType::EthiopicAbegedeTiEr:
-    case ListStyleType::EthiopicAbegedeTiEt:
-    case ListStyleType::EthiopicHalehameAaEr:
-    case ListStyleType::EthiopicHalehameAaEt:
-    case ListStyleType::EthiopicHalehameAmEt:
-    case ListStyleType::EthiopicHalehameGez:
-    case ListStyleType::EthiopicHalehameOmEt:
-    case ListStyleType::EthiopicHalehameSidEt:
-    case ListStyleType::EthiopicHalehameSoEt:
-    case ListStyleType::EthiopicHalehameTiEr:
-    case ListStyleType::EthiopicHalehameTiEt:
-    case ListStyleType::EthiopicHalehameTig:
-    case ListStyleType::EthiopicNumeric:
-    case ListStyleType::Footnotes:
-    case ListStyleType::Hangul:
-    case ListStyleType::HangulConsonant:
-    case ListStyleType::Hiragana:
-    case ListStyleType::HiraganaIroha:
-    case ListStyleType::Katakana:
-    case ListStyleType::KatakanaIroha:
-    case ListStyleType::LowerAlpha:
-    case ListStyleType::LowerGreek:
-    case ListStyleType::LowerLatin:
-    case ListStyleType::LowerNorwegian:
-    case ListStyleType::Oromo:
-    case ListStyleType::Sidama:
-    case ListStyleType::Somali:
-    case ListStyleType::Tigre:
-    case ListStyleType::TigrinyaEr:
-    case ListStyleType::TigrinyaErAbegede:
-    case ListStyleType::TigrinyaEt:
-    case ListStyleType::TigrinyaEtAbegede:
-    case ListStyleType::UpperAlpha:
-    case ListStyleType::UpperGreek:
-    case ListStyleType::UpperLatin:
-    case ListStyleType::UpperNorwegian:
-        return (value < 1) ? ListStyleType::Decimal : type;
-    case ListStyleType::Armenian:
-    case ListStyleType::LowerArmenian:
-    case ListStyleType::UpperArmenian:
-        return (value < 1 || value > 9999) ? ListStyleType::Decimal : type;
-    case ListStyleType::CJKDecimal:
-        return (value < 0) ? ListStyleType::Decimal : type;
-    case ListStyleType::CJKIdeographic:
-    case ListStyleType::JapaneseFormal:
-    case ListStyleType::JapaneseInformal:
-    case ListStyleType::SimplifiedChineseFormal:
-    case ListStyleType::SimplifiedChineseInformal:
-    case ListStyleType::TraditionalChineseFormal:
-    case ListStyleType::TraditionalChineseInformal:
-        return value < -9999 ? ListStyleType::Decimal : value > 9999 ? ListStyleType::CJKDecimal : type;
-    case ListStyleType::Georgian:
-        return (value < 1 || value > 19999) ? ListStyleType::Decimal : type;
-    case ListStyleType::Hebrew:
-        return (value < 1 || value > 10999) ? ListStyleType::Decimal : type;
-    case ListStyleType::KoreanHangulFormal:
-    case ListStyleType::KoreanHanjaInformal:
-    case ListStyleType::KoreanHanjaFormal:
-        return (value < -9999 || value > 9999) ? ListStyleType::Decimal : type;
-    case ListStyleType::LowerRoman:
-    case ListStyleType::UpperRoman:
-        return (value < 1 || value > 3999) ? ListStyleType::Decimal : type;
-    case ListStyleType::String:
+    case ListStyleType::Type::Afar:
+    case ListStyleType::Type::Amharic:
+    case ListStyleType::Type::AmharicAbegede:
+    case ListStyleType::Type::Asterisks:
+    case ListStyleType::Type::CJKEarthlyBranch:
+    case ListStyleType::Type::CJKHeavenlyStem:
+    case ListStyleType::Type::Ethiopic:
+    case ListStyleType::Type::EthiopicAbegede:
+    case ListStyleType::Type::EthiopicAbegedeAmEt:
+    case ListStyleType::Type::EthiopicAbegedeGez:
+    case ListStyleType::Type::EthiopicAbegedeTiEr:
+    case ListStyleType::Type::EthiopicAbegedeTiEt:
+    case ListStyleType::Type::EthiopicHalehameAaEr:
+    case ListStyleType::Type::EthiopicHalehameAaEt:
+    case ListStyleType::Type::EthiopicHalehameAmEt:
+    case ListStyleType::Type::EthiopicHalehameGez:
+    case ListStyleType::Type::EthiopicHalehameOmEt:
+    case ListStyleType::Type::EthiopicHalehameSidEt:
+    case ListStyleType::Type::EthiopicHalehameSoEt:
+    case ListStyleType::Type::EthiopicHalehameTiEr:
+    case ListStyleType::Type::EthiopicHalehameTiEt:
+    case ListStyleType::Type::EthiopicHalehameTig:
+    case ListStyleType::Type::EthiopicNumeric:
+    case ListStyleType::Type::Footnotes:
+    case ListStyleType::Type::Hangul:
+    case ListStyleType::Type::HangulConsonant:
+    case ListStyleType::Type::Hiragana:
+    case ListStyleType::Type::HiraganaIroha:
+    case ListStyleType::Type::Katakana:
+    case ListStyleType::Type::KatakanaIroha:
+    case ListStyleType::Type::LowerAlpha:
+    case ListStyleType::Type::LowerGreek:
+    case ListStyleType::Type::LowerLatin:
+    case ListStyleType::Type::LowerNorwegian:
+    case ListStyleType::Type::Oromo:
+    case ListStyleType::Type::Sidama:
+    case ListStyleType::Type::Somali:
+    case ListStyleType::Type::Tigre:
+    case ListStyleType::Type::TigrinyaEr:
+    case ListStyleType::Type::TigrinyaErAbegede:
+    case ListStyleType::Type::TigrinyaEt:
+    case ListStyleType::Type::TigrinyaEtAbegede:
+    case ListStyleType::Type::UpperAlpha:
+    case ListStyleType::Type::UpperGreek:
+    case ListStyleType::Type::UpperLatin:
+    case ListStyleType::Type::UpperNorwegian:
+        return (value < 1) ? ListStyleType::Type::Decimal : type;
+    case ListStyleType::Type::Armenian:
+    case ListStyleType::Type::LowerArmenian:
+    case ListStyleType::Type::UpperArmenian:
+        return (value < 1 || value > 9999) ? ListStyleType::Type::Decimal : type;
+    case ListStyleType::Type::CJKDecimal:
+        return (value < 0) ? ListStyleType::Type::Decimal : type;
+    case ListStyleType::Type::CJKIdeographic:
+    case ListStyleType::Type::JapaneseFormal:
+    case ListStyleType::Type::JapaneseInformal:
+    case ListStyleType::Type::SimplifiedChineseFormal:
+    case ListStyleType::Type::SimplifiedChineseInformal:
+    case ListStyleType::Type::TraditionalChineseFormal:
+    case ListStyleType::Type::TraditionalChineseInformal:
+        return value < -9999 ? ListStyleType::Type::Decimal : value > 9999 ? ListStyleType::Type::CJKDecimal : type;
+    case ListStyleType::Type::Georgian:
+        return (value < 1 || value > 19999) ? ListStyleType::Type::Decimal : type;
+    case ListStyleType::Type::Hebrew:
+        return (value < 1 || value > 10999) ? ListStyleType::Type::Decimal : type;
+    case ListStyleType::Type::KoreanHangulFormal:
+    case ListStyleType::Type::KoreanHanjaInformal:
+    case ListStyleType::Type::KoreanHanjaFormal:
+        return (value < -9999 || value > 9999) ? ListStyleType::Type::Decimal : type;
+    case ListStyleType::Type::LowerRoman:
+    case ListStyleType::Type::UpperRoman:
+        return (value < 1 || value > 3999) ? ListStyleType::Type::Decimal : type;
+    case ListStyleType::Type::String:
         ASSERT_NOT_REACHED();
         break;
     }
@@ -419,116 +418,115 @@ static ListStyleType effectiveListMarkerType(ListStyleType type, int value)
     return type;
 }
 
-static StringView listMarkerSuffix(ListStyleType type)
+static StringView listMarkerSuffix(ListStyleType::Type type)
 {
     switch (type) {
-    // FIXME: handle counter-style: rdar://102988393.
-    case ListStyleType::CustomCounterStyle:
+    case ListStyleType::Type::CounterStyle:
         return { };
-    case ListStyleType::Asterisks:
-    case ListStyleType::Circle:
-    case ListStyleType::Disc:
-    case ListStyleType::DisclosureClosed:
-    case ListStyleType::DisclosureOpen:
-    case ListStyleType::Footnotes:
-    case ListStyleType::None:
-    case ListStyleType::Square:
+    case ListStyleType::Type::Asterisks:
+    case ListStyleType::Type::Circle:
+    case ListStyleType::Type::Disc:
+    case ListStyleType::Type::DisclosureClosed:
+    case ListStyleType::Type::DisclosureOpen:
+    case ListStyleType::Type::Footnotes:
+    case ListStyleType::Type::None:
+    case ListStyleType::Type::Square:
         return { &space, 1 };
-    case ListStyleType::Afar:
-    case ListStyleType::Amharic:
-    case ListStyleType::AmharicAbegede:
-    case ListStyleType::Ethiopic:
-    case ListStyleType::EthiopicAbegede:
-    case ListStyleType::EthiopicAbegedeAmEt:
-    case ListStyleType::EthiopicAbegedeGez:
-    case ListStyleType::EthiopicAbegedeTiEr:
-    case ListStyleType::EthiopicAbegedeTiEt:
-    case ListStyleType::EthiopicHalehameAaEr:
-    case ListStyleType::EthiopicHalehameAaEt:
-    case ListStyleType::EthiopicHalehameAmEt:
-    case ListStyleType::EthiopicHalehameGez:
-    case ListStyleType::EthiopicHalehameOmEt:
-    case ListStyleType::EthiopicHalehameSidEt:
-    case ListStyleType::EthiopicHalehameSoEt:
-    case ListStyleType::EthiopicHalehameTiEr:
-    case ListStyleType::EthiopicHalehameTiEt:
-    case ListStyleType::EthiopicHalehameTig:
-    case ListStyleType::Oromo:
-    case ListStyleType::Sidama:
-    case ListStyleType::Somali:
-    case ListStyleType::Tigre:
-    case ListStyleType::TigrinyaEr:
-    case ListStyleType::TigrinyaErAbegede:
-    case ListStyleType::TigrinyaEt:
-    case ListStyleType::TigrinyaEtAbegede: {
+    case ListStyleType::Type::Afar:
+    case ListStyleType::Type::Amharic:
+    case ListStyleType::Type::AmharicAbegede:
+    case ListStyleType::Type::Ethiopic:
+    case ListStyleType::Type::EthiopicAbegede:
+    case ListStyleType::Type::EthiopicAbegedeAmEt:
+    case ListStyleType::Type::EthiopicAbegedeGez:
+    case ListStyleType::Type::EthiopicAbegedeTiEr:
+    case ListStyleType::Type::EthiopicAbegedeTiEt:
+    case ListStyleType::Type::EthiopicHalehameAaEr:
+    case ListStyleType::Type::EthiopicHalehameAaEt:
+    case ListStyleType::Type::EthiopicHalehameAmEt:
+    case ListStyleType::Type::EthiopicHalehameGez:
+    case ListStyleType::Type::EthiopicHalehameOmEt:
+    case ListStyleType::Type::EthiopicHalehameSidEt:
+    case ListStyleType::Type::EthiopicHalehameSoEt:
+    case ListStyleType::Type::EthiopicHalehameTiEr:
+    case ListStyleType::Type::EthiopicHalehameTiEt:
+    case ListStyleType::Type::EthiopicHalehameTig:
+    case ListStyleType::Type::Oromo:
+    case ListStyleType::Type::Sidama:
+    case ListStyleType::Type::Somali:
+    case ListStyleType::Type::Tigre:
+    case ListStyleType::Type::TigrinyaEr:
+    case ListStyleType::Type::TigrinyaErAbegede:
+    case ListStyleType::Type::TigrinyaEt:
+    case ListStyleType::Type::TigrinyaEtAbegede: {
         static constexpr UChar ethiopicPrefaceColonAndSpace[2] = { ethiopicPrefaceColon, ' ' };
         return { ethiopicPrefaceColonAndSpace, 2 };
     }
-    case ListStyleType::Armenian:
-    case ListStyleType::ArabicIndic:
-    case ListStyleType::Bengali:
-    case ListStyleType::Binary:
-    case ListStyleType::Cambodian:
-    case ListStyleType::DecimalLeadingZero:
-    case ListStyleType::Decimal:
-    case ListStyleType::Devanagari:
-    case ListStyleType::Georgian:
-    case ListStyleType::Gujarati:
-    case ListStyleType::Gurmukhi:
-    case ListStyleType::Hangul:
-    case ListStyleType::HangulConsonant:
-    case ListStyleType::Hebrew:
-    case ListStyleType::Kannada:
-    case ListStyleType::Khmer:
-    case ListStyleType::Lao:
-    case ListStyleType::LowerAlpha:
-    case ListStyleType::LowerArmenian:
-    case ListStyleType::LowerGreek:
-    case ListStyleType::LowerHexadecimal:
-    case ListStyleType::LowerLatin:
-    case ListStyleType::LowerNorwegian:
-    case ListStyleType::LowerRoman:
-    case ListStyleType::Malayalam:
-    case ListStyleType::Mongolian:
-    case ListStyleType::Myanmar:
-    case ListStyleType::Octal:
-    case ListStyleType::Oriya:
-    case ListStyleType::Persian:
-    case ListStyleType::Tamil:
-    case ListStyleType::Telugu:
-    case ListStyleType::Thai:
-    case ListStyleType::Tibetan:
-    case ListStyleType::UpperAlpha:
-    case ListStyleType::UpperArmenian:
-    case ListStyleType::UpperGreek:
-    case ListStyleType::UpperHexadecimal:
-    case ListStyleType::UpperLatin:
-    case ListStyleType::UpperNorwegian:
-    case ListStyleType::UpperRoman:
-    case ListStyleType::Urdu:
+    case ListStyleType::Type::Armenian:
+    case ListStyleType::Type::ArabicIndic:
+    case ListStyleType::Type::Bengali:
+    case ListStyleType::Type::Binary:
+    case ListStyleType::Type::Cambodian:
+    case ListStyleType::Type::DecimalLeadingZero:
+    case ListStyleType::Type::Decimal:
+    case ListStyleType::Type::Devanagari:
+    case ListStyleType::Type::Georgian:
+    case ListStyleType::Type::Gujarati:
+    case ListStyleType::Type::Gurmukhi:
+    case ListStyleType::Type::Hangul:
+    case ListStyleType::Type::HangulConsonant:
+    case ListStyleType::Type::Hebrew:
+    case ListStyleType::Type::Kannada:
+    case ListStyleType::Type::Khmer:
+    case ListStyleType::Type::Lao:
+    case ListStyleType::Type::LowerAlpha:
+    case ListStyleType::Type::LowerArmenian:
+    case ListStyleType::Type::LowerGreek:
+    case ListStyleType::Type::LowerHexadecimal:
+    case ListStyleType::Type::LowerLatin:
+    case ListStyleType::Type::LowerNorwegian:
+    case ListStyleType::Type::LowerRoman:
+    case ListStyleType::Type::Malayalam:
+    case ListStyleType::Type::Mongolian:
+    case ListStyleType::Type::Myanmar:
+    case ListStyleType::Type::Octal:
+    case ListStyleType::Type::Oriya:
+    case ListStyleType::Type::Persian:
+    case ListStyleType::Type::Tamil:
+    case ListStyleType::Type::Telugu:
+    case ListStyleType::Type::Thai:
+    case ListStyleType::Type::Tibetan:
+    case ListStyleType::Type::UpperAlpha:
+    case ListStyleType::Type::UpperArmenian:
+    case ListStyleType::Type::UpperGreek:
+    case ListStyleType::Type::UpperHexadecimal:
+    case ListStyleType::Type::UpperLatin:
+    case ListStyleType::Type::UpperNorwegian:
+    case ListStyleType::Type::UpperRoman:
+    case ListStyleType::Type::Urdu:
         return ". "_s;
-    case ListStyleType::CJKDecimal:
-    case ListStyleType::CJKEarthlyBranch:
-    case ListStyleType::CJKHeavenlyStem:
-    case ListStyleType::CJKIdeographic:
-    case ListStyleType::Hiragana:
-    case ListStyleType::HiraganaIroha:
-    case ListStyleType::JapaneseFormal:
-    case ListStyleType::JapaneseInformal:
-    case ListStyleType::Katakana:
-    case ListStyleType::KatakanaIroha:
-    case ListStyleType::SimplifiedChineseFormal:
-    case ListStyleType::SimplifiedChineseInformal:
-    case ListStyleType::TraditionalChineseFormal:
-    case ListStyleType::TraditionalChineseInformal:
+    case ListStyleType::Type::CJKDecimal:
+    case ListStyleType::Type::CJKEarthlyBranch:
+    case ListStyleType::Type::CJKHeavenlyStem:
+    case ListStyleType::Type::CJKIdeographic:
+    case ListStyleType::Type::Hiragana:
+    case ListStyleType::Type::HiraganaIroha:
+    case ListStyleType::Type::JapaneseFormal:
+    case ListStyleType::Type::JapaneseInformal:
+    case ListStyleType::Type::Katakana:
+    case ListStyleType::Type::KatakanaIroha:
+    case ListStyleType::Type::SimplifiedChineseFormal:
+    case ListStyleType::Type::SimplifiedChineseInformal:
+    case ListStyleType::Type::TraditionalChineseFormal:
+    case ListStyleType::Type::TraditionalChineseInformal:
         return { &ideographicComma, 1 };
-    case ListStyleType::EthiopicNumeric:
+    case ListStyleType::Type::EthiopicNumeric:
         return "/ "_s;
-    case ListStyleType::KoreanHangulFormal:
-    case ListStyleType::KoreanHanjaInformal:
-    case ListStyleType::KoreanHanjaFormal:
+    case ListStyleType::Type::KoreanHangulFormal:
+    case ListStyleType::Type::KoreanHanjaInformal:
+    case ListStyleType::Type::KoreanHanjaFormal:
         return ", "_s;
-    case ListStyleType::String:
+    case ListStyleType::Type::String:
         ASSERT_NOT_REACHED();
         break;
     }
@@ -537,45 +535,43 @@ static StringView listMarkerSuffix(ListStyleType type)
     return ". "_s;
 }
 
-String listMarkerText(ListStyleType type, int value, CSSCounterStyle* counterStyle)
+String listMarkerText(ListStyleType::Type type, int value, CSSCounterStyle* counterStyle)
 {
     switch (effectiveListMarkerType(type, value)) {
-    case ListStyleType::None:
+    case ListStyleType::Type::None:
         return emptyString();
 
-    case ListStyleType::Asterisks: {
+    case ListStyleType::Type::Asterisks: {
         static constexpr LChar asterisksSymbols[1] = { 0x2A };
         return toSymbolic(value, asterisksSymbols);
     }
 
     // We use the same characters for text security. See RenderText::setRenderedText.
-    case ListStyleType::Circle:
+    case ListStyleType::Type::Circle:
         return { &whiteBullet, 1 };
-    case ListStyleType::Disc:
+    case ListStyleType::Type::Disc:
         return { &bullet, 1 };
-    case ListStyleType::Footnotes: {
+    case ListStyleType::Type::Footnotes: {
         static constexpr UChar footnotesSymbols[4] = { 0x002A, 0x2051, 0x2020, 0x2021 };
         return toSymbolic(value, footnotesSymbols);
     }
 
     // CSS specification calls for U+25FE BLACK MEDIUM SMALL SQUARE; we have been using U+25A0 BLACK SQUARE instead for a long time.
-    case ListStyleType::Square:
+    case ListStyleType::Type::Square:
         return { &blackSquare, 1 };
 
-    case ListStyleType::DisclosureClosed:
+    case ListStyleType::Type::DisclosureClosed:
         return { &blackRightPointingSmallTriangle, 1 };
-    case ListStyleType::DisclosureOpen:
+    case ListStyleType::Type::DisclosureOpen:
         return { &blackDownPointingSmallTriangle, 1 };
 
-    // FIXME: handle counter-style: rdar://102988393.
-    case ListStyleType::CustomCounterStyle:
-        if (!counterStyle)
-            return String::number(value);
+    case ListStyleType::Type::CounterStyle:
+        ASSERT(counterStyle);
         return counterStyle->text(value);
-    case ListStyleType::Decimal:
+    case ListStyleType::Type::Decimal:
         return String::number(value);
 
-    case ListStyleType::DecimalLeadingZero:
+    case ListStyleType::Type::DecimalLeadingZero:
         if (value >= 0 && value <= 9) {
             LChar characters[2] = { '0', static_cast<LChar>('0' + value) }; // 00 to 09
             return { characters, 2 };
@@ -586,147 +582,147 @@ String listMarkerText(ListStyleType type, int value, CSSCounterStyle* counterSty
         }
         return String::number(value);
 
-    case ListStyleType::ArabicIndic: {
+    case ListStyleType::Type::ArabicIndic: {
         static constexpr UChar arabicIndicNumerals[10] = {
             0x0660, 0x0661, 0x0662, 0x0663, 0x0664, 0x0665, 0x0666, 0x0667, 0x0668, 0x0669
         };
         return toNumeric(value, arabicIndicNumerals);
     }
 
-    case ListStyleType::Binary: {
+    case ListStyleType::Type::Binary: {
         static constexpr LChar binaryNumerals[2] = { '0', '1' };
         return toNumeric(value, binaryNumerals);
     }
 
-    case ListStyleType::Bengali: {
+    case ListStyleType::Type::Bengali: {
         static constexpr UChar bengaliNumerals[10] = {
             0x09E6, 0x09E7, 0x09E8, 0x09E9, 0x09EA, 0x09EB, 0x09EC, 0x09ED, 0x09EE, 0x09EF
         };
         return toNumeric(value, bengaliNumerals);
     }
 
-    case ListStyleType::Cambodian:
-    case ListStyleType::Khmer: {
+    case ListStyleType::Type::Cambodian:
+    case ListStyleType::Type::Khmer: {
         static constexpr UChar khmerNumerals[10] = {
             0x17E0, 0x17E1, 0x17E2, 0x17E3, 0x17E4, 0x17E5, 0x17E6, 0x17E7, 0x17E8, 0x17E9
         };
         return toNumeric(value, khmerNumerals);
     }
-    case ListStyleType::Devanagari: {
+    case ListStyleType::Type::Devanagari: {
         static constexpr UChar devanagariNumerals[10] = {
             0x0966, 0x0967, 0x0968, 0x0969, 0x096A, 0x096B, 0x096C, 0x096D, 0x096E, 0x096F
         };
         return toNumeric(value, devanagariNumerals);
     }
-    case ListStyleType::Gujarati: {
+    case ListStyleType::Type::Gujarati: {
         static constexpr UChar gujaratiNumerals[10] = {
             0x0AE6, 0x0AE7, 0x0AE8, 0x0AE9, 0x0AEA, 0x0AEB, 0x0AEC, 0x0AED, 0x0AEE, 0x0AEF
         };
         return toNumeric(value, gujaratiNumerals);
     }
-    case ListStyleType::Gurmukhi: {
+    case ListStyleType::Type::Gurmukhi: {
         static constexpr UChar gurmukhiNumerals[10] = {
             0x0A66, 0x0A67, 0x0A68, 0x0A69, 0x0A6A, 0x0A6B, 0x0A6C, 0x0A6D, 0x0A6E, 0x0A6F
         };
         return toNumeric(value, gurmukhiNumerals);
     }
-    case ListStyleType::Kannada: {
+    case ListStyleType::Type::Kannada: {
         static constexpr UChar kannadaNumerals[10] = {
             0x0CE6, 0x0CE7, 0x0CE8, 0x0CE9, 0x0CEA, 0x0CEB, 0x0CEC, 0x0CED, 0x0CEE, 0x0CEF
         };
         return toNumeric(value, kannadaNumerals);
     }
-    case ListStyleType::LowerHexadecimal: {
+    case ListStyleType::Type::LowerHexadecimal: {
         static constexpr LChar lowerHexadecimalNumerals[16] = {
             '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'
         };
         return toNumeric(value, lowerHexadecimalNumerals);
     }
-    case ListStyleType::Lao: {
+    case ListStyleType::Type::Lao: {
         static constexpr UChar laoNumerals[10] = {
             0x0ED0, 0x0ED1, 0x0ED2, 0x0ED3, 0x0ED4, 0x0ED5, 0x0ED6, 0x0ED7, 0x0ED8, 0x0ED9
         };
         return toNumeric(value, laoNumerals);
     }
-    case ListStyleType::Malayalam: {
+    case ListStyleType::Type::Malayalam: {
         static constexpr UChar malayalamNumerals[10] = {
             0x0D66, 0x0D67, 0x0D68, 0x0D69, 0x0D6A, 0x0D6B, 0x0D6C, 0x0D6D, 0x0D6E, 0x0D6F
         };
         return toNumeric(value, malayalamNumerals);
     }
-    case ListStyleType::Mongolian: {
+    case ListStyleType::Type::Mongolian: {
         static constexpr UChar mongolianNumerals[10] = {
             0x1810, 0x1811, 0x1812, 0x1813, 0x1814, 0x1815, 0x1816, 0x1817, 0x1818, 0x1819
         };
         return toNumeric(value, mongolianNumerals);
     }
-    case ListStyleType::Myanmar: {
+    case ListStyleType::Type::Myanmar: {
         static constexpr UChar myanmarNumerals[10] = {
             0x1040, 0x1041, 0x1042, 0x1043, 0x1044, 0x1045, 0x1046, 0x1047, 0x1048, 0x1049
         };
         return toNumeric(value, myanmarNumerals);
     }
-    case ListStyleType::Octal: {
+    case ListStyleType::Type::Octal: {
         static constexpr LChar octalNumerals[8] = {
             '0', '1', '2', '3', '4', '5', '6', '7'
         };
         return toNumeric(value, octalNumerals);
     }
-    case ListStyleType::Oriya: {
+    case ListStyleType::Type::Oriya: {
         static constexpr UChar oriyaNumerals[10] = {
             0x0B66, 0x0B67, 0x0B68, 0x0B69, 0x0B6A, 0x0B6B, 0x0B6C, 0x0B6D, 0x0B6E, 0x0B6F
         };
         return toNumeric(value, oriyaNumerals);
     }
-    case ListStyleType::Persian:
-    case ListStyleType::Urdu: {
+    case ListStyleType::Type::Persian:
+    case ListStyleType::Type::Urdu: {
         static constexpr UChar urduNumerals[10] = {
             0x06F0, 0x06F1, 0x06F2, 0x06F3, 0x06F4, 0x06F5, 0x06F6, 0x06F7, 0x06F8, 0x06F9
         };
         return toNumeric(value, urduNumerals);
     }
-    case ListStyleType::Telugu: {
+    case ListStyleType::Type::Telugu: {
         static constexpr UChar teluguNumerals[10] = {
             0x0C66, 0x0C67, 0x0C68, 0x0C69, 0x0C6A, 0x0C6B, 0x0C6C, 0x0C6D, 0x0C6E, 0x0C6F
         };
         return toNumeric(value, teluguNumerals);
     }
-    case ListStyleType::Tibetan: {
+    case ListStyleType::Type::Tibetan: {
         static constexpr UChar tibetanNumerals[10] = {
             0x0F20, 0x0F21, 0x0F22, 0x0F23, 0x0F24, 0x0F25, 0x0F26, 0x0F27, 0x0F28, 0x0F29
         };
         return toNumeric(value, tibetanNumerals);
     }
-    case ListStyleType::Thai: {
+    case ListStyleType::Type::Thai: {
         static constexpr UChar thaiNumerals[10] = {
             0x0E50, 0x0E51, 0x0E52, 0x0E53, 0x0E54, 0x0E55, 0x0E56, 0x0E57, 0x0E58, 0x0E59
         };
         return toNumeric(value, thaiNumerals);
     }
-    case ListStyleType::UpperHexadecimal: {
+    case ListStyleType::Type::UpperHexadecimal: {
         static constexpr LChar upperHexadecimalNumerals[16] = {
             '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
         };
         return toNumeric(value, upperHexadecimalNumerals);
     }
 
-    case ListStyleType::LowerAlpha:
-    case ListStyleType::LowerLatin: {
+    case ListStyleType::Type::LowerAlpha:
+    case ListStyleType::Type::LowerLatin: {
         static constexpr LChar lowerLatinAlphabet[26] = {
             'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
             'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'
         };
         return toAlphabetic(value, lowerLatinAlphabet);
     }
-    case ListStyleType::UpperAlpha:
-    case ListStyleType::UpperLatin: {
+    case ListStyleType::Type::UpperAlpha:
+    case ListStyleType::Type::UpperLatin: {
         static constexpr LChar upperLatinAlphabet[26] = {
             'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
             'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'
         };
         return toAlphabetic(value, upperLatinAlphabet);
     }
-    case ListStyleType::LowerGreek: {
+    case ListStyleType::Type::LowerGreek: {
         static constexpr UChar lowerGreekAlphabet[24] = {
             0x03B1, 0x03B2, 0x03B3, 0x03B4, 0x03B5, 0x03B6, 0x03B7, 0x03B8,
             0x03B9, 0x03BA, 0x03BB, 0x03BC, 0x03BD, 0x03BE, 0x03BF, 0x03C0,
@@ -735,7 +731,7 @@ String listMarkerText(ListStyleType type, int value, CSSCounterStyle* counterSty
         return toAlphabetic(value, lowerGreekAlphabet);
     }
 
-    case ListStyleType::Hiragana: {
+    case ListStyleType::Type::Hiragana: {
         static constexpr UChar hiraganaAlphabet[48] = {
             0x3042, 0x3044, 0x3046, 0x3048, 0x304A, 0x304B, 0x304D, 0x304F,
             0x3051, 0x3053, 0x3055, 0x3057, 0x3059, 0x305B, 0x305D, 0x305F,
@@ -746,7 +742,7 @@ String listMarkerText(ListStyleType type, int value, CSSCounterStyle* counterSty
         };
         return toAlphabetic(value, hiraganaAlphabet);
     }
-    case ListStyleType::HiraganaIroha: {
+    case ListStyleType::Type::HiraganaIroha: {
         static constexpr UChar hiraganaIrohaAlphabet[47] = {
             0x3044, 0x308D, 0x306F, 0x306B, 0x307B, 0x3078, 0x3068, 0x3061,
             0x308A, 0x306C, 0x308B, 0x3092, 0x308F, 0x304B, 0x3088, 0x305F,
@@ -757,7 +753,7 @@ String listMarkerText(ListStyleType type, int value, CSSCounterStyle* counterSty
         };
         return toAlphabetic(value, hiraganaIrohaAlphabet);
     }
-    case ListStyleType::Katakana: {
+    case ListStyleType::Type::Katakana: {
         static constexpr UChar katakanaAlphabet[48] = {
             0x30A2, 0x30A4, 0x30A6, 0x30A8, 0x30AA, 0x30AB, 0x30AD, 0x30AF,
             0x30B1, 0x30B3, 0x30B5, 0x30B7, 0x30B9, 0x30BB, 0x30BD, 0x30BF,
@@ -768,7 +764,7 @@ String listMarkerText(ListStyleType type, int value, CSSCounterStyle* counterSty
         };
         return toAlphabetic(value, katakanaAlphabet);
     }
-    case ListStyleType::KatakanaIroha: {
+    case ListStyleType::Type::KatakanaIroha: {
         static constexpr UChar katakanaIrohaAlphabet[47] = {
             0x30A4, 0x30ED, 0x30CF, 0x30CB, 0x30DB, 0x30D8, 0x30C8, 0x30C1,
             0x30EA, 0x30CC, 0x30EB, 0x30F2, 0x30EF, 0x30AB, 0x30E8, 0x30BF,
@@ -780,17 +776,17 @@ String listMarkerText(ListStyleType type, int value, CSSCounterStyle* counterSty
         return toAlphabetic(value, katakanaIrohaAlphabet);
     }
 
-    case ListStyleType::Afar:
-    case ListStyleType::EthiopicHalehameAaEt:
-    case ListStyleType::EthiopicHalehameAaEr: {
+    case ListStyleType::Type::Afar:
+    case ListStyleType::Type::EthiopicHalehameAaEt:
+    case ListStyleType::Type::EthiopicHalehameAaEr: {
         static constexpr UChar ethiopicHalehameAaErAlphabet[18] = {
             0x1200, 0x1208, 0x1210, 0x1218, 0x1228, 0x1230, 0x1260, 0x1270, 0x1290,
             0x12A0, 0x12A8, 0x12C8, 0x12D0, 0x12E8, 0x12F0, 0x1308, 0x1338, 0x1348
         };
         return toAlphabetic(value, ethiopicHalehameAaErAlphabet);
     }
-    case ListStyleType::Amharic:
-    case ListStyleType::EthiopicHalehameAmEt: {
+    case ListStyleType::Type::Amharic:
+    case ListStyleType::Type::EthiopicHalehameAmEt: {
         static constexpr UChar ethiopicHalehameAmEtAlphabet[33] = {
             0x1200, 0x1208, 0x1210, 0x1218, 0x1220, 0x1228, 0x1230, 0x1238, 0x1240,
             0x1260, 0x1270, 0x1278, 0x1280, 0x1290, 0x1298, 0x12A0, 0x12A8, 0x12B8,
@@ -799,8 +795,8 @@ String listMarkerText(ListStyleType type, int value, CSSCounterStyle* counterSty
         };
         return toAlphabetic(value, ethiopicHalehameAmEtAlphabet);
     }
-    case ListStyleType::AmharicAbegede:
-    case ListStyleType::EthiopicAbegedeAmEt: {
+    case ListStyleType::Type::AmharicAbegede:
+    case ListStyleType::Type::EthiopicAbegedeAmEt: {
         static constexpr UChar ethiopicAbegedeAmEtAlphabet[33] = {
             0x12A0, 0x1260, 0x1308, 0x12F0, 0x1300, 0x1200, 0x12C8, 0x12D8, 0x12E0,
             0x1210, 0x1320, 0x1328, 0x12E8, 0x12A8, 0x12B8, 0x1208, 0x1218, 0x1290,
@@ -809,22 +805,22 @@ String listMarkerText(ListStyleType type, int value, CSSCounterStyle* counterSty
         };
         return toAlphabetic(value, ethiopicAbegedeAmEtAlphabet);
     }
-    case ListStyleType::CJKEarthlyBranch: {
+    case ListStyleType::Type::CJKEarthlyBranch: {
         static constexpr UChar cjkEarthlyBranchAlphabet[12] = {
             0x5B50, 0x4E11, 0x5BC5, 0x536F, 0x8FB0, 0x5DF3, 0x5348, 0x672A, 0x7533,
             0x9149, 0x620C, 0x4EA5
         };
         return toAlphabetic(value, cjkEarthlyBranchAlphabet);
     }
-    case ListStyleType::CJKHeavenlyStem: {
+    case ListStyleType::Type::CJKHeavenlyStem: {
         static constexpr UChar cjkHeavenlyStemAlphabet[10] = {
             0x7532, 0x4E59, 0x4E19, 0x4E01, 0x620A, 0x5DF1, 0x5E9A, 0x8F9B, 0x58EC,
             0x7678
         };
         return toAlphabetic(value, cjkHeavenlyStemAlphabet);
     }
-    case ListStyleType::Ethiopic:
-    case ListStyleType::EthiopicHalehameGez: {
+    case ListStyleType::Type::Ethiopic:
+    case ListStyleType::Type::EthiopicHalehameGez: {
         static constexpr UChar ethiopicHalehameGezAlphabet[26] = {
             0x1200, 0x1208, 0x1210, 0x1218, 0x1220, 0x1228, 0x1230, 0x1240, 0x1260,
             0x1270, 0x1280, 0x1290, 0x12A0, 0x12A8, 0x12C8, 0x12D0, 0x12D8, 0x12E8,
@@ -832,8 +828,8 @@ String listMarkerText(ListStyleType type, int value, CSSCounterStyle* counterSty
         };
         return toAlphabetic(value, ethiopicHalehameGezAlphabet);
     }
-    case ListStyleType::EthiopicAbegede:
-    case ListStyleType::EthiopicAbegedeGez: {
+    case ListStyleType::Type::EthiopicAbegede:
+    case ListStyleType::Type::EthiopicAbegedeGez: {
         static constexpr UChar ethiopicAbegedeGezAlphabet[26] = {
             0x12A0, 0x1260, 0x1308, 0x12F0, 0x1200, 0x12C8, 0x12D8, 0x1210, 0x1320,
             0x12E8, 0x12A8, 0x1208, 0x1218, 0x1290, 0x1220, 0x12D0, 0x1348, 0x1338,
@@ -841,22 +837,22 @@ String listMarkerText(ListStyleType type, int value, CSSCounterStyle* counterSty
         };
         return toAlphabetic(value, ethiopicAbegedeGezAlphabet);
     }
-    case ListStyleType::HangulConsonant: {
+    case ListStyleType::Type::HangulConsonant: {
         static constexpr UChar hangulConsonantAlphabet[14] = {
             0x3131, 0x3134, 0x3137, 0x3139, 0x3141, 0x3142, 0x3145, 0x3147, 0x3148,
             0x314A, 0x314B, 0x314C, 0x314D, 0x314E
         };
         return toAlphabetic(value, hangulConsonantAlphabet);
     }
-    case ListStyleType::Hangul: {
+    case ListStyleType::Type::Hangul: {
         static constexpr UChar hangulAlphabet[14] = {
             0xAC00, 0xB098, 0xB2E4, 0xB77C, 0xB9C8, 0xBC14, 0xC0AC, 0xC544, 0xC790,
             0xCC28, 0xCE74, 0xD0C0, 0xD30C, 0xD558
         };
         return toAlphabetic(value, hangulAlphabet);
     }
-    case ListStyleType::Oromo:
-    case ListStyleType::EthiopicHalehameOmEt: {
+    case ListStyleType::Type::Oromo:
+    case ListStyleType::Type::EthiopicHalehameOmEt: {
         static constexpr UChar ethiopicHalehameOmEtAlphabet[25] = {
             0x1200, 0x1208, 0x1218, 0x1228, 0x1230, 0x1238, 0x1240, 0x1260, 0x1270,
             0x1278, 0x1290, 0x1298, 0x12A0, 0x12A8, 0x12C8, 0x12E8, 0x12F0, 0x12F8,
@@ -864,8 +860,8 @@ String listMarkerText(ListStyleType type, int value, CSSCounterStyle* counterSty
         };
         return toAlphabetic(value, ethiopicHalehameOmEtAlphabet);
     }
-    case ListStyleType::Sidama:
-    case ListStyleType::EthiopicHalehameSidEt: {
+    case ListStyleType::Type::Sidama:
+    case ListStyleType::Type::EthiopicHalehameSidEt: {
         static constexpr UChar ethiopicHalehameSidEtAlphabet[26] = {
             0x1200, 0x1208, 0x1210, 0x1218, 0x1228, 0x1230, 0x1238, 0x1240, 0x1260,
             0x1270, 0x1278, 0x1290, 0x1298, 0x12A0, 0x12A8, 0x12C8, 0x12E8, 0x12F0,
@@ -873,8 +869,8 @@ String listMarkerText(ListStyleType type, int value, CSSCounterStyle* counterSty
         };
         return toAlphabetic(value, ethiopicHalehameSidEtAlphabet);
     }
-    case ListStyleType::Somali:
-    case ListStyleType::EthiopicHalehameSoEt: {
+    case ListStyleType::Type::Somali:
+    case ListStyleType::Type::EthiopicHalehameSoEt: {
         static constexpr UChar ethiopicHalehameSoEtAlphabet[22] = {
             0x1200, 0x1208, 0x1210, 0x1218, 0x1228, 0x1230, 0x1238, 0x1240, 0x1260,
             0x1270, 0x1290, 0x12A0, 0x12A8, 0x12B8, 0x12C8, 0x12D0, 0x12E8, 0x12F0,
@@ -882,8 +878,8 @@ String listMarkerText(ListStyleType type, int value, CSSCounterStyle* counterSty
         };
         return toAlphabetic(value, ethiopicHalehameSoEtAlphabet);
     }
-    case ListStyleType::Tigre:
-    case ListStyleType::EthiopicHalehameTig: {
+    case ListStyleType::Type::Tigre:
+    case ListStyleType::Type::EthiopicHalehameTig: {
         static constexpr UChar ethiopicHalehameTigAlphabet[27] = {
             0x1200, 0x1208, 0x1210, 0x1218, 0x1228, 0x1230, 0x1238, 0x1240, 0x1260,
             0x1270, 0x1278, 0x1290, 0x12A0, 0x12A8, 0x12C8, 0x12D0, 0x12D8, 0x12E8,
@@ -891,8 +887,8 @@ String listMarkerText(ListStyleType type, int value, CSSCounterStyle* counterSty
         };
         return toAlphabetic(value, ethiopicHalehameTigAlphabet);
     }
-    case ListStyleType::TigrinyaEr:
-    case ListStyleType::EthiopicHalehameTiEr: {
+    case ListStyleType::Type::TigrinyaEr:
+    case ListStyleType::Type::EthiopicHalehameTiEr: {
         static constexpr UChar ethiopicHalehameTiErAlphabet[31] = {
             0x1200, 0x1208, 0x1210, 0x1218, 0x1228, 0x1230, 0x1238, 0x1240, 0x1250,
             0x1260, 0x1270, 0x1278, 0x1290, 0x1298, 0x12A0, 0x12A8, 0x12B8, 0x12C8,
@@ -901,8 +897,8 @@ String listMarkerText(ListStyleType type, int value, CSSCounterStyle* counterSty
         };
         return toAlphabetic(value, ethiopicHalehameTiErAlphabet);
     }
-    case ListStyleType::TigrinyaErAbegede:
-    case ListStyleType::EthiopicAbegedeTiEr: {
+    case ListStyleType::Type::TigrinyaErAbegede:
+    case ListStyleType::Type::EthiopicAbegedeTiEr: {
         static constexpr UChar ethiopicAbegedeTiErAlphabet[31] = {
             0x12A0, 0x1260, 0x1308, 0x12F0, 0x1300, 0x1200, 0x12C8, 0x12D8, 0x12E0,
             0x1210, 0x1320, 0x1328, 0x12E8, 0x12A8, 0x12B8, 0x1208, 0x1218, 0x1290,
@@ -911,8 +907,8 @@ String listMarkerText(ListStyleType type, int value, CSSCounterStyle* counterSty
         };
         return toAlphabetic(value, ethiopicAbegedeTiErAlphabet);
     }
-    case ListStyleType::TigrinyaEt:
-    case ListStyleType::EthiopicHalehameTiEt: {
+    case ListStyleType::Type::TigrinyaEt:
+    case ListStyleType::Type::EthiopicHalehameTiEt: {
         static constexpr UChar ethiopicHalehameTiEtAlphabet[34] = {
             0x1200, 0x1208, 0x1210, 0x1218, 0x1220, 0x1228, 0x1230, 0x1238, 0x1240,
             0x1250, 0x1260, 0x1270, 0x1278, 0x1280, 0x1290, 0x1298, 0x12A0, 0x12A8,
@@ -921,8 +917,8 @@ String listMarkerText(ListStyleType type, int value, CSSCounterStyle* counterSty
         };
         return toAlphabetic(value, ethiopicHalehameTiEtAlphabet);
     }
-    case ListStyleType::TigrinyaEtAbegede:
-    case ListStyleType::EthiopicAbegedeTiEt: {
+    case ListStyleType::Type::TigrinyaEtAbegede:
+    case ListStyleType::Type::EthiopicAbegedeTiEt: {
         static constexpr UChar ethiopicAbegedeTiEtAlphabet[34] = {
             0x12A0, 0x1260, 0x1308, 0x12F0, 0x1300, 0x1200, 0x12C8, 0x12D8, 0x12E0,
             0x1210, 0x1320, 0x1328, 0x12E8, 0x12A8, 0x12B8, 0x1208, 0x1218, 0x1290,
@@ -931,7 +927,7 @@ String listMarkerText(ListStyleType type, int value, CSSCounterStyle* counterSty
         };
         return toAlphabetic(value, ethiopicAbegedeTiEtAlphabet);
     }
-    case ListStyleType::UpperGreek: {
+    case ListStyleType::Type::UpperGreek: {
         static constexpr UChar upperGreekAlphabet[24] = {
             0x0391, 0x0392, 0x0393, 0x0394, 0x0395, 0x0396, 0x0397, 0x0398, 0x0399,
             0x039A, 0x039B, 0x039C, 0x039D, 0x039E, 0x039F, 0x03A0, 0x03A1, 0x03A3,
@@ -939,7 +935,7 @@ String listMarkerText(ListStyleType type, int value, CSSCounterStyle* counterSty
         };
         return toAlphabetic(value, upperGreekAlphabet);
     }
-    case ListStyleType::LowerNorwegian: {
+    case ListStyleType::Type::LowerNorwegian: {
         static constexpr LChar lowerNorwegianAlphabet[29] = {
             0x61, 0x62, 0x63, 0x64, 0x65, 0x66, 0x67, 0x68, 0x69,
             0x6A, 0x6B, 0x6C, 0x6D, 0x6E, 0x6F, 0x70, 0x71, 0x72,
@@ -948,7 +944,7 @@ String listMarkerText(ListStyleType type, int value, CSSCounterStyle* counterSty
         };
         return toAlphabetic(value, lowerNorwegianAlphabet);
     }
-    case ListStyleType::UpperNorwegian: {
+    case ListStyleType::Type::UpperNorwegian: {
         static constexpr LChar upperNorwegianAlphabet[29] = {
             0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48, 0x49,
             0x4A, 0x4B, 0x4C, 0x4D, 0x4E, 0x4F, 0x50, 0x51, 0x52,
@@ -958,7 +954,7 @@ String listMarkerText(ListStyleType type, int value, CSSCounterStyle* counterSty
         return toAlphabetic(value, upperNorwegianAlphabet);
     }
 
-    case ListStyleType::SimplifiedChineseInformal: {
+    case ListStyleType::Type::SimplifiedChineseInformal: {
         static constexpr UChar simplifiedChineseInformalTable[17] = {
             0x842C, 0x5104, 0x5146, // These three group markers are probably wrong; OK because we don't use this on big enough numbers.
             0x5341, 0x767E, 0x5343,
@@ -968,7 +964,7 @@ String listMarkerText(ListStyleType type, int value, CSSCounterStyle* counterSty
         };
         return toCJKIdeographic(value, simplifiedChineseInformalTable, Formality::Informal);
     }
-    case ListStyleType::SimplifiedChineseFormal: {
+    case ListStyleType::Type::SimplifiedChineseFormal: {
         static constexpr UChar simplifiedChineseFormalTable[17] = {
             0x842C, 0x5104, 0x5146, // These three group markers are probably wrong; OK because we don't use this on big enough numbers.
             0x62FE, 0x4F70, 0x4EDF,
@@ -978,8 +974,8 @@ String listMarkerText(ListStyleType type, int value, CSSCounterStyle* counterSty
         };
         return toCJKIdeographic(value, simplifiedChineseFormalTable, Formality::Formal);
     }
-    case ListStyleType::CJKIdeographic:
-    case ListStyleType::TraditionalChineseInformal: {
+    case ListStyleType::Type::CJKIdeographic:
+    case ListStyleType::Type::TraditionalChineseInformal: {
         static constexpr UChar traditionalChineseInformalTable[17] = {
             0x842C, 0x5104, 0x5146,
             0x5341, 0x767E, 0x5343,
@@ -989,7 +985,7 @@ String listMarkerText(ListStyleType type, int value, CSSCounterStyle* counterSty
         };
         return toCJKIdeographic(value, traditionalChineseInformalTable, Formality::Informal);
     }
-    case ListStyleType::TraditionalChineseFormal: {
+    case ListStyleType::Type::TraditionalChineseFormal: {
         static constexpr UChar traditionalChineseFormalTable[17] = {
             0x842C, 0x5104, 0x5146, // These three group markers are probably wrong; OK because we don't use this on big enough numbers.
             0x62FE, 0x4F70, 0x4EDF,
@@ -1000,7 +996,7 @@ String listMarkerText(ListStyleType type, int value, CSSCounterStyle* counterSty
         return toCJKIdeographic(value, traditionalChineseFormalTable, Formality::Formal);
     }
 
-    case ListStyleType::LowerRoman: {
+    case ListStyleType::Type::LowerRoman: {
         static CONSTEXPR_WITH_MSVC_INITIALIZER_LIST_WORKAROUND AdditiveSystem lowerRomanSystem {
             {
                 { 1000, { 'm' } },
@@ -1021,7 +1017,7 @@ String listMarkerText(ListStyleType type, int value, CSSCounterStyle* counterSty
         };
         return toPredefinedAdditiveSystem(value, lowerRomanSystem);
     }
-    case ListStyleType::UpperRoman: {
+    case ListStyleType::Type::UpperRoman: {
         static CONSTEXPR_WITH_MSVC_INITIALIZER_LIST_WORKAROUND AdditiveSystem upperRomanSystem {
             {
                 { 1000, { 'M' } },
@@ -1043,8 +1039,8 @@ String listMarkerText(ListStyleType type, int value, CSSCounterStyle* counterSty
         return toPredefinedAdditiveSystem(value, upperRomanSystem);
     }
 
-    case ListStyleType::Armenian:
-    case ListStyleType::UpperArmenian: {
+    case ListStyleType::Type::Armenian:
+    case ListStyleType::Type::UpperArmenian: {
         static CONSTEXPR_WITH_MSVC_INITIALIZER_LIST_WORKAROUND AdditiveSystem upperArmenianSystem {
             {
                 { 9000, { 0x554 } },
@@ -1088,7 +1084,7 @@ String listMarkerText(ListStyleType type, int value, CSSCounterStyle* counterSty
         };
         return toPredefinedAdditiveSystem(value, upperArmenianSystem);
     }
-    case ListStyleType::LowerArmenian: {
+    case ListStyleType::Type::LowerArmenian: {
         static CONSTEXPR_WITH_MSVC_INITIALIZER_LIST_WORKAROUND AdditiveSystem lowerArmenianSystem {
             {
                 { 9000, { 0x584 } },
@@ -1133,7 +1129,7 @@ String listMarkerText(ListStyleType type, int value, CSSCounterStyle* counterSty
         return toPredefinedAdditiveSystem(value, lowerArmenianSystem);
     }
 
-    case ListStyleType::Georgian: {
+    case ListStyleType::Type::Georgian: {
         static CONSTEXPR_WITH_MSVC_INITIALIZER_LIST_WORKAROUND AdditiveSystem georgianSystem {
             {
                 { 10000, { 0x10F5 } },
@@ -1178,7 +1174,7 @@ String listMarkerText(ListStyleType type, int value, CSSCounterStyle* counterSty
         };
         return toPredefinedAdditiveSystem(value, georgianSystem);
     }
-    case ListStyleType::Hebrew: {
+    case ListStyleType::Type::Hebrew: {
         static CONSTEXPR_WITH_MSVC_INITIALIZER_LIST_WORKAROUND AdditiveSystem hebrewSystem {
             {
                 { 10000, { 0x5D9, 0x5F3 } },
@@ -1224,20 +1220,20 @@ String listMarkerText(ListStyleType type, int value, CSSCounterStyle* counterSty
         return toPredefinedAdditiveSystem(value, hebrewSystem);
     }
 
-    case ListStyleType::CJKDecimal: {
+    case ListStyleType::Type::CJKDecimal: {
         static constexpr UChar CJKDecimalNumerals[10] = {
             0x3007, 0x4E00, 0x4E8C, 0x4E09, 0x56DB, 0x4E94, 0x516D, 0x4E03, 0x516B, 0x4E5D
         };
         return toNumeric(value, CJKDecimalNumerals);
     }
-    case ListStyleType::Tamil: {
+    case ListStyleType::Type::Tamil: {
         static constexpr UChar tamilNumerals[10] = {
             0x0BE6, 0x0BE7, 0x0BE8, 0x0BE9, 0x0BEA, 0x0BEB, 0x0BEC, 0x0BED, 0x0BEE, 0x0BEF
         };
         return toNumeric(value, tamilNumerals);
     }
 
-    case ListStyleType::JapaneseInformal: {
+    case ListStyleType::Type::JapaneseInformal: {
         static CONSTEXPR_WITH_MSVC_INITIALIZER_LIST_WORKAROUND AdditiveSystem japaneseInformalSystem {
             {
                 { 9000, { 0x4E5D, 0x5343 } },
@@ -1282,7 +1278,7 @@ String listMarkerText(ListStyleType type, int value, CSSCounterStyle* counterSty
         };
         return toPredefinedAdditiveSystem(value, japaneseInformalSystem);
     }
-    case ListStyleType::JapaneseFormal: {
+    case ListStyleType::Type::JapaneseFormal: {
         static CONSTEXPR_WITH_MSVC_INITIALIZER_LIST_WORKAROUND AdditiveSystem japaneseFormalSystem {
             {
                 { 9000, { 0x4E5D, 0x9621 } },
@@ -1327,7 +1323,7 @@ String listMarkerText(ListStyleType type, int value, CSSCounterStyle* counterSty
         };
         return toPredefinedAdditiveSystem(value, japaneseFormalSystem);
     }
-    case ListStyleType::KoreanHangulFormal: {
+    case ListStyleType::Type::KoreanHangulFormal: {
         static CONSTEXPR_WITH_MSVC_INITIALIZER_LIST_WORKAROUND AdditiveSystem koreanHangulFormalSystem {
             {
                 { 9000, { 0xAD6C, 0xCC9C } },
@@ -1372,7 +1368,7 @@ String listMarkerText(ListStyleType type, int value, CSSCounterStyle* counterSty
         };
         return toPredefinedAdditiveSystem(value, koreanHangulFormalSystem);
     }
-    case ListStyleType::KoreanHanjaInformal: {
+    case ListStyleType::Type::KoreanHanjaInformal: {
         static CONSTEXPR_WITH_MSVC_INITIALIZER_LIST_WORKAROUND AdditiveSystem koreanHanjaInformalSystem {
             {
                 { 9000, { 0x4E5D, 0x5343 } },
@@ -1417,7 +1413,7 @@ String listMarkerText(ListStyleType type, int value, CSSCounterStyle* counterSty
         };
         return toPredefinedAdditiveSystem(value, koreanHanjaInformalSystem);
     }
-    case ListStyleType::KoreanHanjaFormal: {
+    case ListStyleType::Type::KoreanHanjaFormal: {
         static CONSTEXPR_WITH_MSVC_INITIALIZER_LIST_WORKAROUND AdditiveSystem koreanHanjaFormalSystem {
             {
                 { 9000, { 0x4E5D, 0x4EDF } },
@@ -1463,10 +1459,10 @@ String listMarkerText(ListStyleType type, int value, CSSCounterStyle* counterSty
         return toPredefinedAdditiveSystem(value, koreanHanjaFormalSystem);
     }
 
-    case ListStyleType::EthiopicNumeric:
+    case ListStyleType::Type::EthiopicNumeric:
         return toEthiopicNumeric(value);
 
-    case ListStyleType::String:
+    case ListStyleType::Type::String:
         ASSERT_NOT_REACHED();
         break;
     }
@@ -1499,7 +1495,7 @@ void RenderListMarker::styleDidChange(StyleDifference diff, const RenderStyle* o
 {
     RenderBox::styleDidChange(diff, oldStyle);
     if (oldStyle) {
-        if (style().listStylePosition() != oldStyle->listStylePosition() || style().listStyleType() != oldStyle->listStyleType() || (style().listStyleType() == ListStyleType::String && style().listStyleStringValue() != oldStyle->listStyleStringValue()))
+        if (style().listStylePosition() != oldStyle->listStylePosition() || style().listStyleType() != oldStyle->listStyleType())
             setNeedsLayoutAndPrefWidthsRecalc();
         if (oldStyle->isDisplayInlineType() && !style().isDisplayInlineType()) {
             setNeedsLayoutAndPrefWidthsRecalc();
@@ -1571,7 +1567,7 @@ auto RenderListMarker::textRun() const -> TextRunWithUnderlyingString
         if (style().isLeftToRightDirection())
             textForRun = m_textWithSuffix;
         else {
-            if (style().listStyleType() == ListStyleType::DisclosureClosed)
+            if (style().listStyleType().isDisclosureClosed())
                 textForRun = { &blackLeftPointingSmallTriangle, 1 };
             else
                 textForRun = makeString(reversed(StringView(m_textWithSuffix).substring(m_textWithoutSuffixLength)), m_textWithSuffix.left(m_textWithoutSuffixLength));
@@ -1628,22 +1624,22 @@ void RenderListMarker::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
 
     auto color = style().visitedDependentColorWithColorFilter(CSSPropertyColor);
     context.setStrokeColor(color);
-    context.setStrokeStyle(SolidStroke);
+    context.setStrokeStyle(StrokeStyle::SolidStroke);
     context.setStrokeThickness(1.0f);
     context.setFillColor(color);
 
-    switch (style().listStyleType()) {
-    case ListStyleType::Disc:
+    auto listStyleType = style().listStyleType();
+    if (listStyleType.isDisc()) {
         context.fillEllipse(markerRect);
         return;
-    case ListStyleType::Circle:
+    }
+    if (listStyleType.isCircle()) {
         context.strokeEllipse(markerRect);
         return;
-    case ListStyleType::Square:
+    }
+    if (listStyleType.isSquare()) {
         context.fillRect(markerRect);
         return;
-    default:
-        break;
     }
     if (m_textWithSuffix.isEmpty())
         return;
@@ -1840,19 +1836,26 @@ void RenderListMarker::updateContent()
         return;
     }
 
-    auto type = style().listStyleType();
-    switch (type) {
-    // FIXME: handle CSSCounterStyle case rdar://102988393.
-    case ListStyleType::CustomCounterStyle:
-    case ListStyleType::String:
-        m_textWithSuffix = style().listStyleStringValue();
+    auto styleType = style().listStyleType();
+    switch (styleType.type) {
+    case ListStyleType::Type::String:
+        m_textWithSuffix = styleType.identifier;
         m_textWithoutSuffixLength = m_textWithSuffix.length();
-        // FIXME: Depending on the string value, we may need the real bidi algorithm.
+        // FIXME: Depending on the string value, we may need the real bidi algorithm. (rdar://106139180)
         m_textIsLeftToRightDirection = u_charDirection(m_textWithSuffix[0]) != U_RIGHT_TO_LEFT;
         break;
+    case ListStyleType::Type::CounterStyle: {
+        auto counter = counterStyle();
+        ASSERT(counter);
+        auto text = makeString(counter->prefix().text, counter->text(m_listItem->value()));
+        m_textWithSuffix = makeString(text, counter->suffix().text);
+        m_textWithoutSuffixLength = text.length();
+        m_textIsLeftToRightDirection = u_charDirection(text[0]) != U_RIGHT_TO_LEFT;
+        break;
+    }
     default:
-        auto text = listMarkerText(type, m_listItem->value());
-        m_textWithSuffix = makeString(text, listMarkerSuffix(type));
+        auto text = listMarkerText(styleType.type, m_listItem->value());
+        m_textWithSuffix = makeString(text, listMarkerSuffix(styleType.type));
         m_textWithoutSuffixLength = text.length();
         m_textIsLeftToRightDirection = u_charDirection(text[0]) != U_RIGHT_TO_LEFT;
         break;
@@ -1875,17 +1878,10 @@ void RenderListMarker::computePreferredLogicalWidths()
     const FontCascade& font = style().fontCascade();
 
     LayoutUnit logicalWidth;
-    switch (style().listStyleType()) {
-    case ListStyleType::Circle:
-    case ListStyleType::Disc:
-    case ListStyleType::Square:
+    if (widthUsesMetricsOfPrimaryFont())
         logicalWidth = (font.metricsOfPrimaryFont().ascent() * 2 / 3 + 1) / 2 + 2;
-        break;
-    default:
-        if (!m_textWithSuffix.isEmpty())
+    else if (!m_textWithSuffix.isEmpty())
             logicalWidth = font.width(textRun());
-        break;
-    }
 
     m_minPreferredLogicalWidth = logicalWidth;
     m_maxPreferredLogicalWidth = logicalWidth;
@@ -1905,33 +1901,22 @@ void RenderListMarker::updateMargins()
     if (isInside()) {
         if (isImage())
             marginEnd = cMarkerPadding;
-        else switch (style().listStyleType()) {
-            case ListStyleType::Disc:
-            case ListStyleType::Circle:
-            case ListStyleType::Square:
+        else if (widthUsesMetricsOfPrimaryFont()) {
                 marginStart = -1;
                 marginEnd = fontMetrics.ascent() - minPreferredLogicalWidth() + 1;
-                break;
-            default:
-                break;
         }
     } else if (isImage()) {
         marginStart = -minPreferredLogicalWidth() - cMarkerPadding;
         marginEnd = cMarkerPadding;
     } else {
         int offset = fontMetrics.ascent() * 2 / 3;
-        switch (style().listStyleType()) {
-        case ListStyleType::Disc:
-        case ListStyleType::Circle:
-        case ListStyleType::Square:
+        if (widthUsesMetricsOfPrimaryFont()) {
             marginStart = -offset - cMarkerPadding - 1;
             marginEnd = offset + cMarkerPadding + 1 - minPreferredLogicalWidth();
-            break;
-        case ListStyleType::String:
+        } else if (style().listStyleType().type == ListStyleType::Type::String) {
             if (!m_textWithSuffix.isEmpty())
                 marginStart = -minPreferredLogicalWidth();
-            break;
-        default:
+        } else {
             if (!m_textWithSuffix.isEmpty()) {
                 marginStart = -minPreferredLogicalWidth() - offset / 2;
                 marginEnd = offset / 2;
@@ -1973,23 +1958,17 @@ FloatRect RenderListMarker::relativeMarkerRect()
         return FloatRect(0, 0, m_image->imageSize(this, style().effectiveZoom()).width(), m_image->imageSize(this, style().effectiveZoom()).height());
 
     FloatRect relativeRect;
-    switch (style().listStyleType()) {
-    case ListStyleType::Disc:
-    case ListStyleType::Circle:
-    case ListStyleType::Square: {
+    if (widthUsesMetricsOfPrimaryFont()) {
         // FIXME: Are these particular rounding rules necessary?
         const FontMetrics& fontMetrics = style().metricsOfPrimaryFont();
         int ascent = fontMetrics.ascent();
         int bulletWidth = (ascent * 2 / 3 + 1) / 2;
         relativeRect = FloatRect(1, 3 * (ascent - ascent * 2 / 3) / 2, bulletWidth, bulletWidth);
-        break;
-    }
-    default:
+    } else {
         if (m_textWithSuffix.isEmpty())
             return FloatRect();
         auto& font = style().fontCascade();
         relativeRect = FloatRect(0, 0, font.width(textRun()), font.metricsOfPrimaryFont().height());
-        break;
     }
 
     if (!style().isHorizontalWritingMode()) {
@@ -2020,9 +1999,15 @@ StringView RenderListMarker::textWithoutSuffix() const
     return StringView { m_textWithSuffix }.left(m_textWithoutSuffixLength);
 }
 
-CSSCounterStyle* RenderListMarker::counterStyle() const
+RefPtr<CSSCounterStyle> RenderListMarker::counterStyle() const
 {
-    return document().counterStyleRegistry().resolvedCounterStyle(style().listStyleStringValue()).get();
+    return document().counterStyleRegistry().resolvedCounterStyle(style().listStyleType());
+}
+
+bool RenderListMarker::widthUsesMetricsOfPrimaryFont() const
+{
+    auto listType = style().listStyleType();
+    return listType.isCircle() || listType.isDisc() || listType.isSquare();
 }
 
 } // namespace WebCore

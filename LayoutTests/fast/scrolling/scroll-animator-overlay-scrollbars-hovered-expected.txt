@@ -1,10 +1,10 @@
-CONSOLE MESSAGE: MainFrameView: mouseEnteredContentArea
-CONSOLE MESSAGE: MainFrameView: mouseMovedInContentArea
-CONSOLE MESSAGE: FrameView: mouseEnteredHorizontalScrollbar
-CONSOLE MESSAGE: FrameView: mouseEnteredContentArea
-CONSOLE MESSAGE: FrameView: mouseExitedHorizontalScrollbar
-CONSOLE MESSAGE: FrameView: mouseExitedContentArea
-CONSOLE MESSAGE: MainFrameView: mouseMovedInContentArea
+CONSOLE MESSAGE: MainLocalFrameView: mouseEnteredContentArea
+CONSOLE MESSAGE: MainLocalFrameView: mouseMovedInContentArea
+CONSOLE MESSAGE: LocalFrameView: mouseEnteredHorizontalScrollbar
+CONSOLE MESSAGE: LocalFrameView: mouseEnteredContentArea
+CONSOLE MESSAGE: LocalFrameView: mouseExitedHorizontalScrollbar
+CONSOLE MESSAGE: LocalFrameView: mouseExitedContentArea
+CONSOLE MESSAGE: MainLocalFrameView: mouseMovedInContentArea
 Test for https://bugs.webkit.org/show_bug.cgi?id=153304.
 
 

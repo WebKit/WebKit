@@ -23,9 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <wtf/HashSet.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/UUID.h>
 #import <wtf/WallTime.h>
+#import <wtf/text/StringHash.h>
 
 OBJC_CLASS NSArray;
 OBJC_CLASS NSDate;
@@ -77,5 +79,8 @@ NSString *escapeCharactersInString(NSString *, NSString *charactersToEscape);
 
 NSDate *toAPI(const WallTime&);
 WallTime toImpl(NSDate *);
+
+NSSet *toAPI(HashSet<String>&);
+NSArray *toAPIArray(HashSet<String>&);
 
 } // namespace WebKit

@@ -66,7 +66,10 @@ public:
             client->willRemove();
     }
     
-    virtual bool operator==(const TrackPrivateBase&) const;
+    bool operator==(const TrackPrivateBase&) const;
+
+    enum class Type { Video, Audio, Text };
+    virtual Type type() const = 0;
 
 #if !RELEASE_LOG_DISABLED
     virtual void setLogger(const Logger&, const void*);

@@ -1,0 +1,7 @@
+Received ServiceWorker Console Message: doTest: {"type":"PUSHEVENT","message":"SHOWNOTIFICATION-LATE"}
+Received ServiceWorker Console Message: doPush: SHOWNOTIFICATION-LATE
+Received ServiceWorker Console Message: Push event ended without showing any notification may trigger removal of the push subscription.
+Received ServiceWorker Console Message: showNotification was called outside of any push event lifetime. PushEvent.waitUntil can be used to extend the push event lifetime as necessary.
+
+PASS push with late showNotification call
+

@@ -290,7 +290,7 @@ public:
     }
     bool usesSIMD() const
     {
-        // See also: WasmModuleInformation::isSIMDFunction().
+        // See also: WasmModuleInformation::usesSIMD().
         if (!Options::useWebAssemblySIMD())
             return false;
         if (Options::forceAllFunctionsToUseSIMD())

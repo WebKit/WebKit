@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2023 Apple Inc. All rights reserved.
  *           (C) 2007 Graham Dennis (graham.dennis@gmail.com)
  *           (C) 2007 Eric Seidel <eric@webkit.org>
  *
@@ -33,34 +33,18 @@
 #include <wtf/RefCounted.h>
 #include <wtf/RetainPtr.h>
 
-#if PLATFORM(WIN)
-#include <windows.h>
-#endif
-
 typedef struct CGContext* CGContextRef;
 
-#if PLATFORM(COCOA)
-typedef void* PlatformBitmapBuffer;
-#elif PLATFORM(WIN)
-typedef HBITMAP PlatformBitmapBuffer;
-#endif
+using UniqueBitmapBuffer = std::unique_ptr<void, decltype(std::free) *>;
 
 class BitmapContext : public RefCounted<BitmapContext> {
 public:
-    static Ref<BitmapContext> createByAdoptingBitmapAndContext(PlatformBitmapBuffer buffer, RetainPtr<CGContextRef>&& context)
+    static Ref<BitmapContext> createByAdoptingBitmapAndContext(UniqueBitmapBuffer&& buffer, RetainPtr<CGContextRef>&& context)
     {
-        return adoptRef(*new BitmapContext(buffer, WTFMove(context)));
+        return adoptRef(*new BitmapContext(WTFMove(buffer), WTFMove(context)));
     }
 
-    ~BitmapContext()
-    {
-        if (m_buffer)
-#if PLATFORM(COCOA)
-            free(m_buffer);
-#elif PLATFORM(WIN)
-            DeleteObject(m_buffer);
-#endif
-    }
+    ~BitmapContext() = default;
 
     CGContextRef cgContext() const { return m_context.get(); }
     
@@ -69,18 +53,16 @@ public:
 
 private:
 
-    BitmapContext(PlatformBitmapBuffer buffer, RetainPtr<CGContextRef>&& context)
-        : m_buffer(buffer)
+    BitmapContext(UniqueBitmapBuffer&& buffer, RetainPtr<CGContextRef>&& context)
+        : m_buffer(WTFMove(buffer))
         , m_context(WTFMove(context))
     {
     }
 
-    PlatformBitmapBuffer m_buffer;
+    UniqueBitmapBuffer m_buffer;
     RetainPtr<CGContextRef> m_context;
     double m_scaleFactor { 1.0 };
 };
 
-#if PLATFORM(COCOA)
-RefPtr<BitmapContext> createBitmapContext(size_t pixelsWide, size_t pixelsHigh, size_t& rowBytes, void*& buffer);
-#endif
+RefPtr<BitmapContext> createBitmapContext(size_t pixelsWide, size_t pixelsHigh, size_t& rowBytes);
 RefPtr<BitmapContext> createBitmapContextFromWebView(bool onscreen, bool incrementalRepaint, bool sweepHorizontally, bool drawSelectionRect);

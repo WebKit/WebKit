@@ -28,181 +28,11 @@
 
 #include "ArgumentCoders.h"
 #include "WebProcess.h"
-#include <WebCore/Frame.h>
 #include <WebCore/FrameDestructionObserverInlines.h>
+#include <WebCore/LocalFrame.h>
 #include <WebCore/Page.h>
 
 namespace WebKit {
-
-void WebsitePoliciesData::encode(IPC::Encoder& encoder) const
-{
-    encoder << contentBlockersEnabled;
-    encoder << activeContentRuleListActionPatterns;
-    encoder << autoplayPolicy;
-#if ENABLE(DEVICE_ORIENTATION)
-    encoder << deviceOrientationAndMotionAccessState;
-#endif
-    encoder << allowedAutoplayQuirks;
-    encoder << customHeaderFields;
-    encoder << popUpPolicy;
-    encoder << customUserAgent;
-    encoder << customUserAgentAsSiteSpecificQuirks;
-    encoder << customNavigatorPlatform;
-    encoder << metaViewportPolicy;
-    encoder << mediaSourcePolicy;
-    encoder << simulatedMouseEventsDispatchPolicy;
-    encoder << legacyOverflowScrollingTouchPolicy;
-    encoder << allowContentChangeObserverQuirk;
-    encoder << allowsContentJavaScript;
-    encoder << mouseEventPolicy;
-    encoder << modalContainerObservationPolicy;
-    encoder << colorSchemePreference;
-    encoder << networkConnectionIntegrityPolicy;
-    encoder << idempotentModeAutosizingOnlyHonorsPercentages;
-    encoder << allowPrivacyProxy;
-}
-
-std::optional<WebsitePoliciesData> WebsitePoliciesData::decode(IPC::Decoder& decoder)
-{
-    std::optional<bool> contentBlockersEnabled;
-    decoder >> contentBlockersEnabled;
-    if (!contentBlockersEnabled)
-        return std::nullopt;
-
-    std::optional<HashMap<WTF::String, Vector<WTF::String>>> activeContentRuleListActionPatterns;
-    decoder >> activeContentRuleListActionPatterns;
-    if (!activeContentRuleListActionPatterns)
-        return std::nullopt;
-
-    std::optional<WebsiteAutoplayPolicy> autoplayPolicy;
-    decoder >> autoplayPolicy;
-    if (!autoplayPolicy)
-        return std::nullopt;
-
-#if ENABLE(DEVICE_ORIENTATION)
-    std::optional<WebCore::DeviceOrientationOrMotionPermissionState> deviceOrientationAndMotionAccessState;
-    decoder >> deviceOrientationAndMotionAccessState;
-    if (!deviceOrientationAndMotionAccessState)
-        return std::nullopt;
-#endif
-    
-    std::optional<OptionSet<WebsiteAutoplayQuirk>> allowedAutoplayQuirks;
-    decoder >> allowedAutoplayQuirks;
-    if (!allowedAutoplayQuirks)
-        return std::nullopt;
-    
-    std::optional<Vector<WebCore::CustomHeaderFields>> customHeaderFields;
-    decoder >> customHeaderFields;
-    if (!customHeaderFields)
-        return std::nullopt;
-
-    std::optional<WebsitePopUpPolicy> popUpPolicy;
-    decoder >> popUpPolicy;
-    if (!popUpPolicy)
-        return std::nullopt;
-
-    std::optional<String> customUserAgent;
-    decoder >> customUserAgent;
-    if (!customUserAgent)
-        return std::nullopt;
-
-    std::optional<String> customUserAgentAsSiteSpecificQuirks;
-    decoder >> customUserAgentAsSiteSpecificQuirks;
-    if (!customUserAgentAsSiteSpecificQuirks)
-        return std::nullopt;
-
-    std::optional<String> customNavigatorPlatform;
-    decoder >> customNavigatorPlatform;
-    if (!customNavigatorPlatform)
-        return std::nullopt;
-
-    std::optional<WebsiteMetaViewportPolicy> metaViewportPolicy;
-    decoder >> metaViewportPolicy;
-    if (!metaViewportPolicy)
-        return std::nullopt;
-
-    std::optional<WebsiteMediaSourcePolicy> mediaSourcePolicy;
-    decoder >> mediaSourcePolicy;
-    if (!mediaSourcePolicy)
-        return std::nullopt;
-    
-    std::optional<WebsiteSimulatedMouseEventsDispatchPolicy> simulatedMouseEventsDispatchPolicy;
-    decoder >> simulatedMouseEventsDispatchPolicy;
-    if (!simulatedMouseEventsDispatchPolicy)
-        return std::nullopt;
-
-    std::optional<WebsiteLegacyOverflowScrollingTouchPolicy> legacyOverflowScrollingTouchPolicy;
-    decoder >> legacyOverflowScrollingTouchPolicy;
-    if (!legacyOverflowScrollingTouchPolicy)
-        return std::nullopt;
-
-    std::optional<bool> allowContentChangeObserverQuirk;
-    decoder >> allowContentChangeObserverQuirk;
-    if (!allowContentChangeObserverQuirk)
-        return std::nullopt;
-
-    std::optional<WebCore::AllowsContentJavaScript> allowsContentJavaScript;
-    decoder >> allowsContentJavaScript;
-    if (!allowsContentJavaScript)
-        return std::nullopt;
-
-    std::optional<WebCore::MouseEventPolicy> mouseEventPolicy;
-    decoder >> mouseEventPolicy;
-    if (!mouseEventPolicy)
-        return std::nullopt;
-
-    std::optional<WebCore::ModalContainerObservationPolicy> modalContainerObservationPolicy;
-    decoder >> modalContainerObservationPolicy;
-    if (!modalContainerObservationPolicy)
-        return std::nullopt;
-
-    std::optional<WebCore::ColorSchemePreference> colorSchemePreference;
-    decoder >> colorSchemePreference;
-    if (!colorSchemePreference)
-        return std::nullopt;
-
-    std::optional<OptionSet<WebCore::NetworkConnectionIntegrity>> networkConnectionIntegrityPolicy;
-    decoder >> networkConnectionIntegrityPolicy;
-    if (!networkConnectionIntegrityPolicy)
-        return std::nullopt;
-
-    std::optional<bool> idempotentModeAutosizingOnlyHonorsPercentages;
-    decoder >> idempotentModeAutosizingOnlyHonorsPercentages;
-    if (!idempotentModeAutosizingOnlyHonorsPercentages)
-        return std::nullopt;
-
-    std::optional<bool> allowPrivacyProxy;
-    decoder >> allowPrivacyProxy;
-    if (!allowPrivacyProxy)
-        return std::nullopt;
-
-    return { {
-        WTFMove(*contentBlockersEnabled),
-        WTFMove(*activeContentRuleListActionPatterns),
-        WTFMove(*allowedAutoplayQuirks),
-        WTFMove(*autoplayPolicy),
-#if ENABLE(DEVICE_ORIENTATION)
-        WTFMove(*deviceOrientationAndMotionAccessState),
-#endif
-        WTFMove(*customHeaderFields),
-        WTFMove(*popUpPolicy),
-        WTFMove(*customUserAgent),
-        WTFMove(*customUserAgentAsSiteSpecificQuirks),
-        WTFMove(*customNavigatorPlatform),
-        WTFMove(*metaViewportPolicy),
-        WTFMove(*mediaSourcePolicy),
-        WTFMove(*simulatedMouseEventsDispatchPolicy),
-        WTFMove(*legacyOverflowScrollingTouchPolicy),
-        WTFMove(*allowContentChangeObserverQuirk),
-        WTFMove(*allowsContentJavaScript),
-        WTFMove(*mouseEventPolicy),
-        WTFMove(*modalContainerObservationPolicy),
-        WTFMove(*colorSchemePreference),
-        WTFMove(*networkConnectionIntegrityPolicy),
-        WTFMove(*idempotentModeAutosizingOnlyHonorsPercentages),
-        WTFMove(*allowPrivacyProxy),
-    } };
-}
 
 void WebsitePoliciesData::applyToDocumentLoader(WebsitePoliciesData&& websitePolicies, WebCore::DocumentLoader& documentLoader)
 {
@@ -216,9 +46,10 @@ void WebsitePoliciesData::applyToDocumentLoader(WebsitePoliciesData&& websitePol
     documentLoader.setDeviceOrientationAndMotionAccessState(websitePolicies.deviceOrientationAndMotionAccessState);
 #endif
 
-    // Only setUserContentExtensionsEnabled if it hasn't already been disabled by reloading without content blockers.
-    if (documentLoader.userContentExtensionsEnabled())
-        documentLoader.setUserContentExtensionsEnabled(websitePolicies.contentBlockersEnabled);
+    // Only disable content blockers if it hasn't already been disabled by reloading without content blockers.
+    auto& [defaultEnablement, exceptions] = documentLoader.contentExtensionEnablement();
+    if (defaultEnablement == WebCore::ContentExtensionDefaultEnablement::Enabled && exceptions.isEmpty())
+        documentLoader.setContentExtensionEnablement(WTFMove(websitePolicies.contentExtensionEnablement));
 
     documentLoader.setActiveContentRuleListActionPatterns(websitePolicies.activeContentRuleListActionPatterns);
 

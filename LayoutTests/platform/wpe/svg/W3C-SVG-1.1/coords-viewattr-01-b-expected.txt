@@ -14,14 +14,14 @@ layer at (0,0) size 800x600
             RenderSVGEllipse {circle} at (50,142) size 6x6 [fill={[type=SOLID] [color=#000000]}] [cx=12.00] [cy=12.00] [r=1.50]
             RenderSVGEllipse {circle} at (59,142) size 6x6 [fill={[type=SOLID] [color=#000000]}] [cx=17.00] [cy=12.00] [r=1.50]
             RenderSVGPath {path} at (48,155) size 20x11 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M 10 19 L 15 23 L 20 19"]
-        RenderSVGText {text} at (10,101) size 43x11 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 43x10
-            chunk 1 text run 1 at (10.00,110.00) startOffset 0 endOffset 10 width 42.00: "Viewport 1"
+        RenderSVGText {text} at (10,101) size 42x11 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 42x10
+            chunk 1 text run 1 at (10.00,110.00) startOffset 0 endOffset 10 width 41.46: "Viewport 1"
         RenderSVGContainer {g} at (16,250) size 84x50 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,120.00)}]
           RenderSVGRect {rect} at (16,250) size 84x50 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.50] [y=0.50] [width=49.00] [height=29.00]
-        RenderSVGText {text} at (10,171) size 43x11 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 43x10
-            chunk 1 text run 1 at (10.00,180.00) startOffset 0 endOffset 10 width 42.00: "Viewport 2"
+        RenderSVGText {text} at (10,171) size 42x11 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 42x10
+            chunk 1 text run 1 at (10.00,180.00) startOffset 0 endOffset 10 width 41.46: "Viewport 2"
         RenderSVGContainer {g} at (33,366) size 51x101 [transform={m=((1.00,0.00)(0.00,1.00)) t=(20.00,190.00)}]
           RenderSVGRect {rect} at (33,366) size 51x101 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.50] [y=0.50] [width=29.00] [height=59.00]
         RenderSVGContainer {g} at (200,86) size 200x181 [transform={m=((1.00,0.00)(0.00,1.00)) t=(120.00,50.00)}]

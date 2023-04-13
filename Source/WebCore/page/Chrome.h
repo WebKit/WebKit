@@ -28,6 +28,7 @@
 #include <wtf/Forward.h>
 #include <wtf/FunctionDispatcher.h>
 #include <wtf/RefPtr.h>
+#include <wtf/UniqueRef.h>
 
 #if PLATFORM(COCOA)
 OBJC_CLASS NSView;
@@ -52,11 +53,11 @@ class FileChooser;
 class FileIconLoader;
 class FloatRect;
 class Element;
-class Frame;
 class Geolocation;
 class HitTestResult;
 class IntPoint;
 class IntRect;
+class LocalFrame;
 class NavigationAction;
 class Page;
 class PopupMenu;
@@ -75,10 +76,11 @@ struct WindowFeatures;
 
 class Chrome : public HostWindow {
 public:
-    Chrome(Page&, ChromeClient&);
+    Chrome(Page&, UniqueRef<ChromeClient>&&);
     virtual ~Chrome();
 
     ChromeClient& client() { return m_client; }
+    const ChromeClient& client() const { return m_client; }
 
     // HostWindow methods.
     void invalidateRootView(const IntRect&) override;
@@ -112,55 +114,55 @@ public:
     void scrollContainingScrollViewsToRevealRect(const IntRect&) const;
     void scrollMainFrameToRevealRect(const IntRect&) const;
 
-    void contentsSizeChanged(Frame&, const IntSize&) const;
+    void contentsSizeChanged(LocalFrame&, const IntSize&) const;
 
-    WEBCORE_EXPORT void setWindowRect(const FloatRect&) const;
+    WEBCORE_EXPORT void setWindowRect(const FloatRect&);
     WEBCORE_EXPORT FloatRect windowRect() const;
 
     FloatRect pageRect() const;
 
-    void focus() const;
-    void unfocus() const;
+    void focus();
+    void unfocus();
 
     bool canTakeFocus(FocusDirection) const;
-    void takeFocus(FocusDirection) const;
+    void takeFocus(FocusDirection);
 
-    void focusedElementChanged(Element*) const;
-    void focusedFrameChanged(Frame*) const;
+    void focusedElementChanged(Element*);
+    void focusedFrameChanged(LocalFrame*);
 
-    WEBCORE_EXPORT Page* createWindow(Frame&, const WindowFeatures&, const NavigationAction&) const;
-    WEBCORE_EXPORT void show() const;
+    WEBCORE_EXPORT Page* createWindow(LocalFrame&, const WindowFeatures&, const NavigationAction&);
+    WEBCORE_EXPORT void show();
 
     bool canRunModal() const;
-    void runModal() const;
+    void runModal();
 
-    void setToolbarsVisible(bool) const;
+    void setToolbarsVisible(bool);
     bool toolbarsVisible() const;
 
-    void setStatusbarVisible(bool) const;
+    void setStatusbarVisible(bool);
     bool statusbarVisible() const;
 
-    void setScrollbarsVisible(bool) const;
+    void setScrollbarsVisible(bool);
     bool scrollbarsVisible() const;
 
-    void setMenubarVisible(bool) const;
+    void setMenubarVisible(bool);
     bool menubarVisible() const;
 
-    void setResizable(bool) const;
+    void setResizable(bool);
 
     bool canRunBeforeUnloadConfirmPanel();
-    bool runBeforeUnloadConfirmPanel(const String& message, Frame&);
+    bool runBeforeUnloadConfirmPanel(const String& message, LocalFrame&);
 
     void closeWindow();
 
-    void runJavaScriptAlert(Frame&, const String&);
-    bool runJavaScriptConfirm(Frame&, const String&);
-    bool runJavaScriptPrompt(Frame&, const String& message, const String& defaultValue, String& result);
-    WEBCORE_EXPORT void setStatusbarText(Frame&, const String&);
+    void runJavaScriptAlert(LocalFrame&, const String&);
+    bool runJavaScriptConfirm(LocalFrame&, const String&);
+    bool runJavaScriptPrompt(LocalFrame&, const String& message, const String& defaultValue, String& result);
+    WEBCORE_EXPORT void setStatusbarText(LocalFrame&, const String&);
 
     void mouseDidMoveOverElement(const HitTestResult&, unsigned modifierFlags);
 
-    WEBCORE_EXPORT bool print(Frame&);
+    WEBCORE_EXPORT bool print(LocalFrame&);
 
     WEBCORE_EXPORT void enableSuddenTermination();
     WEBCORE_EXPORT void disableSuddenTermination();
@@ -183,7 +185,7 @@ public:
     void storeAppHighlight(AppHighlight&&) const;
 #endif
 
-    void runOpenPanel(Frame&, FileChooser&);
+    void runOpenPanel(LocalFrame&, FileChooser&);
     void showShareSheet(ShareDataWithParsedURL&, CompletionHandler<void(bool)>&&);
     void showContactPicker(const ContactsRequestData&, CompletionHandler<void(std::optional<Vector<ContactInfo>>&&)>&&);
     void loadIconForFiles(const Vector<String>&, FileIconLoader&);
@@ -207,7 +209,7 @@ public:
     void setDispatchViewportDataDidChangeSuppressed(bool dispatchViewportDataDidChangeSuppressed) { m_isDispatchViewportDataDidChangeSuppressed = dispatchViewportDataDidChangeSuppressed; }
 #endif
 
-    void didReceiveDocType(Frame&);
+    void didReceiveDocType(LocalFrame&);
 
     void registerPopupOpeningObserver(PopupOpeningObserver&);
     void unregisterPopupOpeningObserver(PopupOpeningObserver&);
@@ -218,7 +220,8 @@ private:
     void getToolTip(const HitTestResult&, String&, TextDirection&);
 
     Page& m_page;
-    ChromeClient& m_client;
+    UniqueRef<ChromeClient> m_client;
+    // FIXME: This should be WeakPtr<PopupOpeningObserver>.
     Vector<PopupOpeningObserver*> m_popupOpeningObservers;
 #if PLATFORM(IOS_FAMILY)
     bool m_isDispatchViewportDataDidChangeSuppressed { false };

@@ -26,6 +26,7 @@
 #pragma once
 
 #include "MDNSRegisterError.h"
+#include "MediaCapabilitiesInfo.h"
 #include "RTCDataChannelRemoteHandlerConnection.h"
 #include "RTCRtpCapabilities.h"
 #include "ScriptExecutionContextIdentifier.h"
@@ -37,7 +38,6 @@
 namespace WebCore {
 
 class ContentType;
-struct MediaCapabilitiesInfo;
 struct VideoConfiguration;
 struct MediaCapabilitiesDecodingInfo;
 struct MediaCapabilitiesEncodingInfo;

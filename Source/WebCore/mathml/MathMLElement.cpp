@@ -78,11 +78,11 @@ unsigned MathMLElement::rowSpan() const
     return std::max(1u, std::min(limitToOnlyHTMLNonNegative(rowSpanValue, 1u), maxRowspan));
 }
 
-void MathMLElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void MathMLElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     if (name == hrefAttr) {
         bool wasLink = isLink();
-        setIsLink(!value.isNull() && !shouldProhibitLinks(this));
+        setIsLink(!newValue.isNull() && !shouldProhibitLinks(this));
         if (wasLink != isLink())
             invalidateStyleForSubtree();
     } else if (name == rowspanAttr) {
@@ -92,18 +92,18 @@ void MathMLElement::parseAttribute(const QualifiedName& name, const AtomString& 
         if (is<RenderTableCell>(renderer()) && hasTagName(mtdTag))
             downcast<RenderTableCell>(renderer())->colSpanOrRowSpanChanged();
     } else if (name == HTMLNames::tabindexAttr) {
-        if (value.isEmpty())
+        if (newValue.isEmpty())
             setTabIndexExplicitly(std::nullopt);
-        else if (auto optionalTabIndex = parseHTMLInteger(value))
+        else if (auto optionalTabIndex = parseHTMLInteger(newValue))
             setTabIndexExplicitly(optionalTabIndex.value());
     } else {
         auto& eventName = HTMLElement::eventNameForEventHandlerAttribute(name);
         if (!eventName.isNull()) {
-            setAttributeEventListener(eventName, name, value);
+            setAttributeEventListener(eventName, name, newValue);
             return;
         }
 
-        StyledElement::parseAttribute(name, value);
+        StyledElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
     }
 }
 

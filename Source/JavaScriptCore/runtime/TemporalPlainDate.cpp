@@ -36,10 +36,6 @@
 
 namespace JSC {
 
-namespace TemporalPlainDateInternal {
-static constexpr bool verbose = false;
-}
-
 const ClassInfo TemporalPlainDate::s_info = { "Object"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(TemporalPlainDate) };
 
 TemporalPlainDate* TemporalPlainDate::create(VM& vm, Structure* structure, ISO8601::PlainDate&& plainDate)

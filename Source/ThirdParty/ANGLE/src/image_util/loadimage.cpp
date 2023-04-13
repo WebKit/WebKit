@@ -1348,7 +1348,7 @@ void LoadRGB32FToRG11B10F(const ImageLoadContext &context,
     }
 }
 
-void LoadG8R24ToR24G8(const ImageLoadContext &context,
+void LoadD24S8ToS8D24(const ImageLoadContext &context,
                       size_t width,
                       size_t height,
                       size_t depth,
@@ -1369,9 +1369,7 @@ void LoadG8R24ToR24G8(const ImageLoadContext &context,
                 priv::OffsetDataPointer<uint32_t>(output, y, z, outputRowPitch, outputDepthPitch);
             for (size_t x = 0; x < width; x++)
             {
-                uint32_t d = source[x] >> 8;
-                uint8_t s  = source[x] & 0xFF;
-                dest[x]    = d | (s << 24);
+                dest[x] = ANGLE_ROTL(source[x], 24);
             }
         }
     }
@@ -1401,8 +1399,8 @@ void LoadD24S8ToD32FS8X24(const ImageLoadContext &context,
                 1;
             for (size_t x = 0; x < width; x++)
             {
-                destDepth[x * 2]   = (source[x] & 0xFFFFFF) / static_cast<float>(0xFFFFFF);
-                destStencil[x * 2] = source[x] & 0xFF000000;
+                destDepth[x * 2]   = (source[x] >> 8) / static_cast<float>(0xFFFFFF);
+                destStencil[x * 2] = source[x] & 0xFF;
             }
         }
     }
@@ -1429,8 +1427,7 @@ void LoadD24S8ToD32F(const ImageLoadContext &context,
                 priv::OffsetDataPointer<float>(output, y, z, outputRowPitch, outputDepthPitch);
             for (size_t x = 0; x < width; x++)
             {
-                uint32_t sourcePixel = (source[x] >> 8) & 0xFFFFFF;
-                destDepth[x]         = sourcePixel / static_cast<float>(0xFFFFFF);
+                destDepth[x] = (source[x] >> 8) / static_cast<float>(0xFFFFFF);
             }
         }
     }
@@ -1518,7 +1515,7 @@ void LoadD32FToD32F(const ImageLoadContext &context,
     }
 }
 
-void LoadD32FS8X24ToD24S8(const ImageLoadContext &context,
+void LoadD32FS8X24ToS8D24(const ImageLoadContext &context,
                           size_t width,
                           size_t height,
                           size_t depth,
@@ -1542,7 +1539,7 @@ void LoadD32FS8X24ToD24S8(const ImageLoadContext &context,
             for (size_t x = 0; x < width; x++)
             {
                 uint32_t d = static_cast<uint32_t>(gl::clamp01(sourceDepth[x * 2]) * 0xFFFFFF);
-                uint32_t s = sourceStencil[x * 2] & 0xFF000000;
+                uint32_t s = sourceStencil[x * 2] << 24;
                 dest[x]    = d | s;
             }
         }
@@ -1657,7 +1654,7 @@ void LoadD32FS8X24ToD32FS8X24(const ImageLoadContext &context,
             for (size_t x = 0; x < width; x++)
             {
                 destDepth[x * 2]   = gl::clamp01(sourceDepth[x * 2]);
-                destStencil[x * 2] = sourceStencil[x * 2] & 0xFF000000;
+                destStencil[x * 2] = sourceStencil[x * 2] & 0xFF;
             }
         }
     }
@@ -1749,7 +1746,7 @@ void LoadR32ToR16(const ImageLoadContext &context,
     }
 }
 
-void LoadR32ToR24G8(const ImageLoadContext &context,
+void LoadD32ToX8D24(const ImageLoadContext &context,
                     size_t width,
                     size_t height,
                     size_t depth,
@@ -1779,17 +1776,17 @@ void LoadR32ToR24G8(const ImageLoadContext &context,
 
 // This conversion was added to support using a 32F depth buffer
 // as emulation for 16unorm depth buffer in Metal.
-// See angleproject:6597
-void LoadUNorm16To32F(const ImageLoadContext &context,
-                      size_t width,
-                      size_t height,
-                      size_t depth,
-                      const uint8_t *input,
-                      size_t inputRowPitch,
-                      size_t inputDepthPitch,
-                      uint8_t *output,
-                      size_t outputRowPitch,
-                      size_t outputDepthPitch)
+// See https://anglebug.com/6597
+void LoadD16ToD32F(const ImageLoadContext &context,
+                   size_t width,
+                   size_t height,
+                   size_t depth,
+                   const uint8_t *input,
+                   size_t inputRowPitch,
+                   size_t inputDepthPitch,
+                   uint8_t *output,
+                   size_t outputRowPitch,
+                   size_t outputDepthPitch)
 {
     for (size_t z = 0; z < depth; z++)
     {
@@ -1807,34 +1804,29 @@ void LoadUNorm16To32F(const ImageLoadContext &context,
     }
 }
 
-// This conversion was added to support using a 32F depth buffer
-// as emulation for 16unorm depth buffer in Metal. In OpenGL ES 3.0
-// you're allowed to pass UNSIGNED_INT as input to texImage2D and
-// so this conversion is neccasary.
-//
-// See angleproject:6597
-void LoadUNorm32To32F(const ImageLoadContext &context,
-                      size_t width,
-                      size_t height,
-                      size_t depth,
-                      const uint8_t *input,
-                      size_t inputRowPitch,
-                      size_t inputDepthPitch,
-                      uint8_t *output,
-                      size_t outputRowPitch,
-                      size_t outputDepthPitch)
+void LoadS8ToS8X24(const ImageLoadContext &context,
+                   size_t width,
+                   size_t height,
+                   size_t depth,
+                   const uint8_t *input,
+                   size_t inputRowPitch,
+                   size_t inputDepthPitch,
+                   uint8_t *output,
+                   size_t outputRowPitch,
+                   size_t outputDepthPitch)
 {
     for (size_t z = 0; z < depth; z++)
     {
         for (size_t y = 0; y < height; y++)
         {
-            const uint16_t *source =
-                priv::OffsetDataPointer<uint16_t>(input, y, z, inputRowPitch, inputDepthPitch);
-            float *dest =
-                priv::OffsetDataPointer<float>(output, y, z, outputRowPitch, outputDepthPitch);
+            const uint8_t *source =
+                priv::OffsetDataPointer<uint8_t>(input, y, z, inputRowPitch, inputDepthPitch);
+            uint32_t *destStencil =
+                priv::OffsetDataPointer<uint32_t>(output, y, z, outputRowPitch, outputDepthPitch);
+
             for (size_t x = 0; x < width; x++)
             {
-                dest[x] = static_cast<float>(source[x]) / static_cast<float>(0xFFFFFFFFU);
+                destStencil[x] = source[x] << 24;
             }
         }
     }

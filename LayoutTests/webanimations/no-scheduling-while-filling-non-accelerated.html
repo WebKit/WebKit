@@ -14,30 +14,19 @@
 <body>
 <script src="../resources/testharness.js"></script>
 <script src="../resources/testharnessreport.js"></script>
+<script src="resources/rendering-frames.js"></script>
 <div id="target"></div>
 <script>
 
-function waitNFrames(numberOfFrames, continuation)
-{
-    let elapsedFrames = 0;
-    (function rAFCallback() {
-        if (elapsedFrames++ >= numberOfFrames)
-            continuation();
-        else
-            requestAnimationFrame(rAFCallback);
-    })();
-}
-
-async_test(t => {
+promise_test(async () => {
     const keyframes = { marginLeft: ["50px", "100px"] };
     const timing = { duration: 50, fill: "forwards" };
-    document.getElementById("target").animate(keyframes, timing).addEventListener("finish", event => {
-        const numberOfTimelineInvalidationsWhenFinished = internals.numberOfAnimationTimelineInvalidations();
-        waitNFrames(2, () => {
-            assert_equals(internals.numberOfAnimationTimelineInvalidations(), numberOfTimelineInvalidationsWhenFinished);
-            t.done();
-        });
-    });
+
+    await document.getElementById("target").animate(keyframes, timing).finished;
+
+    const numberOfTimelineInvalidationsWhenFinished = internals.numberOfAnimationTimelineInvalidations();
+    await renderingFrames(2);
+    assert_equals(internals.numberOfAnimationTimelineInvalidations(), numberOfTimelineInvalidationsWhenFinished);
 }, "There should not be any updates made to the timeline after a forward-filling animation completes.");
 
 </script>

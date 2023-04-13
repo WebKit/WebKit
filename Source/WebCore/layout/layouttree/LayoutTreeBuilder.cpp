@@ -368,8 +368,7 @@ void showInlineTreeAndRuns(TextStream& stream, const LayoutState& layoutState, c
         addSpacing();
         auto& line = lines[lineIndex];
         auto& lineBoxRect = line.lineBoxRect();
-        auto enclosingTopAndBottom = line.enclosingLogicalTopAndBottom();
-        stream << "line at (" << lineBoxRect.x() << "," << lineBoxRect.y() << ") size (" << lineBoxRect.width() << "x" << lineBoxRect.height() << ") baseline (" << line.baseline() << ") enclosing top (" << enclosingTopAndBottom.top << ") bottom (" << enclosingTopAndBottom.bottom << ")";
+        stream << "line at (" << lineBoxRect.x() << "," << lineBoxRect.y() << ") size (" << lineBoxRect.width() << "x" << lineBoxRect.height() << ") baseline (" << line.baseline() << ") enclosing top (" << line.enclosingContentLogicalTop() << ") bottom (" << line.enclosingContentLogicalBottom() << ")";
         stream.nextLine();
 
         addSpacing();
@@ -410,13 +409,13 @@ void showInlineTreeAndRuns(TextStream& stream, const LayoutState& layoutState, c
                 continue;
             addSpacing();
             stream << "    ";
-            if (box.text())
+            if (box.isTextOrSoftLineBreak())
                 stream << "text box";
             else
                 stream << "box box";
             stream << " at (" << box.left() << "," << box.top() << ") size " << box.width() << "x" << box.height();
-            if (box.text())
-                stream << " box(" << box.text()->start() << ", " << box.text()->end() << ")";
+            if (box.isTextOrSoftLineBreak())
+                stream << " box(" << box.text().start() << ", " << box.text().end() << ")";
             stream.nextLine();
         }
 

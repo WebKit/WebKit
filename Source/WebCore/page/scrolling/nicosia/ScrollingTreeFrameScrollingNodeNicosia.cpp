@@ -31,7 +31,7 @@
 
 #if ENABLE(ASYNC_SCROLLING) && USE(NICOSIA)
 
-#include "FrameView.h"
+#include "LocalFrameView.h"
 #include "Logging.h"
 #include "NicosiaPlatformLayer.h"
 #include "ScrollingStateFrameScrollingNode.h"
@@ -58,9 +58,13 @@ ScrollingTreeScrollingNodeDelegateNicosia& ScrollingTreeFrameScrollingNodeNicosi
     return *static_cast<ScrollingTreeScrollingNodeDelegateNicosia*>(m_delegate.get());
 }
 
-void ScrollingTreeFrameScrollingNodeNicosia::commitStateBeforeChildren(const ScrollingStateNode& stateNode)
+bool ScrollingTreeFrameScrollingNodeNicosia::commitStateBeforeChildren(const ScrollingStateNode& stateNode)
 {
-    ScrollingTreeFrameScrollingNode::commitStateBeforeChildren(stateNode);
+    if (!ScrollingTreeFrameScrollingNode::commitStateBeforeChildren(stateNode))
+        return false;
+
+    if (!is<ScrollingStateFrameScrollingNode>(stateNode))
+        return false;
 
     const auto& scrollingStateNode = downcast<ScrollingStateFrameScrollingNode>(stateNode);
 
@@ -90,6 +94,7 @@ void ScrollingTreeFrameScrollingNodeNicosia::commitStateBeforeChildren(const Scr
     }
 
     m_delegate->updateFromStateNode(scrollingStateNode);
+    return true;
 }
 
 WheelEventHandlingResult ScrollingTreeFrameScrollingNodeNicosia::handleWheelEvent(const PlatformWheelEvent& wheelEvent, EventTargeting eventTargeting)
@@ -151,11 +156,11 @@ void ScrollingTreeFrameScrollingNodeNicosia::repositionRelatedLayers()
         m_insetClipLayer->accessPending(
             [&scrollPosition, &topContentInset](Nicosia::CompositionLayer::LayerState& state)
             {
-                state.position = { state.position.x(), FrameView::yPositionForInsetClipLayer(scrollPosition, topContentInset) };
+                state.position = { state.position.x(), LocalFrameView::yPositionForInsetClipLayer(scrollPosition, topContentInset) };
                 state.delta.positionChanged = true;
             });
 
-        auto rootContentsPosition = FrameView::positionForRootContentLayer(scrollPosition, scrollOrigin(), topContentInset, headerHeight());
+        auto rootContentsPosition = LocalFrameView::positionForRootContentLayer(scrollPosition, scrollOrigin(), topContentInset, headerHeight());
         applyLayerPosition(*m_rootContentsLayer, rootContentsPosition);
         if (m_contentShadowLayer)
             applyLayerPosition(*m_contentShadowLayer, rootContentsPosition);
@@ -167,9 +172,9 @@ void ScrollingTreeFrameScrollingNodeNicosia::repositionRelatedLayers()
         // then we should recompute layoutViewport.x() for the banner with a scale factor of 1.
         float horizontalScrollOffsetForBanner = layoutViewport.x();
         if (m_headerLayer)
-            applyLayerPosition(*m_headerLayer, FloatPoint(horizontalScrollOffsetForBanner, FrameView::yPositionForHeaderLayer(scrollPosition, topContentInset)));
+            applyLayerPosition(*m_headerLayer, FloatPoint(horizontalScrollOffsetForBanner, LocalFrameView::yPositionForHeaderLayer(scrollPosition, topContentInset)));
         if (m_footerLayer)
-            applyLayerPosition(*m_footerLayer, FloatPoint(horizontalScrollOffsetForBanner, FrameView::yPositionForFooterLayer(scrollPosition, topContentInset, totalContentsSize().height(), footerHeight())));
+            applyLayerPosition(*m_footerLayer, FloatPoint(horizontalScrollOffsetForBanner, LocalFrameView::yPositionForFooterLayer(scrollPosition, topContentInset, totalContentsSize().height(), footerHeight())));
     }
 
     delegate().updateVisibleLengths();

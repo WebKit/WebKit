@@ -320,4 +320,19 @@ void handleMessageAsync(Connection& connection, Decoder& decoder, T* object, MF 
         callMemberFunction(object, function, WTFMove(*arguments), WTFMove(completionHandler));
 }
 
+template<typename MessageType, typename T, typename U, typename MF>
+void handleMessageAsyncWithReplyID(Connection& connection, Decoder& decoder, T* object, MF U::* function)
+{
+    using ValidationType = MethodSignatureValidation<MF>;
+    static_assert(std::is_same_v<typename ValidationType::MessageArguments, std::tuple<IPC::AsyncReplyID>>);
+
+    auto replyID = decoder.decode<Connection::AsyncReplyID>();
+    if (UNLIKELY(!replyID))
+        return;
+
+    logMessage(connection, MessageType::name(), object, std::tuple<>());
+    static_assert(!ValidationType::expectsConnectionArgument);
+    callMemberFunction(object, function, std::tuple<IPC::AsyncReplyID>(*replyID));
+}
+
 } // namespace IPC

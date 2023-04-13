@@ -28,7 +28,11 @@
 #include "ASTVisitor.h"
 #include <wtf/StringPrintStream.h>
 
-namespace WGSL::AST {
+namespace WGSL {
+
+class ShaderModule;
+
+namespace AST {
 
 class StringDumper final : public Visitor {
     friend struct Indent;
@@ -41,7 +45,7 @@ public:
 
     // Visitor
     void visit(ShaderModule&) override;
-    void visit(GlobalDirective&) override;
+    void visit(Directive&) override;
 
     // Attribute
     void visit(BindingAttribute&) override;
@@ -49,42 +53,46 @@ public:
     void visit(GroupAttribute&) override;
     void visit(LocationAttribute&) override;
     void visit(StageAttribute&) override;
+    void visit(WorkgroupSizeAttribute&) override;
 
     // Declaration
-    void visit(FunctionDecl&) override;
-    void visit(StructDecl&) override;
-    void visit(VariableDecl&) override;
+    void visit(Function&) override;
+    void visit(Structure&) override;
+    void visit(Variable&) override;
 
     // Expression
     void visit(AbstractFloatLiteral&) override;
-    void visit(AbstractIntLiteral&) override;
-    void visit(ArrayAccess&) override;
+    void visit(AbstractIntegerLiteral&) override;
+    void visit(BinaryExpression&) override;
     void visit(BoolLiteral&) override;
-    void visit(CallableExpression&) override;
+    void visit(CallExpression&) override;
+    void visit(FieldAccessExpression&) override;
     void visit(Float32Literal&) override;
     void visit(IdentifierExpression&) override;
-    void visit(Int32Literal&) override;
-    void visit(StructureAccess&) override;
-    void visit(Uint32Literal&) override;
+    void visit(IndexAccessExpression&) override;
+    void visit(PointerDereferenceExpression&) override;
+    void visit(Signed32Literal&) override;
     void visit(UnaryExpression&) override;
-    void visit(BinaryExpression&) override;
-    void visit(PointerDereference&) override;
+    void visit(Unsigned32Literal&) override;
 
     // Statement
     void visit(AssignmentStatement&) override;
     void visit(CompoundStatement&) override;
+    void visit(IfStatement&) override;
     void visit(ReturnStatement&) override;
     void visit(VariableStatement&) override;
 
     // Types
-    void visit(ArrayType&) override;
-    void visit(NamedType&) override;
-    void visit(ParameterizedType&) override;
-    void visit(StructType&) override;
-    void visit(ReferenceType&) override;
+    void visit(ArrayTypeName&) override;
+    void visit(NamedTypeName&) override;
+    void visit(ParameterizedTypeName&) override;
+    void visit(ReferenceTypeName&) override;
 
+    // Values
     void visit(Parameter&) override;
-    void visit(StructMember&) override;
+
+    void visit(StructureMember&) override;
+
     void visit(VariableQualifier&) override;
 
 private:
@@ -96,10 +104,17 @@ private:
     String m_indent;
 };
 
-template<typename T> void dumpNode(PrintStream&, T&);
+template<typename T>
+void dumpNode(PrintStream& out, T& node)
+{
+    StringDumper dumper;
+    dumper.visit(node);
+    out.print(dumper.toString());
+}
 
 MAKE_PRINT_ADAPTOR(ShaderModuleDumper, ShaderModule&, dumpNode);
 
 void dumpAST(ShaderModule&);
 
-} // namespace WGSL::AST
+} // namespace AST
+} // namespace WGSL

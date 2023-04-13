@@ -1512,7 +1512,6 @@ TEST(WebAuthenticationPanel, PublicKeyCredentialCreationOptionsMinimum)
     EXPECT_EQ(result.authenticatorSelection, std::nullopt);
     EXPECT_EQ(result.attestation, AttestationConveyancePreference::None);
     EXPECT_TRUE(result.extensions->appid.isNull());
-    EXPECT_EQ(result.extensions->googleLegacyAppidSupport, false);
 }
 
 TEST(WebAuthenticationPanel, PublicKeyCredentialCreationOptionsMaximumDefault)
@@ -1859,7 +1858,6 @@ TEST(WebAuthenticationPanel, PublicKeyCredentialRequestOptionsMinimun)
     EXPECT_EQ(result.allowCredentials.size(), 0lu);
     EXPECT_EQ(result.userVerification, UserVerificationRequirement::Preferred);
     EXPECT_TRUE(result.extensions->appid.isNull());
-    EXPECT_EQ(result.extensions->googleLegacyAppidSupport, false);
 }
 
 TEST(WebAuthenticationPanel, PublicKeyCredentialRequestOptionsMaximumDefault)

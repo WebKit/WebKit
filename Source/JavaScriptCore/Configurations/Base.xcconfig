@@ -91,7 +91,7 @@ GCC_WARN_UNUSED_FUNCTION = YES;
 GCC_WARN_UNUSED_VARIABLE = YES;
 CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 PREBINDING = NO;
-WARNING_CFLAGS = $(WK_COMMON_WARNING_CFLAGS) -Wcast-qual -Wchar-subscripts -Wextra-tokens -Winit-self -Wmissing-noreturn -Wpacked -Wpointer-arith -Wredundant-decls -Wwrite-strings -Wexit-time-destructors -Wglobal-constructors -Wtautological-compare -Wimplicit-fallthrough -Wvla -Wliteral-conversion -Wthread-safety -Wno-profile-instr-out-of-date -Wno-profile-instr-unprofiled;
+WARNING_CFLAGS = $(inherited) -Wcast-qual -Wchar-subscripts -Wextra-tokens -Winit-self -Wmissing-noreturn -Wpacked -Wpointer-arith -Wredundant-decls -Wwrite-strings -Wexit-time-destructors -Wglobal-constructors -Wtautological-compare -Wimplicit-fallthrough -Wvla -Wliteral-conversion -Wthread-safety -Wno-profile-instr-out-of-date -Wno-profile-instr-unprofiled;
 
 HEADER_SEARCH_PATHS = . "$(BUILT_PRODUCTS_DIR)$(WK_LIBRARY_HEADERS_FOLDER_PATH)" $(HEADER_SEARCH_PATHS);
 LIBRARY_SEARCH_PATHS = $(SDK_DIR)$(WK_LIBRARY_INSTALL_PATH) $(inherited);
@@ -125,8 +125,8 @@ DEAD_CODE_STRIPPING[config=Debug] = NO;
 DEBUG_DEFINES = NDEBUG;
 DEBUG_DEFINES[config=Debug] = ;
 
-GCC_OPTIMIZATION_LEVEL = 3;
-GCC_OPTIMIZATION_LEVEL[config=Debug] = 0;
+WK_DEFAULT_GCC_OPTIMIZATION_LEVEL = 3;
+WK_DEFAULT_GCC_OPTIMIZATION_LEVEL[config=Debug] = 0;
 
 STRIP_INSTALLED_PRODUCT = YES;
 STRIP_INSTALLED_PRODUCT[config=Debug] = NO;
@@ -142,25 +142,10 @@ WK_LLVM_LTO_NO = NO;
 WK_LLVM_LTO_YES = $(WK_USER_LTO_MODE);
 
 WK_XCODE_SUPPORTS_LTO[sdk=macos*] = $(WK_NOT_$(WK_MACOS_BEFORE_1300));
-WK_XCODE_SUPPORTS_LTO[sdk=iphone*] = $(WK_NOT_$(WK_IOS_BEFORE_16));
-WK_XCODE_SUPPORTS_LTO[sdk=appletv*] = $(WK_NOT_$(WK_TVOS_BEFORE_16));
-// FIXME: This can follow the above pattern once rdar://90049836 is resolved.
+WK_XCODE_SUPPORTS_LTO[sdk=iphone*] = YES;
+WK_XCODE_SUPPORTS_LTO[sdk=appletv*] = YES;
+// FIXME: This was disabled due to rdar://90049836, and can likely be enabled now.
 WK_XCODE_SUPPORTS_LTO[sdk=watch*] = NO;
-
-WK_XCODE_VERSION_BEFORE_10_2_0800 = YES;
-WK_XCODE_VERSION_BEFORE_10_2_0900 = YES;
-WK_XCODE_VERSION_BEFORE_10_2_1000 = $(WK_XCODE_VERSION_BEFORE_10_2_1000_$(XCODE_VERSION_MINOR));
-WK_XCODE_VERSION_BEFORE_10_2_1000_1000 = YES;
-WK_XCODE_VERSION_BEFORE_10_2_1000_1010 = YES;
-
-WK_XCODE_VERSION_BEFORE_11_4_0800 = YES;
-WK_XCODE_VERSION_BEFORE_11_4_0900 = YES;
-WK_XCODE_VERSION_BEFORE_11_4_1000 = YES;
-WK_XCODE_VERSION_BEFORE_11_4_1100 = $(WK_XCODE_VERSION_BEFORE_11_4_1100_$(XCODE_VERSION_MINOR));
-WK_XCODE_VERSION_BEFORE_11_4_1100_1100 = YES;
-WK_XCODE_VERSION_BEFORE_11_4_1100_1110 = YES;
-WK_XCODE_VERSION_BEFORE_11_4_1100_1120 = YES;
-WK_XCODE_VERSION_BEFORE_11_4_1100_1130 = YES;
 
 WK_USER_LTO_MODE = $(WK_USER_LTO_MODE_$(WK_LTO_MODE));
 WK_USER_LTO_MODE_full = YES;
@@ -168,14 +153,6 @@ WK_USER_LTO_MODE_thin = YES_THIN;
 WK_USER_LTO_MODE_none = NO;
 WK_USER_LTO_MODE_ = $(WK_DEFAULT_LTO_MODE);
 WK_DEFAULT_LTO_MODE = $(WK_USER_LTO_MODE_thin);
-
-// Use a difference in the way the Legacy build sytem and XCBuild interpret
-// xcconfig file to determine which is being used.
-WK_WHICH_BUILD_SYSTEM = not_
-WK_WHICH_BUILD_SYSTEM = $(inherited)legacy
-WK_USE_NEW_BUILD_SYSTEM = $(WK_USE_NEW_BUILD_SYSTEM_$(WK_WHICH_BUILD_SYSTEM))
-WK_USE_NEW_BUILD_SYSTEM_legacy = NO
-WK_USE_NEW_BUILD_SYSTEM_not_legacy = YES
 
 WK_PROCESSED_XCENT_FILE=$(TEMP_FILE_DIR)/$(FULL_PRODUCT_NAME).entitlements
 WK_USE_RESTRICTED_ENTITLEMENTS = $(USE_INTERNAL_SDK);

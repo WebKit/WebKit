@@ -26,13 +26,10 @@
 #include "config.h"
 #include "WebKit2Initialize.h"
 
-#include "LogInitialization.h"
 #include <JavaScriptCore/InitializeThreading.h>
 #include <WebCore/CommonAtomStrings.h>
-#include <WebCore/LogInitialization.h>
 #include <WebCore/WebCoreJITOperations.h>
 #include <wtf/GenerateProfiles.h>
-#include <wtf/LogInitialization.h>
 #include <wtf/MainThread.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RunLoop.h>
@@ -48,12 +45,6 @@ void InitializeWebKit2()
     WebCore::initializeCommonAtomStrings();
 
     WTF::RefCountedBase::enableThreadingChecksGlobally();
-
-#if !LOG_DISABLED || !RELEASE_LOG_DISABLED
-    WTF::logChannels().initializeLogChannelsIfNecessary();
-    WebCore::logChannels().initializeLogChannelsIfNecessary();
-    WebKit::logChannels().initializeLogChannelsIfNecessary();
-#endif // !LOG_DISABLED || !RELEASE_LOG_DISABLED
 
     WebCore::populateJITOperations();
 }

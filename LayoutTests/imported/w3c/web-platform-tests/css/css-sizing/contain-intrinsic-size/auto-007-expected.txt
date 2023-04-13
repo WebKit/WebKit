@@ -1,96 +1,44 @@
 
-FAIL .test 1 assert_equals:
-<div class="test auto-width" data-expected-client-width="320" data-expected-client-height="0"></div>
-clientHeight expected 0 but got 240
-FAIL .test 2 assert_equals:
-<div class="test auto-height" data-expected-client-width="0" data-expected-client-height="240"></div>
-clientWidth expected 0 but got 320
+PASS .test 1
+PASS .test 2
 PASS .test 3
-FAIL .test 4 assert_equals:
-<div class="scroll test auto-width" data-expected-client-width="320" data-expected-client-height="0"></div>
-clientHeight expected 0 but got 240
-FAIL .test 5 assert_equals:
-<div class="scroll test auto-height" data-expected-client-width="0" data-expected-client-height="240"></div>
-clientWidth expected 0 but got 320
+PASS .test 4
+PASS .test 5
 PASS .test 6
-FAIL .test 7 assert_equals:
-<div class="columns test auto-width" data-expected-client-width="656" data-expected-client-height="0"></div>
-clientHeight expected 0 but got 120
-FAIL .test 8 assert_equals:
-<div class="columns test auto-height" data-expected-client-width="136" data-expected-client-height="120"></div>
-clientWidth expected 136 but got 656
+PASS .test 7
+PASS .test 8
 PASS .test 9
-FAIL .test 10 assert_equals:
-<div class="grid test auto-width" data-expected-client-width="320" data-expected-client-height="0"></div>
-clientHeight expected 0 but got 240
-FAIL .test 11 assert_equals:
-<div class="grid test auto-height" data-expected-client-width="0" data-expected-client-height="240"></div>
-clientWidth expected 0 but got 320
+PASS .test 10
+PASS .test 11
 PASS .test 12
-FAIL .test 13 assert_equals:
-<div class="flex test auto-width" data-expected-client-width="320" data-expected-client-height="0"></div>
-clientHeight expected 0 but got 240
-FAIL .test 14 assert_equals:
-<div class="flex test auto-height" data-expected-client-width="0" data-expected-client-height="240"></div>
-clientWidth expected 0 but got 320
+PASS .test 13
+PASS .test 14
 PASS .test 15
-FAIL .test 16 assert_equals:
-<fieldset class="test auto-width" data-expected-client-width="344" data-expected-client-height="16"></fieldset>
-clientHeight expected 16 but got 256
-FAIL .test 17 assert_equals:
-<fieldset class="test auto-height" data-expected-client-width="24" data-expected-client-height="256"></fieldset>
-clientWidth expected 24 but got 344
+PASS .test 16
+PASS .test 17
 PASS .test 18
-FAIL .test 19 assert_equals:
-<img src="resources/dice.png" class="test auto-width" data-expected-client-width="320" data-expected-client-height="0">
-clientHeight expected 0 but got 240
-FAIL .test 20 assert_equals:
-<img src="resources/dice.png" class="test auto-height" data-expected-client-width="0" data-expected-client-height="240">
-clientWidth expected 0 but got 320
+PASS .test 19
+PASS .test 20
 PASS .test 21
-FAIL .test 22 assert_equals:
-<svg class="test auto-width" data-expected-client-width="300" data-expected-client-height="0"></svg>
-clientHeight expected 0 but got 150
-FAIL .test 23 assert_equals:
-<svg class="test auto-height" data-expected-client-width="0" data-expected-client-height="150"></svg>
-clientWidth expected 0 but got 300
+PASS .test 22
+PASS .test 23
 PASS .test 24
-FAIL .test 25 assert_equals:
-<canvas class="test auto-width" data-expected-client-width="300" data-expected-client-height="0"></canvas>
-clientHeight expected 0 but got 150
-FAIL .test 26 assert_equals:
-<canvas class="test auto-height" data-expected-client-width="0" data-expected-client-height="150"></canvas>
-clientWidth expected 0 but got 300
+PASS .test 25
+PASS .test 26
 PASS .test 27
-FAIL .test 28 assert_equals:
-<iframe class="test auto-width" data-expected-client-width="300" data-expected-client-height="0"></iframe>
-clientHeight expected 0 but got 150
-FAIL .test 29 assert_equals:
-<iframe class="test auto-height" data-expected-client-width="0" data-expected-client-height="150"></iframe>
-clientWidth expected 0 but got 300
+PASS .test 28
+PASS .test 29
 PASS .test 30
-FAIL .test 31 assert_equals:
-<video class="test auto-width" data-expected-client-width="300" data-expected-client-height="0"></video>
-clientHeight expected 0 but got 150
-FAIL .test 32 assert_equals:
-<video class="test auto-height" data-expected-client-width="0" data-expected-client-height="150"></video>
-clientWidth expected 0 but got 300
+PASS .test 31
+PASS .test 32
 PASS .test 33
-FAIL .test 34 assert_equals:
-<button class="test auto-width" data-expected-client-width="332" data-expected-client-height="5"></button>
-clientHeight expected 5 but got 245
-FAIL .test 35 assert_equals:
-<button class="test auto-height" data-expected-client-width="12" data-expected-client-height="245"></button>
-clientWidth expected 12 but got 332
+PASS .test 34
+PASS .test 35
 PASS .test 36
 PASS .test 37
-FAIL .test 38 assert_equals:
-<select class="test auto-height" data-expected-client-width="36" data-expected-client-height="18"><option>Lorem ipsum</option></select>
-clientWidth expected 36 but got 99
+PASS .test 38
 PASS .test 39
 PASS .test 40
-FAIL .test 41 assert_equals:
-<select multiple="" class="test auto-height" data-expected-client-width="4" data-expected-client-height="55"><option>Lorem ipsum</option></select>
-clientWidth expected 4 but got 72
+PASS .test 41
 PASS .test 42
 

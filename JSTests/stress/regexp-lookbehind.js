@@ -216,3 +216,9 @@ testRegExp(/(?<=(^(?:A|\u{10400}|\u{10401}|\u{10406})*))x/u, "\u{10401}A\u{10400
 testRegExp(/(?<=(\d{2})(\d{2}))X/, "34121234X", ["X", "12", "34"]);
 testRegExp(/(?<=\2\1(\d{2})(\d{2}))X/, "34121234X", ["X", "12", "34"]);
 testRegExpSyntaxError(".(?<=.)?", "", "SyntaxError: Invalid regular expression: invalid quantifier");
+testRegExp(/(?<=a*\1aaaaaaaaaaaaaa)/, "aaa", null); // The \1 is not a valid back reference, so it becomes an octal escape.
+testRegExp(/(?<=a*\1aaaaaaaaaaaaaa)x/, "aaaaaaaaaaaaaax", null, null);
+
+// Test 91
+testRegExp(/(?<=a*\1aaaaaaaaaaaaaa)x/, "\x01aaaaaaaaaaaaaax", ["x"], null);
+

@@ -1,0 +1,13 @@
+<style>
+  body {
+    transition-delay: 1ms;
+    grid-template-rows: 0 [a];
+  }
+</style>
+<script>
+  onload = () => {
+    if (window.testRunner)
+      testRunner.dumpAsText()
+    document.styleSheets[0].insertRule(`body { font-size: 0; }`);
+  };
+</script>

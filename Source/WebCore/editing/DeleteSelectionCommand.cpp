@@ -31,13 +31,15 @@
 #include "Editing.h"
 #include "Editor.h"
 #include "EditorClient.h"
+#include "ElementInlines.h"
 #include "ElementIterator.h"
-#include "Frame.h"
+#include "ElementTraversal.h"
 #include "HTMLBRElement.h"
 #include "HTMLLinkElement.h"
 #include "HTMLNames.h"
 #include "HTMLStyleElement.h"
 #include "HTMLTableElement.h"
+#include "LocalFrame.h"
 #include "NodeTraversal.h"
 #include "Range.h"
 #include "RenderTableCell.h"
@@ -258,7 +260,7 @@ void DeleteSelectionCommand::smartDeleteParagraphSpacers()
 {
     VisiblePosition visibleStart { m_upstreamStart };
     VisiblePosition visibleEnd { m_downstreamEnd };
-    bool selectionEndsInParagraphSeperator = isEndOfParagraph(visibleEnd);
+    bool selectionEndsInParagraphSeparator = isEndOfParagraph(visibleEnd);
     bool selectionEndIsEndOfContent = endOfEditableContent(visibleEnd) == visibleEnd;
     bool startAndEndInSameUnsplittableElement = unsplittableElementForPosition(visibleStart.deepEquivalent()) == unsplittableElementForPosition(visibleEnd.deepEquivalent());
     visibleStart = visibleStart.previous(CannotCrossEditingBoundary);
@@ -266,7 +268,7 @@ void DeleteSelectionCommand::smartDeleteParagraphSpacers()
     bool previousPositionIsStartOfContent = startOfEditableContent(visibleStart) == visibleStart;
     bool previousPositionIsBlankParagraph = isBlankParagraph(visibleStart);
     bool endPositionIsBlankParagraph = isBlankParagraph(visibleEnd);
-    bool hasBlankParagraphAfterEndOrIsEndOfContent = !selectionEndIsEndOfContent && (endPositionIsBlankParagraph || selectionEndsInParagraphSeperator);
+    bool hasBlankParagraphAfterEndOrIsEndOfContent = !selectionEndIsEndOfContent && (endPositionIsBlankParagraph || selectionEndsInParagraphSeparator);
     if (startAndEndInSameUnsplittableElement && previousPositionIsBlankParagraph && hasBlankParagraphAfterEndOrIsEndOfContent) {
         m_needPlaceholder = false;
         Position position;
@@ -279,7 +281,7 @@ void DeleteSelectionCommand::smartDeleteParagraphSpacers()
         m_trailingWhitespace = m_downstreamEnd.trailingWhitespacePosition(VisiblePosition::defaultAffinity);
         setStartingSelectionOnSmartDelete(m_upstreamStart, m_downstreamEnd);
     }
-    if (startAndEndInSameUnsplittableElement && selectionEndIsEndOfContent && previousPositionIsBlankParagraph && selectionEndsInParagraphSeperator) {
+    if (startAndEndInSameUnsplittableElement && selectionEndIsEndOfContent && previousPositionIsBlankParagraph && selectionEndsInParagraphSeparator) {
         m_needPlaceholder = false;
         VisiblePosition endOfParagraphBeforeStart;
         if (previousPositionIsStartOfContent)
@@ -311,7 +313,7 @@ bool DeleteSelectionCommand::initializePositionData()
     m_downstreamStart = start.downstream();
     m_upstreamEnd = end.upstream();
     m_downstreamEnd = end.downstream();
-    
+
     m_startRoot = editableRootForPosition(start);
     m_endRoot = editableRootForPosition(end);
     
@@ -357,7 +359,7 @@ bool DeleteSelectionCommand::initializePositionData()
     
         // skip smart delete if the selection to delete already starts or ends with whitespace
         Position pos = VisiblePosition(m_upstreamStart, m_selectionToDelete.affinity()).deepEquivalent();
-        bool skipSmartDelete = pos.trailingWhitespacePosition(VisiblePosition::defaultAffinity, true).isNotNull();
+        bool skipSmartDelete = isEditablePosition(pos) && pos.trailingWhitespacePosition(VisiblePosition::defaultAffinity, true).isNotNull();
         if (!skipSmartDelete)
             skipSmartDelete = m_downstreamEnd.leadingWhitespacePosition(VisiblePosition::defaultAffinity, true).isNotNull();
 

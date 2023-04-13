@@ -78,15 +78,14 @@ public:
 #endif
 #if ENABLE(VIDEO)
     RemoteVideoFrameObjectHeapProxy& videoFrameObjectHeapProxy();
-#endif
-
     RemoteMediaPlayerManager& mediaPlayerManager();
+#endif
 
 #if PLATFORM(COCOA) && ENABLE(WEB_AUDIO)
     RemoteAudioSourceProviderManager& audioSourceProviderManager();
 #endif
 
-    void updateMediaConfiguration();
+    void updateMediaConfiguration(bool forceUpdate);
 
 #if ENABLE(VP9)
     void enableVP9Decoders(bool enableVP8Decoder, bool enableVP9Decoder, bool enableVP9SWDecoder);

@@ -27,21 +27,21 @@
 #include "config.h"
 #include "FrameWin.h"
 
-#include "Frame.h"
-#include "FrameView.h"
 #include "GraphicsContext.h"
 #include "GraphicsContextWin.h"
+#include "LocalFrame.h"
+#include "LocalFrameView.h"
 #include <wtf/win/GDIObject.h>
 
 namespace WebCore {
 
 extern HDC g_screenDC;
 
-GDIObject<HBITMAP> imageFromRect(Frame* frame, IntRect& ir)
+GDIObject<HBITMAP> imageFromRect(LocalFrame* frame, IntRect& ir)
 {
     int w;
     int h;
-    FrameView* view = frame->view();
+    auto* view = frame->view();
     if (view->parent()) {
         ir.setLocation(view->parent()->convertChildToSelf(view, ir.location()));
         w = ir.width() * frame->pageZoomFactor() + 0.5;

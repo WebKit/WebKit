@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2004-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2010-2015 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -26,7 +26,6 @@
 #include "ActiveDOMObject.h"
 #include "DecodingOptions.h"
 #include "FormAssociatedElement.h"
-#include "GraphicsLayer.h"
 #include "GraphicsTypes.h"
 #include "HTMLElement.h"
 #include "MediaQuery.h"
@@ -40,11 +39,13 @@ class HTMLAttachmentElement;
 class HTMLFormElement;
 class HTMLImageLoader;
 class HTMLMapElement;
+class Image;
 
 struct ImageCandidate;
 
 enum class ReferrerPolicy : uint8_t;
 enum class RelevantMutation : bool;
+enum class RequestPriority : uint8_t;
 
 class HTMLImageElement : public HTMLElement, public FormAssociatedElement, public ActiveDOMObject {
     WTF_MAKE_ISO_ALLOCATED(HTMLImageElement);
@@ -107,7 +108,7 @@ public:
 #if PLATFORM(IOS_FAMILY)
     bool willRespondToMouseClickEventsWithEditability(Editability) const override;
 
-    enum class IgnoreTouchCallout { No, Yes };
+    enum class IgnoreTouchCallout : bool { No, Yes };
     bool willRespondToMouseClickEventsWithEditability(Editability, IgnoreTouchCallout) const;
 #endif
 
@@ -164,10 +165,15 @@ public:
 
     bool allowsAnimation() const;
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
-    WEBCORE_EXPORT void setAllowsAnimation(bool);
+    WEBCORE_EXPORT void setAllowsAnimation(std::optional<bool>);
 #endif
 
+    void setFetchPriorityForBindings(const AtomString&);
+    String fetchPriorityForBindings() const;
+    RequestPriority fetchPriorityHint() const;
+
 protected:
+    constexpr static auto CreateHTMLImageElement = CreateHTMLElement | NodeFlag::HasCustomStyleResolveCallbacks;
     HTMLImageElement(const QualifiedName&, Document&, HTMLFormElement* = nullptr);
 
     void didMoveToNewDocument(Document& oldDocument, Document& newDocument) override;
@@ -176,10 +182,9 @@ private:
     void resetFormOwner() final;
     void refFormAssociatedElement() const final { HTMLElement::ref(); }
     void derefFormAssociatedElement() const final { HTMLElement::deref(); }
-    void setFormInternal(HTMLFormElement*) final;
+    void setFormInternal(RefPtr<HTMLFormElement>&&) final;
 
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
-    void parseAttribute(const QualifiedName&, const AtomString&) override;
     bool hasPresentationalHintsForAttribute(const QualifiedName&) const override;
     void collectPresentationalHintsForAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) override;
     void collectExtraStyleForPresentationalHints(MutableStyleProperties&) override;

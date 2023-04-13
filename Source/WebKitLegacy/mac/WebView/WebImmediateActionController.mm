@@ -42,10 +42,10 @@
 #import <WebCore/EventHandler.h>
 #import <WebCore/FocusController.h>
 #import <WebCore/FontMetrics.h>
-#import <WebCore/Frame.h>
-#import <WebCore/FrameView.h>
 #import <WebCore/GeometryUtilities.h>
 #import <WebCore/HTMLConverter.h>
+#import <WebCore/LocalFrame.h>
+#import <WebCore/LocalFrameView.h>
 #import <WebCore/NodeRenderStyle.h>
 #import <WebCore/Page.h>
 #import <WebCore/Range.h>
@@ -165,9 +165,13 @@
     if (!coreFrame)
         return;
 
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(coreFrame->mainFrame());
+    if (!localMainFrame)
+        return;
+
     constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::DisallowUserAgentShadowContent, HitTestRequest::Type::AllowChildFrameContent };
     _hitTestResult = coreFrame->eventHandler().hitTestResultAtPoint(WebCore::IntPoint(viewPoint), hitType);
-    coreFrame->mainFrame().eventHandler().setImmediateActionStage(WebCore::ImmediateActionStage::PerformedHitTest);
+    localMainFrame->eventHandler().setImmediateActionStage(WebCore::ImmediateActionStage::PerformedHitTest);
 
     if (auto* element = _hitTestResult.targetElement())
         _contentPreventsDefault = element->dispatchMouseForceWillBegin();
@@ -223,7 +227,7 @@
     if (immediateActionRecognizer != _immediateActionRecognizer)
         return;
 
-    if (WebCore::Frame* coreFrame = [_webView _mainCoreFrame])
+    if (auto* coreFrame = [_webView _mainCoreFrame])
         coreFrame->eventHandler().setImmediateActionStage(WebCore::ImmediateActionStage::ActionUpdated);
 
     if (_contentPreventsDefault)
@@ -237,7 +241,7 @@
     if (immediateActionRecognizer != _immediateActionRecognizer)
         return;
 
-    if (WebCore::Frame* coreFrame = [_webView _mainCoreFrame]) {
+    if (auto* coreFrame = [_webView _mainCoreFrame]) {
         WebCore::ImmediateActionStage lastStage = coreFrame->eventHandler().immediateActionStage();
         if (lastStage == WebCore::ImmediateActionStage::ActionUpdated)
             coreFrame->eventHandler().setImmediateActionStage(WebCore::ImmediateActionStage::ActionCancelledAfterUpdate);
@@ -256,7 +260,7 @@
     if (immediateActionRecognizer != _immediateActionRecognizer)
         return;
 
-    if (WebCore::Frame* coreFrame = [_webView _mainCoreFrame])
+    if (auto* coreFrame = [_webView _mainCoreFrame])
         coreFrame->eventHandler().setImmediateActionStage(WebCore::ImmediateActionStage::ActionCompleted);
 
     [_webView _setTextIndicatorAnimationProgress:1];
@@ -338,14 +342,6 @@
         return;
     }
 
-#if PLATFORM(MAC)
-    // FIXME: We should not permanently disable this for iTunes. rdar://problem/19461358
-    if (WebCore::MacApplication::isITunes()) {
-        [self _cancelImmediateAction];
-        return;
-    }
-#endif
-
     if (customClientAnimationController && [customClientAnimationController conformsToProtocol:@protocol(NSImmediateActionAnimationController)])
         [_immediateActionRecognizer setAnimationController:(id <NSImmediateActionAnimationController>)customClientAnimationController];
     else
@@ -383,15 +379,15 @@ static WebCore::IntRect elementBoundingBoxInWindowCoordinatesFromNode(WebCore::N
     if (!node)
         return { };
 
-    WebCore::Frame* frame = node->document().frame();
+    auto* frame = node->document().frame();
     if (!frame)
         return { };
 
-    WebCore::FrameView* view = frame->view();
+    auto* view = frame->view();
     if (!view)
         return { };
 
-    WebCore::RenderObject* renderer = node->renderer();
+    auto* renderer = node->renderer();
     if (!renderer)
         return { };
 
@@ -509,7 +505,7 @@ static WebCore::IntRect elementBoundingBoxInWindowCoordinatesFromNode(WebCore::N
 
 #pragma mark Text action
 
-+ (WebCore::DictionaryPopupInfo)_dictionaryPopupInfoForRange:(const WebCore::SimpleRange&)range inFrame:(WebCore::Frame*)frame withLookupOptions:(NSDictionary *)lookupOptions indicatorOptions:(OptionSet<WebCore::TextIndicatorOption>)indicatorOptions transition:(WebCore::TextIndicatorPresentationTransition)presentationTransition
++ (WebCore::DictionaryPopupInfo)_dictionaryPopupInfoForRange:(const WebCore::SimpleRange&)range inFrame:(WebCore::LocalFrame*)frame withLookupOptions:(NSDictionary *)lookupOptions indicatorOptions:(OptionSet<WebCore::TextIndicatorOption>)indicatorOptions transition:(WebCore::TextIndicatorPresentationTransition)presentationTransition
 {
     auto& editor = frame->editor();
     editor.setIsGettingDictionaryPopupInfo(true);
@@ -536,7 +532,7 @@ static WebCore::IntRect elementBoundingBoxInWindowCoordinatesFromNode(WebCore::N
     popupInfo.origin = NSMakePoint(rangeRect.x(), rangeRect.y() + scaledDescent);
     popupInfo.platformData.options = lookupOptions;
 
-    auto attributedString = editingAttributedString(range, WebCore::IncludeImages::No).string;
+    auto attributedString = editingAttributedString(range, WebCore::IncludeImages::No).nsAttributedString();
     auto scaledAttributedString = adoptNS([[NSMutableAttributedString alloc] initWithString:[attributedString string]]);
     NSFontManager *fontManager = [NSFontManager sharedFontManager];
 
@@ -550,7 +546,7 @@ static WebCore::IntRect elementBoundingBoxInWindowCoordinatesFromNode(WebCore::N
         [scaledAttributedString addAttributes:scaledAttributes.get() range:attributeRange];
     }];
 
-    popupInfo.platformData.attributedString = scaledAttributedString.get();
+    popupInfo.platformData.attributedString = WebCore::AttributedString::fromNSAttributedString(scaledAttributedString.get());
 
     if (auto textIndicator = WebCore::TextIndicator::createWithRange(range, indicatorOptions, presentationTransition))
         popupInfo.textIndicator = textIndicator->data();
@@ -578,7 +574,7 @@ static WebCore::IntRect elementBoundingBoxInWindowCoordinatesFromNode(WebCore::N
 
     auto [dictionaryRange, options] = WTFMove(*range);
     auto dictionaryPopupInfo = [WebImmediateActionController _dictionaryPopupInfoForRange:dictionaryRange inFrame:frame withLookupOptions:options indicatorOptions: { } transition: WebCore::TextIndicatorPresentationTransition::FadeIn];
-    if (!dictionaryPopupInfo.platformData.attributedString)
+    if (!dictionaryPopupInfo.platformData.attributedString.nsAttributedString())
         return nil;
 
     return [_webView _animationControllerForDictionaryLookupPopupInfo:dictionaryPopupInfo];

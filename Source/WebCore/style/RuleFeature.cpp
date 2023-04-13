@@ -229,10 +229,8 @@ void RuleFeatureSet::recursivelyCollectFeaturesFromSelector(SelectorFeatures& se
         } else if (selector->match() == CSSSelector::Class)
             selectorFeatures.classes.append({ selector, matchElement, isNegation });
         else if (selector->isAttributeSelector()) {
-            auto& canonicalLocalName = selector->attributeCanonicalLocalName();
-            auto& localName = selector->attribute().localName();
-            attributeCanonicalLocalNamesInRules.add(canonicalLocalName);
-            attributeLocalNamesInRules.add(localName);
+            attributeLowercaseLocalNamesInRules.add(selector->attribute().localNameLowercase());
+            attributeLocalNamesInRules.add(selector->attribute().localName());
             selectorFeatures.attributes.append({ selector, matchElement, isNegation });
         } else if (selector->match() == CSSSelector::PseudoElement) {
             switch (selector->pseudoElementType()) {
@@ -349,11 +347,11 @@ void RuleFeatureSet::collectFeatures(const RuleData& ruleData)
 
     for (auto& entry : selectorFeatures.attributes) {
         auto& [selector, matchElement, isNegation] = entry;
-        attributeRules.ensure(selector->attribute().localName().convertToASCIILowercase(), [] {
+        attributeRules.ensure(selector->attribute().localNameLowercase(), [] {
             return makeUnique<Vector<RuleFeatureWithInvalidationSelector>>();
         }).iterator->value->append({ ruleData, matchElement, isNegation, selector });
         if (matchElement == MatchElement::Host)
-            attributesAffectingHost.add(selector->attribute().localName().convertToASCIILowercase());
+            attributesAffectingHost.add(selector->attribute().localNameLowercase());
         setUsesMatchElement(matchElement);
     }
 
@@ -385,7 +383,7 @@ void RuleFeatureSet::add(const RuleFeatureSet& other)
 {
     idsInRules.add(other.idsInRules.begin(), other.idsInRules.end());
     idsMatchingAncestorsInRules.add(other.idsMatchingAncestorsInRules.begin(), other.idsMatchingAncestorsInRules.end());
-    attributeCanonicalLocalNamesInRules.add(other.attributeCanonicalLocalNamesInRules.begin(), other.attributeCanonicalLocalNamesInRules.end());
+    attributeLowercaseLocalNamesInRules.add(other.attributeLowercaseLocalNamesInRules.begin(), other.attributeLowercaseLocalNamesInRules.end());
     attributeLocalNamesInRules.add(other.attributeLocalNamesInRules.begin(), other.attributeLocalNamesInRules.end());
     contentAttributeNamesInRules.add(other.contentAttributeNamesInRules.begin(), other.contentAttributeNamesInRules.end());
     siblingRules.appendVector(other.siblingRules);
@@ -423,7 +421,7 @@ void RuleFeatureSet::add(const RuleFeatureSet& other)
 void RuleFeatureSet::registerContentAttribute(const AtomString& attributeName)
 {
     contentAttributeNamesInRules.add(attributeName.convertToASCIILowercase());
-    attributeCanonicalLocalNamesInRules.add(attributeName);
+    attributeLowercaseLocalNamesInRules.add(attributeName);
     attributeLocalNamesInRules.add(attributeName);
 }
 
@@ -431,7 +429,7 @@ void RuleFeatureSet::clear()
 {
     idsInRules.clear();
     idsMatchingAncestorsInRules.clear();
-    attributeCanonicalLocalNamesInRules.clear();
+    attributeLowercaseLocalNamesInRules.clear();
     attributeLocalNamesInRules.clear();
     contentAttributeNamesInRules.clear();
     siblingRules.clear();

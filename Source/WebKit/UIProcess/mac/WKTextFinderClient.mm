@@ -30,6 +30,8 @@
 
 #import "APIFindClient.h"
 #import "APIFindMatchesClient.h"
+#import "WKPageFindMatchesClient.h"
+#import "WebFindOptions.h"
 #import "WebImage.h"
 #import "WebPageProxy.h"
 #import <algorithm>

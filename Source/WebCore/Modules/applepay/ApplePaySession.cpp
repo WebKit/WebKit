@@ -45,14 +45,14 @@
 #include "ApplePayShippingMethodSelectedEvent.h"
 #include "ApplePayShippingMethodUpdate.h"
 #include "ApplePayValidateMerchantEvent.h"
-#include "DOMWindow.h"
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "EventNames.h"
-#include "Frame.h"
 #include "JSDOMPromiseDeferred.h"
 #include "LinkIconCollector.h"
 #include "LinkIconType.h"
+#include "LocalDOMWindow.h"
+#include "LocalFrame.h"
 #include "Page.h"
 #include "PageConsoleClient.h"
 #include "PaymentContact.h"
@@ -66,6 +66,10 @@
 #include "UserGestureIndicator.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/RunLoop.h>
+
+#if ENABLE(APPLE_PAY_DEFERRED_PAYMENTS)
+#include <wtf/DateMath.h>
+#endif
 
 namespace WebCore {
 
@@ -221,6 +225,48 @@ static ExceptionOr<Vector<ApplePayPaymentTokenContext>> convertAndValidate(Vecto
 
 #endif // ENABLE(APPLE_PAY_MULTI_MERCHANT_PAYMENTS)
 
+#if ENABLE(APPLE_PAY_DEFERRED_PAYMENTS)
+
+ExceptionOr<void> ApplePayDeferredPaymentRequest::validate() const
+{
+    if (deferredBilling.paymentTiming != ApplePayPaymentTiming::Deferred)
+        return Exception(TypeError, "'deferredBilling' must be a 'deferred' line item."_s);
+    if (!deferredBilling.label)
+        return Exception(TypeError, "Missing label for 'deferredBilling'."_s);
+    if (!isValidDecimalMonetaryValue(deferredBilling.amount) && deferredBilling.type != ApplePayLineItem::Type::Pending)
+        return Exception(TypeError, makeString('"', deferredBilling.amount, "\" is not a valid amount."));
+
+    if (!URL { managementURL }.isValid())
+        return Exception(TypeError, makeString('"', managementURL, "\" is not a valid URL."));
+
+    if (std::isnan(freeCancellationDate)) {
+        if (!freeCancellationDateTimeZone.isEmpty())
+            return Exception(TypeError, "Unexpected 'freeCancellationDateTimeZone' when 'freeCancellationDate' is not set."_s);
+    } else if (freeCancellationDateTimeZone.isEmpty())
+        return Exception(TypeError, "Missing 'freeCancellationDateTimeZone' when 'freeCancellationDate' is set."_s);
+    else if (!isTimeZoneValid(freeCancellationDateTimeZone))
+        return Exception(TypeError, makeString('"', freeCancellationDateTimeZone, "\" is not a valid time zone."));
+
+    if (paymentDescription.isEmpty())
+        return Exception(TypeError, "Missing 'paymentDescription'."_s);
+
+    if (!tokenNotificationURL.isNull() && !URL { tokenNotificationURL }.isValid())
+        return Exception(TypeError, makeString('"', tokenNotificationURL, "\" is not a valid URL."));
+
+    return { };
+}
+
+ExceptionOr<ApplePayDeferredPaymentRequest> ApplePayDeferredPaymentRequest::convertAndValidate() &&
+{
+    auto validity = validate();
+    if (validity.hasException())
+        return validity.releaseException();
+
+    return WTFMove(*this);
+}
+
+#endif // ENABLE(APPLE_PAY_DEFERRED_PAYMENTS)
+
 static ExceptionOr<ApplePaySessionPaymentRequest> convertAndValidate(Document& document, unsigned version, ApplePayPaymentRequest&& paymentRequest, const PaymentCoordinator& paymentCoordinator)
 {
     auto convertedRequest = convertAndValidate(document, version, paymentRequest, paymentCoordinator);
@@ -274,6 +320,15 @@ static ExceptionOr<ApplePaySessionPaymentRequest> convertAndValidate(Document& d
         if (multiTokenContexts.hasException())
             return multiTokenContexts.releaseException();
         result.setMultiTokenContexts(multiTokenContexts.releaseReturnValue());
+    }
+#endif
+
+#if ENABLE(APPLE_PAY_DEFERRED_PAYMENTS)
+    if (paymentRequest.deferredPaymentRequest) {
+        auto deferredPaymentRequest = WTFMove(*paymentRequest.deferredPaymentRequest).convertAndValidate();
+        if (deferredPaymentRequest.hasException())
+            return deferredPaymentRequest.releaseException();
+        result.setDeferredPaymentRequest(deferredPaymentRequest.releaseReturnValue());
     }
 #endif
 

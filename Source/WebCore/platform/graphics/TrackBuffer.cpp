@@ -339,6 +339,7 @@ void TrackBuffer::clearSamples()
 {
     m_samples.clear();
     m_decodeQueue.clear();
+    m_buffered = PlatformTimeRanges();
 }
 
 void TrackBuffer::setRoundedTimestampOffset(const MediaTime& time, uint32_t timeScale, const MediaTime& roundingMargin)

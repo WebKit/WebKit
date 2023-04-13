@@ -247,7 +247,7 @@ void BlobRegistryImpl::registerBlobURLForSlice(const URL& url, const URL& srcURL
         end = originalSize;
 
     unsigned long long newLength = end - start;
-    auto newData = BlobData::create(contentType.isEmpty() ? originalData->contentType() : contentType);
+    auto newData = BlobData::create(contentType);
 
     appendStorageItems(newData.ptr(), originalData->items(), start, newLength);
 
@@ -366,22 +366,6 @@ void BlobRegistryImpl::writeBlobsToTemporaryFilesForIndexedDB(const Vector<Strin
 
         callOnMainThread([completionHandler = WTFMove(completionHandler), filePaths = WTFMove(filePaths)] () mutable {
             completionHandler(WTFMove(filePaths));
-        });
-    });
-}
-
-void BlobRegistryImpl::writeBlobToFilePath(const URL& blobURL, const String& path, Function<void(bool success)>&& completionHandler)
-{
-    Vector<BlobForFileWriting> blobsForWriting;
-    if (!populateBlobsForFileWriting({ blobURL.string() }, blobsForWriting) || blobsForWriting.size() != 1) {
-        completionHandler(false);
-        return;
-    }
-
-    blobUtilityQueue().dispatch([path, blobsForWriting = WTFMove(blobsForWriting), completionHandler = WTFMove(completionHandler)]() mutable {
-        bool success = writeFilePathsOrDataBuffersToFile(blobsForWriting.first().filePathsOrDataBuffers, FileSystem::openFile(path, FileSystem::FileOpenMode::Write), path);
-        callOnMainThread([success, completionHandler = WTFMove(completionHandler)]() {
-            completionHandler(success);
         });
     });
 }

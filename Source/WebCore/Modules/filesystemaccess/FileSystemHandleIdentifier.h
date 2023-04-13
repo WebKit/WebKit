@@ -30,6 +30,6 @@
 namespace WebCore {
 
 enum FileSystemHandleIdentifierType { };
-using FileSystemHandleIdentifier = ObjectIdentifier<FileSystemHandleIdentifierType>;
+using FileSystemHandleIdentifier = AtomicObjectIdentifier<FileSystemHandleIdentifierType>;
 
 } // namespace WebCore

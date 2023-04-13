@@ -194,7 +194,7 @@ layer at (171,120) size 124x14 scrollX 163 scrollWidth 288
       text run at (108,0) width 17: "elit"
 layer at (171,120) size 125x14
   RenderBlock {DIV} at (0,0) size 125x14
-layer at (328,120) size 139x14 scrollX 149 scrollWidth 289
+layer at (328,120) size 139x14 scrollX 148 scrollWidth 288
   RenderBlock {DIV} at (6,3) size 141x15
     RenderText {#text} at (-147,0) size 288x14
       text run at (-147,0) width 32: "Lorem"
@@ -212,7 +212,7 @@ layer at (328,120) size 139x14 scrollX 149 scrollWidth 289
       text run at (67,0) width 54: "adipiscing"
       text run at (120,0) width 4: " "
       text run at (123,0) width 17: "elit"
-layer at (485,120) size 125x14 scrollX 164 scrollWidth 289
+layer at (485,120) size 125x14 scrollX 163 scrollWidth 288
   RenderBlock {DIV} at (0,0) size 125x14
     RenderText {#text} at (-162,0) size 288x14
       text run at (-162,0) width 32: "Lorem"
@@ -298,7 +298,7 @@ layer at (171,222) size 124x14 scrollX 163 scrollWidth 288
       text run at (108,0) width 17: "elit"
 layer at (171,222) size 125x14
   RenderBlock {DIV} at (0,0) size 125x14
-layer at (328,222) size 139x14 scrollX 149 scrollWidth 289
+layer at (328,222) size 139x14 scrollX 148 scrollWidth 288
   RenderBlock {DIV} at (6,3) size 141x15
     RenderText {#text} at (-147,0) size 288x14
       text run at (-147,0) width 32: "Lorem"
@@ -316,7 +316,7 @@ layer at (328,222) size 139x14 scrollX 149 scrollWidth 289
       text run at (67,0) width 54: "adipiscing"
       text run at (120,0) width 4: " "
       text run at (123,0) width 17: "elit"
-layer at (485,222) size 125x14 scrollX 164 scrollWidth 289
+layer at (485,222) size 125x14 scrollX 163 scrollWidth 288
   RenderBlock {DIV} at (0,0) size 125x14
     RenderText {#text} at (-162,0) size 288x14
       text run at (-162,0) width 32: "Lorem"

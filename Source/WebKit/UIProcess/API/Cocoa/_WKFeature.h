@@ -27,12 +27,13 @@
 #import <WebKit/WKFoundation.h>
 #import <WebKit/WebFeature.h>
 
-WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
+WK_CLASS_AVAILABLE(macos(13.3), ios(16.4))
 @interface _WKFeature : NSObject
 
 @property (nonatomic, readonly, copy) NSString *key;
 @property (nonatomic, readonly, copy) NSString *name;
 @property (nonatomic, readonly) WebFeatureStatus status;
+@property (nonatomic, readonly) WebFeatureCategory category;
 @property (nonatomic, readonly, copy) NSString *details;
 @property (nonatomic, readonly) BOOL defaultValue;
 @property (nonatomic, readonly, getter=isHidden) BOOL hidden;

@@ -44,6 +44,7 @@ OBJC_CLASS UIViewController;
 
 namespace IPC {
 class Connection;
+enum class ReceiverName : uint8_t;
 }
 
 namespace WebCore {

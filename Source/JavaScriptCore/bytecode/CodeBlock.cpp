@@ -1617,7 +1617,7 @@ void CodeBlock::finalizeJITInlineCaches()
 }
 #endif
 
-void CodeBlock::finalizeUnconditionally(VM& vm)
+void CodeBlock::finalizeUnconditionally(VM& vm, CollectionScope)
 {
     UNUSED_PARAM(vm);
 

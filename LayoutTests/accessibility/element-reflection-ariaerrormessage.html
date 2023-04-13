@@ -22,6 +22,7 @@
       target.id = "innertarget";
       target.textContent = "Target 3";
       target.ariaErrorMessageElements = [error3];
+      target.ariaInvalid = true;
       this.shadowRoot.appendChild(target);
     }
   }
@@ -40,6 +41,7 @@
       this.shadowRoot.appendChild(error);
       this.shadowRoot.appendChild(target);
       target.ariaErrorMessageElements = [error];
+      target.ariaInvalid = true;
       document.body.appendChild(error);
     }
   }
@@ -49,11 +51,13 @@
   if (!window.accessibilityController) {
     debug("This test requires accessibilityController");
   } else {
+    target1.ariaInvalid = true;
     target1.ariaErrorMessageElements = [error1];
     var axError1 = accessibilityController.accessibleElementById("error1");
     var axTarget1 = accessibilityController.accessibleElementById("target1");
     shouldBeTrue("axTarget1.ariaErrorMessageElementAtIndex(0).isEqual(axError1)");
 
+    target2.ariaInvalid = true;
     target2.ariaErrorMessageElements = [document.getElementsByClassName("error")[0]];
     var wrapper = accessibilityController.accessibleElementById("wrapper");
     var axError2 = wrapper.childAtIndex(0);
@@ -71,6 +75,7 @@
     shouldBeTrue("axTarget2.ariaErrorMessageElementAtIndex(1).isEqual(axError2)");
     shouldBeTrue("axTarget2.ariaErrorMessageElementAtIndex(2).isEqual(axError3)");
 
+    target4.ariaInvalid = true;
     target4.ariaErrorMessageElements = [error4];
     error4.id = "error4-new";
     var axErrorMessage4 = accessibilityController.accessibleElementById("error4-new");

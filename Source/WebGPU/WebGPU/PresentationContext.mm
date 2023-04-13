@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (c) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -67,8 +67,17 @@ void PresentationContext::configure(Device&, const WGPUSwapChainDescriptor&)
 {
 }
 
+void PresentationContext::unconfigure()
+{
+}
+
 void PresentationContext::present()
 {
+}
+
+Texture* PresentationContext::getCurrentTexture()
+{
+    return nullptr;
 }
 
 TextureView* PresentationContext::getCurrentTextureView()
@@ -87,12 +96,21 @@ void wgpuSurfaceRelease(WGPUSurface surface)
 
 void wgpuSwapChainRelease(WGPUSwapChain swapChain)
 {
-    WebGPU::fromAPI(swapChain).deref();
+    auto& presentationContext = WebGPU::fromAPI(swapChain);
+
+    presentationContext.unconfigure(); // It doesn't make sense to have multiple swap chains targetting a single surface.
+
+    presentationContext.deref();
 }
 
 WGPUTextureFormat wgpuSurfaceGetPreferredFormat(WGPUSurface surface, WGPUAdapter adapter)
 {
     return WebGPU::fromAPI(surface).getPreferredFormat(WebGPU::fromAPI(adapter));
+}
+
+WGPUTexture wgpuSwapChainGetCurrentTexture(WGPUSwapChain swapChain)
+{
+    return WebGPU::fromAPI(swapChain).getCurrentTexture();
 }
 
 WGPUTextureView wgpuSwapChainGetCurrentTextureView(WGPUSwapChain swapChain)

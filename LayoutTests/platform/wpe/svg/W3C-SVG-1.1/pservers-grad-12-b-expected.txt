@@ -3,9 +3,9 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
     RenderSVGContainer {g} at (16,19) size 768x469
-      RenderSVGText {text} at (10,11) size 203x18 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 203x17
-          chunk 1 text run 1 at (10.00,25.00) startOffset 0 endOffset 31 width 202.20: "Testing gradientUnits attribute"
+      RenderSVGText {text} at (10,11) size 201x18 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 201x17
+          chunk 1 text run 1 at (10.00,25.00) startOffset 0 endOffset 31 width 200.54: "Testing gradientUnits attribute"
       RenderSVGResourceRadialGradient {radialGradient} [id="Grad1"] [gradientUnits=objectBoundingBox] [center=(0.50,0.50)] [focal=(0.50,0.50)] [radius=0.50] [focalRadius=0.00]
         RenderSVGGradientStop {stop} [offset=0.00] [color=#0000FF]
         RenderSVGGradientStop {stop} [offset=1.00] [color=#FF0000]
@@ -33,8 +33,8 @@ layer at (0,0) size 800x600
       RenderSVGText {text} at (10,264) size 172x14 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 172x14
           chunk 1 text run 1 at (10.00,275.00) startOffset 0 endOffset 28 width 171.60: "gradientUnits=userSpaceOnUse"
-      RenderSVGText {text} at (10,279) size 376x14 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 376x14
+      RenderSVGText {text} at (10,279) size 375x14 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 375x14
           chunk 1 text run 1 at (10.00,290.00) startOffset 0 endOffset 72 width 375.00: "Gradient is red to blue radial gradiant from center to horizontal bounds"
     RenderSVGText {text} at (10,304) size 269x45 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 269x45

@@ -153,7 +153,6 @@ class ProgramD3DMetadata final : angle::NonCopyable
     int getRendererMajorShaderModel() const;
     bool usesBroadcast(const gl::State &data) const;
     bool usesSecondaryColor() const;
-    bool usesFragDepth() const;
     bool usesPointCoord() const;
     bool usesFragCoord() const;
     bool usesPointSize() const;
@@ -169,6 +168,7 @@ class ProgramD3DMetadata final : angle::NonCopyable
     bool usesMultipleFragmentOuts() const;
     bool usesCustomOutVars() const;
     const ShaderD3D *getFragmentShader() const;
+    FragDepthUsage getFragDepthUsage() const;
     uint8_t getClipDistanceArraySize() const;
     uint8_t getCullDistanceArraySize() const;
 
@@ -549,7 +549,7 @@ class ProgramD3D : public ProgramImpl
     gl::ShaderMap<std::string> mShaderHLSL;
     gl::ShaderMap<CompilerWorkaroundsD3D> mShaderWorkarounds;
 
-    bool mUsesFragDepth;
+    FragDepthUsage mFragDepthUsage;
     bool mHasANGLEMultiviewEnabled;
     bool mUsesVertexID;
     bool mUsesViewID;

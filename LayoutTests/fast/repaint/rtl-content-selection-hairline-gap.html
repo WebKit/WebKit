@@ -1,0 +1,39 @@
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" >
+<style>
+div {
+  font-family: sans-serif;
+  font-size: 40px;
+}
+</style>
+<div id=select_this lang="ja"><span>ンズ</span>pass if no hairline gap after select</div>
+<script src="../../resources/ui-helper.js"></script>
+<script>
+if (window.testRunner) {
+  testRunner.dumpAsText();
+  testRunner.waitUntilDone();
+}
+
+async function repaintTest() {
+  if (window.internals)
+    internals.startTrackingRepaints();
+
+  let range = document.createRange();
+  range.selectNodeContents(select_this);  
+  window.getSelection().addRange(range);
+
+  await UIHelper.renderingUpdate();
+ 
+  if (window.internals) {
+    var repaintRects = internals.repaintRectsAsText();
+    internals.stopTrackingRepaints();
+    var pre = document.createElement('pre');
+    document.body.appendChild(pre);
+    pre.innerText = repaintRects.indexOf("88 18 694 40") != -1 ? "PASS" : "FAIL";
+  }
+
+  if (window.testRunner)
+    testRunner.notifyDone();
+}
+setTimeout(repaintTest, 0);
+
+</script>

@@ -70,8 +70,8 @@ matchQueries)
   for (const subtree of tree.iterateCollapsedNodes({
     includeIntermediateNodes: true,
     includeEmptySubtrees: true,
-    alwaysExpandThroughLevel }))
-  {
+    alwaysExpandThroughLevel
+  })) {
     subtreeCount++;
     const subtreeDone = !subtree.subtreeCounts?.nodesWithTODO;
 

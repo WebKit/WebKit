@@ -5,13 +5,13 @@ TIMEOUT Parent embeds same-origin anonymous iframe Test timed out
 PASS Parent embeds cross-origin anonymous iframe
 TIMEOUT COEP:require-corp parent embeds same-origin anonymous iframe Test timed out
 TIMEOUT COEP:require-corp parent embeds cross-origin anonymous iframe Test timed out
-PASS COEP:credentialless parent embeds same-origin anonymous iframe
+TIMEOUT COEP:credentialless parent embeds same-origin anonymous iframe Test timed out
 PASS COEP:credentialless parent embeds cross-origin anonymous iframe
 TIMEOUT COOP:same-origin + COEP:require-corp embeds same-origin anonymous iframe Test timed out
 TIMEOUT COOP:same-origin + COEP:require-corp embeds cross-origin anonymous iframe Test timed out
-PASS COOP:same-origin + COEP:credentialless embeds same-origin anonymous iframe
+TIMEOUT COOP:same-origin + COEP:credentialless embeds same-origin anonymous iframe Test timed out
 PASS COOP:same-origin + COEP:credentialless embeds cross-origin anonymous iframe
-PASS Parents embeds a CSP:frame-ancestore anonymous iframe
-PASS Cross-Origin-Isolated parent embeds same-origin COEP anonymous iframe
+TIMEOUT Parents embeds a CSP:frame-ancestore anonymous iframe Test timed out
+TIMEOUT Cross-Origin-Isolated parent embeds same-origin COEP anonymous iframe Test timed out
 TIMEOUT Cross-Origin-Isolated parent embeds cross-origin COEP anonymous iframe Test timed out
 

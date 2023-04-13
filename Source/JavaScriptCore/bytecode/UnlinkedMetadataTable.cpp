@@ -31,10 +31,70 @@
 namespace JSC {
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(MetadataTable);
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(UnlinkedMetadataTable);
 
+#if CPU(ADDRESS64)
+static_assert((UnlinkedMetadataTable::s_maxMetadataAlignment >=
+#define JSC_ALIGNMENT_CHECK(size) size) && (size >=
+FOR_EACH_BYTECODE_METADATA_ALIGNMENT(JSC_ALIGNMENT_CHECK)
+#undef JSC_ALIGNMENT_CHECK
+1));
+#else
 #define JSC_ALIGNMENT_CHECK(size) static_assert(size <= UnlinkedMetadataTable::s_maxMetadataAlignment);
 FOR_EACH_BYTECODE_METADATA_ALIGNMENT(JSC_ALIGNMENT_CHECK)
 #undef JSC_ALIGNMENT_CHECK
+#endif
+
+#if ENABLE(METADATA_STATISTICS)
+size_t MetadataStatistics::unlinkedMetadataCount = 0;
+size_t MetadataStatistics::size32MetadataCount = 0;
+size_t MetadataStatistics::totalMemory = 0;
+size_t MetadataStatistics::perOpcodeCount[NUMBER_OF_BYTECODE_WITH_METADATA] { 0 };
+size_t MetadataStatistics::numberOfCopiesFromLinking = 0;
+size_t MetadataStatistics::linkingCopyMemory = 0;
+
+void MetadataStatistics::reportMetadataStatistics()
+{
+    static constexpr bool verbose = true;
+
+    dataLogLn("\nMetadata statistics\n");
+
+    totalMemory += unlinkedMetadataCount * sizeof(UnlinkedMetadataTable::LinkingData);
+    totalMemory += size32MetadataCount * (UnlinkedMetadataTable::s_offset32TableSize);
+    totalMemory += linkingCopyMemory;
+    dataLogLn("total memory: ", totalMemory);
+    if (verbose)
+        dataLogLn("\t of which due to multiple linked copies: ", linkingCopyMemory);
+
+    dataLogLn("# of unlinked metadata tables created: ", unlinkedMetadataCount);
+    dataLogLn("# of which were 32bit: ", size32MetadataCount);
+    dataLogLn("# of copies from linking: ", numberOfCopiesFromLinking);
+    dataLogLn();
+
+    if (!verbose)
+        return;
+
+    dataLogLn("Per opcode statistics:");
+    std::array<unsigned, NUMBER_OF_BYTECODE_WITH_METADATA> opcodeIds;
+    std::array<size_t, NUMBER_OF_BYTECODE_WITH_METADATA> memoryUsagePerOpcode;
+    for (unsigned i = 0; i < NUMBER_OF_BYTECODE_WITH_METADATA; ++i) {
+        opcodeIds[i] = i;
+        memoryUsagePerOpcode[i] = perOpcodeCount[i] * metadataSize(static_cast<OpcodeID>(i));
+    }
+    std::sort(opcodeIds.begin(), opcodeIds.end(), [&](auto a, auto b) {
+        return memoryUsagePerOpcode[a] > memoryUsagePerOpcode[b];
+    });
+    for (unsigned i = 0; i < NUMBER_OF_BYTECODE_WITH_METADATA; ++i) {
+        auto id = opcodeIds[i];
+        auto numberOfEntries = perOpcodeCount[id];
+        if (!numberOfEntries)
+            continue;
+        dataLogLn(opcodeNames[id], ":");
+        dataLogLn("\tnumber of entries: ", numberOfEntries);
+        dataLogLn("\tmemory usage: ", memoryUsagePerOpcode[id]);
+    }
+}
+#endif
 
 void UnlinkedMetadataTable::finalize()
 {
@@ -57,13 +117,34 @@ void UnlinkedMetadataTable::finalize()
             }
             buffer[i] = offset; // We align when we access this.
             unsigned alignment = metadataAlignment(static_cast<OpcodeID>(i));
-            offset = roundUpToMultipleOf(alignment, offset);
             ASSERT(alignment <= s_maxMetadataAlignment);
+
+#if CPU(ADDRESS64)
+            // This is only necessary for the first metadata entry, if the buffer
+            // is 4-byte aligned and the entry has an alignment requirement of 8
+            ASSERT(offset == roundUpToMultipleOf(alignment, offset) || offset == s_offset16TableSize);
+#endif
+            offset = roundUpToMultipleOf(alignment, offset);
+
             offset += numberOfEntries * metadataSize(static_cast<OpcodeID>(i));
+#if ENABLE(METADATA_STATISTICS)
+            MetadataStatistics::perOpcodeCount[i] += numberOfEntries;
+#endif
         }
         buffer[s_offsetTableEntries - 1] = offset;
         m_is32Bit = offset > UINT16_MAX;
     }
+
+#if ENABLE(METADATA_STATISTICS)
+    MetadataStatistics::unlinkedMetadataCount++;
+    if (m_is32Bit)
+        MetadataStatistics::size32MetadataCount++;
+    MetadataStatistics::totalMemory += offset;
+    static std::once_flag once;
+    std::call_once(once, [] {
+        std::atexit(MetadataStatistics::reportMetadataStatistics);
+    });
+#endif
 
     if (m_is32Bit) {
         m_rawBuffer = reinterpret_cast<uint8_t*>(MetadataTableMalloc::realloc(m_rawBuffer, s_offset16TableSize + s_offset32TableSize + sizeof(LinkingData)));

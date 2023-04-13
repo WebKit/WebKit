@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-TextStream& operator<<(TextStream& ts, OptionSet<ActivityState::Flag> flags)
+TextStream& operator<<(TextStream& ts, OptionSet<ActivityState> flags)
 {
     bool didAppend = false;
 

@@ -28,26 +28,44 @@
 #if PLATFORM(MAC) && ENABLE(UI_SIDE_COMPOSITING)
 
 #include "RemoteScrollingCoordinatorProxy.h"
-#include <WebCore/WheelEventDeltaFilter.h>
 
 namespace WebKit {
+
+#if ENABLE(SCROLLING_THREAD)
+class RemoteLayerTreeEventDispatcher;
+#endif
 
 class RemoteScrollingCoordinatorProxyMac final : public RemoteScrollingCoordinatorProxy {
 public:
     explicit RemoteScrollingCoordinatorProxyMac(WebPageProxy&);
+    ~RemoteScrollingCoordinatorProxyMac();
 
 private:
-    WebCore::PlatformWheelEvent filteredWheelEvent(const WebCore::PlatformWheelEvent&) override;
+    void cacheWheelEventScrollingAccelerationCurve(const NativeWebWheelEvent&) override;
 
-    void didReceiveWheelEvent(bool) override;
+    void handleWheelEvent(const WebWheelEvent&, WebCore::RectEdges<bool> rubberBandableEdges) override;
+    void wheelEventHandlingCompleted(const WebCore::PlatformWheelEvent&, WebCore::ScrollingNodeID, std::optional<WebCore::WheelScrollGestureState>) override;
+
     bool scrollingTreeNodeRequestsScroll(WebCore::ScrollingNodeID, const WebCore::RequestedScrollData&) override;
+    bool scrollingTreeNodeRequestsKeyboardScroll(WebCore::ScrollingNodeID, const WebCore::RequestedKeyboardScrollData&) override;
     void hasNodeWithAnimatedScrollChanged(bool) override;
-    void displayDidRefresh(WebCore::PlatformDisplayID) override;
+
+    void scrollingTreeNodeWillStartScroll(WebCore::ScrollingNodeID) override;
+    void scrollingTreeNodeDidEndScroll(WebCore::ScrollingNodeID) override;
 
     void connectStateNodeLayers(WebCore::ScrollingStateTree&, const RemoteLayerTreeHost&) override;
     void establishLayerTreeScrollingRelations(const RemoteLayerTreeHost&) override;
 
-    std::unique_ptr<WebCore::WheelEventDeltaFilter> m_recentWheelEventDeltaFilter;
+    void displayDidRefresh(WebCore::PlatformDisplayID) override;
+    void windowScreenDidChange(WebCore::PlatformDisplayID, std::optional<WebCore::FramesPerSecond>) override;
+
+    void willCommitLayerAndScrollingTrees() override;
+    void didCommitLayerAndScrollingTrees() override;
+    void applyScrollingTreeLayerPositionsAfterCommit() override;
+
+#if ENABLE(SCROLLING_THREAD)
+    RefPtr<RemoteLayerTreeEventDispatcher> m_wheelEventDispatcher;
+#endif
 };
 
 } // namespace WebKit

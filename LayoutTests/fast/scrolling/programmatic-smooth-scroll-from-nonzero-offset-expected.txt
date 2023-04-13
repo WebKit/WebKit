@@ -1,0 +1,6 @@
+PASS observedScrollLeftBelow1000 is false
+PASS scrollContainer.scrollLeft is 2000
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

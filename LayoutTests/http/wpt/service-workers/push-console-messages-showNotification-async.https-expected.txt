@@ -1,0 +1,5 @@
+Received ServiceWorker Console Message: doTest: {"type":"PUSHEVENT","message":"SHOWNOTIFICATION-ASYNC"}
+Received ServiceWorker Console Message: doPush: SHOWNOTIFICATION-ASYNC
+
+PASS push with async showNotification call
+

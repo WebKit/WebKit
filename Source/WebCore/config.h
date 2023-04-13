@@ -36,18 +36,6 @@
 // Using CMake with Unix makefiles does not use prefix headers.
 #if PLATFORM(MAC) && defined(BUILDING_WITH_CMAKE)
 #include "WebCorePrefix.h"
-#ifndef JSC_API_AVAILABLE
-#define JSC_API_AVAILABLE(...)
-#endif
-#ifndef JSC_CLASS_AVAILABLE
-#define JSC_CLASS_AVAILABLE(...) JS_EXPORT
-#endif
-#ifndef JSC_API_DEPRECATED
-#define JSC_API_DEPRECATED(...)
-#endif
-#ifndef JSC_API_DEPRECATED_WITH_REPLACEMENT
-#define JSC_API_DEPRECATED_WITH_REPLACEMENT(...)
-#endif
 #endif
 
 #ifdef __cplusplus

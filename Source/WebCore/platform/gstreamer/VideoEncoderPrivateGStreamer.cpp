@@ -485,6 +485,8 @@ static GRefPtr<GstCaps> createSrcPadTemplateCaps()
 
 static void videoEncoderConstructed(GObject* encoder)
 {
+    GST_CALL_PARENT(G_OBJECT_CLASS, constructed, (encoder));
+
     auto* self = WEBKIT_VIDEO_ENCODER(encoder);
     self->priv->encoderId = None;
 

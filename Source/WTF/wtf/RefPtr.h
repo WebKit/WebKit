@@ -282,6 +282,18 @@ inline bool is(const RefPtr<ArgType, PtrTraits, RefDerefTraits>& source)
     return is<ExpectedType>(source.get());
 }
 
+template<typename Target, typename Source, typename PtrTraits, typename RefDerefTraits>
+inline Target* downcast(RefPtr<Source, PtrTraits, RefDerefTraits>& source)
+{
+    return downcast<Target>(source.get());
+}
+
+template<typename Target, typename Source, typename PtrTraits, typename RefDerefTraits>
+inline Target* downcast(const RefPtr<Source, PtrTraits, RefDerefTraits>& source)
+{
+    return downcast<Target>(source.get());
+}
+
 template<typename Target, typename Source, typename TargetPtrTraits = RawPtrTraits<Target>, typename TargetRefDerefTraits = DefaultRefDerefTraits<Target>,
     typename SourcePtrTraits, typename SourceRefDerefTraits>
 inline RefPtr<Target, TargetPtrTraits, TargetRefDerefTraits> dynamicDowncast(const RefPtr<Source, SourcePtrTraits, SourceRefDerefTraits>& source)

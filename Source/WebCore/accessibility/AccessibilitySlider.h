@@ -48,7 +48,6 @@ private:
     AXCoreObject* elementAccessibilityHitTest(const IntPoint&) const override;
 
     AccessibilityRole roleValue() const override { return AccessibilityRole::Slider; }
-    bool isSlider() const final { return true; }
     bool isControl() const override { return true; }
     
     void addChildren() override;

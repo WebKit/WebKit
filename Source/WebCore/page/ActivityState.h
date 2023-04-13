@@ -33,48 +33,46 @@ class TextStream;
 
 namespace WebCore {
 
-struct ActivityState {
-    enum Flag {
-        WindowIsActive = 1 << 0,
-        IsFocused = 1 << 1,
-        IsVisible = 1 << 2,
-        IsVisibleOrOccluded = 1 << 3,
-        IsInWindow = 1 << 4,
-        IsVisuallyIdle = 1 << 5,
-        IsAudible = 1 << 6,
-        IsLoading = 1 << 7,
-        IsCapturingMedia = 1 << 8,
-        IsConnectedToHardwareConsole = 1 << 9,
-    };
-
-    static constexpr OptionSet<Flag> allFlags() { return { WindowIsActive, IsFocused, IsVisible, IsVisibleOrOccluded, IsInWindow, IsVisuallyIdle, IsAudible, IsLoading, IsCapturingMedia, IsConnectedToHardwareConsole }; }
+enum class ActivityState : uint16_t {
+    WindowIsActive = 1 << 0,
+    IsFocused = 1 << 1,
+    IsVisible = 1 << 2,
+    IsVisibleOrOccluded = 1 << 3,
+    IsInWindow = 1 << 4,
+    IsVisuallyIdle = 1 << 5,
+    IsAudible = 1 << 6,
+    IsLoading = 1 << 7,
+    IsCapturingMedia = 1 << 8,
+    IsConnectedToHardwareConsole = 1 << 9,
 };
 
-enum class ActivityStateForCPUSampling {
+static constexpr OptionSet<ActivityState> allActivityStates() { return { ActivityState::WindowIsActive, ActivityState::IsFocused, ActivityState::IsVisible, ActivityState::IsVisibleOrOccluded, ActivityState::IsInWindow, ActivityState::IsVisuallyIdle, ActivityState::IsAudible, ActivityState::IsLoading, ActivityState::IsCapturingMedia, ActivityState::IsConnectedToHardwareConsole }; }
+
+enum class ActivityStateForCPUSampling : uint8_t {
     NonVisible,
     VisibleNonActive,
     VisibleAndActive
 };
 
-WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, OptionSet<ActivityState::Flag>);
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, OptionSet<ActivityState>);
 
 } // namespace WebCore
 
 namespace WTF {
 
-template<> struct EnumTraits<WebCore::ActivityState::Flag> {
+template<> struct EnumTraits<WebCore::ActivityState> {
     using values = EnumValues<
-        WebCore::ActivityState::Flag,
-        WebCore::ActivityState::Flag::WindowIsActive,
-        WebCore::ActivityState::Flag::IsFocused,
-        WebCore::ActivityState::Flag::IsVisible,
-        WebCore::ActivityState::Flag::IsVisibleOrOccluded,
-        WebCore::ActivityState::Flag::IsInWindow,
-        WebCore::ActivityState::Flag::IsVisuallyIdle,
-        WebCore::ActivityState::Flag::IsAudible,
-        WebCore::ActivityState::Flag::IsLoading,
-        WebCore::ActivityState::Flag::IsCapturingMedia,
-        WebCore::ActivityState::Flag::IsConnectedToHardwareConsole
+        WebCore::ActivityState,
+        WebCore::ActivityState::WindowIsActive,
+        WebCore::ActivityState::IsFocused,
+        WebCore::ActivityState::IsVisible,
+        WebCore::ActivityState::IsVisibleOrOccluded,
+        WebCore::ActivityState::IsInWindow,
+        WebCore::ActivityState::IsVisuallyIdle,
+        WebCore::ActivityState::IsAudible,
+        WebCore::ActivityState::IsLoading,
+        WebCore::ActivityState::IsCapturingMedia,
+        WebCore::ActivityState::IsConnectedToHardwareConsole
     >;
 };
 

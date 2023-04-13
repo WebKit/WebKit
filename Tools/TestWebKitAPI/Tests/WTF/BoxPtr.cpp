@@ -172,9 +172,9 @@ TEST(WTF_BoxPtr, Assignment)
         BoxPtrLogger* a = BoxPtrLogger::create("a");
         BoxPtr<BoxPtrLogger> ptr = adoptInBoxPtr(a);
         EXPECT_EQ(a, ptr->get());
-        IGNORE_CLANG_WARNINGS_BEGIN("self-move")
+        IGNORE_WARNINGS_BEGIN("self-move")
         ptr = WTFMove(ptr);
-        IGNORE_CLANG_WARNINGS_END
+        IGNORE_WARNINGS_END
         EXPECT_EQ(a, ptr->get());
     }
     EXPECT_STREQ("create(a) delete(a) ", takeLogStr().c_str());

@@ -1,3 +1,5 @@
+// META: script=/common/gc.js
+
 if (window.testRunner)
     testRunner.setAllowStorageQuotaIncrease(false);
 
@@ -26,5 +28,33 @@ promise_test(async (test) => {
     await cache.put("test", response380ko);
     return promise_rejects_dom(test, "QuotaExceededError", cache.addAll(["../preload/resources/square.png?", "../preload/resources/square.png?1", "../preload/resources/square.png?2"]));
 }, "Testing that cache.addAll checks against quota");
+
+promise_test(async (test) => {
+    await doCleanup();
+    // Fill cache storage with 399ko data.
+    for (let i = 0; i < 399; i ++) {
+        let response = new Response(new ArrayBuffer(1024));
+        let cache = await caches.open("add_"+i);
+        await cache.put("test", response);
+        await caches.delete("add_"+i);
+    }
+
+    await garbageCollect();
+    var newCache = await caches.open("add3");
+    var retryAttempts = 10;
+    var putSucceeded = false;
+    while (retryAttempts-- && !putSucceeded) {
+        // If any Cache object is collected, requesting to store (1ko + 1) data should succeed.
+        let response = new Response(new ArrayBuffer(1025));
+        await newCache.put("test", response).then(() => {
+            putSucceeded = true;
+        }).catch((e) => {
+            assert_equals(e.name, "QuotaExceededError");
+        });
+        if (!putSucceeded)
+            await new Promise(resolve => test.step_timeout(resolve, 100));
+    }
+    assert_true(putSucceeded);
+}, "Testing that caches.delete will reduce usage");
 
 done();

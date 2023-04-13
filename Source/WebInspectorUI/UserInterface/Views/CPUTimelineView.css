@@ -177,7 +177,7 @@
     fill: var(--cpu-paint-fill-color);
 }
 
-.timeline-view.cpu :matches(.area-chart, .stacked-area-chart) svg > path {
+.timeline-view.cpu :is(.area-chart, .stacked-area-chart) svg > path {
     fill: var(--cpu-other-thread-fill-color);
     stroke: var(--cpu-other-thread-stroke-color);
 }
@@ -194,7 +194,7 @@
     stroke: var(--cpu-worker-thread-stroke-color);
 }
 
-.timeline-view.cpu :matches(.area-chart, .stacked-area-chart) .markers {
+.timeline-view.cpu :is(.area-chart, .stacked-area-chart) .markers {
     position: absolute;
     top: 0;
     left: 0;
@@ -203,7 +203,7 @@
     pointer-events: none;
 }
 
-.timeline-view.cpu :matches(.area-chart, .stacked-area-chart) .markers > div {
+.timeline-view.cpu :is(.area-chart, .stacked-area-chart) .markers > div {
     position: absolute;
     z-index: 10;
     width: 100%;
@@ -212,18 +212,18 @@
     background-color: var(--graph-line-color);
 }
 
-body[dir=rtl] .timeline-view.cpu :matches(.area-chart, .stacked-area-chart) .markers > div {
+body[dir=rtl] .timeline-view.cpu :is(.area-chart, .stacked-area-chart) .markers > div {
     transform: scaleX(-1);
 }
 
-.timeline-view.cpu :matches(.area-chart, .stacked-area-chart) .markers > div > .label {
+.timeline-view.cpu :is(.area-chart, .stacked-area-chart) .markers > div > .label {
     padding: 2px;
     font-size: 8px;
     color: var(--text-color-secondary);
     background-color: var(--background-color-content);
 }
 
-.timeline-view.cpu :matches(.area-chart, .stacked-area-chart) circle {
+.timeline-view.cpu :is(.area-chart, .stacked-area-chart) circle {
     r: 3;
     fill: var(--cpu-overlay-color);
 }
@@ -339,7 +339,7 @@ body[dir=rtl] .timeline-view.cpu :matches(.area-chart, .stacked-area-chart) .mar
     cursor: pointer;
 }
 
-.timeline-view.cpu > .content > .overview > .chart > .container.stats > table :matches(.filter, .filter-clear):hover {
+.timeline-view.cpu > .content > .overview > .chart > .container.stats > table :is(.filter, .filter-clear):hover {
     opacity: 0.7;
 }
 

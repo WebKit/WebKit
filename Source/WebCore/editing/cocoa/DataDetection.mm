@@ -35,16 +35,16 @@
 #import "CommonAtomStrings.h"
 #import "DataDetectionResultsStorage.h"
 #import "Editing.h"
-#import "ElementAncestorIterator.h"
+#import "ElementAncestorIteratorInlines.h"
 #import "ElementRareData.h"
 #import "ElementTraversal.h"
-#import "FrameView.h"
 #import "HTMLAnchorElement.h"
 #import "HTMLDivElement.h"
 #import "HTMLNames.h"
 #import "HTMLTextFormControlElement.h"
 #import "HitTestResult.h"
 #import "ImageOverlay.h"
+#import "LocalFrameView.h"
 #import "NodeList.h"
 #import "NodeTraversal.h"
 #import "QualifiedName.h"
@@ -54,6 +54,7 @@
 #import "Text.h"
 #import "TextIterator.h"
 #import "TextRecognitionResult.h"
+#import "TypedElementDescendantIteratorInlines.h"
 #import "VisiblePosition.h"
 #import "VisibleUnits.h"
 #import <pal/spi/ios/DataDetectorsUISPI.h>
@@ -144,7 +145,7 @@ std::optional<DetectedItem> DataDetection::detectItemAroundHitTestResult(const H
 
         contextRange = rangeExpandedAroundPositionByCharacters(position, 250);
     } else {
-        Frame* frame = node->document().frame();
+        auto* frame = node->document().frame();
         if (!frame)
             return { };
 
@@ -361,7 +362,6 @@ static void buildQuery(DDScanQueryRef scanQuery, const SimpleRange& contextRange
     CFCharacterSetRef newLinesSet = CFCharacterSetGetPredefined(kCFCharacterSetNewline);
     
     CFIndex iteratorCount = 0;
-    CFIndex fragmentCount = 0;
     
     // Build the scan query adding separators.
     // For each fragment the iterator increment is stored as metadata.
@@ -417,7 +417,6 @@ static void buildQuery(DDScanQueryRef scanQuery, const SimpleRange& contextRange
         
         auto currentTextCFString = adoptCF(CFStringCreateWithCharacters(kCFAllocatorDefault, reinterpret_cast<const UniChar*>(currentTextUpconvertedCharacters.get()), currentTextLength));
         PAL::softLink_DataDetectorsCore_DDScanQueryAddTextFragment(scanQuery, currentTextCFString.get(), CFRangeMake(0, currentTextLength), (void *)iteratorCount, (DDTextFragmentMode)0, DDTextCoalescingTypeNone);
-        fragmentCount++;
     }
 }
 

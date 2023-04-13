@@ -41,7 +41,10 @@
 
 namespace WebCore {
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(FetchBodyOwner);
+
 class FetchBodyOwner : public RefCounted<FetchBodyOwner>, public ActiveDOMObject, public CanMakeWeakPtr<FetchBodyOwner> {
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(FetchBodyOwner);
 public:
     ~FetchBodyOwner();
 
@@ -66,6 +69,7 @@ public:
     virtual void consumeBodyAsStream();
     virtual void feedStream() { }
     virtual void cancel() { }
+    virtual void loadBody() { }
 
     bool hasLoadingError() const;
     ResourceError loadingError() const;

@@ -43,6 +43,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/parsing/background-repeat-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/parsing/background-repeat-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/parsing/background-repeat-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/parsing/background-shorthand-serialization.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/parsing/background-size-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/parsing/background-size-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/parsing/background-size-valid.html
@@ -86,3 +87,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/parsing/box-shadow-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/parsing/box-shadow-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/parsing/box-shadow-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/parsing/webkit-border-radius-valid.html

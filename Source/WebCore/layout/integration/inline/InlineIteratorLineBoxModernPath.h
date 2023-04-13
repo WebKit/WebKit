@@ -54,9 +54,11 @@ public:
     float logicalWidth() const { return line().lineBoxLogicalRect().width(); }
     float inkOverflowTop() const { return line().inkOverflow().y(); }
     float inkOverflowBottom() const { return line().inkOverflow().maxY(); }
+    float scrollableOverflowTop() const { return line().scrollableOverflow().y(); }
+    float scrollableOverflowBottom() const { return line().scrollableOverflow().maxY(); }
 
     bool hasEllipsis() const { return line().hasEllipsis(); }
-    FloatRect ellipsisVisualRectIgnoringBlockDirection() const { return line().ellipsisVisualRect(); }
+    FloatRect ellipsisVisualRectIgnoringBlockDirection() const { return *line().ellipsisVisualRect(); }
     TextRun ellipsisText() const { return line().ellipsisText(); }
 
     float contentLogicalTopAdjustedForPrecedingLineBox() const { return !m_lineIndex ? contentLogicalTop() : LineBoxIteratorModernPath(*m_inlineContent, m_lineIndex - 1).contentLogicalBottomAdjustedForFollowingLineBox(); }
@@ -72,6 +74,8 @@ public:
 
     RenderFragmentContainer* containingFragment() const { return nullptr; }
     bool isFirstAfterPageBreak() const { return line().isFirstAfterPageBreak(); }
+
+    size_t lineIndex() const { return m_lineIndex; }
 
     void traverseNext()
     {
@@ -120,8 +124,8 @@ public:
 private:
     void setAtEnd() { m_lineIndex = lines().size(); }
 
-    const LayoutIntegration::InlineContent::Lines& lines() const { return m_inlineContent->lines; }
-    const LayoutIntegration::Line& line() const { return lines()[m_lineIndex]; }
+    const InlineDisplay::Lines& lines() const { return m_inlineContent->displayContent().lines; }
+    const InlineDisplay::Line& line() const { return lines()[m_lineIndex]; }
 
     WeakPtr<const LayoutIntegration::InlineContent> m_inlineContent;
     size_t m_lineIndex { 0 };

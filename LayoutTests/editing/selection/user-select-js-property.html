@@ -33,7 +33,7 @@ test(function(){
     // user-select:none in uneditable element
     sample2.style.webkitUserSelect = "none";
     setSelection(sample2);
-    assert_equals(selection.type, "None");
+    assert_equals(selection.type, "Range");
 });
 
 var style = document.createElement("baz").style;

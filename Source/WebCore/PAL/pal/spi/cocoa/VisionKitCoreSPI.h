@@ -27,6 +27,10 @@
 
 #if USE(APPLE_INTERNAL_SDK)
 
+#if __has_include(<TextRecognition/CRRegion.h>)
+#import <TextRecognition/CRRegion.h>
+#endif
+
 #import <VisionKitCore/VKImageAnalysis_WebKit.h>
 #import <VisionKitCore/VisionKitCore.h>
 
@@ -64,6 +68,7 @@ typedef NS_OPTIONS(NSUInteger, VKAnalysisTypes) {
     VKAnalysisTypeMachineReadableCode  = 1 << 2,
     VKAnalysisTypeAppClip              = 1 << 3,
     VKAnalysisTypeVisualSearch         = 1 << 4,
+    VKAnalysisTypeImageSegmentation    = 1 << 5,
     VKAnalysisTypeNone = 0,
     VKAnalysisTypeAll = NSUIntegerMax,
 };
@@ -164,6 +169,7 @@ NS_ASSUME_NONNULL_END
 
 @interface VKWKLineInfo (Staging_85139101)
 @property (nonatomic, readonly) BOOL shouldWrap;
+@property (nonatomic, readonly) NSUInteger layoutDirection;
 @end
 
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)

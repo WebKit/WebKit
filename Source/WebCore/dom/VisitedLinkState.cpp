@@ -30,13 +30,14 @@
 #include "VisitedLinkState.h"
 
 #include "ElementIterator.h"
-#include "Frame.h"
 #include "FrameDestructionObserverInlines.h"
 #include "HTMLAnchorElementInlines.h"
+#include "LocalFrame.h"
 #include "Page.h"
 #include "SVGAElement.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGNames.h"
+#include "TypedElementDescendantIteratorInlines.h"
 #include "VisitedLinkStore.h"
 #include "XLinkNames.h"
 
@@ -109,7 +110,7 @@ InsideLink VisitedLinkState::determineLinkStateSlowCase(const Element& element)
     if (!hash)
         return InsideLink::InsideVisited;
 
-    Frame* frame = element.document().frame();
+    auto* frame = element.document().frame();
     if (!frame)
         return InsideLink::InsideUnvisited;
 

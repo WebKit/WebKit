@@ -37,6 +37,7 @@ typedef (sequence<sequence<ByteString>> or record<ByteString, ByteString>) Heade
     undefined append(ByteString name, ByteString value);
     [ImplementedAs=remove] undefined delete(ByteString name);
     ByteString? get(ByteString name);
+    sequence<ByteString> getSetCookie();
     boolean has(ByteString name);
     undefined set(ByteString name, ByteString value);
 

@@ -35,10 +35,13 @@
 #include <ft2build.h>
 #include FT_FREETYPE_H
 #include FT_TRUETYPE_TABLES_H
-#include <hb-ft.h>
-#include <hb-ot.h>
 #include <wtf/MathExtras.h>
 #include <wtf/text/WTFString.h>
+
+#if ENABLE(MATHML) && USE(HARFBUZZ)
+#include <hb-ft.h>
+#include <hb-ot.h>
+#endif
 
 namespace WebCore {
 
@@ -302,7 +305,7 @@ RefPtr<SharedBuffer> FontPlatformData::openTypeTable(uint32_t table) const
     return SharedBuffer::create(WTFMove(data));
 }
 
-#if USE(HARFBUZZ) && !ENABLE(OPENTYPE_MATH)
+#if ENABLE(MATHML) && USE(HARFBUZZ)
 HbUniquePtr<hb_font_t> FontPlatformData::createOpenTypeMathHarfBuzzFont() const
 {
     CairoFtFaceLocker cairoFtFaceLocker(m_scaledFont.get());

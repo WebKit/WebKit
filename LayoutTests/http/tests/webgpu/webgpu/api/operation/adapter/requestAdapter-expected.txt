@@ -1,0 +1,12 @@
+
+PASS :requestAdapter:powerPreference="_undef_";forceFallbackAdapter="_undef_"
+PASS :requestAdapter:powerPreference="_undef_";forceFallbackAdapter=false
+PASS :requestAdapter:powerPreference="_undef_";forceFallbackAdapter=true
+PASS :requestAdapter:powerPreference="low-power";forceFallbackAdapter="_undef_"
+PASS :requestAdapter:powerPreference="low-power";forceFallbackAdapter=false
+PASS :requestAdapter:powerPreference="low-power";forceFallbackAdapter=true
+PASS :requestAdapter:powerPreference="high-performance";forceFallbackAdapter="_undef_"
+PASS :requestAdapter:powerPreference="high-performance";forceFallbackAdapter=false
+PASS :requestAdapter:powerPreference="high-performance";forceFallbackAdapter=true
+PASS :requestAdapter_no_parameters:
+

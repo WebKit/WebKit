@@ -37,7 +37,11 @@ JSStringJoiner::~JSStringJoiner()
 template<typename CharacterType>
 static inline void appendStringToData(CharacterType*& data, StringView string)
 {
-    string.getCharacters(data);
+    if constexpr (std::is_same_v<CharacterType, LChar>) {
+        ASSERT(string.is8Bit());
+        string.getCharacters8(data);
+    } else
+        string.getCharacters(data);
     data += string.length();
 }
 
@@ -98,7 +102,7 @@ inline unsigned JSStringJoiner::joinedLength(JSGlobalObject* globalObject) const
     return totalLength;
 }
 
-JSValue JSStringJoiner::join(JSGlobalObject* globalObject)
+JSValue JSStringJoiner::joinSlow(JSGlobalObject* globalObject)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);

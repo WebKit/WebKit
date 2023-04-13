@@ -304,7 +304,7 @@ LibWebRTCCodecs::Decoder* LibWebRTCCodecs::createDecoderInternal(VideoCodecType 
 {
     auto decoder = makeUnique<Decoder>();
     auto* result = decoder.get();
-    decoder->identifier = VideoDecoderIdentifier::generateThreadSafe();
+    decoder->identifier = VideoDecoderIdentifier::generate();
     decoder->type = type;
 
     ensureGPUProcessConnectionAndDispatchToThread([this, decoder = WTFMove(decoder), callback = WTFMove(callback)]() mutable {
@@ -515,7 +515,7 @@ LibWebRTCCodecs::Encoder* LibWebRTCCodecs::createEncoderInternal(VideoCodecType 
 {
     auto encoder = makeUnique<Encoder>();
     auto* result = encoder.get();
-    encoder->identifier = VideoEncoderIdentifier::generateThreadSafe();
+    encoder->identifier = VideoEncoderIdentifier::generate();
     encoder->type = type;
     encoder->useAnnexB = useAnnexB;
     encoder->isRealtime = isRealtime;

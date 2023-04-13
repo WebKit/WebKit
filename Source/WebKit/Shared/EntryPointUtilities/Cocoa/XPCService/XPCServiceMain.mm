@@ -30,6 +30,7 @@
 #import "WKCrashReporter.h"
 #import "XPCServiceEntryPoint.h"
 #import <CoreFoundation/CoreFoundation.h>
+#import <mach/mach.h>
 #import <pal/spi/cf/CFUtilitiesSPI.h>
 #import <pal/spi/cocoa/LaunchServicesSPI.h>
 #import <sys/sysctl.h>
@@ -37,6 +38,9 @@
 #import <wtf/Language.h>
 #import <wtf/OSObjectPtr.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/WTFProcess.h>
+#import <wtf/spi/cocoa/OSLogSPI.h>
+#import <wtf/spi/darwin/SandboxSPI.h>
 #import <wtf/spi/darwin/XPCSPI.h>
 
 namespace WebKit {
@@ -62,6 +66,52 @@ static void setAppleLanguagesPreference()
         LOG(Language, "Bootstrap message does not contain OverrideLanguages");
 }
 
+static void initializeCFPrefs()
+{
+#if ENABLE(CFPREFS_DIRECT_MODE)
+    // Enable CFPrefs direct mode to avoid unsuccessfully attempting to connect to the daemon and getting blocked by the sandbox.
+    _CFPrefsSetDirectModeEnabled(YES);
+#if HAVE(CF_PREFS_SET_READ_ONLY)
+    _CFPrefsSetReadOnly(YES);
+#endif
+#endif // ENABLE(CFPREFS_DIRECT_MODE)
+}
+
+#if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
+static void blockLogdInSandbox()
+{
+    audit_token_t auditToken = { 0 };
+    mach_msg_type_number_t info_size = TASK_AUDIT_TOKEN_COUNT;
+    if (KERN_SUCCESS == task_info(mach_task_self(), TASK_AUDIT_TOKEN, reinterpret_cast<integer_t *>(&auditToken), &info_size))
+        sandbox_enable_state_flag("DisableLogging", auditToken);
+}
+#endif
+
+static void initializeLogd(bool disableLogging)
+{
+#if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
+    if (disableLogging) {
+#if PLATFORM(IOS_FAMILY)
+        blockLogdInSandbox();
+#endif
+        os_trace_set_mode(OS_TRACE_MODE_OFF);
+        return;
+    }
+#else
+    UNUSED_PARAM(disableLogging);
+#endif
+
+    os_trace_set_mode(OS_TRACE_MODE_INFO | OS_TRACE_MODE_DEBUG);
+
+    // Log a long message to make sure the XPC connection to the log daemon for oversized messages is opened.
+    // This is needed to block launchd after the WebContent process has launched, since access to launchd is
+    // required when opening new XPC connections.
+    char stringWithSpaces[1024];
+    memset(stringWithSpaces, ' ', sizeof(stringWithSpaces));
+    stringWithSpaces[sizeof(stringWithSpaces) - 1] = 0;
+    RELEASE_LOG(Process, "Initialized logd %s", stringWithSpaces);
+}
+
 static void XPCServiceEventHandler(xpc_connection_t peer)
 {
     OSObjectPtr<xpc_connection_t> retainedPeerConnection(peer);
@@ -76,7 +126,7 @@ static void XPCServiceEventHandler(xpc_connection_t peer)
                     RELEASE_LOG_FAULT(IPC, "Exiting: Received XPC event type: %{public}s", event == XPC_ERROR_CONNECTION_INVALID ? "XPC_ERROR_CONNECTION_INVALID" : "XPC_ERROR_TERMINATION_IMMINENT");
                     // FIXME: Handle this case more gracefully.
                     [[NSRunLoop mainRunLoop] performBlock:^{
-                        exit(EXIT_FAILURE);
+                        exitProcess(EXIT_FAILURE);
                     }];
                 }
             }
@@ -89,6 +139,9 @@ static void XPCServiceEventHandler(xpc_connection_t peer)
             return;
         }
         if (!strcmp(messageName, "bootstrap")) {
+            bool disableLogging = xpc_dictionary_get_bool(event, "disable-logging");
+            initializeLogd(disableLogging);
+
             const char* serviceName = xpc_dictionary_get_string(event, "service-name");
             if (!serviceName) {
                 RELEASE_LOG_ERROR(IPC, "XPCServiceEventHandler: 'service-name' is not present in the XPC dictionary");
@@ -112,7 +165,7 @@ static void XPCServiceEventHandler(xpc_connection_t peer)
             if (!initializerFunctionPtr) {
                 RELEASE_LOG_FAULT(IPC, "Exiting: Unable to find entry point in WebKit.framework with name: %s", [(__bridge NSString *)entryPointFunctionName UTF8String]);
                 [[NSRunLoop mainRunLoop] performBlock:^{
-                    exit(EXIT_FAILURE);
+                    exitProcess(EXIT_FAILURE);
                 }];
                 return;
             }
@@ -129,10 +182,21 @@ static void XPCServiceEventHandler(xpc_connection_t peer)
             if (fd != -1)
                 dup2(fd, STDERR_FILENO);
 
-            WorkQueue::main().dispatchSync([initializerFunctionPtr, event = OSObjectPtr<xpc_object_t>(event), retainedPeerConnection] {
+            WorkQueue::main().dispatchSync([initializerFunctionPtr, event = OSObjectPtr<xpc_object_t>(event), retainedPeerConnection, disableLogging] {
+                WTF::initializeMainThread();
+
+                initializeCFPrefs();
+
                 initializerFunctionPtr(retainedPeerConnection.get(), event.get());
 
                 setAppleLanguagesPreference();
+
+#if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT) && PLATFORM(MAC)
+                if (disableLogging)
+                    blockLogdInSandbox();
+#else
+                UNUSED_PARAM(disableLogging);
+#endif
             });
 
             return;
@@ -144,7 +208,7 @@ static void XPCServiceEventHandler(xpc_connection_t peer)
     xpc_connection_resume(peer);
 }
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
 
 NEVER_INLINE NO_RETURN_DUE_TO_CRASH static void crashDueWebKitFrameworkVersionMismatch()
 {
@@ -155,16 +219,6 @@ NEVER_INLINE NO_RETURN_DUE_TO_CRASH static void crashDueWebKitFrameworkVersionMi
 
 int XPCServiceMain(int, const char**)
 {
-#if ENABLE(CFPREFS_DIRECT_MODE)
-    // Enable CFPrefs direct mode to avoid unsuccessfully attempting to connect to the daemon and getting blocked by the sandbox.
-    _CFPrefsSetDirectModeEnabled(YES);
-#if HAVE(CF_PREFS_SET_READ_ONLY)
-    _CFPrefsSetReadOnly(YES);
-#endif
-#endif // ENABLE(CFPREFS_DIRECT_MODE)
-
-    WTF::initializeMainThread();
-
     auto bootstrap = adoptOSObject(xpc_copy_bootstrap());
 
     if (bootstrap) {
@@ -175,7 +229,7 @@ int XPCServiceMain(int, const char**)
             return true;
         });
 #endif
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
 #if ASAN_ENABLED
         // EXC_RESOURCE on ASAN builds freezes the process for several minutes: rdar://65027596
         if (char *disableFreezingOnExcResource = getenv("DISABLE_FREEZING_ON_EXC_RESOURCE")) {

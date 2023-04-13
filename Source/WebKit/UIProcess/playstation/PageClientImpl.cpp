@@ -29,6 +29,16 @@
 #include "DrawingAreaProxyCoordinatedGraphics.h"
 #include "PlayStationWebView.h"
 #include "WebPageProxy.h"
+#include <WebCore/DOMPasteAccess.h>
+#include <WebCore/NotImplemented.h>
+
+#if USE(GRAPHICS_LAYER_WC)
+#include "DrawingAreaProxyWC.h"
+#endif
+
+#if USE(WPE_RENDERER)
+#include <wpe/wpe.h>
+#endif
 
 namespace WebKit {
 
@@ -40,6 +50,12 @@ PageClientImpl::PageClientImpl(PlayStationWebView& view)
 // PageClient's pure virtual functions
 std::unique_ptr<DrawingAreaProxy> PageClientImpl::createDrawingAreaProxy(WebProcessProxy&)
 {
+#if USE(GRAPHICS_LAYER_WC)
+    if (m_view.page()->preferences().useGPUProcessForDOMRenderingEnabled()
+        || m_view.page()->preferences().useGPUProcessForCanvasRenderingEnabled()
+        || m_view.page()->preferences().useGPUProcessForWebGLEnabled())
+        return makeUnique<DrawingAreaProxyWC>(*m_view.page());
+#endif
     return makeUnique<DrawingAreaProxyCoordinatedGraphics>(*m_view.page());
 }
 
@@ -181,11 +197,25 @@ void PageClientImpl::doneWithKeyEvent(const NativeWebKeyboardEvent& event, bool 
     notImplemented();
 }
 
+#if ENABLE(TOUCH_EVENTS)
+void PageClientImpl::doneWithTouchEvent(const NativeWebTouchEvent& event, bool wasEventHandled)
+{
+    notImplemented();
+}
+#endif // ENABLE(TOUCH_EVENTS)
+
 RefPtr<WebPopupMenuProxy> PageClientImpl::createPopupMenuProxy(WebPageProxy&  pageProxy)
 {
     notImplemented();
     return { };
 }
+
+#if USE(GRAPHICS_LAYER_WC)
+bool PageClientImpl::usesOffscreenRendering() const
+{
+    return false;
+}
+#endif
 
 void PageClientImpl::enterAcceleratedCompositingMode(const LayerTreeContext& context)
 {
@@ -317,5 +347,12 @@ void PageClientImpl::requestDOMPasteAccess(WebCore::DOMPasteAccessCategory, cons
 {
     completionHandler(WebCore::DOMPasteAccessResponse::DeniedForGesture);
 }
+
+#if USE(WPE_RENDERER)
+UnixFileDescriptor PageClientImpl::hostFileDescriptor()
+{
+    return UnixFileDescriptor { 1, UnixFileDescriptor::Adopt };
+}
+#endif
 
 } // namespace WebKit

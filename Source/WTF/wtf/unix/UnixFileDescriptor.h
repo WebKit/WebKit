@@ -68,7 +68,7 @@ public:
     ~UnixFileDescriptor()
     {
         if (m_value >= 0)
-            closeWithRetry(m_value);
+            closeWithRetry(std::exchange(m_value, -1));
     }
 
     explicit operator bool() const { return m_value >= 0; }

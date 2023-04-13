@@ -28,15 +28,25 @@
 G_BEGIN_DECLS
 
 #define WEBKIT_TYPE_FIND_CONTROLLER            (webkit_find_controller_get_type())
+#if !ENABLE(2022_GLIB_API)
 #define WEBKIT_FIND_CONTROLLER(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), WEBKIT_TYPE_FIND_CONTROLLER, WebKitFindController))
 #define WEBKIT_FIND_CONTROLLER_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass),  WEBKIT_TYPE_FIND_CONTROLLER, WebKitFindControllerClass))
 #define WEBKIT_IS_FIND_CONTROLLER(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), WEBKIT_TYPE_FIND_CONTROLLER))
 #define WEBKIT_IS_FIND_CONTROLLER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass),  WEBKIT_TYPE_FIND_CONTROLLER))
 #define WEBKIT_FIND_CONTROLLER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj),  WEBKIT_TYPE_FIND_CONTROLLER, WebKitFindControllerClass))
 
-typedef struct _WebKitFindController        WebKitFindController;
-typedef struct _WebKitFindControllerPrivate WebKitFindControllerPrivate;
-typedef struct _WebKitFindControllerClass   WebKitFindControllerClass;
+struct _WebKitFindControllerClass {
+    GObjectClass parent_class;
+
+    /*< private >*/
+    void (*_webkit_reserved0) (void);
+    void (*_webkit_reserved1) (void);
+    void (*_webkit_reserved2) (void);
+    void (*_webkit_reserved3) (void);
+};
+#endif
+
+WEBKIT_DECLARE_FINAL_TYPE (WebKitFindController, webkit_find_controller, WEBKIT, FIND_CONTROLLER, GObject)
 
 typedef struct _WebKitWebView WebKitWebView;
 
@@ -64,26 +74,6 @@ typedef enum {
   WEBKIT_FIND_OPTIONS_BACKWARDS =                          1 << 3,
   WEBKIT_FIND_OPTIONS_WRAP_AROUND =                        1 << 4
 } WebKitFindOptions;
-
-struct _WebKitFindController {
-    GObject parent;
-
-  /*< private >*/
-  WebKitFindControllerPrivate *priv;
-};
-
-struct _WebKitFindControllerClass {
-    GObjectClass parent_class;
-
-    /*< private >*/
-    void (*_webkit_reserved0) (void);
-    void (*_webkit_reserved1) (void);
-    void (*_webkit_reserved2) (void);
-    void (*_webkit_reserved3) (void);
-};
-
-WEBKIT_API GType
-webkit_find_controller_get_type            (void);
 
 WEBKIT_API void
 webkit_find_controller_search              (WebKitFindController *find_controller,

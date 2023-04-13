@@ -62,7 +62,7 @@ RenderLayoutState::RenderLayoutState(RenderElement& renderer, IsPaginated isPagi
     }
 }
 
-RenderLayoutState::RenderLayoutState(const FrameViewLayoutContext::LayoutStateStack& layoutStateStack, RenderBox& renderer, const LayoutSize& offset, LayoutUnit pageLogicalHeight, bool pageLogicalHeightChanged, std::optional<size_t> maximumLineCountForLineClamp, std::optional<size_t> visibleLineCountForLineClamp, std::optional<LeadingTrim> leadingTrim)
+RenderLayoutState::RenderLayoutState(const LocalFrameViewLayoutContext::LayoutStateStack& layoutStateStack, RenderBox& renderer, const LayoutSize& offset, LayoutUnit pageLogicalHeight, bool pageLogicalHeightChanged, std::optional<size_t> maximumLineCountForLineClamp, std::optional<size_t> visibleLineCountForLineClamp, std::optional<LeadingTrim> leadingTrim)
     : m_clipped(false)
     , m_isPaginated(false)
     , m_pageLogicalHeightChanged(false)
@@ -134,7 +134,7 @@ void RenderLayoutState::computeClipRect(const RenderLayoutState& ancestor, Rende
     // FIXME: <http://bugs.webkit.org/show_bug.cgi?id=13443> Apply control clip if present.
 }
 
-void RenderLayoutState::computePaginationInformation(const FrameViewLayoutContext::LayoutStateStack& layoutStateStack, RenderBox& renderer, LayoutUnit pageLogicalHeight, bool pageLogicalHeightChanged)
+void RenderLayoutState::computePaginationInformation(const LocalFrameViewLayoutContext::LayoutStateStack& layoutStateStack, RenderBox& renderer, LayoutUnit pageLogicalHeight, bool pageLogicalHeightChanged)
 {
     auto* ancestor = layoutStateStack.isEmpty() ? nullptr : layoutStateStack.last().get();
     // If we establish a new page height, then cache the offset to the top of the first page.
@@ -230,7 +230,7 @@ void RenderLayoutState::propagateLineGridInfo(const RenderLayoutState& ancestor,
     m_lineGridPaginationOrigin = ancestor.lineGridPaginationOrigin();
 }
 
-void RenderLayoutState::establishLineGrid(const FrameViewLayoutContext::LayoutStateStack& layoutStateStack, RenderBlockFlow& renderer)
+void RenderLayoutState::establishLineGrid(const LocalFrameViewLayoutContext::LayoutStateStack& layoutStateStack, RenderBlockFlow& renderer)
 {
     // First check to see if this grid has been established already.
     if (m_lineGrid) {
@@ -291,7 +291,7 @@ LayoutStateMaintainer::~LayoutStateMaintainer()
         m_context.enablePaintOffsetCache();
 }
 
-LayoutStateDisabler::LayoutStateDisabler(FrameViewLayoutContext& context)
+LayoutStateDisabler::LayoutStateDisabler(LocalFrameViewLayoutContext& context)
     : m_context(context)
 {
     m_context.disablePaintOffsetCache();

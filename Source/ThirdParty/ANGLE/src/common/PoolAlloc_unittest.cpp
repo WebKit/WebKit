@@ -67,7 +67,7 @@ TEST_P(PoolAllocatorAlignmentTest, Alignment)
         const size_t numBytes = rand() % (1024 * 4) + 1;
         void *allocation      = poolAllocator.allocate(numBytes);
         // Verify alignment of allocation matches expected default
-        EXPECT_EQ(0u, reinterpret_cast<std::uintptr_t>(allocation) % alignment)
+        EXPECT_EQ(0u, reinterpret_cast<uintptr_t>(allocation) % alignment)
             << "Iteration " << i << " allocating " << numBytes;
     }
 }

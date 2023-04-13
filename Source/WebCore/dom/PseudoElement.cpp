@@ -53,7 +53,6 @@ PseudoElement::PseudoElement(Element& host, PseudoId pseudoId)
     , m_pseudoId(pseudoId)
 {
     ASSERT(pseudoId == PseudoId::Before || pseudoId == PseudoId::After);
-    setHasCustomStyleResolveCallbacks();
 }
 
 PseudoElement::~PseudoElement()

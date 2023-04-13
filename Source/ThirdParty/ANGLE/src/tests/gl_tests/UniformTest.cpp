@@ -1514,6 +1514,34 @@ void main()
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
+// Bug: chromium:4210448 : Ensure programs properly
+// compiles and renders where the uniforms form
+// a struct with an alignment not matched with
+// the actual size of the individual members.
+// (Metal)
+TEST_P(UniformTest, Vec4Vec2SizeAlignment)
+{
+    constexpr char kVS[] = R"(precision highp float;
+attribute vec4 position;
+uniform vec4 uniformA;
+uniform vec4 uniformB;
+uniform vec2 uniformC;
+void main()
+{
+    gl_Position = position+uniformA +
+    uniformB + vec4(uniformC.x, uniformC.y, 0, 0);
+})";
+    constexpr char kFS[] = R"(precision highp float;
+void main()
+{
+    gl_FragColor = vec4(0,1,0,1);
+})";
+    mProgram             = CompileProgram(kVS, kFS);
+    ASSERT_NE(mProgram, 0u);
+    drawQuad(mProgram, "position", 0.5f);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+}
+
 // Use this to select which configurations (e.g. which renderer, which GLES major version) these
 // tests should be run against.
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(SimpleUniformTest);

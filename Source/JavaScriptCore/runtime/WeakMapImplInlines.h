@@ -72,7 +72,7 @@ ALWAYS_INLINE void WeakMapImpl<WeakMapBucket>::add(VM& vm, JSCell* key, JSValue 
 
 // Note that this function can be executed in parallel as long as the mutator stops.
 template<typename WeakMapBucket>
-void WeakMapImpl<WeakMapBucket>::finalizeUnconditionally(VM& vm)
+void WeakMapImpl<WeakMapBucket>::finalizeUnconditionally(VM& vm, CollectionScope)
 {
     auto* buffer = this->buffer();
     for (uint32_t index = 0; index < m_capacity; ++index) {

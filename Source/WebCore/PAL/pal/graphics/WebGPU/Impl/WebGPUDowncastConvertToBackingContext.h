@@ -63,6 +63,7 @@ public:
     WGPUShaderModule convertToBacking(const ShaderModule&) final;
     WGPUTexture convertToBacking(const Texture&) final;
     WGPUTextureView convertToBacking(const TextureView&) final;
+    CompositorIntegrationImpl& convertToBacking(CompositorIntegration&) final;
 
 private:
     DowncastConvertToBackingContext() = default;

@@ -8,11 +8,22 @@ features: [Temporal]
 ---*/
 
 const badResults = [
-  [undefined, RangeError],
+  [undefined, TypeError],
   [Infinity, RangeError],
   [-Infinity, RangeError],
   [Symbol("foo"), TypeError],
   [7n, TypeError],
+  [NaN, RangeError],
+  ["string", TypeError],
+  [{}, TypeError],
+  [null, TypeError],
+  [true, TypeError],
+  [false, TypeError],
+  [7.1, RangeError],
+  [-0.1, RangeError],
+  ["7", TypeError],
+  ["7.5", TypeError],
+  [{valueOf() { return 7; }}, TypeError],
 ];
 
 badResults.forEach(([result, error]) => {
@@ -22,30 +33,19 @@ badResults.forEach(([result, error]) => {
     }
   }("iso8601");
   const instance = new Temporal.PlainDate(1981, 12, 15, calendar);
-  assert.throws(error, () => instance.year, `${typeof result} not converted to integer`);
+  assert.throws(error, () => instance.year, `${typeof result} ${String(result)} not converted to integer`);
 });
 
-const convertedResults = [
-  [null, 0],
-  [true, 1],
-  [false, 0],
-  [7.1, 7],
-  [-7, -7],
-  [-0.1, 0],
-  [NaN, 0],
-  ["string", 0],
-  ["7", 7],
-  ["7.5", 7],
-  [{}, 0],
-  [{valueOf() { return 7; }}, 7],
+const preservedResults = [
+  -7,
 ];
 
-convertedResults.forEach(([result, convertedResult]) => {
+preservedResults.forEach(result => {
   const calendar = new class extends Temporal.Calendar {
     year() {
       return result;
     }
   }("iso8601");
   const instance = new Temporal.PlainDate(1981, 12, 15, calendar);
-  assert.sameValue(instance.year, convertedResult, `${typeof result} converted to integer ${convertedResult}`);
+  assert.sameValue(instance.year, result, `${typeof result} ${String(result)} preserved`);
 });

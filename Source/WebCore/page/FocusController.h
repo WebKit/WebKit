@@ -39,9 +39,9 @@ class ContainerNode;
 class Document;
 class Element;
 class FocusNavigationScope;
-class Frame;
 class IntRect;
 class KeyboardEvent;
+class LocalFrame;
 class Node;
 class Page;
 class TreeScope;
@@ -51,18 +51,18 @@ struct FocusCandidate;
 class FocusController : public CanMakeCheckedPtr {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit FocusController(Page&, OptionSet<ActivityState::Flag>);
+    explicit FocusController(Page&, OptionSet<ActivityState>);
 
-    WEBCORE_EXPORT void setFocusedFrame(Frame*);
-    Frame* focusedFrame() const { return m_focusedFrame.get(); }
-    WEBCORE_EXPORT Frame& focusedOrMainFrame() const;
+    WEBCORE_EXPORT void setFocusedFrame(LocalFrame*);
+    LocalFrame* focusedFrame() const { return m_focusedFrame.get(); }
+    WEBCORE_EXPORT LocalFrame& focusedOrMainFrame() const;
 
     WEBCORE_EXPORT bool setInitialFocus(FocusDirection, KeyboardEvent*);
     bool advanceFocus(FocusDirection, KeyboardEvent*, bool initialFocus = false);
 
-    WEBCORE_EXPORT bool setFocusedElement(Element*, Frame&, const FocusOptions& = { });
+    WEBCORE_EXPORT bool setFocusedElement(Element*, LocalFrame&, const FocusOptions& = { });
 
-    void setActivityState(OptionSet<ActivityState::Flag>);
+    void setActivityState(OptionSet<ActivityState>);
 
     WEBCORE_EXPORT void setActive(bool);
     bool isActive() const { return m_activityState.contains(ActivityState::WindowIsActive); }
@@ -119,9 +119,9 @@ private:
     void focusRepaintTimerFired();
 
     Page& m_page;
-    RefPtr<Frame> m_focusedFrame;
+    RefPtr<LocalFrame> m_focusedFrame;
     bool m_isChangingFocusedFrame;
-    OptionSet<ActivityState::Flag> m_activityState;
+    OptionSet<ActivityState> m_activityState;
 
     Timer m_focusRepaintTimer;
     MonotonicTime m_focusSetTime;

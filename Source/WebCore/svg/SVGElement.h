@@ -164,12 +164,16 @@ public:
     AtomString className() const { return AtomString { m_className->currentValue() }; }
     SVGAnimatedString& classNameAnimated() { return m_className; }
 
+    SVGConditionalProcessingAttributes& conditionalProcessingAttributes();
+    SVGConditionalProcessingAttributes* conditionalProcessingAttributesIfExists() const;
+
+    bool hasAssociatedSVGLayoutBox() const;
+
 protected:
     SVGElement(const QualifiedName&, Document&, UniqueRef<SVGPropertyRegistry>&&, ConstructionType = CreateSVGElement);
     virtual ~SVGElement();
 
     bool rendererIsNeeded(const RenderStyle&) override;
-    void parseAttribute(const QualifiedName&, const AtomString&) override;
 
     void finishParsingChildren() override;
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason = ModifiedDirectly) override;

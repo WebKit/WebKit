@@ -40,7 +40,7 @@ NS_ASSUME_NONNULL_BEGIN
 typedef NS_ENUM(NSInteger, _WKWebExtensionWindowType) {
     _WKWebExtensionWindowTypeNormal,
     _WKWebExtensionWindowTypePopup,
-} WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+} WK_API_AVAILABLE(macos(13.3), ios(16.4));
 
 /*!
  @abstract Constants used by @link WKWebExtensionWindow @/link to indicate possible states of a window.
@@ -54,10 +54,10 @@ typedef NS_ENUM(NSInteger, _WKWebExtensionWindowState) {
     _WKWebExtensionWindowStateMinimized,
     _WKWebExtensionWindowStateMaximized,
     _WKWebExtensionWindowStateFullscreen,
-} WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+} WK_API_AVAILABLE(macos(13.3), ios(16.4));
 
 /*! @abstract A class conforming to the `WKWebExtensionWindow` protocol represents a window to web extensions. */
-WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
+WK_API_AVAILABLE(macos(13.3), ios(16.4))
 @protocol _WKWebExtensionWindow <NSObject>
 @optional
 

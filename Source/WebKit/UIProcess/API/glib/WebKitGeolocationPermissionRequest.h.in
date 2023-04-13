@@ -28,22 +28,12 @@
 G_BEGIN_DECLS
 
 #define WEBKIT_TYPE_GEOLOCATION_PERMISSION_REQUEST            (webkit_geolocation_permission_request_get_type())
+#if !ENABLE(2022_GLIB_API)
 #define WEBKIT_GEOLOCATION_PERMISSION_REQUEST(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), WEBKIT_TYPE_GEOLOCATION_PERMISSION_REQUEST, WebKitGeolocationPermissionRequest))
 #define WEBKIT_GEOLOCATION_PERMISSION_REQUEST_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass),  WEBKIT_TYPE_GEOLOCATION_PERMISSION_REQUEST, WebKitGeolocationPermissionRequestClass))
 #define WEBKIT_IS_GEOLOCATION_PERMISSION_REQUEST(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), WEBKIT_TYPE_GEOLOCATION_PERMISSION_REQUEST))
 #define WEBKIT_IS_GEOLOCATION_PERMISSION_REQUEST_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass),  WEBKIT_TYPE_GEOLOCATION_PERMISSION_REQUEST))
 #define WEBKIT_GEOLOCATION_PERMISSION_REQUEST_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj),  WEBKIT_TYPE_GEOLOCATION_PERMISSION_REQUEST, WebKitGeolocationPermissionRequestClass))
-
-typedef struct _WebKitGeolocationPermissionRequest        WebKitGeolocationPermissionRequest;
-typedef struct _WebKitGeolocationPermissionRequestClass   WebKitGeolocationPermissionRequestClass;
-typedef struct _WebKitGeolocationPermissionRequestPrivate WebKitGeolocationPermissionRequestPrivate;
-
-struct _WebKitGeolocationPermissionRequest {
-    GObject parent;
-
-    /*< private >*/
-    WebKitGeolocationPermissionRequestPrivate *priv;
-};
 
 struct _WebKitGeolocationPermissionRequestClass {
     GObjectClass parent_class;
@@ -54,9 +44,9 @@ struct _WebKitGeolocationPermissionRequestClass {
     void (*_webkit_reserved2) (void);
     void (*_webkit_reserved3) (void);
 };
+#endif
 
-WEBKIT_API GType
-webkit_geolocation_permission_request_get_type (void);
+WEBKIT_DECLARE_FINAL_TYPE (WebKitGeolocationPermissionRequest, webkit_geolocation_permission_request, WEBKIT, GEOLOCATION_PERMISSION_REQUEST, GObject)
 
 G_END_DECLS
 

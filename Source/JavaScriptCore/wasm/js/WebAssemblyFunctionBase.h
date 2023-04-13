@@ -49,6 +49,7 @@ public:
     Wasm::TypeIndex typeIndex() const { return m_importableFunction.typeIndex; }
     WasmToWasmImportableFunction::LoadLocation entrypointLoadLocation() const { return m_importableFunction.entrypointLoadLocation; }
     WasmToWasmImportableFunction importableFunction() const { return m_importableFunction; }
+    CompactRefPtr<const Wasm::RTT> rtt() const { ASSERT(m_rtt); return m_rtt; }
 
     static ptrdiff_t offsetOfInstance() { return OBJECT_OFFSETOF(WebAssemblyFunctionBase, m_instance); }
 
@@ -56,10 +57,12 @@ public:
 
     static ptrdiff_t offsetOfEntrypointLoadLocation() { return OBJECT_OFFSETOF(WebAssemblyFunctionBase, m_importableFunction) + WasmToWasmImportableFunction::offsetOfEntrypointLoadLocation(); }
 
+    static ptrdiff_t offsetOfRTT() { return OBJECT_OFFSETOF(WebAssemblyFunctionBase, m_rtt); }
+
 protected:
     DECLARE_VISIT_CHILDREN;
     void finishCreation(VM&, NativeExecutable*, unsigned length, const String& name, JSWebAssemblyInstance*);
-    WebAssemblyFunctionBase(VM&, NativeExecutable*, JSGlobalObject*, Structure*, WasmToWasmImportableFunction);
+    WebAssemblyFunctionBase(VM&, NativeExecutable*, JSGlobalObject*, Structure*, WasmToWasmImportableFunction, RefPtr<const Wasm::RTT>);
 
     WriteBarrier<JSWebAssemblyInstance> m_instance;
 
@@ -67,6 +70,9 @@ protected:
     // to our Instance, which points to the CodeBlock, which points to the Module
     // that exported us, which ensures that the actual Signature/code doesn't get deallocated.
     WasmToWasmImportableFunction m_importableFunction;
+
+    // This can be a null pointer if GC support is turned off, in which case the RTT should not be accessed anyway.
+    CompactRefPtr<const Wasm::RTT> m_rtt;
 };
 
 } // namespace JSC

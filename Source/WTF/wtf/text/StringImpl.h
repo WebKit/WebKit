@@ -398,8 +398,8 @@ public:
         //       StringImpl::hash() only sets a new hash iff !hasHash().
         //       Additionally, StringImpl::setHash() asserts hasHash() and !isStatic().
 
-        template<unsigned characterCount> constexpr StaticStringImpl(const char (&characters)[characterCount], StringKind = StringNormal);
-        template<unsigned characterCount> constexpr StaticStringImpl(const char16_t (&characters)[characterCount], StringKind = StringNormal);
+        template<unsigned characterCount> explicit constexpr StaticStringImpl(const char (&characters)[characterCount], StringKind = StringNormal);
+        template<unsigned characterCount> explicit constexpr StaticStringImpl(const char16_t (&characters)[characterCount], StringKind = StringNormal);
         operator StringImpl&();
     };
 
@@ -1449,6 +1449,7 @@ template<typename CharacterType, typename Predicate> ALWAYS_INLINE Ref<StringImp
 template<typename Predicate>
 inline Ref<StringImpl> StringImpl::removeCharacters(const Predicate& findMatch)
 {
+    static_assert(!std::is_function_v<Predicate>, "Passing a lambda instead of a function pointer helps the compiler with inlining");
     if (is8Bit())
         return removeCharactersImpl(characters8(), findMatch);
     return removeCharactersImpl(characters16(), findMatch);
@@ -1505,7 +1506,7 @@ inline Expected<std::invoke_result_t<Func, Span<const char>>, UTF8ConversionErro
 {
     if (!length) {
         constexpr const char* emptyString = "";
-        return function(Span { emptyString, emptyString });
+        return function(makeSpan(emptyString, emptyString));
     }
 
     // Allocate a buffer big enough to hold all the characters
@@ -1534,16 +1535,16 @@ inline Expected<std::invoke_result_t<Func, Span<const char>>, UTF8ConversionErro
 
         auto success = Unicode::convertLatin1ToUTF8(&nonASCII, characters + length, &buffer, buffer + (bufferVector.size() - prefixLength));
         ASSERT_UNUSED(success, success); // (length * 2) should be sufficient for any conversion from Latin1
-        return function(Span { bufferVector.data(), buffer });
+        return function(makeSpan(bufferVector.data(), buffer));
     }
-    return function(Span { bitwise_cast<const char*>(characters), bitwise_cast<const char*>(characters + length) });
+    return function(makeSpan(bitwise_cast<const char*>(characters), bitwise_cast<const char*>(characters + length)));
 #else
     Vector<char, 1024> bufferVector(length * 2);
     char* buffer = bufferVector.data();
     const LChar* source = characters;
     bool success = Unicode::convertLatin1ToUTF8(&source, source + length, &buffer, buffer + bufferVector.size());
     ASSERT_UNUSED(success, success); // (length * 2) should be sufficient for any conversion from Latin1
-    return function(Span { bufferVector.data(), buffer });
+    return function(makeSpan(bufferVector.data(), buffer));
 #endif
 }
 
@@ -1552,7 +1553,7 @@ inline Expected<std::invoke_result_t<Func, Span<const char>>, UTF8ConversionErro
 {
     if (!length) {
         constexpr const char* emptyString = "";
-        return function(Span { emptyString, emptyString });
+        return function(makeSpan(emptyString, emptyString));
     }
     if (length > MaxLength / 3)
         return makeUnexpected(UTF8ConversionError::OutOfMemory);
@@ -1562,7 +1563,7 @@ inline Expected<std::invoke_result_t<Func, Span<const char>>, UTF8ConversionErro
     auto convertedSize = utf8ForCharactersIntoBuffer(characters, length, mode, bufferVector);
     if (!convertedSize)
         return makeUnexpected(convertedSize.error());
-    return function(Span { bufferVector.data(), *convertedSize });
+    return function(makeSpan(bufferVector.data(), *convertedSize));
 }
 
 } // namespace WTF

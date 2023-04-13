@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/js-test.js"></script>
 <script src="../resources/accessibility-helper.js"></script>
 </head>
 <body>
@@ -25,15 +25,21 @@
 
 <script>
 
-    description("This tests that aria-labelledby works on SVG elements.");
+description("This tests that aria-labelledby works on SVG elements.");
 
-    if (window.accessibilityController) {
-        var image = accessibilityController.accessibleElementById("Sudan");
-        shouldBeEqualToString("platformValueForW3CName(image)", "Sudan");
-    }
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true
+    var output = "";
+    var image;
+    setTimeout(function() {
+        image = accessibilityController.accessibleElementById("Sudan");
+        output += expect("platformValueForW3CName(image)", "'Sudan'");
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
 
 </script>
 
-<script src="../resources/js-test-post.js"></script>
 </body>
 </html>

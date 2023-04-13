@@ -54,10 +54,12 @@ CSSParserContext::CSSParserContext(CSSParserMode mode, const URL& baseURL)
 {
     // FIXME: We should turn all of the features on from their WebCore Settings defaults.
     if (mode == UASheetMode) {
+        colorMixEnabled = true;
         focusVisibleEnabled = true;
         propertySettings.cssContainmentEnabled = true;
         propertySettings.cssIndividualTransformPropertiesEnabled = true;
         propertySettings.cssInputSecurityEnabled = true;
+        propertySettings.cssCounterStyleAtRulesEnabled = true;
 #if ENABLE(CSS_TRANSFORM_STYLE_OPTIMIZED_3D)
         transformStyleOptimized3DEnabled = true;
 #endif
@@ -77,6 +79,7 @@ CSSParserContext::CSSParserContext(const Document& document, const URL& sheetBas
     , colorMixEnabled { document.settings().cssColorMixEnabled() }
     , constantPropertiesEnabled { document.settings().constantPropertiesEnabled() }
     , counterStyleAtRuleImageSymbolsEnabled { document.settings().cssCounterStyleAtRuleImageSymbolsEnabled() }
+    , counterStyleAtRuleEnabled { document.settings().cssCounterStyleAtRulesEnabled() }
     , cssColor4 { document.settings().cssColor4() }
     , relativeColorSyntaxEnabled { document.settings().cssRelativeColorSyntaxEnabled() }
     , springTimingFunctionEnabled { document.settings().springTimingFunctionEnabled() }
@@ -115,6 +118,7 @@ bool operator==(const CSSParserContext& a, const CSSParserContext& b)
         && a.colorMixEnabled == b.colorMixEnabled
         && a.constantPropertiesEnabled == b.constantPropertiesEnabled
         && a.counterStyleAtRuleImageSymbolsEnabled == b.counterStyleAtRuleImageSymbolsEnabled
+        && a.counterStyleAtRuleEnabled == b.counterStyleAtRuleEnabled
         && a.cssColor4 == b.cssColor4
         && a.relativeColorSyntaxEnabled == b.relativeColorSyntaxEnabled
         && a.springTimingFunctionEnabled == b.springTimingFunctionEnabled

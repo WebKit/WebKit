@@ -73,18 +73,27 @@ public:
     void emitPopupMenuSignal();
 #endif
 
-    WebKitJavascriptResult* runJavaScriptAndWaitUntilFinished(const char* javascript, GError**, WebKitWebView* = nullptr);
-    WebKitJavascriptResult* runJavaScriptFromGResourceAndWaitUntilFinished(const char* resource, GError**);
-    WebKitJavascriptResult* runJavaScriptInWorldAndWaitUntilFinished(const char* javascript, const char* world, GError**);
-    WebKitJavascriptResult* runAsyncJavaScriptFunctionInWorldAndWaitUntilFinished(const char* body, GVariant* arguments, const char* world, GError**);
-    WebKitJavascriptResult* runJavaScriptWithoutForcedUserGesturesAndWaitUntilFinished(const char* javascript, GError**);
+    JSCValue* runJavaScriptAndWaitUntilFinished(const char* javascript, GError**, WebKitWebView* = nullptr);
+    JSCValue* runJavaScriptAndWaitUntilFinished(const char* javascript, gsize, GError**);
+    JSCValue* runJavaScriptFromGResourceAndWaitUntilFinished(const char* resource, GError**);
+    JSCValue* runJavaScriptInWorldAndWaitUntilFinished(const char* javascript, const char* world, const char* sourceURI, GError**);
+    JSCValue* runAsyncJavaScriptFunctionInWorldAndWaitUntilFinished(const char* body, GVariant* arguments, const char* world, GError**);
+    JSCValue* runJavaScriptWithoutForcedUserGesturesAndWaitUntilFinished(const char* javascript, GError**);
+    void runJavaScriptAndWait(const char* javascript);
 
     // Javascript result helpers.
+    static char* javascriptResultToCString(JSCValue*);
+    static double javascriptResultToNumber(JSCValue*);
+    static bool javascriptResultToBoolean(JSCValue*);
+    static bool javascriptResultIsNull(JSCValue*);
+    static bool javascriptResultIsUndefined(JSCValue*);
+#if !ENABLE(2022_GLIB_API)
     static char* javascriptResultToCString(WebKitJavascriptResult*);
     static double javascriptResultToNumber(WebKitJavascriptResult*);
     static bool javascriptResultToBoolean(WebKitJavascriptResult*);
     static bool javascriptResultIsNull(WebKitJavascriptResult*);
     static bool javascriptResultIsUndefined(WebKitJavascriptResult*);
+#endif
 
 #if PLATFORM(GTK)
     cairo_surface_t* getSnapshotAndWaitUntilReady(WebKitSnapshotRegion, WebKitSnapshotOptions);
@@ -94,7 +103,7 @@ public:
 
     // Prohibit overrides because this is called when the web view is created
     // in our constructor, before a derived class's vtable is ready.
-    void initializeWebExtensions() final { Test::initializeWebExtensions(); }
+    void initializeWebProcessExtensions() final { Test::initializeWebProcessExtensions(); }
 
     static gboolean webProcessTerminated(WebKitWebView*, WebKitWebProcessTerminationReason, WebViewTest*);
 
@@ -105,11 +114,10 @@ public:
     GMainLoop* m_mainLoop;
     CString m_activeURI;
     CString m_expectedTitle;
-    WebKitJavascriptResult* m_javascriptResult { nullptr };
+    GRefPtr<JSCValue> m_javascriptResult;
     GError** m_javascriptError { nullptr };
     GUniquePtr<char> m_resourceData { nullptr };
     size_t m_resourceDataSize { 0 };
-    cairo_surface_t* m_surface { nullptr };
     bool m_expectedWebProcessCrash { false };
 
 #if PLATFORM(GTK)

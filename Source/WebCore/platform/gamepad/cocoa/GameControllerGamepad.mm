@@ -29,8 +29,10 @@
 #import "GameControllerGamepadProvider.h"
 #import "GameControllerHapticEngines.h"
 #import "GamepadConstants.h"
+#import "RuntimeApplicationChecks.h"
 #import <GameController/GCControllerElement.h>
 #import <GameController/GameController.h>
+#import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 
 #import "GameControllerSoftLink.h"
 
@@ -54,6 +56,12 @@ static void disableDefaultSystemAction(GCControllerButtonInput *button)
 
 void GameControllerGamepad::setupElements()
 {
+#if PLATFORM(IOS_FAMILY)
+    // rdar://103093747 - Backbone controller not recognized by Backbone app
+    if (IOSApplication::isBackboneApp() && !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::UsesGameControllerPhysicalInputProfile))
+        m_gcController.get().extendedGamepad.valueChangedHandler = ^(GCExtendedGamepad *, GCControllerElement *) { };
+#endif
+
     auto *profile = m_gcController.get().physicalInputProfile;
 
     // The user can expose an already-connected game controller to a web page by expressing explicit intent.

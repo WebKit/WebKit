@@ -30,18 +30,35 @@
 
 #include "config.h"
 #include "CSSGridLineNamesValue.h"
-#include <wtf/text/WTFString.h>
+
+#include "CSSMarkup.h"
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
 String CSSGridLineNamesValue::customCSSText() const
 {
-    return makeString('[', CSSValueList::customCSSText(), ']');
+    StringBuilder result;
+    result.append('[');
+    bool first = true;
+    for (auto& name : m_names) {
+        if (!std::exchange(first, false))
+            result.append(' ');
+        serializeIdentifier(name, result);
+    }
+    result.append(']');
+    return result.toString();
 }
 
-CSSGridLineNamesValue::CSSGridLineNamesValue()
-    : CSSValueList(GridLineNamesClass, SpaceSeparator)
+CSSGridLineNamesValue::CSSGridLineNamesValue(Span<const String> names)
+    : CSSValue(GridLineNamesClass)
+    , m_names(names.begin(), names.end())
 {
+}
+
+Ref<CSSGridLineNamesValue> CSSGridLineNamesValue::create(Span<const String> names)
+{
+    return adoptRef(*new CSSGridLineNamesValue(names));
 }
 
 }

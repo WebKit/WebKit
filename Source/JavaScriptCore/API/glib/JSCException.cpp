@@ -52,7 +52,7 @@ struct _JSCExceptionPrivate {
     GUniquePtr<char> backtrace;
 };
 
-WEBKIT_DEFINE_TYPE(JSCException, jsc_exception, G_TYPE_OBJECT)
+WEBKIT_DEFINE_FINAL_TYPE(JSCException, jsc_exception, G_TYPE_OBJECT, GObject)
 
 static void jsc_exception_class_init(JSCExceptionClass*)
 {

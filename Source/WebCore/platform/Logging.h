@@ -97,6 +97,7 @@ namespace WebCore {
     M(PlatformLeaks) \
     M(Plugins) \
     M(PopupBlocking) \
+    M(Printing) \
     M(PrivateClickMeasurement) \
     M(Process) \
     M(Progress) \

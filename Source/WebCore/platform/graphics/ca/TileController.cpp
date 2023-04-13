@@ -63,13 +63,14 @@ String TileController::zoomedOutTileGridContainerLayerName()
     return "Zoomed-out TileGrid container"_s;
 }
 
-TileController::TileController(PlatformCALayer* rootPlatformLayer)
+TileController::TileController(PlatformCALayer* rootPlatformLayer, AllowScrollPerformanceLogging shouldLogScrollingPerformance)
     : m_tileCacheLayer(rootPlatformLayer)
     , m_deviceScaleFactor(owningGraphicsLayer()->platformCALayerDeviceScaleFactor())
     , m_tileGrid(makeUnique<TileGrid>(*this))
     , m_tileRevalidationTimer(*this, &TileController::tileRevalidationTimerFired)
     , m_tileSizeChangeTimer(*this, &TileController::tileSizeChangeTimerFired, tileSizeUpdateDelay)
     , m_marginEdges(false, false, false, false)
+    , m_shouldAllowScrollPerformanceLogging(shouldLogScrollingPerformance)
 {
 }
 
@@ -242,7 +243,7 @@ void TileController::setVelocity(const VelocityData& velocity)
         setNeedsRevalidateTiles();
 }
 
-void TileController::setScrollability(Scrollability scrollability)
+void TileController::setScrollability(OptionSet<Scrollability> scrollability)
 {
     if (scrollability == m_scrollability)
         return;
@@ -568,10 +569,10 @@ IntSize TileController::computeTileSize()
 
     IntSize tileSize(kDefaultTileSize, kDefaultTileSize);
 
-    if (m_scrollability == NotScrollable) {
+    if (m_scrollability == Scrollability::NotScrollable) {
         IntSize scaledSize = expandedIntSize(boundsWithoutMargin().size() * tileGrid().scale());
         tileSize = scaledSize.constrainedBetween(IntSize(kDefaultTileSize, kDefaultTileSize), maxTileSize);
-    } else if (m_scrollability == VerticallyScrollable)
+    } else if (m_scrollability == Scrollability::VerticallyScrollable)
         tileSize.setWidth(std::min(std::max<int>(ceilf(boundsWithoutMargin().width() * tileGrid().scale()), kDefaultTileSize), maxTileSize.width()));
 
     LOG_WITH_STREAM(Scrolling, stream << "TileController::tileSize newSize=" << tileSize);
@@ -794,7 +795,8 @@ void TileController::removeUnparentedTilesNow()
 
 void TileController::logFilledVisibleFreshTile(unsigned blankPixelCount)
 {
-    owningGraphicsLayer()->platformCALayerLogFilledVisibleFreshTile(blankPixelCount);
+    if (m_shouldAllowScrollPerformanceLogging == AllowScrollPerformanceLogging::Yes)
+        owningGraphicsLayer()->platformCALayerLogFilledVisibleFreshTile(blankPixelCount);
 }
 
 } // namespace WebCore

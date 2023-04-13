@@ -273,22 +273,6 @@ void MarkedSpace::enablePreciseAllocationTracking()
         m_preciseAllocationSet->add(allocation->cell());
 }
 
-template<typename Visitor>
-void MarkedSpace::visitWeakSets(Visitor& visitor)
-{
-    auto visit = [&] (WeakSet* weakSet) {
-        weakSet->visit(visitor);
-    };
-    
-    m_newActiveWeakSets.forEach(visit);
-    
-    if (heap().collectionScope() == CollectionScope::Full)
-        m_activeWeakSets.forEach(visit);
-}
-
-template void MarkedSpace::visitWeakSets(AbstractSlotVisitor&);
-template void MarkedSpace::visitWeakSets(SlotVisitor&);
-
 void MarkedSpace::reapWeakSets()
 {
     auto visit = [&] (WeakSet* weakSet) {

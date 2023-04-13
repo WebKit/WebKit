@@ -1,4 +1,4 @@
-# Copyright (C) 2019-2022 Apple Inc. All rights reserved.
+# Copyright (C) 2019-2023 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -189,8 +189,8 @@ end
             restoreCalleeSavesUsedByWasm()
             restoreCallerPCAndCFR()
             if ARM64E
-                leap JSCConfig + constexpr JSC::offsetOfJSCConfigGateMap + (constexpr Gate::wasmOSREntry) * PtrSize, ws1
-                jmp [ws1], NativeToJITGatePtrTag # WasmEntryPtrTag
+                leap _g_config, ws1
+                jmp JSCConfigGateMapOffset + (constexpr Gate::wasmOSREntry) * PtrSize[ws1], NativeToJITGatePtrTag # WasmEntryPtrTag
             else
                 jmp ws0, WasmEntryPtrTag
             end
@@ -217,8 +217,8 @@ macro checkSwitchToJITForLoop()
             move r0, a0
             if ARM64E
                 move r1, ws0
-                leap JSCConfig + constexpr JSC::offsetOfJSCConfigGateMap + (constexpr Gate::wasmOSREntry) * PtrSize, ws1
-                jmp [ws1], NativeToJITGatePtrTag # WasmEntryPtrTag
+                leap _g_config, ws1
+                jmp JSCConfigGateMapOffset + (constexpr Gate::wasmOSREntry) * PtrSize[ws1], NativeToJITGatePtrTag # WasmEntryPtrTag
             else
                 jmp r1, WasmEntryPtrTag
             end
@@ -539,8 +539,8 @@ end
     restoreCalleeSavesUsedByWasm()
     restoreCallerPCAndCFR()
     if ARM64E
-        leap JSCConfig + constexpr JSC::offsetOfJSCConfigGateMap + (constexpr Gate::wasmOSREntry) * PtrSize, ws1
-        jmp [ws1], NativeToJITGatePtrTag # WasmEntryPtrTag
+        leap _g_config, ws1
+        jmp JSCConfigGateMapOffset + (constexpr Gate::wasmOSREntry) * PtrSize[ws1], NativeToJITGatePtrTag # WasmEntryPtrTag
     else
         jmp ws0, WasmEntryPtrTag
     end
@@ -739,8 +739,8 @@ macro doReturn()
     restoreCalleeSavesUsedByWasm()
     restoreCallerPCAndCFR()
     if ARM64E
-        leap JSCConfig + constexpr JSC::offsetOfJSCConfigGateMap + (constexpr Gate::returnFromLLInt) * PtrSize, ws0
-        jmp [ws0], NativeToJITGatePtrTag
+        leap _g_config, ws0
+        jmp JSCConfigGateMapOffset + (constexpr Gate::returnFromLLInt) * PtrSize[ws0], NativeToJITGatePtrTag
     else
         ret
     end
@@ -769,8 +769,8 @@ end)
 macro jumpToException()
     if ARM64E
         move r0, a0
-        leap JSCConfig + constexpr JSC::offsetOfJSCConfigGateMap + (constexpr Gate::exceptionHandler) * PtrSize, a1
-        jmp [a1], NativeToJITGatePtrTag # ExceptionHandlerPtrTag
+        leap _g_config, a1
+        jmp JSCConfigGateMapOffset + (constexpr Gate::exceptionHandler) * PtrSize[a1], NativeToJITGatePtrTag # ExceptionHandlerPtrTag
     else
         jmp r0, ExceptionHandlerPtrTag
     end
@@ -1030,8 +1030,8 @@ end
             ctx(macro(opcodeName, opcodeStruct, size)
                 macro callNarrow()
                     if ARM64E
-                        leap JSCConfig + constexpr JSC::offsetOfJSCConfigGateMap + (constexpr Gate::%opcodeName%) * PtrSize, ws1
-                        jmp [ws1], NativeToJITGatePtrTag # JSEntrySlowPathPtrTag
+                        leap _g_config, ws1
+                        jmp JSCConfigGateMapOffset + (constexpr Gate::%opcodeName%) * PtrSize[ws1], NativeToJITGatePtrTag # JSEntrySlowPathPtrTag
                     end
                     _wasm_trampoline_%opcodeName%:
                     call ws0, JSEntrySlowPathPtrTag
@@ -1039,8 +1039,8 @@ end
 
                 macro callWide16()
                     if ARM64E
-                        leap JSCConfig + constexpr JSC::offsetOfJSCConfigGateMap + (constexpr Gate::%opcodeName%_wide16) * PtrSize, ws1
-                        jmp [ws1], NativeToJITGatePtrTag # JSEntrySlowPathPtrTag
+                        leap _g_config, ws1
+                        jmp JSCConfigGateMapOffset + (constexpr Gate::%opcodeName%_wide16) * PtrSize[ws1], NativeToJITGatePtrTag # JSEntrySlowPathPtrTag
                     end
                     _wasm_trampoline_%opcodeName%_wide16:
                     call ws0, JSEntrySlowPathPtrTag
@@ -1048,8 +1048,8 @@ end
 
                 macro callWide32()
                     if ARM64E
-                        leap JSCConfig + constexpr JSC::offsetOfJSCConfigGateMap + (constexpr Gate::%opcodeName%_wide32) * PtrSize, ws1
-                        jmp [ws1], NativeToJITGatePtrTag # JSEntrySlowPathPtrTag
+                        leap _g_config, ws1
+                        jmp JSCConfigGateMapOffset + (constexpr Gate::%opcodeName%_wide32) * PtrSize[ws1], NativeToJITGatePtrTag # JSEntrySlowPathPtrTag
                     end
                     _wasm_trampoline_%opcodeName%_wide32:
                     call ws0, JSEntrySlowPathPtrTag
@@ -1254,8 +1254,8 @@ end
             ctx(macro(opcodeName, opcodeStruct, size)
                 macro jumpNarrow()
                     if ARM64E
-                        leap JSCConfig + constexpr JSC::offsetOfJSCConfigGateMap + (constexpr Gate::wasmTailCallJSEntrySlowPathPtrTag) * PtrSize, ws1
-                        jmp [ws1], NativeToJITGatePtrTag # JSEntrySlowPathPtrTag
+                        leap _g_config, ws1
+                        jmp JSCConfigGateMapOffset + (constexpr Gate::wasmTailCallJSEntrySlowPathPtrTag) * PtrSize[ws1], NativeToJITGatePtrTag # JSEntrySlowPathPtrTag
                     end
                     _wasm_trampoline_%opcodeName%:
                     jmp ws0, JSEntrySlowPathPtrTag
@@ -1263,8 +1263,8 @@ end
 
                 macro jumpWide16()
                     if ARM64E
-                        leap JSCConfig + constexpr JSC::offsetOfJSCConfigGateMap + (constexpr Gate::wasmTailCallJSEntrySlowPathPtrTag) * PtrSize, ws1
-                        jmp [ws1], NativeToJITGatePtrTag # JSEntrySlowPathPtrTag
+                        leap _g_config, ws1
+                        jmp JSCConfigGateMapOffset + (constexpr Gate::wasmTailCallJSEntrySlowPathPtrTag) * PtrSize[ws1], NativeToJITGatePtrTag # JSEntrySlowPathPtrTag
                     end
                     _wasm_trampoline_%opcodeName%_wide16:
                     jmp ws0, JSEntrySlowPathPtrTag
@@ -1272,8 +1272,8 @@ end
 
                 macro jumpWide32()
                     if ARM64E
-                        leap JSCConfig + constexpr JSC::offsetOfJSCConfigGateMap + (constexpr Gate::wasmTailCallJSEntrySlowPathPtrTag) * PtrSize, ws1
-                        jmp [ws1], NativeToJITGatePtrTag # JSEntrySlowPathPtrTag
+                        leap _g_config, ws1
+                        jmp JSCConfigGateMapOffset + (constexpr Gate::wasmTailCallJSEntrySlowPathPtrTag) * PtrSize[ws1], NativeToJITGatePtrTag # JSEntrySlowPathPtrTag
                     end
                     _wasm_trampoline_%opcodeName%_wide32:
                     jmp ws0, JSEntrySlowPathPtrTag
@@ -1708,7 +1708,6 @@ wasmOp(i32_eq, WasmI32Eq, macro(ctx)
     mloadi(ctx, m_lhs, t0)
     mloadi(ctx, m_rhs, t1)
     cieq t0, t1, t2
-    andi 1, t2
     returni(ctx, t2)
 end)
 
@@ -1716,7 +1715,6 @@ wasmOp(i32_ne, WasmI32Ne, macro(ctx)
     mloadi(ctx, m_lhs, t0)
     mloadi(ctx, m_rhs, t1)
     cineq t0, t1, t2
-    andi 1, t2
     returni(ctx, t2)
 end)
 
@@ -1724,7 +1722,6 @@ wasmOp(i32_lt_s, WasmI32LtS, macro(ctx)
     mloadi(ctx, m_lhs, t0)
     mloadi(ctx, m_rhs, t1)
     cilt t0, t1, t2
-    andi 1, t2
     returni(ctx, t2)
 end)
 
@@ -1732,7 +1729,6 @@ wasmOp(i32_le_s, WasmI32LeS, macro(ctx)
     mloadi(ctx, m_lhs, t0)
     mloadi(ctx, m_rhs, t1)
     cilteq t0, t1, t2
-    andi 1, t2
     returni(ctx, t2)
 end)
 
@@ -1740,7 +1736,6 @@ wasmOp(i32_lt_u, WasmI32LtU, macro(ctx)
     mloadi(ctx, m_lhs, t0)
     mloadi(ctx, m_rhs, t1)
     cib t0, t1, t2
-    andi 1, t2
     returni(ctx, t2)
 end)
 
@@ -1748,7 +1743,6 @@ wasmOp(i32_le_u, WasmI32LeU, macro(ctx)
     mloadi(ctx, m_lhs, t0)
     mloadi(ctx, m_rhs, t1)
     cibeq t0, t1, t2
-    andi 1, t2
     returni(ctx, t2)
 end)
 
@@ -1756,7 +1750,6 @@ wasmOp(i32_gt_s, WasmI32GtS, macro(ctx)
     mloadi(ctx, m_lhs, t0)
     mloadi(ctx, m_rhs, t1)
     cigt t0, t1, t2
-    andi 1, t2
     returni(ctx, t2)
 end)
 
@@ -1764,7 +1757,6 @@ wasmOp(i32_ge_s, WasmI32GeS, macro(ctx)
     mloadi(ctx, m_lhs, t0)
     mloadi(ctx, m_rhs, t1)
     cigteq t0, t1, t2
-    andi 1, t2
     returni(ctx, t2)
 end)
 
@@ -1772,7 +1764,6 @@ wasmOp(i32_gt_u, WasmI32GtU, macro(ctx)
     mloadi(ctx, m_lhs, t0)
     mloadi(ctx, m_rhs, t1)
     cia t0, t1, t2
-    andi 1, t2
     returni(ctx, t2)
 end)
 
@@ -1780,7 +1771,6 @@ wasmOp(i32_ge_u, WasmI32GeU, macro(ctx)
     mloadi(ctx, m_lhs, t0)
     mloadi(ctx, m_rhs, t1)
     ciaeq t0, t1, t2
-    andi 1, t2
     returni(ctx, t2)
 end)
 

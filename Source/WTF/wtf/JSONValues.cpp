@@ -404,8 +404,7 @@ RefPtr<JSON::Value> buildValue(const CodeUnit* start, const CodeUnit* end, const
                 return nullptr;
             }
         }
-        if (token != Token::ArrayEnd)
-            return nullptr;
+        ASSERT(token == Token::ArrayEnd);
         result = WTFMove(array);
         break;
     }
@@ -445,8 +444,7 @@ RefPtr<JSON::Value> buildValue(const CodeUnit* start, const CodeUnit* end, const
                 return nullptr;
             }
         }
-        if (token != Token::ObjectEnd)
-            return nullptr;
+        ASSERT(token == Token::ObjectEnd);
         result = WTFMove(object);
         break;
     }

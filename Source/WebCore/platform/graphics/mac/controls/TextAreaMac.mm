@@ -42,6 +42,8 @@ TextAreaMac::TextAreaMac(TextAreaPart& owningPart)
 
 void TextAreaMac::draw(GraphicsContext& context, const FloatRoundedRect& borderRect, float, const ControlStyle& style)
 {
+    LocalDefaultSystemAppearance localAppearance(style.states.contains(ControlStyle::State::DarkAppearance), style.accentColor);
+
     LocalCurrentGraphicsContext localContext(context);
 
     bool enabled = style.states.contains(ControlStyle::State::Enabled);

@@ -40,7 +40,7 @@ namespace Style {
 
 StyleColor colorFromPrimitiveValue(const Document& document, RenderStyle& style, const CSSPrimitiveValue& value, ForVisitedLink forVisitedLink)
 {
-    if (value.isRGBColor())
+    if (value.isColor())
         return value.color();
     if (value.isUnresolvedColor())
         return value.unresolvedColor().createStyleColor(document, style, forVisitedLink);

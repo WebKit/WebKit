@@ -112,16 +112,14 @@ void HTMLTableCellElement::collectPresentationalHintsForAttribute(const Qualifie
         HTMLTablePartElement::collectPresentationalHintsForAttribute(name, value, style);
 }
 
-void HTMLTableCellElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void HTMLTableCellElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
-    if (name == rowspanAttr) {
+    HTMLTablePartElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
+
+    if (name == rowspanAttr || name == colspanAttr) {
         if (is<RenderTableCell>(renderer()))
             downcast<RenderTableCell>(*renderer()).colSpanOrRowSpanChanged();
-    } else if (name == colspanAttr) {
-        if (is<RenderTableCell>(renderer()))
-            downcast<RenderTableCell>(*renderer()).colSpanOrRowSpanChanged();
-    } else
-        HTMLTablePartElement::parseAttribute(name, value);
+    }
 }
 
 const MutableStyleProperties* HTMLTableCellElement::additionalPresentationalHintStyle() const

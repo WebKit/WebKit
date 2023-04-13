@@ -28,7 +28,7 @@
 #if HAVE(WEBGPU_IMPLEMENTATION)
 
 #include "WebGPUDevice.h"
-#include "WebGPUDeviceHolderImpl.h"
+#include "WebGPUDeviceWrapper.h"
 #include "WebGPUQueueImpl.h"
 #include <WebGPU/WebGPU.h>
 #include <wtf/Deque.h>
@@ -57,15 +57,14 @@ private:
     DeviceImpl& operator=(const DeviceImpl&) = delete;
     DeviceImpl& operator=(DeviceImpl&&) = delete;
 
-    WGPUDevice backing() const { return m_deviceHolder->backingDevice(); }
+    WGPUDevice backing() const { return m_backing; }
 
-    Queue& queue() final;
+    Ref<Queue> queue() final;
 
     void destroy() final;
 
     Ref<Buffer> createBuffer(const BufferDescriptor&) final;
     Ref<Texture> createTexture(const TextureDescriptor&) final;
-    Ref<Texture> createSurfaceTexture(const TextureDescriptor&, const PresentationContext&) final;
     Ref<Sampler> createSampler(const SamplerDescriptor&) final;
     Ref<ExternalTexture> importExternalTexture(const ExternalTextureDescriptor&) final;
 
@@ -76,8 +75,8 @@ private:
     Ref<ShaderModule> createShaderModule(const ShaderModuleDescriptor&) final;
     Ref<ComputePipeline> createComputePipeline(const ComputePipelineDescriptor&) final;
     Ref<RenderPipeline> createRenderPipeline(const RenderPipelineDescriptor&) final;
-    void createComputePipelineAsync(const ComputePipelineDescriptor&, CompletionHandler<void(Ref<ComputePipeline>&&)>&&) final;
-    void createRenderPipelineAsync(const RenderPipelineDescriptor&, CompletionHandler<void(Ref<RenderPipeline>&&)>&&) final;
+    void createComputePipelineAsync(const ComputePipelineDescriptor&, CompletionHandler<void(RefPtr<ComputePipeline>&&)>&&) final;
+    void createRenderPipelineAsync(const RenderPipelineDescriptor&, CompletionHandler<void(RefPtr<RenderPipeline>&&)>&&) final;
 
     Ref<CommandEncoder> createCommandEncoder(const std::optional<CommandEncoderDescriptor>&) final;
     Ref<RenderBundleEncoder> createRenderBundleEncoder(const RenderBundleEncoderDescriptor&) final;
@@ -89,8 +88,9 @@ private:
 
     void setLabelInternal(const String&) final;
 
-    Ref<DeviceHolderImpl> m_deviceHolder;
+    WGPUDevice m_backing { nullptr };
     Ref<ConvertToBackingContext> m_convertToBackingContext;
+    Ref<DeviceWrapper> m_deviceWrapper;
     Ref<QueueImpl> m_queue;
 };
 

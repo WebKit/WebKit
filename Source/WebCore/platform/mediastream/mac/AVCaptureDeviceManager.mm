@@ -59,28 +59,6 @@ using namespace WebCore;
 
 namespace WebCore {
 
-static NSMutableArray<NSString*>* cameraCaptureDeviceTypes()
-{
-    ASSERT(isMainThread());
-    NSMutableArray<NSString*>* deviceTypes = [[NSMutableArray alloc] initWithArray:
-        @[AVCaptureDeviceTypeBuiltInWideAngleCamera,
-          AVCaptureDeviceTypeBuiltInTelephotoCamera,
-          AVCaptureDeviceTypeBuiltInUltraWideCamera,
-#if PLATFORM(MAC)
-          AVCaptureDeviceTypeExternalUnknown,
-#endif
-        ]
-    ];
-    if (PAL::canLoad_AVFoundation_AVCaptureDeviceTypeDeskViewCamera())
-        [deviceTypes addObject:AVCaptureDeviceTypeDeskViewCamera];
-    if (PAL::canLoad_AVFoundation_AVCaptureDeviceTypeBuiltInDualWideCamera())
-        [deviceTypes addObject:AVCaptureDeviceTypeBuiltInDualWideCamera];
-    if (PAL::canLoad_AVFoundation_AVCaptureDeviceTypeBuiltInTripleCamera())
-        [deviceTypes addObject:AVCaptureDeviceTypeBuiltInTripleCamera];
-
-    return deviceTypes;
-}
-
 void AVCaptureDeviceManager::computeCaptureDevices(CompletionHandler<void()>&& callback)
 {
     if (!m_isInitialized) {
@@ -160,7 +138,7 @@ static inline CaptureDevice toCaptureDevice(AVCaptureDevice *device, bool isDefa
     captureDevice.setEnabled(deviceIsAvailable(device));
     captureDevice.setIsDefault(isDefault);
 
-#if HAVE(CONTINUITY_CAMEARA)
+#if HAVE(CONTINUITY_CAMERA)
     if ([PAL::getAVCaptureDeviceClass() respondsToSelector:@selector(systemPreferredCamera)] && [device respondsToSelector:@selector(isContinuityCamera)])
         captureDevice.setIsEphemeral(device.isContinuityCamera && [PAL::getAVCaptureDeviceClass() systemPreferredCamera] != device);
 #endif
@@ -189,9 +167,24 @@ Vector<CaptureDevice> AVCaptureDeviceManager::retrieveCaptureDevices()
     auto currentDevices = currentCameras();
     Vector<CaptureDevice> deviceList;
 
-    auto* defaultVideoDevice = [PAL::getAVCaptureDeviceClass() defaultDeviceWithMediaType: AVMediaTypeVideo];
+    AVCaptureDevice* defaultVideoDevice = nil;
+#if HAVE(CONTINUITY_CAMERA)
+    auto haveSystemPreferredCamera = !![PAL::getAVCaptureDeviceClass() respondsToSelector:@selector(systemPreferredCamera)];
+    if (haveSystemPreferredCamera)
+        defaultVideoDevice = [PAL::getAVCaptureDeviceClass() systemPreferredCamera];
+    else
+#endif
+        defaultVideoDevice = [PAL::getAVCaptureDeviceClass() defaultDeviceWithMediaType: AVMediaTypeVideo];
+
 #if PLATFORM(IOS)
-    if ([defaultVideoDevice position] != AVCaptureDevicePositionFront) {
+    ([&] {
+#if HAVE(CONTINUITY_CAMERA)
+        if (haveSystemPreferredCamera && defaultVideoDevice)
+            return;
+#endif
+        if ([defaultVideoDevice position] == AVCaptureDevicePositionFront)
+            return;
+
         defaultVideoDevice = nullptr;
         for (AVCaptureDevice *platformDevice in currentDevices.get()) {
             if (!isVideoDevice(platformDevice))
@@ -202,7 +195,7 @@ Vector<CaptureDevice> AVCaptureDeviceManager::retrieveCaptureDevices()
                 break;
             }
         }
-    }
+    })();
 #endif
 
     if (defaultVideoDevice)
@@ -252,7 +245,7 @@ AVCaptureDeviceManager& AVCaptureDeviceManager::singleton()
 
 AVCaptureDeviceManager::AVCaptureDeviceManager()
     : m_objcObserver(adoptNS([[WebCoreAVCaptureDeviceManagerObserver alloc] initWithCallback:this]))
-    , m_avCaptureDeviceTypes(adoptNS(cameraCaptureDeviceTypes()))
+    , m_avCaptureDeviceTypes(adoptNS(AVVideoCaptureSource::cameraCaptureDeviceTypes()))
     , m_dispatchQueue(WorkQueue::create("com.apple.WebKit.AVCaptureDeviceManager"))
 {
 }

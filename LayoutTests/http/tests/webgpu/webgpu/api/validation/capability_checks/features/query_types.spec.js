@@ -11,33 +11,67 @@ export const g = makeTestGroup(ValidationTest);
 g.test('createQuerySet')
   .desc(
     `
-Tests that creating query set shouldn't be valid without the required feature enabled.
-- createQuerySet
-  - type {occlusion, timestamp}
-  - x= {pipeline statistics, timestamp} query {enable, disable}
-
-TODO: This test should expect *synchronous* exceptions, not validation errors, per
-<https://github.com/gpuweb/gpuweb/blob/main/design/ErrorConventions.md>.
-As of this writing, the spec needs to be fixed as well.
+  Tests that creating a query set throws a type error exception if the features don't contain
+  'timestamp-query'.
+    - createQuerySet
+      - type {occlusion, timestamp}
+      - x= {pipeline statistics, timestamp} query {enable, disable}
   `
   )
   .params(u =>
-    u.combine('type', ['occlusion', 'timestamp']).combine('timestampQueryEnable', [false, true])
+    u
+      .combine('type', ['occlusion', 'timestamp'])
+      .combine('featureContainsTimestampQuery', [false, true])
   )
-  .fn(async t => {
-    const { type, timestampQueryEnable } = t.params;
+  .beforeAllSubcases(t => {
+    const { featureContainsTimestampQuery } = t.params;
 
     const requiredFeatures = [];
-    if (timestampQueryEnable) {
+    if (featureContainsTimestampQuery) {
       requiredFeatures.push('timestamp-query');
     }
 
-    await t.selectDeviceOrSkipTestCase({ requiredFeatures });
+    t.selectDeviceOrSkipTestCase({ requiredFeatures });
+  })
+  .fn(t => {
+    const { type, featureContainsTimestampQuery } = t.params;
 
     const count = 1;
-    const shouldError = type === 'timestamp' && !timestampQueryEnable;
+    const shouldException = type === 'timestamp' && !featureContainsTimestampQuery;
 
-    t.expectValidationError(() => {
+    t.shouldThrow(shouldException ? 'TypeError' : false, () => {
       t.device.createQuerySet({ type, count });
-    }, shouldError);
+    });
+  });
+
+g.test('writeTimestamp')
+  .desc(
+    `
+  Tests that writing a timestamp throws a type error exception if the features don't contain
+  'timestamp-query'.
+  `
+  )
+  .params(u => u.combine('featureContainsTimestampQuery', [false, true]))
+  .beforeAllSubcases(t => {
+    const { featureContainsTimestampQuery } = t.params;
+
+    const requiredFeatures = [];
+    if (featureContainsTimestampQuery) {
+      requiredFeatures.push('timestamp-query');
+    }
+
+    t.selectDeviceOrSkipTestCase({ requiredFeatures });
+  })
+  .fn(t => {
+    const { featureContainsTimestampQuery } = t.params;
+
+    const querySet = t.device.createQuerySet({
+      type: featureContainsTimestampQuery ? 'timestamp' : 'occlusion',
+      count: 1,
+    });
+    const encoder = t.createEncoder('non-pass');
+
+    t.shouldThrow(featureContainsTimestampQuery ? false : 'TypeError', () => {
+      encoder.encoder.writeTimestamp(querySet, 0);
+    });
   });

@@ -27,13 +27,13 @@
 #import "WebScriptObjectPrivate.h"
 
 #import "BridgeJSC.h"
-#import "Frame.h"
 #import "JSDOMBindingSecurity.h"
-#import "JSDOMWindow.h"
-#import "JSDOMWindowCustom.h"
 #import "JSExecState.h"
 #import "JSHTMLElement.h"
+#import "JSLocalDOMWindow.h"
+#import "JSLocalDOMWindowCustom.h"
 #import "JSPluginElementFunctions.h"
+#import "LocalFrame.h"
 #import "ObjCRuntimeObject.h"
 #import "WebCoreJITOperations.h"
 #import "WebCoreObjCExtras.h"
@@ -122,7 +122,7 @@ id createJSWrapper(JSC::JSObject* object, RefPtr<JSC::Bindings::RootObject>&& or
 static void addExceptionToConsole(JSC::JSGlobalObject* lexicalGlobalObject, JSC::Exception* exception)
 {
     JSC::VM& vm = lexicalGlobalObject->vm();
-    JSDOMWindow* window = asJSDOMWindow(vm.deprecatedVMEntryGlobalObject(lexicalGlobalObject));
+    auto* window = asJSLocalDOMWindow(vm.deprecatedVMEntryGlobalObject(lexicalGlobalObject));
     if (!window || !exception)
         return;
     reportException(lexicalGlobalObject, exception);
@@ -333,12 +333,8 @@ void disconnectWindowWrapper(WebScriptObject *windowWrapper)
 
 static void getListFromNSArray(JSC::JSGlobalObject* lexicalGlobalObject, NSArray *array, RootObject* rootObject, MarkedArgumentBuffer& aList)
 {
-    int i, numObjects = array ? [array count] : 0;
-    
-    for (i = 0; i < numObjects; i++) {
-        id anObject = [array objectAtIndex:i];
+    for (id anObject in array)
         aList.append(convertObjcValueToValue(lexicalGlobalObject, &anObject, ObjcObjectType, rootObject));
-    }
 }
 
 - (id)callWebScriptMethod:(NSString *)name withArguments:(NSArray *)args
@@ -496,10 +492,8 @@ static void getListFromNSArray(JSC::JSGlobalObject* lexicalGlobalObject, NSArray
 
 - (NSString *)stringRepresentation
 {
-    if (![self _isSafeScript]) {
-        // This is a workaround for a gcc 3.3 internal compiler error.
-        return @"Undefined";
-    }
+    if (![self _isSafeScript])
+        return nil;
 
     JSC::JSGlobalObject* lexicalGlobalObject = [self _rootObject]->globalObject();
     JSLockHolder lock(lexicalGlobalObject);

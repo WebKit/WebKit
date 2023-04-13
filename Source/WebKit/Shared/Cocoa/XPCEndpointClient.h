@@ -25,6 +25,8 @@
 
 #pragma once
 
+#ifdef __cplusplus
+
 #include "WKDeclarationSpecifiers.h"
 #include <wtf/Lock.h>
 #include <wtf/OSObjectPtr.h>
@@ -50,3 +52,5 @@ private:
 };
 
 }
+
+#endif

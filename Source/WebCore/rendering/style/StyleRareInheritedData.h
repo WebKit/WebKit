@@ -25,11 +25,13 @@
 #pragma once
 
 #include "Length.h"
+#include "ListStyleType.h"
 #include "RenderStyleConstants.h"
 #include "StyleColor.h"
 #include "StyleCustomPropertyData.h"
 #include "StyleTextEdge.h"
 #include "TabSize.h"
+#include "TextSpacing.h"
 #include "TextUnderlineOffset.h"
 #include "TouchAction.h"
 #include <wtf/DataRef.h>
@@ -75,7 +77,6 @@ public:
     float textStrokeWidth;
 
     RefPtr<StyleImage> listStyleImage;
-    AtomString listStyleStringValue;
 
     StyleColor textStrokeColor;
     StyleColor textFillColor;
@@ -144,7 +145,7 @@ public:
     unsigned textAlignLast : 3; // TextAlignLast
     unsigned textJustify : 2; // TextJustify
     unsigned textDecorationSkipInk : 2; // TextDecorationSkipInk
-    unsigned textUnderlinePosition : 2; // TextUnderlinePosition
+    unsigned textUnderlinePosition : 3; // TextUnderlinePosition
     unsigned textWrap : 3; // TextWrap
     unsigned rubyPosition : 2; // RubyPosition
     unsigned textZoom: 1; // TextZoom
@@ -208,6 +209,10 @@ public:
 #if ENABLE(TOUCH_EVENTS)
     StyleColor tapHighlightColor;
 #endif
+    TextSpacingTrim textSpacingTrim;
+    TextAutospace textAutospace;
+
+    ListStyleType listStyleType;
 
 private:
     StyleRareInheritedData();

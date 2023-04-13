@@ -124,8 +124,8 @@ private:
     virtual ~SVGSVGElement();
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGSVGElement, SVGGraphicsElement, SVGFitToViewBox>;
-    
-    void parseAttribute(const QualifiedName&, const AtomString&) override;
+
+    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
     void svgAttributeChanged(const QualifiedName&) override;
     bool selfHasRelativeLengths() const override;
     bool isValid() const override;
@@ -139,7 +139,7 @@ private:
     void didMoveToNewDocument(Document& oldDocument, Document& newDocument) override;
 
     AffineTransform localCoordinateSpaceTransform(SVGLocatable::CTMScope) const override;
-    RefPtr<Frame> frameForCurrentScale() const;
+    RefPtr<LocalFrame> frameForCurrentScale() const;
     Ref<NodeList> collectIntersectionOrEnclosureList(SVGRect&, SVGElement*, bool (*checkFunction)(SVGElement&, SVGRect&));
 
     SVGViewElement* findViewAnchor(StringView fragmentIdentifier) const;

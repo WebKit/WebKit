@@ -1,5 +1,5 @@
 //@ requireOptions("--useWebAssemblySIMD=1","--useWebAssemblyTailCalls=1")
-//@ skip if $architecture != "arm64" && $architecture != "x86_64"
+//@ skip
 import { instantiate } from "../wabt-wrapper.js"
 import * as assert from "../assert.js"
 

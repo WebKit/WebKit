@@ -25,25 +25,20 @@
 
 #pragma once
 
-#include "ASTNode.h"
-
-#include <wtf/UniqueRef.h>
-#include <wtf/UniqueRefVector.h>
-#include <wtf/Vector.h>
+#include "ASTAttribute.h"
+#include "ASTExpression.h"
 
 namespace WGSL::AST {
 
 class LocationAttribute final : public Attribute {
     WTF_MAKE_FAST_ALLOCATED;
-
 public:
     LocationAttribute(SourceSpan span, unsigned value)
         : Attribute(span)
         , m_value(value)
-    {
-    }
+    { }
 
-    Kind kind() const override;
+    NodeKind kind() const override;
     unsigned location() const { return m_value; }
 
 private:

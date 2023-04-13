@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,7 +31,6 @@
 #include "FourCC.h"
 #include "ImageOrientation.h"
 #include "ImageResolution.h"
-#include "ImageSourceCG.h"
 #include "IntPoint.h"
 #include "IntSize.h"
 #include "Logging.h"
@@ -55,14 +54,6 @@ const CFStringRef WebCoreCGImagePropertyFrameInfoArray = CFSTR("FrameInfo");
 const CFStringRef WebCoreCGImagePropertyUnclampedDelayTime = CFSTR("UnclampedDelayTime");
 const CFStringRef WebCoreCGImagePropertyDelayTime = CFSTR("DelayTime");
 const CFStringRef WebCoreCGImagePropertyLoopCount = CFSTR("LoopCount");
-
-#if PLATFORM(WIN)
-const CFStringRef kCGImageSourceShouldPreferRGB32 = CFSTR("kCGImageSourceShouldPreferRGB32");
-const CFStringRef kCGImageSourceSkipMetadata = CFSTR("kCGImageSourceSkipMetadata");
-const CFStringRef kCGImageSourceSubsampleFactor = CFSTR("kCGImageSourceSubsampleFactor");
-const CFStringRef kCGImageSourceShouldCacheImmediately = CFSTR("kCGImageSourceShouldCacheImmediately");
-const CFStringRef kCGImageSourceUseHardwareAcceleration = CFSTR("kCGImageSourceUseHardwareAcceleration");
-#endif
 
 const CFStringRef kCGImageSourceEnableRestrictedDecoding = CFSTR("kCGImageSourceEnableRestrictedDecoding");
 
@@ -98,7 +89,7 @@ static RetainPtr<CFMutableDictionaryRef> createImageSourceMetadataOptions()
     return options;
 }
     
-static RetainPtr<CFMutableDictionaryRef> createImageSourceAsyncOptions()
+static RetainPtr<CFMutableDictionaryRef> createImageSourceThumbnailOptions()
 {
     RetainPtr<CFMutableDictionaryRef> options = createImageSourceOptions();
     CFDictionarySetValue(options.get(), kCGImageSourceShouldCacheImmediately, kCFBooleanTrue);
@@ -117,7 +108,7 @@ static RetainPtr<CFMutableDictionaryRef> appendImageSourceOption(RetainPtr<CFMut
 
 static RetainPtr<CFMutableDictionaryRef> appendImageSourceOption(RetainPtr<CFMutableDictionaryRef>&& options, const IntSize& sizeForDrawing)
 {
-    unsigned maxDimension = DecodingOptions::maxDimension(sizeForDrawing);
+    unsigned maxDimension = sizeForDrawing.maxDimension();
     RetainPtr<CFNumberRef> maxDimensionNumber = adoptCF(CFNumberCreate(nullptr, kCFNumberIntType, &maxDimension));
     CFDictionarySetValue(options.get(), kCGImageSourceThumbnailMaxPixelSize, maxDimensionNumber.get());
     return WTFMove(options);
@@ -140,9 +131,13 @@ static RetainPtr<CFDictionaryRef> imageSourceOptions(SubsamplingLevel subsamplin
     return appendImageSourceOption(adoptCF(CFDictionaryCreateMutableCopy(nullptr, 0, options)), subsamplingLevel);
 }
 
-static RetainPtr<CFDictionaryRef> imageSourceAsyncOptions(SubsamplingLevel subsamplingLevel, const IntSize& sizeForDrawing)
+static RetainPtr<CFDictionaryRef> imageSourceThumbnailOptions(SubsamplingLevel subsamplingLevel, const IntSize& sizeForDrawing)
 {
-    static const auto options = createImageSourceAsyncOptions().leakRef();
+    static CFMutableDictionaryRef options;
+    static std::once_flag initializeThumbnailOptionsOnce;
+    std::call_once(initializeThumbnailOptionsOnce, [] {
+        options = createImageSourceThumbnailOptions().leakRef();
+    });
     return appendImageSourceOptions(adoptCF(CFDictionaryCreateMutableCopy(nullptr, 0, options)), subsamplingLevel, sizeForDrawing);
 }
 
@@ -195,7 +190,7 @@ static ImageOrientation orientationFromProperties(CFDictionaryRef imagePropertie
     ASSERT(imageProperties);
     CFNumberRef orientationProperty = (CFNumberRef)CFDictionaryGetValue(imageProperties, kCGImagePropertyOrientation);
     if (!orientationProperty)
-        return ImageOrientation::None;
+        return ImageOrientation::Orientation::None;
     
     int exifValue;
     CFNumberGetValue(orientationProperty, kCFNumberIntType, &exifValue);
@@ -254,27 +249,6 @@ static std::optional<IntSize> densityCorrectedSizeFromProperties(CFDictionaryRef
         static_cast<ImageResolution::ResolutionUnit>(resolutionUnit)
     });
 }
-
-#if !PLATFORM(COCOA)
-size_t sharedBufferGetBytesAtPosition(void* info, void* buffer, off_t position, size_t count)
-{
-    SharedBuffer* sharedBuffer = static_cast<SharedBuffer*>(info);
-    size_t sourceSize = sharedBuffer->size();
-    if (position >= sourceSize)
-        return 0;
-    
-    auto* source = sharedBuffer->data() + position;
-    size_t amount = std::min<size_t>(count, sourceSize - position);
-    memcpy(buffer, source, amount);
-    return amount;
-}
-
-void sharedBufferRelease(void* info)
-{
-    FragmentedSharedBuffer* sharedBuffer = static_cast<FragmentedSharedBuffer*>(info);
-    sharedBuffer->deref();
-}
-#endif
 
 ImageDecoderCG::ImageDecoderCG(FragmentedSharedBuffer& data, AlphaOption, GammaAndColorProfileOption)
 {
@@ -373,6 +347,11 @@ EncodedDataStatus ImageDecoderCG::encodedDataStatus() const
 size_t ImageDecoderCG::frameCount() const
 {
     return CGImageSourceGetCount(m_nativeDecoder.get());
+}
+
+size_t ImageDecoderCG::primaryFrameIndex() const
+{
+    return CGImageSourceGetPrimaryImageIndex(m_nativeDecoder.get());
 }
 
 RepetitionCount ImageDecoderCG::repetitionCount() const
@@ -546,24 +525,24 @@ PlatformImagePtr ImageDecoderCG::createFrameImageAtIndex(size_t index, Subsampli
     RetainPtr<CFDictionaryRef> options;
     RetainPtr<CGImageRef> image;
 
-    auto size = frameSizeAtIndex(index, SubsamplingLevel::Default);
+    ASSERT(decodingOptions.decodingMode() != DecodingMode::Auto);
 
-    if (!decodingOptions.isSynchronous()) {
-        // Don't consider the subsamplingLevel when comparing the image native size with sizeForDrawing.
-        
-        if (decodingOptions.hasSizeForDrawing()) {
-            // See which size is smaller: the image native size or the sizeForDrawing.
-            std::optional<IntSize> sizeForDrawing = decodingOptions.sizeForDrawing();
-            if (sizeForDrawing.value().unclampedArea() < size.unclampedArea())
-                size = sizeForDrawing.value();
-        }
-        
-        options = imageSourceAsyncOptions(subsamplingLevel, size);
-        image = adoptCF(CGImageSourceCreateThumbnailAtIndex(m_nativeDecoder.get(), index, options.get()));
-    } else {
+    if (decodingOptions.decodingMode() == DecodingMode::Synchronous) {
         // Decode an image synchronously for its native size.
         options = imageSourceOptions(subsamplingLevel);
         image = adoptCF(CGImageSourceCreateImageAtIndex(m_nativeDecoder.get(), index, options.get()));
+    } else {
+        auto size = frameSizeAtIndex(index, SubsamplingLevel::Default);
+
+        // Don't consider the subsamplingLevel when comparing the image native size with sizeForDrawing.
+        if (auto sizeForDrawing = decodingOptions.sizeForDrawing()) {
+            // See which size is smaller: the image native size or the decodingSize.
+            if (sizeForDrawing->unclampedArea() < size.unclampedArea())
+                size = *sizeForDrawing;
+        }
+
+        options = imageSourceThumbnailOptions(subsamplingLevel, size);
+        image = adoptCF(CGImageSourceCreateThumbnailAtIndex(m_nativeDecoder.get(), index, options.get()));
     }
     
 #if PLATFORM(IOS_FAMILY)
@@ -674,21 +653,10 @@ void ImageDecoderCG::setData(const FragmentedSharedBuffer& data, bool allDataRec
     
     auto contiguousData = data.makeContiguous();
     
-#if PLATFORM(COCOA)
     // On Mac the NSData inside the FragmentedSharedBuffer can be secretly appended to without the FragmentedSharedBuffer's knowledge.
     // We use FragmentedSharedBuffer's ability to wrap itself inside CFData to get around this, ensuring that ImageIO is
     // really looking at the FragmentedSharedBuffer.
     CGImageSourceUpdateData(m_nativeDecoder.get(), contiguousData->createCFData().get(), allDataReceived);
-#else
-    // Create a CGDataProvider to wrap the FragmentedSharedBuffer.
-    contiguousData.get().ref();
-    // We use the GetBytesAtPosition callback rather than the GetBytePointer one because FragmentedSharedBuffer
-    // does not provide a way to lock down the byte pointer and guarantee that it won't move, which
-    // is a requirement for using the GetBytePointer callback.
-    CGDataProviderDirectCallbacks providerCallbacks = { 0, 0, 0, sharedBufferGetBytesAtPosition, sharedBufferRelease };
-    RetainPtr<CGDataProviderRef> dataProvider = adoptCF(CGDataProviderCreateDirect(contiguousData.ptr(), data.size(), &providerCallbacks));
-    CGImageSourceUpdateDataProvider(m_nativeDecoder.get(), dataProvider.get(), allDataReceived);
-#endif
     
     m_uti = decodeUTI(contiguousData.get());
 }

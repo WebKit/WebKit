@@ -37,6 +37,8 @@
 #import "InteractionInformationAtPosition.h"
 #import "NativeWebKeyboardEvent.h"
 #import "NavigationState.h"
+#import "PlatformXRSystem.h"
+#import "RemoteLayerTreeNode.h"
 #import "RunningBoardServicesSPI.h"
 #import "StringUtilities.h"
 #import "TapHandlingResult.h"
@@ -143,7 +145,13 @@ bool PageClientImpl::isViewVisible()
     
     if ([m_webView _mayAutomaticallyShowVideoPictureInPicture])
         return true;
-    
+
+#if ENABLE(WEBXR) && !USE(OPENXR)
+    auto page = m_webView.get()->_page;
+    if (page && page->xrSystem() && page->xrSystem()->hasActiveSession())
+        return true;
+#endif
+
     return false;
 }
 
@@ -233,6 +241,11 @@ void PageClientImpl::toolTipChanged(const String&, const String&)
 void PageClientImpl::didNotHandleTapAsClick(const WebCore::IntPoint& point)
 {
     [m_contentView _didNotHandleTapAsClick:point];
+}
+
+void PageClientImpl::didHandleTapAsHover()
+{
+    [m_contentView _didHandleTapAsHover];
 }
 
 void PageClientImpl::didCompleteSyntheticClick()
@@ -608,24 +621,10 @@ void PageClientImpl::restorePageCenterAndScale(std::optional<WebCore::FloatPoint
     [m_webView _restorePageStateToUnobscuredCenter:center scale:scale];
 }
 
-void PageClientImpl::elementDidFocus(const FocusedElementInformation& nodeInformation, bool userIsInteracting, bool blurPreviousNode, OptionSet<WebCore::ActivityState::Flag> activityStateChanges, API::Object* userData)
+void PageClientImpl::elementDidFocus(const FocusedElementInformation& nodeInformation, bool userIsInteracting, bool blurPreviousNode, OptionSet<WebCore::ActivityState> activityStateChanges, API::Object* userData)
 {
-    MESSAGE_CHECK(!userData || userData->type() == API::Object::Type::Data);
-
-    NSObject <NSSecureCoding> *userObject = nil;
-    if (API::Data* data = static_cast<API::Data*>(userData)) {
-        auto nsData = adoptNS([[NSData alloc] initWithBytesNoCopy:const_cast<unsigned char*>(data->bytes()) length:data->size() freeWhenDone:NO]);
-        auto unarchiver = adoptNS([[NSKeyedUnarchiver alloc] initForReadingFromData:nsData.get() error:nullptr]);
-        unarchiver.get().decodingFailurePolicy = NSDecodingFailurePolicyRaiseException;
-        @try {
-            auto* allowedClasses = m_webView.get()->_page->process().processPool().allowedClassesForParameterCoding();
-            userObject = [unarchiver decodeObjectOfClasses:allowedClasses forKey:@"userObject"];
-        } @catch (NSException *exception) {
-            LOG_ERROR("Failed to decode user data: %@", exception);
-        }
-    }
-
-    [m_contentView _elementDidFocus:nodeInformation userIsInteracting:userIsInteracting blurPreviousNode:blurPreviousNode activityStateChanges:activityStateChanges userObject:userObject];
+    auto userObject = userData ? userData->toNSObject() : RetainPtr<NSObject<NSSecureCoding>>();
+    [m_contentView _elementDidFocus:nodeInformation userIsInteracting:userIsInteracting blurPreviousNode:blurPreviousNode activityStateChanges:activityStateChanges userObject:userObject.get()];
 }
 
 void PageClientImpl::updateInputContextAfterBlurringAndRefocusingElement()
@@ -1104,6 +1103,7 @@ bool PageClientImpl::isTextRecognitionInFullscreenVideoEnabled() const
     return [m_contentView isTextRecognitionInFullscreenVideoEnabled];
 }
 
+#if ENABLE(VIDEO)
 void PageClientImpl::beginTextRecognitionForVideoInElementFullscreen(const ShareableBitmapHandle& bitmapHandle, FloatRect bounds)
 {
     [m_contentView beginTextRecognitionForVideoInElementFullscreen:bitmapHandle bounds:bounds];
@@ -1113,6 +1113,7 @@ void PageClientImpl::cancelTextRecognitionForVideoInElementFullscreen()
 {
     [m_contentView cancelTextRecognitionForVideoInElementFullscreen];
 }
+#endif
 
 bool PageClientImpl::hasResizableWindows() const
 {

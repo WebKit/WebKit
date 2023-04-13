@@ -56,7 +56,6 @@
 #include "DynamicsCompressorNode.h"
 #include "EventNames.h"
 #include "FFTFrame.h"
-#include "Frame.h"
 #include "FrameLoader.h"
 #include "GainNode.h"
 #include "HRTFDatabaseLoader.h"
@@ -65,6 +64,7 @@
 #include "IIRFilterOptions.h"
 #include "JSAudioBuffer.h"
 #include "JSDOMPromiseDeferred.h"
+#include "LocalFrame.h"
 #include "Logging.h"
 #include "NetworkingContext.h"
 #include "OscillatorNode.h"
@@ -126,6 +126,7 @@ BaseAudioContext::BaseAudioContext(Document& document)
     , m_contextID(generateContextID())
     , m_worklet(AudioWorklet::create(*this))
     , m_listener(AudioListener::create(*this))
+    , m_noiseInjectionPolicy(document.noiseInjectionPolicy())
 {
     liveAudioContexts().add(m_contextID);
 

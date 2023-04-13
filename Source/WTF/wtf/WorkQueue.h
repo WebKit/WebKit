@@ -117,7 +117,6 @@ private:
     static Ref<WorkQueue> constructMainWorkQueue();
 
 #if ASSERT_ENABLED
-    WTF_EXPORT_PRIVATE void assertIsCurrent() const;
     friend void assertIsCurrent(const WorkQueue&);
 #endif
 };

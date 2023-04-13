@@ -40,6 +40,7 @@ static inline NSCorrectionIndicatorType correctionIndicatorType(AlternativeTextT
     case AlternativeTextType::Reversion:
         return NSCorrectionIndicatorTypeReversion;
     case AlternativeTextType::SpellingSuggestions:
+    case AlternativeTextType::GrammarSuggestions:
         return NSCorrectionIndicatorTypeGuesses;
     case AlternativeTextType::DictationAlternatives:
         ASSERT_NOT_REACHED();
@@ -50,18 +51,18 @@ static inline NSCorrectionIndicatorType correctionIndicatorType(AlternativeTextT
 
 CorrectionPanel::CorrectionPanel()
     : m_wasDismissedExternally(false)
-    , m_reasonForDismissing(ReasonForDismissingAlternativeTextIgnored)
+    , m_reasonForDismissing(ReasonForDismissingAlternativeText::Ignored)
 {
 }
 
 CorrectionPanel::~CorrectionPanel()
 {
-    dismissInternal(ReasonForDismissingAlternativeTextIgnored, false);
+    dismissInternal(ReasonForDismissingAlternativeText::Ignored, false);
 }
 
 void CorrectionPanel::show(WebView* view, AlternativeTextType type, const FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacementString, const Vector<String>& alternativeReplacementStrings)
 {
-    dismissInternal(ReasonForDismissingAlternativeTextIgnored, false);
+    dismissInternal(ReasonForDismissingAlternativeText::Ignored, false);
     
     if (!view)
         return;
@@ -114,7 +115,7 @@ void CorrectionPanel::handleAcceptedReplacement(NSString* acceptedReplacement, N
         if (acceptedReplacement)
             recordAutocorrectionResponse(documentTag, NSCorrectionResponseAccepted, replaced, acceptedReplacement);
         else {
-            if (!m_wasDismissedExternally || m_reasonForDismissing == ReasonForDismissingAlternativeTextCancelled)
+            if (!m_wasDismissedExternally || m_reasonForDismissing == ReasonForDismissingAlternativeText::Cancelled)
                 recordAutocorrectionResponse(documentTag, NSCorrectionResponseRejected, replaced, proposedReplacement);
             else
                 recordAutocorrectionResponse(documentTag, NSCorrectionResponseIgnored, replaced, proposedReplacement);

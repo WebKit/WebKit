@@ -126,6 +126,14 @@ public:
     template<typename OtherType, typename OtherPtrTraits>
     bool operator==(const CheckedPtr<OtherType, OtherPtrTraits>& other) const { return m_ptr == other.m_ptr; }
 
+    bool operator!=(const T* other) const { return !(m_ptr == other); }
+    template<typename U> bool operator!=(U* other) const { return !(m_ptr == other); }
+
+    bool operator!=(const CheckedPtr& other) const { return !(m_ptr == other.m_ptr); }
+
+    template<typename OtherType, typename OtherPtrTraits>
+    bool operator!=(const CheckedPtr<OtherType, OtherPtrTraits>& other) const { return !(m_ptr == other.m_ptr); }
+
     CheckedPtr& operator=(std::nullptr_t)
     {
         derefIfNotNull();

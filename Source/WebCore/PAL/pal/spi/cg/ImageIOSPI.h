@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc.  All rights reserved.
+ * Copyright (C) 2017-2023 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,13 +31,11 @@
 #include <ImageIO/CGImageSourcePrivate.h>
 #endif
 
-#if !PLATFORM(WIN)
 IMAGEIO_EXTERN const CFStringRef kCGImageSourceShouldPreferRGB32;
 IMAGEIO_EXTERN const CFStringRef kCGImageSourceSkipMetadata;
 IMAGEIO_EXTERN const CFStringRef kCGImageSourceSubsampleFactor;
 IMAGEIO_EXTERN const CFStringRef kCGImageSourceShouldCacheImmediately;
 IMAGEIO_EXTERN const CFStringRef kCGImageSourceUseHardwareAcceleration;
-#endif
 
 WTF_EXTERN_C_BEGIN
 CFStringRef CGImageSourceGetTypeWithData(CFDataRef, CFStringRef, bool*);

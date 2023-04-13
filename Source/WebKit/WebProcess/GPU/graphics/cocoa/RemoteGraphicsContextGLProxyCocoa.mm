@@ -37,6 +37,7 @@
 #import <WebCore/GraphicsLayerContentsDisplayDelegate.h>
 #import <WebCore/IOSurface.h>
 #import <WebCore/PlatformCALayer.h>
+#import <WebCore/PlatformCALayerDelegatedContents.h>
 
 namespace WebKit {
 
@@ -59,7 +60,7 @@ public:
     void display(WebCore::PlatformCALayer& layer) final
     {
         if (m_displayBuffer)
-            layer.setContents(m_displayBuffer);
+            layer.setDelegatedContents({ m_displayBuffer, { } });
         else
             layer.clearContents();
     }
@@ -101,8 +102,8 @@ public:
     WebCore::GraphicsContextGLCV* asCV() final { return nullptr; }
 #endif
 private:
-    RemoteGraphicsContextGLProxyCocoa(IPC::Connection& connection, SerialFunctionDispatcher& dispatcher, const WebCore::GraphicsContextGLAttributes& attributes, RenderingBackendIdentifier renderingBackend, Ref<RemoteVideoFrameObjectHeapProxy>&& videoFrameObjectHeapProxy)
-        : RemoteGraphicsContextGLProxy(connection, dispatcher, attributes, renderingBackend, WTFMove(videoFrameObjectHeapProxy))
+    RemoteGraphicsContextGLProxyCocoa(IPC::Connection& connection,  Ref<IPC::StreamClientConnection> streamConnection, const WebCore::GraphicsContextGLAttributes& attributes, Ref<RemoteVideoFrameObjectHeapProxy>&& videoFrameObjectHeapProxy)
+        : RemoteGraphicsContextGLProxy(connection, WTFMove(streamConnection), attributes, WTFMove(videoFrameObjectHeapProxy))
         , m_layerContentsDisplayDelegate(DisplayBufferDisplayDelegate::create(!attributes.alpha, attributes.devicePixelRatio))
     {
     }
@@ -131,9 +132,9 @@ void RemoteGraphicsContextGLProxyCocoa::prepareForDisplay()
 
 }
 
-RefPtr<RemoteGraphicsContextGLProxy> RemoteGraphicsContextGLProxy::create(IPC::Connection& connection, const WebCore::GraphicsContextGLAttributes& attributes, RemoteRenderingBackendProxy& renderingBackend, Ref<RemoteVideoFrameObjectHeapProxy>&& videoFrameObjectHeapProxy)
+Ref<RemoteGraphicsContextGLProxy> RemoteGraphicsContextGLProxy::platformCreate(IPC::Connection& connection,  Ref<IPC::StreamClientConnection> streamConnection, const WebCore::GraphicsContextGLAttributes& attributes, Ref<RemoteVideoFrameObjectHeapProxy>&& videoFrameObjectHeapProxy)
 {
-    return adoptRef(new RemoteGraphicsContextGLProxyCocoa(connection, renderingBackend.dispatcher(), attributes, renderingBackend.ensureBackendCreated(), WTFMove(videoFrameObjectHeapProxy)));
+    return adoptRef(*new RemoteGraphicsContextGLProxyCocoa(connection, WTFMove(streamConnection), attributes, WTFMove(videoFrameObjectHeapProxy)));
 }
 
 }

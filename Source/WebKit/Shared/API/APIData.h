@@ -27,7 +27,7 @@
 
 #include "APIObject.h"
 #include "DataReference.h"
-#include <wtf/Forward.h>
+#include <wtf/Vector.h>
 
 #if PLATFORM(COCOA)
 #include <wtf/RetainPtr.h>

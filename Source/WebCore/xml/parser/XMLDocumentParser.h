@@ -41,7 +41,7 @@ class ContainerNode;
 class CachedResourceLoader;
 class DocumentFragment;
 class Element;
-class FrameView;
+class LocalFrameView;
 class PendingCallbacks;
 class Text;
 
@@ -63,7 +63,7 @@ private:
 class XMLDocumentParser final : public ScriptableDocumentParser, public PendingScriptClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<XMLDocumentParser> create(Document& document, FrameView* view, OptionSet<ParserContentPolicy> policy = DefaultParserContentPolicy)
+    static Ref<XMLDocumentParser> create(Document& document, LocalFrameView* view, OptionSet<ParserContentPolicy> policy = DefaultParserContentPolicy)
     {
         return adoptRef(*new XMLDocumentParser(document, view, policy));
     }
@@ -88,7 +88,7 @@ public:
     static bool supportsXMLVersion(const String&);
 
 private:
-    explicit XMLDocumentParser(Document&, FrameView*, OptionSet<ParserContentPolicy>);
+    explicit XMLDocumentParser(Document&, LocalFrameView*, OptionSet<ParserContentPolicy>);
     XMLDocumentParser(DocumentFragment&, HashMap<AtomString, AtomString>&&, const AtomString&, OptionSet<ParserContentPolicy>);
 
     void insert(SegmentedString&&) final;
@@ -149,7 +149,7 @@ private:
 
     xmlParserCtxtPtr context() const { return m_context ? m_context->context() : nullptr; };
 
-    FrameView* m_view { nullptr };
+    LocalFrameView* m_view { nullptr };
 
     SegmentedString m_originalSourceForTransform;
 

@@ -26,6 +26,7 @@
 #pragma once
 
 #include "FloatRect.h"
+#include <wtf/ArgumentCoder.h>
 #include <wtf/OptionSet.h>
 #include <wtf/Ref.h>
 
@@ -35,7 +36,7 @@ class FilterEffect;
 
 class FilterEffectGeometry {
 public:
-    enum class Flags {
+    enum class Flags : uint8_t {
         HasX      = 1 << 0,
         HasY      = 1 << 1,
         HasWidth  = 1 << 2,
@@ -78,52 +79,12 @@ public:
         return std::nullopt;
     }
 
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<FilterEffectGeometry> decode(Decoder&);
-
 private:
+    friend struct IPC::ArgumentCoder<FilterEffectGeometry, void>;
     FloatRect m_boundaries;
     OptionSet<Flags> m_flags;
 };
 
 using FilterEffectGeometryMap = HashMap<Ref<FilterEffect>, FilterEffectGeometry>;
 
-template<class Encoder>
-void FilterEffectGeometry::encode(Encoder& encoder) const
-{
-    encoder << m_boundaries;
-    encoder << m_flags;
-}
-
-template<class Decoder>
-std::optional<FilterEffectGeometry> FilterEffectGeometry::decode(Decoder& decoder)
-{
-    std::optional<FloatRect> boundaries;
-    decoder >> boundaries;
-    if (!boundaries)
-        return std::nullopt;
-
-    std::optional<OptionSet<Flags>> flags;
-    decoder >> flags;
-    if (!flags)
-        return std::nullopt;
-
-    return FilterEffectGeometry(*boundaries, *flags);
-}
-
 } // namespace WebCore
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::FilterEffectGeometry::Flags> {
-    using values = EnumValues<
-        WebCore::FilterEffectGeometry::Flags,
-
-        WebCore::FilterEffectGeometry::Flags::HasX,
-        WebCore::FilterEffectGeometry::Flags::HasY,
-        WebCore::FilterEffectGeometry::Flags::HasWidth,
-        WebCore::FilterEffectGeometry::Flags::HasHeight
-    >;
-};
-
-} // namespace WTF

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "BytecodeCacheError.h"
 
+#include "JSGlobalObject.h"
 #include <wtf/SafeStrerror.h>
 
 namespace JSC {
@@ -47,7 +48,7 @@ bool BytecodeCacheError::WriteError::isValid() const
 
 String BytecodeCacheError::WriteError::message() const
 {
-    return makeString("Could not write the full cache file to disk. Only wrote ", String::number(m_written), " of the expected ", String::number(m_expected), " bytes.");
+    return makeString("Could not write the full cache file to disk. Only wrote "_s, m_written, " of the expected "_s, m_expected, " bytes."_s);
 }
 
 BytecodeCacheError& BytecodeCacheError::operator=(const ParserError& error)

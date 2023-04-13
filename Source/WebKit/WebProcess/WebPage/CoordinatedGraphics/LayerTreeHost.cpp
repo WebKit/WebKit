@@ -34,10 +34,11 @@
 #include "DrawingArea.h"
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
+#include "WebProcess.h"
 #include <WebCore/AsyncScrollingCoordinator.h>
 #include <WebCore/Chrome.h>
-#include <WebCore/Frame.h>
-#include <WebCore/FrameView.h>
+#include <WebCore/LocalFrame.h>
+#include <WebCore/LocalFrameView.h>
 #include <WebCore/PageOverlayController.h>
 #include <WebCore/RenderLayerBacking.h>
 #include <WebCore/RenderView.h>
@@ -50,13 +51,13 @@
 namespace WebKit {
 using namespace WebCore;
 
-LayerTreeHost::LayerTreeHost(WebPage& webPage)
+LayerTreeHost::LayerTreeHost(WebPage& webPage, WebCore::PlatformDisplayID displayID)
     : m_webPage(webPage)
     , m_surface(AcceleratedSurface::create(webPage, *this))
     , m_viewportController(webPage.size())
     , m_layerFlushTimer(RunLoop::main(), this, &LayerTreeHost::layerFlushTimerFired)
     , m_coordinator(webPage, *this)
-    , m_displayID(std::numeric_limits<uint32_t>::max() - m_webPage.identifier().toUInt64())
+    , m_displayID(displayID)
 {
 #if USE(GLIB_EVENT_LOOP)
     m_layerFlushTimer.setPriority(RunLoopSourcePriority::LayerFlushTimer);
@@ -64,7 +65,7 @@ LayerTreeHost::LayerTreeHost(WebPage& webPage)
 #endif
     scheduleLayerFlush();
 
-    if (FrameView* frameView = m_webPage.mainFrameView()) {
+    if (auto* frameView = m_webPage.mainFrameView()) {
         auto contentsSize = frameView->contentsSize();
         if (!contentsSize.isEmpty())
             m_viewportController.didChangeContentsSize(contentsSize);
@@ -300,8 +301,11 @@ void LayerTreeHost::didChangeViewport()
     // When using non overlay scrollbars, the contents size doesn't include the scrollbars, but we need to include them
     // in the visible area used by the compositor to ensure that the scrollbar layers are also updated.
     // See https://bugs.webkit.org/show_bug.cgi?id=160450.
-    FrameView* view = m_webPage.corePage()->mainFrame().view();
-    Scrollbar* scrollbar = view->verticalScrollbar();
+    auto* localMainFrame = dynamicDowncast<WebCore::LocalFrame>(m_webPage.corePage()->mainFrame());
+    auto* view = localMainFrame ? localMainFrame->view() : nullptr;
+    if (!view)
+        return;
+    auto* scrollbar = view->verticalScrollbar();
     if (scrollbar && !scrollbar->isOverlayScrollbar())
         visibleRect.expand(scrollbar->width(), 0);
     scrollbar = view->horizontalScrollbar();
@@ -368,7 +372,8 @@ void LayerTreeHost::deviceOrPageScaleFactorChanged()
 
 RefPtr<DisplayRefreshMonitor> LayerTreeHost::createDisplayRefreshMonitor(PlatformDisplayID displayID)
 {
-    return m_compositor->displayRefreshMonitor(displayID);
+    ASSERT(m_displayID == displayID);
+    return Ref { m_compositor->displayRefreshMonitor() };
 }
 
 void LayerTreeHost::didFlushRootLayer(const FloatRect& visibleContentRect)
@@ -400,6 +405,16 @@ uint64_t LayerTreeHost::nativeSurfaceHandleForCompositing()
     return m_surface->window();
 }
 
+void LayerTreeHost::didCreateGLContext()
+{
+    m_surface->didCreateGLContext();
+}
+
+void LayerTreeHost::willDestroyGLContext()
+{
+    m_surface->willDestroyGLContext();
+}
+
 void LayerTreeHost::didDestroyGLContext()
 {
     m_surface->finalize();
@@ -422,14 +437,7 @@ void LayerTreeHost::didRenderFrame()
 
 void LayerTreeHost::displayDidRefresh(PlatformDisplayID displayID)
 {
-#if ENABLE(ASYNC_SCROLLING)
-    if (auto* scrollingCoordinator = m_webPage.scrollingCoordinator()) {
-        if (auto* scrollingTree = downcast<AsyncScrollingCoordinator>(*scrollingCoordinator).scrollingTree())
-            downcast<ThreadedScrollingTree>(*scrollingTree).displayDidRefresh(displayID);
-    }
-#else
-    UNUSED_PARAM(displayID);
-#endif
+    WebProcess::singleton().eventDispatcher().notifyScrollingTreesDisplayDidRefresh(displayID);
 }
 
 void LayerTreeHost::requestDisplayRefreshMonitorUpdate()
@@ -479,7 +487,7 @@ void LayerTreeHost::renderNextFrame(bool forceRepaint)
 #if PLATFORM(GTK)
 FloatPoint LayerTreeHost::constrainTransientZoomOrigin(double scale, FloatPoint origin) const
 {
-    FrameView& frameView = *m_webPage.mainFrameView();
+    auto& frameView = *m_webPage.mainFrameView();
     FloatRect visibleContentRect = frameView.visibleContentRectIncludingScrollbars();
 
     FloatPoint constrainedOrigin = visibleContentRect.location();

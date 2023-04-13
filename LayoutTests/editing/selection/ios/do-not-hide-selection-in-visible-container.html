@@ -61,9 +61,9 @@ addEventListener("load", async () => {
         await ensureCaretIsVisible(expectedVisibility);
         document.activeElement.blur();
         buttonToTap.remove();
+        await UIHelper.waitForKeyboardToHide();
     }
 
-    await UIHelper.waitForKeyboardToHide();
     finishJSTest();
 });
 </script>

@@ -242,12 +242,13 @@ void Instance::initElementSegment(uint32_t tableIndex, const Element& segment, u
                 functionImport,
                 functionIndex,
                 jsInstance,
-                typeIndex);
+                typeIndex,
+                TypeInformation::getCanonicalRTT(typeIndex));
             jsTable->set(dstIndex, wrapperFunction);
             continue;
         }
 
-        Callee& embedderEntrypointCallee = calleeGroup()->embedderEntrypointCalleeFromFunctionIndexSpace(functionIndex);
+        Callee& jsEntrypointCallee = calleeGroup()->jsEntrypointCalleeFromFunctionIndexSpace(functionIndex);
         WasmToWasmImportableFunction::LoadLocation entrypointLoadLocation = calleeGroup()->entrypointLoadLocationFromFunctionIndexSpace(functionIndex);
         const auto& signature = TypeInformation::getFunctionSignature(typeIndex);
         // FIXME: Say we export local function "foo" at function index 0.
@@ -261,10 +262,73 @@ void Instance::initElementSegment(uint32_t tableIndex, const Element& segment, u
             signature.argumentCount(),
             WTF::makeString(functionIndex),
             jsInstance,
-            embedderEntrypointCallee,
+            jsEntrypointCallee,
             entrypointLoadLocation,
-            typeIndex);
+            typeIndex,
+            TypeInformation::getCanonicalRTT(typeIndex));
         jsTable->set(dstIndex, function);
+    }
+}
+
+template<typename T>
+bool Instance::copyDataSegment(uint32_t segmentIndex, uint32_t offset, uint32_t lengthInBytes, FixedVector<T>& values)
+{
+    // Fail if the data segment index is out of bounds
+    RELEASE_ASSERT(segmentIndex < module().moduleInformation().dataSegmentsCount());
+    // Otherwise, get the `segmentIndex`th data segment
+    const Segment::Ptr& segment = module().moduleInformation().data[segmentIndex];
+    const uint32_t segmentSizeInBytes = m_passiveDataSegments.quickGet(segmentIndex) ? segment->sizeInBytes : 0U;
+
+    // Caller checks that the (offset + lengthInBytes) calculation doesn't overflow
+    if ((offset + lengthInBytes) > segmentSizeInBytes) {
+        // The segment access would overflow; the caller must handle this error.
+        return false;
+    }
+    // If size is 0, do nothing
+    if (!lengthInBytes)
+        return true;
+    // Cast the data segment to a pointer
+    const uint8_t* segmentData = &segment->byte(offset);
+
+    // Copy the data from the segment into the out param vector
+    memcpy(reinterpret_cast<uint8_t*>(values.data()), segmentData, lengthInBytes);
+
+    return true;
+}
+
+template bool Instance::copyDataSegment<uint8_t>(uint32_t, uint32_t, uint32_t, FixedVector<uint8_t>&);
+template bool Instance::copyDataSegment<uint16_t>(uint32_t, uint32_t, uint32_t, FixedVector<uint16_t>&);
+template bool Instance::copyDataSegment<uint32_t>(uint32_t, uint32_t, uint32_t, FixedVector<uint32_t>&);
+template bool Instance::copyDataSegment<uint64_t>(uint32_t, uint32_t, uint32_t, FixedVector<uint64_t>&);
+
+
+void Instance::copyElementSegment(const Element& segment, uint32_t srcOffset, uint32_t length, FixedVector<uint64_t>& values)
+{
+    // Caller should have already checked that the (offset + length) calculation doesn't overflow int32,
+    // and that the (offset + length) doesn't overflow the element segment
+    ASSERT(!sumOverflows<uint32_t>(srcOffset, length));
+    ASSERT((srcOffset + length) <= segment.length());
+
+    for (uint32_t srcIndex = srcOffset; srcIndex < length; ++srcIndex) {
+        const auto dstIndex = srcIndex - srcOffset;
+
+        // Represent the null function as the null JS value
+        if (Element::isNullFuncIndex(segment.functionIndices[srcIndex])) {
+            values[dstIndex] = static_cast<uint64_t>(JSValue::encode(jsNull()));
+            continue;
+        }
+
+        // FIXME
+        // This will have to be updated to handle element types other than function references
+        // when https://bugs.webkit.org/show_bug.cgi?id=251874 is fixed
+        uint32_t functionIndex = segment.functionIndices[srcIndex];
+
+        // A wrapper for this function should have been created during parsing.
+        // A future optimization would be for the parser to not create the wrappers,
+        // and create them here dynamically instead.
+        JSValue value = getFunctionWrapper(functionIndex);
+        ASSERT(value.isCallable());
+        values[dstIndex] = static_cast<uint64_t>(JSValue::encode(value));
     }
 }
 

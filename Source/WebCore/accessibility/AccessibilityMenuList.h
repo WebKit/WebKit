@@ -43,7 +43,7 @@ public:
 private:
     explicit AccessibilityMenuList(RenderMenuList*);
 
-    bool isMenuList() const override { return true; }
+    bool isMenuList() const final { return true; }
     AccessibilityRole roleValue() const override { return AccessibilityRole::PopUpButton; }
     bool canSetFocusAttribute() const override;
 
@@ -52,4 +52,6 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_ACCESSIBILITY(AccessibilityMenuList, isMenuList())
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::AccessibilityMenuList) \
+    static bool isType(const WebCore::AccessibilityObject& object) { return object.isMenuList(); } \
+SPECIALIZE_TYPE_TRAITS_END()

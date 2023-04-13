@@ -40,7 +40,7 @@ class LineBoxVerticalAligner;
 
 class InlineLevelBox {
 public:
-    enum class LineSpanningInlineBox { Yes, No };
+    enum class LineSpanningInlineBox : bool { No, Yes };
     static InlineLevelBox createInlineBox(const Box&, const RenderStyle&, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth, LineSpanningInlineBox = LineSpanningInlineBox::No);
     static InlineLevelBox createRootInlineBox(const Box&, const RenderStyle&, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth);
     static InlineLevelBox createAtomicInlineLevelBox(const Box&, const RenderStyle&, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth);
@@ -83,9 +83,9 @@ public:
     LeadingTrim leadingTrim() const { return m_style.leadingTrim; }
     InlineLayoutUnit inlineBoxContentOffsetForLeadingTrim() const { return m_inlineBoxContentOffsetForLeadingTrim; }
 
-    bool hasAnnotation() const { return hasContent() && m_annotation.has_value(); };
-    std::optional<InlineLayoutUnit> annotationAbove() const { return hasAnnotation() && m_annotation->type == Annotation::Type::Above ? std::make_optional(m_annotation->size) : std::nullopt; }
-    std::optional<InlineLayoutUnit> annotationUnder() const { return hasAnnotation() && m_annotation->type == Annotation::Type::Under ? std::make_optional(m_annotation->size) : std::nullopt; }
+    bool hasAnnotation() const { return (hasContent() || isAtomicInlineLevelBox()) && m_annotation.has_value(); };
+    std::optional<InlineLayoutUnit> annotationAbove() const { return hasAnnotation() ? std::optional { m_annotation->above } : std::nullopt; }
+    std::optional<InlineLayoutUnit> annotationBelow() const { return hasAnnotation() ? std::optional { m_annotation->below } : std::nullopt; }
 
     bool isInlineBox() const { return m_type == Type::InlineBox || isRootInlineBox() || isLineSpanningInlineBox(); }
     bool isRootInlineBox() const { return m_type == Type::RootInlineBox; }
@@ -170,9 +170,8 @@ private:
     Style m_style;
 
     struct Annotation {
-        enum class Type : uint8_t { Above, Under };
-        Type type { Type::Above };
-        InlineLayoutUnit size { };
+        InlineLayoutUnit above;
+        InlineLayoutUnit below;
     };
     std::optional<Annotation> m_annotation;
 };
@@ -190,7 +189,11 @@ inline InlineLevelBox::InlineLevelBox(const Box& layoutBox, const RenderStyle& s
         m_style.verticalAlignment.baselineOffset = floatValueForLength(style.verticalAlignLength(), preferredLineHeight());
 
     auto setAnnotationIfApplicable = [&] {
-        // Generic, non-inline box inline-level content (e.g. replaced elements) can't have annotations.
+        if (auto* rubyAdjustments = layoutBox.rubyAdjustments()) {
+            m_annotation = { rubyAdjustments->annotationAbove, rubyAdjustments->annotationBelow };
+            return;
+        }
+        // Generic, non-inline box inline-level content (e.g. replaced elements) can't have text-emphasis annotations.
         if (!isRootInlineBox() && !isInlineBox())
             return;
         auto hasTextEmphasis =  style.textEmphasisMark() != TextEmphasisMark::None;
@@ -210,7 +213,7 @@ inline InlineLevelBox::InlineLevelBox(const Box& layoutBox, const RenderStyle& s
 
         if (hasAboveTextEmphasis || hasUnderTextEmphasis) {
             InlineLayoutUnit annotationSize = roundToInt(style.fontCascade().floatEmphasisMarkHeight(style.textEmphasisMarkString()));
-            m_annotation = { hasAboveTextEmphasis ? Annotation::Type::Above : Annotation::Type::Under, annotationSize };
+            m_annotation = { hasAboveTextEmphasis ? annotationSize : 0, hasAboveTextEmphasis ? 0 : annotationSize };
         }
     };
     setAnnotationIfApplicable();

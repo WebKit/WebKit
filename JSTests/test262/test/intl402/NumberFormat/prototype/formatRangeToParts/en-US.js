@@ -23,7 +23,7 @@ function compare(actual, expected) {
     assert.sameValue(actualEntry.type, expectedEntry.type, `type for entry ${i}`);
     assert.sameValue(actualEntry.value, expectedEntry.value, `value for entry ${i}`);
     assert.sameValue(actualEntry.source, expectedEntry.source, `source for entry ${i}`);
-    
+
     //  1.1.25_4.a  Let O be ObjectCreate(%ObjectPrototype%).
     assert.sameValue(Object.getPrototypeOf(actualEntry), Object.prototype, `prototype for entry ${i}`);
     //  1.1.25_4.b Perform ! CreateDataPropertyOrThrow(O, "type", part.[[Type]])
@@ -49,3 +49,17 @@ compare(nf.formatRangeToParts(3, 5), [
   {type: "currency", value: "$", source: "endRange"},
   {type: "integer", value: "5", source: "endRange"}
 ]);
+
+compare(nf.formatRangeToParts(1, 1), [
+  {type: 'approximatelySign', value: '~', source: 'shared'},
+  {type: 'currency', value: '$', source: 'shared'},
+  {type: 'integer', value: '1', source: 'shared'}
+]);
+
+compare(nf.formatRangeToParts(2.999, 3.001), [
+  {type: 'approximatelySign', value: '~', source: 'shared'},
+  {type: 'currency', value: '$', source: 'shared'},
+  {type: 'integer', value: '3', source: 'shared'}
+]);
+
+

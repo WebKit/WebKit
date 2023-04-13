@@ -1,0 +1,31 @@
+<body>
+    <p>Test that the source rectangle of drawImage() is in the canvas backend coordinates.</p>
+    <canvas></canvas>
+    <script>
+        function drawTriangle(ctx, x1, y1, x2, y2, x3, y3) {
+            ctx.beginPath();
+            ctx.moveTo(x1, y1);
+            ctx.lineTo(x2, y2);
+            ctx.lineTo(x3, y3);
+            ctx.fill();
+        }
+
+        const ctx = document.querySelector('canvas').getContext('2d');
+        ctx.canvas.width = 200;
+        ctx.canvas.height = 100;
+
+        ctx.scale(2, 2);
+
+        ctx.fillStyle = "green";
+        ctx.globalCompositeOperation = 'copy';
+        ctx.imageSmoothingEnabled = false;
+
+        // Draw a triangle to the right side.
+        drawTriangle(ctx, 75, 0, 100, 50, 50, 50);
+
+        // Move the image from right to left via drawImage+global composite copy operation.
+        ctx.drawImage(ctx.canvas,
+            100, 0, 100, 100,   // source rect in pixels of the canvas (200x100)
+              0, 0,  50,  50);  // dest in current scaled transform (100x50)
+    </script>
+</body>

@@ -161,6 +161,9 @@ TEST(WTF_CheckedPtr, CheckedRef)
             EXPECT_EQ(ref->someFunction(), -7);
             EXPECT_EQ(checkedObject.ptrCount(), 1u);
             CheckedPtr ptr { WTFMove(ref) };
+#if ASAN_ENABLED
+            __asan_unpoison_memory_region(&ref, sizeof(ref));
+#endif
             EXPECT_EQ(ref.ptr(), nullptr);
             EXPECT_EQ(ptr.get(), &checkedObject);
             EXPECT_EQ(ptr->someFunction(), -7);
@@ -178,6 +181,9 @@ TEST(WTF_CheckedPtr, CheckedRef)
             EXPECT_EQ(ref->someFunction(), -7);
             EXPECT_EQ(checkedObject.ptrCount(), 1u);
             CheckedPtr<CheckedObject> ptr { WTFMove(ref) };
+#if ASAN_ENABLED
+            __asan_unpoison_memory_region(&ref, sizeof(ref));
+#endif
             EXPECT_EQ(ref.ptr(), nullptr);
             EXPECT_EQ(ptr.get(), &checkedObject);
             EXPECT_EQ(ptr->someFunction(), -7);

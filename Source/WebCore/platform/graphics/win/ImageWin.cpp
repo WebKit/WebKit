@@ -28,17 +28,7 @@
 
 #include "BitmapImage.h"
 #include "SharedBuffer.h"
-
-#if !PLATFORM(WIN_CAIRO)
-// This function loads resources from WebKit
-RefPtr<WebCore::FragmentedSharedBuffer> loadResourceIntoBuffer(const char*);
-#else
-// FIXME: https://bugs.webkit.org/show_bug.cgi?id=188175
-RefPtr<WebCore::FragmentedSharedBuffer> loadResourceIntoBuffer(const char*)
-{
-    return nullptr;
-}
-#endif
+#include "WebCoreBundleWin.h"
 
 namespace WebCore {
 
@@ -48,9 +38,11 @@ void BitmapImage::invalidatePlatformData()
 
 Ref<Image> Image::loadPlatformResource(const char *name)
 {
-    auto buffer = loadResourceIntoBuffer(name);
+    auto path = webKitBundlePath(StringView::fromLatin1(name), "png"_s, "icons"_s);
+    auto data = FileSystem::readEntireFile(path);
     auto img = BitmapImage::create();
-    img->setData(WTFMove(buffer), true);
+    if (data)
+        img->setData(FragmentedSharedBuffer::create(WTFMove(*data)), true);
     return img;
 }
 

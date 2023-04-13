@@ -196,19 +196,22 @@ def gn_sources_to_blueprint_sources(sources):
 target_blockist = [
     '//build/config:shared_library_deps',
     '//third_party/vulkan-validation-layers/src:vulkan_clean_old_validation_layer_objects',
+    '//third_party/zlib:zlib',
+    '//third_party/zlib/google:compression_utils_portable',
 ]
 
 third_party_target_allowlist = [
     '//third_party/abseil-cpp',
     '//third_party/vulkan-deps',
     '//third_party/vulkan_memory_allocator',
-    '//third_party/zlib',
 ]
 
 include_blocklist = [
     '//buildtools/third_party/libc++/',
     '//out/Android/gen/third_party/vulkan-deps/glslang/src/include/',
     '//third_party/android_ndk/sources/android/cpufeatures/',
+    '//third_party/zlib/',
+    '//third_party/zlib/google/',
 ]
 
 
@@ -255,13 +258,10 @@ def gn_deps_to_blueprint_deps(abi, target, build_info):
             # target depends on another's genrule, it wont find the outputs. Propogate generated
             # headers up the dependency stack.
             generated_headers += child_generated_headers
-        elif dep == '//third_party/android_ndk:cpu_features':
-            # chrome_zlib needs cpufeatures from the Android NDK. Rather than including the
-            # entire NDK is a dep in the ANGLE checkout, use the library that's already part
-            # of Android.
-            dep_info = build_info[abi][dep]
-            blueprint_dep_name = gn_target_to_blueprint_target(dep, dep_info)
-            static_libs.append('cpufeatures')
+        elif dep == '//third_party/zlib/google:compression_utils_portable':
+            # Replace zlib by Android's zlib, compression_utils_portable is the root dependency
+            static_libs.extend(
+                ['zlib_google_compression_utils_portable', 'libz_static', 'cpufeatures'])
 
     return static_libs, shared_libs, defaults, generated_headers, header_libs
 
@@ -464,7 +464,7 @@ def handle_gn_build_arg_response_file_name(command_arg_list):
     updated_args = command_arg_list[:]
     for index, arg in enumerate(updated_args):
         if arg == '{{response_file_name}}':
-            new_temp_file_name = 'gn_response_file'
+            new_temp_file_name = '$(genDir)/gn_response_file'
             updated_args[index] = new_temp_file_name
     return new_temp_file_name, updated_args
 
@@ -511,7 +511,7 @@ def action_target_to_blueprint(abi, target, build_info):
         target_info['args'])
 
     if new_temporary_gn_response_file:
-        # add the command 'echo $(in) > gn_response_file' to
+        # add the command 'echo $(in) > $(genDir)/gn_response_file' to
         # write $response_file_contents into the new_temporary_gn_response_file.
         cmd = ['echo $(in) >', new_temporary_gn_response_file, '&&', '$(location)'
               ] + gn_action_args_to_blueprint_args(bp_srcs, bp_outputs, updated_args)
@@ -660,7 +660,6 @@ def main():
             'third_party/vulkan-deps/vulkan-headers/LICENSE.txt',
             'third_party/vulkan-deps/vulkan-headers/src/LICENSE.txt',
             'third_party/vulkan_memory_allocator/LICENSE.txt',
-            'third_party/zlib/LICENSE',
             'tools/flex-bison/third_party/m4sugar/LICENSE',
             'tools/flex-bison/third_party/skeletons/LICENSE',
             'util/windows/third_party/StackWalker/LICENSE',

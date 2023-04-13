@@ -28,6 +28,7 @@
 
 #include "ArgumentCoders.h"
 #include "DataReference.h"
+#include "MessageSenderInlines.h"
 #include "UserData.h"
 #include "WebConnectionMessages.h"
 #include <wtf/text/WTFString.h>

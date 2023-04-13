@@ -164,7 +164,7 @@ void ServiceWorkerClients::claim(ScriptExecutionContext& context, Ref<DeferredPr
 
 ServiceWorkerClients::PromiseIdentifier ServiceWorkerClients::addPendingPromise(Ref<DeferredPromise>&& promise)
 {
-    auto identifier = PromiseIdentifier::generateThreadSafe();
+    auto identifier = PromiseIdentifier::generate();
     m_pendingPromises.add(identifier, WTFMove(promise));
     return identifier;
 }

@@ -117,6 +117,9 @@ void DataDetectorHighlight::paintContents(const GraphicsLayer*, GraphicsContext&
     if (!PAL::isDataDetectorsFrameworkAvailable())
         return;
 
+    if (!highlight())
+        return;
+
     CGRect highlightBoundingRect = PAL::softLink_DataDetectors_DDHighlightGetBoundingRect(highlight());
     highlightBoundingRect.origin = CGPointZero;
 

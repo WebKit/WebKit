@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (c) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,7 @@
 #import <wtf/FastMalloc.h>
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
+#import <wtf/Vector.h>
 
 struct WGPUComputePassEncoderImpl {
 };
@@ -45,9 +46,9 @@ class QuerySet;
 class ComputePassEncoder : public WGPUComputePassEncoderImpl, public RefCounted<ComputePassEncoder>, public CommandsMixin {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<ComputePassEncoder> create(id<MTLComputeCommandEncoder> computeCommandEncoder, Device& device)
+    static Ref<ComputePassEncoder> create(id<MTLComputeCommandEncoder> computeCommandEncoder, const WGPUComputePassDescriptor& descriptor, Device& device)
     {
-        return adoptRef(*new ComputePassEncoder(computeCommandEncoder, device));
+        return adoptRef(*new ComputePassEncoder(computeCommandEncoder, descriptor, device));
     }
     static Ref<ComputePassEncoder> createInvalid(Device& device)
     {
@@ -73,7 +74,7 @@ public:
     bool isValid() const { return m_computeCommandEncoder; }
 
 private:
-    ComputePassEncoder(id<MTLComputeCommandEncoder>, Device&);
+    ComputePassEncoder(id<MTLComputeCommandEncoder>, const WGPUComputePassDescriptor&, Device&);
     ComputePassEncoder(Device&);
 
     bool validatePopDebugGroup() const;
@@ -82,9 +83,15 @@ private:
 
     id<MTLComputeCommandEncoder> m_computeCommandEncoder { nil };
 
+    struct PendingTimestampWrites {
+        Ref<QuerySet> querySet;
+        uint32_t queryIndex;
+    };
+    Vector<PendingTimestampWrites> m_pendingTimestampWrites;
     uint64_t m_debugGroupStackSize { 0 };
 
     const Ref<Device> m_device;
+    MTLSize m_threadsPerThreadgroup;
 };
 
 } // namespace WebGPU

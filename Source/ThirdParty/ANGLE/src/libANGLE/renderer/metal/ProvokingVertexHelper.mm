@@ -102,8 +102,6 @@ static inline gl::PrimitiveMode getNewPrimitiveMode(const uint fixIndexBufferKey
 ProvokingVertexHelper::ProvokingVertexHelper(ContextMtl *context)
     : mIndexBuffers(false), mPipelineCache(this)
 {
-    id<MTLLibrary> mtlLib   = context->getDisplay()->getDefaultShadersLib();
-    mProvokingVertexLibrary = mtlLib;
     mIndexBuffers.initialize(context, kInitialIndexBufferSize, mtl::kIndexBufferOffsetAlignment, 0);
 }
 
@@ -158,17 +156,18 @@ angle::Result ProvokingVertexHelper::getSpecializedShader(
     const mtl::ProvokingVertexComputePipelineDesc &pipelineDesc,
     id<MTLFunction> *shaderOut)
 {
-    uint indexBufferKey = buildIndexBufferKey(pipelineDesc);
-    auto fcValues       = mtl::adoptObjCObj([[MTLFunctionConstantValues alloc] init]);
+    id<MTLLibrary> provokingVertexLibrary = context->getDisplay()->getDefaultShadersLib();
+    uint indexBufferKey                   = buildIndexBufferKey(pipelineDesc);
+    auto fcValues = mtl::adoptObjCObj([[MTLFunctionConstantValues alloc] init]);
     [fcValues setConstantValue:&indexBufferKey type:MTLDataTypeUInt withName:@"fixIndexBufferKey"];
     if (pipelineDesc.generateIndices)
     {
-        return CreateMslShader(context, mProvokingVertexLibrary, @"genIndexBuffer", fcValues.get(),
+        return CreateMslShader(context, provokingVertexLibrary, @"genIndexBuffer", fcValues.get(),
                                shaderOut);
     }
     else
     {
-        return CreateMslShader(context, mProvokingVertexLibrary, @"fixIndexBuffer", fcValues.get(),
+        return CreateMslShader(context, provokingVertexLibrary, @"fixIndexBuffer", fcValues.get(),
                                shaderOut);
     }
 }

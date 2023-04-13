@@ -46,6 +46,7 @@
 #import <wtf/NeverDestroyed.h>
 #import <wtf/ProcessPrivilege.h>
 #import <wtf/URL.h>
+#import <wtf/UUID.h>
 #import <wtf/cocoa/Entitlements.h>
 #import <wtf/text/cf/StringConcatenateCF.h>
 
@@ -243,11 +244,6 @@ void WebsiteDataStore::platformDestroy()
     dataStores().remove(this);
 }
 
-void WebsiteDataStore::platformRemoveRecentSearches(WallTime oldestTimeToRemove)
-{
-    WebCore::removeRecentlyModifiedRecentSearches(oldestTimeToRemove);
-}
-
 static String defaultWebsiteDataStoreRootDirectory()
 {
     static dispatch_once_t onceToken;
@@ -267,24 +263,50 @@ static String defaultWebsiteDataStoreRootDirectory()
 
 void WebsiteDataStore::fetchAllDataStoreIdentifiers(CompletionHandler<void(Vector<UUID>&&)>&& completionHandler)
 {
-    Vector<UUID> identifiers;
-    for (auto identifierString : FileSystem::listDirectory(defaultWebsiteDataStoreRootDirectory())) {
-        if (auto identifier = UUID::parse(identifierString))
-            identifiers.append(*identifier);
-    }
+    ASSERT(isMainRunLoop());
 
-    completionHandler(WTFMove(identifiers));
+    websiteDataStoreIOQueue().dispatch([completionHandler = WTFMove(completionHandler), directory = defaultWebsiteDataStoreRootDirectory().isolatedCopy()]() mutable {
+        auto identifiers = WTF::compactMap(FileSystem::listDirectory(directory), [](auto&& identifierString) {
+            return UUID::parse(identifierString);
+        });
+        RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler), identifiers = crossThreadCopy(WTFMove(identifiers))]() mutable {
+            completionHandler(WTFMove(identifiers));
+        });
+    });
 }
 
 void WebsiteDataStore::removeDataStoreWithIdentifier(const UUID& identifier, CompletionHandler<void(const String&)>&& completionHandler)
 {
-    if (!identifier)
+    ASSERT(isMainRunLoop());
+
+    if (!identifier.isValid())
         return completionHandler("Identifier is invalid"_s);
 
-    if (!FileSystem::deleteNonEmptyDirectory(defaultWebsiteDataStoreDirectory(identifier)))
-        return completionHandler("WebsiteDataStore with this identifier does not exist or deletion failed"_s);
+    if (auto existingDataStore = existingDataStoreForIdentifier(identifier)) {
+        if (existingDataStore->hasActivePages())
+            return completionHandler("Data store is in use"_s);
+        
+        // FIXME: Try removing session from network process instead of returning error.
+        if (existingDataStore->networkProcessIfExists())
+            return completionHandler("Data store is in use (by network process)"_s);
+    }
 
-    return completionHandler({ });
+    auto nsCredentialStorage = adoptNS([[NSURLCredentialStorage alloc] _initWithIdentifier:identifier.toString() private:NO]);
+    auto* credentials = [nsCredentialStorage.get() allCredentials];
+    for (NSURLProtectionSpace *space in credentials) {
+        for (NSURLCredential *credential in [credentials[space] allValues])
+            [nsCredentialStorage.get() removeCredential:credential forProtectionSpace:space];
+    }
+
+    websiteDataStoreIOQueue().dispatch([completionHandler = WTFMove(completionHandler), directory = defaultWebsiteDataStoreDirectory(identifier).isolatedCopy()]() mutable {
+        bool deleted = FileSystem::deleteNonEmptyDirectory(directory);
+        RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler), deleted]() mutable {
+            if (!deleted)
+                return completionHandler("Failed to delete files on disk"_s);
+
+            completionHandler({ });
+        });
+    });
 }
 
 String WebsiteDataStore::defaultWebsiteDataStoreDirectory(const UUID& identifier)
@@ -298,6 +320,14 @@ String WebsiteDataStore::defaultCookieStorageFile(const String& baseDirectory)
         return { };
 
     return FileSystem::pathByAppendingComponents(baseDirectory, { "Cookies"_s, "Cookies.binarycookies"_s });
+}
+
+String WebsiteDataStore::defaultSearchFieldHistoryDirectory(const String& baseDirectory)
+{
+    if (!baseDirectory.isEmpty())
+        return FileSystem::pathByAppendingComponent(baseDirectory, "SearchHistory"_s);
+
+    return websiteDataDirectoryFileSystemRepresentation("SearchHistory"_s);
 }
 
 String WebsiteDataStore::defaultApplicationCacheDirectory(const String& baseDirectory)
@@ -787,12 +817,12 @@ void WebsiteDataStore::getManagedDomains(CompletionHandler<void(const HashSet<We
     });
 }
 
-std::optional<std::reference_wrapper<HashSet<WebCore::RegistrableDomain>>> WebsiteDataStore::managedDomainsIfInitialized()
+const HashSet<WebCore::RegistrableDomain>* WebsiteDataStore::managedDomainsIfInitialized()
 {
     ASSERT(RunLoop::isMain());
     if (!hasInitializedManagedDomains)
-        return std::nullopt;
-    return managedDomains();
+        return nullptr;
+    return &managedDomains();
 }
 
 void WebsiteDataStore::setManagedDomainsForTesting(HashSet<WebCore::RegistrableDomain>&& domains, CompletionHandler<void()>&& completionHandler)
@@ -916,5 +946,30 @@ void WebsiteDataStore::setBackupExclusionPeriodForTesting(Seconds period, Comple
 }
 
 #endif
+
+void WebsiteDataStore::saveRecentSearches(const String& name, const Vector<WebCore::RecentSearch>& searchItems)
+{
+    m_queue->dispatch([name = name.isolatedCopy(), searchItems = crossThreadCopy(searchItems), directory = resolvedSearchFieldHistoryDirectory().isolatedCopy()] {
+        WebCore::saveRecentSearchesToFile(name, searchItems, directory);
+    });
+}
+
+void WebsiteDataStore::loadRecentSearches(const String& name, CompletionHandler<void(Vector<WebCore::RecentSearch>&&)>&& completionHandler)
+{
+    m_queue->dispatch([name = name.isolatedCopy(), completionHandler = WTFMove(completionHandler), directory = resolvedSearchFieldHistoryDirectory().isolatedCopy()]() mutable {
+        auto result = WebCore::loadRecentSearchesFromFile(name, directory);
+        RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler), result = crossThreadCopy(result)]() mutable {
+            completionHandler(WTFMove(result));
+        });
+    });
+}
+
+void WebsiteDataStore::removeRecentSearches(WallTime oldestTimeToRemove, CompletionHandler<void()>&& completionHandler)
+{
+    m_queue->dispatch([time = oldestTimeToRemove.isolatedCopy(), directory = resolvedSearchFieldHistoryDirectory().isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
+        WebCore::removeRecentlyModifiedRecentSearchesFromFile(time, directory);
+        RunLoop::main().dispatch(WTFMove(completionHandler));
+    });
+}
 
 }

@@ -20,7 +20,6 @@ export const kScalarTypeInfo = {
   },
   bool: { layout: undefined, supportsAtomics: false, arrayLength: 1, innerLength: 0 },
 };
-
 /** List of all plain scalar types. */
 export const kScalarTypes = keysOf(kScalarTypeInfo);
 
@@ -30,7 +29,6 @@ export const kVectorContainerTypeInfo = {
   vec3: { layout: { alignment: 16, size: 12 }, arrayLength: 3, innerLength: 0 },
   vec4: { layout: { alignment: 16, size: 16 }, arrayLength: 4, innerLength: 0 },
 };
-
 /** List of all vecN<> container types. */
 export const kVectorContainerTypes = keysOf(kVectorContainerTypeInfo);
 
@@ -46,9 +44,28 @@ export const kMatrixContainerTypeInfo = {
   mat3x4: { layout: { alignment: 16, size: 48 }, arrayLength: 3, innerLength: 4 },
   mat4x4: { layout: { alignment: 16, size: 64 }, arrayLength: 4, innerLength: 4 },
 };
-
 /** List of all matNxN<> container types. */
 export const kMatrixContainerTypes = keysOf(kMatrixContainerTypeInfo);
+
+/** List of texel formats and their shader representation */
+export const TexelFormats = [
+  { format: 'rgba8unorm', _shaderType: 'f32' },
+  { format: 'rgba8snorm', _shaderType: 'f32' },
+  { format: 'rgba8uint', _shaderType: 'u32' },
+  { format: 'rgba8sint', _shaderType: 'i32' },
+  { format: 'rgba16uint', _shaderType: 'u32' },
+  { format: 'rgba16sint', _shaderType: 'i32' },
+  { format: 'rgba16float', _shaderType: 'f32' },
+  { format: 'r32uint', _shaderType: 'u32' },
+  { format: 'r32sint', _shaderType: 'i32' },
+  { format: 'r32float', _shaderType: 'f32' },
+  { format: 'rg32uint', _shaderType: 'u32' },
+  { format: 'rg32sint', _shaderType: 'i32' },
+  { format: 'rg32float', _shaderType: 'f32' },
+  { format: 'rgba32uint', _shaderType: 'i32' },
+  { format: 'rgba32sint', _shaderType: 'i32' },
+  { format: 'rgba32float', _shaderType: 'f32' },
+];
 
 /**
  * Generate a bunch types (vec, mat, sized/unsized array) for testing.

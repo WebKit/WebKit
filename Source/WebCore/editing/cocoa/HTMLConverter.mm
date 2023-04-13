@@ -44,7 +44,6 @@
 #import "ElementTraversal.h"
 #import "File.h"
 #import "FontCascade.h"
-#import "Frame.h"
 #import "FrameLoader.h"
 #import "HTMLAttachmentElement.h"
 #import "HTMLElement.h"
@@ -59,6 +58,7 @@
 #import "HTMLTableCellElement.h"
 #import "HTMLTextAreaElement.h"
 #import "LoaderNSURLExtras.h"
+#import "LocalFrame.h"
 #import "RenderImage.h"
 #import "RenderText.h"
 #import "StyleProperties.h"
@@ -77,52 +77,10 @@
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-
+#import "UIFoundationSoftLink.h"
 #import "WAKAppKitStubs.h"
 #import <pal/ios/UIKitSoftLink.h>
 #import <pal/spi/ios/UIKitSPI.h>
-
-SOFT_LINK_CLASS(UIFoundation, NSColor)
-SOFT_LINK_CLASS(UIFoundation, NSShadow)
-SOFT_LINK_CLASS(UIFoundation, NSTextAttachment)
-SOFT_LINK_CLASS(UIFoundation, NSMutableParagraphStyle)
-SOFT_LINK_CLASS(UIFoundation, NSParagraphStyle)
-SOFT_LINK_CLASS(UIFoundation, NSTextList)
-SOFT_LINK_CLASS(UIFoundation, NSTextBlock)
-SOFT_LINK_CLASS(UIFoundation, NSTextTableBlock)
-SOFT_LINK_CLASS(UIFoundation, NSTextTable)
-SOFT_LINK_CLASS(UIFoundation, NSTextTab)
-
-#define PlatformNSShadow            getNSShadowClass()
-#define PlatformNSTextAttachment    getNSTextAttachmentClass()
-#define PlatformNSParagraphStyle    getNSParagraphStyleClass()
-#define PlatformNSTextList          getNSTextListClass()
-#define PlatformNSTextTableBlock    getNSTextTableBlockClass()
-#define PlatformNSTextTable         getNSTextTableClass()
-#define PlatformNSTextTab           getNSTextTabClass()
-#define PlatformColor               UIColor
-#define PlatformColorClass          PAL::getUIColorClass()
-#define PlatformNSColorClass        getNSColorClass()
-#define PlatformFont                UIFont
-#define PlatformFontClass           PAL::getUIFontClass()
-#define PlatformImageClass          PAL::getUIImageClass()
-
-#else
-
-#define PlatformNSShadow            NSShadow
-#define PlatformNSTextAttachment    NSTextAttachment
-#define PlatformNSParagraphStyle    NSParagraphStyle
-#define PlatformNSTextList          NSTextList
-#define PlatformNSTextTableBlock    NSTextTableBlock
-#define PlatformNSTextTable         NSTextTable
-#define PlatformNSTextTab           NSTextTab
-#define PlatformColor               NSColor
-#define PlatformColorClass          NSColor
-#define PlatformNSColorClass        NSColor
-#define PlatformFont                NSFont
-#define PlatformFontClass           NSFont
-#define PlatformImageClass          NSImage
-
 #endif
 
 using namespace WebCore;
@@ -416,7 +374,7 @@ AttributedString HTMLConverter::convert()
     if (_domRangeStartIndex > 0 && _domRangeStartIndex <= [_attrStr length])
         [_attrStr deleteCharactersInRange:NSMakeRange(0, _domRangeStartIndex)];
 
-    return { WTFMove(_attrStr), WTFMove(_documentAttrs) };
+    return AttributedString::fromNSAttributedStringAndDocumentAttributes(WTFMove(_attrStr), WTFMove(_documentAttrs));
 }
 
 #if !PLATFORM(IOS_FAMILY)
@@ -875,15 +833,13 @@ Color HTMLConverterCaches::colorPropertyValueForNode(Node& node, CSSPropertyID p
     bool ignoreDefaultColor = propertyId == CSSPropertyColor;
 
     Element& element = downcast<Element>(node);
-    if (RefPtr<CSSValue> value = computedStylePropertyForElement(element, propertyId)) {
-        if (is<CSSPrimitiveValue>(*value) && downcast<CSSPrimitiveValue>(*value).isRGBColor())
-            return normalizedColor(downcast<CSSPrimitiveValue>(*value).color(), ignoreDefaultColor, element);
-    }
+    if (auto value = computedStylePropertyForElement(element, propertyId); value && value->isColor())
+        return normalizedColor(value->color(), ignoreDefaultColor, element);
 
     bool inherit = false;
-    if (RefPtr<CSSValue> value = inlineStylePropertyForElement(element, propertyId)) {
-        if (is<CSSPrimitiveValue>(*value) && downcast<CSSPrimitiveValue>(*value).isRGBColor())
-            return normalizedColor(downcast<CSSPrimitiveValue>(*value).color(), ignoreDefaultColor, element);
+    if (auto value = inlineStylePropertyForElement(element, propertyId)) {
+        if (value->isColor())
+            return normalizedColor(value->color(), ignoreDefaultColor, element);
         if (isValueID(*value, CSSValueInherit))
             inherit = true;
     }
@@ -949,9 +905,9 @@ NSDictionary *HTMLConverter::computedAttributesForElement(Element& element)
         fontSize = defaultFontSize;
     if (fontSize < minimumFontSize)
         fontSize = minimumFontSize;
-    if (fabs(floor(2.0 * fontSize + 0.5) / 2.0 - fontSize) < 0.05)
+    if (std::abs(floor(2.0 * fontSize + 0.5) / 2.0 - fontSize) < 0.05)
         fontSize = floor(2.0 * fontSize + 0.5) / 2;
-    else if (fabs(floor(10.0 * fontSize + 0.5) / 10.0 - fontSize) < 0.005)
+    else if (std::abs(floor(10.0 * fontSize + 0.5) / 10.0 - fontSize) < 0.005)
         fontSize = floor(10.0 * fontSize + 0.5) / 10;
 
     if (fontSize <= 0.0)
@@ -1027,7 +983,7 @@ NSDictionary *HTMLConverter::computedAttributesForElement(Element& element)
             [attrs setObject:@0.0 forKey:NSKernAttributeName];
         else {
             double kernVal = letterSpacing.length() ? letterSpacing.toDouble() : 0.0;
-            if (fabs(kernVal - 0) < FLT_EPSILON)
+            if (std::abs(kernVal - 0) < FLT_EPSILON)
                 [attrs setObject:@0.0 forKey:NSKernAttributeName]; // auto and normal, the other possible values, are both "kerning enabled"
             else
                 [attrs setObject:@(kernVal) forKey:NSKernAttributeName];
@@ -1267,7 +1223,7 @@ BOOL HTMLConverter::_addAttachmentForElement(Element& element, NSURL *url, BOOL 
     BOOL retval = NO;
     BOOL notFound = NO;
     RetainPtr<NSFileWrapper> fileWrapper;
-    Frame* frame = element.document().frame();
+    auto* frame = element.document().frame();
     DocumentLoader *dataSource = frame->loader().frameHasLoaded() ? frame->loader().documentLoader() : 0;
     BOOL ignoreOrientation = YES;
 
@@ -2399,7 +2355,7 @@ AttributedString editingAttributedString(const SimpleRange& range, IncludeImages
         if (style.textDecorationsInEffect() & TextDecorationLine::LineThrough)
             [attrs setObject:[NSNumber numberWithInteger:NSUnderlineStyleSingle] forKey:NSStrikethroughStyleAttributeName];
         if (auto font = style.fontCascade().primaryFont().getCTFont())
-            [attrs setObject:toNSFont(font) forKey:NSFontAttributeName];
+            [attrs setObject:(__bridge NSFont *)font forKey:NSFontAttributeName];
         else
             [attrs setObject:[fontManager convertFont:WebDefaultFont() toSize:style.fontCascade().primaryFont().platformData().size()] forKey:NSFontAttributeName];
 
@@ -2461,7 +2417,7 @@ AttributedString editingAttributedString(const SimpleRange& range, IncludeImages
         stringLength += currentTextLength;
     }
 
-    return { WTFMove(string), nil };
+    return AttributedString::fromNSAttributedString(WTFMove(string));
 }
 
 #endif

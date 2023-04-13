@@ -1,0 +1,91 @@
+<!DOCTYPE html><!-- webkit-test-runner [ AttachmentElementEnabled=true AttachmentWideLayoutEnabled=true ] -->
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+</head>
+<body>
+
+<div><attachment id="attachment" title="Filename" save></attachment></div>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+var attachment;
+var attachmentClientRect;
+var saveButtonClientRect;
+var clickX;
+var clickY;
+var events;
+
+async function runTest() {
+    description("This tests that clicking on the save button sends a save event.");
+
+    attachment = document.getElementById("attachment");
+    shouldBeType("attachment", "HTMLAttachmentElement");
+
+    attachmentClientRect = attachment.getBoundingClientRect();
+
+    saveButtonClientRect = attachment.saveButtonClientRect;
+    shouldBeType("saveButtonClientRect", "DOMRectReadOnly");
+    shouldBeGreaterThan("saveButtonClientRect.width", "0");
+    shouldBeGreaterThan("saveButtonClientRect.height", "0");
+
+    shouldBeGreaterThan("saveButtonClientRect.x", "attachmentClientRect.left");
+    shouldBeGreaterThan("saveButtonClientRect.y", "attachmentClientRect.top");
+    shouldBeGreaterThan("attachmentClientRect.right", "saveButtonClientRect.x + saveButtonClientRect.width");
+    shouldBeGreaterThan("attachmentClientRect.bottom", "saveButtonClientRect.y + saveButtonClientRect.height");
+
+    window.addEventListener("click", event => { events.push({ targetId: "window", event }); event.stopImmediatePropagation(); event.preventDefault(); });
+    attachment.addEventListener("click", event => { events.push({ targetId: "attachment", event }); event.stopImmediatePropagation(); event.preventDefault(); });
+    attachment.addEventListener("save", event => { events.push({ targetId: "saveButton", event }); event.stopImmediatePropagation(); event.preventDefault(); });
+
+    let testClick = async function(comment, x, y, eventTargetId, eventType) {
+        debug(comment);
+        clickX = x;
+        clickY = y;
+        events = [];
+        await UIHelper.activateAt(clickX, clickY);
+        await shouldBecomeDifferent("events.length", "0");
+        shouldBe("events.length", "1");
+        while (events.length >= 1) {
+            shouldBeEqualToString("events[0].targetId", eventTargetId);
+            shouldBeType("events[0].event", "MouseEvent");
+            shouldBeEqualToString("events[0].event.type", eventType);
+            shouldBe("events[0].event.x", "clickX");
+            shouldBe("events[0].event.y", "clickY");
+            shouldBe("events[0].event.target", "attachment");
+            events.shift();
+        }
+    };
+
+    const centerX = saveButtonClientRect.x + saveButtonClientRect.width / 2;
+    const centerY = saveButtonClientRect.y + saveButtonClientRect.height / 2;
+    await testClick("button center", centerX, centerY, "saveButton", "save");
+    await testClick("button center left", saveButtonClientRect.x, centerY, "saveButton", "save");
+    await testClick("button center right", saveButtonClientRect.x + saveButtonClientRect.width - 1, centerY, "saveButton", "save");
+    await testClick("button center top", centerX, saveButtonClientRect.y, "saveButton", "save");
+    await testClick("button center bottom", centerX, saveButtonClientRect.y + saveButtonClientRect.height - 1, "saveButton", "save");
+
+    await testClick("outside button left", saveButtonClientRect.x - 2, centerY, "attachment", "click");
+    await testClick("outside button right", saveButtonClientRect.x + saveButtonClientRect.width + 1, centerY, "attachment", "click");
+    await testClick("outside button top", centerX, saveButtonClientRect.y - 2, "attachment", "click");
+    await testClick("outside button bottom", centerX, saveButtonClientRect.y + saveButtonClientRect.height + 1, "attachment", "click");
+
+    await testClick("attachment left", attachmentClientRect.x + 1, centerY, "attachment", "click");
+    await testClick("attachment right", attachmentClientRect.x + attachmentClientRect.width - 2, centerY, "attachment", "click");
+    await testClick("attachment top", centerX, attachmentClientRect.y + 1, "attachment", "click");
+    await testClick("attachment bottom", centerX, attachmentClientRect.y + attachmentClientRect.height - 2, "attachment", "click");
+
+    testRunner.notifyDone();
+}
+
+testRunner.dumpAsText();
+testRunner.waitUntilDone();
+addEventListener("load", runTest);
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

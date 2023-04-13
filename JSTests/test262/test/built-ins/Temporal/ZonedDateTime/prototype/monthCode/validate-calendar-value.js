@@ -8,8 +8,13 @@ features: [Temporal]
 ---*/
 
 const badResults = [
-  [undefined, RangeError],
+  [undefined, TypeError],
   [Symbol("foo"), TypeError],
+  [null, TypeError],
+  [true, TypeError],
+  [false, TypeError],
+  [7.1, TypeError],
+  [{toString() { return "M01"; }}, TypeError],
 ];
 
 badResults.forEach(([result, error]) => {
@@ -19,24 +24,5 @@ badResults.forEach(([result, error]) => {
     }
   }("iso8601");
   const instance = new Temporal.ZonedDateTime(1_000_000_000_000_000_000n, "UTC", calendar);
-  assert.throws(error, () => instance.monthCode, `${typeof result} not converted to string`);
-});
-
-const convertedResults = [
-  [null, "null"],
-  [true, "true"],
-  [false, "false"],
-  [7.1, "7.1"],
-  ["M01", "M01"],
-  [{toString() { return "M01"; }}, "M01"],
-];
-
-convertedResults.forEach(([result, convertedResult]) => {
-  const calendar = new class extends Temporal.Calendar {
-    monthCode() {
-      return result;
-    }
-  }("iso8601");
-  const instance = new Temporal.ZonedDateTime(1_000_000_000_000_000_000n, "UTC", calendar);
-  assert.sameValue(instance.monthCode, convertedResult, `${typeof result} converted to string ${convertedResult}`);
+  assert.throws(error, () => instance.monthCode, `${typeof result} ${String(result)} not converted to string`);
 });

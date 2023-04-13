@@ -142,7 +142,7 @@ function test()
 
             InspectorTest.log("Requesting to show grid overlay for invalid nodeId -1");
             await InspectorTest.expectException(async () => {
-                await DOMAgent.showGridOverlay(-1, WI.Color.fromString("magenta").toProtocol());
+                await DOMAgent.showGridOverlay(-1, { gridColor: WI.Color.fromString("magenta").toProtocol() });
             });
 
         await checkGridOverlayCount(0);
@@ -162,6 +162,7 @@ function test()
             display: grid;
             grid-gap: 10px;
             grid-template-columns: 100px 100px 100px;
+            grid-template-rows: repeat(2, 10px) repeat(auto-fit, 50px);
             background-color: white;
             color: gray;
         }

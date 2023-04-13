@@ -26,8 +26,8 @@
 #include "config.h"
 #include "PluginInfoProvider.h"
 
-#include "Frame.h"
 #include "FrameLoader.h"
+#include "LocalFrame.h"
 #include "Page.h"
 #include "SubframeLoader.h"
 
@@ -48,7 +48,7 @@ void PluginInfoProvider::refresh(bool reloadPages)
 {
     refreshPlugins();
 
-    Vector<Ref<Frame>> framesNeedingReload;
+    Vector<Ref<LocalFrame>> framesNeedingReload;
 
     for (auto& page : m_pages) {
         page.clearPluginData();
@@ -56,12 +56,14 @@ void PluginInfoProvider::refresh(bool reloadPages)
         if (!reloadPages)
             continue;
 
-        for (AbstractFrame* frame = &page.mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        for (Frame* frame = &page.mainFrame(); frame; frame = frame->tree().traverseNext()) {
             auto* localFrame = dynamicDowncast<LocalFrame>(frame);
             if (!localFrame)
                 continue;
-            if (localFrame->loader().subframeLoader().containsPlugins())
-                framesNeedingReload.append(page.mainFrame());
+            if (localFrame->loader().subframeLoader().containsPlugins()) {
+                if (auto* localMainFrame = dynamicDowncast<LocalFrame>(page.mainFrame()))
+                    framesNeedingReload.append(*localMainFrame);
+            }
         }
     }
 

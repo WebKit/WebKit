@@ -32,13 +32,14 @@
 #include "EventLoop.h"
 #include "EventNames.h"
 #include "ExtendableEvent.h"
-#include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "JSDOMPromiseDeferred.h"
+#include "LocalFrame.h"
 #include "NotificationEvent.h"
 #include "PushEvent.h"
 #include "SWContextManager.h"
+#include "SWServer.h"
 #include "ServiceWorker.h"
 #include "ServiceWorkerClient.h"
 #include "ServiceWorkerClients.h"
@@ -87,6 +88,7 @@ void ServiceWorkerGlobalScope::dispatchPushEvent(PushEvent& pushEvent)
 {
     ASSERT(!m_pushEvent);
     m_pushEvent = &pushEvent;
+    m_lastPushEventTime = MonotonicTime::now();
     dispatchEvent(pushEvent);
     m_pushEvent = nullptr;
 }
@@ -102,8 +104,10 @@ void ServiceWorkerGlobalScope::notifyServiceWorkerPageOfCreationIfNecessary()
 
     Vector<Ref<DOMWrapperWorld>> worlds;
     static_cast<JSVMClientData*>(vm().clientData)->getAllWorlds(worlds);
-    for (auto& world : worlds)
-        serviceWorkerPage->mainFrame().loader().client().dispatchServiceWorkerGlobalObjectAvailable(world);
+    if (auto* localMainFrame = dynamicDowncast<LocalFrame>(serviceWorkerPage->mainFrame())) {
+        for (auto& world : worlds)
+            localMainFrame->loader().client().dispatchServiceWorkerGlobalObjectAvailable(world);
+    }
 }
 
 Page* ServiceWorkerGlobalScope::serviceWorkerPage()
@@ -214,6 +218,22 @@ void ServiceWorkerGlobalScope::recordUserGesture()
 {
     m_isProcessingUserGesture = true;
     m_userGestureTimer.startOneShot(userGestureLifetime);
+}
+
+bool ServiceWorkerGlobalScope::didFirePushEventRecently() const
+{
+    return MonotonicTime::now() <= m_lastPushEventTime + SWServer::defaultTerminationDelay;
+}
+
+void ServiceWorkerGlobalScope::addConsoleMessage(MessageSource source, MessageLevel level, const String& message, unsigned long requestIdentifier)
+{
+    if (m_consoleMessageReportingEnabled) {
+        callOnMainThread([threadIdentifier = thread().identifier(), source, level, message = message.isolatedCopy(), requestIdentifier] {
+            if (auto* connection = SWContextManager::singleton().connection())
+                connection->reportConsoleMessage(threadIdentifier, source, level, message, requestIdentifier);
+        });
+    }
+    WorkerGlobalScope::addConsoleMessage(source, level, message, requestIdentifier);
 }
 
 } // namespace WebCore

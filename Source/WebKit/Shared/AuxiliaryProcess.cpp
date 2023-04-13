@@ -36,6 +36,7 @@
 #include <pal/SessionID.h>
 #include <wtf/LogInitialization.h>
 #include <wtf/SetForScope.h>
+#include <wtf/WTFProcess.h>
 
 #if !OS(WINDOWS)
 #include <unistd.h>
@@ -67,7 +68,7 @@ void AuxiliaryProcess::didClose(IPC::Connection&)
 #if PLATFORM(GTK) || PLATFORM(WPE)
     stopRunLoop();
 #else
-    _exit(EXIT_SUCCESS);
+    terminateProcess(EXIT_SUCCESS);
 #endif
 }
 

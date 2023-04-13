@@ -32,18 +32,20 @@
 #include "CommonVM.h"
 #include "ContainerNodeAlgorithms.h"
 #include "Editor.h"
+#include "ElementChildIteratorInlines.h"
 #include "ElementRareData.h"
+#include "ElementTraversal.h"
 #include "EventNames.h"
 #include "FloatRect.h"
-#include "FrameView.h"
 #include "GenericCachedHTMLCollection.h"
 #include "HTMLFormControlsCollection.h"
 #include "HTMLOptionsCollection.h"
 #include "HTMLSlotElement.h"
 #include "HTMLTableRowsCollection.h"
 #include "InspectorInstrumentation.h"
-#include "JSNode.h"
+#include "JSNodeCustom.h"
 #include "LabelsNodeList.h"
+#include "LocalFrameView.h"
 #include "MutationEvent.h"
 #include "NameNodeList.h"
 #include "NodeRareData.h"
@@ -94,7 +96,9 @@ ALWAYS_INLINE auto ContainerNode::removeAllChildrenWithScriptAssertion(ChildChan
     if (UNLIKELY(isDocumentFragmentForInnerOuterHTML())) {
         ScriptDisallowedScope::InMainThread scriptDisallowedScope;
         RELEASE_ASSERT(!connectedSubframeCount() && !hasRareData() && !wrapper());
+#if !DUMP_NODE_STATISTICS
         ASSERT(!weakPtrFactory().isInitialized());
+#endif
         bool hadElementChild = false;
         while (RefPtr<Node> child = m_firstChild) {
             hadElementChild |= is<Element>(*child);
@@ -385,9 +389,6 @@ static inline bool isChildTypeAllowed(ContainerNode& newParent, Node& child)
 
 static bool containsIncludingHostElements(const Node& possibleAncestor, const Node& node)
 {
-    if (LIKELY(!node.isInShadowTree() && !node.document().templateDocumentHost()))
-        return possibleAncestor.contains(node);
-
     const Node* currentNode = &node;
     do {
         if (currentNode == &possibleAncestor)
@@ -405,7 +406,7 @@ static bool containsIncludingHostElements(const Node& possibleAncestor, const No
     return false;
 }
 
-enum class ShouldValidateChildParent { No, Yes };
+enum class ShouldValidateChildParent : bool { No, Yes };
 static inline ExceptionOr<void> checkAcceptChild(ContainerNode& newParent, Node& newChild, const Node* refChild, Document::AcceptChildOperation operation, ShouldValidateChildParent shouldValidateChildParent)
 {
     if (containsIncludingHostElements(newChild, newParent))
@@ -663,7 +664,8 @@ ExceptionOr<void> ContainerNode::removeChild(Node& oldChild)
     // If it is, it can be deleted as a side effect of sending mutation events.
     ASSERT(refCount() || parentOrShadowHostNode());
 
-    Ref<ContainerNode> protectedThis(*this);
+    Ref protectedThis { *this };
+    Ref protectedOldChild { oldChild };
 
     // NotFoundError: Raised if oldChild is not a child of this node.
     if (oldChild.parentNode() != this)
@@ -674,6 +676,14 @@ ExceptionOr<void> ContainerNode::removeChild(Node& oldChild)
 
     rebuildSVGExtensionsElementsIfNecessary();
     dispatchSubtreeModifiedEvent();
+
+    auto* element = dynamicDowncast<Element>(oldChild);
+    if (element && (element->lastRememberedLogicalWidth() || element->lastRememberedLogicalHeight())) {
+        // The disconnected element could be unobserved because of other properties, here we need to make sure it is observed,
+        // so that deliver could be triggered and it would clear lastRememberedSize.
+        document().observeForContainIntrinsicSize(*element);
+        document().resetObservationSizeForContainIntrinsicSize(*element);
+    }
 
     return { };
 }

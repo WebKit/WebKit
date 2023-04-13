@@ -1,0 +1,39 @@
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="../resources/common.js"></script>
+</head>
+<body>
+<br>
+<form action="" id="form">
+<input name="searchName" id="searchBox" type="search" results="10" value="searchValue"><br>
+<input type="submit" value="search">
+</form>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+window.onload = function() {
+    if (window.location.href.indexOf('searchName') == -1) {
+        document.getElementById('form').submit();
+        return;
+    }
+
+    var input = document.getElementById('searchBox');
+    document.getElementById('searchBox').value = 'newValue';
+    var position = searchCancelButtonPosition(input);
+    rect = input.getBoundingClientRect();
+    eventSender.mouseMoveTo(position.x, position.y);
+    eventSender.mouseDown();
+    eventSender.mouseUp()
+
+    if (window.internals) {
+        recentSearches = internals.recentSearches(input);
+        shouldBe('recentSearches.length', '1');
+        shouldBeEqualToString('recentSearches[0]', 'searchValue');
+    }
+    testRunner.notifyDone(); 
+}
+</script>
+</body>
+</html>

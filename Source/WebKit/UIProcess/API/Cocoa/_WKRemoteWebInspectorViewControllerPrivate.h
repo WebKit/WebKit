@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "_WKRemoteWebInspectorViewController.h"
+#import <WebKit/_WKRemoteWebInspectorViewController.h>
 
 #if !TARGET_OS_IPHONE
 

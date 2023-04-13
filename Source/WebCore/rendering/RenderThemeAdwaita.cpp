@@ -26,6 +26,8 @@
 #include "config.h"
 #include "RenderThemeAdwaita.h"
 
+#if USE(THEME_ADWAITA)
+
 #include "Color.h"
 #include "FloatRoundedRect.h"
 #include "GraphicsContext.h"
@@ -709,3 +711,5 @@ void RenderThemeAdwaita::setAccentColor(const Color& color)
 }
 
 } // namespace WebCore
+
+#endif // USE(THEME_ADWAITA)

@@ -63,6 +63,8 @@ private:
 
     Ref<PresentationContext> createPresentationContext(const PresentationContextDescriptor&) final;
 
+    Ref<CompositorIntegration> createCompositorIntegration() final;
+
     WGPUInstance m_backing { nullptr };
     Ref<ConvertToBackingContext> m_convertToBackingContext;
 };

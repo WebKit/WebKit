@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,15 +35,7 @@
 
 OBJC_CLASS AVPlayerLayer;
 
-#if PLATFORM(COCOA)
 typedef struct CGContext *CGContextRef;
-#endif
-
-namespace WTF {
-#if HAVE(IOSURFACE)
-class MachSendRight;
-#endif
-}
 
 namespace WebCore {
 
@@ -52,18 +44,22 @@ class PlatformCALayer;
 class PlatformCAAnimation;
 class PlatformCALayerClient;
 
+struct PlatformCALayerDelegatedContents;
+struct PlatformCALayerDelegatedContentsFinishedEvent;
+struct PlatformCALayerInProcessDelegatedContents;
+struct PlatformCALayerInProcessDelegatedContentsFinishedEvent;
+
 typedef Vector<RefPtr<PlatformCALayer>> PlatformCALayerList;
 
-#if HAVE(IOSURFACE)
-class IOSurface;
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
+class AcceleratedEffect;
+struct AcceleratedEffectValues;
 #endif
 
+
+
 class WEBCORE_EXPORT PlatformCALayer : public ThreadSafeRefCounted<PlatformCALayer, WTF::DestructionThread::Main> {
-#if PLATFORM(COCOA)
     friend class PlatformCALayerCocoa;
-#elif PLATFORM(WIN)
-    friend class PlatformCALayerWin;
-#endif
 public:
     static CFTimeInterval currentTimeToMediaTime(MonotonicTime);
 
@@ -88,6 +84,7 @@ public:
         LayerTypeModelLayer,
 #endif
         LayerTypeCustom,
+        LayerTypeHost,
     };
     enum FilterType { Linear, Nearest, Trilinear };
 
@@ -95,11 +92,16 @@ public:
 
     virtual ~PlatformCALayer();
 
-    GraphicsLayer::PlatformLayerID layerID() const { return m_layerID; }
+    PlatformLayerIdentifier layerID() const { return m_layerID; }
 
-    virtual bool isPlatformCALayerCocoa() const { return false; }
-    virtual bool isPlatformCALayerRemote() const { return false; }
-    virtual bool isPlatformCALayerRemoteCustom() const { return false; }
+    enum class Type : uint8_t {
+        Cocoa,
+        Remote,
+        RemoteCustom,
+        RemoteHost,
+        RemoteModel
+    };
+    virtual Type type() const = 0;
 
     // This function passes the layer as a void* rather than a PlatformLayer because PlatformLayer
     // is defined differently for Obj C and C++. This allows callers from both languages.
@@ -145,6 +147,11 @@ public:
     virtual void addAnimationForKey(const String& key, PlatformCAAnimation&) = 0;
     virtual void removeAnimationForKey(const String& key) = 0;
     virtual RefPtr<PlatformCAAnimation> animationForKey(const String& key) = 0;
+
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
+    virtual void clearAcceleratedEffectsAndBaseValues();
+    virtual void setAcceleratedEffectsAndBaseValues(const AcceleratedEffects&, AcceleratedEffectValues&);
+#endif
 
     virtual void setMask(PlatformCALayer*) = 0;
 
@@ -196,10 +203,12 @@ public:
     virtual void setContents(CFTypeRef) = 0;
     virtual void clearContents();
 
-#if HAVE(IOSURFACE)
-    virtual void setContents(const WebCore::IOSurface&) = 0;
-    virtual void setContents(const WTF::MachSendRight&) = 0;
-#endif
+    // The subclass will override one variant of both setDelegatedContentsFinishedEvent, setDelegatedContents.
+
+    virtual void setDelegatedContentsFinishedEvent(const PlatformCALayerDelegatedContentsFinishedEvent&);
+    virtual void setDelegatedContents(const PlatformCALayerDelegatedContents&);
+    virtual void setDelegatedContentsFinishedEvent(const PlatformCALayerInProcessDelegatedContentsFinishedEvent&);
+    virtual void setDelegatedContents(const PlatformCALayerInProcessDelegatedContents&);
 
     virtual void setContentsRect(const FloatRect&) = 0;
 
@@ -282,13 +291,6 @@ public:
     
     virtual unsigned backingStoreBytesPerPixel() const { return 4; }
 
-#if PLATFORM(WIN)
-    virtual PlatformCALayer* rootLayer() const = 0;
-    virtual void setNeedsLayout() = 0;
-    virtual void setNeedsCommit() = 0;
-    virtual String layerTreeAsString() const = 0;
-#endif // PLATFORM(WIN)
-
 #if PLATFORM(IOS_FAMILY)
     bool isWebLayer();
     void setBoundsOnMainThread(CGRect);
@@ -299,16 +301,10 @@ public:
     virtual Ref<PlatformCALayer> createCompatibleLayer(LayerType, PlatformCALayerClient*) const = 0;
     Ref<PlatformCALayer> createCompatibleLayerOrTakeFromPool(LayerType, PlatformCALayerClient*, IntSize);
 
-#if PLATFORM(COCOA)
     virtual void enumerateRectsBeingDrawn(GraphicsContext&, void (^block)(FloatRect)) = 0;
-#endif
 
     static const unsigned webLayerMaxRectsToPaint = 5;
-#if COMPILER(MSVC)
-    static const float webLayerWastedSpaceThreshold;
-#else
     constexpr static const float webLayerWastedSpaceThreshold = 0.75f;
-#endif
 
     typedef Vector<FloatRect, webLayerMaxRectsToPaint> RepaintRectList;
         
@@ -328,7 +324,7 @@ protected:
     virtual LayerPool& layerPool();
 
     const LayerType m_layerType;
-    const GraphicsLayer::PlatformLayerID m_layerID;
+    const PlatformLayerIdentifier m_layerID;
     RetainPtr<PlatformLayer> m_layer;
     PlatformCALayerClient* m_owner;
 };
@@ -373,7 +369,8 @@ template<> struct EnumTraits<WebCore::PlatformCALayer::LayerType> {
 #if ENABLE(MODEL_ELEMENT)
         WebCore::PlatformCALayer::LayerType::LayerTypeModelLayer,
 #endif
-        WebCore::PlatformCALayer::LayerType::LayerTypeCustom
+        WebCore::PlatformCALayer::LayerType::LayerTypeCustom,
+        WebCore::PlatformCALayer::LayerType::LayerTypeHost
     >;
 };
 

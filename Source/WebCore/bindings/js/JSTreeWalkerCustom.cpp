@@ -21,7 +21,7 @@
 #include "JSTreeWalker.h"
 
 #include "Node.h"
-#include "WebCoreOpaqueRoot.h"
+#include "WebCoreOpaqueRootInlines.h"
 #include <JavaScriptCore/SlotVisitorInlines.h>
 
 namespace WebCore {

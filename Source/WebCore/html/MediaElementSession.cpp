@@ -34,14 +34,14 @@
 #include "DocumentInlines.h"
 #include "DocumentLoader.h"
 #include "ElementInlines.h"
-#include "Frame.h"
-#include "FrameView.h"
 #include "FullscreenManager.h"
 #include "HTMLAudioElement.h"
 #include "HTMLMediaElement.h"
 #include "HTMLNames.h"
 #include "HTMLVideoElement.h"
 #include "HitTestResult.h"
+#include "LocalFrame.h"
+#include "LocalFrameView.h"
 #include "Logging.h"
 #include "MediaUsageInfo.h"
 #include "NowPlayingInfo.h"
@@ -992,7 +992,11 @@ static bool isElementMainContentForPurposesOfAutoplay(const HTMLMediaElement& el
     if (!document.frame() || !document.frame()->isMainFrame())
         return false;
 
-    auto& mainFrame = document.frame()->mainFrame();
+    auto* localFrame = dynamicDowncast<LocalFrame>(document.frame()->mainFrame());
+    if (!localFrame)
+        return false;
+
+    auto& mainFrame = *localFrame;
     if (!mainFrame.view() || !mainFrame.view()->renderView())
         return false;
 
@@ -1028,7 +1032,11 @@ static bool isElementRectMostlyInMainFrame(const HTMLMediaElement& element)
     if (!documentFrame)
         return false;
 
-    auto mainFrameView = documentFrame->mainFrame().view();
+    auto* localFrame = dynamicDowncast<LocalFrame>(documentFrame->mainFrame());
+    if (!localFrame)
+        return false;
+
+    auto mainFrameView = localFrame->view();
     if (!mainFrameView)
         return false;
 
@@ -1054,10 +1062,14 @@ static bool isElementLargeRelativeToMainFrame(const HTMLMediaElement& element)
     if (!documentFrame)
         return false;
 
-    if (!documentFrame->mainFrame().view())
+    auto* localFrame = dynamicDowncast<LocalFrame>(documentFrame->mainFrame());
+    if (!localFrame)
         return false;
 
-    auto& mainFrameView = *documentFrame->mainFrame().view();
+    if (!localFrame->view())
+        return false;
+
+    auto& mainFrameView = *localFrame->view();
     auto maxVisibleClientWidth = std::min(renderer->clientWidth().toInt(), mainFrameView.visibleWidth());
     auto maxVisibleClientHeight = std::min(renderer->clientHeight().toInt(), mainFrameView.visibleHeight());
 
@@ -1122,7 +1134,8 @@ bool MediaElementSession::allowsPlaybackControlsForAutoplayingAudio() const
 static bool isDocumentPlayingSeveralMediaStreams(Document& document)
 {
     // We restrict to capturing document for now, until we have a good way to state to the UIProcess application that audio rendering is muted from here.
-    return document.activeMediaElementsWithMediaStreamCount() > 1 && MediaProducer::isCapturing(document.mediaState());
+    auto* page = document.page();
+    return document.activeMediaElementsWithMediaStreamCount() > 1 && page && MediaProducer::isCapturing(page->mediaState());
 }
 
 static bool processRemoteControlCommandIfPlayingMediaStreams(Document& document, PlatformMediaSession::RemoteControlCommandType commandType)

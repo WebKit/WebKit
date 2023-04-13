@@ -80,7 +80,7 @@ public:
     bool userGestureRequired() const;
     bool shouldForceControlsDisplay() const;
 
-    enum class ForceUpdate { Yes, No };
+    enum class ForceUpdate : bool { No, Yes };
     void updateCaptionDisplaySizes(ForceUpdate = ForceUpdate::No);
     void updateTextTrackRepresentationImageIfNeeded();
     void enteredFullscreen();

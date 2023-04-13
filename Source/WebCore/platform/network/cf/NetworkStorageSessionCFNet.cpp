@@ -26,16 +26,13 @@
 #include "config.h"
 #include "NetworkStorageSession.h"
 
+#include "PublicSuffix.h"
+#include "ResourceRequest.h"
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/ProcessID.h>
 #include <wtf/ProcessPrivilege.h>
 #include <wtf/text/StringConcatenateNumbers.h>
-
-#if PLATFORM(COCOA)
-#include "PublicSuffix.h"
-#include "ResourceRequest.h"
-#endif
 
 namespace WebCore {
 
@@ -108,12 +105,8 @@ RetainPtr<CFHTTPCookieStorageRef> NetworkStorageSession::cookieStorage() const
     if (m_platformSession)
         return adoptCF(_CFURLStorageSessionCopyCookieStorage(kCFAllocatorDefault, m_platformSession.get()));
 
-#if USE(CFURLCONNECTION)
-    return _CFHTTPCookieStorageGetDefault(kCFAllocatorDefault);
-#else
     // When using NSURLConnection, we also use its shared cookie storage.
     return nullptr;
-#endif
 }
 
 } // namespace WebCore

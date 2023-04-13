@@ -25,10 +25,5 @@
 "text-transform" has aliases:
  - "-epub-text-transform"
 "text-transform" is inherited
-"text-transform" has keyword values:
- - "none"
- - "capitalize"
- - "uppercase"
- - "lowercase"
 
 

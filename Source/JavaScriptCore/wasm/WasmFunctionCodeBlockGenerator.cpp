@@ -30,6 +30,8 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "InstructionStream.h"
+#include "VirtualRegister.h"
+#include <wtf/FixedVector.h>
 
 namespace JSC { namespace Wasm {
 

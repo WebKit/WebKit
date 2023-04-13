@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-enum class PasteboardItemPresentationStyle {
+enum class PasteboardItemPresentationStyle : uint8_t {
     Unspecified,
     Inline,
     Attachment
@@ -39,29 +39,7 @@ enum class PasteboardItemPresentationStyle {
 struct PresentationSize {
     std::optional<double> width;
     std::optional<double> height;
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<PresentationSize> decode(Decoder&);
 };
-
-template<class Encoder>
-void PresentationSize::encode(Encoder& encoder) const
-{
-    encoder << width << height;
-}
-
-template<class Decoder>
-std::optional<PresentationSize> PresentationSize::decode(Decoder& decoder)
-{
-    PresentationSize result;
-    if (!decoder.decode(result.width))
-        return std::nullopt;
-
-    if (!decoder.decode(result.height))
-        return std::nullopt;
-
-    return result;
-}
 
 struct PasteboardItemInfo {
     Vector<String> pathsForFileUpload;
@@ -117,63 +95,6 @@ struct PasteboardItemInfo {
 
         return pathsForFileUpload.first();
     }
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<PasteboardItemInfo> decode(Decoder&);
 };
 
-template<class Encoder>
-void PasteboardItemInfo::encode(Encoder& encoder) const
-{
-    encoder << pathsForFileUpload << platformTypesForFileUpload << platformTypesByFidelity << suggestedFileName << preferredPresentationSize << isNonTextType << containsFileURLAndFileUploadContent << webSafeTypesByFidelity;
-    encoder << preferredPresentationStyle;
 }
-
-template<class Decoder>
-std::optional<PasteboardItemInfo> PasteboardItemInfo::decode(Decoder& decoder)
-{
-    PasteboardItemInfo result;
-    if (!decoder.decode(result.pathsForFileUpload))
-        return std::nullopt;
-
-    if (!decoder.decode(result.platformTypesForFileUpload))
-        return std::nullopt;
-
-    if (!decoder.decode(result.platformTypesByFidelity))
-        return std::nullopt;
-
-    if (!decoder.decode(result.suggestedFileName))
-        return std::nullopt;
-
-    if (!decoder.decode(result.preferredPresentationSize))
-        return std::nullopt;
-
-    if (!decoder.decode(result.isNonTextType))
-        return std::nullopt;
-
-    if (!decoder.decode(result.containsFileURLAndFileUploadContent))
-        return std::nullopt;
-
-    if (!decoder.decode(result.webSafeTypesByFidelity))
-        return std::nullopt;
-
-    if (!decoder.decode(result.preferredPresentationStyle))
-        return std::nullopt;
-
-    return result;
-}
-
-}
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::PasteboardItemPresentationStyle> {
-    using values = EnumValues<
-        WebCore::PasteboardItemPresentationStyle,
-        WebCore::PasteboardItemPresentationStyle::Unspecified,
-        WebCore::PasteboardItemPresentationStyle::Inline,
-        WebCore::PasteboardItemPresentationStyle::Attachment
-    >;
-};
-
-} // namespace WTF

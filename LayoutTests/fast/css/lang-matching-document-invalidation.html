@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<script src="../../resources/js-test.js"></script>
+<body>
+<script>
+var container, child, otherFrame;
+var testNumber = 0;
+
+description("This tests invalidation of :lang selectors when the document element's lang attribute changes and a descendant element is using the 'explicit language matching document element language' optimization");
+
+function matchedLang(element) {
+    for (let lang of ["en", "de", "zh"]) {
+        if (element.matches(`:lang(${lang})`))
+            return lang;
+    }
+    return "";
+}
+
+function shouldMatchLang(elementName, lang) {
+    shouldBe(`matchedLang(${elementName})`, `"${lang}"`);
+}
+
+function test(f) {
+    document.documentElement.lang = "en";
+    f();
+    container = null;
+    child = null;
+    debug("----");
+}
+
+function testWithOtherDocument(f) {
+    test(function() {
+        otherFrame = document.createElement("iframe");
+        otherFrame.srcdoc = "<!DOCTYPE html><html lang=en><body>";
+        document.body.append(otherFrame);
+        f();
+        otherFrame.remove();
+        otherFrame = null;
+    });
+}
+
+function makeContainer() {
+    container = document.createElement("div");
+    return container;
+}
+
+function makeChild() {
+    child = document.createElement("div");
+    return child;
+}
+
+function makeContainerWithChild() {
+    container = document.createElement("div");
+    child = document.createElement("div");
+    container.append(child);
+    return container;
+}
+
+test(function() {
+    document.body.append(makeContainerWithChild());
+    shouldMatchLang("container", "en");
+    shouldMatchLang("child", "en");
+    container.remove();
+});
+
+test(function() {
+    document.body.append(makeContainerWithChild());
+    document.documentElement.lang = "de";
+    shouldMatchLang("container", "de");
+    shouldMatchLang("child", "de");
+    container.remove();
+});
+
+test(function() {
+    document.body.append(makeContainerWithChild());
+    container.lang = "en";
+    shouldMatchLang("container", "en");
+    shouldMatchLang("child", "en");
+    container.remove();
+});
+
+test(function() {
+    document.body.append(makeContainerWithChild());
+    container.lang = "en";
+    document.documentElement.lang = "de";
+    shouldMatchLang("container", "en");
+    shouldMatchLang("child", "en");
+    container.remove();
+});
+
+test(function() {
+    document.body.append(makeContainerWithChild());
+    container.lang = "en";
+    document.documentElement.lang = "de";
+    container.lang = "de";
+    shouldMatchLang("container", "de");
+    shouldMatchLang("child", "de");
+    container.remove();
+});
+
+test(function() {
+    document.body.append(makeContainerWithChild());
+    container.lang = "en";
+    document.documentElement.lang = "de";
+    container.lang = "de";
+    document.documentElement.lang = "zh";
+    shouldMatchLang("container", "de");
+    shouldMatchLang("child", "de");
+    container.remove();
+});
+
+test(function() {
+    document.body.append(makeContainerWithChild());
+    container.lang = "en";
+    document.documentElement.lang = "de";
+    container.removeAttribute("lang");
+    shouldMatchLang("container", "de");
+    shouldMatchLang("child", "de");
+    container.remove();
+});
+
+test(function() {
+    document.body.append(makeContainerWithChild());
+    container.lang = "en";
+    container.remove();
+    shouldMatchLang("container", "en");
+    shouldMatchLang("child", "en");
+});
+
+test(function() {
+    document.body.append(makeContainerWithChild());
+    container.lang = "de";
+    container.remove();
+    shouldMatchLang("container", "de");
+    shouldMatchLang("child", "de");
+});
+
+test(function() {
+    document.body.append(makeContainer());
+    container.lang = "en";
+    container.append(makeChild());
+    shouldMatchLang("child", "en");
+    container.remove();
+});
+
+test(function() {
+    document.body.append(makeContainer());
+    container.lang = "de";
+    makeChild();
+    child.lang = "en";
+    container.append(child);
+    shouldMatchLang("child", "en");
+    container.remove();
+});
+
+testWithOtherDocument(function() {
+    document.body.append(makeContainerWithChild());
+    container.lang = "en";
+    otherFrame.contentDocument.body.append(container);
+    shouldMatchLang("container", "en");
+    shouldMatchLang("child", "en");
+});
+
+testWithOtherDocument(function() {
+    document.body.append(makeContainerWithChild());
+    container.lang = "de";
+    otherFrame.contentDocument.body.append(container);
+    shouldMatchLang("container", "de");
+    shouldMatchLang("child", "de");
+});
+
+testWithOtherDocument(function() {
+    document.body.append(makeContainerWithChild());
+    otherFrame.contentDocument.body.append(container);
+    otherFrame.contentDocument.documentElement.lang = "de";
+    shouldMatchLang("container", "de");
+    shouldMatchLang("child", "de");
+});
+
+testWithOtherDocument(function() {
+    document.body.append(makeContainerWithChild());
+    container.lang = "en";
+    otherFrame.contentDocument.body.append(container);
+    otherFrame.contentDocument.documentElement.lang = "de";
+    shouldMatchLang("container", "en");
+    shouldMatchLang("child", "en");
+});
+
+test(function() {
+    makeContainerWithChild();
+    shouldMatchLang("container", "");
+    shouldMatchLang("child", "");
+});
+
+test(function() {
+    makeContainerWithChild();
+    container.lang = "en";
+    shouldMatchLang("container", "en");
+    shouldMatchLang("child", "en");
+});
+
+testWithOtherDocument(function() {
+    otherFrame.contentDocument.documentElement.lang = "de";
+    makeContainerWithChild();
+    container.lang = "en";
+    otherFrame.contentDocument.adoptNode(container);
+    shouldMatchLang("container", "en");
+    shouldMatchLang("child", "en");
+});
+
+test(function() {
+    makeContainer();
+    container.lang = "de";
+    document.documentElement.append(container);
+    container.removeAttribute("lang");
+    shouldMatchLang("container", "en");
+});
+
+testWithOtherDocument(function() {
+    container = otherFrame.contentDocument.documentElement;
+    container.removeAttribute("lang");
+    container.remove();
+    shouldMatchLang("container", "");
+});
+
+testWithOtherDocument(function() {
+    otherFrame.contentDocument.documentElement.lang = "de";
+    makeContainerWithChild();
+    otherFrame.contentDocument.body.append(container);
+    container.lang = "de";
+    otherFrame.contentDocument.documentElement.remove();
+    let newRoot = document.createElement("html");
+    otherFrame.contentDocument.append(newRoot);
+    newRoot.lang = "zh";
+    shouldMatchLang("container", "de");
+    shouldMatchLang("child", "de");
+});
+
+testWithOtherDocument(function() {
+    otherFrame.contentDocument.documentElement.lang = "de";
+    otherFrame.contentDocument.documentElement.remove();
+    makeContainerWithChild();
+    container.lang = "zh";
+    otherFrame.contentDocument.append(container);
+    shouldMatchLang("container", "zh");
+    shouldMatchLang("child", "zh");
+});
+
+testWithOtherDocument(function() {
+    container = otherFrame.contentDocument.documentElement;
+    container.lang = "de";
+    container.remove();
+    shouldMatchLang("container", "de");
+});
+</script>

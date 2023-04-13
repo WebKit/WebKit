@@ -74,24 +74,24 @@ public:
     void open(Connection::Client&, SerialFunctionDispatcher& = RunLoop::current());
     void invalidate();
 
-    template<typename T, typename U> bool send(T&& message, ObjectIdentifier<U> destinationID, Timeout);
+    template<typename T, typename U, typename V> bool send(T&& message, ObjectIdentifierGeneric<U, V> destinationID, Timeout);
 
     using AsyncReplyID = Connection::AsyncReplyID;
-    template<typename T, typename C, typename U>
-    AsyncReplyID sendWithAsyncReply(T&& message, C&& completionHandler, ObjectIdentifier<U> destinationID, Timeout);
+    template<typename T, typename C, typename U, typename V>
+    AsyncReplyID sendWithAsyncReply(T&& message, C&& completionHandler, ObjectIdentifierGeneric<U, V> destinationID, Timeout);
 
     template<typename T> using SendSyncResult = Connection::SendSyncResult<T>;
-    template<typename T, typename U>
-    SendSyncResult<T> sendSync(T&& message, ObjectIdentifier<U> destinationID, Timeout);
+    template<typename T, typename U, typename V>
+    SendSyncResult<T> sendSync(T&& message, ObjectIdentifierGeneric<U, V> destinationID, Timeout);
 
-    template<typename T, typename U>
-    bool waitForAndDispatchImmediately(ObjectIdentifier<U> destinationID, Timeout, OptionSet<WaitForOption> = { });
+    template<typename T, typename U, typename V>
+    bool waitForAndDispatchImmediately(ObjectIdentifierGeneric<U, V> destinationID, Timeout, OptionSet<WaitForOption> = { });
 
     StreamClientConnectionBuffer& bufferForTesting();
     Connection& connectionForTesting();
 
 private:
-    StreamClientConnection(Ref<Connection>, unsigned bufferSizeLog2);
+    StreamClientConnection(Ref<Connection>, StreamClientConnectionBuffer&&);
 
     template<typename T, typename... AdditionalData>
     bool trySendStream(Span<uint8_t>&, T& message, AdditionalData&&...);
@@ -125,8 +125,8 @@ private:
     friend class WebKit::IPCTestingAPI::JSIPCStreamClientConnection;
 };
 
-template<typename T, typename U>
-bool StreamClientConnection::send(T&& message, ObjectIdentifier<U> destinationID, Timeout timeout)
+template<typename T, typename U, typename V>
+bool StreamClientConnection::send(T&& message, ObjectIdentifierGeneric<U, V> destinationID, Timeout timeout)
 {
     static_assert(!T::isSync, "Message is sync!");
     if (!trySendDestinationIDIfNeeded(destinationID.toUInt64(), timeout))
@@ -144,8 +144,8 @@ bool StreamClientConnection::send(T&& message, ObjectIdentifier<U> destinationID
     return true;
 }
 
-template<typename T, typename C, typename U>
-StreamClientConnection::AsyncReplyID StreamClientConnection::sendWithAsyncReply(T&& message, C&& completionHandler, ObjectIdentifier<U> destinationID, Timeout timeout)
+template<typename T, typename C, typename U, typename V>
+StreamClientConnection::AsyncReplyID StreamClientConnection::sendWithAsyncReply(T&& message, C&& completionHandler, ObjectIdentifierGeneric<U, V> destinationID, Timeout timeout)
 {
     static_assert(!T::isSync, "Message is sync!");
     if (!trySendDestinationIDIfNeeded(destinationID.toUInt64(), timeout))
@@ -193,8 +193,8 @@ bool StreamClientConnection::trySendStream(Span<uint8_t>& span, T& message, Addi
     return false;
 }
 
-template<typename T, typename U>
-StreamClientConnection::SendSyncResult<T> StreamClientConnection::sendSync(T&& message, ObjectIdentifier<U> destinationID, Timeout timeout)
+template<typename T, typename U, typename V>
+StreamClientConnection::SendSyncResult<T> StreamClientConnection::sendSync(T&& message, ObjectIdentifierGeneric<U, V> destinationID, Timeout timeout)
 {
     static_assert(T::isSync, "Message is not sync!");
     if (!trySendDestinationIDIfNeeded(destinationID.toUInt64(), timeout))
@@ -211,8 +211,8 @@ StreamClientConnection::SendSyncResult<T> StreamClientConnection::sendSync(T&& m
     return m_connection->sendSync(WTFMove(message), destinationID.toUInt64(), timeout);
 }
 
-template<typename T, typename U>
-bool StreamClientConnection::waitForAndDispatchImmediately(ObjectIdentifier<U> destinationID, Timeout timeout, OptionSet<WaitForOption> waitForOptions)
+template<typename T, typename U, typename V>
+bool StreamClientConnection::waitForAndDispatchImmediately(ObjectIdentifierGeneric<U, V> destinationID, Timeout timeout, OptionSet<WaitForOption> waitForOptions)
 {
     return m_connection->waitForAndDispatchImmediately<T>(destinationID, timeout, waitForOptions);
 }

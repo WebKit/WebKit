@@ -28,14 +28,15 @@
 
 #include "CanvasRenderingContext.h"
 #include "Document.h"
-#include "Frame.h"
-#include "FrameView.h"
 #include "GraphicsContext.h"
 #include "HTMLCanvasElement.h"
 #include "HTMLNames.h"
 #include "ImageQualityController.h"
+#include "LocalFrame.h"
+#include "LocalFrameView.h"
 #include "Page.h"
 #include "PaintInfo.h"
+#include "RenderLayer.h"
 #include "RenderView.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -94,7 +95,12 @@ void RenderHTMLCanvas::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& pa
     InterpolationQualityMaintainer interpolationMaintainer(context, ImageQualityController::interpolationQualityFromStyle(style()));
 
     canvasElement().setIsSnapshotting(paintInfo.paintBehavior.contains(PaintBehavior::Snapshotting));
-    canvasElement().paint(context, replacedContentRect);
+    CompositeOperator op = CompositeOperator::SourceOver;
+#if ENABLE(CSS_COMPOSITING)
+    if (paintInfo.enclosingSelfPaintingLayer() && paintInfo.enclosingSelfPaintingLayer()->shouldPaintUsingCompositeCopy())
+        op = CompositeOperator::Copy;
+#endif
+    canvasElement().paint(context, replacedContentRect, op);
     canvasElement().setIsSnapshotting(false);
 }
 

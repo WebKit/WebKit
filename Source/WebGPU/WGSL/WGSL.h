@@ -42,17 +42,15 @@ namespace WGSL {
 // Step 1
 //
 
-namespace AST {
 class ShaderModule;
-}
 
 struct SuccessfulCheck {
     SuccessfulCheck() = delete;
     SuccessfulCheck(SuccessfulCheck&&);
-    SuccessfulCheck(Vector<Warning>&&, UniqueRef<AST::ShaderModule>&&);
+    SuccessfulCheck(Vector<Warning>&&, UniqueRef<ShaderModule>&&);
     ~SuccessfulCheck();
     Vector<Warning> warnings;
-    UniqueRef<AST::ShaderModule> ast;
+    UniqueRef<ShaderModule> ast;
 };
 
 struct FailedCheck {
@@ -65,7 +63,11 @@ struct SourceMap {
     // https://sourcemaps.info/spec.html
 };
 
-std::variant<SuccessfulCheck, FailedCheck> staticCheck(const String& wgsl, const std::optional<SourceMap>&);
+struct Configuration {
+    uint32_t maxBuffersPlusVertexBuffersForVertexStage = 8;
+};
+
+std::variant<SuccessfulCheck, FailedCheck> staticCheck(const String& wgsl, const std::optional<SourceMap>&, const Configuration&);
 
 //
 // Step 2
@@ -204,7 +206,7 @@ struct PrepareResult {
 
 // These are not allowed to fail.
 // All failures must have already been caught in check().
-PrepareResult prepare(AST::ShaderModule&, const HashMap<String, PipelineLayout>&);
-PrepareResult prepare(AST::ShaderModule&, const String& entryPointName, const std::optional<PipelineLayout>&);
+PrepareResult prepare(ShaderModule&, const HashMap<String, PipelineLayout>&);
+PrepareResult prepare(ShaderModule&, const String& entryPointName, const std::optional<PipelineLayout>&);
 
 } // namespace WGSL

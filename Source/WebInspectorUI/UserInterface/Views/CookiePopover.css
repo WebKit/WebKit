@@ -45,7 +45,7 @@
     padding-inline-start: 4px;
 }
 
-.popover .cookie-popover-content > table > tr > td > input:matches([type="text"], [type="datetime-local"]) {
+.popover .cookie-popover-content > table > tr > td > input:is([type="text"], [type="datetime-local"]) {
     width: 100%;
     padding: 3px 4px 2px;
     font-family: Menlo, monospace;
@@ -54,7 +54,7 @@
     appearance: none;
 }
 
-.popover .cookie-popover-content > table > tr > td > input:matches([type="text"], [type="datetime-local"]):matches(:invalid, .invalid) {
+.popover .cookie-popover-content > table > tr > td > input:is([type="text"], [type="datetime-local"]):is(:invalid, .invalid) {
     border-color: var(--error-text-color);
 }
 

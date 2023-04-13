@@ -43,13 +43,22 @@ DOMFormData::DOMFormData(ScriptExecutionContext* context, const PAL::TextEncodin
 {
 }
 
-ExceptionOr<Ref<DOMFormData>> DOMFormData::create(ScriptExecutionContext& context, HTMLFormElement* form)
+ExceptionOr<Ref<DOMFormData>> DOMFormData::create(ScriptExecutionContext& context, HTMLFormElement* form, HTMLElement* submitter)
 {
+    // https://xhr.spec.whatwg.org/#dom-formdata
     auto formData = adoptRef(*new DOMFormData(&context));
     if (!form)
         return formData;
-    
-    auto result = form->constructEntryList(nullptr, WTFMove(formData), nullptr);
+
+    RefPtr<HTMLFormControlElement> control;
+    if (submitter) {
+        control = dynamicDowncast<HTMLFormControlElement>(*submitter);
+        if (!control || !control->isSubmitButton())
+            return Exception { TypeError, "The specified element is not a submit button."_s };
+        if (control->form() != form)
+            return Exception { NotFoundError, "The specified element is not owned by this form element."_s };
+    }
+    auto result = form->constructEntryList(control.get(), WTFMove(formData), nullptr);
     
     if (!result)
         return Exception { InvalidStateError, "Already constructing Form entry list."_s };

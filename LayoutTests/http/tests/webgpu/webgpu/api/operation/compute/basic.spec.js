@@ -16,7 +16,7 @@ const kMaxComputeWorkgroupSize = [
   kLimitInfo.maxComputeWorkgroupSizeZ.default,
 ];
 
-g.test('memcpy').fn(async t => {
+g.test('memcpy').fn(t => {
   const data = new Uint32Array([0x01020304]);
 
   const src = t.makeBufferWithContents(data, GPUBufferUsage.COPY_DST | GPUBufferUsage.STORAGE);
@@ -27,23 +27,23 @@ g.test('memcpy').fn(async t => {
   });
 
   const pipeline = t.device.createComputePipeline({
+    layout: 'auto',
     compute: {
       module: t.device.createShaderModule({
         code: `
           struct Data {
-              value : u32
+            value : u32
           };
 
           @group(0) @binding(0) var<storage, read> src : Data;
           @group(0) @binding(1) var<storage, read_write> dst : Data;
 
-          @stage(compute) @workgroup_size(1) fn main() {
+          @compute @workgroup_size(1) fn main() {
             dst.value = src.value;
             return;
           }
         `,
       }),
-
       entryPoint: 'main',
     },
   });
@@ -61,7 +61,7 @@ g.test('memcpy').fn(async t => {
   const pass = encoder.beginComputePass();
   pass.setPipeline(pipeline);
   pass.setBindGroup(0, bg);
-  pass.dispatch(1);
+  pass.dispatchWorkgroups(1);
   pass.end();
   t.device.queue.submit([encoder.finish()]);
 
@@ -88,7 +88,7 @@ g.test('large_dispatch')
       .combine('largeDimension', [0, 1, 2])
       .expand('workgroupSize', p => [1, 2, 8, 32, kMaxComputeWorkgroupSize[p.largeDimension]])
   )
-  .fn(async t => {
+  .fn(t => {
     // The output storage buffer is filled with this value.
     const val = 0x01020304;
     const badVal = 0xbaadf00d;
@@ -108,6 +108,7 @@ g.test('large_dispatch')
     const wgSizes = [1, 1, 1];
     wgSizes[t.params.largeDimension] = t.params.workgroupSize;
     const pipeline = t.device.createComputePipeline({
+      layout: 'auto',
       compute: {
         module: t.device.createShaderModule({
           code: `
@@ -117,7 +118,7 @@ g.test('large_dispatch')
 
             @group(0) @binding(0) var<storage, read_write> dst : OutputBuffer;
 
-            @stage(compute) @workgroup_size(${wgSizes[0]}, ${wgSizes[1]}, ${wgSizes[2]})
+            @compute @workgroup_size(${wgSizes[0]}, ${wgSizes[1]}, ${wgSizes[2]})
             fn main(
               @builtin(global_invocation_id) GlobalInvocationID : vec3<u32>
             ) {
@@ -139,7 +140,6 @@ g.test('large_dispatch')
             }
           `,
         }),
-
         entryPoint: 'main',
       },
     });
@@ -153,7 +153,7 @@ g.test('large_dispatch')
     const pass = encoder.beginComputePass();
     pass.setPipeline(pipeline);
     pass.setBindGroup(0, bg);
-    pass.dispatch(dims[0], dims[1], dims[2]);
+    pass.dispatchWorkgroups(dims[0], dims[1], dims[2]);
     pass.end();
     t.device.queue.submit([encoder.finish()]);
 

@@ -23,7 +23,7 @@
 #include "config.h"
 #include "SVGGradientElement.h"
 
-#include "ElementIterator.h"
+#include "ElementChildIteratorInlines.h"
 #include "RenderSVGResourceLinearGradient.h"
 #include "RenderSVGResourceRadialGradient.h"
 #include "SVGElementTypeHelpers.h"
@@ -49,29 +49,29 @@ SVGGradientElement::SVGGradientElement(const QualifiedName& tagName, Document& d
     });
 }
 
-void SVGGradientElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void SVGGradientElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
+    SVGURIReference::parseAttribute(name, newValue);
+    SVGElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
+
     if (name == SVGNames::gradientUnitsAttr) {
-        auto propertyValue = SVGPropertyTraits<SVGUnitTypes::SVGUnitType>::fromString(value);
+        auto propertyValue = SVGPropertyTraits<SVGUnitTypes::SVGUnitType>::fromString(newValue);
         if (propertyValue > 0)
             m_gradientUnits->setBaseValInternal<SVGUnitTypes::SVGUnitType>(propertyValue);
         return;
     }
 
     if (name == SVGNames::gradientTransformAttr) {
-        m_gradientTransform->baseVal()->parse(value);
+        m_gradientTransform->baseVal()->parse(newValue);
         return;
     }
 
     if (name == SVGNames::spreadMethodAttr) {
-        auto propertyValue = SVGPropertyTraits<SVGSpreadMethodType>::fromString(value);
+        auto propertyValue = SVGPropertyTraits<SVGSpreadMethodType>::fromString(newValue);
         if (propertyValue > 0)
             m_spreadMethod->setBaseValInternal<SVGSpreadMethodType>(propertyValue);
         return;
     }
-
-    SVGElement::parseAttribute(name, value);
-    SVGURIReference::parseAttribute(name, value);
 }
 
 void SVGGradientElement::svgAttributeChanged(const QualifiedName& attrName)

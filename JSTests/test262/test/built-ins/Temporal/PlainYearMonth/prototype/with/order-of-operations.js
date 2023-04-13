@@ -15,7 +15,14 @@ const expected = [
   // CalendarFields
   "get this.calendar.fields",
   "call this.calendar.fields",
-  // PrepareTemporalFields
+  // PrepareTemporalFields on receiver
+  "get this.calendar.month",
+  "call this.calendar.month",
+  "get this.calendar.monthCode",
+  "call this.calendar.monthCode",
+  "get this.calendar.year",
+  "call this.calendar.year",
+  // PrepareTemporalFields on argument
   "get fields.month",
   "get fields.month.valueOf",
   "call fields.month.valueOf",
@@ -25,13 +32,6 @@ const expected = [
   "get fields.year",
   "get fields.year.valueOf",
   "call fields.year.valueOf",
-  // PrepareTemporalFields on receiver
-  "get this.calendar.month",
-  "call this.calendar.month",
-  "get this.calendar.monthCode",
-  "call this.calendar.monthCode",
-  "get this.calendar.year",
-  "call this.calendar.year",
   // CalendarMergeFields
   "get this.calendar.mergeFields",
   "call this.calendar.mergeFields",

@@ -205,7 +205,6 @@ __ZN7WebCore17FrameLoaderClient24isEmptyFrameLoaderClientEv
 -[WebHTMLView(WebHTMLViewFileInternal) _topHTMLView]
 -[WebDataSource(WebInternal) _webView]
 -[WebHTMLView(WebHTMLViewFileInternal) _webView]
--[WebView(WebPrivate) _dashboardBehavior:]
 -[WebDataSource(WebInternal) _documentLoader]
 -[WebDataSource pageTitle]
 __ZNK7WebCore17FrameLoaderClient29shouldAlwaysUsePluginDocumentERKN3WTF6StringE
@@ -288,7 +287,6 @@ __Z4core40WebTextDirectionSubmenuInclusionBehavior
 -[WebPreferences(WebPrivate) showsToolTipOverTruncatedText]
 -[WebPreferences(WebPrivate) developerExtrasEnabled]
 -[WebPreferences(WebPrivate) authorAndUserStylesEnabled]
--[WebPreferences(WebPrivate) applicationChromeModeEnabled]
 -[WebPreferences userStyleSheetEnabled]
 -[WebView(WebPrivate) _needsAdobeFrameReloadingQuirk]
 _WKAppVersionCheckLessThan
@@ -1155,7 +1153,6 @@ _WKHTTPCookiesForURL
 _WKGetPreferredExtensionForMIMEType
 +[WebView(WebPrivate) _decodeData:]
 +[NSPasteboard(WebExtras) _web_setFindPasteboardString:withOwner:]
--[NSString(WebKitExtras) _webkit_fixedCarbonPOSIXPath]
 +[WebCoreStatistics statistics]
 +[WebCache statistics]
 +[WebCoreStatistics javaScriptObjectsCount]
@@ -1285,7 +1282,6 @@ _WKSetHTTPCookieAcceptPolicy
 -[WebView(WebPendingPublic) resetPageZoom:]
 -[WebView(WebPrivate) _scaleWebView:atOrigin:]
 -[WebView(WebPrivate) _setCustomBackingScaleFactor:]
--[WebView(WebPrivate) _setDashboardBehavior:to:]
 -[WebView(WebPrivate) _clearMainFrameName]
 -[WebView groupName]
 +[WebView(WebPrivate) _removeAllUserContentFromGroup:]
@@ -1529,7 +1525,6 @@ __ZN18WebInspectorClient21openInspectorFrontendEPN7WebCore19InspectorControllerE
 -[WebInspectorWindowController initWithInspectedWebView:]
 -[WebInspectorWindowController init]
 -[WebPreferences init]
--[WebPreferences(WebPrivate) setApplicationChromeModeEnabled:]
 -[WebInspectorWindowController inspectorPagePath]
 __ZL21useWebKitWebInspectorv
 -[WebInspectorWindowController webView:decidePolicyForNavigationAction:request:frame:decisionListener:]
@@ -2214,13 +2209,6 @@ __ZN6WebKit27NetscapePluginInstanceProxy13invokeDefaultEjPcjRS1_Rj
 __ZNK7WebCore12ChromeClient39shouldRunModalDialogDuringPageDismissalERKNS0_10DialogTypeERKN3WTF6StringENS_11FrameLoader17PageDismissalTypeE
 -[WebView(WebPrivate) trackedRepaintRects]
 __ZN15WebChromeClient23annotatedRegionsChangedEv
--[WebView(WebPrivate) _dashboardRegions]
--[WebDashboardRegion .cxx_construct]
--[WebDashboardRegion initWithRect:clip:type:]
--[WebView(WebPrivate) _addScrollerDashboardRegions:]
--[WebView(WebPrivate) _addScrollerDashboardRegions:from:]
--[WebView(WebPrivate) _addScrollerDashboardRegionsForFrameView:dashboardRegions:]
--[WebView(WebPrivate) _addControlRect:clip:fromView:toDashboardRegions:]
 __ZN15WebEditorClient26shouldMoveRangeAfterDeleteEPN7WebCore5RangeES2_
 -[WebDefaultEditingDelegate webView:shouldMoveRangeAfterDelete:replacingRange:]
 __ZN15WebEditorClient24textFieldDidBeginEditingEPN7WebCore7ElementE

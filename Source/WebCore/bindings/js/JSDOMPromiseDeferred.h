@@ -34,8 +34,8 @@
 
 namespace WebCore {
 
-class JSDOMWindow;
-enum class RejectAsHandled : uint8_t { No, Yes };
+class JSLocalDOMWindow;
+enum class RejectAsHandled : bool { No, Yes };
 
 class DeferredPromise : public DOMGuarded<JSC::JSPromise> {
 public:

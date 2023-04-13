@@ -26,10 +26,6 @@
 #include "config.h"
 #include "GraphicsContext.h"
 
-#if USE(CG)
-#include "GraphicsContextPlatformPrivateCG.h"
-#endif
-
 #include "AffineTransform.h"
 #include "BitmapInfo.h"
 #include "TransformationMatrix.h"
@@ -53,14 +49,6 @@ HDC GraphicsContext::getWindowsContext(const IntRect& dstRect, bool supportAlpha
     if (!hasPlatformContext())
         return nullptr;
     HDC hdc = nullptr;
-#if !USE(CAIRO)
-    hdc = deprecatedPrivateContext()->m_hdc;
-    if (hdc && !isInTransparencyLayer()) {
-        deprecatedPrivateContext()->flush();
-        deprecatedPrivateContext()->save();
-        return deprecatedPrivateContext()->m_hdc;
-    }
-#endif
     // FIXME: Should a bitmap be created also when a shadow is set?
     if (dstRect.isEmpty())
         return 0;
@@ -90,76 +78,5 @@ HDC GraphicsContext::getWindowsContext(const IntRect& dstRect, bool supportAlpha
 
     return bitmapDC.leak();
 }
-
-#if PLATFORM(WIN) && USE(CG)
-void GraphicsContextPlatformPrivate::save()
-{
-    if (!m_hdc)
-        return;
-    SaveDC(m_hdc);
-}
-
-void GraphicsContextPlatformPrivate::restore()
-{
-    if (!m_hdc)
-        return;
-    RestoreDC(m_hdc, -1);
-}
-
-void GraphicsContextPlatformPrivate::clip(const FloatRect& clipRect)
-{
-    if (!m_hdc)
-        return;
-    auto clip = enclosingIntRect(clipRect);
-    IntersectClipRect(m_hdc, clip.x(), clip.y(), clip.maxX(), clip.maxY());
-}
-
-void GraphicsContextPlatformPrivate::clip(const Path&)
-{
-    notImplemented();
-}
-
-void GraphicsContextPlatformPrivate::scale(const FloatSize& size)
-{
-    if (!m_hdc)
-        return;
-
-    XFORM xform = TransformationMatrix().scaleNonUniform(size.width(), size.height());
-    ModifyWorldTransform(m_hdc, &xform, MWT_LEFTMULTIPLY);
-}
-
-void GraphicsContextPlatformPrivate::rotate(float degreesAngle)
-{
-    XFORM xform = TransformationMatrix().rotate(degreesAngle);
-    ModifyWorldTransform(m_hdc, &xform, MWT_LEFTMULTIPLY);
-}
-
-void GraphicsContextPlatformPrivate::translate(float x , float y)
-{
-    if (!m_hdc)
-        return;
-
-    XFORM xform = TransformationMatrix().translate(x, y);
-    ModifyWorldTransform(m_hdc, &xform, MWT_LEFTMULTIPLY);
-}
-
-void GraphicsContextPlatformPrivate::concatCTM(const AffineTransform& transform)
-{
-    if (!m_hdc)
-        return;
-
-    XFORM xform = transform.toTransformationMatrix();
-    ModifyWorldTransform(m_hdc, &xform, MWT_LEFTMULTIPLY);
-}
-
-void GraphicsContextPlatformPrivate::setCTM(const AffineTransform& transform)
-{
-    if (!m_hdc)
-        return;
-
-    XFORM xform = transform.toTransformationMatrix();
-    SetWorldTransform(m_hdc, &xform);
-}
-#endif
 
 }

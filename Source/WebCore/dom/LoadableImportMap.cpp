@@ -42,7 +42,7 @@ Ref<LoadableImportMap> LoadableImportMap::create(const AtomString& nonce, const 
 }
 
 LoadableImportMap::LoadableImportMap(const AtomString& nonce, const AtomString& integrity, ReferrerPolicy policy, const AtomString& crossOriginMode, const AtomString& initiatorType, bool isInUserAgentShadowTree, bool isAsync)
-    : LoadableNonModuleScriptBase(nonce, integrity, policy, crossOriginMode, "utf-8"_s, initiatorType, isInUserAgentShadowTree, isAsync)
+    : LoadableNonModuleScriptBase(nonce, integrity, policy, RequestPriority::Auto, crossOriginMode, "utf-8"_s, initiatorType, isInUserAgentShadowTree, isAsync)
 {
 }
 

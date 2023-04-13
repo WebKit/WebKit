@@ -115,6 +115,18 @@ void printInternal(PrintStream& out, JSC::InlineCallFrame::Kind kind)
     case JSC::InlineCallFrame::SetterCall:
         out.print("SetterCall");
         return;
+    case JSC::InlineCallFrame::ProxyObjectLoadCall:
+        out.print("ProxyObjectLoadCall");
+        return;
+    case JSC::InlineCallFrame::ProxyObjectStoreCall:
+        out.print("ProxyObjectStoreCall");
+        return;
+    case JSC::InlineCallFrame::BoundFunctionCall:
+        out.print("BoundFunctionCall");
+        return;
+    case JSC::InlineCallFrame::BoundFunctionTailCall:
+        out.print("BoundFunctionTailCall");
+        return;
     }
     RELEASE_ASSERT_NOT_REACHED();
 }

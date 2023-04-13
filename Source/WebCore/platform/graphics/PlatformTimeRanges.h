@@ -36,13 +36,15 @@ class PrintStream;
 
 namespace WebCore {
 
-class WEBCORE_EXPORT PlatformTimeRanges {
+class WEBCORE_EXPORT PlatformTimeRanges final {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit PlatformTimeRanges() { }
+    PlatformTimeRanges();
     PlatformTimeRanges(const MediaTime& start, const MediaTime& end);
 
     PlatformTimeRanges copyWithEpsilon(const MediaTime&) const;
+
+    static const PlatformTimeRanges& emptyRanges();
 
     MediaTime start(unsigned index) const;
     MediaTime start(unsigned index, bool& valid) const;
@@ -107,7 +109,13 @@ public:
         {
             return range.start >= end;
         }
+
+        inline bool operator==(const Range& other) const { return start == other.start && end == other.end; }
+        inline bool operator!=(const Range& other) const { return !operator==(other); }
     };
+
+    bool operator==(const PlatformTimeRanges& other) const;
+    bool operator!=(const PlatformTimeRanges& other) const;
 
 private:
     friend struct IPC::ArgumentCoder<PlatformTimeRanges, void>;

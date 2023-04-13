@@ -34,31 +34,6 @@ namespace WebCore {
 struct GlobalFrameIdentifier {
     PageIdentifier pageID;
     FrameIdentifier frameID;
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<GlobalFrameIdentifier> decode(Decoder&);
 };
-
-template<class Encoder>
-void GlobalFrameIdentifier::encode(Encoder& encoder) const
-{
-    encoder << pageID << frameID;
-}
-
-template<class Decoder>
-std::optional<GlobalFrameIdentifier> GlobalFrameIdentifier::decode(Decoder& decoder)
-{
-    std::optional<PageIdentifier> pageID;
-    decoder >> pageID;
-    if (!pageID)
-        return std::nullopt;
-
-    std::optional<FrameIdentifier> frameID;
-    decoder >> frameID;
-    if (!frameID)
-        return std::nullopt;
-
-    return { { WTFMove(*pageID), WTFMove(*frameID) } };
-}
 
 } // namespace WebCore

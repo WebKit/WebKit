@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,14 +27,13 @@
 
 #include "APIObject.h"
 #include "FrameLoadState.h"
-#include "GenericCallback.h"
 #include "MessageReceiver.h"
 #include "MessageSender.h"
 #include "WebFramePolicyListenerProxy.h"
-#include "WebPageProxy.h"
 #include <WebCore/FrameLoaderTypes.h>
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
+#include <wtf/ListHashSet.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -43,23 +42,34 @@
 #endif
 
 namespace API {
+class Data;
 class Navigation;
+class URL;
 }
 
 namespace IPC {
 class Connection;
 class Decoder;
+using DataReference = Span<const uint8_t>;
 }
 
 namespace WebKit {
-struct FrameTreeNodeData;
+
 class ProvisionalFrameProxy;
 class SafeBrowsingWarning;
 class SubframePageProxy;
+class UserData;
 class WebFramePolicyListenerProxy;
+class WebPageProxy;
+class WebProcessProxy;
 class WebsiteDataStore;
+
 enum class ShouldExpectSafeBrowsingResult : bool;
 enum class ProcessSwapRequestedByClient : bool;
+
+struct FrameInfoData;
+struct FrameTreeCreationParameters;
+struct FrameTreeNodeData;
 struct WebsitePoliciesData;
 
 class WebFrameProxy : public API::ObjectImpl<API::Object::Type::Frame>, public IPC::MessageReceiver, public IPC::MessageSender {
@@ -75,7 +85,7 @@ public:
     virtual ~WebFrameProxy();
 
     WebCore::FrameIdentifier frameID() const { return m_frameID; }
-    WebPageProxy* page() const { return m_page.get(); }
+    WebPageProxy* page() const;
 
     bool pageIsClosed() const { return !m_page; } // Needs to be thread-safe.
 
@@ -149,6 +159,12 @@ public:
     void commitProvisionalFrame(WebCore::FrameIdentifier, FrameInfoData&&, WebCore::ResourceRequest&&, uint64_t navigationID, const String& mimeType, bool frameHasCustomContentProvider, WebCore::FrameLoadType, const WebCore::CertificateInfo&, bool usedLegacyTLS, bool privateRelayed, bool containsPluginDocument, WebCore::HasInsecureContent, WebCore::MouseEventPolicy, const UserData&);
 
     void getFrameInfo(CompletionHandler<void(FrameTreeNodeData&&)>&&);
+    FrameTreeCreationParameters frameTreeCreationParameters() const;
+
+    void updateRemoteFrameSize(WebCore::IntSize);
+
+    WebFrameProxy* parentFrame() { return m_parentFrame.get(); }
+    WebProcessProxy& process() { return m_process.get(); }
 
 private:
     WebFrameProxy(WebPageProxy&, WebProcessProxy&, WebCore::FrameIdentifier);

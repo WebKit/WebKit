@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,16 +28,17 @@
 
 namespace API {
 
-Ref<Feature> Feature::create(const WTF::String& name, const WTF::String& key, FeatureStatus status, const WTF::String& details, bool defaultValue, bool hidden)
+Ref<Feature> Feature::create(const WTF::String& name, const WTF::String& key, FeatureStatus status, FeatureCategory category, const WTF::String& details, bool defaultValue, bool hidden)
 {
-    return adoptRef(*new Feature(name, key, status, details, defaultValue, hidden));
+    return adoptRef(*new Feature(name, key, status, category, details, defaultValue, hidden));
 }
 
-Feature::Feature(const WTF::String& name, const WTF::String& key, FeatureStatus status, const WTF::String& details, bool defaultValue, bool hidden)
+Feature::Feature(const WTF::String& name, const WTF::String& key, FeatureStatus status, FeatureCategory category, const WTF::String& details, bool defaultValue, bool hidden)
     : m_name(name)
     , m_key(key)
-    , m_status(status)
     , m_details(details)
+    , m_status(status)
+    , m_category(category)
     , m_defaultValue(defaultValue)
     , m_hidden(hidden)
 {

@@ -31,16 +31,18 @@
 #import "AVAssetMIMETypeCache.h"
 #import "AVAssetTrackUtilities.h"
 #import "AVStreamDataParserMIMETypeCache.h"
-#import "CDMSessionAVStreamSession.h"
+#import "CDMSessionMediaSourceAVFObjC.h"
 #import "ContentTypeUtilities.h"
 #import "GraphicsContext.h"
 #import "IOSurface.h"
 #import "Logging.h"
 #import "MediaSessionManagerCocoa.h"
+#import "MediaSourcePrivate.h"
 #import "MediaSourcePrivateAVFObjC.h"
 #import "MediaSourcePrivateClient.h"
 #import "PixelBufferConformerCV.h"
 #import "PlatformScreen.h"
+#import "SourceBufferPrivateAVFObjC.h"
 #import "TextTrackRepresentation.h"
 #import "VideoFrameCV.h"
 #import "VideoLayerManagerObjC.h"
@@ -63,11 +65,8 @@
 #import <pal/cf/CoreMediaSoftLink.h>
 #import <pal/cocoa/AVFoundationSoftLink.h>
 
-#pragma mark -
-#pragma mark AVStreamSession
-
-@interface AVStreamSession : NSObject
-- (instancetype)initWithStorageDirectoryAtURL:(NSURL *)storageDirectory;
+@interface AVSampleBufferDisplayLayer (Staging_100128644)
+@property (assign, nonatomic) BOOL preventsAutomaticBackgroundingDuringVideoPlayback;
 @end
 
 namespace WebCore {
@@ -99,7 +98,7 @@ static bool isCopyDisplayedPixelBufferAvailable()
 }
 
 #endif // HAVE(AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER)
-    
+
 #pragma mark -
 #pragma mark MediaPlayerPrivateMediaSourceAVFObjC
 
@@ -232,7 +231,7 @@ private:
 
     std::unique_ptr<MediaPlayerPrivateInterface> createMediaEnginePlayer(MediaPlayer* player) const final
     {
-        return makeUnique<MediaPlayerPrivateMediaSourceAVFObjC>(player);        
+        return makeUnique<MediaPlayerPrivateMediaSourceAVFObjC>(player);
     }
 
     void getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>& types) const final
@@ -468,6 +467,11 @@ MediaTime MediaPlayerPrivateMediaSourceAVFObjC::currentMediaTime() const
     return synchronizerTime;
 }
 
+bool MediaPlayerPrivateMediaSourceAVFObjC::currentMediaTimeMayProgress() const
+{
+    return m_mediaSourcePrivate ? m_mediaSourcePrivate->hasFutureTime(currentMediaTime(), durationMediaTime(), buffered()) : false;
+}
+
 MediaTime MediaPlayerPrivateMediaSourceAVFObjC::clampTimeToLastSeekTime(const MediaTime& time) const
 {
     if (m_lastSeekTime.isFinite() && time < m_lastSeekTime)
@@ -643,11 +647,6 @@ MediaPlayer::ReadyState MediaPlayerPrivateMediaSourceAVFObjC::readyState() const
     return m_readyState;
 }
 
-std::unique_ptr<PlatformTimeRanges> MediaPlayerPrivateMediaSourceAVFObjC::seekable() const
-{
-    return makeUnique<PlatformTimeRanges>(minMediaTimeSeekable(), maxMediaTimeSeekable());
-}
-
 MediaTime MediaPlayerPrivateMediaSourceAVFObjC::maxMediaTimeSeekable() const
 {
     return durationMediaTime();
@@ -658,9 +657,9 @@ MediaTime MediaPlayerPrivateMediaSourceAVFObjC::minMediaTimeSeekable() const
     return startTime();
 }
 
-std::unique_ptr<PlatformTimeRanges> MediaPlayerPrivateMediaSourceAVFObjC::buffered() const
+const PlatformTimeRanges& MediaPlayerPrivateMediaSourceAVFObjC::buffered() const
 {
-    return m_mediaSourcePrivate ? m_mediaSourcePrivate->buffered() : makeUnique<PlatformTimeRanges>();
+    return m_mediaSourcePrivate ? m_mediaSourcePrivate->buffered() : PlatformTimeRanges::emptyRanges();
 }
 
 bool MediaPlayerPrivateMediaSourceAVFObjC::didLoadingProgress() const
@@ -916,6 +915,9 @@ void MediaPlayerPrivateMediaSourceAVFObjC::ensureLayer()
     if ([m_sampleBufferDisplayLayer respondsToSelector:@selector(setPreventsDisplaySleepDuringVideoPlayback:)])
         m_sampleBufferDisplayLayer.get().preventsDisplaySleepDuringVideoPlayback = NO;
 
+    if ([m_sampleBufferDisplayLayer respondsToSelector:@selector(setPreventsAutomaticBackgroundingDuringVideoPlayback:)])
+        m_sampleBufferDisplayLayer.get().preventsAutomaticBackgroundingDuringVideoPlayback = NO;
+
     @try {
         [m_synchronizer addRenderer:m_sampleBufferDisplayLayer.get()];
     } @catch(NSException *exception) {
@@ -1055,8 +1057,6 @@ void MediaPlayerPrivateMediaSourceAVFObjC::updateAllRenderersHaveAvailableSample
 
 void MediaPlayerPrivateMediaSourceAVFObjC::durationChanged()
 {
-    m_player->durationChanged();
-
     if (m_durationObserver)
         [m_synchronizer removeTimeObserver:m_durationObserver.get()];
 
@@ -1064,6 +1064,12 @@ void MediaPlayerPrivateMediaSourceAVFObjC::durationChanged()
         return;
 
     MediaTime duration = m_mediaSourcePrivate->duration();
+    // Avoid emiting durationchanged in the case where the previous duration was unkniwn as that case is already handled
+    // by the HTMLMediaElement.
+    if (m_mediaTimeDuration != duration && m_mediaTimeDuration.isValid())
+        m_player->durationChanged();
+    m_mediaTimeDuration = duration;
+
     NSArray* times = @[[NSValue valueWithCMTime:PAL::toCMTime(duration)]];
 
     auto logSiteIdentifier = LOGIDENTIFIER;
@@ -1137,29 +1143,6 @@ void MediaPlayerPrivateMediaSourceAVFObjC::flushPendingSizeChanges()
 }
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
-#if HAVE(AVSTREAMSESSION)
-AVStreamSession* MediaPlayerPrivateMediaSourceAVFObjC::streamSession()
-{
-    if (!PAL::getAVStreamSessionClass() || ![PAL::getAVStreamSessionClass() instancesRespondToSelector:@selector(initWithStorageDirectoryAtURL:)])
-        return nil;
-
-    if (!m_streamSession) {
-        String storageDirectory = m_player->mediaKeysStorageDirectory();
-        if (storageDirectory.isEmpty())
-            return nil;
-
-        if (!FileSystem::fileExists(storageDirectory)) {
-            if (!FileSystem::makeAllDirectories(storageDirectory))
-                return nil;
-        }
-
-        String storagePath = FileSystem::pathByAppendingComponent(storageDirectory, "SecureStop.plist"_s);
-        m_streamSession = adoptNS([PAL::allocAVStreamSessionInstance() initWithStorageDirectoryAtURL:[NSURL fileURLWithPath:storagePath]]);
-    }
-    return m_streamSession.get();
-}
-#endif
-
 CDMSessionMediaSourceAVFObjC* MediaPlayerPrivateMediaSourceAVFObjC::cdmSession() const
 {
     return m_session.get();
@@ -1173,11 +1156,6 @@ void MediaPlayerPrivateMediaSourceAVFObjC::setCDMSession(LegacyCDMSession* sessi
     ALWAYS_LOG(LOGIDENTIFIER);
 
     m_session = toCDMSessionMediaSourceAVFObjC(session);
-
-#if HAVE(AVSTREAMSESSION)
-    if (CDMSessionAVStreamSession* cdmStreamSession = toCDMSessionAVStreamSession(m_session.get()))
-        cdmStreamSession->setStreamSession(streamSession());
-#endif
 
     if (!m_mediaSourcePrivate)
         return;
@@ -1398,12 +1376,12 @@ bool MediaPlayerPrivateMediaSourceAVFObjC::requiresTextTrackRepresentation() con
 {
     return m_videoLayerManager->videoFullscreenLayer();
 }
-    
+
 void MediaPlayerPrivateMediaSourceAVFObjC::syncTextTrackBounds()
 {
     m_videoLayerManager->syncTextTrackBounds();
 }
-    
+
 void MediaPlayerPrivateMediaSourceAVFObjC::setTextTrackRepresentation(TextTrackRepresentation* representation)
 {
     auto* representationLayer = representation ? representation->platformLayer() : nil;

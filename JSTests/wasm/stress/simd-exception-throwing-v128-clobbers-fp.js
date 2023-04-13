@@ -1,5 +1,5 @@
 //@ requireOptions("--useWebAssemblySIMD=1")
-//@ skip if $architecture != "arm64" && $architecture != "x86_64"
+//@ skip if !$isSIMDPlatform
 var wasm_code = read('./simd-exception-throwing-v128-clobbers-fp.wasm', 'binary')
 var wasm_module = new WebAssembly.Module(wasm_code);
 var wasm_instance = new WebAssembly.Instance(wasm_module);

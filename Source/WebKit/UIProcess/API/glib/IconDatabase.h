@@ -32,7 +32,7 @@ namespace WebKit {
 
 class IconDatabase : public ThreadSafeRefCounted<IconDatabase> {
 public:
-    enum class AllowDatabaseWrite { No, Yes };
+    enum class AllowDatabaseWrite : bool { No, Yes };
 
     static Ref<IconDatabase> create(const String& path, AllowDatabaseWrite allowDatabaseWrite)
     {

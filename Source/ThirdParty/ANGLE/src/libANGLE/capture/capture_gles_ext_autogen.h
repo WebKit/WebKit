@@ -886,6 +886,10 @@ angle::CallCapture CaptureEndPixelLocalStorageANGLE(const State &glState,
                                                     GLsizei n,
                                                     const GLenum *storeops);
 angle::CallCapture CapturePixelLocalStorageBarrierANGLE(const State &glState, bool isCallValid);
+angle::CallCapture CaptureFramebufferPixelLocalStorageInterruptANGLE(const State &glState,
+                                                                     bool isCallValid);
+angle::CallCapture CaptureFramebufferPixelLocalStorageRestoreANGLE(const State &glState,
+                                                                   bool isCallValid);
 angle::CallCapture CaptureGetFramebufferPixelLocalStorageParameterfvANGLE(const State &glState,
                                                                           bool isCallValid,
                                                                           GLint plane,
@@ -896,6 +900,24 @@ angle::CallCapture CaptureGetFramebufferPixelLocalStorageParameterivANGLE(const 
                                                                           GLint plane,
                                                                           GLenum pname,
                                                                           GLint *params);
+angle::CallCapture CaptureGetFramebufferPixelLocalStorageParameterfvRobustANGLE(
+    const State &glState,
+    bool isCallValid,
+    GLint plane,
+    GLenum pname,
+    GLsizei bufSize,
+    GLsizei *length,
+    GLfloat *params);
+angle::CallCapture CaptureGetFramebufferPixelLocalStorageParameterivRobustANGLE(
+    const State &glState,
+    bool isCallValid,
+    GLint plane,
+    GLenum pname,
+    GLsizei bufSize,
+    GLsizei *length,
+    GLint *params);
+
+// GL_ANGLE_stencil_texturing
 
 // GL_ANGLE_texture_compression_dxt3
 
@@ -960,6 +982,8 @@ angle::CallCapture CaptureReleaseTexturesANGLE(const State &glState,
 // GL_APPLE_clip_distance
 
 // GL_ARB_sync
+
+// GL_ARM_shader_framebuffer_fetch
 
 // GL_CHROMIUM_bind_uniform_location
 angle::CallCapture CaptureBindUniformLocationCHROMIUM(const State &glState,
@@ -1095,14 +1119,16 @@ angle::CallCapture CaptureBufferStorageEXT(const State &glState,
 // GL_EXT_clip_control
 angle::CallCapture CaptureClipControlEXT(const State &glState,
                                          bool isCallValid,
-                                         GLenum origin,
-                                         GLenum depth);
+                                         ClipOrigin originPacked,
+                                         ClipDepthMode depthPacked);
 
 // GL_EXT_clip_cull_distance
 
 // GL_EXT_color_buffer_float
 
 // GL_EXT_color_buffer_half_float
+
+// GL_EXT_conservative_depth
 
 // GL_EXT_copy_image
 angle::CallCapture CaptureCopyImageSubDataEXT(const State &glState,
@@ -1148,6 +1174,8 @@ angle::CallCapture CapturePushGroupMarkerEXT(const State &glState,
                                              bool isCallValid,
                                              GLsizei length,
                                              const GLchar *marker);
+
+// GL_EXT_depth_clamp
 
 // GL_EXT_discard_framebuffer
 angle::CallCapture CaptureDiscardFramebufferEXT(const State &glState,
@@ -1501,6 +1529,8 @@ angle::CallCapture CapturePrimitiveBoundingBoxEXT(const State &glState,
 // GL_EXT_pvrtc_sRGB
 
 // GL_EXT_read_format_bgra
+
+// GL_EXT_render_snorm
 
 // GL_EXT_robustness
 angle::CallCapture CaptureGetGraphicsResetStatusEXT(const State &glState,
@@ -1933,9 +1963,13 @@ angle::CallCapture CaptureTexBufferRangeEXT(const State &glState,
 
 // GL_EXT_texture_filter_anisotropic
 
+// GL_EXT_texture_filter_minmax
+
 // GL_EXT_texture_format_BGRA8888
 
 // GL_EXT_texture_format_sRGB_override
+
+// GL_EXT_texture_mirror_clamp_to_edge
 
 // GL_EXT_texture_norm16
 
@@ -2697,6 +2731,8 @@ angle::CallCapture CaptureFramebufferTextureMultiviewOVR(const State &glState,
                                                          GLsizei numViews);
 
 // GL_OVR_multiview2
+
+// GL_QCOM_render_shared_exponent
 
 // GL_QCOM_shading_rate
 angle::CallCapture CaptureShadingRateQCOM(const State &glState, bool isCallValid, GLenum rate);
@@ -4162,6 +4198,42 @@ void CaptureGetFramebufferPixelLocalStorageParameterivANGLE_params(
     bool isCallValid,
     GLint plane,
     GLenum pname,
+    GLint *params,
+    angle::ParamCapture *paramCapture);
+void CaptureGetFramebufferPixelLocalStorageParameterfvRobustANGLE_length(
+    const State &glState,
+    bool isCallValid,
+    GLint plane,
+    GLenum pname,
+    GLsizei bufSize,
+    GLsizei *length,
+    GLfloat *params,
+    angle::ParamCapture *paramCapture);
+void CaptureGetFramebufferPixelLocalStorageParameterfvRobustANGLE_params(
+    const State &glState,
+    bool isCallValid,
+    GLint plane,
+    GLenum pname,
+    GLsizei bufSize,
+    GLsizei *length,
+    GLfloat *params,
+    angle::ParamCapture *paramCapture);
+void CaptureGetFramebufferPixelLocalStorageParameterivRobustANGLE_length(
+    const State &glState,
+    bool isCallValid,
+    GLint plane,
+    GLenum pname,
+    GLsizei bufSize,
+    GLsizei *length,
+    GLint *params,
+    angle::ParamCapture *paramCapture);
+void CaptureGetFramebufferPixelLocalStorageParameterivRobustANGLE_params(
+    const State &glState,
+    bool isCallValid,
+    GLint plane,
+    GLenum pname,
+    GLsizei bufSize,
+    GLsizei *length,
     GLint *params,
     angle::ParamCapture *paramCapture);
 void CaptureGetMultisamplefvANGLE_val(const State &glState,

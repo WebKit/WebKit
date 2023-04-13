@@ -25,9 +25,6 @@
 6214 : dEQP-GLES3.functional.shaders.operator.unary_operator.minus.lowp_uvec4_vertex = FAIL
 6214 : dEQP-GLES3.functional.shaders.operator.unary_operator.minus.mediump_uvec4_vertex = FAIL
 
-// New tests in VK-GL-CTS roll 2022-08-19, fail on all backends
-7592 : dEQP-GLES3.functional.shaders.keywords.allowed_keywords.* = FAIL
-
 // Failures related to using a depth/stencil enabled backbuffer on Windows / NVIDIA.
 2428 WIN D3D11 NVIDIA : dEQP-GLES3.functional.shaders.invariance.highp.common_subexpression_1 = FAIL
 2428 WIN D3D11 NVIDIA : dEQP-GLES3.functional.shaders.invariance.mediump.common_subexpression_1 = FAIL
@@ -330,10 +327,6 @@
 2137 MAC OPENGL : dEQP-GLES3.functional.shaders.loops.short_circuit.* = FAIL
 3317 MAC OPENGL : dEQP-GLES3.functional.fbo.blit.rect.out_of_bounds_linear = FAIL
 
-5136 MAC OPENGL : dEQP-GLES3.functional.fbo.completeness.renderable.texture.color0.stencil_index8 = FAIL
-5136 MAC OPENGL : dEQP-GLES3.functional.fbo.completeness.renderable.texture.stencil.stencil_index8 = FAIL
-5136 MAC OPENGL : dEQP-GLES3.functional.fbo.completeness.renderable.texture.depth.stencil_index8 = FAIL
-
 // ETC compressed formats not supported
 3853 MAC OPENGL : dEQP-GLES3.functional.negative_api.texture.compressedtexsubimage* = FAIL
 3853 MAC OPENGL : dEQP-GLES3.functional.negative_api.texture.generatemipmap = FAIL
@@ -366,6 +359,18 @@
 6222 MAC OPENGL AMD : dEQP-GLES3.functional.texture.specification.teximage3d_pbo.r8* = FAIL
 6222 MAC OPENGL AMD : dEQP-GLES3.functional.texture.specification.teximage3d_pbo.rg8* = FAIL
 6222 MAC OPENGL AMD : dEQP-GLES3.functional.texture.specification.teximage3d_pbo.r16* = FAIL
+
+// New failures on MacBook Pro 2019 macOS 13.2.1
+8091 MAC OPENGL AMD : dEQP-GLES3.functional.fbo.msaa.renderbuffer_resize.ms_to_nonms = FAIL
+8091 MAC OPENGL AMD : dEQP-GLES3.functional.fbo.msaa.renderbuffer_resize.nonms_to_nonms = FAIL
+8091 MAC OPENGL AMD : dEQP-GLES3.functional.pbo.renderbuffer.rgb5_a1_clears = FAIL
+8091 MAC OPENGL AMD : dEQP-GLES3.functional.pbo.renderbuffer.rgb5_a1_triangles = FAIL
+8091 MAC OPENGL AMD : dEQP-GLES3.functional.pbo.renderbuffer.rgba4_clears = FAIL
+8091 MAC OPENGL AMD : dEQP-GLES3.functional.pbo.renderbuffer.rgba4_triangles = FAIL
+8091 MAC OPENGL AMD : dEQP-GLES3.functional.pbo.renderbuffer.rgba8_clears = FAIL
+8091 MAC OPENGL AMD : dEQP-GLES3.functional.pbo.renderbuffer.rgba8_triangles = FAIL
+8091 MAC OPENGL AMD : dEQP-GLES3.functional.pbo.renderbuffer.srgb8_alpha8_clears = FAIL
+8091 MAC OPENGL AMD : dEQP-GLES3.functional.pbo.renderbuffer.srgb8_alpha8_triangles = FAIL
 
 // Mac Intel crashes
 2137 MAC OPENGL INTEL : dEQP-GLES3.functional.shaders.discard.function_static_loop_never = SKIP
@@ -684,6 +689,12 @@
 5666 MAC METAL AMD : dEQP-GLES3.functional.texture.filtering.2d_array.formats.rgb9_e5_linear_mipmap_linear = FAIL
 5666 MAC METAL AMD : dEQP-GLES3.functional.texture.filtering.2d_array.formats.rgb9_e5_nearest_mipmap_linear = FAIL
 
+// New failures on MacBook Pro 2019 macOS 13.2.1
+8091 MAC METAL AMD : dEQP-GLES3.functional.shaders.builtin_functions.pack_unpack.unpacksnorm2x16_vertex = FAIL
+8091 MAC METAL AMD : dEQP-GLES3.functional.shaders.builtin_functions.pack_unpack.unpackunorm2x16_vertex = FAIL
+8091 MAC METAL AMD : dEQP-GLES3.functional.shaders.function.global_variable_aliasing_fragment = FAIL
+8091 MAC METAL AMD : dEQP-GLES3.functional.shaders.function.global_variable_aliasing_vertex = FAIL
+
 // Test failures introduced by Apple's changes (anglebug.com/5505)
 6467 MAC METAL : dEQP-GLES3.functional.fbo.invalidate.sub.unbind_blit_msaa_color = FAIL
 6467 MAC METAL : dEQP-GLES3.functional.fbo.invalidate.sub.unbind_blit_msaa_stencil = FAIL
@@ -781,3 +792,11 @@
 6678 UBSAN : dEQP-GLES3.functional.fragment_ops.interaction.basic_shader.* = SKIP
 6678 UBSAN : dEQP-GLES3.functional.fragment_out.* = SKIP
 6678 UBSAN : dEQP-GLES3.functional.vertex_arrays.single_attribute.* = SKIP
+
+// https://gitlab.khronos.org/opengl/API/-/issues/179
+8048 : dEQP-GLES3.functional.fbo.completeness.renderable.renderbuffer.color0.r8_snorm = SKIP
+8048 : dEQP-GLES3.functional.fbo.completeness.renderable.renderbuffer.color0.rg8_snorm = SKIP
+8048 : dEQP-GLES3.functional.fbo.completeness.renderable.renderbuffer.color0.rgba8_snorm = SKIP
+8048 : dEQP-GLES3.functional.fbo.completeness.renderable.texture.color0.r8_snorm = SKIP
+8048 : dEQP-GLES3.functional.fbo.completeness.renderable.texture.color0.rg8_snorm = SKIP
+8048 : dEQP-GLES3.functional.fbo.completeness.renderable.texture.color0.rgba8_snorm = SKIP

@@ -33,13 +33,13 @@
 #include "Document.h"
 #include "EventLoop.h"
 #include "FeaturePolicy.h"
-#include "Frame.h"
 #include "GeoNotifier.h"
 #include "GeolocationController.h"
 #include "GeolocationCoordinates.h"
 #include "GeolocationError.h"
 #include "GeolocationPosition.h"
 #include "GeolocationPositionData.h"
+#include "LocalFrame.h"
 #include "Navigator.h"
 #include "Page.h"
 #include "RuntimeApplicationChecks.h"
@@ -353,15 +353,6 @@ static void logError(const String& target, const bool isSecure, const bool isMix
     message.append(".\n");
     document->addConsoleMessage(MessageSource::Security, MessageLevel::Error, message.toString());
 }
-
-// FIXME: remove this function when rdar://problem/32137821 is fixed.
-static bool isRequestFromIBooks()
-{
-#if PLATFORM(COCOA)
-    return CocoaApplication::isIBooks();
-#endif
-    return false;
-}
     
 bool Geolocation::shouldBlockGeolocationRequests()
 {
@@ -372,7 +363,7 @@ bool Geolocation::shouldBlockGeolocationRequests()
     bool hasMixedContent = !document()->foundMixedContent().isEmpty();
     bool isLocalOrigin = securityOrigin()->isLocal();
     if (document()->canAccessResource(ScriptExecutionContext::ResourceType::Geolocation) != ScriptExecutionContext::HasResourceAccess::No) {
-        if (isLocalOrigin || (isSecure && !hasMixedContent) || isRequestFromIBooks())
+        if (isLocalOrigin || (isSecure && !hasMixedContent))
             return false;
     }
 
@@ -762,7 +753,7 @@ Navigator* Geolocation::navigator()
     return m_navigator.get();
 }
 
-Frame* Geolocation::frame() const
+LocalFrame* Geolocation::frame() const
 {
     return m_navigator ? m_navigator->frame() : nullptr;
 }

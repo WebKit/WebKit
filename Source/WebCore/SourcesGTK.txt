@@ -61,25 +61,20 @@ page/scrolling/nicosia/ScrollingTreePositionedNodeNicosia.cpp
 page/scrolling/nicosia/ScrollingTreeScrollingNodeDelegateNicosia.cpp
 page/scrolling/nicosia/ScrollingTreeStickyNodeNicosia.cpp
 
-platform/UserAgentQuirks.cpp
-
-platform/adwaita/ScrollbarThemeAdwaita.cpp
-platform/adwaita/ThemeAdwaita.cpp
-
 platform/gamepad/manette/ManetteGamepad.cpp
 platform/gamepad/manette/ManetteGamepadProvider.cpp
 
 platform/generic/ScrollbarsControllerGeneric.cpp
 
-platform/graphics/GLContext.cpp @no-unify
 platform/graphics/PlatformDisplay.cpp @no-unify
 
 platform/graphics/cairo/BackingStoreBackendCairoX11.cpp @no-unify
 
-platform/graphics/egl/GLContextEGL.cpp @no-unify
-platform/graphics/egl/GLContextEGLLibWPE.cpp @no-unify
-platform/graphics/egl/GLContextEGLWayland.cpp @no-unify
-platform/graphics/egl/GLContextEGLX11.cpp @no-unify
+platform/graphics/egl/GLContext.cpp @no-unify
+platform/graphics/egl/GLContextLibWPE.cpp @no-unify
+platform/graphics/egl/GLContextWayland.cpp @no-unify
+platform/graphics/egl/GLContextX11.cpp @no-unify
+platform/graphics/egl/PlatformDisplayHeadless.cpp
 
 platform/graphics/gbm/GBMBufferSwapchain.cpp
 platform/graphics/gbm/GBMDevice.cpp
@@ -87,8 +82,6 @@ platform/graphics/gbm/GraphicsContextGLANGLELinux.cpp
 platform/graphics/gbm/GraphicsContextGLFallback.cpp
 platform/graphics/gbm/GraphicsContextGLGBM.cpp
 platform/graphics/gbm/GraphicsContextGLGBMTextureMapper.cpp
-
-platform/graphics/glx/GLContextGLX.cpp @no-unify
 
 platform/graphics/gtk/ColorGtk.cpp
 platform/graphics/gtk/DisplayRefreshMonitorGtk.cpp
@@ -106,7 +99,6 @@ platform/graphics/wayland/PlatformDisplayWayland.cpp
 
 platform/graphics/x11/PlatformDisplayX11.cpp @no-unify
 platform/graphics/x11/XErrorTrapper.cpp @no-unify
-platform/graphics/x11/XUniquePtr.cpp @no-unify
 platform/graphics/x11/XUniqueResource.cpp @no-unify
 
 platform/gtk/CursorGtk.cpp
@@ -136,5 +128,4 @@ platform/unix/LoggingUnix.cpp
 
 platform/xdg/MIMETypeRegistryXdg.cpp
 
-rendering/RenderThemeAdwaita.cpp
 rendering/RenderThemeGtk.cpp

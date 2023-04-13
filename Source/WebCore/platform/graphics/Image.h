@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2006 Samuel Weinig (sam.weinig@gmail.com)
- * Copyright (C) 2004, 2005, 2006, 2013 Apple Inc.  All rights reserved.
+ * Copyright (C) 2004-2023 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -58,6 +58,7 @@ typedef struct HBITMAP__ *HBITMAP;
 #endif
 
 #if PLATFORM(GTK)
+#include <wtf/glib/GRefPtr.h>
 typedef struct _GdkPixbuf GdkPixbuf;
 #if USE(GTK4)
 typedef struct _GdkTexture GdkTexture;
@@ -77,6 +78,7 @@ struct Length;
 class ImageObserver;
 
 class Image : public RefCounted<Image> {
+    friend class CachedSubimage;
     friend class GraphicsContext;
 public:
     virtual ~Image();
@@ -116,14 +118,14 @@ public:
     virtual bool hasRelativeHeight() const { return false; }
     virtual void computeIntrinsicDimensions(Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio);
 
-    virtual FloatSize size(ImageOrientation = ImageOrientation::FromImage) const = 0;
-    virtual FloatSize sourceSize(ImageOrientation orientation = ImageOrientation::FromImage) const { return size(orientation); }
+    virtual FloatSize size(ImageOrientation = ImageOrientation::Orientation::FromImage) const = 0;
+    virtual FloatSize sourceSize(ImageOrientation orientation = ImageOrientation::Orientation::FromImage) const { return size(orientation); }
     virtual bool hasDensityCorrectedSize() const { return false; }
     FloatRect rect() const { return FloatRect(FloatPoint(), size()); }
     float width() const { return size().width(); }
     float height() const { return size().height(); }
     virtual std::optional<IntPoint> hotSpot() const { return std::nullopt; }
-    virtual ImageOrientation orientation() const { return ImageOrientation::FromImage; }
+    virtual ImageOrientation orientation() const { return ImageOrientation::Orientation::FromImage; }
 
     WEBCORE_EXPORT EncodedDataStatus setData(RefPtr<FragmentedSharedBuffer>&& data, bool allDataReceived);
     virtual EncodedDataStatus dataChanged(bool /*allDataReceived*/) { return EncodedDataStatus::Unknown; }
@@ -132,7 +134,7 @@ public:
     virtual String filenameExtension() const { return String(); } // null string if unknown
     virtual String accessibilityDescription() const { return String(); } // null string if unknown
 
-    virtual void destroyDecodedData(bool destroyAll = true) = 0;
+    virtual void destroyDecodedData(bool /*destroyAll*/ = true) { }
 
     FragmentedSharedBuffer* data() { return m_encodedImageData.get(); }
     const FragmentedSharedBuffer* data() const { return m_encodedImageData.get(); }
@@ -181,9 +183,9 @@ public:
 #endif
 
 #if PLATFORM(GTK)
-    virtual GdkPixbuf* getGdkPixbuf() { return nullptr; }
+    virtual GRefPtr<GdkPixbuf> gdkPixbuf() { return nullptr; }
 #if USE(GTK4)
-    virtual GdkTexture* gdkTexture() { return nullptr; }
+    virtual GRefPtr<GdkTexture> gdkTexture() { return nullptr; }
 #endif
 #endif
 
@@ -203,6 +205,8 @@ protected:
 #if PLATFORM(WIN)
     virtual void drawFrameMatchingSourceSize(GraphicsContext&, const FloatRect& dstRect, const IntSize& srcSize, CompositeOperator) { }
 #endif
+    virtual bool shouldDrawFromCachedSubimage(GraphicsContext&) const { return false; }
+    virtual bool mustDrawFromCachedSubimage(GraphicsContext&) const { return false; }
     virtual ImageDrawResult draw(GraphicsContext&, const FloatRect& dstRect, const FloatRect& srcRect, const ImagePaintingOptions& = { }) = 0;
     ImageDrawResult drawTiled(GraphicsContext&, const FloatRect& dstRect, const FloatPoint& srcPoint, const FloatSize& tileSize, const FloatSize& spacing, const ImagePaintingOptions& = { });
     ImageDrawResult drawTiled(GraphicsContext&, const FloatRect& dstRect, const FloatRect& srcRect, const FloatSize& tileScaleFactor, TileRule hRule, TileRule vRule, const ImagePaintingOptions& = { });
@@ -213,10 +217,10 @@ protected:
 private:
     RefPtr<FragmentedSharedBuffer> m_encodedImageData;
     ImageObserver* m_imageObserver;
-    std::unique_ptr<Timer> m_animationStartTimer;
 
     // A value of true or false will override the default Page::imageAnimationEnabled state.
     std::optional<bool> m_allowsAnimation { std::nullopt };
+    std::unique_ptr<Timer> m_animationStartTimer;
 };
 
 WTF::TextStream& operator<<(WTF::TextStream&, const Image&);

@@ -23,6 +23,7 @@
 #pragma once
 
 #include "CSSParserContext.h"
+#include "CSSParserEnum.h"
 #include "CSSSelectorParser.h"
 #include "CSSValue.h"
 #include "ColorTypes.h"
@@ -33,8 +34,6 @@ namespace WebCore {
 
 class CSSParserObserver;
 class CSSSelectorList;
-class CSSValueList;
-class CSSValuePool;
 class Color;
 class Element;
 class ImmutableStyleProperties;
@@ -42,10 +41,6 @@ class MutableStyleProperties;
 class StyleRuleBase;
 class StyleRuleKeyframe;
 class StyleSheetContents;
-
-namespace CSSPropertyParserHelpers {
-struct FontRaw;
-}
 
 class CSSParser {
 public:
@@ -60,7 +55,7 @@ public:
 
     void parseSheet(StyleSheetContents&, const String&);
     
-    static RefPtr<StyleRuleBase> parseRule(const CSSParserContext&, StyleSheetContents*, const String&);
+    static RefPtr<StyleRuleBase> parseRule(const CSSParserContext&, StyleSheetContents*, const String&, CSSParserEnum::IsNestedContext = CSSParserEnum::IsNestedContext::No);
     
     RefPtr<StyleRuleKeyframe> parseKeyframeRule(const String&);
     static Vector<double> parseKeyframeKeyList(const String&);
@@ -78,7 +73,7 @@ public:
     WEBCORE_EXPORT bool parseDeclaration(MutableStyleProperties&, const String&);
     static Ref<ImmutableStyleProperties> parseInlineStyleDeclaration(const String&, const Element*);
 
-    WEBCORE_EXPORT std::optional<CSSSelectorList> parseSelector(const String&, StyleSheetContents* = nullptr, CSSSelectorParser::IsNestedContext = CSSSelectorParser::IsNestedContext::No);
+    WEBCORE_EXPORT std::optional<CSSSelectorList> parseSelector(const String&, StyleSheetContents* = nullptr, CSSParserEnum::IsNestedContext = CSSParserEnum::IsNestedContext::No);
 
     WEBCORE_EXPORT static Color parseColor(const String&, const CSSParserContext&);
     // FIXME: All callers are not getting the right Settings for parsing due to lack of CSSParserContext and should switch to the parseColor function above.

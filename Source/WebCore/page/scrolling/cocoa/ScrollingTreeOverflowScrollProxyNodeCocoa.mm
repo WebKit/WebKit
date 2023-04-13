@@ -46,12 +46,17 @@ ScrollingTreeOverflowScrollProxyNodeCocoa::ScrollingTreeOverflowScrollProxyNodeC
 
 ScrollingTreeOverflowScrollProxyNodeCocoa::~ScrollingTreeOverflowScrollProxyNodeCocoa() = default;
 
-void ScrollingTreeOverflowScrollProxyNodeCocoa::commitStateBeforeChildren(const ScrollingStateNode& stateNode)
+bool ScrollingTreeOverflowScrollProxyNodeCocoa::commitStateBeforeChildren(const ScrollingStateNode& stateNode)
 {
-    if (stateNode.hasChangedProperty(ScrollingStateNode::Property::Layer))
+    if (stateNode.hasChangedProperty(ScrollingStateNode::Property::Layer)) {
         m_layer = static_cast<CALayer*>(stateNode.layer());
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+        m_interactionRegionsLayer = static_cast<CALayer*>(stateNode.interactionRegionsLayer());
+#endif
+    }
 
-    ScrollingTreeOverflowScrollProxyNode::commitStateBeforeChildren(stateNode);
+
+    return ScrollingTreeOverflowScrollProxyNode::commitStateBeforeChildren(stateNode);
 }
 
 void ScrollingTreeOverflowScrollProxyNodeCocoa::applyLayerPositions()
@@ -60,6 +65,10 @@ void ScrollingTreeOverflowScrollProxyNodeCocoa::applyLayerPositions()
 
     LOG_WITH_STREAM(ScrollingTree, stream << "ScrollingTreeOverflowScrollProxyNodeCocoa " << scrollingNodeID() << " applyLayerPositions: setting bounds origin to " << scrollOffset);
     [m_layer _web_setLayerBoundsOrigin:scrollOffset];
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+    [m_interactionRegionsLayer _web_setLayerBoundsOrigin:scrollOffset];
+#endif
+
 }
 
 } // namespace WebCore

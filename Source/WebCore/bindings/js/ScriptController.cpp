@@ -29,17 +29,17 @@
 #include "DocumentInlines.h"
 #include "DocumentLoader.h"
 #include "Event.h"
-#include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "HTMLPlugInElement.h"
 #include "InspectorInstrumentation.h"
 #include "JSDOMBindingSecurity.h"
 #include "JSDOMExceptionHandling.h"
-#include "JSDOMWindow.h"
 #include "JSDocument.h"
 #include "JSExecState.h"
+#include "JSLocalDOMWindow.h"
 #include "LoadableModuleScript.h"
+#include "LocalFrame.h"
 #include "Logging.h"
 #include "ModuleFetchFailureKind.h"
 #include "ModuleFetchParameters.h"
@@ -97,7 +97,7 @@ void ScriptController::initializeMainThread()
     WTF::registerProfileGenerationCallback<WebCoreProfileTag>("WebCore");
 }
 
-ScriptController::ScriptController(Frame& frame)
+ScriptController::ScriptController(LocalFrame& frame)
     : m_frame(frame)
     , m_sourceURL(0)
     , m_paused(false)
@@ -217,7 +217,7 @@ JSC::JSValue ScriptController::linkAndEvaluateModuleScriptInWorld(LoadableModule
 
     // FIXME: Preventing Frame from being destroyed is essentially unnecessary.
     // https://bugs.webkit.org/show_bug.cgi?id=164763
-    Ref<Frame> protector(m_frame);
+    Ref protectedFrame { m_frame };
 
     NakedPtr<JSC::Exception> evaluationException;
     auto returnValue = JSExecState::linkAndEvaluateModule(lexicalGlobalObject, Identifier::fromUid(vm, moduleScript.moduleKey()), jsUndefined(), evaluationException);
@@ -289,7 +289,7 @@ void ScriptController::initScriptForWindowProxy(JSWindowProxy& windowProxy)
     JSC::VM& vm = world.vm();
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
-    jsCast<JSDOMWindow*>(windowProxy.window())->updateDocument();
+    jsCast<JSLocalDOMWindow*>(windowProxy.window())->updateDocument();
     EXCEPTION_ASSERT_UNUSED(scope, !scope.exception());
 
     if (Document* document = m_frame.document())
@@ -441,7 +441,7 @@ void ScriptController::setWebAssemblyEnabled(bool value, const String& errorMess
     jsWindowProxy->window()->setWebAssemblyEnabled(value, errorMessage);
 }
 
-bool ScriptController::canAccessFromCurrentOrigin(Frame* frame, Document& accessingDocument)
+bool ScriptController::canAccessFromCurrentOrigin(LocalFrame* frame, Document& accessingDocument)
 {
     auto* lexicalGlobalObject = JSExecState::currentState();
 
@@ -458,7 +458,7 @@ void ScriptController::updateDocument()
 {
     for (auto& jsWindowProxy : windowProxy().jsWindowProxiesAsVector()) {
         JSLockHolder lock(jsWindowProxy->world().vm());
-        jsCast<JSDOMWindow*>(jsWindowProxy->window())->updateDocument();
+        jsCast<JSLocalDOMWindow*>(jsWindowProxy->window())->updateDocument();
     }
 }
 
@@ -502,7 +502,7 @@ void ScriptController::collectIsolatedContexts(Vector<std::pair<JSC::JSGlobalObj
 {
     for (auto& jsWindowProxy : windowProxy().jsWindowProxiesAsVector()) {
         auto* lexicalGlobalObject = jsWindowProxy->window();
-        auto* origin = &downcast<DOMWindow>(jsWindowProxy->wrapped()).document()->securityOrigin();
+        auto* origin = &downcast<LocalDOMWindow>(jsWindowProxy->wrapped()).document()->securityOrigin();
         result.append(std::make_pair(lexicalGlobalObject, origin));
     }
 }
@@ -807,8 +807,8 @@ void ScriptController::executeJavaScriptURL(const URL& url, RefPtr<SecurityOrigi
 
     // We need to hold onto the Frame here because executing script can
     // destroy the frame.
-    Ref<Frame> protector(m_frame);
-    RefPtr<Document> ownerDocument(m_frame.document());
+    Ref protectedFrame { m_frame };
+    RefPtr ownerDocument { m_frame.document() };
 
     const int javascriptSchemeLength = sizeof("javascript:") - 1;
 

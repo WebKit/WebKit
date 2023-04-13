@@ -27,9 +27,8 @@
 #include "CSSPropertyNames.h"
 #include "DOMWrapperWorld.h"
 #include "Document.h"
-#include "ElementIterator.h"
+#include "ElementAncestorIteratorInlines.h"
 #include "Event.h"
-#include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "HTMLBodyElement.h"
@@ -38,6 +37,7 @@
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
 #include "Length.h"
+#include "LocalFrame.h"
 #include "MouseEvent.h"
 #include "RenderFrameSet.h"
 #include "Text.h"
@@ -50,7 +50,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLFrameSetElement);
 using namespace HTMLNames;
 
 HTMLFrameSetElement::HTMLFrameSetElement(const QualifiedName& tagName, Document& document)
-    : HTMLElement(tagName, document)
+    : HTMLElement(tagName, document, CreateHTMLFrameSetElement)
     , m_totalRows(1)
     , m_totalCols(1)
     , m_border(6)
@@ -61,7 +61,6 @@ HTMLFrameSetElement::HTMLFrameSetElement(const QualifiedName& tagName, Document&
     , m_noresize(false)
 {
     ASSERT(hasTagName(framesetTag));
-    setHasCustomStyleResolveCallbacks();
 }
 
 Ref<HTMLFrameSetElement> HTMLFrameSetElement::create(const QualifiedName& tagName, Document& document)
@@ -84,13 +83,19 @@ void HTMLFrameSetElement::collectPresentationalHintsForAttribute(const Qualified
         HTMLElement::collectPresentationalHintsForAttribute(name, value, style);
 }
 
-void HTMLFrameSetElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+void HTMLFrameSetElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
+    auto& eventName = HTMLBodyElement::eventNameForWindowEventHandlerAttribute(name);
+    if (!eventName.isNull())
+        document().setWindowAttributeEventListener(eventName, name, newValue, mainThreadNormalWorld());
+    else
+        HTMLElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
+
     if (name == rowsAttr) {
         // FIXME: What is the right thing to do when removing this attribute?
         // Why not treat it the same way we treat setting it to the empty string?
-        if (!value.isNull()) {
-            m_rowLengths = newLengthArray(value.string(), m_totalRows);
+        if (!newValue.isNull()) {
+            m_rowLengths = newLengthArray(newValue.string(), m_totalRows);
             // FIXME: Would be nice to optimize the case where m_rowLengths did not change.
             invalidateStyleForSubtree();
         }
@@ -100,8 +105,8 @@ void HTMLFrameSetElement::parseAttribute(const QualifiedName& name, const AtomSt
     if (name == colsAttr) {
         // FIXME: What is the right thing to do when removing this attribute?
         // Why not treat it the same way we treat setting it to the empty string?
-        if (!value.isNull()) {
-            m_colLengths = newLengthArray(value.string(), m_totalCols);
+        if (!newValue.isNull()) {
+            m_colLengths = newLengthArray(newValue.string(), m_totalCols);
             // FIXME: Would be nice to optimize the case where m_colLengths did not change.
             invalidateStyleForSubtree();
         }
@@ -109,11 +114,11 @@ void HTMLFrameSetElement::parseAttribute(const QualifiedName& name, const AtomSt
     }
 
     if (name == frameborderAttr) {
-        if (!value.isNull()) {
-            if (equalLettersIgnoringASCIICase(value, "no"_s) || value == "0"_s) {
+        if (!newValue.isNull()) {
+            if (equalLettersIgnoringASCIICase(newValue, "no"_s) || newValue == "0"_s) {
                 m_frameborder = false;
                 m_frameborderSet = true;
-            } else if (equalLettersIgnoringASCIICase(value, "yes"_s) || value == "1"_s) {
+            } else if (equalLettersIgnoringASCIICase(newValue, "yes"_s) || newValue == "1"_s) {
                 m_frameborderSet = true;
             }
         } else {
@@ -131,8 +136,8 @@ void HTMLFrameSetElement::parseAttribute(const QualifiedName& name, const AtomSt
     }
 
     if (name == borderAttr) {
-        if (!value.isNull()) {
-            m_border = parseHTMLInteger(value).value_or(0);
+        if (!newValue.isNull()) {
+            m_border = parseHTMLInteger(newValue).value_or(0);
             m_borderSet = true;
         } else
             m_borderSet = false;
@@ -141,26 +146,17 @@ void HTMLFrameSetElement::parseAttribute(const QualifiedName& name, const AtomSt
     }
 
     if (name == bordercolorAttr) {
-        m_borderColorSet = !value.isEmpty();
+        m_borderColorSet = !newValue.isEmpty();
         // FIXME: Clearly wrong: This can overwrite the value inherited from the parent frameset.
         // FIXME: Do we need to trigger repainting?
         return;
     }
-
-    auto& eventName = HTMLBodyElement::eventNameForWindowEventHandlerAttribute(name);
-    if (!eventName.isNull()) {
-        document().setWindowAttributeEventListener(eventName, name, value, mainThreadNormalWorld());
-        return;
-    }
-
-    HTMLElement::parseAttribute(name, value);
 }
 
-bool HTMLFrameSetElement::rendererIsNeeded(const RenderStyle& style)
+bool HTMLFrameSetElement::rendererIsNeeded(const RenderStyle&)
 {
     // For compatibility, frames render even when display: none is set.
-    // However, we delay creating a renderer until stylesheets have loaded. 
-    return !style.isNotFinal();
+    return true;
 }
 
 RenderPtr<RenderElement> HTMLFrameSetElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)

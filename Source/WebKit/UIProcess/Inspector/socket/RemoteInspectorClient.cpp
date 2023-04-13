@@ -32,6 +32,7 @@
 #include "APIInspectorConfiguration.h"
 #include "RemoteWebInspectorUIProxy.h"
 #include <wtf/MainThread.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/text/Base64.h>
 
 namespace WebKit {

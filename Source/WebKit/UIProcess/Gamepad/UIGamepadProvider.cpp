@@ -189,10 +189,10 @@ void UIGamepadProvider::stopMonitoringGamepads()
     m_gamepads.clear();
 }
 
-Vector<GamepadData> UIGamepadProvider::snapshotGamepads()
+Vector<std::optional<GamepadData>> UIGamepadProvider::snapshotGamepads()
 {
     return m_gamepads.map([](auto& gamepad) {
-        return gamepad ? gamepad->gamepadData() : GamepadData { };
+        return gamepad ? std::optional<GamepadData>(gamepad->gamepadData()) : std::nullopt;
     });
 }
 

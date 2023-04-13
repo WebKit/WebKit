@@ -146,6 +146,7 @@ WEBKIT_DEFINE_TYPE_WITH_CODE(WebKitVideoSink, webkit_video_sink, GST_TYPE_VIDEO_
 
 static void webkitVideoSinkConstructed(GObject* object)
 {
+    GST_CALL_PARENT(G_OBJECT_CLASS, constructed, (object));
     g_object_set(GST_BASE_SINK(object), "enable-last-sample", FALSE, nullptr);
 }
 

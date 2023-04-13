@@ -27,7 +27,7 @@
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
 #include "WebProcess.h"
-#include <WebCore/FrameView.h>
+#include <WebCore/LocalFrameView.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/PopupMenuClient.h>
 
@@ -94,7 +94,7 @@ Vector<WebPopupItem> WebPopupMenu::populateItems()
     return items;
 }
 
-void WebPopupMenu::show(const IntRect& rect, FrameView* view, int selectedIndex)
+void WebPopupMenu::show(const IntRect& rect, LocalFrameView* view, int selectedIndex)
 {
     // FIXME: We should probably inform the client to also close the menu.
     Vector<WebPopupItem> items = populateItems();

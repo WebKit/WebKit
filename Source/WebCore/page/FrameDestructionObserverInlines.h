@@ -25,12 +25,12 @@
 
 #pragma once
 
-#include "Frame.h"
 #include "FrameDestructionObserver.h"
+#include "LocalFrame.h"
 
 namespace WebCore {
 
-inline Frame* FrameDestructionObserver::frame() const
+inline LocalFrame* FrameDestructionObserver::frame() const
 {
     return m_frame.get();
 }

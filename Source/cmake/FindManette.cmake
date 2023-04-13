@@ -52,7 +52,7 @@ This will define the following variables in your project:
 
 #]=======================================================================]
 
-find_package(PkgConfig)
+find_package(PkgConfig QUIET)
 pkg_check_modules(PC_MANETTE QUIET manette-0.2)
 set(Manette_COMPILE_OPTIONS ${PC_MANETTE_CFLAGS_OTHER})
 set(Manette_VERSION ${PC_MANETTE_VERSION})

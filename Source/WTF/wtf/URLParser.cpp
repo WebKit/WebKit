@@ -703,11 +703,15 @@ std::optional<String> URLParser::maybeCanonicalizeScheme(StringView scheme)
     if (scheme.isEmpty())
         return std::nullopt;
 
-    if (!isASCIIAlpha(scheme[0]))
+    size_t i = 0;
+    while (i < scheme.length() && isTabOrNewline(scheme[i]))
+        ++i;
+
+    if (i >= scheme.length() || !isASCIIAlpha(scheme[i++]))
         return std::nullopt;
 
-    for (size_t i = 1; i < scheme.length(); ++i) {
-        if (isASCIIAlphanumeric(scheme[i]) || scheme[i] == '+' || scheme[i] == '-' || scheme[i] == '.')
+    for (; i < scheme.length(); ++i) {
+        if (isASCIIAlphanumeric(scheme[i]) || scheme[i] == '+' || scheme[i] == '-' || scheme[i] == '.' || isTabOrNewline(scheme[i]))
             continue;
         return std::nullopt;
     }
@@ -2227,7 +2231,7 @@ Expected<uint32_t, URLParser::IPv4PieceParsingError> URLParser::parseIPv4Piece(C
 ALWAYS_INLINE static uint64_t pow256(size_t exponent)
 {
     RELEASE_ASSERT(exponent <= 4);
-    uint64_t values[5] = {1, 256, 256 * 256, 256 * 256 * 256, 256ull * 256 * 256 * 256 };
+    static constexpr uint64_t values[5] = { 1, 256, 256 * 256, 256 * 256 * 256, 256ull * 256 * 256 * 256 };
     return values[exponent];
 }
 
@@ -2310,8 +2314,6 @@ std::optional<uint32_t> URLParser::parseIPv4PieceInsideIPv6(CodePointIterator<Ch
                 return std::nullopt;
             leadingZeros = true;
         }
-        if (!piece && *iterator == '0')
-            leadingZeros = true;
         piece = piece * 10 + *iterator - '0';
         if (piece > 255)
             return std::nullopt;
@@ -2510,7 +2512,7 @@ void URLParser::addNonSpecialDotSlash()
 {
     auto oldPathStart = m_url.m_hostEnd + m_url.m_portLength;
     auto& oldString = m_url.m_string;
-    m_url.m_string = makeString(StringView(oldString).left(oldPathStart + 1), "./", StringView(oldString).substring(oldPathStart + 1));
+    m_url.m_string = makeString(StringView(oldString).left(oldPathStart + 1), "./"_s, StringView(oldString).substring(oldPathStart + 1));
     m_url.m_pathAfterLastSlash += 2;
     m_url.m_pathEnd += 2;
     m_url.m_queryEnd += 2;

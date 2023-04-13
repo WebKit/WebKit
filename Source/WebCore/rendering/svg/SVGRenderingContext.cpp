@@ -28,9 +28,9 @@
 #include "SVGRenderingContext.h"
 
 #include "BasicShapes.h"
-#include "Frame.h"
-#include "FrameView.h"
 #include "LegacyRenderSVGImage.h"
+#include "LocalFrame.h"
+#include "LocalFrameView.h"
 #include "RenderLayer.h"
 #include "RenderSVGResourceClipper.h"
 #include "RenderSVGResourceFilter.h"

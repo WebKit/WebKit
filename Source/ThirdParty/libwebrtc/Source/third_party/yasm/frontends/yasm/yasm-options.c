@@ -174,30 +174,30 @@ help_msg(const char *msg, const char *tail, opt_option *options, size_t nopts)
 
         if (options[i].takes_param) {
             if (options[i].sopt) {
-                sprintf(optbuf, "-%c <%s>", options[i].sopt,
+                snprintf(optbuf, 100, "-%c <%s>", options[i].sopt,
                         options[i].param_desc ? options[i].
                         param_desc : _("param"));
                 shortopt_len = strlen(optbuf);
             }
             if (options[i].sopt && options[i].lopt)
-                strcat(optbuf, ", ");
+                strlcat(optbuf, ", ", 100);
             if (options[i].lopt) {
-                sprintf(optopt, "--%s=<%s>", options[i].lopt,
+                snprintf(optopt, 100, "--%s=<%s>", options[i].lopt,
                         options[i].param_desc ? options[i].
                         param_desc : _("param"));
-                strcat(optbuf, optopt);
+                strlcat(optbuf, optopt, 100);
                 longopt_len = strlen(optbuf);
             }
         } else {
             if (options[i].sopt) {
-                sprintf(optbuf, "-%c", options[i].sopt);
+                snprintf(optbuf, 100, "-%c", options[i].sopt);
                 shortopt_len = strlen(optbuf);
             }
             if (options[i].sopt && options[i].lopt)
-                strcat(optbuf, ", ");
+                strlcat(optbuf, ", ", 100);
             if (options[i].lopt) {
-                sprintf(optopt, "--%s", options[i].lopt);
-                strcat(optbuf, optopt);
+                snprintf(optopt, 100, "--%s", options[i].lopt);
+                strlcat(optbuf, optopt, 100);
                 longopt_len = strlen(optbuf);
             }
         }

@@ -25,8 +25,11 @@
 
 #pragma once
 
+#include "ExceptionOr.h"
+#include "GPUBufferMapState.h"
 #include "GPUIntegralTypes.h"
 #include "GPUMapMode.h"
+#include "JSDOMPromiseDeferred.h"
 #include "JSDOMPromiseDeferredForward.h"
 #include <JavaScriptCore/ArrayBuffer.h>
 #include <cstdint>
@@ -40,9 +43,9 @@ namespace WebCore {
 
 class GPUBuffer : public RefCounted<GPUBuffer> {
 public:
-    static Ref<GPUBuffer> create(Ref<PAL::WebGPU::Buffer>&& backing)
+    static Ref<GPUBuffer> create(Ref<PAL::WebGPU::Buffer>&& backing, size_t bufferSize, GPUBufferUsageFlags usage, bool mappedAtCreation)
     {
-        return adoptRef(*new GPUBuffer(WTFMove(backing)));
+        return adoptRef(*new GPUBuffer(WTFMove(backing), bufferSize, usage, mappedAtCreation));
     }
 
     String label() const;
@@ -50,7 +53,7 @@ public:
 
     using MapAsyncPromise = DOMPromiseDeferred<IDLNull>;
     void mapAsync(GPUMapModeFlags, std::optional<GPUSize64> offset, std::optional<GPUSize64> sizeForMap, MapAsyncPromise&&);
-    Ref<JSC::ArrayBuffer> getMappedRange(std::optional<GPUSize64> offset, std::optional<GPUSize64> rangeSize);
+    ExceptionOr<Ref<JSC::ArrayBuffer>> getMappedRange(std::optional<GPUSize64> offset, std::optional<GPUSize64> rangeSize);
     void unmap();
 
     void destroy();
@@ -58,16 +61,22 @@ public:
     PAL::WebGPU::Buffer& backing() { return m_backing; }
     const PAL::WebGPU::Buffer& backing() const { return m_backing; }
 
-    ~GPUBuffer() { destroy(); }
+    GPUSize64 size() const { return static_cast<GPUSize64>(m_bufferSize); }
+    GPUBufferUsageFlags usage() const { return m_usage; }
+
+    GPUBufferMapState mapState() const { return m_mapState; };
+
+    ~GPUBuffer();
 private:
-    GPUBuffer(Ref<PAL::WebGPU::Buffer>&& backing)
-        : m_backing(WTFMove(backing))
-    {
-    }
+    GPUBuffer(Ref<PAL::WebGPU::Buffer>&&, size_t, GPUBufferUsageFlags, bool);
 
     Ref<PAL::WebGPU::Buffer> m_backing;
     PAL::WebGPU::Buffer::MappedRange m_mappedRange;
     JSC::ArrayBuffer* m_arrayBuffer { nullptr };
+    size_t m_bufferSize { 0 };
+    const GPUBufferUsageFlags m_usage { 0 };
+    GPUBufferMapState m_mapState { GPUBufferMapState::Unmapped };
+    std::optional<MapAsyncPromise> m_pendingMapPromise;
 };
 
 }

@@ -40,6 +40,7 @@
 #import <wtf/LogInitialization.h>
 #import <wtf/MainThread.h>
 #import <wtf/OSObjectPtr.h>
+#import <wtf/WTFProcess.h>
 #import <wtf/spi/darwin/XPCSPI.h>
 
 using WebKit::Daemon::EncodedMessage;
@@ -132,7 +133,7 @@ int WebPushDaemonMain(int argc, char** argv)
                 break;
             default:
                 fprintf(stderr, "Unknown option: %c\n", optopt);
-                exit(1);
+                exitProcess(1);
             }
         }
 

@@ -75,6 +75,7 @@
                                    GLchar *source);                                                \
     /* GL_APPLE_clip_distance */                                                                   \
     /* GL_ARB_sync */                                                                              \
+    /* GL_ARM_shader_framebuffer_fetch */                                                          \
     /* GL_EXT_EGL_image_array */                                                                   \
     /* GL_EXT_EGL_image_external_wrap_modes */                                                     \
     /* GL_EXT_EGL_image_storage */                                                                 \
@@ -104,11 +105,12 @@
     void bufferStorage(BufferBinding targetPacked, GLsizeiptr size, const void *data,              \
                        GLbitfield flags);                                                          \
     /* GL_EXT_clip_control */                                                                      \
-    void clipControl(GLenum origin, GLenum depth);                                                 \
+    void clipControl(ClipOrigin originPacked, ClipDepthMode depthPacked);                          \
     /* GL_EXT_clip_cull_distance */                                                                \
     /* GL_EXT_color_buffer_float */                                                                \
     /* GL_EXT_color_buffer_half_float */                                                           \
     /* GL_EXT_compressed_ETC1_RGB8_sub_texture */                                                  \
+    /* GL_EXT_conservative_depth */                                                                \
     /* GL_EXT_copy_image */                                                                        \
     /* GL_EXT_debug_label */                                                                       \
     void labelObject(GLenum type, GLuint object, GLsizei length, const GLchar *label);             \
@@ -116,6 +118,7 @@
     void insertEventMarker(GLsizei length, const GLchar *marker);                                  \
     void popGroupMarker();                                                                         \
     void pushGroupMarker(GLsizei length, const GLchar *marker);                                    \
+    /* GL_EXT_depth_clamp */                                                                       \
     /* GL_EXT_discard_framebuffer */                                                               \
     void discardFramebuffer(GLenum target, GLsizei numAttachments, const GLenum *attachments);     \
     /* GL_EXT_disjoint_timer_query */                                                              \
@@ -189,6 +192,7 @@
     /* GL_EXT_protected_textures */                                                                \
     /* GL_EXT_pvrtc_sRGB */                                                                        \
     /* GL_EXT_read_format_bgra */                                                                  \
+    /* GL_EXT_render_snorm */                                                                      \
     /* GL_EXT_robustness */                                                                        \
     /* GL_EXT_sRGB */                                                                              \
     /* GL_EXT_sRGB_write_control */                                                                \
@@ -225,8 +229,10 @@
     /* GL_EXT_texture_compression_s3tc_srgb */                                                     \
     /* GL_EXT_texture_cube_map_array */                                                            \
     /* GL_EXT_texture_filter_anisotropic */                                                        \
+    /* GL_EXT_texture_filter_minmax */                                                             \
     /* GL_EXT_texture_format_BGRA8888 */                                                           \
     /* GL_EXT_texture_format_sRGB_override */                                                      \
+    /* GL_EXT_texture_mirror_clamp_to_edge */                                                      \
     /* GL_EXT_texture_norm16 */                                                                    \
     /* GL_EXT_texture_rg */                                                                        \
     /* GL_EXT_texture_sRGB_R8 */                                                                   \
@@ -332,6 +338,7 @@
     void framebufferTextureMultiview(GLenum target, GLenum attachment, TextureID texturePacked,    \
                                      GLint level, GLint baseViewIndex, GLsizei numViews);          \
     /* GL_OVR_multiview2 */                                                                        \
+    /* GL_QCOM_render_shared_exponent */                                                           \
     /* GL_QCOM_shading_rate */                                                                     \
     void shadingRateQCOM(GLenum rate);                                                             \
     /* GL_WEBGL_video_texture */                                                                   \
@@ -569,6 +576,7 @@
     /* GL_ANGLE_semaphore_fuchsia */                                                               \
     void importSemaphoreZirconHandle(SemaphoreID semaphorePacked, HandleType handleTypePacked,     \
                                      GLuint handle);                                               \
+    /* GL_ANGLE_shader_binary */                                                                   \
     /* GL_ANGLE_shader_pixel_local_storage */                                                      \
     void framebufferMemorylessPixelLocalStorage(GLint plane, GLenum internalformat);               \
     void framebufferTexturePixelLocalStorage(GLint plane, TextureID backingtexturePacked,          \
@@ -579,9 +587,16 @@
     void beginPixelLocalStorage(GLsizei n, const GLenum *loadops);                                 \
     void endPixelLocalStorage(GLsizei n, const GLenum *storeops);                                  \
     void pixelLocalStorageBarrier();                                                               \
+    void framebufferPixelLocalStorageInterrupt();                                                  \
+    void framebufferPixelLocalStorageRestore();                                                    \
     void getFramebufferPixelLocalStorageParameterfv(GLint plane, GLenum pname, GLfloat *params);   \
     void getFramebufferPixelLocalStorageParameteriv(GLint plane, GLenum pname, GLint *params);     \
+    void getFramebufferPixelLocalStorageParameterfvRobust(                                         \
+        GLint plane, GLenum pname, GLsizei bufSize, GLsizei *length, GLfloat *params);             \
+    void getFramebufferPixelLocalStorageParameterivRobust(                                         \
+        GLint plane, GLenum pname, GLsizei bufSize, GLsizei *length, GLint *params);               \
     /* GL_ANGLE_shader_pixel_local_storage_coherent */                                             \
+    /* GL_ANGLE_stencil_texturing */                                                               \
     /* GL_ANGLE_texture_compression_dxt3 */                                                        \
     /* GL_ANGLE_texture_compression_dxt5 */                                                        \
     /* GL_ANGLE_texture_external_update */                                                         \

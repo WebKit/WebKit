@@ -47,8 +47,8 @@ private:
 
     ScrollingTreeScrollingNodeDelegateIOS& delegate() const;
 
-    void commitStateBeforeChildren(const WebCore::ScrollingStateNode&) final;
-    void commitStateAfterChildren(const WebCore::ScrollingStateNode&) final;
+    bool commitStateBeforeChildren(const WebCore::ScrollingStateNode&) final;
+    bool commitStateAfterChildren(const WebCore::ScrollingStateNode&) final;
     
     void repositionScrollingLayers() final;
 };

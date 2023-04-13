@@ -35,6 +35,8 @@ namespace WTR {
 
 static String testPathFromURL(WKURLRef url)
 {
+    if (!url)
+        return "(null)"_s;
     auto cfURL = adoptCF(WKURLCopyCFURL(kCFAllocatorDefault, url));
     if (!cfURL)
         return String();

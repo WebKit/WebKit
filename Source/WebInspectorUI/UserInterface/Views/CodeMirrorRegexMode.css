@@ -31,11 +31,11 @@
     color: var(--syntax-highlight-number-color);
 }
 
-.cm-s-default :matches(.cm-regex-escape, .cm-regex-escape-2, .cm-regex-escape-3) {
+.cm-s-default :is(.cm-regex-escape, .cm-regex-escape-2, .cm-regex-escape-3) {
     color: var(--syntax-highlight-symbol-color);
 }
 
-.cm-s-default :matches(.cm-regex-group, .cm-regex-lookahead) {
+.cm-s-default :is(.cm-regex-group, .cm-regex-lookahead) {
     color: var(--syntax-highlight-regex-group-color);
 }
 
@@ -43,6 +43,6 @@
     color: var(--syntax-highlight-number-color);
 }
 
-.cm-s-default :matches(.cm-regex-literal, .cm-regex-special, .cm-regex-backreference) {
+.cm-s-default :is(.cm-regex-literal, .cm-regex-special, .cm-regex-backreference) {
     color: var(--syntax-highlight-boolean-color);
 }

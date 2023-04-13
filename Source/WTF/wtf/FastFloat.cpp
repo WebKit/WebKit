@@ -24,8 +24,9 @@
  */
 
 #include "config.h"
-#include <wtf/FastFloat.h>
-#include <wtf/fast_float/fast_float.h>
+#include "FastFloat.h"
+
+#include "fast_float/fast_float.h"
 
 namespace WTF {
 

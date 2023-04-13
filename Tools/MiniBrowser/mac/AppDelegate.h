@@ -23,6 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+@class BrowserWindowController;
 @class ExtensionManagerWindowController;
 @class SettingsController;
 
@@ -41,6 +42,7 @@
     bool _openNewWindowAtStartup;
 }
 
+- (void)didCreateBrowserWindowController:(BrowserWindowController *)controller;
 - (void)browserWindowWillClose:(NSWindow *)window;
 
 - (void)didChangeSettings;

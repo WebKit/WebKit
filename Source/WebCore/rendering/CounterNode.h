@@ -21,6 +21,7 @@
 
 #pragma once
 
+#include <wtf/CheckedPtr.h>
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 
@@ -38,7 +39,7 @@ namespace WebCore {
 class RenderCounter;
 class RenderElement;
 
-class CounterNode : public RefCounted<CounterNode> {
+class CounterNode : public RefCounted<CounterNode>, public CanMakeCheckedPtr {
 public:
     static Ref<CounterNode> create(RenderElement&, bool isReset, int value);
     ~CounterNode();
@@ -53,11 +54,11 @@ public:
     // Invalidates the text in the renderers of this counter, if any.
     void resetRenderers();
 
-    CounterNode* parent() const { return m_parent; }
-    CounterNode* previousSibling() const { return m_previousSibling; }
-    CounterNode* nextSibling() const { return m_nextSibling; }
-    CounterNode* firstChild() const { return m_firstChild; }
-    CounterNode* lastChild() const { return m_lastChild; }
+    CounterNode* parent() const { return const_cast<CounterNode*>(m_parent.get()); }
+    CounterNode* previousSibling() const { return const_cast<CounterNode*>(m_previousSibling.get()); }
+    CounterNode* nextSibling() const { return const_cast<CounterNode*>(m_nextSibling.get()); }
+    CounterNode* firstChild() const { return const_cast<CounterNode*>(m_firstChild.get()); }
+    CounterNode* lastChild() const { return const_cast<CounterNode*>(m_lastChild.get()); }
     CounterNode* lastDescendant() const;
     CounterNode* previousInPreOrder() const;
     CounterNode* nextInPreOrder(const CounterNode* stayWithin = nullptr) const;
@@ -77,15 +78,15 @@ private:
 
     bool m_hasResetType;
     int m_value;
-    int m_countInParent;
+    int m_countInParent { 0 };
     RenderElement& m_owner;
     RenderCounter* m_rootRenderer { nullptr };
 
-    CounterNode* m_parent { nullptr };
-    CounterNode* m_previousSibling { nullptr };
-    CounterNode* m_nextSibling { nullptr };
-    CounterNode* m_firstChild { nullptr };
-    CounterNode* m_lastChild { nullptr };
+    CheckedPtr<CounterNode> m_parent;
+    CheckedPtr<CounterNode> m_previousSibling;
+    CheckedPtr<CounterNode> m_nextSibling;
+    CheckedPtr<CounterNode> m_firstChild;
+    CheckedPtr<CounterNode> m_lastChild;
 };
 
 } // namespace WebCore

@@ -32,6 +32,8 @@
                 return;
             }
 
+            await UIHelper.ensurePresentationUpdate();
+
             eventSender.mouseMoveTo(100, 100); // Inside the iframe.
             eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'began', 'none');
             eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -10, 'changed', 'none');

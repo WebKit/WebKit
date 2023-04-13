@@ -136,7 +136,7 @@ std::optional<GeolocationPositionData> GeolocationController::lastPosition()
     return m_client.lastPosition();
 }
 
-void GeolocationController::activityStateDidChange(OptionSet<ActivityState::Flag> oldActivityState, OptionSet<ActivityState::Flag> newActivityState)
+void GeolocationController::activityStateDidChange(OptionSet<ActivityState> oldActivityState, OptionSet<ActivityState> newActivityState)
 {
     // Toggle GPS based on page visibility to save battery.
     auto changed = oldActivityState ^ newActivityState;

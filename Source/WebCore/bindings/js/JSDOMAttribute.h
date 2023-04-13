@@ -25,6 +25,7 @@
 
 #include "JSDOMCastThisValue.h"
 #include "JSDOMExceptionHandling.h"
+#include <JavaScriptCore/Error.h>
 
 namespace WebCore {
 

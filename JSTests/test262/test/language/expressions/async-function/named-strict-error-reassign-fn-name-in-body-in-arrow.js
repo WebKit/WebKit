@@ -6,6 +6,7 @@ description: Reassignment of function name is silently ignored in non-strict mod
 esid: sec-async-function-definitions
 features: [async-functions]
 flags: [generated, async, onlyStrict]
+includes: [asyncHelpers.js]
 info: |
     Async Function Definitions
 
@@ -24,7 +25,7 @@ let ref = async function BindingIdentifier() {
   return BindingIdentifier;
 };
 
-(async () => {
+asyncTest(async () => {
   let catchCount = 0;
   try {
     await ref()
@@ -34,5 +35,5 @@ let ref = async function BindingIdentifier() {
   }
   assert.sameValue(catchCount, 1);
   assert.sameValue(callCount, 1);
-})().then($DONE, $DONE);
+});
 

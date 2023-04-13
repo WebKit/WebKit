@@ -7,6 +7,7 @@ esid: pending
 description: >
   Await can await any thenable.
 flags: [async]
+includes: [asyncHelpers.js]
 ---*/
 
 var thenable = {
@@ -18,4 +19,4 @@ async function foo() {
   assert.sameValue(await thenable, 42);
 }
 
-foo().then($DONE, $DONE);
+asyncTest(foo);

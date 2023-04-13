@@ -2457,6 +2457,57 @@ TEST(WTF_WeakPtr, WeakListHashSetIterators)
         EXPECT_EQ(weakListHashSet.computeSize(), 0u);
         EXPECT_FALSE(weakListHashSet.hasNullReferences());
     }
+
+    {
+        WeakListHashSet<Base> weakListHashSet;
+        {
+            Vector<std::unique_ptr<Base>> objects;
+            for (unsigned i = 0; i < 50; ++i) {
+                if (i % 2)
+                    objects.append(makeUnique<Derived>());
+                else
+                    objects.append(makeUnique<Base>());
+                objects.last()->dummy = i + 1;
+                weakListHashSet.add(*objects.last());
+            }
+            weakListHashSet.checkConsistency();
+            EXPECT_EQ(s_baseWeakReferences, 50u);
+            EXPECT_FALSE(weakListHashSet.hasNullReferences());
+            EXPECT_EQ(weakListHashSet.computeSize(), 50u);
+
+            {
+                auto it = weakListHashSet.end();
+                unsigned sum = 0;
+                while (it != weakListHashSet.begin()) {
+                    --it;
+                    sum += it->dummy;
+                }
+                weakListHashSet.checkConsistency();
+                EXPECT_EQ(sum, 1275u);
+            }
+
+            EXPECT_FALSE(weakListHashSet.hasNullReferences());
+
+            for (unsigned i = 0; i < 50; ++i) {
+                if (!(i % 2))
+                    objects[i] = nullptr;
+            }
+
+            EXPECT_TRUE(weakListHashSet.hasNullReferences());
+
+            {
+                auto it = weakListHashSet.end();
+                unsigned sum = 0;
+                while (it != weakListHashSet.begin()) {
+                    --it;
+                    sum += it->dummy;
+                }
+                EXPECT_EQ(sum, 650u);
+            }
+        }
+        EXPECT_TRUE(weakListHashSet.hasNullReferences());
+        EXPECT_TRUE(weakListHashSet.end() == weakListHashSet.begin());
+    }
 }
 
 TEST(WTF_WeakPtr, WeakListHashSetAppendOrMoveToLast)

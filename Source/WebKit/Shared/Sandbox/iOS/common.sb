@@ -29,7 +29,7 @@
 (define file-write-unmount file-unmount)
 
 (with-filter (mac-policy-name "Sandbox")
-    (allow system-mac-syscall (mac-syscall-number 2 4 6)))
+    (allow system-mac-syscall (mac-syscall-number 2 4 6 7 67)))
 
 (with-filter (mac-policy-name "AMFI")
     (allow system-mac-syscall (mac-syscall-number 90)))

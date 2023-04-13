@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,9 +31,15 @@
 namespace JSC {
 namespace Wasm {
 
+#if ENABLE(WEBASSEMBLY)
+
 inline bool isSupported()
 {
     return Options::useWebAssembly();
 }
+
+#else
+inline bool isSupported() { return false; }
+#endif
 
 } } // namespace JSC::Wasm

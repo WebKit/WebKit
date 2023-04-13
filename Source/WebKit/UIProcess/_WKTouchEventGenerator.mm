@@ -204,25 +204,24 @@ static void delayBetweenMove(int eventIndex, double elapsed)
     return eventRef.leakRef();
 }
 
-- (BOOL)_sendHIDEvent:(IOHIDEventRef)eventRef
+- (BOOL)_sendHIDEvent:(IOHIDEventRef)eventRef window:(UIWindow *)window
 {
     if (!_ioSystemClient)
         _ioSystemClient = adoptCF(IOHIDEventSystemClientCreate(kCFAllocatorDefault));
 
     if (eventRef) {
-        RunLoop::main().dispatch([strongEvent = retainPtr(eventRef)] {
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-            uint32_t contextID = [UIApplication sharedApplication].keyWindow._contextId;
-ALLOW_DEPRECATED_DECLARATIONS_END
-            ASSERT(contextID);
-            BKSHIDEventSetDigitizerInfo(strongEvent.get(), contextID, false, false, NULL, 0, 0);
+        auto contextId = window._contextId;
+        ASSERT(contextId);
+
+        RunLoop::main().dispatch([strongEvent = retainPtr(eventRef), contextId] {
+            BKSHIDEventSetDigitizerInfo(strongEvent.get(), contextId, false, false, NULL, 0, 0);
             [[UIApplication sharedApplication] _enqueueHIDEvent:strongEvent.get()];
         });
     }
     return YES;
 }
 
-- (BOOL)_sendMarkerHIDEventWithCompletionBlock:(void (^)(void))completionBlock
+- (BOOL)_sendMarkerHIDEventInWindow:(UIWindow *)window completionBlock:(void (^)(void))completionBlock
 {
     auto callbackID = [_WKTouchEventGenerator nextEventCallbackID];
     [_eventCallbacks setObject:Block_copy(completionBlock) forKey:@(callbackID)];
@@ -237,19 +236,18 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         kIOHIDEventOptionNone));
     
     if (markerEvent) {
-        RunLoop::main().dispatch([markerEvent = WTFMove(markerEvent)] {
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-            auto contextID = [UIApplication sharedApplication].keyWindow._contextId;
-ALLOW_DEPRECATED_DECLARATIONS_END
-            ASSERT(contextID);
-            BKSHIDEventSetDigitizerInfo(markerEvent.get(), contextID, false, false, NULL, 0, 0);
+        auto contextId = window._contextId;
+        ASSERT(contextId);
+
+        RunLoop::main().dispatch([markerEvent = WTFMove(markerEvent), contextId] {
+            BKSHIDEventSetDigitizerInfo(markerEvent.get(), contextId, false, false, NULL, 0, 0);
             [[UIApplication sharedApplication] _enqueueHIDEvent:markerEvent.get()];
         });
     }
     return YES;
 }
 
-- (void)_updateTouchPoints:(CGPoint*)points count:(NSUInteger)count
+- (void)_updateTouchPoints:(CGPoint*)points count:(NSUInteger)count window:(UIWindow *)window
 {
     HandEventType handEventType;
     
@@ -271,10 +269,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         _activePoints[i].point = points[i];
     
     RetainPtr<IOHIDEventRef> eventRef = adoptCF([self _createIOHIDEventType:handEventType]);
-    [self _sendHIDEvent:eventRef.get()];
+    [self _sendHIDEvent:eventRef.get() window:window];
 }
 
-- (void)touchDownAtPoints:(CGPoint*)locations touchCount:(NSUInteger)touchCount
+- (void)touchDownAtPoints:(CGPoint*)locations touchCount:(NSUInteger)touchCount window:(UIWindow *)window
 {
     touchCount = std::min(touchCount, HIDMaxTouchCount);
 
@@ -284,10 +282,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         _activePoints[index].point = locations[index];
 
     RetainPtr<IOHIDEventRef> eventRef = adoptCF([self _createIOHIDEventType:HandEventTouched]);
-    [self _sendHIDEvent:eventRef.get()];
+    [self _sendHIDEvent:eventRef.get() window:window];
 }
 
-- (void)touchDown:(CGPoint)location touchCount:(NSUInteger)touchCount
+- (void)touchDown:(CGPoint)location touchCount:(NSUInteger)touchCount window:(UIWindow *)window
 {
     touchCount = std::min(touchCount, HIDMaxTouchCount);
 
@@ -296,15 +294,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     for (NSUInteger index = 0; index < touchCount; ++index)
         locations[index] = location;
     
-    [self touchDownAtPoints:locations.data() touchCount:touchCount];
+    [self touchDownAtPoints:locations.data() touchCount:touchCount window:window];
 }
 
-- (void)touchDown:(CGPoint)location
-{
-    [self touchDownAtPoints:&location touchCount:1];
-}
-
-- (void)liftUpAtPoints:(CGPoint*)locations touchCount:(NSUInteger)touchCount
+- (void)liftUpAtPoints:(CGPoint*)locations touchCount:(NSUInteger)touchCount window:(UIWindow *)window
 {
     touchCount = std::min(touchCount, HIDMaxTouchCount);
     touchCount = std::min(touchCount, _activePointCount);
@@ -315,12 +308,12 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         _activePoints[newPointCount + index].point = locations[index];
     
     RetainPtr<IOHIDEventRef> eventRef = adoptCF([self _createIOHIDEventType:HandEventLifted]);
-    [self _sendHIDEvent:eventRef.get()];
-    
+    [self _sendHIDEvent:eventRef.get() window:window];
+
     _activePointCount = newPointCount;
 }
 
-- (void)liftUp:(CGPoint)location touchCount:(NSUInteger)touchCount
+- (void)liftUp:(CGPoint)location touchCount:(NSUInteger)touchCount window:(UIWindow *)window
 {
     touchCount = std::min(touchCount, HIDMaxTouchCount);
 
@@ -329,15 +322,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     for (NSUInteger index = 0; index < touchCount; ++index)
         locations[index] = location;
     
-    [self liftUpAtPoints:locations.data() touchCount:touchCount];
+    [self liftUpAtPoints:locations.data() touchCount:touchCount window:window];
 }
 
-- (void)liftUp:(CGPoint)location
-{
-    [self liftUp:location touchCount:1];
-}
-
-- (void)moveToPoints:(CGPoint*)newLocations touchCount:(NSUInteger)touchCount duration:(NSTimeInterval)seconds
+- (void)moveToPoints:(CGPoint*)newLocations touchCount:(NSUInteger)touchCount duration:(NSTimeInterval)seconds window:(UIWindow *)window
 {
     touchCount = std::min(touchCount, HIDMaxTouchCount);
 
@@ -358,32 +346,32 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
             nextLocations[i] = calculateNextCurveLocation(startLocations[i], newLocations[i], interval);
         }
-        [self _updateTouchPoints:nextLocations.data() count:touchCount];
+        [self _updateTouchPoints:nextLocations.data() count:touchCount window:window];
 
         delayBetweenMove(eventIndex++, elapsed);
     }
 
-    [self _updateTouchPoints:newLocations count:touchCount];
+    [self _updateTouchPoints:newLocations count:touchCount window:window];
 }
 
-- (void)touchDown:(CGPoint)location completionBlock:(void (^)(void))completionBlock
+- (void)touchDown:(CGPoint)location window:(UIWindow *)window completionBlock:(void (^)(void))completionBlock
 {
-    [self touchDown:location touchCount:1];
-    [self _sendMarkerHIDEventWithCompletionBlock:completionBlock];
+    [self touchDown:location touchCount:1 window:window];
+    [self _sendMarkerHIDEventInWindow:window completionBlock:completionBlock];
 }
 
-- (void)liftUp:(CGPoint)location completionBlock:(void (^)(void))completionBlock
+- (void)liftUp:(CGPoint)location window:(UIWindow *)window completionBlock:(void (^)(void))completionBlock
 {
-    [self liftUp:location touchCount:1];
-    [self _sendMarkerHIDEventWithCompletionBlock:completionBlock];
+    [self liftUp:location touchCount:1 window:window];
+    [self _sendMarkerHIDEventInWindow:window completionBlock:completionBlock];
 }
 
-- (void)moveToPoint:(CGPoint)location duration:(NSTimeInterval)seconds completionBlock:(void (^)(void))completionBlock
+- (void)moveToPoint:(CGPoint)location duration:(NSTimeInterval)seconds window:(UIWindow *)window completionBlock:(void (^)(void))completionBlock
 {
     CGPoint locations[1];
     locations[0] = location;
-    [self moveToPoints:locations touchCount:1 duration:seconds];
-    [self _sendMarkerHIDEventWithCompletionBlock:completionBlock];
+    [self moveToPoints:locations touchCount:1 duration:seconds window:window];
+    [self _sendMarkerHIDEventInWindow:window completionBlock:completionBlock];
 }
 
 - (void)receivedHIDEvent:(IOHIDEventRef)event

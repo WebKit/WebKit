@@ -31,9 +31,9 @@ namespace WebCore {
 class DocumentFragment : public ContainerNode {
     WTF_MAKE_ISO_ALLOCATED(DocumentFragment);
 public:
-    static Ref<DocumentFragment> create(Document&);
+    WEBCORE_EXPORT static Ref<DocumentFragment> create(Document&);
 
-    void parseHTML(const String&, Element* contextElement, OptionSet<ParserContentPolicy> = { ParserContentPolicy::AllowScriptingContent, ParserContentPolicy::AllowPluginContent });
+    void parseHTML(const String&, Element& contextElement, OptionSet<ParserContentPolicy> = { ParserContentPolicy::AllowScriptingContent, ParserContentPolicy::AllowPluginContent });
     bool parseXML(const String&, Element* contextElement, OptionSet<ParserContentPolicy> = { ParserContentPolicy::AllowScriptingContent, ParserContentPolicy::AllowPluginContent });
 
     bool canContainRangeEndPoint() const final { return true; }

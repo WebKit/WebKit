@@ -1,11 +1,13 @@
 
 Indenting:
+| <#selection-anchor>
 | "\n"
 | <pre>
 |   <ul>
 |     <li>
-|       "<#selection-anchor>hello<#selection-focus>"
+|       "hello"
 | "\n"
+| <#selection-focus>
 
 yields:
 | "\n"
@@ -17,13 +19,15 @@ yields:
 | "\n"
 
 Indenting:
+| <#selection-anchor>
 | "\n"
 | <pre>
 |   <ul>
 |     <li>
-|       "<#selection-anchor>hello\nworld"
-|     "<#selection-focus>\n"
+|       "hello\nworld"
+|     "\n"
 | "\n"
+| <#selection-focus>
 
 yields:
 | "\n"
@@ -38,12 +42,14 @@ yields:
 | "\n"
 
 Indenting:
+| <#selection-anchor>
 | "\n"
 | <ul>
 |   <li>
 |     <pre>
-|       "<#selection-anchor>hello\nworld\nwebkit<#selection-focus>\n"
+|       "hello\nworld\nwebkit\n"
 | "\n"
+| <#selection-focus>
 
 yields:
 | "\n"

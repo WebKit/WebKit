@@ -26,6 +26,8 @@
 #include "config.h"
 #include "GPUAdapter.h"
 
+#include "Exception.h"
+#include "JSDOMPromiseDeferred.h"
 #include "JSGPUDevice.h"
 
 namespace WebCore {
@@ -60,9 +62,18 @@ static PAL::WebGPU::DeviceDescriptor convertToBacking(const std::optional<GPUDev
 
 void GPUAdapter::requestDevice(ScriptExecutionContext&, const std::optional<GPUDeviceDescriptor>& deviceDescriptor, RequestDevicePromise&& promise)
 {
-    m_backing->requestDevice(convertToBacking(deviceDescriptor), [promise = WTFMove(promise)] (Ref<PAL::WebGPU::Device>&& device) mutable {
-        promise.resolve(GPUDevice::create(nullptr, WTFMove(device)));
+    m_backing->requestDevice(convertToBacking(deviceDescriptor), [promise = WTFMove(promise)] (RefPtr<PAL::WebGPU::Device>&& device) mutable {
+        if (!device.get())
+            promise.reject(Exception(OperationError));
+        else
+            promise.resolve(GPUDevice::create(nullptr, device.releaseNonNull()));
     });
+}
+
+void GPUAdapter::requestAdapterInfo(const std::optional<Vector<String>>&, RequestAdapterInfoPromise&& promise)
+{
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=251377 - [WebGPU] Implement GPUAdapter.requestAdapterInfo
+    promise.resolve(nullptr);
 }
 
 }

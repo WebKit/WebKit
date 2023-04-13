@@ -29,6 +29,7 @@
 #if PLATFORM(MAC)
 
 #import "APIHitTestResult.h"
+#import "MessageSenderInlines.h"
 #import "WKNSURLExtras.h"
 #import "WebPageMessages.h"
 #import "WebPageProxy.h"
@@ -480,7 +481,7 @@
         return nil;
 
     WebCore::DictionaryPopupInfo dictionaryPopupInfo = _hitTestResultData.dictionaryPopupInfo;
-    if (!dictionaryPopupInfo.platformData.attributedString)
+    if (!dictionaryPopupInfo.platformData.attributedString.nsAttributedString())
         return nil;
 
     _viewImpl->prepareForDictionaryLookup();

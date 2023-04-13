@@ -56,28 +56,6 @@ struct MethodInfo {
     HashMap<SEL, MethodInfo> _methods;
 }
 
-static bool isContainerClass(Class objectClass)
-{
-    // FIXME: Add more classes here if needed.
-    static Class arrayClass = [NSArray class];
-    static Class dictionaryClass = [NSDictionary class];
-    return objectClass == arrayClass || objectClass == dictionaryClass;
-}
-
-static HashSet<CFTypeRef>& propertyListClasses()
-{
-    static LazyNeverDestroyed<HashSet<CFTypeRef>> propertyListClasses;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        propertyListClasses.construct(std::initializer_list<CFTypeRef> {
-            (__bridge CFTypeRef)[NSArray class], (__bridge CFTypeRef)[NSDictionary class],
-            (__bridge CFTypeRef)[NSNumber class], (__bridge CFTypeRef)[NSString class]
-        });
-    });
-
-    return propertyListClasses;
-}
-
 static const char* methodArgumentTypeEncodingForSelector(Protocol *protocol, SEL selector)
 {
     // First look at required methods.
@@ -133,12 +111,6 @@ static void initializeMethod(MethodInfo& methodInfo, Protocol *protocol, SEL sel
         Class objectClass = [methodSignature _classForObjectAtArgumentIndex:i];
         if (!objectClass) {
             allowedClasses.append({ });
-            continue;
-        }
-
-        if (isContainerClass(objectClass)) {
-            // For container classes, we allow all simple property list classes.
-            allowedClasses.append(propertyListClasses());
             continue;
         }
 

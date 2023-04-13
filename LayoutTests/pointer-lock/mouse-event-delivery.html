@@ -3,6 +3,7 @@
 <head>
 <script src="../http/tests/resources/js-test-pre.js"></script>
 <script src="../http/tests/resources/pointer-lock/pointer-lock-test-harness.js"></script>
+<script src="../resources/ui-helper.js"></script>
 </head>
 <body id="body">
 <div>
@@ -57,11 +58,14 @@
             targetdiv1.onwheel = eventExpectedThenNextStep;
             targetdiv2.onwheel = eventNotExpected;
             document.body.onwheel = eventExpected;
-            if (window.eventSender) {
-                window.eventSender.mouseMoveTo(20,20);
-                window.eventSender.leapForward(1000);
-                window.eventSender.mouseScrollBy(0,10);
-            }
+            setTimeout(async () => {
+                await UIHelper.ensurePresentationUpdate();
+                if (window.eventSender) {
+                    window.eventSender.mouseMoveTo(20,20);
+                    window.eventSender.leapForward(1000);
+                    window.eventSender.mouseScrollBy(0,10);
+                }
+            }, 0);
         },
         function () {
             debug("     With a lock in place move the mouse.")

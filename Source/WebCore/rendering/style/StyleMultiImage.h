@@ -25,14 +25,16 @@
 #pragma once
 
 #include "StyleImage.h"
+#include "StyleInvalidImage.h"
 
 namespace WebCore {
 
 class Document;
 
 struct ImageWithScale {
-    RefPtr<StyleImage> image;
+    RefPtr<StyleImage> image { StyleInvalidImage::create() };
     float scaleFactor { 1 };
+    String mimeType { String() };
 };
 
 inline bool operator==(const ImageWithScale& a, const ImageWithScale& b)

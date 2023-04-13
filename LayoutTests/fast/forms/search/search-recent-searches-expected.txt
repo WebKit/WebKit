@@ -1,0 +1,8 @@
+PASS recentSearches.length is 1
+PASS recentSearches[0] is "searchValue"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+
+

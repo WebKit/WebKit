@@ -135,7 +135,10 @@ void NetworkProcess::platformInitializeNetworkProcess(const NetworkProcessCreati
     }
 
     m_cacheOptions = { NetworkCache::CacheOption::RegisterNotify };
-    supplement<WebCookieManager>()->setHTTPCookieAcceptPolicy(parameters.cookieAcceptPolicy, []() { });
+    // FIXME: NetworkProcess probably does not have session at this point.
+    forEachNetworkSession([&](NetworkSession& session) {
+        supplement<WebCookieManager>()->setHTTPCookieAcceptPolicy(session.sessionID(), parameters.cookieAcceptPolicy, []() { });
+    });
 
     if (!parameters.languages.isEmpty())
         userPreferredLanguagesChanged(parameters.languages);

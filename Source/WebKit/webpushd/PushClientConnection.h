@@ -87,6 +87,7 @@ private:
     void maybeStartNextAppBundleRequest();
     void setHostAppAuditTokenData(const Vector<uint8_t>&);
 
+    String bundleIdentifierFromAuditToken(audit_token_t);
     bool hostHasEntitlement(ASCIILiteral);
 
     template<DaemonMessageType messageType, typename... Args>
@@ -99,7 +100,7 @@ private:
     std::optional<bool> m_hostAppHasPushEntitlement;
 
     String m_pushPartitionString;
-    std::optional<UUID> m_dataStoreIdentifier;
+    Markable<UUID> m_dataStoreIdentifier;
 
     Deque<std::unique_ptr<AppBundleRequest>> m_pendingBundleRequests;
     std::unique_ptr<AppBundleRequest> m_currentBundleRequest;

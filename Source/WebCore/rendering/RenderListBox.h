@@ -172,7 +172,7 @@ private:
 
     LayoutUnit itemHeight() const;
 
-    enum class ConsiderPadding { Yes, No };
+    enum class ConsiderPadding : bool { No, Yes };
     int numVisibleItems(ConsiderPadding = ConsiderPadding::No) const;
     int numItems() const;
     LayoutUnit listHeight() const;

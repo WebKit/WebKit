@@ -1,4 +1,0 @@
-
-PASS XRInputSources properly communicate their handedness - webgl
-PASS XRInputSources properly communicate their handedness - webgl2
-

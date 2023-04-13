@@ -41,61 +41,6 @@ void WebsiteDataStore::platformDestroy()
     notImplemented();
 }
 
-void WebsiteDataStore::platformRemoveRecentSearches(WallTime)
-{
-    notImplemented();
-}
-
-String WebsiteDataStore::defaultApplicationCacheDirectory(const String& baseCacheDirectory)
-{
-    return cacheDirectoryFileSystemRepresentation("ApplicationCache"_s, baseCacheDirectory);
-}
-
-String WebsiteDataStore::defaultCacheStorageDirectory(const String& baseCacheDirectory)
-{
-    return cacheDirectoryFileSystemRepresentation("CacheStorage"_s, baseCacheDirectory);
-}
-
-String WebsiteDataStore::defaultNetworkCacheDirectory(const String& baseCacheDirectory)
-{
-    return cacheDirectoryFileSystemRepresentation("NetworkCache"_s, baseCacheDirectory);
-}
-
-String WebsiteDataStore::defaultGeneralStorageDirectory(const String& baseDataDirectory)
-{
-    return websiteDataDirectoryFileSystemRepresentation("Storage"_s, baseDataDirectory);
-}
-
-String WebsiteDataStore::defaultIndexedDBDatabaseDirectory(const String& baseDataDirectory)
-{
-    return websiteDataDirectoryFileSystemRepresentation("IndexedDB"_s, baseDataDirectory);
-}
-
-String WebsiteDataStore::defaultServiceWorkerRegistrationDirectory(const String& baseDataDirectory)
-{
-    return websiteDataDirectoryFileSystemRepresentation("ServiceWorkers"_s, baseDataDirectory);
-}
-
-String WebsiteDataStore::defaultLocalStorageDirectory(const String& baseDataDirectory)
-{
-    return websiteDataDirectoryFileSystemRepresentation("LocalStorage"_s, baseDataDirectory);
-}
-
-String WebsiteDataStore::defaultMediaKeysStorageDirectory(const String& baseDataDirectory)
-{
-    return websiteDataDirectoryFileSystemRepresentation("MediaKeyStorage"_s, baseDataDirectory);
-}
-
-String WebsiteDataStore::defaultWebSQLDatabaseDirectory(const String& baseDataDirectory)
-{
-    return websiteDataDirectoryFileSystemRepresentation("WebSQL"_s, baseDataDirectory);
-}
-
-String WebsiteDataStore::defaultResourceLoadStatisticsDirectory(const String& baseDataDirectory)
-{
-    return websiteDataDirectoryFileSystemRepresentation("ResourceLoadStatistics"_s, baseDataDirectory);
-}
-
 String WebsiteDataStore::cacheDirectoryFileSystemRepresentation(const String& directoryName, const String& baseCacheDirectory, ShouldCreateDirectory)
 {
     if (!baseCacheDirectory.isNull())
@@ -108,6 +53,11 @@ String WebsiteDataStore::websiteDataDirectoryFileSystemRepresentation(const Stri
     if (!baseDataDirectory.isNull())
         return FileSystem::pathByAppendingComponent(baseDataDirectory, directoryName);
     return FileSystem::pathByAppendingComponent(FileSystem::localUserSpecificStorageDirectory(), directoryName);
+}
+
+UnifiedOriginStorageLevel WebsiteDataStore::defaultUnifiedOriginStorageLevel()
+{
+    return UnifiedOriginStorageLevel::None;
 }
 
 } // namespace WebKit

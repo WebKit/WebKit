@@ -26,14 +26,18 @@
 #include <gst/app/gstappsink.h>
 #include <wtf/text/WTFString.h>
 
-GST_DEBUG_CATEGORY_EXTERN(webkit_webrtc_endpoint_debug);
-#define GST_CAT_DEFAULT webkit_webrtc_endpoint_debug
+GST_DEBUG_CATEGORY(webkit_webrtc_incoming_media_debug);
+#define GST_CAT_DEFAULT webkit_webrtc_incoming_media_debug
 
 namespace WebCore {
 
 RealtimeIncomingSourceGStreamer::RealtimeIncomingSourceGStreamer(const CaptureDevice& device)
     : RealtimeMediaSource(device)
 {
+    static std::once_flag debugRegisteredFlag;
+    std::call_once(debugRegisteredFlag, [] {
+        GST_DEBUG_CATEGORY_INIT(webkit_webrtc_incoming_media_debug, "webkitwebrtcincomingmedia", 0, "WebKit WebRTC incoming media");
+    });
     m_bin = gst_bin_new(nullptr);
     m_valve = gst_element_factory_make("valve", nullptr);
     m_tee = gst_element_factory_make("tee", nullptr);

@@ -34,22 +34,12 @@
 G_BEGIN_DECLS
 
 #define WEBKIT_TYPE_CONTEXT_MENU_ITEM            (webkit_context_menu_item_get_type())
+#if !ENABLE(2022_GLIB_API)
 #define WEBKIT_CONTEXT_MENU_ITEM(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), WEBKIT_TYPE_CONTEXT_MENU_ITEM, WebKitContextMenuItem))
 #define WEBKIT_IS_CONTEXT_MENU_ITEM(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), WEBKIT_TYPE_CONTEXT_MENU_ITEM))
 #define WEBKIT_CONTEXT_MENU_ITEM_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass),  WEBKIT_TYPE_CONTEXT_MENU_ITEM, WebKitContextMenuItemClass))
 #define WEBKIT_IS_CONTEXT_MENU_ITEM_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass),  WEBKIT_TYPE_CONTEXT_MENU_ITEM))
 #define WEBKIT_CONTEXT_MENU_ITEM_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj),  WEBKIT_TYPE_CONTEXT_MENU_ITEM, WebKitContextMenuItemClass))
-
-typedef struct _WebKitContextMenuItem        WebKitContextMenuItem;
-typedef struct _WebKitContextMenuItemClass   WebKitContextMenuItemClass;
-typedef struct _WebKitContextMenuItemPrivate WebKitContextMenuItemPrivate;
-
-struct _WebKitContextMenuItem {
-    GInitiallyUnowned parent;
-
-    /*< private >*/
-    WebKitContextMenuItemPrivate *priv;
-};
 
 struct _WebKitContextMenuItemClass {
     GInitiallyUnownedClass parent_class;
@@ -60,9 +50,9 @@ struct _WebKitContextMenuItemClass {
     void (*_webkit_reserved2) (void);
     void (*_webkit_reserved3) (void);
 };
+#endif
 
-WEBKIT_API GType
-webkit_context_menu_item_get_type                         (void);
+WEBKIT_DECLARE_FINAL_TYPE (WebKitContextMenuItem, webkit_context_menu_item, WEBKIT, CONTEXT_MENU_ITEM, GInitiallyUnowned)
 
 #if PLATFORM(GTK) && !USE(GTK4)
 WEBKIT_DEPRECATED_FOR(webkit_context_menu_item_new_from_gaction) WebKitContextMenuItem *

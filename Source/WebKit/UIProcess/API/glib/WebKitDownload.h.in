@@ -30,24 +30,14 @@
 G_BEGIN_DECLS
 
 #define WEBKIT_TYPE_DOWNLOAD            (webkit_download_get_type())
+#if !ENABLE(2022_GLIB_API)
 #define WEBKIT_DOWNLOAD(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), WEBKIT_TYPE_DOWNLOAD, WebKitDownload))
 #define WEBKIT_IS_DOWNLOAD(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), WEBKIT_TYPE_DOWNLOAD))
 #define WEBKIT_DOWNLOAD_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass),  WEBKIT_TYPE_DOWNLOAD, WebKitDownloadClass))
 #define WEBKIT_IS_DOWNLOAD_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass),  WEBKIT_TYPE_DOWNLOAD))
 #define WEBKIT_DOWNLOAD_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj),  WEBKIT_TYPE_DOWNLOAD, WebKitDownloadClass))
 
-typedef struct _WebKitDownload        WebKitDownload;
-typedef struct _WebKitDownloadClass   WebKitDownloadClass;
-typedef struct _WebKitDownloadPrivate WebKitDownloadPrivate;
-
-typedef struct _WebKitWebView WebKitWebView;
-
-struct _WebKitDownload {
-    GObject parent;
-
-    /*< private >*/
-    WebKitDownloadPrivate *priv;
-};
+WEBKIT_DECLARE_TYPE (WebKitDownload, webkit_download, WEBKIT, DOWNLOAD, GObject)
 
 struct _WebKitDownloadClass {
     GObjectClass parent_class;
@@ -62,9 +52,11 @@ struct _WebKitDownloadClass {
     void (*_webkit_reserved2) (void);
     void (*_webkit_reserved3) (void);
 };
+#else
+WEBKIT_DECLARE_FINAL_TYPE (WebKitDownload, webkit_download, WEBKIT, DOWNLOAD, GObject)
+#endif
 
-WEBKIT_API GType
-webkit_download_get_type                 (void);
+typedef struct _WebKitWebView WebKitWebView;
 
 WEBKIT_API WebKitURIRequest *
 webkit_download_get_request              (WebKitDownload *download);
@@ -74,7 +66,7 @@ webkit_download_get_destination          (WebKitDownload *download);
 
 WEBKIT_API void
 webkit_download_set_destination          (WebKitDownload *download,
-                                          const gchar    *uri);
+                                          const gchar    *destination);
 
 WEBKIT_API WebKitURIResponse*
 webkit_download_get_response             (WebKitDownload *download);

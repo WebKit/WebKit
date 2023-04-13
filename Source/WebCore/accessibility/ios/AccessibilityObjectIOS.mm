@@ -30,11 +30,13 @@
 
 #import "AccessibilityRenderObject.h"
 #import "EventNames.h"
-#import "FrameView.h"
 #import "HTMLInputElement.h"
+#import "HTMLNames.h"
+#import "LocalFrameView.h"
 #import "RenderObject.h"
 #import "WAKView.h"
 #import "WebAccessibilityObjectWrapperIOS.h"
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 namespace WebCore {
     
@@ -80,9 +82,9 @@ void AccessibilityObject::overrideAttachmentParent(AXCoreObject*)
 }
     
 // In iPhone only code for now. It's debateable whether this is desired on all platforms.
-int AccessibilityObject::accessibilityPasswordFieldLength()
+int AccessibilityObject::accessibilitySecureFieldLength()
 {
-    if (!isPasswordField())
+    if (!isSecureField())
         return 0;
     RenderObject* renderObject = downcast<AccessibilityRenderObject>(*this).renderer();
     
@@ -125,6 +127,104 @@ bool AccessibilityObject::isInputTypePopupButton() const
     if (is<HTMLInputElement>(node()))
         return roleValue() == AccessibilityRole::PopUpButton;
     return false;
+}
+
+// NSAttributedString support.
+
+static void attributeStringSetLanguage(NSMutableAttributedString *attrString, RenderObject* renderer, const NSRange& range)
+{
+    if (!renderer)
+        return;
+
+    RefPtr object = renderer->document().axObjectCache()->getOrCreate(renderer);
+    NSString *language = object->language();
+    if (language.length)
+        [attrString addAttribute:UIAccessibilityTokenLanguage value:language range:range];
+    else
+        [attrString removeAttribute:UIAccessibilityTokenLanguage range:range];
+}
+
+static unsigned blockquoteLevel(RenderObject* renderer)
+{
+    if (!renderer)
+        return 0;
+
+    unsigned result = 0;
+    for (Node* node = renderer->node(); node; node = node->parentNode()) {
+        if (node->hasTagName(HTMLNames::blockquoteTag))
+            ++result;
+    }
+
+    return result;
+}
+
+static void attributeStringSetBlockquoteLevel(NSMutableAttributedString *attrString, RenderObject* renderer, const NSRange& range)
+{
+    unsigned quoteLevel = blockquoteLevel(renderer);
+
+    if (quoteLevel)
+        [attrString addAttribute:UIAccessibilityTokenBlockquoteLevel value:@(quoteLevel) range:range];
+    else
+        [attrString removeAttribute:UIAccessibilityTokenBlockquoteLevel range:range];
+}
+
+static void attributeStringSetHeadingLevel(NSMutableAttributedString *attrString, RenderObject* renderer, const NSRange& range)
+{
+    if (!renderer)
+        return;
+
+    RefPtr parent = renderer->document().axObjectCache()->getOrCreate(renderer->parent());
+    if (!parent)
+        return;
+
+    unsigned parentHeadingLevel = parent->headingLevel();
+    if (parentHeadingLevel)
+        [attrString addAttribute:UIAccessibilityTokenHeadingLevel value:@(parentHeadingLevel) range:range];
+    else
+        [attrString removeAttribute:UIAccessibilityTokenHeadingLevel range:range];
+}
+
+static void attributeStringSetStyle(NSMutableAttributedString *attrString, RenderObject* renderer, const NSRange& range)
+{
+    if (!renderer)
+        return;
+
+    auto& style = renderer->style();
+
+    // Set basic font info.
+    attributedStringSetFont(attrString, style.fontCascade().primaryFont().getCTFont(), range);
+
+    auto decor = style.textDecorationsInEffect();
+    if (decor & TextDecorationLine::Underline)
+        attributedStringSetNumber(attrString, UIAccessibilityTokenUnderline, @YES, range);
+
+    // Add code context if this node is within a <code> block.
+    RefPtr object = renderer->document().axObjectCache()->getOrCreate(renderer);
+    auto matchFunc = [] (const auto& axObject) {
+        return axObject.isCode();
+    };
+
+    if (const auto* parent = Accessibility::findAncestor<AccessibilityObject>(*object, true, WTFMove(matchFunc)))
+        [attrString addAttribute:UIAccessibilityTextAttributeContext value:UIAccessibilityTextualContextSourceCode range:range];
+}
+
+RetainPtr<NSAttributedString> attributedStringCreate(Node* node, StringView text, AXCoreObject::SpellCheck)
+{
+    // Skip invisible text.
+    auto* renderer = node->renderer();
+    if (!renderer)
+        return nil;
+
+    auto result = adoptNS([[NSMutableAttributedString alloc] initWithString:text.createNSStringWithoutCopying().get()]);
+    NSRange range = NSMakeRange(0, [result length]);
+
+    // Set attributes.
+    attributeStringSetStyle(result.get(), renderer, range);
+    attributeStringSetHeadingLevel(result.get(), renderer, range);
+    attributeStringSetBlockquoteLevel(result.get(), renderer, range);
+    attributeStringSetLanguage(result.get(), renderer, range);
+
+    return result;
 }
 
 } // WebCore

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<script src="../../../resources/js-test.js"></script>
+<form method="GET" onsubmit="finish(false)">
+<input type="file" oninvalid="finish(true)" required>
+<input type="reset">
+<input type="submit">
+</form>
+<pre id="console"></pre>
+<script>
+description("This tests that a reset file input with a required value doesn't validate.");
+
+var invalid = false;
+function finish(pass)
+{
+    invalid = pass;
+    shouldBeTrue("invalid");
+    finishJSTest();
+}
+
+function moveMouseToCenterOfElement(element) {
+    var centerX = element.offsetLeft + element.offsetWidth / 2;
+    var centerY = element.offsetTop + element.offsetHeight / 2;
+    eventSender.mouseMoveTo(centerX, centerY);
+}
+
+function dragFilesOntoInput(input, files) {
+    eventSender.beginDragWithFiles(files);
+    moveMouseToCenterOfElement(input);
+    eventSender.mouseUp();
+}
+
+function dragFilesOntoElement(element, files) {
+    eventSender.beginDragWithFiles(files);
+    var centerX = element.offsetLeft + element.offsetWidth / 2;
+    var centerY = element.offsetTop + element.offsetHeight / 2;
+    eventSender.mouseMoveTo(centerX, centerY);
+    eventSender.mouseUp();
+}
+
+function startTest()
+{
+    dragFilesOntoInput(document.forms[0].querySelector("[type=file]"), ['file-input-reset-validation.html']);
+    document.forms[0].querySelector("[type=reset]").click();
+    document.forms[0].querySelector("[type=submit]").click();
+}
+
+if (window.eventSender) {
+    window.jsTestIsAsync = true;
+    testRunner.dumpAsText();
+    window.onload = startTest;
+}
+</script>

@@ -109,7 +109,11 @@ public:
     WTF_EXPORT_PRIVATE MemoryUsagePolicy currentMemoryUsagePolicy();
 
 #if PLATFORM(COCOA)
-    WTF_EXPORT_PRIVATE void setDispatchQueue(OSObjectPtr<dispatch_queue_t>&&);
+    void setDispatchQueue(OSObjectPtr<dispatch_queue_t>&& queue)
+    {
+        RELEASE_ASSERT(!m_installed);
+        m_dispatchQueue = WTFMove(queue);
+    }
 #endif
 
     class ReliefLogger {

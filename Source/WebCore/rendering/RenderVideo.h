@@ -62,6 +62,7 @@ private:
     void mediaElement() const = delete;
 
     void intrinsicSizeChanged() final;
+    LayoutSize calculateIntrinsicSizeInternal();
     LayoutSize calculateIntrinsicSize();
     bool updateIntrinsicSize();
 
