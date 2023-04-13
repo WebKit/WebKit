@@ -1202,6 +1202,7 @@ NetworkProcessConnection& WebProcess::ensureNetworkProcessConnection()
 #if HAVE(AUDIT_TOKEN)
         m_networkProcessConnection->setNetworkProcessAuditToken(WTFMove(connectionInfo.auditToken));
 #endif
+        setNetworkProcessConnectionID(m_networkProcessConnection->connection().uniqueID());
         m_networkProcessConnection->connection().send(Messages::NetworkConnectionToWebProcess::RegisterURLSchemesAsCORSEnabled(WebCore::LegacySchemeRegistry::allURLSchemesRegisteredAsCORSEnabled()), 0);
 
 #if ENABLE(SERVICE_WORKER)
@@ -1278,6 +1279,7 @@ void WebProcess::networkProcessConnectionClosed(NetworkProcessConnection* connec
 #endif
 
     m_networkProcessConnection = nullptr;
+    setNetworkProcessConnectionID({ });
 
     logDiagnosticMessageForNetworkProcessCrash();
 
@@ -2291,6 +2293,19 @@ RemoteMediaEngineConfigurationFactory& WebProcess::mediaEngineConfigurationFacto
     return *supplement<RemoteMediaEngineConfigurationFactory>();
 }
 #endif
+
+IPC::Connection::UniqueID WebProcess::networkProcessConnectionID()
+{
+    Locker lock { m_lockNetworkProcessConnectionID };
+    return m_networkProcessConnectionID;
+}
+
+void WebProcess::setNetworkProcessConnectionID(IPC::Connection::UniqueID uniqueID)
+{
+    Locker lock { m_lockNetworkProcessConnectionID };
+    m_networkProcessConnectionID = uniqueID;
+
+}
 
 } // namespace WebKit
 

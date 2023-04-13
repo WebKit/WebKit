@@ -116,6 +116,6 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
     InstallMockContentFilter(WebCore::MockContentFilterSettings settings)
 #endif
 #if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
-    LogOnBehalfOfWebContent(String logChannel, String logCategory, String logString, uint8_t logType, int32_t pid)
+    LogOnBehalfOfWebContent(IPC::DataReference logChannel, IPC::DataReference logCategory, IPC::DataReference logString, uint8_t logType, int32_t pid)
 #endif
 }

@@ -662,18 +662,35 @@ static void registerLogHook()
     os_log_set_hook(OS_LOG_TYPE_DEFAULT, ^(os_log_type_t type, os_log_message_t msg) {
         if (msg->buffer_sz > 1024)
             return;
-        char* messageString = os_log_copy_message_string(msg);
-        String logString = String::fromUTF8(messageString);
-        free(messageString);
 
-        String logChannel = String::fromUTF8(msg->subsystem);
-        String logCategory = String::fromUTF8(msg->category);
+        CString logFormat(msg->format);
+        CString logChannel(msg->subsystem);
+        CString logCategory(msg->category);
 
-        callOnMainRunLoop([logChannel = logChannel.isolatedCopy(), logCategory = logCategory.isolatedCopy(), logString = logString.isolatedCopy(), type] {
-            auto* connection = WebProcess::singleton().existingNetworkProcessConnection();
-            if (!connection)
+        Vector<uint8_t> buffer(msg->buffer, msg->buffer_sz);
+        Vector<uint8_t> privdata(msg->privdata, msg->privdata_sz);
+
+        static NeverDestroyed<Ref<WorkQueue>> queue(WorkQueue::create("Log Queue", WorkQueue::QOS::Background));
+
+        queue.get()->dispatch([logFormat = WTFMove(logFormat), logChannel = WTFMove(logChannel), logCategory = WTFMove(logCategory), type = type, buffer = WTFMove(buffer), privdata = WTFMove(privdata)] {
+            os_log_message_s msg = { 0 };
+
+            msg.format = logFormat.data();
+            msg.buffer = buffer.data();
+            msg.buffer_sz = buffer.size();
+            msg.privdata = privdata.data();
+            msg.privdata_sz = privdata.size();
+
+            char* messageString = os_log_copy_message_string(&msg);
+            if (!messageString)
                 return;
-            connection->connection().send(Messages::NetworkConnectionToWebProcess::LogOnBehalfOfWebContent(logChannel, logCategory, logString, type, getpid()), 0);
+            IPC::DataReference logString(reinterpret_cast<uint8_t*>(messageString), strlen(messageString) + 1);
+
+            auto connectionID = WebProcess::singleton().networkProcessConnectionID();
+            if (connectionID)
+                IPC::Connection::send(connectionID, Messages::NetworkConnectionToWebProcess::LogOnBehalfOfWebContent(logChannel.bytesInludingNullTerminator(), logCategory.bytesInludingNullTerminator(), logString, type, getpid()), 0);
+
+            free(messageString);
         });
     });
 }

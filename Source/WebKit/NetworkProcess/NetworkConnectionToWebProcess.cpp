@@ -1414,35 +1414,18 @@ void NetworkConnectionToWebProcess::installMockContentFilter(WebCore::MockConten
 }
 #endif
 
-
 #if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
-static CString validatedASCIIString(const String& string, unsigned maxLength)
+void NetworkConnectionToWebProcess::logOnBehalfOfWebContent(IPC::DataReference&& logChannel, IPC::DataReference&& logCategory, IPC::DataReference&& logString, uint8_t logType, int32_t pid)
 {
-    String shortString = string.substring(0, maxLength);
-    CString validatedString = shortString.ascii();
-    auto stringLength = validatedString.length();
-
-    for (unsigned i = 0; i < stringLength; i++) {
-        char c = validatedString.data()[i];
-        if (c >= 32 && c <= 126)
-            continue;
-        validatedString.mutableData()[i] = ' ';
+    OSObjectPtr<os_log_t> osLogChannel;
+    if (logChannel.data() && logCategory.data()) {
+        auto channel = reinterpret_cast<const char*>(logChannel.data());
+        auto category = reinterpret_cast<const char*>(logCategory.data());
+        osLogChannel = adoptOSObject(os_log_create(channel, category));
     }
-    return validatedString;
-}
-
-void NetworkConnectionToWebProcess::logOnBehalfOfWebContent(const String& logChannel, const String& logCategory, const String& logString, uint8_t logType, int32_t pid)
-{
-    // Truncate long strings and only accept printable characters
-    CString string = validatedASCIIString(logString, 2048);
-    CString channel = validatedASCIIString(logChannel, 64);
-    CString category = validatedASCIIString(logCategory, 64);
-
-    OSObjectPtr<os_log_t> osLogChannel = adoptOSObject(os_log_create(channel.data(), category.data()));
-
     RELEASE_ASSERT(logType == OS_LOG_TYPE_DEFAULT || logType == OS_LOG_TYPE_INFO || logType == OS_LOG_TYPE_DEBUG || logType == OS_LOG_TYPE_ERROR || logType == OS_LOG_TYPE_FAULT);
 
-    os_log_with_type(osLogChannel.get(), static_cast<os_log_type_t>(logType), "WebContent[pid=%d, identifier=%llu]: %s", pid, m_webProcessIdentifier.toUInt64(), string.data());
+    os_log_with_type(osLogChannel.get() ? osLogChannel.get() : OS_LOG_DEFAULT, static_cast<os_log_type_t>(logType), "WebContent[pid=%d, identifier=%llu]: %s", pid, m_webProcessIdentifier.toUInt64(), logString.data());
 }
 #endif
 

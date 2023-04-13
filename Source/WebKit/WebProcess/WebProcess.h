@@ -238,6 +238,7 @@ public:
     NetworkProcessConnection& ensureNetworkProcessConnection();
     void networkProcessConnectionClosed(NetworkProcessConnection*);
     NetworkProcessConnection* existingNetworkProcessConnection() { return m_networkProcessConnection.get(); }
+    IPC::Connection::UniqueID networkProcessConnectionID();
     WebLoaderStrategy& webLoaderStrategy();
     WebFileSystemStorageConnection& fileSystemStorageConnection();
 
@@ -610,6 +611,8 @@ private:
     void dispatchSimulatedNotificationsForPreferenceChange(const String& key) final;
 #endif
 
+    void setNetworkProcessConnectionID(IPC::Connection::UniqueID);
+
     RefPtr<WebConnectionToUIProcess> m_webConnection;
 
     HashMap<WebCore::PageIdentifier, RefPtr<WebPage>> m_pageMap;
@@ -648,6 +651,8 @@ private:
 
     String m_uiProcessBundleIdentifier;
     RefPtr<NetworkProcessConnection> m_networkProcessConnection;
+    Lock m_lockNetworkProcessConnectionID;
+    IPC::Connection::UniqueID m_networkProcessConnectionID WTF_GUARDED_BY_LOCK(m_lockNetworkProcessConnectionID);
     WebLoaderStrategy& m_webLoaderStrategy;
     RefPtr<WebFileSystemStorageConnection> m_fileSystemStorageConnection;
 
