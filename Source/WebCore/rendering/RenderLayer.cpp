@@ -4144,11 +4144,11 @@ RenderLayer::HitLayer RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLa
     {
         HitTestResult tempResult(result.hitTestLocation());
         hitLayer = hitTestList(normalFlowLayers(), rootLayer, request, tempResult, hitTestRect, hitTestLocation, localTransformState.get(), zOffsetForDescendantsPtr, zOffset, unflattenedTransformState.get(), depthSortDescendants);
+        if (request.resultIsElementList())
+            result.append(tempResult, request);
         if (hitLayer.layer) {
             if (!depthSortDescendants || !using3DTransformsInterop || hitLayer.zOffset > candidateLayer.zOffset) {
-                if (request.resultIsElementList())
-                    result.append(tempResult, request);
-                else
+                if (!request.resultIsElementList())
                     result = tempResult;
                 candidateLayer = hitLayer;
             }
@@ -4197,11 +4197,11 @@ RenderLayer::HitLayer RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLa
     {
         HitTestResult tempResult(result.hitTestLocation());
         hitLayer = hitTestList(negativeZOrderLayers(), rootLayer, request, tempResult, hitTestRect, hitTestLocation, localTransformState.get(), zOffsetForDescendantsPtr, zOffset, unflattenedTransformState.get(), depthSortDescendants);
+        if (request.resultIsElementList())
+            result.append(tempResult, request);
         if (hitLayer.layer) {
             if (!depthSortDescendants || !using3DTransformsInterop || hitLayer.zOffset > candidateLayer.zOffset) {
-                if (request.resultIsElementList())
-                    result.append(tempResult, request);
-                else
+                if (!request.resultIsElementList())
                     result = tempResult;
                 candidateLayer = hitLayer;
             }

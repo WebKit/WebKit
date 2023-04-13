@@ -1,0 +1,67 @@
+<!doctype html>
+<html id="html">
+<head>
+<title>elementsFromPoint hit-testing with negative and positive z-index</title>
+<style>
+#container {
+    width: 200px;
+    height: 200px;
+    background: beige;
+    transform: translateZ(1px);
+    position: absolute;
+}
+
+a {
+    width: 200px;
+    height: 200px;
+    display: block;
+    position: absolute;
+}
+
+#back {
+    transform: translateZ(-10px);
+    z-index: -2;
+}
+
+#front {
+    transform: translateZ(10px);
+    z-index: 2;
+}
+
+#results {
+    position: absolute;
+    top: 250px;
+}
+
+</style>
+</head>
+<body id="body">
+<div id="container">
+    <a id="back"></a>
+    <a id="front"></a>
+    <a id="middle"></a>
+</div>
+
+<div id="results"></div>
+
+<script type="text/javascript" charset="utf-8">
+  if (window.testRunner)
+    testRunner.dumpAsText();
+
+  let elements = document.elementsFromPoint(100, 100);
+  let result = "";
+  elements.forEach((elt, i) => {
+    result += elt.id;
+    if (i < elements.length - 1) {
+      result += " < ";
+    }
+  });
+  let output = document.getElementById('results');
+  if (result == "front < middle < back < container < html")
+    output.textContent = "SUCCESS: Hit test elements in correct order - " + result;
+  else
+    output.textContent = "FAIL: Hit test elements in incorrect order - " + result;
+
+</script>
+</body>
+</html>
