@@ -81,7 +81,7 @@ void RemoteBuffer::getMappedRange(PAL::WebGPU::Size64 offset, std::optional<PAL:
 
 void RemoteBuffer::unmap(Vector<uint8_t>&& data)
 {
-    if (!m_mappedRange)
+    if (!m_mappedRange || m_mappedRange->byteLength < data.size())
         return;
     ASSERT(m_isMapped);
 
