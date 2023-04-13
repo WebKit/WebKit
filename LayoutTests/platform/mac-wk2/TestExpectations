@@ -1729,6 +1729,8 @@ webkit.org/b/255235 [ Ventura Release ] imported/w3c/web-platform-tests/css/css-
 
 webkit.org/b/254778 [ Ventura Debug arm64 ] fast/images/avif-image-decoding.html [ Pass Crash ]
 
+webkit.org/b/255407 [ Monterey x86_64 ] imported/w3c/web-platform-tests/html/semantics/popovers/light-dismiss-event-ordering.html [ Pass Failure ]
+
 #webkit.org/b/248537 Batch mark expectations for Ventura test failures
 [ Ventura+ ] webrtc/canvas-to-peer-connection-2d.html [ Pass Timeout ]
 [ Ventura+ ] webrtc/canvas-to-peer-connection.html [ Pass Failure Timeout ]
