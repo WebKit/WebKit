@@ -1,0 +1,16 @@
+main frame "second/load" - has 1 onunload handler(s)
+main frame - has 1 onunload handler(s)
+Test ensures that scrollingElement.scrollTop/Left properties are available by the time DOMContentLoaded event fires.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.scrollingElement.scrollTop is 2000
+PASS document.scrollingElement.scrollLeft is 1000
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+
+
+

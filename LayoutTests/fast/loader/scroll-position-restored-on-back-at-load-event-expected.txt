@@ -1,0 +1,3 @@
+
+PASS Test ensures that scrollingElement.scrollTop/Left properties are available by the time DOMContentLoaded event fires.
+
