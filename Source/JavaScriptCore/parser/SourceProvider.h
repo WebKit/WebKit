@@ -163,8 +163,8 @@ class UnlinkedFunctionCodeBlock;
 
     
     private:
-        JS_EXPORT_PRIVATE SyntheticSourceProvider(SyntheticSourceGenerator&& generator, const SourceOrigin& sourceOrigin, String&& sourceURL)
-            : SourceProvider(sourceOrigin, WTFMove(sourceURL), TextPosition(), SourceProviderSourceType::Synthetic)
+        JS_EXPORT_PRIVATE SyntheticSourceProvider(SyntheticSourceGenerator&& generator, const SourceOrigin& sourceOrigin, String&& sourceURL, String&& preRedirectURL = String())
+            : SourceProvider(sourceOrigin, WTFMove(sourceURL), WTFMove(preRedirectURL), TextPosition(), SourceProviderSourceType::Synthetic)
             , m_source("[native code]"_s)
             , m_generator(WTFMove(generator))
         {
