@@ -71,7 +71,7 @@ void RemoteBuffer::mapAsync(PAL::WebGPU::MapModeFlags mapModeFlags, std::optiona
 
 void RemoteBuffer::unmap(Vector<uint8_t>&& data)
 {
-    if (!m_mappedRange)
+    if (!m_mappedRange || m_mappedRange->byteLength < data.size())
         return;
     ASSERT(m_isMapped);
 
