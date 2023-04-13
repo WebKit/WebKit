@@ -1310,6 +1310,9 @@ let RemoteObject = class RemoteObject extends PrototypelessObjectBase
                 return InjectedScript.PropertyFetchAction.Stop;
             }
 
+            if (descriptor.isPrivate)
+                property.isPrivate = true;
+
             if (internal)
                 property.internal = true;
 

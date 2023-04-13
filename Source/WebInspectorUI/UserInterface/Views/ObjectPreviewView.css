@@ -39,6 +39,10 @@
     color: hsl(295, 76%, 32%);
 }
 
+.object-preview .name:is(.private, .internal) {
+    color: var(--text-color-secondary);
+}
+
 .object-preview > .size {
     font-style: normal;
     color: var(--console-secondary-text-color);

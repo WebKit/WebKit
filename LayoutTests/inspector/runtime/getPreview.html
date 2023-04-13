@@ -140,6 +140,30 @@ function test()
         }
     });
 
+    suite.addTestCase({
+        name: "Runtime.getPreview.Private",
+        test(resolve, reject) {
+            InspectorTest.evaluateInPage(`class Foo { #value = 42; } new Foo`, (error, remoteObject) => {
+                RuntimeAgent.getPreview(remoteObject.objectId, (error, result) => {
+                    InspectorTest.log(JSON.stringify(result));
+                    resolve();
+                });
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "Runtime.getPreview.Internal",
+        test(resolve, reject) {
+            InspectorTest.evaluateInPage(`var target = new EventTarget; target.addEventListener("click", console.log); target`, (error, remoteObject) => {
+                RuntimeAgent.getPreview(remoteObject.objectId, (error, result) => {
+                    InspectorTest.log(JSON.stringify(result));
+                    resolve();
+                });
+            });
+        }
+    });
+
     // ------
 
     suite.addTestCase({

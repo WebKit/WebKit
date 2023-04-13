@@ -25,10 +25,11 @@
 
 WI.PropertyPreview = class PropertyPreview
 {
-    constructor(name, type, subtype, value, valuePreview, isInternalProperty)
+    constructor(name, type, {subtype, value, valuePreview, isPrivateProperty, isInternalProperty} = {})
     {
         console.assert(typeof name === "string");
         console.assert(type);
+        console.assert(!subtype || typeof subtype === "string");
         console.assert(!value || typeof value === "string");
         console.assert(!valuePreview || valuePreview instanceof WI.ObjectPreview);
 
@@ -37,6 +38,7 @@ WI.PropertyPreview = class PropertyPreview
         this._subtype = subtype;
         this._value = value;
         this._valuePreview = valuePreview;
+        this._private = isPrivateProperty;
         this._internal = isInternalProperty;
     }
 
@@ -45,10 +47,13 @@ WI.PropertyPreview = class PropertyPreview
     // Runtime.PropertyPreview.
     static fromPayload(payload)
     {
-        if (payload.valuePreview)
-            payload.valuePreview = WI.ObjectPreview.fromPayload(payload.valuePreview);
-
-        return new WI.PropertyPreview(payload.name, payload.type, payload.subtype, payload.value, payload.valuePreview, payload.internal);
+        return new WI.PropertyPreview(payload.name, payload.type, {
+            subtype: payload.subtype,
+            value: payload.value,
+            valuePreview: payload.valuePreview ? WI.ObjectPreview.fromPayload(payload.valuePreview) : undefined,
+            isPrivateProperty: payload.isPrivate,
+            isInternalProperty: payload.internal,
+        });
     }
 
     // Public
@@ -58,5 +63,6 @@ WI.PropertyPreview = class PropertyPreview
     get subtype() { return this._subtype; }
     get value() { return this._value; }
     get valuePreview() { return this._valuePreview; }
+    get private() { return this._private; }
     get internal() { return this._internal; }
 };
