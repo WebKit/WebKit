@@ -294,7 +294,7 @@ private:
         };
 
         struct A : ContainerTag<HTMLAnchorElement, PermittedParents::FlowContent> {
-            static constexpr ElementName tagName = ElementName::HTML_a;
+            static constexpr ElementName tagName = ElementNames::HTML::a;
             static constexpr Char tagNameCharacters[] = { 'a' };
 
             static RefPtr<HTMLElement> parseChild(HTMLFastPathParser& self)
@@ -308,7 +308,7 @@ private:
         };
 
         struct AWithPhrasingContent : ContainsPhrasingContentTag<HTMLAnchorElement, PermittedParents::PhrasingOrFlowContent> {
-            static constexpr ElementName tagName = ElementName::HTML_a;
+            static constexpr ElementName tagName = ElementNames::HTML::a;
             static constexpr Char tagNameCharacters[] = { 'a' };
 
             static RefPtr<HTMLElement> parseChild(HTMLFastPathParser& self)
@@ -322,7 +322,7 @@ private:
         };
 
         struct B : ContainsPhrasingContentTag<HTMLElement, PermittedParents::PhrasingOrFlowContent> {
-            static constexpr ElementName tagName = ElementName::HTML_b;
+            static constexpr ElementName tagName = ElementNames::HTML::b;
             static constexpr Char tagNameCharacters[] = { 'b' };
 
             static Ref<HTMLElement> create(Document& document)
@@ -332,22 +332,22 @@ private:
         };
 
         struct Br : VoidTag<HTMLBRElement, PermittedParents::PhrasingOrFlowContent> {
-            static constexpr ElementName tagName = ElementName::HTML_br;
+            static constexpr ElementName tagName = ElementNames::HTML::br;
             static constexpr Char tagNameCharacters[] = { 'b', 'r' };
         };
 
         struct Button : ContainsPhrasingContentTag<HTMLButtonElement, PermittedParents::PhrasingOrFlowContent> {
-            static constexpr ElementName tagName = ElementName::HTML_button;
+            static constexpr ElementName tagName = ElementNames::HTML::button;
             static constexpr Char tagNameCharacters[] = { 'b', 'u', 't', 't', 'o', 'n' };
         };
 
         struct Div : ContainerTag<HTMLDivElement, PermittedParents::FlowContent> {
-            static constexpr ElementName tagName = ElementName::HTML_div;
+            static constexpr ElementName tagName = ElementNames::HTML::div;
             static constexpr Char tagNameCharacters[] = { 'd', 'i', 'v' };
         };
 
         struct Footer : ContainerTag<HTMLElement, PermittedParents::FlowContent> {
-            static constexpr ElementName tagName = ElementName::HTML_footer;
+            static constexpr ElementName tagName = ElementNames::HTML::footer;
             static constexpr Char tagNameCharacters[] = { 'f', 'o', 'o', 't', 'e', 'r' };
 
             static Ref<HTMLElement> create(Document& document)
@@ -357,7 +357,7 @@ private:
         };
 
         struct I : ContainsPhrasingContentTag<HTMLElement, PermittedParents::PhrasingOrFlowContent> {
-            static constexpr ElementName tagName = ElementName::HTML_i;
+            static constexpr ElementName tagName = ElementNames::HTML::i;
             static constexpr Char tagNameCharacters[] = { 'i' };
 
             static Ref<HTMLElement> create(Document& document)
@@ -367,7 +367,7 @@ private:
         };
 
         struct Input : VoidTag<HTMLInputElement, PermittedParents::PhrasingOrFlowContent> {
-            static constexpr ElementName tagName = ElementName::HTML_input;
+            static constexpr ElementName tagName = ElementNames::HTML::input;
             static constexpr Char tagNameCharacters[] = { 'i', 'n', 'p', 'u', 't' };
 
             static Ref<HTMLInputElement> create(Document& document)
@@ -377,17 +377,17 @@ private:
         };
 
         struct Li : ContainerTag<HTMLLIElement, PermittedParents::Special> {
-            static constexpr ElementName tagName = ElementName::HTML_li;
+            static constexpr ElementName tagName = ElementNames::HTML::li;
             static constexpr Char tagNameCharacters[] = { 'l', 'i' };
         };
 
         struct Label : ContainsPhrasingContentTag<HTMLLabelElement, PermittedParents::PhrasingOrFlowContent> {
-            static constexpr ElementName tagName = ElementName::HTML_label;
+            static constexpr ElementName tagName = ElementNames::HTML::label;
             static constexpr Char tagNameCharacters[] = { 'l', 'a', 'b', 'e', 'l' };
         };
 
         struct Option : ContainerTag<HTMLOptionElement, PermittedParents::Special> {
-            static constexpr ElementName tagName = ElementName::HTML_option;
+            static constexpr ElementName tagName = ElementNames::HTML::option;
             static constexpr Char tagNameCharacters[] = { 'o', 'p', 't', 'i', 'o', 'n' };
 
             static RefPtr<HTMLElement> parseChild(HTMLFastPathParser& self)
@@ -398,7 +398,7 @@ private:
         };
 
         struct Ol : ContainerTag<HTMLOListElement, PermittedParents::FlowContent> {
-            static constexpr ElementName tagName = ElementName::HTML_ol;
+            static constexpr ElementName tagName = ElementNames::HTML::ol;
             static constexpr Char tagNameCharacters[] = { 'o', 'l' };
 
             static RefPtr<HTMLElement> parseChild(HTMLFastPathParser& self)
@@ -408,12 +408,12 @@ private:
         };
 
         struct P : ContainsPhrasingContentTag<HTMLParagraphElement, PermittedParents::FlowContent> {
-            static constexpr ElementName tagName = ElementName::HTML_p;
+            static constexpr ElementName tagName = ElementNames::HTML::p;
             static constexpr Char tagNameCharacters[] = { 'p' };
         };
 
         struct Select : ContainerTag<HTMLSelectElement, PermittedParents::PhrasingOrFlowContent> {
-            static constexpr ElementName tagName = ElementName::HTML_select;
+            static constexpr ElementName tagName = ElementNames::HTML::select;
             static constexpr Char tagNameCharacters[] = { 's', 'e', 'l', 'e', 'c', 't' };
 
             static RefPtr<HTMLElement> parseChild(HTMLFastPathParser& self)
@@ -423,12 +423,12 @@ private:
         };
 
         struct Span : ContainsPhrasingContentTag<HTMLSpanElement, PermittedParents::PhrasingOrFlowContent> {
-            static constexpr ElementName tagName = ElementName::HTML_span;
+            static constexpr ElementName tagName = ElementNames::HTML::span;
             static constexpr Char tagNameCharacters[] = { 's', 'p', 'a', 'n' };
         };
 
         struct Strong : ContainsPhrasingContentTag<HTMLElement, PermittedParents::PhrasingOrFlowContent> {
-            static constexpr ElementName tagName = ElementName::HTML_strong;
+            static constexpr ElementName tagName = ElementNames::HTML::strong;
             static constexpr Char tagNameCharacters[] = { 's', 't', 'r', 'o', 'n', 'g' };
 
             static Ref<HTMLElement> create(Document& document)
@@ -438,7 +438,7 @@ private:
         };
 
         struct Ul : ContainerTag<HTMLUListElement, PermittedParents::FlowContent> {
-            static constexpr ElementName tagName = ElementName::HTML_ul;
+            static constexpr ElementName tagName = ElementNames::HTML::ul;
             static constexpr Char tagNameCharacters[] = { 'u', 'l' };
 
             static RefPtr<HTMLElement> parseChild(HTMLFastPathParser& self)
