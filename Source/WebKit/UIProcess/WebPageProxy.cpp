@@ -3806,7 +3806,7 @@ void WebPageProxy::receivedNavigationPolicyDecision(PolicyAction policyAction, A
 
     m_isLockdownModeExplicitlySet = (navigation->websitePolicies() && navigation->websitePolicies()->isLockdownModeExplicitlySet()) || m_configuration->isLockdownModeExplicitlySet();
     auto lockdownMode = (navigation->websitePolicies() ? navigation->websitePolicies()->lockdownModeEnabled() : shouldEnableLockdownMode()) ? WebProcessProxy::LockdownMode::Enabled : WebProcessProxy::LockdownMode::Disabled;
-    process().processPool().processForNavigation(*this, *navigation, sourceProcess.copyRef(), sourceURL, processSwapRequestedByClient, lockdownMode, frameInfo, WTFMove(websiteDataStore), [this, protectedThis = Ref { *this }, policyAction, navigation = Ref { *navigation }, navigationAction = WTFMove(navigationAction), sourceProcess = sourceProcess.copyRef(), sender = WTFMove(sender), processSwapRequestedByClient, frame = Ref { frame }] (Ref<WebProcessProxy>&& processForNavigation, SuspendedPageProxy* destinationSuspendedPage, const String& reason) mutable {
+    process().processPool().processForNavigation(*this, *navigation, sourceProcess.copyRef(), sourceURL, processSwapRequestedByClient, lockdownMode, frameInfo, WTFMove(websiteDataStore), [this, protectedThis = Ref { *this }, policyAction, navigation = Ref { *navigation }, navigationAction = WTFMove(navigationAction), sourceProcess = sourceProcess.copyRef(), sender = WTFMove(sender), processSwapRequestedByClient, frame = Ref { frame }] (Ref<WebProcessProxy>&& processForNavigation, SuspendedPageProxy* destinationSuspendedPage, ASCIILiteral reason) mutable {
         // If the navigation has been destroyed, then no need to proceed.
         if (isClosed() || !navigationState().hasNavigation(navigation->navigationID())) {
             receivedPolicyDecision(policyAction, navigation.ptr(), navigation->websitePolicies(), WTFMove(navigationAction), WTFMove(sender), WillContinueLoadInNewProcess::No, std::nullopt);
@@ -3818,10 +3818,10 @@ void WebPageProxy::receivedNavigationPolicyDecision(PolicyAction policyAction, A
         bool shouldProcessSwap = processForNavigation.ptr() != sourceProcess.ptr();
         if (shouldProcessSwap) {
             policyAction = PolicyAction::StopAllLoads;
-            WEBPAGEPROXY_RELEASE_LOG(ProcessSwapping, "decidePolicyForNavigationAction, swapping process %i with process %i for navigation, reason=%" PUBLIC_LOG_STRING, processIdentifier(), processForNavigation->processIdentifier(), reason.utf8().data());
+            WEBPAGEPROXY_RELEASE_LOG(ProcessSwapping, "decidePolicyForNavigationAction, swapping process %i with process %i for navigation, reason=%" PUBLIC_LOG_STRING, processIdentifier(), processForNavigation->processIdentifier(), reason.characters());
             LOG(ProcessSwapping, "(ProcessSwapping) Switching from process %i to new process (%i) for navigation %" PRIu64 " '%s'", processIdentifier(), processForNavigation->processIdentifier(), navigation->navigationID(), navigation->loggingString());
         } else
-            WEBPAGEPROXY_RELEASE_LOG(ProcessSwapping, "decidePolicyForNavigationAction: keep using process %i for navigation, reason=%" PUBLIC_LOG_STRING, processIdentifier(), reason.utf8().data());
+            WEBPAGEPROXY_RELEASE_LOG(ProcessSwapping, "decidePolicyForNavigationAction: keep using process %i for navigation, reason=%" PUBLIC_LOG_STRING, processIdentifier(), reason.characters());
 
         if (shouldProcessSwap) {
             // Make sure the process to be used for the navigation does not get shutDown now due to destroying SuspendedPageProxy or ProvisionalPageProxy objects.

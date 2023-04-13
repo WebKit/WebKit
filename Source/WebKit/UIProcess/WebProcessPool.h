@@ -450,7 +450,7 @@ public:
     bool hasForegroundWebProcesses() const { return m_foregroundWebProcessCounter.value(); }
     bool hasBackgroundWebProcesses() const { return m_backgroundWebProcessCounter.value(); }
 
-    void processForNavigation(WebPageProxy&, const API::Navigation&, Ref<WebProcessProxy>&& sourceProcess, const URL& sourceURL, ProcessSwapRequestedByClient, WebProcessProxy::LockdownMode, const FrameInfoData&, Ref<WebsiteDataStore>&&, CompletionHandler<void(Ref<WebProcessProxy>&&, SuspendedPageProxy*, const String&)>&&);
+    void processForNavigation(WebPageProxy&, const API::Navigation&, Ref<WebProcessProxy>&& sourceProcess, const URL& sourceURL, ProcessSwapRequestedByClient, WebProcessProxy::LockdownMode, const FrameInfoData&, Ref<WebsiteDataStore>&&, CompletionHandler<void(Ref<WebProcessProxy>&&, SuspendedPageProxy*, ASCIILiteral)>&&);
 
     void didReachGoodTimeToPrewarm();
 
@@ -530,7 +530,7 @@ private:
     void platformInitializeWebProcess(const WebProcessProxy&, WebProcessCreationParameters&);
     void platformInvalidateContext();
 
-    void processForNavigationInternal(WebPageProxy&, const API::Navigation&, Ref<WebProcessProxy>&& sourceProcess, const URL& sourceURL, ProcessSwapRequestedByClient, WebProcessProxy::LockdownMode, const FrameInfoData&, Ref<WebsiteDataStore>&&, CompletionHandler<void(Ref<WebProcessProxy>&&, SuspendedPageProxy*, const String&)>&&);
+    std::tuple<Ref<WebProcessProxy>, SuspendedPageProxy*, ASCIILiteral> processForNavigationInternal(WebPageProxy&, const API::Navigation&, Ref<WebProcessProxy>&& sourceProcess, const URL& sourceURL, ProcessSwapRequestedByClient, WebProcessProxy::LockdownMode, const FrameInfoData&, Ref<WebsiteDataStore>&&);
 
     RefPtr<WebProcessProxy> tryTakePrewarmedProcess(WebsiteDataStore&, WebProcessProxy::LockdownMode);
 
