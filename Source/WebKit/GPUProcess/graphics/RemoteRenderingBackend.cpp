@@ -440,6 +440,7 @@ void RemoteRenderingBackend::releaseRenderingResourceWithQualifiedIdentifier(Qua
     MESSAGE_CHECK(success, "Resource is being released before being cached.");
 }
 
+#if PLATFORM(COCOA)
 static std::optional<ImageBufferBackendHandle> handleFromBuffer(ImageBuffer& buffer)
 {
     auto* backend = buffer.ensureBackendCreated();
@@ -453,7 +454,6 @@ static std::optional<ImageBufferBackendHandle> handleFromBuffer(ImageBuffer& buf
     return std::nullopt;
 }
 
-#if PLATFORM(COCOA)
 void RemoteRenderingBackend::prepareBuffersForDisplay(Vector<PrepareBackingStoreBuffersInputData> swapBuffersInput, CompletionHandler<void(const Vector<PrepareBackingStoreBuffersOutputData>&)>&& completionHandler)
 {
     Vector<PrepareBackingStoreBuffersOutputData> outputData;
