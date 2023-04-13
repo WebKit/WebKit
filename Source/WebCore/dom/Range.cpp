@@ -44,6 +44,7 @@
 #include "NodeWithIndex.h"
 #include "ProcessingInstruction.h"
 #include "ScopedEventQueue.h"
+#include "ShadowRoot.h"
 #include "TextIterator.h"
 #include "TypedElementDescendantIteratorInlines.h"
 #include "VisibleUnits.h"
@@ -575,6 +576,10 @@ ExceptionOr<RefPtr<Node>> processAncestorsAndTheirSiblings(Range::ActionType act
     RefPtr<Node> firstChildInAncestorToProcess = direction == ProcessContentsForward ? container->nextSibling() : container->previousSibling();
     for (auto& ancestor : ancestors) {
         if (action == Range::Extract || action == Range::Clone) {
+            if (auto shadowRoot = dynamicDowncast<ShadowRoot>(ancestor.get())) {
+                if (!shadowRoot->isCloneable())
+                    continue;
+            }
             auto clonedAncestor = ancestor->cloneNode(false); // Might have been removed already during mutation event.
             if (clonedContainer) {
                 auto result = clonedAncestor->appendChild(*clonedContainer);
