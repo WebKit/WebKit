@@ -2160,8 +2160,6 @@ imported/w3c/web-platform-tests/css/css-pseudo/selection-background-painting-ord
 # Failing preload tests
 imported/w3c/web-platform-tests/preload/link-header-preload-nonce.html [ Failure ]
 imported/w3c/web-platform-tests/preload/onerror-event.html [ Failure ]
-imported/w3c/web-platform-tests/preload/prefetch-headers.html [ Failure ]
-imported/w3c/web-platform-tests/preload/prefetch-types.html [ Failure ]
 imported/w3c/web-platform-tests/preload/preload-csp.sub.html [ Failure ]
 imported/w3c/web-platform-tests/preload/preload-default-csp.sub.html [ Failure ]
 imported/w3c/web-platform-tests/preload/preload-dynamic-csp.html [ Failure ]
