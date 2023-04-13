@@ -83,11 +83,11 @@ jobs:
             package_json_arch: "arm64"
           - lto_flag: "-flto='full'"
             label: bun-webkit-linux-amd64-lto
-            os: ubuntu-18.04
+            os: big-ubuntu
             package_json_arch: "x64"
           - lto_flag: ""
             label: bun-webkit-linux-amd64
-            os: ubuntu-18.04
+            os: big-ubuntu
             package_json_arch: "x64"
 
     timeout-minutes: 90
