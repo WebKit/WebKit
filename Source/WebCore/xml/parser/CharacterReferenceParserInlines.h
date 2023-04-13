@@ -32,7 +32,8 @@ namespace WebCore {
 
 inline void unconsumeCharacters(SegmentedString& source, StringBuilder& consumedCharacters)
 {
-    source.pushBack(consumedCharacters.toString());
+    if (!consumedCharacters.isEmpty())
+        source.pushBack(consumedCharacters.toString());
 }
 
 template<typename T> void appendCharacterTo(T& output, UChar32 c)

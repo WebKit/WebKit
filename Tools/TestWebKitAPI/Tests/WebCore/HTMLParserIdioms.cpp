@@ -214,23 +214,21 @@ TEST(WebCoreHTMLParser, FastPathComplexHTMLEntityParsing)
     auto div = HTMLDivElement::create(document);
     document->body()->appendChild(div);
 
-    auto fragment = DocumentFragment::create(document);
-    bool result = tryFastParsingHTMLFragment("Price: 12&cent; only"_s, document, fragment, div, { ParserContentPolicy::AllowScriptingContent, ParserContentPolicy::AllowPluginContent });
-    EXPECT_TRUE(result);
+    auto testFastParser = [&](const String& input) -> String {
+        auto fragment = DocumentFragment::create(document);
+        bool result = tryFastParsingHTMLFragment(input, document, fragment, div, { ParserContentPolicy::AllowScriptingContent, ParserContentPolicy::AllowPluginContent });
+        EXPECT_TRUE(result);
+        auto textChild = dynamicDowncast<Text>(fragment->firstChild());
+        EXPECT_TRUE(textChild);
+        return textChild ? textChild->data() : String();
+    };
 
-    auto textChild = dynamicDowncast<Text>(fragment->firstChild());
-    ASSERT_TRUE(textChild);
-
-    EXPECT_STREQ(textChild->data().utf8().data(), String::fromUTF8("Price: 12¢ only").utf8().data());
-
-    fragment->removeChildren();
-    result = tryFastParsingHTMLFragment("Genius Nicer Dicer Plus | 18&nbsp&hellip;"_s, document, fragment, div, { ParserContentPolicy::AllowScriptingContent, ParserContentPolicy::AllowPluginContent });
-    EXPECT_TRUE(result);
-
-    textChild = dynamicDowncast<Text>(fragment->firstChild());
-    ASSERT_TRUE(textChild);
-
-    EXPECT_STREQ(textChild->data().utf8().data(), String::fromUTF8("Genius Nicer Dicer Plus | 18 …").utf8().data());
+    EXPECT_STREQ(testFastParser("Price: 12&cent; only"_s).utf8().data(), String::fromUTF8("Price: 12¢ only").utf8().data());
+    EXPECT_STREQ(testFastParser("Genius Nicer Dicer Plus | 18&nbsp&hellip;"_s).utf8().data(), String::fromUTF8("Genius Nicer Dicer Plus | 18 …").utf8().data());
+    EXPECT_STREQ(testFastParser("&nbsp&a"_s).utf8().data(), String::fromUTF8(" &a").utf8().data());
+    EXPECT_STREQ(testFastParser("&nbsp&"_s).utf8().data(), String::fromUTF8(" &").utf8().data());
+    EXPECT_STREQ(testFastParser("&nbsp-"_s).utf8().data(), String::fromUTF8(" -").utf8().data());
+    EXPECT_STREQ(testFastParser("food & water"_s).utf8().data(), String("food & water"_s).utf8().data());
 }
 
 } // namespace TestWebKitAPI

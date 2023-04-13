@@ -95,14 +95,6 @@ enum class HTMLFastPathResult {
     FailedCssPseudoDirEnabledAndDirAttributeDirty
 };
 
-template<class Char> static bool operator==(Span<const Char> span, ASCIILiteral s)
-{
-    if (span.size() != s.length())
-        return false;
-
-    return WTF::equal(span.data(), s.characters8(), span.size());
-}
-
 template<typename CharacterType> static inline bool isQuoteCharacter(CharacterType c)
 {
     return c == '"' || c == '\'';
@@ -637,78 +629,21 @@ private:
     {
         ASSERT(*m_parsingBuffer == '&');
         m_parsingBuffer.advance();
-        auto* start = m_parsingBuffer.position();
-        while (true) {
-            // A rather arbitrary constant to prevent unbounded lookahead in the case of ill-formed input.
-            constexpr int maxLength = 20;
-            if (m_parsingBuffer.atEnd() || m_parsingBuffer.position() - start > maxLength || UNLIKELY(*m_parsingBuffer == '\0'))
-                return didFail(HTMLFastPathResult::FailedParsingCharacterReference);
-            if (m_parsingBuffer.consume() == ';')
-                break;
-        }
 
-        CharSpan reference { start, static_cast<size_t>(m_parsingBuffer.position() - start) - 1 };
-        // There are no valid character references shorter than that. The check protects the indexed accesses below.
-        constexpr size_t minLength = 2;
-        if (reference.size() < minLength)
-            return didFail(HTMLFastPathResult::FailedParsingCharacterReference);
-
-        if (reference[0] == '#') {
-            UChar32 result = 0;
-            if (reference[1] == 'x' || reference[1] == 'X') {
-                for (size_t i = 2; i < reference.size(); ++i) {
-                    auto c = reference[i];
-                    result *= 16;
-                    if (c >= '0' && c <= '9')
-                        result += c - '0';
-                    else if (c >= 'a' && c <= 'f')
-                        result += c - 'a' + 10;
-                    else if (c >= 'A' && c <= 'F')
-                        result += c - 'A' + 10;
-                    else
-                        return didFail(HTMLFastPathResult::FailedParsingCharacterReference);
-
-                    if (result > UCHAR_MAX_VALUE)
-                        return didFail(HTMLFastPathResult::FailedParsingCharacterReference);
-                }
-            } else {
-                for (size_t i = 1; i < reference.size(); ++i) {
-                    auto c = reference[i];
-                    result *= 10;
-                    if (c >= '0' && c <= '9')
-                        result += c - '0';
-                    else
-                        return didFail(HTMLFastPathResult::FailedParsingCharacterReference);
-
-                    if (result > UCHAR_MAX_VALUE)
-                        return didFail(HTMLFastPathResult::FailedParsingCharacterReference);
-                }
-            }
-            appendLegalEntityFor(result, out);
-            // Handle the most common named references.
-        } else if (reference == "amp"_s)
-            out.append('&');
-        else if (reference == "lt"_s)
-            out.append('<');
-        else if (reference == "gt"_s)
-            out.append('>');
-        else if (reference == "nbsp"_s)
-            out.append(0xa0);
-        else {
-            // This handles uncommon named references.
-            // We need +1 to include the trailing semicolon. Without it, the HTMLEntityParser would think
-            // the input is incomplete and would fail parsing.
-            String inputString { reference.data(), static_cast<unsigned>(reference.size() + 1) };
-            SegmentedString inputSegmented { WTFMove(inputString) };
+        if (LIKELY(m_parsingBuffer.lengthRemaining() >= 2)) {
+            // FIXME: It is unnecessarily inefficient to use a SegmentedString here. Ideally, we'd
+            // be able to parse HTMLEntities straight from a StringView.
+            StringView inputString(m_parsingBuffer.position(), m_parsingBuffer.lengthRemaining());
+            SegmentedString inputSegmented { inputString };
+            inputSegmented.append(String { &kEndOfFileMarker, 1 }); // Matches what the full parser does in markEndOfFile().
             bool notEnoughCharacters = false;
-            if (!consumeHTMLEntity(inputSegmented, out, notEnoughCharacters) || notEnoughCharacters)
-                return didFail(HTMLFastPathResult::FailedParsingCharacterReference);
-            // consumeHTMLEntity() may not have consumed all the input.
-            if (auto remainingLength = inputSegmented.length()) {
-                ASSERT(*(m_parsingBuffer.position() - 1) == ';');
-                m_parsingBuffer.setPosition(m_parsingBuffer.position() - remainingLength);
+            if (consumeHTMLEntity(inputSegmented, out, notEnoughCharacters)) {
+                // Advance m_parsingBuffer by the amount of characters consumed by consumeHTMLEntity().
+                m_parsingBuffer.advanceBy(inputString.length() - (inputSegmented.length() - 1));
+                return;
             }
         }
+        out.append('&');
     }
 
     void didFail(HTMLFastPathResult result)
