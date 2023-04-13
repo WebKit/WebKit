@@ -211,7 +211,7 @@ ImageSizeChangeType RenderImage::setImageSizeForAltText(CachedImage* newImage /*
     // we have an alt and the user meant it (its not a text we invented)
     if (!m_altText.isEmpty()) {
         const FontCascade& font = style().fontCascade();
-        IntSize paddedTextSize(paddingWidth + std::min(ceilf(font.width(RenderBlock::constructTextRun(m_altText, style()))), maxAltTextWidth), paddingHeight + std::min(font.metricsOfPrimaryFont().height(), maxAltTextHeight));
+        IntSize paddedTextSize(paddingWidth + std::min(ceilf(font.width(RenderBlock::constructTextRun(m_altText, style()))), maxAltTextWidth), paddingHeight + std::min(font.metricsOfPrimaryFont().intHeight(), maxAltTextHeight));
         imageSize = imageSize.expandedTo(paddedTextSize);
     }
 
@@ -556,7 +556,7 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
                 if (hasRoomForAltText()) {
                     auto altTextLocation = [&]() -> LayoutPoint {
                         auto contentHorizontalOffset = LayoutUnit { leftBorder + leftPadding + (paddingWidth / 2) - missingImageBorderWidth };
-                        auto contentVerticalOffset = LayoutUnit { topBorder + topPadding + fontMetrics.ascent() + (paddingHeight / 2) - missingImageBorderWidth };
+                        auto contentVerticalOffset = LayoutUnit { topBorder + topPadding + fontMetrics.intAscent() + (paddingHeight / 2) - missingImageBorderWidth };
                         if (!style().isLeftToRightDirection())
                             contentHorizontalOffset += contentSize.width() - textWidth;
                         return paintOffset + LayoutPoint { contentHorizontalOffset, contentVerticalOffset };

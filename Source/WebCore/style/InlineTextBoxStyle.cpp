@@ -166,19 +166,20 @@ static float computedUnderlineOffset(const UnderlineOffsetArguments& context)
     auto underlineOffset = context.lineStyle.textUnderlineOffset();
     auto& fontMetrics = context.lineStyle.metricsOfPrimaryFont();
 
-    float computedUnderlineOffset = fontMetrics.ascent() + gap;
+    float ascent = fontMetrics.intAscent();
+    float computedUnderlineOffset = ascent + gap;
     switch (context.resolvedUnderlinePosition) {
     case TextUnderlinePosition::Auto:
-        computedUnderlineOffset = fontMetrics.ascent() + underlineOffset.lengthOr(gap);
+        computedUnderlineOffset = ascent + underlineOffset.lengthOr(gap);
         break;
     case TextUnderlinePosition::FromFont:
-        computedUnderlineOffset = fontMetrics.ascent() + fontMetrics.underlinePosition() + underlineOffset.lengthOr(0.f);
+        computedUnderlineOffset = ascent + fontMetrics.underlinePosition().value_or(0) + underlineOffset.lengthOr(0.f);
         break;
     case TextUnderlinePosition::Under: {
         ASSERT(context.textUnderlinePositionUnder);
         // Position underline relative to the bottom edge of the lowest element's content box.
         auto desiredOffset = context.textUnderlinePositionUnder->textRunLogicalHeight + gap + std::max(context.textUnderlinePositionUnder->textRunOffsetFromBottomMost, 0.f) + underlineOffset.lengthOr(0.f);
-        computedUnderlineOffset = std::max<float>(desiredOffset, fontMetrics.ascent());
+        computedUnderlineOffset = std::max<float>(desiredOffset, ascent);
         break;
     }
     default:
@@ -213,7 +214,7 @@ static GlyphOverflow computedVisualOverflowForDecorations(const RenderStyle& lin
     float wavyOffset = 0;
 
     TextDecorationStyle decorationStyle = lineStyle.textDecorationStyle();
-    float height = lineStyle.fontCascade().metricsOfPrimaryFont().floatHeight();
+    float height = lineStyle.fontCascade().metricsOfPrimaryFont().height();
     GlyphOverflow overflowResult;
 
     if (decorationStyle == TextDecorationStyle::Wavy) {
@@ -251,7 +252,7 @@ static GlyphOverflow computedVisualOverflowForDecorations(const RenderStyle& lin
     if (decoration & TextDecorationLine::LineThrough) {
         FloatRect rect(FloatPoint(), FloatSize(1, strokeThickness));
         float autoTextDecorationThickness = TextDecorationThickness::createWithAuto().resolve(lineStyle.computedFontSize(), lineStyle.metricsOfPrimaryFont());
-        auto center = 2 * lineStyle.metricsOfPrimaryFont().floatAscent() / 3 + autoTextDecorationThickness / 2;
+        auto center = 2 * lineStyle.metricsOfPrimaryFont().ascent().value_or(0) / 3 + autoTextDecorationThickness / 2;
         rect.move(0, center - strokeThickness / 2);
         if (decorationStyle == TextDecorationStyle::Wavy) {
             FloatBoxExtent wavyExpansion;

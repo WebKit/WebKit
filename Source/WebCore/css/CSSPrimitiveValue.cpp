@@ -682,8 +682,8 @@ double CSSPrimitiveValue::computeUnzoomedNonCalcLengthDouble(CSSUnitType primiti
         return ((propertyToCompute == CSSPropertyFontSize) ? fontDescription->specifiedSize() : fontDescription->computedSize()) * value;
     case CSSUnitType::CSS_EXS:
         ASSERT(fontMetrics);
-        if (fontMetrics->hasXHeight())
-            return fontMetrics->xHeight() * value;
+        if (fontMetrics->xHeight().has_value())
+            return fontMetrics->xHeight().value() * value;
         ASSERT(fontDescription);
         return ((propertyToCompute == CSSPropertyFontSize) ? fontDescription->specifiedSize() : fontDescription->computedSize()) / 2.0 * value;
     case CSSUnitType::CSS_REMS:
@@ -696,7 +696,7 @@ double CSSPrimitiveValue::computeUnzoomedNonCalcLengthDouble(CSSUnitType primiti
         return fontMetrics->zeroWidth().value_or(fontDescription->computedSize() / 2) * value;
     case CSSUnitType::CSS_IC:
         ASSERT(fontMetrics);
-        return fontMetrics->ideogramWidth() * value;
+        return fontMetrics->ideogramWidth().value_or(0) * value;
     case CSSUnitType::CSS_PX:
         return value;
     case CSSUnitType::CSS_CM:
@@ -897,7 +897,7 @@ double CSSPrimitiveValue::computeNonCalcLengthDouble(const CSSToLengthConversion
     case CSSUnitType::CSS_LHS:
         if (conversionData.computingLineHeight() || conversionData.computingFontSize()) {
             // Try to get the parent's computed line-height, or fall back to the initial line-height of this element's font spacing.
-            value *= conversionData.parentStyle() ? conversionData.parentStyle()->computedLineHeight() : conversionData.fontCascadeForFontUnits().metricsOfPrimaryFont().lineSpacing();
+            value *= conversionData.parentStyle() ? conversionData.parentStyle()->computedLineHeight() : conversionData.fontCascadeForFontUnits().metricsOfPrimaryFont().intLineSpacing();
         } else
             value *= conversionData.computedLineHeightForFontUnits();
         break;

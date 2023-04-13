@@ -27,109 +27,101 @@ namespace WebCore {
 
 class FontMetrics {
 public:
-    static const unsigned defaultUnitsPerEm = 1000;
+    static constexpr unsigned defaultUnitsPerEm = 1000;
 
     unsigned unitsPerEm() const { return m_unitsPerEm; }
     void setUnitsPerEm(unsigned unitsPerEm) { m_unitsPerEm = unitsPerEm; }
 
-    float floatAscent(FontBaseline baselineType = AlphabeticBaseline) const
+    float height(FontBaseline baselineType = AlphabeticBaseline) const
+    {
+        return ascent(baselineType).value_or(0) + descent(baselineType).value_or(0);
+    }
+    int intHeight(FontBaseline baselineType = AlphabeticBaseline) const
+    {
+        return intAscent(baselineType) + intDescent(baselineType);
+    }
+
+    std::optional<float> ascent(FontBaseline baselineType = AlphabeticBaseline) const
     {
         if (baselineType == AlphabeticBaseline)
-            return m_floatAscent;
-        return floatHeight() / 2;
+            return m_ascent;
+        return height() / 2;
     }
-
-    void setAscent(float ascent)
-    {
-        m_floatAscent = ascent;
-        m_intAscent = std::max(static_cast<int>(lroundf(ascent)), 0);
-    }
-
-    float floatDescent(FontBaseline baselineType = AlphabeticBaseline) const
-    {
-        if (baselineType == AlphabeticBaseline)
-            return m_floatDescent;
-        return floatHeight() / 2;
-    }
-
-    void setDescent(float descent)
-    {
-        m_floatDescent = descent;
-        m_intDescent = lroundf(descent);
-    }
-
-    float floatHeight(FontBaseline baselineType = AlphabeticBaseline) const
-    {
-        return floatAscent(baselineType) + floatDescent(baselineType);
-    }
-
-    float floatLineGap() const { return m_floatLineGap; }
-    void setLineGap(float lineGap)
-    {
-        m_floatLineGap = lineGap;
-        m_intLineGap = lroundf(lineGap);
-    }
-
-    float floatLineSpacing() const { return m_floatLineSpacing; }
-    void setLineSpacing(float lineSpacing)
-    {
-        m_floatLineSpacing = lineSpacing;
-        m_intLineSpacing = lroundf(lineSpacing);
-    }
-
-    float xHeight() const { return m_xHeight; }
-    void setXHeight(float xHeight) { m_xHeight = xHeight; }
-    bool hasXHeight() const { return m_xHeight > 0; }
-    
-    bool hasCapHeight() const { return m_floatCapHeight > 0; }
-    float floatCapHeight() const { return m_floatCapHeight; }
-    void setCapHeight(float capHeight)
-    {
-        m_floatCapHeight = capHeight;
-        m_intCapHeight = lroundf(capHeight);
-    }
-    
-    // Integer variants of certain metrics, used for HTML rendering.
-    int ascent(FontBaseline baselineType = AlphabeticBaseline) const
+    int intAscent(FontBaseline baselineType = AlphabeticBaseline) const
     {
         if (baselineType == AlphabeticBaseline)
             return m_intAscent;
-        return height() - height() / 2;
+        return intHeight() - intHeight() / 2;
     }
-    
-    int descent(FontBaseline baselineType = AlphabeticBaseline) const
+    void setAscent(float ascent)
+    {
+        m_ascent = ascent;
+        m_intAscent = std::max(static_cast<int>(lroundf(ascent)), 0);
+    }
+
+    std::optional<float> descent(FontBaseline baselineType = AlphabeticBaseline) const
+    {
+        if (baselineType == AlphabeticBaseline)
+            return m_descent;
+        return height() / 2;
+    }
+    int intDescent(FontBaseline baselineType = AlphabeticBaseline) const
     {
         if (baselineType == AlphabeticBaseline)
             return m_intDescent;
-        return height() / 2;
+        return intHeight() / 2;
+    }
+    void setDescent(float descent)
+    {
+        m_descent = descent;
+        m_intDescent = lroundf(descent);
     }
 
-    int height(FontBaseline baselineType = AlphabeticBaseline) const
+    std::optional<float> lineGap() const { return m_lineGap; }
+    int intLineGap() const { return m_intLineGap; }
+    void setLineGap(float lineGap)
     {
-        return ascent(baselineType) + descent(baselineType);
+        m_lineGap = lineGap;
+        m_intLineGap = lroundf(lineGap);
     }
 
-    int lineGap() const { return m_intLineGap; }
-    int lineSpacing() const { return m_intLineSpacing; }
-    
-    int capHeight() const { return m_intCapHeight; }
-    
-    bool hasIdenticalAscentDescentAndLineGap(const FontMetrics& other) const
+    std::optional<float> lineSpacing() const { return m_lineSpacing; }
+    int intLineSpacing() const { return m_intLineSpacing; }
+    void setLineSpacing(float lineSpacing)
     {
-        return ascent() == other.ascent() && descent() == other.descent() && lineGap() == other.lineGap();
+        m_lineSpacing = lineSpacing;
+        m_intLineSpacing = lroundf(lineSpacing);
+    }
+
+    std::optional<float> xHeight() const { return m_xHeight; }
+    void setXHeight(float xHeight) { m_xHeight = xHeight; }
+
+    std::optional<float> capHeight() const { return m_capHeight; }
+    int intCapHeight() const { return m_intCapHeight; }
+    void setCapHeight(float capHeight)
+    {
+        m_capHeight = capHeight;
+        m_intCapHeight = lroundf(capHeight);
     }
 
     std::optional<float> zeroWidth() const { return m_zeroWidth; }
     void setZeroWidth(float zeroWidth) { m_zeroWidth = zeroWidth; }
 
-    float ideogramWidth() const { return m_ideogramWidth; }
+    std::optional<float> ideogramWidth() const { return m_ideogramWidth; }
     void setIdeogramWidth(float ideogramWidth) { m_ideogramWidth = ideogramWidth; }
 
-    float underlinePosition() const { return m_underlinePosition; }
+    std::optional<float> underlinePosition() const { return m_underlinePosition; }
     void setUnderlinePosition(float underlinePosition) { m_underlinePosition = underlinePosition; }
 
-    float underlineThickness() const { return m_underlineThickness; }
+    std::optional<float> underlineThickness() const { return m_underlineThickness; }
     void setUnderlineThickness(float underlineThickness) { m_underlineThickness = underlineThickness; }
+
+    bool hasIdenticalAscentDescentAndLineGap(const FontMetrics& other) const
+    {
+        return intAscent() == other.intAscent()
+            && intDescent() == other.intDescent()
+            && intLineGap() == other.intLineGap();
+    }
 
 private:
     friend class Font;
@@ -137,43 +129,44 @@ private:
     void reset()
     {
         m_unitsPerEm = defaultUnitsPerEm;
-        m_floatAscent = 0;
-        m_floatDescent = 0;
-        m_floatLineGap = 0;
-        m_floatLineSpacing = 0;
-        m_floatCapHeight = 0;
+
+        m_ascent = std::nullopt;
+        m_capHeight = std::nullopt;
+        m_descent = std::nullopt;
+        m_ideogramWidth = std::nullopt;
+        m_lineGap = std::nullopt;
+        m_lineSpacing = std::nullopt;
+        m_underlinePosition = std::nullopt;
+        m_underlineThickness = std::nullopt;
+        m_xHeight = std::nullopt;
+        m_zeroWidth = std::nullopt;
+
         m_intAscent = 0;
         m_intDescent = 0;
         m_intLineGap = 0;
         m_intLineSpacing = 0;
         m_intCapHeight = 0;
-        m_xHeight = 0;
-        m_zeroWidth = std::nullopt;
-        m_ideogramWidth = 0;
-        m_underlinePosition = 0;
-        m_underlineThickness = 0;
     }
 
     unsigned m_unitsPerEm { defaultUnitsPerEm };
 
-    float m_floatAscent { 0 };
-    float m_floatDescent { 0 };
-    float m_floatLineGap { 0 };
-    float m_floatLineSpacing { 0 };
-    float m_floatCapHeight { 0 };
+    std::optional<float> m_ascent;
+    std::optional<float> m_capHeight;
+    std::optional<float> m_descent;
+    std::optional<float> m_ideogramWidth;
+    std::optional<float> m_lineGap;
+    std::optional<float> m_lineSpacing;
+    std::optional<float> m_underlinePosition;
+    std::optional<float> m_underlineThickness;
+    std::optional<float> m_xHeight;
+    std::optional<float> m_zeroWidth;
 
-    // Also cached as integers for performance.
+    // Integer variants of certain metrics are cached for HTML rendering performance.
     int m_intAscent { 0 };
     int m_intDescent { 0 };
     int m_intLineGap { 0 };
     int m_intLineSpacing { 0 };
     int m_intCapHeight { 0 };
-
-    std::optional<float> m_zeroWidth;
-    float m_ideogramWidth { 0 };
-    float m_xHeight { 0 };
-    float m_underlinePosition { 0 };
-    float m_underlineThickness { 0 };
 };
 
 static inline float scaleEmToUnits(float x, unsigned unitsPerEm)

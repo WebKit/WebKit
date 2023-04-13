@@ -113,7 +113,7 @@ static LayoutRect computeCaretRectForEmptyElement(const RenderBoxModelObject& re
     x = std::min(x, std::max<LayoutUnit>(maxX - caretWidth(), 0));
 
     auto lineHeight = renderer.lineHeight(true, currentStyle.isHorizontalWritingMode() ? HorizontalLine : VerticalLine, PositionOfInteriorLineBoxes);
-    auto height = std::min(lineHeight, LayoutUnit { currentStyle.metricsOfPrimaryFont().height() });
+    auto height = std::min(lineHeight, LayoutUnit { currentStyle.metricsOfPrimaryFont().intHeight() });
     auto y = renderer.paddingTop() + renderer.borderTop() + (lineHeight > height ? (lineHeight - height) / 2 : LayoutUnit { });
 
     auto rect = LayoutRect(x, y, caretWidth(), height);
@@ -256,7 +256,7 @@ static LayoutRect computeCaretRectForBox(const RenderBox& renderer, const Inline
     // <rdar://problem/3777804> Deleting all content in a document can result in giant tall-as-window insertion point
     //
     // FIXME: ignoring :first-line, missing good reason to take care of
-    LayoutUnit fontHeight = renderer.style().metricsOfPrimaryFont().height();
+    LayoutUnit fontHeight = renderer.style().metricsOfPrimaryFont().intHeight();
     if (fontHeight > rect.height() || (!renderer.isReplacedOrInlineBlock() && !renderer.isTable()))
         rect.setHeight(fontHeight);
 

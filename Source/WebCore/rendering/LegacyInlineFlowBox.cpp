@@ -692,7 +692,7 @@ static void placeChildInlineBoxesInBlockDirection(LegacyInlineFlowBox& inlineBox
         const RenderStyle& childLineStyle = child->lineStyle();
         if (child->behavesLikeText() || is<LegacyInlineFlowBox>(*child)) {
             const FontMetrics& fontMetrics = childLineStyle.metricsOfPrimaryFont();
-            newLogicalTop += child->baselinePosition(baselineType) - fontMetrics.ascent(baselineType);
+            newLogicalTop += child->baselinePosition(baselineType) - fontMetrics.intAscent(baselineType);
             if (is<LegacyInlineFlowBox>(*child)) {
                 RenderBoxModelObject& boxObject = downcast<LegacyInlineFlowBox>(*child).renderer();
                 newLogicalTop -= childLineStyle.isHorizontalWritingMode()
@@ -765,7 +765,7 @@ void LegacyInlineFlowBox::placeBoxesInBlockDirection(LayoutUnit top, LayoutUnit 
 {
     bool isRootBox = isRootInlineBox();
     if (isRootBox)
-        setLogicalTop(top + maxAscent - lineStyle().metricsOfPrimaryFont().ascent(baselineType));
+        setLogicalTop(top + maxAscent - lineStyle().metricsOfPrimaryFont().intAscent(baselineType));
 
     placeChildInlineBoxesInBlockDirection(*this, top, maxHeight, maxAscent, strictMode, lineTop, lineBottom, setLineTop, lineTopIncludingMargins, lineBottomIncludingMargins, hasAnnotationsBefore, hasAnnotationsAfter, baselineType);
 

@@ -329,7 +329,7 @@ void PopupMenuWin::calculatePositionAndSize(const IntRect& r, LocalFrameView* v)
 
     // First, determine the popup's height
     int itemCount = client()->listSize();
-    m_itemHeight = m_font.metricsOfPrimaryFont().height() + optionSpacingMiddle;
+    m_itemHeight = m_font.metricsOfPrimaryFont().intHeight() + optionSpacingMiddle;
 
     int naturalHeight = m_itemHeight * itemCount;
     int popupHeight = std::min(maxPopupHeight, naturalHeight);
@@ -667,7 +667,7 @@ void PopupMenuWin::paint(const IntRect& damageRect, HDC hdc)
                 if (RenderTheme::singleton().popupOptionSupportsTextIndent())
                     textX -= minimumIntValueForLength(itemStyle.textIndent(), itemRect.width());
             }
-            int textY = itemRect.y() + itemFont.metricsOfPrimaryFont().ascent() + (itemRect.height() - itemFont.metricsOfPrimaryFont().height()) / 2;
+            int textY = itemRect.y() + itemFont.metricsOfPrimaryFont().intAscent() + (itemRect.height() - itemFont.metricsOfPrimaryFont().intHeight()) / 2;
             context.drawBidiText(itemFont, textRun, IntPoint(textX, textY));
         }
     }

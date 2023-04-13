@@ -199,16 +199,16 @@ float adjustedFontSize(float size, const FontSizeAdjust& sizeAdjust, const FontM
     // https://github.com/w3c/csswg-drafts/issues/6384
     switch (sizeAdjust.metric) {
     case FontSizeAdjust::Metric::CapHeight:
-        return metrics.hasCapHeight() ? adjustedFontSize(size, *sizeAdjust.value, metrics.floatCapHeight()) : size;
+        return metrics.capHeight() ? adjustedFontSize(size, *sizeAdjust.value, *metrics.capHeight()) : size;
     case FontSizeAdjust::Metric::ChWidth:
         return metrics.zeroWidth() ? adjustedFontSize(size, *sizeAdjust.value, *metrics.zeroWidth()) : size;
     // FIXME: Are ic-height and ic-width the same? Gecko treats them the same.
     case FontSizeAdjust::Metric::IcWidth:
     case FontSizeAdjust::Metric::IcHeight:
-        return metrics.ideogramWidth() > 0 ? adjustedFontSize(size, *sizeAdjust.value, metrics.ideogramWidth()) : size;
+        return metrics.ideogramWidth() ? adjustedFontSize(size, *sizeAdjust.value, *metrics.ideogramWidth()) : size;
     case FontSizeAdjust::Metric::ExHeight:
     default:
-        return metrics.hasXHeight() ? adjustedFontSize(size, *sizeAdjust.value, metrics.xHeight()) : size;
+        return metrics.xHeight() ? adjustedFontSize(size, *sizeAdjust.value, *metrics.xHeight()) : size;
     }
 
     ASSERT_NOT_REACHED();
@@ -220,23 +220,19 @@ std::optional<float> aspectValueOfPrimaryFont(const RenderStyle& style, FontSize
     std::optional<float> metricValue;
     switch (metric) {
     case FontSizeAdjust::Metric::CapHeight:
-        if (metrics.hasCapHeight())
-            metricValue = metrics.floatCapHeight();
+        metricValue = metrics.capHeight();
         break;
     case FontSizeAdjust::Metric::ChWidth:
-        if (metrics.zeroWidth())
-            metricValue = metrics.zeroWidth();
+        metricValue = metrics.zeroWidth();
         break;
     // FIXME: Are ic-height and ic-width the same? Gecko treats them the same.
     case FontSizeAdjust::Metric::IcWidth:
     case FontSizeAdjust::Metric::IcHeight:
-        if (metrics.ideogramWidth() > 0)
-            metricValue = metrics.ideogramWidth();
+        metricValue = metrics.ideogramWidth();
         break;
     case FontSizeAdjust::Metric::ExHeight:
     default:
-        if (metrics.hasXHeight())
-            metricValue = metrics.xHeight();
+        metricValue = metrics.xHeight();
     }
 
     float computedFontSize = style.computedFontSize();

@@ -411,7 +411,7 @@ void LineLayout::updateLayoutBoxDimensions(const RenderBox& replacedOrInlineBloc
         auto baseline = replacedOrInlineBlock.baselinePosition(AlphabeticBaseline, false /* firstLine */, writingMode == WritingMode::TopToBottom ? HorizontalLine : VerticalLine, PositionOnContainingLine);
         if (is<RenderListMarker>(replacedOrInlineBlock)) {
             ASSERT(!downcast<RenderListMarker>(replacedOrInlineBlock).isImage());
-            baseline = replacedOrInlineBlock.style().metricsOfPrimaryFont().ascent();
+            baseline = replacedOrInlineBlock.style().metricsOfPrimaryFont().intAscent();
         }
         layoutBox.setBaselineForIntegration(roundToInt(baseline));
     }

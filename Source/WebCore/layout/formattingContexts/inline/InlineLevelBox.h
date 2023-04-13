@@ -230,7 +230,7 @@ inline InlineLayoutUnit InlineLevelBox::preferredLineHeight() const
 {
     // FIXME: Remove integral flooring when legacy line layout stops using it.
     if (isPreferredLineHeightFontMetricsBased())
-        return primarymetricsOfPrimaryFont().lineSpacing();
+        return primarymetricsOfPrimaryFont().intLineSpacing();
 
     if (m_style.lineHeight.isPercentOrCalculated())
         return floorf(minimumValueForLength(m_style.lineHeight, fontSize()));

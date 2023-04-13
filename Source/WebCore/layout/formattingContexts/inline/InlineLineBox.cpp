@@ -53,7 +53,7 @@ InlineRect LineBox::logicalRectForTextRun(const Line::Run& run) const
     auto* ancestorInlineBox = &parentInlineBox(run);
     ASSERT(ancestorInlineBox->isInlineBox());
     auto runlogicalTop = ancestorInlineBox->logicalTop() - ancestorInlineBox->inlineBoxContentOffsetForLeadingTrim();
-    InlineLayoutUnit logicalHeight = ancestorInlineBox->primarymetricsOfPrimaryFont().height();
+    InlineLayoutUnit logicalHeight = ancestorInlineBox->primarymetricsOfPrimaryFont().intHeight();
 
     while (ancestorInlineBox != &m_rootInlineBox && !ancestorInlineBox->hasLineBoxRelativeAlignment()) {
         ancestorInlineBox = &parentInlineBox(*ancestorInlineBox);

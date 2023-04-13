@@ -273,7 +273,7 @@ static void showGlyphsWithAdvances(const FloatPoint& point, const Font& font, CG
         Vector<CGSize, 256> translations(count);
         CTFontGetVerticalTranslationsForGlyphs(platformData.ctFont(), glyphs, translations.data(), count);
 
-        auto ascentDelta = font.fontMetrics().floatAscent(IdeographicBaseline) - font.fontMetrics().floatAscent();
+        auto ascentDelta = font.fontMetrics().ascent(IdeographicBaseline).value_or(0) - font.fontMetrics().ascent().value_or(0);
         fillVectorWithVerticalGlyphPositions(positions, translations.data(), advances, count, point, ascentDelta, CGContextGetTextMatrix(context));
         CTFontDrawGlyphs(platformData.ctFont(), glyphs, positions.data(), count, context);
     } else {
