@@ -56,6 +56,7 @@ private:
     size_t bufferSize() const final;
     size_t numberOfOutputChannels() const final;
     size_t maximumNumberOfOutputChannels() const final;
+    bool tryToSetActiveInternal(bool) final;
     RouteSharingPolicy routeSharingPolicy() const final;
     String routingContextUID() const final;
     size_t preferredBufferSize() const final;
@@ -64,6 +65,7 @@ private:
     void handleMutedStateChange() final;
 
     String m_lastSetPreferredAudioDeviceUID;
+    Ref<WTF::WorkQueue> m_workQueue;
     RetainPtr<WebInterruptionObserverHelper> m_interruptionObserverHelper;
 };
 

@@ -431,6 +431,12 @@ size_t AudioSessionMac::maximumNumberOfOutputChannels() const
     return channels;
 }
 
+bool AudioSessionMac::tryToSetActiveInternal(bool)
+{
+    notImplemented();
+    return true;
+}
+
 String AudioSessionMac::routingContextUID() const
 {
     return emptyString();

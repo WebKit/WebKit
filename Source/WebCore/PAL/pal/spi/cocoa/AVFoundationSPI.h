@@ -54,9 +54,8 @@
 #endif
 #endif
 
-#import <AVFoundation/AVAudioSession_Private.h>
-
 #if PLATFORM(IOS_FAMILY)
+#import <AVFoundation/AVAudioSession_Private.h>
 NS_ASSUME_NONNULL_BEGIN
 @interface AVAudioSession (AVAudioSessionWebKitPrivate)
 - (BOOL)setAuditTokensForProcessAssertion:(NSArray<NSData *>*)inAuditTokens error:(NSError **)outError;
@@ -432,7 +431,7 @@ NS_ASSUME_NONNULL_END
 @end
 #endif
 
-#if !USE(APPLE_INTERNAL_SDK) && HAVE(AVAUDIOSESSION) && !PLATFORM(MACCATALYST)
+#if !USE(APPLE_INTERNAL_SDK) && PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
 #import <AVFoundation/AVAudioSession.h>
 
 NS_ASSUME_NONNULL_BEGIN
