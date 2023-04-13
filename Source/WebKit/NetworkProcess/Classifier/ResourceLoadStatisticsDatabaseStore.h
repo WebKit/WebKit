@@ -116,6 +116,7 @@ public:
     void setIsNewResourceLoadStatisticsDatabaseFile(bool isNewResourceLoadStatisticsDatabaseFile) { m_isNewResourceLoadStatisticsDatabaseFile = isNewResourceLoadStatisticsDatabaseFile; }
     void removeDataForDomain(const RegistrableDomain&) override;
     Vector<RegistrableDomain> allDomains() const final;
+    HashMap<RegistrableDomain, WallTime> allDomainsWithLastAccessedTime() const final;
     bool domainIDExistsInDatabase(int);
     std::optional<Vector<String>> checkForMissingTablesInSchema();
     void insertExpiredStatisticForTesting(const RegistrableDomain&, unsigned numberOfOperatingDaysPassed, bool hasUserInteraction, bool isScheduledForAllButCookieDataRemoval, bool isPrevalent) override;

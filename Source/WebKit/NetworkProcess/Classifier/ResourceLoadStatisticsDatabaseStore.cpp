@@ -2024,6 +2024,19 @@ Vector<RegistrableDomain> ResourceLoadStatisticsDatabaseStore::allDomains() cons
     return domains;
 }
 
+HashMap<RegistrableDomain, WallTime> ResourceLoadStatisticsDatabaseStore::allDomainsWithLastAccessedTime() const
+{
+    ASSERT(!RunLoop::isMain());
+
+    HashMap<RegistrableDomain, WallTime> result;
+    for (auto& domainData : domains()) {
+        auto lastAccessedTime = std::max(domainData.mostRecentUserInteractionTime, domainData.mostRecentWebPushInteractionTime);
+        result.add(WTFMove(domainData.registrableDomain), lastAccessedTime);
+    }
+
+    return result;
+}
+
 void ResourceLoadStatisticsDatabaseStore::clear(CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());

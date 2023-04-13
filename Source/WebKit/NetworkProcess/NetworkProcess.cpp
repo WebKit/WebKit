@@ -595,6 +595,19 @@ void NetworkProcess::destroySession(PAL::SessionID sessionID)
     m_sessionsControlledByAutomation.remove(sessionID);
 }
 
+void NetworkProcess::registrableDomainsWithLastAccessedTime(PAL::SessionID sessionID, CompletionHandler<void(std::optional<HashMap<RegistrableDomain, WallTime>>)>&& completionHandler)
+{
+#if ENABLE(TRACKING_PREVENTION)
+    if (auto* session = networkSession(sessionID)) {
+        if (auto* resourceLoadStatistics = session->resourceLoadStatistics()) {
+            resourceLoadStatistics->registrableDomainsWithLastAccessedTime(WTFMove(completionHandler));
+            return;
+        }
+    }
+#endif
+    completionHandler(std::nullopt);
+}
+
 #if ENABLE(TRACKING_PREVENTION)
 void NetworkProcess::dumpResourceLoadStatistics(PAL::SessionID sessionID, CompletionHandler<void(String)>&& completionHandler)
 {

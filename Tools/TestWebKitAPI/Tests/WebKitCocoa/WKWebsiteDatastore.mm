@@ -778,6 +778,7 @@ TEST(WKWebsiteDataStoreConfiguration, TotalQuotaRatio)
     [websiteDataStoreConfiguration.get() setVolumeCapacityOverride:[NSNumber numberWithInteger:100000]];
     auto handler = adoptNS([[WKWebsiteDataStoreMessageHandler alloc] init]);
     auto websiteDataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()]);
+    [websiteDataStore _setResourceLoadStatisticsEnabled:NO];
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"testHandler"];
     [configuration setWebsiteDataStore:websiteDataStore.get()];
@@ -805,13 +806,15 @@ TEST(WKWebsiteDataStoreConfiguration, TotalQuotaRatio)
     TestWebKitAPI::Util::run(&done);
     done = false;
 
+    // Ensure access time of first.com is later than second.com.
+    Util::runFor(1_s);
     // Update recently used origin list.
     [webView loadHTMLString:htmlString baseURL:[NSURL URLWithString:@"https://first.com"]];
     TestWebKitAPI::Util::run(&receivedScriptMessage);
     receivedScriptMessage = false;
     EXPECT_WK_STREQ(@"success", [lastScriptMessage body]);
 
-    // Trigger eviction on example.com.
+    // Trigger eviction on second.com.
     [webView loadHTMLString:htmlString baseURL:[NSURL URLWithString:@"https://third.com"]];
     TestWebKitAPI::Util::run(&receivedScriptMessage);
     receivedScriptMessage = false;
@@ -828,4 +831,78 @@ TEST(WKWebsiteDataStoreConfiguration, TotalQuotaRatio)
     done = false;
 }
 
+TEST(WKWebsiteDataStoreConfiguration, TotalQuotaRatioWithResourceLoadStatisticsEnabled)
+{
+    done = false;
+    receivedScriptMessage = false;
+    auto uuid = adoptNS([[NSUUID alloc] initWithUUIDString:@"68753a44-4d6f-1226-9c60-0050e4c00067"]);
+    // Clear existing data.
+    [WKWebsiteDataStore _removeDataStoreWithIdentifier:uuid.get() completionHandler:^(NSError *error) {
+        done = true;
+        EXPECT_NULL(error);
+    }];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    NSString *htmlString = @"<script> \
+        window.caches.open('test').then((cache) => { \
+            return cache.put('https://webkit.org/test', new Response(new ArrayBuffer(20000))); \
+        }).then(() => { \
+            window.webkit.messageHandlers.testHandler.postMessage('success'); \
+        }).catch(() => { \
+            window.webkit.messageHandlers.testHandler.postMessage('error'); \
+        }); \
+    </script>";
+    auto websiteDataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initWithIdentifier:uuid.get()]);
+    EXPECT_NULL([websiteDataStoreConfiguration.get() totalQuotaRatio]);
+    [websiteDataStoreConfiguration.get() setTotalQuotaRatio:[NSNumber numberWithFloat:0.5]];
+    [websiteDataStoreConfiguration.get() setVolumeCapacityOverride:[NSNumber numberWithFloat:100000]];
+    auto handler = adoptNS([[WKWebsiteDataStoreMessageHandler alloc] init]);
+    auto websiteDataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()]);
+    [websiteDataStore _setResourceLoadStatisticsEnabled:YES];
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"testHandler"];
+    [configuration setWebsiteDataStore:websiteDataStore.get()];
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView loadHTMLString:htmlString baseURL:[NSURL URLWithString:@"https://first.com"]];
+    TestWebKitAPI::Util::run(&receivedScriptMessage);
+    receivedScriptMessage = false;
+    EXPECT_WK_STREQ(@"success", [lastScriptMessage body]);
+
+    [webView loadHTMLString:htmlString baseURL:[NSURL URLWithString:@"https://second.com"]];
+    TestWebKitAPI::Util::run(&receivedScriptMessage);
+    receivedScriptMessage = false;
+    EXPECT_WK_STREQ(@"success", [lastScriptMessage body]);
+
+    // Simulate user interaction on first.com and third.com.
+    done = false;
+    [websiteDataStore _logUserInteraction:[NSURL URLWithString:@"https://first.com"] completionHandler:^{
+        done = true;
+    }];
+    Util::run(&done);
+    
+    done = false;
+    [websiteDataStore _logUserInteraction:[NSURL URLWithString:@"https://third.com"] completionHandler:^{
+        done = true;
+    }];
+    Util::run(&done);
+
+    [webView loadHTMLString:htmlString baseURL:[NSURL URLWithString:@"https://third.com"]];
+    TestWebKitAPI::Util::run(&receivedScriptMessage);
+    receivedScriptMessage = false;
+    EXPECT_WK_STREQ(@"success", [lastScriptMessage body]);
+
+    auto sortFunction = ^(WKWebsiteDataRecord *record1, WKWebsiteDataRecord *record2) {
+        return [record1.displayName compare:record2.displayName];
+    };
+    [websiteDataStore fetchDataRecordsOfTypes:[NSSet setWithObject:WKWebsiteDataTypeFetchCache] completionHandler:^(NSArray<WKWebsiteDataRecord *> *records) {
+        EXPECT_EQ(records.count, 2u);
+        auto sortedRecords = [records sortedArrayUsingComparator:sortFunction];
+        EXPECT_WK_STREQ(@"first.com", [[sortedRecords objectAtIndex:0] displayName]);
+        EXPECT_WK_STREQ(@"third.com", [[sortedRecords objectAtIndex:1] displayName]);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+}
 } // namespace TestWebKitAPI

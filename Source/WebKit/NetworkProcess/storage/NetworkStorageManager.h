@@ -77,15 +77,14 @@ enum class BackgroundFetchChange : uint8_t;
 enum class UnifiedOriginStorageLevel : uint8_t;
 class FileSystemStorageHandleRegistry;
 class IDBStorageRegistry;
-class NetworkQuotaManager;
-
+class NetworkProcess;
 class ServiceWorkerStorageManager;
 class StorageAreaBase;
 class StorageAreaRegistry;
 
 class NetworkStorageManager final : public IPC::WorkQueueMessageReceiver {
 public:
-    static Ref<NetworkStorageManager> create(PAL::SessionID, Markable<UUID>, IPC::Connection::UniqueID, const String& path, const String& customLocalStoragePath, const String& customIDBStoragePath, const String& customCacheStoragePath, const String& customServiceWorkerStoragePath, uint64_t defaultOriginQuota, std::optional<double> originQuotaRatio, std::optional<double> totalQuotaRatio, std::optional<uint64_t> volumeCapacityOverride, UnifiedOriginStorageLevel);
+    static Ref<NetworkStorageManager> create(NetworkProcess&, PAL::SessionID, Markable<UUID>, IPC::Connection::UniqueID, const String& path, const String& customLocalStoragePath, const String& customIDBStoragePath, const String& customCacheStoragePath, const String& customServiceWorkerStoragePath, uint64_t defaultOriginQuota, std::optional<double> originQuotaRatio, std::optional<double> totalQuotaRatio, std::optional<uint64_t> volumeCapacityOverride, UnifiedOriginStorageLevel);
     static bool canHandleTypes(OptionSet<WebsiteDataType>);
     static OptionSet<WebsiteDataType> allManagedTypes();
 
@@ -128,14 +127,12 @@ public:
 #endif // ENABLE(SERVICE_WORKER)
 
 private:
-    NetworkStorageManager(PAL::SessionID, Markable<UUID>, IPC::Connection::UniqueID, const String& path, const String& customLocalStoragePath, const String& customIDBStoragePath, const String& customCacheStoragePath, const String& customServiceWorkerStoragePath, uint64_t defaultOriginQuota, std::optional<double> originQuotaRatio, std::optional<double> totalQuotaRatio, std::optional<uint64_t> volumeCapacityOverride, UnifiedOriginStorageLevel);
+    NetworkStorageManager(NetworkProcess&, PAL::SessionID, Markable<UUID>, IPC::Connection::UniqueID, const String& path, const String& customLocalStoragePath, const String& customIDBStoragePath, const String& customCacheStoragePath, const String& customServiceWorkerStoragePath, uint64_t defaultOriginQuota, std::optional<double> originQuotaRatio, std::optional<double> totalQuotaRatio, std::optional<uint64_t> volumeCapacityOverride, UnifiedOriginStorageLevel);
     ~NetworkStorageManager();
-    NetworkQuotaManager& quotaManager();
     void writeOriginToFileIfNecessary(const WebCore::ClientOrigin&, StorageAreaBase* = nullptr);
     enum class ShouldWriteOriginFile : bool { No, Yes };
     OriginStorageManager& originStorageManager(const WebCore::ClientOrigin&, ShouldWriteOriginFile = ShouldWriteOriginFile::Yes);
     bool removeOriginStorageManagerIfPossible(const WebCore::ClientOrigin&);
-    void updateOriginModificationTime(const WebCore::ClientOrigin&);
 
     void forEachOriginDirectory(const Function<void(const String&)>&);
     HashSet<WebCore::ClientOrigin> getAllOrigins();
@@ -225,8 +222,22 @@ private:
     Vector<WebCore::ServiceWorkerScripts> updateServiceWorkerRegistrationsByOrigin(Vector<WebCore::ServiceWorkerContextData>&&, Vector<WebCore::ServiceWorkerRegistrationKey>&&);
 #endif
 
+    void spaceGrantedForOrigin(const WebCore::ClientOrigin&, uint64_t amount);
+    void prepareForEviction();
+    void donePrepareForEviction(const std::optional<HashMap<WebCore::RegistrableDomain, WallTime>>&);
+    WallTime lastModificationTimeForOrigin(const WebCore::ClientOrigin&, OriginStorageManager&) const;
+    void updateLastModificationTimeForOrigin(const WebCore::ClientOrigin&);
+    void schedulePerformEviction();
+    struct AccessRecord {
+        bool isActive { false };
+        uint64_t usage { 0 };
+        WallTime lastAccessTime;
+        Vector<WebCore::SecurityOriginData> clientOrigins;
+    };
+    void performEviction(HashMap<WebCore::SecurityOriginData, AccessRecord>&&);
     SuspendableWorkQueue& workQueue() WTF_RETURNS_CAPABILITY(m_queue.get()) { return m_queue; }
 
+    WeakPtr<NetworkProcess> m_process;
     PAL::SessionID m_sessionID;
     String m_queueName;
     Ref<SuspendableWorkQueue> m_queue;
@@ -247,7 +258,9 @@ private:
     std::optional<double> m_originQuotaRatio;
     std::optional<double> m_totalQuotaRatio;
     std::optional<uint64_t> m_volumeCapacityOverride;
-    std::unique_ptr<NetworkQuotaManager> m_quotaManager;
+    std::optional<uint64_t> m_totalUsage;
+    uint64_t m_totalQuota;
+    bool m_isEvictionScheduled { false };
     UnifiedOriginStorageLevel m_unifiedOriginStorageLevel;
     IPC::Connection::UniqueID m_parentConnection;
     HashMap<IPC::Connection::UniqueID, HashSet<String>> m_temporaryBlobPathsByConnection WTF_GUARDED_BY_CAPABILITY(workQueue());

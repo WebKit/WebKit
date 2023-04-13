@@ -30,25 +30,32 @@
 
 namespace WebKit {
 
-Ref<OriginQuotaManager> OriginQuotaManager::create(uint64_t quota, uint64_t standardReportedQuota, GetUsageFunction&& getUsageFunction, IncreaseQuotaFunction&& increaseQuotaFunction, NotifyUsageUpdateFunction&& notifyUsageUpdateFunction)
+Ref<OriginQuotaManager> OriginQuotaManager::create(uint64_t quota, uint64_t standardReportedQuota, GetUsageFunction&& getUsageFunction, IncreaseQuotaFunction&& increaseQuotaFunction, NotifySpaceGrantedFunction&& notifySpaceGrantedFunction)
 {
-    return adoptRef(*new OriginQuotaManager(quota, standardReportedQuota, WTFMove(getUsageFunction), WTFMove(increaseQuotaFunction), WTFMove(notifyUsageUpdateFunction)));
+    return adoptRef(*new OriginQuotaManager(quota, standardReportedQuota, WTFMove(getUsageFunction), WTFMove(increaseQuotaFunction), WTFMove(notifySpaceGrantedFunction)));
 }
 
-OriginQuotaManager::OriginQuotaManager(uint64_t quota, uint64_t standardReportedQuota, GetUsageFunction&& getUsageFunction, IncreaseQuotaFunction&& increaseQuotaFunction, NotifyUsageUpdateFunction&& notifyUsageUpdateFunction)
+OriginQuotaManager::OriginQuotaManager(uint64_t quota, uint64_t standardReportedQuota, GetUsageFunction&& getUsageFunction, IncreaseQuotaFunction&& increaseQuotaFunction, NotifySpaceGrantedFunction&& notifySpaceGrantedFunction)
     : m_quota(quota)
     , m_standardReportedQuota(standardReportedQuota)
     , m_initialQuota(quota)
     , m_getUsageFunction(WTFMove(getUsageFunction))
     , m_increaseQuotaFunction(WTFMove(increaseQuotaFunction))
-    , m_notifyUsageUpdateFunction(WTFMove(notifyUsageUpdateFunction))
+    , m_notifySpaceGrantedFunction(WTFMove(notifySpaceGrantedFunction))
 {
     ASSERT(m_quota);
 }
 
 uint64_t OriginQuotaManager::usage()
 {
-    return m_getUsageFunction();
+    // Estimated usage that includes granted space.
+    if (m_quotaCountdown)
+        return m_quota - m_quotaCountdown;
+
+    if (!m_usage)
+        m_usage = m_getUsageFunction();
+
+    return std::min(*m_usage, m_quota);
 }
 
 void OriginQuotaManager::requestSpace(uint64_t spaceRequested, RequestCallback&& callback)
@@ -97,24 +104,21 @@ bool OriginQuotaManager::grantWithCurrentQuota(uint64_t spaceRequested)
         m_quota = std::max(m_quota, defaultQuotaStep * ((*m_usage / defaultQuotaStep) + 1));
     }
     m_quotaCountdown = *m_usage < m_quota ? m_quota - *m_usage : 0;
-    usageUpdated(*m_usage);
 
     return grantFastPath(spaceRequested);
 }
 
-void OriginQuotaManager::usageUpdated(uint64_t newUsage)
+void OriginQuotaManager::spaceGranted(uint64_t amount)
 {
-    if (m_notifyUsageUpdateFunction)
-        m_notifyUsageUpdateFunction(newUsage);
+    if (m_notifySpaceGrantedFunction)
+        m_notifySpaceGrantedFunction(amount);
 }
 
 bool OriginQuotaManager::grantFastPath(uint64_t spaceRequested)
 {
     if (spaceRequested <= m_quotaCountdown) {
         m_quotaCountdown -= spaceRequested;
-        // If spaceRequested is 0, usage is not updated.
-        if (spaceRequested)
-            usageUpdated(m_quota - m_quotaCountdown);
+        spaceGranted(spaceRequested);
         return true;
     }
 

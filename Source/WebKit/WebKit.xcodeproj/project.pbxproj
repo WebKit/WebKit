@@ -1604,7 +1604,6 @@
 		93B631E527ABA62800443A44 /* IDBStorageConnectionToClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B631E427ABA62700443A44 /* IDBStorageConnectionToClient.h */; };
 		93B631E827ABA65D00443A44 /* IDBStorageManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B631E627ABA65C00443A44 /* IDBStorageManager.h */; };
 		93B631ED27ABA6B400443A44 /* IDBStorageRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B631EB27ABA6B300443A44 /* IDBStorageRegistry.h */; };
-		93B631F127ABACA900443A44 /* QuotaManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B631EF27ABACA900443A44 /* QuotaManager.h */; };
 		93B631F327ABAD8000443A44 /* QuotaIncreaseRequestIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B631F227ABAD7F00443A44 /* QuotaIncreaseRequestIdentifier.h */; };
 		93BDEB01171DD7AF00BFEE1B /* WKPageLoadTypesPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 93BDEB00171DD7AF00BFEE1B /* WKPageLoadTypesPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93D1EEF529669D74009B31D6 /* UnifiedOriginStorageLevel.h in Headers */ = {isa = PBXBuildFile; fileRef = 93D1EEF429669D73009B31D6 /* UnifiedOriginStorageLevel.h */; };
@@ -6008,8 +6007,6 @@
 		93B631E727ABA65C00443A44 /* IDBStorageManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBStorageManager.cpp; sourceTree = "<group>"; };
 		93B631EA27ABA6B200443A44 /* IDBStorageRegistry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBStorageRegistry.cpp; sourceTree = "<group>"; };
 		93B631EB27ABA6B300443A44 /* IDBStorageRegistry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBStorageRegistry.h; sourceTree = "<group>"; };
-		93B631EE27ABACA800443A44 /* QuotaManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QuotaManager.cpp; sourceTree = "<group>"; };
-		93B631EF27ABACA900443A44 /* QuotaManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuotaManager.h; sourceTree = "<group>"; };
 		93B631F227ABAD7F00443A44 /* QuotaIncreaseRequestIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuotaIncreaseRequestIdentifier.h; sourceTree = "<group>"; };
 		93BA04DA2151ADF3007F455F /* WebSWServerConnection.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebSWServerConnection.messages.in; sourceTree = "<group>"; };
 		93BA04DB2151ADF3007F455F /* WebSWServerToContextConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSWServerToContextConnection.h; sourceTree = "<group>"; };
@@ -11601,8 +11598,6 @@
 				3AE104BE29CBC8BB00661165 /* OriginQuotaManager.h */,
 				93085DC526E1C6CF000EC6A7 /* OriginStorageManager.cpp */,
 				93085DC626E1C6CF000EC6A7 /* OriginStorageManager.h */,
-				93B631EE27ABACA800443A44 /* QuotaManager.cpp */,
-				93B631EF27ABACA900443A44 /* QuotaManager.h */,
 				3A7D62D329D38DD300D57DAC /* ServiceWorkerStorageManager.cpp */,
 				3A7D62D429D38DD300D57DAC /* ServiceWorkerStorageManager.h */,
 				93E799CC2760497B0074008A /* SessionStorageManager.cpp */,
@@ -14519,7 +14514,6 @@
 				1A0C227E2451130A00ED614D /* QuickLookThumbnailingSoftLink.h in Headers */,
 				1AEE57252409F142002005D6 /* QuickLookThumbnailLoader.h in Headers */,
 				93B631F327ABAD8000443A44 /* QuotaIncreaseRequestIdentifier.h in Headers */,
-				93B631F127ABACA900443A44 /* QuotaManager.h in Headers */,
 				5CB6AE442609799C00B6ED5A /* ReasonSPI.h in Headers */,
 				7BE9326327F5C75A00D5FEFB /* ReceiverMatcher.h in Headers */,
 				950FECF4285027200002DE4E /* RecurringPaymentRequest.h in Headers */,
