@@ -904,7 +904,7 @@ static inline bool isSpaceAccordingToStyle(UChar c, const RenderStyle& style)
 float RenderText::minLogicalWidth() const
 {
     if (preferredLogicalWidthsDirty() || !m_minWidth)
-        const_cast<RenderText*>(this)->computePreferredLogicalWidths(0);
+        const_cast<RenderText*>(this)->computePreferredLogicalWidths(0, !preferredLogicalWidthsDirty());
 
     return *m_minWidth;
 }
@@ -912,7 +912,7 @@ float RenderText::minLogicalWidth() const
 float RenderText::maxLogicalWidth() const
 {
     if (preferredLogicalWidthsDirty() || !m_maxWidth)
-        const_cast<RenderText*>(this)->computePreferredLogicalWidths(0);
+        const_cast<RenderText*>(this)->computePreferredLogicalWidths(0, !preferredLogicalWidthsDirty());
 
     return *m_maxWidth;
 }
@@ -935,11 +935,11 @@ LineBreakIteratorMode mapLineBreakToIteratorMode(LineBreak lineBreak)
     return LineBreakIteratorMode::Default;
 }
 
-void RenderText::computePreferredLogicalWidths(float leadWidth)
+void RenderText::computePreferredLogicalWidths(float leadWidth, bool forcedMinMaxWidthComputation)
 {
     HashSet<const Font*> fallbackFonts;
     GlyphOverflow glyphOverflow;
-    computePreferredLogicalWidths(leadWidth, fallbackFonts, glyphOverflow);
+    computePreferredLogicalWidths(leadWidth, fallbackFonts, glyphOverflow, forcedMinMaxWidthComputation);
     if (fallbackFonts.isEmpty() && !glyphOverflow.left && !glyphOverflow.right && !glyphOverflow.top && !glyphOverflow.bottom)
         m_knownToHaveNoOverflowAndNoFallbackFonts = true;
 }
@@ -1004,9 +1004,9 @@ float RenderText::maxWordFragmentWidth(const RenderStyle& style, const FontCasca
     return std::max(maxFragmentWidth, suffixWidth);
 }
 
-void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Font*>& fallbackFonts, GlyphOverflow& glyphOverflow)
+void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Font*>& fallbackFonts, GlyphOverflow& glyphOverflow, bool forcedMinMaxWidthComputation)
 {
-    ASSERT(m_hasTab || preferredLogicalWidthsDirty() || !m_knownToHaveNoOverflowAndNoFallbackFonts);
+    ASSERT_UNUSED(forcedMinMaxWidthComputation, m_hasTab || preferredLogicalWidthsDirty() || forcedMinMaxWidthComputation || !m_knownToHaveNoOverflowAndNoFallbackFonts);
 
     m_minWidth = 0;
     m_beginMinWidth = 0;
@@ -1642,6 +1642,9 @@ float RenderText::width(unsigned from, unsigned length, const FontCascade& fontC
                     if (fallbackFonts->isEmpty() && !glyphOverflow->left && !glyphOverflow->right && !glyphOverflow->top && !glyphOverflow->bottom)
                         m_knownToHaveNoOverflowAndNoFallbackFonts = true;
                 }
+                // The rare case of when we switch between IFC and legacy preferred width computation.
+                if (!m_maxWidth)
+                    width = maxLogicalWidth();
                 width = *m_maxWidth;
             } else
                 width = maxLogicalWidth();

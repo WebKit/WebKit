@@ -53,7 +53,7 @@ private:
     bool isCounter() const override;
     String originalText() const override;
     
-    void computePreferredLogicalWidths(float leadWidth) override;
+    void computePreferredLogicalWidths(float leadWidth, bool forcedMinMaxWidthComputation = false) override;
 
     RefPtr<CSSCounterStyle> counterStyle() const;
 

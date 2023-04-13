@@ -4927,8 +4927,12 @@ bool RenderBlockFlow::tryComputePreferredWidthsUsingModernPath(LayoutUnit& minLo
     modernLineLayout()->updateInlineContentDimensions();
 
     std::tie(minLogicalWidth, maxLogicalWidth) = modernLineLayout()->computeIntrinsicWidthConstraints();
-    for (auto walker = InlineWalker(*this); !walker.atEnd(); walker.advance())
-        walker.current()->setPreferredLogicalWidthsDirty(false);
+    for (auto walker = InlineWalker(*this); !walker.atEnd(); walker.advance()) {
+        auto* renderer = walker.current();
+        renderer->setPreferredLogicalWidthsDirty(false);
+        if (auto* renderText = dynamicDowncast<RenderText>(renderer))
+            renderText->resetMinMaxWidth();
+    }
     return true;
 }
 

@@ -182,8 +182,10 @@ public:
 
     static std::optional<bool> emphasisMarkExistsAndIsAbove(const RenderText&, const RenderStyle&);
 
+    void resetMinMaxWidth();
+
 protected:
-    virtual void computePreferredLogicalWidths(float leadWidth);
+    virtual void computePreferredLogicalWidths(float leadWidth, bool forcedMinMaxWidthComputation = false);
     void willBeDestroyed() override;
 
     virtual void setRenderedText(const String&);
@@ -206,7 +208,7 @@ private:
     LayoutRect selectionRectForRepaint(const RenderLayerModelObject* repaintContainer, bool clipToVisibleContent = true) final;
     LayoutRect clippedOverflowRect(const RenderLayerModelObject* repaintContainer, VisibleRectContext) const final;
 
-    void computePreferredLogicalWidths(float leadWidth, HashSet<const Font*>& fallbackFonts, GlyphOverflow&);
+    void computePreferredLogicalWidths(float leadWidth, HashSet<const Font*>& fallbackFonts, GlyphOverflow&, bool forcedMinMaxWidthComputation = false);
 
     bool computeCanUseSimpleFontCodePath() const;
     
@@ -314,6 +316,12 @@ inline std::unique_ptr<RenderStyle> RenderText::selectionPseudoStyle() const
 inline RenderText* Text::renderer() const
 {
     return downcast<RenderText>(Node::renderer());
+}
+
+inline void RenderText::resetMinMaxWidth()
+{
+    m_minWidth = { };
+    m_maxWidth = { };
 }
 
 } // namespace WebCore

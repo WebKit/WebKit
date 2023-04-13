@@ -485,7 +485,7 @@ void RenderCounter::updateCounter()
     computePreferredLogicalWidths(0);
 }
 
-void RenderCounter::computePreferredLogicalWidths(float lead)
+void RenderCounter::computePreferredLogicalWidths(float lead, bool forcedMinMaxWidthComputation)
 {
     // FIXME: We shouldn't be modifying the tree in computePreferredLogicalWidths.
     // Instead, we should properly hook the appropriate changes in the DOM and modify
@@ -496,7 +496,7 @@ void RenderCounter::computePreferredLogicalWidths(float lead)
 
     setRenderedText(originalText());
 
-    RenderText::computePreferredLogicalWidths(lead);
+    RenderText::computePreferredLogicalWidths(lead, forcedMinMaxWidthComputation);
 }
 
 static void destroyCounterNodeWithoutMapRemoval(const AtomString& identifier, CounterNode& node)
