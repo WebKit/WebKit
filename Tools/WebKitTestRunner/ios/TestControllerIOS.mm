@@ -527,10 +527,10 @@ void TestController::lockScreenOrientation(WKScreenOrientationType orientation)
         webView.supportedInterfaceOrientations = UIInterfaceOrientationMaskPortraitUpsideDown;
         break;
     case kWKScreenOrientationTypeLandscapePrimary:
-        webView.supportedInterfaceOrientations = UIInterfaceOrientationMaskLandscapeLeft;
+        webView.supportedInterfaceOrientations = UIInterfaceOrientationMaskLandscapeRight;
         break;
     case kWKScreenOrientationTypeLandscapeSecondary:
-        webView.supportedInterfaceOrientations = UIInterfaceOrientationMaskLandscapeRight;
+        webView.supportedInterfaceOrientations = UIInterfaceOrientationMaskLandscapeLeft;
         break;
     }
     [UIView performWithoutAnimation:^{
