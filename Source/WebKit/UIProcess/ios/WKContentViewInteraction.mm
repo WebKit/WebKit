@@ -2566,7 +2566,8 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
         return ![self shouldDeferGestureDueToImageAnalysis:gestureRecognizer];
 #endif
 
-    if (gestureRecognizer == _singleTapGestureRecognizer && [otherGestureRecognizer isKindOfClass:UIPanGestureRecognizer.class])
+    if (gestureRecognizer == _singleTapGestureRecognizer && [otherGestureRecognizer isKindOfClass:UIPanGestureRecognizer.class]
+        && ![self _isInterruptingDecelerationForScrollViewOrAncestor:[_singleTapGestureRecognizer lastTouchedScrollView]])
         return YES;
 
     if (isSamePair(gestureRecognizer, otherGestureRecognizer, _highlightLongPressGestureRecognizer.get(), _longPressGestureRecognizer.get()))
@@ -2868,29 +2869,30 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
     return pointIsInSelectionRect;
 }
 
+- (BOOL)_isInterruptingDecelerationForScrollViewOrAncestor:(UIScrollView *)scrollView
+{
+    UIScrollView *mainScroller = self.webView.scrollView;
+    UIView *view = scrollView ?: mainScroller;
+    while (view) {
+        if (dynamic_objc_cast<UIScrollView>(view)._isInterruptingDeceleration)
+            return YES;
+
+        if (mainScroller == view)
+            break;
+
+        view = view.superview;
+    }
+    return NO;
+}
+
 - (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer
 {
     CGPoint point = [gestureRecognizer locationInView:self];
 
-    auto isInterruptingDecelerationForScrollViewOrAncestor = [&] (UIScrollView *scrollView) {
-        UIScrollView *mainScroller = self.webView.scrollView;
-        UIView *view = scrollView ?: mainScroller;
-        while (view) {
-            if ([view isKindOfClass:UIScrollView.class] && [(UIScrollView *)view _isInterruptingDeceleration])
-                return YES;
-
-            if (mainScroller == view)
-                break;
-
-            view = view.superview;
-        }
-        return NO;
-    };
-
     if (gestureRecognizer == _singleTapGestureRecognizer) {
         if ([self _shouldToggleSelectionCommandsAfterTapAt:point])
             return NO;
-        return !isInterruptingDecelerationForScrollViewOrAncestor([_singleTapGestureRecognizer lastTouchedScrollView]);
+        return ![self _isInterruptingDecelerationForScrollViewOrAncestor:[_singleTapGestureRecognizer lastTouchedScrollView]];
     }
 
     if (gestureRecognizer == _doubleTapGestureRecognizerForDoubleClick) {
@@ -2919,7 +2921,7 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
     }
 
     if (gestureRecognizer == _highlightLongPressGestureRecognizer) {
-        if (isInterruptingDecelerationForScrollViewOrAncestor([_highlightLongPressGestureRecognizer lastTouchedScrollView]))
+        if ([self _isInterruptingDecelerationForScrollViewOrAncestor:[_highlightLongPressGestureRecognizer lastTouchedScrollView]])
             return NO;
 
         if (self._hasFocusedElement) {
