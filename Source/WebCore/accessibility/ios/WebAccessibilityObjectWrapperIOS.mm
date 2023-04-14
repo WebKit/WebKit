@@ -1534,18 +1534,18 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     if (backingObject->supportsCheckedState()) {
         switch (backingObject->checkboxOrRadioValue()) {
         case AccessibilityButtonState::Off:
-            return [NSString stringWithFormat:@"%d", 0];
+            return @"0";
         case AccessibilityButtonState::On:
-            return [NSString stringWithFormat:@"%d", 1];
+            return @"1";
         case AccessibilityButtonState::Mixed:
-            return [NSString stringWithFormat:@"%d", 2];
+            return @"2";
         }
         ASSERT_NOT_REACHED();
-        return [NSString stringWithFormat:@"%d", 0];
+        return @"0";
     }
 
     if (backingObject->isButton() && backingObject->isPressed())
-        return [NSString stringWithFormat:@"%d", 1];
+        return @"1";
 
     // If self has the header trait, value should be the heading level.
     if (self.accessibilityTraits & self._axHeaderTrait) {
