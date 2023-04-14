@@ -121,10 +121,10 @@ AcceleratedBackingStoreDMABuf::Texture::Texture(GdkGLContext* glContext, const U
         Vector<EGLAttrib> attributes = {
             EGL_WIDTH, m_size.width(),
             EGL_HEIGHT, m_size.height(),
-            EGL_LINUX_DRM_FOURCC_EXT, format,
+            EGL_LINUX_DRM_FOURCC_EXT, static_cast<EGLAttrib>(format),
             EGL_DMA_BUF_PLANE0_FD_EXT, fd.value(),
-            EGL_DMA_BUF_PLANE0_OFFSET_EXT, offset,
-            EGL_DMA_BUF_PLANE0_PITCH_EXT, stride,
+            EGL_DMA_BUF_PLANE0_OFFSET_EXT, static_cast<EGLAttrib>(offset),
+            EGL_DMA_BUF_PLANE0_PITCH_EXT, static_cast<EGLAttrib>(stride),
         };
         if (modifier != uint64_t(WebCore::DMABufFormat::Modifier::Invalid) && display.eglExtensions().EXT_image_dma_buf_import_modifiers) {
             std::array<EGLAttrib, 4> modifierAttributes {
