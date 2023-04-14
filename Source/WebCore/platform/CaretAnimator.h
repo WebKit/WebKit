@@ -87,11 +87,13 @@ protected:
 
     virtual void updateAnimationProperties(ReducedResolutionSeconds) = 0;
 
-    void didStart(ReducedResolutionSeconds currentTime, Seconds interval)
+    void didStart(ReducedResolutionSeconds currentTime, std::optional<Seconds> interval)
     {
         m_startTime = currentTime;
         m_isActive = true;
-        m_blinkTimer.startOneShot(interval);
+        setBlinkingSuspended(!interval);
+        if (interval)
+            m_blinkTimer.startOneShot(*interval);
     }
 
     void didEnd()

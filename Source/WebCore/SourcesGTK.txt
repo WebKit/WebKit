@@ -132,5 +132,3 @@ platform/text/hyphen/HyphenationLibHyphen.cpp
 platform/unix/LoggingUnix.cpp
 
 platform/xdg/MIMETypeRegistryXdg.cpp
-
-rendering/RenderThemeGtk.cpp

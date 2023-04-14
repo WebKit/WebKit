@@ -193,7 +193,7 @@ public:
 #endif
     virtual void platformColorsDidChange();
 
-    virtual Seconds caretBlinkInterval() const { return 500_ms; }
+    virtual std::optional<Seconds> caretBlinkInterval() const { return { 500_ms }; }
 
     // System fonts and colors for CSS.
     virtual Color systemColor(CSSValueID, OptionSet<StyleColorOptions>) const;
