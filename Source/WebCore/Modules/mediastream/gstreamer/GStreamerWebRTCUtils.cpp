@@ -185,7 +185,8 @@ RTCRtpSendParameters toRTCRtpSendParameters(const GstStructure* rtcParameters)
     unsigned size = gst_value_list_get_size(encodings);
     for (unsigned i = 0; i < size; i++) {
         const auto* value = gst_value_list_get_value(encodings, i);
-        parameters.encodings.append(toRTCEncodingParameters(GST_STRUCTURE_CAST(value)));
+        RELEASE_ASSERT(GST_VALUE_HOLDS_STRUCTURE(value));
+        parameters.encodings.append(toRTCEncodingParameters(gst_value_get_structure(value)));
     }
 
     // FIXME: Handle rtcParameters.degradation_preference.
