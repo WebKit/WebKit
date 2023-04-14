@@ -308,6 +308,8 @@ public:
     };
 
     // This function is called whenever an attribute is added, changed or removed.
+    // Do not call this function directly. notifyAttributeChanged() should be used instead
+    // in order to update accessibility.
     virtual void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason = ModifiedDirectly);
 
     // Only called by the parser immediately after element construction.
@@ -806,6 +808,7 @@ private:
     NodeType nodeType() const final;
     bool childTypeAllowed(NodeType) const final;
 
+    void notifyAttributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason = ModifiedDirectly);
     enum SynchronizationOfLazyAttribute { NotInSynchronizationOfLazyAttribute, InSynchronizationOfLazyAttribute };
     void setAttributeInternal(unsigned index, const QualifiedName&, const AtomString& value, SynchronizationOfLazyAttribute);
     void addAttributeInternal(const QualifiedName&, const AtomString& value, SynchronizationOfLazyAttribute);

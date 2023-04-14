@@ -2046,6 +2046,16 @@ bool Element::isElementsArrayReflectionAttribute(const Settings& settings, const
     return false;
 }
 
+void Element::notifyAttributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason reason)
+{
+    attributeChanged(name, oldValue, newValue, reason);
+
+    if (oldValue != newValue) {
+        if (auto* cache = document().existingAXObjectCache())
+            cache->deferAttributeChangeIfNeeded(this, name, oldValue, newValue);
+    }
+}
+
 void Element::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason)
 {
     bool valueIsSameAsBefore = oldValue == newValue;
@@ -2127,9 +2137,6 @@ void Element::attributeChanged(const QualifiedName& name, const AtomString& oldV
         return;
 
     invalidateNodeListAndCollectionCachesInAncestorsForAttribute(name);
-
-    if (AXObjectCache* cache = document().existingAXObjectCache())
-        cache->deferAttributeChangeIfNeeded(this, name, oldValue, newValue);
 }
 
 void Element::updateEffectiveLangStateAndPropagateToDescendants()
@@ -2490,7 +2497,7 @@ void Element::parserSetAttributes(Span<const Attribute> attributes)
 
     // Use attributes instead of m_elementData because attributeChanged might modify m_elementData.
     for (const auto& attribute : attributes)
-        attributeChanged(attribute.name(), nullAtom(), attribute.value(), ModifiedDirectly);
+        notifyAttributeChanged(attribute.name(), nullAtom(), attribute.value(), ModifiedDirectly);
 }
 
 void Element::parserDidSetAttributes()
@@ -2505,9 +2512,9 @@ void Element::didMoveToNewDocument(Document& oldDocument, Document& newDocument)
         ensureUniqueElementData();
         // ElementData::m_classNames or ElementData::m_idForStyleResolution need to be updated with the right case.
         if (hasID())
-            attributeChanged(idAttr, nullAtom(), getIdAttribute());
+            notifyAttributeChanged(idAttr, nullAtom(), getIdAttribute());
         if (hasClass())
-            attributeChanged(classAttr, nullAtom(), getAttribute(classAttr));
+            notifyAttributeChanged(classAttr, nullAtom(), getAttribute(classAttr));
     }
 
     if (UNLIKELY(isDefinedCustomElement()))
@@ -4790,21 +4797,21 @@ void Element::willModifyAttribute(const QualifiedName& name, const AtomString& o
 
 void Element::didAddAttribute(const QualifiedName& name, const AtomString& value)
 {
-    attributeChanged(name, nullAtom(), value);
+    notifyAttributeChanged(name, nullAtom(), value);
     InspectorInstrumentation::didModifyDOMAttr(document(), *this, name.toAtomString(), value);
     dispatchSubtreeModifiedEvent();
 }
 
 void Element::didModifyAttribute(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue)
 {
-    attributeChanged(name, oldValue, newValue);
+    notifyAttributeChanged(name, oldValue, newValue);
     InspectorInstrumentation::didModifyDOMAttr(document(), *this, name.toAtomString(), newValue);
     // Do not dispatch a DOMSubtreeModified event here; see bug 81141.
 }
 
 void Element::didRemoveAttribute(const QualifiedName& name, const AtomString& oldValue)
 {
-    attributeChanged(name, oldValue, nullAtom());
+    notifyAttributeChanged(name, oldValue, nullAtom());
     InspectorInstrumentation::didRemoveDOMAttr(document(), *this, name.toAtomString());
     dispatchSubtreeModifiedEvent();
 }
@@ -5012,7 +5019,7 @@ void Element::cloneAttributesFromElement(const Element& other)
         m_elementData = other.m_elementData->makeUniqueCopy();
 
     for (const Attribute& attribute : attributesIterator())
-        attributeChanged(attribute.name(), nullAtom(), attribute.value(), ModifiedByCloning);
+        notifyAttributeChanged(attribute.name(), nullAtom(), attribute.value(), ModifiedByCloning);
 
     setNonce(other.nonce());
 }
