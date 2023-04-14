@@ -26,7 +26,8 @@
 // https://wicg.github.io/shape-detection-api/#dictdef-detectedbarcode
 
 [
-    EnabledBySetting=ShapeDetection
+    EnabledBySetting=ShapeDetection,
+    JSGenerateToJSObject
 ]
 dictionary DetectedBarcode {
     required DOMRectReadOnly boundingBox;

@@ -25,29 +25,31 @@
 
 #pragma once
 
-#include "FloatPoint.h"
+#include "FaceDetectorInterface.h"
 
-namespace WebCore {
+namespace WebCore::ShapeDetection {
 
-struct Point2D {
-    FloatPoint convertToBacking() const
+struct FaceDetectorOptions;
+
+class FaceDetectorImpl final : public FaceDetector {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    static Ref<FaceDetectorImpl> create(const FaceDetectorOptions& faceDetectorOptions)
     {
-        return {
-            static_cast<float>(x),
-            static_cast<float>(y),
-        };
+        return adoptRef(*new FaceDetectorImpl(faceDetectorOptions));
     }
 
-    double x { 0 };
-    double y { 0 };
+    virtual ~FaceDetectorImpl();
+
+private:
+    FaceDetectorImpl(const FaceDetectorOptions&);
+
+    FaceDetectorImpl(const FaceDetectorImpl&) = delete;
+    FaceDetectorImpl(FaceDetectorImpl&&) = delete;
+    FaceDetectorImpl& operator=(const FaceDetectorImpl&) = delete;
+    FaceDetectorImpl& operator=(FaceDetectorImpl&&) = delete;
+
+    void detect(CompletionHandler<void(Vector<DetectedFace>&&)>&&) final;
 };
 
-inline Point2D convertFromBacking(const FloatPoint& floatPoint)
-{
-    return {
-        floatPoint.x(),
-        floatPoint.y(),
-    };
-}
-
-} // namespace WebCore
+} // namespace WebCore::ShapeDetection

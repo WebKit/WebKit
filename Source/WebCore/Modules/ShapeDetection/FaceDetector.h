@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include "ExceptionOr.h"
+#include "FaceDetectorInterface.h"
 #include "ImageBitmap.h"
 #include "JSDOMPromiseDeferredForward.h"
 #include <wtf/Ref.h>
@@ -37,7 +39,7 @@ struct DetectedFace;
 
 class FaceDetector : public RefCounted<FaceDetector> {
 public:
-    static Ref<FaceDetector> create(const FaceDetectorOptions&);
+    static ExceptionOr<Ref<FaceDetector>> create(const FaceDetectorOptions&);
 
     ~FaceDetector();
 
@@ -45,7 +47,9 @@ public:
     void detect(const ImageBitmap::Source&, DetectPromise&&);
 
 private:
-    FaceDetector(const FaceDetectorOptions&);
+    FaceDetector(Ref<ShapeDetection::FaceDetector>&&);
+
+    Ref<ShapeDetection::FaceDetector> m_backing;
 };
 
 } // namespace WebCore

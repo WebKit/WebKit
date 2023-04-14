@@ -25,8 +25,10 @@
 
 #pragma once
 
+#include "ExceptionOr.h"
 #include "ImageBitmap.h"
 #include "JSDOMPromiseDeferredForward.h"
+#include "TextDetectorInterface.h"
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
@@ -36,7 +38,7 @@ struct DetectedText;
 
 class TextDetector : public RefCounted<TextDetector> {
 public:
-    static Ref<TextDetector> create();
+    static ExceptionOr<Ref<TextDetector>> create();
 
     ~TextDetector();
 
@@ -44,7 +46,9 @@ public:
     void detect(const ImageBitmap::Source&, DetectPromise&&);
 
 private:
-    TextDetector();
+    TextDetector(Ref<ShapeDetection::TextDetector>&&);
+
+    Ref<ShapeDetection::TextDetector> m_backing;
 };
 
 } // namespace WebCore

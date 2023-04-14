@@ -26,26 +26,60 @@
 #include "config.h"
 #include "BarcodeDetector.h"
 
+#include "BarcodeDetectorOptions.h"
+#include "BarcodeFormat.h"
+#include "DetectedBarcode.h"
+#include "JSDOMPromiseDeferred.h"
+#include "JSDetectedBarcode.h"
+
+#if PLATFORM(COCOA)
+// FIXME: Use the GPU Process.
+#include "BarcodeDetectorImplementation.h"
+#endif
+
 namespace WebCore {
 
-Ref<BarcodeDetector> BarcodeDetector::create(const BarcodeDetectorOptions& barcodeDetectorOptions)
+ExceptionOr<Ref<BarcodeDetector>> BarcodeDetector::create(const BarcodeDetectorOptions& barcodeDetectorOptions)
 {
-    return adoptRef(*new BarcodeDetector(barcodeDetectorOptions));
+#if PLATFORM(COCOA)
+    // FIXME: Use the GPU Process.
+    auto backing = ShapeDetection::BarcodeDetectorImpl::create(barcodeDetectorOptions.convertToBacking());
+    return adoptRef(*new BarcodeDetector(WTFMove(backing)));
+#else
+    UNUSED_PARAM(barcodeDetectorOptions);
+    return Exception { AbortError };
+#endif
 }
 
 
-BarcodeDetector::BarcodeDetector(const BarcodeDetectorOptions&)
+BarcodeDetector::BarcodeDetector(Ref<ShapeDetection::BarcodeDetector>&& backing)
+    : m_backing(WTFMove(backing))
 {
 }
 
 BarcodeDetector::~BarcodeDetector() = default;
 
-void BarcodeDetector::getSupportedFormats(GetSupportedFormatsPromise&&)
+void BarcodeDetector::getSupportedFormats(GetSupportedFormatsPromise&& promise)
 {
+#if PLATFORM(COCOA)
+    // FIXME: Use the GPU Process.
+    ShapeDetection::BarcodeDetectorImpl::getSupportedFormats([promise = WTFMove(promise)](Vector<ShapeDetection::BarcodeFormat>&& barcodeFormats) mutable {
+        promise.resolve(barcodeFormats.map([](auto format) {
+            return convertFromBacking(format);
+        }));
+    });
+#else
+    promise.resolve({ });
+#endif
 }
 
-void BarcodeDetector::detect(const ImageBitmap::Source&, DetectPromise&&)
+void BarcodeDetector::detect(const ImageBitmap::Source&, DetectPromise&& promise)
 {
+    m_backing->detect([promise = WTFMove(promise)](Vector<ShapeDetection::DetectedBarcode>&& detectedBarcodes) mutable {
+        promise.resolve(detectedBarcodes.map([](const auto& detectedBarcode) {
+            return convertFromBacking(detectedBarcode);
+        }));
+    });
 }
 
 } // namespace WebCore

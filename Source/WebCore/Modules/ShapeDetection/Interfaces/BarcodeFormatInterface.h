@@ -25,29 +25,25 @@
 
 #pragma once
 
-#include "FloatPoint.h"
+#include <cstdint>
 
-namespace WebCore {
+namespace WebCore::ShapeDetection {
 
-struct Point2D {
-    FloatPoint convertToBacking() const
-    {
-        return {
-            static_cast<float>(x),
-            static_cast<float>(y),
-        };
-    }
-
-    double x { 0 };
-    double y { 0 };
+enum class BarcodeFormat : uint8_t {
+    Aztec,
+    Code_128,
+    Code_39,
+    Code_93,
+    Codabar,
+    Data_matrix,
+    Ean_13,
+    Ean_8,
+    Itf,
+    Pdf417,
+    Qr_code,
+    Unknown,
+    Upc_a,
+    Upc_e,
 };
 
-inline Point2D convertFromBacking(const FloatPoint& floatPoint)
-{
-    return {
-        floatPoint.x(),
-        floatPoint.y(),
-    };
-}
-
-} // namespace WebCore
+} // namespace WebCore::ShapeDetection

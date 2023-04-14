@@ -25,29 +25,20 @@
 
 #pragma once
 
-#include "FloatPoint.h"
+#include "FloatRect.h"
+#include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
-
-struct Point2D {
-    FloatPoint convertToBacking() const
-    {
-        return {
-            static_cast<float>(x),
-            static_cast<float>(y),
-        };
-    }
-
-    double x { 0 };
-    double y { 0 };
-};
-
-inline Point2D convertFromBacking(const FloatPoint& floatPoint)
-{
-    return {
-        floatPoint.x(),
-        floatPoint.y(),
-    };
+class FloatPoint;
 }
 
-} // namespace WebCore
+namespace WebCore::ShapeDetection {
+
+struct DetectedText {
+    FloatRect boundingBox;
+    String rawValue;
+    Vector<FloatPoint> cornerPoints;
+};
+
+} // namespace WebCore::ShapeDetection

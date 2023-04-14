@@ -23,31 +23,20 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "TextDetectorImplementation.h"
 
-#include "FloatPoint.h"
+#include "DetectedTextInterface.h"
 
-namespace WebCore {
+namespace WebCore::ShapeDetection {
 
-struct Point2D {
-    FloatPoint convertToBacking() const
-    {
-        return {
-            static_cast<float>(x),
-            static_cast<float>(y),
-        };
-    }
+TextDetectorImpl::TextDetectorImpl() = default;
 
-    double x { 0 };
-    double y { 0 };
-};
+TextDetectorImpl::~TextDetectorImpl() = default;
 
-inline Point2D convertFromBacking(const FloatPoint& floatPoint)
+void TextDetectorImpl::detect(CompletionHandler<void(Vector<DetectedText>&&)>&& completionHandler)
 {
-    return {
-        floatPoint.x(),
-        floatPoint.y(),
-    };
+    completionHandler({ });
 }
 
-} // namespace WebCore
+} // namespace WebCore::ShapeDetection

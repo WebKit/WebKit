@@ -25,29 +25,14 @@
 
 #pragma once
 
-#include "FloatPoint.h"
+#include <wtf/Vector.h>
 
-namespace WebCore {
+namespace WebCore::ShapeDetection {
 
-struct Point2D {
-    FloatPoint convertToBacking() const
-    {
-        return {
-            static_cast<float>(x),
-            static_cast<float>(y),
-        };
-    }
+enum class BarcodeFormat : uint8_t;
 
-    double x { 0 };
-    double y { 0 };
+struct BarcodeDetectorOptions {
+    Vector<BarcodeFormat> formats;
 };
 
-inline Point2D convertFromBacking(const FloatPoint& floatPoint)
-{
-    return {
-        floatPoint.x(),
-        floatPoint.y(),
-    };
-}
-
-} // namespace WebCore
+} // namespace WebCore::ShapeDetection

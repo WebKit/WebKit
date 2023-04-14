@@ -25,29 +25,29 @@
 
 #pragma once
 
-#include "FloatPoint.h"
+#include <wtf/CompletionHandler.h>
+#include <wtf/Ref.h>
+#include <wtf/RefCounted.h>
+#include <wtf/Vector.h>
 
-namespace WebCore {
+namespace WebCore::ShapeDetection {
 
-struct Point2D {
-    FloatPoint convertToBacking() const
-    {
-        return {
-            static_cast<float>(x),
-            static_cast<float>(y),
-        };
-    }
+struct DetectedText;
 
-    double x { 0 };
-    double y { 0 };
+class TextDetector : public RefCounted<TextDetector> {
+public:
+    virtual ~TextDetector() = default;
+
+    virtual void detect(CompletionHandler<void(Vector<DetectedText>&&)>&&) = 0;
+
+protected:
+    TextDetector() = default;
+
+private:
+    TextDetector(const TextDetector&) = delete;
+    TextDetector(TextDetector&&) = delete;
+    TextDetector& operator=(const TextDetector&) = delete;
+    TextDetector& operator=(TextDetector&&) = delete;
 };
 
-inline Point2D convertFromBacking(const FloatPoint& floatPoint)
-{
-    return {
-        floatPoint.x(),
-        floatPoint.y(),
-    };
-}
-
-} // namespace WebCore
+} // namespace WebCore::ShapeDetection

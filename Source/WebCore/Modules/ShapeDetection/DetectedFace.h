@@ -25,18 +25,46 @@
 
 #pragma once
 
+#include "DOMRectReadOnly.h"
+#include "DetectedFaceInterface.h"
+#include "Landmark.h"
 #include <optional>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
-class DOMRectReadOnly;
 struct Landmark;
 
 struct DetectedFace {
+    ShapeDetection::DetectedFace convertToBacking() const
+    {
+        ASSERT(boundingBox);
+        return {
+            {
+                static_cast<float>(boundingBox->x()),
+                static_cast<float>(boundingBox->y()),
+                static_cast<float>(boundingBox->width()),
+                static_cast<float>(boundingBox->height()),
+            },
+            landmarks ? std::optional { landmarks->map([] (const auto& landmark) {
+                return landmark.convertToBacking();
+            }) } : std::nullopt,
+        };
+    }
+
     RefPtr<DOMRectReadOnly> boundingBox;
     std::optional<Vector<Landmark>> landmarks;
 };
+
+inline DetectedFace convertFromBacking(const ShapeDetection::DetectedFace& detectedFace)
+{
+    return {
+        DOMRectReadOnly::create(detectedFace.boundingBox.x(), detectedFace.boundingBox.y(), detectedFace.boundingBox.width(), detectedFace.boundingBox.height()),
+        detectedFace.landmarks ? std::optional { detectedFace.landmarks->map([] (const auto& landmark) {
+            return convertFromBacking(landmark);
+        }) } : std::nullopt,
+    };
+}
 
 } // namespace WebCore

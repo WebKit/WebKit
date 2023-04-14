@@ -26,21 +26,44 @@
 #include "config.h"
 #include "FaceDetector.h"
 
+#include "DetectedFace.h"
+#include "FaceDetectorOptions.h"
+#include "JSDOMPromiseDeferred.h"
+#include "JSDetectedFace.h"
+
+#if PLATFORM(COCOA)
+// FIXME: Use the GPU Process.
+#include "FaceDetectorImplementation.h"
+#endif
+
 namespace WebCore {
 
-Ref<FaceDetector> FaceDetector::create(const FaceDetectorOptions& faceDetectorOptions)
+ExceptionOr<Ref<FaceDetector>> FaceDetector::create(const FaceDetectorOptions& faceDetectorOptions)
 {
-    return adoptRef(*new FaceDetector(faceDetectorOptions));
+#if PLATFORM(COCOA)
+    // FIXME: Use the GPU Process.
+    auto backing = ShapeDetection::FaceDetectorImpl::create(faceDetectorOptions.convertToBacking());
+    return adoptRef(*new FaceDetector(WTFMove(backing)));
+#else
+    UNUSED_PARAM(faceDetectorOptions);
+    return Exception { AbortError };
+#endif
 }
 
-FaceDetector::FaceDetector(const FaceDetectorOptions&)
+FaceDetector::FaceDetector(Ref<ShapeDetection::FaceDetector>&& backing)
+    : m_backing(WTFMove(backing))
 {
 }
 
 FaceDetector::~FaceDetector() = default;
 
-void FaceDetector::detect(const ImageBitmap::Source&, DetectPromise&&)
+void FaceDetector::detect(const ImageBitmap::Source&, DetectPromise&& promise)
 {
+    m_backing->detect([promise = WTFMove(promise)](Vector<ShapeDetection::DetectedFace>&& detectedFaces) mutable {
+        promise.resolve(detectedFaces.map([](const auto& detectedFace) {
+            return convertFromBacking(detectedFace);
+        }));
+    });
 }
 
 } // namespace WebCore

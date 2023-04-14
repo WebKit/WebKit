@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "LandmarkTypeInterface.h"
 #include <cstdint>
 
 namespace WebCore {
@@ -34,5 +35,31 @@ enum class LandmarkType : uint8_t {
     Eye,
     Nose,
 };
+
+inline ShapeDetection::LandmarkType convertToBacking(LandmarkType landmarkType)
+{
+    switch (landmarkType) {
+    case LandmarkType::Mouth:
+        return ShapeDetection::LandmarkType::Mouth;
+    case LandmarkType::Eye:
+        return ShapeDetection::LandmarkType::Eye;
+    case LandmarkType::Nose:
+        return ShapeDetection::LandmarkType::Nose;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+inline LandmarkType convertFromBacking(ShapeDetection::LandmarkType landmarkType)
+{
+    switch (landmarkType) {
+    case ShapeDetection::LandmarkType::Mouth:
+        return LandmarkType::Mouth;
+    case ShapeDetection::LandmarkType::Eye:
+        return LandmarkType::Eye;
+    case ShapeDetection::LandmarkType::Nose:
+        return LandmarkType::Nose;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
 
 } // namespace WebCore

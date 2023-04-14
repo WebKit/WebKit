@@ -25,13 +25,31 @@
 
 #pragma once
 
+#include "FaceDetectorOptionsInterface.h"
+#include <cstdint>
 #include <limits>
 
 namespace WebCore {
 
 struct FaceDetectorOptions {
+    ShapeDetection::FaceDetectorOptions convertToBacking() const
+    {
+        return {
+            maxDetectedFaces,
+            fastMode,
+        };
+    }
+
     uint16_t maxDetectedFaces { std::numeric_limits<uint16_t>::max() };
     bool fastMode { true };
 };
+
+inline FaceDetectorOptions convertFromBacking(const ShapeDetection::FaceDetectorOptions& faceDetectorOptions)
+{
+    return {
+        faceDetectorOptions.maxDetectedFaces,
+        faceDetectorOptions.fastMode,
+    };
+}
 
 } // namespace WebCore

@@ -25,14 +25,32 @@
 
 #pragma once
 
+#include "BarcodeDetectorOptionsInterface.h"
+#include "BarcodeFormat.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
-enum class BarcodeFormat : uint8_t;
-
 struct BarcodeDetectorOptions {
+    ShapeDetection::BarcodeDetectorOptions convertToBacking() const
+    {
+        return {
+            formats.map([] (auto format) {
+                return WebCore::convertToBacking(format);
+            }),
+        };
+    }
+
     Vector<BarcodeFormat> formats;
 };
+
+inline BarcodeDetectorOptions convertFromBacking(const ShapeDetection::BarcodeDetectorOptions& barcodeDetectorOptions)
+{
+    return {
+        barcodeDetectorOptions.formats.map([] (auto format) {
+            return WebCore::convertFromBacking(format);
+        }),
+    };
+}
 
 } // namespace WebCore

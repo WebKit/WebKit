@@ -25,29 +25,30 @@
 
 #pragma once
 
-#include "FloatPoint.h"
+#include <wtf/CompletionHandler.h>
+#include <wtf/Ref.h>
+#include <wtf/RefCounted.h>
+#include <wtf/Vector.h>
 
-namespace WebCore {
+namespace WebCore::ShapeDetection {
 
-struct Point2D {
-    FloatPoint convertToBacking() const
-    {
-        return {
-            static_cast<float>(x),
-            static_cast<float>(y),
-        };
-    }
+enum class BarcodeFormat : uint8_t;
+struct DetectedBarcode;
 
-    double x { 0 };
-    double y { 0 };
+class BarcodeDetector : public RefCounted<BarcodeDetector> {
+public:
+    virtual ~BarcodeDetector() = default;
+
+    virtual void detect(CompletionHandler<void(Vector<DetectedBarcode>&&)>&&) = 0;
+
+protected:
+    BarcodeDetector() = default;
+
+private:
+    BarcodeDetector(const BarcodeDetector&) = delete;
+    BarcodeDetector(BarcodeDetector&&) = delete;
+    BarcodeDetector& operator=(const BarcodeDetector&) = delete;
+    BarcodeDetector& operator=(BarcodeDetector&&) = delete;
 };
 
-inline Point2D convertFromBacking(const FloatPoint& floatPoint)
-{
-    return {
-        floatPoint.x(),
-        floatPoint.y(),
-    };
-}
-
-} // namespace WebCore
+} // namespace WebCore::ShapeDetection

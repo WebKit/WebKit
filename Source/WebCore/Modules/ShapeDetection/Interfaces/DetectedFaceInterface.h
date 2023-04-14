@@ -25,29 +25,17 @@
 
 #pragma once
 
-#include "FloatPoint.h"
+#include "FloatRect.h"
+#include <optional>
+#include <wtf/Vector.h>
 
-namespace WebCore {
+namespace WebCore::ShapeDetection {
 
-struct Point2D {
-    FloatPoint convertToBacking() const
-    {
-        return {
-            static_cast<float>(x),
-            static_cast<float>(y),
-        };
-    }
+struct Landmark;
 
-    double x { 0 };
-    double y { 0 };
+struct DetectedFace {
+    FloatRect boundingBox;
+    std::optional<Vector<Landmark>> landmarks;
 };
 
-inline Point2D convertFromBacking(const FloatPoint& floatPoint)
-{
-    return {
-        floatPoint.x(),
-        floatPoint.y(),
-    };
-}
-
-} // namespace WebCore
+} // namespace WebCore::ShapeDetection

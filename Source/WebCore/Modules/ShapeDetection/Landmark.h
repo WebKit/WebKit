@@ -25,16 +25,36 @@
 
 #pragma once
 
+#include "LandmarkInterface.h"
 #include "LandmarkType.h"
+#include "Point2D.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
-struct Point2D;
-
 struct Landmark {
+    ShapeDetection::Landmark convertToBacking() const
+    {
+        return {
+            locations.map([] (const auto& location) {
+                return location.convertToBacking();
+            }),
+            WebCore::convertToBacking(type),
+        };
+    }
+
     Vector<Point2D> locations;
     LandmarkType type { LandmarkType::Eye };
 };
+
+inline Landmark convertFromBacking(const ShapeDetection::Landmark& landmark)
+{
+    return {
+        landmark.locations.map([] (const auto& location) {
+            return Point2D { location.x(), location.y() };
+        }),
+        convertFromBacking(landmark.type),
+    };
+}
 
 } // namespace WebCore

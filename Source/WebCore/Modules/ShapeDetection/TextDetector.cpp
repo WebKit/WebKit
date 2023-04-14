@@ -26,19 +26,42 @@
 #include "config.h"
 #include "TextDetector.h"
 
+#include "DetectedText.h"
+#include "JSDOMPromiseDeferred.h"
+#include "JSDetectedText.h"
+
+#if PLATFORM(COCOA)
+// FIXME: Use the GPU Process.
+#include "TextDetectorImplementation.h"
+#endif
+
 namespace WebCore {
 
-Ref<TextDetector> TextDetector::create()
+ExceptionOr<Ref<TextDetector>> TextDetector::create()
 {
-    return adoptRef(*new TextDetector);
+#if PLATFORM(COCOA)
+    // FIXME: Use the GPU Process.
+    auto backing = ShapeDetection::TextDetectorImpl::create();
+    return adoptRef(*new TextDetector(WTFMove(backing)));
+#else
+    return Exception { AbortError };
+#endif
 }
 
-TextDetector::TextDetector() = default;
+TextDetector::TextDetector(Ref<ShapeDetection::TextDetector>&& backing)
+    : m_backing(WTFMove(backing))
+{
+}
 
 TextDetector::~TextDetector() = default;
 
-void TextDetector::detect(const ImageBitmap::Source&, DetectPromise&&)
+void TextDetector::detect(const ImageBitmap::Source&, DetectPromise&& promise)
 {
+    m_backing->detect([promise = WTFMove(promise)](Vector<ShapeDetection::DetectedText>&& detectedText) mutable {
+        promise.resolve(detectedText.map([](const auto& detectedText) {
+            return convertFromBacking(detectedText);
+        }));
+    });
 }
 
 } // namespace WebCore

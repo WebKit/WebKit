@@ -80,6 +80,9 @@ JSSpeechSynthesisErrorCode.cpp
 JSSpeechSynthesisErrorEvent.cpp
 JSSpeechSynthesisErrorEventInit.cpp
 JSSpeechSynthesisEventInit.cpp
+Modules/ShapeDetection/Implementation/Cocoa/BarcodeDetectorImplementation.mm
+Modules/ShapeDetection/Implementation/Cocoa/FaceDetectorImplementation.mm
+Modules/ShapeDetection/Implementation/Cocoa/TextDetectorImplementation.mm
 Modules/airplay/WebMediaSessionManager.cpp
 Modules/applepay/ApplePayCouponCodeChangedEvent.cpp
 Modules/applepay/ApplePayCancelEvent.cpp

@@ -25,29 +25,29 @@
 
 #pragma once
 
-#include "FloatPoint.h"
+#include "TextDetectorInterface.h"
 
-namespace WebCore {
+namespace WebCore::ShapeDetection {
 
-struct Point2D {
-    FloatPoint convertToBacking() const
+class TextDetectorImpl final : public TextDetector {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    static Ref<TextDetectorImpl> create()
     {
-        return {
-            static_cast<float>(x),
-            static_cast<float>(y),
-        };
+        return adoptRef(*new TextDetectorImpl);
     }
 
-    double x { 0 };
-    double y { 0 };
+    virtual ~TextDetectorImpl();
+
+private:
+    TextDetectorImpl();
+
+    TextDetectorImpl(const TextDetectorImpl&) = delete;
+    TextDetectorImpl(TextDetectorImpl&&) = delete;
+    TextDetectorImpl& operator=(const TextDetectorImpl&) = delete;
+    TextDetectorImpl& operator=(TextDetectorImpl&&) = delete;
+
+    void detect(CompletionHandler<void(Vector<DetectedText>&&)>&&) final;
 };
 
-inline Point2D convertFromBacking(const FloatPoint& floatPoint)
-{
-    return {
-        floatPoint.x(),
-        floatPoint.y(),
-    };
-}
-
-} // namespace WebCore
+} // namespace WebCore::ShapeDetection

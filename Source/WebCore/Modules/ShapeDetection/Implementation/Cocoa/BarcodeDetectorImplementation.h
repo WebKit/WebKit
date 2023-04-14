@@ -25,29 +25,33 @@
 
 #pragma once
 
-#include "FloatPoint.h"
+#include "BarcodeDetectorInterface.h"
 
-namespace WebCore {
+namespace WebCore::ShapeDetection {
 
-struct Point2D {
-    FloatPoint convertToBacking() const
+struct BarcodeDetectorOptions;
+
+class BarcodeDetectorImpl final : public BarcodeDetector {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    static Ref<BarcodeDetectorImpl> create(const BarcodeDetectorOptions& barcodeDetectorOptions)
     {
-        return {
-            static_cast<float>(x),
-            static_cast<float>(y),
-        };
+        return adoptRef(*new BarcodeDetectorImpl(barcodeDetectorOptions));
     }
 
-    double x { 0 };
-    double y { 0 };
+    virtual ~BarcodeDetectorImpl();
+
+    static void getSupportedFormats(CompletionHandler<void(Vector<BarcodeFormat>&&)>&&);
+
+private:
+    BarcodeDetectorImpl(const BarcodeDetectorOptions&);
+
+    BarcodeDetectorImpl(const BarcodeDetectorImpl&) = delete;
+    BarcodeDetectorImpl(BarcodeDetectorImpl&&) = delete;
+    BarcodeDetectorImpl& operator=(const BarcodeDetectorImpl&) = delete;
+    BarcodeDetectorImpl& operator=(BarcodeDetectorImpl&&) = delete;
+
+    void detect(CompletionHandler<void(Vector<DetectedBarcode>&&)>&&) final;
 };
 
-inline Point2D convertFromBacking(const FloatPoint& floatPoint)
-{
-    return {
-        floatPoint.x(),
-        floatPoint.y(),
-    };
-}
-
-} // namespace WebCore
+} // namespace WebCore::ShapeDetection

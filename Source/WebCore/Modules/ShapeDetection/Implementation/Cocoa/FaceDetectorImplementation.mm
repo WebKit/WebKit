@@ -23,31 +23,23 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "FaceDetectorImplementation.h"
 
-#include "FloatPoint.h"
+#include "DetectedFaceInterface.h"
+#include "LandmarkInterface.h"
 
-namespace WebCore {
+namespace WebCore::ShapeDetection {
 
-struct Point2D {
-    FloatPoint convertToBacking() const
-    {
-        return {
-            static_cast<float>(x),
-            static_cast<float>(y),
-        };
-    }
-
-    double x { 0 };
-    double y { 0 };
-};
-
-inline Point2D convertFromBacking(const FloatPoint& floatPoint)
+FaceDetectorImpl::FaceDetectorImpl(const FaceDetectorOptions&)
 {
-    return {
-        floatPoint.x(),
-        floatPoint.y(),
-    };
 }
 
-} // namespace WebCore
+FaceDetectorImpl::~FaceDetectorImpl() = default;
+
+void FaceDetectorImpl::detect(CompletionHandler<void(Vector<DetectedFace>&&)>&& completionHandler)
+{
+    completionHandler({ });
+}
+
+} // namespace WebCore::ShapeDetection

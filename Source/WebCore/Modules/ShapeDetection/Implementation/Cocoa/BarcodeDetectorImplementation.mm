@@ -23,31 +23,28 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "BarcodeDetectorImplementation.h"
 
-#include "FloatPoint.h"
+#include "BarcodeFormatInterface.h"
+#include "DetectedBarcodeInterface.h"
 
-namespace WebCore {
+namespace WebCore::ShapeDetection {
 
-struct Point2D {
-    FloatPoint convertToBacking() const
-    {
-        return {
-            static_cast<float>(x),
-            static_cast<float>(y),
-        };
-    }
-
-    double x { 0 };
-    double y { 0 };
-};
-
-inline Point2D convertFromBacking(const FloatPoint& floatPoint)
+BarcodeDetectorImpl::BarcodeDetectorImpl(const BarcodeDetectorOptions&)
 {
-    return {
-        floatPoint.x(),
-        floatPoint.y(),
-    };
 }
 
-} // namespace WebCore
+BarcodeDetectorImpl::~BarcodeDetectorImpl() = default;
+
+void BarcodeDetectorImpl::getSupportedFormats(CompletionHandler<void(Vector<BarcodeFormat>&&)>&& completionHandler)
+{
+    completionHandler({ });
+}
+
+void BarcodeDetectorImpl::detect(CompletionHandler<void(Vector<DetectedBarcode>&&)>&& completionHandler)
+{
+    completionHandler({ });
+}
+
+} // namespace WebCore::ShapeDetection

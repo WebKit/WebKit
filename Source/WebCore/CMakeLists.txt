@@ -14,6 +14,7 @@ set(WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WebCore_DERIVED_SOURCES_DIR}"
     "${WEBCORE_DIR}"
     "${WEBCORE_DIR}/Modules/ShapeDetection"
+    "${WEBCORE_DIR}/Modules/ShapeDetection/Interfaces"
     "${WEBCORE_DIR}/Modules/WebGPU"
     "${WEBCORE_DIR}/Modules/airplay"
     "${WEBCORE_DIR}/Modules/applepay"
