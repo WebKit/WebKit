@@ -609,10 +609,10 @@ SelectorQuery* SelectorQueryCache::add(const String& selectors, const Document& 
         if (selectorList->selectorsNeedNamespaceResolution())
             return nullptr;
 
-        // FIXME: Remove this fixup step or at least make it not make a copy in the common case.
-        auto resolvedSelectorList = CSSSelectorParser::resolveNestingParent(*selectorList, nullptr);
+        if (selectorList->hasExplicitNestingParent())
+            selectorList = CSSSelectorParser::resolveNestingParent(WTFMove(*selectorList), nullptr);
 
-        return makeUnique<SelectorQuery>(WTFMove(resolvedSelectorList));
+        return makeUnique<SelectorQuery>(WTFMove(*selectorList));
     }).iterator->value.get();
 }
 
