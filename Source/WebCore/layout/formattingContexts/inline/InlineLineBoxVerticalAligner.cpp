@@ -200,7 +200,7 @@ LineBoxVerticalAligner::LineBoxAlignmentContent LineBoxVerticalAligner::computeL
         case VerticalAlign::TextBottom: {
             // Note that text-bottom aligns with the inline box's font metrics bottom (descent) and not the layout bounds bottom.
             auto parentInlineBoxLayoutBounds = parentInlineBox.layoutBounds();
-            auto parentInlineBoxLogicalBottom = parentInlineBoxLayoutBounds.height() - parentInlineBoxLayoutBounds.descent + *parentInlineBox.descent();
+            auto parentInlineBoxLogicalBottom = parentInlineBoxLayoutBounds.height() - parentInlineBoxLayoutBounds.descent + parentInlineBox.descent();
             logicalTop = parentInlineBoxLogicalBottom - layoutBounds.height();
             break;
         }
@@ -310,7 +310,7 @@ void LineBoxVerticalAligner::computeRootInlineBoxVerticalPosition(LineBox& lineB
             baselineOffsetFromParentBaseline = parentInlineBox.ascent() - layoutBounds.ascent;
             break;
         case VerticalAlign::TextBottom:
-            baselineOffsetFromParentBaseline = layoutBounds.descent - *parentInlineBox.descent();
+            baselineOffsetFromParentBaseline = layoutBounds.descent - parentInlineBox.descent();
             break;
         case VerticalAlign::Sub:
             baselineOffsetFromParentBaseline = -(parentInlineBox.fontSize() / 5 + 1);
@@ -364,7 +364,7 @@ void LineBoxVerticalAligner::computeRootInlineBoxVerticalPosition(LineBox& lineB
     rootInlineBox.setLogicalTop(rootInlineBoxLogicalTop);
 }
 
-InlineLevelBox::LayoutBounds LineBoxVerticalAligner::layoutBoundsForInlineBoxSubtree(const LineBox::InlineLevelBoxList& nonRootInlineLevelBoxes, size_t inlineBoxIndex) const
+InlineLevelBox::AscentAndDescent LineBoxVerticalAligner::layoutBoundsForInlineBoxSubtree(const LineBox::InlineLevelBoxList& nonRootInlineLevelBoxes, size_t inlineBoxIndex) const
 {
     // https://w3c.github.io/csswg-drafts/css2/#propdef-vertical-align
     //
@@ -376,7 +376,7 @@ InlineLevelBox::LayoutBounds LineBoxVerticalAligner::layoutBoundsForInlineBoxSub
     // The top of the aligned subtree is the highest of the tops of the boxes in the subtree, and the bottom is analogous.
     ASSERT(nonRootInlineLevelBoxes[inlineBoxIndex].isInlineBox());
     auto& formattingGeometry = this->formattingGeometry();
-    auto enclosingLayoutBounds = InlineLevelBox::LayoutBounds { };
+    auto enclosingLayoutBounds = InlineLevelBox::AscentAndDescent { };
     auto& inlineBoxParent = nonRootInlineLevelBoxes[inlineBoxIndex].layoutBox().parent();
     for (size_t index = inlineBoxIndex + 1; index < nonRootInlineLevelBoxes.size(); ++index) {
         auto& descendantInlineLevelBox = nonRootInlineLevelBoxes[index];

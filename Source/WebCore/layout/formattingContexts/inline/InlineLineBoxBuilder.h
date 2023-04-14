@@ -36,7 +36,6 @@ namespace Layout {
 class Box;
 class ElementBox;
 class LayoutState;
-struct AscentAndDescent;
 
 class LineBoxBuilder {
 public:
@@ -49,7 +48,7 @@ private:
     void setLayoutBoundsForInlineBox(InlineLevelBox&, FontBaseline) const;
     void adjustInlineBoxHeightsForLineBoxContainIfApplicable(LineBox&);
     void computeLineBoxGeometry(LineBox&) const;
-    AscentAndDescent enclosingAscentDescentWithFallbackFonts(const InlineLevelBox&, const TextUtil::FallbackFontList& fallbackFontsForContent, FontBaseline) const;
+    InlineLevelBox::AscentAndDescent enclosingAscentDescentWithFallbackFonts(const InlineLevelBox&, const TextUtil::FallbackFontList& fallbackFontsForContent, FontBaseline) const;
     TextUtil::FallbackFontList collectFallbackFonts(const InlineLevelBox& parentInlineBox, const Line::Run&, const RenderStyle&);
 
     void constructInlineLevelBoxes(LineBox&);

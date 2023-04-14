@@ -47,17 +47,20 @@ public:
     static InlineLevelBox createLineBreakBox(const Box&, const RenderStyle&, InlineLayoutUnit logicalLeft);
     static InlineLevelBox createGenericInlineLevelBox(const Box&, const RenderStyle&, InlineLayoutUnit logicalLeft);
 
-    InlineLayoutUnit ascent() const { return m_ascent; }
-    std::optional<InlineLayoutUnit> descent() const { return m_descent; }
-    // See https://www.w3.org/TR/css-inline-3/#layout-bounds
-    struct LayoutBounds {
-        InlineLayoutUnit height() const { return ascent + descent; }
-        bool operator==(const LayoutBounds& other) const { return ascent == other.ascent && descent == other.descent; }
-
+    struct AscentAndDescent {
         InlineLayoutUnit ascent { 0 };
         InlineLayoutUnit descent { 0 };
+
+        InlineLayoutUnit height() const { return ascent + descent; }
+        bool operator==(const AscentAndDescent& other) const { return ascent == other.ascent && descent == other.descent; }
+        // FIXME: Remove this.
+        // We need floor/ceil to match legacy layout integral positioning.
+        void round();
     };
-    LayoutBounds layoutBounds() const { return m_layoutBounds; }
+    InlineLayoutUnit ascent() const { return m_ascentAndDescent.ascent; }
+    InlineLayoutUnit descent() const { return m_ascentAndDescent.descent; }
+    // See https://www.w3.org/TR/css-inline-3/#layout-bounds
+    AscentAndDescent layoutBounds() const { return m_layoutBounds; }
 
     bool hasContent() const { return m_hasContent; }
     void setHasContent();
@@ -135,9 +138,8 @@ private:
     void setLogicalHeight(InlineLayoutUnit logicalHeight) { m_logicalRect.setHeight(roundToInt(logicalHeight)); }
     void setLogicalTop(InlineLayoutUnit logicalTop) { m_logicalRect.setTop(logicalTop >= 0 ? roundToInt(logicalTop) : -roundToInt(-logicalTop)); }
     void setLogicalLeft(InlineLayoutUnit logicalLeft) { m_logicalRect.setLeft(logicalLeft); }
-    void setAscent(InlineLayoutUnit ascent) { m_ascent = roundToInt(ascent); }
-    void setDescent(InlineLayoutUnit descent) { m_descent = roundToInt(descent); }
-    void setLayoutBounds(const LayoutBounds& layoutBounds) { m_layoutBounds = { InlineLayoutUnit(roundToInt(layoutBounds.ascent)), InlineLayoutUnit(roundToInt(layoutBounds.descent)) }; }
+    void setAscentAndDescent(AscentAndDescent ascentAndDescent) { m_ascentAndDescent = { InlineLayoutUnit(roundToInt(ascentAndDescent.ascent)), InlineLayoutUnit(roundToInt(ascentAndDescent.descent)) }; }
+    void setLayoutBounds(const AscentAndDescent& layoutBounds) { m_layoutBounds = { InlineLayoutUnit(roundToInt(layoutBounds.ascent)), InlineLayoutUnit(roundToInt(layoutBounds.descent)) }; }
     void setInlineBoxContentOffsetForLeadingTrim(InlineLayoutUnit offset) { m_inlineBoxContentOffsetForLeadingTrim = offset; }
 
     void setIsFirstBox() { m_isFirstWithinLayoutBox = true; }
@@ -147,10 +149,9 @@ private:
     CheckedRef<const Box> m_layoutBox;
     // This is the combination of margin and border boxes. Inline level boxes are vertically aligned using their margin boxes.
     InlineRect m_logicalRect;
-    LayoutBounds m_layoutBounds;
+    AscentAndDescent m_layoutBounds;
+    AscentAndDescent m_ascentAndDescent;
     InlineLayoutUnit m_inlineBoxContentOffsetForLeadingTrim { 0.f };
-    InlineLayoutUnit m_ascent { 0 };
-    std::optional<InlineLayoutUnit> m_descent;
     bool m_hasContent { false };
     // These bits are about whether this inline level box is the first/last generated box of the associated Layout::Box
     // (e.g. always true for atomic inline level boxes, but inline boxes spanning over multiple lines can produce separate first/last boxes).
@@ -285,6 +286,12 @@ inline bool InlineLevelBox::lineBoxContain() const
         return m_style.lineBoxContain.containsAny({ LineBoxContain::Inline, LineBoxContain::InlineBox }) || (hasContent() && m_style.lineBoxContain.containsAny({ LineBoxContain::Font, LineBoxContain::Glyphs }));
 
     return true;
+}
+
+inline void InlineLevelBox::AscentAndDescent::round()
+{
+    ascent = floorf(ascent);
+    descent = ceilf(descent);
 }
 
 }
