@@ -39,6 +39,8 @@ class TimeControl extends LayoutItem
             layoutDelegate
         });
 
+        this._timeLabelsAttachment = TimeControl.TimeLabelsAttachment.Side;
+
         this._shouldShowDurationTimeLabel = this.layoutTraits.supportsDurationTimeLabel();
 
         this.elapsedTimeLabel = new TimeLabel(TimeLabel.Type.Elapsed);
@@ -101,13 +103,32 @@ class TimeControl extends LayoutItem
     get minimumWidth()
     {
         this._performIdealLayout();
-        return MinimumScrubberWidth + this._scrubberMargin + this._durationOrRemainingTimeLabel().width;
+
+        if (this._timeLabelsDisplayOnScrubberSide)
+            return MinimumScrubberWidth + this._scrubberMargin + this._durationOrRemainingTimeLabel().width;
+        return MinimumScrubberWidth;
     }
 
     get idealMinimumWidth()
     {
         this._performIdealLayout();
-        return this.elapsedTimeLabel.width + MinimumScrubberWidth + (2 * this._scrubberMargin) + this._durationOrRemainingTimeLabel().width;
+        if (this._timeLabelsDisplayOnScrubberSide)
+            return this.elapsedTimeLabel.width + MinimumScrubberWidth + (2 * this._scrubberMargin) + this._durationOrRemainingTimeLabel().width;
+        return MinimumScrubberWidth;
+    }
+
+    get timeLabelsAttachment()
+    {
+        return this._timeLabelsAttachment;
+    }
+
+    set timeLabelsAttachment(attachment)
+    {
+        if (this._timeLabelsAttachment == attachment)
+            return;
+
+        this._timeLabelsAttachment = attachment;
+        this.needsLayout = true;
     }
 
     // Protected
@@ -117,7 +138,7 @@ class TimeControl extends LayoutItem
         super.layout();
         this._performIdealLayout();
 
-        if (this._loading)
+        if (this._loading || !this._timeLabelsDisplayOnScrubberSide)
             return;
 
         // If the scrubber width is larger or equal to the minimal scrubber width, this means we determined during ideal layout
@@ -152,6 +173,11 @@ class TimeControl extends LayoutItem
     get _scrubberMargin()
     {
         return this.computedValueForStylePropertyInPx("--scrubber-margin");
+    }
+
+    get _timeLabelsDisplayOnScrubberSide()
+    {
+        return this._timeLabelsAttachment == TimeControl.TimeLabelsAttachment.Side;
     }
 
     get _canShowDurationTimeLabel()
@@ -208,13 +234,22 @@ class TimeControl extends LayoutItem
         this.scrubber.x = (() => {
             if (this._loading)
                 return this.activityIndicator.width + scrubberMargin;
-            if (this.elapsedTimeLabel.visible)
+            if (this._timeLabelsDisplayOnScrubberSide && this.elapsedTimeLabel.visible)
                 return this.elapsedTimeLabel.width + scrubberMargin;
             return 0;
         })();
 
-        this.scrubber.width = this.width - this.scrubber.x - scrubberMargin - rightTimeLabel.width;
-        rightTimeLabel.x = this.scrubber.x + this.scrubber.width + scrubberMargin;
+        this.scrubber.width = (() => {
+            if (this._timeLabelsDisplayOnScrubberSide)
+                return this.width - this.scrubber.x - scrubberMargin - rightTimeLabel.width;
+            return this.width;
+        })();
+
+        rightTimeLabel.x = (() => {
+            if (this._timeLabelsDisplayOnScrubberSide)
+                return this.scrubber.x + this.scrubber.width + scrubberMargin;
+            return this.width - rightTimeLabel.width;
+        })()
 
         this.children = [this._loading ? this.activityIndicator : this.elapsedTimeLabel, this.scrubber, rightTimeLabel];
     }
@@ -225,3 +260,8 @@ class TimeControl extends LayoutItem
     }
 
 }
+
+TimeControl.TimeLabelsAttachment = {
+    Above: 1 << 0,
+    Side:  1 << 1
+};
