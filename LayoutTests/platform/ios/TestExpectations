@@ -4372,6 +4372,7 @@ webkit.org/b/251875 fast/dynamic/create-renderer-for-whitespace-only-text.html [
 
 webkit.org/b/252504 http/tests/site-isolation [ Skip ]
 
+http/wpt/service-workers/basic-fetch-with-contentfilter-allow-after-adding-data.html [ Pass ]
 http/wpt/service-workers/basic-fetch-with-contentfilter.https.html [ Pass ]
 
 http/tests/misc/heic-accept-header.html [ Pass ]

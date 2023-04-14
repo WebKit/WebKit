@@ -2023,6 +2023,7 @@ void NetworkResourceLoader::serviceWorkerDidFinish()
 {
     if (!m_contentFilter)
         return;
+    m_contentFilter->continueAfterNotifyFinished(m_parameters.request.url());
     m_contentFilter->stopFilteringMainResource();
 }
 
