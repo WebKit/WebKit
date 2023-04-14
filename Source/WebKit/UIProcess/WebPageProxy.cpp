@@ -5587,9 +5587,11 @@ void WebPageProxy::didFinishDocumentLoadForFrame(FrameIdentifier frameID, uint64
 
 SubframePageProxy* WebPageProxy::subframePageProxyForFrameID(WebCore::FrameIdentifier identifier) const
 {
-    if (m_registrableDomainForSubframeID.contains(identifier))
-        return m_subframePageProxyForDomain.get(m_registrableDomainForSubframeID.get(identifier));
-    return nullptr;
+    auto& internals = this->internals();
+    auto domainIterator = internals.frameIdentifierToDomainMap.find(identifier);
+    if (domainIterator == internals.frameIdentifierToDomainMap.end())
+        return nullptr;
+    return internals.domainToSubframePageProxyMap.get(domainIterator->value);
 }
 
 void WebPageProxy::didFinishLoadForFrame(FrameIdentifier frameID, FrameInfoData&& frameInfo, ResourceRequest&& request, uint64_t navigationID, const UserData& userData)
@@ -12313,9 +12315,15 @@ void WebPageProxy::generateTestReport(const String& message, const String& group
 
 void WebPageProxy::addSubframePageProxyForFrameID(WebCore::FrameIdentifier frameID, WebCore::RegistrableDomain domain, UniqueRef<SubframePageProxy>&& subframePageProxy)
 {
-    // FIXME: Add a corresponding remove call
-    m_subframePageProxyForDomain.add(domain, WTFMove(subframePageProxy));
-    m_registrableDomainForSubframeID.add(frameID, domain);
+    // FIXME: Add a corresponding remove call.
+    auto& internals = this->internals();
+    internals.domainToSubframePageProxyMap.add(domain, WTFMove(subframePageProxy));
+    internals.frameIdentifierToDomainMap.add(frameID, domain);
+}
+
+SubframePageProxy* WebPageProxy::subpageFrameProxyForRegistrableDomain(WebCore::RegistrableDomain domain) const
+{
+    return internals().domainToSubframePageProxyMap.get(domain);
 }
 
 #if ENABLE(NETWORK_CONNECTION_INTEGRITY)

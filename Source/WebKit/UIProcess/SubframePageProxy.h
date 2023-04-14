@@ -60,7 +60,9 @@ private:
     WebCore::PageIdentifier m_webPageID;
     Ref<WebProcessProxy> m_process;
     WeakPtr<WebPageProxy> m_page;
-    bool m_isInSameProcessAsMainFrame { false };
+
+    // FIXME: We shouldn't make a SubframePageProxy for frames in the same process as the main frame.
+    const bool m_isInSameProcessAsMainFrame { false };
 };
 
 }

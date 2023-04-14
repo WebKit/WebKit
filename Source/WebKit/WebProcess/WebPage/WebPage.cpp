@@ -1788,7 +1788,7 @@ void WebPage::loadRequestByCreatingNewLocalFrameOrConvertingRemoteFrame(LocalFra
         return;
     }
 
-    // If there is an existing RemoteFrame, let's remove it and later convert it to a LocalFrame
+    // If there is an existing RemoteFrame, let's remove it and later convert it to a LocalFrame.
     RefPtr<WebFrame> parentWebFrame;
     RefPtr<WebCore::RemoteFrame> coreRemoteFrame;
     std::optional<ScopeExit<Function<void()>>> invalidator;

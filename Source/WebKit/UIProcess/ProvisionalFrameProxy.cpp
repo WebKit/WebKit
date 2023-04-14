@@ -49,7 +49,7 @@
 
 namespace WebKit {
 
-ProvisionalFrameProxy::ProvisionalFrameProxy(WebFrameProxy& frame, Ref<WebProcessProxy>&& process, const WebCore::ResourceRequest& request, bool newProcess)
+ProvisionalFrameProxy::ProvisionalFrameProxy(WebFrameProxy& frame, Ref<WebProcessProxy>&& process, const WebCore::ResourceRequest& request, bool didCreateNewProcess)
     : m_frame(frame)
     , m_process(WTFMove(process))
     , m_visitedLinkStore(frame.page()->visitedLinkStore())
@@ -66,7 +66,7 @@ ProvisionalFrameProxy::ProvisionalFrameProxy(WebFrameProxy& frame, Ref<WebProces
     auto* drawingArea = page.drawingArea();
     ASSERT(drawingArea);
 
-    if (newProcess) {
+    if (didCreateNewProcess) {
         auto parameters = page.creationParameters(m_process, *drawingArea);
         parameters.subframeProcessFrameTreeInitializationParameters = { {
             frame.frameID(),
@@ -87,7 +87,7 @@ ProvisionalFrameProxy::ProvisionalFrameProxy(WebFrameProxy& frame, Ref<WebProces
     // FIXME: Add more parameters as appropriate.
     // FIXME: This gives too much cookie access. This should be removed after putting the entire frame tree in all web processes.
     auto giveAllCookieAccess = LoadedWebArchive::Yes;
-    if (newProcess) {
+    if (didCreateNewProcess) {
         page.websiteDataStore().networkProcess().sendWithAsyncReply(Messages::NetworkProcess::AddAllowedFirstPartyForCookies(m_process->coreProcessIdentifier(), WebCore::RegistrableDomain(request.url()), giveAllCookieAccess), [process = m_process, loadParameters = WTFMove(loadParameters), pageID = m_pageID] () mutable {
             // FIXME: Do we need a LoadRequestWaitingForProcessLaunch version?
             process->send(Messages::WebPage::LoadRequest(loadParameters), pageID);
