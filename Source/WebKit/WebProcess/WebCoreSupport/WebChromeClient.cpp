@@ -1061,6 +1061,10 @@ RefPtr<WebCore::ScrollingCoordinator> WebChromeClient::createScrollingCoordinato
 std::unique_ptr<ScrollbarsController> WebChromeClient::createScrollbarsController(Page& page, ScrollableArea& area) const
 {
     ASSERT_UNUSED(page, m_page.corePage() == &page);
+    
+    if (area.mockScrollbarsControllerEnabled())
+        return nullptr;
+    
     switch (m_page.drawingArea()->type()) {
     case DrawingAreaType::RemoteLayerTree:
         return makeUnique<RemoteScrollbarsController>(area, page.scrollingCoordinator());
