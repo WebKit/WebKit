@@ -339,7 +339,7 @@ private:
     bool m_asyncFrameOrOverflowScrollingEnabled { false };
     bool m_wheelEventGesturesBecomeNonBlocking { false };
     bool m_needsApplyLayerPositionsAfterCommit { false };
-    bool m_inCommitTreeState { false };
+    std::atomic<bool> m_inCommitTreeState { false };
 };
 
 class ScrollingTreeWheelEventTestMonitorCompletionDeferrer {

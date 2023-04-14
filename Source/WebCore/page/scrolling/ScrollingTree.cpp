@@ -311,7 +311,7 @@ void ScrollingTree::setOverlayScrollbarsEnabled(bool enabled)
 
 bool ScrollingTree::commitTreeState(std::unique_ptr<ScrollingStateTree>&& scrollingStateTree)
 {
-    SetForScope inCommitTreeState(m_inCommitTreeState, true);
+    m_inCommitTreeState = true;
     Locker locker { m_treeLock };
 
     bool rootStateNodeChanged = scrollingStateTree->hasNewRootStateNode();
@@ -361,8 +361,10 @@ bool ScrollingTree::commitTreeState(std::unique_ptr<ScrollingStateTree>&& scroll
         commitState.unvisitedNodes.add(nodeID);
 
     bool succeeded = updateTreeFromStateNodeRecursive(rootNode, commitState);
-    if (!succeeded)
+    if (!succeeded) {
+        m_inCommitTreeState = false;
         return false;
+    }
 
     propagateSynchronousScrollingReasons(commitState.synchronousScrollingNodes);
 
@@ -378,6 +380,8 @@ bool ScrollingTree::commitTreeState(std::unique_ptr<ScrollingStateTree>&& scroll
     didCommitTree();
 
     LOG_WITH_STREAM(ScrollingTree, stream << "committed ScrollingTree" << scrollingTreeAsText(debugScrollingStateTreeAsTextBehaviors));
+    m_inCommitTreeState = false;
+
     return true;
 }
 
@@ -611,7 +615,12 @@ FloatSize ScrollingTree::totalContentsSize() const
 
 FloatRect ScrollingTree::layoutViewport() const
 {
-    Locker locker { m_treeLock };
+    // Workaround for when this gets called during scrolling tree commit
+    if (inCommitTreeState()) {
+        ASSERT(m_treeLock.isHeld());
+        return m_rootNode ? m_rootNode->layoutViewport() : FloatRect();
+    }
+    Locker lockerTree { m_treeLock };
     return m_rootNode ? m_rootNode->layoutViewport() : FloatRect();
 }
 
