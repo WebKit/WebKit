@@ -53,39 +53,25 @@ Ref<SVGFETurbulenceElement> SVGFETurbulenceElement::create(const QualifiedName& 
 
 void SVGFETurbulenceElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
-    SVGFilterPrimitiveStandardAttributes::attributeChanged(name, oldValue, newValue, attributeModificationReason);
-
     if (name == SVGNames::typeAttr) {
         TurbulenceType propertyValue = SVGPropertyTraits<TurbulenceType>::fromString(newValue);
         if (propertyValue != TurbulenceType::Unknown)
             m_type->setBaseValInternal<TurbulenceType>(propertyValue);
-        return;
-    }
-
-    if (name == SVGNames::stitchTilesAttr) {
+    } else if (name == SVGNames::stitchTilesAttr) {
         SVGStitchOptions propertyValue = SVGPropertyTraits<SVGStitchOptions>::fromString(newValue);
         if (propertyValue > 0)
             m_stitchTiles->setBaseValInternal<SVGStitchOptions>(propertyValue);
-        return;
-    }
-
-    if (name == SVGNames::baseFrequencyAttr) {
+    } else if (name == SVGNames::baseFrequencyAttr) {
         if (auto result = parseNumberOptionalNumber(newValue)) {
             m_baseFrequencyX->setBaseValInternal(result->first);
             m_baseFrequencyY->setBaseValInternal(result->second);
         }
-        return;
-    }
-
-    if (name == SVGNames::seedAttr) {
+    } else if (name == SVGNames::seedAttr)
         m_seed->setBaseValInternal(newValue.toFloat());
-        return;
-    }
-
-    if (name == SVGNames::numOctavesAttr) {
+    else if (name == SVGNames::numOctavesAttr)
         m_numOctaves->setBaseValInternal(parseInteger<unsigned>(newValue).value_or(0));
-        return;
-    }
+
+    SVGFilterPrimitiveStandardAttributes::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }
 
 bool SVGFETurbulenceElement::setFilterEffectAttribute(FilterEffect& effect, const QualifiedName& attrName)
