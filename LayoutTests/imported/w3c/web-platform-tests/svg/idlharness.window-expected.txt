@@ -415,8 +415,8 @@ PASS SVGSVGElement interface: operation createSVGRect()
 PASS SVGSVGElement interface: operation createSVGTransform()
 PASS SVGSVGElement interface: operation createSVGTransformFromMatrix(optional DOMMatrix2DInit)
 PASS SVGSVGElement interface: operation getElementById(DOMString)
-FAIL SVGSVGElement interface: operation suspendRedraw(unsigned long) assert_equals: property has wrong .length expected 1 but got 0
-FAIL SVGSVGElement interface: operation unsuspendRedraw(unsigned long) assert_equals: property has wrong .length expected 1 but got 0
+PASS SVGSVGElement interface: operation suspendRedraw(unsigned long)
+PASS SVGSVGElement interface: operation unsuspendRedraw(unsigned long)
 PASS SVGSVGElement interface: operation unsuspendRedrawAll()
 PASS SVGSVGElement interface: operation forceRedraw()
 PASS SVGSVGElement interface: attribute viewBox
@@ -450,13 +450,9 @@ PASS SVGSVGElement interface: calling createSVGTransformFromMatrix(optional DOMM
 PASS SVGSVGElement interface: objects.svg must inherit property "getElementById(DOMString)" with the proper type
 PASS SVGSVGElement interface: calling getElementById(DOMString) on objects.svg with too few arguments must throw TypeError
 PASS SVGSVGElement interface: objects.svg must inherit property "suspendRedraw(unsigned long)" with the proper type
-FAIL SVGSVGElement interface: calling suspendRedraw(unsigned long) on objects.svg with too few arguments must throw TypeError assert_throws_js: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS SVGSVGElement interface: calling suspendRedraw(unsigned long) on objects.svg with too few arguments must throw TypeError
 PASS SVGSVGElement interface: objects.svg must inherit property "unsuspendRedraw(unsigned long)" with the proper type
-FAIL SVGSVGElement interface: calling unsuspendRedraw(unsigned long) on objects.svg with too few arguments must throw TypeError assert_throws_js: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS SVGSVGElement interface: calling unsuspendRedraw(unsigned long) on objects.svg with too few arguments must throw TypeError
 PASS SVGSVGElement interface: objects.svg must inherit property "unsuspendRedrawAll()" with the proper type
 PASS SVGSVGElement interface: objects.svg must inherit property "forceRedraw()" with the proper type
 PASS SVGSVGElement interface: objects.svg must inherit property "viewBox" with the proper type
