@@ -588,14 +588,10 @@ String OriginStorageManager::StorageBucket::resolvedCacheStoragePath()
         m_resolvedCacheStoragePath = m_customCacheStoragePath;
         break;
     case UnifiedOriginStorageLevel::Standard:
-        auto cacheStorageDirectory = typeStoragePath(StorageType::CacheStorage);
-        RELEASE_LOG(Storage, "%p - StorageBucket::resolvedCacheStoragePath New path '%" PUBLIC_LOG_STRING "'", this, cacheStorageDirectory.utf8().data());
-        if (cacheStorageDirectory.isEmpty() || m_customCacheStoragePath.isEmpty() || !FileSystem::fileExists(m_customCacheStoragePath))
-            m_resolvedCacheStoragePath = emptyString();
-        else {
-            if (!FileSystem::fileExists(cacheStorageDirectory))
-                FileSystem::moveFile(m_customCacheStoragePath, cacheStorageDirectory);
-            m_resolvedCacheStoragePath = cacheStorageDirectory;
+        m_resolvedCacheStoragePath = typeStoragePath(StorageType::CacheStorage);
+        if (!m_resolvedCacheStoragePath.isEmpty() && !m_customCacheStoragePath.isEmpty() && !FileSystem::fileExists(m_resolvedCacheStoragePath) && FileSystem::fileExists(m_customCacheStoragePath)) {
+            RELEASE_LOG(Storage, "%p - StorageBucket::resolvedCacheStoragePath New path '%" PUBLIC_LOG_STRING "'", this, m_resolvedCacheStoragePath.utf8().data());
+            FileSystem::moveFile(m_customCacheStoragePath, m_resolvedCacheStoragePath);
         }
     }
 

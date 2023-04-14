@@ -849,7 +849,7 @@ bool WebsiteDataStore::networkProcessHasEntitlementForTesting(const String& enti
 
 UnifiedOriginStorageLevel WebsiteDataStore::defaultUnifiedOriginStorageLevel()
 {
-    auto defaultUnifiedOriginStorageLevelValue = UnifiedOriginStorageLevel::Basic;
+    auto defaultUnifiedOriginStorageLevelValue = UnifiedOriginStorageLevel::Standard;
     NSString* unifiedOriginStorageLevelKey = @"WebKitDebugUnifiedOriginStorageLevel";
     if ([[NSUserDefaults standardUserDefaults] objectForKey:unifiedOriginStorageLevelKey] == nil)
         return defaultUnifiedOriginStorageLevelValue;

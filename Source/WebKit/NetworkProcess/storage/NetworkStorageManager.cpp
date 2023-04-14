@@ -425,7 +425,7 @@ WallTime NetworkStorageManager::lastModificationTimeForOrigin(const WebCore::Cli
         FALLTHROUGH;
     }
     case UnifiedOriginStorageLevel::Standard: {
-        auto originFile = manager.path();
+        auto originFile = originFilePath(manager.path());
         auto originFileModificationTime = valueOrDefault(FileSystem::fileModificationTime(originFile));
         lastModificationTime = std::max(originFileModificationTime, lastModificationTime);
     }
