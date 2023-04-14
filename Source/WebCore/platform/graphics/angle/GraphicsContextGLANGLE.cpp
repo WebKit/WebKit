@@ -3192,7 +3192,7 @@ void GraphicsContextGLANGLE::paintCompositedResultsToCanvas(ImageBuffer& imageBu
     });
 }
 
-void GraphicsContextGLANGLE::withDrawingBufferAsNativeImage(std::function<void(NativeImage&)> func)
+void GraphicsContextGLANGLE::withDrawingBufferAsNativeImage(Function<void(NativeImage&)> func)
 {
     if (!makeContextCurrent())
         return;
@@ -3209,7 +3209,7 @@ void GraphicsContextGLANGLE::withDrawingBufferAsNativeImage(std::function<void(N
     func(*drawingImage);
 }
 
-void GraphicsContextGLANGLE::withDisplayBufferAsNativeImage(std::function<void(NativeImage&)> func)
+void GraphicsContextGLANGLE::withDisplayBufferAsNativeImage(Function<void(NativeImage&)> func)
 {
     if (!makeContextCurrent())
         return;

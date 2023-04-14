@@ -92,8 +92,8 @@ public:
     void setDrawingBufferColorSpace(const DestinationColorSpace&) final;
     void prepareForDisplay() override;
 
-    void withDrawingBufferAsNativeImage(std::function<void(NativeImage&)>) override;
-    void withDisplayBufferAsNativeImage(std::function<void(NativeImage&)>) override;
+    void withDrawingBufferAsNativeImage(Function<void(NativeImage&)>) override;
+    void withDisplayBufferAsNativeImage(Function<void(NativeImage&)>) override;
 
 #if PLATFORM(MAC)
     void updateContextOnDisplayReconfiguration();

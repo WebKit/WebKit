@@ -146,9 +146,9 @@ protected:
 #include "RemoteGraphicsContextGLFunctionsGenerated.h" // NOLINT
 
 private:
-    void paintRenderingResultsToCanvasWithQualifiedIdentifier(QualifiedRenderingResourceIdentifier, CompletionHandler<void()>&&);
-    void paintCompositedResultsToCanvasWithQualifiedIdentifier(QualifiedRenderingResourceIdentifier, CompletionHandler<void()>&&);
-    void paintNativeImageToImageBuffer(WebCore::NativeImage&, QualifiedRenderingResourceIdentifier, CompletionHandler<void()>&&);
+    void paintRenderingResultsToCanvasWithQualifiedIdentifier(QualifiedRenderingResourceIdentifier);
+    void paintCompositedResultsToCanvasWithQualifiedIdentifier(QualifiedRenderingResourceIdentifier);
+    void paintNativeImageToImageBuffer(WebCore::NativeImage&, QualifiedRenderingResourceIdentifier);
 
 protected:
     WeakPtr<GPUConnectionToWebProcess> m_gpuConnectionToWebProcess;

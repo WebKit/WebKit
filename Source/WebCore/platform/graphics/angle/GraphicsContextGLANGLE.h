@@ -32,7 +32,7 @@
 #include "GraphicsContextGL.h"
 #include "GraphicsContextGLState.h"
 #include <memory>
-#include <wtf/ListHashSet.h>
+#include <wtf/Function.h>
 
 #if PLATFORM(COCOA)
 #include "GraphicsContextGLIOSurfaceSwapChain.h"
@@ -348,8 +348,8 @@ public:
     RefPtr<PixelBuffer> readRenderingResultsForPainting();
     RefPtr<PixelBuffer> readCompositedResultsForPainting();
 
-    virtual void withDrawingBufferAsNativeImage(std::function<void(NativeImage&)>);
-    virtual void withDisplayBufferAsNativeImage(std::function<void(NativeImage&)>);
+    virtual void withDrawingBufferAsNativeImage(Function<void(NativeImage&)>);
+    virtual void withDisplayBufferAsNativeImage(Function<void(NativeImage&)>);
 
     // Returns true on success.
     bool readnPixelsWithStatus(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, Span<uint8_t> data);

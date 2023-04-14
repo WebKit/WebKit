@@ -887,7 +887,7 @@ void GraphicsContextGLCocoa::invalidateKnownTextureContent(GCGLuint texture)
         m_cv->invalidateKnownTextureContent(texture);
 }
 
-void GraphicsContextGLCocoa::withDrawingBufferAsNativeImage(std::function<void(NativeImage&)> func)
+void GraphicsContextGLCocoa::withDrawingBufferAsNativeImage(Function<void(NativeImage&)> func)
 {
     if (!makeContextCurrent())
         return;
@@ -928,7 +928,7 @@ void GraphicsContextGLCocoa::withDrawingBufferAsNativeImage(std::function<void(N
     func(*drawingImage);
 }
 
-void GraphicsContextGLCocoa::withDisplayBufferAsNativeImage(std::function<void(NativeImage&)> func)
+void GraphicsContextGLCocoa::withDisplayBufferAsNativeImage(Function<void(NativeImage&)> func)
 {
     auto& displayBuffer = m_swapChain.displayBuffer();
     if (!displayBuffer.surface || !displayBuffer.handle)
