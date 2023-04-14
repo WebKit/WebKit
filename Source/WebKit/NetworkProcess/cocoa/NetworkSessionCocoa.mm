@@ -1033,7 +1033,7 @@ static NSDictionary<NSString *, id> *extractResolutionReport(NSError *error)
     }
 }
 
-- (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didReceiveInformationalResponse:(NSURLResponse *)response
+- (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didReceiveInformationalResponse:(NSHTTPURLResponse *)response
 {
     if (auto* networkDataTask = [self existingTask:task]) {
         ASSERT(RunLoop::isMain());
@@ -1046,7 +1046,8 @@ static NSDictionary<NSString *, id> *extractResolutionReport(NSError *error)
 // FIXME: Remove when rdar://108002223 can be resolved.
 - (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task _didReceiveInformationalResponse:(NSURLResponse *)response
 {
-    [self URLSession:session task:task didReceiveInformationalResponse:response];
+    if ([response isKindOfClass:[NSHTTPURLResponse class]])
+        [self URLSession:session task:task didReceiveInformationalResponse:(NSHTTPURLResponse *)response];
 }
 
 - (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask didReceiveResponse:(NSURLResponse *)response completionHandler:(void (^)(NSURLSessionResponseDisposition disposition))completionHandler
