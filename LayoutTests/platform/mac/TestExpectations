@@ -2806,4 +2806,5 @@ webkit.org/b/251099 [ Ventura+ ] fast/images/avif-image-document.html [ Pass Cra
 
 webkit.org/b/251710 webaudio/AudioBuffer/huge-buffer.html [ Pass Timeout ]
 
+http/wpt/service-workers/basic-fetch-with-contentfilter-allow-after-adding-data.html [ Pass ]
 http/wpt/service-workers/basic-fetch-with-contentfilter.https.html [ Pass ]
