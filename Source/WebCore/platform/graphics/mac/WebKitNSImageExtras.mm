@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc.  All rights reserved.
+ * Copyright (C) 2018-2023 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,9 +38,9 @@
     [transform scaleBy:deviceScaleFactor];
 
     NSRect bounds = { NSZeroPoint, self.size };
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     BOOL flippedOrientation = self.isFlipped;
-    ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
     [self lockFocusWithRect:bounds context:nil hints:@{ NSImageHintCTM : transform } flipped:flippedOrientation];
 }
 

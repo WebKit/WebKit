@@ -80,14 +80,14 @@ static BOOL isForcingPreviewUpdate;
 
 - (void)_setAutodisplay:(BOOL)newState
 {
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if (!newState && [[_wkView window] isAutodisplay])
         [_wkView displayIfNeeded];
-    ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
     
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [[_wkView window] setAutodisplay:newState];
-    ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
 
     // For some reason, painting doesn't happen for a long time without this call, <rdar://problem/8975229>.
     if (newState)
@@ -476,9 +476,9 @@ static NSString *linkDestinationName(PDFDocument *document, PDFDestination *dest
     CGContextTranslateCTM(context, point.x, point.y);
     CGContextScaleCTM(context, _totalScaleFactorForPrinting, -_totalScaleFactorForPrinting);
     CGContextTranslateCTM(context, 0, -[pdfPage boundsForBox:kPDFDisplayBoxMediaBox].size.height);
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [pdfPage drawWithBox:kPDFDisplayBoxMediaBox];
-    ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
 
     CGAffineTransform transform = CGContextGetCTM(context);
 
@@ -491,9 +491,9 @@ static NSString *linkDestinationName(PDFDocument *document, PDFDestination *dest
         if (![annotation isKindOfClass:WebKit::getPDFAnnotationLinkClass()])
             continue;
 
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         PDFAnnotationLink *linkAnnotation = (PDFAnnotationLink *)annotation;
-        ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
         NSURL *url = [linkAnnotation URL];
         CGRect transformedRect = CGRectApplyAffineTransform(NSRectToCGRect([linkAnnotation bounds]), transform);
 
@@ -597,9 +597,9 @@ static NSString *linkDestinationName(PDFDocument *document, PDFDestination *dest
                 if (![annotation isKindOfClass:WebKit::getPDFAnnotationLinkClass()])
                     continue;
 
-                ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
                 PDFAnnotationLink *linkAnnotation = (PDFAnnotationLink *)annotation;
-                ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
                 if (linkAnnotation.URL)
                     continue;
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -388,9 +388,9 @@ static NSString * firstUTIThatConformsTo(NSArray<NSString *> *typeIdentifiers, U
     RetainPtr<PHPickerViewController> _photoPicker;
 #endif
     RetainPtr<UIViewController> _presentationViewController;
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     BOOL _isPresentingSubMenu;
-    ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
 #if USE(UICONTEXTMENU)
     BOOL _isRepositioningContextMenu;
     RetainPtr<UIContextMenuInteraction> _documentContextMenuInteraction;

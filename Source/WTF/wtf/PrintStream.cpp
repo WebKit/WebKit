@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -45,14 +45,14 @@ void PrintStream::printf(const char* format, ...)
 
 void PrintStream::printfVariableFormat(const char* format, ...)
 {
-    ALLOW_NONLITERAL_FORMAT_BEGIN
-    IGNORE_GCC_WARNINGS_BEGIN("suggest-attribute=format")
+ALLOW_NONLITERAL_FORMAT_BEGIN
+IGNORE_GCC_WARNINGS_BEGIN("suggest-attribute=format")
     va_list argList;
     va_start(argList, format);
     vprintf(format, argList);
     va_end(argList);
-    IGNORE_GCC_WARNINGS_END
-    ALLOW_NONLITERAL_FORMAT_END
+IGNORE_GCC_WARNINGS_END
+ALLOW_NONLITERAL_FORMAT_END
 }
 
 void PrintStream::flush()

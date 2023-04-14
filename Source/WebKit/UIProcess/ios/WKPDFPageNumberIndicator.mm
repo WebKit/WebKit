@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -183,9 +183,9 @@ const NSTimeInterval indicatorMoveDuration = 0.3;
     CGContextSaveGState(context);
     CGContextAddRect(context, cornerImageBounds);
 
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     UIBezierPath *cornerPath = [UIBezierPath bezierPathWithRoundedRect:cornerImageBounds byRoundingCorners:(UIRectCorner)UIAllCorners cornerRadii:CGSizeMake(indicatorCornerRadius, indicatorCornerRadius)];
-    ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
     CGContextAddPath(context, [cornerPath CGPath]);
     CGContextEOClip(context);
     CGContextFillRect(context, cornerImageBounds);

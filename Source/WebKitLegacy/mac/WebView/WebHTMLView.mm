@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2023 Apple Inc. All rights reserved.
  *           (C) 2006, 2007 Graham Dennis (graham.dennis@gmail.com)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -3958,9 +3958,9 @@ static BOOL currentScrollIsBlit(NSView *clipView)
 #if PLATFORM(MAC)
     // Only do the synchronization dance if we're drawing into the window, otherwise
     // we risk disabling screen updates when no flush is pending.
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if ([NSGraphicsContext currentContext] == [[self window] graphicsContext] && [webView _needsOneShotDrawingSynchronization]) {
-        ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
         // Disable screen updates to minimize the chances of the race between the CA
         // display link and AppKit drawing causing flashes.
         [[self window] disableScreenUpdatesUntilFlush];
@@ -4187,11 +4187,11 @@ static BOOL currentScrollIsBlit(NSView *clipView)
     if (auto* coreFrame = core([self _frame]))
         coreFrame->eventHandler().mouseDown(event);
 #else
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     NSInputManager *currentInputManager = [NSInputManager currentInputManager];
 
     if (![currentInputManager wantsToHandleMouseEvents] || ![currentInputManager handleMouseEvent:event]) {
-        ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
         [_private->completionController endRevertingChange:NO moveLeft:NO];
 
         // If the web page handles the context menu event and menuForEvent: returns nil, we'll get control click events here.
@@ -4267,11 +4267,11 @@ IGNORE_WARNINGS_END
     // the current event prevents that from causing a problem inside WebKit or AppKit code.
     retainPtr(event).autorelease();
 
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     NSInputManager *currentInputManager = [NSInputManager currentInputManager];
     if ([currentInputManager wantsToHandleMouseEvents] && [currentInputManager handleMouseEvent:event])
         return;
-    ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
 
     [self retain];
 
@@ -4444,11 +4444,11 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     [self _setMouseDownEvent:nil];
 
 #if PLATFORM(MAC)
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     NSInputManager *currentInputManager = [NSInputManager currentInputManager];
     if ([currentInputManager wantsToHandleMouseEvents] && [currentInputManager handleMouseEvent:event])
         return;
-    ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
 
     [self retain];
@@ -4799,9 +4799,9 @@ static RefPtr<WebCore::KeyboardEvent> currentKeyboardEvent(WebCore::LocalFrame* 
 - (void)_endPrintModeAndRestoreWindowAutodisplay
 {
     [self _endPrintMode];
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [[self window] setAutodisplay:YES];
-    ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 - (void)_delayedEndPrintMode:(NSPrintOperation *)initiatingOperation
@@ -4836,9 +4836,9 @@ static RefPtr<WebCore::KeyboardEvent> currentKeyboardEvent(WebCore::LocalFrame* 
     // Must do this explicit display here, because otherwise the view might redisplay while the print
     // sheet was up, using printer fonts (and looking different).
     [self displayIfNeeded];
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [[self window] setAutodisplay:NO];
-    ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
 
     [[self _webView] _adjustPrintingMarginsForHeaderAndFooter];
     NSPrintOperation *printOperation = [NSPrintOperation currentOperation];
@@ -5031,9 +5031,9 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 #if PLATFORM(IOS_FAMILY)
         return [accTree accessibilityHitTest:point];
 #else
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         NSPoint windowCoord = [[self window] convertScreenToBase:point];
-        ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
         return [accTree accessibilityHitTest:[self convertPoint:windowCoord fromView:nil]];
 #endif
     }
@@ -5095,9 +5095,9 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 - (NSString *)_colorAsString:(NSColor *)color
 {
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     NSColor *rgbColor = [color colorUsingColorSpaceName:NSDeviceRGBColorSpace];
-    ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
     // FIXME: If color is non-nil and rgbColor is nil, that means we got some kind
     // of fancy color that can't be converted to RGB. Changing that to "transparent"
     // might not be great, but it's probably OK.
@@ -5954,14 +5954,14 @@ static BOOL writingDirectionKeyBindingsEnabled()
     const Vector<WebCore::KeypressCommand>& commands = parameters->event->keypressCommands();
 
     for (size_t i = 0; i < commands.size(); ++i) {
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         if (commands[i].commandName == "insertText:"_s)
             [self insertText:commands[i].text];
         else if (commands[i].commandName == "noop:"_s)
             ; // Do nothing. This case can be removed once <rdar://problem/9025012> is fixed.
         else
             [self doCommandBySelector:NSSelectorFromString(commands[i].commandName)];
-        ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
     }
     parameters->event->keypressCommands().clear();
     parameters->shouldSaveCommands = wasSavingCommands;
@@ -6158,9 +6158,9 @@ static BOOL writingDirectionKeyBindingsEnabled()
         // If we are in a layer-backed view, we need to manually initialize the geometry for our layer.
         [viewLayer setBounds:NSRectToCGRect([_private->layerHostingView bounds])];
         [viewLayer setAnchorPoint:CGPointMake(0, [self isFlipped] ? 1 : 0)];
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         CGPoint layerPosition = NSPointToCGPoint([self convertPointToBase:[_private->layerHostingView frame].origin]);
-        ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
         [viewLayer setPosition:layerPosition];
     }
     
@@ -6288,9 +6288,9 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         LOG(TextInput, "textStorage -> nil");
         return nil;
     }
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     NSAttributedString *result = [self attributedSubstringFromRange:NSMakeRange(0, UINT_MAX)];
-    ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
 
     LOG(TextInput, "textStorage -> \"%@\"", result ? [result string] : @"");
     
@@ -6799,14 +6799,14 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
     unsigned start;
     unsigned end;
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if (coreFrame->editor().getCompositionSelection(start, end))
         [[NSInputManager currentInputManager] markedTextSelectionChanged:NSMakeRange(start, end - start) client:self];
     else {
         coreFrame->editor().cancelComposition();
         [[NSInputManager currentInputManager] markedTextAbandoned:self];
     }
-    ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 #endif

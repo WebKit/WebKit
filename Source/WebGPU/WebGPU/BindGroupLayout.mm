@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (c) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -49,20 +49,18 @@ static MTLArgumentDescriptor *createArgumentDescriptor(const WGPUBufferBindingLa
     case WGPUBufferBindingType_Uniform:
     case WGPUBufferBindingType_ReadOnlyStorage:
 #if USE(METAL_ARGUMENT_ACCESS_ENUMS)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         descriptor.access = MTLArgumentAccessReadOnly;
-#pragma clang diagnostic pop
+ALLOW_DEPRECATED_DECLARATIONS_END
 #else
         descriptor.access = MTLBindingAccessReadOnly;
 #endif
         break;
     case WGPUBufferBindingType_Storage:
 #if USE(METAL_ARGUMENT_ACCESS_ENUMS)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         descriptor.access = MTLArgumentAccessReadWrite;
-#pragma clang diagnostic pop
+ALLOW_DEPRECATED_DECLARATIONS_END
 #else
         descriptor.access = MTLBindingAccessReadWrite;
 #endif
@@ -89,10 +87,9 @@ static MTLArgumentDescriptor *createArgumentDescriptor(const WGPUSamplerBindingL
     auto descriptor = [MTLArgumentDescriptor new];
     descriptor.dataType = MTLDataTypeSampler;
 #if USE(METAL_ARGUMENT_ACCESS_ENUMS)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     descriptor.access = MTLArgumentAccessReadOnly;
-#pragma clang diagnostic pop
+ALLOW_DEPRECATED_DECLARATIONS_END
 #else
     descriptor.access = MTLBindingAccessReadOnly;
 #endif
@@ -114,10 +111,9 @@ static MTLArgumentDescriptor *createArgumentDescriptor(const WGPUTextureBindingL
     auto descriptor = [MTLArgumentDescriptor new];
     descriptor.dataType = MTLDataTypeTexture;
 #if USE(METAL_ARGUMENT_ACCESS_ENUMS)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     descriptor.access = MTLArgumentAccessReadOnly;
-#pragma clang diagnostic pop
+ALLOW_DEPRECATED_DECLARATIONS_END
 #else
     descriptor.access = MTLBindingAccessReadOnly;
 #endif

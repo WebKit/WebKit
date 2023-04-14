@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -223,10 +223,9 @@ static PKShippingContactEditingMode toPKShippingContactEditingMode(WebCore::Appl
     switch (shippingContactEditingMode) {
     case WebCore::ApplePayShippingContactEditingMode::Enabled:
 #if USE(PKSHIPPINGCONTACTEDITINGMODEENABLED)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         return PKShippingContactEditingModeEnabled;
-#pragma clang diagnostic pop
+ALLOW_DEPRECATED_DECLARATIONS_END
 #else
         return PKShippingContactEditingModeAvailable;
 #endif
@@ -237,10 +236,9 @@ static PKShippingContactEditingMode toPKShippingContactEditingMode(WebCore::Appl
 
     ASSERT_NOT_REACHED();
 #if USE(PKSHIPPINGCONTACTEDITINGMODEENABLED)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     return PKShippingContactEditingModeEnabled;
-#pragma clang diagnostic pop
+ALLOW_DEPRECATED_DECLARATIONS_END
 #else
     return PKShippingContactEditingModeAvailable;
 #endif
@@ -323,9 +321,9 @@ RetainPtr<PKPaymentRequest> WebPaymentCoordinatorProxy::platformPaymentRequest(c
 
     [result setPaymentSummaryItems:WebCore::platformSummaryItems(paymentRequest.total(), paymentRequest.lineItems())];
 
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [result setExpectsMerchantSession:YES];
-    ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
 
     if (!paymentRequest.applicationData().isNull()) {
         auto applicationData = adoptNS([[NSData alloc] initWithBase64EncodedString:paymentRequest.applicationData() options:0]);

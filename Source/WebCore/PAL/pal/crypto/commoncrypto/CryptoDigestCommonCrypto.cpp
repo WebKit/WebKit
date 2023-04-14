@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -97,9 +97,9 @@ std::unique_ptr<CryptoDigest> CryptoDigest::create(CryptoDigest::Algorithm algor
     case CryptoDigest::Algorithm::SHA_1: {
         CC_SHA1_CTX* context = new CC_SHA1_CTX;
         digest->m_context->ccContext = context;
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         CC_SHA1_Init(context);
-        ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
         return digest;
     }
     case CryptoDigest::Algorithm::SHA_224: {
@@ -133,9 +133,9 @@ void CryptoDigest::addBytes(const void* input, size_t length)
 {
     switch (m_context->algorithm) {
     case CryptoDigest::Algorithm::SHA_1:
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         CC_SHA1_Update(toSHA1Context(m_context.get()), input, length);
-        ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
         return;
     case CryptoDigest::Algorithm::SHA_224:
         CC_SHA224_Update(toSHA224Context(m_context.get()), input, length);
@@ -158,9 +158,9 @@ Vector<uint8_t> CryptoDigest::computeHash()
     switch (m_context->algorithm) {
     case CryptoDigest::Algorithm::SHA_1:
         result.resize(CC_SHA1_DIGEST_LENGTH);
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         CC_SHA1_Final(result.data(), toSHA1Context(m_context.get()));
-        ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
         break;
     case CryptoDigest::Algorithm::SHA_224:
         result.resize(CC_SHA224_DIGEST_LENGTH);

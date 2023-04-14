@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2013 Adenilson Cavalcanti <cavalcantii@gmail.com>
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -110,9 +111,9 @@ static void didCrashCheckFrames(WKPageRef page, const void*)
 
     EXPECT_TRUE(!WKPageGetMainFrame(page));
     EXPECT_TRUE(!WKPageGetFocusedFrame(page));
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     EXPECT_TRUE(!WKPageGetFrameSetLargestFrame(page));
-    ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
 
     calledCrashHandler = true;
 }

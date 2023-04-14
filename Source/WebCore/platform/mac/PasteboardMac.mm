@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -163,9 +163,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (content.dataInWebArchiveFormat) {
         m_changeCount = platformStrategies()->pasteboardStrategy()->setBufferForType(content.dataInWebArchiveFormat.get(), WebArchivePboardType, m_pasteboardName, context());
 
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         m_changeCount = platformStrategies()->pasteboardStrategy()->setBufferForType(content.dataInWebArchiveFormat.get(), kUTTypeWebArchive, m_pasteboardName, context());
-        ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
     }
     if (content.dataInRTFDFormat)
         m_changeCount = platformStrategies()->pasteboardStrategy()->setBufferForType(content.dataInRTFDFormat.get(), legacyRTFDPasteboardType(), m_pasteboardName, context());
@@ -285,9 +285,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (auto archiveData = pasteboardImage.dataInWebArchiveFormat) {
         m_changeCount = platformStrategies()->pasteboardStrategy()->setBufferForType(archiveData.get(), WebArchivePboardType, m_pasteboardName, context());
 
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         m_changeCount = platformStrategies()->pasteboardStrategy()->setBufferForType(archiveData.get(), kUTTypeWebArchive, m_pasteboardName, context());
-        ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
     }
     if (!pasteboardImage.dataInHTMLFormat.isEmpty())
         m_changeCount = platformStrategies()->pasteboardStrategy()->setStringForType(pasteboardImage.dataInHTMLFormat, legacyHTMLPasteboardType(), m_pasteboardName, context());
@@ -530,7 +530,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         return;
 
     using ImageReadingInfo = std::tuple<String, ASCIILiteral>;
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     const std::array<ImageReadingInfo, 6> imageTypesToRead { {
         { String(legacyTIFFPasteboardType()), "image/tiff"_s },
         { String(NSPasteboardTypeTIFF), "image/tiff"_s },
@@ -539,7 +539,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         { String(kUTTypePNG), "image/png"_s },
         { String(kUTTypeJPEG), "image/jpeg"_s }
     } };
-    ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
 
     auto tryToReadImage = [&] (const String& pasteboardType, ASCIILiteral mimeType) {
         if (!types.contains(pasteboardType))
@@ -759,16 +759,16 @@ static void setDragImageImpl(NSImage *image, NSPoint offset)
     RetainPtr<NSBitmapImageRep> bitmapImage;
     if (!imageRep || ![imageRep isKindOfClass:[NSBitmapImageRep class]] || !NSEqualSizes(imageRep.size, imageSize)) {
         [image lockFocus];
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         bitmapImage = adoptNS([[NSBitmapImageRep alloc] initWithFocusedViewRect:*(NSRect*)&imageRect]);
-        ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
         [image unlockFocus];
         
         // we may have to flip the bits we just read if the image was flipped since it means the cache was also
         // and CoreDragSetImage can't take a transform for rendering.
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         flipImage = image.isFlipped;
-        ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
     } else {
         flipImage = false;
         bitmapImage = (NSBitmapImageRep *)imageRep;

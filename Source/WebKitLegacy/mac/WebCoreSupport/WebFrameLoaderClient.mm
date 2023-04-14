@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -262,9 +262,9 @@ void WebFrameLoaderClient::forceLayoutForNonHTML()
 
 void WebFrameLoaderClient::setCopiesOnScroll()
 {
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [[[m_webFrame->_private->webFrameView _scrollView] contentView] setCopiesOnScroll:YES];
-    ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 void WebFrameLoaderClient::detachedFromParent2()
@@ -293,9 +293,9 @@ void WebFrameLoaderClient::convertMainResourceLoadToDownload(WebCore::DocumentLo
 
     if (!mainResourceLoader) {
         // The resource has already been cached, or the conversion is being attmpted when not calling SubresourceLoader::didReceiveResponse().
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         auto webDownload = adoptNS([[WebDownload alloc] initWithRequest:request.nsURLRequest(WebCore::HTTPBodyUpdatePolicy::UpdateHTTPBody) delegate:[webView downloadDelegate]]);
-        ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
         webDownload.autorelease();
         return;
     }
@@ -2101,9 +2101,9 @@ static NSImage *webGetNSImage(WebCore::Image* image, NSSize size)
     if (!nsImage)
         return nil;
     if (!NSEqualSizes([nsImage size], size)) {
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         [nsImage setScalesWhenResized:YES];
-        ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
         [nsImage setSize:size];
     }
     return nsImage;

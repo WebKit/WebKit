@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -101,17 +101,17 @@ void ScrollView::platformScrollbarModes(ScrollbarMode& horizontal, ScrollbarMode
 void ScrollView::platformSetCanBlitOnScroll(bool canBlitOnScroll)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [[scrollView() contentView] setCopiesOnScroll:canBlitOnScroll];
-    ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
 bool ScrollView::platformCanBlitOnScroll() const
 {
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     return [[scrollView() contentView] copiesOnScroll];
-    ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 float ScrollView::platformTopContentInset() const
@@ -239,9 +239,9 @@ IntRect ScrollView::platformContentsToScreen(const IntRect& rect) const
     if (NSView* documentView = this->documentView()) {
         NSRect tempRect = rect;
         tempRect = [documentView convertRect:tempRect toView:nil];
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         tempRect.origin = [[documentView window] convertBaseToScreen:tempRect.origin];
-        ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
         return enclosingIntRect(tempRect);
     }
     END_BLOCK_OBJC_EXCEPTIONS
@@ -252,9 +252,9 @@ IntPoint ScrollView::platformScreenToContents(const IntPoint& point) const
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     if (NSView* documentView = this->documentView()) {
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         NSPoint windowCoord = [[documentView window] convertScreenToBase: point];
-        ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
         return IntPoint([documentView convertPoint:windowCoord fromView:nil]);
     }
     END_BLOCK_OBJC_EXCEPTIONS

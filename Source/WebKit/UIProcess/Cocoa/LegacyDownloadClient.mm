@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -213,9 +213,9 @@ void LegacyDownloadClient::decideDestinationWithSuggestedFilename(DownloadProxy&
 
     if (m_delegateMethods.downloadDecideDestinationWithSuggestedFilenameAllowOverwrite) {
         BOOL allowOverwrite = NO;
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         NSString *destination = [m_delegate _download:[_WKDownload downloadWithDownload:wrapper(downloadProxy)] decideDestinationWithSuggestedFilename:filename allowOverwrite:&allowOverwrite];
-        ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
         completionHandler(allowOverwrite ? AllowOverwrite::Yes : AllowOverwrite::No, destination);
     } else {
         [m_delegate _download:[_WKDownload downloadWithDownload:wrapper(downloadProxy)] decideDestinationWithSuggestedFilename:filename completionHandler:makeBlockPtr([checker = CompletionHandlerCallChecker::create(m_delegate.get().get(), @selector(_download:decideDestinationWithSuggestedFilename:completionHandler:)), completionHandler = WTFMove(completionHandler)] (BOOL allowOverwrite, NSString *destination) mutable {

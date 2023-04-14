@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -53,8 +53,7 @@ TEST(WebKit, InvalidConfiguration)
         }
     };
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wnonnull"
+    IGNORE_NULL_CHECK_WARNINGS_BEGIN
     shouldThrowExceptionWhenUsed([](WKWebViewConfiguration *configuration) {
         [configuration setProcessPool:nil];
     });
@@ -70,7 +69,7 @@ TEST(WebKit, InvalidConfiguration)
     shouldThrowExceptionWhenUsed([](WKWebViewConfiguration *configuration) {
         [configuration _setVisitedLinkStore:nil];
     });
-#pragma clang diagnostic pop
+    IGNORE_NULL_CHECK_WARNINGS_END
 
     // Related WebViews cannot use different data stores.
     auto configurationForEphemeralView = adoptNS([[WKWebViewConfiguration alloc] init]);

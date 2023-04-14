@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -102,9 +102,9 @@
 
 - (BOOL)_interpretKeyEvent:(NSEvent *)event usingLegacyCocoaTextInput:(BOOL)usingLegacyCocoaTextInput string:(NSString **)string
 {
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     BOOL hadMarkedText = [_inputTextView hasMarkedText];
-    ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
  
     *string = nil;
 
@@ -119,9 +119,9 @@
     if (![[_inputTextView inputContext] handleEvent:event])
         return NO;
     
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if ([_inputTextView hasMarkedText]) {
-        ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
         // Don't show the input method window for dead keys
         if ([[event characters] length] > 0)
             [self orderFront:nil];
@@ -155,9 +155,9 @@
 
 - (BOOL)_hasMarkedText
 {
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     return [_inputTextView hasMarkedText];
-    ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 @end

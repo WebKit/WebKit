@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -188,9 +188,9 @@ OSStatus CoreAudioSharedInternalUnit::defaultOutputDevice(uint32_t* deviceID)
 #if HAVE(AUDIO_OBJECT_PROPERTY_ELEMENT_MAIN)
         kAudioObjectPropertyElementMain
 #else
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         kAudioObjectPropertyElementMaster
-        ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
     };
 

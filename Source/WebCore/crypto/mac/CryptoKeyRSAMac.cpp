@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -50,9 +50,9 @@ static CCCryptorStatus getPublicKeyComponents(const PlatformRSAKeyContainer& rsa
 {
     ASSERT(CCRSAGetKeyType(rsaKey.get()) == ccRSAKeyPublic || CCRSAGetKeyType(rsaKey.get()) == ccRSAKeyPrivate);
     bool keyIsPublic = CCRSAGetKeyType(rsaKey.get()) == ccRSAKeyPublic;
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     PlatformRSAKeyContainer publicKeyFromPrivateKey(keyIsPublic ? nullptr : CCRSACryptorGetPublicKeyFromPrivateKey(rsaKey.get()));
-    ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
 
     modulus.resize(16384);
     size_t modulusLength = modulus.size();

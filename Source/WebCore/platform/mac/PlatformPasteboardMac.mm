@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -412,7 +412,7 @@ int64_t PlatformPasteboard::setStringForType(const String& string, const String&
                 return 0;
         }
 
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         if ([[m_pasteboard types] containsObject:(NSString *)kUTTypeURL]) {
             didWriteData = [m_pasteboard setString:[url absoluteString] forType:(NSString *)kUTTypeURL];
             if (!didWriteData)
@@ -424,7 +424,7 @@ int64_t PlatformPasteboard::setStringForType(const String& string, const String&
             if (!didWriteData)
                 return 0;
         }
-        ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
 
     } else {
         didWriteData = [m_pasteboard setString:string forType:pasteboardType];

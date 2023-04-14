@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -112,9 +112,9 @@ TEST(WKWebView, IsOpaqueYesDecodedFromArchive)
     [webView setOpaque:YES];
 
     NSData *data = [NSKeyedArchiver archivedDataWithRootObject:webView.get() requiringSecureCoding:NO error:nullptr];
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     TestWKWebView *decodedWebView = [NSKeyedUnarchiver unarchiveObjectWithData:data];
-    ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
 
     isOpaque(decodedWebView, YES);
 }
@@ -126,9 +126,9 @@ TEST(WKWebView, IsOpaqueNoDecodedFromArchive)
     [webView setOpaque:NO];
 
     NSData *data = [NSKeyedArchiver archivedDataWithRootObject:webView.get() requiringSecureCoding:NO error:nullptr];
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     TestWKWebView *decodedWebView = [NSKeyedUnarchiver unarchiveObjectWithData:data];
-    ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
 
     isOpaque(decodedWebView, NO);
 }

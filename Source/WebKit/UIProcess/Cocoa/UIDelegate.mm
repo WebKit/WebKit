@@ -256,12 +256,12 @@ void UIDelegate::ContextMenuClient::menuFromProposedMenu(WebPageProxy&, NSMenu *
         return;
     }
     
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if (m_uiDelegate->m_delegateMethods.webViewContextMenuForElement)
         return completionHandler([(id<WKUIDelegatePrivate>)delegate _webView:m_uiDelegate->m_webView.get().get() contextMenu:menu forElement:wrapper(contextMenuElementInfo.get())]);
 
     completionHandler([(id<WKUIDelegatePrivate>)delegate _webView:m_uiDelegate->m_webView.get().get() contextMenu:menu forElement:wrapper(contextMenuElementInfo.get()) userInfo:userInfo ? static_cast<id<NSSecureCoding>>(userInfo->wrapper()) : nil]);
-    ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
 }
 #endif
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -130,10 +130,9 @@ TEST(WebKit, NSAttributedStringWithReadOnlyPaths)
     if (![NSFileManager.defaultManager copyItemAtURL:redImagePath toURL:unreadableFileURL error:&error])
         EXPECT_TRUE(error.code == NSFileWriteFileExistsError);
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunguarded-availability-new"
+ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
     auto options = adoptNS([[NSMutableDictionary alloc] initWithObjectsAndKeys:@[ readableDirectoryURL.get() ], _WKReadAccessFileURLsOption, nil]);
-#pragma clang diagnostic pop
+ALLOW_NEW_API_WITHOUT_GUARDS_END
 
     NSString *testString = [NSString stringWithFormat:@"<p>Hello<img src='%@'></p><p>World<img src='%@'></p>", [readableFileURL absoluteString], [unreadableFileURL absoluteString]];
 
@@ -182,10 +181,9 @@ TEST(WebKit, NSAttributedStringWithAndWithoutReadOnlyPaths)
     if (![NSFileManager.defaultManager copyItemAtURL:redImagePath toURL:unreadableFileURL error:&error])
         EXPECT_TRUE(error.code == NSFileWriteFileExistsError);
     
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunguarded-availability-new"
+ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
     auto options = adoptNS([[NSMutableDictionary alloc] initWithObjectsAndKeys:@[ readableDirectoryURL.get() ], _WKReadAccessFileURLsOption, nil]);
-#pragma clang diagnostic pop
+ALLOW_NEW_API_WITHOUT_GUARDS_END
 
     NSString *testString = [NSString stringWithFormat:@"<p>Hello<img src='%@'></p><p>World<img src='%@'></p>", [readableFileURL absoluteString], [unreadableFileURL absoluteString]];
 
@@ -256,10 +254,9 @@ TEST(WebKit, NSAttributedStringWithTooManyReadOnlyPaths)
     auto [readableDirectoryURL, unreadableDirectoryURL] = readableAndUnreadableDirectories();
     NSURL *bundlePathURL = [NSURL fileURLWithPath:[[NSBundle mainBundle] bundlePath]];
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunguarded-availability-new"
+ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
     auto options = adoptNS([[NSMutableDictionary alloc] initWithObjectsAndKeys:@[ readableDirectoryURL.get(), unreadableDirectoryURL.get(), bundlePathURL ], _WKReadAccessFileURLsOption, nil]);
-#pragma clang diagnostic pop
+ALLOW_NEW_API_WITHOUT_GUARDS_END
 
     bool exceptionRaised = false;
     @try {
@@ -278,10 +275,9 @@ TEST(WebKit, NSAttributedStringWithTooManyReadOnlyPaths)
 
 TEST(WebKit, NSAttributedStringWithInvalidReadOnlyPaths)
 {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunguarded-availability-new"
+ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
     auto options = adoptNS([[NSMutableDictionary alloc] initWithObjectsAndKeys:@[ @"/some/random/path" ], _WKReadAccessFileURLsOption, nil]);
-#pragma clang diagnostic pop
+ALLOW_NEW_API_WITHOUT_GUARDS_END
 
     bool exceptionRaised = false;
     @try {
@@ -299,11 +295,10 @@ TEST(WebKit, NSAttributedStringWithInvalidReadOnlyPaths)
 
     done = false;
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunguarded-availability-new"
+ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
     NSURL* testURL = [NSURL URLWithString:@"https://example.com"];
     auto options2 = adoptNS([[NSMutableDictionary alloc] initWithObjectsAndKeys:@[ testURL ], _WKReadAccessFileURLsOption, nil]);
-#pragma clang diagnostic pop
+ALLOW_NEW_API_WITHOUT_GUARDS_END
     exceptionRaised = false;
     @try {
         [NSAttributedString loadFromHTMLWithString:@"Hello World" options:options2.get() completionHandler:^(NSAttributedString *attributedString, NSDictionary<NSAttributedStringDocumentAttributeKey, id> *attributes, NSError *error) {

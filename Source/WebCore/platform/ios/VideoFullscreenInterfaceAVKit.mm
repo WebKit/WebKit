@@ -435,10 +435,10 @@ NS_ASSUME_NONNULL_END
 
 - (void)setWebKitOverrideRouteSharingPolicy:(NSUInteger)routeSharingPolicy routingContextUID:(NSString *)routingContextUID
 {
-    ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
+ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
     if ([_avPlayerViewController respondsToSelector:@selector(setWebKitOverrideRouteSharingPolicy:routingContextUID:)])
         [_avPlayerViewController setWebKitOverrideRouteSharingPolicy:routeSharingPolicy routingContextUID:routingContextUID];
-    ALLOW_NEW_API_WITHOUT_GUARDS_END
+ALLOW_NEW_API_WITHOUT_GUARDS_END
 }
 
 - (void)enterFullScreenAnimated:(BOOL)animated completionHandler:(void (^)(BOOL success, NSError * __nullable error))completionHandler

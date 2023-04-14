@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -310,11 +310,11 @@ public:
     template<PtrTag tag, typename... Args>
     CodeRef<tag> finalizeCodeWithDisassembly(bool dumpDisassembly, const char* format, Args... args)
     {
-        ALLOW_NONLITERAL_FORMAT_BEGIN
+ALLOW_NONLITERAL_FORMAT_BEGIN
         IGNORE_WARNINGS_BEGIN("format-security")
         return finalizeCodeWithDisassemblyImpl(dumpDisassembly, format, args...).template retagged<tag>();
         IGNORE_WARNINGS_END
-        ALLOW_NONLITERAL_FORMAT_END
+ALLOW_NONLITERAL_FORMAT_END
     }
 
     template<PtrTag tag>

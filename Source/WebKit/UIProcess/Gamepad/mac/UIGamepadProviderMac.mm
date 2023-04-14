@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,10 +44,10 @@ WebPageProxy* UIGamepadProvider::platformWebPageProxyForGamepadInput()
     if ([responder isKindOfClass:[WKWebView class]])
         return ((WKWebView *)responder)->_page.get();
 
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if ([responder isKindOfClass:[WKView class]])
         return toImpl(((WKView *)responder).pageRef);
-    ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
 
     return nullptr;
 }

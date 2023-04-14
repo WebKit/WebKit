@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -260,7 +260,7 @@ static String stringForTLSCipherSuite(tls_ciphersuite_t suite)
 
 static String stringForSSLProtocol(SSLProtocol protocol)
 {
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     switch (protocol) {
     case kDTLSProtocol1:
         return "DTLS 1.0"_s;
@@ -289,7 +289,7 @@ static String stringForSSLProtocol(SSLProtocol protocol)
         ASSERT_NOT_REACHED();
         return emptyString();
     }
-    ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 static String stringForSSLCipher(SSLCipherSuite cipher)
@@ -761,13 +761,13 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
             negotiatedLegacyTLS = NegotiatedLegacyTLS::Yes;
 ALLOW_DEPRECATED_DECLARATIONS_END
 
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         if (negotiatedLegacyTLS == NegotiatedLegacyTLS::No && [task respondsToSelector:@selector(_TLSNegotiatedProtocolVersion)]) {
             SSLProtocol tlsVersion = [task _TLSNegotiatedProtocolVersion];
             if (tlsVersion == kTLSProtocol11 || tlsVersion == kTLSProtocol1)
                 negotiatedLegacyTLS = NegotiatedLegacyTLS::Yes;
         }
-        ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
 
         if (negotiatedLegacyTLS == NegotiatedLegacyTLS::Yes && task._preconnect)
             return completionHandler(NSURLSessionAuthChallengeCancelAuthenticationChallenge, nil);
@@ -972,9 +972,9 @@ static NSDictionary<NSString *, id> *extractResolutionReport(NSError *error)
             else
                 additionalMetrics->remoteAddress = m.remoteAddress;
 #else
-            ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
             additionalMetrics->remoteAddress = String(m._remoteAddressAndPort);
-            ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
             additionalMetrics->connectionIdentifier = String([m._connectionIdentifier UUIDString]);
 
@@ -982,10 +982,10 @@ static NSDictionary<NSString *, id> *extractResolutionReport(NSError *error)
             additionalMetrics->tlsProtocol = stringForTLSProtocolVersion((tls_protocol_version_t)[m.negotiatedTLSProtocolVersion unsignedShortValue]);
             additionalMetrics->tlsCipher = stringForTLSCipherSuite((tls_ciphersuite_t)[m.negotiatedTLSCipherSuite unsignedShortValue]);
 #else
-            ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
             additionalMetrics->tlsProtocol = stringForSSLProtocol(m._negotiatedTLSProtocol);
             additionalMetrics->tlsCipher = stringForSSLCipher(m._negotiatedTLSCipher);
-            ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
 
             __block WebCore::HTTPHeaderMap requestHeaders;
@@ -1002,10 +1002,10 @@ static NSDictionary<NSString *, id> *extractResolutionReport(NSError *error)
                 requestHeaderBytesSent += transactionMetrics.countOfRequestHeaderBytesSent;
                 responseHeaderBytesReceived += transactionMetrics.countOfResponseHeaderBytesReceived;
 #else
-                ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
                 requestHeaderBytesSent += transactionMetrics._requestHeaderBytesSent;
                 responseHeaderBytesReceived += transactionMetrics._responseHeaderBytesReceived;
-                ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
             }
 
@@ -1021,10 +1021,10 @@ static NSDictionary<NSString *, id> *extractResolutionReport(NSError *error)
         networkLoadMetrics.responseBodyBytesReceived = m.countOfResponseBodyBytesReceived;
         networkLoadMetrics.responseBodyDecodedSize = m.countOfResponseBodyBytesAfterDecoding;
 #else
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         networkLoadMetrics.responseBodyBytesReceived = m._responseBodyBytesReceived;
         networkLoadMetrics.responseBodyDecodedSize = m._responseBodyBytesDecoded;
-        ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
         // Sometimes the encoded body bytes received contains a few (3 or so) bytes from the header when there is no body.
         // When this happens, trim our metrics to make more sense.
@@ -1298,7 +1298,7 @@ static RetainPtr<NSDictionary> proxyDictionary(const URL& httpProxy, const URL& 
     if (!httpProxy.isValid() && !httpsProxy.isValid())
         return nil;
 
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 
     auto dictionary = adoptNS([[NSMutableDictionary alloc] init]);
     if (httpProxy.isValid()) {
@@ -1313,7 +1313,7 @@ static RetainPtr<NSDictionary> proxyDictionary(const URL& httpProxy, const URL& 
     }
     return dictionary;
 
-    ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 void SessionWrapper::initialize(NSURLSessionConfiguration *configuration, NetworkSessionCocoa& networkSession, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, NavigatingToAppBoundDomain isNavigatingToAppBoundDomain)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -236,18 +236,18 @@ static RetainPtr<CGImageRef> createImageWithCopiedData(CGImageRef sourceImage)
     webViewFrame.origin.y = NSMaxY([[[NSScreen screens] objectAtIndex:0] frame]) - NSMaxY(webViewFrame);
 
     CGWindowID windowID = [[_webView window] windowNumber];
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     RetainPtr<CGImageRef> webViewContents = adoptCF(CGWindowListCreateImage(NSRectToCGRect(webViewFrame), kCGWindowListOptionIncludingWindow, windowID, kCGWindowImageShouldBeOpaque));
-    ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
 
     // Using the returned CGImage directly would result in calls to the WindowServer every time
     // the image was painted. Instead, copy the image data into our own process to eliminate that
     // future overhead.
     webViewContents = createImageWithCopiedData(webViewContents.get());
 
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [[self window] setAutodisplay:NO];
-    ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
 
     [self _manager]->saveScrollPosition();
     _savedTopContentInset = _page->topContentInset();
@@ -311,9 +311,9 @@ static RetainPtr<CGImageRef> createImageWithCopiedData(CGImageRef sourceImage)
     [window setCollectionBehavior:behavior];
 
     _page->setSuppressVisibilityUpdates(false);
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [[self window] setAutodisplay:YES];
-    ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
     [[self window] displayIfNeeded];
 
     [CATransaction commit];
@@ -351,9 +351,9 @@ static const float minVideoWidth = 468; // Keep in sync with `--controls-bar-wid
         // Transition to fullscreen failed. Clean up.
         _fullScreenState = NotInFullScreen;
 
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         [[self window] setAutodisplay:YES];
-        ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
         _page->setSuppressVisibilityUpdates(false);
 
         NSResponder *firstResponder = [[self window] firstResponder];
@@ -413,9 +413,9 @@ static const float minVideoWidth = 468; // Keep in sync with `--controls-bar-wid
 
     [_webViewPlaceholder setExitWarningVisible:NO];
 
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [[self window] setAutodisplay:NO];
-    ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
 
     // See the related comment in enterFullScreen:
     // We will resume the normal behavior in _startExitFullScreenAnimationWithDuration:
@@ -475,9 +475,9 @@ static RetainPtr<CGImageRef> takeWindowSnapshot(CGSWindowID windowID, bool captu
     CGWindowImageOption imageOptions = kCGWindowImageBoundsIgnoreFraming | kCGWindowImageShouldBeOpaque;
     if (captureAtNominalResolution)
         imageOptions |= kCGWindowImageNominalResolution;
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     return adoptCF(CGWindowListCreateImage(CGRectNull, kCGWindowListOptionIncludingWindow, windowID, imageOptions));
-    ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 - (void)finishedExitFullScreenAnimationAndExitImmediately:(bool)immediately
@@ -836,9 +836,9 @@ static CAAnimation *fadeAnimation(CFTimeInterval duration, AnimationDirection di
     [_backgroundView.get().layer addAnimation:fadeAnimation(duration, AnimateOut) forKey:@"fullscreen"];
 
     _page->setSuppressVisibilityUpdates(false);
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [[self window] setAutodisplay:YES];
-    ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
     [[self window] displayIfNeeded];
 }
 

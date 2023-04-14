@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,9 +44,9 @@ static AudioHardwareActivityType isAudioHardwareProcessRunning()
 #if HAVE(AUDIO_OBJECT_PROPERTY_ELEMENT_MAIN)
         kAudioObjectPropertyElementMain
 #else
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         kAudioObjectPropertyElementMaster
-        ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
     };
     
@@ -75,9 +75,9 @@ static AudioHardwareListener::BufferSizeRange currentDeviceSupportedBufferSizes(
 #if HAVE(AUDIO_OBJECT_PROPERTY_ELEMENT_MAIN)
         kAudioObjectPropertyElementMain
 #else
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         kAudioObjectPropertyElementMaster
-        ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
     };
 
@@ -93,9 +93,9 @@ static AudioHardwareListener::BufferSizeRange currentDeviceSupportedBufferSizes(
 #if HAVE(AUDIO_OBJECT_PROPERTY_ELEMENT_MAIN)
         kAudioObjectPropertyElementMain
 #else
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         kAudioObjectPropertyElementMaster,
-        ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
     };
 
@@ -114,9 +114,9 @@ static const AudioObjectPropertyAddress& processIsRunningPropertyDescriptor()
 #if HAVE(AUDIO_OBJECT_PROPERTY_ELEMENT_MAIN)
         kAudioObjectPropertyElementMain
 #else
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         kAudioObjectPropertyElementMaster
-        ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
     };
 
@@ -131,9 +131,9 @@ static const AudioObjectPropertyAddress& outputDevicePropertyDescriptor()
 #if HAVE(AUDIO_OBJECT_PROPERTY_ELEMENT_MAIN)
         kAudioObjectPropertyElementMain
 #else
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         kAudioObjectPropertyElementMaster
-        ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
     };
 

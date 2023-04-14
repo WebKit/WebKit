@@ -56,11 +56,11 @@
     _customProtocolManagerProxy = customProtocolManagerProxy;
     _customProtocolID = customProtocolID;
     _storagePolicy = NSURLCacheStorageNotAllowed;
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     _urlConnection = adoptNS([[NSURLConnection alloc] initWithRequest:request delegate:self startImmediately:NO]);
     [_urlConnection scheduleInRunLoop:[NSRunLoop mainRunLoop] forMode:NSRunLoopCommonModes];
     [_urlConnection start];
-    ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
 
     return self;
 }

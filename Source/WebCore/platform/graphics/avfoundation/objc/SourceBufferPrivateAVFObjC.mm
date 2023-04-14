@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -86,9 +86,9 @@
 @interface WebAVSampleBufferErrorListener : NSObject {
     WeakPtr<WebCore::SourceBufferPrivateAVFObjC> _parent;
     Vector<RetainPtr<AVSampleBufferDisplayLayer>> _layers;
-    ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
+ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
     Vector<RetainPtr<AVSampleBufferAudioRenderer>> _renderers;
-    ALLOW_NEW_API_WITHOUT_GUARDS_END
+ALLOW_NEW_API_WITHOUT_GUARDS_END
 }
 
 - (id)initWithParent:(WeakPtr<WebCore::SourceBufferPrivateAVFObjC>&&)parent;
@@ -214,9 +214,9 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
             ASSERT_NOT_REACHED();
 
     } else if ([object isKindOfClass:PAL::getAVSampleBufferAudioRendererClass()]) {
-        ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
+ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
         RetainPtr<AVSampleBufferAudioRenderer> renderer = (AVSampleBufferAudioRenderer *)object;
-        ALLOW_NEW_API_WITHOUT_GUARDS_END
+ALLOW_NEW_API_WITHOUT_GUARDS_END
         RetainPtr<NSError> error = [change valueForKey:NSKeyValueChangeNewKey];
         if ([error isKindOfClass:[NSNull class]])
             return;
@@ -835,17 +835,17 @@ void SourceBufferPrivateAVFObjC::trackDidChangeEnabled(AudioTrackPrivate& track,
     ALWAYS_LOG(LOGIDENTIFIER, "audio trackID = ", trackID, ", enabled = ", enabled);
 
     if (!enabled) {
-        ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
+ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
         RetainPtr<AVSampleBufferAudioRenderer> renderer = m_audioRenderers.get(trackID);
-        ALLOW_NEW_API_WITHOUT_GUARDS_END
+ALLOW_NEW_API_WITHOUT_GUARDS_END
         m_parser->setShouldProvideMediaDataForTrackID(false, trackID);
         if (auto player = this->player())
             player->removeAudioRenderer(renderer.get());
     } else {
         m_parser->setShouldProvideMediaDataForTrackID(true, trackID);
-        ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
+ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
         RetainPtr<AVSampleBufferAudioRenderer> renderer;
-        ALLOW_NEW_API_WITHOUT_GUARDS_END
+ALLOW_NEW_API_WITHOUT_GUARDS_END
         if (!m_audioRenderers.contains(trackID)) {
             renderer = adoptNS([PAL::allocAVSampleBufferAudioRendererInstance() init]);
 

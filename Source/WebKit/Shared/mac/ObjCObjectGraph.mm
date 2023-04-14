@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -128,10 +128,10 @@ static std::optional<ObjCType> typeFromObject(id object)
 
     if (dynamic_objc_cast<WKBrowsingContextHandle>(object))
         return ObjCType::WKBrowsingContextHandle;
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if (dynamic_objc_cast<WKTypeRefWrapper>(object))
         return ObjCType::WKTypeRefWrapper;
-    ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
 
     return std::nullopt;
 }
@@ -200,9 +200,9 @@ void ObjCObjectGraph::encode(IPC::Encoder& encoder, id object)
     }
 
     case ObjCType::WKTypeRefWrapper: {
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         UserData::encode(encoder, toImpl(static_cast<WKTypeRefWrapper *>(object).object));
-        ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
         return;
     }
     }
@@ -325,9 +325,9 @@ bool ObjCObjectGraph::decode(IPC::Decoder& decoder, RetainPtr<id>& result)
         if (!UserData::decode(decoder, object))
             return false;
 
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         result = adoptNS([[WKTypeRefWrapper alloc] initWithObject:toAPI(object.get())]);
-        ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
         return true;
     }
     }

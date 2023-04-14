@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -127,7 +127,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         currentIndex++;
     }
 
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     UITextWritingDirection writingDirection = _contentView.focusedElementInformation.isRTL ? UITextWritingDirectionRightToLeft : UITextWritingDirectionLeftToRight;
     BOOL override = NO;
     _textAlignment = (writingDirection == UITextWritingDirectionLeftToRight) ? NSTextAlignmentLeft : NSTextAlignmentRight;
@@ -138,7 +138,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (writingDirection == UITextWritingDirectionRightToLeft)
         self.view.semanticContentAttribute = UISemanticContentAttributeForceRightToLeft;
     [self setTitle:stringWithWritingDirection(_contentView.focusedElementInformation.title, writingDirection, override)];
-    ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
 
     return self;
 }
@@ -389,9 +389,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     else
         [popoverViewController setPreferredContentSize: popoverSize];
     
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     self.popoverController = adoptNS([[UIPopoverController alloc] initWithContentViewController:popoverViewController.get()]).get();
-    ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
 
     return self;
 }

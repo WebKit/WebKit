@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -54,9 +54,9 @@ public:
 
     // SourceBufferPrivateAVFObjCErrorClient
     void layerDidReceiveError(AVSampleBufferDisplayLayer *, NSError *, bool& shouldIgnore) override;
-    ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
+ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
     void rendererDidReceiveError(AVSampleBufferAudioRenderer *, NSError *, bool& shouldIgnore) override;
-    ALLOW_NEW_API_WITHOUT_GUARDS_END
+ALLOW_NEW_API_WITHOUT_GUARDS_END
 
     void addSourceBuffer(SourceBufferPrivateAVFObjC*);
     void removeSourceBuffer(SourceBufferPrivateAVFObjC*);

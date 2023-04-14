@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -60,10 +60,9 @@ enum class ViewStabilityFlag : uint8_t;
     WeakObjCPtr<WKWebView> _webView;
 }
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 @property (nonatomic, readonly) WKBrowsingContextController *browsingContextController;
-#pragma clang diagnostic pop
+ALLOW_DEPRECATED_DECLARATIONS_END
 
 @property (nonatomic, readonly) WebKit::WebPageProxy* page;
 @property (nonatomic, readonly) BOOL isFocusingElement;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -60,54 +60,54 @@
 
 static void checkChallenge(NSURLAuthenticationChallenge *challenge)
 {
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if ([challenge class] != [WKNSURLAuthenticationChallenge class])
         [NSException raise:NSInvalidArgumentException format:@"The challenge was not sent by the receiver."];
-    ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 - (void)cancelAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
 {
     checkChallenge(challenge);
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     WebKit::AuthenticationChallengeProxy& webChallenge = ((WKNSURLAuthenticationChallenge *)challenge)._web_authenticationChallengeProxy;
-    ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
     webChallenge.listener().completeChallenge(WebKit::AuthenticationChallengeDisposition::Cancel);
 }
 
 - (void)continueWithoutCredentialForAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
 {
     checkChallenge(challenge);
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     WebKit::AuthenticationChallengeProxy& webChallenge = ((WKNSURLAuthenticationChallenge *)challenge)._web_authenticationChallengeProxy;
-    ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
     webChallenge.listener().completeChallenge(WebKit::AuthenticationChallengeDisposition::UseCredential);
 }
 
 - (void)useCredential:(NSURLCredential *)credential forAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
 {
     checkChallenge(challenge);
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     WebKit::AuthenticationChallengeProxy& webChallenge = ((WKNSURLAuthenticationChallenge *)challenge)._web_authenticationChallengeProxy;
-    ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
     webChallenge.listener().completeChallenge(WebKit::AuthenticationChallengeDisposition::UseCredential, WebCore::Credential(credential));
 }
 
 - (void)performDefaultHandlingForAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
 {
     checkChallenge(challenge);
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     WebKit::AuthenticationChallengeProxy& webChallenge = ((WKNSURLAuthenticationChallenge *)challenge)._web_authenticationChallengeProxy;
-    ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
     webChallenge.listener().completeChallenge(WebKit::AuthenticationChallengeDisposition::PerformDefaultHandling);
 }
 
 - (void)rejectProtectionSpaceAndContinueWithChallenge:(NSURLAuthenticationChallenge *)challenge
 {
     checkChallenge(challenge);
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     WebKit::AuthenticationChallengeProxy& webChallenge = ((WKNSURLAuthenticationChallenge *)challenge)._web_authenticationChallengeProxy;
-    ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
     webChallenge.listener().completeChallenge(WebKit::AuthenticationChallengeDisposition::RejectProtectionSpaceAndContinue);
 }
 

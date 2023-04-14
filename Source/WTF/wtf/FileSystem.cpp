@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2015 Canon Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -57,9 +57,9 @@ namespace WTF::FileSystemImpl {
 static std::filesystem::path toStdFileSystemPath(StringView path)
 {
 #if HAVE(MISSING_STD_FILESYSTEM_PATH_CONSTRUCTOR)
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     return std::filesystem::u8path(path.utf8().data());
-    ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
 #else
     return { std::u8string(reinterpret_cast<const char8_t*>(path.utf8().data())) };
 #endif

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -46,9 +46,9 @@ static bool getDeviceInfo(uint32_t deviceID, CaptureDevice::DeviceType type, Str
 #if HAVE(AUDIO_OBJECT_PROPERTY_ELEMENT_MAIN)
         kAudioObjectPropertyElementMain
 #else
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         kAudioObjectPropertyElementMaster
-        ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
     };
     UInt32 dataSize = sizeof(uniqueID);
@@ -68,9 +68,9 @@ static bool getDeviceInfo(uint32_t deviceID, CaptureDevice::DeviceType type, Str
 #if HAVE(AUDIO_OBJECT_PROPERTY_ELEMENT_MAIN)
         kAudioObjectPropertyElementMain
 #else
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         kAudioObjectPropertyElementMaster
-        ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
     };
     uint32_t sourceID;
@@ -84,9 +84,9 @@ static bool getDeviceInfo(uint32_t deviceID, CaptureDevice::DeviceType type, Str
 #if HAVE(AUDIO_OBJECT_PROPERTY_ELEMENT_MAIN)
             kAudioObjectPropertyElementMain
 #else
-            ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
             kAudioObjectPropertyElementMaster
-            ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
         };
         dataSize = sizeof(translation);
@@ -100,9 +100,9 @@ static bool getDeviceInfo(uint32_t deviceID, CaptureDevice::DeviceType type, Str
 #if HAVE(AUDIO_OBJECT_PROPERTY_ELEMENT_MAIN)
             kAudioObjectPropertyElementMain
 #else
-            ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
             kAudioObjectPropertyElementMaster
-            ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
         };
         dataSize = sizeof(localizedName);
@@ -141,9 +141,9 @@ CoreAudioCaptureDevice::CoreAudioCaptureDevice(uint32_t deviceID, const String& 
 #if HAVE(AUDIO_OBJECT_PROPERTY_ELEMENT_MAIN)
         kAudioObjectPropertyElementMain
 #else
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         kAudioObjectPropertyElementMaster
-        ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
     };
     UInt32 state = 0;
@@ -160,9 +160,9 @@ CoreAudioCaptureDevice::CoreAudioCaptureDevice(uint32_t deviceID, const String& 
 #if HAVE(AUDIO_OBJECT_PROPERTY_ELEMENT_MAIN)
         kAudioObjectPropertyElementMain
 #else
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         kAudioObjectPropertyElementMaster
-        ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
     };
     AudioDeviceID defaultID = kAudioDeviceUnknown;
@@ -182,9 +182,9 @@ Vector<AudioDeviceID> CoreAudioCaptureDevice::relatedAudioDeviceIDs(AudioDeviceI
 #if HAVE(AUDIO_OBJECT_PROPERTY_ELEMENT_MAIN)
         kAudioObjectPropertyElementMain
 #else
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         kAudioObjectPropertyElementMaster
-        ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
     };
     OSStatus error = AudioObjectGetPropertyDataSize(deviceID, &property, 0, 0, &size);

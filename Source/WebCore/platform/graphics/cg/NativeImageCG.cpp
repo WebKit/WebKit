@@ -73,10 +73,9 @@ DestinationColorSpace NativeImage::colorSpace() const
 void NativeImage::draw(GraphicsContext& context, const FloatSize& imageSize, const FloatRect& destinationRect, const FloatRect& sourceRect, const ImagePaintingOptions& options)
 {
     auto isHDRColorSpace = [](CGColorSpaceRef colorSpace) -> bool {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         return CGColorSpaceIsHDR(colorSpace);
-#pragma clang diagnostic pop
+ALLOW_DEPRECATED_DECLARATIONS_END
     };
 
     auto isHDRNativeImage = [&](const NativeImage& image) -> bool {

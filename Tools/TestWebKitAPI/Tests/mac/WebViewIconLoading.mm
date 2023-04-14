@@ -1,6 +1,5 @@
-
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -64,10 +63,9 @@ static NSImage *imageFromData(NSData *data)
 {
     auto image = adoptNS([[NSImage alloc] initWithData:data]);
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [image setScalesWhenResized:YES];
-#pragma clang diagnostic pop
+ALLOW_DEPRECATED_DECLARATIONS_END
     [image setSize:NSMakeSize(16, 16)];
 
     return image.autorelease();

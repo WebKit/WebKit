@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -104,9 +104,9 @@ const CGFloat passwordEntryFieldPadding = 10;
 #if HAVE(OS_DARK_MODE_SUPPORT)
     [_scrollView setBackgroundColor:UIColor.systemGroupedBackgroundColor];
 #else
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [_scrollView setBackgroundColor:UIColor.groupTableViewBackgroundColor];
-    ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
 
     [scrollView addSubview:self];

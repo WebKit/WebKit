@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -80,9 +80,9 @@ class SourceBufferPrivateAVFObjCErrorClient {
 public:
     virtual ~SourceBufferPrivateAVFObjCErrorClient() = default;
     virtual void layerDidReceiveError(AVSampleBufferDisplayLayer *, NSError *, bool& shouldIgnore) = 0;
-    ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
+ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
     virtual void rendererDidReceiveError(AVSampleBufferAudioRenderer *, NSError *, bool& shouldIgnore) = 0;
-    ALLOW_NEW_API_WITHOUT_GUARDS_END
+ALLOW_NEW_API_WITHOUT_GUARDS_END
 };
 
 class SourceBufferPrivateAVFObjC final
@@ -127,9 +127,9 @@ public:
     void layerDidReceiveError(AVSampleBufferDisplayLayer *, NSError *);
     void rendererWasAutomaticallyFlushed(AVSampleBufferAudioRenderer *, const CMTime&);
     void outputObscuredDueToInsufficientExternalProtectionChanged(bool);
-    ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
+ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
     void rendererDidReceiveError(AVSampleBufferAudioRenderer *, NSError *);
-    ALLOW_NEW_API_WITHOUT_GUARDS_END
+ALLOW_NEW_API_WITHOUT_GUARDS_END
 
     void setVideoLayer(AVSampleBufferDisplayLayer*);
     void setDecompressionSession(WebCoreDecompressionSession*);
@@ -189,9 +189,9 @@ private:
     void clearTracks();
 
     void flushVideo();
-    ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
+ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
     void flushAudio(AVSampleBufferAudioRenderer *);
-    ALLOW_NEW_API_WITHOUT_GUARDS_END
+ALLOW_NEW_API_WITHOUT_GUARDS_END
 
     MediaPlayerPrivateMediaSourceAVFObjC* player() const;
     bool canEnqueueSample(uint64_t trackID, const MediaSampleAVFObjC&);
@@ -212,9 +212,9 @@ private:
     Deque<std::pair<uint64_t, Ref<MediaSampleAVFObjC>>> m_blockedSamples;
 
     RetainPtr<AVSampleBufferDisplayLayer> m_displayLayer;
-    ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
+ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
     HashMap<uint64_t, RetainPtr<AVSampleBufferAudioRenderer>, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> m_audioRenderers;
-    ALLOW_NEW_API_WITHOUT_GUARDS_END
+ALLOW_NEW_API_WITHOUT_GUARDS_END
     RetainPtr<WebAVSampleBufferErrorListener> m_errorListener;
 #if PLATFORM(IOS_FAMILY)
     bool m_displayLayerWasInterrupted { false };

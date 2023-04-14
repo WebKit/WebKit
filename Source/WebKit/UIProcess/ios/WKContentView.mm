@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -155,9 +155,9 @@ typedef NS_ENUM(NSInteger, _WKPrintRenderingCallbackType) {
 
 @implementation WKContentView {
     std::unique_ptr<WebKit::PageClientImpl> _pageClient;
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     RetainPtr<WKBrowsingContextController> _browsingContextController;
-    ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
 
     RetainPtr<UIView> _rootContentView;
     RetainPtr<UIView> _fixedClippingView;

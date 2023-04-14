@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -157,11 +157,11 @@ static const float GroupOptionTextColorAlpha = 0.5;
     [self _setUsesCheckedSelection:YES];
 
     [self _setMagnifierEnabled:NO];
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     UITextWritingDirection writingDirection = UITextWritingDirectionLeftToRight;
     // FIXME: retrieve from WebProcess writing direction.
     _textAlignment = (writingDirection == UITextWritingDirectionLeftToRight) ? NSTextAlignmentLeft : NSTextAlignmentRight;
-    ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
 
     [self setAllowsMultipleSelection:_allowsMultipleSelection];
     [self setSize:[UIKeyboard defaultSizeForInterfaceOrientation:view.interfaceOrientation]];
@@ -1167,11 +1167,11 @@ static NSString *optionCellReuseIdentifier = @"WKSelectPickerTableViewCell";
 
         UIPresentationController *presentationController = [_navigationController presentationController];
         presentationController.delegate = self;
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         if ([presentationController isKindOfClass:[_UISheetPresentationController class]]) {
             _UISheetPresentationController *sheetPresentationController = (_UISheetPresentationController *)presentationController;
             sheetPresentationController._detents = @[_UISheetDetent._mediumDetent, _UISheetDetent._largeDetent];
-        ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
             sheetPresentationController._widthFollowsPreferredContentSizeWhenBottomAttached = YES;
             sheetPresentationController._wantsBottomAttachedInCompactHeight = YES;
         }

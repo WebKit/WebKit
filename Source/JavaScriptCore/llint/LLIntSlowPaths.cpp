@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -206,12 +206,12 @@ void slowPathLn(const Types&... values)
 template<typename... Types>
 void slowPathLogF(const char* format, const Types&... values)
 {
-    ALLOW_NONLITERAL_FORMAT_BEGIN
+ALLOW_NONLITERAL_FORMAT_BEGIN
     IGNORE_WARNINGS_BEGIN("format-security")
     if (Options::traceLLIntSlowPath())
         dataLogF(format, values...);
     IGNORE_WARNINGS_END
-    ALLOW_NONLITERAL_FORMAT_END
+ALLOW_NONLITERAL_FORMAT_END
 }
 
 #else // not LLINT_TRACING

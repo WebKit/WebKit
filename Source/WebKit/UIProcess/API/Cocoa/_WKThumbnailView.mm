@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -47,9 +47,9 @@
 // FIXME: We should switch to the low-resolution scale if a view we have high-resolution tiles for repaints.
 
 @implementation _WKThumbnailView {
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     RetainPtr<WKView> _wkView;
-    ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
     RetainPtr<WKWebView> _wkWebView;
     NakedPtr<WebKit::WebPageProxy> _webPageProxy;
 

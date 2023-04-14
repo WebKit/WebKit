@@ -692,14 +692,14 @@ static const NSUInteger orderedListSegment = 2;
     [insertListControl setWidth:listControlSegmentWidth forSegment:orderedListSegment];
     insertListControl.font = [NSFont systemFontOfSize:15];
 
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     id segmentElement = NSAccessibilityUnignoredDescendant(insertListControl);
     NSArray *segments = [segmentElement accessibilityAttributeValue:NSAccessibilityChildrenAttribute];
     ASSERT(segments.count == 3);
     [segments[noListSegment] accessibilitySetOverrideValue:WebCore::insertListTypeNone() forAttribute:NSAccessibilityDescriptionAttribute];
     [segments[unorderedListSegment] accessibilitySetOverrideValue:WebCore::insertListTypeBulletedAccessibilityTitle() forAttribute:NSAccessibilityDescriptionAttribute];
     [segments[orderedListSegment] accessibilitySetOverrideValue:WebCore::insertListTypeNumberedAccessibilityTitle() forAttribute:NSAccessibilityDescriptionAttribute];
-    ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
 
     self.view = insertListControl;
 
@@ -1648,10 +1648,10 @@ void WebViewImpl::updateWindowAndViewFrames()
         if (weakThis->m_needsViewFrameInWindowCoordinates)
             viewFrameInWindowCoordinates = [weakThis->m_view convertRect:[weakThis->m_view frame] toView:nil];
 
-            ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         if (WebCore::AXObjectCache::accessibilityEnabled())
             accessibilityPosition = [[weakThis->m_view accessibilityAttributeValue:NSAccessibilityPositionAttribute] pointValue];
-            ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
 
         weakThis->m_page->windowAndViewFramesChanged(viewFrameInWindowCoordinates, accessibilityPosition);
     });
@@ -3861,9 +3861,9 @@ void WebViewImpl::draggedImage(NSImage *, CGPoint endPoint, NSDragOperation oper
 
 void WebViewImpl::sendDragEndToPage(CGPoint endPoint, NSDragOperation dragOperationMask)
 {
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     NSPoint windowImageLoc = [[m_view window] convertScreenToBase:NSPointFromCGPoint(endPoint)];
-    ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
     NSPoint windowMouseLoc = windowImageLoc;
 
     // Prevent queued mouseDragged events from coming after the drag and fake mouseUp event.
@@ -4172,9 +4172,9 @@ void WebViewImpl::startDrag(const WebCore::DragItem& item, const ShareableBitmap
     m_page->didStartDrag();
 
     [pasteboard setString:@"" forType:PasteboardTypes::WebDummyPboardType];
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [m_view dragImage:dragNSImage.get() at:NSPointFromCGPoint(clientDragLocation) offset:NSZeroSize event:m_lastMouseDownEvent.get() pasteboard:pasteboard source:m_view.getAutoreleased() slideBack:YES];
-    ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 static bool matchesExtensionOrEquivalent(const String& filename, const String& extension)
@@ -4411,9 +4411,9 @@ static RetainPtr<CGImageRef> takeWindowSnapshot(CGSWindowID windowID, bool captu
     CGWindowImageOption imageOptions = kCGWindowImageBoundsIgnoreFraming | kCGWindowImageShouldBeOpaque;
     if (captureAtNominalResolution)
         imageOptions |= kCGWindowImageNominalResolution;
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     return adoptCF(CGWindowListCreateImage(CGRectNull, kCGWindowListOptionIncludingWindow, windowID, imageOptions));
-    ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 RefPtr<ViewSnapshot> WebViewImpl::takeViewSnapshot()
@@ -4971,10 +4971,10 @@ void WebViewImpl::characterIndexForPoint(NSPoint point, void(^completionHandler)
 
     NSWindow *window = [m_view window];
 
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if (window)
         point = [window convertScreenToBase:point];
-    ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
     point = [m_view convertPoint:point fromView:nil];  // the point is relative to the main frame
 
     m_page->characterIndexForPointAsync(WebCore::IntPoint(point), [completionHandler = makeBlockPtr(completionHandler)](uint64_t result) {

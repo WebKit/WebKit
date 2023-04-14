@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1070,10 +1070,10 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
 
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
     
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [center addObserver:self selector:@selector(_willHideMenu:) name:UIMenuControllerWillHideMenuNotification object:nil];
     [center addObserver:self selector:@selector(_didHideMenu:) name:UIMenuControllerDidHideMenuNotification object:nil];
-    ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
     
     [center addObserver:self selector:@selector(_keyboardDidRequestDismissal:) name:UIKeyboardPrivateDidRequestDismissalNotification object:nil];
 
@@ -2675,9 +2675,9 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
         return;
 
     auto element = adoptNS([[_WKActivatedElementInfo alloc] _initWithType:_WKActivatedElementTypeAttachment URL:(NSURL *)_positionInformation.url imageURL:(NSURL *)_positionInformation.imageURL location:_positionInformation.request.point title:_positionInformation.title ID:_positionInformation.idAttribute rect:_positionInformation.bounds image:nil imageMIMEType:_positionInformation.imageMIMEType]);
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [uiDelegate _webView:self.webView showCustomSheetForElement:element.get()];
-    ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 - (void)_showLinkSheet
@@ -3018,10 +3018,10 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
         return NO;
 #endif
 
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if (!self.webView.configuration._textInteractionGesturesEnabled)
         return NO;
-    ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
 
     if (!_page->preferences().textInteractionEnabled())
         return NO;
@@ -3051,10 +3051,10 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
         return NO;
 #endif
 
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if (!self.webView.configuration._textInteractionGesturesEnabled)
         return NO;
-    ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
 
     if (!_page->preferences().textInteractionEnabled())
         return NO;
@@ -3075,10 +3075,10 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
         return NO;
 #endif
 
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if (!self.webView.configuration._textInteractionGesturesEnabled)
         return NO;
-    ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
 
     if (!_page->preferences().textInteractionEnabled())
         return NO;
@@ -3584,9 +3584,9 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
     static NeverDestroyed supportedTypes = [] {
         auto types = adoptNS([[NSMutableArray alloc] init]);
         [types addObject:@(WebCore::PasteboardCustomData::cocoaType().characters())];
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         [types addObject:(id)kUTTypeURL];
-        ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
         [types addObjectsFromArray:UIPasteboardTypeListString];
         return types;
     }();
@@ -3894,10 +3894,10 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
 
 - (UIColor *)_cascadeInteractionTintColor
 {
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if (!self.webView.configuration._textInteractionGesturesEnabled)
         return [UIColor clearColor];
-    ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
 
     if (!_page->preferences().textInteractionEnabled())
         return [UIColor clearColor];
@@ -4100,9 +4100,9 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
 
     if (action == @selector(selectAll:)) {
         BOOL isPreparingEditMenu = _isPreparingEditMenu;
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         isPreparingEditMenu |= [sender isKindOfClass:UIMenuController.class];
-        ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
         if (isPreparingEditMenu) {
             // By platform convention we don't show Select All in the callout menu for a range selection.
             return !editorState.selectionIsRange && self.hasContent;
@@ -4139,9 +4139,9 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
             return NO;
 
         BOOL isPreparingEditMenu = _isPreparingEditMenu;
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         isPreparingEditMenu |= [sender isKindOfClass:UIMenuController.class];
-        ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
         if (isPreparingEditMenu && editorState.selectionIsRange)
             return NO;
     }
@@ -4202,10 +4202,10 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
 
 - (void)pasteForWebView:(id)sender
 {
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if (sender == UIMenuController.sharedMenuController && [self _handleDOMPasteRequestWithResult:WebCore::DOMPasteAccessResponse::GrantedForGesture])
         return;
-    ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
 
     _autocorrectionContextNeedsUpdate = YES;
     _page->executeEditCommand("paste"_s);
@@ -4370,9 +4370,9 @@ static UIPasteboard *pasteboardForAccessCategory(WebCore::DOMPasteAccessCategory
     }
 
     if (auto pasteHandler = WTFMove(_domPasteRequestHandler)) {
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         [UIMenuController.sharedMenuController hideMenuFromView:self];
-        ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
         pasteHandler(response);
         return YES;
     }
@@ -7315,9 +7315,9 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
         menuControllerRect = { WebCore::IntPoint(_lastInteractionLocation), { } };
         menuControllerRect.inflate(interactionLocationMargin);
     }
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [UIMenuController.sharedMenuController showMenuFromView:self rect:menuControllerRect];
-    ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 - (void)doAfterEditorStateUpdateAfterFocusingElement:(dispatch_block_t)block
@@ -8315,7 +8315,7 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
     id <WKUIDelegatePrivate> uiDelegate = static_cast<id <WKUIDelegatePrivate>>([_webView UIDelegate]);
     
     if ([uiDelegate respondsToSelector:@selector(_webView:showCustomSheetForElement:)]) {
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         if ([uiDelegate _webView:self.webView showCustomSheetForElement:element]) {
 #if ENABLE(DRAG_SUPPORT)
             BOOL shouldCancelAllTouches = !_dragDropInteractionState.dragSession();
@@ -8329,7 +8329,7 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
 
             return YES;
         }
-        ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
     }
 
     return NO;
@@ -11853,7 +11853,7 @@ static BOOL shouldUseMachineReadableCodeMenuFromImageAnalysisResult(CocoaImageAn
 
 static NSString *previewIdentifierForElementAction(_WKElementAction *action)
 {
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     switch (action.type) {
     case _WKElementActionTypeOpen:
         return WKPreviewActionItemIdentifierOpen;
@@ -11868,7 +11868,7 @@ static NSString *previewIdentifierForElementAction(_WKElementAction *action)
     default:
         return nil;
     }
-    ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
     ASSERT_NOT_REACHED();
     return nil;
 }
@@ -11998,7 +11998,7 @@ static NSArray<UIMenuElement *> *menuElementsFromLegacyPreview(UIViewController 
     if (!previewViewController)
         return nil;
 
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     NSArray<id<UIPreviewActionItem>> *previewActions = previewViewController.previewActionItems;
     if (!previewActions || ![previewActions count])
         return nil;
@@ -12007,7 +12007,7 @@ static NSArray<UIMenuElement *> *menuElementsFromLegacyPreview(UIViewController 
 
     for (UIPreviewAction *previewAction in previewActions)
         [actions addObject:uiActionForLegacyPreviewAction(previewAction, previewViewController)];
-    ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
 
     return actions;
 }
@@ -12063,7 +12063,7 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
 
         // FIXME: Animated images go here.
 
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         if ([uiDelegate respondsToSelector:@selector(webView:previewingViewControllerForElement:defaultActions:)]) {
             auto defaultActions = wkLegacyPreviewActionsFromElementActions(defaultActionsFromAssistant.get(), elementInfo.get());
             auto previewElementInfo = adoptNS([[WKPreviewElementInfo alloc] _initWithLinkURL:url]);
@@ -12073,7 +12073,7 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
             previewViewController = [uiDelegate _webView:self.webView previewViewControllerForURL:url defaultActions:defaultActionsFromAssistant.get() elementInfo:elementInfo.get()];
         else if ([uiDelegate respondsToSelector:@selector(_webView:previewViewControllerForURL:)])
             previewViewController = [uiDelegate _webView:self.webView previewViewControllerForURL:url];
-        ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
 
         // Previously, UIPreviewItemController would detect the case where there was no previewViewController
         // and create one. We need to replicate this code for the new API.
@@ -12106,7 +12106,7 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
             imageInfo = userInfo;
         }
 
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         if ([uiDelegate respondsToSelector:@selector(_webView:willPreviewImageWithURL:)])
             [uiDelegate _webView:self.webView willPreviewImageWithURL:_positionInformation.imageURL];
 
@@ -12116,7 +12116,7 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
             previewViewController = [uiDelegate _webView:self.webView previewViewControllerForImage:uiImage.get() alternateURL:nsURL defaultActions:defaultActionsFromAssistant.get() elementInfo:elementInfo.get()];
         else
             previewViewController = adoptNS([[WKImagePreviewViewController alloc] initWithCGImage:cgImage defaultActions:defaultActionsFromAssistant.get() elementInfo:elementInfo.get()]);
-        ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
 
         _contextMenuLegacyMenu = menuFromLegacyPreviewOrDefaultActions(previewViewController.get(), defaultActionsFromAssistant, elementInfo, _positionInformation.title);
     }
@@ -12212,13 +12212,13 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
 
     if (needsDeprecatedPreviewAPI(uiDelegate)) {
         if (_positionInformation.isLink) {
-            ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
             if ([uiDelegate respondsToSelector:@selector(webView:shouldPreviewElement:)]) {
                 auto previewElementInfo = adoptNS([[WKPreviewElementInfo alloc] _initWithLinkURL:linkURL]);
                 if (![uiDelegate webView:self.webView shouldPreviewElement:previewElementInfo.get()])
                     return continueWithContextMenuConfiguration(nil);
             }
-            ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
 
             // FIXME: Support JavaScript urls here. But make sure they don't show a preview.
             // <rdar://problem/50572283>
@@ -12460,9 +12460,9 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
     if ([uiDelegate respondsToSelector:@selector(webView:contextMenuWillPresentForElement:)])
         [uiDelegate webView:self.webView contextMenuWillPresentForElement:_contextMenuElementInfo.get()];
     else if ([uiDelegate respondsToSelector:@selector(_webView:contextMenuWillPresentForElement:)]) {
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         [uiDelegate _webView:self.webView contextMenuWillPresentForElement:_contextMenuElementInfo.get()];
-        ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
     }
 }
 
@@ -12510,26 +12510,26 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
                 const auto& imageURL = _positionInformation.imageURL;
                 if (imageURL.isEmpty() || !(imageURL.protocolIsInHTTPFamily() || imageURL.protocolIs("data"_s)))
                     return;
-                ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
                 [uiDelegate _webView:self.webView commitPreviewedImageWithURL:(NSURL *)imageURL];
-                ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
             }
             return;
         }
 
         if ([uiDelegate respondsToSelector:@selector(webView:commitPreviewingViewController:)]) {
-            ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
             if (auto viewController = _contextMenuLegacyPreviewController.get())
                 [uiDelegate webView:self.webView commitPreviewingViewController:viewController];
-            ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
             return;
         }
 
         if ([uiDelegate respondsToSelector:@selector(_webView:commitPreviewedViewController:)]) {
-            ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
             if (auto viewController = _contextMenuLegacyPreviewController.get())
                 [uiDelegate _webView:self.webView commitPreviewedViewController:viewController];
-            ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
             return;
         }
 
@@ -12539,9 +12539,9 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
     if ([uiDelegate respondsToSelector:@selector(webView:contextMenuForElement:willCommitWithAnimator:)])
         [uiDelegate webView:self.webView contextMenuForElement:_contextMenuElementInfo.get() willCommitWithAnimator:animator];
     else if ([uiDelegate respondsToSelector:@selector(_webView:contextMenuForElement:willCommitWithAnimator:)]) {
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         [uiDelegate _webView:self.webView contextMenuForElement:_contextMenuElementInfo.get() willCommitWithAnimator:animator];
-        ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
     }
 
 #if defined(DD_CONTEXT_MENU_SPI_VERSION) && DD_CONTEXT_MENU_SPI_VERSION >= 2
@@ -12598,9 +12598,9 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
         if ([uiDelegate respondsToSelector:@selector(webView:contextMenuDidEndForElement:)])
             [uiDelegate webView:self.webView contextMenuDidEndForElement:_contextMenuElementInfo.get()];
         else if ([uiDelegate respondsToSelector:@selector(_webView:contextMenuDidEndForElement:)]) {
-            ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
             [uiDelegate _webView:self.webView contextMenuDidEndForElement:_contextMenuElementInfo.get()];
-            ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
         }
     }
 
@@ -12641,12 +12641,12 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
     const URL& linkURL = _positionInformation.url;
     if (_positionInformation.isLink) {
         id <WKUIDelegatePrivate> uiDelegate = static_cast<id <WKUIDelegatePrivate>>([_webView UIDelegate]);
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         if ([uiDelegate respondsToSelector:@selector(webView:shouldPreviewElement:)]) {
             auto previewElementInfo = adoptNS([[WKPreviewElementInfo alloc] _initWithLinkURL:(NSURL *)linkURL]);
             return [uiDelegate webView:self.webView shouldPreviewElement:previewElementInfo.get()];
         }
-        ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
         if (linkURL.isEmpty())
             return NO;
         if (linkURL.protocolIsInHTTPFamily())
@@ -12773,9 +12773,9 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
 
             if ([uiDelegate respondsToSelector:@selector(_webView:previewViewControllerForAnimatedImageAtURL:defaultActions:elementInfo:imageSize:)]) {
                 RetainPtr<NSArray> actions = [_actionSheetAssistant defaultActionsForImageSheet:animatedImageElementInfo.get()];
-                ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
                 return [uiDelegate _webView:self.webView previewViewControllerForAnimatedImageAtURL:targetURL defaultActions:actions.get() elementInfo:animatedImageElementInfo.get() imageSize:_positionInformation.image->size()];
-                ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
             }
         }
 
@@ -12785,27 +12785,27 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
         if ([uiDelegate respondsToSelector:@selector(webView:previewingViewControllerForElement:defaultActions:)]) {
             auto previewActions = adoptNS([[NSMutableArray alloc] init]);
             for (_WKElementAction *elementAction in actions.get()) {
-                ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
                 WKPreviewAction *previewAction = [WKPreviewAction actionWithIdentifier:previewIdentifierForElementAction(elementAction) title:[elementAction title] style:UIPreviewActionStyleDefault handler:^(UIPreviewAction *, UIViewController *) {
                     [elementAction runActionWithElementInfo:elementInfo.get()];
                 }];
-                ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
                 [previewActions addObject:previewAction];
             }
-            ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
             auto previewElementInfo = adoptNS([[WKPreviewElementInfo alloc] _initWithLinkURL:targetURL]);
             if (UIViewController *controller = [uiDelegate webView:self.webView previewingViewControllerForElement:previewElementInfo.get() defaultActions:previewActions.get()])
                 return controller;
-            ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
         }
 
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         if ([uiDelegate respondsToSelector:@selector(_webView:previewViewControllerForURL:defaultActions:elementInfo:)])
             return [uiDelegate _webView:self.webView previewViewControllerForURL:targetURL defaultActions:actions.get() elementInfo:elementInfo.get()];
 
         if ([uiDelegate respondsToSelector:@selector(_webView:previewViewControllerForURL:)])
             return [uiDelegate _webView:self.webView previewViewControllerForURL:targetURL];
-        ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
 
         return nil;
     }
@@ -12827,16 +12827,16 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
         auto elementInfo = adoptNS([[_WKActivatedElementInfo alloc] _initWithType:_WKActivatedElementTypeImage URL:alternateURL.get() imageURL:nil location:_positionInformation.request.point title:_positionInformation.title ID:_positionInformation.idAttribute rect:_positionInformation.bounds image:_positionInformation.image.get() imageMIMEType:_positionInformation.imageMIMEType userInfo:imageInfo.get()]);
         _page->startInteractionWithPositionInformation(_positionInformation);
 
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         if ([uiDelegate respondsToSelector:@selector(_webView:willPreviewImageWithURL:)])
             [uiDelegate _webView:self.webView willPreviewImageWithURL:targetURL];
-        ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
 
         auto defaultActions = [_actionSheetAssistant defaultActionsForImageSheet:elementInfo.get()];
         if (imageInfo && [uiDelegate respondsToSelector:@selector(_webView:previewViewControllerForImage:alternateURL:defaultActions:elementInfo:)]) {
-            ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
             UIViewController *previewViewController = [uiDelegate _webView:self.webView previewViewControllerForImage:uiImage.get() alternateURL:alternateURL.get() defaultActions:defaultActions.get() elementInfo:elementInfo.get()];
-            ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
             if (previewViewController)
                 return previewViewController;
         }
@@ -12855,25 +12855,25 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
             const URL& imageURL = _positionInformation.imageURL;
             if (imageURL.isEmpty() || !(imageURL.protocolIsInHTTPFamily() || imageURL.protocolIs("data"_s)))
                 return;
-            ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
             [uiDelegate _webView:self.webView commitPreviewedImageWithURL:(NSURL *)imageURL];
-            ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
             return;
         }
         return;
     }
 
     if ([uiDelegate respondsToSelector:@selector(webView:commitPreviewingViewController:)]) {
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         [uiDelegate webView:self.webView commitPreviewingViewController:viewController];
-        ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
         return;
     }
 
     if ([uiDelegate respondsToSelector:@selector(_webView:commitPreviewedViewController:)]) {
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         [uiDelegate _webView:self.webView commitPreviewedViewController:viewController];
-        ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
         return;
     }
 
@@ -12897,12 +12897,12 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
 - (void)_previewItemController:(UIPreviewItemController *)controller didDismissPreview:(UIViewController *)viewController committing:(BOOL)committing
 {
     id<WKUIDelegatePrivate> uiDelegate = static_cast<id <WKUIDelegatePrivate>>([_webView UIDelegate]);
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if ([uiDelegate respondsToSelector:@selector(_webView:didDismissPreviewViewController:committing:)])
         [uiDelegate _webView:self.webView didDismissPreviewViewController:viewController committing:committing];
     else if ([uiDelegate respondsToSelector:@selector(_webView:didDismissPreviewViewController:)])
         [uiDelegate _webView:self.webView didDismissPreviewViewController:viewController];
-    ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
 
     [_webView _didDismissContextMenu];
 }

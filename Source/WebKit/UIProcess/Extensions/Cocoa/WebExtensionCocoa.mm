@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -422,13 +422,12 @@ NSError *WebExtension::createError(Error error, NSString *customLocalizedDescrip
         break;
 
     case Error::InvalidManifest:
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wformat-nonliteral"
+ALLOW_NONLITERAL_FORMAT_BEGIN
         if (NSString *debugDescription = underlyingError.userInfo[NSDebugDescriptionErrorKey])
             localizedDescription = [NSString stringWithFormat:WEB_UI_STRING("Unable to parse manifest: %@", "WKWebExtensionErrorInvalidManifest description, because of a JSON error"), debugDescription];
         else
             localizedDescription = WEB_UI_STRING("Unable to parse manifest because of an unexpected format.", "WKWebExtensionErrorInvalidManifest description");
-#pragma clang diagnostic pop
+ALLOW_NONLITERAL_FORMAT_END
         break;
 
     case Error::UnsupportedManifestVersion:
@@ -458,13 +457,12 @@ NSError *WebExtension::createError(Error error, NSString *customLocalizedDescrip
         break;
 
     case Error::InvalidDeclarativeNetRequest:
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wformat-nonliteral"
+ALLOW_NONLITERAL_FORMAT_BEGIN
         if (NSString *debugDescription = underlyingError.userInfo[NSDebugDescriptionErrorKey])
             localizedDescription = [NSString stringWithFormat:WEB_UI_STRING("Unable to parse `declarativeNetRequest` rules: %@", "WKWebExtensionErrorInvalidDeclarativeNetRequest description, because of a JSON error"), debugDescription];
         else
             localizedDescription = WEB_UI_STRING("Unable to parse `declarativeNetRequest` rules because of an unexpected error.", "WKWebExtensionErrorInvalidDeclarativeNetRequest description");
-#pragma clang diagnostic pop
+ALLOW_NONLITERAL_FORMAT_END
         break;
 
     case Error::InvalidDescription:
@@ -576,10 +574,9 @@ NSArray *WebExtension::errors()
 
 NSString *WebExtension::webProcessDisplayName()
 {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wformat-nonliteral"
+ALLOW_NONLITERAL_FORMAT_BEGIN
     return [NSString stringWithFormat:WEB_UI_STRING("%@ Web Extension", "Extension's process name that appears in Activity Monitor where the parameter is the name of the extension"), displayShortName()];
-#pragma clang diagnostic pop
+ALLOW_NONLITERAL_FORMAT_END
 }
 
 NSString *WebExtension::displayName()

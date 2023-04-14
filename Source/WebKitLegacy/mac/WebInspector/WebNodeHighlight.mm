@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007-2023 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -266,9 +266,9 @@ using namespace WebCore;
     ASSERT([_targetView window]);
 
     NSRect highlightWindowFrame = [_targetView convertRect:[_targetView visibleRect] toView:nil];
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     highlightWindowFrame.origin = [[_targetView window] convertBaseToScreen:highlightWindowFrame.origin];
-    ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
 
     return highlightWindowFrame;
 }

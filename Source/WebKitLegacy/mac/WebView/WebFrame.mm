@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -447,9 +447,9 @@ static NSURL *createUniqueWebDataURL();
         if (auto* view = frame->view()) {
             view->setTransparent(!drawsBackground);
 #if !PLATFORM(IOS_FAMILY)
-            ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
             auto color = WebCore::colorFromCocoaColor([backgroundColor colorUsingColorSpaceName:NSDeviceRGBColorSpace]);
-            ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
 #else
             WebCore::Color color(WebCore::roundAndClampToSRGBALossy(backgroundColor));
 #endif
@@ -2162,9 +2162,9 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
     if (!WebCore::AXObjectCache::accessibilityEnabled()) {
         WebCore::AXObjectCache::enableAccessibility();
 #if !PLATFORM(IOS_FAMILY)
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         WebCore::AXObjectCache::setEnhancedUserInterfaceAccessibility([[NSApp accessibilityAttributeValue:NSAccessibilityEnhancedUserInterfaceAttribute] boolValue]);
-        ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
     }
     

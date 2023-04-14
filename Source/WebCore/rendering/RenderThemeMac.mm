@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2023 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -311,9 +311,9 @@ Color RenderThemeMac::platformActiveListBoxSelectionBackgroundColor(OptionSet<St
     return colorFromCocoaColor([NSColor selectedContentBackgroundColor]);
 #else
     UNUSED_PARAM(options);
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     return colorFromCocoaColor([NSColor alternateSelectedControlColor]);
-    ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
 }
 
@@ -479,9 +479,9 @@ Color RenderThemeMac::systemColor(CSSValueID cssValueID, OptionSet<StyleColorOpt
 #if HAVE(OS_DARK_MODE_SUPPORT)
             return systemAppearanceColor(cache.systemControlAccentColor, @selector(controlAccentColor));
 #else
-            ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
             return systemAppearanceColor(cache.systemControlAccentColor, @selector(alternateSelectedControlColor));
-            ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
 
         case CSSValueAppleSystemSelectedContentBackground:
@@ -1468,18 +1468,18 @@ static void paintAttachmentIcon(const RenderAttachment& attachment, GraphicsCont
 static std::pair<RefPtr<Image>, float> createAttachmentPlaceholderImage(float deviceScaleFactor, const AttachmentLayout& layout)
 {
 #if HAVE(ALTERNATE_ICONS)
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     auto image = [NSImage _imageWithSystemSymbolName:@"arrow.down.circle"];
-    ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
     auto imageSize = FloatSize([image size]);
     auto imageSizeScales = deviceScaleFactor * layout.iconRect.size() / imageSize;
     imageSize.scale(std::min(imageSizeScales.width(), imageSizeScales.height()));
     auto imageRect = NSMakeRect(0, 0, imageSize.width(), imageSize.height());
     auto cgImage = [image CGImageForProposedRect:&imageRect context:nil hints:@{
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         NSImageHintSymbolFont : [NSFont systemFontOfSize:32],
         NSImageHintSymbolScale : @(NSImageSymbolScaleMedium)
-        ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
     }];
     return { BitmapImage::create(cgImage), deviceScaleFactor };
 #else
@@ -1517,9 +1517,9 @@ static void paintAttachmentTitleBackground(const RenderAttachment& attachment, G
 
     Color backgroundColor;
     if (attachment.frame().selection().isFocusedAndActive()) {
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         backgroundColor = colorFromCocoaColor([NSColor alternateSelectedControlColor]);
-        ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
     } else
         backgroundColor = attachmentTitleInactiveBackgroundColor;
 
