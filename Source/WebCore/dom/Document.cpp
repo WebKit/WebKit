@@ -3586,7 +3586,29 @@ const URL& Document::urlForBindings() const
         if (preNavigationURL.isEmpty() || RegistrableDomain { URL { preNavigationURL } }.matches(securityOrigin().data()))
             return false;
 
-        return mayBeExecutingThirdPartyScript();
+        if (!m_hasLoadedThirdPartyScript)
+            return false;
+
+        if (auto sourceURL = currentSourceURL(); !sourceURL.isEmpty()) {
+            RegistrableDomain sourceURLDomain { sourceURL };
+            if (sourceURLDomain.matches(securityOrigin().data()))
+                return false;
+
+            auto domainString = topPrivatelyControlledDomain(securityOrigin().data().host());
+            auto sourceURLDomainString = topPrivatelyControlledDomain(sourceURLDomain.string());
+            auto substringToSeparator = [&](const String& domain) -> StringView {
+                auto indexOfFirstSeparator = domain.find('.');
+                if (indexOfFirstSeparator == notFound)
+                    return { };
+                return domain.left(indexOfFirstSeparator);
+            };
+
+            auto firstSubstring = substringToSeparator(domainString);
+            if (!firstSubstring.isEmpty() && firstSubstring == substringToSeparator(sourceURLDomainString))
+                return false;
+        }
+
+        return true;
     }();
 
     if (shouldAdjustURL)
@@ -6128,15 +6150,6 @@ void Document::popCurrentScript()
 {
     ASSERT(!m_currentScriptStack.isEmpty());
     m_currentScriptStack.removeLast();
-}
-
-bool Document::mayBeExecutingThirdPartyScript() const
-{
-    if (!m_hasLoadedThirdPartyScript)
-        return false;
-
-    auto sourceURL = currentSourceURL();
-    return sourceURL.isEmpty() || !RegistrableDomain { sourceURL }.matches(securityOrigin().data());
 }
 
 bool Document::shouldDeferAsynchronousScriptsUntilParsingFinishes() const

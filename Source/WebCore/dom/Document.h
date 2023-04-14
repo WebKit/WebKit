@@ -1125,8 +1125,6 @@ public:
     void pushCurrentScript(Element*);
     void popCurrentScript();
 
-    bool mayBeExecutingThirdPartyScript() const;
-
     bool shouldDeferAsynchronousScriptsUntilParsingFinishes() const;
 
     bool supportsPaintTiming() const;
