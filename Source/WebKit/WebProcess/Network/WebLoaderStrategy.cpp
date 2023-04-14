@@ -651,12 +651,8 @@ static bool shouldClearReferrerOnHTTPSToHTTPRedirect(LocalFrame* frame)
 
 WebLoaderStrategy::SyncLoadResult WebLoaderStrategy::loadDataURLSynchronously(const ResourceRequest& request)
 {
-    auto mode = DataURLDecoder::Mode::Legacy;
-    if (request.requester() == ResourceRequestRequester::Fetch)
-        mode = DataURLDecoder::Mode::ForgivingBase64;
-
     SyncLoadResult result;
-    auto decodeResult = DataURLDecoder::decode(request.url(), mode);
+    auto decodeResult = DataURLDecoder::decode(request.url());
     if (!decodeResult) {
         WEBLOADERSTRATEGY_RELEASE_LOG_BASIC("loadDataURLSynchronously: decoding of data failed");
         result.error = internalError(request.url());

@@ -340,7 +340,7 @@ void NetworkDataTaskSoup::resume()
     if (m_currentRequest.url().protocolIsData() && !m_cancellable) {
         m_networkLoadMetrics.fetchStart = MonotonicTime::now();
         m_cancellable = adoptGRef(g_cancellable_new());
-        DataURLDecoder::decode(m_currentRequest.url(), { }, DataURLDecoder::Mode::Legacy, [this, protectedThis = WTFMove(protectedThis)](auto decodeResult) mutable {
+        DataURLDecoder::decode(m_currentRequest.url(), { }, [this, protectedThis = WTFMove(protectedThis)](auto decodeResult) mutable {
             if (m_state == State::Canceling || m_state == State::Completed || !m_client) {
                 clearRequest();
                 return;

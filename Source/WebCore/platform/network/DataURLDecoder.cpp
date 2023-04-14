@@ -147,23 +147,6 @@ static std::unique_ptr<DecodeTask> createDecodeTask(const URL& url, const Schedu
     );
 }
 
-static std::optional<Vector<uint8_t>> decodeBase64(const DecodeTask& task, Mode mode)
-{
-    switch (mode) {
-    case Mode::ForgivingBase64:
-        return base64Decode(PAL::decodeURLEscapeSequences(task.encodedData), { Base64DecodeOptions::ValidatePadding, Base64DecodeOptions::IgnoreSpacesAndNewLines, Base64DecodeOptions::DiscardVerticalTab });
-
-    case Mode::Legacy:
-        // First try base64url.
-        if (auto decodedData = base64URLDecode(task.encodedData))
-            return decodedData;
-        // Didn't work, try unescaping and decoding as base64.
-        return base64Decode(PAL::decodeURLEscapeSequences(task.encodedData), { Base64DecodeOptions::IgnoreSpacesAndNewLines, Base64DecodeOptions::DiscardVerticalTab });
-    }
-
-    RELEASE_ASSERT_NOT_REACHED();
-}
-
 static Vector<uint8_t> decodeEscaped(const DecodeTask& task)
 {
     PAL::TextEncoding encodingFromCharset(task.result.charset);
@@ -171,13 +154,13 @@ static Vector<uint8_t> decodeEscaped(const DecodeTask& task)
     return PAL::decodeURLEscapeSequencesAsData(task.encodedData, encoding);
 }
 
-static std::optional<Result> decodeSynchronously(DecodeTask& task, Mode mode)
+static std::optional<Result> decodeSynchronously(DecodeTask& task)
 {
     if (!task.process())
         return std::nullopt;
 
     if (task.isBase64) {
-        auto decodedData = decodeBase64(task, mode);
+        auto decodedData = base64Decode(PAL::decodeURLEscapeSequences(task.encodedData), { Base64DecodeOptions::ValidatePadding, Base64DecodeOptions::IgnoreSpacesAndNewLines, Base64DecodeOptions::DiscardVerticalTab });
         if (!decodedData)
             return std::nullopt;
         task.result.data = WTFMove(*decodedData);
@@ -188,12 +171,12 @@ static std::optional<Result> decodeSynchronously(DecodeTask& task, Mode mode)
     return WTFMove(task.result);
 }
 
-void decode(const URL& url, const ScheduleContext& scheduleContext, Mode mode, DecodeCompletionHandler&& completionHandler)
+void decode(const URL& url, const ScheduleContext& scheduleContext, DecodeCompletionHandler&& completionHandler)
 {
     ASSERT(url.protocolIsData());
 
-    decodeQueue().dispatch([decodeTask = createDecodeTask(url, scheduleContext, WTFMove(completionHandler)), mode]() mutable {
-        auto result = decodeSynchronously(*decodeTask, mode);
+    decodeQueue().dispatch([decodeTask = createDecodeTask(url, scheduleContext, WTFMove(completionHandler))]() mutable {
+        auto result = decodeSynchronously(*decodeTask);
 
 #if USE(COCOA_EVENT_LOOP)
         auto scheduledPairs = decodeTask->scheduleContext.scheduledPairs;
@@ -211,12 +194,12 @@ void decode(const URL& url, const ScheduleContext& scheduleContext, Mode mode, D
     });
 }
 
-std::optional<Result> decode(const URL& url, Mode mode)
+std::optional<Result> decode(const URL& url)
 {
     ASSERT(url.protocolIsData());
 
     auto task = createDecodeTask(url, { }, nullptr);
-    return decodeSynchronously(*task, mode);
+    return decodeSynchronously(*task);
 }
 
 } // namespace DataURLDecoder

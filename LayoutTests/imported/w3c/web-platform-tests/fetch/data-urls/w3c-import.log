@@ -16,4 +16,5 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/fetch/data-urls/README.md
 /LayoutTests/imported/w3c/web-platform-tests/fetch/data-urls/base64.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/data-urls/navigate.window.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/data-urls/processing.any.js

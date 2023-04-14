@@ -294,10 +294,7 @@ void ResourceLoader::loadDataURL()
     if (auto page = m_frame->page())
         scheduleContext.scheduledPairs = *page->scheduledRunLoopPairs();
 #endif
-    auto mode = DataURLDecoder::Mode::Legacy;
-    if (m_request.requester() == ResourceRequestRequester::Fetch)
-        mode = DataURLDecoder::Mode::ForgivingBase64;
-    DataURLDecoder::decode(url, scheduleContext, mode, [this, protectedThis = Ref { *this }, url](auto decodeResult) mutable {
+    DataURLDecoder::decode(url, scheduleContext, [this, protectedThis = Ref { *this }, url](auto decodeResult) mutable {
         if (this->reachedTerminalState())
             return;
         if (!decodeResult) {
