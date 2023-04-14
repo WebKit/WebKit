@@ -487,6 +487,7 @@ void NetworkStorageManager::performEviction(HashMap<WebCore::SecurityOriginData,
         auto [topOrigin, record] = sortedOriginRecords.takeLast();
         bool canDelete = !record.isActive;
         if (!canDelete) {
+            UNUSED_PARAM(deletedOriginCount);
             RELEASE_LOG(Storage, "%p - NetworkStorageManager::performEviction evicts %" PRIu64 " origins before getting an active origin", this, deletedOriginCount);
             return;
         }
@@ -1798,4 +1799,3 @@ bool NetworkStorageManager::shouldManageServiceWorkerRegistrationsByOrigin()
 #endif // ENABLE(SERVICE_WORKER)
 
 } // namespace WebKit
-
