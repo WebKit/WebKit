@@ -27,7 +27,7 @@
 
 #if USE(AUDIO_SESSION) && PLATFORM(MAC)
 
-#include "AudioSession.h"
+#include "AudioSessionCocoa.h"
 #include <pal/spi/cf/CoreAudioSPI.h>
 
 typedef UInt32 AudioObjectID;
@@ -35,7 +35,7 @@ typedef struct AudioObjectPropertyAddress AudioObjectPropertyAddress;
 
 namespace WebCore {
 
-class AudioSessionMac final : public AudioSession {
+class AudioSessionMac final : public AudioSessionCocoa {
 public:
     AudioSessionMac() = default;
     virtual ~AudioSessionMac() = default;
@@ -73,7 +73,6 @@ private:
     size_t bufferSize() const final;
     size_t numberOfOutputChannels() const final;
     size_t maximumNumberOfOutputChannels() const final;
-    bool tryToSetActiveInternal(bool) final;
     String routingContextUID() const final;
     size_t preferredBufferSize() const final;
     void setPreferredBufferSize(size_t) final;
