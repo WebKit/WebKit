@@ -31,13 +31,13 @@
 #include "ComputedStyleExtractor.h"
 #include "Document.h"
 #include "ElementChildIteratorInlines.h"
-#include "ElementName.h"
 #include "Event.h"
 #include "EventNames.h"
 #include "HTMLElement.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
 #include "JSEventListener.h"
+#include "NodeName.h"
 #include "RenderAncestorIterator.h"
 #include "RenderSVGResourceFilter.h"
 #include "RenderSVGResourceMasker.h"
@@ -533,7 +533,7 @@ static inline bool isSVGLayerAwareElement(const SVGElement& element)
 {
     using namespace ElementNames;
 
-    switch (element.tagQName().elementName()) {
+    switch (element.elementName()) {
     case SVG::a:
     case SVG::altGlyph:
     case SVG::circle:
@@ -577,7 +577,7 @@ bool SVGElement::childShouldCreateRenderer(const Node& child) const
         return false;
 #endif
 
-    switch (svgChild.tagQName().elementName()) {
+    switch (svgChild.elementName()) {
     case ElementNames::SVG::altGlyph:
     case ElementNames::SVG::textPath:
     case ElementNames::SVG::tref:

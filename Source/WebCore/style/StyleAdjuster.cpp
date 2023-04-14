@@ -33,7 +33,6 @@
 #include "CSSFontSelector.h"
 #include "DOMTokenList.h"
 #include "ElementInlines.h"
-#include "ElementName.h"
 #include "EventNames.h"
 #include "HTMLBodyElement.h"
 #include "HTMLDialogElement.h"
@@ -49,6 +48,7 @@
 #include "LocalFrameView.h"
 #include "MathMLElement.h"
 #include "ModalContainerObserver.h"
+#include "NodeName.h"
 #include "Page.h"
 #include "Quirks.h"
 #include "RenderBox.h"
@@ -619,7 +619,7 @@ static bool hasEffectiveDisplayNoneForDisplayContents(const Element& element)
         return false;
 
     // https://drafts.csswg.org/css-display-3/#unbox-html
-    switch (element.tagQName().elementName()) {
+    switch (element.elementName()) {
     case HTML::br:
     case HTML::wbr:
     case HTML::meter:

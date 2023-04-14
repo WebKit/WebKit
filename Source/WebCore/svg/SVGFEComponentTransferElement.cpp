@@ -23,8 +23,8 @@
 #include "SVGFEComponentTransferElement.h"
 
 #include "ElementChildIteratorInlines.h"
-#include "ElementName.h"
 #include "FEComponentTransfer.h"
+#include "NodeName.h"
 #include "SVGComponentTransferFunctionElement.h"
 #include "SVGComponentTransferFunctionElementInlines.h"
 #include "SVGElementTypeHelpers.h"

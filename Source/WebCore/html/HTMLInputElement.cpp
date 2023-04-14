@@ -30,7 +30,6 @@
 #include "HTMLInputElement.h"
 
 #include "AXObjectCache.h"
-#include "AttributeName.h"
 #include "BeforeTextInsertedEvent.h"
 #include "CSSGradientValue.h"
 #include "CSSPropertyNames.h"
@@ -62,6 +61,7 @@
 #include "LocalFrameView.h"
 #include "LocalizedStrings.h"
 #include "MouseEvent.h"
+#include "NodeName.h"
 #include "NodeRenderStyle.h"
 #include "Page.h"
 #include "PlatformMouseEvent.h"
@@ -665,7 +665,7 @@ bool HTMLInputElement::accessKeyAction(bool sendMouseEvents)
 
 bool HTMLInputElement::hasPresentationalHintsForAttribute(const QualifiedName& name) const
 {
-    switch (name.attributeName()) {
+    switch (name.nodeName()) {
     case AttributeName::vspaceAttr:
     case AttributeName::hspaceAttr:
     case AttributeName::widthAttr:
@@ -681,7 +681,7 @@ bool HTMLInputElement::hasPresentationalHintsForAttribute(const QualifiedName& n
 
 void HTMLInputElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
 {
-    switch (name.attributeName()) {
+    switch (name.nodeName()) {
     case AttributeName::vspaceAttr:
         if (isImageButton()) {
             addHTMLLengthToStyle(style, CSSPropertyMarginTop, value);
@@ -747,7 +747,7 @@ void HTMLInputElement::attributeChanged(const QualifiedName& name, const AtomStr
 
     HTMLTextFormControlElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 
-    switch (name.attributeName()) {
+    switch (name.nodeName()) {
     case AttributeName::typeAttr:
         updateType();
         break;

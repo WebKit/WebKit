@@ -34,7 +34,6 @@
 
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES)
 
-#include "AttributeName.h"
 #include "BaseClickableWithKeyInputType.h"
 #include "Chrome.h"
 #include "DateComponents.h"
@@ -48,6 +47,7 @@
 #include "HTMLOptionElement.h"
 #include "KeyboardEvent.h"
 #include "LocalFrameView.h"
+#include "NodeName.h"
 #include "Page.h"
 #include "PlatformLocale.h"
 #include "RenderElement.h"
@@ -386,7 +386,7 @@ bool BaseDateAndTimeInputType::hasCustomFocusLogic() const
 
 void BaseDateAndTimeInputType::attributeChanged(const QualifiedName& name)
 {
-    switch (name.attributeName()) {
+    switch (name.nodeName()) {
     case AttributeName::maxAttr:
     case AttributeName::minAttr:
         if (auto* element = this->element())

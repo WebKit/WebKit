@@ -27,7 +27,6 @@
 #include "HTMLTextAreaElement.h"
 
 #include "AXObjectCache.h"
-#include "AttributeName.h"
 #include "BeforeTextInsertedEvent.h"
 #include "CSSValueKeywords.h"
 #include "DOMFormData.h"
@@ -42,6 +41,7 @@
 #include "HTMLParserIdioms.h"
 #include "LocalFrame.h"
 #include "LocalizedStrings.h"
+#include "NodeName.h"
 #include "RenderTextControlMultiLine.h"
 #include "ShadowRoot.h"
 #include "Text.h"
@@ -148,7 +148,7 @@ void HTMLTextAreaElement::attributeChanged(const QualifiedName& name, const Atom
 {
     HTMLTextFormControlElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 
-    switch (name.attributeName()) {
+    switch (name.nodeName()) {
     case AttributeName::rowsAttr: {
         unsigned rows = limitToOnlyHTMLNonNegativeNumbersGreaterThanZero(newValue, defaultRows);
         if (m_rows != rows) {

@@ -28,7 +28,6 @@
 #include "HTMLOptionElement.h"
 
 #include "AXObjectCache.h"
-#include "AttributeName.h"
 #include "Document.h"
 #include "DocumentInlines.h"
 #include "ElementAncestorIteratorInlines.h"
@@ -37,6 +36,7 @@
 #include "HTMLOptGroupElement.h"
 #include "HTMLParserIdioms.h"
 #include "HTMLSelectElement.h"
+#include "NodeName.h"
 #include "NodeRenderStyle.h"
 #include "NodeTraversal.h"
 #include "PseudoClassChangeInvalidation.h"
@@ -176,7 +176,7 @@ int HTMLOptionElement::index() const
 
 void HTMLOptionElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
-    switch (name.attributeName()) {
+    switch (name.nodeName()) {
     case AttributeName::disabledAttr: {
         bool newDisabled = !newValue.isNull();
         if (m_disabled != newDisabled) {

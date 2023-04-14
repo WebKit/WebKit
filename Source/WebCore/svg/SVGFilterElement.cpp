@@ -26,7 +26,7 @@
 #include "config.h"
 #include "SVGFilterElement.h"
 
-#include "ElementName.h"
+#include "NodeName.h"
 #include "RenderSVGResourceFilter.h"
 #include "SVGElementInlines.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
@@ -128,7 +128,7 @@ bool SVGFilterElement::childShouldCreateRenderer(const Node& child) const
     if (!child.isSVGElement())
         return false;
 
-    switch (downcast<SVGElement>(child).tagQName().elementName()) {
+    switch (downcast<SVGElement>(child).elementName()) {
     case SVG::feBlend:
     case SVG::feColorMatrix:
     case SVG::feComponentTransfer:

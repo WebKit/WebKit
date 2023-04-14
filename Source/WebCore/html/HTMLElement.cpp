@@ -25,7 +25,6 @@
 #include "config.h"
 #include "HTMLElement.h"
 
-#include "AttributeName.h"
 #include "CSSMarkup.h"
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
@@ -73,6 +72,7 @@
 #include "LocalFrameView.h"
 #include "MediaControlsHost.h"
 #include "MutableStyleProperties.h"
+#include "NodeName.h"
 #include "NodeTraversal.h"
 #include "PopoverData.h"
 #include "PseudoClassChangeInvalidation.h"
@@ -158,7 +158,7 @@ void HTMLElement::mapLanguageAttributeToLocale(const AtomString& value, MutableS
 
 bool HTMLElement::hasPresentationalHintsForAttribute(const QualifiedName& name) const
 {
-    switch (name.attributeName()) {
+    switch (name.nodeName()) {
     case AttributeName::alignAttr:
     case AttributeName::contenteditableAttr:
     case AttributeName::hiddenAttr:
@@ -234,7 +234,7 @@ static bool elementAffectsDirectionality(const Node& node)
 
 void HTMLElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
 {
-    switch (name.attributeName()) {
+    switch (name.nodeName()) {
     case AttributeName::alignAttr:
         if (equalLettersIgnoringASCIICase(value, "middle"_s))
             addPropertyToPresentationalHintStyle(style, CSSPropertyTextAlign, CSSValueCenter);
@@ -395,7 +395,7 @@ void HTMLElement::attributeChanged(const QualifiedName& name, const AtomString& 
 {
     StyledElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 
-    switch (name.attributeName()) {
+    switch (name.nodeName()) {
     case AttributeName::dirAttr:
         dirAttributeChanged(newValue);
         return;

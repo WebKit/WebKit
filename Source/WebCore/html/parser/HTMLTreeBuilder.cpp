@@ -425,7 +425,7 @@ void HTMLTreeBuilder::processFakeEndTag(TagName tagName)
 
 void HTMLTreeBuilder::processFakeEndTag(const HTMLStackItem& item)
 {
-    AtomHTMLToken fakeToken(HTMLToken::Type::EndTag, tagNameForElement(item.elementName()), item.localName());
+    AtomHTMLToken fakeToken(HTMLToken::Type::EndTag, tagNameForElementName(item.elementName()), item.localName());
     processEndTag(WTFMove(fakeToken));
 }
 

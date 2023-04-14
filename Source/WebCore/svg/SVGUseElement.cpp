@@ -30,10 +30,10 @@
 #include "CachedSVGDocument.h"
 #include "ElementAncestorIteratorInlines.h"
 #include "ElementChildIteratorInlines.h"
-#include "ElementName.h"
 #include "Event.h"
 #include "EventNames.h"
 #include "LegacyRenderSVGTransformableContainer.h"
+#include "NodeName.h"
 #include "RenderSVGResource.h"
 #include "RenderSVGTransformableContainer.h"
 #include "SVGDocumentExtensions.h"
@@ -190,7 +190,7 @@ static inline bool isDisallowedElement(const SVGElement& element)
     // (i.e., "instanced") in the SVG document via a 'use' element."
     // "Graphics Element" is defined as 'circle', 'ellipse', 'image', 'line', 'path', 'polygon', 'polyline', 'rect', 'text'
     // Excluded are anything that is used by reference or that only make sense to appear once in a document.
-    switch (element.tagQName().elementName()) {
+    switch (element.elementName()) {
     case SVG::a:
     case SVG::circle:
     case SVG::desc:

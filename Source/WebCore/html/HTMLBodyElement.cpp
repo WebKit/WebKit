@@ -24,7 +24,6 @@
 #include "config.h"
 #include "HTMLBodyElement.h"
 
-#include "AttributeName.h"
 #include "CSSImageValue.h"
 #include "CSSParser.h"
 #include "CSSValueKeywords.h"
@@ -38,6 +37,7 @@
 #include "JSHTMLBodyElement.h"
 #include "LocalDOMWindow.h"
 #include "MutableStyleProperties.h"
+#include "NodeName.h"
 #include "ResourceLoaderOptions.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
@@ -68,7 +68,7 @@ HTMLBodyElement::~HTMLBodyElement() = default;
 
 bool HTMLBodyElement::hasPresentationalHintsForAttribute(const QualifiedName& name) const
 {
-    switch (name.attributeName()) {
+    switch (name.nodeName()) {
     case AttributeName::backgroundAttr:
     case AttributeName::marginwidthAttr:
     case AttributeName::leftmarginAttr:
@@ -85,7 +85,7 @@ bool HTMLBodyElement::hasPresentationalHintsForAttribute(const QualifiedName& na
 
 void HTMLBodyElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
 {
-    switch (name.attributeName()) {
+    switch (name.nodeName()) {
     case AttributeName::backgroundAttr: {
         String url = stripLeadingAndTrailingHTMLSpaces(value);
         if (!url.isEmpty()) {

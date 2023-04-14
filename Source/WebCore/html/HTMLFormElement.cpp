@@ -25,7 +25,6 @@
 #include "config.h"
 #include "HTMLFormElement.h"
 
-#include "AttributeName.h"
 #include "CommonAtomStrings.h"
 #include "DOMFormData.h"
 #include "DOMTokenList.h"
@@ -52,6 +51,7 @@
 #include "LocalDOMWindow.h"
 #include "LocalFrame.h"
 #include "MixedContentChecker.h"
+#include "NodeName.h"
 #include "NodeRareData.h"
 #include "Page.h"
 #include "PseudoClassChangeInvalidation.h"
@@ -505,7 +505,7 @@ void HTMLFormElement::resetListedFormControlElements()
 
 void HTMLFormElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
-    switch (name.attributeName()) {
+    switch (name.nodeName()) {
     case AttributeName::actionAttr:
         m_attributes.parseAction(newValue);
         if (!m_attributes.action().isEmpty()) {

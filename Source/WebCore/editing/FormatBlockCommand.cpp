@@ -29,9 +29,9 @@
 #include "Document.h"
 #include "Editing.h"
 #include "Element.h"
-#include "ElementName.h"
 #include "HTMLElement.h"
 #include "HTMLNames.h"
+#include "NodeName.h"
 #include "VisibleUnits.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RobinHoodHashSet.h>
@@ -126,7 +126,7 @@ bool isElementForFormatBlock(const QualifiedName& tagName)
 {
     using namespace ElementNames;
 
-    switch (tagName.elementName()) {
+    switch (tagName.nodeName()) {
     case HTML::address:
     case HTML::article:
     case HTML::aside:

@@ -29,7 +29,6 @@
 #include "HTMLSelectElement.h"
 
 #include "AXObjectCache.h"
-#include "AttributeName.h"
 #include "DOMFormData.h"
 #include "DocumentInlines.h"
 #include "ElementChildIteratorInlines.h"
@@ -48,6 +47,7 @@
 #include "LocalFrame.h"
 #include "LocalizedStrings.h"
 #include "MouseEvent.h"
+#include "NodeName.h"
 #include "NodeRareData.h"
 #include "Page.h"
 #include "PlatformMouseEvent.h"
@@ -293,7 +293,7 @@ bool HTMLSelectElement::hasPresentationalHintsForAttribute(const QualifiedName& 
 
 void HTMLSelectElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
-    switch (name.attributeName()) {
+    switch (name.nodeName()) {
     case AttributeName::sizeAttr: {
         unsigned oldSize = m_size;
         unsigned size = limitToOnlyHTMLNonNegative(newValue);

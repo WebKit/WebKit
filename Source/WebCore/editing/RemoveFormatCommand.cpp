@@ -29,11 +29,11 @@
 
 #include "ApplyStyleCommand.h"
 #include "Element.h"
-#include "ElementName.h"
 #include "FrameSelection.h"
 #include "HTMLNames.h"
 #include "LocalFrame.h"
 #include "MutableStyleProperties.h"
+#include "NodeName.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RobinHoodHashSet.h>
 
@@ -50,7 +50,7 @@ static bool isElementForRemoveFormatCommand(const Element* element)
 {
     using namespace ElementNames;
 
-    switch (element->tagQName().elementName()) {
+    switch (element->elementName()) {
     case HTML::acronym:
     case HTML::b:
     case HTML::bdo:

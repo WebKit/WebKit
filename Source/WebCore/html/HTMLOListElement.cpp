@@ -23,11 +23,11 @@
 #include "config.h"
 #include "HTMLOListElement.h"
 
-#include "AttributeName.h"
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
+#include "NodeName.h"
 #include "RenderListItem.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -86,7 +86,7 @@ void HTMLOListElement::collectPresentationalHintsForAttribute(const QualifiedNam
 
 void HTMLOListElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
-    switch (name.attributeName()) {
+    switch (name.nodeName()) {
     case AttributeName::startAttr: {
         int oldStart = start();
         m_start = optionalValue(parseHTMLInteger(newValue));

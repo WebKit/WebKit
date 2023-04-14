@@ -102,6 +102,7 @@ struct ScrollToOptions;
 struct SecurityPolicyViolationEventInit;
 struct ShadowRootInit;
 
+using ElementName = NodeName;
 using ExplicitlySetAttrElementsMap = HashMap<QualifiedName, Vector<WeakPtr<Element, WeakPtrImplWithEventTargetData>>>;
 
 namespace Style {
@@ -283,7 +284,7 @@ public:
 
     const AtomString& localNameLowercase() const { return m_tagName.localNameLowercase(); }
 
-    ElementName elementName() const { return m_tagName.elementName(); }
+    ElementName elementName() const { return m_tagName.nodeName(); }
     Namespace nodeNamespace() const { return m_tagName.nodeNamespace(); }
 
     ExceptionOr<void> setPrefix(const AtomString&) final;

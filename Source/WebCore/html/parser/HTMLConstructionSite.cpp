@@ -27,7 +27,6 @@
 #include "config.h"
 #include "HTMLConstructionSite.h"
 
-#include "AttributeName.h"
 #include "Comment.h"
 #include "CustomElementRegistry.h"
 #include "DocumentFragment.h"
@@ -52,6 +51,7 @@
 #include "JSCustomElementInterface.h"
 #include "LocalDOMWindow.h"
 #include "LocalFrame.h"
+#include "NodeName.h"
 #include "NotImplemented.h"
 #include "SVGElementInlines.h"
 #include "Settings.h"
@@ -731,16 +731,16 @@ static inline QualifiedName qualifiedNameForTag(AtomHTMLToken& token, const Atom
     auto nodeNamespace = findNamespace(namespaceURI);
     auto elementName = elementNameForTag(nodeNamespace, token.tagName());
     if (LIKELY(elementName != ElementName::Unknown))
-        return qualifiedNameForElement(elementName);
-    return { nullAtom(), token.name(), namespaceURI, nodeNamespace, elementName, AttributeName::Unknown };
+        return qualifiedNameForNodeName(elementName);
+    return { nullAtom(), token.name(), namespaceURI, nodeNamespace, elementName };
 }
 
 static inline QualifiedName qualifiedNameForHTMLTag(const AtomHTMLToken& token)
 {
     auto elementName = elementNameForTag(Namespace::HTML, token.tagName());
     if (LIKELY(elementName != ElementName::Unknown))
-        return qualifiedNameForElement(elementName);
-    return { nullAtom(), token.name(), xhtmlNamespaceURI, Namespace::HTML, elementName, AttributeName::Unknown };
+        return qualifiedNameForNodeName(elementName);
+    return { nullAtom(), token.name(), xhtmlNamespaceURI, Namespace::HTML, elementName };
 }
 
 Ref<Element> HTMLConstructionSite::createElement(AtomHTMLToken& token, const AtomString& namespaceURI)
@@ -822,7 +822,7 @@ Ref<HTMLElement> HTMLConstructionSite::createHTMLElement(AtomHTMLToken& token)
 HTMLStackItem HTMLConstructionSite::createElementFromSavedToken(const HTMLStackItem& item)
 {
     // NOTE: Moving from item -> token -> item copies the Attribute vector twice!
-    auto tagName = tagNameForElement(item.elementName());
+    auto tagName = tagNameForElementName(item.elementName());
     AtomHTMLToken fakeToken(HTMLToken::Type::StartTag, tagName, item.localName(), Vector<Attribute>(item.attributes()));
     ASSERT(item.namespaceURI() == HTMLNames::xhtmlNamespaceURI);
     ASSERT(isFormattingTag(tagName));

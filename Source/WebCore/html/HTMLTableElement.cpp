@@ -25,7 +25,6 @@
 #include "config.h"
 #include "HTMLTableElement.h"
 
-#include "AttributeName.h"
 #include "CSSImageValue.h"
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
@@ -39,6 +38,7 @@
 #include "HTMLTableRowsCollection.h"
 #include "HTMLTableSectionElement.h"
 #include "MutableStyleProperties.h"
+#include "NodeName.h"
 #include "NodeRareData.h"
 #include "RenderTable.h"
 #include <wtf/IsoMallocInlines.h>
@@ -370,7 +370,7 @@ void HTMLTableElement::attributeChanged(const QualifiedName& name, const AtomStr
     CellBorders bordersBefore = cellBorders();
     unsigned short oldPadding = m_padding;
 
-    switch (name.attributeName()) {
+    switch (name.nodeName()) {
     case AttributeName::borderAttr:
         // FIXME: This attribute is a mess.
         m_borderAttr = parseBorderWidthAttribute(newValue);

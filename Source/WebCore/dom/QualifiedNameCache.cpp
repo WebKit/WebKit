@@ -27,9 +27,8 @@
 #include "config.h"
 #include "QualifiedNameCache.h"
 
-#include "AttributeName.h"
-#include "ElementName.h"
 #include "Namespace.h"
+#include "NodeName.h"
 
 namespace WebCore {
 
@@ -50,12 +49,11 @@ struct QNameComponentsTranslator {
     }
 };
 
-static void updateImplWithNamespaceAndElementName(QualifiedName::QualifiedNameImpl& impl, Namespace nodeNamespace, ElementName elementName, AttributeName attributeName)
+static void updateImplWithNamespaceAndElementName(QualifiedName::QualifiedNameImpl& impl, Namespace nodeNamespace, NodeName nodeName)
 {
     impl.m_namespace = nodeNamespace;
-    impl.m_elementName = elementName;
-    impl.m_attributeName = attributeName;
-    bool needsLowercasing = nodeNamespace != Namespace::HTML || elementName == ElementName::Unknown;
+    impl.m_nodeName = nodeName;
+    bool needsLowercasing = nodeNamespace != Namespace::HTML || nodeName == NodeName::Unknown;
     impl.m_localNameLower = needsLowercasing ? impl.m_localName.convertToASCIILowercase() : impl.m_localName;
 }
 
@@ -66,24 +64,21 @@ Ref<QualifiedName::QualifiedNameImpl> QualifiedNameCache::getOrCreate(const Qual
 
     if (addResult.isNewEntry) {
         auto nodeNamespace = findNamespace(components.m_namespaceURI);
-        auto elementName = findElementName(nodeNamespace, components.m_localName);
-        auto attributeName = AttributeName::Unknown;
-        if (elementName == ElementName::Unknown)
-            attributeName = findAttributeName(nodeNamespace, components.m_localName);
-        updateImplWithNamespaceAndElementName(impl, nodeNamespace, elementName, attributeName);
+        auto nodeName = findNodeName(nodeNamespace, components.m_localName);
+        updateImplWithNamespaceAndElementName(impl, nodeNamespace, nodeName);
         return adoptRef(impl);
     }
 
     return Ref { impl };
 }
 
-Ref<QualifiedName::QualifiedNameImpl> QualifiedNameCache::getOrCreate(const QualifiedNameComponents& components, Namespace nodeNamespace, ElementName elementName, AttributeName attributeName)
+Ref<QualifiedName::QualifiedNameImpl> QualifiedNameCache::getOrCreate(const QualifiedNameComponents& components, Namespace nodeNamespace, NodeName nodeName)
 {
     auto addResult = m_cache.add<QNameComponentsTranslator>(components);
     auto& impl = **addResult.iterator;
 
     if (addResult.isNewEntry) {
-        updateImplWithNamespaceAndElementName(impl, nodeNamespace, elementName, attributeName);
+        updateImplWithNamespaceAndElementName(impl, nodeNamespace, nodeName);
         return adoptRef(impl);
     }
 

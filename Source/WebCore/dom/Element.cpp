@@ -29,7 +29,6 @@
 #include "AXObjectCache.h"
 #include "Attr.h"
 #include "AttributeChangeInvalidation.h"
-#include "AttributeName.h"
 #include "CSSParser.h"
 #include "ChildChangeInvalidation.h"
 #include "ChildListMutationScope.h"
@@ -51,7 +50,6 @@
 #include "ElementAncestorIteratorInlines.h"
 #include "ElementAnimationRareData.h"
 #include "ElementChildIteratorInlines.h"
-#include "ElementName.h"
 #include "ElementRareData.h"
 #include "EventDispatcher.h"
 #include "EventHandler.h"
@@ -92,6 +90,7 @@
 #include "Logging.h"
 #include "MutationObserverInterestGroup.h"
 #include "MutationRecord.h"
+#include "NodeName.h"
 #include "NodeRenderStyle.h"
 #include "PlatformMouseEvent.h"
 #include "PlatformWheelEvent.h"
@@ -2032,7 +2031,7 @@ bool Element::isElementsArrayReflectionAttribute(const Settings& settings, const
     if (!settings.ariaReflectionForElementReferencesEnabled())
         return false;
 
-    switch (name.attributeName()) {
+    switch (name.nodeName()) {
     case AttributeName::aria_controlsAttr:
     case AttributeName::aria_describedbyAttr:
     case AttributeName::aria_detailsAttr:
@@ -2052,7 +2051,7 @@ void Element::attributeChanged(const QualifiedName& name, const AtomString& oldV
     bool valueIsSameAsBefore = oldValue == newValue;
 
     if (!valueIsSameAsBefore) {
-        switch (name.attributeName()) {
+        switch (name.nodeName()) {
         case AttributeName::classAttr:
             classAttributeChanged(newValue);
             break;
@@ -2846,7 +2845,7 @@ static bool canAttachAuthorShadowRoot(const Element& element)
     if (!is<HTMLElement>(element))
         return false;
 
-    switch (element.tagQName().elementName()) {
+    switch (element.elementName()) {
     case HTML::article:
     case HTML::aside:
     case HTML::blockquote:

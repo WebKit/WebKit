@@ -20,10 +20,9 @@
 #include "config.h"
 #include "QualifiedName.h"
 
-#include "AttributeName.h"
 #include "CommonAtomStrings.h"
-#include "ElementName.h"
 #include "Namespace.h"
+#include "NodeName.h"
 #include "QualifiedNameCache.h"
 #include "ThreadGlobalData.h"
 #include <wtf/Assertions.h>
@@ -35,8 +34,7 @@ DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(QualifiedNameQualifiedNameImpl);
 
 QualifiedName::QualifiedNameImpl::QualifiedNameImpl(const AtomString& prefix, const AtomString& localName, const AtomString& namespaceURI)
     : m_namespace(Namespace::Unknown)
-    , m_attributeName(AttributeName::Unknown)
-    , m_elementName(ElementName::Unknown)
+    , m_nodeName(NodeName::Unknown)
     , m_prefix(prefix)
     , m_localName(localName)
     , m_namespaceURI(namespaceURI)
@@ -54,8 +52,8 @@ QualifiedName::QualifiedName(const AtomString& prefix, const AtomString& localNa
 {
 }
 
-QualifiedName::QualifiedName(const AtomString& prefix, const AtomString& localName, const AtomString& namespaceURI, Namespace nodeNamespace, ElementName elementName, AttributeName attributeName)
-    : m_impl(threadGlobalData().qualifiedNameCache().getOrCreate(makeComponents(prefix, localName, namespaceURI), nodeNamespace, elementName, attributeName))
+QualifiedName::QualifiedName(const AtomString& prefix, const AtomString& localName, const AtomString& namespaceURI, Namespace nodeNamespace, NodeName nodeName)
+    : m_impl(threadGlobalData().qualifiedNameCache().getOrCreate(makeComponents(prefix, localName, namespaceURI), nodeNamespace, nodeName))
 {
 }
 
@@ -73,13 +71,13 @@ void QualifiedName::init()
     if (initialized)
         return;
 
-    anyName.construct(nullAtom(), starAtom(), starAtom(), Namespace::Unknown, ElementName::Unknown, AttributeName::Unknown);
+    anyName.construct(nullAtom(), starAtom(), starAtom(), Namespace::Unknown, NodeName::Unknown);
     initialized = true;
 }
 
 const QualifiedName& nullQName()
 {
-    static NeverDestroyed<QualifiedName> nullName(nullAtom(), nullAtom(), nullAtom(), Namespace::None, ElementName::Unknown, AttributeName::Unknown);
+    static NeverDestroyed<QualifiedName> nullName(nullAtom(), nullAtom(), nullAtom(), Namespace::None, NodeName::Unknown);
     return nullName;
 }
 
