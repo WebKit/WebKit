@@ -49,8 +49,12 @@ static Vector<WebKitTestRunnerWindow *> allWindows;
 - (instancetype)initWithContentRect:(NSRect)contentRect styleMask:(NSUInteger)windowStyle backing:(NSBackingStoreType)bufferingType defer:(BOOL)deferCreation
 {
     ASSERT(isMainThread());
+    self = [super initWithContentRect:contentRect styleMask:windowStyle backing:bufferingType defer:deferCreation];
+    if (!self)
+        return nil;
+
     allWindows.append(self);
-    return [super initWithContentRect:contentRect styleMask:windowStyle backing:bufferingType defer:deferCreation];
+    return self;
 }
 
 - (void)close

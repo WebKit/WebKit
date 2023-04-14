@@ -76,7 +76,8 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
 
 - (instancetype)init
 {
-    return [super init];
+    self = [super init];
+    return self;
 }
 
 - (instancetype)initWithCoreResource:(Ref<ArchiveResource>&&)passedResource

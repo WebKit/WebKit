@@ -37,8 +37,9 @@
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     static NSUInteger styleMask = NSMiniaturizableWindowMask | NSClosableWindowMask | NSResizableWindowMask  | NSTitledWindowMask | NSSmallWindowMask | NSSideUtilityWindowMask | NSUtilityWindowMask;
     ALLOW_DEPRECATED_DECLARATIONS_END
-    
-    return [super initWithContentRect:NSZeroRect styleMask:styleMask backing:NSBackingStoreBuffered defer:YES];
+
+    self = [super initWithContentRect:NSZeroRect styleMask:styleMask backing:NSBackingStoreBuffered defer:YES];
+    return self;
 }
 
 @end

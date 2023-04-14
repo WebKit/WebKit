@@ -81,7 +81,9 @@ CGFloat adjustedFontSize(CGFloat textWidth, UIFont *font, CGFloat initialFontSiz
             control = adoptNS([[WKSelectMultiplePicker alloc] initWithView:view]);
         else
             control = adoptNS([[WKSelectPicker alloc] initWithView:view]);
-        return [super initWithView:view control:WTFMove(control)];
+
+        self = [super initWithView:view control:WTFMove(control)];
+        return self;
     }
 #endif
 
@@ -92,7 +94,8 @@ CGFloat adjustedFontSize(CGFloat textWidth, UIFont *font, CGFloat initialFontSiz
     else
         control = adoptNS([[WKSelectSinglePicker alloc] initWithView:view]);
 
-    return [super initWithView:view control:WTFMove(control)];
+    self = [super initWithView:view control:WTFMove(control)];
+    return self;
 }
 
 @end

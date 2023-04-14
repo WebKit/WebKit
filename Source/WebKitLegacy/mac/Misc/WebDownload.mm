@@ -225,12 +225,13 @@ using namespace WebCore;
 - (id)init
 {
     self = [super init];
-    if (self != nil) {
-        // _webInternal can be set up before init by _setRealDelegate
-        if (_webInternal == nil) {
-            _webInternal = [[WebDownloadInternal alloc] init];
-        }
-    }
+    if (self == nil)
+        return nil;
+
+    // _webInternal can be set up before init by _setRealDelegate
+    if (_webInternal == nil)
+        _webInternal = [[WebDownloadInternal alloc] init];
+
     return self;
 }
 
