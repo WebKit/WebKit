@@ -115,13 +115,11 @@ static inline Color getAccentColor(const RenderObject& renderObject)
     return getSystemAccentColor();
 }
 
-#if !PLATFORM(GTK)
 RenderTheme& RenderTheme::singleton()
 {
     static MainThreadNeverDestroyed<RenderThemeAdwaita> theme;
     return theme;
 }
-#endif
 
 bool RenderThemeAdwaita::supportsFocusRing(const RenderStyle& style) const
 {
@@ -695,12 +693,14 @@ void RenderThemeAdwaita::adjustListButtonStyle(RenderStyle& style, const Element
 #endif // ENABLE(DATALIST_ELEMENT)
 
 #if PLATFORM(GTK)
-Seconds RenderThemeAdwaita::caretBlinkInterval() const
+std::optional<Seconds> RenderThemeAdwaita::caretBlinkInterval() const
 {
     gboolean shouldBlink;
     gint time;
     g_object_get(gtk_settings_get_default(), "gtk-cursor-blink", &shouldBlink, "gtk-cursor-blink-time", &time, nullptr);
-    return shouldBlink ? 500_us * time : 0_s;
+    if (shouldBlink)
+        return { 500_us * time };
+    return { };
 }
 #endif
 

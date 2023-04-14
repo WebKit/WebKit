@@ -103,7 +103,7 @@ private:
 #endif
 
 #if PLATFORM(GTK)
-    Seconds caretBlinkInterval() const override;
+    std::optional<Seconds> caretBlinkInterval() const override;
 #endif
 };
 
