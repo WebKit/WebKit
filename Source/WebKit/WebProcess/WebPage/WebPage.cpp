@@ -47,6 +47,7 @@
 #include "LibWebRTCCodecs.h"
 #include "LibWebRTCProvider.h"
 #include "LoadParameters.h"
+#include "LocalFrameCreationParameters.h"
 #include "Logging.h"
 #include "MediaKeySystemPermissionRequestManager.h"
 #include "MediaRecorderProvider.h"
@@ -1018,7 +1019,7 @@ void WebPage::constructFrameTree(WebFrame& parent, WebCore::FrameIdentifier loca
 {
     bool shouldCreateLocalFrame = treeCreationParameters.frameID == localFrameIdentifier;
     auto frame = shouldCreateLocalFrame
-        ? WebFrame::createLocalSubframeHostedInAnotherProcess(*this, parent, treeCreationParameters.frameID, localFrameHostLayerIdentifier)
+        ? WebFrame::createLocalSubframeHostedInAnotherProcess(*this, parent, treeCreationParameters.frameID, localFrameHostLayerIdentifier, std::nullopt)
         : WebFrame::createRemoteSubframe(*this, parent, treeCreationParameters.frameID, treeCreationParameters.remoteProcessIdentifier);
     if (shouldCreateLocalFrame) {
         ASSERT(frame->coreFrame());
@@ -1779,12 +1780,55 @@ void WebPage::platformDidReceiveLoadParameters(const LoadParameters& loadParamet
 }
 #endif
 
+void WebPage::loadRequestByCreatingNewLocalFrameOrConvertingRemoteFrame(LocalFrameCreationParameters&& localFrameCreationParameters, LoadParameters&& loadParameters)
+{
+    RefPtr frame = WebProcess::singleton().webFrame(localFrameCreationParameters.frameIdentifier);
+    if (frame && frame->coreFrame()) {
+        loadRequest(WTFMove(loadParameters));
+        return;
+    }
+
+    // If there is an existing RemoteFrame, let's remove it and later convert it to a LocalFrame
+    RefPtr<WebFrame> parentWebFrame;
+    RefPtr<WebCore::RemoteFrame> coreRemoteFrame;
+    std::optional<ScopeExit<Function<void()>>> invalidator;
+    if (frame) {
+        coreRemoteFrame = frame->coreRemoteFrame();
+        auto* parent = coreRemoteFrame->tree().parent();
+        if (!parent) {
+            ASSERT_NOT_REACHED();
+            return;
+        }
+
+        parentWebFrame = WebProcess::singleton().webFrame(parent->frameID());
+        if (!parentWebFrame) {
+            ASSERT_NOT_REACHED();
+            return;
+        }
+
+        parent->tree().removeChild(*coreRemoteFrame);
+        coreRemoteFrame->disconnectOwnerElement();
+        if (auto* remoteFrameClient = static_cast<WebRemoteFrameClient*>(&coreRemoteFrame->client()))
+            invalidator.emplace(remoteFrameClient->takeFrameInvalidator());
+    } else
+        parentWebFrame = WebProcess::singleton().webFrame(localFrameCreationParameters.parentFrameIdentifier);
+
+    if (!parentWebFrame) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    WebFrame::createLocalSubframeHostedInAnotherProcess(*this, *parentWebFrame, localFrameCreationParameters.frameIdentifier, localFrameCreationParameters.layerHostingContextIdentifier, WTFMove(invalidator));
+
+    loadRequest(WTFMove(loadParameters));
+}
+
 void WebPage::loadRequest(LoadParameters&& loadParameters)
 {
     WEBPAGE_RELEASE_LOG(Loading, "loadRequest: navigationID=%" PRIu64 ", shouldTreatAsContinuingLoad=%u, lastNavigationWasAppInitiated=%d, existingNetworkResourceLoadIdentifierToResume=%" PRIu64, loadParameters.navigationID, static_cast<unsigned>(loadParameters.shouldTreatAsContinuingLoad), loadParameters.request.isAppInitiated(), valueOrDefault(loadParameters.existingNetworkResourceLoadIdentifierToResume).toUInt64());
 
     RefPtr frame = loadParameters.frameIdentifier ? WebProcess::singleton().webFrame(*loadParameters.frameIdentifier) : m_mainFrame.ptr();
-    if (!frame) {
+    if (!frame || is<RemoteFrame>(frame->coreAbstractFrame())) {
         ASSERT_NOT_REACHED();
         return;
     }

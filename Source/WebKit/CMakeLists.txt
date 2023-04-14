@@ -535,6 +535,7 @@ set(WebKit_SERIALIZATION_IN_FILES
     Shared/FrameTreeNodeData.serialization.in
     Shared/GPUProcessConnectionParameters.serialization.in
     Shared/LayerTreeContext.serialization.in
+    Shared/LocalFrameCreationParameters.serialization.in
     Shared/Model.serialization.in
     Shared/NavigationActionData.serialization.in
     Shared/NetworkProcessConnectionParameters.serialization.in

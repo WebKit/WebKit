@@ -28,6 +28,7 @@
 #include "APIObject.h"
 #include "MessageReceiver.h"
 #include "MessageSender.h"
+#include <WebCore/RegistrableDomain.h>
 #include <wtf/ProcessID.h>
 #include <wtf/UniqueRef.h>
 
@@ -346,6 +347,7 @@ class ShareableResourceHandle;
 class SharedMemory;
 class SharedMemoryHandle;
 class SpeechRecognitionPermissionManager;
+class SubframePageProxy;
 class SuspendedPageProxy;
 class SystemPreviewController;
 class TouchBarMenuData;
@@ -2138,6 +2140,10 @@ public:
     WKQuickLookPreviewController *quickLookPreviewController() const { return m_quickLookPreviewController.get(); }
 #endif
 
+    WebCore::RegistrableDomain registrableDomainForSubframeID(WebCore::FrameIdentifier identifier) const { return m_registrableDomainForSubframeID.get(identifier); }
+    SubframePageProxy* subpageFrameProxyForRegistrableDomain(WebCore::RegistrableDomain domain) const { return m_subframePageProxyForDomain.get(domain); }
+    SubframePageProxy* subframePageProxyForFrameID(WebCore::FrameIdentifier) const;
+
     void requestImageBitmap(const WebCore::ElementContext&, CompletionHandler<void(const ShareableBitmapHandle&, const String& sourceMIMEType)>&&);
 
 #if PLATFORM(MAC)
@@ -2218,6 +2224,7 @@ public:
 #endif
 
     WebPopupMenuProxyClient& popupMenuClient();
+    void addSubframePageProxyForFrameID(WebCore::FrameIdentifier, WebCore::RegistrableDomain, UniqueRef<SubframePageProxy>&&);
 
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, Ref<API::PageConfiguration>&&);
@@ -2705,7 +2712,7 @@ private:
 
     void reportPageLoadResult(const WebCore::ResourceError&);
 
-    void continueNavigationInNewProcess(API::Navigation&, WebFrameProxy&, std::unique_ptr<SuspendedPageProxy>&&, Ref<WebProcessProxy>&&, ProcessSwapRequestedByClient, WebCore::ShouldTreatAsContinuingLoad, std::optional<NetworkResourceLoadIdentifier> existingNetworkResourceLoadIdentifierToResume);
+    void continueNavigationInNewProcess(API::Navigation&, WebFrameProxy&, std::unique_ptr<SuspendedPageProxy>&&, Ref<WebProcessProxy>&&, ProcessSwapRequestedByClient, WebCore::ShouldTreatAsContinuingLoad, std::optional<NetworkResourceLoadIdentifier> existingNetworkResourceLoadIdentifierToResume, bool didCreateNewProcess = true);
 
     void setNeedsFontAttributes(bool);
     void updateFontAttributesAfterEditorStateChange();
@@ -3231,6 +3238,9 @@ private:
 #endif
 
     RefPtr<WebPageProxy> m_pageToCloneSessionStorageFrom;
+
+    HashMap<WebCore::RegistrableDomain, UniqueRef<SubframePageProxy>>  m_subframePageProxyForDomain;
+    HashMap<WebCore::FrameIdentifier, WebCore::RegistrableDomain>  m_registrableDomainForSubframeID;
 };
 
 } // namespace WebKit

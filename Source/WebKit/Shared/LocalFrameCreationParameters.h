@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,30 +25,15 @@
 
 #pragma once
 
-#include "WebFrame.h"
-#include <WebCore/MessageWithMessagePorts.h>
-#include <WebCore/ProcessIdentifier.h>
-#include <WebCore/RemoteFrameClient.h>
-#include <WebCore/SecurityOriginData.h>
-#include <wtf/Scope.h>
+#include <WebCore/FrameIdentifier.h>
+#include <WebCore/LayerHostingContextIdentifier.h>
 
 namespace WebKit {
 
-class WebRemoteFrameClient final : public WebCore::RemoteFrameClient {
-public:
-    explicit WebRemoteFrameClient(Ref<WebFrame>&&, ScopeExit<Function<void()>>&& frameInvalidator);
-    ~WebRemoteFrameClient();
-
-    WebFrame& webFrame() const { return m_frame.get(); }
-    ScopeExit<Function<void()>> takeFrameInvalidator() { return WTFMove(m_frameInvalidator); }
-
-private:
-    void frameDetached() final;
-    void sizeDidChange(WebCore::IntSize) final;
-    void postMessageToRemote(WebCore::ProcessIdentifier, WebCore::FrameIdentifier, std::optional<WebCore::SecurityOriginData>, const WebCore::MessageWithMessagePorts&) final;
-
-    Ref<WebFrame> m_frame;
-    ScopeExit<Function<void()>> m_frameInvalidator;
+struct LocalFrameCreationParameters {
+    WebCore::FrameIdentifier frameIdentifier;
+    WebCore::FrameIdentifier parentFrameIdentifier;
+    WebCore::LayerHostingContextIdentifier layerHostingContextIdentifier;
 };
 
-}
+} // namespace WebKit

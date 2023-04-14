@@ -367,6 +367,7 @@ struct InsertTextOptions;
 struct InteractionInformationAtPosition;
 struct InteractionInformationRequest;
 struct LoadParameters;
+struct LocalFrameCreationParameters;
 struct PrintInfo;
 struct TextInputContext;
 struct UserMessage;
@@ -1738,6 +1739,7 @@ private:
     // Actions
     void tryClose(CompletionHandler<void(bool)>&&);
     void platformDidReceiveLoadParameters(const LoadParameters&);
+    void loadRequestByCreatingNewLocalFrameOrConvertingRemoteFrame(LocalFrameCreationParameters&&, LoadParameters&&);
     void loadRequest(LoadParameters&&);
     [[noreturn]] void loadRequestWaitingForProcessLaunch(LoadParameters&&, URL&&, WebPageProxyIdentifier, bool);
     void loadData(LoadParameters&&);

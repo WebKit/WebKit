@@ -185,6 +185,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     LoadURLInFrame(URL url, String referrer, WebCore::FrameIdentifier frameID)
     LoadDataInFrame(IPC::DataReference data, String MIMEType, String encodingName, URL baseURL, WebCore::FrameIdentifier frameID)
     LoadRequest(struct WebKit::LoadParameters loadParameters)
+    LoadRequestByCreatingNewLocalFrameOrConvertingRemoteFrame(struct WebKit::LocalFrameCreationParameters localFrameCreationParameters, struct WebKit::LoadParameters loadParameters)
     LoadRequestWaitingForProcessLaunch(struct WebKit::LoadParameters loadParameters, URL resourceDirectoryURL, WebKit::WebPageProxyIdentifier pageID, bool checkAssumedReadAccessToResourceURL)
     LoadData(struct WebKit::LoadParameters loadParameters)
     LoadSimulatedRequestAndResponse(struct WebKit::LoadParameters loadParameters, WebCore::ResourceResponse simulatedResponse)

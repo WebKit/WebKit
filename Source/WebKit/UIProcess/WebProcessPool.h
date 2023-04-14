@@ -450,7 +450,11 @@ public:
     bool hasForegroundWebProcesses() const { return m_foregroundWebProcessCounter.value(); }
     bool hasBackgroundWebProcesses() const { return m_backgroundWebProcessCounter.value(); }
 
-    void processForNavigation(WebPageProxy&, const API::Navigation&, Ref<WebProcessProxy>&& sourceProcess, const URL& sourceURL, ProcessSwapRequestedByClient, WebProcessProxy::LockdownMode, const FrameInfoData&, Ref<WebsiteDataStore>&&, CompletionHandler<void(Ref<WebProcessProxy>&&, SuspendedPageProxy*, ASCIILiteral)>&&);
+    enum class DidCreateNewProcess : bool {
+        No,
+        Yes,
+    };
+    void processForNavigation(WebPageProxy&, WebFrameProxy&, const API::Navigation&, Ref<WebProcessProxy>&& sourceProcess, const URL& sourceURL, ProcessSwapRequestedByClient, WebProcessProxy::LockdownMode, const FrameInfoData&, Ref<WebsiteDataStore>&&, CompletionHandler<void(Ref<WebProcessProxy>&&, SuspendedPageProxy*, ASCIILiteral, DidCreateNewProcess)>&&);
 
     void didReachGoodTimeToPrewarm();
 

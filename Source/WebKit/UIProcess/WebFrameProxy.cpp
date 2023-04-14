@@ -39,6 +39,7 @@
 #include "WebFrameMessages.h"
 #include "WebFramePolicyListenerProxy.h"
 #include "WebFrameProxyMessages.h"
+#include "WebNavigationState.h"
 #include "WebPageMessages.h"
 #include "WebPageProxy.h"
 #include "WebPageProxyMessages.h"
@@ -105,9 +106,6 @@ WebFrameProxy::~WebFrameProxy()
 
     ASSERT(allFrames().get(m_frameID) == this);
     allFrames().remove(m_frameID);
-
-    if (m_subframePage)
-        m_process->removeFrameWithRemoteFrameProcess(*this);
 }
 
 WebPageProxy* WebFrameProxy::page() const
@@ -260,9 +258,6 @@ void WebFrameProxy::didFinishLoad()
 
     if (m_navigateCallback)
         m_navigateCallback(pageIdentifier(), frameID());
-
-    if (m_subframePage && m_parentFrame)
-        m_parentFrame->m_process->send(Messages::WebFrame::DidFinishLoadInAnotherProcess(), m_frameID.object());
 }
 
 void WebFrameProxy::didFailLoad()
@@ -387,10 +382,10 @@ void WebFrameProxy::didCreateSubframe(WebCore::FrameIdentifier frameID)
     m_childFrames.add(WTFMove(child));
 }
 
-void WebFrameProxy::swapToProcess(Ref<WebProcessProxy>&& process, const WebCore::ResourceRequest& request)
+void WebFrameProxy::swapToProcess(Ref<WebProcessProxy>&& process, const WebCore::ResourceRequest& request, bool didCreateNewProcess)
 {
     ASSERT(!isMainFrame());
-    m_provisionalFrame = makeUnique<ProvisionalFrameProxy>(*this, WTFMove(process), request);
+    m_provisionalFrame = makeUnique<ProvisionalFrameProxy>(*this, WTFMove(process), request, didCreateNewProcess);
 }
 
 IPC::Connection* WebFrameProxy::messageSenderConnection() const
@@ -407,27 +402,15 @@ void WebFrameProxy::commitProvisionalFrame(FrameIdentifier frameID, FrameInfoDat
 {
     // FIXME: Not only is this a race condition, but we still want to receive messages,
     // such as if the parent frame navigates the remote frame.
-    m_provisionalFrame->process().provisionalFrameCommitted(*this);
-    send(Messages::WebFrame::DidCommitLoadInAnotherProcess(m_provisionalFrame->layerHostingContextIdentifier(), m_provisionalFrame->process().coreProcessIdentifier()));
-    m_process->removeMessageReceiver(Messages::WebFrameProxy::messageReceiverName(), m_frameID.object());
-    m_process = std::exchange(m_provisionalFrame, nullptr)->process();
-    m_process->addMessageReceiver(Messages::WebFrameProxy::messageReceiverName(), m_frameID.object(), *this);
-
-    if (m_page) {
-        m_subframePage = makeUnique<SubframePageProxy>(*this, *m_page, m_process);
-        m_page->didCommitLoadForFrame(frameID, WTFMove(frameInfo), WTFMove(request), navigationID, mimeType, frameHasCustomContentProvider, frameLoadType, certificateInfo, usedLegacyTLS, privateRelayed, containsPluginDocument, hasInsecureContent, mouseEventPolicy, userData);
+    if (m_provisionalFrame) {
+        m_provisionalFrame->process().provisionalFrameCommitted(*this);
+        send(Messages::WebFrame::DidCommitLoadInAnotherProcess(m_provisionalFrame->layerHostingContextIdentifier(), m_provisionalFrame->process().coreProcessIdentifier()));
+        m_process->removeMessageReceiver(Messages::WebFrameProxy::messageReceiverName(), m_frameID.object());
+        m_process = std::exchange(m_provisionalFrame, nullptr)->process();
+        m_process->addMessageReceiver(Messages::WebFrameProxy::messageReceiverName(), m_frameID.object(), *this);
     }
-}
-
-void WebFrameProxy::updateRemoteFrameSize(WebCore::IntSize newSize)
-{
-    if (!m_page)
-        return;
-    auto* drawingArea = m_page->drawingArea();
-    if (!drawingArea)
-        return;
-    if (m_subframePage)
-        m_subframePage->send(Messages::WebPage::UpdateFrameSize(m_frameID, newSize));
+    if (m_page)
+        m_page->didCommitLoadForFrame(frameID, WTFMove(frameInfo), WTFMove(request), navigationID, mimeType, frameHasCustomContentProvider, frameLoadType, certificateInfo, usedLegacyTLS, privateRelayed, containsPluginDocument, hasInsecureContent, mouseEventPolicy, userData);
 }
 
 void WebFrameProxy::getFrameInfo(CompletionHandler<void(FrameTreeNodeData&&)>&& completionHandler)

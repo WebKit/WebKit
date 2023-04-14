@@ -56,6 +56,7 @@
 #include "PerActivityStateCPUUsageSampler.h"
 #include "RemoteWorkerType.h"
 #include "SandboxExtension.h"
+#include "SubframePageProxy.h"
 #include "SuspendedPageProxy.h"
 #include "TextChecker.h"
 #include "UIGamepad.h"
@@ -1809,9 +1810,27 @@ void WebProcessPool::removeProcessFromOriginCacheSet(WebProcessProxy& process)
     });
 }
 
-void WebProcessPool::processForNavigation(WebPageProxy& page, const API::Navigation& navigation, Ref<WebProcessProxy>&& sourceProcess, const URL& sourceURL, ProcessSwapRequestedByClient processSwapRequestedByClient, WebProcessProxy::LockdownMode lockdownMode, const FrameInfoData& frameInfo, Ref<WebsiteDataStore>&& dataStore, CompletionHandler<void(Ref<WebProcessProxy>&&, SuspendedPageProxy*, ASCIILiteral)>&& completionHandler)
+void WebProcessPool::processForNavigation(WebPageProxy& page, WebFrameProxy& frame, const API::Navigation& navigation, Ref<WebProcessProxy>&& sourceProcess, const URL& sourceURL, ProcessSwapRequestedByClient processSwapRequestedByClient, WebProcessProxy::LockdownMode lockdownMode, const FrameInfoData& frameInfo, Ref<WebsiteDataStore>&& dataStore, CompletionHandler<void(Ref<WebProcessProxy>&&, SuspendedPageProxy*, ASCIILiteral, DidCreateNewProcess)>&& completionHandler)
 {
+    if (!frame.isMainFrame() && page.preferences().siteIsolationEnabled()) {
+        auto registrableDomain = RegistrableDomain { navigation.currentRequest().url() };
+        if (!registrableDomain.isEmpty()) {
+            if (auto* subframePageProxy = page.subpageFrameProxyForRegistrableDomain(registrableDomain)) {
+                completionHandler(Ref { subframePageProxy->process() }, nullptr, "Found process for the same registration domain"_s, DidCreateNewProcess::No);
+                return;
+            }
+        }
+    }
+
     auto [process, suspendedPage, reason] = processForNavigationInternal(page, navigation, sourceProcess.copyRef(), sourceURL, processSwapRequestedByClient, lockdownMode, frameInfo, dataStore.copyRef());
+
+    if (page.preferences().siteIsolationEnabled()) {
+        auto registrableDomain = RegistrableDomain(navigation.currentRequest().url());
+        if (!registrableDomain.isEmpty()) {
+            auto subFramePageProxy = makeUniqueRef<SubframePageProxy>(page, process, frame.isMainFrame());
+            page.addSubframePageProxyForFrameID(frame.frameID(), registrableDomain, WTFMove(subFramePageProxy));
+        }
+    }
 
     // We are process-swapping so automatic process prewarming would be beneficial if the client has not explicitly enabled / disabled it.
     bool doingAnAutomaticProcessSwap = processSwapRequestedByClient == ProcessSwapRequestedByClient::No && process.ptr() != sourceProcess.ptr();
@@ -1839,15 +1858,15 @@ void WebProcessPool::processForNavigation(WebPageProxy& page, const API::Navigat
 
     auto processIdentifier = process->coreProcessIdentifier();
     auto preventProcessShutdownScope = process->shutdownPreventingScope();
-    auto callCompletionHandler = [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler), page = Ref { page }, navigation = Ref { navigation }, process = WTFMove(process), preventProcessShutdownScope = WTFMove(preventProcessShutdownScope), reason = reason, dataStore = WTFMove(dataStore), frameInfo, sourceProcess = WTFMove(sourceProcess), sourceURL, lockdownMode, processSwapRequestedByClient](SuspendedPageProxy* suspendedPage) mutable {
+    auto callCompletionHandler = [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler), page = Ref { page }, frame = Ref { frame }, navigation = Ref { navigation }, process = WTFMove(process), preventProcessShutdownScope = WTFMove(preventProcessShutdownScope), reason = reason, dataStore = WTFMove(dataStore), frameInfo, sourceProcess = WTFMove(sourceProcess), sourceURL, lockdownMode, processSwapRequestedByClient](SuspendedPageProxy* suspendedPage) mutable {
         // Since the IPC is asynchronous, make sure the destination process and suspended page are still valid.
         if (process->state() == AuxiliaryProcessProxy::State::Terminated) {
-            processForNavigation(page, navigation, WTFMove(sourceProcess), sourceURL, processSwapRequestedByClient, lockdownMode, frameInfo, WTFMove(dataStore), WTFMove(completionHandler));
+            processForNavigation(page, frame, navigation, WTFMove(sourceProcess), sourceURL, processSwapRequestedByClient, lockdownMode, frameInfo, WTFMove(dataStore), WTFMove(completionHandler));
             return;
         }
         if (suspendedPage && (!navigation->targetItem() || suspendedPage != navigation->targetItem()->suspendedPage()))
             suspendedPage = nullptr;
-        completionHandler(WTFMove(process), suspendedPage, reason);
+        completionHandler(WTFMove(process), suspendedPage, reason, DidCreateNewProcess::Yes);
     };
 
     page.websiteDataStore().networkProcess().sendWithAsyncReply(Messages::NetworkProcess::AddAllowedFirstPartyForCookies(processIdentifier, RegistrableDomain(navigation.currentRequest().url()), loadedWebArchive), [callCompletionHandler = WTFMove(callCompletionHandler), suspendedPage = WeakPtr { suspendedPage }] () mutable {

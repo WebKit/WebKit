@@ -568,4 +568,50 @@ TEST(SiteIsolation, GrandchildIframe)
     // (add an onload in the response to /webkit and verify that it is actually called. It is not right now.)
 }
 
+TEST(SiteIsolation, MainFrameWithTwoIFramesInTheSameProcess)
+{
+    HTTPServer server({
+        { "/example"_s, { "<iframe id='webkit_frame_1' src='https://webkit.org/a'></iframe><iframe id='webkit_frame_2' src='https://webkit.org/b'></iframe>"_s } },
+        { "/a"_s, { "<script>alert('donea')</script>"_s } },
+        { "/b"_s, { "<script>alert('doneb')</script>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+
+    auto configuration = server.httpsProxyConfiguration();
+    enableSiteIsolation(configuration);
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
+    webView.get().navigationDelegate = navigationDelegate.get();
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    NSString* alert1 = [webView _test_waitForAlert];
+    NSString* alert2 = [webView _test_waitForAlert];
+    if ([alert1 isEqualToString:@"donea"])
+        EXPECT_WK_STREQ(alert2, "doneb");
+    else if ([alert1 isEqualToString:@"doneb"])
+        EXPECT_WK_STREQ(alert2, "donea");
+    else
+        EXPECT_TRUE(false);
+
+    __block bool done { false };
+    [webView _frames:^(_WKFrameTreeNode *mainFrame) {
+        EXPECT_EQ(mainFrame.childFrames.count, 2u);
+        _WKFrameTreeNode *childFrame = mainFrame.childFrames.firstObject;
+        _WKFrameTreeNode *otherChildFrame = mainFrame.childFrames[1];
+        pid_t mainFramePid = mainFrame._processIdentifier;
+        pid_t childFramePid = childFrame._processIdentifier;
+        pid_t otherChildFramePid = otherChildFrame._processIdentifier;
+        EXPECT_NE(mainFramePid, 0);
+        EXPECT_NE(childFramePid, 0);
+        EXPECT_NE(otherChildFramePid, 0);
+        EXPECT_EQ(childFramePid, otherChildFramePid);
+        EXPECT_NE(mainFramePid, childFramePid);
+        EXPECT_WK_STREQ(mainFrame.securityOrigin.host, "example.com");
+        EXPECT_WK_STREQ(childFrame.securityOrigin.host, "webkit.org");
+        EXPECT_WK_STREQ(childFrame.securityOrigin.host, "webkit.org");
+        done = true;
+    }];
+    Util::run(&done);
+}
+
 }

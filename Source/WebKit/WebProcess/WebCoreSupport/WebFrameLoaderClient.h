@@ -40,7 +40,7 @@ struct WebsitePoliciesData;
     
 class WebFrameLoaderClient final : public WebCore::FrameLoaderClient {
 public:
-    explicit WebFrameLoaderClient(Ref<WebFrame>&&);
+    explicit WebFrameLoaderClient(Ref<WebFrame>&&, std::optional<ScopeExit<Function<void()>>>&& = std::nullopt);
     ~WebFrameLoaderClient();
 
     WebFrame& webFrame() const { return m_frame.get(); }

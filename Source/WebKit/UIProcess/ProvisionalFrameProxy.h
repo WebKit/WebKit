@@ -52,7 +52,7 @@ struct FrameInfoData;
 class ProvisionalFrameProxy : public IPC::MessageReceiver, public IPC::MessageSender {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    ProvisionalFrameProxy(WebFrameProxy&, Ref<WebProcessProxy>&&, const WebCore::ResourceRequest&);
+    ProvisionalFrameProxy(WebFrameProxy&, Ref<WebProcessProxy>&&, const WebCore::ResourceRequest&, bool);
     ~ProvisionalFrameProxy();
 
     WebProcessProxy& process() { return m_process.get(); }
@@ -73,7 +73,6 @@ private:
     Ref<VisitedLinkStore> m_visitedLinkStore;
     WebCore::PageIdentifier m_pageID;
     WebPageProxyIdentifier m_webPageID;
-    bool m_wasCommitted { false };
     WebCore::LayerHostingContextIdentifier m_layerHostingContextIdentifier;
 };
 

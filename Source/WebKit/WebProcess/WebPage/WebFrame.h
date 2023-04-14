@@ -79,7 +79,7 @@ class WebFrame : public API::ObjectImpl<API::Object::Type::BundleFrame>, public 
 public:
     static Ref<WebFrame> create(WebPage& page) { return adoptRef(*new WebFrame(page)); }
     static Ref<WebFrame> createSubframe(WebPage&, WebFrame& parent, const AtomString& frameName, WebCore::HTMLFrameOwnerElement&);
-    static Ref<WebFrame> createLocalSubframeHostedInAnotherProcess(WebPage&, WebFrame& parent, WebCore::FrameIdentifier, WebCore::LayerHostingContextIdentifier);
+    static Ref<WebFrame> createLocalSubframeHostedInAnotherProcess(WebPage&, WebFrame& parent, WebCore::FrameIdentifier, WebCore::LayerHostingContextIdentifier, std::optional<ScopeExit<Function<void()>>>&&);
     static Ref<WebFrame> createRemoteSubframe(WebPage&, WebFrame& parent, WebCore::FrameIdentifier, WebCore::ProcessIdentifier);
     ~WebFrame();
 
