@@ -60,7 +60,7 @@ public:
 protected:
     JSTestReadOnlyMapLike(JSC::Structure*, JSDOMGlobalObject&, Ref<TestReadOnlyMapLike>&&);
 
-    void finishCreation(JSC::VM&);
+    DECLARE_DEFAULT_FINISH_CREATION;
 };
 
 class JSTestReadOnlyMapLikeOwner final : public JSC::WeakHandleOwner {

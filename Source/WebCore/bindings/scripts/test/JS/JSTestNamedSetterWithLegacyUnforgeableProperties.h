@@ -68,7 +68,7 @@ public:
 protected:
     JSTestNamedSetterWithLegacyUnforgeableProperties(JSC::Structure*, JSDOMGlobalObject&, Ref<TestNamedSetterWithLegacyUnforgeableProperties>&&);
 
-    void finishCreation(JSC::VM&);
+    DECLARE_DEFAULT_FINISH_CREATION;
 };
 
 class JSTestNamedSetterWithLegacyUnforgeablePropertiesOwner final : public JSC::WeakHandleOwner {

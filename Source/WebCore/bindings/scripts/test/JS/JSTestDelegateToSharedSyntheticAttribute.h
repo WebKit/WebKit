@@ -60,7 +60,7 @@ public:
 protected:
     JSTestDelegateToSharedSyntheticAttribute(JSC::Structure*, JSDOMGlobalObject&, Ref<TestDelegateToSharedSyntheticAttribute>&&);
 
-    void finishCreation(JSC::VM&);
+    DECLARE_DEFAULT_FINISH_CREATION;
 };
 
 class JSTestDelegateToSharedSyntheticAttributeOwner final : public JSC::WeakHandleOwner {

@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003-2022 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2023 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -1001,6 +1001,7 @@ public:
     bool getNonIndexPropertySlot(JSGlobalObject*, PropertyName, PropertySlot&);
 
 protected:
+#if ASSERT_ENABLED
     void finishCreation(VM& vm)
     {
         Base::finishCreation(vm);
@@ -1009,6 +1010,7 @@ protected:
         ASSERT(structure()->isObject());
         ASSERT(classInfo());
     }
+#endif
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
     {
@@ -1204,12 +1206,14 @@ protected:
     {
     }
 
+#if ASSERT_ENABLED
     void finishCreation(VM& vm)
     {
         Base::finishCreation(vm);
         ASSERT(!this->structure()->hasInlineStorage());
         ASSERT(classInfo());
     }
+#endif
 };
 
 // JSFinalObject is a type of JSObject that contains sufficient internal
@@ -1259,12 +1263,14 @@ private:
         gcSafeZeroMemory(inlineStorageUnsafe(), structure->inlineCapacity() * sizeof(EncodedJSValue));
     }
 
+#if ASSERT_ENABLED
     void finishCreation(VM& vm)
     {
         Base::finishCreation(vm);
         ASSERT(butterfly() || structure()->totalStorageCapacity() == structure()->inlineCapacity());
         ASSERT(classInfo());
     }
+#endif
 };
 
 JS_EXPORT_PRIVATE JSC_DECLARE_HOST_FUNCTION(objectPrivateFuncInstanceOf);

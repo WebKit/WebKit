@@ -60,7 +60,7 @@ public:
 protected:
     JSTestOverloadedConstructorsWithSequence(JSC::Structure*, JSDOMGlobalObject&, Ref<TestOverloadedConstructorsWithSequence>&&);
 
-    void finishCreation(JSC::VM&);
+    DECLARE_DEFAULT_FINISH_CREATION;
 };
 
 class JSTestOverloadedConstructorsWithSequenceOwner final : public JSC::WeakHandleOwner {

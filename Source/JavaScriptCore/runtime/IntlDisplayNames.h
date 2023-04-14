@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -62,7 +62,7 @@ public:
 
 private:
     IntlDisplayNames(VM&, Structure*);
-    void finishCreation(VM&);
+    DECLARE_DEFAULT_FINISH_CREATION;
 
     enum class Style : uint8_t { Narrow, Short, Long };
     enum class Type : uint8_t { Language, Region, Script, Currency, Calendar, DateTimeField };

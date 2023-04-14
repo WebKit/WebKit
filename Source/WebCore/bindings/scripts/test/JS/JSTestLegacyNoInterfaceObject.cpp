@@ -133,14 +133,7 @@ JSTestLegacyNoInterfaceObject::JSTestLegacyNoInterfaceObject(Structure* structur
 {
 }
 
-void JSTestLegacyNoInterfaceObject::finishCreation(VM& vm)
-{
-    Base::finishCreation(vm);
-    ASSERT(inherits(info()));
-
-    static_assert(!std::is_base_of<ActiveDOMObject, TestLegacyNoInterfaceObject>::value, "Interface is not marked as [ActiveDOMObject] even though implementation class subclasses ActiveDOMObject.");
-
-}
+static_assert(!std::is_base_of<ActiveDOMObject, TestLegacyNoInterfaceObject>::value, "Interface is not marked as [ActiveDOMObject] even though implementation class subclasses ActiveDOMObject.");
 
 JSObject* JSTestLegacyNoInterfaceObject::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
 {

@@ -60,7 +60,7 @@ public:
 protected:
     JSTestCEReactions(JSC::Structure*, JSDOMGlobalObject&, Ref<TestCEReactions>&&);
 
-    void finishCreation(JSC::VM&);
+    DECLARE_DEFAULT_FINISH_CREATION;
 };
 
 class JSTestCEReactionsOwner final : public JSC::WeakHandleOwner {

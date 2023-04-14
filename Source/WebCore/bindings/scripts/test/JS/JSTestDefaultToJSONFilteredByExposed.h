@@ -60,7 +60,7 @@ public:
 protected:
     JSTestDefaultToJSONFilteredByExposed(JSC::Structure*, JSDOMGlobalObject&, Ref<TestDefaultToJSONFilteredByExposed>&&);
 
-    void finishCreation(JSC::VM&);
+    DECLARE_DEFAULT_FINISH_CREATION;
 };
 
 class JSTestDefaultToJSONFilteredByExposedOwner final : public JSC::WeakHandleOwner {

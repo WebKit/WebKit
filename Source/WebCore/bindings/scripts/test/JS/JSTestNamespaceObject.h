@@ -54,7 +54,7 @@ public:
 protected:
     JSTestNamespaceObject(JSC::Structure*, JSDOMGlobalObject&);
 
-    void finishCreation(JSC::VM&);
+    DECLARE_DEFAULT_FINISH_CREATION;
 };
 
 

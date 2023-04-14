@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2022 Igalia S.L. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -92,12 +93,6 @@ JSWebAssemblyArray::~JSWebAssemblyArray()
         m_payload64.~FixedVector<uint64_t>();
         break;
     }
-}
-
-void JSWebAssemblyArray::finishCreation(VM& vm)
-{
-    Base::finishCreation(vm);
-    ASSERT(inherits(info()));
 }
 
 void JSWebAssemblyArray::destroy(JSCell* cell)

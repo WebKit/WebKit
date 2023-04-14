@@ -68,7 +68,7 @@ public:
 protected:
     JSTestLegacyNoInterfaceObject(JSC::Structure*, JSDOMGlobalObject&, Ref<TestLegacyNoInterfaceObject>&&);
 
-    void finishCreation(JSC::VM&);
+    DECLARE_DEFAULT_FINISH_CREATION;
 };
 
 class JSTestLegacyNoInterfaceObjectOwner final : public JSC::WeakHandleOwner {

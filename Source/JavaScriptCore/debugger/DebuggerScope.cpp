@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -48,11 +48,6 @@ DebuggerScope::DebuggerScope(VM& vm, Structure* structure, JSScope* scope)
 {
     ASSERT(scope);
     m_scope.set(vm, this, scope);
-}
-
-void DebuggerScope::finishCreation(VM& vm)
-{
-    Base::finishCreation(vm);
 }
 
 template<typename Visitor>

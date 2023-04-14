@@ -159,14 +159,7 @@ JSTestCEReactions::JSTestCEReactions(Structure* structure, JSDOMGlobalObject& gl
 {
 }
 
-void JSTestCEReactions::finishCreation(VM& vm)
-{
-    Base::finishCreation(vm);
-    ASSERT(inherits(info()));
-
-    static_assert(!std::is_base_of<ActiveDOMObject, TestCEReactions>::value, "Interface is not marked as [ActiveDOMObject] even though implementation class subclasses ActiveDOMObject.");
-
-}
+static_assert(!std::is_base_of<ActiveDOMObject, TestCEReactions>::value, "Interface is not marked as [ActiveDOMObject] even though implementation class subclasses ActiveDOMObject.");
 
 JSObject* JSTestCEReactions::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
 {

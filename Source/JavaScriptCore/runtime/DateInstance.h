@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2008-2022 Apple Inc. All rights reserved.
+ *  Copyright (C) 2008-2023 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -83,7 +83,8 @@ public:
 
 private:
     JS_EXPORT_PRIVATE DateInstance(VM&, Structure*);
-    void finishCreation(VM&);
+
+    DECLARE_DEFAULT_FINISH_CREATION;
     JS_EXPORT_PRIVATE void finishCreation(VM&, double);
     JS_EXPORT_PRIVATE const GregorianDateTime* calculateGregorianDateTime(DateCache&) const;
     JS_EXPORT_PRIVATE const GregorianDateTime* calculateGregorianDateTimeUTC(DateCache&) const;

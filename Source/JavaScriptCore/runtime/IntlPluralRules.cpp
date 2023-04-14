@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2018 Andy VanWagoner (andy@vanwagoner.family)
- * Copyright (C) 2019-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -71,12 +71,6 @@ Structure* IntlPluralRules::createStructure(VM& vm, JSGlobalObject* globalObject
 IntlPluralRules::IntlPluralRules(VM& vm, Structure* structure)
     : Base(vm, structure)
 {
-}
-
-void IntlPluralRules::finishCreation(VM& vm)
-{
-    Base::finishCreation(vm);
-    ASSERT(inherits(info()));
 }
 
 template<typename Visitor>

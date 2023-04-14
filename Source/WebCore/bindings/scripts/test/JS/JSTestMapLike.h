@@ -60,7 +60,7 @@ public:
 protected:
     JSTestMapLike(JSC::Structure*, JSDOMGlobalObject&, Ref<TestMapLike>&&);
 
-    void finishCreation(JSC::VM&);
+    DECLARE_DEFAULT_FINISH_CREATION;
 };
 
 class JSTestMapLikeOwner final : public JSC::WeakHandleOwner {

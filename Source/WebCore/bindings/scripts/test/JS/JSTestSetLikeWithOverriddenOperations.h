@@ -60,7 +60,7 @@ public:
 protected:
     JSTestSetLikeWithOverriddenOperations(JSC::Structure*, JSDOMGlobalObject&, Ref<TestSetLikeWithOverriddenOperations>&&);
 
-    void finishCreation(JSC::VM&);
+    DECLARE_DEFAULT_FINISH_CREATION;
 };
 
 class JSTestSetLikeWithOverriddenOperationsOwner final : public JSC::WeakHandleOwner {

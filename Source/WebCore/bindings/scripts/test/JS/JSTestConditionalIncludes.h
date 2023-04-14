@@ -73,7 +73,7 @@ public:
 protected:
     JSTestConditionalIncludes(JSC::Structure*, JSDOMGlobalObject&, Ref<TestConditionalIncludes>&&);
 
-    void finishCreation(JSC::VM&);
+    DECLARE_DEFAULT_FINISH_CREATION;
 };
 
 class JSTestConditionalIncludesOwner final : public JSC::WeakHandleOwner {

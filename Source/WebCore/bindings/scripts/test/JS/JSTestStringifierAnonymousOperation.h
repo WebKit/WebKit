@@ -60,7 +60,7 @@ public:
 protected:
     JSTestStringifierAnonymousOperation(JSC::Structure*, JSDOMGlobalObject&, Ref<TestStringifierAnonymousOperation>&&);
 
-    void finishCreation(JSC::VM&);
+    DECLARE_DEFAULT_FINISH_CREATION;
 };
 
 class JSTestStringifierAnonymousOperationOwner final : public JSC::WeakHandleOwner {

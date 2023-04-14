@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003-2021 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2023 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -75,6 +75,19 @@ template<typename T> void* tryAllocateCell(VM&, GCDeferralContext*, size_t = siz
         static const ::JSC::ClassInfo s_info;                                \
     public:                                                                  \
         static constexpr const ::JSC::ClassInfo* info() { return &s_info; }
+
+#if ASSERT_ENABLED
+#define DECLARE_DEFAULT_FINISH_CREATION \
+    ALWAYS_INLINE void finishCreation(JSC::VM& vm) \
+    { \
+        Base::finishCreation(vm); \
+        ASSERT(inherits(info())); \
+    } \
+    static constexpr int __unusedFooterAfterDefaultFinishCreation = 0
+#else
+#define DECLARE_DEFAULT_FINISH_CREATION \
+    using Base::finishCreation
+#endif
 
 class JSCell : public HeapCell {
     friend class JSValue;

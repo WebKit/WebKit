@@ -68,7 +68,7 @@ public:
 protected:
     JSTestIndexedSetterThrowingException(JSC::Structure*, JSDOMGlobalObject&, Ref<TestIndexedSetterThrowingException>&&);
 
-    void finishCreation(JSC::VM&);
+    DECLARE_DEFAULT_FINISH_CREATION;
 };
 
 class JSTestIndexedSetterThrowingExceptionOwner final : public JSC::WeakHandleOwner {

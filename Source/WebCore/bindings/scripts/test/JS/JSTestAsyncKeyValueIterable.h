@@ -60,7 +60,7 @@ public:
 protected:
     JSTestAsyncKeyValueIterable(JSC::Structure*, JSDOMGlobalObject&, Ref<TestAsyncKeyValueIterable>&&);
 
-    void finishCreation(JSC::VM&);
+    DECLARE_DEFAULT_FINISH_CREATION;
 };
 
 class JSTestAsyncKeyValueIterableOwner final : public JSC::WeakHandleOwner {

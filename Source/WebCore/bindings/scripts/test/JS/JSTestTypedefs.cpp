@@ -248,14 +248,7 @@ JSTestTypedefs::JSTestTypedefs(Structure* structure, JSDOMGlobalObject& globalOb
 {
 }
 
-void JSTestTypedefs::finishCreation(VM& vm)
-{
-    Base::finishCreation(vm);
-    ASSERT(inherits(info()));
-
-    static_assert(!std::is_base_of<ActiveDOMObject, TestTypedefs>::value, "Interface is not marked as [ActiveDOMObject] even though implementation class subclasses ActiveDOMObject.");
-
-}
+static_assert(!std::is_base_of<ActiveDOMObject, TestTypedefs>::value, "Interface is not marked as [ActiveDOMObject] even though implementation class subclasses ActiveDOMObject.");
 
 JSObject* JSTestTypedefs::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
 {

@@ -67,7 +67,7 @@ public:
 protected:
     JSTestNamedDeleterThrowingException(JSC::Structure*, JSDOMGlobalObject&, Ref<TestNamedDeleterThrowingException>&&);
 
-    void finishCreation(JSC::VM&);
+    DECLARE_DEFAULT_FINISH_CREATION;
 };
 
 class JSTestNamedDeleterThrowingExceptionOwner final : public JSC::WeakHandleOwner {

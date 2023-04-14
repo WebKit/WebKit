@@ -487,14 +487,7 @@ JSTestInterface::JSTestInterface(Structure* structure, JSDOMGlobalObject& global
 {
 }
 
-void JSTestInterface::finishCreation(VM& vm)
-{
-    Base::finishCreation(vm);
-    ASSERT(inherits(info()));
-
-    static_assert(std::is_base_of<ActiveDOMObject, TestInterface>::value, "Interface is marked as [ActiveDOMObject] but implementation class does not subclass ActiveDOMObject.");
-
-}
+static_assert(std::is_base_of<ActiveDOMObject, TestInterface>::value, "Interface is marked as [ActiveDOMObject] but implementation class does not subclass ActiveDOMObject.");
 
 JSObject* JSTestInterface::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
 {

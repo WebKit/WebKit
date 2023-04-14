@@ -68,7 +68,7 @@ public:
 protected:
     JSTestNamedSetterWithIndexedGetterAndSetter(JSC::Structure*, JSDOMGlobalObject&, Ref<TestNamedSetterWithIndexedGetterAndSetter>&&);
 
-    void finishCreation(JSC::VM&);
+    DECLARE_DEFAULT_FINISH_CREATION;
 };
 
 class JSTestNamedSetterWithIndexedGetterAndSetterOwner final : public JSC::WeakHandleOwner {

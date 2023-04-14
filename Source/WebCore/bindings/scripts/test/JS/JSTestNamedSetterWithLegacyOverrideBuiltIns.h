@@ -68,7 +68,7 @@ public:
 protected:
     JSTestNamedSetterWithLegacyOverrideBuiltIns(JSC::Structure*, JSDOMGlobalObject&, Ref<TestNamedSetterWithLegacyOverrideBuiltIns>&&);
 
-    void finishCreation(JSC::VM&);
+    DECLARE_DEFAULT_FINISH_CREATION;
 };
 
 class JSTestNamedSetterWithLegacyOverrideBuiltInsOwner final : public JSC::WeakHandleOwner {

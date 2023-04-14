@@ -60,7 +60,7 @@ public:
 protected:
     JSTestDefaultToJSON(JSC::Structure*, JSDOMGlobalObject&, Ref<TestDefaultToJSON>&&);
 
-    void finishCreation(JSC::VM&);
+    DECLARE_DEFAULT_FINISH_CREATION;
 };
 
 class JSTestDefaultToJSONOwner final : public JSC::WeakHandleOwner {

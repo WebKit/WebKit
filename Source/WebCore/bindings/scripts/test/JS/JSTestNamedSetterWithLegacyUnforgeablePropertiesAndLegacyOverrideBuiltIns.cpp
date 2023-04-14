@@ -151,14 +151,7 @@ JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns::JSTes
 {
 }
 
-void JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns::finishCreation(VM& vm)
-{
-    Base::finishCreation(vm);
-    ASSERT(inherits(info()));
-
-    static_assert(!std::is_base_of<ActiveDOMObject, TestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns>::value, "Interface is not marked as [ActiveDOMObject] even though implementation class subclasses ActiveDOMObject.");
-
-}
+static_assert(!std::is_base_of<ActiveDOMObject, TestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns>::value, "Interface is not marked as [ActiveDOMObject] even though implementation class subclasses ActiveDOMObject.");
 
 JSObject* JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
 {

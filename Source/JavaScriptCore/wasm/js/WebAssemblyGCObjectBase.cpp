@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2023 Igalia S.L. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -50,12 +51,6 @@ void WebAssemblyGCObjectBase::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 }
 
 DEFINE_VISIT_CHILDREN(WebAssemblyGCObjectBase);
-
-void WebAssemblyGCObjectBase::finishCreation(VM& vm)
-{
-    Base::finishCreation(vm);
-    ASSERT(inherits(info()));
-}
 
 bool WebAssemblyGCObjectBase::getOwnPropertySlot(JSObject* object, JSGlobalObject*, PropertyName, PropertySlot& slot)
 {

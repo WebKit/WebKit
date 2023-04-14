@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2020 Sony Interactive Entertainment Inc.
- * Copyright (C) 2020-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -63,7 +63,7 @@ public:
 
 private:
     IntlRelativeTimeFormat(VM&, Structure*);
-    void finishCreation(VM&);
+    DECLARE_DEFAULT_FINISH_CREATION;
     DECLARE_VISIT_CHILDREN;
 
     static Vector<String> localeData(const String&, RelevantExtensionKey);

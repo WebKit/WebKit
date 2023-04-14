@@ -60,7 +60,7 @@ public:
 protected:
     JSTestCEReactionsStringifier(JSC::Structure*, JSDOMGlobalObject&, Ref<TestCEReactionsStringifier>&&);
 
-    void finishCreation(JSC::VM&);
+    DECLARE_DEFAULT_FINISH_CREATION;
 };
 
 class JSTestCEReactionsStringifierOwner final : public JSC::WeakHandleOwner {

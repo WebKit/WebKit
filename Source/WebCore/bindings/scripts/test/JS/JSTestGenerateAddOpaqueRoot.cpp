@@ -128,14 +128,7 @@ JSTestGenerateAddOpaqueRoot::JSTestGenerateAddOpaqueRoot(Structure* structure, J
 {
 }
 
-void JSTestGenerateAddOpaqueRoot::finishCreation(VM& vm)
-{
-    Base::finishCreation(vm);
-    ASSERT(inherits(info()));
-
-    static_assert(!std::is_base_of<ActiveDOMObject, TestGenerateAddOpaqueRoot>::value, "Interface is not marked as [ActiveDOMObject] even though implementation class subclasses ActiveDOMObject.");
-
-}
+static_assert(!std::is_base_of<ActiveDOMObject, TestGenerateAddOpaqueRoot>::value, "Interface is not marked as [ActiveDOMObject] even though implementation class subclasses ActiveDOMObject.");
 
 JSObject* JSTestGenerateAddOpaqueRoot::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
 {

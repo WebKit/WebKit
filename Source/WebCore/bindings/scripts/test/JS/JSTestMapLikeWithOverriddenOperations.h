@@ -60,7 +60,7 @@ public:
 protected:
     JSTestMapLikeWithOverriddenOperations(JSC::Structure*, JSDOMGlobalObject&, Ref<TestMapLikeWithOverriddenOperations>&&);
 
-    void finishCreation(JSC::VM&);
+    DECLARE_DEFAULT_FINISH_CREATION;
 };
 
 class JSTestMapLikeWithOverriddenOperationsOwner final : public JSC::WeakHandleOwner {

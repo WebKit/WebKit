@@ -63,7 +63,9 @@ public:
     static constexpr unsigned StructureFlags = Base::StructureFlags | JSC::HasStaticPropertyTable;
 protected:
     JSSharedWorkerGlobalScope(JSC::VM&, JSC::Structure*, Ref<SharedWorkerGlobalScope>&&);
+#if ASSERT_ENABLED
     void finishCreation(JSC::VM&, JSC::JSGlobalProxy*);
+#endif
 };
 
 

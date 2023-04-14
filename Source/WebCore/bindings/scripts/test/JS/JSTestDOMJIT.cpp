@@ -580,13 +580,6 @@ JSTestDOMJIT::JSTestDOMJIT(Structure* structure, JSDOMGlobalObject& globalObject
 {
 }
 
-void JSTestDOMJIT::finishCreation(VM& vm)
-{
-    Base::finishCreation(vm);
-    ASSERT(inherits(info()));
-
-}
-
 JSObject* JSTestDOMJIT::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
 {
     auto* structure = JSTestDOMJITPrototype::createStructure(vm, &globalObject, JSNode::prototype(vm, globalObject));

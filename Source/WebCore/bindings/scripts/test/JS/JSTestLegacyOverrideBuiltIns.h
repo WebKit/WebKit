@@ -65,7 +65,7 @@ public:
 protected:
     JSTestLegacyOverrideBuiltIns(JSC::Structure*, JSDOMGlobalObject&, Ref<TestLegacyOverrideBuiltIns>&&);
 
-    void finishCreation(JSC::VM&);
+    DECLARE_DEFAULT_FINISH_CREATION;
 };
 
 class JSTestLegacyOverrideBuiltInsOwner final : public JSC::WeakHandleOwner {

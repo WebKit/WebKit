@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003-2022 Apple Inc. All Rights Reserved.
+ *  Copyright (C) 2003-2023 Apple Inc. All Rights Reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -136,7 +136,9 @@ public:
 
 private:
     JS_EXPORT_PRIVATE RegExpObject(VM&, Structure*, RegExp*, bool areLegacyFeaturesEnabled);
+#if ASSERT_ENABLED
     JS_EXPORT_PRIVATE void finishCreation(VM&);
+#endif
 
     DECLARE_VISIT_CHILDREN;
 

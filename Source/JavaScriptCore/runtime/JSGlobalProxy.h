@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -73,10 +73,7 @@ protected:
     {
     }
 
-    void finishCreation(VM& vm)
-    {
-        Base::finishCreation(vm);
-    }
+    DECLARE_DEFAULT_FINISH_CREATION;
 
     void finishCreation(VM& vm, JSGlobalObject* target)
     {

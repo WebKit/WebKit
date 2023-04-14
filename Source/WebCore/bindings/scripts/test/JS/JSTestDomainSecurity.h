@@ -62,7 +62,7 @@ public:
 protected:
     JSTestDomainSecurity(JSC::Structure*, JSDOMGlobalObject&, Ref<TestDomainSecurity>&&);
 
-    void finishCreation(JSC::VM&);
+    DECLARE_DEFAULT_FINISH_CREATION;
 };
 
 class JSTestDomainSecurityOwner final : public JSC::WeakHandleOwner {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -764,7 +764,7 @@ private:
         return ensureRareDataSlow();
     }
     
-    JS_EXPORT_PRIVATE void finishCreation(VM&);
+    DECLARE_DEFAULT_FINISH_CREATION;
     JS_EXPORT_PRIVATE SymbolTableRareData& ensureRareDataSlow();
 
     Map m_map;

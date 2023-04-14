@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003-2022 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2023 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -190,10 +190,7 @@ private:
     }
 
 protected:
-    void finishCreation(VM& vm)
-    {
-        Base::finishCreation(vm);
-    }
+    DECLARE_DEFAULT_FINISH_CREATION;
 
 public:
     ~JSString();

@@ -62,7 +62,7 @@ public:
 protected:
     JSTestOperationConditional(JSC::Structure*, JSDOMGlobalObject&, Ref<TestOperationConditional>&&);
 
-    void finishCreation(JSC::VM&);
+    DECLARE_DEFAULT_FINISH_CREATION;
 };
 
 class JSTestOperationConditionalOwner final : public JSC::WeakHandleOwner {

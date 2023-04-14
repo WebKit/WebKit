@@ -68,7 +68,7 @@ public:
 protected:
     JSTestNamedSetterThrowingException(JSC::Structure*, JSDOMGlobalObject&, Ref<TestNamedSetterThrowingException>&&);
 
-    void finishCreation(JSC::VM&);
+    DECLARE_DEFAULT_FINISH_CREATION;
 };
 
 class JSTestNamedSetterThrowingExceptionOwner final : public JSC::WeakHandleOwner {

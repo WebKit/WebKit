@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003-2021 Apple Inc. All Rights Reserved.
+ *  Copyright (C) 2003-2023 Apple Inc. All Rights Reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -39,12 +39,14 @@ RegExpObject::RegExpObject(VM& vm, Structure* structure, RegExp* regExp, bool ar
     m_lastIndex.setWithoutWriteBarrier(jsNumber(0));
 }
 
+#if ASSERT_ENABLED
 void RegExpObject::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
     ASSERT(type() == RegExpObjectType);
 }
+#endif
 
 template<typename Visitor>
 void RegExpObject::visitChildrenImpl(JSCell* cell, Visitor& visitor)

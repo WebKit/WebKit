@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2021 Sony Interactive Entertainment Inc.
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -55,12 +55,6 @@ TemporalDuration::TemporalDuration(VM& vm, Structure* structure, ISO8601::Durati
     : Base(vm, structure)
     , m_duration(WTFMove(duration))
 {
-}
-
-void TemporalDuration::finishCreation(VM& vm)
-{
-    Base::finishCreation(vm);
-    ASSERT(inherits(info()));
 }
 
 // CreateTemporalDuration ( years, months, weeks, days, hours, minutes, seconds, milliseconds, microseconds, nanoseconds [ , newTarget ] )

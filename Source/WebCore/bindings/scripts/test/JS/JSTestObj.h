@@ -86,7 +86,7 @@ public:
 protected:
     JSTestObj(JSC::Structure*, JSDOMGlobalObject&, Ref<TestObj>&&);
 
-    void finishCreation(JSC::VM&);
+    DECLARE_DEFAULT_FINISH_CREATION;
 };
 
 class JSTestObjOwner final : public JSC::WeakHandleOwner {

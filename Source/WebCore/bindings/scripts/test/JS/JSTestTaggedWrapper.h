@@ -61,7 +61,7 @@ public:
 protected:
     JSTestTaggedWrapper(JSC::Structure*, JSDOMGlobalObject&, Ref<TestTaggedWrapper>&&);
 
-    void finishCreation(JSC::VM&);
+    DECLARE_DEFAULT_FINISH_CREATION;
 };
 
 class JSTestTaggedWrapperOwner final : public JSC::WeakHandleOwner {

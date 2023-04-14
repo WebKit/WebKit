@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -73,7 +73,7 @@ public:
 
 protected:
     JSWebAssemblyStruct(VM&, Structure*, Ref<const Wasm::TypeDefinition>&&, RefPtr<const Wasm::RTT>);
-    void finishCreation(VM&);
+    DECLARE_DEFAULT_FINISH_CREATION;
 
     // FIXME: It is possible to encode the type information in the structure field of Wasm.Struct and remove this field.
     // https://bugs.webkit.org/show_bug.cgi?id=244838

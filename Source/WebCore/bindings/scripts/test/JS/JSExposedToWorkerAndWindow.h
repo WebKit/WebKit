@@ -61,7 +61,7 @@ public:
 protected:
     JSExposedToWorkerAndWindow(JSC::Structure*, JSDOMGlobalObject&, Ref<ExposedToWorkerAndWindow>&&);
 
-    void finishCreation(JSC::VM&);
+    DECLARE_DEFAULT_FINISH_CREATION;
 };
 
 class JSExposedToWorkerAndWindowOwner final : public JSC::WeakHandleOwner {

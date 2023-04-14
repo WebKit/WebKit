@@ -60,7 +60,7 @@ public:
 protected:
     JSTestStringifierReadOnlyAttribute(JSC::Structure*, JSDOMGlobalObject&, Ref<TestStringifierReadOnlyAttribute>&&);
 
-    void finishCreation(JSC::VM&);
+    DECLARE_DEFAULT_FINISH_CREATION;
 };
 
 class JSTestStringifierReadOnlyAttributeOwner final : public JSC::WeakHandleOwner {

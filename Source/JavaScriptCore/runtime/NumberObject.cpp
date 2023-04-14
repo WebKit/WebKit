@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000,2003 Harri Porten (porten@kde.org)
- *  Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
+ *  Copyright (C) 2007-2023 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -35,12 +35,14 @@ NumberObject::NumberObject(VM& vm, Structure* structure)
 {
 }
 
+#if ASSERT_ENABLED
 void NumberObject::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
     ASSERT(type() == NumberObjectType);
 }
+#endif
 
 NumberObject* constructNumber(JSGlobalObject* globalObject, JSValue number)
 {

@@ -60,7 +60,7 @@ public:
 protected:
     JSTestSetLike(JSC::Structure*, JSDOMGlobalObject&, Ref<TestSetLike>&&);
 
-    void finishCreation(JSC::VM&);
+    DECLARE_DEFAULT_FINISH_CREATION;
 };
 
 class JSTestSetLikeOwner final : public JSC::WeakHandleOwner {

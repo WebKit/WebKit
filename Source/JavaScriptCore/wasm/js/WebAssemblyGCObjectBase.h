@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2023 Igalia S.L. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -48,7 +49,7 @@ protected:
 
     WebAssemblyGCObjectBase(VM&, Structure*, RefPtr<const Wasm::RTT>);
 
-    void finishCreation(VM&);
+    DECLARE_DEFAULT_FINISH_CREATION;
 
     JS_EXPORT_PRIVATE static bool getOwnPropertySlot(JSObject*, JSGlobalObject*, PropertyName, PropertySlot&);
     JS_EXPORT_PRIVATE static bool getOwnPropertySlotByIndex(JSObject*, JSGlobalObject*, unsigned, PropertySlot&);
