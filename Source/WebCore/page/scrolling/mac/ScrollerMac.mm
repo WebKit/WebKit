@@ -30,6 +30,7 @@
 
 #import "ScrollTypesMac.h"
 #import "ScrollerPairMac.h"
+#import "ScrollingTreeScrollingNode.h"
 #import <QuartzCore/CALayer.h>
 #import <WebCore/FloatPoint.h>
 #import <WebCore/IntRect.h>
@@ -181,7 +182,7 @@ enum class FeatureToAnimate {
 
     ASSERT_UNUSED(scrollerImp, scrollerImp == _scroller->scrollerImp());
 
-    return _scroller->convertFromContent(_scroller->pair().lastKnownMousePosition());
+    return _scroller->lastKnownMousePositionInScrollbar();
 }
 
 - (NSRect)convertRectToLayer:(NSRect)rect
@@ -367,11 +368,6 @@ void ScrollerMac::updateScrollbarStyle()
     updatePairScrollerImps();
 }
 
-FloatPoint ScrollerMac::convertFromContent(const FloatPoint& point) const
-{
-    return FloatPoint { [m_hostLayer convertPoint:point fromLayer:[m_hostLayer superlayer]] };
-}
-
 void ScrollerMac::updatePairScrollerImps()
 {
     NSScrollerImp *scrollerImp = m_hostLayer ? m_scrollerImp.get() : nil;
@@ -407,6 +403,15 @@ void ScrollerMac::mouseExitedScrollbar()
 
         [m_scrollerImp mouseExitedScroller];
     });
+}
+
+IntPoint ScrollerMac::lastKnownMousePositionInScrollbar() const
+{
+    // When we dont have an update from the Web Process, return
+    // a point outside of the scrollbars
+    if (!m_pair.mouseInContentArea())
+        return { -1, -1 };
+    return m_lastKnownMousePositionInScrollbar;
 }
 
 String ScrollerMac::scrollbarState() const

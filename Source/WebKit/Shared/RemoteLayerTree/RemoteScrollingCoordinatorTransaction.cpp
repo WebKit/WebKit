@@ -171,6 +171,12 @@ void ArgumentCoder<ScrollingStateScrollingNode>::encode(Encoder& encoder, const 
         encoder << mouseIsInScrollbar.mouseIsOverHorizontalScrollbar;
         encoder << mouseIsInScrollbar.mouseIsOverVerticalScrollbar;
     }
+    
+    if (node.hasChangedProperty(ScrollingStateNode::Property::MouseActivityState)) {
+        auto mouseLocationState = node.mouseLocationState();
+        encoder << mouseLocationState.locationInHorizontalScrollbar;
+        encoder << mouseLocationState.locationInVerticalScrollbar;
+    }
 }
 
 void ArgumentCoder<ScrollingStateFrameScrollingNode>::encode(Encoder& encoder, const ScrollingStateFrameScrollingNode& node)
@@ -264,7 +270,7 @@ bool ArgumentCoder<ScrollingStateScrollingNode>::decode(Decoder& decoder, Scroll
         node.setRequestedScrollData(WTFMove(requestedScrollData), ScrollingStateScrollingNode::CanMergeScrollData::No);
     }
     SCROLLING_NODE_DECODE(ScrollingStateNode::Property::KeyboardScrollData, RequestedKeyboardScrollData, setKeyboardScrollData);
-    SCROLLING_NODE_DECODE(ScrollingStateNode::Property::ContentAreaHoverState, bool, setMouseIsOverContentArea)
+    SCROLLING_NODE_DECODE(ScrollingStateNode::Property::ContentAreaHoverState, bool, setMouseIsOverContentArea);
 
     if (node.hasChangedProperty(ScrollingStateNode::Property::ScrollContainerLayer)) {
         std::optional<PlatformLayerIdentifier> layerID;
@@ -303,6 +309,17 @@ bool ArgumentCoder<ScrollingStateScrollingNode>::decode(Decoder& decoder, Scroll
         if (!decoder.decode(didEnterScrollbarVertical))
             return false;
         node.setScrollbarHoverState({ didEnterScrollbarHorizontal, didEnterScrollbarVertical });
+    }
+    
+    if (node.hasChangedProperty(ScrollingStateNode::Property::MouseActivityState)) {
+        IntPoint locationInHorizontalScrollbar;
+        if (!decoder.decode(locationInHorizontalScrollbar))
+            return false;
+
+        IntPoint locationInVerticalScrollbar;
+        if (!decoder.decode(locationInVerticalScrollbar))
+            return false;
+        node.setMouseMovedInContentArea({ locationInHorizontalScrollbar, locationInVerticalScrollbar });
     }
 
     return true;

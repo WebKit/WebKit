@@ -61,7 +61,6 @@ public:
     void updateScrollbarLayers() final;
     
     void handleWheelEventPhase(const PlatformWheelEventPhase) final;
-    bool handleMouseEventForScrollbars(const PlatformMouseEvent&) final;
     void viewWillStartLiveResize() final;
     void viewWillEndLiveResize() final;
     void viewSizeDidChange() final;

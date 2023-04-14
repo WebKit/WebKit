@@ -46,8 +46,6 @@ public:
     explicit RemoteScrollingTreeMac(RemoteScrollingCoordinatorProxy&);
     virtual ~RemoteScrollingTreeMac();
 
-    void handleMouseEvent(const WebCore::PlatformMouseEvent&) final;
-
 private:
     void handleWheelEventPhase(WebCore::ScrollingNodeID, WebCore::PlatformWheelEventPhase) override;
     RefPtr<WebCore::ScrollingTreeNode> scrollingNodeForPoint(WebCore::FloatPoint) override;

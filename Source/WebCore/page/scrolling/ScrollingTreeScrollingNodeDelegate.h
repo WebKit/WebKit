@@ -48,7 +48,6 @@ public:
     virtual void updateFromStateNode(const ScrollingStateScrollingNode&) { }
     
     virtual void handleWheelEventPhase(const PlatformWheelEventPhase) { }
-    virtual bool handleMouseEventForScrollbars(const PlatformMouseEvent&) { return false; }
     
     virtual void viewWillStartLiveResize() { }
     virtual void viewWillEndLiveResize() { }

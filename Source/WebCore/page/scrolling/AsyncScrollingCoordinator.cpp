@@ -384,7 +384,13 @@ void AsyncScrollingCoordinator::setMouseMovedInContentArea(ScrollableArea& scrol
     auto stateNode = dynamicDowncast<ScrollingStateScrollingNode>(m_scrollingStateTree->stateNodeForID(scrollingNodeID));
     if (!stateNode)
         return;
-    stateNode->setMouseMovedInContentArea();
+    
+    auto mousePosition = scrollableArea.lastKnownMousePositionInView();
+    auto horizontalScrollbar = scrollableArea.horizontalScrollbar();
+    auto verticalScrollbar = scrollableArea.verticalScrollbar();
+    
+    MouseLocationState state = { horizontalScrollbar ? horizontalScrollbar->convertFromContainingView(mousePosition) : IntPoint(), verticalScrollbar ? verticalScrollbar->convertFromContainingView(mousePosition) : IntPoint() };
+    stateNode->setMouseMovedInContentArea(state);
 }
 
 bool AsyncScrollingCoordinator::requestAnimatedScrollToPosition(ScrollableArea& scrollableArea, const ScrollPosition& scrollPosition, ScrollClamping clamping)

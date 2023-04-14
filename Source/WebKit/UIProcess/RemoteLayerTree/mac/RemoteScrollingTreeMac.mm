@@ -106,13 +106,6 @@ Ref<ScrollingTreeNode> RemoteScrollingTreeMac::createScrollingTreeNode(Scrolling
     return ScrollingTreeFixedNodeCocoa::create(*this, nodeID);
 }
 
-void RemoteScrollingTreeMac::handleMouseEvent(const PlatformMouseEvent& event)
-{
-    if (!rootNode())
-        return;
-    static_cast<ScrollingTreeFrameScrollingNodeRemoteMac&>(*rootNode()).handleMouseEvent(event);
-}
-
 void RemoteScrollingTreeMac::didCommitTree()
 {
     ASSERT(isMainRunLoop());

@@ -61,18 +61,19 @@ public:
     void updateScrollbarStyle();
     void updatePairScrollerImps();
 
-    FloatPoint convertFromContent(const FloatPoint&) const;
-
     void updateValues();
     
     String scrollbarState() const;
     
     void mouseEnteredScrollbar();
     void mouseExitedScrollbar();
-
+    
+    void setLastKnownMousePositionInScrollbar(IntPoint position) { m_lastKnownMousePositionInScrollbar = position; }
+    IntPoint lastKnownMousePositionInScrollbar() const;
 private:
     ScrollerPairMac& m_pair;
     const ScrollbarOrientation m_orientation;
+    IntPoint m_lastKnownMousePositionInScrollbar;
 
     RetainPtr<CALayer> m_hostLayer;
     RetainPtr<NSScrollerImp> m_scrollerImp;
