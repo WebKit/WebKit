@@ -87,7 +87,7 @@ void HTMLOListElement::collectPresentationalHintsForAttribute(const QualifiedNam
 void HTMLOListElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     switch (name.nodeName()) {
-    case AttributeName::startAttr: {
+    case AttributeNames::startAttr: {
         int oldStart = start();
         m_start = optionalValue(parseHTMLInteger(newValue));
         if (oldStart == start())
@@ -95,7 +95,7 @@ void HTMLOListElement::attributeChanged(const QualifiedName& name, const AtomStr
         RenderListItem::updateItemValuesForOrderedList(*this);
         break;
     }
-    case AttributeName::reversedAttr: {
+    case AttributeNames::reversedAttr: {
         bool reversed = !newValue.isNull();
         if (reversed == m_isReversed)
             return;

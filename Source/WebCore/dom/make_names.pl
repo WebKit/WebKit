@@ -1078,7 +1078,6 @@ sub printNodeNameHeaderFile
     }
     print F "};\n";
     print F "\n";
-    print F "using AttributeName = NodeName;\n";
     print F "using ElementName = NodeName;\n";
     print F "\n";
     print F "namespace ElementNames {\n";
@@ -1097,7 +1096,7 @@ sub printNodeNameHeaderFile
         print F "namespace $namespace {\n" unless $namespace eq "";
         for my $attrKey (sort byAttrNameOrder keys %{$allAttrsPerNamespace{$namespace}}) {
             my $enumValue = $allAttrs{$attrKey}{nodeNameEnumValue};
-            print F "inline constexpr auto $allAttrs{$attrKey}{tagEnumValue} = AttributeName::$enumValue;\n" unless $handledAttrs{$enumValue};
+            print F "inline constexpr auto $allAttrs{$attrKey}{tagEnumValue} = NodeName::$enumValue;\n" unless $handledAttrs{$enumValue};
             $handledAttrs{$enumValue} = 1;
         }
         if ($namespace eq "") {

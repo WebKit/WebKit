@@ -666,12 +666,12 @@ bool HTMLInputElement::accessKeyAction(bool sendMouseEvents)
 bool HTMLInputElement::hasPresentationalHintsForAttribute(const QualifiedName& name) const
 {
     switch (name.nodeName()) {
-    case AttributeName::vspaceAttr:
-    case AttributeName::hspaceAttr:
-    case AttributeName::widthAttr:
-    case AttributeName::heightAttr:
+    case AttributeNames::vspaceAttr:
+    case AttributeNames::hspaceAttr:
+    case AttributeNames::widthAttr:
+    case AttributeNames::heightAttr:
         return true;
-    case AttributeName::borderAttr:
+    case AttributeNames::borderAttr:
         return isImageButton();
     default:
         return HTMLTextFormControlElement::hasPresentationalHintsForAttribute(name);
@@ -682,35 +682,35 @@ bool HTMLInputElement::hasPresentationalHintsForAttribute(const QualifiedName& n
 void HTMLInputElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
 {
     switch (name.nodeName()) {
-    case AttributeName::vspaceAttr:
+    case AttributeNames::vspaceAttr:
         if (isImageButton()) {
             addHTMLLengthToStyle(style, CSSPropertyMarginTop, value);
             addHTMLLengthToStyle(style, CSSPropertyMarginBottom, value);
         }
         break;
-    case AttributeName::hspaceAttr:
+    case AttributeNames::hspaceAttr:
         if (isImageButton()) {
             addHTMLLengthToStyle(style, CSSPropertyMarginLeft, value);
             addHTMLLengthToStyle(style, CSSPropertyMarginRight, value);
         }
         break;
-    case AttributeName::alignAttr:
+    case AttributeNames::alignAttr:
         if (m_inputType->shouldRespectAlignAttribute())
             applyAlignmentAttributeToStyle(value, style);
         break;
-    case AttributeName::widthAttr:
+    case AttributeNames::widthAttr:
         if (m_inputType->shouldRespectHeightAndWidthAttributes())
             addHTMLLengthToStyle(style, CSSPropertyWidth, value);
         if (isImageButton())
             applyAspectRatioFromWidthAndHeightAttributesToStyle(value, attributeWithoutSynchronization(heightAttr), style);
         break;
-    case AttributeName::heightAttr:
+    case AttributeNames::heightAttr:
         if (m_inputType->shouldRespectHeightAndWidthAttributes())
             addHTMLLengthToStyle(style, CSSPropertyHeight, value);
         if (isImageButton())
             applyAspectRatioFromWidthAndHeightAttributesToStyle(attributeWithoutSynchronization(widthAttr), value, style);
         break;
-    case AttributeName::borderAttr:
+    case AttributeNames::borderAttr:
         if (isImageButton())
             applyBorderAttributeToStyle(value, style);
         break;
@@ -748,10 +748,10 @@ void HTMLInputElement::attributeChanged(const QualifiedName& name, const AtomStr
     HTMLTextFormControlElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 
     switch (name.nodeName()) {
-    case AttributeName::typeAttr:
+    case AttributeNames::typeAttr:
         updateType();
         break;
-    case AttributeName::valueAttr:
+    case AttributeNames::valueAttr:
         // Changes to the value attribute may change whether or not this element has a default value.
         // If this field is autocomplete=off that might affect the return value of needsSuspensionCallback.
         if (m_autocomplete == Off) {
@@ -767,13 +767,13 @@ void HTMLInputElement::attributeChanged(const QualifiedName& name, const AtomStr
         updateValidity();
         m_valueAttributeWasUpdatedAfterParsing = !m_parsingInProgress;
         break;
-    case AttributeName::nameAttr:
+    case AttributeNames::nameAttr:
         removeFromRadioButtonGroup();
         m_name = newValue;
         addToRadioButtonGroup();
         HTMLTextFormControlElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
         break;
-    case AttributeName::checkedAttr:
+    case AttributeNames::checkedAttr:
         if (m_inputType->isCheckable())
             invalidateStyleForSubtree();
         // Another radio button in the same group might be checked by state
@@ -786,7 +786,7 @@ void HTMLInputElement::attributeChanged(const QualifiedName& name, const AtomStr
             m_dirtyCheckednessFlag = false;
         }
         break;
-    case AttributeName::autocompleteAttr:
+    case AttributeNames::autocompleteAttr:
         if (equalLettersIgnoringASCIICase(newValue, "off"_s)) {
             m_autocomplete = Off;
             registerForSuspensionCallbackIfNeeded();
@@ -802,35 +802,35 @@ void HTMLInputElement::attributeChanged(const QualifiedName& name, const AtomStr
                 unregisterForSuspensionCallbackIfNeeded();
         }
         break;
-    case AttributeName::maxlengthAttr:
+    case AttributeNames::maxlengthAttr:
         maxLengthAttributeChanged(newValue);
         break;
-    case AttributeName::minlengthAttr:
+    case AttributeNames::minlengthAttr:
         minLengthAttributeChanged(newValue);
         break;
-    case AttributeName::sizeAttr: {
+    case AttributeNames::sizeAttr: {
         unsigned oldSize = m_size;
         m_size = limitToOnlyHTMLNonNegativeNumbersGreaterThanZero(newValue, defaultSize);
         if (m_size != oldSize && renderer())
             renderer()->setNeedsLayoutAndPrefWidthsRecalc();
         break;
     }
-    case AttributeName::resultsAttr:
+    case AttributeNames::resultsAttr:
         m_maxResults = newValue.isNull() ? -1 : std::min(parseHTMLInteger(newValue).value_or(0), maxSavedResults);
         break;
-    case AttributeName::autosaveAttr:
-    case AttributeName::incrementalAttr:
+    case AttributeNames::autosaveAttr:
+    case AttributeNames::incrementalAttr:
         invalidateStyleForSubtree();
         break;
-    case AttributeName::maxAttr:
-    case AttributeName::minAttr:
-    case AttributeName::multipleAttr:
-    case AttributeName::patternAttr:
-    case AttributeName::stepAttr:
+    case AttributeNames::maxAttr:
+    case AttributeNames::minAttr:
+    case AttributeNames::multipleAttr:
+    case AttributeNames::patternAttr:
+    case AttributeNames::stepAttr:
         updateValidity();
         break;
 #if ENABLE(DATALIST_ELEMENT)
-    case AttributeName::listAttr:
+    case AttributeNames::listAttr:
         m_hasNonEmptyList = !newValue.isEmpty();
         if (m_hasNonEmptyList) {
             resetListAttributeTargetObserver();

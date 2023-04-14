@@ -387,18 +387,18 @@ bool BaseDateAndTimeInputType::hasCustomFocusLogic() const
 void BaseDateAndTimeInputType::attributeChanged(const QualifiedName& name)
 {
     switch (name.nodeName()) {
-    case AttributeName::maxAttr:
-    case AttributeName::minAttr:
+    case AttributeNames::maxAttr:
+    case AttributeNames::minAttr:
         if (auto* element = this->element())
             element->invalidateStyleForSubtree();
         break;
-    case AttributeName::valueAttr:
+    case AttributeNames::valueAttr:
         if (auto* element = this->element()) {
             if (!element->hasDirtyValue())
                 updateInnerTextValue();
         }
         break;
-    case AttributeName::stepAttr:
+    case AttributeNames::stepAttr:
         if (m_dateTimeEditElement)
             updateInnerTextValue();
         break;

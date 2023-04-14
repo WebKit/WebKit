@@ -2032,13 +2032,13 @@ bool Element::isElementsArrayReflectionAttribute(const Settings& settings, const
         return false;
 
     switch (name.nodeName()) {
-    case AttributeName::aria_controlsAttr:
-    case AttributeName::aria_describedbyAttr:
-    case AttributeName::aria_detailsAttr:
-    case AttributeName::aria_errormessageAttr:
-    case AttributeName::aria_flowtoAttr:
-    case AttributeName::aria_labelledbyAttr:
-    case AttributeName::aria_ownsAttr:
+    case AttributeNames::aria_controlsAttr:
+    case AttributeNames::aria_describedbyAttr:
+    case AttributeNames::aria_detailsAttr:
+    case AttributeNames::aria_errormessageAttr:
+    case AttributeNames::aria_flowtoAttr:
+    case AttributeNames::aria_labelledbyAttr:
+    case AttributeNames::aria_ownsAttr:
         return true;
     default:
         break;
@@ -2052,10 +2052,10 @@ void Element::attributeChanged(const QualifiedName& name, const AtomString& oldV
 
     if (!valueIsSameAsBefore) {
         switch (name.nodeName()) {
-        case AttributeName::classAttr:
+        case AttributeNames::classAttr:
             classAttributeChanged(newValue);
             break;
-        case AttributeName::idAttr: {
+        case AttributeNames::idAttr: {
             AtomString oldId = elementData()->idForStyleResolution();
             AtomString newId = makeIdForStyleResolution(newValue, document().inQuirksMode());
             if (newId != oldId) {
@@ -2069,37 +2069,37 @@ void Element::attributeChanged(const QualifiedName& name, const AtomString& oldV
                 treeScope().idTargetObserverRegistry().notifyObservers(*newValue.impl());
             break;
         }
-        case AttributeName::nameAttr:
+        case AttributeNames::nameAttr:
             elementData()->setHasNameAttribute(!newValue.isNull());
             break;
-        case AttributeName::nonceAttr:
+        case AttributeNames::nonceAttr:
             if (is<HTMLElement>(*this) || is<SVGElement>(*this))
                 setNonce(newValue.isNull() ? emptyAtom() : newValue);
             break;
-        case AttributeName::pseudoAttr:
+        case AttributeNames::pseudoAttr:
             if (needsStyleInvalidation() && isInShadowTree())
                 invalidateStyleForSubtree();
             break;
-        case AttributeName::slotAttr:
+        case AttributeNames::slotAttr:
             if (auto* parent = parentElement()) {
                 if (auto* shadowRoot = parent->shadowRoot())
                     shadowRoot->hostChildElementDidChangeSlotAttribute(*this, oldValue, newValue);
             }
             break;
-        case AttributeName::partAttr:
+        case AttributeNames::partAttr:
             partAttributeChanged(newValue);
             break;
-        case AttributeName::exportpartsAttr:
+        case AttributeNames::exportpartsAttr:
             if (auto* shadowRoot = this->shadowRoot()) {
                 shadowRoot->invalidatePartMappings();
                 Style::Invalidator::invalidateShadowParts(*shadowRoot);
             }
             break;
-        case AttributeName::accesskeyAttr:
+        case AttributeNames::accesskeyAttr:
             document().invalidateAccessKeyCache();
             break;
-        case AttributeName::XML_langAttr:
-        case AttributeName::langAttr:
+        case AttributeNames::XML::langAttr:
+        case AttributeNames::langAttr:
             if (name == HTMLNames::langAttr)
                 setHasLangAttr(!newValue.isNull());
             else

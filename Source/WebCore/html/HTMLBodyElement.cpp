@@ -69,13 +69,13 @@ HTMLBodyElement::~HTMLBodyElement() = default;
 bool HTMLBodyElement::hasPresentationalHintsForAttribute(const QualifiedName& name) const
 {
     switch (name.nodeName()) {
-    case AttributeName::backgroundAttr:
-    case AttributeName::marginwidthAttr:
-    case AttributeName::leftmarginAttr:
-    case AttributeName::marginheightAttr:
-    case AttributeName::topmarginAttr:
-    case AttributeName::bgcolorAttr:
-    case AttributeName::textAttr:
+    case AttributeNames::backgroundAttr:
+    case AttributeNames::marginwidthAttr:
+    case AttributeNames::leftmarginAttr:
+    case AttributeNames::marginheightAttr:
+    case AttributeNames::topmarginAttr:
+    case AttributeNames::bgcolorAttr:
+    case AttributeNames::textAttr:
         return true;
     default:
         break;
@@ -86,7 +86,7 @@ bool HTMLBodyElement::hasPresentationalHintsForAttribute(const QualifiedName& na
 void HTMLBodyElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
 {
     switch (name.nodeName()) {
-    case AttributeName::backgroundAttr: {
+    case AttributeNames::backgroundAttr: {
         String url = stripLeadingAndTrailingHTMLSpaces(value);
         if (!url.isEmpty()) {
             auto imageValue = CSSImageValue::create(document().completeURL(url), LoadedFromOpaqueSource::No, localName());
@@ -94,20 +94,20 @@ void HTMLBodyElement::collectPresentationalHintsForAttribute(const QualifiedName
         }
         break;
     }
-    case AttributeName::marginwidthAttr:
-    case AttributeName::leftmarginAttr:
+    case AttributeNames::marginwidthAttr:
+    case AttributeNames::leftmarginAttr:
         addHTMLLengthToStyle(style, CSSPropertyMarginRight, value);
         addHTMLLengthToStyle(style, CSSPropertyMarginLeft, value);
         break;
-    case AttributeName::marginheightAttr:
-    case AttributeName::topmarginAttr:
+    case AttributeNames::marginheightAttr:
+    case AttributeNames::topmarginAttr:
         addHTMLLengthToStyle(style, CSSPropertyMarginBottom, value);
         addHTMLLengthToStyle(style, CSSPropertyMarginTop, value);
         break;
-    case AttributeName::bgcolorAttr:
+    case AttributeNames::bgcolorAttr:
         addHTMLColorToStyle(style, CSSPropertyBackgroundColor, value);
         break;
-    case AttributeName::textAttr:
+    case AttributeNames::textAttr:
         addHTMLColorToStyle(style, CSSPropertyColor, value);
         break;
     default:

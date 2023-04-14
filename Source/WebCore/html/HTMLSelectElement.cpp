@@ -294,7 +294,7 @@ bool HTMLSelectElement::hasPresentationalHintsForAttribute(const QualifiedName& 
 void HTMLSelectElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     switch (name.nodeName()) {
-    case AttributeName::sizeAttr: {
+    case AttributeNames::sizeAttr: {
         unsigned oldSize = m_size;
         unsigned size = limitToOnlyHTMLNonNegative(newValue);
 
@@ -311,7 +311,7 @@ void HTMLSelectElement::attributeChanged(const QualifiedName& name, const AtomSt
         }
         break;
     }
-    case AttributeName::multipleAttr:
+    case AttributeNames::multipleAttr:
         parseMultipleAttribute(newValue);
         break;
     default:

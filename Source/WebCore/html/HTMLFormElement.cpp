@@ -506,7 +506,7 @@ void HTMLFormElement::resetListedFormControlElements()
 void HTMLFormElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     switch (name.nodeName()) {
-    case AttributeName::actionAttr:
+    case AttributeNames::actionAttr:
         m_attributes.parseAction(newValue);
         if (!m_attributes.action().isEmpty()) {
             if (RefPtr f = document().frame()) {
@@ -515,25 +515,25 @@ void HTMLFormElement::attributeChanged(const QualifiedName& name, const AtomStri
             }
         }
         break;
-    case AttributeName::targetAttr:
+    case AttributeNames::targetAttr:
         m_attributes.setTarget(newValue);
         break;
-    case AttributeName::methodAttr:
+    case AttributeNames::methodAttr:
         m_attributes.updateMethodType(newValue, document().settings().dialogElementEnabled());
         break;
-    case AttributeName::enctypeAttr:
+    case AttributeNames::enctypeAttr:
         m_attributes.updateEncodingType(newValue);
         break;
-    case AttributeName::accept_charsetAttr:
+    case AttributeNames::accept_charsetAttr:
         m_attributes.setAcceptCharset(newValue);
         break;
-    case AttributeName::autocompleteAttr:
+    case AttributeNames::autocompleteAttr:
         if (!shouldAutocomplete())
             document().registerForDocumentSuspensionCallbacks(*this);
         else
             document().unregisterForDocumentSuspensionCallbacks(*this);
         break;
-    case AttributeName::relAttr:
+    case AttributeNames::relAttr:
         if (m_relList)
             m_relList->associatedAttributeValueChanged(newValue);
         break;

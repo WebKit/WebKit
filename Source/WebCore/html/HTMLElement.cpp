@@ -159,13 +159,13 @@ void HTMLElement::mapLanguageAttributeToLocale(const AtomString& value, MutableS
 bool HTMLElement::hasPresentationalHintsForAttribute(const QualifiedName& name) const
 {
     switch (name.nodeName()) {
-    case AttributeName::alignAttr:
-    case AttributeName::contenteditableAttr:
-    case AttributeName::hiddenAttr:
-    case AttributeName::langAttr:
-    case AttributeName::XML_langAttr:
-    case AttributeName::draggableAttr:
-    case AttributeName::dirAttr:
+    case AttributeNames::alignAttr:
+    case AttributeNames::contenteditableAttr:
+    case AttributeNames::hiddenAttr:
+    case AttributeNames::langAttr:
+    case AttributeNames::XML::langAttr:
+    case AttributeNames::draggableAttr:
+    case AttributeNames::dirAttr:
         return true;
     default:
         break;
@@ -235,13 +235,13 @@ static bool elementAffectsDirectionality(const Node& node)
 void HTMLElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
 {
     switch (name.nodeName()) {
-    case AttributeName::alignAttr:
+    case AttributeNames::alignAttr:
         if (equalLettersIgnoringASCIICase(value, "middle"_s))
             addPropertyToPresentationalHintStyle(style, CSSPropertyTextAlign, CSSValueCenter);
         else
             addPropertyToPresentationalHintStyle(style, CSSPropertyTextAlign, value);
         break;
-    case AttributeName::contenteditableAttr: {
+    case AttributeNames::contenteditableAttr: {
         CSSValueID userModifyValue = CSSValueReadWrite;
         switch (contentEditableType(value)) {
         case ContentEditableType::Inherit:
@@ -264,10 +264,10 @@ void HTMLElement::collectPresentationalHintsForAttribute(const QualifiedName& na
         addPropertyToPresentationalHintStyle(style, CSSPropertyWebkitUserModify, userModifyValue);
         break;
     }
-    case AttributeName::hiddenAttr:
+    case AttributeNames::hiddenAttr:
         addPropertyToPresentationalHintStyle(style, CSSPropertyDisplay, CSSValueNone);
         break;
-    case AttributeName::draggableAttr:
+    case AttributeNames::draggableAttr:
         if (equalLettersIgnoringASCIICase(value, "true"_s)) {
             addPropertyToPresentationalHintStyle(style, CSSPropertyWebkitUserDrag, CSSValueElement);
             if (!isDraggableIgnoringAttributes())
@@ -275,7 +275,7 @@ void HTMLElement::collectPresentationalHintsForAttribute(const QualifiedName& na
         } else if (equalLettersIgnoringASCIICase(value, "false"_s))
             addPropertyToPresentationalHintStyle(style, CSSPropertyWebkitUserDrag, CSSValueNone);
         break;
-    case AttributeName::dirAttr:
+    case AttributeNames::dirAttr:
         if (equalLettersIgnoringASCIICase(value, "auto"_s))
             addPropertyToPresentationalHintStyle(style, CSSPropertyUnicodeBidi, unicodeBidiAttributeForDirAuto(*this));
         else if (equalLettersIgnoringASCIICase(value, "rtl"_s) || equalLettersIgnoringASCIICase(value, "ltr"_s)) {
@@ -284,10 +284,10 @@ void HTMLElement::collectPresentationalHintsForAttribute(const QualifiedName& na
                 addPropertyToPresentationalHintStyle(style, CSSPropertyUnicodeBidi, CSSValueIsolate);
         }
         break;
-    case AttributeName::XML_langAttr:
+    case AttributeNames::XML::langAttr:
         mapLanguageAttributeToLocale(value, style);
         break;
-    case AttributeName::langAttr:
+    case AttributeNames::langAttr:
         // xml:lang has a higher priority than lang.
         if (!hasAttributeWithoutSynchronization(XMLNames::langAttr))
             mapLanguageAttributeToLocale(value, style);
@@ -396,26 +396,26 @@ void HTMLElement::attributeChanged(const QualifiedName& name, const AtomString& 
     StyledElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 
     switch (name.nodeName()) {
-    case AttributeName::dirAttr:
+    case AttributeNames::dirAttr:
         dirAttributeChanged(newValue);
         return;
-    case AttributeName::tabindexAttr:
+    case AttributeNames::tabindexAttr:
         if (auto optionalTabIndex = parseHTMLInteger(newValue))
             setTabIndexExplicitly(optionalTabIndex.value());
         else
             setTabIndexExplicitly(std::nullopt);
         return;
-    case AttributeName::inertAttr:
+    case AttributeNames::inertAttr:
         if (document().settings().inertAttributeEnabled())
             invalidateStyleInternal();
         return;
-    case AttributeName::inputmodeAttr:
+    case AttributeNames::inputmodeAttr:
         if (auto& document = this->document(); this == document.focusedElement()) {
             if (auto* page = document.page())
                 page->chrome().client().focusedElementDidChangeInputMode(*this, canonicalInputMode());
         }
         return;
-    case AttributeName::popoverAttr:
+    case AttributeNames::popoverAttr:
         if (document().settings().popoverAttributeEnabled() && !document().quirks().shouldDisablePopoverAttributeQuirk())
             popoverAttributeChanged(newValue);
         return;

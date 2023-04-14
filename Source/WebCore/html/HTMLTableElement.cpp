@@ -371,14 +371,14 @@ void HTMLTableElement::attributeChanged(const QualifiedName& name, const AtomStr
     unsigned short oldPadding = m_padding;
 
     switch (name.nodeName()) {
-    case AttributeName::borderAttr:
+    case AttributeNames::borderAttr:
         // FIXME: This attribute is a mess.
         m_borderAttr = parseBorderWidthAttribute(newValue);
         break;
-    case AttributeName::bordercolorAttr:
+    case AttributeNames::bordercolorAttr:
         m_borderColorAttr = !newValue.isEmpty();
         break;
-    case AttributeName::frameAttr: {
+    case AttributeNames::frameAttr: {
         // FIXME: This attribute is a mess.
         bool borderTop;
         bool borderRight;
@@ -387,7 +387,7 @@ void HTMLTableElement::attributeChanged(const QualifiedName& name, const AtomStr
         m_frameAttr = getBordersFromFrameAttributeValue(newValue, borderTop, borderRight, borderBottom, borderLeft);
         break;
     }
-    case AttributeName::rulesAttr:
+    case AttributeNames::rulesAttr:
         m_rulesAttr = UnsetRules;
         if (equalLettersIgnoringASCIICase(newValue, "none"_s))
             m_rulesAttr = NoneRules;
@@ -400,7 +400,7 @@ void HTMLTableElement::attributeChanged(const QualifiedName& name, const AtomStr
         else if (equalLettersIgnoringASCIICase(newValue, "all"_s))
             m_rulesAttr = AllRules;
         break;
-    case AttributeName::cellpaddingAttr:
+    case AttributeNames::cellpaddingAttr:
         if (!newValue.isEmpty())
             m_padding = std::max(0, parseHTMLInteger(newValue).value_or(0));
         else

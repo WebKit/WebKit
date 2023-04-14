@@ -177,7 +177,7 @@ int HTMLOptionElement::index() const
 void HTMLOptionElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     switch (name.nodeName()) {
-    case AttributeName::disabledAttr: {
+    case AttributeNames::disabledAttr: {
         bool newDisabled = !newValue.isNull();
         if (m_disabled != newDisabled) {
             Style::PseudoClassChangeInvalidation disabledInvalidation(*this, { { CSSSelector::PseudoClassDisabled, newDisabled },  { CSSSelector::PseudoClassEnabled, !newDisabled } });
@@ -187,7 +187,7 @@ void HTMLOptionElement::attributeChanged(const QualifiedName& name, const AtomSt
         }
         break;
     }
-    case AttributeName::selectedAttr: {
+    case AttributeNames::selectedAttr: {
         // FIXME: Use PseudoClassChangeInvalidation in other elements that implement matchesDefaultPseudoClass().
         Style::PseudoClassChangeInvalidation defaultInvalidation(*this, CSSSelector::PseudoClassDefault, !newValue.isNull());
         m_isDefault = !newValue.isNull();
@@ -200,7 +200,7 @@ void HTMLOptionElement::attributeChanged(const QualifiedName& name, const AtomSt
         break;
     }
 #if ENABLE(DATALIST_ELEMENT)
-    case AttributeName::valueAttr:
+    case AttributeNames::valueAttr:
         for (auto& dataList : ancestorsOfType<HTMLDataListElement>(*this))
             dataList.optionElementChildrenChanged();
         break;

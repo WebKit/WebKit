@@ -149,7 +149,7 @@ void HTMLTextAreaElement::attributeChanged(const QualifiedName& name, const Atom
     HTMLTextFormControlElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 
     switch (name.nodeName()) {
-    case AttributeName::rowsAttr: {
+    case AttributeNames::rowsAttr: {
         unsigned rows = limitToOnlyHTMLNonNegativeNumbersGreaterThanZero(newValue, defaultRows);
         if (m_rows != rows) {
             m_rows = rows;
@@ -158,7 +158,7 @@ void HTMLTextAreaElement::attributeChanged(const QualifiedName& name, const Atom
         }
         break;
     }
-    case AttributeName::colsAttr: {
+    case AttributeNames::colsAttr: {
         unsigned cols = limitToOnlyHTMLNonNegativeNumbersGreaterThanZero(newValue, defaultCols);
         if (m_cols != cols) {
             m_cols = cols;
@@ -167,7 +167,7 @@ void HTMLTextAreaElement::attributeChanged(const QualifiedName& name, const Atom
         }
         break;
     }
-    case AttributeName::wrapAttr: {
+    case AttributeNames::wrapAttr: {
         // The virtual/physical values were a Netscape extension of HTML 3.0, now deprecated.
         // The soft/hard /off values are a recommendation for HTML 4 extension by IE and NS 4.
         WrapMethod wrap;
@@ -184,11 +184,11 @@ void HTMLTextAreaElement::attributeChanged(const QualifiedName& name, const Atom
         }
         break;
     }
-    case AttributeName::maxlengthAttr:
+    case AttributeNames::maxlengthAttr:
         internalSetMaxLength(parseHTMLNonNegativeInteger(newValue).value_or(-1));
         updateValidity();
         break;
-    case AttributeName::minlengthAttr:
+    case AttributeNames::minlengthAttr:
         internalSetMinLength(parseHTMLNonNegativeInteger(newValue).value_or(-1));
         updateValidity();
         break;
