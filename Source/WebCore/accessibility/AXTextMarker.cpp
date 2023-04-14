@@ -235,9 +235,15 @@ AXTextMarkerRange::AXTextMarkerRange(const std::optional<SimpleRange>& range)
     m_end = AXTextMarker(cache->startOrEndCharacterOffsetForRange(*range, false));
 }
 
-AXTextMarkerRange::AXTextMarkerRange(const AXTextMarker& s, const AXTextMarker& e)
-    : m_start(s)
-    , m_end(e)
+AXTextMarkerRange::AXTextMarkerRange(const AXTextMarker& start, const AXTextMarker& end)
+    : m_start(start)
+    , m_end(end)
+{
+}
+
+AXTextMarkerRange::AXTextMarkerRange(AXID treeID, AXID objectID, unsigned start, unsigned end)
+    : m_start({ treeID, objectID, nullptr, start, Position::PositionIsOffsetInAnchor, Affinity::Downstream, 0, start })
+    , m_end({ treeID, objectID, nullptr, end, Position::PositionIsOffsetInAnchor, Affinity::Downstream, 0, end })
 {
 }
 

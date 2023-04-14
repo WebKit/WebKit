@@ -1277,9 +1277,8 @@ public:
     virtual VisiblePositionRange selectedVisiblePositionRange() const = 0;
 
     virtual std::optional<SimpleRange> rangeForPlainTextRange(const PlainTextRange&) const = 0;
-#if PLATFORM(MAC)
-    // FIXME: make this a COCOA method.
-    virtual AXTextMarkerRangeRef textMarkerRangeForNSRange(const NSRange&) const = 0;
+#if PLATFORM(COCOA)
+    virtual AXTextMarkerRange textMarkerRangeForNSRange(const NSRange&) const = 0;
 #endif
 
     virtual String stringForRange(const SimpleRange&) const = 0;

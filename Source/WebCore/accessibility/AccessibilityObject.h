@@ -551,8 +551,8 @@ public:
     VisiblePositionRange selectedVisiblePositionRange() const override { return { }; }
 
     std::optional<SimpleRange> rangeForPlainTextRange(const PlainTextRange&) const override;
-#if PLATFORM(MAC)
-    AXTextMarkerRangeRef textMarkerRangeForNSRange(const NSRange&) const override;
+#if PLATFORM(COCOA)
+    AXTextMarkerRange textMarkerRangeForNSRange(const NSRange&) const override;
 #endif
 
     static String stringForVisiblePositionRange(const VisiblePositionRange&);

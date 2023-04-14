@@ -148,6 +148,7 @@ public:
 #if PLATFORM(MAC)
     AXTextMarkerRange(AXTextMarkerRangeRef);
 #endif
+    AXTextMarkerRange(AXID treeID, AXID objectID, unsigned offset, unsigned length);
     AXTextMarkerRange() = default;
 
     operator bool() const { return !m_start.isNull() && !m_end.isNull(); }

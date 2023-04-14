@@ -213,6 +213,13 @@ String AccessibilityObject::helpTextAttributeValue() const
     return { };
 }
 
+AXTextMarkerRange AccessibilityObject::textMarkerRangeForNSRange(const NSRange& range) const
+{
+    if (range.location == NSNotFound)
+        return { };
+    return { visiblePositionForIndex(range.location), visiblePositionForIndex(range.location + range.length) };
+}
+
 // NSAttributedString support.
 
 #ifndef NSAttachmentCharacter

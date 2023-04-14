@@ -3237,7 +3237,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
     // TextMarkerRange attributes.
     if ([attribute isEqualToString:AXTextMarkerRangeForNSRangeAttribute])
-        return (id)backingObject->textMarkerRangeForNSRange(range);
+        return backingObject->textMarkerRangeForNSRange(range).platformData().bridgingAutorelease();
 
     if ([attribute isEqualToString:AXLineTextMarkerRangeForTextMarkerAttribute])
         return (id)[self lineTextMarkerRangeForTextMarker:textMarker forUnit:TextUnit::Line];

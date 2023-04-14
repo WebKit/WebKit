@@ -503,13 +503,6 @@ String AccessibilityObject::rolePlatformDescription() const
     return String();
 }
 
-AXTextMarkerRangeRef AccessibilityObject::textMarkerRangeForNSRange(const NSRange& range) const
-{
-    return textMarkerRangeFromVisiblePositions(axObjectCache(),
-        visiblePositionForIndex(range.location),
-        visiblePositionForIndex(range.location + range.length));
-}
-
 // NSAttributedString support.
 
 static void attributedStringSetColor(NSMutableAttributedString *attrString, NSString *attribute, NSColor *color, const NSRange& range)

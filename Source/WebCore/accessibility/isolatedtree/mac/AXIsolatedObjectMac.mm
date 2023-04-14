@@ -118,15 +118,8 @@ AXTextMarkerRange AXIsolatedObject::textMarkerRange() const
         return { };
     }
 
-    if (auto text = textContent()) {
-        TextMarkerData start(tree()->treeID(), objectID(),
-            nullptr, 0, Position::PositionIsOffsetInAnchor, Affinity::Downstream,
-            0, 0);
-        TextMarkerData end(tree()->treeID(), objectID(),
-            nullptr, text->length(), Position::PositionIsOffsetInAnchor, Affinity::Downstream,
-            0, text->length());
-        return { { start }, { end } };
-    }
+    if (auto text = textContent())
+        return { tree()->treeID(), objectID(), 0, text->length() };
 
     return Accessibility::retrieveValueFromMainThread<AXTextMarkerRange>([this] () {
         auto* axObject = associatedAXObject();
@@ -134,11 +127,21 @@ AXTextMarkerRange AXIsolatedObject::textMarkerRange() const
     });
 }
 
-AXTextMarkerRangeRef AXIsolatedObject::textMarkerRangeForNSRange(const NSRange& range) const
+AXTextMarkerRange AXIsolatedObject::textMarkerRangeForNSRange(const NSRange& range) const
 {
-    return Accessibility::retrieveAutoreleasedValueFromMainThread<AXTextMarkerRangeRef>([&range, this] () -> RetainPtr<AXTextMarkerRangeRef> {
+    if (range.location == NSNotFound)
+        return { };
+
+    if (auto text = textContent()) {
+        unsigned start = range.location;
+        unsigned end = range.location + range.length;
+        if (start < text->length() && end <= text->length())
+            return { tree()->treeID(), objectID(), start, end };
+    }
+
+    return Accessibility::retrieveValueFromMainThread<AXTextMarkerRange>([&range, this] () -> AXTextMarkerRange {
         auto* axObject = associatedAXObject();
-        return axObject ? axObject->textMarkerRangeForNSRange(range) : nullptr;
+        return axObject ? axObject->textMarkerRangeForNSRange(range) : AXTextMarkerRange();
     });
 }
 

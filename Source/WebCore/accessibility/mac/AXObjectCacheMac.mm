@@ -700,21 +700,14 @@ bool AXObjectCache::usedOnAXThread()
 // TextMarker and TextMarkerRange funcstions.
 // FIXME: TextMarker and TextMarkerRange should become classes wrapping the system objects.
 
-static RetainPtr<AXTextMarkerRangeRef> AXTextMarkerRange(AXTextMarkerRef startMarker, AXTextMarkerRef endMarker)
+RetainPtr<AXTextMarkerRangeRef> textMarkerRangeFromMarkers(AXTextMarkerRef startMarker, AXTextMarkerRef endMarker)
 {
-    ASSERT(startMarker);
-    ASSERT(endMarker);
+    if (!startMarker || !endMarker)
+        return nil;
+
     ASSERT(CFGetTypeID((__bridge CFTypeRef)startMarker) == AXTextMarkerGetTypeID());
     ASSERT(CFGetTypeID((__bridge CFTypeRef)endMarker) == AXTextMarkerGetTypeID());
     return adoptCF(AXTextMarkerRangeCreate(kCFAllocatorDefault, startMarker, endMarker));
-}
-
-RetainPtr<AXTextMarkerRangeRef> textMarkerRangeFromMarkers(AXTextMarkerRef textMarker1, AXTextMarkerRef textMarker2)
-{
-    if (!textMarker1 || !textMarker2)
-        return nil;
-
-    return AXTextMarkerRange(textMarker1, textMarker2);
 }
 
 static RetainPtr<AXTextMarkerRef> AXTextMarkerRangeStart(AXTextMarkerRangeRef textMarkerRange)
