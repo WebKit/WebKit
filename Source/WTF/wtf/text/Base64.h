@@ -34,13 +34,7 @@
 
 namespace WTF {
 
-enum class Base64EncodePolicy {
-    DoNotInsertLFs,
-    InsertLFs,
-    URL // No padding, no LFs.
-};
-
-enum class Base64EncodeMap { Default, URL };
+enum class Base64EncodeMap : bool { Default, URL };
 
 enum class Base64DecodeOptions : uint8_t {
     ValidatePadding         = 1 << 0,
@@ -48,38 +42,35 @@ enum class Base64DecodeOptions : uint8_t {
     DiscardVerticalTab      = 1 << 2,
 };
 
-enum class Base64DecodeMap { Default, URL };
+enum class Base64DecodeMap : bool { Default, URL };
 
 struct Base64Specification {
     Span<const std::byte> input;
-    Base64EncodePolicy policy;
     Base64EncodeMap map;
 };
-
-static constexpr unsigned maximumBase64LineLengthWhenInsertingLFs = 76;
 
 // If the input string is pathologically large, just return nothing.
 // Rather than being perfectly precise, this is a bit conservative.
 static constexpr unsigned maximumBase64EncoderInputBufferSize = std::numeric_limits<unsigned>::max() / 77 * 76 / 4 * 3 - 2;
 
-unsigned calculateBase64EncodedSize(unsigned inputLength, Base64EncodePolicy);
+unsigned calculateBase64EncodedSize(unsigned inputLength, Base64EncodeMap);
 
 template<typename CharacterType> bool isBase64OrBase64URLCharacter(CharacterType);
 
-WTF_EXPORT_PRIVATE void base64Encode(Span<const std::byte>, Span<UChar>, Base64EncodePolicy = Base64EncodePolicy::DoNotInsertLFs, Base64EncodeMap = Base64EncodeMap::Default);
-WTF_EXPORT_PRIVATE void base64Encode(Span<const std::byte>, Span<LChar>, Base64EncodePolicy = Base64EncodePolicy::DoNotInsertLFs, Base64EncodeMap = Base64EncodeMap::Default);
+WTF_EXPORT_PRIVATE void base64Encode(Span<const std::byte>, Span<UChar>, Base64EncodeMap = Base64EncodeMap::Default);
+WTF_EXPORT_PRIVATE void base64Encode(Span<const std::byte>, Span<LChar>, Base64EncodeMap = Base64EncodeMap::Default);
 
-WTF_EXPORT_PRIVATE Vector<uint8_t> base64EncodeToVector(Span<const std::byte>, Base64EncodePolicy = Base64EncodePolicy::DoNotInsertLFs, Base64EncodeMap = Base64EncodeMap::Default);
-Vector<uint8_t> base64EncodeToVector(Span<const uint8_t>, Base64EncodePolicy = Base64EncodePolicy::DoNotInsertLFs, Base64EncodeMap = Base64EncodeMap::Default);
-Vector<uint8_t> base64EncodeToVector(Span<const char>, Base64EncodePolicy = Base64EncodePolicy::DoNotInsertLFs, Base64EncodeMap = Base64EncodeMap::Default);
-Vector<uint8_t> base64EncodeToVector(const CString&, Base64EncodePolicy = Base64EncodePolicy::DoNotInsertLFs, Base64EncodeMap = Base64EncodeMap::Default);
-Vector<uint8_t> base64EncodeToVector(const void*, unsigned, Base64EncodePolicy = Base64EncodePolicy::DoNotInsertLFs, Base64EncodeMap = Base64EncodeMap::Default);
+WTF_EXPORT_PRIVATE Vector<uint8_t> base64EncodeToVector(Span<const std::byte>, Base64EncodeMap = Base64EncodeMap::Default);
+Vector<uint8_t> base64EncodeToVector(Span<const uint8_t>, Base64EncodeMap = Base64EncodeMap::Default);
+Vector<uint8_t> base64EncodeToVector(Span<const char>, Base64EncodeMap = Base64EncodeMap::Default);
+Vector<uint8_t> base64EncodeToVector(const CString&, Base64EncodeMap = Base64EncodeMap::Default);
+Vector<uint8_t> base64EncodeToVector(const void*, unsigned, Base64EncodeMap = Base64EncodeMap::Default);
 
-WTF_EXPORT_PRIVATE String base64EncodeToString(Span<const std::byte>, Base64EncodePolicy = Base64EncodePolicy::DoNotInsertLFs, Base64EncodeMap = Base64EncodeMap::Default);
-String base64EncodeToString(Span<const uint8_t>, Base64EncodePolicy = Base64EncodePolicy::DoNotInsertLFs, Base64EncodeMap = Base64EncodeMap::Default);
-String base64EncodeToString(Span<const char>, Base64EncodePolicy = Base64EncodePolicy::DoNotInsertLFs, Base64EncodeMap = Base64EncodeMap::Default);
-String base64EncodeToString(const CString&, Base64EncodePolicy = Base64EncodePolicy::DoNotInsertLFs, Base64EncodeMap = Base64EncodeMap::Default);
-String base64EncodeToString(const void*, unsigned, Base64EncodePolicy = Base64EncodePolicy::DoNotInsertLFs, Base64EncodeMap = Base64EncodeMap::Default);
+WTF_EXPORT_PRIVATE String base64EncodeToString(Span<const std::byte>, Base64EncodeMap = Base64EncodeMap::Default);
+String base64EncodeToString(Span<const uint8_t>, Base64EncodeMap = Base64EncodeMap::Default);
+String base64EncodeToString(Span<const char>, Base64EncodeMap = Base64EncodeMap::Default);
+String base64EncodeToString(const CString&, Base64EncodeMap = Base64EncodeMap::Default);
+String base64EncodeToString(const void*, unsigned, Base64EncodeMap = Base64EncodeMap::Default);
 
 WTF_EXPORT_PRIVATE std::optional<Vector<uint8_t>> base64Decode(Span<const std::byte>, OptionSet<Base64DecodeOptions> = { }, Base64DecodeMap = Base64DecodeMap::Default);
 WTF_EXPORT_PRIVATE std::optional<Vector<uint8_t>> base64Decode(StringView, OptionSet<Base64DecodeOptions> = { }, Base64DecodeMap = Base64DecodeMap::Default);
@@ -111,10 +102,10 @@ std::optional<Vector<uint8_t>> base64URLDecode(const void*, unsigned);
 
 // Versions for use with StringBuilder / makeString.
 
-Base64Specification base64Encoded(Span<const std::byte>, Base64EncodePolicy = Base64EncodePolicy::DoNotInsertLFs, Base64EncodeMap = Base64EncodeMap::Default);
-Base64Specification base64Encoded(Span<const uint8_t>, Base64EncodePolicy = Base64EncodePolicy::DoNotInsertLFs, Base64EncodeMap = Base64EncodeMap::Default);
-Base64Specification base64Encoded(const CString&, Base64EncodePolicy = Base64EncodePolicy::DoNotInsertLFs, Base64EncodeMap = Base64EncodeMap::Default);
-Base64Specification base64Encoded(const void*, unsigned, Base64EncodePolicy = Base64EncodePolicy::DoNotInsertLFs, Base64EncodeMap = Base64EncodeMap::Default);
+Base64Specification base64Encoded(Span<const std::byte>, Base64EncodeMap = Base64EncodeMap::Default);
+Base64Specification base64Encoded(Span<const uint8_t>, Base64EncodeMap = Base64EncodeMap::Default);
+Base64Specification base64Encoded(const CString&, Base64EncodeMap = Base64EncodeMap::Default);
+Base64Specification base64Encoded(const void*, unsigned, Base64EncodeMap = Base64EncodeMap::Default);
 
 Base64Specification base64URLEncoded(Span<const std::byte>);
 Base64Specification base64URLEncoded(Span<const uint8_t>);
@@ -122,44 +113,44 @@ Base64Specification base64URLEncoded(const CString&);
 Base64Specification base64URLEncoded(const void*, unsigned);
 
 
-inline Vector<uint8_t> base64EncodeToVector(Span<const uint8_t> input, Base64EncodePolicy policy, Base64EncodeMap map)
+inline Vector<uint8_t> base64EncodeToVector(Span<const uint8_t> input, Base64EncodeMap map)
 {
-    return base64EncodeToVector(asBytes(input), policy, map);
+    return base64EncodeToVector(asBytes(input), map);
 }
 
-inline Vector<uint8_t> base64EncodeToVector(Span<const char> input, Base64EncodePolicy policy, Base64EncodeMap map)
+inline Vector<uint8_t> base64EncodeToVector(Span<const char> input, Base64EncodeMap map)
 {
-    return base64EncodeToVector(asBytes(input), policy, map);
+    return base64EncodeToVector(asBytes(input), map);
 }
 
-inline Vector<uint8_t> base64EncodeToVector(const CString& input, Base64EncodePolicy policy, Base64EncodeMap map)
+inline Vector<uint8_t> base64EncodeToVector(const CString& input, Base64EncodeMap map)
 {
-    return base64EncodeToVector(input.bytes(), policy, map);
+    return base64EncodeToVector(input.bytes(), map);
 }
 
-inline Vector<uint8_t> base64EncodeToVector(const void* input, unsigned length, Base64EncodePolicy policy, Base64EncodeMap map)
+inline Vector<uint8_t> base64EncodeToVector(const void* input, unsigned length, Base64EncodeMap map)
 {
-    return base64EncodeToVector({ static_cast<const std::byte*>(input), length }, policy, map);
+    return base64EncodeToVector({ static_cast<const std::byte*>(input), length }, map);
 }
 
-inline String base64EncodeToString(Span<const uint8_t> input, Base64EncodePolicy policy, Base64EncodeMap map)
+inline String base64EncodeToString(Span<const uint8_t> input, Base64EncodeMap map)
 {
-    return base64EncodeToString(asBytes(input), policy, map);
+    return base64EncodeToString(asBytes(input), map);
 }
 
-inline String base64EncodeToString(Span<const char> input, Base64EncodePolicy policy, Base64EncodeMap map)
+inline String base64EncodeToString(Span<const char> input, Base64EncodeMap map)
 {
-    return base64EncodeToString(asBytes(input), policy, map);
+    return base64EncodeToString(asBytes(input), map);
 }
 
-inline String base64EncodeToString(const CString& input, Base64EncodePolicy policy, Base64EncodeMap map)
+inline String base64EncodeToString(const CString& input, Base64EncodeMap map)
 {
-    return base64EncodeToString(input.bytes(), policy, map);
+    return base64EncodeToString(input.bytes(), map);
 }
 
-inline String base64EncodeToString(const void* input, unsigned length, Base64EncodePolicy policy, Base64EncodeMap map)
+inline String base64EncodeToString(const void* input, unsigned length, Base64EncodeMap map)
 {
-    return base64EncodeToString({ static_cast<const std::byte*>(input), length }, policy, map);
+    return base64EncodeToString({ static_cast<const std::byte*>(input), length }, map);
 }
 
 inline std::optional<Vector<uint8_t>> base64Decode(Span<const uint8_t> input, OptionSet<Base64DecodeOptions> options, Base64DecodeMap map)
@@ -179,52 +170,52 @@ inline std::optional<Vector<uint8_t>> base64Decode(const void* input, unsigned l
 
 inline Vector<uint8_t> base64URLEncodeToVector(Span<const std::byte> input)
 {
-    return base64EncodeToVector(input, Base64EncodePolicy::URL, Base64EncodeMap::URL);
+    return base64EncodeToVector(input, Base64EncodeMap::URL);
 }
 
 inline Vector<uint8_t> base64URLEncodeToVector(Span<const uint8_t> input)
 {
-    return base64EncodeToVector(input, Base64EncodePolicy::URL, Base64EncodeMap::URL);
+    return base64EncodeToVector(input, Base64EncodeMap::URL);
 }
 
 inline Vector<uint8_t> base64URLEncodeToVector(Span<const char> input)
 {
-    return base64EncodeToVector(input, Base64EncodePolicy::URL, Base64EncodeMap::URL);
+    return base64EncodeToVector(input, Base64EncodeMap::URL);
 }
 
 inline Vector<uint8_t> base64URLEncodeToVector(const CString& input)
 {
-    return base64EncodeToVector(input, Base64EncodePolicy::URL, Base64EncodeMap::URL);
+    return base64EncodeToVector(input, Base64EncodeMap::URL);
 }
 
 inline Vector<uint8_t> base64URLEncodeToVector(const void* input, unsigned length)
 {
-    return base64EncodeToVector(input, length, Base64EncodePolicy::URL, Base64EncodeMap::URL);
+    return base64EncodeToVector(input, length, Base64EncodeMap::URL);
 }
 
 inline String base64URLEncodeToString(Span<const std::byte> input)
 {
-    return base64EncodeToString(input, Base64EncodePolicy::URL, Base64EncodeMap::URL);
+    return base64EncodeToString(input, Base64EncodeMap::URL);
 }
 
 inline String base64URLEncodeToString(Span<const uint8_t> input)
 {
-    return base64EncodeToString(input, Base64EncodePolicy::URL, Base64EncodeMap::URL);
+    return base64EncodeToString(input, Base64EncodeMap::URL);
 }
 
 inline String base64URLEncodeToString(Span<const char> input)
 {
-    return base64EncodeToString(input, Base64EncodePolicy::URL, Base64EncodeMap::URL);
+    return base64EncodeToString(input, Base64EncodeMap::URL);
 }
 
 inline String base64URLEncodeToString(const CString& input)
 {
-    return base64EncodeToString(input, Base64EncodePolicy::URL, Base64EncodeMap::URL);
+    return base64EncodeToString(input, Base64EncodeMap::URL);
 }
 
 inline String base64URLEncodeToString(const void* input, unsigned length)
 {
-    return base64EncodeToString(input, length, Base64EncodePolicy::URL, Base64EncodeMap::URL);
+    return base64EncodeToString(input, length, Base64EncodeMap::URL);
 }
 
 inline std::optional<Vector<uint8_t>> base64URLDecode(StringView input)
@@ -257,7 +248,7 @@ template<typename CharacterType> bool isBase64OrBase64URLCharacter(CharacterType
     return isASCIIAlphanumeric(c) || c == '+' || c == '/' || c == '-' || c == '_';
 }
 
-inline unsigned calculateBase64EncodedSize(unsigned inputLength, Base64EncodePolicy policy)
+inline unsigned calculateBase64EncodedSize(unsigned inputLength, Base64EncodeMap map)
 {
     if (!inputLength)
         return 0;
@@ -273,16 +264,11 @@ inline unsigned calculateBase64EncodedSize(unsigned inputLength, Base64EncodePol
         return ((inputLength * 4) + 2) / 3;
     };
 
-    switch (policy) {
-    case Base64EncodePolicy::DoNotInsertLFs:
+    switch (map) {
+    case Base64EncodeMap::Default:
         return basePaddedEncodedSize();
 
-    case Base64EncodePolicy::InsertLFs: {
-        auto result = basePaddedEncodedSize();
-        return result + ((result - 1) / maximumBase64LineLengthWhenInsertingLFs);
-    }
-
-    case Base64EncodePolicy::URL:
+    case Base64EncodeMap::URL:
         return baseUnpaddedEncodedSize();
     }
 
@@ -290,51 +276,51 @@ inline unsigned calculateBase64EncodedSize(unsigned inputLength, Base64EncodePol
     return 0;
 }
 
-inline Base64Specification base64Encoded(Span<const std::byte> input, Base64EncodePolicy policy, Base64EncodeMap map)
+inline Base64Specification base64Encoded(Span<const std::byte> input, Base64EncodeMap map)
 {
-    return { input, policy, map };
+    return { input, map };
 }
 
-inline Base64Specification base64Encoded(Span<const uint8_t> input, Base64EncodePolicy policy, Base64EncodeMap map)
+inline Base64Specification base64Encoded(Span<const uint8_t> input, Base64EncodeMap map)
 {
-    return base64Encoded(asBytes(input), policy, map);
+    return base64Encoded(asBytes(input), map);
 }
 
-inline Base64Specification base64Encoded(const CString& input, Base64EncodePolicy policy, Base64EncodeMap map)
+inline Base64Specification base64Encoded(const CString& input, Base64EncodeMap map)
 {
-    return base64Encoded(input.bytes(), policy, map);
+    return base64Encoded(input.bytes(), map);
 }
 
-inline Base64Specification base64Encoded(const void* input, unsigned length, Base64EncodePolicy policy, Base64EncodeMap map)
+inline Base64Specification base64Encoded(const void* input, unsigned length, Base64EncodeMap map)
 {
-    return base64Encoded({ static_cast<const std::byte*>(input), length }, policy, map);
+    return base64Encoded({ static_cast<const std::byte*>(input), length }, map);
 }
 
 inline Base64Specification base64URLEncoded(Span<const std::byte> input)
 {
-    return base64Encoded(input, Base64EncodePolicy::URL, Base64EncodeMap::URL);
+    return base64Encoded(input, Base64EncodeMap::URL);
 }
 
 inline Base64Specification base64URLEncoded(Span<const uint8_t> input)
 {
-    return base64Encoded(input, Base64EncodePolicy::URL, Base64EncodeMap::URL);
+    return base64Encoded(input, Base64EncodeMap::URL);
 }
 
 inline Base64Specification base64URLEncoded(const CString& input)
 {
-    return base64Encoded(input, Base64EncodePolicy::URL, Base64EncodeMap::URL);
+    return base64Encoded(input, Base64EncodeMap::URL);
 }
 
 inline Base64Specification base64URLEncoded(const void* input, unsigned length)
 {
-    return base64Encoded(input, length, Base64EncodePolicy::URL, Base64EncodeMap::URL);
+    return base64Encoded(input, length, Base64EncodeMap::URL);
 }
 
 template<> class StringTypeAdapter<Base64Specification> {
 public:
     StringTypeAdapter(const Base64Specification& base64)
         : m_base64 { base64 }
-        , m_encodedLength { calculateBase64EncodedSize(base64.input.size(), base64.policy) }
+        , m_encodedLength { calculateBase64EncodedSize(base64.input.size(), base64.map) }
     {
     }
 
@@ -343,7 +329,7 @@ public:
 
     template<typename CharacterType> void writeTo(CharacterType* destination) const
     {
-        base64Encode(m_base64.input, makeSpan(destination, m_encodedLength), m_base64.policy, m_base64.map);
+        base64Encode(m_base64.input, makeSpan(destination, m_encodedLength), m_base64.map);
     }
 
 private:
@@ -354,7 +340,6 @@ private:
 } // namespace WTF
 
 using WTF::Base64DecodeOptions;
-using WTF::Base64EncodePolicy;
 using WTF::base64Decode;
 using WTF::base64EncodeToString;
 using WTF::base64EncodeToVector;

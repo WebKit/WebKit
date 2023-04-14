@@ -93,27 +93,18 @@ static const char base64URLDecMap[decodeMapSize] = {
     0x31, 0x32, 0x33, nonAlphabet, nonAlphabet, nonAlphabet, nonAlphabet, nonAlphabet
 };
 
-template<typename CharacterType> static void base64EncodeInternal(Span<const uint8_t> inputDataBuffer, Span<CharacterType> destinationDataBuffer, Base64EncodePolicy policy, Base64EncodeMap map)
+template<typename CharacterType> static void base64EncodeInternal(Span<const uint8_t> inputDataBuffer, Span<CharacterType> destinationDataBuffer, Base64EncodeMap map)
 {
     ASSERT(destinationDataBuffer.size() > 0);
-    ASSERT(calculateBase64EncodedSize(inputDataBuffer.size(), policy) == destinationDataBuffer.size());
+    ASSERT(calculateBase64EncodedSize(inputDataBuffer.size(), map) == destinationDataBuffer.size());
 
     auto encodeMap = (map == Base64EncodeMap::URL) ? base64URLEncMap : base64EncMap;
 
     unsigned sidx = 0;
     unsigned didx = 0;
-    unsigned count = 0;
-
-    bool insertLFs = (policy == Base64EncodePolicy::InsertLFs && destinationDataBuffer.size() > maximumBase64LineLengthWhenInsertingLFs);
 
     if (inputDataBuffer.size() > 1) {
         while (sidx < inputDataBuffer.size() - 2) {
-            if (insertLFs) {
-                if (count && !(count % maximumBase64LineLengthWhenInsertingLFs))
-                    destinationDataBuffer[didx++] = '\n';
-                count += 4;
-            }
-
             destinationDataBuffer[didx++] = encodeMap[ (inputDataBuffer[sidx    ] >> 2) & 077];
             destinationDataBuffer[didx++] = encodeMap[((inputDataBuffer[sidx + 1] >> 4) & 017) | ((inputDataBuffer[sidx    ] << 4) & 077)];
             destinationDataBuffer[didx++] = encodeMap[((inputDataBuffer[sidx + 2] >> 6) & 003) | ((inputDataBuffer[sidx + 1] << 2) & 077)];
@@ -123,9 +114,6 @@ template<typename CharacterType> static void base64EncodeInternal(Span<const uin
     }
 
     if (sidx < inputDataBuffer.size()) {
-        if (insertLFs && (count > 0) && !(count % maximumBase64LineLengthWhenInsertingLFs))
-            destinationDataBuffer[didx++] = '\n';
-
         destinationDataBuffer[didx++] = encodeMap[(inputDataBuffer[sidx] >> 2) & 077];
         if (sidx < inputDataBuffer.size() - 1) {
             destinationDataBuffer[didx++] = encodeMap[((inputDataBuffer[sidx + 1] >> 4) & 017) | ((inputDataBuffer[sidx] << 4) & 077)];
@@ -134,50 +122,50 @@ template<typename CharacterType> static void base64EncodeInternal(Span<const uin
             destinationDataBuffer[didx++] = encodeMap[ (inputDataBuffer[sidx    ] << 4) & 077];
     }
 
-    ASSERT(policy != Base64EncodePolicy::URL || didx == destinationDataBuffer.size());
+    ASSERT(map != Base64EncodeMap::URL || didx == destinationDataBuffer.size());
 
     while (didx < destinationDataBuffer.size())
         destinationDataBuffer[didx++] = '=';
 }
 
-template<typename CharacterType> static void base64EncodeInternal(Span<const std::byte> input, Span<CharacterType> destinationDataBuffer, Base64EncodePolicy policy, Base64EncodeMap map)
+template<typename CharacterType> static void base64EncodeInternal(Span<const std::byte> input, Span<CharacterType> destinationDataBuffer, Base64EncodeMap map)
 {
-    base64EncodeInternal(makeSpan(reinterpret_cast<const uint8_t*>(input.data()), input.size()), destinationDataBuffer, policy, map);
+    base64EncodeInternal(makeSpan(reinterpret_cast<const uint8_t*>(input.data()), input.size()), destinationDataBuffer, map);
 }
 
-static Vector<uint8_t> base64EncodeInternal(Span<const std::byte> input, Base64EncodePolicy policy, Base64EncodeMap map)
+static Vector<uint8_t> base64EncodeInternal(Span<const std::byte> input, Base64EncodeMap map)
 {
-    auto destinationLength = calculateBase64EncodedSize(input.size(), policy);
+    auto destinationLength = calculateBase64EncodedSize(input.size(), map);
     if (!destinationLength)
         return { };
 
     Vector<uint8_t> destinationVector(destinationLength);
-    base64EncodeInternal(input, makeSpan(destinationVector), policy, map);
+    base64EncodeInternal(input, makeSpan(destinationVector), map);
     return destinationVector;
 }
 
-void base64Encode(Span<const std::byte> input, Span<UChar> destination, Base64EncodePolicy policy, Base64EncodeMap map)
+void base64Encode(Span<const std::byte> input, Span<UChar> destination, Base64EncodeMap map)
 {
     if (!destination.size())
         return;
-    base64EncodeInternal(input, destination, policy, map);
+    base64EncodeInternal(input, destination, map);
 }
 
-void base64Encode(Span<const std::byte> input, Span<LChar> destination, Base64EncodePolicy policy, Base64EncodeMap map)
+void base64Encode(Span<const std::byte> input, Span<LChar> destination, Base64EncodeMap map)
 {
     if (!destination.size())
         return;
-    base64EncodeInternal(input, destination, policy, map);
+    base64EncodeInternal(input, destination, map);
 }
 
-Vector<uint8_t> base64EncodeToVector(Span<const std::byte> input, Base64EncodePolicy policy, Base64EncodeMap map)
+Vector<uint8_t> base64EncodeToVector(Span<const std::byte> input, Base64EncodeMap map)
 {
-    return base64EncodeInternal(input, policy, map);
+    return base64EncodeInternal(input, map);
 }
 
-String base64EncodeToString(Span<const std::byte> input, Base64EncodePolicy policy, Base64EncodeMap map)
+String base64EncodeToString(Span<const std::byte> input, Base64EncodeMap map)
 {
-    return makeString(base64Encoded(input, policy, map));
+    return makeString(base64Encoded(input, map));
 }
 
 template<typename T> static std::optional<Vector<uint8_t>> base64DecodeInternal(Span<const T> inputDataBuffer, OptionSet<Base64DecodeOptions> options, Base64DecodeMap map)
