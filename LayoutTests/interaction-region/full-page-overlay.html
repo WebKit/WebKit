@@ -4,18 +4,17 @@
     <meta name="viewport" content="initial-scale=0.5">
     <style>
         html, body {
-            width: 100%;
-            height: 100%;
             margin: 0;
         }
 
         .overlay {
-            position: fixed;
+            position: absolute;
             top: 0;
             left: 0;
-            z-index: 1;
             width: 100%;
             height: 100%;
+            z-index: 1;
+            opacity: 0.5;
             background-color: purple;
         }
 
@@ -24,20 +23,24 @@
         }
 
         .spacer {
-            height: 2000px;
+            height: 5000px;
         }
     </style>
 </head>
 <body>
-<div class="overlay"></div>
 <div class="tappable-overlay overlay"></div>
-<div class="spacer"></div>
+<div class="spacer">
+    <div id="dynamic" class="overlay"></div>
+</div>
 
 <pre id="results"></pre>
 <script>
 document.body.addEventListener("click", function(e) {
     console.log(e, "event delegation");
 });
+
+let dynamicallySizedOverlay = document.querySelector("#dynamic");
+dynamicallySizedOverlay.style.height = dynamicallySizedOverlay.parentElement.offsetHeight + "px";
 
 if (window.testRunner)
     testRunner.dumpAsText();

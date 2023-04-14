@@ -142,8 +142,7 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(RenderObject
     auto& mainFrameView = *localFrame->view();
 
     FloatSize frameViewSize = mainFrameView.size();
-    // Adding some wiggle room, we use this to avoid extreme cases.
-    auto scale = 1 / mainFrameView.visibleContentScaleFactor() + 0.2;
+    auto scale = 1 / mainFrameView.visibleContentScaleFactor();
     frameViewSize.scale(scale, scale);
     auto frameViewArea = frameViewSize.area();
 
@@ -183,7 +182,7 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(RenderObject
     bool hasPointer = cursorTypeForElement(*matchedElement) == CursorType::Pointer || shouldAllowNonPointerCursorForElement(*matchedElement);
     bool isTooBigForInteraction = checkedRegionArea.value() > frameViewArea / 2;
     if (!hasListener || !hasPointer || isTooBigForInteraction) {
-        bool isOverlay = checkedRegionArea.value() <= frameViewArea && (renderer.style().specifiedZIndex() > 0 || renderer.isFixedPositioned());
+        bool isOverlay = renderer.style().specifiedZIndex() > 0 || renderer.isFixedPositioned();
         if (isOverlay && isOriginalMatch) {
             return { {
                 InteractionRegion::Type::Occlusion,
