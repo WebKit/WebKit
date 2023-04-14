@@ -234,18 +234,7 @@ void PageClientImpl::doneWithTouchEvent(const NativeWebTouchEvent& touchEvent, b
             event->modifiers &= ~wpe_input_pointer_modifier_button1;
             page.handleMouseEvent(NativeWebMouseEvent(event, page.deviceScaleFactor()));
         },
-        [&](TouchGestureController::AxisEvent& axisEvent)
-        {
-#if WPE_CHECK_VERSION(1, 5, 0)
-            auto* event = &axisEvent.event.base;
-#else
-            auto* event = &axisEvent.event;
-#endif
-            if (event->type != wpe_input_axis_event_type_null) {
-                page.handleNativeWheelEvent(WebKit::NativeWebWheelEvent(event, page.deviceScaleFactor(),
-                    axisEvent.phase, WebWheelEvent::Phase::PhaseNone));
-            }
-        });
+        [](TouchGestureController::AxisEvent&) { });
 }
 #endif
 

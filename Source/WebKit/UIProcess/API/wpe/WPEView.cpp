@@ -261,12 +261,6 @@ View::View(struct wpe_view_backend* backend, const API::PageConfiguration& baseC
                             handledThroughGestureController = true;
                         }
                     });
-
-                // In case of the axis event gesturing, the generic touch event handling should be skipped.
-                // Exception to this are touch-up events that should still be handled just like the corresponding
-                // touch-down events were.
-                if (handledThroughGestureController && event->type != wpe_input_touch_event_type_up)
-                    return;
             }
 
             page.handleTouchEvent(touchEvent);
