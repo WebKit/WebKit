@@ -164,7 +164,6 @@ template<typename CharacterType> static inline bool isCharAfterUnquotedAttribute
 // - Unquoted attribute names are very restricted.
 // - Many tags are unsupported, but we could support more. For example, <table>
 //   because of the complex re-parenting rules
-// - Only a few named "&" character references are supported.
 // - No '\0'. The handling of '\0' varies depending upon where it is found
 //   and in general the correct handling complicates things.
 // - Fails if an attribute name starts with 'on'. Such attributes are generally
