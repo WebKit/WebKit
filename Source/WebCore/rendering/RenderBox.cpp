@@ -1396,7 +1396,7 @@ void RenderBox::clearOverridingLogicalWidthLength()
 FlowRelativeDirection RenderBox::physicalToFlowRelativeDirectionMapping(PhysicalDirection direction) const
 {
     auto determineFormattingContextRootStyle = [&]() -> const RenderStyle& {
-        if (isFlexItem())
+        if (isFlexItem() || isGridItem())
             return parent()->style();
         ASSERT_NOT_IMPLEMENTED_YET();
         return style();
@@ -1473,12 +1473,12 @@ bool RenderBox::hasTrimmedMargin(std::optional<MarginTrimType> marginTrimType) c
     // containingBlock->isBlockContainer() can return true even if the item is in a RenderFlexibleBox
     // (e.g. buttons) so we should explicitly check that the item is not a flex item to catch block containers here
     auto* containingBlock = this->containingBlock(); 
-    if (containingBlock && !containingBlock->isFlexibleBox() && (containingBlock->isBlockContainer() || containingBlock->isRenderGrid())) {
+    if (containingBlock && !containingBlock->isFlexibleBox() && containingBlock->isBlockContainer()) {
         ASSERT_NOT_IMPLEMENTED_YET();
         return false;
     }
-    if (containingBlock && containingBlock->isFlexibleBox())
-        ASSERT(!marginTrimType || marginTrimType.value() == MarginTrimType::BlockStart || marginTrimType.value() == MarginTrimType::InlineEnd);
+    if (containingBlock && containingBlock->isRenderGrid())
+        ASSERT(!marginTrimType || marginTrimType.value() == MarginTrimType::BlockStart);
 #endif
     if (!hasRareData())
         return false;
@@ -3822,9 +3822,18 @@ void RenderBox::computeAndSetBlockDirectionMargins(const RenderBlock& containing
 
 LayoutUnit RenderBox::constrainBlockMarginInAvailableSpaceOrTrim(const RenderBox& containingBlock, LayoutUnit availableSpace, MarginTrimType marginSide) const
 {
+    
     ASSERT(marginSide == MarginTrimType::BlockStart || marginSide == MarginTrimType::BlockEnd);
-    if (containingBlock.shouldTrimChildMargin(marginSide, *this))
+    if (containingBlock.shouldTrimChildMargin(marginSide, *this)) {
+        // FIXME(255434): This should be set when the margin is being trimmed
+        // within the context of its layout system (block, flex, grid) and should not 
+        // be done at this level within RenderBox. We should be able to leave the 
+        // trimming responsibility to each of those contexts and not need to
+        // do any of it here (trimming the margin and setting the rare data bit)
+        if (isGridItem() && marginSide == MarginTrimType::BlockStart)
+            const_cast<RenderBox&>(*this).markMarginAsTrimmed(MarginTrimType::BlockStart);
         return 0_lu;
+    }
     
     return marginSide == MarginTrimType::BlockStart ? minimumValueForLength(style().marginBeforeUsing(&containingBlock.style()), availableSpace) : minimumValueForLength(style().marginAfterUsing(&containingBlock.style()), availableSpace);
 }

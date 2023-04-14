@@ -2416,7 +2416,7 @@ static bool rendererCanHaveTrimmedMargin(const RenderBox& renderer, std::optiona
 
     // containingBlock->isBlockContainer() can return true even if the item is in a RenderFlexibleBox
     // (e.g. buttons) so we should explicitly check that the item is not a flex item to catch block containers here
-    if (!renderer.isFlexItem() && (containingBlock->isRenderGrid() || containingBlock->isBlockContainer()))
+    if (!renderer.isFlexItem() && containingBlock->isBlockContainer())
         return false;
 
     if (containingBlock->isFlexibleBox()) {
@@ -2424,6 +2424,8 @@ static bool rendererCanHaveTrimmedMargin(const RenderBox& renderer, std::optiona
             return containingBlock->style().marginTrim().containsAny({ MarginTrimType::BlockStart, MarginTrimType::InlineEnd });
         return containingBlock->style().marginTrim().contains(marginTrimType.value());
     }
+    if (containingBlock->isRenderGrid() && (!marginTrimType || marginTrimType.value() == MarginTrimType::BlockStart))
+        return containingBlock->style().marginTrim().contains(marginTrimType.value());
     return false;
 }
 
@@ -2460,7 +2462,7 @@ static bool isLayoutDependent(CSSPropertyID propertyID, const RenderStyle* style
             || (rendererCanHaveTrimmedMargin(downcast<RenderBox>(*renderer), { }));
     }
     case CSSPropertyMarginTop:
-        return paddingOrMarginIsRendererDependent<&RenderStyle::marginTop>(style, renderer) || (isFlexItem(renderer) && rendererCanHaveTrimmedMargin(downcast<RenderBox>(*renderer), MarginTrimType::BlockStart));
+        return paddingOrMarginIsRendererDependent<&RenderStyle::marginTop>(style, renderer) || (is<RenderBox>(renderer) && (rendererCanHaveTrimmedMargin(downcast<RenderBox>(*renderer), MarginTrimType::BlockStart)));
     case CSSPropertyMarginRight:
         return paddingOrMarginIsRendererDependent<&RenderStyle::marginRight>(style, renderer) || (isFlexItem(renderer) && rendererCanHaveTrimmedMargin(downcast<RenderBox>(*renderer), MarginTrimType::InlineEnd));
     case CSSPropertyMarginBottom:
