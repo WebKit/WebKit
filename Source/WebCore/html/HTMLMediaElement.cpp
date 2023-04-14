@@ -59,6 +59,7 @@
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "FullscreenManager.h"
+#include "HTMLAudioElement.h"
 #include "HTMLParserIdioms.h"
 #include "HTMLSourceElement.h"
 #include "HTMLTrackElement.h"
@@ -8007,7 +8008,6 @@ bool HTMLMediaElement::ensureMediaControls()
         if (callData.type == JSC::CallData::Type::None)
             return false;
 
-
         auto controllerValue = JSC::call(&lexicalGlobalObject, function, callData, &globalObject, argList);
         RETURN_IF_EXCEPTION(scope, reportExceptionAndReturnFalse());
 
@@ -8050,7 +8050,7 @@ void HTMLMediaElement::setMediaControlsDependOnPageScaleFactor(bool dependsOnPag
 {
     INFO_LOG(LOGIDENTIFIER, dependsOnPageScale);
 
-    if (document().settings().mediaControlsScaleWithPageZoom()) {
+    if (document().settings().mediaControlsScaleWithPageZoom() || (is<HTMLAudioElement>(*this) && document().settings().audioControlsScaleWithPageZoom())) {
         INFO_LOG(LOGIDENTIFIER, "forced to false by Settings value");
         m_mediaControlsDependOnPageScaleFactor = false;
         return;

@@ -648,6 +648,24 @@ AttachmentWideLayoutEnabled:
     WebCore:
       default: false
 
+AudioControlsScaleWithPageZoom:
+  type: bool
+  status: embedder
+  category: media
+  defaultValue:
+    WebKitLegacy:
+      "HAVE(UIKIT_WEBKIT_INTERNALS)": true
+      "PLATFORM(IOS_FAMILY)": false
+      default: true
+    WebKit:
+      "HAVE(UIKIT_WEBKIT_INTERNALS)": true
+      "PLATFORM(IOS_FAMILY)": false
+      default: true
+    WebCore:
+      "HAVE(UIKIT_WEBKIT_INTERNALS)": true
+      "PLATFORM(IOS_FAMILY)": false
+      default: true
+
 AudioDescriptionsEnabled:
   type: bool
   status: preview
