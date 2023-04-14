@@ -231,7 +231,7 @@ public:
         trackEnded(m_track);
     }
 
-    void pushSample(GstSample* sample, const char* logMessage)
+    void pushSample(GRefPtr<GstSample>&& sample, const char* logMessage)
     {
         ASSERT(m_src);
         if (!m_src || !m_isObserving)
@@ -242,8 +242,8 @@ public:
         webkitMediaStreamSrcEnsureStreamCollectionPosted(parent, false);
 
         bool drop = m_enoughData;
-        auto* buffer = gst_sample_get_buffer(sample);
-        auto* caps = gst_sample_get_caps(sample);
+        auto* buffer = gst_sample_get_buffer(sample.get());
+        auto* caps = gst_sample_get_caps(sample.get());
         if (!GST_CLOCK_TIME_IS_VALID(m_firstBufferPts)) {
             m_firstBufferPts = GST_BUFFER_PTS(buffer);
             auto pad = adoptGRef(gst_element_get_static_pad(m_src.get(), "src"));
@@ -264,7 +264,7 @@ public:
             m_needsDiscont = false;
         }
 
-        gst_app_src_push_sample(GST_APP_SRC(m_src.get()), sample);
+        gst_app_src_push_sample(GST_APP_SRC(m_src.get()), sample.get());
     }
 
     void trackStarted(MediaStreamTrackPrivate&) final { };
@@ -342,14 +342,14 @@ public:
             gst_pad_push_event(pad.get(), gst_event_new_tag(gst_tag_list_new(GST_TAG_IMAGE_ORIENTATION, orientation.utf8().data(), nullptr)));
         }
 
-        auto* gstSample = static_cast<VideoFrameGStreamer*>(&videoFrame)->sample();
         if (!m_configuredSize.isEmpty() && m_lastKnownSize != m_configuredSize) {
             GST_DEBUG_OBJECT(m_src.get(), "Video size changed from %dx%d to %dx%d", m_lastKnownSize.width(), m_lastKnownSize.height(), m_configuredSize.width(), m_configuredSize.height());
             m_lastKnownSize = m_configuredSize;
         }
 
         if (m_track.enabled()) {
-            pushSample(gstSample, "Pushing video frame from enabled track");
+            GRefPtr<GstSample> sample = static_cast<VideoFrameGStreamer*>(&videoFrame)->sample();
+            pushSample(WTFMove(sample), "Pushing video frame from enabled track");
             return;
         }
 
@@ -362,9 +362,9 @@ public:
             return;
 
         const auto& data = static_cast<const GStreamerAudioData&>(audioData);
-        auto sample = data.getSample();
         if (m_track.enabled()) {
-            pushSample(sample.get(), "Pushing audio sample from enabled track");
+            GRefPtr<GstSample> sample = data.getSample();
+            pushSample(WTFMove(sample), "Pushing audio sample from enabled track");
             return;
         }
 
@@ -433,7 +433,7 @@ private:
         gst_buffer_add_video_meta_full(buffer.get(), GST_VIDEO_FRAME_FLAG_NONE, GST_VIDEO_FORMAT_I420, width, height, 3, info.offset, info.stride);
         GST_BUFFER_DTS(buffer.get()) = GST_BUFFER_PTS(buffer.get()) = gst_element_get_current_running_time(m_parent);
         auto sample = adoptGRef(gst_sample_new(buffer.get(), m_blackFrameCaps.get(), nullptr, nullptr));
-        pushSample(sample.get(), "Pushing black video frame");
+        pushSample(WTFMove(sample), "Pushing black video frame");
     }
 
     void pushSilentSample()
@@ -454,7 +454,7 @@ private:
             webkitGstAudioFormatFillSilence(info.finfo, map.data(), map.size());
         }
         auto sample = adoptGRef(gst_sample_new(buffer.get(), m_silentSampleCaps.get(), nullptr, nullptr));
-        pushSample(sample.get(), "Pushing audio silence from disabled track");
+        pushSample(WTFMove(sample), "Pushing audio silence from disabled track");
     }
 
     GstElement* m_parent { nullptr };
