@@ -88,6 +88,8 @@ DeviceIdHashSaltStorage::DeviceIdHashSaltStorage(const String& deviceIdHashSaltS
 
 DeviceIdHashSaltStorage::~DeviceIdHashSaltStorage()
 {
+    m_isClosed = true;
+
     auto pendingCompletionHandlers = WTFMove(m_pendingCompletionHandlers);
     for (auto& completionHandler : pendingCompletionHandlers)
         completionHandler();
@@ -270,6 +272,16 @@ void DeviceIdHashSaltStorage::deleteDeviceIdHashSaltForOrigins(const Vector<Secu
 {
     ASSERT(RunLoop::isMain());
 
+    if (!m_isLoaded) {
+        m_pendingCompletionHandlers.append([this, origins, completionHandler = WTFMove(completionHandler)]() mutable {
+            if (m_isClosed)
+                return completionHandler();
+
+            deleteDeviceIdHashSaltForOrigins(origins, WTFMove(completionHandler));
+        });
+        return;
+    }
+
     m_deviceIdHashSaltForOrigins.removeIf([this, &origins](auto& keyAndValue) {
         bool needsRemoval = origins.contains(keyAndValue.value->documentOrigin) || origins.contains(keyAndValue.value->parentOrigin);
         if (m_deviceIdHashSaltStorageDirectory.isEmpty())
@@ -285,6 +297,16 @@ void DeviceIdHashSaltStorage::deleteDeviceIdHashSaltForOrigins(const Vector<Secu
 void DeviceIdHashSaltStorage::deleteDeviceIdHashSaltOriginsModifiedSince(WallTime time, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
+
+    if (!m_isLoaded) {
+        m_pendingCompletionHandlers.append([this, time, completionHandler = WTFMove(completionHandler)]() mutable {
+            if (m_isClosed)
+                return completionHandler();
+
+            deleteDeviceIdHashSaltOriginsModifiedSince(time, WTFMove(completionHandler));
+        });
+        return;
+    }
 
     m_deviceIdHashSaltForOrigins.removeIf([this, time](auto& keyAndValue) {
         bool needsRemoval = keyAndValue.value->lastTimeUsed > time;
