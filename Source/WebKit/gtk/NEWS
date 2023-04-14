@@ -1,4 +1,18 @@
 ================
+WebKitGTK 2.41.2
+================
+
+What's new in WebKitGTK 2.41.2?
+
+  - Properly handle the modifier value when exporting/importing DMA-BUF buffers.
+  - Don't require GApplication for bubblewrap sandbox.
+  - Fix cap height calculation in font metrics.
+  - Fix the build on i386.
+  - Fix the build with libgbm disabled.
+  - Fix several crashes and rendering issues.
+  - Translation updates: Swedish.
+
+================
 WebKitGTK 2.41.1
 ================
 
