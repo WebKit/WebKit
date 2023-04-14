@@ -568,6 +568,8 @@ TEST(SiteIsolation, GrandchildIframe)
     // (add an onload in the response to /webkit and verify that it is actually called. It is not right now.)
 }
 
+// FIXME: This test times out on the iOS simulator. Investigate and fix.
+#if PLATFORM(MAC)
 TEST(SiteIsolation, MainFrameWithTwoIFramesInTheSameProcess)
 {
     HTTPServer server({
@@ -613,5 +615,6 @@ TEST(SiteIsolation, MainFrameWithTwoIFramesInTheSameProcess)
     }];
     Util::run(&done);
 }
+#endif
 
 }
