@@ -97,6 +97,7 @@ bool defaultGamepadVibrationActuatorEnabled();
 bool defaultRunningBoardThrottlingEnabled();
 bool defaultShouldDropSuspendedAssertionAfterDelay();
 bool defaultShowModalDialogEnabled();
+bool defaultLiveRangeSelectionEnabled();
 
 bool defaultShouldEnableScreenOrientationAPI();
 bool defaultPopoverAttributeEnabled();

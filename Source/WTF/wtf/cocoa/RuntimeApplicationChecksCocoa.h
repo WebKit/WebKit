@@ -107,6 +107,7 @@ enum class SDKAlignedBehavior {
     UsesGameControllerPhysicalInputProfile,
     ScreenOrientationAPIEnabled,
     PopoverAttributeEnabled,
+    LiveRangeSelectionEnabledForAllApps,
 
     NumberOfBehaviors
 };

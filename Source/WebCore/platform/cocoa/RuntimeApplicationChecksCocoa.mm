@@ -227,6 +227,12 @@ bool IOSApplication::isIMDb()
     return isIMDb;
 }
 
+bool IOSApplication::isGmail()
+{
+    static bool isGmail = applicationBundleIsEqualTo("com.google.Gmail"_s);
+    return isGmail;
+}
+
 bool IOSApplication::isWebBookmarksD()
 {
     static bool isWebBookmarksD = applicationBundleIsEqualTo("com.apple.webbookmarksd"_s);

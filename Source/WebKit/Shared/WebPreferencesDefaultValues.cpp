@@ -217,6 +217,16 @@ bool defaultShouldDropSuspendedAssertionAfterDelay()
 #endif
 }
 
+bool defaultLiveRangeSelectionEnabled()
+{
+#if PLATFORM(IOS_FAMILY)
+    static bool enableForAllApps = linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::LiveRangeSelectionEnabledForAllApps);
+    if (!enableForAllApps && WebCore::IOSApplication::isGmail())
+        return false;
+#endif
+    return true;
+}
+
 bool defaultShowModalDialogEnabled()
 {
 #if PLATFORM(COCOA)

@@ -114,6 +114,7 @@ WEBCORE_EXPORT bool isFIFACompanion();
 WEBCORE_EXPORT bool isFeedly();
 WEBCORE_EXPORT bool isFirefox();
 WEBCORE_EXPORT bool isIMDb();
+WEBCORE_EXPORT bool isGmail();
 WEBCORE_EXPORT bool isJWLibrary();
 WEBCORE_EXPORT bool isLaBanquePostale();
 WEBCORE_EXPORT bool isLutron();

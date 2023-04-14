@@ -3711,7 +3711,7 @@ LiveRangeSelectionEnabled:
     WebKitLegacy:
       default: true
     WebKit:
-      default: true
+      default: WebKit::defaultLiveRangeSelectionEnabled()
     WebCore:
       default: true
 
