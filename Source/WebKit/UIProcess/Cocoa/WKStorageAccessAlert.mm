@@ -26,7 +26,8 @@
 #import "config.h"
 #import "WKStorageAccessAlert.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
+#import "UIAlertControllerUtilities.h"
 #import "UIKitSPI.h"
 #endif
 
@@ -93,7 +94,7 @@ void displayStorageAccessAlert(WKWebView *webView, NSString *alertTitle, NSStrin
         completionBlock(shouldAllow);
     }];
 #else
-    UIAlertController* alert = [UIAlertController alertControllerWithTitle:alertTitle message:informativeText preferredStyle:UIAlertControllerStyleAlert];
+    auto alert = WebKit::createUIAlertController(alertTitle, informativeText);
 
     UIAlertAction* allowAction = [UIAlertAction actionWithTitle:allowButtonString style:UIAlertActionStyleCancel handler:[completionBlock](UIAlertAction *action) {
         completionBlock(true);
@@ -106,7 +107,7 @@ void displayStorageAccessAlert(WKWebView *webView, NSString *alertTitle, NSStrin
     [alert addAction:doNotAllowAction];
     [alert addAction:allowAction];
 
-    [[UIViewController _viewControllerForFullScreenPresentationFromView:webView] presentViewController:alert animated:YES completion:nil];
+    [[UIViewController _viewControllerForFullScreenPresentationFromView:webView] presentViewController:alert.get() animated:YES completion:nil];
 #endif
 }
 
