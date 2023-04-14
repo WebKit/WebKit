@@ -148,6 +148,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(AccessCase);
     macro(IndexedResizableTypedArrayFloat32Load) \
     macro(IndexedResizableTypedArrayFloat64Load) \
     macro(IndexedStringLoad) \
+    macro(IndexedProxyObjectLoad) \
     macro(IndexedNoIndexingMiss) \
     macro(IndexedInt32Store) \
     macro(IndexedDoubleStore) \

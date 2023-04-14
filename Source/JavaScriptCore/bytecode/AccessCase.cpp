@@ -113,6 +113,7 @@ Ref<AccessCase> AccessCase::create(VM& vm, JSCell* owner, AccessType type, Cache
     case IndexedResizableTypedArrayFloat32Load:
     case IndexedResizableTypedArrayFloat64Load:
     case IndexedStringLoad:
+    case IndexedProxyObjectLoad:
     case IndexedNoIndexingMiss:
     case IndexedInt32Store:
     case IndexedDoubleStore:
@@ -374,6 +375,7 @@ bool AccessCase::guardedByStructureCheckSkippingConstantIdentifierCheck() const
     case IndexedResizableTypedArrayFloat32Load:
     case IndexedResizableTypedArrayFloat64Load:
     case IndexedStringLoad:
+    case IndexedProxyObjectLoad:
     case IndexedInt32Store:
     case IndexedDoubleStore:
     case IndexedContiguousStore:
@@ -483,6 +485,7 @@ bool AccessCase::requiresIdentifierNameMatch() const
     case IndexedResizableTypedArrayFloat32Load:
     case IndexedResizableTypedArrayFloat64Load:
     case IndexedStringLoad:
+    case IndexedProxyObjectLoad:
     case IndexedNoIndexingMiss:
     case IndexedInt32Store:
     case IndexedDoubleStore:
@@ -571,6 +574,7 @@ bool AccessCase::requiresInt32PropertyCheck() const
     case IndexedResizableTypedArrayFloat32Load:
     case IndexedResizableTypedArrayFloat64Load:
     case IndexedStringLoad:
+    case IndexedProxyObjectLoad:
     case IndexedNoIndexingMiss:
     case IndexedInt32Store:
     case IndexedDoubleStore:
@@ -668,6 +672,7 @@ bool AccessCase::needsScratchFPR() const
     case IndexedResizableTypedArrayInt32Store:
         return false;
     case IndexedDoubleLoad:
+    case IndexedProxyObjectLoad:
     case IndexedTypedArrayFloat32Load:
     case IndexedTypedArrayFloat64Load:
     case IndexedTypedArrayUint32Load:
@@ -730,7 +735,8 @@ void AccessCase::forEachDependentCell(VM&, const Functor& functor) const
     }
     case ProxyObjectHas:
     case ProxyObjectLoad:
-    case ProxyObjectStore: {
+    case ProxyObjectStore:
+    case IndexedProxyObjectLoad: {
         auto& accessor = this->as<ProxyObjectAccessCase>();
         if (accessor.callLinkInfo())
             accessor.callLinkInfo()->forEachDependentCell(functor);
@@ -829,6 +835,7 @@ bool AccessCase::doesCalls(VM& vm, Vector<JSCell*>* cellsToMarkIfDoesCalls) cons
     case ProxyObjectHas:
     case ProxyObjectLoad:
     case ProxyObjectStore:
+    case IndexedProxyObjectLoad:
         doesCalls = true;
         break;
     case IntrinsicGetter: {
@@ -993,6 +1000,7 @@ bool AccessCase::canReplace(const AccessCase& other) const
     case IndexedResizableTypedArrayFloat32Load:
     case IndexedResizableTypedArrayFloat64Load:
     case IndexedStringLoad:
+    case IndexedProxyObjectLoad:
     case IndexedInt32Store:
     case IndexedDoubleStore:
     case IndexedContiguousStore:
@@ -1268,6 +1276,7 @@ inline void AccessCase::runWithDowncast(const Func& func)
     case ProxyObjectHas:
     case ProxyObjectLoad:
     case ProxyObjectStore:
+    case IndexedProxyObjectLoad:
         func(static_cast<ProxyObjectAccessCase*>(this));
         break;
     }
@@ -1380,8 +1389,9 @@ bool AccessCase::canBeShared(const AccessCase& lhs, const AccessCase& rhs)
     case Setter:
     case ProxyObjectHas:
     case ProxyObjectLoad:
-    case ProxyObjectStore: {
-        // Getter / Setter / ProxyObjectHas / ProxyObjectLoad / ProxyObjectStore relies on CodeBlock, which makes sharing impossible.
+    case ProxyObjectStore:
+    case IndexedProxyObjectLoad: {
+        // These types rely on CodeBlock, which makes sharing impossible.
         return false;
     }
 

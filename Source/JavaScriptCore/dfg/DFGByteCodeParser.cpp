@@ -216,7 +216,7 @@ private:
     Node* handleGetByOffset(SpeculatedType, Node* base, unsigned identifierNumber, PropertyOffset, NodeType = GetByOffset);
     bool handleDOMJITGetter(Operand result, const GetByVariant&, Node* thisNode, unsigned identifierNumber, SpeculatedType prediction);
     bool handleModuleNamespaceLoad(VirtualRegister result, SpeculatedType, Node* base, GetByStatus);
-    bool handleProxyObjectLoad(VirtualRegister result, SpeculatedType, Node* base, GetByStatus, BytecodeIndex osrExitIndex);
+    bool handleProxyObjectLoad(VirtualRegister result, SpeculatedType, Node* base, Node* property, GetByStatus, BytecodeIndex osrExitIndex);
 
     template<typename Bytecode>
     void handlePutByVal(Bytecode, BytecodeIndex osrExitIndex);
@@ -4311,7 +4311,7 @@ bool ByteCodeParser::handleModuleNamespaceLoad(VirtualRegister result, Speculate
     return true;
 }
 
-bool ByteCodeParser::handleProxyObjectLoad(VirtualRegister destination, SpeculatedType prediction, Node* base, GetByStatus getById, BytecodeIndex osrExitIndex)
+bool ByteCodeParser::handleProxyObjectLoad(VirtualRegister destination, SpeculatedType prediction, Node* base, Node* property, GetByStatus getByStatus, BytecodeIndex osrExitIndex)
 {
     if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType))
         return false;
@@ -4322,9 +4322,18 @@ bool ByteCodeParser::handleProxyObjectLoad(VirtualRegister destination, Speculat
 
     addToGraph(Check, Edge(base, ProxyObjectUse));
     Node* functionNode = weakJSConstant(function);
-    Node* propertyNameNode = weakJSConstant(getById.variants()[0].identifier().cell());
 
-    addToGraph(FilterGetByStatus, OpInfo(m_graph.m_plan.recordedStatuses().addGetByStatus(currentCodeOrigin(), getById)), base);
+    Node* propertyNameNode = nullptr;
+    const auto& getByVariant = getByStatus.variants()[0];
+    if (CacheableIdentifier identifier = getByVariant.identifier())
+        propertyNameNode = weakJSConstant(identifier.cell());
+    else {
+        ASSERT(property);
+        uint32_t radix = 10;
+        propertyNameNode = addToGraph(NumberToStringWithValidRadixConstant, OpInfo(radix), Edge(property, Int32Use));
+    }
+
+    addToGraph(FilterGetByStatus, OpInfo(m_graph.m_plan.recordedStatuses().addGetByStatus(currentCodeOrigin(), getByStatus)), base);
 
     // Make a call. We don't try to get fancy with using the smallest operand number because
     // the stack layout phase should compress the stack anyway.
@@ -4361,7 +4370,7 @@ bool ByteCodeParser::handleProxyObjectLoad(VirtualRegister destination, Speculat
 
     handleCall(
         destination, Call, InlineCallFrame::ProxyObjectLoadCall, osrExitIndex,
-        functionNode, numberOfParameters - 1, registerOffset, *getById.variants()[0].callLinkStatus(), prediction);
+        functionNode, numberOfParameters - 1, registerOffset, *getByVariant.callLinkStatus(), prediction);
 
     return true;
 }
@@ -5015,7 +5024,7 @@ void ByteCodeParser::handleGetById(
             }
         }
         if (getByStatus.isProxyObject()) {
-            if (handleProxyObjectLoad(destination, prediction, base, getByStatus, osrExitIndex)) {
+            if (handleProxyObjectLoad(destination, prediction, base, nullptr, getByStatus, osrExitIndex)) {
                 if (UNLIKELY(m_graph.compilation()))
                     m_graph.compilation()->noticeInlinedGetById();
                 return;
@@ -6799,7 +6808,9 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
             if (shouldCompileAsGetById)
                 handleGetById(bytecode.m_dst, prediction, base, identifier, identifierNumber, getByStatus, AccessType::GetById, nextOpcodeIndex());
-            else {
+            else if (getByStatus.isProxyObject() && handleProxyObjectLoad(bytecode.m_dst, prediction, base, property, getByStatus, nextOpcodeIndex())) {
+                // Successfully inlined ProxyObject's "get" trap as Call, proceed to next opcode.
+            } else {
                 ArrayMode arrayMode = getArrayMode(bytecode.metadata(codeBlock).m_arrayProfile, Array::Read);
                 // FIXME: We could consider making this not vararg, since it only uses three child
                 // slots.

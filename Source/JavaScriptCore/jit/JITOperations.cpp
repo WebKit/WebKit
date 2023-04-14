@@ -60,6 +60,7 @@
 #include "JSWithScope.h"
 #include "LLIntEntrypoint.h"
 #include "MegamorphicCache.h"
+#include "NumberPrototype.h"
 #include "ObjectConstructor.h"
 #include "PropertyName.h"
 #include "RegExpObject.h"
@@ -1813,6 +1814,16 @@ JSC_DEFINE_JIT_OPERATION(operationSetFunctionName, void, (JSGlobalObject* global
     JSFunction* func = jsCast<JSFunction*>(funcCell);
     JSValue name = JSValue::decode(encodedName);
     func->setFunctionName(globalObject, name);
+}
+
+JSC_DEFINE_JIT_OPERATION(operationInt32ToStringWithRadix10, JSCell*, (VM* vmPointer, int32_t value))
+{
+    VM& vm = *vmPointer;
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+
+    int32_t radix = 10;
+    return int32ToString(vm, value, radix);
 }
 
 JSC_DEFINE_JIT_OPERATION(operationNewObject, JSCell*, (VM* vmPointer, Structure* structure))

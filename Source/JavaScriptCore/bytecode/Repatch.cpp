@@ -706,6 +706,11 @@ static InlineCacheAction tryCacheArrayGetByVal(JSGlobalObject* globalObject, Cod
                 if (!base->isObject())
                     return GiveUpOnCache;
 
+                if (base->inherits<ProxyObject>()) {
+                    newCase = ProxyObjectAccessCase::create(vm, codeBlock, AccessCase::IndexedProxyObjectLoad, nullptr);
+                    break;
+                }
+
                 if (base->structure()->mayInterceptIndexedAccesses() || base->structure()->typeInfo().interceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero())
                     return GiveUpOnCache;
 
@@ -861,7 +866,7 @@ static InlineCacheAction tryCachePutBy(JSGlobalObject* globalObject, CodeBlock* 
 
         JSCell* baseCell = baseValue.asCell();
 
-        bool isProxyObject = baseCell->type() == ProxyObjectType;
+        bool isProxyObject = baseCell->inherits<ProxyObject>();
         if (!isProxyObject) {
             if (!slot.isCacheablePut() && !slot.isCacheableCustom() && !slot.isCacheableSetter())
                 return GiveUpOnCache;

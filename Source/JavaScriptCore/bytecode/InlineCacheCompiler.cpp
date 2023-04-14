@@ -520,7 +520,8 @@ void InlineCacheCompiler::generateWithGuard(AccessCase& accessCase, CCallHelpers
 
     case AccessCase::ProxyObjectHas:
     case AccessCase::ProxyObjectLoad:
-    case AccessCase::ProxyObjectStore: {
+    case AccessCase::ProxyObjectStore:
+    case AccessCase::IndexedProxyObjectLoad: {
         ASSERT(!accessCase.viaGlobalProxy());
         emitProxyObjectAccess(accessCase.as<ProxyObjectAccessCase>(), fallThrough);
         return;
@@ -2136,6 +2137,7 @@ void InlineCacheCompiler::generateImpl(AccessCase& accessCase)
     case AccessCase::IndexedResizableTypedArrayFloat32Load:
     case AccessCase::IndexedResizableTypedArrayFloat64Load:
     case AccessCase::IndexedStringLoad:
+    case AccessCase::IndexedProxyObjectLoad:
     case AccessCase::CheckPrivateBrand:
     case AccessCase::IndexedInt32Store:
     case AccessCase::IndexedDoubleStore:
@@ -2343,6 +2345,7 @@ void InlineCacheCompiler::emitProxyObjectAccess(ProxyObjectAccessCase& accessCas
         proxyInternalMethod = globalObject->performProxyObjectHasFunction();
         break;
     case AccessCase::ProxyObjectLoad:
+    case AccessCase::IndexedProxyObjectLoad:
         numberOfParameters = 3;
         proxyInternalMethod = globalObject->performProxyObjectGetFunction();
         break;
@@ -2370,15 +2373,29 @@ void InlineCacheCompiler::emitProxyObjectAccess(ProxyObjectAccessCase& accessCas
 
     jit.storeCell(baseGPR, calleeFrame.withOffset(virtualRegisterForArgumentIncludingThis(0).offset() * sizeof(Register)));
 
-    if (!stubInfo.hasConstantIdentifier) {
-        RELEASE_ASSERT(accessCase.identifier());
-        GPRReg propertyGPR = stubInfo.propertyGPR();
-        jit.storeCell(propertyGPR, calleeFrame.withOffset(virtualRegisterForArgumentIncludingThis(1).offset() * sizeof(Register)));
-    } else
+    if (stubInfo.hasConstantIdentifier)
         jit.storeTrustedValue(accessCase.identifier().cell(), calleeFrame.withOffset(virtualRegisterForArgumentIncludingThis(1).offset() * sizeof(Register)));
+    else if (accessCase.identifier())
+        jit.storeCell(stubInfo.propertyGPR(), calleeFrame.withOffset(virtualRegisterForArgumentIncludingThis(1).offset() * sizeof(Register)));
+    else {
+        ASSERT(accessCase.requiresInt32PropertyCheck());
+
+        jit.makeSpaceOnStackForCCall();
+        jit.setupArguments<decltype(operationInt32ToStringWithRadix10)>(CCallHelpers::TrustedImmPtr(&vm), stubInfo.propertyGPR());
+        jit.prepareCallOperation(vm);
+
+        auto operationCall = jit.call(OperationPtrTag);
+        jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
+            linkBuffer.link<OperationPtrTag>(operationCall, operationInt32ToStringWithRadix10);
+        });
+
+        jit.reclaimSpaceOnStackForCCall();
+        jit.storeCell(GPRInfo::returnValueGPR, calleeFrame.withOffset(virtualRegisterForArgumentIncludingThis(1).offset() * sizeof(Register)));
+    }
 
     switch (accessCase.m_type) {
     case AccessCase::ProxyObjectLoad:
+    case AccessCase::IndexedProxyObjectLoad:
         jit.storeCell(thisGPR, calleeFrame.withOffset(virtualRegisterForArgumentIncludingThis(2).offset() * sizeof(Register)));
         break;
     case AccessCase::ProxyObjectStore:
@@ -2754,7 +2771,8 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
         case AccessCase::Setter:
         case AccessCase::ProxyObjectLoad:
         case AccessCase::ProxyObjectStore:
-            // Getter / Setter / ProxyObjectLoad / ProxyObjectStore relies on stack-pointer adjustment, which is tied to the linked CodeBlock, which makes this code unshareable.
+        case AccessCase::IndexedProxyObjectLoad:
+            // These types rely on stack-pointer adjustment, which is tied to the linked CodeBlock, which makes this code unshareable.
             canBeShared = false;
             doesJSCalls = true;
             break;
