@@ -528,8 +528,14 @@ IntRect RenderInline::linesBoundingBox() const
 
 LayoutRect RenderInline::linesVisualOverflowBoundingBox() const
 {
-    if (auto* layout = LayoutIntegration::LineLayout::containing(*this))
+    if (auto* layout = LayoutIntegration::LineLayout::containing(*this)) {
+        if (!layoutBox()) {
+            // Repaint may be issued on subtrees during content mutation with newly inserted renderers. 
+            ASSERT(needsLayout());
+            return { };
+        }
         return layout->visualOverflowBoundingBoxRectFor(*this);
+    }
 
     if (!firstLineBox() || !lastLineBox())
         return LayoutRect();
