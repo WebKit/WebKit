@@ -38,6 +38,16 @@ RefPtr<BitmapTexture> TextureMapper::acquireTextureFromPool(const IntSize& size,
     return selectedTexture;
 }
 
+#if USE(GRAPHICS_LAYER_WC)
+void TextureMapper::releaseUnusedTexturesNow()
+{
+    // GraphicsLayerWC runs TextureMapper in the OpenGL thread of the
+    // GPU process that doesn't use RunLoop. RunLoop::Timer doesn't
+    // work in the thread.
+    m_texturePool->releaseUnusedTexturesTimerFired();
+}
+#endif
+
 std::unique_ptr<TextureMapper> TextureMapper::create()
 {
     return platformCreateAccelerated();

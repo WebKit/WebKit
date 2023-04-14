@@ -87,6 +87,7 @@ std::optional<UpdateInfo> WCScene::update(WCUpateInfo&& update)
 {
     if (!m_context->makeContextCurrent())
         return std::nullopt;
+    m_textureMapper->releaseUnusedTexturesNow();
 
     for (auto id : update.addedLayers) {
         auto layer = makeUnique<Layer>();
