@@ -8547,11 +8547,7 @@ void Document::updateResizeObservations(Page& page)
 
     if (hasSkippedResizeObservations()) {
         setHasSkippedResizeObservations(false);
-        String url;
-        unsigned line = 0;
-        unsigned column = 0;
-        getParserLocation(url, line, column);
-        reportException("ResizeObserver loop completed with undelivered notifications."_s, line, column, url, nullptr, nullptr);
+        reportException("ResizeObserver loop completed with undelivered notifications."_s, 0, 0, url().string(), nullptr, nullptr);
         // Starting a new schedule the next round of notify.
         scheduleRenderingUpdate(RenderingUpdateStep::ResizeObservations);
     }
