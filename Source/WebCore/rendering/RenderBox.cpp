@@ -1478,7 +1478,7 @@ bool RenderBox::hasTrimmedMargin(std::optional<MarginTrimType> marginTrimType) c
         return false;
     }
     if (containingBlock && containingBlock->isRenderGrid())
-        ASSERT(!marginTrimType || marginTrimType.value() == MarginTrimType::BlockStart);
+        ASSERT(!marginTrimType || marginTrimType.value() == MarginTrimType::BlockStart || marginTrimType.value() == MarginTrimType::BlockEnd);
 #endif
     if (!hasRareData())
         return false;
@@ -3830,8 +3830,8 @@ LayoutUnit RenderBox::constrainBlockMarginInAvailableSpaceOrTrim(const RenderBox
         // be done at this level within RenderBox. We should be able to leave the 
         // trimming responsibility to each of those contexts and not need to
         // do any of it here (trimming the margin and setting the rare data bit)
-        if (isGridItem() && marginSide == MarginTrimType::BlockStart)
-            const_cast<RenderBox&>(*this).markMarginAsTrimmed(MarginTrimType::BlockStart);
+        if (isGridItem())
+            const_cast<RenderBox&>(*this).markMarginAsTrimmed(marginSide);
         return 0_lu;
     }
     
