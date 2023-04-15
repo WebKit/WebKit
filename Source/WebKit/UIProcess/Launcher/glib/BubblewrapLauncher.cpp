@@ -137,11 +137,13 @@ static String effectiveApplicationId()
         return String::fromUTF8(programName);
 
     // There must be some id for xdg-desktop-portal to function.
-    // xdg-desktop-portal uses this id for permissions. While we don't currently
-    // use any APIs that require permissions, we generate a random id to avoid
-    // interactions with other applications.
-    auto uuid = UUID::createVersion4Weak();
-    return makeString("org.webkit.app-", uuid.toString());
+    // xdg-desktop-portal uses this id for permissions.
+    // This creates a somewhat reliable id based on the executable path
+    // which will avoid potentially gaining permissions from another app
+    // and won't flood xdg-desktop-portal with new ids.
+    auto executablePath = FileSystem::currentExecutablePath();
+    GUniquePtr<char> digest(g_compute_checksum_for_data(G_CHECKSUM_SHA256, reinterpret_cast<const uint8_t*>(executablePath.data()), executablePath.length()));
+    return makeString("org.webkit.app-", digest.get());
 }
 
 static int createFlatpakInfo()
