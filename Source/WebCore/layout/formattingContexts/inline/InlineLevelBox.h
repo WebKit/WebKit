@@ -75,8 +75,7 @@ public:
     InlineLayoutUnit preferredLineHeight() const;
     bool isPreferredLineHeightFontMetricsBased() const { return m_style.lineHeight.isNegative(); }
 
-    bool lineBoxContain() const;
-    bool hasLineBoxContain() const { return m_style.lineBoxContain != RenderStyle::initialLineBoxContain(); }
+    bool mayStretchLineBox() const;
 
     const FontMetrics& primarymetricsOfPrimaryFont() const { return m_style.primaryFontMetrics; }
     InlineLayoutUnit fontSize() const { return m_style.primaryFontSize; }
@@ -269,7 +268,7 @@ inline InlineLevelBox InlineLevelBox::createGenericInlineLevelBox(const Box& lay
     return InlineLevelBox { layoutBox, style, logicalLeft, { }, Type::GenericInlineLevelBox };
 }
 
-inline bool InlineLevelBox::lineBoxContain() const
+inline bool InlineLevelBox::mayStretchLineBox() const
 {
     if (isRootInlineBox())
         return m_style.lineBoxContain.containsAny({ LineBoxContain::Block, LineBoxContain::Inline }) || (hasContent() && m_style.lineBoxContain.containsAny({ LineBoxContain::InitialLetter, LineBoxContain::Font, LineBoxContain::Glyphs }));

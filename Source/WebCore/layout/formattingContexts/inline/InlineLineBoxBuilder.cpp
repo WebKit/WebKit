@@ -450,9 +450,8 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox)
 void LineBoxBuilder::adjustInlineBoxHeightsForLineBoxContainIfApplicable(LineBox& lineBox)
 {
     // While line-box-contain normally tells whether a certain type of content should be included when computing the line box height,
-    // font and Glyphs values affect the "size" of the associated inline boxes (which affects the line box height).
-    auto lineBoxContain = isFirstLine() ? rootBox().firstLineStyle().lineBoxContain() : rootBox().style().lineBoxContain();
-
+    // font and Glyphs values affect the "size" of the associated inline boxes (which then affect the line box height).
+    auto lineBoxContain = rootBox().style().lineBoxContain();
     // Collect layout bounds based on the contain property and set them on the inline boxes when they are applicable.
     HashMap<InlineLevelBox*, TextUtil::EnclosingAscentDescent> inlineBoxBoundsMap;
 

@@ -121,7 +121,7 @@ ContentHeightAndMargin InlineFormattingGeometry::inlineBlockContentHeightAndMarg
 
 bool InlineFormattingGeometry::inlineLevelBoxAffectsLineBox(const InlineLevelBox& inlineLevelBox) const
 {
-    if (!inlineLevelBox.lineBoxContain())
+    if (!inlineLevelBox.mayStretchLineBox())
         return false;
 
     if (inlineLevelBox.isLineBreakBox())
