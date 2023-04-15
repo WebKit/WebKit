@@ -385,6 +385,7 @@ rows
 rowspan
 rules
 sandbox
+save
 scheme
 scope
 scoped
@@ -411,6 +412,7 @@ standby
 start
 step
 style
+subtitle
 summary
 tabindex
 tableborder

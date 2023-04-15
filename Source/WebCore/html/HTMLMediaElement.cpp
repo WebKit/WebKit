@@ -90,6 +90,7 @@
 #include "MediaResourceLoader.h"
 #include "NavigatorMediaDevices.h"
 #include "NetworkingContext.h"
+#include "NodeName.h"
 #include "PODIntervalTree.h"
 #include "PageGroup.h"
 #include "PageInlines.h"
@@ -774,10 +775,11 @@ bool HTMLMediaElement::isInteractiveContent() const
 
 void HTMLMediaElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
-    if (name == idAttr)
+    switch (name.nodeName()) {
+    case AttributeNames::idAttr:
         m_id = newValue;
-
-    if (name == srcAttr) {
+        break;
+    case AttributeNames::srcAttr:
         // https://html.spec.whatwg.org/multipage/embedded-content.html#location-of-the-media-resource
         // Location of the Media Resource
         // 12 February 2017
@@ -786,11 +788,14 @@ void HTMLMediaElement::attributeChanged(const QualifiedName& name, const AtomStr
         // agent must invoke the media element's media element load algorithm.
         if (!newValue.isNull())
             prepareForLoad();
-    } else if (name == controlsAttr)
+        return;
+    case AttributeNames::controlsAttr:
         configureMediaControls();
-    else if (name == loopAttr)
+        return;
+    case AttributeNames::loopAttr:
         updateSleepDisabling();
-    else if (name == preloadAttr) {
+        return;
+    case AttributeNames::preloadAttr:
         if (equalLettersIgnoringASCIICase(newValue, "none"_s))
             m_preload = MediaPlayer::Preload::None;
         else if (equalLettersIgnoringASCIICase(newValue, "metadata"_s))
@@ -800,26 +805,30 @@ void HTMLMediaElement::attributeChanged(const QualifiedName& name, const AtomStr
             // "missing value default", so use it for everything except "none" and "metadata"
             m_preload = MediaPlayer::Preload::Auto;
         }
-
         // The attribute must be ignored if the autoplay attribute is present
         if (!autoplay() && !m_havePreparedToPlay && m_player)
             m_player->setPreload(mediaSession().effectivePreloadForElement());
-
-    } else if (name == mediagroupAttr)
+        return;
+    case AttributeNames::mediagroupAttr:
         setMediaGroup(newValue);
-    else if (name == autoplayAttr) {
+        return;
+    case AttributeNames::autoplayAttr:
         if (processingUserGestureForMedia())
             removeBehaviorRestrictionsAfterFirstUserGesture();
-    } else if (name == titleAttr) {
+        return;
+    case AttributeNames::titleAttr:
         if (m_mediaSession)
             m_mediaSession->clientCharacteristicsChanged(false);
-    }
+        return;
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-    else if (name == webkitwirelessvideoplaybackdisabledAttr)
+    case AttributeNames::webkitwirelessvideoplaybackdisabledAttr:
         mediaSession().setWirelessVideoPlaybackDisabled(newValue != nullAtom());
+        return;
 #endif
-    else
-        HTMLElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
+    default:
+        break;
+    }
+    HTMLElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }
 
 void HTMLMediaElement::finishParsingChildren()

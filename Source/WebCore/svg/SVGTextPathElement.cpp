@@ -22,6 +22,7 @@
 #include "config.h"
 #include "SVGTextPathElement.h"
 
+#include "NodeName.h"
 #include "RenderSVGResource.h"
 #include "RenderSVGTextPath.h"
 #include "SVGDocumentExtensions.h"
@@ -67,18 +68,25 @@ void SVGTextPathElement::attributeChanged(const QualifiedName& name, const AtomS
 {
     SVGParsingError parseError = NoError;
 
-    if (name == SVGNames::startOffsetAttr)
+    switch (name.nodeName()) {
+    case AttributeNames::startOffsetAttr:
         m_startOffset->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Other, newValue, parseError));
-    else if (name == SVGNames::methodAttr) {
+        break;
+    case AttributeNames::methodAttr: {
         SVGTextPathMethodType propertyValue = SVGPropertyTraits<SVGTextPathMethodType>::fromString(newValue);
         if (propertyValue > 0)
             m_method->setBaseValInternal<SVGTextPathMethodType>(propertyValue);
-    } else if (name == SVGNames::spacingAttr) {
+        break;
+    }
+    case AttributeNames::spacingAttr: {
         SVGTextPathSpacingType propertyValue = SVGPropertyTraits<SVGTextPathSpacingType>::fromString(newValue);
         if (propertyValue > 0)
             m_spacing->setBaseValInternal<SVGTextPathSpacingType>(propertyValue);
+        break;
     }
-
+    default:
+        break;
+    }
     reportAttributeParsingError(parseError, name, newValue);
 
     SVGURIReference::parseAttribute(name, newValue);

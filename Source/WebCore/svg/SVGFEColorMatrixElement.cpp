@@ -23,6 +23,7 @@
 #include "SVGFEColorMatrixElement.h"
 
 #include "FEColorMatrix.h"
+#include "NodeName.h"
 #include "SVGNames.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -62,21 +63,21 @@ void SVGFEColorMatrixElement::attributeChanged(const QualifiedName& name, const 
 {
     SVGFilterPrimitiveStandardAttributes::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 
-    if (name == SVGNames::typeAttr) {
+    switch (name.nodeName()) {
+    case AttributeNames::typeAttr: {
         auto propertyValue = SVGPropertyTraits<ColorMatrixType>::fromString(newValue);
         if (propertyValue > 0)
             m_type->setBaseValInternal<ColorMatrixType>(propertyValue);
-        return;
+        break;
     }
-
-    if (name == SVGNames::inAttr) {
+    case AttributeNames::inAttr:
         m_in1->setBaseValInternal(newValue);
-        return;
-    }
-
-    if (name == SVGNames::valuesAttr) {
+        break;
+    case AttributeNames::valuesAttr:
         m_values->baseVal()->parse(newValue);
-        return;
+        break;
+    default:
+        break;
     }
 }
 

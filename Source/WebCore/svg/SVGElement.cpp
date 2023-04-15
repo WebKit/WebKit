@@ -593,20 +593,25 @@ void SVGElement::attributeChanged(const QualifiedName& name, const AtomString& o
 {
     StyledElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 
-    if (name == HTMLNames::idAttr)
+    switch (name.nodeName()) {
+    case AttributeNames::idAttr:
         document().accessSVGExtensions().rebuildAllElementReferencesForTarget(*this);
-    else if (name == HTMLNames::classAttr) {
+        break;
+    case AttributeNames::classAttr:
         m_className->setBaseValInternal(newValue);
-    } else if (name == HTMLNames::tabindexAttr) {
+        break;
+    case AttributeNames::tabindexAttr:
         if (newValue.isEmpty())
             setTabIndexExplicitly(std::nullopt);
         else if (auto optionalTabIndex = parseHTMLInteger(newValue))
             setTabIndexExplicitly(optionalTabIndex.value());
-    } else {
-        auto& eventName = HTMLElement::eventNameForEventHandlerAttribute(name);
-        if (!eventName.isNull())
+        break;
+    default:
+        if (auto& eventName = HTMLElement::eventNameForEventHandlerAttribute(name); !eventName.isNull())
             setAttributeEventListener(eventName, name, newValue);
+        break;
     }
+
     // Changes to the style attribute are processed lazily (see Element::getAttribute() and related methods),
     // so we don't want changes to the style attribute to result in extra work here except invalidateInstances().
     if (name == HTMLNames::styleAttr)

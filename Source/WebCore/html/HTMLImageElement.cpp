@@ -51,6 +51,7 @@
 #include "MIMETypeRegistry.h"
 #include "MediaQueryEvaluator.h"
 #include "MouseEvent.h"
+#include "NodeName.h"
 #include "NodeTraversal.h"
 #include "PlatformMouseEvent.h"
 #include "RenderImage.h"
@@ -333,37 +334,48 @@ void HTMLImageElement::attributeChanged(const QualifiedName& name, const AtomStr
 {
     HTMLElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 
-    if (name == altAttr) {
-        if (is<RenderImage>(renderer()))
-            downcast<RenderImage>(*renderer()).updateAltText();
-    } else if (name == srcAttr || name == srcsetAttr || name == sizesAttr)
+    switch (name.nodeName()) {
+    case AttributeNames::altAttr:
+        if (auto* renderImage = dynamicDowncast<RenderImage>(renderer()))
+            renderImage->updateAltText();
+        break;
+    case AttributeNames::srcAttr:
+    case AttributeNames::srcsetAttr:
+    case AttributeNames::sizesAttr:
         selectImageSource(RelevantMutation::Yes);
-    else if (name == usemapAttr) {
+        break;
+    case AttributeNames::usemapAttr:
         if (isInTreeScope() && !m_parsedUsemap.isNull())
             treeScope().removeImageElementByUsemap(*m_parsedUsemap.impl(), *this);
-
         m_parsedUsemap = parseHTMLHashNameReference(newValue);
-
         if (isInTreeScope() && !m_parsedUsemap.isNull())
             treeScope().addImageElementByUsemap(*m_parsedUsemap.impl(), *this);
-    } else if (name == compositeAttr) {
+        break;
+    case AttributeNames::compositeAttr: {
         // FIXME: images don't support blend modes in their compositing attribute.
         BlendMode blendOp = BlendMode::Normal;
         if (!parseCompositeAndBlendOperator(newValue, m_compositeOperator, blendOp))
             m_compositeOperator = CompositeOperator::SourceOver;
-    } else if (name == loadingAttr) {
+        break;
+    }
+    case AttributeNames::loadingAttr:
         // No action needed for eager to lazy transition.
         if (!hasLazyLoadableAttributeValue(newValue))
             loadDeferredImage();
-    } else if (name == referrerpolicyAttr && document().settings().referrerPolicyAttributeEnabled()) {
-        auto oldReferrerPolicy = parseReferrerPolicy(oldValue, ReferrerPolicySource::ReferrerPolicyAttribute).value_or(ReferrerPolicy::EmptyString);
-        auto newReferrerPolicy = parseReferrerPolicy(newValue, ReferrerPolicySource::ReferrerPolicyAttribute).value_or(ReferrerPolicy::EmptyString);
-        if (oldReferrerPolicy != newReferrerPolicy)
-            m_imageLoader->updateFromElementIgnoringPreviousError(RelevantMutation::Yes);
-    } else if (name == crossoriginAttr) {
+        break;
+    case AttributeNames::referrerpolicyAttr:
+        if (document().settings().referrerPolicyAttributeEnabled()) {
+            auto oldReferrerPolicy = parseReferrerPolicy(oldValue, ReferrerPolicySource::ReferrerPolicyAttribute).value_or(ReferrerPolicy::EmptyString);
+            auto newReferrerPolicy = parseReferrerPolicy(newValue, ReferrerPolicySource::ReferrerPolicyAttribute).value_or(ReferrerPolicy::EmptyString);
+            if (oldReferrerPolicy != newReferrerPolicy)
+                m_imageLoader->updateFromElementIgnoringPreviousError(RelevantMutation::Yes);
+        }
+        break;
+    case AttributeNames::crossoriginAttr:
         if (parseCrossoriginState(oldValue) != parseCrossoriginState(newValue))
             m_imageLoader->updateFromElementIgnoringPreviousError(RelevantMutation::Yes);
-    } else if (name == nameAttr) {
+        break;
+    case AttributeNames::nameAttr: {
         bool willHaveName = !newValue.isEmpty();
         if (m_hadNameBeforeAttributeChanged != willHaveName && isConnected() && !isInShadowTree() && is<HTMLDocument>(document())) {
             HTMLDocument& document = downcast<HTMLDocument>(this->document());
@@ -376,6 +388,10 @@ void HTMLImageElement::attributeChanged(const QualifiedName& name, const AtomStr
             }
         }
         m_hadNameBeforeAttributeChanged = willHaveName;
+        break;
+    }
+    default:
+        break;
     }
 
 #if ENABLE(SERVICE_CONTROLS)

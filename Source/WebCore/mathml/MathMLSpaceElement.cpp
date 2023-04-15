@@ -29,6 +29,7 @@
 
 #if ENABLE(MATHML)
 
+#include "NodeName.h"
 #include "RenderMathMLSpace.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -65,13 +66,19 @@ const MathMLElement::Length& MathMLSpaceElement::depth()
 
 void MathMLSpaceElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
-    if (name == widthAttr)
+    switch (name.nodeName()) {
+    case AttributeNames::widthAttr:
         m_width = std::nullopt;
-    else if (name == heightAttr)
+        break;
+    case AttributeNames::heightAttr:
         m_height = std::nullopt;
-    else if (name == depthAttr)
+        break;
+    case AttributeNames::depthAttr:
         m_depth = std::nullopt;
-
+        break;
+    default:
+        break;
+    }
     MathMLPresentationElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }
 

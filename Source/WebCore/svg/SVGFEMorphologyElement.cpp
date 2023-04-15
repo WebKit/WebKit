@@ -23,6 +23,7 @@
 #include "SVGFEMorphologyElement.h"
 
 #include "FEMorphology.h"
+#include "NodeName.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
 #include <wtf/IsoMallocInlines.h>
@@ -53,24 +54,24 @@ void SVGFEMorphologyElement::attributeChanged(const QualifiedName& name, const A
 {
     SVGFilterPrimitiveStandardAttributes::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 
-    if (name == SVGNames::operatorAttr) {
+    switch (name.nodeName()) {
+    case AttributeNames::operatorAttr: {
         MorphologyOperatorType propertyValue = SVGPropertyTraits<MorphologyOperatorType>::fromString(newValue);
         if (propertyValue != MorphologyOperatorType::Unknown)
             m_svgOperator->setBaseValInternal<MorphologyOperatorType>(propertyValue);
-        return;
+        break;
     }
-
-    if (name == SVGNames::inAttr) {
+    case AttributeNames::inAttr:
         m_in1->setBaseValInternal(newValue);
-        return;
-    }
-
-    if (name == SVGNames::radiusAttr) {
+        break;
+    case AttributeNames::radiusAttr:
         if (auto result = parseNumberOptionalNumber(newValue)) {
             m_radiusX->setBaseValInternal(result->first);
             m_radiusY->setBaseValInternal(result->second);
         }
-        return;
+        break;
+    default:
+        break;
     }
 }
 

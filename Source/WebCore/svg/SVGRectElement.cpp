@@ -24,6 +24,7 @@
 #include "SVGRectElement.h"
 
 #include "LegacyRenderSVGRect.h"
+#include "NodeName.h"
 #include "RenderSVGRect.h"
 #include "RenderSVGResource.h"
 #include "SVGElementInlines.h"
@@ -58,21 +59,29 @@ void SVGRectElement::attributeChanged(const QualifiedName& name, const AtomStrin
 {
     SVGParsingError parseError = NoError;
 
-    if (name == SVGNames::xAttr)
+    switch (name.nodeName()) {
+    case AttributeNames::xAttr:
         m_x->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Width, newValue, parseError));
-    else if (name == SVGNames::yAttr)
+        break;
+    case AttributeNames::yAttr:
         m_y->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Height, newValue, parseError));
-    else if (name == SVGNames::rxAttr)
+        break;
+    case AttributeNames::rxAttr:
         m_rx->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Width, newValue, parseError, SVGLengthNegativeValuesMode::Forbid));
-    else if (name == SVGNames::ryAttr)
+        break;
+    case AttributeNames::ryAttr:
         m_ry->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Height, newValue, parseError, SVGLengthNegativeValuesMode::Forbid));
-    else if (name == SVGNames::widthAttr)
+        break;
+    case AttributeNames::widthAttr:
         m_width->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Width, newValue, parseError, SVGLengthNegativeValuesMode::Forbid));
-    else if (name == SVGNames::heightAttr)
+        break;
+    case AttributeNames::heightAttr:
         m_height->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Height, newValue, parseError, SVGLengthNegativeValuesMode::Forbid));
-
+        break;
+    default:
+        break;
+    }
     reportAttributeParsingError(parseError, name, newValue);
-
     SVGGeometryElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }
 

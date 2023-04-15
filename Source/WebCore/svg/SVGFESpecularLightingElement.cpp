@@ -24,6 +24,7 @@
 #include "SVGFESpecularLightingElement.h"
 
 #include "FESpecularLighting.h"
+#include "NodeName.h"
 #include "RenderStyle.h"
 #include "SVGFELightElement.h"
 #include "SVGNames.h"
@@ -58,32 +59,27 @@ void SVGFESpecularLightingElement::attributeChanged(const QualifiedName& name, c
 {
     SVGFilterPrimitiveStandardAttributes::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 
-    if (name == SVGNames::inAttr) {
+    switch (name.nodeName()) {
+    case AttributeNames::inAttr:
         m_in1->setBaseValInternal(newValue);
-        return;
-    }
-
-    if (name == SVGNames::surfaceScaleAttr) {
+        break;
+    case AttributeNames::surfaceScaleAttr:
         m_surfaceScale->setBaseValInternal(newValue.toFloat());
-        return;
-    }
-
-    if (name == SVGNames::specularConstantAttr) {
+        break;
+    case AttributeNames::specularConstantAttr:
         m_specularConstant->setBaseValInternal(newValue.toFloat());
-        return;
-    }
-
-    if (name == SVGNames::specularExponentAttr) {
+        break;
+    case AttributeNames::specularExponentAttr:
         m_specularExponent->setBaseValInternal(newValue.toFloat());
-        return;
-    }
-
-    if (name == SVGNames::kernelUnitLengthAttr) {
+        break;
+    case AttributeNames::kernelUnitLengthAttr:
         if (auto result = parseNumberOptionalNumber(newValue)) {
             m_kernelUnitLengthX->setBaseValInternal(result->first);
             m_kernelUnitLengthY->setBaseValInternal(result->second);
         }
-        return;
+        break;
+    default:
+        break;
     }
 }
 

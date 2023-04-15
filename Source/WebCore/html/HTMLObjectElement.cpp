@@ -107,20 +107,26 @@ void HTMLObjectElement::attributeChanged(const QualifiedName& name, const AtomSt
     bool invalidateRenderer = false;
     bool needsWidgetUpdate = false;
 
-    if (name == typeAttr) {
+    switch (name.nodeName()) {
+    case AttributeNames::typeAttr:
         m_serviceType = newValue.string().left(newValue.find(';')).convertToASCIILowercase();
         invalidateRenderer = !hasAttributeWithoutSynchronization(classidAttr);
         needsWidgetUpdate = true;
-    } else if (name == dataAttr) {
+        break;
+    case AttributeNames::dataAttr:
         m_url = stripLeadingAndTrailingHTMLSpaces(newValue);
         invalidateRenderer = !hasAttributeWithoutSynchronization(classidAttr);
         needsWidgetUpdate = true;
         updateImageLoaderWithNewURLSoon();
-    } else if (name == classidAttr) {
+        break;
+    case AttributeNames::classidAttr:
         invalidateRenderer = true;
         needsWidgetUpdate = true;
-    } else
+        break;
+    default:
         FormListedElement::parseAttribute(name, newValue);
+        break;
+    }
 
     if (needsWidgetUpdate) {
         setNeedsWidgetUpdate(true);

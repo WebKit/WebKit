@@ -133,38 +133,38 @@ const AtomString& HTMLBodyElement::eventNameForWindowEventHandlerAttribute(const
 
 void HTMLBodyElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
-    if (name == vlinkAttr || name == alinkAttr || name == linkAttr) {
-        auto parsedColor = parseLegacyColorValue(newValue);
-        if (name == linkAttr) {
-            if (parsedColor)
-                document().setLinkColor(*parsedColor);
-            else
-                document().resetLinkColor();
-        } else if (name == vlinkAttr) {
-            if (parsedColor)
-                document().setVisitedLinkColor(*parsedColor);
-            else
-                document().resetVisitedLinkColor();
-        } else {
-            ASSERT(name == alinkAttr);
-            if (parsedColor)
-                document().setActiveLinkColor(*parsedColor);
-            else
-                document().resetActiveLinkColor();
-        }
+    switch (name.nodeName()) {
+    case AttributeNames::vlinkAttr:
+        if (auto parsedColor = parseLegacyColorValue(newValue))
+            document().setVisitedLinkColor(*parsedColor);
+        else
+            document().resetVisitedLinkColor();
         invalidateStyleForSubtree();
         return;
-    }
-
-    // FIXME: Emit "selectionchange" event at <input> / <textarea> elements and remove this special-case.
-    // https://bugs.webkit.org/show_bug.cgi?id=234348
-    if (name == onselectionchangeAttr) {
+    case AttributeNames::alinkAttr:
+        if (auto parsedColor = parseLegacyColorValue(newValue))
+            document().setActiveLinkColor(*parsedColor);
+        else
+            document().resetActiveLinkColor();
+        invalidateStyleForSubtree();
+        return;
+    case AttributeNames::linkAttr:
+        if (auto parsedColor = parseLegacyColorValue(newValue))
+            document().setLinkColor(*parsedColor);
+        else
+            document().resetLinkColor();
+        invalidateStyleForSubtree();
+        return;
+    case AttributeNames::onselectionchangeAttr:
+        // FIXME: Emit "selectionchange" event at <input> / <textarea> elements and remove this special-case.
+        // https://bugs.webkit.org/show_bug.cgi?id=234348
         document().setAttributeEventListener(eventNames().selectionchangeEvent, name, newValue, mainThreadNormalWorld());
         return;
+    default:
+        break;
     }
 
-    auto& eventName = eventNameForWindowEventHandlerAttribute(name);
-    if (!eventName.isNull()) {
+    if (auto& eventName = eventNameForWindowEventHandlerAttribute(name); !eventName.isNull()) {
         document().setWindowAttributeEventListener(eventName, name, newValue, mainThreadNormalWorld());
         return;
     }

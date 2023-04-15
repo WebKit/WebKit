@@ -43,6 +43,7 @@
 #include "InputTypeNames.h"
 #include "KeyboardEvent.h"
 #include "MouseEvent.h"
+#include "NodeName.h"
 #include "PlatformMouseEvent.h"
 #include "RenderSlider.h"
 #include "ScopedEventQueue.h"
@@ -327,7 +328,10 @@ bool RangeInputType::accessKeyAction(bool sendMouseEvents)
 
 void RangeInputType::attributeChanged(const QualifiedName& name)
 {
-    if (name == maxAttr || name == minAttr || name == valueAttr) {
+    switch (name.nodeName()) {
+    case AttributeNames::maxAttr:
+    case AttributeNames::minAttr:
+    case AttributeNames::valueAttr:
         // Sanitize the value.
         if (auto* element = this->element()) {
             if (element->hasDirtyValue())
@@ -335,6 +339,9 @@ void RangeInputType::attributeChanged(const QualifiedName& name)
         }
         if (hasCreatedShadowSubtree())
             typedSliderThumbElement().setPositionFromValue();
+        break;
+    default:
+        break;
     }
     InputType::attributeChanged(name);
 }

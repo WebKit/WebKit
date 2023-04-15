@@ -33,6 +33,7 @@
 #include "HTMLParserIdioms.h"
 #include "LazyLoadFrameObserver.h"
 #include "LocalFrame.h"
+#include "NodeName.h"
 #include "Quirks.h"
 #include "RenderIFrame.h"
 #include "ScriptController.h"
@@ -100,7 +101,8 @@ void HTMLIFrameElement::collectPresentationalHintsForAttribute(const QualifiedNa
 
 void HTMLIFrameElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
-    if (name == sandboxAttr) {
+    switch (name.nodeName()) {
+    case AttributeNames::sandboxAttr: {
         if (m_sandbox)
             m_sandbox->associatedAttributeValueChanged(newValue);
 
@@ -108,17 +110,25 @@ void HTMLIFrameElement::attributeChanged(const QualifiedName& name, const AtomSt
         setSandboxFlags(newValue.isNull() ? SandboxNone : SecurityContext::parseSandboxPolicy(newValue, invalidTokens));
         if (!invalidTokens.isNull())
             document().addConsoleMessage(MessageSource::Other, MessageLevel::Error, "Error while parsing the 'sandbox' attribute: " + invalidTokens);
-    } else if (name == allowAttr || name == allowfullscreenAttr || name == webkitallowfullscreenAttr) {
+        break;
+    }
+    case AttributeNames::allowAttr:
+    case AttributeNames::allowfullscreenAttr:
+    case AttributeNames::webkitallowfullscreenAttr:
         m_featurePolicy = std::nullopt;
-    } else if (name == loadingAttr) {
+        break;
+    case AttributeNames::loadingAttr:
         // Allow loading=eager to load the frame immediately if the lazy load was started, but
         // do not allow the reverse situation since the eager load is already started.
         if (m_lazyLoadFrameObserver && !equalLettersIgnoringASCIICase(newValue, "lazy"_s)) {
             m_lazyLoadFrameObserver->unobserve();
             loadDeferredFrame();
         }
-    } else
+        break;
+    default:
         HTMLFrameElementBase::attributeChanged(name, oldValue, newValue, attributeModificationReason);
+        break;
+    }
 }
 
 bool HTMLIFrameElement::rendererIsNeeded(const RenderStyle& style)

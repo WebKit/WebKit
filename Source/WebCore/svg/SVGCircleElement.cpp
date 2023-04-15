@@ -23,6 +23,7 @@
 #include "SVGCircleElement.h"
 
 #include "LegacyRenderSVGEllipse.h"
+#include "NodeName.h"
 #include "RenderSVGEllipse.h"
 #include "RenderSVGResource.h"
 #include "SVGElementInlines.h"
@@ -54,13 +55,19 @@ void SVGCircleElement::attributeChanged(const QualifiedName& name, const AtomStr
 {
     SVGParsingError parseError = NoError;
 
-    if (name == SVGNames::cxAttr)
+    switch (name.nodeName()) {
+    case AttributeNames::cxAttr:
         m_cx->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Width, newValue, parseError));
-    else if (name == SVGNames::cyAttr)
+        break;
+    case AttributeNames::cyAttr:
         m_cy->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Height, newValue, parseError));
-    else if (name == SVGNames::rAttr)
+        break;
+    case AttributeNames::rAttr:
         m_r->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Other, newValue, parseError, SVGLengthNegativeValuesMode::Forbid));
-
+        break;
+    default:
+        break;
+    }
     reportAttributeParsingError(parseError, name, newValue);
 
     SVGGeometryElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);

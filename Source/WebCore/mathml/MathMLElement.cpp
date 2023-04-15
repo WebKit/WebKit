@@ -40,6 +40,7 @@
 #include "HTMLParserIdioms.h"
 #include "MathMLNames.h"
 #include "MouseEvent.h"
+#include "NodeName.h"
 #include "RenderTableCell.h"
 #include "Settings.h"
 #include <wtf/IsoMallocInlines.h>
@@ -80,30 +81,32 @@ unsigned MathMLElement::rowSpan() const
 
 void MathMLElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
-    if (name == hrefAttr) {
+    switch (name.nodeName()) {
+    case AttributeNames::hrefAttr: {
         bool wasLink = isLink();
         setIsLink(!newValue.isNull() && !shouldProhibitLinks(this));
         if (wasLink != isLink())
             invalidateStyleForSubtree();
-    } else if (name == rowspanAttr) {
+        break;
+    }
+    case AttributeNames::columnspanAttr:
+    case AttributeNames::rowspanAttr:
         if (is<RenderTableCell>(renderer()) && hasTagName(mtdTag))
             downcast<RenderTableCell>(*renderer()).colSpanOrRowSpanChanged();
-    } else if (name == columnspanAttr) {
-        if (is<RenderTableCell>(renderer()) && hasTagName(mtdTag))
-            downcast<RenderTableCell>(renderer())->colSpanOrRowSpanChanged();
-    } else if (name == HTMLNames::tabindexAttr) {
+        break;
+    case AttributeNames::tabindexAttr:
         if (newValue.isEmpty())
             setTabIndexExplicitly(std::nullopt);
         else if (auto optionalTabIndex = parseHTMLInteger(newValue))
             setTabIndexExplicitly(optionalTabIndex.value());
-    } else {
-        auto& eventName = HTMLElement::eventNameForEventHandlerAttribute(name);
-        if (!eventName.isNull()) {
+        break;
+    default:
+        if (auto& eventName = HTMLElement::eventNameForEventHandlerAttribute(name); !eventName.isNull()) {
             setAttributeEventListener(eventName, name, newValue);
             return;
         }
-
         StyledElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
+        break;
     }
 }
 

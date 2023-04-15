@@ -22,6 +22,7 @@
 #include "SVGFEDisplacementMapElement.h"
 
 #include "FEDisplacementMap.h"
+#include "NodeName.h"
 #include "SVGNames.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -53,33 +54,30 @@ void SVGFEDisplacementMapElement::attributeChanged(const QualifiedName& name, co
 {
     SVGFilterPrimitiveStandardAttributes::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 
-    if (name == SVGNames::xChannelSelectorAttr) {
+    switch (name.nodeName()) {
+    case AttributeNames::xChannelSelectorAttr: {
         auto propertyValue = SVGPropertyTraits<ChannelSelectorType>::fromString(newValue);
         if (propertyValue > 0)
             m_xChannelSelector->setBaseValInternal<ChannelSelectorType>(propertyValue);
-        return;
+        break;
     }
-
-    if (name == SVGNames::yChannelSelectorAttr) {
+    case AttributeNames::yChannelSelectorAttr: {
         auto propertyValue = SVGPropertyTraits<ChannelSelectorType>::fromString(newValue);
         if (propertyValue > 0)
             m_yChannelSelector->setBaseValInternal<ChannelSelectorType>(propertyValue);
-        return;
+        break;
     }
-
-    if (name == SVGNames::inAttr) {
+    case AttributeNames::inAttr:
         m_in1->setBaseValInternal(newValue);
-        return;
-    }
-
-    if (name == SVGNames::in2Attr) {
+        break;
+    case AttributeNames::in2Attr:
         m_in2->setBaseValInternal(newValue);
-        return;
-    }
-
-    if (name == SVGNames::scaleAttr) {
+        break;
+    case AttributeNames::scaleAttr:
         m_scale->setBaseValInternal(newValue.toFloat());
-        return;
+        break;
+    default:
+        break;
     }
 }
 

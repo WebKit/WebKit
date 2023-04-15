@@ -364,11 +364,11 @@ std::optional<MathMLElement::MathVariant> MathMLPresentationElement::specifiedMa
 
 void MathMLPresentationElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
-    bool mathVariantAttribute = name == mathvariantAttr && acceptsMathVariantAttribute();
-    if (mathVariantAttribute)
+    if (name == mathvariantAttr && acceptsMathVariantAttribute()) {
         m_mathVariant = std::nullopt;
-    if ((mathVariantAttribute) && renderer())
-        MathMLStyle::resolveMathMLStyleTree(renderer());
+        if (renderer())
+            MathMLStyle::resolveMathMLStyleTree(renderer());
+    }
 
     MathMLElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }

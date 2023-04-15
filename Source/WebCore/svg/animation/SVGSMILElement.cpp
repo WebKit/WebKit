@@ -36,6 +36,7 @@
 #include "EventSender.h"
 #include "FloatConversion.h"
 #include "LocalFrameView.h"
+#include "NodeName.h"
 #include "Page.h"
 #include "SMILTimeContainer.h"
 #include "SVGDocumentExtensions.h"
@@ -479,7 +480,8 @@ void SVGSMILElement::attributeChanged(const QualifiedName& name, const AtomStrin
 {
     SVGElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 
-    if (name == SVGNames::beginAttr) {
+    switch (name.nodeName()) {
+    case AttributeNames::beginAttr:
         if (!m_conditions.isEmpty()) {
             disconnectConditions();
             m_conditions.clear();
@@ -488,7 +490,8 @@ void SVGSMILElement::attributeChanged(const QualifiedName& name, const AtomStrin
         parseBeginOrEnd(newValue, Begin);
         if (isConnected())
             connectConditions();
-    } else if (name == SVGNames::endAttr) {
+        break;
+    case AttributeNames::endAttr:
         if (!m_conditions.isEmpty()) {
             disconnectConditions();
             m_conditions.clear();
@@ -497,10 +500,16 @@ void SVGSMILElement::attributeChanged(const QualifiedName& name, const AtomStrin
         parseBeginOrEnd(newValue, End);
         if (isConnected())
             connectConditions();
-    } else if (name == SVGNames::onendAttr)
+        break;
+    case AttributeNames::onendAttr:
         setAttributeEventListener(eventNames().endEventEvent, name, newValue);
-    else if (name == SVGNames::onbeginAttr)
+        break;
+    case AttributeNames::onbeginAttr:
         setAttributeEventListener(eventNames().beginEventEvent, name, newValue);
+        break;
+    default:
+        break;
+    }
 }
 
 void SVGSMILElement::svgAttributeChanged(const QualifiedName& attrName)

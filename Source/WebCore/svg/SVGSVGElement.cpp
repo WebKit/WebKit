@@ -33,6 +33,7 @@
 #include "LegacyRenderSVGRoot.h"
 #include "LegacyRenderSVGViewportContainer.h"
 #include "LocalFrame.h"
+#include "NodeName.h"
 #include "RenderSVGResource.h"
 #include "RenderSVGRoot.h"
 #include "RenderSVGViewportContainer.h"
@@ -172,39 +173,40 @@ void SVGSVGElement::attributeChanged(const QualifiedName& name, const AtomString
     if (!nearestViewportElement() && isConnected()) {
         // For these events, the outermost <svg> element works like a <body> element does,
         // setting certain event handlers directly on the window object.
-        if (name == HTMLNames::onunloadAttr) {
+        switch (name.nodeName()) {
+        case AttributeNames::onunloadAttr:
             document().setWindowAttributeEventListener(eventNames().unloadEvent, name, newValue, mainThreadNormalWorld());
             return;
-        }
-        if (name == HTMLNames::onresizeAttr) {
+        case AttributeNames::onresizeAttr:
             document().setWindowAttributeEventListener(eventNames().resizeEvent, name, newValue, mainThreadNormalWorld());
             return;
-        }
-        if (name == HTMLNames::onscrollAttr) {
+        case AttributeNames::onscrollAttr:
             document().setWindowAttributeEventListener(eventNames().scrollEvent, name, newValue, mainThreadNormalWorld());
             return;
-        }
-        if (name == SVGNames::onzoomAttr) {
+        case AttributeNames::onzoomAttr:
             document().setWindowAttributeEventListener(eventNames().zoomEvent, name, newValue, mainThreadNormalWorld());
             return;
-        }
-        if (name == HTMLNames::onabortAttr) {
+        case AttributeNames::onabortAttr:
             document().setWindowAttributeEventListener(eventNames().abortEvent, name, newValue, mainThreadNormalWorld());
             return;
-        }
-        if (name == HTMLNames::onerrorAttr) {
+        case AttributeNames::onerrorAttr:
             document().setWindowAttributeEventListener(eventNames().errorEvent, name, newValue, mainThreadNormalWorld());
             return;
+        default:
+            break;
         }
     }
 
     SVGParsingError parseError = NoError;
 
-    if (name == SVGNames::xAttr)
+    switch (name.nodeName()) {
+    case AttributeNames::xAttr:
         m_x->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Width, newValue, parseError));
-    else if (name == SVGNames::yAttr)
+        break;
+    case AttributeNames::yAttr:
         m_y->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Height, newValue, parseError));
-    else if (name == SVGNames::widthAttr) {
+        break;
+    case AttributeNames::widthAttr: {
         auto length = SVGLengthValue::construct(SVGLengthMode::Width, newValue, parseError, SVGLengthNegativeValuesMode::Forbid);
         if (parseError != NoError || newValue.isEmpty()) {
             // FIXME: This is definitely the correct behavior for a missing/removed attribute.
@@ -212,7 +214,9 @@ void SVGSVGElement::attributeChanged(const QualifiedName& name, const AtomString
             length = SVGLengthValue(SVGLengthMode::Width, "100%"_s);
         }
         m_width->setBaseValInternal(length);
-    } else if (name == SVGNames::heightAttr) {
+        break;
+    }
+    case AttributeNames::heightAttr: {
         auto length = SVGLengthValue::construct(SVGLengthMode::Height, newValue, parseError, SVGLengthNegativeValuesMode::Forbid);
         if (parseError != NoError || newValue.isEmpty()) {
             // FIXME: This is definitely the correct behavior for a removed attribute.
@@ -220,8 +224,11 @@ void SVGSVGElement::attributeChanged(const QualifiedName& name, const AtomString
             length = SVGLengthValue(SVGLengthMode::Height, "100%"_s);
         }
         m_height->setBaseValInternal(length);
+        break;
     }
-
+    default:
+        break;
+    }
     reportAttributeParsingError(parseError, name, newValue);
 }
 

@@ -23,6 +23,7 @@
 
 #include "CommonAtomStrings.h"
 #include "FEConvolveMatrix.h"
+#include "NodeName.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
 #include <wtf/IsoMallocInlines.h>
@@ -61,77 +62,64 @@ void SVGFEConvolveMatrixElement::attributeChanged(const QualifiedName& name, con
 {
     SVGFilterPrimitiveStandardAttributes::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 
-    if (name == SVGNames::inAttr) {
+    switch (name.nodeName()) {
+    case AttributeNames::inAttr:
         m_in1->setBaseValInternal(newValue);
-        return;
-    }
-
-    if (name == SVGNames::orderAttr) {
+        break;
+    case AttributeNames::orderAttr: {
         auto result = parseNumberOptionalNumber(newValue);
         if (result && result->first >= 1 && result->second >= 1) {
             m_orderX->setBaseValInternal(result->first);
             m_orderY->setBaseValInternal(result->second);
         } else
             document().accessSVGExtensions().reportWarning("feConvolveMatrix: problem parsing order=\"" + newValue + "\". Filtered element will not be displayed.");
-        return;
+        break;
     }
-
-    if (name == SVGNames::edgeModeAttr) {
+    case AttributeNames::edgeModeAttr: {
         EdgeModeType propertyValue = SVGPropertyTraits<EdgeModeType>::fromString(newValue);
         if (propertyValue != EdgeModeType::Unknown)
             m_edgeMode->setBaseValInternal<EdgeModeType>(propertyValue);
         else
             document().accessSVGExtensions().reportWarning("feConvolveMatrix: problem parsing edgeMode=\"" + newValue + "\". Filtered element will not be displayed.");
-        return;
+        break;
     }
-
-    if (name == SVGNames::kernelMatrixAttr) {
+    case AttributeNames::kernelMatrixAttr:
         m_kernelMatrix->baseVal()->parse(newValue);
-        return;
-    }
-
-    if (name == SVGNames::divisorAttr) {
-        float divisor = newValue.toFloat();
-        if (divisor)
+        break;
+    case AttributeNames::divisorAttr:
+        if (float divisor = newValue.toFloat())
             m_divisor->setBaseValInternal(divisor);
         else
             document().accessSVGExtensions().reportWarning("feConvolveMatrix: problem parsing divisor=\"" + newValue + "\". Filtered element will not be displayed.");
-        return;
-    }
-    
-    if (name == SVGNames::biasAttr) {
+        break;
+    case AttributeNames::biasAttr:
         m_bias->setBaseValInternal(newValue.toFloat());
-        return;
-    }
-
-    if (name == SVGNames::targetXAttr) {
+        break;
+    case AttributeNames::targetXAttr:
         m_targetX->setBaseValInternal(parseInteger<unsigned>(newValue).value_or(0));
-        return;
-    }
-
-    if (name == SVGNames::targetYAttr) {
+        break;
+    case AttributeNames::targetYAttr:
         m_targetY->setBaseValInternal(parseInteger<unsigned>(newValue).value_or(0));
-        return;
-    }
-
-    if (name == SVGNames::kernelUnitLengthAttr) {
+        break;
+    case AttributeNames::kernelUnitLengthAttr: {
         auto result = parseNumberOptionalNumber(newValue);
         if (result && result->first > 0 && result->second > 0) {
             m_kernelUnitLengthX->setBaseValInternal(result->first);
             m_kernelUnitLengthY->setBaseValInternal(result->second);
         } else
             document().accessSVGExtensions().reportWarning("feConvolveMatrix: problem parsing kernelUnitLength=\"" + newValue + "\". Filtered element will not be displayed.");
-        return;
+        break;
     }
-
-    if (name == SVGNames::preserveAlphaAttr) {
+    case AttributeNames::preserveAlphaAttr:
         if (newValue == trueAtom())
             m_preserveAlpha->setBaseValInternal(true);
         else if (newValue == falseAtom())
             m_preserveAlpha->setBaseValInternal(false);
         else
             document().accessSVGExtensions().reportWarning("feConvolveMatrix: problem parsing preserveAlphaAttr=\"" + newValue  + "\". Filtered element will not be displayed.");
-        return;
+        break;
+    default:
+        break;
     }
 }
 

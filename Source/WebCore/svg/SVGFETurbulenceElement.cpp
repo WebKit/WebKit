@@ -22,6 +22,7 @@
 #include "config.h"
 #include "SVGFETurbulenceElement.h"
 
+#include "NodeName.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
 #include <wtf/IsoMallocInlines.h>
@@ -53,24 +54,34 @@ Ref<SVGFETurbulenceElement> SVGFETurbulenceElement::create(const QualifiedName& 
 
 void SVGFETurbulenceElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
-    if (name == SVGNames::typeAttr) {
+    switch (name.nodeName()) {
+    case AttributeNames::typeAttr: {
         TurbulenceType propertyValue = SVGPropertyTraits<TurbulenceType>::fromString(newValue);
         if (propertyValue != TurbulenceType::Unknown)
             m_type->setBaseValInternal<TurbulenceType>(propertyValue);
-    } else if (name == SVGNames::stitchTilesAttr) {
+        break;
+    }
+    case AttributeNames::stitchTilesAttr: {
         SVGStitchOptions propertyValue = SVGPropertyTraits<SVGStitchOptions>::fromString(newValue);
         if (propertyValue > 0)
             m_stitchTiles->setBaseValInternal<SVGStitchOptions>(propertyValue);
-    } else if (name == SVGNames::baseFrequencyAttr) {
+        break;
+    }
+    case AttributeNames::baseFrequencyAttr:
         if (auto result = parseNumberOptionalNumber(newValue)) {
             m_baseFrequencyX->setBaseValInternal(result->first);
             m_baseFrequencyY->setBaseValInternal(result->second);
         }
-    } else if (name == SVGNames::seedAttr)
+        break;
+    case AttributeNames::seedAttr:
         m_seed->setBaseValInternal(newValue.toFloat());
-    else if (name == SVGNames::numOctavesAttr)
+        break;
+    case AttributeNames::numOctavesAttr:
         m_numOctaves->setBaseValInternal(parseInteger<unsigned>(newValue).value_or(0));
-
+        break;
+    default:
+        break;
+    }
     SVGFilterPrimitiveStandardAttributes::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }
 

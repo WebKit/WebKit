@@ -46,6 +46,7 @@
 #include "LocalFrame.h"
 #include "MIMETypeRegistry.h"
 #include "MouseEvent.h"
+#include "NodeName.h"
 #include "RenderAttachment.h"
 #include "ShadowRoot.h"
 #include "SharedBuffer.h"
@@ -174,20 +175,10 @@ static const AtomString& attachmentSaveIconIdentifier()
     return identifier;
 }
 
-static QualifiedName subtitleAttr()
-{
-    return QualifiedName { nullAtom(), "subtitle"_s, nullAtom() };
-}
-
 static const AtomString& saveAtom()
 {
     static MainThreadNeverDestroyed<const AtomString> identifier("save"_s);
     return identifier;
-}
-
-static QualifiedName saveAttr()
-{
-    return QualifiedName { nullAtom(), saveAtom(), nullAtom() };
 }
 
 template <typename ElementType>
@@ -228,7 +219,7 @@ void HTMLAttachmentElement::ensureModernShadowTree(ShadowRoot& root)
     };
     copyAttribute(actionAttr);
     copyAttribute(progressAttr);
-    copyAttribute(subtitleAttr());
+    copyAttribute(subtitleAttr);
     copyAttribute(titleAttr);
     copyAttribute(typeAttr);
     m_innerLegacyAttachment->m_file = m_file;
@@ -253,7 +244,7 @@ void HTMLAttachmentElement::ensureModernShadowTree(ShadowRoot& root)
 
     m_subtitleElement = createContainedElement<HTMLDivElement>(*m_informationBlock, attachmentSubtitleIdentifier(), String { attachmentSubtitleForDisplay() });
 
-    updateSaveButton(!attributeWithoutSynchronization(saveAttr()).isNull());
+    updateSaveButton(!attributeWithoutSynchronization(saveAttr).isNull());
 }
 
 class AttachmentSaveEventListener final : public EventListener {
@@ -402,11 +393,11 @@ void HTMLAttachmentElement::setFile(RefPtr<File>&& file, UpdateDisplayAttributes
     if (updateAttributes == UpdateDisplayAttributes::Yes) {
         if (m_file) {
             setAttributeWithoutSynchronization(HTMLNames::titleAttr, AtomString { m_file->name() });
-            setAttributeWithoutSynchronization(subtitleAttr(), PAL::fileSizeDescription(m_file->size()));
+            setAttributeWithoutSynchronization(subtitleAttr, PAL::fileSizeDescription(m_file->size()));
             setAttributeWithoutSynchronization(HTMLNames::typeAttr, AtomString { m_file->type() });
         } else {
             removeAttribute(HTMLNames::titleAttr);
-            removeAttribute(subtitleAttr());
+            removeAttribute(HTMLNames::subtitleAttr);
             removeAttribute(HTMLNames::typeAttr);
         }
     }
@@ -457,36 +448,55 @@ RefPtr<HTMLImageElement> HTMLAttachmentElement::enclosingImageElement() const
 
 void HTMLAttachmentElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
-    if (name == actionAttr || name == subtitleAttr() || name == titleAttr || name == typeAttr) {
+    switch (name.nodeName()) {
+    case AttributeNames::actionAttr:
+    case AttributeNames::subtitleAttr:
+    case AttributeNames::titleAttr:
+    case AttributeNames::typeAttr:
         if (m_innerLegacyAttachment)
             m_innerLegacyAttachment->setAttributeWithoutSynchronization(name, newValue);
         invalidateRendering();
-    } else if (name == progressAttr && m_implementation == Implementation::Legacy) {
-        invalidateRendering();
+        break;
+    case AttributeNames::progressAttr:
+        if (m_implementation == Implementation::Legacy)
+            invalidateRendering();
+        break;
+    default:
+        break;
     }
 
     HTMLElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 
-    if (name == actionAttr) {
+    switch (name.nodeName()) {
+    case AttributeNames::actionAttr:
         if (m_actionTextElement)
             m_actionTextElement->setTextContent(String(newValue.string()));
-    } else if (name == titleAttr) {
+        break;
+    case AttributeNames::titleAttr:
         if (m_titleElement)
             m_titleElement->setTextContent(String(newValue.string()));
-    } else if (name == subtitleAttr()) {
+        break;
+    case AttributeNames::subtitleAttr:
         if (m_subtitleElement)
             m_subtitleElement->setTextContent(String(newValue.string()));
-    } else if (name == progressAttr)
+        break;
+    case AttributeNames::progressAttr:
         updateProgress(newValue);
-    else if (name == saveAttr())
+        break;
+    case AttributeNames::saveAttr:
         updateSaveButton(!newValue.isNull());
-
+        break;
 #if ENABLE(SERVICE_CONTROLS)
-    if (name == typeAttr && attachmentType() == "application/pdf"_s) {
-        setImageMenuEnabled(true);
-        ImageControlsMac::updateImageControls(*this);
-    }
+    case AttributeNames::typeAttr:
+        if (attachmentType() == "application/pdf"_s) {
+            setImageMenuEnabled(true);
+            ImageControlsMac::updateImageControls(*this);
+        }
+        break;
 #endif
+    default:
+        break;
+    }
 }
 
 String HTMLAttachmentElement::attachmentTitle() const
@@ -499,7 +509,7 @@ String HTMLAttachmentElement::attachmentTitle() const
 
 const AtomString& HTMLAttachmentElement::attachmentSubtitle() const
 {
-    return attributeWithoutSynchronization(subtitleAttr());
+    return attributeWithoutSynchronization(subtitleAttr);
 }
 
 const AtomString& HTMLAttachmentElement::attachmentActionForDisplay() const
@@ -565,9 +575,9 @@ void HTMLAttachmentElement::updateAttributes(std::optional<uint64_t>&& newFileSi
         removeAttribute(HTMLNames::typeAttr);
 
     if (newFileSize)
-        setAttributeWithoutSynchronization(subtitleAttr(), PAL::fileSizeDescription(*newFileSize));
+        setAttributeWithoutSynchronization(subtitleAttr, PAL::fileSizeDescription(*newFileSize));
     else
-        removeAttribute(subtitleAttr());
+        removeAttribute(subtitleAttr);
 
     invalidateRendering();
 }

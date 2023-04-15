@@ -21,6 +21,7 @@
 #include "config.h"
 #include "SVGFEDropShadowElement.h"
 
+#include "NodeName.h"
 #include "RenderStyle.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
@@ -61,27 +62,24 @@ void SVGFEDropShadowElement::attributeChanged(const QualifiedName& name, const A
 {
     SVGFilterPrimitiveStandardAttributes::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 
-    if (name == SVGNames::stdDeviationAttr) {
+    switch (name.nodeName()) {
+    case AttributeNames::stdDeviationAttr:
         if (auto result = parseNumberOptionalNumber(newValue)) {
             m_stdDeviationX->setBaseValInternal(result->first);
             m_stdDeviationY->setBaseValInternal(result->second);
         }
-        return;
-    }
-
-    if (name == SVGNames::inAttr) {
+        break;
+    case AttributeNames::inAttr:
         m_in1->setBaseValInternal(newValue);
-        return;
-    }
-
-    if (name == SVGNames::dxAttr) {
+        break;
+    case AttributeNames::dxAttr:
         m_dx->setBaseValInternal(newValue.toFloat());
-        return;
-    }
-
-    if (name == SVGNames::dyAttr) {
+        break;
+    case AttributeNames::dyAttr:
         m_dy->setBaseValInternal(newValue.toFloat());
-        return;
+        break;
+    default:
+        break;
     }
 }
 

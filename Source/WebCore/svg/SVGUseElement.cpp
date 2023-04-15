@@ -84,15 +84,22 @@ void SVGUseElement::attributeChanged(const QualifiedName& name, const AtomString
 {
     SVGParsingError parseError = NoError;
 
-    if (name == SVGNames::xAttr)
+    switch (name.nodeName()) {
+    case AttributeNames::xAttr:
         m_x->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Width, newValue, parseError));
-    else if (name == SVGNames::yAttr)
+        break;
+    case AttributeNames::yAttr:
         m_y->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Height, newValue, parseError));
-    else if (name == SVGNames::widthAttr)
+        break;
+    case AttributeNames::widthAttr:
         m_width->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Width, newValue, parseError, SVGLengthNegativeValuesMode::Forbid));
-    else if (name == SVGNames::heightAttr)
+        break;
+    case AttributeNames::heightAttr:
         m_height->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Height, newValue, parseError, SVGLengthNegativeValuesMode::Forbid));
-
+        break;
+    default:
+        break;
+    }
     reportAttributeParsingError(parseError, name, newValue);
 
     SVGURIReference::parseAttribute(name, newValue);

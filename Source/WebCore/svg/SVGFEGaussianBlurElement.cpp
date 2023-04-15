@@ -23,6 +23,7 @@
 #include "SVGFEGaussianBlurElement.h"
 
 #include "FEGaussianBlur.h"
+#include "NodeName.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
 #include <wtf/IsoMallocInlines.h>
@@ -60,26 +61,26 @@ void SVGFEGaussianBlurElement::attributeChanged(const QualifiedName& name, const
 {
     SVGFilterPrimitiveStandardAttributes::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 
-    if (name == SVGNames::stdDeviationAttr) {
+    switch (name.nodeName()) {
+    case AttributeNames::stdDeviationAttr:
         if (auto result = parseNumberOptionalNumber(newValue)) {
             m_stdDeviationX->setBaseValInternal(result->first);
             m_stdDeviationY->setBaseValInternal(result->second);
         }
-        return;
-    }
-
-    if (name == SVGNames::inAttr) {
+        break;
+    case AttributeNames::inAttr:
         m_in1->setBaseValInternal(newValue);
-        return;
-    }
-
-    if (name == SVGNames::edgeModeAttr) {
+        break;
+    case AttributeNames::edgeModeAttr: {
         auto propertyValue = SVGPropertyTraits<EdgeModeType>::fromString(newValue);
         if (propertyValue != EdgeModeType::Unknown)
             m_edgeMode->setBaseValInternal<EdgeModeType>(propertyValue);
         else
             document().accessSVGExtensions().reportWarning("feGaussianBlur: problem parsing edgeMode=\"" + newValue + "\". Filtered element will not be displayed.");
-        return;
+        break;
+    }
+    default:
+        break;
     }
 }
 

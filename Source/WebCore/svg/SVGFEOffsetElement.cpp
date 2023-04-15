@@ -23,6 +23,7 @@
 #include "SVGFEOffsetElement.h"
 
 #include "FEOffset.h"
+#include "NodeName.h"
 #include "SVGNames.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -52,19 +53,18 @@ void SVGFEOffsetElement::attributeChanged(const QualifiedName& name, const AtomS
 {
     SVGFilterPrimitiveStandardAttributes::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 
-    if (name == SVGNames::dxAttr) {
+    switch (name.nodeName()) {
+    case AttributeNames::dxAttr:
         m_dx->setBaseValInternal(newValue.toFloat());
-        return;
-    }
-
-    if (name == SVGNames::dyAttr) {
+        break;
+    case AttributeNames::dyAttr:
         m_dy->setBaseValInternal(newValue.toFloat());
-        return;
-    }
-
-    if (name == SVGNames::inAttr) {
+        break;
+    case AttributeNames::inAttr:
         m_in1->setBaseValInternal(newValue);
-        return;
+        break;
+    default:
+        break;
     }
 }
 

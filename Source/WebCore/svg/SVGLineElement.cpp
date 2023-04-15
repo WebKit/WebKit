@@ -23,6 +23,7 @@
 #include "SVGLineElement.h"
 
 #include "LegacyRenderSVGShape.h"
+#include "NodeName.h"
 #include "RenderSVGResource.h"
 #include "RenderSVGShape.h"
 #include "SVGLengthValue.h"
@@ -55,15 +56,22 @@ void SVGLineElement::attributeChanged(const QualifiedName& name, const AtomStrin
 {
     SVGParsingError parseError = NoError;
 
-    if (name == SVGNames::x1Attr)
+    switch (name.nodeName()) {
+    case AttributeNames::x1Attr:
         m_x1->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Width, newValue, parseError));
-    else if (name == SVGNames::y1Attr)
+        break;
+    case AttributeNames::y1Attr:
         m_y1->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Height, newValue, parseError));
-    else if (name == SVGNames::x2Attr)
+        break;
+    case AttributeNames::x2Attr:
         m_x2->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Width, newValue, parseError));
-    else if (name == SVGNames::y2Attr)
+        break;
+    case AttributeNames::y2Attr:
         m_y2->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Height, newValue, parseError));
-
+        break;
+    default:
+        break;
+    }
     reportAttributeParsingError(parseError, name, newValue);
 
     SVGGeometryElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
