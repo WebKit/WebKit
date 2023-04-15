@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -12025,7 +12025,7 @@ void SpeculativeJIT::emitNewTypedArrayWithSizeInRegister(Node* node, TypedArrayT
     done.link(this);
 #if CPU(ARM64E)
     // sizeGPR is still boxed as a number and there is no 32-bit variant of the PAC instructions.
-    zeroExtend32ToWord(sizeGPR, scratchGPR);
+    zeroExtend48ToWord(sizeGPR, scratchGPR); // See rdar://107561209, rdar://107724053.
     tagArrayPtr(scratchGPR, storageGPR);
 #endif
 

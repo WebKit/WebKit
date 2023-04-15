@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -2966,6 +2966,37 @@ void testOrUnsignedRightShift64()
         }
     }
 }
+
+void testZeroExtend48ToWord()
+{
+    auto zext48First = compile([=] (CCallHelpers& jit) {
+        emitFunctionPrologue(jit);
+
+        jit.zeroExtend48ToWord(GPRInfo::argumentGPR0, GPRInfo::argumentGPR0);
+
+        emitFunctionEpilogue(jit);
+        jit.ret();
+    });
+
+    auto zeroTop16Bits = [] (int64_t value) -> int64_t {
+        return value & (1ull << 48) - 1;
+    };
+
+    for (auto a : int64Operands())
+        CHECK_EQ(invoke<int64_t>(zext48First, a), zeroTop16Bits(a));
+
+    auto zext48Second = compile([=] (CCallHelpers& jit) {
+        emitFunctionPrologue(jit);
+
+        jit.zeroExtend48ToWord(GPRInfo::argumentGPR1, GPRInfo::argumentGPR0);
+
+        emitFunctionEpilogue(jit);
+        jit.ret();
+    });
+
+    for (auto a : int64Operands())
+        CHECK_EQ(invoke<int64_t>(zext48Second, 0, a), zeroTop16Bits(a));
+}
 #endif
 
 #if CPU(X86) || CPU(X86_64) || CPU(ARM64) || CPU(RISCV64)
@@ -5890,6 +5921,8 @@ void run(const char* filter) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
     RUN(testOrLeftShift64());
     RUN(testOrRightShift64());
     RUN(testOrUnsignedRightShift64());
+
+    RUN(testZeroExtend48ToWord());
 #endif
 
 #if CPU(ARM64)
