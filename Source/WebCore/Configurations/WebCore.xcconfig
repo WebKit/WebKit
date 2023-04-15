@@ -151,7 +151,6 @@ OTHER_LDFLAGS_PLATFORM_cocoatouch = -allowable_client WebKit -allowable_client i
 OTHER_LDFLAGS_PLATFORM_macosx = -sub_library libobjc -umbrella WebKit $(PROFILE_GENERATE_OR_USE_LDFLAGS);
 
 SECTORDER_FLAGS = $(SECTORDER_FLAGS_$(CONFIGURATION));
-SECTORDER_FLAGS_Production[sdk=iphoneos*] = -Wl,-order_file,$(SDKROOT)/AppleInternal/OrderFiles/WebCore.order;
 SECTORDER_FLAGS_Production[sdk=macosx*] = -Wl,-order_file,WebCore.order;
 
 EXCLUDED_SOURCE_FILE_NAMES = pdfjs*/*;
