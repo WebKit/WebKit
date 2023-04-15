@@ -1377,13 +1377,18 @@ void FontCascade::drawEmphasisMarks(GraphicsContext& context, const GlyphBuffer&
     FloatPoint startPoint(point.x() + middleOfLastGlyph - offsetToMiddleOfGlyph(*markFontData, markGlyph), point.y());
 
     GlyphBuffer markBuffer;
+    auto glyphForMarker = [&](unsigned index) {
+        auto glyph = glyphBuffer.glyphAt(index);
+        return (glyph && glyph != deletedGlyph) ? markGlyph : spaceGlyph;
+    };
+
     for (unsigned i = 0; i + 1 < glyphBuffer.size(); ++i) {
         float middleOfNextGlyph = offsetToMiddleOfGlyphAtIndex(glyphBuffer, i + 1);
         float advance = WebCore::width(glyphBuffer.advanceAt(i)) - middleOfLastGlyph + middleOfNextGlyph;
-        markBuffer.add(glyphBuffer.glyphAt(i) ? markGlyph : spaceGlyph, *markFontData, advance);
+        markBuffer.add(glyphForMarker(i), *markFontData, advance);
         middleOfLastGlyph = middleOfNextGlyph;
     }
-    markBuffer.add(glyphBuffer.glyphAt(glyphBuffer.size() - 1) ? markGlyph : spaceGlyph, *markFontData, 0);
+    markBuffer.add(glyphForMarker(glyphBuffer.size() - 1), *markFontData, 0);
 
     drawGlyphBuffer(context, markBuffer, startPoint, CustomFontNotReadyAction::DoNotPaintIfFontNotReady);
 }

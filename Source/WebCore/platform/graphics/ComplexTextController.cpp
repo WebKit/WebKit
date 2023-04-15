@@ -32,6 +32,7 @@
 #include "RenderText.h"
 #include "TextRun.h"
 #include <unicode/ubrk.h>
+#include <unicode/utf16.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/TextBreakIterator.h>
 #include <wtf/unicode/CharacterNames.h>
@@ -778,9 +779,14 @@ void ComplexTextController::adjustGlyphsAndAdvances()
 
             m_totalAdvance += advance;
 
-            // FIXME: Combining marks should receive a text emphasis mark if they are combine with a space.
-            if (m_forTextEmphasis && (!FontCascade::canReceiveTextEmphasis(ch) || (U_GET_GC_MASK(ch) & U_GC_M_MASK)))
-                glyph = 0;
+            if (m_forTextEmphasis) {
+                UChar32 ch32 = ch;
+                if (U16_IS_SURROGATE(ch))
+                    U16_GET(cp, 0, characterIndex, complexTextRun.stringLength(), ch32);
+                // FIXME: Combining marks should receive a text emphasis mark if they are combine with a space.
+                if (!FontCascade::canReceiveTextEmphasis(ch32) || (U_GET_GC_MASK(ch) & U_GC_M_MASK))
+                    glyph = deletedGlyph;
+            }
 
             m_adjustedBaseAdvances.append(advance);
             if (auto* origins = complexTextRun.glyphOrigins()) {

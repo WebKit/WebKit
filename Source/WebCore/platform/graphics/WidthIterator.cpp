@@ -273,7 +273,6 @@ inline void WidthIterator::advanceInternal(TextIterator& textIterator, GlyphBuff
         if (!glyph && !characterMustDrawSomething) {
             commitCurrentFontRange(glyphBuffer, lastGlyphCount, currentCharacterIndex, lastFontData, primaryFont, primaryFont, character, widthOfCurrentFontRange, width, charactersTreatedAsSpace);
 
-            Glyph deletedGlyph = 0xFFFF;
             addToGlyphBuffer(glyphBuffer, deletedGlyph, primaryFont, 0, currentCharacterIndex, character);
 
             textIterator.advance(advanceLength);
@@ -300,7 +299,7 @@ inline void WidthIterator::advanceInternal(TextIterator& textIterator, GlyphBuff
         }
 
         if (m_forTextEmphasis && !FontCascade::canReceiveTextEmphasis(character))
-            glyph = 0;
+            glyph = deletedGlyph;
 
         addToGlyphBuffer(glyphBuffer, glyph, font, width, currentCharacterIndex, character);
 
@@ -534,7 +533,6 @@ void WidthIterator::applyCSSVisibilityRules(GlyphBuffer& glyphBuffer, unsigned g
 
     auto adjustForSyntheticBold = [&](auto index) {
         auto glyph = glyphBuffer.glyphAt(index);
-        static constexpr const GlyphBufferGlyph deletedGlyph = 0xFFFF;
         auto syntheticBoldOffset = glyph == deletedGlyph ? 0 : glyphBuffer.fontAt(index).syntheticBoldOffset();
         m_runWidthSoFar += syntheticBoldOffset;
         auto& advance = glyphBuffer.advances(index)[0];

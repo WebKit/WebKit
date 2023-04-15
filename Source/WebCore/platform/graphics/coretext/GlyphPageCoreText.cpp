@@ -47,7 +47,6 @@ static bool shouldFillWithVerticalGlyphs(const UChar* buffer, unsigned bufferLen
     return false;
 }
 
-static const constexpr CGGlyph deletedGlyph = 0xFFFF;
 
 bool GlyphPage::fill(UChar* buffer, unsigned bufferLength)
 {
