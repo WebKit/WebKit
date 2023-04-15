@@ -102,7 +102,7 @@ void RenderTextControlSingleLine::layout()
     // and type=search if the text height is taller than the contentHeight()
     // because of compability.
 
-    RenderTextControlInnerBlock* innerTextRenderer = innerTextElement()->renderer();
+    RenderTextControlInnerBlock* innerTextRenderer = innerTextElement() ? innerTextElement()->renderer() : nullptr;
     RenderBox* innerBlockRenderer = innerBlockElement() ? innerBlockElement()->renderBox() : nullptr;
     HTMLElement* container = containerElement();
     RenderBox* containerRenderer = container ? container->renderBox() : nullptr;
@@ -342,8 +342,8 @@ LayoutUnit RenderTextControlSingleLine::preferredContentLogicalWidth(float charW
 
     if (includesDecoration)
         result += inputElement().decorationWidth();
-    
-    if (auto* innerRenderer = innerTextElement()->renderer())
+
+    if (auto* innerRenderer = innerTextElement() ? innerTextElement()->renderer() : nullptr)
         result += innerRenderer->endPaddingWidthForCaret();
 
     return result;
