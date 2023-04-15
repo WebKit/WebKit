@@ -66,11 +66,12 @@ public:
     String scrollbarState() const;
     
     void mouseEnteredScrollbar();
-    void mouseExitedScrollbar();
-    
+    void mouseExitedScrollbar();    
     void setLastKnownMousePositionInScrollbar(IntPoint position) { m_lastKnownMousePositionInScrollbar = position; }
     IntPoint lastKnownMousePositionInScrollbar() const;
+    void visibilityChanged(bool);
 private:
+    bool m_isVisible { false };
     ScrollerPairMac& m_pair;
     const ScrollbarOrientation m_orientation;
     IntPoint m_lastKnownMousePositionInScrollbar;

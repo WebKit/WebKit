@@ -30,6 +30,7 @@
 
 #include <WebCore/ScrollableArea.h>
 #include <WebCore/ScrollingCoordinator.h>
+#include <pal/spi/mac/NSScrollerImpSPI.h>
 
 namespace WebKit {
 
@@ -67,6 +68,23 @@ void RemoteScrollbarsController::mouseExitedScrollbar(WebCore::Scrollbar* scroll
 {
     if (auto scrollingCoordinator = m_coordinator.get())
         scrollingCoordinator->setMouseIsOverScrollbar(scrollbar, false);
+}
+
+bool RemoteScrollbarsController::shouldScrollbarParticipateInHitTesting(WebCore::Scrollbar* scrollbar)
+{
+    // Non-overlay scrollbars should always participate in hit testing.    
+    ASSERT(scrollbar->isOverlayScrollbar());
+
+    // Overlay scrollbars should participate in hit testing whenever they are at all visible.
+    return scrollbar->orientation() == ScrollbarOrientation::Horizontal ? m_horizontalOverlayScrollbarIsVisible :  m_verticalOverlayScrollbarIsVisible;
+}
+
+void RemoteScrollbarsController::setScrollbarVisibilityState(ScrollbarOrientation orientation, bool isVisible)
+{
+    if (orientation == ScrollbarOrientation::Horizontal)
+        m_horizontalOverlayScrollbarIsVisible = isVisible;
+    else
+        m_verticalOverlayScrollbarIsVisible = isVisible;
 }
 
 }

@@ -27,6 +27,7 @@
 
 #if PLATFORM(MAC)
 
+#include <WebCore/NSScrollerImpDetails.h>
 #include <WebCore/ScrollbarsController.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/ThreadSafeWeakPtr.h>
@@ -35,7 +36,6 @@ class ScrollingCoordinator;
 class Scrollbar;
 
 namespace WebKit {
-
 
 class RemoteScrollbarsController final : public WebCore::ScrollbarsController {
 public:
@@ -46,8 +46,13 @@ public:
     void mouseMovedInContentArea() final;
     void mouseEnteredScrollbar(WebCore::Scrollbar*) const final;
     void mouseExitedScrollbar(WebCore::Scrollbar*) const final;
+    bool shouldScrollbarParticipateInHitTesting(WebCore::Scrollbar*) final;
+    
+    void setScrollbarVisibilityState(ScrollbarOrientation, bool) final;
 
 private:
+    bool m_horizontalOverlayScrollbarIsVisible { false };
+    bool m_verticalOverlayScrollbarIsVisible { false };
     ThreadSafeWeakPtr<WebCore::ScrollingCoordinator> m_coordinator;
 };
 

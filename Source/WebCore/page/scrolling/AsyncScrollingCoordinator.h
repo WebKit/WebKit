@@ -75,6 +75,7 @@ public:
     
     WEBCORE_EXPORT void setMouseIsOverContentArea(ScrollableArea&, bool) override;
     WEBCORE_EXPORT void setMouseMovedInContentArea(ScrollableArea&) override;
+    WEBCORE_EXPORT void scrollingTreeNodeScrollbarVisibilityDidChange(ScrollingNodeID, ScrollbarOrientation, bool);
 
 protected:
     WEBCORE_EXPORT AsyncScrollingCoordinator(Page*);

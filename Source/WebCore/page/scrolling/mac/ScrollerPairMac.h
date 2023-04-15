@@ -110,6 +110,7 @@ public:
     ScrollingTreeScrollingNode& node() const { return m_scrollingNode; }
     
     bool mouseInContentArea() const { return m_mouseInContentArea; }
+
 private:
     ScrollerPairMac(ScrollingTreeScrollingNode&);
 

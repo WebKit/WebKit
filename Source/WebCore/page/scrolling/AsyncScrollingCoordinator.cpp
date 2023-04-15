@@ -41,6 +41,7 @@
 #include "RenderLayerCompositor.h"
 #include "RenderView.h"
 #include "ScrollAnimator.h"
+#include "ScrollbarsController.h"
 #include "ScrollingConstraints.h"
 #include "ScrollingStateFixedNode.h"
 #include "ScrollingStateFrameHostingNode.h"
@@ -1191,6 +1192,16 @@ bool AsyncScrollingCoordinator::scrollAnimatorEnabled() const
         return false;
     auto& settings = localMainFrame->settings();
     return settings.scrollAnimatorEnabled();
+}
+
+void AsyncScrollingCoordinator::scrollingTreeNodeScrollbarVisibilityDidChange(ScrollingNodeID nodeID, ScrollbarOrientation orientation, bool isVisible)
+{
+    auto* frameView = frameViewForScrollingNode(nodeID);
+    if (!frameView)
+        return;
+    
+    if (auto* scrollableArea = frameView->scrollableAreaForScrollingNodeID(nodeID))
+        scrollableArea->scrollbarsController().setScrollbarVisibilityState(orientation, isVisible);
 }
 
 } // namespace WebCore

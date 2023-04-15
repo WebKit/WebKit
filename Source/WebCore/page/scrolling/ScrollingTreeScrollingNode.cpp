@@ -492,6 +492,11 @@ ScrollPropagationInfo ScrollingTreeScrollingNode::computeScrollPropagation(const
     return propagation;
 }
 
+void ScrollingTreeScrollingNode::scrollbarVisibilityDidChange(ScrollbarOrientation orientation, bool isVisible)
+{
+    scrollingTree().scrollingTreeNodeScrollbarVisibilityDidChange(scrollingNodeID(), orientation, isVisible);
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(ASYNC_SCROLLING)

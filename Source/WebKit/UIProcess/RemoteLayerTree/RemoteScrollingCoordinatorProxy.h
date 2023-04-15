@@ -160,6 +160,8 @@ public:
     bool overlayScrollbarsEnabled();
 
     void sendScrollingTreeNodeDidScroll();
+    
+    void scrollingTreeNodeScrollbarVisibilityDidChange(WebCore::ScrollingNodeID, WebCore::ScrollbarOrientation, bool);
 
 protected:
     RemoteScrollingTree* scrollingTree() const { return m_scrollingTree.get(); }

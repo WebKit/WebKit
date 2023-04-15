@@ -412,4 +412,12 @@ template<> struct EnumTraits<WebCore::ScrollDirection> {
         WebCore::ScrollDirection::ScrollRight
     >;
 };
+
+template<> struct EnumTraits<WebCore::ScrollbarOrientation> {
+    using values = EnumValues<
+        WebCore::ScrollbarOrientation,
+        WebCore::ScrollbarOrientation::Horizontal,
+        WebCore::ScrollbarOrientation::Vertical
+    >;
+};
 } // namespace WTF

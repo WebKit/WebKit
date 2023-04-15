@@ -3223,7 +3223,7 @@
 		1ABC3DF41899E437004F0626 /* NavigationState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NavigationState.h; sourceTree = "<group>"; };
 		1ABC3DFB1899F51C004F0626 /* WKNavigationDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKNavigationDelegate.h; sourceTree = "<group>"; };
 		1ABF43791A368050003FB0E6 /* WebsiteDataType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebsiteDataType.h; sourceTree = "<group>"; };
-		1AC009E129E0E28A00E696C4 /* RemoteScrollbarsController.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteScrollbarsController.cpp; sourceTree = "<group>"; };
+		1AC009E129E0E28A00E696C4 /* RemoteScrollbarsController.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = RemoteScrollbarsController.mm; sourceTree = "<group>"; };
 		1AC009E229E0E28B00E696C4 /* RemoteScrollbarsController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteScrollbarsController.h; sourceTree = "<group>"; };
 		1AC0273E196622D600C12B75 /* WebPageProxyCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebPageProxyCocoa.mm; sourceTree = "<group>"; };
 		1AC1336518565B5700F3EC05 /* UserData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UserData.cpp; sourceTree = "<group>"; };
@@ -9048,8 +9048,8 @@
 				2D29ECCF192F2C2E00984B78 /* RemoteLayerTreeDisplayRefreshMonitor.mm */,
 				1AB16ADC1648598400290D62 /* RemoteLayerTreeDrawingArea.h */,
 				1AB16ADB1648598400290D62 /* RemoteLayerTreeDrawingArea.mm */,
-				1AC009E129E0E28A00E696C4 /* RemoteScrollbarsController.cpp */,
 				1AC009E229E0E28B00E696C4 /* RemoteScrollbarsController.h */,
+				1AC009E129E0E28A00E696C4 /* RemoteScrollbarsController.mm */,
 				0F59478D187B3B3A00437857 /* RemoteScrollingCoordinator.h */,
 				0F59478E187B3B3A00437857 /* RemoteScrollingCoordinator.messages.in */,
 				0F59478F187B3B3A00437857 /* RemoteScrollingCoordinator.mm */,

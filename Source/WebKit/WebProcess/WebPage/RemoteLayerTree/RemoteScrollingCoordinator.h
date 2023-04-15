@@ -96,6 +96,7 @@ private:
     void receivedWheelEventWithPhases(WebCore::PlatformWheelEventPhase phase, WebCore::PlatformWheelEventPhase momentumPhase);
     void startDeferringScrollingTestCompletionForNode(WebCore::ScrollingNodeID, WebCore::WheelEventTestMonitor::DeferReason);
     void stopDeferringScrollingTestCompletionForNode(WebCore::ScrollingNodeID, WebCore::WheelEventTestMonitor::DeferReason);
+    void scrollingTreeNodeScrollbarVisibilityDidChange(WebCore::ScrollingNodeID, WebCore::ScrollbarOrientation, bool);
 
     WebCore::WheelEventHandlingResult handleWheelEventForScrolling(const WebCore::PlatformWheelEvent&, WebCore::ScrollingNodeID, std::optional<WebCore::WheelScrollGestureState>) override;
 

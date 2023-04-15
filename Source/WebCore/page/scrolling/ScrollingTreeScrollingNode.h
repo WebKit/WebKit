@@ -132,6 +132,8 @@ public:
     OverscrollBehavior verticalOverscrollBehavior() const { return m_scrollableAreaParameters.verticalOverscrollBehavior; }
     
     virtual String scrollbarStateForOrientation(ScrollbarOrientation) const { return ""_s; }
+    
+    void scrollbarVisibilityDidChange(ScrollbarOrientation, bool);
 
 protected:
     ScrollingTreeScrollingNode(ScrollingTree&, ScrollingNodeType, ScrollingNodeID);

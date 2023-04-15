@@ -46,6 +46,8 @@ public:
     explicit RemoteScrollingTreeMac(RemoteScrollingCoordinatorProxy&);
     virtual ~RemoteScrollingTreeMac();
 
+    void scrollingTreeNodeScrollbarVisibilityDidChange(WebCore::ScrollingNodeID, ScrollbarOrientation, bool) override;
+
 private:
     void handleWheelEventPhase(WebCore::ScrollingNodeID, WebCore::PlatformWheelEventPhase) override;
     RefPtr<WebCore::ScrollingTreeNode> scrollingNodeForPoint(WebCore::FloatPoint) override;

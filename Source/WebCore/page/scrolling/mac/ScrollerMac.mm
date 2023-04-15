@@ -28,14 +28,14 @@
 
 #if PLATFORM(MAC)
 
+#import "FloatPoint.h"
+#import "IntRect.h"
+#import "NSScrollerImpDetails.h"
+#import "PlatformWheelEvent.h"
 #import "ScrollTypesMac.h"
 #import "ScrollerPairMac.h"
 #import "ScrollingTreeScrollingNode.h"
 #import <QuartzCore/CALayer.h>
-#import <WebCore/FloatPoint.h>
-#import <WebCore/IntRect.h>
-#import <WebCore/NSScrollerImpDetails.h>
-#import <WebCore/PlatformWheelEvent.h>
 #import <pal/spi/mac/NSScrollerImpSPI.h>
 #import <wtf/BlockObjCExceptions.h>
 
@@ -233,6 +233,7 @@ enum class FeatureToAnimate {
         return;
 
     ASSERT_UNUSED(scrollerImp, scrollerImp == _scroller->scrollerImp());
+    _scroller->visibilityChanged(newKnobAlpha > 0);
     [self setUpAlphaAnimation:_knobAlphaAnimation featureToAnimate:FeatureToAnimate::KnobAlpha animateAlphaTo:newKnobAlpha duration:duration];
 }
 
@@ -412,6 +413,14 @@ IntPoint ScrollerMac::lastKnownMousePositionInScrollbar() const
     if (!m_pair.mouseInContentArea())
         return { -1, -1 };
     return m_lastKnownMousePositionInScrollbar;
+}
+
+void ScrollerMac::visibilityChanged(bool isVisible)
+{
+    if (m_isVisible == isVisible)
+        return;
+    m_isVisible = isVisible;
+    m_pair.node().scrollbarVisibilityDidChange(m_orientation, isVisible);
 }
 
 String ScrollerMac::scrollbarState() const
