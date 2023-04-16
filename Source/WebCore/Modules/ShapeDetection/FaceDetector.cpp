@@ -30,6 +30,8 @@
 #include "DetectedFace.h"
 #include "Document.h"
 #include "FaceDetectorOptions.h"
+#include "ImageBitmap.h"
+#include "ImageBitmapOptions.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSDetectedFace.h"
 #include "Page.h"
@@ -66,12 +68,25 @@ FaceDetector::FaceDetector(Ref<ShapeDetection::FaceDetector>&& backing)
 
 FaceDetector::~FaceDetector() = default;
 
-void FaceDetector::detect(const ImageBitmap::Source&, DetectPromise&& promise)
+void FaceDetector::detect(ScriptExecutionContext& scriptExecutionContext, ImageBitmap::Source&& source, DetectPromise&& promise)
 {
-    m_backing->detect([promise = WTFMove(promise)](Vector<ShapeDetection::DetectedFace>&& detectedFaces) mutable {
-        promise.resolve(detectedFaces.map([](const auto& detectedFace) {
-            return convertFromBacking(detectedFace);
-        }));
+    ImageBitmap::createCompletionHandler(scriptExecutionContext, WTFMove(source), { }, [backing = m_backing.copyRef(), promise = WTFMove(promise)](ExceptionOr<Ref<ImageBitmap>>&& imageBitmap) mutable {
+        if (imageBitmap.hasException()) {
+            promise.resolve({ });
+            return;
+        }
+
+        auto imageBuffer = imageBitmap.releaseReturnValue()->takeImageBuffer();
+        if (!imageBuffer) {
+            promise.resolve({ });
+            return;
+        }
+
+        backing->detect(imageBuffer.releaseNonNull(), [promise = WTFMove(promise)](Vector<ShapeDetection::DetectedFace>&& detectedFaces) mutable {
+            promise.resolve(detectedFaces.map([](const auto& detectedFace) {
+                return convertFromBacking(detectedFace);
+            }));
+        });
     });
 }
 

@@ -30,6 +30,8 @@
 #include "Connection.h"
 #include "ShapeDetectionIdentifier.h"
 #include "StreamMessageReceiver.h"
+#include <WebCore/ProcessIdentifier.h>
+#include <WebCore/RenderingResourceIdentifier.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Ref.h>
 #include <wtf/Vector.h>
@@ -41,6 +43,7 @@ struct DetectedBarcode;
 }
 
 namespace WebKit {
+class RemoteResourceCache;
 
 namespace ShapeDetection {
 class ObjectHeap;
@@ -50,15 +53,15 @@ class RemoteBarcodeDetector : public IPC::StreamMessageReceiver {
 public:
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RemoteBarcodeDetector> create(Ref<WebCore::ShapeDetection::BarcodeDetector>&& barcodeDetector, ShapeDetection::ObjectHeap& objectHeap, ShapeDetectionIdentifier identifier)
+    static Ref<RemoteBarcodeDetector> create(Ref<WebCore::ShapeDetection::BarcodeDetector>&& barcodeDetector, ShapeDetection::ObjectHeap& objectHeap, RemoteResourceCache& remoteResourceCache, ShapeDetectionIdentifier identifier, WebCore::ProcessIdentifier webProcessIdentifier)
     {
-        return adoptRef(*new RemoteBarcodeDetector(WTFMove(barcodeDetector), objectHeap, identifier));
+        return adoptRef(*new RemoteBarcodeDetector(WTFMove(barcodeDetector), objectHeap, remoteResourceCache, identifier, webProcessIdentifier));
     }
 
     virtual ~RemoteBarcodeDetector();
 
 private:
-    RemoteBarcodeDetector(Ref<WebCore::ShapeDetection::BarcodeDetector>&&, ShapeDetection::ObjectHeap&, ShapeDetectionIdentifier);
+    RemoteBarcodeDetector(Ref<WebCore::ShapeDetection::BarcodeDetector>&&, ShapeDetection::ObjectHeap&, RemoteResourceCache&, ShapeDetectionIdentifier, WebCore::ProcessIdentifier);
 
     RemoteBarcodeDetector(const RemoteBarcodeDetector&) = delete;
     RemoteBarcodeDetector(RemoteBarcodeDetector&&) = delete;
@@ -69,11 +72,13 @@ private:
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 
-    void detect(CompletionHandler<void(Vector<WebCore::ShapeDetection::DetectedBarcode>&&)>&&);
+    void detect(WebCore::RenderingResourceIdentifier, CompletionHandler<void(Vector<WebCore::ShapeDetection::DetectedBarcode>&&)>&&);
 
     Ref<WebCore::ShapeDetection::BarcodeDetector> m_backing;
     ShapeDetection::ObjectHeap& m_objectHeap;
-    ShapeDetectionIdentifier m_identifier;
+    RemoteResourceCache& m_remoteResourceCache;
+    const ShapeDetectionIdentifier m_identifier;
+    const WebCore::ProcessIdentifier m_webProcessIdentifier;
 };
 
 } // namespace WebKit

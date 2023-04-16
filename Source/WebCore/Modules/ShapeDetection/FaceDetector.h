@@ -45,7 +45,7 @@ public:
     ~FaceDetector();
 
     using DetectPromise = DOMPromiseDeferred<IDLSequence<IDLDictionary<DetectedFace>>>;
-    void detect(const ImageBitmap::Source&, DetectPromise&&);
+    void detect(ScriptExecutionContext&, ImageBitmap::Source&&, DetectPromise&&);
 
 private:
     FaceDetector(Ref<ShapeDetection::FaceDetector>&&);

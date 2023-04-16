@@ -49,7 +49,7 @@ private:
     FaceDetectorImpl& operator=(const FaceDetectorImpl&) = delete;
     FaceDetectorImpl& operator=(FaceDetectorImpl&&) = delete;
 
-    void detect(CompletionHandler<void(Vector<DetectedFace>&&)>&&) final;
+    void detect(Ref<ImageBuffer>&&, CompletionHandler<void(Vector<DetectedFace>&&)>&&) final;
 };
 
 } // namespace WebCore::ShapeDetection

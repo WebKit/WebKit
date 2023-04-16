@@ -37,7 +37,7 @@ FaceDetectorImpl::FaceDetectorImpl(const FaceDetectorOptions&)
 
 FaceDetectorImpl::~FaceDetectorImpl() = default;
 
-void FaceDetectorImpl::detect(CompletionHandler<void(Vector<DetectedFace>&&)>&& completionHandler)
+void FaceDetectorImpl::detect(Ref<ImageBuffer>&&, CompletionHandler<void(Vector<DetectedFace>&&)>&& completionHandler)
 {
     completionHandler({ });
 }

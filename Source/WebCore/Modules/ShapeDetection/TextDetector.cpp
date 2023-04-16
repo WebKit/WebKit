@@ -29,6 +29,8 @@
 #include "Chrome.h"
 #include "DetectedText.h"
 #include "Document.h"
+#include "ImageBitmap.h"
+#include "ImageBitmapOptions.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSDetectedText.h"
 #include "Page.h"
@@ -65,12 +67,25 @@ TextDetector::TextDetector(Ref<ShapeDetection::TextDetector>&& backing)
 
 TextDetector::~TextDetector() = default;
 
-void TextDetector::detect(const ImageBitmap::Source&, DetectPromise&& promise)
+void TextDetector::detect(ScriptExecutionContext& scriptExecutionContext, ImageBitmap::Source&& source, DetectPromise&& promise)
 {
-    m_backing->detect([promise = WTFMove(promise)](Vector<ShapeDetection::DetectedText>&& detectedText) mutable {
-        promise.resolve(detectedText.map([](const auto& detectedText) {
-            return convertFromBacking(detectedText);
-        }));
+    ImageBitmap::createCompletionHandler(scriptExecutionContext, WTFMove(source), { }, [backing = m_backing.copyRef(), promise = WTFMove(promise)](ExceptionOr<Ref<ImageBitmap>>&& imageBitmap) mutable {
+        if (imageBitmap.hasException()) {
+            promise.resolve({ });
+            return;
+        }
+
+        auto imageBuffer = imageBitmap.releaseReturnValue()->takeImageBuffer();
+        if (!imageBuffer) {
+            promise.resolve({ });
+            return;
+        }
+
+        backing->detect(imageBuffer.releaseNonNull(), [promise = WTFMove(promise)](Vector<ShapeDetection::DetectedText>&& detectedText) mutable {
+            promise.resolve(detectedText.map([](const auto& detectedText) {
+                return convertFromBacking(detectedText);
+            }));
+        });
     });
 }
 

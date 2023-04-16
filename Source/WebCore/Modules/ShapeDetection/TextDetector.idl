@@ -50,5 +50,5 @@ typedef (CanvasImageSource or Blob or ImageData) ImageBitmapSource;
 ]
 interface TextDetector {
     [CallWith=CurrentScriptExecutionContext] constructor();
-    Promise<sequence<DetectedText>> detect(ImageBitmapSource image);
+    [CallWith=CurrentScriptExecutionContext] Promise<sequence<DetectedText>> detect(ImageBitmapSource image);
 };

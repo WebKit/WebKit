@@ -66,7 +66,7 @@ private:
 
     ShapeDetectionIdentifier backing() const { return m_backing; }
 
-    void detect(CompletionHandler<void(Vector<WebCore::ShapeDetection::DetectedBarcode>&&)>&&) final;
+    void detect(Ref<WebCore::ImageBuffer>&&, CompletionHandler<void(Vector<WebCore::ShapeDetection::DetectedBarcode>&&)>&&) final;
 
     ShapeDetectionIdentifier m_backing;
     Ref<IPC::StreamClientConnection> m_streamClientConnection;

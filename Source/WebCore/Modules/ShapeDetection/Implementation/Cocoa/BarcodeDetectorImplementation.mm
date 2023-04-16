@@ -42,7 +42,7 @@ void BarcodeDetectorImpl::getSupportedFormats(CompletionHandler<void(Vector<Barc
     completionHandler({ });
 }
 
-void BarcodeDetectorImpl::detect(CompletionHandler<void(Vector<DetectedBarcode>&&)>&& completionHandler)
+void BarcodeDetectorImpl::detect(Ref<ImageBuffer>&&, CompletionHandler<void(Vector<DetectedBarcode>&&)>&& completionHandler)
 {
     completionHandler({ });
 }

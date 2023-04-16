@@ -24,7 +24,7 @@
 #if ENABLE(GPU_PROCESS)
 
 messages -> RemoteFaceDetector NotRefCounted Stream {
-    void Detect() -> (Vector<WebCore::ShapeDetection::DetectedFace> detectedFaces)
+    void Detect(WebCore::RenderingResourceIdentifier renderingResourceIdentifier) -> (Vector<WebCore::ShapeDetection::DetectedFace> detectedFaces)
 }
 
 #endif

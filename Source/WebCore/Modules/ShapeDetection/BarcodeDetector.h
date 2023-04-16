@@ -49,7 +49,7 @@ public:
     static ExceptionOr<void> getSupportedFormats(ScriptExecutionContext&, GetSupportedFormatsPromise&&);
 
     using DetectPromise = DOMPromiseDeferred<IDLSequence<IDLDictionary<DetectedBarcode>>>;
-    void detect(const ImageBitmap::Source&, DetectPromise&&);
+    void detect(ScriptExecutionContext&, ImageBitmap::Source&&, DetectPromise&&);
 
 private:
     BarcodeDetector(Ref<ShapeDetection::BarcodeDetector>&&);

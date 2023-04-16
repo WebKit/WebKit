@@ -108,13 +108,23 @@ RefPtr<ImageBuffer> ImageBitmap::createImageBuffer(ScriptExecutionContext& scrip
     return ImageBuffer::create(size, RenderingPurpose::Canvas, resolutionScale, *imageBufferColorSpace, PixelFormat::BGRA8, bufferOptions, { client });
 }
 
-void ImageBitmap::createPromise(ScriptExecutionContext& scriptExecutionContext, ImageBitmap::Source&& source, ImageBitmapOptions&& options, ImageBitmap::Promise&& promise)
+void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutionContext, ImageBitmap::Source&& source, ImageBitmapOptions&& options, CompletionHandler&& completionHandler)
 {
-    WTF::switchOn(source,
+    return WTF::switchOn(source,
         [&] (auto& specificSource) {
-            createPromise(scriptExecutionContext, specificSource, WTFMove(options), std::nullopt, WTFMove(promise));
+            return createCompletionHandler(scriptExecutionContext, specificSource, WTFMove(options), std::nullopt, WTFMove(completionHandler));
         }
     );
+}
+
+void ImageBitmap::createPromise(ScriptExecutionContext& scriptExecutionContext, ImageBitmap::Source&& source, ImageBitmapOptions&& options, ImageBitmap::Promise&& promise)
+{
+    createCompletionHandler(scriptExecutionContext, WTFMove(source), WTFMove(options), [promise = WTFMove(promise)](ExceptionOr<Ref<ImageBitmap>> result) mutable {
+        if (result.hasException())
+            promise.reject(result.releaseException());
+        else
+            promise.resolve(result.releaseReturnValue());
+    });
 }
 
 RefPtr<ImageBuffer> ImageBitmap::createImageBuffer(ScriptExecutionContext& scriptExecutionContext, const FloatSize& size, DestinationColorSpace colorSpace, float resolutionScale)
@@ -148,7 +158,12 @@ void ImageBitmap::createPromise(ScriptExecutionContext& scriptExecutionContext, 
 
     WTF::switchOn(source,
         [&] (auto& specificSource) {
-            createPromise(scriptExecutionContext, specificSource, WTFMove(options), IntRect { left, top, width, height }, WTFMove(promise));
+            createCompletionHandler(scriptExecutionContext, specificSource, WTFMove(options), IntRect { left, top, width, height }, [promise = WTFMove(promise)](ExceptionOr<Ref<ImageBitmap>> result) mutable {
+                if (result.hasException())
+                    promise.reject(result.releaseException());
+                else
+                    promise.resolve(result.releaseReturnValue());
+            });
         }
     );
 }
@@ -247,7 +262,7 @@ static AlphaPremultiplication alphaPremultiplicationForPremultiplyAlpha(ImageBit
     return AlphaPremultiplication::Premultiplied;
 }
 
-void ImageBitmap::resolveWithBlankImageBuffer(ScriptExecutionContext& scriptExecutionContext, bool originClean, Promise&& promise)
+Ref<ImageBitmap> ImageBitmap::createBlankImageBuffer(ScriptExecutionContext& scriptExecutionContext, bool originClean)
 {
     // Source rectangle likely doesn't intersect the source image.
     // Behavior isn't well specified, but WPT tests expect no Promise rejection (and of course no crashes).
@@ -266,7 +281,7 @@ void ImageBitmap::resolveWithBlankImageBuffer(ScriptExecutionContext& scriptExec
 
     // 10. Return a new promise, but continue running these steps in parallel.
     // 11. Resolve the promise with the new ImageBitmap object as the value.
-    promise.resolve(WTFMove(imageBitmap));
+    return imageBitmap;
 }
 
 // FIXME: More steps from https://html.spec.whatwg.org/multipage/imagebitmap-and-animations.html#cropped-to-the-source-rectangle-with-formatting
@@ -312,14 +327,14 @@ void ImageBitmap::resolveWithBlankImageBuffer(ScriptExecutionContext& scriptExec
 
 // 13. Return output.
 
-void ImageBitmap::createPromise(ScriptExecutionContext& scriptExecutionContext, RefPtr<HTMLImageElement>& imageElement, ImageBitmapOptions&& options, std::optional<IntRect> rect, ImageBitmap::Promise&& promise)
+void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutionContext, RefPtr<HTMLImageElement>& imageElement, ImageBitmapOptions&& options, std::optional<IntRect> rect, CompletionHandler&& completionHandler)
 {
     // 2. If image is not completely available, then return a promise rejected with
     // an "InvalidStateError" DOMException and abort these steps.
 
     auto* cachedImage = imageElement->cachedImage();
     if (!cachedImage || !imageElement->complete()) {
-        promise.reject(InvalidStateError, "Cannot create ImageBitmap that is not completely available"_s);
+        completionHandler(Exception { InvalidStateError, "Cannot create ImageBitmap that is not completely available"_s });
         return;
     }
 
@@ -330,7 +345,7 @@ void ImageBitmap::createPromise(ScriptExecutionContext& scriptExecutionContext, 
 
     auto imageSize = cachedImage->imageSizeForRenderer(imageElement->renderer(), 1.0f);
     if ((!imageSize.width() || !imageSize.height()) && (!options.resizeWidth || !options.resizeHeight)) {
-        promise.reject(InvalidStateError, "Cannot create ImageBitmap from a source with no intrinsic size without providing resize dimensions"_s);
+        completionHandler(Exception { InvalidStateError, "Cannot create ImageBitmap from a source with no intrinsic size without providing resize dimensions"_s });
         return;
     }
 
@@ -354,7 +369,7 @@ void ImageBitmap::createPromise(ScriptExecutionContext& scriptExecutionContext, 
     // width and height for the image.
 
     if (!rect && (!imageSize.width() || !imageSize.height())) {
-        promise.reject(InvalidStateError, "Cannot create ImageBitmap from a source with no intrinsic size without providing dimensions"_s);
+        completionHandler(Exception { InvalidStateError, "Cannot create ImageBitmap from a source with no intrinsic size without providing dimensions"_s });
         return;
     }
 
@@ -366,20 +381,20 @@ void ImageBitmap::createPromise(ScriptExecutionContext& scriptExecutionContext, 
 
     auto sourceRectangle = croppedSourceRectangleWithFormatting(roundedIntSize(imageSize), options, WTFMove(rect));
     if (sourceRectangle.hasException()) {
-        promise.reject(sourceRectangle.releaseException());
+        completionHandler(sourceRectangle.releaseException());
         return;
     }
 
     auto imageForRenderer = cachedImage->imageForRenderer(imageElement->renderer());
     if (!imageForRenderer) {
-        promise.reject(InvalidStateError, "Cannot create ImageBitmap from image that can't be rendered"_s);
+        completionHandler(Exception { InvalidStateError, "Cannot create ImageBitmap from image that can't be rendered"_s });
         return;
     }
 
     auto outputSize = outputSizeForSourceRectangle(sourceRectangle.returnValue(), options);
     auto bitmapData = createImageBuffer(scriptExecutionContext, outputSize, bufferRenderingMode, imageForRenderer->colorSpace());
     if (!bitmapData) {
-        resolveWithBlankImageBuffer(scriptExecutionContext, !taintsOrigin(*cachedImage), WTFMove(promise));
+        completionHandler(createBlankImageBuffer(scriptExecutionContext, !taintsOrigin(*cachedImage)));
         return;
     }
 
@@ -406,42 +421,43 @@ void ImageBitmap::createPromise(ScriptExecutionContext& scriptExecutionContext, 
     // 10. Return a new promise, but continue running these steps in parallel.
     // 11. Resolve the promise with the new ImageBitmap object as the value.
 
-    promise.resolve(WTFMove(imageBitmap));
+    completionHandler(WTFMove(imageBitmap));
 }
 
-void ImageBitmap::createPromise(ScriptExecutionContext& scriptExecutionContext, RefPtr<HTMLCanvasElement>& canvasElement, ImageBitmapOptions&& options, std::optional<IntRect> rect, ImageBitmap::Promise&& promise)
+void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutionContext, RefPtr<HTMLCanvasElement>& canvasElement, ImageBitmapOptions&& options, std::optional<IntRect> rect, CompletionHandler&& completionHandler)
 {
-    createPromise(scriptExecutionContext, *canvasElement, WTFMove(options), WTFMove(rect), WTFMove(promise));
+    createCompletionHandler(scriptExecutionContext, *canvasElement, WTFMove(options), WTFMove(rect), WTFMove(completionHandler));
 }
 
 #if ENABLE(OFFSCREEN_CANVAS)
-void ImageBitmap::createPromise(ScriptExecutionContext& scriptExecutionContext, RefPtr<OffscreenCanvas>& canvasElement, ImageBitmapOptions&& options, std::optional<IntRect> rect, ImageBitmap::Promise&& promise)
+void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutionContext, RefPtr<OffscreenCanvas>& canvasElement, ImageBitmapOptions&& options, std::optional<IntRect> rect, CompletionHandler&& completionHandler)
 {
-    createPromise(scriptExecutionContext, *canvasElement, WTFMove(options), WTFMove(rect), WTFMove(promise));
+    createCompletionHandler(scriptExecutionContext, *canvasElement, WTFMove(options), WTFMove(rect), WTFMove(completionHandler));
 }
 #endif
 
 #if ENABLE(WEB_CODECS)
-void ImageBitmap::createPromise(ScriptExecutionContext& scriptExecutionContext, RefPtr<WebCodecsVideoFrame>& videoFrame, ImageBitmapOptions&& options, std::optional<IntRect> rect, ImageBitmap::Promise&& promise)
+void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutionContext, RefPtr<WebCodecsVideoFrame>& videoFrame, ImageBitmapOptions&& options, std::optional<IntRect> rect, CompletionHandler&& completionHandler)
 {
     if (videoFrame->isDetached()) {
-        promise.reject(InvalidStateError, "Cannot create ImageBitmap from a detached video frame"_s);
+        completionHandler(Exception { InvalidStateError, "Cannot create ImageBitmap from a detached video frame"_s });
         return;
     }
+
     auto internalFrame = videoFrame->internalFrame();
     if (!internalFrame) {
-        promise.reject(InvalidStateError, "Cannot create ImageBitmap from an empty video frame"_s);
+        completionHandler(Exception { InvalidStateError, "Cannot create ImageBitmap from an empty video frame"_s });
         return;
     }
 
     if (!videoFrame->codedWidth() || !videoFrame->codedHeight()) {
-        promise.reject(InvalidStateError, "Cannot create ImageBitmap from a video frame that has zero width or height"_s);
+        completionHandler(Exception { InvalidStateError, "Cannot create ImageBitmap from a video frame that has zero width or height"_s });
         return;
     }
 
     auto sourceRectangle = croppedSourceRectangleWithFormatting({ static_cast<int>(videoFrame->displayWidth()), static_cast<int>(videoFrame->displayHeight()) }, options, WTFMove(rect));
     if (sourceRectangle.hasException()) {
-        promise.reject(sourceRectangle.releaseException());
+        completionHandler(sourceRectangle.releaseException());
         return;
     }
 
@@ -449,7 +465,7 @@ void ImageBitmap::createPromise(ScriptExecutionContext& scriptExecutionContext, 
     auto bitmapData = createImageBuffer(scriptExecutionContext, outputSize, bufferRenderingMode, DestinationColorSpace::SRGB());
 
     if (!bitmapData) {
-        resolveWithBlankImageBuffer(scriptExecutionContext, true, WTFMove(promise));
+        completionHandler(createBlankImageBuffer(scriptExecutionContext, true));
         return;
     }
 
@@ -459,18 +475,18 @@ void ImageBitmap::createPromise(ScriptExecutionContext& scriptExecutionContext, 
     OptionSet<SerializationState> serializationState { SerializationState::OriginClean };
     auto imageBitmap = create(ImageBitmapBacking(WTFMove(bitmapData), serializationState));
 
-    promise.resolve(WTFMove(imageBitmap));
+    completionHandler(WTFMove(imageBitmap));
 }
 #endif
 
-void ImageBitmap::createPromise(ScriptExecutionContext& scriptExecutionContext, CanvasBase& canvas, ImageBitmapOptions&& options, std::optional<IntRect> rect, ImageBitmap::Promise&& promise)
+void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutionContext, CanvasBase& canvas, ImageBitmapOptions&& options, std::optional<IntRect> rect, CompletionHandler&& completionHandler)
 {
     // 2. If the canvas element's bitmap has either a horizontal dimension or a vertical
     //    dimension equal to zero, then return a promise rejected with an "InvalidStateError"
     //    DOMException and abort these steps.
     auto size = canvas.size();
     if (!size.width() || !size.height()) {
-        promise.reject(InvalidStateError, "Cannot create ImageBitmap from a canvas that has zero width or height"_s);
+        completionHandler(Exception { InvalidStateError, "Cannot create ImageBitmap from a canvas that has zero width or height"_s });
         return;
     }
 
@@ -479,13 +495,13 @@ void ImageBitmap::createPromise(ScriptExecutionContext& scriptExecutionContext, 
 
     auto sourceRectangle = croppedSourceRectangleWithFormatting(size, options, WTFMove(rect));
     if (sourceRectangle.hasException()) {
-        promise.reject(sourceRectangle.releaseException());
+        completionHandler(sourceRectangle.releaseException());
         return;
     }
 
     auto imageForRender = canvas.copiedImage();
     if (!imageForRender) {
-        promise.reject(InvalidStateError, "Cannot create ImageBitmap from canvas that can't be rendered"_s);
+        completionHandler(Exception { InvalidStateError, "Cannot create ImageBitmap from canvas that can't be rendered"_s });
         return;
     }
 
@@ -493,7 +509,7 @@ void ImageBitmap::createPromise(ScriptExecutionContext& scriptExecutionContext, 
     auto bitmapData = createImageBuffer(scriptExecutionContext, outputSize, bufferRenderingMode, imageForRender->colorSpace());
 
     if (!bitmapData) {
-        resolveWithBlankImageBuffer(scriptExecutionContext, canvas.originClean(), WTFMove(promise));
+        completionHandler(createBlankImageBuffer(scriptExecutionContext, canvas.originClean()));
         return;
     }
 
@@ -515,11 +531,11 @@ void ImageBitmap::createPromise(ScriptExecutionContext& scriptExecutionContext, 
     // 6. Return a new promise, but continue running these steps in parallel.
     // 7. Resolve the promise with the new ImageBitmap object as the value.
 
-    promise.resolve(WTFMove(imageBitmap));
+    completionHandler(WTFMove(imageBitmap));
 }
 
 #if ENABLE(VIDEO)
-void ImageBitmap::createPromise(ScriptExecutionContext& scriptExecutionContext, RefPtr<HTMLVideoElement>& video, ImageBitmapOptions&& options, std::optional<IntRect> rect, ImageBitmap::Promise&& promise)
+void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutionContext, RefPtr<HTMLVideoElement>& video, ImageBitmapOptions&& options, std::optional<IntRect> rect, CompletionHandler&& completionHandler)
 {
     // https://html.spec.whatwg.org/multipage/#dom-createimagebitmap
     // WHATWG HTML 2102913b313078cd8eeac7e81e6a8756cbd3e773
@@ -530,14 +546,14 @@ void ImageBitmap::createPromise(ScriptExecutionContext& scriptExecutionContext, 
     //    or returns bad, then return p rejected with an "InvalidStateError"
     //    DOMException.
     if (video->readyState() == HTMLMediaElement::HAVE_NOTHING || video->readyState() == HTMLMediaElement::HAVE_METADATA) {
-        promise.reject(InvalidStateError, "Cannot create ImageBitmap before the HTMLVideoElement has data"_s);
+        completionHandler(Exception { InvalidStateError, "Cannot create ImageBitmap before the HTMLVideoElement has data"_s });
         return;
     }
 
     // 6.1. If image's networkState attribute is NETWORK_EMPTY, then return p
     //      rejected with an "InvalidStateError" DOMException.
     if (video->networkState() == HTMLMediaElement::NETWORK_EMPTY) {
-        promise.reject(InvalidStateError, "Cannot create ImageBitmap before the HTMLVideoElement has data"_s);
+        completionHandler(Exception { InvalidStateError, "Cannot create ImageBitmap before the HTMLVideoElement has data"_s });
         return;
     }
 
@@ -548,7 +564,7 @@ void ImageBitmap::createPromise(ScriptExecutionContext& scriptExecutionContext, 
     auto size = video->player() ? roundedIntSize(video->player()->naturalSize()) : IntSize();
     auto maybeSourceRectangle = croppedSourceRectangleWithFormatting(size, options, WTFMove(rect));
     if (maybeSourceRectangle.hasException()) {
-        promise.reject(maybeSourceRectangle.releaseException());
+        completionHandler(maybeSourceRectangle.releaseException());
         return;
     }
     auto sourceRectangle = maybeSourceRectangle.releaseReturnValue();
@@ -562,7 +578,7 @@ void ImageBitmap::createPromise(ScriptExecutionContext& scriptExecutionContext, 
     // FIXME: Add support for pixel formats to ImageBitmap.
     auto bitmapData = video->createBufferForPainting(outputSize, bufferRenderingMode, *colorSpace, PixelFormat::BGRA8);
     if (!bitmapData) {
-        resolveWithBlankImageBuffer(scriptExecutionContext, !taintsOrigin(scriptExecutionContext.securityOrigin(), *video), WTFMove(promise));
+        completionHandler(createBlankImageBuffer(scriptExecutionContext, !taintsOrigin(scriptExecutionContext.securityOrigin(), *video)));
         return;
     }
 
@@ -596,21 +612,21 @@ void ImageBitmap::createPromise(ScriptExecutionContext& scriptExecutionContext, 
     auto imageBitmap = create(ImageBitmapBacking(WTFMove(bitmapData), serializationState));
 
     // 6.4.1. Resolve p with imageBitmap.
-    promise.resolve(WTFMove(imageBitmap));
+    completionHandler(WTFMove(imageBitmap));
 }
 #endif
 
-void ImageBitmap::createPromise(ScriptExecutionContext&, RefPtr<CSSStyleImageValue>&, ImageBitmapOptions&&, std::optional<IntRect>, ImageBitmap::Promise&& promise)
+void ImageBitmap::createCompletionHandler(ScriptExecutionContext&, RefPtr<CSSStyleImageValue>&, ImageBitmapOptions&&, std::optional<IntRect>, CompletionHandler&& completionHandler)
 {
-    promise.reject(InvalidStateError, "Not implemented"_s);
+    completionHandler(Exception { InvalidStateError, "Not implemented"_s });
 }
 
-void ImageBitmap::createPromise(ScriptExecutionContext& scriptExecutionContext, RefPtr<ImageBitmap>& existingImageBitmap, ImageBitmapOptions&& options, std::optional<IntRect> rect, ImageBitmap::Promise&& promise)
+void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutionContext, RefPtr<ImageBitmap>& existingImageBitmap, ImageBitmapOptions&& options, std::optional<IntRect> rect, CompletionHandler&& completionHandler)
 {
     // 2. If image's [[Detached]] internal slot value is true, return a promise
     //    rejected with an "InvalidStateError" DOMException and abort these steps.
     if (existingImageBitmap->isDetached() || !existingImageBitmap->buffer()) {
-        promise.reject(InvalidStateError, "Cannot create ImageBitmap from a detached ImageBitmap"_s);
+        completionHandler(Exception { InvalidStateError, "Cannot create ImageBitmap from a detached ImageBitmap"_s });
         return;
     }
 
@@ -618,7 +634,7 @@ void ImageBitmap::createPromise(ScriptExecutionContext& scriptExecutionContext, 
     //    bitmap data, cropped to the source rectangle with formatting.
     auto sourceRectangle = croppedSourceRectangleWithFormatting(existingImageBitmap->buffer()->truncatedLogicalSize(), options, WTFMove(rect));
     if (sourceRectangle.hasException()) {
-        promise.reject(sourceRectangle.releaseException());
+        completionHandler(Exception { sourceRectangle.releaseException() });
         return;
     }
 
@@ -626,7 +642,7 @@ void ImageBitmap::createPromise(ScriptExecutionContext& scriptExecutionContext, 
     auto bitmapData = createImageBuffer(scriptExecutionContext, outputSize, bufferRenderingMode, existingImageBitmap->buffer()->colorSpace());
 
     if (!bitmapData) {
-        resolveWithBlankImageBuffer(scriptExecutionContext, existingImageBitmap->originClean(), WTFMove(promise));
+        completionHandler(createBlankImageBuffer(scriptExecutionContext, existingImageBitmap->originClean()));
         return;
     }
 
@@ -656,7 +672,7 @@ void ImageBitmap::createPromise(ScriptExecutionContext& scriptExecutionContext, 
 
     // 6. Return a new promise, but continue running these steps in parallel.
     // 7. Resolve the promise with the new ImageBitmap object as the value.
-    promise.resolve(WTFMove(imageBitmap));
+    completionHandler(WTFMove(imageBitmap));
 }
 
 class ImageBitmapImageObserver final : public RefCounted<ImageBitmapImageObserver>, public ImageObserver {
@@ -694,24 +710,24 @@ private:
 class PendingImageBitmap final : public ActiveDOMObject, public FileReaderLoaderClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static void fetch(ScriptExecutionContext& scriptExecutionContext, RefPtr<Blob>&& blob, ImageBitmapOptions&& options, std::optional<IntRect> rect, ImageBitmap::Promise&& promise)
+    static void fetch(ScriptExecutionContext& scriptExecutionContext, RefPtr<Blob>&& blob, ImageBitmapOptions&& options, std::optional<IntRect> rect, ImageBitmap::CompletionHandler&& completionHandler)
     {
         if (scriptExecutionContext.activeDOMObjectsAreStopped())
             return;
-        auto pendingImageBitmap = new PendingImageBitmap(scriptExecutionContext, WTFMove(blob), WTFMove(options), WTFMove(rect), WTFMove(promise));
+        auto pendingImageBitmap = new PendingImageBitmap(scriptExecutionContext, WTFMove(blob), WTFMove(options), WTFMove(rect), WTFMove(completionHandler));
         pendingImageBitmap->suspendIfNeeded();
         pendingImageBitmap->start(scriptExecutionContext);
     }
 
 private:
-    PendingImageBitmap(ScriptExecutionContext& scriptExecutionContext, RefPtr<Blob>&& blob, ImageBitmapOptions&& options, std::optional<IntRect> rect, ImageBitmap::Promise&& promise)
+    PendingImageBitmap(ScriptExecutionContext& scriptExecutionContext, RefPtr<Blob>&& blob, ImageBitmapOptions&& options, std::optional<IntRect> rect, ImageBitmap::CompletionHandler&& completionHandler)
         : ActiveDOMObject(&scriptExecutionContext)
         , m_blobLoader(FileReaderLoader::ReadAsArrayBuffer, this)
         , m_blob(WTFMove(blob))
         , m_options(WTFMove(options))
         , m_rect(WTFMove(rect))
-        , m_promise(WTFMove(promise))
-        , m_createImageBitmapTimer(&scriptExecutionContext, *this, &PendingImageBitmap::createImageBitmapAndResolvePromise)
+        , m_completionHandler(WTFMove(completionHandler))
+        , m_createImageBitmapTimer(&scriptExecutionContext, *this, &PendingImageBitmap::createImageBitmapAndCallCompletionHandler)
     {
         m_createImageBitmapTimer.suspendIfNeeded();
     }
@@ -745,48 +761,48 @@ private:
 
     void didFinishLoading() override
     {
-        createImageBitmapAndResolvePromiseSoon(m_blobLoader.arrayBufferResult());
+        createImageBitmapAndCallCompletionHandlerSoon(m_blobLoader.arrayBufferResult());
     }
 
     void didFail(ExceptionCode) override
     {
-        createImageBitmapAndResolvePromiseSoon(nullptr);
+        createImageBitmapAndCallCompletionHandlerSoon(nullptr);
     }
 
-    void createImageBitmapAndResolvePromiseSoon(RefPtr<ArrayBuffer>&& arrayBuffer)
+    void createImageBitmapAndCallCompletionHandlerSoon(RefPtr<ArrayBuffer>&& arrayBuffer)
     {
         ASSERT(!m_createImageBitmapTimer.isActive());
         m_arrayBufferToProcess = WTFMove(arrayBuffer);
         m_createImageBitmapTimer.startOneShot(0_s);
     }
 
-    void createImageBitmapAndResolvePromise()
+    void createImageBitmapAndCallCompletionHandler()
     {
         auto destroyOnExit = makeScopeExit([this] {
             delete this;
         });
 
         if (!m_arrayBufferToProcess) {
-            m_promise.reject(InvalidStateError, "An error occured reading the Blob argument to createImageBitmap"_s);
+            m_completionHandler(Exception { InvalidStateError, "An error occured reading the Blob argument to createImageBitmap"_s });
             return;
         }
 
-        ImageBitmap::createFromBuffer(*scriptExecutionContext(), m_arrayBufferToProcess.releaseNonNull(), m_blob->type(), m_blob->size(), m_blobLoader.url(), WTFMove(m_options), WTFMove(m_rect), WTFMove(m_promise));
+        ImageBitmap::createFromBuffer(*scriptExecutionContext(), m_arrayBufferToProcess.releaseNonNull(), m_blob->type(), m_blob->size(), m_blobLoader.url(), WTFMove(m_options), WTFMove(m_rect), WTFMove(m_completionHandler));
     }
 
     FileReaderLoader m_blobLoader;
     RefPtr<Blob> m_blob;
     ImageBitmapOptions m_options;
     std::optional<IntRect> m_rect;
-    ImageBitmap::Promise m_promise;
+    ImageBitmap::CompletionHandler m_completionHandler;
     SuspendableTimer m_createImageBitmapTimer;
     RefPtr<ArrayBuffer> m_arrayBufferToProcess;
 };
 
-void ImageBitmap::createFromBuffer(ScriptExecutionContext& scriptExecutionContext, Ref<ArrayBuffer>&& arrayBuffer, String mimeType, long long expectedContentLength, const URL& sourceURL, ImageBitmapOptions&& options, std::optional<IntRect> rect, Promise&& promise)
+void ImageBitmap::createFromBuffer(ScriptExecutionContext& scriptExecutionContext, Ref<ArrayBuffer>&& arrayBuffer, String mimeType, long long expectedContentLength, const URL& sourceURL, ImageBitmapOptions&& options, std::optional<IntRect> rect, CompletionHandler&& completionHandler)
 {
     if (!arrayBuffer->byteLength()) {
-        promise.reject(InvalidStateError, "Cannot create an ImageBitmap from an empty buffer"_s);
+        completionHandler(Exception { InvalidStateError, "Cannot create an ImageBitmap from an empty buffer"_s });
         return;
     }
 
@@ -795,20 +811,20 @@ void ImageBitmap::createFromBuffer(ScriptExecutionContext& scriptExecutionContex
     auto image = BitmapImage::create(observer.ptr());
     auto result = image->setData(sharedBuffer.copyRef(), true);
     if (result != EncodedDataStatus::Complete || image->isNull()) {
-        promise.reject(InvalidStateError, "Cannot decode the data in the argument to createImageBitmap"_s);
+        completionHandler(Exception { InvalidStateError, "Cannot decode the data in the argument to createImageBitmap"_s });
         return;
     }
 
     auto sourceRectangle = croppedSourceRectangleWithFormatting(roundedIntSize(image->size()), options, rect);
     if (sourceRectangle.hasException()) {
-        promise.reject(sourceRectangle.releaseException());
+        completionHandler(sourceRectangle.releaseException());
         return;
     }
 
     auto outputSize = outputSizeForSourceRectangle(sourceRectangle.returnValue(), options);
     auto bitmapData = createImageBuffer(scriptExecutionContext, outputSize, bufferRenderingMode, image->colorSpace());
     if (!bitmapData) {
-        promise.reject(InvalidStateError, "Cannot create an image buffer from the argument to createImageBitmap"_s);
+        completionHandler(Exception { InvalidStateError, "Cannot create an image buffer from the argument to createImageBitmap"_s });
         return;
     }
 
@@ -825,23 +841,23 @@ void ImageBitmap::createFromBuffer(ScriptExecutionContext& scriptExecutionContex
 
     auto imageBitmap = create(ImageBitmapBacking(WTFMove(bitmapData), serializationState));
 
-    promise.resolve(WTFMove(imageBitmap));
+    completionHandler(WTFMove(imageBitmap));
 }
 
-void ImageBitmap::createPromise(ScriptExecutionContext& scriptExecutionContext, RefPtr<Blob>& blob, ImageBitmapOptions&& options, std::optional<IntRect> rect, ImageBitmap::Promise&& promise)
+void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutionContext, RefPtr<Blob>& blob, ImageBitmapOptions&& options, std::optional<IntRect> rect, CompletionHandler&& completionHandler)
 {
     // 2. Return a new promise, but continue running these steps in parallel.
-    PendingImageBitmap::fetch(scriptExecutionContext, WTFMove(blob), WTFMove(options), WTFMove(rect), WTFMove(promise));
+    PendingImageBitmap::fetch(scriptExecutionContext, WTFMove(blob), WTFMove(options), WTFMove(rect), WTFMove(completionHandler));
 }
 
-void ImageBitmap::createPromise(ScriptExecutionContext& scriptExecutionContext, RefPtr<ImageData>& imageData, ImageBitmapOptions&& options, std::optional<IntRect> rect, ImageBitmap::Promise&& promise)
+void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutionContext, RefPtr<ImageData>& imageData, ImageBitmapOptions&& options, std::optional<IntRect> rect, CompletionHandler&& completionHandler)
 {
     // 6.1. Let buffer be image's data attribute value's [[ViewedArrayBuffer]]
     //      internal slot.
     // 6.2. If IsDetachedBuffer(buffer) is true, then return p rejected with an
     //      "InvalidStateError" DOMException.
     if (imageData->data().isDetached()) {
-        promise.reject(InvalidStateError, "ImageData's viewed buffer has been detached"_s);
+        completionHandler(Exception { InvalidStateError, "ImageData's viewed buffer has been detached"_s });
         return;
     }
 
@@ -849,7 +865,7 @@ void ImageBitmap::createPromise(ScriptExecutionContext& scriptExecutionContext, 
     //      source rectangle with formatting.
     auto sourceRectangle = croppedSourceRectangleWithFormatting(imageData->size(), options, WTFMove(rect));
     if (sourceRectangle.hasException()) {
-        promise.reject(sourceRectangle.releaseException());
+        completionHandler(sourceRectangle.releaseException());
         return;
     }
 
@@ -857,7 +873,7 @@ void ImageBitmap::createPromise(ScriptExecutionContext& scriptExecutionContext, 
     auto bitmapData = createImageBuffer(scriptExecutionContext, outputSize, bufferRenderingMode, toDestinationColorSpace(imageData->colorSpace()));
 
     if (!bitmapData) {
-        resolveWithBlankImageBuffer(scriptExecutionContext, true, WTFMove(promise));
+        completionHandler(createBlankImageBuffer(scriptExecutionContext, true));
         return;
     }
 
@@ -869,7 +885,7 @@ void ImageBitmap::createPromise(ScriptExecutionContext& scriptExecutionContext, 
         
         auto imageBitmap = create(ImageBitmapBacking(WTFMove(bitmapData)));
         // The result is implicitly origin-clean, and alpha premultiplication has already been handled.
-        promise.resolve(WTFMove(imageBitmap));
+        completionHandler(WTFMove(imageBitmap));
         return;
     }
 
@@ -877,7 +893,7 @@ void ImageBitmap::createPromise(ScriptExecutionContext& scriptExecutionContext, 
     //      source rectangle with formatting.
     auto tempBitmapData = createImageBuffer(scriptExecutionContext, imageData->size(), bufferRenderingMode, toDestinationColorSpace(imageData->colorSpace()));
     if (!tempBitmapData) {
-        resolveWithBlankImageBuffer(scriptExecutionContext, true, WTFMove(promise));
+        completionHandler(createBlankImageBuffer(scriptExecutionContext, true));
         return;
     }
     tempBitmapData->putPixelBuffer(imageData->pixelBuffer(), IntRect(0, 0, imageData->width(), imageData->height()), { }, alphaPremultiplication);
@@ -887,7 +903,7 @@ void ImageBitmap::createPromise(ScriptExecutionContext& scriptExecutionContext, 
     // 6.4.1. Resolve p with ImageBitmap.
     auto imageBitmap = create({ WTFMove(bitmapData) });
     // The result is implicitly origin-clean, and alpha premultiplication has already been handled.
-    promise.resolve(WTFMove(imageBitmap));
+    completionHandler(WTFMove(imageBitmap));
 }
 
 ImageBitmap::ImageBitmap(std::optional<ImageBitmapBacking>&& backingStore)

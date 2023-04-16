@@ -29,22 +29,32 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "ArgumentCoders.h"
+#include "RemoteResourceCache.h"
 #include <WebCore/BarcodeDetectorInterface.h>
+#include <WebCore/DetectedBarcodeInterface.h>
 
 namespace WebKit {
 
-RemoteBarcodeDetector::RemoteBarcodeDetector(Ref<WebCore::ShapeDetection::BarcodeDetector>&& barcodeDetector, ShapeDetection::ObjectHeap& objectHeap, ShapeDetectionIdentifier identifier)
+RemoteBarcodeDetector::RemoteBarcodeDetector(Ref<WebCore::ShapeDetection::BarcodeDetector>&& barcodeDetector, ShapeDetection::ObjectHeap& objectHeap, RemoteResourceCache& remoteResourceCache, ShapeDetectionIdentifier identifier, WebCore::ProcessIdentifier webProcessIdentifier)
     : m_backing(WTFMove(barcodeDetector))
     , m_objectHeap(objectHeap)
+    , m_remoteResourceCache(remoteResourceCache)
     , m_identifier(identifier)
+    , m_webProcessIdentifier(webProcessIdentifier)
 {
 }
 
 RemoteBarcodeDetector::~RemoteBarcodeDetector() = default;
 
-void RemoteBarcodeDetector::detect(CompletionHandler<void(Vector<WebCore::ShapeDetection::DetectedBarcode>&&)>&& completionHandler)
+void RemoteBarcodeDetector::detect(WebCore::RenderingResourceIdentifier renderingResourceIdentifier, CompletionHandler<void(Vector<WebCore::ShapeDetection::DetectedBarcode>&&)>&& completionHandler)
 {
-    m_backing->detect(WTFMove(completionHandler));
+    auto imageBuffer = m_remoteResourceCache.cachedImageBuffer({ renderingResourceIdentifier, m_webProcessIdentifier });
+    if (!imageBuffer) {
+        completionHandler({ });
+        return;
+    }
+
+    m_backing->detect(*imageBuffer, WTFMove(completionHandler));
 }
 
 } // namespace WebKit

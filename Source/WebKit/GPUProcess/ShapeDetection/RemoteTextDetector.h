@@ -30,6 +30,8 @@
 #include "Connection.h"
 #include "ShapeDetectionIdentifier.h"
 #include "StreamMessageReceiver.h"
+#include <WebCore/ProcessIdentifier.h>
+#include <WebCore/RenderingResourceIdentifier.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Ref.h>
 #include <wtf/Vector.h>
@@ -40,6 +42,7 @@ class TextDetector;
 }
 
 namespace WebKit {
+class RemoteResourceCache;
 
 namespace ShapeDetection {
 class ObjectHeap;
@@ -49,15 +52,15 @@ class RemoteTextDetector : public IPC::StreamMessageReceiver {
 public:
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RemoteTextDetector> create(Ref<WebCore::ShapeDetection::TextDetector>&& textDetector, ShapeDetection::ObjectHeap& objectHeap, ShapeDetectionIdentifier identifier)
+    static Ref<RemoteTextDetector> create(Ref<WebCore::ShapeDetection::TextDetector>&& textDetector, ShapeDetection::ObjectHeap& objectHeap, RemoteResourceCache& remoteResourceCache, ShapeDetectionIdentifier identifier, WebCore::ProcessIdentifier webProcessIdentifier)
     {
-        return adoptRef(*new RemoteTextDetector(WTFMove(textDetector), objectHeap, identifier));
+        return adoptRef(*new RemoteTextDetector(WTFMove(textDetector), objectHeap, remoteResourceCache, identifier, webProcessIdentifier));
     }
 
     virtual ~RemoteTextDetector();
 
 private:
-    RemoteTextDetector(Ref<WebCore::ShapeDetection::TextDetector>&&, ShapeDetection::ObjectHeap&, ShapeDetectionIdentifier);
+    RemoteTextDetector(Ref<WebCore::ShapeDetection::TextDetector>&&, ShapeDetection::ObjectHeap&, RemoteResourceCache&, ShapeDetectionIdentifier, WebCore::ProcessIdentifier);
 
     RemoteTextDetector(const RemoteTextDetector&) = delete;
     RemoteTextDetector(RemoteTextDetector&&) = delete;
@@ -68,11 +71,13 @@ private:
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 
-    void detect(CompletionHandler<void(Vector<WebCore::ShapeDetection::DetectedText>&&)>&&);
+    void detect(WebCore::RenderingResourceIdentifier, CompletionHandler<void(Vector<WebCore::ShapeDetection::DetectedText>&&)>&&);
 
     Ref<WebCore::ShapeDetection::TextDetector> m_backing;
     ShapeDetection::ObjectHeap& m_objectHeap;
-    ShapeDetectionIdentifier m_identifier;
+    RemoteResourceCache& m_remoteResourceCache;
+    const ShapeDetectionIdentifier m_identifier;
+    const WebCore::ProcessIdentifier m_webProcessIdentifier;
 };
 
 } // namespace WebKit

@@ -31,6 +31,8 @@
 #include "Chrome.h"
 #include "DetectedBarcode.h"
 #include "Document.h"
+#include "ImageBitmap.h"
+#include "ImageBitmapOptions.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSDetectedBarcode.h"
 #include "Page.h"
@@ -91,12 +93,25 @@ ExceptionOr<void> BarcodeDetector::getSupportedFormats(ScriptExecutionContext& s
     return Exception { AbortError };
 }
 
-void BarcodeDetector::detect(const ImageBitmap::Source&, DetectPromise&& promise)
+void BarcodeDetector::detect(ScriptExecutionContext& scriptExecutionContext, ImageBitmap::Source&& source, DetectPromise&& promise)
 {
-    m_backing->detect([promise = WTFMove(promise)](Vector<ShapeDetection::DetectedBarcode>&& detectedBarcodes) mutable {
-        promise.resolve(detectedBarcodes.map([](const auto& detectedBarcode) {
-            return convertFromBacking(detectedBarcode);
-        }));
+    ImageBitmap::createCompletionHandler(scriptExecutionContext, WTFMove(source), { }, [backing = m_backing.copyRef(), promise = WTFMove(promise)](ExceptionOr<Ref<ImageBitmap>>&& imageBitmap) mutable {
+        if (imageBitmap.hasException()) {
+            promise.resolve({ });
+            return;
+        }
+
+        auto imageBuffer = imageBitmap.releaseReturnValue()->takeImageBuffer();
+        if (!imageBuffer) {
+            promise.resolve({ });
+            return;
+        }
+
+        backing->detect(imageBuffer.releaseNonNull(), [promise = WTFMove(promise)](Vector<ShapeDetection::DetectedBarcode>&& detectedBarcodes) mutable {
+            promise.resolve(detectedBarcodes.map([](const auto& detectedBarcode) {
+                return convertFromBacking(detectedBarcode);
+            }));
+        });
     });
 }
 
