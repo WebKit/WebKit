@@ -2050,7 +2050,14 @@ void Element::notifyAttributeChanged(const QualifiedName& name, const AtomString
 {
     attributeChanged(name, oldValue, newValue, reason);
 
+    document().incDOMTreeVersion();
+
+    if (UNLIKELY(isDefinedCustomElement()))
+        CustomElementReactionQueue::enqueueAttributeChangedCallbackIfNeeded(*this, name, oldValue, newValue);
+
     if (oldValue != newValue) {
+        invalidateNodeListAndCollectionCachesInAncestorsForAttribute(name);
+
         if (auto* cache = document().existingAXObjectCache())
             cache->deferAttributeChangeIfNeeded(this, name, oldValue, newValue);
     }
@@ -2058,85 +2065,74 @@ void Element::notifyAttributeChanged(const QualifiedName& name, const AtomString
 
 void Element::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason)
 {
-    bool valueIsSameAsBefore = oldValue == newValue;
-
-    if (!valueIsSameAsBefore) {
-        switch (name.nodeName()) {
-        case AttributeNames::classAttr:
-            classAttributeChanged(newValue);
-            break;
-        case AttributeNames::idAttr: {
-            AtomString oldId = elementData()->idForStyleResolution();
-            AtomString newId = makeIdForStyleResolution(newValue, document().inQuirksMode());
-            if (newId != oldId) {
-                Style::IdChangeInvalidation styleInvalidation(*this, oldId, newId);
-                elementData()->setIdForStyleResolution(newId);
-            }
-
-            if (!oldValue.isEmpty())
-                treeScope().idTargetObserverRegistry().notifyObservers(*oldValue.impl());
-            if (!newValue.isEmpty())
-                treeScope().idTargetObserverRegistry().notifyObservers(*newValue.impl());
-            break;
-        }
-        case AttributeNames::nameAttr:
-            elementData()->setHasNameAttribute(!newValue.isNull());
-            break;
-        case AttributeNames::nonceAttr:
-            if (is<HTMLElement>(*this) || is<SVGElement>(*this))
-                setNonce(newValue.isNull() ? emptyAtom() : newValue);
-            break;
-        case AttributeNames::pseudoAttr:
-            if (needsStyleInvalidation() && isInShadowTree())
-                invalidateStyleForSubtree();
-            break;
-        case AttributeNames::slotAttr:
-            if (auto* parent = parentElement()) {
-                if (auto* shadowRoot = parent->shadowRoot())
-                    shadowRoot->hostChildElementDidChangeSlotAttribute(*this, oldValue, newValue);
-            }
-            break;
-        case AttributeNames::partAttr:
-            partAttributeChanged(newValue);
-            break;
-        case AttributeNames::exportpartsAttr:
-            if (auto* shadowRoot = this->shadowRoot()) {
-                shadowRoot->invalidatePartMappings();
-                Style::Invalidator::invalidateShadowParts(*shadowRoot);
-            }
-            break;
-        case AttributeNames::accesskeyAttr:
-            document().invalidateAccessKeyCache();
-            break;
-        case AttributeNames::XML::langAttr:
-        case AttributeNames::langAttr:
-            if (name == HTMLNames::langAttr)
-                setHasLangAttr(!newValue.isNull());
-            else
-                setHasXMLLangAttr(!newValue.isNull());
-            if (document().documentElement() == this)
-                document().setDocumentElementLanguage(langFromAttribute());
-            else
-                updateEffectiveLangStateAndPropagateToDescendants();
-            break;
-        default:
-            if (isElementReflectionAttribute(document().settings(), name) || isElementsArrayReflectionAttribute(document().settings(), name)) {
-                if (auto* map = explicitlySetAttrElementsMapIfExists())
-                    map->remove(name);
-            }
-            break;
-        }
-    }
-
-    document().incDOMTreeVersion();
-
-    if (UNLIKELY(isDefinedCustomElement()))
-        CustomElementReactionQueue::enqueueAttributeChangedCallbackIfNeeded(*this, name, oldValue, newValue);
-
-    if (valueIsSameAsBefore)
+    if (oldValue == newValue)
         return;
 
-    invalidateNodeListAndCollectionCachesInAncestorsForAttribute(name);
+    switch (name.nodeName()) {
+    case AttributeNames::classAttr:
+        classAttributeChanged(newValue);
+        break;
+    case AttributeNames::idAttr: {
+        AtomString oldId = elementData()->idForStyleResolution();
+        AtomString newId = makeIdForStyleResolution(newValue, document().inQuirksMode());
+        if (newId != oldId) {
+            Style::IdChangeInvalidation styleInvalidation(*this, oldId, newId);
+            elementData()->setIdForStyleResolution(newId);
+        }
+
+        if (!oldValue.isEmpty())
+            treeScope().idTargetObserverRegistry().notifyObservers(*oldValue.impl());
+        if (!newValue.isEmpty())
+            treeScope().idTargetObserverRegistry().notifyObservers(*newValue.impl());
+        break;
+    }
+    case AttributeNames::nameAttr:
+        elementData()->setHasNameAttribute(!newValue.isNull());
+        break;
+    case AttributeNames::nonceAttr:
+        if (is<HTMLElement>(*this) || is<SVGElement>(*this))
+            setNonce(newValue.isNull() ? emptyAtom() : newValue);
+        break;
+    case AttributeNames::pseudoAttr:
+        if (needsStyleInvalidation() && isInShadowTree())
+            invalidateStyleForSubtree();
+        break;
+    case AttributeNames::slotAttr:
+        if (auto* parent = parentElement()) {
+            if (auto* shadowRoot = parent->shadowRoot())
+                shadowRoot->hostChildElementDidChangeSlotAttribute(*this, oldValue, newValue);
+        }
+        break;
+    case AttributeNames::partAttr:
+        partAttributeChanged(newValue);
+        break;
+    case AttributeNames::exportpartsAttr:
+        if (auto* shadowRoot = this->shadowRoot()) {
+            shadowRoot->invalidatePartMappings();
+            Style::Invalidator::invalidateShadowParts(*shadowRoot);
+        }
+        break;
+    case AttributeNames::accesskeyAttr:
+        document().invalidateAccessKeyCache();
+        break;
+    case AttributeNames::XML::langAttr:
+    case AttributeNames::langAttr:
+        if (name == HTMLNames::langAttr)
+            setHasLangAttr(!newValue.isNull());
+        else
+            setHasXMLLangAttr(!newValue.isNull());
+        if (document().documentElement() == this)
+            document().setDocumentElementLanguage(langFromAttribute());
+        else
+            updateEffectiveLangStateAndPropagateToDescendants();
+        break;
+    default:
+        if (isElementReflectionAttribute(document().settings(), name) || isElementsArrayReflectionAttribute(document().settings(), name)) {
+            if (auto* map = explicitlySetAttrElementsMapIfExists())
+                map->remove(name);
+        }
+        break;
+    }
 }
 
 void Element::updateEffectiveLangStateAndPropagateToDescendants()
