@@ -1474,7 +1474,7 @@ bool RenderBox::hasTrimmedMargin(std::optional<MarginTrimType> marginTrimType) c
         return false;
     }
     if (containingBlock && containingBlock->isRenderGrid())
-        ASSERT(!marginTrimType || marginTrimType.value() == MarginTrimType::BlockStart || marginTrimType.value() == MarginTrimType::BlockEnd);
+        ASSERT(!marginTrimType || marginTrimType.value() == MarginTrimType::BlockStart || marginTrimType.value() == MarginTrimType::BlockEnd || marginTrimType.value() == MarginTrimType::InlineStart);
 #endif
     if (!hasRareData())
         return false;
@@ -3033,8 +3033,16 @@ bool RenderBox::sizesLogicalWidthToFitContent(SizeType widthType) const
 template<typename Function>
 LayoutUnit RenderBox::computeOrTrimInlineMargin(const RenderBlock& containingBlock, MarginTrimType marginSide, const Function& computeInlineMargin) const
 {
-    if (containingBlock.shouldTrimChildMargin(marginSide, *this))
+    if (containingBlock.shouldTrimChildMargin(marginSide, *this)) {
+        // FIXME(255434): This should be set when the margin is being trimmed
+        // within the context of its layout system (block, flex, grid) and should not 
+        // be done at this level within RenderBox. We should be able to leave the 
+        // trimming responsibility to each of those contexts and not need to
+        // do any of it here (trimming the margin and setting the rare data bit)
+        if (isGridItem() && marginSide == MarginTrimType::InlineStart)
+            const_cast<RenderBox&>(*this).markMarginAsTrimmed(MarginTrimType::InlineStart);
         return 0_lu;
+    }
     return computeInlineMargin();
 }
 
