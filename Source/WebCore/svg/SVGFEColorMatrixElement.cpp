@@ -96,22 +96,25 @@ bool SVGFEColorMatrixElement::setFilterEffectAttribute(FilterEffect& effect, con
 
 void SVGFEColorMatrixElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    if (attrName == SVGNames::inAttr) {
+    switch (attrName.nodeName()) {
+    case AttributeNames::inAttr: {
         InstanceInvalidationGuard guard(*this);
         updateSVGRendererForElementChange();
-        return;
+        break;
     }
-
-    if (attrName == SVGNames::typeAttr || attrName == SVGNames::valuesAttr) {
+    case AttributeNames::typeAttr:
+    case AttributeNames::valuesAttr: {
         InstanceInvalidationGuard guard(*this);
         if (isInvalidValuesLength())
             markFilterEffectForRebuild();
         else
             primitiveAttributeChanged(attrName);
-        return;
+        break;
     }
-
-    SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
+    default:
+        SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
+        break;
+    }
 }
 
 RefPtr<FilterEffect> SVGFEColorMatrixElement::createFilterEffect(const FilterEffectVector&, const GraphicsContext&) const

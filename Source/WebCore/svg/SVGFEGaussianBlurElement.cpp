@@ -86,25 +86,29 @@ void SVGFEGaussianBlurElement::attributeChanged(const QualifiedName& name, const
 
 void SVGFEGaussianBlurElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    if (attrName == SVGNames::inAttr) {
+    switch (attrName.nodeName()) {
+    case AttributeNames::inAttr: {
         InstanceInvalidationGuard guard(*this);
         updateSVGRendererForElementChange();
-        return;
+        break;
     }
-
-    if (attrName == SVGNames::stdDeviationAttr && (stdDeviationX() < 0 || stdDeviationY() < 0)) {
-        InstanceInvalidationGuard guard(*this);
-        markFilterEffectForRebuild();
-        return;
+    case AttributeNames::stdDeviationAttr: {
+        if (stdDeviationX() < 0 || stdDeviationY() < 0) {
+            InstanceInvalidationGuard guard(*this);
+            markFilterEffectForRebuild();
+            return;
+        }
+        FALLTHROUGH;
     }
-
-    if (attrName == SVGNames::stdDeviationAttr || attrName == SVGNames::edgeModeAttr) {
+    case AttributeNames::edgeModeAttr: {
         InstanceInvalidationGuard guard(*this);
         primitiveAttributeChanged(attrName);
-        return;
+        break;
     }
-
-    SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
+    default:
+        SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
+        break;
+    }
 }
 
 bool SVGFEGaussianBlurElement::setFilterEffectAttribute(FilterEffect& effect, const QualifiedName& attrName)

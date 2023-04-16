@@ -519,28 +519,42 @@ void SVGSMILElement::svgAttributeChanged(const QualifiedName& attrName)
         return;
     }
 
-    if (attrName == SVGNames::durAttr)
+    switch (attrName.nodeName()) {
+    case AttributeNames::durAttr:
         m_cachedDur = invalidCachedTime;
-    else if (attrName == SVGNames::repeatDurAttr)
+        break;
+    case AttributeNames::repeatDurAttr:
         m_cachedRepeatDur = invalidCachedTime;
-    else if (attrName == SVGNames::repeatCountAttr)
+        break;
+    case AttributeNames::repeatCountAttr:
         m_cachedRepeatCount = invalidCachedTime;
-    else if (attrName == SVGNames::minAttr)
+        break;
+    case AttributeNames::minAttr:
         m_cachedMin = invalidCachedTime;
-    else if (attrName == SVGNames::maxAttr)
+        break;
+    case AttributeNames::maxAttr:
         m_cachedMax = invalidCachedTime;
-    else if (attrName == SVGNames::attributeNameAttr)
+        break;
+    case AttributeNames::attributeNameAttr:
         updateAttributeName();
-    else if (attrName.matches(SVGNames::hrefAttr) || attrName.matches(XLinkNames::hrefAttr)) {
+        break;
+    case AttributeNames::hrefAttr:
+    case AttributeNames::XLink::hrefAttr: {
         InstanceInvalidationGuard guard(*this);
         buildPendingResource();
-    } else if (isConnected()) {
-        if (attrName == SVGNames::beginAttr)
-            beginListChanged(elapsed());
-        else if (attrName == SVGNames::endAttr)
-            endListChanged(elapsed());
+        break;
     }
-
+    case AttributeNames::beginAttr:
+        if (isConnected())
+            beginListChanged(elapsed());
+        break;
+    case AttributeNames::endAttr:
+        if (isConnected())
+            endListChanged(elapsed());
+        break;
+    default:
+        break;
+    }
     animationAttributeChanged();
 }
 

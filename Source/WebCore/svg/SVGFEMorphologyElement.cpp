@@ -93,19 +93,22 @@ bool SVGFEMorphologyElement::setFilterEffectAttribute(FilterEffect& effect, cons
 
 void SVGFEMorphologyElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    if (attrName == SVGNames::inAttr) {
+    switch (attrName.nodeName()) {
+    case AttributeNames::inAttr: {
         InstanceInvalidationGuard guard(*this);
         updateSVGRendererForElementChange();
-        return;
+        break;
     }
-
-    if (attrName == SVGNames::operatorAttr || attrName == SVGNames::radiusAttr) {
+    case AttributeNames::operatorAttr:
+    case AttributeNames::radiusAttr: {
         InstanceInvalidationGuard guard(*this);
         primitiveAttributeChanged(attrName);
-        return;
+        break;
     }
-
-    SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
+    default:
+        SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
+        break;
+    }
 }
 
 bool SVGFEMorphologyElement::isIdentity() const

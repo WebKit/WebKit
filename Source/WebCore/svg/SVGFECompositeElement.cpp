@@ -87,20 +87,23 @@ void SVGFECompositeElement::attributeChanged(const QualifiedName& name, const At
     }
 }
 
-bool SVGFECompositeElement::setFilterEffectAttribute(FilterEffect& effect, const QualifiedName& attrName)
+bool SVGFECompositeElement::setFilterEffectAttribute(FilterEffect& filterEffect, const QualifiedName& attrName)
 {
-    auto& feComposite = downcast<FEComposite>(effect);
-    if (attrName == SVGNames::operatorAttr)
-        return feComposite.setOperation(svgOperator());
-    if (attrName == SVGNames::k1Attr)
-        return feComposite.setK1(k1());
-    if (attrName == SVGNames::k2Attr)
-        return feComposite.setK2(k2());
-    if (attrName == SVGNames::k3Attr)
-        return feComposite.setK3(k3());
-    if (attrName == SVGNames::k4Attr)
-        return feComposite.setK4(k4());
-
+    auto& effect = downcast<FEComposite>(filterEffect);
+    switch (attrName.nodeName()) {
+    case AttributeNames::operatorAttr:
+        return effect.setOperation(svgOperator());
+    case AttributeNames::k1Attr:
+        return effect.setK1(k1());
+    case AttributeNames::k2Attr:
+        return effect.setK2(k2());
+    case AttributeNames::k3Attr:
+        return effect.setK3(k3());
+    case AttributeNames::k4Attr:
+        return effect.setK4(k4());
+    default:
+        break;
+    }
     ASSERT_NOT_REACHED();
     return false;
 }
@@ -108,19 +111,26 @@ bool SVGFECompositeElement::setFilterEffectAttribute(FilterEffect& effect, const
 
 void SVGFECompositeElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    if (attrName == SVGNames::inAttr || attrName == SVGNames::in2Attr) {
+    switch (attrName.nodeName()) {
+    case AttributeNames::inAttr:
+    case AttributeNames::in2Attr: {
         InstanceInvalidationGuard guard(*this);
         updateSVGRendererForElementChange();
-        return;
+        break;
     }
-
-    if (attrName == SVGNames::k1Attr || attrName == SVGNames::k2Attr || attrName == SVGNames::k3Attr || attrName == SVGNames::k4Attr || attrName == SVGNames::operatorAttr) {
+    case AttributeNames::k1Attr:
+    case AttributeNames::k2Attr:
+    case AttributeNames::k3Attr:
+    case AttributeNames::k4Attr:
+    case AttributeNames::operatorAttr: {
         InstanceInvalidationGuard guard(*this);
         primitiveAttributeChanged(attrName);
-        return;
+        break;
     }
-
-    SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
+    default:
+        SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
+        break;
+    }
 }
 
 RefPtr<FilterEffect> SVGFECompositeElement::createFilterEffect(const FilterEffectVector&, const GraphicsContext&) const

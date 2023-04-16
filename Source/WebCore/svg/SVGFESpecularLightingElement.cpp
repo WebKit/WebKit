@@ -83,49 +83,46 @@ void SVGFESpecularLightingElement::attributeChanged(const QualifiedName& name, c
     }
 }
 
-bool SVGFESpecularLightingElement::setFilterEffectAttribute(FilterEffect& effect, const QualifiedName& attrName)
+bool SVGFESpecularLightingElement::setFilterEffectAttribute(FilterEffect& filterEffect, const QualifiedName& attrName)
 {
-    auto& feSpecularLighting = downcast<FESpecularLighting>(effect);
+    auto& effect = downcast<FESpecularLighting>(filterEffect);
+    auto lightElement = [this] {
+        return SVGFELightElement::findLightElement(this);
+    };
 
-    if (attrName == SVGNames::lighting_colorAttr) {
-        RenderObject* renderer = this->renderer();
-        ASSERT(renderer);
-        auto& style = renderer->style();
+    switch (attrName.nodeName()) {
+    case AttributeNames::lighting_colorAttr: {
+        auto& style = renderer()->style();
         auto color = style.colorWithColorFilter(style.svgStyle().lightingColor());
-        return feSpecularLighting.setLightingColor(color);
+        return effect.setLightingColor(color);
     }
-    if (attrName == SVGNames::surfaceScaleAttr)
-        return feSpecularLighting.setSurfaceScale(surfaceScale());
-    if (attrName == SVGNames::specularConstantAttr)
-        return feSpecularLighting.setSpecularConstant(specularConstant());
-    if (attrName == SVGNames::specularExponentAttr)
-        return feSpecularLighting.setSpecularExponent(specularExponent());
-
-    auto& lightSource = feSpecularLighting.lightSource().get();
-    const SVGFELightElement* lightElement = SVGFELightElement::findLightElement(this);
-    ASSERT(lightElement);
-
-    if (attrName == SVGNames::azimuthAttr)
-        return lightSource.setAzimuth(lightElement->azimuth());
-    if (attrName == SVGNames::elevationAttr)
-        return lightSource.setElevation(lightElement->elevation());
-    if (attrName == SVGNames::xAttr)
-        return lightSource.setX(lightElement->x());
-    if (attrName == SVGNames::yAttr)
-        return lightSource.setY(lightElement->y());
-    if (attrName == SVGNames::zAttr)
-        return lightSource.setZ(lightElement->z());
-    if (attrName == SVGNames::pointsAtXAttr)
-        return lightSource.setPointsAtX(lightElement->pointsAtX());
-    if (attrName == SVGNames::pointsAtYAttr)
-        return lightSource.setPointsAtY(lightElement->pointsAtY());
-    if (attrName == SVGNames::pointsAtZAttr)
-        return lightSource.setPointsAtZ(lightElement->pointsAtZ());
-    if (attrName == SVGNames::specularExponentAttr)
-        return lightSource.setSpecularExponent(lightElement->specularExponent());
-    if (attrName == SVGNames::limitingConeAngleAttr)
-        return lightSource.setLimitingConeAngle(lightElement->limitingConeAngle());
-
+    case AttributeNames::surfaceScaleAttr:
+        return effect.setSurfaceScale(surfaceScale());
+    case AttributeNames::specularConstantAttr:
+        return effect.setSpecularConstant(specularConstant());
+    case AttributeNames::specularExponentAttr:
+        return effect.setSpecularExponent(specularExponent());
+    case AttributeNames::azimuthAttr:
+        return effect.lightSource()->setAzimuth(lightElement()->azimuth());
+    case AttributeNames::elevationAttr:
+        return effect.lightSource()->setElevation(lightElement()->elevation());
+    case AttributeNames::xAttr:
+        return effect.lightSource()->setX(lightElement()->x());
+    case AttributeNames::yAttr:
+        return effect.lightSource()->setY(lightElement()->y());
+    case AttributeNames::zAttr:
+        return effect.lightSource()->setZ(lightElement()->z());
+    case AttributeNames::pointsAtXAttr:
+        return effect.lightSource()->setPointsAtX(lightElement()->pointsAtX());
+    case AttributeNames::pointsAtYAttr:
+        return effect.lightSource()->setPointsAtY(lightElement()->pointsAtY());
+    case AttributeNames::pointsAtZAttr:
+        return effect.lightSource()->setPointsAtZ(lightElement()->pointsAtZ());
+    case AttributeNames::limitingConeAngleAttr:
+        return effect.lightSource()->setLimitingConeAngle(lightElement()->limitingConeAngle());
+    default:
+        break;
+    }
     ASSERT_NOT_REACHED();
     return false;
 }

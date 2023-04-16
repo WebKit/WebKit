@@ -70,19 +70,22 @@ void SVGFEOffsetElement::attributeChanged(const QualifiedName& name, const AtomS
 
 void SVGFEOffsetElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    if (attrName == SVGNames::inAttr) {
+    switch (attrName.nodeName()) {
+    case AttributeNames::inAttr: {
         InstanceInvalidationGuard guard(*this);
         updateSVGRendererForElementChange();
-        return;
+        break;
     }
-
-    if (attrName == SVGNames::dxAttr || attrName == SVGNames::dyAttr) {
+    case AttributeNames::dxAttr:
+    case AttributeNames::dyAttr: {
         InstanceInvalidationGuard guard(*this);
         primitiveAttributeChanged(attrName);
-        return;
+        break;
     }
-
-    SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
+    default:
+        SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
+        break;
+    }
 }
 
 bool SVGFEOffsetElement::setFilterEffectAttribute(FilterEffect& effect, const QualifiedName& attrName)
