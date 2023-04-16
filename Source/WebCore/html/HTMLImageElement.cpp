@@ -143,33 +143,52 @@ Ref<HTMLImageElement> HTMLImageElement::createForLegacyFactoryFunction(Document&
 
 bool HTMLImageElement::hasPresentationalHintsForAttribute(const QualifiedName& name) const
 {
-    if (name == widthAttr || name == heightAttr || name == borderAttr || name == vspaceAttr || name == hspaceAttr || name == valignAttr)
+    switch (name.nodeName()) {
+    case AttributeNames::widthAttr:
+    case AttributeNames::heightAttr:
+    case AttributeNames::borderAttr:
+    case AttributeNames::vspaceAttr:
+    case AttributeNames::hspaceAttr:
+    case AttributeNames::valignAttr:
         return true;
+    default:
+        break;
+    }
     return HTMLElement::hasPresentationalHintsForAttribute(name);
 }
 
 void HTMLImageElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
 {
-    if (name == widthAttr) {
+    switch (name.nodeName()) {
+    case AttributeNames::widthAttr:
         addHTMLMultiLengthToStyle(style, CSSPropertyWidth, value);
         applyAspectRatioFromWidthAndHeightAttributesToStyle(value, attributeWithoutSynchronization(heightAttr), style);
-    } else if (name == heightAttr) {
+        break;
+    case AttributeNames::heightAttr:
         addHTMLMultiLengthToStyle(style, CSSPropertyHeight, value);
         applyAspectRatioFromWidthAndHeightAttributesToStyle(attributeWithoutSynchronization(widthAttr), value, style);
-    } else if (name == borderAttr)
+        break;
+    case AttributeNames::borderAttr:
         applyBorderAttributeToStyle(value, style);
-    else if (name == vspaceAttr) {
+        break;
+    case AttributeNames::vspaceAttr:
         addHTMLLengthToStyle(style, CSSPropertyMarginTop, value);
         addHTMLLengthToStyle(style, CSSPropertyMarginBottom, value);
-    } else if (name == hspaceAttr) {
+        break;
+    case AttributeNames::hspaceAttr:
         addHTMLLengthToStyle(style, CSSPropertyMarginLeft, value);
         addHTMLLengthToStyle(style, CSSPropertyMarginRight, value);
-    } else if (name == alignAttr)
+        break;
+    case AttributeNames::alignAttr:
         applyAlignmentAttributeToStyle(value, style);
-    else if (name == valignAttr)
+        break;
+    case AttributeNames::valignAttr:
         addPropertyToPresentationalHintStyle(style, CSSPropertyVerticalAlign, value);
-    else
+        break;
+    default:
         HTMLElement::collectPresentationalHintsForAttribute(name, value, style);
+        break;
+    }
 }
 
 void HTMLImageElement::collectExtraStyleForPresentationalHints(MutableStyleProperties& style)

@@ -307,28 +307,36 @@ static bool getBordersFromFrameAttributeValue(const AtomString& value, bool& bor
 
 void HTMLTableElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
 {
-    if (name == widthAttr)
+    switch (name.nodeName()) {
+    case AttributeNames::widthAttr:
         addHTMLLengthToStyle(style, CSSPropertyWidth, value, AllowZeroValue::No);
-    else if (name == heightAttr)
+        break;
+    case AttributeNames::heightAttr:
         addHTMLLengthToStyle(style, CSSPropertyHeight, value);
-    else if (name == borderAttr) 
+        break;
+    case AttributeNames::borderAttr:
         addPropertyToPresentationalHintStyle(style, CSSPropertyBorderWidth, parseBorderWidthAttribute(value), CSSUnitType::CSS_PX);
-    else if (name == bordercolorAttr) {
+        break;
+    case AttributeNames::bordercolorAttr:
         if (!value.isEmpty())
             addHTMLColorToStyle(style, CSSPropertyBorderColor, value);
-    } else if (name == bgcolorAttr)
+        break;
+    case AttributeNames::bgcolorAttr:
         addHTMLColorToStyle(style, CSSPropertyBackgroundColor, value);
-    else if (name == backgroundAttr) {
-        String url = stripLeadingAndTrailingHTMLSpaces(value);
-        if (!url.isEmpty())
+        break;
+    case AttributeNames::backgroundAttr:
+        if (String url = stripLeadingAndTrailingHTMLSpaces(value); !url.isEmpty())
             style.setProperty(CSSProperty(CSSPropertyBackgroundImage, CSSImageValue::create(document().completeURL(url), LoadedFromOpaqueSource::No)));
-    } else if (name == valignAttr) {
+        break;
+    case AttributeNames::valignAttr:
         if (!value.isEmpty())
             addPropertyToPresentationalHintStyle(style, CSSPropertyVerticalAlign, value);
-    } else if (name == cellspacingAttr) {
+        break;
+    case AttributeNames::cellspacingAttr:
         if (!value.isEmpty())
             addHTMLPixelsToStyle(style, CSSPropertyBorderSpacing, value);
-    } else if (name == alignAttr) {
+        break;
+    case AttributeNames::alignAttr:
         if (!value.isEmpty()) {
             if (equalLettersIgnoringASCIICase(value, "center"_s)) {
                 addPropertyToPresentationalHintStyle(style, CSSPropertyMarginInlineStart, CSSValueAuto);
@@ -336,11 +344,13 @@ void HTMLTableElement::collectPresentationalHintsForAttribute(const QualifiedNam
             } else
                 addPropertyToPresentationalHintStyle(style, CSSPropertyFloat, value);
         }
-    } else if (name == rulesAttr) {
+        break;
+    case AttributeNames::rulesAttr:
         // The presence of a valid rules attribute causes border collapsing to be enabled.
         if (m_rulesAttr != UnsetRules)
             addPropertyToPresentationalHintStyle(style, CSSPropertyBorderCollapse, CSSValueCollapse);
-    } else if (name == frameAttr) {
+        break;
+    case AttributeNames::frameAttr: {
         bool borderTop;
         bool borderRight;
         bool borderBottom;
@@ -352,14 +362,33 @@ void HTMLTableElement::collectPresentationalHintsForAttribute(const QualifiedNam
             addPropertyToPresentationalHintStyle(style, CSSPropertyBorderLeftStyle, borderLeft ? CSSValueSolid : CSSValueHidden);
             addPropertyToPresentationalHintStyle(style, CSSPropertyBorderRightStyle, borderRight ? CSSValueSolid : CSSValueHidden);
         }
-    } else
+        break;
+    }
+    default:
         HTMLElement::collectPresentationalHintsForAttribute(name, value, style);
+        break;
+    }
 }
 
 bool HTMLTableElement::hasPresentationalHintsForAttribute(const QualifiedName& name) const
 {
-    if (name == widthAttr || name == heightAttr || name == bgcolorAttr || name == backgroundAttr || name == valignAttr || name == vspaceAttr || name == hspaceAttr || name == cellspacingAttr || name == borderAttr || name == bordercolorAttr || name == frameAttr || name == rulesAttr)
+    switch (name.nodeName()) {
+    case AttributeNames::widthAttr:
+    case AttributeNames::heightAttr:
+    case AttributeNames::bgcolorAttr:
+    case AttributeNames::backgroundAttr:
+    case AttributeNames::valignAttr:
+    case AttributeNames::vspaceAttr:
+    case AttributeNames::hspaceAttr:
+    case AttributeNames::cellspacingAttr:
+    case AttributeNames::borderAttr:
+    case AttributeNames::bordercolorAttr:
+    case AttributeNames::frameAttr:
+    case AttributeNames::rulesAttr:
         return true;
+    default:
+        break;
+    }
     return HTMLElement::hasPresentationalHintsForAttribute(name);
 }
 

@@ -34,6 +34,7 @@
 #include "HTMLParserIdioms.h"
 #include "HTMLTableElement.h"
 #include "MutableStyleProperties.h"
+#include "NodeName.h"
 #include "StyleProperties.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -45,20 +46,29 @@ using namespace HTMLNames;
 
 bool HTMLTablePartElement::hasPresentationalHintsForAttribute(const QualifiedName& name) const
 {
-    if (name == bgcolorAttr || name == backgroundAttr || name == valignAttr || name == heightAttr)
+    switch (name.nodeName()) {
+    case AttributeNames::bgcolorAttr:
+    case AttributeNames::backgroundAttr:
+    case AttributeNames::valignAttr:
+    case AttributeNames::heightAttr:
         return true;
+    default:
+        break;
+    }
     return HTMLElement::hasPresentationalHintsForAttribute(name);
 }
 
 void HTMLTablePartElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
 {
-    if (name == bgcolorAttr)
+    switch (name.nodeName()) {
+    case AttributeNames::bgcolorAttr:
         addHTMLColorToStyle(style, CSSPropertyBackgroundColor, value);
-    else if (name == backgroundAttr) {
-        String url = stripLeadingAndTrailingHTMLSpaces(value);
-        if (!url.isEmpty())
+        break;
+    case AttributeNames::backgroundAttr:
+        if (String url = stripLeadingAndTrailingHTMLSpaces(value); !url.isEmpty())
             style.setProperty(CSSProperty(CSSPropertyBackgroundImage, CSSImageValue::create(document().completeURL(url), LoadedFromOpaqueSource::No)));
-    } else if (name == valignAttr) {
+        break;
+    case AttributeNames::valignAttr:
         if (equalLettersIgnoringASCIICase(value, "top"_s))
             addPropertyToPresentationalHintStyle(style, CSSPropertyVerticalAlign, CSSValueTop);
         else if (equalLettersIgnoringASCIICase(value, "middle"_s))
@@ -69,7 +79,8 @@ void HTMLTablePartElement::collectPresentationalHintsForAttribute(const Qualifie
             addPropertyToPresentationalHintStyle(style, CSSPropertyVerticalAlign, CSSValueBaseline);
         else
             addPropertyToPresentationalHintStyle(style, CSSPropertyVerticalAlign, value);
-    } else if (name == alignAttr) {
+        break;
+    case AttributeNames::alignAttr:
         if (equalLettersIgnoringASCIICase(value, "middle"_s) || equalLettersIgnoringASCIICase(value, "center"_s))
             addPropertyToPresentationalHintStyle(style, CSSPropertyTextAlign, CSSValueWebkitCenter);
         else if (equalLettersIgnoringASCIICase(value, "absmiddle"_s))
@@ -80,11 +91,15 @@ void HTMLTablePartElement::collectPresentationalHintsForAttribute(const Qualifie
             addPropertyToPresentationalHintStyle(style, CSSPropertyTextAlign, CSSValueWebkitRight);
         else
             addPropertyToPresentationalHintStyle(style, CSSPropertyTextAlign, value);
-    } else if (name == heightAttr) {
+        break;
+    case AttributeNames::heightAttr:
         if (!value.isEmpty())
             addHTMLLengthToStyle(style, CSSPropertyHeight, value);
-    } else
+        break;
+    default:
         HTMLElement::collectPresentationalHintsForAttribute(name, value, style);
+        break;
+    }
 }
 
 RefPtr<const HTMLTableElement> HTMLTablePartElement::findParentTable() const

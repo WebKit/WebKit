@@ -31,6 +31,7 @@
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
 #include "MutableStyleProperties.h"
+#include "NodeName.h"
 #include "StyleProperties.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/text/StringBuilder.h>
@@ -178,24 +179,39 @@ bool HTMLFontElement::cssValueFromFontSizeNumber(const String& s, CSSValueID& si
 
 bool HTMLFontElement::hasPresentationalHintsForAttribute(const QualifiedName& name) const
 {
-    if (name == sizeAttr || name == colorAttr || name == faceAttr)
+    switch (name.nodeName()) {
+    case AttributeNames::sizeAttr:
+    case AttributeNames::colorAttr:
+    case AttributeNames::faceAttr:
         return true;
+    default:
+        break;
+    }
     return HTMLElement::hasPresentationalHintsForAttribute(name);
 }
 
 void HTMLFontElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
 {
-    if (name == sizeAttr) {
+    switch (name.nodeName()) {
+    case AttributeNames::sizeAttr: {
         CSSValueID size = CSSValueInvalid;
         if (cssValueFromFontSizeNumber(value, size))
             addPropertyToPresentationalHintStyle(style, CSSPropertyFontSize, size);
-    } else if (name == colorAttr)
+        break;
+    }
+    case AttributeNames::colorAttr:
         addHTMLColorToStyle(style, CSSPropertyColor, value);
-    else if (name == faceAttr && !value.isEmpty()) {
-        if (auto fontFaceValue = CSSValuePool::singleton().createFontFaceValue(value))
-            style.setProperty(CSSProperty(CSSPropertyFontFamily, WTFMove(fontFaceValue)));
-    } else
+        break;
+    case AttributeNames::faceAttr:
+        if (!value.isEmpty()) {
+            if (auto fontFaceValue = CSSValuePool::singleton().createFontFaceValue(value))
+                style.setProperty(CSSProperty(CSSPropertyFontFamily, WTFMove(fontFaceValue)));
+        }
+        break;
+    default:
         HTMLElement::collectPresentationalHintsForAttribute(name, value, style);
+        break;
+    }
 }
 
 }
