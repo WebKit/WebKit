@@ -2433,6 +2433,11 @@ bool Element::hasDisplayContents() const
     return !!style;
 }
 
+bool Element::mayHaveDisplayContents() const
+{
+    return (hasDisplayContents() || displayContentsChanged());
+}
+
 void Element::storeDisplayContentsStyle(std::unique_ptr<RenderStyle> style)
 {
     // This is used by RenderTreeBuilder to store the style for Elements with display:contents.

@@ -195,7 +195,7 @@ void RenderTreeUpdater::updateRenderTree(ContainerNode& root)
         auto mayHaveRenderedDescendants = [&]() {
             if (element.renderer())
                 return !(element.isInTopLayer() && element.renderer()->style().effectiveSkipsContent());
-            return element.hasDisplayContents() && shouldCreateRenderer(element, renderTreePosition().parent());
+            return element.mayHaveDisplayContents() && shouldCreateRenderer(element, renderTreePosition().parent());
         }();
 
         if (!mayHaveRenderedDescendants) {
@@ -554,6 +554,17 @@ void RenderTreeUpdater::updateRenderViewStyle()
         m_document.renderView()->setStyle(RenderStyle::clone(*m_styleUpdate->initialContainingBlockUpdate()));
 }
 
+#if ASSERT_ENABLED
+static void validateRendererTearDown(Element &root)
+{
+    for (auto& descendants : composedTreeDescendants(root)) {
+        ASSERT(descendants.isConnected());
+        ASSERT(!descendants.renderer());
+    }
+    ASSERT(!root.renderer());
+}
+#endif
+
 void RenderTreeUpdater::tearDownRenderers(Element& root)
 {
     auto* view = root.document().renderView();
@@ -561,12 +572,16 @@ void RenderTreeUpdater::tearDownRenderers(Element& root)
         return;
     RenderTreeBuilder builder(*view);
     tearDownRenderers(root, TeardownType::Full, builder);
+
+#if ASSERT_ENABLED
+    validateRendererTearDown(root);
+#endif
 }
 
 void RenderTreeUpdater::tearDownRenderersAfterSlotChange(Element& host)
 {
     ASSERT(host.shadowRoot());
-    if (!host.renderer() && !host.hasDisplayContents())
+    if (!host.renderer() && !host.mayHaveDisplayContents())
         return;
     auto* view = host.document().renderView();
     if (!view)
