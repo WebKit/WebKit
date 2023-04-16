@@ -1,5 +1,9 @@
 include(FindGettext)
 
+if (NOT GETTEXT_FOUND)
+    message(FATAL_ERROR "gettext not found")
+endif ()
+
 set(linguas
     ar as bg ca cs da de el en_CA en_GB eo es et eu fi fr gl gu he hi hr hu id
     it ja ka kn ko lt lv ml mr nb nl or pa pl pt pt_BR ro ru sl sr sr@latin sv
