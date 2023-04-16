@@ -2284,13 +2284,6 @@ static inline bool isNonReplacedInline(RenderObject& renderer)
     return renderer.isInline() && !renderer.isReplacedOrInlineBlock();
 }
 
-static bool isFlexItem(const RenderObject* renderer)
-{
-    if (auto* box = dynamicDowncast<RenderBox>(renderer))
-        return box->isFlexItem();
-    return false;
-}
-
 static bool rendererCanHaveTrimmedMargin(const RenderBox& renderer, std::optional<MarginTrimType> marginTrimType)
 {
     // A renderer will have a specific margin marked as trimmed by setting its rare data bit if:
@@ -2307,14 +2300,9 @@ static bool rendererCanHaveTrimmedMargin(const RenderBox& renderer, std::optiona
     if (!renderer.isFlexItem() && containingBlock->isBlockContainer())
         return false;
 
-    if (containingBlock->isFlexibleBox()) {
+    if (containingBlock->isFlexibleBox() || containingBlock->isRenderGrid()) {
         if (!marginTrimType)
             return !containingBlock->style().marginTrim().isEmpty();
-        return containingBlock->style().marginTrim().contains(marginTrimType.value());
-    }
-    if (containingBlock->isRenderGrid() && (!marginTrimType || marginTrimType.value() == MarginTrimType::BlockStart || marginTrimType.value() == MarginTrimType::BlockEnd || marginTrimType.value() == MarginTrimType::InlineStart)) {
-        if (!marginTrimType)
-            return containingBlock->style().marginTrim().containsAny({ MarginTrimType::BlockStart, MarginTrimType::BlockEnd, MarginTrimType::InlineStart });
         return containingBlock->style().marginTrim().contains(marginTrimType.value());
     }
     return false;
@@ -2355,7 +2343,7 @@ static bool isLayoutDependent(CSSPropertyID propertyID, const RenderStyle* style
     case CSSPropertyMarginTop:
         return paddingOrMarginIsRendererDependent<&RenderStyle::marginTop>(style, renderer) || (is<RenderBox>(renderer) && (rendererCanHaveTrimmedMargin(downcast<RenderBox>(*renderer), MarginTrimType::BlockStart)));
     case CSSPropertyMarginRight:
-        return paddingOrMarginIsRendererDependent<&RenderStyle::marginRight>(style, renderer) || (isFlexItem(renderer) && rendererCanHaveTrimmedMargin(downcast<RenderBox>(*renderer), MarginTrimType::InlineEnd));
+        return paddingOrMarginIsRendererDependent<&RenderStyle::marginRight>(style, renderer) || ((is<RenderBox>(renderer)) && rendererCanHaveTrimmedMargin(downcast<RenderBox>(*renderer), MarginTrimType::InlineEnd));
     case CSSPropertyMarginBottom:
         return paddingOrMarginIsRendererDependent<&RenderStyle::marginBottom>(style, renderer) ||  (is<RenderBox>(renderer) && rendererCanHaveTrimmedMargin(downcast<RenderBox>(*renderer), MarginTrimType::BlockEnd));
     case CSSPropertyMarginLeft:
@@ -3294,7 +3282,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         return zoomAdjustedPaddingOrMarginPixelValue<&RenderStyle::marginTop, &RenderBoxModelObject::marginTop>(style, renderer);
     }
     case CSSPropertyMarginRight: {
-        if (auto* box = dynamicDowncast<RenderBox>(renderer); box && box->isFlexItem() 
+        if (auto* box = dynamicDowncast<RenderBox>(renderer); box
             && rendererCanHaveTrimmedMargin(*box, MarginTrimType::InlineEnd)
             && box->hasTrimmedMargin(PhysicalDirection::Right))
             return zoomAdjustedPixelValue(box->marginRight(), style);
