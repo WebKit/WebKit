@@ -480,6 +480,10 @@ target_link_libraries(WPEInjectedBundle WebKit)
 
 target_include_directories(WPEInjectedBundle PRIVATE $<TARGET_PROPERTY:WebKit,INCLUDE_DIRECTORIES>)
 
+target_include_directories(WPEInjectedBundle SYSTEM PRIVATE
+    ${WebKit_SYSTEM_INCLUDE_DIRECTORIES}
+)
+
 if (ENABLE_WPE_QT_API)
     set(qtwpe_SOURCES
         ${WEBKIT_DIR}/UIProcess/API/wpe/qt/WPEQtViewBackend.cpp
