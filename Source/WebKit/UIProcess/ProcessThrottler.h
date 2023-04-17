@@ -121,6 +121,7 @@ public:
     void setShouldTakeSuspendedAssertion(bool);
     void delaySuspension();
     bool isSuspended() const { return m_processIdentifier && !m_assertion; }
+    ProcessThrottleState currentState() const { return m_state; }
 
 private:
     friend class ProcessThrottlerActivity;
