@@ -47,6 +47,7 @@
 #include "config.h"
 #include "RenderLayer.h"
 
+#include "BitmapImage.h"
 #include "BoxShape.h"
 #include "CSSFilter.h"
 #include "CSSPropertyNames.h"
@@ -96,6 +97,7 @@
 #include "RenderFragmentContainer.h"
 #include "RenderFragmentedFlow.h"
 #include "RenderGeometryMap.h"
+#include "RenderHTMLCanvas.h"
 #include "RenderImage.h"
 #include "RenderInline.h"
 #include "RenderIterator.h"
@@ -2304,6 +2306,11 @@ void RenderLayer::beginTransparencyLayers(GraphicsContext& context, const LayerP
     if (paintsWithTransparency(paintingInfo.paintBehavior)) {
         ASSERT(isCSSStackingContext());
         m_usedTransparency = true;
+        if (canPaintTransparencyWithSetOpacity()) {
+            m_savedAlphaForTransparency = context.alpha();
+            context.setAlpha(context.alpha() * renderer().opacity());
+            return;
+        }
         context.save();
         LayoutRect adjustedClipRect = paintingExtent(*this, paintingInfo.rootLayer, dirtyRect, paintingInfo.paintBehavior);
         adjustedClipRect.move(paintingInfo.subpixelOffset);
@@ -3187,8 +3194,13 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
     if (localPaintFlags.contains(PaintLayerFlag::PaintingRootBackgroundOnly) && !renderer().isRenderView() && !renderer().isDocumentElementRenderer()) {
         // If beginTransparencyLayers was called prior to this, ensure the transparency state is cleaned up before returning.
         if (haveTransparency && m_usedTransparency && !m_paintingInsideReflection) {
-            context.endTransparencyLayer();
-            context.restore();
+            if (m_savedAlphaForTransparency) {
+                context.setAlpha(*m_savedAlphaForTransparency);
+                m_savedAlphaForTransparency = std::nullopt;
+            } else {
+                context.endTransparencyLayer();
+                context.restore();
+            }
             m_usedTransparency = false;
         }
 
@@ -3357,8 +3369,13 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
 
     // End our transparency layer
     if (haveTransparency && m_usedTransparency && !m_paintingInsideReflection) {
-        context.endTransparencyLayer();
-        context.restore();
+        if (m_savedAlphaForTransparency) {
+            context.setAlpha(*m_savedAlphaForTransparency);
+            m_savedAlphaForTransparency = std::nullopt;
+        } else {
+            context.endTransparencyLayer();
+            context.restore();
+        }
         m_usedTransparency = false;
     }
 
@@ -5603,6 +5620,27 @@ bool RenderLayer::isTransparentRespectingParentFrames() const
         currentOpacity *= layer->renderer().style().opacity();
         if (currentOpacity < minimumVisibleOpacity)
             return true;
+    }
+
+    return false;
+}
+
+bool RenderLayer::isBitmapOnly() const
+{
+    if (hasVisibleBoxDecorationsOrBackground())
+        return false;
+
+    if (is<RenderHTMLCanvas>(renderer()))
+        return true;
+
+    if (is<RenderImage>(renderer())) {
+        auto& imageRenderer = downcast<RenderImage>(renderer());
+        if (auto* cachedImage = imageRenderer.cachedImage()) {
+            if (!cachedImage->hasImage())
+                return false;
+            return is<BitmapImage>(cachedImage->imageForRenderer(&imageRenderer));
+        }
+        return false;
     }
 
     return false;

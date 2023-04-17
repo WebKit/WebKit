@@ -824,7 +824,18 @@ public:
 
     bool paintsWithTransparency(OptionSet<PaintBehavior> paintBehavior) const
     {
-        return (isTransparent() || hasBlendMode() || (isolatesBlending() && !renderer().isDocumentElementRenderer())) && ((paintBehavior & PaintBehavior::FlattenCompositingLayers) || !isComposited());
+        if (!renderer().isTransparent() && !hasNonOpacityTransparency())
+            return false;
+        return (paintBehavior & PaintBehavior::FlattenCompositingLayers) || !isComposited();
+    }
+
+    // If we will only draw a single item, then we can just apply
+    // opacity to the drawing context rather than pushing a transparency
+    // layer. This currently only detects a single bitmap image, but could
+    // be extended to handle other cases.
+    bool canPaintTransparencyWithSetOpacity() const
+    {
+        return isBitmapOnly() && !hasNonOpacityTransparency();
     }
 
     bool paintsWithTransform(OptionSet<PaintBehavior>) const;
@@ -845,6 +856,8 @@ public:
     bool establishesTopLayer() const;
     void establishesTopLayerWillChange();
     void establishesTopLayerDidChange();
+
+    bool isBitmapOnly() const;
 
     enum ViewportConstrainedNotCompositedReason {
         NoNotCompositedReason,
@@ -1180,6 +1193,11 @@ private:
     // Convert a point in absolute coords into layer coords, taking transforms into account
     LayoutPoint absoluteToContents(const LayoutPoint&) const;
 
+    bool hasNonOpacityTransparency() const
+    {
+        return renderer().hasMask() || hasBlendMode() || (isolatesBlending() && !renderer().isDocumentElementRenderer());
+    }
+
     void updatePagination();
 
     void setHasCompositingDescendant(bool b)  { m_hasCompositingDescendant = b; }
@@ -1201,6 +1219,8 @@ private:
     OverflowControlRects overflowControlsRects() const;
 
     OptionSet<Compositing> m_compositingDirtyBits;
+
+    std::optional<float> m_savedAlphaForTransparency;
 
     const bool m_isRenderViewLayer : 1;
     const bool m_forcedStackingContext : 1;
