@@ -251,3 +251,20 @@ template<class E> using Unexpected = std::experimental::unexpected<E>;
 #define WTF_LAZY_HAS_REST_8 WTF_LAZY_EXPAND
 #define WTF_LAZY_HAS_REST(...) \
     WTF_LAZY_JOIN(WTF_LAZY_HAS_REST_, WTF_LAZY_NUM_ARGS(__VA_ARGS__))
+
+// <windows.h> contains ::UUID. Define UUID in each namespace that is using it.
+namespace IPC {
+using WTF::UUID;
+}
+namespace Messages {
+using WTF::UUID;
+}
+namespace WTR {
+using WTF::UUID;
+}
+namespace WebCore {
+using WTF::UUID;
+}
+namespace WebKit {
+using WTF::UUID;
+}
