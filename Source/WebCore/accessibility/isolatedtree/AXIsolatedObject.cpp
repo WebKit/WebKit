@@ -241,9 +241,10 @@ void AXIsolatedObject::initializeProperties(const Ref<AccessibilityObject>& axOb
     if (object.isImage())
         setProperty(AXPropertyName::EmbeddedImageDescription, object.embeddedImageDescription().isolatedCopy());
 
-    AccessibilityChildrenVector visibleChildren;
-    object.visibleChildren(visibleChildren);
-    setObjectVectorProperty(AXPropertyName::VisibleChildren, visibleChildren);
+    // On macOS, we only advertise support for the visible children attribute for listboxes.
+    if (object.isListBox())
+        setObjectVectorProperty(AXPropertyName::VisibleChildren, object.visibleChildren());
+
     setObjectVectorProperty(AXPropertyName::LinkedObjects, object.linkedObjects());
 
     if (object.isSpinButton()) {

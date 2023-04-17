@@ -1003,7 +1003,6 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     static NeverDestroyed menuBarAttrs = [] {
         auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:commonMenuAttrs.get().get()]);
         [tempArray addObject:NSAccessibilitySelectedChildrenAttribute];
-        [tempArray addObject:NSAccessibilityVisibleChildrenAttribute];
         [tempArray addObject:NSAccessibilityTitleUIElementAttribute];
         [tempArray addObject:NSAccessibilityOrientationAttribute];
         return tempArray;
@@ -1011,7 +1010,6 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     static NeverDestroyed menuAttrs = [] {
         auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:commonMenuAttrs.get().get()]);
         [tempArray addObject:NSAccessibilitySelectedChildrenAttribute];
-        [tempArray addObject:NSAccessibilityVisibleChildrenAttribute];
         [tempArray addObject:NSAccessibilityTitleUIElementAttribute];
         [tempArray addObject:NSAccessibilityOrientationAttribute];
         return tempArray;
@@ -1615,11 +1613,8 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     }
 
     if ([attributeName isEqualToString: NSAccessibilityVisibleChildrenAttribute]) {
-        if (backingObject->isListBox()) {
-            AccessibilityObject::AccessibilityChildrenVector visibleChildrenCopy;
-            backingObject->visibleChildren(visibleChildrenCopy);
-            return makeNSArray(visibleChildrenCopy);
-        }
+        if (backingObject->isListBox())
+            return makeNSArray(backingObject->visibleChildren());
 
         if (backingObject->isList())
             return [self accessibilityAttributeValue:NSAccessibilityChildrenAttribute];

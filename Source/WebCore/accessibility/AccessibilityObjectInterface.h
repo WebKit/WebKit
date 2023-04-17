@@ -1250,7 +1250,7 @@ public:
     bool canHaveSelectedChildren() const;
     virtual void selectedChildren(AccessibilityChildrenVector&) = 0;
     virtual void setSelectedChildren(const AccessibilityChildrenVector&) = 0;
-    virtual void visibleChildren(AccessibilityChildrenVector&) = 0;
+    virtual AccessibilityChildrenVector visibleChildren() = 0;
     AccessibilityChildrenVector tabChildren();
     virtual AXCoreObject* activeDescendant() const = 0;
     bool isDescendantOfObject(const AXCoreObject*) const;

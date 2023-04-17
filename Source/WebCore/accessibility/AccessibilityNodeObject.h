@@ -156,6 +156,7 @@ protected:
     void clearChildren() override;
     void updateChildrenIfNecessary() override;
     bool canHaveChildren() const override;
+    AccessibilityChildrenVector visibleChildren() override;
     bool isDescendantOfBarrenParent() const override;
     void updateOwnedChildren();
     AccessibilityObject* ownerParentObject() const;

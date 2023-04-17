@@ -114,18 +114,22 @@ void AccessibilityListBox::selectedChildren(AccessibilityChildrenVector& result)
     }    
 }
 
-void AccessibilityListBox::visibleChildren(AccessibilityChildrenVector& result)
+AXCoreObject::AccessibilityChildrenVector AccessibilityListBox::visibleChildren()
 {
-    ASSERT(result.isEmpty());
-    
+    ASSERT(!m_renderer || is<RenderListBox>(m_renderer.get()));
+    auto* listBox = dynamicDowncast<RenderListBox>(m_renderer.get());
+    if (!listBox)
+        return { };
+
     if (!childrenInitialized())
         addChildren();
     
-    unsigned length = m_children.size();
-    for (unsigned i = 0; i < length; i++) {
-        if (downcast<RenderListBox>(*m_renderer).listIndexIsVisible(i))
+    AccessibilityChildrenVector result;
+    for (unsigned i = 0; i < m_children.size(); i++) {
+        if (listBox->listIndexIsVisible(i))
             result.append(m_children[i]);
     }
+    return result;
 }
 
 AccessibilityObject* AccessibilityListBox::listBoxOptionAccessibilityObject(HTMLElement* element) const

@@ -361,8 +361,8 @@ public:
     virtual AccessibilityRole ariaRoleAttribute() const { return AccessibilityRole::Unknown; }
     bool hasExplicitGenericRole() const { return ariaRoleAttribute() == AccessibilityRole::Generic; }
     bool hasImplicitGenericRole() const { return roleValue() == AccessibilityRole::Generic && !hasExplicitGenericRole(); }
-    virtual bool isPresentationalChildOfAriaRole() const { return false; }
-    virtual bool ariaRoleHasPresentationalChildren() const { return false; }
+    bool isPresentationalChildOfAriaRole() const;
+    bool ariaRoleHasPresentationalChildren() const;
     bool inheritsPresentationalRole() const override { return false; }
 
     // Accessibility Text
@@ -517,7 +517,7 @@ public:
 
     void selectedChildren(AccessibilityChildrenVector&) override { }
     void setSelectedChildren(const AccessibilityChildrenVector&) override { }
-    void visibleChildren(AccessibilityChildrenVector&) override { }
+    AccessibilityChildrenVector visibleChildren() override { return { }; }
     virtual bool shouldFocusActiveDescendant() const { return false; }
     AccessibilityObject* activeDescendant() const override { return nullptr; }
 

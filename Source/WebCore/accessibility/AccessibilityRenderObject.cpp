@@ -2708,31 +2708,6 @@ bool AccessibilityRenderObject::inheritsPresentationalRole() const
     return false;
 }
     
-bool AccessibilityRenderObject::isPresentationalChildOfAriaRole() const
-{
-    // Walk the parent chain looking for a parent that has presentational children
-    AccessibilityObject* parent;
-    for (parent = parentObject(); parent && !parent->ariaRoleHasPresentationalChildren(); parent = parent->parentObject())
-    { }
-    
-    return parent;
-}
-    
-bool AccessibilityRenderObject::ariaRoleHasPresentationalChildren() const
-{
-    switch (m_ariaRole) {
-    case AccessibilityRole::Button:
-    case AccessibilityRole::Slider:
-    case AccessibilityRole::Image:
-    case AccessibilityRole::ProgressIndicator:
-    case AccessibilityRole::SpinButton:
-    // case SeparatorRole:
-        return true;
-    default:
-        return false;
-    }
-}
-
 void AccessibilityRenderObject::addImageMapChildren()
 {
     RenderBoxModelObject* cssBox = renderBoxModelObject();
@@ -3133,28 +3108,6 @@ void AccessibilityRenderObject::selectedChildren(AccessibilityChildrenVector& re
     }
 }
 
-void AccessibilityRenderObject::ariaListboxVisibleChildren(AccessibilityChildrenVector& result)      
-{
-    if (!childrenInitialized())
-        addChildren();
-    
-    for (const auto& child : children()) {
-        if (child->isOffScreen())
-            result.append(child);
-    }
-}
-
-void AccessibilityRenderObject::visibleChildren(AccessibilityChildrenVector& result)
-{
-    ASSERT(result.isEmpty());
-
-    // Only listboxes are asked for their visible children.
-    // Native list boxes would be AccessibilityListBoxes, so only check for aria list boxes.
-    if (ariaRoleAttribute() != AccessibilityRole::ListBox)
-        return;
-    return ariaListboxVisibleChildren(result);
-}
- 
 void AccessibilityRenderObject::setAccessibleName(const AtomString& name)
 {
     // Setting the accessible name can store the value in the DOM

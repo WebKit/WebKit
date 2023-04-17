@@ -3907,6 +3907,27 @@ bool AccessibilityObject::isActiveDescendantOfFocusedContainer() const
     return false;
 }
 
+bool AccessibilityObject::ariaRoleHasPresentationalChildren() const
+{
+    switch (ariaRoleAttribute()) {
+    case AccessibilityRole::Button:
+    case AccessibilityRole::Slider:
+    case AccessibilityRole::Image:
+    case AccessibilityRole::ProgressIndicator:
+    case AccessibilityRole::SpinButton:
+        return true;
+    default:
+        return false;
+    }
+}
+
+bool AccessibilityObject::isPresentationalChildOfAriaRole() const
+{
+    return Accessibility::findAncestor(*this, false, [] (const auto& ancestor) {
+        return ancestor.ariaRoleHasPresentationalChildren();
+    });
+}
+
 void AccessibilityObject::setIsIgnoredFromParentDataForChild(AccessibilityObject* child)
 {
     if (!child)

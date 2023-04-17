@@ -42,7 +42,7 @@ public:
     AccessibilityRole roleValue() const override { return AccessibilityRole::ListBox; }
         
     void selectedChildren(AccessibilityChildrenVector&) override;
-    void visibleChildren(AccessibilityChildrenVector&) override;
+    AccessibilityChildrenVector visibleChildren() final;
     
     void addChildren() override;
 

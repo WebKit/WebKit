@@ -88,8 +88,6 @@ public:
     AccessibilityObject* titleUIElement() const override;
 
     bool supportsARIAOwns() const override;
-    bool isPresentationalChildOfAriaRole() const override;
-    bool ariaRoleHasPresentationalChildren() const override;
     
     // Should be called on the root accessibility object to kick off a hit test.
     AXCoreObject* accessibilityHitTest(const IntPoint&) const override;
@@ -132,7 +130,6 @@ public:
     void addChildren() override;
     bool canHaveChildren() const override;
     void selectedChildren(AccessibilityChildrenVector&) override;
-    void visibleChildren(AccessibilityChildrenVector&) override;
     bool shouldFocusActiveDescendant() const override;
     AccessibilityObject* activeDescendant() const override;
 
@@ -193,7 +190,6 @@ protected:
 private:
     bool isAccessibilityRenderObject() const final { return true; }
     void ariaListboxSelectedChildren(AccessibilityChildrenVector&);
-    void ariaListboxVisibleChildren(AccessibilityChildrenVector&);
     bool isAllowedChildOfTree() const;
     String positionalDescriptionForMSAA() const;
     PlainTextRange documentBasedSelectedTextRange() const;

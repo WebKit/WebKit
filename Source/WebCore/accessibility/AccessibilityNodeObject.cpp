@@ -546,6 +546,24 @@ bool AccessibilityNodeObject::canHaveChildren() const
     }
 }
 
+AXCoreObject::AccessibilityChildrenVector AccessibilityNodeObject::visibleChildren()
+{
+    // Only listboxes are asked for their visible children.
+    // Native list boxes would be AccessibilityListBoxes, so only check for aria list boxes.
+    if (ariaRoleAttribute() != AccessibilityRole::ListBox)
+        return { };
+
+    if (!childrenInitialized())
+        addChildren();
+
+    AccessibilityChildrenVector result;
+    for (const auto& child : children()) {
+        if (!child->isOffScreen())
+            result.append(child);
+    }
+    return result;
+}
+
 bool AccessibilityNodeObject::computeAccessibilityIsIgnored() const
 {
 #ifndef NDEBUG
