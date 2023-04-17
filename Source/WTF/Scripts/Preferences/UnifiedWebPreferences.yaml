@@ -1124,7 +1124,7 @@ CSSMotionPathEnabled:
 
 CSSNestingEnabled:
   type: bool
-  status: preview
+  status: stable
   category: css
   humanReadableName: "CSS Nesting"
   humanReadableDescription: "Enable support for CSS nesting https://www.w3.org/TR/css-nesting-1/"
@@ -1577,7 +1577,7 @@ ConstantPropertiesEnabled:
 
 ConstructableStylesheetsEnabled:
   type: bool
-  status: preview
+  status: stable
   category: css
   humanReadableName: "Constructable Stylesheets"
   humanReadableDescription: "Enable Constructable Stylesheets"
@@ -1993,7 +1993,7 @@ DefaultTextEncodingName:
 
 DeprecateRSAESPKCSWebCryptoEnabled:
   type: bool
-  status: preview
+  status: stable
   category: dom
   humanReadableName: "Deprecate RSAES-PKCS1-v1_5 Web Crypto"
   humanReadableDescription: "Enable Deprecation of RSAES-PKCS1-v1_5 Web Crypto"
@@ -3608,7 +3608,7 @@ LineHeightUnitsEnabled:
 
 LinkModulePreloadEnabled:
   type: bool
-  status: preview
+  status: stable
   category: networking
   humanReadableName: "Link rel=modulepreload"
   humanReadableDescription: "Enable Link rel=modulepreload"
@@ -3851,7 +3851,7 @@ ManageCaptureStatusBarInGPUProcessEnabled:
 
 ManagedMediaSourceEnabled:
   type: bool
-  status: preview
+  status: stable
   category: media
   humanReadableName: "Managed Media Source API"
   humanReadableDescription: "Managed Media Source API"
@@ -5553,7 +5553,7 @@ SelectTrailingWhitespaceEnabled:
 
 SelectionAPIForShadowDOMEnabled:
   type: bool
-  status: preview
+  status: stable
   category: dom
   humanReadableName: "Selection API for shadow DOM"
   humanReadableDescription: "Enable selection API for shadow DOM"
@@ -6524,7 +6524,7 @@ UseCGDisplayListsForDOMRendering:
 
 UseGPUProcessForCanvasRenderingEnabled:
   type: bool
-  status: preview
+  status: stable
   category: dom
   humanReadableName: "GPU Process: Canvas Rendering"
   humanReadableDescription: "Enable canvas rendering in GPU Process"
@@ -6539,7 +6539,7 @@ UseGPUProcessForCanvasRenderingEnabled:
 
 UseGPUProcessForDOMRenderingEnabled:
   type: bool
-  status: preview
+  status: stable
   category: dom
   humanReadableName: "GPU Process: DOM Rendering"
   humanReadableDescription: "Enable DOM rendering in GPU Process"
@@ -6554,7 +6554,7 @@ UseGPUProcessForDOMRenderingEnabled:
 
 UseGPUProcessForDisplayCapture:
   type: bool
-  status: preview
+  status: stable
   category: media
   humanReadableName: "GPU Process: Screen and Window capture"
   humanReadableDescription: "Display capture in GPU Process"
@@ -7146,7 +7146,7 @@ WebCodecsEnabled:
 
 WebCryptoSafeCurvesEnabled:
   type: bool
-  status: preview
+  status: stable
   category: dom
   humanReadableName: "Web Crypto Safe Curves"
   humanReadableDescription: "Enable Web Crypto Safe Curves"
