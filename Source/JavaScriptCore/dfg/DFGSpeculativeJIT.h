@@ -1024,7 +1024,7 @@ public:
     }
 
 #if OS(WINDOWS) && CPU(X86_64)
-    JITCompiler::Call appendCallWithUGPRPair(Address address)
+    void appendCallWithUGPRPair(Address address)
     {
         prepareForExternalCall();
         emitStoreCodeOrigin(m_currentNode->origin.semantic);
