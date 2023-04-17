@@ -303,7 +303,8 @@ void MediaPlayerPrivateGStreamerMSE::propagateReadyStateToPlayer()
 
     // The readyState change may be a result of monitorSourceBuffers() finding that currentTime == duration, which
     // should cause the video to be marked as ended. Let's have the player check that.
-    m_player->timeChanged();
+    if (!m_isWaitingForPreroll || currentMediaTime() == durationMediaTime())
+        m_player->timeChanged();
 }
 
 void MediaPlayerPrivateGStreamerMSE::asyncStateChangeDone()
