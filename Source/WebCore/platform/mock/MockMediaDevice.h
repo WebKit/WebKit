@@ -198,6 +198,11 @@ struct MockMediaDevice {
         return isSpeaker() ? &std::get<MockSpeakerProperties>(properties) : nullptr;
     }
 
+    const MockCameraProperties* cameraProperties() const
+    {
+        return isCamera() ? &std::get<MockCameraProperties>(properties) : nullptr;
+    }
+
     template<class Encoder>
     void encode(Encoder& encoder) const
     {

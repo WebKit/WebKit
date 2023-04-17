@@ -782,8 +782,7 @@ bool RealtimeMediaSource::selectSettings(const MediaConstraints& constraints, Fl
     minimumDistance = distance;
 
     // 4. If candidates is empty, return undefined as the result of the SelectSettings() algorithm.
-    if (candidates.isEmpty())
-        return true;
+    // We skip this check since our implementation will compute empty candidates in case no mandatory constraints is given.
 
     // 5. Iterate over the 'advanced' ConstraintSets in newConstraints in the order in which they were specified.
     //    For each ConstraintSet:

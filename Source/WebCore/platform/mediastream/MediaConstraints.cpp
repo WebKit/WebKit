@@ -364,7 +364,7 @@ bool MediaTrackConstraintSetMap::isEmpty() const
     return !size();
 }
 
-static inline void addDefaultVideoConstraints(MediaTrackConstraintSetMap& videoConstraints, bool addFrameRateConstraint, bool addSizeConstraint, bool addFacingModeConstraint)
+static inline void addDefaultVideoConstraints(MediaTrackConstraintSetMap& videoConstraints, bool addFrameRateConstraint, bool addSizeConstraint)
 {
     if (addFrameRateConstraint) {
         DoubleConstraint frameRateConstraint({ }, MediaConstraintType::FrameRate);
@@ -379,11 +379,6 @@ static inline void addDefaultVideoConstraints(MediaTrackConstraintSetMap& videoC
         IntConstraint heightConstraint({ }, MediaConstraintType::Height);
         heightConstraint.setIdeal(480);
         videoConstraints.set(MediaConstraintType::Height, WTFMove(heightConstraint));
-    }
-    if (addFacingModeConstraint) {
-        StringConstraint facingModeConstraint({ }, MediaConstraintType::FacingMode);
-        facingModeConstraint.setIdeal("user"_s);
-        videoConstraints.set(MediaConstraintType::FacingMode, WTFMove(facingModeConstraint));
     }
 }
 
@@ -401,7 +396,7 @@ bool MediaConstraints::isConstraintSet(const Function<bool(const MediaTrackConst
 
 void MediaConstraints::setDefaultVideoConstraints()
 {
-    // 640x480, 30fps, front-facing camera
+    // 640x480, 30fps camera
     bool needsFrameRateConstraints = !isConstraintSet([](const MediaTrackConstraintSetMap& constraint) {
         return !!constraint.frameRate() || !!constraint.width() || !!constraint.height();
     });
@@ -410,11 +405,7 @@ void MediaConstraints::setDefaultVideoConstraints()
         return !!constraint.width() || !!constraint.height();
     });
     
-    bool needsFacingModeConstraints = !isConstraintSet([](const MediaTrackConstraintSetMap& constraint) {
-        return !!constraint.facingMode() || !!constraint.deviceId();
-    });
-    
-    addDefaultVideoConstraints(mandatoryConstraints, needsFrameRateConstraints, needsSizeConstraints, needsFacingModeConstraints);
+    addDefaultVideoConstraints(mandatoryConstraints, needsFrameRateConstraints, needsSizeConstraints);
 }
 
 void MediaConstraint::log() const
