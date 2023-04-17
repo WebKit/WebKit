@@ -522,6 +522,8 @@ Value FunSubstring::evaluate() const
     {
         SetForScope<EvaluationContext> contextForScope(Expression::evaluationContext(), clonedContext1);
         s = argument(0).evaluate().toString();
+        if (s.isEmpty())
+            return emptyString();
     }
     {
         SetForScope<EvaluationContext> contextForScope(Expression::evaluationContext(), clonedContext2);
@@ -531,8 +533,11 @@ Value FunSubstring::evaluate() const
     if (std::isnan(doublePos))
         return emptyString();
     long pos = static_cast<long>(FunRound::round(doublePos));
+    long len = long(s.length());
+    if (pos > len)
+        return emptyString();
+
     bool haveLength = argumentCount() == 3;
-    long len = -1;
     if (haveLength) {
         double doubleLen = argument(2).evaluate().toNumber();
         if (std::isnan(doubleLen))
@@ -540,16 +545,14 @@ Value FunSubstring::evaluate() const
         len = static_cast<long>(FunRound::round(doubleLen));
     }
 
-    if (pos > long(s.length())) 
-        return emptyString();
-
     if (pos < 1) {
         if (haveLength) {
             len -= 1 - pos;
             if (len < 1)
                 return emptyString();
+            return s.substring(0, len);
         }
-        pos = 1;
+        return s;
     }
 
     return s.substring(pos - 1, len);
