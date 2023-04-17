@@ -34,7 +34,7 @@ class Commit(object):
     REVISION_RE = re.compile(r'^[Rr]?(?P<revision>\d{1,10})$')
     IDENTIFIER_RE = re.compile(r'^((?P<branch_point>\d{1,10})\.)?(?P<identifier>-?\d{1,10})(@(?P<branch>\S*))?$')
     NUMBER_RE = re.compile(r'^-?\d{1,10}$')
-    TRAILER_RE = re.compile(r'^(?P<key>[^:()\t\/*]+): (?P<value>.+)')
+    TRAILER_RE = re.compile(r'^(?P<key>\S[^:()\t\/*]*): (?P<value>.+)')
     HASH_LABEL_SIZE = 12
     UUID_MULTIPLIER = 100
 
