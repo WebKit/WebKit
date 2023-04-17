@@ -50,7 +50,7 @@ from steps import (AddReviewerToCommitMessage, AnalyzeAPITestsResults, AnalyzeCo
                    CompileWebKit, CompileWebKitWithoutChange, ConfigureBuild, ConfigureBuild, Contributors,
                    DetermineLandedIdentifier, DownloadBuiltProduct, DownloadBuiltProductFromMaster,
                    EWS_BUILD_HOSTNAME, ExtractBuiltProduct, ExtractTestResults,
-                   FetchBranches, FindModifiedLayoutTests, GitHub, GitHubMixin,
+                   FetchBranches, FindModifiedLayoutTests, GitHub, GitHubMixin, GenerateS3URL,
                    InstallBuiltProduct, InstallGtkDependencies, InstallWpeDependencies, InstallHooks,
                    KillOldProcesses, PrintConfiguration, PushCommitToWebKitRepo, PushPullRequestBranch, ReRunAPITests, ReRunWebKitPerlTests,
                    MapBranchAlias, ReRunWebKitTests, RevertPullRequestChanges, RunAPITests, RunAPITestsWithoutChange, RunBindingsTests, RunBuildWebKitOrgUnitTests,
@@ -60,7 +60,7 @@ from steps import (AddReviewerToCommitMessage, AnalyzeAPITestsResults, AnalyzeCo
                    RunWebKitTestsWithoutChange, RunWebKitTestsRedTree, RunWebKitTestsRepeatFailuresRedTree,
                    RunWebKitTestsRepeatFailuresWithoutChangeRedTree, RunWebKitTestsWithoutChangeRedTree, AnalyzeLayoutTestsResultsRedTree, TestWithFailureCount,
                    ShowIdentifier, Trigger, TransferToS3, TwistedAdditions, UnApplyPatch, UpdatePullRequest, UpdateWorkingDirectory, UploadBuiltProduct,
-                   UploadTestResults, ValidateCommitMessage, ValidateCommitterAndReviewer, ValidateChange, ValidateRemote, ValidateSquashed)
+                   UploadFileToS3, UploadTestResults, ValidateCommitMessage, ValidateCommitterAndReviewer, ValidateChange, ValidateRemote, ValidateSquashed)
 
 # Workaround for https://github.com/buildbot/buildbot/issues/4669
 from buildbot.test.fake.fakebuild import FakeBuild
@@ -4437,6 +4437,58 @@ class current_hostname(object):
         steps.CURRENT_HOSTNAME = self.saved_hostname
 
 
+class TestGenerateS3URL(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def configureStep(self):
+        self.setupStep(GenerateS3URL())
+        self.setProperty('fullPlatform', 'mac-highsierra')
+        self.setProperty('configuration', 'release')
+        self.setProperty('architecture', 'x86_64')
+        self.setProperty('change_id', '1234')
+
+    def test_success(self):
+        self.configureStep()
+        self.expectLocalCommands(
+            ExpectMasterShellCommand(command=['python3',
+                                              '../Shared/generate-s3-url',
+                                              '--change-id', '1234',
+                                              '--identifier', 'mac-highsierra-x86_64-release'
+                                              ])
+            + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Generated S3 URL')
+        with current_hostname(EWS_BUILD_HOSTNAME):
+            return self.runStep()
+
+    def test_failure(self):
+        self.configureStep()
+        self.setProperty('fullPlatform', 'ios-simulator-16')
+        self.setProperty('configuration', 'debug')
+        self.expectLocalCommands(
+            ExpectMasterShellCommand(command=['python3',
+                                              '../Shared/generate-s3-url',
+                                              '--change-id', '1234',
+                                              '--identifier', 'ios-simulator-16-x86_64-debug',
+                                              ])
+            + 2,
+        )
+        self.expectOutcome(result=FAILURE, state_string='Failed to generate S3 URL')
+        with current_hostname(EWS_BUILD_HOSTNAME):
+            return self.runStep()
+
+    def test_skipped(self):
+        self.configureStep()
+        self.expectOutcome(result=SKIPPED, state_string='Generated S3 URL (skipped)')
+        with current_hostname('something-other-than-steps.EWS_BUILD_HOSTNAME'):
+            return self.runStep()
+
+
 class TestTransferToS3(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
         self.longMessage = True
@@ -4492,6 +4544,60 @@ class TestTransferToS3(BuildStepMixinAdditions, unittest.TestCase):
         self.expectOutcome(result=SKIPPED, state_string='Transferred archive to S3 (skipped)')
         with current_hostname('something-other-than-steps.EWS_BUILD_HOSTNAME'):
             return self.runStep()
+
+
+class TestUploadFileToS3(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def configureStep(self):
+        self.setupStep(UploadFileToS3())
+        self.build.s3url = 'https://test-s3-url'
+        self.setProperty('configuration', 'release')
+
+    def test_success(self):
+        self.configureStep()
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        env=dict(UPLOAD_URL='https://test-s3-url'),
+                        logEnviron=False,
+                        command=['python3', 'Tools/Scripts/upload-file-to-url', '--filename', 'WebKitBuild/release.zip'],
+                        timeout=300,
+                        )
+            + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='upload-file-to-s3')
+        with current_hostname(EWS_BUILD_HOSTNAME):
+            return self.runStep()
+
+    def test_failure(self):
+        self.configureStep()
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        env=dict(UPLOAD_URL='https://test-s3-url'),
+                        logEnviron=False,
+                        command=['python3', 'Tools/Scripts/upload-file-to-url', '--filename', 'WebKitBuild/release.zip'],
+                        timeout=300,
+                        )
+            + ExpectShell.log('stdio', stdout='''Uploading WebKitBuild/release.zip
+response: <Response [403]>, 403, Forbidden
+exit 1''')
+            + 2,
+        )
+        self.expectOutcome(result=FAILURE, state_string='upload-file-to-s3 (failure)')
+        with current_hostname(EWS_BUILD_HOSTNAME):
+            return self.runStep()
+
+    def test_skipped(self):
+        self.configureStep()
+        self.expectOutcome(result=SKIPPED, state_string='upload-file-to-s3 (skipped)')
+        with current_hostname('something-other-than-steps.EWS_BUILD_HOSTNAME'):
+            return self.runStep()
+
 
 
 class TestRunAPITests(BuildStepMixinAdditions, unittest.TestCase):
