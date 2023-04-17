@@ -298,7 +298,7 @@ public:
     // Allow an accessibility object to retrieve a Frame parent if there's no PlatformWidget.
     virtual RemoteAXObjectRef accessibilityRemoteObject() = 0;
     virtual void willCacheResponse(DocumentLoader*, ResourceLoaderIdentifier, NSCachedURLResponse*, CompletionHandler<void(NSCachedURLResponse *)>&&) const = 0;
-    virtual NSDictionary *dataDetectionContext() { return nullptr; }
+    virtual std::optional<double> dataDetectionReferenceDate() { return std::nullopt; }
 #endif
 
     virtual bool shouldAlwaysUsePluginDocument(const String& /*mimeType*/) const { return false; }

@@ -179,7 +179,7 @@ TEST(ActionSheetTests, DataDetectorsLinkIsNotPresentedAsALink)
         // We shouldn't present a normal action sheet, but instead a data detectors sheet.
         [observer setDataDetectionContextHandler:^{
             done = true;
-            return @{ };
+            return @{ @"unused" : [NSUUID UUID] };
         }];
         [observer setPresentationHandler:^(_WKActivatedElementInfo *, NSArray *) {
             done = true;

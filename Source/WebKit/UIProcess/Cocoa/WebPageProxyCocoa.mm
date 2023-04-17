@@ -241,7 +241,7 @@ void WebPageProxy::contentFilterDidBlockLoadForFrameShared(Ref<WebProcessProxy>&
 
 void WebPageProxy::addPlatformLoadParameters(WebProcessProxy& process, LoadParameters& loadParameters)
 {
-    loadParameters.dataDetectionContext = m_uiClient->dataDetectionContext();
+    loadParameters.dataDetectionReferenceDate = m_uiClient->dataDetectionReferenceDate();
 
 #if !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
     loadParameters.networkExtensionSandboxExtensionHandles = createNetworkExtensionsSandboxExtensions(process);

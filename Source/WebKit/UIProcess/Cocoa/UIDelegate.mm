@@ -66,6 +66,7 @@
 #import <AVFoundation/AVCaptureDevice.h>
 #import <AVFoundation/AVMediaFormat.h>
 #import <WebCore/AutoplayEvent.h>
+#import <WebCore/DataDetection.h>
 #import <WebCore/FontAttributes.h>
 #import <WebCore/SecurityOrigin.h>
 #import <wtf/BlockPtr.h>
@@ -1611,19 +1612,23 @@ PlatformViewController *UIDelegate::UIClient::presentingViewController()
     return [static_cast<id <WKUIDelegatePrivate>>(delegate) _presentingViewControllerForWebView:m_uiDelegate->m_webView.get().get()];
 }
 
-NSDictionary *UIDelegate::UIClient::dataDetectionContext()
+std::optional<double> UIDelegate::UIClient::dataDetectionReferenceDate()
 {
     if (!m_uiDelegate)
-        return nullptr;
+        return std::nullopt;
 
     if (!m_uiDelegate->m_delegateMethods.dataDetectionContextForWebView)
-        return nullptr;
+        return std::nullopt;
 
     auto delegate = m_uiDelegate->m_delegate.get();
     if (!delegate)
-        return nullptr;
+        return std::nullopt;
 
-    return [static_cast<id <WKUIDelegatePrivate>>(delegate) _dataDetectionContextForWebView:m_uiDelegate->m_webView.get().get()];
+#if ENABLE(DATA_DETECTION)
+    return WebCore::DataDetection::extractReferenceDate([static_cast<id<WKUIDelegatePrivate>>(delegate) _dataDetectionContextForWebView:m_uiDelegate->m_webView.get().get()]);
+#else
+    return std::nullopt;
+#endif
 }
 
 #if ENABLE(POINTER_LOCK)

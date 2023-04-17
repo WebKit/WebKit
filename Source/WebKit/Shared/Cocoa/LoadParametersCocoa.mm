@@ -35,8 +35,7 @@ namespace WebKit {
 
 void LoadParameters::platformEncode(IPC::Encoder& encoder) const
 {
-    IPC::encode(encoder, dataDetectionContext.get());
-
+    encoder << dataDetectionReferenceDate;
 #if !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
     encoder << networkExtensionSandboxExtensionHandles;
 #if PLATFORM(IOS)
@@ -48,8 +47,10 @@ void LoadParameters::platformEncode(IPC::Encoder& encoder) const
 
 bool LoadParameters::platformDecode(IPC::Decoder& decoder, LoadParameters& parameters)
 {
-    if (!IPC::decode(decoder, parameters.dataDetectionContext))
+    auto dataDetectionReferenceDate = decoder.decode<std::optional<double>>();
+    if (!dataDetectionReferenceDate)
         return false;
+    parameters.dataDetectionReferenceDate = WTFMove(*dataDetectionReferenceDate);
 
 #if !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
     std::optional<Vector<SandboxExtension::Handle>> networkExtensionSandboxExtensionHandles;

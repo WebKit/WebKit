@@ -4577,7 +4577,7 @@ void WebPage::detectDataInAllFrames(OptionSet<WebCore::DataDetectorType> dataDet
         RefPtr document = localFrame->document();
         if (!document)
             continue;
-        auto results = retainPtr(DataDetection::detectContentInRange(makeRangeSelectingNodeContents(*document), dataDetectorTypes, m_dataDetectionContext.get()));
+        auto results = retainPtr(DataDetection::detectContentInRange(makeRangeSelectingNodeContents(*document), dataDetectorTypes, m_dataDetectionReferenceDate));
         localFrame->dataDetectionResults().setDocumentLevelResults(results.get());
         if (localFrame->isMainFrame())
             mainFrameResult.results = WTFMove(results);

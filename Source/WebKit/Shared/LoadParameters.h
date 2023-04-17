@@ -91,7 +91,7 @@ struct LoadParameters {
     bool isServiceWorkerLoad { false };
 
 #if PLATFORM(COCOA)
-    RetainPtr<NSDictionary> dataDetectionContext;
+    std::optional<double> dataDetectionReferenceDate;
 #if !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
     Vector<SandboxExtension::Handle> networkExtensionSandboxExtensionHandles;
 #if PLATFORM(IOS)

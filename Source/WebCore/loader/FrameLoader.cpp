@@ -2723,7 +2723,7 @@ void FrameLoader::checkLoadCompleteForThisFrame()
             auto document = m_frame.document();
             OptionSet<DataDetectorType> types = m_frame.settings().dataDetectorTypes();
             if (document && types) {
-                auto documentLevelResults = retainPtr(DataDetection::detectContentInRange(makeRangeSelectingNodeContents(*document), types, m_client->dataDetectionContext()));
+                auto documentLevelResults = retainPtr(DataDetection::detectContentInRange(makeRangeSelectingNodeContents(*document), types, m_client->dataDetectionReferenceDate()));
                 m_frame.dataDetectionResults().setDocumentLevelResults(documentLevelResults.get());
                 if (m_frame.isMainFrame())
                     m_client->dispatchDidFinishDataDetection(documentLevelResults.get());

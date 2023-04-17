@@ -105,7 +105,7 @@ void WebPage::platformInitialize(const WebPageCreationParameters& parameters)
 
 void WebPage::platformDidReceiveLoadParameters(const LoadParameters& parameters)
 {
-    m_dataDetectionContext = parameters.dataDetectionContext;
+    m_dataDetectionReferenceDate = parameters.dataDetectionReferenceDate;
 
 #if !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
     consumeNetworkExtensionSandboxExtensions(parameters.networkExtensionSandboxExtensionHandles);

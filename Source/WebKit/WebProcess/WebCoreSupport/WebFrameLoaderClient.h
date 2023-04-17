@@ -245,7 +245,7 @@ private:
     
     void willCacheResponse(WebCore::DocumentLoader*, WebCore::ResourceLoaderIdentifier, NSCachedURLResponse*, CompletionHandler<void(NSCachedURLResponse *)>&&) const final;
 
-    NSDictionary *dataDetectionContext() final;
+    std::optional<double> dataDetectionReferenceDate() final;
 #endif
 
     void didChangeScrollOffset() final;

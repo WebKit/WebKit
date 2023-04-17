@@ -443,7 +443,14 @@ void DataDetection::removeDataDetectedLinksInDocument(Document& document)
         removeResultLinksFromAnchor(anchor.get());
 }
 
-NSArray *DataDetection::detectContentInRange(const SimpleRange& contextRange, OptionSet<DataDetectorType> types, NSDictionary *context)
+std::optional<double> DataDetection::extractReferenceDate(NSDictionary *context)
+{
+    if (auto date = dynamic_objc_cast<NSDate>([context objectForKey:getkDataDetectorsReferenceDateKey()]))
+        return [date timeIntervalSince1970];
+    return std::nullopt;
+}
+
+NSArray *DataDetection::detectContentInRange(const SimpleRange& contextRange, OptionSet<DataDetectorType> types, std::optional<double> referenceDateFromContext)
 {
     auto scanner = adoptCF(PAL::softLink_DataDetectorsCore_DDScannerCreate(DDScannerTypeStandard, 0, nullptr));
     auto scanQuery = adoptCF(PAL::softLink_DataDetectorsCore_DDScanQueryCreate(NULL));
@@ -541,7 +548,7 @@ NSArray *DataDetection::detectContentInRange(const SimpleRange& contextRange, Op
     }
 
     auto tz = adoptCF(CFTimeZoneCopyDefault());
-    NSDate *referenceDate = [context objectForKey:getkDataDetectorsReferenceDateKey()] ?: [NSDate date];
+    NSDate *referenceDate = referenceDateFromContext ? [NSDate dateWithTimeIntervalSince1970:*referenceDateFromContext] : [NSDate date];
     RefPtr<Text> lastTextNodeToUpdate;
     String lastNodeContent;
     unsigned contentOffset = 0;
@@ -655,7 +662,12 @@ NSArray *DataDetection::detectContentInRange(const SimpleRange& contextRange, Op
 
 #else
 
-NSArray *DataDetection::detectContentInRange(const SimpleRange&, OptionSet<DataDetectorType>, NSDictionary *)
+std::optional<double> DataDetection::extractReferenceDate(NSDictionary *)
+{
+    return std::nullopt;
+}
+
+NSArray *DataDetection::detectContentInRange(const SimpleRange&, OptionSet<DataDetectorType>, std::optional<double>)
 {
     return nil;
 }

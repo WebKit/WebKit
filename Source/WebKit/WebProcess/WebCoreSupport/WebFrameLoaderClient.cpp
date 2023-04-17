@@ -1913,13 +1913,13 @@ void WebFrameLoaderClient::willCacheResponse(DocumentLoader*, ResourceLoaderIden
     return completionHandler(webPage->injectedBundleResourceLoadClient().shouldCacheResponse(*webPage, m_frame, identifier) ? response : nil);
 }
 
-NSDictionary *WebFrameLoaderClient::dataDetectionContext()
+std::optional<double> WebFrameLoaderClient::dataDetectionReferenceDate()
 {
     WebPage* webPage = m_frame->page();
     if (!webPage)
-        return nil;
+        return std::nullopt;
 
-    return webPage->dataDetectionContext();
+    return webPage->dataDetectionReferenceDate();
 }
 
 #endif // PLATFORM(COCOA)

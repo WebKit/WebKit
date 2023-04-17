@@ -162,7 +162,7 @@ private:
 #endif // PLATFORM(IOS_FAMILY)
         PlatformViewController *presentingViewController() final;
 
-        NSDictionary *dataDetectionContext() final;
+        std::optional<double> dataDetectionReferenceDate() final;
 
 #if ENABLE(POINTER_LOCK)
         void requestPointerLock(WebPageProxy*) final;

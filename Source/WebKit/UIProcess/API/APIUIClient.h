@@ -188,7 +188,7 @@ public:
 #endif
 #if PLATFORM(COCOA)
     virtual PlatformViewController *presentingViewController() { return nullptr; }
-    virtual NSDictionary *dataDetectionContext() { return nullptr; }
+    virtual std::optional<double> dataDetectionReferenceDate() { return std::nullopt; }
 #endif
 
 #if ENABLE(POINTER_LOCK)

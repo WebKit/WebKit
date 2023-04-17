@@ -1218,7 +1218,7 @@ public:
     bool selectionFlippingEnabled() const { return m_selectionFlippingEnabled; }
     void setSelectionFlippingEnabled(bool enabled) { m_selectionFlippingEnabled = enabled; }
 
-    NSDictionary *dataDetectionContext() const { return m_dataDetectionContext.get(); }
+    std::optional<double> dataDetectionReferenceDate() const { return m_dataDetectionReferenceDate; }
 #endif
 
     bool mainFrameIsScrollable() const { return m_mainFrameIsScrollable; }
@@ -2189,7 +2189,7 @@ private:
 #endif
 
 #if PLATFORM(COCOA)
-    RetainPtr<NSDictionary> m_dataDetectionContext;
+    std::optional<double> m_dataDetectionReferenceDate;
 #endif
 
 #if USE(ATSPI)
