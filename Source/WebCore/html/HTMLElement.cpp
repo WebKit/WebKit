@@ -1297,10 +1297,10 @@ static HTMLElement* topmostPopoverAncestor(Element& newPopover)
             topmostAncestor = candidateAncestor;
     };
 
-    checkAncestor(newPopover.parentElement());
+    checkAncestor(newPopover.parentElementInComposedTree());
 
     // Iterate over all popover invokers in the document.
-    for (auto& invoker : descendantsOfType<HTMLFormControlElement>(newPopover.document())) {
+    for (auto& invoker : descendantsOfType<HTMLFormControlElement>(newPopover.treeScope().rootNode())) {
         // popoverTargetElement() already checks if the form control can invoke popovers.
         if (invoker.popoverTargetElement() == &newPopover)
             checkAncestor(&invoker);
