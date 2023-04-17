@@ -185,7 +185,7 @@ bool Analyzer::analyzeVM(VM& vm, Analyzer::Action action)
     return true;
 }
 
-#if COMPILER(MSVC) || !VA_OPT_SUPPORTED
+#if !VA_OPT_SUPPORTED
 
 #define AUDIT_VERIFY(cond, format, ...) do { \
         IA_ASSERT_WITH_ACTION(cond, { \
@@ -197,7 +197,7 @@ bool Analyzer::analyzeVM(VM& vm, Analyzer::Action action)
         }); \
     } while (false)
 
-#else // not (COMPILER(MSVC) || !VA_OPT_SUPPORTED)
+#else // not !VA_OPT_SUPPORTED
 
 #define AUDIT_VERIFY(cond, format, ...) do { \
         IA_ASSERT_WITH_ACTION(cond, { \
@@ -209,7 +209,7 @@ bool Analyzer::analyzeVM(VM& vm, Analyzer::Action action)
         }, format __VA_OPT__(,) __VA_ARGS__); \
     } while (false)
 
-#endif // COMPILER(MSVC) || !VA_OPT_SUPPORTED
+#endif // !VA_OPT_SUPPORTED
 
 bool Analyzer::analyzeCell(VM& vm, JSCell* cell, Analyzer::Action action)
 {
