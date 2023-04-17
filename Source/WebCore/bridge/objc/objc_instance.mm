@@ -399,28 +399,21 @@ bool ObjcInstance::setValueOfUndefinedField(JSGlobalObject* lexicalGlobalObject,
         return false;
 
     id targetObject = getObject();
-    if (![targetObject respondsToSelector:@selector(setValue:forUndefinedKey:)])
-        return false;
 
     JSLock::DropAllLocks dropAllLocks(lexicalGlobalObject); // Can't put this inside the @try scope because it unwinds incorrectly.
 
-    // This check is not really necessary because NSObject implements
-    // setValue:forUndefinedKey:, and unfortunately the default implementation
-    // throws an exception.
-    if ([targetObject respondsToSelector:@selector(setValue:forUndefinedKey:)]){
-        setGlobalException(nil);
-    
-        ObjcValue objcValue = convertValueToObjcValue(lexicalGlobalObject, aValue, ObjcObjectType);
+    setGlobalException(nil);
 
-        @try {
-            [targetObject setValue:(__bridge id)objcValue.objectValue forUndefinedKey:[NSString stringWithCString:name.ascii().data() encoding:NSASCIIStringEncoding]];
-        } @catch(NSException* localException) {
-            // Do nothing.  Class did not override valueForUndefinedKey:.
-        }
+    ObjcValue objcValue = convertValueToObjcValue(lexicalGlobalObject, aValue, ObjcObjectType);
 
-        moveGlobalExceptionToExecState(lexicalGlobalObject);
+    @try {
+        [targetObject setValue:(__bridge id)objcValue.objectValue forUndefinedKey:[NSString stringWithCString:name.ascii().data() encoding:NSASCIIStringEncoding]];
+    } @catch (NSException* localException) {
+        // Do nothing. Class did not override setValue:forUndefinedKey:.
     }
-    
+
+    moveGlobalExceptionToExecState(lexicalGlobalObject);
+
     return true;
 }
 
@@ -436,21 +429,16 @@ JSC::JSValue ObjcInstance::getValueOfUndefinedField(JSGlobalObject* lexicalGloba
 
     JSLock::DropAllLocks dropAllLocks(lexicalGlobalObject); // Can't put this inside the @try scope because it unwinds incorrectly.
 
-    // This check is not really necessary because NSObject implements
-    // valueForUndefinedKey:, and unfortunately the default implementation
-    // throws an exception.
-    if ([targetObject respondsToSelector:@selector(valueForUndefinedKey:)]){
-        setGlobalException(nil);
-    
-        @try {
-            id objcValue = [targetObject valueForUndefinedKey:[NSString stringWithCString:name.ascii().data() encoding:NSASCIIStringEncoding]];
-            result = convertObjcValueToValue(lexicalGlobalObject, &objcValue, ObjcObjectType, m_rootObject.get());
-        } @catch(NSException* localException) {
-            // Do nothing.  Class did not override valueForUndefinedKey:.
-        }
+    setGlobalException(nil);
 
-        moveGlobalExceptionToExecState(lexicalGlobalObject);
+    @try {
+        id objcValue = [targetObject valueForUndefinedKey:[NSString stringWithCString:name.ascii().data() encoding:NSASCIIStringEncoding]];
+        result = convertObjcValueToValue(lexicalGlobalObject, &objcValue, ObjcObjectType, m_rootObject.get());
+    } @catch (NSException* localException) {
+        // Do nothing. Class did not override valueForUndefinedKey:.
     }
+
+    moveGlobalExceptionToExecState(lexicalGlobalObject);
 
     return result;
 }
