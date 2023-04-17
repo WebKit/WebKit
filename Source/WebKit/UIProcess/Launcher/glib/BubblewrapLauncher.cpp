@@ -141,9 +141,15 @@ static String effectiveApplicationId()
     // This creates a somewhat reliable id based on the executable path
     // which will avoid potentially gaining permissions from another app
     // and won't flood xdg-desktop-portal with new ids.
-    auto executablePath = FileSystem::currentExecutablePath();
-    GUniquePtr<char> digest(g_compute_checksum_for_data(G_CHECKSUM_SHA256, reinterpret_cast<const uint8_t*>(executablePath.data()), executablePath.length()));
-    return makeString("org.webkit.app-", digest.get());
+    if (auto executablePath = FileSystem::currentExecutablePath(); !executablePath.isNull()) {
+        GUniquePtr<char> digest(g_compute_checksum_for_data(G_CHECKSUM_SHA256, reinterpret_cast<const uint8_t*>(executablePath.data()), executablePath.length()));
+        return makeString("org.webkit.app-", digest.get());
+    }
+
+    // If it is not possible to obtain the executable path, generate
+    // a random identifier as a fallback.
+    auto uuid = UUID::createVersion4Weak();
+    return makeString("org.webkit.app-", uuid.toString());
 }
 
 static int createFlatpakInfo()
