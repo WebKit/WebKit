@@ -221,11 +221,11 @@ void RuleSetBuilder::resolveSelectorListWithNesting(StyleRuleWithNesting& rule)
     if (m_styleRuleStack.size()) 
         parentResolvedSelectorList =  m_styleRuleStack.last();
 
-    // If it's a top-level rule wihout a nesting parent selector, keep the selector list as is.
-    if (!rule.selectorList().hasExplicitNestingParent() && !parentResolvedSelectorList)
+    // If it's a top-level rule without a nesting parent selector, keep the selector list as is.
+    if (!rule.originalSelectorList().hasExplicitNestingParent() && !parentResolvedSelectorList)
         return;
 
-    auto resolvedSelectorList = CSSSelectorParser::resolveNestingParent(rule.selectorList(), parentResolvedSelectorList);
+    auto resolvedSelectorList = CSSSelectorParser::resolveNestingParent(rule.originalSelectorList(), parentResolvedSelectorList);
     ASSERT(!resolvedSelectorList.hasExplicitNestingParent());
     rule.wrapperAdoptSelectorList(WTFMove(resolvedSelectorList));    
 }
