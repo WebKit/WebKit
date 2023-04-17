@@ -744,24 +744,25 @@ void GStreamerMediaEndpoint::doCreateAnswer()
 
 struct GStreamerMediaEndpointHolder {
     RefPtr<GStreamerMediaEndpoint> endPoint;
+    RTCSdpType sdpType;
 };
 WEBKIT_DEFINE_ASYNC_DATA_STRUCT(GStreamerMediaEndpointHolder)
 
 void GStreamerMediaEndpoint::initiate(bool isInitiator, GstStructure* rawOptions)
 {
-    m_isInitiator = isInitiator;
     const char* type = isInitiator ? "offer" : "answer";
     GST_DEBUG_OBJECT(m_pipeline.get(), "Creating %s", type);
     auto signalName = makeString("create-", type);
     GUniquePtr<GstStructure> options(rawOptions);
     auto* holder = createGStreamerMediaEndpointHolder();
     holder->endPoint = this;
+    holder->sdpType = isInitiator ? RTCSdpType::Offer : RTCSdpType::Answer;
     g_signal_emit_by_name(m_webrtcBin.get(), signalName.ascii().data(), options.get(), gst_promise_new_with_change_func([](GstPromise* rawPromise, gpointer userData) {
         auto* holder = static_cast<GStreamerMediaEndpointHolder*>(userData);
         auto promise = adoptGRef(rawPromise);
         auto result = gst_promise_wait(promise.get());
         if (result != GST_PROMISE_RESULT_REPLIED) {
-            holder->endPoint->createSessionDescriptionFailed({ });
+            holder->endPoint->createSessionDescriptionFailed(holder->sdpType, { });
             return;
         }
 
@@ -770,17 +771,17 @@ void GStreamerMediaEndpoint::initiate(bool isInitiator, GstStructure* rawOptions
         if (gst_structure_has_field(reply, "error")) {
             GUniqueOutPtr<GError> promiseError;
             gst_structure_get(reply, "error", G_TYPE_ERROR, &promiseError.outPtr(), nullptr);
-            holder->endPoint->createSessionDescriptionFailed(GUniquePtr<GError>(promiseError.release()));
+            holder->endPoint->createSessionDescriptionFailed(holder->sdpType, GUniquePtr<GError>(promiseError.release()));
             return;
         }
 
-        const char* type = holder->endPoint->m_isInitiator ? "offer" : "answer";
         GUniqueOutPtr<GstWebRTCSessionDescription> sessionDescription;
-        gst_structure_get(reply, type, GST_TYPE_WEBRTC_SESSION_DESCRIPTION, &sessionDescription.outPtr(), nullptr);
+        const char* sdpTypeString = holder->sdpType == RTCSdpType::Offer ? "offer" : "answer";
+        gst_structure_get(reply, sdpTypeString, GST_TYPE_WEBRTC_SESSION_DESCRIPTION, &sessionDescription.outPtr(), nullptr);
 
 #ifndef GST_DISABLE_GST_DEBUG
         GUniquePtr<char> sdp(gst_sdp_message_as_text(sessionDescription->sdp));
-        GST_DEBUG_OBJECT(holder->endPoint->pipeline(), "Created %s: %s", type, sdp.get());
+        GST_DEBUG_OBJECT(holder->endPoint->pipeline(), "Created %s: %s", sdpTypeString, sdp.get());
 #endif
         holder->endPoint->createSessionDescriptionSucceeded(GUniquePtr<GstWebRTCSessionDescription>(sessionDescription.release()));
     }, holder, reinterpret_cast<GDestroyNotify>(destroyGStreamerMediaEndpointHolder)));
@@ -1327,24 +1328,33 @@ void GStreamerMediaEndpoint::createSessionDescriptionSucceeded(GUniquePtr<GstWeb
             return;
 
         GUniquePtr<char> sdp(gst_sdp_message_as_text(description->sdp));
-        if (m_isInitiator)
-            m_peerConnectionBackend.createOfferSucceeded(String::fromLatin1(sdp.get()));
-        else
-            m_peerConnectionBackend.createAnswerSucceeded(String::fromLatin1(sdp.get()));
+        auto sdpString = String::fromLatin1(sdp.get());
+        if (description->type == GST_WEBRTC_SDP_TYPE_OFFER) {
+            m_peerConnectionBackend.createOfferSucceeded(WTFMove(sdpString));
+            return;
+        }
+
+        if (description->type == GST_WEBRTC_SDP_TYPE_ANSWER) {
+            m_peerConnectionBackend.createAnswerSucceeded(WTFMove(sdpString));
+            return;
+        }
+
+        GST_WARNING_OBJECT(m_pipeline.get(), "Unsupported SDP type: %s", gst_webrtc_sdp_type_to_string(description->type));
     });
 }
 
-void GStreamerMediaEndpoint::createSessionDescriptionFailed(GUniquePtr<GError>&& error)
+void GStreamerMediaEndpoint::createSessionDescriptionFailed(RTCSdpType sdpType, GUniquePtr<GError>&& error)
 {
-    callOnMainThread([protectedThis = Ref(*this), this, error = WTFMove(error)] {
+    callOnMainThread([protectedThis = Ref(*this), this, sdpType, error = WTFMove(error)] {
         if (isStopped())
             return;
 
         auto exc = Exception { OperationError, error ? String::fromUTF8(error->message) : "Unknown Error"_s };
-        if (m_isInitiator)
+        if (sdpType == RTCSdpType::Offer) {
             m_peerConnectionBackend.createOfferFailed(WTFMove(exc));
-        else
-            m_peerConnectionBackend.createAnswerFailed(WTFMove(exc));
+            return;
+        }
+        m_peerConnectionBackend.createAnswerFailed(WTFMove(exc));
     });
 }
 

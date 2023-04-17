@@ -98,7 +98,7 @@ public:
     void collectTransceivers();
 
     void createSessionDescriptionSucceeded(GUniquePtr<GstWebRTCSessionDescription>&&);
-    void createSessionDescriptionFailed(GUniquePtr<GError>&&);
+    void createSessionDescriptionFailed(RTCSdpType, GUniquePtr<GError>&&);
 
     GstElement* pipeline() const { return m_pipeline.get(); }
     bool handleMessage(GstMessage*);
@@ -176,7 +176,6 @@ private:
     unsigned m_requestPadCounter { 0 };
     int m_ptCounter { 96 };
     unsigned m_pendingIncomingStreams { 0 };
-    bool m_isInitiator { false };
     uint32_t m_negotiationNeededEventId { 0 };
 
 #if !RELEASE_LOG_DISABLED
