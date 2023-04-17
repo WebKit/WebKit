@@ -1,0 +1,5 @@
+
+
+PASS Width and height before and after rotation with default device
+PASS Width and height before and after rotation with new device
+

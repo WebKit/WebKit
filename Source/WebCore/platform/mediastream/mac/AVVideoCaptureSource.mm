@@ -615,6 +615,9 @@ void AVVideoCaptureSource::shutdownCaptureSession()
 void AVVideoCaptureSource::monitorOrientation(OrientationNotifier& notifier)
 {
 #if PLATFORM(IOS_FAMILY)
+    if ([device() deviceType] == AVCaptureDeviceTypeExternalUnknown)
+        return;
+
     notifier.addObserver(*this);
     orientationChanged(notifier.orientation());
 #else

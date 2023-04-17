@@ -1006,7 +1006,8 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         auto persistentID = stringValue(messageBodyDictionary, "PersistentID");
         auto label = stringValue(messageBodyDictionary, "Label");
         auto type = stringValue(messageBodyDictionary, "Type");
-        TestController::singleton().addMockMediaDevice(persistentID, label, type);
+        auto properties = dictionaryValue(value(messageBodyDictionary, "Properties"));
+        TestController::singleton().addMockMediaDevice(persistentID, label, type, properties);
         return nullptr;
     }
 

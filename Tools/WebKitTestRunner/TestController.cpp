@@ -3920,9 +3920,9 @@ void TestController::removeAllCookies()
     m_currentInvocation->didRemoveAllCookies();
 }
 
-void TestController::addMockMediaDevice(WKStringRef persistentID, WKStringRef label, WKStringRef type)
+void TestController::addMockMediaDevice(WKStringRef persistentID, WKStringRef label, WKStringRef type, WKDictionaryRef properties)
 {
-    WKAddMockMediaDevice(platformContext(), persistentID, label, type);
+    WKAddMockMediaDevice(platformContext(), persistentID, label, type, properties);
 }
 
 void TestController::clearMockMediaDevices()

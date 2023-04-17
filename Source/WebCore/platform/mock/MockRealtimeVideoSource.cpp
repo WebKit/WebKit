@@ -143,7 +143,8 @@ const RealtimeMediaSourceCapabilities& MockRealtimeVideoSource::capabilities()
 
         if (mockCamera()) {
             auto facingMode = std::get<MockCameraProperties>(m_device.properties).facingMode;
-            capabilities.addFacingMode(facingMode);
+            if (facingMode != VideoFacingMode::Unknown)
+                capabilities.addFacingMode(facingMode);
             capabilities.setDeviceId(hashedId());
             updateCapabilities(capabilities);
 
@@ -208,7 +209,8 @@ const RealtimeMediaSourceSettings& MockRealtimeVideoSource::settings()
     supportedConstraints.setSupportsAspectRatio(true);
     supportedConstraints.setSupportsDeviceId(true);
     if (mockCamera()) {
-        supportedConstraints.setSupportsFacingMode(true);
+        if (facingMode() != VideoFacingMode::Unknown)
+            supportedConstraints.setSupportsFacingMode(true);
         if (isZoomSupported(presets())) {
             supportedConstraints.setSupportsZoom(true);
             settings.setZoom(zoom());
@@ -538,7 +540,7 @@ void MockRealtimeVideoSource::orientationChanged(IntDegrees orientation)
 
 void MockRealtimeVideoSource::monitorOrientation(OrientationNotifier& notifier)
 {
-    if (!mockCamera())
+    if (!mockCamera() || std::get<MockCameraProperties>(m_device.properties).facingMode == VideoFacingMode::Unknown)
         return;
 
     notifier.addObserver(*this);

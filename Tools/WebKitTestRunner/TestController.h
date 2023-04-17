@@ -323,7 +323,7 @@ public:
     bool didReceiveServerRedirectForProvisionalNavigation() const { return m_didReceiveServerRedirectForProvisionalNavigation; }
     void clearDidReceiveServerRedirectForProvisionalNavigation() { m_didReceiveServerRedirectForProvisionalNavigation = false; }
 
-    void addMockMediaDevice(WKStringRef persistentID, WKStringRef label, WKStringRef type);
+    void addMockMediaDevice(WKStringRef persistentID, WKStringRef label, WKStringRef type, WKDictionaryRef properties);
     void clearMockMediaDevices();
     void removeMockMediaDevice(WKStringRef persistentID);
     void setMockMediaDeviceIsEphemeral(WKStringRef, bool);
