@@ -4529,7 +4529,7 @@ NotificationEventEnabled:
 
 NotificationsEnabled:
   type: bool
-  status: developer
+  status: stable
   category: dom
   humanReadableName: "Notifications"
   humanReadableDescription: "Enable the Notifications API"
