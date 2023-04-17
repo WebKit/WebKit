@@ -886,8 +886,7 @@ inline JSString* jsString(VM& vm, const String& s)
     if (!size)
         return vm.smallStrings.emptyString();
     if (size == 1) {
-        UChar c = s.characterAt(0);
-        if (c <= maxSingleCharacterString)
+        if (auto c = s.characterAt(0); c <= maxSingleCharacterString)
             return vm.smallStrings.singleCharacterString(c);
     }
     return JSString::create(vm, *s.impl());
@@ -899,8 +898,7 @@ inline JSString* jsString(VM& vm, String&& s)
     if (!size)
         return vm.smallStrings.emptyString();
     if (size == 1) {
-        UChar c = s.characterAt(0);
-        if (c <= maxSingleCharacterString)
+        if (auto c = s.characterAt(0); c <= maxSingleCharacterString)
             return vm.smallStrings.singleCharacterString(c);
     }
     return JSString::create(vm, s.releaseImpl().releaseNonNull());
@@ -922,8 +920,7 @@ inline JSString* jsString(VM& vm, StringView s)
     if (!size)
         return vm.smallStrings.emptyString();
     if (size == 1) {
-        UChar c = s.characterAt(0);
-        if (c <= maxSingleCharacterString)
+        if (auto c = s.characterAt(0); c <= maxSingleCharacterString)
             return vm.smallStrings.singleCharacterString(c);
     }
     auto impl = s.is8Bit() ? StringImpl::create(s.characters8(), s.length()) : StringImpl::create(s.characters16(), s.length());
@@ -984,9 +981,8 @@ inline JSString* jsSubstringOfResolved(VM& vm, GCDeferralContext* deferralContex
         return s;
     if (length == 1) {
         auto& base = s->valueInternal();
-        UChar character = base.characterAt(offset);
-        if (character <= maxSingleCharacterString)
-            return vm.smallStrings.singleCharacterString(character);
+        if (auto c = base.characterAt(offset); c <= maxSingleCharacterString)
+            return vm.smallStrings.singleCharacterString(c);
     }
     return JSRopeString::createSubstringOfResolved(vm, deferralContext, s, offset, length);
 }
@@ -1009,8 +1005,7 @@ inline JSString* jsSubstring(VM& vm, const String& s, unsigned offset, unsigned 
     if (!length)
         return vm.smallStrings.emptyString();
     if (length == 1) {
-        UChar c = s.characterAt(offset);
-        if (c <= maxSingleCharacterString)
+        if (auto c = s.characterAt(offset); c <= maxSingleCharacterString)
             return vm.smallStrings.singleCharacterString(c);
     }
     auto impl = StringImpl::createSubstringSharingImpl(*s.impl(), offset, length);
@@ -1025,8 +1020,7 @@ inline JSString* jsOwnedString(VM& vm, const String& s)
     if (!size)
         return vm.smallStrings.emptyString();
     if (size == 1) {
-        UChar c = s.characterAt(0);
-        if (c <= maxSingleCharacterString)
+        if (auto c = s.characterAt(0); c <= maxSingleCharacterString)
             return vm.smallStrings.singleCharacterString(c);
     }
     return JSString::createHasOtherOwner(vm, *s.impl());
@@ -1040,8 +1034,7 @@ ALWAYS_INLINE JSString* jsStringWithCache(VM& vm, const String& s)
 
     auto& stringImpl = *s.impl();
     if (length == 1) {
-        auto c = stringImpl[0];
-        if (c <= maxSingleCharacterString)
+        if (auto c = stringImpl[0]; c <= maxSingleCharacterString)
             return vm.smallStrings.singleCharacterString(c);
     }
 
