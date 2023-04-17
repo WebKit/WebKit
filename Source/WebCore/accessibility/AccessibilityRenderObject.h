@@ -57,7 +57,6 @@ public:
     virtual ~AccessibilityRenderObject();
     
     bool isAttachment() const override;
-    bool isSelected() const override;
     bool isOffScreen() const override;
     bool isUnvisited() const override;
     bool isVisited() const override;
@@ -117,7 +116,6 @@ public:
     String stringValue() const override;
     String helpText() const override;
     String textUnderElement(AccessibilityTextUnderElementMode = AccessibilityTextUnderElementMode()) const override;
-    unsigned textLength() const override;
     String selectedText() const override;
     String accessKey() const override;
 
@@ -203,7 +201,6 @@ private:
     bool nodeIsTextControl(const Node*) const;
     Path elementPath() const override;
     
-    bool isTabItemSelected() const;
     LayoutRect checkboxOrRadioRect() const;
     void addRadioButtonGroupMembers(AccessibilityChildrenVector& linkedUIElements) const;
     void addRadioButtonGroupChildren(AXCoreObject*, AccessibilityChildrenVector&) const;

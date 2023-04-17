@@ -207,7 +207,8 @@ public:
 
     bool isChecked() const override { return false; }
     bool isEnabled() const override { return false; }
-    bool isSelected() const override { return false; }
+    bool isSelected() const override;
+    bool isTabItemSelected() const;
     bool isFocused() const override { return false; }
     virtual bool isHovered() const { return false; }
     bool isIndeterminate() const override { return false; }
@@ -388,7 +389,7 @@ public:
     String stringValue() const override { return { }; }
     String textUnderElement(AccessibilityTextUnderElementMode = AccessibilityTextUnderElementMode()) const override { return { }; }
     String text() const override { return { }; }
-    unsigned textLength() const override { return 0; }
+    unsigned textLength() const final;
 #if PLATFORM(COCOA)
     // Returns an array of strings and AXObject wrappers corresponding to the
     // textruns and replacement nodes included in the given range.

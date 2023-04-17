@@ -1541,12 +1541,6 @@ int AccessibilityRenderObject::layoutCount() const
     return downcast<RenderView>(*m_renderer).frameView().layoutContext().layoutCount();
 }
 
-unsigned AccessibilityRenderObject::textLength() const
-{
-    ASSERT(isTextControl());
-    return text().length();
-}
-
 PlainTextRange AccessibilityRenderObject::documentBasedSelectedTextRange() const
 {
     auto selectedVisiblePositionRange = this->selectedVisiblePositionRange();
@@ -1724,67 +1718,6 @@ bool AccessibilityRenderObject::isVisited() const
     return m_renderer->style().isLink() && m_renderer->style().insideLink() == InsideLink::InsideVisited;
 }
 
-bool AccessibilityRenderObject::isSelected() const
-{
-    if (!m_renderer)
-        return false;
-    
-    if (!m_renderer->node())
-        return false;
-    
-    if (equalLettersIgnoringASCIICase(getAttribute(aria_selectedAttr), "true"_s))
-        return true;    
-    
-    if (isTabItem() && isTabItemSelected())
-        return true;
-
-    // Menu items are considered selectable by assistive technologies
-    if (isMenuItem())
-        return isFocused() || parentObjectUnignored()->activeDescendant() == this;
-
-    return false;
-}
-
-bool AccessibilityRenderObject::isTabItemSelected() const
-{
-    if (!isTabItem() || !m_renderer)
-        return false;
-
-    Node* node = m_renderer->node();
-    if (!node || !node->isElementNode())
-        return false;
-
-    // The ARIA spec says a tab item can also be selected if it is aria-labeled by a tabpanel
-    // that has keyboard focus inside of it, or if a tabpanel in its aria-controls list has KB
-    // focus inside of it.
-    auto* focusedElement = static_cast<AccessibilityObject*>(focusedUIElement());
-    if (!focusedElement)
-        return false;
-
-    auto* cache = axObjectCache();
-    if (!cache)
-        return false;
-
-    auto elements = elementsFromAttribute(aria_controlsAttr);
-    for (const auto& element : elements) {
-        auto* tabPanel = cache->getOrCreate(element);
-
-        // A tab item should only control tab panels.
-        if (!tabPanel || tabPanel->roleValue() != AccessibilityRole::TabPanel)
-            continue;
-
-        auto* checkFocusElement = focusedElement;
-        // Check if the focused element is a descendant of the element controlled by the tab item.
-        while (checkFocusElement) {
-            if (tabPanel == checkFocusElement)
-                return true;
-            checkFocusElement = checkFocusElement->parentObject();
-        }
-    }
-
-    return false;
-}
-    
 void AccessibilityRenderObject::setSelectedRows(AccessibilityChildrenVector& selectedRows)
 {
     // Setting selected only makes sense in trees and tables (and tree-tables).

@@ -2762,6 +2762,69 @@ AutoFillButtonType AccessibilityObject::valueAutofillButtonType() const
     return downcast<HTMLInputElement>(*this->node()).autoFillButtonType();
 }
 
+bool AccessibilityObject::isSelected() const
+{
+    if (!renderer() && !node())
+        return false;
+
+    if (equalLettersIgnoringASCIICase(getAttribute(aria_selectedAttr), "true"_s))
+        return true;
+
+    if (isTabItem() && isTabItemSelected())
+        return true;
+
+    // Menu items are considered selectable by assistive technologies
+    if (isMenuItem())
+        return isFocused() || parentObjectUnignored()->activeDescendant() == this;
+
+    return false;
+}
+
+bool AccessibilityObject::isTabItemSelected() const
+{
+    if (!isTabItem() || (!renderer() && !node()))
+        return false;
+
+    WeakPtr node = this->node();
+    if (!node || !node->isElementNode())
+        return false;
+
+    // The ARIA spec says a tab item can also be selected if it is aria-labeled by a tabpanel
+    // that has keyboard focus inside of it, or if a tabpanel in its aria-controls list has KB
+    // focus inside of it.
+    auto* focusedElement = static_cast<AccessibilityObject*>(focusedUIElement());
+    if (!focusedElement)
+        return false;
+
+    auto* cache = axObjectCache();
+    if (!cache)
+        return false;
+
+    auto elements = elementsFromAttribute(aria_controlsAttr);
+    for (const auto& element : elements) {
+        auto* tabPanel = cache->getOrCreate(element);
+
+        // A tab item should only control tab panels.
+        if (!tabPanel || tabPanel->roleValue() != AccessibilityRole::TabPanel)
+            continue;
+
+        auto* checkFocusElement = focusedElement;
+        // Check if the focused element is a descendant of the element controlled by the tab item.
+        while (checkFocusElement) {
+            if (tabPanel == checkFocusElement)
+                return true;
+            checkFocusElement = checkFocusElement->parentObject();
+        }
+    }
+    return false;
+}
+
+unsigned AccessibilityObject::textLength() const
+{
+    ASSERT(isTextControl());
+    return text().length();
+}
+
 std::optional<String> AccessibilityObject::textContent() const
 {
     if (!hasTextContent())
