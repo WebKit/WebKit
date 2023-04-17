@@ -248,6 +248,7 @@ View::View(struct wpe_view_backend* backend, const API::PageConfiguration& baseC
                 WTF::switchOn(generatedEvent,
                     [](TouchGestureController::NoEvent&) { },
                     [](TouchGestureController::ClickEvent&) { },
+                    [](TouchGestureController::ContextMenuEvent&) { },
                     [&](TouchGestureController::AxisEvent& axisEvent)
                     {
 #if WPE_CHECK_VERSION(1, 5, 0)

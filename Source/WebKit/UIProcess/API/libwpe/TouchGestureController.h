@@ -41,12 +41,17 @@ public:
     enum class GesturedEvent {
         None,
         Click,
+        ContextMenu,
         Axis,
     };
 
     struct NoEvent { };
 
     struct ClickEvent {
+        struct wpe_input_pointer_event event;
+    };
+
+    struct ContextMenuEvent {
         struct wpe_input_pointer_event event;
     };
 
@@ -59,7 +64,7 @@ public:
         WebWheelEvent::Phase phase;
     };
 
-    using EventVariant = std::variant<NoEvent, ClickEvent, AxisEvent>;
+    using EventVariant = std::variant<NoEvent, ClickEvent, ContextMenuEvent, AxisEvent>;
 
     GesturedEvent gesturedEvent() const { return m_gesturedEvent; }
     EventVariant handleEvent(const struct wpe_input_touch_event_raw*);

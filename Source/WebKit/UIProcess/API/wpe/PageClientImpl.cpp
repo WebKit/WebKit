@@ -234,6 +234,9 @@ void PageClientImpl::doneWithTouchEvent(const NativeWebTouchEvent& touchEvent, b
             event->modifiers &= ~wpe_input_pointer_modifier_button1;
             page.handleMouseEvent(NativeWebMouseEvent(event, page.deviceScaleFactor()));
         },
+        [&](TouchGestureController::ContextMenuEvent&) {
+            // FIXME: Generate contextmenuevent without accidentally generating mouseup/mousedown events
+        },
         [](TouchGestureController::AxisEvent&) { });
 }
 #endif
