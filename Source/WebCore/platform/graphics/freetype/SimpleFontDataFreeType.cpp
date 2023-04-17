@@ -96,10 +96,11 @@ static std::optional<unsigned> fontUnitsPerEm(FT_Face freeTypeFace)
     return std::nullopt;
 }
 
-static float heightOfCharacter(cairo_scaled_font_t* scaledFont, const char character, FontOrientation orientation)
+static float heightOfCharacter(cairo_scaled_font_t* scaledFont, const char* character, FontOrientation orientation)
 {
+    ASSERT(strlen(character) == 1);
     cairo_text_extents_t textExtents;
-    cairo_scaled_font_text_extents(scaledFont, &character, &textExtents);
+    cairo_scaled_font_text_extents(scaledFont, character, &textExtents);
     return narrowPrecisionToFloat(orientation == FontOrientation::Horizontal ? textExtents.height : textExtents.width);
 }
 
@@ -158,9 +159,9 @@ void Font::platformInit()
     // We approximate capHeight and xHeight from cairo_text_extents_t unless
     // FreeType returns them above. This approach is less precise than using FreeType.
     if (!capHeight.has_value() || !capHeight.value())
-        capHeight = heightOfCharacter(m_platformData.scaledFont(), 'T', platformData().orientation());
+        capHeight = heightOfCharacter(m_platformData.scaledFont(), "T", platformData().orientation());
     if (!xHeight.has_value() || !xHeight.value())
-        xHeight = heightOfCharacter(m_platformData.scaledFont(), 'x', platformData().orientation());
+        xHeight = heightOfCharacter(m_platformData.scaledFont(), "x", platformData().orientation());
 
     m_fontMetrics.setAscent(ascent);
     m_fontMetrics.setDescent(descent);
