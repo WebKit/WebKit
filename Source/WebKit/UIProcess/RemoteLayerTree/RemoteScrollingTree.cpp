@@ -71,6 +71,18 @@ bool RemoteScrollingTree::scrollingTreeNodeRequestsScroll(ScrollingNodeID nodeID
     return m_scrollingCoordinatorProxy.scrollingTreeNodeRequestsScroll(nodeID, request);
 }
 
+void RemoteScrollingTree::scrollingTreeNodeDidBeginScrollSnapping(ScrollingNodeID nodeID)
+{
+    if (m_scrollingCoordinatorProxy)
+        m_scrollingCoordinatorProxy->scrollingTreeNodeDidBeginScrollSnapping(nodeID);
+}
+
+void RemoteScrollingTree::scrollingTreeNodeDidEndScrollSnapping(ScrollingNodeID nodeID)
+{
+    if (m_scrollingCoordinatorProxy)
+        m_scrollingCoordinatorProxy->scrollingTreeNodeDidEndScrollSnapping(nodeID);
+}
+
 Ref<ScrollingTreeNode> RemoteScrollingTree::createScrollingTreeNode(ScrollingNodeType nodeType, ScrollingNodeID nodeID)
 {
     switch (nodeType) {
