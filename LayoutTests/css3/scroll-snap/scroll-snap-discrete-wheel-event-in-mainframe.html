@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+:root {
+    scroll-snap-type: y mandatory;
+    overflow-x: hidden;
+}
+
+body, html {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+}
+
+.snap {
+    width: 100%;
+    height: 100%;
+    scroll-snap-align: start;
+}
+
+#extra-tall {
+    height: 150%;
+}
+
+.output {
+    color: white;
+    position: fixed;
+    top: 0;
+}
+</style>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    description(`This test verifies that discrete wheel events trigger scroll snapping in the mainframe.
+        To manually run the test, scroll using a physical mouse wheel and verify that a single scroll
+        tick animates to the next snap point, and a second scroll tick should not trigger snapping (due
+        to the content being too tall)`);
+
+    if (!window.testRunner)
+        return;
+
+    await UIHelper.statelessMouseWheelScrollAt(100, 100, 0, -1);
+    await shouldBecomeEqual("pageYOffset", "600");
+    await UIHelper.statelessMouseWheelScrollAt(200, 200, 0, -1);
+    await shouldBecomeEqual("pageYOffset > 600", "true");
+    shouldBeTrue("pageYOffset < 1500");
+
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+    <div class="snap" id="first-container" style="background: #80475E"></div>
+    <div class="snap" id="extra-tall" style="background: #CC5A71"></div>
+    <div class="snap" style="background: #32228B"></div>
+    <div class="output">
+        <pre id="description"></pre>
+        <pre id="console"></pre>
+    </div>
+</body>
+</html>
