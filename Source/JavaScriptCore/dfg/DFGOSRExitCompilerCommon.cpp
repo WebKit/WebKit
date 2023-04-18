@@ -217,6 +217,7 @@ static CodePtr<JSEntryPtrTag> callerReturnPC(CodeBlock* baselineCodeBlockForCall
 
         case InlineCallFrame::GetterCall:
         case InlineCallFrame::SetterCall:
+        case InlineCallFrame::ProxyObjectHasCall:
         case InlineCallFrame::ProxyObjectLoadCall:
         case InlineCallFrame::ProxyObjectStoreCall: {
             StructureStubInfo* stubInfo = baselineCodeBlockForCaller->findStubInfo(CodeOrigin(callBytecodeIndex));

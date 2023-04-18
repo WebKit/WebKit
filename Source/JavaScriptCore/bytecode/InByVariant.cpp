@@ -31,16 +31,36 @@
 
 namespace JSC {
 
-InByVariant::InByVariant(CacheableIdentifier identifier, const StructureSet& structureSet, PropertyOffset offset, const ObjectPropertyConditionSet& conditionSet)
+InByVariant::InByVariant(CacheableIdentifier identifier, const StructureSet& structureSet, PropertyOffset offset, const ObjectPropertyConditionSet& conditionSet, std::unique_ptr<CallLinkStatus> callLinkStatus)
     : m_structureSet(structureSet)
     , m_conditionSet(conditionSet)
     , m_offset(offset)
+    , m_callLinkStatus(WTFMove(callLinkStatus))
     , m_identifier(WTFMove(identifier))
 {
     if (!structureSet.size()) {
         ASSERT(offset == invalidOffset);
         ASSERT(conditionSet.isEmpty());
     }
+}
+
+InByVariant::InByVariant(const InByVariant& other)
+    : InByVariant(other.m_identifier)
+{
+    *this = other;
+}
+
+InByVariant& InByVariant::operator=(const InByVariant& other)
+{
+    m_structureSet = other.m_structureSet;
+    m_conditionSet = other.m_conditionSet;
+    m_offset = other.m_offset;
+    m_identifier = other.m_identifier;
+    if (other.m_callLinkStatus)
+        m_callLinkStatus = makeUnique<CallLinkStatus>(*other.m_callLinkStatus);
+    else
+        m_callLinkStatus = nullptr;
+    return *this;
 }
 
 bool InByVariant::attemptToMerge(const InByVariant& other)

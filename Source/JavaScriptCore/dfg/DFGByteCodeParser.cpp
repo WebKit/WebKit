@@ -266,6 +266,7 @@ private:
         VirtualRegister destination, Node* base, CacheableIdentifier, unsigned identifierNumber, DeleteByStatus, ECMAMode);
 
     bool handleInByAsMatchStructure(VirtualRegister destination, Node* base, InByStatus);
+    bool handleInByForProxyObject(VirtualRegister destination, Node* base, InByStatus, BytecodeIndex osrExitIndex);
     void handleInById(VirtualRegister destination, Node* base, CacheableIdentifier, InByStatus);
     void handleGetScope(VirtualRegister destination);
     void handleCheckTraps();
@@ -1802,6 +1803,7 @@ void ByteCodeParser::inlineCall(Node* callTargetNode, Operand result, CallVarian
     switch (kind) {
     case InlineCallFrame::GetterCall:
     case InlineCallFrame::SetterCall:
+    case InlineCallFrame::ProxyObjectHasCall:
     case InlineCallFrame::ProxyObjectLoadCall:
     case InlineCallFrame::ProxyObjectStoreCall:
     case InlineCallFrame::BoundFunctionCall:
@@ -5372,9 +5374,71 @@ bool ByteCodeParser::handleInByAsMatchStructure(VirtualRegister destination, Nod
     return allOK;
 }
 
+bool ByteCodeParser::handleInByForProxyObject(VirtualRegister destination, Node* base, InByStatus status, BytecodeIndex osrExitIndex)
+{
+    if (!status.isProxyObject())
+        return false;
+
+    if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType))
+        return false;
+
+    JSGlobalObject* globalObject = m_inlineStackTop->m_codeBlock->globalObject();
+    auto* function = globalObject->performProxyObjectHasFunctionConcurrently();
+    if (UNLIKELY(!function))
+        return false;
+
+    addToGraph(Check, Edge(base, ProxyObjectUse));
+    Node* functionNode = weakJSConstant(function);
+
+    const InByVariant& variant = status.variants()[0];
+    Node* propertyNameNode = weakJSConstant(variant.identifier().cell());
+
+    addToGraph(FilterInByStatus, OpInfo(m_graph.m_plan.recordedStatuses().addInByStatus(currentCodeOrigin(), status)), base);
+
+    // Make a call. We don't try to get fancy with using the smallest operand number because
+    // the stack layout phase should compress the stack anyway.
+
+    unsigned numberOfParameters = 0;
+    numberOfParameters++; // |this|
+    numberOfParameters++; // |propertyName|
+    numberOfParameters++; // True return PC.
+
+    // Start with a register offset that corresponds to the last in-use register.
+    int registerOffset = virtualRegisterForLocal(m_inlineStackTop->m_profiledBlock->numCalleeLocals() - 1).offset();
+    registerOffset -= numberOfParameters;
+    registerOffset -= CallFrame::headerSizeInRegisters;
+
+    // Get the alignment right.
+    registerOffset = -WTF::roundUpToMultipleOf(stackAlignmentRegisters(), -registerOffset);
+
+    ensureLocals(m_inlineStackTop->remapOperand(VirtualRegister(registerOffset)).toLocal());
+
+    // Issue SetLocals. This has two effects:
+    // 1) That's how handleCall() sees the arguments.
+    // 2) If we inline then this ensures that the arguments are flushed so that if you use
+    //    the dreaded arguments object on the getter, the right things happen. Well, sort of -
+    //    since we only really care about 'this' in this case. But we're not going to take that
+    //    shortcut.
+    set(virtualRegisterForArgumentIncludingThis(0, registerOffset), base, ImmediateNakedSet);
+    set(virtualRegisterForArgumentIncludingThis(1, registerOffset), propertyNameNode, ImmediateNakedSet);
+
+    // We've set some locals, but they are not user-visible. It's still OK to exit from here.
+    m_exitOK = true;
+    addToGraph(ExitOK);
+
+    handleCall(
+        destination, Call, InlineCallFrame::ProxyObjectHasCall, osrExitIndex,
+        functionNode, numberOfParameters - 1, registerOffset, *variant.callLinkStatus(), SpecBoolean);
+
+    return true;
+}
+
 void ByteCodeParser::handleInById(VirtualRegister destination, Node* base, CacheableIdentifier identifier, InByStatus status)
 {
     if (handleInByAsMatchStructure(destination, base, status))
+        return;
+
+    if (handleInByForProxyObject(destination, base, status, nextOpcodeIndex()))
         return;
 
     set(destination, addToGraph(InById, OpInfo(identifier), base));

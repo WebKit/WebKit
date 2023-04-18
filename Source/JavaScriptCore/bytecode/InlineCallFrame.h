@@ -53,6 +53,7 @@ struct InlineCallFrame {
         // slot.
         GetterCall,
         SetterCall,
+        ProxyObjectHasCall,
         ProxyObjectLoadCall,
         ProxyObjectStoreCall,
         BoundFunctionCall,
@@ -67,6 +68,7 @@ struct InlineCallFrame {
         case CallVarargs:
         case GetterCall:
         case SetterCall:
+        case ProxyObjectHasCall:
         case ProxyObjectLoadCall:
         case ProxyObjectStoreCall:
         case BoundFunctionCall:
@@ -117,6 +119,7 @@ struct InlineCallFrame {
         case TailCallVarargs:
         case GetterCall:
         case SetterCall:
+        case ProxyObjectHasCall:
         case ProxyObjectLoadCall:
         case ProxyObjectStoreCall:
         case BoundFunctionCall:
