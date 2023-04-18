@@ -48,8 +48,9 @@
 #include <wpe/wpe.h>
 #endif
 
-#if PLATFORM(GTK) && USE(EGL)
-#include <WebCore/PlatformDisplayHeadless.h>
+#if PLATFORM(GTK) && USE(GBM)
+#include <WebCore/PlatformDisplayGBM.h>
+#include <WebCore/PlatformDisplaySurfaceless.h>
 #endif
 
 #if PLATFORM(GTK) && !USE(GTK4)
@@ -123,9 +124,13 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
     }
 #endif
 
-#if PLATFORM(GTK) && USE(EGL)
-    if (parameters.useDMABufSurfaceForCompositing)
-        m_displayForCompositing = WebCore::PlatformDisplayHeadless::create();
+#if PLATFORM(GTK) && USE(GBM)
+    if (parameters.useDMABufSurfaceForCompositing) {
+        if (!parameters.renderDeviceFile.isEmpty())
+            m_displayForCompositing = WebCore::PlatformDisplayGBM::create(parameters.renderDeviceFile);
+        else
+            m_displayForCompositing = WebCore::PlatformDisplaySurfaceless::create();
+    }
 #endif
 
 #if PLATFORM(WAYLAND)

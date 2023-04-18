@@ -33,7 +33,6 @@
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
 #include <WebCore/DMABufFormat.h>
-#include <WebCore/GBMDevice.h>
 #include <WebCore/GLContext.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/PlatformDisplay.h>
@@ -219,7 +218,12 @@ void AcceleratedBackingStoreDMABuf::Texture::paint(GtkWidget* widget, cairo_t* c
 AcceleratedBackingStoreDMABuf::Surface::Surface(const UnixFileDescriptor& backFD, const UnixFileDescriptor& frontFD, const WebCore::IntSize& size, uint32_t format, uint32_t offset, uint32_t stride, float deviceScaleFactor)
     : RenderSource(size, deviceScaleFactor)
 {
-    auto* device = WebCore::GBMDevice::singleton().device();
+    auto* device = WebCore::PlatformDisplay::sharedDisplay().gbmDevice();
+    if (!device) {
+        WTFLogAlways("Failed to get GBM device");
+        return;
+    }
+
     struct gbm_import_fd_data fdData = { backFD.value(), static_cast<uint32_t>(m_size.width()), static_cast<uint32_t>(m_size.height()), stride, format };
     m_backBuffer = gbm_bo_import(device, GBM_BO_IMPORT_FD, &fdData, GBM_BO_USE_RENDERING);
     if (!m_backBuffer) {

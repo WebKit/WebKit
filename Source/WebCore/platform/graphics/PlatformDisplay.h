@@ -36,6 +36,11 @@ typedef void *EGLContext;
 typedef void *EGLDisplay;
 typedef void *EGLImage;
 typedef unsigned EGLenum;
+#if USE(GBM)
+#include <wtf/unix/UnixFileDescriptor.h>
+typedef void *EGLDeviceEXT;
+struct gbm_device;
+#endif
 #endif
 
 #if PLATFORM(GTK)
@@ -80,7 +85,10 @@ public:
         WPE,
 #endif
 #if USE(EGL)
-        Headless,
+        Surfaceless,
+#if USE(GBM)
+        GBM,
+#endif
 #endif
     };
 
@@ -105,6 +113,11 @@ public:
 
     EGLImage createEGLImage(EGLContext, EGLenum target, EGLClientBuffer, const Vector<EGLAttrib>&) const;
     bool destroyEGLImage(EGLImage) const;
+#if USE(GBM)
+    const String& drmDeviceFile();
+    const String& drmRenderNodeFile();
+    struct gbm_device* gbmDevice();
+#endif
 #endif
 
 #if ENABLE(VIDEO) && USE(GSTREAMER_GL)
@@ -138,10 +151,16 @@ protected:
     virtual void initializeEGLDisplay();
 
     EGLDisplay m_eglDisplay;
-#endif
-
-#if USE(EGL)
     std::unique_ptr<GLContext> m_sharingGLContext;
+
+#if USE(GBM)
+    std::optional<String> m_drmDeviceFile;
+    std::optional<String> m_drmRenderNodeFile;
+    struct {
+        WTF::UnixFileDescriptor deviceFD;
+        std::optional<struct gbm_device*> device;
+    } m_gbm;
+#endif
 #endif
 
 #if USE(LCMS)
@@ -159,6 +178,9 @@ private:
 
 #if USE(EGL)
     void terminateEGLDisplay();
+#if USE(GBM)
+    EGLDeviceEXT eglDevice();
+#endif
 
     bool m_eglDisplayInitialized { false };
     int m_eglMajorVersion { 0 };

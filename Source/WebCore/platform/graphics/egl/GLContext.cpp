@@ -146,7 +146,7 @@ bool GLContext::getEGLConfig(PlatformDisplay& platformDisplay, EGLConfig* config
 
     switch (surfaceType) {
     case GLContext::Surfaceless:
-        if (platformDisplay.type() == PlatformDisplay::Type::Headless)
+        if (platformDisplay.type() == PlatformDisplay::Type::Surfaceless)
             attributeList[13] = EGL_PBUFFER_BIT;
         else
             attributeList[13] = EGL_WINDOW_BIT;
@@ -270,7 +270,10 @@ std::unique_ptr<GLContext> GLContext::createWindowContext(GLNativeWindowType win
         surface = createWindowSurfaceWPE(display, config, window);
         break;
 #endif // USE(WPE_RENDERER)
-    case PlatformDisplay::Type::Headless:
+#if USE(GBM)
+    case PlatformDisplay::Type::GBM:
+#endif
+    case PlatformDisplay::Type::Surfaceless:
         RELEASE_ASSERT_NOT_REACHED();
     }
 
@@ -359,7 +362,7 @@ std::unique_ptr<GLContext> GLContext::create(GLNativeWindowType window, Platform
     }
 
     EGLContext eglSharingContext = platformDisplay.sharingGLContext() ? static_cast<GLContext*>(platformDisplay.sharingGLContext())->m_context : EGL_NO_CONTEXT;
-    if (platformDisplay.type() == PlatformDisplay::Type::Headless) {
+    if (platformDisplay.type() == PlatformDisplay::Type::Surfaceless) {
         auto context = createSurfacelessContext(platformDisplay, eglSharingContext);
         if (!context)
             WTFLogAlways("Could not create EGL surfaceless context: %s.", lastErrorString());
@@ -386,7 +389,10 @@ std::unique_ptr<GLContext> GLContext::create(GLNativeWindowType window, Platform
             context = createWPEContext(platformDisplay, eglSharingContext);
             break;
 #endif
-        case PlatformDisplay::Type::Headless:
+#if USE(GBM)
+        case PlatformDisplay::Type::GBM:
+#endif
+        case PlatformDisplay::Type::Surfaceless:
             RELEASE_ASSERT_NOT_REACHED();
         }
     }
@@ -443,7 +449,10 @@ std::unique_ptr<GLContext> GLContext::createSharing(PlatformDisplay& platformDis
             context = createWPEContext(platformDisplay);
             break;
 #endif
-        case PlatformDisplay::Type::Headless:
+#if USE(GBM)
+        case PlatformDisplay::Type::GBM:
+#endif
+        case PlatformDisplay::Type::Surfaceless:
             break;
         }
     }

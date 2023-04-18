@@ -188,6 +188,7 @@ void WebProcessCreationParameters::encode(IPC::Encoder& encoder) const
 
 #if PLATFORM(GTK)
     encoder << useDMABufSurfaceForCompositing;
+    encoder << renderDeviceFile;
     encoder << useSystemAppearanceForScrollbars;
     encoder << gtkSettings;
 #endif
@@ -526,6 +527,11 @@ bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreat
     if (!useDMABufSurfaceForCompositing)
         return false;
     parameters.useDMABufSurfaceForCompositing = WTFMove(*useDMABufSurfaceForCompositing);
+    std::optional<String> renderDeviceFile;
+    decoder >> renderDeviceFile;
+    if (!renderDeviceFile)
+        return false;
+    parameters.renderDeviceFile = WTFMove(*renderDeviceFile);
     std::optional<bool> useSystemAppearanceForScrollbars;
     decoder >> useSystemAppearanceForScrollbars;
     if (!useSystemAppearanceForScrollbars)

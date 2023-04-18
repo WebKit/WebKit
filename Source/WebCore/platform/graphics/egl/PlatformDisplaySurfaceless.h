@@ -30,15 +30,15 @@
 
 namespace WebCore {
 
-class PlatformDisplayHeadless final : public PlatformDisplay {
+class PlatformDisplaySurfaceless final : public PlatformDisplay {
 public:
-    static std::unique_ptr<PlatformDisplayHeadless> create();
+    static std::unique_ptr<PlatformDisplaySurfaceless> create();
 
-    virtual ~PlatformDisplayHeadless();
+    virtual ~PlatformDisplaySurfaceless();
 private:
-    PlatformDisplayHeadless();
+    PlatformDisplaySurfaceless();
 
-    Type type() const override { return PlatformDisplay::Type::Headless; }
+    Type type() const override { return PlatformDisplay::Type::Surfaceless; }
 };
 
 } // namespace WebCore

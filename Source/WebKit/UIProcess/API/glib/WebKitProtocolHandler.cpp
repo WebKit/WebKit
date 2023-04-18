@@ -58,9 +58,6 @@
 
 #if USE(GBM)
 #include "AcceleratedBackingStoreDMABuf.h"
-#ifndef EGL_DRM_RENDER_NODE_FILE_EXT
-#define EGL_DRM_RENDER_NODE_FILE_EXT 0x3377
-#endif
 #endif
 
 #if PLATFORM(X11)
@@ -281,22 +278,13 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request)
     addTableRow(hardwareAccelerationObject, "GL_VERSION"_s, makeString(reinterpret_cast<const char*>(glGetString(GL_VERSION))));
     addTableRow(hardwareAccelerationObject, "GL_SHADING_LANGUAGE_VERSION"_s, makeString(reinterpret_cast<const char*>(glGetString(GL_SHADING_LANGUAGE_VERSION))));
 
-    auto eglDisplay = PlatformDisplay::sharedDisplay().eglDisplay();
 #if USE(GBM)
-    if (GLContext::isExtensionSupported(eglQueryString(nullptr, EGL_EXTENSIONS), "EGL_EXT_device_query")) {
-        EGLDeviceEXT eglDevice;
-        if (eglQueryDisplayAttribEXT(eglDisplay, EGL_DEVICE_EXT, reinterpret_cast<EGLAttrib*>(&eglDevice))) {
-            const char* deviceExtensions = eglQueryDeviceStringEXT(eglDevice, EGL_EXTENSIONS);
-            if (GLContext::isExtensionSupported(deviceExtensions, "EGL_EXT_device_drm")) {
-                if (const char* deviceFile = eglQueryDeviceStringEXT(eglDevice, EGL_DRM_DEVICE_FILE_EXT))
-                    addTableRow(hardwareAccelerationObject, "DRM Device"_s, makeString(deviceFile));
-            }
-            if (GLContext::isExtensionSupported(deviceExtensions, "EGL_EXT_device_drm_render_node")) {
-                if (const char* renderNode = eglQueryDeviceStringEXT(eglDevice, EGL_DRM_RENDER_NODE_FILE_EXT))
-                    addTableRow(hardwareAccelerationObject, "DRM Render Node"_s, makeString(renderNode));
-            }
-        }
-    }
+    auto deviceFile = PlatformDisplay::sharedDisplay().drmDeviceFile();
+    if (!deviceFile.isEmpty())
+        addTableRow(hardwareAccelerationObject, "DRM Device"_s, deviceFile);
+    auto renderNode = PlatformDisplay::sharedDisplay().drmRenderNodeFile();
+    if (!renderNode.isEmpty())
+        addTableRow(hardwareAccelerationObject, "DRM Render Node"_s, renderNode);
 #endif
 
 #if USE(OPENGL_ES)
@@ -313,6 +301,7 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request)
     addTableRow(hardwareAccelerationObject, "GL_EXTENSIONS"_s, extensionsBuilder.toString());
 #endif
 
+    auto eglDisplay = PlatformDisplay::sharedDisplay().eglDisplay();
     addTableRow(hardwareAccelerationObject, "EGL_VERSION"_s, makeString(eglQueryString(eglDisplay, EGL_VERSION)));
     addTableRow(hardwareAccelerationObject, "EGL_VENDOR"_s, makeString(eglQueryString(eglDisplay, EGL_VENDOR)));
     addTableRow(hardwareAccelerationObject, "EGL_EXTENSIONS"_s, makeString(eglQueryString(nullptr, EGL_EXTENSIONS), ' ', eglQueryString(eglDisplay, EGL_EXTENSIONS)));

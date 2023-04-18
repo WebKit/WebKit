@@ -32,7 +32,6 @@
 #include "WebPage.h"
 #include "WebProcess.h"
 #include <WebCore/DMABufFormat.h>
-#include <WebCore/GBMDevice.h>
 #include <WebCore/PlatformDisplay.h>
 #include <array>
 #include <epoxy/egl.h>
@@ -48,7 +47,7 @@ std::unique_ptr<AcceleratedSurfaceDMABuf> AcceleratedSurfaceDMABuf::create(WebPa
 
 AcceleratedSurfaceDMABuf::AcceleratedSurfaceDMABuf(WebPage& webPage, Client& client)
     : AcceleratedSurface(webPage, client)
-    , m_isSoftwareRast(!WebCore::PlatformDisplay::sharedDisplayForCompositing().eglExtensions().EXT_image_dma_buf_import)
+    , m_isSoftwareRast(WebCore::PlatformDisplay::sharedDisplayForCompositing().type() == WebCore::PlatformDisplay::Type::Surfaceless)
 {
 }
 
@@ -101,7 +100,12 @@ std::unique_ptr<AcceleratedSurfaceDMABuf::RenderTarget> AcceleratedSurfaceDMABuf
 
     auto& display = WebCore::PlatformDisplay::sharedDisplayForCompositing();
     auto createImage = [&]() -> std::pair<UnixFileDescriptor, EGLImage> {
-        auto* bo = gbm_bo_create(WebCore::GBMDevice::singleton().device(), size.width(), size.height(), uint32_t(WebCore::DMABufFormat::FourCC::ARGB8888), 0);
+        auto* device = display.gbmDevice();
+        if (!device) {
+            WTFLogAlways("Failed to create GBM buffer of size %dx%d: no GBM device found", size.width(), size.height());
+            return { };
+        }
+        auto* bo = gbm_bo_create(device, size.width(), size.height(), uint32_t(WebCore::DMABufFormat::FourCC::ARGB8888), 0);
         if (!bo) {
             WTFLogAlways("Failed to create GBM buffer of size %dx%d: %s", size.width(), size.height(), safeStrerror(errno).data());
             return { };

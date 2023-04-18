@@ -47,7 +47,9 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     platform/glib/ApplicationGLib.h
 
-    platform/graphics/egl/PlatformDisplayHeadless.h
+    platform/graphics/egl/PlatformDisplaySurfaceless.h
+
+    platform/graphics/gbm/PlatformDisplayGBM.h
 
     platform/graphics/gtk/GdkCairoUtilities.h
 

@@ -47,7 +47,8 @@ using namespace WebCore;
 std::unique_ptr<AcceleratedSurface> AcceleratedSurface::create(WebPage& webPage, Client& client)
 {
 #if USE(GBM)
-    if (PlatformDisplay::sharedDisplayForCompositing().type() == PlatformDisplay::Type::Headless)
+    if (PlatformDisplay::sharedDisplayForCompositing().type() == PlatformDisplay::Type::GBM
+        || PlatformDisplay::sharedDisplayForCompositing().type() == PlatformDisplay::Type::Surfaceless)
         return AcceleratedSurfaceDMABuf::create(webPage, client);
 #endif
 #if PLATFORM(WAYLAND)

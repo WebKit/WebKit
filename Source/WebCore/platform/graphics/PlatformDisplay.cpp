@@ -80,6 +80,18 @@
 #include <wtf/NeverDestroyed.h>
 #endif
 
+#if USE(EGL) && USE(GBM)
+#include <fcntl.h>
+#include <gbm.h>
+#include <unistd.h>
+#include <wtf/SafeStrerror.h>
+#include <wtf/StdLibExtras.h>
+#include <xf86drm.h>
+#ifndef EGL_DRM_RENDER_NODE_FILE_EXT
+#define EGL_DRM_RENDER_NODE_FILE_EXT 0x3377
+#endif
+#endif
+
 #if USE(ATSPI)
 #include <wtf/glib/GUniquePtr.h>
 #endif
@@ -221,6 +233,10 @@ PlatformDisplay::~PlatformDisplay()
 #if PLATFORM(GTK)
     if (m_sharedDisplay)
         g_signal_handlers_disconnect_by_data(m_sharedDisplay.get(), this);
+#endif
+#if USE(EGL) && USE(GBM)
+    if (m_gbm.device.has_value() && m_gbm.device.value())
+        gbm_device_destroy(m_gbm.device.value());
 #endif
     if (s_sharedDisplayForCompositing == this)
         s_sharedDisplayForCompositing = nullptr;
@@ -401,6 +417,107 @@ bool PlatformDisplay::destroyEGLImage(EGLImage image) const
     return false;
 #endif
 }
+
+#if USE(GBM)
+EGLDeviceEXT PlatformDisplay::eglDevice()
+{
+    if (!GLContext::isExtensionSupported(eglQueryString(nullptr, EGL_EXTENSIONS), "EGL_EXT_device_query"))
+        return nullptr;
+
+    if (!m_eglDisplayInitialized)
+        const_cast<PlatformDisplay*>(this)->initializeEGLDisplay();
+
+    EGLDeviceEXT eglDevice;
+    if (eglQueryDisplayAttribEXT(m_eglDisplay, EGL_DEVICE_EXT, reinterpret_cast<EGLAttrib*>(&eglDevice)))
+        return eglDevice;
+
+    return nullptr;
+}
+
+const String& PlatformDisplay::drmDeviceFile()
+{
+    if (!m_drmDeviceFile.has_value()) {
+        if (EGLDeviceEXT device = eglDevice()) {
+            if (GLContext::isExtensionSupported(eglQueryDeviceStringEXT(device, EGL_EXTENSIONS), "EGL_EXT_device_drm")) {
+                m_drmDeviceFile = String::fromUTF8(eglQueryDeviceStringEXT(device, EGL_DRM_DEVICE_FILE_EXT));
+                return m_drmDeviceFile.value();
+            }
+        }
+        m_drmDeviceFile = String();
+    }
+
+    return m_drmDeviceFile.value();
+}
+
+static String drmRenderNodeFromPrimaryDeviceFile(const String& primaryDeviceFile)
+{
+    if (primaryDeviceFile.isEmpty())
+        return { };
+
+    drmDevicePtr devices[64];
+    memset(devices, 0, sizeof(devices));
+
+    int numDevices = drmGetDevices2(0, devices, std::size(devices));
+    if (numDevices <= 0)
+        return { };
+
+    String renderNodeDeviceFile;
+    for (int i = 0; i < numDevices; ++i) {
+        drmDevice* device = devices[i];
+        if (!(device->available_nodes & (1 << DRM_NODE_PRIMARY | 1 << DRM_NODE_RENDER)))
+            continue;
+
+        if (String::fromUTF8(device->nodes[DRM_NODE_PRIMARY]) == primaryDeviceFile) {
+            renderNodeDeviceFile = String::fromUTF8(device->nodes[DRM_NODE_RENDER]);
+            break;
+        }
+    }
+    drmFreeDevices(devices, numDevices);
+
+    return renderNodeDeviceFile;
+}
+
+const String& PlatformDisplay::drmRenderNodeFile()
+{
+    if (!m_drmRenderNodeFile.has_value()) {
+        if (EGLDeviceEXT device = eglDevice()) {
+            if (GLContext::isExtensionSupported(eglQueryDeviceStringEXT(device, EGL_EXTENSIONS), "EGL_EXT_device_drm_render_node")) {
+                m_drmRenderNodeFile = String::fromUTF8(eglQueryDeviceStringEXT(device, EGL_DRM_RENDER_NODE_FILE_EXT));
+                return m_drmRenderNodeFile.value();
+            }
+
+            // If EGL_EXT_device_drm_render_node is not present, try to get the render node using DRM API.
+            m_drmRenderNodeFile = drmRenderNodeFromPrimaryDeviceFile(drmDeviceFile());
+        } else
+            m_drmRenderNodeFile = String();
+    }
+
+    return m_drmRenderNodeFile.value();
+}
+
+struct gbm_device* PlatformDisplay::gbmDevice()
+{
+    if (!m_gbm.device.has_value()) {
+        const char* envDeviceFile = getenv("WEBKIT_WEB_RENDER_DEVICE_FILE");
+        String deviceFile = envDeviceFile && *envDeviceFile ? String::fromUTF8(envDeviceFile) : drmRenderNodeFile();
+        if (!deviceFile.isEmpty()) {
+            m_gbm.deviceFD = UnixFileDescriptor { open(deviceFile.utf8().data(), O_RDWR | O_CLOEXEC), UnixFileDescriptor::Adopt };
+            if (m_gbm.deviceFD) {
+                m_gbm.device = gbm_create_device(m_gbm.deviceFD.value());
+                if (m_gbm.device.value())
+                    return m_gbm.device.value();
+
+                WTFLogAlways("Failed to create GBM device for render device: %s: %s", deviceFile.utf8().data(), safeStrerror(errno).data());
+                m_gbm.deviceFD = { };
+            } else
+                WTFLogAlways("Failed to open DRM render device %s: %s", deviceFile.utf8().data(), safeStrerror(errno).data());
+        }
+        m_gbm.device = nullptr;
+    }
+
+    return m_gbm.device.value();
+}
+#endif
 
 #endif // USE(EGL)
 
