@@ -155,11 +155,12 @@ class GitHub(object):
         return cls._cache[prefix]
 
     @classmethod
+    @defer.inlineCallbacks
     def email_for_owners(cls, owners):
         if not owners:
-            return None, 'No owners defined, so email cannot be extracted'
-        contributors, errors = Contributors.load()
-        return contributors.get(owners[0].lower(), {}).get('email'), errors
+            return defer.returnValue((None, 'No owners defined, so email cannot be extracted'))
+        contributors, errors = yield Contributors.load()
+        return defer.returnValue((contributors.get(owners[0].lower(), {}).get('email'), errors))
 
 
 class GitHubMixin(object):
@@ -529,16 +530,20 @@ class Contributors(object):
             return {}, 'Failed to load {}\n'.format(contributors_path)
 
     @classmethod
+    @defer.inlineCallbacks
     def load_from_github(cls):
         try:
-            response = requests.get(cls.url, timeout=60)
+            response = yield TwistedAdditions.request(cls.url, type=b'GET', timeout=60)
             if response.status_code != 200:
-                return {}, 'Failed to access {} with status code: {}\n'.format(cls.url, response.status_code)
-            return response.json(), None
+                return defer.returnValue((
+                    {}, 'Failed to access {} with status code: {}\n'.format(cls.url, response.status_code)
+                ))
+            return defer.returnValue((response.json(), None))
         except Exception as e:
-            return {}, 'Failed to access {url}\n'.format(url=cls.url)
+            return defer.returnValue(({}, 'Failed to access {url}\n'.format(url=cls.url)))
 
     @classmethod
+    @defer.inlineCallbacks
     def load(cls, use_network=None):
         errors = []
 
@@ -548,7 +553,7 @@ class Contributors(object):
 
         if use_network:
             cls.contributors = {}
-            contributors_json, error = cls.load_from_github()
+            contributors_json, error = yield cls.load_from_github()
             if error:
                 errors.append(error)
             else:
@@ -560,7 +565,7 @@ class Contributors(object):
         elif cls.contributors:
             return cls.contributors, errors
         else:
-            contributors_json, error = cls.load_from_github()
+            contributors_json, error = yield cls.load_from_github()
             if error:
                 errors.append(error)
             else:
@@ -593,7 +598,7 @@ class Contributors(object):
                     status=value.get('status'),
                     email=emails[0].lower(),
                 )
-        return cls.contributors, errors
+        return defer.returnValue((cls.contributors, errors))
 
 
 class ConfigureBuild(buildstep.BuildStep, AddToLogMixin):
@@ -674,7 +679,7 @@ class ConfigureBuild(buildstep.BuildStep, AddToLogMixin):
         title = f': {title}' if title else ''
         self.addURL(f'PR {pr_number}{title}', GitHub.pr_url(pr_number, repository_url))
         if owners:
-            email, errors = GitHub.email_for_owners(owners)
+            email, errors = yield GitHub.email_for_owners(owners)
             for error in errors:
                 print(error)
                 yield self._addToLog('stdio', error)
@@ -1835,7 +1840,7 @@ class ValidateChange(buildstep.BuildStep, BugzillaMixin, GitHubMixin):
             sha = self.getProperty('github.head.sha', '')[:HASH_LENGTH_TO_DISPLAY]
 
             change_string = 'Hash {}'.format(sha)
-            change_author, errors = GitHub.email_for_owners(self.getProperty('owners', []))
+            change_author, errors = yield GitHub.email_for_owners(self.getProperty('owners', []))
             for error in errors:
                 print(error)
                 yield self._addToLog('stdio', error)
@@ -1938,7 +1943,7 @@ class ValidateCommitterAndReviewer(buildstep.BuildStep, GitHubMixin, AddToLogMix
 
     @defer.inlineCallbacks
     def run(self):
-        self.contributors, errors = Contributors.load(use_network=True)
+        self.contributors, errors = yield Contributors.load(use_network=True)
         for error in errors:
             print(error)
             yield self._addToLog('stdio', error)
@@ -2903,7 +2908,7 @@ class AnalyzeCompileWebKitResults(buildstep.BuildStep, BugzillaMixin, GitHubMixi
                 change_string = 'Patch {}'.format(patch_id)
             elif pr_number and sha:
                 change_string = 'Hash {}'.format(sha)
-                change_author, errors = GitHub.email_for_owners(self.getProperty('owners', []))
+                change_author, errors = yield GitHub.email_for_owners(self.getProperty('owners', []))
                 for error in errors:
                     print(error)
                     yield self._addToLog('stdio', error)
@@ -3883,7 +3888,7 @@ class AnalyzeLayoutTestsResults(buildstep.BuildStep, BugzillaMixin, GitHubMixin)
                 change_string = 'Patch {}'.format(patch_id)
             elif pr_number and sha:
                 change_string = 'Hash {}'.format(sha)
-                change_author, errors = GitHub.email_for_owners(self.getProperty('owners', []))
+                change_author, errors = yield GitHub.email_for_owners(self.getProperty('owners', []))
                 for error in errors:
                     print(error)
                     yield self._addToLog('stdio', error)
@@ -5550,6 +5555,7 @@ class ValidateSquashed(shell.ShellCommand):
 class AddReviewerMixin(object):
     NOBODY_SED = 's/NOBODY (OO*PP*S!*)/{}/g'
 
+    @defer.inlineCallbacks
     def gitCommitEnvironment(self):
         owners = self.getProperty('owners', [])
         if not owners:
@@ -5559,7 +5565,7 @@ class AddReviewerMixin(object):
                 FILTER_BRANCH_SQUELCH_WARNING='1',
             )
 
-        contributors, _ = Contributors.load()
+        contributors, _ = yield Contributors.load()
         return dict(
             GIT_COMMITTER_NAME=contributors.get(owners[0].lower(), {}).get('name', 'EWS'),
             GIT_COMMITTER_EMAIL=contributors.get(owners[0].lower(), {}).get('email', FROM_EMAIL),
@@ -5582,7 +5588,8 @@ class AddReviewerToCommitMessage(shell.ShellCommand, AddReviewerMixin):
     def __init__(self, **kwargs):
         super().__init__(logEnviron=False, timeout=60, **kwargs)
 
-    def start(self, BufferLogObserverClass=logobserver.BufferLogObserver):
+    @defer.inlineCallbacks
+    def run(self, BufferLogObserverClass=logobserver.BufferLogObserver):
         base_ref = self.getProperty('github.base.ref', f'{DEFAULT_REMOTE}/{DEFAULT_BRANCH}')
         head_ref = self.getProperty('github.head.ref', 'HEAD')
 
@@ -5595,10 +5602,12 @@ class AddReviewerToCommitMessage(shell.ShellCommand, AddReviewerMixin):
             f'{head_ref}...{base_ref}',
         ]
 
-        for key, value in self.gitCommitEnvironment().items():
+        commit_environment = yield self.gitCommitEnvironment()
+        for key, value in commit_environment.items():
             self.workerEnvironment[key] = value
 
-        return super().start()
+        rc = yield super().run()
+        defer.returnValue(rc)
 
     def getResultSummary(self):
         if self.results == FAILURE:
@@ -5699,7 +5708,7 @@ class ValidateCommitMessage(steps.ShellSequence, ShellMixin, AddToLogMixin):
             defer.returnValue(rc)
             return
 
-        self.contributors, errors = Contributors.load(use_network=True)
+        self.contributors, errors = yield Contributors.load(use_network=True)
         for error in errors:
             print(error)
             self._addToLog('stdio', error)
@@ -5761,12 +5770,13 @@ class Canonicalize(steps.ShellSequence, ShellMixin, AddToLogMixin):
             commit_count += 2
         return commit_count
 
+    @defer.inlineCallbacks
     def run(self):
         self.commands = []
-        self.contributors, errors = Contributors.load(use_network=True)
+        self.contributors, errors = yield Contributors.load(use_network=True)
         for error in errors:
             print(error)
-            self._addToLog('stdio', error)
+            yield self._addToLog('stdio', error)
 
         base_ref = self.getProperty('github.base.ref', DEFAULT_BRANCH)
         head_ref = self.getProperty('github.head.ref', None)
@@ -5806,7 +5816,8 @@ class Canonicalize(steps.ShellSequence, ShellMixin, AddToLogMixin):
 
         for command in commands:
             self.commands.append(util.ShellArg(command=command, logname='stdio', haltOnFailure=True))
-        return super().run()
+        rc = yield super().run()
+        defer.returnValue(rc)
 
     def getResultSummary(self):
         commit_pluralized = "commit" if self.number_commits_to_canonicalize() == 1 else "commits"
