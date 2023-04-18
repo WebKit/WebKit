@@ -417,19 +417,15 @@ class PullRequest(Command):
             print("Pull request needs to be sent to a secure remote for review")
             original_remote = source_remote
             if len(repository.source_remotes()) < 2:
-                sys.stderr.write("Error. You do not have access to a secure remote to make a pull request for a redacted issue\n")
-                if args.defaults or Terminal.choose(
-                    "Would you like to proceed anyways? \n",
-                    default='No',
-                ) == 'No':
-                    sys.stderr.write("Failed to create pull request due to unsuitable remote\n")
-                    return 1
+                sys.stderr.write('Error. You do not have access to a secure remote to make a pull request for a redacted issue\n')
+                sys.stderr.write('Please consult repository administers to gain access to a secure remote to make this fix against\n')
+                return 1
             else:
                 source_remote = repository.source_remotes()[-1]
                 if args.defaults or Terminal.choose(
                     "Would you like to make a pull request against '{}' instead of '{}'? \n".format(source_remote, original_remote),
-                    default='Yes',
-                ) == 'No':
+                    default='Yes', options=('Yes', 'Cancel')
+                ) == 'Cancel':
                     sys.stderr.write("User declined to create a pull request against the secure remote '{}'\n".format(source_remote))
                     return 1
                 remote_repo = repository.remote(name=source_remote)
