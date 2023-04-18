@@ -1,0 +1,45 @@
+<html>
+<head>
+    <style>
+        .box {
+            position: absolute;
+            top: 200px;
+            left: 200px;
+            width: 100px;
+            height: 100px;
+            background-color: silver;
+            filter: drop-shadow(20px 20px 10px black);
+        }
+
+        body.changed .box {
+            width: 150px;
+        }
+    </style>
+    <script src="../../resources/js-test-pre.js"></script>
+    <script>
+        jsTestIsAsync = true;
+        description("Test repaint rects when a box with drop-shadow changes size");
+
+        var layerTreeAsText;
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                if (window.internals)
+                    internals.startTrackingRepaints();
+
+                document.body.classList.add('changed');
+
+                if (window.internals) {
+                    layerTreeAsText =  window.internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_REPAINT_RECTS);
+                    internals.stopTrackingRepaints();
+                }
+
+                shouldBeTrue("layerTreeAsText.indexOf('(rect 192 192 206 156)') > -1");
+                finishJSTest();
+            }, 0)
+        }, false);
+    </script>
+</head>
+<body>
+    <div class="box"></div>
+<script src="../../resources/js-test-post.js"></script>
+</html>

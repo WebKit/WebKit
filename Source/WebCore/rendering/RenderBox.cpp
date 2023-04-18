@@ -5117,7 +5117,8 @@ void RenderBox::addVisualEffectOverflow()
     bool hasBoxShadow = style().boxShadow();
     bool hasBorderImageOutsets = style().hasBorderImageOutsets();
     bool hasOutline = outlineStyleForRepaint().hasOutlineInVisualOverflow();
-    if (!hasBoxShadow && !hasBorderImageOutsets && !hasOutline)
+    bool hasFilterOutsets = style().hasAccumulatedFilterOutsets();
+    if (!hasBoxShadow && !hasBorderImageOutsets && !hasOutline && !hasFilterOutsets)
         return;
 
     addVisualOverflow(applyVisualEffectOverflow(borderBoxRect()));
@@ -5167,6 +5168,14 @@ LayoutRect RenderBox::applyVisualEffectOverflow(const LayoutRect& borderBox) con
         overflowMaxY = std::max(overflowMaxY, borderBox.maxY() + outlineSize);
     }
     // Add in the final overflow with shadows and outsets combined.
+    auto filterOutsets = style().accumulatedFilterOutsets();
+    if (!filterOutsets.isZero()) {
+        overflowMinX = std::min(overflowMinX, overflowMinX - ((!isFlipped || isHorizontal) ? filterOutsets.left() : filterOutsets.right()));
+        overflowMaxX = std::max(overflowMaxX, overflowMaxX + ((!isFlipped || isHorizontal) ? filterOutsets.right() : filterOutsets.left()));
+        overflowMinY = std::min(overflowMinY, overflowMinY - ((!isFlipped || !isHorizontal) ? filterOutsets.top() : filterOutsets.bottom()));
+        overflowMaxY = std::max(overflowMaxY, overflowMaxY + ((!isFlipped || !isHorizontal) ? filterOutsets.bottom() : filterOutsets.top()));
+    }
+
     return LayoutRect(overflowMinX, overflowMinY, overflowMaxX - overflowMinX, overflowMaxY - overflowMinY);
 }
 

@@ -1,0 +1,42 @@
+<html>
+<head>
+    <style>
+        .box {
+            writing-mode:vertical-rl;
+            width: 100px;
+            height: 100px;
+            margin: 100px;
+            background-color: silver;
+        }
+
+        body.changed .box {
+            filter: drop-shadow(-20px 20px 10px black);
+        }
+    </style>
+    <script src="../../resources/js-test-pre.js"></script>
+    <script>
+        jsTestIsAsync = true;
+        description("Test repaint rects when the drop-shadow filter property changes");
+
+        var layerTreeAsText;
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                if (window.internals)
+                    internals.startTrackingRepaints();
+
+                document.body.classList.add('changed');
+
+                if (window.internals) {
+                    layerTreeAsText =  window.internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_REPAINT_RECTS);
+                    internals.stopTrackingRepaints();
+                }
+                shouldBeTrue("layerTreeAsText.indexOf('(rect 60 160 156 156)') > -1");
+                finishJSTest();
+            }, 2000)
+        }, false);
+    </script>
+</head>
+<body>
+    <div class="box">here is some text</div>
+<script src="../../resources/js-test-post.js"></script>
+</html>
