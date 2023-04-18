@@ -649,6 +649,7 @@ static constexpr CGFloat kFullScreenWindowCornerRadius = 12;
 
         [webView setAutoresizingMask:(UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight)];
         [webView setFrame:[_window bounds]];
+        [webView _setMinimumEffectiveDeviceWidth:0];
         [webView _overrideLayoutParametersWithMinimumLayoutSize:[_window bounds].size maximumUnobscuredSizeOverride:[_window bounds].size];
         [_window insertSubview:webView.get() atIndex:0];
         [webView setNeedsLayout];
@@ -671,13 +672,21 @@ static constexpr CGFloat kFullScreenWindowCornerRadius = 12;
                 return;
             }
 
-            if (auto* manager = [protectedSelf _manager]) {
-                manager->willEnterFullScreen();
+            if (![protectedSelf _manager]) {
+                ASSERT_NOT_REACHED();
+                [self _exitFullscreenImmediately];
                 return;
             }
 
-            ASSERT_NOT_REACHED();
-            [self _exitFullscreenImmediately];
+            [self._webView _doAfterNextVisibleContentRectAndPresentationUpdate:makeBlockPtr([protectedSelf] {
+                if (auto* manager = [protectedSelf _manager]) {
+                    manager->willEnterFullScreen();
+                    return;
+                }
+
+                ASSERT_NOT_REACHED();
+                [protectedSelf _exitFullscreenImmediately];
+            }).get()];
         });
 
         [CATransaction commit];

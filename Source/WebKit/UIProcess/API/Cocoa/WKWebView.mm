@@ -1639,6 +1639,13 @@ inline OptionSet<WebKit::FindOptions> toFindOptions(WKFindConfiguration *configu
     });
 }
 
+- (void)_doAfterNextVisibleContentRectAndPresentationUpdate:(void (^)(void))updateBlock
+{
+    [self _doAfterNextVisibleContentRectUpdate:makeBlockPtr([strongSelf = retainPtr(self), updateBlock = makeBlockPtr(updateBlock)] {
+        [strongSelf _doAfterNextPresentationUpdate:updateBlock.get()];
+    }).get()];
+}
+
 - (void)_recalculateViewportSizesWithMinimumViewportInset:(CocoaEdgeInsets)minimumViewportInset maximumViewportInset:(CocoaEdgeInsets)maximumViewportInset throwOnInvalidInput:(BOOL)throwOnInvalidInput
 {
     auto frame = WebCore::FloatSize(self.frame.size);
