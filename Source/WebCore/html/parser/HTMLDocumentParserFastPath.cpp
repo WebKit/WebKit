@@ -232,9 +232,6 @@ private:
     // 32 matches that used by HTMLToken::Attribute.
     Vector<CharacterType, 32> m_charBuffer;
     Vector<UChar> m_ucharBuffer;
-    // Used if the attribute name contains upper case ascii (which must be mapped to lower case).
-    // 32 matches that used by HTMLToken::Attribute.
-    Vector<CharacterType, 32> m_attributeNameBuffer;
     // The inline capacity matches HTMLToken::AttributeList.
     Vector<Attribute, 10> m_attributeBuffer;
     Vector<StringImpl*> m_attributeNames;
@@ -536,7 +533,7 @@ private:
         return tagName;
     }
 
-    CharacterSpan scanAttributeName()
+    QualifiedName scanAttributeName()
     {
         // First look for all lower case. This path doesn't require any mapping of
         // input. This path could handle other valid attribute name chars, but they
@@ -544,24 +541,36 @@ private:
         auto* start = m_parsingBuffer.position();
         skipWhile<isASCIILower>(m_parsingBuffer);
         if (UNLIKELY(m_parsingBuffer.atEnd()))
-            return didFail(HTMLFastPathResult::FailedEndOfInputReached, CharacterSpan { });
-        if (!isValidAttributeNameChar(*m_parsingBuffer))
-            return CharacterSpan { start, static_cast<size_t>(m_parsingBuffer.position() - start) };
+            return didFail(HTMLFastPathResult::FailedEndOfInputReached, nullQName());
 
-        // At this point name does not contain lowercase. It may contain upper-case,
-        // which requires mapping. Assume it does.
-        m_parsingBuffer.setPosition(start);
-        m_attributeNameBuffer.resize(0);
+        CharacterSpan attributeName;
+        if (UNLIKELY(isValidAttributeNameChar(*m_parsingBuffer))) {
+            // At this point name does not contain lowercase. It may contain upper-case,
+            // which requires mapping. Assume it does.
+            m_parsingBuffer.setPosition(start);
+            m_charBuffer.resize(0);
+            // isValidAttributeNameChar() returns false if end of input is reached.
+            do {
+                auto c = m_parsingBuffer.consume();
+                if (isASCIIUpper(c))
+                    c = toASCIILowerUnchecked(c);
+                m_charBuffer.append(c);
+            } while (m_parsingBuffer.hasCharactersRemaining() && isValidAttributeNameChar(*m_parsingBuffer));
+            attributeName = m_charBuffer.span();
+        } else
+            attributeName = { start, static_cast<size_t>(m_parsingBuffer.position() - start) };
 
-        // isValidAttributeNameChar() returns false if end of input is reached.
-        do {
-            auto c = m_parsingBuffer.consume();
-            if (isASCIIUpper(c))
-                c = toASCIILowerUnchecked(c);
-            m_attributeNameBuffer.append(c);
-        } while (m_parsingBuffer.hasCharactersRemaining() && isValidAttributeNameChar(*m_parsingBuffer));
-
-        return CharacterSpan { m_attributeNameBuffer.data(), static_cast<size_t>(m_attributeNameBuffer.size()) };
+        if (attributeName.empty())
+            return nullQName();
+        if (attributeName.size() > 2 && attributeName[0] == 'o' && attributeName[1] == 'n') {
+            // These attributes likely contain script that may be executed at random
+            // points, which could cause problems if parsing via the fast path
+            // fails. For example, an image's onload event.
+            return nullQName();
+        }
+        if (attributeName.size() == 2 && attributeName[0] == 'i' && attributeName[1] == 's')
+            return nullQName();
+        return HTMLNameCache::makeAttributeQualifiedName(attributeName);
     }
 
     AtomString scanAttributeValue()
@@ -696,7 +705,7 @@ private:
         ASSERT(m_attributeNames.isEmpty());
         while (true) {
             auto attributeName = scanAttributeName();
-            if (attributeName.empty()) {
+            if (attributeName == nullQName()) {
                 if (m_parsingBuffer.hasCharactersRemaining()) {
                     if (*m_parsingBuffer == '>') {
                         m_parsingBuffer.advance();
@@ -712,23 +721,14 @@ private:
                 }
                 return didFail(HTMLFastPathResult::FailedParsingAttributes);
             }
-            if (attributeName.size() > 2 && attributeName[0] == 'o' && attributeName[1] == 'n') {
-                // These attributes likely contain script that may be executed at random
-                // points, which could cause problems if parsing via the fast path
-                // fails. For example, an image's onload event.
-                return didFail(HTMLFastPathResult::FailedOnAttribute);
-            }
-            if (attributeName.size() == 2 && attributeName[0] == 'i' && attributeName[1] == 's')
-                return didFail(HTMLFastPathResult::FailedParsingAttributes);
             skipWhile<isHTMLSpace>(m_parsingBuffer);
             AtomString attributeValue { emptyAtom() };
             if (skipExactly(m_parsingBuffer, '=')) {
                 attributeValue = scanAttributeValue();
                 skipWhile<isHTMLSpace>(m_parsingBuffer);
             }
-            Attribute attribute { HTMLNameCache::makeAttributeQualifiedName(attributeName), WTFMove(attributeValue) };
-            m_attributeNames.append(attribute.localName().impl());
-            m_attributeBuffer.append(WTFMove(attribute));
+            m_attributeNames.append(attributeName.localName().impl());
+            m_attributeBuffer.append(Attribute { WTFMove(attributeName), WTFMove(attributeValue) });
         }
         std::sort(m_attributeNames.begin(), m_attributeNames.end());
         if (std::adjacent_find(m_attributeNames.begin(), m_attributeNames.end()) != m_attributeNames.end()) {
