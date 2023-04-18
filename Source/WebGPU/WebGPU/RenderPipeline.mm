@@ -337,7 +337,7 @@ static MTLVertexDescriptor *createVertexDescriptor(WGPUVertexState vertexState)
         // FIXME: need to assign stepRate with per-instance data?
         for (size_t i = 0; i < buffer.attributeCount; ++i) {
             auto& attribute = buffer.attributes[i];
-            const auto& mtlAttribute = vertexDescriptor.attributes[i];
+            const auto& mtlAttribute = vertexDescriptor.attributes[attribute.shaderLocation];
             mtlAttribute.format = vertexFormat(attribute.format);
             mtlAttribute.bufferIndex = bufferIndex;
             mtlAttribute.offset = attribute.offset;
