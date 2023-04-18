@@ -2,6 +2,7 @@
  * Copyright (C) 2004, 2005, 2007, 2008 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006, 2007, 2008 Rob Buis <buis@kde.org>
  * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -77,7 +78,7 @@ ExceptionOr<float> SVGTextContentElement::getSubStringLength(unsigned charnum, u
 
 ExceptionOr<Ref<SVGPoint>> SVGTextContentElement::getStartPositionOfChar(unsigned charnum)
 {
-    if (charnum > getNumberOfChars())
+    if (charnum >= getNumberOfChars())
         return Exception { IndexSizeError };
 
     return SVGPoint::create(SVGTextQuery(renderer()).startPositionOfCharacter(charnum));
@@ -85,7 +86,7 @@ ExceptionOr<Ref<SVGPoint>> SVGTextContentElement::getStartPositionOfChar(unsigne
 
 ExceptionOr<Ref<SVGPoint>> SVGTextContentElement::getEndPositionOfChar(unsigned charnum)
 {
-    if (charnum > getNumberOfChars())
+    if (charnum >= getNumberOfChars())
         return Exception { IndexSizeError };
 
     return SVGPoint::create(SVGTextQuery(renderer()).endPositionOfCharacter(charnum));
@@ -93,7 +94,7 @@ ExceptionOr<Ref<SVGPoint>> SVGTextContentElement::getEndPositionOfChar(unsigned 
 
 ExceptionOr<Ref<SVGRect>> SVGTextContentElement::getExtentOfChar(unsigned charnum)
 {
-    if (charnum > getNumberOfChars())
+    if (charnum >= getNumberOfChars())
         return Exception { IndexSizeError };
 
     return SVGRect::create(SVGTextQuery(renderer()).extentOfCharacter(charnum));
@@ -101,7 +102,7 @@ ExceptionOr<Ref<SVGRect>> SVGTextContentElement::getExtentOfChar(unsigned charnu
 
 ExceptionOr<float> SVGTextContentElement::getRotationOfChar(unsigned charnum)
 {
-    if (charnum > getNumberOfChars())
+    if (charnum >= getNumberOfChars())
         return Exception { IndexSizeError };
 
     return SVGTextQuery(renderer()).rotationOfCharacter(charnum);
