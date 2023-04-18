@@ -341,7 +341,7 @@ inline bool is(const WeakPtr<ArgType, WeakPtrImpl>& source)
 template<typename Target, typename Source, typename WeakPtrImpl>
 inline Target* downcast(WeakPtr<Source, WeakPtrImpl>& source)
 {
-    return downcase<Target>(source.get());
+    return downcast<Target>(source.get());
 }
 
 template<typename Target, typename Source, typename WeakPtrImpl>
