@@ -34,6 +34,7 @@
 #include "GraphicsContext.h"
 #include "HWndDC.h"
 #include "HostWindow.h"
+#include "LocalFrame.h"
 #include "LocalFrameView.h"
 #include "NotImplemented.h"
 #include <shlwapi.h>
