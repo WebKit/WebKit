@@ -552,6 +552,8 @@
 		2B2E2FD12949A41100F85C38 /* pas_malloc_stack_logging.c in Sources */ = {isa = PBXBuildFile; fileRef = 2B2E2FCF2949A41100F85C38 /* pas_malloc_stack_logging.c */; };
 		2B2E2FD22949A41100F85C38 /* pas_malloc_stack_logging.h in Headers */ = {isa = PBXBuildFile; fileRef = 2B2E2FD02949A41100F85C38 /* pas_malloc_stack_logging.h */; };
 		2B6055E42805368B00C8BDAC /* BmallocTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2B6055E32805368B00C8BDAC /* BmallocTests.cpp */; };
+		2BDF4F4529E8B36F0056BF50 /* pas_report_crash.h in Headers */ = {isa = PBXBuildFile; fileRef = 2BDF4F4429E8B36F0056BF50 /* pas_report_crash.h */; };
+		2BDF4F4729E8B3AD0056BF50 /* pas_report_crash.c in Sources */ = {isa = PBXBuildFile; fileRef = 2BDF4F4629E8B3AD0056BF50 /* pas_report_crash.c */; };
 		2BF3F5B529A0051F005361FD /* EnumerationTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2BF3F5B429A0051F005361FD /* EnumerationTests.cpp */; };
 		2C11E88E2728A783002162D0 /* bmalloc_type.h in Headers */ = {isa = PBXBuildFile; fileRef = 2C11E88C2728A783002162D0 /* bmalloc_type.h */; };
 		2C11E88F2728A783002162D0 /* pas_simple_type.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C11E88D2728A783002162D0 /* pas_simple_type.c */; };
@@ -1257,6 +1259,8 @@
 		2B2E2FCF2949A41100F85C38 /* pas_malloc_stack_logging.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pas_malloc_stack_logging.c; sourceTree = "<group>"; };
 		2B2E2FD02949A41100F85C38 /* pas_malloc_stack_logging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_malloc_stack_logging.h; sourceTree = "<group>"; };
 		2B6055E32805368B00C8BDAC /* BmallocTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BmallocTests.cpp; sourceTree = "<group>"; };
+		2BDF4F4429E8B36F0056BF50 /* pas_report_crash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_report_crash.h; sourceTree = "<group>"; };
+		2BDF4F4829E8B5510056BF50 /* pas_report_crash.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pas_report_crash.c; sourceTree = "<group>"; };
 		2BF3F5B429A0051F005361FD /* EnumerationTests.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = EnumerationTests.cpp; sourceTree = "<group>"; };
 		2C11E88C2728A783002162D0 /* bmalloc_type.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bmalloc_type.h; sourceTree = "<group>"; };
 		2C11E88D2728A783002162D0 /* pas_simple_type.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pas_simple_type.c; sourceTree = "<group>"; };
@@ -1825,6 +1829,8 @@
 				0FF08F3122A58F1200386575 /* pas_red_black_tree.h */,
 				0FA5E4542492D5B900CE962A /* pas_redundant_local_allocator_node.c */,
 				0FA5E4522492D5B900CE962A /* pas_redundant_local_allocator_node.h */,
+				2BDF4F4829E8B5510056BF50 /* pas_report_crash.c */,
+				2BDF4F4429E8B36F0056BF50 /* pas_report_crash.h */,
 				0F5B608F235E88EE00CAE629 /* pas_reserved_memory_provider.c */,
 				0F5B6090235E88EE00CAE629 /* pas_reserved_memory_provider.h */,
 				0F4F60F825979BC7008B4A82 /* pas_root.c */,
@@ -2313,6 +2319,7 @@
 				0FE7EE7D22A1A31C004F4166 /* pas_reallocate_heap_teleport_rule.h in Headers */,
 				0FF08F3322A58F1200386575 /* pas_red_black_tree.h in Headers */,
 				0FA5E4572492D5BA00CE962A /* pas_redundant_local_allocator_node.h in Headers */,
+				2BDF4F4529E8B36F0056BF50 /* pas_report_crash.h in Headers */,
 				0F5B6092235E88EF00CAE629 /* pas_reserved_memory_provider.h in Headers */,
 				0F4F60FB25979BC8008B4A82 /* pas_root.h in Headers */,
 				0F19326C22F73E8500FBA713 /* pas_scavenger.h in Headers */,
@@ -2804,6 +2811,7 @@
 				0FD48B3023A9ABB30026C46D /* pas_random.c in Sources */,
 				0FF08F3422A58F1200386575 /* pas_red_black_tree.c in Sources */,
 				0FA5E4592492D5BA00CE962A /* pas_redundant_local_allocator_node.c in Sources */,
+				2BDF4F4729E8B3AD0056BF50 /* pas_report_crash.c in Sources */,
 				0F5B6091235E88EF00CAE629 /* pas_reserved_memory_provider.c in Sources */,
 				0F4F60FA25979BC8008B4A82 /* pas_root.c in Sources */,
 				0F19326D22F73E8500FBA713 /* pas_scavenger.c in Sources */,
