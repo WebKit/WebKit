@@ -85,12 +85,14 @@ AutoInstall.register(Package('tblib', Version(1, 7, 0)))
 AutoInstall.register(Package('urllib3', Version(1, 25, 10)))
 AutoInstall.register(Package('wheel', Version(0, 35, 1)))
 AutoInstall.register(Package('whichcraft', Version(0, 6, 1)))
+AutoInstall.register(Package('cffi', Version(1, 15, 1)))
+
+if sys.version_info > (3, 0):
+    AutoInstall.register(Package('cryptography', Version(36, 0, 2), wheel=True, implicit_deps=['cffi']))
 
 if sys.version_info >= (3, 6):
     if sys.platform == 'linux':
         AutoInstall.register(Package('jeepney', Version(0, 7, 1)))
-        AutoInstall.register(Package('cffi', Version(1, 15, 0)))
-        AutoInstall.register(Package('cryptography', Version(36, 0, 1), wheel=True, implicit_deps=['cffi']))
         AutoInstall.register(Package('secretstorage', Version(3, 3, 1)))
     AutoInstall.register(Package('keyring', Version(23, 2, 1)))
 else:
