@@ -1015,6 +1015,30 @@ webkit.org/b/152789 webarchive/adopt-attribute-styled-body-webarchive.html [ Pas
 
 webkit.org/b/155196 security/contentSecurityPolicy/video-with-blob-url-allowed-by-media-src-star.html [ Skip ]
 
+# webkit.org/b/255554 22x editing/run tests are constant timeouts.
+imported/w3c/web-platform-tests/editing/run/delete.html?1-1000 [ Slow ]
+imported/w3c/web-platform-tests/editing/run/delete.html?1001-2000 [ Slow ]
+imported/w3c/web-platform-tests/editing/run/delete.html?2001-3000 [ Slow ]
+imported/w3c/web-platform-tests/editing/run/delete.html?3001-4000 [ Slow ]
+imported/w3c/web-platform-tests/editing/run/delete.html?4001-5000 [ Slow ]
+imported/w3c/web-platform-tests/editing/run/delete.html?5001-6000 [ Slow ]
+imported/w3c/web-platform-tests/editing/run/delete.html?7001-last [ Slow ]
+imported/w3c/web-platform-tests/editing/run/forwarddelete.html?1001-2000 [ Slow ]
+imported/w3c/web-platform-tests/editing/run/forwarddelete.html?2001-3000 [ Slow ]
+imported/w3c/web-platform-tests/editing/run/forwarddelete.html?3001-4000 [ Slow ]
+imported/w3c/web-platform-tests/editing/run/forwarddelete.html?5001-6000 [ Slow ]
+imported/w3c/web-platform-tests/editing/run/forwarddelete.html?6001-last [ Slow ]
+imported/w3c/web-platform-tests/editing/run/insertparagraph.html?1001-2000 [ Slow ]
+imported/w3c/web-platform-tests/editing/run/insertparagraph.html?2001-3000 [ Slow ]
+imported/w3c/web-platform-tests/editing/run/multitest.html?1-1000 [ Slow ]
+imported/w3c/web-platform-tests/editing/run/multitest.html?1001-2000 [ Slow ]
+imported/w3c/web-platform-tests/editing/run/multitest.html?2001-3000 [ Slow ]
+imported/w3c/web-platform-tests/editing/run/multitest.html?3001-4000 [ Slow ]
+imported/w3c/web-platform-tests/editing/run/multitest.html?4001-5000 [ Slow ]
+imported/w3c/web-platform-tests/editing/run/multitest.html?5001-6000 [ Slow ]
+imported/w3c/web-platform-tests/editing/run/multitest.html?6001-7000 [ Slow ]
+imported/w3c/web-platform-tests/editing/run/multitest.html?7001-8000 [ Slow ]
+
 # FIXME: Needs bugzilla (<rdar://problem/18273139>)
 storage/websql/sql-error-codes.html [ Failure ]
 
