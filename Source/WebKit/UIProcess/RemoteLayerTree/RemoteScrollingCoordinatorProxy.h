@@ -116,6 +116,10 @@ public:
     virtual void hasNodeWithAnimatedScrollChanged(bool) { }
     virtual void setRootNodeIsInUserScroll(bool) { }
 
+
+    virtual void scrollingTreeNodeDidBeginScrollSnapping(WebCore::ScrollingNodeID) { }
+    virtual void scrollingTreeNodeDidEndScrollSnapping(WebCore::ScrollingNodeID) { }
+
     String scrollingTreeAsText() const;
 
     void resetStateAfterProcessExited();

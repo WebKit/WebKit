@@ -44,6 +44,9 @@ private:
     void hasNodeWithAnimatedScrollChanged(bool) override;
     void displayDidRefresh(WebCore::PlatformDisplayID) override;
 
+    void scrollingTreeNodeDidBeginScrollSnapping(WebCore::ScrollingNodeID) override;
+    void scrollingTreeNodeDidEndScrollSnapping(WebCore::ScrollingNodeID) override;
+
     void connectStateNodeLayers(WebCore::ScrollingStateTree&, const RemoteLayerTreeHost&) override;
     void establishLayerTreeScrollingRelations(const RemoteLayerTreeHost&) override;
 

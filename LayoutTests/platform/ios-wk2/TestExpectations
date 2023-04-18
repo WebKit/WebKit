@@ -965,6 +965,7 @@ editing/selection/select-out-of-floated-non-editable-12.html [ Skip ]
 css3/scroll-snap/scroll-snap-click-scrollbar-gutter.html [ Skip ]
 css3/scroll-snap/scroll-snap-wheel-event.html [ Skip ]
 css3/scroll-snap/scroll-snap-discrete-wheel-event-in-mainframe.html [ Skip ]
+css3/scroll-snap/scroll-snap-discrete-wheel-events-with-layout.html [ Skip ]
 css3/scroll-snap/resnap-after-layout.html [ Skip ]
 
 webkit.org/b/192088 media/no-fullscreen-when-hidden.html [ Failure Pass ]

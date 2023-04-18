@@ -613,15 +613,19 @@ bool ScrollingTree::isScrollSnapInProgressForNode(ScrollingNodeID nodeID)
     Locker locker { m_treeStateLock };
     return m_treeState.nodesWithActiveScrollSnap.contains(nodeID);
 }
-    
+
 void ScrollingTree::setNodeScrollSnapInProgress(ScrollingNodeID nodeID, bool isScrollSnapping)
 {
     ASSERT(nodeID);
     Locker locker { m_treeStateLock };
-    if (isScrollSnapping)
-        m_treeState.nodesWithActiveScrollSnap.add(nodeID);
-    else
-        m_treeState.nodesWithActiveScrollSnap.remove(nodeID);
+
+    if (isScrollSnapping) {
+        if (m_treeState.nodesWithActiveScrollSnap.add(nodeID).isNewEntry)
+            scrollingTreeNodeDidBeginScrollSnapping(nodeID);
+    } else {
+        if (m_treeState.nodesWithActiveScrollSnap.remove(nodeID))
+            scrollingTreeNodeDidEndScrollSnapping(nodeID);
+    }
 }
 
 bool ScrollingTree::isScrollAnimationInProgressForNode(ScrollingNodeID nodeID)
