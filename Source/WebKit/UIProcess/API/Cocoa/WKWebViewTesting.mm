@@ -94,10 +94,13 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
     };
 
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
-    if ([layer valueForKey:@"WKInteractionRegionGroupName"])
+    if ([layer valueForKey:@"WKInteractionRegionGroupName"]) {
         ts.dumpProperty("type", "interaction");
-    else if ([layer valueForKey:@"WKInteractionRegionType"])
+        traverse = false;
+    } else if ([layer valueForKey:@"WKInteractionRegionType"]) {
         ts.dumpProperty("type", "occlusion");
+        traverse = false;
+    }
 #endif
 
     ts.dumpProperty("layer bounds", rectToString(layer.bounds));

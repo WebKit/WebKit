@@ -583,6 +583,12 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
 
         style.setEventListenerRegionTypes(computeEventListenerRegionTypes(m_document, style, *m_element, m_parentStyle.eventListenerRegionTypes()));
 
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+        // Every element will automatically get an interaction region which is not useful, ignoring the `cursor: pointer;` on the body.
+        if (is<HTMLBodyElement>(*m_element) && style.cursor() == CursorType::Pointer && style.eventListenerRegionTypes().contains(EventListenerRegionType::MouseClick))
+            style.setCursor(CursorType::Auto);
+#endif
+
 #if ENABLE(TEXT_AUTOSIZING)
         if (m_document.settings().textAutosizingUsesIdempotentMode())
             adjustForTextAutosizing(style, *m_element);
