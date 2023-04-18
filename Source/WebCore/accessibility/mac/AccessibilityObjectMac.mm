@@ -663,7 +663,7 @@ static void attributedStringSetElement(NSMutableAttributedString *attrString, NS
         [attrString addAttribute:attribute value:(__bridge id)axElement.get() range:range];
 }
 
-static void attributedStringSetSpelling(NSMutableAttributedString *attrString, Node* node, StringView text, const NSRange& range)
+void attributedStringSetSpelling(NSMutableAttributedString *attrString, Node* node, StringView text, const NSRange& range)
 {
     ASSERT(node);
 

@@ -40,18 +40,13 @@
 
 #if PLATFORM(COCOA)
 #include <wtf/RetainPtr.h>
-#endif
-
-#if PLATFORM(COCOA)
 
 OBJC_CLASS NSArray;
-OBJC_CLASS NSAttributedString;
 OBJC_CLASS NSData;
 OBJC_CLASS NSMutableAttributedString;
 OBJC_CLASS NSString;
 OBJC_CLASS NSValue;
 OBJC_CLASS NSView;
-
 #endif
 
 namespace WebCore {

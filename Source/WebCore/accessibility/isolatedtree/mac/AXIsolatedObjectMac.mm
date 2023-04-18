@@ -190,12 +190,26 @@ NSAttributedString *AXIsolatedObject::cachedAttributedStringForTextMarkerRange(c
         return nil;
 
     NSMutableAttributedString *result = [[NSMutableAttributedString alloc] initWithAttributedString:[attributedText attributedSubstringFromRange:*nsRange]];
+    if (!result.length)
+        return result;
 
+    auto resultRange = NSMakeRange(0, result.length);
     // The AttributedString is cached with spelling info. If the caller does not request spelling info, we have to remove it before returning.
     if (spellCheck == SpellCheck::No) {
-        auto fullRange = NSMakeRange(0, result.length);
-        [result removeAttribute:NSAccessibilityMisspelledTextAttribute range:fullRange];
-        [result removeAttribute:NSAccessibilityMarkedMisspelledTextAttribute range:fullRange];
+        [result removeAttribute:NSAccessibilityMisspelledTextAttribute range:resultRange];
+        [result removeAttribute:NSAccessibilityMarkedMisspelledTextAttribute range:resultRange];
+        return result;
+    }
+
+    // For any nsRange different from the full range, remove exissting spell check attribute and spell check the text.
+    auto fullRange = NSMakeRange(0, [attributedText length]);
+    if (!NSEqualRanges(*nsRange, fullRange)) {
+        [result removeAttribute:NSAccessibilityMisspelledTextAttribute range:resultRange];
+        [result removeAttribute:NSAccessibilityMarkedMisspelledTextAttribute range:resultRange];
+        // FIXME: pull attributedStringSetSpelling off the main thread.
+        performFunctionOnMainThread([result = retainPtr(result), &resultRange] (AccessibilityObject* axObject) {
+            attributedStringSetSpelling(result.get(), axObject->node(), String { [result string] }, resultRange);
+        });
     }
 
     return result;
