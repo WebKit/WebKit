@@ -1,0 +1,35 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<html>
+  <head>
+    <style>
+        #test-clip-text {
+            font-family: system-ui;
+            font-weight: 900;
+            font-size: 60px;
+        }
+        .clipped {
+            position: absolute;
+            width: 200px;
+            height: 100px;
+            z-index: 1;
+            top: 5px;
+            left: 50px;
+            clip-path: url("#test-clip-text");
+            background-color: blue;
+        }
+        .composited {
+            transform: translateZ(0);
+        }
+        </style>
+  </head>
+  <body>
+    <svg xmlns="http://www.w3.org/2000/svg" width="0" height="0">
+      <defs>
+        <clipPath id="test-clip-text">
+          <text x="5" y="50">TEST</text>
+        </clipPath>
+      </defs>
+    </svg>
+    <div class="composited clipped"></div>
+  </body>
+</html>
