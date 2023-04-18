@@ -406,8 +406,8 @@ if (USE_OPENGL_OR_ES)
     if (USE_GBM)
         # ANGLE-backed WebGL depends on DMABuf support, which at the moment is leveraged
         # through libgbm and libdrm dependencies. When libgbm is enabled, make
-        # libdrm a requirement and define the USE_LIBGBM and USE_TEXTURE_MAPPER_DMABUF
-        # macros. When not available, ANGLE will be used in slower software-rasterization mode.
+        # libdrm a requirement and define USE_TEXTURE_MAPPER_DMABUF macros.
+        # When not available, ANGLE will be used in slower software-rasterization mode.
         find_package(GBM)
         if (NOT GBM_FOUND)
             message(FATAL_ERROR "GBM is required for USE_GBM")
@@ -418,7 +418,6 @@ if (USE_OPENGL_OR_ES)
             message(FATAL_ERROR "libdrm is required for USE_GBM")
         endif ()
 
-        SET_AND_EXPOSE_TO_BUILD(USE_LIBGBM TRUE)
         SET_AND_EXPOSE_TO_BUILD(USE_TEXTURE_MAPPER_DMABUF TRUE)
     endif ()
 endif ()

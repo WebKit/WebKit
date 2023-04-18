@@ -44,7 +44,7 @@
 
 #if PLATFORM(COCOA)
 #include <WebCore/GraphicsContextGLCocoa.h>
-#elif USE(LIBGBM)
+#elif USE(GBM)
 #include <WebCore/GraphicsContextGLGBM.h>
 #else
 #include <WebCore/GraphicsContextGLTextureMapperANGLE.h>
@@ -116,7 +116,7 @@ protected:
     virtual void prepareForDisplay(CompletionHandler<void(WTF::MachSendRight&&)>&&) = 0;
 #elif USE(GRAPHICS_LAYER_WC)
     virtual void prepareForDisplay(CompletionHandler<void(std::optional<WCContentBufferIdentifier>)>&&) = 0;
-#elif USE(LIBGBM)
+#elif USE(GBM)
     virtual void prepareForDisplay(CompletionHandler<void(WebCore::DMABufObject&&)>&&) = 0;
 #else
     void prepareForDisplay(CompletionHandler<void()>&&);
@@ -157,7 +157,7 @@ protected:
     RefPtr<IPC::StreamServerConnection> m_streamConnection;
 #if PLATFORM(COCOA)
     using GCGLContext = WebCore::GraphicsContextGLCocoa;
-#elif USE(LIBGBM)
+#elif USE(GBM)
     using GCGLContext = WebCore::GraphicsContextGLGBM;
 #else
     using GCGLContext = WebCore::GraphicsContextGLTextureMapperANGLE;

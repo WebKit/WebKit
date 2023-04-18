@@ -27,7 +27,7 @@
 #include "config.h"
 #include "GraphicsContextGLGBM.h"
 
-#if ENABLE(WEBGL) && USE(LIBGBM)
+#if ENABLE(WEBGL) && USE(GBM)
 
 #include "ANGLEHeaders.h"
 #include "DMABufEGLUtilities.h"
@@ -329,4 +329,4 @@ GraphicsContextGLGBM::Swapchain::~Swapchain()
 
 } // namespace WebCore
 
-#endif // ENABLE(WEBGL) && USE(LIBGBM)
+#endif // ENABLE(WEBGL) && USE(GBM)

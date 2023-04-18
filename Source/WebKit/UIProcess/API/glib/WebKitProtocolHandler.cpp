@@ -49,7 +49,6 @@
 #include <wpe/wpe.h>
 #include <wpe/fdo.h>
 #endif
-#endif
 
 #if USE(LIBEPOXY)
 #include <epoxy/gl.h>
@@ -64,6 +63,7 @@
 #include <epoxy/egl.h>
 #else
 #include <EGL/egl.h>
+#endif
 #endif
 #endif
 

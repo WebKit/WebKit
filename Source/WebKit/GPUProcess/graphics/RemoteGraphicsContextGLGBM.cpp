@@ -27,7 +27,7 @@
 #include "config.h"
 #include "RemoteGraphicsContextGL.h"
 
-#if ENABLE(GPU_PROCESS) && ENABLE(WEBGL) && USE(LIBGBM)
+#if ENABLE(GPU_PROCESS) && ENABLE(WEBGL) && USE(GBM)
 
 namespace WebKit {
 
@@ -75,4 +75,4 @@ Ref<RemoteGraphicsContextGL> RemoteGraphicsContextGL::create(GPUConnectionToWebP
 
 } // namespace WebKit
 
-#endif // ENABLE(GPU_PROCESS) && ENABLE(WEBGL) && USE(LIBGBM)
+#endif // ENABLE(GPU_PROCESS) && ENABLE(WEBGL) && USE(GBM)

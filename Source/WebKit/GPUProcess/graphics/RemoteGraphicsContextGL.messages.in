@@ -32,10 +32,10 @@ messages -> RemoteGraphicsContextGL NotRefCounted Stream {
 #if USE(GRAPHICS_LAYER_WC)
     void PrepareForDisplay() -> (std::optional<WebKit::WCContentBufferIdentifier> contentBuffer) Synchronous
 #endif
-#if USE(LIBGBM)
+#if USE(GBM)
     void PrepareForDisplay() -> (WebCore::DMABufObject dmabufObject) Synchronous NotStreamEncodableReply
 #endif
-#if !PLATFORM(COCOA) && !USE(GRAPHICS_LAYER_WC) && !USE(LIBGBM)
+#if !PLATFORM(COCOA) && !USE(GRAPHICS_LAYER_WC) && !USE(GBM)
     void PrepareForDisplay() -> () Synchronous
 #endif
     void EnsureExtensionEnabled(String extension)

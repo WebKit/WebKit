@@ -41,7 +41,7 @@ namespace WebCore {
 class IntSize;
 class GraphicsContextGLANGLE;
 class GraphicsContextGLFallback;
-#if USE(LIBGBM)
+#if USE(GBM)
 class GraphicsContextGLGBM;
 #endif
 class PlatformDisplay;
@@ -53,7 +53,7 @@ class GCGLANGLELayer final : public ContentLayerTextureMapperImpl::Client {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     GCGLANGLELayer(WebCore::GraphicsContextGLFallback&);
-#if USE(LIBGBM)
+#if USE(GBM)
     GCGLANGLELayer(WebCore::GraphicsContextGLGBM&);
 #endif
     virtual ~GCGLANGLELayer();
@@ -74,4 +74,4 @@ private:
 
 } // namespace Nicosia
 
-#endif // USE(NICOSIA) && USE(TEXTURE_MAPPER) && USE(LIBGBM)
+#endif // USE(NICOSIA) && USE(TEXTURE_MAPPER)

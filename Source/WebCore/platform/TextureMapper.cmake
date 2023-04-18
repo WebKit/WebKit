@@ -151,7 +151,7 @@ if (USE_GRAPHICS_LAYER_WC)
     )
 endif ()
 
-if (USE_LIBGBM)
+if (USE_GBM)
     list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
         platform/graphics/gbm/DMABufColorSpace.h
         platform/graphics/gbm/DMABufEGLUtilities.h

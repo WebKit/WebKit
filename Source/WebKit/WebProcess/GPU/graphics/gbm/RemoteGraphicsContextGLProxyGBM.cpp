@@ -28,7 +28,7 @@
 #include "RemoteGraphicsContextGLProxy.h"
 #include "RemoteRenderingBackendProxy.h"
 
-#if ENABLE(GPU_PROCESS) && ENABLE(WEBGL) && USE(LIBGBM)
+#if ENABLE(GPU_PROCESS) && ENABLE(WEBGL) && USE(GBM)
 
 // This is a standalone check of additional requirements in this implementation,
 // avoiding having to place an overwhelming amount of build guards over the rest of the code.
@@ -144,4 +144,4 @@ RefPtr<RemoteGraphicsContextGLProxy> RemoteGraphicsContextGLProxy::create(IPC::C
 
 } // namespace WebKit
 
-#endif // ENABLE(GPU_PROCESS) && ENABLE(WEBGL) && USE(LIBGBM)
+#endif // ENABLE(GPU_PROCESS) && ENABLE(WEBGL) && USE(GBM)

@@ -163,12 +163,14 @@ static void webkit_dmabuf_video_sink_class_init(WebKitDMABufVideoSinkClass* klas
 bool webKitDMABufVideoSinkIsEnabled()
 {
     static bool s_enabled = false;
+#if USE(GBM)
     static std::once_flag s_flag;
     std::call_once(s_flag,
         [&] {
             const char* value = g_getenv("WEBKIT_GST_DMABUF_SINK_ENABLED");
             s_enabled = value && (equalLettersIgnoringASCIICase(value, "true"_s) || equalLettersIgnoringASCIICase(value, "1"_s));
         });
+#endif
     return s_enabled;
 }
 
