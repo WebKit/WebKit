@@ -26,7 +26,7 @@
 
 #pragma once
 
-#if USE(LIBGBM)
+#if USE(GBM)
 
 #include "DMABufFormat.h"
 #include "DMABufObject.h"
@@ -134,4 +134,4 @@ private:
 
 } // namespace WebCore
 
-#endif // USE(LIBGBM)
+#endif // USE(GBM)

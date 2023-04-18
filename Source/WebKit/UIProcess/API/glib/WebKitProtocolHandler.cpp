@@ -50,18 +50,18 @@
 #include <wpe/wpe.h>
 #include <wpe/fdo.h>
 #endif
-#endif
 
-#if USE(EGL)
-#include <epoxy/egl.h>
+#if PLATFORM(X11)
+#include <WebCore/PlatformDisplayX11.h>
 #endif
 
 #if USE(GBM)
 #include "AcceleratedBackingStoreDMABuf.h"
 #endif
+#endif
 
-#if PLATFORM(X11)
-#include <WebCore/PlatformDisplayX11.h>
+#if USE(EGL)
+#include <epoxy/egl.h>
 #endif
 
 #if USE(GSTREAMER)

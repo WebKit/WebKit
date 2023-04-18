@@ -56,7 +56,7 @@ list(APPEND WebKit_MESSAGES_IN_FILES
     WebProcess/WebPage/ViewGestureGeometryCollector
 )
 
-if (USE_LIBGBM)
+if (USE_GBM)
     list(APPEND WebKit_MESSAGES_IN_FILES
         UIProcess/gtk/AcceleratedBackingStoreDMABuf
     )

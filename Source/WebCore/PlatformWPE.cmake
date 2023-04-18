@@ -120,7 +120,7 @@ if (USE_ATSPI)
     )
 endif ()
 
-if (USE_LIBGBM)
+if (USE_GBM)
     list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
         ${LIBDRM_INCLUDE_DIR}
     )

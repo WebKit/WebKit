@@ -112,7 +112,7 @@ GCGLANGLELayer::GCGLANGLELayer(GraphicsContextGLFallback& context)
 {
 }
 
-#if USE(LIBGBM)
+#if USE(GBM)
 GCGLANGLELayer::GCGLANGLELayer(GraphicsContextGLGBM& context)
     : m_contextType(ContextType::Gbm)
     , m_context(context)
