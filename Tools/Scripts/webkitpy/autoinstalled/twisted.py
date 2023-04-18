@@ -30,9 +30,7 @@ AutoInstall.install(Package('incremental', Version(21, 3, 0), pypi_name='increme
 AutoInstall.install(Package('twisted', Version(20, 3, 0), pypi_name='Twisted'))
 
 AutoInstall.install(Package('pyOpenSSL', Version(20, 0, 0)))
-AutoInstall.install(Package('cryptography', Version(36, 0, 2), wheel=True))
 AutoInstall.install(Package('bcrypt', Version(4), wheel=True))
-AutoInstall.install(Package('cffi', Version(1, 15, 1), wheel=True))
 AutoInstall.install(Package('pycparser', Version(2, 21), wheel=True))
 
 from twisted.protocols.tls import TLSMemoryBIOFactory
